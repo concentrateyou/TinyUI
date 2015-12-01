@@ -48,8 +48,8 @@ namespace TinyUI
 			void Scale(DOUBLE x_scale, DOUBLE y_scale);
 			TinyString ToString() const;
 		private:
-			FLOAT x_;
-			FLOAT y_;
+			FLOAT m_x;
+			FLOAT m_y;
 		};
 		class Vector3F
 		{
@@ -77,9 +77,9 @@ namespace TinyUI
 			void Cross(const Vector3F& other);
 			TinyString ToString() const;
 		private:
-			FLOAT x_;
-			FLOAT y_;
-			FLOAT z_;
+			FLOAT m_x;
+			FLOAT m_y;
+			FLOAT m_z;
 		};
 	}
 }

@@ -219,9 +219,6 @@
     <ClInclude Include="Render\TinyTheme.h">
       <Filter>头文件\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Windowless\TinyVisual.h">
-      <Filter>头文件\Windowless</Filter>
-    </ClInclude>
     <ClInclude Include="Windowless\TinyVisualHWND.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
@@ -230,9 +227,6 @@
     </ClInclude>
     <ClInclude Include="XML\TinyXMLParse.h">
       <Filter>头文件\XML</Filter>
-    </ClInclude>
-    <ClInclude Include="Windowless\TinyLayout.h">
-      <Filter>头文件\Windowless</Filter>
     </ClInclude>
     <ClInclude Include="Control\TinyScrollBox.h">
       <Filter>头文件\Control</Filter>
@@ -297,13 +291,19 @@
     <ClInclude Include="Render\TinyGDI.h">
       <Filter>头文件\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Windowless\TinyVisualScroll.h">
-      <Filter>头文件\Windowless</Filter>
-    </ClInclude>
     <ClInclude Include="Windowless\TinyUtility.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
-    <ClInclude Include="Windowless\TinyVisualManager.h">
+    <ClInclude Include="Windowless\TinyVisualElement.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisual.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualContainer.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualWindow.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
   </ItemGroup>
@@ -458,9 +458,6 @@
     <ClCompile Include="Render\TinyTheme.cpp">
       <Filter>源文件\Render</Filter>
     </ClCompile>
-    <ClCompile Include="Windowless\TinyVisual.cpp">
-      <Filter>源文件\Windowless</Filter>
-    </ClCompile>
     <ClCompile Include="Windowless\TinyVisualHWND.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
@@ -469,9 +466,6 @@
     </ClCompile>
     <ClCompile Include="XML\TinyXMLParse.cpp">
       <Filter>源文件\XML</Filter>
-    </ClCompile>
-    <ClCompile Include="Windowless\TinyLayout.cpp">
-      <Filter>源文件\Windowless</Filter>
     </ClCompile>
     <ClCompile Include="Control\TinyScrollBox.cpp">
       <Filter>源文件\Control</Filter>
@@ -536,13 +530,19 @@
     <ClCompile Include="Render\TinyGDI.cpp">
       <Filter>源文件\Render</Filter>
     </ClCompile>
-    <ClCompile Include="Windowless\TinyVisualScroll.cpp">
-      <Filter>源文件\Windowless</Filter>
-    </ClCompile>
-    <ClCompile Include="Windowless\TinyVisualManager.cpp">
-      <Filter>源文件\Windowless</Filter>
-    </ClCompile>
     <ClCompile Include="Windowless\TinyUtility.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualElement.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisual.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualContainer.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualWindow.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>

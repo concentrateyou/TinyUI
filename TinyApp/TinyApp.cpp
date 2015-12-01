@@ -4,11 +4,11 @@
 #include "stdafx.h"
 #include "TinyApp.h"
 #include "Control/TinyFrameUI.h"
-#include "Windowless/TinyVisual.h"
 #include "Windowless/TinyVisualHWND.h"
 #include "Database/TinyAdo.h"
 #include "Network/TinyConnector.h"
 #include <algorithm>
+#include "DirWatcher.h"
 
 #pragma comment(lib,"TinyUI.lib")
 using namespace TinyUI;
@@ -145,6 +145,10 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	WSADATA   wsd;
 	WSAStartup(MAKEWORD(2, 2), &wsd);
 
+	/*FolderWatcher watcher;
+	watcher.Initialize();
+	watcher.Watch("D:\\pdf1");
+	watcher.Watch("D:\\pdf2");*/
 	//Windowless::TinyVisual visual;
 	//visual.ParserAttributes();
 	//TinyString str = visual.ToStyle();

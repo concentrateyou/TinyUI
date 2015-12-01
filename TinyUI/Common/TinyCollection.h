@@ -226,6 +226,7 @@ namespace TinyUI
 		TinyArray(const TinyArray<T>& myT);
 		TinyArray<T>& operator=(const TinyArray<T>& myT);
 		~TinyArray();
+		BOOL    IsEmpty() const;
 		BOOL	Add(const T& myT);
 		BOOL	Insert(INT index, const T& myT);
 		BOOL	Remove(const T& myT);
@@ -308,6 +309,11 @@ namespace TinyUI
 	INT	TinyArray<T>::GetSize() const
 	{
 		return m_size;
+	}
+	template<class T>
+	BOOL TinyArray<T>::IsEmpty() const
+	{
+		return m_size == 0;
 	}
 	template<class T>
 	BOOL TinyArray<T>::Add(const T& myT)
@@ -500,8 +506,8 @@ namespace TinyUI
 		explicit TinyLinkList(DWORD dwSize = 10);
 		~TinyLinkList();
 		ITERATOR operator[](const T& value) const;
-		DWORD GetSize() const;
-		BOOL IsEmpty() const;
+		DWORD	GetSize() const;
+		BOOL	IsEmpty() const;
 		ITERATOR InsertFirst(const T& value);
 		ITERATOR InsertLast(const T& value);
 		ITERATOR InsertBefore(ITERATOR pos, const T& value);

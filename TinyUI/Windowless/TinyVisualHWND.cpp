@@ -71,6 +71,7 @@ namespace TinyUI
 		LRESULT TinyVisualHWND::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
+
 			return FALSE;
 		}
 	}
