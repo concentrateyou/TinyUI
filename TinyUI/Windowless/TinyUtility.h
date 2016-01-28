@@ -7,25 +7,6 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		/*static const char Width[];
-		static const char Height[];
-		static const char BackgroundColor[];
-		static const char PaddingLeft[];
-		static const char PaddingTop[];
-		static const char PaddingRight[];
-		static const char PaddingBottom[];
-		static const char MarginLeft[];
-		static const char MarginTop[];
-		static const char MarginRight[];
-		static const char MarginBottom[];
-		static const char TextAlign[];
-		static const char TextColor[];
-		static const char FontFamily[];
-		static const char FontSize[];
-		static const char FontColor[];
-		static const char FontStyle[];
-		static const char FontWeight[];*/
-
 		class Vector2F
 		{
 		public:

@@ -310,10 +310,12 @@ namespace TinyUI
 		}
 	};
 	//////////////////////////////////////////////////////////////////////////
-	template<typename FunctionType, typename InstanceType, typename TList>
+	template<typename... _Types>
 	class InvokerStorage;
-	template <typename FunctionType>
-	class InvokerStorage<FunctionType, TYPE_LIST0(), TYPE_LIST0()> : public InvokerStorageBase
+	typedef InvokerStorage<> InvokerStorageNULL;
+
+	template <typename FunctionType, typename... _Types>
+	class InvokerStorage<FunctionType, _Types...> : public InvokerStorageBase
 	{
 	public:
 		typedef InvokerStorage SelfType;
@@ -330,8 +332,8 @@ namespace TinyUI
 		}
 		FunctionType m_runnable;
 	};
-	template <typename FunctionType, typename InstanceType>
-	class InvokerStorage<FunctionType, InstanceType, TYPE_LIST0()> : public InvokerStorageBase
+	template <typename FunctionType, typename InstanceType, typename... _Types>
+	class InvokerStorage<FunctionType, InstanceType, _Types...> : public InvokerStorageBase
 	{
 	public:
 		typedef InvokerStorage SelfType;
@@ -360,7 +362,6 @@ namespace TinyUI
 		CallbackBase(const CallbackBase& callbackBase);
 		CallbackBase& operator=(const CallbackBase& callbackBase);
 		virtual ~CallbackBase();
-	public:
 		BOOL operator == (const CallbackBase& other) const;
 		BOOL IsNull() const;
 		void Reset();
@@ -375,10 +376,30 @@ namespace TinyUI
 	class Caller
 	{
 	public:
-		Caller(InvokerStorage* storage) : m_storage(static_cast<InvokerStorageBase*>(storage))
+		Caller(InvokerStorage* storage)
+			:m_storage(static_cast<InvokerStorageBase*>(storage))
 		{
-
+			TRACE("Caller构造函数\n");
 		}
+		Caller(const Caller& caller)
+			:m_storage(caller.m_storage)
+		{
+			TRACE("Caller拷贝构造函数\n");
+		}
+		Caller& operator=(const Caller& caller)
+		{
+			TRACE("Caller复制构造函数\n");
+			if (&caller != this)
+			{
+				m_storage = caller.m_storage;
+			}
+			return *this;
+		}
+		virtual ~Caller()
+		{
+			TRACE("Caller析构函数\n");
+		}
+	public:
 		mutable TinyScopedReferencePtr < InvokerStorageBase > m_storage;
 	};
 	template<typename T>
@@ -579,18 +600,18 @@ namespace TinyUI
 	/// <summary>
 	/// 绑定函数
 	/// </summary>
-	template <typename FunctionType>
-	Caller<InvokerStorage<FunctionType, TYPE_LIST0(), TYPE_LIST0()>> BindCallback(const FunctionType& runnable)
+	template <typename FunctionType, typename..._Types>
+	Caller<InvokerStorage<FunctionType, _Types...>> BindCallback(const FunctionType& runnable)
 	{
-		return MakeCaller(new InvokerStorage<FunctionType, TYPE_LIST0(), TYPE_LIST0()>(runnable));
+		return MakeCaller(new InvokerStorage<FunctionType, _Types...>(runnable));
 	};
 	/// <summary>
 	/// 绑定成员函数
 	/// </summary>
-	template <typename FunctionType, typename InstanceType>
-	Caller<InvokerStorage<FunctionType, InstanceType, TYPE_LIST0()>> BindCallback(const FunctionType& runnable, const InstanceType& instance)
+	template <typename FunctionType, typename InstanceType, typename..._Types>
+	Caller<InvokerStorage<FunctionType, InstanceType, _Types...>> BindCallback(const FunctionType& runnable, const InstanceType& instance)
 	{
-		return MakeCaller(new InvokerStorage<FunctionType, InstanceType, TYPE_LIST0()>(runnable, instance));
+		return MakeCaller(new InvokerStorage<FunctionType, InstanceType, _Types...>(runnable, instance));
 	};
 };
 

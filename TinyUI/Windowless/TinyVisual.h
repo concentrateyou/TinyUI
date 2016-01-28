@@ -8,42 +8,40 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-
-		/// <summary>
-		/// 可视化元素基类
-		/// </summary>
-		class TinyVisual : public TinyObject
+		typedef struct tagVIS
 		{
-			DECLARE_DYNAMIC(TinyVisual);
-			DISALLOW_COPY_AND_ASSIGN(TinyVisual);
-		public:
-			TinyVisual(TinyVisual* pOwner = NULL);
-			virtual	~TinyVisual();
-			const TinyString& name() const;
-			void		SetName(const TinyString& name);
-			BOOL		IsVisible() const;
-			BOOL		IsEnable() const;
-			void		SetVisible(BOOL	vis);
-			void		SetEnable(BOOL enable);
-		public:
-			TinyString* GetAttribute(const TinyString& key);
-			void		SetAttribute(const TinyString& key, TinyString& value);
-			BOOL		ParserAttributes();
-			TinyString	ToStyle();
-			BOOL		BuildUI();
-		public:
-			virtual void Layout();
-		protected:
-			BOOL							m_visible;
-			BOOL							m_enable;
-			RECT							m_padding;//内偏移量
-			RECT							m_margin;//外偏移量
-			SIZE							m_size;//元素大小
-			TinyMap<TinyString, TinyString> m_attrMap;//属性映射
-			TinyString						m_style;
-			TinyString						m_name;
-			TinyVisual*						m_pOwner;
-		};
+			struct tagVIS *spvisNext;
+			struct tagVIS *spvisParent;
+			struct tagVIS *spvisChild;
+			struct tagVIS *spvisOwner;
+			RECT          rcWindow;
+			RECT          rcClient;
+			HRGN          hrgnUpdate;
+			DWORD		  dwExStyle;
+			DWORD		  dwStyle;
+			DWORD		  dwState;
+		}VIS, *PVIS;
+//#define STATEOFFSET (sizeof(VIS) - sizeof(WW) + (WND_CNT_WOWDWORDS * sizeof(DWORD)))
+//#define TestWF(hwnd, flag)   (*(((BYTE *)(hwnd)) + STATEOFFSET + (int)HIBYTE(flag)) & LOBYTE(flag))
+//#define SetWF(hwnd, flag)    (*(((BYTE *)(hwnd)) + STATEOFFSET + (int)HIBYTE(flag)) |= LOBYTE(flag))
+//#define ClrWF(hwnd, flag)    (*(((BYTE *)(hwnd)) + STATEOFFSET + (int)HIBYTE(flag)) &= ~LOBYTE(flag))
+//#define MaskWF(flag)         ((WORD)( (HIBYTE(flag) & 1) ? LOBYTE(flag) << 8 : LOBYTE(flag)))
+
+#define PVIS_INPUTOWNER (PVIS)1   
+#define PVIS_FOCUS      (PVIS)NULL 
+#define PVIS_ERROR      (PVIS)0x10  
+#define PVIS_TOP        (PVIS)0
+#define PVIS_BOTTOM     (PVIS)1
+#define PVIS_GROUPTOTOP ((PVIS)-1)
+#define PVIS_TOPMOST    ((PVIS)-1)
+
+	/*	VOID LinkWindow(
+			PVIS pwnd,
+			PVIS pwndInsert,
+			PVIS *ppwndFirst);
+		VOID UnlinkWindow(
+			PVIS pwndUnlink,
+			PVIS *ppwndFirst);*/
 	}
 }
 

@@ -44,8 +44,6 @@ namespace TinyUI
 			bHandled = FALSE;
 			PAINTSTRUCT ps = { 0 };
 			HDC hDC = BeginPaint(m_hWND, &ps);
-
-
 			EndPaint(m_hWND, &ps);
 			return FALSE;
 		}

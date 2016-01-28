@@ -5,25 +5,6 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		/*const char Width[] = "width";
-		const char Height[] = "height";
-		const char BackgroundColor[] = "background-color";
-		const char PaddingLeft[] = "padding-left";
-		const char PaddingTop[] = "padding-top";
-		const char PaddingRight[] = "padding-right";
-		const char PaddingBottom[] = "padding-bottom";
-		const char MarginLeft[] = "margin-left";
-		const char MarginTop[] = "margin-top";
-		const char MarginRight[] = "margin-right";
-		const char MarginBottom[] = "margin-bottom";
-		const char TextAlign[] = "text-align";
-		const char TextColor[] = "text-color";
-		const char FontFamily[] = "font-family";
-		const char FontSize[] = "font-size";
-		const char FontColor[] = "font-color";
-		const char FontStyle[] = "font-style";
-		const char FontWeight[] = "font-weight";*/
-
 		Vector2F::Vector2F()
 			:m_x(0.0),
 			m_y(0.0)
@@ -92,7 +73,7 @@ namespace TinyUI
 		}
 		void Vector2F::Scale(DOUBLE scale)
 		{
-			Scale(scale);
+			Scale(scale, scale);
 		}
 		void Vector2F::Scale(DOUBLE x_scale, DOUBLE y_scale)
 		{

@@ -26,7 +26,9 @@ namespace TinyUI
 		FunctorBase() = default;
 		FunctorBase(const FunctorBase&) = default;
 		FunctorBase& operator=(const FunctorBase&) = default;
-		virtual ~FunctorBase(){};
+		virtual ~FunctorBase()
+		{
+		};
 	public:
 		virtual FunctorBase* DoClone() const = 0;
 		virtual BOOL operator==(const FunctorBase&) const = 0;
@@ -91,7 +93,7 @@ namespace TinyUI
 		virtual R operator()(A1, A2, A3, A4) = 0;
 	};
 	//////////////////////////////////////////////////////////////////////////
-	template<typename R, typename TList, typename FunctionType, typename InstanceType, typename Placeholder>
+	template<typename R, typename TList, typename FunctionType, typename InstanceType, typename Types>
 	class Function;
 	template<typename R, typename TList, typename FunctionType>
 	class Function<R, TList, FunctionType, TYPE_LIST0(), TYPE_LIST0()> : public Functor < R, TList >

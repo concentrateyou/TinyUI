@@ -5,104 +5,74 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		TinyVisual::TinyVisual(TinyVisual* pOwner)
-			:m_pOwner(pOwner)
-		{
 
-		}
-		TinyVisual::~TinyVisual()
-		{
+#define Lock(ppobj, pobj) (*ppobj = pobj)
+#define Unlock(ppobj) (*ppobj = NULL)
 
-		}
-		const TinyString& TinyVisual::name() const
+		/*VOID LinkWindow(
+			PVIS pwnd,
+			PVIS pwndInsert,
+			PVIS *ppwndFirst)
 		{
-			return m_name;
-		}
-		void TinyVisual::SetName(const TinyString& name)
-		{
-			m_name = name;
-		}
-		void TinyVisual::SetVisible(BOOL vis)
-		{
-			if (vis != m_visible)
+			if (*ppwndFirst == pwnd)
 			{
-				vis = m_visible;
-				Layout();
+				return;
 			}
-		}
-		void TinyVisual::SetEnable(BOOL enable)
-		{
-			if (m_enable != enable)
+			if (pwndInsert == PVIS_TOP)
 			{
-				m_enable = enable;
-				Layout();
+			LinkTop:
+				Lock(&pwnd->spvisNext, *ppwndFirst);
+				Lock(ppwndFirst, pwnd);
 			}
-		}
-		BOOL TinyVisual::IsVisible() const
-		{
-			return this->m_visible;
-		}
-		BOOL TinyVisual::IsEnable() const
-		{
-			return this->m_enable;
-		}
-
-		TinyString*  TinyVisual::GetAttribute(const TinyString& key)
-		{
-			return m_attrMap.GetValue(key);
-		}
-
-		void TinyVisual::SetAttribute(const TinyString& key, TinyString& value)
-		{
-			m_attrMap.SetAt(key, value);
-		}
-		BOOL TinyVisual::ParserAttributes()
-		{
-			if (!m_style.IsEmpty())
+			else
 			{
-				TinyArray<TinyString> _Array;
-				m_style.Split(';', _Array);
-				for (INT i = 0; i < _Array.GetSize(); i++)
+				if (pwndInsert == PVIS_BOTTOM)
 				{
-					TinyString str = _Array[i];
-					TinyArray < TinyString > _Arrays;
-					str.Split(':', _Arrays);
-					if (_Arrays.GetSize() > 0)
+					if (((pwndInsert = *ppwndFirst) == NULL) || TestWF(pwndInsert, WFBOTTOMMOST))
+						goto LinkTop;
+
+					while (pwndInsert->spvisNext != NULL)
 					{
-						m_attrMap.Add(_Arrays[0], _Arrays[1]);
+						if (TestWF(pwndInsert->spvisNext, WFBOTTOMMOST))
+						{
+							break;
+						}
+						pwndInsert = pwndInsert->spvisNext;
 					}
 				}
-				return TRUE;
+				ASSERT(pwnd != pwndInsert);
+				ASSERT(pwnd != pwndInsert->spvisNext);
+				ASSERT(!TestWF(pwndInsert, WFDESTROYED));
+				ASSERT(pwnd->spvisParent == pwndInsert->spvisParent);
+				Lock(&pwnd->spvisNext, pwndInsert->spvisNext);
+				Lock(&pwndInsert->spvisNext, pwnd);
 			}
-			return FALSE;
 		}
-		TinyString	TinyVisual::ToStyle()
-		{
-			TinyString str;
-			ITERATOR is = m_attrMap.First();
-			while (is)
-			{
-				const TinyString* key = m_attrMap.GetKeyAt(is);
-				const TinyString* value = m_attrMap.GetValueAt(is);
-				str.Append(*key);
-				str.Append(":");
-				str.Append(*value);
-				str.Append(";");
-				is = m_attrMap.Next(is);
-			}
-			return str;
-		}
-		BOOL TinyVisual::BuildUI()
-		{
-			/*const TinyString* value = m_attrMap.GetValue(TinyUI::Windowless::Width);
-			if (value) m_size.cx = atoi(value->STR());
-			value = m_attrMap.GetValue(TinyUI::Windowless::Height);
-			if (value) m_size.cy = atoi(value->STR());*/
-			return FALSE;
-		}
-		void TinyVisual::Layout()
-		{
 
-		}
+		VOID UnlinkWindow(
+			PVIS pwndUnlink,
+			PVIS *ppwndFirst)
+		{
+			PVIS pwnd;
+			pwnd = *ppwndFirst;
+
+			if (pwnd == pwndUnlink)
+				goto Unlock;
+
+			while (pwnd != NULL)
+			{
+				if (pwnd->spvisNext == pwndUnlink)
+				{
+					ppwndFirst = &pwnd->spvisNext;
+				Unlock:
+					Lock(ppwndFirst, pwndUnlink->spvisNext);
+					Unlock(&pwndUnlink->spvisNext);
+					return;
+				}
+
+				pwnd = pwnd->spvisNext;
+			}
+			return;
+		}*/
 	}
 }

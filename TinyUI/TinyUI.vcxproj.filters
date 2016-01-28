@@ -285,9 +285,6 @@
     <ClInclude Include="Network\TinyNetwork.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
-    <ClInclude Include="IO\TinyThreadPool.h">
-      <Filter>头文件\IO</Filter>
-    </ClInclude>
     <ClInclude Include="Render\TinyGDI.h">
       <Filter>头文件\Render</Filter>
     </ClInclude>
@@ -305,6 +302,9 @@
     </ClInclude>
     <ClInclude Include="Windowless\TinyVisualWindow.h">
       <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\TinyTaskPool.h">
+      <Filter>头文件\IO</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -524,9 +524,6 @@
     <ClCompile Include="Network\TinyNetwork.cpp">
       <Filter>源文件\Network</Filter>
     </ClCompile>
-    <ClCompile Include="IO\TinyThreadPool.cpp">
-      <Filter>源文件\IO</Filter>
-    </ClCompile>
     <ClCompile Include="Render\TinyGDI.cpp">
       <Filter>源文件\Render</Filter>
     </ClCompile>
@@ -544,6 +541,9 @@
     </ClCompile>
     <ClCompile Include="Windowless\TinyVisualWindow.cpp">
       <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\TinyTaskPool.cpp">
+      <Filter>源文件\IO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
