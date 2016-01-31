@@ -127,6 +127,7 @@
     <ClInclude Include="Control\TinyTabBox.h" />
     <ClInclude Include="Control\TinyTabControl.h" />
     <ClInclude Include="Control\TinyTextBox.h" />
+    <ClInclude Include="Control\TinySkinAPIHook.h" />
     <ClInclude Include="Control\TinyTrackBar.h" />
     <ClInclude Include="Control\TinyTreeView.h" />
     <ClInclude Include="Database\TinyAdo.h" />
@@ -207,6 +208,7 @@
     <ClCompile Include="Control\TinyTabBox.cpp" />
     <ClCompile Include="Control\TinyTabControl.cpp" />
     <ClCompile Include="Control\TinyTextBox.cpp" />
+    <ClCompile Include="Control\TinySkinAPIHook.cpp" />
     <ClCompile Include="Control\TinyTrackBar.cpp" />
     <ClCompile Include="Control\TinyTreeView.cpp" />
     <ClCompile Include="Database\TinyAdo.cpp" />

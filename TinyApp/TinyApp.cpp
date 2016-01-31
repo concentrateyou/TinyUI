@@ -16,23 +16,32 @@ using namespace TinyUI;
 class Test
 {
 public:
+	Test()
+	{
+		TRACE("Test构造函数!");
+	}
+
+	Test(const Test& t1)
+	{
+		TRACE("Test拷贝构造函数!");
+	}
+
+public:
 	void traceMsg(TinyString str)
 	{
 		TRACE(str.STR());
 	}
 };
 
+
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
 	INT       nCmdShow)
 {
+
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
-
-	Test test;
-	Callback<void(TinyString)> abc = BindCallback(&Test::traceMsg, &test);
-	abc("abc");
 
 	WSADATA   wsd;
 	WSAStartup(MAKEWORD(2, 2), &wsd);

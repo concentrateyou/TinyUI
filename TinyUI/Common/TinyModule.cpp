@@ -3,5 +3,12 @@
 
 namespace TinyUI
 {
+	TinyModuleList::TinyModuleList(DWORD dwProcessId)
+	{
 
+	}
+	TinyModuleList::~TinyModuleList()
+	{
+
+	}
 };

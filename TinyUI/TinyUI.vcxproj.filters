@@ -306,6 +306,9 @@
     <ClInclude Include="IO\TinyTaskPool.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
+    <ClInclude Include="Control\TinySkinAPIHook.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -544,6 +547,9 @@
     </ClCompile>
     <ClCompile Include="IO\TinyTaskPool.cpp">
       <Filter>源文件\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="Control\TinySkinAPIHook.cpp">
+      <Filter>源文件\Control</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
