@@ -570,6 +570,7 @@ private:\
 	template <class T>
 	class TinyScopedPtr
 	{
+		DISALLOW_COPY_AND_ASSIGN(TinyScopedPtr);
 	public:
 		explicit TinyScopedPtr(T* ps = 0);
 		~TinyScopedPtr();
@@ -629,6 +630,7 @@ private:\
 	template <class T>
 	class TinyScopedArray
 	{
+		DISALLOW_COPY_AND_ASSIGN(TinyScopedArray);
 	public:
 		explicit TinyScopedArray(T* ps = 0);
 		~TinyScopedArray();
@@ -789,9 +791,6 @@ private:\
 	{
 		Swap(&s.m_myP);
 	}
-	/// <summary>
-	/// 
-	/// </summary>
 	/// <summary>
 	/// COM÷«ƒ‹÷∏’Î
 	/// </summary>
