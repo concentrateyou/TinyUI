@@ -12,18 +12,16 @@ namespace TinyUI
 	}
 	TinyApplication* TinyApplication::GetInstance() throw()
 	{
-		TinyCriticalSection section;
-		section.Initialize();
 		if (m_pInstance == NULL)
 		{
-			section.Lock();
+			TinyLock lock;
+			lock.Acquire();
 			if (m_pInstance == NULL)
 			{
 				m_pInstance = new TinyApplication();
 			}
-			section.Unlock();
+			lock.Release();
 		}
-		section.Uninitialize();
 		return m_pInstance;
 	}
 	HINSTANCE TinyApplication::Handle() throw()
@@ -151,5 +149,10 @@ namespace TinyUI
 	TinyApplication::~TinyApplication()
 	{
 
+	}
+	//////////////////////////////////////////////////////////////////////////
+	LONG WINAPI TOP_LEVEL_EXCEPTION_FILTER(struct _EXCEPTION_POINTERS *pExp)
+	{
+		return EXCEPTION_EXECUTE_HANDLER;
 	}
 }

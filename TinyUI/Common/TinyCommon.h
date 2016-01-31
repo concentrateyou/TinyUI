@@ -490,17 +490,18 @@ private:\
 	class TinyAutoPtr
 	{
 	public:
-		T* _myP;
 		explicit TinyAutoPtr(T* _rP = NULL);
 		explicit TinyAutoPtr(TinyAutoPtr<T>& _rP);
 		~TinyAutoPtr();
 		TinyAutoPtr<T>& operator = (TinyAutoPtr<T>& _rP);
 		T*	Release() throw();
 		void Reset(T* _ptr) throw();
-		T*	Ptr() const throw();
+		T*	Ptr() const  throw();
 		operator T*() const throw();
 		T&	operator*() const throw();
 		T*	operator->() const throw();
+	protected:
+		T* _myP;
 	};
 	template<class T>
 	TinyAutoPtr<T>::TinyAutoPtr(T* lp)

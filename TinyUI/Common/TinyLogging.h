@@ -7,9 +7,7 @@
 #include <cassert>
 #include <io.h>
 #pragma comment(lib, "dbghelp.lib")
-/************************************************************************/
-/* Google Chrome日志类 我只是个搬运工                                   */
-/************************************************************************/
+
 namespace TinyUI
 {
 	/// <summary>
@@ -50,7 +48,6 @@ namespace TinyUI
 		void* m_trace[MaxTraces];
 		size_t m_count;
 	};
-	//////////////////////////////////////////////////////////////////////////
 }
 
 

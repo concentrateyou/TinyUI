@@ -17,7 +17,13 @@ namespace TinyUI
 		if (!SymInitialize(GetCurrentProcess(), NULL, TRUE))
 		{
 			m_error = GetLastError();
-			assert(false);
+			return;
+		}
+		const size_t symbolsArraySize = 1024;
+		TinyScopedArray<wchar_t> symbols_path(new wchar_t[symbolsArraySize]);
+		if (!SymGetSearchPathW(GetCurrentProcess(), (PWSTR)symbols_path.Ptr(), symbolsArraySize))
+		{
+			m_error = GetLastError();
 			return;
 		}
 	}
@@ -30,35 +36,35 @@ namespace TinyUI
 			DWORD_PTR frame = reinterpret_cast<DWORD_PTR>(trace[i]);
 			// http://msdn.microsoft.com/en-us/library/ms680578(VS.85).aspx
 			ULONG64 buffer[
-				(sizeof(SYMBOL_INFO)+
-					kMaxNameLength * sizeof(wchar_t)+
-					sizeof(ULONG64)-1) /
+				(sizeof(SYMBOL_INFO) +
+					kMaxNameLength * sizeof(wchar_t) +
+					sizeof(ULONG64) - 1) /
 					sizeof(ULONG64)];
-				memset(buffer, 0, sizeof(buffer));
-				DWORD64 sym_displacement = 0;
-				PSYMBOL_INFO symbol = reinterpret_cast<PSYMBOL_INFO>(&buffer[0]);
-				symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
-				symbol->MaxNameLen = kMaxNameLength - 1;
-				BOOL has_symbol = SymFromAddr(GetCurrentProcess(), frame, &sym_displacement, symbol);
-				DWORD line_displacement = 0;
-				IMAGEHLP_LINE64 line = {};
-				line.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
-				BOOL has_line = SymGetLineFromAddr64(GetCurrentProcess(), frame, &line_displacement, &line);
-				(*os) << "\t";
-				if (has_symbol)
-				{
-					(*os) << symbol->Name << " [0x" << trace[i] << "+"
-						<< sym_displacement << "]";
-				}
-				else
-				{
-					(*os) << "(No symbol) [0x" << trace[i] << "]";
-				}
-				if (has_line)
-				{
-					(*os) << " (" << line.FileName << ":" << line.LineNumber << ")";
-				}
-				(*os) << "\n";
+			memset(buffer, 0, sizeof(buffer));
+			DWORD64 sym_displacement = 0;
+			PSYMBOL_INFO symbol = reinterpret_cast<PSYMBOL_INFO>(&buffer[0]);
+			symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
+			symbol->MaxNameLen = kMaxNameLength - 1;
+			BOOL has_symbol = SymFromAddr(GetCurrentProcess(), frame, &sym_displacement, symbol);
+			DWORD line_displacement = 0;
+			IMAGEHLP_LINE64 line = {};
+			line.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
+			BOOL has_line = SymGetLineFromAddr64(GetCurrentProcess(), frame, &line_displacement, &line);
+			(*os) << "\t";
+			if (has_symbol)
+			{
+				(*os) << symbol->Name << " [0x" << trace[i] << "+"
+					<< sym_displacement << "]";
+			}
+			else
+			{
+				(*os) << "(No symbol) [0x" << trace[i] << "]";
+			}
+			if (has_line)
+			{
+				(*os) << " (" << line.FileName << ":" << line.LineNumber << ")";
+			}
+			(*os) << "\n";
 		}
 	}
 	DWORD SymbolContext::GetError() const
@@ -152,14 +158,14 @@ namespace TinyUI
 		DWORD error = context->GetError();
 		if (error != ERROR_SUCCESS)
 		{
-			(*os) << "Error initializing symbols (" << error
-				<< ").  Dumping unresolved backtrace:\n";
+			(*os) << "Error initializing symbols (" << error << ").  Dumping unresolved backtrace:\n";
 			for (size_t i = 0; (i < m_count) && os->good(); ++i)
 			{
 				(*os) << "\t" << m_trace[i] << "\n";
 			}
 		}
-		else {
+		else
+		{
 			(*os) << "Backtrace:\n";
 			context->OutputTraceToStream(m_trace, m_count, os);
 		}

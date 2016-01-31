@@ -306,8 +306,8 @@
     <ClInclude Include="IO\TinyTaskPool.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
-    <ClInclude Include="Control\TinySkinAPIHook.h">
-      <Filter>头文件\Control</Filter>
+    <ClInclude Include="Common\TinyAPIHook.h">
+      <Filter>头文件\Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -548,8 +548,8 @@
     <ClCompile Include="IO\TinyTaskPool.cpp">
       <Filter>源文件\IO</Filter>
     </ClCompile>
-    <ClCompile Include="Control\TinySkinAPIHook.cpp">
-      <Filter>源文件\Control</Filter>
+    <ClCompile Include="Common\TinyAPIHook.cpp">
+      <Filter>源文件\Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

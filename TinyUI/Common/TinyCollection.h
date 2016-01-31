@@ -226,17 +226,18 @@ namespace TinyUI
 		TinyArray(const TinyArray<T>& myT);
 		TinyArray<T>& operator=(const TinyArray<T>& myT);
 		~TinyArray();
-		BOOL    IsEmpty() const;
-		BOOL	Add(const T& myT);
-		BOOL	Insert(INT index, const T& myT);
-		BOOL	Remove(const T& myT);
-		BOOL	RemoveAt(INT index);
-		void	RemoveAll();
-		INT		Lookup(const T& myT) const;
-		T*		GetDate() const;
-		INT		GetSize() const;
-		const T& operator[](INT index) const;
-		T&	operator[](INT index);
+		BOOL		IsEmpty() const;
+		BOOL		Add(const T& myT);
+		BOOL		Insert(INT index, const T& myT);
+		BOOL		Remove(const T& myT);
+		BOOL		RemoveAt(INT index);
+		void		RemoveAll();
+		INT			Lookup(const T& myT) const;
+		const T*	GetDate() const;
+		T*			GetDate();
+		INT			GetSize() const;
+		const T&	operator[](INT index) const;
+		T&			operator[](INT index);
 		T*	m_value;
 		INT m_size;
 		INT m_alloc_size;
@@ -301,7 +302,12 @@ namespace TinyUI
 		RemoveAll();
 	}
 	template<class T>
-	T*	TinyArray<T>::GetDate() const
+	const T*  TinyArray<T>::GetDate() const
+	{
+		return m_value;
+	}
+	template<class T>
+	T*	TinyArray<T>::GetDate()
 	{
 		return m_value;
 	}

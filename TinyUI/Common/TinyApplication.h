@@ -67,6 +67,8 @@ namespace TinyUI
 		TinyHandleMap<HIMAGELIST, TinyHandleHIMAGELIST*>m_MapHIMAGELIST;
 	};
 	__declspec(selectany) TinyApplication* TinyApplication::m_pInstance = NULL;
+	//////////////////////////////////////////////////////////////////////////
+	LONG WINAPI TOP_LEVEL_EXCEPTION_FILTER(struct _EXCEPTION_POINTERS *pExp);
 }
 
 
