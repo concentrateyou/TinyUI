@@ -238,6 +238,7 @@ namespace TinyUI
 		INT			GetSize() const;
 		const T&	operator[](INT index) const;
 		T&			operator[](INT index);
+	protected:
 		T*	m_value;
 		INT m_size;
 		INT m_alloc_size;

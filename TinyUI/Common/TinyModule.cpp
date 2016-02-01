@@ -45,6 +45,10 @@ namespace TinyUI
 		::CloseHandle(hProcess);
 		return TRUE;
 	}
+	DWORD TinyPsapiEnumModule::GetSize()
+	{
+		return m_dwSize;
+	}
 	INT	TinyPsapiEnumModule::Lookup(HMODULE hModule)
 	{
 		ASSERT(hModule);
@@ -142,29 +146,59 @@ namespace TinyUI
 		if (!m_pfnModule32First(hSnapshot, &me)) return FALSE;
 		do
 		{
-
+			m_modules.Add(me);
 		} while (m_pfnModule32Next(hSnapshot, &me));
 		CloseHandle(hSnapshot);
 		return TRUE;
 	}
 	HMODULE	TinyToolHelpEnumModule::operator[](INT index)
 	{
-		return NULL;
+		if (index < 0 || index >= m_modules.GetSize())
+			return NULL;
+		MODULEENTRY32& me = m_modules[index];
+		return me.hModule;
 	}
 	INT	TinyToolHelpEnumModule::Lookup(HMODULE m_hModule)
 	{
-		return NULL;
+		for (INT i = 0; i < m_modules.GetSize(); i++)
+		{
+			MODULEENTRY32& me = m_modules[i];
+			if (me.hModule == m_hModule)
+			{
+				return i;
+			}
+		}
+		return -1;
 	}
 	DWORD TinyToolHelpEnumModule::GetSize()
 	{
-		return NULL;
+		return m_modules.GetSize();
 	}
 	BOOL TinyToolHelpEnumModule::GetModule(INT index, MODULEINFO& info)
 	{
-		return FALSE;
+		if (index < 0 || index >= m_modules.GetSize())
+			return FALSE;
+		MODULEENTRY32& me = m_modules[index];
+		info.lpBaseOfDll = me.modBaseAddr;
+		info.EntryPoint = 0;
+		info.SizeOfImage = me.modBaseSize;
+		return TRUE;
 	}
-	BOOL TinyToolHelpEnumModule::GetModule(HMODULE module, MODULEINFO& info)
+	BOOL TinyToolHelpEnumModule::GetModule(HMODULE hModule, MODULEINFO& info)
 	{
-		return FALSE;
+		if (!hModule)
+			return FALSE;
+		for (INT i = 0; i < m_modules.GetSize(); i++)
+		{
+			MODULEENTRY32& me = m_modules[i];
+			if (me.hModule == hModule)
+			{
+				info.lpBaseOfDll = me.modBaseAddr;
+				info.EntryPoint = 0;
+				info.SizeOfImage = me.modBaseSize;
+				break;
+			}
+		};
+		return TRUE;
 	}
 };

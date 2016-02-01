@@ -1,5 +1,6 @@
 #pragma once
 #include "TinyObject.h"
+#include "TinyCollection.h"
 #include <Psapi.h>
 #include <TlHelp32.h>
 
@@ -55,14 +56,14 @@ namespace TinyUI
 		INT			Lookup(HMODULE m_hModule);
 		DWORD		GetSize();
 		BOOL		GetModule(INT index, MODULEINFO& info);
-		BOOL		GetModule(HMODULE module, MODULEINFO& info);
+		BOOL		GetModule(HMODULE hModule, MODULEINFO& info);
 	private:
 		HANDLE									m_hSnapshot;
 		PFNCREATETOOLHELP32SNAPSHOT				m_pfnCreateToolhelp32Snapshot;
 		PFNMODULE32NEXT							m_pfnModule32Next;
 		PFNMODULE32FIRST						m_pfnModule32First;
 		DWORD									m_dwProcessId;
-		//TinyArray<MODULEENTRY32>				m_modules;
+		TinyArray<MODULEENTRY32>				m_modules;
 	};
 };
 
