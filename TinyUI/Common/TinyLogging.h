@@ -48,6 +48,26 @@ namespace TinyUI
 		void* m_trace[MaxTraces];
 		size_t m_count;
 	};
+	string GetDefaultLogFile();
+	/// <summary>
+	/// »’÷æ¿‡
+	/// </summary>
+	class LogMessage
+	{
+		DISALLOW_COPY_AND_ASSIGN(LogMessage);
+	public:
+		LogMessage(LPCSTR pFileName, INT line);
+		~LogMessage();
+		void WriteTrace(StackTrace& trace);
+	private:
+		BOOL Initialize(LPCSTR pFileName, INT line);
+	private:
+		std::ostringstream	m_stream;
+		LPCSTR				m_pFileName;
+		size_t				m_messageOffset;
+		HANDLE				m_hFile;
+		const INT			m_line;
+	};
 }
 
 

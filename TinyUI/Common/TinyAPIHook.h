@@ -36,11 +36,4 @@ namespace TinyUI
 		TinyString			m_calleeModName;
 
 	};
-	/// <summary>
-	/// 
-	/// </summary>
-	class TinyToolHelp
-	{
-
-	};
 }

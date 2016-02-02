@@ -32,26 +32,26 @@ namespace TinyUI
 		TinyAutoLock lock(m_lock);
 		for (size_t i = 0; (i < count) && os->good(); ++i)
 		{
-			const int kMaxNameLength = 256;
+			const int maxNameLength = 256;
 			DWORD_PTR frame = reinterpret_cast<DWORD_PTR>(trace[i]);
 			// http://msdn.microsoft.com/en-us/library/ms680578(VS.85).aspx
 			ULONG64 buffer[
 				(sizeof(SYMBOL_INFO) +
-					kMaxNameLength * sizeof(wchar_t) +
+					maxNameLength * sizeof(wchar_t) +
 					sizeof(ULONG64) - 1) /
 					sizeof(ULONG64)];
 			memset(buffer, 0, sizeof(buffer));
 			DWORD64 sym_displacement = 0;
 			PSYMBOL_INFO symbol = reinterpret_cast<PSYMBOL_INFO>(&buffer[0]);
 			symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
-			symbol->MaxNameLen = kMaxNameLength - 1;
-			BOOL has_symbol = SymFromAddr(GetCurrentProcess(), frame, &sym_displacement, symbol);
+			symbol->MaxNameLen = maxNameLength - 1;
+			BOOL hasSymbol = SymFromAddr(GetCurrentProcess(), frame, &sym_displacement, symbol);
 			DWORD line_displacement = 0;
 			IMAGEHLP_LINE64 line = {};
 			line.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
 			BOOL has_line = SymGetLineFromAddr64(GetCurrentProcess(), frame, &line_displacement, &line);
 			(*os) << "\t";
-			if (has_symbol)
+			if (hasSymbol)
 			{
 				(*os) << symbol->Name << " [0x" << trace[i] << "+"
 					<< sym_displacement << "]";
@@ -168,6 +168,96 @@ namespace TinyUI
 		{
 			(*os) << "Backtrace:\n";
 			context->OutputTraceToStream(m_trace, m_count, os);
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
+	string GetDefaultLogFile()
+	{
+		CHAR moduleName[MAX_PATH];
+		GetModuleFileName(NULL, moduleName, MAX_PATH);
+		string name = moduleName;
+		size_t last_backslash = name.rfind('\\', name.size());
+		if (last_backslash != string::npos)
+		{
+			name.erase(last_backslash + 1);
+		}
+		name += TEXT("debug.log");
+		return name;
+	}
+
+	LogMessage::LogMessage(LPCSTR pFile, INT line)
+		:m_pFileName(pFile),
+		m_line(line),
+		m_hFile(NULL)
+	{
+		Initialize(pFile, line);
+	}
+
+	BOOL LogMessage::Initialize(LPCSTR pFileName, INT line)
+	{
+		std::string name(pFileName);
+		m_stream << '[';
+		m_stream << GetCurrentProcessId() << ':';
+		m_stream << GetCurrentThreadId() << ':';
+		time_t t = time(NULL);
+		struct tm local_time = { 0 };
+#if _MSC_VER >= 1400
+		localtime_s(&local_time, &t);
+#else
+		localtime_r(&t, &local_time);
+#endif
+		struct tm* tm_time = &local_time;
+		m_stream << std::setfill('0')
+			<< std::setw(2) << 1 + tm_time->tm_mon
+			<< std::setw(2) << tm_time->tm_mday
+			<< '/'
+			<< std::setw(2) << tm_time->tm_hour
+			<< std::setw(2) << tm_time->tm_min
+			<< std::setw(2) << tm_time->tm_sec
+			<< ':';
+		m_stream << GetTickCount() << ':';
+		m_stream << ":" << name << "(" << line << ")] ";
+		m_messageOffset = m_stream.tellp();
+		string logFile = GetDefaultLogFile();
+		m_hFile = CreateFile(logFile.c_str(), GENERIC_WRITE,
+			FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
+			OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		if (!m_hFile || m_hFile == INVALID_HANDLE_VALUE)
+		{
+			m_hFile = CreateFile(TEXT(".\\debug.log"), GENERIC_WRITE,
+				FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
+				OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+			if (!m_hFile || m_hFile == INVALID_HANDLE_VALUE)
+			{
+				m_hFile = NULL;
+				return FALSE;
+			}
+		}
+		SetFilePointer(m_hFile, 0, 0, FILE_END);
+		return TRUE;
+	}
+	void LogMessage::WriteTrace(StackTrace& trace)
+	{
+		m_stream << std::endl;
+		trace.OutputToStream(&m_stream);
+		m_stream << std::endl;
+		string newline(m_stream.str());
+		SetFilePointer(m_hFile, 0, 0, SEEK_END);
+		DWORD num_written;
+		WriteFile(m_hFile,
+			static_cast<const void*>(newline.c_str()),
+			static_cast<DWORD>(newline.length()),
+			&num_written,
+			NULL);
+	}
+
+	LogMessage::~LogMessage()
+	{
+		if (m_hFile &&
+			m_hFile != INVALID_HANDLE_VALUE)
+		{
+			FlushFileBuffers(m_hFile);
+			CloseHandle(m_hFile);
 		}
 	}
 }
