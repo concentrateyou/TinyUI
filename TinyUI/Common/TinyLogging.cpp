@@ -41,26 +41,25 @@ namespace TinyUI
 					sizeof(ULONG64) - 1) /
 					sizeof(ULONG64)];
 			memset(buffer, 0, sizeof(buffer));
-			DWORD64 sym_displacement = 0;
+			DWORD64 symDisplacement = 0;
 			PSYMBOL_INFO symbol = reinterpret_cast<PSYMBOL_INFO>(&buffer[0]);
 			symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
 			symbol->MaxNameLen = maxNameLength - 1;
-			BOOL hasSymbol = SymFromAddr(GetCurrentProcess(), frame, &sym_displacement, symbol);
-			DWORD line_displacement = 0;
+			BOOL hasSymbol = SymFromAddr(GetCurrentProcess(), frame, &symDisplacement, symbol);
+			DWORD lineDisplacement = 0;
 			IMAGEHLP_LINE64 line = {};
 			line.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
-			BOOL has_line = SymGetLineFromAddr64(GetCurrentProcess(), frame, &line_displacement, &line);
+			BOOL hasLine = SymGetLineFromAddr64(GetCurrentProcess(), frame, &lineDisplacement, &line);
 			(*os) << "\t";
 			if (hasSymbol)
 			{
-				(*os) << symbol->Name << " [0x" << trace[i] << "+"
-					<< sym_displacement << "]";
+				(*os) << symbol->Name << " [0x" << trace[i] << "+" << symDisplacement << "]";
 			}
 			else
 			{
 				(*os) << "(No symbol) [0x" << trace[i] << "]";
 			}
-			if (has_line)
+			if (hasLine)
 			{
 				(*os) << " (" << line.FileName << ":" << line.LineNumber << ")";
 			}
@@ -146,7 +145,9 @@ namespace TinyUI
 			m_trace[m_count++] = reinterpret_cast<void*>(stack_frame.AddrPC.Offset);
 		}
 		for (size_t i = m_count; i < arraysize(m_trace); ++i)
+		{
 			m_trace[i] = NULL;
+		}
 	}
 	void StackTrace::Print() const
 	{
@@ -181,11 +182,15 @@ namespace TinyUI
 		{
 			name.erase(last_backslash + 1);
 		}
+#if _DEBUG
 		name += TEXT("debug.log");
+#else
+		name += TEXT("debug.dmp");
+#endif
 		return name;
 	}
 
-	LogMessage::LogMessage(LPCSTR pFile, INT line)
+	LogException::LogException(LPCSTR pFile, INT line)
 		:m_pFileName(pFile),
 		m_line(line),
 		m_hFile(NULL)
@@ -193,7 +198,7 @@ namespace TinyUI
 		Initialize(pFile, line);
 	}
 
-	BOOL LogMessage::Initialize(LPCSTR pFileName, INT line)
+	BOOL LogException::Initialize(LPCSTR pFileName, INT line)
 	{
 		std::string name(pFileName);
 		m_stream << '[';
@@ -224,9 +229,15 @@ namespace TinyUI
 			OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 		if (!m_hFile || m_hFile == INVALID_HANDLE_VALUE)
 		{
+#if _DEBUG
 			m_hFile = CreateFile(TEXT(".\\debug.log"), GENERIC_WRITE,
 				FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
 				OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+#else
+			m_hFile = CreateFile(TEXT(".\\debug.dmp"), GENERIC_WRITE,
+				FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
+				OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+#endif
 			if (!m_hFile || m_hFile == INVALID_HANDLE_VALUE)
 			{
 				m_hFile = NULL;
@@ -236,8 +247,10 @@ namespace TinyUI
 		SetFilePointer(m_hFile, 0, 0, FILE_END);
 		return TRUE;
 	}
-	void LogMessage::WriteTrace(StackTrace& trace)
+	void LogException::WriteLog(PEXCEPTION_POINTERS ps)
 	{
+#if _DEBUG
+		StackTrace trace(ps);
 		m_stream << std::endl;
 		trace.OutputToStream(&m_stream);
 		m_stream << std::endl;
@@ -249,9 +262,22 @@ namespace TinyUI
 			static_cast<DWORD>(newline.length()),
 			&num_written,
 			NULL);
+#else
+		MINIDUMP_EXCEPTION_INFORMATION mei;
+		mei.ThreadId = GetCurrentThreadId();
+		mei.ExceptionPointers = ps;
+		mei.ClientPointers = FALSE;
+		MINIDUMP_TYPE mdt = (MINIDUMP_TYPE)(MiniDumpWithPrivateReadWriteMemory |
+			MiniDumpWithDataSegs |
+			MiniDumpWithHandleData |
+			MiniDumpWithFullMemoryInfo |
+			MiniDumpWithThreadInfo |
+			MiniDumpWithUnloadedModules);
+		MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), m_hFile, mdt, &mei, NULL, NULL);
+#endif
 	}
 
-	LogMessage::~LogMessage()
+	LogException::~LogException()
 	{
 		if (m_hFile &&
 			m_hFile != INVALID_HANDLE_VALUE)

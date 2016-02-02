@@ -15,28 +15,29 @@
 #pragma comment(lib,"TinyUI.lib")
 using namespace TinyUI;
 
-LogMessage logMsg(__FILE__, __LINE__);
+LogException logMsg(__FILE__, __LINE__);
 
 LONG NTAPI TopLevelExceptionFilter(PEXCEPTION_POINTERS pExcepInfo)
 {
+	logMsg.WriteLog(pExcepInfo);
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 
 LONG NTAPI FirstVectoredExceptionFilter(PEXCEPTION_POINTERS pExcepInfo)
 {
-	StackTrace trace(pExcepInfo);
-	logMsg.WriteTrace(trace);
+	logMsg.WriteLog(pExcepInfo);
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 
 LONG NTAPI LastVectoredExceptionFilter(PEXCEPTION_POINTERS pExcepInfo)
 {
+	logMsg.WriteLog(pExcepInfo);
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 
-void Test(INT* a)
+void Test(MINIDUMP_EXCEPTION_INFORMATION* ps)
 {
-	INT v = *a;
+	DWORD id = ps->ThreadId;
 }
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
@@ -45,12 +46,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	INT       nCmdShow)
 {
 
-	UNREFERENCED_PARAMETER(hPrevInstance);
-	UNREFERENCED_PARAMETER(lpCmdLine);
-
-	WSADATA   wsd;
-	WSAStartup(MAKEWORD(2, 2), &wsd);
-
 	RemoveVectoredExceptionHandler(&FirstVectoredExceptionFilter);
 	RemoveVectoredContinueHandler(&LastVectoredExceptionFilter);
 
@@ -58,6 +53,13 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	AddVectoredExceptionHandler(0, &FirstVectoredExceptionFilter);
 	AddVectoredContinueHandler(0, &LastVectoredExceptionFilter);
 
+	UNREFERENCED_PARAMETER(hPrevInstance);
+	UNREFERENCED_PARAMETER(lpCmdLine);
+
+	Test(NULL);
+
+	WSADATA   wsd;
+	WSAStartup(MAKEWORD(2, 2), &wsd);
 	HRESULT hRes = OleInitialize(NULL);
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));

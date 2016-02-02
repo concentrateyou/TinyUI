@@ -52,13 +52,13 @@ namespace TinyUI
 	/// <summary>
 	/// »’÷æ¿‡
 	/// </summary>
-	class LogMessage
+	class LogException
 	{
-		DISALLOW_COPY_AND_ASSIGN(LogMessage);
+		DISALLOW_COPY_AND_ASSIGN(LogException);
 	public:
-		LogMessage(LPCSTR pFileName, INT line);
-		~LogMessage();
-		void WriteTrace(StackTrace& trace);
+		LogException(LPCSTR pFileName, INT line);
+		~LogException();
+		void WriteLog(PEXCEPTION_POINTERS ps);
 	private:
 		BOOL Initialize(LPCSTR pFileName, INT line);
 	private:
