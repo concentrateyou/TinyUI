@@ -5,6 +5,7 @@
 
 namespace TinyUI
 {
+	class TinyAPIFunction;
 	/// <summary>
 	/// API¹³×Ó
 	/// </summary>
@@ -13,13 +14,15 @@ namespace TinyUI
 	public:
 		TinyAPIHook();
 		virtual ~TinyAPIHook();
+		BOOL Add(LPCSTR pszCalleeModName, LPCSTR pszFunctionName, PROC  pfnOrig, PROC  pfnHook);
+		BOOL Remove();
 	public:
 		static TinyAPIHook* GetInstance();
 	private:
 		static TinyAPIHook* m_pHook;
+		TinyArray<TinyAPIFunction*> m_hookFs;
 	};
-	TinyAPIHook* TinyAPIHook::m_pHook = NULL;
-
+	__declspec(selectany) TinyAPIHook* TinyAPIHook::m_pHook = NULL;
 	/// <summary>
 	/// APIº¯Êý
 	/// </summary>
@@ -27,13 +30,17 @@ namespace TinyUI
 	{
 		friend class TinyAPIHook;
 	public:
-		TinyAPIFunction(TinyAPIHook* pHook);
+		TinyAPIFunction(TinyAPIHook* pHook, LPCSTR  pszCalleeModName, LPCSTR pszFunctionName, PROC pfnOrig, PROC pfnHook);
 		~TinyAPIFunction();
+		BOOL InstallHook();
+		BOOL UninstallHook();
 	private:
+		void DoInstallHook(LPCSTR pszCalleeModName, PROC pfnCurrent, PROC pfnNew);
+	private:
+		PROC				m_pfnOrig;
+		PROC				m_pfnHook;
+		TinyString			m_strFunctionName;
+		TinyString			m_strCalleeModName;
 		TinyAPIHook*		m_pAPIHook;
-		/*PROC				m_pfnOrig;
-		PROC				m_pfnHook;*/
-		TinyString			m_calleeModName;
-
 	};
 }

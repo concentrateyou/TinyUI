@@ -6,7 +6,7 @@
 
 namespace TinyUI
 {
-	class TinyEnumModule
+	class IEnumModule
 	{
 	public:
 		virtual	BOOL	Initialize() = 0;
@@ -19,7 +19,7 @@ namespace TinyUI
 	/// <summary>
 	/// Psapi获得进程模块信息
 	/// </summary>
-	class TinyPsapiEnumModule : public TinyEnumModule
+	class TinyPsapiEnumModule : public IEnumModule
 	{
 		typedef BOOL(WINAPI* PFNENUMPROCESSMODULES) (HANDLE hProcess, HMODULE *lphModule, DWORD cb, LPDWORD lpcbNeeded);
 		typedef BOOL(WINAPI* PFNGETMODULEINFORMATION) (HANDLE hProcess, HMODULE hModule, MODULEINFO* lpmodinfo, DWORD cb);
@@ -43,7 +43,7 @@ namespace TinyUI
 	/// <summary>
 	/// ToolHelp获得进程模块信息
 	/// </summary>
-	class TinyToolHelpEnumModule : public TinyEnumModule
+	class TinyToolHelpEnumModule : public IEnumModule
 	{
 		typedef BOOL(WINAPI* PFNMODULE32FIRST) (HANDLE hSnapshot, LPMODULEENTRY32 lpme);
 		typedef BOOL(WINAPI* PFNMODULE32NEXT) (HANDLE hSnapshot, LPMODULEENTRY32 lpme);
