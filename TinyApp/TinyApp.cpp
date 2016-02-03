@@ -17,46 +17,111 @@ using namespace TinyUI;
 
 LogException logMsg(__FILE__, __LINE__);
 
-LONG NTAPI TopLevelExceptionFilter(PEXCEPTION_POINTERS pExcepInfo)
+
+LPTOP_LEVEL_EXCEPTION_FILTER WINAPI MyDummySetUnhandledExceptionFilter(LPTOP_LEVEL_EXCEPTION_FILTER lpTopLevelExceptionFilter)
 {
-	logMsg.WriteLog(pExcepInfo);
+	return NULL;
+}
+
+BOOL PreventSetUnhandledExceptionFilter()
+{
+	HMODULE hKernel32 = LoadLibrary(_T("kernel32.dll"));
+	if (hKernel32 == NULL)
+		return FALSE;
+	void *pOrgEntry = GetProcAddress(hKernel32, "SetUnhandledExceptionFilter");
+	if (pOrgEntry == NULL)
+		return FALSE;
+	unsigned char newJump[100];
+	DWORD dwOrgEntryAddr = (DWORD)pOrgEntry;
+	dwOrgEntryAddr += 5;
+	void *pNewFunc = &MyDummySetUnhandledExceptionFilter;
+	DWORD dwNewEntryAddr = (DWORD)pNewFunc;
+	DWORD dwRelativeAddr = dwNewEntryAddr - dwOrgEntryAddr;
+	newJump[0] = 0xE9;
+	memcpy(&newJump[1], &dwRelativeAddr, sizeof(pNewFunc));
+	SIZE_T bytesWritten;
+	BOOL bRet = WriteProcessMemory(GetCurrentProcess(), pOrgEntry, newJump, sizeof(pNewFunc) + 1, &bytesWritten);
+	return bRet;
+}
+
+
+LONG WINAPI TopLevelExceptionFilter(struct _EXCEPTION_POINTERS *pException)
+{
+	logMsg.WriteLog(pException);
+	FatalAppExit(-1, _T("Dump OK"));
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 
-LONG NTAPI FirstVectoredExceptionFilter(PEXCEPTION_POINTERS pExcepInfo)
+void MemoryAccessCrash()
 {
-	logMsg.WriteLog(pExcepInfo);
-	return EXCEPTION_CONTINUE_SEARCH;
+	std::cout << "Normal null pointer crash" << std::endl;
+
+	char *p = 0;
+	*p = 5;
 }
 
-LONG NTAPI LastVectoredExceptionFilter(PEXCEPTION_POINTERS pExcepInfo)
+void OutOfBoundsVectorCrash()
 {
-	logMsg.WriteLog(pExcepInfo);
-	return EXCEPTION_CONTINUE_SEARCH;
+	std::cout << "std::vector out of bounds crash!" << std::endl;
+
+	std::vector<int> v;
+	v[0] = 5;
 }
 
-void Test(MINIDUMP_EXCEPTION_INFORMATION* ps)
+void AbortCrash()
 {
-	DWORD id = ps->ThreadId;
+	std::cout << "Calling Abort" << std::endl;
+	abort();
 }
+
+void VirtualFunctionCallCrash()
+{
+	struct B
+	{
+		B()
+		{
+			std::cout << "Pure Virtual Function Call crash!" << std::endl;
+			Bar();
+		}
+
+		virtual void Foo() = 0;
+
+		void Bar()
+		{
+			Foo();
+		}
+	};
+
+	struct D : public B
+	{
+		D()
+		{
+			std::cout << "D!" << std::endl;
+		}
+		void Foo()
+		{
+			INT a = 0;
+		}
+	};
+
+	B* b = new D;
+	b->Foo();
+}
+
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
 	INT       nCmdShow)
 {
-
-	RemoveVectoredExceptionHandler(&FirstVectoredExceptionFilter);
-	RemoveVectoredContinueHandler(&LastVectoredExceptionFilter);
-
-	SetUnhandledExceptionFilter(&TopLevelExceptionFilter);
-	AddVectoredExceptionHandler(0, &FirstVectoredExceptionFilter);
-	AddVectoredContinueHandler(0, &LastVectoredExceptionFilter);
+	SetUnhandledExceptionFilter(TopLevelExceptionFilter);
+	PreventSetUnhandledExceptionFilter();
+	//MemoryAccessCrash();
+	//OutOfBoundsVectorCrash();
+	VirtualFunctionCallCrash();
 
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
-
-	Test(NULL);
 
 	WSADATA   wsd;
 	WSAStartup(MAKEWORD(2, 2), &wsd);
