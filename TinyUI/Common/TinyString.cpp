@@ -4,19 +4,19 @@
 
 namespace TinyUI
 {
-	inline INT strcasecmp(const char* s1, const char* s2)
+	INT strcasecmp(const char* s1, const char* s2)
 	{
 		return _stricmp(s1, s2);
 	}
-	inline INT strncasecmp(const char* s1, const char* s2, size_t count)
+	INT strncasecmp(const char* s1, const char* s2, size_t count)
 	{
 		return _strnicmp(s1, s2, count);
 	}
-	inline INT strncmp16(const wchar_t* s1, const wchar_t* s2, size_t count)
+	INT strncmp16(const wchar_t* s1, const wchar_t* s2, size_t count)
 	{
 		return ::wcsncmp(s1, s2, count);
 	}
-	inline INT vsnprintf(char* buffer, size_t size, const char* format, va_list arguments)
+	INT vsnprintf(char* buffer, size_t size, const char* format, va_list arguments)
 	{
 		INT length = vsnprintf_s(buffer, size, size - 1, format, arguments);
 		if (length < 0)
@@ -25,7 +25,7 @@ namespace TinyUI
 		}
 		return length;
 	}
-	inline INT vswprintf(wchar_t* buffer, size_t size, const wchar_t* format, va_list arguments)
+	INT vswprintf(wchar_t* buffer, size_t size, const wchar_t* format, va_list arguments)
 	{
 		int length = _vsnwprintf_s(buffer, size, size - 1, format, arguments);
 		if (length < 0)

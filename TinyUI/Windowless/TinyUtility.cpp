@@ -77,8 +77,8 @@ namespace TinyUI
 		}
 		void Vector2F::Scale(DOUBLE x_scale, DOUBLE y_scale)
 		{
-			m_x *= x_scale;
-			m_y *= y_scale;;
+			m_x *= static_cast<FLOAT>(x_scale);
+			m_y *= static_cast<FLOAT>(y_scale);;
 		}
 		TinyString Vector2F::ToString() const
 		{

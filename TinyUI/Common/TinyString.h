@@ -9,15 +9,15 @@ namespace TinyUI
 	/// <summary>
 	/// 以大小写无关的方式比较两个字符串s1和s2 相等==0
 	/// </summary>
-	inline INT strcasecmp(const char* s1, const char* s2);
+	INT strcasecmp(const char* s1, const char* s2);
 	/// <summary>
 	/// 以大小写无关的方式比较两个字符串s1和s2前count个字符 相等==0
 	/// </summary>
-	inline INT strncasecmp(const char* s1, const char* s2, size_t count);
+	INT strncasecmp(const char* s1, const char* s2, size_t count);
 	/// <summary>
 	/// Unicode字符串比较
 	/// </summary>
-	inline INT strncmp16(const wchar_t* s1, const wchar_t* s2, size_t count);
+	INT strncmp16(const wchar_t* s1, const wchar_t* s2, size_t count);
 	/// <summary>
 	/// 封装vsnprintf保证字符串始终以null结尾并返回字符长度, 即使发生截断时也一样.
 	/// </summary>
