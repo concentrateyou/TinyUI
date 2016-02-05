@@ -125,8 +125,8 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 {
 	TinyAPIHook hook;
 	hook.Add("USER32.DLL", "MessageBoxA", (PROC)MessageBoxA, (PROC)MyMessageBox);
+	hook.Remove("USER32.DLL", "MessageBoxA");
 
-	MessageBox(NULL, "OK", "OK", MB_OK);
 
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);

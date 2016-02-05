@@ -60,7 +60,7 @@ namespace TinyUI
 	void TinyAPIHook::RemoveAll()
 	{
 		DWORD size = m_hookFs.GetSize();
-		for (INT i = 0; i < size; i++)
+		for (DWORD i = 0; i < size; i++)
 		{
 			TinyScopedReferencePtr<TinyAPIFunction>& fs = m_hookFs[i];
 			fs->UninstallHook();
@@ -70,7 +70,7 @@ namespace TinyUI
 	BOOL TinyAPIHook::IsModuleExclude(HMODULE hModule)
 	{
 		DWORD size = m_excludes.GetSize();
-		for (INT i = 0; i < size; i++)
+		for (DWORD i = 0; i < size; i++)
 		{
 			if (m_excludes[i].hModule == hModule)
 			{
@@ -86,6 +86,35 @@ namespace TinyUI
 		em.hModule = NULL;
 		strcpy((char*)lpszModule, em.pzModule);
 		m_excludes.Add(em);
+	}
+	TinyArray<HMODULE> TinyAPIHook::GetExcludeModules()
+	{
+		TinyArray<HMODULE> vals;
+		DWORD size = m_excludes.GetSize();
+		for (DWORD i = 0; i < size; i++)
+		{
+			vals.Add(m_excludes[i].hModule);
+		}
+		return vals;
+	}
+	TinyAPIFunction* TinyAPIHook::GetFunction(LPCSTR pszCalleeModName, LPCSTR pszFunctionName)
+	{
+		DWORD size = m_hookFs.GetSize();
+		for (DWORD i = 0; i < size; i++)
+		{
+			TinyScopedReferencePtr<TinyAPIFunction>& fs = m_hookFs[i];
+			if (strcasecmp(fs->m_pzCalleeModName, pszCalleeModName) == 0
+				&& strcasecmp(fs->m_pzFunctionName, pszFunctionName) == 0)
+			{
+				return fs;
+			}
+		}
+		return NULL;
+	}
+	PROC TinyAPIHook::GetOriginalProc(LPCSTR pszCalleeModName, LPCSTR pszFunctionName)
+	{
+		TinyAPIFunction* fs = GetInstance()->GetFunction(pszCalleeModName, pszFunctionName);
+		return fs ? fs->m_pfnOrig : NULL;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinyAPIFunction::TinyAPIFunction(TinyAPIHook* pAPIHook, LPCSTR  pszCalleeModName, LPCSTR pszFunctionName, PROC pfnOrig, PROC pfnHook)
@@ -126,7 +155,7 @@ namespace TinyUI
 		tools.Initialize();
 		BOOL bRes = FALSE;
 		DWORD dwSize = tools.GetSize();
-		for (INT i = 0; i < dwSize; i++)
+		for (DWORD i = 0; i < dwSize; i++)
 		{
 			HMODULE hModule = tools[i];
 			if (!m_pAPIHook->IsModuleExclude(hModule))

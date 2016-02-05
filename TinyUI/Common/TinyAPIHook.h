@@ -24,8 +24,11 @@ namespace TinyUI
 		void RemoveAll();
 		BOOL IsModuleExclude(HMODULE hModule);
 		void ExcludeModule(LPCTSTR lpszModule);
+		TinyArray<HMODULE> GetExcludeModules();
+		TinyAPIFunction* GetFunction(LPCSTR pszCalleeModName, LPCSTR pszFunctionName);
 	public:
 		static TinyAPIHook* GetInstance();
+		static PROC GetOriginalProc(LPCSTR pszCalleeModName, LPCSTR pszFunctionName);
 	private:
 		static TinyAPIHook* m_pHook;
 		TinyArray<TinyScopedReferencePtr<TinyAPIFunction>> m_hookFs;

@@ -46,6 +46,34 @@ namespace TinyUI
 			DWORD GetDataOffset();
 		};
 		/// <summary>
+		/// Wave输入类
+		/// </summary>
+		class TinyWaveIn
+		{
+		private:
+			HWAVEIN	hWaveIn;
+		public:
+			TinyWaveIn();
+			~TinyWaveIn();
+			operator HWAVEIN() const throw();
+			MMRESULT QueryFormat(LPWAVEFORMATEX pwfx);
+			MMRESULT Open(LPWAVEFORMATEX pwfx, DWORD_PTR dwCallbackInstance);
+			MMRESULT Start();
+			MMRESULT Stop();
+			MMRESULT Reset();
+			MMRESULT Close();
+			MMRESULT Prepare(LPWAVEHDR pwh);
+			MMRESULT Unprepare(LPWAVEHDR pwh);
+			MMRESULT Add(LPWAVEHDR pwh);
+			MMRESULT GetPosition(LPMMTIME pmmt);
+			void	GetErrorText(LPTSTR pzText, MMRESULT hRes);
+			virtual void OnOpen();
+			virtual void OnClose();
+			virtual void OnData(LPWAVEHDR wp, DWORD_PTR dwInstance);
+		private:
+			static void CALLBACK waveInProc(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2);
+		};
+		/// <summary>
 		/// Wave输出类
 		/// </summary>
 		class TinyWaveOut
@@ -74,28 +102,18 @@ namespace TinyUI
 			DWORD	GetVolume();
 			DWORD	GetNumDevs();
 			void	GetErrorText(LPTSTR pzText, MMRESULT hRes);
-			static void CALLBACK waveOutProc(HWAVEOUT hwo, UINT uMsg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2);
 			virtual void OnOpen();
 			virtual void OnClose();
 			virtual void OnDone(LPWAVEHDR wp, DWORD_PTR dwInstance);
 			Event<void(LPWAVEHDR, DWORD_PTR)> WaveDone;
+		private:
+			static void CALLBACK waveOutProc(HWAVEOUT hwo, UINT uMsg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2);
 		};
 		/// <summary>
 		/// Wave播放类
 		/// </summary>
 		class TinyWavePlayer
 		{
-		private:
-			TinyWaveFile waveFile;
-			TinyWaveOut waveOut;
-			LPWAVEHDR  audioBlockPtr[MAX_AUDIO_BUFFERS];
-			DWORD dwBlocks;
-			DWORD dwBlockOut;
-			DWORD dwBlockNext;
-			DWORD dwSizeL;//播放数据
-			BOOL bPlaying;
-			Delegate<void(LPWAVEHDR, DWORD_PTR)> wavePlayDone;
-			void PlayData();
 		public:
 			TinyWavePlayer();
 			~TinyWavePlayer();
@@ -109,6 +127,36 @@ namespace TinyUI
 			BOOL Restart();
 			BOOL Reset();
 			DWORD GetDataSize();
+		private:
+			TinyWaveFile	m_waveFile;
+			TinyWaveOut		m_waveOut;
+			LPWAVEHDR		m_audioBlockPtr[MAX_AUDIO_BUFFERS];
+			DWORD			m_dwBlocks;
+			DWORD			m_dwBlockOut;
+			DWORD			m_dwBlockNext;
+			DWORD			m_dwSizeL;//播放数据
+			BOOL			m_bPlaying;
+			Delegate<void(LPWAVEHDR, DWORD_PTR)> m_wavePlayDone;
+			void PlayData();
+		};
+		/// <summary>
+		/// Wave录音机
+		/// </summary>
+		class TinyWaveTape
+		{
+		public:
+			TinyWaveTape();
+			~TinyWaveTape();
+			BOOL LoadFile(LPTSTR pzFile);
+			BOOL Start();
+			BOOL Stop();
+			BOOL Reset();
+		private:
+			TinyWaveFile	m_waveFile;
+			TinyWaveIn		m_waveOut;
+			LPWAVEHDR		m_audioBlockPtr[MAX_AUDIO_BUFFERS];
+			DWORD			m_dwBlocks;
+			Delegate<void(LPWAVEHDR, DWORD_PTR)> m_waveTapeDone;
 		};
 	};
 }

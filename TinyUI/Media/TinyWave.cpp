@@ -210,99 +210,246 @@ namespace TinyUI
 
 		}
 		//////////////////////////////////////////////////////////////////////////
+		TinyWaveIn::TinyWaveIn()
+			:hWaveIn(NULL)
+		{
+
+		}
+		TinyWaveIn::~TinyWaveIn()
+		{
+			Close();
+		}
+		MMRESULT TinyWaveIn::QueryFormat(LPWAVEFORMATEX pwfx)
+		{
+			ASSERT(pwfx != NULL);
+			return waveInOpen(NULL, WAVE_MAPPER, pwfx, NULL, 0, WAVE_FORMAT_QUERY);
+		}
+		TinyWaveIn::operator HWAVEIN() const throw()
+		{
+			return (hWaveIn);
+		}
+		MMRESULT TinyWaveIn::Open(LPWAVEFORMATEX pwfx, DWORD_PTR dwCallbackInstance)
+		{
+			ASSERT(pwfx != NULL);
+			if (QueryFormat(pwfx) != MMSYSERR_NOERROR) return FALSE;
+			return waveInOpen(&hWaveIn, WAVE_MAPPER, pwfx, (DWORD_PTR)TinyWaveIn::waveInProc, (DWORD_PTR)dwCallbackInstance, CALLBACK_FUNCTION);
+		}
+		MMRESULT TinyWaveIn::Close()
+		{
+			if (hWaveIn != NULL)
+			{
+				waveInClose(hWaveIn);
+				hWaveIn = NULL;
+				return S_OK;
+			}
+			return S_FALSE;
+		}
+		MMRESULT TinyWaveIn::Start()
+		{
+			if (hWaveIn == NULL) return S_FALSE;
+			MMRESULT hRes = waveInStart(hWaveIn);
+			if (hRes != MMSYSERR_NOERROR)
+			{
+				waveInClose(hWaveIn);
+				hWaveIn = NULL;
+				return S_FALSE;
+			}
+			return S_OK;
+		}
+		MMRESULT TinyWaveIn::Stop()
+		{
+			if (hWaveIn == NULL) return S_FALSE;
+			MMRESULT hRes = waveInStop(hWaveIn);
+			if (hRes != MMSYSERR_NOERROR)
+			{
+				waveInClose(hWaveIn);
+				hWaveIn = NULL;
+				return S_FALSE;
+			}
+			return S_OK;
+		}
+		MMRESULT TinyWaveIn::Reset()
+		{
+			if (hWaveIn == NULL) return S_FALSE;
+			MMRESULT hRes = waveInReset(hWaveIn);
+			if (hRes != MMSYSERR_NOERROR)
+			{
+				waveInClose(hWaveIn);
+				hWaveIn = NULL;
+				return S_FALSE;
+			}
+			return S_OK;
+		}
+		MMRESULT TinyWaveIn::Prepare(LPWAVEHDR pwh)
+		{
+			if (hWaveIn == NULL || pwh == NULL) return S_FALSE;
+			MMRESULT hRes = waveInPrepareHeader(hWaveIn, pwh, sizeof(WAVEOUTCAPS));
+			if (hRes != MMSYSERR_NOERROR)
+			{
+				waveInClose(hWaveIn);
+				hWaveIn = NULL;
+			}
+			return hRes;
+		}
+		MMRESULT TinyWaveIn::Unprepare(LPWAVEHDR pwh)
+		{
+			if (hWaveIn == NULL || pwh == NULL) return S_FALSE;
+			MMRESULT hRes = waveInUnprepareHeader(hWaveIn, pwh, sizeof(WAVEHDR));
+			if (hRes != MMSYSERR_NOERROR)
+			{
+				waveInClose(hWaveIn);
+				hWaveIn = NULL;
+			}
+			return hRes;
+		}
+		MMRESULT TinyWaveIn::Add(LPWAVEHDR pwh)
+		{
+			if (hWaveIn == NULL || pwh == NULL) return S_FALSE;
+			MMRESULT hRes = waveInAddBuffer(hWaveIn, pwh, sizeof(WAVEHDR));
+			if (hRes != MMSYSERR_NOERROR)
+			{
+				waveInClose(hWaveIn);
+				hWaveIn = NULL;
+			}
+			return hRes;
+		}
+		MMRESULT TinyWaveIn::GetPosition(LPMMTIME pmmt)
+		{
+			if (hWaveIn == NULL || pmmt == NULL) return S_FALSE;
+			MMRESULT hRes = waveInGetPosition(hWaveIn, pmmt, sizeof(WAVEINCAPS));
+			if (hRes != MMSYSERR_NOERROR)
+			{
+				waveInClose(hWaveIn);
+				hWaveIn = NULL;
+			}
+			return hRes;
+		}
+		void TinyWaveIn::GetErrorText(LPTSTR pzText, MMRESULT hRes)
+		{
+			waveInGetErrorText(hRes, pzText, MAX_PATH);
+		}
+		void TinyWaveIn::OnOpen()
+		{
+
+		}
+		void TinyWaveIn::OnClose()
+		{
+
+		}
+		void TinyWaveIn::OnData(LPWAVEHDR wp, DWORD_PTR dwInstance)
+		{
+
+		}
+		void CALLBACK TinyWaveIn::waveInProc(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2)
+		{
+			TinyWaveIn* waveIn = (TinyWaveIn*)dwInstance;
+			switch (uMsg)
+			{
+			case MM_WIM_OPEN:
+				waveIn->OnOpen();
+				break;
+			case MM_WIM_CLOSE:
+				waveIn->OnClose();
+				break;
+			case MM_WIM_DATA:
+				waveIn->OnData((LPWAVEHDR)dwParam1, dwInstance);
+				break;
+			}
+		}
+		//////////////////////////////////////////////////////////////////////////
 		TinyWavePlayer::TinyWavePlayer()
 		{
-			wavePlayDone.BindDelegate(this, &TinyWavePlayer::PlayDone);
-			waveOut.WaveDone += &wavePlayDone;
-			dwBlocks = dwBlockNext = dwBlockOut = 0;
-			bPlaying = FALSE;
+			m_wavePlayDone.BindDelegate(this, &TinyWavePlayer::PlayDone);
+			m_waveOut.WaveDone += &m_wavePlayDone;
+			m_dwBlocks = m_dwBlockNext = m_dwBlockOut = 0;
+			m_bPlaying = FALSE;
 		}
 		TinyWavePlayer::~TinyWavePlayer()
 		{
-			waveOut.WaveDone -= &wavePlayDone;
-			while (dwBlocks > 0)
+			m_waveOut.WaveDone -= &m_wavePlayDone;
+			while (m_dwBlocks > 0)
 			{
-				--dwBlocks;
-				waveOut.Unprepare(audioBlockPtr[dwBlocks]);
-				LocalFree((LPBYTE)audioBlockPtr[dwBlocks]);
+				--m_dwBlocks;
+				m_waveOut.Unprepare(m_audioBlockPtr[m_dwBlocks]);
+				LocalFree((LPBYTE)m_audioBlockPtr[m_dwBlocks]);
 			}
-			waveOut.Close();
-			waveFile.Close();
-			dwBlockNext = dwBlockOut = 0;
-			bPlaying = FALSE;
+			m_waveOut.Close();
+			m_waveFile.Close();
+			m_dwBlockNext = m_dwBlockOut = 0;
+			m_bPlaying = FALSE;
 		}
 		BOOL TinyWavePlayer::LoadStream(LPVOID pStream, DWORD bufferSize)
 		{
-			waveFile.Close();
-			if (!waveFile.Open(pStream, bufferSize)) return FALSE;
-			WAVEFORMATEX waveEx = waveFile.GetFormat();
-			if (waveOut.Open(&waveEx, (DWORD_PTR)&waveOut) != MMSYSERR_NOERROR)
+			m_waveFile.Close();
+			if (!m_waveFile.Open(pStream, bufferSize)) return FALSE;
+			WAVEFORMATEX waveEx = m_waveFile.GetFormat();
+			if (m_waveOut.Open(&waveEx, (DWORD_PTR)&m_waveOut) != MMSYSERR_NOERROR)
 				return FALSE;
-			for (dwBlocks = 0; dwBlocks < MAX_AUDIO_BUFFERS; dwBlocks++)
+			for (m_dwBlocks = 0; m_dwBlocks < MAX_AUDIO_BUFFERS; m_dwBlocks++)
 			{
-				if (!(audioBlockPtr[dwBlocks] = (LPWAVEHDR)LocalAlloc(LPTR, (DWORD)(sizeof(WAVEHDR) + AUDIO_BUFFER_SIZE))))
+				if (!(m_audioBlockPtr[m_dwBlocks] = (LPWAVEHDR)LocalAlloc(LPTR, (DWORD)(sizeof(WAVEHDR) + AUDIO_BUFFER_SIZE))))
 					break;
-				audioBlockPtr[dwBlocks]->dwFlags = WHDR_DONE;
-				audioBlockPtr[dwBlocks]->lpData = (LPSTR)((LPBYTE)audioBlockPtr[dwBlocks] + sizeof(WAVEHDR));
-				audioBlockPtr[dwBlocks]->dwBufferLength = AUDIO_BUFFER_SIZE;
-				if (waveOut.Prepare(audioBlockPtr[dwBlocks]) != MMSYSERR_NOERROR)
+				m_audioBlockPtr[m_dwBlocks]->dwFlags = WHDR_DONE;
+				m_audioBlockPtr[m_dwBlocks]->lpData = (LPSTR)((LPBYTE)m_audioBlockPtr[m_dwBlocks] + sizeof(WAVEHDR));
+				m_audioBlockPtr[m_dwBlocks]->dwBufferLength = AUDIO_BUFFER_SIZE;
+				if (m_waveOut.Prepare(m_audioBlockPtr[m_dwBlocks]) != MMSYSERR_NOERROR)
 				{
-					LocalFree(audioBlockPtr[dwBlocks]);
+					LocalFree(m_audioBlockPtr[m_dwBlocks]);
 					continue;
 				}
 			}
-			if (dwBlocks < MIN_AUDIO_BUFFERS)
+			if (m_dwBlocks < MIN_AUDIO_BUFFERS)
 			{
-				while (dwBlocks > 0)
+				while (m_dwBlocks > 0)
 				{
-					--dwBlocks;
-					waveOut.Unprepare(audioBlockPtr[dwBlocks]);
-					LocalFree((LPBYTE)audioBlockPtr[dwBlocks]);
+					--m_dwBlocks;
+					m_waveOut.Unprepare(m_audioBlockPtr[m_dwBlocks]);
+					LocalFree((LPBYTE)m_audioBlockPtr[m_dwBlocks]);
 				}
-				waveOut.Close();
-				waveFile.Close();
+				m_waveOut.Close();
+				m_waveFile.Close();
 			}
 			return TRUE;
 		}
 		BOOL TinyWavePlayer::LoadFile(LPSTR szFilename)
 		{
-			waveFile.Close();
-			if (!waveFile.Open(szFilename)) return FALSE;
-			WAVEFORMATEX waveEx = waveFile.GetFormat();
-			if (waveOut.Open(&waveEx, (DWORD_PTR)&waveOut) != MMSYSERR_NOERROR)
+			m_waveFile.Close();
+			if (!m_waveFile.Open(szFilename)) return FALSE;
+			WAVEFORMATEX waveEx = m_waveFile.GetFormat();
+			if (m_waveOut.Open(&waveEx, (DWORD_PTR)&m_waveOut) != MMSYSERR_NOERROR)
 				return FALSE;
-			for (dwBlocks = 0; dwBlocks < MAX_AUDIO_BUFFERS; dwBlocks++)
+			for (m_dwBlocks = 0; m_dwBlocks < MAX_AUDIO_BUFFERS; m_dwBlocks++)
 			{
-				if (!(audioBlockPtr[dwBlocks] = (LPWAVEHDR)LocalAlloc(LPTR, (DWORD)(sizeof(WAVEHDR) + AUDIO_BUFFER_SIZE))))
+				if (!(m_audioBlockPtr[m_dwBlocks] = (LPWAVEHDR)LocalAlloc(LPTR, (DWORD)(sizeof(WAVEHDR) + AUDIO_BUFFER_SIZE))))
 					break;
-				audioBlockPtr[dwBlocks]->dwFlags = WHDR_DONE;
-				audioBlockPtr[dwBlocks]->lpData = (LPSTR)((LPBYTE)audioBlockPtr[dwBlocks] + sizeof(WAVEHDR));
-				audioBlockPtr[dwBlocks]->dwBufferLength = AUDIO_BUFFER_SIZE;
-				if (waveOut.Prepare(audioBlockPtr[dwBlocks]) != MMSYSERR_NOERROR)
+				m_audioBlockPtr[m_dwBlocks]->dwFlags = WHDR_DONE;
+				m_audioBlockPtr[m_dwBlocks]->lpData = (LPSTR)((LPBYTE)m_audioBlockPtr[m_dwBlocks] + sizeof(WAVEHDR));
+				m_audioBlockPtr[m_dwBlocks]->dwBufferLength = AUDIO_BUFFER_SIZE;
+				if (m_waveOut.Prepare(m_audioBlockPtr[m_dwBlocks]) != MMSYSERR_NOERROR)
 				{
-					LocalFree(audioBlockPtr[dwBlocks]);
+					LocalFree(m_audioBlockPtr[m_dwBlocks]);
 					continue;
 				}
 			}
-			if (dwBlocks < MIN_AUDIO_BUFFERS)
+			if (m_dwBlocks < MIN_AUDIO_BUFFERS)
 			{
-				while (dwBlocks > 0)
+				while (m_dwBlocks > 0)
 				{
-					--dwBlocks;
-					waveOut.Unprepare(audioBlockPtr[dwBlocks]);
-					LocalFree((LPBYTE)audioBlockPtr[dwBlocks]);
+					--m_dwBlocks;
+					m_waveOut.Unprepare(m_audioBlockPtr[m_dwBlocks]);
+					LocalFree((LPBYTE)m_audioBlockPtr[m_dwBlocks]);
 				}
-				waveOut.Close();
-				waveFile.Close();
+				m_waveOut.Close();
+				m_waveFile.Close();
 			}
 			return FALSE;
 		}
 		BOOL TinyWavePlayer::IsPlaying()
 		{
 			BOOL bFlags = FALSE;
-			for (DWORD i = 0; i < dwBlocks; i++)
+			for (DWORD i = 0; i < m_dwBlocks; i++)
 			{
-				if ((audioBlockPtr[i]->dwFlags & WHDR_DONE) == 0)//正在播放
+				if ((m_audioBlockPtr[i]->dwFlags & WHDR_DONE) == 0)//正在播放
 				{
 					bFlags = TRUE;
 				}
@@ -311,83 +458,83 @@ namespace TinyUI
 		}
 		BOOL TinyWavePlayer::Seek(DWORD newPos)
 		{
-			newPos += waveFile.GetDataOffset();
-			return waveFile.Seek(newPos, SEEK_SET);
+			newPos += m_waveFile.GetDataOffset();
+			return m_waveFile.Seek(newPos, SEEK_SET);
 		}
 		BOOL TinyWavePlayer::Pause()
 		{
-			bPlaying = FALSE;
-			return waveOut.Pause();
+			m_bPlaying = FALSE;
+			return m_waveOut.Pause();
 		}
 		BOOL TinyWavePlayer::Restart()
 		{
-			bPlaying = TRUE;
-			return waveOut.Restart();
+			m_bPlaying = TRUE;
+			return m_waveOut.Restart();
 		}
 		DWORD TinyWavePlayer::GetDataSize()
 		{
-			return waveFile.GetDataSize();
+			return m_waveFile.GetDataSize();
 		}
 		void TinyWavePlayer::PlayData()
 		{
-			if (!bPlaying) return;
-			while (dwBlockOut < dwBlocks)
+			if (!m_bPlaying) return;
+			while (m_dwBlockOut < m_dwBlocks)
 			{
 				DWORD numberOfBytesRead = 0;
-				waveFile.Read((LPBYTE)audioBlockPtr[dwBlockNext]->lpData, min(AUDIO_BUFFER_SIZE, dwSizeL), &numberOfBytesRead);
-				dwSizeL -= numberOfBytesRead;
+				m_waveFile.Read((LPBYTE)m_audioBlockPtr[m_dwBlockNext]->lpData, min(AUDIO_BUFFER_SIZE, m_dwSizeL), &numberOfBytesRead);
+				m_dwSizeL -= numberOfBytesRead;
 				if (numberOfBytesRead > 0)
 				{
-					audioBlockPtr[dwBlockNext]->dwBytesRecorded = numberOfBytesRead;
-					waveOut.Write(audioBlockPtr[dwBlockNext]);
-					if (dwSizeL <= 0)
+					m_audioBlockPtr[m_dwBlockNext]->dwBytesRecorded = numberOfBytesRead;
+					m_waveOut.Write(m_audioBlockPtr[m_dwBlockNext]);
+					if (m_dwSizeL <= 0)
 					{
-						++dwBlockOut;
-						++dwBlockNext;
+						++m_dwBlockOut;
+						++m_dwBlockNext;
 					}
 				}
-				if (dwSizeL <= 0) break;
-				++dwBlockOut;
-				++dwBlockNext;
-				if (dwBlockNext >= dwBlocks)
+				if (m_dwSizeL <= 0) break;
+				++m_dwBlockOut;
+				++m_dwBlockNext;
+				if (m_dwBlockNext >= m_dwBlocks)
 				{
-					dwBlockNext = 0;
+					m_dwBlockNext = 0;
 				}
 			}
 		}
 		BOOL TinyWavePlayer::Reset()
 		{
-			return waveOut.Reset();
+			return m_waveOut.Reset();
 		}
 		BOOL TinyWavePlayer::Play(BOOL bLoop)
 		{
 			do
 			{
-				bPlaying = TRUE;
-				dwBlockOut = dwBlockNext = 0;
-				dwSizeL = waveFile.GetDataSize();
+				m_bPlaying = TRUE;
+				m_dwBlockOut = m_dwBlockNext = 0;
+				m_dwSizeL = m_waveFile.GetDataSize();
 				PlayData();//播放数据
-				if (waveOut.Restart() != MMSYSERR_NOERROR) return FALSE;
-				while (dwBlockOut > 0)
+				if (m_waveOut.Restart() != MMSYSERR_NOERROR) return FALSE;
+				while (m_dwBlockOut > 0)
 				{
 					MSG msg = { 0 };
 					if (PeekMessage(&msg, 0, 0, 0, PM_NOREMOVE) && (msg.message == PLAY_QUIT))
 					{
 						//收到窗口退出消息
-						bPlaying = FALSE;
+						m_bPlaying = FALSE;
 						do
 						{
 							LoopEmpty();
 						} while (IsPlaying());
-						waveOut.Reset();
-						while (dwBlocks > 0)
+						m_waveOut.Reset();
+						while (m_dwBlocks > 0)
 						{
-							--dwBlocks;
-							waveOut.Unprepare(audioBlockPtr[dwBlocks]);
-							LocalFree((LPBYTE)audioBlockPtr[dwBlocks]);
+							--m_dwBlocks;
+							m_waveOut.Unprepare(m_audioBlockPtr[m_dwBlocks]);
+							LocalFree((LPBYTE)m_audioBlockPtr[m_dwBlocks]);
 						}
-						waveOut.Close();
-						waveFile.Close();
+						m_waveOut.Close();
+						m_waveFile.Close();
 						break;
 					}
 				}
@@ -398,15 +545,40 @@ namespace TinyUI
 		{
 			if (wp->dwFlags & WHDR_DONE)
 			{
-				--dwBlockOut;
+				--m_dwBlockOut;
 				PlayData();
 			}
+		}
+		//////////////////////////////////////////////////////////////////////////
+		TinyWaveTape::TinyWaveTape()
+		{
+
+		}
+		TinyWaveTape::~TinyWaveTape()
+		{
+
+		}
+		BOOL TinyWaveTape::LoadFile(LPTSTR pzFile)
+		{
+			return FALSE;
+		}
+		BOOL TinyWaveTape::Start()
+		{
+			return FALSE;
+		}
+		BOOL TinyWaveTape::Stop()
+		{
+			return FALSE;
+		}
+		BOOL TinyWaveTape::Reset()
+		{
+			return FALSE;
 		}
 		//////////////////////////////////////////////////////////////////////////
 		//Wave File http://msdn.microsoft.com/en-us/library/windows/desktop/dd742884(v=vs.85).aspx
 		BOOL TinyWaveFile::Open(LPTSTR pzFile)
 		{
-			if (pzFile == NULL) return FALSE;
+			if (!pzFile) return FALSE;
 			if (hmmio != NULL)
 			{
 				mmioClose(hmmio, 0);

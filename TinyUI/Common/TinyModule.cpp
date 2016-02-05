@@ -52,7 +52,7 @@ namespace TinyUI
 	INT	TinyPsapiEnumModule::Lookup(HMODULE hModule)
 	{
 		ASSERT(hModule);
-		for (INT i = 0; i < m_dwSize; i++)
+		for (DWORD i = 0; i < m_dwSize; i++)
 		{
 			if (m_pModules[i] == hModule)
 			{
