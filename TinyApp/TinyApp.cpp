@@ -107,15 +107,26 @@ using namespace TinyUI;
 //	b->Foo();
 //}
 
+int WINAPI MyMessageBox(
+	_In_opt_ HWND    hWnd,
+	_In_opt_ LPCTSTR lpText,
+	_In_opt_ LPCTSTR lpCaption,
+	_In_     UINT    uType
+	)
+{
+	TRACE("Call Me");
+	return 1;
+}
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
 	INT       nCmdShow)
 {
+	TinyAPIHook hook;
+	hook.Add("USER32.DLL", "MessageBoxA", (PROC)MessageBoxA, (PROC)MyMessageBox);
 
-	//SetUnhandledExceptionFilter(TopLevelExceptionFilter);
-	//PreventSetUnhandledExceptionFilter();
+	MessageBox(NULL, "OK", "OK", MB_OK);
 
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);

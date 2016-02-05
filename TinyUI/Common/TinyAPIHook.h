@@ -18,21 +18,24 @@ namespace TinyUI
 	{
 	public:
 		TinyAPIHook();
-		virtual ~TinyAPIHook();
+		~TinyAPIHook();
 		BOOL Add(LPCSTR pszCalleeModName, LPCSTR pszFunctionName, PROC  pfnOrig, PROC  pfnHook);
 		BOOL Remove(LPCSTR pszCalleeModName, LPCSTR pszFunctionName);
+		void RemoveAll();
+		BOOL IsModuleExclude(HMODULE hModule);
+		void ExcludeModule(LPCTSTR lpszModule);
 	public:
 		static TinyAPIHook* GetInstance();
 	private:
 		static TinyAPIHook* m_pHook;
-		TinyArray<TinyAPIFunction*> m_hookFs;
+		TinyArray<TinyScopedReferencePtr<TinyAPIFunction>> m_hookFs;
 		TinyArray<EXCLUDEDMODULE>	m_excludes;
 	};
 	__declspec(selectany) TinyAPIHook* TinyAPIHook::m_pHook = NULL;
 	/// <summary>
 	/// APIº¯Êý
 	/// </summary>
-	class TinyAPIFunction
+	class TinyAPIFunction : public TinyReference < TinyAPIFunction >
 	{
 		friend class TinyAPIHook;
 	public:

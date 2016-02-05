@@ -34,14 +34,58 @@ namespace TinyUI
 		TinyAPIFunction* ps = new TinyAPIFunction(this, pszCalleeModName, pszFunctionName, pfnOrig, pfnHook);
 		if (ps && ps->InstallHook())
 		{
-			m_hookFs.Add(ps);
-			return TRUE;
+			return m_hookFs.Add(ps);
 		}
 		return FALSE;
 	}
 	BOOL TinyAPIHook::Remove(LPCSTR pszCalleeModName, LPCSTR pszFunctionName)
 	{
-		return TRUE;
+		DWORD size = m_hookFs.GetSize();
+		for (INT i = 0; i < size; i++)
+		{
+			TinyScopedReferencePtr<TinyAPIFunction>& fs = m_hookFs[i];
+			if (strcasecmp(fs->m_pzCalleeModName, pszCalleeModName) == 0
+				&& strcasecmp(fs->m_pzFunctionName, pszFunctionName) == 0)
+			{
+				if (fs->UninstallHook())
+				{
+					m_hookFs.Remove(fs);
+					return TRUE;
+				}
+
+			}
+		}
+		return FALSE;
+	}
+	void TinyAPIHook::RemoveAll()
+	{
+		DWORD size = m_hookFs.GetSize();
+		for (INT i = 0; i < size; i++)
+		{
+			TinyScopedReferencePtr<TinyAPIFunction>& fs = m_hookFs[i];
+			fs->UninstallHook();
+		}
+		m_hookFs.RemoveAll();
+	}
+	BOOL TinyAPIHook::IsModuleExclude(HMODULE hModule)
+	{
+		DWORD size = m_excludes.GetSize();
+		for (INT i = 0; i < size; i++)
+		{
+			if (m_excludes[i].hModule == hModule)
+			{
+				return TRUE;
+			}
+		}
+		return FALSE;
+	}
+	void TinyAPIHook::ExcludeModule(LPCTSTR lpszModule)
+	{
+		EXCLUDEDMODULE em;
+		memset(&em, 0, sizeof(EXCLUDEDMODULE));
+		em.hModule = NULL;
+		strcpy((char*)lpszModule, em.pzModule);
+		m_excludes.Add(em);
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinyAPIFunction::TinyAPIFunction(TinyAPIHook* pAPIHook, LPCSTR  pszCalleeModName, LPCSTR pszFunctionName, PROC pfnOrig, PROC pfnHook)
@@ -71,23 +115,29 @@ namespace TinyUI
 			}
 		}
 	}
+	TinyAPIFunction::~TinyAPIFunction()
+	{
 
+	}
 	BOOL TinyAPIFunction::DoInstallHook(LPCSTR pszCalleeModName, PROC pfnCurrent, PROC pfnNew)
 	{
 		if (!pfnCurrent || !pfnNew) return FALSE;
 		TinyToolHelpEnumModule tools(GetCurrentProcessId());
 		tools.Initialize();
-		HINSTANCE hInstance = TinyApplication::GetInstance()->Handle();
+		BOOL bRes = FALSE;
 		DWORD dwSize = tools.GetSize();
-		INT index = 0;
-		for (index = 0; index < dwSize; index++)
+		for (INT i = 0; i < dwSize; i++)
 		{
-			if (tools[index] == hInstance)
+			HMODULE hModule = tools[i];
+			if (!m_pAPIHook->IsModuleExclude(hModule))
 			{
-				break;
+				if (DoInstallHook(hModule, pszCalleeModName, pfnCurrent, pfnNew))
+				{
+					bRes = TRUE;
+				}
 			}
 		}
-		return TRUE;
+		return bRes;
 	}
 
 	BOOL TinyAPIFunction::DoInstallHook(HMODULE hmodCaller, LPCSTR pszCalleeModName, PROC pfnCurrent, PROC pfnNew)
