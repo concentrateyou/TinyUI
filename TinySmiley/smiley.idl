@@ -1,8 +1,9 @@
 import "oaidl.idl";
 import "ocidl.idl";
+import "oleidl.idl";
+import "objidl.idl";
 
-[object, uuid(767F59D8-A4DD-4659-A6BC-3769D219F902),
-oleautomation, helpstring("ISmiley")]
+[object, uuid(767F59D8-A4DD-4659-A6BC-3769D219F902), oleautomation, helpstring("ISmiley")]
 interface ISmiley : IUnknown
 {
 	HRESULT LoadStream([in] LPSTREAM pStm);
@@ -14,5 +15,12 @@ interface ISmiley : IUnknown
 	HRESULT Draw([in] HDC hdc, [in] LPCRECT pRect, [in] int iFrame);
 };
 
+[object, uuid(E4E1F5AC-AC4E-4558-99F5-C658533E1146), oleautomation, helpstring("ISmileyCtrl")]
+interface ISmileyCtrl : IDispatch
+{
+	HRESULT InsertOLE([in] DWORD_PTR ole);
+	HRESULT GetSmiley(ISmiley** ps);
+	HRESULT SetSmiley(ISmiley* ps);
+};
 
 

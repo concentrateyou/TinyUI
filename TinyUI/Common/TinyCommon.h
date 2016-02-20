@@ -404,6 +404,64 @@ private:\
 #define TYPE_LIST2(P1, P2) TypeList<P1, TYPE_LIST1(P2)>
 #define TYPE_LIST3(P1, P2, P3) TypeList<P1, TYPE_LIST2(P2, P3)>
 #define TYPE_LIST4(P1, P2, P3, P4) TypeList<P1, TYPE_LIST3(P2, P3, P4)>
+	template<class T01 = NullType, class T02 = NullType, class T03 = NullType, class T04 = NullType>
+	struct Sequence
+	{
+	private:
+		typedef typename Sequence < T02, T03, T04> ::Type Result;
+	public:
+		typedef TypeList<T01, Result> Type;
+	};
+	template<>
+	struct Sequence < >
+	{
+		typedef NullType Type;
+	};
+	//////////////////////////////////////////////////////////////////////////
+	template <class TList>
+	struct Length;
+	template <>
+	struct Length < NullType >
+	{
+		enum { Result = 0 };
+	};
+	template <class T, class U>
+	struct Length < TypeList<T, U> >
+	{
+		enum { Result = 1 + Length<U>::Result };
+	};
+
+	template <class TList, UINT index>
+	struct TypeAt;
+	template <class T1, class T2>
+	struct TypeAt < TypeList<T1, T2>, 0 >
+	{
+		typedef T1 Result;
+	};
+	template <class T1, class T2, UINT i>
+	struct TypeAt < TypeList<T1, T2>, i >
+	{
+		typedef typename TypeAt<T2, i - 1>::Result Result;
+	};
+
+	template <class TList, class T>
+	struct IndexOf;
+	template <class T>
+	struct IndexOf < NullType, T >
+	{
+		enum { Result = -1 };
+	};
+	template <class T, class T2>
+	struct IndexOf < TypeList<T, T2>, T >
+	{
+		enum { Result = 0 };
+	};
+	template <class T1, class T2, class T>
+	struct IndexOf < TypeList<T1, T2>, T >
+	{
+	public:
+		enum { Result = (IndexOf<T2, T>::Result == -1 ? -1 : 1 + IndexOf<T2, T>::Result) };
+	};
 	//////////////////////////////////////////////////////////////////////////
 	/// <summary>
 	/// 线程安全的引用计数基类类

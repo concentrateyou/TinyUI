@@ -313,7 +313,7 @@ namespace TinyUI
 	template<typename FunctionType, typename InstanceType, typename TList>
 	class InvokerStorage;
 	template <typename FunctionType>
-	class InvokerStorage<FunctionType, TYPE_LIST0(), TYPE_LIST0()> : public InvokerStorageBase
+	class InvokerStorage<FunctionType, Sequence<>, Sequence<>> : public InvokerStorageBase
 	{
 	public:
 		typedef InvokerStorage SelfType;
@@ -331,7 +331,7 @@ namespace TinyUI
 		FunctionType m_runnable;
 	};
 	template <typename FunctionType, typename InstanceType>
-	class InvokerStorage<FunctionType, InstanceType, TYPE_LIST0()> : public InvokerStorageBase
+	class InvokerStorage<FunctionType, InstanceType, Sequence<>> : public InvokerStorageBase
 	{
 	public:
 		typedef InvokerStorage SelfType;
@@ -581,17 +581,17 @@ namespace TinyUI
 	/// 绑定函数
 	/// </summary>
 	template <typename FunctionType>
-	Caller<InvokerStorage<FunctionType, TYPE_LIST0(), TYPE_LIST0()>> BindCallback(const FunctionType& runnable)
+	Caller<InvokerStorage<FunctionType, Sequence<>, Sequence<>>> BindCallback(const FunctionType& runnable)
 	{
-		return MakeCaller(new InvokerStorage<FunctionType, TYPE_LIST0(), TYPE_LIST0()>(runnable));
+		return MakeCaller(new InvokerStorage<FunctionType, Sequence<>, Sequence<>>(runnable));
 	};
 	/// <summary>
 	/// 绑定成员函数
 	/// </summary>
 	template <typename FunctionType, typename InstanceType>
-	Caller<InvokerStorage<FunctionType, InstanceType, TYPE_LIST0()>> BindCallback(const FunctionType& runnable, const InstanceType& instance)
+	Caller<InvokerStorage<FunctionType, InstanceType, Sequence<>>> BindCallback(const FunctionType& runnable, const InstanceType& instance)
 	{
-		return MakeCaller(new InvokerStorage<FunctionType, InstanceType, TYPE_LIST0()>(runnable, instance));
+		return MakeCaller(new InvokerStorage<FunctionType, InstanceType, Sequence<>>(runnable, instance));
 	};
 };
 

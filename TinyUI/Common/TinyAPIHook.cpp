@@ -41,7 +41,7 @@ namespace TinyUI
 	BOOL TinyAPIHook::Remove(LPCSTR pszCalleeModName, LPCSTR pszFunctionName)
 	{
 		DWORD size = m_hookFs.GetSize();
-		for (INT i = 0; i < size; i++)
+		for (UINT i = 0; i < size; i++)
 		{
 			TinyScopedReferencePtr<TinyAPIFunction>& fs = m_hookFs[i];
 			if (strcasecmp(fs->m_pzCalleeModName, pszCalleeModName) == 0
@@ -84,8 +84,11 @@ namespace TinyUI
 		EXCLUDEDMODULE em;
 		memset(&em, 0, sizeof(EXCLUDEDMODULE));
 		em.hModule = NULL;
+#pragma warning(push)
+#pragma warning(disable : 4996)
 		strcpy((char*)lpszModule, em.pzModule);
 		m_excludes.Add(em);
+#pragma warning(pop)
 	}
 	TinyArray<HMODULE> TinyAPIHook::GetExcludeModules()
 	{

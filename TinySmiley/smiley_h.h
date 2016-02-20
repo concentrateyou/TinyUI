@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Fri Feb 05 21:59:20 2016
+/* at Thu Feb 18 11:30:20 2016
  */
 /* Compiler settings for smiley.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
@@ -50,6 +50,13 @@
 typedef interface ISmiley ISmiley;
 
 #endif 	/* __ISmiley_FWD_DEFINED__ */
+
+
+#ifndef __ISmileyCtrl_FWD_DEFINED__
+#define __ISmileyCtrl_FWD_DEFINED__
+typedef interface ISmileyCtrl ISmileyCtrl;
+
+#endif 	/* __ISmileyCtrl_FWD_DEFINED__ */
 
 
 /* header files for imported files */
@@ -205,6 +212,156 @@ EXTERN_C const IID IID_ISmiley;
 
 
 #endif 	/* __ISmiley_INTERFACE_DEFINED__ */
+
+
+#ifndef __ISmileyCtrl_INTERFACE_DEFINED__
+#define __ISmileyCtrl_INTERFACE_DEFINED__
+
+/* interface ISmileyCtrl */
+/* [helpstring][oleautomation][uuid][object] */ 
+
+
+EXTERN_C const IID IID_ISmileyCtrl;
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("E4E1F5AC-AC4E-4558-99F5-C658533E1146")
+    ISmileyCtrl : public IDispatch
+    {
+    public:
+        virtual HRESULT STDMETHODCALLTYPE InsertOLE( 
+            /* [in] */ DWORD_PTR ole) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetSmiley( 
+            ISmiley **ps) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE SetSmiley( 
+            ISmiley *ps) = 0;
+        
+    };
+    
+    
+#else 	/* C style interface */
+
+    typedef struct ISmileyCtrlVtbl
+    {
+        BEGIN_INTERFACE
+        
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            ISmileyCtrl * This,
+            /* [in] */ REFIID riid,
+            /* [annotation][iid_is][out] */ 
+            _COM_Outptr_  void **ppvObject);
+        
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            ISmileyCtrl * This);
+        
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            ISmileyCtrl * This);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetTypeInfoCount )( 
+            ISmileyCtrl * This,
+            /* [out] */ UINT *pctinfo);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetTypeInfo )( 
+            ISmileyCtrl * This,
+            /* [in] */ UINT iTInfo,
+            /* [in] */ LCID lcid,
+            /* [out] */ ITypeInfo **ppTInfo);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetIDsOfNames )( 
+            ISmileyCtrl * This,
+            /* [in] */ REFIID riid,
+            /* [size_is][in] */ LPOLESTR *rgszNames,
+            /* [range][in] */ UINT cNames,
+            /* [in] */ LCID lcid,
+            /* [size_is][out] */ DISPID *rgDispId);
+        
+        /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
+            ISmileyCtrl * This,
+            /* [annotation][in] */ 
+            _In_  DISPID dispIdMember,
+            /* [annotation][in] */ 
+            _In_  REFIID riid,
+            /* [annotation][in] */ 
+            _In_  LCID lcid,
+            /* [annotation][in] */ 
+            _In_  WORD wFlags,
+            /* [annotation][out][in] */ 
+            _In_  DISPPARAMS *pDispParams,
+            /* [annotation][out] */ 
+            _Out_opt_  VARIANT *pVarResult,
+            /* [annotation][out] */ 
+            _Out_opt_  EXCEPINFO *pExcepInfo,
+            /* [annotation][out] */ 
+            _Out_opt_  UINT *puArgErr);
+        
+        HRESULT ( STDMETHODCALLTYPE *InsertOLE )( 
+            ISmileyCtrl * This,
+            /* [in] */ DWORD_PTR ole);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetSmiley )( 
+            ISmileyCtrl * This,
+            ISmiley **ps);
+        
+        HRESULT ( STDMETHODCALLTYPE *SetSmiley )( 
+            ISmileyCtrl * This,
+            ISmiley *ps);
+        
+        END_INTERFACE
+    } ISmileyCtrlVtbl;
+
+    interface ISmileyCtrl
+    {
+        CONST_VTBL struct ISmileyCtrlVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define ISmileyCtrl_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define ISmileyCtrl_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define ISmileyCtrl_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#define ISmileyCtrl_GetTypeInfoCount(This,pctinfo)	\
+    ( (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo) ) 
+
+#define ISmileyCtrl_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
+    ( (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo) ) 
+
+#define ISmileyCtrl_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
+    ( (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId) ) 
+
+#define ISmileyCtrl_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
+    ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
+
+
+#define ISmileyCtrl_InsertOLE(This,ole)	\
+    ( (This)->lpVtbl -> InsertOLE(This,ole) ) 
+
+#define ISmileyCtrl_GetSmiley(This,ps)	\
+    ( (This)->lpVtbl -> GetSmiley(This,ps) ) 
+
+#define ISmileyCtrl_SetSmiley(This,ps)	\
+    ( (This)->lpVtbl -> SetSmiley(This,ps) ) 
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+
+#endif 	/* __ISmileyCtrl_INTERFACE_DEFINED__ */
 
 
 /* Additional Prototypes for ALL interfaces */

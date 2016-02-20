@@ -48,14 +48,14 @@ namespace TinyUI
 	template<typename R, typename TList>
 	class Functor;
 	template<typename R>
-	class Functor<R, TYPE_LIST0()> : public FunctorBase < R >
+	class Functor<R, Sequence<>> : public FunctorBase < R >
 	{
 	public:
 		typedef R	ReturnType;
 		virtual R operator()() = 0;
 	};
 	template <typename R, typename A1>
-	class Functor<R, TYPE_LIST1(A1)> : public FunctorBase < R >
+	class Functor<R, Sequence<A1>> : public FunctorBase < R >
 	{
 	public:
 		typedef R	ReturnType;
@@ -63,7 +63,7 @@ namespace TinyUI
 		virtual R operator()(A1) = 0;
 	};
 	template <typename R, typename A1, typename A2>
-	class Functor<R, TYPE_LIST2(A1, A2)> : public FunctorBase < R >
+	class Functor<R, Sequence<A1, A2>> : public FunctorBase < R >
 	{
 	public:
 		typedef R	ReturnType;
@@ -72,7 +72,7 @@ namespace TinyUI
 		virtual R operator()(A1, A2) = 0;
 	};
 	template <typename R, typename A1, typename A2, typename A3>
-	class Functor<R, TYPE_LIST3(A1, A2, A3)> : public FunctorBase < R >
+	class Functor<R, Sequence<A1, A2, A3>> : public FunctorBase < R >
 	{
 	public:
 		typedef R	ReturnType;
@@ -82,7 +82,7 @@ namespace TinyUI
 		virtual R operator()(A1, A2, A3) = 0;
 	};
 	template <typename R, typename A1, typename A2, typename A3, typename A4>
-	class Functor<R, TYPE_LIST4(A1, A2, A3, A4)> : public FunctorBase < R >
+	class Functor<R, Sequence<A1, A2, A3, A4>> : public FunctorBase < R >
 	{
 	public:
 		typedef R	ReturnType;
@@ -96,7 +96,7 @@ namespace TinyUI
 	template<typename R, typename TList, typename FunctionType, typename InstanceType, typename Types>
 	class Function;
 	template<typename R, typename TList, typename FunctionType>
-	class Function<R, TList, FunctionType, TYPE_LIST0(), TYPE_LIST0()> : public Functor < R, TList >
+	class Function<R, TList, FunctionType, Sequence<>, Sequence<>> : public Functor < R, TList >
 	{
 	public:
 		typedef Functor<R, TList> FunctorType;
@@ -164,7 +164,7 @@ namespace TinyUI
 	/// 成员函数
 	/// </summary>
 	template <typename R, typename TList, typename InstanceType, typename FunctionType>
-	class Function<R, TList, InstanceType, FunctionType, TYPE_LIST0()> : public Functor < R, TList >
+	class Function<R, TList, InstanceType, FunctionType, Sequence<>> : public Functor < R, TList >
 	{
 	public:
 		typedef Functor<R, TList> FunctorType;
@@ -270,7 +270,7 @@ namespace TinyUI
 		/// </summary>
 		template <typename FunctionType>
 		DelegateBase(FunctionType fType)
-			: m_my(new Function<R, TList, FunctionType, TYPE_LIST0(), TYPE_LIST0()>(fType))
+			: m_my(new Function<R, TList, FunctionType, Sequence<>, Sequence<>>(fType))
 		{
 
 		}
@@ -279,7 +279,7 @@ namespace TinyUI
 		/// </summary>
 		template <class InstanceType, typename FunctionType>
 		DelegateBase(const InstanceType& iType, FunctionType mType)
-			: m_my(new Function<R, TList, InstanceType, FunctionType, TYPE_LIST0()>(iType, mType))
+			: m_my(new Function<R, TList, InstanceType, FunctionType, Sequence<>>(iType, mType))
 		{
 
 		}
@@ -289,7 +289,7 @@ namespace TinyUI
 		template <typename FunctionType>
 		void BindDelegate(FunctionType fType)
 		{
-			m_my.Reset(new Function<R, TList, FunctionType, TYPE_LIST0(), TYPE_LIST0()>(fType));
+			m_my.Reset(new Function<R, TList, FunctionType, Sequence(), Sequence<>>(fType));
 		}
 		/// <summary>
 		/// 绑定成员函数
@@ -297,7 +297,7 @@ namespace TinyUI
 		template <class InstanceType, typename FunctionType>
 		void BindDelegate(const InstanceType& iType, FunctionType mType)
 		{
-			m_my.Reset(new Function<R, TList, InstanceType, FunctionType, TYPE_LIST0()>(iType, mType));
+			m_my.Reset(new Function<R, TList, InstanceType, FunctionType, Sequence<>>(iType, mType));
 		}
 		/// <summary>
 		/// 判断是都为空
@@ -360,10 +360,10 @@ namespace TinyUI
 	template<typename R = void>
 	class Delegate;
 	template<typename R>
-	class Delegate<R()> : public DelegateBase < R, TYPE_LIST0() >
+	class Delegate<R()> : public DelegateBase < R, Sequence<> >
 	{
 	public:
-		typedef DelegateBase<R, TYPE_LIST0()> BaseType;
+		typedef DelegateBase<R, Sequence<>> BaseType;
 		Delegate() : BaseType()
 		{
 		}
@@ -384,10 +384,10 @@ namespace TinyUI
 		}
 	};
 	template<typename R, typename P1>
-	class Delegate<R(P1)> :public DelegateBase < R, TYPE_LIST1(P1) >
+	class Delegate<R(P1)> :public DelegateBase < R, Sequence<P1> >
 	{
 	public:
-		typedef DelegateBase<R, TYPE_LIST1(P1)> BaseType;
+		typedef DelegateBase<R, Sequence<P1>> BaseType;
 		Delegate() : BaseType()
 		{
 		}
@@ -408,10 +408,10 @@ namespace TinyUI
 		}
 	};
 	template<typename R, typename P1, typename P2>
-	class Delegate<R(P1, P2)> :public DelegateBase < R, TYPE_LIST2(P1, P2) >
+	class Delegate<R(P1, P2)> :public DelegateBase < R, Sequence<P1, P2> >
 	{
 	public:
-		typedef DelegateBase<R, TYPE_LIST2(P1, P2)> BaseType;
+		typedef DelegateBase<R, Sequence<P1, P2>> BaseType;
 		Delegate() : BaseType()
 		{
 		}
@@ -432,10 +432,10 @@ namespace TinyUI
 		}
 	};
 	template<typename R, typename P1, typename P2, typename P3>
-	class Delegate<R(P1, P2, P3)> :public DelegateBase < R, TYPE_LIST3(P1, P2, P3) >
+	class Delegate<R(P1, P2, P3)> :public DelegateBase < R, Sequence<P1, P2, P3> >
 	{
 	public:
-		typedef DelegateBase<R, TYPE_LIST3(P1, P2, P3)> BaseType;
+		typedef DelegateBase<R, Sequence<P1, P2, P3>> BaseType;
 		Delegate() : BaseType()
 		{
 		}
@@ -456,10 +456,10 @@ namespace TinyUI
 		}
 	};
 	template<typename R, typename P1, typename P2, typename P3, typename P4>
-	class Delegate<R(P1, P2, P3, P4)> : public DelegateBase < R, TYPE_LIST4(P1, P2, P3, P4) >
+	class Delegate<R(P1, P2, P3, P4)> : public DelegateBase < R, Sequence<P1, P2, P3, P4> >
 	{
 	public:
-		typedef DelegateBase<R, TYPE_LIST4(P1, P2, P3, P4)> BaseType;
+		typedef DelegateBase<R, Sequence<P1, P2, P3, P4>> BaseType;
 		Delegate() : BaseType()
 		{
 		}

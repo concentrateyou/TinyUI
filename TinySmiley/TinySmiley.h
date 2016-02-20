@@ -5,6 +5,7 @@
 #include "smiley_h.h"
 #include <windows.h>
 #include <vector>
+#include <atlbase.h>
 using namespace std;
 
 static const GUID  CLSID_Smiley =
@@ -66,6 +67,62 @@ namespace Smiley
 		INT		m_cy;
 		size_t	m_count;//帧数
 	};
+	//////////////////////////////////////////////////////////////////////////
+	/// <summary>
+	/// 表情OLE
+	/// </summary>
+	/*class ATL_NO_VTABLE TinySmileyCtrl : public CComControl<TinySmileyCtrl>,
+		public CStockPropImpl<TinySmileyCtrl, ISmileyCtrl>,
+		public IOleObjectImpl<TinySmileyCtrl>,
+		public IOleInPlaceObjectWindowlessImpl<TinySmileyCtrl>,
+		public IViewObjectExImpl<TinySmileyCtrl>,
+		public IPersistStreamInitImpl<TinySmileyCtrl>,
+		public IPersistStorageImpl<TinySmileyCtrl>,
+		public IOleControlImpl < TinySmileyCtrl >
+	{
+		DECLARE_OLEMISC_STATUS(OLEMISC_RECOMPOSEONRESIZE |
+		OLEMISC_CANTLINKINSIDE |
+			OLEMISC_INSIDEOUT |
+			OLEMISC_ACTIVATEWHENVISIBLE |
+			OLEMISC_SETCLIENTSITEFIRST)
+
+			BEGIN_COM_MAP(TinySmileyCtrl)
+				COM_INTERFACE_ENTRY(ISmileyCtrl)
+				COM_INTERFACE_ENTRY(IOleControl)
+				COM_INTERFACE_ENTRY(IOleObject)
+				COM_INTERFACE_ENTRY(IPersistStreamInit)
+				COM_INTERFACE_ENTRY2(IPersist, IPersistStreamInit)
+				COM_INTERFACE_ENTRY(IPersistStorage)
+			END_COM_MAP()
+
+			BEGIN_PROP_MAP(TinySmileyCtrl)
+			END_PROP_MAP()
+
+			BEGIN_MSG_MAP(TinySmileyCtrl)
+				CHAIN_MSG_MAP(CComControl<TinySmileyCtrl>)
+				DEFAULT_REFLECTION_HANDLER()
+			END_MSG_MAP()
+
+			DECLARE_PROTECT_FINAL_CONSTRUCT()
+	public:
+		TinySmileyCtrl();
+		~TinySmileyCtrl();
+	public:
+		STDMETHOD(InsertOLE)(DWORD_PTR ole);
+		STDMETHOD(GetSmiley)(ISmiley* ps);
+		STDMETHOD(SetSmiley)(ISmiley** ps);
+	public:
+		STDMETHOD(SetClientSite)(IOleClientSite *pClientSite);
+	public:
+		HRESULT IPersistStreamInit_Load(LPSTREAM pStm, const ATL_PROPMAP_ENTRY* pMap);
+		HRESULT IPersistStreamInit_Save(LPSTREAM pStm, BOOL fClearDirty, const ATL_PROPMAP_ENTRY* pMap);
+		HRESULT FireViewChange();
+		HRESULT	OnDraw(ATL_DRAWINFO& di);
+	public:
+		STDMETHOD(Load)(IStorage* pStorage);
+	private:
+		CComPtr<ISmiley>  m_pSmiley;
+	};*/
 	//////////////////////////////////////////////////////////////////////////
 	/// <summary>
 	/// COM工厂类
