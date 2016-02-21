@@ -404,10 +404,10 @@ private:\
 #define TYPE_LIST2(P1, P2) TypeList<P1, TYPE_LIST1(P2)>
 #define TYPE_LIST3(P1, P2, P3) TypeList<P1, TYPE_LIST2(P2, P3)>
 #define TYPE_LIST4(P1, P2, P3, P4) TypeList<P1, TYPE_LIST3(P2, P3, P4)>
+	//////////////////////////////////////////////////////////////////////////
 	template<class T01 = NullType, class T02 = NullType, class T03 = NullType, class T04 = NullType>
 	struct Sequence
 	{
-	private:
 		typedef typename Sequence < T02, T03, T04> ::Type Result;
 	public:
 		typedef TypeList<T01, Result> Type;
@@ -416,7 +416,7 @@ private:\
 	struct Sequence < >
 	{
 		typedef NullType Type;
-	};
+	}; 
 	//////////////////////////////////////////////////////////////////////////
 	template <class TList>
 	struct Length;
