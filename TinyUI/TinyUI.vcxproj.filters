@@ -309,7 +309,7 @@
     <ClInclude Include="Common\TinyAPIHook.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
-    <ClInclude Include="Media\TinyVideo.h">
+    <ClInclude Include="Media\TinyVideoCapture.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
   </ItemGroup>
@@ -554,7 +554,7 @@
     <ClCompile Include="Common\TinyAPIHook.cpp">
       <Filter>源文件\Common</Filter>
     </ClCompile>
-    <ClCompile Include="Media\TinyVideo.cpp">
+    <ClCompile Include="Media\TinyVideoCapture.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
   </ItemGroup>

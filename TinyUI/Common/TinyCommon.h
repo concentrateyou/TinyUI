@@ -47,11 +47,16 @@ namespace TinyUI
 #ifndef ASSUME
 #define ASSUME(expr) do { ASSERT(expr); __analysis_assume(!!(expr)); } while(0)
 #endif // ASSUME
+
+#if __cplusplus >= 201103L
+#define COMPILE_ASSERT(expr, msg) static_assert(expr, #msg)
+#else
 	template<bool>
 	struct CompileAssert {};
 #undef COMPILE_ASSERT
 #define COMPILE_ASSERT(expr, msg) \
     typedef CompileAssert<(bool(expr))> msg[bool(expr)?1:-1]
+#endif
 
 #ifndef SAFE_DELETE
 #define SAFE_DELETE(p)  { if (p) { delete (p);  (p)=NULL; } }
@@ -416,7 +421,7 @@ private:\
 	struct Sequence < >
 	{
 		typedef NullType Type;
-	}; 
+	};
 	//////////////////////////////////////////////////////////////////////////
 	template <class TList>
 	struct Length;

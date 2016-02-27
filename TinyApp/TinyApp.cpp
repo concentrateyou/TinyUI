@@ -12,6 +12,7 @@
 #include "Common/TinyAPIHook.h"
 #include <algorithm>
 #include "MyDemo.h"
+#include "Media/TinyVideoCapture.h"
 
 #pragma comment(lib,"TinyUI.lib")
 using namespace TinyUI;
@@ -49,6 +50,7 @@ A Func1()
 	return a;
 }
 
+
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -57,12 +59,12 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	Func();
-	//A&& a1 = Func1();
-
 	WSADATA   wsd;
 	WSAStartup(MAKEWORD(2, 2), &wsd);
 	HRESULT hRes = OleInitialize(NULL);
+
+	Media::TinyVideoCapture cap;
+
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;

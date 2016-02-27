@@ -58,9 +58,8 @@ namespace TinyUI
 	{
 		return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
 	}
-
 	/// <summary>
-	/// 字符串操作类
+	/// 字符串操作类多字节
 	/// </summary>
 	class TinyString : public TinyObject
 	{
@@ -91,6 +90,8 @@ namespace TinyUI
 		INT			operator==(const CHAR* s);
 		INT			operator==(TinyString& str);
 		INT			operator==(CHAR* s);
+		INT			operator==(const string& str);
+		INT			operator==(string& str);
 		TinyString& Erase(size_t pos);
 		TinyString& Erase(size_t pos, size_t size);
 		TinyString& Insert(size_t pos, const CHAR* s);
@@ -106,6 +107,7 @@ namespace TinyUI
 		INT			LastIndexOf(const CHAR* s, size_t pos, size_t size) const;
 		INT			LastIndexOf(CHAR s, size_t pos = -1) const;
 		INT			Compare(const TinyString& str) const throw();
+		INT			Compare(const string& str) const throw();
 		INT			Compare(size_t pos, size_t size, const TinyString& str) const throw();
 		INT			Compare(const CHAR* s) const  throw();
 		INT			Compare(size_t pos, size_t size, const CHAR* s) const  throw();

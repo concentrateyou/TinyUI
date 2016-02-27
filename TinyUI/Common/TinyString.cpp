@@ -260,7 +260,14 @@ namespace TinyUI
 	{
 		return this->Compare(str);
 	}
-
+	INT	TinyString::operator == (const string& str)
+	{
+		return this->Compare(str);
+	}
+	INT	TinyString::operator == (string& str)
+	{
+		return this->Compare(str);
+	}
 	INT TinyString::operator == (CHAR* s)
 	{
 		return strcmp(this->_Mystr, s);
@@ -573,6 +580,10 @@ namespace TinyUI
 	INT TinyString::Compare(const TinyString& str) const throw()
 	{
 		return Compare(0, str.GetSize(), str.STR());
+	}
+	INT	TinyString::Compare(const string& str) const throw()
+	{
+		return Compare(0, str.size(), str.c_str());
 	}
 	INT TinyString::Compare(size_t pos, size_t size, const TinyString& str) const throw()
 	{
