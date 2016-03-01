@@ -96,8 +96,6 @@ namespace TinyUI
 
 		CreateMenuBox();
 
-		//m_image.Load("E:\\123.png");
-
 		return TRUE;
 	}
 
