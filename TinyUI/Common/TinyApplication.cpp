@@ -69,7 +69,7 @@ namespace TinyUI
 			ASSERT(FALSE);
 			return NULL;
 		}
-		TinyMessageLoop* ps = *m_msgLoops.Lookup(dwThreadID);
+		TinyMessageLoop* ps = *m_msgLoops.GetValue(dwThreadID);
 		section.Unlock();
 		section.Uninitialize();
 		return ps;
