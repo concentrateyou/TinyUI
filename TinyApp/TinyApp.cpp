@@ -17,39 +17,38 @@
 #pragma comment(lib,"TinyUI.lib")
 using namespace TinyUI;
 
-class A
-{
-public:
-	A()
-	{
-		TRACE("A默认构造%d\n", this);
-	}
-	A(const A& a)
-	{
-		TRACE("A拷贝构造%d,%d\n", &a, this);
-	}
-	~A()
-	{
-		TRACE("A析构函数%d\n", this);
-	}
-	A(A&& a)
-	{
-		TRACE("A移动构造%d,%d\n", &a, this);
-	}
-};
-
-A Func()
-{
-	A a;
-	return a;
-}
-
-A Func1()
-{
-	A a;
-	return a;
-}
-
+//class A
+//{
+//public:
+//	A()
+//	{
+//		TRACE("A默认构造%d\n", this);
+//	}
+//	A(const A& a)
+//	{
+//		TRACE("A拷贝构造%d,%d\n", &a, this);
+//	}
+//	~A()
+//	{
+//		TRACE("A析构函数%d\n", this);
+//	}
+//	A(A&& a)
+//	{
+//		TRACE("A移动构造%d,%d\n", &a, this);
+//	}
+//};
+//
+//A Func()
+//{
+//	A a;
+//	return a;
+//}
+//
+//A Func1()
+//{
+//	A a;
+//	return a;
+//}
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -62,8 +61,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	WSADATA   wsd;
 	WSAStartup(MAKEWORD(2, 2), &wsd);
 	HRESULT hRes = OleInitialize(NULL);
-
-	Media::TinyVideoCapture cap;
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));

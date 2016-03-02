@@ -14,16 +14,16 @@ namespace TinyUI
 	public:
 		TinyHandleMap();
 		~TinyHandleMap();
-		V* Lookup(const T& _key);
-		const V* Lookup(const T& _key) const;
-		V* operator[](const T& _key);
-		const V* operator[](const T& _key) const;
-		void Add(const T& _key, V& _value);
+		V* Lookup(T& _key);
+		V* Lookup(const T& _key) const;
+		V* operator[](T& _key);
+		V* operator[](const T& _key) const;
+		void Add(const T& _key, const V& _value);
 		void Remove(const T& _key);
 		void RemoveAll();
 		INT GetSize() const;
 	private:
-		TinyMap<T, V> m_handleMap;
+		TinySimpleMap<T, V> m_handleMap;
 	};
 	template<class T, class V>
 	TinyHandleMap<T, V>::TinyHandleMap()
@@ -33,30 +33,30 @@ namespace TinyUI
 	template<class T, class V>
 	TinyHandleMap<T, V>::~TinyHandleMap()
 	{
-
+		m_handleMap.RemoveAll();
 	}
 	template<class T, class V>
-	V* TinyHandleMap<T, V>::Lookup(const T& _key)
+	V* TinyHandleMap<T, V>::Lookup(T& _key)
 	{
-		return m_handleMap.GetValue(_key);
+		return m_handleMap.Lookup(_key);
 	}
 	template<class T, class V>
-	const V* TinyHandleMap<T, V>::Lookup(const T& _key) const
+	V* TinyHandleMap<T, V>::Lookup(const T& _key) const
 	{
-		return m_handleMap.GetValue(_key);
+		return m_handleMap.Lookup(_key);
 	}
 	template<class T, class V>
-	V* TinyHandleMap<T, V>::operator[](const T& _key)
+	V* TinyHandleMap<T, V>::operator[](T& _key)
 	{
-		return m_handleMap.GetValue(_key);
+		return m_handleMap.Lookup(_key);
 	}
 	template<class T, class V>
-	const V* TinyHandleMap<T, V>::operator[](const T& _key) const
+	V* TinyHandleMap<T, V>::operator[](const T& _key) const
 	{
-		return m_handleMap.GetValue(_key);
+		return m_handleMap.Lookup(_key);
 	}
 	template<class T, class V>
-	void TinyHandleMap<T, V>::Add(const T& _key, V& _value)
+	void TinyHandleMap<T, V>::Add(const T& _key, const V& _value)
 	{
 		m_handleMap.Add(_key, _value);
 	}

@@ -35,18 +35,20 @@ namespace TinyUI
 	public:
 		TinySimpleMap();
 		~TinySimpleMap();
-		BOOL Add(K myKey, V myValue);
-		BOOL Remove(K myKey);
+		BOOL Add(const K& myKey, const V& myValue);
+		BOOL Remove(const K& myKey);
 		BOOL RemoveAt(INT index);
 		void RemoveAll();
 		INT	 GetSize() const;
-		INT	 FindKey(K myKey) const;
-		INT  FindValue(V myValue) const;
+		INT	 FindKey(const K& myKey) const;
+		INT  FindValue(const V& myValue) const;
 		K&	 GetKeyAt(INT index);
 		V&	 GetValueAt(INT index);
-		V	 Lookup(K key) const;
-		V operator[](K myKey);
-		V& operator[](K& myKey);
+		V*	 Lookup(const K& key) const;
+		V*	 Lookup(K& key);
+		V&	 operator[](const K& myKey) const;
+		V&	 operator[](K& myKey);
+	private:
 		INT		m_size;
 		K*		m_myKey;
 		V*		m_myValue;
@@ -70,7 +72,7 @@ namespace TinyUI
 		return m_size;
 	}
 	template<class K, class V>
-	BOOL TinySimpleMap<K, V>::Add(K myKey, V myValue)
+	BOOL TinySimpleMap<K, V>::Add(const K& myKey, const V& myValue)
 	{
 		K* _myKey = NULL;
 		_myKey = (K*)_recalloc(m_myKey, m_size + 1, sizeof(K));
@@ -95,7 +97,7 @@ namespace TinyUI
 		return TRUE;
 	}
 	template<class K, class V>
-	BOOL TinySimpleMap<K, V>::Remove(K myKey)
+	BOOL TinySimpleMap<K, V>::Remove(const K& myKey)
 	{
 		INT index = FindKey(myKey);
 		if (index < 0)
@@ -105,7 +107,7 @@ namespace TinyUI
 		return RemoveAt(index);
 	}
 	template<class K, class V>
-	INT TinySimpleMap<K, V>::FindKey(K myKey) const
+	INT TinySimpleMap<K, V>::FindKey(const K& myKey) const
 	{
 		for (INT i = 0; i < m_size; i++)
 		{
@@ -117,7 +119,7 @@ namespace TinyUI
 		return -1;
 	}
 	template<class K, class V>
-	INT TinySimpleMap<K, V>::FindValue(V myValue) const
+	INT TinySimpleMap<K, V>::FindValue(const V& myValue) const
 	{
 		for (INT i = 0; i < m_size; i++)
 		{
@@ -129,14 +131,24 @@ namespace TinyUI
 		return -1;
 	}
 	template<class K, class V>
-	V TinySimpleMap<K, V>::Lookup(K key) const
+	V* TinySimpleMap<K, V>::Lookup(const K& key) const
 	{
 		INT index = FindKey(key);
 		if (index < 0)
 		{
 			return NULL;
 		}
-		return m_myValue[index];
+		return &m_myValue[index];
+	}
+	template<class K, class V>
+	V* TinySimpleMap<K, V>::Lookup(K& key)
+	{
+		INT index = FindKey(key);
+		if (index < 0)
+		{
+			return NULL;
+		}
+		return &m_myValue[index];
 	}
 	template<class K, class V>
 	K& TinySimpleMap<K, V>::GetKeyAt(INT index)
@@ -202,7 +214,7 @@ namespace TinyUI
 		m_size = 0;
 	}
 	template<class K, class V>
-	V TinySimpleMap<K, V>::operator[](K myKey)
+	V& TinySimpleMap<K, V>::operator[](const K& myKey) const
 	{
 		INT index = FindKey(myKey);
 		if (index < 0) throw("无效的Key");
@@ -761,7 +773,6 @@ namespace TinyUI
 			TinyEntry*	m_pLeft;
 			TinyEntry*	m_pRight;
 			TinyEntry*	m_pParent;
-			TinyEntry*	m_pEntry;
 		public:
 			TinyEntry(const K& key, V& value)
 				:m_key(key),
@@ -803,14 +814,22 @@ namespace TinyUI
 		void RotateR(TinyEntry* ps);
 		void Add(TinyEntry* ps);
 		void AddFixup(TinyEntry* ps);
-		void Delete(TinyEntry* ps);
+		void Delete(TinyEntry* ps, BOOL order = FALSE);
 		void Remove(TinyEntry* ps);
-		void RemoveFixup(TinyEntry* ps, TinyEntry* pParent);
+		void RemoveFixup(TinyEntry* ps);
+		void SwapNode(TinyEntry* ps1, TinyEntry* ps2);
+		TinyEntry*	Minimum(TinyEntry* ps)const throw();
+		TinyEntry*	Maximum(TinyEntry* ps)const throw();
+		TinyEntry*	Predecessor(TinyEntry* ps) const throw();
+		TinyEntry*	Successor(TinyEntry* ps) const throw();
+		BOOL IsNil(TinyEntry *p) const throw();
+		void SetNil(TinyEntry **p) throw();
 	private:
 		DWORD		m_dwBlockSize;
 		DWORD		m_dwCount;
 		TinyEntry*	m_pRoot;
-		TinyEntry*	m_pEntry;
+		TinyEntry*	m_pFree;
+		TinyEntry*	m_pNil;//哨兵所有的叶子节点指向这个节点
 		TinyPlex*	m_pBlocks;
 	};
 	template<class K, class V, class KTraits, class VTraits>
@@ -818,7 +837,8 @@ namespace TinyUI
 		:m_dwBlockSize(dwBlockSize),
 		m_dwCount(0),
 		m_pBlocks(NULL),
-		m_pEntry(NULL),
+		m_pFree(NULL),
+		m_pNil(NULL),
 		m_pRoot(NULL)
 	{
 
@@ -844,24 +864,48 @@ namespace TinyUI
 		return Lookup(m_pRoot, key) != NULL;
 	}
 	template<class K, class V, class KTraits, class VTraits>
+	BOOL TinyMap<K, V, KTraits, VTraits>::IsNil(TinyEntry *p) const throw()
+	{
+		return (p == m_pNil);
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	void TinyMap<K, V, KTraits, VTraits>::SetNil(TinyEntry **p) throw()
+	{
+		*p = m_pNil;
+	}
+
+	template<class K, class V, class KTraits, class VTraits>
 	typename TinyMap<K, V, KTraits, VTraits>::TinyEntry* TinyMap<K, V, KTraits, VTraits>::New(const K& key, V& value)
 	{
-		if (m_pEntry == NULL)
+		if (m_pFree == NULL)
 		{
+			//初始化哨兵节点
+			if (m_pNil == NULL)
+			{
+				m_pNil = reinterpret_cast<TinyEntry*>(malloc(sizeof(TinyEntry)));
+				memset(m_pNil, 0x00, sizeof(TinyEntry));
+				m_pNil->m_bColor = FALSE;
+				m_pNil->m_pParent = m_pNil->m_pLeft = m_pNil->m_pRight = m_pNil;
+				m_pRoot = m_pNil;
+			}
 			TinyPlex* pPlex = TinyPlex::Create(m_pBlocks, m_dwBlockSize, sizeof(TinyEntry));
 			if (pPlex == NULL) return NULL;
 			TinyEntry* ps = static_cast<TinyEntry*>(pPlex->data());
 			ps += m_dwBlockSize - 1;
 			for (INT_PTR iBlock = m_dwBlockSize - 1; iBlock >= 0; iBlock--)
 			{
-				ps->m_pEntry = m_pEntry;
-				m_pEntry = ps;
+				ps->m_pLeft = m_pFree;
+				m_pFree = ps;
 				ps--;
 			}
 		}
-		TinyEntry* pNew = m_pEntry;
+		TinyEntry* pNew = m_pFree;
 		::new(pNew)TinyEntry(key, value);
-		m_pEntry = m_pEntry->m_pEntry;
+		m_pFree = m_pFree->m_pLeft;
+		pNew->m_bColor = TRUE;
+		SetNil(&pNew->m_pLeft);
+		SetNil(&pNew->m_pRight);
+		SetNil(&pNew->m_pParent);
 		m_dwCount++;
 		return pNew;
 	}
@@ -879,11 +923,11 @@ namespace TinyUI
 	template<class K, class V, class KTraits, class VTraits>
 	void TinyMap<K, V, KTraits, VTraits>::RemoveAll()
 	{
-		Delete(m_pRoot);
+		Delete(m_pRoot, TRUE);
 		m_dwCount = 0;
 		m_pBlocks->Destory();
 		m_pBlocks = NULL;
-		m_pEntry = NULL;
+		m_pFree = NULL;
 		m_pRoot = NULL;
 	}
 	template<class K, class V, class KTraits, class VTraits>
@@ -927,289 +971,380 @@ namespace TinyUI
 		{
 			pY->m_pRight = pNew;
 		}
-		pNew->m_bColor = TRUE;
 		AddFixup(pNew);
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	void TinyMap<K, V, KTraits, VTraits>::AddFixup(TinyEntry* ps)
+	void TinyMap<K, V, KTraits, VTraits>::AddFixup(TinyEntry* pNew)
 	{
-		TinyEntry *pParent = NULL;
-		TinyEntry *pGparent = NULL;
-		while ((pParent = ps->m_pParent) && pParent->m_bColor)
+		TinyEntry* pX = pNew;
+		pX->m_bColor = TRUE;
+		TinyEntry* pY = NULL;
+		while (pX != m_pRoot && pX->m_pParent->m_bColor)//当前节点不是根节点，并且节点的父节点颜色为红色
 		{
-			pGparent = pParent->m_pParent;
-			if (pParent == pGparent->m_pLeft)
+			//父节点为祖父节点的左孩子
+			if (pX->m_pParent == pX->m_pParent->m_pParent->m_pLeft)//Left
 			{
-				register TinyEntry *pUncle = pGparent->m_pRight;
-				if (pUncle && pUncle->m_bColor)
+				pY = pX->m_pParent->m_pParent->m_pRight;//取叔叔节点
+				//情况1:父节点为红，叔叔节点为红
+				if (pY != NULL && pY->m_bColor)//red
 				{
-					pUncle->m_bColor = FALSE;
-					pParent->m_bColor = FALSE;
-					pGparent->m_bColor = TRUE;
-					ps = pGparent;
-					continue;
+					pY->m_bColor = FALSE;//叔叔节点改为黑色
+					pX->m_pParent->m_bColor = FALSE;//父节点修改为黑色
+					pX->m_pParent->m_pParent->m_bColor = TRUE;//祖父节点修改为红色
+					pX = pX->m_pParent->m_pParent;
 				}
-				if (pParent->m_pRight == ps)
+				else//情况2:父节点为红，叔叔节点为黑色，当前节点为父节点的右孩子
 				{
-					RotateL(pParent);
-					register TinyEntry *pEntry = NULL;
-					pEntry = pParent;
-					pParent = ps;
-					ps = pEntry;
+					if (pX == pX->m_pParent->m_pRight)
+					{
+						pX = pX->m_pParent;//修改当前节点为父节点
+						RotateL(pX);//左旋当前节点
+					}
+					//情况3:父节点为红，叔叔节点为黑色，当前节点为父节点的左孩子
+					pX->m_pParent->m_bColor = FALSE;//父节点修改为黑色
+					pX->m_pParent->m_pParent->m_bColor = TRUE;//祖父节点修改为红色
+					RotateR(pX->m_pParent->m_pParent);//右旋祖父节点
 				}
-				pParent->m_bColor = FALSE;
-				pGparent->m_bColor = TRUE;
-				RotateR(pGparent);
 			}
-			else
+			else//父节点为祖父节点的右孩子，这也有三种情况，和上述情况操作类似，只不过旋转方向相反
 			{
-				register TinyEntry *pUncle = pGparent->m_pLeft;
-				if (pUncle && pUncle->m_bColor)
+				//情况1
+				pY = pX->m_pParent->m_pParent->m_pLeft;
+				if (pY != NULL && pY->m_bColor)//red
 				{
-					pUncle->m_bColor = FALSE;
-					pParent->m_bColor = FALSE;
-					pGparent->m_bColor = TRUE;
-					ps = pGparent;
-					continue;
+					pX->m_pParent->m_bColor = FALSE;
+					pY->m_bColor = FALSE;
+					pX->m_pParent->m_pParent->m_bColor = TRUE;
+					pX = pX->m_pParent->m_pParent;
 				}
-				if (pParent->m_pLeft == ps)
+				else
 				{
-					register TinyEntry *ps = NULL;
-					RotateR(pParent);
-					ps = pParent;
-					pParent = ps;
-					ps = ps;
+					//情况2
+					if (pX == pX->m_pParent->m_pLeft)
+					{
+						pX = pX->m_pParent;
+						RotateR(pX);
+					}
+					//情况3
+					pX->m_pParent->m_bColor = FALSE;
+					pX->m_pParent->m_pParent->m_bColor = TRUE;
+					RotateL(pX->m_pParent->m_pParent);
 				}
-				pParent->m_bColor = FALSE;
-				pGparent->m_bColor = TRUE;
-				RotateL(pGparent);
 			}
 		}
+		//根节点永远是黑色
 		m_pRoot->m_bColor = FALSE;
+		SetNil(&m_pRoot->m_pParent);
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	void TinyMap<K, V, KTraits, VTraits>::Delete(TinyEntry* ps)
+	void TinyMap<K, V, KTraits, VTraits>::Delete(TinyEntry* ps, BOOL order)
 	{
 		if (ps != NULL)
 		{
-			Delete(ps->m_pLeft);
-			Delete(ps->m_pRight);
+			if (order)
+			{
+				Delete(ps->m_pLeft, order);
+				Delete(ps->m_pRight, order);
+			}
 			ps->~TinyEntry();
-			ps->m_pEntry = m_pEntry;
-			m_pEntry = ps;
+			ps->m_pLeft = m_pFree;
+			m_pFree = ps;
 			m_dwCount--;
 		}
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	void TinyMap<K, V, KTraits, VTraits>::Remove(TinyEntry* ps)
+	typename TinyMap<K, V, KTraits, VTraits>::TinyEntry* TinyMap<K, V, KTraits, VTraits>::Minimum(TinyEntry* ps) const throw()
 	{
-		TinyEntry *pChild = NULL;
-		TinyEntry *pParent = NULL;
-		BOOL bColor = FALSE;
-		if (!ps->m_pLeft)
+		if (ps == NULL || IsNil(ps))
 		{
-			pChild = ps->m_pRight;
+			return NULL;
 		}
-		else if (!ps->m_pRight)
+		TinyEntry* pMin = ps;
+		while (!IsNil(pMin->m_pLeft))
 		{
-			pChild = ps->m_pLeft;
+			pMin = pMin->m_pLeft;
 		}
-		else
-		{
-			TinyEntry *pOld = ps;
-			TinyEntry *pLeft = NULL;
-			ps = ps->m_pRight;
-			while ((pLeft = ps->m_pLeft) != NULL)
-			{
-				ps = pLeft;
-			}
-			if (pOld->m_pParent != NULL)
-			{
-				if (pOld->m_pParent->m_pLeft == pOld)
-					pOld->m_pParent->m_pLeft = ps;
-				else
-					pOld->m_pParent->m_pRight = ps;
-			}
-			else
-			{
-				m_pRoot = ps;
-			}
-			pChild = ps->m_pRight;
-			pParent = ps->m_pParent;
-			bColor = ps->m_bColor;
-			if (pParent == pOld)
-			{
-				pParent = ps;
-			}
-			else
-			{
-				if (pChild != NULL)
-				{
-					pChild->m_pParent = pParent;
-				}
-				pParent->m_pLeft = pChild;
-				ps->m_pRight = pOld->m_pRight;
-				pOld->m_pRight->m_pParent = ps;
-			}
-			ps->m_pParent = pOld->m_pParent;
-			ps->m_bColor = pOld->m_bColor;
-			ps->m_pLeft = pOld->m_pLeft;
-			pOld->m_pLeft->m_pParent = ps;
-			goto LABEL;
-		}
-
-		pParent = ps->m_pParent;
-		bColor = ps->m_bColor;
-		if (pChild != NULL)
-		{
-			pChild->m_pParent = pParent;
-		}
-		if (pParent != NULL)
-		{
-			if (pParent->m_pLeft == ps)
-				pParent->m_pLeft = pChild;
-			else
-				pParent->m_pRight = pChild;
-		}
-		else
-		{
-			m_pRoot = pChild;
-		}
-	LABEL:
-		if (!bColor)
-		{
-			RemoveFixup(pChild, pParent);
-		}
-		ps->~TinyEntry();
-		ps->m_pEntry = m_pEntry;
-		m_pEntry = ps;
-		m_dwCount--;
+		return pMin;
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	void TinyMap<K, V, KTraits, VTraits>::RemoveFixup(TinyEntry* ps, TinyEntry* pParent)
+	typename TinyMap<K, V, KTraits, VTraits>::TinyEntry* TinyMap<K, V, KTraits, VTraits>::Maximum(TinyEntry* ps) const throw()
 	{
-		TinyEntry *pOther = NULL;
-		while ((!ps || !ps->m_bColor) && ps != m_pRoot)
+		if (ps == NULL || IsNil(ps))
 		{
-			if (pParent->m_pLeft == ps)
+			return NULL;
+		}
+		TinyEntry* pMax = ps;
+		while (!IsNil(pMax->m_pLeft))
+		{
+			pMax = pMax->m_pLeft;
+		}
+		return pMax;
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	typename TinyMap<K, V, KTraits, VTraits>::TinyEntry* TinyMap<K, V, KTraits, VTraits>::Predecessor(TinyEntry* ps) const throw()
+	{
+		if (ps == NULL)
+		{
+			return(NULL);
+		}
+		if (!IsNil(ps->m_pLeft))
+		{
+			return(Maximum(ps->m_pLeft));
+		}
+
+		TinyEntry* pParent = ps->m_pParent;
+		TinyEntry* pLeft = ps;
+		while (!IsNil(pParent) && (pLeft == pParent->m_pLeft))
+		{
+			pLeft = pParent;
+			pParent = pParent->m_pParent;
+		}
+
+		if (IsNil(pParent))
+		{
+			pParent = NULL;
+		}
+		return(pParent);
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	typename TinyMap<K, V, KTraits, VTraits>::TinyEntry* TinyMap<K, V, KTraits, VTraits>::Successor(TinyEntry* ps) const throw()
+	{
+		if (ps == NULL)
+		{
+			return NULL;
+		}
+		if (!IsNil(ps->m_pRight))
+		{
+			return Minimum(ps->m_pRight);
+		}
+
+		TinyEntry* pParent = ps->m_pParent;
+		TinyEntry* pRight = ps;
+		while (!IsNil(pParent) && (pRight == pParent->m_pRight))
+		{
+			pRight = pParent;
+			pParent = pParent->m_pParent;
+		}
+
+		if (IsNil(pParent))
+		{
+			pParent = NULL;
+		}
+		return pParent;
+	}
+
+	template<class K, class V, class KTraits, class VTraits>
+	void TinyMap<K, V, KTraits, VTraits>::Remove(TinyEntry* pZ)
+	{
+		if (pZ == NULL) return;
+		TinyEntry* pY = NULL;
+		TinyEntry* pX = NULL;
+		if (IsNil(pZ->m_pLeft))//左子节点为哨兵
+		{
+			pX = pZ->m_pRight;
+			pY = pZ;//记录后继节点，用着个节点代替删除节点
+		}
+		else if (IsNil(pZ->m_pRight))//右子节点为哨兵
+		{
+			pX = pZ->m_pLeft;
+			pY = pZ;
+		}
+		else
+		{
+			pY = Successor(pZ);//获得后继节点
+		}
+		if (!IsNil(pY->m_pLeft))
+		{
+			pX = pY->m_pLeft;
+		}
+		else
+		{
+			pX = pY->m_pRight;
+		}
+
+		pX->m_pParent = pY->m_pParent;
+
+		if (IsNil(pY->m_pParent))
+		{
+			m_pRoot = pX;
+		}
+		else if (pY == pY->m_pParent->m_pLeft)
+		{
+			pY->m_pParent->m_pLeft = pX;
+		}
+		else
+		{
+			pY->m_pParent->m_pRight = pX;
+		}
+		//如果后继是红色，就不需要调整红黑树
+		if (!pY->m_bColor)
+		{
+			RemoveFixup(pX);
+		}
+		if (pY != pZ)
+		{
+			SwapNode(pY, pZ);
+		}
+
+		if (m_pRoot != NULL)
+		{
+			SetNil(&m_pRoot->m_pParent);
+		}
+		Delete(pZ);
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	void TinyMap<K, V, KTraits, VTraits>::RemoveFixup(TinyEntry* ps)
+	{
+		TinyEntry* pX = ps;
+		TinyEntry* pW = NULL;
+
+		while ((pX != m_pRoot) && (!pX->m_bColor))
+		{
+			//当前节点为左节点的情况
+			if (pX == pX->m_pParent->m_pLeft)
 			{
-				pOther = pParent->m_pRight;
-				if (pOther->m_bColor)
+				pW = pX->m_pParent->m_pRight;
+				//情况1:当前节点为黑色，兄弟节点为红色
+				if (pW->m_bColor)
 				{
-					pOther->m_bColor = FALSE;
-					pParent->m_bColor = TRUE;
-					RotateL(pParent);
-					pOther = pParent->m_pRight;
+					pW->m_bColor = FALSE;//兄弟节点修改为黑色
+					pX->m_pParent->m_bColor = TRUE;//父节点修改红色
+					RotateL(pX->m_pParent);
+					pW = pX->m_pParent->m_pRight;
 				}
-				if ((!pOther->m_pLeft || !pOther->m_pLeft->m_bColor) && (!pOther->m_pRight || !pOther->m_pRight->m_bColor))
+				//情况2:当前节点为黑色，兄弟节点为黑色，兄弟节点的俩子节点也为黑色
+				if (!pW->m_pLeft->m_bColor && !pW->m_pRight->m_bColor)
 				{
-					pOther->m_bColor = TRUE;
-					ps = pParent;
-					pParent = ps->m_pParent;
+					pW->m_bColor = TRUE;//兄弟节点修改为红色
+					pX = pX->m_pParent;//当前节点指向父节点
 				}
 				else
 				{
-					if (!pOther->m_pRight || !pOther->m_pRight->m_bColor)
+					//情况3:当前节点为黑色，兄弟节点为黑色，兄弟节点右子节点为黑色，左子节点为红色
+					if (!pW->m_pRight->m_bColor)
 					{
-						pOther->m_pLeft->m_bColor = FALSE;
-						pOther->m_bColor = TRUE;
-						RotateR(pOther);
-						pOther = pParent->m_pRight;
+						pW->m_pLeft->m_bColor = FALSE;//左子节点改为黑色
+						pW->m_bColor = TRUE;//兄弟节点改为红色
+						RotateR(pW);
+						pW = pX->m_pParent->m_pRight;
 					}
-					pOther->m_bColor = pParent->m_bColor;
-					pParent->m_bColor = FALSE;
-					pOther->m_pRight->m_bColor = FALSE;
-					RotateL(pParent);
-					ps = m_pRoot;
-					break;
+					//情况4:当前节点为黑色，兄弟节点为黑色，兄弟节点右子节点为红色，左子节点任意色
+					pW->m_bColor = pX->m_pParent->m_bColor;
+					pX->m_pParent->m_bColor = FALSE;
+					pW->m_pRight->m_bColor = FALSE;
+					RotateL(pX->m_pParent);
+					pX = m_pRoot;
 				}
 			}
-			else
+			else//当前节点为右节点的情况
 			{
-				pOther = pParent->m_pLeft;
-				if (pOther->m_bColor)
+				pW = pX->m_pParent->m_pLeft;
+				if (pW->m_bColor)
 				{
-					pOther->m_bColor = FALSE;
-					pParent->m_bColor = TRUE;
-					RotateR(pParent);
-					pOther = pParent->m_pLeft;
+					pW->m_bColor = FALSE;
+					pX->m_pParent->m_bColor = TRUE;
+					RotateR(pX->m_pParent);
+					pW = pX->m_pParent->m_pLeft;
 				}
-				if ((!pOther->m_pLeft || !pOther->m_pLeft->m_bColor) && (!pOther->m_pRight || !pOther->m_pRight->m_bColor))
+				if (!pW->m_pRight->m_bColor && !pW->m_pLeft->m_bColor)
 				{
-					pOther->m_bColor = TRUE;
-					ps = pParent;
-					pParent = ps->m_pParent;
+					pW->m_bColor = TRUE;
+					pX = pX->m_pParent;
 				}
 				else
 				{
-					if (!pOther->m_pLeft || !pOther->m_pLeft->m_bColor)
+					if (!pW->m_pLeft->m_bColor)
 					{
-						pOther->m_pRight->m_bColor = FALSE;
-						pOther->m_bColor = TRUE;
-						RotateL(pOther);
-						pOther = pParent->m_pLeft;
+						pW->m_pRight->m_bColor = FALSE;
+						pW->m_bColor = TRUE;
+						RotateL(pW);
+						pW = pX->m_pParent->m_pLeft;
 					}
-					pOther->m_bColor = pParent->m_bColor;
-					pParent->m_bColor = FALSE;
-					pOther->m_pLeft->m_bColor = FALSE;
-					RotateR(pParent);
-					ps = m_pRoot;
-					break;
+					pW->m_bColor = pX->m_pParent->m_bColor;
+					pX->m_pParent->m_bColor = FALSE;
+					pW->m_pLeft->m_bColor = FALSE;
+					RotateR(pX->m_pParent);
+					pX = m_pRoot;
 				}
 			}
 		}
-		if (ps)
+		pX->m_bColor = FALSE;
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	void TinyMap<K, V, KTraits, VTraits>::SwapNode(TinyEntry* pDest, TinyEntry* pSrc)
+	{
+		pDest->m_pParent = pSrc->m_pParent;
+		if (pSrc->m_pParent->m_pLeft == pSrc)
 		{
-			ps->m_bColor = FALSE;
+			pSrc->m_pParent->m_pLeft = pDest;
+		}
+		else
+		{
+			pSrc->m_pParent->m_pRight = pDest;
+		}
+
+		pDest->m_pRight = pSrc->m_pRight;
+		pDest->m_pLeft = pSrc->m_pLeft;
+		pDest->m_bColor = pSrc->m_bColor;
+		pDest->m_pRight->m_pParent = pDest;
+		pDest->m_pLeft->m_pParent = pDest;
+
+		if (m_pRoot == pSrc)
+		{
+			m_pRoot = pDest;
 		}
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	void TinyMap<K, V, KTraits, VTraits>::RotateL(TinyEntry* ps)
 	{
-		TinyEntry* pRight = ps->m_pRight;
-		TinyEntry* pParent = ps->m_pParent;
-		if (ps->m_pRight = pRight->m_pLeft)
+		if (ps == NULL) return;
+		TinyEntry* pTemp = ps->m_pRight;
+		ps->m_pRight = pTemp->m_pLeft;
+		if (!IsNil(pTemp->m_pLeft))
 		{
-			pRight->m_pLeft->m_pParent = ps;
+			pTemp->m_pLeft->m_pParent = ps;
 		}
-		pRight->m_pLeft = ps;
-		pRight->m_pParent = pParent;
-		if (pParent != NULL)
+		pTemp->m_pParent = ps->m_pParent;
+		if (IsNil(ps->m_pParent))
 		{
-			if (ps == pParent->m_pLeft)
-				pParent->m_pLeft = pRight;
-			else
-				pParent->m_pRight = pRight;
+			m_pRoot = pTemp;
+		}
+		else if (ps == ps->m_pParent->m_pLeft)
+		{
+			ps->m_pParent->m_pLeft = pTemp;
 		}
 		else
 		{
-			m_pRoot = pRight;
+			ps->m_pParent->m_pRight = pTemp;
 		}
-		ps->m_pParent = pRight;
+		pTemp->m_pLeft = ps;
+		ps->m_pParent = pTemp;
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	void TinyMap<K, V, KTraits, VTraits>::RotateR(TinyEntry* ps)
 	{
-		TinyEntry *pLeft = ps->m_pLeft;
-		TinyEntry *pParent = ps->m_pParent;
-		if ((ps->m_pLeft = pLeft->m_pRight))
+		if (ps == NULL) return;
+		TinyEntry* pTemp = ps->m_pLeft;
+		ps->m_pLeft = pTemp->m_pRight;
+		if (!IsNil(pTemp->m_pRight))
 		{
-			pLeft->m_pRight->m_pParent = ps;
+			pTemp->m_pRight->m_pParent = ps;
 		}
-		pLeft->m_pRight = ps;
-		pLeft->m_pParent = pParent;
-		if (pParent != NULL)
+		pTemp->m_pParent = ps->m_pParent;
+		if (IsNil(ps->m_pParent))
 		{
-			if (ps == pParent->m_pRight)
-				pParent->m_pRight = pLeft;
-			else
-				pParent->m_pLeft = pLeft;
+			m_pRoot = pTemp;
+		}
+		else if (ps == ps->m_pParent->m_pRight)
+		{
+			ps->m_pParent->m_pRight = pTemp;
 		}
 		else
 		{
-			m_pRoot = pLeft;
+			ps->m_pParent->m_pLeft = pTemp;
 		}
-		ps->m_pParent = pLeft;
+		pTemp->m_pRight = ps;
+		ps->m_pParent = pTemp;
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	ITERATOR TinyMap<K, V, KTraits, VTraits>::Lookup(const K& key)
@@ -1226,18 +1361,46 @@ namespace TinyUI
 	template<class K, class V, class KTraits, class VTraits>
 	typename TinyMap<K, V, KTraits, VTraits>::TinyEntry* TinyMap<K, V, KTraits, VTraits>::Lookup(TinyEntry* ps, const K& key)
 	{
-		while (ps != NULL && KTraits::Compare(key, ps->m_key) != 0)
+		TinyEntry* pKey = NULL;
+		TinyEntry* pTemp = ps;
+		while (!IsNil(pTemp) && (pKey == NULL))
 		{
-			if (KTraits::Compare(key, ps->m_key) < 0)
+			INT cmp = KTraits::Compare(key, pTemp->m_key);
+			if (cmp == 0)
 			{
-				ps = ps->m_pLeft;
+				pKey = pTemp;
 			}
 			else
 			{
-				ps = ps->m_pRight;
+				if (cmp < 0)
+				{
+					pTemp = pTemp->m_pLeft;
+				}
+				else
+				{
+					pTemp = pTemp->m_pRight;
+				}
 			}
 		}
-		return ps;
+		if (pKey == NULL)
+		{
+			return(NULL);
+		}
+#pragma warning(push)
+#pragma warning(disable:4127)
+
+		while (true)
+		{
+			TinyEntry* pPrev = Predecessor(pKey);
+			if ((pPrev != NULL) && KTraits::Compare(key, pPrev->m_key))
+			{
+				pKey = pPrev;
+			}
+			else
+			{
+				return(pKey);
+			}
+		}
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	V* TinyMap<K, V, KTraits, VTraits>::GetValueAt(ITERATOR pos)
@@ -1281,55 +1444,27 @@ namespace TinyUI
 	ITERATOR TinyMap<K, V, KTraits, VTraits>::First() const
 	{
 		if (!m_pRoot) return NULL;
-		TinyEntry* ps = m_pRoot;
-		while (ps->m_pLeft != NULL)
-			ps = ps->m_pLeft;
-		return ps;
+		return Successor(m_pRoot);
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	ITERATOR TinyMap<K, V, KTraits, VTraits>::Last() const
 	{
 		if (!m_pRoot) return NULL;
-		TinyEntry* ps = m_pRoot;
-		while (ps->m_pRight != NULL)
-			ps = ps->m_pRight;
-		return ps;
+		return Predecessor(m_pRoot);
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	ITERATOR TinyMap<K, V, KTraits, VTraits>::Next(ITERATOR pos) const
 	{
 		TinyEntry* ps = static_cast<TinyEntry*>(pos);
-		if (ps->m_pParent == ps)
-			return NULL;
-		if (ps->m_pRight != NULL)
-		{
-			ps = ps->m_pRight;
-			while (ps->m_pLeft != NULL)
-				ps = ps->m_pLeft;
-			return ps;
-		}
-		TinyEntry* pParent = NULL;
-		while ((pParent = ps->m_pParent) && ps == pParent->m_pRight)
-			ps = pParent;
-		return pParent;
+		pos = Successor(ps);
+		return ps;
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	ITERATOR TinyMap<K, V, KTraits, VTraits>::Prev(ITERATOR pos) const
 	{
 		TinyEntry* ps = static_cast<TinyEntry*>(pos);
-		if (ps->m_pParent == ps)
-			return NULL;
-		if (ps->m_pLeft != NULL)
-		{
-			ps = ps->m_pLeft;
-			while (ps->m_pRight != NULL)
-				ps = ps->m_pRight;
-			return ps;
-		}
-		TinyEntry* pParent = NULL;
-		while ((pParent = ps->m_pParent) && ps == pParent->m_pLeft)
-			ps = pParent;
-		return pParent;
+		pos = Predecessor(ps);
+		return ps;
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	ITERATOR TinyMap<K, V, KTraits, VTraits>::operator[](const K& key) const

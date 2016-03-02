@@ -77,7 +77,7 @@ namespace TinyUI
 		_Mysize(0),
 		_Mystr(NULL)
 	{
-		TRACE("调用构造函数TinyString(): %d\n", this);
+		//TRACE("调用构造函数TinyString(): %d\n", this);
 	}
 	TinyString::TinyString(size_t size)
 		:_Myres(size),
@@ -85,14 +85,14 @@ namespace TinyUI
 		_Mystr(NULL)
 	{
 		_Mystr = new CHAR[_Mysize];
-		TRACE("调用构造函数TinyString(INT size): %d\n", this);
+		//TRACE("调用构造函数TinyString(INT size): %d\n", this);
 	}
 	TinyString::TinyString(const CHAR* s)
 		: _Myres(0),
 		_Mysize(0),
 		_Mystr(NULL)
 	{
-		TRACE("调用构造函数TinyString(const CHAR* s): %d\n", this);
+		//TRACE("调用构造函数TinyString(const CHAR* s): %d\n", this);
 		ASSERT(s);
 		Assign(s, strlen(s));
 	}
@@ -101,7 +101,7 @@ namespace TinyUI
 		_Mysize(0),
 		_Mystr(NULL)
 	{
-		TRACE("调用构造函数TinyString(const TinyString& s, size_t pos, size_t size): %d\n", this);
+		//TRACE("调用构造函数TinyString(const TinyString& s, size_t pos, size_t size): %d\n", this);
 		Assign(s, pos, size);
 	}
 	TinyString::TinyString(const TinyString& s)
@@ -109,13 +109,13 @@ namespace TinyUI
 		_Mysize(0),
 		_Mystr(NULL)
 	{
-		TRACE("调用拷贝构造函数TinyString(const TinyString& s): %d\n", this);
+		//TRACE("调用拷贝构造函数TinyString(const TinyString& s): %d\n", this);
 		size_t _Maxsize = (size_t)((size_t)-1 / sizeof(CHAR));
 		Assign(s, 0, _Maxsize);
 	}
 	TinyString::TinyString(TinyString&& s)
 	{
-		TRACE("调用移动构造函数TinyString(TinyString&& s): %d\n", this);
+		//TRACE("调用移动构造函数TinyString(TinyString&& s): %d\n", this);
 		this->_Mystr = s._Mystr;
 		this->_Mysize = s._Mysize;
 		this->_Myres = s._Myres;
@@ -125,7 +125,7 @@ namespace TinyUI
 	}
 	TinyString::~TinyString()
 	{
-		TRACE("调用析构函数~TinyString: %d\n", this);
+		//TRACE("调用析构函数~TinyString: %d\n", this);
 		SAFE_DELETE_ARRAY(this->_Mystr);
 		this->_Myres = this->_Mysize = 0;
 	}
@@ -232,17 +232,17 @@ namespace TinyUI
 	}
 	TinyString& TinyString::operator = (const TinyString& str)
 	{
-		TRACE("调用赋值构造函数TinyString::operator = (const TinyString& str)\n");
+		//TRACE("调用赋值构造函数TinyString::operator = (const TinyString& str)\n");
 		return Assign(str, 0, str.GetSize());
 	}
 	TinyString& TinyString::operator = (const CHAR* s)
 	{
-		TRACE("调用赋值构造函数TinyString::operator = (const CHAR* s)\n");
+		//TRACE("调用赋值构造函数TinyString::operator = (const CHAR* s)\n");
 		return Assign(s);
 	}
 	TinyString& TinyString::operator = (CHAR s)
 	{
-		TRACE("调用赋值构造函数TinyString::operator = (CHAR s)\n");
+		//TRACE("调用赋值构造函数TinyString::operator = (CHAR s)\n");
 		return Assign(&s);
 	}
 
