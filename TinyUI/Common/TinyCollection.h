@@ -767,14 +767,14 @@ namespace TinyUI
 		class TinyEntry : public __ITERATOR
 		{
 		public:
-			const K		m_key;
+			K			m_key;
 			V			m_value;
 			BOOL		m_bColor;
 			TinyEntry*	m_pLeft;
 			TinyEntry*	m_pRight;
 			TinyEntry*	m_pParent;
 		public:
-			TinyEntry(const K& key, V& value)
+			TinyEntry(const K& key, const V& value)
 				:m_key(key),
 				m_value(value),
 				m_bColor(FALSE),
@@ -792,7 +792,7 @@ namespace TinyUI
 		DWORD GetSize() const;
 		BOOL Contain(const K& key) const;
 		BOOL IsEmpty() const;
-		ITERATOR Add(const K& key, V& value);
+		ITERATOR Add(const K& key, const V& value);
 		BOOL Remove(const K& key);
 		void RemoveAll();
 		ITERATOR Lookup(const K& key);
@@ -808,7 +808,7 @@ namespace TinyUI
 		ITERATOR Next(ITERATOR pos) const;
 		ITERATOR Prev(ITERATOR pos) const;
 	private:
-		typename TinyMap<K, V, KTraits, VTraits>::TinyEntry* New(const K& key, V& value);
+		typename TinyMap<K, V, KTraits, VTraits>::TinyEntry* New(const K& key, const V& value);
 		typename TinyMap<K, V, KTraits, VTraits>::TinyEntry* Lookup(TinyEntry* ps, const K& key);
 		void RotateL(TinyEntry* ps);
 		void RotateR(TinyEntry* ps);
@@ -875,7 +875,7 @@ namespace TinyUI
 	}
 
 	template<class K, class V, class KTraits, class VTraits>
-	typename TinyMap<K, V, KTraits, VTraits>::TinyEntry* TinyMap<K, V, KTraits, VTraits>::New(const K& key, V& value)
+	typename TinyMap<K, V, KTraits, VTraits>::TinyEntry* TinyMap<K, V, KTraits, VTraits>::New(const K& key, const V& value)
 	{
 		if (m_pFree == NULL)
 		{
@@ -931,7 +931,7 @@ namespace TinyUI
 		m_pRoot = NULL;
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	ITERATOR TinyMap<K, V, KTraits, VTraits>::Add(const K& key, V& value)
+	ITERATOR TinyMap<K, V, KTraits, VTraits>::Add(const K& key, const V& value)
 	{
 		TinyEntry* ps = Lookup(m_pRoot, key);
 		if (ps == NULL)
@@ -950,7 +950,7 @@ namespace TinyUI
 	{
 		TinyEntry* pX = m_pRoot;
 		TinyEntry* pY = NULL;
-		while (pX != NULL)
+		while (!IsNil(pX))
 		{
 			pY = pX;
 			if (KTraits::Compare(pNew->m_key, pX->m_key) <= 0)
@@ -971,7 +971,7 @@ namespace TinyUI
 		{
 			pY->m_pRight = pNew;
 		}
-		AddFixup(pNew);
+		AddFixup(pNew); 
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	void TinyMap<K, V, KTraits, VTraits>::AddFixup(TinyEntry* pNew)
