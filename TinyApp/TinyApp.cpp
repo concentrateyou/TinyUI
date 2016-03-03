@@ -11,6 +11,7 @@
 #include "Common/TinyLogging.h"
 #include "Common/TinyAPIHook.h"
 #include <algorithm>
+#include <map>
 #include "MyDemo.h"
 #include "Media/TinyVideoCapture.h"
 
@@ -58,18 +59,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	//TinyMap<INT, INT> map;
-	//map.Add(11, 11);
-	//map.Add(11, 12);
-	//map.Add(13, 13);
-	//map.Add(14, 14);
-
-	//ITERATOR io = map.First();
-	//TRACE("%d\n", *map.GetKeyAt(io));
-	//io = map.Next(io);
-	//TRACE("%d\n", *map.GetKeyAt(io));
-	//io = map.Last();
-	//TRACE("%d\n", *map.GetKeyAt(io));
 
 	WSADATA   wsd;
 	WSAStartup(MAKEWORD(2, 2), &wsd);

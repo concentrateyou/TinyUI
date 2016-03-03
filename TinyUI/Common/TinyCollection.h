@@ -810,14 +810,14 @@ namespace TinyUI
 	private:
 		typename TinyMap<K, V, KTraits, VTraits>::TinyEntry* New(const K& key, const V& value);
 		typename TinyMap<K, V, KTraits, VTraits>::TinyEntry* Lookup(TinyEntry* ps, const K& key);
-		void RotateL(TinyEntry* ps);
-		void RotateR(TinyEntry* ps);
-		void Add(TinyEntry* ps);
-		void AddFixup(TinyEntry* ps);
-		void Delete(TinyEntry* ps);
+		void RotateL(TinyEntry* ps) throw();
+		void RotateR(TinyEntry* ps) throw();
+		void Add(TinyEntry* ps) throw();
+		void AddFixup(TinyEntry* ps) throw();
+		void Delete(TinyEntry* ps) throw();
 		void DeletePostOrder(TinyEntry* ps) throw();
-		void Remove(TinyEntry* ps);
-		void RemoveFixup(TinyEntry* ps);
+		void Remove(TinyEntry* ps) throw();
+		void RemoveFixup(TinyEntry* ps) throw();
 		void SwapNode(TinyEntry* ps1, TinyEntry* ps2);
 		TinyEntry*	Minimum(TinyEntry* ps)const throw();
 		TinyEntry*	Maximum(TinyEntry* ps)const throw();
@@ -949,7 +949,7 @@ namespace TinyUI
 		return NULL;
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	void TinyMap<K, V, KTraits, VTraits>::Add(TinyEntry* pNew)
+	void TinyMap<K, V, KTraits, VTraits>::Add(TinyEntry* pNew) throw()
 	{
 		TinyEntry* pX = m_pRoot;
 		TinyEntry* pY = NULL;
@@ -981,7 +981,7 @@ namespace TinyUI
 		AddFixup(pNew);
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	void TinyMap<K, V, KTraits, VTraits>::AddFixup(TinyEntry* pNew)
+	void TinyMap<K, V, KTraits, VTraits>::AddFixup(TinyEntry* pNew) throw()
 	{
 		TinyEntry* pX = pNew;
 		pX->m_bColor = TRUE;
@@ -1291,7 +1291,7 @@ namespace TinyUI
 		}
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	void TinyMap<K, V, KTraits, VTraits>::RotateL(TinyEntry* ps)
+	void TinyMap<K, V, KTraits, VTraits>::RotateL(TinyEntry* ps) throw()
 	{
 		if (ps == NULL) return;
 		TinyEntry* pTemp = ps->m_pRight;
@@ -1317,7 +1317,7 @@ namespace TinyUI
 		ps->m_pParent = pTemp;
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	void TinyMap<K, V, KTraits, VTraits>::RotateR(TinyEntry* ps)
+	void TinyMap<K, V, KTraits, VTraits>::RotateR(TinyEntry* ps) throw()
 	{
 		if (ps == NULL) return;
 		TinyEntry* pTemp = ps->m_pLeft;
@@ -1483,7 +1483,7 @@ namespace TinyUI
 	/// <summary>
 	/// HashMap½á¹¹
 	/// </summary>
-	template<typename T, typename Traits>
+	template<class K, class V, class KTraits = DefaultTraits< K >, class VTraits = DefaultTraits< V >>
 	class TinyHashMap
 	{
 
