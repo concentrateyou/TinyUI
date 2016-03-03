@@ -59,7 +59,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-
 	WSADATA   wsd;
 	WSAStartup(MAKEWORD(2, 2), &wsd);
 	HRESULT hRes = OleInitialize(NULL);

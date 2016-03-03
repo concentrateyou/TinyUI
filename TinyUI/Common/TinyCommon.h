@@ -963,4 +963,20 @@ private:\
 		noncopyable(const noncopyable& a) = delete;
 		noncopyable& operator=(const noncopyable&) = delete;
 	};
+	/// <summary>
+	/// STLµÄHashËã·¨
+	/// </summary>
+	template<class K>
+	inline UINT WINAPI TinyHashKey(K key)
+	{
+		COMPILE_ASSERT(IsPointer<K>::Result, callback_type_not_match);
+#pragma warning(suppress: 4302) 
+		ldiv_t val = ldiv((LONG)(K)key, 127773);
+		val.rem = 16807 * val.rem - 2836 * val.quot;
+		if (val.rem < 0)
+		{
+			val.rem += 2147483647;
+		}
+		return ((UINT)val.rem);
+	};
 };

@@ -23,7 +23,7 @@ namespace TinyUI
 		void RemoveAll();
 		INT GetSize() const;
 	private:
-		TinyMap<T, V> m_handleMap;
+		TinySimpleMap<T, V> m_handleMap;
 	};
 	template<class T, class V>
 	TinyHandleMap<T, V>::TinyHandleMap()
@@ -38,12 +38,12 @@ namespace TinyUI
 	template<class T, class V>
 	V* TinyHandleMap<T, V>::Lookup(T& _key)
 	{
-		return m_handleMap.GetValue(_key);
+		return m_handleMap.Lookup(_key);
 	}
 	template<class T, class V>
 	V* TinyHandleMap<T, V>::Lookup(const T& _key) const
 	{
-		return m_handleMap.GetValue(_key);
+		return m_handleMap.Lookup(_key);
 	}
 	template<class T, class V>
 	V* TinyHandleMap<T, V>::operator[](T& _key)
@@ -75,6 +75,7 @@ namespace TinyUI
 	{
 		return m_handleMap.GetSize();
 	}
+
 	/// <summary>
 	/// ´°¿Ú¾ä±úÀà
 	/// </summary>

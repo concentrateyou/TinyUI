@@ -24,4 +24,44 @@ namespace TinyUI
 			p = pNext;
 		}
 	}
+	//////////////////////////////////////////////////////////////////////////
+	TinyMapPtr::TinyMapPtr(DWORD dwBlockSize)
+		:m_dwBlockSize(dwBlockSize),
+		m_dwHashSize(17),
+		m_dwCount(0),
+		m_pHashTable(NULL),
+		m_pFreeList(NULL),
+		m_pBlocks(NULL)
+	{
+
+	}
+	DWORD TinyMapPtr::GetSize() const
+	{
+		return m_dwCount;
+	}
+	BOOL TinyMapPtr::IsEmpty() const
+	{
+		return m_dwCount == 0;
+	}
+	void* TinyMapPtr::Lookup(void* key) const
+	{
+		return NULL;
+	}
+	void* TinyMapPtr::operator[](void* key) const
+	{
+		return NULL;
+	}
+
+	void TinyMapPtr::Add(void* key, void* value)
+	{
+
+	}
+	void TinyMapPtr::Remove(void* key)
+	{
+
+	}
+	void TinyMapPtr::RemoveAll()
+	{
+
+	}
 }
