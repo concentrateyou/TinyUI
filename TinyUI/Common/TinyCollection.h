@@ -1479,9 +1479,41 @@ namespace TinyUI
 			pos = Add(key, value);
 		}
 		return pos;
-	}
+	};
 	/// <summary>
-	/// 针对指针的Map
+	/// 基数树Map
+	/// </summary>
+	class TinyRadixMap
+	{
+		DISALLOW_COPY_AND_ASSIGN(TinyRadixMap);
+	protected:
+		class TinyNode : public __ITERATOR
+		{
+		public:
+			TinyNode()
+				:m_pLeft(NULL),
+				m_pRight(NULL),
+				m_pParent(NULL)
+			{
+
+			}
+			TinyNode*	m_pLeft;
+			TinyNode*	m_pRight;
+			TinyNode*	m_pParent;
+		};
+	public:
+		TinyRadixMap(){}
+		~TinyRadixMap(){}
+	private:
+		DWORD		m_dwBlockSize;
+		DWORD		m_dwCount;
+		TinyNode*	m_pRoot;
+		TinyNode*	m_pFreeList;
+		TinyPlex*	m_pBlocks;
+	};
+
+	/// <summary>
+	/// 针对指针的HashMap
 	/// </summary>
 	class TinyMapPtr
 	{

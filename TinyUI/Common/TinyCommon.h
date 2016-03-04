@@ -34,9 +34,9 @@ using namespace std;
 namespace TinyUI
 {
 	//////////////////////////////////////////////////////////////////////////
-
-#define OVERRIDE override
-#define NO_VTABLE _declspec(novtable)
+#define INLINE		inline
+#define OVERRIDE	override
+#define NO_VTABLE	_declspec(novtable)
 #ifndef ASSERT
 #define ASSERT(expr) _ASSERTE(expr)
 #endif 
@@ -967,9 +967,8 @@ private:\
 	/// STLµÄHashËã·¨
 	/// </summary>
 	template<class K>
-	inline UINT WINAPI TinyHashKey(K key)
+	INLINE UINT WINAPI TinyHashKey(K key)
 	{
-		COMPILE_ASSERT(IsPointer<K>::Result, callback_type_not_match);
 #pragma warning(suppress: 4302) 
 		ldiv_t val = ldiv((LONG)(K)key, 127773);
 		val.rem = 16807 * val.rem - 2836 * val.quot;

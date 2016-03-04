@@ -63,14 +63,14 @@ namespace TinyUI
 	}
 	HMODULE TinyPsapiEnumModule::operator[](INT index)
 	{
-		if (index < 0 || index >= m_dwSize || !m_pModules)
+		if (index < 0 || index >= (INT)m_dwSize || !m_pModules)
 			return NULL;
 		return m_pModules[index];
 	}
 
 	BOOL TinyPsapiEnumModule::GetModule(INT index, MODULEINFO& modeinfo)
 	{
-		if (index < 0 || index >= m_dwSize || !m_pModules)
+		if (index < 0 || index >= (INT)m_dwSize || !m_pModules)
 			return FALSE;
 		HANDLE hProcess = ::OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, m_dwProcessId);
 		if (!hProcess)

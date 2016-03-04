@@ -222,7 +222,7 @@ namespace TinyUI
 			<< ':';
 		m_stream << GetTickCount() << ':';
 		m_stream << ":" << name << "(" << line << ")] ";
-		m_messageOffset = m_stream.tellp();
+		m_messageOffset = static_cast<size_t>(m_stream.tellp());
 		string logFile = GetDefaultLogFile();
 		m_hFile = CreateFile(logFile.c_str(), GENERIC_WRITE,
 			FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,

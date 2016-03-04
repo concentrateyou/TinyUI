@@ -35,7 +35,7 @@ namespace TinyUI
 		RECT paintRC = { 0, 0, m_size.cx, m_size.cy };
 		FillRect(memdc, &paintRC, (HBRUSH)GetStockObject(WHITE_BRUSH));
 
-		DrawScrollBar(memdc, m_si.iTrackHitTest, FALSE); 
+		DrawScrollBar(memdc, m_si.iTrackHitTest, FALSE);
 
 		memdc.Render(paintRC, paintRC, FALSE);
 		EndPaint(m_hWND, &ps);
@@ -198,7 +198,6 @@ namespace TinyUI
 	LRESULT TinyScrollBox::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-
 		if (m_bTracking)
 		{
 			INT iNewPos = m_si.iPos;
