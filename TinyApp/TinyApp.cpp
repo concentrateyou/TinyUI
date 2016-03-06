@@ -26,14 +26,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	//CMapWordToPtr
-
-	/*for (USHORT i = 0; i < 30; i++)
-	{
-	ULONG s = TinyHashKey<USHORT>(i) % 17;
-	TRACE("s:%d\n", s);
-	}*/
-
 	WSADATA   wsd;
 	WSAStartup(MAKEWORD(2, 2), &wsd);
 	HRESULT hRes = OleInitialize(NULL);

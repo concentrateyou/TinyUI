@@ -970,12 +970,10 @@ private:\
 	INLINE UINT WINAPI TinyHashKey(K key)
 	{
 #pragma warning(suppress: 4302) 
-		ldiv_t val = ldiv((LONG)(K)key, 127773);
-		val.rem = 16807 * val.rem - 2836 * val.quot;
-		if (val.rem < 0)
-		{
-			val.rem += 2147483647;
-		}
-		return ((UINT)val.rem);
+		ldiv_t HashVal = ldiv((long)(K)key, 127773);
+		HashVal.rem = 16807 * HashVal.rem - 2836 * HashVal.quot;
+		if (HashVal.rem < 0)
+			HashVal.rem += 2147483647;
+		return ((UINT)HashVal.rem);
 	};
 };

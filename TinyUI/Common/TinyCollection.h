@@ -1481,73 +1481,47 @@ namespace TinyUI
 		return pos;
 	};
 	/// <summary>
-	/// 基数树Map
+	/// 指针Map
 	/// </summary>
-	class TinyRadixMap
+	class TinyPtrMap
 	{
-		DISALLOW_COPY_AND_ASSIGN(TinyRadixMap);
+		DISALLOW_COPY_AND_ASSIGN(TinyPtrMap);
 	protected:
 		class TinyNode : public __ITERATOR
 		{
 		public:
-			TinyNode()
-				:m_pLeft(NULL),
-				m_pRight(NULL),
-				m_pParent(NULL)
-			{
-
-			}
-			TinyNode*	m_pLeft;
-			TinyNode*	m_pRight;
-			TinyNode*	m_pParent;
-		};
-	public:
-		TinyRadixMap(){}
-		~TinyRadixMap(){}
-	private:
-		DWORD		m_dwBlockSize;
-		DWORD		m_dwCount;
-		TinyNode*	m_pRoot;
-		TinyNode*	m_pFreeList;
-		TinyPlex*	m_pBlocks;
-	};
-
-	/// <summary>
-	/// 针对指针的HashMap
-	/// </summary>
-	class TinyMapPtr
-	{
-		DISALLOW_COPY_AND_ASSIGN(TinyMapPtr);
-	protected:
-		class TinyNode : public __ITERATOR
-		{
-		public:
-			TinyNode()
+			TinyNode(UINT_PTR key = 0, UINT_PTR value = 0)
 				:m_pNext(NULL),
-				m_key(NULL),
-				m_value(NULL)
+				m_key(key),
+				m_value(value)
 			{
-
 			}
 			TinyNode*	m_pNext;
-			void*		m_key;
-			void*		m_value;
+			UINT_PTR	m_key;
+			UINT_PTR	m_value;
 		};
 	public:
-		explicit TinyMapPtr(DWORD dwBlockSize = 10);
-		DWORD GetSize() const;
-		BOOL IsEmpty() const;
-		void Add(void* key, void* value);
-		void Remove(void* key);
-		void RemoveAll();
-		void* Lookup(void* key) const;
-		void* operator[](void* key) const;
+		TinyPtrMap();
+		~TinyPtrMap();
+		DWORD		GetSize() const;
+		BOOL		IsEmpty() const;
+		BOOL		Add(UINT_PTR key, UINT_PTR value);
+		BOOL		Remove(UINT_PTR key);
+		void		RemoveAll();
+		BOOL		Lookup(UINT_PTR key, UINT_PTR& value) const;
+		UINT_PTR&	operator[](UINT_PTR key);
+		void		SetAt(UINT_PTR key, UINT_PTR value);
 	private:
-		TinyNode**	m_pHashTable;
-		TinyNode*	m_pFreeList;
-		DWORD		m_dwHashSize;
+		void		Initialize(DWORD dwhHashSize);
+		TinyNode*	New(UINT_PTR key = 0, UINT_PTR value = 0);
+		void		Delete(TinyNode* ps);
+		TinyNode*	Lookup(UINT_PTR key, UINT& index, UINT_PTR& hash) const;
+	private:
 		DWORD		m_dwBlockSize;
 		DWORD		m_dwCount;
+		DWORD       m_dwHashSize;
+		TinyNode**	m_ppHashTable;
+		TinyNode*	m_pFreeList;
 		TinyPlex*	m_pBlocks;
 	};
 }
