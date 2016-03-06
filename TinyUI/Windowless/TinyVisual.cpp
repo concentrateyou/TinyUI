@@ -5,74 +5,44 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-
-#define Lock(ppobj, pobj) (*ppobj = pobj)
-#define Unlock(ppobj) (*ppobj = NULL)
-
-		/*VOID LinkWindow(
-			PVIS pwnd,
-			PVIS pwndInsert,
-			PVIS *ppwndFirst)
+		TinyVisual::TinyVisual()
+			:m_spvisPrev(NULL),
+			m_spvisNext(NULL),
+			m_spvisParent(NULL),
+			m_spvisChild(NULL),
+			m_spvisOwner(NULL)
 		{
-			if (*ppwndFirst == pwnd)
-			{
-				return;
-			}
-			if (pwndInsert == PVIS_TOP)
-			{
-			LinkTop:
-				Lock(&pwnd->spvisNext, *ppwndFirst);
-				Lock(ppwndFirst, pwnd);
-			}
-			else
-			{
-				if (pwndInsert == PVIS_BOTTOM)
-				{
-					if (((pwndInsert = *ppwndFirst) == NULL) || TestWF(pwndInsert, WFBOTTOMMOST))
-						goto LinkTop;
 
-					while (pwndInsert->spvisNext != NULL)
-					{
-						if (TestWF(pwndInsert->spvisNext, WFBOTTOMMOST))
-						{
-							break;
-						}
-						pwndInsert = pwndInsert->spvisNext;
-					}
-				}
-				ASSERT(pwnd != pwndInsert);
-				ASSERT(pwnd != pwndInsert->spvisNext);
-				ASSERT(!TestWF(pwndInsert, WFDESTROYED));
-				ASSERT(pwnd->spvisParent == pwndInsert->spvisParent);
-				Lock(&pwnd->spvisNext, pwndInsert->spvisNext);
-				Lock(&pwndInsert->spvisNext, pwnd);
+		}
+		TinyVisual::~TinyVisual()
+		{
+
+		}
+		void TinyVisual::SetMaximumSize(const TinySize& size)
+		{
+			if (m_maximumSize != size)
+			{
+				m_maximumSize = size;
 			}
 		}
-
-		VOID UnlinkWindow(
-			PVIS pwndUnlink,
-			PVIS *ppwndFirst)
+		void TinyVisual::SetMinimumSize(const TinySize& size)
 		{
-			PVIS pwnd;
-			pwnd = *ppwndFirst;
-
-			if (pwnd == pwndUnlink)
-				goto Unlock;
-
-			while (pwnd != NULL)
+			if (m_minimumSize != size)
 			{
-				if (pwnd->spvisNext == pwndUnlink)
-				{
-					ppwndFirst = &pwnd->spvisNext;
-				Unlock:
-					Lock(ppwndFirst, pwndUnlink->spvisNext);
-					Unlock(&pwndUnlink->spvisNext);
-					return;
-				}
-
-				pwnd = pwnd->spvisNext;
+				m_minimumSize = size;
 			}
-			return;
-		}*/
+		}
+		TinySize TinyVisual::GetMaximumSize() const
+		{
+			return m_maximumSize;
+		}
+		TinySize TinyVisual::GetMinimumSize() const
+		{
+			return m_minimumSize;
+		}
+		HRESULT	TinyVisual::OnDraw(TinyDC& dc, TinyRectangle& drawRect)
+		{
+			return FALSE;
+		}
 	}
 }

@@ -9,7 +9,7 @@
 #include "Database/TinyAdo.h"
 #include "Network/TinyConnector.h"
 #include "Common/TinyLogging.h"
-#include "Common/TinyAPIHook.h"
+#include "Common/TinyHook.h"
 #include <algorithm>
 #include <map>
 #include "MyDemo.h"
@@ -34,7 +34,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	TinyUI::TinyFrameUI uiImpl;
+	TinyUI::Windowless::TinyVisualHWND uiImpl;
 	uiImpl.Create(NULL, 50, 50, 400, 500);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();

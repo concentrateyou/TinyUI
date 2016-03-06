@@ -306,11 +306,11 @@
     <ClInclude Include="IO\TinyTaskPool.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
-    <ClInclude Include="Common\TinyAPIHook.h">
-      <Filter>头文件\Common</Filter>
-    </ClInclude>
     <ClInclude Include="Media\TinyVideoCapture.h">
       <Filter>头文件\Media</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\TinyHook.h">
+      <Filter>头文件\Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -551,11 +551,11 @@
     <ClCompile Include="IO\TinyTaskPool.cpp">
       <Filter>源文件\IO</Filter>
     </ClCompile>
-    <ClCompile Include="Common\TinyAPIHook.cpp">
-      <Filter>源文件\Common</Filter>
-    </ClCompile>
     <ClCompile Include="Media\TinyVideoCapture.cpp">
       <Filter>源文件\Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\TinyHook.cpp">
+      <Filter>源文件\Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -564,6 +564,6 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="Skin.xml" />
+    <Xml Include="resource.xml" />
   </ItemGroup>
 </Project>

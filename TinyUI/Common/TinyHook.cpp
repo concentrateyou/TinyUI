@@ -1,7 +1,7 @@
 #include "../stdafx.h"
 #include "TinyModule.h"
 #include "TinyString.h"
-#include "TinyAPIHook.h"
+#include "TinyHook.h"
 #include "TinyApplication.h"
 #include <imagehlp.h>
 #pragma comment(lib, "imagehlp.lib")

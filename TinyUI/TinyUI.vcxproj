@@ -94,7 +94,7 @@
     <ClInclude Include="Common\TinyLogging.h" />
     <ClInclude Include="Common\TinyModule.h" />
     <ClInclude Include="Common\TinyMsg.h" />
-    <ClInclude Include="Common\TinyAPIHook.h" />
+    <ClInclude Include="Common\TinyHook.h" />
     <ClInclude Include="Common\TinyTreeBox.h" />
     <ClInclude Include="Common\TinyObject.h" />
     <ClInclude Include="Common\TinyShell.h" />
@@ -176,7 +176,7 @@
     <ClCompile Include="Common\TinyLogging.cpp" />
     <ClCompile Include="Common\TinyModule.cpp" />
     <ClCompile Include="Common\TinyMsg.cpp" />
-    <ClCompile Include="Common\TinyAPIHook.cpp" />
+    <ClCompile Include="Common\TinyHook.cpp" />
     <ClCompile Include="Common\TinyTreeBox.cpp" />
     <ClCompile Include="Common\TinyObject.cpp" />
     <ClCompile Include="Common\TinyShell.cpp" />
@@ -261,7 +261,7 @@
     <ResourceCompile Include="TinyUI.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="Skin.xml" />
+    <Xml Include="resource.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

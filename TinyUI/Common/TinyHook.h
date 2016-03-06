@@ -5,17 +5,19 @@
 
 namespace TinyUI
 {
-	struct EXCLUDEDMODULE
-	{
-		HMODULE		hModule;
-		CHAR		pzModule[MAX_PATH];
-	};
 	class TinyAPIFunction;
+	class TinyAPIHook;
 	/// <summary>
 	/// API¹³×Ó
 	/// </summary>
 	class TinyAPIHook
 	{
+	private:
+		struct EXCLUDEDMODULE
+		{
+			HMODULE		hModule;
+			CHAR		pzModule[MAX_PATH];
+		};
 	public:
 		TinyAPIHook();
 		~TinyAPIHook();
@@ -60,4 +62,8 @@ namespace TinyUI
 		static PVOID        m_pMaximumApplicationAddress;
 	};
 	__declspec(selectany) PVOID TinyAPIFunction::m_pMaximumApplicationAddress = NULL;
+	//////////////////////////////////////////////////////////////////////////
+	/// <summary>
+	/// ´°¿Ú¹³×ÓSetWindowsHookEx
+	/// </summary>
 }
