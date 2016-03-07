@@ -5,12 +5,12 @@
 
 namespace TinyUI
 {
-	class TinyAPIFunction;
-	class TinyAPIHook;
+	class TinyIATFunction;
+	class TinyIATHook;
 	/// <summary>
-	/// API钩子
+	/// IAT注入
 	/// </summary>
-	class TinyAPIHook
+	class TinyIATHook
 	{
 	private:
 		struct EXCLUDEDMODULE
@@ -19,33 +19,33 @@ namespace TinyUI
 			CHAR		pzModule[MAX_PATH];
 		};
 	public:
-		TinyAPIHook();
-		~TinyAPIHook();
+		TinyIATHook();
+		~TinyIATHook();
 		BOOL Add(LPCSTR pszCalleeModName, LPCSTR pszFunctionName, PROC  pfnOrig, PROC  pfnHook);
 		BOOL Remove(LPCSTR pszCalleeModName, LPCSTR pszFunctionName);
 		void RemoveAll();
 		BOOL IsModuleExclude(HMODULE hModule);
 		void ExcludeModule(LPCTSTR lpszModule);
 		TinyArray<HMODULE> GetExcludeModules();
-		TinyAPIFunction* GetFunction(LPCSTR pszCalleeModName, LPCSTR pszFunctionName);
+		TinyIATFunction* GetFunction(LPCSTR pszCalleeModName, LPCSTR pszFunctionName);
 	public:
-		static TinyAPIHook* GetInstance();
+		static TinyIATHook* GetInstance();
 		static PROC GetOriginalProc(LPCSTR pszCalleeModName, LPCSTR pszFunctionName);
 	private:
-		static TinyAPIHook* m_pHook;
-		TinyArray<TinyScopedReferencePtr<TinyAPIFunction>> m_hookFs;
+		static TinyIATHook* m_pHook;
+		TinyArray<TinyScopedReferencePtr<TinyIATFunction>> m_hookFs;
 		TinyArray<EXCLUDEDMODULE>	m_excludes;
 	};
-	__declspec(selectany) TinyAPIHook* TinyAPIHook::m_pHook = NULL;
+	SELECTANY TinyIATHook* TinyIATHook::m_pHook = NULL;
 	/// <summary>
 	/// API函数
 	/// </summary>
-	class TinyAPIFunction : public TinyReference < TinyAPIFunction >
+	class TinyIATFunction : public TinyReference < TinyIATFunction >
 	{
-		friend class TinyAPIHook;
+		friend class TinyIATHook;
 	public:
-		TinyAPIFunction(TinyAPIHook* pAPIHook, LPCSTR  pszCalleeModName, LPCSTR pszFunctionName, PROC pfnOrig, PROC pfnHook);
-		~TinyAPIFunction();
+		TinyIATFunction(TinyIATHook* pAPIHook, LPCSTR  pszCalleeModName, LPCSTR pszFunctionName, PROC pfnOrig, PROC pfnHook);
+		~TinyIATFunction();
 		BOOL InstallHook();
 		BOOL UninstallHook();
 	private:
@@ -58,12 +58,22 @@ namespace TinyUI
 		CHAR				m_pzFunctionName[MAX_PATH];
 		CHAR				m_pzCalleeModName[MAX_PATH];
 		TinyLock			m_lock;
-		TinyAPIHook*		m_pAPIHook;
+		TinyIATHook*		m_pAPIHook;
 		static PVOID        m_pMaximumApplicationAddress;
 	};
-	__declspec(selectany) PVOID TinyAPIFunction::m_pMaximumApplicationAddress = NULL;
+	SELECTANY PVOID TinyIATFunction::m_pMaximumApplicationAddress = NULL;
 	//////////////////////////////////////////////////////////////////////////
 	/// <summary>
-	/// 窗口钩子SetWindowsHookEx
+	/// 内联注入(inline)
 	/// </summary>
+	class TinyInlineHook
+	{
+	public:
+		TinyInlineHook(PROC pfnCurrent, PROC pfnNew);
+		~TinyInlineHook();
+		BOOL InstallHook();
+		BOOL UninstallHook();
+	private:
+		PROC m_pfnOrig;
+	};
 }

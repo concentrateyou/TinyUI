@@ -12,7 +12,7 @@ namespace TinyUI
 	const INT maxTimeBufferSize = 128;
 	const LONG maxDaysInSpan = 3615897L;
 	inline BOOL ConvertSystemTimeToVariantTime(const SYSTEMTIME& systimeSrc, double* pVarDtTm);
-	extern __declspec(selectany) const TCHAR * const szInvalidDateTime = _T("Invalid DateTime");
+	extern SELECTANY const TCHAR * const szInvalidDateTime = _T("Invalid DateTime");
 
 	/// <summary>
 	/// 时间间隔类

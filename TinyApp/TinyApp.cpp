@@ -12,11 +12,11 @@
 #include "Common/TinyHook.h"
 #include <algorithm>
 #include <map>
-#include "MyDemo.h"
-#include "Media/TinyVideoCapture.h"
 
 #pragma comment(lib,"TinyUI.lib")
 using namespace TinyUI;
+
+
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,

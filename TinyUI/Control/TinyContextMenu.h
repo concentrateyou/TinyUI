@@ -93,5 +93,5 @@ namespace TinyUI
 		static HHOOK m_pMessageHook;
 		static LRESULT CALLBACK MessageFilterHook(INT code, WPARAM wParam, LPARAM lParam);
 	};
-	__declspec(selectany) HHOOK TinyContextMenu::m_pMessageHook = NULL;
+	SELECTANY HHOOK TinyContextMenu::m_pMessageHook = NULL;
 }

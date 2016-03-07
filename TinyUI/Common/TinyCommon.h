@@ -34,9 +34,24 @@ using namespace std;
 namespace TinyUI
 {
 	//////////////////////////////////////////////////////////////////////////
+#ifndef INLINE
 #define INLINE		inline
+#endif 
+#ifndef OVERRIDE
 #define OVERRIDE	override
-#define NO_VTABLE	_declspec(novtable)
+#endif 
+//编译器不生成虚表
+#ifndef NO_VTABLE
+#define NO_VTABLE	__declspec(novtable)
+#endif 
+//编译器不需要添加任何汇编代码
+#ifndef NAKED
+#define	NAKED		__declspec(naked)
+#endif 
+//编译器移除对静态变量的重复定义
+#ifndef SELECTANY
+#define	SELECTANY	__declspec(selectany)
+#endif 
 #ifndef ASSERT
 #define ASSERT(expr) _ASSERTE(expr)
 #endif 

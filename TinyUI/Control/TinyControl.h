@@ -121,7 +121,7 @@ namespace TinyUI
 		virtual LRESULT OnMeasureItem(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnMeasureItemReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	};
-	__declspec(selectany) HHOOK TinyControl::m_pHook = NULL;
+	SELECTANY HHOOK TinyControl::m_pHook = NULL;
 }
 
 

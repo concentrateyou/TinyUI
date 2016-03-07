@@ -416,7 +416,7 @@ namespace TinyUI
 		return m_status;
 	}
 
-	__declspec(selectany) const double
+	SELECTANY const double
 		TinyOleDateTimeSpan::OLE_DATETIME_HALFSECOND =
 		1.0 / (2.0 * (60.0 * 60.0 * 24.0));
 
@@ -1202,7 +1202,7 @@ namespace TinyUI
 	{
 		FILETIME ft;
 		GetSystemTimeAsFileTime(&ft);
-		ULARGE_INTEGER epoch; 
+		ULARGE_INTEGER epoch;
 		epoch.LowPart = 0xD53E8000;
 		epoch.HighPart = 0x019DB1DE;
 		ULARGE_INTEGER ts;

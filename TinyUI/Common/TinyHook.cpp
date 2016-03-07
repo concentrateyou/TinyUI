@@ -8,14 +8,14 @@
 
 namespace TinyUI
 {
-	TinyAPIHook::TinyAPIHook()
+	TinyIATHook::TinyIATHook()
 	{
 	}
-	TinyAPIHook::~TinyAPIHook()
+	TinyIATHook::~TinyIATHook()
 	{
 
 	}
-	TinyAPIHook* TinyAPIHook::GetInstance()
+	TinyIATHook* TinyIATHook::GetInstance()
 	{
 		if (m_pHook == NULL)
 		{
@@ -23,27 +23,27 @@ namespace TinyUI
 			lock.Acquire();
 			if (m_pHook == NULL)
 			{
-				m_pHook = new TinyAPIHook();
+				m_pHook = new TinyIATHook();
 			}
 			lock.Release();
 		}
 		return m_pHook;
 	}
-	BOOL TinyAPIHook::Add(LPCSTR pszCalleeModName, LPCSTR pszFunctionName, PROC  pfnOrig, PROC  pfnHook)
+	BOOL TinyIATHook::Add(LPCSTR pszCalleeModName, LPCSTR pszFunctionName, PROC  pfnOrig, PROC  pfnHook)
 	{
-		TinyAPIFunction* ps = new TinyAPIFunction(this, pszCalleeModName, pszFunctionName, pfnOrig, pfnHook);
+		TinyIATFunction* ps = new TinyIATFunction(this, pszCalleeModName, pszFunctionName, pfnOrig, pfnHook);
 		if (ps && ps->InstallHook())
 		{
 			return m_hookFs.Add(ps);
 		}
 		return FALSE;
 	}
-	BOOL TinyAPIHook::Remove(LPCSTR pszCalleeModName, LPCSTR pszFunctionName)
+	BOOL TinyIATHook::Remove(LPCSTR pszCalleeModName, LPCSTR pszFunctionName)
 	{
 		DWORD size = m_hookFs.GetSize();
 		for (UINT i = 0; i < size; i++)
 		{
-			TinyScopedReferencePtr<TinyAPIFunction>& fs = m_hookFs[i];
+			TinyScopedReferencePtr<TinyIATFunction>& fs = m_hookFs[i];
 			if (strcasecmp(fs->m_pzCalleeModName, pszCalleeModName) == 0
 				&& strcasecmp(fs->m_pzFunctionName, pszFunctionName) == 0)
 			{
@@ -57,17 +57,17 @@ namespace TinyUI
 		}
 		return FALSE;
 	}
-	void TinyAPIHook::RemoveAll()
+	void TinyIATHook::RemoveAll()
 	{
 		DWORD size = m_hookFs.GetSize();
 		for (DWORD i = 0; i < size; i++)
 		{
-			TinyScopedReferencePtr<TinyAPIFunction>& fs = m_hookFs[i];
+			TinyScopedReferencePtr<TinyIATFunction>& fs = m_hookFs[i];
 			fs->UninstallHook();
 		}
 		m_hookFs.RemoveAll();
 	}
-	BOOL TinyAPIHook::IsModuleExclude(HMODULE hModule)
+	BOOL TinyIATHook::IsModuleExclude(HMODULE hModule)
 	{
 		DWORD size = m_excludes.GetSize();
 		for (DWORD i = 0; i < size; i++)
@@ -79,7 +79,7 @@ namespace TinyUI
 		}
 		return FALSE;
 	}
-	void TinyAPIHook::ExcludeModule(LPCTSTR lpszModule)
+	void TinyIATHook::ExcludeModule(LPCTSTR lpszModule)
 	{
 		EXCLUDEDMODULE em;
 		memset(&em, 0, sizeof(EXCLUDEDMODULE));
@@ -90,7 +90,7 @@ namespace TinyUI
 		m_excludes.Add(em);
 #pragma warning(pop)
 	}
-	TinyArray<HMODULE> TinyAPIHook::GetExcludeModules()
+	TinyArray<HMODULE> TinyIATHook::GetExcludeModules()
 	{
 		TinyArray<HMODULE> vals;
 		DWORD size = m_excludes.GetSize();
@@ -100,12 +100,12 @@ namespace TinyUI
 		}
 		return vals;
 	}
-	TinyAPIFunction* TinyAPIHook::GetFunction(LPCSTR pszCalleeModName, LPCSTR pszFunctionName)
+	TinyIATFunction* TinyIATHook::GetFunction(LPCSTR pszCalleeModName, LPCSTR pszFunctionName)
 	{
 		DWORD size = m_hookFs.GetSize();
 		for (DWORD i = 0; i < size; i++)
 		{
-			TinyScopedReferencePtr<TinyAPIFunction>& fs = m_hookFs[i];
+			TinyScopedReferencePtr<TinyIATFunction>& fs = m_hookFs[i];
 			if (strcasecmp(fs->m_pzCalleeModName, pszCalleeModName) == 0
 				&& strcasecmp(fs->m_pzFunctionName, pszFunctionName) == 0)
 			{
@@ -114,13 +114,13 @@ namespace TinyUI
 		}
 		return NULL;
 	}
-	PROC TinyAPIHook::GetOriginalProc(LPCSTR pszCalleeModName, LPCSTR pszFunctionName)
+	PROC TinyIATHook::GetOriginalProc(LPCSTR pszCalleeModName, LPCSTR pszFunctionName)
 	{
-		TinyAPIFunction* fs = GetInstance()->GetFunction(pszCalleeModName, pszFunctionName);
+		TinyIATFunction* fs = GetInstance()->GetFunction(pszCalleeModName, pszFunctionName);
 		return fs ? fs->m_pfnOrig : NULL;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	TinyAPIFunction::TinyAPIFunction(TinyAPIHook* pAPIHook, LPCSTR  pszCalleeModName, LPCSTR pszFunctionName, PROC pfnOrig, PROC pfnHook)
+	TinyIATFunction::TinyIATFunction(TinyIATHook* pAPIHook, LPCSTR  pszCalleeModName, LPCSTR pszFunctionName, PROC pfnOrig, PROC pfnHook)
 		: m_pAPIHook(pAPIHook),
 		m_pfnOrig(pfnOrig),
 		m_pfnHook(pfnHook),
@@ -147,11 +147,11 @@ namespace TinyUI
 			}
 		}
 	}
-	TinyAPIFunction::~TinyAPIFunction()
+	TinyIATFunction::~TinyIATFunction()
 	{
 
 	}
-	BOOL TinyAPIFunction::DoInstallHook(LPCSTR pszCalleeModName, PROC pfnCurrent, PROC pfnNew)
+	BOOL TinyIATFunction::DoInstallHook(LPCSTR pszCalleeModName, PROC pfnCurrent, PROC pfnNew)
 	{
 		if (!pfnCurrent || !pfnNew) return FALSE;
 		TinyToolHelpEnumModule tools(GetCurrentProcessId());
@@ -172,7 +172,7 @@ namespace TinyUI
 		return bRes;
 	}
 
-	BOOL TinyAPIFunction::DoInstallHook(HMODULE hmodCaller, LPCSTR pszCalleeModName, PROC pfnCurrent, PROC pfnNew)
+	BOOL TinyIATFunction::DoInstallHook(HMODULE hmodCaller, LPCSTR pszCalleeModName, PROC pfnCurrent, PROC pfnNew)
 	{
 		if (!pfnCurrent || !pfnNew) return FALSE;
 		TinyAutoLock lock(m_lock);
@@ -234,12 +234,12 @@ namespace TinyUI
 		return FALSE;
 	}
 
-	BOOL TinyAPIFunction::InstallHook()
+	BOOL TinyIATFunction::InstallHook()
 	{
 		return m_bInstall = DoInstallHook(m_pzCalleeModName, m_pfnOrig, m_pfnHook);
 	}
 
-	BOOL TinyAPIFunction::UninstallHook()
+	BOOL TinyIATFunction::UninstallHook()
 	{
 		if (m_bInstall)
 		{
