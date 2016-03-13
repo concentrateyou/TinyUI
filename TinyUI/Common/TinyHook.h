@@ -13,11 +13,11 @@ namespace TinyUI
 	class TinyIATHook
 	{
 	private:
-		struct EXCLUDEDMODULE
+		typedef struct tagEXCLUDEDMODULE
 		{
 			HMODULE		hModule;
 			CHAR		pzModule[MAX_PATH];
-		};
+		}EXCLUDEDMODULE;
 	public:
 		TinyIATHook();
 		~TinyIATHook();
@@ -64,7 +64,7 @@ namespace TinyUI
 	SELECTANY PVOID TinyIATFunction::m_pMaximumApplicationAddress = NULL;
 	//////////////////////////////////////////////////////////////////////////
 	/// <summary>
-	/// 内联注入(inline)
+	/// 内联注入(inline),替换函数指令块以后实现貌似写的通用有点复杂
 	/// </summary>
 	class TinyInlineHook
 	{
@@ -75,5 +75,6 @@ namespace TinyUI
 		BOOL UninstallHook();
 	private:
 		PROC m_pfnOrig;
+		PROC m_pfnNew;
 	};
 }

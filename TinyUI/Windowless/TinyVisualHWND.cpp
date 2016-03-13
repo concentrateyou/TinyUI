@@ -8,6 +8,7 @@ namespace TinyUI
 	namespace Windowless
 	{
 		TinyVisualHWND::TinyVisualHWND()
+			:m_vtree(NULL)
 		{
 
 		}
@@ -39,6 +40,17 @@ namespace TinyUI
 		{
 			return NULL;
 		}
+		void TinyVisualHWND::Initialize()
+		{
+			m_vtree = new TinyVisualTree(this);
+			m_vtree->Initialize();
+		}
+		void TinyVisualHWND::Uninitialize()
+		{
+			if (!m_vtree) return;
+			m_vtree->Uninitialize();
+			SAFE_DELETE(m_vtree);
+		}
 		LRESULT TinyVisualHWND::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
@@ -62,6 +74,8 @@ namespace TinyUI
 
 		LRESULT TinyVisualHWND::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
+			bHandled = FALSE;
+			Uninitialize();
 			PostQuitMessage(0);//退出应用程序
 			return FALSE;
 		}
@@ -69,17 +83,38 @@ namespace TinyUI
 		LRESULT TinyVisualHWND::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
+			Initialize();
 			return FALSE;
 		}
-
+		LRESULT TinyVisualHWND::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			
+			return FALSE;
+		}
 		LRESULT TinyVisualHWND::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+
+			return FALSE;
+		}
+		LRESULT TinyVisualHWND::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			return FALSE;
 		}
+		LRESULT TinyVisualHWND::OnNCMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			return FALSE;
+		}
+		LRESULT TinyVisualHWND::OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
 
-
-		LRESULT TinyVisualHWND::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+			return FALSE;
+		}
+		LRESULT TinyVisualHWND::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			return FALSE;

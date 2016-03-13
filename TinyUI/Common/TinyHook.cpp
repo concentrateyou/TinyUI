@@ -248,4 +248,26 @@ namespace TinyUI
 		}
 		return !m_bInstall;
 	}
+	//////////////////////////////////////////////////////////////////////////
+	TinyInlineHook::TinyInlineHook(PROC pfnCurrent, PROC pfnNew)
+		:m_pfnOrig(pfnCurrent),
+		m_pfnNew(pfnNew)
+	{
+
+	}
+
+	TinyInlineHook::~TinyInlineHook()
+	{
+
+	}
+
+	BOOL TinyInlineHook::InstallHook()
+	{
+		return FALSE;
+	}
+
+	BOOL TinyInlineHook::UninstallHook()
+	{
+		return FALSE;
+	}
 }

@@ -3,6 +3,7 @@
 #include "../Common/TinyEvent.h"
 #include "../Render/TinyGDI.h"
 #include "TinyUtility.h"
+#include "TinyVisualTree.h"
 
 namespace TinyUI
 {
@@ -13,25 +14,48 @@ namespace TinyUI
 		/// </summary>
 		class TinyVisual : public TinyObject
 		{
+			friend class TinyVisualTree;
 			DECLARE_DYNAMIC(TinyVisual)
 		public:
 			TinyVisual();
 			virtual ~TinyVisual();
+			void			SetText(LPCSTR pzText);
+			TinyString		GetText() const;
+			void			SetName(LPCSTR pzName);
+			TinyString		GetName() const;
+			void			SetToolTip(LPCSTR pzTitle);
+			TinyString		GetToolTip() const;
 			void			SetMaximumSize(const TinySize& size);
 			void			SetMinimumSize(const TinySize& size);
 			TinySize		GetMaximumSize() const;
 			TinySize		GetMinimumSize() const;
-			virtual HRESULT	OnDraw(TinyDC& dc, TinyRectangle& drawRect);
-		private:
-			TinyVisual*		m_spvisPrev;//同级上一个兄弟节点
+			BOOL			IsVisible() const;
+			BOOL			IsEnable() const;
+			void			SetVisible(BOOL visible);
+			void			SetEnable(BOOL enable);
+		public:
+			virtual LPCSTR	RetrieveTag() = 0;
+			virtual HRESULT	OnDraw(TinyDC& dc, TinyRectangle& drawRect) = 0;
+			virtual HRESULT OnMouseMove(POINT pos) = 0;
+			virtual HRESULT OnLButtonDown(POINT pos) = 0;
+			virtual HRESULT OnLButtonUp(POINT pos) = 0;
+			virtual HRESULT OnRButtonDown(POINT pos) = 0;
+			virtual HRESULT OnRButtonUp(POINT pos) = 0;
+		protected:
 			TinyVisual*		m_spvisNext;//同级下一个兄弟节点
 			TinyVisual*		m_spvisParent;//父节点
-			TinyVisual*		m_spvisChild;//孩子节点
+			TinyVisual*		m_spvisChild;//第一个孩子节点
 			TinyVisual*		m_spvisOwner;//对于Popup窗口使用
-			TinyPoint		m_pos;//元素相对窗口的坐标
-			TinySize		m_size;//元素像素大小
+			TinyRectangle   m_windowRect;//屏幕区域
+			TinyRectangle	m_clientRect;//客户区域
 			TinySize		m_maximumSize;//元素的最大像素大小
 			TinySize		m_minimumSize;//元素的最小像素大小
+			TinyString		m_strName;
+			TinyString		m_strText;
+			TinyString		m_strToolTip;
+			HRGN			m_hrgnClip;
+			BOOL			m_visible;
+			BOOL			m_enable;
 		};
 	}
 }

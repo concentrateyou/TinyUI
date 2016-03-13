@@ -5,7 +5,10 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
+		class TinyVisualElement
+		{
 
+		};
 	}
 }
 
