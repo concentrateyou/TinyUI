@@ -206,6 +206,15 @@ namespace TinyUI
 		{
 			TinyVisual* spvisParent = spvis->m_spvisParent;
 			if (!spvisParent || !m_pWindow) return FALSE;
+
+			if (cx < 0)
+				cx = 0;
+			else if (cx > SHRT_MAX)
+				cx = SHRT_MAX;
+			if (cy < 0)
+				cy = 0;
+			else if (cy > SHRT_MAX)
+				cy = SHRT_MAX;
 			INT mycx = cx;
 			INT mycy = cy;
 			if (flags & SWP_NOSIZE)
@@ -213,6 +222,14 @@ namespace TinyUI
 				mycx = spvis->m_windowRect.right - spvis->m_windowRect.left;
 				mycy = spvis->m_windowRect.bottom - spvis->m_windowRect.top;
 			}
+			if (x > SHRT_MAX)
+				x = SHRT_MAX;
+			else if (x < SHRT_MIN)
+				x = SHRT_MIN;
+			if (y > SHRT_MAX)
+				y = SHRT_MAX;
+			else if (y < SHRT_MIN)
+				y = SHRT_MIN;
 			INT myx = x;
 			INT myy = y;
 			if (flags & SWP_NOMOVE)
@@ -224,6 +241,9 @@ namespace TinyUI
 			spvis->m_windowRect.top = spvisParent->m_windowRect.top + myy;
 			spvis->m_windowRect.right = spvis->m_windowRect.left + mycx;
 			spvis->m_windowRect.bottom = spvis->m_windowRect.top + mycx;
+			//TODO
+			CopyRect(spvis->m_clientRect, &spvis->m_windowRect);
+
 			RedrawWindow(m_pWindow->Handle(), NULL, NULL, RDW_INVALIDATE);
 			return TRUE;
 		}
@@ -294,6 +314,20 @@ namespace TinyUI
 				m_spvisFocus = pNew;
 			}
 			return pv;
+		}
+		BOOL TinyVisualTree::ClientToScreen(TinyVisual* psvis, POINT& pos)
+		{
+			if (!psvis) return FALSE;
+			pos.x += psvis->m_clientRect.left;
+			pos.y += psvis->m_clientRect.top;
+			return TRUE;
+		}
+		BOOL TinyVisualTree::ScreenToClient(TinyVisual* psvis, POINT& pos)
+		{
+			if (!psvis) return FALSE;
+			pos->x -= psvis->m_clientRect.left;
+			pos->y -= psvis->m_clientRect.top;
+			return TRUE;
 		}
 		HRESULT	TinyVisualTree::OnMouseMove(POINT pos)
 		{

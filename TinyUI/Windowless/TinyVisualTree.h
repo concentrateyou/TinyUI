@@ -7,7 +7,6 @@ namespace TinyUI
 	{
 #define PVISUAL_TOP        (TinyVisual*)0
 #define PVISUAL_BOTTOM     (TinyVisual*)1	
-
 #define CMD_FIRST        0
 #define CMD_LAST         1
 #define CMD_NEXT         2
@@ -40,6 +39,8 @@ namespace TinyUI
 			TinyVisual*	SetCapture(TinyVisual* pNew);
 			TinyVisual* GetFocus() const;
 			TinyVisual*	SetFocus(TinyVisual* pNew);
+			BOOL		ClientToScreen(TinyVisual* psvis, POINT& pos);
+			BOOL		ScreenToClient(TinyVisual* psvis, POINT& pos);
 		public:
 			HRESULT		OnMouseMove(POINT pos);
 			HRESULT     OnLButtonDown(POINT pos);
@@ -47,8 +48,8 @@ namespace TinyUI
 			HRESULT     OnRButtonDown(POINT pos);
 			HRESULT     OnRButtonUp(POINT pos);
 		private:
-			void LinkVisual(TinyVisual* spvis, TinyVisual* spvisInsert, TinyVisual**pspvisFirst);
-			void UnlinkVisual(TinyVisual* spvisUnlink, TinyVisual** pspvisFirst);
+			void		LinkVisual(TinyVisual* spvis, TinyVisual* spvisInsert, TinyVisual**pspvisFirst);
+			void		UnlinkVisual(TinyVisual* spvisUnlink, TinyVisual** pspvisFirst);
 			TinyVisual*	GetVisualByPos1(TinyVisual* spvis, INT x, INT y);
 			TinyVisual*	GetVisualByPos2(TinyVisual* spvis, INT x, INT y);
 			TinyVisual* GetPrevVisual(TinyVisual* spvisList, TinyVisual* spvisFind) const;

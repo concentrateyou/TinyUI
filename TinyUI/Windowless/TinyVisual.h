@@ -46,8 +46,8 @@ namespace TinyUI
 			TinyVisual*		m_spvisParent;//父节点
 			TinyVisual*		m_spvisChild;//第一个孩子节点
 			TinyVisual*		m_spvisOwner;//对于Popup窗口使用
-			TinyRectangle   m_windowRect;//屏幕区域
-			TinyRectangle	m_clientRect;//客户区域
+			TinyRectangle   m_windowRect;//屏幕区域(屏幕坐标)
+			TinyRectangle	m_clientRect;//客户区域(屏幕坐标)
 			TinySize		m_maximumSize;//元素的最大像素大小
 			TinySize		m_minimumSize;//元素的最小像素大小
 			TinyString		m_strName;
