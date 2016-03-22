@@ -178,7 +178,7 @@ private:\
 	/// <summary>
 	/// 占位符空类型
 	/// </summary>
-	class NullType {};
+	struct NullType;
 	template<typename T>
 	struct IsVoidType
 	{
@@ -481,6 +481,19 @@ private:\
 	{
 	public:
 		enum { Result = (IndexOf<T2, T>::Result == -1 ? -1 : 1 + IndexOf<T2, T>::Result) };
+	};
+	//////////////////////////////////////////////////////////////////////////
+	class TinyAnyPlace
+	{
+	public:
+
+	};
+	/// <summary>
+	/// Any数据结构
+	/// </summary>
+	class TinyAny
+	{
+
 	};
 	//////////////////////////////////////////////////////////////////////////
 	/// <summary>

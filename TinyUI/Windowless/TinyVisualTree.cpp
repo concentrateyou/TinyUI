@@ -325,8 +325,8 @@ namespace TinyUI
 		BOOL TinyVisualTree::ScreenToClient(TinyVisual* psvis, POINT& pos)
 		{
 			if (!psvis) return FALSE;
-			pos->x -= psvis->m_clientRect.left;
-			pos->y -= psvis->m_clientRect.top;
+			pos.x -= psvis->m_clientRect.left;
+			pos.y -= psvis->m_clientRect.top;
 			return TRUE;
 		}
 		HRESULT	TinyVisualTree::OnMouseMove(POINT pos)

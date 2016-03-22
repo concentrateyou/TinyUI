@@ -16,8 +16,6 @@
 #pragma comment(lib,"TinyUI.lib")
 using namespace TinyUI;
 
-
-
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
