@@ -30,12 +30,24 @@
     <ClInclude Include="TinyApp.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Collection.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Watcher.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="TinyApp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Collection.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Watcher.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

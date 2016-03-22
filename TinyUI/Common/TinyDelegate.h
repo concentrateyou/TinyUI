@@ -6,7 +6,7 @@ namespace TinyUI
 {
 	//////////////////////////////////////////////////////////////////////////
 	/// <summary>
-	/// emplate_class< type( type1, type2, ... ) > a_class;
+	/// template_class< type( type1, type2, ... ) > a_class;
 	/// http://blog.csdn.net/pongba/article/details/1560773
 	/// C++ 类型擦除 类似boost::any, 参考了Loki库实现
 	/// 模板R(T1,T2,...)函数类型退化成函数指针
