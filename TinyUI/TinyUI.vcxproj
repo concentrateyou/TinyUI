@@ -102,6 +102,7 @@
     <ClInclude Include="Common\TinyString.h" />
     <ClInclude Include="Common\TinyThunk.h" />
     <ClInclude Include="Common\TinyTime.h" />
+    <ClInclude Include="Common\TinyTuple.h" />
     <ClInclude Include="Common\TinyWindow.h" />
     <ClInclude Include="Common\TinyWindowMsg.h" />
     <ClInclude Include="Control\TinyAnimate.h" />
@@ -186,6 +187,7 @@
     <ClCompile Include="Common\TinyString.cpp" />
     <ClCompile Include="Common\TinyThunk.cpp" />
     <ClCompile Include="Common\TinyTime.cpp" />
+    <ClCompile Include="Common\TinyTuple.cpp" />
     <ClCompile Include="Common\TinyWindow.cpp" />
     <ClCompile Include="Common\TinyWindowMsg.cpp" />
     <ClCompile Include="Control\TinyAnimate.cpp" />

@@ -33,6 +33,8 @@ namespace TinyUI
 			BOOL			IsEnable() const;
 			void			SetVisible(BOOL visible);
 			void			SetEnable(BOOL enable);
+			BOOL			GetClientRect(LPRECT ps);
+			BOOL			GetWindowRect(LPRECT ps);
 		public:
 			virtual LPCSTR	RetrieveTag() = 0;
 			virtual HRESULT	OnDraw(TinyDC& dc, TinyRectangle& drawRect) = 0;

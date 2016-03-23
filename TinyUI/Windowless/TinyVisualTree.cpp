@@ -241,7 +241,6 @@ namespace TinyUI
 			spvis->m_windowRect.top = spvisParent->m_windowRect.top + myy;
 			spvis->m_windowRect.right = spvis->m_windowRect.left + mycx;
 			spvis->m_windowRect.bottom = spvis->m_windowRect.top + mycx;
-			//TODO
 			CopyRect(spvis->m_clientRect, &spvis->m_windowRect);
 
 			RedrawWindow(m_pWindow->Handle(), NULL, NULL, RDW_INVALIDATE);

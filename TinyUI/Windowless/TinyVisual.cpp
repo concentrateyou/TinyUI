@@ -98,33 +98,20 @@ namespace TinyUI
 				}
 			}
 		}
-		//LPCSTR	TinyVisual::RetrieveTag()
-		//{
-		//	return TEXT("");
-		//}
-		//HRESULT	TinyVisual::OnDraw(TinyDC& dc, TinyRectangle& drawRect)
-		//{
-		//	return FALSE;
-		//}
-		//HRESULT TinyVisual::OnMouseMove(POINT pos)
-		//{
-		//	return FALSE;
-		//}
-		//HRESULT TinyVisual::OnLButtonDown(POINT pos)
-		//{
-		//	return FALSE;
-		//}
-		//HRESULT TinyVisual::OnLButtonUp(POINT pos)
-		//{
-		//	return FALSE;
-		//}
-		//HRESULT TinyVisual::OnRButtonDown(POINT pos)
-		//{
-		//	return FALSE;
-		//}
-		//HRESULT TinyVisual::OnRButtonUp(POINT pos)
-		//{
-		//	return FALSE;
-		//}
+		BOOL TinyVisual::GetClientRect(LPRECT ps)
+		{
+			if (!ps) return FALSE;
+			ps->left = 0;
+			ps->top = 0;
+			ps->right = m_clientRect.right - m_clientRect.left;
+			ps->bottom = m_clientRect.bottom - m_clientRect.top;
+			return TRUE;
+		}
+		BOOL TinyVisual::GetWindowRect(LPRECT ps)
+		{
+			if (!ps) return FALSE;
+			memcpy(ps, &m_windowRect, sizeof(RECT));
+			return TRUE;
+		}
 	}
 }

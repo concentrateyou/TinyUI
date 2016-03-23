@@ -318,6 +318,9 @@
     <ClInclude Include="Windowless\TinyVisualDesktop.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
+    <ClInclude Include="Common\TinyTuple.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -568,6 +571,9 @@
     </ClCompile>
     <ClCompile Include="Windowless\TinyVisualDesktop.cpp">
       <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\TinyTuple.cpp">
+      <Filter>源文件\Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
