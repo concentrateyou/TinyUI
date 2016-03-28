@@ -321,6 +321,9 @@
     <ClInclude Include="Common\TinyTuple.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
+    <ClInclude Include="Common\TinySignal.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -573,6 +576,9 @@
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
     <ClCompile Include="Common\TinyTuple.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\TinySignal.cpp">
       <Filter>源文件\Common</Filter>
     </ClCompile>
   </ItemGroup>

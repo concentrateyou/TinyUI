@@ -1,14 +1,9 @@
 #pragma once
 #include "../Common//TinyCollection.h"
+#include "../Common/TinyCallback.h"
 
 namespace TinyUI
 {
-	/// <summary>
-	/// Any数据结构
-	/// </summary>
-	class TinyAny
-	{
 
-	};
 }
 

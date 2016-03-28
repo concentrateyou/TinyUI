@@ -95,6 +95,7 @@
     <ClInclude Include="Common\TinyModule.h" />
     <ClInclude Include="Common\TinyMsg.h" />
     <ClInclude Include="Common\TinyHook.h" />
+    <ClInclude Include="Common\TinySignal.h" />
     <ClInclude Include="Common\TinyTreeBox.h" />
     <ClInclude Include="Common\TinyObject.h" />
     <ClInclude Include="Common\TinyShell.h" />
@@ -180,6 +181,7 @@
     <ClCompile Include="Common\TinyModule.cpp" />
     <ClCompile Include="Common\TinyMsg.cpp" />
     <ClCompile Include="Common\TinyHook.cpp" />
+    <ClCompile Include="Common\TinySignal.cpp" />
     <ClCompile Include="Common\TinyTreeBox.cpp" />
     <ClCompile Include="Common\TinyObject.cpp" />
     <ClCompile Include="Common\TinyShell.cpp" />
