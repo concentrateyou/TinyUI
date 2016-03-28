@@ -26,9 +26,7 @@ namespace TinyUI
 		FunctorBase() = default;
 		FunctorBase(const FunctorBase&) = default;
 		FunctorBase& operator=(const FunctorBase&) = default;
-		virtual ~FunctorBase()
-		{
-		};
+		virtual ~FunctorBase(){};
 	public:
 		virtual FunctorBase* DoClone() const = 0;
 		virtual BOOL operator==(const FunctorBase&) const = 0;

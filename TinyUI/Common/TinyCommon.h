@@ -154,21 +154,21 @@ namespace TinyUI
 
 #define DISALLOW_COPY(TypeName) \
 private:\
-	TypeName(const TypeName&);
+	TypeName(const TypeName&) = delete;
 
 #define DISALLOW_ASSIGN(TypeName) \
 private:\
-	void operator=(const TypeName&);
+	void operator=(const TypeName&) = delete;
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
 private:\
-	TypeName(const TypeName&);               \
-	void operator=(const TypeName&);
+	TypeName(const TypeName&) = delete;  \
+	void operator=(const TypeName&) = delete;
 
 #define DISALLOW_IMPLICIT_CONSTRUCTORS(TypeName) \
 private:\
-	TypeName();                                    \
-	DISALLOW_COPY_AND_ASSIGN(TypeName)
+	TypeName() = delete;   \
+	DISALLOW_COPY_AND_ASSIGN(TypeName);
 
 	template<typename T, size_t N>
 	char(&ArraySizeHelper(T(&array)[N]))[N];
@@ -484,12 +484,6 @@ private:\
 	{
 	public:
 		enum { Result = (IndexOf<T2, T>::Result == -1 ? -1 : 1 + IndexOf<T2, T>::Result) };
-	};
-	//////////////////////////////////////////////////////////////////////////
-	class TinyAnyPlace
-	{
-	public:
-
 	};
 	//////////////////////////////////////////////////////////////////////////
 	/// <summary>

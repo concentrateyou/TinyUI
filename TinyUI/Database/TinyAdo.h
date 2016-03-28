@@ -76,7 +76,7 @@ namespace TinyUI
 	class ADODataParameter : public IDbDataParameter
 	{
 		friend class ADOCommand;
-		DISALLOW_IMPLICIT_CONSTRUCTORS(ADODataParameter);
+		DISALLOW_IMPLICIT_CONSTRUCTORS(ADODataParameter)
 	public:
 		ADODataParameter(ADOCommand& command);
 		virtual ~ADODataParameter();
