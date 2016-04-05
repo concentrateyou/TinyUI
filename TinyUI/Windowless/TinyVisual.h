@@ -36,6 +36,7 @@ namespace TinyUI
 			BOOL			GetClientRect(LPRECT ps);
 			BOOL			GetWindowRect(LPRECT ps);
 		public:
+			virtual BOOL	ParseVisual(LPCSTR pzText) = 0;
 			virtual LPCSTR	RetrieveTag() = 0;
 			virtual HRESULT	OnDraw(TinyDC& dc, TinyRectangle& drawRect) = 0;
 			virtual HRESULT OnMouseMove(POINT pos) = 0;

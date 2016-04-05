@@ -4,8 +4,6 @@
 #include <typeinfo>
 using namespace std;
 
-#include <boost/any.hpp>
-
 namespace TinyUI
 {
 	/// <summary>

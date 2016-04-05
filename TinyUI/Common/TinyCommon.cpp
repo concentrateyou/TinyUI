@@ -23,6 +23,19 @@ namespace TinyUI
 		va_end(args);
 	}
 	//////////////////////////////////////////////////////////////////////////
+	INLINE BOOL operator==(const NullType&, const NullType&)
+	{
+		return TRUE;
+	}
+	INLINE BOOL operator<(const NullType&, const NullType&)
+	{
+		return FALSE;
+	}
+	INLINE BOOL operator>(const NullType&, const NullType&)
+	{
+		return FALSE;
+	}
+	//////////////////////////////////////////////////////////////////////////
 	TinyReferenceBase::TinyReferenceBase()
 		:m_cRef(0)
 	{

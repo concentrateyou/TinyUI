@@ -14,6 +14,7 @@ namespace TinyUI
 	BOOL TinyXMLParse::LoadFile(LPCSTR pzFile)
 	{
 		ASSERT(pzFile);
+		
 		return TRUE;
 	}
 	BOOL TinyXMLParse::LoadStream(IStream* ps)

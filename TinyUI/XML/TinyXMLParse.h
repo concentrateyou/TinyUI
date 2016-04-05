@@ -17,6 +17,8 @@ namespace TinyUI
 	public:
 		BOOL	LoadFile(LPCSTR pzFile);
 		BOOL	LoadStream(IStream* ps);
+	public:
+
 	};
 }
 

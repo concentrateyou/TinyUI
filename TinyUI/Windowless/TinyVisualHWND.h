@@ -20,7 +20,7 @@ namespace TinyUI
 			virtual DWORD RetrieveExStyle() OVERRIDE;
 			virtual LPCSTR RetrieveClassName() OVERRIDE;
 			virtual LPCSTR RetrieveTitle() OVERRIDE;
-			virtual HICON RetrieveIcon() OVERRIDE;
+			virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			virtual LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			virtual LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			virtual LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
@@ -33,8 +33,9 @@ namespace TinyUI
 			virtual LRESULT OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			virtual LRESULT OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		private:
-			void Initialize();
+			BOOL Initialize();
 			void Uninitialize();
+			void BuildVisualTree();
 		private:
 			SIZE			m_size;
 			TinyVisualTree*	m_vtree;

@@ -182,6 +182,10 @@ private:\
 	/// 占位符空类型
 	/// </summary>
 	struct NullType;
+	INLINE BOOL operator==(const NullType&, const NullType&);
+	INLINE BOOL operator<(const NullType&, const NullType&);
+	INLINE BOOL operator>(const NullType&, const NullType&);
+	//////////////////////////////////////////////////////////////////////////
 	template<typename T>
 	struct IsVoidType
 	{

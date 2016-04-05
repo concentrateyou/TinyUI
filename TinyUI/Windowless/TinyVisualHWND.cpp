@@ -40,16 +40,31 @@ namespace TinyUI
 		{
 			return NULL;
 		}
-		void TinyVisualHWND::Initialize()
+		BOOL TinyVisualHWND::Initialize()
 		{
-			m_vtree = new TinyVisualTree(this);
-			m_vtree->Initialize();
+			if (m_vtree = new TinyVisualTree(this))
+			{
+				return m_vtree->Initialize();
+			}
+			return FALSE;
 		}
 		void TinyVisualHWND::Uninitialize()
 		{
 			if (!m_vtree) return;
 			m_vtree->Uninitialize();
 			SAFE_DELETE(m_vtree);
+		}
+		void TinyVisualHWND::BuildVisualTree()
+		{
+			if (!m_vtree) return;
+
+		}
+		LRESULT TinyVisualHWND::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			Initialize();
+			BuildVisualTree();
+			return FALSE;
 		}
 		LRESULT TinyVisualHWND::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
@@ -89,7 +104,7 @@ namespace TinyUI
 		LRESULT TinyVisualHWND::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
-			
+
 			return FALSE;
 		}
 		LRESULT TinyVisualHWND::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

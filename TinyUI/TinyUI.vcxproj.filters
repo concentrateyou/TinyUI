@@ -276,9 +276,6 @@
     <ClInclude Include="Render\TinyTransform.h">
       <Filter>头文件\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Windowless\TinyVisualFactory.h">
-      <Filter>头文件\Windowless</Filter>
-    </ClInclude>
     <ClInclude Include="Common\TinyError.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
@@ -323,6 +320,9 @@
     </ClInclude>
     <ClInclude Include="Common\TinySignal.h">
       <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualManage.h">
+      <Filter>头文件\Windowless</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -533,9 +533,6 @@
     <ClCompile Include="Render\TinyTransform.cpp">
       <Filter>源文件\Render</Filter>
     </ClCompile>
-    <ClCompile Include="Windowless\TinyVisualFactory.cpp">
-      <Filter>源文件\Windowless</Filter>
-    </ClCompile>
     <ClCompile Include="Common\TinyError.cpp">
       <Filter>源文件\Common</Filter>
     </ClCompile>
@@ -580,6 +577,9 @@
     </ClCompile>
     <ClCompile Include="Common\TinySignal.cpp">
       <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualManage.cpp">
+      <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

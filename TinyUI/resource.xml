@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <window name="" value="" size="100,400">
-  <sysbutton>
-    <button name="min" value="" size="30,30" style="0x0001"></button>
-    <button name="max" value="" size="30,30" style="0x0001"></button>
-    <button name="restore" value="" size="30,30" style="0x0001"></button>
-    <button name="close" value="" size="30,30" style="0x0001"></button>
-  </sysbutton>
+  <caption>
+    <sysbutton name="min" value="Min" size="30,30" ></sysbutton>
+    <sysbutton name="max" value="Max" size="30,30"></sysbutton>
+    <sysbutton name="restore" value="Restore" size="30,30"></sysbutton>
+    <sysbutton name="close" value="Close" size="30,30"></sysbutton>
+  </caption>
 </window>

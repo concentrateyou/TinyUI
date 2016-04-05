@@ -18,3 +18,4 @@ public:
 private:
 	TrieNode* m_pRoot;
 };
+
