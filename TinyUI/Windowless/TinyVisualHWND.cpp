@@ -59,13 +59,6 @@ namespace TinyUI
 			if (!m_vtree) return;
 
 		}
-		LRESULT TinyVisualHWND::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-		{
-			bHandled = FALSE;
-			Initialize();
-			BuildVisualTree();
-			return FALSE;
-		}
 		LRESULT TinyVisualHWND::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
@@ -99,6 +92,7 @@ namespace TinyUI
 		{
 			bHandled = FALSE;
 			Initialize();
+			BuildVisualTree();
 			return FALSE;
 		}
 		LRESULT TinyVisualHWND::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

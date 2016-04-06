@@ -12,6 +12,7 @@ namespace TinyUI
 		{
 		public:
 			LPCSTR RetrieveTag() OVERRIDE;
+			BOOL ParseVisual(LPCSTR pzText) OVERRIDE;
 			HRESULT OnDraw(TinyDC& dc, TinyRectangle& drawRect) OVERRIDE;
 			HRESULT OnMouseMove(POINT pos) OVERRIDE;
 			HRESULT OnLButtonDown(POINT pos) OVERRIDE;

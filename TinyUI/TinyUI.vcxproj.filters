@@ -291,9 +291,6 @@
     <ClInclude Include="Windowless\TinyVisual.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
-    <ClInclude Include="Windowless\TinyVisualWindow.h">
-      <Filter>头文件\Windowless</Filter>
-    </ClInclude>
     <ClInclude Include="IO\TinyTaskPool.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
@@ -312,9 +309,6 @@
     <ClInclude Include="Windowless\TinyVisualElement.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
-    <ClInclude Include="Windowless\TinyVisualDesktop.h">
-      <Filter>头文件\Windowless</Filter>
-    </ClInclude>
     <ClInclude Include="Common\TinyTuple.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
@@ -322,6 +316,9 @@
       <Filter>头文件\Common</Filter>
     </ClInclude>
     <ClInclude Include="Windowless\TinyVisualManage.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualWindow.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
   </ItemGroup>
@@ -548,9 +545,6 @@
     <ClCompile Include="Windowless\TinyVisual.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
-    <ClCompile Include="Windowless\TinyVisualWindow.cpp">
-      <Filter>源文件\Windowless</Filter>
-    </ClCompile>
     <ClCompile Include="IO\TinyTaskPool.cpp">
       <Filter>源文件\IO</Filter>
     </ClCompile>
@@ -569,9 +563,6 @@
     <ClCompile Include="Windowless\TinyVisualElement.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
-    <ClCompile Include="Windowless\TinyVisualDesktop.cpp">
-      <Filter>源文件\Windowless</Filter>
-    </ClCompile>
     <ClCompile Include="Common\TinyTuple.cpp">
       <Filter>源文件\Common</Filter>
     </ClCompile>
@@ -579,6 +570,9 @@
       <Filter>源文件\Common</Filter>
     </ClCompile>
     <ClCompile Include="Windowless\TinyVisualManage.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualWindow.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>

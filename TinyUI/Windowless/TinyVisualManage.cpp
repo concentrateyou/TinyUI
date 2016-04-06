@@ -20,7 +20,7 @@ namespace TinyUI
 		}
 		BOOL TinyVisualParse::BuildVisualTree(TinyVisualTree* ps)
 		{
-			
+			return FALSE;
 		}
 	};
 }

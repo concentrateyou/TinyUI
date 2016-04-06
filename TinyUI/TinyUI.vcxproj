@@ -154,7 +154,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Render\TinyCanvas.h" />
     <ClInclude Include="Windowless\TinyUtility.h" />
-    <ClInclude Include="Windowless\TinyVisualDesktop.h" />
+    <ClInclude Include="Windowless\TinyVisualWindow.h" />
     <ClInclude Include="Windowless\TinyVisualElement.h" />
     <ClInclude Include="Windowless\TinyVisualManage.h" />
     <ClInclude Include="Windowless\TinyVisualCaption.h" />
@@ -162,7 +162,6 @@
     <ClInclude Include="Windowless\TinyVisualEvent.h" />
     <ClInclude Include="Windowless\TinyVisualHWND.h" />
     <ClInclude Include="Windowless\TinyVisualTree.h" />
-    <ClInclude Include="Windowless\TinyVisualWindow.h" />
     <ClInclude Include="XML\tinystr.h" />
     <ClInclude Include="XML\tinyxml.h" />
     <ClInclude Include="XML\TinyXMLParse.h" />
@@ -242,7 +241,7 @@
     </ClCompile>
     <ClCompile Include="Render\TinyCanvas.cpp" />
     <ClCompile Include="Windowless\TinyUtility.cpp" />
-    <ClCompile Include="Windowless\TinyVisualDesktop.cpp" />
+    <ClCompile Include="Windowless\TinyVisualWindow.cpp" />
     <ClCompile Include="Windowless\TinyVisualElement.cpp" />
     <ClCompile Include="Windowless\TinyVisualManage.cpp" />
     <ClCompile Include="Windowless\TinyVisualCaption.cpp" />
@@ -250,7 +249,6 @@
     <ClCompile Include="Windowless\TinyVisualEvent.cpp" />
     <ClCompile Include="Windowless\TinyVisualHWND.cpp" />
     <ClCompile Include="Windowless\TinyVisualTree.cpp" />
-    <ClCompile Include="Windowless\TinyVisualWindow.cpp" />
     <ClCompile Include="XML\tinystr.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>

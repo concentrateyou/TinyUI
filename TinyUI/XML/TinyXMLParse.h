@@ -2,6 +2,8 @@
 #include "../Common/TinyString.h"
 #include "../Common/TinyEvent.h"
 #include "../Render/TinyGDI.h"
+#include "../XML/tinystr.h"
+#include "../XML/tinyxml.h"
 
 namespace TinyUI
 {

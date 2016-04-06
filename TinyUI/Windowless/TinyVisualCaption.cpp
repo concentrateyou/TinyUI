@@ -12,7 +12,7 @@ namespace TinyUI
 		}
 		BOOL TinySysButton::ParseVisual(LPCSTR pzText)
 		{
-
+			return FALSE;
 		}
 		HRESULT TinySysButton::OnDraw(TinyDC& dc, TinyRectangle& drawRect)
 		{

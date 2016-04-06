@@ -1,6 +1,6 @@
 #include "../stdafx.h"
+#include "TinyVisualWindow.h"
 #include "TinyVisualTree.h"
-#include "TinyVisualDesktop.h"
 
 namespace TinyUI
 {
@@ -20,7 +20,7 @@ namespace TinyUI
 		}
 		BOOL TinyVisualTree::Initialize()
 		{
-			m_spvisDesktop = new TinyVisualDesktop();
+			m_spvisDesktop = new TinyVisualWindow(this);
 			if (!m_spvisDesktop) return FALSE;
 			return TRUE;
 		}
