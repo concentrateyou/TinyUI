@@ -5,6 +5,10 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
+		const CHAR* TinyVisualTag::WINDOW = TEXT("window");
+		const CHAR* TinyVisualTag::CAPTION = TEXT("caption");
+		const CHAR* TinyVisualTag::SYSBUTTON = TEXT("sysbutton");
+		//////////////////////////////////////////////////////////////////////////
 		TinyVisualParse::TinyVisualParse()
 		{
 
@@ -20,6 +24,10 @@ namespace TinyUI
 		}
 		BOOL TinyVisualParse::BuildVisualTree(TinyVisualTree* ps)
 		{
+			TiXmlElement *ele = m_doc.RootElement();
+			if (!ele && !strcasecmp(ele->Value(), TinyVisualTag::WINDOW)) 
+				return FALSE;
+
 			return FALSE;
 		}
 	};

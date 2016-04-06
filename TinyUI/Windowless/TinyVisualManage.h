@@ -7,6 +7,13 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
+		class TinyVisualTag
+		{
+		public:
+			const static CHAR* WINDOW;
+			const static CHAR* CAPTION;
+			const static CHAR* SYSBUTTON;
+		};
 		/// <summary>
 		/// 可视化元素管理
 		/// </summary>
