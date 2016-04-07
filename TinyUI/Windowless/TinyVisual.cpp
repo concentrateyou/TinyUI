@@ -5,6 +5,14 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
+		const CHAR* TinyVisual::NAME = TEXT("name");
+		const CHAR* TinyVisual::TEXT = TEXT("text");
+		const CHAR* TinyVisual::TOOLTIP = TEXT("tooltip");
+		const CHAR* TinyVisual::MAXSIZE = TEXT("maxsize");
+		const CHAR* TinyVisual::MINSIZE = TEXT("minsize");
+		const CHAR* TinyVisual::VISIBLE = TEXT("visible");
+		const CHAR* TinyVisual::ENABLE = TEXT("enable");
+
 		TinyVisual::TinyVisual()
 			:m_spvisNext(NULL),
 			m_spvisParent(NULL),

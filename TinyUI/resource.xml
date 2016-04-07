@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<window name="demo" value="demo" size="100,400" maxsize="100,400" minsize="100,400">
+<window name="demo" text="demo" size="100,400" maxsize="100,400" minsize="100,400">
   <caption>
-    <sysbutton name="min" value="Min" size="30,30" ></sysbutton>
-    <sysbutton name="max" value="Max" size="30,30"></sysbutton>
-    <sysbutton name="restore" value="Restore" size="30,30"></sysbutton>
-    <sysbutton name="close" value="Close" size="30,30"></sysbutton>
+    <sysbutton name="min" text="Min" size="30,30" ></sysbutton>
+    <sysbutton name="max" text="Max" size="30,30"></sysbutton>
+    <sysbutton name="restore" text="Restore" size="30,30"></sysbutton>
+    <sysbutton name="close" text="Close" size="30,30"></sysbutton>
   </caption>
 </window>

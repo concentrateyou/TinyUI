@@ -93,7 +93,6 @@ namespace TinyUI
 		_Mystr(NULL)
 	{
 		//TRACE("调用构造函数TinyString(const CHAR* s): %d\n", this);
-		ASSERT(s);
 		Assign(s, strlen(s));
 	}
 	TinyString::TinyString(const TinyString& s, size_t pos, size_t size)

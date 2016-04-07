@@ -7,19 +7,8 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		class TinyVisualTag
-		{
-		public:
-			const static CHAR* WINDOW;
-			const static CHAR* CAPTION;
-			const static CHAR* SYSBUTTON;
-			const static CHAR* BUTTON;
-			const static CHAR* COMBOBOX;
-			const static CHAR* TAB;
-			const static CHAR* LIST;
-			const static CHAR* TREEVIEW;
-			const static CHAR* TOOLBAR;
-		};
+		class TinyVisual;
+		class TinyVisualTree;
 		/// <summary>
 		/// 可视化元素管理
 		/// </summary>

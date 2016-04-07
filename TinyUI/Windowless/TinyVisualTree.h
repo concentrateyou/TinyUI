@@ -1,5 +1,6 @@
 #pragma once
 #include "TinyVisualHWND.h"
+#include "TinyVisualManage.h"
 
 namespace TinyUI
 {
@@ -13,7 +14,6 @@ namespace TinyUI
 #define CMD_PREV         3
 #define CMD_OWNER        4
 #define CMD_CHILD        5
-
 		class TinyVisual;
 		class TinyVisualHWND;
 		/// <summary>
@@ -21,6 +21,7 @@ namespace TinyUI
 		/// </summary>
 		class TinyVisualTree
 		{
+			friend class TinyVisualParse;
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualTree);
 		public:
 			TinyVisualTree(TinyVisualHWND* pv);
@@ -54,10 +55,11 @@ namespace TinyUI
 			TinyVisual*	GetVisualByPos2(TinyVisual* spvis, INT x, INT y);
 			TinyVisual* GetPrevVisual(TinyVisual* spvisList, TinyVisual* spvisFind) const;
 		private:
-			TinyVisual*			m_spvisDesktop;//根节点
-			TinyVisualHWND*		m_pWindow;
-			TinyVisual*			m_spvisCapture;
-			TinyVisual*			m_spvisFocus;
+			TinyVisualHWND*					m_pWindow;
+			TinyVisual*						m_spvisWindow;//根节点
+			TinyVisual*						m_spvisCapture;
+			TinyVisual*						m_spvisFocus;
+			TinyScopedPtr<TinyVisualParse>	m_parse;
 		};
 	};
 }

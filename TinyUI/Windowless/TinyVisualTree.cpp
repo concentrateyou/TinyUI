@@ -7,7 +7,7 @@ namespace TinyUI
 	namespace Windowless
 	{
 		TinyVisualTree::TinyVisualTree(TinyVisualHWND* pWindow)
-			:m_spvisDesktop(NULL),
+			:m_spvisWindow(NULL),
 			m_spvisCapture(NULL),
 			m_spvisFocus(NULL),
 			m_pWindow(pWindow)
@@ -20,13 +20,16 @@ namespace TinyUI
 		}
 		BOOL TinyVisualTree::Initialize()
 		{
-			m_spvisDesktop = new TinyVisualWindow(this);
-			if (!m_spvisDesktop) return FALSE;
+			m_spvisWindow = new TinyVisualWindow(this);
+			if (!m_spvisWindow) return FALSE;
+			m_parse.Reset(new TinyVisualParse());
+			m_parse->LoadFile("D:\\resource.xml");
+			m_parse->BuildVisualTree(this);
 			return TRUE;
 		}
 		void TinyVisualTree::Uninitialize()
 		{
-			SAFE_DELETE(m_spvisDesktop);
+			SAFE_DELETE(m_spvisWindow);
 		}
 		void TinyVisualTree::LinkVisual(TinyVisual* spvis, TinyVisual* spvisInsert, TinyVisual**pspvisFirst)
 		{
@@ -80,7 +83,7 @@ namespace TinyUI
 		}
 		TinyVisual* TinyVisualTree::GetVisual(TinyVisual* spvis, UINT cmd) const
 		{
-			if (spvis == m_spvisDesktop)
+			if (spvis == m_spvisWindow)
 			{
 				switch (cmd)
 				{
@@ -146,7 +149,7 @@ namespace TinyUI
 		}
 		TinyVisual* TinyVisualTree::GetParent(TinyVisual* spvis) const
 		{
-			if (!spvis) return NULL;
+			if (!spvis) return m_spvisWindow;
 			return spvis->m_spvisParent;
 		}
 		TinyVisual* TinyVisualTree::SetParent(TinyVisual* spvis, TinyVisual* spvisParent)
@@ -154,9 +157,9 @@ namespace TinyUI
 			ASSERT(spvis && spvisParent);
 			if (spvisParent == NULL)
 			{
-				spvisParent = m_spvisDesktop;
+				spvisParent = m_spvisWindow;
 			}
-			if (spvis == m_spvisDesktop)
+			if (spvis == m_spvisWindow)
 			{
 				return NULL;
 			}
@@ -286,7 +289,7 @@ namespace TinyUI
 		}
 		TinyVisual*	TinyVisualTree::GetVisualByPos(INT x, INT y)
 		{
-			return GetVisualByPos2(m_spvisDesktop, x, y);
+			return GetVisualByPos2(m_spvisWindow, x, y);
 		}
 		TinyVisual* TinyVisualTree::GetCapture() const
 		{

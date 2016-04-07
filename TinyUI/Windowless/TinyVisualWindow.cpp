@@ -5,16 +5,42 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		TinyVisualWindow::TinyVisualWindow(TinyVisualTree* pT)
-			:m_pT(pT)
+		const CHAR* TinyVisualWindow::Tag = TEXT("window");
+
+		TinyVisualWindow::TinyVisualWindow(TinyVisualTree* myT)
+			:m_myT(myT)
+		{
+
+		}
+		TinyVisualWindow::~TinyVisualWindow()
 		{
 
 		}
 		LPCSTR TinyVisualWindow::RetrieveTag()
 		{
-			return TEXT("window");
+			return Tag;
 		}
 
+		BOOL TinyVisualWindow::ParseVisual(TiXmlElement* ps)
+		{
+			TiXmlAttribute* pFA = ps->FirstAttribute();
+			TiXmlAttribute* pLA = ps->LastAttribute();
+			while (pFA != pLA)
+			{
+				if (!strcasecmp(pFA->Name(), TinyVisual::NAME))
+					this->SetName(pFA->Value());
+				if (!strcasecmp(pFA->Name(), TinyVisual::TEXT))
+					this->SetText(pFA->Value());
+				if (!strcasecmp(pFA->Name(), TinyVisual::TOOLTIP))
+					this->SetToolTip(pFA->Value());
+				if (!strcasecmp(pFA->Name(), TinyVisual::MAXSIZE))
+				{
+
+				}
+				pFA = pFA->Next();
+			}
+			return TRUE;
+		}
 		HRESULT TinyVisualWindow::OnDraw(TinyDC& dc, TinyRectangle& drawRect)
 		{
 			return FALSE;

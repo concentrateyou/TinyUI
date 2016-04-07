@@ -35,7 +35,6 @@ namespace TinyUI
 		private:
 			BOOL Initialize();
 			void Uninitialize();
-			void BuildVisualTree();
 		private:
 			SIZE			m_size;
 			TinyVisualTree*	m_vtree;

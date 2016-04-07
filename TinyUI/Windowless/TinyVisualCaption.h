@@ -8,11 +8,11 @@ namespace TinyUI
 		/// <summary>
 		/// 系统按钮-最大,最小,还原,关闭
 		/// </summary>
-		class TinySysButton : public TinyVisualElement
+		class TinySysButton : public TinyVisual
 		{
 		public:
 			LPCSTR RetrieveTag() OVERRIDE;
-			BOOL ParseVisual(LPCSTR pzText) OVERRIDE;
+			BOOL ParseVisual(TiXmlElement* ps) OVERRIDE;
 			HRESULT OnDraw(TinyDC& dc, TinyRectangle& drawRect) OVERRIDE;
 			HRESULT OnMouseMove(POINT pos) OVERRIDE;
 			HRESULT OnLButtonDown(POINT pos) OVERRIDE;
@@ -23,7 +23,7 @@ namespace TinyUI
 		/// <summary>
 		/// 标题栏
 		/// </summary>
-		class TinyVisualCaption : public TinyVisualElement
+		class TinyVisualCaption : public TinyVisual
 		{
 		public:
 			LPCSTR RetrieveTag() OVERRIDE;

@@ -44,6 +44,7 @@ namespace TinyUI
 		{
 			if (m_vtree = new TinyVisualTree(this))
 			{
+
 				return m_vtree->Initialize();
 			}
 			return FALSE;
@@ -54,11 +55,7 @@ namespace TinyUI
 			m_vtree->Uninitialize();
 			SAFE_DELETE(m_vtree);
 		}
-		void TinyVisualHWND::BuildVisualTree()
-		{
-			if (!m_vtree) return;
 
-		}
 		LRESULT TinyVisualHWND::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
@@ -92,7 +89,6 @@ namespace TinyUI
 		{
 			bHandled = FALSE;
 			Initialize();
-			BuildVisualTree();
 			return FALSE;
 		}
 		LRESULT TinyVisualHWND::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
