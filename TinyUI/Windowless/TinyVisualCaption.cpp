@@ -10,7 +10,7 @@ namespace TinyUI
 		{
 			return TEXT("sysbutton");
 		}
-		BOOL TinySysButton::ParseVisual(TiXmlElement* ps)
+		BOOL TinySysButton::ParsePropertys(TiXmlElement* ps)
 		{
 			return FALSE;
 		}

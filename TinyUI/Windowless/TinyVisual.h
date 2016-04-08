@@ -38,7 +38,7 @@ namespace TinyUI
 			BOOL			GetClientRect(LPRECT ps);
 			BOOL			GetWindowRect(LPRECT ps);
 		public:
-			virtual BOOL	ParseVisual(TiXmlElement* ps) = 0;
+			virtual BOOL	ParsePropertys(TiXmlElement* ps);
 			virtual LPCSTR	RetrieveTag() = 0;
 			virtual HRESULT	OnDraw(TinyDC& dc, TinyRectangle& drawRect) = 0;
 			virtual HRESULT OnMouseMove(POINT pos) = 0;
@@ -46,14 +46,6 @@ namespace TinyUI
 			virtual HRESULT OnLButtonUp(POINT pos) = 0;
 			virtual HRESULT OnRButtonDown(POINT pos) = 0;
 			virtual HRESULT OnRButtonUp(POINT pos) = 0;
-			//元素属性
-			static const CHAR* NAME;
-			static const CHAR* TEXT;
-			static const CHAR* TOOLTIP;
-			static const CHAR* MAXSIZE;
-			static const CHAR* MINSIZE;
-			static const CHAR* VISIBLE;
-			static const CHAR* ENABLE;
 		protected:
 			TinyVisual*		m_spvisNext;//同级下一个兄弟节点
 			TinyVisual*		m_spvisParent;//父节点

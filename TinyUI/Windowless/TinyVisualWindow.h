@@ -13,8 +13,8 @@ namespace TinyUI
 			TinyVisualWindow(TinyVisualTree* myT);
 			virtual ~TinyVisualWindow();
 		public:
+			BOOL ParsePropertys(TiXmlElement* ps) OVERRIDE;
 			LPCSTR RetrieveTag() OVERRIDE;
-			BOOL ParseVisual(TiXmlElement* ps) OVERRIDE;
 			HRESULT OnDraw(TinyDC& dc, TinyRectangle& drawRect) OVERRIDE;
 			HRESULT OnMouseMove(POINT pos) OVERRIDE;
 			HRESULT OnLButtonDown(POINT pos) OVERRIDE;
@@ -22,9 +22,13 @@ namespace TinyUI
 			HRESULT OnRButtonDown(POINT pos) OVERRIDE;
 			HRESULT OnRButtonUp(POINT pos) OVERRIDE;
 		public:
+			void			SetSize(const TinySize& size);
+			TinySize		GetSize() const;
+		public:
 			static const CHAR* Tag;
 		private:
 			TinyVisualTree*		m_myT;
+			TinySize			m_size;
 		};
 	}
 }

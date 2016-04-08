@@ -1,5 +1,6 @@
 #include "../stdafx.h"
 #include "TinyVisualWindow.h"
+#include "../Common/TinyString.h"
 
 namespace TinyUI
 {
@@ -21,25 +22,25 @@ namespace TinyUI
 			return Tag;
 		}
 
-		BOOL TinyVisualWindow::ParseVisual(TiXmlElement* ps)
+		BOOL TinyVisualWindow::ParsePropertys(TiXmlElement* ps)
 		{
 			TiXmlAttribute* pFA = ps->FirstAttribute();
 			TiXmlAttribute* pLA = ps->LastAttribute();
 			while (pFA != pLA)
 			{
-				if (!strcasecmp(pFA->Name(), TinyVisual::NAME))
-					this->SetName(pFA->Value());
-				if (!strcasecmp(pFA->Name(), TinyVisual::TEXT))
-					this->SetText(pFA->Value());
-				if (!strcasecmp(pFA->Name(), TinyVisual::TOOLTIP))
-					this->SetToolTip(pFA->Value());
-				if (!strcasecmp(pFA->Name(), TinyVisual::MAXSIZE))
+				if (!strcasecmp(pFA->Name(), TinyVisualPoperty::SIZE))
 				{
-
+					TinyString val = pFA->Value();
+					TinyArray<TinyString> sps;
+					val.Split(',', sps);
+					if (sps.GetSize() == 2)
+					{
+						this->SetSize(TinySize(atoi(sps[0].STR()), atoi(sps[1].STR())));
+					}
 				}
 				pFA = pFA->Next();
 			}
-			return TRUE;
+			return TinyVisual::ParsePropertys(ps);
 		}
 		HRESULT TinyVisualWindow::OnDraw(TinyDC& dc, TinyRectangle& drawRect)
 		{
@@ -70,6 +71,16 @@ namespace TinyUI
 		{
 			return FALSE;
 		}
-
+		void TinyVisualWindow::SetSize(const TinySize& size)
+		{
+			if (m_size != size)
+			{
+				m_size = size;
+			}
+		}
+		TinySize TinyVisualWindow::GetSize() const
+		{
+			return m_size;
+		}
 	}
 }

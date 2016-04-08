@@ -11,8 +11,8 @@ namespace TinyUI
 		class TinySysButton : public TinyVisual
 		{
 		public:
+			BOOL ParsePropertys(TiXmlElement* ps) OVERRIDE;
 			LPCSTR RetrieveTag() OVERRIDE;
-			BOOL ParseVisual(TiXmlElement* ps) OVERRIDE;
 			HRESULT OnDraw(TinyDC& dc, TinyRectangle& drawRect) OVERRIDE;
 			HRESULT OnMouseMove(POINT pos) OVERRIDE;
 			HRESULT OnLButtonDown(POINT pos) OVERRIDE;

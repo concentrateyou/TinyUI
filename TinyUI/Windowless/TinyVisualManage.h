@@ -9,6 +9,19 @@ namespace TinyUI
 	{
 		class TinyVisual;
 		class TinyVisualTree;
+		class TinyVisualPoperty
+		{
+		public:
+			//元素属性
+			static const CHAR* NAME;
+			static const CHAR* TEXT;
+			static const CHAR* TOOLTIP;
+			static const CHAR* MAXSIZE;
+			static const CHAR* MINSIZE;
+			static const CHAR* SIZE;
+			static const CHAR* VISIBLE;
+			static const CHAR* ENABLE;
+		};
 		/// <summary>
 		/// 可视化元素管理
 		/// </summary>

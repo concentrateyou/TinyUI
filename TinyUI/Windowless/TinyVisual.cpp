@@ -5,13 +5,6 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		const CHAR* TinyVisual::NAME = TEXT("name");
-		const CHAR* TinyVisual::TEXT = TEXT("text");
-		const CHAR* TinyVisual::TOOLTIP = TEXT("tooltip");
-		const CHAR* TinyVisual::MAXSIZE = TEXT("maxsize");
-		const CHAR* TinyVisual::MINSIZE = TEXT("minsize");
-		const CHAR* TinyVisual::VISIBLE = TEXT("visible");
-		const CHAR* TinyVisual::ENABLE = TEXT("enable");
 
 		TinyVisual::TinyVisual()
 			:m_spvisNext(NULL),
@@ -119,6 +112,42 @@ namespace TinyUI
 		{
 			if (!ps) return FALSE;
 			memcpy(ps, &m_windowRect, sizeof(RECT));
+			return TRUE;
+		}
+		BOOL TinyVisual::ParsePropertys(TiXmlElement* ps)
+		{
+			TiXmlAttribute* pFA = ps->FirstAttribute();
+			TiXmlAttribute* pLA = ps->LastAttribute();
+			while (pFA != pLA)
+			{
+				if (!strcasecmp(pFA->Name(), TinyVisualPoperty::NAME))
+					this->SetName(pFA->Value());
+				if (!strcasecmp(pFA->Name(), TinyVisualPoperty::TEXT))
+					this->SetText(pFA->Value());
+				if (!strcasecmp(pFA->Name(), TinyVisualPoperty::TOOLTIP))
+					this->SetToolTip(pFA->Value());
+				if (!strcasecmp(pFA->Name(), TinyVisualPoperty::MAXSIZE))
+				{
+					TinyString val = pFA->Value();
+					TinyArray<TinyString> sps;
+					val.Split(',', sps);
+					if (sps.GetSize() == 2)
+					{
+						this->SetMaximumSize(TinySize(atoi(sps[0].STR()), atoi(sps[1].STR())));
+					}
+				}
+				if (!strcasecmp(pFA->Name(), TinyVisualPoperty::MINSIZE))
+				{
+					TinyString val = pFA->Value();
+					TinyArray<TinyString> sps;
+					val.Split(',', sps);
+					if (sps.GetSize() == 2)
+					{
+						this->SetMinimumSize(TinySize(atoi(sps[0].STR()), atoi(sps[1].STR())));
+					}
+				}
+				pFA = pFA->Next();
+			}
 			return TRUE;
 		}
 	}

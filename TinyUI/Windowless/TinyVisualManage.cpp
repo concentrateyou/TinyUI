@@ -6,6 +6,15 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
+		const CHAR* TinyVisualPoperty::NAME = TEXT("name");
+		const CHAR* TinyVisualPoperty::TEXT = TEXT("text");
+		const CHAR* TinyVisualPoperty::TOOLTIP = TEXT("tooltip");
+		const CHAR* TinyVisualPoperty::MAXSIZE = TEXT("maxsize");
+		const CHAR* TinyVisualPoperty::MINSIZE = TEXT("minsize");
+		const CHAR* TinyVisualPoperty::SIZE = TEXT("size");
+		const CHAR* TinyVisualPoperty::VISIBLE = TEXT("visible");
+		const CHAR* TinyVisualPoperty::ENABLE = TEXT("enable");
+		//////////////////////////////////////////////////////////////////////////
 		TinyVisualParse::TinyVisualParse()
 		{
 
@@ -27,7 +36,7 @@ namespace TinyUI
 			//获得根节点
 			TinyVisual* pWindow = ps->GetParent(NULL);
 			if (!pWindow) return FALSE;
-			pWindow->ParseVisual(ele);
+			pWindow->ParsePropertys(ele);
 			return FALSE;
 		}
 	};
