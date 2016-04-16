@@ -38,6 +38,11 @@ namespace TinyUI
 		BOOL ShowWindow(INT nCmdShow) throw();
 		BOOL UpdateWindow() throw();
 		void CenterWindow(HWND parent, HWND window, SIZE pref) throw();
+		DWORD GetStyle() const;
+		DWORD GetExStyle() const;
+		BOOL  GetWindowRect(LPRECT lprect);
+		BOOL  GetClientRect(LPRECT lprect);
+		//////////////////////////////////////////////////////////////////////////
 	public:
 		BEGIN_MSG_MAP(TinyControl, TinyWindow)
 			MESSAGE_HANDLER(WM_CREATE, OnCreate)
@@ -61,17 +66,17 @@ namespace TinyUI
 			MESSAGE_HANDLER(WM_PAINT, OnPaint)
 			MESSAGE_HANDLER(WM_ERASEBKGND, OnErasebkgnd)
 			MESSAGE_HANDLER(WM_MOUSEMOVE, OnMouseMove)
-			MESSAGE_HANDLER(WM_MOUSELEAVE,OnMouseLeave)
-			MESSAGE_HANDLER(WM_MOUSEWHEEL,OnMouseWheel)
+			MESSAGE_HANDLER(WM_MOUSELEAVE, OnMouseLeave)
+			MESSAGE_HANDLER(WM_MOUSEWHEEL, OnMouseWheel)
 			MESSAGE_HANDLER(WM_LBUTTONDOWN, OnLButtonDown)
 			MESSAGE_HANDLER(WM_LBUTTONUP, OnLButtonUp)
 			MESSAGE_HANDLER(WM_LBUTTONDBLCLK, OnRButtonDBClick)
 			MESSAGE_HANDLER(WM_RBUTTONDOWN, OnRButtonDown)
 			MESSAGE_HANDLER(WM_RBUTTONUP, OnRButtonUp)
 			MESSAGE_HANDLER(WM_RBUTTONDBLCLK, OnRButtonDBClick)
-			MESSAGE_HANDLER(WM_MOUSEHOVER,OnMouseHover)
+			MESSAGE_HANDLER(WM_MOUSEHOVER, OnMouseHover)
 			MESSAGE_HANDLER(WM_ACTIVATE, OnActivate)
-			MESSAGE_HANDLER(WM_TIMER,OnTimer)
+			MESSAGE_HANDLER(WM_TIMER, OnTimer)
 			MESSAGE_HANDLER(WM_COMMAND, OnCommand)
 			MESSAGE_HANDLER(WM_NOTIFY, OnNotify)
 			MESSAGE_HANDLER(WM_COMMANDREFLECT, OnCommandReflect)

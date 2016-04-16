@@ -1183,6 +1183,7 @@ namespace TinyUI
 		return ::GradientFill(m_hDC, pVertices, nVertices, pMesh, nMeshElements, dwMode);
 	}
 #pragma endregion
+#pragma region TinyMemDC
 	TinyMemDC::TinyMemDC(HDC hDC, INT cx, INT cy)
 		:m_hDestDC(hDC), m_hOldBitmap(NULL)
 	{
@@ -1415,6 +1416,25 @@ namespace TinyUI
 			m_hOldBitmap = NULL;
 		}
 	}
+#pragma endregion
+#pragma regionTinyWindowDC TinyWindowDC
+	TinyWindowDC::TinyWindowDC(HWND hWND)
+		:m_hWND(hWND)
+	{
+		if (Attach(::GetWindowDC(m_hWND)))
+		{
+			//TODO
+		}
+	}
+	TinyWindowDC::~TinyWindowDC()
+	{
+		if (m_hDC != NULL)
+		{
+			::ReleaseDC(m_hWND, Detach());
+			m_hDC = NULL;
+		}
+	}
+#pragma endregion 
 #pragma region  TinyGDIObject
 	/************************************************************************/
 	/* PEN                                                                  */

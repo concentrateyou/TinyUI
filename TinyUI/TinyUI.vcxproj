@@ -113,7 +113,6 @@
     <ClInclude Include="Control\TinyControl.h" />
     <ClInclude Include="Control\TinyFileView.h" />
     <ClInclude Include="Control\TinyFolderView.h" />
-    <ClInclude Include="Control\TinyFrameUI.h" />
     <ClInclude Include="Control\TinyHotKey.h" />
     <ClInclude Include="Control\TinyImageList.h" />
     <ClInclude Include="Control\TinyIPAddress.h" />
@@ -150,6 +149,7 @@
     <ClInclude Include="Render\TinyTheme.h" />
     <ClInclude Include="Render\TinyTransform.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SkinFramework\TinySkinWindow.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Render\TinyCanvas.h" />
@@ -198,7 +198,6 @@
     <ClCompile Include="Control\TinyControl.cpp" />
     <ClCompile Include="Control\TinyFileView.cpp" />
     <ClCompile Include="Control\TinyFolderView.cpp" />
-    <ClCompile Include="Control\TinyFrameUI.cpp" />
     <ClCompile Include="Control\TinyHotKey.cpp" />
     <ClCompile Include="Control\TinyImageList.cpp" />
     <ClCompile Include="Control\TinyIPAddress.cpp" />
@@ -235,6 +234,7 @@
     <ClCompile Include="Render\TinyRichUI.cpp" />
     <ClCompile Include="Render\TinyTheme.cpp" />
     <ClCompile Include="Render\TinyTransform.cpp" />
+    <ClCompile Include="SkinFramework\TinySkinWindow.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

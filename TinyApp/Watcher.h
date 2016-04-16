@@ -22,7 +22,7 @@
 #include <vector>
 #include <map>
 #include <string>
-#include "Control/TinyFrameUI.h"
+#include "SkinFramework/TinySkinWindow.h"
 
 #pragma comment(lib, "gdi32.lib")
 #pragma comment(lib, "shlwapi.lib")

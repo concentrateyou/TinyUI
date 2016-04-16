@@ -64,11 +64,8 @@ namespace TinyUI
 		UINT GetItemState(HTREEITEM hItem, UINT nStateMask) const;
 		DWORD_PTR GetItemData(HTREEITEM hItem) const;
 		BOOL SetItem(TVITEM* pItem);
-		BOOL SetItem(HTREEITEM hItem, UINT nMask, _In_opt_z_ LPCTSTR lpszItem, INT nImage,
-			INT nSelectedImage, UINT nState, UINT nStateMask, LPARAM lParam);
-		BOOL SetItemEx(HTREEITEM hItem, UINT nMask, _In_opt_z_ LPCTSTR lpszItem, INT nImage,
-			INT nSelectedImage, UINT nState, UINT nStateMask, LPARAM lParam,
-			UINT uStateEx, HWND hWnd, INT iExpandedImage);
+		BOOL SetItem(HTREEITEM hItem, UINT nMask, _In_opt_z_ LPCTSTR lpszItem, INT nImage, INT nSelectedImage, UINT nState, UINT nStateMask, LPARAM lParam);
+		BOOL SetItemEx(HTREEITEM hItem, UINT nMask, _In_opt_z_ LPCTSTR lpszItem, INT nImage, INT nSelectedImage, UINT nState, UINT nStateMask, LPARAM lParam, UINT uStateEx, HWND hWnd, INT iExpandedImage);
 		BOOL SetItemText(HTREEITEM hItem, LPCTSTR lpszItem);
 		BOOL SetItemImage(HTREEITEM hItem, INT nImage, INT nSelectedImage);
 		BOOL SetItemState(HTREEITEM hItem, UINT nState, UINT nStateMask);

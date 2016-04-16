@@ -68,8 +68,7 @@ namespace TinyUI
 	}
 	std::string UTF16ToUTF8(const std::wstring& wide)
 	{
-		std::string temp = WStringToString(wide);
-		return ASCIIToUTF8(temp);
+		return ASCIIToUTF8(WStringToString(wide));
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinyString::TinyString()

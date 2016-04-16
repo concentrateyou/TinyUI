@@ -332,4 +332,24 @@ namespace TinyUI
 				SWP_NOACTIVATE | SWP_NOZORDER);
 		}
 	}
+	DWORD TinyControl::GetStyle() const
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return (DWORD)GetWindowLong(m_hWND, GWL_STYLE);
+	}
+	DWORD TinyControl::GetExStyle() const
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return (DWORD)GetWindowLong(m_hWND, GWL_EXSTYLE);
+	}
+	BOOL  TinyControl::GetWindowRect(LPRECT lprect)
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return (DWORD)::GetWindowRect(m_hWND, lprect);
+	}
+	BOOL  TinyControl::GetClientRect(LPRECT lprect)
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return (DWORD)::GetClientRect(m_hWND, lprect);
+	}
 }

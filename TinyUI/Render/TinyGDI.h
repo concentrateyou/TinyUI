@@ -307,7 +307,6 @@ namespace TinyUI
 		INT		GetExtLogPen(EXTLOGPEN* pLogPen);
 		INT		GetLogPen(LOGPEN* pLogPen);
 	};
-
 	/// <summary>
 	/// Brush¿‡
 	/// </summary>
@@ -324,7 +323,6 @@ namespace TinyUI
 		BOOL	CreateBrush(const void* lpPackedDIB, UINT nUsage);
 		INT		GetLogBrush(LOGBRUSH* pLogBrush);
 	};
-
 	/// <summary>
 	/// Bitmap¿‡
 	/// </summary>
@@ -377,6 +375,18 @@ namespace TinyUI
 		HDC			m_hDestDC;
 		TinyBitmap	m_bitmap;
 		HBITMAP		m_hOldBitmap;
+	};
+	/// <summary>
+	/// ¥∞ø⁄DC
+	/// </summary>
+	class TinyWindowDC : public TinyDC
+	{
+		DECLARE_DYNAMIC(TinyWindowDC)
+	public:
+		TinyWindowDC(HWND hWND);
+		virtual ~TinyWindowDC();
+	private:
+		HWND m_hWND;
 	};
 	/// <summary>
 	/// TinyPalette

@@ -12,7 +12,7 @@ namespace TinyUI
 	/// </summary>
 	class TinyIATHook
 	{
-	private:
+	protected:
 		typedef struct tagEXCLUDEDMODULE
 		{
 			HMODULE		hModule;
@@ -20,7 +20,8 @@ namespace TinyUI
 		}EXCLUDEDMODULE;
 	public:
 		TinyIATHook();
-		~TinyIATHook();
+		virtual ~TinyIATHook();
+	public:
 		BOOL Add(LPCSTR pszCalleeModName, LPCSTR pszFunctionName, PROC  pfnOrig, PROC  pfnHook);
 		BOOL Remove(LPCSTR pszCalleeModName, LPCSTR pszFunctionName);
 		void RemoveAll();
@@ -31,7 +32,7 @@ namespace TinyUI
 	public:
 		static TinyIATHook* GetInstance();
 		static PROC GetOriginalProc(LPCSTR pszCalleeModName, LPCSTR pszFunctionName);
-	private:
+	protected:
 		static TinyIATHook* m_pHook;
 		TinyArray<TinyScopedReferencePtr<TinyIATFunction>> m_hookFs;
 		TinyArray<EXCLUDEDMODULE>	m_excludes;

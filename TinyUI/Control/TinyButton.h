@@ -60,6 +60,14 @@ namespace TinyUI
 		BOOL SetDropDownState(BOOL fDropDown);
 		HICON SetShield(BOOL fElevationRequired);
 	};
+	/// <summary>
+	/// ±ÍÃ‚∞¥≈•
+	/// </summary>
+	class SysButton : public TinyObject
+	{
+	public:
+
+	};
 }
 
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "../Common/TinyCommon.h"
+#include "../Render/TinyTheme.h"
 #include <vssym32.h>
 #include <uxtheme.h>
 
@@ -12,7 +13,7 @@ namespace TinyUI
 	public:
 		TinyTheme(HWND hWND);
 		~TinyTheme();
-		BOOL Open();
+		BOOL Open(LPCWSTR pszClassList);
 		void Close();
 	private:
 		HTHEME  m_hTheme;

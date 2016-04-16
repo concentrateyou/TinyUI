@@ -67,6 +67,12 @@
     <Filter Include="源文件\Network">
       <UniqueIdentifier>{ac6f29a6-0362-47eb-941b-f7084c021f6a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\SkinFramework">
+      <UniqueIdentifier>{9f7be6c1-a2b4-454d-b012-946eae361d0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\SkinFramework">
+      <UniqueIdentifier>{64c87573-c58f-451a-af9f-d2e088e7b0f6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -222,9 +228,6 @@
     <ClInclude Include="Windowless\TinyVisualHWND.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
-    <ClInclude Include="Control\TinyFrameUI.h">
-      <Filter>头文件\Control</Filter>
-    </ClInclude>
     <ClInclude Include="XML\TinyXMLParse.h">
       <Filter>头文件\XML</Filter>
     </ClInclude>
@@ -320,6 +323,9 @@
     </ClInclude>
     <ClInclude Include="Windowless\TinyVisualWindow.h">
       <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="SkinFramework\TinySkinWindow.h">
+      <Filter>头文件\SkinFramework</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -476,9 +482,6 @@
     <ClCompile Include="Windowless\TinyVisualHWND.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
-    <ClCompile Include="Control\TinyFrameUI.cpp">
-      <Filter>源文件\Control</Filter>
-    </ClCompile>
     <ClCompile Include="XML\TinyXMLParse.cpp">
       <Filter>源文件\XML</Filter>
     </ClCompile>
@@ -574,6 +577,9 @@
     </ClCompile>
     <ClCompile Include="Windowless\TinyVisualWindow.cpp">
       <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinFramework\TinySkinWindow.cpp">
+      <Filter>源文件\SkinFramework</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

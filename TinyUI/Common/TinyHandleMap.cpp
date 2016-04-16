@@ -119,7 +119,7 @@ namespace TinyUI
 	}
 	TinyHandleHDC::~TinyHandleHDC()
 	{
-
+		m_hDC = NULL;
 	}
 	TinyHandleHDC::operator HDC() const
 	{

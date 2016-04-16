@@ -13,12 +13,13 @@ namespace TinyUI
 	{
 
 	}
-	BOOL TinyTheme::Open()
+	BOOL TinyTheme::Open(LPCWSTR pszClassList)
 	{
-		return TRUE;
+		return (m_hTheme = OpenThemeData(m_hWND, pszClassList)) != NULL;
 	}
 	void TinyTheme::Close()
 	{
-
+		CloseThemeData(m_hTheme);
+		m_hTheme = NULL;
 	}
 }
