@@ -2,10 +2,8 @@
 #include "../Common/TinyString.h"
 #include "../Common/TinyEvent.h"
 #include "../Render/TinyGDI.h"
-#include "TinyUtility.h"
-#include "TinyVisualTree.h"
 #include "../XML//tinyxml.h"
-
+#include "TinyUtility.h"
 namespace TinyUI
 {
 	namespace Windowless
@@ -18,27 +16,31 @@ namespace TinyUI
 			friend class TinyVisualTree;
 			friend class TinyVisualParse;
 			DECLARE_DYNAMIC(TinyVisual)
+			DISALLOW_COPY_AND_ASSIGN(TinyVisual)
 		public:
-			TinyVisual();
+			TinyVisual(TinyVisual* spvisParent);
+		public:
+			void		SetText(LPCSTR pzText);
+			TinyString	GetText() const;
+			void		SetName(LPCSTR pzName);
+			TinyString	GetName() const;
+			void		SetToolTip(LPCSTR pzTitle);
+			TinyString	GetToolTip() const;
+			TinyPoint	GetPosition() const;
+			TinySize	GetSize() const;
+			void		SetSize(const TinySize& size);
+			void		SetMaximumSize(const TinySize& size);
+			void		SetMinimumSize(const TinySize& size);
+			TinySize	GetMaximumSize() const;
+			TinySize	GetMinimumSize() const;
+			BOOL		IsVisible() const;
+			BOOL		IsEnable() const;
+			void		SetVisible(BOOL visible);
+			void		SetEnable(BOOL enable);
+		public:
+			virtual void OnSizeChange(const TinySize&, const TinySize&);
+		public:
 			virtual ~TinyVisual();
-			void			SetText(LPCSTR pzText);
-			TinyString		GetText() const;
-			void			SetName(LPCSTR pzName);
-			TinyString		GetName() const;
-			void			SetToolTip(LPCSTR pzTitle);
-			TinyString		GetToolTip() const;
-			void			SetMaximumSize(const TinySize& size);
-			void			SetMinimumSize(const TinySize& size);
-			TinySize		GetMaximumSize() const;
-			TinySize		GetMinimumSize() const;
-			BOOL			IsVisible() const;
-			BOOL			IsEnable() const;
-			void			SetVisible(BOOL visible);
-			void			SetEnable(BOOL enable);
-			BOOL			GetClientRect(LPRECT ps);
-			BOOL			GetWindowRect(LPRECT ps);
-		public:
-			virtual BOOL	ParsePropertys(TiXmlElement* ps);
 			virtual LPCSTR	RetrieveTag() = 0;
 			virtual HRESULT	OnDraw(TinyDC& dc, TinyRectangle& drawRect) = 0;
 			virtual HRESULT OnMouseMove(POINT pos) = 0;
@@ -52,7 +54,6 @@ namespace TinyUI
 			TinyVisual*		m_spvisChild;//第一个孩子节点
 			TinyVisual*		m_spvisOwner;//对于Popup窗口使用
 			TinyRectangle   m_windowRect;//屏幕区域(屏幕坐标)
-			TinyRectangle	m_clientRect;//客户区域(屏幕坐标)
 			TinySize		m_maximumSize;//元素的最大像素大小
 			TinySize		m_minimumSize;//元素的最小像素大小
 			TinyString		m_strName;

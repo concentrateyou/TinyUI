@@ -1387,7 +1387,7 @@ namespace TinyUI
 		for (;;)
 		{
 			TinyNode* pPrev = Prev(pKey);
-			if ((pPrev != NULL) && KTraits::Compare(key, pPrev->m_key))
+			if ((pPrev != NULL) && KTraits::Compare(key, pPrev->m_key) == 0)
 			{
 				pKey = pPrev;
 			}

@@ -1,4 +1,5 @@
 #include "../stdafx.h"
+#include "TinyVisualHWND.h"
 #include "TinyVisualWindow.h"
 #include "TinyVisualTree.h"
 
@@ -24,12 +25,15 @@ namespace TinyUI
 			if (!m_spvisWindow) return FALSE;
 			m_parse.Reset(new TinyVisualParse());
 			m_parse->LoadFile("D:\\resource.xml");
-			m_parse->BuildVisualTree(this);
-			return TRUE;
+			return m_parse->BuildVisualTree(this);
 		}
 		void TinyVisualTree::Uninitialize()
 		{
 			SAFE_DELETE(m_spvisWindow);
+		}
+		TinyVisualHWND*	TinyVisualTree::GetVisualHWND()
+		{
+			return m_pWindow;
 		}
 		void TinyVisualTree::LinkVisual(TinyVisual* spvis, TinyVisual* spvisInsert, TinyVisual**pspvisFirst)
 		{
@@ -174,8 +178,8 @@ namespace TinyUI
 			spvis->SetVisible(FALSE);
 			TinyVisual* spvisOldParent = spvis->m_spvisParent;
 			INT x, y;
-			x = spvis->m_windowRect.left - spvisOldParent->m_clientRect.left;
-			y = spvis->m_windowRect.top - spvisOldParent->m_clientRect.top;
+			x = spvis->m_windowRect.left - spvisOldParent->m_windowRect.left;
+			y = spvis->m_windowRect.top - spvisOldParent->m_windowRect.top;
 			UnlinkVisual(spvis, &spvisOldParent->m_spvisChild);
 			spvis->m_spvisParent = spvisParent;
 			LinkVisual(spvis, NULL, &spvisParent->m_spvisChild);
@@ -193,7 +197,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		BOOL TinyVisualTree::IsVisualVisible(TinyVisual* spvis) const
+		BOOL TinyVisualTree::IsVisible(TinyVisual* spvis) const
 		{
 			if (spvis == NULL)
 				return TRUE;
@@ -205,11 +209,10 @@ namespace TinyUI
 			}
 			return TRUE;
 		}
-		BOOL TinyVisualTree::SetVisualPos(TinyVisual* spvis, INT  x, INT  y, INT  cx, INT  cy, UINT flags)
+		BOOL TinyVisualTree::SetVisualPos(TinyVisual* spvis, INT  x, INT  y, INT  cx, INT  cy, DWORD dwFlags)
 		{
 			TinyVisual* spvisParent = spvis->m_spvisParent;
 			if (!spvisParent || !m_pWindow) return FALSE;
-
 			if (cx < 0)
 				cx = 0;
 			else if (cx > SHRT_MAX)
@@ -220,10 +223,10 @@ namespace TinyUI
 				cy = SHRT_MAX;
 			INT mycx = cx;
 			INT mycy = cy;
-			if (flags & SWP_NOSIZE)
+			if (dwFlags & SWP_NOSIZE)
 			{
-				mycx = spvis->m_windowRect.right - spvis->m_windowRect.left;
-				mycy = spvis->m_windowRect.bottom - spvis->m_windowRect.top;
+				mycx = TO_CX(&spvis->m_windowRect);
+				mycy = TO_CY(&spvis->m_windowRect);
 			}
 			if (x > SHRT_MAX)
 				x = SHRT_MAX;
@@ -235,18 +238,15 @@ namespace TinyUI
 				y = SHRT_MIN;
 			INT myx = x;
 			INT myy = y;
-			if (flags & SWP_NOMOVE)
+			if (dwFlags & SWP_NOMOVE)
 			{
-				myx = spvis->m_windowRect.left - spvisParent->m_clientRect.left;
-				myy = spvis->m_windowRect.top - spvisParent->m_clientRect.top;
+				myx = spvis->m_windowRect.left - spvisParent->m_windowRect.left;
+				myy = spvis->m_windowRect.top - spvisParent->m_windowRect.top;
 			}
 			spvis->m_windowRect.left = spvisParent->m_windowRect.left + myx;
 			spvis->m_windowRect.top = spvisParent->m_windowRect.top + myy;
 			spvis->m_windowRect.right = spvis->m_windowRect.left + mycx;
 			spvis->m_windowRect.bottom = spvis->m_windowRect.top + mycx;
-			CopyRect(spvis->m_clientRect, &spvis->m_windowRect);
-
-			RedrawWindow(m_pWindow->Handle(), NULL, NULL, RDW_INVALIDATE);
 			return TRUE;
 		}
 		TinyVisual*	TinyVisualTree::GetVisualByPos1(TinyVisual* spvis, INT x, INT y)
@@ -316,20 +316,6 @@ namespace TinyUI
 				m_spvisFocus = pNew;
 			}
 			return pv;
-		}
-		BOOL TinyVisualTree::ClientToScreen(TinyVisual* psvis, POINT& pos)
-		{
-			if (!psvis) return FALSE;
-			pos.x += psvis->m_clientRect.left;
-			pos.y += psvis->m_clientRect.top;
-			return TRUE;
-		}
-		BOOL TinyVisualTree::ScreenToClient(TinyVisual* psvis, POINT& pos)
-		{
-			if (!psvis) return FALSE;
-			pos.x -= psvis->m_clientRect.left;
-			pos.y -= psvis->m_clientRect.top;
-			return TRUE;
 		}
 		HRESULT	TinyVisualTree::OnMouseMove(POINT pos)
 		{

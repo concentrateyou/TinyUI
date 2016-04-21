@@ -1,15 +1,14 @@
 #include "../stdafx.h"
-#include "TinyVisualWindow.h"
 #include "../Common/TinyString.h"
+#include "TinyVisualManage.h"
+#include "TinyVisualHWND.h"
 
 namespace TinyUI
 {
 	namespace Windowless
 	{
-		const CHAR* TinyVisualWindow::Tag = TEXT("window");
-
 		TinyVisualWindow::TinyVisualWindow(TinyVisualTree* myT)
-			:m_myT(myT)
+			:TinyVisual(NULL), m_myT(myT)
 		{
 
 		}
@@ -19,28 +18,7 @@ namespace TinyUI
 		}
 		LPCSTR TinyVisualWindow::RetrieveTag()
 		{
-			return Tag;
-		}
-
-		BOOL TinyVisualWindow::ParsePropertys(TiXmlElement* ps)
-		{
-			TiXmlAttribute* pFA = ps->FirstAttribute();
-			TiXmlAttribute* pLA = ps->LastAttribute();
-			while (pFA != pLA)
-			{
-				if (!strcasecmp(pFA->Name(), TinyVisualPoperty::SIZE))
-				{
-					TinyString val = pFA->Value();
-					TinyArray<TinyString> sps;
-					val.Split(',', sps);
-					if (sps.GetSize() == 2)
-					{
-						this->SetSize(TinySize(atoi(sps[0].STR()), atoi(sps[1].STR())));
-					}
-				}
-				pFA = pFA->Next();
-			}
-			return TinyVisual::ParsePropertys(ps);
+			return TinyVisualTag::WINDOW;
 		}
 		HRESULT TinyVisualWindow::OnDraw(TinyDC& dc, TinyRectangle& drawRect)
 		{
@@ -71,16 +49,9 @@ namespace TinyUI
 		{
 			return FALSE;
 		}
-		void TinyVisualWindow::SetSize(const TinySize& size)
+
+		void TinyVisualWindow::OnSizeChange(const TinySize&oldSize, const TinySize&newSize)
 		{
-			if (m_size != size)
-			{
-				m_size = size;
-			}
-		}
-		TinySize TinyVisualWindow::GetSize() const
-		{
-			return m_size;
 		}
 	}
 }

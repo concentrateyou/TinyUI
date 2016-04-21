@@ -1,5 +1,4 @@
 #pragma once
-#include "TinyVisualHWND.h"
 #include "TinyVisualManage.h"
 
 namespace TinyUI
@@ -14,6 +13,11 @@ namespace TinyUI
 #define CMD_PREV         3
 #define CMD_OWNER        4
 #define CMD_CHILD        5
+
+#define NOSIZE          0x0001
+#define NOMOVE          0x0002
+#define NOZORDER        0x0004
+#define NOREDRAW        
 		class TinyVisual;
 		class TinyVisualHWND;
 		/// <summary>
@@ -29,19 +33,20 @@ namespace TinyUI
 		public:
 			BOOL		Initialize();
 			void		Uninitialize();
-			TinyVisual* GetVisual(TinyVisual* spvis, UINT cmd) const;
-			TinyVisual* SetParent(TinyVisual* spvis, TinyVisual* spvisParent);
-			TinyVisual* GetParent(TinyVisual* spvis) const;
+			TinyVisualHWND*	GetVisualHWND();
+			TinyVisual*	GetVisual(TinyVisual* spvis, UINT cmd) const;
+			TinyVisual*	SetParent(TinyVisual* spvis, TinyVisual* spvisParent);
+			TinyVisual*	GetParent(TinyVisual* spvis) const;
 			BOOL		IsChild(TinyVisual* spvisParent, TinyVisual* spvis) const;
-			BOOL		IsVisualVisible(TinyVisual* spvis) const;
-			BOOL		SetVisualPos(TinyVisual* spvis, INT  x, INT  y, INT  cx, INT  cy, UINT flags);
+			BOOL		IsVisible(TinyVisual* spvis) const;
+			BOOL		SetVisualPos(TinyVisual* spvis, INT  x, INT  y, INT  cx, INT  cy, DWORD dwFlags);
 			TinyVisual*	GetVisualByPos(INT x, INT y);
-			TinyVisual* GetCapture() const;
+			TinyVisual*	GetCapture() const;
 			TinyVisual*	SetCapture(TinyVisual* pNew);
-			TinyVisual* GetFocus() const;
+			TinyVisual*	GetFocus() const;
 			TinyVisual*	SetFocus(TinyVisual* pNew);
-			BOOL		ClientToScreen(TinyVisual* psvis, POINT& pos);
-			BOOL		ScreenToClient(TinyVisual* psvis, POINT& pos);
+			void		LinkVisual(TinyVisual* spvis, TinyVisual* spvisInsert, TinyVisual**pspvisFirst);
+			void		UnlinkVisual(TinyVisual* spvisUnlink, TinyVisual** pspvisFirst);
 		public:
 			HRESULT		OnMouseMove(POINT pos);
 			HRESULT     OnLButtonDown(POINT pos);
@@ -49,8 +54,6 @@ namespace TinyUI
 			HRESULT     OnRButtonDown(POINT pos);
 			HRESULT     OnRButtonUp(POINT pos);
 		private:
-			void		LinkVisual(TinyVisual* spvis, TinyVisual* spvisInsert, TinyVisual**pspvisFirst);
-			void		UnlinkVisual(TinyVisual* spvisUnlink, TinyVisual** pspvisFirst);
 			TinyVisual*	GetVisualByPos1(TinyVisual* spvis, INT x, INT y);
 			TinyVisual*	GetVisualByPos2(TinyVisual* spvis, INT x, INT y);
 			TinyVisual* GetPrevVisual(TinyVisual* spvisList, TinyVisual* spvisFind) const;

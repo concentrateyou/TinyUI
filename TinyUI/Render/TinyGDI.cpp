@@ -1208,6 +1208,17 @@ namespace TinyUI
 			m_hOldBitmap = (HBITMAP)::SelectObject(m_hDC, hBitmap);
 		}
 	}
+	TinyMemDC::TinyMemDC(TinyDC& dc, INT cx, INT cy)
+		:m_hDestDC(dc), m_hOldBitmap(NULL)
+	{
+		m_size.cx = cx;
+		m_size.cy = cy;
+		if (Attach(::CreateCompatibleDC(dc)))
+		{
+			m_bitmap.Attach(::CreateCompatibleBitmap(dc, cx, cy));
+			m_hOldBitmap = (HBITMAP)::SelectObject(dc, m_bitmap);
+		}
+	}
 	SIZE TinyMemDC::GetSize() const
 	{
 		return m_size;
@@ -2047,6 +2058,10 @@ namespace TinyUI
 	void TinyRectangle::SetRect(POINT topLeft, POINT bottomRight) throw()
 	{
 		::SetRect(this, topLeft.x, topLeft.y, bottomRight.x, bottomRight.y);
+	}
+	void TinyRectangle::SetSize(SIZE size) throw()
+	{
+		::SetRect(this, left, top, left + size.cx, top + size.cy);
 	}
 	void TinyRectangle::SetRectEmpty() throw()
 	{

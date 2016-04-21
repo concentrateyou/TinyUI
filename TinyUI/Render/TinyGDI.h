@@ -357,6 +357,7 @@ namespace TinyUI
 	{
 		DECLARE_DYNAMIC(TinyMemDC)
 	public:
+		TinyMemDC(TinyDC& dc, INT cx, INT cy);
 		TinyMemDC(HDC hDC, INT cx, INT cy);
 		TinyMemDC(HDC hDC, HBITMAP hBitmap);
 		BOOL Render(RECT dstPaint, RECT srcPaint, BOOL bAlpha);
@@ -527,6 +528,7 @@ namespace TinyUI
 		BOOL PtInRect(POINT point) const throw();
 		void SetRect(INT x1, INT y1, INT x2, INT y2) throw();
 		void SetRect(POINT topLeft, POINT bottomRight) throw();
+		void SetSize(SIZE size) throw();
 		void SetRectEmpty() throw();
 		void CopyRect(LPCRECT lpSrcRect) throw();
 		BOOL EqualRect(LPCRECT lpRect) const throw();

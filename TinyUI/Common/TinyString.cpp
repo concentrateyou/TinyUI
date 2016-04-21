@@ -617,7 +617,7 @@ namespace TinyUI
 		ASSERT(this->_Mysize >= pos);
 		return this->_Mystr[pos];
 	}
-	void TinyString::Split(char sep, TinyArray<TinyString>& strs)
+	void TinyString::Split(char sep, TinyArray<TinyString>& strs) const
 	{
 		size_t last = 0;
 		size_t size = this->GetSize();

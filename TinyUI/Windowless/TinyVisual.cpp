@@ -5,17 +5,15 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-
-		TinyVisual::TinyVisual()
-			:m_spvisNext(NULL),
-			m_spvisParent(NULL),
+		TinyVisual::TinyVisual(TinyVisual* spvisParent)
+			:m_spvisParent(spvisParent),
+			m_spvisNext(NULL),
 			m_spvisChild(NULL),
 			m_spvisOwner(NULL),
 			m_hrgnClip(NULL),
 			m_visible(TRUE),
 			m_enable(TRUE)
 		{
-
 		}
 		TinyVisual::~TinyVisual()
 		{
@@ -80,9 +78,9 @@ namespace TinyUI
 			if (m_visible != visible)
 			{
 				m_visible = visible;
-				TinyVisual* pv = NULL;
-				for (pv = pv->m_spvisChild; pv != NULL; pv = pv->m_spvisNext)
+				for (TinyVisual* pv = this->m_spvisChild; pv != NULL; pv = pv->m_spvisNext)
 				{
+					if (!pv) continue;;
 					pv->SetVisible(visible);
 				}
 			}
@@ -92,63 +90,33 @@ namespace TinyUI
 			if (m_enable != enable)
 			{
 				m_enable = enable;
-				TinyVisual* pv = NULL;
-				for (pv = pv->m_spvisChild; pv != NULL; pv = pv->m_spvisNext)
+				for (TinyVisual* pv = this->m_spvisChild; pv != NULL; pv = pv->m_spvisNext)
 				{
+					if (!pv) continue;;
 					pv->SetEnable(enable);
 				}
 			}
 		}
-		BOOL TinyVisual::GetClientRect(LPRECT ps)
+		TinyPoint TinyVisual::GetPosition() const
 		{
-			if (!ps) return FALSE;
-			ps->left = 0;
-			ps->top = 0;
-			ps->right = m_clientRect.right - m_clientRect.left;
-			ps->bottom = m_clientRect.bottom - m_clientRect.top;
-			return TRUE;
+			return *((TinyPoint*)&m_windowRect);
 		}
-		BOOL TinyVisual::GetWindowRect(LPRECT ps)
+		TinySize TinyVisual::GetSize() const
 		{
-			if (!ps) return FALSE;
-			memcpy(ps, &m_windowRect, sizeof(RECT));
-			return TRUE;
+			return m_windowRect.Size();
 		}
-		BOOL TinyVisual::ParsePropertys(TiXmlElement* ps)
+		void TinyVisual::SetSize(const TinySize& size)
 		{
-			TiXmlAttribute* pFA = ps->FirstAttribute();
-			TiXmlAttribute* pLA = ps->LastAttribute();
-			while (pFA != pLA)
+			TinySize oldSize = *((TinySize*)&m_windowRect + 1);
+			if (oldSize != size)
 			{
-				if (!strcasecmp(pFA->Name(), TinyVisualPoperty::NAME))
-					this->SetName(pFA->Value());
-				if (!strcasecmp(pFA->Name(), TinyVisualPoperty::TEXT))
-					this->SetText(pFA->Value());
-				if (!strcasecmp(pFA->Name(), TinyVisualPoperty::TOOLTIP))
-					this->SetToolTip(pFA->Value());
-				if (!strcasecmp(pFA->Name(), TinyVisualPoperty::MAXSIZE))
-				{
-					TinyString val = pFA->Value();
-					TinyArray<TinyString> sps;
-					val.Split(',', sps);
-					if (sps.GetSize() == 2)
-					{
-						this->SetMaximumSize(TinySize(atoi(sps[0].STR()), atoi(sps[1].STR())));
-					}
-				}
-				if (!strcasecmp(pFA->Name(), TinyVisualPoperty::MINSIZE))
-				{
-					TinyString val = pFA->Value();
-					TinyArray<TinyString> sps;
-					val.Split(',', sps);
-					if (sps.GetSize() == 2)
-					{
-						this->SetMinimumSize(TinySize(atoi(sps[0].STR()), atoi(sps[1].STR())));
-					}
-				}
-				pFA = pFA->Next();
+				m_windowRect.SetSize(size);
+				OnSizeChange(oldSize, size);
 			}
-			return TRUE;
+		}
+		void TinyVisual::OnSizeChange(const TinySize&oldSize, const TinySize&newSize)
+		{
+
 		}
 	}
 }

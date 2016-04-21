@@ -309,9 +309,6 @@
     <ClInclude Include="Windowless\TinyVisualCaption.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
-    <ClInclude Include="Windowless\TinyVisualElement.h">
-      <Filter>头文件\Windowless</Filter>
-    </ClInclude>
     <ClInclude Include="Common\TinyTuple.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
@@ -561,9 +558,6 @@
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
     <ClCompile Include="Windowless\TinyVisualCaption.cpp">
-      <Filter>源文件\Windowless</Filter>
-    </ClCompile>
-    <ClCompile Include="Windowless\TinyVisualElement.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
     <ClCompile Include="Common\TinyTuple.cpp">

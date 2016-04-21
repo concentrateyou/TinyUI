@@ -2,13 +2,13 @@
 #include "TinyVisual.h"
 #include "../IO/TinyIO.h"
 #include "../XML/TinyXMLParse.h"
+#include "../Common/TinyCollection.h"
+#include "TinyVisualWindow.h"
 
 namespace TinyUI
 {
 	namespace Windowless
 	{
-		class TinyVisual;
-		class TinyVisualTree;
 		class TinyVisualPoperty
 		{
 		public:
@@ -22,6 +22,13 @@ namespace TinyUI
 			static const CHAR* VISIBLE;
 			static const CHAR* ENABLE;
 		};
+		class TinyVisualTag
+		{
+		public:
+			static const CHAR* WINDOW;
+			static const CHAR* CAPTION;
+			static const CHAR* SYSBUTTON;
+		};
 		/// <summary>
 		/// 可视化元素管理
 		/// </summary>
@@ -33,6 +40,10 @@ namespace TinyUI
 			~TinyVisualParse();
 			BOOL LoadFile(LPCSTR pzFile);
 			BOOL BuildVisualTree(TinyVisualTree* ps);
+			static TinyVisual* CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualTree* ps);
+		private:
+			static BOOL GetAttributeMap(const TiXmlElement* pXMLNode, TinyMap<TinyString, TinyString>& map);
+			static TinySize	GetSize(const TinyString* ps);
 		private:
 			TiXmlDocument	m_doc;
 		};

@@ -1,14 +1,12 @@
 #pragma once
 #include "../Control/TinyControl.h"
 #include "../Render/TinyImage.h"
-#include "TinyVisual.h"
+#include "TinyVisualTree.h"
 
 namespace TinyUI
 {
 	namespace Windowless
 	{
-		class TinyVisual;
-		class TinyVisualTree;
 		class TinyVisualHWND : public TinyControl
 		{
 			DECLARE_DYNAMIC(TinyVisualHWND)
@@ -21,6 +19,7 @@ namespace TinyUI
 			LPCSTR RetrieveClassName() OVERRIDE;
 			LPCSTR RetrieveTitle() OVERRIDE;
 			HICON RetrieveIcon() OVERRIDE;
+
 			LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
@@ -29,6 +28,7 @@ namespace TinyUI
 			LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+			//NC
 			LRESULT OnNCMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;

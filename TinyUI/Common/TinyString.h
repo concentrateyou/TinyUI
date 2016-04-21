@@ -119,7 +119,7 @@ namespace TinyUI
 		TinyString&	Replace(size_t pos, size_t size, const CHAR* s, size_t subsize);
 		TinyString	Substring(size_t pos, size_t size) const;//RVO”≈ªØ
 		const CHAR& GetAt(size_t pos) const;
-		void		Split(char sep, TinyArray<TinyString>& strs);
+		void		Split(char sep, TinyArray<TinyString>& strs) const;
 		TinyString	Trim(const TinyString& str) const;
 		TinyString	Trim(const CHAR* s, size_t size) const;
 		TinyString	Trim(CHAR s) const;

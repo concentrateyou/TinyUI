@@ -44,7 +44,6 @@ namespace TinyUI
 		{
 			if (m_vtree = new TinyVisualTree(this))
 			{
-
 				return m_vtree->Initialize();
 			}
 			return FALSE;
@@ -94,13 +93,12 @@ namespace TinyUI
 		LRESULT TinyVisualHWND::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
-
+			
 			return FALSE;
 		}
 		LRESULT TinyVisualHWND::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
-
 			return FALSE;
 		}
 		LRESULT TinyVisualHWND::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -115,8 +113,15 @@ namespace TinyUI
 		}
 		LRESULT TinyVisualHWND::OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
-			bHandled = FALSE;
-
+			bHandled = TRUE;
+			if (static_cast<BOOL>(wParam))
+			{
+				NCCALCSIZE_PARAMS* ps = reinterpret_cast<NCCALCSIZE_PARAMS*>(lParam);
+				ps->rgrc[0].left = ps->lppos->x;
+				ps->rgrc[0].top = ps->lppos->y;
+				ps->rgrc[0].bottom = ps->lppos->y + ps->lppos->cy;
+				ps->rgrc[0].right = ps->lppos->x + ps->lppos->cx;
+			}
 			return FALSE;
 		}
 		LRESULT TinyVisualHWND::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

@@ -36,7 +36,6 @@ namespace TinyUI
 		INT GetCaptionCY();
 	protected:
 		//»º³åµÄÑùÊ½
-		TinySize		m_size;
-		TinyRectangle	m_rectResizeBox;
+		TinySize	m_size;
 	};
 }

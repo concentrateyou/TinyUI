@@ -1,6 +1,5 @@
 #pragma once
-#include "TinyVisualElement.h"
-#include "TinyVisualHWND.h"
+#include "TinyVisual.h"
 
 namespace TinyUI
 {
@@ -13,7 +12,6 @@ namespace TinyUI
 			TinyVisualWindow(TinyVisualTree* myT);
 			virtual ~TinyVisualWindow();
 		public:
-			BOOL ParsePropertys(TiXmlElement* ps) OVERRIDE;
 			LPCSTR RetrieveTag() OVERRIDE;
 			HRESULT OnDraw(TinyDC& dc, TinyRectangle& drawRect) OVERRIDE;
 			HRESULT OnMouseMove(POINT pos) OVERRIDE;
@@ -22,10 +20,7 @@ namespace TinyUI
 			HRESULT OnRButtonDown(POINT pos) OVERRIDE;
 			HRESULT OnRButtonUp(POINT pos) OVERRIDE;
 		public:
-			void			SetSize(const TinySize& size);
-			TinySize		GetSize() const;
-		public:
-			static const CHAR* Tag;
+			void OnSizeChange(const TinySize&oldSize, const TinySize&newSize) OVERRIDE;
 		private:
 			TinyVisualTree*		m_myT;
 			TinySize			m_size;

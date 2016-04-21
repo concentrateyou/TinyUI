@@ -17,6 +17,7 @@ namespace TinyUI
 		BOOL SubclassDlgItem(UINT nID, HWND hDlg);
 		BOOL SubclassWindow(HWND hWND);
 		HWND UnsubclassWindow(BOOL bForce = FALSE);
+		LRESULT DefWindowProc();
 	public:
 		virtual LPCSTR RetrieveClassName();
 		virtual LPCSTR RetrieveTitle();
@@ -35,7 +36,6 @@ namespace TinyUI
 		TinyLoopThunk	m_thunk;// Thunk类
 		WNDPROC			m_hPrimaryProc;//原始的PROC
 	private:
-		LRESULT DefWindowProc();
 		LRESULT DefWindowProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
 		static LRESULT CALLBACK BeginLoop(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 		static LRESULT CALLBACK EndLoop(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
