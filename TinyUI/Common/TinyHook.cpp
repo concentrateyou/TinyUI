@@ -19,13 +19,16 @@ namespace TinyUI
 	{
 		if (m_pHook == NULL)
 		{
-			TinyLock lock;
-			lock.Acquire();
+			TinyLock lock1;
+			lock1.Acquire();
 			if (m_pHook == NULL)
 			{
+				TinyLock lock2;
+				lock2.Acquire();
 				m_pHook = new TinyIATHook();
+				lock2.Release();
 			}
-			lock.Release();
+			lock1.Release();
 		}
 		return m_pHook;
 	}
