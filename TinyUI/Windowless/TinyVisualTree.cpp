@@ -43,6 +43,7 @@ namespace TinyUI
 			}
 			if (spvisInsert == PVISUAL_TOP)
 			{
+			LINKTOP:
 				spvis->m_spvisNext = *pspvisFirst;
 				*pspvisFirst = spvis;
 			}
@@ -52,16 +53,15 @@ namespace TinyUI
 				{
 					if ((spvisInsert = *pspvisFirst) == NULL)
 					{
-						spvis->m_spvisNext = *pspvisFirst;
-						*pspvisFirst = spvis;
+						goto LINKTOP;
 					}
 				}
+				ASSERT(spvis != spvisInsert);
+				ASSERT(spvis != spvisInsert->m_spvisNext);
+				ASSERT(spvis->m_spvisParent == spvisInsert->m_spvisParent);
+				spvis->m_spvisNext = spvisInsert->m_spvisNext;
+				spvisInsert->m_spvisNext = spvis;
 			}
-			ASSERT(spvis != spvisInsert);
-			ASSERT(spvis != spvisInsert->m_spvisNext);
-			ASSERT(spvis->m_spvisParent == spvisInsert->m_spvisParent);
-			spvis->m_spvisNext = spvisInsert->m_spvisNext;
-			spvisInsert->m_spvisNext = spvis;
 		}
 		void TinyVisualTree::UnlinkVisual(TinyVisual* spvisUnlink, TinyVisual** pspvisFirst)
 		{
@@ -401,6 +401,31 @@ namespace TinyUI
 				}
 			}
 			return FALSE;
+		}
+
+		void TinyVisualTree::Dump()
+		{
+			TinyVisual* spvis = this->GetParent(NULL);
+			TinyVisual* ps = spvis->m_spvisChild;
+			while (ps)
+			{
+				Dump(ps);
+				ps = ps->m_spvisNext;
+			}
+
+		}
+		void TinyVisualTree::Dump(TinyVisual* spvis)
+		{
+			if (!spvis) return;
+			TinyString className = spvis->RetrieveTag();
+			TinyString name = spvis->GetName();
+			TRACE("Tag:%s,Name:%s\n", className.STR(), name.STR());
+			TinyVisual* ps = spvis->m_spvisChild;
+			while (ps)
+			{
+				Dump(ps);
+				ps = ps->m_spvisNext;
+			}
 		}
 	}
 }

@@ -1,5 +1,6 @@
 #include "../stdafx.h"
 #include "../Common/TinyString.h"
+#include "TinyVisualCommon.h"
 #include "TinyVisualManage.h"
 #include "TinyVisualWindow.h"
 #include "TinyVisualCaption.h"
@@ -9,19 +10,6 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		const CHAR* TinyVisualPoperty::NAME = TEXT("name");
-		const CHAR* TinyVisualPoperty::TEXT = TEXT("text");
-		const CHAR* TinyVisualPoperty::TOOLTIP = TEXT("tooltip");
-		const CHAR* TinyVisualPoperty::MAXSIZE = TEXT("maxsize");
-		const CHAR* TinyVisualPoperty::MINSIZE = TEXT("minsize");
-		const CHAR* TinyVisualPoperty::SIZE = TEXT("size");
-		const CHAR* TinyVisualPoperty::VISIBLE = TEXT("visible");
-		const CHAR* TinyVisualPoperty::ENABLE = TEXT("enable");
-		//////////////////////////////////////////////////////////////////////////
-		const CHAR* TinyVisualTag::WINDOW = TEXT("window");
-		const CHAR* TinyVisualTag::CAPTION = TEXT("caption");
-		const CHAR* TinyVisualTag::SYSBUTTON = TEXT("sysbutton");
-		//////////////////////////////////////////////////////////////////////////
 		TinyVisualParse::TinyVisualParse()
 		{
 
@@ -40,43 +28,85 @@ namespace TinyUI
 			TinyVisual* spvis = pvisualTree->GetParent(NULL);
 			if (!spvis) return FALSE;
 			TiXmlElement *pXML = m_doc.RootElement();
-			if (pXML && !strcasecmp(pXML->Value(), TinyVisualTag::WINDOW))
+			if (pXML && !strcasecmp(pXML->Value(), TinyVisualTag::WINDOW.STR()))
 			{
 				TinyMap<TinyString, TinyString> map;
 				GetAttributeMap(pXML, map);
-				TinySize size = GetSize(map.GetValue("size"));
-				spvis->SetSize(size);
-				TinySize maxsize = GetSize(map.GetValue("maxsize"));
-				spvis->SetMaximumSize(maxsize);
-				TinySize minsize = GetSize(map.GetValue("minsize"));
-				spvis->SetMinimumSize(minsize);
+				BuildProperty(map, spvis);
 			}
-			return CreateInstace(pXML, spvis, pvisualTree) != NULL;
+			CreateInstace(pXML, spvis, pvisualTree);
+			pvisualTree->Dump();
+			return TRUE;
 		}
-		TinyVisual* TinyVisualParse::CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualTree* pvisualTree)
+		void TinyVisualParse::CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualTree* pvisualTree)
 		{
 			TinyVisual* spvis = NULL;
 			for (const TiXmlNode* pXMLChildNode = pXMLNode->FirstChild(); pXMLChildNode; pXMLChildNode = pXMLChildNode->NextSibling())
 			{
 				if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT &&
-					!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::CAPTION))
+					!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::CAPTION.STR()))
 				{
 					TinyMap<TinyString, TinyString> map;
 					GetAttributeMap(static_cast<const TiXmlElement*>(pXMLChildNode), map);
 					spvis = new TinyVisualCaption(spvisParent);
+					BuildProperty(map, spvis);
 					pvisualTree->LinkVisual(spvis, PVISUAL_BOTTOM, &spvisParent->m_spvisChild);
+					CreateInstace(pXMLChildNode, spvis, pvisualTree);
+					spvis->Resize();
 				}
 				else if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT &&
-					!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::SYSBUTTON))
+					!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::SYSBUTTON.STR()))
 				{
 					TinyMap<TinyString, TinyString> map;
 					GetAttributeMap(static_cast<const TiXmlElement*>(pXMLChildNode), map);
 					spvis = new TinySysButton(spvisParent);
+					BuildProperty(map, spvis);
 					pvisualTree->LinkVisual(spvis, PVISUAL_BOTTOM, &spvisParent->m_spvisChild);
 				}
-				return CreateInstace(pXMLChildNode, spvis, pvisualTree);
 			}
-			return spvis;
+		}
+		void TinyVisualParse::BuildProperty(TinyMap<TinyString, TinyString> &map, TinyVisual* spvis)
+		{
+			if (map.Contain(TinyVisualProperty::SIZE))
+			{
+				TinySize size = GetSize(map.GetValue(TinyVisualProperty::SIZE));
+				spvis->SetSize(size);
+			}
+			if (map.Contain(TinyVisualProperty::MAXSIZE))
+			{
+				TinySize maxsize = GetSize(map.GetValue(TinyVisualProperty::MAXSIZE));
+				spvis->SetMaximumSize(maxsize);
+			}
+			if (map.Contain(TinyVisualProperty::MINSIZE))
+			{
+				TinySize minsize = GetSize(map.GetValue(TinyVisualProperty::MINSIZE));
+				spvis->SetMinimumSize(minsize);
+			}
+			if (map.Contain(TinyVisualProperty::NAME))
+			{
+				TinyString* ps = map.GetValue(TinyVisualProperty::NAME);
+				spvis->SetName(ps->STR());
+			}
+			if (map.Contain(TinyVisualProperty::TOOLTIP))
+			{
+				TinyString* ps = map.GetValue(TinyVisualProperty::TOOLTIP);
+				spvis->SetToolTip(ps->STR());
+			}
+			if (map.Contain(TinyString(TinyVisualProperty::TEXT)))
+			{
+				TinyString* ps = map.GetValue(TinyVisualProperty::TEXT);
+				spvis->SetText(ps->STR());
+			}
+			if (map.Contain(TinyString(TinyVisualProperty::ENABLE)))
+			{
+				TinyString* ps = map.GetValue(TinyVisualProperty::ENABLE);
+				spvis->SetEnable(GetBool(ps));
+			}
+			if (map.Contain(TinyString(TinyVisualProperty::VISIBLE)))
+			{
+				TinyString* ps = map.GetValue(TinyVisualProperty::VISIBLE);
+				spvis->SetVisible(GetBool(ps));
+			}
 		}
 		BOOL TinyVisualParse::GetAttributeMap(const TiXmlElement* pXMLNode, TinyMap<TinyString, TinyString>& map)
 		{
@@ -100,6 +130,10 @@ namespace TinyUI
 				return (TinySize(atoi(sps[0].STR()), atoi(sps[1].STR())));
 			}
 			return TinySize();
+		}
+		BOOL TinyVisualParse::GetBool(const TinyString* str)
+		{
+			return str->Compare("true") == 0;
 		}
 	};
 }

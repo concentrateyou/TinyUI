@@ -3,23 +3,21 @@
 
 namespace TinyUI
 {
-	TinyTheme::TinyTheme(HWND hWND)
-		:m_hTheme(NULL),
-		m_hWND(hWND)
+	TinyTheme::TinyTheme()
+		:m_hThemeDLL(NULL)
 	{
-
+		m_hThemeDLL = LoadLibrary(_T("UXTHEME.DLL"));
 	}
 	TinyTheme::~TinyTheme()
 	{
+		if (m_hThemeDLL)
+		{
+			FreeLibrary(m_hThemeDLL);
+			m_hThemeDLL = NULL;
+		}
+	}
+	void TinyTheme::EnumThemeFunctions()
+	{
 
-	}
-	BOOL TinyTheme::Open(LPCWSTR pszClassList)
-	{
-		return (m_hTheme = OpenThemeData(m_hWND, pszClassList)) != NULL;
-	}
-	void TinyTheme::Close()
-	{
-		CloseThemeData(m_hTheme);
-		m_hTheme = NULL;
 	}
 }

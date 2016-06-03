@@ -58,14 +58,19 @@ namespace TinyUI
 #ifndef ASSERT
 #define ASSERT(expr) _ASSERTE(expr)
 #endif 
-	void Trace(LPCTSTR lpszFormat, ...);
+void Trace(LPCTSTR lpszFormat, ...);
 #ifndef TRACE
 #define TRACE Trace
 #endif
 #ifndef ASSUME
 #define ASSUME(expr) do { ASSERT(expr); __analysis_assume(!!(expr)); } while(0)
 #endif // ASSUME
-
+#ifndef UNUSED
+#define UNUSED(x) (void)x;
+#endif 
+#ifndef UNIMPLEMENTED
+#define UNIMPLEMENTED() TRACE("%s:%d: %s: Unimplemented code.", __FILE__, __LINE__, __FUNCSIG__)
+#endif
 #if __cplusplus >= 201103L
 #define COMPILE_ASSERT(expr, msg) static_assert(expr, #msg)
 #else

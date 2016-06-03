@@ -12,7 +12,7 @@ namespace TinyUI
 			TinyVisualWindow(TinyVisualTree* myT);
 			virtual ~TinyVisualWindow();
 		public:
-			LPCSTR RetrieveTag() OVERRIDE;
+			TinyString RetrieveTag() const OVERRIDE;
 			HRESULT OnDraw(TinyDC& dc, TinyRectangle& drawRect) OVERRIDE;
 			HRESULT OnMouseMove(POINT pos) OVERRIDE;
 			HRESULT OnLButtonDown(POINT pos) OVERRIDE;

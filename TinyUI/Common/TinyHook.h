@@ -10,13 +10,13 @@ namespace TinyUI
 	/// <summary>
 	/// IAT注入
 	/// </summary>
-	class TinyIATHook
+	class TinyIATHook : public TinyReference < TinyIATHook >
 	{
 	protected:
 		typedef struct tagEXCLUDEDMODULE
 		{
 			HMODULE		hModule;
-			CHAR		pzModule[MAX_PATH];
+			TCHAR		pzModule[MAX_PATH];
 		}EXCLUDEDMODULE;
 	public:
 		TinyIATHook();
@@ -30,14 +30,11 @@ namespace TinyUI
 		TinyArray<HMODULE> GetExcludeModules();
 		TinyIATFunction* GetFunction(LPCSTR pszCalleeModName, LPCSTR pszFunctionName);
 	public:
-		static TinyIATHook* GetInstance();
-		static PROC GetOriginalProc(LPCSTR pszCalleeModName, LPCSTR pszFunctionName);
+		static PROC GetOriginalProc(TinyIATHook* pHook, LPCSTR pszCalleeModName, LPCSTR pszFunctionName);
 	protected:
-		static TinyIATHook* m_pHook;
 		TinyArray<TinyScopedReferencePtr<TinyIATFunction>> m_hookFs;
 		TinyArray<EXCLUDEDMODULE>	m_excludes;
 	};
-	SELECTANY TinyIATHook* TinyIATHook::m_pHook = NULL;
 	/// <summary>
 	/// API函数
 	/// </summary>
@@ -59,23 +56,8 @@ namespace TinyUI
 		CHAR				m_pzFunctionName[MAX_PATH];
 		CHAR				m_pzCalleeModName[MAX_PATH];
 		TinyLock			m_lock;
-		TinyIATHook*		m_pAPIHook;
+		TinyIATHook*		m_pIATHook;
 		static PVOID        m_pMaximumApplicationAddress;
 	};
 	SELECTANY PVOID TinyIATFunction::m_pMaximumApplicationAddress = NULL;
-	//////////////////////////////////////////////////////////////////////////
-	/// <summary>
-	/// 内联注入(inline),替换函数指令块以后实现貌似写的通用有点复杂
-	/// </summary>
-	class TinyInlineHook
-	{
-	public:
-		TinyInlineHook(PROC pfnCurrent, PROC pfnNew);
-		~TinyInlineHook();
-		BOOL InstallHook();
-		BOOL UninstallHook();
-	private:
-		PROC m_pfnOrig;
-		PROC m_pfnNew;
-	};
 }

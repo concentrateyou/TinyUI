@@ -60,6 +60,7 @@ namespace TinyUI
 			bHandled = FALSE;
 			PAINTSTRUCT ps = { 0 };
 			HDC hDC = BeginPaint(m_hWND, &ps);
+			
 			EndPaint(m_hWND, &ps);
 			return FALSE;
 		}
@@ -93,7 +94,7 @@ namespace TinyUI
 		LRESULT TinyVisualHWND::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
-			
+
 			return FALSE;
 		}
 		LRESULT TinyVisualHWND::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

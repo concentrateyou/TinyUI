@@ -12,14 +12,14 @@ namespace TinyUI
 			DECLARE_DYNAMIC(TinyVisualHWND)
 		public:
 			TinyVisualHWND();
-			~TinyVisualHWND();
+			virtual ~TinyVisualHWND();
 			BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 			DWORD RetrieveStyle() OVERRIDE;
 			DWORD RetrieveExStyle() OVERRIDE;
 			LPCSTR RetrieveClassName() OVERRIDE;
 			LPCSTR RetrieveTitle() OVERRIDE;
 			HICON RetrieveIcon() OVERRIDE;
-
+			//ÏûÏ¢
 			LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;

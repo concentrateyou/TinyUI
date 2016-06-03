@@ -15,23 +15,6 @@ namespace TinyUI
 	{
 
 	}
-	TinyIATHook* TinyIATHook::GetInstance()
-	{
-		if (m_pHook == NULL)
-		{
-			TinyLock lock1;
-			lock1.Acquire();
-			if (m_pHook == NULL)
-			{
-				TinyLock lock2;
-				lock2.Acquire();
-				m_pHook = new TinyIATHook();
-				lock2.Release();
-			}
-			lock1.Release();
-		}
-		return m_pHook;
-	}
 	BOOL TinyIATHook::Add(LPCSTR pszCalleeModName, LPCSTR pszFunctionName, PROC  pfnOrig, PROC  pfnHook)
 	{
 		TinyIATFunction* ps = new TinyIATFunction(this, pszCalleeModName, pszFunctionName, pfnOrig, pfnHook);
@@ -117,14 +100,14 @@ namespace TinyUI
 		}
 		return NULL;
 	}
-	PROC TinyIATHook::GetOriginalProc(LPCSTR pszCalleeModName, LPCSTR pszFunctionName)
+	PROC TinyIATHook::GetOriginalProc(TinyIATHook* pIATHook, LPCSTR pszCalleeModName, LPCSTR pszFunctionName)
 	{
-		TinyIATFunction* fs = GetInstance()->GetFunction(pszCalleeModName, pszFunctionName);
+		TinyIATFunction* fs = pIATHook->GetFunction(pszCalleeModName, pszFunctionName);
 		return fs ? fs->m_pfnOrig : NULL;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	TinyIATFunction::TinyIATFunction(TinyIATHook* pAPIHook, LPCSTR  pszCalleeModName, LPCSTR pszFunctionName, PROC pfnOrig, PROC pfnHook)
-		: m_pAPIHook(pAPIHook),
+	TinyIATFunction::TinyIATFunction(TinyIATHook* pIATHook, LPCSTR  pszCalleeModName, LPCSTR pszFunctionName, PROC pfnOrig, PROC pfnHook)
+		: m_pIATHook(pIATHook),
 		m_pfnOrig(pfnOrig),
 		m_pfnHook(pfnHook),
 		m_bInstall(FALSE)
@@ -164,7 +147,7 @@ namespace TinyUI
 		for (DWORD i = 0; i < dwSize; i++)
 		{
 			HMODULE hModule = tools[i];
-			if (!m_pAPIHook->IsModuleExclude(hModule))
+			if (!m_pIATHook->IsModuleExclude(hModule))
 			{
 				if (DoInstallHook(hModule, pszCalleeModName, pfnCurrent, pfnNew))
 				{
@@ -250,27 +233,5 @@ namespace TinyUI
 			m_bInstall = FALSE;
 		}
 		return !m_bInstall;
-	}
-	//////////////////////////////////////////////////////////////////////////
-	TinyInlineHook::TinyInlineHook(PROC pfnCurrent, PROC pfnNew)
-		:m_pfnOrig(pfnCurrent),
-		m_pfnNew(pfnNew)
-	{
-
-	}
-
-	TinyInlineHook::~TinyInlineHook()
-	{
-
-	}
-
-	BOOL TinyInlineHook::InstallHook()
-	{
-		return FALSE;
-	}
-
-	BOOL TinyInlineHook::UninstallHook()
-	{
-		return FALSE;
 	}
 }

@@ -14,6 +14,7 @@ namespace TinyUI
 			m_visible(TRUE),
 			m_enable(TRUE)
 		{
+
 		}
 		TinyVisual::~TinyVisual()
 		{
@@ -97,6 +98,28 @@ namespace TinyUI
 				}
 			}
 		}
+		TinyRectangle TinyVisual::GetMargin() const
+		{
+			return m_margin;
+		}
+		void TinyVisual::SetMargin(const TinyRectangle& margin)
+		{
+			if (margin != m_margin)
+			{
+				m_margin = margin;
+			}
+		}
+		TinyRectangle TinyVisual::GetPadding() const
+		{
+			return m_padding;
+		}
+		void TinyVisual::SetPadding(const TinyRectangle& padding)
+		{
+			if (padding != m_padding)
+			{
+				m_padding = padding;
+			}
+		}
 		TinyPoint TinyVisual::GetPosition() const
 		{
 			return *((TinyPoint*)&m_windowRect);
@@ -114,7 +137,15 @@ namespace TinyUI
 				OnSizeChange(oldSize, size);
 			}
 		}
+		void TinyVisual::SetClip(HRGN hrgnClip)
+		{
+			this->m_hrgnClip = hrgnClip;
+		}
 		void TinyVisual::OnSizeChange(const TinySize&oldSize, const TinySize&newSize)
+		{
+
+		}
+		void TinyVisual::Resize()
 		{
 
 		}

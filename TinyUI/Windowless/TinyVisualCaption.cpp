@@ -1,4 +1,5 @@
 #include "../stdafx.h"
+#include "TinyVisualCommon.h"
 #include "TinyVisualCaption.h"
 #include "TinyVisualManage.h"
 
@@ -15,7 +16,7 @@ namespace TinyUI
 		{
 
 		}
-		LPCSTR TinySysButton::RetrieveTag()
+		TinyString TinySysButton::RetrieveTag() const
 		{
 			return TinyVisualTag::SYSBUTTON;
 		}
@@ -57,9 +58,13 @@ namespace TinyUI
 		{
 
 		}
-		LPCSTR TinyVisualCaption::RetrieveTag()
+		TinyString TinyVisualCaption::RetrieveTag() const
 		{
 			return TinyVisualTag::CAPTION;
+		}
+		void TinyVisualCaption::Resize()
+		{
+			TinyVisual* spvisParent = m_spvisParent;
 		}
 		HRESULT TinyVisualCaption::OnDraw(TinyDC& dc, TinyRectangle& drawRect)
 		{

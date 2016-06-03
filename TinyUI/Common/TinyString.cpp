@@ -108,8 +108,7 @@ namespace TinyUI
 		_Mystr(NULL)
 	{
 		//TRACE("调用拷贝构造函数TinyString(const TinyString& s): %d\n", this);
-		size_t _Maxsize = (size_t)((size_t)-1 / sizeof(CHAR));
-		Assign(s, 0, _Maxsize);
+		Assign(s, 0, s.GetSize());
 	}
 	TinyString::TinyString(TinyString&& s)
 	{
@@ -308,46 +307,54 @@ namespace TinyUI
 	}
 	TinyString& TinyString::Assign(const TinyString& str, size_t pos, size_t size)
 	{
-		ASSERT(str.GetSize() > pos);
-		size_t _Num = str.GetSize() - pos;
-		if (size < _Num)
-			_Num = size;
-		if (this == &str)//substring
+		if (str.GetSize() <= pos)
 		{
-			Erase(pos + _Num);
-			Erase(0, pos);
+			this->_Mystr = NULL;
+			this->_Mysize = 0;
+			this->_Myres = 0;
 		}
 		else
 		{
-			//容量不足扩充
-			if (this->_Myres < _Num)
+			size_t _Num = str.GetSize() - pos;
+			if (size < _Num)
+				_Num = size;
+			if (this == &str)//substring
 			{
-				size_t _Maxsize = (size_t)((size_t)-1 / sizeof(CHAR));
-				size_t _Newres = _Num | this->_ALLOC_MASK;
-				size_t _size = (_Myres * 3) / 2;//扩充一半
-				if (_Maxsize < _Newres)
-					_Newres = _Num;
-				else if (_Newres < _size && _size <= _Maxsize)
-					_Newres = _size;
-				ASSERT(_Newres >= _Num);
-				CHAR *_Ptr = NULL;
-				_Ptr = new CHAR[_Newres + 1];
-				if (0 < this->_Mysize)//拷贝存在的
-				{
-					memcpy(_Ptr, this->_Mystr, this->_Mysize);
-				}
-				this->_Myres = _Newres;
-				memcpy(_Ptr, str.STR() + pos, _Num);//附加内存
-				this->_Mysize = _Num;
-				_Ptr[this->_Mysize] = '\0';
-				SAFE_DELETE_ARRAY(this->_Mystr);
-				this->_Mystr = _Ptr;
+				Erase(pos + _Num);
+				Erase(0, pos);
 			}
-			else//拷贝内存
+			else
 			{
-				memcpy(this->_Mystr, str.STR() + pos, _Num);//附加内存
-				this->_Mysize = _Num;
-				this->_Mystr[this->_Mysize] = '\0';
+				//容量不足扩充
+				if (this->_Myres < _Num)
+				{
+					size_t _Maxsize = (size_t)((size_t)-1 / sizeof(CHAR));
+					size_t _Newres = _Num | this->_ALLOC_MASK;
+					size_t _size = (_Myres * 3) / 2;//扩充一半
+					if (_Maxsize < _Newres)
+						_Newres = _Num;
+					else if (_Newres < _size && _size <= _Maxsize)
+						_Newres = _size;
+					ASSERT(_Newres >= _Num);
+					CHAR *_Ptr = NULL;
+					_Ptr = new CHAR[_Newres + 1];
+					if (0 < this->_Mysize)//拷贝存在的
+					{
+						memcpy(_Ptr, this->_Mystr, this->_Mysize);
+					}
+					this->_Myres = _Newres;
+					memcpy(_Ptr, str.STR() + pos, _Num);//附加内存
+					this->_Mysize = _Num;
+					_Ptr[this->_Mysize] = '\0';
+					SAFE_DELETE_ARRAY(this->_Mystr);
+					this->_Mystr = _Ptr;
+				}
+				else//拷贝内存
+				{
+					memcpy(this->_Mystr, str.STR() + pos, _Num);//附加内存
+					this->_Mysize = _Num;
+					this->_Mystr[this->_Mysize] = '\0';
+				}
 			}
 		}
 		return *this;

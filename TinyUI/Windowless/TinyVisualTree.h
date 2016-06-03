@@ -47,6 +47,10 @@ namespace TinyUI
 			TinyVisual*	SetFocus(TinyVisual* pNew);
 			void		LinkVisual(TinyVisual* spvis, TinyVisual* spvisInsert, TinyVisual**pspvisFirst);
 			void		UnlinkVisual(TinyVisual* spvisUnlink, TinyVisual** pspvisFirst);
+#ifdef _DEBUG
+			void		Dump();
+			void		Dump(TinyVisual* spvis);
+#endif // _DEBUG
 		public:
 			HRESULT		OnMouseMove(POINT pos);
 			HRESULT     OnLButtonDown(POINT pos);

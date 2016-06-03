@@ -1428,7 +1428,7 @@ namespace TinyUI
 		}
 	}
 #pragma endregion
-#pragma regionTinyWindowDC TinyWindowDC
+#pragma region  TinyWindowDC
 	TinyWindowDC::TinyWindowDC(HWND hWND)
 		:m_hWND(hWND)
 	{

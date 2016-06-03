@@ -26,11 +26,6 @@ namespace TinyUI
 	LRESULT TinySkinWindow::OnNCPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		//TinyWindowDC dc(m_hWND);
-		//TinyRectangle rectangle;
-		//this->GetWindowRect(&rectangle);
-		//OffsetRect(&rectangle, -rectangle.left, -rectangle.top);
-		//TinyMemDC menDC(dc, TO_CX(rectangle), TO_CY(rectangle));
 		return FALSE;
 	}
 	LRESULT TinySkinWindow::OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

@@ -13,7 +13,7 @@ namespace TinyUI
 		public:
 			TinySysButton(TinyVisual* spvisParent);
 			virtual ~TinySysButton();
-			LPCSTR RetrieveTag() OVERRIDE;
+			TinyString RetrieveTag() const OVERRIDE;
 			HRESULT OnDraw(TinyDC& dc, TinyRectangle& drawRect) OVERRIDE;
 			HRESULT OnMouseMove(POINT pos) OVERRIDE;
 			HRESULT OnLButtonDown(POINT pos) OVERRIDE;
@@ -24,14 +24,15 @@ namespace TinyUI
 			TinyImage	m_images[3];
 		};
 		/// <summary>
-		/// 标题栏
+		/// 标题栏容器控件HorizontalLayout
 		/// </summary>
 		class TinyVisualCaption : public TinyVisual
 		{
 		public:
 			TinyVisualCaption(TinyVisual* spvisParent);
 			virtual ~TinyVisualCaption();
-			LPCSTR RetrieveTag() OVERRIDE;
+			TinyString RetrieveTag() const OVERRIDE;
+			void Resize() OVERRIDE;
 			HRESULT OnDraw(TinyDC& dc, TinyRectangle& drawRect) OVERRIDE;
 			HRESULT OnMouseMove(POINT pos) OVERRIDE;
 			HRESULT OnLButtonDown(POINT pos) OVERRIDE;

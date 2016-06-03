@@ -790,7 +790,7 @@ namespace TinyUI
 		~TinyMap();
 		ITERATOR operator[](const K& key) const;
 		DWORD GetSize() const;
-		BOOL Contain(const K& key) const;
+		BOOL Contain(const K& key);
 		BOOL IsEmpty() const;
 		ITERATOR Add(const K& key, const V& value);
 		BOOL Remove(const K& key);
@@ -823,8 +823,8 @@ namespace TinyUI
 		TinyNode*	Maximum(TinyNode* ps)const throw();
 		TinyNode*	Prev(TinyNode* ps) const throw();
 		TinyNode*	Next(TinyNode* ps) const throw();
-		BOOL IsNil(TinyNode *p) const throw();
-		void SetNil(TinyNode **p) throw();
+		BOOL IsNIL(TinyNode *p) const throw();
+		void SetNIL(TinyNode **p) throw();
 	private:
 		DWORD		m_dwBlockSize;
 		DWORD		m_dwCount;
@@ -861,17 +861,17 @@ namespace TinyUI
 		return m_dwCount == 0;
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	BOOL TinyMap<K, V, KTraits, VTraits>::Contain(const K& key) const
+	BOOL TinyMap<K, V, KTraits, VTraits>::Contain(const K& key)
 	{
 		return Lookup(m_pRoot, key) != NULL;
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	BOOL TinyMap<K, V, KTraits, VTraits>::IsNil(TinyNode *p) const throw()
+	BOOL TinyMap<K, V, KTraits, VTraits>::IsNIL(TinyNode *p) const throw()
 	{
 		return (p == m_pNIL);
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	void TinyMap<K, V, KTraits, VTraits>::SetNil(TinyNode **p) throw()
+	void TinyMap<K, V, KTraits, VTraits>::SetNIL(TinyNode **p) throw()
 	{
 		*p = m_pNIL;
 	}
@@ -906,9 +906,9 @@ namespace TinyUI
 		m_pFreeList = m_pFreeList->m_pLeft;
 		pNew->m_bColor = TRUE;
 		//新节点指向哨兵节点
-		SetNil(&pNew->m_pLeft);
-		SetNil(&pNew->m_pRight);
-		SetNil(&pNew->m_pParent);
+		SetNIL(&pNew->m_pLeft);
+		SetNIL(&pNew->m_pRight);
+		SetNIL(&pNew->m_pParent);
 		m_dwCount++;
 		return pNew;
 	}
@@ -953,7 +953,7 @@ namespace TinyUI
 	{
 		TinyNode* pX = m_pRoot;
 		TinyNode* pY = NULL;
-		while (!IsNil(pX))
+		while (!IsNIL(pX))
 		{
 			pY = pX;
 			if (KTraits::Compare(pNew->m_key, pX->m_key) <= 0)
@@ -1041,7 +1041,7 @@ namespace TinyUI
 		}
 		//根节点永远是黑色
 		m_pRoot->m_bColor = FALSE;
-		SetNil(&m_pRoot->m_pParent);
+		SetNIL(&m_pRoot->m_pParent);
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	void TinyMap<K, V, KTraits, VTraits>::Delete(TinyNode* ps)
@@ -1055,7 +1055,7 @@ namespace TinyUI
 	template<class K, class V, class KTraits, class VTraits>
 	void TinyMap<K, V, KTraits, VTraits>::DeletePostOrder(TinyNode* ps) throw()
 	{
-		if (IsNil(ps) || ps == NULL) return;
+		if (IsNIL(ps) || ps == NULL) return;
 		DeletePostOrder(ps->m_pLeft);
 		DeletePostOrder(ps->m_pRight);
 		Delete(ps);
@@ -1063,10 +1063,10 @@ namespace TinyUI
 	template<class K, class V, class KTraits, class VTraits>
 	typename TinyMap<K, V, KTraits, VTraits>::TinyNode* TinyMap<K, V, KTraits, VTraits>::Minimum(TinyNode* ps) const throw()
 	{
-		if (IsNil(ps) || ps == NULL)
+		if (IsNIL(ps) || ps == NULL)
 			return (NULL);
 		TinyNode* pMin = ps;
-		while (!IsNil(pMin->m_pLeft))
+		while (!IsNIL(pMin->m_pLeft))
 		{
 			pMin = pMin->m_pLeft;
 		}
@@ -1075,10 +1075,10 @@ namespace TinyUI
 	template<class K, class V, class KTraits, class VTraits>
 	typename TinyMap<K, V, KTraits, VTraits>::TinyNode* TinyMap<K, V, KTraits, VTraits>::Maximum(TinyNode* ps) const throw()
 	{
-		if (IsNil(ps) || ps == NULL)
+		if (IsNIL(ps) || ps == NULL)
 			return (NULL);
 		TinyNode* pMax = ps;
-		while (!IsNil(pMax->m_pLeft))
+		while (!IsNIL(pMax->m_pLeft))
 		{
 			pMax = pMax->m_pLeft;
 		}
@@ -1091,20 +1091,20 @@ namespace TinyUI
 		{
 			return(NULL);
 		}
-		if (!IsNil(ps->m_pLeft))
+		if (!IsNIL(ps->m_pLeft))
 		{
 			return(Maximum(ps->m_pLeft));
 		}
 
 		TinyNode* pParent = ps->m_pParent;
 		TinyNode* pLeft = ps;
-		while (!IsNil(pParent) && (pLeft == pParent->m_pLeft))
+		while (!IsNIL(pParent) && (pLeft == pParent->m_pLeft))
 		{
 			pLeft = pParent;
 			pParent = pParent->m_pParent;
 		}
 
-		if (IsNil(pParent))
+		if (IsNIL(pParent))
 		{
 			pParent = NULL;
 		}
@@ -1117,18 +1117,18 @@ namespace TinyUI
 		{
 			return (NULL);
 		}
-		if (!IsNil(ps->m_pRight))
+		if (!IsNIL(ps->m_pRight))
 		{
 			return Minimum(ps->m_pRight);
 		}
 		TinyNode* pParent = ps->m_pParent;
 		TinyNode* pRight = ps;
-		while (!IsNil(pParent) && (pRight == pParent->m_pRight))
+		while (!IsNIL(pParent) && (pRight == pParent->m_pRight))
 		{
 			pRight = pParent;
 			pParent = pParent->m_pParent;
 		}
-		if (IsNil(pParent))
+		if (IsNIL(pParent))
 		{
 			pParent = NULL;
 		}
@@ -1141,7 +1141,7 @@ namespace TinyUI
 		if (pZ == NULL) return;
 		TinyNode* pY = NULL;
 		TinyNode* pX = NULL;
-		if (IsNil(pZ->m_pLeft) || IsNil(pZ->m_pRight))//左子节点为哨兵
+		if (IsNIL(pZ->m_pLeft) || IsNIL(pZ->m_pRight))//左子节点为哨兵
 		{
 			pY = pZ;//记录后继节点，用着个节点代替删除节点
 		}
@@ -1149,7 +1149,7 @@ namespace TinyUI
 		{
 			pY = Next(pZ);//获得后继节点
 		}
-		if (!IsNil(pY->m_pLeft))
+		if (!IsNIL(pY->m_pLeft))
 		{
 			pX = pY->m_pLeft;
 		}
@@ -1160,7 +1160,7 @@ namespace TinyUI
 
 		pX->m_pParent = pY->m_pParent;
 
-		if (IsNil(pY->m_pParent))
+		if (IsNIL(pY->m_pParent))
 		{
 			m_pRoot = pX;
 		}
@@ -1184,7 +1184,7 @@ namespace TinyUI
 
 		if (m_pRoot != NULL)
 		{
-			SetNil(&m_pRoot->m_pParent);
+			SetNIL(&m_pRoot->m_pParent);
 		}
 		Delete(pZ);
 	}
@@ -1296,12 +1296,12 @@ namespace TinyUI
 		if (ps == NULL) return;
 		TinyNode* pTemp = ps->m_pRight;
 		ps->m_pRight = pTemp->m_pLeft;
-		if (!IsNil(pTemp->m_pLeft))
+		if (!IsNIL(pTemp->m_pLeft))
 		{
 			pTemp->m_pLeft->m_pParent = ps;
 		}
 		pTemp->m_pParent = ps->m_pParent;
-		if (IsNil(ps->m_pParent))
+		if (IsNIL(ps->m_pParent))
 		{
 			m_pRoot = pTemp;
 		}
@@ -1322,12 +1322,12 @@ namespace TinyUI
 		if (ps == NULL) return;
 		TinyNode* pTemp = ps->m_pLeft;
 		ps->m_pLeft = pTemp->m_pRight;
-		if (!IsNil(pTemp->m_pRight))
+		if (!IsNIL(pTemp->m_pRight))
 		{
 			pTemp->m_pRight->m_pParent = ps;
 		}
 		pTemp->m_pParent = ps->m_pParent;
-		if (IsNil(ps->m_pParent))
+		if (IsNIL(ps->m_pParent))
 		{
 			m_pRoot = pTemp;
 		}
@@ -1359,7 +1359,7 @@ namespace TinyUI
 	{
 		TinyNode* pKey = NULL;
 		TinyNode* pX = ps;
-		while (!IsNil(pX) && (pKey == NULL))
+		while (!IsNIL(pX) && (pKey == NULL))
 		{
 			INT cmp = KTraits::Compare(key, pX->m_key);
 			if (cmp == 0)

@@ -324,6 +324,12 @@
     <ClInclude Include="SkinFramework\TinySkinWindow.h">
       <Filter>头文件\SkinFramework</Filter>
     </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualLayout.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualCommon.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -574,6 +580,12 @@
     </ClCompile>
     <ClCompile Include="SkinFramework\TinySkinWindow.cpp">
       <Filter>源文件\SkinFramework</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualLayout.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualCommon.cpp">
+      <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
