@@ -19,6 +19,7 @@ namespace TinyUI
 		TinyImage();
 		~TinyImage();
 		operator HBITMAP() const;//默认第一帧
+		BOOL			IsEmpty() const;
 		BOOL			Load(LPCSTR pz);
 		BOOL			Load(BYTE* p, DWORD size);
 		BOOL			Save(LPCSTR pz);//保存成BMP

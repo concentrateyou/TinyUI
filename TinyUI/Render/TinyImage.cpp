@@ -26,6 +26,10 @@ namespace TinyUI
 			SAFE_DELETE_OBJECT(m_images[i]);
 		}
 	}
+	BOOL TinyImage::IsEmpty() const
+	{
+		return m_hBitmap == NULL || m_count == 0;
+	}
 	BOOL TinyImage::Load(LPCSTR pz)
 	{
 		FILE* pFile = NULL;

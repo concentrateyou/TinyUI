@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<window name="demo" text="demo" size="100,400" maxsize="100,400" minsize="100,400" img="D:\\image.jpg">
+<window name="demo" text="demo" size="100,400" maxsize="100,400" minsize="100,400" image-normal="D:\\image.jpg">
   <caption name="syscaption">
-    <sysbutton name="min" text="Min" tooltip="Min" size="30,30" maxsize="30,30" minsize="30,30" enable="true" visible="true"></sysbutton>
-    <sysbutton name="max" text="Max" tooltip="Max" size="30,30" maxsize="30,30" minsize="30,30" enable="true" visible="true"></sysbutton>
-    <sysbutton name="restore" text="Restore" tooltip="Restore" size="30,30" maxsize="30,30" minsize="30,30" enable="true" visible="true"></sysbutton>
-    <sysbutton name="close" text="Close" tooltip="Close" size="30,30" maxsize="30,30" minsize="30,30" enable="true" visible="true"></sysbutton>
+    <sysbutton name="min" text="Min" tooltip="Min" size="30,30" maxsize="30,30" minsize="30,30" 
+               image-normal="D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_mini_normal.png" 
+               image-highlight="D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_mini_highlight.png"
+               image-down="D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_mini_down.png"></sysbutton>
+    <sysbutton name="max" text="Max" tooltip="Max" size="30,30" maxsize="30,30" minsize="30,30"
+               image-normal="D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_max_normal.png"
+               image-highlight="D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_max_highlight.png"
+               image-down="D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_max_down.png"></sysbutton>
+    <sysbutton name="restore" text="Restore" tooltip="Restore" size="30,30" maxsize="30,30" minsize="30,30"
+               image-normal="D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_restore_normal.png"
+               image-highlight="D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_restore_highlight.png"
+               image-down="D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_restore_down.png"></sysbutton>
+    <sysbutton name="close" text="Close" tooltip="Close" size="30,30" maxsize="30,30" minsize="30,30"
+               image-normal="D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_close_normal.png"
+               image-highlight="D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_close_highlight.png"
+               image-down="D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_close_down.png"></sysbutton>
   </caption>
 </window>

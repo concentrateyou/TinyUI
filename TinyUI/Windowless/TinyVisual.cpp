@@ -1,16 +1,18 @@
 #include "../stdafx.h"
 #include "TinyVisual.h"
+#include "TinyVisualTree.h"
 
 namespace TinyUI
 {
 	namespace Windowless
 	{
-		TinyVisual::TinyVisual(TinyVisual* spvisParent)
+		TinyVisual::TinyVisual(TinyVisual* spvisParent, TinyVisualTree* vtree)
 			:m_spvisParent(spvisParent),
 			m_spvisNext(NULL),
 			m_spvisChild(NULL),
 			m_spvisOwner(NULL),
 			m_hrgnClip(NULL),
+			m_vtree(vtree),
 			m_visible(TRUE),
 			m_enable(TRUE)
 		{
@@ -98,31 +100,15 @@ namespace TinyUI
 				}
 			}
 		}
-		TinyRectangle TinyVisual::GetMargin() const
-		{
-			return m_margin;
-		}
-		void TinyVisual::SetMargin(const TinyRectangle& margin)
-		{
-			if (margin != m_margin)
-			{
-				m_margin = margin;
-			}
-		}
-		TinyRectangle TinyVisual::GetPadding() const
-		{
-			return m_padding;
-		}
-		void TinyVisual::SetPadding(const TinyRectangle& padding)
-		{
-			if (padding != m_padding)
-			{
-				m_padding = padding;
-			}
-		}
 		TinyPoint TinyVisual::GetPosition() const
 		{
 			return *((TinyPoint*)&m_windowRect);
+		}
+		void TinyVisual::SetPosition(const TinyPoint& pos)
+		{
+			TinyPoint& ps = *((TinyPoint*)&m_windowRect);
+			ps.x = pos.x;
+			ps.y = pos.y;
 		}
 		TinySize TinyVisual::GetSize() const
 		{
@@ -140,6 +126,14 @@ namespace TinyUI
 		void TinyVisual::SetClip(HRGN hrgnClip)
 		{
 			this->m_hrgnClip = hrgnClip;
+		}
+		BOOL TinyVisual::SetStyleImage(StyleImage type, LPCSTR pzFile)
+		{
+			return m_images[(INT)type].Load(pzFile);
+		}
+		BOOL TinyVisual::SetStyleImage(StyleImage type, BYTE*	ps, DWORD dwSize)
+		{
+			return m_images[(INT)type].Load(ps, dwSize);
 		}
 		void TinyVisual::OnSizeChange(const TinySize&oldSize, const TinySize&newSize)
 		{

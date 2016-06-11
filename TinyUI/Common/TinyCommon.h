@@ -43,22 +43,22 @@ namespace TinyUI
 #ifndef FINAL
 #define FINAL		final
 #endif 
-//编译器不生成虚表
+	//编译器不生成虚表
 #ifndef NO_VTABLE
 #define NO_VTABLE	__declspec(novtable)
 #endif 
-//编译器不需要添加任何汇编代码
+	//编译器不需要添加任何汇编代码
 #ifndef NAKED
 #define	NAKED		__declspec(naked)
 #endif 
-//编译器移除对静态变量的重复定义
+	//编译器移除对静态变量的重复定义
 #ifndef SELECTANY
 #define	SELECTANY	__declspec(selectany)
 #endif 
 #ifndef ASSERT
 #define ASSERT(expr) _ASSERTE(expr)
 #endif 
-void Trace(LPCTSTR lpszFormat, ...);
+	void Trace(LPCTSTR lpszFormat, ...);
 #ifndef TRACE
 #define TRACE Trace
 #endif
@@ -665,55 +665,61 @@ private:\
 	public:
 		explicit TinyScopedPtr(T* ps = 0);
 		~TinyScopedPtr();
+		BOOL IsEmpty() const throw();
 		void Reset(T* ps = 0) throw();
 		operator T*() const throw();
 		T& operator*() const throw();
 		T* operator->() const throw();
 		T* Ptr() const throw();
 	public:
-		T* _myP;
+		T* m_myP;
 	};
 	template<class T>
 	TinyScopedPtr<T>::TinyScopedPtr(T* ps)
-		: _myP(ps)
+		: m_myP(ps)
 	{
 
 	}
 	template<class T>
 	TinyScopedPtr<T>::~TinyScopedPtr()
 	{
-		if (_myP != NULL)
+		if (m_myP != NULL)
 		{
-			delete _myP;
-			_myP = NULL;
+			delete m_myP;
+			m_myP = NULL;
 		}
+	}
+	template<class T>
+	BOOL TinyScopedPtr<T>::IsEmpty() const throw()
+	{
+		return m_myP == NULL;
 	}
 	template<class T>
 	void TinyScopedPtr<T>::Reset(T* ps) throw()
 	{
-		if (ps != _myP)
-			delete _myP;
-		_myP = ps;
+		if (ps != m_myP)
+			delete m_myP;
+		m_myP = ps;
 	}
 	template<class T>
 	T& TinyScopedPtr<T>::operator*() const throw()
 	{
-		return (*_myP);
+		return (*m_myP);
 	}
 	template<class T>
 	T* TinyScopedPtr<T>::operator->() const throw()
 	{
-		return _myP;
+		return m_myP;
 	}
 	template<class T>
 	T* TinyScopedPtr<T>::Ptr() const throw()
 	{
-		return _myP;
+		return m_myP;
 	}
 	template<class T>
 	TinyScopedPtr<T>::operator T*() const throw()
 	{
-		return _myP;
+		return m_myP;
 	}
 	/// <summary>
 	/// Scope数组

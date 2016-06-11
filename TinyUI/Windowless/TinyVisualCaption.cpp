@@ -1,56 +1,59 @@
 #include "../stdafx.h"
-#include "TinyVisualCommon.h"
-#include "TinyVisualCaption.h"
+#include "TinyVisualTree.h"
 #include "TinyVisualManage.h"
+#include "TinyVisualCaption.h"
 
 namespace TinyUI
 {
 	namespace Windowless
 	{
-		TinySysButton::TinySysButton(TinyVisual* spvisParent)
-			:TinyVisual(spvisParent)
+		TinyVisualSysButton::TinyVisualSysButton(TinyVisual* spvisParent, TinyVisualTree* vtree)
+			:TinyVisual(spvisParent, vtree)
 		{
 
 		}
-		TinySysButton::~TinySysButton()
+		TinyVisualSysButton::~TinyVisualSysButton()
 		{
 
 		}
-		TinyString TinySysButton::RetrieveTag() const
+		TinyString TinyVisualSysButton::RetrieveTag() const
 		{
 			return TinyVisualTag::SYSBUTTON;
 		}
-		HRESULT TinySysButton::OnDraw(TinyDC& dc, TinyRectangle& drawRect)
+		HRESULT TinyVisualSysButton::OnDraw(TinyCanvas& canvas, TinyRectangle& drawRect)
 		{
-			return FALSE;
+			TinyImage& image = m_images[NORMAL];
+			if (image.IsEmpty()) return S_FALSE;
+			canvas.DrawImage(image, drawRect, 0, 0, 30, 30);
+			return S_OK;
 		}
-		HRESULT TinySysButton::OnMouseMove(POINT pos)
-		{
-			return FALSE;
-		}
-
-		HRESULT TinySysButton::OnLButtonDown(POINT pos)
-		{
-			return FALSE;
-		}
-
-		HRESULT TinySysButton::OnLButtonUp(POINT pos)
+		HRESULT TinyVisualSysButton::OnMouseMove(POINT pos)
 		{
 			return FALSE;
 		}
 
-		HRESULT TinySysButton::OnRButtonDown(POINT pos)
+		HRESULT TinyVisualSysButton::OnLButtonDown(POINT pos)
 		{
 			return FALSE;
 		}
 
-		HRESULT TinySysButton::OnRButtonUp(POINT pos)
+		HRESULT TinyVisualSysButton::OnLButtonUp(POINT pos)
+		{
+			return FALSE;
+		}
+
+		HRESULT TinyVisualSysButton::OnRButtonDown(POINT pos)
+		{
+			return FALSE;
+		}
+
+		HRESULT TinyVisualSysButton::OnRButtonUp(POINT pos)
 		{
 			return FALSE;
 		}
 		//////////////////////////////////////////////////////////////////////////
-		TinyVisualCaption::TinyVisualCaption(TinyVisual* spvisParent)
-			:TinyVisual(spvisParent)
+		TinyVisualCaption::TinyVisualCaption(TinyVisual* spvisParent, TinyVisualTree* vtree)
+			:TinyVisual(spvisParent, vtree)
 		{
 
 		}
@@ -66,9 +69,15 @@ namespace TinyUI
 		{
 			TinyVisual* spvisParent = m_spvisParent;
 		}
-		HRESULT TinyVisualCaption::OnDraw(TinyDC& dc, TinyRectangle& drawRect)
+		HRESULT TinyVisualCaption::OnDraw(TinyCanvas& canvas, TinyRectangle& drawRect)
 		{
-			return FALSE;
+			TinyVisual* spvis = m_vtree->GetVisual(this, CMD_CHILD);
+			while (spvis)
+			{
+				spvis->OnDraw(canvas, drawRect);
+				spvis = m_vtree->GetVisual(spvis, CMD_NEXT);
+			}
+			return S_OK;
 		}
 		HRESULT TinyVisualCaption::OnMouseMove(POINT pos)
 		{

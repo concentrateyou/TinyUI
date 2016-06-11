@@ -23,6 +23,7 @@ namespace TinyUI
 	class TinyBitmap;
 	class TinyMemDC;
 	class TinyPalette;
+	class TinyFont;
 	/// <summary>
 	/// DC¿‡
 	/// </summary>
@@ -307,6 +308,7 @@ namespace TinyUI
 		INT		GetExtLogPen(EXTLOGPEN* pLogPen);
 		INT		GetLogPen(LOGPEN* pLogPen);
 	};
+
 	/// <summary>
 	/// Brush¿‡
 	/// </summary>
@@ -439,6 +441,24 @@ namespace TinyUI
 		INT GetRegionData(LPRGNDATA lpRgnData, INT nCount) const;
 		void SetRectRgn(INT x1, INT y1, INT x2, INT y2);
 		void SetRectRgn(LPCRECT lpRect);
+	};
+	/// <summary>
+	/// TinyFont
+	/// </summary>
+	class TinyFont : public TinyHandleHFONT
+	{
+		DECLARE_DYNAMIC(TinyFont)
+	public:
+		TinyFont();
+		virtual ~TinyFont();
+	public:
+		BOOL CreateFontIndirect(const LOGFONT* lpLogFont);
+		BOOL CreateFont(INT nHeight, INT nWidth, INT nEscapement, INT nOrientation, INT nWeight, BYTE bItalic,
+			BYTE bUnderline, BYTE cStrikeOut, BYTE nCharSet, BYTE nOutPrecision,
+			BYTE nClipPrecision, BYTE nQuality, BYTE nPitchAndFamily, LPCTSTR lpszFacename);
+		BOOL CreatePointFont(INT nPointSize, LPCTSTR lpszFaceName, HDC hDC = NULL);
+		BOOL CreatePointFontIndirect(const LOGFONT* lpLogFont, HDC hDC = NULL);
+		INT GetLogFont(LOGFONT* pLogFont);
 	};
 	/// <summary>
 	/// Size¿‡

@@ -7,10 +7,12 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
+		/// <summary>
+		/// 元素属性常量
+		/// </summary>
 		class TinyVisualProperty
 		{
 		public:
-			//元素属性
 			static const TinyString NAME;
 			static const TinyString TEXT;
 			static const TinyString TOOLTIP;
@@ -19,13 +21,34 @@ namespace TinyUI
 			static const TinyString SIZE;
 			static const TinyString VISIBLE;
 			static const TinyString ENABLE;
+			static const TinyString IMAGENORMAL;
+			static const TinyString IMAGEHIGHLIGHT;
+			static const TinyString IMAGEDOWN;
 		};
+		/// <summary>
+		/// Tag常量
+		/// </summary>
 		class TinyVisualTag
 		{
 		public:
 			static const TinyString WINDOW;
 			static const TinyString CAPTION;
 			static const TinyString SYSBUTTON;
+		};
+		/// <summary>
+		/// 缓存DC
+		/// </summary>
+		class TinyVisualCacheDC : public TinyHandleHDC
+		{
+		public:
+			TinyVisualCacheDC(HWND hWND);
+			~TinyVisualCacheDC();
+			void SetSize(INT cx, INT cy);
+		protected:
+			HWND		m_hWND;
+			TinySize	m_size;
+			HBITMAP		m_hBitmap;
+			HGDIOBJ		m_hPrev;
 		};
 	}
 }

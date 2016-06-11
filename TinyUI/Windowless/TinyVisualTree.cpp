@@ -21,15 +21,38 @@ namespace TinyUI
 		}
 		BOOL TinyVisualTree::Initialize()
 		{
-			m_spvisWindow = new TinyVisualWindow(this);
-			if (!m_spvisWindow) return FALSE;
-			m_parse.Reset(new TinyVisualParse());
-			m_parse->LoadFile("D:\\resource.xml");
-			return m_parse->BuildVisualTree(this);
+			m_fs.Reset(new TinyVisualFactory(this));
+			m_spvisWindow = new TinyVisualWindow(NULL, this);
+			m_spvisWindow->SetName("Window");
+			m_spvisWindow->SetStyleImage(NORMAL, "D:\\image.png");
+
+			TinyVisual* ps1 = m_fs->Create(0, 0, 100, 30, m_spvisWindow, TinyVisualTag::CAPTION);
+			ps1->SetName("Caption-1");
+
+			TinyVisual* ps2 = m_fs->Create(0, 0, 30, 30, ps1, TinyVisualTag::SYSBUTTON);
+			ps2->SetName("Min-1");
+			ps2->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_mini_normal.png");
+			ps2->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_mini_highlight.png");
+			ps2->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_mini_down.png");
+
+			TinyVisual* ps3 = m_fs->Create(30, 0, 30, 30, ps1, TinyVisualTag::SYSBUTTON);
+			ps3->SetName("Max-1");
+			ps3->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_max_normal.png");
+			ps3->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_max_highlight.png");
+			ps3->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_max_down.png");
+
+			TinyVisual* ps4 = m_fs->Create(60, 0, 30, 30, ps1, TinyVisualTag::SYSBUTTON);
+			ps4->SetName("Close-1");
+			ps4->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_close_normal.png");
+			ps4->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_close_highlight.png");
+			ps4->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_close_down.png");
+
+			this->Dump();
+			return TRUE;
 		}
 		void TinyVisualTree::Uninitialize()
 		{
-			SAFE_DELETE(m_spvisWindow);
+			m_fs->Destory(m_spvisWindow);
 		}
 		TinyVisualHWND*	TinyVisualTree::GetVisualHWND()
 		{
@@ -91,7 +114,7 @@ namespace TinyUI
 			{
 				switch (cmd)
 				{
-				case CMD_FIRST:
+				case GW_CHILD:
 					break;
 				default:
 					return NULL;
@@ -130,7 +153,7 @@ namespace TinyUI
 			default:
 				return NULL;
 			}
-			return NULL;
+			return pv;
 		}
 		TinyVisual* TinyVisualTree::GetPrevVisual(TinyVisual* spvisList, TinyVisual* spvisFind) const
 		{
@@ -156,21 +179,21 @@ namespace TinyUI
 			if (!spvis) return m_spvisWindow;
 			return spvis->m_spvisParent;
 		}
-		TinyVisual* TinyVisualTree::SetParent(TinyVisual* spvis, TinyVisual* spvisParent)
+		TinyVisual* TinyVisualTree::SetParent(TinyVisual* spvis, TinyVisual* spvisNewParent)
 		{
-			ASSERT(spvis && spvisParent);
-			if (spvisParent == NULL)
+			ASSERT(spvis);
+			if (spvisNewParent == NULL)
 			{
-				spvisParent = m_spvisWindow;
+				spvisNewParent = m_spvisWindow;
 			}
 			if (spvis == m_spvisWindow)
 			{
 				return NULL;
 			}
-			TinyVisual* pv = NULL;
-			for (pv = spvisParent; pv != NULL; pv = pv->m_spvisParent)
+			TinyVisual* pvT = NULL;
+			for (pvT = spvisNewParent; pvT != NULL; pvT = pvT->m_spvisParent)
 			{
-				if (spvis == pv)
+				if (spvis == pvT)
 				{
 					return NULL;
 				}
@@ -178,12 +201,14 @@ namespace TinyUI
 			spvis->SetVisible(FALSE);
 			TinyVisual* spvisOldParent = spvis->m_spvisParent;
 			INT x, y;
-			x = spvis->m_windowRect.left - spvisOldParent->m_windowRect.left;
-			y = spvis->m_windowRect.top - spvisOldParent->m_windowRect.top;
+			x = abs(spvis->m_windowRect.left - spvisOldParent->m_windowRect.left);
+			y = abs(spvis->m_windowRect.top - spvisOldParent->m_windowRect.top);
 			UnlinkVisual(spvis, &spvisOldParent->m_spvisChild);
-			spvis->m_spvisParent = spvisParent;
-			LinkVisual(spvis, NULL, &spvisParent->m_spvisChild);
-			SetVisualPos(spvis, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+			spvis->m_spvisParent = spvisNewParent;
+			LinkVisual(spvis, NULL, &spvisNewParent->m_spvisChild);
+			TinyPoint pos(x, y);
+			pos.Offset(spvis->m_spvisParent->GetPosition());
+			spvis->SetPosition(pos);
 			spvis->SetVisible(TRUE);
 			return spvisOldParent;
 		}
@@ -207,46 +232,6 @@ namespace TinyUI
 					return FALSE;
 				spvis = spvis->m_spvisParent;
 			}
-			return TRUE;
-		}
-		BOOL TinyVisualTree::SetVisualPos(TinyVisual* spvis, INT  x, INT  y, INT  cx, INT  cy, DWORD dwFlags)
-		{
-			TinyVisual* spvisParent = spvis->m_spvisParent;
-			if (!spvisParent || !m_pWindow) return FALSE;
-			if (cx < 0)
-				cx = 0;
-			else if (cx > SHRT_MAX)
-				cx = SHRT_MAX;
-			if (cy < 0)
-				cy = 0;
-			else if (cy > SHRT_MAX)
-				cy = SHRT_MAX;
-			INT mycx = cx;
-			INT mycy = cy;
-			if (dwFlags & SWP_NOSIZE)
-			{
-				mycx = TO_CX(&spvis->m_windowRect);
-				mycy = TO_CY(&spvis->m_windowRect);
-			}
-			if (x > SHRT_MAX)
-				x = SHRT_MAX;
-			else if (x < SHRT_MIN)
-				x = SHRT_MIN;
-			if (y > SHRT_MAX)
-				y = SHRT_MAX;
-			else if (y < SHRT_MIN)
-				y = SHRT_MIN;
-			INT myx = x;
-			INT myy = y;
-			if (dwFlags & SWP_NOMOVE)
-			{
-				myx = spvis->m_windowRect.left - spvisParent->m_windowRect.left;
-				myy = spvis->m_windowRect.top - spvisParent->m_windowRect.top;
-			}
-			spvis->m_windowRect.left = spvisParent->m_windowRect.left + myx;
-			spvis->m_windowRect.top = spvisParent->m_windowRect.top + myy;
-			spvis->m_windowRect.right = spvis->m_windowRect.left + mycx;
-			spvis->m_windowRect.bottom = spvis->m_windowRect.top + mycx;
 			return TRUE;
 		}
 		TinyVisual*	TinyVisualTree::GetVisualByPos1(TinyVisual* spvis, INT x, INT y)
@@ -316,6 +301,10 @@ namespace TinyUI
 				m_spvisFocus = pNew;
 			}
 			return pv;
+		}
+		void TinyVisualTree::Resize()
+		{
+
 		}
 		HRESULT	TinyVisualTree::OnMouseMove(POINT pos)
 		{
@@ -402,28 +391,38 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-
 		void TinyVisualTree::Dump()
 		{
+			TRACE("Dump-----\n");
+			INT deep = 0;
 			TinyVisual* spvis = this->GetParent(NULL);
 			TinyVisual* ps = spvis->m_spvisChild;
 			while (ps)
 			{
-				Dump(ps);
+				Dump(ps, deep);
 				ps = ps->m_spvisNext;
+				deep = 0;
 			}
-
+			TRACE("Dump-----\n");
 		}
-		void TinyVisualTree::Dump(TinyVisual* spvis)
+		void TinyVisualTree::Dump(TinyVisual* spvis, INT& deep)
 		{
+			++deep;
 			if (!spvis) return;
 			TinyString className = spvis->RetrieveTag();
 			TinyString name = spvis->GetName();
-			TRACE("Tag:%s,Name:%s\n", className.STR(), name.STR());
+			TinyString str;
+			for (INT i = 0; i < deep; i++)
+			{
+				str += "-";
+			}
+			str += "Tag:%s,Name:%s,Rectangle(%d,%d,%d,%d)\n";
+			TinyRectangle bounds(spvis->GetPosition(), spvis->GetSize());
+			TRACE(str.STR(), className.STR(), name.STR(), bounds.left, bounds.top, bounds.right, bounds.bottom);
 			TinyVisual* ps = spvis->m_spvisChild;
 			while (ps)
 			{
-				Dump(ps);
+				Dump(ps, deep);
 				ps = ps->m_spvisNext;
 			}
 		}

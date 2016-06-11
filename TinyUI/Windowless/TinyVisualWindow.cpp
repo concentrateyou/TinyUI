@@ -8,10 +8,14 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		TinyVisualWindow::TinyVisualWindow(TinyVisualTree* myT)
-			:TinyVisual(NULL), m_myT(myT)
+		TinyVisualWindow::TinyVisualWindow(TinyVisual* spvisParent, TinyVisualTree* vtree)
+			:TinyVisual(spvisParent, vtree)
 		{
-
+			TinyVisualHWND* pWND = vtree->GetVisualHWND();
+			if (pWND)
+			{
+				pWND->GetWindowRect(&m_windowRect);
+			}
 		}
 		TinyVisualWindow::~TinyVisualWindow()
 		{
@@ -21,9 +25,20 @@ namespace TinyUI
 		{
 			return TinyVisualTag::WINDOW;
 		}
-		HRESULT TinyVisualWindow::OnDraw(TinyDC& dc, TinyRectangle& drawRect)
+		HRESULT TinyVisualWindow::OnDraw(TinyCanvas& canvas, TinyRectangle& drawRect)
 		{
-			return FALSE;
+			TinyImage& image = m_images[NORMAL];
+			if (image.IsEmpty()) return S_FALSE;
+			canvas.SetBrush((HBRUSH)GetStockObject(WHITE_BRUSH));
+			canvas.FillRectangle(drawRect);
+			canvas.DrawImage(image, drawRect, 0, 0, image.GetSize().cx, image.GetSize().cy);
+			TinyVisual* spvis = m_vtree->GetVisual(this, CMD_CHILD);
+			while (spvis)
+			{
+				spvis->OnDraw(canvas, drawRect);
+				spvis = m_vtree->GetVisual(spvis, CMD_CHILD);
+			}
+			return S_OK;
 		}
 
 		HRESULT TinyVisualWindow::OnMouseMove(POINT pos)
@@ -49,10 +64,6 @@ namespace TinyUI
 		HRESULT TinyVisualWindow::OnRButtonUp(POINT pos)
 		{
 			return FALSE;
-		}
-
-		void TinyVisualWindow::OnSizeChange(const TinySize&oldSize, const TinySize&newSize)
-		{
 		}
 	}
 }

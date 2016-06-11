@@ -35,9 +35,11 @@ namespace TinyUI
 		private:
 			BOOL Initialize();
 			void Uninitialize();
+			void Draw();
 		private:
-			SIZE			m_size;
-			TinyVisualTree*	m_vtree;
+			TinySize							m_size;
+			TinyScopedPtr<TinyVisualTree>		m_vtree;
+			TinyScopedPtr<TinyVisualCacheDC>	m_cacheDC;
 		};
 	}
 }

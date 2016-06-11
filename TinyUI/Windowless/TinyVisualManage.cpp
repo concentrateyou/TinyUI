@@ -10,6 +10,49 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
+		TinyVisualFactory::TinyVisualFactory(TinyVisualTree* vtree)
+			:m_vtree(vtree)
+		{
+
+		}
+		TinyVisual* TinyVisualFactory::Create(INT x, INT y, INT cx, INT cy, TinyVisual* spvisParent, const TinyString& tag)
+		{
+			ASSERT(m_vtree);
+			TinyVisual* spvis = NULL;
+			if (tag.Compare(TinyVisualTag::CAPTION) == 0)
+			{
+				spvis = new TinyVisualCaption(spvisParent, m_vtree);
+			}
+			else if (tag.Compare(TinyVisualTag::SYSBUTTON) == 0)
+			{
+				spvis = new TinyVisualSysButton(spvisParent, m_vtree);
+			}
+			spvis->SetSize(TinySize(cx, cy));
+			TinyPoint pos(x, y);
+			pos.Offset(spvisParent->GetPosition());
+			spvis->SetPosition(pos);
+			m_vtree->SetParent(spvis, spvisParent);
+			return spvis;
+		}
+		BOOL TinyVisualFactory::Destory(TinyVisual* spvis)
+		{
+			ASSERT(m_vtree);
+			if (!spvis) return FALSE;
+			TinyVisual* spvisNext = NULL;
+			TinyVisual* spvisChild = NULL;
+			spvisChild = spvis->m_spvisChild;
+			while (spvisChild != NULL)
+			{
+				spvisNext = spvisChild->m_spvisNext;
+				Destory(spvisChild);
+				spvisChild = spvisNext;
+			}
+			if (spvis->m_spvisParent)
+				m_vtree->UnlinkVisual(spvis, &(spvis->m_spvisParent->m_spvisChild));
+			SAFE_DELETE(spvis);
+			return TRUE;
+		}
+		//////////////////////////////////////////////////////////////////////////
 		TinyVisualParse::TinyVisualParse()
 		{
 
@@ -40,30 +83,30 @@ namespace TinyUI
 		}
 		void TinyVisualParse::CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualTree* pvisualTree)
 		{
-			TinyVisual* spvis = NULL;
+			/*TinyVisual* spvis = NULL;
 			for (const TiXmlNode* pXMLChildNode = pXMLNode->FirstChild(); pXMLChildNode; pXMLChildNode = pXMLChildNode->NextSibling())
 			{
-				if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT &&
-					!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::CAPTION.STR()))
-				{
-					TinyMap<TinyString, TinyString> map;
-					GetAttributeMap(static_cast<const TiXmlElement*>(pXMLChildNode), map);
-					spvis = new TinyVisualCaption(spvisParent);
-					BuildProperty(map, spvis);
-					pvisualTree->LinkVisual(spvis, PVISUAL_BOTTOM, &spvisParent->m_spvisChild);
-					CreateInstace(pXMLChildNode, spvis, pvisualTree);
-					spvis->Resize();
-				}
-				else if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT &&
-					!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::SYSBUTTON.STR()))
-				{
-					TinyMap<TinyString, TinyString> map;
-					GetAttributeMap(static_cast<const TiXmlElement*>(pXMLChildNode), map);
-					spvis = new TinySysButton(spvisParent);
-					BuildProperty(map, spvis);
-					pvisualTree->LinkVisual(spvis, PVISUAL_BOTTOM, &spvisParent->m_spvisChild);
-				}
+			if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT &&
+			!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::CAPTION.STR()))
+			{
+			TinyMap<TinyString, TinyString> map;
+			GetAttributeMap(static_cast<const TiXmlElement*>(pXMLChildNode), map);
+			spvis = new TinyVisualCaption(spvisParent);
+			BuildProperty(map, spvis);
+			pvisualTree->LinkVisual(spvis, PVISUAL_BOTTOM, &spvisParent->m_spvisChild);
+			CreateInstace(pXMLChildNode, spvis, pvisualTree);
+			spvis->Resize();
 			}
+			else if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT &&
+			!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::SYSBUTTON.STR()))
+			{
+			TinyMap<TinyString, TinyString> map;
+			GetAttributeMap(static_cast<const TiXmlElement*>(pXMLChildNode), map);
+			spvis = new TinyVisualSysButton(spvisParent);
+			BuildProperty(map, spvis);
+			pvisualTree->LinkVisual(spvis, PVISUAL_BOTTOM, &spvisParent->m_spvisChild);
+			}
+			}*/
 		}
 		void TinyVisualParse::BuildProperty(TinyMap<TinyString, TinyString> &map, TinyVisual* spvis)
 		{
@@ -106,6 +149,21 @@ namespace TinyUI
 			{
 				TinyString* ps = map.GetValue(TinyVisualProperty::VISIBLE);
 				spvis->SetVisible(GetBool(ps));
+			}
+			if (map.Contain(TinyString(TinyVisualProperty::IMAGENORMAL)))
+			{
+				TinyString* ps = map.GetValue(TinyVisualProperty::IMAGENORMAL);
+				spvis->SetStyleImage(NORMAL, ps->STR());
+			}
+			if (map.Contain(TinyString(TinyVisualProperty::IMAGEHIGHLIGHT)))
+			{
+				TinyString* ps = map.GetValue(TinyVisualProperty::IMAGEHIGHLIGHT);
+				spvis->SetStyleImage(HIGHLIGHT, ps->STR());
+			}
+			if (map.Contain(TinyString(TinyVisualProperty::IMAGEDOWN)))
+			{
+				TinyString* ps = map.GetValue(TinyVisualProperty::IMAGEDOWN);
+				spvis->SetStyleImage(DOWN, ps->STR());
 			}
 		}
 		BOOL TinyVisualParse::GetAttributeMap(const TiXmlElement* pXMLNode, TinyMap<TinyString, TinyString>& map)

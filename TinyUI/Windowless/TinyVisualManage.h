@@ -3,13 +3,31 @@
 #include "../IO/TinyIO.h"
 #include "../XML/TinyXMLParse.h"
 #include "../Common/TinyCollection.h"
+#include "TinyVisualCommon.h"
 #include "TinyVisualWindow.h"
 
 namespace TinyUI
 {
 	namespace Windowless
 	{
-		
+		class TinyVisualFactory;
+		class TinyVisualTree;
+		/// <summary>
+		/// Visual工厂类
+		/// </summary>
+		class TinyVisualFactory
+		{
+			friend class TinyVisual;
+			friend class TinyVisualTree;
+			DISALLOW_COPY_AND_ASSIGN(TinyVisualFactory);
+		private:
+			TinyVisualFactory(TinyVisualTree* vtree);
+		public:
+			TinyVisual* Create(INT x, INT y, INT cx, INT cy, TinyVisual* spvisParent, const TinyString& tag);
+			BOOL		Destory(TinyVisual* spvis);
+		private:
+			TinyVisualTree* m_vtree;
+		};
 		/// <summary>
 		/// 可视化元素管理
 		/// </summary>

@@ -1743,7 +1743,7 @@ namespace TinyUI
 	}
 	BOOL TinyRgn::CreateRgn(HDC hDC)
 	{
-		ASSERT(hDC != NULL);
+		ASSERT(hDC);
 		return Attach(::PathToRegion(hDC));
 	}
 	BOOL TinyRgn::CreateRgn(const XFORM* lpXForm, INT nCount, const RGNDATA* pRgnData)
@@ -1797,6 +1797,68 @@ namespace TinyUI
 	void TinyRgn::SetRectRgn(LPCRECT lpRect)
 	{
 		::SetRectRgn(m_hHRGN, lpRect->left, lpRect->top, lpRect->right, lpRect->bottom);
+	}
+	/************************************************************************/
+	/* FONT																	*/
+	/************************************************************************/
+	TinyFont::TinyFont()
+	{
+
+	}
+	TinyFont::~TinyFont()
+	{
+		::DeleteObject(Detach());
+	}
+	BOOL TinyFont::CreateFontIndirect(const LOGFONT* lpLogFont)
+	{
+		ASSERT(lpLogFont);
+		return Attach(::CreateFontIndirect(lpLogFont));
+	}
+	BOOL TinyFont::CreateFont(INT nHeight, INT nWidth, INT nEscapement, INT nOrientation, INT nWeight, BYTE bItalic,
+		BYTE bUnderline, BYTE cStrikeOut, BYTE nCharSet, BYTE nOutPrecision,
+		BYTE nClipPrecision, BYTE nQuality, BYTE nPitchAndFamily, LPCTSTR lpszFacename)
+	{
+		return Attach(::CreateFont(nHeight, nWidth, nEscapement, nOrientation, nWeight, bItalic,
+			bUnderline, cStrikeOut, nCharSet, nOutPrecision,
+			nClipPrecision, nQuality, nPitchAndFamily, lpszFacename));
+	}
+	BOOL TinyFont::CreatePointFont(INT nPointSize, LPCTSTR lpszFaceName, HDC hDC)
+	{
+		LOGFONT logFont;
+		memset(&logFont, 0, sizeof(LOGFONT));
+		logFont.lfCharSet = DEFAULT_CHARSET;
+		logFont.lfHeight = nPointSize;
+		_tcsncpy_s(logFont.lfFaceName, _countof(logFont.lfFaceName), lpszFaceName, _TRUNCATE);
+		return CreatePointFontIndirect(&logFont, hDC);
+	}
+	BOOL TinyFont::CreatePointFontIndirect(const LOGFONT* lpLogFont, HDC hDC)
+	{
+		HDC hPrevDC = NULL;
+		if (hDC != NULL)
+		{
+			hPrevDC = hDC;
+		}
+		else
+		{
+			hPrevDC = ::GetDC(NULL);
+		}
+		LOGFONT logFont = *lpLogFont;
+		POINT pt;
+		pt.y = ::MulDiv(::GetDeviceCaps(hPrevDC, LOGPIXELSY), logFont.lfHeight, 720);
+		pt.x = 0;
+		::DPtoLP(hPrevDC, &pt, 1);
+		POINT ptOrg = { 0, 0 };
+		::DPtoLP(hDC, &ptOrg, 1);
+		logFont.lfHeight = -abs(pt.y - ptOrg.y);
+		if (hDC == NULL)
+		{
+			ReleaseDC(NULL, hPrevDC);
+		}
+		return CreateFontIndirect(&logFont);
+	}
+	INT TinyFont::GetLogFont(LOGFONT* pLogFont)
+	{
+		return ::GetObject(m_hFONT, sizeof(LOGFONT), pLogFont);
 	}
 	/************************************************************************/
 	/* SIZE																	*/
@@ -1969,7 +2031,9 @@ namespace TinyUI
 	/* RECTANGLE															*/
 	/************************************************************************/
 	TinyRectangle::TinyRectangle() throw()
-	{	}
+	{
+		left = top = right = bottom = 0;
+	}
 	TinyRectangle::TinyRectangle(INT l, INT t, INT r, INT b) throw()
 	{
 		left = l; top = t; right = r; bottom = b;

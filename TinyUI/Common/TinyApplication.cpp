@@ -12,17 +12,8 @@ namespace TinyUI
 	}
 	TinyApplication* TinyApplication::GetInstance() throw()
 	{
-		if (m_pInstance == NULL)
-		{
-			TinyLock lock;
-			lock.Acquire();
-			if (m_pInstance == NULL)
-			{
-				m_pInstance = new TinyApplication();
-			}
-			lock.Release();
-		}
-		return m_pInstance;
+		static TinyApplication instance;
+		return &instance;
 	}
 	HINSTANCE TinyApplication::Handle() throw()
 	{
@@ -97,11 +88,6 @@ namespace TinyUI
 		{
 			GdiplusShutdown(m_gdiplusToken);
 			m_gdiplusToken = 0;
-		}
-		//ÊÍ·Åµ¥Àý
-		if (m_pInstance != NULL)
-		{
-			SAFE_DELETE(m_pInstance);
 		}
 		return TRUE;
 	}

@@ -26,7 +26,6 @@ namespace TinyUI
 		LPTSTR				m_hCmdLine;
 		HACCEL				m_hAccTable;
 		ULONG_PTR			m_gdiplusToken;
-		static TinyApplication*	m_pInstance;//µ¥Àý
 	private:
 		TinyApplication();
 	protected:
@@ -66,7 +65,6 @@ namespace TinyUI
 		TinyHandleMap<HRGN, TinyHandleHRGN*>			m_MapHRGN;
 		TinyHandleMap<HIMAGELIST, TinyHandleHIMAGELIST*>m_MapHIMAGELIST;
 	};
-	SELECTANY TinyApplication* TinyApplication::m_pInstance = NULL;
 	//////////////////////////////////////////////////////////////////////////
 	LONG WINAPI TOP_LEVEL_EXCEPTION_FILTER(struct _EXCEPTION_POINTERS *pExp);
 }
