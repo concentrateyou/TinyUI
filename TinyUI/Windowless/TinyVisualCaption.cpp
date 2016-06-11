@@ -24,7 +24,7 @@ namespace TinyUI
 		{
 			TinyImage& image = m_images[NORMAL];
 			if (image.IsEmpty()) return S_FALSE;
-			canvas.DrawImage(image, drawRect, 0, 0, 30, 30);
+			canvas.DrawImage(image, m_windowRect, 0, 0, 30, 30);
 			return S_OK;
 		}
 		HRESULT TinyVisualSysButton::OnMouseMove(POINT pos)

@@ -473,9 +473,6 @@
     <ClCompile Include="XML\tinyxmlparser.cpp">
       <Filter>源文件\XML</Filter>
     </ClCompile>
-    <ClCompile Include="Render\stb_image.c">
-      <Filter>源文件\Render</Filter>
-    </ClCompile>
     <ClCompile Include="Render\TinyImage.cpp">
       <Filter>源文件\Render</Filter>
     </ClCompile>
@@ -586,6 +583,9 @@
     </ClCompile>
     <ClCompile Include="Windowless\TinyVisualCommon.cpp">
       <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\stb_image.c">
+      <Filter>源文件\Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

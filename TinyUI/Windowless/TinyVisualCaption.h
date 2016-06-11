@@ -24,8 +24,6 @@ namespace TinyUI
 			HRESULT OnLButtonUp(POINT pos) OVERRIDE;
 			HRESULT OnRButtonDown(POINT pos) OVERRIDE;
 			HRESULT OnRButtonUp(POINT pos) OVERRIDE;
-		private:
-			TinyImage	m_images[3];
 		};
 		/// <summary>
 		/// ±êÌâÀ¸ÈÝÆ÷¿Ø¼þHorizontalLayout

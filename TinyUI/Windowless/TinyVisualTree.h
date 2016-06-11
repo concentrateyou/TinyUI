@@ -44,6 +44,7 @@ namespace TinyUI
 			TinyVisual*		SetCapture(TinyVisual* pNew);
 			TinyVisual*		GetFocus() const;
 			TinyVisual*		SetFocus(TinyVisual* pNew);
+			TinyRectangle	ConvertToClient(TinyVisual* spvis);
 			void			Resize();//重新计算大小
 #ifdef _DEBUG
 			void			Dump();

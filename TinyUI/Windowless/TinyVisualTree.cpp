@@ -302,6 +302,11 @@ namespace TinyUI
 			}
 			return pv;
 		}
+		TinyRectangle TinyVisualTree::ConvertToClient(TinyVisual* spvis)
+		{
+			ASSERT(m_vtree);
+			return TinyRectangle();
+		}
 		void TinyVisualTree::Resize()
 		{
 
