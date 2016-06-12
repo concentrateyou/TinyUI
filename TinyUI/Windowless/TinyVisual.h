@@ -55,7 +55,7 @@ namespace TinyUI
 		public:
 			virtual ~TinyVisual();
 			virtual TinyString	RetrieveTag() const = 0;
-			virtual HRESULT		OnDraw(TinyCanvas& canvas, TinyRectangle& drawRect) = 0;
+			virtual HRESULT		OnDraw(TinyCanvas& canvas) = 0;
 			virtual HRESULT		OnMouseMove(POINT pos) = 0;
 			virtual HRESULT		OnLButtonDown(POINT pos) = 0;
 			virtual HRESULT		OnLButtonUp(POINT pos) = 0;

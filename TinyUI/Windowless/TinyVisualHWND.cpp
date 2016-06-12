@@ -57,9 +57,7 @@ namespace TinyUI
 			TinyVisual* ps = m_vtree->GetParent(NULL);
 			if (ps != NULL)
 			{
-				TinyRectangle drawRect;
-				this->GetClientRect(&drawRect);
-				ps->OnDraw(canvas, drawRect);
+				ps->OnDraw(canvas);
 			}
 		}
 		LRESULT TinyVisualHWND::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -83,6 +81,13 @@ namespace TinyUI
 			m_size.cy = HIWORD(lParam);
 			m_cacheDC->SetSize(m_size.cx, m_size.cy);
 			::RedrawWindow(m_hWND, NULL, NULL, 0);
+			return FALSE;
+		}
+		LRESULT TinyVisualHWND::OnMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			TinyPoint pos((INT)(SHORT)LOWORD(lParam), (INT)(SHORT)HIWORD(lParam));
+
 			return FALSE;
 		}
 
@@ -118,6 +123,8 @@ namespace TinyUI
 		LRESULT TinyVisualHWND::OnNCMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
+			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			m_vtree->OnMouseMove(pos);
 			return FALSE;
 		}
 		LRESULT TinyVisualHWND::OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -159,6 +166,7 @@ namespace TinyUI
 				return HTBOTTOMRIGHT;
 			if (pos.x >(rectangle.left + cx) && pos.x < (rectangle.right - cx) && pos.y >= (rectangle.bottom - cy) && pos.y <= rectangle.bottom)
 				return HTBOTTOM;
+
 			return HTCAPTION;
 		}
 	}

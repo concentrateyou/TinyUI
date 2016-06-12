@@ -234,20 +234,29 @@ namespace TinyUI
 			}
 			return TRUE;
 		}
-		TinyVisual*	TinyVisualTree::GetVisualByPos1(TinyVisual* spvis, INT x, INT y)
+		BOOL TinyVisualTree::MoveVisual(TinyVisual* spvis, INT x, INT y)
+		{
+			if (!spvis) return;
+			spvis->SetPosition(x, y);
+			spvis = spvis->m_spvisChild;
+			while (spvis)
+			{
+				MoveVisual(spvis, x, y);
+			}
+		}
+		TinyVisual*	TinyVisualTree::GetVisualByPos2(TinyVisual* spvis, INT x, INT y)
 		{
 			while (spvis != NULL)
 			{
-				spvis = GetVisualByPos2(spvis, x, y);
+				spvis = GetVisualByPos1(spvis, x, y);
 				if (spvis != NULL)
 				{
 					return spvis;
 				}
-				spvis = spvis->m_spvisNext;
 			}
 			return NULL;
 		}
-		TinyVisual*	TinyVisualTree::GetVisualByPos2(TinyVisual* spvis, INT x, INT y)
+		TinyVisual*	TinyVisualTree::GetVisualByPos1(TinyVisual* spvis, INT x, INT y)
 		{
 			if (!spvis || !spvis->IsVisible() || !spvis->IsEnable())
 			{
@@ -264,7 +273,7 @@ namespace TinyUI
 			}
 			if (PtInRect((LPRECT)&spvis->m_windowRect, pos))
 			{
-				spvis = GetVisualByPos1(spvis->m_spvisChild, x, y);
+				spvis = GetVisualByPos2(spvis->m_spvisChild, x, y);
 				if (spvis != NULL)
 				{
 					return spvis;
@@ -274,7 +283,7 @@ namespace TinyUI
 		}
 		TinyVisual*	TinyVisualTree::GetVisualByPos(INT x, INT y)
 		{
-			return GetVisualByPos2(m_spvisWindow, x, y);
+			return GetVisualByPos1(m_spvisWindow, x, y);
 		}
 		TinyVisual* TinyVisualTree::GetCapture() const
 		{
@@ -304,7 +313,6 @@ namespace TinyUI
 		}
 		TinyRectangle TinyVisualTree::ConvertToClient(TinyVisual* spvis)
 		{
-			ASSERT(m_vtree);
 			return TinyRectangle();
 		}
 		void TinyVisualTree::Resize()

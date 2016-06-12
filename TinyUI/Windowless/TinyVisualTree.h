@@ -39,6 +39,7 @@ namespace TinyUI
 			TinyVisual*		GetParent(TinyVisual* spvis) const;
 			BOOL			IsChild(TinyVisual* spvisParent, TinyVisual* spvis) const;
 			BOOL			IsVisible(TinyVisual* spvis) const;
+			BOOL			MoveVisual(TinyVisual* spvis, INT x, INT y);
 			TinyVisual*		GetVisualByPos(INT x, INT y);
 			TinyVisual*		GetCapture() const;
 			TinyVisual*		SetCapture(TinyVisual* pNew);

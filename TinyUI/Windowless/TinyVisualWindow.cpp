@@ -25,17 +25,20 @@ namespace TinyUI
 		{
 			return TinyVisualTag::WINDOW;
 		}
-		HRESULT TinyVisualWindow::OnDraw(TinyCanvas& canvas, TinyRectangle& drawRect)
+		HRESULT TinyVisualWindow::OnDraw(TinyCanvas& canvas)
 		{
+			ASSERT(m_vtree || m_vtree->GetVisualHWND());
 			TinyImage& image = m_images[NORMAL];
 			if (image.IsEmpty()) return S_FALSE;
 			canvas.SetBrush((HBRUSH)GetStockObject(WHITE_BRUSH));
-			canvas.FillRectangle(drawRect);
-			canvas.DrawImage(image, drawRect, 0, 0, image.GetSize().cx, image.GetSize().cy);
+			TinyRectangle rectangle;
+			m_vtree->GetVisualHWND()->GetClientRect(&rectangle);
+			canvas.FillRectangle(rectangle);
+			canvas.DrawImage(image, rectangle, 0, 0, image.GetSize().cx, image.GetSize().cy);
 			TinyVisual* spvis = m_vtree->GetVisual(this, CMD_CHILD);
 			while (spvis)
 			{
-				spvis->OnDraw(canvas, drawRect);
+				spvis->OnDraw(canvas);
 				spvis = m_vtree->GetVisual(spvis, CMD_CHILD);
 			}
 			return S_OK;

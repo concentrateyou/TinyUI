@@ -20,7 +20,7 @@ namespace TinyUI
 		{
 			return TinyVisualTag::SYSBUTTON;
 		}
-		HRESULT TinyVisualSysButton::OnDraw(TinyCanvas& canvas, TinyRectangle& drawRect)
+		HRESULT TinyVisualSysButton::OnDraw(TinyCanvas& canvas)
 		{
 			TinyImage& image = m_images[NORMAL];
 			if (image.IsEmpty()) return S_FALSE;
@@ -29,6 +29,7 @@ namespace TinyUI
 		}
 		HRESULT TinyVisualSysButton::OnMouseMove(POINT pos)
 		{
+			TRACE("TinyVisualSysButton-OnMouseMove\n");
 			return FALSE;
 		}
 
@@ -69,18 +70,19 @@ namespace TinyUI
 		{
 			TinyVisual* spvisParent = m_spvisParent;
 		}
-		HRESULT TinyVisualCaption::OnDraw(TinyCanvas& canvas, TinyRectangle& drawRect)
+		HRESULT TinyVisualCaption::OnDraw(TinyCanvas& canvas)
 		{
 			TinyVisual* spvis = m_vtree->GetVisual(this, CMD_CHILD);
 			while (spvis)
 			{
-				spvis->OnDraw(canvas, drawRect);
+				spvis->OnDraw(canvas);
 				spvis = m_vtree->GetVisual(spvis, CMD_NEXT);
 			}
 			return S_OK;
 		}
 		HRESULT TinyVisualCaption::OnMouseMove(POINT pos)
 		{
+			TRACE("TinyVisualCaption-OnMouseMove\n");
 			return FALSE;
 		}
 		HRESULT TinyVisualCaption::OnLButtonDown(POINT pos)

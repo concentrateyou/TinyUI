@@ -49,6 +49,7 @@ namespace TinyUI
 			MESSAGE_HANDLER(WM_DESTROY, OnDestory)
 			MESSAGE_HANDLER(WM_CLOSE, OnClose)
 			MESSAGE_HANDLER(WM_SIZE, OnSize)
+			MESSAGE_HANDLER(WM_MOVE,OnMove)
 			MESSAGE_HANDLER(WM_SETCURSOR, OnSetCursor)
 			MESSAGE_HANDLER(WM_NCMOUSEMOVE, OnNCMouseMove)
 			MESSAGE_HANDLER(WM_NCMOUSEHOVER, OnNCMouseHover)
@@ -102,6 +103,7 @@ namespace TinyUI
 		virtual LRESULT OnNCActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
