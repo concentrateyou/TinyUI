@@ -17,7 +17,7 @@ namespace TinyUI
 		LOGFONT m_lf;
 		TCHAR m_szStyleName[64];
 	public:
-		TinyFontDialog(LPLOGFONT lplfInitial = NULL,
+		explicit TinyFontDialog(LPLOGFONT lplfInitial = NULL,
 			DWORD dwFlags = CF_EFFECTS | CF_SCREENFONTS,
 			HDC hDCPrinter = NULL,
 			HWND pParentWnd = NULL);
@@ -46,7 +46,7 @@ namespace TinyUI
 	{
 		DECLARE_DYNAMIC(TinyColorDialog)
 	public:
-		TinyColorDialog(COLORREF clrInit = 0, DWORD dwFlags = 0);
+		explicit TinyColorDialog(COLORREF clrInit = 0, DWORD dwFlags = 0);
 		virtual INT_PTR DoModal(HWND hParent);
 		void SetCurrentColor(COLORREF clr);
 		COLORREF GetColor() const;
