@@ -40,7 +40,6 @@ namespace TinyUI
 			BOOL			IsChild(TinyVisual* spvisParent, TinyVisual* spvis) const;
 			BOOL			IsVisible(TinyVisual* spvis) const;
 			BOOL			MoveVisual(TinyVisual* spvis, INT x, INT y);
-			TinyVisual*		GetVisualByPos(TinyVisual* spvis, INT x, INT y);
 			TinyVisual*		GetVisualByPos(INT x, INT y);
 			TinyVisual*		GetCapture() const;
 			TinyVisual*		SetCapture(TinyVisual* pNew);
@@ -59,9 +58,10 @@ namespace TinyUI
 			HRESULT			OnRButtonDown(POINT pos);
 			HRESULT			OnRButtonUp(POINT pos);
 		private:
-			TinyVisual*		GetVisualByPos2(TinyVisual* spvis, INT x, INT y);
 			void			LinkVisual(TinyVisual* spvis, TinyVisual* spvisInsert, TinyVisual**pspvisFirst);
 			void			UnlinkVisual(TinyVisual* spvisUnlink, TinyVisual** pspvisFirst);
+			TinyVisual*		GetVisualByPos1(TinyVisual* spvis, INT x, INT y);
+			TinyVisual*		GetVisualByPos2(TinyVisual* spvis, INT x, INT y);
 			TinyVisual*		GetPrevVisual(TinyVisual* spvisList, TinyVisual* spvisFind) const;
 		protected:
 			TinyVisualHWND*						m_pWindow;

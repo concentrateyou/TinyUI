@@ -35,13 +35,11 @@ namespace TinyUI
 
 		HRESULT TinyVisualSysButton::OnLButtonDown(POINT pos)
 		{
-			TRACE("TinyVisualSysButton-OnLButtonDown\n");
 			return FALSE;
 		}
 
 		HRESULT TinyVisualSysButton::OnLButtonUp(POINT pos)
 		{
-			TRACE("TinyVisualSysButton-OnLButtonUp\n");
 			return FALSE;
 		}
 
