@@ -4,6 +4,8 @@
 
 namespace TinyUI
 {
+	typedef UINT_PTR(CALLBACK* COMMDLGPROC)(HWND, UINT, WPARAM, LPARAM);
+	UINT_PTR CALLBACK CommDlgProc(HWND, UINT, WPARAM, LPARAM);
 	/// <summary>
 	/// 字体对话框
 	/// </summary>
@@ -12,7 +14,7 @@ namespace TinyUI
 		DECLARE_DYNAMIC(TinyFontDialog)
 	private:
 		CHOOSEFONT m_cf;
-		LOGFONT m_lf; 
+		LOGFONT m_lf;
 		TCHAR m_szStyleName[64];
 	public:
 		TinyFontDialog(LPLOGFONT lplfInitial = NULL,
@@ -25,17 +27,34 @@ namespace TinyUI
 			HWND pParentWnd = NULL);
 		virtual INT_PTR DoModal(HWND hParent);
 		void GetCurrentFont(LPLOGFONT lplf);
-		TinyString GetFaceName() const;  
+		TinyString GetFaceName() const;
 		TinyString GetStyleName() const;
-		INT GetSize() const;        
-		COLORREF GetColor() const;  
-		INT GetWeight() const;        
-		BOOL IsStrikeOut() const;   
-		BOOL IsUnderline() const;   
-		BOOL IsBold() const;         
-		BOOL IsItalic() const;      
+		INT GetSize() const;
+		COLORREF GetColor() const;
+		INT GetWeight() const;
+		BOOL IsStrikeOut() const;
+		BOOL IsUnderline() const;
+		BOOL IsBold() const;
+		BOOL IsItalic() const;
 		void GetCharFormat(CHARFORMAT& cf) const;
 		DWORD FillInLogFont(const CHARFORMAT& cf);
+	};
+	/// <summary>
+	/// 颜色对话框
+	/// </summary>
+	class TinyColorDialog : public TinyDialog
+	{
+		DECLARE_DYNAMIC(TinyColorDialog)
+	public:
+		TinyColorDialog(COLORREF clrInit = 0, DWORD dwFlags = 0);
+		virtual INT_PTR DoModal(HWND hParent);
+		void SetCurrentColor(COLORREF clr);
+		COLORREF GetColor() const;
+		void SetCustomColors(COLORREF* lpCustColors);
+	protected:
+		virtual BOOL OnColorOK();
+	private:
+		CHOOSECOLOR m_cc;
 	};
 	/// <summary>
 	/// 文件对话框
@@ -45,18 +64,18 @@ namespace TinyUI
 		DECLARE_DYNAMIC(TinyFileDialog)
 	private:
 		BOOL m_bOpenFileDialog;
-		TCHAR m_szFileTitle[64*10];    
-		TCHAR m_szFileName[_MAX_PATH*10];
+		TCHAR m_szFileTitle[64 * 10];
+		TCHAR m_szFileName[_MAX_PATH * 10];
 	public:
 		OPENFILENAME m_ofn;
-		explicit TinyFileDialog(BOOL bOpenFileDialog, 
+		explicit TinyFileDialog(BOOL bOpenFileDialog,
 			LPCTSTR lpszDefExt = NULL,
 			LPCTSTR lpszFileName = NULL,
 			DWORD dwFlags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
 			LPCTSTR lpszFilter = NULL,
 			DWORD dwSize = 0,
 			BOOL bVistaStyle = TRUE);
-		virtual ~TinyFileDialog();	
+		virtual ~TinyFileDialog();
 		virtual INT_PTR DoModal(HWND hParent);
 		BOOL IsReadOnly() const;
 		void SetFilterText(LPCSTR pzFilter);

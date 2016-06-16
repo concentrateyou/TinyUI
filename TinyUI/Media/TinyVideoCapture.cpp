@@ -56,12 +56,15 @@ namespace TinyUI
 					goto ERROR_LABEL;
 				}
 				VARIANT val;
+				VariantInit(&val);
 				hRes = bag->Read(L"Description", &val, 0);
 				if (FAILED(hRes))
 				{
+					VariantClear(&val);
+					VariantInit(&val);
 					hRes = bag->Read(L"FriendlyName", &val, 0);
 				}
-				if (FAILED(hRes) || val.vt != VT_BSTR)
+				if (FAILED(hRes))
 				{
 					success = FALSE;
 					goto ERROR_LABEL;
@@ -94,12 +97,15 @@ namespace TinyUI
 					goto ERROR_LABEL;
 				}
 				VARIANT val;
+				VariantInit(&val);
 				hRes = bag->Read(L"Description", &val, 0);
 				if (FAILED(hRes))
 				{
+					VariantClear(&val);
+					VariantInit(&val);
 					hRes = bag->Read(L"FriendlyName", &val, 0);
 				}
-				if (FAILED(hRes) || val.vt != VT_BSTR)
+				if (FAILED(hRes))
 				{
 					success = FALSE;
 					goto ERROR_LABEL;
