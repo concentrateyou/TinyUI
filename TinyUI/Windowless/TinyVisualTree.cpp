@@ -236,13 +236,14 @@ namespace TinyUI
 		}
 		BOOL TinyVisualTree::MoveVisual(TinyVisual* spvis, INT x, INT y)
 		{
-			if (!spvis) return;
-			spvis->SetPosition(x, y);
+			if (!spvis) return FALSE;
+			spvis->SetPosition(TinyPoint(x, y));
 			spvis = spvis->m_spvisChild;
 			while (spvis)
 			{
 				MoveVisual(spvis, x, y);
 			}
+			return TRUE;
 		}
 		TinyVisual*	TinyVisualTree::GetVisualByPos2(TinyVisual* spvis, INT x, INT y)
 		{

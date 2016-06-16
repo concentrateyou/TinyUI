@@ -11,6 +11,17 @@ namespace TinyUI
 		static IID IID_IFileDialogEvents = { 0x973510DB, 0x7D7F, 0x452B, { 0x89, 0x75, 0x74, 0xA8, 0x58, 0x28, 0xD3, 0x54 } };
 		static IID IID_IFileDialogControlEvents = { 0x36116642, 0xD713, 0x4B97, { 0x9B, 0x83, 0x74, 0x84, 0xA9, 0xD0, 0x04, 0x33 } };
 	}
+	UINT_PTR CALLBACK CommDlgProc(HWND hWND, UINT message, WPARAM wParam, LPARAM lParam)
+	{
+		if (message == WM_COMMAND)
+		{
+			if (LOWORD(wParam) == IDOK)
+			{
+				TRACE("WM_COMMAND -IDOK\n");
+			}
+		}
+		return 0;
+	}
 	/************************************************************************/
 	/* TinyFontDialog                                                        */
 	/************************************************************************/
@@ -236,6 +247,41 @@ namespace TinyUI
 		}
 
 		return dwFlags;
+	}
+	/************************************************************************/
+	/* TinyColorDialog                                                      */
+	/************************************************************************/
+	TinyColorDialog::TinyColorDialog(COLORREF clrInit, DWORD dwFlags)
+	{
+		memset(&m_cc, 0, sizeof(m_cc));
+		m_cc.lStructSize = sizeof(m_cc);
+		m_cc.Flags = dwFlags | CC_ENABLEHOOK;
+		m_cc.lpfnHook = (COMMDLGPROC)CommDlgProc;
+		if ((m_cc.rgbResult = clrInit) != 0)
+		{
+			m_cc.Flags |= CC_RGBINIT;
+		}
+	}
+	INT_PTR TinyColorDialog::DoModal(HWND hParent)
+	{
+		ASSERT(m_cc.Flags & CC_ENABLEHOOK);
+		ASSERT(m_cc.lpfnHook != NULL);
+		m_cc.hwndOwner = hParent;
+		INT_PTR iResult = ChooseColor(&m_cc);
+		return iResult ? iResult : IDCANCEL;
+	}
+	BOOL TinyColorDialog::OnColorOK()
+	{
+		//TODO
+		return FALSE;
+	}
+	void TinyColorDialog::SetCustomColors(COLORREF* lpCustColors)
+	{
+		m_cc.lpCustColors = lpCustColors;
+	}
+	COLORREF TinyColorDialog::GetColor() const
+	{
+		return m_cc.rgbResult;
 	}
 	/************************************************************************/
 	/* TinyFileDialog                                                        */
