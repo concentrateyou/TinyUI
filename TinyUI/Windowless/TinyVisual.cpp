@@ -109,18 +109,21 @@ namespace TinyUI
 			TinyPoint& ps = *((TinyPoint*)&m_windowRect);
 			ps.x = pos.x;
 			ps.y = pos.y;
+			TinyPoint& ps1 = *((TinyPoint*)&m_windowRect + 1);
+			ps1.x += ps.x;
+			ps1.y += ps.y;
 		}
 		TinySize TinyVisual::GetSize() const
 		{
 			return m_windowRect.Size();
 		}
-		void TinyVisual::SetSize(const TinySize& size)
+		void TinyVisual::SetSize(const TinySize& newsize)
 		{
-			TinySize oldSize = *((TinySize*)&m_windowRect + 1);
-			if (oldSize != size)
+			TinySize size = *((TinySize*)&m_windowRect + 1);
+			if (size != newsize)
 			{
-				m_windowRect.SetSize(size);
-				OnSizeChange(oldSize, size);
+				m_windowRect.SetSize(newsize);
+				OnSizeChange(size, newsize);
 			}
 		}
 		void TinyVisual::SetClip(HRGN hrgnClip)
