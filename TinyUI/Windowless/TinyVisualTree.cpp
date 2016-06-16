@@ -245,19 +245,24 @@ namespace TinyUI
 			}
 			return TRUE;
 		}
-		TinyVisual*	TinyVisualTree::GetVisualByPos2(TinyVisual* spvis, INT x, INT y)
+		TinyVisual*	TinyVisualTree::GetVisualByPos(INT x, INT y)
+		{
+			return GetVisualByPos(m_spvisWindow, x, y);
+		}
+		TinyVisual*	TinyVisualTree::GetVisualByPos(TinyVisual* spvis, INT x, INT y)
 		{
 			while (spvis != NULL)
 			{
-				spvis = GetVisualByPos1(spvis, x, y);
-				if (spvis != NULL)
+				TinyVisual* hspvis = GetVisualByPos2(spvis, x, y);
+				if (hspvis != NULL)
 				{
-					return spvis;
+					return hspvis;
 				}
+				spvis = spvis->m_spvisNext;
 			}
 			return NULL;
 		}
-		TinyVisual*	TinyVisualTree::GetVisualByPos1(TinyVisual* spvis, INT x, INT y)
+		TinyVisual*	TinyVisualTree::GetVisualByPos2(TinyVisual* spvis, INT x, INT y)
 		{
 			if (!spvis || !spvis->IsVisible() || !spvis->IsEnable())
 			{
@@ -272,19 +277,10 @@ namespace TinyUI
 			{
 				return NULL;
 			}
-			if (PtInRect((LPRECT)&spvis->m_windowRect, pos))
-			{
-				spvis = GetVisualByPos2(spvis->m_spvisChild, x, y);
-				if (spvis != NULL)
-				{
-					return spvis;
-				}
-			}
+			TinyVisual* hspvis = GetVisualByPos(spvis->m_spvisChild, x, y);
+			if (hspvis != NULL)
+				return hspvis;
 			return NULL;
-		}
-		TinyVisual*	TinyVisualTree::GetVisualByPos(INT x, INT y)
-		{
-			return GetVisualByPos1(m_spvisWindow, x, y);
 		}
 		TinyVisual* TinyVisualTree::GetCapture() const
 		{
@@ -339,6 +335,7 @@ namespace TinyUI
 		}
 		HRESULT TinyVisualTree::OnLButtonDown(POINT pos)
 		{
+			this->Dump();
 			TinyVisual* pv = m_spvisCapture;
 			if (pv != NULL)
 			{
@@ -408,6 +405,9 @@ namespace TinyUI
 		void TinyVisualTree::Dump()
 		{
 			TRACE("Dump-----\n");
+			TinyRectangle rect;
+			m_pWindow->GetWindowRect(rect);
+			TRACE("window:%d,%d,%d,%d\n", rect.left, rect.top, rect.right, rect.bottom);
 			INT deep = 0;
 			TinyVisual* spvis = this->GetParent(NULL);
 			TinyVisual* ps = spvis->m_spvisChild;

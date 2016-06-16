@@ -127,6 +127,13 @@ namespace TinyUI
 			m_vtree->OnMouseMove(pos);
 			return FALSE;
 		}
+		LRESULT TinyVisualHWND::OnNCLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			m_vtree->OnLButtonDown(pos);
+			return FALSE;
+		}
 		LRESULT TinyVisualHWND::OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = TRUE;
