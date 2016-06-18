@@ -534,6 +534,7 @@ namespace TinyUI
 		INT Width() const throw();
 		INT Height() const throw();
 		TinySize Size() const throw();
+		TinyPoint Position() const throw();
 		TinyPoint& TopLeft() throw();
 		TinyPoint& BottomRight() throw();
 		const TinyPoint& TopLeft() const throw();
@@ -548,6 +549,7 @@ namespace TinyUI
 		BOOL PtInRect(POINT point) const throw();
 		void SetRect(INT x1, INT y1, INT x2, INT y2) throw();
 		void SetRect(POINT topLeft, POINT bottomRight) throw();
+		void SetRect(POINT pos, SIZE size) throw();
 		void SetSize(SIZE size) throw();
 		void SetRectEmpty() throw();
 		void CopyRect(LPCRECT lpSrcRect) throw();

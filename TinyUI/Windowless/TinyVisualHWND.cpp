@@ -79,6 +79,10 @@ namespace TinyUI
 			bHandled = FALSE;
 			m_size.cx = LOWORD(lParam);
 			m_size.cy = HIWORD(lParam);
+			//ÉèÖÃ×ÀÃæÔªËØ
+			TinyVisual* spvis = m_vtree->GetParent(NULL);
+			if (spvis)
+				spvis->SetSize(m_size);
 			m_cacheDC->SetSize(m_size.cx, m_size.cy);
 			::RedrawWindow(m_hWND, NULL, NULL, 0);
 			return FALSE;
@@ -113,6 +117,8 @@ namespace TinyUI
 		LRESULT TinyVisualHWND::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
+			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			m_vtree->OnMouseMove(pos,(DWORD)wParam);
 			return FALSE;
 		}
 		LRESULT TinyVisualHWND::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -120,18 +126,32 @@ namespace TinyUI
 			bHandled = FALSE;
 			return FALSE;
 		}
-		LRESULT TinyVisualHWND::OnNCMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualHWND::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			m_vtree->OnMouseMove(pos);
+			m_vtree->OnLButtonDown(pos, (DWORD)wParam);
 			return FALSE;
 		}
-		LRESULT TinyVisualHWND::OnNCLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualHWND::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			m_vtree->OnLButtonDown(pos);
+			m_vtree->OnLButtonUp(pos, (DWORD)wParam);
+			return FALSE;
+		}
+		LRESULT TinyVisualHWND::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			m_vtree->OnRButtonDown(pos, (DWORD)wParam);
+			return FALSE;
+		}
+		LRESULT TinyVisualHWND::OnRButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			m_vtree->OnRButtonUp(pos, (DWORD)wParam);
 			return FALSE;
 		}
 		LRESULT TinyVisualHWND::OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -149,12 +169,14 @@ namespace TinyUI
 		}
 		LRESULT TinyVisualHWND::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
+			ASSERT(m_vtree);
 			bHandled = TRUE;
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 			TinyRectangle rectangle;
 			this->GetWindowRect(rectangle);
 			if (!rectangle.PtInRect(pos))
 				return HTNOWHERE;
+
 			INT cx = GetSystemMetrics(SM_CXBORDER);
 			INT cy = GetSystemMetrics(SM_CYBORDER);
 			if (pos.x >= rectangle.left && pos.x <= (rectangle.left + cx) && pos.y >= rectangle.top && pos.y <= (rectangle.top + cy))
@@ -174,7 +196,12 @@ namespace TinyUI
 			if (pos.x >(rectangle.left + cx) && pos.x < (rectangle.right - cx) && pos.y >= (rectangle.bottom - cy) && pos.y <= rectangle.bottom)
 				return HTBOTTOM;
 
-			return HTCAPTION;
+			ScreenToClient(m_hWND, &pos);
+			if (m_vtree->GetParent(NULL) == m_vtree->GetVisualByPos(pos.x, pos.y))
+			{
+				return HTCAPTION;
+			}
+			return HTCLIENT;
 		}
 	}
 }

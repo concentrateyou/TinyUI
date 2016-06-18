@@ -27,10 +27,8 @@ namespace TinyUI
 			{
 				spvis = new TinyVisualSysButton(spvisParent, m_vtree);
 			}
+			spvis->SetPosition(TinyPoint(x, y));
 			spvis->SetSize(TinySize(cx, cy));
-			TinyPoint pos(x, y);
-			pos.Offset(spvisParent->GetPosition());
-			spvis->SetPosition(pos);
 			m_vtree->SetParent(spvis, spvisParent);
 			return spvis;
 		}
@@ -48,7 +46,9 @@ namespace TinyUI
 				spvisChild = spvisNext;
 			}
 			if (spvis->m_spvisParent)
+			{
 				m_vtree->UnlinkVisual(spvis, &(spvis->m_spvisParent->m_spvisChild));
+			}
 			SAFE_DELETE(spvis);
 			return TRUE;
 		}

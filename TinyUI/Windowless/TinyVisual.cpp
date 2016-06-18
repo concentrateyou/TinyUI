@@ -104,14 +104,15 @@ namespace TinyUI
 		{
 			return *((TinyPoint*)&m_windowRect);
 		}
-		void TinyVisual::SetPosition(const TinyPoint& pos)
+		void TinyVisual::SetPosition(const TinyPoint& newPos)
 		{
-			TinyPoint& ps = *((TinyPoint*)&m_windowRect);
-			ps.x = pos.x;
-			ps.y = pos.y;
-			TinyPoint& ps1 = *((TinyPoint*)&m_windowRect + 1);
-			ps1.x += ps.x;
-			ps1.y += ps.y;
+			TinyPoint& pos = *((TinyPoint*)&m_windowRect);
+			if (pos != newPos)
+			{
+				pos.x = newPos.x;
+				pos.y = newPos.y;
+				OnPosChange(pos, newPos);
+			}
 		}
 		TinySize TinyVisual::GetSize() const
 		{
@@ -138,6 +139,10 @@ namespace TinyUI
 		{
 			return m_images[(INT)type].Load(ps, dwSize);
 		}
+		void TinyVisual::OnPosChange(const TinyPoint&oldPos, const TinyPoint&newPos)
+		{
+
+		}
 		void TinyVisual::OnSizeChange(const TinySize&oldSize, const TinySize&newSize)
 		{
 
@@ -146,5 +151,34 @@ namespace TinyUI
 		{
 
 		}
+		HRESULT	TinyVisual::OnMouseMove(const TinyPoint& pos, DWORD dwKey)
+		{
+			return FALSE;
+		}
+		HRESULT	TinyVisual::OnLButtonDown(const TinyPoint& pos, DWORD dwKey)
+		{
+			return FALSE;
+		}
+		HRESULT	TinyVisual::OnLButtonUp(const TinyPoint& pos, DWORD dwKey)
+		{
+			return FALSE;
+		}
+		HRESULT	TinyVisual::OnRButtonDown(const TinyPoint& pos, DWORD dwKey)
+		{
+			return FALSE;
+		}
+		HRESULT	TinyVisual::OnRButtonUp(const TinyPoint& pos, DWORD dwKey)
+		{
+			return FALSE;
+		}
+		HRESULT	TinyVisual::OnMButtonDown(const TinyPoint& pos, DWORD dwKey)
+		{
+			return FALSE;
+		}
+		HRESULT	TinyVisual::OnMButtonUp(const TinyPoint& pos, DWORD dwKey)
+		{
+			return FALSE;
+		}
+
 	}
 }

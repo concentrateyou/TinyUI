@@ -17,7 +17,7 @@ namespace TinyUI
 		}
 		TinyVisualTree::~TinyVisualTree()
 		{
-
+			Uninitialize();
 		}
 		BOOL TinyVisualTree::Initialize()
 		{
@@ -26,7 +26,7 @@ namespace TinyUI
 			m_spvisWindow->SetName("Window");
 			m_spvisWindow->SetStyleImage(NORMAL, "D:\\image.png");
 
-			TinyVisual* ps1 = m_fs->Create(0, 0, 100, 30, m_spvisWindow, TinyVisualTag::CAPTION);
+			TinyVisual* ps1 = m_fs->Create(0, 0, 200, 30, m_spvisWindow, TinyVisualTag::CAPTION);
 			ps1->SetName("Caption-1");
 
 			TinyVisual* ps2 = m_fs->Create(0, 0, 30, 30, ps1, TinyVisualTag::SYSBUTTON);
@@ -200,15 +200,9 @@ namespace TinyUI
 			}
 			spvis->SetVisible(FALSE);
 			TinyVisual* spvisOldParent = spvis->m_spvisParent;
-			INT x, y;
-			x = abs(spvis->m_windowRect.left - spvisOldParent->m_windowRect.left);
-			y = abs(spvis->m_windowRect.top - spvisOldParent->m_windowRect.top);
 			UnlinkVisual(spvis, &spvisOldParent->m_spvisChild);
 			spvis->m_spvisParent = spvisNewParent;
 			LinkVisual(spvis, NULL, &spvisNewParent->m_spvisChild);
-			TinyPoint pos(x, y);
-			pos.Offset(spvis->m_spvisParent->GetPosition());
-			spvis->SetPosition(pos);
 			spvis->SetVisible(TRUE);
 			return spvisOldParent;
 		}
@@ -234,22 +228,35 @@ namespace TinyUI
 			}
 			return TRUE;
 		}
-		BOOL TinyVisualTree::MoveVisual(TinyVisual* spvis, INT x, INT y)
+		BOOL TinyVisualTree::IsEnable(TinyVisual* spvis) const
 		{
-			if (!spvis) return FALSE;
-			spvis->SetPosition(TinyPoint(x, y));
-			spvis = spvis->m_spvisChild;
-			while (spvis)
+			if (spvis == NULL)
+				return TRUE;
+			for (;;)
 			{
-				MoveVisual(spvis, x, y);
+				if (!spvis->IsEnable())
+					return FALSE;
+				spvis = spvis->m_spvisParent;
 			}
 			return TRUE;
 		}
 		TinyVisual*	TinyVisualTree::GetVisualByPos(INT x, INT y)
 		{
-			return GetVisualByPos(m_spvisWindow, x, y);
+			return GetVisualByPos1(m_spvisWindow, x, y);
 		}
-		TinyVisual*	TinyVisualTree::GetVisualByPos(TinyVisual* spvis, INT x, INT y)
+		void TinyVisualTree::ConvertToVisualPos(TinyVisual* spvis, TinyPoint& pos)
+		{
+			ASSERT(m_pWindow && spvis);
+			TinyPoint point = pos;
+			TinyVisual* pv = spvis;
+			while (pv != NULL)
+			{
+				TinyPoint ps = pv->GetPosition();
+				pos.Offset(-ps.x, -ps.y);
+				pv = pv->m_spvisParent;
+			}
+		}
+		TinyVisual*	TinyVisualTree::GetVisualByPos1(TinyVisual* spvis, INT x, INT y)
 		{
 			while (spvis != NULL)
 			{
@@ -269,7 +276,9 @@ namespace TinyUI
 				return NULL;
 			}
 			POINT pos = { x, y };
-			if (!PtInRect((LPRECT)&spvis->m_windowRect, pos))
+			TinyRectangle rectangle;
+			rectangle.SetRect(GetWindowPos(spvis), spvis->GetSize());
+			if (!PtInRect((LPRECT)&rectangle, pos))
 			{
 				return NULL;
 			}
@@ -277,10 +286,10 @@ namespace TinyUI
 			{
 				return NULL;
 			}
-			TinyVisual* hspvis = GetVisualByPos(spvis->m_spvisChild, x, y);
+			TinyVisual* hspvis = GetVisualByPos1(spvis->m_spvisChild, x, y);
 			if (hspvis != NULL)
 				return hspvis;
-			return NULL;
+			return spvis;
 		}
 		TinyVisual* TinyVisualTree::GetCapture() const
 		{
@@ -308,96 +317,115 @@ namespace TinyUI
 			}
 			return pv;
 		}
-		TinyRectangle TinyVisualTree::ConvertToClient(TinyVisual* spvis)
+		TinyPoint TinyVisualTree::GetWindowPos(const TinyVisual* spvis)
 		{
-			return TinyRectangle();
+			TinyPoint pos = spvis->GetPosition();
+			TinyVisual* ps = spvis->m_spvisParent;
+			while (ps != NULL)
+			{
+				pos.Offset(ps->GetPosition());
+				ps = ps->m_spvisParent;
+			}
+			return pos;
 		}
-		void TinyVisualTree::Resize()
+		TinyPoint TinyVisualTree::GetScreenPos(const TinyVisual* spvis)
 		{
-
+			TinyPoint pos = GetWindowPos(spvis);
+			ClientToScreen(m_pWindow->Handle(), &pos);
+			return pos;
 		}
-		HRESULT	TinyVisualTree::OnMouseMove(POINT pos)
+		HRESULT	TinyVisualTree::OnMouseMove(const TinyPoint& pos, DWORD dwKey)
 		{
 			TinyVisual* pv = m_spvisCapture;
 			if (pv != NULL)
 			{
-				pv->OnMouseMove(pos);
+				pv->OnMouseMove(pos, dwKey);
 			}
 			else
 			{
 				pv = GetVisualByPos(pos.x, pos.y);
 				if (pv != NULL)
 				{
-					pv->OnMouseMove(pos);
+					TinyPoint relativePos = pos;
+					ConvertToVisualPos(pv, relativePos);
+					pv->OnMouseMove(relativePos, dwKey);
 				}
 			}
 			return FALSE;
 		}
-		HRESULT TinyVisualTree::OnLButtonDown(POINT pos)
+		HRESULT TinyVisualTree::OnLButtonDown(const TinyPoint& pos, DWORD dwKey)
 		{
 			this->Dump();
 			TinyVisual* pv = m_spvisCapture;
 			if (pv != NULL)
 			{
-				pv->OnLButtonDown(pos);
+				pv->OnLButtonDown(pos, dwKey);
 			}
 			else
 			{
 				pv = GetVisualByPos(pos.x, pos.y);
 				if (pv != NULL)
 				{
-					pv->OnLButtonDown(pos);
+					TinyPoint relativePos = pos;
+					ConvertToVisualPos(pv, relativePos);
+					pv->OnLButtonDown(relativePos, dwKey);
 				}
 			}
 			return FALSE;
 		}
-		HRESULT TinyVisualTree::OnLButtonUp(POINT pos)
+		HRESULT TinyVisualTree::OnLButtonUp(const TinyPoint& pos, DWORD dwKey)
 		{
 			TinyVisual* pv = m_spvisCapture;
 			if (pv != NULL)
 			{
-				pv->OnLButtonUp(pos);
+				pv->OnLButtonUp(pos, dwKey);
 			}
 			else
 			{
 				pv = GetVisualByPos(pos.x, pos.y);
 				if (pv != NULL)
 				{
-					pv->OnLButtonUp(pos);
+					TinyPoint relativePos = pos;
+					ConvertToVisualPos(pv, relativePos);
+					pv->OnLButtonUp(relativePos, dwKey);
 				}
 			}
 			return FALSE;
 		}
-		HRESULT TinyVisualTree::OnRButtonDown(POINT pos)
+		HRESULT TinyVisualTree::OnRButtonDown(const TinyPoint& pos, DWORD dwKey)
 		{
 			TinyVisual* pv = m_spvisCapture;
 			if (pv != NULL)
 			{
-				pv->OnRButtonDown(pos);
+				pv->OnRButtonDown(pos, dwKey);
 			}
 			else
 			{
 				pv = GetVisualByPos(pos.x, pos.y);
 				if (pv != NULL)
 				{
-					pv->OnRButtonDown(pos);
+					TinyPoint relativePos = pos;
+					ConvertToVisualPos(pv, relativePos);
+					pv->OnRButtonDown(relativePos, dwKey);
 				}
 			}
 			return FALSE;
 		}
-		HRESULT TinyVisualTree::OnRButtonUp(POINT pos)
+		HRESULT TinyVisualTree::OnRButtonUp(const TinyPoint& pos, DWORD dwKey)
 		{
 			TinyVisual* pv = m_spvisCapture;
 			if (pv != NULL)
 			{
-				pv->OnRButtonUp(pos);
+				pv->OnRButtonUp(pos, dwKey);
 			}
 			else
 			{
 				pv = GetVisualByPos(pos.x, pos.y);
 				if (pv != NULL)
 				{
-					pv->OnRButtonUp(pos);
+					TinyPoint relativePos = pos;
+					ConvertToVisualPos(pv, relativePos);
+					pv->OnRButtonUp(relativePos, dwKey);
 				}
 			}
 			return FALSE;

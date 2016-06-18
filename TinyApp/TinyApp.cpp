@@ -42,10 +42,10 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	WSAStartup(MAKEWORD(2, 2), &wsd);
 	HRESULT hRes = OleInitialize(NULL);
 
-	IBaseFilter* bfs = GetFilter();
+	/*IBaseFilter* bfs = GetFilter();
 	if (bfs)
-		bfs->Release();
-	/*::DefWindowProc(NULL, 0, 0, 0L);
+	bfs->Release();*/
+	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
@@ -55,9 +55,8 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	uiImpl.UpdateWindow();
 	INT loopRes = theLoop.MessageLoop();
 	TinyApplication::GetInstance()->RemoveMessageLoop();
-	TinyApplication::GetInstance()->Uninitialize();*/
+	TinyApplication::GetInstance()->Uninitialize();
 	OleUninitialize();
 	WSACleanup();
-	//return loopRes;
-	return 0;
+	return loopRes;
 };

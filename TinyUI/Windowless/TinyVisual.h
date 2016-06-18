@@ -52,26 +52,30 @@ namespace TinyUI
 		public:
 			virtual void		Resize();
 			virtual void		OnSizeChange(const TinySize&, const TinySize&);
+			virtual void		OnPosChange(const TinyPoint&, const TinyPoint&);
 		public:
 			virtual ~TinyVisual();
 			virtual TinyString	RetrieveTag() const = 0;
 			virtual HRESULT		OnDraw(TinyCanvas& canvas) = 0;
-			virtual HRESULT		OnMouseMove(POINT pos) = 0;
-			virtual HRESULT		OnLButtonDown(POINT pos) = 0;
-			virtual HRESULT		OnLButtonUp(POINT pos) = 0;
-			virtual HRESULT		OnRButtonDown(POINT pos) = 0;
-			virtual HRESULT		OnRButtonUp(POINT pos) = 0;
+			virtual HRESULT		OnMouseMove(const TinyPoint& pos, DWORD dwKey);
+			virtual HRESULT		OnLButtonDown(const TinyPoint& pos, DWORD dwKey);
+			virtual HRESULT		OnLButtonUp(const TinyPoint& pos, DWORD dwKey);
+			virtual HRESULT		OnRButtonDown(const TinyPoint& pos, DWORD dwKey);
+			virtual HRESULT		OnRButtonUp(const TinyPoint& pos, DWORD dwKey);
+			virtual HRESULT		OnMButtonDown(const TinyPoint& pos, DWORD dwKey);
+			virtual HRESULT		OnMButtonUp(const TinyPoint& pos, DWORD dwKey);
 		protected:
+
 			TinyImage			m_images[3];
 			TinyVisual*			m_spvisNext;//同级下一个兄弟节点
 			TinyVisual*			m_spvisParent;//父节点
 			TinyVisual*			m_spvisChild;//第一个孩子节点
 			TinyVisual*			m_spvisOwner;//对于Popup窗口使用
 			TinyVisualTree*		m_vtree;
-			TinyRectangle		m_windowRect;//屏幕区域(屏幕坐标)
 			TinyString			m_strName;
 			TinyString			m_strText;
 			TinyString			m_strToolTip;
+			TinyRectangle		m_windowRect;//相对于父元素区域
 			TinySize			m_maximumSize;//元素的最大像素大小
 			TinySize			m_minimumSize;//元素的最小像素大小
 			HRGN				m_hrgnClip;

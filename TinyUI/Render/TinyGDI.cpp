@@ -2067,6 +2067,10 @@ namespace TinyUI
 	{
 		return TinySize(right - left, bottom - top);
 	}
+	TinyPoint TinyRectangle::Position() const throw()
+	{
+		return *((TinyPoint*)this);
+	}
 	TinyPoint& TinyRectangle::TopLeft() throw()
 	{
 		return *((TinyPoint*)this);
@@ -2122,6 +2126,10 @@ namespace TinyUI
 	void TinyRectangle::SetRect(POINT topLeft, POINT bottomRight) throw()
 	{
 		::SetRect(this, topLeft.x, topLeft.y, bottomRight.x, bottomRight.y);
+	}
+	void TinyRectangle::SetRect(POINT pos, SIZE size) throw()
+	{
+		::SetRect(this, pos.x, pos.y, pos.x + size.cx, pos.y + size.cy);
 	}
 	void TinyRectangle::SetSize(SIZE size) throw()
 	{

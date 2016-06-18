@@ -24,33 +24,21 @@ namespace TinyUI
 		{
 			TinyImage& image = m_images[NORMAL];
 			if (image.IsEmpty()) return S_FALSE;
-			canvas.DrawImage(image, m_windowRect, 0, 0, 30, 30);
+			canvas.DrawImage(image, m_windowRect, 0, 0, image.GetSize().cx, image.GetSize().cy);
 			return S_OK;
 		}
-		HRESULT TinyVisualSysButton::OnMouseMove(POINT pos)
-		{
-			TRACE("TinyVisualSysButton-OnMouseMove\n");
-			return FALSE;
-		}
-
-		HRESULT TinyVisualSysButton::OnLButtonDown(POINT pos)
-		{
-			TRACE("TinyVisualSysButton-OnLButtonDown\n");
-			return FALSE;
-		}
-
-		HRESULT TinyVisualSysButton::OnLButtonUp(POINT pos)
-		{
-			TRACE("TinyVisualSysButton-OnLButtonUp\n");
-			return FALSE;
-		}
-
-		HRESULT TinyVisualSysButton::OnRButtonDown(POINT pos)
+		HRESULT TinyVisualSysButton::OnMouseMove(const TinyPoint& pos, DWORD dwKey)
 		{
 			return FALSE;
 		}
 
-		HRESULT TinyVisualSysButton::OnRButtonUp(POINT pos)
+		HRESULT TinyVisualSysButton::OnLButtonDown(const TinyPoint& pos, DWORD dwKey)
+		{
+			TRACE("SysButton-OnLButtonDown:%d,%d\n", pos.x, pos.y);
+			return FALSE;
+		}
+
+		HRESULT TinyVisualSysButton::OnLButtonUp(const TinyPoint& pos, DWORD dwKey)
 		{
 			return FALSE;
 		}
@@ -82,24 +70,15 @@ namespace TinyUI
 			}
 			return S_OK;
 		}
-		HRESULT TinyVisualCaption::OnMouseMove(POINT pos)
-		{
-			TRACE("TinyVisualCaption-OnMouseMove\n");
-			return FALSE;
-		}
-		HRESULT TinyVisualCaption::OnLButtonDown(POINT pos)
+		HRESULT TinyVisualCaption::OnMouseMove(const TinyPoint& pos, DWORD dwKey)
 		{
 			return FALSE;
 		}
-		HRESULT TinyVisualCaption::OnLButtonUp(POINT pos)
+		HRESULT TinyVisualCaption::OnLButtonDown(const TinyPoint& pos, DWORD dwKey)
 		{
 			return FALSE;
 		}
-		HRESULT TinyVisualCaption::OnRButtonDown(POINT pos)
-		{
-			return FALSE;
-		}
-		HRESULT TinyVisualCaption::OnRButtonUp(POINT pos)
+		HRESULT TinyVisualCaption::OnLButtonUp(const TinyPoint& pos, DWORD dwKey)
 		{
 			return FALSE;
 		}

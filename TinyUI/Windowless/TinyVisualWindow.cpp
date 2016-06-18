@@ -14,7 +14,7 @@ namespace TinyUI
 			TinyVisualHWND* pWND = vtree->GetVisualHWND();
 			if (pWND)
 			{
-				pWND->GetWindowRect(&m_windowRect);
+				pWND->GetClientRect(&m_windowRect);
 			}
 		}
 		TinyVisualWindow::~TinyVisualWindow()
@@ -31,10 +31,8 @@ namespace TinyUI
 			TinyImage& image = m_images[NORMAL];
 			if (image.IsEmpty()) return S_FALSE;
 			canvas.SetBrush((HBRUSH)GetStockObject(WHITE_BRUSH));
-			TinyRectangle rectangle;
-			m_vtree->GetVisualHWND()->GetClientRect(&rectangle);
-			canvas.FillRectangle(rectangle);
-			canvas.DrawImage(image, rectangle, 0, 0, image.GetSize().cx, image.GetSize().cy);
+			canvas.FillRectangle(m_windowRect);
+			canvas.DrawImage(image, m_windowRect, 0, 0, image.GetSize().cx, image.GetSize().cy);
 			TinyVisual* spvis = m_vtree->GetVisual(this, CMD_CHILD);
 			while (spvis)
 			{
@@ -44,27 +42,17 @@ namespace TinyUI
 			return S_OK;
 		}
 
-		HRESULT TinyVisualWindow::OnMouseMove(POINT pos)
+		HRESULT TinyVisualWindow::OnMouseMove(const TinyPoint& pos, DWORD dwKey)
 		{
 			return FALSE;
 		}
 
-		HRESULT TinyVisualWindow::OnLButtonDown(POINT pos)
+		HRESULT TinyVisualWindow::OnLButtonDown(const TinyPoint& pos, DWORD dwKey)
 		{
 			return FALSE;
 		}
 
-		HRESULT TinyVisualWindow::OnLButtonUp(POINT pos)
-		{
-			return FALSE;
-		}
-
-		HRESULT TinyVisualWindow::OnRButtonDown(POINT pos)
-		{
-			return FALSE;
-		}
-
-		HRESULT TinyVisualWindow::OnRButtonUp(POINT pos)
+		HRESULT TinyVisualWindow::OnLButtonUp(const TinyPoint& pos, DWORD dwKey)
 		{
 			return FALSE;
 		}
