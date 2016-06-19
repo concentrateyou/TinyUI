@@ -2,6 +2,7 @@
 #include "TinyVisualHWND.h"
 #include "TinyVisualWindow.h"
 #include "TinyVisualTree.h"
+#include "TinyVisualCaption.h"
 
 namespace TinyUI
 {
@@ -38,6 +39,19 @@ namespace TinyUI
 			ps2->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_mini_highlight.png");
 			ps2->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_mini_down.png");
 
+			/*auto s1 = [=](void)->void{
+				MessageBox(NULL, "Min-1-Click-1", "", MB_OK);
+				return;
+				};
+
+				auto s2 = [=](void)->void{
+				MessageBox(NULL, "Min-1-Click-1", "", MB_OK);
+				return;
+				};
+				BIND_EVENT(Click, static_cast<TinyVisualSysButton*>(ps2), s1);*/
+			/*BIND_EVENT(Click, static_cast<TinyVisualSysButton*>(ps2), s1);
+			BIND_EVENT(Click, static_cast<TinyVisualSysButton*>(ps2), s2);
+			*/
 			TinyVisual* ps3 = m_fs->Create(30, 0, 30, 30, ps5, TinyVisualTag::SYSBUTTON);
 			ps3->SetName("Max-1");
 			ps3->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_max_normal.png");
@@ -363,10 +377,9 @@ namespace TinyUI
 		}
 		TinyRectangle TinyVisualTree::GetWindowRect(const TinyVisual* spvis)
 		{
-			ASSERT(spvis);
-			TinyRectangle rectangle = spvis->GetRectangle();
-			rectangle.OffsetRect(GetWindowPos(spvis));
-			return rectangle;
+			TinySize size = spvis->GetSize();
+			TinyPoint pos = GetWindowPos(spvis);
+			return TinyRectangle(pos, size);
 		}
 		TinyPoint TinyVisualTree::GetScreenPos(const TinyVisual* spvis)
 		{
@@ -539,7 +552,7 @@ namespace TinyUI
 				str += "-";
 			}
 			str += "Tag:%s,Name:%s,Rectangle(%d,%d,%d,%d)\n";
-			TinyRectangle bounds(spvis->GetPosition(), spvis->GetSize());
+			TinyRectangle bounds = GetWindowRect(spvis);
 			TRACE(str.STR(), className.STR(), name.STR(), bounds.left, bounds.top, bounds.right, bounds.bottom);
 			TinyVisual* ps = spvis->m_spvisChild;
 			while (ps)
@@ -547,6 +560,11 @@ namespace TinyUI
 				Dump(ps, deep);
 				ps = ps->m_spvisNext;
 			}
+		}
+
+		void TinyVisualTree::onClick()
+		{
+
 		}
 	}
 }

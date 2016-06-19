@@ -9,7 +9,7 @@ namespace TinyUI
 	template<typename R = void()>
 	class Event;
 	template<typename R>
-	class Event<R()>
+	class Event < R() >
 	{
 	public:
 		/// <summary>
@@ -69,7 +69,7 @@ namespace TinyUI
 		TinyArray<DelegateType*> m_array;
 	};
 	template<typename R, typename P1>
-	class Event<R(P1)>
+	class Event < R(P1) >
 	{
 	public:
 		/// <summary>
@@ -132,7 +132,7 @@ namespace TinyUI
 		TinyArray<DelegateType*> m_array;
 	};
 	template<typename R, typename P1, typename P2>
-	class Event<R(P1, P2)>
+	class Event < R(P1, P2) >
 	{
 	public:
 		/// <summary>
@@ -189,7 +189,7 @@ namespace TinyUI
 		TinyArray<DelegateType*> m_array;
 	};
 	template<typename R, typename P1, typename P2, typename P3>
-	class Event<R(P1, P2, P3)>
+	class Event < R(P1, P2, P3) >
 	{
 	public:
 		/// <summary>
@@ -246,7 +246,7 @@ namespace TinyUI
 		TinyArray<DelegateType*> m_array;
 	};
 	template<typename R, typename P1, typename P2, typename P3, typename P4>
-	class Event<R(P1, P2, P3, P4)>
+	class Event < R(P1, P2, P3, P4) >
 	{
 	public:
 		/// <summary>

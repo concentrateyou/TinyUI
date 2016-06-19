@@ -100,7 +100,15 @@ namespace TinyUI
 		RGBQUAD rgb = { b, g, r, 0 };
 		return rgb;
 	}
-
+	//////////////////////////////////////////////////////////////////////////
+	TinyCanvas::TinyCanvas()
+		:m_hDC(NULL),
+		m_hPEN(NULL),
+		m_hBRUSH(NULL),
+		m_iSave(0)
+	{
+		InitializeDC(m_hDC);
+	}
 	TinyCanvas::TinyCanvas(HDC hDC)
 		:m_hDC(hDC),
 		m_hPEN(NULL),

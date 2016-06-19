@@ -25,16 +25,18 @@ namespace TinyUI
 		{
 			return TinyVisualTag::WINDOW;
 		}
-		HRESULT TinyVisualWindow::OnDraw(HDC hDC)
+		BOOL TinyVisualWindow::OnDraw(HDC hDC)
 		{
 			ASSERT(m_vtree || m_vtree->GetVisualHWND());
 			TinyImage& image = m_images[NORMAL];
-			if (image.IsEmpty()) return S_FALSE;
-			TinyCanvas canvas(hDC);
-			TinyCanvasClip clip(canvas, this);
+			if (image.IsEmpty())
+				return FALSE;
+			TinyClipCanvas canvas(hDC, this);
 			canvas.SetBrush((HBRUSH)GetStockObject(WHITE_BRUSH));
-			canvas.FillRectangle(m_windowRect);
-			canvas.DrawImage(image, m_windowRect, 0, 0, image.GetSize().cx, image.GetSize().cy);
+			TinyRectangle clip = canvas.GetClipBox();
+			canvas.FillRectangle(clip);
+			canvas.DrawImage(image, clip, 0, 0, image.GetSize().cx, image.GetSize().cy);
+			return TRUE;
 		}
 	}
 }

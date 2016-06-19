@@ -68,13 +68,16 @@ namespace TinyUI
 			void			LinkVisual(TinyVisual* spvis, TinyVisual* spvisInsert, TinyVisual**pspvisFirst);
 			void			UnlinkVisual(TinyVisual* spvisUnlink, TinyVisual** pspvisFirst);
 			TinyVisual*		GetPrevVisual(TinyVisual* spvisList, TinyVisual* spvisFind) const;
+			void			onClick();
 		protected:
-			TinyVisualHWND*								m_pWindow;
 			TinyVisual*									m_spvisWindow;//¸ù½Úµã
 			TinyVisual*									m_spvisCapture;
 			TinyVisual*									m_spvisFocus;
+			TinyVisualHWND*								m_pWindow;
 			TinyScopedPtr<TinyVisualParse>				m_parse;
 			TinyScopedPtr<TinyVisualFactory>			m_fs;
+		public:
+			DECLARE_DELEGATE0(Click, void);
 #ifdef _DEBUG
 			void			Dump();
 			void			Dump(TinyVisual* spvis, INT& deep);

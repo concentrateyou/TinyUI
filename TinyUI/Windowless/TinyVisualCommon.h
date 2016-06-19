@@ -24,6 +24,10 @@ namespace TinyUI
 			static const TinyString IMAGENORMAL;
 			static const TinyString IMAGEHIGHLIGHT;
 			static const TinyString IMAGEDOWN;
+			static const TinyString FONTNAME;
+			static const TinyString FONTSIZE;
+			static const TinyString FONTCOLOR;
+			static const TinyString FONTSTYLE;
 		};
 		/// <summary>
 		/// Tag≥£¡ø
@@ -34,6 +38,8 @@ namespace TinyUI
 			static const TinyString WINDOW;
 			static const TinyString CAPTION;
 			static const TinyString SYSBUTTON;
+			static const TinyString LABEL;
+			static const TinyString LINK;
 		};
 		/// <summary>
 		/// ª∫¥ÊDC

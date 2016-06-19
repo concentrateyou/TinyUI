@@ -53,17 +53,14 @@ namespace TinyUI
 		}
 		void TinyVisualHWND::Render()
 		{
-			if (TinyVisual* spvis = m_vtree->GetParent(NULL))
-			{
-				m_vtree->Render(spvis, m_cacheDC->Handle());
-			}
+			m_vtree->Render(m_vtree->GetParent(NULL), m_cacheDC->Handle());
 		}
 		LRESULT TinyVisualHWND::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			PAINTSTRUCT ps = { 0 };
 			HDC hDC = BeginPaint(m_hWND, &ps);
-			Render();
+			this->Render();
 			EndPaint(m_hWND, &ps);
 			return FALSE;
 		}

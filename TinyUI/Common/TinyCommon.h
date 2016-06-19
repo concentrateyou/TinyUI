@@ -43,6 +43,9 @@ namespace TinyUI
 #ifndef FINAL
 #define FINAL		final
 #endif 
+#ifndef NOEXCEPT
+#define NOEXCEPT	throw()
+#endif 
 	//编译器不生成虚表
 #ifndef NO_VTABLE
 #define NO_VTABLE	__declspec(novtable)
@@ -420,6 +423,105 @@ private:\
 	struct IsSameType < T, T >
 	{
 		enum { Result = 1 };
+	};
+	template<typename T>
+	struct IsLValueReference
+	{
+		enum { Result = 0 };
+	};
+
+	template<typename T>
+	struct IsLValueReference < T& >
+	{
+		enum { Result = 1 };
+	};
+
+	template<typename T>
+	struct IsRValueReference
+	{
+		enum { Result = 0 };
+	};
+
+	template<typename T>
+	struct IsRValueReference < T&& >
+	{
+		enum { Result = 1 };
+	};
+	template<typename T>
+	struct RemoveReference
+	{
+		typedef T Type;
+	};
+	template<typename T>
+	struct RemoveReference < T& >
+	{
+		typedef T Type;
+	};
+	template<typename T>
+	struct RemoveReference < T&& >
+	{
+		typedef T Type;
+	};
+	template<typename T>
+	inline T&& Forward(typename RemoveReference<T>::Type& Arg)
+	{
+		return (static_cast<T&&>(Arg));
+	};
+	template<typename T>
+	inline T&& Forward(typename RemoveReference<T>::Type&& Arg) throw()
+	{
+		COMPILE_ASSERT(!IsLValueReference<T>::Result, "IsLValueReference error");
+		return (static_cast<T&&>(Arg));
+	};
+	template<typename T>
+	inline typename RemoveReference<T>::Type&& Move(T&& Arg) throw()
+	{
+		return ((typename RemoveReference<T>::Type&&)Arg);
+	};
+	template<typename T>
+	struct RemoveConst
+	{
+		typedef T Type;
+	};
+	template<typename T>
+	struct RemoveConst < const T >
+	{
+		typedef T Type;
+	};
+	template<typename T>
+	struct RemoveConst < const T[] >
+	{
+		typedef T Type[];
+	};
+	template<typename T, UINT x>
+	struct RemoveConst < const T[x] >
+	{
+		typedef T Type[x];
+	};
+	template<typename T>
+	struct RemoveVolatile
+	{
+		typedef T Type;
+	};
+	template<typename T>
+	struct RemoveVolatile < volatile T >
+	{
+		typedef T Type;
+	};
+	template<typename T>
+	struct RemoveVolatile < volatile T[] >
+	{
+		typedef T Type[];
+	};
+	template<typename T, UINT x>
+	struct RemoveVolatile < volatile T[x] >
+	{
+		typedef T Type[x];
+	};
+	template<typename T>
+	struct RemoveCV
+	{
+		typedef typename RemoveConst<typename RemoveVolatile<T>::Type>::Type Type;
 	};
 	/// <summary>
 	/// 类型列表

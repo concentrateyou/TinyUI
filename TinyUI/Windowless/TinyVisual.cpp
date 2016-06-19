@@ -163,6 +163,10 @@ namespace TinyUI
 		{
 
 		}
+		BOOL	TinyVisual::OnDraw(HDC hDC)
+		{
+			return FALSE;
+		}
 		HRESULT	TinyVisual::OnMouseMove(TinyPoint pos, DWORD dwFlags)
 		{
 			return FALSE;

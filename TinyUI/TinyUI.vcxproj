@@ -96,6 +96,7 @@
     <ClInclude Include="Common\TinyMsg.h" />
     <ClInclude Include="Common\TinyHook.h" />
     <ClInclude Include="Common\TinySignal.h" />
+    <ClInclude Include="Common\TinyTemplate.h" />
     <ClInclude Include="Common\TinyTreeBox.h" />
     <ClInclude Include="Common\TinyObject.h" />
     <ClInclude Include="Common\TinyShell.h" />
@@ -155,6 +156,7 @@
     <ClInclude Include="Render\TinyCanvas.h" />
     <ClInclude Include="Windowless\TinyUtility.h" />
     <ClInclude Include="Windowless\TinyVisualCommon.h" />
+    <ClInclude Include="Windowless\TinyVisualLabel.h" />
     <ClInclude Include="Windowless\TinyVisualLayout.h" />
     <ClInclude Include="Windowless\TinyVisualWindow.h" />
     <ClInclude Include="Windowless\TinyVisualManage.h" />
@@ -182,6 +184,7 @@
     <ClCompile Include="Common\TinyMsg.cpp" />
     <ClCompile Include="Common\TinyHook.cpp" />
     <ClCompile Include="Common\TinySignal.cpp" />
+    <ClCompile Include="Common\TinyTemplate.cpp" />
     <ClCompile Include="Common\TinyTreeBox.cpp" />
     <ClCompile Include="Common\TinyObject.cpp" />
     <ClCompile Include="Common\TinyShell.cpp" />
@@ -243,6 +246,7 @@
     <ClCompile Include="Render\TinyCanvas.cpp" />
     <ClCompile Include="Windowless\TinyUtility.cpp" />
     <ClCompile Include="Windowless\TinyVisualCommon.cpp" />
+    <ClCompile Include="Windowless\TinyVisualLabel.cpp" />
     <ClCompile Include="Windowless\TinyVisualLayout.cpp" />
     <ClCompile Include="Windowless\TinyVisualWindow.cpp" />
     <ClCompile Include="Windowless\TinyVisualManage.cpp" />

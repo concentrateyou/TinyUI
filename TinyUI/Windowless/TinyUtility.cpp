@@ -199,22 +199,23 @@ namespace TinyUI
 			return TinyString::Format("[%f %f %f]", m_x, m_y, m_z);
 		}
 		//////////////////////////////////////////////////////////////////////////
-		TinyCanvasClip::TinyCanvasClip(TinyCanvas& canvas, TinyVisual* spvis)
+		TinyClipCanvas::TinyClipCanvas(HDC hDC, TinyVisual* spvis)
+			:TinyCanvas(hDC)
 		{
 			ASSERT(spvis);
 			TinyRectangle clip;
-			::GetClipBox(canvas.Handle(), &clip);
+			::GetClipBox(m_hDC, &clip);
 			m_clip = spvis->GetVisualTree()->GetWindowRect(spvis);
 			m_hRGN = ::CreateRectRgnIndirect(&m_clip);
 			if (spvis->GetClip())
 				::CombineRgn(m_hRGN, m_hRGN, spvis->GetClip(), RGN_AND);
-			::ExtSelectClipRgn(canvas.Handle(), m_hRGN, RGN_AND);
+			::ExtSelectClipRgn(m_hDC, m_hRGN, RGN_AND);
 		}
-		TinyRectangle TinyCanvasClip::GetClipBox() const
+		TinyRectangle TinyClipCanvas::GetClipBox() const
 		{
 			return m_clip;
 		}
-		TinyCanvasClip::~TinyCanvasClip()
+		TinyClipCanvas::~TinyClipCanvas()
 		{
 			SAFE_DELETE_OBJECT(m_hRGN);
 		}

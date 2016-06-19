@@ -36,8 +36,13 @@ namespace TinyUI
 	class TinyCanvas
 	{
 	public:
+		TinyCanvas();
 		TinyCanvas(HDC hDC);
-		~TinyCanvas();
+		virtual ~TinyCanvas();
+		/// <summary>
+		/// 初始化DC
+		/// </summary>
+		BOOL InitializeDC(HDC hDC);
 		/// <summary>
 		/// DC句柄
 		/// </summary>
@@ -238,9 +243,7 @@ namespace TinyUI
 		/// 获得可见的最小矩形大小
 		/// </summary>
 		INT GetClipRectangle(LPRECT lprc);
-	private:
-		BOOL TinyCanvas::InitializeDC(HDC hDC);
-	private:
+	protected:
 		HDC			m_hDC;
 		HPEN		m_hPEN;
 		HBRUSH		m_hBRUSH;

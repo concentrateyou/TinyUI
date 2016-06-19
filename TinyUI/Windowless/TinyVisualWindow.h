@@ -16,7 +16,7 @@ namespace TinyUI
 			virtual ~TinyVisualWindow();
 		public:
 			TinyString RetrieveTag() const OVERRIDE;
-			HRESULT OnDraw(HDC hDC) OVERRIDE;
+			BOOL OnDraw(HDC hDC) OVERRIDE;
 		};
 	}
 }
