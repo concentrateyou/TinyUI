@@ -34,86 +34,51 @@ namespace TinyUI
 			BOOL			Initialize();
 			void			Uninitialize();
 		public:
-			/// <summary>
-			/// 原生窗口
-			/// </summary>
 			TinyVisualHWND*	GetVisualHWND();
-			/// <summary>
-			/// 获得兄弟孩子元素
-			/// </summary>
 			TinyVisual*		GetVisual(TinyVisual* spvis, UINT cmd) const;
-			/// <summary>
-			/// 设置父元素
-			/// </summary>
 			TinyVisual*		SetParent(TinyVisual* spvis, TinyVisual* spvisNewParent);
-			/// <summary>
-			/// 获得父元素
-			/// </summary>
 			TinyVisual*		GetParent(TinyVisual* spvis) const;
-			/// <summary>
-			/// 是否孩子元素
-			/// </summary>
 			BOOL			IsChild(TinyVisual* spvisParent, TinyVisual* spvis) const;
-			/// <summary>
-			/// 是否Visible
-			/// </summary>
 			BOOL			IsVisible(TinyVisual* spvis) const;
-			/// <summary>
-			/// 是否Enable
-			/// </summary>
 			BOOL			IsEnable(TinyVisual* spvis) const;
-			/// <summary>
-			/// x,y分别是屏幕坐标
-			/// </summary>
+			TinyVisual*		GetVisualByName(const TinyString& name);
 			TinyVisual*		GetVisualByPos(INT x, INT y);
-			/// <summary>
-			/// 获得捕获元素
-			/// </summary>
 			TinyVisual*		GetCapture() const;
-			/// <summary>
-			/// 设置捕获元素
-			/// </summary>
 			TinyVisual*		SetCapture(TinyVisual* spvis);
-			/// <summary>
-			/// 获得焦点元素
-			/// </summary>
 			TinyVisual*		GetFocus() const;
-			/// <summary>
-			/// 设置焦点元素
-			/// </summary>
 			TinyVisual*		SetFocus(TinyVisual* spvis);
-			/// <summary>
-			/// 获得元素相对于窗口的坐标
-			/// </summary>
 			TinyPoint		GetWindowPos(const TinyVisual* spvis);
-			/// <summary>
-			/// 获得元素相对于屏幕的坐标
-			/// </summary>
+			TinyRectangle	GetWindowRect(const TinyVisual* spvis);
 			TinyPoint		GetScreenPos(const TinyVisual* spvis);
-#ifdef _DEBUG
-			void			Dump();
-			void			Dump(TinyVisual* spvis, INT& deep);
-#endif
+			void			Render(TinyVisual* spvis, HDC hDC);
 		public:
-			HRESULT			OnMouseMove(const TinyPoint& pos, DWORD dwKey);
-			HRESULT			OnLButtonDown(const TinyPoint& pos, DWORD dwKey);
-			HRESULT			OnLButtonUp(const TinyPoint& pos, DWORD dwKey);
-			HRESULT			OnRButtonDown(const TinyPoint& pos, DWORD dwKey);
-			HRESULT			OnRButtonUp(const TinyPoint& pos, DWORD dwKey);
+			HRESULT			OnMouseMove(TinyPoint pos, DWORD dwFlags);
+			HRESULT			OnLButtonDown(TinyPoint pos, DWORD dwFlags);
+			HRESULT			OnLButtonUp(TinyPoint pos, DWORD dwFlags);
+			HRESULT			OnRButtonDown(TinyPoint pos, DWORD dwFlags);
+			HRESULT			OnRButtonUp(TinyPoint pos, DWORD dwFlags);
+			HRESULT			OnMButtonDown(TinyPoint pos, DWORD dwFlags);
+			HRESULT			OnMButtonUp(TinyPoint pos, DWORD dwFlags);
 		private:
 			void			ConvertToVisualPos(TinyVisual* spvis, TinyPoint& pos);//相对于原生窗口的坐标转换到元素坐标
+			TinyVisual*		GetVisualByName1(TinyVisual* spvis, const TinyString& name);
+			TinyVisual*		GetVisualByName2(TinyVisual* spvis, const TinyString& name);
 			TinyVisual*		GetVisualByPos1(TinyVisual* spvis, INT x, INT y);
 			TinyVisual*		GetVisualByPos2(TinyVisual* spvis, INT x, INT y);
 			void			LinkVisual(TinyVisual* spvis, TinyVisual* spvisInsert, TinyVisual**pspvisFirst);
 			void			UnlinkVisual(TinyVisual* spvisUnlink, TinyVisual** pspvisFirst);
 			TinyVisual*		GetPrevVisual(TinyVisual* spvisList, TinyVisual* spvisFind) const;
 		protected:
-			TinyVisualHWND*						m_pWindow;
-			TinyVisual*							m_spvisWindow;//根节点
-			TinyVisual*							m_spvisCapture;
-			TinyVisual*							m_spvisFocus;
-			TinyScopedPtr<TinyVisualParse>		m_parse;
-			TinyScopedPtr<TinyVisualFactory>	m_fs;
+			TinyVisualHWND*								m_pWindow;
+			TinyVisual*									m_spvisWindow;//根节点
+			TinyVisual*									m_spvisCapture;
+			TinyVisual*									m_spvisFocus;
+			TinyScopedPtr<TinyVisualParse>				m_parse;
+			TinyScopedPtr<TinyVisualFactory>			m_fs;
+#ifdef _DEBUG
+			void			Dump();
+			void			Dump(TinyVisual* spvis, INT& deep);
+#endif
 		};
 	};
 }

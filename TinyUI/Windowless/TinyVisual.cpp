@@ -127,9 +127,21 @@ namespace TinyUI
 				OnSizeChange(size, newsize);
 			}
 		}
+		TinyRectangle TinyVisual::GetRectangle() const
+		{
+			return m_windowRect;
+		}
+		TinyVisualTree*	TinyVisual::GetVisualTree()
+		{
+			return m_vtree;
+		}
 		void TinyVisual::SetClip(HRGN hrgnClip)
 		{
 			this->m_hrgnClip = hrgnClip;
+		}
+		HRGN TinyVisual::GetClip() const
+		{
+			return m_hrgnClip;
 		}
 		BOOL TinyVisual::SetStyleImage(StyleImage type, LPCSTR pzFile)
 		{
@@ -151,34 +163,41 @@ namespace TinyUI
 		{
 
 		}
-		HRESULT	TinyVisual::OnMouseMove(const TinyPoint& pos, DWORD dwKey)
+		HRESULT	TinyVisual::OnMouseMove(TinyPoint pos, DWORD dwFlags)
 		{
 			return FALSE;
 		}
-		HRESULT	TinyVisual::OnLButtonDown(const TinyPoint& pos, DWORD dwKey)
+		HRESULT	TinyVisual::OnLButtonDown(TinyPoint pos, DWORD dwFlags)
 		{
 			return FALSE;
 		}
-		HRESULT	TinyVisual::OnLButtonUp(const TinyPoint& pos, DWORD dwKey)
+		HRESULT	TinyVisual::OnLButtonUp(TinyPoint pos, DWORD dwFlags)
 		{
 			return FALSE;
 		}
-		HRESULT	TinyVisual::OnRButtonDown(const TinyPoint& pos, DWORD dwKey)
+		HRESULT	TinyVisual::OnRButtonDown(TinyPoint pos, DWORD dwFlags)
 		{
 			return FALSE;
 		}
-		HRESULT	TinyVisual::OnRButtonUp(const TinyPoint& pos, DWORD dwKey)
+		HRESULT	TinyVisual::OnRButtonUp(TinyPoint pos, DWORD dwFlags)
 		{
 			return FALSE;
 		}
-		HRESULT	TinyVisual::OnMButtonDown(const TinyPoint& pos, DWORD dwKey)
+		HRESULT	TinyVisual::OnMButtonDown(TinyPoint pos, DWORD dwFlags)
 		{
 			return FALSE;
 		}
-		HRESULT	TinyVisual::OnMButtonUp(const TinyPoint& pos, DWORD dwKey)
+		HRESULT	TinyVisual::OnMButtonUp(TinyPoint pos, DWORD dwFlags)
 		{
 			return FALSE;
 		}
-
+		HRESULT	TinyVisual::OnKeyDown(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags)
+		{
+			return FALSE;
+		}
+		HRESULT	TinyVisual::OnKeyUp(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags)
+		{
+			return FALSE;
+		}
 	}
 }

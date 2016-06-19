@@ -62,6 +62,19 @@ namespace TinyUI
 			FLOAT m_y;
 			FLOAT m_z;
 		};
+		/// <summary>
+		/// »­²¼ÇøÓò
+		/// </summary>
+		class TinyCanvasClip
+		{
+		public:
+			TinyCanvasClip(TinyCanvas& canvas, TinyVisual* spvis);
+			~TinyCanvasClip();
+			TinyRectangle	GetClipBox() const;
+		private:
+			HRGN			m_hRGN;
+			TinyRectangle	m_clip;
+		};
 	}
 }
 

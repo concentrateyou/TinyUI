@@ -5,6 +5,7 @@ namespace TinyUI
 {
 	TinyControl::TinyControl()
 	{
+
 	}
 	TinyControl::~TinyControl()
 	{
@@ -238,6 +239,21 @@ namespace TinyUI
 		return FALSE;
 	}
 	LRESULT TinyControl::OnRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;;
+		return FALSE;
+	}
+	LRESULT TinyControl::OnMButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;;
+		return FALSE;
+	}
+	LRESULT TinyControl::OnMButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;;
+		return FALSE;
+	}
+	LRESULT TinyControl::OnMButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;;
 		return FALSE;

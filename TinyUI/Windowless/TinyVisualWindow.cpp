@@ -25,36 +25,16 @@ namespace TinyUI
 		{
 			return TinyVisualTag::WINDOW;
 		}
-		HRESULT TinyVisualWindow::OnDraw(TinyCanvas& canvas)
+		HRESULT TinyVisualWindow::OnDraw(HDC hDC)
 		{
 			ASSERT(m_vtree || m_vtree->GetVisualHWND());
 			TinyImage& image = m_images[NORMAL];
 			if (image.IsEmpty()) return S_FALSE;
+			TinyCanvas canvas(hDC);
+			TinyCanvasClip clip(canvas, this);
 			canvas.SetBrush((HBRUSH)GetStockObject(WHITE_BRUSH));
 			canvas.FillRectangle(m_windowRect);
 			canvas.DrawImage(image, m_windowRect, 0, 0, image.GetSize().cx, image.GetSize().cy);
-			TinyVisual* spvis = m_vtree->GetVisual(this, CMD_CHILD);
-			while (spvis)
-			{
-				spvis->OnDraw(canvas);
-				spvis = m_vtree->GetVisual(spvis, CMD_CHILD);
-			}
-			return S_OK;
-		}
-
-		HRESULT TinyVisualWindow::OnMouseMove(const TinyPoint& pos, DWORD dwKey)
-		{
-			return FALSE;
-		}
-
-		HRESULT TinyVisualWindow::OnLButtonDown(const TinyPoint& pos, DWORD dwKey)
-		{
-			return FALSE;
-		}
-
-		HRESULT TinyVisualWindow::OnLButtonUp(const TinyPoint& pos, DWORD dwKey)
-		{
-			return FALSE;
 		}
 	}
 }

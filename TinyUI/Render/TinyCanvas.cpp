@@ -103,23 +103,15 @@ namespace TinyUI
 
 	TinyCanvas::TinyCanvas(HDC hDC)
 		:m_hDC(hDC),
-		m_hPen(NULL),
-		m_hBrush(NULL),
+		m_hPEN(NULL),
+		m_hBRUSH(NULL),
 		m_iSave(0)
 	{
-		InitializeDC(hDC);
-	}
-	TinyCanvas::TinyCanvas()
-		: m_hDC(NULL),
-		m_hPen(NULL),
-		m_hBrush(NULL),
-		m_iSave(0)
-	{
-
+		InitializeDC(m_hDC);
 	}
 	TinyCanvas::~TinyCanvas()
 	{
-		if (m_hDC != NULL && m_iSave != 0)
+		if (m_hDC != NULL)
 		{
 			RestoreDC(m_hDC, m_iSave);
 		}
@@ -150,27 +142,31 @@ namespace TinyUI
 		if (!res) return FALSE;
 		res = GetWorldTransform(m_hDC, &m_matrix);
 		if (!res) return FALSE;
-		m_hPen = (HPEN)GetCurrentObject(m_hDC, OBJ_PEN);
-		m_hBrush = (HBRUSH)GetCurrentObject(m_hDC, OBJ_BRUSH);
+		m_hPEN = (HPEN)GetCurrentObject(m_hDC, OBJ_PEN);
+		m_hBRUSH = (HBRUSH)GetCurrentObject(m_hDC, OBJ_BRUSH);
 		return TRUE;
+	}
+	HDC TinyCanvas::Handle()
+	{
+		return m_hDC;
 	}
 	HPEN TinyCanvas::SetPen(HPEN hPen)
 	{
-		if (m_hPen != hPen)
+		if (m_hPEN != hPen)
 		{
-			m_hPen = hPen;
+			m_hPEN = hPen;
 			return (HPEN)SelectObject(m_hDC, hPen);
 		}
-		return m_hPen;
+		return m_hPEN;
 	}
 	HBRUSH TinyCanvas::SetBrush(HBRUSH hBrush)
 	{
-		if (m_hBrush != hBrush)
+		if (m_hBRUSH != hBrush)
 		{
-			m_hBrush = hBrush;
+			m_hBRUSH = hBrush;
 			return (HBRUSH)SelectObject(m_hDC, hBrush);
 		}
-		return m_hBrush;
+		return m_hBRUSH;
 	}
 	BOOL TinyCanvas::DrawImage(TinyImage& image, INT x, INT y)
 	{
@@ -493,6 +489,11 @@ namespace TinyUI
 	{
 		if (!m_hDC) return FALSE;
 		return RectVisible(m_hDC, &rect);
+	}
+	INT TinyCanvas::GetClipRectangle(LPRECT lprect)
+	{
+		if (!m_hDC) return FALSE;
+		return ::GetClipBox(m_hDC, lprect) != ERROR;
 	}
 	BOOL TinyCanvas::TranslateTransform(FLOAT x, FLOAT y)
 	{

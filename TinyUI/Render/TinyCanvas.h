@@ -36,10 +36,12 @@ namespace TinyUI
 	class TinyCanvas
 	{
 	public:
-		TinyCanvas();
 		TinyCanvas(HDC hDC);
 		~TinyCanvas();
-		BOOL InitializeDC(HDC hDC);
+		/// <summary>
+		/// DC句柄
+		/// </summary>
+		HDC Handle();
 		/// <summary>
 		/// 设置画板铅笔
 		/// </summary>
@@ -232,10 +234,17 @@ namespace TinyUI
 		/// 返回当前画布矩形是否可见
 		/// </summary>
 		BOOL IsVisible(POINT pt);
+		/// <summary>
+		/// 获得可见的最小矩形大小
+		/// </summary>
+		INT GetClipRectangle(LPRECT lprc);
+	private:
+		BOOL TinyCanvas::InitializeDC(HDC hDC);
 	private:
 		HDC			m_hDC;
-		HPEN		m_hPen;
-		HBRUSH		m_hBrush;
+		HPEN		m_hPEN;
+		HBRUSH		m_hBRUSH;
+		HRGN		m_hRGN;
 		INT			m_iSave;
 		TinyMatrix	m_matrix;
 	};

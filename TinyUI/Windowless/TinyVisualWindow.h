@@ -16,10 +16,7 @@ namespace TinyUI
 			virtual ~TinyVisualWindow();
 		public:
 			TinyString RetrieveTag() const OVERRIDE;
-			HRESULT OnDraw(TinyCanvas& canvas) OVERRIDE;
-			HRESULT OnMouseMove(const TinyPoint& pos, DWORD dwKey) OVERRIDE;
-			HRESULT OnLButtonDown(const TinyPoint& pos, DWORD dwKey) OVERRIDE;
-			HRESULT OnLButtonUp(const TinyPoint& pos, DWORD dwKey) OVERRIDE;
+			HRESULT OnDraw(HDC hDC) OVERRIDE;
 		};
 	}
 }

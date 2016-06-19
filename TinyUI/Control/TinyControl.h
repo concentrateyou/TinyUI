@@ -49,7 +49,7 @@ namespace TinyUI
 			MESSAGE_HANDLER(WM_DESTROY, OnDestory)
 			MESSAGE_HANDLER(WM_CLOSE, OnClose)
 			MESSAGE_HANDLER(WM_SIZE, OnSize)
-			MESSAGE_HANDLER(WM_MOVE,OnMove)
+			MESSAGE_HANDLER(WM_MOVE, OnMove)
 			MESSAGE_HANDLER(WM_SETCURSOR, OnSetCursor)
 			MESSAGE_HANDLER(WM_NCMOUSEMOVE, OnNCMouseMove)
 			MESSAGE_HANDLER(WM_NCMOUSEHOVER, OnNCMouseHover)
@@ -74,6 +74,8 @@ namespace TinyUI
 			MESSAGE_HANDLER(WM_LBUTTONDBLCLK, OnRButtonDBClick)
 			MESSAGE_HANDLER(WM_RBUTTONDOWN, OnRButtonDown)
 			MESSAGE_HANDLER(WM_RBUTTONUP, OnRButtonUp)
+			MESSAGE_HANDLER(WM_MBUTTONDOWN, OnMButtonDown)
+			MESSAGE_HANDLER(WM_MBUTTONUP, OnMButtonUp)
 			MESSAGE_HANDLER(WM_RBUTTONDBLCLK, OnRButtonDBClick)
 			MESSAGE_HANDLER(WM_MOUSEHOVER, OnMouseHover)
 			MESSAGE_HANDLER(WM_ACTIVATE, OnActivate)
@@ -115,6 +117,9 @@ namespace TinyUI
 		virtual LRESULT OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnRButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnMButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnMButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnMButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnTimer(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

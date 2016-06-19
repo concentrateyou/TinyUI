@@ -20,25 +20,27 @@ namespace TinyUI
 		{
 			return TinyVisualTag::SYSBUTTON;
 		}
-		HRESULT TinyVisualSysButton::OnDraw(TinyCanvas& canvas)
+		HRESULT TinyVisualSysButton::OnDraw(HDC hDC)
 		{
 			TinyImage& image = m_images[NORMAL];
 			if (image.IsEmpty()) return S_FALSE;
-			canvas.DrawImage(image, m_windowRect, 0, 0, image.GetSize().cx, image.GetSize().cy);
+			TinyCanvas canvas(hDC);
+			TinyCanvasClip clip(canvas, this);
+			TinyRectangle rcClip = clip.GetClipBox();
+			canvas.DrawImage(image, rcClip, 0, 0, image.GetSize().cx, image.GetSize().cy);
 			return S_OK;
 		}
-		HRESULT TinyVisualSysButton::OnMouseMove(const TinyPoint& pos, DWORD dwKey)
+		HRESULT TinyVisualSysButton::OnMouseMove(TinyPoint pos, DWORD dwFlags)
 		{
 			return FALSE;
 		}
 
-		HRESULT TinyVisualSysButton::OnLButtonDown(const TinyPoint& pos, DWORD dwKey)
+		HRESULT TinyVisualSysButton::OnLButtonDown(TinyPoint pos, DWORD dwFlags)
 		{
-			TRACE("SysButton-OnLButtonDown:%d,%d\n", pos.x, pos.y);
 			return FALSE;
 		}
 
-		HRESULT TinyVisualSysButton::OnLButtonUp(const TinyPoint& pos, DWORD dwKey)
+		HRESULT TinyVisualSysButton::OnLButtonUp(TinyPoint pos, DWORD dwFlags)
 		{
 			return FALSE;
 		}
@@ -60,25 +62,19 @@ namespace TinyUI
 		{
 			TinyVisual* spvisParent = m_spvisParent;
 		}
-		HRESULT TinyVisualCaption::OnDraw(TinyCanvas& canvas)
+		HRESULT TinyVisualCaption::OnDraw(HDC hDC)
 		{
-			TinyVisual* spvis = m_vtree->GetVisual(this, CMD_CHILD);
-			while (spvis)
-			{
-				spvis->OnDraw(canvas);
-				spvis = m_vtree->GetVisual(spvis, CMD_NEXT);
-			}
 			return S_OK;
 		}
-		HRESULT TinyVisualCaption::OnMouseMove(const TinyPoint& pos, DWORD dwKey)
+		HRESULT TinyVisualCaption::OnMouseMove(TinyPoint pos, DWORD dwFlags)
 		{
 			return FALSE;
 		}
-		HRESULT TinyVisualCaption::OnLButtonDown(const TinyPoint& pos, DWORD dwKey)
+		HRESULT TinyVisualCaption::OnLButtonDown(TinyPoint pos, DWORD dwFlags)
 		{
 			return FALSE;
 		}
-		HRESULT TinyVisualCaption::OnLButtonUp(const TinyPoint& pos, DWORD dwKey)
+		HRESULT TinyVisualCaption::OnLButtonUp(TinyPoint pos, DWORD dwFlags)
 		{
 			return FALSE;
 		}

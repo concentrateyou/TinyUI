@@ -1,5 +1,6 @@
 #include "../stdafx.h"
 #include "TinyUtility.h"
+#include "TinyVisualTree.h"
 
 namespace TinyUI
 {
@@ -196,6 +197,26 @@ namespace TinyUI
 		TinyString Vector3F::ToString() const
 		{
 			return TinyString::Format("[%f %f %f]", m_x, m_y, m_z);
+		}
+		//////////////////////////////////////////////////////////////////////////
+		TinyCanvasClip::TinyCanvasClip(TinyCanvas& canvas, TinyVisual* spvis)
+		{
+			ASSERT(spvis);
+			TinyRectangle clip;
+			::GetClipBox(canvas.Handle(), &clip);
+			m_clip = spvis->GetVisualTree()->GetWindowRect(spvis);
+			m_hRGN = ::CreateRectRgnIndirect(&m_clip);
+			if (spvis->GetClip())
+				::CombineRgn(m_hRGN, m_hRGN, spvis->GetClip(), RGN_AND);
+			::ExtSelectClipRgn(canvas.Handle(), m_hRGN, RGN_AND);
+		}
+		TinyRectangle TinyCanvasClip::GetClipBox() const
+		{
+			return m_clip;
+		}
+		TinyCanvasClip::~TinyCanvasClip()
+		{
+			SAFE_DELETE_OBJECT(m_hRGN);
 		}
 	}
 }

@@ -243,31 +243,58 @@ namespace TinyUI
 		return Assign(&s);
 	}
 
-	INT TinyString::operator == (const TinyString& str)
+	BOOL TinyString::operator == (const TinyString& str)
 	{
-		return this->Compare(str);
+		return this->Compare(str) == 0;
 	}
 
-	INT TinyString::operator == (const CHAR* s)
+	BOOL TinyString::operator == (const CHAR* s)
 	{
-		return strcmp(this->_Mystr, s);
+		return strcmp(this->_Mystr, s) == 0;
 	}
 
-	INT TinyString::operator == (TinyString& str)
+	BOOL TinyString::operator == (TinyString& str)
 	{
-		return this->Compare(str);
+		return this->Compare(str) == 0;
 	}
-	INT	TinyString::operator == (const string& str)
+	BOOL TinyString::operator == (const string& str)
 	{
-		return this->Compare(str);
+		return this->Compare(str) == 0;
 	}
-	INT	TinyString::operator == (string& str)
+	BOOL TinyString::operator == (string& str)
 	{
-		return this->Compare(str);
+		return this->Compare(str) == 0;
 	}
-	INT TinyString::operator == (CHAR* s)
+	BOOL TinyString::operator == (CHAR* s)
 	{
-		return strcmp(this->_Mystr, s);
+		return strcmp(this->_Mystr, s) == 0;
+	}
+
+	BOOL TinyString::operator != (const TinyString& str)
+	{
+		return this->Compare(str) != 0;
+	}
+
+	BOOL TinyString::operator != (const CHAR* s)
+	{
+		return strcmp(this->_Mystr, s) != 0;
+	}
+
+	BOOL TinyString::operator != (TinyString& str)
+	{
+		return this->Compare(str) != 0;
+	}
+	BOOL TinyString::operator != (const string& str)
+	{
+		return this->Compare(str) != 0;
+	}
+	BOOL TinyString::operator != (string& str)
+	{
+		return this->Compare(str) != 0;
+	}
+	BOOL TinyString::operator != (CHAR* s)
+	{
+		return strcmp(this->_Mystr, s) != 0;
 	}
 
 	TinyString& TinyString::Assign(const CHAR* s)

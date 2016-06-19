@@ -18,10 +18,12 @@ namespace TinyUI
 		public:
 			virtual ~TinyVisualSysButton();
 			TinyString RetrieveTag() const OVERRIDE;
-			HRESULT OnDraw(TinyCanvas& canvas) OVERRIDE;
-			HRESULT OnMouseMove(const TinyPoint& pos, DWORD dwKey) OVERRIDE;
-			HRESULT OnLButtonDown(const TinyPoint& pos, DWORD dwKey) OVERRIDE;
-			HRESULT OnLButtonUp(const TinyPoint& pos, DWORD dwKey) OVERRIDE;
+			HRESULT OnDraw(HDC hDC) OVERRIDE;
+			HRESULT OnMouseMove(TinyPoint pos, DWORD dwFlags) OVERRIDE;
+			HRESULT OnLButtonDown(TinyPoint pos, DWORD dwFlags) OVERRIDE;
+			HRESULT OnLButtonUp(TinyPoint pos, DWORD dwFlags) OVERRIDE;
+		public:
+
 		};
 		/// <summary>
 		/// ±êÌâÀ¸ÈÝÆ÷¿Ø¼þHorizontalLayout
@@ -37,10 +39,10 @@ namespace TinyUI
 			virtual ~TinyVisualCaption();
 			TinyString RetrieveTag() const OVERRIDE;
 			void Resize() OVERRIDE;
-			HRESULT OnDraw(TinyCanvas& canvas) OVERRIDE;
-			HRESULT OnMouseMove(const TinyPoint& pos, DWORD dwKey) OVERRIDE;
-			HRESULT OnLButtonDown(const TinyPoint& pos, DWORD dwKey) OVERRIDE;
-			HRESULT OnLButtonUp(const TinyPoint& pos, DWORD dwKey) OVERRIDE;
+			HRESULT OnDraw(HDC hDC) OVERRIDE;
+			HRESULT OnMouseMove(TinyPoint pos, DWORD dwFlags) OVERRIDE;
+			HRESULT OnLButtonDown(TinyPoint pos, DWORD dwFlags) OVERRIDE;
+			HRESULT OnLButtonUp(TinyPoint pos, DWORD dwFlags) OVERRIDE;
 		};
 	}
 }
