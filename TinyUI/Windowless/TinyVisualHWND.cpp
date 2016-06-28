@@ -49,7 +49,7 @@ namespace TinyUI
 		}
 		void TinyVisualHWND::Uninitialize()
 		{
-			m_vtree->Uninitialize();
+			//TODO
 		}
 		void TinyVisualHWND::Render()
 		{

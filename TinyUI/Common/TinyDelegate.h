@@ -6,10 +6,6 @@ namespace TinyUI
 {
 	//////////////////////////////////////////////////////////////////////////
 	/// <summary>
-	/// template_class< type( type1, type2, ... ) > a_class;
-	/// http://blog.csdn.net/pongba/article/details/1560773
-	/// C++ 类型擦除 类似boost::any, 参考了Loki库实现
-	/// 模板R(T1,T2,...)函数类型退化成函数指针
 	/// 仿函数基类
 	/// </summary>
 	template<typename R>
@@ -91,10 +87,8 @@ namespace TinyUI
 		virtual R operator()(A1, A2, A3, A4) = 0;
 	};
 	//////////////////////////////////////////////////////////////////////////
-	template<typename R, typename TList, typename FunctionType, typename InstanceType, typename Types>
-	class Function;
 	template<typename R, typename TList, typename FunctionType>
-	class Function<R, TList, FunctionType, Sequence<>, Sequence<>> : public Functor < R, TList >
+	class UnaryFunction : public Functor < R, TList >
 	{
 	public:
 		typedef Functor<R, TList> FunctorType;
@@ -104,16 +98,16 @@ namespace TinyUI
 		typedef typename FunctorType::A3Type		A3Type;
 		typedef typename FunctorType::A4Type		A4Type;
 	public:
-		Function(const FunctionType& fType)
+		UnaryFunction(const FunctionType& fType)
 			: m_fType(fType)
 		{
 
 		}
-		Function(const Function& other)
+		UnaryFunction(const UnaryFunction& other)
 			:m_fType(other.m_fType)
 		{
 		}
-		Function& operator = (const Function& other)
+		UnaryFunction& operator = (const UnaryFunction& other)
 		{
 			if (&other != this)
 			{
@@ -121,9 +115,9 @@ namespace TinyUI
 			}
 			return *this;
 		}
-		virtual Function* DoClone() const
+		virtual UnaryFunction* DoClone() const
 		{
-			return new Function(*this);
+			return new UnaryFunction(*this);
 		}
 	public:
 		BOOL operator==(const typename FunctorType::SelfType& fType) const
@@ -132,7 +126,7 @@ namespace TinyUI
 			{
 				return FALSE;
 			}
-			const Function& s = static_cast<const Function&>(fType);
+			const UnaryFunction& s = static_cast<const UnaryFunction&>(fType);
 			return  m_fType == s.m_fType;
 		}
 		ReturnType operator()()
@@ -162,7 +156,7 @@ namespace TinyUI
 	/// 成员函数
 	/// </summary>
 	template <typename R, typename TList, typename InstanceType, typename FunctionType>
-	class Function<R, TList, InstanceType, FunctionType, Sequence<>> : public Functor < R, TList >
+	class BinaryFunction : public Functor < R, TList >
 	{
 	public:
 		typedef Functor<R, TList> FunctorType;
@@ -172,16 +166,16 @@ namespace TinyUI
 		typedef typename FunctorType::A3Type		A3Type;
 		typedef typename FunctorType::A4Type		A4Type;
 	public:
-		Function(const InstanceType& iType, FunctionType mType)
+		BinaryFunction(const InstanceType& iType, FunctionType mType)
 			: m_iType(iType), m_mType(mType)
 
 		{
 		}
-		Function(const Function& other)
+		BinaryFunction(const BinaryFunction& other)
 			:m_iType(other.m_iType), m_mType(other.m_mType)
 		{
 		}
-		Function& operator = (const Function& other)
+		BinaryFunction& operator = (const BinaryFunction& other)
 		{
 			if (&other != this)
 			{
@@ -190,9 +184,9 @@ namespace TinyUI
 			}
 			return *this;
 		}
-		virtual Function* DoClone() const
+		virtual BinaryFunction* DoClone() const
 		{
-			return new Function(*this);
+			return new BinaryFunction(*this);
 		}
 	public:
 		BOOL operator==(const typename FunctorType::SelfType& fType) const
@@ -201,7 +195,7 @@ namespace TinyUI
 			{
 				return FALSE;
 			}
-			const Function& s = static_cast<const Function&>(fType);
+			const BinaryFunction& s = static_cast<const BinaryFunction&>(fType);
 			return  m_iType == s.m_iType && m_mType == s.m_mType;
 		}
 		ReturnType operator()()
@@ -268,7 +262,7 @@ namespace TinyUI
 		/// </summary>
 		template <typename FunctionType>
 		DelegateBase(FunctionType fType)
-			: m_my(new Function<R, TList, FunctionType, Sequence<>, Sequence<>>(fType))
+			: m_my(new UnaryFunction<R, TList, FunctionType>(fType))
 		{
 
 		}
@@ -277,7 +271,7 @@ namespace TinyUI
 		/// </summary>
 		template <class InstanceType, typename FunctionType>
 		DelegateBase(const InstanceType& iType, FunctionType mType)
-			: m_my(new Function<R, TList, InstanceType, FunctionType, Sequence<>>(iType, mType))
+			: m_my(new BinaryFunction<R, TList, InstanceType, FunctionType>(iType, mType))
 		{
 
 		}
@@ -287,7 +281,7 @@ namespace TinyUI
 		template <typename FunctionType>
 		void BindDelegate(FunctionType fType)
 		{
-			m_my.Reset(new Function<R, TList, FunctionType, Sequence(), Sequence<>>(fType));
+			m_my.Reset(new UnaryFunction<R, TList, FunctionType>(fType));
 		}
 		/// <summary>
 		/// 绑定成员函数
@@ -295,7 +289,7 @@ namespace TinyUI
 		template <class InstanceType, typename FunctionType>
 		void BindDelegate(const InstanceType& iType, FunctionType mType)
 		{
-			m_my.Reset(new Function<R, TList, InstanceType, FunctionType, Sequence<>>(iType, mType));
+			m_my.Reset(new BinaryFunction<R, TList, InstanceType, FunctionType>(iType, mType));
 		}
 		/// <summary>
 		/// 判断是都为空
