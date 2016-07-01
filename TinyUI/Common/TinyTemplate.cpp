@@ -4,5 +4,8 @@
 
 namespace TinyUI
 {
-
+	namespace TinyTemplete
+	{
+		
+	}
 }

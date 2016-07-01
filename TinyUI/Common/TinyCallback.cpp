@@ -17,16 +17,29 @@ namespace TinyUI
 	{
 		return m_storage.Ptr() == other.m_storage.Ptr() && m_invoke == other.m_invoke;
 	}
-	CallbackBase::CallbackBase(InvokeBase invoke, InvokerStorageBase* storage)
+	CallbackBase::CallbackBase(InvokeFunctionBase invoke, InvokerStorageBase* storage)
 		: m_invoke(invoke),
 		m_storage(storage)
 	{
 
 	}
+	CallbackBase::CallbackBase(CallbackBase&& other)
+	{
+		m_storage = std::move(other.m_storage);
+		m_invoke = other.m_invoke;
+		other.m_invoke = nullptr;
+	}
 	CallbackBase::CallbackBase(const CallbackBase& other)
 		: m_invoke(other.m_invoke),
 		m_storage(other.m_storage)
 	{
+	}
+	CallbackBase& CallbackBase::operator = (CallbackBase&& other)
+	{
+		m_storage = std::move(other.m_storage);
+		m_invoke = other.m_invoke;
+		other.m_invoke = nullptr;
+		return *this;
 	}
 	CallbackBase& CallbackBase::operator = (const CallbackBase& other)
 	{

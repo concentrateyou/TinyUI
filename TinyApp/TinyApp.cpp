@@ -29,6 +29,25 @@ using namespace TinyUI;
 //	}
 //	return bfs;
 //}
+
+INT  Add(INT a, INT b)
+{
+	return a + b;
+}
+
+class Test
+{
+public:
+	INT Add(INT a, INT b)
+	{
+		return a + b;
+	}
+	INT Show(INT a, INT b) const
+	{
+		return a + b;
+	}
+};
+
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -41,6 +60,12 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	WSADATA   wsd;
 	WSAStartup(MAKEWORD(2, 2), &wsd);
 	HRESULT hRes = OleInitialize(NULL);
+
+	Test test1;
+	Callback<INT(INT, INT)> abc = BindCallback(&Test::Add, &test1);
+	abc(10, 10);
+	abc = BindCallback(&Test::Show, &test1);
+
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
