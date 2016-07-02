@@ -42,7 +42,6 @@ namespace TinyUI
 
 		HRESULT TinyVisualSysButton::OnLButtonUp(TinyPoint pos, DWORD dwFlags)
 		{
-			EVENT_Click();
 			return FALSE;
 		}
 		//////////////////////////////////////////////////////////////////////////

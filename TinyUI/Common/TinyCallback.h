@@ -3,7 +3,6 @@
 
 namespace TinyUI
 {
-	//改成可变参数模板支持
 	template <typename Functor>
 	class RunnableAdapter;
 	template <typename R, typename... Args>
@@ -52,32 +51,32 @@ namespace TinyUI
 	{
 		typedef R(*DoInvokeType)(InvokerStorageBase*);
 
-		static R DoInvoke(InvokerStorageBase* base, Args&&... args)
+		static R DoInvoke(InvokerStorageBase* base, Args... args)
 		{
 			InvokerStorage* call = static_cast<InvokerStorage*>(base);
-			return (*call->m_runnable)(std::forward<Args>(args)...);
+			return (*call->m_runnable)(args...);
 		}
 	};
 	template <typename InvokerStorage, typename R, typename T, typename... Args>
 	struct Invoker < InvokerStorage, R(T::*)(Args...) >
 	{
-		typedef R(*DoInvokeType)(InvokerStorageBase*, Args&&...);
+		typedef R(*DoInvokeType)(InvokerStorageBase*, Args...);
 
-		static R DoInvoke(InvokerStorageBase* base, Args&&... args)
+		static R DoInvoke(InvokerStorageBase* base, Args... args)
 		{
 			InvokerStorage* call = static_cast<InvokerStorage*>(base);
-			return ((call->m_instance)->*call->m_runnable)(std::forward<Args>(args)...);
+			return ((call->m_instance)->*call->m_runnable)(args...);
 		}
 	};
 	template <typename InvokerStorage, typename R, typename T, typename... Args>
 	struct Invoker < InvokerStorage, R(T::*)(Args...) const >
 	{
-		typedef R(*DoInvokeType)(InvokerStorageBase*, Args&&...);
+		typedef R(*DoInvokeType)(InvokerStorageBase*, Args...);
 
-		static R DoInvoke(InvokerStorageBase* base, Args&&... args)
+		static R DoInvoke(InvokerStorageBase* base, Args... args)
 		{
 			InvokerStorage* call = static_cast<InvokerStorage*>(base);
-			return ((call->m_instance)->*call->m_runnable)(std::forward<Args>(args)...);
+			return ((call->m_instance)->*call->m_runnable)(args...);
 		}
 	};
 	//////////////////////////////////////////////////////////////////////
@@ -117,9 +116,7 @@ namespace TinyUI
 		FunctionType m_runnable;
 		InstanceType m_instance;
 	};
-	/// <summary>
-	/// 回调基类
-	/// </summary>
+	//////////////////////////////////////////////////////////////////////////
 	class CallbackBase
 	{
 	protected:
@@ -139,9 +136,7 @@ namespace TinyUI
 		TinyScopedReferencePtr<InvokerStorageBase> m_storage;
 		InvokeFunctionBase m_invoke;
 	};
-	/// <summary>
-	/// 类型擦除
-	/// </summary>
+	//////////////////////////////////////////////////////////////////////////
 	template<typename InvokerStorage>
 	class Caller
 	{
@@ -159,17 +154,14 @@ namespace TinyUI
 	{
 		return Caller<T>(o);
 	}
-
-	/// <summary>
-	/// 回调实现类
-	/// </summary>
+	//////////////////////////////////////////////////////////////////////////
 	template<typename Runnable>
 	class Callback;
 	template<typename R, typename... Args>
 	class Callback<R(Args...)> : public CallbackBase
 	{
 	private:
-		typedef R(*InvokeFunction)(InvokerStorageBase*, Args&&...);
+		typedef R(*InvokeFunction)(InvokerStorageBase*, Args...);
 	public:
 		Callback() : CallbackBase(NULL, NULL)
 		{
@@ -199,26 +191,21 @@ namespace TinyUI
 		R operator()(Args... args) const
 		{
 			InvokeFunction invoke = reinterpret_cast<InvokeFunction>(m_invoke);
-			return invoke(m_storage.Ptr(), std::forward<Args>(args)...);
+			return invoke(m_storage.Ptr(), args...);
 		}
 	};
-	typedef Callback<void(void)> Closure;
 	//////////////////////////////////////////////////////////////////////////
-	/// <summary>
-	/// 绑定函数
-	/// </summary>
 	template <typename FunctionType>
 	Caller <UnaryInvokerStorage<FunctionType>> BindCallback(const FunctionType& runnable)
 	{
 		return MakeCaller(new UnaryInvokerStorage<FunctionType>(runnable));
 	};
-	/// <summary>
-	/// 绑定成员函数
-	/// </summary>
+	//////////////////////////////////////////////////////////////////////////
 	template <typename FunctionType, typename InstanceType>
 	Caller<BinaryInvokerStorage<FunctionType, InstanceType>> BindCallback(const FunctionType& runnable, const InstanceType& instance)
 	{
 		return MakeCaller(new BinaryInvokerStorage<FunctionType, InstanceType>(runnable, instance));
 	};
+	typedef Callback<void(void)> Closure;
 };
 
