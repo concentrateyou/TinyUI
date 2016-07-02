@@ -23,12 +23,14 @@ namespace TinyUI
 	{
 
 	}
+
 	CallbackBase::CallbackBase(CallbackBase&& other)
+		:m_storage(std::move(other.m_storage)),
+		m_invoke(other.m_invoke)
 	{
-		m_storage = std::move(other.m_storage);
-		m_invoke = other.m_invoke;
-		other.m_invoke = nullptr;
+		other.m_invoke = NULL;
 	}
+
 	CallbackBase::CallbackBase(const CallbackBase& other)
 		: m_invoke(other.m_invoke),
 		m_storage(other.m_storage)

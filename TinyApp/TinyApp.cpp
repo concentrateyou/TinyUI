@@ -12,8 +12,10 @@
 #include "Media/TinyVideoCapture.h"
 #include "Common/TinyHook.h"
 #include "Common/TinyTemplate.h"
+#include "Common/TinyEvent.h"
 #include <algorithm>
 #include <map>
+#include <functional>
 
 #pragma comment(lib,"TinyUI.lib")
 using namespace TinyUI;
@@ -30,23 +32,15 @@ using namespace TinyUI;
 //	return bfs;
 //}
 
-INT  Add(INT a, INT b)
+void Show1()
 {
-	return a + b;
+	TRACE("Call Show1");
 }
 
-class Test
+void Show2()
 {
-public:
-	INT Add(INT a, INT b)
-	{
-		return a + b;
-	}
-	INT Show(INT a, INT b) const
-	{
-		return a + b;
-	}
-};
+	TRACE("Call Show2");
+}
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -57,15 +51,15 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
+
+	Delegate<void(void)>* ds = new Delegate<void(void)>(&Show1);
+
+	SAFE_DELETE(ds);
+
+
 	WSADATA   wsd;
 	WSAStartup(MAKEWORD(2, 2), &wsd);
 	HRESULT hRes = OleInitialize(NULL);
-
-	Test test1;
-	Callback<INT(INT, INT)> abc = BindCallback(&Test::Add, &test1);
-	abc(10, 10);
-	abc = BindCallback(&Test::Show, &test1);
-
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));

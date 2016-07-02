@@ -43,6 +43,9 @@ namespace TinyUI
 #ifndef FINAL
 #define FINAL		final
 #endif 
+#ifndef DEFAULT
+#define DEFAULT		default
+#endif 
 #ifndef NOEXCEPT
 #define NOEXCEPT	throw()
 #endif 

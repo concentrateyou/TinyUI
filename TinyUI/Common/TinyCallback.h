@@ -79,6 +79,28 @@ namespace TinyUI
 			return ((call->m_instance)->*call->m_runnable)(args...);
 		}
 	};
+	template <typename InvokerStorage, typename R, typename T, typename... Args>
+	struct Invoker < InvokerStorage, R(T::*)(Args...) volatile >
+	{
+		typedef R(*DoInvokeType)(InvokerStorageBase*, Args...);
+
+		static R DoInvoke(InvokerStorageBase* base, Args... args)
+		{
+			InvokerStorage* call = static_cast<InvokerStorage*>(base);
+			return ((call->m_instance)->*call->m_runnable)(args...);
+		}
+	};
+	template <typename InvokerStorage, typename R, typename T, typename... Args>
+	struct Invoker < InvokerStorage, R(T::*)(Args...) const volatile >
+	{
+		typedef R(*DoInvokeType)(InvokerStorageBase*, Args...);
+
+		static R DoInvoke(InvokerStorageBase* base, Args... args)
+		{
+			InvokerStorage* call = static_cast<InvokerStorage*>(base);
+			return ((call->m_instance)->*call->m_runnable)(args...);
+		}
+	};
 	//////////////////////////////////////////////////////////////////////
 	template <typename FunctionType>
 	class UnaryInvokerStorage : public InvokerStorageBase
