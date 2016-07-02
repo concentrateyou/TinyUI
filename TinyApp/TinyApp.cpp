@@ -32,6 +32,11 @@ using namespace TinyUI;
 //	return bfs;
 //}
 
+class TestEvent
+{
+
+};
+
 void Show1()
 {
 	TRACE("Call Show1");

@@ -136,7 +136,7 @@ namespace TinyUI
 			DWORD			m_dwBlockNext;
 			DWORD			m_dwSizeL;//²¥·ÅÊý¾Ý
 			BOOL			m_bPlaying;
-			Delegate<void(LPWAVEHDR, DWORD_PTR)> m_wavePlayDone;
+			TinyScopedPtr<Delegate<void(LPWAVEHDR, DWORD_PTR)>> m_wavePlayDone;
 			void PlayData();
 		};
 		/// <summary>
@@ -156,7 +156,7 @@ namespace TinyUI
 			TinyWaveIn		m_waveOut;
 			LPWAVEHDR		m_audioBlockPtr[MAX_AUDIO_BUFFERS];
 			DWORD			m_dwBlocks;
-			Delegate<void(LPWAVEHDR, DWORD_PTR)> m_waveTapeDone;
+			TinyScopedPtr<Delegate<void(LPWAVEHDR, DWORD_PTR)>> m_waveTapeDone;
 		};
 	};
 }

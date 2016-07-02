@@ -33,25 +33,16 @@ namespace TinyUI
 			TinyVisual* ps5 = m_fs->Create(10, 0, 200, 30, ps1, TinyVisualTag::CAPTION);
 			ps5->SetName("Caption-1-2");
 
-			TinyVisual* ps2 = m_fs->Create(0, 0, 30, 30, ps5, TinyVisualTag::SYSBUTTON);
+			m_click.Reset(new Delegate<void(void)>(this, &TinyVisualTree::onClick));
+
+			TinyVisualSysButton* ps2 = static_cast<TinyVisualSysButton*>(m_fs->Create(0, 0, 30, 30, ps5, TinyVisualTag::SYSBUTTON));
+			ps2->EVENT_Click += m_click;
 			ps2->SetName("Min-1");
 			ps2->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_mini_normal.png");
 			ps2->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_mini_highlight.png");
 			ps2->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_mini_down.png");
 
-			/*auto s1 = [=](void)->void{
-				MessageBox(NULL, "Min-1-Click-1", "", MB_OK);
-				return;
-				};
 
-				auto s2 = [=](void)->void{
-				MessageBox(NULL, "Min-1-Click-1", "", MB_OK);
-				return;
-				};
-				BIND_EVENT(Click, static_cast<TinyVisualSysButton*>(ps2), s1);*/
-			/*BIND_EVENT(Click, static_cast<TinyVisualSysButton*>(ps2), s1);
-			BIND_EVENT(Click, static_cast<TinyVisualSysButton*>(ps2), s2);
-			*/
 			TinyVisual* ps3 = m_fs->Create(30, 0, 30, 30, ps5, TinyVisualTag::SYSBUTTON);
 			ps3->SetName("Max-1");
 			ps3->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_max_normal.png");

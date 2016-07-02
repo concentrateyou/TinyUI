@@ -75,42 +75,6 @@ namespace TinyUI
 			HRGN			m_hRGN;
 			TinyRectangle	m_clip;
 		};
-
-
-#define DECLARE_EVENT0(NAME,R)\
-	Event<R(void)> EVENT_##NAME;
-#define DECLARE_EVENT1(NAME,R,A1)\
-	Event<R(A1)> EVENT_##NAME;
-#define DECLARE_EVENT2(NAME,R,A1,A2)\
-	Event<R(A1,A2)> EVENT_##NAME;
-#define DECLARE_EVENT3(NAME,R,A1,A2,A3)\
-	Event<R(A1,A2,A3)> EVENT_##NAME;
-#define DECLARE_EVENT4(NAME,R,A1,A2,A3,A4)\
-	Event<R(A1,A2,A3,A4)> EVENT_##NAME;
-
-#define DECLARE_DELEGATE0(NAME,R)\
-	Delegate<R(void)> DELEGATE_##NAME;
-#define DECLARE_DELEGATE1(NAME,R,A1)\
-	Delegate<R(A1)> DELEGATE_##NAME;
-#define DECLARE_DELEGATE2(NAME,R,A1,A2)\
-	Delegate<R(A1,A2)> DELEGATE_##NAME;
-#define DECLARE_DELEGATE3(NAME,R,A1,A2,A3)\
-	Delegate<R(A1,A2,A3)> DELEGATE_##NAME;
-#define DECLARE_DELEGATE4(NAME,R,A1,A2,A3,A4)\
-	Delegate<R(A1,A2,A3,A4)> DELEGATE_##NAME;
-
-#define  BIND_EVENT(NAME,SOURCE,F)\
-	DELEGATE_##NAME.BindDelegate(&F);\
-	if(SOURCE)\
-		{\
-		SOURCE->EVENT_##NAME += &DELEGATE_##NAME;\
-		}
-
-#define  UNBIND_EVENT(NAME,SOURCE,F)\
-	if(SOURCE)\
-		{\
-		SOURCE->EVENT_##NAME -= &DELEGATE_##NAME\
-		}
 	}
 }
 

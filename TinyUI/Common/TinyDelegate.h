@@ -246,7 +246,7 @@ namespace TinyUI
 	{
 	public:
 		typedef DelegateBase<R, Args... > BaseType;
-	public:
+	protected:
 		Delegate() : BaseType(){}
 	public:
 		Delegate(const Delegate& os) : BaseType()

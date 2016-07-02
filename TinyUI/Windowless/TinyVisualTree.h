@@ -76,8 +76,9 @@ namespace TinyUI
 			TinyVisualHWND*								m_pWindow;
 			TinyScopedPtr<TinyVisualParse>				m_parse;
 			TinyScopedPtr<TinyVisualFactory>			m_fs;
+		private:
+			TinyScopedPtr<Delegate<void(void)>>			m_click;
 		public:
-			DECLARE_DELEGATE0(Click, void);
 #ifdef _DEBUG
 			void			Dump();
 			void			Dump(TinyVisual* spvis, INT& deep);

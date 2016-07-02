@@ -23,7 +23,7 @@ namespace TinyUI
 		BOOL TinyVisualSysButton::OnDraw(HDC hDC)
 		{
 			TinyImage& image = m_images[NORMAL];
-			if (image.IsEmpty()) 
+			if (image.IsEmpty())
 				return FALSE;
 			TinyClipCanvas canvas(hDC, this);
 			TinyRectangle clip = canvas.GetClipBox();
@@ -37,6 +37,7 @@ namespace TinyUI
 
 		HRESULT TinyVisualSysButton::OnLButtonDown(TinyPoint pos, DWORD dwFlags)
 		{
+			EVENT_Click();
 			return FALSE;
 		}
 
