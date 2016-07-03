@@ -37,7 +37,6 @@ namespace TinyUI
 
 		HRESULT TinyVisualSysButton::OnLButtonDown(TinyPoint pos, DWORD dwFlags)
 		{
-			EVENT_Click();
 			return FALSE;
 		}
 

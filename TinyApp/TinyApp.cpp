@@ -20,33 +20,6 @@
 #pragma comment(lib,"TinyUI.lib")
 using namespace TinyUI;
 
-//IBaseFilter* GetFilter()
-//{
-//	IBaseFilter* bfs = NULL;
-//	TinyArray<TinyString> devices;
-//	Media::TinyVideoCapture::GetDeviceNames(devices);
-//	if (devices.GetSize() > 0)
-//	{
-//		Media::TinyVideoCapture::GetDeviceFilter(devices[0].STR(), &bfs);
-//	}
-//	return bfs;
-//}
-
-class TestEvent
-{
-
-};
-
-void Show1()
-{
-	TRACE("Call Show1");
-}
-
-void Show2()
-{
-	TRACE("Call Show2");
-}
-
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -55,12 +28,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
-
-
-	Delegate<void(void)>* ds = new Delegate<void(void)>(&Show1);
-
-	SAFE_DELETE(ds);
-
 
 	WSADATA   wsd;
 	WSAStartup(MAKEWORD(2, 2), &wsd);

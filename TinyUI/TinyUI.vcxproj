@@ -139,6 +139,7 @@
     <ClInclude Include="IO\TinyIOCP.h" />
     <ClInclude Include="IO\TinyTask.h" />
     <ClInclude Include="IO\TinyTaskPool.h" />
+    <ClInclude Include="Media\TinyMediaCommon.h" />
     <ClInclude Include="Media\TinyVideoCapture.h" />
     <ClInclude Include="Media\TinyWave.h" />
     <ClInclude Include="Network\TinyConnector.h" />
@@ -227,6 +228,7 @@
     <ClCompile Include="IO\TinyIOCP.cpp" />
     <ClCompile Include="IO\TinyTask.cpp" />
     <ClCompile Include="IO\TinyTaskPool.cpp" />
+    <ClCompile Include="Media\TinyMediaCommon.cpp" />
     <ClCompile Include="Media\TinyVideoCapture.cpp" />
     <ClCompile Include="Media\TinyWave.cpp" />
     <ClCompile Include="Network\TinyConnector.cpp" />

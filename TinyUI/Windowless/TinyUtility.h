@@ -62,6 +62,7 @@ namespace TinyUI
 			FLOAT m_y;
 			FLOAT m_z;
 		};
+
 		/// <summary>
 		/// ²Ã¼ôµÄ»­²¼
 		/// </summary>

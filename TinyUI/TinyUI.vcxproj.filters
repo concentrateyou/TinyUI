@@ -336,6 +336,9 @@
     <ClInclude Include="Common\TinyTemplate.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
+    <ClInclude Include="Media\TinyMediaCommon.h">
+      <Filter>头文件\Media</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -598,6 +601,9 @@
     </ClCompile>
     <ClCompile Include="Common\TinyTemplate.cpp">
       <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\TinyMediaCommon.cpp">
+      <Filter>源文件\Media</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

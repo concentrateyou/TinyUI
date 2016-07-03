@@ -33,10 +33,8 @@ namespace TinyUI
 			TinyVisual* ps5 = m_fs->Create(10, 0, 200, 30, ps1, TinyVisualTag::CAPTION);
 			ps5->SetName("Caption-1-2");
 
-			m_click.Reset(new Delegate<void(void)>(this, &TinyVisualTree::onClick));
-
 			TinyVisualSysButton* ps2 = static_cast<TinyVisualSysButton*>(m_fs->Create(0, 0, 30, 30, ps5, TinyVisualTag::SYSBUTTON));
-			ps2->EVENT_Click += m_click;
+
 			ps2->SetName("Min-1");
 			ps2->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_mini_normal.png");
 			ps2->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_mini_highlight.png");
@@ -553,9 +551,5 @@ namespace TinyUI
 			}
 		}
 
-		void TinyVisualTree::onClick()
-		{
-
-		}
 	}
 }

@@ -22,8 +22,6 @@ namespace TinyUI
 			HRESULT OnMouseMove(TinyPoint pos, DWORD dwFlags) OVERRIDE;
 			HRESULT OnLButtonDown(TinyPoint pos, DWORD dwFlags) OVERRIDE;
 			HRESULT OnLButtonUp(TinyPoint pos, DWORD dwFlags) OVERRIDE;
-		public:
-			Event<void(void)>	EVENT_Click;
 		};
 		/// <summary>
 		/// ±êÌâÀ¸ÈÝÆ÷¿Ø¼þ
