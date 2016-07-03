@@ -20,11 +20,19 @@ namespace TinyUI
 		const TinyString TinyVisualTag::WINDOW = TEXT("window");
 		const TinyString TinyVisualTag::CAPTION = TEXT("caption");
 		const TinyString TinyVisualTag::SYSBUTTON = TEXT("sysbutton");
+		const TinyString TinyVisualTag::BUTTON = TEXT("button");
+		const TinyString TinyVisualTag::LISTBOX = TEXT("listbox");
+		const TinyString TinyVisualTag::TOOLBAR = TEXT("toolbar");
+		const TinyString TinyVisualTag::TREEVIEW = TEXT("treeview");
+		const TinyString TinyVisualTag::HSCROLLBAR = TEXT("hscrollbar");
+		const TinyString TinyVisualTag::VSCROLLBAR = TEXT("vscrollbar");
+		const TinyString TinyVisualTag::COMMBOBOX = TEXT("combobox");
 		//////////////////////////////////////////////////////////////////////////
 		TinyVisualCacheDC::TinyVisualCacheDC(HWND hWND)
 			:m_hWND(hWND),
-			m_hPrev(NULL),
-			m_hBitmap(NULL)
+			m_hMemDC(NULL),
+			m_hMemBitmap(NULL),
+			m_OldBitmap(NULL)
 		{
 			ASSERT(m_hWND);
 			HDC hDC = ::GetDC(m_hWND);
@@ -38,10 +46,17 @@ namespace TinyUI
 			ASSERT(m_hWND);
 			if (m_hDC != NULL)
 			{
-				if (m_hPrev != NULL)
-					::SelectObject(m_hDC, m_hPrev);
-				if (m_hBitmap != NULL)
-					SAFE_DELETE_OBJECT(m_hBitmap);
+				SAFE_DELETE_OBJECT(m_hMemBitmap);
+				if (m_hMemDC != NULL)
+				{
+					if (m_OldBitmap != NULL)
+					{
+						SelectObject(m_hMemDC, m_OldBitmap);
+						m_OldBitmap = NULL;
+					}
+					::DeleteDC(m_hMemDC);
+					m_hMemDC = NULL;
+				}
 				HDC hDC = Detach();
 				::ReleaseDC(m_hWND, hDC);
 			}
@@ -53,13 +68,30 @@ namespace TinyUI
 			{
 				m_size.cx = cx;
 				m_size.cy = cy;
-				if (m_hPrev != NULL)
-					::SelectObject(m_hDC, m_hPrev);
-				SAFE_DELETE_OBJECT(m_hBitmap);
-				m_hBitmap = ::CreateCompatibleBitmap(m_hDC, m_size.cx, m_size.cy);
-				m_hPrev = ::SelectObject(m_hDC, m_hBitmap);
+				SAFE_DELETE_OBJECT(m_hMemBitmap);
+				if (m_hMemDC != NULL)
+				{
+					if (m_OldBitmap != NULL)
+					{
+						SelectObject(m_hMemDC, m_OldBitmap);
+						m_OldBitmap = NULL;
+					}
+					::DeleteDC(m_hMemDC);
+					m_hMemDC = NULL;
+				}
+				m_hMemDC = ::CreateCompatibleDC(m_hDC);
+				m_hMemBitmap = ::CreateCompatibleBitmap(m_hDC, m_size.cx, m_size.cy);
+				m_OldBitmap = (HBITMAP)::SelectObject(m_hMemDC, m_hMemBitmap);
 			}
 		}
-		//////////////////////////////////////////////////////////////////////////
+		HDC	 TinyVisualCacheDC::GetMemDC() const
+		{
+			return m_hMemDC;
+		}
+		BOOL TinyVisualCacheDC::Render(const RECT& s)
+		{
+			if (!m_hMemDC || !m_hMemBitmap) return FALSE;
+			return ::BitBlt(m_hDC, s.left, s.top, TO_CX(s), TO_CY(s), m_hMemDC, s.left, s.top, SRCCOPY);
+		}
 	}
 }

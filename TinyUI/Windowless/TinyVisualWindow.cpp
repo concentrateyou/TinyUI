@@ -25,7 +25,7 @@ namespace TinyUI
 		{
 			return TinyVisualTag::WINDOW;
 		}
-		BOOL TinyVisualWindow::OnDraw(HDC hDC)
+		BOOL TinyVisualWindow::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
 			ASSERT(m_vtree || m_vtree->GetVisualHWND());
 			TinyImage& image = m_images[NORMAL];

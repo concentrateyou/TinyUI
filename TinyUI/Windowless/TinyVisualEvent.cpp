@@ -1,5 +1,6 @@
 #include "../stdafx.h"
 #include "TinyVisualEvent.h"
+
 namespace TinyUI
 {
 	namespace Windowless
@@ -38,7 +39,7 @@ namespace TinyUI
 		{
 
 		}
-		DWORD	KeyEventArgs::Key()
+		DWORD KeyEventArgs::Key()
 		{
 			return m_dwKey;
 		}

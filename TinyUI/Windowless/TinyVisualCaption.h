@@ -1,5 +1,5 @@
 #pragma once
-#include "TinyVisual.h"
+#include "TinyVisualButton.h"
 
 namespace TinyUI
 {
@@ -8,7 +8,7 @@ namespace TinyUI
 		/// <summary>
 		/// 系统按钮
 		/// </summary>
-		class TinyVisualSysButton : public TinyVisual
+		class TinyVisualSysButton : public TinyVisualButton
 		{
 			friend class TinyVisualFactory;
 			DECLARE_DYNAMIC(TinyVisualSysButton);
@@ -18,10 +18,6 @@ namespace TinyUI
 		public:
 			virtual ~TinyVisualSysButton();
 			TinyString RetrieveTag() const OVERRIDE;
-			BOOL OnDraw(HDC hDC) OVERRIDE;
-			HRESULT OnMouseMove(TinyPoint pos, DWORD dwFlags) OVERRIDE;
-			HRESULT OnLButtonDown(TinyPoint pos, DWORD dwFlags) OVERRIDE;
-			HRESULT OnLButtonUp(TinyPoint pos, DWORD dwFlags) OVERRIDE;
 		};
 		/// <summary>
 		/// 标题栏容器控件

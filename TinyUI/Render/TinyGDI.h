@@ -11,7 +11,6 @@ namespace TinyUI
 #define HANDLETYPE_BRUSH	1
 #define HANDLETYPE_BITMAP	1
 #define HANDLETYPE_PALETTE	1
-
 	//GDI∂‘œÛ
 	class TinySize;
 	class TinyPoint;

@@ -39,7 +39,13 @@ namespace TinyUI
 			static const TinyString CAPTION;
 			static const TinyString SYSBUTTON;
 			static const TinyString LABEL;
-			static const TinyString LINK;
+			static const TinyString BUTTON;
+			static const TinyString LISTBOX;
+			static const TinyString TOOLBAR;
+			static const TinyString TREEVIEW;
+			static const TinyString HSCROLLBAR;
+			static const TinyString VSCROLLBAR;
+			static const TinyString COMMBOBOX;
 		};
 		/// <summary>
 		/// ª∫¥ÊDC
@@ -50,11 +56,14 @@ namespace TinyUI
 			TinyVisualCacheDC(HWND hWND);
 			~TinyVisualCacheDC();
 			void SetSize(INT cx, INT cy);
+			HDC	 GetMemDC() const;
+			BOOL Render(const RECT& s);
 		protected:
 			HWND		m_hWND;
 			TinySize	m_size;
-			HBITMAP		m_hBitmap;
-			HGDIOBJ		m_hPrev;
+			HDC			m_hMemDC;
+			HBITMAP		m_hMemBitmap;
+			HBITMAP		m_OldBitmap;
 		};
 	}
 }

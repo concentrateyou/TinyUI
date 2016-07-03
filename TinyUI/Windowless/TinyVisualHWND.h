@@ -41,7 +41,6 @@ namespace TinyUI
 		private:
 			BOOL Initialize();
 			void Uninitialize();
-			void Render();
 		private:
 			TinySize							m_size;
 			TinyScopedPtr<TinyVisualTree>		m_vtree;

@@ -21,7 +21,7 @@ namespace TinyUI
 			return TinyVisualTag::LABEL;
 		}
 
-		BOOL TinyVisualLabel::OnDraw(HDC hDC)
+		BOOL TinyVisualLabel::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
 			return FALSE;
 		}

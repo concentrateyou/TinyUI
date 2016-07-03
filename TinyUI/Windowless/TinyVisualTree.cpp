@@ -12,6 +12,7 @@ namespace TinyUI
 			:m_spvisWindow(NULL),
 			m_spvisCapture(NULL),
 			m_spvisFocus(NULL),
+			m_spvisLastMouse(NULL),
 			m_pWindow(pWindow)
 		{
 			ASSERT(m_pWindow);
@@ -56,7 +57,7 @@ namespace TinyUI
 			TinyVisual* ps6 = m_fs->Create(0, 30, 300, 30, m_spvisWindow, TinyVisualTag::CAPTION);
 			ps6->SetName("Caption-3");
 
-			this->Dump();
+			//this->Dump();
 
 			TinyVisual* pv = GetVisualByName("Close-1");
 
@@ -376,12 +377,21 @@ namespace TinyUI
 			ClientToScreen(m_pWindow->Handle(), &pos);
 			return pos;
 		}
-		void TinyVisualTree::Render(TinyVisual* spvis, HDC hDC)
+		BOOL TinyVisualTree::Invalidate(RECT *lpRect)
+		{
+			return ::InvalidateRect(m_pWindow->Handle(), lpRect, FALSE);
+		}
+		void TinyVisualTree::Draw(TinyVisualCacheDC* ps, const RECT& rcPaint)
+		{
+			this->Draw(m_spvisWindow, ps->GetMemDC(), rcPaint);
+			ps->Render(rcPaint);
+		}
+		void TinyVisualTree::Draw(TinyVisual* spvis, HDC hDC, const RECT& rcPaint)
 		{
 			while (spvis != NULL)
 			{
-				spvis->OnDraw(hDC);
-				Render(spvis->m_spvisChild, hDC);
+				spvis->OnDraw(hDC, rcPaint);
+				Draw(spvis->m_spvisChild, hDC, rcPaint);
 				spvis = spvis->m_spvisNext;
 			}
 		}
@@ -390,26 +400,38 @@ namespace TinyUI
 			TinyVisual* pv = m_spvisCapture;
 			if (pv != NULL)
 			{
-				pv->OnMouseMove(pos, dwFlags);
+				return pv->OnMouseMove(pos, dwFlags);
 			}
 			else
 			{
 				pv = GetVisualByPos(pos.x, pos.y);
 				if (pv != NULL)
 				{
+					if (m_spvisLastMouse != pv)
+					{
+						if (m_spvisLastMouse)
+						{
+							m_spvisLastMouse->OnMouseLeave();
+						}
+						m_spvisLastMouse = pv;
+					}
 					ConvertToVisualPos(pv, pos);
-					pv->OnMouseMove(pos, dwFlags);
+					return pv->OnMouseMove(pos, dwFlags);
 				}
 			}
 			return FALSE;
 		}
+		HRESULT	TinyVisualTree::OnMouseLeave()
+		{
+			return FALSE;
+		}
 		HRESULT TinyVisualTree::OnLButtonDown(TinyPoint pos, DWORD dwFlags)
 		{
-			this->Dump();
+			//this->Dump();
 			TinyVisual* pv = m_spvisCapture;
 			if (pv != NULL)
 			{
-				pv->OnLButtonDown(pos, dwFlags);
+				return pv->OnLButtonDown(pos, dwFlags);
 			}
 			else
 			{
@@ -417,7 +439,7 @@ namespace TinyUI
 				if (pv != NULL)
 				{
 					ConvertToVisualPos(pv, pos);
-					pv->OnLButtonDown(pos, dwFlags);
+					return pv->OnLButtonDown(pos, dwFlags);
 				}
 			}
 			return FALSE;
@@ -427,7 +449,7 @@ namespace TinyUI
 			TinyVisual* pv = m_spvisCapture;
 			if (pv != NULL)
 			{
-				pv->OnLButtonUp(pos, dwFlags);
+				return pv->OnLButtonUp(pos, dwFlags);
 			}
 			else
 			{
@@ -435,7 +457,7 @@ namespace TinyUI
 				if (pv != NULL)
 				{
 					ConvertToVisualPos(pv, pos);
-					pv->OnLButtonUp(pos, dwFlags);
+					return pv->OnLButtonUp(pos, dwFlags);
 				}
 			}
 			return FALSE;
@@ -445,7 +467,7 @@ namespace TinyUI
 			TinyVisual* pv = m_spvisCapture;
 			if (pv != NULL)
 			{
-				pv->OnRButtonDown(pos, dwFlags);
+				return pv->OnRButtonDown(pos, dwFlags);
 			}
 			else
 			{
@@ -453,7 +475,7 @@ namespace TinyUI
 				if (pv != NULL)
 				{
 					ConvertToVisualPos(pv, pos);
-					pv->OnRButtonDown(pos, dwFlags);
+					return pv->OnRButtonDown(pos, dwFlags);
 				}
 			}
 			return FALSE;
@@ -463,7 +485,7 @@ namespace TinyUI
 			TinyVisual* pv = m_spvisCapture;
 			if (pv != NULL)
 			{
-				pv->OnRButtonUp(pos, dwFlags);
+				return pv->OnRButtonUp(pos, dwFlags);
 			}
 			else
 			{
@@ -471,7 +493,7 @@ namespace TinyUI
 				if (pv != NULL)
 				{
 					ConvertToVisualPos(pv, pos);
-					pv->OnRButtonUp(pos, dwFlags);
+					return pv->OnRButtonUp(pos, dwFlags);
 				}
 			}
 			return FALSE;
@@ -481,7 +503,7 @@ namespace TinyUI
 			TinyVisual* pv = m_spvisCapture;
 			if (pv != NULL)
 			{
-				pv->OnMButtonDown(pos, dwFlags);
+				return pv->OnMButtonDown(pos, dwFlags);
 			}
 			else
 			{
@@ -489,7 +511,7 @@ namespace TinyUI
 				if (pv != NULL)
 				{
 					ConvertToVisualPos(pv, pos);
-					pv->OnMButtonDown(pos, dwFlags);
+					return pv->OnMButtonDown(pos, dwFlags);
 				}
 			}
 			return FALSE;
@@ -499,7 +521,7 @@ namespace TinyUI
 			TinyVisual* pv = m_spvisCapture;
 			if (pv != NULL)
 			{
-				pv->OnMButtonUp(pos, dwFlags);
+				return pv->OnMButtonUp(pos, dwFlags);
 			}
 			else
 			{
@@ -507,7 +529,7 @@ namespace TinyUI
 				if (pv != NULL)
 				{
 					ConvertToVisualPos(pv, pos);
-					pv->OnMButtonUp(pos, dwFlags);
+					return pv->OnMButtonUp(pos, dwFlags);
 				}
 			}
 			return FALSE;

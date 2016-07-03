@@ -62,7 +62,7 @@ namespace TinyUI
 			virtual ~TinyVisual();
 			virtual TinyString	RetrieveTag() const = 0;
 		protected:
-			virtual BOOL		OnDraw(HDC hDC);
+			virtual BOOL		OnDraw(HDC hDC, const RECT& rcPaint);
 			virtual HRESULT		OnMouseMove(TinyPoint pos, DWORD dwFlags);
 			virtual HRESULT		OnMouseEnter();
 			virtual HRESULT		OnMouseLeave();
@@ -87,12 +87,12 @@ namespace TinyUI
 			Event<void(KeyEventArgs&)>		EVENT_KeyDown;
 			Event<void(KeyEventArgs&)>		EVENT_KeyUp;
 		protected:
+			TinyVisualTree*		m_vtree;
 			TinyImage			m_images[3];//三态图片
 			TinyVisual*			m_spvisNext;//同级下一个兄弟节点
 			TinyVisual*			m_spvisParent;//父节点
 			TinyVisual*			m_spvisChild;//第一个孩子节点
 			TinyVisual*			m_spvisOwner;//对于Popup窗口使用
-			TinyVisualTree*		m_vtree;
 			TinyString			m_strName;
 			TinyString			m_strText;
 			TinyString			m_strToolTip;

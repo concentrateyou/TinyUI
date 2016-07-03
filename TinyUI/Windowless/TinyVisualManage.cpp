@@ -78,7 +78,7 @@ namespace TinyUI
 				BuildProperty(map, spvis);
 			}
 			CreateInstace(pXML, spvis, pvisualTree);
-			pvisualTree->Dump();
+			//pvisualTree->Dump();
 			return TRUE;
 		}
 		void TinyVisualParse::CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualTree* pvisualTree)

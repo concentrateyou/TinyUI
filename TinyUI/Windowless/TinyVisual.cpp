@@ -163,7 +163,7 @@ namespace TinyUI
 		{
 
 		}
-		BOOL	TinyVisual::OnDraw(HDC hDC)
+		BOOL	TinyVisual::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
 			return FALSE;
 		}
@@ -174,6 +174,14 @@ namespace TinyUI
 			if (dwFlags & MK_RBUTTON) button = MouseButtons::RBUTTON;
 			if (dwFlags & MK_MBUTTON) button = MouseButtons::MBUTTON;
 			EVENT_MouseMove(MouseEventArgs(button, 0, pos.x, pos.y, 0));
+			return FALSE;
+		}
+		HRESULT	TinyVisual::OnMouseEnter()
+		{
+			return FALSE;
+		}
+		HRESULT	TinyVisual::OnMouseLeave()
+		{
 			return FALSE;
 		}
 		HRESULT	TinyVisual::OnLButtonDown(TinyPoint pos, DWORD dwFlags)

@@ -26,6 +26,7 @@ namespace TinyUI
 		{
 			friend class TinyVisualParse;
 			friend class TinyVisualFactory;
+			friend class TinyVisualHWND;
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualTree);
 		public:
 			TinyVisualTree(TinyVisualHWND* pv);
@@ -33,6 +34,7 @@ namespace TinyUI
 		public:
 			BOOL			Initialize();
 			void			Uninitialize();
+			BOOL			RedrawVisual(const TinyVisual* spvis);
 		public:
 			TinyVisualHWND*	GetVisualHWND();
 			TinyVisual*		GetVisual(TinyVisual* spvis, UINT cmd) const;
@@ -50,8 +52,9 @@ namespace TinyUI
 			TinyPoint		GetWindowPos(const TinyVisual* spvis);
 			TinyRectangle	GetWindowRect(const TinyVisual* spvis);
 			TinyPoint		GetScreenPos(const TinyVisual* spvis);
-			void			Render(TinyVisual* spvis, HDC hDC);
+			BOOL			Invalidate(RECT* lpRect = NULL);
 		public:
+			HRESULT			OnMouseLeave();
 			HRESULT			OnMouseMove(TinyPoint pos, DWORD dwFlags);
 			HRESULT			OnLButtonDown(TinyPoint pos, DWORD dwFlags);
 			HRESULT			OnLButtonUp(TinyPoint pos, DWORD dwFlags);
@@ -68,16 +71,16 @@ namespace TinyUI
 			void			LinkVisual(TinyVisual* spvis, TinyVisual* spvisInsert, TinyVisual**pspvisFirst);
 			void			UnlinkVisual(TinyVisual* spvisUnlink, TinyVisual** pspvisFirst);
 			TinyVisual*		GetPrevVisual(TinyVisual* spvisList, TinyVisual* spvisFind) const;
-			void			onClick();
+			void			Draw(TinyVisualCacheDC* ps, const RECT& rcPaint);
+			void			Draw(TinyVisual* spvis, HDC hDC, const RECT& rcPaint);
 		protected:
 			TinyVisual*									m_spvisWindow;//根节点
 			TinyVisual*									m_spvisCapture;
 			TinyVisual*									m_spvisFocus;
+			TinyVisual*									m_spvisLastMouse;//当前鼠标所在的元素
 			TinyVisualHWND*								m_pWindow;
 			TinyScopedPtr<TinyVisualParse>				m_parse;
 			TinyScopedPtr<TinyVisualFactory>			m_fs;
-		private:
-			TinyScopedPtr<Delegate<void(void)>>			m_click;
 		public:
 #ifdef _DEBUG
 			void			Dump();

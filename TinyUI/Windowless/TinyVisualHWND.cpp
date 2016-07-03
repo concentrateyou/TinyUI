@@ -23,7 +23,7 @@ namespace TinyUI
 		}
 		DWORD TinyVisualHWND::RetrieveStyle()
 		{
-			return (WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_OVERLAPPEDWINDOW);
+			return (WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_OVERLAPPEDWINDOW & ~WS_CAPTION);
 		}
 		DWORD TinyVisualHWND::RetrieveExStyle()
 		{
@@ -51,16 +51,12 @@ namespace TinyUI
 		{
 			//TODO
 		}
-		void TinyVisualHWND::Render()
-		{
-			m_vtree->Render(m_vtree->GetParent(NULL), m_cacheDC->Handle());
-		}
 		LRESULT TinyVisualHWND::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			PAINTSTRUCT ps = { 0 };
 			HDC hDC = BeginPaint(m_hWND, &ps);
-			this->Render();
+			m_vtree->Draw(m_cacheDC, ps.rcPaint);
 			EndPaint(m_hWND, &ps);
 			return FALSE;
 		}

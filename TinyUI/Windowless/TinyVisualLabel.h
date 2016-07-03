@@ -18,7 +18,8 @@ namespace TinyUI
 		public:
 			virtual ~TinyVisualLabel();
 			TinyString RetrieveTag() const OVERRIDE;
-			BOOL OnDraw(HDC hDC) OVERRIDE;
+		protected:
+			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 		};
 	}
 }
