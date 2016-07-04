@@ -42,6 +42,7 @@ namespace TinyUI
 			BOOL Initialize();
 			void Uninitialize();
 		private:
+			BOOL								m_bMouseTracking;
 			TinySize							m_size;
 			TinyScopedPtr<TinyVisualTree>		m_vtree;
 			TinyScopedPtr<TinyVisualCacheDC>	m_cacheDC;

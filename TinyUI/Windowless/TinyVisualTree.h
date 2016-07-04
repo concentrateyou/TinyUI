@@ -47,14 +47,17 @@ namespace TinyUI
 			TinyVisual*		GetVisualByPos(INT x, INT y);
 			TinyVisual*		GetCapture() const;
 			TinyVisual*		SetCapture(TinyVisual* spvis);
+			BOOL			ReleaseCapture();
 			TinyVisual*		GetFocus() const;
 			TinyVisual*		SetFocus(TinyVisual* spvis);
 			TinyPoint		GetWindowPos(const TinyVisual* spvis);
 			TinyRectangle	GetWindowRect(const TinyVisual* spvis);
 			TinyPoint		GetScreenPos(const TinyVisual* spvis);
 			BOOL			Invalidate(RECT* lpRect = NULL);
+			BOOL			Redraw(RECT *lprcUpdate = NULL, HRGN hrgnUpdate = NULL);
 		public:
 			HRESULT			OnMouseLeave();
+			HRESULT			OnMouseEnter();
 			HRESULT			OnMouseMove(TinyPoint pos, DWORD dwFlags);
 			HRESULT			OnLButtonDown(TinyPoint pos, DWORD dwFlags);
 			HRESULT			OnLButtonUp(TinyPoint pos, DWORD dwFlags);
@@ -74,13 +77,13 @@ namespace TinyUI
 			void			Draw(TinyVisualCacheDC* ps, const RECT& rcPaint);
 			void			Draw(TinyVisual* spvis, HDC hDC, const RECT& rcPaint);
 		protected:
-			TinyVisual*									m_spvisWindow;//根节点
-			TinyVisual*									m_spvisCapture;
-			TinyVisual*									m_spvisFocus;
-			TinyVisual*									m_spvisLastMouse;//当前鼠标所在的元素
-			TinyVisualHWND*								m_pWindow;
-			TinyScopedPtr<TinyVisualParse>				m_parse;
-			TinyScopedPtr<TinyVisualFactory>			m_fs;
+			TinyVisual*							m_spvisWindow;//根节点
+			TinyVisual*							m_spvisCapture;
+			TinyVisual*							m_spvisFocus;
+			TinyVisual*							m_spvisLastMouse;//当前鼠标所在的元素
+			TinyVisualHWND*						m_pWindow;
+			TinyScopedPtr<TinyVisualParse>		m_parse;
+			TinyScopedPtr<TinyVisualFactory>	m_fs;
 		public:
 #ifdef _DEBUG
 			void			Dump();

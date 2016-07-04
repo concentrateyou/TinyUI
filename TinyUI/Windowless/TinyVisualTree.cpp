@@ -334,12 +334,19 @@ namespace TinyUI
 		}
 		TinyVisual*	TinyVisualTree::SetCapture(TinyVisual* pNew)
 		{
+			ASSERT(m_pWindow);
 			TinyVisual* pv = m_spvisCapture;
 			if (pNew != pv)
 			{
 				m_spvisCapture = pNew;
 			}
+			::SetCapture(m_pWindow->Handle());
 			return pv;
+		}
+		BOOL TinyVisualTree::ReleaseCapture()
+		{
+			m_spvisCapture = NULL;
+			return ::ReleaseCapture();
 		}
 		TinyVisual* TinyVisualTree::GetFocus() const
 		{
@@ -347,11 +354,13 @@ namespace TinyUI
 		}
 		TinyVisual*	TinyVisualTree::SetFocus(TinyVisual* pNew)
 		{
+			ASSERT(m_pWindow);
 			TinyVisual* pv = m_spvisFocus;
 			if (pNew != pv)
 			{
 				m_spvisFocus = pNew;
 			}
+			::SetFocus(m_pWindow->Handle());
 			return pv;
 		}
 		TinyPoint TinyVisualTree::GetWindowPos(const TinyVisual* spvis)
@@ -379,7 +388,13 @@ namespace TinyUI
 		}
 		BOOL TinyVisualTree::Invalidate(RECT *lpRect)
 		{
+			ASSERT(m_pWindow);
 			return ::InvalidateRect(m_pWindow->Handle(), lpRect, FALSE);
+		}
+		BOOL TinyVisualTree::Redraw(RECT *lprcUpdate, HRGN hrgnUpdate)
+		{
+			ASSERT(m_pWindow);
+			return ::RedrawWindow(m_pWindow->Handle(), lprcUpdate, hrgnUpdate, RDW_INVALIDATE | RDW_UPDATENOW);
 		}
 		void TinyVisualTree::Draw(TinyVisualCacheDC* ps, const RECT& rcPaint)
 		{
@@ -409,10 +424,9 @@ namespace TinyUI
 				{
 					if (m_spvisLastMouse != pv)
 					{
+						pv->OnMouseEnter();
 						if (m_spvisLastMouse)
-						{
 							m_spvisLastMouse->OnMouseLeave();
-						}
 						m_spvisLastMouse = pv;
 					}
 					ConvertToVisualPos(pv, pos);
@@ -423,11 +437,12 @@ namespace TinyUI
 		}
 		HRESULT	TinyVisualTree::OnMouseLeave()
 		{
+			if (m_spvisLastMouse)
+				m_spvisLastMouse->OnMouseLeave();
 			return FALSE;
 		}
 		HRESULT TinyVisualTree::OnLButtonDown(TinyPoint pos, DWORD dwFlags)
 		{
-			//this->Dump();
 			TinyVisual* pv = m_spvisCapture;
 			if (pv != NULL)
 			{
@@ -572,6 +587,5 @@ namespace TinyUI
 				ps = ps->m_spvisNext;
 			}
 		}
-
 	}
 }

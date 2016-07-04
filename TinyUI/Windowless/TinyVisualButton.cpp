@@ -23,7 +23,6 @@ namespace TinyUI
 		}
 		BOOL TinyVisualButton::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
-			TRACE("m_dwFlag:%d\n", m_dwFlag);
 			TinyImage& image = m_images[m_dwFlag];
 			if (image.IsEmpty())
 				return FALSE;
@@ -36,25 +35,28 @@ namespace TinyUI
 		HRESULT	TinyVisualButton::OnLButtonDown(TinyPoint pos, DWORD dwFlags)
 		{
 			m_dwFlag = DOWN;
-			m_vtree->Invalidate();
+			m_vtree->Redraw();
+			m_vtree->SetCapture(this);
 			return TinyVisual::OnLButtonDown(pos, dwFlags);
 		}
 		HRESULT	TinyVisualButton::OnMouseMove(TinyPoint pos, DWORD dwFlags)
 		{
-			m_dwFlag = HIGHLIGHT;
-			m_vtree->Invalidate();
+			m_dwFlag = dwFlags & MK_LBUTTON ? DOWN : HIGHLIGHT;
+			m_vtree->Redraw();
 			return TinyVisual::OnMouseMove(pos, dwFlags);
 		}
 		HRESULT TinyVisualButton::OnMouseLeave()
 		{
 			m_dwFlag = NORMAL;
-			m_vtree->Invalidate();
+			m_vtree->Redraw();
+			m_vtree->ReleaseCapture();
 			return TinyVisual::OnMouseLeave();
 		}
 		HRESULT	TinyVisualButton::OnLButtonUp(TinyPoint pos, DWORD dwFlags)
 		{
-			m_dwFlag = NORMAL;
-			m_vtree->Invalidate();
+			m_dwFlag = HIGHLIGHT;
+			m_vtree->Redraw();
+			m_vtree->SetCapture(NULL);
 			return TinyVisual::OnLButtonUp(pos, dwFlags);
 		}
 	}

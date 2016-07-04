@@ -9,7 +9,8 @@ namespace TinyUI
 	{
 		TinyVisualHWND::TinyVisualHWND()
 			:m_vtree(NULL),
-			m_cacheDC(NULL)
+			m_cacheDC(NULL),
+			m_bMouseTracking(FALSE)
 		{
 
 		}
@@ -108,6 +109,15 @@ namespace TinyUI
 		LRESULT TinyVisualHWND::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
+			if (!m_bMouseTracking)
+			{
+				TRACKMOUSEEVENT tme;
+				tme.cbSize = sizeof(tme);
+				tme.hwndTrack = m_hWND;
+				tme.dwFlags = TME_LEAVE;
+				tme.dwHoverTime = 10;
+				m_bMouseTracking = _TrackMouseEvent(&tme);
+			}
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 			m_vtree->OnMouseMove(pos, (DWORD)wParam);
 			return FALSE;
@@ -115,6 +125,9 @@ namespace TinyUI
 		LRESULT TinyVisualHWND::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
+			if (m_bMouseTracking)
+				m_bMouseTracking = FALSE;
+			m_vtree->OnMouseLeave();
 			return FALSE;
 		}
 		LRESULT TinyVisualHWND::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
