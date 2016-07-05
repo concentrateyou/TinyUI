@@ -85,21 +85,17 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Collection.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TinyApp.h" />
-    <ClInclude Include="Watcher.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Collection.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TinyApp.cpp" />
-    <ClCompile Include="Watcher.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TinyApp.rc" />
