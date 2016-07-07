@@ -13,6 +13,7 @@
 #include "Common/TinyHook.h"
 #include "Common/TinyTemplate.h"
 #include "Common/TinyEvent.h"
+#include "Common/TinyTime.h"
 #include <algorithm>
 #include <map>
 #include <functional>
@@ -32,6 +33,9 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	WSADATA   wsd;
 	WSAStartup(MAKEWORD(2, 2), &wsd);
 	HRESULT hRes = OleInitialize(NULL);
+
+	//TinyOleDateTime time = TinyOleDateTime::GetCurrentTime();
+	//TinyString strTime = time.Format("%Y-%m-%d %H:%M:%S");
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
