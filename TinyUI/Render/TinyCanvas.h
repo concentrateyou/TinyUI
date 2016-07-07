@@ -76,10 +76,6 @@ namespace TinyUI
 		/// </summary>
 		BOOL ResetTransform();
 		/// <summary>
-		/// 绘制文字
-		/// </summary>
-		BOOL DrawString(const TinyString& str, LPRECT lprc, UINT format);
-		/// <summary>
 		/// 在指定位置绘制原始的Image
 		/// </summary>
 		BOOL DrawImage(TinyImage& image, INT x, INT y);
