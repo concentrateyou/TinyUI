@@ -176,6 +176,11 @@ namespace TinyUI
 		}
 		return m_hBRUSH;
 	}
+	BOOL TinyCanvas::DrawString(const TinyString& str, LPRECT lprc, UINT format)
+	{
+		if (!m_hDC) return FALSE;
+		return ::DrawTextEx(m_hDC, str.STR(), str.GetSize(), lprc, format, NULL);
+	}
 	BOOL TinyCanvas::DrawImage(TinyImage& image, INT x, INT y)
 	{
 		if (!m_hDC) return FALSE;
