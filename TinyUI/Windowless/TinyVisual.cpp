@@ -102,11 +102,11 @@ namespace TinyUI
 		}
 		TinyPoint TinyVisual::GetPosition() const
 		{
-			return *((TinyPoint*)&m_windowRect);
+			return *((TinyPoint*)&m_rectangle);
 		}
 		void TinyVisual::SetPosition(const TinyPoint& newPos)
 		{
-			TinyPoint& pos = *((TinyPoint*)&m_windowRect);
+			TinyPoint& pos = *((TinyPoint*)&m_rectangle);
 			if (pos != newPos)
 			{
 				pos.x = newPos.x;
@@ -116,20 +116,20 @@ namespace TinyUI
 		}
 		TinySize TinyVisual::GetSize() const
 		{
-			return m_windowRect.Size();
+			return m_rectangle.Size();
 		}
 		void TinyVisual::SetSize(const TinySize& newsize)
 		{
-			TinySize size = *((TinySize*)&m_windowRect + 1);
+			TinySize size = *((TinySize*)&m_rectangle + 1);
 			if (size != newsize)
 			{
-				m_windowRect.SetSize(newsize);
+				m_rectangle.SetSize(newsize);
 				OnSizeChange(size, newsize);
 			}
 		}
 		TinyRectangle TinyVisual::GetRectangle() const
 		{
-			return m_windowRect;
+			return m_rectangle;
 		}
 		TinyVisualTree*	TinyVisual::GetVisualTree()
 		{
@@ -167,7 +167,7 @@ namespace TinyUI
 		{
 			return FALSE;
 		}
-		HRESULT	TinyVisual::OnMouseMove(TinyPoint pos, DWORD dwFlags)
+		HRESULT	TinyVisual::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)
 		{
 			MouseButtons button = NONE;
 			if (dwFlags & MK_LBUTTON) button = MouseButtons::LBUTTON;
@@ -184,49 +184,49 @@ namespace TinyUI
 		{
 			return FALSE;
 		}
-		HRESULT	TinyVisual::OnLButtonDown(TinyPoint pos, DWORD dwFlags)
+		HRESULT	TinyVisual::OnLButtonDown(const TinyPoint& pos, DWORD dwFlags)
 		{
 			EVENT_MouseDown(MouseEventArgs(MouseButtons::LBUTTON, 0, pos.x, pos.y, 1));
 			return FALSE;
 		}
-		HRESULT	TinyVisual::OnLButtonUp(TinyPoint pos, DWORD dwFlags)
+		HRESULT	TinyVisual::OnLButtonUp(const TinyPoint& pos, DWORD dwFlags)
 		{
 			EVENT_MouseUp(MouseEventArgs(MouseButtons::LBUTTON, 0, pos.x, pos.y, 1));
 			EVENT_MouseClick(MouseEventArgs(MouseButtons::LBUTTON, 0, pos.x, pos.y, 1));
 			return FALSE;
 		}
-		HRESULT	TinyVisual::OnLButtonDBClick(TinyPoint pos, DWORD dwFlags)
+		HRESULT	TinyVisual::OnLButtonDBClick(const TinyPoint& pos, DWORD dwFlags)
 		{
 			EVENT_MouseDoubleClick(MouseEventArgs(MouseButtons::LBUTTON, 0, pos.x, pos.y, 2));
 			return FALSE;
 		}
-		HRESULT	TinyVisual::OnRButtonDown(TinyPoint pos, DWORD dwFlags)
+		HRESULT	TinyVisual::OnRButtonDown(const TinyPoint& pos, DWORD dwFlags)
 		{
 			EVENT_MouseDown(MouseEventArgs(MouseButtons::RBUTTON, 0, pos.x, pos.y, 1));
 			return FALSE;
 		}
-		HRESULT	TinyVisual::OnRButtonUp(TinyPoint pos, DWORD dwFlags)
+		HRESULT	TinyVisual::OnRButtonUp(const TinyPoint& pos, DWORD dwFlags)
 		{
 			EVENT_MouseUp(MouseEventArgs(MouseButtons::RBUTTON, 0, pos.x, pos.y, 1));
 			EVENT_MouseClick(MouseEventArgs(MouseButtons::RBUTTON, 0, pos.x, pos.y, 1));
 			return FALSE;
 		}
-		HRESULT	TinyVisual::OnRButtonDBClick(TinyPoint pos, DWORD dwFlags)
+		HRESULT	TinyVisual::OnRButtonDBClick(const TinyPoint& pos, DWORD dwFlags)
 		{
 			EVENT_MouseDoubleClick(MouseEventArgs(MouseButtons::RBUTTON, 0, pos.x, pos.y, 2));
 			return FALSE;
 		}
-		HRESULT	TinyVisual::OnMButtonDown(TinyPoint pos, DWORD dwFlags)
+		HRESULT	TinyVisual::OnMButtonDown(const TinyPoint& pos, DWORD dwFlags)
 		{
 			EVENT_MouseDown(MouseEventArgs(MouseButtons::MBUTTON, 0, pos.x, pos.y, 1));
 			return FALSE;
 		}
-		HRESULT	TinyVisual::OnMButtonUp(TinyPoint pos, DWORD dwFlags)
+		HRESULT	TinyVisual::OnMButtonUp(const TinyPoint& pos, DWORD dwFlags)
 		{
 			EVENT_MouseUp(MouseEventArgs(MouseButtons::MBUTTON, 0, pos.x, pos.y, 1));
 			return FALSE;
 		}
-		HRESULT	TinyVisual::OnMButtonDBClick(TinyPoint pos, DWORD dwFlags)
+		HRESULT	TinyVisual::OnMButtonDBClick(const TinyPoint& pos, DWORD dwFlags)
 		{
 			EVENT_MouseDoubleClick(MouseEventArgs(MouseButtons::MBUTTON, 0, pos.x, pos.y, 2));
 			return FALSE;

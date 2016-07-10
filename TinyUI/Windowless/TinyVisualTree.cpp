@@ -3,6 +3,7 @@
 #include "TinyVisualWindow.h"
 #include "TinyVisualTree.h"
 #include "TinyVisualCaption.h"
+#include "TinyVisualScrollBar.h"
 
 namespace TinyUI
 {
@@ -28,38 +29,36 @@ namespace TinyUI
 			m_spvisWindow->SetName("Window");
 			m_spvisWindow->SetStyleImage(NORMAL, "D:\\image.png");
 
-			TinyVisual* ps1 = m_fs->Create(0, 0, 300, 30, m_spvisWindow, TinyVisualTag::CAPTION);
+			TinyVisual* ps1 = m_fs->Create(10, 10, 300, 30, m_spvisWindow, TinyVisualTag::CAPTION);
 			ps1->SetName("Caption-1");
 
 			TinyVisual* ps5 = m_fs->Create(10, 0, 200, 30, ps1, TinyVisualTag::CAPTION);
 			ps5->SetName("Caption-1-2");
 
-			TinyVisualSysButton* ps2 = static_cast<TinyVisualSysButton*>(m_fs->Create(0, 0, 30, 30, ps5, TinyVisualTag::SYSBUTTON));
-
+			TinyVisual* ps2 = m_fs->Create(0, 0, 30, 30, ps5, TinyVisualTag::BUTTON);
 			ps2->SetName("Min-1");
 			ps2->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_mini_normal.png");
 			ps2->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_mini_highlight.png");
 			ps2->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_mini_down.png");
 
 
-			TinyVisual* ps3 = m_fs->Create(30, 0, 30, 30, ps5, TinyVisualTag::SYSBUTTON);
+			TinyVisual* ps3 = m_fs->Create(30, 0, 30, 30, ps5, TinyVisualTag::BUTTON);
 			ps3->SetName("Max-1");
 			ps3->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_max_normal.png");
 			ps3->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_max_highlight.png");
 			ps3->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_max_down.png");
 
-			TinyVisual* ps4 = m_fs->Create(60, 0, 30, 30, ps5, TinyVisualTag::SYSBUTTON);
+			TinyVisual* ps4 = m_fs->Create(60, 0, 30, 30, ps5, TinyVisualTag::BUTTON);
 			ps4->SetName("Close-1");
 			ps4->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_close_normal.png");
 			ps4->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_close_highlight.png");
 			ps4->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_close_down.png");
 
-			TinyVisual* ps6 = m_fs->Create(0, 30, 300, 30, m_spvisWindow, TinyVisualTag::CAPTION);
-			ps6->SetName("Caption-3");
+			TinyVisualScrollBar* ps6 = static_cast<TinyVisualScrollBar*>(m_fs->Create(50, 40, 12, 300, m_spvisWindow, TinyVisualTag::SCROLLBAR));
+			ps6->SetName("Label-1");
+			ps6->SetScrollInfo(0, 200, 3, 0);
 
-			//this->Dump();
-
-			TinyVisual* pv = GetVisualByName("Close-1");
+			this->Dump();
 
 			return TRUE;
 		}
@@ -355,13 +354,13 @@ namespace TinyUI
 		TinyVisual*	TinyVisualTree::SetFocus(TinyVisual* pNew)
 		{
 			ASSERT(m_pWindow);
-			TinyVisual* pv = m_spvisFocus;
-			if (pNew != pv)
+			TinyVisual* spvis = m_spvisFocus;
+			if (pNew != spvis)
 			{
 				m_spvisFocus = pNew;
 			}
 			::SetFocus(m_pWindow->Handle());
-			return pv;
+			return spvis;
 		}
 		TinyPoint TinyVisualTree::GetWindowPos(const TinyVisual* spvis)
 		{
@@ -410,27 +409,30 @@ namespace TinyUI
 				spvis = spvis->m_spvisNext;
 			}
 		}
-		HRESULT	TinyVisualTree::OnMouseMove(TinyPoint pos, DWORD dwFlags)
+		HRESULT	TinyVisualTree::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)
 		{
-			TinyVisual* pv = m_spvisCapture;
-			if (pv != NULL)
+			TinyVisual* spvis = m_spvisCapture;
+			if (spvis != NULL)
 			{
-				return pv->OnMouseMove(pos, dwFlags);
+				TinyPoint pt = pos;
+				ConvertToVisualPos(spvis, pt);
+				return spvis->OnMouseMove(pt, dwFlags);
 			}
 			else
 			{
-				pv = GetVisualByPos(pos.x, pos.y);
-				if (pv != NULL)
+				spvis = GetVisualByPos(pos.x, pos.y);
+				if (spvis != NULL)
 				{
-					if (m_spvisLastMouse != pv)
+					if (m_spvisLastMouse != spvis)
 					{
-						pv->OnMouseEnter();
+						spvis->OnMouseEnter();
 						if (m_spvisLastMouse)
 							m_spvisLastMouse->OnMouseLeave();
-						m_spvisLastMouse = pv;
+						m_spvisLastMouse = spvis;
 					}
-					ConvertToVisualPos(pv, pos);
-					return pv->OnMouseMove(pos, dwFlags);
+					TinyPoint pt = pos;
+					ConvertToVisualPos(spvis, pt);
+					return spvis->OnMouseMove(pt, dwFlags);
 				}
 			}
 			return FALSE;
@@ -441,110 +443,128 @@ namespace TinyUI
 				m_spvisLastMouse->OnMouseLeave();
 			return FALSE;
 		}
-		HRESULT TinyVisualTree::OnLButtonDown(TinyPoint pos, DWORD dwFlags)
+		HRESULT TinyVisualTree::OnLButtonDown(const TinyPoint& pos, DWORD dwFlags)
 		{
-			TinyVisual* pv = m_spvisCapture;
-			if (pv != NULL)
+			TinyVisual* spvis = m_spvisCapture;
+			if (spvis != NULL)
 			{
-				return pv->OnLButtonDown(pos, dwFlags);
+				TinyPoint pt = pos;
+				ConvertToVisualPos(spvis, pt);
+				return spvis->OnLButtonDown(pt, dwFlags);
 			}
 			else
 			{
-				pv = GetVisualByPos(pos.x, pos.y);
-				if (pv != NULL)
+				spvis = GetVisualByPos(pos.x, pos.y);
+				if (spvis != NULL)
 				{
-					ConvertToVisualPos(pv, pos);
-					return pv->OnLButtonDown(pos, dwFlags);
+					TinyPoint pt = pos;
+					ConvertToVisualPos(spvis, pt);
+					return spvis->OnLButtonDown(pt, dwFlags);
 				}
 			}
 			return FALSE;
 		}
-		HRESULT TinyVisualTree::OnLButtonUp(TinyPoint pos, DWORD dwFlags)
+		HRESULT TinyVisualTree::OnLButtonUp(const TinyPoint& pos, DWORD dwFlags)
 		{
-			TinyVisual* pv = m_spvisCapture;
-			if (pv != NULL)
+			TinyVisual* spvis = m_spvisCapture;
+			if (spvis != NULL)
 			{
-				return pv->OnLButtonUp(pos, dwFlags);
+				TinyPoint pt = pos;
+				ConvertToVisualPos(spvis, pt);
+				return spvis->OnLButtonUp(pt, dwFlags);
 			}
 			else
 			{
-				pv = GetVisualByPos(pos.x, pos.y);
-				if (pv != NULL)
+				spvis = GetVisualByPos(pos.x, pos.y);
+				if (spvis != NULL)
 				{
-					ConvertToVisualPos(pv, pos);
-					return pv->OnLButtonUp(pos, dwFlags);
+					TinyPoint pt = pos;
+					ConvertToVisualPos(spvis, pt);
+					return spvis->OnLButtonUp(pt, dwFlags);
 				}
 			}
 			return FALSE;
 		}
-		HRESULT TinyVisualTree::OnRButtonDown(TinyPoint pos, DWORD dwFlags)
+		HRESULT TinyVisualTree::OnRButtonDown(const TinyPoint& pos, DWORD dwFlags)
 		{
-			TinyVisual* pv = m_spvisCapture;
-			if (pv != NULL)
+			TinyVisual* spvis = m_spvisCapture;
+			if (spvis != NULL)
 			{
-				return pv->OnRButtonDown(pos, dwFlags);
+				TinyPoint pt = pos;
+				ConvertToVisualPos(spvis, pt);
+				return spvis->OnRButtonDown(pt, dwFlags);
 			}
 			else
 			{
-				pv = GetVisualByPos(pos.x, pos.y);
-				if (pv != NULL)
+				spvis = GetVisualByPos(pos.x, pos.y);
+				if (spvis != NULL)
 				{
-					ConvertToVisualPos(pv, pos);
-					return pv->OnRButtonDown(pos, dwFlags);
+					TinyPoint pt = pos;
+					ConvertToVisualPos(spvis, pt);
+					return spvis->OnRButtonDown(pt, dwFlags);
 				}
 			}
 			return FALSE;
 		}
-		HRESULT TinyVisualTree::OnRButtonUp(TinyPoint pos, DWORD dwFlags)
+		HRESULT TinyVisualTree::OnRButtonUp(const TinyPoint& pos, DWORD dwFlags)
 		{
-			TinyVisual* pv = m_spvisCapture;
-			if (pv != NULL)
+			TinyVisual* spvis = m_spvisCapture;
+			if (spvis != NULL)
 			{
-				return pv->OnRButtonUp(pos, dwFlags);
+				TinyPoint pt = pos;
+				ConvertToVisualPos(spvis, pt);
+				return spvis->OnRButtonUp(pt, dwFlags);
 			}
 			else
 			{
-				pv = GetVisualByPos(pos.x, pos.y);
-				if (pv != NULL)
+				spvis = GetVisualByPos(pos.x, pos.y);
+				if (spvis != NULL)
 				{
-					ConvertToVisualPos(pv, pos);
-					return pv->OnRButtonUp(pos, dwFlags);
+					TinyPoint pt = pos;
+					ConvertToVisualPos(spvis, pt);
+					return spvis->OnRButtonUp(pt, dwFlags);
 				}
 			}
 			return FALSE;
 		}
-		HRESULT TinyVisualTree::OnMButtonDown(TinyPoint pos, DWORD dwFlags)
+		HRESULT TinyVisualTree::OnMButtonDown(const TinyPoint& pos, DWORD dwFlags)
 		{
-			TinyVisual* pv = m_spvisCapture;
-			if (pv != NULL)
+			TinyVisual* spvis = m_spvisCapture;
+			if (spvis != NULL)
 			{
-				return pv->OnMButtonDown(pos, dwFlags);
+				TinyPoint pt = pos;
+				ConvertToVisualPos(spvis, pt);
+				return spvis->OnMButtonDown(pt, dwFlags);
 			}
 			else
 			{
-				pv = GetVisualByPos(pos.x, pos.y);
-				if (pv != NULL)
+				spvis = GetVisualByPos(pos.x, pos.y);
+				if (spvis != NULL)
 				{
-					ConvertToVisualPos(pv, pos);
-					return pv->OnMButtonDown(pos, dwFlags);
+					TinyPoint pt = pos;
+					ConvertToVisualPos(spvis, pt);
+					return spvis->OnMButtonDown(pt, dwFlags);
 				}
 			}
 			return FALSE;
 		}
-		HRESULT	TinyVisualTree::OnMButtonUp(TinyPoint pos, DWORD dwFlags)
+		HRESULT	TinyVisualTree::OnMButtonUp(const TinyPoint& pos, DWORD dwFlags)
 		{
-			TinyVisual* pv = m_spvisCapture;
-			if (pv != NULL)
+			TinyVisual* spvis = m_spvisCapture;
+			if (spvis != NULL)
 			{
-				return pv->OnMButtonUp(pos, dwFlags);
+				TinyPoint pt = pos;
+				ConvertToVisualPos(spvis, pt);
+				return spvis->OnMButtonUp(pt, dwFlags);
 			}
 			else
 			{
-				pv = GetVisualByPos(pos.x, pos.y);
-				if (pv != NULL)
+				spvis = GetVisualByPos(pos.x, pos.y);
+				if (spvis != NULL)
 				{
-					ConvertToVisualPos(pv, pos);
-					return pv->OnMButtonUp(pos, dwFlags);
+					TinyPoint pt = pos;
+					ConvertToVisualPos(spvis, pt);
+					return spvis->OnMButtonUp(pt, dwFlags);
 				}
 			}
 			return FALSE;

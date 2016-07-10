@@ -63,18 +63,18 @@ namespace TinyUI
 			virtual TinyString	RetrieveTag() const = 0;
 		protected:
 			virtual BOOL		OnDraw(HDC hDC, const RECT& rcPaint);
-			virtual HRESULT		OnMouseMove(TinyPoint pos, DWORD dwFlags);
+			virtual HRESULT		OnMouseMove(const TinyPoint& pos, DWORD dwFlags);
 			virtual HRESULT		OnMouseEnter();
 			virtual HRESULT		OnMouseLeave();
-			virtual HRESULT		OnLButtonDown(TinyPoint pos, DWORD dwFlags);
-			virtual HRESULT		OnLButtonUp(TinyPoint pos, DWORD dwFlags);
-			virtual HRESULT		OnLButtonDBClick(TinyPoint pos, DWORD dwFlags);
-			virtual HRESULT		OnRButtonDown(TinyPoint pos, DWORD dwFlags);
-			virtual HRESULT		OnRButtonUp(TinyPoint pos, DWORD dwFlags);
-			virtual HRESULT		OnRButtonDBClick(TinyPoint pos, DWORD dwFlags);
-			virtual HRESULT		OnMButtonDown(TinyPoint pos, DWORD dwFlags);
-			virtual HRESULT		OnMButtonUp(TinyPoint pos, DWORD dwFlags);
-			virtual HRESULT		OnMButtonDBClick(TinyPoint pos, DWORD dwFlags);
+			virtual HRESULT		OnLButtonDown(const TinyPoint& pos, DWORD dwFlags);
+			virtual HRESULT		OnLButtonUp(const TinyPoint& pos, DWORD dwFlags);
+			virtual HRESULT		OnLButtonDBClick(const TinyPoint& pos, DWORD dwFlags);
+			virtual HRESULT		OnRButtonDown(const TinyPoint& pos, DWORD dwFlags);
+			virtual HRESULT		OnRButtonUp(const TinyPoint& pos, DWORD dwFlags);
+			virtual HRESULT		OnRButtonDBClick(const TinyPoint& pos, DWORD dwFlags);
+			virtual HRESULT		OnMButtonDown(const TinyPoint& pos, DWORD dwFlags);
+			virtual HRESULT		OnMButtonUp(const TinyPoint& pos, DWORD dwFlags);
+			virtual HRESULT		OnMButtonDBClick(const TinyPoint& pos, DWORD dwFlags);
 			virtual HRESULT		OnKeyDown(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
 			virtual HRESULT		OnKeyUp(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
 		public:
@@ -96,7 +96,7 @@ namespace TinyUI
 			TinyString			m_strName;
 			TinyString			m_strText;
 			TinyString			m_strToolTip;
-			TinyRectangle		m_windowRect;//相对于父元素区域
+			TinyRectangle		m_rectangle;//相对于父元素区域
 			TinySize			m_maximumSize;//元素的最大像素大小
 			TinySize			m_minimumSize;//元素的最小像素大小
 			HRGN				m_hrgnClip;

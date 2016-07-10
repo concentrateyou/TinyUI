@@ -39,6 +39,7 @@ namespace TinyUI
 		TinyCanvas();
 		TinyCanvas(HDC hDC);
 		virtual ~TinyCanvas();
+		operator HDC() const;
 		/// <summary>
 		/// 初始化DC
 		/// </summary>
@@ -55,6 +56,10 @@ namespace TinyUI
 		/// 设置画板画刷
 		/// </summary>
 		HBRUSH SetBrush(HBRUSH hBrush);
+		/// <summary>
+		/// 设置字体
+		/// </summary>
+		HFONT SetFont(HFONT hFont);
 		/// <summary>
 		/// 平移变换
 		/// </summary>
@@ -78,7 +83,7 @@ namespace TinyUI
 		/// <summary>
 		/// 绘制文本
 		/// </summary>
-		BOOL DrawString(const TinyString& str,LPRECT lprc,UINT format);
+		BOOL DrawString(const TinyString& str, LPRECT lprc, UINT format);
 		/// <summary>
 		/// 在指定位置绘制原始的Image
 		/// </summary>
@@ -92,9 +97,17 @@ namespace TinyUI
 		/// </summary>
 		BOOL DrawImage(TinyImage& image, RECT destRect, INT srcX, INT srcY, INT srcCX, INT srcCY);
 		/// <summary>
+		/// 在指定位置绘制原始Image的部分缩放自适应
+		/// </summary>
+		BOOL DrawImage(TinyImage& image, RECT destRect, RECT srcRect);
+		/// <summary>
 		/// 绘制9宫格中间矩形和4个角大小不变其余的拉伸
 		/// </summary>
 		BOOL DrawImage(TinyImage& image, RECT dstPaint, RECT srcPaint, RECT srcCenter);
+		/// <summary>
+		/// 绘制9宫格中间矩形和4个角大小不变其余的拉伸
+		/// </summary>
+		BOOL DrawImage(TinyImage& image, RECT dstPaint, RECT dstCenter, RECT srcPaint, RECT srcCenter);
 		/// <summary>
 		/// 绘制线(必须设置铅笔)
 		/// </summary>
@@ -249,6 +262,7 @@ namespace TinyUI
 		INT GetClipRectangle(LPRECT lprc);
 	protected:
 		HDC			m_hDC;
+		HFONT		m_hFONT;
 		HPEN		m_hPEN;
 		HBRUSH		m_hBRUSH;
 		HRGN		m_hRGN;

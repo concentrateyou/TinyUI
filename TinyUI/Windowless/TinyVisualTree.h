@@ -58,13 +58,13 @@ namespace TinyUI
 		public:
 			HRESULT			OnMouseLeave();
 			HRESULT			OnMouseEnter();
-			HRESULT			OnMouseMove(TinyPoint pos, DWORD dwFlags);
-			HRESULT			OnLButtonDown(TinyPoint pos, DWORD dwFlags);
-			HRESULT			OnLButtonUp(TinyPoint pos, DWORD dwFlags);
-			HRESULT			OnRButtonDown(TinyPoint pos, DWORD dwFlags);
-			HRESULT			OnRButtonUp(TinyPoint pos, DWORD dwFlags);
-			HRESULT			OnMButtonDown(TinyPoint pos, DWORD dwFlags);
-			HRESULT			OnMButtonUp(TinyPoint pos, DWORD dwFlags);
+			HRESULT			OnMouseMove(const TinyPoint& pos, DWORD dwFlags);
+			HRESULT			OnLButtonDown(const TinyPoint& pos, DWORD dwFlags);
+			HRESULT			OnLButtonUp(const TinyPoint& pos, DWORD dwFlags);
+			HRESULT			OnRButtonDown(const TinyPoint& pos, DWORD dwFlags);
+			HRESULT			OnRButtonUp(const TinyPoint& pos, DWORD dwFlags);
+			HRESULT			OnMButtonDown(const TinyPoint& pos, DWORD dwFlags);
+			HRESULT			OnMButtonUp(const TinyPoint& pos, DWORD dwFlags);
 		private:
 			void			ConvertToVisualPos(TinyVisual* spvis, TinyPoint& pos);//相对于原生窗口的坐标转换到元素坐标
 			TinyVisual*		GetVisualByName1(TinyVisual* spvis, const TinyString& name);

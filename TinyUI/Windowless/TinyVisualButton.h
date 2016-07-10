@@ -21,9 +21,9 @@ namespace TinyUI
 		protected:
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT OnMouseLeave() OVERRIDE;
-			HRESULT	OnLButtonDown(TinyPoint pos, DWORD dwFlags) OVERRIDE;
-			HRESULT	OnMouseMove(TinyPoint pos, DWORD dwFlags) OVERRIDE;
-			HRESULT	OnLButtonUp(TinyPoint pos, DWORD dwFlags) OVERRIDE;
+			HRESULT	OnLButtonDown(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
+			HRESULT	OnMouseMove(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
+			HRESULT	OnLButtonUp(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
 		private:
 			StyleImage	m_dwFlag;
 		};

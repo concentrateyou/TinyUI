@@ -14,7 +14,7 @@ namespace TinyUI
 			TinyVisualHWND* pWND = vtree->GetVisualHWND();
 			if (pWND)
 			{
-				pWND->GetClientRect(&m_windowRect);
+				pWND->GetClientRect(&m_rectangle);
 			}
 		}
 		TinyVisualWindow::~TinyVisualWindow()
@@ -31,7 +31,7 @@ namespace TinyUI
 			TinyImage& image = m_images[NORMAL];
 			if (image.IsEmpty())
 				return FALSE;
-			TinyClipCanvas canvas(hDC, this);
+			TinyClipCanvas canvas(hDC, this, rcPaint);
 			canvas.SetBrush((HBRUSH)GetStockObject(WHITE_BRUSH));
 			TinyRectangle clip = canvas.GetClipBox();
 			canvas.FillRectangle(clip);

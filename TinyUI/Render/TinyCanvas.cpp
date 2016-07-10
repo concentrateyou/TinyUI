@@ -105,6 +105,7 @@ namespace TinyUI
 		:m_hDC(NULL),
 		m_hPEN(NULL),
 		m_hBRUSH(NULL),
+		m_hFONT(NULL),
 		m_iSave(0)
 	{
 		InitializeDC(m_hDC);
@@ -123,6 +124,10 @@ namespace TinyUI
 		{
 			RestoreDC(m_hDC, m_iSave);
 		}
+	}
+	TinyCanvas::operator HDC() const
+	{
+		return m_hDC;
 	}
 	BOOL TinyCanvas::InitializeDC(HDC hDC)
 	{
@@ -144,7 +149,7 @@ namespace TinyUI
 		if (res == CLR_INVALID) return FALSE;
 		res = SetDCPenColor(m_hDC, RGB(0, 0, 0));
 		if (res == CLR_INVALID) return FALSE;
-		res = SetBkMode(m_hDC, OPAQUE);
+		res = SetBkMode(m_hDC, TRANSPARENT);
 		if (!res) return FALSE;
 		res = SetROP2(m_hDC, R2_COPYPEN);
 		if (!res) return FALSE;
@@ -175,6 +180,15 @@ namespace TinyUI
 			return (HBRUSH)SelectObject(m_hDC, hBrush);
 		}
 		return m_hBRUSH;
+	}
+	HFONT TinyCanvas::SetFont(HFONT hFont)
+	{
+		if (m_hFONT != hFont)
+		{
+			m_hFONT = hFont;
+			return (HFONT)SelectObject(m_hDC, m_hFONT);
+		}
+		return m_hFONT;
 	}
 	BOOL TinyCanvas::DrawString(const TinyString& str, LPRECT lprc, UINT format)
 	{
@@ -207,11 +221,23 @@ namespace TinyUI
 		src.SetRect(srcX, srcY, srcX + srcCX, srcY + srcCY);
 		return menDC.Render(destRect, src, TRUE);
 	}
+	BOOL TinyCanvas::DrawImage(TinyImage& image, RECT destRect, RECT srcRect)
+	{
+		if (!m_hDC) return FALSE;
+		TinyMemDC menDC(m_hDC, image);
+		return menDC.Render(destRect, srcRect, TRUE);
+	}
 	BOOL TinyCanvas::DrawImage(TinyImage& image, RECT dstPaint, RECT srcPaint, RECT srcCenter)
 	{
 		if (!m_hDC) return FALSE;
 		TinyMemDC menDC(m_hDC, image);
 		return menDC.Render(dstPaint, srcPaint, srcCenter, TRUE);
+	}
+	BOOL TinyCanvas::DrawImage(TinyImage& image, RECT dstPaint, RECT dstCenter, RECT srcPaint, RECT srcCenter)
+	{
+		if (!m_hDC) return FALSE;
+		TinyMemDC menDC(m_hDC, image);
+		return menDC.Render(dstPaint, dstCenter, srcPaint, srcCenter, TRUE);
 	}
 	BOOL TinyCanvas::DrawLine(INT sx, INT sy, INT dx, INT dy)
 	{

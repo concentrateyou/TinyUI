@@ -19,13 +19,12 @@ namespace TinyUI
 		//////////////////////////////////////////////////////////////////////////
 		const TinyString TinyVisualTag::WINDOW = TEXT("window");
 		const TinyString TinyVisualTag::CAPTION = TEXT("caption");
-		const TinyString TinyVisualTag::SYSBUTTON = TEXT("sysbutton");
 		const TinyString TinyVisualTag::BUTTON = TEXT("button");
+		const TinyString TinyVisualTag::LABEL = TEXT("label");
 		const TinyString TinyVisualTag::LISTBOX = TEXT("listbox");
 		const TinyString TinyVisualTag::TOOLBAR = TEXT("toolbar");
 		const TinyString TinyVisualTag::TREEVIEW = TEXT("treeview");
-		const TinyString TinyVisualTag::HSCROLLBAR = TEXT("hscrollbar");
-		const TinyString TinyVisualTag::VSCROLLBAR = TEXT("vscrollbar");
+		const TinyString TinyVisualTag::SCROLLBAR = TEXT("scrollbar");
 		const TinyString TinyVisualTag::COMMBOBOX = TEXT("combobox");
 		//////////////////////////////////////////////////////////////////////////
 		TinyVisualCacheDC::TinyVisualCacheDC(HWND hWND)

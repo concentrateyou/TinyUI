@@ -342,6 +342,9 @@
     <ClInclude Include="Windowless\TinyVisualButton.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualScrollbar.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -609,6 +612,9 @@
       <Filter>源文件\Media</Filter>
     </ClCompile>
     <ClCompile Include="Windowless\TinyVisualButton.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualScrollbar.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>

@@ -37,14 +37,12 @@ namespace TinyUI
 		public:
 			static const TinyString WINDOW;
 			static const TinyString CAPTION;
-			static const TinyString SYSBUTTON;
 			static const TinyString LABEL;
 			static const TinyString BUTTON;
 			static const TinyString LISTBOX;
 			static const TinyString TOOLBAR;
 			static const TinyString TREEVIEW;
-			static const TinyString HSCROLLBAR;
-			static const TinyString VSCROLLBAR;
+			static const TinyString SCROLLBAR;
 			static const TinyString COMMBOBOX;
 		};
 		/// <summary>

@@ -2,9 +2,12 @@
 #include "../Common/TinyString.h"
 #include "TinyVisualCommon.h"
 #include "TinyVisualManage.h"
-#include "TinyVisualWindow.h"
-#include "TinyVisualCaption.h"
 #include "TinyVisualTree.h"
+#include "TinyVisualWindow.h"
+#include "TinyVisualLabel.h"
+#include "TinyVisualButton.h"
+#include "TinyVisualCaption.h"
+#include "TinyVisualScrollbar.h"
 
 namespace TinyUI
 {
@@ -23,9 +26,17 @@ namespace TinyUI
 			{
 				spvis = new TinyVisualCaption(spvisParent, m_vtree);
 			}
-			else if (tag.Compare(TinyVisualTag::SYSBUTTON) == 0)
+			else if (tag.Compare(TinyVisualTag::BUTTON) == 0)
 			{
-				spvis = new TinyVisualSysButton(spvisParent, m_vtree);
+				spvis = new TinyVisualButton(spvisParent, m_vtree);
+			}
+			else if (tag.Compare(TinyVisualTag::LABEL) == 0)
+			{
+				spvis = new TinyVisualLabel(spvisParent, m_vtree);
+			}
+			else if (tag.Compare(TinyVisualTag::SCROLLBAR) == 0)
+			{
+				spvis = new TinyVisualScrollBar(spvisParent, m_vtree);
 			}
 			spvis->SetPosition(TinyPoint(x, y));
 			spvis->SetSize(TinySize(cx, cy));

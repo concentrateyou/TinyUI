@@ -68,7 +68,7 @@ namespace TinyUI
 		class TinyClipCanvas : public TinyCanvas
 		{
 		public:
-			TinyClipCanvas(HDC hDC, TinyVisual* spvis);
+			TinyClipCanvas(HDC hDC, TinyVisual* spvis, const RECT& rcPaint);
 			virtual ~TinyClipCanvas();
 			TinyRectangle	GetClipBox() const;
 		private:

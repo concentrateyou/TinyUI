@@ -1,24 +1,10 @@
 #pragma once
-#include "TinyVisualButton.h"
+#include "TinyVisual.h"
 
 namespace TinyUI
 {
 	namespace Windowless
 	{
-		/// <summary>
-		/// 系统按钮
-		/// </summary>
-		class TinyVisualSysButton : public TinyVisualButton
-		{
-			friend class TinyVisualFactory;
-			DECLARE_DYNAMIC(TinyVisualSysButton);
-			DISALLOW_COPY_AND_ASSIGN(TinyVisualSysButton);
-		protected:
-			TinyVisualSysButton(TinyVisual* spvisParent, TinyVisualTree* vtree);
-		public:
-			virtual ~TinyVisualSysButton();
-			TinyString RetrieveTag() const OVERRIDE;
-		};
 		/// <summary>
 		/// 标题栏容器控件
 		/// </summary>
