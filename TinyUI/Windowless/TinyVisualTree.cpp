@@ -4,6 +4,7 @@
 #include "TinyVisualTree.h"
 #include "TinyVisualCaption.h"
 #include "TinyVisualScrollBar.h"
+#include "TinyVisualList.h"
 
 namespace TinyUI
 {
@@ -25,6 +26,7 @@ namespace TinyUI
 		BOOL TinyVisualTree::Initialize()
 		{
 			m_fs.Reset(new TinyVisualFactory(this));
+
 			m_spvisWindow = new TinyVisualWindow(NULL, this);
 			m_spvisWindow->SetName("Window");
 			m_spvisWindow->SetStyleImage(NORMAL, "D:\\image.png");
@@ -54,17 +56,30 @@ namespace TinyUI
 			ps4->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_close_highlight.png");
 			ps4->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_close_down.png");
 
-			TinyVisualScrollBar* ps6 = static_cast<TinyVisualScrollBar*>(m_fs->Create(50, 40, 12, 300, m_spvisWindow, TinyVisualTag::SCROLLBAR));
+			TinyVisualList* ps6 = static_cast<TinyVisualList*>(m_fs->Create(50, 40, 400, 300, m_spvisWindow, TinyVisualTag::LIST));
 			ps6->SetName("Label-1");
-			ps6->SetScrollInfo(0, 200, 3, 0);
 
-			this->Dump();
-
+			INT pos = 0;
+			for (INT i = 0; i < 50; i++)
+			{
+				TinyVisual* spvis = m_fs->Create(30, pos, 90, 29, ps6, TinyVisualTag::BUTTON);
+				TinyString str;
+				str = str.Format("BUTTON-%d", i);
+				spvis->SetName(str.STR());
+				spvis->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Resource\\button\\blue_normal.png");
+				spvis->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Resource\\button\\blue_hover.png");
+				spvis->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Resource\\button\\blue_down.png");
+				pos += 32;
+			}
 			return TRUE;
 		}
 		void TinyVisualTree::Uninitialize()
 		{
 			m_fs->Destory(m_spvisWindow);
+		}
+		TinyVisualFactory*	TinyVisualTree::GetFactory()
+		{
+			return m_fs;
 		}
 		TinyVisualHWND*	TinyVisualTree::GetVisualHWND()
 		{
@@ -406,6 +421,25 @@ namespace TinyUI
 			{
 				spvis->OnDraw(hDC, rcPaint);
 				Draw(spvis->m_spvisChild, hDC, rcPaint);
+				/*TinyVisual* spvisParent = this->GetParent(spvis);
+				if (spvisParent != NULL)
+				{
+				TinyRectangle parentRect = this->GetWindowRect(spvisParent);
+				TinyRectangle thisRect = this->GetWindowRect(spvis);
+				if (parentRect.PtInRect(thisRect.TopLeft() && parentRect.PtInRect()))
+				{
+				if (::IntersectRect(&parentRect, &parentRect, &thisRect))
+				{
+				spvis->OnDraw(hDC, rcPaint);
+				Draw(spvis->m_spvisChild, hDC, rcPaint);
+				}
+				}
+				}
+				else
+				{
+				spvis->OnDraw(hDC, rcPaint);
+				Draw(spvis->m_spvisChild, hDC, rcPaint);
+				}*/
 				spvis = spvis->m_spvisNext;
 			}
 		}

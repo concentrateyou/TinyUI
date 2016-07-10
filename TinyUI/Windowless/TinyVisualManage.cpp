@@ -8,6 +8,7 @@
 #include "TinyVisualButton.h"
 #include "TinyVisualCaption.h"
 #include "TinyVisualScrollbar.h"
+#include "TinyVisualList.h"
 
 namespace TinyUI
 {
@@ -38,9 +39,14 @@ namespace TinyUI
 			{
 				spvis = new TinyVisualScrollBar(spvisParent, m_vtree);
 			}
+			else if (tag.Compare(TinyVisualTag::LIST) == 0)
+			{
+				spvis = new TinyVisualList(spvisParent, m_vtree);
+			}
 			spvis->SetPosition(TinyPoint(x, y));
 			spvis->SetSize(TinySize(cx, cy));
 			m_vtree->SetParent(spvis, spvisParent);
+			spvis->OnCreate();
 			return spvis;
 		}
 		BOOL TinyVisualFactory::Destory(TinyVisual* spvis)
@@ -60,6 +66,7 @@ namespace TinyUI
 			{
 				m_vtree->UnlinkVisual(spvis, &(spvis->m_spvisParent->m_spvisChild));
 			}
+			spvis->OnDestory();
 			SAFE_DELETE(spvis);
 			return TRUE;
 		}

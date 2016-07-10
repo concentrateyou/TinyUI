@@ -31,12 +31,13 @@ namespace TinyUI
 			TinyImage& image = m_images[NORMAL];
 			if (image.IsEmpty())
 				return FALSE;
-			TinyClipCanvas canvas(hDC, this, rcPaint);
-			canvas.SetBrush((HBRUSH)GetStockObject(WHITE_BRUSH));
-			TinyRectangle clip = canvas.GetClipBox();
-			canvas.FillRectangle(clip);
-			canvas.DrawImage(image, clip, 0, 0, image.GetSize().cx, image.GetSize().cy);
-			return TRUE;
+			TinyClipCanvas canvas(hDC, this);
+			if (canvas.IsValid())
+			{
+				canvas.DrawImage(image, m_rectangle, 0, 0, image.GetSize().cx, image.GetSize().cy);
+				return TRUE;
+			}
+			return FALSE;
 		}
 	}
 }

@@ -32,9 +32,9 @@ namespace TinyUI
 			TinyVisualTree(TinyVisualHWND* pv);
 			~TinyVisualTree();
 		public:
-			BOOL			Initialize();
-			void			Uninitialize();
-			BOOL			RedrawVisual(const TinyVisual* spvis);
+			BOOL				Initialize();
+			void				Uninitialize();
+			TinyVisualFactory*	GetFactory();
 		public:
 			TinyVisualHWND*	GetVisualHWND();
 			TinyVisual*		GetVisual(TinyVisual* spvis, UINT cmd) const;

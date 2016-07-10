@@ -200,14 +200,40 @@ namespace TinyUI
 		}
 		//////////////////////////////////////////////////////////////////////////
 		TinyClipCanvas::TinyClipCanvas(HDC hDC, TinyVisual* spvis, const RECT& rcPaint)
-			:TinyCanvas(hDC)
+			:TinyCanvas(hDC),
+			m_bValid(FALSE)
 		{
 			ASSERT(spvis);
-			TinyRectangle clip;
-			::GetClipBox(m_hDC, &clip);
-			m_clip = spvis->GetVisualTree()->GetWindowRect(spvis);
-			if (::IntersectRect(&m_clip, &m_clip, &rcPaint))
+			TinyVisual* spvisParent = spvis->GetVisualTree()->GetParent(spvis);
+			::GetClipBox(m_hDC, &m_clip);
+			if (::IntersectRect(&m_clip, &m_clip, &rcPaint) &&
+				spvisParent != NULL)
 			{
+				TinyRectangle clipP = spvis->GetVisualTree()->GetWindowRect(spvisParent);
+				TinyRectangle clip = spvis->GetVisualTree()->GetWindowRect(spvis);
+				if (::IntersectRect(&clipP, &clipP, &clip))
+				{
+					if (::IntersectRect(&m_clip, &clipP, &m_clip))
+					{
+						m_bValid = TRUE;
+						m_hRGN = ::CreateRectRgnIndirect(&m_clip);
+						if (spvis->GetClip())
+							::CombineRgn(m_hRGN, m_hRGN, spvis->GetClip(), RGN_AND);
+						::ExtSelectClipRgn(m_hDC, m_hRGN, RGN_AND);
+					}
+				}
+			}
+		}
+		TinyClipCanvas::TinyClipCanvas(HDC hDC, TinyVisual* spvis)
+			:TinyCanvas(hDC),
+			m_bValid(FALSE)
+		{
+			ASSERT(spvis);
+			::GetClipBox(m_hDC, &m_clip);
+			TinyRectangle clip = spvis->GetVisualTree()->GetWindowRect(spvis);
+			if (::IntersectRect(&m_clip, &m_clip, &clip))
+			{
+				m_bValid = TRUE;
 				m_hRGN = ::CreateRectRgnIndirect(&m_clip);
 				if (spvis->GetClip())
 					::CombineRgn(m_hRGN, m_hRGN, spvis->GetClip(), RGN_AND);
@@ -217,6 +243,10 @@ namespace TinyUI
 		TinyRectangle TinyClipCanvas::GetClipBox() const
 		{
 			return m_clip;
+		}
+		BOOL TinyClipCanvas::IsValid() const
+		{
+			return m_bValid;
 		}
 		TinyClipCanvas::~TinyClipCanvas()
 		{

@@ -533,6 +533,10 @@ namespace TinyUI
 	{
 		return _Mystr;
 	}
+	const CHAR*	TinyString::CSTR() const
+	{
+		return _Mystr;
+	}
 	TinyString _cdecl TinyString::Format(const CHAR* s, ...)
 	{
 		va_list args;

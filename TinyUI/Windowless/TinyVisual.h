@@ -38,6 +38,8 @@ namespace TinyUI
 			TinySize			GetMaximumSize() const;
 			TinySize			GetMinimumSize() const;
 			TinyRectangle		GetRectangle() const;
+			TinyRectangle		GetWindowRect()const;
+			TinyRectangle		GetClientRect() const;
 			HRGN				GetClip() const;
 			BOOL				IsVisible() const;
 			BOOL				IsEnable() const;
@@ -63,6 +65,8 @@ namespace TinyUI
 			virtual TinyString	RetrieveTag() const = 0;
 		protected:
 			virtual BOOL		OnDraw(HDC hDC, const RECT& rcPaint);
+			virtual HRESULT		OnCreate();
+			virtual HRESULT		OnDestory();
 			virtual HRESULT		OnMouseMove(const TinyPoint& pos, DWORD dwFlags);
 			virtual HRESULT		OnMouseEnter();
 			virtual HRESULT		OnMouseLeave();

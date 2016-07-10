@@ -131,6 +131,17 @@ namespace TinyUI
 		{
 			return m_rectangle;
 		}
+		TinyRectangle TinyVisual::GetWindowRect()const
+		{
+			ASSERT(m_vtree);
+			return m_vtree->GetWindowRect(this);
+		}
+		TinyRectangle TinyVisual::GetClientRect() const
+		{
+			TinyRectangle s = m_rectangle;
+			s.OffsetRect(-s.left, -s.top);
+			return s;
+		}
 		TinyVisualTree*	TinyVisual::GetVisualTree()
 		{
 			return m_vtree;
@@ -162,6 +173,14 @@ namespace TinyUI
 		void TinyVisual::Resize()
 		{
 
+		}
+		HRESULT	TinyVisual::OnCreate()
+		{
+			return FALSE;
+		}
+		HRESULT	TinyVisual::OnDestory()
+		{
+			return FALSE;
 		}
 		BOOL	TinyVisual::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
