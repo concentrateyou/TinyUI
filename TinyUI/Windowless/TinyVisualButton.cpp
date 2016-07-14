@@ -29,8 +29,11 @@ namespace TinyUI
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			if (canvas.IsValid())
 			{
+				canvas.SetFont((HFONT)GetStockObject(DEFAULT_GUI_FONT));
+				canvas.SetTextColor(RGB(255, 255, 255));
 				TinyRectangle clip = canvas.GetClipBox();
 				canvas.DrawImage(image, clip, 0, 0, image.GetSize().cx, image.GetSize().cy);
+				canvas.DrawString(GetText(), clip, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
 			}
 			return TRUE;
 		}

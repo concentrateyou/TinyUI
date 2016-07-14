@@ -134,24 +134,7 @@ namespace TinyUI
 		m_hDC = hDC;
 		m_iSave = SaveDC(m_hDC);
 		BOOL res = SetGraphicsMode(m_hDC, GM_ADVANCED);
-		if (!res) return FALSE;
-		res = SetStretchBltMode(m_hDC, HALFTONE);
-		if (!res) return FALSE;
-		res = SetBrushOrgEx(m_hDC, 0, 0, NULL);
-		if (!res) return FALSE;
-		res = SetArcDirection(m_hDC, AD_CLOCKWISE);
-		if (!res) return FALSE;
-		res = SetBkColor(m_hDC, RGB(255, 255, 255));
-		if (res == CLR_INVALID) return FALSE;
-		res = SetTextColor(m_hDC, RGB(0, 0, 0));
-		if (res == CLR_INVALID) return FALSE;
-		res = SetDCBrushColor(m_hDC, RGB(255, 255, 255));
-		if (res == CLR_INVALID) return FALSE;
-		res = SetDCPenColor(m_hDC, RGB(0, 0, 0));
-		if (res == CLR_INVALID) return FALSE;
 		res = SetBkMode(m_hDC, TRANSPARENT);
-		if (!res) return FALSE;
-		res = SetROP2(m_hDC, R2_COPYPEN);
 		if (!res) return FALSE;
 		res = GetWorldTransform(m_hDC, &m_matrix);
 		if (!res) return FALSE;
@@ -563,5 +546,17 @@ namespace TinyUI
 		if (!m_hDC) return FALSE;
 		m_matrix.Reset();
 		return SetWorldTransform(m_hDC, &m_matrix);
+	}
+
+	BOOL TinyCanvas::SetTextColor(COLORREF color)
+	{
+		if (!m_hDC) return FALSE;
+		return ::SetTextColor(m_hDC, color);
+	}
+
+	BOOL TinyCanvas::SetTextAlign(UINT align)
+	{
+		if (!m_hDC) return FALSE;
+		return ::SetTextAlign(m_hDC, align);
 	}
 };

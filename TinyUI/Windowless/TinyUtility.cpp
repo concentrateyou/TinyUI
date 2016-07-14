@@ -204,16 +204,15 @@ namespace TinyUI
 			m_bValid(FALSE)
 		{
 			ASSERT(spvis);
-			TinyVisual* spvisParent = spvis->GetVisualTree()->GetParent(spvis);
 			::GetClipBox(m_hDC, &m_clip);
-			if (::IntersectRect(&m_clip, &m_clip, &rcPaint) &&
-				spvisParent != NULL)
+			TinyVisual* spvisParent = spvis->GetVisualTree()->GetParent(spvis);
+			if (::IntersectRect(&m_clip, &m_clip, &rcPaint) && spvisParent != NULL)
 			{
 				TinyRectangle clipP = spvis->GetVisualTree()->GetWindowRect(spvisParent);
-				TinyRectangle clip = spvis->GetVisualTree()->GetWindowRect(spvis);
-				if (::IntersectRect(&clipP, &clipP, &clip))
+				TinyRectangle clip = clip = spvis->GetVisualTree()->GetWindowRect(spvis);
+				if (::IntersectRect(&clip, &clipP, &clip))
 				{
-					if (::IntersectRect(&m_clip, &clipP, &m_clip))
+					if (::IntersectRect(&m_clip, &clip, &m_clip))
 					{
 						m_bValid = TRUE;
 						m_hRGN = ::CreateRectRgnIndirect(&m_clip);

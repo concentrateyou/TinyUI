@@ -8,7 +8,8 @@ namespace TinyUI
 	namespace Windowless
 	{
 		TinyVisualList::TinyVisualList(TinyVisual* spvisParent, TinyVisualTree* vtree)
-			:TinyVisual(spvisParent, vtree)
+			:TinyVisual(spvisParent, vtree),
+			m_offsetY(0)
 		{
 
 		}
@@ -39,9 +40,28 @@ namespace TinyUI
 		{
 			return TRUE;
 		}
-
-		void TinyVisualList::OnPosChange(INT iPrevPos, INT iNewPos)
+		void TinyVisualList::AdjustLayout(TinyVisual* spvis, INT dx, INT dy)
 		{
+			TRACE("AdjustLayout:%d\n", dy);
+			while (spvis != NULL)
+			{
+				TinyRectangle s = spvis->GetRectangle();
+				s.OffsetRect(dx, dy);
+				spvis->SetPosition(s.Position());
+				spvis->SetSize(s.Size());
+				spvis = m_vtree->GetVisual(spvis, CMD_PREV);
+			}
+		}
+		void TinyVisualList::OnPosChange(INT iOldPos, INT iNewPos)
+		{
+			TinyVisual* spvis = m_vtree->GetVisual(this, CMD_CHILD);
+			spvis = m_vtree->GetVisual(spvis, CMD_LAST);
+			if (spvis == m_scrollbar)
+			{
+				spvis = m_vtree->GetVisual(m_scrollbar, CMD_PREV);
+			}
+			AdjustLayout(spvis, 0, iOldPos - iNewPos);
+			//更新孩子元素坐标
 			TinyRectangle s = m_vtree->GetWindowRect(this);
 			m_vtree->Redraw(&s);
 		}

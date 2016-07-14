@@ -31,7 +31,7 @@ namespace TinyUI
 			m_spvisWindow->SetName("Window");
 			m_spvisWindow->SetStyleImage(NORMAL, "D:\\image.png");
 
-			TinyVisual* ps1 = m_fs->Create(10, 10, 300, 30, m_spvisWindow, TinyVisualTag::CAPTION);
+			/*TinyVisual* ps1 = m_fs->Create(10, 10, 300, 30, m_spvisWindow, TinyVisualTag::CAPTION);
 			ps1->SetName("Caption-1");
 
 			TinyVisual* ps5 = m_fs->Create(10, 0, 200, 30, ps1, TinyVisualTag::CAPTION);
@@ -55,17 +55,19 @@ namespace TinyUI
 			ps4->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_close_normal.png");
 			ps4->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_close_highlight.png");
 			ps4->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_close_down.png");
-
-			TinyVisualList* ps6 = static_cast<TinyVisualList*>(m_fs->Create(50, 40, 400, 300, m_spvisWindow, TinyVisualTag::LIST));
-			ps6->SetName("Label-1");
+			*/
+			TinyVisualList* ps6 = static_cast<TinyVisualList*>(m_fs->Create(50, 40, 400, 150, m_spvisWindow, TinyVisualTag::LIST));
+			ps6->SetName("LIST-1");
+			ps6->SetText("LIST-1");
 
 			INT pos = 0;
-			for (INT i = 0; i < 50; i++)
+			for (INT i = 0; i < 20; i++)
 			{
 				TinyVisual* spvis = m_fs->Create(30, pos, 90, 29, ps6, TinyVisualTag::BUTTON);
 				TinyString str;
 				str = str.Format("BUTTON-%d", i);
 				spvis->SetName(str.STR());
+				spvis->SetText(str.STR());
 				spvis->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Resource\\button\\blue_normal.png");
 				spvis->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Resource\\button\\blue_hover.png");
 				spvis->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Resource\\button\\blue_down.png");
@@ -383,7 +385,8 @@ namespace TinyUI
 			TinyVisual* ps = spvis->m_spvisParent;
 			while (ps != NULL)
 			{
-				pos.Offset(ps->GetPosition());
+				TinyPoint s = ps->GetPosition();
+				pos.Offset(s);
 				ps = ps->m_spvisParent;
 			}
 			return pos;
@@ -417,29 +420,10 @@ namespace TinyUI
 		}
 		void TinyVisualTree::Draw(TinyVisual* spvis, HDC hDC, const RECT& rcPaint)
 		{
-			while (spvis != NULL)
+			while (spvis != NULL && spvis->IsVisible())
 			{
 				spvis->OnDraw(hDC, rcPaint);
 				Draw(spvis->m_spvisChild, hDC, rcPaint);
-				/*TinyVisual* spvisParent = this->GetParent(spvis);
-				if (spvisParent != NULL)
-				{
-				TinyRectangle parentRect = this->GetWindowRect(spvisParent);
-				TinyRectangle thisRect = this->GetWindowRect(spvis);
-				if (parentRect.PtInRect(thisRect.TopLeft() && parentRect.PtInRect()))
-				{
-				if (::IntersectRect(&parentRect, &parentRect, &thisRect))
-				{
-				spvis->OnDraw(hDC, rcPaint);
-				Draw(spvis->m_spvisChild, hDC, rcPaint);
-				}
-				}
-				}
-				else
-				{
-				spvis->OnDraw(hDC, rcPaint);
-				Draw(spvis->m_spvisChild, hDC, rcPaint);
-				}*/
 				spvis = spvis->m_spvisNext;
 			}
 		}
@@ -603,6 +587,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
+#ifdef _DEBUG
 		void TinyVisualTree::Dump()
 		{
 			TRACE("Dump-----\n");
@@ -641,5 +626,7 @@ namespace TinyUI
 				ps = ps->m_spvisNext;
 			}
 		}
+#endif // _DEBUG
+
 	}
 }

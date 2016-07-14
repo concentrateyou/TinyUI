@@ -1960,15 +1960,18 @@ namespace TinyUI
 	}
 	void TinyPoint::Offset(INT xOffset, INT yOffset) throw()
 	{
-		x += xOffset; y += yOffset;
+		x += xOffset;
+		y += yOffset;
 	}
 	void TinyPoint::Offset(POINT point) throw()
 	{
-		x += point.x; y += point.y;
+		x += point.x;
+		y += point.y;
 	}
 	void TinyPoint::Offset(SIZE size) throw()
 	{
-		x += size.cx; y += size.cy;
+		x += size.cx;
+		y += size.cy;
 	}
 	void TinyPoint::SetPoint(INT X, INT Y) throw()
 	{
