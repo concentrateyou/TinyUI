@@ -21,12 +21,15 @@ namespace TinyUI
 		{
 			return TinyVisualTag::LIST;
 		}
+		void TinyVisualList::SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos)
+		{
+			m_scrollbar->SetScrollInfo(iMin, iMax, iPage, iPos);
+		}
 		HRESULT	TinyVisualList::OnCreate()
 		{
 			ASSERT(m_vtree);
 			TinySize size = this->GetSize();
 			m_scrollbar = static_cast<TinyVisualScrollBar*>(m_vtree->GetFactory()->Create(size.cx - 12, 0, 12, size.cy, this, TinyVisualTag::SCROLLBAR));
-			m_scrollbar->SetScrollInfo(0, 200, 50, 0);
 			m_onPosChange.Reset(new Delegate<void(INT, INT)>(this, &TinyVisualList::OnPosChange));
 			m_scrollbar->EVENT_PosChange += m_onPosChange;
 			return TinyVisual::OnCreate();
@@ -42,13 +45,13 @@ namespace TinyUI
 		}
 		void TinyVisualList::AdjustLayout(TinyVisual* spvis, INT dx, INT dy)
 		{
-			TRACE("AdjustLayout:%d\n", dy);
 			while (spvis != NULL)
 			{
 				TinyRectangle s = spvis->GetRectangle();
 				s.OffsetRect(dx, dy);
 				spvis->SetPosition(s.Position());
 				spvis->SetSize(s.Size());
+				//TRACE("%s:%d,%d,%d,%d\n", spvis->GetText().STR(), s.left, s.top, s.Width(), s.Height());
 				spvis = m_vtree->GetVisual(spvis, CMD_PREV);
 			}
 		}

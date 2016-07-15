@@ -25,6 +25,7 @@ namespace TinyUI
 			friend class TinyVisualTree;
 			friend class TinyVisualParse;
 			friend class TinyVisualFactory;
+			friend class TinyClipCanvas;
 			DECLARE_DYNAMIC(TinyVisual);
 			DISALLOW_COPY_AND_ASSIGN(TinyVisual);
 		protected:

@@ -12,16 +12,15 @@ namespace TinyUI
 		{
 			memset(&m_si, 0, sizeof(SCROLLBOXINFO));
 			m_si.iHitTest = m_si.iHitTestPress = HTSCROLL_NONE;
-			m_images[0].Load("D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\scrollbar\\arrow_up_normal.png");
-			m_images[1].Load("D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\scrollbar\\arrow_up_hover.png");
-			m_images[2].Load("D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\scrollbar\\arrow_up_press.png");
-			m_images[3].Load("D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\scrollbar\\arrow_down_normal.png");
-			m_images[4].Load("D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\scrollbar\\arrow_down_hover.png");
-			m_images[5].Load("D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\scrollbar\\arrow_down_press.png");
-			m_images[6].Load("D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\scrollbar\\scrollbar_groove.png");
-			m_images[7].Load("D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\scrollbar\\scrollbar_normal.png");
-			m_images[8].Load("D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\scrollbar\\scrollbar_hover.png");
-
+			m_images[0].Load("D:\\Github\\TinyUI\\Debug\\Resource\\scrollbar\\arrow_up_normal.png");
+			m_images[1].Load("D:\\Github\\TinyUI\\Debug\\Resource\\scrollbar\\arrow_up_hover.png");
+			m_images[2].Load("D:\\Github\\TinyUI\\Debug\\Resource\\scrollbar\\arrow_up_press.png");
+			m_images[3].Load("D:\\Github\\TinyUI\\Debug\\Resource\\scrollbar\\arrow_down_normal.png");
+			m_images[4].Load("D:\\Github\\TinyUI\\Debug\\Resource\\scrollbar\\arrow_down_hover.png");
+			m_images[5].Load("D:\\Github\\TinyUI\\Debug\\Resource\\scrollbar\\arrow_down_press.png");
+			m_images[6].Load("D:\\Github\\TinyUI\\Debug\\Resource\\scrollbar\\scrollbar_groove.png");
+			m_images[7].Load("D:\\Github\\TinyUI\\Debug\\Resource\\scrollbar\\scrollbar_normal.png");
+			m_images[8].Load("D:\\Github\\TinyUI\\Debug\\Resource\\scrollbar\\scrollbar_hover.png");
 		}
 		TinyVisualScrollBar::~TinyVisualScrollBar()
 		{
@@ -37,7 +36,7 @@ namespace TinyUI
 			if (canvas.IsValid())
 			{
 				canvas.SetFont((HFONT)GetStockObject(DEFAULT_GUI_FONT));
-				TinyRectangle clip = canvas.GetClipBox();
+				TinyRectangle clip = m_vtree->GetWindowRect(this);
 				DrawScrollBar(canvas, clip.Size());
 			}
 			return FALSE;
@@ -353,6 +352,8 @@ namespace TinyUI
 			{
 				m_si.iPos = m_si.iMin = m_si.iMax = m_si.iMin = 0;
 			}
+			TinyRectangle s = m_vtree->GetWindowRect(this);
+			m_vtree->Redraw(&s);
 		}
 		INT	TinyVisualScrollBar::GetScrollPos()
 		{

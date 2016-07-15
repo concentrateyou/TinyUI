@@ -27,8 +27,9 @@ namespace TinyUI
 			if (canvas.IsValid())
 			{
 				canvas.SetFont((HFONT)GetStockObject(DEFAULT_GUI_FONT));
-				TinyRectangle clip = canvas.GetClipBox();
+				TinyRectangle clip = m_vtree->GetWindowRect(this);
 				canvas.DrawString(m_strText, clip, DT_LEFT);
+				return TRUE;
 			}
 			return FALSE;
 		}

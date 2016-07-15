@@ -19,6 +19,8 @@ namespace TinyUI
 		public:
 			virtual ~TinyVisualList();
 			TinyString RetrieveTag() const OVERRIDE;
+		public:
+			void SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos);
 		protected:
 			BOOL	OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT	OnCreate() OVERRIDE;

@@ -31,7 +31,7 @@ namespace TinyUI
 			m_spvisWindow->SetName("Window");
 			m_spvisWindow->SetStyleImage(NORMAL, "D:\\image.png");
 
-			/*TinyVisual* ps1 = m_fs->Create(10, 10, 300, 30, m_spvisWindow, TinyVisualTag::CAPTION);
+			TinyVisual* ps1 = m_fs->Create(10, 10, 300, 30, m_spvisWindow, TinyVisualTag::CAPTION);
 			ps1->SetName("Caption-1");
 
 			TinyVisual* ps5 = m_fs->Create(10, 0, 200, 30, ps1, TinyVisualTag::CAPTION);
@@ -39,27 +39,26 @@ namespace TinyUI
 
 			TinyVisual* ps2 = m_fs->Create(0, 0, 30, 30, ps5, TinyVisualTag::BUTTON);
 			ps2->SetName("Min-1");
-			ps2->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_mini_normal.png");
-			ps2->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_mini_highlight.png");
-			ps2->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_mini_down.png");
+			ps2->SetStyleImage(NORMAL, "D:\\Github\\TinyUI\\Debug\\Resource\\sysbutton\\btn_mini_normal.png");
+			ps2->SetStyleImage(HIGHLIGHT, "D:\\Github\\TinyUI\\Debug\\Resource\\sysbutton\\btn_mini_highlight.png");
+			ps2->SetStyleImage(DOWN, "D:\\Github\\TinyUI\\Debug\\Resource\\sysbutton\\btn_mini_down.png");
 
 
 			TinyVisual* ps3 = m_fs->Create(30, 0, 30, 30, ps5, TinyVisualTag::BUTTON);
 			ps3->SetName("Max-1");
-			ps3->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_max_normal.png");
-			ps3->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_max_highlight.png");
-			ps3->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_max_down.png");
+			ps3->SetStyleImage(NORMAL, "D:\\Github\\TinyUI\\Debug\\Resource\\sysbutton\\btn_max_normal.png");
+			ps3->SetStyleImage(HIGHLIGHT, "D:\\Github\\TinyUI\\Debug\\Resource\\sysbutton\\btn_max_highlight.png");
+			ps3->SetStyleImage(DOWN, "D:\\Github\\TinyUI\\Debug\\Resource\\sysbutton\\btn_max_down.png");
 
 			TinyVisual* ps4 = m_fs->Create(60, 0, 30, 30, ps5, TinyVisualTag::BUTTON);
 			ps4->SetName("Close-1");
-			ps4->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_close_normal.png");
-			ps4->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_close_highlight.png");
-			ps4->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Resource\\sysbutton\\btn_close_down.png");
-			*/
+			ps4->SetStyleImage(NORMAL, "D:\\Github\\TinyUI\\Debug\\Resource\\sysbutton\\btn_close_normal.png");
+			ps4->SetStyleImage(HIGHLIGHT, "D:\\Github\\TinyUI\\Debug\\Resource\\sysbutton\\btn_close_highlight.png");
+			ps4->SetStyleImage(DOWN, "D:\\Github\\TinyUI\\Debug\\Resource\\sysbutton\\btn_close_down.png");
+
 			TinyVisualList* ps6 = static_cast<TinyVisualList*>(m_fs->Create(50, 40, 400, 150, m_spvisWindow, TinyVisualTag::LIST));
 			ps6->SetName("LIST-1");
 			ps6->SetText("LIST-1");
-
 			INT pos = 0;
 			for (INT i = 0; i < 20; i++)
 			{
@@ -68,11 +67,12 @@ namespace TinyUI
 				str = str.Format("BUTTON-%d", i);
 				spvis->SetName(str.STR());
 				spvis->SetText(str.STR());
-				spvis->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Resource\\button\\blue_normal.png");
-				spvis->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Resource\\button\\blue_hover.png");
-				spvis->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Resource\\button\\blue_down.png");
+				spvis->SetStyleImage(NORMAL, "D:\\Github\\TinyUI\\Debug\\Resource\\button\\blue_normal.png");
+				spvis->SetStyleImage(HIGHLIGHT, "D:\\Github\\TinyUI\\Debug\\Resource\\button\\blue_hover.png");
+				spvis->SetStyleImage(DOWN, "D:\\Github\\TinyUI\\Debug\\Resource\\button\\blue_down.png");
 				pos += 32;
 			}
+			ps6->SetScrollInfo(0, pos, 150, 0);
 			return TRUE;
 		}
 		void TinyVisualTree::Uninitialize()

@@ -63,7 +63,7 @@ namespace TinyUI
 			FLOAT m_z;
 		};
 		/// <summary>
-		/// 裁剪的画布
+		/// 裁剪的DC在当前元素最小的矩形上绘制
 		/// </summary>
 		class TinyClipCanvas : public TinyCanvas
 		{
@@ -71,12 +71,10 @@ namespace TinyUI
 			TinyClipCanvas(HDC hDC, TinyVisual* spvis, const RECT& rcPaint);
 			TinyClipCanvas(HDC hDC, TinyVisual* spvis);
 			virtual ~TinyClipCanvas();
-			TinyRectangle	GetClipBox() const;
 			BOOL	IsValid() const;
 		private:
 			BOOL			m_bValid;
 			HRGN			m_hRGN;
-			TinyRectangle	m_clip;
 		};
 	}
 }
