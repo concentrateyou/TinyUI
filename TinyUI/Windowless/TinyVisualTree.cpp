@@ -56,13 +56,13 @@ namespace TinyUI
 			ps4->SetStyleImage(HIGHLIGHT, "D:\\Github\\TinyUI\\Debug\\Resource\\sysbutton\\btn_close_highlight.png");
 			ps4->SetStyleImage(DOWN, "D:\\Github\\TinyUI\\Debug\\Resource\\sysbutton\\btn_close_down.png");
 
-			TinyVisualList* ps6 = static_cast<TinyVisualList*>(m_fs->Create(50, 40, 400, 150, m_spvisWindow, TinyVisualTag::LIST));
+			TinyVisualList* ps6 = static_cast<TinyVisualList*>(m_fs->Create(50, 40, 400, 300, m_spvisWindow, TinyVisualTag::LIST));
 			ps6->SetName("LIST-1");
 			ps6->SetText("LIST-1");
 			INT pos = 0;
 			for (INT i = 0; i < 20; i++)
 			{
-				TinyVisual* spvis = m_fs->Create(30, pos, 90, 29, ps6, TinyVisualTag::BUTTON);
+				TinyVisual* spvis = m_fs->Create(30, pos, 90, 30, ps6, TinyVisualTag::BUTTON);
 				TinyString str;
 				str = str.Format("BUTTON-%d", i);
 				spvis->SetName(str.STR());
@@ -72,7 +72,25 @@ namespace TinyUI
 				spvis->SetStyleImage(DOWN, "D:\\Github\\TinyUI\\Debug\\Resource\\button\\blue_down.png");
 				pos += 32;
 			}
-			ps6->SetScrollInfo(0, pos, 150, 0);
+			TinyVisualList* ps7 = static_cast<TinyVisualList*>(m_fs->Create(0, pos, 300, 150, ps6, TinyVisualTag::LIST));
+			INT pos1 = 0;
+			for (INT i = 0; i < 8; i++)
+			{
+				TinyVisual* spvis = m_fs->Create(30, pos1, 90, 30, ps7, TinyVisualTag::BUTTON);
+				TinyString str;
+				str = str.Format("BUTTON-%d", i);
+				spvis->SetName(str.STR());
+				spvis->SetText(str.STR());
+				spvis->SetStyleImage(NORMAL, "D:\\Github\\TinyUI\\Debug\\Resource\\button\\blue_normal.png");
+				spvis->SetStyleImage(HIGHLIGHT, "D:\\Github\\TinyUI\\Debug\\Resource\\button\\blue_hover.png");
+				spvis->SetStyleImage(DOWN, "D:\\Github\\TinyUI\\Debug\\Resource\\button\\blue_down.png");
+				pos1 += 32;
+			}
+			ps7->SetScrollInfo(0, pos1, 150, 0);
+			ps7->SetName("LIST-2");
+			ps7->SetText("LIST-2");
+			ps6->SetScrollInfo(0, pos + 150, 300, 0);
+
 			return TRUE;
 		}
 		void TinyVisualTree::Uninitialize()
