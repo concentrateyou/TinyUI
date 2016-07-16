@@ -15,7 +15,7 @@ namespace TinyUI
 			DECLARE_DYNAMIC(TinyVisualList);
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualList);
 		protected:
-			TinyVisualList(TinyVisual* spvisParent, TinyVisualTree* vtree);
+			TinyVisualList(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:
 			virtual ~TinyVisualList();
 			TinyString RetrieveTag() const OVERRIDE;
@@ -23,14 +23,15 @@ namespace TinyUI
 			void SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos);
 		protected:
 			BOOL	OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
+			HRESULT	OnMouseEnter() OVERRIDE;
+			HRESULT	OnMouseLeave() OVERRIDE;
 			HRESULT	OnCreate() OVERRIDE;
 			HRESULT OnDestory() OVERRIDE;
 			virtual void OnPosChange(INT, INT);
 		private:
 			void AdjustLayout(TinyVisual* spvis, INT dx, INT dy);
 		private:
-			INT						m_offsetY;
-			TinyVisualScrollBar*	m_scrollbar;
+			TinyVisualVScrollBar*	m_scrollbar;
 			TinyScopedPtr<Delegate<void(INT, INT)>> m_onPosChange;
 		};
 	}

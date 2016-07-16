@@ -14,7 +14,7 @@ namespace TinyUI
 			DECLARE_DYNAMIC(TinyVisualButton);
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualButton);
 		protected:
-			TinyVisualButton(TinyVisual* spvisParent, TinyVisualTree* vtree);
+			TinyVisualButton(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:
 			virtual ~TinyVisualButton();
 			TinyString RetrieveTag() const OVERRIDE;

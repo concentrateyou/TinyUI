@@ -1,5 +1,5 @@
 #include "../stdafx.h"
-#include "TinyVisualTree.h"
+#include "TinyVisualDocument.h"
 #include "TinyVisualManage.h"
 #include "TinyVisualList.h"
 
@@ -7,9 +7,8 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		TinyVisualList::TinyVisualList(TinyVisual* spvisParent, TinyVisualTree* vtree)
-			:TinyVisual(spvisParent, vtree),
-			m_offsetY(0)
+		TinyVisualList::TinyVisualList(TinyVisual* spvisParent, TinyVisualDocument* vtree)
+			:TinyVisual(spvisParent, vtree)
 		{
 
 		}
@@ -27,9 +26,9 @@ namespace TinyUI
 		}
 		HRESULT	TinyVisualList::OnCreate()
 		{
-			ASSERT(m_vtree);
+			ASSERT(m_document);
 			TinySize size = this->GetSize();
-			m_scrollbar = static_cast<TinyVisualScrollBar*>(m_vtree->GetFactory()->Create(size.cx - 12, 0, 12, size.cy, this, TinyVisualTag::SCROLLBAR));
+			m_scrollbar = static_cast<TinyVisualVScrollBar*>(m_document->GetFactory()->Create(size.cx - 12, 0, 12, size.cy, this, TinyVisualTag::VSCROLLBAR));
 			m_onPosChange.Reset(new Delegate<void(INT, INT)>(this, &TinyVisualList::OnPosChange));
 			m_scrollbar->EVENT_PosChange += m_onPosChange;
 			return TinyVisual::OnCreate();
@@ -43,6 +42,16 @@ namespace TinyUI
 		{
 			return TRUE;
 		}
+		HRESULT	TinyVisualList::OnMouseEnter()
+		{
+			m_document->SetFocus(m_scrollbar);
+			return FALSE;
+		}
+		HRESULT	TinyVisualList::OnMouseLeave()
+		{
+			m_document->SetFocus(NULL);
+			return FALSE;
+		}
 		void TinyVisualList::AdjustLayout(TinyVisual* spvis, INT dx, INT dy)
 		{
 			while (spvis != NULL)
@@ -51,22 +60,20 @@ namespace TinyUI
 				s.OffsetRect(dx, dy);
 				spvis->SetPosition(s.Position());
 				spvis->SetSize(s.Size());
-				//TRACE("%s:%d,%d,%d,%d\n", spvis->GetText().STR(), s.left, s.top, s.Width(), s.Height());
-				spvis = m_vtree->GetVisual(spvis, CMD_PREV);
+				spvis = m_document->GetVisual(spvis, CMD_PREV);
 			}
 		}
 		void TinyVisualList::OnPosChange(INT iOldPos, INT iNewPos)
 		{
-			TinyVisual* spvis = m_vtree->GetVisual(this, CMD_CHILD);
-			spvis = m_vtree->GetVisual(spvis, CMD_LAST);
+			TinyVisual* spvis = m_document->GetVisual(this, CMD_CHILD);
+			spvis = m_document->GetVisual(spvis, CMD_LAST);
 			if (spvis == m_scrollbar)
 			{
-				spvis = m_vtree->GetVisual(m_scrollbar, CMD_PREV);
+				spvis = m_document->GetVisual(m_scrollbar, CMD_PREV);
 			}
 			AdjustLayout(spvis, 0, iOldPos - iNewPos);
-			//更新孩子元素坐标
-			TinyRectangle s = m_vtree->GetWindowRect(this);
-			m_vtree->Redraw(&s);
+			TinyRectangle s = m_document->GetWindowRect(this);
+			m_document->Invalidate(&s);
 		}
 	}
 }

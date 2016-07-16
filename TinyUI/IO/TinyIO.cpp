@@ -413,7 +413,6 @@ namespace TinyUI
 				*ppvObj = NULL;
 				return E_NOINTERFACE;
 			}
-			AddRef();
 			return NOERROR;
 		}
 

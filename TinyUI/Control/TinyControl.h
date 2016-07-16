@@ -87,6 +87,8 @@ namespace TinyUI
 			MESSAGE_HANDLER(WM_DRAWITEMREFLECT, OnDrawItemReflect)
 			MESSAGE_HANDLER(WM_MEASUREITEMREFLECT, OnMeasureItemReflect)
 			MESSAGE_HANDLER(WM_DELETEITEMREFLECT, OnDeleteItemReflect)
+			MESSAGE_HANDLER(WM_KEYDOWN, OnKeyDown)
+			MESSAGE_HANDLER(WM_KEYUP, OnKeyUp)
 		END_MSG_MAP()
 		virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -132,6 +134,8 @@ namespace TinyUI
 		virtual LRESULT OnDrawItemReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnMeasureItem(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnMeasureItemReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnKeyUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	};
 	SELECTANY HHOOK TinyControl::m_pHook = NULL;
 }

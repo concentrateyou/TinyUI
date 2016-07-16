@@ -22,14 +22,14 @@ namespace TinyUI
 		/// </summary>
 		class TinyVisual : public TinyObject
 		{
-			friend class TinyVisualTree;
+			friend class TinyVisualDocument;
 			friend class TinyVisualParse;
 			friend class TinyVisualFactory;
 			friend class TinyClipCanvas;
 			DECLARE_DYNAMIC(TinyVisual);
 			DISALLOW_COPY_AND_ASSIGN(TinyVisual);
 		protected:
-			TinyVisual(TinyVisual* spvisParent, TinyVisualTree* vtree);
+			TinyVisual(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:
 			TinyString			GetText() const;
 			TinyString			GetName() const;
@@ -57,7 +57,7 @@ namespace TinyUI
 			BOOL				SetStyleImage(StyleImage type, LPCSTR pzFile);
 			BOOL				SetStyleImage(StyleImage type, BYTE*	ps, DWORD dwSize);
 		public:
-			TinyVisualTree*		GetVisualTree();
+			TinyVisualDocument*	GetDocument();
 			virtual void		Resize();
 			virtual void		OnSizeChange(const TinySize&, const TinySize&);
 			virtual void		OnPosChange(const TinyPoint&, const TinyPoint&);
@@ -69,6 +69,7 @@ namespace TinyUI
 			virtual HRESULT		OnCreate();
 			virtual HRESULT		OnDestory();
 			virtual HRESULT		OnMouseMove(const TinyPoint& pos, DWORD dwFlags);
+			virtual HRESULT		OnMouseWheel(const TinyPoint& pos, SHORT zDelta, DWORD dwFlags);
 			virtual HRESULT		OnMouseEnter();
 			virtual HRESULT		OnMouseLeave();
 			virtual HRESULT		OnLButtonDown(const TinyPoint& pos, DWORD dwFlags);
@@ -85,6 +86,7 @@ namespace TinyUI
 		public:
 			Event<void(EventArgs&)>			EVENT_Click;
 			Event<void(MouseEventArgs&)>	EVENT_MouseMove;
+			Event<void(MouseEventArgs&)>	EVENT_MouseWheel;
 			Event<void(MouseEventArgs&)>	EVENT_MouseDown;
 			Event<void(MouseEventArgs&)>	EVENT_MouseUp;
 			Event<void(MouseEventArgs&)>	EVENT_MouseClick;
@@ -92,7 +94,7 @@ namespace TinyUI
 			Event<void(KeyEventArgs&)>		EVENT_KeyDown;
 			Event<void(KeyEventArgs&)>		EVENT_KeyUp;
 		protected:
-			TinyVisualTree*		m_vtree;
+			TinyVisualDocument*	m_document;
 			TinyImage			m_images[3];//三态图片
 			TinyVisual*			m_spvisNext;//同级下一个兄弟节点
 			TinyVisual*			m_spvisParent;//父节点

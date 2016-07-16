@@ -43,8 +43,10 @@ namespace TinyUI
 			static const TinyString LISTBOX;
 			static const TinyString TOOLBAR;
 			static const TinyString TREEVIEW;
-			static const TinyString SCROLLBAR;
-			static const TinyString COMMBOBOX;
+			static const TinyString HSCROLLBAR;
+			static const TinyString VSCROLLBAR;
+			static const TinyString COMBOBOX;
+			static const TinyString RICHTEXT;
 		};
 		/// <summary>
 		/// ª∫¥ÊDC

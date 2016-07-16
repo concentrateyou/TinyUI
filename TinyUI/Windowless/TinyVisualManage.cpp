@@ -2,56 +2,71 @@
 #include "../Common/TinyString.h"
 #include "TinyVisualCommon.h"
 #include "TinyVisualManage.h"
-#include "TinyVisualTree.h"
+#include "TinyVisualDocument.h"
 #include "TinyVisualWindow.h"
 #include "TinyVisualLabel.h"
 #include "TinyVisualButton.h"
-#include "TinyVisualCaption.h"
-#include "TinyVisualScrollbar.h"
 #include "TinyVisualList.h"
+#include "TinyVisualCaption.h"
+#include "TinyVisualButton.h"
+#include "TinyVisualScrollbar.h"
+#include "TinyVisualComboBox.h"
+#include "TinyVisualRichText.h"
 
 namespace TinyUI
 {
 	namespace Windowless
 	{
-		TinyVisualFactory::TinyVisualFactory(TinyVisualTree* vtree)
-			:m_vtree(vtree)
+		TinyVisualFactory::TinyVisualFactory(TinyVisualDocument* document)
+			:m_document(document)
 		{
 
 		}
 		TinyVisual* TinyVisualFactory::Create(INT x, INT y, INT cx, INT cy, TinyVisual* spvisParent, const TinyString& tag)
 		{
-			ASSERT(m_vtree);
+			ASSERT(m_document);
 			TinyVisual* spvis = NULL;
 			if (tag.Compare(TinyVisualTag::CAPTION) == 0)
 			{
-				spvis = new TinyVisualCaption(spvisParent, m_vtree);
+				spvis = new TinyVisualCaption(spvisParent, m_document);
 			}
 			else if (tag.Compare(TinyVisualTag::BUTTON) == 0)
 			{
-				spvis = new TinyVisualButton(spvisParent, m_vtree);
+				spvis = new TinyVisualButton(spvisParent, m_document);
 			}
 			else if (tag.Compare(TinyVisualTag::LABEL) == 0)
 			{
-				spvis = new TinyVisualLabel(spvisParent, m_vtree);
+				spvis = new TinyVisualLabel(spvisParent, m_document);
 			}
-			else if (tag.Compare(TinyVisualTag::SCROLLBAR) == 0)
+			else if (tag.Compare(TinyVisualTag::HSCROLLBAR) == 0)
 			{
-				spvis = new TinyVisualScrollBar(spvisParent, m_vtree);
+				spvis = new TinyVisualHScrollBar(spvisParent, m_document);
+			}
+			else if (tag.Compare(TinyVisualTag::VSCROLLBAR) == 0)
+			{
+				spvis = new TinyVisualVScrollBar(spvisParent, m_document);
 			}
 			else if (tag.Compare(TinyVisualTag::LIST) == 0)
 			{
-				spvis = new TinyVisualList(spvisParent, m_vtree);
+				spvis = new TinyVisualList(spvisParent, m_document);
+			}
+			else if (tag.Compare(TinyVisualTag::COMBOBOX) == 0)
+			{
+				spvis = new TinyVisualComboBox(spvisParent, m_document);
+			}
+			else if (tag.Compare(TinyVisualTag::RICHTEXT) == 0)
+			{
+				spvis = new TinyVisualRichText(spvisParent, m_document);
 			}
 			spvis->SetPosition(TinyPoint(x, y));
 			spvis->SetSize(TinySize(cx, cy));
-			m_vtree->SetParent(spvis, spvisParent);
+			m_document->SetParent(spvis, spvisParent);
 			spvis->OnCreate();
 			return spvis;
 		}
 		BOOL TinyVisualFactory::Destory(TinyVisual* spvis)
 		{
-			ASSERT(m_vtree);
+			ASSERT(m_document);
 			if (!spvis) return FALSE;
 			TinyVisual* spvisNext = NULL;
 			TinyVisual* spvisChild = NULL;
@@ -64,7 +79,7 @@ namespace TinyUI
 			}
 			if (spvis->m_spvisParent)
 			{
-				m_vtree->UnlinkVisual(spvis, &(spvis->m_spvisParent->m_spvisChild));
+				m_document->UnlinkVisual(spvis, &(spvis->m_spvisParent->m_spvisChild));
 			}
 			spvis->OnDestory();
 			SAFE_DELETE(spvis);
@@ -84,7 +99,7 @@ namespace TinyUI
 			ASSERT(pzFile);
 			return m_doc.LoadFile(pzFile);
 		}
-		BOOL TinyVisualParse::BuildVisualTree(TinyVisualTree* pvisualTree)
+		BOOL TinyVisualParse::BuildVisualTree(TinyVisualDocument* pvisualTree)
 		{
 			TinyVisual* spvis = pvisualTree->GetParent(NULL);
 			if (!spvis) return FALSE;
@@ -99,7 +114,7 @@ namespace TinyUI
 			//pvisualTree->Dump();
 			return TRUE;
 		}
-		void TinyVisualParse::CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualTree* pvisualTree)
+		void TinyVisualParse::CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualDocument* pvisualTree)
 		{
 			/*TinyVisual* spvis = NULL;
 			for (const TiXmlNode* pXMLChildNode = pXMLNode->FirstChild(); pXMLChildNode; pXMLChildNode = pXMLChildNode->NextSibling())

@@ -147,7 +147,6 @@
     <ClInclude Include="Network\TinyNetwork.h" />
     <ClInclude Include="Render\TinyGDI.h" />
     <ClInclude Include="Render\TinyImage.h" />
-    <ClInclude Include="Render\TinyRichUI.h" />
     <ClInclude Include="Render\TinyTheme.h" />
     <ClInclude Include="Render\TinyTransform.h" />
     <ClInclude Include="resource.h" />
@@ -155,9 +154,12 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Render\TinyCanvas.h" />
+    <ClInclude Include="Windowless\TinyVisualRichText.h" />
     <ClInclude Include="Windowless\TinyUtility.h" />
     <ClInclude Include="Windowless\TinyVisualButton.h" />
+    <ClInclude Include="Windowless\TinyVisualComboBox.h" />
     <ClInclude Include="Windowless\TinyVisualCommon.h" />
+    <ClInclude Include="Windowless\TinyVisualDropDownHWND.h" />
     <ClInclude Include="Windowless\TinyVisualLabel.h" />
     <ClInclude Include="Windowless\TinyVisualLayout.h" />
     <ClInclude Include="Windowless\TinyVisualList.h" />
@@ -168,7 +170,7 @@
     <ClInclude Include="Windowless\TinyVisual.h" />
     <ClInclude Include="Windowless\TinyVisualEvent.h" />
     <ClInclude Include="Windowless\TinyVisualHWND.h" />
-    <ClInclude Include="Windowless\TinyVisualTree.h" />
+    <ClInclude Include="Windowless\TinyVisualDocument.h" />
     <ClInclude Include="XML\tinystr.h" />
     <ClInclude Include="XML\tinyxml.h" />
     <ClInclude Include="XML\TinyXMLParse.h" />
@@ -240,7 +242,6 @@
     <ClCompile Include="Render\stb_image.c" />
     <ClCompile Include="Render\TinyGDI.cpp" />
     <ClCompile Include="Render\TinyImage.cpp" />
-    <ClCompile Include="Render\TinyRichUI.cpp" />
     <ClCompile Include="Render\TinyTheme.cpp" />
     <ClCompile Include="Render\TinyTransform.cpp" />
     <ClCompile Include="SkinFramework\TinySkinWindow.cpp" />
@@ -249,9 +250,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Render\TinyCanvas.cpp" />
+    <ClCompile Include="Windowless\TinyVisualRichText.cpp" />
     <ClCompile Include="Windowless\TinyUtility.cpp" />
     <ClCompile Include="Windowless\TinyVisualButton.cpp" />
+    <ClCompile Include="Windowless\TinyVisualComboBox.cpp" />
     <ClCompile Include="Windowless\TinyVisualCommon.cpp" />
+    <ClCompile Include="Windowless\TinyVisualDropDownHWND.cpp" />
     <ClCompile Include="Windowless\TinyVisualLabel.cpp" />
     <ClCompile Include="Windowless\TinyVisualLayout.cpp" />
     <ClCompile Include="Windowless\TinyVisualList.cpp" />
@@ -262,7 +266,7 @@
     <ClCompile Include="Windowless\TinyVisual.cpp" />
     <ClCompile Include="Windowless\TinyVisualEvent.cpp" />
     <ClCompile Include="Windowless\TinyVisualHWND.cpp" />
-    <ClCompile Include="Windowless\TinyVisualTree.cpp" />
+    <ClCompile Include="Windowless\TinyVisualDocument.cpp" />
     <ClCompile Include="XML\tinystr.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>

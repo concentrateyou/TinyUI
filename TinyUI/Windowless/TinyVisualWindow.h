@@ -7,11 +7,11 @@ namespace TinyUI
 	{
 		class TinyVisualWindow : public TinyVisual
 		{
-			friend class TinyVisualTree;
+			friend class TinyVisualDocument;
 			DECLARE_DYNAMIC(TinyVisualWindow);
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualWindow);
 		protected:
-			TinyVisualWindow(TinyVisual* spvisParent, TinyVisualTree* vtree);
+			TinyVisualWindow(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:
 			virtual ~TinyVisualWindow();
 		public:

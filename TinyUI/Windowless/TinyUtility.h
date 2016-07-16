@@ -7,6 +7,17 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
+#define LY_PER_INCH   1440
+#define HIMETRIC_PER_INCH   2540
+#define MAP_PIX_TO_LOGHIM(x,ppli)   MulDiv(HIMETRIC_PER_INCH, (x), (ppli))
+#define MAP_LOGHIM_TO_PIX(x,ppli)   MulDiv((ppli), (x), HIMETRIC_PER_INCH)
+		LONG HimetricXtoDX(LONG xHimetric, LONG xPerInch);
+		LONG HimetricYtoDY(LONG yHimetric, LONG yPerInch);
+		LONG DXtoHimetricX(LONG dx, LONG xPerInch);
+		LONG DYtoHimetricY(LONG dy, LONG yPerInch);
+		/// <summary>
+		/// ¶þÎ¬¾ØÕó
+		/// </summary>
 		class Vector2F
 		{
 		public:
@@ -32,6 +43,9 @@ namespace TinyUI
 			FLOAT m_x;
 			FLOAT m_y;
 		};
+		/// <summary>
+		/// ÈýÎ¬¾ØÕó
+		/// </summary>
 		class Vector3F
 		{
 		public:
@@ -69,11 +83,8 @@ namespace TinyUI
 		{
 		public:
 			TinyClipCanvas(HDC hDC, TinyVisual* spvis, const RECT& rcPaint);
-			TinyClipCanvas(HDC hDC, TinyVisual* spvis);
 			virtual ~TinyClipCanvas();
-			BOOL	IsValid() const;
 		private:
-			BOOL			m_bValid;
 			HRGN			m_hRGN;
 		};
 	}

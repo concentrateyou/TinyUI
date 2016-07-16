@@ -11,22 +11,22 @@ namespace TinyUI
 	namespace Windowless
 	{
 		class TinyVisualFactory;
-		class TinyVisualTree;
+		class TinyVisualDocument;
 		/// <summary>
 		/// Visual工厂类
 		/// </summary>
 		class TinyVisualFactory
 		{
 			friend class TinyVisual;
-			friend class TinyVisualTree;
+			friend class TinyVisualDocument;
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualFactory);
 		private:
-			TinyVisualFactory(TinyVisualTree* vtree);
+			TinyVisualFactory(TinyVisualDocument* vtree);
 		public:
 			TinyVisual* Create(INT x, INT y, INT cx, INT cy, TinyVisual* spvisParent, const TinyString& tag);
 			BOOL		Destory(TinyVisual* spvis);
 		private:
-			TinyVisualTree* m_vtree;
+			TinyVisualDocument* m_document;
 		};
 		/// <summary>
 		/// 可视化元素管理
@@ -38,8 +38,8 @@ namespace TinyUI
 			TinyVisualParse();
 			~TinyVisualParse();
 			BOOL LoadFile(LPCSTR pzFile);
-			BOOL BuildVisualTree(TinyVisualTree* ps);
-			static void CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualTree* ps);
+			BOOL BuildVisualTree(TinyVisualDocument* ps);
+			static void CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualDocument* ps);
 		private:
 			static void BuildProperty(TinyMap<TinyString, TinyString> &map, TinyVisual* spvis);
 			static BOOL GetAttributeMap(const TiXmlElement* pXMLNode, TinyMap<TinyString, TinyString>& map);

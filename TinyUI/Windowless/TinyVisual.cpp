@@ -1,18 +1,18 @@
 #include "../stdafx.h"
 #include "TinyVisual.h"
-#include "TinyVisualTree.h"
+#include "TinyVisualDocument.h"
 
 namespace TinyUI
 {
 	namespace Windowless
 	{
-		TinyVisual::TinyVisual(TinyVisual* spvisParent, TinyVisualTree* vtree)
+		TinyVisual::TinyVisual(TinyVisual* spvisParent, TinyVisualDocument* document)
 			:m_spvisParent(spvisParent),
 			m_spvisNext(NULL),
 			m_spvisChild(NULL),
 			m_spvisOwner(NULL),
 			m_hrgnClip(NULL),
-			m_vtree(vtree),
+			m_document(document),
 			m_visible(TRUE),
 			m_enable(TRUE)
 		{
@@ -133,8 +133,8 @@ namespace TinyUI
 		}
 		TinyRectangle TinyVisual::GetWindowRect()const
 		{
-			ASSERT(m_vtree);
-			return m_vtree->GetWindowRect(this);
+			ASSERT(m_document);
+			return m_document->GetWindowRect(this);
 		}
 		TinyRectangle TinyVisual::GetClientRect() const
 		{
@@ -142,9 +142,9 @@ namespace TinyUI
 			s.OffsetRect(-s.left, -s.top);
 			return s;
 		}
-		TinyVisualTree*	TinyVisual::GetVisualTree()
+		TinyVisualDocument*	TinyVisual::GetDocument()
 		{
-			return m_vtree;
+			return m_document;
 		}
 		void TinyVisual::SetClip(HRGN hrgnClip)
 		{
@@ -193,6 +193,15 @@ namespace TinyUI
 			if (dwFlags & MK_RBUTTON) button = MouseButtons::RBUTTON;
 			if (dwFlags & MK_MBUTTON) button = MouseButtons::MBUTTON;
 			EVENT_MouseMove(MouseEventArgs(button, 0, pos.x, pos.y, 0));
+			return FALSE;
+		}
+		HRESULT TinyVisual::OnMouseWheel(const TinyPoint& pos, SHORT zDelta, DWORD dwFlags)
+		{
+			MouseButtons button = NONE;
+			if (dwFlags & MK_LBUTTON) button = MouseButtons::LBUTTON;
+			if (dwFlags & MK_RBUTTON) button = MouseButtons::RBUTTON;
+			if (dwFlags & MK_MBUTTON) button = MouseButtons::MBUTTON;
+			EVENT_MouseMove(MouseEventArgs(button, 0, pos.x, pos.y, zDelta));
 			return FALSE;
 		}
 		HRESULT	TinyVisual::OnMouseEnter()

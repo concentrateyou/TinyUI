@@ -8,7 +8,7 @@ namespace TinyUI
 	namespace Windowless
 	{
 		TinyVisualHWND::TinyVisualHWND()
-			:m_vtree(NULL),
+			:m_document(NULL),
 			m_cacheDC(NULL),
 			m_bMouseTracking(FALSE)
 		{
@@ -36,7 +36,7 @@ namespace TinyUI
 		}
 		LPCSTR TinyVisualHWND::RetrieveTitle()
 		{
-			return TEXT("FramwUI");
+			return TEXT("TinyVisualHWND");
 		}
 		HICON TinyVisualHWND::RetrieveIcon()
 		{
@@ -44,9 +44,9 @@ namespace TinyUI
 		}
 		BOOL TinyVisualHWND::Initialize()
 		{
-			m_vtree.Reset(new TinyVisualTree(this));
+			m_document.Reset(new TinyVisualDocument(this));
 			m_cacheDC.Reset(new TinyVisualCacheDC(m_hWND));
-			return m_vtree->Initialize();
+			return m_document->Initialize();
 		}
 		void TinyVisualHWND::Uninitialize()
 		{
@@ -57,7 +57,7 @@ namespace TinyUI
 			bHandled = FALSE;
 			PAINTSTRUCT ps = { 0 };
 			HDC hDC = BeginPaint(m_hWND, &ps);
-			m_vtree->Draw(m_cacheDC, ps.rcPaint);
+			m_document->Draw(m_cacheDC, ps.rcPaint);
 			EndPaint(m_hWND, &ps);
 			return FALSE;
 		}
@@ -72,18 +72,16 @@ namespace TinyUI
 			m_size.cx = LOWORD(lParam);
 			m_size.cy = HIWORD(lParam);
 			//设置桌面元素
-			TinyVisual* spvis = m_vtree->GetParent(NULL);
+			TinyVisual* spvis = m_document->GetParent(NULL);
 			if (spvis)
 				spvis->SetSize(m_size);
 			m_cacheDC->SetSize(m_size.cx, m_size.cy);
-			::RedrawWindow(m_hWND, NULL, NULL, 0);
+			::RedrawWindow(m_hWND, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
 			return FALSE;
 		}
 		LRESULT TinyVisualHWND::OnMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
-			TinyPoint pos((INT)(SHORT)LOWORD(lParam), (INT)(SHORT)HIWORD(lParam));
-
 			return FALSE;
 		}
 
@@ -91,7 +89,7 @@ namespace TinyUI
 		{
 			bHandled = FALSE;
 			Uninitialize();
-			PostQuitMessage(0);//退出应用程序
+			//PostQuitMessage(0);//退出应用程序
 			return FALSE;
 		}
 
@@ -119,57 +117,66 @@ namespace TinyUI
 				m_bMouseTracking = _TrackMouseEvent(&tme);
 			}
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			m_vtree->OnMouseMove(pos, (DWORD)wParam);
-			return FALSE;
+			return m_document->OnMouseMove(pos, (DWORD)wParam);
 		}
 		LRESULT TinyVisualHWND::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			if (m_bMouseTracking)
 				m_bMouseTracking = FALSE;
-			m_vtree->OnMouseLeave();
-			return FALSE;
+			return m_document->OnMouseLeave();
+		}
+		LRESULT TinyVisualHWND::OnMouseWheel(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			::ScreenToClient(m_hWND, &pos);
+			return m_document->OnMouseWheel(pos, GET_WHEEL_DELTA_WPARAM(wParam), GET_KEYSTATE_WPARAM(wParam));
 		}
 		LRESULT TinyVisualHWND::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			m_vtree->OnLButtonDown(pos, (DWORD)wParam);
-			return FALSE;
+			return m_document->OnLButtonDown(pos, (DWORD)wParam);
 		}
 		LRESULT TinyVisualHWND::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			m_vtree->OnLButtonUp(pos, (DWORD)wParam);
-			return FALSE;
+			return m_document->OnLButtonUp(pos, (DWORD)wParam);
 		}
 		LRESULT TinyVisualHWND::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			m_vtree->OnRButtonDown(pos, (DWORD)wParam);
-			return FALSE;
+			return m_document->OnRButtonDown(pos, (DWORD)wParam);
 		}
 		LRESULT TinyVisualHWND::OnRButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			m_vtree->OnRButtonUp(pos, (DWORD)wParam);
-			return FALSE;
+			return m_document->OnRButtonUp(pos, (DWORD)wParam);
 		}
 		LRESULT TinyVisualHWND::OnMButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			m_vtree->OnMButtonDown(pos, (DWORD)wParam);
-			return FALSE;
+			return m_document->OnMButtonDown(pos, (DWORD)wParam);
 		}
 		LRESULT TinyVisualHWND::OnMButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			m_vtree->OnMButtonUp(pos, (DWORD)wParam);
+			return m_document->OnMButtonUp(pos, (DWORD)wParam);
+		}
+		LRESULT TinyVisualHWND::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			return FALSE;
+		}
+		LRESULT TinyVisualHWND::OnKeyUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
 			return FALSE;
 		}
 		LRESULT TinyVisualHWND::OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -187,14 +194,13 @@ namespace TinyUI
 		}
 		LRESULT TinyVisualHWND::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
-			ASSERT(m_vtree);
+			ASSERT(m_document);
 			bHandled = TRUE;
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 			TinyRectangle rectangle;
 			this->GetWindowRect(rectangle);
 			if (!rectangle.PtInRect(pos))
 				return HTNOWHERE;
-
 			INT cx = GetSystemMetrics(SM_CXBORDER);
 			INT cy = GetSystemMetrics(SM_CYBORDER);
 			if (pos.x >= rectangle.left && pos.x <= (rectangle.left + cx) && pos.y >= rectangle.top && pos.y <= (rectangle.top + cy))
@@ -213,12 +219,9 @@ namespace TinyUI
 				return HTBOTTOMRIGHT;
 			if (pos.x >(rectangle.left + cx) && pos.x < (rectangle.right - cx) && pos.y >= (rectangle.bottom - cy) && pos.y <= rectangle.bottom)
 				return HTBOTTOM;
-
 			ScreenToClient(m_hWND, &pos);
-			if (m_vtree->GetParent(NULL) == m_vtree->GetVisualByPos(pos.x, pos.y))
-			{
+			if (m_document->GetParent(NULL) == m_document->GetVisualByPos(pos.x, pos.y))
 				return HTCAPTION;
-			}
 			return HTCLIENT;
 		}
 	}

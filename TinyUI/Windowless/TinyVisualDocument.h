@@ -22,15 +22,15 @@ namespace TinyUI
 		/// <summary>
 		/// 可视化树
 		/// </summary>
-		class TinyVisualTree
+		class TinyVisualDocument
 		{
 			friend class TinyVisualParse;
 			friend class TinyVisualFactory;
 			friend class TinyVisualHWND;
-			DISALLOW_COPY_AND_ASSIGN(TinyVisualTree);
+			DISALLOW_COPY_AND_ASSIGN(TinyVisualDocument);
 		public:
-			TinyVisualTree(TinyVisualHWND* pv);
-			~TinyVisualTree();
+			TinyVisualDocument(TinyVisualHWND* pv);
+			~TinyVisualDocument();
 		public:
 			BOOL				Initialize();
 			void				Uninitialize();
@@ -59,12 +59,15 @@ namespace TinyUI
 			HRESULT			OnMouseLeave();
 			HRESULT			OnMouseEnter();
 			HRESULT			OnMouseMove(const TinyPoint& pos, DWORD dwFlags);
+			HRESULT			OnMouseWheel(const TinyPoint& pos, SHORT zDelta, DWORD dwFlags);
 			HRESULT			OnLButtonDown(const TinyPoint& pos, DWORD dwFlags);
 			HRESULT			OnLButtonUp(const TinyPoint& pos, DWORD dwFlags);
 			HRESULT			OnRButtonDown(const TinyPoint& pos, DWORD dwFlags);
 			HRESULT			OnRButtonUp(const TinyPoint& pos, DWORD dwFlags);
 			HRESULT			OnMButtonDown(const TinyPoint& pos, DWORD dwFlags);
 			HRESULT			OnMButtonUp(const TinyPoint& pos, DWORD dwFlags);
+			HRESULT			OnKeyDown(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
+			HRESULT			OnKeyUp(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
 		private:
 			void			ConvertToVisualPos(TinyVisual* spvis, TinyPoint& pos);//相对于原生窗口的坐标转换到元素坐标
 			TinyVisual*		GetVisualByName1(TinyVisual* spvis, const TinyString& name);
