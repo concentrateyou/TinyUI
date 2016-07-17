@@ -103,19 +103,19 @@ namespace TinyUI
 		/// <summary>
 		/// 在指定位置绘制原始Image的部分缩放自适应
 		/// </summary>
-		BOOL DrawImage(TinyImage& image, RECT destRect, INT srcX, INT srcY, INT srcCX, INT srcCY);
+		BOOL DrawImage(TinyImage& image, const RECT& destRect, INT srcX, INT srcY, INT srcCX, INT srcCY);
 		/// <summary>
 		/// 在指定位置绘制原始Image的部分缩放自适应
 		/// </summary>
-		BOOL DrawImage(TinyImage& image, RECT destRect, RECT srcRect);
+		BOOL DrawImage(TinyImage& image, const RECT& destRect, const RECT& srcRect);
 		/// <summary>
 		/// 绘制9宫格中间矩形和4个角大小不变其余的拉伸
 		/// </summary>
-		BOOL DrawImage(TinyImage& image, RECT dstPaint, RECT srcPaint, RECT srcCenter);
+		BOOL DrawImage(TinyImage& image, const RECT& dstPaint, const RECT& srcPaint, const RECT& srcCenter);
 		/// <summary>
 		/// 绘制9宫格中间矩形和4个角大小不变其余的拉伸
 		/// </summary>
-		BOOL DrawImage(TinyImage& image, RECT dstPaint, RECT dstCenter, RECT srcPaint, RECT srcCenter);
+		BOOL DrawImage(TinyImage& image, const RECT& dstPaint, const RECT& dstCenter, const RECT& srcPaint, const RECT& srcCenter);
 		/// <summary>
 		/// 绘制线(必须设置铅笔)
 		/// </summary>
@@ -135,7 +135,7 @@ namespace TinyUI
 		/// <summary>
 		/// 绘制线(必须设置铅笔)
 		/// </summary>
-		BOOL DrawRectangle(RECT rect);
+		BOOL DrawRectangle(const RECT& rect);
 		/// <summary>
 		/// 绘制矩形(必须设置铅笔)
 		/// </summary>
@@ -163,7 +163,7 @@ namespace TinyUI
 		/// <summary>
 		/// 绘制椭圆(必须设置铅笔)
 		/// </summary>
-		BOOL DrawEllipse(RECT rect);
+		BOOL DrawEllipse(const RECT& rect);
 		/// <summary>
 		/// 绘制椭圆(必须设置铅笔)
 		/// </summary>
@@ -179,7 +179,7 @@ namespace TinyUI
 		/// <summary>
 		/// 填充矩形(必须设置画刷)
 		/// </summary>
-		BOOL FillRectangle(RECT rect);
+		BOOL FillRectangle(const RECT& rect);
 		/// <summary>
 		/// 填充矩形(必须设置画刷)
 		/// </summary>
@@ -191,7 +191,7 @@ namespace TinyUI
 		/// <summary>
 		/// 填充椭圆(必须设置画刷)
 		/// </summary>
-		BOOL FillEllipse(RECT rect);
+		BOOL FillEllipse(const RECT& rect);
 		/// <summary>
 		/// 填充区域(必须设置画刷)
 		/// </summary>
@@ -199,7 +199,7 @@ namespace TinyUI
 		/// <summary>
 		/// 设置裁剪区域
 		/// </summary>
-		BOOL SetClip(RECT rect);
+		BOOL SetClip(const RECT& rect);
 		/// <summary>
 		/// 设置裁剪区域
 		/// </summary>
@@ -211,7 +211,7 @@ namespace TinyUI
 		/// <summary>
 		/// 设置裁剪区域
 		/// </summary>
-		BOOL SetClip(RECT rect, INT iCombineMode);
+		BOOL SetClip(const RECT& rect, INT iCombineMode);
 		/// <summary>
 		/// 设置裁剪区域
 		/// </summary>
@@ -223,7 +223,7 @@ namespace TinyUI
 		/// <summary>
 		/// 从裁剪区域中去掉添加矩形
 		/// </summary>
-		BOOL IntersectClip(RECT rect);
+		BOOL IntersectClip(const RECT& rect);
 		/// <summary>
 		/// 从裁剪区域中去掉添加矩形
 		/// </summary>
@@ -235,7 +235,7 @@ namespace TinyUI
 		/// <summary>
 		/// 从裁剪区域中去掉去掉矩形
 		/// </summary>
-		BOOL ExcludeClip(RECT rect);
+		BOOL ExcludeClip(const RECT& rect);
 		/// <summary>
 		/// 从裁剪区域中去掉去掉矩形
 		/// </summary>
@@ -259,7 +259,7 @@ namespace TinyUI
 		/// <summary>
 		/// 返回当前画布矩形是否可见
 		/// </summary>
-		BOOL IsVisible(RECT rect);
+		BOOL IsVisible(const RECT& rect);
 		/// <summary>
 		/// 返回当前画布矩形是否可见
 		/// </summary>

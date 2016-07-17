@@ -196,7 +196,7 @@ namespace TinyUI
 		dst.SetRect(x, y, x + cx, y + cy);
 		return menDC.Render(dst, src, TRUE);
 	}
-	BOOL TinyCanvas::DrawImage(TinyImage& image, RECT destRect, INT srcX, INT srcY, INT srcCX, INT srcCY)
+	BOOL TinyCanvas::DrawImage(TinyImage& image, const RECT& destRect, INT srcX, INT srcY, INT srcCX, INT srcCY)
 	{
 		if (!m_hDC) return FALSE;
 		TinyMemDC menDC(m_hDC, image);
@@ -204,19 +204,19 @@ namespace TinyUI
 		src.SetRect(srcX, srcY, srcX + srcCX, srcY + srcCY);
 		return menDC.Render(destRect, src, TRUE);
 	}
-	BOOL TinyCanvas::DrawImage(TinyImage& image, RECT destRect, RECT srcRect)
+	BOOL TinyCanvas::DrawImage(TinyImage& image, const RECT& destRect, const RECT& srcRect)
 	{
 		if (!m_hDC) return FALSE;
 		TinyMemDC menDC(m_hDC, image);
 		return menDC.Render(destRect, srcRect, TRUE);
 	}
-	BOOL TinyCanvas::DrawImage(TinyImage& image, RECT dstPaint, RECT srcPaint, RECT srcCenter)
+	BOOL TinyCanvas::DrawImage(TinyImage& image, const RECT& dstPaint, const RECT& srcPaint, const RECT& srcCenter)
 	{
 		if (!m_hDC) return FALSE;
 		TinyMemDC menDC(m_hDC, image);
 		return menDC.Render(dstPaint, srcPaint, srcCenter, TRUE);
 	}
-	BOOL TinyCanvas::DrawImage(TinyImage& image, RECT dstPaint, RECT dstCenter, RECT srcPaint, RECT srcCenter)
+	BOOL TinyCanvas::DrawImage(TinyImage& image, const RECT& dstPaint, const RECT& dstCenter, const RECT& srcPaint, const RECT& srcCenter)
 	{
 		if (!m_hDC) return FALSE;
 		TinyMemDC menDC(m_hDC, image);
@@ -306,7 +306,7 @@ namespace TinyUI
 		SetArcDirection(m_hDC, iArc);
 		return TRUE;
 	}
-	BOOL TinyCanvas::DrawRectangle(RECT rect)
+	BOOL TinyCanvas::DrawRectangle(const RECT& rect)
 	{
 		if (!m_hDC) return FALSE;
 		return Rectangle(m_hDC, rect.left, rect.top, rect.right, rect.bottom);
@@ -321,7 +321,7 @@ namespace TinyUI
 		if (!m_hDC) return FALSE;
 		return PolyBezier(m_hDC, pts, size);
 	}
-	BOOL TinyCanvas::DrawEllipse(RECT rect)
+	BOOL TinyCanvas::DrawEllipse(const RECT& rect)
 	{
 		if (!m_hDC) return FALSE;
 		return Ellipse(m_hDC, rect.left, rect.top, rect.right, rect.bottom);
@@ -353,12 +353,12 @@ namespace TinyUI
 		if (!m_hDC) return FALSE;
 		return Ellipse(m_hDC, x, y, x + cx, y + cy);
 	}
-	BOOL TinyCanvas::FillEllipse(RECT rect)
+	BOOL TinyCanvas::FillEllipse(const RECT& rect)
 	{
 		if (!m_hDC) return FALSE;
 		return Ellipse(m_hDC, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
 	}
-	BOOL TinyCanvas::FillRectangle(RECT rect)
+	BOOL TinyCanvas::FillRectangle(const RECT& rect)
 	{
 		if (!m_hDC) return FALSE;
 		return PatBlt(m_hDC, rect.left, rect.top, abs(rect.right - rect.left), abs(rect.bottom - rect.top), PATCOPY);
@@ -373,7 +373,7 @@ namespace TinyUI
 		if (!m_hDC || !hRgn) return FALSE;
 		return PaintRgn(m_hDC, hRgn);
 	}
-	BOOL TinyCanvas::SetClip(RECT rect)
+	BOOL TinyCanvas::SetClip(const RECT& rect)
 	{
 		if (!m_hDC) return FALSE;
 		HRGN hRgn = CreateRectRgn(rect.left, rect.top, rect.right, rect.bottom);
@@ -403,7 +403,7 @@ namespace TinyUI
 		}
 		return FALSE;
 	}
-	BOOL TinyCanvas::SetClip(RECT rect, INT iCombineMode)
+	BOOL TinyCanvas::SetClip(const RECT& rect, INT iCombineMode)
 	{
 		if (!m_hDC) return FALSE;
 		HRGN hRgn = CreateRectRgn(rect.left, rect.top, rect.right, rect.bottom);
@@ -438,7 +438,7 @@ namespace TinyUI
 		if (!m_hDC) return FALSE;
 		return ExtSelectClipRgn(m_hDC, NULL, RGN_COPY) != ERROR;
 	}
-	BOOL TinyCanvas::IntersectClip(RECT rect)
+	BOOL TinyCanvas::IntersectClip(const RECT& rect)
 	{
 		if (!m_hDC) return FALSE;
 		return IntersectClipRect(m_hDC, rect.left, rect.top, rect.right, rect.bottom) != ERROR;
@@ -463,7 +463,7 @@ namespace TinyUI
 		SAFE_DELETE_OBJECT(hNewRgn);
 		return FALSE;
 	}
-	BOOL TinyCanvas::ExcludeClip(RECT rect)
+	BOOL TinyCanvas::ExcludeClip(const RECT& rect)
 	{
 		if (!m_hDC) return FALSE;
 		return ExcludeClipRect(m_hDC, rect.left, rect.top, rect.right, rect.bottom);
@@ -507,7 +507,7 @@ namespace TinyUI
 		if (!m_hDC) return FALSE;
 		return PtVisible(m_hDC, pt.x, pt.y);
 	}
-	BOOL TinyCanvas::IsVisible(RECT rect)
+	BOOL TinyCanvas::IsVisible(const RECT& rect)
 	{
 		if (!m_hDC) return FALSE;
 		return RectVisible(m_hDC, &rect);
