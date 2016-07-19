@@ -5,7 +5,7 @@
 #include "../XML//tinyxml.h"
 #include "TinyVisualLayout.h"
 #include "TinyVisualEvent.h"
-#include "TinyUtility.h"
+#include "TinyVisualUtility.h"
 
 namespace TinyUI
 {

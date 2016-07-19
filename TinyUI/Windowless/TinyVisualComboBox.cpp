@@ -29,15 +29,15 @@ namespace TinyUI
 		{
 			TinySize size = this->GetSize();
 			m_input = static_cast<TinyVisualButton*>(m_document->GetFactory()->Create(size.cx - 19, (size.cy - 18) / 2, 19, 18, this, TinyVisualTag::BUTTON));
-			m_input->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\combobox\\inputbtn_down.png");
-			m_input->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\combobox\\inputbtn_normal.png");
-			m_input->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\combobox\\inputbtn_highlight.png");
+			m_input->SetStyleImage(DOWN, "D:\\Github\\TinyUI\\Debug\\Resource\\combobox\\inputbtn_down.png");
+			m_input->SetStyleImage(NORMAL, "D:\\Github\\TinyUI\\Debug\\Resource\\combobox\\inputbtn_normal.png");
+			m_input->SetStyleImage(HIGHLIGHT, "D:\\Github\\TinyUI\\Debug\\Resource\\combobox\\inputbtn_highlight.png");
 			m_onClick.Reset(new Delegate<void(EventArgs&)>(this, &TinyVisualComboBox::OnInputClick));
 			m_input->EVENT_Click += m_onClick;
 
-			SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\combobox\\combobox_down.png");
-			SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\combobox\\combobox_normal.png");
-			SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\combobox\\combobox_hover.png");
+			SetStyleImage(DOWN, "D:\\Github\\TinyUI\\Debug\\Resource\\combobox\\combobox_down.png");
+			SetStyleImage(NORMAL, "D:\\Github\\TinyUI\\Debug\\Resource\\combobox\\combobox_normal.png");
+			SetStyleImage(HIGHLIGHT, "D:\\Github\\TinyUI\\Debug\\Resource\\combobox\\combobox_hover.png");
 
 			return TinyVisual::OnCreate();
 		}

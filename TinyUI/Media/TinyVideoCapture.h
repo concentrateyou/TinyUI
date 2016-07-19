@@ -1,5 +1,5 @@
 #pragma once
-#include "TinyMediaCommon.h"
+#include "TinyMedia.h"
 
 namespace TinyUI
 {
