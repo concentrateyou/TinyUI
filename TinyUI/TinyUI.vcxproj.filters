@@ -366,6 +366,9 @@
     <ClInclude Include="Windowless\TinyTextHost.h">
       <Filter>源文件\Windowless</Filter>
     </ClInclude>
+    <ClInclude Include="D3D\TinyD3DTexture.h">
+      <Filter>头文件\D3D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -652,6 +655,9 @@
     </ClCompile>
     <ClCompile Include="Windowless\TinyTextHost.cpp">
       <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D\TinyD3DTexture.cpp">
+      <Filter>源文件\D3D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
