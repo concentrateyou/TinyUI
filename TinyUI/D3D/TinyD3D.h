@@ -9,6 +9,10 @@ namespace TinyUI
 {
 	namespace D3D
 	{
+#define TEXTUREMEMORY			TEXT("Local\\TextureMemory")
+#define BEGIN_CAPTURE_EVENT		TEXT("D3DBeginCapture")
+#define END_CAPTURE_EVENT		TEXT("D3DEndCapture")
+
 		class D3DSystem
 		{
 		public:
@@ -17,7 +21,6 @@ namespace TinyUI
 			BOOL Initialize(HWND hWND, INT cx, INT cy);//D3D标准化的初始化过程
 			void SetViewport(FLOAT x, FLOAT y, FLOAT cx, FLOAT cy);
 			void SetScissorRect(const D3D10_RECT *pRects);
-			BOOL CreateVertexBuffer();//创建顶点缓冲
 		private:
 			DXGI_SWAP_CHAIN_DESC				m_dsc;
 			TinyComPtr<IDXGISwapChain>			m_swap;

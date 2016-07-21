@@ -1,5 +1,5 @@
 #include "../stdafx.h"
-#include "TinySingle.h"
+#include "TinySemaphore.h"
 
 namespace TinyUI
 {

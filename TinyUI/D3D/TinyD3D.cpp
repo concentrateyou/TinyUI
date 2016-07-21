@@ -91,7 +91,6 @@ namespace TinyUI
 
 			return TRUE;
 		}
-
 		void D3DSystem::SetViewport(FLOAT x, FLOAT y, FLOAT cx, FLOAT cy)
 		{
 			ASSERT(m_d3d);

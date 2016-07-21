@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TinyApp", "TinyApp\TinyApp.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TinySmiley", "TinySmiley\TinySmiley.vcxproj", "{4D1E61ED-D1C3-4706-B8F2-CB101ADBE9B7}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "D3DCaptureHook", "D3DCaptureHook\D3DCaptureHook.vcxproj", "{E0F3F740-8BD7-4E5A-A39F-23F1A1C236F6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -27,6 +29,10 @@ Global
 		{4D1E61ED-D1C3-4706-B8F2-CB101ADBE9B7}.Debug|Win32.Build.0 = Debug|Win32
 		{4D1E61ED-D1C3-4706-B8F2-CB101ADBE9B7}.Release|Win32.ActiveCfg = Release|Win32
 		{4D1E61ED-D1C3-4706-B8F2-CB101ADBE9B7}.Release|Win32.Build.0 = Release|Win32
+		{E0F3F740-8BD7-4E5A-A39F-23F1A1C236F6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E0F3F740-8BD7-4E5A-A39F-23F1A1C236F6}.Debug|Win32.Build.0 = Debug|Win32
+		{E0F3F740-8BD7-4E5A-A39F-23F1A1C236F6}.Release|Win32.ActiveCfg = Release|Win32
+		{E0F3F740-8BD7-4E5A-A39F-23F1A1C236F6}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

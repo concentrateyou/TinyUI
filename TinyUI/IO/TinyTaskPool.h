@@ -1,6 +1,6 @@
 #pragma once
 #include "../Common/TinyCollection.h"
-#include "../Common/TinySingle.h"
+#include "../Common/TinySemaphore.h"
 #include "../Common/TinyCallback.h"
 #include "../Common/TinyEvent.h"
 #include <string>

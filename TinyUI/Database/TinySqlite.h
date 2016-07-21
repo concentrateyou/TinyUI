@@ -2,7 +2,7 @@
 #include "../Common/TinyCommon.h"
 #include "../Common/TinyTime.h"
 #include "../Common/TinyCollection.h"
-#include "../Common/TinySingle.h"
+#include "../Common/TinySemaphore.h"
 #include "../ThirdParty/sqlite/sqlite3.h"
 #include "TinyDatabase.h"
 #pragma comment(lib, "../ThirdParty/sqlite/sqlite.lib")

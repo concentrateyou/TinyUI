@@ -126,9 +126,6 @@
     <ClInclude Include="Common\TinyShell.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
-    <ClInclude Include="Common\TinySingle.h">
-      <Filter>头文件\Common</Filter>
-    </ClInclude>
     <ClInclude Include="Common\TinyString.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
@@ -330,9 +327,6 @@
     <ClInclude Include="Windowless\TinyVisualLabel.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
-    <ClInclude Include="Common\TinyTemplate.h">
-      <Filter>头文件\Common</Filter>
-    </ClInclude>
     <ClInclude Include="Windowless\TinyVisualButton.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
@@ -366,8 +360,17 @@
     <ClInclude Include="Windowless\TinyTextHost.h">
       <Filter>源文件\Windowless</Filter>
     </ClInclude>
-    <ClInclude Include="D3D\TinyD3DTexture.h">
+    <ClInclude Include="D3D\TinyD3DHook.h">
       <Filter>头文件\D3D</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\TinySharedMemory.h">
+      <Filter>头文件\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\TinySemaphore.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\TinyRand.h">
+      <Filter>头文件\Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -405,9 +408,6 @@
       <Filter>源文件\Common</Filter>
     </ClCompile>
     <ClCompile Include="Common\TinyShell.cpp">
-      <Filter>源文件\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="Common\TinySingle.cpp">
       <Filter>源文件\Common</Filter>
     </ClCompile>
     <ClCompile Include="Common\TinyString.cpp">
@@ -620,9 +620,6 @@
     <ClCompile Include="Windowless\TinyVisualLabel.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
-    <ClCompile Include="Common\TinyTemplate.cpp">
-      <Filter>源文件\Common</Filter>
-    </ClCompile>
     <ClCompile Include="Windowless\TinyVisualButton.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
@@ -656,8 +653,17 @@
     <ClCompile Include="Windowless\TinyTextHost.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
-    <ClCompile Include="D3D\TinyD3DTexture.cpp">
+    <ClCompile Include="D3D\TinyD3DHook.cpp">
       <Filter>源文件\D3D</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\TinySharedMemory.cpp">
+      <Filter>源文件\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\TinySemaphore.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\TinyRand.cpp">
+      <Filter>源文件\Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

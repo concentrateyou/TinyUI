@@ -2,7 +2,7 @@
 #include "../Common/TinyCommon.h"
 #include "../Common/TinyTime.h"
 #include "../Common/TinyCollection.h"
-#include "../Common/TinySingle.h"
+#include "../Common/TinySemaphore.h"
 #include "TinyDatabase.h"
 #import "C:\Program Files\Common Files\System\ado\msado15.dll" rename("EOF", "EndOfFile") rename_namespace("ADODB")
 using namespace ADODB;

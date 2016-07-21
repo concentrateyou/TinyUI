@@ -1,6 +1,6 @@
 #pragma once
 #include "TinyCommon.h"
-#include "TinySingle.h"
+#include "TinySemaphore.h"
 #include "TinyString.h"
 
 namespace TinyUI
