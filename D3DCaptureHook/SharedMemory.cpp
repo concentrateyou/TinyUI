@@ -3,6 +3,9 @@
 
 namespace D3D
 {
+	typedef BOOL(WINAPI *SystemFunction036_T)(PVOID, ULONG);
+	SystemFunction036_T SystemFunction036;
+
 	string _cdecl Format(const CHAR* s, ...)
 	{
 		va_list args;
@@ -16,14 +19,17 @@ namespace D3D
 	}
 	void RandBytes(void* output, size_t outputSize)
 	{
+		HINSTANCE advapi32 = LoadLibraryA("advapi32.dll");
+		SystemFunction036 = (SystemFunction036_T)GetProcAddress(advapi32, "SystemFunction036");
 		char* pOutput = static_cast<char*>(output);
 		while (outputSize > 0)
 		{
 			const ULONGLONG outputBytes = static_cast<ULONG>(std::min<size_t>(outputSize, static_cast<size_t>((std::numeric_limits<ULONG>::max)())));
-			const BOOL success = RtlGenRandom(pOutput, outputBytes) != FALSE;
+			const BOOL success = SystemFunction036(pOutput, outputBytes) != FALSE;
 			outputSize -= outputBytes;
 			pOutput += outputBytes;
 		}
+		FreeLibrary(advapi32);
 	}
 	ULONGLONG RandUInteger64()
 	{

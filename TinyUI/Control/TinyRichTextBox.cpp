@@ -32,7 +32,7 @@ namespace TinyUI
 	}
 	DWORD TinyRichTextBox::RetrieveStyle()
 	{
-		return (ES_MULTILINE | WS_VISIBLE | WS_CHILD | WS_TABSTOP);
+		return (ES_MULTILINE | WS_VISIBLE | WS_CHILD | WS_TABSTOP | ES_AUTOVSCROLL | ES_AUTOHSCROLL | WS_VSCROLL);
 	}
 	DWORD TinyRichTextBox::RetrieveExStyle()
 	{

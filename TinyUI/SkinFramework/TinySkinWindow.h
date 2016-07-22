@@ -3,6 +3,7 @@
 #include "../Render/TinyImage.h"
 #include "../Control/TinyLabel.h"
 #include "../Control/TinyButton.h"
+#include "../Control/TinyRichTextBox.h"
 
 namespace TinyUI
 {
@@ -33,11 +34,14 @@ namespace TinyUI
 	private:
 		void OnInjectLibrary(void*, INT);
 		DWORD FindProcess(const TinyString& name);
+		void AppendLog(TinyString& str);
 	protected:
 		//»º³åµÄÑùÊ½
 		TinySize	m_size;
 		TinyButton	m_inject;
 		TinyLabel	m_lblState;
+		TinyRichTextBox	m_txtLog;
+		CHARFORMAT2	m_cf;
 		TinyScopedPtr<Delegate<void(void*, INT)>> m_onInjectClick;
 	};
 }
