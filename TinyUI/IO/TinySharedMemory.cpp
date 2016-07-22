@@ -38,12 +38,17 @@ namespace TinyUI
 		{
 
 		}
+		TinySharedMemory::~TinySharedMemory()
+		{
+			Close();
+		}
 		TinySharedMemory::operator HANDLE() const
 		{
 			return m_hFileMap;
 		}
-		BOOL TinySharedMemory::Create(DWORD dwSize)
+		BOOL TinySharedMemory::Create(const TinyString& name, DWORD dwSize)
 		{
+			m_name = name;
 			SECURITY_ATTRIBUTES sa = { sizeof(sa), NULL, FALSE };
 			SECURITY_DESCRIPTOR sd;
 			ACL dacl = { 0 };

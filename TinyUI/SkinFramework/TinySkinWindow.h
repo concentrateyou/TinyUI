@@ -1,6 +1,7 @@
 #pragma once
 #include "../Control/TinyControl.h"
 #include "../Render/TinyImage.h"
+#include "../Control/TinyLabel.h"
 #include "../Control/TinyButton.h"
 
 namespace TinyUI
@@ -36,6 +37,7 @@ namespace TinyUI
 		//»º³åµÄÑùÊ½
 		TinySize	m_size;
 		TinyButton	m_inject;
+		TinyLabel	m_lblState;
 		TinyScopedPtr<Delegate<void(void*, INT)>> m_onInjectClick;
 	};
 }

@@ -37,7 +37,7 @@ namespace D3D
 			WaitForSingleObject(m_hCapture, 300);
 			CloseHandle(m_hCapture);
 		}
-
+		return TRUE;
 	}
 	DWORD WINAPI CD3DCapture::CaptureLoop(LPVOID ps)
 	{

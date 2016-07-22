@@ -59,8 +59,9 @@ namespace TinyUI
 		m_inject.Create(m_hWND, 10, 10, 100, 25);
 		m_inject.SetText("注入到War3");
 		m_onInjectClick.Reset(new Delegate<void(void*, INT)>(this, &TinySkinWindow::OnInjectLibrary));
-
 		m_inject.Click += m_onInjectClick;
+
+		m_lblState.Create(m_hWND, 130, 10, 100, 25);
 		return TRUE;
 	}
 
@@ -97,7 +98,10 @@ namespace TinyUI
 		HANDLE hProcess = ::OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwProcess);
 		if (hProcess)
 		{
-			D3D::InjectLibrary(hProcess, TEXT("D:\\Github\\TinyUI\\Debug\\D3DCaptureHook.dll"));
+			if (D3D::InjectLibrary(hProcess, TEXT("D:\\Github\\TinyUI\\Debug\\D3DCaptureHook.dll")))
+			{
+				m_lblState.SetText("注入成功");
+			}
 			CloseHandle(hProcess);
 		}
 	}

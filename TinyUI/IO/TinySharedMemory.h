@@ -21,7 +21,7 @@ namespace TinyUI
 			TinySharedMemory();
 			~TinySharedMemory();
 			operator HANDLE() const;
-			BOOL	Create(DWORD dwSize);
+			BOOL	Create(const TinyString& name, DWORD dwSize);
 			BOOL	Delete();
 			BOOL	Open(const TinyString& name, BOOL bReadonly = FALSE);
 			BOOL	Close();
