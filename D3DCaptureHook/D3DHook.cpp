@@ -9,6 +9,10 @@ D3DAPIHook::D3DAPIHook()
 {
 
 }
+D3DAPIHook::~D3DAPIHook()
+{
+
+}
 BOOL D3DAPIHook::Initialize(FARPROC pfnOrig, FARPROC pfnHook)
 {
 	if (!pfnOrig || !pfnHook)
@@ -49,6 +53,10 @@ BOOL D3DAPIHook::EndHook()
 BOOL D3DAPIHook::IsValid() const
 {
 	return m_bHook;
+}
+FARPROC D3DAPIHook::GetOrig() const
+{
+	return m_pfnOrig;
 }
 //////////////////////////////////////////////////////////////////////////
 

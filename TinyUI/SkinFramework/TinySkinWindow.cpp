@@ -1,5 +1,10 @@
 #include "../stdafx.h"
 #include "TinySkinWindow.h"
+#include "../Common/TinyString.h"
+#include "../D3D/TinyD3D.h"
+#include "../D3D/TinyD3DHook.h"
+
+#include <TlHelp32.h>
 
 namespace TinyUI
 {
@@ -22,33 +27,6 @@ namespace TinyUI
 	BOOL TinySkinWindow::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
 	{
 		return TinyControl::Create(hParent, x, y, cx, cy, FALSE);
-	}
-	LRESULT TinySkinWindow::OnNCPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		bHandled = FALSE;
-		return FALSE;
-	}
-	LRESULT TinySkinWindow::OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		bHandled = TRUE;
-		if (static_cast<BOOL>(wParam))
-		{
-			NCCALCSIZE_PARAMS* ps = reinterpret_cast<NCCALCSIZE_PARAMS*>(lParam);
-			ps->rgrc[0].left = ps->lppos->x;
-			ps->rgrc[0].top = ps->lppos->y;
-			ps->rgrc[0].bottom = ps->lppos->y + ps->lppos->cy;
-			ps->rgrc[0].right = ps->lppos->x + ps->lppos->cx;
-		}
-		return FALSE;
-	}
-	LRESULT TinySkinWindow::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		bHandled = FALSE;
-		TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		ScreenToClient(m_hWND, &pos);
-		INT captioncy = GetCaptionCY();
-
-		return FALSE;
 	}
 	DWORD TinySkinWindow::RetrieveStyle()
 	{
@@ -78,14 +56,18 @@ namespace TinyUI
 	LRESULT TinySkinWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		m_inject.Create(m_hWND, 10, 10, 100, 25);
+		m_inject.SetText("ע�뵽War3");
+		m_onInjectClick.Reset(new Delegate<void(void*, INT)>(this, &TinySkinWindow::OnInjectLibrary));
 
+		m_inject.Click += m_onInjectClick;
 		return TRUE;
 	}
 
 	LRESULT TinySkinWindow::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-
+		m_inject.Click -= m_onInjectClick;
 		return FALSE;
 	}
 
@@ -109,17 +91,40 @@ namespace TinyUI
 		return FALSE;
 	}
 
-	INT TinySkinWindow::GetCaptionCY()
+	void TinySkinWindow::OnInjectLibrary(void*, INT)
 	{
-		if ((this->GetStyle() & WS_CAPTION) == 0)
+		DWORD dwProcess = FindProcess("War3.exe");
+		HANDLE hProcess = ::OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwProcess);
+		if (hProcess)
 		{
-			return 0;
+			D3D::InjectLibrary(hProcess, TEXT("D:\\Github\\TinyUI\\Debug\\D3DCaptureHook.dll"));
+			CloseHandle(hProcess);
 		}
-		if (this->GetExStyle() & WS_EX_TOOLWINDOW)
+	}
+
+	DWORD TinySkinWindow::FindProcess(const TinyString& name)
+	{
+		DWORD dwProcessID = 0;
+		HANDLE hProcessSnap = NULL;
+		PROCESSENTRY32 pe32 = { 0 };
+		hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+		if (hProcessSnap == (HANDLE)-1)
+			return FALSE;
+		pe32.dwSize = sizeof(PROCESSENTRY32);
+		if (Process32First(hProcessSnap, &pe32))
 		{
-			return ::GetSystemMetrics(SM_CYSMCAPTION);
+			do
+			{
+				TinyString str(pe32.szExeFile);
+				if (str == name)
+				{
+					dwProcessID = pe32.th32ProcessID;
+					break;;
+				}
+			} while (Process32Next(hProcessSnap, &pe32));
 		}
-		return ::GetSystemMetrics(SM_CYCAPTION);
+		CloseHandle(hProcessSnap);
+		return dwProcessID;
 	}
 }
 

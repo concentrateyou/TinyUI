@@ -3,7 +3,6 @@
 #include <Ntsecapi.h>
 #include <algorithm>
 #include <limits>
-#include <windows.h>
 #include <string>
 using namespace std;
 

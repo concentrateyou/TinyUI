@@ -11,7 +11,6 @@
 #include "Common/TinyLogging.h"
 #include "Media/TinyVideoCapture.h"
 #include "Common/TinyHook.h"
-#include "Common/TinyTemplate.h"
 #include "Common/TinyEvent.h"
 #include <algorithm>
 #include <map>
@@ -37,8 +36,9 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	TinyUI::Windowless::TinyVisualHWND uiImpl;
-	uiImpl.Create(NULL, 50, 50, 1024, 640);
+	//TinyUI::Windowless::TinyVisualHWND uiImpl;
+	TinyUI::TinySkinWindow uiImpl;
+	uiImpl.Create(NULL, 50, 50, 600, 500);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();
 	INT loopRes = theLoop.MessageLoop();

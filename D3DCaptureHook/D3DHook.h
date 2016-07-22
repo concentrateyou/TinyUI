@@ -11,11 +11,12 @@ public:
 	BOOL	BeginHook();
 	BOOL	EndHook();
 	BOOL	IsValid() const;
+	FARPROC GetOrig() const;
 protected:
 	FARPROC	m_pfnOrig;
 	FARPROC	m_pfnHook;
 	DWORD	m_dwOrigProtect;
-	BYTE	m_data[5];//原始数据用于还原现场(x64需要14个字节)
+	BYTE	m_data[5];
 	BOOL	m_bHook;
 };
 

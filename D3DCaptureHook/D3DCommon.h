@@ -83,3 +83,106 @@ private:
 	LARGE_INTEGER	m_lFrequency;
 	LARGE_INTEGER	m_startPerformanceCount;
 };
+
+/// <summary>
+/// COM÷«ƒ‹÷∏’Î
+/// </summary>
+template <class T>
+class CComPtr
+{
+public:
+	T* _myP;
+public:
+	CComPtr(T* lp = NULL);
+	CComPtr(const CComPtr<T>& lp);
+	~CComPtr();
+	void Release();
+	operator T*() const;
+	T*	Ptr() const;
+	T& operator*() const;
+	T** operator&();
+	T* operator->();
+	T* operator=(T* lp);
+	T* operator=(const CComPtr<T>& lp);
+	BOOL operator!();
+private:
+	static IUnknown*  ComPtrAssign(IUnknown** pp, IUnknown* lp);
+};
+template<class T>
+CComPtr<T>::CComPtr(T* lp)
+{
+	if ((_myP = lp) != NULL)
+		_myP->AddRef();
+}
+template<class T>
+CComPtr<T>::CComPtr(const CComPtr<T>& lp)
+{
+	if ((_myP = lp._myP) != NULL)
+		_myP->AddRef();
+}
+template<class T>
+CComPtr<T>::~CComPtr()
+{
+	if (_myP)
+		_myP->Release();
+}
+template<class T>
+void CComPtr<T>::Release()
+{
+	if (_myP)
+		_myP->Release();
+	_myP = NULL;
+}
+template<class T>
+CComPtr<T>::operator T*() const
+{
+	return (T*)_myP;
+}
+template<class T>
+T*	CComPtr<T>::Ptr() const
+{
+	return (T*)_myP;
+}
+template<class T>
+T& CComPtr<T>::operator*() const
+{
+	ASSERT(_myP != NULL);
+	return *_myP;
+}
+template<class T>
+T** CComPtr<T>::operator&()
+{
+	ASSERT(_myP == NULL);
+	return &_myP;
+}
+template<class T>
+T* CComPtr<T>::operator->()
+{
+	ASSERT(_myP != NULL);
+	return _myP;
+}
+template<class T>
+T* CComPtr<T>::operator=(T* lp)
+{
+	return (T*)ComPtrAssign((IUnknown**)&_myP, lp);
+}
+template<class T>
+T* CComPtr<T>::operator=(const CComPtr<T>& lp)
+{
+	return (T*)ComPtrAssign((IUnknown**)&_myP, lp.p);
+}
+template<class T>
+BOOL CComPtr<T>::operator!()
+{
+	return (_myP == NULL) ? TRUE : FALSE;
+}
+template<class T>
+IUnknown*  CComPtr<T>::ComPtrAssign(IUnknown** pp, IUnknown* lp)
+{
+	if (lp != NULL)
+		lp->AddRef();
+	if (*pp)
+		(*pp)->Release();
+	*pp = lp;
+	return lp;
+}
