@@ -21,18 +21,21 @@ namespace D3D
 		BOOL Attach(HMODULE hModule);
 		BOOL Detach();
 	private:
-		static DWORD WINAPI CaptureLoop(LPVOID ps);
-		static DWORD WINAPI WindowLoop(LPVOID ps);
+		BOOL TryCapture();
 	private:
-		HANDLE			m_hMain;
-		HANDLE			m_hCapture;
+		static DWORD WINAPI CaptureLoop(LPVOID ps);
+	private:
+		HANDLE			m_hCapture;//捕获线程
 		HINSTANCE		m_hInstance;
 		CSharedMemory	m_memory;
 		CMutex			m_mutex1;
 		CMutex			m_mutex2;
-		D3D9Capture		m_d3d9Capture;
-		HWND			m_hWNDMain;//主窗口
+		HWND			m_hWNDMain;
 		HWND			m_hWNDOpenGL;
 		HWND			m_hWNDD3D;
+		BOOL			m_bD3D8Hook;
+		BOOL			m_bD3D9Hook;
+		BOOL			m_bD3D10Hook;
+		BOOL			m_bD3D11Hook;
 	};
 }

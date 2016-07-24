@@ -73,8 +73,8 @@ public:
 	CPerformanceTimer();
 	~CPerformanceTimer();
 	LONGLONG GetMicroseconds();
-	void Start();
-	void Stop();
+	void BeginTime();
+	void EndTime();
 private:
 	BOOL			m_bRunning;
 	DWORD			m_dwTimerMask;

@@ -35,7 +35,7 @@ CPerformanceTimer::~CPerformanceTimer()
 {
 
 }
-void CPerformanceTimer::Start()
+void CPerformanceTimer::BeginTime()
 {
 	m_dwTimerMask = 1;
 	DWORD dwProcessMask = 0;
@@ -60,7 +60,7 @@ void CPerformanceTimer::Start()
 	SetThreadAffinityMask(hHandle, oldMask);
 }
 
-void CPerformanceTimer::Stop()
+void CPerformanceTimer::EndTime()
 {
 	HANDLE hHandle = GetCurrentThread();
 	DWORD oldMask = SetThreadAffinityMask(hHandle, m_dwTimerMask);

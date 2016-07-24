@@ -82,7 +82,7 @@
     <ClInclude Include="D3DCapture.h" />
     <ClInclude Include="D3DCaptureHook.h" />
     <ClInclude Include="D3DCommon.h" />
-    <ClInclude Include="D3DHook.h" />
+    <ClInclude Include="D3DDetour.h" />
     <ClInclude Include="D3DSemaphore.h" />
     <ClInclude Include="D3DThunk.h" />
     <ClInclude Include="SharedMemory.h" />
@@ -93,7 +93,7 @@
     <ClCompile Include="D3DCapture.cpp" />
     <ClCompile Include="D3DCaptureHook.cpp" />
     <ClCompile Include="D3DCommon.cpp" />
-    <ClCompile Include="D3DHook.cpp" />
+    <ClCompile Include="D3DDetour.cpp" />
     <ClCompile Include="D3DSemaphore.cpp" />
     <ClCompile Include="D3DThunk.cpp" />
     <ClCompile Include="dllmain.cpp">

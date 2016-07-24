@@ -2,27 +2,29 @@
 //
 
 #include "stdafx.h"
-#include "D3DHook.h"
+#include "D3DDetour.h"
 
-D3DAPIHook::D3DAPIHook()
+D3DDetour::D3DDetour()
 	:m_bHook(FALSE)
 {
 
 }
-D3DAPIHook::~D3DAPIHook()
+D3DDetour::~D3DDetour()
 {
 
 }
-BOOL D3DAPIHook::Initialize(FARPROC pfnOrig, FARPROC pfnHook)
+BOOL D3DDetour::Initialize(FARPROC pfnOrig, FARPROC pfnHook)
 {
 	if (!pfnOrig || !pfnHook)
 		return FALSE;
+	m_pfnOrig = pfnOrig;
+	m_pfnHook = pfnHook;
 	if (!VirtualProtect((LPVOID)m_pfnOrig, 5, PAGE_EXECUTE_READWRITE, &m_dwOrigProtect))
 		return FALSE;
 	memcpy(m_data, (const void*)m_pfnOrig, 5);
 	return TRUE;
 }
-BOOL D3DAPIHook::BeginHook()
+BOOL D3DDetour::BeginDetour()
 {
 	if (!m_pfnOrig || !m_pfnHook)
 		return FALSE;
@@ -40,7 +42,7 @@ BOOL D3DAPIHook::BeginHook()
 	m_bHook = TRUE;
 	return TRUE;
 }
-BOOL D3DAPIHook::EndHook()
+BOOL D3DDetour::EndDetour()
 {
 	if (!m_bHook) return FALSE;
 	DWORD oldProtect;
@@ -50,11 +52,11 @@ BOOL D3DAPIHook::EndHook()
 	m_bHook = FALSE;
 	return TRUE;
 }
-BOOL D3DAPIHook::IsValid() const
+BOOL D3DDetour::IsValid() const
 {
 	return m_bHook;
 }
-FARPROC D3DAPIHook::GetOrig() const
+FARPROC D3DDetour::GetOrig() const
 {
 	return m_pfnOrig;
 }

@@ -24,12 +24,14 @@ namespace D3D
 		void* GetCodeAddress()
 		{
 			return this;
-		}
+		};
+
 		void* operator new(size_t)
 		{
 			return __AllocThunk();
-		}
-			void operator delete(void* pThunk)
+		};
+
+		void operator delete(void* pThunk)
 		{
 			__FreeThunk(pThunk);
 		}
