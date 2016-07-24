@@ -32,7 +32,7 @@ typedef struct tagCaptureEntry
 	UINT    mapID;
 	DWORD   mapSize;
 	HWND	hwndCapture;
-}CaptureEntry;
+}CaptureShare;
 /// <summary>
 /// ÎÆÀíÊı¾İ
 /// </summary>

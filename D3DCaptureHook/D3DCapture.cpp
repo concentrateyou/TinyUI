@@ -49,7 +49,6 @@ namespace D3D
 		CComPtr<IDirect3DDevice9Ex>	d3dDevice;
 		if (FAILED(hRes = d3d9ex->CreateDeviceEx(D3DADAPTER_DEFAULT, D3DDEVTYPE_NULLREF, hWND, D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_NOWINDOWCHANGES, &pp, NULL, &d3dDevice)))
 			return FALSE;
-		//获得虚表指针
 		ULONG *vtable = *(ULONG**)d3dDevice.Ptr();
 		if (m_d3d9EndScene.Initialize((FARPROC)*(vtable + 42), (FARPROC)D3D9EndScene))
 		{
@@ -60,7 +59,6 @@ namespace D3D
 
 	HRESULT STDMETHODCALLTYPE D3D9Capture::D3D9EndScene(IDirect3DDevice9 *device)
 	{
-		ULONG *vtable = *(ULONG**)device;
 		D3D9Capture::Instance().m_lock.Acquire();
 		D3D9Capture::Instance().m_d3d9EndScene.EndDetour();
 		HRESULT hRes = S_OK;
@@ -69,7 +67,6 @@ namespace D3D
 		if (FAILED(hRes))
 		{
 			//TODO
-
 		}
 		D3DPRESENT_PARAMETERS pp;
 		hRes = swapChain->GetPresentParameters(&pp);
@@ -77,32 +74,21 @@ namespace D3D
 		{
 			//TODO
 		}
-		//D3D9Capture::Instance().m_capture.captureType = CAPTURETYPE_SHAREDTEX;
-		//D3D9Capture::Instance().m_capture.format = pp.BackBufferFormat;
-		//D3D9Capture::Instance().m_capture.cx = pp.BackBufferWidth;
-		//D3D9Capture::Instance().m_capture.cy = pp.BackBufferHeight;
-		//D3D9Capture::Instance().m_capture.hwndCapture = pp.hDeviceWindow;
-		//CComPtr<IDirect3D9> d3d9;
-		//hRes = device->GetDirect3D(&d3d9);
-		//if (SUCCEEDED(hRes))
-		//{
-		//	CComPtr<IDirect3D9> d3d9ex;
-		//	hRes = d3d9->QueryInterface(__uuidof(IDirect3D9Ex), (void**)&d3d9ex);
-		//	if (SUCCEEDED(hRes))
-		//	{
-		//		D3D9Capture::Instance().m_d3d9PresentEx.Initialize(GetVTable(device, (484 / 4)), (FARPROC)D3D9PresentEx);
-		//		D3D9Capture::Instance().m_d3d9ResetEx.Initialize(GetVTable(device, (528 / 4)), (FARPROC)D3D9ResetEx);
-		//		D3D9Capture::Instance().m_d3d9PresentEx.BeginDetour();
-		//		D3D9Capture::Instance().m_d3d9ResetEx.BeginDetour();
-		//	}
-		//}
-		//D3D9Capture::Instance().m_d3d9Present.Initialize(GetVTable(device, (68 / 4)), (FARPROC)D3D9Present);
-		//D3D9Capture::Instance().m_d3d9Present.BeginDetour();
-		//D3D9Capture::Instance().m_d3d9Reset.Initialize(GetVTable(device, (64 / 4)), (FARPROC)D3D9Reset);
-		//D3D9Capture::Instance().m_d3d9Reset.BeginDetour();
-		//D3D9Capture::Instance().m_d3d9SwapPresent.Initialize(GetVTable(swapChain, (12 / 4)), (FARPROC)D3D9SwapPresent);
-		//D3D9Capture::Instance().m_d3d9SwapPresent.BeginDetour();
-
+		/*D3D9Capture::Instance().m_captureShare.captureType = CAPTURETYPE_SHAREDTEX;
+		D3D9Capture::Instance().m_captureShare.format = pp.BackBufferFormat;
+		D3D9Capture::Instance().m_captureShare.cx = pp.BackBufferWidth;
+		D3D9Capture::Instance().m_captureShare.cy = pp.BackBufferHeight;
+		D3D9Capture::Instance().m_captureShare.hwndCapture = pp.hDeviceWindow;
+		D3D9Capture::Instance().m_d3d9PresentEx.Initialize(GetVTable(device, (484 / 4)), (FARPROC)D3D9PresentEx);
+		D3D9Capture::Instance().m_d3d9ResetEx.Initialize(GetVTable(device, (528 / 4)), (FARPROC)D3D9ResetEx);
+		D3D9Capture::Instance().m_d3d9PresentEx.BeginDetour();
+		D3D9Capture::Instance().m_d3d9ResetEx.BeginDetour();
+		D3D9Capture::Instance().m_d3d9Present.Initialize(GetVTable(device, (68 / 4)), (FARPROC)D3D9Present);
+		D3D9Capture::Instance().m_d3d9Present.BeginDetour();
+		D3D9Capture::Instance().m_d3d9Reset.Initialize(GetVTable(device, (64 / 4)), (FARPROC)D3D9Reset);
+		D3D9Capture::Instance().m_d3d9Reset.BeginDetour();
+		D3D9Capture::Instance().m_d3d9SwapPresent.Initialize(GetVTable(swapChain, (12 / 4)), (FARPROC)D3D9SwapPresent);
+		D3D9Capture::Instance().m_d3d9SwapPresent.BeginDetour();*/
 		hRes = device->EndScene();
 		D3D9Capture::Instance().m_d3d9EndScene.BeginDetour();
 		D3D9Capture::Instance().m_lock.Release();

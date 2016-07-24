@@ -34,6 +34,7 @@ BOOL D3DDetour::BeginDetour()
 	//http://www.cnblogs.com/zhangdongsheng/archive/2012/12/06/2804234.html
 	//计算偏移量(JMP的地址–代码地址–5 = 机器码跳转地址 x86)
 	offset = target - (start + 5);
+	TRACE("BeginDetour-start=%d,target=%d,offset=%d\n", start, target, offset);
 	DWORD oldProtect;
 	VirtualProtect((LPVOID)m_pfnOrig, 5, PAGE_EXECUTE_READWRITE, &oldProtect);
 	LPBYTE ps = (LPBYTE)m_pfnOrig;

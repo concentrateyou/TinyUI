@@ -30,7 +30,7 @@ namespace D3D
 	public:
 		BOOL						m_bD3dEx;
 		CLock						m_lock;
-		CaptureEntry				m_captureEntry;
+		CaptureShare				m_captureShare;
 		HMODULE						m_hInstance;
 		D3DDetour					m_d3d9EndScene;
 		D3DDetour					m_d3d9Reset;

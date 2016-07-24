@@ -54,7 +54,7 @@ namespace D3D
 	DWORD WINAPI CD3DCapture::CaptureLoop(LPVOID ps)
 	{
 		CD3DCapture* _this = reinterpret_cast<CD3DCapture*>(ps);
-		_this->m_memory.Create(CAPTURE_MEMORY, sizeof(CaptureEntry));
+		_this->m_memory.Create(CAPTURE_MEMORY, sizeof(CaptureShare));
 		if (!_this->m_memory.Map())
 			return FALSE;
 		_this->m_hWNDMain = FindWindow(IQIYI_WINDOW_CLASS, NULL);

@@ -112,7 +112,7 @@ namespace TinyUI
 		if (hProcess)
 		{
 			
-			if (D3D::InjectLibrary(hProcess, TEXT("D:\\Github\\TinyUI\\Debug\\D3DCaptureHook.dll")))
+			if (D3D::InjectLibrary(hProcess, TEXT("D:\\Develop\\GitHub\\TinyUI\\Debug\\D3DCaptureHook.dll")))
 			{
 				m_lblState.SetText("×¢Èë³É¹¦");
 			}
