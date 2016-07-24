@@ -1,6 +1,6 @@
 #pragma once
 #include "TinyCommon.h"
-#include "TinySemaphore.h"
+#include "TinyCore.h"
 #include <dbghelp.h>
 #include <sstream>
 #include <iostream>

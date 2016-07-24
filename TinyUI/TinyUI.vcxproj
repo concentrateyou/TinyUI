@@ -96,11 +96,10 @@
     <ClInclude Include="Common\TinyMsg.h" />
     <ClInclude Include="Common\TinyHook.h" />
     <ClInclude Include="Common\TinyRand.h" />
-    <ClInclude Include="Common\TinySignal.h" />
     <ClInclude Include="Common\TinyTreeBox.h" />
     <ClInclude Include="Common\TinyObject.h" />
     <ClInclude Include="Common\TinyShell.h" />
-    <ClInclude Include="Common\TinySemaphore.h" />
+    <ClInclude Include="Common\TinyCore.h" />
     <ClInclude Include="Common\TinyString.h" />
     <ClInclude Include="Common\TinyThunk.h" />
     <ClInclude Include="Common\TinyTime.h" />
@@ -194,11 +193,10 @@
     <ClCompile Include="Common\TinyMsg.cpp" />
     <ClCompile Include="Common\TinyHook.cpp" />
     <ClCompile Include="Common\TinyRand.cpp" />
-    <ClCompile Include="Common\TinySignal.cpp" />
     <ClCompile Include="Common\TinyTreeBox.cpp" />
     <ClCompile Include="Common\TinyObject.cpp" />
     <ClCompile Include="Common\TinyShell.cpp" />
-    <ClCompile Include="Common\TinySemaphore.cpp" />
+    <ClCompile Include="Common\TinyCore.cpp" />
     <ClCompile Include="Common\TinyString.cpp" />
     <ClCompile Include="Common\TinyThunk.cpp" />
     <ClCompile Include="Common\TinyTime.cpp" />

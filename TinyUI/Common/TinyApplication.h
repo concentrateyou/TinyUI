@@ -1,6 +1,6 @@
 #pragma once
 #include "TinyMsg.h"
-#include "TinySemaphore.h"
+#include "TinyCore.h"
 #include "TinyHandleMap.h"
 #include "TinyCollection.h"
 

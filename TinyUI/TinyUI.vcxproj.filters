@@ -306,9 +306,6 @@
     <ClInclude Include="Common\TinyTuple.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
-    <ClInclude Include="Common\TinySignal.h">
-      <Filter>头文件\Common</Filter>
-    </ClInclude>
     <ClInclude Include="Windowless\TinyVisualManage.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
@@ -366,10 +363,10 @@
     <ClInclude Include="IO\TinySharedMemory.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
-    <ClInclude Include="Common\TinySemaphore.h">
+    <ClInclude Include="Common\TinyRand.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
-    <ClInclude Include="Common\TinyRand.h">
+    <ClInclude Include="Common\TinyCore.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
   </ItemGroup>
@@ -596,9 +593,6 @@
     <ClCompile Include="Common\TinyTuple.cpp">
       <Filter>源文件\Common</Filter>
     </ClCompile>
-    <ClCompile Include="Common\TinySignal.cpp">
-      <Filter>源文件\Common</Filter>
-    </ClCompile>
     <ClCompile Include="Windowless\TinyVisualManage.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
@@ -659,10 +653,10 @@
     <ClCompile Include="IO\TinySharedMemory.cpp">
       <Filter>源文件\IO</Filter>
     </ClCompile>
-    <ClCompile Include="Common\TinySemaphore.cpp">
+    <ClCompile Include="Common\TinyRand.cpp">
       <Filter>源文件\Common</Filter>
     </ClCompile>
-    <ClCompile Include="Common\TinyRand.cpp">
+    <ClCompile Include="Common\TinyCore.cpp">
       <Filter>源文件\Common</Filter>
     </ClCompile>
   </ItemGroup>
