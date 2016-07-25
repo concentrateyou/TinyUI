@@ -11,7 +11,8 @@ namespace D3D
 #define TEXTURE_MUTEX2          TEXT("IQiyiTextureMutex2")
 #define D3D_WINDOWCLASS			TEXT("IQiyiD3DGraphicsCapture")
 #define OPENGL_WINDOWCLASS		TEXT("IQiyiOpenGLGraphicsCapture")
-#define IQIYI_WINDOW_CLASS        TEXT("IQiyiWindowClass")
+#define IQIYI_WINDOW_CLASS      TEXT("IQiyiWindowClass")
+
 	class CD3DCapture
 	{
 	public:
@@ -25,7 +26,7 @@ namespace D3D
 	private:
 		static DWORD WINAPI CaptureLoop(LPVOID ps);
 	private:
-		HANDLE			m_hCapture;//²¶»ñÏß³Ì
+		HANDLE			m_hCapture;
 		HINSTANCE		m_hInstance;
 		CSharedMemory	m_memory;
 		CMutex			m_mutex1;

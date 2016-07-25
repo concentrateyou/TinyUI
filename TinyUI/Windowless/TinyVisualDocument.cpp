@@ -4,6 +4,7 @@
 #include "TinyVisualDocument.h"
 #include "TinyVisualComboBox.h"
 #include "TinyVisualRichText.h"
+#include "TinyVisualList.h"
 
 namespace TinyUI
 {
@@ -63,43 +64,43 @@ namespace TinyUI
 			//ps7->SetName("TinyVisualHScrollBar");
 			//ps7->SetScrollInfo(0, 400, 100, 0);
 
-			/*TinyVisualList* ps6 = static_cast<TinyVisualList*>(m_fs->Create(50, 40, 400, 300, m_spvisWindow, TinyVisualTag::LIST));
+			TinyVisualList* ps6 = static_cast<TinyVisualList*>(m_fs->Create(50, 40, 400, 300, m_spvisWindow, TinyVisualTag::LIST));
 			ps6->SetName("LIST-1");
 			ps6->SetText("LIST-1");
 			INT pos = 0;
 			for (INT i = 0; i < 200; i++)
 			{
-			TinyVisual* spvis = m_fs->Create(30, pos, 90, 30, ps6, TinyVisualTag::BUTTON);
-			TinyString str;
-			str = str.Format("BUTTON-%d", i);
-			spvis->SetName(str.STR());
-			spvis->SetText(str.STR());
-			spvis->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\button\\blue_normal.png");
-			spvis->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\button\\blue_hover.png");
-			spvis->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\button\\blue_down.png");
-			pos += 32;
+				TinyVisual* spvis = m_fs->Create(30, pos, 90, 30, ps6, TinyVisualTag::BUTTON);
+				TinyString str;
+				str = str.Format("BUTTON-%d", i);
+				spvis->SetName(str.STR());
+				spvis->SetText(str.STR());
+				spvis->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\button\\blue_normal.png");
+				spvis->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\button\\blue_hover.png");
+				spvis->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\button\\blue_down.png");
+				pos += 32;
 			}
 			TinyVisualList* ps7 = static_cast<TinyVisualList*>(m_fs->Create(0, pos, 300, 150, ps6, TinyVisualTag::LIST));
 			INT pos1 = 0;
 			for (INT i = 0; i < 100; i++)
 			{
-			TinyVisual* spvis = m_fs->Create(30, pos1, 90, 30, ps7, TinyVisualTag::BUTTON);
-			TinyString str;
-			str = str.Format("BUTTON-%d", i);
-			spvis->SetName(str.STR());
-			spvis->SetText(str.STR());
-			spvis->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\button\\blue_normal.png");
-			spvis->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\button\\blue_hover.png");
-			spvis->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\button\\blue_down.png");
-			pos1 += 32;
+				TinyVisual* spvis = m_fs->Create(30, pos1, 90, 30, ps7, TinyVisualTag::BUTTON);
+				TinyString str;
+				str = str.Format("BUTTON-%d", i);
+				spvis->SetName(str.STR());
+				spvis->SetText(str.STR());
+				spvis->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\button\\blue_normal.png");
+				spvis->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\button\\blue_hover.png");
+				spvis->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\button\\blue_down.png");
+				pos1 += 32;
 			}
 			ps7->SetScrollInfo(0, pos1, 150, 0);
 			ps7->SetName("LIST-2");
 			ps7->SetText("LIST-2");
-			ps6->SetScrollInfo(0, pos + 150, 300, 0);*/
+			ps6->SetScrollInfo(0, pos + 150, 300, 0);
 
 			//TinyVisualComboBox* ps8 = static_cast<TinyVisualComboBox*>(m_fs->Create(50, 50, 100, 28, m_spvisWindow, TinyVisualTag::COMBOBOX));
-			TinyVisualRichText* ps9 = static_cast<TinyVisualRichText*>(m_fs->Create(50, 50, 250, 250, m_spvisWindow, TinyVisualTag::RICHTEXT));
+			//TinyVisualRichText* ps9 = static_cast<TinyVisualRichText*>(m_fs->Create(50, 50, 250, 250, m_spvisWindow, TinyVisualTag::RICHTEXT));
 
 			return TRUE;
 		}

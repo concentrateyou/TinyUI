@@ -85,5 +85,27 @@ LONGLONG CPerformanceTimer::GetMicroseconds()
 	LONGLONG ticks = (1000000 * m_lastTime / m_lFrequency.QuadPart);
 	return ticks;
 }
+//////////////////////////////////////////////////////////////////////////
+CScopedLibrary::CScopedLibrary(const string& str)
+{
+	m_hInstance = ::LoadLibrary(str.c_str());
+}
+CScopedLibrary::~CScopedLibrary()
+{
+	if (m_hInstance)
+	{
+		::FreeLibrary(m_hInstance);
+		m_hInstance = NULL;
+	}
+}
+CScopedLibrary::operator HINSTANCE() const
+{
+	return m_hInstance;
+}
+
+HINSTANCE CScopedLibrary::Handle() const
+{
+	return m_hInstance;
+}
 
 

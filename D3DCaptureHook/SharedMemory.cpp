@@ -24,7 +24,7 @@ namespace D3D
 		char* pOutput = static_cast<char*>(output);
 		while (outputSize > 0)
 		{
-			const ULONGLONG outputBytes = static_cast<ULONG>(std::min<size_t>(outputSize, static_cast<size_t>((std::numeric_limits<ULONG>::max)())));
+			const ULONG outputBytes = static_cast<ULONG>(std::min<size_t>(outputSize, static_cast<size_t>((std::numeric_limits<ULONG>::max)())));
 			const BOOL success = SystemFunction036(pOutput, outputBytes) != FALSE;
 			outputSize -= outputBytes;
 			pOutput += outputBytes;

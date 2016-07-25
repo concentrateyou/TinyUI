@@ -25,7 +25,7 @@ class CEvent
 {
 	DISALLOW_COPY_AND_ASSIGN(CEvent);
 public:
-	CEvent(BOOL bInitiallyOwn = FALSE, BOOL bManualReset = FALSE, LPCTSTR lpszNAme = NULL, LPSECURITY_ATTRIBUTES lpsaAttribute = NULL);
+	CEvent();
 	~CEvent();
 	operator HANDLE() const;
 	HANDLE Handle();

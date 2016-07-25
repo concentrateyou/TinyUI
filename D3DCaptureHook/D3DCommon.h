@@ -21,8 +21,10 @@
 #include <utility>
 #include <algorithm>
 #include <limits>
+#include <string>
 #pragma comment(lib, "gdi32.lib")
 #pragma comment(lib, "shlwapi.lib")
+using namespace std;
 
 #ifndef ASSERT
 #define ASSERT(expr) _ASSERTE(expr)
@@ -56,6 +58,13 @@ private:\
 	TypeName() = delete;   \
 	DISALLOW_COPY_AND_ASSIGN(TypeName);
 
+#ifndef SAFE_DELETE_ARRAY
+#define SAFE_DELETE_ARRAY(p) { if (p) { delete[] (p); (p)=NULL; } }
+#endif    
+#ifndef SAFE_DELETE
+#define SAFE_DELETE(p)  { if (p) { delete (p);  (p)=NULL; } }
+#endif    
+
 template<typename T, size_t N>
 char(&ArraySizeHelper(T(&array)[N]))[N];
 #define arraysize(array) (sizeof(ArraySizeHelper(array)))
@@ -69,6 +78,7 @@ char(&ArraySizeHelper(T(&array)[N]))[N];
 /// </summary>
 class CPerformanceTimer
 {
+	DISALLOW_COPY_AND_ASSIGN(CPerformanceTimer);
 public:
 	CPerformanceTimer();
 	~CPerformanceTimer();
@@ -84,6 +94,73 @@ private:
 	LARGE_INTEGER	m_startPerformanceCount;
 };
 
+class CScopedLibrary
+{
+	DISALLOW_COPY_AND_ASSIGN(CScopedLibrary);
+public:
+	CScopedLibrary(const string& str);
+	~CScopedLibrary();
+	operator HINSTANCE() const;
+	HINSTANCE Handle() const;
+private:
+	HINSTANCE	m_hInstance;
+};
+
+template <class T>
+class CScopedArray
+{
+	DISALLOW_COPY_AND_ASSIGN(CScopedArray);
+public:
+	explicit CScopedArray(T* ps = 0);
+	~CScopedArray();
+	void Reset(T* ps = 0) throw();
+	T& operator[](INT i) const;
+	BOOL operator==(T* ps) const;
+	BOOL operator!=(T* ps) const;
+	T* Ptr() const throw();
+public:
+	T* _myP;
+};
+template<class T>
+CScopedArray<T>::CScopedArray(T* ps)
+	: _myP(ps)
+{
+
+}
+template<class T>
+CScopedArray<T>::~CScopedArray()
+{
+	SAFE_DELETE_ARRAY(_myP);
+}
+template<class T>
+T& CScopedArray<T>::operator[](INT i) const
+{
+	ASSERT(i >= 0);
+	ASSERT(_myP != NULL);
+	return _myP[i];
+}
+template<class T>
+BOOL CScopedArray<T>::operator==(T* ps) const
+{
+	return _myP == ps;
+}
+template<class T>
+BOOL CScopedArray<T>::operator!=(T* ps) const
+{
+	return _myP != ps;
+}
+template<class T>
+void CScopedArray<T>::Reset(T* ps) throw()
+{
+	if (ps != _myP)
+		delete[] _myP;
+	_myP = ps;
+}
+template<class T>
+T* CScopedArray<T>::Ptr() const throw()
+{
+	return _myP;
+}
 /// <summary>
 /// COM÷«ƒ‹÷∏’Î
 /// </summary>

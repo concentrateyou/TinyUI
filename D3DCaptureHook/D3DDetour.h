@@ -1,6 +1,6 @@
 #pragma once
 #include "D3DCommon.h"
-#include "D3DSemaphore.h"
+#include "D3DCore.h"
 
 class D3DDetour
 {
@@ -23,23 +23,21 @@ protected:
 #define CAPTURETYPE_SHAREDTEX   2
 typedef struct tagCaptureEntry
 {
-	UINT    captureType;
-	DWORD   format;
-	UINT    cx;
-	UINT	cy;
-	BOOL    bFlip;
-	UINT    pitch;
-	UINT    mapID;
-	DWORD   mapSize;
-	HWND	hwndCapture;
+	UINT		CaptureType;
+	DWORD		Format;
+	UINT		Width;
+	UINT		Height;
+	BOOL		bFlip;
+	UINT		Pitch;
+	UINT		MapID;
+	DWORD		MapSize;
+	HWND		HwndCapture;
 }CaptureShare;
-/// <summary>
-/// ÎÆÀíÊý¾Ý
-/// </summary>
+
 typedef struct tagSharedTextureData
 {
-	LONGLONG    frameTime;
-	DWORD       textureHandle;
+	LONGLONG    FrameTime;
+	HANDLE      TextureHandle;
 }SharedTextureData;
 
 inline FARPROC GetVTable(LPVOID ptr, UINT funcOffset)

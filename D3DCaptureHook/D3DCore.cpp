@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "D3DSemaphore.h"
+#include "D3DCore.h"
 
 CCriticalSection::CCriticalSection() throw()
 {
@@ -33,10 +33,10 @@ HRESULT CCriticalSection::Uninitialize() throw()
 	return S_OK;
 }
 /////////////////////////////////////////////////////////////////////////
-CEvent::CEvent(BOOL bInitiallyOwn, BOOL bManualReset, LPCTSTR pstrName, LPSECURITY_ATTRIBUTES lpsaAttribute)
+CEvent::CEvent()
 	:m_hEvent(NULL)
 {
-	m_hEvent = ::CreateEvent(lpsaAttribute, bManualReset, bInitiallyOwn, pstrName);
+
 }
 CEvent::~CEvent()
 {
@@ -56,8 +56,7 @@ HANDLE CEvent::Handle()
 }
 BOOL CEvent::CreateEvent(BOOL bInitiallyOwn, BOOL bManualReset, LPCTSTR lpszNAme, LPSECURITY_ATTRIBUTES lpsaAttribute)
 {
-	m_hEvent = ::CreateEvent(lpsaAttribute, bManualReset,
-		bInitiallyOwn, lpszNAme);
+	m_hEvent = ::CreateEvent(lpsaAttribute, bManualReset, bInitiallyOwn, lpszNAme);
 	return m_hEvent == NULL ? FALSE : TRUE;
 }
 BOOL CEvent::OpenEvent(DWORD dwDesiredAccess, BOOL bInheritHandle, LPCTSTR lpName)
