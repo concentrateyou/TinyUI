@@ -35,7 +35,11 @@ namespace TinyUI
 		}
 		TinyTextHost::~TinyTextHost()
 		{
-			SAFE_RELEASE(m_pts);
+			if (m_pts)
+			{
+				m_pts->OnTxInPlaceDeactivate();
+				m_pts->Release();
+			}
 			if (m_hDll != NULL)
 			{
 				::FreeLibrary(m_hDll);
@@ -230,21 +234,53 @@ namespace TinyUI
 		HRESULT TinyTextHost::TxGetPropertyBits(DWORD dwMask, DWORD *pdwBits)
 		{
 			ASSERT(m_spvis);
-			if (m_spvis->m_dwStyle & ES_MULTILINE)
-				*pdwBits |= TXTBIT_MULTILINE;
-			if (m_spvis->m_dwStyle & ES_PASSWORD)
-				*pdwBits |= TXTBIT_USEPASSWORD;
-			if (m_spvis->m_bAllowBeep)
-				*pdwBits |= TXTBIT_ALLOWBEEP;
-			if (!m_spvis->m_bAllowDrag)
-				*pdwBits |= TXTBIT_DISABLEDRAG;
-			if (m_spvis->m_bRichText)
-				*pdwBits |= TXTBIT_RICHTEXT;
-			*pdwBits |= TXTBIT_WORDWRAP;
-			*pdwBits |= TXTBIT_SAVESELECTION;
-			*pdwBits |= TXTBIT_CLIENTRECTCHANGE;
-			*pdwBits = *pdwBits & dwMask;
-			return S_OK;
+			/*	DWORD dwProperties = 0;
+				if (fRich)
+				{
+				dwProperties = TXTBIT_RICHTEXT;
+				}
+				if (m_dwStyle & ES_MULTILINE)
+				{
+				dwProperties |= TXTBIT_MULTILINE;
+				}
+				if (m_dwStyle & ES_READONLY)
+				{
+				dwProperties |= TXTBIT_READONLY;
+				}
+				if (m_dwStyle & ES_PASSWORD)
+				{
+				dwProperties |= TXTBIT_USEPASSWORD;
+				}
+				if (!(m_dwStyle & ES_NOHIDESEL))
+				{
+				dwProperties |= TXTBIT_HIDESELECTION;
+				}
+				if (fEnableAutoWordSel)
+				{
+				dwProperties |= TXTBIT_AUTOWORDSEL;
+				}
+				if (fVertical)
+				{
+				dwProperties |= TXTBIT_VERTICAL;
+				}
+
+				if (fWordWrap)
+				{
+				dwProperties |= TXTBIT_WORDWRAP;
+				}
+
+				if (fAllowBeep)
+				{
+				dwProperties |= TXTBIT_ALLOWBEEP;
+				}
+
+				if (fSaveSelection)
+				{
+				dwProperties |= TXTBIT_SAVESELECTION;
+				}
+
+				*pdwBits = dwProperties & dwMask;*/
+			return NOERROR;
 		}
 		HRESULT TinyTextHost::TxNotify(DWORD iNotify, void *pv)
 		{
@@ -266,14 +302,15 @@ namespace TinyUI
 		BOOL TinyTextHost::SetCharFormat(HFONT hFont, COLORREF crTextColor, LONG yOffset)
 		{
 			ASSERT(m_pts);
+			HWND hWND = m_spvis->m_document->GetVisualHWND()->Handle();
 			LOGFONT lf;
 			if (!::GetObject(hFont, sizeof(LOGFONT), &lf))
 				return FALSE;
-			m_cf.cbSize = sizeof(CHARFORMAT);
-			if (HDC hDC = ::GetDC(NULL))
+			m_cf.cbSize = sizeof(CHARFORMAT2);
+			if (HDC hDC = ::GetDC(hWND))
 			{
 				m_cf.yHeight = lf.lfHeight * LY_PER_INCH / GetDeviceCaps(hDC, LOGPIXELSY);
-				::ReleaseDC(NULL, hDC);
+				::ReleaseDC(hWND, hDC);
 			}
 			m_cf.yOffset = yOffset;
 			m_cf.crTextColor = GetSysColor(COLOR_WINDOWTEXT);
@@ -322,6 +359,17 @@ namespace TinyUI
 				return m_pts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE, TXTBIT_CLIENTRECTCHANGE) == S_OK;
 			}
 			return FALSE;
+		}
+		BOOL TinyTextHost::SetText(const string& str)
+		{
+			ASSERT(m_pts);
+			wstring wstr = StringToWString(str);
+			return m_pts->TxSetText(wstr.c_str()) != S_OK;
+		}
+		BOOL TinyTextHost::SetFocus(BOOL bFocus)
+		{
+			ASSERT(m_pts);
+			return m_pts->TxSendMessage(WM_SETFOCUS, 0, 0, 0) == S_OK;
 		}
 	}
 }

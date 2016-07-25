@@ -13,6 +13,7 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
+#define HOST_BORDER 0
 		/// <summary>
 		/// 无窗口富文本控件
 		/// </summary>
@@ -32,20 +33,13 @@ namespace TinyUI
 			LRESULT OnCreate() OVERRIDE;
 			LRESULT OnDestory() OVERRIDE;
 			BOOL	OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
-		public:
-			BOOL	SetReadonly(BOOL bReadOnly);
-			BOOL	SetPassword(BOOL bPassword);
-			BOOL	SetMultiline(BOOL bMultiline);
-			BOOL	SetRichText(BOOL bRichText);
-			BOOL	SetLimit(DWORD dwLimit);
-			BOOL	AllowBeep(BOOL bAllowBeep);
-			BOOL	AllowDrag(BOOL bAllowDrag);
 		private:
 			TinyScopedPtr<TinyTextHost> m_texthost;
-			DWORD						m_dwStyle;
-			BOOL						m_bRichText;
-			BOOL						m_bAllowBeep;
-			BOOL						m_bAllowDrag;
+			LONG xWidthSys;
+			LONG yHeightSys;
+			LONG xPerInch;
+			LONG yPerInch;
+			SIZEL						m_sizelExtent;
 		};
 	}
 }

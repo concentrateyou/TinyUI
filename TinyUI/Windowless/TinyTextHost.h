@@ -85,6 +85,8 @@ namespace TinyUI
 				LONG	dxOffset = 0,
 				WORD	wNumbering = 0);
 			BOOL SetRectangle(const TinyRectangle& rectangle);
+			BOOL SetText(const string& str);
+			BOOL SetFocus(BOOL bFocus);
 		private:
 			LONG				m_cRef;
 			ITextServices		*m_pts;

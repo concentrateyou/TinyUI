@@ -8,11 +8,7 @@ namespace TinyUI
 	namespace Windowless
 	{
 		TinyVisualRichText::TinyVisualRichText(TinyVisual* spvisParent, TinyVisualDocument* document)
-			:TinyVisual(spvisParent, document),
-			m_bAllowBeep(FALSE),
-			m_bAllowDrag(FALSE),
-			m_bRichText(FALSE),
-			m_dwStyle(0)
+			:TinyVisual(spvisParent, document)
 		{
 
 		}
@@ -35,15 +31,26 @@ namespace TinyUI
 
 		LRESULT TinyVisualRichText::OnCreate()
 		{
-			m_texthost.Reset(new TinyTextHost(this));
+			HWND hWND = m_document->GetVisualHWND()->Handle();
 			TinyApplication::GetInstance()->GetMessageLoop()->AddMessageFilter(this);
-			SetMultiline(TRUE);
-			SetRichText(TRUE);
+			m_texthost.Reset(new TinyTextHost(this));
+			HDC hDC = GetDC(hWND);
+			HFONT hOldFont = (HFONT)SelectObject(hDC, GetStockObject(SYSTEM_FONT));
+			TEXTMETRIC tm;
+			GetTextMetrics(hDC, &tm);
+			SelectObject(hDC, hOldFont);
+			xWidthSys = (INT)tm.tmAveCharWidth;
+			yHeightSys = (INT)tm.tmHeight;
+			xPerInch = GetDeviceCaps(hDC, LOGPIXELSX);
+			yPerInch = GetDeviceCaps(hDC, LOGPIXELSY);
 			TinyRectangle rectangle = m_document->GetWindowRect(this);
 			m_texthost->SetRectangle(rectangle);
+			m_sizelExtent.cx = DXtoHimetricX(TO_CX(rectangle) - 2 * HOST_BORDER, xPerInch);
+			m_sizelExtent.cy = DYtoHimetricY(TO_CY(rectangle) - 2 * HOST_BORDER, yPerInch);
 			m_texthost->SetCharFormat((HFONT)GetStockObject(DEFAULT_GUI_FONT));
 			m_texthost->SetParaFormat();
-			m_texthost->m_pts->TxSetText(L"²âÊÔ11111");
+			m_texthost->SetRectangle(rectangle);
+			m_texthost->SetText("²âÊÔ11111");
 			return FALSE;
 		}
 		LRESULT TinyVisualRichText::OnDestory()
@@ -70,86 +77,6 @@ namespace TinyUI
 				NULL,
 				NULL,
 				TXTVIEW_ACTIVE) == S_OK;
-		}
-		BOOL TinyVisualRichText::SetReadonly(BOOL fReadOnly)
-		{
-			if (fReadOnly)
-			{
-				m_dwStyle |= ES_READONLY;
-				return m_texthost->m_pts->OnTxPropertyBitsChange(TXTBIT_READONLY, TXTBIT_READONLY) == S_OK;
-			}
-			else
-			{
-				m_dwStyle &= ~(DWORD)ES_READONLY;
-				return m_texthost->m_pts->OnTxPropertyBitsChange(TXTBIT_READONLY, FALSE) == S_OK;
-			}
-		}
-		BOOL TinyVisualRichText::SetPassword(BOOL fPassword)
-		{
-			if (fPassword)
-			{
-				m_dwStyle |= ES_PASSWORD;
-				return m_texthost->m_pts->OnTxPropertyBitsChange(TXTBIT_USEPASSWORD, TXTBIT_USEPASSWORD) == S_OK;
-			}
-			else
-			{
-				m_dwStyle &= ~(DWORD)ES_PASSWORD;
-				return  m_texthost->m_pts->OnTxPropertyBitsChange(TXTBIT_USEPASSWORD, FALSE) == S_OK;
-			}
-		}
-		BOOL TinyVisualRichText::SetMultiline(BOOL fMultiline)
-		{
-			if (fMultiline)
-			{
-				m_dwStyle |= ES_MULTILINE;
-				return m_texthost->m_pts->OnTxPropertyBitsChange(TXTBIT_MULTILINE, TXTBIT_MULTILINE) == S_OK;
-			}
-			else
-			{
-				m_dwStyle &= ~(DWORD)ES_MULTILINE;
-				return  m_texthost->m_pts->OnTxPropertyBitsChange(TXTBIT_MULTILINE, FALSE) == S_OK;
-			}
-		}
-		BOOL TinyVisualRichText::SetRichText(BOOL bRichText)
-		{
-			m_bRichText = bRichText;
-			if (bRichText)
-			{
-				return m_texthost->m_pts->OnTxPropertyBitsChange(TXTBIT_RICHTEXT, TXTBIT_RICHTEXT) == S_OK;
-			}
-			else
-			{
-				return  m_texthost->m_pts->OnTxPropertyBitsChange(TXTBIT_RICHTEXT, FALSE) == S_OK;
-			}
-		}
-		BOOL TinyVisualRichText::AllowBeep(BOOL bAllowBeep)
-		{
-			m_bAllowBeep = bAllowBeep;
-			if (bAllowBeep)
-			{
-				return m_texthost->m_pts->OnTxPropertyBitsChange(TXTBIT_ALLOWBEEP, TXTBIT_ALLOWBEEP) == S_OK;
-			}
-			else
-			{
-				return  m_texthost->m_pts->OnTxPropertyBitsChange(TXTBIT_ALLOWBEEP, FALSE) == S_OK;
-			}
-		}
-		BOOL TinyVisualRichText::AllowDrag(BOOL bAllowDrag)
-		{
-			m_bAllowDrag = bAllowDrag;
-			if (!bAllowDrag)
-			{
-				return m_texthost->m_pts->OnTxPropertyBitsChange(TXTBIT_DISABLEDRAG, TXTBIT_DISABLEDRAG) == S_OK;
-			}
-			else
-			{
-				return  m_texthost->m_pts->OnTxPropertyBitsChange(TXTBIT_DISABLEDRAG, FALSE) == S_OK;
-			}
-		}
-		BOOL TinyVisualRichText::SetLimit(DWORD dwLimit)
-		{
-			m_texthost->m_dwLimit = dwLimit;
-			return m_texthost->m_pts->OnTxPropertyBitsChange(TXTBIT_MAXLENGTHCHANGE, TXTBIT_MAXLENGTHCHANGE) == S_OK;
 		}
 	}
 }
