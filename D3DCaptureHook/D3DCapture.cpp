@@ -170,6 +170,7 @@ namespace D3D
 			return FALSE;
 		if (!m_bTextures)
 		{
+			m_patchType = GetD3D9PatchType(m_hInstance);
 			CComPtr<IDirect3DSurface9> backBuffer;
 			if (SUCCEEDED(device->GetRenderTarget(0, &backBuffer)))
 			{
@@ -198,7 +199,7 @@ namespace D3D
 			{
 				return FALSE;
 			}
-			if (!backBuffer || FAILED(device->StretchRect(backBuffer, NULL, m_d3dSurface9, NULL, D3DTEXF_NONE)))
+			if (!backBuffer || FAILED(device->StretchRect(backBuffer, NULL, m_d3d9TextureGame, NULL, D3DTEXF_NONE)))
 			{
 				return FALSE;
 			}
@@ -304,7 +305,7 @@ namespace D3D
 			memcpy(patchAddress, patchData.Ptr(), patchSize);
 			VirtualProtect(patchAddress, patchSize, dwOldProtect, &dwOldProtect);
 		}
-		if (FAILED(d3d9Tex->GetSurfaceLevel(0, &m_d3dSurface9)))
+		if (FAILED(d3d9Tex->GetSurfaceLevel(0, &m_d3d9TextureGame)))
 		{
 			return FALSE;
 		}

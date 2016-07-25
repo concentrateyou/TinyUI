@@ -53,7 +53,7 @@ namespace D3D
 		CPerformanceTimer			m_timer;
 		CComPtr<ID3D10Device1>		m_d3d10Device1;
 		CComPtr<ID3D10Resource>		m_d3d10Resource;
-		CComPtr<IDirect3DSurface9>	m_d3dSurface9;
+		CComPtr<IDirect3DSurface9>	m_d3d9TextureGame;
 		CSharedMemory				m_textureMemery;
 		INT							m_patchType;
 		DWORD						m_sharedMemoryIDCounter;

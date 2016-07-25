@@ -19,7 +19,7 @@ namespace D3D
 	}
 	void RandBytes(void* output, size_t outputSize)
 	{
-		HINSTANCE advapi32 = LoadLibraryA("advapi32.dll");
+		CScopedLibrary advapi32(TEXT("advapi32.dll"));
 		SystemFunction036 = (SystemFunction036_T)GetProcAddress(advapi32, "SystemFunction036");
 		char* pOutput = static_cast<char*>(output);
 		while (outputSize > 0)
@@ -29,7 +29,6 @@ namespace D3D
 			outputSize -= outputBytes;
 			pOutput += outputBytes;
 		}
-		FreeLibrary(advapi32);
 	}
 	ULONGLONG RandUInteger64()
 	{
