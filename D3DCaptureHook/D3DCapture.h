@@ -69,7 +69,9 @@ namespace D3D
 		SharedTextureData*			m_pSharedTextureData;
 		D3DFORMAT					m_d3dFormat;
 		DXGI_FORMAT					m_dxgiFormat;
-		HMODULE						m_hD3D9DLL;
+		HINSTANCE					m_hD3D9;
+		HINSTANCE					m_hD3D10_1;
+		HINSTANCE					m_hDXGI;
 		HANDLE						m_pSharedHandle;
 		BOOL						m_bCapturing;
 		BOOL						m_bTextures;

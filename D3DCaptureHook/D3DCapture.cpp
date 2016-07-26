@@ -101,7 +101,9 @@ LPBYTE GetD3D9PatchAddress(HMODULE hModule, INT patchType)
 namespace D3D
 {
 	D3D9Capture::D3D9Capture()
-		:m_hD3D9DLL(NULL),
+		:m_hD3D9(NULL),
+		m_hD3D10_1(NULL),
+		m_hDXGI(NULL),
 		m_d3dFormat(D3DFMT_UNKNOWN),
 		m_dxgiFormat(DXGI_FORMAT_UNKNOWN),
 		m_pSharedHandle(NULL),
@@ -121,6 +123,22 @@ namespace D3D
 		m_d3d10Resource->Release();
 		m_d3d9TextureGame->Release();
 		m_d3d10Device1->Release();
+
+		if (m_hD3D9 != NULL)
+		{
+			::FreeLibrary(m_hD3D9);
+			m_hD3D9 = NULL;
+		}
+		if (m_hD3D10_1 != NULL)
+		{
+			::FreeLibrary(m_hD3D10_1);
+			m_hD3D10_1 = NULL;
+		}
+		if (m_hDXGI != NULL)
+		{
+			::FreeLibrary(m_hDXGI);
+			m_hDXGI = NULL;
+		}
 	}
 	D3D9Capture& D3D9Capture::Instance()
 	{
@@ -153,12 +171,12 @@ namespace D3D
 		if (FAILED(hRes = SHGetFolderPath(NULL, CSIDL_SYSTEM, NULL, SHGFP_TYPE_CURRENT, szD3DPath)))
 			return FALSE;
 		strcat_s(szD3DPath, MAX_PATH, TEXT("\\d3d9.dll"));
-		m_hD3D9DLL = GetModuleHandle(szD3DPath);
-		if (!m_hD3D9DLL)
+		m_hD3D9 = ::LoadLibrary(szD3DPath);
+		if (!m_hD3D9)
 		{
 			return FALSE;
 		}
-		D3D9CREATEEXPROC d3d9CreateEx = (D3D9CREATEEXPROC)GetProcAddress(m_hD3D9DLL, "Direct3DCreate9Ex");
+		D3D9CREATEEXPROC d3d9CreateEx = (D3D9CREATEEXPROC)GetProcAddress(m_hD3D9, "Direct3DCreate9Ex");
 		if (!d3d9CreateEx)
 		{
 			return FALSE;
@@ -200,7 +218,7 @@ namespace D3D
 		{
 			if (!m_bTextures)
 			{
-				m_patchType = GetD3D9PatchType(m_hD3D9DLL);
+				m_patchType = GetD3D9PatchType(m_hD3D9);
 				CComPtr<IDirect3DSurface9> backBuffer;
 				if (SUCCEEDED(device->GetRenderTarget(0, &backBuffer)))
 				{
@@ -262,22 +280,22 @@ namespace D3D
 	}
 	BOOL D3D9Capture::D3D9GPUHook(IDirect3DDevice9 *device)
 	{
-		CScopedLibrary d3d10_1(TEXT("d3d10_1.dll"));
-		if (!d3d10_1.IsValid())
+		m_hD3D10_1 = ::LoadLibrary(TEXT("d3d10_1.dll"));
+		if (!m_hD3D10_1)
 		{
 			return FALSE;
 		}
-		CScopedLibrary dxgi(TEXT("dxgi.dll"));
-		if (!dxgi.IsValid())
+		m_hDXGI = ::LoadLibrary(TEXT("dxgi.dll"));
+		if (!m_hDXGI)
 		{
 			return FALSE;
 		}
-		PFN_D3D10_CREATE_DEVICE1 d3d10CreateDevice1 = (PFN_D3D10_CREATE_DEVICE1)GetProcAddress(d3d10_1, "D3D10CreateDevice1");
+		PFN_D3D10_CREATE_DEVICE1 d3d10CreateDevice1 = (PFN_D3D10_CREATE_DEVICE1)GetProcAddress(m_hD3D10_1, "D3D10CreateDevice1");
 		if (!d3d10CreateDevice1)
 		{
 			return FALSE;
 		}
-		CREATEDXGIFACTORY1PROC createDXGIFactory1 = (CREATEDXGIFACTORY1PROC)GetProcAddress(dxgi, "CreateDXGIFactory1");
+		CREATEDXGIFACTORY1PROC createDXGIFactory1 = (CREATEDXGIFACTORY1PROC)GetProcAddress(m_hDXGI, "CreateDXGIFactory1");
 		if (!createDXGIFactory1)
 		{
 			return FALSE;
@@ -310,17 +328,17 @@ namespace D3D
 		texGameDesc.BindFlags = D3D10_BIND_RENDER_TARGET | D3D10_BIND_SHADER_RESOURCE;
 		texGameDesc.Usage = D3D10_USAGE_DEFAULT;
 		texGameDesc.MiscFlags = D3D10_RESOURCE_MISC_SHARED;
-		CComPtr<ID3D10Texture2D> d3d101Tex;
-		if (FAILED(m_d3d10Device1->CreateTexture2D(&texGameDesc, NULL, &d3d101Tex)))
+		CComPtr<ID3D10Texture2D> d3d10Texture2D;
+		if (FAILED(m_d3d10Device1->CreateTexture2D(&texGameDesc, NULL, &d3d10Texture2D)))
 		{
 			return FALSE;
 		}
-		if (FAILED(d3d101Tex->QueryInterface(__uuidof(ID3D10Resource), (void**)&m_d3d10Resource)))
+		if (FAILED(d3d10Texture2D->QueryInterface(__uuidof(ID3D10Resource), (void**)&m_d3d10Resource)))
 		{
 			return FALSE;
 		}
 		CComPtr<IDXGIResource> dxgiResource;
-		if (FAILED(d3d101Tex->QueryInterface(IID_IDXGIResource, (void**)&dxgiResource)))
+		if (FAILED(d3d10Texture2D->QueryInterface(IID_IDXGIResource, (void**)&dxgiResource)))
 		{
 			return FALSE;
 		}
@@ -328,7 +346,7 @@ namespace D3D
 		{
 			return FALSE;
 		}
-		LPBYTE patchAddress = (m_patchType != 0) ? GetD3D9PatchAddress(m_hD3D9DLL, m_patchType) : NULL;
+		LPBYTE patchAddress = (m_patchType != 0) ? GetD3D9PatchAddress(m_hD3D9, m_patchType) : NULL;
 		DWORD dwOldProtect;
 		size_t patchSize;
 		CScopedArray<BYTE> patchData;
