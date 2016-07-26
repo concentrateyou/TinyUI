@@ -93,10 +93,10 @@ BOOL CEvent::Unlock()
 	return TRUE;
 }
 /////////////////////////////////////////////////////////////////////////
-CMutex::CMutex(BOOL bInitiallyOwn, LPCTSTR lpszName, LPSECURITY_ATTRIBUTES lpsaAttribute)
+CMutex::CMutex()
 	:m_hMutex(NULL)
 {
-	m_hMutex = ::CreateMutex(lpsaAttribute, bInitiallyOwn, lpszName);
+
 }
 CMutex::~CMutex()
 {
@@ -105,6 +105,11 @@ CMutex::~CMutex()
 		::CloseHandle(m_hMutex);
 		m_hMutex = NULL;
 	}
+}
+BOOL CMutex::Create(BOOL bInitiallyOwn, LPCTSTR lpszName, LPSECURITY_ATTRIBUTES lpsaAttribute)
+{
+	m_hMutex = ::CreateMutex(lpsaAttribute, bInitiallyOwn, lpszName);
+	return m_hMutex == NULL ? FALSE : TRUE;
 }
 BOOL CMutex::Open(DWORD dwDesiredAccess, BOOL bInheritHandle, LPCTSTR lpName)
 {

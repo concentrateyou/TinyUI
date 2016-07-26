@@ -12,14 +12,15 @@ using namespace TinyUI;
 
 namespace D3D
 {
-	class D3DSystem
+	class CD3DSystem
 	{
 	public:
-		D3DSystem();
-		~D3DSystem();
+		CD3DSystem();
+		~CD3DSystem();
 		BOOL Initialize(HWND hWND, INT cx, INT cy);//D3D标准化的初始化过程
 		void SetViewport(FLOAT x, FLOAT y, FLOAT cx, FLOAT cy);
 		void SetScissorRect(const D3D10_RECT *pRects);
+		ID3D10Device1*	GetD3D() const;
 	private:
 		DXGI_SWAP_CHAIN_DESC				m_dsc;
 		TinyComPtr<IDXGISwapChain>			m_swap;

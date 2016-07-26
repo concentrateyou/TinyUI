@@ -8,12 +8,11 @@
 #include "Control/TinyButton.h"
 #include "Control/TinyRichTextBox.h"
 #include "Common/TinyEvent.h"
-#include "D3DHook.h"
+#include "D3DDrawPanel.h"
 #include <algorithm>
 #include <map>
 #include <functional>
-#pragma comment(lib,"TinyUI.lib")
-using namespace TinyUI;
+#include "D3DCaptureSource.h"
 
 class CMainFrame : public TinyControl
 {
@@ -33,19 +32,16 @@ public:
 	LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-	LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	//·½·¨
 	BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 private:
 	void OnInjectLibrary(void*, INT);
-	void AppendLog(TinyString& str);
-	DWORD FindProcess(const TinyString& name);
 protected:
-	TinySize		m_size;
-	TinyButton		m_inject;
-	TinyLabel		m_lblState;
-	TinyRichTextBox	m_txtLog;
-	CHARFORMAT2		m_cf;
+	TinyButton			m_inject;
+	TinyLabel			m_lblState;
+	CD3DDrawPanel		m_drawCtrl;
+	CHARFORMAT2			m_cf;
+	CD3DCaptureSource	m_source;
 	TinyScopedPtr<Delegate<void(void*, INT)>> m_onInjectClick;
 };
 

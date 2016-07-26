@@ -32,7 +32,7 @@ namespace TinyUI
 		DECLARE_DYNAMIC(TinyEvent);
 		DISALLOW_COPY_AND_ASSIGN(TinyEvent);
 	public:
-		TinyEvent(BOOL bInitiallyOwn = FALSE, BOOL bManualReset = FALSE, LPCTSTR lpszNAme = NULL, LPSECURITY_ATTRIBUTES lpsaAttribute = NULL);
+		TinyEvent();
 		~TinyEvent();
 		operator HANDLE() const;
 		HANDLE Handle();
@@ -54,8 +54,9 @@ namespace TinyUI
 		DECLARE_DYNAMIC(TinyMutex);
 		DISALLOW_COPY_AND_ASSIGN(TinyMutex);
 	public:
-		TinyMutex(BOOL bInitiallyOwn = FALSE, LPCTSTR lpszName = NULL, LPSECURITY_ATTRIBUTES lpsaAttribute = NULL);
+		TinyMutex();
 		~TinyMutex();
+		BOOL Create(BOOL bInitiallyOwn = FALSE, LPCTSTR lpszName = NULL, LPSECURITY_ATTRIBUTES lpsaAttribute = NULL);
 		BOOL Open(DWORD dwDesiredAccess, BOOL bInheritHandle, LPCTSTR lpName);
 		operator HANDLE() const;
 		HANDLE Handle();
@@ -92,6 +93,21 @@ namespace TinyUI
 		~TinyAutoLock();
 	private:
 		TinyLock& m_lock;
+	};
+	/// <summary>
+	/// Library·â×° 
+	/// </summary>
+	class TinyScopedLibrary
+	{
+		DISALLOW_COPY_AND_ASSIGN(TinyScopedLibrary);
+	public:
+		TinyScopedLibrary(LPCSTR pzName);
+		~TinyScopedLibrary();
+		BOOL IsValid() const;
+		operator HINSTANCE() const;
+		HINSTANCE Handle() const;
+	private:
+		HINSTANCE	m_hInstance;
 	};
 };
 

@@ -105,8 +105,8 @@ namespace D3D
 		m_d3dFormat(D3DFMT_UNKNOWN),
 		m_dxgiFormat(DXGI_FORMAT_UNKNOWN),
 		m_pSharedHandle(NULL),
-		m_pDirect3DDevice9(NULL),
-		m_sharedTexture(NULL),
+		m_pGameDevice(NULL),
+		m_pSharedTextureData(NULL),
 		m_bCapturing(FALSE),
 		m_bTextures(FALSE),
 		m_bUseSharedTextures(FALSE),
@@ -118,7 +118,9 @@ namespace D3D
 	}
 	D3D9Capture::~D3D9Capture()
 	{
-
+		m_d3d10Resource->Release();
+		m_d3d9TextureGame->Release();
+		m_d3d10Device1->Release();
 	}
 	D3D9Capture& D3D9Capture::Instance()
 	{
@@ -127,6 +129,25 @@ namespace D3D
 	}
 	BOOL D3D9Capture::Initialize(HWND hWND)
 	{
+		DWORD dwProcessID = GetCurrentProcessId();
+		stringstream stream;
+		stream << BEGIN_CAPTURE_EVENT << dwProcessID;
+		if (!m_beginCapture.CreateEvent(FALSE, FALSE, stream.str().c_str()))
+		{
+			if (!m_beginCapture.OpenEvent(EVENT_ALL_ACCESS, FALSE, stream.str().c_str()))
+			{
+				return FALSE;
+			}
+		}
+		stream.clear();
+		stream << END_CAPTURE_EVENT << dwProcessID;
+		if (!m_endCapture.CreateEvent(FALSE, FALSE, stream.str().c_str()))
+		{
+			if (!m_endCapture.OpenEvent(EVENT_ALL_ACCESS, FALSE, stream.str().c_str()))
+			{
+				return FALSE;
+			}
+		}
 		HRESULT hRes = S_OK;
 		CHAR szD3DPath[MAX_PATH];
 		if (FAILED(hRes = SHGetFolderPath(NULL, CSIDL_SYSTEM, NULL, SHGFP_TYPE_CURRENT, szD3DPath)))
@@ -146,7 +167,7 @@ namespace D3D
 		if (FAILED(hRes = (*d3d9CreateEx)(D3D_SDK_VERSION, &d3d9ex)))
 			return FALSE;
 		D3DPRESENT_PARAMETERS pp;
-		ZeroMemory(&pp, sizeof(pp));
+		::ZeroMemory(&pp, sizeof(pp));
 		pp.Windowed = 1;
 		pp.SwapEffect = D3DSWAPEFFECT_FLIP;
 		pp.BackBufferFormat = D3DFMT_A8R8G8B8;
@@ -163,62 +184,81 @@ namespace D3D
 		}
 		return TRUE;
 	}
-	BOOL D3D9Capture::D3D9DrawStuff(IDirect3DDevice9 *device)
+	BOOL D3D9Capture::D3D9Draw(IDirect3DDevice9 *device)
 	{
 		ASSERT(device);
-		if (!m_bCapturing)
-			return FALSE;
-		if (!m_bTextures)
+		if (m_bCapturing && m_endCapture.Lock(0))
 		{
-			m_patchType = GetD3D9PatchType(m_hD3D9DLL);
-			CComPtr<IDirect3DSurface9> backBuffer;
-			if (SUCCEEDED(device->GetRenderTarget(0, &backBuffer)))
+			m_bCapturing = FALSE;
+			return FALSE;
+		}
+		if (!m_bCapturing && m_beginCapture.Lock(0))
+		{
+			m_bCapturing = TRUE;
+		}
+		if (m_bCapturing)
+		{
+			if (!m_bTextures)
 			{
-				D3DSURFACE_DESC sd;
-				ZeroMemory(&sd, sizeof(sd));
-				if (SUCCEEDED(backBuffer->GetDesc(&sd)))
+				m_patchType = GetD3D9PatchType(m_hD3D9DLL);
+				CComPtr<IDirect3DSurface9> backBuffer;
+				if (SUCCEEDED(device->GetRenderTarget(0, &backBuffer)))
 				{
-					m_d3dFormat = sd.Format;
-					m_dxgiFormat = GetDXGIFormat(sd.Format);
-					m_d3dCaptureShare.Format = sd.Format;
-					m_d3dCaptureShare.Width = sd.Width;
-					m_d3dCaptureShare.Height = sd.Height;
-					m_bTextures = D3D9GPUHook(device);
+					D3DSURFACE_DESC sd;
+					::ZeroMemory(&sd, sizeof(sd));
+					if (SUCCEEDED(backBuffer->GetDesc(&sd)))
+					{
+						m_d3dFormat = sd.Format;
+						m_dxgiFormat = GetDXGIFormat(sd.Format);
+						m_d3dSharedTexture.Format = sd.Format;
+						m_d3dSharedTexture.Width = sd.Width;
+						m_d3dSharedTexture.Height = sd.Height;
+						m_bTextures = D3D9GPUHook(device);
+					}
 				}
 			}
-		}
-		if (m_bTextures)
-		{
-			DWORD dwNextCapture = m_dwCurrentCapture == 0 ? 1 : 0;
-			CComPtr<IDirect3DSurface9> backBuffer;
-			if (FAILED(device->GetRenderTarget(0, &backBuffer)))
+			if (m_bTextures)
 			{
-				return FALSE;
+				DWORD dwNextCapture = m_dwCurrentCapture == 0 ? 1 : 0;
+				CComPtr<IDirect3DSurface9> backBuffer;
+				if (FAILED(device->GetRenderTarget(0, &backBuffer)))
+				{
+					if (FAILED(device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer)))
+					{
+						return FALSE;
+					}
+				}
+				if (!backBuffer || FAILED(device->StretchRect(backBuffer, NULL, m_d3d9TextureGame, NULL, D3DTEXF_NONE)))
+				{
+					return FALSE;
+				}
+				m_dwCurrentCapture = dwNextCapture;
 			}
-			if (FAILED(device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer)))
-			{
-				return FALSE;
-			}
-			if (!backBuffer || FAILED(device->StretchRect(backBuffer, NULL, m_d3d9TextureGame, NULL, D3DTEXF_NONE)))
-			{
-				return FALSE;
-			}
-			m_dwCurrentCapture = dwNextCapture;
 		}
 		return TRUE;
 	}
-	UINT D3D9Capture::InitializeSharedMemoryGPUCapture(SharedTextureData ** textureData)
+	void D3D9Capture::D3DReset()
 	{
-		stringstream name;
-		name << TEXTURE_MEMORY << ++m_sharedMemoryIDCounter;
-		INT totalSize = sizeof(SharedTextureData);
-		if (!m_textureMemery.Create(name.str(), totalSize))
-			return 0;
+		m_bTextures = FALSE;
+		m_d3d10Resource->Release();
+		m_d3d9TextureGame->Release();
+		m_d3d10Device1->Release();
+		m_textureMemery.Unmap();
+		m_textureMemery.Close();
+		m_pSharedTextureData = NULL;
+	}
+	BOOL D3D9Capture::InitializeSharedMemoryGPUCapture(SharedTextureData** textureData)
+	{
+		INT size = sizeof(SharedTextureData);
+		m_textureMemery.Unmap();
+		m_textureMemery.Close();
+		if (!m_textureMemery.Create(TEXTURE_MEMORY, size))
+			return FALSE;
 		if (!m_textureMemery.Map(0, 0))
-			return 0;
+			return FALSE;
 		*textureData = (SharedTextureData*)m_textureMemery.Address();
 		(*textureData)->FrameTime = 0;
-		return m_sharedMemoryIDCounter;
+		return TRUE;
 	}
 	BOOL D3D9Capture::D3D9GPUHook(IDirect3DDevice9 *device)
 	{
@@ -261,8 +301,8 @@ namespace D3D
 		}
 		D3D10_TEXTURE2D_DESC texGameDesc;
 		ZeroMemory(&texGameDesc, sizeof(texGameDesc));
-		texGameDesc.Width = m_d3dCaptureShare.Width;
-		texGameDesc.Height = m_d3dCaptureShare.Height;
+		texGameDesc.Width = m_d3dSharedTexture.Width;
+		texGameDesc.Height = m_d3dSharedTexture.Height;
 		texGameDesc.MipLevels = 1;
 		texGameDesc.ArraySize = 1;
 		texGameDesc.Format = m_dxgiFormat;
@@ -303,8 +343,8 @@ namespace D3D
 			memcpy(patchData.Ptr(), patchAddress, patchSize);
 			memcpy(patchAddress, patch[m_patchType - 1].patchData, patchSize);
 		}
-		CComPtr<IDirect3DTexture9> d3d9Tex;
-		if (FAILED(device->CreateTexture(m_d3dCaptureShare.Width, m_d3dCaptureShare.Height, 1, D3DUSAGE_RENDERTARGET, (D3DFORMAT)m_d3dFormat, D3DPOOL_DEFAULT, &d3d9Tex, &m_pSharedHandle)))
+		CComPtr<IDirect3DTexture9> d3d9Texture;
+		if (FAILED(device->CreateTexture(m_d3dSharedTexture.Width, m_d3dSharedTexture.Height, 1, D3DUSAGE_RENDERTARGET, (D3DFORMAT)m_d3dFormat, D3DPOOL_DEFAULT, &d3d9Texture, &m_pSharedHandle)))
 		{
 			return FALSE;
 		}
@@ -313,18 +353,17 @@ namespace D3D
 			memcpy(patchAddress, patchData.Ptr(), patchSize);
 			VirtualProtect(patchAddress, patchSize, dwOldProtect, &dwOldProtect);
 		}
-		if (FAILED(d3d9Tex->GetSurfaceLevel(0, &m_d3d9TextureGame)))
+		if (FAILED(d3d9Texture->GetSurfaceLevel(0, &m_d3d9TextureGame)))
 		{
 			return FALSE;
 		}
-		m_d3dCaptureShare.MapID = InitializeSharedMemoryGPUCapture(&m_sharedTexture);
-		if (!m_d3dCaptureShare.MapID)
+		if (!InitializeSharedMemoryGPUCapture(&m_pSharedTextureData))
 		{
 			return FALSE;
 		}
-		m_d3dCaptureShare.CaptureType = CAPTURETYPE_SHAREDTEX;
-		m_d3dCaptureShare.bFlip = FALSE;
-		m_sharedTexture->TextureHandle = m_pSharedHandle;
+		m_d3dSharedTexture.CaptureType = CAPTURETYPE_SHAREDTEX;
+		m_d3dSharedTexture.bFlip = FALSE;
+		m_pSharedTextureData->TextureHandle = m_pSharedHandle;
 		return TRUE;
 	}
 	HRESULT STDMETHODCALLTYPE D3D9Capture::D3D9EndScene(IDirect3DDevice9 *device)
@@ -332,22 +371,20 @@ namespace D3D
 		D3D9Capture::Instance().m_lock.Acquire();
 		D3D9Capture::Instance().m_d3d9EndScene.EndDetour();
 		HRESULT hRes = S_OK;
-		if (!D3D9Capture::Instance().m_pDirect3DDevice9)
+		if (!D3D9Capture::Instance().m_pGameDevice)
 		{
-			D3D9Capture::Instance().m_pDirect3DDevice9 = device;
+			D3D9Capture::Instance().m_pGameDevice = device;
 			CComPtr<IDirect3DSwapChain9> swapChain;
-			hRes = device->GetSwapChain(0, &swapChain);
-			if (SUCCEEDED(hRes))
+			if (SUCCEEDED(device->GetSwapChain(0, &swapChain)))
 			{
 				D3DPRESENT_PARAMETERS pp;
-				hRes = swapChain->GetPresentParameters(&pp);
-				if (SUCCEEDED(hRes))
+				if (SUCCEEDED(swapChain->GetPresentParameters(&pp)))
 				{
-					D3D9Capture::Instance().m_d3dCaptureShare.CaptureType = CAPTURETYPE_SHAREDTEX;
-					D3D9Capture::Instance().m_d3dCaptureShare.Format = pp.BackBufferFormat;
-					D3D9Capture::Instance().m_d3dCaptureShare.Width = pp.BackBufferWidth;
-					D3D9Capture::Instance().m_d3dCaptureShare.Height = pp.BackBufferHeight;
-					D3D9Capture::Instance().m_d3dCaptureShare.HwndCapture = pp.hDeviceWindow;
+					D3D9Capture::Instance().m_d3dSharedTexture.CaptureType = CAPTURETYPE_SHAREDTEX;
+					D3D9Capture::Instance().m_d3dSharedTexture.Format = pp.BackBufferFormat;
+					D3D9Capture::Instance().m_d3dSharedTexture.Width = pp.BackBufferWidth;
+					D3D9Capture::Instance().m_d3dSharedTexture.Height = pp.BackBufferHeight;
+					D3D9Capture::Instance().m_d3dSharedTexture.HwndCapture = pp.hDeviceWindow;
 					D3D9Capture::Instance().m_d3d9PresentEx.Initialize(GetVTable(device, (484 / 4)), (FARPROC)D3D9PresentEx);
 					D3D9Capture::Instance().m_d3d9PresentEx.BeginDetour();
 					D3D9Capture::Instance().m_d3d9ResetEx.Initialize(GetVTable(device, (528 / 4)), (FARPROC)D3D9ResetEx);
@@ -371,7 +408,7 @@ namespace D3D
 	HRESULT STDMETHODCALLTYPE D3D9Capture::D3D9Present(IDirect3DDevice9 *device, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion)
 	{
 		D3D9Capture::Instance().m_d3d9Present.EndDetour();
-		D3D9Capture::Instance().D3D9DrawStuff(device);
+		D3D9Capture::Instance().D3D9Draw(device);
 		HRESULT hRes = device->Present(pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion);
 		D3D9Capture::Instance().m_d3d9Present.BeginDetour();
 		return hRes;
@@ -379,7 +416,7 @@ namespace D3D
 	HRESULT STDMETHODCALLTYPE D3D9Capture::D3D9PresentEx(IDirect3DDevice9Ex *device, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion, DWORD dwFlags)
 	{
 		D3D9Capture::Instance().m_d3d9PresentEx.EndDetour();
-		D3D9Capture::Instance().D3D9DrawStuff(device);
+		D3D9Capture::Instance().D3D9Draw(device);
 		HRESULT hRes = device->PresentEx(pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion, dwFlags);
 		D3D9Capture::Instance().m_d3d9PresentEx.BeginDetour();
 		return hRes;
@@ -395,7 +432,7 @@ namespace D3D
 	HRESULT STDMETHODCALLTYPE D3D9Capture::D3D9Reset(IDirect3DDevice9 *device, D3DPRESENT_PARAMETERS *params)
 	{
 		D3D9Capture::Instance().m_d3d9Reset.EndDetour();
-
+		D3D9Capture::Instance().D3DReset();
 		HRESULT hRes = device->Reset(params);
 		D3D9Capture::Instance().m_d3d9Reset.BeginDetour();
 		return hRes;
@@ -403,7 +440,6 @@ namespace D3D
 	HRESULT STDMETHODCALLTYPE D3D9Capture::D3D9ResetEx(IDirect3DDevice9Ex *device, D3DPRESENT_PARAMETERS *params, D3DDISPLAYMODEEX *fullscreenData)
 	{
 		D3D9Capture::Instance().m_d3d9ResetEx.EndDetour();
-
 		HRESULT hRes = device->ResetEx(params, fullscreenData);
 		D3D9Capture::Instance().m_d3d9ResetEx.BeginDetour();
 		return hRes;

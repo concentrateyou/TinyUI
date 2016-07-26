@@ -46,8 +46,9 @@ class CMutex
 {
 	DISALLOW_COPY_AND_ASSIGN(CMutex);
 public:
-	CMutex(BOOL bInitiallyOwn = FALSE, LPCTSTR lpszName = NULL, LPSECURITY_ATTRIBUTES lpsaAttribute = NULL);
+	CMutex();
 	~CMutex();
+	BOOL Create(BOOL bInitiallyOwn = FALSE, LPCTSTR lpszName = NULL, LPSECURITY_ATTRIBUTES lpsaAttribute = NULL);
 	BOOL Open(DWORD dwDesiredAccess, BOOL bInheritHandle, LPCTSTR lpName);
 	operator HANDLE() const;
 	HANDLE Handle();

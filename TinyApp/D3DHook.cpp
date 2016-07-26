@@ -42,20 +42,17 @@ namespace D3D
 		hInstance = GetModuleHandle(TEXT("KERNEL32"));
 		if (!hInstance)
 			return FALSE;
-
 		pfnWriteProcessMemory = (WRITEPROCESSMEMORY)GetProcAddress(hInstance, pWPMSTR);
 		pfnCreateRemoteThread = (CREATEREMOTETHREAD)GetProcAddress(hInstance, pCRTSTR);
 		pfnVirtualAllocEx = (VIRTUALALLOCEX)GetProcAddress(hInstance, pVAESTR);
 		pfnVirtualFreeEx = (VIRTUALFREEEX)GetProcAddress(hInstance, pVFESTR);
 		if (!pfnWriteProcessMemory || !pfnCreateRemoteThread || !pfnVirtualAllocEx || !pfnVirtualFreeEx)
 			return FALSE;
-
 		LPVOID pAlloc = (LPVOID)(*pfnVirtualAllocEx)(hProcess, NULL, dwSize, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
 		if (!pAlloc)
 			return FALSE;
-
-		SIZE_T  writtenSize = 0;
-		BOOL bRes = (*pfnWriteProcessMemory)(hProcess, pAlloc, (LPVOID)pszDLL, dwSize, &writtenSize);
+		SIZE_T size = 0;
+		BOOL bRes = (*pfnWriteProcessMemory)(hProcess, pAlloc, (LPVOID)pszDLL, dwSize, &size);
 		if (!bRes)
 			goto error;
 		lpStartAddress = (FARPROC)GetProcAddress(hInstance, pLLSTR);

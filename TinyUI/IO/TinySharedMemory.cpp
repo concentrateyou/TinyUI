@@ -8,6 +8,9 @@ namespace TinyUI
 {
 	namespace IO
 	{
+		typedef BOOL(WINAPI *SystemFunction036_T)(PVOID, ULONG);
+		SystemFunction036_T SystemFunction036;
+
 		HANDLE CreateFileMappingReducedPermissions(SECURITY_ATTRIBUTES* sa, DWORD dwSize, LPCSTR name)
 		{
 			HANDLE hFile = CreateFileMapping(INVALID_HANDLE_VALUE, sa, PAGE_READWRITE, 0, dwSize, name);

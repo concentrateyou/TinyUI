@@ -12,9 +12,7 @@ namespace D3D
 		m_bD3D8Hook(FALSE),
 		m_bD3D9Hook(FALSE),
 		m_bD3D10Hook(FALSE),
-		m_bD3D11Hook(FALSE),
-		m_mutex1(FALSE, TEXTURE_MUTEX1, NULL),
-		m_mutex2(FALSE, TEXTURE_MUTEX2, NULL)
+		m_bD3D11Hook(FALSE)
 	{
 
 	}
@@ -54,63 +52,57 @@ namespace D3D
 	DWORD WINAPI CD3DCapture::CaptureLoop(LPVOID ps)
 	{
 		CD3DCapture* _this = reinterpret_cast<CD3DCapture*>(ps);
-		_this->m_memory.Create(CAPTURE_MEMORY, sizeof(CaptureShare));
+		_this->m_memory.Create(CAPTURE_MEMORY, sizeof(SharedTexture));
 		if (!_this->m_memory.Map())
 			return FALSE;
 		_this->m_hWNDMain = FindWindow(IQIYI_WINDOW_CLASS, NULL);
-		if (_this->m_mutex1.Open(MUTEX_ALL_ACCESS, FALSE, TEXTURE_MUTEX1))
+		WNDCLASS wc;
+		ZeroMemory(&wc, sizeof(wc));
+		wc.style = CS_OWNDC;
+		wc.hInstance = _this->m_hInstance;
+		wc.lpfnWndProc = (WNDPROC)DefWindowProc;
+		wc.lpszClassName = OPENGL_WINDOWCLASS;
+		if (RegisterClass(&wc))
 		{
-			if (_this->m_mutex2.Open(MUTEX_ALL_ACCESS, FALSE, TEXTURE_MUTEX2))
-			{
-				WNDCLASS wc;
-				ZeroMemory(&wc, sizeof(wc));
-				wc.style = CS_OWNDC;
-				wc.hInstance = _this->m_hInstance;
-				wc.lpfnWndProc = (WNDPROC)DefWindowProc;
-				wc.lpszClassName = OPENGL_WINDOWCLASS;
-				if (RegisterClass(&wc))
-				{
-					_this->m_hWNDOpenGL = CreateWindowEx(0,
-						OPENGL_WINDOWCLASS,
-						TEXT("Open GL Capture Window"),
-						WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS,
-						0, 0,
-						1, 1,
-						NULL,
-						NULL,
-						_this->m_hInstance,
-						NULL
-						);
-					if (!_this->m_hWNDOpenGL)
-						return FALSE;
-				}
-				wc.lpszClassName = D3D_WINDOWCLASS;
-				if (RegisterClass(&wc))
-				{
-					_this->m_hWNDD3D = CreateWindowEx(0,
-						OPENGL_WINDOWCLASS,
-						TEXT("D3D Caption Window"),
-						WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS,
-						0, 0,
-						1, 1,
-						NULL,
-						NULL,
-						_this->m_hInstance,
-						NULL
-						);
-					if (!_this->m_hWNDD3D)
-						return FALSE;
-				}
+			_this->m_hWNDOpenGL = CreateWindowEx(0,
+				OPENGL_WINDOWCLASS,
+				TEXT("Open GL Capture Window"),
+				WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS,
+				0, 0,
+				1, 1,
+				NULL,
+				NULL,
+				_this->m_hInstance,
+				NULL
+				);
+			if (!_this->m_hWNDOpenGL)
+				return FALSE;
+		}
+		wc.lpszClassName = D3D_WINDOWCLASS;
+		if (RegisterClass(&wc))
+		{
+			_this->m_hWNDD3D = CreateWindowEx(0,
+				OPENGL_WINDOWCLASS,
+				TEXT("D3D Caption Window"),
+				WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS,
+				0, 0,
+				1, 1,
+				NULL,
+				NULL,
+				_this->m_hInstance,
+				NULL
+				);
+			if (!_this->m_hWNDD3D)
+				return FALSE;
+		}
 
-				_this->TryCapture();
+		_this->TryCapture();
 
-				MSG msg;
-				while (GetMessage(&msg, NULL, 0, 0))
-				{
-					TranslateMessage(&msg);
-					DispatchMessage(&msg);
-				}
-			}
+		MSG msg;
+		while (GetMessage(&msg, NULL, 0, 0))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
 		}
 		return FALSE;
 	}

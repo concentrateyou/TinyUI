@@ -1,8 +1,12 @@
 #include "../stdafx.h"
 #include "TinyRand.h"
+#include "TinyCore.h"
 
 namespace TinyUI
 {
+	typedef BOOL(WINAPI *SystemFunction036_T)(PVOID, ULONG);
+	SystemFunction036_T SystemFunction036;
+
 	ULONGLONG RandUInteger64()
 	{
 		ULONGLONG number;
@@ -27,6 +31,8 @@ namespace TinyUI
 	}
 	void RandBytes(void* output, size_t outputSize)
 	{
+		TinyScopedLibrary advapi32(TEXT("advapi32.dll"));
+		SystemFunction036 = (SystemFunction036_T)GetProcAddress(advapi32, "SystemFunction036");
 		char* pOutput = static_cast<char*>(output);
 		while (outputSize > 0)
 		{

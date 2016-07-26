@@ -36,10 +36,10 @@ namespace TinyUI
 		return S_OK;
 	}
 	/////////////////////////////////////////////////////////////////////////
-	TinyEvent::TinyEvent(BOOL bInitiallyOwn, BOOL bManualReset, LPCTSTR pstrName, LPSECURITY_ATTRIBUTES lpsaAttribute)
+	TinyEvent::TinyEvent()
 		:m_hEvent(NULL)
 	{
-		m_hEvent = ::CreateEvent(lpsaAttribute, bManualReset, bInitiallyOwn, pstrName);
+
 	}
 	TinyEvent::~TinyEvent()
 	{
@@ -97,10 +97,10 @@ namespace TinyUI
 		return TRUE;
 	}
 	/////////////////////////////////////////////////////////////////////////
-	TinyMutex::TinyMutex(BOOL bInitiallyOwn, LPCTSTR lpszName, LPSECURITY_ATTRIBUTES lpsaAttribute)
+	TinyMutex::TinyMutex()
 		:m_hMutex(NULL)
 	{
-		m_hMutex = ::CreateMutex(lpsaAttribute, bInitiallyOwn, lpszName);
+
 	}
 	TinyMutex::~TinyMutex()
 	{
@@ -109,6 +109,11 @@ namespace TinyUI
 			::CloseHandle(m_hMutex);
 			m_hMutex = NULL;
 		}
+	}
+	BOOL TinyMutex::Create(BOOL bInitiallyOwn, LPCTSTR lpszName, LPSECURITY_ATTRIBUTES lpsaAttribute)
+	{
+		m_hMutex = ::CreateMutex(lpsaAttribute, bInitiallyOwn, lpszName);
+		return m_hMutex == NULL ? FALSE : TRUE;
 	}
 	BOOL TinyMutex::Open(DWORD dwDesiredAccess, BOOL bInheritHandle, LPCTSTR lpName)
 	{
@@ -166,5 +171,32 @@ namespace TinyUI
 	TinyAutoLock::~TinyAutoLock()
 	{
 		m_lock.Release();
+	}
+	//////////////////////////////////////////////////////////////////////////
+	TinyScopedLibrary::TinyScopedLibrary(LPCSTR pzName)
+	{
+		m_hInstance = ::LoadLibrary(pzName);
+	}
+	TinyScopedLibrary::~TinyScopedLibrary()
+	{
+		if (m_hInstance)
+		{
+			::FreeLibrary(m_hInstance);
+			m_hInstance = NULL;
+		}
+	}
+	TinyScopedLibrary::operator HINSTANCE() const
+	{
+		return m_hInstance;
+	}
+
+	HINSTANCE TinyScopedLibrary::Handle() const
+	{
+		return m_hInstance;
+	}
+
+	BOOL TinyScopedLibrary::IsValid() const
+	{
+		return m_hInstance != NULL;
 	}
 };

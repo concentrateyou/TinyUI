@@ -17,6 +17,32 @@ namespace D3D
 #define TEXTURE_MEMORY          TEXT("Local\\TextureMemory")
 #define NUM_BUFFERS				3
 #define ZERO_ARRAY				{0, 0, 0}
+#define BEGIN_CAPTURE_EVENT		TEXT("BeginCapture")
+#define END_CAPTURE_EVENT       TEXT("EndCapture")
+#define CAPTURE_READY_EVENT     TEXT("CaptureReady")
+#define CAPTURETYPE_MEMORY      1
+#define CAPTURETYPE_SHAREDTEX   2
+	typedef struct tagCaptureEntry
+	{
+		UINT		CaptureType;
+		DWORD		Format;
+		UINT		Width;
+		UINT		Height;
+		BOOL		bFlip;
+		UINT		Pitch;
+		DWORD		MapSize;
+		HWND		HwndCapture;
+	}SharedTexture;
+
+#pragma pack(push, 8)
+
+	typedef struct tagSharedTextureData
+	{
+		LONGLONG    FrameTime;
+		HANDLE      TextureHandle;
+	}SharedTextureData;
+
+#pragma pack(pop)
 	/// <summary>
 	/// D3D9
 	/// </summary>
@@ -26,9 +52,10 @@ namespace D3D
 		D3D9Capture();
 		~D3D9Capture();
 		BOOL Initialize(HWND hWND);
-		BOOL D3D9DrawStuff(IDirect3DDevice9 *device);
+		BOOL D3D9Draw(IDirect3DDevice9 *device);
+		void D3DReset();
 		BOOL D3D9GPUHook(IDirect3DDevice9 *device);
-		UINT InitializeSharedMemoryGPUCapture(SharedTextureData **texData);
+		BOOL InitializeSharedMemoryGPUCapture(SharedTextureData **texData);
 		static D3D9Capture& Instance();
 	private:
 		static HRESULT STDMETHODCALLTYPE D3D9EndScene(IDirect3DDevice9 *device);
@@ -38,7 +65,8 @@ namespace D3D
 		static HRESULT STDMETHODCALLTYPE D3D9Reset(IDirect3DDevice9 *device, D3DPRESENT_PARAMETERS *params);
 		static HRESULT STDMETHODCALLTYPE D3D9ResetEx(IDirect3DDevice9Ex *device, D3DPRESENT_PARAMETERS *params, D3DDISPLAYMODEEX *fullscreenData);
 	public:
-		CaptureShare				m_d3dCaptureShare;
+		SharedTexture				m_d3dSharedTexture;
+		SharedTextureData*			m_pSharedTextureData;
 		D3DFORMAT					m_d3dFormat;
 		DXGI_FORMAT					m_dxgiFormat;
 		HMODULE						m_hD3D9DLL;
@@ -47,22 +75,22 @@ namespace D3D
 		BOOL						m_bTextures;
 		BOOL						m_bUseSharedTextures;
 		DWORD						m_dwCurrentCapture;
-		SharedTextureData*			m_sharedTexture;
-		IDirect3DDevice9*			m_pDirect3DDevice9;
+		IDirect3DDevice9*			m_pGameDevice;
 		CLock						m_lock;
 		CPerformanceTimer			m_timer;
 		CComPtr<ID3D10Device1>		m_d3d10Device1;
 		CComPtr<ID3D10Resource>		m_d3d10Resource;
 		CComPtr<IDirect3DSurface9>	m_d3d9TextureGame;
 		CSharedMemory				m_textureMemery;
+		CD3DDetour					m_d3d9EndScene;
+		CD3DDetour					m_d3d9Reset;
+		CD3DDetour					m_d3d9ResetEx;
+		CD3DDetour					m_d3d9Present;
+		CD3DDetour					m_d3d9PresentEx;
+		CD3DDetour					m_d3d9SwapPresent;
+		CEvent						m_beginCapture;
+		CEvent						m_endCapture;
 		INT							m_patchType;
-		DWORD						m_sharedMemoryIDCounter;
-		D3DDetour					m_d3d9EndScene;
-		D3DDetour					m_d3d9Reset;
-		D3DDetour					m_d3d9ResetEx;
-		D3DDetour					m_d3d9Present;
-		D3DDetour					m_d3d9PresentEx;
-		D3DDetour					m_d3d9SwapPresent;
 		LONGLONG					m_lastTime;
 	};
 }

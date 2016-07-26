@@ -3,15 +3,15 @@
 
 namespace D3D
 {
-	D3DSystem::D3DSystem()
+	CD3DSystem::CD3DSystem()
 	{
 
 	}
-	D3DSystem::~D3DSystem()
+	CD3DSystem::~CD3DSystem()
 	{
 
 	}
-	BOOL D3DSystem::Initialize(HWND hWND, INT cx, INT cy)
+	BOOL CD3DSystem::Initialize(HWND hWND, INT cx, INT cy)
 	{
 		TinyComPtr<IDXGIFactory1> gif1;
 		HRESULT hRes = S_OK;
@@ -89,7 +89,7 @@ namespace D3D
 
 		return TRUE;
 	}
-	void D3DSystem::SetViewport(FLOAT x, FLOAT y, FLOAT cx, FLOAT cy)
+	void CD3DSystem::SetViewport(FLOAT x, FLOAT y, FLOAT cx, FLOAT cy)
 	{
 		ASSERT(m_d3d);
 		D3D10_VIEWPORT vp;
@@ -101,7 +101,7 @@ namespace D3D
 		vp.Height = UINT(cy);
 		m_d3d->RSSetViewports(1, &vp);
 	}
-	void D3DSystem::SetScissorRect(const D3D10_RECT *pRect)
+	void CD3DSystem::SetScissorRect(const D3D10_RECT *pRect)
 	{
 		ASSERT(m_d3d);
 		if (pRect)
@@ -115,6 +115,9 @@ namespace D3D
 			m_d3d->RSSetScissorRects(0, NULL);
 		}
 	}
-
+	ID3D10Device1*	CD3DSystem::GetD3D() const
+	{
+		return m_d3d;
+	}
 }
 

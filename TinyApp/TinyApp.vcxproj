@@ -86,18 +86,26 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="D3D10Texture.h" />
+    <ClInclude Include="D3DCaptureSource.h" />
+    <ClInclude Include="D3DDrawPanel.h" />
     <ClInclude Include="D3DSystem.h" />
     <ClInclude Include="D3DHook.h" />
     <ClInclude Include="MainFrame.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SharedTextureCapture.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TinyApp.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="D3D10Texture.cpp" />
+    <ClCompile Include="D3DCaptureSource.cpp" />
+    <ClCompile Include="D3DDrawPanel.cpp" />
     <ClCompile Include="D3DSystem.cpp" />
     <ClCompile Include="D3DHook.cpp" />
     <ClCompile Include="MainFrame.cpp" />
+    <ClCompile Include="SharedTextureCapture.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

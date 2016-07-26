@@ -14,7 +14,7 @@ CMainFrame::~CMainFrame()
 LRESULT CMainFrame::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	PostQuitMessage(0);//退出应用程序
+	PostQuitMessage(0);
 	return FALSE;
 }
 
@@ -34,7 +34,7 @@ DWORD CMainFrame::RetrieveExStyle()
 
 LPCSTR CMainFrame::RetrieveClassName()
 {
-	return TEXT("FramwUI");
+	return TEXT("IQiyiWindowClass");
 }
 
 LPCSTR CMainFrame::RetrieveTitle()
@@ -56,8 +56,6 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 	m_inject.Click += m_onInjectClick;
 	m_lblState.Create(m_hWND, 130, 16, 100, 25);
 	m_lblState.SetText("状态");
-	m_txtLog.Create(m_hWND, 10, 40, 300, 300);
-	m_txtLog.SetReadOnly(TRUE);
 	memset(&m_cf, 0, sizeof(m_cf));
 	m_cf.dwMask = CFM_COLOR | CFM_FACE | CFM_SIZE | CFM_EFFECTS;
 	m_cf.dwEffects |= CFE_BOLD;
@@ -66,7 +64,8 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 	m_cf.crTextColor = RGB(0, 114, 193);
 	m_cf.yHeight = 180;
 	strcpy(m_cf.szFaceName, _T("微软雅黑"));
-	return TRUE;
+	m_drawCtrl.Create(m_hWND, 10, 40, 400, 400);
+	return FALSE;
 }
 
 LRESULT CMainFrame::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -88,74 +87,23 @@ LRESULT CMainFrame::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& 
 	return FALSE;
 }
 
-LRESULT CMainFrame::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-{
-	bHandled = FALSE;
-	m_size.cx = LOWORD(lParam);
-	m_size.cy = HIWORD(lParam);
-	return FALSE;
-}
-
 void CMainFrame::OnInjectLibrary(void*, INT)
 {
-	SetWindowText(m_txtLog.Handle(), "");
-	DWORD dwProcess = FindProcess("War3.exe");
-
-	m_lblState.SetText("War3进程找到");
-	HANDLE hProcess = ::OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwProcess);
-	if (hProcess)
+	if (m_source.Initialize("War3.exe"))
 	{
-
-		if (D3D::InjectLibrary(hProcess, TEXT("D:\\Develop\\GitHub\\TinyUI\\Debug\\D3DCaptureHook.dll")))
+		m_lblState.SetText("初始化成功!");
+		if (m_source.BeginCapture())
 		{
-			m_lblState.SetText("注入成功");
+			m_lblState.SetText("注入成功!");
 		}
 		else
 		{
-			m_lblState.SetText("注入失败");
+			m_lblState.SetText("注入失败!");
 		}
-		CloseHandle(hProcess);
 	}
 	else
 	{
-		m_lblState.SetText("War3进程没找到");
+		m_lblState.SetText("初始化失败!");
 	}
 }
 
-DWORD CMainFrame::FindProcess(const TinyString& name)
-{
-	TinyString str1 = "要查找进程";
-	str1.Append(name);
-	AppendLog(str1);
-	DWORD dwProcessID = 0;
-	HANDLE hProcessSnap = NULL;
-	PROCESSENTRY32 pe32 = { 0 };
-	hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-	if (hProcessSnap == (HANDLE)-1)
-		return FALSE;
-	pe32.dwSize = sizeof(PROCESSENTRY32);
-	if (Process32First(hProcessSnap, &pe32))
-	{
-		do
-		{
-			TinyString str(pe32.szExeFile);
-			if (str == name)
-			{
-				dwProcessID = pe32.th32ProcessID;
-				break;
-			}
-			AppendLog(str);
-		} while (Process32Next(hProcessSnap, &pe32));
-	}
-	CloseHandle(hProcessSnap);
-	return dwProcessID;
-}
-void CMainFrame::AppendLog(TinyString& str)
-{
-	str += "\n";
-	INT pos = GetWindowTextLength(m_txtLog.Handle());
-	m_txtLog.SetSel(pos, -1);
-	m_txtLog.SetSelectionCharFormat(m_cf);
-	m_txtLog.ReplaceSel(str.STR());
-	::SendMessage(m_txtLog.Handle(), WM_VSCROLL, SB_BOTTOM, 0);
-}

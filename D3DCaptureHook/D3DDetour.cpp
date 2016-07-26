@@ -4,60 +4,60 @@
 #include "stdafx.h"
 #include "D3DDetour.h"
 
-D3DDetour::D3DDetour()
-	:m_bHook(FALSE)
+CD3DDetour::CD3DDetour()
+	:m_bDetour(FALSE)
 {
 
 }
-D3DDetour::~D3DDetour()
+CD3DDetour::~CD3DDetour()
 {
 
 }
-BOOL D3DDetour::Initialize(FARPROC pfnOrig, FARPROC pfnHook)
+BOOL CD3DDetour::Initialize(FARPROC pfnOrig, FARPROC pfnNew)
 {
-	if (!pfnOrig || !pfnHook)
+	if (!pfnOrig || !pfnNew)
 		return FALSE;
 	m_pfnOrig = pfnOrig;
-	m_pfnHook = pfnHook;
+	m_pfnNew = pfnNew;
 	if (!VirtualProtect((LPVOID)m_pfnOrig, 5, PAGE_EXECUTE_READWRITE, &m_dwOrigProtect))
 		return FALSE;
 	memcpy(m_data, (const void*)m_pfnOrig, 5);
 	return TRUE;
 }
-BOOL D3DDetour::BeginDetour()
+BOOL CD3DDetour::BeginDetour()
 {
-	if (!m_pfnOrig || !m_pfnHook)
+	if (!m_pfnOrig || !m_pfnNew)
 		return FALSE;
 	ULONG start = ULONG(m_pfnOrig);
-	ULONG target = ULONG(m_pfnHook);
+	ULONG target = ULONG(m_pfnNew);
 	ULONG64 offset = 0;
+	ULONG64 diff = 0;
 	//http://www.cnblogs.com/zhangdongsheng/archive/2012/12/06/2804234.html
 	//计算偏移量(JMP的地址–代码地址–5 = 机器码跳转地址 x86)
 	offset = target - (start + 5);
-	TRACE("BeginDetour-start=%d,target=%d,offset=%d\n", start, target, offset);
 	DWORD oldProtect;
 	VirtualProtect((LPVOID)m_pfnOrig, 5, PAGE_EXECUTE_READWRITE, &oldProtect);
 	LPBYTE ps = (LPBYTE)m_pfnOrig;
 	*ps = 0xE9;
 	*(DWORD*)(ps + 1) = DWORD(offset);
-	m_bHook = TRUE;
+	m_bDetour = TRUE;
 	return TRUE;
 }
-BOOL D3DDetour::EndDetour()
+BOOL CD3DDetour::EndDetour()
 {
-	if (!m_bHook) return FALSE;
+	if (!m_bDetour) return FALSE;
 	DWORD oldProtect;
 	VirtualProtect((LPVOID)m_pfnOrig, 5, PAGE_EXECUTE_READWRITE, &oldProtect);
 	memcpy((void*)m_pfnOrig, m_data, 5);
 	VirtualProtect((LPVOID)m_pfnOrig, 5, m_dwOrigProtect, &oldProtect);
-	m_bHook = FALSE;
+	m_bDetour = FALSE;
 	return TRUE;
 }
-BOOL D3DDetour::IsValid() const
+BOOL CD3DDetour::IsValid() const
 {
-	return m_bHook;
+	return m_bDetour;
 }
-FARPROC D3DDetour::GetOrig() const
+FARPROC CD3DDetour::GetOrig() const
 {
 	return m_pfnOrig;
 }
