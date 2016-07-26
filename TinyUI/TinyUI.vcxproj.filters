@@ -342,10 +342,10 @@
     <ClInclude Include="IO\TinySharedMemory.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
-    <ClInclude Include="Common\TinyRand.h">
+    <ClInclude Include="Common\TinyCore.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
-    <ClInclude Include="Common\TinyCore.h">
+    <ClInclude Include="Common\TinyUtility.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
   </ItemGroup>
@@ -623,10 +623,10 @@
     <ClCompile Include="IO\TinySharedMemory.cpp">
       <Filter>源文件\IO</Filter>
     </ClCompile>
-    <ClCompile Include="Common\TinyRand.cpp">
+    <ClCompile Include="Common\TinyCore.cpp">
       <Filter>源文件\Common</Filter>
     </ClCompile>
-    <ClCompile Include="Common\TinyCore.cpp">
+    <ClCompile Include="Common\TinyUtility.cpp">
       <Filter>源文件\Common</Filter>
     </ClCompile>
   </ItemGroup>

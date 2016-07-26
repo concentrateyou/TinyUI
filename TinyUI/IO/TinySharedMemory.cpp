@@ -1,7 +1,7 @@
 #include "../stdafx.h"
 #include "vld.h"
 #include <process.h>
-#include "../Common/TinyRand.h"
+#include "../Common/TinyUtility.h"
 #include "TinySharedMemory.h"
 
 namespace TinyUI

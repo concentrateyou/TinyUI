@@ -4,12 +4,15 @@
 #include <algorithm>
 #include <limits>
 #include <string>
+#include "TinyString.h"
 using namespace std;
 
 namespace TinyUI
 {
+	void RandBytes(void* output, size_t outputSize);
 	INT RandInteger(INT min, INT max);
 	ULONGLONG RandUInteger64();
-	void RandBytes(void* output, size_t outputSize);
+	ULONGLONG RandGenerator(ULONGLONG range);
+	string GenerateGUID();
 }
 

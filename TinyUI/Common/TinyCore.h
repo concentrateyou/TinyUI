@@ -104,6 +104,8 @@ namespace TinyUI
 		TinyScopedLibrary(LPCSTR pzName);
 		~TinyScopedLibrary();
 		BOOL IsValid() const;
+		void Reset(HINSTANCE hInstance);
+		FARPROC GetFunctionPointer(LPCSTR lpProcName) const;
 		operator HINSTANCE() const;
 		HINSTANCE Handle() const;
 	private:

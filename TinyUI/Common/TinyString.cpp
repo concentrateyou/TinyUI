@@ -34,6 +34,17 @@ namespace TinyUI
 		}
 		return length;
 	}
+	string _cdecl StringPrintf(const CHAR* s, ...)
+	{
+		va_list args;
+		va_start(args, s);
+		INT size;
+		CHAR szBuffer[1024];
+		size = _vsntprintf_s(szBuffer, 1024, s, args);
+		ASSERT(size >= 0);
+		va_end(args);
+		return string(szBuffer, 0, size);
+	}
 	std::string WStringToString(const std::wstring str, const DWORD dwType)
 	{
 		int nMultiByteLenght = WideCharToMultiByte(dwType, 0, str.c_str(), -1, NULL, 0, NULL, NULL);

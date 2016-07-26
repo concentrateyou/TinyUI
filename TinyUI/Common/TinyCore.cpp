@@ -194,9 +194,20 @@ namespace TinyUI
 	{
 		return m_hInstance;
 	}
-
+	FARPROC TinyScopedLibrary::GetFunctionPointer(LPCSTR lpProcName) const
+	{
+		return ::GetProcAddress(m_hInstance, lpProcName);
+	}
 	BOOL TinyScopedLibrary::IsValid() const
 	{
 		return m_hInstance != NULL;
+	}
+	void TinyScopedLibrary::Reset(HINSTANCE hInstance)
+	{
+		if(m_hInstance)
+		{
+			::FreeLibrary(m_hInstance);
+		}
+		m_hInstance = hInstance;
 	}
 };

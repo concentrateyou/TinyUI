@@ -27,6 +27,10 @@ namespace TinyUI
 	/// </summary>
 	INT vswprintf(wchar_t* buffer, size_t size, const wchar_t* format, va_list arguments);
 	/// <summary>
+	/// 字符串格式化
+	/// </summary>
+	string _cdecl StringPrintf(const CHAR* s, ...);
+	/// <summary>
 	/// 宽字节字符创到多字节字符串
 	/// </summary>
 	std::string WStringToString(const std::wstring str, const DWORD dwType = CP_ACP);
