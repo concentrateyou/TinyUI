@@ -3,21 +3,8 @@
 
 #include "stdafx.h"
 #include "TinyApp.h"
-#include "Common/TinyModule.h"
-#include "SkinFramework/TinySkinWindow.h"
-#include "Windowless/TinyVisualHWND.h"
-#include "Database/TinyAdo.h"
+#include "MainFrame.h"
 #include "Network/TinyConnector.h"
-#include "Common/TinyLogging.h"
-#include "Media/TinyVideoCapture.h"
-#include "Common/TinyHook.h"
-#include "Common/TinyEvent.h"
-#include <algorithm>
-#include <map>
-#include <functional>
-
-#pragma comment(lib,"TinyUI.lib")
-using namespace TinyUI;
 
 BOOL LoadSeDebugPrivilege()
 {
@@ -69,8 +56,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	TinyUI::Windowless::TinyVisualHWND uiImpl;
-	//TinyUI::TinySkinWindow uiImpl;
+	CMainFrame uiImpl;
 	uiImpl.Create(NULL, 50, 50, 600, 500);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();

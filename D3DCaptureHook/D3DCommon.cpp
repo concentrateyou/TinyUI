@@ -108,4 +108,9 @@ HINSTANCE CScopedLibrary::Handle() const
 	return m_hInstance;
 }
 
+BOOL CScopedLibrary::IsValid() const
+{
+	return m_hInstance != NULL;
+}
+
 

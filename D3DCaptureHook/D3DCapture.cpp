@@ -101,11 +101,11 @@ LPBYTE GetD3D9PatchAddress(HMODULE hModule, INT patchType)
 namespace D3D
 {
 	D3D9Capture::D3D9Capture()
-		:m_hInstance(NULL),
+		:m_hD3D9DLL(NULL),
 		m_d3dFormat(D3DFMT_UNKNOWN),
 		m_dxgiFormat(DXGI_FORMAT_UNKNOWN),
-		m_sharedHandle(NULL),
-		m_currentD3DDevice(NULL),
+		m_pSharedHandle(NULL),
+		m_pDirect3DDevice9(NULL),
 		m_sharedTexture(NULL),
 		m_bCapturing(FALSE),
 		m_bTextures(FALSE),
@@ -132,12 +132,12 @@ namespace D3D
 		if (FAILED(hRes = SHGetFolderPath(NULL, CSIDL_SYSTEM, NULL, SHGFP_TYPE_CURRENT, szD3DPath)))
 			return FALSE;
 		strcat_s(szD3DPath, MAX_PATH, TEXT("\\d3d9.dll"));
-		m_hInstance = GetModuleHandle(szD3DPath);
-		if (!m_hInstance)
+		m_hD3D9DLL = GetModuleHandle(szD3DPath);
+		if (!m_hD3D9DLL)
 		{
 			return FALSE;
 		}
-		D3D9CREATEEXPROC d3d9CreateEx = (D3D9CREATEEXPROC)GetProcAddress(m_hInstance, "Direct3DCreate9Ex");
+		D3D9CREATEEXPROC d3d9CreateEx = (D3D9CREATEEXPROC)GetProcAddress(m_hD3D9DLL, "Direct3DCreate9Ex");
 		if (!d3d9CreateEx)
 		{
 			return FALSE;
@@ -170,7 +170,7 @@ namespace D3D
 			return FALSE;
 		if (!m_bTextures)
 		{
-			m_patchType = GetD3D9PatchType(m_hInstance);
+			m_patchType = GetD3D9PatchType(m_hD3D9DLL);
 			CComPtr<IDirect3DSurface9> backBuffer;
 			if (SUCCEEDED(device->GetRenderTarget(0, &backBuffer)))
 			{
@@ -223,14 +223,22 @@ namespace D3D
 	BOOL D3D9Capture::D3D9GPUHook(IDirect3DDevice9 *device)
 	{
 		CScopedLibrary d3d10_1(TEXT("d3d10_1.dll"));
+		if (!d3d10_1.IsValid())
+		{
+			return FALSE;
+		}
 		CScopedLibrary dxgi(TEXT("dxgi.dll"));
-		CREATEDXGIFACTORY1PROC createDXGIFactory1 = (CREATEDXGIFACTORY1PROC)GetProcAddress(dxgi, "CreateDXGIFactory1");
-		if (!createDXGIFactory1)
+		if (!dxgi.IsValid())
 		{
 			return FALSE;
 		}
 		PFN_D3D10_CREATE_DEVICE1 d3d10CreateDevice1 = (PFN_D3D10_CREATE_DEVICE1)GetProcAddress(d3d10_1, "D3D10CreateDevice1");
 		if (!d3d10CreateDevice1)
+		{
+			return FALSE;
+		}
+		CREATEDXGIFACTORY1PROC createDXGIFactory1 = (CREATEDXGIFACTORY1PROC)GetProcAddress(dxgi, "CreateDXGIFactory1");
+		if (!createDXGIFactory1)
 		{
 			return FALSE;
 		}
@@ -276,11 +284,11 @@ namespace D3D
 		{
 			return FALSE;
 		}
-		if (FAILED(dxgiResource->GetSharedHandle(&m_sharedHandle)))
+		if (FAILED(dxgiResource->GetSharedHandle(&m_pSharedHandle)))
 		{
 			return FALSE;
 		}
-		LPBYTE patchAddress = (m_patchType != 0) ? GetD3D9PatchAddress(m_hInstance, m_patchType) : NULL;
+		LPBYTE patchAddress = (m_patchType != 0) ? GetD3D9PatchAddress(m_hD3D9DLL, m_patchType) : NULL;
 		DWORD dwOldProtect;
 		size_t patchSize;
 		CScopedArray<BYTE> patchData;
@@ -296,7 +304,7 @@ namespace D3D
 			memcpy(patchAddress, patch[m_patchType - 1].patchData, patchSize);
 		}
 		CComPtr<IDirect3DTexture9> d3d9Tex;
-		if (FAILED(device->CreateTexture(m_d3dCaptureShare.Width, m_d3dCaptureShare.Height, 1, D3DUSAGE_RENDERTARGET, (D3DFORMAT)m_d3dFormat, D3DPOOL_DEFAULT, &d3d9Tex, &m_sharedHandle)))
+		if (FAILED(device->CreateTexture(m_d3dCaptureShare.Width, m_d3dCaptureShare.Height, 1, D3DUSAGE_RENDERTARGET, (D3DFORMAT)m_d3dFormat, D3DPOOL_DEFAULT, &d3d9Tex, &m_pSharedHandle)))
 		{
 			return FALSE;
 		}
@@ -316,7 +324,7 @@ namespace D3D
 		}
 		m_d3dCaptureShare.CaptureType = CAPTURETYPE_SHAREDTEX;
 		m_d3dCaptureShare.bFlip = FALSE;
-		m_sharedTexture->TextureHandle = m_sharedHandle;
+		m_sharedTexture->TextureHandle = m_pSharedHandle;
 		return TRUE;
 	}
 	HRESULT STDMETHODCALLTYPE D3D9Capture::D3D9EndScene(IDirect3DDevice9 *device)
@@ -324,9 +332,9 @@ namespace D3D
 		D3D9Capture::Instance().m_lock.Acquire();
 		D3D9Capture::Instance().m_d3d9EndScene.EndDetour();
 		HRESULT hRes = S_OK;
-		if (!D3D9Capture::Instance().m_currentD3DDevice)
+		if (!D3D9Capture::Instance().m_pDirect3DDevice9)
 		{
-			D3D9Capture::Instance().m_currentD3DDevice = device;
+			D3D9Capture::Instance().m_pDirect3DDevice9 = device;
 			CComPtr<IDirect3DSwapChain9> swapChain;
 			hRes = device->GetSwapChain(0, &swapChain);
 			if (SUCCEEDED(hRes))
@@ -363,7 +371,7 @@ namespace D3D
 	HRESULT STDMETHODCALLTYPE D3D9Capture::D3D9Present(IDirect3DDevice9 *device, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion)
 	{
 		D3D9Capture::Instance().m_d3d9Present.EndDetour();
-
+		D3D9Capture::Instance().D3D9DrawStuff(device);
 		HRESULT hRes = device->Present(pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion);
 		D3D9Capture::Instance().m_d3d9Present.BeginDetour();
 		return hRes;
@@ -371,7 +379,7 @@ namespace D3D
 	HRESULT STDMETHODCALLTYPE D3D9Capture::D3D9PresentEx(IDirect3DDevice9Ex *device, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion, DWORD dwFlags)
 	{
 		D3D9Capture::Instance().m_d3d9PresentEx.EndDetour();
-
+		D3D9Capture::Instance().D3D9DrawStuff(device);
 		HRESULT hRes = device->PresentEx(pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion, dwFlags);
 		D3D9Capture::Instance().m_d3d9PresentEx.BeginDetour();
 		return hRes;

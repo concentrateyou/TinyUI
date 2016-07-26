@@ -41,14 +41,14 @@ namespace D3D
 		CaptureShare				m_d3dCaptureShare;
 		D3DFORMAT					m_d3dFormat;
 		DXGI_FORMAT					m_dxgiFormat;
-		HMODULE						m_hInstance;
-		HANDLE						m_sharedHandle;
+		HMODULE						m_hD3D9DLL;
+		HANDLE						m_pSharedHandle;
 		BOOL						m_bCapturing;
 		BOOL						m_bTextures;
 		BOOL						m_bUseSharedTextures;
 		DWORD						m_dwCurrentCapture;
 		SharedTextureData*			m_sharedTexture;
-		IDirect3DDevice9*			m_currentD3DDevice;
+		IDirect3DDevice9*			m_pDirect3DDevice9;
 		CLock						m_lock;
 		CPerformanceTimer			m_timer;
 		CComPtr<ID3D10Device1>		m_d3d10Device1;

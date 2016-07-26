@@ -34,11 +34,15 @@ typedef struct tagCaptureEntry
 	HWND		HwndCapture;
 }CaptureShare;
 
+#pragma pack(push, 8)
+
 typedef struct tagSharedTextureData
 {
 	LONGLONG    FrameTime;
 	HANDLE      TextureHandle;
 }SharedTextureData;
+
+#pragma pack(pop)
 
 inline FARPROC GetVTable(LPVOID ptr, UINT funcOffset)
 {

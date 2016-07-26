@@ -100,6 +100,7 @@ class CScopedLibrary
 public:
 	CScopedLibrary(const string& str);
 	~CScopedLibrary();
+	BOOL IsValid() const;
 	operator HINSTANCE() const;
 	HINSTANCE Handle() const;
 private:

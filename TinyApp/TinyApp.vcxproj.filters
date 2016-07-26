@@ -30,12 +30,30 @@
     <ClInclude Include="TinyApp.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MainFrame.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="D3DHook.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="D3DSystem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="TinyApp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MainFrame.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="D3DHook.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="D3DSystem.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
