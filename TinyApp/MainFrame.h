@@ -12,7 +12,6 @@
 #include <algorithm>
 #include <map>
 #include <functional>
-#include "D3DCaptureSource.h"
 
 class CMainFrame : public TinyControl
 {
@@ -41,7 +40,6 @@ protected:
 	TinyLabel			m_lblState;
 	CD3DDrawPanel		m_drawCtrl;
 	CHARFORMAT2			m_cf;
-	CD3DCaptureSource	m_source;
 	TinyScopedPtr<Delegate<void(void*, INT)>> m_onInjectClick;
 };
 

@@ -14,6 +14,7 @@ namespace D3D
 {
 	typedef HRESULT(WINAPI *CREATEDXGIFACTORY1PROC)(REFIID riid, void **ppFactory);
 
+#define SHAREDCAPTURE			TEXT("Local\\SharedCapture")
 #define TEXTURE_MEMORY          TEXT("Local\\TextureMemory")
 #define NUM_BUFFERS				3
 #define ZERO_ARRAY				{0, 0, 0}
@@ -22,7 +23,7 @@ namespace D3D
 #define CAPTURE_READY_EVENT     TEXT("CaptureReady")
 #define CAPTURETYPE_MEMORY      1
 #define CAPTURETYPE_SHAREDTEX   2
-	typedef struct tagCaptureEntry
+	typedef struct tagSharedCapture
 	{
 		UINT		CaptureType;
 		DWORD		Format;
@@ -32,7 +33,7 @@ namespace D3D
 		UINT		Pitch;
 		DWORD		MapSize;
 		HWND		HwndCapture;
-	}SharedTexture;
+	}SharedCapture;//共享的捕获参数
 
 #pragma pack(push, 8)
 
@@ -65,13 +66,12 @@ namespace D3D
 		static HRESULT STDMETHODCALLTYPE D3D9Reset(IDirect3DDevice9 *device, D3DPRESENT_PARAMETERS *params);
 		static HRESULT STDMETHODCALLTYPE D3D9ResetEx(IDirect3DDevice9Ex *device, D3DPRESENT_PARAMETERS *params, D3DDISPLAYMODEEX *fullscreenData);
 	public:
-		SharedTexture				m_d3dSharedTexture;
 		SharedTextureData*			m_pSharedTextureData;
 		D3DFORMAT					m_d3dFormat;
 		DXGI_FORMAT					m_dxgiFormat;
-		HINSTANCE					m_hD3D9;
-		HINSTANCE					m_hD3D10_1;
-		HINSTANCE					m_hDXGI;
+		CScopedLibrary				m_d3d9;
+		CScopedLibrary				m_d3d10_1;
+		CScopedLibrary				m_dxgi;
 		HANDLE						m_pSharedHandle;
 		BOOL						m_bCapturing;
 		BOOL						m_bTextures;
@@ -83,6 +83,7 @@ namespace D3D
 		CComPtr<ID3D10Device1>		m_d3d10Device1;
 		CComPtr<ID3D10Resource>		m_d3d10Resource;
 		CComPtr<IDirect3DSurface9>	m_d3d9TextureGame;
+		CSharedMemory				m_sharedCapture;
 		CSharedMemory				m_textureMemery;
 		CD3DDetour					m_d3d9EndScene;
 		CD3DDetour					m_d3d9Reset;
@@ -90,8 +91,9 @@ namespace D3D
 		CD3DDetour					m_d3d9Present;
 		CD3DDetour					m_d3d9PresentEx;
 		CD3DDetour					m_d3d9SwapPresent;
-		CEvent						m_beginCapture;
-		CEvent						m_endCapture;
+		CEvent						m_eventBegin;
+		CEvent						m_eventEnd;
+		CEvent						m_eventReady;
 		INT							m_patchType;
 		LONGLONG					m_lastTime;
 	};

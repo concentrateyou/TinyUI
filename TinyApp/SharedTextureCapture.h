@@ -7,6 +7,17 @@ using namespace TinyUI::IO;
 namespace D3D
 {
 #define TEXTURE_MEMORY    TEXT("Local\\TextureMemory")
+	typedef struct tagSharedCapture
+	{
+		UINT		CaptureType;
+		DWORD		Format;
+		UINT		Width;
+		UINT		Height;
+		BOOL		bFlip;
+		UINT		Pitch;
+		DWORD		MapSize;
+		HWND		HwndCapture;
+	}SharedCapture;//共享的捕获参数
 	typedef struct tagCaptureEntry
 	{
 		UINT		CaptureType;

@@ -86,7 +86,7 @@ namespace TinyUI
 	BOOL TinyEvent::Lock(DWORD dwTimeout)
 	{
 		ASSERT(m_hEvent != NULL);
-		DWORD dwRet = ::WaitForSingleObject(m_hEvent, dwTimeout);
+		DWORD dwRet = ::WaitForSingleObject(m_hEvent, dwTimeout); 
 		if (dwRet == WAIT_OBJECT_0 || dwRet == WAIT_ABANDONED)
 			return TRUE;
 		else
@@ -173,6 +173,11 @@ namespace TinyUI
 		m_lock.Release();
 	}
 	//////////////////////////////////////////////////////////////////////////
+	TinyScopedLibrary::TinyScopedLibrary()
+		:m_hInstance(NULL)
+	{
+
+	}
 	TinyScopedLibrary::TinyScopedLibrary(LPCSTR pzName)
 	{
 		m_hInstance = ::LoadLibrary(pzName);
@@ -207,7 +212,17 @@ namespace TinyUI
 		if(m_hInstance)
 		{
 			::FreeLibrary(m_hInstance);
+			m_hInstance = NULL;
 		}
 		m_hInstance = hInstance;
+	}
+	void TinyScopedLibrary::Reset(LPCSTR pzName)
+	{
+		if (m_hInstance)
+		{
+			::FreeLibrary(m_hInstance);
+			m_hInstance = NULL;
+		}
+		m_hInstance = LoadLibrary(pzName);
 	}
 };

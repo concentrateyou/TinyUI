@@ -86,6 +86,11 @@ LONGLONG CPerformanceTimer::GetMicroseconds()
 	return ticks;
 }
 //////////////////////////////////////////////////////////////////////////
+CScopedLibrary::CScopedLibrary()
+	:m_hInstance(NULL)
+{
+
+}
 CScopedLibrary::CScopedLibrary(const string& str)
 {
 	m_hInstance = ::LoadLibrary(str.c_str());
@@ -111,6 +116,26 @@ HINSTANCE CScopedLibrary::Handle() const
 BOOL CScopedLibrary::IsValid() const
 {
 	return m_hInstance != NULL;
+}
+void CScopedLibrary::Reset(HINSTANCE hInstance)
+{
+	if (m_hInstance)
+	{
+		::FreeLibrary(m_hInstance);
+	}
+	m_hInstance = hInstance;
+}
+void CScopedLibrary::Reset(const string& str)
+{
+	if (m_hInstance)
+	{
+		::FreeLibrary(m_hInstance);
+	}
+	m_hInstance = LoadLibrary(str.c_str());
+}
+FARPROC CScopedLibrary::GetFunctionPointer(LPCSTR lpProcName) const
+{
+	return ::GetProcAddress(m_hInstance, lpProcName);
 }
 
 

@@ -101,10 +101,12 @@ namespace TinyUI
 	{
 		DISALLOW_COPY_AND_ASSIGN(TinyScopedLibrary);
 	public:
-		TinyScopedLibrary(LPCSTR pzName);
+		TinyScopedLibrary();
+		explicit TinyScopedLibrary(LPCSTR pzName);
 		~TinyScopedLibrary();
 		BOOL IsValid() const;
 		void Reset(HINSTANCE hInstance);
+		void Reset(LPCSTR pzName);
 		FARPROC GetFunctionPointer(LPCSTR lpProcName) const;
 		operator HINSTANCE() const;
 		HINSTANCE Handle() const;

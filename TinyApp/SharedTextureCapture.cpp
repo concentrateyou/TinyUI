@@ -25,6 +25,7 @@ namespace D3D
 		{
 			return FALSE;
 		}
+
 		return TRUE;
 	}
 }

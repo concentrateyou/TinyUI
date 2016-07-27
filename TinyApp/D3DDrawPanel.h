@@ -3,6 +3,9 @@
 #pragma comment(lib,"TinyUI.lib")
 using namespace TinyUI;
 
+/// <summary>
+/// ªÊ÷∆√Ê∞Â
+/// </summary>
 class CD3DDrawPanel : public TinyControl
 {
 	DECLARE_DYNAMIC(CD3DDrawPanel)

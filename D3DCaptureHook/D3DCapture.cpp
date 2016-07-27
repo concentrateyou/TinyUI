@@ -83,7 +83,9 @@ INT GetD3D9PatchType(HMODULE hModule)
 	for (int i = 0; i < NUM_KNOWN_PATCHES; i++)
 	{
 		if (CompareMemory(lpBaseAddress + patch_offsets[i], patch_compare[i], PATCH_COMPARE_SIZE))
+		{
 			return i + 1;
+		}
 	}
 
 	return 0;
@@ -101,10 +103,7 @@ LPBYTE GetD3D9PatchAddress(HMODULE hModule, INT patchType)
 namespace D3D
 {
 	D3D9Capture::D3D9Capture()
-		:m_hD3D9(NULL),
-		m_hD3D10_1(NULL),
-		m_hDXGI(NULL),
-		m_d3dFormat(D3DFMT_UNKNOWN),
+		:m_d3dFormat(D3DFMT_UNKNOWN),
 		m_dxgiFormat(DXGI_FORMAT_UNKNOWN),
 		m_pSharedHandle(NULL),
 		m_pGameDevice(NULL),
@@ -120,25 +119,7 @@ namespace D3D
 	}
 	D3D9Capture::~D3D9Capture()
 	{
-		m_d3d10Resource->Release();
-		m_d3d9TextureGame->Release();
-		m_d3d10Device1->Release();
-
-		if (m_hD3D9 != NULL)
-		{
-			::FreeLibrary(m_hD3D9);
-			m_hD3D9 = NULL;
-		}
-		if (m_hD3D10_1 != NULL)
-		{
-			::FreeLibrary(m_hD3D10_1);
-			m_hD3D10_1 = NULL;
-		}
-		if (m_hDXGI != NULL)
-		{
-			::FreeLibrary(m_hDXGI);
-			m_hDXGI = NULL;
-		}
+		D3DReset();
 	}
 	D3D9Capture& D3D9Capture::Instance()
 	{
@@ -150,40 +131,69 @@ namespace D3D
 		DWORD dwProcessID = GetCurrentProcessId();
 		stringstream stream;
 		stream << BEGIN_CAPTURE_EVENT << dwProcessID;
-		if (!m_beginCapture.CreateEvent(FALSE, FALSE, stream.str().c_str()))
+		if (!m_eventBegin.CreateEvent(FALSE, FALSE, stream.str().c_str()))
 		{
-			if (!m_beginCapture.OpenEvent(EVENT_ALL_ACCESS, FALSE, stream.str().c_str()))
+			if (!m_eventBegin.OpenEvent(EVENT_ALL_ACCESS, FALSE, stream.str().c_str()))
 			{
 				return FALSE;
 			}
 		}
-		stream.clear();
+		stream.str("");
 		stream << END_CAPTURE_EVENT << dwProcessID;
-		if (!m_endCapture.CreateEvent(FALSE, FALSE, stream.str().c_str()))
+		if (!m_eventEnd.CreateEvent(FALSE, FALSE, stream.str().c_str()))
 		{
-			if (!m_endCapture.OpenEvent(EVENT_ALL_ACCESS, FALSE, stream.str().c_str()))
+			if (!m_eventEnd.OpenEvent(EVENT_ALL_ACCESS, FALSE, stream.str().c_str()))
 			{
 				return FALSE;
 			}
+		}
+		stream.str("");
+		stream << CAPTURE_READY_EVENT << dwProcessID;
+		if (!m_eventReady.CreateEvent(FALSE, FALSE, stream.str().c_str()))
+		{
+			if (!m_eventReady.OpenEvent(EVENT_ALL_ACCESS, FALSE, stream.str().c_str()))
+			{
+				return FALSE;
+			}
+		}
+		if (!m_sharedCapture.Create(SHAREDCAPTURE, sizeof(SharedCapture)))
+		{
+			return FALSE;
+		}
+		if (!m_sharedCapture.Map(0, 0))
+		{
+			return FALSE;
 		}
 		HRESULT hRes = S_OK;
 		CHAR szD3DPath[MAX_PATH];
 		if (FAILED(hRes = SHGetFolderPath(NULL, CSIDL_SYSTEM, NULL, SHGFP_TYPE_CURRENT, szD3DPath)))
 			return FALSE;
 		strcat_s(szD3DPath, MAX_PATH, TEXT("\\d3d9.dll"));
-		m_hD3D9 = ::LoadLibrary(szD3DPath);
-		if (!m_hD3D9)
+		m_d3d9.Reset(szD3DPath);
+		if (!m_d3d9.IsValid())
 		{
 			return FALSE;
 		}
-		D3D9CREATEEXPROC d3d9CreateEx = (D3D9CREATEEXPROC)GetProcAddress(m_hD3D9, "Direct3DCreate9Ex");
+		m_d3d10_1.Reset(TEXT("d3d10_1.dll"));
+		if (!m_d3d10_1.IsValid())
+		{
+			return FALSE;
+		}
+		m_dxgi.Reset(TEXT("dxgi.dll"));
+		if (!m_dxgi.IsValid())
+		{
+			return FALSE;
+		}
+		D3D9CREATEEXPROC d3d9CreateEx = (D3D9CREATEEXPROC)m_d3d9.GetFunctionPointer(TEXT("Direct3DCreate9Ex"));
 		if (!d3d9CreateEx)
 		{
 			return FALSE;
 		}
 		CComPtr<IDirect3D9Ex> d3d9ex;
 		if (FAILED(hRes = (*d3d9CreateEx)(D3D_SDK_VERSION, &d3d9ex)))
+		{
 			return FALSE;
+		}
 		D3DPRESENT_PARAMETERS pp;
 		::ZeroMemory(&pp, sizeof(pp));
 		pp.Windowed = 1;
@@ -194,7 +204,9 @@ namespace D3D
 		pp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 		CComPtr<IDirect3DDevice9Ex>	d3dDevice;
 		if (FAILED(hRes = d3d9ex->CreateDeviceEx(D3DADAPTER_DEFAULT, D3DDEVTYPE_NULLREF, hWND, D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_NOWINDOWCHANGES, &pp, NULL, &d3dDevice)))
+		{
 			return FALSE;
+		}
 		ULONG *vtable = *(ULONG**)d3dDevice.Ptr();
 		if (m_d3d9EndScene.Initialize((FARPROC)*(vtable + 42), (FARPROC)D3D9EndScene))
 		{
@@ -205,12 +217,12 @@ namespace D3D
 	BOOL D3D9Capture::D3D9Draw(IDirect3DDevice9 *device)
 	{
 		ASSERT(device);
-		if (m_bCapturing && m_endCapture.Lock(0))
+		if (m_bCapturing && m_eventEnd.Lock(0))
 		{
 			m_bCapturing = FALSE;
 			return FALSE;
 		}
-		if (!m_bCapturing && m_beginCapture.Lock(0))
+		if (!m_bCapturing && m_eventBegin.Lock(0))
 		{
 			m_bCapturing = TRUE;
 		}
@@ -218,7 +230,7 @@ namespace D3D
 		{
 			if (!m_bTextures)
 			{
-				m_patchType = GetD3D9PatchType(m_hD3D9);
+				m_patchType = GetD3D9PatchType(m_d3d9);
 				CComPtr<IDirect3DSurface9> backBuffer;
 				if (SUCCEEDED(device->GetRenderTarget(0, &backBuffer)))
 				{
@@ -228,9 +240,11 @@ namespace D3D
 					{
 						m_d3dFormat = sd.Format;
 						m_dxgiFormat = GetDXGIFormat(sd.Format);
-						m_d3dSharedTexture.Format = sd.Format;
-						m_d3dSharedTexture.Width = sd.Width;
-						m_d3dSharedTexture.Height = sd.Height;
+						SharedCapture* sharedCapture = (SharedCapture*)m_sharedCapture.Address();
+						ASSERT(sharedCapture);
+						sharedCapture->Format = sd.Format;
+						sharedCapture->Width = sd.Width;
+						sharedCapture->Height = sd.Height;
 						m_bTextures = D3D9GPUHook(device);
 					}
 				}
@@ -258,9 +272,9 @@ namespace D3D
 	void D3D9Capture::D3DReset()
 	{
 		m_bTextures = FALSE;
-		m_d3d10Resource->Release();
-		m_d3d9TextureGame->Release();
-		m_d3d10Device1->Release();
+		m_d3d10Resource.Release();
+		m_d3d9TextureGame.Release();
+		m_d3d10Device1.Release();
 		m_textureMemery.Unmap();
 		m_textureMemery.Close();
 		m_pSharedTextureData = NULL;
@@ -268,8 +282,6 @@ namespace D3D
 	BOOL D3D9Capture::InitializeSharedMemoryGPUCapture(SharedTextureData** textureData)
 	{
 		INT size = sizeof(SharedTextureData);
-		m_textureMemery.Unmap();
-		m_textureMemery.Close();
 		if (!m_textureMemery.Create(TEXTURE_MEMORY, size))
 			return FALSE;
 		if (!m_textureMemery.Map(0, 0))
@@ -280,22 +292,12 @@ namespace D3D
 	}
 	BOOL D3D9Capture::D3D9GPUHook(IDirect3DDevice9 *device)
 	{
-		m_hD3D10_1 = ::LoadLibrary(TEXT("d3d10_1.dll"));
-		if (!m_hD3D10_1)
-		{
-			return FALSE;
-		}
-		m_hDXGI = ::LoadLibrary(TEXT("dxgi.dll"));
-		if (!m_hDXGI)
-		{
-			return FALSE;
-		}
-		PFN_D3D10_CREATE_DEVICE1 d3d10CreateDevice1 = (PFN_D3D10_CREATE_DEVICE1)GetProcAddress(m_hD3D10_1, "D3D10CreateDevice1");
+		PFN_D3D10_CREATE_DEVICE1 d3d10CreateDevice1 = (PFN_D3D10_CREATE_DEVICE1)m_d3d10_1.GetFunctionPointer(TEXT("D3D10CreateDevice1"));
 		if (!d3d10CreateDevice1)
 		{
 			return FALSE;
 		}
-		CREATEDXGIFACTORY1PROC createDXGIFactory1 = (CREATEDXGIFACTORY1PROC)GetProcAddress(m_hDXGI, "CreateDXGIFactory1");
+		CREATEDXGIFACTORY1PROC createDXGIFactory1 = (CREATEDXGIFACTORY1PROC)m_dxgi.GetFunctionPointer(TEXT("CreateDXGIFactory1"));
 		if (!createDXGIFactory1)
 		{
 			return FALSE;
@@ -317,10 +319,12 @@ namespace D3D
 				return FALSE;
 			}
 		}
+		SharedCapture* sharedCapture = reinterpret_cast<SharedCapture*>(m_sharedCapture.Address());
+		ASSERT(sharedCapture);
 		D3D10_TEXTURE2D_DESC texGameDesc;
 		ZeroMemory(&texGameDesc, sizeof(texGameDesc));
-		texGameDesc.Width = m_d3dSharedTexture.Width;
-		texGameDesc.Height = m_d3dSharedTexture.Height;
+		texGameDesc.Width = sharedCapture->Width;
+		texGameDesc.Height = sharedCapture->Height;
 		texGameDesc.MipLevels = 1;
 		texGameDesc.ArraySize = 1;
 		texGameDesc.Format = m_dxgiFormat;
@@ -346,7 +350,7 @@ namespace D3D
 		{
 			return FALSE;
 		}
-		LPBYTE patchAddress = (m_patchType != 0) ? GetD3D9PatchAddress(m_hD3D9, m_patchType) : NULL;
+		LPBYTE patchAddress = (m_patchType != 0) ? GetD3D9PatchAddress(m_d3d9, m_patchType) : NULL;
 		DWORD dwOldProtect;
 		size_t patchSize;
 		CScopedArray<BYTE> patchData;
@@ -362,7 +366,7 @@ namespace D3D
 			memcpy(patchAddress, patch[m_patchType - 1].patchData, patchSize);
 		}
 		CComPtr<IDirect3DTexture9> d3d9Texture;
-		if (FAILED(device->CreateTexture(m_d3dSharedTexture.Width, m_d3dSharedTexture.Height, 1, D3DUSAGE_RENDERTARGET, (D3DFORMAT)m_d3dFormat, D3DPOOL_DEFAULT, &d3d9Texture, &m_pSharedHandle)))
+		if (FAILED(device->CreateTexture(sharedCapture->Width, sharedCapture->Height, 1, D3DUSAGE_RENDERTARGET, (D3DFORMAT)m_d3dFormat, D3DPOOL_DEFAULT, &d3d9Texture, &m_pSharedHandle)))
 		{
 			return FALSE;
 		}
@@ -379,9 +383,10 @@ namespace D3D
 		{
 			return FALSE;
 		}
-		m_d3dSharedTexture.CaptureType = CAPTURETYPE_SHAREDTEX;
-		m_d3dSharedTexture.bFlip = FALSE;
+		sharedCapture->CaptureType = CAPTURETYPE_SHAREDTEX;
+		sharedCapture->bFlip = FALSE;
 		m_pSharedTextureData->TextureHandle = m_pSharedHandle;
+		m_eventReady.SetEvent();
 		return TRUE;
 	}
 	HRESULT STDMETHODCALLTYPE D3D9Capture::D3D9EndScene(IDirect3DDevice9 *device)
@@ -398,11 +403,13 @@ namespace D3D
 				D3DPRESENT_PARAMETERS pp;
 				if (SUCCEEDED(swapChain->GetPresentParameters(&pp)))
 				{
-					D3D9Capture::Instance().m_d3dSharedTexture.CaptureType = CAPTURETYPE_SHAREDTEX;
-					D3D9Capture::Instance().m_d3dSharedTexture.Format = pp.BackBufferFormat;
-					D3D9Capture::Instance().m_d3dSharedTexture.Width = pp.BackBufferWidth;
-					D3D9Capture::Instance().m_d3dSharedTexture.Height = pp.BackBufferHeight;
-					D3D9Capture::Instance().m_d3dSharedTexture.HwndCapture = pp.hDeviceWindow;
+					SharedCapture* sharedCapture = (SharedCapture*)D3D9Capture::Instance().m_sharedCapture.Address();
+					ASSERT(sharedCapture);
+					sharedCapture->CaptureType = CAPTURETYPE_SHAREDTEX;
+					sharedCapture->Format = pp.BackBufferFormat;
+					sharedCapture->Width = pp.BackBufferWidth;
+					sharedCapture->Height = pp.BackBufferHeight;
+					sharedCapture->HwndCapture = pp.hDeviceWindow;
 					D3D9Capture::Instance().m_d3d9PresentEx.Initialize(GetVTable(device, (484 / 4)), (FARPROC)D3D9PresentEx);
 					D3D9Capture::Instance().m_d3d9PresentEx.BeginDetour();
 					D3D9Capture::Instance().m_d3d9ResetEx.Initialize(GetVTable(device, (528 / 4)), (FARPROC)D3D9ResetEx);
@@ -442,7 +449,7 @@ namespace D3D
 	HRESULT STDMETHODCALLTYPE D3D9Capture::D3D9SwapPresent(IDirect3DSwapChain9 *swap, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion, DWORD dwFlags)
 	{
 		D3D9Capture::Instance().m_d3d9SwapPresent.EndDetour();
-
+		D3D9Capture::Instance().D3DReset();
 		HRESULT hRes = swap->Present(pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion, dwFlags);
 		D3D9Capture::Instance().m_d3d9SwapPresent.BeginDetour();
 		return hRes;

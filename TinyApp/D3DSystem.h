@@ -4,11 +4,8 @@
 #include <d3d10_1.h>
 #include "Common/TinyCommon.h"
 #include "Common/TinyCore.h"
+#include "IO/TinySharedMemory.h"
 using namespace TinyUI;
-
-#define TEXTUREMEMORY			TEXT("Local\\TextureMemory")
-#define BEGIN_CAPTURE_EVENT		TEXT("D3DBeginCapture")
-#define END_CAPTURE_EVENT		TEXT("D3DEndCapture")
 
 namespace D3D
 {
@@ -22,6 +19,7 @@ namespace D3D
 		void SetScissorRect(const D3D10_RECT *pRects);
 		ID3D10Device1*	GetD3D() const;
 	private:
+		IO::TinySharedMemory				m_sharedCapture;
 		DXGI_SWAP_CHAIN_DESC				m_dsc;
 		TinyComPtr<IDXGISwapChain>			m_swap;
 		TinyComPtr<ID3D10Device1>			m_d3d;
