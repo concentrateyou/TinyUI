@@ -7,9 +7,9 @@ using namespace std;
 
 namespace D3D
 {
-
-	CD3DCaptureSource::CD3DCaptureSource()
-		:m_bCapturing(FALSE)
+	CD3DCaptureSource::CD3DCaptureSource(CD3DSystem& system)
+		:m_bCapturing(FALSE),
+		m_sharedTexture(system)
 	{
 		::ZeroMemory(&m_targetWND, sizeof(m_targetWND));
 	}
@@ -64,7 +64,11 @@ namespace D3D
 			return FALSE;
 		if (!D3D::InjectLibrary(m_targetWND.hProcess, TEXT("D:\\Develop\\GitHub\\TinyUI\\Debug\\D3DCaptureHook.dll")))
 			return FALSE;
-
+		SharedCapture* sharedCapture = GetSharedCapture();
+		if (!sharedCapture)
+			return FALSE;
+		if (!m_sharedTexture.Initialize())
+			return FALSE;
 		m_bCapturing = TRUE;
 		m_eventBegin.SetEvent();
 		return TRUE;
@@ -77,10 +81,9 @@ namespace D3D
 		return TRUE;
 	}
 
-	SharedCapture* CD3DCaptureSource::GetSharedCapture(DWORD processID)
+	SharedCapture* CD3DCaptureSource::GetSharedCapture()
 	{
-		if (m_sharedCapture.Open(SHAREDCAPTURE)
-			&& m_sharedCapture.Map())
+		if (m_sharedCapture.Open(SHAREDCAPTURE) && m_sharedCapture.Map())
 		{
 			return reinterpret_cast<SharedCapture*>(m_sharedCapture.Address());
 		}

@@ -22,12 +22,13 @@ typedef struct tagWNDINFO
 #define SHAREDCAPTURE			TEXT("Local\\SharedCapture")
 #define TEXTURE_MEMORY          TEXT("Local\\TextureMemory")
 
+
 namespace D3D
 {
 	class CD3DCaptureSource
 	{
 	public:
-		CD3DCaptureSource();
+		explicit CD3DCaptureSource(CD3DSystem& system);
 		~CD3DCaptureSource();
 		BOOL BeginCapture(const TinyString& processName);
 		BOOL EndCapture();
@@ -37,7 +38,7 @@ namespace D3D
 		DWORD	FindProcess(const TinyString& processName);
 		BOOL	FindWindow(const TinyString& processName);
 		BOOL	Initialize(const TinyString& processName);
-		SharedCapture* GetSharedCapture(DWORD processID);
+		SharedCapture* GetSharedCapture();
 		static BOOL CALLBACK EnumWindow(HWND hwnd, LPARAM lParam);
 	private:
 		TinyEvent					m_eventBegin;

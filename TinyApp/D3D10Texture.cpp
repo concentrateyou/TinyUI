@@ -14,7 +14,7 @@ namespace D3D
 	{
 	}
 
-	BOOL CD3D10Texture::GetTexture(HANDLE hResource)
+	BOOL CD3D10Texture::CreateTexture(HANDLE hResource)
 	{
 		ASSERT(m_system);
 		HRESULT hRes = S_OK;
@@ -35,6 +35,47 @@ namespace D3D
 		dsrvd.ViewDimension = D3D10_SRV_DIMENSION_TEXTURE2D;
 		dsrvd.Texture2D.MipLevels = 1;
 		if (FAILED(hRes = m_system->GetD3D()->CreateShaderResourceView(m_d3d10Texture2D, &dsrvd, &m_d3d10SRView)))
+		{
+			return FALSE;
+		}
+		return TRUE;
+	}
+	BOOL CD3D10Texture::CreateTexture(UINT width, UINT height, DXGI_FORMAT format, void *lpData, BOOL bGenMipMaps, BOOL bStatic)
+	{
+		D3D10_TEXTURE2D_DESC dtd;
+		::ZeroMemory(&dtd, sizeof(dtd));
+		dtd.Width = width;
+		dtd.Height = height;
+		dtd.MipLevels = bGenMipMaps ? 0 : 1;
+		dtd.ArraySize = 1;
+		dtd.Format = format;
+		dtd.BindFlags = D3D10_BIND_SHADER_RESOURCE;
+		dtd.SampleDesc.Count = 1;
+		dtd.Usage = bStatic ? D3D10_USAGE_DEFAULT : D3D10_USAGE_DYNAMIC;
+		dtd.CPUAccessFlags = bStatic ? 0 : D3D10_CPU_ACCESS_WRITE;
+		D3D10_SUBRESOURCE_DATA dsd;
+		D3D10_SUBRESOURCE_DATA *lpDSD = NULL;
+		if (lpData)
+		{
+			// 0, 1, 1, 4, 4, 4, 4, 8, 16, 0, 0, 0
+			dsd.pSysMem = lpData;
+			//dsd.SysMemPitch = width * formatPitch[(UINT)colorFormat];
+			dsd.SysMemSlicePitch = 0;
+			lpDSD = &dsd;
+		}
+		TinyComPtr<ID3D10Texture2D> texture2D;
+		if (FAILED(m_system->GetD3D()->CreateTexture2D(&dtd, lpDSD, &texture2D)))
+		{
+			return FALSE;
+		}
+
+		D3D10_SHADER_RESOURCE_VIEW_DESC dsrvd;
+		::ZeroMemory(&dsrvd, sizeof(dsrvd));
+		dsrvd.Format = format;
+		dsrvd.ViewDimension = D3D10_SRV_DIMENSION_TEXTURE2D;
+		dsrvd.Texture2D.MipLevels = bGenMipMaps ? -1 : 1;
+		ID3D10ShaderResourceView *resource;
+		if (FAILED(m_system->GetD3D()->CreateShaderResourceView(texture2D, &dsrvd, &resource)))
 		{
 			return FALSE;
 		}

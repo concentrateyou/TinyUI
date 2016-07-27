@@ -1,6 +1,8 @@
 #pragma once
 #include "D3DSystem.h"
 
+const UINT formatPitch[] = { 0, 1, 1, 4, 4, 4, 4, 8, 16, 0, 0, 0 };
+
 namespace D3D
 {
 	class CD3D10Texture
@@ -8,7 +10,8 @@ namespace D3D
 	public:
 		CD3D10Texture(CD3DSystem* system);
 		~CD3D10Texture();
-		BOOL GetTexture(HANDLE hResource);
+		BOOL CreateTexture(HANDLE hResource);
+		BOOL CreateTexture(UINT width, UINT height, DXGI_FORMAT format, void *lpData, BOOL bGenMipMaps, BOOL bStatic);
 		TinyComPtr<IDXGISurface1> GetSurface();
 	private:
 		CD3DSystem*								m_system;

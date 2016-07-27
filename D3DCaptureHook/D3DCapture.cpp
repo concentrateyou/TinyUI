@@ -279,15 +279,15 @@ namespace D3D
 		m_textureMemery.Close();
 		m_pSharedTextureData = NULL;
 	}
-	BOOL D3D9Capture::InitializeSharedMemoryGPUCapture(SharedTextureData** textureData)
+	BOOL D3D9Capture::InitializeSharedMemoryGPUCapture(SharedTexture** sharedTexture)
 	{
-		INT size = sizeof(SharedTextureData);
+		INT size = sizeof(SharedTexture);
 		if (!m_textureMemery.Create(TEXTURE_MEMORY, size))
 			return FALSE;
 		if (!m_textureMemery.Map(0, 0))
 			return FALSE;
-		*textureData = (SharedTextureData*)m_textureMemery.Address();
-		(*textureData)->FrameTime = 0;
+		*sharedTexture = (SharedTexture*)m_textureMemery.Address();
+		(*sharedTexture)->FrameTime = 0;
 		return TRUE;
 	}
 	BOOL D3D9Capture::D3D9GPUHook(IDirect3DDevice9 *device)

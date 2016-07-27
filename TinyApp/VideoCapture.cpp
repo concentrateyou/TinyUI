@@ -3,6 +3,8 @@
 
 
 CVideoCapture::CVideoCapture()
+	:m_d3dCaptureSource(m_system),
+	m_hCapture(NULL)
 {
 
 }

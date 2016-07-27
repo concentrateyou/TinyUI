@@ -34,15 +34,12 @@ namespace D3D
 		DWORD		MapSize;
 		HWND		HwndCapture;
 	}SharedCapture;//共享的捕获参数
-
 #pragma pack(push, 8)
-
-	typedef struct tagSharedTextureData
+	typedef struct tagSharedTexture
 	{
 		LONGLONG    FrameTime;
 		HANDLE      TextureHandle;
-	}SharedTextureData;
-
+	}SharedTexture;
 #pragma pack(pop)
 	/// <summary>
 	/// D3D9
@@ -56,7 +53,7 @@ namespace D3D
 		BOOL D3D9Draw(IDirect3DDevice9 *device);
 		void D3DReset();
 		BOOL D3D9GPUHook(IDirect3DDevice9 *device);
-		BOOL InitializeSharedMemoryGPUCapture(SharedTextureData **texData);
+		BOOL InitializeSharedMemoryGPUCapture(SharedTexture **texData);
 		static D3D9Capture& Instance();
 	private:
 		static HRESULT STDMETHODCALLTYPE D3D9EndScene(IDirect3DDevice9 *device);
@@ -66,7 +63,7 @@ namespace D3D
 		static HRESULT STDMETHODCALLTYPE D3D9Reset(IDirect3DDevice9 *device, D3DPRESENT_PARAMETERS *params);
 		static HRESULT STDMETHODCALLTYPE D3D9ResetEx(IDirect3DDevice9Ex *device, D3DPRESENT_PARAMETERS *params, D3DDISPLAYMODEEX *fullscreenData);
 	public:
-		SharedTextureData*			m_pSharedTextureData;
+		SharedTexture*			m_pSharedTextureData;
 		D3DFORMAT					m_d3dFormat;
 		DXGI_FORMAT					m_dxgiFormat;
 		CScopedLibrary				m_d3d9;

@@ -18,36 +18,23 @@ namespace D3D
 		DWORD		MapSize;
 		HWND		HwndCapture;
 	}SharedCapture;//共享的捕获参数
-	typedef struct tagCaptureEntry
-	{
-		UINT		CaptureType;
-		DWORD		Format;
-		UINT		Width;
-		UINT		Height;
-		BOOL		bFlip;
-		UINT		Pitch;
-		UINT		MapID;
-		DWORD		MapSize;
-		HWND		HwndCapture;
-	}SharedTexture;
 #pragma pack(push, 8)
-
-	typedef struct tagSharedTextureData
+	typedef struct tagSharedTexture
 	{
 		LONGLONG    FrameTime;
 		HANDLE      TextureHandle;
-	}SharedTextureData;
-
+	}SharedTexture;
 #pragma pack(pop)
 
 	class CSharedTextureCapture
 	{
 	public:
-		CSharedTextureCapture();
+		explicit CSharedTextureCapture(CD3DSystem& system);
 		~CSharedTextureCapture();
 		BOOL Initialize();
 	private:
-		CD3D10Texture*		m_pSharedTexture;
+		CD3D10Texture		sharedTexture;
+		CD3D10Texture		cpoyTexture;
 		TinySharedMemory	m_textureMemery;
 		HWND				m_hWNDTarget;
 	};
