@@ -1,4 +1,5 @@
 #pragma once
+#include <Windows.h>
 #include <d3d9.h>
 #include <D3D10_1.h>
 #include <DXGI.h>
@@ -27,8 +28,7 @@ namespace D3D
 	{
 		UINT		CaptureType;
 		DWORD		Format;
-		UINT		Width;
-		UINT		Height;
+		SIZE		Size;
 		BOOL		bFlip;
 		UINT		Pitch;
 		DWORD		MapSize;

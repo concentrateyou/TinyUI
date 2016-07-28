@@ -1,11 +1,12 @@
 #pragma once
-#include "D3DSystem.h"
+#include <Windows.h>
+#include <TlHelp32.h>
+#include "D3DDevice.h"
 #include "D3DHook.h"
 #include "Common/TinyString.h"
 #include "Common/TinyCore.h"
 #include "SharedTextureCapture.h"
-#include <Windows.h>
-#include <TlHelp32.h>
+#include "Vector2D.h"
 
 typedef struct tagWNDINFO
 {
@@ -28,19 +29,24 @@ namespace D3D
 	class CD3DCaptureSource
 	{
 	public:
-		explicit CD3DCaptureSource(CD3DSystem& system);
+		explicit CD3DCaptureSource(CD3DDevice& device);
 		~CD3DCaptureSource();
 		BOOL BeginCapture(const TinyString& processName);
 		BOOL EndCapture();
 		void Tick(FLOAT fSeconds);
-		void Render(const POINT &pos, const SIZE &size);
+		void Render(const Vector2D &pos, const Vector2D &size);
 	private:
+		BOOL	Initialize(const TinyString& processName);
 		DWORD	FindProcess(const TinyString& processName);
 		BOOL	FindWindow(const TinyString& processName);
-		BOOL	Initialize(const TinyString& processName);
+		void	DrawSprite(DWORD color, float x, float y, float x2, float y2);
 		SharedCapture* GetSharedCapture();
 		static BOOL CALLBACK EnumWindow(HWND hwnd, LPARAM lParam);
 	private:
+		CD3DDevice&					m_device;
+		SharedCapture*				m_pSharedCapture;
+		CD3D10Texture				m_gameTexture;//”Œœ∑µƒŒ∆¿Ì
+		D3D::CSharedTextureCapture	m_textureCapture;
 		TinyEvent					m_eventBegin;
 		TinyEvent					m_eventEnd;
 		TinyEvent					m_eventReady;
@@ -48,7 +54,6 @@ namespace D3D
 		TinySharedMemory			m_sharedCapture;
 		WNDINFO						m_targetWND;
 		BOOL						m_bCapturing;
-		D3D::CSharedTextureCapture	m_sharedTexture;
 	};
 }
 

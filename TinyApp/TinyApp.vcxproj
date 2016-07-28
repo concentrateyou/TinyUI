@@ -59,7 +59,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\TinyUI;..\TinySmiley;..\Debug;$(DXSDK_DIR)Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d9.lib;dxgi.lib;dxguid.lib;D3D10_1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxgi.lib;dxguid.lib;d3d10_1.lib;d3dx10.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -86,25 +86,30 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="D3D10PixelShader.h" />
     <ClInclude Include="D3D10Texture.h" />
     <ClInclude Include="D3DCaptureSource.h" />
     <ClInclude Include="D3DDrawPanel.h" />
-    <ClInclude Include="D3DSystem.h" />
+    <ClInclude Include="D3DDevice.h" />
     <ClInclude Include="D3DHook.h" />
+    <ClInclude Include="D3DVertexShader.h" />
     <ClInclude Include="MainFrame.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SharedTextureCapture.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TinyApp.h" />
+    <ClInclude Include="Vector2D.h" />
     <ClInclude Include="VideoCapture.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="D3D10PixelShader.cpp" />
     <ClCompile Include="D3D10Texture.cpp" />
     <ClCompile Include="D3DCaptureSource.cpp" />
     <ClCompile Include="D3DDrawPanel.cpp" />
-    <ClCompile Include="D3DSystem.cpp" />
+    <ClCompile Include="D3DDevice.cpp" />
     <ClCompile Include="D3DHook.cpp" />
+    <ClCompile Include="D3DVertexShader.cpp" />
     <ClCompile Include="MainFrame.cpp" />
     <ClCompile Include="SharedTextureCapture.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -112,6 +117,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TinyApp.cpp" />
+    <ClCompile Include="Vector2D.cpp" />
     <ClCompile Include="VideoCapture.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -1,17 +1,18 @@
 #include "stdafx.h"
-#include "D3DSystem.h"
+#include "D3DDevice.h"
+#include "Vector2D.h"
 
 namespace D3D
 {
-	CD3DSystem::CD3DSystem()
+	CD3DDevice::CD3DDevice()
 	{
 
 	}
-	CD3DSystem::~CD3DSystem()
+	CD3DDevice::~CD3DDevice()
 	{
 
 	}
-	BOOL CD3DSystem::Initialize(HWND hWND, INT cx, INT cy)
+	BOOL CD3DDevice::Initialize(HWND hWND, INT cx, INT cy)
 	{
 		TinyComPtr<IDXGIFactory1> gif1;
 		HRESULT hRes = S_OK;
@@ -86,10 +87,9 @@ namespace D3D
 		hRes = m_d3d->CreateBlendState(&dbd, &m_blendState);
 		if (FAILED(hRes))
 			return FALSE;
-
 		return TRUE;
 	}
-	void CD3DSystem::SetViewport(FLOAT x, FLOAT y, FLOAT cx, FLOAT cy)
+	void CD3DDevice::SetViewport(FLOAT x, FLOAT y, FLOAT cx, FLOAT cy)
 	{
 		ASSERT(m_d3d);
 		D3D10_VIEWPORT vp;
@@ -101,7 +101,7 @@ namespace D3D
 		vp.Height = UINT(cy);
 		m_d3d->RSSetViewports(1, &vp);
 	}
-	void CD3DSystem::SetScissorRect(const D3D10_RECT *pRect)
+	void CD3DDevice::SetScissorRect(const D3D10_RECT *pRect)
 	{
 		ASSERT(m_d3d);
 		if (pRect)
@@ -115,9 +115,41 @@ namespace D3D
 			m_d3d->RSSetScissorRects(0, NULL);
 		}
 	}
-	ID3D10Device1*	CD3DSystem::GetD3D() const
+	BOOL CD3DDevice::ResizeView()
+	{
+		LPVOID nullVal = NULL;
+		m_d3d->OMSetRenderTargets(1, (ID3D10RenderTargetView**)&nullVal, NULL);
+		m_renderView.Release();
+		m_swap->ResizeBuffers(2, 0, 0, DXGI_FORMAT_B8G8R8A8_UNORM, 0);
+		TinyComPtr<ID3D10Texture2D> backBuffer;
+		if (FAILED(m_swap->GetBuffer(0, IID_ID3D10Texture2D, (void**)&backBuffer)))
+		{
+			return FALSE;
+		}
+		if (FAILED(m_d3d->CreateRenderTargetView(backBuffer, NULL, &m_renderView)))
+		{
+			return FALSE;
+		}
+		return TRUE;
+	}
+	ID3D10Device1*	CD3DDevice::GetD3D() const
 	{
 		return m_d3d;
+	}
+	void CD3DDevice::CopyTexture(CD3D10Texture *texDest, CD3D10Texture *texSrc)
+	{
+		CD3D10Texture *d3d10Dest = static_cast<CD3D10Texture*>(texDest);
+		CD3D10Texture *d3d10Src = static_cast<CD3D10Texture*>(texSrc);
+		m_d3d->CopyResource(d3d10Dest->m_d3d10Texture2D, d3d10Src->m_d3d10Texture2D);
+	}
+	void CD3DDevice::DrawSprite(CD3D10Texture *texture, DWORD color, float x, float y, float x2, float y2)
+	{
+		ASSERT(texture);
+		DrawSpriteEx(texture, color, x, y, x2, y2, 0.0f, 0.0f, 1.0f, 1.0f);
+	}
+	void CD3DDevice::DrawSpriteEx(CD3D10Texture *texture, DWORD color, float x, float y, float x2, float y2, float u, float v, float u2, float v2)
+	{
+
 	}
 }
 

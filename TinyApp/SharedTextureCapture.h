@@ -1,5 +1,4 @@
 #pragma once
-#include "D3DSystem.h"
 #include "D3D10Texture.h"
 #include "IO/TinySharedMemory.h"
 using namespace TinyUI::IO;
@@ -11,8 +10,7 @@ namespace D3D
 	{
 		UINT		CaptureType;
 		DWORD		Format;
-		UINT		Width;
-		UINT		Height;
+		SIZE		Size;
 		BOOL		bFlip;
 		UINT		Pitch;
 		DWORD		MapSize;
@@ -29,12 +27,13 @@ namespace D3D
 	class CSharedTextureCapture
 	{
 	public:
-		explicit CSharedTextureCapture(CD3DSystem& system);
+		explicit CSharedTextureCapture(CD3DDevice& system);
 		~CSharedTextureCapture();
 		BOOL Initialize();
+		CD3D10Texture*  GetSharedTexture();
+		CD3D10Texture*	GetCopyTexture();
 	private:
-		CD3D10Texture		sharedTexture;
-		CD3D10Texture		cpoyTexture;
+		CD3D10Texture		m_sharedTexture;
 		TinySharedMemory	m_textureMemery;
 		HWND				m_hWNDTarget;
 	};

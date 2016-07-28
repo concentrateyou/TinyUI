@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "D3DCaptureSource.h"
+#include "Vector2D.h"
 #include <string>
 #include <sstream>
 #include <fstream>
@@ -7,9 +8,18 @@ using namespace std;
 
 namespace D3D
 {
-	CD3DCaptureSource::CD3DCaptureSource(CD3DSystem& system)
+	void RoundVector2D(Vector2D &v)
+	{
+		v.x = float(round(v.x));
+		v.y = float(round(v.y));
+	}
+	//////////////////////////////////////////////////////////////////////////
+	CD3DCaptureSource::CD3DCaptureSource(CD3DDevice& system)
 		:m_bCapturing(FALSE),
-		m_sharedTexture(system)
+		m_device(system),
+		m_textureCapture(system),
+		m_gameTexture(system),
+		m_pSharedCapture(NULL)
 	{
 		::ZeroMemory(&m_targetWND, sizeof(m_targetWND));
 	}
@@ -64,11 +74,12 @@ namespace D3D
 			return FALSE;
 		if (!D3D::InjectLibrary(m_targetWND.hProcess, TEXT("D:\\Develop\\GitHub\\TinyUI\\Debug\\D3DCaptureHook.dll")))
 			return FALSE;
-		SharedCapture* sharedCapture = GetSharedCapture();
-		if (!sharedCapture)
+		m_pSharedCapture = GetSharedCapture();
+		if (!m_pSharedCapture)
 			return FALSE;
-		if (!m_sharedTexture.Initialize())
+		if (!m_textureCapture.Initialize())
 			return FALSE;
+		m_gameTexture.CreateTexture(m_pSharedCapture->Size, (DXGI_FORMAT)m_pSharedCapture->Format, 0, FALSE, TRUE);
 		m_bCapturing = TRUE;
 		m_eventBegin.SetEvent();
 		return TRUE;
@@ -97,14 +108,42 @@ namespace D3D
 		}
 		if (!m_bCapturing)
 		{
-			BOOL hRes = BeginCapture(TEXT("War3.exe"));
+			BeginCapture(TEXT("War3.exe"));
 		}
 		else
 		{
 
 		}
 	}
-	void CD3DCaptureSource::Render(const POINT &pos, const SIZE &size)
+	void CD3DCaptureSource::Render(const Vector2D &pos, const Vector2D &size)
+	{
+		if (!m_pSharedCapture || !m_gameTexture.IsValid()) 
+			return;
+		Vector2D texturePos = Vector2D(0.0f, 0.0f);
+		Vector2D textureStretch = Vector2D(1.0f, 1.0f);
+		TinySize gameSize = m_gameTexture.GetSize();
+		Vector2D textureSize = Vector2D(float(gameSize.cx), float(gameSize.cy));
+		gameSize.cx = GetSystemMetrics(SM_CXSCREEN);
+		gameSize.cy = GetSystemMetrics(SM_CYSCREEN);
+		Vector2D totalSize = Vector2D(float(gameSize.cx), float(gameSize.cy));
+		Vector2D center = totalSize*0.5f;
+		float xAspect = totalSize.x / textureSize.x;
+		float yAspect = totalSize.y / textureSize.y;
+		float multiplyVal = ((textureSize.y * xAspect) > totalSize.y) ? yAspect : xAspect;
+		textureStretch *= textureSize*multiplyVal;
+		texturePos = center - (textureStretch*0.5f);
+		Vector2D sizeAdjust = size / totalSize;
+		texturePos *= sizeAdjust;
+		texturePos += pos;
+		textureStretch *= sizeAdjust;
+		RoundVector2D(texturePos);
+		RoundVector2D(textureSize);
+		if (m_pSharedCapture->bFlip)
+			DrawSprite(0xFFFFFFFF, texturePos.x, texturePos.y + textureStretch.y, texturePos.x + textureStretch.x, texturePos.y);
+		else
+			DrawSprite(0xFFFFFFFF, texturePos.x, texturePos.y, texturePos.x + textureStretch.x, texturePos.y + textureStretch.y);
+	}
+	void CD3DCaptureSource::DrawSprite(DWORD color, float x, float y, float x2, float y2)
 	{
 
 	}

@@ -243,8 +243,8 @@ namespace D3D
 						SharedCapture* sharedCapture = (SharedCapture*)m_sharedCapture.Address();
 						ASSERT(sharedCapture);
 						sharedCapture->Format = sd.Format;
-						sharedCapture->Width = sd.Width;
-						sharedCapture->Height = sd.Height;
+						sharedCapture->Size.cx = sd.Width;
+						sharedCapture->Size.cy = sd.Height;
 						m_bTextures = D3D9GPUHook(device);
 					}
 				}
@@ -323,8 +323,8 @@ namespace D3D
 		ASSERT(sharedCapture);
 		D3D10_TEXTURE2D_DESC texGameDesc;
 		ZeroMemory(&texGameDesc, sizeof(texGameDesc));
-		texGameDesc.Width = sharedCapture->Width;
-		texGameDesc.Height = sharedCapture->Height;
+		texGameDesc.Width = sharedCapture->Size.cx;
+		texGameDesc.Height = sharedCapture->Size.cy;
 		texGameDesc.MipLevels = 1;
 		texGameDesc.ArraySize = 1;
 		texGameDesc.Format = m_dxgiFormat;
@@ -366,7 +366,7 @@ namespace D3D
 			memcpy(patchAddress, patch[m_patchType - 1].patchData, patchSize);
 		}
 		CComPtr<IDirect3DTexture9> d3d9Texture;
-		if (FAILED(device->CreateTexture(sharedCapture->Width, sharedCapture->Height, 1, D3DUSAGE_RENDERTARGET, (D3DFORMAT)m_d3dFormat, D3DPOOL_DEFAULT, &d3d9Texture, &m_pSharedHandle)))
+		if (FAILED(device->CreateTexture(sharedCapture->Size.cx, sharedCapture->Size.cy, 1, D3DUSAGE_RENDERTARGET, (D3DFORMAT)m_d3dFormat, D3DPOOL_DEFAULT, &d3d9Texture, &m_pSharedHandle)))
 		{
 			return FALSE;
 		}
@@ -407,8 +407,8 @@ namespace D3D
 					ASSERT(sharedCapture);
 					sharedCapture->CaptureType = CAPTURETYPE_SHAREDTEX;
 					sharedCapture->Format = pp.BackBufferFormat;
-					sharedCapture->Width = pp.BackBufferWidth;
-					sharedCapture->Height = pp.BackBufferHeight;
+					sharedCapture->Size.cx = pp.BackBufferWidth;
+					sharedCapture->Size.cy = pp.BackBufferHeight;
 					sharedCapture->HwndCapture = pp.hDeviceWindow;
 					D3D9Capture::Instance().m_d3d9PresentEx.Initialize(GetVTable(device, (484 / 4)), (FARPROC)D3D9PresentEx);
 					D3D9Capture::Instance().m_d3d9PresentEx.BeginDetour();

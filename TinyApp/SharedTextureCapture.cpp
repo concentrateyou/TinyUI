@@ -3,10 +3,9 @@
 
 namespace D3D
 {
-	CSharedTextureCapture::CSharedTextureCapture(CD3DSystem& system)
+	CSharedTextureCapture::CSharedTextureCapture(CD3DDevice& system)
 		:m_hWNDTarget(NULL),
-		sharedTexture(&system),
-		cpoyTexture(&system)
+		m_sharedTexture(system)
 	{
 
 	}
@@ -31,10 +30,14 @@ namespace D3D
 		{
 			return FALSE;
 		}
-		if (!sharedTexture.CreateTexture(pTexture->TextureHandle))
+		if (!m_sharedTexture.CreateTexture(pTexture->TextureHandle))
 		{
 			return FALSE;
 		}
 		return TRUE;
+	}
+	CD3D10Texture* CSharedTextureCapture::GetSharedTexture()
+	{
+		return &m_sharedTexture;
 	}
 }

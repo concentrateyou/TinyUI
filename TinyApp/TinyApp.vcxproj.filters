@@ -36,9 +36,6 @@
     <ClInclude Include="D3DHook.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="D3DSystem.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="D3DDrawPanel.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -52,6 +49,18 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="VideoCapture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D10PixelShader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="D3DVertexShader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="D3DDevice.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -68,9 +77,6 @@
     <ClCompile Include="D3DHook.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="D3DSystem.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="D3DDrawPanel.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -84,6 +90,18 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="VideoCapture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D10PixelShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="D3DVertexShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="D3DDevice.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
