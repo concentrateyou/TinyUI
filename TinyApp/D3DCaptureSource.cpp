@@ -14,7 +14,7 @@ namespace D3D
 		v.y = float(round(v.y));
 	}
 	//////////////////////////////////////////////////////////////////////////
-	CD3DCaptureSource::CD3DCaptureSource(CD3DDevice& system)
+	CD3DCaptureSource::CD3DCaptureSource(CD3D10Device& system)
 		:m_bCapturing(FALSE),
 		m_device(system),
 		m_textureCapture(system),

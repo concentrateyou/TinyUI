@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include <TlHelp32.h>
-#include "D3DDevice.h"
+#include "D3D10Device.h"
 #include "D3DHook.h"
 #include "Common/TinyString.h"
 #include "Common/TinyCore.h"
@@ -23,13 +23,12 @@ typedef struct tagWNDINFO
 #define SHAREDCAPTURE			TEXT("Local\\SharedCapture")
 #define TEXTURE_MEMORY          TEXT("Local\\TextureMemory")
 
-
 namespace D3D
 {
 	class CD3DCaptureSource
 	{
 	public:
-		explicit CD3DCaptureSource(CD3DDevice& device);
+		explicit CD3DCaptureSource(CD3D10Device& device);
 		~CD3DCaptureSource();
 		BOOL BeginCapture(const TinyString& processName);
 		BOOL EndCapture();
@@ -43,10 +42,10 @@ namespace D3D
 		SharedCapture* GetSharedCapture();
 		static BOOL CALLBACK EnumWindow(HWND hwnd, LPARAM lParam);
 	private:
-		CD3DDevice&					m_device;
-		SharedCapture*				m_pSharedCapture;
-		CD3D10Texture				m_gameTexture;//”Œœ∑µƒŒ∆¿Ì
+		CD3D10Device&				m_device;
+		CD3D10Texture				m_gameTexture;
 		D3D::CSharedTextureCapture	m_textureCapture;
+		SharedCapture*				m_pSharedCapture;
 		TinyEvent					m_eventBegin;
 		TinyEvent					m_eventEnd;
 		TinyEvent					m_eventReady;

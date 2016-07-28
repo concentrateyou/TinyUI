@@ -3,7 +3,7 @@
 
 namespace D3D
 {
-	CSharedTextureCapture::CSharedTextureCapture(CD3DDevice& system)
+	CSharedTextureCapture::CSharedTextureCapture(CD3D10Device& system)
 		:m_hWNDTarget(NULL),
 		m_sharedTexture(system)
 	{

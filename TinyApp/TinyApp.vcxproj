@@ -88,11 +88,12 @@
   <ItemGroup>
     <ClInclude Include="D3D10PixelShader.h" />
     <ClInclude Include="D3D10Texture.h" />
+    <ClInclude Include="D3D10VertexBuffer.h" />
     <ClInclude Include="D3DCaptureSource.h" />
     <ClInclude Include="D3DDrawPanel.h" />
-    <ClInclude Include="D3DDevice.h" />
+    <ClInclude Include="D3D10Device.h" />
     <ClInclude Include="D3DHook.h" />
-    <ClInclude Include="D3DVertexShader.h" />
+    <ClInclude Include="D3D10VertexShader.h" />
     <ClInclude Include="MainFrame.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SharedTextureCapture.h" />
@@ -105,11 +106,12 @@
   <ItemGroup>
     <ClCompile Include="D3D10PixelShader.cpp" />
     <ClCompile Include="D3D10Texture.cpp" />
+    <ClCompile Include="D3D10VertexBuffer.cpp" />
     <ClCompile Include="D3DCaptureSource.cpp" />
     <ClCompile Include="D3DDrawPanel.cpp" />
-    <ClCompile Include="D3DDevice.cpp" />
+    <ClCompile Include="D3D10Device.cpp" />
     <ClCompile Include="D3DHook.cpp" />
-    <ClCompile Include="D3DVertexShader.cpp" />
+    <ClCompile Include="D3D10VertexShader.cpp" />
     <ClCompile Include="MainFrame.cpp" />
     <ClCompile Include="SharedTextureCapture.cpp" />
     <ClCompile Include="stdafx.cpp">

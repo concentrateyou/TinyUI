@@ -1,18 +1,20 @@
 #include "stdafx.h"
-#include "D3DDevice.h"
+#include "D3D10Device.h"
 #include "Vector2D.h"
 
 namespace D3D
 {
-	CD3DDevice::CD3DDevice()
+	CD3D10Device::CD3D10Device()
+		:m_pCurrentVertexShader(NULL),
+		m_pCurrentPixelShader(NULL)
 	{
 
 	}
-	CD3DDevice::~CD3DDevice()
+	CD3D10Device::~CD3D10Device()
 	{
 
 	}
-	BOOL CD3DDevice::Initialize(HWND hWND, INT cx, INT cy)
+	BOOL CD3D10Device::Initialize(HWND hWND, INT cx, INT cy)
 	{
 		TinyComPtr<IDXGIFactory1> gif1;
 		HRESULT hRes = S_OK;
@@ -89,7 +91,7 @@ namespace D3D
 			return FALSE;
 		return TRUE;
 	}
-	void CD3DDevice::SetViewport(FLOAT x, FLOAT y, FLOAT cx, FLOAT cy)
+	void CD3D10Device::SetViewport(FLOAT x, FLOAT y, FLOAT cx, FLOAT cy)
 	{
 		ASSERT(m_d3d);
 		D3D10_VIEWPORT vp;
@@ -101,7 +103,7 @@ namespace D3D
 		vp.Height = UINT(cy);
 		m_d3d->RSSetViewports(1, &vp);
 	}
-	void CD3DDevice::SetScissorRect(const D3D10_RECT *pRect)
+	void CD3D10Device::SetScissorRect(const D3D10_RECT *pRect)
 	{
 		ASSERT(m_d3d);
 		if (pRect)
@@ -115,7 +117,7 @@ namespace D3D
 			m_d3d->RSSetScissorRects(0, NULL);
 		}
 	}
-	BOOL CD3DDevice::ResizeView()
+	BOOL CD3D10Device::ResizeView()
 	{
 		LPVOID nullVal = NULL;
 		m_d3d->OMSetRenderTargets(1, (ID3D10RenderTargetView**)&nullVal, NULL);
@@ -132,22 +134,75 @@ namespace D3D
 		}
 		return TRUE;
 	}
-	ID3D10Device1*	CD3DDevice::GetD3D() const
+	ID3D10Device1*	CD3D10Device::GetD3D() const
 	{
 		return m_d3d;
 	}
-	void CD3DDevice::CopyTexture(CD3D10Texture *texDest, CD3D10Texture *texSrc)
+	void CD3D10Device::CopyTexture(CD3D10Texture *texDest, CD3D10Texture *texSrc)
 	{
 		CD3D10Texture *d3d10Dest = static_cast<CD3D10Texture*>(texDest);
 		CD3D10Texture *d3d10Src = static_cast<CD3D10Texture*>(texSrc);
 		m_d3d->CopyResource(d3d10Dest->m_d3d10Texture2D, d3d10Src->m_d3d10Texture2D);
 	}
-	void CD3DDevice::DrawSprite(CD3D10Texture *texture, DWORD color, float x, float y, float x2, float y2)
+	void CD3D10Device::LoadTexture(CD3D10Texture *texture, UINT idTexture)
+	{
+		if (m_currentTextures[idTexture] != texture)
+		{
+			if (texture)
+			{
+				m_d3d->PSSetShaderResources(idTexture, 1, &texture->m_d3d10SRView);
+			}
+			else
+			{
+				LPVOID lpNull = NULL;
+				m_d3d->PSSetShaderResources(idTexture, 1, (ID3D10ShaderResourceView**)&lpNull);
+			}
+			m_currentTextures[idTexture] = texture;
+		}
+	}
+	void CD3D10Device::LoadVertexShader(CD3D10VertexShader* pVertexShader)
+	{
+		if (m_pCurrentVertexShader != pVertexShader)
+		{
+			if (pVertexShader)
+			{
+				m_d3d->VSSetShader(pVertexShader->m_vertexShader);
+				m_d3d->IASetInputLayout(pVertexShader->m_inputLayout);
+				m_d3d->VSSetConstantBuffers(0, 1, &pVertexShader->m_constantBuffer);
+			}
+			else
+			{
+				LPVOID lpNULL = NULL;
+				m_d3d->VSSetShader(NULL);
+				m_d3d->VSSetConstantBuffers(0, 1, (ID3D10Buffer**)&lpNULL);
+			}
+			m_pCurrentVertexShader = pVertexShader;
+		}
+	}
+	void CD3D10Device::LoadPixelShader(CD3D10PixelShader* pPixelShader)
+	{
+		if (m_pCurrentPixelShader != pPixelShader)
+		{
+			if (pPixelShader)
+			{
+				m_d3d->PSSetShader(pPixelShader->m_pixelShader);
+				m_d3d->PSSetConstantBuffers(0, 1, &pPixelShader->m_constantBuffer);
+			}
+			else
+			{
+				LPVOID lpNULL = NULL;
+				m_d3d->PSSetShader(NULL);
+				m_d3d->PSSetConstantBuffers(0, 1, (ID3D10Buffer**)&lpNULL);;
+			}
+			m_pCurrentPixelShader = pPixelShader;
+		}
+	}
+	void CD3D10Device::DrawSprite(CD3D10Texture *texture, DWORD color, float x, float y, float x2, float y2)
 	{
 		ASSERT(texture);
 		DrawSpriteEx(texture, color, x, y, x2, y2, 0.0f, 0.0f, 1.0f, 1.0f);
 	}
-	void CD3DDevice::DrawSpriteEx(CD3D10Texture *texture, DWORD color, float x, float y, float x2, float y2, float u, float v, float u2, float v2)
+	void CD3D10Device::DrawSpriteEx(CD3D10Texture *texture, DWORD color, float x, float y, float x2, float y2, float u, float v, float u2, float v2)
 	{
 
 	}

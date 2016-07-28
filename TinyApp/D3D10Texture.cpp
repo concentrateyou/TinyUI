@@ -13,16 +13,19 @@ namespace D3D
 		case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:
 		case DXGI_FORMAT_B8G8R8A8_UNORM:
 			return GS_BGRA;
-		case DXGI_FORMAT_R10G10B10A2_UNORM: return GS_R10G10B10A2;
-		case DXGI_FORMAT_B8G8R8X8_UNORM:    return GS_BGR;
-		case DXGI_FORMAT_B5G5R5A1_UNORM:    return GS_B5G5R5A1;
-		case DXGI_FORMAT_B5G6R5_UNORM:      return GS_B5G6R5;
+		case DXGI_FORMAT_R10G10B10A2_UNORM:
+			return GS_R10G10B10A2;
+		case DXGI_FORMAT_B8G8R8X8_UNORM:
+			return GS_BGR;
+		case DXGI_FORMAT_B5G5R5A1_UNORM:
+			return GS_B5G5R5A1;
+		case DXGI_FORMAT_B5G6R5_UNORM:
+			return GS_B5G6R5;
 		}
-
 		return GS_UNKNOWNFORMAT;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	CD3D10Texture::CD3D10Texture(CD3DDevice& system)
+	CD3D10Texture::CD3D10Texture(CD3D10Device& system)
 		:m_device(system)
 	{
 
@@ -37,7 +40,7 @@ namespace D3D
 	{
 		return m_d3d10Texture2D && m_d3d10SRView && m_d3dRenderTarget;
 	}
-	CD3DDevice* CD3D10Texture::GetSystem()
+	CD3D10Device* CD3D10Texture::GetSystem()
 	{
 		return &m_device;
 	}

@@ -6,7 +6,6 @@
 #include "D3DCommon.h"
 #include "D3DDetour.h"
 #include "D3DCore.h"
-#include "D3DThunk.h"
 #include "SharedMemory.h"
 #include <string>
 using namespace std;

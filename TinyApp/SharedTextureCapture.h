@@ -27,7 +27,7 @@ namespace D3D
 	class CSharedTextureCapture
 	{
 	public:
-		explicit CSharedTextureCapture(CD3DDevice& system);
+		explicit CSharedTextureCapture(CD3D10Device& system);
 		~CSharedTextureCapture();
 		BOOL Initialize();
 		CD3D10Texture*  GetSharedTexture();

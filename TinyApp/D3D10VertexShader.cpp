@@ -1,18 +1,17 @@
 #include "stdafx.h"
-#include "D3DVertexShader.h"
+#include "D3D10VertexShader.h"
 
 namespace D3D
 {
-	const	INT	constantSize = 64;
-	CD3DVertexShader::CD3DVertexShader()
+	CD3D10VertexShader::CD3D10VertexShader()
 	{
 	}
 
 
-	CD3DVertexShader::~CD3DVertexShader()
+	CD3D10VertexShader::~CD3D10VertexShader()
 	{
 	}
-	BOOL CD3DVertexShader::Compile(CD3DDevice& device, const TinyString& str)
+	BOOL CD3D10VertexShader::Compile(CD3D10Device& device, const TinyString& str)
 	{
 		TinyComPtr<ID3D10Blob> shader;
 		TinyComPtr<ID3D10Blob> errorMsgs;
@@ -34,6 +33,7 @@ namespace D3D
 		{
 			return FALSE;
 		}
+		INT	constantSize = 64;
 		D3D10_BUFFER_DESC dbd;
 		::ZeroMemory(&dbd, sizeof(dbd));
 		dbd.ByteWidth = (constantSize + 15) & 0xFFFFFFF0;
