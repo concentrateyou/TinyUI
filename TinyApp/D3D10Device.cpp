@@ -6,7 +6,8 @@ namespace D3D
 {
 	CD3D10Device::CD3D10Device()
 		:m_pCurrentVertexShader(NULL),
-		m_pCurrentPixelShader(NULL)
+		m_pCurrentPixelShader(NULL),
+		m_pCurrentTexture(NULL)
 	{
 
 	}
@@ -40,6 +41,7 @@ namespace D3D
 		dscd.Windowed = TRUE;
 		dscd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 		dscd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+		//´´½¨½»»»Á´
 		hRes = D3D10CreateDeviceAndSwapChain1(adapter, D3D10_DRIVER_TYPE_HARDWARE, NULL, D3D10_CREATE_DEVICE_BGRA_SUPPORT | D3D10_CREATE_DEVICE_DEBUG, D3D10_FEATURE_LEVEL_10_1, D3D10_1_SDK_VERSION, &dscd, &m_swap, &m_d3d);
 		if (FAILED(hRes))
 			hRes = D3D10CreateDeviceAndSwapChain1(adapter, D3D10_DRIVER_TYPE_HARDWARE, NULL, D3D10_CREATE_DEVICE_BGRA_SUPPORT | D3D10_CREATE_DEVICE_DEBUG, D3D10_FEATURE_LEVEL_9_3, D3D10_1_SDK_VERSION, &dscd, &m_swap, &m_d3d);
@@ -144,6 +146,14 @@ namespace D3D
 		CD3D10Texture *d3d10Src = static_cast<CD3D10Texture*>(texSrc);
 		m_d3d->CopyResource(d3d10Dest->m_d3d10Texture2D, d3d10Src->m_d3d10Texture2D);
 	}
+	CD3D10PixelShader* CD3D10Device::GetCurrentPixelShader() const
+	{
+		return m_pCurrentPixelShader;
+	}
+	CD3D10VertexShader* CD3D10Device::GetCurrentVertexShader() const
+	{
+		return m_pCurrentVertexShader;
+	}
 	void CD3D10Device::LoadTexture(CD3D10Texture *texture, UINT idTexture)
 	{
 		if (m_currentTextures[idTexture] != texture)
@@ -197,6 +207,25 @@ namespace D3D
 			m_pCurrentPixelShader = pPixelShader;
 		}
 	}
+	void CD3D10Device::SetRenderTarget(CD3D10Texture *texture)
+	{
+		if (m_pCurrentTexture != texture)
+		{
+			if (texture)
+			{
+				ID3D10RenderTargetView *targetView = texture->m_d3dRenderTarget;
+				if (targetView)
+				{
+					m_d3d->OMSetRenderTargets(1, &targetView, NULL);
+				}
+			}
+			else
+			{
+				m_d3d->OMSetRenderTargets(1, &m_renderView, NULL);
+			}
+			m_pCurrentTexture = texture;
+		}
+	}
 	void CD3D10Device::DrawSprite(CD3D10Texture *texture, DWORD color, float x, float y, float x2, float y2)
 	{
 		ASSERT(texture);
@@ -204,7 +233,7 @@ namespace D3D
 	}
 	void CD3D10Device::DrawSpriteEx(CD3D10Texture *texture, DWORD color, float x, float y, float x2, float y2, float u, float v, float u2, float v2)
 	{
-
+		ASSERT(texture);
 	}
 }
 

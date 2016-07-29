@@ -33,6 +33,9 @@ namespace D3D
 		void LoadVertexShader(CD3D10VertexShader* pVertexShader);
 		void LoadPixelShader(CD3D10PixelShader* pPixelShader);
 		void LoadTexture(CD3D10Texture *texture, UINT idTexture = 0);
+		CD3D10PixelShader* GetCurrentPixelShader() const;
+		CD3D10VertexShader* GetCurrentVertexShader() const;
+		void SetRenderTarget(CD3D10Texture *texture);
 		void DrawSprite(CD3D10Texture *texture, DWORD color, float x, float y, float x2, float y2);
 		void DrawSpriteEx(CD3D10Texture *texture, DWORD color, float x, float y, float x2, float y2, float u, float v, float u2, float v2);
 	private:
@@ -45,10 +48,10 @@ namespace D3D
 		TinyUI::TinyComPtr<ID3D10RasterizerState>   m_scissorState;
 		TinyUI::TinyComPtr<ID3D10RenderTargetView>  m_renderView;
 		TinyUI::TinyComPtr<ID3D10BlendState>        m_blendState;
+		CD3D10Texture*								m_pCurrentTexture;
 		CD3D10VertexShader*							m_pCurrentVertexShader;
 		CD3D10PixelShader*							m_pCurrentPixelShader;
 		CD3D10Texture*								m_currentTextures[8];
-		CD3D10Texture*								m_currentRenderTarget[8];
 	};
 }
 
