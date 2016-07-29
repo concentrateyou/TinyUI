@@ -3,9 +3,8 @@
 
 namespace D3D
 {
-	CSharedTextureCapture::CSharedTextureCapture(CD3D10Device& system)
-		:m_hWNDTarget(NULL),
-		m_sharedTexture(system)
+	CSharedTextureCapture::CSharedTextureCapture()
+		:m_hWNDTarget(NULL)
 	{
 
 	}
@@ -15,8 +14,9 @@ namespace D3D
 
 	}
 
-	BOOL CSharedTextureCapture::Initialize()
+	BOOL CSharedTextureCapture::Initialize(CD3D10Device* device, SharedCapture* sharedCapture)
 	{
+		ASSERT(device);
 		if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE))
 		{
 			return FALSE;
@@ -30,11 +30,21 @@ namespace D3D
 		{
 			return FALSE;
 		}
-		if (!m_sharedTexture.CreateTexture(pTexture->TextureHandle))
+		if (!m_sharedTexture.CreateTexture(device, pTexture->TextureHandle))
+		{
+			return FALSE;
+		}
+		if (!m_copyTexture.CreateTexture(device, sharedCapture->Size, (DXGI_FORMAT)sharedCapture->Format, NULL, FALSE, TRUE))
 		{
 			return FALSE;
 		}
 		return TRUE;
+	}
+	CD3D10Texture* CSharedTextureCapture::LockTexture(CD3D10Device* device)
+	{
+		ASSERT(device);
+		device->CopyTexture(&m_copyTexture, &m_sharedTexture);
+		return &m_copyTexture;
 	}
 	CD3D10Texture* CSharedTextureCapture::GetSharedTexture()
 	{

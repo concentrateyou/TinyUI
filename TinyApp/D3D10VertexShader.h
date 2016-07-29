@@ -1,5 +1,5 @@
 #pragma once
-#include "D3D10Device.h"
+#include "D3DUtility.h"
 using namespace TinyUI;
 
 namespace D3D
@@ -10,7 +10,7 @@ namespace D3D
 	public:
 		CD3D10VertexShader();
 		~CD3D10VertexShader();
-		BOOL Compile(CD3D10Device& device, const TinyString& str);
+		BOOL Compile(CD3D10Device* device, const TinyString& str);
 	private:
 		TinyComPtr<ID3D10VertexShader>	m_vertexShader;
 		TinyComPtr<ID3D10InputLayout>	m_inputLayout;

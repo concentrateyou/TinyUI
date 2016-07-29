@@ -25,13 +25,10 @@ namespace D3D
 		return GS_UNKNOWNFORMAT;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	CD3D10Texture::CD3D10Texture(CD3D10Device& system)
-		:m_device(system)
+	CD3D10Texture::CD3D10Texture()
 	{
 
 	}
-
-
 	CD3D10Texture::~CD3D10Texture()
 	{
 
@@ -40,19 +37,16 @@ namespace D3D
 	{
 		return m_d3d10Texture2D && m_d3d10SRView && m_d3dRenderTarget;
 	}
-	CD3D10Device* CD3D10Texture::GetSystem()
-	{
-		return &m_device;
-	}
 	TinySize CD3D10Texture::GetSize() const
 	{
 		return m_size;
 	}
-	BOOL CD3D10Texture::CreateTexture(HANDLE hResource)
+	BOOL CD3D10Texture::CreateTexture(CD3D10Device* device, HANDLE hResource)
 	{
+		ASSERT(device);
 		HRESULT hRes = S_OK;
 		TinyComPtr<ID3D10Resource> d3d10Resource;
-		if (FAILED(hRes = m_device.GetD3D()->OpenSharedResource(hResource, __uuidof(ID3D10Resource), (void**)&d3d10Resource)))
+		if (FAILED(hRes = device->GetD3D()->OpenSharedResource(hResource, __uuidof(ID3D10Resource), (void**)&d3d10Resource)))
 		{
 			return FALSE;
 		}
@@ -67,14 +61,15 @@ namespace D3D
 		dsrvd.Format = dtd.Format;
 		dsrvd.ViewDimension = D3D10_SRV_DIMENSION_TEXTURE2D;
 		dsrvd.Texture2D.MipLevels = 1;
-		if (FAILED(hRes = m_device.GetD3D()->CreateShaderResourceView(m_d3d10Texture2D, &dsrvd, &m_d3d10SRView)))
+		if (FAILED(hRes = device->GetD3D()->CreateShaderResourceView(m_d3d10Texture2D, &dsrvd, &m_d3d10SRView)))
 		{
 			return FALSE;
 		}
 		return TRUE;
 	}
-	BOOL CD3D10Texture::CreateTexture(const SIZE& size, DXGI_FORMAT format, void *lpData, BOOL bGenMipMaps, BOOL bStatic)
+	BOOL CD3D10Texture::CreateTexture(CD3D10Device* device, const SIZE& size, DXGI_FORMAT format, void *lpData, BOOL bGenMipMaps, BOOL bStatic)
 	{
+		ASSERT(device);
 		D3D10_TEXTURE2D_DESC dtd;
 		::ZeroMemory(&dtd, sizeof(dtd));
 		dtd.Width = size.cx;
@@ -97,7 +92,7 @@ namespace D3D
 			lpDSD = &dsd;
 		}
 		TinyComPtr<ID3D10Texture2D> texture2D;
-		if (FAILED(m_device.GetD3D()->CreateTexture2D(&dtd, lpDSD, &texture2D)))
+		if (FAILED(device->GetD3D()->CreateTexture2D(&dtd, lpDSD, &texture2D)))
 		{
 			return FALSE;
 		}
@@ -108,7 +103,7 @@ namespace D3D
 		dsrvd.ViewDimension = D3D10_SRV_DIMENSION_TEXTURE2D;
 		dsrvd.Texture2D.MipLevels = bGenMipMaps ? -1 : 1;
 		ID3D10ShaderResourceView *resource;
-		if (FAILED(m_device.GetD3D()->CreateShaderResourceView(texture2D, &dsrvd, &resource)))
+		if (FAILED(device->GetD3D()->CreateShaderResourceView(texture2D, &dsrvd, &resource)))
 		{
 			return FALSE;
 		}

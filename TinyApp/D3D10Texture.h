@@ -11,16 +11,15 @@ namespace D3D
 	{
 		friend class CD3D10Device;
 	public:
-		CD3D10Texture(CD3D10Device& device);
+		CD3D10Texture();
 		~CD3D10Texture();
 		BOOL IsValid() const;
 		CD3D10Device* GetSystem();
 		TinyUI::TinySize GetSize() const;
-		BOOL CreateTexture(HANDLE hResource);
-		BOOL CreateTexture(const SIZE& size, DXGI_FORMAT format, void *lpData, BOOL bGenMipMaps, BOOL bStatic);
+		BOOL CreateTexture(CD3D10Device* device, HANDLE hResource);
+		BOOL CreateTexture(CD3D10Device* device, const SIZE& size, DXGI_FORMAT format, void *lpData, BOOL bGenMipMaps, BOOL bStatic);
 		TinyComPtr<IDXGISurface1> GetSurface();
 	private:
-		CD3D10Device&							m_device;
 		TinyComPtr<ID3D10Texture2D>				m_d3d10Texture2D;
 		TinyComPtr<ID3D10ShaderResourceView>	m_d3d10SRView;
 		TinyComPtr<ID3D10RenderTargetView>		m_d3dRenderTarget;

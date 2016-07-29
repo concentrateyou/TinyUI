@@ -6,7 +6,6 @@
 #include "Common/TinyString.h"
 #include "Common/TinyCore.h"
 #include "SharedTextureCapture.h"
-#include "Vector2D.h"
 
 typedef struct tagWNDINFO
 {
@@ -33,12 +32,12 @@ namespace D3D
 		BOOL BeginCapture(const TinyString& processName);
 		BOOL EndCapture();
 		void Tick(FLOAT fSeconds);
-		void Render(const Vector2D &pos, const Vector2D &size);
+		BOOL Render(const D3DXVECTOR2 &pos, const D3DXVECTOR2 &size);
 	private:
 		BOOL	Initialize(const TinyString& processName);
 		DWORD	FindProcess(const TinyString& processName);
 		BOOL	FindWindow(const TinyString& processName);
-		void	DrawSprite(DWORD color, float x, float y, float x2, float y2);
+		void	DrawSprite(CD3D10Texture *texture, DWORD color, float x, float y, float x2, float y2);
 		SharedCapture* GetSharedCapture();
 		static BOOL CALLBACK EnumWindow(HWND hwnd, LPARAM lParam);
 	private:

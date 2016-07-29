@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "D3D10Device.h"
 #include "D3D10VertexShader.h"
 
 namespace D3D
@@ -11,15 +12,16 @@ namespace D3D
 	CD3D10VertexShader::~CD3D10VertexShader()
 	{
 	}
-	BOOL CD3D10VertexShader::Compile(CD3D10Device& device, const TinyString& str)
+	BOOL CD3D10VertexShader::Compile(CD3D10Device* device, const TinyString& str)
 	{
+		ASSERT(device);
 		TinyComPtr<ID3D10Blob> shader;
 		TinyComPtr<ID3D10Blob> errorMsgs;
 		if (FAILED(D3DX10CompileFromMemory(str.STR(), str.GetSize(), NULL, NULL, NULL, TEXT("main"), TEXT("vs_4_0"), D3D10_SHADER_OPTIMIZATION_LEVEL3, 0, NULL, &shader, &errorMsgs, NULL)))
 		{
 			return FALSE;
 		}
-		if (FAILED(device.GetD3D()->CreateVertexShader(shader->GetBufferPointer(), shader->GetBufferSize(), &m_vertexShader)))
+		if (FAILED(device->GetD3D()->CreateVertexShader(shader->GetBufferPointer(), shader->GetBufferSize(), &m_vertexShader)))
 		{
 			return FALSE;
 		}
@@ -29,7 +31,7 @@ namespace D3D
 			{ "SV_Position", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 },
 			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 1, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 }
 		};
-		if (FAILED(device.GetD3D()->CreateInputLayout(descs, 2, shader->GetBufferPointer(), shader->GetBufferSize(), &m_inputLayout)))
+		if (FAILED(device->GetD3D()->CreateInputLayout(descs, 2, shader->GetBufferPointer(), shader->GetBufferSize(), &m_inputLayout)))
 		{
 			return FALSE;
 		}
@@ -40,7 +42,7 @@ namespace D3D
 		dbd.Usage = D3D10_USAGE_DYNAMIC;
 		dbd.BindFlags = D3D10_BIND_CONSTANT_BUFFER;
 		dbd.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
-		if (FAILED(device.GetD3D()->CreateBuffer(&dbd, NULL, &m_constantBuffer)))
+		if (FAILED(device->GetD3D()->CreateBuffer(&dbd, NULL, &m_constantBuffer)))
 		{
 			return FALSE;
 		}

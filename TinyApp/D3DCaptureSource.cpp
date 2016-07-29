@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "D3DCaptureSource.h"
-#include "Vector2D.h"
+#include "D3DUtility.h"
 #include <string>
 #include <sstream>
 #include <fstream>
@@ -8,7 +8,7 @@ using namespace std;
 
 namespace D3D
 {
-	void RoundVector2D(Vector2D &v)
+	void RoundVector2D(D3DXVECTOR2 &v)
 	{
 		v.x = float(round(v.x));
 		v.y = float(round(v.y));
@@ -17,8 +17,6 @@ namespace D3D
 	CD3DCaptureSource::CD3DCaptureSource(CD3D10Device& system)
 		:m_bCapturing(FALSE),
 		m_device(system),
-		m_textureCapture(system),
-		m_gameTexture(system),
 		m_pSharedCapture(NULL)
 	{
 		::ZeroMemory(&m_targetWND, sizeof(m_targetWND));
@@ -77,9 +75,9 @@ namespace D3D
 		m_pSharedCapture = GetSharedCapture();
 		if (!m_pSharedCapture)
 			return FALSE;
-		if (!m_textureCapture.Initialize())
+		if (!m_textureCapture.Initialize(&m_device, m_pSharedCapture))
 			return FALSE;
-		m_gameTexture.CreateTexture(m_pSharedCapture->Size, (DXGI_FORMAT)m_pSharedCapture->Format, 0, FALSE, TRUE);
+		m_gameTexture.CreateTexture(&m_device, m_pSharedCapture->Size, (DXGI_FORMAT)m_pSharedCapture->Format, 0, FALSE, TRUE);
 		m_bCapturing = TRUE;
 		m_eventBegin.SetEvent();
 		return TRUE;
@@ -115,37 +113,44 @@ namespace D3D
 
 		}
 	}
-	void CD3DCaptureSource::Render(const Vector2D &pos, const Vector2D &size)
+	BOOL CD3DCaptureSource::Render(const D3DXVECTOR2 &pos, const D3DXVECTOR2 &size)
 	{
-		if (!m_pSharedCapture || !m_gameTexture.IsValid()) 
-			return;
-		Vector2D texturePos = Vector2D(0.0f, 0.0f);
-		Vector2D textureStretch = Vector2D(1.0f, 1.0f);
-		TinySize gameSize = m_gameTexture.GetSize();
-		Vector2D textureSize = Vector2D(float(gameSize.cx), float(gameSize.cy));
-		gameSize.cx = GetSystemMetrics(SM_CXSCREEN);
-		gameSize.cy = GetSystemMetrics(SM_CYSCREEN);
-		Vector2D totalSize = Vector2D(float(gameSize.cx), float(gameSize.cy));
-		Vector2D center = totalSize*0.5f;
-		float xAspect = totalSize.x / textureSize.x;
-		float yAspect = totalSize.y / textureSize.y;
-		float multiplyVal = ((textureSize.y * xAspect) > totalSize.y) ? yAspect : xAspect;
-		textureStretch *= textureSize*multiplyVal;
-		texturePos = center - (textureStretch*0.5f);
-		Vector2D sizeAdjust = size / totalSize;
-		texturePos *= sizeAdjust;
-		texturePos += pos;
-		textureStretch *= sizeAdjust;
-		RoundVector2D(texturePos);
-		RoundVector2D(textureSize);
-		if (m_pSharedCapture->bFlip)
-			DrawSprite(0xFFFFFFFF, texturePos.x, texturePos.y + textureStretch.y, texturePos.x + textureStretch.x, texturePos.y);
-		else
-			DrawSprite(0xFFFFFFFF, texturePos.x, texturePos.y, texturePos.x + textureStretch.x, texturePos.y + textureStretch.y);
-	}
-	void CD3DCaptureSource::DrawSprite(DWORD color, float x, float y, float x2, float y2)
-	{
+		if (!m_pSharedCapture || !m_gameTexture.IsValid())
+			return FALSE;
 
+		CD3D10Texture *texture = m_textureCapture.LockTexture(&m_device);
+		if (texture)
+		{
+			TinySize gameSize = m_gameTexture.GetSize();
+			D3DXVECTOR2 texturePos = D3DXVECTOR2(0.0F, 0.0F);
+			D3DXVECTOR2 textureStretch = D3DXVECTOR2(1.0F, 1.0F);
+			D3DXVECTOR2 textureSize = D3DXVECTOR2(FLOAT(gameSize.cx), FLOAT(gameSize.cy));
+			gameSize.cx = GetSystemMetrics(SM_CXSCREEN);
+			gameSize.cy = GetSystemMetrics(SM_CYSCREEN);
+			D3DXVECTOR2 totalSize = D3DXVECTOR2(FLOAT(gameSize.cx), FLOAT(gameSize.cy));
+			D3DXVECTOR2 center = totalSize*0.5F;
+			FLOAT xAspect = totalSize.x / textureSize.x;
+			FLOAT yAspect = totalSize.y / textureSize.y;
+			FLOAT multiplyVal = ((textureSize.y * xAspect) > totalSize.y) ? yAspect : xAspect;
+			textureSize *= multiplyVal;
+			textureStretch = Multiply(textureStretch, textureSize);
+			texturePos = center - (textureStretch*0.5F);
+			D3DXVECTOR2 sizeAdjust = Divide(size, totalSize);
+			texturePos = Multiply(texturePos, sizeAdjust);
+			texturePos += pos;
+			textureStretch = Multiply(textureStretch, sizeAdjust);
+			RoundVector2D(texturePos);
+			RoundVector2D(textureSize);
+			if (m_pSharedCapture->bFlip)
+				DrawSprite(texture, 0xFFFFFFFF, texturePos.x, texturePos.y + textureStretch.y, texturePos.x + textureStretch.x, texturePos.y);
+			else
+				DrawSprite(texture, 0xFFFFFFFF, texturePos.x, texturePos.y, texturePos.x + textureStretch.x, texturePos.y + textureStretch.y);
+		}
+		return TRUE;
+	}
+	void CD3DCaptureSource::DrawSprite(CD3D10Texture *texture, DWORD color, float x, float y, float x2, float y2)
+	{
+		m_device.DrawSprite(texture, color, x, y, x2, y2, 0.0F, 0.0F, 1.0F, 1.0F);
 	}
 
 	BOOL CALLBACK CD3DCaptureSource::EnumWindow(HWND hwnd, LPARAM lParam)

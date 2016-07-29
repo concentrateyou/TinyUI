@@ -1,13 +1,14 @@
 #include "stdafx.h"
 #include "D3D10Device.h"
-#include "Vector2D.h"
+#include "D3DUtility.h"
 
 namespace D3D
 {
 	CD3D10Device::CD3D10Device()
 		:m_pCurrentVertexShader(NULL),
 		m_pCurrentPixelShader(NULL),
-		m_pCurrentTexture(NULL)
+		m_pCurrentTexture(NULL),
+		m_pCurrentVertexBuffer(NULL)
 	{
 
 	}
@@ -91,6 +92,10 @@ namespace D3D
 		hRes = m_d3d->CreateBlendState(&dbd, &m_blendState);
 		if (FAILED(hRes))
 			return FALSE;
+
+		if (!m_spriteVertexBuffer.Create(this, FALSE))
+			return FALSE;
+
 		return TRUE;
 	}
 	void CD3D10Device::SetViewport(FLOAT x, FLOAT y, FLOAT cx, FLOAT cy)
@@ -189,6 +194,20 @@ namespace D3D
 			m_pCurrentVertexShader = pVertexShader;
 		}
 	}
+	void CD3D10Device::LoadVertexBuffer(CD3D10VertexBuffer* vb)
+	{
+		if (vb != m_pCurrentVertexBuffer)
+		{
+			if (m_pCurrentVertexShader)
+			{
+				ID3D10Buffer* buffers[2] = { vb->m_vertexBuffer, vb->m_textureVertexBuffer };
+				UINT strides[2] = { sizeof(D3DXVECTOR4), sizeof(D3DXVECTOR2) };
+				UINT offsets[2] = { 0, 0 };
+				m_d3d->IASetVertexBuffers(0, 2, buffers, strides, offsets);
+			}
+			m_pCurrentVertexBuffer = vb;
+		}
+	}
 	void CD3D10Device::LoadPixelShader(CD3D10PixelShader* pPixelShader)
 	{
 		if (m_pCurrentPixelShader != pPixelShader)
@@ -226,14 +245,66 @@ namespace D3D
 			m_pCurrentTexture = texture;
 		}
 	}
-	void CD3D10Device::DrawSprite(CD3D10Texture *texture, DWORD color, float x, float y, float x2, float y2)
+	BOOL CD3D10Device::DrawSprite(CD3D10Texture *texture, DWORD color, float x, float y, float x2, float y2, float u, float v, float u2, float v2)
 	{
-		ASSERT(texture);
-		DrawSpriteEx(texture, color, x, y, x2, y2, 0.0f, 0.0f, 1.0f, 1.0f);
+		return DrawSpriteRotate(texture, color, x, y, x2, y2, 0.0F, u, v, u2, v2, 0.0F);
 	}
-	void CD3D10Device::DrawSpriteEx(CD3D10Texture *texture, DWORD color, float x, float y, float x2, float y2, float u, float v, float u2, float v2)
+	BOOL CD3D10Device::DrawSpriteRotate(CD3D10Texture *texture, DWORD color, float x, float y, float x2, float y2, float degrees, float u, float v, float u2, float v2, float texDegrees)
 	{
-		ASSERT(texture);
+		if (!texture || !m_pCurrentPixelShader)
+			return FALSE;
+
+		D3DXVECTOR2 totalSize = D3DXVECTOR2(x2 - x, y2 - y);
+		D3DXVECTOR2 invMult = D3DXVECTOR2(totalSize.x < 0.0f ? -1.0f : 1.0f, totalSize.y < 0.0f ? -1.0f : 1.0f);
+		Abs(totalSize);
+		if (y2 - y < 0)
+		{
+			FLOAT s = m_currentCroppings[1];
+			m_currentCroppings[1] = m_currentCroppings[3];
+			m_currentCroppings[3] = s;
+		}
+
+		if (x2 - x < 0)
+		{
+			FLOAT s = m_currentCroppings[0];
+			m_currentCroppings[0] = m_currentCroppings[2];
+			m_currentCroppings[2] = s;
+		}
+		BOOL bFlipX = (x2 - x) < 0.0f;
+		BOOL bFlipY = (y2 - y) < 0.0f;
+		x += m_currentCroppings[0] * invMult.x;
+		y += m_currentCroppings[1] * invMult.y;
+		x2 -= m_currentCroppings[2] * invMult.x;
+		y2 -= m_currentCroppings[3] * invMult.y;
+		BOOL cropXUnder = bFlipX ? ((x - x2) < 0.0f) : ((x2 - x) < 0.0f);
+		BOOL cropYUnder = bFlipY ? ((y - y2) < 0.0f) : ((y2 - y) < 0.0f);
+		if (cropXUnder || cropYUnder)
+			return FALSE;
+
+		FLOAT cropMult[4];
+		cropMult[0] = m_currentCroppings[0] / totalSize.x;
+		cropMult[1] = m_currentCroppings[1] / totalSize.y;
+		cropMult[2] = m_currentCroppings[2] / totalSize.x;
+		cropMult[3] = m_currentCroppings[3] / totalSize.y;
+		D3DXVECTOR2 totalUVSize = D3DXVECTOR2(u2 - u, v2 - v);
+		u += cropMult[0] * totalUVSize.x;
+		v += cropMult[1] * totalUVSize.y;
+		u2 -= cropMult[2] * totalUVSize.x;
+		v2 -= cropMult[3] * totalUVSize.y;
+		SetVector(m_spriteVertexBuffer.m_vertexs[0], x, y, 0.0F);
+		SetVector(m_spriteVertexBuffer.m_vertexs[1], x, y2, 0.0F);
+		SetVector(m_spriteVertexBuffer.m_vertexs[2], x2, y, 0.0F);
+		SetVector(m_spriteVertexBuffer.m_vertexs[3], x2, y2, 0.0F);
+		SetVector(m_spriteVertexBuffer.m_textureVertexs[0], u, v);
+		SetVector(m_spriteVertexBuffer.m_textureVertexs[1], u, v2);
+		SetVector(m_spriteVertexBuffer.m_textureVertexs[2], u2, v);
+		SetVector(m_spriteVertexBuffer.m_textureVertexs[3], u2, v2);
+		if (!m_spriteVertexBuffer.Flush())
+		{
+			return FALSE;
+		}
+
+		return TRUE;
 	}
 }
 

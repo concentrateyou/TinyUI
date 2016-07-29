@@ -27,13 +27,14 @@ namespace D3D
 	class CSharedTextureCapture
 	{
 	public:
-		explicit CSharedTextureCapture(CD3D10Device& system);
+		explicit CSharedTextureCapture();
 		~CSharedTextureCapture();
-		BOOL Initialize();
 		CD3D10Texture*  GetSharedTexture();
-		CD3D10Texture*	GetCopyTexture();
+		BOOL Initialize(CD3D10Device* device, SharedCapture* sharedCapture);
+		CD3D10Texture* LockTexture(CD3D10Device* device);
 	private:
 		CD3D10Texture		m_sharedTexture;
+		CD3D10Texture		m_copyTexture;
 		TinySharedMemory	m_textureMemery;
 		HWND				m_hWNDTarget;
 	};

@@ -94,6 +94,7 @@
     <ClInclude Include="D3D10Device.h" />
     <ClInclude Include="D3DHook.h" />
     <ClInclude Include="D3D10VertexShader.h" />
+    <ClInclude Include="D3DUtility.h" />
     <ClInclude Include="MainFrame.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SharedTextureCapture.h" />
@@ -112,6 +113,7 @@
     <ClCompile Include="D3D10Device.cpp" />
     <ClCompile Include="D3DHook.cpp" />
     <ClCompile Include="D3D10VertexShader.cpp" />
+    <ClCompile Include="D3DUtility.cpp" />
     <ClCompile Include="MainFrame.cpp" />
     <ClCompile Include="SharedTextureCapture.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -119,7 +121,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TinyApp.cpp" />
-    <ClCompile Include="Vector2D.cpp" />
     <ClCompile Include="VideoCapture.cpp" />
   </ItemGroup>
   <ItemGroup>
