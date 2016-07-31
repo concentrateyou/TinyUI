@@ -260,7 +260,7 @@ namespace D3D
 						return FALSE;
 					}
 				}
-				if (!backBuffer || FAILED(device->StretchRect(backBuffer, NULL, m_d3d9TextureGame, NULL, D3DTEXF_NONE)))
+				if (!backBuffer || FAILED(device->StretchRect(backBuffer, NULL, m_d3d9TextureSurface, NULL, D3DTEXF_NONE)))
 				{
 					return FALSE;
 				}
@@ -273,7 +273,7 @@ namespace D3D
 	{
 		m_bTextures = FALSE;
 		m_d3d10Resource.Release();
-		m_d3d9TextureGame.Release();
+		m_d3d9TextureSurface.Release();
 		m_d3d10Device1.Release();
 		m_textureMemery.Unmap();
 		m_textureMemery.Close();
@@ -375,7 +375,7 @@ namespace D3D
 			memcpy(patchAddress, patchData.Ptr(), patchSize);
 			VirtualProtect(patchAddress, patchSize, dwOldProtect, &dwOldProtect);
 		}
-		if (FAILED(d3d9Texture->GetSurfaceLevel(0, &m_d3d9TextureGame)))
+		if (FAILED(d3d9Texture->GetSurfaceLevel(0, &m_d3d9TextureSurface)))
 		{
 			return FALSE;
 		}

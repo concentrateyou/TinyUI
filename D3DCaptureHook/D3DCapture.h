@@ -62,7 +62,7 @@ namespace D3D
 		static HRESULT STDMETHODCALLTYPE D3D9Reset(IDirect3DDevice9 *device, D3DPRESENT_PARAMETERS *params);
 		static HRESULT STDMETHODCALLTYPE D3D9ResetEx(IDirect3DDevice9Ex *device, D3DPRESENT_PARAMETERS *params, D3DDISPLAYMODEEX *fullscreenData);
 	public:
-		SharedTexture*			m_pSharedTextureData;
+		SharedTexture*				m_pSharedTextureData;
 		D3DFORMAT					m_d3dFormat;
 		DXGI_FORMAT					m_dxgiFormat;
 		CScopedLibrary				m_d3d9;
@@ -78,7 +78,7 @@ namespace D3D
 		CPerformanceTimer			m_timer;
 		CComPtr<ID3D10Device1>		m_d3d10Device1;
 		CComPtr<ID3D10Resource>		m_d3d10Resource;
-		CComPtr<IDirect3DSurface9>	m_d3d9TextureGame;
+		CComPtr<IDirect3DSurface9>	m_d3d9TextureSurface;
 		CSharedMemory				m_sharedCapture;
 		CSharedMemory				m_textureMemery;
 		CD3DDetour					m_d3d9EndScene;

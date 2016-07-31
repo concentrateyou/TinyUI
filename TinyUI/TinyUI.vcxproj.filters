@@ -67,6 +67,12 @@
     <Filter Include="源文件\Network">
       <UniqueIdentifier>{ac6f29a6-0362-47eb-941b-f7084c021f6a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\DirectX">
+      <UniqueIdentifier>{a9a8cb3a-9a7a-4dff-ae41-db12c5df3621}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\DirectX">
+      <UniqueIdentifier>{422a6a42-3ea8-4ee0-bcbb-4bd87254da6f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -327,17 +333,11 @@
     <ClInclude Include="Windowless\TinyVisualDropDownHWND.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
-    <ClInclude Include="Windowless\TinyVisualRichText.h">
-      <Filter>头文件\Windowless</Filter>
-    </ClInclude>
     <ClInclude Include="Windowless\TinyVisualUtility.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
     <ClInclude Include="Media\TinyMedia.h">
       <Filter>头文件\Media</Filter>
-    </ClInclude>
-    <ClInclude Include="Windowless\TinyTextHost.h">
-      <Filter>源文件\Windowless</Filter>
     </ClInclude>
     <ClInclude Include="IO\TinySharedMemory.h">
       <Filter>头文件\IO</Filter>
@@ -347,6 +347,12 @@
     </ClInclude>
     <ClInclude Include="Common\TinyUtility.h">
       <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Control\TinyTextHost.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="Control\TinyRichText.h">
+      <Filter>头文件\Control</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -608,17 +614,11 @@
     <ClCompile Include="Windowless\TinyVisualDropDownHWND.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
-    <ClCompile Include="Windowless\TinyVisualRichText.cpp">
-      <Filter>源文件\Windowless</Filter>
-    </ClCompile>
     <ClCompile Include="Windowless\TinyVisualUtility.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
     <ClCompile Include="Media\TinyMedia.cpp">
       <Filter>源文件\Media</Filter>
-    </ClCompile>
-    <ClCompile Include="Windowless\TinyTextHost.cpp">
-      <Filter>源文件\Windowless</Filter>
     </ClCompile>
     <ClCompile Include="IO\TinySharedMemory.cpp">
       <Filter>源文件\IO</Filter>
@@ -628,6 +628,12 @@
     </ClCompile>
     <ClCompile Include="Common\TinyUtility.cpp">
       <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Control\TinyTextHost.cpp">
+      <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="Control\TinyRichText.cpp">
+      <Filter>源文件\Control</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
