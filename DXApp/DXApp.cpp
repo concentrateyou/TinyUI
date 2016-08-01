@@ -1,11 +1,14 @@
-// TinyApp.cpp : 定义应用程序的入口点。
+// DXApp.cpp : 定义应用程序的入口点。
 //
 
 #include "stdafx.h"
-#include "TinyApp.h"
-#include "MainFrame.h"
+#include "DXApp.h"
 #include "Network/TinyConnector.h"
-#include "Windowless/TinyVisualHWND.h"
+#include "Common/TinyApplication.h"
+#include "MainFrame.h"
+using namespace TinyUI;
+
+#define MAX_LOADSTRING 100
 
 BOOL LoadSeDebugPrivilege()
 {
@@ -54,7 +57,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadSeDebugPrivilege();
 
 	::DefWindowProc(NULL, 0, 0, 0L);
-	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
+	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_DXAPP));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
 	CMainFrame uiImpl;

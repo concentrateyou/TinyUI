@@ -115,4 +115,8 @@ namespace D3D
 		m_d3d10Texture2D->QueryInterface(__uuidof(IDXGISurface1), (void**)&surface);
 		return surface;
 	}
+	ID3D10Texture2D* CD3D10Texture::GetTexture()
+	{
+		return m_d3d10Texture2D;
+	}
 }

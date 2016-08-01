@@ -354,6 +354,12 @@
     <ClInclude Include="Control\TinyRichText.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
+    <ClInclude Include="DirectX\TinyD3D10Device.h">
+      <Filter>头文件\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX\TinyD3D10Common.h">
+      <Filter>头文件\DirectX</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -634,6 +640,12 @@
     </ClCompile>
     <ClCompile Include="Control\TinyRichText.cpp">
       <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX\TinyD3D10Device.cpp">
+      <Filter>源文件\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX\TinyD3D10Common.cpp">
+      <Filter>源文件\DirectX</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

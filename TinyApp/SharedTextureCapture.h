@@ -5,7 +5,6 @@ using namespace TinyUI::IO;
 
 namespace D3D
 {
-#define TEXTURE_MEMORY    TEXT("Local\\TextureMemory")
 	typedef struct tagSharedCapture
 	{
 		UINT		CaptureType;

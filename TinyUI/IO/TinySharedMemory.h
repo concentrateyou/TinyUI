@@ -30,7 +30,6 @@ namespace TinyUI
 			void*	Address() const;
 			BOOL	IsValid() const;
 		private:
-			TinyString	m_name;
 			BOOL        m_bReadonly;
 			HANDLE		m_hFileMap;
 			void*       m_pMemory;

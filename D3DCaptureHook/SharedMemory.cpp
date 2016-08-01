@@ -53,22 +53,6 @@ namespace D3D
 		return static_cast<INT>(min + static_cast<LONGLONG>(RandGenerator(range)));
 	}
 
-	HANDLE CreateFileMappingReducedPermissions(SECURITY_ATTRIBUTES* sa, DWORD dwSize, LPCSTR name)
-	{
-		HANDLE hFile = CreateFileMapping(INVALID_HANDLE_VALUE, sa, PAGE_READWRITE, 0, dwSize, name);
-		if (!hFile)
-		{
-			return NULL;
-		}
-		HANDLE hHandle = NULL;
-		if (::DuplicateHandle(GetCurrentProcess(), hFile, GetCurrentProcess(), &hHandle, FILE_MAP_READ | FILE_MAP_WRITE | SECTION_QUERY, FALSE, 0))
-		{
-			::CloseHandle(hFile);
-			return hHandle;
-		}
-		::CloseHandle(hFile);
-		return NULL;
-	}
 	DWORD GetMemorySectionSize(void* address)
 	{
 		MEMORY_BASIC_INFORMATION info;
@@ -93,30 +77,9 @@ namespace D3D
 	}
 	BOOL CSharedMemory::Create(const string& name, DWORD dwSize)
 	{
-		m_name = name;
-		SECURITY_ATTRIBUTES sa = { sizeof(sa), NULL, FALSE };
-		SECURITY_DESCRIPTOR sd;
-		ACL dacl = { 0 };
-		sa.lpSecurityDescriptor = &sd;
-		if (!InitializeAcl(&dacl, sizeof(dacl), ACL_REVISION))
-		{
-			return FALSE;
-		}
-		if (!InitializeSecurityDescriptor(&sd, SECURITY_DESCRIPTOR_REVISION))
-		{
-			return FALSE;
-		}
-		if (!SetSecurityDescriptorDacl(&sd, TRUE, &dacl, FALSE))
-		{
-			return FALSE;
-		}
-		if (m_name.empty())
-		{
-			ULONGLONG values[4];
-			RandBytes(&values, sizeof(values));
-			m_name = Format("SharedMemory__%016llx%016llx%016llx%016llx", values[0], values[1], values[2], values[3]);
-		}
-		m_hFileMap = CreateFileMappingReducedPermissions(&sa, dwSize, m_name.empty() ? NULL : m_name.c_str());
+		Unmap();
+		Close();
+		m_hFileMap = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, dwSize, name.c_str());
 		return m_hFileMap != NULL;
 	}
 	BOOL CSharedMemory::Delete()
@@ -125,10 +88,10 @@ namespace D3D
 	}
 	BOOL CSharedMemory::Open(const string& name, BOOL bReadonly)
 	{
-		DWORD dwAccess = FILE_MAP_READ | SECTION_QUERY;
+		DWORD dwAccess = SECTION_MAP_READ | SECTION_MAP_EXECUTE | SECTION_EXTEND_SIZE | STANDARD_RIGHTS_REQUIRED | SECTION_QUERY;
 		if (!bReadonly) dwAccess |= FILE_MAP_WRITE;
 		m_bReadonly = bReadonly;
-		m_hFileMap = OpenFileMapping(dwAccess, false, name.empty() ? NULL : name.c_str());
+		m_hFileMap = OpenFileMapping(dwAccess, FALSE, name.empty() ? NULL : name.c_str());
 		if (!m_hFileMap)
 			return FALSE;
 		return TRUE;

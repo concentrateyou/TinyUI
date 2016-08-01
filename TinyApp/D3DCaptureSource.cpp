@@ -14,12 +14,15 @@ namespace D3D
 		v.y = float(round(v.y));
 	}
 	//////////////////////////////////////////////////////////////////////////
-	CD3DCaptureSource::CD3DCaptureSource(CD3D10Device& system)
+	CD3DCaptureSource::CD3DCaptureSource(CD3D10Device& device)
 		:m_bCapturing(FALSE),
-		m_device(system),
+		m_bInject(FALSE),
+		m_device(device),
 		m_pSharedCapture(NULL)
 	{
 		::ZeroMemory(&m_targetWND, sizeof(m_targetWND));
+		stringstream stream;
+
 	}
 
 
@@ -35,33 +38,39 @@ namespace D3D
 	{
 		if (!FindWindow(processName))
 			return FALSE;
-		stringstream stream;
-		stream << BEGIN_CAPTURE_EVENT << m_targetWND.dwProcessID;
-		if (!m_eventBegin.CreateEvent(FALSE, FALSE, stream.str().c_str()))
+		string name = StringPrintf("%s%d", BEGIN_CAPTURE_EVENT, m_targetWND.dwProcessID);
+		if (!m_eventBegin.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
 		{
-			if (!m_eventBegin.OpenEvent(EVENT_ALL_ACCESS, FALSE, stream.str().c_str()))
+			if (!m_eventBegin.CreateEvent(FALSE, FALSE, name.c_str()))
 			{
 				return FALSE;
 			}
 		}
-		stream.str("");
-		stream << END_CAPTURE_EVENT << m_targetWND.dwProcessID;
-		if (!m_eventEnd.CreateEvent(FALSE, FALSE, stream.str().c_str()))
+		name = StringPrintf("%s%d", END_CAPTURE_EVENT, m_targetWND.dwProcessID);
+		if (!m_eventEnd.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
 		{
-			if (!m_eventEnd.OpenEvent(EVENT_ALL_ACCESS, FALSE, stream.str().c_str()))
+			if (!m_eventEnd.CreateEvent(FALSE, FALSE, name.c_str()))
 			{
 				return FALSE;
 			}
 		}
-		stream.str("");
-		stream << CAPTURE_READY_EVENT << m_targetWND.dwProcessID;
-		if (!m_eventReady.CreateEvent(FALSE, FALSE, stream.str().c_str()))
+		name = StringPrintf("%s%d", CAPTURE_READY_EVENT, m_targetWND.dwProcessID);
+		if (!m_eventReady.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
 		{
-			if (!m_eventReady.OpenEvent(EVENT_ALL_ACCESS, FALSE, stream.str().c_str()))
+			if (!m_eventReady.CreateEvent(FALSE, FALSE, name.c_str()))
 			{
 				return FALSE;
 			}
 		}
+		name = StringPrintf("%s%d", APP_EXIT_EVENT, m_targetWND.dwProcessID);
+		if (!m_eventExit.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
+		{
+			if (!m_eventExit.CreateEvent(FALSE, FALSE, name.c_str()))
+			{
+				return FALSE;
+			}
+		}
+
 		return TRUE;
 	}
 
@@ -70,15 +79,22 @@ namespace D3D
 		BOOL bRes = S_OK;
 		if (!Initialize(processName))
 			return FALSE;
-		if (!D3D::InjectLibrary(m_targetWND.hProcess, TEXT("D:\\Develop\\GitHub\\TinyUI\\Debug\\D3DCaptureHook.dll")))
-			return FALSE;
-		m_pSharedCapture = GetSharedCapture();
-		if (!m_pSharedCapture)
-			return FALSE;
-		if (!m_textureCapture.Initialize(&m_device, m_pSharedCapture))
-			return FALSE;
-		m_gameTexture.CreateTexture(&m_device, m_pSharedCapture->Size, (DXGI_FORMAT)m_pSharedCapture->Format, 0, FALSE, TRUE);
-		m_bCapturing = TRUE;
+		if (!m_bInject)
+		{
+			m_bInject = D3D::InjectLibrary(m_targetWND.hProcess, TEXT("D:\\Develop\\GitHub\\TinyUI\\Debug\\D3DCaptureHook.dll"));
+			if (!m_bInject)
+				return FALSE;
+		}
+		if (m_eventReady.Lock(0))
+		{
+			m_pSharedCapture = GetSharedCapture();
+			if (!m_pSharedCapture)
+				return FALSE;
+			if (!m_textureCapture.Initialize(&m_device, m_pSharedCapture))
+				return FALSE;
+			m_targetTexture.CreateTexture(&m_device, m_pSharedCapture->Size, (DXGI_FORMAT)m_pSharedCapture->Format, 0, FALSE, TRUE);
+			m_bCapturing = TRUE;
+		}
 		m_eventBegin.SetEvent();
 		return TRUE;
 	}
@@ -92,15 +108,15 @@ namespace D3D
 
 	SharedCapture* CD3DCaptureSource::GetSharedCapture()
 	{
-		if (m_sharedCapture.Open(SHAREDCAPTURE) && m_sharedCapture.Map())
+		if (m_sharedCaptureMemory.Open(SHAREDCAPTURE_MEMORY) && m_sharedCaptureMemory.Map())
 		{
-			return reinterpret_cast<SharedCapture*>(m_sharedCapture.Address());
+			return reinterpret_cast<SharedCapture*>(m_sharedCaptureMemory.Address());
 		}
 		return NULL;
 	}
 	void CD3DCaptureSource::Tick(FLOAT fSeconds)
 	{
-		if (m_eventExit.Lock(0))
+		if (m_eventExit && m_eventExit.Lock(0))
 		{
 			EndCapture();
 		}
@@ -108,20 +124,17 @@ namespace D3D
 		{
 			BeginCapture(TEXT("War3.exe"));
 		}
-		else
-		{
 
-		}
 	}
 	BOOL CD3DCaptureSource::Render(const D3DXVECTOR2 &pos, const D3DXVECTOR2 &size)
 	{
-		if (!m_pSharedCapture || !m_gameTexture.IsValid())
+		if (!m_pSharedCapture || !m_targetTexture.IsValid())
 			return FALSE;
 
 		CD3D10Texture *texture = m_textureCapture.LockTexture(&m_device);
 		if (texture)
 		{
-			TinySize gameSize = m_gameTexture.GetSize();
+			TinySize gameSize = m_targetTexture.GetSize();
 			D3DXVECTOR2 texturePos = D3DXVECTOR2(0.0F, 0.0F);
 			D3DXVECTOR2 textureStretch = D3DXVECTOR2(1.0F, 1.0F);
 			D3DXVECTOR2 textureSize = D3DXVECTOR2(FLOAT(gameSize.cx), FLOAT(gameSize.cy));
@@ -147,6 +160,14 @@ namespace D3D
 				DrawSprite(texture, 0xFFFFFFFF, texturePos.x, texturePos.y, texturePos.x + textureStretch.x, texturePos.y + textureStretch.y);
 		}
 		return TRUE;
+	}
+	BOOL CD3DCaptureSource::Save(LPCSTR pzFile)
+	{
+		ASSERT(pzFile);
+		D3D::CD3D10Texture* ps = m_textureCapture.GetSharedTexture();
+		if (!ps) return FALSE;
+		BOOL bRes = D3DX10SaveTextureToFile(ps->GetTexture(), D3DX10_IFF_PNG, pzFile) != S_OK;
+		return bRes;
 	}
 	void CD3DCaptureSource::DrawSprite(CD3D10Texture *texture, DWORD color, float x, float y, float x2, float y2)
 	{
@@ -200,7 +221,7 @@ namespace D3D
 			CloseHandle(hProcess);
 			hProcess = NULL;
 		}
-		return bRes;
+		return bRes == S_OK;
 	}
 	DWORD CD3DCaptureSource::FindProcess(const TinyString& processName)
 	{

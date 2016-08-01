@@ -92,14 +92,14 @@ namespace TinyUI
 	INT TinyMessageLoop::MessageLoop()
 	{
 		MSG msg;
-		BOOL bRet;
-		while ((bRet = GetMessage(&msg, NULL, 0, 0)) != 0)
+		BOOL bRes;
+		while ((bRes = GetMessage(&msg, NULL, 0, 0)) != 0)
 		{
-			if (bRet == -1)
+			if (bRes == -1)
 			{
 				TRACE(_T("::GetMessage returned -1 (error)\n"));
 			}
-			else if (!bRet)
+			else if (!bRes)
 			{
 				TRACE(_T("MessageLoop::Run - exiting\n"));
 				break;
@@ -117,7 +117,7 @@ namespace TinyUI
 		for (INT i = mFilters.GetSize() - 1; i >= 0; i--)
 		{
 			TinyMessageFilter* pMessageFilter = mFilters[i];
-			if (pMessageFilter != NULL && 
+			if (pMessageFilter != NULL &&
 				pMessageFilter->PreTranslateMessage(pMsg))
 			{
 				return TRUE;

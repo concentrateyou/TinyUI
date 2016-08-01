@@ -23,6 +23,18 @@ void Trace(LPCTSTR lpszFormat, ...)
 	va_end(args);
 }
 //////////////////////////////////////////////////////////////////////////
+string _cdecl StringPrintf(const CHAR* s, ...)
+{
+	va_list args;
+	va_start(args, s);
+	INT size;
+	CHAR szBuffer[1024];
+	size = _vsntprintf_s(szBuffer, 1024, s, args);
+	ASSERT(size >= 0);
+	va_end(args);
+	return string(szBuffer, 0, size);
+}
+//////////////////////////////////////////////////////////////////////////
 CPerformanceTimer::CPerformanceTimer()
 	:m_dwTick(0),
 	m_dwTimerMask(0),

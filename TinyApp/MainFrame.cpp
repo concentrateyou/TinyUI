@@ -89,21 +89,15 @@ LRESULT CMainFrame::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& 
 
 void CMainFrame::OnInjectLibrary(void*, INT)
 {
-	/*if (m_source.Initialize("War3.exe"))
+	RECT rect;
+	::GetClientRect(m_drawCtrl, &rect);
+	if (m_videoCapture.Initialize(m_drawCtrl, TO_CX(rect), TO_CY(rect)))
 	{
-	m_lblState.SetText("初始化成功!");
-	if (m_source.BeginCapture())
-	{
-	m_lblState.SetText("注入成功!");
+		m_lblState.SetText("初始化成功!");
 	}
 	else
 	{
-	m_lblState.SetText("注入失败!");
+		m_lblState.SetText("初始化失败!");
 	}
-	}
-	else
-	{
-	m_lblState.SetText("初始化失败!");
-	}*/
 }
 

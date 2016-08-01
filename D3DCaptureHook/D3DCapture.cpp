@@ -3,6 +3,9 @@
 #include <string>
 #include <sstream>
 #include <fstream>
+#include <D3D10_1.h>
+#include <D3DX10.h>
+#include <DXGI.h>
 using namespace std;
 
 typedef IDirect3D9* (WINAPI*D3D9CREATEPROC)(UINT);
@@ -129,38 +132,38 @@ namespace D3D
 	BOOL D3D9Capture::Initialize(HWND hWND)
 	{
 		DWORD dwProcessID = GetCurrentProcessId();
-		stringstream stream;
-		stream << BEGIN_CAPTURE_EVENT << dwProcessID;
-		if (!m_eventBegin.CreateEvent(FALSE, FALSE, stream.str().c_str()))
+		string name = StringPrintf("%s%d", BEGIN_CAPTURE_EVENT, dwProcessID);
+		if (!m_eventBegin.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
 		{
-			if (!m_eventBegin.OpenEvent(EVENT_ALL_ACCESS, FALSE, stream.str().c_str()))
+			if (!m_eventBegin.CreateEvent(FALSE, FALSE, name.c_str()))
 			{
 				return FALSE;
 			}
 		}
-		stream.str("");
-		stream << END_CAPTURE_EVENT << dwProcessID;
-		if (!m_eventEnd.CreateEvent(FALSE, FALSE, stream.str().c_str()))
+		name = StringPrintf("%s%d", END_CAPTURE_EVENT, dwProcessID);
+		if (!m_eventEnd.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
 		{
-			if (!m_eventEnd.OpenEvent(EVENT_ALL_ACCESS, FALSE, stream.str().c_str()))
+			if (!m_eventEnd.CreateEvent(FALSE, FALSE, name.c_str()))
 			{
 				return FALSE;
 			}
 		}
-		stream.str("");
-		stream << CAPTURE_READY_EVENT << dwProcessID;
-		if (!m_eventReady.CreateEvent(FALSE, FALSE, stream.str().c_str()))
+		name = StringPrintf("%s%d", CAPTURE_READY_EVENT, dwProcessID);
+		if (!m_eventReady.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
 		{
-			if (!m_eventReady.OpenEvent(EVENT_ALL_ACCESS, FALSE, stream.str().c_str()))
+			if (!m_eventReady.CreateEvent(FALSE, FALSE, name.c_str()))
 			{
 				return FALSE;
 			}
 		}
-		if (!m_sharedCapture.Create(SHAREDCAPTURE, sizeof(SharedCapture)))
+		if (!m_sharedCaptureMemery.Open(SHAREDCAPTURE_MEMORY))
 		{
-			return FALSE;
+			if (!m_sharedCaptureMemery.Create(SHAREDCAPTURE_MEMORY, sizeof(SharedCapture)))
+			{
+				return FALSE;
+			}
 		}
-		if (!m_sharedCapture.Map(0, 0))
+		if (!m_sharedCaptureMemery.Map(0, 0))
 		{
 			return FALSE;
 		}
@@ -240,7 +243,7 @@ namespace D3D
 					{
 						m_d3dFormat = sd.Format;
 						m_dxgiFormat = GetDXGIFormat(sd.Format);
-						SharedCapture* sharedCapture = (SharedCapture*)m_sharedCapture.Address();
+						SharedCapture* sharedCapture = (SharedCapture*)m_sharedCaptureMemery.Address();
 						ASSERT(sharedCapture);
 						sharedCapture->Format = sd.Format;
 						sharedCapture->Size.cx = sd.Width;
@@ -272,7 +275,6 @@ namespace D3D
 	void D3D9Capture::D3DReset()
 	{
 		m_bTextures = FALSE;
-		m_d3d10Resource.Release();
 		m_d3d9TextureSurface.Release();
 		m_d3d10Device1.Release();
 		m_textureMemery.Unmap();
@@ -281,8 +283,7 @@ namespace D3D
 	}
 	BOOL D3D9Capture::InitializeSharedMemoryGPUCapture(SharedTexture** sharedTexture)
 	{
-		INT size = sizeof(SharedTexture);
-		if (!m_textureMemery.Create(TEXTURE_MEMORY, size))
+		if (!m_textureMemery.Create(TEXTURE_MEMORY, sizeof(SharedTexture)))
 			return FALSE;
 		if (!m_textureMemery.Map(0, 0))
 			return FALSE;
@@ -319,25 +320,21 @@ namespace D3D
 				return FALSE;
 			}
 		}
-		SharedCapture* sharedCapture = reinterpret_cast<SharedCapture*>(m_sharedCapture.Address());
+		SharedCapture* sharedCapture = reinterpret_cast<SharedCapture*>(m_sharedCaptureMemery.Address());
 		ASSERT(sharedCapture);
-		D3D10_TEXTURE2D_DESC texGameDesc;
-		ZeroMemory(&texGameDesc, sizeof(texGameDesc));
-		texGameDesc.Width = sharedCapture->Size.cx;
-		texGameDesc.Height = sharedCapture->Size.cy;
-		texGameDesc.MipLevels = 1;
-		texGameDesc.ArraySize = 1;
-		texGameDesc.Format = m_dxgiFormat;
-		texGameDesc.SampleDesc.Count = 1;
-		texGameDesc.BindFlags = D3D10_BIND_RENDER_TARGET | D3D10_BIND_SHADER_RESOURCE;
-		texGameDesc.Usage = D3D10_USAGE_DEFAULT;
-		texGameDesc.MiscFlags = D3D10_RESOURCE_MISC_SHARED;
+		D3D10_TEXTURE2D_DESC desc;
+		ZeroMemory(&desc, sizeof(desc));
+		desc.Width = sharedCapture->Size.cx;
+		desc.Height = sharedCapture->Size.cy;
+		desc.MipLevels = 1;
+		desc.ArraySize = 1;
+		desc.Format = m_dxgiFormat;
+		desc.SampleDesc.Count = 1;
+		desc.BindFlags = D3D10_BIND_RENDER_TARGET | D3D10_BIND_SHADER_RESOURCE;
+		desc.Usage = D3D10_USAGE_DEFAULT;
+		desc.MiscFlags = D3D10_RESOURCE_MISC_SHARED;
 		CComPtr<ID3D10Texture2D> d3d10Texture2D;
-		if (FAILED(m_d3d10Device1->CreateTexture2D(&texGameDesc, NULL, &d3d10Texture2D)))
-		{
-			return FALSE;
-		}
-		if (FAILED(d3d10Texture2D->QueryInterface(__uuidof(ID3D10Resource), (void**)&m_d3d10Resource)))
+		if (FAILED(m_d3d10Device1->CreateTexture2D(&desc, NULL, &d3d10Texture2D)))
 		{
 			return FALSE;
 		}
@@ -403,7 +400,7 @@ namespace D3D
 				D3DPRESENT_PARAMETERS pp;
 				if (SUCCEEDED(swapChain->GetPresentParameters(&pp)))
 				{
-					SharedCapture* sharedCapture = (SharedCapture*)D3D9Capture::Instance().m_sharedCapture.Address();
+					SharedCapture* sharedCapture = (SharedCapture*)D3D9Capture::Instance().m_sharedCaptureMemery.Address();
 					ASSERT(sharedCapture);
 					sharedCapture->CaptureType = CAPTURETYPE_SHAREDTEX;
 					sharedCapture->Format = pp.BackBufferFormat;

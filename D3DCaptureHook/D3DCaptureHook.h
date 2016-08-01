@@ -5,11 +5,11 @@
 
 namespace D3D
 {
-
-#define CAPTURE_MEMORY          TEXT("Local\\IQiyiCaptureMemory")
-#define D3D_WINDOWCLASS			TEXT("IQiyiD3DGraphicsCapture")
-#define OPENGL_WINDOWCLASS		TEXT("IQiyiOpenGLGraphicsCapture")
-#define IQIYI_WINDOW_CLASS      TEXT("IQiyiWindowClass")
+#define SHAREDCAPTURE_MEMORY	TEXT("Local\\SharedCaptureMemory")
+#define TEXTURE_MEMORY          TEXT("Local\\TextureMemory")
+#define D3D_WINDOWCLASS			TEXT("D3DGraphicsCapture")
+#define OPENGL_WINDOWCLASS		TEXT("OpenGLGraphicsCapture")
+#define IQIYI_WINDOW_CLASS      TEXT("QiyiWindowClass")
 
 	class CD3DCapture
 	{

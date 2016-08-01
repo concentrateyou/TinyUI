@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "SharedTextureCapture.h"
+#include "D3DCaptureSource.h"
 
 namespace D3D
 {

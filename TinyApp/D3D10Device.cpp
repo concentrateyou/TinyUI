@@ -96,6 +96,7 @@ namespace D3D
 		if (!m_spriteVertexBuffer.Create(this, FALSE))
 			return FALSE;
 
+
 		return TRUE;
 	}
 	void CD3D10Device::SetViewport(FLOAT x, FLOAT y, FLOAT cx, FLOAT cy)
@@ -303,7 +304,6 @@ namespace D3D
 		{
 			return FALSE;
 		}
-
 		return TRUE;
 	}
 }

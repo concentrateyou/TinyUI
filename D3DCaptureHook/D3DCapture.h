@@ -14,7 +14,7 @@ namespace D3D
 {
 	typedef HRESULT(WINAPI *CREATEDXGIFACTORY1PROC)(REFIID riid, void **ppFactory);
 
-#define SHAREDCAPTURE			TEXT("Local\\SharedCapture")
+#define SHAREDCAPTURE_MEMORY	TEXT("Local\\SharedCaptureMemory")
 #define TEXTURE_MEMORY          TEXT("Local\\TextureMemory")
 #define NUM_BUFFERS				3
 #define ZERO_ARRAY				{0, 0, 0}
@@ -77,9 +77,8 @@ namespace D3D
 		CLock						m_lock;
 		CPerformanceTimer			m_timer;
 		CComPtr<ID3D10Device1>		m_d3d10Device1;
-		CComPtr<ID3D10Resource>		m_d3d10Resource;
 		CComPtr<IDirect3DSurface9>	m_d3d9TextureSurface;
-		CSharedMemory				m_sharedCapture;
+		CSharedMemory				m_sharedCaptureMemery;
 		CSharedMemory				m_textureMemery;
 		CD3DDetour					m_d3d9EndScene;
 		CD3DDetour					m_d3d9Reset;

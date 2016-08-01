@@ -51,30 +51,7 @@ namespace TinyUI
 		}
 		BOOL TinySharedMemory::Create(const TinyString& name, DWORD dwSize)
 		{
-			m_name = name;
-			SECURITY_ATTRIBUTES sa = { sizeof(sa), NULL, FALSE };
-			SECURITY_DESCRIPTOR sd;
-			ACL dacl = { 0 };
-			if (m_name.IsEmpty())
-			{
-				sa.lpSecurityDescriptor = &sd;
-				if (!InitializeAcl(&dacl, sizeof(dacl), ACL_REVISION))
-				{
-					return FALSE;
-				}
-				if (!InitializeSecurityDescriptor(&sd, SECURITY_DESCRIPTOR_REVISION))
-				{
-					return FALSE;
-				}
-				if (!SetSecurityDescriptorDacl(&sd, TRUE, &dacl, FALSE))
-				{
-					return FALSE;
-				}
-				ULONGLONG values[4];
-				RandBytes(&values, sizeof(values));
-				m_name = TinyString::Format("SharedMemory__%016llx%016llx%016llx%016llx", values[0], values[1], values[2], values[3]).STR();
-			}
-			m_hFileMap = CreateFileMappingReducedPermissions(&sa, dwSize, m_name.IsEmpty() ? NULL : m_name.STR());
+			m_hFileMap = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, dwSize, name.STR());
 			return m_hFileMap != NULL;
 		}
 		BOOL TinySharedMemory::Delete()

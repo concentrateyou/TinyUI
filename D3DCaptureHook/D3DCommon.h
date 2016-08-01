@@ -73,6 +73,8 @@ char(&ArraySizeHelper(T(&array)[N]))[N];
 	((sizeof(a) / sizeof(*(a))) / \
 	static_cast<size_t>(!(sizeof(a) % sizeof(*(a)))))
 
+string _cdecl StringPrintf(const CHAR* s, ...);
+
 /// <summary>
 /// 高精度计数器
 /// </summary>

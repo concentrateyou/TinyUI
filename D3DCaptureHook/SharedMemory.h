@@ -24,7 +24,6 @@ namespace D3D
 		void*	Address() const;
 		BOOL	IsValid() const;
 	private:
-		string		m_name;
 		BOOL        m_bReadonly;
 		HANDLE		m_hFileMap;
 		void*       m_pMemory;

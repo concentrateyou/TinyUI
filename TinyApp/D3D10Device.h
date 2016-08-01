@@ -54,6 +54,8 @@ namespace D3D
 		CD3D10VertexShader*							m_pCurrentVertexShader;
 		CD3D10PixelShader*							m_pCurrentPixelShader;
 		CD3D10VertexBuffer*							m_pCurrentVertexBuffer;
+		CD3D10VertexShader							m_mainVertexShader;
+		CD3D10PixelShader							m_mainPixelShader;
 		CD3D10Texture*								m_currentTextures[8];
 		FLOAT										m_currentCroppings[4];
 	};

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "VideoCapture.h"
-
+using namespace D3D;
 
 CVideoCapture::CVideoCapture()
 	:m_d3dCaptureSource(m_device),
@@ -25,13 +25,18 @@ BOOL CVideoCapture::Initialize(HWND hWND, INT cx, INT cy)
 	return TRUE;
 }
 
+BOOL CVideoCapture::Save(LPCSTR pzFile)
+{
+	ASSERT(pzFile);
+	return m_d3dCaptureSource.Save(pzFile);
+}
+
 DWORD CVideoCapture::MainCaptureLoop(LPVOID lpUnused)
 {
 	CVideoCapture* capture = reinterpret_cast<CVideoCapture*>(lpUnused);
-	while (capture->m_video.Lock(INFINITE))
+	for (;;)
 	{
 		capture->m_d3dCaptureSource.Tick(0);
-		capture->m_video.SetEvent();
 	}
 	return FALSE;
 }

@@ -19,7 +19,7 @@ typedef struct tagWNDINFO
 #define END_CAPTURE_EVENT       TEXT("EndCapture")
 #define CAPTURE_READY_EVENT     TEXT("CaptureReady")
 #define APP_EXIT_EVENT          TEXT("AppExit")
-#define SHAREDCAPTURE			TEXT("Local\\SharedCapture")
+#define SHAREDCAPTURE_MEMORY	TEXT("Local\\SharedCaptureMemory")
 #define TEXTURE_MEMORY          TEXT("Local\\TextureMemory")
 
 namespace D3D
@@ -33,6 +33,7 @@ namespace D3D
 		BOOL EndCapture();
 		void Tick(FLOAT fSeconds);
 		BOOL Render(const D3DXVECTOR2 &pos, const D3DXVECTOR2 &size);
+		BOOL Save(LPCSTR pzFile);
 	private:
 		BOOL	Initialize(const TinyString& processName);
 		DWORD	FindProcess(const TinyString& processName);
@@ -42,16 +43,17 @@ namespace D3D
 		static BOOL CALLBACK EnumWindow(HWND hwnd, LPARAM lParam);
 	private:
 		CD3D10Device&				m_device;
-		CD3D10Texture				m_gameTexture;
-		D3D::CSharedTextureCapture	m_textureCapture;
+		CD3D10Texture				m_targetTexture;
 		SharedCapture*				m_pSharedCapture;
 		TinyEvent					m_eventBegin;
 		TinyEvent					m_eventEnd;
 		TinyEvent					m_eventReady;
 		TinyEvent					m_eventExit;
-		TinySharedMemory			m_sharedCapture;
 		WNDINFO						m_targetWND;
 		BOOL						m_bCapturing;
+		BOOL						m_bInject;
+		D3D::CSharedTextureCapture	m_textureCapture;
+		TinySharedMemory			m_sharedCaptureMemory;
 	};
 }
 

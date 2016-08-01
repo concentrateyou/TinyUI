@@ -974,7 +974,6 @@ private:\
 	template<class T>
 	T** TinyComPtr<T>::operator&() throw()
 	{
-		ASSERT(m_myP == NULL);
 		return &m_myP;
 	}
 	template<class T>
