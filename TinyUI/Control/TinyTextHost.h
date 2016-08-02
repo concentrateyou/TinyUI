@@ -20,7 +20,14 @@ namespace TinyUI
 		~TinyTextHost();
 	public:
 		BOOL Initialize();
+		LRESULT TxWindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled);
 	public:
+		HRESULT OnPaint(HWND hwnd, WPARAM wparam, LPARAM lparam, BOOL& bHandled);
+		HRESULT OnSetCursor(HWND hwnd, WPARAM wparam, LPARAM lparam, BOOL& bHandled);
+	public:
+		HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject);
+		ULONG STDMETHODCALLTYPE AddRef(void);
+		ULONG STDMETHODCALLTYPE Release(void);
 		HDC TxGetDC() OVERRIDE;
 		INT TxReleaseDC(HDC hdc) OVERRIDE;
 		BOOL TxShowScrollBar(INT fnBar, BOOL fShow) OVERRIDE;
@@ -60,9 +67,6 @@ namespace TinyUI
 		HIMC TxImmGetContext() OVERRIDE;
 		void TxImmReleaseContext(HIMC himc) OVERRIDE;
 		HRESULT TxGetSelectionBarWidth(LONG *lSelBarWidth) OVERRIDE;
-		HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject);
-		ULONG STDMETHODCALLTYPE AddRef(void);
-		ULONG STDMETHODCALLTYPE Release(void);
 	private:
 		HINSTANCE					m_hInstance;
 		LONG						m_cRef;

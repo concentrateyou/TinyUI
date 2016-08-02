@@ -10,11 +10,11 @@ namespace TinyUI
 	public:
 		TinyRichTextBox();
 		virtual ~TinyRichTextBox();
-		virtual LPCSTR RetrieveClassName();
-		virtual LPCSTR RetrieveTitle();
-		virtual DWORD RetrieveStyle();
-		virtual DWORD RetrieveExStyle();
-		virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+		LPCSTR RetrieveClassName() OVERRIDE;
+		LPCSTR RetrieveTitle() OVERRIDE;
+		DWORD RetrieveStyle() OVERRIDE;
+		DWORD RetrieveExStyle() OVERRIDE;
+		BOOL PreCreateWindow(CREATESTRUCT& cs);
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 	public:
 		BOOL CanUndo() const;

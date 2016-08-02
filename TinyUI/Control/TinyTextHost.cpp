@@ -27,6 +27,7 @@ namespace TinyUI
 	}
 	TinyTextHost::~TinyTextHost()
 	{
+		m_ts.Release();
 		if (m_hInstance)
 		{
 			::FreeLibrary(m_hInstance);
@@ -58,6 +59,69 @@ namespace TinyUI
 		}
 		return FALSE;
 	}
+
+	LRESULT TinyTextHost::TxWindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled)
+	{
+		HRESULT hRes = FALSE;
+		switch (msg)
+		{
+		case WM_PAINT:
+			hRes = OnPaint(hwnd, wparam, lparam, bHandled);
+			break;
+		case WM_SETCURSOR:
+			hRes = OnSetCursor(hwnd, wparam, lparam, bHandled);
+			break;
+		}
+		return hRes;
+	}
+	HRESULT TinyTextHost::OnSetCursor(HWND hwnd, WPARAM wparam, LPARAM lparam, BOOL& bHandled)
+	{
+		ASSERT(m_ts);
+		bHandled = TRUE;
+		POINT pt;
+		GetCursorPos(&pt);
+		::ScreenToClient(hwnd, &pt);
+		RECT rect;
+		GetClientRect(hwnd, &rect);
+		HDC hdc = GetDC(hwnd);
+		m_ts->OnTxSetCursor(
+			DVASPECT_CONTENT,
+			-1,
+			NULL,
+			NULL,
+			hdc,
+			NULL,
+			&rect,
+			pt.x,
+			pt.y);
+		ReleaseDC(hwnd, hdc);
+		SetCursor(LoadCursor(NULL, IDC_CROSS));
+		return FALSE;
+	}
+	HRESULT TinyTextHost::OnPaint(HWND hwnd, WPARAM wparam, LPARAM lparam, BOOL& bHandled)
+	{
+		ASSERT(m_ts);
+		bHandled = FALSE;
+		PAINTSTRUCT ps;
+		HDC hDC = BeginPaint(hwnd, &ps);
+		RECT *prc = NULL;
+		m_ts->TxDraw(
+			DVASPECT_CONTENT,
+			0,
+			NULL,
+			NULL,
+			(HDC)wparam,
+			NULL,
+			(RECTL *)prc,
+			NULL,
+			(RECT *)lparam,
+			NULL,
+			NULL,
+			TXTVIEW_INACTIVE);
+		EndPaint(hwnd, &ps);
+		return FALSE;
+	}
+
 	HDC TinyTextHost::TxGetDC()
 	{
 		return ::GetDC(NULL);

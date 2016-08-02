@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "TinyApp.h"
 #include "MainFrame.h"
+#include "UIFrame.h"
 #include "Network/TinyConnector.h"
 #include "Windowless/TinyVisualHWND.h"
 
@@ -57,7 +58,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	CMainFrame uiImpl;
+	CUIFrame uiImpl;
 	uiImpl.Create(NULL, 50, 50, 800, 500);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();
