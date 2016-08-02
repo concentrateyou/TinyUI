@@ -1,6 +1,6 @@
 #pragma once
 #include "Control/TinyControl.h"
-#include "DirectX/TinyD3D10Device.h"
+#include "D3D/TinyD3D10Device.h"
 using namespace TinyUI;
 
 class CMainFrame : public TinyControl
@@ -22,6 +22,6 @@ public:
 	LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 private:
-	TinyUI::DX::TinyD3D10Device m_d3d10Device;
+	TinyUI::D3D::TinyD3D10Device m_d3d10Device;
 };
 

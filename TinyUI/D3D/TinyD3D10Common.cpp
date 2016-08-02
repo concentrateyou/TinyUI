@@ -4,7 +4,7 @@
 
 namespace TinyUI
 {
-	namespace DX
+	namespace D3D
 	{
 		
 	}

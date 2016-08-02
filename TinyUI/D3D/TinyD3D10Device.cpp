@@ -4,7 +4,7 @@
 
 namespace TinyUI
 {
-	namespace DX
+	namespace D3D
 	{
 		BOOL TinyD3D10Device::Initialize(HWND hWND, INT cx, INT cy)
 		{
@@ -41,48 +41,57 @@ namespace TinyUI
 			if (FAILED(hRes))
 				return FALSE;
 
-			ID3D10Texture2D* texture2D = NULL;
-			this->LoadTexture(TEXT("D:\\image.bmp"), &texture2D);
-			m_d3d->CopyResource(backBuffer, texture2D);
-
 			hRes = m_d3d->CreateRenderTargetView(backBuffer, NULL, &m_renderView);
 			if (FAILED(hRes))
 				return FALSE;
-			D3D10_RASTERIZER_DESC drd;
-			ZeroMemory(&drd, sizeof(drd));
-			drd.FillMode = D3D10_FILL_SOLID;
-			drd.CullMode = D3D10_CULL_NONE;
-			drd.FrontCounterClockwise = FALSE;
-			drd.DepthClipEnable = TRUE;
-			hRes = m_d3d->CreateRasterizerState(&drd, &m_rasterizerState);
-			if (FAILED(hRes))
-				return FALSE;
-			m_d3d->RSSetState(m_rasterizerState);
-			D3D10_DEPTH_STENCIL_DESC ddsd;
-			ZeroMemory(&ddsd, sizeof(ddsd));
-			ddsd.DepthEnable = FALSE;
-			hRes = m_d3d->CreateDepthStencilState(&ddsd, &m_depthState);
-			if (FAILED(hRes))
-				return FALSE;
-			m_d3d->OMSetDepthStencilState(m_depthState, 0);
-			D3D10_BLEND_DESC dbd;
-			ZeroMemory(&dbd, sizeof(dbd));
-			for (int i = 0; i < 8; i++)
-			{
-				dbd.BlendEnable[i] = TRUE;
-				dbd.RenderTargetWriteMask[i] = D3D10_COLOR_WRITE_ENABLE_ALL;
-			}
-			dbd.BlendOpAlpha = D3D10_BLEND_OP_ADD;
-			dbd.BlendOp = D3D10_BLEND_OP_ADD;
-			dbd.SrcBlendAlpha = D3D10_BLEND_ONE;
-			dbd.DestBlendAlpha = D3D10_BLEND_ZERO;
-			dbd.SrcBlend = D3D10_BLEND_ONE;
-			dbd.DestBlend = D3D10_BLEND_ZERO;
-			hRes = m_d3d->CreateBlendState(&dbd, &m_blendState);
-			if (FAILED(hRes))
-				return FALSE;
+			//D3D10_RASTERIZER_DESC drd;
+			//ZeroMemory(&drd, sizeof(drd));
+			//drd.FillMode = D3D10_FILL_SOLID;
+			//drd.CullMode = D3D10_CULL_NONE;
+			//drd.FrontCounterClockwise = FALSE;
+			//drd.DepthClipEnable = TRUE;
+			//hRes = m_d3d->CreateRasterizerState(&drd, &m_rasterizerState);
+			//if (FAILED(hRes))
+			//	return FALSE;
+			//m_d3d->RSSetState(m_rasterizerState);
+			//D3D10_DEPTH_STENCIL_DESC ddsd;
+			//ZeroMemory(&ddsd, sizeof(ddsd));
+			//ddsd.DepthEnable = FALSE;
+			//hRes = m_d3d->CreateDepthStencilState(&ddsd, &m_depthState);
+			//if (FAILED(hRes))
+			//	return FALSE;
+			//m_d3d->OMSetDepthStencilState(m_depthState, 0);
+			//D3D10_BLEND_DESC dbd;
+			//ZeroMemory(&dbd, sizeof(dbd));
+			//for (int i = 0; i < 8; i++)
+			//{
+			//	dbd.BlendEnable[i] = TRUE;
+			//	dbd.RenderTargetWriteMask[i] = D3D10_COLOR_WRITE_ENABLE_ALL;
+			//}
+			//dbd.BlendOpAlpha = D3D10_BLEND_OP_ADD;
+			//dbd.BlendOp = D3D10_BLEND_OP_ADD;
+			//dbd.SrcBlendAlpha = D3D10_BLEND_ONE;
+			//dbd.DestBlendAlpha = D3D10_BLEND_ZERO;
+			//dbd.SrcBlend = D3D10_BLEND_ONE;
+			//dbd.DestBlend = D3D10_BLEND_ZERO;
+			//hRes = m_d3d->CreateBlendState(&dbd, &m_blendState);
+			//if (FAILED(hRes))
+			//	return FALSE;
+			//	
 			m_d3d->OMSetRenderTargets(1, &m_renderView, NULL);
 			this->SetViewports(0, 0, cx, cy);
+
+			//ID3D10Texture2D* texture2D = NULL;
+			//this->LoadTexture(TEXT("D:\\test.jpg"), &texture2D);
+			//this->GetResourceView(texture2D, &m_resourceView);
+			//m_s.pTexture = m_resourceView;
+			//m_s.TexCoord.x = 0;
+			//m_s.TexCoord.y = 0;
+			//m_s.TexSize.x = 1.0f;
+			//m_s.TexSize.y = 1.0f;
+			//m_s.TextureIndex = 0;
+			//m_s.ColorModulate = D3DXCOLOR(1.0F, 1.0F, 1.0F, 1.0F);
+			//D3DX10CreateSprite(m_d3d, 0, &m_sprite);
 			return TRUE;
 		}
 		void TinyD3D10Device::SetViewports(INT x, INT y, INT cx, INT cy)
@@ -102,6 +111,10 @@ namespace TinyUI
 			ASSERT(m_d3d);
 			D3DXCOLOR clearColor(0, 0, 0, 0);
 			m_d3d->ClearRenderTargetView(m_renderView, clearColor);
+			m_sprite->Begin(D3DX10_SPRITE_SORT_TEXTURE);
+			m_sprite->DrawSpritesBuffered(&m_s, 1);
+			m_sprite->Flush();
+			m_sprite->End();
 			m_swap->Present(0, 0);
 			return TRUE;
 		}
@@ -122,6 +135,20 @@ namespace TinyUI
 				return FALSE;
 			}
 			return TRUE;
+		}
+		BOOL TinyD3D10Device::GetResourceView(ID3D10Texture2D* texture2D, ID3D10ShaderResourceView **resourceView)
+		{
+			ASSERT(m_d3d);
+			if (!texture2D)
+				return FALSE;
+			D3D10_TEXTURE2D_DESC desc;
+			texture2D->GetDesc(&desc);
+			D3D10_SHADER_RESOURCE_VIEW_DESC srvdesc;
+			ZeroMemory(&srvdesc, sizeof(srvdesc));
+			srvdesc.Format = desc.Format;
+			srvdesc.ViewDimension = D3D10_SRV_DIMENSION_TEXTURE2D;
+			srvdesc.Texture2D.MipLevels = desc.MipLevels;
+			return m_d3d->CreateShaderResourceView(texture2D, &srvdesc, resourceView) == S_OK;
 		}
 	}
 }
