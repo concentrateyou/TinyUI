@@ -123,14 +123,12 @@
     <ClInclude Include="Control\TinyContextMenu.h" />
     <ClInclude Include="Control\TinyProgressBar.h" />
     <ClInclude Include="Control\TinyRebar.h" />
-    <ClInclude Include="Control\TinyRichText.h" />
     <ClInclude Include="Control\TinyRichTextBox.h" />
     <ClInclude Include="Control\TinyScrollBox.h" />
     <ClInclude Include="Control\TinyScrollBar.h" />
     <ClInclude Include="Control\TinyTabBox.h" />
     <ClInclude Include="Control\TinyTabControl.h" />
     <ClInclude Include="Control\TinyTextBox.h" />
-    <ClInclude Include="Control\TinyTextHost.h" />
     <ClInclude Include="Control\TinyTrackBar.h" />
     <ClInclude Include="Control\TinyTreeView.h" />
     <ClInclude Include="D3D\TinyD3D10Common.h" />
@@ -157,6 +155,8 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Render\TinyCanvas.h" />
+    <ClInclude Include="Windowless\TinyTextHost.h" />
+    <ClInclude Include="Windowless\TinyVisualRichText.h" />
     <ClInclude Include="Windowless\TinyVisualUtility.h" />
     <ClInclude Include="Windowless\TinyVisualButton.h" />
     <ClInclude Include="Windowless\TinyVisualComboBox.h" />
@@ -219,14 +219,12 @@
     <ClCompile Include="Control\TinyContextMenu.cpp" />
     <ClCompile Include="Control\TinyProgressBar.cpp" />
     <ClCompile Include="Control\TinyRebar.cpp" />
-    <ClCompile Include="Control\TinyRichText.cpp" />
     <ClCompile Include="Control\TinyRichTextBox.cpp" />
     <ClCompile Include="Control\TinyScrollBox.cpp" />
     <ClCompile Include="Control\TinyScrollBar.cpp" />
     <ClCompile Include="Control\TinyTabBox.cpp" />
     <ClCompile Include="Control\TinyTabControl.cpp" />
     <ClCompile Include="Control\TinyTextBox.cpp" />
-    <ClCompile Include="Control\TinyTextHost.cpp" />
     <ClCompile Include="Control\TinyTrackBar.cpp" />
     <ClCompile Include="Control\TinyTreeView.cpp" />
     <ClCompile Include="D3D\TinyD3D10Common.cpp" />
@@ -255,6 +253,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Render\TinyCanvas.cpp" />
+    <ClCompile Include="Windowless\TinyTextHost.cpp" />
+    <ClCompile Include="Windowless\TinyVisualRichText.cpp" />
     <ClCompile Include="Windowless\TinyVisualUtility.cpp" />
     <ClCompile Include="Windowless\TinyVisualButton.cpp" />
     <ClCompile Include="Windowless\TinyVisualComboBox.cpp" />

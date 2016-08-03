@@ -53,7 +53,7 @@ namespace TinyUI
 	{
 		return (HANDLE)(this == NULL ? NULL : m_hEvent);
 	}
-	HANDLE TinyEvent::Handle()
+	HANDLE TinyEvent::Handle() const
 	{
 		return m_hEvent;
 	}
@@ -86,7 +86,7 @@ namespace TinyUI
 	BOOL TinyEvent::Lock(DWORD dwTimeout)
 	{
 		ASSERT(m_hEvent != NULL);
-		DWORD dwRet = ::WaitForSingleObject(m_hEvent, dwTimeout); 
+		DWORD dwRet = ::WaitForSingleObject(m_hEvent, dwTimeout);
 		if (dwRet == WAIT_OBJECT_0 || dwRet == WAIT_ABANDONED)
 			return TRUE;
 		else
@@ -124,7 +124,7 @@ namespace TinyUI
 	{
 		return (HANDLE)(this == NULL ? NULL : m_hMutex);
 	}
-	HANDLE TinyMutex::Handle()
+	HANDLE TinyMutex::Handle() const
 	{
 		return m_hMutex;
 	}
@@ -209,7 +209,7 @@ namespace TinyUI
 	}
 	void TinyScopedLibrary::Reset(HINSTANCE hInstance)
 	{
-		if(m_hInstance)
+		if (m_hInstance)
 		{
 			::FreeLibrary(m_hInstance);
 			m_hInstance = NULL;

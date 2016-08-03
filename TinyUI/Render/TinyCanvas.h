@@ -47,7 +47,7 @@ namespace TinyUI
 		/// <summary>
 		/// DCæ‰±˙
 		/// </summary>
-		HDC Handle();
+		HDC Handle() const;
 		/// <summary>
 		/// …Ë÷√ª≠∞Â«¶± 
 		/// </summary>

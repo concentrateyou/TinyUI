@@ -110,9 +110,17 @@ namespace TinyUI
 		{
 			return m_fs;
 		}
-		TinyVisualHWND*	TinyVisualDocument::GetVisualHWND()
+		TinyVisualHWND*	TinyVisualDocument::GetVisualHWND() const
 		{
 			return m_pWindow;
+		}
+		const MSG* TinyVisualDocument::GetCurrentMsg() const
+		{
+			return m_pWindow->GetCurrentMessage();
+		}
+		HWND TinyVisualDocument::Handle() const
+		{
+			return m_pWindow != NULL ? m_pWindow->Handle() : NULL;
 		}
 		void TinyVisualDocument::LinkVisual(TinyVisual* spvis, TinyVisual* spvisInsert, TinyVisual**pspvisFirst)
 		{

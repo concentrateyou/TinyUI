@@ -22,6 +22,10 @@ namespace TinyUI
 		{
 
 		}
+		HWND TinyVisual::Handle() const
+		{
+			return m_document != NULL ? m_document->Handle() : NULL;
+		}
 		void TinyVisual::SetText(LPCSTR pzText)
 		{
 			m_strText = pzText;
@@ -75,6 +79,14 @@ namespace TinyUI
 		BOOL TinyVisual::IsEnable() const
 		{
 			return m_enable;
+		}
+		BOOL TinyVisual::IsCapture() const
+		{
+			return m_document->GetCapture() == this;
+		}
+		BOOL TinyVisual::IsFocus() const
+		{
+			return m_document->GetFocus() == this;
 		}
 		void TinyVisual::SetVisible(BOOL visible)
 		{

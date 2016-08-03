@@ -36,7 +36,9 @@ namespace TinyUI
 			void				Uninitialize();
 			TinyVisualFactory*	GetFactory();
 		public:
-			TinyVisualHWND*	GetVisualHWND();
+			HWND			Handle() const;
+			TinyVisualHWND*	GetVisualHWND() const;
+			const MSG*		GetCurrentMsg() const;
 			TinyVisual*		GetVisual(TinyVisual* spvis, UINT cmd) const;
 			TinyVisual*		SetParent(TinyVisual* spvis, TinyVisual* spvisNewParent);
 			TinyVisual*		GetParent(TinyVisual* spvis) const;

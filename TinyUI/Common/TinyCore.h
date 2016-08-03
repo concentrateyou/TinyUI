@@ -35,7 +35,7 @@ namespace TinyUI
 		TinyEvent();
 		~TinyEvent();
 		operator HANDLE() const;
-		HANDLE Handle();
+		HANDLE Handle() const;
 		BOOL CreateEvent(BOOL bInitiallyOwn = FALSE, BOOL bManualReset = FALSE, LPCTSTR lpszNAme = NULL, LPSECURITY_ATTRIBUTES lpsaAttribute = NULL);
 		BOOL OpenEvent(DWORD dwDesiredAccess, BOOL bInheritHandle, LPCTSTR lpName);
 		BOOL SetEvent();
@@ -59,7 +59,7 @@ namespace TinyUI
 		BOOL Create(BOOL bInitiallyOwn = FALSE, LPCTSTR lpszName = NULL, LPSECURITY_ATTRIBUTES lpsaAttribute = NULL);
 		BOOL Open(DWORD dwDesiredAccess, BOOL bInheritHandle, LPCTSTR lpName);
 		operator HANDLE() const;
-		HANDLE Handle();
+		HANDLE Handle() const;
 		BOOL Lock(DWORD dwTimeout = INFINITE);
 		BOOL Unlock();
 	private:

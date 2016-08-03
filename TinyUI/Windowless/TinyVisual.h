@@ -31,6 +31,7 @@ namespace TinyUI
 		protected:
 			TinyVisual(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:
+			HWND				Handle() const;
 			TinyString			GetText() const;
 			TinyString			GetName() const;
 			TinyString			GetToolTip() const;
@@ -44,6 +45,8 @@ namespace TinyUI
 			HRGN				GetClip() const;
 			BOOL				IsVisible() const;
 			BOOL				IsEnable() const;
+			BOOL				IsCapture() const;
+			BOOL				IsFocus() const;
 			void				SetName(LPCSTR pzName);
 			void				SetToolTip(LPCSTR pzTitle);
 			void				SetText(LPCSTR pzText);

@@ -89,7 +89,7 @@ namespace TinyUI
 		{
 			bHandled = FALSE;
 			Uninitialize();
-			//PostQuitMessage(0);//退出应用程序
+			PostQuitMessage(0);//退出应用程序
 			return FALSE;
 		}
 

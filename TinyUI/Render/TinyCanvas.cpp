@@ -142,7 +142,7 @@ namespace TinyUI
 		m_hBRUSH = (HBRUSH)GetCurrentObject(m_hDC, OBJ_BRUSH);
 		return TRUE;
 	}
-	HDC TinyCanvas::Handle()
+	HDC TinyCanvas::Handle() const
 	{
 		return m_hDC;
 	}

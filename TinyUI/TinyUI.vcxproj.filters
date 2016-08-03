@@ -348,17 +348,17 @@
     <ClInclude Include="Common\TinyUtility.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
-    <ClInclude Include="Control\TinyTextHost.h">
-      <Filter>头文件\Control</Filter>
-    </ClInclude>
-    <ClInclude Include="Control\TinyRichText.h">
-      <Filter>头文件\Control</Filter>
-    </ClInclude>
     <ClInclude Include="D3D\TinyD3D10Common.h">
       <Filter>头文件\D3D</Filter>
     </ClInclude>
     <ClInclude Include="D3D\TinyD3D10Device.h">
       <Filter>头文件\D3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualRichText.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyTextHost.h">
+      <Filter>头文件\Windowless</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -635,17 +635,17 @@
     <ClCompile Include="Common\TinyUtility.cpp">
       <Filter>源文件\Common</Filter>
     </ClCompile>
-    <ClCompile Include="Control\TinyTextHost.cpp">
-      <Filter>源文件\Control</Filter>
-    </ClCompile>
-    <ClCompile Include="Control\TinyRichText.cpp">
-      <Filter>源文件\Control</Filter>
-    </ClCompile>
     <ClCompile Include="D3D\TinyD3D10Common.cpp">
       <Filter>源文件\D3D</Filter>
     </ClCompile>
     <ClCompile Include="D3D\TinyD3D10Device.cpp">
       <Filter>源文件\D3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualRichText.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyTextHost.cpp">
+      <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
