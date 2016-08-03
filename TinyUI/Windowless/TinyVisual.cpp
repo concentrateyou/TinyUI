@@ -273,12 +273,21 @@ namespace TinyUI
 		}
 		HRESULT	TinyVisual::OnKeyDown(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags)
 		{
-			EVENT_KeyDown(KeyEventArgs(dwChar));
+			EVENT_KeyDown(KeyEventArgs(dwChar, dwRepCnt, dwFlags));
 			return FALSE;
 		}
 		HRESULT	TinyVisual::OnKeyUp(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags)
 		{
-			EVENT_KeyUp(KeyEventArgs(dwChar));
+			EVENT_KeyUp(KeyEventArgs(dwChar, dwRepCnt, dwFlags));
+			return FALSE;
+		}
+		HRESULT	TinyVisual::OnChar(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags)
+		{
+			EVENT_Char(KeyEventArgs(dwChar, dwRepCnt, dwFlags));
+			return FALSE;
+		}
+		HRESULT	 TinyVisual::OnSetCursor(HWND hWND, DWORD dwHitTest, DWORD dwMessage)
+		{
 			return FALSE;
 		}
 	}

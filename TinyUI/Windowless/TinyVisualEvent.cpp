@@ -34,14 +34,24 @@ namespace TinyUI
 			return m_clicks;
 		}
 		//////////////////////////////////////////////////////////////////////////
-		KeyEventArgs::KeyEventArgs(DWORD dwKey)
-			:m_dwKey(dwKey)
+		KeyEventArgs::KeyEventArgs(DWORD dwKey, DWORD dwRepCnt, DWORD dwFlags)
+			:m_dwKey(dwKey),
+			m_dwRepCnt(dwRepCnt),
+			m_dwFlags(dwFlags)
 		{
 
 		}
 		DWORD KeyEventArgs::Key()
 		{
 			return m_dwKey;
+		}
+		DWORD KeyEventArgs::RepCnt()
+		{
+			return m_dwRepCnt;
+		}
+		DWORD KeyEventArgs::Flag()
+		{
+			return m_dwFlags;
 		}
 	}
 }

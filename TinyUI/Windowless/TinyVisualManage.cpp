@@ -11,6 +11,7 @@
 #include "TinyVisualButton.h"
 #include "TinyVisualScrollbar.h"
 #include "TinyVisualComboBox.h"
+#include "TinyVisualRichText.h"
 
 namespace TinyUI
 {
@@ -53,10 +54,10 @@ namespace TinyUI
 			{
 				spvis = new TinyVisualComboBox(spvisParent, m_document);
 			}
-			/*else if (tag.Compare(TinyVisualTag::RICHTEXT) == 0)
+			else if (tag.Compare(TinyVisualTag::RICHTEXT) == 0)
 			{
 				spvis = new TinyVisualRichText(spvisParent, m_document);
-			}*/
+			}
 			spvis->SetPosition(TinyPoint(x, y));
 			spvis->SetSize(TinySize(cx, cy));
 			m_document->SetParent(spvis, spvisParent);

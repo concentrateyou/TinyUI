@@ -41,10 +41,14 @@ namespace TinyUI
 		class KeyEventArgs : public EventArgs
 		{
 		public:
-			KeyEventArgs(DWORD dwKey);
+			KeyEventArgs(DWORD dwKey, DWORD	m_dwRepCnt, DWORD m_dwFlags);
 			DWORD	Key();
+			DWORD	RepCnt();
+			DWORD	Flag();
 		private:
 			DWORD	m_dwKey;
+			DWORD	m_dwRepCnt;
+			DWORD	m_dwFlags;
 		};
 	}
 }

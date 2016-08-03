@@ -13,13 +13,11 @@ namespace TinyUI
 #define HIMETRIC_PER_INCH   2540
 #define MAP_PIX_TO_LOGHIM(x,ppli)   MulDiv(HIMETRIC_PER_INCH, (x), (ppli))
 #define MAP_LOGHIM_TO_PIX(x,ppli)   MulDiv((ppli), (x), HIMETRIC_PER_INCH)
-
 		typedef HRESULT(WINAPI *pfnCreateTextServices)(IUnknown  *punkOuter, ITextHost *pITextHost, IUnknown  **ppUnk);
-
 		class TinyTextHost;
 		class TinyRichText;
 		//////////////////////////////////////////////////////////////////////////
-		class TinyTextHost :public ITextHost
+		class TinyTextHost :public ITextHost, public TinyMessageFilter
 		{
 			friend class TinyVisualRichText;
 		public:
@@ -70,6 +68,8 @@ namespace TinyUI
 			HIMC TxImmGetContext() OVERRIDE;
 			void TxImmReleaseContext(HIMC himc) OVERRIDE;
 			HRESULT TxGetSelectionBarWidth(LONG *lSelBarWidth) OVERRIDE;
+		public:
+			BOOL PreTranslateMessage(MSG* pMsg) OVERRIDE;
 		private:
 			TinyComPtr<ITextServices>	m_ts;
 			HINSTANCE					m_hInstance;

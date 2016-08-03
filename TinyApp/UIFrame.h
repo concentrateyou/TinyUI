@@ -6,7 +6,7 @@
 #include "Common/TinyEvent.h"
 #include "Control/TinyLabel.h"
 #include "Control/TinyButton.h"
-#include "Control/TinyRichText.h"
+#include "Windowless/TinyVisualRichText.h"
 using namespace TinyUI;
 
 class CUIFrame : public TinyControl
@@ -29,7 +29,5 @@ public:
 	LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	//·½·¨
 	BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
-private:
-	TinyRichText m_richtext;
 };
 

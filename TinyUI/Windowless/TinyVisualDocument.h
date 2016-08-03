@@ -38,7 +38,6 @@ namespace TinyUI
 		public:
 			HWND			Handle() const;
 			TinyVisualHWND*	GetVisualHWND() const;
-			const MSG*		GetCurrentMsg() const;
 			TinyVisual*		GetVisual(TinyVisual* spvis, UINT cmd) const;
 			TinyVisual*		SetParent(TinyVisual* spvis, TinyVisual* spvisNewParent);
 			TinyVisual*		GetParent(TinyVisual* spvis) const;
@@ -70,6 +69,8 @@ namespace TinyUI
 			HRESULT			OnMButtonUp(const TinyPoint& pos, DWORD dwFlags);
 			HRESULT			OnKeyDown(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
 			HRESULT			OnKeyUp(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
+			LRESULT			OnChar(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
+			HRESULT			OnSetCursor(HWND hWND, DWORD dwHitTest, DWORD dwMessage);
 		private:
 			void			ConvertToVisualPos(TinyVisual* spvis, TinyPoint& pos);//相对于原生窗口的坐标转换到元素坐标
 			TinyVisual*		GetVisualByName1(TinyVisual* spvis, const TinyString& name);

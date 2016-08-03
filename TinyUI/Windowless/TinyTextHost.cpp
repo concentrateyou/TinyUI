@@ -142,9 +142,13 @@ namespace TinyUI
 		{
 			ASSERT(m_spvis);
 			if (fShow)
+			{
 				return ::ShowCaret(m_spvis->Handle());
+			}
 			else
+			{
 				return ::HideCaret(m_spvis->Handle());
+			}
 		}
 
 		BOOL TinyTextHost::TxSetCaretPos(INT x, INT y)
@@ -308,6 +312,12 @@ namespace TinyUI
 			*lSelBarWidth = 0;
 			return S_OK;
 		}
+
+		BOOL TinyTextHost::PreTranslateMessage(MSG* pMsg)
+		{
+			return FALSE;
+		}
+
 	}
 }
 

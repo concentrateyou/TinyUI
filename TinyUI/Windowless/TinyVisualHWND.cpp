@@ -52,6 +52,12 @@ namespace TinyUI
 		{
 			//TODO
 		}
+
+		BOOL TinyVisualHWND::ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
+		{
+			return TinyControl::ProcessWindowMessage(hWnd, uMsg, wParam, lParam, lResult);
+		}
+
 		LRESULT TinyVisualHWND::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
@@ -117,7 +123,7 @@ namespace TinyUI
 				m_bMouseTracking = _TrackMouseEvent(&tme);
 			}
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			return m_document->OnMouseMove(pos, (DWORD)wParam);
+			return m_document->OnMouseMove(pos, static_cast<DWORD>(wParam));
 		}
 		LRESULT TinyVisualHWND::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
@@ -137,47 +143,57 @@ namespace TinyUI
 		{
 			bHandled = FALSE;
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			return m_document->OnLButtonDown(pos, (DWORD)wParam);
+			return m_document->OnLButtonDown(pos, static_cast<DWORD>(wParam));
 		}
 		LRESULT TinyVisualHWND::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			return m_document->OnLButtonUp(pos, (DWORD)wParam);
+			return m_document->OnLButtonUp(pos, static_cast<DWORD>(wParam));
 		}
 		LRESULT TinyVisualHWND::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			return m_document->OnRButtonDown(pos, (DWORD)wParam);
+			return m_document->OnRButtonDown(pos, static_cast<DWORD>(wParam));
 		}
 		LRESULT TinyVisualHWND::OnRButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			return m_document->OnRButtonUp(pos, (DWORD)wParam);
+			return m_document->OnRButtonUp(pos, static_cast<DWORD>(wParam));
 		}
 		LRESULT TinyVisualHWND::OnMButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			return m_document->OnMButtonDown(pos, (DWORD)wParam);
+			return m_document->OnMButtonDown(pos, static_cast<DWORD>(wParam));
 		}
 		LRESULT TinyVisualHWND::OnMButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			return m_document->OnMButtonUp(pos, (DWORD)wParam);
+			return m_document->OnMButtonUp(pos, static_cast<DWORD>(wParam));
 		}
 		LRESULT TinyVisualHWND::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
-			return FALSE;
+			return m_document->OnKeyDown(static_cast<DWORD>(wParam), LOWORD(lParam), HIWORD(lParam));
 		}
 		LRESULT TinyVisualHWND::OnKeyUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
-			return FALSE;
+			return m_document->OnKeyUp(static_cast<DWORD>(wParam), LOWORD(lParam), HIWORD(lParam));
+		}
+		LRESULT TinyVisualHWND::OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			return m_document->OnChar(static_cast<DWORD>(wParam), LOWORD(lParam), HIWORD(lParam));
+		}
+		LRESULT TinyVisualHWND::OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			return m_document->OnSetCursor(reinterpret_cast<HWND>(wParam), LOWORD(lParam), HIWORD(lParam));
 		}
 		LRESULT TinyVisualHWND::OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{

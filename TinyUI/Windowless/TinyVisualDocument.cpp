@@ -4,6 +4,7 @@
 #include "TinyVisualDocument.h"
 #include "TinyVisualComboBox.h"
 #include "TinyVisualList.h"
+#include "TinyVisualRichText.h"
 
 namespace TinyUI
 {
@@ -99,7 +100,7 @@ namespace TinyUI
 			ps6->SetScrollInfo(0, pos + 150, 300, 0);*/
 
 			//TinyVisualComboBox* ps8 = static_cast<TinyVisualComboBox*>(m_fs->Create(50, 50, 100, 28, m_spvisWindow, TinyVisualTag::COMBOBOX));
-			/*TinyVisualRichText* ps9 = static_cast<TinyVisualRichText*>(m_fs->Create(50, 50, 250, 250, m_spvisWindow, TinyVisualTag::RICHTEXT));*/
+			TinyVisualRichText* ps9 = static_cast<TinyVisualRichText*>(m_fs->Create(50, 50, 250, 250, m_spvisWindow, TinyVisualTag::RICHTEXT));
 			return TRUE;
 		}
 		void TinyVisualDocument::Uninitialize()
@@ -113,10 +114,6 @@ namespace TinyUI
 		TinyVisualHWND*	TinyVisualDocument::GetVisualHWND() const
 		{
 			return m_pWindow;
-		}
-		const MSG* TinyVisualDocument::GetCurrentMsg() const
-		{
-			return m_pWindow->GetCurrentMessage();
 		}
 		HWND TinyVisualDocument::Handle() const
 		{
@@ -667,6 +664,32 @@ namespace TinyUI
 		}
 		HRESULT	TinyVisualDocument::OnKeyUp(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags)
 		{
+			TinyVisual* spvis = m_spvisFocus;
+			if (spvis != NULL)
+			{
+				return spvis->OnKeyUp(dwChar, dwRepCnt, dwFlags);
+			}
+			return FALSE;
+		}
+		LRESULT	TinyVisualDocument::OnChar(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags)
+		{
+			TinyVisual* spvis = m_spvisFocus;
+			if (spvis != NULL)
+			{
+				return spvis->OnChar(dwChar, dwRepCnt, dwFlags);
+			}
+			return FALSE;
+		}
+		HRESULT	TinyVisualDocument::OnSetCursor(HWND hWND, DWORD dwHitTest, DWORD dwMessage)
+		{
+			POINT pos;
+			GetCursorPos(&pos);
+			ScreenToClient(hWND, &pos);
+			TinyVisual* spvis = GetVisualByPos(pos.x, pos.y);
+			if (spvis != NULL)
+			{
+				return spvis->OnSetCursor(hWND, dwHitTest, dwMessage);
+			}
 			return FALSE;
 		}
 #ifdef _DEBUG
