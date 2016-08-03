@@ -50,7 +50,8 @@ HICON CUIFrame::RetrieveIcon()
 LRESULT CUIFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	m_richtext.Create(m_hWND, 0, 0, 400, 400);
+	m_richtext.Create(m_hWND, 50, 10, 295, 244);
+	::SetFocus(m_richtext);
 	return FALSE;
 }
 

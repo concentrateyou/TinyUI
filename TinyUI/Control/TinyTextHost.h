@@ -7,6 +7,10 @@
 
 namespace TinyUI
 {
+#define HIMETRIC_PER_INCH   2540
+	LONG DXtoHimetricX(LONG dx, LONG xPerInch);
+	LONG DYtoHimetricY(LONG dy, LONG yPerInch);
+
 	typedef HRESULT(WINAPI *pfnCreateTextServices)(IUnknown  *punkOuter, ITextHost *pITextHost, IUnknown  **ppUnk);
 
 	class TinyTextHost;
@@ -16,14 +20,10 @@ namespace TinyUI
 	{
 		friend class TinyRichText;
 	public:
-		TinyTextHost(TinyRichText* ps);
+		TinyTextHost();
 		~TinyTextHost();
 	public:
-		BOOL Initialize();
-		LRESULT TxWindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled);
-	public:
-		HRESULT OnPaint(HWND hwnd, WPARAM wparam, LPARAM lparam, BOOL& bHandled);
-		HRESULT OnSetCursor(HWND hwnd, WPARAM wparam, LPARAM lparam, BOOL& bHandled);
+		BOOL Initialize(HWND hWND);
 	public:
 		HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject);
 		ULONG STDMETHODCALLTYPE AddRef(void);
@@ -71,7 +71,8 @@ namespace TinyUI
 		HINSTANCE					m_hInstance;
 		LONG						m_cRef;
 		TinyComPtr<ITextServices>	m_ts;
-		TinyRichText*				m_pRichText;
+		HWND						m_hWND;
+		SIZEL						m_sizelExtent;
 	};
 }
 

@@ -19,11 +19,20 @@ namespace TinyUI
 		{ 0xa8, 0x9e, 0x00, 0xaa, 0x00, 0x6c, 0xad, 0xc5 }
 	};
 
-	TinyTextHost::TinyTextHost(TinyRichText* pRichText)
-		:m_hInstance(NULL),
-		m_pRichText(pRichText)
-	{
 
+	LONG DXtoHimetricX(LONG dx, LONG xPerInch)
+	{
+		return (LONG)MulDiv(dx, HIMETRIC_PER_INCH, xPerInch);
+	}
+	LONG DYtoHimetricY(LONG dy, LONG yPerInch)
+	{
+		return (LONG)MulDiv(dy, HIMETRIC_PER_INCH, yPerInch);
+	}
+
+	TinyTextHost::TinyTextHost()
+		:m_hInstance(NULL)
+	{
+		m_sizelExtent.cx = m_sizelExtent.cy = 0;
 	}
 	TinyTextHost::~TinyTextHost()
 	{
@@ -34,15 +43,11 @@ namespace TinyUI
 			m_hInstance = NULL;
 		}
 	}
-	BOOL TinyTextHost::Initialize()
+	BOOL TinyTextHost::Initialize(HWND hWND)
 	{
-#if (_RICHEDIT_VER >= 0x0200)
+		ASSERT(hWND);
+		m_hWND = hWND;
 		m_hInstance = ::LoadLibrary(TEXT("msftedit.dll"));
-#elif (_RICHEDIT_VER > 0x100)
-		m_hInstance = ::LoadLibrary(TEXT("RICHED20.dll"));
-#else
-		m_hInstance = ::LoadLibrary(TEXT("RICHED32.dll"));
-#endif
 		if (m_hInstance)
 		{
 			pfnCreateTextServices ps = (pfnCreateTextServices)::GetProcAddress(m_hInstance, "CreateTextServices");
@@ -53,6 +58,9 @@ namespace TinyUI
 				{
 					pUnknown->QueryInterface(IID_ITextServices, (void**)&m_ts);
 					pUnknown->Release();
+					m_ts->OnTxInPlaceDeactivate();
+					m_ts->OnTxUIDeactivate();
+					m_ts->TxSendMessage(WM_KILLFOCUS, 0, 0, 0);
 					return TRUE;
 				}
 			}
@@ -60,101 +68,42 @@ namespace TinyUI
 		return FALSE;
 	}
 
-	LRESULT TinyTextHost::TxWindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled)
-	{
-		HRESULT hRes = FALSE;
-		switch (msg)
-		{
-		case WM_PAINT:
-			hRes = OnPaint(hwnd, wparam, lparam, bHandled);
-			break;
-		case WM_SETCURSOR:
-			hRes = OnSetCursor(hwnd, wparam, lparam, bHandled);
-			break;
-		}
-		return hRes;
-	}
-	HRESULT TinyTextHost::OnSetCursor(HWND hwnd, WPARAM wparam, LPARAM lparam, BOOL& bHandled)
-	{
-		ASSERT(m_ts);
-		bHandled = TRUE;
-		POINT pt;
-		GetCursorPos(&pt);
-		::ScreenToClient(hwnd, &pt);
-		RECT rect;
-		GetClientRect(hwnd, &rect);
-		HDC hdc = GetDC(hwnd);
-		m_ts->OnTxSetCursor(
-			DVASPECT_CONTENT,
-			-1,
-			NULL,
-			NULL,
-			hdc,
-			NULL,
-			&rect,
-			pt.x,
-			pt.y);
-		ReleaseDC(hwnd, hdc);
-		SetCursor(LoadCursor(NULL, IDC_CROSS));
-		return FALSE;
-	}
-	HRESULT TinyTextHost::OnPaint(HWND hwnd, WPARAM wparam, LPARAM lparam, BOOL& bHandled)
-	{
-		ASSERT(m_ts);
-		bHandled = FALSE;
-		PAINTSTRUCT ps;
-		HDC hDC = BeginPaint(hwnd, &ps);
-		RECT *prc = NULL;
-		m_ts->TxDraw(
-			DVASPECT_CONTENT,
-			0,
-			NULL,
-			NULL,
-			(HDC)wparam,
-			NULL,
-			(RECTL *)prc,
-			NULL,
-			(RECT *)lparam,
-			NULL,
-			NULL,
-			TXTVIEW_INACTIVE);
-		EndPaint(hwnd, &ps);
-		return FALSE;
-	}
-
 	HDC TinyTextHost::TxGetDC()
 	{
-		return ::GetDC(NULL);
+		ASSERT(m_hWND);
+		HDC hDC = ::GetDC(m_hWND);
+		return hDC;
 	}
 
 	INT TinyTextHost::TxReleaseDC(HDC hdc)
 	{
-		return ::ReleaseDC(NULL, hdc);
+		ASSERT(m_hWND);
+		return ::ReleaseDC(m_hWND, hdc);
 	}
 
 	BOOL TinyTextHost::TxShowScrollBar(INT fnBar, BOOL fShow)
 	{
-		return FALSE;
+		return S_OK;
 	}
 
 	BOOL TinyTextHost::TxEnableScrollBar(INT fuSBFlags, INT fuArrowflags)
 	{
-		return FALSE;
+		return S_OK;
 	}
 
 	BOOL TinyTextHost::TxSetScrollRange(INT fnBar, LONG nMinPos, INT nMaxPos, BOOL fRedraw)
 	{
-		return FALSE;
+		return S_OK;
 	}
 
 	BOOL TinyTextHost::TxSetScrollPos(INT fnBar, INT nPos, BOOL fRedraw)
 	{
-		return FALSE;
+		return S_OK;
 	}
 
 	void TinyTextHost::TxInvalidateRect(LPCRECT prc, BOOL fMode)
 	{
-
+		::InvalidateRect(m_hWND, prc, fMode);
 	}
 
 	void TinyTextHost::TxViewChange(BOOL fUpdate)
@@ -164,22 +113,28 @@ namespace TinyUI
 
 	BOOL TinyTextHost::TxCreateCaret(HBITMAP hbmp, INT xWidth, INT yHeight)
 	{
-		return FALSE;
+		ASSERT(m_hWND);
+		BOOL bRes = ::CreateCaret(m_hWND, hbmp, xWidth, yHeight);
+		return bRes;
 	}
 
 	BOOL TinyTextHost::TxShowCaret(BOOL fShow)
 	{
-		return FALSE;
+		ASSERT(m_hWND);
+		if (fShow)
+			return ::ShowCaret(m_hWND);
+		else
+			return ::HideCaret(m_hWND);
 	}
 
 	BOOL TinyTextHost::TxSetCaretPos(INT x, INT y)
 	{
-		return FALSE;
+		return ::SetCaretPos(x, y);
 	}
 
 	BOOL TinyTextHost::TxSetTimer(UINT idTimer, UINT uTimeout)
 	{
-		return FALSE;
+		return S_OK;
 	}
 
 	void TinyTextHost::TxKillTimer(UINT idTimer)
@@ -194,7 +149,14 @@ namespace TinyUI
 
 	void TinyTextHost::TxSetCapture(BOOL fCapture)
 	{
-
+		if (fCapture)
+		{
+			SetCapture(m_hWND);
+		}
+		else
+		{
+			ReleaseCapture();
+		}
 	}
 
 	void TinyTextHost::TxSetFocus()
@@ -204,107 +166,113 @@ namespace TinyUI
 
 	void TinyTextHost::TxSetCursor(HCURSOR hcur, BOOL fText)
 	{
-
+		SetCursor(hcur);
 	}
 
 	BOOL TinyTextHost::TxScreenToClient(LPPOINT lppt)
 	{
-		return FALSE;
+		return E_NOTIMPL;
 	}
 
 	BOOL TinyTextHost::TxClientToScreen(LPPOINT lppt)
 	{
-		return FALSE;
+		return E_NOTIMPL;
 	}
 
 	HRESULT TinyTextHost::TxActivate(LONG * plOldState)
 	{
-		return FALSE;
+		return S_OK;
 	}
 
 	HRESULT TinyTextHost::TxDeactivate(LONG lNewState)
 	{
-		return FALSE;
+		return S_OK;
 	}
 
 	HRESULT TinyTextHost::TxGetClientRect(LPRECT prc)
 	{
-		return FALSE;
+		GetClientRect(m_hWND, prc);
+		return S_OK;
 	}
 
 	HRESULT TinyTextHost::TxGetViewInset(LPRECT prc)
 	{
-		return FALSE;
+		prc->left = prc->right = prc->top = prc->bottom = 0;
+		return S_OK;
 	}
 
 	HRESULT TinyTextHost::TxGetCharFormat(const CHARFORMATW **ppCF)
 	{
-		return FALSE;
+		return S_OK;
 	}
 
 	HRESULT TinyTextHost::TxGetParaFormat(const PARAFORMAT **ppPF)
 	{
-		return FALSE;
+		return S_OK;
 	}
 
 	COLORREF TinyTextHost::TxGetSysColor(int nIndex)
 	{
-		return FALSE;
+		return GetSysColor(nIndex);
 	}
 
 	HRESULT TinyTextHost::TxGetBackStyle(TXTBACKSTYLE *pstyle)
 	{
-		return FALSE;
+		*pstyle = TXTBACK_OPAQUE;
+		return S_OK;
 	}
 
 	HRESULT TinyTextHost::TxGetMaxLength(DWORD *plength)
 	{
-		return FALSE;
+		return E_NOTIMPL;
 	}
 
 	HRESULT TinyTextHost::TxGetScrollBars(DWORD *pdwScrollBar)
 	{
-		return FALSE;
+		return E_NOTIMPL;
 	}
 
 	HRESULT TinyTextHost::TxGetPasswordChar(_Out_ TCHAR *pch)
 	{
-		return FALSE;
+		return E_NOTIMPL;
 	}
 
 	HRESULT TinyTextHost::TxGetAcceleratorPos(LONG *pcp)
 	{
-		return FALSE;
+		return E_NOTIMPL;
 	}
 
 	HRESULT TinyTextHost::TxGetExtent(LPSIZEL lpExtent)
 	{
-		return FALSE;
+		*lpExtent = m_sizelExtent;
+		return S_OK;
 	}
 
 	HRESULT TinyTextHost::OnTxCharFormatChange(const CHARFORMATW * pCF)
 	{
-		return FALSE;
+		return E_NOTIMPL;
 	}
 
 	HRESULT TinyTextHost::OnTxParaFormatChange(const PARAFORMAT * pPF)
 	{
-		return FALSE;
+		return E_NOTIMPL;
 	}
 
 	HRESULT TinyTextHost::TxGetPropertyBits(DWORD dwMask, DWORD *pdwBits)
 	{
-		return FALSE;
+		DWORD bits = TXTBIT_MULTILINE | TXTBIT_RICHTEXT | TXTBIT_WORDWRAP;
+		*pdwBits = bits & dwMask;
+		return S_OK;
 	}
 
 	HRESULT TinyTextHost::TxNotify(DWORD iNotify, void *pv)
 	{
-		return FALSE;
+		return E_NOTIMPL;
 	}
 
 	HIMC TinyTextHost::TxImmGetContext()
 	{
-		return FALSE;
+		return NULL;
 	}
 
 	void TinyTextHost::TxImmReleaseContext(HIMC himc)
@@ -314,7 +282,8 @@ namespace TinyUI
 
 	HRESULT TinyTextHost::TxGetSelectionBarWidth(LONG *lSelBarWidth)
 	{
-		return FALSE;
+		*lSelBarWidth = 0;
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE TinyTextHost::QueryInterface(REFIID riid, void **ppvObject)

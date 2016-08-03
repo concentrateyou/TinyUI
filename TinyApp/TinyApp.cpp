@@ -7,6 +7,7 @@
 #include "UIFrame.h"
 #include "Network/TinyConnector.h"
 #include "Windowless/TinyVisualHWND.h"
+#include "Control/TinyRichText.h"
 
 BOOL LoadSeDebugPrivilege()
 {
@@ -58,8 +59,8 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	CUIFrame uiImpl;
-	uiImpl.Create(NULL, 50, 50, 800, 500);
+	TinyRichText uiImpl;
+	uiImpl.Create(NULL, 50, 50, 295, 244);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();
 	INT loopRes = theLoop.MessageLoop();
