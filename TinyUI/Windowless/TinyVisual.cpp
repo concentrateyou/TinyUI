@@ -174,6 +174,11 @@ namespace TinyUI
 		{
 			return m_images[(INT)type].Load(ps, dwSize);
 		}
+		HRESULT	TinyVisual::SendMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes)
+		{
+			ASSERT(m_document->Handle());
+			return ::SendMessage(m_document->Handle(), uMsg, wParam, lParam);
+		}
 		void TinyVisual::OnPosChange(const TinyPoint&oldPos, const TinyPoint&newPos)
 		{
 

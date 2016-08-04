@@ -30,6 +30,7 @@ namespace TinyUI
 			HRESULT OnSetCursor(HWND hWND, DWORD dwHitTest, DWORD dwMessage) OVERRIDE;
 			HRESULT	OnSetFocus() OVERRIDE;
 			HRESULT	OnKillFocus() OVERRIDE;
+			HRESULT SendMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes) OVERRIDE;
 		private:
 			TinyTextHost	m_texthost;
 		};

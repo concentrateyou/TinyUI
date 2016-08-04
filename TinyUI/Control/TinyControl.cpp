@@ -324,7 +324,6 @@ namespace TinyUI
 		bHandled = FALSE;
 		return FALSE;
 	}
-
 	BOOL TinyControl::ShowWindow(int nCmdShow) throw()
 	{
 		ASSERT(::IsWindow(m_hWND));

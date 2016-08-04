@@ -19,9 +19,8 @@ namespace TinyUI
 		{
 			ASSERT(m_texthost.m_ts);
 			const MSG* pMsg = m_document->GetVisualHWND()->GetCurrentMessage();
-			m_document->GetVisualHWND()->SetMsgHandled(TRUE);
 			LRESULT lRes = FALSE;
-			m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes);
+			m_document->GetVisualHWND()->SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
 			return lRes;
 		}
 
@@ -29,9 +28,9 @@ namespace TinyUI
 		{
 			ASSERT(m_texthost.m_ts);
 			const MSG* pMsg = m_document->GetVisualHWND()->GetCurrentMessage();
-			m_document->GetVisualHWND()->SetMsgHandled(TRUE);
+			m_document->GetVisualHWND()->SetMsgHandled(FALSE);
 			LRESULT lRes = FALSE;
-			m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes);
+			m_document->GetVisualHWND()->SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
 			return lRes;
 		}
 
@@ -39,9 +38,8 @@ namespace TinyUI
 		{
 			ASSERT(m_texthost.m_ts);
 			const MSG* pMsg = m_document->GetVisualHWND()->GetCurrentMessage();
-			m_document->GetVisualHWND()->SetMsgHandled(TRUE);
 			LRESULT lRes = FALSE;
-			m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes);
+			m_document->GetVisualHWND()->SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
 			return lRes;
 		}
 
@@ -49,9 +47,8 @@ namespace TinyUI
 		{
 			ASSERT(m_texthost.m_ts);
 			const MSG* pMsg = m_document->GetVisualHWND()->GetCurrentMessage();
-			m_document->GetVisualHWND()->SetMsgHandled(TRUE);
 			LRESULT lRes = FALSE;
-			m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes);
+			m_document->GetVisualHWND()->SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
 			return lRes;
 		}
 
@@ -59,9 +56,8 @@ namespace TinyUI
 		{
 			ASSERT(m_texthost.m_ts);
 			const MSG* pMsg = m_document->GetVisualHWND()->GetCurrentMessage();
-			m_document->GetVisualHWND()->SetMsgHandled(TRUE);
 			LRESULT lRes = FALSE;
-			m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes);
+			m_document->GetVisualHWND()->SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
 			return lRes;
 		}
 
@@ -69,9 +65,8 @@ namespace TinyUI
 		{
 			ASSERT(m_texthost.m_ts);
 			const MSG* pMsg = m_document->GetVisualHWND()->GetCurrentMessage();
-			m_document->GetVisualHWND()->SetMsgHandled(TRUE);
 			LRESULT lRes = FALSE;
-			m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes);
+			m_document->GetVisualHWND()->SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
 			return lRes;
 		}
 
@@ -79,9 +74,8 @@ namespace TinyUI
 		{
 			ASSERT(m_texthost.m_ts);
 			const MSG* pMsg = m_document->GetVisualHWND()->GetCurrentMessage();
-			m_document->GetVisualHWND()->SetMsgHandled(TRUE);
 			LRESULT lRes = FALSE;
-			m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes);
+			m_document->GetVisualHWND()->SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
 			return lRes;
 		}
 
@@ -119,6 +113,12 @@ namespace TinyUI
 			m_texthost.m_ts->OnTxUIDeactivate();
 			m_texthost.m_ts->TxSendMessage(WM_KILLFOCUS, 0, 0, NULL);
 			return FALSE;
+		}
+
+		HRESULT TinyVisualRichText::SendMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes)
+		{
+			ASSERT(m_texthost.m_ts);
+			return m_texthost.m_ts->TxSendMessage(uMsg, wParam, lParam, &lRes);
 		}
 
 		TinyVisualRichText::~TinyVisualRichText()

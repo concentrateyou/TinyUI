@@ -49,7 +49,7 @@ namespace TinyUI
 			m_logpixelsy = ::GetDeviceCaps(hDC, LOGPIXELSY);
 			ReleaseDC(m_spvis->Handle(), hDC);
 			LOGFONT lf;
-			HFONT hFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
+			HFONT hFont = (HFONT)GetStockObject(SYSTEM_FONT);
 			GetObject(hFont, sizeof(LOGFONT), &lf);
 			m_cf.cbSize = sizeof(CHARFORMAT2);
 			m_cf.yHeight = lf.lfHeight * LY_PER_INCH / m_logpixelsy;
@@ -74,17 +74,17 @@ namespace TinyUI
 			MultiByteToWideChar(CP_ACP, 0, lf.lfFaceName, LF_FACESIZE, m_cf.szFaceName, LF_FACESIZE);
 #endif
 
-			memset(&m_pf, 0, sizeof(PARAFORMAT));
+			ZeroMemory(&m_pf, sizeof(PARAFORMAT));
 			m_pf.cbSize = sizeof(PARAFORMAT);
 			m_pf.dwMask = PFM_ALL;
 			m_pf.wAlignment = PFA_LEFT;
 			m_pf.cTabCount = 1;
 			m_pf.rgxTabs[0] = lDefaultTab;
 
-			m_hInstance = ::LoadLibrary(TEXT("msftedit.dll"));
+			m_hInstance = ::LoadLibrary(TEXT("Msftedit.dll"));
 			if (m_hInstance)
 			{
-				pfnCreateTextServices ps = (pfnCreateTextServices)::GetProcAddress(m_hInstance, "CreateTextServices");
+				PCreateTextServices ps = (PCreateTextServices)::GetProcAddress(m_hInstance, "CreateTextServices");
 				if (ps != NULL)
 				{
 					IUnknown* pUnknown = NULL;
@@ -95,7 +95,9 @@ namespace TinyUI
 						m_ts->OnTxInPlaceDeactivate();
 						m_ts->OnTxUIDeactivate();
 						m_ts->TxSendMessage(WM_KILLFOCUS, 0, 0, 0);
-						m_ts->TxSendMessage(EM_SETEVENTMASK, 0, ENM_CHANGE, NULL);
+						m_ts->TxSendMessage(EM_SETCHARFORMAT, 0, (LPARAM)&m_cf, 0);
+						m_ts->TxSendMessage(EM_SETPARAFORMAT, 0, (LPARAM)&m_pf, 0);
+						m_ts->TxSendMessage(EM_SETLANGOPTIONS, 0, IMF_AUTOFONT | IMF_DUALFONT, 0);
 						m_ts->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE, TXTBIT_CHARFORMATCHANGE);
 						m_ts->OnTxPropertyBitsChange(TXTBIT_PARAFORMATCHANGE, TXTBIT_PARAFORMATCHANGE);
 						return TRUE;
@@ -186,7 +188,8 @@ namespace TinyUI
 
 		void TinyTextHost::TxViewChange(BOOL fUpdate)
 		{
-
+			ASSERT(m_spvis);
+			::UpdateWindow(m_spvis->Handle());
 		}
 
 		BOOL TinyTextHost::TxCreateCaret(HBITMAP hbmp, INT xWidth, INT yHeight)
@@ -215,17 +218,20 @@ namespace TinyUI
 
 		BOOL TinyTextHost::TxSetTimer(UINT idTimer, UINT uTimeout)
 		{
-			return S_OK;
+			ASSERT(m_spvis);
+			return ::SetTimer(m_spvis->Handle(), idTimer, uTimeout, NULL);
 		}
 
 		void TinyTextHost::TxKillTimer(UINT idTimer)
 		{
-
+			ASSERT(m_spvis);
+			::KillTimer(m_spvis->Handle(), idTimer);
 		}
 
 		void TinyTextHost::TxScrollWindowEx(INT dx, INT dy, LPCRECT lprcScroll, LPCRECT lprcClip, HRGN hrgnUpdate, LPRECT lprcUpdate, UINT fuScroll)
 		{
-
+			ASSERT(m_spvis);
+			::ScrollWindowEx(m_spvis->Handle(), dx, dy, lprcScroll, lprcClip, hrgnUpdate, lprcUpdate, fuScroll);
 		}
 
 		void TinyTextHost::TxSetCapture(BOOL fCapture)
@@ -317,6 +323,7 @@ namespace TinyUI
 
 		HRESULT TinyTextHost::TxGetScrollBars(DWORD *pdwScrollBar)
 		{
+			*pdwScrollBar = WS_VSCROLL | WS_HSCROLL | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_DISABLENOSCROLL;
 			return E_NOTIMPL;
 		}
 
@@ -348,7 +355,7 @@ namespace TinyUI
 
 		HRESULT TinyTextHost::TxGetPropertyBits(DWORD dwMask, DWORD *pdwBits)
 		{
-			DWORD bits = TXTBIT_MULTILINE | TXTBIT_RICHTEXT | TXTBIT_WORDWRAP;
+			DWORD bits = TXTBIT_MULTILINE | TXTBIT_RICHTEXT | TXTBIT_WORDWRAP | TXTBIT_SAVESELECTION;
 			*pdwBits = bits & dwMask;
 			return S_OK;
 		}

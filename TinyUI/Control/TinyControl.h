@@ -26,22 +26,21 @@ namespace TinyUI
 	private:
 		static HHOOK m_pHook;
 		static LRESULT CALLBACK CbtFilterHook(INT code, WPARAM wParam, LPARAM lParam);
-		//5个创建窗口函数
 	public:
-		virtual LPCSTR	RetrieveClassName();
-		virtual LPCSTR	RetrieveTitle();
-		virtual HICON	RetrieveIcon();
-		virtual DWORD	RetrieveStyle();
-		virtual DWORD	RetrieveExStyle();
-		virtual BOOL	Create(HWND hParent, INT x, INT y, INT cx, INT cy, BOOL bHook = TRUE);
+		LPCSTR	RetrieveClassName() OVERRIDE;
+		LPCSTR	RetrieveTitle() OVERRIDE;
+		HICON	RetrieveIcon() OVERRIDE;
+		DWORD	RetrieveStyle() OVERRIDE;
+		DWORD	RetrieveExStyle() OVERRIDE;
+		virtual BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy, BOOL bHook = TRUE);
 	public:
-		BOOL ShowWindow(INT nCmdShow) throw();
-		BOOL UpdateWindow() throw();
-		void CenterWindow(HWND parent, HWND window, SIZE pref) throw();
-		DWORD GetStyle() const;
-		DWORD GetExStyle() const;
-		BOOL  GetWindowRect(LPRECT lprect);
-		BOOL  GetClientRect(LPRECT lprect);
+		BOOL	ShowWindow(INT nCmdShow) throw();
+		BOOL	UpdateWindow() throw();
+		BOOL	GetWindowRect(LPRECT lprect);
+		BOOL	GetClientRect(LPRECT lprect);
+		DWORD	GetStyle() const;
+		DWORD	GetExStyle() const;
+		void	CenterWindow(HWND parent, HWND window, SIZE pref) throw();
 		//////////////////////////////////////////////////////////////////////////
 	public:
 		BEGIN_MSG_MAP(TinyControl, TinyWindow)

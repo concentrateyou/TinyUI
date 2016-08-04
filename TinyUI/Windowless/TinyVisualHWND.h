@@ -2,6 +2,7 @@
 #include "../Control/TinyControl.h"
 #include "../Render/TinyImage.h"
 #include "TinyVisualDocument.h"
+#include "TinyVisualUtility.h"
 
 namespace TinyUI
 {
@@ -21,6 +22,7 @@ namespace TinyUI
 			HICON RetrieveIcon() OVERRIDE;
 		public:
 			//ÏûÏ¢
+			BOOL ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult) OVERRIDE;
 			LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
@@ -54,6 +56,7 @@ namespace TinyUI
 			TinySize							m_size;
 			TinyScopedPtr<TinyVisualDocument>	m_document;
 			TinyScopedPtr<TinyVisualCacheDC>	m_cacheDC;
+			TinyVisualFilters						m_mFilters;
 		};
 	}
 }

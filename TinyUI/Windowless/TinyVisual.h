@@ -61,6 +61,7 @@ namespace TinyUI
 			BOOL				SetStyleImage(StyleImage type, BYTE*	ps, DWORD dwSize);
 		public:
 			TinyVisualDocument*	GetDocument();
+			virtual	HRESULT		SendMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes);
 			virtual void		Resize();
 			virtual void		OnSizeChange(const TinySize&, const TinySize&);
 			virtual void		OnPosChange(const TinyPoint&, const TinyPoint&);

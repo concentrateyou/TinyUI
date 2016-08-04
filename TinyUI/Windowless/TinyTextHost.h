@@ -13,7 +13,8 @@ namespace TinyUI
 #define HIMETRIC_PER_INCH   2540
 #define MAP_PIX_TO_LOGHIM(x,ppli)   MulDiv(HIMETRIC_PER_INCH, (x), (ppli))
 #define MAP_LOGHIM_TO_PIX(x,ppli)   MulDiv((ppli), (x), HIMETRIC_PER_INCH)
-		typedef HRESULT(WINAPI *pfnCreateTextServices)(IUnknown  *punkOuter, ITextHost *pITextHost, IUnknown  **ppUnk);
+		typedef HRESULT(WINAPI * PCreateTextServices)(IUnknown *punkOuter, ITextHost *pITextHost, IUnknown **ppUnk);
+		typedef HRESULT(WINAPI * PShutdownTextServices)(IUnknown *pTextServices);
 		class TinyTextHost;
 		class TinyRichText;
 		//////////////////////////////////////////////////////////////////////////

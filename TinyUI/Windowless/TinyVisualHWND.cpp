@@ -28,7 +28,7 @@ namespace TinyUI
 		}
 		DWORD TinyVisualHWND::RetrieveExStyle()
 		{
-			return (WS_EX_LEFT | WS_EX_RIGHTSCROLLBAR);
+			return (WS_EX_LEFT | WS_EX_LTRREADING);
 		}
 		LPCSTR TinyVisualHWND::RetrieveClassName()
 		{
@@ -52,6 +52,20 @@ namespace TinyUI
 		{
 			m_document->Uninitialize();
 		}
+
+		BOOL TinyVisualHWND::ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
+		{
+			for (INT i = m_mFilters.GetSize() - 1; i >= 0; i--)
+			{
+				TinyVisualFilter* pFilter = m_mFilters[i];
+				if (pFilter != NULL && pFilter->OnFilter(hWnd, uMsg, wParam, lParam, lResult))
+				{
+					return TRUE;
+				}
+			}
+			return TinyControl::ProcessWindowMessage(hWnd, uMsg, wParam, lParam, lResult);
+		}
+
 		LRESULT TinyVisualHWND::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;

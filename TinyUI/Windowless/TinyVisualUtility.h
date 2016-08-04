@@ -16,67 +16,6 @@ namespace TinyUI
 		LONG DXtoHimetricX(LONG dx, LONG xPerInch);
 		LONG DYtoHimetricY(LONG dy, LONG yPerInch);
 		/// <summary>
-		/// 二维矩阵
-		/// </summary>
-		class Vector2F
-		{
-		public:
-			Vector2F();
-			Vector2F(FLOAT x, FLOAT y);
-			FLOAT X() const;
-			void SetX(FLOAT x);
-			FLOAT Y() const;
-			void SetY(FLOAT y);
-			BOOL IsZero() const;
-			void Add(const Vector2F& other);
-			void Subtract(const Vector2F& other);
-			void operator+=(const Vector2F& other);
-			void operator-=(const Vector2F& other);
-			void SetMin(const Vector2F& other);
-			void SetMax(const Vector2F& other);
-			DOUBLE LengthSquared() const;
-			FLOAT Length() const;
-			void Scale(DOUBLE scale);
-			void Scale(DOUBLE x_scale, DOUBLE y_scale);
-			TinyString ToString() const;
-		private:
-			FLOAT m_x;
-			FLOAT m_y;
-		};
-		/// <summary>
-		/// 三维矩阵
-		/// </summary>
-		class Vector3F
-		{
-		public:
-			Vector3F();
-			Vector3F(FLOAT x, FLOAT y, FLOAT z);
-			explicit Vector3F(const Vector2F& other);
-			FLOAT X() const;
-			void SetX(FLOAT x);
-			FLOAT Y() const;
-			void SetY(FLOAT y);
-			FLOAT Z() const;
-			void SetZ(FLOAT z);
-			BOOL IsZero() const;
-			void Add(const Vector3F& other);
-			void Subtract(const Vector3F& other);
-			void operator+=(const Vector3F& other);
-			void operator-=(const Vector3F& other);
-			void SetMin(const Vector3F& other);
-			void SetMax(const Vector3F& other);
-			DOUBLE LengthSquared() const;
-			FLOAT Length() const;
-			void Scale(FLOAT scale);
-			void Scale(FLOAT x_scale, FLOAT y_scale, FLOAT z_scale);
-			void Cross(const Vector3F& other);
-			TinyString ToString() const;
-		private:
-			FLOAT m_x;
-			FLOAT m_y;
-			FLOAT m_z;
-		};
-		/// <summary>
 		/// 裁剪的DC在当前元素最小的矩形上绘制
 		/// </summary>
 		class TinyClipCanvas : public TinyCanvas
@@ -85,7 +24,34 @@ namespace TinyUI
 			TinyClipCanvas(HDC hDC, TinyVisual* spvis, const RECT& rcPaint);
 			virtual ~TinyClipCanvas();
 		private:
-			HRGN			m_hRGN;
+			HRGN	m_hRGN;
+		};
+		/// <summary>
+		/// 消息过滤器
+		/// </summary>
+		class TINY_NO_VTABLE TinyVisualFilter
+		{
+		public:
+			virtual BOOL OnFilter(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult) = 0;
+		};
+		/// <summary>
+		/// 可视化消息筛选器集合
+		/// </summary>
+		class TinyVisualFilters
+		{
+		public:
+			TinyVisualFilters();
+			~TinyVisualFilters();
+			BOOL Add(TinyVisualFilter* element);
+			BOOL Remove(TinyVisualFilter* element);
+			BOOL RemoveAt(INT index);
+			void RemoveAll();
+			INT  GetSize() const;
+			const TinyVisualFilter* operator[] (INT index) const;
+			TinyVisualFilter* operator[] (INT index);
+			INT Lookup(TinyVisualFilter* element) const;
+		private:
+			TinyArray<TinyVisualFilter*> m_array;
 		};
 	}
 }

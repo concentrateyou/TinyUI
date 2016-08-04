@@ -13,13 +13,11 @@ namespace TinyUI
 			RBUTTON,
 			MBUTTON
 		};
-
 		class EventArgs
 		{
 		public:
 			EventArgs() = DEFAULT;
 		};
-
 		class MouseEventArgs : public EventArgs
 		{
 		public:
@@ -37,7 +35,6 @@ namespace TinyUI
 			INT				m_y;
 			INT				m_delta;
 		};
-
 		class KeyEventArgs : public EventArgs
 		{
 		public:
@@ -50,7 +47,6 @@ namespace TinyUI
 			DWORD	m_dwRepCnt;
 			DWORD	m_dwFlags;
 		};
-
 	}
 }
 
