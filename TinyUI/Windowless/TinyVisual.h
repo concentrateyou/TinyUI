@@ -85,6 +85,8 @@ namespace TinyUI
 			virtual HRESULT		OnMButtonUp(const TinyPoint& pos, DWORD dwFlags);
 			virtual HRESULT		OnMButtonDBClick(const TinyPoint& pos, DWORD dwFlags);
 			virtual HRESULT		OnKeyDown(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
+			virtual HRESULT		OnSetFocus();
+			virtual HRESULT		OnKillFocus();
 			virtual HRESULT		OnKeyUp(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
 			virtual HRESULT		OnChar(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
 			virtual HRESULT		OnSetCursor(HWND hWND, DWORD dwHitTest, DWORD dwMessage);
@@ -99,6 +101,8 @@ namespace TinyUI
 			Event<void(KeyEventArgs&)>		EVENT_KeyDown;
 			Event<void(KeyEventArgs&)>		EVENT_KeyUp;
 			Event<void(KeyEventArgs&)>		EVENT_Char;
+			Event<void(EventArgs&)>			EVENT_SetFocus;
+			Event<void(EventArgs&)>			EVENT_KillFocus;
 		protected:
 			TinyVisualDocument*	m_document;
 			TinyImage			m_images[3];//ÈýÌ¬Í¼Æ¬

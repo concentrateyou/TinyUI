@@ -2,6 +2,7 @@
 #include "TinyTextHost.h"
 #include "TinyVisual.h"
 #include "TinyVisualDocument.h"
+#pragma comment(lib,"imm32.lib")
 
 namespace TinyUI
 {
@@ -51,11 +52,32 @@ namespace TinyUI
 					{
 						pUnknown->QueryInterface(IID_ITextServices, (void**)&m_ts);
 						pUnknown->Release();
+						m_ts->OnTxInPlaceDeactivate();
+						m_ts->OnTxUIDeactivate();
+						m_ts->TxSendMessage(WM_KILLFOCUS, 0, 0, 0);
+						m_ts->TxSendMessage(EM_SETEVENTMASK, 0, ENM_CHANGE, NULL);
+						ASSERT(m_spvis);
+						HDC hDC = GetDC(m_spvis->Handle());
+						m_logpixelsx = ::GetDeviceCaps(hDC, LOGPIXELSX);
+						m_logpixelsy = ::GetDeviceCaps(hDC, LOGPIXELSY);
+						ReleaseDC(m_spvis->Handle(), hDC);
 						return TRUE;
 					}
 				}
 			}
 			return FALSE;
+		}
+		BOOL TinyTextHost::UpdateView()
+		{
+			ASSERT(m_ts || m_spvis);
+			TinyRectangle rectangle = m_spvis->GetWindowRect();
+			m_extent.cx = MAP_PIX_TO_LOGHIM(rectangle.Width(), m_logpixelsx);
+			m_extent.cy = MAP_PIX_TO_LOGHIM(rectangle.Height(), m_logpixelsy);
+			if (FAILED(m_ts->OnTxInPlaceActivate(&rectangle)))
+				return FALSE;
+			m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE, TXTBIT_CLIENTRECTCHANGE);
+			m_ts->OnTxPropertyBitsChange(TXTBIT_EXTENTCHANGE, TXTBIT_EXTENTCHANGE);
+			return TRUE;
 		}
 
 		HRESULT STDMETHODCALLTYPE TinyTextHost::QueryInterface(REFIID riid, void **ppvObject)
@@ -90,8 +112,7 @@ namespace TinyUI
 		HDC TinyTextHost::TxGetDC()
 		{
 			ASSERT(m_spvis);
-			HDC hDC = ::GetDC(m_spvis->Handle());
-			return hDC;
+			return ::GetDC(m_spvis->Handle());
 		}
 
 		INT TinyTextHost::TxReleaseDC(HDC hdc)
@@ -187,6 +208,7 @@ namespace TinyUI
 		{
 			ASSERT(m_spvis);
 			m_spvis->GetDocument()->SetFocus(m_spvis);
+			m_ts->TxSendMessage(WM_SETFOCUS, 0, 0, NULL);
 		}
 
 		void TinyTextHost::TxSetCursor(HCURSOR hcur, BOOL fText)
@@ -196,12 +218,12 @@ namespace TinyUI
 
 		BOOL TinyTextHost::TxScreenToClient(LPPOINT lppt)
 		{
-			return E_NOTIMPL;
+			return ::ScreenToClient(m_spvis->Handle(), lppt);
 		}
 
 		BOOL TinyTextHost::TxClientToScreen(LPPOINT lppt)
 		{
-			return E_NOTIMPL;
+			return ::ClientToScreen(m_spvis->Handle(), lppt);
 		}
 
 		HRESULT TinyTextHost::TxActivate(LONG * plOldState)
@@ -217,14 +239,14 @@ namespace TinyUI
 		HRESULT TinyTextHost::TxGetClientRect(LPRECT prc)
 		{
 			ASSERT(m_spvis);
-			TinyRectangle s = m_spvis->GetWindowRect();
-			SetRect(prc, s.left, s.top, s.right, s.bottom);
+			TinyRectangle rectangle = m_spvis->GetWindowRect();
+			CopyRect(prc, &rectangle);
 			return S_OK;
 		}
 
 		HRESULT TinyTextHost::TxGetViewInset(LPRECT prc)
 		{
-			SetRect(prc, 0, 0, 0, 0);
+			prc->left = prc->right = prc->top = prc->bottom = 0;
 			return S_OK;
 		}
 
@@ -245,7 +267,7 @@ namespace TinyUI
 
 		HRESULT TinyTextHost::TxGetBackStyle(TXTBACKSTYLE *pstyle)
 		{
-			*pstyle = TXTBACK_OPAQUE;
+			*pstyle = TXTBACK_TRANSPARENT;
 			return S_OK;
 		}
 
@@ -287,7 +309,8 @@ namespace TinyUI
 
 		HRESULT TinyTextHost::TxGetPropertyBits(DWORD dwMask, DWORD *pdwBits)
 		{
-			*pdwBits = 0;
+			DWORD bits = TXTBIT_MULTILINE | TXTBIT_RICHTEXT | TXTBIT_WORDWRAP;
+			*pdwBits = bits & dwMask;
 			return S_OK;
 		}
 
@@ -298,12 +321,14 @@ namespace TinyUI
 
 		HIMC TinyTextHost::TxImmGetContext()
 		{
-			return NULL;
+			ASSERT(m_spvis);
+			return ImmGetContext(m_spvis->Handle());
 		}
 
 		void TinyTextHost::TxImmReleaseContext(HIMC himc)
 		{
-
+			ASSERT(m_spvis);
+			ImmReleaseContext(m_spvis->Handle(), himc);
 		}
 
 		HRESULT TinyTextHost::TxGetSelectionBarWidth(LONG *lSelBarWidth)

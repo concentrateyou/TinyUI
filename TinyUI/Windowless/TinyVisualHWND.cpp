@@ -214,6 +214,20 @@ namespace TinyUI
 			bHandled = IsMsgHandled();
 			return lRes;
 		}
+		LRESULT TinyVisualHWND::OnSetFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			SetMsgHandled(FALSE);
+			LRESULT lRes = m_document->OnSetFocus(reinterpret_cast<HWND>(wParam));
+			bHandled = IsMsgHandled();
+			return lRes;
+		}
+		LRESULT TinyVisualHWND::OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			SetMsgHandled(FALSE);
+			LRESULT lRes = m_document->OnKillFocus(reinterpret_cast<HWND>(wParam));
+			bHandled = IsMsgHandled();
+			return lRes;
+		}
 		LRESULT TinyVisualHWND::OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = TRUE;

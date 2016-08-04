@@ -15,6 +15,26 @@ namespace TinyUI
 
 		}
 
+		HRESULT TinyVisualRichText::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)
+		{
+			ASSERT(m_texthost.m_ts);
+			const MSG* pMsg = m_document->GetVisualHWND()->GetCurrentMessage();
+			m_document->GetVisualHWND()->SetMsgHandled(TRUE);
+			LRESULT lRes = FALSE;
+			m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes);
+			return lRes;
+		}
+
+		HRESULT TinyVisualRichText::OnMouseWheel(const TinyPoint& pos, SHORT zDelta, DWORD dwFlags)
+		{
+			ASSERT(m_texthost.m_ts);
+			const MSG* pMsg = m_document->GetVisualHWND()->GetCurrentMessage();
+			m_document->GetVisualHWND()->SetMsgHandled(TRUE);
+			LRESULT lRes = FALSE;
+			m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes);
+			return lRes;
+		}
+
 		HRESULT TinyVisualRichText::OnLButtonDown(const TinyPoint& pos, DWORD dwFlags)
 		{
 			ASSERT(m_texthost.m_ts);
@@ -104,6 +124,7 @@ namespace TinyUI
 		HRESULT TinyVisualRichText::OnCreate()
 		{
 			m_texthost.Initialize(this);
+			m_texthost.UpdateView();
 			return S_OK;
 		}
 		HRESULT TinyVisualRichText::OnDestory()

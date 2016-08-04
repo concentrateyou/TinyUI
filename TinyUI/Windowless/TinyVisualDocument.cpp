@@ -406,7 +406,15 @@ namespace TinyUI
 			TinyVisual* spvis = m_spvisFocus;
 			if (pNew != spvis)
 			{
+				if (m_spvisFocus)
+				{
+					m_spvisFocus->OnKillFocus();
+				}
 				m_spvisFocus = pNew;
+				if (m_spvisFocus)
+				{
+					m_spvisFocus->OnSetFocus();
+				}
 			}
 			::SetFocus(m_pWindow->Handle());
 			return spvis;
@@ -690,6 +698,15 @@ namespace TinyUI
 			{
 				return spvis->OnSetCursor(hWND, dwHitTest, dwMessage);
 			}
+			return FALSE;
+		}
+		HRESULT	TinyVisualDocument::OnSetFocus(HWND hWND)
+		{
+			return FALSE;
+		}
+		HRESULT	TinyVisualDocument::OnKillFocus(HWND hWND)
+		{
+			SetFocus(NULL);
 			return FALSE;
 		}
 #ifdef _DEBUG

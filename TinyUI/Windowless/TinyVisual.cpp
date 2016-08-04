@@ -286,6 +286,16 @@ namespace TinyUI
 			EVENT_Char(KeyEventArgs(dwChar, dwRepCnt, dwFlags));
 			return FALSE;
 		}
+		HRESULT	TinyVisual::OnSetFocus()
+		{
+			EVENT_SetFocus(EventArgs());
+			return FALSE;
+		}
+		HRESULT	TinyVisual::OnKillFocus()
+		{
+			EVENT_KillFocus(EventArgs());
+			return FALSE;
+		}
 		HRESULT	 TinyVisual::OnSetCursor(HWND hWND, DWORD dwHitTest, DWORD dwMessage)
 		{
 			return FALSE;

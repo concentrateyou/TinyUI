@@ -25,6 +25,7 @@ namespace TinyUI
 			~TinyTextHost();
 		public:
 			BOOL Initialize(TinyVisual* spvis);
+			BOOL UpdateView();
 		public:
 			HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject);
 			ULONG STDMETHODCALLTYPE AddRef(void);
@@ -74,7 +75,8 @@ namespace TinyUI
 			LONG						m_cRef;
 			TinyVisual*					m_spvis;
 			TinySize					m_extent;
-			TinyRectangle				m_rectangle;
+			LONG						m_logpixelsx;
+			LONG						m_logpixelsy;
 		};
 	}
 }

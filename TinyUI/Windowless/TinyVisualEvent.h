@@ -50,6 +50,7 @@ namespace TinyUI
 			DWORD	m_dwRepCnt;
 			DWORD	m_dwFlags;
 		};
+
 	}
 }
 

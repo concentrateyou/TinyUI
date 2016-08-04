@@ -71,6 +71,8 @@ namespace TinyUI
 			HRESULT			OnKeyUp(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
 			LRESULT			OnChar(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
 			HRESULT			OnSetCursor(HWND hWND, DWORD dwHitTest, DWORD dwMessage);
+			HRESULT			OnSetFocus(HWND hWND);
+			HRESULT			OnKillFocus(HWND hWND);
 		private:
 			void			ConvertToVisualPos(TinyVisual* spvis, TinyPoint& pos);//相对于原生窗口的坐标转换到元素坐标
 			TinyVisual*		GetVisualByName1(TinyVisual* spvis, const TinyString& name);
