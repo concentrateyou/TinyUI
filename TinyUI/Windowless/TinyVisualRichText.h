@@ -28,6 +28,8 @@ namespace TinyUI
 			HRESULT OnKeyUp(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags) OVERRIDE;
 			HRESULT OnChar(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags) OVERRIDE;
 			HRESULT OnSetCursor(HWND hWND, DWORD dwHitTest, DWORD dwMessage) OVERRIDE;
+			HRESULT	OnSetFocus() OVERRIDE;
+			HRESULT	OnKillFocus() OVERRIDE;
 		private:
 			TinyTextHost	m_texthost;
 		};

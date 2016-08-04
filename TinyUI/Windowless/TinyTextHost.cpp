@@ -31,6 +31,8 @@ namespace TinyUI
 		}
 		TinyTextHost::~TinyTextHost()
 		{
+			m_ts->OnTxInPlaceDeactivate();
+			m_ts->OnTxUIDeactivate();
 			m_ts.Release();
 			if (m_hInstance)
 			{
@@ -40,7 +42,45 @@ namespace TinyUI
 		}
 		BOOL TinyTextHost::Initialize(TinyVisual* spvis)
 		{
+			ASSERT(spvis);
 			m_spvis = spvis;
+			HDC hDC = GetDC(m_spvis->Handle());
+			m_logpixelsx = ::GetDeviceCaps(hDC, LOGPIXELSX);
+			m_logpixelsy = ::GetDeviceCaps(hDC, LOGPIXELSY);
+			ReleaseDC(m_spvis->Handle(), hDC);
+			LOGFONT lf;
+			HFONT hFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
+			GetObject(hFont, sizeof(LOGFONT), &lf);
+			m_cf.cbSize = sizeof(CHARFORMAT2);
+			m_cf.yHeight = lf.lfHeight * LY_PER_INCH / m_logpixelsy;
+			m_cf.yOffset = 0;
+			m_cf.crTextColor = GetSysColor(COLOR_WINDOWTEXT);
+			m_cf.dwEffects = CFM_EFFECTS | CFE_AUTOBACKCOLOR;
+			m_cf.dwEffects &= ~(CFE_PROTECTED | CFE_LINK);
+			if (lf.lfWeight < FW_BOLD)
+				m_cf.dwEffects &= ~CFE_BOLD;
+			if (!lf.lfItalic)
+				m_cf.dwEffects &= ~CFE_ITALIC;
+			if (!lf.lfUnderline)
+				m_cf.dwEffects &= ~CFE_UNDERLINE;
+			if (!lf.lfStrikeOut)
+				m_cf.dwEffects &= ~CFE_STRIKEOUT;
+			m_cf.dwMask = CFM_ALL | CFM_BACKCOLOR;
+			m_cf.bCharSet = lf.lfCharSet;
+			m_cf.bPitchAndFamily = lf.lfPitchAndFamily;
+#ifdef UNICODE
+			StrCpy(m_cf.szFaceName, lf.lfFaceName);
+#else
+			MultiByteToWideChar(CP_ACP, 0, lf.lfFaceName, LF_FACESIZE, m_cf.szFaceName, LF_FACESIZE);
+#endif
+
+			memset(&m_pf, 0, sizeof(PARAFORMAT));
+			m_pf.cbSize = sizeof(PARAFORMAT);
+			m_pf.dwMask = PFM_ALL;
+			m_pf.wAlignment = PFA_LEFT;
+			m_pf.cTabCount = 1;
+			m_pf.rgxTabs[0] = lDefaultTab;
+
 			m_hInstance = ::LoadLibrary(TEXT("msftedit.dll"));
 			if (m_hInstance)
 			{
@@ -56,11 +96,8 @@ namespace TinyUI
 						m_ts->OnTxUIDeactivate();
 						m_ts->TxSendMessage(WM_KILLFOCUS, 0, 0, 0);
 						m_ts->TxSendMessage(EM_SETEVENTMASK, 0, ENM_CHANGE, NULL);
-						ASSERT(m_spvis);
-						HDC hDC = GetDC(m_spvis->Handle());
-						m_logpixelsx = ::GetDeviceCaps(hDC, LOGPIXELSX);
-						m_logpixelsy = ::GetDeviceCaps(hDC, LOGPIXELSY);
-						ReleaseDC(m_spvis->Handle(), hDC);
+						m_ts->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE, TXTBIT_CHARFORMATCHANGE);
+						m_ts->OnTxPropertyBitsChange(TXTBIT_PARAFORMATCHANGE, TXTBIT_PARAFORMATCHANGE);
 						return TRUE;
 					}
 				}
@@ -252,11 +289,13 @@ namespace TinyUI
 
 		HRESULT TinyTextHost::TxGetCharFormat(const CHARFORMATW **ppCF)
 		{
+			*ppCF = &m_cf;
 			return S_OK;
 		}
 
 		HRESULT TinyTextHost::TxGetParaFormat(const PARAFORMAT **ppPF)
 		{
+			*ppPF = &m_pf;
 			return S_OK;
 		}
 

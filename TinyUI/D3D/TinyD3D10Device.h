@@ -29,8 +29,6 @@ namespace TinyUI
 			TinyComPtr<ID3D10RasterizerState>		m_rasterizerState;
 			TinyComPtr<ID3D10BlendState>			m_blendState;
 			TinyComPtr<ID3D10ShaderResourceView>	m_resourceView;
-			TinyComPtr<ID3DX10Sprite>				m_sprite;
-			D3DX10_SPRITE							m_s;
 		};
 	};
 }

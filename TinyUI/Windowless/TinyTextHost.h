@@ -77,6 +77,8 @@ namespace TinyUI
 			TinySize					m_extent;
 			LONG						m_logpixelsx;
 			LONG						m_logpixelsy;
+			CHARFORMATW					m_cf;
+			PARAFORMAT					m_pf;
 		};
 	}
 }

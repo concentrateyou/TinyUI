@@ -102,6 +102,25 @@ namespace TinyUI
 			return TRUE;
 		}
 
+		HRESULT	TinyVisualRichText::OnSetFocus()
+		{
+			ASSERT(m_texthost.m_ts);
+			TinyRectangle clip = GetWindowRect();
+			m_texthost.m_ts->OnTxInPlaceActivate(clip);
+			m_texthost.m_ts->OnTxUIActivate();
+			m_texthost.m_ts->TxSendMessage(WM_SETFOCUS, 0, 0, NULL);
+			return FALSE;
+		}
+
+		HRESULT	TinyVisualRichText::OnKillFocus()
+		{
+			ASSERT(m_texthost.m_ts);
+			m_texthost.m_ts->OnTxInPlaceDeactivate();
+			m_texthost.m_ts->OnTxUIDeactivate();
+			m_texthost.m_ts->TxSendMessage(WM_KILLFOCUS, 0, 0, NULL);
+			return FALSE;
+		}
+
 		TinyVisualRichText::~TinyVisualRichText()
 		{
 
@@ -115,10 +134,9 @@ namespace TinyUI
 		{
 			ASSERT(m_texthost.m_ts);
 			TinyClipCanvas canvas(hDC, this, rcPaint);
-			canvas.SetFont((HFONT)GetStockObject(DEFAULT_GUI_FONT));
 			::SetGraphicsMode(canvas, GM_COMPATIBLE);
 			TinyRectangle clip = GetWindowRect();
-			m_texthost.m_ts->TxDraw(DVASPECT_CONTENT, 0, NULL, NULL, canvas, NULL, reinterpret_cast<LPCRECTL>(&clip), NULL, NULL, NULL, 0, TXTVIEW_ACTIVE);
+			m_texthost.m_ts->TxDraw(DVASPECT_CONTENT, 0, NULL, NULL, canvas, NULL, reinterpret_cast<LPCRECTL>(&clip), NULL, NULL, NULL, 0, 0);
 			return TRUE;
 		}
 		HRESULT TinyVisualRichText::OnCreate()

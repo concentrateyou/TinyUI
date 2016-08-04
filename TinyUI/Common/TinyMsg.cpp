@@ -47,7 +47,6 @@ namespace TinyUI
 	TinyMessageFilters::~TinyMessageFilters()
 	{
 	}
-	//////////////////////////////////////////////////////////////////////////
 	BOOL TinyMessageFilters::Add(TinyMessageFilter*  element)
 	{
 		return m_array.Add(element);
@@ -81,46 +80,140 @@ namespace TinyUI
 		return m_array.GetSize();
 	}
 	//////////////////////////////////////////////////////////////////////////
+	TinyIdleHandlers::TinyIdleHandlers()
+	{
+
+	}
+	TinyIdleHandlers::~TinyIdleHandlers()
+	{
+	}
+	BOOL TinyIdleHandlers::Add(TinyIdleHandler*  element)
+	{
+		return m_array.Add(element);
+	}
+	BOOL TinyIdleHandlers::Remove(TinyIdleHandler* element)
+	{
+		return m_array.Remove(element);
+	}
+	BOOL TinyIdleHandlers::RemoveAt(INT index)
+	{
+		return m_array.RemoveAt(index);
+	}
+	void TinyIdleHandlers::RemoveAll()
+	{
+		m_array.RemoveAll();
+	}
+	TinyIdleHandler* TinyIdleHandlers::operator[](INT index)
+	{
+		return m_array[index];
+	}
+	const TinyIdleHandler* TinyIdleHandlers::operator[](INT index) const
+	{
+		return m_array[index];
+	}
+	INT TinyIdleHandlers::Lookup(TinyIdleHandler* element) const
+	{
+		return m_array.Lookup(element);
+	}
+	INT  TinyIdleHandlers::GetSize() const
+	{
+		return m_array.GetSize();
+	}
+	//////////////////////////////////////////////////////////////////////////
 	BOOL TinyMessageLoop::AddMessageFilter(TinyMessageFilter* pMessageFilter)
 	{
-		return mFilters.Add(pMessageFilter);
+		return m_messageFilters.Add(pMessageFilter);
 	}
 	BOOL TinyMessageLoop::RemoveMessageFilter(TinyMessageFilter* pMessageFilter)
 	{
-		return mFilters.Remove(pMessageFilter);
+		return m_messageFilters.Remove(pMessageFilter);
 	}
+	BOOL TinyMessageLoop::AddIdleHandler(TinyIdleHandler* pIdleHandler)
+	{
+		return m_idleHandles.Add(pIdleHandler);
+	}
+	BOOL TinyMessageLoop::RemoveIdleHandler(TinyIdleHandler* pIdleHandler)
+	{
+		return m_idleHandles.Remove(pIdleHandler);
+	}
+#define WM_SYSTIMER 0x0118
+	static BOOL IsIdleMessage(MSG* pMsg)
+	{
+		switch (pMsg->message)
+		{
+		case WM_MOUSEMOVE:
+#ifndef _WIN32_WCE
+		case WM_NCMOUSEMOVE:
+#endif 
+		case WM_PAINT:
+		case WM_SYSTIMER:
+			return FALSE;
+		}
+		return TRUE;
+	}
+
 	INT TinyMessageLoop::MessageLoop()
 	{
-		MSG msg;
 		BOOL bRes;
-		while ((bRes = GetMessage(&msg, NULL, 0, 0)) != 0)
+		BOOL bIdle = TRUE;
+		INT	 idleCount = 0;
+		for (;;)
 		{
+			while (bIdle && !::PeekMessage(&m_msg, NULL, 0, 0, PM_NOREMOVE))
+			{
+				if (!OnIdle(idleCount++))
+				{
+					bIdle = FALSE;
+				}
+			}
+			bRes = ::GetMessage(&m_msg, NULL, 0, 0);
 			if (bRes == -1)
 			{
-				TRACE(_T("::GetMessage returned -1 (error)\n"));
+				TRACE(TEXT("::GetMessage returned -1 (error)\n"));
+				continue;
 			}
 			else if (!bRes)
 			{
-				TRACE(_T("MessageLoop::Run - exiting\n"));
+				TRACE(TEXT("TinyMessageLoop::Run - exiting\n"));
 				break;
 			}
-			if (!PreTranslateMessage(&msg))
+			if (!PreTranslateMessage(&m_msg))
 			{
-				::TranslateMessage(&msg);
-				::DispatchMessage(&msg);
+				::TranslateMessage(&m_msg);
+				::DispatchMessage(&m_msg);
+			}
+
+			if (IsIdleMessage(&m_msg))
+			{
+				bIdle = TRUE;
+				idleCount = 0;
 			}
 		}
-		return (INT)msg.wParam;
+		return (INT)m_msg.wParam;
 	}
+
+
 	BOOL TinyMessageLoop::PreTranslateMessage(MSG* pMsg)
 	{
-		for (INT i = mFilters.GetSize() - 1; i >= 0; i--)
+		for (INT i = m_messageFilters.GetSize() - 1; i >= 0; i--)
 		{
-			TinyMessageFilter* pMessageFilter = mFilters[i];
+			TinyMessageFilter* pMessageFilter = m_messageFilters[i];
 			if (pMessageFilter != NULL &&
 				pMessageFilter->PreTranslateMessage(pMsg))
 			{
 				return TRUE;
+			}
+		}
+		return FALSE;
+	}
+	BOOL TinyMessageLoop::OnIdle(INT /*idleCount*/)
+	{
+		for (INT i = 0; i < m_idleHandles.GetSize(); i++)
+		{
+			TinyIdleHandler* pIdleHandler = m_idleHandles[i];
+			if (pIdleHandler != NULL)
+			{
+				pIdleHandler->OnIdle();
 			}
 		}
 		return FALSE;
