@@ -45,8 +45,8 @@ namespace TinyUI
 			hRes = m_d3d->CreateRenderTargetView(backBuffer, NULL, &m_renderView);
 			if (FAILED(hRes))
 				return FALSE;
-
-
+			m_d3d->OMSetRenderTargets(1, &m_renderView, NULL);
+			SetViewports(0, 0, cx, cy);
 			return TRUE;
 		}
 		void TinyD3D10Device::SetViewports(INT x, INT y, INT cx, INT cy)
@@ -64,8 +64,10 @@ namespace TinyUI
 		BOOL TinyD3D10Device::Render()
 		{
 			ASSERT(m_d3d);
-			D3DXCOLOR clearColor(0, 0, 0, 0);
+			D3DXCOLOR clearColor(255, 255, 255, 255);
 			m_d3d->ClearRenderTargetView(m_renderView, clearColor);
+
+
 			m_swap->Present(0, 0);
 			return TRUE;
 		}
@@ -101,5 +103,6 @@ namespace TinyUI
 			srvdesc.Texture2D.MipLevels = desc.MipLevels;
 			return m_d3d->CreateShaderResourceView(texture2D, &srvdesc, resourceView) == S_OK;
 		}
+		
 	}
 }

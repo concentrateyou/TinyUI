@@ -1,6 +1,7 @@
 #pragma once
 #include "../Common/TinyCommon.h"
 #include "../Render/TinyGDI.h"
+#include "../Common/TinyString.h"
 #include "TinyD3D10Common.h"
 #include <string>
 using namespace std;
