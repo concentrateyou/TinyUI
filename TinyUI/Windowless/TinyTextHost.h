@@ -17,7 +17,7 @@ namespace TinyUI
 		class TinyTextHost;
 		class TinyRichText;
 		//////////////////////////////////////////////////////////////////////////
-		class TinyTextHost :public ITextHost, public TinyMessageFilter
+		class TinyTextHost :public ITextHost
 		{
 			friend class TinyVisualRichText;
 		public:
@@ -68,8 +68,6 @@ namespace TinyUI
 			HIMC TxImmGetContext() OVERRIDE;
 			void TxImmReleaseContext(HIMC himc) OVERRIDE;
 			HRESULT TxGetSelectionBarWidth(LONG *lSelBarWidth) OVERRIDE;
-		public:
-			BOOL PreTranslateMessage(MSG* pMsg) OVERRIDE;
 		private:
 			TinyComPtr<ITextServices>	m_ts;
 			HINSTANCE					m_hInstance;

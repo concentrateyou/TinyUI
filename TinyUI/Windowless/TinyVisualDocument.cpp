@@ -21,7 +21,7 @@ namespace TinyUI
 		}
 		TinyVisualDocument::~TinyVisualDocument()
 		{
-			Uninitialize();
+
 		}
 		BOOL TinyVisualDocument::Initialize()
 		{
@@ -98,8 +98,8 @@ namespace TinyUI
 			ps7->SetName("LIST-2");
 			ps7->SetText("LIST-2");
 			ps6->SetScrollInfo(0, pos + 150, 300, 0);*/
-
 			//TinyVisualComboBox* ps8 = static_cast<TinyVisualComboBox*>(m_fs->Create(50, 50, 100, 28, m_spvisWindow, TinyVisualTag::COMBOBOX));
+
 			TinyVisualRichText* ps9 = static_cast<TinyVisualRichText*>(m_fs->Create(50, 50, 250, 250, m_spvisWindow, TinyVisualTag::RICHTEXT));
 			return TRUE;
 		}

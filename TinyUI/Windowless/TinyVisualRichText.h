@@ -17,9 +17,15 @@ namespace TinyUI
 			virtual ~TinyVisualRichText();
 			TinyString RetrieveTag() const OVERRIDE;
 		protected:
+			BOOL	OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT OnCreate() OVERRIDE;
 			HRESULT OnDestory() OVERRIDE;
-			BOOL	OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
+			HRESULT OnLButtonDown(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
+			HRESULT OnLButtonUp(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
+			HRESULT OnKeyDown(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags) OVERRIDE;
+			HRESULT OnKeyUp(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags) OVERRIDE;
+			HRESULT OnChar(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags) OVERRIDE;
+			HRESULT OnSetCursor(HWND hWND, DWORD dwHitTest, DWORD dwMessage) OVERRIDE;
 		private:
 			TinyTextHost	m_texthost;
 		};

@@ -37,7 +37,6 @@ namespace TinyUI
 				m_hInstance = NULL;
 			}
 		}
-
 		BOOL TinyTextHost::Initialize(TinyVisual* spvis)
 		{
 			m_spvis = spvis;
@@ -312,12 +311,6 @@ namespace TinyUI
 			*lSelBarWidth = 0;
 			return S_OK;
 		}
-
-		BOOL TinyTextHost::PreTranslateMessage(MSG* pMsg)
-		{
-			return FALSE;
-		}
-
 	}
 }
 

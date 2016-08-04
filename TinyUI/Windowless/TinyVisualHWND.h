@@ -20,7 +20,6 @@ namespace TinyUI
 			LPCSTR RetrieveTitle() OVERRIDE;
 			HICON RetrieveIcon() OVERRIDE;
 		public:
-			BOOL ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult) OVERRIDE;
 			//ÏûÏ¢
 			LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
@@ -48,9 +47,6 @@ namespace TinyUI
 		private:
 			BOOL Initialize();
 			void Uninitialize();
-
-
-
 		public:
 			BOOL								m_bMouseTracking;
 			TinySize							m_size;
