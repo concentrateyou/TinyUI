@@ -21,7 +21,6 @@ namespace TinyUI
 			HRESULT OnCreate() OVERRIDE;
 			HRESULT OnDestory() OVERRIDE;
 			HRESULT OnMouseMove(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
-			HRESULT OnMouseWheel(const TinyPoint& pos, SHORT zDelta, DWORD dwFlags) OVERRIDE;
 			HRESULT OnLButtonDown(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
 			HRESULT OnLButtonUp(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
 			HRESULT OnKeyDown(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags) OVERRIDE;

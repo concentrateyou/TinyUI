@@ -49,7 +49,7 @@ namespace TinyUI
 			m_logpixelsy = ::GetDeviceCaps(hDC, LOGPIXELSY);
 			ReleaseDC(m_spvis->Handle(), hDC);
 			LOGFONT lf;
-			HFONT hFont = (HFONT)GetStockObject(SYSTEM_FONT);
+			HFONT hFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
 			GetObject(hFont, sizeof(LOGFONT), &lf);
 			m_cf.cbSize = sizeof(CHARFORMAT2);
 			m_cf.yHeight = lf.lfHeight * LY_PER_INCH / m_logpixelsy;
@@ -73,7 +73,6 @@ namespace TinyUI
 #else
 			MultiByteToWideChar(CP_ACP, 0, lf.lfFaceName, LF_FACESIZE, m_cf.szFaceName, LF_FACESIZE);
 #endif
-
 			ZeroMemory(&m_pf, sizeof(PARAFORMAT));
 			m_pf.cbSize = sizeof(PARAFORMAT);
 			m_pf.dwMask = PFM_ALL;
@@ -95,11 +94,6 @@ namespace TinyUI
 						m_ts->OnTxInPlaceDeactivate();
 						m_ts->OnTxUIDeactivate();
 						m_ts->TxSendMessage(WM_KILLFOCUS, 0, 0, 0);
-						m_ts->TxSendMessage(EM_SETCHARFORMAT, 0, (LPARAM)&m_cf, 0);
-						m_ts->TxSendMessage(EM_SETPARAFORMAT, 0, (LPARAM)&m_pf, 0);
-						m_ts->TxSendMessage(EM_SETLANGOPTIONS, 0, IMF_AUTOFONT | IMF_DUALFONT, 0);
-						m_ts->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE, TXTBIT_CHARFORMATCHANGE);
-						m_ts->OnTxPropertyBitsChange(TXTBIT_PARAFORMATCHANGE, TXTBIT_PARAFORMATCHANGE);
 						return TRUE;
 					}
 				}
@@ -114,6 +108,10 @@ namespace TinyUI
 			m_extent.cy = MAP_PIX_TO_LOGHIM(rectangle.Height(), m_logpixelsy);
 			if (FAILED(m_ts->OnTxInPlaceActivate(&rectangle)))
 				return FALSE;
+			m_ts->TxSendMessage(EM_SETCHARFORMAT, 0, (LPARAM)&m_cf, 0);
+			m_ts->TxSendMessage(EM_SETPARAFORMAT, 0, (LPARAM)&m_pf, 0);
+			m_ts->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE, TXTBIT_CHARFORMATCHANGE);
+			m_ts->OnTxPropertyBitsChange(TXTBIT_PARAFORMATCHANGE, TXTBIT_PARAFORMATCHANGE);
 			m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE, TXTBIT_CLIENTRECTCHANGE);
 			m_ts->OnTxPropertyBitsChange(TXTBIT_EXTENTCHANGE, TXTBIT_EXTENTCHANGE);
 			return TRUE;
@@ -239,10 +237,12 @@ namespace TinyUI
 			ASSERT(m_spvis);
 			if (fCapture)
 			{
+				TRACE("TxSetCapture = TRUE\n");
 				m_spvis->GetDocument()->SetCapture(m_spvis);
 			}
 			else
 			{
+				TRACE("TxSetCapture = FALSE\n");
 				m_spvis->GetDocument()->ReleaseCapture();
 			}
 		}
@@ -251,6 +251,7 @@ namespace TinyUI
 		{
 			ASSERT(m_spvis);
 			m_spvis->GetDocument()->SetFocus(m_spvis);
+			TRACE("TxSetFocus\n");
 			m_ts->TxSendMessage(WM_SETFOCUS, 0, 0, NULL);
 		}
 
@@ -312,7 +313,7 @@ namespace TinyUI
 
 		HRESULT TinyTextHost::TxGetBackStyle(TXTBACKSTYLE *pstyle)
 		{
-			*pstyle = TXTBACK_OPAQUE;
+			*pstyle = TXTBACK_TRANSPARENT;
 			return S_OK;
 		}
 
@@ -355,7 +356,7 @@ namespace TinyUI
 
 		HRESULT TinyTextHost::TxGetPropertyBits(DWORD dwMask, DWORD *pdwBits)
 		{
-			DWORD bits = TXTBIT_MULTILINE | TXTBIT_RICHTEXT | TXTBIT_WORDWRAP | TXTBIT_SAVESELECTION;
+			DWORD bits = TXTBIT_MULTILINE | TXTBIT_RICHTEXT | TXTBIT_WORDWRAP;
 			*pdwBits = bits & dwMask;
 			return S_OK;
 		}
