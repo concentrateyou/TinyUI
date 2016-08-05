@@ -48,6 +48,9 @@ namespace TinyUI
 			//NC
 			LRESULT OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+		public:
+			BOOL AddFilter(TinyVisualFilter* ps);
+			BOOL RemoveFilter(TinyVisualFilter* ps);
 		private:
 			BOOL Initialize();
 			void Uninitialize();

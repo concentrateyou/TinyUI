@@ -47,6 +47,30 @@ namespace TinyUI
 			DWORD	m_dwRepCnt;
 			DWORD	m_dwFlags;
 		};
+		class FocusEventArgs :public EventArgs
+		{
+		public:
+			FocusEventArgs(BOOL bFocus);
+			BOOL IsFocus() const;
+		private:
+			BOOL m_bFocus;
+		};
+		class CaptureEventArgs :public EventArgs
+		{
+		public:
+			CaptureEventArgs(BOOL bCapture);
+			BOOL IsCapture() const;
+		private:
+			BOOL m_bCapture;
+		};
+		class ActiveEventArgs :public EventArgs
+		{
+		public:
+			ActiveEventArgs(BOOL bActive);
+			BOOL IsActive() const;
+		private:
+			BOOL m_bActive;
+		};
 	}
 }
 

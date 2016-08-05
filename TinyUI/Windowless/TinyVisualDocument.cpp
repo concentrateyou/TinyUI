@@ -101,6 +101,7 @@ namespace TinyUI
 			//TinyVisualComboBox* ps8 = static_cast<TinyVisualComboBox*>(m_fs->Create(50, 50, 100, 28, m_spvisWindow, TinyVisualTag::COMBOBOX));
 
 			TinyVisualRichText* ps9 = static_cast<TinyVisualRichText*>(m_fs->Create(50, 50, 250, 250, m_spvisWindow, TinyVisualTag::RICHTEXT));
+			TinyVisualRichText* ps10 = static_cast<TinyVisualRichText*>(m_fs->Create(50, 320, 250, 250, m_spvisWindow, TinyVisualTag::RICHTEXT));
 			return TRUE;
 		}
 		void TinyVisualDocument::Uninitialize()
@@ -301,6 +302,18 @@ namespace TinyUI
 			}
 			return TRUE;
 		}
+		BOOL TinyVisualDocument::IsActive(TinyVisual* spvis) const
+		{
+			if (spvis == NULL)
+				return TRUE;
+			for (;;)
+			{
+				if (!spvis->IsActive())
+					return FALSE;
+				spvis = spvis->m_spvisParent;
+			}
+			return TRUE;
+		}
 		TinyVisual*	TinyVisualDocument::GetVisualByName(const TinyString& name)
 		{
 			return GetVisualByName1(m_spvisWindow, name);
@@ -386,7 +399,15 @@ namespace TinyUI
 			TinyVisual* pv = m_spvisCapture;
 			if (pNew != pv)
 			{
+				if (m_spvisCapture)
+				{
+					m_spvisCapture->OnCapture(FALSE);
+				}
 				m_spvisCapture = pNew;
+				if (m_spvisCapture)
+				{
+					m_spvisCapture->OnCapture(TRUE);
+				}
 			}
 			::SetCapture(m_pWindow->Handle());
 			return pv;
@@ -408,16 +429,39 @@ namespace TinyUI
 			{
 				if (m_spvisFocus)
 				{
-					m_spvisFocus->OnKillFocus();
+					m_spvisFocus->OnFocus(FALSE);
 				}
 				m_spvisFocus = pNew;
 				if (m_spvisFocus)
 				{
-					m_spvisFocus->OnSetFocus();
+					m_spvisFocus->OnFocus(TRUE);
 				}
 			}
 			::SetFocus(m_pWindow->Handle());
 			return spvis;
+		}
+		TinyVisual*	TinyVisualDocument::SetActive(TinyVisual* pNew)
+		{
+			ASSERT(m_pWindow);
+			TinyVisual* spvis = m_spvisActive;
+			if (pNew != spvis)
+			{
+				if (m_spvisActive)
+				{
+					m_spvisActive->OnActive(FALSE);
+				}
+				m_spvisFocus = pNew;
+				if (m_spvisActive)
+				{
+					m_spvisActive->OnActive(TRUE);
+				}
+			}
+			::SetActiveWindow(m_pWindow->Handle());
+			return spvis;
+		}
+		TinyVisual* TinyVisualDocument::GetActive() const
+		{
+			return m_spvisActive;
 		}
 		TinyPoint TinyVisualDocument::GetWindowPos(const TinyVisual* spvis)
 		{

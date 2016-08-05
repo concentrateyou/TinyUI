@@ -6,7 +6,7 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		class TinyVisualRichText : public TinyVisual
+		class TinyVisualRichText : public TinyVisual, public TinyVisualFilter
 		{
 			friend class TinyVisualFactory;
 			DECLARE_DYNAMIC(TinyVisualRichText);
@@ -28,9 +28,9 @@ namespace TinyUI
 			HRESULT OnKeyUp(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags) OVERRIDE;
 			HRESULT OnChar(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags) OVERRIDE;
 			HRESULT OnSetCursor(HWND hWND, DWORD dwHitTest, DWORD dwMessage) OVERRIDE;
-			HRESULT	OnSetFocus() OVERRIDE;
-			HRESULT	OnKillFocus() OVERRIDE;
+			HRESULT	OnFocus(BOOL bFlag) OVERRIDE;
 			HRESULT SendMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes) OVERRIDE;
+			BOOL	OnFilter(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult) OVERRIDE;
 		private:
 			TinyTextHost	m_texthost;
 		};

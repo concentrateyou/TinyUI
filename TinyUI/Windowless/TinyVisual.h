@@ -47,6 +47,7 @@ namespace TinyUI
 			BOOL				IsEnable() const;
 			BOOL				IsCapture() const;
 			BOOL				IsFocus() const;
+			BOOL				IsActive() const;
 			void				SetName(LPCSTR pzName);
 			void				SetToolTip(LPCSTR pzTitle);
 			void				SetText(LPCSTR pzText);
@@ -86,11 +87,12 @@ namespace TinyUI
 			virtual HRESULT		OnMButtonUp(const TinyPoint& pos, DWORD dwFlags);
 			virtual HRESULT		OnMButtonDBClick(const TinyPoint& pos, DWORD dwFlags);
 			virtual HRESULT		OnKeyDown(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
-			virtual HRESULT		OnSetFocus();
-			virtual HRESULT		OnKillFocus();
 			virtual HRESULT		OnKeyUp(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
 			virtual HRESULT		OnChar(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
 			virtual HRESULT		OnSetCursor(HWND hWND, DWORD dwHitTest, DWORD dwMessage);
+			virtual HRESULT		OnFocus(BOOL bFlag);
+			virtual HRESULT		OnCapture(BOOL bFlag);
+			virtual HRESULT		OnActive(BOOL bFlag);
 		public:
 			Event<void(EventArgs&)>			EVENT_Click;
 			Event<void(MouseEventArgs&)>	EVENT_MouseMove;
@@ -102,8 +104,9 @@ namespace TinyUI
 			Event<void(KeyEventArgs&)>		EVENT_KeyDown;
 			Event<void(KeyEventArgs&)>		EVENT_KeyUp;
 			Event<void(KeyEventArgs&)>		EVENT_Char;
-			Event<void(EventArgs&)>			EVENT_SetFocus;
-			Event<void(EventArgs&)>			EVENT_KillFocus;
+			Event<void(FocusEventArgs&)>	EVENT_Focus;
+			Event<void(CaptureEventArgs&)>	EVENT_Capture;
+			Event<void(ActiveEventArgs&)>	EVENT_Active;
 		protected:
 			TinyVisualDocument*	m_document;
 			TinyImage			m_images[3];//ÈýÌ¬Í¼Æ¬

@@ -88,6 +88,10 @@ namespace TinyUI
 		{
 			return m_document->GetFocus() == this;
 		}
+		BOOL TinyVisual::IsActive() const
+		{
+			return m_document->GetActive() == this;
+		}
 		void TinyVisual::SetVisible(BOOL visible)
 		{
 			if (m_visible != visible)
@@ -291,14 +295,19 @@ namespace TinyUI
 			EVENT_Char(KeyEventArgs(dwChar, dwRepCnt, dwFlags));
 			return FALSE;
 		}
-		HRESULT	TinyVisual::OnSetFocus()
+		HRESULT	TinyVisual::OnFocus(BOOL bFlag)
 		{
-			EVENT_SetFocus(EventArgs());
+			EVENT_Focus(FocusEventArgs(bFlag));
 			return FALSE;
 		}
-		HRESULT	TinyVisual::OnKillFocus()
+		HRESULT	TinyVisual::OnCapture(BOOL bFlag)
 		{
-			EVENT_KillFocus(EventArgs());
+			EVENT_Capture(CaptureEventArgs(bFlag));
+			return FALSE;
+		}
+		HRESULT	TinyVisual::OnActive(BOOL bFlag)
+		{
+			EVENT_Active(ActiveEventArgs(bFlag));
 			return FALSE;
 		}
 		HRESULT	 TinyVisual::OnSetCursor(HWND hWND, DWORD dwHitTest, DWORD dwMessage)

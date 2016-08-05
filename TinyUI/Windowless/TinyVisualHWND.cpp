@@ -52,7 +52,14 @@ namespace TinyUI
 		{
 			m_document->Uninitialize();
 		}
-
+		BOOL TinyVisualHWND::AddFilter(TinyVisualFilter* ps)
+		{
+			return m_mFilters.Add(ps);
+		}
+		BOOL TinyVisualHWND::RemoveFilter(TinyVisualFilter* ps)
+		{
+			return m_mFilters.Remove(ps);
+		}
 		BOOL TinyVisualHWND::ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
 		{
 			for (INT i = m_mFilters.GetSize() - 1; i >= 0; i--)

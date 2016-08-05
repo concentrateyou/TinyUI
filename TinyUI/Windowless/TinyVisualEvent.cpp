@@ -53,5 +53,35 @@ namespace TinyUI
 		{
 			return m_dwFlags;
 		}
+		//////////////////////////////////////////////////////////////////////////
+		FocusEventArgs::FocusEventArgs(BOOL bFocus)
+			:m_bFocus(bFocus)
+		{
+
+		}
+		BOOL FocusEventArgs::IsFocus() const
+		{
+			return m_bFocus;
+		}
+		//////////////////////////////////////////////////////////////////////////
+		CaptureEventArgs::CaptureEventArgs(BOOL bCapture)
+			:m_bCapture(bCapture)
+		{
+
+		}
+		BOOL CaptureEventArgs::IsCapture() const
+		{
+			return m_bCapture;
+		}
+		//////////////////////////////////////////////////////////////////////////
+		ActiveEventArgs::ActiveEventArgs(BOOL bActive)
+			:m_bActive(bActive)
+		{
+
+		}
+		BOOL ActiveEventArgs::IsActive() const
+		{
+			return m_bActive;
+		}
 	}
 }

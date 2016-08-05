@@ -312,7 +312,7 @@ namespace TinyUI
 
 		HRESULT TinyTextHost::TxGetBackStyle(TXTBACKSTYLE *pstyle)
 		{
-			*pstyle = TXTBACK_TRANSPARENT;
+			*pstyle = TXTBACK_OPAQUE;
 			return S_OK;
 		}
 

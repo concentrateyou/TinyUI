@@ -44,6 +44,7 @@ namespace TinyUI
 			BOOL			IsChild(TinyVisual* spvisParent, TinyVisual* spvis) const;
 			BOOL			IsVisible(TinyVisual* spvis) const;
 			BOOL			IsEnable(TinyVisual* spvis) const;
+			BOOL			IsActive(TinyVisual* spvis) const;
 			TinyVisual*		GetVisualByName(const TinyString& name);
 			TinyVisual*		GetVisualByPos(INT x, INT y);
 			TinyVisual*		GetCapture() const;
@@ -51,6 +52,8 @@ namespace TinyUI
 			BOOL			ReleaseCapture();
 			TinyVisual*		GetFocus() const;
 			TinyVisual*		SetFocus(TinyVisual* spvis);
+			TinyVisual*		SetActive(TinyVisual* spvis);
+			TinyVisual*		GetActive() const;
 			TinyPoint		GetWindowPos(const TinyVisual* spvis);
 			TinyRectangle	GetWindowRect(const TinyVisual* spvis);
 			TinyPoint		GetScreenPos(const TinyVisual* spvis);
@@ -88,6 +91,7 @@ namespace TinyUI
 			TinyVisual*							m_spvisWindow;//根节点
 			TinyVisual*							m_spvisCapture;
 			TinyVisual*							m_spvisFocus;
+			TinyVisual*							m_spvisActive;
 			TinyVisual*							m_spvisLastMouse;//当前鼠标所在的元素
 			TinyVisualHWND*						m_pWindow;
 			TinyScopedPtr<TinyVisualParse>		m_parse;

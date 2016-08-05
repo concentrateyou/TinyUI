@@ -96,29 +96,34 @@ namespace TinyUI
 			return TRUE;
 		}
 
-		HRESULT	TinyVisualRichText::OnSetFocus()
+		HRESULT	TinyVisualRichText::OnFocus(BOOL bFlag)
 		{
 			ASSERT(m_texthost.m_ts);
-			TinyRectangle clip = GetWindowRect();
-			m_texthost.m_ts->OnTxInPlaceActivate(clip);
-			m_texthost.m_ts->OnTxUIActivate();
-			m_texthost.m_ts->TxSendMessage(WM_SETFOCUS, 0, 0, NULL);
-			return FALSE;
-		}
-
-		HRESULT	TinyVisualRichText::OnKillFocus()
-		{
-			ASSERT(m_texthost.m_ts);
-			m_texthost.m_ts->OnTxInPlaceDeactivate();
-			m_texthost.m_ts->OnTxUIDeactivate();
-			m_texthost.m_ts->TxSendMessage(WM_KILLFOCUS, 0, 0, NULL);
+			if (bFlag)
+			{
+				TinyRectangle clip = GetWindowRect();
+				m_texthost.m_ts->OnTxInPlaceActivate(clip);
+				m_texthost.m_ts->OnTxUIActivate();
+				m_texthost.m_ts->TxSendMessage(WM_SETFOCUS, 0, 0, NULL);
+			}
+			else
+			{
+				m_texthost.m_ts->OnTxInPlaceDeactivate();
+				m_texthost.m_ts->OnTxUIDeactivate();
+				m_texthost.m_ts->TxSendMessage(WM_KILLFOCUS, 0, 0, NULL);
+			}
 			return FALSE;
 		}
 
 		HRESULT TinyVisualRichText::SendMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes)
 		{
 			ASSERT(m_texthost.m_ts);
-			return m_texthost.m_ts->TxSendMessage(uMsg, wParam, lParam, &lRes);
+			if (uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST)
+			{
+				m_texthost.m_ts->TxSendMessage(uMsg, wParam, lParam, &lRes);
+				return FALSE;
+			}
+			return FALSE;
 		}
 
 		TinyVisualRichText::~TinyVisualRichText()
@@ -128,6 +133,12 @@ namespace TinyUI
 		TinyString TinyVisualRichText::RetrieveTag() const
 		{
 			return TinyVisualTag::RICHTEXT;
+		}
+
+		BOOL TinyVisualRichText::OnFilter(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
+		{
+			m_texthost.m_ts->TxSendMessage(uMsg, wParam, lParam, &lResult);
+			return FALSE;
 		}
 
 		BOOL TinyVisualRichText::OnDraw(HDC hDC, const RECT& rcPaint)
@@ -143,10 +154,12 @@ namespace TinyUI
 		{
 			m_texthost.Initialize(this);
 			m_texthost.UpdateView();
+			m_document->GetVisualHWND()->m_mFilters.Add(this);
 			return S_OK;
 		}
 		HRESULT TinyVisualRichText::OnDestory()
 		{
+			m_document->GetVisualHWND()->m_mFilters.Remove(this);
 			return S_OK;
 		}
 	}
