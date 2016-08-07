@@ -24,13 +24,14 @@ namespace TinyUI
 
 		void* GetCodeAddress()
 		{
+			//GetCodeAddress获得的函数pProc是从DWORD m_mov开始执行
 			return this;
 		}
 		void* operator new(size_t)
 		{
 			return __AllocThunk();
 		}
-		void operator delete(void* pThunk)
+			void operator delete(void* pThunk)
 		{
 			__FreeThunk(pThunk);
 		}

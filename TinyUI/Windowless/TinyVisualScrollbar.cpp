@@ -255,7 +255,7 @@ namespace TinyUI
 			{
 				INT iPos = m_si.iPos;
 				m_si.iPos = iNewPos;
-				EVENT_PosChange(iPos, iNewPos);
+				//EVENT_PosChange(iPos, iNewPos);
 			}
 		}
 		void TinyVisualHScrollBar::DrawScrollBar(TinyClipCanvas& canvas, const TinySize& size)

@@ -5,6 +5,7 @@
 #include "TinyVisualComboBox.h"
 #include "TinyVisualList.h"
 #include "TinyVisualRichText.h"
+#include "TinyVisualImageView.h"
 
 namespace TinyUI
 {
@@ -64,11 +65,11 @@ namespace TinyUI
 			//ps7->SetName("TinyVisualHScrollBar");
 			//ps7->SetScrollInfo(0, 400, 100, 0);
 
-			TinyVisualList* ps6 = static_cast<TinyVisualList*>(m_fs->Create(300, 40, 400, 300, m_spvisWindow, TinyVisualTag::LIST));
+			/*TinyVisualList* ps6 = static_cast<TinyVisualList*>(m_fs->Create(300, 40, 400, 300, m_spvisWindow, TinyVisualTag::LIST));
 			ps6->SetName("LIST-1");
 			ps6->SetText("LIST-1");
 			INT pos = 0;
-			for (INT i = 0; i < 20; i++)
+			for (INT i = 0; i < 500; i++)
 			{
 				TinyVisual* spvis = m_fs->Create(30, pos, 90, 30, ps6, TinyVisualTag::BUTTON);
 				TinyString str;
@@ -80,7 +81,7 @@ namespace TinyUI
 				spvis->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\button\\blue_down.png");
 				pos += 32;
 			}
-			ps6->SetScrollInfo(0, pos, 300, 0);
+			ps6->SetScrollInfo(0, pos, 300, 0);*/
 			//TinyVisualList* ps7 = static_cast<TinyVisualList*>(m_fs->Create(0, pos, 300, 150, ps6, TinyVisualTag::LIST));
 			//INT pos1 = 0;
 			//for (INT i = 0; i < 10; i++)
@@ -101,7 +102,9 @@ namespace TinyUI
 			//ps6->SetScrollInfo(0, pos + 150, 300, 0);
 
 			//TinyVisualRichText* ps9 = static_cast<TinyVisualRichText*>(m_fs->Create(50, 50, 250, 250, m_spvisWindow, TinyVisualTag::RICHTEXT));
-			TinyVisualRichText* ps10 = static_cast<TinyVisualRichText*>(m_fs->Create(50, 320, 250, 250, m_spvisWindow, TinyVisualTag::RICHTEXT));
+			//TinyVisualRichText* ps10 = static_cast<TinyVisualRichText*>(m_fs->Create(50, 320, 250, 250, m_spvisWindow, TinyVisualTag::RICHTEXT));
+			TinyVisualImageView* ps11 = static_cast<TinyVisualImageView*>(m_fs->Create(50, 50, 310, 100, m_spvisWindow, TinyVisualTag::IMAGEVIEW));
+
 			return TRUE;
 		}
 		void TinyVisualDocument::Uninitialize()
@@ -115,6 +118,11 @@ namespace TinyUI
 		TinyVisualHWND*	TinyVisualDocument::GetVisualHWND() const
 		{
 			return m_pWindow;
+		}
+		TinyVisualCacheDC*	TinyVisualDocument::GetCacheDC() const
+		{
+			ASSERT(m_pWindow);
+			return m_pWindow->m_cacheDC;
 		}
 		HWND TinyVisualDocument::Handle() const
 		{
@@ -509,6 +517,7 @@ namespace TinyUI
 		}
 		void TinyVisualDocument::Draw(TinyVisual* spvis, HDC hDC, const RECT& rcPaint)
 		{
+			ASSERT(m_pWindow && m_pWindow->m_cacheDC);
 			while (spvis != NULL && spvis->IsVisible())
 			{
 				if (spvis->m_spvisParent)
@@ -520,6 +529,7 @@ namespace TinyUI
 						if (::IntersectRect(&clip, &clip, &clipAncestor))
 						{
 							spvis->OnDraw(hDC, clip);
+							TRACE("Draw:%s\n", spvis->GetName().STR());
 							Draw(spvis->m_spvisChild, hDC, clip);
 						}
 					}
@@ -530,6 +540,7 @@ namespace TinyUI
 					if (::IntersectRect(&clip, &clip, &rcPaint))
 					{
 						spvis->OnDraw(hDC, clip);
+						TRACE("Draw:%s\n", spvis->GetName().STR());
 						Draw(spvis->m_spvisChild, hDC, clip);
 					}
 				}

@@ -22,6 +22,7 @@ namespace TinyUI
 		const TinyString TinyVisualTag::BUTTON = TEXT("button");
 		const TinyString TinyVisualTag::LABEL = TEXT("label");
 		const TinyString TinyVisualTag::LIST = TEXT("list");
+		const TinyString TinyVisualTag::IMAGEVIEW = TEXT("imageview");
 		const TinyString TinyVisualTag::LISTBOX = TEXT("listbox");
 		const TinyString TinyVisualTag::TOOLBAR = TEXT("toolbar");
 		const TinyString TinyVisualTag::TREEVIEW = TEXT("treeview");
@@ -39,6 +40,8 @@ namespace TinyUI
 			ASSERT(m_hWND);
 			HDC hDC = ::GetDC(m_hWND);
 			Attach(hDC);
+			SetGraphicsMode(hDC, GM_ADVANCED);
+			SetBkMode(hDC, TRANSPARENT);
 			RECT s = { 0 };
 			GetWindowRect(m_hWND, &s);
 			SetSize(TO_CX(s), TO_CY(s));
@@ -94,6 +97,11 @@ namespace TinyUI
 		{
 			if (!m_hMemDC || !m_hMemBitmap) return FALSE;
 			return ::BitBlt(m_hDC, s.left, s.top, TO_CX(s), TO_CY(s), m_hMemDC, s.left, s.top, SRCCOPY);
+		}
+		BOOL TinyVisualCacheDC::Render(const RECT& s, INT x, INT y)
+		{
+			if (!m_hMemDC || !m_hMemBitmap) return FALSE;
+			return ::BitBlt(m_hDC, s.left, s.top, TO_CX(s), TO_CY(s), m_hMemDC, x, y, SRCCOPY);
 		}
 	}
 }

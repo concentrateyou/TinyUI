@@ -38,6 +38,7 @@ namespace TinyUI
 		public:
 			HWND			Handle() const;
 			TinyVisualHWND*	GetVisualHWND() const;
+			TinyVisualCacheDC*	GetCacheDC() const;
 			TinyVisual*		GetVisual(TinyVisual* spvis, UINT cmd) const;
 			TinyVisual*		SetParent(TinyVisual* spvis, TinyVisual* spvisNewParent);
 			TinyVisual*		GetParent(TinyVisual* spvis) const;

@@ -59,7 +59,7 @@ namespace TinyUI
 			TinySize							m_size;
 			TinyScopedPtr<TinyVisualDocument>	m_document;
 			TinyScopedPtr<TinyVisualCacheDC>	m_cacheDC;
-			TinyVisualFilters						m_mFilters;
+			TinyVisualFilters					m_mFilters;
 		};
 	}
 }

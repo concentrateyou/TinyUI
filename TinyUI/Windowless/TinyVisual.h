@@ -70,7 +70,7 @@ namespace TinyUI
 			virtual ~TinyVisual();
 			virtual TinyString	RetrieveTag() const = 0;
 		protected:
-			virtual BOOL		OnDraw(HDC hDC, const RECT& rcPaint);
+			virtual BOOL		OnDraw(HDC hDC, const RECT& clip);
 			virtual HRESULT		OnCreate();
 			virtual HRESULT		OnDestory();
 			virtual HRESULT		OnMouseMove(const TinyPoint& pos, DWORD dwFlags);

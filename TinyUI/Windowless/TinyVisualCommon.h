@@ -40,6 +40,7 @@ namespace TinyUI
 			static const TinyString LABEL;
 			static const TinyString BUTTON;
 			static const TinyString LIST;
+			static const TinyString IMAGEVIEW;
 			static const TinyString LISTBOX;
 			static const TinyString TOOLBAR;
 			static const TinyString TREEVIEW;
@@ -59,6 +60,7 @@ namespace TinyUI
 			void SetSize(INT cx, INT cy);
 			HDC	 GetMemDC() const;
 			BOOL Render(const RECT& s);
+			BOOL Render(const RECT& s, INT x, INT y);
 		protected:
 			HWND		m_hWND;
 			TinySize	m_size;

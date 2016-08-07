@@ -24,9 +24,14 @@ namespace TinyUI
 		}
 		//////////////////////////////////////////////////////////////////////////
 		TinyClipCanvas::TinyClipCanvas(HDC hDC, TinyVisual* spvis, const RECT& rcPaint)
-			:TinyCanvas(hDC)
+			:TinyCanvas(hDC),
+			m_hRGN(NULL),
+			m_hOldRGN(NULL)
 		{
 			ASSERT(spvis);
+			RECT clip = { 0 };
+			::GetClipBox(hDC, &clip);
+			m_hOldRGN = ::CreateRectRgnIndirect(&clip);
 			m_hRGN = ::CreateRectRgnIndirect(&rcPaint);
 			if (spvis->GetClip())
 			{
@@ -36,6 +41,8 @@ namespace TinyUI
 		}
 		TinyClipCanvas::~TinyClipCanvas()
 		{
+			::SelectClipRgn(m_hDC, m_hOldRGN);
+			SAFE_DELETE_OBJECT(m_hOldRGN);
 			SAFE_DELETE_OBJECT(m_hRGN);
 		}
 		//////////////////////////////////////////////////////////////////////////

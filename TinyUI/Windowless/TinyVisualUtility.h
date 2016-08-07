@@ -25,6 +25,7 @@ namespace TinyUI
 			virtual ~TinyClipCanvas();
 		private:
 			HRGN	m_hRGN;
+			HRGN	m_hOldRGN;
 		};
 		/// <summary>
 		/// ÏûÏ¢¹ıÂËÆ÷
