@@ -170,7 +170,7 @@ namespace TinyUI
 		TRIM_TRAILING = 1 << 1,
 		TRIM_ALL = TRIM_LEADING | TRIM_TRAILING,
 	};
-	const char kWhitespaceASCII[] =
+	const char WhitespaceASCII[] =
 	{
 		0x09,
 		0x0A,

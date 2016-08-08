@@ -931,7 +931,7 @@ namespace TinyUI
 		TrimPositions positions,
 		std::string* output)
 	{
-		return TrimStringT(input, kWhitespaceASCII, positions, output);
+		return TrimStringT(input, WhitespaceASCII, positions, output);
 	}
 
 	TrimPositions TrimWhitespace(const std::string& input,

@@ -1074,6 +1074,15 @@ private:\
 		return m_myP->QueryInterface(__uuidof(T), (void**)myPP);
 	}
 	/// <summary>
+	/// Variant·â×°
+	/// </summary>
+	class ScopedVariant
+	{
+		DISALLOW_COPY_AND_ASSIGN(ScopedVariant);
+	protected:
+		VARIANT m_var;
+	};
+	/// <summary>
 	/// ½ûÖ¹¿½±´¸³ÖµÀà
 	/// </summary>
 	class noncopyable

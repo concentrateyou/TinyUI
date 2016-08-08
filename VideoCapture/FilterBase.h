@@ -1,8 +1,7 @@
 #pragma once
-class FilterBase
-{
-public:
-	FilterBase();
-	~FilterBase();
-};
+#include "VideoCaptureDevice.h"
 
+namespace VideoCapture
+{
+	
+}

@@ -36,6 +36,9 @@
     <ClInclude Include="VideoCaptureFormat.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="FilterObserver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -51,6 +54,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="VideoCaptureFormat.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FilterObserver.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
