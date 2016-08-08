@@ -72,18 +72,6 @@ namespace TinyUI
 			m_document->SetFocus(NULL);
 			return FALSE;
 		}
-		void TinyVisualImageView::AdjustLayout(TinyVisual* spvis, INT dx, INT dy)
-		{
-			TinyRectangle clip = GetWindowRect();
-			while (spvis != NULL)
-			{
-				TinyRectangle s = spvis->GetRectangle();
-				s.OffsetRect(dx, dy);
-				spvis->SetPosition(s.Position());
-				spvis->SetSize(s.Size());
-				spvis = m_document->GetVisual(spvis, CMD_PREV);
-			}
-		}
 		void TinyVisualImageView::OnPosChange(INT iOldPos, INT iNewPos)
 		{
 			m_offsetY = iOldPos;

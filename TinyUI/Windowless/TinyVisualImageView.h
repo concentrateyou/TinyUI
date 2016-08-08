@@ -30,8 +30,6 @@ namespace TinyUI
 			HRESULT OnDestory() OVERRIDE;
 			virtual void OnPosChange(INT, INT);
 		private:
-			void AdjustLayout(TinyVisual* spvis, INT dx, INT dy);
-		private:
 			TinyVisualVScrollBar*	m_scrollbar;
 			TinyScopedPtr<Delegate<void(INT, INT)>> m_onPosChange;
 		private:

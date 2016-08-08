@@ -71,15 +71,15 @@ namespace TinyUI
 			INT pos = 0;
 			for (INT i = 0; i < 500; i++)
 			{
-				TinyVisual* spvis = m_fs->Create(30, pos, 90, 30, ps6, TinyVisualTag::BUTTON);
-				TinyString str;
-				str = str.Format("BUTTON-%d", i);
-				spvis->SetName(str.STR());
-				spvis->SetText(str.STR());
-				spvis->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\button\\blue_normal.png");
-				spvis->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\button\\blue_hover.png");
-				spvis->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\button\\blue_down.png");
-				pos += 32;
+			TinyVisual* spvis = m_fs->Create(30, pos, 90, 30, ps6, TinyVisualTag::BUTTON);
+			TinyString str;
+			str = str.Format("BUTTON-%d", i);
+			spvis->SetName(str.STR());
+			spvis->SetText(str.STR());
+			spvis->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\button\\blue_normal.png");
+			spvis->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\button\\blue_hover.png");
+			spvis->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\button\\blue_down.png");
+			pos += 32;
 			}
 			ps6->SetScrollInfo(0, pos, 300, 0);*/
 			//TinyVisualList* ps7 = static_cast<TinyVisualList*>(m_fs->Create(0, pos, 300, 150, ps6, TinyVisualTag::LIST));
@@ -100,10 +100,9 @@ namespace TinyUI
 			//ps7->SetName("LIST-2");
 			//ps7->SetText("LIST-2");
 			//ps6->SetScrollInfo(0, pos + 150, 300, 0);
-
 			//TinyVisualRichText* ps9 = static_cast<TinyVisualRichText*>(m_fs->Create(50, 50, 250, 250, m_spvisWindow, TinyVisualTag::RICHTEXT));
 			//TinyVisualRichText* ps10 = static_cast<TinyVisualRichText*>(m_fs->Create(50, 320, 250, 250, m_spvisWindow, TinyVisualTag::RICHTEXT));
-			TinyVisualImageView* ps11 = static_cast<TinyVisualImageView*>(m_fs->Create(50, 50, 310, 100, m_spvisWindow, TinyVisualTag::IMAGEVIEW));
+			TinyVisualImageView* ps11 = static_cast<TinyVisualImageView*>(m_fs->Create(50, 50, 812, 100, m_spvisWindow, TinyVisualTag::IMAGEVIEW));
 
 			return TRUE;
 		}
@@ -529,7 +528,6 @@ namespace TinyUI
 						if (::IntersectRect(&clip, &clip, &clipAncestor))
 						{
 							spvis->OnDraw(hDC, clip);
-							TRACE("Draw:%s\n", spvis->GetName().STR());
 							Draw(spvis->m_spvisChild, hDC, clip);
 						}
 					}
@@ -540,7 +538,6 @@ namespace TinyUI
 					if (::IntersectRect(&clip, &clip, &rcPaint))
 					{
 						spvis->OnDraw(hDC, clip);
-						TRACE("Draw:%s\n", spvis->GetName().STR());
 						Draw(spvis->m_spvisChild, hDC, clip);
 					}
 				}

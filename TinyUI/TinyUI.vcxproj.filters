@@ -67,12 +67,6 @@
     <Filter Include="源文件\Network">
       <UniqueIdentifier>{ac6f29a6-0362-47eb-941b-f7084c021f6a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="头文件\D3D">
-      <UniqueIdentifier>{40b03145-c9c4-496b-ad1e-eb522b800168}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="源文件\D3D">
-      <UniqueIdentifier>{422a6a42-3ea8-4ee0-bcbb-4bd87254da6f}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -344,12 +338,6 @@
     </ClInclude>
     <ClInclude Include="Common\TinyUtility.h">
       <Filter>头文件\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D\TinyD3D10Common.h">
-      <Filter>头文件\D3D</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D\TinyD3D10Device.h">
-      <Filter>头文件\D3D</Filter>
     </ClInclude>
     <ClInclude Include="Windowless\TinyVisualRichText.h">
       <Filter>头文件\Windowless</Filter>
@@ -634,12 +622,6 @@
     </ClCompile>
     <ClCompile Include="Common\TinyUtility.cpp">
       <Filter>源文件\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D\TinyD3D10Common.cpp">
-      <Filter>源文件\D3D</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D\TinyD3D10Device.cpp">
-      <Filter>源文件\D3D</Filter>
     </ClCompile>
     <ClCompile Include="Windowless\TinyVisualRichText.cpp">
       <Filter>源文件\Windowless</Filter>
