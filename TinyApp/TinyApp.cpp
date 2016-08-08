@@ -40,6 +40,7 @@ BOOL LoadSeDebugPrivilege()
 	return TRUE;
 }
 
+
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -59,7 +60,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	Windowless::TinyVisualHWND uiImpl;
+	CMainFrame uiImpl;
 	uiImpl.Create(NULL, 50, 50, 1024, 640);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();

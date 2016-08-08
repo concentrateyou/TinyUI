@@ -282,9 +282,6 @@
     <ClInclude Include="IO\TinyTaskPool.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
-    <ClInclude Include="Media\TinyVideoCapture.h">
-      <Filter>头文件\Media</Filter>
-    </ClInclude>
     <ClInclude Include="Common\TinyHook.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
@@ -562,9 +559,6 @@
     </ClCompile>
     <ClCompile Include="IO\TinyTaskPool.cpp">
       <Filter>源文件\IO</Filter>
-    </ClCompile>
-    <ClCompile Include="Media\TinyVideoCapture.cpp">
-      <Filter>源文件\Media</Filter>
     </ClCompile>
     <ClCompile Include="Common\TinyHook.cpp">
       <Filter>源文件\Common</Filter>

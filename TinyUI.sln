@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "D3DCaptureHook", "D3DCaptur
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DXApp", "DXApp\DXApp.vcxproj", "{A101330B-EC03-4336-B0B9-D54AD3154AAA}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VideoCapture", "VideoCapture\VideoCapture.vcxproj", "{96CE67C6-F329-47C3-AB33-52D4C50B0E46}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -39,6 +41,10 @@ Global
 		{A101330B-EC03-4336-B0B9-D54AD3154AAA}.Debug|Win32.Build.0 = Debug|Win32
 		{A101330B-EC03-4336-B0B9-D54AD3154AAA}.Release|Win32.ActiveCfg = Release|Win32
 		{A101330B-EC03-4336-B0B9-D54AD3154AAA}.Release|Win32.Build.0 = Release|Win32
+		{96CE67C6-F329-47C3-AB33-52D4C50B0E46}.Debug|Win32.ActiveCfg = Debug|Win32
+		{96CE67C6-F329-47C3-AB33-52D4C50B0E46}.Debug|Win32.Build.0 = Debug|Win32
+		{96CE67C6-F329-47C3-AB33-52D4C50B0E46}.Release|Win32.ActiveCfg = Release|Win32
+		{96CE67C6-F329-47C3-AB33-52D4C50B0E46}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

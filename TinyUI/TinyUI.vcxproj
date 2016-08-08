@@ -140,7 +140,6 @@
     <ClInclude Include="IO\TinyTask.h" />
     <ClInclude Include="IO\TinyTaskPool.h" />
     <ClInclude Include="Media\TinyMedia.h" />
-    <ClInclude Include="Media\TinyVideoCapture.h" />
     <ClInclude Include="Media\TinyWave.h" />
     <ClInclude Include="Network\TinyConnector.h" />
     <ClInclude Include="Network\TinyAcceptor.h" />
@@ -235,7 +234,6 @@
     <ClCompile Include="IO\TinyTask.cpp" />
     <ClCompile Include="IO\TinyTaskPool.cpp" />
     <ClCompile Include="Media\TinyMedia.cpp" />
-    <ClCompile Include="Media\TinyVideoCapture.cpp" />
     <ClCompile Include="Media\TinyWave.cpp" />
     <ClCompile Include="Network\TinyConnector.cpp" />
     <ClCompile Include="Network\TinyAcceptor.cpp" />

@@ -795,6 +795,13 @@ private:\
 		TinyScopedReferencePtr();
 		TinyScopedReferencePtr(T* myP);
 		TinyScopedReferencePtr(const TinyScopedReferencePtr<T>& s);
+		TinyScopedReferencePtr<T>& operator=(const TinyScopedReferencePtr<T>& s);
+		TinyScopedReferencePtr<T>& operator=(TinyScopedReferencePtr<T>&& s);
+		~TinyScopedReferencePtr();
+		T* Ptr() const;
+		operator T*() const;
+		T* operator->() const;
+		TinyScopedReferencePtr<T>& operator=(T* ps);
 		template<typename U>
 		TinyScopedReferencePtr(const TinyScopedReferencePtr<U>& s) : m_myP(s.Ptr())
 		{
@@ -803,19 +810,26 @@ private:\
 				m_myP->AddRef();
 			}
 		}
-		~TinyScopedReferencePtr();
-		T* Ptr() const;
-		operator T*() const;
-		T* operator->() const;
-		TinyScopedReferencePtr<T>& operator=(T* ps);
-		TinyScopedReferencePtr<T>& operator=(const TinyScopedReferencePtr<T>& s);
 		template<typename U>
 		TinyScopedReferencePtr<T>& operator=(const TinyScopedReferencePtr<U>& s)
 		{
 			return *this = s.Ptr();
 		}
-		void Swap(T** pp);
-		void Swap(TinyScopedReferencePtr<T>& s);
+		template <typename U>
+		TinyScopedReferencePtr<T>& operator=(TinyScopedReferencePtr<U>&& s)
+		{
+			TinyScopedReferencePtr<T>(std::move(s)).swap(*this);
+			return *this;
+		}
+		template <typename U>
+		TinyScopedReferencePtr(TinyScopedReferencePtr<U>&& s)
+			: m_myP(s.m_myP)
+		{
+			s.m_myP = NULL;
+		}
+	private:
+		void swap(T** pp);
+		void swap(TinyScopedReferencePtr<T>& s);
 	protected:
 		T* m_myP;
 	};
@@ -883,16 +897,22 @@ private:\
 		return *this = s.m_myP;
 	}
 	template<class T>
-	void TinyScopedReferencePtr<T>::Swap(T** pp)
+	TinyScopedReferencePtr<T>& TinyScopedReferencePtr<T>::operator=(TinyScopedReferencePtr<T>&& s)
+	{
+		TinyScopedReferencePtr<T>(std::move(s)).swap(*this);
+		return *this;
+	}
+	template<class T>
+	void TinyScopedReferencePtr<T>::swap(T** pp)
 	{
 		T* p = m_myP;
 		m_myP = *pp;
 		*pp = p;
 	}
 	template<class T>
-	void TinyScopedReferencePtr<T>::Swap(TinyScopedReferencePtr<T>& s)
+	void TinyScopedReferencePtr<T>::swap(TinyScopedReferencePtr<T>& s)
 	{
-		Swap(&s.m_myP);
+		swap(&s.m_myP);
 	}
 	/// <summary>
 	/// COM÷«ƒ‹÷∏’Î
@@ -903,9 +923,9 @@ private:\
 	public:
 		T* m_myP;
 	public:
-		TinyComPtr(T* lp = NULL) throw();
-		TinyComPtr(const TinyComPtr<T>& lp) throw();
-		TinyComPtr(TinyComPtr<T>&& lp) throw();
+		TinyComPtr(T* s = NULL) throw();
+		TinyComPtr(const TinyComPtr<T>& s) throw();
+		TinyComPtr(TinyComPtr<T>&& s) throw();
 		~TinyComPtr() throw();
 		void Release() throw();
 		operator T*() const throw();
@@ -913,9 +933,9 @@ private:\
 		T& operator*() const;
 		T* operator->();
 		const T* operator->() const;
-		T* operator=(T* lp) throw();
-		T* operator=(TinyComPtr<T>&& lp) throw();
-		T* operator=(const TinyComPtr<T>& lp) throw();
+		T* operator=(T* s) throw();
+		T* operator=(TinyComPtr<T>&& s) throw();
+		T* operator=(const TinyComPtr<T>& s) throw();
 		BOOL operator!();
 		HRESULT CoCreateInstance(REFCLSID rclsid, LPUNKNOWN pUnkOuter = NULL, DWORD dwClsContext = CLSCTX_ALL);
 		HRESULT CoCreateInstance(LPCOLESTR szProgID, LPUNKNOWN pUnkOuter = NULL, DWORD dwClsContext = CLSCTX_ALL);
