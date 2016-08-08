@@ -35,10 +35,12 @@ namespace TinyUI
 		public:
 			virtual ~TinyVisualHScrollBar();
 			TinyString	RetrieveTag() const OVERRIDE;
-			INT			GetScrollPos();
+			INT			GetScrollPos() const;
+			INT			GetPage() const;
 			void		SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos);
+			void		SetScrollPos(INT iPos);
 		public:
-			Event<void(INT, INT)> EVENT_PosChange;
+			Event<void(BOOL, INT, INT, INT)> EVENT_PosChange;
 		protected:
 			BOOL		OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT		OnMouseLeave();
@@ -71,10 +73,12 @@ namespace TinyUI
 		public:
 			virtual ~TinyVisualVScrollBar();
 			TinyString	RetrieveTag() const OVERRIDE;
-			INT			GetScrollPos();
+			INT			GetScrollPos() const;
+			INT			GetPage() const;
 			void		SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos);
+			void		SetScrollPos(INT iPos);
 		public:
-			Event<void(INT, INT)> EVENT_PosChange;
+			Event<void(BOOL, INT, INT, INT)> EVENT_PosChange;
 		protected:
 			BOOL		OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT		OnMouseLeave();

@@ -77,7 +77,7 @@ namespace TinyUI
 			{
 				INT iOldPos = m_si.iPos;
 				m_si.iPos = iNewPos;
-				EVENT_PosChange(iOldPos, iNewPos);
+				EVENT_PosChange(FALSE, zDelta > 0 ? SB_LINEDOWN : SB_LINEUP, iOldPos, iNewPos);
 			}
 			TinyRectangle s = m_document->GetWindowRect(this);
 			m_document->Invalidate(&s);
@@ -118,26 +118,35 @@ namespace TinyUI
 		HRESULT	TinyVisualHScrollBar::OnLButtonUp(const TinyPoint& pos, DWORD dwFlags)
 		{
 			INT iNewPos = m_si.iPos;
+			INT code = 0;
 			switch (m_si.iHitTest)
 			{
 			case HTSCROLL_LINEUP:
+				code = SB_LINEUP;
 				iNewPos = (m_si.iPos - 1) > m_si.iMin ? m_si.iPos - 1 : m_si.iMin;
 				break;
 			case HTSCROLL_LINEDOWN:
+				code = SB_LINEDOWN;
 				iNewPos = (m_si.iPos + 1) < (m_si.iMax - m_si.iPage + 1) ? m_si.iPos + 1 : (m_si.iMax - m_si.iPage + 1);
 				break;
 			case HTSCROLL_PAGEUP:
+				code = SB_PAGEUP;
 				iNewPos = (m_si.iPos - m_si.iPage) > m_si.iMin ? m_si.iPos - m_si.iPage : m_si.iMin;
 				break;
 			case HTSCROLL_PAGEDOWN:
+				code = SB_PAGEDOWN;
 				iNewPos = (m_si.iPos + m_si.iPage) < (m_si.iMax - m_si.iPage + 1) ? m_si.iPos + m_si.iPage : (m_si.iMax - m_si.iPage + 1);
+				break;
+			case HTSCROLL_THUMB:
+				code = SB_THUMBPOSITION;
+				EVENT_PosChange(TRUE, code, m_si.iPos, iNewPos);
 				break;
 			}
 			if (iNewPos != m_si.iPos)
 			{
 				INT iPos = m_si.iPos;
 				m_si.iPos = iNewPos;
-				EVENT_PosChange(iPos, iNewPos);
+				EVENT_PosChange(FALSE, code, iPos, iNewPos);
 			}
 			TinyRectangle s = m_document->GetWindowRect(this);
 			m_document->Invalidate(&s);
@@ -255,7 +264,7 @@ namespace TinyUI
 			{
 				INT iPos = m_si.iPos;
 				m_si.iPos = iNewPos;
-				//EVENT_PosChange(iPos, iNewPos);
+				EVENT_PosChange(FALSE, SB_THUMBTRACK, iPos, iNewPos);
 			}
 		}
 		void TinyVisualHScrollBar::DrawScrollBar(TinyClipCanvas& canvas, const TinySize& size)
@@ -373,9 +382,21 @@ namespace TinyUI
 			TinyRectangle s = m_document->GetWindowRect(this);
 			m_document->Invalidate(&s);
 		}
-		INT	TinyVisualHScrollBar::GetScrollPos()
+		void TinyVisualHScrollBar::SetScrollPos(INT iPos)
+		{
+			iPos = iPos < m_si.iMin ? m_si.iMin : iPos;
+			iPos = iPos > (m_si.iMax - m_si.iPage + 1) ? (m_si.iMax - m_si.iPage + 1) : iPos;
+			m_si.iPos = iPos;
+			TinyRectangle s = m_document->GetWindowRect(this);
+			m_document->Invalidate(&s);
+		}
+		INT	TinyVisualHScrollBar::GetScrollPos() const
 		{
 			return m_si.iPos;
+		}
+		INT TinyVisualHScrollBar::GetPage() const
+		{
+			return m_si.iPage;
 		}
 		//////////////////////////////////////////////////////////////////////////
 		TinyVisualVScrollBar::TinyVisualVScrollBar(TinyVisual* spvisParent, TinyVisualDocument* vtree)
@@ -449,7 +470,7 @@ namespace TinyUI
 			{
 				INT iOldPos = m_si.iPos;
 				m_si.iPos = iNewPos;
-				EVENT_PosChange(iOldPos, iNewPos);
+				EVENT_PosChange(TRUE, zDelta > 0 ? SB_LINEDOWN : SB_LINEUP, iOldPos, iNewPos);
 			}
 			TinyRectangle s = m_document->GetWindowRect(this);
 			m_document->Invalidate(&s);
@@ -490,26 +511,35 @@ namespace TinyUI
 		HRESULT	TinyVisualVScrollBar::OnLButtonUp(const TinyPoint& pos, DWORD dwFlags)
 		{
 			INT iNewPos = m_si.iPos;
+			INT code = 0;
 			switch (m_si.iHitTest)
 			{
 			case HTSCROLL_LINEUP:
+				code = SB_LINEUP;
 				iNewPos = (m_si.iPos - 1) > m_si.iMin ? m_si.iPos - 1 : m_si.iMin;
 				break;
 			case HTSCROLL_LINEDOWN:
+				code = SB_LINEDOWN;
 				iNewPos = (m_si.iPos + 1) < (m_si.iMax - m_si.iPage + 1) ? m_si.iPos + 1 : (m_si.iMax - m_si.iPage + 1);
 				break;
 			case HTSCROLL_PAGEUP:
+				code = SB_PAGEUP;
 				iNewPos = (m_si.iPos - m_si.iPage) > m_si.iMin ? m_si.iPos - m_si.iPage : m_si.iMin;
 				break;
 			case HTSCROLL_PAGEDOWN:
+				code = SB_PAGEDOWN;
 				iNewPos = (m_si.iPos + m_si.iPage) < (m_si.iMax - m_si.iPage + 1) ? m_si.iPos + m_si.iPage : (m_si.iMax - m_si.iPage + 1);
+				break;
+			case HTSCROLL_THUMB:
+				code = SB_THUMBPOSITION;
+				EVENT_PosChange(TRUE, code, m_si.iPos, iNewPos);
 				break;
 			}
 			if (iNewPos != m_si.iPos)
 			{
 				INT iPos = m_si.iPos;
 				m_si.iPos = iNewPos;
-				EVENT_PosChange(iPos, iNewPos);
+				EVENT_PosChange(TRUE, code, iPos, iNewPos);
 			}
 			TinyRectangle s = m_document->GetWindowRect(this);
 			m_document->Invalidate(&s);
@@ -626,7 +656,7 @@ namespace TinyUI
 			{
 				INT iPos = m_si.iPos;
 				m_si.iPos = iNewPos;
-				EVENT_PosChange(iPos, iNewPos);
+				EVENT_PosChange(TRUE, SB_THUMBTRACK, iPos, iNewPos);
 			}
 		}
 		void TinyVisualVScrollBar::DrawScrollBar(TinyClipCanvas& canvas, const TinySize& size)
@@ -744,9 +774,21 @@ namespace TinyUI
 			TinyRectangle s = m_document->GetWindowRect(this);
 			m_document->Invalidate(&s);
 		}
-		INT	TinyVisualVScrollBar::GetScrollPos()
+		void TinyVisualVScrollBar::SetScrollPos(INT iPos)
+		{
+			iPos = iPos < m_si.iMin ? m_si.iMin : iPos;
+			iPos = iPos > (m_si.iMax - m_si.iPage + 1) ? (m_si.iMax - m_si.iPage + 1) : iPos;
+			m_si.iPos = iPos;
+			TinyRectangle s = m_document->GetWindowRect(this);
+			m_document->Invalidate(&s);
+		}
+		INT	TinyVisualVScrollBar::GetScrollPos() const
 		{
 			return m_si.iPos;
+		}
+		INT	TinyVisualVScrollBar::GetPage() const
+		{
+			return m_si.iPage;
 		}
 	}
 }

@@ -7,7 +7,6 @@
 #include "TinyVisualLabel.h"
 #include "TinyVisualButton.h"
 #include "TinyVisualList.h"
-#include "TinyVisualImageView.h"
 #include "TinyVisualCaption.h"
 #include "TinyVisualButton.h"
 #include "TinyVisualScrollbar.h"
@@ -50,10 +49,6 @@ namespace TinyUI
 			else if (tag.Compare(TinyVisualTag::LIST) == 0)
 			{
 				spvis = new TinyVisualList(spvisParent, m_document);
-			}
-			else if (tag.Compare(TinyVisualTag::IMAGEVIEW) == 0)
-			{
-				spvis = new TinyVisualImageView(spvisParent, m_document);
 			}
 			else if (tag.Compare(TinyVisualTag::COMBOBOX) == 0)
 			{

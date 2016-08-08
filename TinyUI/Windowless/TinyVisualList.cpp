@@ -29,7 +29,7 @@ namespace TinyUI
 			ASSERT(m_document);
 			TinySize size = this->GetSize();
 			m_scrollbar = static_cast<TinyVisualVScrollBar*>(m_document->GetFactory()->Create(size.cx - 12, 0, 12, size.cy, this, TinyVisualTag::VSCROLLBAR));
-			m_onPosChange.Reset(new Delegate<void(INT, INT)>(this, &TinyVisualList::OnPosChange));
+			m_onPosChange.Reset(new Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualList::OnPosChange));
 			m_scrollbar->EVENT_PosChange += m_onPosChange;
 			return TinyVisual::OnCreate();
 		}
@@ -63,7 +63,7 @@ namespace TinyUI
 				spvis = m_document->GetVisual(spvis, CMD_PREV);
 			}
 		}
-		void TinyVisualList::OnPosChange(INT iOldPos, INT iNewPos)
+		void TinyVisualList::OnPosChange(BOOL bVer, INT code, INT iOldPos, INT iNewPos)
 		{
 			TinyVisual* spvis = m_document->GetVisual(this, CMD_CHILD);
 			spvis = m_document->GetVisual(spvis, CMD_LAST);

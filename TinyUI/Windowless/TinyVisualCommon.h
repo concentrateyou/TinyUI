@@ -40,7 +40,6 @@ namespace TinyUI
 			static const TinyString LABEL;
 			static const TinyString BUTTON;
 			static const TinyString LIST;
-			static const TinyString IMAGEVIEW;
 			static const TinyString LISTBOX;
 			static const TinyString TOOLBAR;
 			static const TinyString TREEVIEW;

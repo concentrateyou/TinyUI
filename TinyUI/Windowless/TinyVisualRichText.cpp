@@ -10,7 +10,9 @@ namespace TinyUI
 	namespace Windowless
 	{
 		TinyVisualRichText::TinyVisualRichText(TinyVisual* spvisParent, TinyVisualDocument* vtree)
-			:TinyVisual(spvisParent, vtree)
+			:TinyVisual(spvisParent, vtree),
+			m_hscroll(NULL),
+			m_vscroll(NULL)
 		{
 
 		}
@@ -23,7 +25,14 @@ namespace TinyUI
 			m_document->GetVisualHWND()->SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
 			return lRes;
 		}
-
+		HRESULT TinyVisualRichText::OnMouseWheel(const TinyPoint& pos, SHORT zDelta, DWORD dwFlags)
+		{
+			ASSERT(m_texthost.m_ts);
+			const MSG* pMsg = m_document->GetVisualHWND()->GetCurrentMessage();
+			LRESULT lRes = FALSE;
+			m_document->GetVisualHWND()->SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
+			return lRes;
+		}
 		HRESULT TinyVisualRichText::OnLButtonDown(const TinyPoint& pos, DWORD dwFlags)
 		{
 			ASSERT(m_texthost.m_ts);
@@ -130,7 +139,7 @@ namespace TinyUI
 				return FALSE;
 			if (uMsg == WM_SETCURSOR)
 				return FALSE;
-			if (IsFocus() || IsCapture())
+			if (IsFocus())
 			{
 				return m_texthost.m_ts->TxSendMessage(uMsg, wParam, lParam, &lResult) == S_OK;
 			}
@@ -148,6 +157,15 @@ namespace TinyUI
 		}
 		HRESULT TinyVisualRichText::OnCreate()
 		{
+			TinySize size = this->GetSize();
+			m_hscroll = static_cast<TinyVisualHScrollBar*>(m_document->GetFactory()->Create(0, size.cy - 12, size.cx, 12, this, TinyVisualTag::HSCROLLBAR));
+			m_onPosChange.Reset(new Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualRichText::OnPosChange));
+			m_hscroll->EVENT_PosChange += m_onPosChange;
+			m_hscroll->SetVisible(FALSE);
+			m_vscroll = static_cast<TinyVisualVScrollBar*>(m_document->GetFactory()->Create(size.cx - 12, 0, 12, size.cy, this, TinyVisualTag::VSCROLLBAR));
+			m_onPosChange.Reset(new Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualRichText::OnPosChange));
+			m_vscroll->EVENT_PosChange += m_onPosChange;
+			m_vscroll->SetVisible(FALSE);
 			m_texthost.Initialize(this);
 			m_texthost.UpdateView();
 			m_document->GetVisualHWND()->AddFilter(this);
@@ -155,8 +173,33 @@ namespace TinyUI
 		}
 		HRESULT TinyVisualRichText::OnDestory()
 		{
+			m_hscroll->EVENT_PosChange -= m_onPosChange;
+			m_vscroll->EVENT_PosChange -= m_onPosChange;
 			m_document->GetVisualHWND()->RemoveFilter(this);
 			return S_OK;
+		}
+
+		void TinyVisualRichText::OnPosChange(BOOL bVer, INT code, INT iOldPos, INT iNewPos)
+		{
+			ASSERT(m_texthost.m_ts);
+			if (bVer)
+			{
+				LRESULT lRes = 0;
+				m_texthost.m_ts->TxSendMessage(WM_VSCROLL, MAKEWPARAM(code, iNewPos), 0, &lRes);
+			}
+			else
+			{
+				LRESULT lRes = 0;
+				m_texthost.m_ts->TxSendMessage(WM_HSCROLL, MAKEWPARAM(code, iNewPos), 0, &lRes);
+			}
+		}
+
+
+
+		BOOL TinyVisualRichText::SetReadonly(BOOL bFlag)
+		{
+			ASSERT(m_texthost.m_ts);
+			return FALSE;
 		}
 	}
 }

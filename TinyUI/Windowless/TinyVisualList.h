@@ -27,12 +27,12 @@ namespace TinyUI
 			HRESULT	OnMouseLeave() OVERRIDE;
 			HRESULT	OnCreate() OVERRIDE;
 			HRESULT OnDestory() OVERRIDE;
-			virtual void OnPosChange(INT, INT);
+			virtual void OnPosChange(BOOL, INT, INT, INT);
 		private:
 			void AdjustLayout(TinyVisual* spvis, INT dx, INT dy);
 		private:
 			TinyVisualVScrollBar*	m_scrollbar;
-			TinyScopedPtr<Delegate<void(INT, INT)>> m_onPosChange;
+			TinyScopedPtr<Delegate<void(BOOL, INT, INT, INT)>> m_onPosChange;
 		};
 	}
 }

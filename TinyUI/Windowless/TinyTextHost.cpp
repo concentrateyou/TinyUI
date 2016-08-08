@@ -1,7 +1,7 @@
 #include "../stdafx.h"
 #include "TinyTextHost.h"
-#include "TinyVisual.h"
 #include "TinyVisualDocument.h"
+#include "TinyVisualRichText.h"
 #pragma comment(lib,"imm32.lib")
 
 namespace TinyUI
@@ -40,7 +40,7 @@ namespace TinyUI
 				m_hInstance = NULL;
 			}
 		}
-		BOOL TinyTextHost::Initialize(TinyVisual* spvis)
+		BOOL TinyTextHost::Initialize(TinyVisualRichText* spvis)
 		{
 			ASSERT(spvis);
 			m_spvis = spvis;
@@ -51,7 +51,7 @@ namespace TinyUI
 			LOGFONT lf;
 			HFONT hFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
 			GetObject(hFont, sizeof(LOGFONT), &lf);
-			m_cf.cbSize = sizeof(CHARFORMAT2);
+			m_cf.cbSize = sizeof(CHARFORMATW);
 			m_cf.yHeight = lf.lfHeight * LY_PER_INCH / m_logpixelsy;
 			m_cf.yOffset = 0;
 			m_cf.crTextColor = GetSysColor(COLOR_WINDOWTEXT);
@@ -103,10 +103,10 @@ namespace TinyUI
 		BOOL TinyTextHost::UpdateView()
 		{
 			ASSERT(m_ts || m_spvis);
-			TinyRectangle rectangle = m_spvis->GetWindowRect();
-			m_extent.cx = MAP_PIX_TO_LOGHIM(rectangle.Width(), m_logpixelsx);
-			m_extent.cy = MAP_PIX_TO_LOGHIM(rectangle.Height(), m_logpixelsy);
-			if (FAILED(m_ts->OnTxInPlaceActivate(&rectangle)))
+			m_rectangle = m_spvis->GetWindowRect();
+			m_extent.cx = MAP_PIX_TO_LOGHIM(m_rectangle.Width(), m_logpixelsx);
+			m_extent.cy = MAP_PIX_TO_LOGHIM(m_rectangle.Height(), m_logpixelsy);
+			if (FAILED(m_ts->OnTxInPlaceActivate(&m_rectangle)))
 				return FALSE;
 			m_ts->TxSendMessage(EM_SETCHARFORMAT, 0, (LPARAM)&m_cf, 0);
 			m_ts->TxSendMessage(EM_SETPARAFORMAT, 0, (LPARAM)&m_pf, 0);
@@ -160,21 +160,91 @@ namespace TinyUI
 
 		BOOL TinyTextHost::TxShowScrollBar(INT fnBar, BOOL fShow)
 		{
+			ASSERT(m_ts || m_spvis);
+			switch (fnBar)
+			{
+			case SB_VERT:
+				if (TinyVisualVScrollBar* vscroll = m_spvis->m_vscroll)
+				{
+					vscroll->SetVisible(fShow);
+					if (fShow)
+					{
+						m_rectangle = m_spvis->GetWindowRect();
+						m_ts->OnTxInPlaceActivate(&m_rectangle);
+					}
+					else
+					{
+						m_rectangle = m_spvis->GetWindowRect();
+						m_ts->OnTxInPlaceActivate(&m_rectangle);
+					}
+				}
+				break;
+			case SB_HORZ:
+				if (TinyVisualHScrollBar* hscroll = m_spvis->m_hscroll)
+				{
+					hscroll->SetVisible(fShow);
+					if (fShow)
+					{
+						m_rectangle = m_spvis->GetWindowRect();
+						m_ts->OnTxInPlaceActivate(&m_rectangle);
+					}
+					else
+					{
+						m_rectangle = m_spvis->GetWindowRect();
+						m_ts->OnTxInPlaceActivate(&m_rectangle);
+					}
+				}
+				break;
+			}
 			return S_OK;
 		}
 
 		BOOL TinyTextHost::TxEnableScrollBar(INT fuSBFlags, INT fuArrowflags)
 		{
+
 			return S_OK;
 		}
 
 		BOOL TinyTextHost::TxSetScrollRange(INT fnBar, LONG nMinPos, INT nMaxPos, BOOL fRedraw)
 		{
+			ASSERT(m_ts || m_spvis);
+			switch (fnBar)
+			{
+			case SB_VERT:
+				if (TinyVisualVScrollBar* vscroll = m_spvis->m_vscroll)
+				{
+					vscroll->SetScrollInfo(nMinPos, nMaxPos, m_spvis->GetSize().cy, vscroll->GetScrollPos());
+				}
+				break;
+			case SB_HORZ:
+				if (TinyVisualHScrollBar* hscroll = m_spvis->m_hscroll)
+				{
+					hscroll->SetScrollInfo(nMinPos, nMaxPos, m_spvis->GetSize().cx, hscroll->GetScrollPos());
+				}
+				break;
+			}
 			return S_OK;
 		}
 
 		BOOL TinyTextHost::TxSetScrollPos(INT fnBar, INT nPos, BOOL fRedraw)
 		{
+			ASSERT(m_ts || m_spvis);
+			switch (fnBar)
+			{
+			case SB_VERT:
+				if (TinyVisualVScrollBar* vscroll = m_spvis->m_vscroll)
+				{
+					vscroll->SetScrollPos(nPos);
+				}
+				break;
+			case SB_HORZ:
+				if (TinyVisualHScrollBar* hscroll = m_spvis->m_hscroll)
+				{
+					hscroll->SetScrollPos(nPos);
+				}
+				break;
+			}
+			return S_OK;
 			return S_OK;
 		}
 
@@ -229,7 +299,7 @@ namespace TinyUI
 		void TinyTextHost::TxScrollWindowEx(INT dx, INT dy, LPCRECT lprcScroll, LPCRECT lprcClip, HRGN hrgnUpdate, LPRECT lprcUpdate, UINT fuScroll)
 		{
 			ASSERT(m_spvis);
-			::ScrollWindowEx(m_spvis->Handle(), dx, dy, lprcScroll, lprcClip, hrgnUpdate, lprcUpdate, fuScroll);
+			m_spvis->Invalidate();
 		}
 
 		void TinyTextHost::TxSetCapture(BOOL fCapture)
@@ -237,12 +307,10 @@ namespace TinyUI
 			ASSERT(m_spvis);
 			if (fCapture)
 			{
-				TRACE("TxSetCapture = TRUE\n");
 				m_spvis->GetDocument()->SetCapture(m_spvis);
 			}
 			else
 			{
-				TRACE("TxSetCapture = FALSE\n");
 				m_spvis->GetDocument()->ReleaseCapture();
 			}
 		}
@@ -251,7 +319,6 @@ namespace TinyUI
 		{
 			ASSERT(m_spvis);
 			m_spvis->GetDocument()->SetFocus(m_spvis);
-			TRACE("TxSetFocus\n");
 			m_ts->TxSendMessage(WM_SETFOCUS, 0, 0, NULL);
 		}
 
@@ -283,8 +350,7 @@ namespace TinyUI
 		HRESULT TinyTextHost::TxGetClientRect(LPRECT prc)
 		{
 			ASSERT(m_spvis);
-			TinyRectangle rectangle = m_spvis->GetWindowRect();
-			CopyRect(prc, &rectangle);
+			CopyRect(prc, &m_rectangle);
 			return S_OK;
 		}
 
@@ -313,7 +379,7 @@ namespace TinyUI
 
 		HRESULT TinyTextHost::TxGetBackStyle(TXTBACKSTYLE *pstyle)
 		{
-			*pstyle = TXTBACK_TRANSPARENT;
+			*pstyle = TXTBACK_OPAQUE;
 			return S_OK;
 		}
 
@@ -324,7 +390,7 @@ namespace TinyUI
 
 		HRESULT TinyTextHost::TxGetScrollBars(DWORD *pdwScrollBar)
 		{
-			*pdwScrollBar = WS_VSCROLL | WS_HSCROLL | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_DISABLENOSCROLL;
+			*pdwScrollBar = WS_VSCROLL | WS_HSCROLL | ES_AUTOVSCROLL | ES_AUTOHSCROLL;
 			return E_NOTIMPL;
 		}
 
@@ -356,14 +422,14 @@ namespace TinyUI
 
 		HRESULT TinyTextHost::TxGetPropertyBits(DWORD dwMask, DWORD *pdwBits)
 		{
-			DWORD bits = TXTBIT_MULTILINE | TXTBIT_RICHTEXT | TXTBIT_WORDWRAP;
+			DWORD bits = TXTBIT_MULTILINE | TXTBIT_RICHTEXT | TXTBIT_WORDWRAP | TXTBIT_SCROLLBARCHANGE;
 			*pdwBits = bits & dwMask;
 			return S_OK;
 		}
 
 		HRESULT TinyTextHost::TxNotify(DWORD iNotify, void *pv)
 		{
-			return E_NOTIMPL;
+			return S_OK;
 		}
 
 		HIMC TinyTextHost::TxImmGetContext()

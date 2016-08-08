@@ -183,6 +183,12 @@ namespace TinyUI
 			ASSERT(m_document->Handle());
 			return ::SendMessage(m_document->Handle(), uMsg, wParam, lParam);
 		}
+		BOOL TinyVisual::Invalidate()
+		{
+			ASSERT(m_document);
+			TinyRectangle s = GetWindowRect();
+			return m_document->Invalidate(&s);
+		}
 		void TinyVisual::OnPosChange(const TinyPoint&oldPos, const TinyPoint&newPos)
 		{
 

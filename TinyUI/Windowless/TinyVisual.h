@@ -60,6 +60,7 @@ namespace TinyUI
 			void				SetEnable(BOOL enable);
 			BOOL				SetStyleImage(StyleImage type, LPCSTR pzFile);
 			BOOL				SetStyleImage(StyleImage type, BYTE*	ps, DWORD dwSize);
+			BOOL				Invalidate();
 		public:
 			TinyVisualDocument*	GetDocument();
 			virtual	HRESULT		SendMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes);

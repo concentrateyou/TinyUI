@@ -1,9 +1,9 @@
 #pragma once
-#include "../Control/TinyControl.h"
 #include <richedit.h>
 #include <textserv.h>
 #include <RichOle.h>
 #include <tom.h>
+#include "../Control/TinyControl.h"
 #include "TinyVisual.h"
 
 namespace TinyUI
@@ -25,7 +25,7 @@ namespace TinyUI
 			TinyTextHost();
 			~TinyTextHost();
 		public:
-			BOOL Initialize(TinyVisual* spvis);
+			BOOL Initialize(TinyVisualRichText* spvis);
 			BOOL UpdateView();
 		public:
 			HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject);
@@ -74,12 +74,13 @@ namespace TinyUI
 			TinyComPtr<ITextServices>	m_ts;
 			HINSTANCE					m_hInstance;
 			LONG						m_cRef;
-			TinyVisual*					m_spvis;
+			TinyVisualRichText*			m_spvis;
 			TinySize					m_extent;
 			LONG						m_logpixelsx;
 			LONG						m_logpixelsy;
 			CHARFORMATW					m_cf;
 			PARAFORMAT					m_pf;
+			TinyRectangle				m_rectangle;
 		};
 	}
 }

@@ -5,7 +5,6 @@
 #include "TinyVisualComboBox.h"
 #include "TinyVisualList.h"
 #include "TinyVisualRichText.h"
-#include "TinyVisualImageView.h"
 
 namespace TinyUI
 {
@@ -101,9 +100,7 @@ namespace TinyUI
 			//ps7->SetText("LIST-2");
 			//ps6->SetScrollInfo(0, pos + 150, 300, 0);
 			//TinyVisualRichText* ps9 = static_cast<TinyVisualRichText*>(m_fs->Create(50, 50, 250, 250, m_spvisWindow, TinyVisualTag::RICHTEXT));
-			//TinyVisualRichText* ps10 = static_cast<TinyVisualRichText*>(m_fs->Create(50, 320, 250, 250, m_spvisWindow, TinyVisualTag::RICHTEXT));
-			TinyVisualImageView* ps11 = static_cast<TinyVisualImageView*>(m_fs->Create(50, 50, 812, 100, m_spvisWindow, TinyVisualTag::IMAGEVIEW));
-
+			TinyVisualRichText* ps10 = static_cast<TinyVisualRichText*>(m_fs->Create(50, 320, 250, 250, m_spvisWindow, TinyVisualTag::RICHTEXT));
 			return TRUE;
 		}
 		void TinyVisualDocument::Uninitialize()

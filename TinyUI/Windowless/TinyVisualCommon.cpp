@@ -22,7 +22,6 @@ namespace TinyUI
 		const TinyString TinyVisualTag::BUTTON = TEXT("button");
 		const TinyString TinyVisualTag::LABEL = TEXT("label");
 		const TinyString TinyVisualTag::LIST = TEXT("list");
-		const TinyString TinyVisualTag::IMAGEVIEW = TEXT("imageview");
 		const TinyString TinyVisualTag::LISTBOX = TEXT("listbox");
 		const TinyString TinyVisualTag::TOOLBAR = TEXT("toolbar");
 		const TinyString TinyVisualTag::TREEVIEW = TEXT("treeview");
