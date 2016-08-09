@@ -1079,6 +1079,13 @@ private:\
 	class ScopedVariant
 	{
 		DISALLOW_COPY_AND_ASSIGN(ScopedVariant);
+	public:
+		ScopedVariant();
+		~ScopedVariant();
+		void Reset();
+		operator const VARIANT&() const throw();
+		VARIANT* operator->();
+		VARIANT* operator&() throw();
 	protected:
 		VARIANT m_var;
 	};

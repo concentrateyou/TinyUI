@@ -1,10 +1,10 @@
 #pragma once
 #include "Render/TinyGDI.h"
-#include "VideoCaptureDevice.h"
 #include <string>
 using namespace std;
+using namespace TinyUI;
 
-namespace VideoCapture
+namespace Media
 {
 	enum VideoPixelFormat
 	{

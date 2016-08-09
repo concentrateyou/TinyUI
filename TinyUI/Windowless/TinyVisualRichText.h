@@ -19,9 +19,10 @@ namespace TinyUI
 			virtual ~TinyVisualRichText();
 			TinyString RetrieveTag() const OVERRIDE;
 		public:
-			BOOL		SetReadonly(BOOL bFlag);
-			BOOL		SetText(LPCSTR pzText);
-			TinyString	GetText() const;
+			BOOL SetReadonly(BOOL bReadOnly);
+			BOOL SetMultiline(BOOL bMultiline);
+			BOOL SetPassword(BOOL bPassword, CHAR s);
+			BOOL ShowScrollBar(INT bar, BOOL fShow);
 		protected:
 			BOOL	OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT OnCreate() OVERRIDE;
@@ -39,9 +40,6 @@ namespace TinyUI
 			BOOL	OnFilter(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult) OVERRIDE;
 		public:
 			virtual void OnPosChange(BOOL, INT, INT, INT);
-
-			
-
 		private:
 			TinyTextHost			m_texthost;
 			TinyVisualHScrollBar*	m_hscroll;

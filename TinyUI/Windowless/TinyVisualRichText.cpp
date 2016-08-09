@@ -14,9 +14,27 @@ namespace TinyUI
 			m_hscroll(NULL),
 			m_vscroll(NULL)
 		{
-
 		}
-
+		BOOL TinyVisualRichText::SetReadonly(BOOL fReadOnly)
+		{
+			ASSERT(m_texthost.m_ts);
+			return m_texthost.SetReadonly(fReadOnly);
+		}
+		BOOL TinyVisualRichText::SetMultiline(BOOL fMultiline)
+		{
+			ASSERT(m_texthost.m_ts);
+			return m_texthost.SetMultiline(fMultiline);
+		}
+		BOOL TinyVisualRichText::SetPassword(BOOL fPassword, CHAR s)
+		{
+			ASSERT(m_texthost.m_ts);
+			return m_texthost.SetPassword(fPassword, s);
+		}
+		BOOL TinyVisualRichText::ShowScrollBar(INT bar, BOOL fShow)
+		{
+			ASSERT(m_texthost.m_ts);
+			return m_texthost.ShowScrollBar(bar, fShow);
+		}
 		HRESULT TinyVisualRichText::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)
 		{
 			ASSERT(m_texthost.m_ts);
@@ -41,7 +59,6 @@ namespace TinyUI
 			m_document->GetVisualHWND()->SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
 			return lRes;
 		}
-
 		HRESULT TinyVisualRichText::OnLButtonUp(const TinyPoint& pos, DWORD dwFlags)
 		{
 			ASSERT(m_texthost.m_ts);
@@ -50,7 +67,6 @@ namespace TinyUI
 			m_document->GetVisualHWND()->SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
 			return lRes;
 		}
-
 		HRESULT TinyVisualRichText::OnKeyDown(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags)
 		{
 			ASSERT(m_texthost.m_ts);
@@ -59,7 +75,6 @@ namespace TinyUI
 			m_document->GetVisualHWND()->SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
 			return lRes;
 		}
-
 		HRESULT TinyVisualRichText::OnKeyUp(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags)
 		{
 			ASSERT(m_texthost.m_ts);
@@ -68,7 +83,6 @@ namespace TinyUI
 			m_document->GetVisualHWND()->SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
 			return lRes;
 		}
-
 		HRESULT TinyVisualRichText::OnChar(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags)
 		{
 			ASSERT(m_texthost.m_ts);
@@ -77,7 +91,6 @@ namespace TinyUI
 			m_document->GetVisualHWND()->SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
 			return lRes;
 		}
-
 		HRESULT TinyVisualRichText::OnSetCursor(HWND hWND, DWORD dwHitTest, DWORD dwMessage)
 		{
 			ASSERT(m_texthost.m_ts);
@@ -94,7 +107,6 @@ namespace TinyUI
 			}
 			return TRUE;
 		}
-
 		HRESULT	TinyVisualRichText::OnFocus(BOOL bFlag)
 		{
 			ASSERT(m_texthost.m_ts);
@@ -113,13 +125,11 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-
 		HRESULT TinyVisualRichText::SendMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes)
 		{
 			ASSERT(m_texthost.m_ts);
 			return m_texthost.m_ts->TxSendMessage(uMsg, wParam, lParam, &lRes);
 		}
-
 		TinyVisualRichText::~TinyVisualRichText()
 		{
 
@@ -128,7 +138,6 @@ namespace TinyUI
 		{
 			return TinyVisualTag::RICHTEXT;
 		}
-
 		BOOL TinyVisualRichText::OnFilter(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
 		{
 			if (uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST)
@@ -145,13 +154,13 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-
 		BOOL TinyVisualRichText::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
 			ASSERT(m_texthost.m_ts);
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			::SetGraphicsMode(canvas, GM_COMPATIBLE);
-			TinyRectangle clip = GetWindowRect();
+			TinyRectangle clip;
+			m_texthost.TxGetClientRect(&clip);
 			m_texthost.m_ts->TxDraw(DVASPECT_CONTENT, 0, NULL, NULL, canvas, NULL, reinterpret_cast<LPCRECTL>(&clip), NULL, reinterpret_cast<LPRECT>(&clip), NULL, 0, 0);
 			return TRUE;
 		}
@@ -178,7 +187,6 @@ namespace TinyUI
 			m_document->GetVisualHWND()->RemoveFilter(this);
 			return S_OK;
 		}
-
 		void TinyVisualRichText::OnPosChange(BOOL bVer, INT code, INT iOldPos, INT iNewPos)
 		{
 			ASSERT(m_texthost.m_ts);
@@ -186,20 +194,24 @@ namespace TinyUI
 			{
 				LRESULT lRes = 0;
 				m_texthost.m_ts->TxSendMessage(WM_VSCROLL, MAKEWPARAM(code, iNewPos), 0, &lRes);
+				LONG lPos = 0;
+				m_texthost.m_ts->TxGetVScroll(NULL, NULL, &lPos, NULL, NULL);
+				if (lPos != m_vscroll->GetScrollPos())
+				{
+					m_vscroll->SetScrollPos(lPos);
+				}
 			}
 			else
 			{
 				LRESULT lRes = 0;
 				m_texthost.m_ts->TxSendMessage(WM_HSCROLL, MAKEWPARAM(code, iNewPos), 0, &lRes);
+				LONG lPos = 0;
+				m_texthost.m_ts->TxGetHScroll(NULL, NULL, &lPos, NULL, NULL);
+				if (lPos != m_hscroll->GetScrollPos())
+				{
+					m_hscroll->SetScrollPos(lPos);
+				}
 			}
-		}
-
-
-
-		BOOL TinyVisualRichText::SetReadonly(BOOL bFlag)
-		{
-			ASSERT(m_texthost.m_ts);
-			return FALSE;
 		}
 	}
 }

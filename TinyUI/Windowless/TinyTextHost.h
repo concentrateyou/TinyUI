@@ -27,6 +27,11 @@ namespace TinyUI
 		public:
 			BOOL Initialize(TinyVisualRichText* spvis);
 			BOOL UpdateView();
+			BOOL SetReadonly(BOOL fReadOnly);
+			BOOL SetMultiline(BOOL fMultiline);
+			BOOL SetPassword(BOOL fPassword, CHAR s);
+			BOOL SetWordWrap(BOOL fWarp);
+			BOOL ShowScrollBar(INT bar, BOOL fShow);
 		public:
 			HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject);
 			ULONG STDMETHODCALLTYPE AddRef(void);
@@ -81,6 +86,8 @@ namespace TinyUI
 			CHARFORMATW					m_cf;
 			PARAFORMAT					m_pf;
 			TinyRectangle				m_rectangle;
+			DWORD						m_dwStyle;
+			CHAR						m_password;
 		};
 	}
 }

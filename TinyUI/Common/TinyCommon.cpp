@@ -58,4 +58,28 @@ namespace TinyUI
 		return this->m_cRef;
 	}
 	//////////////////////////////////////////////////////////////////////////
+	ScopedVariant::ScopedVariant()
+	{
+		VariantInit(&m_var);
+	}
+	ScopedVariant::~ScopedVariant()
+	{
+		VariantClear(&m_var);
+	}
+	void ScopedVariant::Reset()
+	{
+		VariantClear(&m_var);
+	}
+	ScopedVariant::operator const VARIANT&() const throw()
+	{
+		return m_var;
+	}
+	VARIANT* ScopedVariant::operator->()
+	{
+		return &m_var;
+	}
+	VARIANT* ScopedVariant::operator&()
+	{
+		return &m_var;
+	}
 };

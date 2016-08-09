@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 
-namespace VideoCapture
+namespace Media
 {
 	class FilterObserver
 	{

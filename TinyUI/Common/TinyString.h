@@ -3,6 +3,7 @@
 #include "TinyCollection.h"
 #include <string>
 #include <vector>
+using namespace std;
 
 namespace TinyUI
 {
@@ -33,27 +34,31 @@ namespace TinyUI
 	/// <summary>
 	/// 宽字节字符创到多字节字符串
 	/// </summary>
-	std::string WStringToString(const std::wstring str, const DWORD dwType = CP_ACP);
+	string WStringToString(const wstring str, const DWORD dwType = CP_ACP);
 	/// <summary>
 	/// 多字节字符串打到宽字节字符串
 	/// </summary>
-	std::wstring StringToWString(const std::string str, const DWORD dwType = CP_ACP);
+	wstring StringToWString(const string str, const DWORD dwType = CP_ACP);
+	/// <summary>
+	/// 宽字节字符创到多字节字符串
+	/// </summary>
+	string WStringToUTF8(const wstring str);
 	/// <summary>
 	/// ASCII转UTF8
 	/// </summary>
-	std::string ASCIIToUTF8(const std::string str);
+	string ASCIIToUTF8(const string str);
 	/// <summary>
 	/// UTF8转ASCII
 	/// </summary>
-	std::string UTF8ToASCII(const std::string str);
+	string UTF8ToASCII(const string str);
 	/// <summary>
 	/// UTF8转UTF16
 	/// </summary>
-	std::wstring UTF8ToUTF16(const std::string& s);
+	wstring UTF8ToUTF16(const string& s);
 	/// <summary>
 	/// UTF16转UTF8
 	/// </summary>
-	std::string UTF16ToUTF8(const std::wstring& wide);
+	string UTF16ToUTF8(const wstring& wide);
 	/// <summary>
 	/// 转小写CHAR
 	/// </summary>

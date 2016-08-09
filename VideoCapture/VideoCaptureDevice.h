@@ -7,10 +7,13 @@
 #include <strmif.h>
 #include <uuids.h>
 #include <string>
-using namespace TinyUI;
+#include <vector>
+#include "FilterBase.h"
+#include "FilterObserver.h"
 using namespace std;
+using namespace TinyUI;
 
-namespace VideoCapture
+namespace Media
 {
 	class ScopedMediaType
 	{
@@ -33,6 +36,18 @@ namespace VideoCapture
 		explicit VideoCaptureDevice(const string& name);
 		virtual ~VideoCaptureDevice();
 		BOOL Initialize();
+	public:
+		class Name
+		{
+		public:
+			Name(const string& name, const string& id);
+			~Name();
+			const string& name() const;
+			const string& id() const;
+		private:
+			string	m_name;
+			string	m_id;
+		};
 	private:
 		enum InternalState
 		{
@@ -40,16 +55,16 @@ namespace VideoCapture
 			Capturing, //视频采集中
 			Error //出错
 		};
-		static BOOL GetDeviceFilter(const string& name, IBaseFilter** filter);
-		static BOOL PinMatchesCategory(IPin* pin, REFGUID category);
+		static BOOL GetDevices(vector<Name>& names);
+		static BOOL GetDeviceFilter(const Name& name, IBaseFilter** filter);
+		static BOOL GetCategory(IPin* pin, REFGUID category);
 		static TinyComPtr<IPin> GetPin(IBaseFilter* filter, PIN_DIRECTION pin_dir, REFGUID category);
-		static VideoPixelFormat TranslateMediaSubtypeToPixelFormat(const GUID& sub_type);
+		static VideoPixelFormat TranslateMediaSubtypeToPixelFormat(const GUID& subType);
+
 	private:
 		TinyComPtr<IBaseFilter>		m_captureFilter;
 		TinyComPtr<IGraphBuilder>	m_graph;
 		InternalState				m_state;
 		VideoCaptureFormat			m_vcf;
-	private:
-
 	};
 }

@@ -47,21 +47,25 @@ namespace TinyUI
 	}
 	std::string WStringToString(const std::wstring str, const DWORD dwType)
 	{
-		int nMultiByteLenght = WideCharToMultiByte(dwType, 0, str.c_str(), -1, NULL, 0, NULL, NULL);
-		char* pMultiByteBuffer = new char[nMultiByteLenght];
-		nMultiByteLenght = WideCharToMultiByte(dwType, 0, str.c_str(), -1, pMultiByteBuffer, nMultiByteLenght, NULL, NULL);
-		std::string sRet = pMultiByteBuffer;
-		delete[] pMultiByteBuffer;
-		return sRet;
+		INT size = WideCharToMultiByte(dwType, 0, str.c_str(), -1, NULL, 0, NULL, NULL);
+		CHAR* data = new CHAR[size];
+		size = WideCharToMultiByte(dwType, 0, str.c_str(), -1, data, size, NULL, NULL);
+		std::string s = data;
+		delete[] data;
+		return s;
 	}
 	std::wstring StringToWString(const std::string str, const DWORD dwType)
 	{
-		int nWideCharLenght = MultiByteToWideChar(dwType, 0, str.c_str(), -1, NULL, 0);
-		wchar_t* pWideCharBuffer = new wchar_t[nWideCharLenght];
-		nWideCharLenght = MultiByteToWideChar(dwType, 0, str.c_str(), -1, pWideCharBuffer, nWideCharLenght);
-		std::wstring sRet = pWideCharBuffer;
-		delete[] pWideCharBuffer;
-		return sRet;
+		INT size = MultiByteToWideChar(dwType, 0, str.c_str(), -1, NULL, 0);
+		WCHAR* data = new WCHAR[size];
+		size = MultiByteToWideChar(dwType, 0, str.c_str(), -1, data, size);
+		std::wstring s = data;
+		delete[] data;
+		return s;
+	}
+	std::string WStringToUTF8(const std::wstring str)
+	{
+		return WStringToString(str, CP_UTF8);
 	}
 	std::string ASCIIToUTF8(const std::string str)
 	{

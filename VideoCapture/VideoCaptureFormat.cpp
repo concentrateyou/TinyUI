@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "VideoCaptureFormat.h"
+#include "VideoCaptureDevice.h"
 
-namespace VideoCapture
+namespace Media
 {
 	VideoCaptureFormat::VideoCaptureFormat()
 		:m_rate(0.0F), m_vpf(PIXEL_FORMAT_UNKNOWN)
