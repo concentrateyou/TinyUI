@@ -55,6 +55,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>..\TinyUI;..\Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Strmiids.lib;Quartz.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -83,8 +84,11 @@
     <ClInclude Include="PinBase.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TaskRunner.h" />
+    <ClInclude Include="TypeEnumerator.h" />
+    <ClInclude Include="VideoCaptureCapability.h" />
     <ClInclude Include="VideoCaptureDevice.h" />
-    <ClInclude Include="VideoCaptureFormat.h" />
+    <ClInclude Include="VideoCaptureParam.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FilterBase.cpp" />
@@ -94,8 +98,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TaskRunner.cpp" />
+    <ClCompile Include="TypeEnumerator.cpp" />
+    <ClCompile Include="VideoCaptureCapability.cpp" />
     <ClCompile Include="VideoCaptureDevice.cpp" />
-    <ClCompile Include="VideoCaptureFormat.cpp" />
+    <ClCompile Include="VideoCaptureParam.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TinyUI\TinyUI.vcxproj">

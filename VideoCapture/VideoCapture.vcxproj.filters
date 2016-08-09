@@ -33,10 +33,19 @@
     <ClInclude Include="PinBase.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="VideoCaptureFormat.h">
+    <ClInclude Include="FilterObserver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="FilterObserver.h">
+    <ClInclude Include="VideoCaptureParam.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoCaptureCapability.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskRunner.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeEnumerator.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -53,10 +62,19 @@
     <ClCompile Include="PinBase.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="VideoCaptureFormat.cpp">
+    <ClCompile Include="FilterObserver.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="FilterObserver.cpp">
+    <ClCompile Include="VideoCaptureParam.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoCaptureCapability.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TaskRunner.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TypeEnumerator.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

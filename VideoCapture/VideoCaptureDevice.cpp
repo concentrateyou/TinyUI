@@ -1,6 +1,7 @@
 #include "stdafx.h"
-#include "VideoCaptureDevice.h"
+#include <algorithm>
 #include "Common/TinyString.h"
+#include "VideoCaptureDevice.h"
 
 namespace Media
 {
@@ -70,18 +71,89 @@ namespace Media
 	{
 		return m_id;
 	}
-	VideoCaptureDevice::VideoCaptureDevice(const string& name)
-
+	VideoCaptureDevice::VideoCaptureDevice()
+		:m_state(Idle)
 	{
 
 	}
 	VideoCaptureDevice::~VideoCaptureDevice()
 	{
-
+		if (m_mediaControl)
+		{
+			m_mediaControl->Stop();
+		}
 	}
-	BOOL VideoCaptureDevice::Initialize()
+	BOOL VideoCaptureDevice::Initialize(const Name& name)
 	{
-		return TRUE;
+		m_currentName = name;
+		if (!GetDeviceFilter(m_currentName, &m_captureFilter))
+			return FALSE;
+		m_capturePin = GetPin(m_captureFilter, PINDIR_OUTPUT, PIN_CATEGORY_CAPTURE);
+		if (!m_capturePin)
+			return FALSE;
+		HRESULT hRes = m_graphBuilder.CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER);
+		if (FAILED(hRes))
+			return FALSE;
+		hRes = m_graphBuilder->QueryInterface(&m_mediaControl);
+		if (FAILED(hRes))
+			return FALSE;
+		hRes = m_graphBuilder->AddFilter(m_captureFilter, NULL);
+		if (FAILED(hRes))
+			return FALSE;
+		return CreateCapabilityMap();
+	}
+	BOOL VideoCaptureDevice::CreateCapabilityMap()
+	{
+		ASSERT(m_captureFilter);
+		ASSERT(m_capturePin);
+		TinyComPtr<IAMStreamConfig> streamConfig;
+		HRESULT hRes = m_capturePin->QueryInterface(&streamConfig);
+		if (FAILED(hRes))
+			return FALSE;
+		TinyComPtr<IAMVideoControl> videoControl;
+		hRes = m_captureFilter->QueryInterface(&videoControl);
+		if (FAILED(hRes))
+			return FALSE;
+		INT count = 0;
+		INT size = 0;
+		hRes = streamConfig->GetNumberOfCapabilities(&count, &size);
+		if (FAILED(hRes))
+			return FALSE;
+		TinyScopedArray<BYTE> caps(new BYTE[size]);
+		for (INT i = 0; i < count; ++i)
+		{
+			ScopedMediaType mediaType;
+			hRes = streamConfig->GetStreamCaps(i, mediaType.Receive(), caps.Ptr());
+			if (hRes != S_OK)
+				return FALSE;
+			if (mediaType->majortype == MEDIATYPE_Video && mediaType->formattype == FORMAT_VideoInfo)
+			{
+				VideoCaptureCapability capability(i);
+				capability.Parameter.SetFormat(TranslateMediaSubtypeToPixelFormat(mediaType->subtype));
+				if (capability.Parameter.GetFormat() == PIXEL_FORMAT_UNKNOWN)
+					continue;
+				VIDEOINFOHEADER* h = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
+				capability.Parameter.SetSize(h->bmiHeader.biWidth, h->bmiHeader.biHeight);
+				REFERENCE_TIME avgTimePerFrame = h->AvgTimePerFrame;
+				if (videoControl)
+				{
+					LONGLONG* rate = NULL;
+					LONG listsize = 0;
+					SIZE size = capability.Parameter.GetSize();
+					hRes = videoControl->GetFrameRateList(m_capturePin, i, size, &listsize, &rate);
+					if (hRes == S_OK && listsize > 0 && rate)
+					{
+						avgTimePerFrame = *std::min_element(rate, rate + listsize);
+						CoTaskMemFree(rate);
+					}
+				}
+				capability.Parameter.SetRate((avgTimePerFrame > 0) ? (10000000 / static_cast<FLOAT>(avgTimePerFrame)) : 0.0);
+				capability.RateNumerator = capability.Parameter.GetRate();
+				capability.RateDenominator = 1;
+				m_capabilitys.push_back(capability);
+			}
+		}
+		return !m_capabilitys.empty();
 	}
 	BOOL VideoCaptureDevice::GetDevices(vector<Name>& names)
 	{
@@ -115,7 +187,7 @@ namespace Media
 			{
 				const WCHAR* str = V_BSTR(&variant);
 				string id;
-				string name(WStringToUTF8(str));
+				string name(WStringToString(str));
 				variant.Reset();
 				hRes = propertyBag->Read(L"DevicePath", &variant, 0);
 				if (FAILED(hRes) || variant->vt != VT_BSTR)
@@ -124,12 +196,13 @@ namespace Media
 				}
 				else
 				{
-					id = WStringToUTF8(V_BSTR(&variant));
+					id = WStringToString(V_BSTR(&variant));
 				}
 				names.push_back(Name(name, id));
 			}
 			moniker.Release();
 		}
+		return TRUE;
 	}
 	BOOL VideoCaptureDevice::GetDeviceFilter(const Name& name, IBaseFilter** ps)
 	{
@@ -139,7 +212,7 @@ namespace Media
 			return FALSE;
 		TinyComPtr<IEnumMoniker> enumMoniker;
 		hRes = dev->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &enumMoniker, 0);
-		if (hRes != S_OK)
+		if (FAILED(hRes))
 			return FALSE;
 		TinyComPtr<IMoniker> moniker;
 		DWORD fetched = 0;
@@ -159,18 +232,20 @@ namespace Media
 				L"FriendlyName"
 			};
 			ScopedVariant variant;
-			for (size_t i = 0; i < arraysize(PropertyNames) && variant->vt != VT_BSTR; ++i)
+			for (INT i = 0; i < ARRAYSIZE(PropertyNames) && variant->vt != VT_BSTR; ++i)
 			{
 				propertyBag->Read(PropertyNames[i], &variant, 0);
 			}
 			if (variant->vt == VT_BSTR)
 			{
-				string device = UTF16ToUTF8(V_BSTR(variant));
-				if (device.compare(name.name()) == 0)
+				string device = WStringToString(V_BSTR(variant));
+				if (device.compare(name.id()) == 0)
 				{
-					hRes = moniker->BindToObject(0, 0, IID_IBaseFilter, (void**)&ps);
-					if (SUCCEEDED(hRes) && ps)
+					IBaseFilter* captureFilter = NULL;
+					hRes = moniker->BindToObject(0, 0, IID_IBaseFilter, (void**)&captureFilter);
+					if (SUCCEEDED(hRes) && captureFilter)
 					{
+						*ps = captureFilter;
 						return TRUE;
 					}
 				}
@@ -178,11 +253,12 @@ namespace Media
 		}
 		return FALSE;
 	}
-	BOOL VideoCaptureDevice::GetCategory(IPin* pin, REFGUID category)
+	BOOL VideoCaptureDevice::GetPinCategory(IPin* pPin, REFGUID category)
 	{
+		ASSERT(pPin);
 		BOOL bFlag = FALSE;
 		TinyComPtr<IKsPropertySet> ksProperty;
-		HRESULT hRes = ksProperty->QueryInterface(&pin);
+		HRESULT hRes = pPin->QueryInterface(&ksProperty);
 		if (SUCCEEDED(hRes))
 		{
 			GUID category1;
@@ -195,22 +271,26 @@ namespace Media
 		}
 		return bFlag;
 	}
-	TinyComPtr<IPin> VideoCaptureDevice::GetPin(IBaseFilter* filter, PIN_DIRECTION pinDIR, REFGUID category)
+	TinyComPtr<IPin> VideoCaptureDevice::GetPin(IBaseFilter* pFilter, PIN_DIRECTION dest, REFGUID category)
 	{
+		ASSERT(pFilter);
 		TinyComPtr<IPin> pin;
 		TinyComPtr<IEnumPins> enumPins;
-		HRESULT hRes = filter->EnumPins(&enumPins);
-		if (enumPins == NULL)
-			return pin;
-		hRes = enumPins->Reset();
-		while ((hRes = enumPins->Next(1, &pin, NULL)) == S_OK)
+		if (FAILED(pFilter->EnumPins(&enumPins)) || !enumPins)
 		{
-			PIN_DIRECTION pd = static_cast<PIN_DIRECTION>(-1);
-			hRes = pin->QueryDirection(&pd);
-			if (pinDIR == pd)
+			return pin;
+		}
+		enumPins->Reset();
+		while (enumPins->Next(1, &pin, NULL) == S_OK)
+		{
+			PIN_DIRECTION src = static_cast<PIN_DIRECTION>(-1);
+			if (SUCCEEDED(pin->QueryDirection(&src)) && dest == src)
 			{
-				if (category == GUID_NULL || GetCategory(pin, category))
+				if (category == GUID_NULL ||
+					GetPinCategory(pin, category))
+				{
 					return pin;
+				}
 			}
 			pin.Release();
 		}
@@ -243,5 +323,51 @@ namespace Media
 		StringFromGUID2(subType, str, arraysize(str));
 		TRACE("%s", UTF16ToUTF8(str).c_str());
 		return PIXEL_FORMAT_UNKNOWN;
+	}
+	BOOL VideoCaptureDevice::GetDeviceParams(const VideoCaptureDevice::Name& device, vector<VideoCaptureParam>& params)
+	{
+		TinyComPtr<ICreateDevEnum> devEnum;
+		HRESULT hRes = devEnum.CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC);
+		if (FAILED(hRes))
+			return FALSE;
+		TinyComPtr<IEnumMoniker> enumMoniker;
+		hRes = devEnum->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &enumMoniker, 0);
+		if (FAILED(hRes))
+			return FALSE;
+		TinyComPtr<IBaseFilter> captureFilter;
+		if (!GetDeviceFilter(device, &captureFilter))
+			return FALSE;
+		TinyComPtr<IPin> outputPin(GetPin(captureFilter, PINDIR_OUTPUT, PIN_CATEGORY_CAPTURE));
+		if (!outputPin)
+			return FALSE;
+		TinyComPtr<IAMStreamConfig> streamConfig;
+		hRes = outputPin->QueryInterface(&streamConfig);
+		if (FAILED(hRes))
+			return FALSE;
+		INT iCount = 0;
+		INT iSize = 0;
+		hRes = streamConfig->GetNumberOfCapabilities(&iCount, &iSize);
+		if (FAILED(hRes))
+			return FALSE;
+		TinyScopedArray<BYTE> caps(new BYTE[iSize]);
+		for (INT i = 0; i < iCount; ++i)
+		{
+			ScopedMediaType mediaType;
+			hRes = streamConfig->GetStreamCaps(i, mediaType.Receive(), caps.Ptr());
+			if (FAILED(hRes))
+				return FALSE;
+			if (mediaType->majortype == MEDIATYPE_Video &&mediaType->formattype == FORMAT_VideoInfo)
+			{
+				VideoCaptureParam param;
+				param.SetFormat(TranslateMediaSubtypeToPixelFormat(mediaType->subtype));
+				if (param.GetFormat() == PIXEL_FORMAT_UNKNOWN)
+					continue;
+				VIDEOINFOHEADER* h = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
+				param.SetSize(h->bmiHeader.biWidth, h->bmiHeader.biHeight);
+				param.SetRate((h->AvgTimePerFrame > 0) ? 10000000 / static_cast<FLOAT>(h->AvgTimePerFrame) : 0.0F);
+				params.push_back(param);
+			}
+		}
+		return TRUE;
 	}
 }

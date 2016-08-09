@@ -47,16 +47,23 @@ namespace Media
 
 	const int FrameRatePrecision = 10000;
 
-	class  VideoCaptureFormat
+	class  VideoCaptureParam
 	{
 	public:
-		VideoCaptureFormat();
-		VideoCaptureFormat(const TinySize& size, FLOAT rate, VideoPixelFormat vpf);
-		static string PixelFormatToString(VideoPixelFormat format);
+		VideoCaptureParam();
+		VideoCaptureParam(const TinySize& size, FLOAT rate, VideoPixelFormat vpf);
 		BOOL IsValid() const;
+		void SetFormat(VideoPixelFormat vpf);
+		void SetSize(const TinySize& size);
+		void SetSize(INT cx, INT cy);
+		void SetRate(FLOAT rate);
+		const TinySize& GetSize() const;
+		FLOAT	GetRate() const;
+		VideoPixelFormat GetFormat() const;
+		static string PixelFormatToString(VideoPixelFormat format);
 	private:
-		TinySize	m_size;
-		FLOAT		m_rate;
+		FLOAT			 m_rate;
+		TinySize		 m_size;
 		VideoPixelFormat m_vpf;
 	};
 }

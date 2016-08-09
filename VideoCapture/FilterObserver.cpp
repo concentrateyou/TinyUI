@@ -1,7 +1,10 @@
 #include "stdafx.h"
 #include "FilterObserver.h"
 
-namespace VideoCapture
+namespace Media
 {
-	
+	FilterObserver::~FilterObserver()
+	{
+
+	}
 }

@@ -1,15 +1,16 @@
 #pragma once
 #include "Common/TinyCommon.h"
-#include "FilterBase.h"
-#include "FilterObserver.h"
-#include "VideoCaptureFormat.h"
 #include <dshow.h>
 #include <strmif.h>
 #include <uuids.h>
 #include <string>
+#include <list>
 #include <vector>
 #include "FilterBase.h"
 #include "FilterObserver.h"
+#include "FilterObserver.h"
+#include "VideoCaptureParam.h"
+#include "VideoCaptureCapability.h"
 using namespace std;
 using namespace TinyUI;
 
@@ -27,19 +28,18 @@ namespace Media
 		void Release();
 		AM_MEDIA_TYPE* m_mediaType;
 	};
+	extern GUID MediaSubTypeI420;
+	extern GUID MediaSubTypeHDYC;
 	/// <summary>
 	/// 视频捕获设备
 	/// </summary>
 	class VideoCaptureDevice : public FilterObserver
 	{
 	public:
-		explicit VideoCaptureDevice(const string& name);
-		virtual ~VideoCaptureDevice();
-		BOOL Initialize();
-	public:
 		class Name
 		{
 		public:
+			Name();
 			Name(const string& name, const string& id);
 			~Name();
 			const string& name() const;
@@ -48,6 +48,16 @@ namespace Media
 			string	m_name;
 			string	m_id;
 		};
+	public:
+		explicit VideoCaptureDevice();
+		virtual ~VideoCaptureDevice();
+		BOOL Initialize(const Name& name);
+		virtual void Allocate(const VideoCaptureParam& params);
+		virtual void DeAllocate();
+	public:
+		static BOOL GetDevices(vector<Name>& names);
+		static BOOL GetDeviceParams(const VideoCaptureDevice::Name& device, vector<VideoCaptureParam>& formats);
+		static BOOL GetDeviceFilter(const Name& name, IBaseFilter** filter);
 	private:
 		enum InternalState
 		{
@@ -55,16 +65,20 @@ namespace Media
 			Capturing, //视频采集中
 			Error //出错
 		};
-		static BOOL GetDevices(vector<Name>& names);
-		static BOOL GetDeviceFilter(const Name& name, IBaseFilter** filter);
-		static BOOL GetCategory(IPin* pin, REFGUID category);
+		static BOOL GetPinCategory(IPin* pin, REFGUID category);
 		static TinyComPtr<IPin> GetPin(IBaseFilter* filter, PIN_DIRECTION pin_dir, REFGUID category);
 		static VideoPixelFormat TranslateMediaSubtypeToPixelFormat(const GUID& subType);
-
 	private:
-		TinyComPtr<IBaseFilter>		m_captureFilter;
-		TinyComPtr<IGraphBuilder>	m_graph;
-		InternalState				m_state;
-		VideoCaptureFormat			m_vcf;
+		BOOL CreateCapabilityMap();
+	private:
+		Name							m_currentName;
+		VideoCaptureParam				m_currentParam;
+		list<VideoCaptureCapability>	m_capabilitys;
+		TinyComPtr<IBaseFilter>			m_captureFilter;
+		TinyComPtr<IGraphBuilder>		m_graphBuilder;
+		TinyComPtr<IMediaControl>		m_mediaControl;
+		TinyComPtr<IPin>				m_capturePin;
+		InternalState					m_state;
+		VideoCaptureParam				m_vcf;
 	};
 }

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "MainFrame.h"
-
+#include "VideoCaptureDevice.h"
+using namespace Media;
 
 CMainFrame::CMainFrame()
 {
@@ -50,7 +51,15 @@ HICON CMainFrame::RetrieveIcon()
 LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	m_inject.Create(m_hWND, 10, 10, 100, 25);
+
+	vector<VideoCaptureDevice::Name> names;
+	VideoCaptureDevice::GetDevices(names);
+	vector<VideoCaptureParam> params;
+	VideoCaptureDevice::GetDeviceParams(names[0], params);
+
+
+
+	/*m_inject.Create(m_hWND, 10, 10, 100, 25);
 	m_inject.SetText("×¢Èëµ½War3");
 	m_onInjectClick.Reset(new Delegate<void(void*, INT)>(this, &CMainFrame::OnInjectLibrary));
 	m_inject.Click += m_onInjectClick;
@@ -64,7 +73,7 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 	m_cf.crTextColor = RGB(0, 114, 193);
 	m_cf.yHeight = 180;
 	strcpy(m_cf.szFaceName, _T("Î¢ÈíÑÅºÚ"));
-	m_drawCtrl.Create(m_hWND, 10, 40, 400, 400);
+	m_drawCtrl.Create(m_hWND, 10, 40, 400, 400);*/
 	return FALSE;
 }
 
