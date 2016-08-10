@@ -475,7 +475,7 @@ namespace TinyUI
 		void operator+=(SIZE size) throw();
 		void operator-=(SIZE size) throw();
 		void SetSize(INT CX, INT CY) throw();
-		BOOL IsEmpty() throw();
+		BOOL IsEmpty() const throw();
 		TinySize operator+(SIZE size) const throw();
 		TinySize operator-(SIZE size) const throw();
 		TinySize operator-() const throw();
@@ -500,7 +500,7 @@ namespace TinyUI
 		void Offset(POINT point) throw();
 		void Offset(SIZE size) throw();
 		void SetPoint(INT X, INT Y) throw();
-
+		BOOL IsEmpty() const throw();
 		BOOL operator==(POINT point) const throw();
 		BOOL operator!=(POINT point) const throw();
 		void operator+=(SIZE size) throw();

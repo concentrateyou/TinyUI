@@ -18,100 +18,33 @@ namespace TinyUI
 			m_pWindow(pWindow)
 		{
 			ASSERT(m_pWindow);
+			m_fs.Reset(new TinyVisualFactory(this));
 		}
 		TinyVisualDocument::~TinyVisualDocument()
 		{
 
 		}
+		template<typename T>
+		T*	 TinyVisualDocument::Create(INT x, INT y, INT cx, INT cy, TinyVisual* spvisParent)
+		{
+			ASSERT(m_fs);
+			COMPILE_ASSERT((std::is_convertible<T*, TinyUI::Windowless::TinyVisual*>::value), T_must_implicitly_convert_to_TinyVisual);
+			return m_fs->Create<T>(x, y, cx, cy, spvisParent);
+		}
+		BOOL TinyVisualDocument::Destory(TinyVisual* spvis)
+		{
+			ASSERT(m_fs);
+			return m_fs->Destory(spvis);
+		}
 		BOOL TinyVisualDocument::Initialize()
 		{
-			m_fs.Reset(new TinyVisualFactory(this));
-
 			m_spvisWindow = new TinyVisualWindow(NULL, this);
 			m_spvisWindow->SetName("Window");
-			m_spvisWindow->SetStyleImage(NORMAL, "D:\\image.png");
-
-			/*TinyVisual* ps1 = m_fs->Create(10, 10, 300, 30, m_spvisWindow, TinyVisualTag::CAPTION);
-			ps1->SetName("Caption-1");
-
-			TinyVisual* ps5 = m_fs->Create(10, 0, 200, 30, ps1, TinyVisualTag::CAPTION);
-			ps5->SetName("Caption-1-2");
-
-			TinyVisual* ps2 = m_fs->Create(0, 0, 30, 30, ps5, TinyVisualTag::BUTTON);
-			ps2->SetName("Min-1");
-			ps2->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\sysbutton\\btn_mini_normal.png");
-			ps2->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\sysbutton\\btn_mini_highlight.png");
-			ps2->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\sysbutton\\btn_mini_down.png");
-
-
-			TinyVisual* ps3 = m_fs->Create(30, 0, 30, 30, ps5, TinyVisualTag::BUTTON);
-			ps3->SetName("Max-1");
-			ps3->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\sysbutton\\btn_max_normal.png");
-			ps3->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\sysbutton\\btn_max_highlight.png");
-			ps3->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\sysbutton\\btn_max_down.png");
-
-			TinyVisual* ps4 = m_fs->Create(60, 0, 30, 30, ps5, TinyVisualTag::BUTTON);
-			ps4->SetName("Close-1");
-			ps4->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\sysbutton\\btn_close_normal.png");
-			ps4->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\sysbutton\\btn_close_highlight.png");
-			ps4->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\sysbutton\\btn_close_down.png");*/
-
-			/*	TinyVisualVScrollBar* ps6 = static_cast<TinyVisualVScrollBar*>(m_fs->Create(50, 40, 12, 400, m_spvisWindow, TinyVisualTag::VSCROLLBAR));
-				ps6->SetName("TinyVisualVScrollBar");
-				ps6->SetScrollInfo(0, 400, 100, 0);*/
-
-			//TinyVisualHScrollBar* ps7 = static_cast<TinyVisualHScrollBar*>(m_fs->Create(50, 80, 400, 12, m_spvisWindow, TinyVisualTag::HSCROLLBAR));
-			//ps7->SetName("TinyVisualHScrollBar");
-			//ps7->SetScrollInfo(0, 400, 100, 0);
-
-			/*TinyVisualList* ps6 = static_cast<TinyVisualList*>(m_fs->Create(300, 40, 400, 300, m_spvisWindow, TinyVisualTag::LIST));
-			ps6->SetName("LIST-1");
-			ps6->SetText("LIST-1");
-			INT pos = 0;
-			for (INT i = 0; i < 500; i++)
-			{
-			TinyVisual* spvis = m_fs->Create(30, pos, 90, 30, ps6, TinyVisualTag::BUTTON);
-			TinyString str;
-			str = str.Format("BUTTON-%d", i);
-			spvis->SetName(str.STR());
-			spvis->SetText(str.STR());
-			spvis->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\button\\blue_normal.png");
-			spvis->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\button\\blue_hover.png");
-			spvis->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\button\\blue_down.png");
-			pos += 32;
-			}
-			ps6->SetScrollInfo(0, pos, 300, 0);*/
-			//TinyVisualList* ps7 = static_cast<TinyVisualList*>(m_fs->Create(0, pos, 300, 150, ps6, TinyVisualTag::LIST));
-			//INT pos1 = 0;
-			//for (INT i = 0; i < 10; i++)
-			//{
-			//	TinyVisual* spvis = m_fs->Create(30, pos1, 90, 30, ps7, TinyVisualTag::BUTTON);
-			//	TinyString str;
-			//	str = str.Format("BUTTON-%d", i);
-			//	spvis->SetName(str.STR());
-			//	spvis->SetText(str.STR());
-			//	spvis->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\button\\blue_normal.png");
-			//	spvis->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\button\\blue_hover.png");
-			//	spvis->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\button\\blue_down.png");
-			//	pos1 += 32;
-			//}
-			//ps7->SetScrollInfo(0, pos1, 150, 0);
-			//ps7->SetName("LIST-2");
-			//ps7->SetText("LIST-2");
-			//ps6->SetScrollInfo(0, pos + 150, 300, 0);
-			TinyVisualRichText* ps9 = static_cast<TinyVisualRichText*>(m_fs->Create(50, 50, 250, 250, m_spvisWindow, TinyVisualTag::RICHTEXT));
-			ps9->ShowScrollBar(SB_VERT, TRUE);
-			TinyVisualRichText* ps10 = static_cast<TinyVisualRichText*>(m_fs->Create(50, 320, 250, 250, m_spvisWindow, TinyVisualTag::RICHTEXT));
-			ps10->ShowScrollBar(SB_VERT, TRUE);
 			return TRUE;
 		}
 		void TinyVisualDocument::Uninitialize()
 		{
-			m_fs->Destory(m_spvisWindow);
-		}
-		TinyVisualFactory*	TinyVisualDocument::GetFactory()
-		{
-			return m_fs;
+			Destory(m_spvisWindow);
 		}
 		TinyVisualHWND*	TinyVisualDocument::GetVisualHWND() const
 		{
@@ -760,6 +693,43 @@ namespace TinyUI
 			SetFocus(NULL);
 			return FALSE;
 		}
+		TinyVisualDocument::TinyVisualFactory::TinyVisualFactory(TinyVisualDocument* document)
+			:m_document(document)
+		{
+
+		}
+		template<typename T>
+		T* TinyVisualDocument::TinyVisualFactory::Create(INT x, INT y, INT cx, INT cy, TinyVisual* spvisParent)
+		{
+			ASSERT(m_document);
+			TinyVisual* spvis = new T(spvisParent, m_document);
+			spvis->SetPosition(TinyPoint(x, y));
+			spvis->SetSize(TinySize(cx, cy));
+			m_document->SetParent(spvis, spvisParent);
+			spvis->OnCreate();
+			return static_cast<T*>(spvis);
+		}
+		BOOL TinyVisualDocument::TinyVisualFactory::Destory(TinyVisual* spvis)
+		{
+			ASSERT(m_document);
+			if (!spvis) return FALSE;
+			TinyVisual* spvisNext = NULL;
+			TinyVisual* spvisChild = NULL;
+			spvisChild = spvis->m_spvisChild;
+			while (spvisChild != NULL)
+			{
+				spvisNext = spvisChild->m_spvisNext;
+				Destory(spvisChild);
+				spvisChild = spvisNext;
+			}
+			if (spvis->m_spvisParent)
+			{
+				m_document->UnlinkVisual(spvis, &(spvis->m_spvisParent->m_spvisChild));
+			}
+			spvis->OnDestory();
+			SAFE_DELETE(spvis);
+			return TRUE;
+		}
 #ifdef _DEBUG
 		void TinyVisualDocument::Dump()
 		{
@@ -800,6 +770,5 @@ namespace TinyUI
 			}
 		}
 #endif // _DEBUG
-
 	}
 }

@@ -1,6 +1,5 @@
 #include "../stdafx.h"
 #include "TinyVisualDocument.h"
-#include "TinyVisualManage.h"
 #include "TinyVisualList.h"
 
 namespace TinyUI
@@ -28,7 +27,8 @@ namespace TinyUI
 		{
 			ASSERT(m_document);
 			TinySize size = this->GetSize();
-			m_scrollbar = static_cast<TinyVisualVScrollBar*>(m_document->GetFactory()->Create(size.cx - 12, 0, 12, size.cy, this, TinyVisualTag::VSCROLLBAR));
+			//m_scrollbar = m_document->Create<TinyVisualDocument>(size.cx - 12, 0, 12, size.cy, this);
+			m_document->Create<TinyVisualDocument>(size.cx - 12, 0, 12, size.cy, this);
 			m_onPosChange.Reset(new Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualList::OnPosChange));
 			m_scrollbar->EVENT_PosChange += m_onPosChange;
 			return TinyVisual::OnCreate();

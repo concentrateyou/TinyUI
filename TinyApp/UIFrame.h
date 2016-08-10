@@ -1,7 +1,7 @@
 #pragma once
 #include "Common/TinyModule.h"
 #include "Windowless/TinyVisualHWND.h"
-#include "VideoCaptureDevice.h"
+#include "VideoCapture.h"
 using namespace TinyUI;
 
 class CUIFrame : public TinyControl
@@ -25,6 +25,6 @@ public:
 	//·½·¨
 	BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 private:
-	Media::VideoCaptureDevice m_device;
+	Media::VideoCapture m_device;
 };
 

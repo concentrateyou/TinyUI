@@ -54,14 +54,15 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	WSAStartup(MAKEWORD(2, 2), &wsd);
 	HRESULT hRes = OleInitialize(NULL);
 
+
 	LoadSeDebugPrivilege();
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	/*TinyUI::Windowless::TinyVisualHWND uiImpl;*/
-	CUIFrame uiImpl;
+	TinyUI::Windowless::TinyVisualHWND uiImpl;
+	//CUIFrame uiImpl;
 	uiImpl.Create(NULL, 50, 50, 1024, 640);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();

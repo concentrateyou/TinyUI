@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "MainFrame.h"
-#include "VideoCaptureDevice.h"
+#include "VideoCapture.h"
 using namespace Media;
 
 CMainFrame::CMainFrame()
@@ -52,10 +52,10 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 {
 	bHandled = FALSE;
 
-	vector<VideoCaptureDevice::Name> names;
-	VideoCaptureDevice::GetDevices(names);
+	vector<VideoCapture::Name> names;
+	VideoCapture::GetDevices(names);
 	vector<VideoCaptureParam> params;
-	VideoCaptureDevice::GetDeviceParams(names[0], params);
+	VideoCapture::GetDeviceParams(names[0], params);
 
 
 
@@ -100,13 +100,13 @@ void CMainFrame::OnInjectLibrary(void*, INT)
 {
 	RECT rect;
 	::GetClientRect(m_drawCtrl, &rect);
-	if (m_videoCapture.Initialize(m_drawCtrl, TO_CX(rect), TO_CY(rect)))
+	/*if (m_videoCapture.Initialize(m_drawCtrl, TO_CX(rect), TO_CY(rect)))
 	{
 		m_lblState.SetText("初始化成功!");
 	}
 	else
 	{
 		m_lblState.SetText("初始化失败!");
-	}
+	}*/
 }
 

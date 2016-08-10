@@ -51,9 +51,6 @@
     <ClInclude Include="SharedTextureCapture.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="VideoCapture.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="D3D10PixelShader.h">
       <Filter>头文件\D3D10</Filter>
     </ClInclude>
@@ -99,9 +96,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="SharedTextureCapture.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="VideoCapture.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="D3D10PixelShader.cpp">

@@ -10,7 +10,7 @@ namespace TinyUI
 		/// </summary>
 		class TinyVisualCaption : public TinyVisual
 		{
-			friend class TinyVisualFactory;
+			friend class TinyVisualDocument;
 			DECLARE_DYNAMIC(TinyVisualCaption);
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualCaption);
 		protected:

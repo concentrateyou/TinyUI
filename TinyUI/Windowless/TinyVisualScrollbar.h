@@ -27,7 +27,7 @@ namespace TinyUI
 		/// </summary>
 		class TinyVisualHScrollBar : public TinyVisual
 		{
-			friend class TinyVisualFactory;
+			friend class TinyVisualDocument;
 			DECLARE_DYNAMIC(TinyVisualHScrollBar);
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualHScrollBar);
 		protected:

@@ -167,11 +167,11 @@ namespace TinyUI
 		HRESULT TinyVisualRichText::OnCreate()
 		{
 			TinySize size = this->GetSize();
-			m_hscroll = static_cast<TinyVisualHScrollBar*>(m_document->GetFactory()->Create(0, size.cy - 12, size.cx, 12, this, TinyVisualTag::HSCROLLBAR));
+			m_hscroll = m_document->Create<TinyVisualHScrollBar>(0, size.cy - 12, size.cx, 12, this);
 			m_onPosChange.Reset(new Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualRichText::OnPosChange));
 			m_hscroll->EVENT_PosChange += m_onPosChange;
 			m_hscroll->SetVisible(FALSE);
-			m_vscroll = static_cast<TinyVisualVScrollBar*>(m_document->GetFactory()->Create(size.cx - 12, 0, 12, size.cy, this, TinyVisualTag::VSCROLLBAR));
+			m_vscroll = m_document->Create<TinyVisualVScrollBar>(size.cx - 12, 0, 12, size.cy, this);
 			m_onPosChange.Reset(new Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualRichText::OnPosChange));
 			m_vscroll->EVENT_PosChange += m_onPosChange;
 			m_vscroll->SetVisible(FALSE);

@@ -9,7 +9,7 @@ namespace TinyUI
 	{
 		class TinyVisualRichText : public TinyVisual, public TinyVisualFilter
 		{
-			friend class TinyVisualFactory;
+			friend class TinyVisualDocument;
 			friend class TinyTextHost;
 			DECLARE_DYNAMIC(TinyVisualRichText);
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualRichText);

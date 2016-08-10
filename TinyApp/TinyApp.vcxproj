@@ -103,7 +103,6 @@
     <ClInclude Include="TinyApp.h" />
     <ClInclude Include="UIFrame.h" />
     <ClInclude Include="Vector2D.h" />
-    <ClInclude Include="VideoCapture.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D3D10PixelShader.cpp" />
@@ -123,7 +122,6 @@
     </ClCompile>
     <ClCompile Include="TinyApp.cpp" />
     <ClCompile Include="UIFrame.cpp" />
-    <ClCompile Include="VideoCapture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TinyApp.rc" />

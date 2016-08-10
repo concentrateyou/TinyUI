@@ -23,9 +23,9 @@ namespace Media
 		AM_MEDIA_TYPE* m_mediaType;
 	};
 	/// <summary>
-	/// 视频捕获设备
+	/// 视频捕获
 	/// </summary>
-	class VideoCaptureDevice : public FilterObserver
+	class VideoCapture : public FilterObserver
 	{
 	public:
 		class Name
@@ -42,15 +42,15 @@ namespace Media
 		};
 		void OnFrameReceive(const BYTE* data, INT size) OVERRIDE;
 	public:
-		explicit VideoCaptureDevice();
-		virtual ~VideoCaptureDevice();
+		explicit VideoCapture();
+		virtual ~VideoCapture();
 		BOOL Initialize(const Name& name);
 		void Uninitialize();
 		virtual BOOL Allocate(const VideoCaptureParam& param);
 		virtual void DeAllocate();
 	public:
 		static BOOL GetDevices(vector<Name>& names);
-		static BOOL GetDeviceParams(const VideoCaptureDevice::Name& device, vector<VideoCaptureParam>& formats);
+		static BOOL GetDeviceParams(const VideoCapture::Name& device, vector<VideoCaptureParam>& formats);
 		static BOOL GetDeviceFilter(const Name& name, IBaseFilter** filter);
 	private:
 		enum InternalState

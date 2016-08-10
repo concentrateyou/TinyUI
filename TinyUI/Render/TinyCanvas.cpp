@@ -133,10 +133,7 @@ namespace TinyUI
 	{
 		m_hDC = hDC;
 		m_iSave = SaveDC(m_hDC);
-		BOOL res = SetGraphicsMode(m_hDC, GM_ADVANCED);
-		res = SetBkMode(m_hDC, TRANSPARENT);
-		if (!res) return FALSE;
-		res = GetWorldTransform(m_hDC, &m_matrix);
+		BOOL res = GetWorldTransform(m_hDC, &m_matrix);
 		if (!res) return FALSE;
 		m_hPEN = (HPEN)GetCurrentObject(m_hDC, OBJ_PEN);
 		m_hBRUSH = (HBRUSH)GetCurrentObject(m_hDC, OBJ_BRUSH);

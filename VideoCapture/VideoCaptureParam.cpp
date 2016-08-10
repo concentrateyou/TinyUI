@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "VideoCaptureParam.h"
-#include "VideoCaptureDevice.h"
+#include "VideoCapture.h"
 
 namespace Media
 {

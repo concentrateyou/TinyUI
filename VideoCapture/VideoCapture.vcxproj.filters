@@ -24,9 +24,6 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="VideoCaptureDevice.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="FilterBase.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -60,12 +57,12 @@
     <ClInclude Include="VideoCommon.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="VideoCapture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="VideoCaptureDevice.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="FilterBase.cpp">
@@ -99,6 +96,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="VideoCommon.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoCapture.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

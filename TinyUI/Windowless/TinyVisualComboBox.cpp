@@ -28,7 +28,7 @@ namespace TinyUI
 		HRESULT	TinyVisualComboBox::OnCreate()
 		{
 			TinySize size = this->GetSize();
-			m_input = static_cast<TinyVisualButton*>(m_document->GetFactory()->Create(size.cx - 19, (size.cy - 18) / 2, 19, 18, this, TinyVisualTag::BUTTON));
+			m_input = m_document->Create<TinyVisualButton>(size.cx - 19, (size.cy - 18) / 2, 19, 18, this);
 			m_input->SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\combobox\\inputbtn_down.png");
 			m_input->SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\combobox\\inputbtn_normal.png");
 			m_input->SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\combobox\\inputbtn_highlight.png");
@@ -38,7 +38,7 @@ namespace TinyUI
 			SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\combobox\\combobox_down.png");
 			SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\combobox\\combobox_normal.png");
 			SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\combobox\\combobox_hover.png");
-
+			m_dropdown.Create(NULL, 0, 0, 0, 0);
 			return TinyVisual::OnCreate();
 		}
 		HRESULT TinyVisualComboBox::OnDestory()
@@ -49,7 +49,10 @@ namespace TinyUI
 
 		void TinyVisualComboBox::OnInputClick(EventArgs& args)
 		{
-
+			POINT pos;
+			GetCursorPos(&pos);
+			ScreenToClient(this->Handle(), &pos);
+			m_dropdown.SetPosition(pos, TinySize(100, 100));
 		}
 	}
 }

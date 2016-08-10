@@ -174,7 +174,7 @@ namespace TinyUI
 		{
 			return m_images[(INT)type].Load(pzFile);
 		}
-		BOOL TinyVisual::SetStyleImage(StyleImage type, BYTE*	ps, DWORD dwSize)
+		BOOL TinyVisual::SetStyleImage(StyleImage type, BYTE* ps, DWORD dwSize)
 		{
 			return m_images[(INT)type].Load(ps, dwSize);
 		}

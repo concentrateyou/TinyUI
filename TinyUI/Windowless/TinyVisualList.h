@@ -11,7 +11,7 @@ namespace TinyUI
 		/// </summary>
 		class TinyVisualList : public TinyVisual
 		{
-			friend class TinyVisualFactory;
+			friend class TinyVisualDocument;
 			DECLARE_DYNAMIC(TinyVisualList);
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualList);
 		protected:

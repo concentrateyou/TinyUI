@@ -11,7 +11,7 @@ namespace TinyUI
 			DECLARE_DYNAMIC(TinyVisualWindow);
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualWindow);
 		protected:
-			TinyVisualWindow(TinyVisual* spvisParent, TinyVisualDocument* vtree);
+			TinyVisualWindow(TinyVisual* spvisParent, TinyVisualDocument* document);
 		public:
 			virtual ~TinyVisualWindow();
 		public:

@@ -90,7 +90,7 @@
     <ClInclude Include="TaskRunner.h" />
     <ClInclude Include="TypeEnumerator.h" />
     <ClInclude Include="VideoCaptureCapability.h" />
-    <ClInclude Include="VideoCaptureDevice.h" />
+    <ClInclude Include="VideoCapture.h" />
     <ClInclude Include="VideoCaptureParam.h" />
     <ClInclude Include="VideoCommon.h" />
   </ItemGroup>
@@ -108,7 +108,7 @@
     <ClCompile Include="TaskRunner.cpp" />
     <ClCompile Include="TypeEnumerator.cpp" />
     <ClCompile Include="VideoCaptureCapability.cpp" />
-    <ClCompile Include="VideoCaptureDevice.cpp" />
+    <ClCompile Include="VideoCapture.cpp" />
     <ClCompile Include="VideoCaptureParam.cpp" />
     <ClCompile Include="VideoCommon.cpp" />
   </ItemGroup>

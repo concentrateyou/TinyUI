@@ -31,10 +31,12 @@ namespace TinyUI
 		public:
 			TinyVisualDocument(TinyVisualHWND* pv);
 			~TinyVisualDocument();
+			virtual BOOL	Initialize();
+			virtual void	Uninitialize();
 		public:
-			BOOL				Initialize();
-			void				Uninitialize();
-			TinyVisualFactory*	GetFactory();
+			template<typename T>
+			T*		Create(INT x, INT y, INT cx, INT cy, TinyVisual* spvisParent);
+			BOOL	Destory(TinyVisual* spvis);
 		public:
 			HWND			Handle() const;
 			TinyVisualHWND*	GetVisualHWND() const;
@@ -88,6 +90,21 @@ namespace TinyUI
 			TinyVisual*		GetPrevVisual(TinyVisual* spvisList, TinyVisual* spvisFind) const;
 			void			Draw(TinyVisualCacheDC* ps, const RECT& rcPaint);
 			void			Draw(TinyVisual* spvis, HDC hDC, const RECT& rcPaint);
+		private:
+			class TinyVisualFactory
+			{
+				friend class TinyVisual;
+				friend class TinyVisualDocument;
+				DISALLOW_COPY_AND_ASSIGN(TinyVisualFactory);
+			private:
+				TinyVisualFactory(TinyVisualDocument* vtree);
+			public:
+				template<typename T>
+				T*		Create(INT x, INT y, INT cx, INT cy, TinyVisual* spvisParent);
+				BOOL	Destory(TinyVisual* spvis);
+			private:
+				TinyVisualDocument* m_document;
+			};
 		protected:
 			TinyVisual*							m_spvisWindow;//¸ù½Úµã
 			TinyVisual*							m_spvisCapture;

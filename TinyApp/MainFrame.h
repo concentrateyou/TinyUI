@@ -42,6 +42,6 @@ protected:
 	CD3DDrawPanel		m_drawCtrl;
 	CHARFORMAT2			m_cf;
 	TinyScopedPtr<Delegate<void(void*, INT)>> m_onInjectClick;
-	CVideoCapture		m_videoCapture;
+	//CVideoCapture		m_videoCapture;
 };
 

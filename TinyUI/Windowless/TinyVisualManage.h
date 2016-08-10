@@ -10,24 +10,8 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		class TinyVisualFactory;
+
 		class TinyVisualDocument;
-		/// <summary>
-		/// Visual工厂类
-		/// </summary>
-		class TinyVisualFactory
-		{
-			friend class TinyVisual;
-			friend class TinyVisualDocument;
-			DISALLOW_COPY_AND_ASSIGN(TinyVisualFactory);
-		private:
-			TinyVisualFactory(TinyVisualDocument* vtree);
-		public:
-			TinyVisual* Create(INT x, INT y, INT cx, INT cy, TinyVisual* spvisParent, const TinyString& tag);
-			BOOL		Destory(TinyVisual* spvis);
-		private:
-			TinyVisualDocument* m_document;
-		};
 		/// <summary>
 		/// 可视化元素管理
 		/// </summary>

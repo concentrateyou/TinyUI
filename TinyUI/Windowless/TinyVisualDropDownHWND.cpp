@@ -17,7 +17,7 @@ namespace TinyUI
 		}
 		DWORD TinyVisualDropDownHWND::RetrieveStyle()
 		{
-			return (WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_OVERLAPPEDWINDOW & ~WS_CAPTION);
+			return (WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP & ~WS_CAPTION);
 		}
 		DWORD TinyVisualDropDownHWND::RetrieveExStyle()
 		{
@@ -35,11 +35,18 @@ namespace TinyUI
 		{
 			return NULL;
 		}
-
+		BOOL TinyVisualDropDownHWND::SetPosition(const TinyPoint& pos, const TinySize& size)
+		{
+			BOOL bRes = ::SetWindowPos(m_hWND, HWND_TOPMOST, pos.x, pos.y, size.cx, size.cy, SWP_SHOWWINDOW);
+			::SetActiveWindow(m_hWND);
+			return bRes;
+		}
 		LRESULT TinyVisualDropDownHWND::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
-			return TinyVisualHWND::OnCreate(uMsg, wParam, lParam, bHandled);
+			LRESULT lRes = TinyVisualHWND::OnCreate(uMsg, wParam, lParam, bHandled);
+			
+			return lRes;
 		}
 
 		LRESULT TinyVisualDropDownHWND::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -52,6 +59,16 @@ namespace TinyUI
 		{
 			bHandled = FALSE;
 			return TinyControl::OnDestory(uMsg, wParam, lParam, bHandled);
+		}
+
+		LRESULT TinyVisualDropDownHWND::OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			if (LOWORD(wParam) == WA_INACTIVE)
+			{
+				//ShowWindow(SW_HIDE);
+			}
+			return FALSE;
 		}
 	}
 }

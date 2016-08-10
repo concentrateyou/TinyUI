@@ -1904,7 +1904,7 @@ namespace TinyUI
 	{
 		cx = CX; cy = CY;
 	}
-	BOOL TinySize::IsEmpty() throw()
+	BOOL TinySize::IsEmpty() const throw()
 	{
 		return cx == 0 && cy == 0;
 	}
@@ -1976,6 +1976,10 @@ namespace TinyUI
 	void TinyPoint::SetPoint(INT X, INT Y) throw()
 	{
 		x = X; y = Y;
+	}
+	BOOL TinyPoint::IsEmpty() const throw()
+	{
+		return x == 0 && y == 0;
 	}
 	BOOL TinyPoint::operator==(POINT point) const throw()
 	{

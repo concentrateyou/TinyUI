@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "VideoCaptureDevice.h"
+#include "VideoCapture.h"
 #include <ks.h>
 #include <ksmedia.h>
 
@@ -45,44 +45,44 @@ namespace Media
 		return &m_mediaType;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	VideoCaptureDevice::Name::Name()
+	VideoCapture::Name::Name()
 	{
 
 	}
-	VideoCaptureDevice::Name::Name(const string& name, const string& id)
+	VideoCapture::Name::Name(const string& name, const string& id)
 		:m_name(name),
 		m_id(id)
 	{
 
 	}
-	VideoCaptureDevice::Name::~Name()
+	VideoCapture::Name::~Name()
 	{
 
 	}
-	const string& VideoCaptureDevice::Name::name() const
+	const string& VideoCapture::Name::name() const
 	{
 		return m_name;
 	}
-	const string& VideoCaptureDevice::Name::id() const
+	const string& VideoCapture::Name::id() const
 	{
 		return m_id;
 	}
 
-	void VideoCaptureDevice::OnFrameReceive(const BYTE* data, INT size)
+	void VideoCapture::OnFrameReceive(const BYTE* data, INT size)
 	{
 
 	}
 
-	VideoCaptureDevice::VideoCaptureDevice()
+	VideoCapture::VideoCapture()
 		:m_state(Idle)
 	{
 
 	}
-	VideoCaptureDevice::~VideoCaptureDevice()
+	VideoCapture::~VideoCapture()
 	{
 		Uninitialize();
 	}
-	BOOL VideoCaptureDevice::Initialize(const Name& name)
+	BOOL VideoCapture::Initialize(const Name& name)
 	{
 		m_currentName = name;
 		if (!GetDeviceFilter(m_currentName, &m_captureFilter))
@@ -108,7 +108,7 @@ namespace Media
 			return FALSE;
 		return TRUE;
 	}
-	void VideoCaptureDevice::Uninitialize()
+	void VideoCapture::Uninitialize()
 	{
 		DeAllocate();
 		if (m_mediaControl)
@@ -123,7 +123,7 @@ namespace Media
 			m_graphBuilder.Release();
 		}
 	}
-	BOOL VideoCaptureDevice::Allocate(const VideoCaptureParam& param)
+	BOOL VideoCapture::Allocate(const VideoCaptureParam& param)
 	{
 		TinyComPtr<IAMStreamConfig> streamConfig;
 		HRESULT hRes = m_captureConnector->QueryInterface(&streamConfig);
@@ -146,6 +146,7 @@ namespace Media
 				VIDEOINFOHEADER* h = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
 				if (param.GetFormat() == TranslateMediaSubtypeToPixelFormat(mediaType->subtype) && param.GetSize() == TinySize(h->bmiHeader.biWidth, h->bmiHeader.biHeight))
 				{
+					SetAntiFlickerInCaptureFilter();
 					m_sinkFilter->SetRequestedParam(param);
 					hRes = m_graphBuilder->ConnectDirect(m_captureConnector, m_sinkConnector, NULL);
 					if (hRes != S_OK)
@@ -163,7 +164,7 @@ namespace Media
 		}
 		return FALSE;
 	}
-	void VideoCaptureDevice::DeAllocate()
+	void VideoCapture::DeAllocate()
 	{
 		if (m_graphBuilder)
 		{
@@ -172,7 +173,7 @@ namespace Media
 		}
 		m_state = Idle;
 	}
-	BOOL VideoCaptureDevice::CreateCapabilityMap()
+	BOOL VideoCapture::CreateCapabilityMap()
 	{
 		return TRUE;
 		/*ASSERT(m_captureFilter);
@@ -226,7 +227,7 @@ namespace Media
 		}
 		return !m_capabilitys.empty();*/
 	}
-	BOOL VideoCaptureDevice::GetDevices(vector<Name>& names)
+	BOOL VideoCapture::GetDevices(vector<Name>& names)
 	{
 		TinyComPtr<ICreateDevEnum> devEnum;
 		HRESULT hRes = devEnum.CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC);
@@ -275,7 +276,7 @@ namespace Media
 		}
 		return TRUE;
 	}
-	BOOL VideoCaptureDevice::GetDeviceFilter(const Name& name, IBaseFilter** ps)
+	BOOL VideoCapture::GetDeviceFilter(const Name& name, IBaseFilter** ps)
 	{
 		TinyComPtr<ICreateDevEnum> dev;
 		HRESULT hRes = dev.CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC);
@@ -324,7 +325,7 @@ namespace Media
 		}
 		return FALSE;
 	}
-	BOOL VideoCaptureDevice::GetPinCategory(IPin* pPin, REFGUID category)
+	BOOL VideoCapture::GetPinCategory(IPin* pPin, REFGUID category)
 	{
 		ASSERT(pPin);
 		BOOL bFlag = FALSE;
@@ -342,7 +343,7 @@ namespace Media
 		}
 		return bFlag;
 	}
-	TinyComPtr<IPin> VideoCaptureDevice::GetPin(IBaseFilter* pFilter, PIN_DIRECTION dest, REFGUID category)
+	TinyComPtr<IPin> VideoCapture::GetPin(IBaseFilter* pFilter, PIN_DIRECTION dest, REFGUID category)
 	{
 		ASSERT(pFilter);
 		TinyComPtr<IPin> pin;
@@ -366,7 +367,7 @@ namespace Media
 		}
 		return pin;
 	}
-	VideoPixelFormat VideoCaptureDevice::TranslateMediaSubtypeToPixelFormat(const GUID& subType)
+	VideoPixelFormat VideoCapture::TranslateMediaSubtypeToPixelFormat(const GUID& subType)
 	{
 		static struct
 		{
@@ -394,7 +395,7 @@ namespace Media
 		TRACE("%s", UTF16ToUTF8(str).c_str());
 		return PIXEL_FORMAT_UNKNOWN;
 	}
-	void VideoCaptureDevice::SetAntiFlickerInCaptureFilter()
+	void VideoCapture::SetAntiFlickerInCaptureFilter()
 	{
 		ASSERT(m_captureFilter);
 		TinyComPtr<IKsPropertySet> ksPropset;
@@ -413,7 +414,7 @@ namespace Media
 			hRes = ksPropset->Set(PROPSETID_VIDCAP_VIDEOPROCAMP, KSPROPERTY_VIDEOPROCAMP_POWERLINE_FREQUENCY, &data, sizeof(data), &data, sizeof(data));
 		}
 	}
-	BOOL VideoCaptureDevice::GetDeviceParams(const VideoCaptureDevice::Name& device, vector<VideoCaptureParam>& params)
+	BOOL VideoCapture::GetDeviceParams(const VideoCapture::Name& device, vector<VideoCaptureParam>& params)
 	{
 		TinyComPtr<ICreateDevEnum> devEnum;
 		HRESULT hRes = devEnum.CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC);

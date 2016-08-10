@@ -1,5 +1,6 @@
 #pragma once
 #include "TinyVisualButton.h"
+#include "TinyVisualDropDownHWND.h"
 
 namespace TinyUI
 {
@@ -10,7 +11,7 @@ namespace TinyUI
 		/// </summary>
 		class TinyVisualComboBox : public TinyVisual
 		{
-			friend class TinyVisualFactory;
+			friend class TinyVisualDocument;
 			DECLARE_DYNAMIC(TinyVisualComboBox);
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualComboBox);
 		protected:
@@ -26,7 +27,8 @@ namespace TinyUI
 			void OnInputClick(EventArgs& args);
 		private:
 			TinyScopedPtr<Delegate<void(EventArgs&)>> m_onClick;
-			TinyVisualButton*				m_input;
+			TinyVisualButton*	m_input;
+			TinyVisualDropDownHWND m_dropdown;
 		};
 	}
 }
