@@ -48,6 +48,18 @@
     <ClInclude Include="TypeEnumerator.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="PinEnumerator.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SinkInputPin.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SinkFilter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoCommon.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -75,6 +87,18 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="TypeEnumerator.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PinEnumerator.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SinkInputPin.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SinkFilter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoCommon.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -82,6 +82,9 @@
     <ClInclude Include="FilterBase.h" />
     <ClInclude Include="FilterObserver.h" />
     <ClInclude Include="PinBase.h" />
+    <ClInclude Include="PinEnumerator.h" />
+    <ClInclude Include="SinkFilter.h" />
+    <ClInclude Include="SinkInputPin.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TaskRunner.h" />
@@ -89,11 +92,15 @@
     <ClInclude Include="VideoCaptureCapability.h" />
     <ClInclude Include="VideoCaptureDevice.h" />
     <ClInclude Include="VideoCaptureParam.h" />
+    <ClInclude Include="VideoCommon.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FilterBase.cpp" />
     <ClCompile Include="FilterObserver.cpp" />
     <ClCompile Include="PinBase.cpp" />
+    <ClCompile Include="PinEnumerator.cpp" />
+    <ClCompile Include="SinkFilter.cpp" />
+    <ClCompile Include="SinkInputPin.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -103,6 +110,7 @@
     <ClCompile Include="VideoCaptureCapability.cpp" />
     <ClCompile Include="VideoCaptureDevice.cpp" />
     <ClCompile Include="VideoCaptureParam.cpp" />
+    <ClCompile Include="VideoCommon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TinyUI\TinyUI.vcxproj">

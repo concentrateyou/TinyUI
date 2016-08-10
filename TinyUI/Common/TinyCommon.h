@@ -923,10 +923,12 @@ private:\
 	public:
 		T* m_myP;
 	public:
-		TinyComPtr(T* s = NULL) throw();
-		TinyComPtr(const TinyComPtr<T>& s) throw();
-		TinyComPtr(TinyComPtr<T>&& s) throw();
+		TinyComPtr(T* myP = NULL) throw();
+		TinyComPtr(const TinyComPtr<T>& myP) throw();
+		TinyComPtr(TinyComPtr<T>&& myP) throw();
 		~TinyComPtr() throw();
+		void Attach(T* myP) throw();
+		T* Detach() throw();
 		void Release() throw();
 		operator T*() const throw();
 		T** operator&() throw();
@@ -941,7 +943,7 @@ private:\
 		HRESULT CoCreateInstance(LPCOLESTR szProgID, LPUNKNOWN pUnkOuter = NULL, DWORD dwClsContext = CLSCTX_ALL);
 		HRESULT QueryInterface(T** myPP) const throw();
 	private:
-		static IUnknown*  ComPtrAssign(IUnknown** pp, IUnknown* lp);
+		static IUnknown* ComPtrAssign(IUnknown** pp, IUnknown* lp);
 	};
 	template<class T>
 	TinyComPtr<T>::TinyComPtr(T* lp) throw()
@@ -969,6 +971,18 @@ private:\
 			m_myP->Release();
 			m_myP = NULL;
 		}
+	}
+	template<class T>
+	void TinyComPtr<T>::Attach(T* myP) throw()
+	{
+		this->m_myP = myP;
+	}
+	template<class T>
+	T* TinyComPtr<T>::Detach() throw()
+	{
+		T* ps = this->m_myP;
+		this->m_myP = NULL;
+		return ps;
 	}
 	template<class T>
 	void TinyComPtr<T>::Release() throw()
@@ -1011,7 +1025,7 @@ private:\
 	{
 		if (*this != lp)
 		{
-			return static_cast<T*>ComPtrAssign((IUnknown**)&m_myP, lp);
+			return static_cast<T*>(ComPtrAssign((IUnknown**)&m_myP, lp));
 		}
 		return *this;
 	}
@@ -1020,7 +1034,7 @@ private:\
 	{
 		if (*this != lp)
 		{
-			return static_cast<T*>ComPtrAssign((IUnknown**)&m_myP, lp.p);
+			return static_cast<T*>(ComPtrAssign((IUnknown**)&m_myP, lp.p));
 		}
 		return *this;
 	}

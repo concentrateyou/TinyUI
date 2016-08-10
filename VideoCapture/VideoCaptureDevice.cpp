@@ -1,18 +1,10 @@
 #include "stdafx.h"
-#include <algorithm>
-#include "Common/TinyString.h"
 #include "VideoCaptureDevice.h"
+#include <ks.h>
+#include <ksmedia.h>
 
 namespace Media
 {
-	GUID MediaSubTypeI420 =
-	{
-		0x30323449, 0x0000, 0x0010, { 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71 }
-	};
-	GUID MediaSubTypeHDYC =
-	{
-		0x43594448, 0x0000, 0x0010, { 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71 }
-	};
 	ScopedMediaType::ScopedMediaType()
 		:m_mediaType(NULL)
 	{
@@ -53,6 +45,10 @@ namespace Media
 		return &m_mediaType;
 	}
 	//////////////////////////////////////////////////////////////////////////
+	VideoCaptureDevice::Name::Name()
+	{
+
+	}
 	VideoCaptureDevice::Name::Name(const string& name, const string& id)
 		:m_name(name),
 		m_id(id)
@@ -71,6 +67,12 @@ namespace Media
 	{
 		return m_id;
 	}
+
+	void VideoCaptureDevice::OnFrameReceive(const BYTE* data, INT size)
+	{
+
+	}
+
 	VideoCaptureDevice::VideoCaptureDevice()
 		:m_state(Idle)
 	{
@@ -78,19 +80,20 @@ namespace Media
 	}
 	VideoCaptureDevice::~VideoCaptureDevice()
 	{
-		if (m_mediaControl)
-		{
-			m_mediaControl->Stop();
-		}
+		Uninitialize();
 	}
 	BOOL VideoCaptureDevice::Initialize(const Name& name)
 	{
 		m_currentName = name;
 		if (!GetDeviceFilter(m_currentName, &m_captureFilter))
 			return FALSE;
-		m_capturePin = GetPin(m_captureFilter, PINDIR_OUTPUT, PIN_CATEGORY_CAPTURE);
-		if (!m_capturePin)
+		m_captureConnector = GetPin(m_captureFilter, PINDIR_OUTPUT, PIN_CATEGORY_CAPTURE);
+		if (!m_captureConnector)
 			return FALSE;
+		m_sinkFilter = new SinkFilter(this);
+		if (!m_sinkFilter)
+			return FALSE;
+		m_sinkConnector = m_sinkFilter->GetPin(0);
 		HRESULT hRes = m_graphBuilder.CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER);
 		if (FAILED(hRes))
 			return FALSE;
@@ -100,18 +103,30 @@ namespace Media
 		hRes = m_graphBuilder->AddFilter(m_captureFilter, NULL);
 		if (FAILED(hRes))
 			return FALSE;
-		return CreateCapabilityMap();
-	}
-	BOOL VideoCaptureDevice::CreateCapabilityMap()
-	{
-		ASSERT(m_captureFilter);
-		ASSERT(m_capturePin);
-		TinyComPtr<IAMStreamConfig> streamConfig;
-		HRESULT hRes = m_capturePin->QueryInterface(&streamConfig);
+		hRes = m_graphBuilder->AddFilter(m_sinkFilter, NULL);
 		if (FAILED(hRes))
 			return FALSE;
-		TinyComPtr<IAMVideoControl> videoControl;
-		hRes = m_captureFilter->QueryInterface(&videoControl);
+		return TRUE;
+	}
+	void VideoCaptureDevice::Uninitialize()
+	{
+		DeAllocate();
+		if (m_mediaControl)
+		{
+			m_mediaControl->Stop();
+			m_mediaControl.Release();
+		}
+		if (m_graphBuilder)
+		{
+			m_graphBuilder->RemoveFilter(m_sinkFilter);
+			m_graphBuilder->RemoveFilter(m_captureFilter);
+			m_graphBuilder.Release();
+		}
+	}
+	BOOL VideoCaptureDevice::Allocate(const VideoCaptureParam& param)
+	{
+		TinyComPtr<IAMStreamConfig> streamConfig;
+		HRESULT hRes = m_captureConnector->QueryInterface(&streamConfig);
 		if (FAILED(hRes))
 			return FALSE;
 		INT count = 0;
@@ -128,32 +143,88 @@ namespace Media
 				return FALSE;
 			if (mediaType->majortype == MEDIATYPE_Video && mediaType->formattype == FORMAT_VideoInfo)
 			{
-				VideoCaptureCapability capability(i);
-				capability.Parameter.SetFormat(TranslateMediaSubtypeToPixelFormat(mediaType->subtype));
-				if (capability.Parameter.GetFormat() == PIXEL_FORMAT_UNKNOWN)
-					continue;
 				VIDEOINFOHEADER* h = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
-				capability.Parameter.SetSize(h->bmiHeader.biWidth, h->bmiHeader.biHeight);
-				REFERENCE_TIME avgTimePerFrame = h->AvgTimePerFrame;
-				if (videoControl)
+				if (param.GetFormat() == TranslateMediaSubtypeToPixelFormat(mediaType->subtype) && param.GetSize() == TinySize(h->bmiHeader.biWidth, h->bmiHeader.biHeight))
 				{
-					LONGLONG* rate = NULL;
-					LONG listsize = 0;
-					SIZE size = capability.Parameter.GetSize();
-					hRes = videoControl->GetFrameRateList(m_capturePin, i, size, &listsize, &rate);
-					if (hRes == S_OK && listsize > 0 && rate)
-					{
-						avgTimePerFrame = *std::min_element(rate, rate + listsize);
-						CoTaskMemFree(rate);
-					}
+					m_sinkFilter->SetRequestedParam(param);
+					hRes = m_graphBuilder->ConnectDirect(m_captureConnector, m_sinkConnector, NULL);
+					if (hRes != S_OK)
+						return FALSE;
+					hRes = m_mediaControl->Pause();
+					if (hRes != S_OK)
+						return FALSE;
+					hRes = m_mediaControl->Run();
+					if (hRes != S_OK)
+						return FALSE;
+					m_state = Capturing;
+					return TRUE;
 				}
-				capability.Parameter.SetRate((avgTimePerFrame > 0) ? (10000000 / static_cast<FLOAT>(avgTimePerFrame)) : 0.0);
-				capability.RateNumerator = capability.Parameter.GetRate();
-				capability.RateDenominator = 1;
-				m_capabilitys.push_back(capability);
 			}
 		}
-		return !m_capabilitys.empty();
+		return FALSE;
+	}
+	void VideoCaptureDevice::DeAllocate()
+	{
+		if (m_graphBuilder)
+		{
+			m_graphBuilder->Disconnect(m_captureConnector);
+			m_graphBuilder->Disconnect(m_sinkConnector);
+		}
+		m_state = Idle;
+	}
+	BOOL VideoCaptureDevice::CreateCapabilityMap()
+	{
+		return TRUE;
+		/*ASSERT(m_captureFilter);
+		ASSERT(m_capturePin);
+		TinyComPtr<IAMStreamConfig> streamConfig;
+		HRESULT hRes = m_capturePin->QueryInterface(&streamConfig);
+		if (FAILED(hRes))
+		return FALSE;
+		TinyComPtr<IAMVideoControl> videoControl;
+		hRes = m_captureFilter->QueryInterface(&videoControl);
+		if (FAILED(hRes))
+		return FALSE;
+		INT count = 0;
+		INT size = 0;
+		hRes = streamConfig->GetNumberOfCapabilities(&count, &size);
+		if (FAILED(hRes))
+		return FALSE;
+		TinyScopedArray<BYTE> caps(new BYTE[size]);
+		for (INT i = 0; i < count; ++i)
+		{
+		ScopedMediaType mediaType;
+		hRes = streamConfig->GetStreamCaps(i, mediaType.Receive(), caps.Ptr());
+		if (hRes != S_OK)
+		return FALSE;
+		if (mediaType->majortype == MEDIATYPE_Video && mediaType->formattype == FORMAT_VideoInfo)
+		{
+		VideoCaptureCapability capability(i);
+		capability.Parameter.SetFormat(TranslateMediaSubtypeToPixelFormat(mediaType->subtype));
+		if (capability.Parameter.GetFormat() == PIXEL_FORMAT_UNKNOWN)
+		continue;
+		VIDEOINFOHEADER* h = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
+		capability.Parameter.SetSize(h->bmiHeader.biWidth, h->bmiHeader.biHeight);
+		REFERENCE_TIME avgTimePerFrame = h->AvgTimePerFrame;
+		if (videoControl)
+		{
+		LONGLONG* rate = NULL;
+		LONG listsize = 0;
+		SIZE size = capability.Parameter.GetSize();
+		hRes = videoControl->GetFrameRateList(m_capturePin, i, size, &listsize, &rate);
+		if (hRes == S_OK && listsize > 0 && rate)
+		{
+		avgTimePerFrame = *std::min_element(rate, rate + listsize);
+		CoTaskMemFree(rate);
+		}
+		}
+		capability.Parameter.SetRate(static_cast<FLOAT>((avgTimePerFrame > 0) ? (10000000 / static_cast<FLOAT>(avgTimePerFrame)) : 0.0));
+		capability.RateNumerator = static_cast<INT>(capability.Parameter.GetRate());
+		capability.RateDenominator = 1;
+		m_capabilitys.push_back(capability);
+		}
+		}
+		return !m_capabilitys.empty();*/
 	}
 	BOOL VideoCaptureDevice::GetDevices(vector<Name>& names)
 	{
@@ -286,8 +357,7 @@ namespace Media
 			PIN_DIRECTION src = static_cast<PIN_DIRECTION>(-1);
 			if (SUCCEEDED(pin->QueryDirection(&src)) && dest == src)
 			{
-				if (category == GUID_NULL ||
-					GetPinCategory(pin, category))
+				if (category == GUID_NULL || GetPinCategory(pin, category))
 				{
 					return pin;
 				}
@@ -323,6 +393,25 @@ namespace Media
 		StringFromGUID2(subType, str, arraysize(str));
 		TRACE("%s", UTF16ToUTF8(str).c_str());
 		return PIXEL_FORMAT_UNKNOWN;
+	}
+	void VideoCaptureDevice::SetAntiFlickerInCaptureFilter()
+	{
+		ASSERT(m_captureFilter);
+		TinyComPtr<IKsPropertySet> ksPropset;
+		DWORD dwTypeSupport = 0;
+		HRESULT hRes;
+		if (SUCCEEDED(hRes = m_captureFilter->QueryInterface(&ksPropset)) &&
+			SUCCEEDED(hRes = ksPropset->QuerySupported(PROPSETID_VIDCAP_VIDEOPROCAMP, KSPROPERTY_VIDEOPROCAMP_POWERLINE_FREQUENCY, &dwTypeSupport)) &&
+			(dwTypeSupport & KSPROPERTY_SUPPORT_SET))
+		{
+			KSPROPERTY_VIDEOPROCAMP_S data = {};
+			data.Property.Set = PROPSETID_VIDCAP_VIDEOPROCAMP;
+			data.Property.Id = KSPROPERTY_VIDEOPROCAMP_POWERLINE_FREQUENCY;
+			data.Property.Flags = KSPROPERTY_TYPE_SET;
+			data.Value = 2;
+			data.Flags = KSPROPERTY_VIDEOPROCAMP_FLAGS_MANUAL;
+			hRes = ksPropset->Set(PROPSETID_VIDCAP_VIDEOPROCAMP, KSPROPERTY_VIDEOPROCAMP_POWERLINE_FREQUENCY, &data, sizeof(data), &data, sizeof(data));
+		}
 	}
 	BOOL VideoCaptureDevice::GetDeviceParams(const VideoCaptureDevice::Name& device, vector<VideoCaptureParam>& params)
 	{

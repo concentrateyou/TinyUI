@@ -1,16 +1,10 @@
 #pragma once
-#include "Common/TinyCommon.h"
-#include <dshow.h>
-#include <strmif.h>
-#include <uuids.h>
-#include <string>
-#include <list>
-#include <vector>
 #include "FilterBase.h"
 #include "FilterObserver.h"
 #include "FilterObserver.h"
 #include "VideoCaptureParam.h"
-#include "VideoCaptureCapability.h"
+#include "SinkFilter.h"
+
 using namespace std;
 using namespace TinyUI;
 
@@ -28,8 +22,6 @@ namespace Media
 		void Release();
 		AM_MEDIA_TYPE* m_mediaType;
 	};
-	extern GUID MediaSubTypeI420;
-	extern GUID MediaSubTypeHDYC;
 	/// <summary>
 	/// 视频捕获设备
 	/// </summary>
@@ -48,11 +40,13 @@ namespace Media
 			string	m_name;
 			string	m_id;
 		};
+		void OnFrameReceive(const BYTE* data, INT size) OVERRIDE;
 	public:
 		explicit VideoCaptureDevice();
 		virtual ~VideoCaptureDevice();
 		BOOL Initialize(const Name& name);
-		virtual void Allocate(const VideoCaptureParam& params);
+		void Uninitialize();
+		virtual BOOL Allocate(const VideoCaptureParam& param);
 		virtual void DeAllocate();
 	public:
 		static BOOL GetDevices(vector<Name>& names);
@@ -68,17 +62,19 @@ namespace Media
 		static BOOL GetPinCategory(IPin* pin, REFGUID category);
 		static TinyComPtr<IPin> GetPin(IBaseFilter* filter, PIN_DIRECTION pin_dir, REFGUID category);
 		static VideoPixelFormat TranslateMediaSubtypeToPixelFormat(const GUID& subType);
+		void SetAntiFlickerInCaptureFilter();
 	private:
 		BOOL CreateCapabilityMap();
 	private:
-		Name							m_currentName;
-		VideoCaptureParam				m_currentParam;
-		list<VideoCaptureCapability>	m_capabilitys;
-		TinyComPtr<IBaseFilter>			m_captureFilter;
-		TinyComPtr<IGraphBuilder>		m_graphBuilder;
-		TinyComPtr<IMediaControl>		m_mediaControl;
-		TinyComPtr<IPin>				m_capturePin;
-		InternalState					m_state;
-		VideoCaptureParam				m_vcf;
+		Name								m_currentName;
+		VideoCaptureParam					m_currentParam;
+		TinyComPtr<IBaseFilter>				m_captureFilter;
+		TinyComPtr<IGraphBuilder>			m_graphBuilder;
+		TinyComPtr<IMediaControl>			m_mediaControl;
+		TinyComPtr<IPin>					m_captureConnector;
+		TinyComPtr<IPin>					m_sinkConnector;
+		InternalState						m_state;
+		VideoCaptureParam					m_vcf;
+		TinyScopedReferencePtr<SinkFilter>	m_sinkFilter;
 	};
 }

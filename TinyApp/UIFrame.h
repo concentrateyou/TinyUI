@@ -1,12 +1,7 @@
 #pragma once
 #include "Common/TinyModule.h"
 #include "Windowless/TinyVisualHWND.h"
-#include "Common/TinyLogging.h"
-#include "Common/TinyHook.h"
-#include "Common/TinyEvent.h"
-#include "Control/TinyLabel.h"
-#include "Control/TinyButton.h"
-#include "Windowless/TinyVisualRichText.h"
+#include "VideoCaptureDevice.h"
 using namespace TinyUI;
 
 class CUIFrame : public TinyControl
@@ -29,5 +24,7 @@ public:
 	LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	//·½·¨
 	BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
+private:
+	Media::VideoCaptureDevice m_device;
 };
 

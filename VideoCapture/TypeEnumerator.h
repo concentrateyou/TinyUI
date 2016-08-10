@@ -1,12 +1,13 @@
 #pragma once
-#include "VideoCaptureDevice.h"
+#include "PinBase.h"
 
 namespace Media
 {
-	class TypeEnumerator : public IEnumMediaTypes
+	class TypeEnumerator : public IEnumMediaTypes, TinyUI::TinyReference < TypeEnumerator >
 	{
+		DISALLOW_COPY_AND_ASSIGN(TypeEnumerator);
 	public:
-		TypeEnumerator();
+		explicit TypeEnumerator(PinBase* pin);
 		~TypeEnumerator();
 		HRESULT STDMETHODCALLTYPE Next(ULONG cMediaTypes, _Out_writes_to_(cMediaTypes, *pcFetched) AM_MEDIA_TYPE **ppMediaTypes, _Out_opt_ ULONG *pcFetched) OVERRIDE;
 		HRESULT STDMETHODCALLTYPE Skip(ULONG cMediaTypes) OVERRIDE;
@@ -15,6 +16,11 @@ namespace Media
 		HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject) OVERRIDE;
 		ULONG STDMETHODCALLTYPE AddRef(void) OVERRIDE;
 		ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
+	private:
+		void FreeAllocatedMediaTypes(ULONG allocated, AM_MEDIA_TYPE** types);
+	private:
+		INT			m_index;
+		TinyUI::TinyScopedReferencePtr<PinBase>	m_pin;
 	};
 }
 

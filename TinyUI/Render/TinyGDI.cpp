@@ -1758,7 +1758,7 @@ namespace TinyUI
 	{
 		return ::CombineRgn(m_hHRGN, (HRGN)pRgn1->Handle(), (HRGN)pRgn2->Handle(), nCombineMode);
 	}
-	INT TinyRgn::CopyRgn(const TinyRgn* pRgnSrc)
+	INT TinyRgn::CopyRgn1(const TinyRgn* pRgnSrc)
 	{
 		return ::CombineRgn(m_hHRGN, (HRGN)pRgnSrc->Handle(), NULL, RGN_COPY);
 	}

@@ -1,11 +1,13 @@
 #include "stdafx.h"
 #include "PinBase.h"
+#include "TypeEnumerator.h"
 
 namespace Media
 {
-	PinBase::PinBase()
-		:m_cRef(1)
+	PinBase::PinBase(IBaseFilter* ownerFilter)
+		:m_ownerFilter(ownerFilter)
 	{
+		ZeroMemory(&m_mediaType, sizeof(m_mediaType));
 	}
 
 
@@ -13,110 +15,154 @@ namespace Media
 	{
 
 	}
-
+	void PinBase::SetOwner(IBaseFilter* ownerFilter)
+	{
+		m_ownerFilter = ownerFilter;
+	}
 	HRESULT STDMETHODCALLTYPE PinBase::Connect(IPin *pReceivePin, _In_opt_ const AM_MEDIA_TYPE *pmt)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		if (!pReceivePin || !pmt)
+		{
+			return E_POINTER;
+		}
+		if (m_connector)
+		{
+			return VFW_E_ALREADY_CONNECTED;
+		}
+		m_mediaType = *pmt;
+		pReceivePin->AddRef();
+		m_connector.Attach(pReceivePin);
+		return pReceivePin->ReceiveConnection(this, pmt);
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::ReceiveConnection(IPin *pConnector, const AM_MEDIA_TYPE *pmt)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		if (!IsMediaTypeValid(pmt))
+			return VFW_E_TYPE_NOT_ACCEPTED;
+		m_mediaType = *pmt;
+		pConnector->AddRef();
+		m_connector.Attach(pConnector);
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::Disconnect(void)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		if (!m_connector)
+			return S_FALSE;
+		m_connector.Release();
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::ConnectedTo(_Out_ IPin **pPin)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		*pPin = m_connector;
+		if (!m_connector)
+			return VFW_E_NOT_CONNECTED;
+		m_connector->AddRef();
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::ConnectionMediaType(_Out_ AM_MEDIA_TYPE *pmt)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		if (!m_connector)
+			return VFW_E_NOT_CONNECTED;
+		*pmt = m_mediaType;
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::QueryPinInfo(_Out_ PIN_INFO *pInfo)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		memcpy(pInfo->achName, PIN_NAME, sizeof(PIN_NAME));
+		pInfo->dir = PINDIR_INPUT;
+		pInfo->pFilter = m_ownerFilter;
+		if (m_ownerFilter)
+		{
+			m_ownerFilter->AddRef();
+		}
+		pInfo->achName[0] = L'\0';
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::QueryDirection(_Out_ PIN_DIRECTION *pPinDir)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		*pPinDir = PINDIR_INPUT;
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::QueryId(_Out_ LPWSTR *Id)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		return E_OUTOFMEMORY;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::QueryAccept(const AM_MEDIA_TYPE *pmt)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		return S_FALSE;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::EnumMediaTypes(_Out_ IEnumMediaTypes **ppEnum)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		*ppEnum = new TypeEnumerator(this);
+		(*ppEnum)->AddRef();
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::QueryInternalConnections(_Out_writes_to_opt_(*nPin, *nPin) IPin **apPin, ULONG *nPin)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		return E_NOTIMPL;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::EndOfStream(void)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::BeginFlush(void)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::EndFlush(void)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::NewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		return E_NOTIMPL;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::GetAllocator(_Out_ IMemAllocator **ppAllocator)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		return VFW_E_NO_ALLOCATOR;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::NotifyAllocator(IMemAllocator *pAllocator, BOOL bReadOnly)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::GetAllocatorRequirements(_Out_ ALLOCATOR_PROPERTIES *pProps)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
-	}
-
-	HRESULT STDMETHODCALLTYPE PinBase::Receive(IMediaSample *pSample)
-	{
-		throw std::logic_error("The method or operation is not implemented.");
+		return E_NOTIMPL;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::ReceiveMultiple(_In_reads_(nSamples) IMediaSample **pSamples, long nSamples, _Out_ long *nSamplesProcessed)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		HRESULT hRes = S_OK;
+		*nSamplesProcessed = 0;
+		while (nSamples--)
+		{
+			hRes = Receive(pSamples[*nSamplesProcessed]);
+			if (hRes != S_OK)
+				break;
+			++(*nSamplesProcessed);
+		}
+		return hRes;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::ReceiveCanBlock(void)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		return S_FALSE;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::QueryInterface(REFIID riid, void **ppvObject)
@@ -140,16 +186,13 @@ namespace Media
 
 	ULONG STDMETHODCALLTYPE PinBase::AddRef(void)
 	{
-		return InterlockedIncrement(&this->m_cRef);
+		TinyReference < PinBase >::AddRef();
+		return TinyReference < PinBase >::GetReference();
 	}
 
 	ULONG STDMETHODCALLTYPE PinBase::Release(void)
 	{
-		if (InterlockedDecrement(&this->m_cRef))
-		{
-			return this->m_cRef;
-		}
-		delete this;
-		return NOERROR;
+		TinyReference < PinBase >::Release();
+		return TinyReference < PinBase >::GetReference();
 	}
 }

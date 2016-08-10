@@ -50,6 +50,13 @@ HICON CUIFrame::RetrieveIcon()
 LRESULT CUIFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
+	vector<Media::VideoCaptureDevice::Name> names;
+	Media::VideoCaptureDevice::GetDevices(names);
+	vector<Media::VideoCaptureParam> params;
+	Media::VideoCaptureDevice::GetDeviceParams(names[0], params);
+	m_device.Uninitialize();
+	m_device.Initialize(names[0]);
+	m_device.Allocate(params[0]);
 	return FALSE;
 }
 

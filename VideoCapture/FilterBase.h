@@ -1,13 +1,16 @@
 #pragma once
-#include "VideoCaptureDevice.h"
+#include "VideoCommon.h"
 
 namespace Media
 {
-	class FilterBase : public IBaseFilter
+	class FilterBase : public IBaseFilter, public TinyUI::TinyReference < FilterBase >
 	{
+		DISALLOW_COPY_AND_ASSIGN(FilterBase);
 	public:
 		FilterBase();
-		~FilterBase();
+		virtual ~FilterBase();
+		virtual INT	GetPinCount() = 0;
+		virtual IPin* GetPin(INT index) = 0;
 	public:
 		HRESULT STDMETHODCALLTYPE EnumPins(_Out_ IEnumPins **ppEnum) OVERRIDE;
 		HRESULT STDMETHODCALLTYPE FindPin(LPCWSTR Id, _Out_ IPin **ppPin) OVERRIDE;
@@ -20,11 +23,12 @@ namespace Media
 		HRESULT STDMETHODCALLTYPE GetState(DWORD dwMilliSecsTimeout, _Out_ FILTER_STATE *State) OVERRIDE;
 		HRESULT STDMETHODCALLTYPE SetSyncSource(_In_opt_ IReferenceClock *pClock) OVERRIDE;
 		HRESULT STDMETHODCALLTYPE GetSyncSource(_Outptr_result_maybenull_ IReferenceClock **pClock) OVERRIDE;
-		HRESULT STDMETHODCALLTYPE GetClassID(__RPC__out CLSID *pClassID) OVERRIDE;
+		HRESULT STDMETHODCALLTYPE GetClassID(__RPC__out CLSID *pClassID) = 0;
 		HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject) OVERRIDE;
 		ULONG STDMETHODCALLTYPE AddRef(void) OVERRIDE;
 		ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
 	private:
-		LONG  m_cRef;
+		FILTER_STATE m_state;
+		TinyUI::TinyComPtr<IFilterGraph> m_graph;
 	};
 }

@@ -429,7 +429,7 @@ namespace TinyUI
 		BOOL CreatePolyPolygonRgn(LPPOINT lpPoints, LPINT lpPolyCounts, INT nCount, INT nPolyFillMode);
 		BOOL CreateRoundRectRgn(INT x1, INT y1, INT x2, INT y2, INT x3, INT y3);
 		INT CombineRgn(const TinyRgn* pRgn1, const TinyRgn* pRgn2, INT nCombineMode);
-		INT CopyRgn(const TinyRgn* pRgnSrc);
+		INT CopyRgn1(const TinyRgn* pRgnSrc);
 		BOOL EqualRgn(const TinyRgn* pRgn) const;
 		INT OffsetRgn(INT x, INT y);
 		INT OffsetRgn(POINT point);

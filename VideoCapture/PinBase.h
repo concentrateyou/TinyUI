@@ -1,13 +1,17 @@
 #pragma once
-#include "VideoCaptureDevice.h"
+#include "VideoCommon.h"
 
 namespace Media
 {
-	class PinBase : public IPin, public IMemInputPin
+	class PinBase : public IPin, public IMemInputPin, public TinyReference < PinBase >
 	{
+		DISALLOW_COPY_AND_ASSIGN(PinBase);
 	public:
-		PinBase();
+		explicit PinBase(IBaseFilter* owner);
 		~PinBase();
+		void SetOwner(IBaseFilter* owner);
+		virtual BOOL IsMediaTypeValid(const AM_MEDIA_TYPE* mediaType) = 0;
+		virtual BOOL GetValidMediaType(INT index, AM_MEDIA_TYPE* mediaType) = 0;
 	public:
 		HRESULT STDMETHODCALLTYPE Connect(IPin *pReceivePin, _In_opt_ const AM_MEDIA_TYPE *pmt) OVERRIDE;
 		HRESULT STDMETHODCALLTYPE ReceiveConnection(IPin *pConnector, const AM_MEDIA_TYPE *pmt) OVERRIDE;
@@ -27,13 +31,16 @@ namespace Media
 		HRESULT STDMETHODCALLTYPE GetAllocator(_Out_ IMemAllocator **ppAllocator) OVERRIDE;
 		HRESULT STDMETHODCALLTYPE NotifyAllocator(IMemAllocator *pAllocator, BOOL bReadOnly) OVERRIDE;
 		HRESULT STDMETHODCALLTYPE GetAllocatorRequirements(_Out_ ALLOCATOR_PROPERTIES *pProps) OVERRIDE;
-		HRESULT STDMETHODCALLTYPE Receive(IMediaSample *pSample) OVERRIDE;
+		HRESULT STDMETHODCALLTYPE Receive(IMediaSample *pSample) = 0;
 		HRESULT STDMETHODCALLTYPE ReceiveMultiple(_In_reads_(nSamples) IMediaSample **pSamples, long nSamples, _Out_ long *nSamplesProcessed) OVERRIDE;
 		HRESULT STDMETHODCALLTYPE ReceiveCanBlock(void) OVERRIDE;
 		HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject) OVERRIDE;
 		ULONG STDMETHODCALLTYPE AddRef(void) OVERRIDE;
 		ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
 	private:
-		LONG  m_cRef;
+		AM_MEDIA_TYPE		m_mediaType;
+		TinyComPtr<IPin>	m_connector;
+		IBaseFilter*		m_ownerFilter;
+		WCHAR*				m_pzName;
 	};
 }

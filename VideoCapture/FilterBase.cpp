@@ -1,10 +1,11 @@
 #include "stdafx.h"
 #include "FilterBase.h"
+#include "PinEnumerator.h"
 
 namespace Media
 {
 	FilterBase::FilterBase()
-		:m_cRef(1)
+		:m_state(State_Stopped)
 	{
 
 	}
@@ -14,77 +15,111 @@ namespace Media
 	}
 	HRESULT STDMETHODCALLTYPE FilterBase::EnumPins(_Out_ IEnumPins **ppEnum)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		*ppEnum = new PinEnumerator(this);
+		(*ppEnum)->AddRef();
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE FilterBase::FindPin(LPCWSTR Id, _Out_ IPin **ppPin)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		return E_NOTIMPL;
 	}
 
 	HRESULT STDMETHODCALLTYPE FilterBase::QueryFilterInfo(_Out_ FILTER_INFO *pInfo)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		memcpy(pInfo->achName, FILTER_NAME, sizeof(FILTER_NAME));
+		pInfo->pGraph = m_graph;
+		if (pInfo->pGraph)
+		{
+			pInfo->pGraph->AddRef();
+		}
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE FilterBase::JoinFilterGraph(_In_opt_ IFilterGraph *pGraph, _In_opt_ LPCWSTR pName)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		m_graph = pGraph;
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE FilterBase::QueryVendorInfo(_Out_ LPWSTR *pVendorInfo)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE FilterBase::Stop(void)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		m_state = State_Stopped;
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE FilterBase::Pause(void)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		m_state = State_Paused;
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE FilterBase::Run(REFERENCE_TIME tStart)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		m_state = State_Running;
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE FilterBase::GetState(DWORD dwMilliSecsTimeout, _Out_ FILTER_STATE *State)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		*State = m_state;
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE FilterBase::SetSyncSource(_In_opt_ IReferenceClock *pClock)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE FilterBase::GetSyncSource(_Outptr_result_maybenull_ IReferenceClock **pClock)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		*pClock = NULL;
+		return E_NOTIMPL;
 	}
 
 	HRESULT STDMETHODCALLTYPE FilterBase::GetClassID(__RPC__out CLSID *pClassID)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		return E_NOTIMPL;
 	}
 
 	HRESULT STDMETHODCALLTYPE FilterBase::QueryInterface(REFIID riid, void **ppvObject)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		if (IsEqualIID(riid, IID_IMediaFilter) || IsEqualIID(riid, IID_IUnknown))
+		{
+			*ppvObject = static_cast<IMediaFilter*>(this);
+		}
+		else if (IsEqualIID(riid, IID_IPersist))
+		{
+			*ppvObject = static_cast<IPersist*>(this);
+		}
+		else if (IsEqualIID(riid, IID_IBaseFilter))
+		{
+			*ppvObject = static_cast<IBaseFilter*>(this);
+		}
+		else
+		{
+			*ppvObject = NULL;
+			return E_NOINTERFACE;
+		}
+		AddRef();
+		return NOERROR;
 	}
 
 	ULONG STDMETHODCALLTYPE FilterBase::AddRef(void)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		TinyReference < FilterBase >::AddRef();
+		return TinyReference < FilterBase >::GetReference();
 	}
 
 	ULONG STDMETHODCALLTYPE FilterBase::Release(void)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		TinyReference < FilterBase >::Release();
+		return TinyReference < FilterBase >::GetReference();
 	}
 
 }
