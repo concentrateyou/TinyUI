@@ -19,7 +19,7 @@ namespace Media
 	private:
 		void FreeAllocatedMediaTypes(ULONG allocated, AM_MEDIA_TYPE** types);
 	private:
-		INT			m_index;
+		INT			m_position;
 		TinyUI::TinyScopedReferencePtr<PinBase>	m_pin;
 	};
 }

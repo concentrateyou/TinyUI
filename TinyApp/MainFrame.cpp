@@ -52,17 +52,16 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 {
 	bHandled = FALSE;
 
-	vector<VideoCapture::Name> names;
+	/*vector<VideoCapture::Name> names;
 	VideoCapture::GetDevices(names);
 	vector<VideoCaptureParam> params;
 	VideoCapture::GetDeviceParams(names[0], params);
+	*/
 
-
-
-	/*m_inject.Create(m_hWND, 10, 10, 100, 25);
+	m_inject.Create(m_hWND, 10, 10, 100, 25);
 	m_inject.SetText("注入到War3");
 	m_onInjectClick.Reset(new Delegate<void(void*, INT)>(this, &CMainFrame::OnInjectLibrary));
-	m_inject.Click += m_onInjectClick;
+	m_inject.EVENT_Click += m_onInjectClick;
 	m_lblState.Create(m_hWND, 130, 16, 100, 25);
 	m_lblState.SetText("状态");
 	memset(&m_cf, 0, sizeof(m_cf));
@@ -73,14 +72,14 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 	m_cf.crTextColor = RGB(0, 114, 193);
 	m_cf.yHeight = 180;
 	strcpy(m_cf.szFaceName, _T("微软雅黑"));
-	m_drawCtrl.Create(m_hWND, 10, 40, 400, 400);*/
+	m_drawCtrl.Create(m_hWND, 10, 40, 400, 400);
 	return FALSE;
 }
 
 LRESULT CMainFrame::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	m_inject.Click -= m_onInjectClick;
+	m_inject.EVENT_Click -= m_onInjectClick;
 	return FALSE;
 }
 
@@ -100,13 +99,13 @@ void CMainFrame::OnInjectLibrary(void*, INT)
 {
 	RECT rect;
 	::GetClientRect(m_drawCtrl, &rect);
-	/*if (m_videoCapture.Initialize(m_drawCtrl, TO_CX(rect), TO_CY(rect)))
+	if (m_videoCapture.Initialize(m_drawCtrl, TO_CX(rect), TO_CY(rect)))
 	{
 		m_lblState.SetText("初始化成功!");
 	}
 	else
 	{
 		m_lblState.SetText("初始化失败!");
-	}*/
+	}
 }
 

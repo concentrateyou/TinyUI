@@ -21,13 +21,21 @@ namespace Media
 	}
 	HRESULT STDMETHODCALLTYPE TypeEnumerator::Next(ULONG cMediaTypes, _Out_writes_to_(cMediaTypes, *pcFetched) AM_MEDIA_TYPE **ppMediaTypes, _Out_opt_ ULONG *pcFetched)
 	{
-		ULONG fetched = 0;
-		while (fetched < cMediaTypes)
+		if (pcFetched != NULL)
+		{
+			*pcFetched = 0;         
+		}
+		else if (cMediaTypes > 1)
+		{
+			return E_INVALIDARG;
+		}
+		ULONG cFetched = 0;
+		while (cFetched < cMediaTypes)
 		{
 			AM_MEDIA_TYPE* type = reinterpret_cast<AM_MEDIA_TYPE*>(CoTaskMemAlloc(sizeof(AM_MEDIA_TYPE)));
 			if (!type)
 			{
-				FreeAllocatedMediaTypes(fetched, ppMediaTypes);
+				FreeAllocatedMediaTypes(cFetched, ppMediaTypes);
 				return E_OUTOFMEMORY;
 			}
 			ZeroMemory(type, sizeof(AM_MEDIA_TYPE));
@@ -36,13 +44,13 @@ namespace Media
 			if (!format)
 			{
 				CoTaskMemFree(type);
-				FreeAllocatedMediaTypes(fetched, ppMediaTypes);
+				FreeAllocatedMediaTypes(cFetched, ppMediaTypes);
 				return E_OUTOFMEMORY;
 			}
 			type->pbFormat = format;
-			if (m_pin->GetValidMediaType(m_index++, type))
+			if (m_pin->GetMediaType(m_position++, type))
 			{
-				ppMediaTypes[fetched++] = type;
+				ppMediaTypes[cFetched++] = type;
 			}
 			else
 			{
@@ -53,20 +61,20 @@ namespace Media
 		}
 		if (pcFetched)
 		{
-			*pcFetched = fetched;
+			*pcFetched = cFetched;
 		}
-		return fetched == cMediaTypes ? S_OK : S_FALSE;
+		return cFetched == cMediaTypes ? S_OK : S_FALSE;
 	}
 
 	HRESULT STDMETHODCALLTYPE TypeEnumerator::Skip(ULONG cMediaTypes)
 	{
-		m_index += cMediaTypes;
+		m_position += cMediaTypes;
 		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE TypeEnumerator::Reset(void)
 	{
-		m_index = 0;
+		m_position = 0;
 		return S_OK;
 	}
 
@@ -74,7 +82,7 @@ namespace Media
 	{
 		TypeEnumerator* ps = new TypeEnumerator(m_pin);
 		ps->AddRef();
-		ps->m_index = m_index;
+		ps->m_position = m_position;
 		*ppEnum = ps;
 		return S_OK;
 	}
@@ -97,15 +105,13 @@ namespace Media
 	ULONG STDMETHODCALLTYPE TypeEnumerator::AddRef(void)
 	{
 		TinyReference < TypeEnumerator >::AddRef();
-		return 1;
-		//return TinyReference < TypeEnumerator >::GetReference();
+		return TinyReference < TypeEnumerator >::GetReference();
 	}
 
 	ULONG STDMETHODCALLTYPE TypeEnumerator::Release(void)
 	{
 		TinyReference < TypeEnumerator >::Release();
-		return 1;
-		//return TinyReference < TypeEnumerator >::GetReference();
+		return TinyReference < TypeEnumerator >::GetReference();
 	}
 
 }

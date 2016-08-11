@@ -12,8 +12,9 @@ namespace Media
 		SinkInputPin(IBaseFilter* filter, FilterObserver* observer);
 		~SinkInputPin();
 		void SetRequestedParam(const VideoCaptureParam& param);
-		BOOL IsMediaTypeValid(const AM_MEDIA_TYPE* mediaType) OVERRIDE;
-		BOOL GetValidMediaType(INT index, AM_MEDIA_TYPE* mediaType) OVERRIDE;
+		HRESULT CheckMediaType(const AM_MEDIA_TYPE* mediaType) OVERRIDE;
+		HRESULT GetMediaType(INT index, AM_MEDIA_TYPE* mediaType) OVERRIDE;
+		HRESULT SetMediaType(const AM_MEDIA_TYPE *mediaType) OVERRIDE;
 		HRESULT STDMETHODCALLTYPE Receive(IMediaSample *pSample) OVERRIDE;
 		const VideoCaptureParam& GetResultingParam();
 	private:

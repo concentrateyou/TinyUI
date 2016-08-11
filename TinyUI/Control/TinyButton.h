@@ -21,11 +21,11 @@ namespace TinyUI
 		virtual void OnDoubleClick(void*, INT ctrlID);
 		virtual void OnGotFocus(void*, INT ctrlID);
 		virtual void OnLostFocus(void*, INT ctrlID);
-		Event<void(void*, INT)> Click;
-		Event<void(void*, INT)> DoubleClick;
-		Event<void(void*, INT)> Disable;
-		Event<void(void*, INT)> GotFocus;
-		Event<void(void*, INT)> LostFocus;
+		Event<void(void*, INT)> EVENT_Click;
+		Event<void(void*, INT)> EVENT_DoubleClick;
+		Event<void(void*, INT)> EVENT_Disable;
+		Event<void(void*, INT)> EVENT_GotFocus;
+		Event<void(void*, INT)> EVENT_LostFocus;
 		//////////////////////////////////////////////////////////////////////////
 		BOOL SetText(LPCSTR pzText);
 		BOOL GetText(LPSTR pzText, INT iSize);
@@ -59,14 +59,6 @@ namespace TinyUI
 		BOOL SetSplitGlyph(TCHAR chGlyph);
 		BOOL SetDropDownState(BOOL fDropDown);
 		HICON SetShield(BOOL fElevationRequired);
-	};
-	/// <summary>
-	/// ±ÍÃ‚∞¥≈•
-	/// </summary>
-	class SysButton : public TinyObject
-	{
-	public:
-
 	};
 }
 

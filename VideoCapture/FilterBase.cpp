@@ -121,5 +121,4 @@ namespace Media
 		TinyReference < FilterBase >::Release();
 		return TinyReference < FilterBase >::GetReference();
 	}
-
 }

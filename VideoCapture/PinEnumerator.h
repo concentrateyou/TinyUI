@@ -17,7 +17,7 @@ namespace Media
 		ULONG STDMETHODCALLTYPE AddRef(void) OVERRIDE;
 		ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
 	private:
-		INT			m_index;
+		INT			m_position;
 		FilterBase* m_pFilter;
 	};
 

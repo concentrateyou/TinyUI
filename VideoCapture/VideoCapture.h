@@ -40,12 +40,16 @@ namespace Media
 			string	m_name;
 			string	m_id;
 		};
-		void OnFrameReceive(const BYTE* data, INT size) OVERRIDE;
+		void OnFrameReceive(const BYTE* data, INT size, void*) OVERRIDE;
 	public:
 		explicit VideoCapture();
 		virtual ~VideoCapture();
 		BOOL Initialize(const Name& name);
 		void Uninitialize();
+		BOOL Start();
+		BOOL Stop();
+		BOOL Pause();
+		FILTER_STATE GetState() const;
 		virtual BOOL Allocate(const VideoCaptureParam& param);
 		virtual void DeAllocate();
 	public:
@@ -53,27 +57,16 @@ namespace Media
 		static BOOL GetDeviceParams(const VideoCapture::Name& device, vector<VideoCaptureParam>& formats);
 		static BOOL GetDeviceFilter(const Name& name, IBaseFilter** filter);
 	private:
-		enum InternalState
-		{
-			Idle,//设备打开摄像头没使用
-			Capturing, //视频采集中
-			Error //出错
-		};
 		static BOOL GetPinCategory(IPin* pin, REFGUID category);
 		static TinyComPtr<IPin> GetPin(IBaseFilter* filter, PIN_DIRECTION pin_dir, REFGUID category);
 		static VideoPixelFormat TranslateMediaSubtypeToPixelFormat(const GUID& subType);
 		void SetAntiFlickerInCaptureFilter();
 	private:
-		BOOL CreateCapabilityMap();
-	private:
-		Name								m_currentName;
-		VideoCaptureParam					m_currentParam;
 		TinyComPtr<IBaseFilter>				m_captureFilter;
-		TinyComPtr<IGraphBuilder>			m_graphBuilder;
-		TinyComPtr<IMediaControl>			m_mediaControl;
+		TinyComPtr<IGraphBuilder>			m_builder;
+		TinyComPtr<IMediaControl>			m_control;
 		TinyComPtr<IPin>					m_captureConnector;
 		TinyComPtr<IPin>					m_sinkConnector;
-		InternalState						m_state;
 		VideoCaptureParam					m_vcf;
 		TinyScopedReferencePtr<SinkFilter>	m_sinkFilter;
 	};

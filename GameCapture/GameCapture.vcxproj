@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{96CE67C6-F329-47C3-AB33-52D4C50B0E46}</ProjectGuid>
+    <ProjectGuid>{42A23F40-AE16-40DE-BD95-A42F4791EA82}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>VideoCapture</RootNamespace>
+    <RootNamespace>GameCapture</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -47,15 +47,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;$(DXSDK_DIR)Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>..\TinyUI;..\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Strmiids.lib;Quartz.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\TinyUI;..\Debug;$(DXSDK_DIR)Lib\x86</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -79,45 +78,14 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FilterBase.h" />
-    <ClInclude Include="FilterObserver.h" />
-    <ClInclude Include="PinBase.h" />
-    <ClInclude Include="PinEnumerator.h" />
-    <ClInclude Include="SinkFilter.h" />
-    <ClInclude Include="SinkInputPin.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="TaskRunner.h" />
-    <ClInclude Include="TypeEnumerator.h" />
-    <ClInclude Include="VideoCaptureCapability.h" />
-    <ClInclude Include="VideoCapture.h" />
-    <ClInclude Include="VideoCaptureParam.h" />
-    <ClInclude Include="VideoCommon.h" />
-    <ClInclude Include="VideoFrame.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FilterBase.cpp" />
-    <ClCompile Include="FilterObserver.cpp" />
-    <ClCompile Include="PinBase.cpp" />
-    <ClCompile Include="PinEnumerator.cpp" />
-    <ClCompile Include="SinkFilter.cpp" />
-    <ClCompile Include="SinkInputPin.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TaskRunner.cpp" />
-    <ClCompile Include="TypeEnumerator.cpp" />
-    <ClCompile Include="VideoCaptureCapability.cpp" />
-    <ClCompile Include="VideoCapture.cpp" />
-    <ClCompile Include="VideoCaptureParam.cpp" />
-    <ClCompile Include="VideoCommon.cpp" />
-    <ClCompile Include="VideoFrame.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\TinyUI\TinyUI.vcxproj">
-      <Project>{58903be2-bb4f-4983-b8b7-905d2db5393d}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

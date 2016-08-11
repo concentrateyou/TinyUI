@@ -242,6 +242,20 @@ namespace TinyUI
 	{
 		return Append(&s);
 	}
+	TinyString& TinyString::operator = (TinyString&& str)
+	{
+		if (this != &str)
+		{
+			SAFE_DELETE_ARRAY(this->_Mystr);
+			this->_Mystr = str._Mystr;
+			this->_Mysize = str._Mysize;
+			this->_Myres = str._Myres;
+			str._Mystr = NULL;
+			str._Mysize = 0;
+			str._Myres = 0;
+		}
+		return *this;
+	}
 	TinyString& TinyString::operator = (const TinyString& str)
 	{
 		//TRACE("调用赋值构造函数TinyString::operator = (const TinyString& str)\n");

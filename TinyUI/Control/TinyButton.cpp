@@ -243,23 +243,23 @@ namespace TinyUI
 	}
 	void TinyButton::OnDoubleClick(void* sender, INT ctrlID)
 	{
-		DoubleClick(sender, ctrlID);
+		EVENT_DoubleClick(sender, ctrlID);
 	}
 	void TinyButton::OnDisable(void* sender, INT ctrlID)
 	{
-		Disable(sender, ctrlID);
+		EVENT_Disable(sender, ctrlID);
 	}
 	void TinyButton::OnClick(void* sender, INT ctrlID)
 	{
-		Click(sender, ctrlID);
+		EVENT_Click(sender, ctrlID);
 	}
 	void TinyButton::OnGotFocus(void* sender, INT ctrlID)
 	{
-		GotFocus(sender, ctrlID);
+		EVENT_GotFocus(sender, ctrlID);
 	}
 	void TinyButton::OnLostFocus(void* sender, INT ctrlID)
 	{
-		LostFocus(sender, ctrlID);
+		EVENT_LostFocus(sender, ctrlID);
 	}
 
 	LRESULT TinyButton::OnCommandReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

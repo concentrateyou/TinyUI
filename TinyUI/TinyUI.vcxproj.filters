@@ -345,6 +345,9 @@
     <ClInclude Include="Windowless\TinyVisualList.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
+    <ClInclude Include="Control\TinyComboBox.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -622,6 +625,9 @@
     </ClCompile>
     <ClCompile Include="Windowless\TinyVisualList.cpp">
       <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Control\TinyComboBox.cpp">
+      <Filter>源文件\Control</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

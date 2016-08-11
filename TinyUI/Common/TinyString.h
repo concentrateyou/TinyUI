@@ -92,6 +92,7 @@ namespace TinyUI
 		TinyString& operator+= (const TinyString& str);
 		TinyString& operator+= (const CHAR* s);
 		TinyString& operator+= (CHAR s);
+		TinyString& operator=(TinyString&& str);
 		TinyString& operator= (const TinyString& str);
 		TinyString& operator= (const CHAR* s);
 		TinyString& operator= (CHAR s);

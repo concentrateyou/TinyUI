@@ -19,7 +19,7 @@ namespace Media
 		BYTE* data = NULL;
 		if (FAILED(pSample->GetPointer(&data)))
 			return S_FALSE;
-		m_observer->OnFrameReceive(data, size);
+		m_observer->OnFrameReceive(data, size, &m_resulting);
 		return S_OK;
 	}
 	void SinkInputPin::SetRequestedParam(const VideoCaptureParam& param)
@@ -29,18 +29,18 @@ namespace Media
 		m_resulting.SetRate(0.0F);
 		m_resulting.SetFormat(PIXEL_FORMAT_UNKNOWN);
 	}
-	BOOL SinkInputPin::IsMediaTypeValid(const AM_MEDIA_TYPE* mediaType)
+	HRESULT SinkInputPin::CheckMediaType(const AM_MEDIA_TYPE* mediaType)
 	{
 		GUID type = mediaType->majortype;
 		if (type != MEDIATYPE_Video)
-			return FALSE;
+			return S_FALSE;
 		GUID formatType = mediaType->formattype;
 		if (formatType != FORMAT_VideoInfo)
-			return FALSE;
+			return S_FALSE;
 		GUID subType = mediaType->subtype;
 		VIDEOINFOHEADER* pvi = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
 		if (pvi == NULL)
-			return FALSE;
+			return S_FALSE;
 		m_resulting.SetSize(pvi->bmiHeader.biWidth, abs(pvi->bmiHeader.biHeight));
 		if (pvi->AvgTimePerFrame > 0)
 		{
@@ -53,24 +53,24 @@ namespace Media
 		if (subType == MediaSubTypeI420 &&pvi->bmiHeader.biCompression == MAKEFOURCC('I', '4', '2', '0'))
 		{
 			m_resulting.SetFormat(PIXEL_FORMAT_I420);
-			return TRUE;
+			return S_OK;
 		}
 		if (subType == MEDIASUBTYPE_YUY2 &&pvi->bmiHeader.biCompression == MAKEFOURCC('Y', 'U', 'Y', '2'))
 		{
 			m_resulting.SetFormat(PIXEL_FORMAT_YUY2);
-			return TRUE;
+			return S_OK;
 		}
 		if (subType == MEDIASUBTYPE_RGB24 && pvi->bmiHeader.biCompression == BI_RGB)
 		{
 			m_resulting.SetFormat(PIXEL_FORMAT_RGB24);
-			return TRUE;
+			return S_OK;
 		}
-		return FALSE;
+		return S_FALSE;
 	}
-	BOOL SinkInputPin::GetValidMediaType(INT index, AM_MEDIA_TYPE* mediaType)
+	HRESULT SinkInputPin::GetMediaType(INT index, AM_MEDIA_TYPE* mediaType)
 	{
 		if (mediaType->cbFormat < sizeof(VIDEOINFOHEADER))
-			return FALSE;
+			return S_FALSE;
 		VIDEOINFOHEADER* pvi = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
 		ZeroMemory(pvi, sizeof(VIDEOINFOHEADER));
 		pvi->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
@@ -117,11 +117,11 @@ namespace Media
 			break;
 		}
 		default:
-			return FALSE;
+			return S_FALSE;
 		}
 		mediaType->bFixedSizeSamples = TRUE;
 		mediaType->lSampleSize = pvi->bmiHeader.biSizeImage;
-		return TRUE;
+		return S_OK;
 	}
 	const VideoCaptureParam& SinkInputPin::GetResultingParam()
 	{

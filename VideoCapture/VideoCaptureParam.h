@@ -60,6 +60,7 @@ namespace Media
 		const TinySize& GetSize() const;
 		FLOAT	GetRate() const;
 		VideoPixelFormat GetFormat() const;
+		string ToString() const;
 		static string PixelFormatToString(VideoPixelFormat format);
 	private:
 		FLOAT			 m_rate;

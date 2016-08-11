@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "VideoCapture.h"
+#include "VideoCapture1.h"
 using namespace D3D;
 
 CVideoCapture::CVideoCapture()

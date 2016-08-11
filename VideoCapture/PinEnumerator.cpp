@@ -4,9 +4,8 @@
 namespace Media
 {
 	PinEnumerator::PinEnumerator(FilterBase* pFilter)
-		:m_pFilter(pFilter), m_index(0)
+		:m_pFilter(pFilter), m_position(0)
 	{
-
 	}
 
 
@@ -18,35 +17,48 @@ namespace Media
 	HRESULT STDMETHODCALLTYPE PinEnumerator::Next(ULONG cPins, _Out_writes_to_(cPins, *pcFetched) IPin **ppPins, _Out_opt_ ULONG *pcFetched)
 	{
 		ASSERT(m_pFilter);
-		ULONG fectch = 0;
-		while (fectch < cPins && m_pFilter->GetPinCount() > m_index)
+		if (pcFetched != NULL)
 		{
-			IPin* pin = m_pFilter->GetPin(m_index++);
-			pin->AddRef();
-			ppPins[fectch++] = pin;
+			*pcFetched = 0;
+		}
+		else if (cPins > 1)
+		{
+			return E_INVALIDARG;
+		}
+		ULONG cFetched = 0;
+		while (cFetched < cPins && m_pFilter->GetPinCount() > m_position)
+		{
+			IPin* pPin = m_pFilter->GetPin(m_position++);
+			if (pPin == NULL)
+			{
+				ASSERT(cFetched == 0);
+				return VFW_E_ENUM_OUT_OF_SYNC;
+			}
+			pPin->AddRef();
+			ppPins[cFetched++] = pPin;
 		}
 		if (pcFetched)
 		{
-			*pcFetched = fectch;
+			*pcFetched = cFetched;
 		}
-		return fectch == cPins ? S_OK : S_FALSE;
+		return cFetched == cPins ? S_OK : S_FALSE;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinEnumerator::Skip(ULONG cPins)
 	{
 		ASSERT(m_pFilter);
-		if ((m_pFilter->GetPinCount() - m_index) > cPins)
+		if ((m_pFilter->GetPinCount() - m_position) > cPins)
 		{
-			m_index += cPins;
+			m_position += cPins;
 			return S_OK;
 		}
-		m_index = 0;
+		m_position = 0;
 		return S_FALSE;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinEnumerator::Reset(void)
 	{
-		m_index = 0;
+		m_position = 0;
 		return S_OK;
 	}
 
@@ -55,7 +67,7 @@ namespace Media
 		ASSERT(m_pFilter);
 		PinEnumerator* ps = new PinEnumerator(m_pFilter);
 		ps->AddRef();
-		ps->m_index = m_index;
+		ps->m_position = m_position;
 		*ppEnum = ps;
 		return S_OK;
 	}

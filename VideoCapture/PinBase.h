@@ -7,11 +7,13 @@ namespace Media
 	{
 		DISALLOW_COPY_AND_ASSIGN(PinBase);
 	public:
-		explicit PinBase(IBaseFilter* owner);
+		explicit PinBase(IBaseFilter* owner, PIN_DIRECTION pinDir = PINDIR_OUTPUT);
 		~PinBase();
 		void SetOwner(IBaseFilter* owner);
-		virtual BOOL IsMediaTypeValid(const AM_MEDIA_TYPE* mediaType) = 0;
-		virtual BOOL GetValidMediaType(INT index, AM_MEDIA_TYPE* mediaType) = 0;
+		virtual HRESULT CheckMediaType(const AM_MEDIA_TYPE* mediaType) = 0;
+		virtual HRESULT GetMediaType(INT position, AM_MEDIA_TYPE* mediaType) = 0;
+		virtual HRESULT SetMediaType(const AM_MEDIA_TYPE *mediaType);
+		virtual HRESULT CheckConnect(IPin *pPin);
 	public:
 		HRESULT STDMETHODCALLTYPE Connect(IPin *pReceivePin, _In_opt_ const AM_MEDIA_TYPE *pmt) OVERRIDE;
 		HRESULT STDMETHODCALLTYPE ReceiveConnection(IPin *pConnector, const AM_MEDIA_TYPE *pmt) OVERRIDE;
@@ -38,7 +40,13 @@ namespace Media
 		ULONG STDMETHODCALLTYPE AddRef(void) OVERRIDE;
 		ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
 	private:
+		HRESULT AgreeMediaType(IPin *pReceivePin, const AM_MEDIA_TYPE *pmt);
+		HRESULT TryConnection(IPin* pReceivePin, const AM_MEDIA_TYPE* pmt);
+		HRESULT TryMediaTypes(IPin *pReceivePin, const AM_MEDIA_TYPE *pmt, IEnumMediaTypes *pEnum);
+		BOOL MediaTypeMatchPartial(const AM_MEDIA_TYPE *pmt1, const AM_MEDIA_TYPE *pmt2);
+	private:
 		AM_MEDIA_TYPE		m_mediaType;
+		PIN_DIRECTION		m_pinDir;
 		TinyComPtr<IPin>	m_connector;
 		IBaseFilter*		m_ownerFilter;
 		WCHAR*				m_pzName;

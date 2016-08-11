@@ -75,6 +75,9 @@
     <ClInclude Include="UIFrame.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="VideoCapture1.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -117,6 +120,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="UIFrame.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoCapture1.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

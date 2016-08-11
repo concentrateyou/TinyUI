@@ -6,8 +6,8 @@ namespace Media
 	class FilterObserver
 	{
 	public:
-		virtual void OnFrameReceive(const BYTE* data, INT size) = 0;
+		virtual void OnFrameReceive(const BYTE* data, INT size, LPVOID lpParameter) = 0;
 	protected:
-		virtual ~FilterObserver();
+		virtual ~FilterObserver(); 
 	};
 }
