@@ -5,22 +5,19 @@
 
 namespace Media
 {
-	class SinkInputPin : public PinBase
+	class SinkInputPin : public PinBase, public IMemInputPin
 	{
 		DISALLOW_IMPLICIT_CONSTRUCTORS(SinkInputPin);
 	public:
-		SinkInputPin(IBaseFilter* filter, FilterObserver* observer);
+		SinkInputPin(FilterBase* pFilter, FilterObserver* observer);
 		~SinkInputPin();
-		void SetRequestedParam(const VideoCaptureParam& param);
 		HRESULT CheckMediaType(const AM_MEDIA_TYPE* mediaType) OVERRIDE;
 		HRESULT GetMediaType(INT index, AM_MEDIA_TYPE* mediaType) OVERRIDE;
 		HRESULT SetMediaType(const AM_MEDIA_TYPE *mediaType) OVERRIDE;
 		HRESULT STDMETHODCALLTYPE Receive(IMediaSample *pSample) OVERRIDE;
-		const VideoCaptureParam& GetResultingParam();
 	private:
-		VideoCaptureParam	m_requesting;
-		VideoCaptureParam	m_resulting;
 		FilterObserver*		m_observer;
+		
 	};
 }
 

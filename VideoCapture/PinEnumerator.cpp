@@ -4,8 +4,9 @@
 namespace Media
 {
 	PinEnumerator::PinEnumerator(FilterBase* pFilter)
-		:m_pFilter(pFilter), m_position(0)
+		:m_pFilter(pFilter), m_position(0), m_count(0)
 	{
+		m_count = m_pFilter->GetPinCount();
 	}
 
 
@@ -26,7 +27,7 @@ namespace Media
 			return E_INVALIDARG;
 		}
 		ULONG cFetched = 0;
-		while (cFetched < cPins && m_pFilter->GetPinCount() > m_position)
+		while (cFetched < cPins && m_count > m_position)
 		{
 			IPin* pPin = m_pFilter->GetPin(m_position++);
 			if (pPin == NULL)
@@ -47,7 +48,7 @@ namespace Media
 	HRESULT STDMETHODCALLTYPE PinEnumerator::Skip(ULONG cPins)
 	{
 		ASSERT(m_pFilter);
-		if ((m_pFilter->GetPinCount() - m_position) > cPins)
+		if ((m_count - m_position) > cPins)
 		{
 			m_position += cPins;
 			return S_OK;

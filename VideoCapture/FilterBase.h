@@ -7,7 +7,7 @@ namespace Media
 	{
 		DISALLOW_COPY_AND_ASSIGN(FilterBase);
 	public:
-		FilterBase();
+		FilterBase(LPWSTR pzName = FILTER_NAME);
 		virtual ~FilterBase();
 		virtual INT	GetPinCount() = 0;
 		virtual IPin* GetPin(INT index) = 0;
@@ -28,7 +28,9 @@ namespace Media
 		ULONG STDMETHODCALLTYPE AddRef(void) OVERRIDE;
 		ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
 	private:
-		FILTER_STATE m_state;
-		TinyUI::TinyComPtr<IFilterGraph> m_graph;
+		FILTER_STATE	m_state;
+		LPCWSTR			m_pzName;
+		TinyUI::TinyComPtr<IFilterGraph>	m_graph;
+		TinyUI::TinyComPtr<IReferenceClock> m_clock;
 	};
 }

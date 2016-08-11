@@ -18,6 +18,7 @@ namespace Media
 		ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
 	private:
 		INT			m_position;
+		INT			m_count;
 		FilterBase* m_pFilter;
 	};
 

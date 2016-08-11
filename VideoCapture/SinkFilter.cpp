@@ -12,7 +12,7 @@ namespace Media
 
 	SinkFilter::~SinkFilter()
 	{
-		m_sinkInputPin->SetOwner(NULL);
+
 	}
 
 	void SinkFilter::SetRequestedParam(const VideoCaptureParam& param)

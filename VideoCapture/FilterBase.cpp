@@ -4,8 +4,9 @@
 
 namespace Media
 {
-	FilterBase::FilterBase()
-		:m_state(State_Stopped)
+	FilterBase::FilterBase(LPWSTR pzName)
+		:m_pzName(pzName),
+		m_state(State_Stopped)
 	{
 
 	}
@@ -16,13 +17,37 @@ namespace Media
 	HRESULT STDMETHODCALLTYPE FilterBase::EnumPins(_Out_ IEnumPins **ppEnum)
 	{
 		*ppEnum = new PinEnumerator(this);
+		if (*ppEnum == NULL)
+			return E_OUTOFMEMORY;
 		(*ppEnum)->AddRef();
 		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE FilterBase::FindPin(LPCWSTR Id, _Out_ IPin **ppPin)
 	{
-		return E_NOTIMPL;
+		INT count = GetPinCount();
+		for (INT i = 0; i < count; i++)
+		{
+			IPin *pPin = GetPin(i);
+			if (NULL == pPin)
+			{
+				break;
+			}
+			LPWSTR id = NULL;
+			if (SUCCEEDED(pPin->QueryId(&id)))
+			{
+				if (0 == StrCmpW(id, Id))
+				{
+					*ppPin = pPin;
+					pPin->AddRef();
+					CoTaskMemFree(id);
+					return S_OK;
+				}
+				CoTaskMemFree(id);
+			}
+		}
+		*ppPin = NULL;
+		return VFW_E_NOT_FOUND;
 	}
 
 	HRESULT STDMETHODCALLTYPE FilterBase::QueryFilterInfo(_Out_ FILTER_INFO *pInfo)
@@ -44,7 +69,7 @@ namespace Media
 
 	HRESULT STDMETHODCALLTYPE FilterBase::QueryVendorInfo(_Out_ LPWSTR *pVendorInfo)
 	{
-		return S_OK;
+		return E_NOTIMPL;
 	}
 
 	HRESULT STDMETHODCALLTYPE FilterBase::Stop(void)
@@ -73,13 +98,14 @@ namespace Media
 
 	HRESULT STDMETHODCALLTYPE FilterBase::SetSyncSource(_In_opt_ IReferenceClock *pClock)
 	{
+		m_clock = pClock;
 		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE FilterBase::GetSyncSource(_Outptr_result_maybenull_ IReferenceClock **pClock)
 	{
-		*pClock = NULL;
-		return E_NOTIMPL;
+		*pClock = m_clock;
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE FilterBase::GetClassID(__RPC__out CLSID *pClassID)

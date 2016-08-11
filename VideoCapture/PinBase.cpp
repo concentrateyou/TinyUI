@@ -1,23 +1,25 @@
 #include "stdafx.h"
+#include "FilterBase.h"
 #include "PinBase.h"
 #include "TypeEnumerator.h"
 
 namespace Media
 {
-	PinBase::PinBase(IBaseFilter* ownerFilter, PIN_DIRECTION pinDir)
-		:m_ownerFilter(ownerFilter),
-		m_pinDir(pinDir)
+	PinBase::PinBase(FilterBase* pFilter, PIN_DIRECTION dir, WCHAR* pzName)
+		:m_pFilter(pFilter),
+		m_dir(dir),
+		m_pzName(pzName),
+		m_bFlushing(FALSE),
+		m_startTime(0),
+		m_stopTime(0),
+		m_rate(0.0F)
 	{
-		ZeroMemory(&m_mediaType, sizeof(m_mediaType));
+		ZeroMemory((void*)&m_mediaType, sizeof(m_mediaType));
 	}
 
 	PinBase::~PinBase()
 	{
 
-	}
-	void PinBase::SetOwner(IBaseFilter* ownerFilter)
-	{
-		m_ownerFilter = ownerFilter;
 	}
 	HRESULT PinBase::SetMediaType(const AM_MEDIA_TYPE *mediaType)
 	{
@@ -37,8 +39,8 @@ namespace Media
 		PIN_DIRECTION pd;
 		pPin->QueryDirection(&pd);
 		ASSERT((pd == PINDIR_OUTPUT) || (pd == PINDIR_INPUT));
-		ASSERT((m_pinDir == PINDIR_OUTPUT) || (m_pinDir == PINDIR_INPUT));
-		if (pd == m_pinDir)
+		ASSERT((m_dir == PINDIR_OUTPUT) || (m_dir == PINDIR_INPUT));
+		if (pd == m_dir)
 		{
 			return VFW_E_INVALID_DIRECTION;
 		}
@@ -225,13 +227,14 @@ namespace Media
 		if (FAILED(hRes))
 			return hRes;
 		return S_OK;
-		/*pReceivePin->AddRef();
-		m_connector.Attach(pReceivePin);
-		return pReceivePin->ReceiveConnection(this, pmt);*/
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::ReceiveConnection(IPin *pConnector, const AM_MEDIA_TYPE *pmt)
 	{
+		if (!pConnector || !pmt)
+		{
+			return E_POINTER;
+		}
 		if (m_connector)
 		{
 			return VFW_E_ALREADY_CONNECTED;
@@ -271,9 +274,10 @@ namespace Media
 		return S_OK;
 	}
 
-	HRESULT STDMETHODCALLTYPE PinBase::ConnectedTo(_Out_ IPin **pPin)
+	HRESULT STDMETHODCALLTYPE PinBase::ConnectedTo(_Out_ IPin **ppPin)
 	{
-		*pPin = m_connector;
+		IPin *pPin = m_connector;
+		*ppPin = pPin;
 		if (!m_connector)
 			return VFW_E_NOT_CONNECTED;
 		m_connector->AddRef();
@@ -283,43 +287,71 @@ namespace Media
 	HRESULT STDMETHODCALLTYPE PinBase::ConnectionMediaType(_Out_ AM_MEDIA_TYPE *pmt)
 	{
 		if (!m_connector)
+		{
+			ZeroMemory(pmt, sizeof(AM_MEDIA_TYPE));
+			pmt->lSampleSize = 1;
+			pmt->bFixedSizeSamples = TRUE;
 			return VFW_E_NOT_CONNECTED;
-		*pmt = m_mediaType;
+		}
+		CopyMediaType(pmt, &m_mediaType);
 		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::QueryPinInfo(_Out_ PIN_INFO *pInfo)
 	{
-		memcpy(pInfo->achName, PIN_NAME, sizeof(PIN_NAME));
-		pInfo->dir = PINDIR_INPUT;
-		pInfo->pFilter = m_ownerFilter;
-		if (m_ownerFilter)
+		pInfo->pFilter = m_pFilter;
+		if (m_pFilter)
 		{
-			m_ownerFilter->AddRef();
+			m_pFilter->AddRef();
 		}
-		pInfo->achName[0] = L'\0';
+		if (m_pzName)
+		{
+			StringCchCopyW(pInfo->achName, ARRAYSIZE(pInfo->achName), m_pzName);
+		}
+		else
+		{
+			pInfo->achName[0] = L'\0';
+		}
+		pInfo->dir = m_dir;
 		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::QueryDirection(_Out_ PIN_DIRECTION *pPinDir)
 	{
-		*pPinDir = m_pinDir;
+		*pPinDir = m_dir;
 		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::QueryId(_Out_ LPWSTR *Id)
 	{
-		return E_OUTOFMEMORY;
+		size_t size;
+		HRESULT hRes = StringCbLengthW(m_pzName, 100000, &size);
+		if (FAILED(hRes))
+			return hRes;
+		*Id = (LPWSTR)CoTaskMemAlloc(size + sizeof(WCHAR));
+		if (*Id == NULL)
+		{
+			return E_OUTOFMEMORY;
+		}
+		CopyMemory(*Id, m_pzName, size + sizeof(WCHAR));
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::QueryAccept(const AM_MEDIA_TYPE *pmt)
 	{
-		return S_FALSE;
+		HRESULT hRes = CheckMediaType(pmt);
+		if (FAILED(hRes))
+		{
+			return S_FALSE;
+		}
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::EnumMediaTypes(_Out_ IEnumMediaTypes **ppEnum)
 	{
 		*ppEnum = new TypeEnumerator(this);
+		if (*ppEnum == NULL)
+			return E_OUTOFMEMORY;
 		(*ppEnum)->AddRef();
 		return S_OK;
 	}
@@ -336,51 +368,22 @@ namespace Media
 
 	HRESULT STDMETHODCALLTYPE PinBase::BeginFlush(void)
 	{
+		m_bFlushing = TRUE;
 		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::EndFlush(void)
 	{
+		m_bFlushing = FALSE;
 		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::NewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate)
 	{
-		return E_NOTIMPL;
-	}
-
-	HRESULT STDMETHODCALLTYPE PinBase::GetAllocator(_Out_ IMemAllocator **ppAllocator)
-	{
-		return VFW_E_NO_ALLOCATOR;
-	}
-
-	HRESULT STDMETHODCALLTYPE PinBase::NotifyAllocator(IMemAllocator *pAllocator, BOOL bReadOnly)
-	{
+		m_startTime = tStart;
+		m_stopTime = tStop;
+		m_rate = dRate;
 		return S_OK;
-	}
-
-	HRESULT STDMETHODCALLTYPE PinBase::GetAllocatorRequirements(_Out_ ALLOCATOR_PROPERTIES *pProps)
-	{
-		return E_NOTIMPL;
-	}
-
-	HRESULT STDMETHODCALLTYPE PinBase::ReceiveMultiple(_In_reads_(nSamples) IMediaSample **pSamples, long nSamples, _Out_ long *nSamplesProcessed)
-	{
-		HRESULT hRes = S_OK;
-		*nSamplesProcessed = 0;
-		while (nSamples--)
-		{
-			hRes = Receive(pSamples[*nSamplesProcessed]);
-			if (hRes != S_OK)
-				break;
-			++(*nSamplesProcessed);
-		}
-		return hRes;
-	}
-
-	HRESULT STDMETHODCALLTYPE PinBase::ReceiveCanBlock(void)
-	{
-		return S_FALSE;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::QueryInterface(REFIID riid, void **ppvObject)
@@ -388,10 +391,6 @@ namespace Media
 		if (IsEqualIID(riid, IID_IPin) || IsEqualIID(riid, IID_IUnknown))
 		{
 			*ppvObject = static_cast<IPin*>(this);
-		}
-		else if (IsEqualIID(riid, IID_IMemInputPin))
-		{
-			*ppvObject = static_cast<IMemInputPin*>(this);
 		}
 		else
 		{
@@ -412,5 +411,152 @@ namespace Media
 	{
 		TinyReference < PinBase >::Release();
 		return TinyReference < PinBase >::GetReference();
+	}
+	//////////////////////////////////////////////////////////////////////////
+	InputPinBase::InputPinBase(FilterBase* pFilter, WCHAR* pzName)
+		:PinBase(pFilter, PINDIR_INPUT, pzName),
+		m_pAllocator(NULL),
+		m_bReadOnly(FALSE)
+	{
+		ZeroMemory((void*)&m_sampleProps, sizeof(m_sampleProps));
+	}
+	InputPinBase::~InputPinBase()
+	{
+
+	}
+	HRESULT InputPinBase::CheckStreaming()
+	{
+		ASSERT(m_connector);
+		if (m_pFilter->m_state == State_Stopped)
+		{
+			return VFW_E_WRONG_STATE;
+		}
+		if (m_bFlushing)
+		{
+			return S_FALSE;
+		}
+		return S_OK;
+	}
+	HRESULT STDMETHODCALLTYPE InputPinBase::GetAllocator(_Out_ IMemAllocator **ppAllocator)
+	{
+		if (m_pAllocator == NULL)
+		{
+			HRESULT hRes = CoCreateInstance(CLSID_MemoryAllocator,
+				0,
+				CLSCTX_INPROC_SERVER,
+				IID_IMemAllocator,
+				(void **)ppAllocator);
+			if (FAILED(hRes))
+			{
+				return hRes;
+			}
+		}
+		ASSERT(m_pAllocator != NULL);
+		*ppAllocator = m_pAllocator;
+		m_pAllocator->AddRef();
+		return S_OK;
+
+	}
+	HRESULT STDMETHODCALLTYPE InputPinBase::NotifyAllocator(IMemAllocator *pAllocator, BOOL bReadOnly)
+	{
+		IMemAllocator *pOldAllocator = m_pAllocator;
+		pAllocator->AddRef();
+		m_pAllocator = pAllocator;
+
+		if (pOldAllocator != NULL)
+		{
+			pOldAllocator->Release();
+		}
+		m_bReadOnly = bReadOnly;
+		return NOERROR;
+	}
+	HRESULT STDMETHODCALLTYPE InputPinBase::GetAllocatorRequirements(_Out_ ALLOCATOR_PROPERTIES *pProps)
+	{
+		return E_NOTIMPL;
+	}
+	HRESULT STDMETHODCALLTYPE InputPinBase::ReceiveMultiple(_In_reads_(nSamples) IMediaSample **pSamples, long nSamples, _Out_ long *nSamplesProcessed)
+	{
+		HRESULT hRes = S_OK;
+		*nSamplesProcessed = 0;
+		while (nSamples-- > 0)
+		{
+			hRes = Receive(pSamples[*nSamplesProcessed]);
+			if (hRes != S_OK)
+			{
+				break;
+			}
+			(*nSamplesProcessed)++;
+		}
+		return hRes;
+	}
+	HRESULT STDMETHODCALLTYPE InputPinBase::ReceiveCanBlock(void)
+	{
+		INT cPins = m_pFilter->GetPinCount();
+		INT cOutputPins = 0;
+		for (INT c = 0; c < cPins; c++)
+		{
+			IPin *pPin = m_pFilter->GetPin(c);
+			if (NULL == pPin)
+			{
+				break;
+			}
+			PIN_DIRECTION pd;
+			HRESULT hRes = pPin->QueryDirection(&pd);
+			if (FAILED(hRes))
+			{
+				return hRes;
+			}
+			if (pd == PINDIR_OUTPUT)
+			{
+				IPin *pConnector = NULL;
+				hRes = pPin->ConnectedTo(&pConnector);
+				if (SUCCEEDED(hRes))
+				{
+					ASSERT(pConnector != NULL);
+					cOutputPins++;
+					IMemInputPin *pInputPin = NULL;
+					hRes = pConnector->QueryInterface(IID_IMemInputPin, (void **)&pInputPin);
+					pConnector->Release();
+					if (SUCCEEDED(hRes))
+					{
+						hRes = pInputPin->ReceiveCanBlock();
+						pInputPin->Release();
+						if (hRes != S_FALSE)
+						{
+							return S_OK;
+						}
+					}
+					else
+					{
+						return S_OK;
+					}
+				}
+			}
+		}
+		return cOutputPins == 0 ? S_OK : S_FALSE;
+	}
+	HRESULT STDMETHODCALLTYPE InputPinBase::QueryInterface(REFIID riid, void **ppvObject)
+	{
+		if (IsEqualIID(riid, IMemInputPin) && IsEqualIID(riid, IID_IUnknown))
+		{
+			*ppvObject = static_cast<IMemInputPin*>(this);
+		}
+		else
+		{
+			*ppvObject = NULL;
+			return E_NOINTERFACE;
+		}
+		AddRef();
+		return NOERROR;
+	}
+	ULONG STDMETHODCALLTYPE InputPinBase::AddRef(void)
+	{
+		TinyReference < InputPinBase >::AddRef();
+		return TinyReference < InputPinBase >::GetReference();
+	}
+	ULONG STDMETHODCALLTYPE InputPinBase::Release(void)
+	{
+		TinyReference < InputPinBase >::Release();
+		return TinyReference < InputPinBase >::GetReference();
 	}
 }

@@ -4,8 +4,8 @@
 namespace Media
 {
 	const REFERENCE_TIME SecondsToReferenceTime = 10000000;
-	SinkInputPin::SinkInputPin(IBaseFilter* filter, FilterObserver* observer)
-		:PinBase(filter), m_observer(observer)
+	SinkInputPin::SinkInputPin(FilterBase* pFilter, FilterObserver* observer)
+		:PinBase(pFilter, PINDIR_INPUT, PIN_NAME), m_observer(observer)
 	{
 	}
 	SinkInputPin::~SinkInputPin()
@@ -19,15 +19,8 @@ namespace Media
 		BYTE* data = NULL;
 		if (FAILED(pSample->GetPointer(&data)))
 			return S_FALSE;
-		m_observer->OnFrameReceive(data, size, &m_resulting);
+		m_observer->OnFrameReceive(data, size, NULL);
 		return S_OK;
-	}
-	void SinkInputPin::SetRequestedParam(const VideoCaptureParam& param)
-	{
-		m_requesting = param;
-		m_resulting.SetSize(0, 0);
-		m_resulting.SetRate(0.0F);
-		m_resulting.SetFormat(PIXEL_FORMAT_UNKNOWN);
 	}
 	HRESULT SinkInputPin::CheckMediaType(const AM_MEDIA_TYPE* mediaType)
 	{
@@ -41,30 +34,30 @@ namespace Media
 		VIDEOINFOHEADER* pvi = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
 		if (pvi == NULL)
 			return S_FALSE;
-		m_resulting.SetSize(pvi->bmiHeader.biWidth, abs(pvi->bmiHeader.biHeight));
+		/*m_resulting.SetSize(pvi->bmiHeader.biWidth, abs(pvi->bmiHeader.biHeight));
 		if (pvi->AvgTimePerFrame > 0)
 		{
-			m_resulting.SetRate(static_cast<FLOAT>(SecondsToReferenceTime / pvi->AvgTimePerFrame));
+		m_resulting.SetRate(static_cast<FLOAT>(SecondsToReferenceTime / pvi->AvgTimePerFrame));
 		}
 		else
 		{
-			m_resulting.SetRate(m_requesting.GetRate());
+		m_resulting.SetRate(m_requesting.GetRate());
 		}
 		if (subType == MediaSubTypeI420 &&pvi->bmiHeader.biCompression == MAKEFOURCC('I', '4', '2', '0'))
 		{
-			m_resulting.SetFormat(PIXEL_FORMAT_I420);
-			return S_OK;
+		m_resulting.SetFormat(PIXEL_FORMAT_I420);
+		return S_OK;
 		}
 		if (subType == MEDIASUBTYPE_YUY2 &&pvi->bmiHeader.biCompression == MAKEFOURCC('Y', 'U', 'Y', '2'))
 		{
-			m_resulting.SetFormat(PIXEL_FORMAT_YUY2);
-			return S_OK;
+		m_resulting.SetFormat(PIXEL_FORMAT_YUY2);
+		return S_OK;
 		}
 		if (subType == MEDIASUBTYPE_RGB24 && pvi->bmiHeader.biCompression == BI_RGB)
 		{
-			m_resulting.SetFormat(PIXEL_FORMAT_RGB24);
-			return S_OK;
-		}
+		m_resulting.SetFormat(PIXEL_FORMAT_RGB24);
+		return S_OK;
+		}*/
 		return S_FALSE;
 	}
 	HRESULT SinkInputPin::GetMediaType(INT index, AM_MEDIA_TYPE* mediaType)
