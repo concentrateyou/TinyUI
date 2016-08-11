@@ -31,7 +31,7 @@ namespace TinyUI
 			DECLARE_DYNAMIC(TinyVisualHScrollBar);
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualHScrollBar);
 		protected:
-			TinyVisualHScrollBar(TinyVisual* spvisParent, TinyVisualDocument* vtree);
+			TinyVisualHScrollBar(TinyVisual* spvisParent, TinyVisualDocument* document);
 		public:
 			virtual ~TinyVisualHScrollBar();
 			TinyString	RetrieveTag() const OVERRIDE;
@@ -65,11 +65,11 @@ namespace TinyUI
 		/// </summary>
 		class TinyVisualVScrollBar : public TinyVisual
 		{
-			friend class TinyVisualFactory;
+			friend class TinyVisualDocument;
 			DECLARE_DYNAMIC(TinyVisualVScrollBar);
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualVScrollBar);
 		protected:
-			TinyVisualVScrollBar(TinyVisual* spvisParent, TinyVisualDocument* vtree);
+			TinyVisualVScrollBar(TinyVisual* spvisParent, TinyVisualDocument* document);
 		public:
 			virtual ~TinyVisualVScrollBar();
 			TinyString	RetrieveTag() const OVERRIDE;

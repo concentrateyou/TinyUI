@@ -38,8 +38,8 @@ namespace TinyUI
 			T*		Create(INT x, INT y, INT cx, INT cy, TinyVisual* spvisParent);
 			BOOL	Destory(TinyVisual* spvis);
 		public:
-			HWND			Handle() const;
-			TinyVisualHWND*	GetVisualHWND() const;
+			HWND				Handle() const;
+			TinyVisualHWND*		GetVisualHWND() const;
 			TinyVisualCacheDC*	GetCacheDC() const;
 			TinyVisual*		GetVisual(TinyVisual* spvis, UINT cmd) const;
 			TinyVisual*		SetParent(TinyVisual* spvis, TinyVisual* spvisNewParent);
@@ -120,6 +120,25 @@ namespace TinyUI
 			void			Dump(TinyVisual* spvis, INT& deep);
 #endif
 		};
+		template<typename T>
+		T*	 TinyVisualDocument::Create(INT x, INT y, INT cx, INT cy, TinyVisual* spvisParent)
+		{
+			ASSERT(m_fs);
+			//T±ØÐëÒª¼Ì³Ð×ÔTinyVisual
+			COMPILE_ASSERT((std::is_convertible<T, TinyVisual>::value), T_must_convertible_to_TinyVisual);
+			return m_fs->Create<T>(x, y, cx, cy, spvisParent);
+		}
+		template<typename T>
+		T* TinyVisualDocument::TinyVisualFactory::Create(INT x, INT y, INT cx, INT cy, TinyVisual* spvisParent)
+		{
+			ASSERT(m_document);
+			TinyVisual* spvis = new T(spvisParent, m_document);
+			spvis->SetPosition(TinyPoint(x, y));
+			spvis->SetSize(TinySize(cx, cy));
+			m_document->SetParent(spvis, spvisParent);
+			spvis->OnCreate();
+			return static_cast<T*>(spvis);
+		}
 	};
 }
 

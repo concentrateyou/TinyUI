@@ -2,9 +2,6 @@
 #include "TinyVisualHWND.h"
 #include "TinyVisualWindow.h"
 #include "TinyVisualDocument.h"
-#include "TinyVisualComboBox.h"
-#include "TinyVisualList.h"
-#include "TinyVisualRichText.h"
 
 namespace TinyUI
 {
@@ -23,13 +20,6 @@ namespace TinyUI
 		TinyVisualDocument::~TinyVisualDocument()
 		{
 
-		}
-		template<typename T>
-		T*	 TinyVisualDocument::Create(INT x, INT y, INT cx, INT cy, TinyVisual* spvisParent)
-		{
-			ASSERT(m_fs);
-			COMPILE_ASSERT((std::is_convertible<T*, TinyUI::Windowless::TinyVisual*>::value), T_must_implicitly_convert_to_TinyVisual);
-			return m_fs->Create<T>(x, y, cx, cy, spvisParent);
 		}
 		BOOL TinyVisualDocument::Destory(TinyVisual* spvis)
 		{
@@ -697,17 +687,6 @@ namespace TinyUI
 			:m_document(document)
 		{
 
-		}
-		template<typename T>
-		T* TinyVisualDocument::TinyVisualFactory::Create(INT x, INT y, INT cx, INT cy, TinyVisual* spvisParent)
-		{
-			ASSERT(m_document);
-			TinyVisual* spvis = new T(spvisParent, m_document);
-			spvis->SetPosition(TinyPoint(x, y));
-			spvis->SetSize(TinySize(cx, cy));
-			m_document->SetParent(spvis, spvisParent);
-			spvis->OnCreate();
-			return static_cast<T*>(spvis);
 		}
 		BOOL TinyVisualDocument::TinyVisualFactory::Destory(TinyVisual* spvis)
 		{

@@ -3,6 +3,7 @@
 #include "TinyVisualManage.h"
 #include "TinyVisualDocument.h"
 #include "TinyVisualRichText.h"
+#include "TinyVisualScrollBar.h"
 #include "TinyTextHost.h"
 
 namespace TinyUI

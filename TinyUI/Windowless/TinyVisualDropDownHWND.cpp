@@ -2,6 +2,7 @@
 #include "TinyVisualDropDownHWND.h"
 #include "../Render/TinyTransform.h"
 #include "../Render/TinyCanvas.h"
+#include "TinyVisualList.h"
 
 namespace TinyUI
 {
@@ -45,7 +46,6 @@ namespace TinyUI
 		{
 			bHandled = FALSE;
 			LRESULT lRes = TinyVisualHWND::OnCreate(uMsg, wParam, lParam, bHandled);
-			
 			return lRes;
 		}
 

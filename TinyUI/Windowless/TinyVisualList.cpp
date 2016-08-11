@@ -27,8 +27,7 @@ namespace TinyUI
 		{
 			ASSERT(m_document);
 			TinySize size = this->GetSize();
-			//m_scrollbar = m_document->Create<TinyVisualDocument>(size.cx - 12, 0, 12, size.cy, this);
-			m_document->Create<TinyVisualDocument>(size.cx - 12, 0, 12, size.cy, this);
+			m_scrollbar = m_document->Create<TinyVisualVScrollBar>(size.cx - 12, 0, 12, size.cy, this);
 			m_onPosChange.Reset(new Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualList::OnPosChange));
 			m_scrollbar->EVENT_PosChange += m_onPosChange;
 			return TinyVisual::OnCreate();
