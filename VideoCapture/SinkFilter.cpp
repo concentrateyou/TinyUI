@@ -6,6 +6,7 @@ namespace Media
 {
 
 	SinkFilter::SinkFilter(FilterObserver* observer)
+		:FilterBase(__uuidof(SinkFilter), FILTER_NAME)
 	{
 		m_sinkInputPin = new SinkInputPin(this, observer);
 	}
@@ -14,17 +15,6 @@ namespace Media
 	{
 
 	}
-
-	void SinkFilter::SetRequestedParam(const VideoCaptureParam& param)
-	{
-		m_sinkInputPin->SetRequestedParam(param);
-	}
-
-	const VideoCaptureParam& SinkFilter::GetResultingParam()
-	{
-		return m_sinkInputPin->GetResultingParam();
-	}
-
 	INT SinkFilter::GetPinCount()
 	{
 		return 1;
@@ -35,9 +25,9 @@ namespace Media
 		return index == 0 ? m_sinkInputPin : NULL;
 	}
 
-	STDMETHODIMP SinkFilter::GetClassID(CLSID* clsid)
+	HRESULT SinkFilter::SetMediaType(const AM_MEDIA_TYPE* mediaType)
 	{
-		*clsid = __uuidof(SinkFilter);
-		return S_OK;
+		ASSERT(m_sinkInputPin);
+		return m_sinkInputPin->SetMediaType(mediaType);
 	}
 }

@@ -16,7 +16,6 @@ namespace Media
 	{
 		ZeroMemory((void*)&m_mediaType, sizeof(m_mediaType));
 	}
-
 	PinBase::~PinBase()
 	{
 
@@ -228,7 +227,6 @@ namespace Media
 			return hRes;
 		return S_OK;
 	}
-
 	HRESULT STDMETHODCALLTYPE PinBase::ReceiveConnection(IPin *pConnector, const AM_MEDIA_TYPE *pmt)
 	{
 		if (!pConnector || !pmt)
@@ -265,7 +263,6 @@ namespace Media
 		m_connector = NULL;
 		return hRes;
 	}
-
 	HRESULT STDMETHODCALLTYPE PinBase::Disconnect(void)
 	{
 		if (!m_connector)
@@ -273,7 +270,6 @@ namespace Media
 		m_connector.Release();
 		return S_OK;
 	}
-
 	HRESULT STDMETHODCALLTYPE PinBase::ConnectedTo(_Out_ IPin **ppPin)
 	{
 		IPin *pPin = m_connector;
@@ -283,7 +279,6 @@ namespace Media
 		m_connector->AddRef();
 		return S_OK;
 	}
-
 	HRESULT STDMETHODCALLTYPE PinBase::ConnectionMediaType(_Out_ AM_MEDIA_TYPE *pmt)
 	{
 		if (!m_connector)
@@ -296,7 +291,6 @@ namespace Media
 		CopyMediaType(pmt, &m_mediaType);
 		return S_OK;
 	}
-
 	HRESULT STDMETHODCALLTYPE PinBase::QueryPinInfo(_Out_ PIN_INFO *pInfo)
 	{
 		pInfo->pFilter = m_pFilter;
@@ -315,13 +309,11 @@ namespace Media
 		pInfo->dir = m_dir;
 		return S_OK;
 	}
-
 	HRESULT STDMETHODCALLTYPE PinBase::QueryDirection(_Out_ PIN_DIRECTION *pPinDir)
 	{
 		*pPinDir = m_dir;
 		return S_OK;
 	}
-
 	HRESULT STDMETHODCALLTYPE PinBase::QueryId(_Out_ LPWSTR *Id)
 	{
 		size_t size;
@@ -336,7 +328,6 @@ namespace Media
 		CopyMemory(*Id, m_pzName, size + sizeof(WCHAR));
 		return S_OK;
 	}
-
 	HRESULT STDMETHODCALLTYPE PinBase::QueryAccept(const AM_MEDIA_TYPE *pmt)
 	{
 		HRESULT hRes = CheckMediaType(pmt);
@@ -346,7 +337,6 @@ namespace Media
 		}
 		return S_OK;
 	}
-
 	HRESULT STDMETHODCALLTYPE PinBase::EnumMediaTypes(_Out_ IEnumMediaTypes **ppEnum)
 	{
 		*ppEnum = new TypeEnumerator(this);
@@ -355,29 +345,24 @@ namespace Media
 		(*ppEnum)->AddRef();
 		return S_OK;
 	}
-
 	HRESULT STDMETHODCALLTYPE PinBase::QueryInternalConnections(_Out_writes_to_opt_(*nPin, *nPin) IPin **apPin, ULONG *nPin)
 	{
 		return E_NOTIMPL;
 	}
-
 	HRESULT STDMETHODCALLTYPE PinBase::EndOfStream(void)
 	{
 		return S_OK;
 	}
-
 	HRESULT STDMETHODCALLTYPE PinBase::BeginFlush(void)
 	{
 		m_bFlushing = TRUE;
 		return S_OK;
 	}
-
 	HRESULT STDMETHODCALLTYPE PinBase::EndFlush(void)
 	{
 		m_bFlushing = FALSE;
 		return S_OK;
 	}
-
 	HRESULT STDMETHODCALLTYPE PinBase::NewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate)
 	{
 		m_startTime = tStart;
@@ -385,7 +370,6 @@ namespace Media
 		m_rate = dRate;
 		return S_OK;
 	}
-
 	HRESULT STDMETHODCALLTYPE PinBase::QueryInterface(REFIID riid, void **ppvObject)
 	{
 		if (IsEqualIID(riid, IID_IPin) || IsEqualIID(riid, IID_IUnknown))
@@ -400,21 +384,20 @@ namespace Media
 		AddRef();
 		return NOERROR;
 	}
-
 	ULONG STDMETHODCALLTYPE PinBase::AddRef(void)
 	{
 		TinyReference < PinBase >::AddRef();
 		return TinyReference < PinBase >::GetReference();
 	}
-
 	ULONG STDMETHODCALLTYPE PinBase::Release(void)
 	{
 		TinyReference < PinBase >::Release();
 		return TinyReference < PinBase >::GetReference();
 	}
 	//////////////////////////////////////////////////////////////////////////
-	InputPinBase::InputPinBase(FilterBase* pFilter, WCHAR* pzName)
+	InputPinBase::InputPinBase(FilterBase* pFilter, WCHAR* pzName, FilterObserver* observer)
 		:PinBase(pFilter, PINDIR_INPUT, pzName),
+		m_observer(observer),
 		m_pAllocator(NULL),
 		m_bReadOnly(FALSE)
 	{
@@ -427,7 +410,9 @@ namespace Media
 	HRESULT InputPinBase::CheckStreaming()
 	{
 		ASSERT(m_connector);
-		if (m_pFilter->m_state == State_Stopped)
+		FILTER_STATE state;
+		m_pFilter->GetState(0, &state);
+		if (state == State_Stopped)
 		{
 			return VFW_E_WRONG_STATE;
 		}
@@ -473,6 +458,21 @@ namespace Media
 	HRESULT STDMETHODCALLTYPE InputPinBase::GetAllocatorRequirements(_Out_ ALLOCATOR_PROPERTIES *pProps)
 	{
 		return E_NOTIMPL;
+	}
+	HRESULT STDMETHODCALLTYPE InputPinBase::Receive(IMediaSample *pSample)
+	{
+		ASSERT(m_observer);
+		HRESULT hRes = CheckStreaming();
+		if (FAILED(hRes))
+		{
+			return hRes;
+		}
+		const INT size = pSample->GetActualDataLength();
+		BYTE* data = NULL;
+		if (FAILED(pSample->GetPointer(&data)))
+			return S_FALSE;
+		m_observer->OnFrameReceive(data, size, NULL);
+		return S_OK;
 	}
 	HRESULT STDMETHODCALLTYPE InputPinBase::ReceiveMultiple(_In_reads_(nSamples) IMediaSample **pSamples, long nSamples, _Out_ long *nSamplesProcessed)
 	{
@@ -537,7 +537,7 @@ namespace Media
 	}
 	HRESULT STDMETHODCALLTYPE InputPinBase::QueryInterface(REFIID riid, void **ppvObject)
 	{
-		if (IsEqualIID(riid, IMemInputPin) && IsEqualIID(riid, IID_IUnknown))
+		if (IsEqualIID(riid, IID_IMemInputPin) && IsEqualIID(riid, IID_IUnknown))
 		{
 			*ppvObject = static_cast<IMemInputPin*>(this);
 		}
@@ -547,7 +547,7 @@ namespace Media
 			return E_NOINTERFACE;
 		}
 		AddRef();
-		return NOERROR;
+		return S_OK;
 	}
 	ULONG STDMETHODCALLTYPE InputPinBase::AddRef(void)
 	{

@@ -4,8 +4,9 @@
 
 namespace Media
 {
-	FilterBase::FilterBase(LPWSTR pzName)
-		:m_pzName(pzName),
+	FilterBase::FilterBase(REFCLSID  clsid, LPWSTR pzName)
+		:m_clsid(clsid),
+		m_pzName(pzName),
 		m_state(State_Stopped)
 	{
 
@@ -110,7 +111,8 @@ namespace Media
 
 	HRESULT STDMETHODCALLTYPE FilterBase::GetClassID(__RPC__out CLSID *pClassID)
 	{
-		return E_NOTIMPL;
+		*pClassID = m_clsid;
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE FilterBase::QueryInterface(REFIID riid, void **ppvObject)

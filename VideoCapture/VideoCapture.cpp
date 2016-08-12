@@ -142,10 +142,13 @@ namespace Media
 			if (mediaType->majortype == MEDIATYPE_Video && mediaType->formattype == FORMAT_VideoInfo)
 			{
 				VIDEOINFOHEADER* h = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
-				if (param.GetFormat() == TranslateMediaSubtypeToPixelFormat(mediaType->subtype) && param.GetSize() == TinySize(h->bmiHeader.biWidth, h->bmiHeader.biHeight))
+				if (param.GetFormat() == TranslateMediaSubtypeToPixelFormat(mediaType->subtype) &&
+					param.GetSize() == TinySize(h->bmiHeader.biWidth, h->bmiHeader.biHeight))
 				{
 					SetAntiFlickerInCaptureFilter();
-					m_sinkFilter->SetRequestedParam(param);
+					hRes = m_sinkFilter->SetMediaType(mediaType.Ptr());
+					if (hRes != S_OK)
+						return FALSE;
 					hRes = m_builder->ConnectDirect(m_captureConnector, m_sinkConnector, NULL);
 					if (hRes != S_OK)
 						return FALSE;

@@ -13,11 +13,9 @@ namespace Media
 	public:
 		explicit SinkFilter(FilterObserver* observer);
 		virtual ~SinkFilter();
-		void SetRequestedParam(const VideoCaptureParam& param);
-		const VideoCaptureParam& GetResultingParam();
+		HRESULT SetMediaType(const AM_MEDIA_TYPE* mediaType);
 		virtual INT GetPinCount();
 		virtual IPin* GetPin(int index);
-		STDMETHOD(GetClassID)(CLSID* clsid);
 	private:
 		TinyScopedReferencePtr<SinkInputPin> m_sinkInputPin;
 	};
