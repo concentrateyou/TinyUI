@@ -64,7 +64,7 @@ namespace Media
 	}
 	HRESULT SinkInputPin::GetMediaType(INT position, AM_MEDIA_TYPE* mediaType)
 	{
-		if (position >= 100)
+		if (position != 0)
 			return S_FALSE;
 		if (mediaType->cbFormat < sizeof(VIDEOINFOHEADER))
 			return S_FALSE;

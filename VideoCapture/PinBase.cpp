@@ -271,6 +271,7 @@ namespace Media
 		if (!m_connector)
 			return VFW_E_NOT_CONNECTED;
 		m_connector->AddRef();
+		TRACE("ConnectedTo : OK\n");
 		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::ConnectionMediaType(_Out_ AM_MEDIA_TYPE *pmt)
@@ -283,6 +284,9 @@ namespace Media
 			return VFW_E_NOT_CONNECTED;
 		}
 		*pmt = m_mediaType;
+		WCHAR str[39];
+		StringFromGUID2(m_mediaType.subtype, str, 39);
+		TRACE("ConnectionMediaType subtype:%s\n", UTF16ToUTF8(str).c_str());
 		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::QueryPinInfo(_Out_ PIN_INFO *pInfo)
@@ -305,6 +309,7 @@ namespace Media
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::QueryDirection(_Out_ PIN_DIRECTION *pPinDir)
 	{
+		TRACE("QueryDirection\n");
 		*pPinDir = m_dir;
 		return NOERROR;
 	}

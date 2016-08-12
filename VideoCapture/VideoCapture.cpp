@@ -47,29 +47,6 @@ namespace Media
 		if (!GetDeviceFilter(name, &m_captureFilter))
 			return FALSE;
 
-		/*TinyComPtr<IGraphBuilder> graph;
-		TinyComPtr<ICaptureGraphBuilder2> graph2;
-		HRESULT hRes = CoCreateInstance(CLSID_CaptureGraphBuilder2, NULL, CLSCTX_INPROC_SERVER, IID_ICaptureGraphBuilder2, (void**)&graph2);
-		hRes = CoCreateInstance(CLSID_FilterGraph, 0, CLSCTX_INPROC_SERVER, IID_IGraphBuilder, (void**)&graph);
-		graph2->SetFiltergraph(graph);
-		TinyComPtr<IAMStreamConfig> config;
-		graph2->FindInterface(&PIN_CATEGORY_CAPTURE, &MEDIATYPE_Video, m_captureFilter, IID_IAMStreamConfig, (void **)&config);
-		VIDEO_STREAM_CONFIG_CAPS scc;
-		AM_MEDIA_TYPE *pmtConfig;
-		INT count = 0;
-		INT size = 0;
-		hRes = config->GetNumberOfCapabilities(&count, &size);
-		for (INT i = 0; i < count; i++)
-		{
-		ScopedMediaType mediaType;
-		VIDEO_STREAM_CONFIG_CAPS caps;
-		hRes = config->GetStreamCaps(i, mediaType.Receive(), (BYTE*)&caps);
-		WCHAR str[39];
-		StringFromGUID2(mediaType->subtype, str, 39);
-		TRACE("subtype:%s\n", UTF16ToUTF8(str).c_str());
-		}
-
-		*/
 		m_captureConnector = GetPin(m_captureFilter, PINDIR_OUTPUT, PIN_CATEGORY_CAPTURE);
 		if (!m_captureConnector)
 			return FALSE;
@@ -177,10 +154,9 @@ namespace Media
 				VIDEOINFOHEADER* h = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
 				if (param.GetFormat() == TranslateMediaSubtypeToPixelFormat(mediaType->subtype) &&
 					param.GetSize() == TinySize(h->bmiHeader.biWidth, h->bmiHeader.biHeight))
-					//if (param.GetSize() == TinySize(h->bmiHeader.biWidth, h->bmiHeader.biHeight))
 				{
-					GetMediaType(param, mediaType.Ptr());
-					hRes = streamConfig->SetFormat(mediaType.Ptr());
+					//GetMediaType(param, mediaType.Ptr());
+					//hRes = streamConfig->SetFormat(mediaType.Ptr());
 					SetAntiFlickerInCaptureFilter();
 					m_sinkFilter->SetRequestedParam(param);
 					hRes = m_builder->ConnectDirect(m_captureConnector, m_sinkConnector, NULL);
