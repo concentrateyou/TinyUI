@@ -23,7 +23,7 @@ namespace Media
 	{
 		if (pcFetched != NULL)
 		{
-			*pcFetched = 0;         
+			*pcFetched = 0;
 		}
 		else if (cMediaTypes > 1)
 		{
@@ -48,7 +48,7 @@ namespace Media
 				return E_OUTOFMEMORY;
 			}
 			type->pbFormat = format;
-			if (m_pin->GetMediaType(m_position++, type))
+			if (m_pin->GetMediaType(m_position++, type) == S_OK)
 			{
 				ppMediaTypes[cFetched++] = type;
 			}

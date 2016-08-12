@@ -71,19 +71,16 @@ LRESULT CUIFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	{
 		m_device1.AddString(m_names[i].name().c_str());
 	}
-	/*vector<Media::VideoCapture::Name> names;
-	Media::VideoCapture::GetDevices(names);
-	vector<Media::VideoCaptureParam> params;
-	Media::VideoCapture::GetDeviceParams(names[0], params);
-	m_device.Uninitialize();
-	m_device.Initialize(names[0]);
-	m_device.Allocate(params[0]);*/
 	return FALSE;
 }
 
 LRESULT CUIFrame::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
+	m_start.EVENT_Click -= m_onStart;
+	m_stop.EVENT_Click -= m_onStop;
+	m_device1.EVENT_SelectChange -= m_onChange1;
+	m_device2.EVENT_SelectChange -= m_onChange2;
 	return FALSE;
 }
 

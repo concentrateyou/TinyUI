@@ -28,10 +28,10 @@ namespace Media
 		ULONG STDMETHODCALLTYPE AddRef(void) OVERRIDE;
 		ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
 	private:
-		FILTER_STATE	m_state;
-		LPCWSTR			m_pzName;
-		CLSID			m_clsid;
-		TinyUI::TinyComPtr<IFilterGraph>	m_graph;
-		TinyUI::TinyComPtr<IReferenceClock> m_clock;
+		FILTER_STATE				m_state;
+		LPCWSTR						m_pzName;
+		CLSID						m_clsid;
+		TinyComPtr<IFilterGraph>	m_graph;
+		TinyComPtr<IReferenceClock> m_clock;
 	};
 }

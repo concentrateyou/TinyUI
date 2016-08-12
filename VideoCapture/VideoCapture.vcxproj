@@ -81,8 +81,10 @@
   <ItemGroup>
     <ClInclude Include="FilterBase.h" />
     <ClInclude Include="FilterObserver.h" />
+    <ClInclude Include="InputPinBase.h" />
     <ClInclude Include="PinBase.h" />
     <ClInclude Include="PinEnumerator.h" />
+    <ClInclude Include="ScopedMediaType.h" />
     <ClInclude Include="SinkFilter.h" />
     <ClInclude Include="SinkInputPin.h" />
     <ClInclude Include="stdafx.h" />
@@ -98,8 +100,10 @@
   <ItemGroup>
     <ClCompile Include="FilterBase.cpp" />
     <ClCompile Include="FilterObserver.cpp" />
+    <ClCompile Include="InputPinBase.cpp" />
     <ClCompile Include="PinBase.cpp" />
     <ClCompile Include="PinEnumerator.cpp" />
+    <ClCompile Include="ScopedMediaType.cpp" />
     <ClCompile Include="SinkFilter.cpp" />
     <ClCompile Include="SinkInputPin.cpp" />
     <ClCompile Include="stdafx.cpp">

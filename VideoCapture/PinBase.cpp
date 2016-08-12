@@ -18,20 +18,14 @@ namespace Media
 	}
 	PinBase::~PinBase()
 	{
-
 	}
 	HRESULT PinBase::SetMediaType(const AM_MEDIA_TYPE *mediaType)
 	{
 		if (&m_mediaType != mediaType)
 		{
-			FreeMediaType(m_mediaType);
-			HRESULT hRes = CopyMediaType(&m_mediaType, mediaType);
-			if (FAILED(hRes))
-			{
-				return E_OUTOFMEMORY;
-			}
+			m_mediaType = *mediaType;
 		}
-		return S_OK;
+		return NOERROR;
 	}
 	HRESULT PinBase::CheckConnect(IPin *pPin)
 	{
@@ -43,7 +37,7 @@ namespace Media
 		{
 			return VFW_E_INVALID_DIRECTION;
 		}
-		return S_OK;
+		return NOERROR;
 	}
 	HRESULT PinBase::AgreeMediaType(IPin *pReceivePin, const AM_MEDIA_TYPE *pmt)
 	{
@@ -97,7 +91,7 @@ namespace Media
 			return S_FALSE;
 		}
 		hRes = CheckMediaType(pmt);
-		if (hRes == S_OK)
+		if (hRes == NOERROR)
 		{
 			m_connector = pReceivePin;
 			m_connector->AddRef();
@@ -107,7 +101,7 @@ namespace Media
 				hRes = pReceivePin->ReceiveConnection((IPin *)this, pmt);
 				if (SUCCEEDED(hRes))
 				{
-					return S_OK;
+					return NOERROR;
 				}
 			}
 		}
@@ -115,7 +109,8 @@ namespace Media
 		{
 			if (SUCCEEDED(hRes) ||
 				(hRes == E_FAIL) ||
-				(hRes == E_INVALIDARG)) {
+				(hRes == E_INVALIDARG))
+			{
 				hRes = VFW_E_TYPE_NOT_ACCEPTED;
 			}
 		}
@@ -134,20 +129,18 @@ namespace Media
 		}
 		AM_MEDIA_TYPE *pMediaType = NULL;
 		ULONG ulMediaCount = 0;
-		HRESULT hrFailure = S_OK;
+		HRESULT hrFailure = NOERROR;
 		for (;;)
 		{
-
 			hRes = pEnum->Next(1, (AM_MEDIA_TYPE**)&pMediaType, &ulMediaCount);
-			if (hRes != S_OK)
+			if (hRes != NOERROR)
 			{
-				if (S_OK == hrFailure)
+				if (NOERROR == hrFailure)
 				{
 					hrFailure = VFW_E_NO_ACCEPTABLE_TYPES;
 				}
 				return hrFailure;
 			}
-
 			ASSERT(ulMediaCount == 1);
 			ASSERT(pMediaType);
 			if (pMediaType && ((pmt == NULL) || MediaTypeMatchPartial(pMediaType, pmt)))
@@ -172,8 +165,7 @@ namespace Media
 				DeleteMediaType(pMediaType);
 				pMediaType = NULL;
 			}
-
-			if (S_OK == hRes)
+			if (NOERROR == hRes)
 			{
 				return hRes;
 			}
@@ -225,7 +217,7 @@ namespace Media
 		HRESULT hRes = AgreeMediaType(pReceivePin, pmt);
 		if (FAILED(hRes))
 			return hRes;
-		return S_OK;
+		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::ReceiveConnection(IPin *pConnector, const AM_MEDIA_TYPE *pmt)
 	{
@@ -244,7 +236,7 @@ namespace Media
 		}
 
 		hRes = CheckMediaType(pmt);
-		if (hRes != S_OK)
+		if (hRes != NOERROR)
 		{
 			if (SUCCEEDED(hRes) || (hRes == E_FAIL) || (hRes == E_INVALIDARG))
 			{
@@ -253,7 +245,6 @@ namespace Media
 			return hRes;
 		}
 		m_connector = pConnector;
-		m_connector->AddRef();
 		hRes = SetMediaType(pmt);
 		if (SUCCEEDED(hRes))
 		{
@@ -268,7 +259,7 @@ namespace Media
 		if (!m_connector)
 			return S_FALSE;
 		m_connector.Release();
-		return S_OK;
+		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::ConnectedTo(_Out_ IPin **ppPin)
 	{
@@ -277,7 +268,7 @@ namespace Media
 		if (!m_connector)
 			return VFW_E_NOT_CONNECTED;
 		m_connector->AddRef();
-		return S_OK;
+		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::ConnectionMediaType(_Out_ AM_MEDIA_TYPE *pmt)
 	{
@@ -288,8 +279,8 @@ namespace Media
 			pmt->bFixedSizeSamples = TRUE;
 			return VFW_E_NOT_CONNECTED;
 		}
-		CopyMediaType(pmt, &m_mediaType);
-		return S_OK;
+		*pmt = m_mediaType;
+		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::QueryPinInfo(_Out_ PIN_INFO *pInfo)
 	{
@@ -307,12 +298,12 @@ namespace Media
 			pInfo->achName[0] = L'\0';
 		}
 		pInfo->dir = m_dir;
-		return S_OK;
+		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::QueryDirection(_Out_ PIN_DIRECTION *pPinDir)
 	{
 		*pPinDir = m_dir;
-		return S_OK;
+		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::QueryId(_Out_ LPWSTR *Id)
 	{
@@ -326,7 +317,7 @@ namespace Media
 			return E_OUTOFMEMORY;
 		}
 		CopyMemory(*Id, m_pzName, size + sizeof(WCHAR));
-		return S_OK;
+		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::QueryAccept(const AM_MEDIA_TYPE *pmt)
 	{
@@ -335,15 +326,16 @@ namespace Media
 		{
 			return S_FALSE;
 		}
-		return S_OK;
+		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::EnumMediaTypes(_Out_ IEnumMediaTypes **ppEnum)
 	{
-		*ppEnum = new TypeEnumerator(this);
-		if (*ppEnum == NULL)
-			return E_OUTOFMEMORY;
-		(*ppEnum)->AddRef();
-		return S_OK;
+		if (*ppEnum = new TypeEnumerator(this))
+		{
+			(*ppEnum)->AddRef();
+			return NOERROR;
+		}
+		return E_OUTOFMEMORY;
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::QueryInternalConnections(_Out_writes_to_opt_(*nPin, *nPin) IPin **apPin, ULONG *nPin)
 	{
@@ -351,24 +343,24 @@ namespace Media
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::EndOfStream(void)
 	{
-		return S_OK;
+		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::BeginFlush(void)
 	{
 		m_bFlushing = TRUE;
-		return S_OK;
+		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::EndFlush(void)
 	{
 		m_bFlushing = FALSE;
-		return S_OK;
+		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::NewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate)
 	{
 		m_startTime = tStart;
 		m_stopTime = tStop;
 		m_rate = dRate;
-		return S_OK;
+		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::QueryInterface(REFIID riid, void **ppvObject)
 	{
@@ -393,170 +385,5 @@ namespace Media
 	{
 		TinyReference < PinBase >::Release();
 		return TinyReference < PinBase >::GetReference();
-	}
-	//////////////////////////////////////////////////////////////////////////
-	InputPinBase::InputPinBase(FilterBase* pFilter, WCHAR* pzName, FilterObserver* observer)
-		:PinBase(pFilter, PINDIR_INPUT, pzName),
-		m_observer(observer),
-		m_pAllocator(NULL),
-		m_bReadOnly(FALSE)
-	{
-		ZeroMemory((void*)&m_sampleProps, sizeof(m_sampleProps));
-	}
-	InputPinBase::~InputPinBase()
-	{
-
-	}
-	HRESULT InputPinBase::CheckStreaming()
-	{
-		ASSERT(m_connector);
-		FILTER_STATE state;
-		m_pFilter->GetState(0, &state);
-		if (state == State_Stopped)
-		{
-			return VFW_E_WRONG_STATE;
-		}
-		if (m_bFlushing)
-		{
-			return S_FALSE;
-		}
-		return S_OK;
-	}
-	HRESULT STDMETHODCALLTYPE InputPinBase::GetAllocator(_Out_ IMemAllocator **ppAllocator)
-	{
-		if (m_pAllocator == NULL)
-		{
-			HRESULT hRes = CoCreateInstance(CLSID_MemoryAllocator,
-				0,
-				CLSCTX_INPROC_SERVER,
-				IID_IMemAllocator,
-				(void **)ppAllocator);
-			if (FAILED(hRes))
-			{
-				return hRes;
-			}
-		}
-		ASSERT(m_pAllocator != NULL);
-		*ppAllocator = m_pAllocator;
-		m_pAllocator->AddRef();
-		return S_OK;
-
-	}
-	HRESULT STDMETHODCALLTYPE InputPinBase::NotifyAllocator(IMemAllocator *pAllocator, BOOL bReadOnly)
-	{
-		IMemAllocator *pOldAllocator = m_pAllocator;
-		pAllocator->AddRef();
-		m_pAllocator = pAllocator;
-
-		if (pOldAllocator != NULL)
-		{
-			pOldAllocator->Release();
-		}
-		m_bReadOnly = bReadOnly;
-		return NOERROR;
-	}
-	HRESULT STDMETHODCALLTYPE InputPinBase::GetAllocatorRequirements(_Out_ ALLOCATOR_PROPERTIES *pProps)
-	{
-		return E_NOTIMPL;
-	}
-	HRESULT STDMETHODCALLTYPE InputPinBase::Receive(IMediaSample *pSample)
-	{
-		ASSERT(m_observer);
-		HRESULT hRes = CheckStreaming();
-		if (FAILED(hRes))
-		{
-			return hRes;
-		}
-		const INT size = pSample->GetActualDataLength();
-		BYTE* data = NULL;
-		if (FAILED(pSample->GetPointer(&data)))
-			return S_FALSE;
-		m_observer->OnFrameReceive(data, size, NULL);
-		return S_OK;
-	}
-	HRESULT STDMETHODCALLTYPE InputPinBase::ReceiveMultiple(_In_reads_(nSamples) IMediaSample **pSamples, long nSamples, _Out_ long *nSamplesProcessed)
-	{
-		HRESULT hRes = S_OK;
-		*nSamplesProcessed = 0;
-		while (nSamples-- > 0)
-		{
-			hRes = Receive(pSamples[*nSamplesProcessed]);
-			if (hRes != S_OK)
-			{
-				break;
-			}
-			(*nSamplesProcessed)++;
-		}
-		return hRes;
-	}
-	HRESULT STDMETHODCALLTYPE InputPinBase::ReceiveCanBlock(void)
-	{
-		INT cPins = m_pFilter->GetPinCount();
-		INT cOutputPins = 0;
-		for (INT c = 0; c < cPins; c++)
-		{
-			IPin *pPin = m_pFilter->GetPin(c);
-			if (NULL == pPin)
-			{
-				break;
-			}
-			PIN_DIRECTION pd;
-			HRESULT hRes = pPin->QueryDirection(&pd);
-			if (FAILED(hRes))
-			{
-				return hRes;
-			}
-			if (pd == PINDIR_OUTPUT)
-			{
-				IPin *pConnector = NULL;
-				hRes = pPin->ConnectedTo(&pConnector);
-				if (SUCCEEDED(hRes))
-				{
-					ASSERT(pConnector != NULL);
-					cOutputPins++;
-					IMemInputPin *pInputPin = NULL;
-					hRes = pConnector->QueryInterface(IID_IMemInputPin, (void **)&pInputPin);
-					pConnector->Release();
-					if (SUCCEEDED(hRes))
-					{
-						hRes = pInputPin->ReceiveCanBlock();
-						pInputPin->Release();
-						if (hRes != S_FALSE)
-						{
-							return S_OK;
-						}
-					}
-					else
-					{
-						return S_OK;
-					}
-				}
-			}
-		}
-		return cOutputPins == 0 ? S_OK : S_FALSE;
-	}
-	HRESULT STDMETHODCALLTYPE InputPinBase::QueryInterface(REFIID riid, void **ppvObject)
-	{
-		if (IsEqualIID(riid, IID_IMemInputPin) && IsEqualIID(riid, IID_IUnknown))
-		{
-			*ppvObject = static_cast<IMemInputPin*>(this);
-		}
-		else
-		{
-			*ppvObject = NULL;
-			return E_NOINTERFACE;
-		}
-		AddRef();
-		return S_OK;
-	}
-	ULONG STDMETHODCALLTYPE InputPinBase::AddRef(void)
-	{
-		TinyReference < InputPinBase >::AddRef();
-		return TinyReference < InputPinBase >::GetReference();
-	}
-	ULONG STDMETHODCALLTYPE InputPinBase::Release(void)
-	{
-		TinyReference < InputPinBase >::Release();
-		return TinyReference < InputPinBase >::GetReference();
 	}
 }

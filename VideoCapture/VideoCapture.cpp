@@ -5,45 +5,6 @@
 
 namespace Media
 {
-	ScopedMediaType::ScopedMediaType()
-		:m_mediaType(NULL)
-	{
-
-	}
-	ScopedMediaType::~ScopedMediaType()
-	{
-		Release();
-	}
-	AM_MEDIA_TYPE* ScopedMediaType::operator->()
-	{
-		return m_mediaType;
-	}
-	AM_MEDIA_TYPE* ScopedMediaType::Ptr()
-	{
-		return m_mediaType;
-	}
-	void ScopedMediaType::Release()
-	{
-		if (m_mediaType)
-		{
-			if (m_mediaType->cbFormat != NULL)
-			{
-				CoTaskMemFree(m_mediaType->pbFormat);
-				m_mediaType->cbFormat = 0;
-				m_mediaType->pbFormat = NULL;
-			}
-			if (m_mediaType->pUnk != NULL)
-			{
-				m_mediaType->pUnk->Release();
-				m_mediaType->pUnk = NULL;
-			}
-			m_mediaType = NULL;
-		}
-	}
-	AM_MEDIA_TYPE** ScopedMediaType::Receive()
-	{
-		return &m_mediaType;
-	}
 	//////////////////////////////////////////////////////////////////////////
 	VideoCapture::Name::Name()
 	{
@@ -110,16 +71,23 @@ namespace Media
 	{
 		DeAllocate();
 		if (m_control)
-		{
-			m_control->Stop();
-			m_control.Release();
-		}
+			m_control->Pause();
 		if (m_builder)
 		{
 			m_builder->RemoveFilter(m_sinkFilter);
 			m_builder->RemoveFilter(m_captureFilter);
-			m_builder.Release();
 		}
+		if (m_captureConnector)
+			m_captureConnector.Release();
+		if (m_sinkConnector)
+			m_sinkConnector.Release();
+		if (m_captureFilter)
+			m_captureFilter.Release();
+		if (m_control)
+			m_control.Release();
+		if (m_builder)
+			m_builder.Release();
+		m_sinkFilter = NULL;
 	}
 	BOOL VideoCapture::Allocate(const VideoCaptureParam& param)
 	{
@@ -146,9 +114,7 @@ namespace Media
 					param.GetSize() == TinySize(h->bmiHeader.biWidth, h->bmiHeader.biHeight))
 				{
 					SetAntiFlickerInCaptureFilter();
-					hRes = m_sinkFilter->SetMediaType(mediaType.Ptr());
-					if (hRes != S_OK)
-						return FALSE;
+					m_sinkFilter->SetRequestedParam(param);
 					hRes = m_builder->ConnectDirect(m_captureConnector, m_sinkConnector, NULL);
 					if (hRes != S_OK)
 						return FALSE;

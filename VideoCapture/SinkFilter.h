@@ -16,6 +16,8 @@ namespace Media
 		HRESULT SetMediaType(const AM_MEDIA_TYPE* mediaType);
 		virtual INT GetPinCount();
 		virtual IPin* GetPin(int index);
+		void SetRequestedParam(const VideoCaptureParam& param);
+		const VideoCaptureParam& GetResultingParam();
 	private:
 		TinyScopedReferencePtr<SinkInputPin> m_sinkInputPin;
 	};

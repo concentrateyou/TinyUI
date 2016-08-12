@@ -25,8 +25,7 @@ HRESULT WINAPI CopyMediaType(AM_MEDIA_TYPE *pmtTarget, const AM_MEDIA_TYPE *pmtS
 		}
 		else
 		{
-			CopyMemory((PVOID)pmtTarget->pbFormat, (PVOID)pmtSource->pbFormat,
-				pmtTarget->cbFormat);
+			CopyMemory((PVOID)pmtTarget->pbFormat, (PVOID)pmtSource->pbFormat, pmtTarget->cbFormat);
 		}
 	}
 	if (pmtTarget->pUnk != NULL)

@@ -50,27 +50,4 @@ namespace Media
 		REFERENCE_TIME		m_stopTime;
 		DOUBLE				m_rate;
 	};
-	//////////////////////////////////////////////////////////////////////////
-	class InputPinBase : public PinBase, public IMemInputPin, public TinyReference < InputPinBase >
-	{
-	public:
-		InputPinBase(FilterBase* pFilter, WCHAR* pzName, FilterObserver* observer);
-		virtual ~InputPinBase();
-	public:
-		HRESULT STDMETHODCALLTYPE GetAllocator(_Out_ IMemAllocator **ppAllocator) OVERRIDE;
-		HRESULT STDMETHODCALLTYPE NotifyAllocator(IMemAllocator *pAllocator, BOOL bReadOnly) OVERRIDE;
-		HRESULT STDMETHODCALLTYPE GetAllocatorRequirements(_Out_ ALLOCATOR_PROPERTIES *pProps) OVERRIDE;
-		HRESULT STDMETHODCALLTYPE Receive(IMediaSample *pSample);
-		HRESULT STDMETHODCALLTYPE ReceiveMultiple(_In_reads_(nSamples) IMediaSample **pSamples, long nSamples, _Out_ long *nSamplesProcessed) OVERRIDE;
-		HRESULT STDMETHODCALLTYPE ReceiveCanBlock(void) OVERRIDE;
-		HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject) OVERRIDE;
-		ULONG STDMETHODCALLTYPE AddRef(void) OVERRIDE;
-		ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
-		virtual HRESULT CheckStreaming();
-	protected:
-		IMemAllocator*			m_pAllocator;
-		BOOL					m_bReadOnly;
-		AM_SAMPLE2_PROPERTIES	m_sampleProps;
-		FilterObserver*			m_observer;
-	};
 }
