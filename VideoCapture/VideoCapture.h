@@ -58,5 +58,6 @@ namespace Media
 		TinyComPtr<IPin>					m_sinkConnector;
 		VideoCaptureParam					m_vcf;
 		TinyScopedReferencePtr<SinkFilter>	m_sinkFilter;
+		//TinyComPtr<ICaptureGraphBuilder2> graph2;
 	};
 }

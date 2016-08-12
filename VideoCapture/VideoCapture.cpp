@@ -46,22 +46,48 @@ namespace Media
 	{
 		if (!GetDeviceFilter(name, &m_captureFilter))
 			return FALSE;
+
+		/*TinyComPtr<IGraphBuilder> graph;
+		TinyComPtr<ICaptureGraphBuilder2> graph2;
+		HRESULT hRes = CoCreateInstance(CLSID_CaptureGraphBuilder2, NULL, CLSCTX_INPROC_SERVER, IID_ICaptureGraphBuilder2, (void**)&graph2);
+		hRes = CoCreateInstance(CLSID_FilterGraph, 0, CLSCTX_INPROC_SERVER, IID_IGraphBuilder, (void**)&graph);
+		graph2->SetFiltergraph(graph);
+		TinyComPtr<IAMStreamConfig> config;
+		graph2->FindInterface(&PIN_CATEGORY_CAPTURE, &MEDIATYPE_Video, m_captureFilter, IID_IAMStreamConfig, (void **)&config);
+		VIDEO_STREAM_CONFIG_CAPS scc;
+		AM_MEDIA_TYPE *pmtConfig;
+		INT count = 0;
+		INT size = 0;
+		hRes = config->GetNumberOfCapabilities(&count, &size);
+		for (INT i = 0; i < count; i++)
+		{
+		ScopedMediaType mediaType;
+		VIDEO_STREAM_CONFIG_CAPS caps;
+		hRes = config->GetStreamCaps(i, mediaType.Receive(), (BYTE*)&caps);
+		WCHAR str[39];
+		StringFromGUID2(mediaType->subtype, str, 39);
+		TRACE("subtype:%s\n", UTF16ToUTF8(str).c_str());
+		}
+
+		*/
 		m_captureConnector = GetPin(m_captureFilter, PINDIR_OUTPUT, PIN_CATEGORY_CAPTURE);
 		if (!m_captureConnector)
 			return FALSE;
-		m_sinkFilter = new SinkFilter(this);
-		if (!m_sinkFilter)
-			return FALSE;
-		m_sinkConnector = m_sinkFilter->GetPin(0);
+
 		HRESULT hRes = m_builder.CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER);
 		if (FAILED(hRes))
 			return FALSE;
+
 		hRes = m_builder->QueryInterface(&m_control);
 		if (FAILED(hRes))
 			return FALSE;
 		hRes = m_builder->AddFilter(m_captureFilter, NULL);
 		if (FAILED(hRes))
 			return FALSE;
+		m_sinkFilter = new SinkFilter(this);
+		if (!m_sinkFilter)
+			return FALSE;
+		m_sinkConnector = m_sinkFilter->GetPin(0);
 		hRes = m_builder->AddFilter(m_sinkFilter, NULL);
 		if (FAILED(hRes))
 			return FALSE;
@@ -71,24 +97,63 @@ namespace Media
 	{
 		DeAllocate();
 		if (m_control)
+		{
 			m_control->Pause();
+		}
 		if (m_builder)
 		{
 			m_builder->RemoveFilter(m_sinkFilter);
 			m_builder->RemoveFilter(m_captureFilter);
 		}
 		if (m_captureConnector)
+		{
 			m_captureConnector.Release();
+		}
 		if (m_sinkConnector)
+		{
 			m_sinkConnector.Release();
+		}
 		if (m_captureFilter)
+		{
 			m_captureFilter.Release();
+		}
 		if (m_control)
+		{
 			m_control.Release();
+		}
 		if (m_builder)
+		{
 			m_builder.Release();
+		}
 		m_sinkFilter = NULL;
 	}
+
+	HRESULT GetMediaType(const VideoCaptureParam& param, AM_MEDIA_TYPE* mediaType)
+	{
+		VIDEOINFOHEADER* pvi = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
+		ZeroMemory(pvi, sizeof(VIDEOINFOHEADER));
+		pvi->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+		pvi->bmiHeader.biPlanes = 1;
+		pvi->bmiHeader.biClrImportant = 0;
+		pvi->bmiHeader.biClrUsed = 0;
+		if (param.GetRate() > 0)
+		{
+			pvi->AvgTimePerFrame = 10000000 / param.GetRate();
+		}
+		mediaType->majortype = MEDIATYPE_Video;
+		mediaType->formattype = FORMAT_VideoInfo;
+		mediaType->bTemporalCompression = FALSE;
+		pvi->bmiHeader.biCompression = BI_RGB;
+		pvi->bmiHeader.biBitCount = 24;
+		pvi->bmiHeader.biWidth = param.GetSize().cx;
+		pvi->bmiHeader.biHeight = param.GetSize().cy;
+		pvi->bmiHeader.biSizeImage = (param.GetSize().cx * param.GetSize().cy) * 3;
+		mediaType->subtype = MEDIASUBTYPE_RGB24;
+		mediaType->bFixedSizeSamples = TRUE;
+		mediaType->lSampleSize = pvi->bmiHeader.biSizeImage;
+		return S_OK;
+	}
+
 	BOOL VideoCapture::Allocate(const VideoCaptureParam& param)
 	{
 		TinyComPtr<IAMStreamConfig> streamConfig;
@@ -100,11 +165,11 @@ namespace Media
 		hRes = streamConfig->GetNumberOfCapabilities(&count, &size);
 		if (FAILED(hRes))
 			return FALSE;
-		TinyScopedArray<BYTE> caps(new BYTE[size]);
 		for (INT i = 0; i < count; ++i)
 		{
 			ScopedMediaType mediaType;
-			hRes = streamConfig->GetStreamCaps(i, mediaType.Receive(), caps.Ptr());
+			VIDEO_STREAM_CONFIG_CAPS caps;
+			hRes = streamConfig->GetStreamCaps(i, mediaType.Receive(), (BYTE*)&caps);
 			if (hRes != S_OK)
 				return FALSE;
 			if (mediaType->majortype == MEDIATYPE_Video && mediaType->formattype == FORMAT_VideoInfo)
@@ -112,7 +177,10 @@ namespace Media
 				VIDEOINFOHEADER* h = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
 				if (param.GetFormat() == TranslateMediaSubtypeToPixelFormat(mediaType->subtype) &&
 					param.GetSize() == TinySize(h->bmiHeader.biWidth, h->bmiHeader.biHeight))
+					//if (param.GetSize() == TinySize(h->bmiHeader.biWidth, h->bmiHeader.biHeight))
 				{
+					GetMediaType(param, mediaType.Ptr());
+					hRes = streamConfig->SetFormat(mediaType.Ptr());
 					SetAntiFlickerInCaptureFilter();
 					m_sinkFilter->SetRequestedParam(param);
 					hRes = m_builder->ConnectDirect(m_captureConnector, m_sinkConnector, NULL);

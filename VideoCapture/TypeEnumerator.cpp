@@ -1,10 +1,11 @@
 #include "stdafx.h"
 #include "TypeEnumerator.h"
+#include "ScopedMediaType.h"
 
 namespace Media
 {
-	TypeEnumerator::TypeEnumerator(PinBase* pin)
-		:m_pin(pin)
+	TypeEnumerator::TypeEnumerator(PinBase* pPin)
+		:m_pin(pPin)
 	{
 	}
 
@@ -68,8 +69,17 @@ namespace Media
 
 	HRESULT STDMETHODCALLTYPE TypeEnumerator::Skip(ULONG cMediaTypes)
 	{
+		if (cMediaTypes == 0)
+		{
+			return S_OK;
+		}
 		m_position += cMediaTypes;
-		return S_OK;
+		AM_MEDIA_TYPE cmt;
+		ZeroMemory(&cmt, sizeof(cmt));
+		cmt.cbFormat = sizeof(VIDEOINFOHEADER);
+		HRESULT hRes = m_pin->GetMediaType(m_position - 1, &cmt);
+		FreeMediaType(cmt);
+		return hRes;
 	}
 
 	HRESULT STDMETHODCALLTYPE TypeEnumerator::Reset(void)

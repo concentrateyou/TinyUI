@@ -221,6 +221,9 @@ namespace Media
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::ReceiveConnection(IPin *pConnector, const AM_MEDIA_TYPE *pmt)
 	{
+		WCHAR str[39];
+		StringFromGUID2(pmt->subtype, str, 39);
+		TRACE("ReceiveConnection-subtype:%s\n", UTF16ToUTF8(str).c_str());
 		if (!pConnector || !pmt)
 		{
 			return E_POINTER;

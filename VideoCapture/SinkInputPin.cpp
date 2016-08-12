@@ -64,9 +64,14 @@ namespace Media
 	}
 	HRESULT SinkInputPin::GetMediaType(INT position, AM_MEDIA_TYPE* mediaType)
 	{
+		if (position >= 100)
+			return S_FALSE;
 		if (mediaType->cbFormat < sizeof(VIDEOINFOHEADER))
 			return S_FALSE;
-
+		if (!mediaType->pbFormat)
+		{
+			mediaType->pbFormat = (BYTE *)CoTaskMemAlloc(sizeof(VIDEOINFOHEADER));
+		}
 		VIDEOINFOHEADER* pvi = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
 		ZeroMemory(pvi, sizeof(VIDEOINFOHEADER));
 		pvi->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
@@ -81,43 +86,52 @@ namespace Media
 		mediaType->majortype = MEDIATYPE_Video;
 		mediaType->formattype = FORMAT_VideoInfo;
 		mediaType->bTemporalCompression = FALSE;
-		switch (position)
-		{
-		case 0:
-		{
-			pvi->bmiHeader.biCompression = MAKEFOURCC('I', '4', '2', '0');
-			pvi->bmiHeader.biBitCount = 12;
-			pvi->bmiHeader.biWidth = m_requesting.GetSize().cx;
-			pvi->bmiHeader.biHeight = m_requesting.GetSize().cy;
-			pvi->bmiHeader.biSizeImage = (m_requesting.GetSize().cx * m_requesting.GetSize().cy) * 3 / 2;
-			mediaType->subtype = MediaSubTypeI420;
-			break;
-		}
-		case 1:
-		{
-			pvi->bmiHeader.biCompression = MAKEFOURCC('Y', 'U', 'Y', '2');
-			pvi->bmiHeader.biBitCount = 16;
-			pvi->bmiHeader.biWidth = m_requesting.GetSize().cx;
-			pvi->bmiHeader.biHeight = m_requesting.GetSize().cy;
-			pvi->bmiHeader.biSizeImage = (m_requesting.GetSize().cx * m_requesting.GetSize().cy) * 2;
-			mediaType->subtype = MEDIASUBTYPE_YUY2;
-			break;
-		}
-		case 2:
-		{
-			pvi->bmiHeader.biCompression = BI_RGB;
-			pvi->bmiHeader.biBitCount = 24;
-			pvi->bmiHeader.biWidth = m_requesting.GetSize().cx;
-			pvi->bmiHeader.biHeight = m_requesting.GetSize().cy;
-			pvi->bmiHeader.biSizeImage = (m_requesting.GetSize().cx * m_requesting.GetSize().cy) * 3;
-			mediaType->subtype = MEDIASUBTYPE_RGB24;
-			break;
-		}
-		default:
-			return S_FALSE;
-		}
+		pvi->bmiHeader.biCompression = BI_RGB;
+		pvi->bmiHeader.biBitCount = 24;
+		pvi->bmiHeader.biWidth = m_requesting.GetSize().cx;
+		pvi->bmiHeader.biHeight = m_requesting.GetSize().cy;
+		pvi->bmiHeader.biSizeImage = (m_requesting.GetSize().cx * m_requesting.GetSize().cy) * 3;
+		mediaType->subtype = MEDIASUBTYPE_RGB24;
 		mediaType->bFixedSizeSamples = TRUE;
 		mediaType->lSampleSize = pvi->bmiHeader.biSizeImage;
 		return S_OK;
+		//switch (position)
+		//{
+		//case 0:
+		//{
+		//	pvi->bmiHeader.biCompression = MAKEFOURCC('I', '4', '2', '0');
+		//	pvi->bmiHeader.biBitCount = 12;
+		//	pvi->bmiHeader.biWidth = m_requesting.GetSize().cx;
+		//	pvi->bmiHeader.biHeight = m_requesting.GetSize().cy;
+		//	pvi->bmiHeader.biSizeImage = (m_requesting.GetSize().cx * m_requesting.GetSize().cy) * 3 / 2;
+		//	mediaType->subtype = MediaSubTypeI420;
+		//	break;
+		//}
+		//case 1:
+		//{
+		//	pvi->bmiHeader.biCompression = MAKEFOURCC('Y', 'U', 'Y', '2');
+		//	pvi->bmiHeader.biBitCount = 16;
+		//	pvi->bmiHeader.biWidth = m_requesting.GetSize().cx;
+		//	pvi->bmiHeader.biHeight = m_requesting.GetSize().cy;
+		//	pvi->bmiHeader.biSizeImage = (m_requesting.GetSize().cx * m_requesting.GetSize().cy) * 2;
+		//	mediaType->subtype = MEDIASUBTYPE_YUY2;
+		//	break;
+		//}
+		//case 2:
+		//{
+		//	pvi->bmiHeader.biCompression = BI_RGB;
+		//	pvi->bmiHeader.biBitCount = 24;
+		//	pvi->bmiHeader.biWidth = m_requesting.GetSize().cx;
+		//	pvi->bmiHeader.biHeight = m_requesting.GetSize().cy;
+		//	pvi->bmiHeader.biSizeImage = (m_requesting.GetSize().cx * m_requesting.GetSize().cy) * 3;
+		//	mediaType->subtype = MEDIASUBTYPE_RGB24;
+		//	break;
+		//}
+		//default:
+		//	return S_FALSE;
+		//}
+		/*mediaType->bFixedSizeSamples = TRUE;
+		mediaType->lSampleSize = pvi->bmiHeader.biSizeImage;
+		return S_OK;*/
 	}
 }

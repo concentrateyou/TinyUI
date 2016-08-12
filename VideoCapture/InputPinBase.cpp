@@ -32,38 +32,35 @@ namespace Media
 	}
 	HRESULT STDMETHODCALLTYPE InputPinBase::GetAllocator(_Out_ IMemAllocator **ppAllocator)
 	{
-		return VFW_E_NO_ALLOCATOR;
-		/*if (m_allocator == NULL)
+		if (m_allocator == NULL)
 		{
-		HRESULT hRes = CoCreateInstance(CLSID_MemoryAllocator,
-		0,
-		CLSCTX_INPROC_SERVER,
-		IID_IMemAllocator,
-		(void **)&m_allocator);
-		if (FAILED(hRes))
-		{
-		return hRes;
-		}
+			HRESULT hRes = CoCreateInstance(CLSID_MemoryAllocator,
+				0,
+				CLSCTX_INPROC_SERVER,
+				IID_IMemAllocator,
+				(void **)&m_allocator);
+			if (FAILED(hRes))
+			{
+				return hRes;
+			}
 		}
 		ASSERT(m_allocator != NULL);
 		*ppAllocator = m_allocator;
-		m_allocator->AddRef();*/
+		m_allocator->AddRef();
 		return NOERROR;
 
 	}
 	HRESULT STDMETHODCALLTYPE InputPinBase::NotifyAllocator(IMemAllocator *pAllocator, BOOL bReadOnly)
 	{
-		return NOERROR;
-		/*IMemAllocator *pOldAllocator = m_allocator;
+		IMemAllocator *pOldAllocator = m_allocator;
 		pAllocator->AddRef();
 		m_allocator = pAllocator;
-
 		if (pOldAllocator != NULL)
 		{
-		pOldAllocator->Release();
+			pOldAllocator->Release();
 		}
 		m_bReadOnly = bReadOnly;
-		return NOERROR;*/
+		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE InputPinBase::GetAllocatorRequirements(_Out_ ALLOCATOR_PROPERTIES *pProps)
 	{
@@ -101,9 +98,9 @@ namespace Media
 	}
 	HRESULT STDMETHODCALLTYPE InputPinBase::ReceiveCanBlock(void)
 	{
-		INT cPins = m_pFilter->GetPinCount();
-		INT cOutputPins = 0;
-		for (INT c = 0; c < cPins; c++)
+		INT count = m_pFilter->GetPinCount();
+		INT outputPins = 0;
+		for (INT c = 0; c < count; c++)
 		{
 			IPin *pPin = m_pFilter->GetPin(c);
 			if (NULL == pPin)
@@ -123,7 +120,7 @@ namespace Media
 				if (SUCCEEDED(hRes))
 				{
 					ASSERT(pConnector != NULL);
-					cOutputPins++;
+					outputPins++;
 					IMemInputPin *pInputPin = NULL;
 					hRes = pConnector->QueryInterface(IID_IMemInputPin, (void **)&pInputPin);
 					pConnector->Release();
@@ -143,7 +140,7 @@ namespace Media
 				}
 			}
 		}
-		return cOutputPins == 0 ? NOERROR : S_FALSE;
+		return outputPins == 0 ? NOERROR : S_FALSE;
 	}
 	HRESULT STDMETHODCALLTYPE InputPinBase::QueryInterface(REFIID riid, void **ppvObject)
 	{

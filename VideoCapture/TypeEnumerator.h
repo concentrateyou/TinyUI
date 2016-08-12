@@ -7,7 +7,7 @@ namespace Media
 	{
 		DISALLOW_COPY_AND_ASSIGN(TypeEnumerator);
 	public:
-		explicit TypeEnumerator(PinBase* pin);
+		explicit TypeEnumerator(PinBase* pPin);
 		~TypeEnumerator();
 		HRESULT STDMETHODCALLTYPE Next(ULONG cMediaTypes, _Out_writes_to_(cMediaTypes, *pcFetched) AM_MEDIA_TYPE **ppMediaTypes, _Out_opt_ ULONG *pcFetched) OVERRIDE;
 		HRESULT STDMETHODCALLTYPE Skip(ULONG cMediaTypes) OVERRIDE;
