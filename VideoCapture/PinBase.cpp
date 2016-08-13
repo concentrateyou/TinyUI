@@ -39,6 +39,38 @@ namespace Media
 		}
 		return NOERROR;
 	}
+	HRESULT PinBase::OnDisconnect()
+	{
+		return NOERROR;
+	}
+	HRESULT	PinBase::OnActive(BOOL active)
+	{
+		return NOERROR;
+	}
+	HRESULT PinBase::OnRun(REFERENCE_TIME tStart)
+	{
+		return NOERROR;
+	}
+	HRESULT PinBase::OnConnect(IPin *pReceivePin)
+	{
+		return NOERROR;
+	}
+	BOOL PinBase::IsConnected(void) const
+	{
+		return m_connector != NULL;
+	}
+	IPin* PinBase::GetConnector()
+	{
+		return m_connector;
+	}
+	REFERENCE_TIME PinBase::GetCurrentStartTime() const
+	{
+		return m_startTime;
+	}
+	REFERENCE_TIME PinBase::GetCurrentStopTime() const
+	{
+		return m_stopTime;
+	}
 	HRESULT PinBase::AgreeMediaType(IPin *pReceivePin, const AM_MEDIA_TYPE *pmt)
 	{
 		ASSERT(pReceivePin);
@@ -101,7 +133,12 @@ namespace Media
 				hRes = pReceivePin->ReceiveConnection((IPin *)this, pmt);
 				if (SUCCEEDED(hRes))
 				{
+					OnConnect(pReceivePin);
 					return NOERROR;
+				}
+				else
+				{
+					pReceivePin->Disconnect();
 				}
 			}
 		}
@@ -114,6 +151,7 @@ namespace Media
 				hRes = VFW_E_TYPE_NOT_ACCEPTED;
 			}
 		}
+		OnDisconnect();
 		if (m_connector)
 		{
 			m_connector.Release();
@@ -233,14 +271,16 @@ namespace Media
 			return VFW_E_ALREADY_CONNECTED;
 		}
 		HRESULT hRes = CheckConnect(pConnector);
-		if (FAILED(hRes))
+		if (hRes != NOERROR)
 		{
+			ASSERT(OnDisconnect() == NOERROR);
 			return hRes;
 		}
 
 		hRes = CheckMediaType(pmt);
-		if (hRes != NOERROR)
+		if (FAILED(hRes))
 		{
+			ASSERT(OnDisconnect() == NOERROR);
 			if (SUCCEEDED(hRes) || (hRes == E_FAIL) || (hRes == E_INVALIDARG))
 			{
 				hRes = VFW_E_TYPE_NOT_ACCEPTED;
@@ -251,7 +291,8 @@ namespace Media
 		hRes = SetMediaType(pmt);
 		if (SUCCEEDED(hRes))
 		{
-			return NOERROR;
+			OnConnect(pConnector);
+			return hRes;
 		}
 		m_connector->Release();
 		m_connector = NULL;
@@ -261,6 +302,7 @@ namespace Media
 	{
 		if (!m_connector)
 			return S_FALSE;
+		ASSERT(OnDisconnect() == NOERROR);
 		m_connector.Release();
 		return NOERROR;
 	}
@@ -283,7 +325,7 @@ namespace Media
 			pmt->bFixedSizeSamples = TRUE;
 			return VFW_E_NOT_CONNECTED;
 		}
-		*pmt = m_mediaType;
+		CopyMediaType(pmt, &m_mediaType);
 		WCHAR str[39];
 		StringFromGUID2(m_mediaType.subtype, str, 39);
 		TRACE("ConnectionMediaType subtype:%s\n", UTF16ToUTF8(str).c_str());

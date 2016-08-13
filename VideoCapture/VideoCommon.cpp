@@ -9,6 +9,7 @@ GUID MediaSubTypeHDYC =
 {
 	0x43594448, 0x0000, 0x0010, { 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71 }
 };
+const REFERENCE_TIME SecondsToReferenceTime = 10000000;
 
 HRESULT WINAPI CopyMediaType(AM_MEDIA_TYPE *pmtTarget, const AM_MEDIA_TYPE *pmtSource)
 {

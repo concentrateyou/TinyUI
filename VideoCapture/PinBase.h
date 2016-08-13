@@ -15,6 +15,14 @@ namespace Media
 		virtual HRESULT GetMediaType(INT position, AM_MEDIA_TYPE* mediaType) = 0;
 		virtual HRESULT SetMediaType(const AM_MEDIA_TYPE *mediaType);
 		virtual HRESULT CheckConnect(IPin *pPin);
+		virtual HRESULT OnConnect(IPin *pReceivePin);
+		virtual HRESULT OnDisconnect();
+		virtual HRESULT	OnActive(BOOL active);
+		virtual HRESULT OnRun(REFERENCE_TIME tStart);
+		BOOL IsConnected(void) const;
+		IPin* GetConnector();
+		REFERENCE_TIME GetCurrentStartTime() const;
+		REFERENCE_TIME GetCurrentStopTime() const;
 	public:
 		HRESULT STDMETHODCALLTYPE Connect(IPin *pReceivePin, _In_opt_ const AM_MEDIA_TYPE *pmt) OVERRIDE;
 		HRESULT STDMETHODCALLTYPE ReceiveConnection(IPin *pConnector, const AM_MEDIA_TYPE *pmt) OVERRIDE;

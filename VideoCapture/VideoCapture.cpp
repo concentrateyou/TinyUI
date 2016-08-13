@@ -58,7 +58,23 @@ namespace Media
 		hRes = m_builder->QueryInterface(&m_control);
 		if (FAILED(hRes))
 			return FALSE;
+
+		hRes = CoCreateInstance(CLSID_MjpegDec, 0, CLSCTX_ALL, IID_IBaseFilter, (void**)&m_mjpgFilter);
+		if (FAILED(hRes))
+			return FALSE;
+
+		m_mjpgConnector1 = GetPin(m_mjpgFilter, PINDIR_INPUT, GUID_NULL);
+		if (!m_mjpgConnector1)
+			return FALSE;
+		m_mjpgConnector2 = GetPin(m_mjpgFilter, PINDIR_OUTPUT, GUID_NULL);
+		if (!m_mjpgConnector2)
+			return FALSE;
+
+
 		hRes = m_builder->AddFilter(m_captureFilter, NULL);
+		if (FAILED(hRes))
+			return FALSE;
+		hRes = m_builder->AddFilter(m_mjpgFilter, NULL);
 		if (FAILED(hRes))
 			return FALSE;
 		m_sinkFilter = new SinkFilter(this);
@@ -105,31 +121,96 @@ namespace Media
 		m_sinkFilter = NULL;
 	}
 
-	HRESULT GetMediaType(const VideoCaptureParam& param, AM_MEDIA_TYPE* mediaType)
-	{
-		VIDEOINFOHEADER* pvi = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
-		ZeroMemory(pvi, sizeof(VIDEOINFOHEADER));
-		pvi->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-		pvi->bmiHeader.biPlanes = 1;
-		pvi->bmiHeader.biClrImportant = 0;
-		pvi->bmiHeader.biClrUsed = 0;
-		if (param.GetRate() > 0)
-		{
-			pvi->AvgTimePerFrame = 10000000 / param.GetRate();
-		}
-		mediaType->majortype = MEDIATYPE_Video;
-		mediaType->formattype = FORMAT_VideoInfo;
-		mediaType->bTemporalCompression = FALSE;
-		pvi->bmiHeader.biCompression = BI_RGB;
-		pvi->bmiHeader.biBitCount = 24;
-		pvi->bmiHeader.biWidth = param.GetSize().cx;
-		pvi->bmiHeader.biHeight = param.GetSize().cy;
-		pvi->bmiHeader.biSizeImage = (param.GetSize().cx * param.GetSize().cy) * 3;
-		mediaType->subtype = MEDIASUBTYPE_RGB24;
-		mediaType->bFixedSizeSamples = TRUE;
-		mediaType->lSampleSize = pvi->bmiHeader.biSizeImage;
-		return S_OK;
-	}
+	//HRESULT EnumMediaTypes(IPin *pin, TinyArray<AM_MEDIA_TYPE*>&types)
+	//{
+	//	types.RemoveAll();
+	//	if (!pin)
+	//		return E_POINTER;
+
+	//	IEnumMediaTypes	*emt;
+	//	HRESULT			hr;
+	//	AM_MEDIA_TYPE	*pmt;
+	//	ULONG			f;
+
+	//	hr = pin->EnumMediaTypes(&emt);
+	//	if (FAILED(hr)) return hr;
+
+	//	emt->Reset();
+	//	while (emt->Next(1, &pmt, &f) == NOERROR)
+	//	{
+	//		types.Add(pmt);
+	//	}
+	//	emt->Release();
+	//	return NOERROR;
+	//}
+
+	//BOOL GetMediaType(const VideoCaptureParam& param, AM_MEDIA_TYPE* mediaType)
+	//{
+	//	if (mediaType->cbFormat < sizeof(VIDEOINFOHEADER))
+	//		return S_FALSE;
+	//	if (!mediaType->pbFormat)
+	//	{
+	//		mediaType->pbFormat = (BYTE *)CoTaskMemAlloc(sizeof(VIDEOINFOHEADER));
+	//	}
+	//	VIDEOINFOHEADER* pvi = reinterpret_cast<VIDEOINFOHEADER*>(CoTaskMemAlloc(sizeof(VIDEOINFOHEADER)));
+	//	ZeroMemory(pvi, sizeof(VIDEOINFOHEADER));
+	//	pvi->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	//	pvi->bmiHeader.biPlanes = 1;
+	//	pvi->bmiHeader.biClrImportant = 0;
+	//	pvi->bmiHeader.biClrUsed = 0;
+	//	if (param.GetRate() > 0)
+	//	{
+	//		pvi->AvgTimePerFrame = static_cast<FLOAT>(10000000 / param.GetRate());
+	//	}
+	//	mediaType->majortype = MEDIATYPE_Video;
+	//	mediaType->formattype = FORMAT_VideoInfo;
+	//	mediaType->bTemporalCompression = FALSE;
+	//	pvi->bmiHeader.biCompression = BI_RGB;
+	//	pvi->bmiHeader.biBitCount = 24;
+	//	pvi->bmiHeader.biWidth = param.GetSize().cx;
+	//	pvi->bmiHeader.biHeight = param.GetSize().cy;
+	//	pvi->bmiHeader.biSizeImage = (param.GetSize().cx * param.GetSize().cy) * 3;
+	//	mediaType->subtype = MEDIASUBTYPE_RGB24;
+	//	/*switch (param.GetFormat())
+	//	{
+	//	case PIXEL_FORMAT_RGB24:
+	//	pvi->bmiHeader.biCompression = BI_RGB;
+	//	pvi->bmiHeader.biBitCount = 24;
+	//	pvi->bmiHeader.biWidth = param.GetSize().cx;
+	//	pvi->bmiHeader.biHeight = param.GetSize().cy;
+	//	pvi->bmiHeader.biSizeImage = (param.GetSize().cx * param.GetSize().cy) * 3;
+	//	mediaType->subtype = MEDIASUBTYPE_RGB24;
+	//	break;
+	//	case PIXEL_FORMAT_MJPEG:
+	//	pvi->bmiHeader.biCompression = MAKEFOURCC('I', '4', '2', '0');
+	//	pvi->bmiHeader.biBitCount = 12;
+	//	pvi->bmiHeader.biWidth = param.GetSize().cx;
+	//	pvi->bmiHeader.biHeight = param.GetSize().cy;
+	//	pvi->bmiHeader.biSizeImage = (param.GetSize().cx * param.GetSize().cy) * 3 / 2;
+	//	mediaType->subtype = MEDIASUBTYPE_MJPG;
+	//	break;
+	//	case PIXEL_FORMAT_I420:
+	//	pvi->bmiHeader.biCompression = MAKEFOURCC('I', '4', '2', '0');
+	//	pvi->bmiHeader.biBitCount = 12;
+	//	pvi->bmiHeader.biWidth = param.GetSize().cx;
+	//	pvi->bmiHeader.biHeight = param.GetSize().cy;
+	//	pvi->bmiHeader.biSizeImage = (param.GetSize().cx * param.GetSize().cy) * 3 / 2;
+	//	mediaType->subtype = MediaSubTypeI420;
+	//	break;
+	//	case PIXEL_FORMAT_YUY2:
+	//	pvi->bmiHeader.biCompression = MAKEFOURCC('Y', 'U', 'Y', '2');
+	//	pvi->bmiHeader.biBitCount = 16;
+	//	pvi->bmiHeader.biWidth = param.GetSize().cx;
+	//	pvi->bmiHeader.biHeight = param.GetSize().cy;
+	//	pvi->bmiHeader.biSizeImage = (param.GetSize().cx * param.GetSize().cy) * 2;
+	//	mediaType->subtype = MEDIASUBTYPE_YUY2;
+	//	break;
+	//	default:
+	//	return S_FALSE;
+	//	}*/
+	//	mediaType->bFixedSizeSamples = TRUE;
+	//	mediaType->lSampleSize = pvi->bmiHeader.biSizeImage;
+	//}
 
 	BOOL VideoCapture::Allocate(const VideoCaptureParam& param)
 	{
@@ -155,10 +236,8 @@ namespace Media
 				if (param.GetFormat() == TranslateMediaSubtypeToPixelFormat(mediaType->subtype) &&
 					param.GetSize() == TinySize(h->bmiHeader.biWidth, h->bmiHeader.biHeight))
 				{
-					//GetMediaType(param, mediaType.Ptr());
-					//hRes = streamConfig->SetFormat(mediaType.Ptr());
 					SetAntiFlickerInCaptureFilter();
-					m_sinkFilter->SetRequestedParam(param);
+					m_sinkFilter->SetParam(param);
 					hRes = m_builder->ConnectDirect(m_captureConnector, m_sinkConnector, NULL);
 					if (hRes != S_OK)
 						return FALSE;

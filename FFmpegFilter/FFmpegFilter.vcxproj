@@ -11,19 +11,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{96CE67C6-F329-47C3-AB33-52D4C50B0E46}</ProjectGuid>
+    <ProjectGuid>{F6E54C56-379D-4018-8974-EF0F791FB126}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>VideoCapture</RootNamespace>
+    <RootNamespace>FFmpegFilter</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -39,24 +39,25 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;FFMPEGFILTER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>Strmiids.lib;Quartz.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <Lib>
-      <AdditionalLibraryDirectories>..\TinyUI;..\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Strmiids.lib;Quartz.lib</AdditionalDependencies>
-    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -65,7 +66,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;FFMPEGFILTER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -79,51 +80,23 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FilterBase.h" />
-    <ClInclude Include="FilterObserver.h" />
-    <ClInclude Include="InputPinBase.h" />
-    <ClInclude Include="OutputPinBase.h" />
-    <ClInclude Include="PinBase.h" />
-    <ClInclude Include="PinEnumerator.h" />
-    <ClInclude Include="ScopedMediaType.h" />
-    <ClInclude Include="SinkFilter.h" />
-    <ClInclude Include="SinkInputPin.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="TaskRunner.h" />
-    <ClInclude Include="TypeEnumerator.h" />
-    <ClInclude Include="VideoCaptureCapability.h" />
-    <ClInclude Include="VideoCapture.h" />
-    <ClInclude Include="VideoCaptureParam.h" />
-    <ClInclude Include="VideoCommon.h" />
-    <ClInclude Include="VideoFrame.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FilterBase.cpp" />
-    <ClCompile Include="FilterObserver.cpp" />
-    <ClCompile Include="InputPinBase.cpp" />
-    <ClCompile Include="OutputPinBase.cpp" />
-    <ClCompile Include="PinBase.cpp" />
-    <ClCompile Include="PinEnumerator.cpp" />
-    <ClCompile Include="ScopedMediaType.cpp" />
-    <ClCompile Include="SinkFilter.cpp" />
-    <ClCompile Include="SinkInputPin.cpp" />
+    <ClCompile Include="dllmain.cpp">
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</CompileAsManaged>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="FFmpegFilter.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TaskRunner.cpp" />
-    <ClCompile Include="TypeEnumerator.cpp" />
-    <ClCompile Include="VideoCaptureCapability.cpp" />
-    <ClCompile Include="VideoCapture.cpp" />
-    <ClCompile Include="VideoCaptureParam.cpp" />
-    <ClCompile Include="VideoCommon.cpp" />
-    <ClCompile Include="VideoFrame.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\TinyUI\TinyUI.vcxproj">
-      <Project>{58903be2-bb4f-4983-b8b7-905d2db5393d}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

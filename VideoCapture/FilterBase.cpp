@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "FilterBase.h"
+#include "PinBase.h"
 #include "PinEnumerator.h"
 
 namespace Media
@@ -75,18 +76,87 @@ namespace Media
 
 	HRESULT STDMETHODCALLTYPE FilterBase::Stop(void)
 	{
+		if (m_state != State_Stopped)
+		{
+			INT count = GetPinCount();
+			for (INT i = 0; i < count; i++)
+			{
+				PinBase *pPin = static_cast<PinBase*>(GetPin(i));
+				if (NULL == pPin)
+				{
+					break;
+				}
+				if (pPin->IsConnected())
+				{
+					HRESULT hRes = pPin->OnActive(FALSE);
+					if (FAILED(hRes))
+					{
+						return hRes;
+					}
+				}
+			}
+		}
 		m_state = State_Stopped;
 		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE FilterBase::Pause(void)
 	{
+		if (m_state == State_Stopped)
+		{
+			INT count = GetPinCount();
+			for (INT i = 0; i < count; i++)
+			{
+				PinBase *pPin = static_cast<PinBase*>(GetPin(i));
+				if (!pPin)
+				{
+					break;
+				}
+				if (pPin->IsConnected())
+				{
+					HRESULT hRes = pPin->OnActive(TRUE);
+					if (FAILED(hRes))
+					{
+						return hRes;
+					}
+				}
+			}
+		}
 		m_state = State_Paused;
 		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE FilterBase::Run(REFERENCE_TIME tStart)
 	{
+		m_start = tStart;
+		if (m_state == State_Stopped)
+		{
+			HRESULT hRes = Pause();
+			if (FAILED(hRes))
+			{
+				return hRes;
+			}
+		}
+		if (m_state != State_Running)
+		{
+			INT count = GetPinCount();
+			for (INT i = 0; i < count; i++)
+			{
+				PinBase *pPin = static_cast<PinBase*>(GetPin(i));
+				if (NULL == pPin)
+				{
+					break;
+				}
+				if (pPin->IsConnected())
+				{
+					HRESULT hRes = pPin->OnRun(tStart);
+					if (FAILED(hRes))
+					{
+						return hRes;
+					}
+				}
+			}
+		}
 		m_state = State_Running;
 		return S_OK;
 	}
@@ -106,6 +176,7 @@ namespace Media
 	HRESULT STDMETHODCALLTYPE FilterBase::GetSyncSource(_Outptr_result_maybenull_ IReferenceClock **pClock)
 	{
 		*pClock = m_clock;
+		(*pClock)->AddRef();
 		return S_OK;
 	}
 

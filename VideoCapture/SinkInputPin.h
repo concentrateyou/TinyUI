@@ -11,13 +11,11 @@ namespace Media
 	public:
 		SinkInputPin(FilterBase* pFilter, FilterObserver* observer);
 		~SinkInputPin();
-		void SetRequestedParam(const VideoCaptureParam& param);
-		const VideoCaptureParam& SinkInputPin::GetResultingParam();
 		HRESULT CheckMediaType(const AM_MEDIA_TYPE* mediaType) OVERRIDE;
 		HRESULT GetMediaType(INT position, AM_MEDIA_TYPE* mediaType) OVERRIDE;
+		void SetParam(const VideoCaptureParam& param);
 	private:
-		VideoCaptureParam	m_requesting;
-		VideoCaptureParam	m_resulting;
+		VideoCaptureParam	m_param;
 	};
 }
 

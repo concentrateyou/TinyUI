@@ -5,7 +5,6 @@
 #include "VideoCaptureParam.h"
 #include "SinkFilter.h"
 #include "ScopedMediaType.h"
-
 using namespace std;
 using namespace TinyUI;
 
@@ -51,13 +50,15 @@ namespace Media
 		static VideoPixelFormat TranslateMediaSubtypeToPixelFormat(const GUID& subType);
 		void SetAntiFlickerInCaptureFilter();
 	private:
-		TinyComPtr<IBaseFilter>				m_captureFilter;
+		VideoCaptureParam					m_vcf;
 		TinyComPtr<IGraphBuilder>			m_builder;
 		TinyComPtr<IMediaControl>			m_control;
+		TinyComPtr<IBaseFilter>				m_captureFilter;
 		TinyComPtr<IPin>					m_captureConnector;
+		TinyComPtr<IBaseFilter>				m_mjpgFilter;
+		TinyComPtr<IPin>					m_mjpgConnector1;
+		TinyComPtr<IPin>					m_mjpgConnector2;
 		TinyComPtr<IPin>					m_sinkConnector;
-		VideoCaptureParam					m_vcf;
 		TinyScopedReferencePtr<SinkFilter>	m_sinkFilter;
-		//TinyComPtr<ICaptureGraphBuilder2> graph2;
 	};
 }

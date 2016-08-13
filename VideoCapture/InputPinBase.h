@@ -9,6 +9,7 @@ namespace Media
 	public:
 		InputPinBase(FilterBase* pFilter, WCHAR* pzName, FilterObserver* observer);
 		virtual ~InputPinBase();
+		virtual HRESULT CheckStreaming();
 	public:
 		HRESULT STDMETHODCALLTYPE GetAllocator(_Out_ IMemAllocator **ppAllocator) OVERRIDE;
 		HRESULT STDMETHODCALLTYPE NotifyAllocator(IMemAllocator *pAllocator, BOOL bReadOnly) OVERRIDE;
@@ -19,10 +20,9 @@ namespace Media
 		HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject) OVERRIDE;
 		ULONG STDMETHODCALLTYPE AddRef(void) OVERRIDE;
 		ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
-		virtual HRESULT CheckStreaming();
 	protected:
-		TinyComPtr<IMemAllocator>	m_allocator;
 		BOOL						m_bReadOnly;
+		TinyComPtr<IMemAllocator>	m_allocator;
 		FilterObserver*				m_observer;
 	};
 }

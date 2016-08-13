@@ -31,6 +31,7 @@ namespace Media
 		FILTER_STATE				m_state;
 		LPCWSTR						m_pzName;
 		CLSID						m_clsid;
+		REFERENCE_TIME				m_start;
 		TinyComPtr<IFilterGraph>	m_graph;
 		TinyComPtr<IReferenceClock> m_clock;
 	};
