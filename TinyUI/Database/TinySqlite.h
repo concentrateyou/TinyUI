@@ -3,9 +3,9 @@
 #include "../Common/TinyTime.h"
 #include "../Common/TinyCollection.h"
 #include "../Common/TinyCore.h"
-#include "../ThirdParty/sqlite/sqlite3.h"
+#include "sqlite3.h"
 #include "TinyDatabase.h"
-#pragma comment(lib, "../ThirdParty/sqlite/sqlite.lib")
+#pragma comment(lib, "sqlite.lib")
 
 namespace TinyUI
 {
