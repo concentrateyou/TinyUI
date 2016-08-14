@@ -18,12 +18,16 @@ namespace Media
 	}
 	PinBase::~PinBase()
 	{
+		FreeMediaType(m_mediaType);
 	}
 	HRESULT PinBase::SetMediaType(const AM_MEDIA_TYPE *mediaType)
 	{
 		if (&m_mediaType != mediaType)
 		{
-			m_mediaType = *mediaType;
+			if (mediaType)
+			{
+				CopyMediaType(&m_mediaType, mediaType);
+			}
 		}
 		return NOERROR;
 	}

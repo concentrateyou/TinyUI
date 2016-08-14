@@ -44,6 +44,7 @@ namespace Media
 		static BOOL GetDevices(vector<Name>& names);
 		static BOOL GetDeviceParams(const VideoCapture::Name& device, vector<VideoCaptureParam>& formats);
 		static BOOL GetDeviceFilter(const Name& name, IBaseFilter** filter);
+		static BOOL GetMediaType(IPin* pPin, REFGUID subtype, AM_MEDIA_TYPE** ppType);
 	private:
 		static BOOL GetPinCategory(IPin* pin, REFGUID category);
 		static TinyComPtr<IPin> GetPin(IBaseFilter* filter, PIN_DIRECTION pin_dir, REFGUID category);
@@ -54,11 +55,14 @@ namespace Media
 		TinyComPtr<IGraphBuilder>			m_builder;
 		TinyComPtr<IMediaControl>			m_control;
 		TinyComPtr<IBaseFilter>				m_captureFilter;
-		TinyComPtr<IPin>					m_captureConnector;
+		TinyComPtr<IPin>					m_captureConnectorO;
 		TinyComPtr<IBaseFilter>				m_mjpgFilter;
-		TinyComPtr<IPin>					m_mjpgConnector1;
-		TinyComPtr<IPin>					m_mjpgConnector2;
-		TinyComPtr<IPin>					m_sinkConnector;
+		TinyComPtr<IPin>					m_mjpgConnectorO;//OUT
+		TinyComPtr<IPin>					m_mjpgConnectorI;//IN
+		TinyComPtr<IBaseFilter>				m_avFilter;
+		TinyComPtr<IPin>					m_avConnectorO;//OUT
+		TinyComPtr<IPin>					m_avConnectorI;//IN
+		TinyComPtr<IPin>					m_sinkConnectorI;
 		TinyScopedReferencePtr<SinkFilter>	m_sinkFilter;
 	};
 }

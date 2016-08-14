@@ -15,7 +15,7 @@ HRESULT WINAPI CopyMediaType(AM_MEDIA_TYPE *pmtTarget, const AM_MEDIA_TYPE *pmtS
 {
 	ASSERT(pmtSource != pmtTarget);
 	*pmtTarget = *pmtSource;
-	if (pmtSource->cbFormat != 0)
+	if (pmtSource->cbFormat != NULL)
 	{
 		ASSERT(pmtSource->pbFormat != NULL);
 		pmtTarget->pbFormat = (PBYTE)CoTaskMemAlloc(pmtSource->cbFormat);
@@ -51,10 +51,9 @@ void WINAPI FreeMediaType(AM_MEDIA_TYPE& mt)
 }
 void WINAPI DeleteMediaType(AM_MEDIA_TYPE *pmt)
 {
-	if (pmt == NULL)
+	if (pmt)
 	{
-		return;
+		FreeMediaType(*pmt);
+		CoTaskMemFree((PVOID)pmt);
 	}
-	FreeMediaType(*pmt);
-	CoTaskMemFree((PVOID)pmt);
 }

@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "VideoCommon.h"
 #include "ScopedMediaType.h"
 
 namespace Media
@@ -10,7 +11,7 @@ namespace Media
 	}
 	ScopedMediaType::~ScopedMediaType()
 	{
-		Release();
+		DeleteMediaType(m_mediaType);
 	}
 	AM_MEDIA_TYPE* ScopedMediaType::operator->()
 	{
@@ -22,21 +23,7 @@ namespace Media
 	}
 	void ScopedMediaType::Release()
 	{
-		if (m_mediaType)
-		{
-			if (m_mediaType->cbFormat != NULL)
-			{
-				CoTaskMemFree(m_mediaType->pbFormat);
-				m_mediaType->cbFormat = 0;
-				m_mediaType->pbFormat = NULL;
-			}
-			if (m_mediaType->pUnk != NULL)
-			{
-				m_mediaType->pUnk->Release();
-				m_mediaType->pUnk = NULL;
-			}
-			m_mediaType = NULL;
-		}
+		::FreeMediaType(*m_mediaType);
 	}
 	AM_MEDIA_TYPE** ScopedMediaType::Receive()
 	{

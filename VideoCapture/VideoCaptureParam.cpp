@@ -30,16 +30,10 @@ namespace Media
 			return "UYUY";
 		case PIXEL_FORMAT_RGB24:
 			return "RGB24";
-		case PIXEL_FORMAT_ARGB:
-			return "ARGB";
 		case PIXEL_FORMAT_MJPEG:
 			return "MJPEG";
-		case PIXEL_FORMAT_NV21:
-			return "YV12";
 		case PIXEL_FORMAT_YV12:
 			return "YV12";
-		case PIXEL_FORMAT_TEXTURE:
-			return "TEXTURE";
 		case PIXEL_FORMAT_MAX:
 			break;
 		}

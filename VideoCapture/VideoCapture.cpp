@@ -52,8 +52,8 @@ namespace Media
 			return FALSE;
 		if (!GetDeviceFilter(name, &m_captureFilter))
 			return FALSE;
-		m_captureConnector = GetPin(m_captureFilter, PINDIR_OUTPUT, PIN_CATEGORY_CAPTURE);
-		if (!m_captureConnector)
+		m_captureConnectorO = GetPin(m_captureFilter, PINDIR_OUTPUT, PIN_CATEGORY_CAPTURE);
+		if (!m_captureConnectorO)
 			return FALSE;
 		hRes = m_builder->AddFilter(m_captureFilter, NULL);
 		if (FAILED(hRes))
@@ -61,8 +61,8 @@ namespace Media
 		m_sinkFilter = new SinkFilter(this);
 		if (!m_sinkFilter)
 			return FALSE;
-		m_sinkConnector = m_sinkFilter->GetPin(0);
-		if (!m_sinkConnector)
+		m_sinkConnectorI = m_sinkFilter->GetPin(0);
+		if (!m_sinkConnectorI)
 			return FALSE;
 		hRes = m_builder->AddFilter(m_sinkFilter, NULL);
 		if (FAILED(hRes))
@@ -78,42 +78,29 @@ namespace Media
 		}
 		if (m_builder)
 		{
-			if (m_sinkFilter)
-			{
-				m_builder->RemoveFilter(m_sinkFilter);
-			}
-			if (m_captureFilter)
-			{
-				m_builder->RemoveFilter(m_captureFilter);
-			}
+			m_builder->RemoveFilter(m_sinkFilter);
+			m_builder->RemoveFilter(m_mjpgFilter);
+			m_builder->RemoveFilter(m_avFilter);
+			m_builder->RemoveFilter(m_captureFilter);
 		}
-		if (m_captureConnector)
-		{
-			m_captureConnector.Release();
-		}
-		if (m_sinkConnector)
-		{
-			m_sinkConnector.Release();
-		}
-		if (m_captureFilter)
-		{
-			m_captureFilter.Release();
-		}
-		if (m_control)
-		{
-			m_control.Release();
-		}
-		if (m_builder)
-		{
-			m_builder.Release();
-		}
+		m_captureConnectorO.Release();
+		m_mjpgConnectorO.Release();
+		m_mjpgConnectorI.Release();
+		m_avConnectorO.Release();
+		m_avConnectorI.Release();
+		m_sinkConnectorI.Release();
+		m_captureFilter.Release();
+		m_avFilter.Release();
+		m_mjpgFilter.Release();
+		m_control.Release();
+		m_builder.Release();
 		m_sinkFilter = NULL;
 	}
 
 	BOOL VideoCapture::Allocate(const VideoCaptureParam& param)
 	{
 		TinyComPtr<IAMStreamConfig> streamConfig;
-		HRESULT hRes = m_captureConnector->QueryInterface(&streamConfig);
+		HRESULT hRes = m_captureConnectorO->QueryInterface(&streamConfig);
 		if (FAILED(hRes))
 			return FALSE;
 		INT count = 0;
@@ -135,10 +122,76 @@ namespace Media
 					param.GetSize() == TinySize(h->bmiHeader.biWidth, h->bmiHeader.biHeight))
 				{
 					SetAntiFlickerInCaptureFilter();
-					m_sinkFilter->SetParam(param);
-					hRes = m_builder->ConnectDirect(m_captureConnector, m_sinkConnector, NULL);
-					if (hRes != S_OK)
-						return FALSE;
+
+					if (param.GetFormat() == PIXEL_FORMAT_MJPEG)
+					{
+						hRes = m_mjpgFilter.CoCreateInstance(CLSID_MjpegDec, NULL, CLSCTX_INPROC);
+						if (hRes != S_OK)
+							return FALSE;
+						hRes = m_builder->AddFilter(m_mjpgFilter, NULL);
+						if (FAILED(hRes))
+							return FALSE;
+						m_mjpgConnectorO = GetPin(m_mjpgFilter, PINDIR_OUTPUT, GUID_NULL);
+						if (!m_mjpgConnectorO)
+							return FALSE;
+						m_mjpgConnectorI = GetPin(m_mjpgFilter, PINDIR_INPUT, GUID_NULL);
+						if (!m_mjpgConnectorI)
+							return FALSE;
+						h = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
+						if (h->bmiHeader.biWidth == param.GetSize().cx &&
+							h->bmiHeader.biHeight == param.GetSize().cy)
+						{
+							hRes = m_builder->ConnectDirect(m_captureConnectorO, m_mjpgConnectorI, NULL);
+							if (hRes != S_OK)
+								return FALSE;
+							ScopedMediaType type;
+							if (!VideoCapture::GetMediaType(m_mjpgConnectorO, MEDIASUBTYPE_RGB24, type.Receive()))
+								return FALSE;
+							m_sinkFilter->SetMediaType(type.Ptr());
+							hRes = m_builder->ConnectDirect(m_mjpgConnectorO, m_sinkConnectorI, NULL);
+							if (hRes != S_OK)
+								return FALSE;
+						}
+					}
+					else if (param.GetFormat() == PIXEL_FORMAT_UYVY
+						|| param.GetFormat() == PIXEL_FORMAT_YUY2
+						|| param.GetFormat() == PIXEL_FORMAT_YV12
+						|| param.GetFormat() == PIXEL_FORMAT_I420)
+					{
+						hRes = m_avFilter.CoCreateInstance(CLSID_AVIDec, NULL, CLSCTX_INPROC);
+						if (hRes != S_OK)
+							return FALSE;
+						hRes = m_builder->AddFilter(m_avFilter, NULL);
+						if (FAILED(hRes))
+							return FALSE;
+						m_avConnectorO = GetPin(m_avFilter, PINDIR_OUTPUT, GUID_NULL);
+						if (!m_avConnectorO)
+							return FALSE;
+						m_avConnectorI = GetPin(m_avFilter, PINDIR_INPUT, GUID_NULL);
+						if (!m_avConnectorI)
+							return FALSE;
+						h = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
+						if (h->bmiHeader.biWidth == param.GetSize().cx &&
+							h->bmiHeader.biHeight == param.GetSize().cy)
+						{
+							hRes = m_builder->ConnectDirect(m_captureConnectorO, m_avConnectorI, NULL);
+							if (hRes != S_OK)
+								return FALSE;
+							ScopedMediaType type;
+							if (!VideoCapture::GetMediaType(m_avConnectorO, MEDIASUBTYPE_RGB24, type.Receive()))
+								return FALSE;
+							m_sinkFilter->SetMediaType(type.Ptr());
+							hRes = m_builder->ConnectDirect(m_avConnectorO, m_sinkConnectorI, NULL);
+							if (hRes != S_OK)
+								return FALSE;
+						}
+					}
+					else
+					{
+						hRes = m_builder->ConnectDirect(m_captureConnectorO, m_sinkConnectorI, NULL);
+						if (hRes != S_OK)
+							return FALSE;
+					}
 					hRes = m_control->Pause();
 					if (hRes != S_OK)
 						return FALSE;
@@ -152,8 +205,17 @@ namespace Media
 	{
 		if (m_builder)
 		{
-			m_builder->Disconnect(m_captureConnector);
-			m_builder->Disconnect(m_sinkConnector);
+			if (m_captureConnectorO)
+			{
+				m_builder->Disconnect(m_captureConnectorO);
+			}
+			if (m_sinkConnectorI)
+			{
+				m_builder->Disconnect(m_captureConnectorO);
+			}
+			m_builder->Disconnect(m_captureConnectorO);
+			m_builder->Disconnect(m_captureConnectorO);
+			m_builder->Disconnect(m_sinkConnectorI);
 		}
 	}
 	BOOL VideoCapture::Start()
@@ -276,6 +338,34 @@ namespace Media
 		}
 		return FALSE;
 	}
+	BOOL VideoCapture::GetMediaType(IPin* pPin, REFGUID subtype, AM_MEDIA_TYPE** ppType)
+	{
+		TinyComPtr<IEnumMediaTypes> emt;
+		if (FAILED(pPin->EnumMediaTypes(&emt)))
+			return FALSE;
+		emt->Reset();
+		ULONG cFetched;
+		AM_MEDIA_TYPE* pMediaType = NULL;
+		while (emt->Next(1, &pMediaType, &cFetched) == NOERROR)
+		{
+			if (pMediaType->majortype == MEDIATYPE_Video &&
+				pMediaType->formattype == FORMAT_VideoInfo &&
+				pMediaType->subtype == subtype)
+			{
+				if (*ppType != NULL)
+				{
+					CopyMediaType(*ppType, pMediaType);
+				}
+				else
+				{
+					*ppType = pMediaType;
+				}
+				return TRUE;
+			}
+			DeleteMediaType(pMediaType);
+		}
+		return FALSE;
+	}
 	BOOL VideoCapture::GetPinCategory(IPin* pPin, REFGUID category)
 	{
 		ASSERT(pPin);
@@ -332,9 +422,7 @@ namespace Media
 			{ MEDIASUBTYPE_RGB24, PIXEL_FORMAT_RGB24 },
 			{ MEDIASUBTYPE_YUY2, PIXEL_FORMAT_YUY2 },
 			{ MEDIASUBTYPE_MJPG, PIXEL_FORMAT_MJPEG },
-			{ MEDIASUBTYPE_UYVY, PIXEL_FORMAT_UYVY },
-			{ MEDIASUBTYPE_ARGB32, PIXEL_FORMAT_ARGB },
-			{ MediaSubTypeHDYC, PIXEL_FORMAT_UYVY },
+			{ MEDIASUBTYPE_UYVY, PIXEL_FORMAT_UYVY }
 		};
 		for (size_t i = 0; i < ARRAYSIZE_UNSAFE(formats); ++i)
 		{

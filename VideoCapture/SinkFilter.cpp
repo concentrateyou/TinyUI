@@ -25,11 +25,6 @@ namespace Media
 		return index == 0 ? m_sinkInputPin : NULL;
 	}
 
-	void SinkFilter::SetParam(const VideoCaptureParam& param)
-	{
-		ASSERT(m_sinkInputPin);
-		return m_sinkInputPin->SetParam(param);
-	}
 	HRESULT SinkFilter::SetMediaType(const AM_MEDIA_TYPE* mediaType)
 	{
 		ASSERT(m_sinkInputPin);
