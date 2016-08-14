@@ -29,9 +29,29 @@ namespace Media
 		return m_id;
 	}
 
+	void SaveBitmap(BITMAPINFOHEADER bi, INT size, const BYTE* pdata)
+	{
+		BITMAPFILEHEADER  bmfHeader = { 0 };
+		DWORD dwSizeofDIB = size + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+		bmfHeader.bfOffBits = (DWORD)sizeof(BITMAPFILEHEADER) + (DWORD)sizeof(BITMAPINFOHEADER);
+		bmfHeader.bfSize = dwSizeofDIB;
+		bmfHeader.bfType = 0x4D42;
+		HANDLE hFile = CreateFile("D:\\test.bmp", GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		DWORD dwBytesWritten = 0;
+		WriteFile(hFile, (LPSTR)&bmfHeader, sizeof(BITMAPFILEHEADER), &dwBytesWritten, NULL);
+		WriteFile(hFile, (LPSTR)&bi, sizeof(BITMAPINFOHEADER), &dwBytesWritten, NULL);
+		WriteFile(hFile, (LPSTR)pdata, size, &dwBytesWritten, NULL);
+		CloseHandle(hFile);
+	}
+
 	void VideoCapture::OnFrameReceive(const BYTE* data, INT size, LPVOID lpData)
 	{
-
+		AM_MEDIA_TYPE* pMediaType = static_cast<AM_MEDIA_TYPE*>(lpData);
+		if (pMediaType)
+		{
+			VIDEOINFOHEADER* h = reinterpret_cast<VIDEOINFOHEADER*>(pMediaType->pbFormat);
+			SaveBitmap(h->bmiHeader, size, data);
+		}
 	}
 
 	VideoCapture::VideoCapture()

@@ -78,7 +78,7 @@ namespace Media
 		BYTE* data = NULL;
 		if (FAILED(pSample->GetPointer(&data)))
 			return S_FALSE;
-		m_observer->OnFrameReceive(data, size, NULL);
+		m_observer->OnFrameReceive(data, size, &m_mediaType);
 		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE InputPinBase::ReceiveMultiple(_In_reads_(nSamples) IMediaSample **pSamples, long nSamples, _Out_ long *nSamplesProcessed)
