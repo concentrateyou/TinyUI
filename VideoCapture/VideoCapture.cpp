@@ -49,8 +49,18 @@ namespace Media
 		AM_MEDIA_TYPE* pMediaType = static_cast<AM_MEDIA_TYPE*>(lpData);
 		if (pMediaType)
 		{
+			RECT rectangle = { 0 };
+			GetWindowRect(m_hWND, &rectangle);
 			VIDEOINFOHEADER* h = reinterpret_cast<VIDEOINFOHEADER*>(pMediaType->pbFormat);
-			SaveBitmap(h->bmiHeader, size, data);
+			TinyUI::TinyWindowDC wdc(m_hWND);
+			BITMAPINFO bi = { 0 };
+			bi.bmiHeader = h->bmiHeader;
+			BYTE* pvBits = NULL;
+			HBITMAP hBitmap = ::CreateDIBSection(wdc, &bi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pvBits), NULL, 0);
+			memcpy(pvBits, data, size);
+			TinyUI::TinyMemDC mdc(wdc, hBitmap);
+			::BitBlt(wdc, 0, 0, TO_CX(rectangle), TO_CY(rectangle), mdc, 0, 0, SRCCOPY);
+			DeleteObject(hBitmap);
 		}
 	}
 
@@ -62,8 +72,9 @@ namespace Media
 	{
 		Uninitialize();
 	}
-	BOOL VideoCapture::Initialize(const Name& name)
+	BOOL VideoCapture::Initialize(const Name& name, HWND hWND)
 	{
+		m_hWND = hWND;
 		HRESULT hRes = m_builder.CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER);
 		if (FAILED(hRes))
 			return FALSE;
@@ -72,8 +83,8 @@ namespace Media
 			return FALSE;
 		if (!GetDeviceFilter(name, &m_captureFilter))
 			return FALSE;
-		m_captureConnectorO = GetPin(m_captureFilter, PINDIR_OUTPUT, PIN_CATEGORY_CAPTURE);
-		if (!m_captureConnectorO)
+		m_captureO = GetPin(m_captureFilter, PINDIR_OUTPUT, PIN_CATEGORY_CAPTURE);
+		if (!m_captureO)
 			return FALSE;
 		hRes = m_builder->AddFilter(m_captureFilter, NULL);
 		if (FAILED(hRes))
@@ -81,8 +92,8 @@ namespace Media
 		m_sinkFilter = new SinkFilter(this);
 		if (!m_sinkFilter)
 			return FALSE;
-		m_sinkConnectorI = m_sinkFilter->GetPin(0);
-		if (!m_sinkConnectorI)
+		m_sinkI = m_sinkFilter->GetPin(0);
+		if (!m_sinkI)
 			return FALSE;
 		hRes = m_builder->AddFilter(m_sinkFilter, NULL);
 		if (FAILED(hRes))
@@ -103,12 +114,12 @@ namespace Media
 			m_builder->RemoveFilter(m_avFilter);
 			m_builder->RemoveFilter(m_captureFilter);
 		}
-		m_captureConnectorO.Release();
-		m_mjpgConnectorO.Release();
-		m_mjpgConnectorI.Release();
-		m_avConnectorO.Release();
-		m_avConnectorI.Release();
-		m_sinkConnectorI.Release();
+		m_captureO.Release();
+		m_mjpgO.Release();
+		m_mjpgI.Release();
+		m_avO.Release();
+		m_avI.Release();
+		m_sinkI.Release();
 		m_captureFilter.Release();
 		m_avFilter.Release();
 		m_mjpgFilter.Release();
@@ -120,7 +131,7 @@ namespace Media
 	BOOL VideoCapture::Allocate(const VideoCaptureParam& param)
 	{
 		TinyComPtr<IAMStreamConfig> streamConfig;
-		HRESULT hRes = m_captureConnectorO->QueryInterface(&streamConfig);
+		HRESULT hRes = m_captureO->QueryInterface(&streamConfig);
 		if (FAILED(hRes))
 			return FALSE;
 		INT count = 0;
@@ -151,24 +162,24 @@ namespace Media
 						hRes = m_builder->AddFilter(m_mjpgFilter, NULL);
 						if (FAILED(hRes))
 							return FALSE;
-						m_mjpgConnectorO = GetPin(m_mjpgFilter, PINDIR_OUTPUT, GUID_NULL);
-						if (!m_mjpgConnectorO)
+						m_mjpgO = GetPin(m_mjpgFilter, PINDIR_OUTPUT, GUID_NULL);
+						if (!m_mjpgO)
 							return FALSE;
-						m_mjpgConnectorI = GetPin(m_mjpgFilter, PINDIR_INPUT, GUID_NULL);
-						if (!m_mjpgConnectorI)
+						m_mjpgI = GetPin(m_mjpgFilter, PINDIR_INPUT, GUID_NULL);
+						if (!m_mjpgI)
 							return FALSE;
 						h = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
 						if (h->bmiHeader.biWidth == param.GetSize().cx &&
 							h->bmiHeader.biHeight == param.GetSize().cy)
 						{
-							hRes = m_builder->ConnectDirect(m_captureConnectorO, m_mjpgConnectorI, NULL);
+							hRes = m_builder->ConnectDirect(m_captureO, m_mjpgI, mediaType.Ptr());
 							if (hRes != S_OK)
 								return FALSE;
 							ScopedMediaType type;
-							if (!VideoCapture::GetMediaType(m_mjpgConnectorO, MEDIASUBTYPE_RGB24, type.Receive()))
+							if (!VideoCapture::GetMediaType(m_mjpgO, MEDIASUBTYPE_RGB24, type.Receive()))
 								return FALSE;
 							m_sinkFilter->SetMediaType(type.Ptr());
-							hRes = m_builder->ConnectDirect(m_mjpgConnectorO, m_sinkConnectorI, NULL);
+							hRes = m_builder->ConnectDirect(m_mjpgO, m_sinkI, NULL);
 							if (hRes != S_OK)
 								return FALSE;
 						}
@@ -184,31 +195,31 @@ namespace Media
 						hRes = m_builder->AddFilter(m_avFilter, NULL);
 						if (FAILED(hRes))
 							return FALSE;
-						m_avConnectorO = GetPin(m_avFilter, PINDIR_OUTPUT, GUID_NULL);
-						if (!m_avConnectorO)
+						m_avO = GetPin(m_avFilter, PINDIR_OUTPUT, GUID_NULL);
+						if (!m_avO)
 							return FALSE;
-						m_avConnectorI = GetPin(m_avFilter, PINDIR_INPUT, GUID_NULL);
-						if (!m_avConnectorI)
+						m_avI = GetPin(m_avFilter, PINDIR_INPUT, GUID_NULL);
+						if (!m_avI)
 							return FALSE;
 						h = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
 						if (h->bmiHeader.biWidth == param.GetSize().cx &&
 							h->bmiHeader.biHeight == param.GetSize().cy)
 						{
-							hRes = m_builder->ConnectDirect(m_captureConnectorO, m_avConnectorI, NULL);
+							hRes = m_builder->ConnectDirect(m_captureO, m_avI, NULL);
 							if (hRes != S_OK)
 								return FALSE;
 							ScopedMediaType type;
-							if (!VideoCapture::GetMediaType(m_avConnectorO, MEDIASUBTYPE_RGB24, type.Receive()))
+							if (!VideoCapture::GetMediaType(m_avO, MEDIASUBTYPE_RGB24, type.Receive()))
 								return FALSE;
 							m_sinkFilter->SetMediaType(type.Ptr());
-							hRes = m_builder->ConnectDirect(m_avConnectorO, m_sinkConnectorI, NULL);
+							hRes = m_builder->ConnectDirect(m_avO, m_sinkI, NULL);
 							if (hRes != S_OK)
 								return FALSE;
 						}
 					}
 					else
 					{
-						hRes = m_builder->ConnectDirect(m_captureConnectorO, m_sinkConnectorI, NULL);
+						hRes = m_builder->ConnectDirect(m_captureO, m_sinkI, NULL);
 						if (hRes != S_OK)
 							return FALSE;
 					}
@@ -225,17 +236,17 @@ namespace Media
 	{
 		if (m_builder)
 		{
-			if (m_captureConnectorO)
+			if (m_captureO)
 			{
-				m_builder->Disconnect(m_captureConnectorO);
+				m_builder->Disconnect(m_captureO);
 			}
-			if (m_sinkConnectorI)
+			if (m_sinkI)
 			{
-				m_builder->Disconnect(m_captureConnectorO);
+				m_builder->Disconnect(m_captureO);
 			}
-			m_builder->Disconnect(m_captureConnectorO);
-			m_builder->Disconnect(m_captureConnectorO);
-			m_builder->Disconnect(m_sinkConnectorI);
+			m_builder->Disconnect(m_captureO);
+			m_builder->Disconnect(m_captureO);
+			m_builder->Disconnect(m_sinkI);
 		}
 	}
 	BOOL VideoCapture::Start()

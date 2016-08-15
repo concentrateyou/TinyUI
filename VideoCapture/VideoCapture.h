@@ -32,7 +32,7 @@ namespace Media
 	public:
 		explicit VideoCapture();
 		virtual ~VideoCapture();
-		BOOL Initialize(const Name& name);
+		BOOL Initialize(const Name& name, HWND hWND);
 		void Uninitialize();
 		BOOL Start();
 		BOOL Stop();
@@ -51,18 +51,19 @@ namespace Media
 		static VideoPixelFormat TranslateMediaSubtypeToPixelFormat(const GUID& subType);
 		void SetAntiFlickerInCaptureFilter();
 	private:
+		HWND								m_hWND;
 		VideoCaptureParam					m_vcf;
 		TinyComPtr<IGraphBuilder>			m_builder;
 		TinyComPtr<IMediaControl>			m_control;
 		TinyComPtr<IBaseFilter>				m_captureFilter;
-		TinyComPtr<IPin>					m_captureConnectorO;
+		TinyComPtr<IPin>					m_captureO;
 		TinyComPtr<IBaseFilter>				m_mjpgFilter;
-		TinyComPtr<IPin>					m_mjpgConnectorO;//OUT
-		TinyComPtr<IPin>					m_mjpgConnectorI;//IN
+		TinyComPtr<IPin>					m_mjpgO;//OUT
+		TinyComPtr<IPin>					m_mjpgI;//IN
 		TinyComPtr<IBaseFilter>				m_avFilter;
-		TinyComPtr<IPin>					m_avConnectorO;//OUT
-		TinyComPtr<IPin>					m_avConnectorI;//IN
-		TinyComPtr<IPin>					m_sinkConnectorI;
+		TinyComPtr<IPin>					m_avO;//OUT
+		TinyComPtr<IPin>					m_avI;//IN
+		TinyComPtr<IPin>					m_sinkI;
 		TinyScopedReferencePtr<SinkFilter>	m_sinkFilter;
 	};
 }

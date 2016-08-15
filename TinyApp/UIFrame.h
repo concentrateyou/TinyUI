@@ -3,6 +3,7 @@
 #include "Windowless/TinyVisualHWND.h"
 #include "Control/TinyComboBox.h"
 #include "Control/TinyButton.h"
+#include "Control/TinyLabel.h"
 #include "VideoCapture.h"
 using namespace TinyUI;
 
@@ -32,6 +33,7 @@ public:
 	void OnStart(void*, INT);
 	void OnStop(void*, INT);
 private:
+	TinyLabel			m_ctrl;
 	Media::VideoCapture m_device;
 	TinyComboBox		m_device1;
 	TinyScopedPtr<Delegate<void(INT)>> m_onChange1;

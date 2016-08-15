@@ -26,6 +26,8 @@ namespace Media
 		{
 			if (mediaType)
 			{
+				VIDEOINFOHEADER* h = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
+				TRACE("PinBase cx:%d,cy:%d\n", h->bmiHeader.biWidth, h->bmiHeader.biHeight);
 				CopyMediaType(&m_mediaType, mediaType);
 			}
 		}
