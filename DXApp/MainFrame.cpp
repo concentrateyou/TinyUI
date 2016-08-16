@@ -44,9 +44,7 @@ BOOL CMainFrame::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
 LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	RECT rect = { 0 };
-	GetClientRect(&rect);
-	m_d3d10Device.Initialize(m_hWND, TO_CX(rect), TO_CY(rect));
+	CenterWindow(GetParent(m_hWND), { 1000, 800 });
 	return FALSE;
 }
 
@@ -65,6 +63,5 @@ LRESULT CMainFrame::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHand
 LRESULT CMainFrame::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	m_d3d10Device.Render();
 	return FALSE;
 }

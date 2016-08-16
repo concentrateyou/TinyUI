@@ -40,7 +40,7 @@ namespace TinyUI
 		BOOL	GetClientRect(LPRECT lprect);
 		DWORD	GetStyle() const;
 		DWORD	GetExStyle() const;
-		void	CenterWindow(HWND parent, HWND window, SIZE pref) throw();
+		void	CenterWindow(HWND parent, SIZE pref) throw();
 		//////////////////////////////////////////////////////////////////////////
 	public:
 		BEGIN_MSG_MAP(TinyControl, TinyWindow)

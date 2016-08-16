@@ -223,7 +223,7 @@ namespace Media
 					default:
 					{
 						m_sinkFilter->SetMediaType(mediaType.Ptr());
-						hRes = m_builder->ConnectDirect(m_captureO, m_sinkI, mediaType.Ptr());
+						hRes = m_builder->ConnectDirect(m_captureO, m_sinkI, NULL);
 						if (hRes != S_OK)
 							return FALSE;
 					}

@@ -335,46 +335,46 @@ namespace TinyUI
 		ASSERT(m_hWND != NULL);
 		return ::UpdateWindow(m_hWND);
 	}
-	void TinyControl::CenterWindow(HWND parent, HWND window, SIZE size) throw()
+	void TinyControl::CenterWindow(HWND parent, SIZE size) throw()
 	{
-		RECT window_bounds;
-		RECT center_bounds = { 0 };
+		RECT windowBounds;
+		RECT centerBounds = { 0 };
 		if (parent)
 		{
-			::GetWindowRect(parent, &center_bounds);
+			::GetWindowRect(parent, &centerBounds);
 		}
 		else
 		{
-			HMONITOR monitor = MonitorFromWindow(window, MONITOR_DEFAULTTONEAREST);
+			HMONITOR monitor = MonitorFromWindow(m_hWND, MONITOR_DEFAULTTONEAREST);
 			if (monitor != NULL)
 			{
 				MONITORINFO mi = { 0 };
 				mi.cbSize = sizeof(mi);
 				GetMonitorInfo(monitor, &mi);
-				center_bounds = mi.rcWork;
+				centerBounds = mi.rcWork;
 			}
 		}
-		window_bounds.left = center_bounds.left + (center_bounds.right - center_bounds.left - size.cx) / 2;
-		window_bounds.right = window_bounds.left + size.cx;
-		window_bounds.top = center_bounds.top + (center_bounds.bottom - center_bounds.top - size.cy) / 2;
-		window_bounds.bottom = window_bounds.top + size.cy;
-		if (::GetWindowLong(window, GWL_STYLE) & WS_CHILD)
+		windowBounds.left = centerBounds.left + (centerBounds.right - centerBounds.left - size.cx) / 2;
+		windowBounds.right = windowBounds.left + size.cx;
+		windowBounds.top = centerBounds.top + (centerBounds.bottom - centerBounds.top - size.cy) / 2;
+		windowBounds.bottom = windowBounds.top + size.cy;
+		if (::GetWindowLong(m_hWND, GWL_STYLE) & WS_CHILD)
 		{
-			POINT topleft = { window_bounds.left, window_bounds.top };
+			POINT topleft = { windowBounds.left, windowBounds.top };
 			::MapWindowPoints(HWND_DESKTOP, parent, &topleft, 1);
-			window_bounds.left = topleft.x;
-			window_bounds.top = topleft.y;
-			window_bounds.right = window_bounds.left + size.cx;
-			window_bounds.bottom = window_bounds.top + size.cy;
+			windowBounds.left = topleft.x;
+			windowBounds.top = topleft.y;
+			windowBounds.right = windowBounds.left + size.cx;
+			windowBounds.bottom = windowBounds.top + size.cy;
 		}
 		WINDOWINFO win_info = { 0 };
 		win_info.cbSize = sizeof(WINDOWINFO);
-		GetWindowInfo(window, &win_info);
-		if (AdjustWindowRectEx(&window_bounds, win_info.dwStyle, FALSE, win_info.dwExStyle))
+		GetWindowInfo(m_hWND, &win_info);
+		if (AdjustWindowRectEx(&windowBounds, win_info.dwStyle, FALSE, win_info.dwExStyle))
 		{
-			SetWindowPos(window, 0, window_bounds.left, window_bounds.top,
-				window_bounds.right - window_bounds.left,
-				window_bounds.bottom - window_bounds.top,
+			SetWindowPos(m_hWND, 0, windowBounds.left, windowBounds.top,
+				windowBounds.right - windowBounds.left,
+				windowBounds.bottom - windowBounds.top,
 				SWP_NOACTIVATE | SWP_NOZORDER);
 		}
 	}

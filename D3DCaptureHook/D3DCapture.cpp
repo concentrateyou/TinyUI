@@ -339,7 +339,7 @@ namespace D3D
 			return FALSE;
 		}
 		CComPtr<IDXGIResource> dxgiResource;
-		if (FAILED(d3d10Texture2D->QueryInterface(IID_IDXGIResource, (void**)&dxgiResource)))
+		if (FAILED(d3d10Texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&dxgiResource)))
 		{
 			return FALSE;
 		}

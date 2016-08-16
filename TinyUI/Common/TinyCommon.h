@@ -927,6 +927,7 @@ private:\
 		TinyComPtr(const TinyComPtr<T>& myP) throw();
 		TinyComPtr(TinyComPtr<T>&& myP) throw();
 		~TinyComPtr() throw();
+		T* Ptr() const throw();
 		void Attach(T* myP) throw();
 		T* Detach() throw();
 		void Release() throw();
@@ -993,6 +994,11 @@ private:\
 			m_myP = NULL;
 			ps->Release();
 		}
+	}
+	template<class T>
+	T* TinyComPtr<T>::Ptr() const throw()
+	{
+		return (T*)m_myP;
 	}
 	template<class T>
 	TinyComPtr<T>::operator T*() const throw()

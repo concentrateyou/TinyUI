@@ -329,4 +329,26 @@ namespace TinyUI
 		void GetTime();
 		INT64 _ts;
 	};
+	typedef signed long  SLONG;
+	/// <summary>
+	/// 高精度计数器
+	/// </summary>
+	class TinyPerformanceTimer
+	{
+		DISALLOW_COPY_AND_ASSIGN(TinyPerformanceTimer);
+	public:
+		TinyPerformanceTimer();
+		~TinyPerformanceTimer();
+		LONGLONG GetMicroseconds();
+		void BeginTime();
+		void EndTime();
+	private:
+		BOOL			m_bRunning;
+		DWORD			m_dwTimerMask;
+		DWORD			m_dwTick;
+		LONGLONG		m_lastTime;
+		LARGE_INTEGER	m_lFrequency;
+		LARGE_INTEGER	m_startPerformanceCount;
+	};
+
 }
