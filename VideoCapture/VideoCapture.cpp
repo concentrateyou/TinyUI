@@ -153,8 +153,9 @@ namespace Media
 					param.GetSize() == TinySize(h->bmiHeader.biWidth, h->bmiHeader.biHeight))
 				{
 					SetAntiFlickerInCaptureFilter();
-
-					if (param.GetFormat() == PIXEL_FORMAT_MJPEG)
+					switch (param.GetFormat())
+					{
+					case PIXEL_FORMAT_MJPEG:
 					{
 						hRes = m_mjpgFilter.CoCreateInstance(CLSID_MjpegDec, NULL, CLSCTX_INPROC);
 						if (hRes != S_OK)
@@ -184,10 +185,11 @@ namespace Media
 								return FALSE;
 						}
 					}
-					else if (param.GetFormat() == PIXEL_FORMAT_UYVY
-						|| param.GetFormat() == PIXEL_FORMAT_YUY2
-						|| param.GetFormat() == PIXEL_FORMAT_YV12
-						|| param.GetFormat() == PIXEL_FORMAT_I420)
+					break;
+					case PIXEL_FORMAT_UYVY:
+					case PIXEL_FORMAT_YUY2:
+					case PIXEL_FORMAT_YV12:
+					case PIXEL_FORMAT_I420:
 					{
 						hRes = m_avFilter.CoCreateInstance(CLSID_AVIDec, NULL, CLSCTX_INPROC);
 						if (hRes != S_OK)
@@ -205,7 +207,7 @@ namespace Media
 						if (h->bmiHeader.biWidth == param.GetSize().cx &&
 							h->bmiHeader.biHeight == param.GetSize().cy)
 						{
-							hRes = m_builder->ConnectDirect(m_captureO, m_avI, NULL);
+							hRes = m_builder->ConnectDirect(m_captureO, m_avI, mediaType.Ptr());
 							if (hRes != S_OK)
 								return FALSE;
 							ScopedMediaType type;
@@ -217,11 +219,15 @@ namespace Media
 								return FALSE;
 						}
 					}
-					else
+					break;
+					default:
 					{
-						hRes = m_builder->ConnectDirect(m_captureO, m_sinkI, NULL);
+						m_sinkFilter->SetMediaType(mediaType.Ptr());
+						hRes = m_builder->ConnectDirect(m_captureO, m_sinkI, mediaType.Ptr());
 						if (hRes != S_OK)
 							return FALSE;
+					}
+					break;
 					}
 					hRes = m_control->Pause();
 					if (hRes != S_OK)

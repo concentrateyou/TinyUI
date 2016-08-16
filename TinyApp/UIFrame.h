@@ -33,7 +33,7 @@ public:
 	void OnStart(void*, INT);
 	void OnStop(void*, INT);
 private:
-	TinyLabel			m_ctrl;
+	TinyLabel			m_control;
 	Media::VideoCapture m_device;
 	TinyComboBox		m_device1;
 	TinyScopedPtr<Delegate<void(INT)>> m_onChange1;

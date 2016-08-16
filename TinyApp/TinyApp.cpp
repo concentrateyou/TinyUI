@@ -64,7 +64,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	//TinyUI::Windowless::TinyVisualHWND uiImpl;
 	CUIFrame uiImpl;
 	//CMainFrame uiImpl;
-	uiImpl.Create(NULL, 50, 50, 1024, 640);
+	uiImpl.Create(NULL, 50, 50, 1300, 986);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();
 	INT loopRes = theLoop.MessageLoop();

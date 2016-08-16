@@ -59,8 +59,8 @@ LRESULT CUIFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	m_stop.EVENT_Click += m_onStop;
 	m_stop.SetText("‘›Õ£≤∂ªÒ");
 
-	m_ctrl.Create(m_hWND, 20, 120, 640, 480);
-	m_ctrl.SetText("≤‚ ‘");
+	m_control.Create(m_hWND, 20, 120, 1024, 768);
+	m_control.SetText("≤‚ ‘");
 
 	m_device1.Create(m_hWND, 20, 20, 150, 23);
 	m_onChange1.Reset(new Delegate<void(INT)>(this, &CUIFrame::OnSelectChange1));
@@ -114,7 +114,7 @@ void CUIFrame::OnSelectChange2(INT index)
 {
 	const Media::VideoCaptureParam& param = m_params[index];
 	m_device.Uninitialize();
-	m_device.Initialize(m_names[m_device1.GetCurSel()], m_ctrl.Handle());
+	m_device.Initialize(m_names[m_device1.GetCurSel()], m_control.Handle());
 	m_device.Allocate(param);
 }
 
