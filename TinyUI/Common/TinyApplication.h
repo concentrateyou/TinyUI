@@ -25,7 +25,8 @@ namespace TinyUI
 		HINSTANCE			m_hInstance;
 		LPTSTR				m_hCmdLine;
 		HACCEL				m_hAccTable;
-		ULONG_PTR			m_gdiplusToken;
+		ULONG_PTR			m_token;
+		WSADATA				m_wsd;
 	private:
 		TinyApplication();
 	protected:

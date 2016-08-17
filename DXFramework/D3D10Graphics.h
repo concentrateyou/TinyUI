@@ -1,10 +1,9 @@
 #pragma once
-#include "Common.h"
-#include "D3D10.h"
+#include "D3D10Device.h"
 #include "D3D10Texture.h"
 #include "D3D10TextureShader.h"
 
-namespace DX
+namespace DXFramework
 {
 	class D3D10Graphics
 	{
@@ -13,8 +12,9 @@ namespace DX
 		D3D10Graphics();
 		~D3D10Graphics();
 		BOOL Initialize(HWND hWND, INT cx, INT cy);
+		ID3D10Device* GetDevice() const;
 	private:
-		D3D10				m_d3d10;
+		D3D10Device			m_d3d10;
 		D3D10Texture		m_texture;
 		D3D10TextureShader  m_textureShader;
 		D3DCamera			m_camera;

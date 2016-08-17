@@ -19,7 +19,7 @@
 #include <strsafe.h>
 #include <crtdbg.h>
 #include <utility>
-
+#include <Winsock2.h>
 #pragma comment(lib, "gdi32.lib")
 #pragma comment(lib, "shlwapi.lib")
 #pragma comment(lib, "gdiplus.lib")
@@ -27,7 +27,7 @@
 #pragma comment(lib, "Psapi.lib")
 #pragma comment(lib, "Winmm.lib")
 #pragma comment(lib, "Comctl32.lib")
-
+#pragma comment(lib, "ws2_32.lib")
 using namespace Gdiplus;
 using namespace std;
 

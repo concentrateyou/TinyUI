@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="头文件\D3D10">
+      <UniqueIdentifier>{47f599bd-eac4-4beb-8b39-f8d8ee4c7490}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\D3D10">
+      <UniqueIdentifier>{654a1fe6-92b0-449a-843c-9aa062c28242}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -24,51 +30,67 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Common.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="D3D10Graphics.h">
+      <Filter>头文件\D3D10</Filter>
     </ClInclude>
     <ClInclude Include="D3D10Texture.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\D3D10</Filter>
     </ClInclude>
     <ClInclude Include="D3D10TextureShader.h">
+      <Filter>头文件\D3D10</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D10Bitmap.h">
+      <Filter>头文件\D3D10</Filter>
+    </ClInclude>
+    <ClInclude Include="DXApplication.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="D3D10Graphics.h">
+    <ClInclude Include="DXIdleHandler.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="D3D10.h">
+    <ClInclude Include="DXWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="D3DBitmap.h">
+    <ClInclude Include="DXFramework.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D10Device.h">
+      <Filter>头文件\D3D10</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Common.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D10Texture.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D10TextureShader.cpp">
+    <ClCompile Include="dllmain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="D3D10Graphics.cpp">
+      <Filter>源文件\D3D10</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D10Texture.cpp">
+      <Filter>源文件\D3D10</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D10TextureShader.cpp">
+      <Filter>源文件\D3D10</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D10Bitmap.cpp">
+      <Filter>源文件\D3D10</Filter>
+    </ClCompile>
+    <ClCompile Include="DXApplication.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="D3D10.cpp">
+    <ClCompile Include="DXIdleHandler.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="D3DBitmap.cpp">
+    <ClCompile Include="DXWindow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="texture.fx">
-      <Filter>资源文件</Filter>
-    </FxCompile>
+    <ClCompile Include="DXFramework.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D10Device.cpp">
+      <Filter>源文件\D3D10</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

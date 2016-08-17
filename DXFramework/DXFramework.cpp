@@ -1,7 +1,8 @@
 #include "stdafx.h"
-#include "Common.h"
+#include "DXFramework.h"
+#include "Control/TinyControl.h"
 
-namespace DX
+namespace DXFramework
 {
 	D3DCamera::D3DCamera()
 	{

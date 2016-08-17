@@ -4,9 +4,11 @@
 #include <DXGI.h>
 #include <string>
 #include "Common/TinyCommon.h"
+#include "Control/TinyControl.h"
+#include "Render/TinyGDI.h"
 using namespace TinyUI;
 
-namespace DX
+namespace DXFramework
 {
 	class D3DCamera
 	{

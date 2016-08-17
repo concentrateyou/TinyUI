@@ -7,7 +7,8 @@ namespace TinyUI
 		:m_hInstance(NULL),
 		m_hCmdLine(NULL),
 		m_hAccTable(NULL),
-		m_iCmdShow(-1)
+		m_iCmdShow(-1),
+		m_token(0)
 	{
 	}
 	TinyApplication* TinyApplication::GetInstance() throw()
@@ -67,28 +68,35 @@ namespace TinyUI
 	}
 	BOOL TinyApplication::Initialize(HINSTANCE m_hInstance, LPTSTR m_lpCmdLine, INT m_nCmdShow, LPCTSTR lpTableName)
 	{
+		if (FAILED(OleInitialize(NULL)))
+			return FALSE;
+		if (WSAStartup(MAKEWORD(2, 2), &m_wsd) != NOERROR)
+			return FALSE;
 		this->m_hCmdLine = m_lpCmdLine;
 		this->m_hInstance = m_hInstance;
 		this->m_iCmdShow = m_nCmdShow;
 		this->m_hAccTable = LoadAccelerators(m_hInstance, lpTableName);
-		if (m_gdiplusToken == 0)
+		if (!m_token)
 		{
 			GdiplusStartupInput input;
 			GdiplusStartupOutput output;
-			Status status = GdiplusStartup(&m_gdiplusToken, &input, &output);
+			Status status = GdiplusStartup(&m_token, &input, &output);
 			return (status != Ok);
 		}
 		return TRUE;
 	}
 	BOOL TinyApplication::Uninitialize()
 	{
+		if (WSACleanup() != NOERROR)
+			return FALSE;
 		m_hInstance = NULL;
 		m_hCmdLine = NULL;
-		if (m_gdiplusToken != 0)
+		if (m_token != 0)
 		{
-			GdiplusShutdown(m_gdiplusToken);
-			m_gdiplusToken = 0;
+			GdiplusShutdown(m_token);
+			m_token = 0;
 		}
+		OleUninitialize();
 		return TRUE;
 	}
 

@@ -65,6 +65,7 @@ namespace TinyUI
 	LRESULT TinyControl::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		EVENT_Create(uMsg, wParam, lParam, bHandled);
 		return FALSE;
 	}
 	LRESULT TinyControl::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -75,6 +76,7 @@ namespace TinyUI
 	LRESULT TinyControl::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		EVENT_Destory(uMsg, wParam, lParam, bHandled);
 		return FALSE;
 	}
 	LRESULT TinyControl::OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
