@@ -10,6 +10,7 @@ namespace TinyUI
 	{
 		class TinyVisualHWND : public TinyControl
 		{
+			friend class TinyVisualDocument;
 			DECLARE_DYNAMIC(TinyVisualHWND)
 		public:
 			TinyVisualHWND();
@@ -54,7 +55,7 @@ namespace TinyUI
 		private:
 			BOOL Initialize();
 			void Uninitialize();
-		public:
+		private:
 			BOOL								m_bMouseTracking;
 			TinySize							m_size;
 			TinyScopedPtr<TinyVisualDocument>	m_document;

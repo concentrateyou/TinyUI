@@ -19,6 +19,8 @@ namespace TinyUI
 		public:
 			virtual ~TinyVisualComboBox();
 			TinyString RetrieveTag() const OVERRIDE;
+		public:
+			
 		protected:
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT	OnCreate() OVERRIDE;
@@ -28,7 +30,6 @@ namespace TinyUI
 		private:
 			TinyScopedPtr<Delegate<void(EventArgs&)>> m_onClick;
 			TinyVisualButton*	m_input;
-			TinyVisualDropDownHWND m_dropdown;
 		};
 	}
 }

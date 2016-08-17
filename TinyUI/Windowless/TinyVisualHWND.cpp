@@ -52,6 +52,8 @@ namespace TinyUI
 		void TinyVisualHWND::Uninitialize()
 		{
 			m_document->Uninitialize();
+			m_document.Reset(NULL);
+			m_cacheDC.Reset(NULL);
 		}
 		BOOL TinyVisualHWND::AddFilter(TinyVisualFilter* ps)
 		{

@@ -3,6 +3,8 @@
 #include "TinyVisualWindow.h"
 #include "TinyVisualDocument.h"
 
+#include "TinyVisualComboBox.h"
+
 namespace TinyUI
 {
 	namespace Windowless
@@ -30,6 +32,8 @@ namespace TinyUI
 		{
 			m_spvisWindow = new TinyVisualWindow(NULL, this);
 			m_spvisWindow->SetName("Window");
+			m_spvisWindow->SetStyleImage(NORMAL, "D:\\image.png");
+			TinyVisualComboBox* ps10 = Create<TinyVisualComboBox>(50, 320, 250, 250, m_spvisWindow);
 			return TRUE;
 		}
 		void TinyVisualDocument::Uninitialize()

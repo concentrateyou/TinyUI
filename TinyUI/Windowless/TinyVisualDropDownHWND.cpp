@@ -45,8 +45,7 @@ namespace TinyUI
 		LRESULT TinyVisualDropDownHWND::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
-			LRESULT lRes = TinyVisualHWND::OnCreate(uMsg, wParam, lParam, bHandled);
-			return lRes;
+			return TinyVisualHWND::OnCreate(uMsg, wParam, lParam, bHandled);
 		}
 
 		LRESULT TinyVisualDropDownHWND::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -58,7 +57,7 @@ namespace TinyUI
 		LRESULT TinyVisualDropDownHWND::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
-			return TinyControl::OnDestory(uMsg, wParam, lParam, bHandled);
+			return TinyVisualHWND::OnDestory(uMsg, wParam, lParam, bHandled);
 		}
 
 		LRESULT TinyVisualDropDownHWND::OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

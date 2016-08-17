@@ -38,7 +38,6 @@ namespace TinyUI
 			SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\combobox\\combobox_down.png");
 			SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\combobox\\combobox_normal.png");
 			SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\combobox\\combobox_hover.png");
-			m_dropdown.Create(NULL, 0, 0, 0, 0);
 			return TinyVisual::OnCreate();
 		}
 		HRESULT TinyVisualComboBox::OnDestory()
@@ -52,7 +51,7 @@ namespace TinyUI
 			POINT pos;
 			GetCursorPos(&pos);
 			ScreenToClient(this->Handle(), &pos);
-			m_dropdown.SetPosition(pos, TinySize(100, 100));
+			//TODO
 		}
 	}
 }
