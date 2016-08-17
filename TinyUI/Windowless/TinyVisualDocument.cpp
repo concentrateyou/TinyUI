@@ -33,7 +33,8 @@ namespace TinyUI
 			m_spvisWindow = new TinyVisualWindow(NULL, this);
 			m_spvisWindow->SetName("Window");
 			m_spvisWindow->SetStyleImage(NORMAL, "D:\\image.png");
-			TinyVisualComboBox* ps10 = Create<TinyVisualComboBox>(50, 320, 250, 250, m_spvisWindow);
+			TinyVisualComboBox* ps10 = Create<TinyVisualComboBox>(50, 320, 200, 50, m_spvisWindow);
+			ps10->SetText("≤‚ ‘");
 			return TRUE;
 		}
 		void TinyVisualDocument::Uninitialize()

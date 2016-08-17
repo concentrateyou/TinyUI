@@ -19,17 +19,16 @@ namespace TinyUI
 		public:
 			virtual ~TinyVisualComboBox();
 			TinyString RetrieveTag() const OVERRIDE;
-		public:
-			
 		protected:
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT	OnCreate() OVERRIDE;
 			HRESULT OnDestory() OVERRIDE;
+			HRESULT	OnLButtonDown(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
+			HRESULT OnMouseMove(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
+			HRESULT OnMouseLeave() OVERRIDE;
+			HRESULT	OnLButtonUp(const TinyPoint& pos, DWORD dwFlags);
 		private:
-			void OnInputClick(EventArgs& args);
-		private:
-			TinyScopedPtr<Delegate<void(EventArgs&)>> m_onClick;
-			TinyVisualButton*	m_input;
+			StyleImage	m_dwFlag;
 		};
 	}
 }
