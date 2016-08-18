@@ -30,18 +30,6 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="D3D10Graphics.h">
-      <Filter>头文件\D3D10</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D10Texture.h">
-      <Filter>头文件\D3D10</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D10TextureShader.h">
-      <Filter>头文件\D3D10</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D10Bitmap.h">
-      <Filter>头文件\D3D10</Filter>
-    </ClInclude>
     <ClInclude Include="DXApplication.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -54,7 +42,22 @@
     <ClInclude Include="DXFramework.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="D3D10Device.h">
+    <ClInclude Include="D3D10\bitmapclass.h">
+      <Filter>头文件\D3D10</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D10\cameraclass.h">
+      <Filter>头文件\D3D10</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D10\d3dclass.h">
+      <Filter>头文件\D3D10</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D10\graphicsclass.h">
+      <Filter>头文件\D3D10</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D10\textureclass.h">
+      <Filter>头文件\D3D10</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D10\textureshaderclass.h">
       <Filter>头文件\D3D10</Filter>
     </ClInclude>
   </ItemGroup>
@@ -64,18 +67,6 @@
     </ClCompile>
     <ClCompile Include="dllmain.cpp">
       <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D10Graphics.cpp">
-      <Filter>源文件\D3D10</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D10Texture.cpp">
-      <Filter>源文件\D3D10</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D10TextureShader.cpp">
-      <Filter>源文件\D3D10</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D10Bitmap.cpp">
-      <Filter>源文件\D3D10</Filter>
     </ClCompile>
     <ClCompile Include="DXApplication.cpp">
       <Filter>源文件</Filter>
@@ -89,7 +80,22 @@
     <ClCompile Include="DXFramework.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="D3D10Device.cpp">
+    <ClCompile Include="D3D10\bitmapclass.cpp">
+      <Filter>源文件\D3D10</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D10\cameraclass.cpp">
+      <Filter>源文件\D3D10</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D10\d3dclass.cpp">
+      <Filter>源文件\D3D10</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D10\graphicsclass.cpp">
+      <Filter>源文件\D3D10</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D10\textureclass.cpp">
+      <Filter>源文件\D3D10</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D10\textureshaderclass.cpp">
       <Filter>源文件\D3D10</Filter>
     </ClCompile>
   </ItemGroup>

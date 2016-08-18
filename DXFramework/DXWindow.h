@@ -1,6 +1,6 @@
 #pragma once
 #include "DXFramework.h"
-#include "D3D10Graphics.h"
+#include "D3D10/graphicsclass.h"
 
 namespace DXFramework
 {
@@ -22,7 +22,7 @@ namespace DXFramework
 		LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 	private:
-		D3D10Graphics m_graphics;
+		GraphicsClass m_graphics;
 	};
 }
 

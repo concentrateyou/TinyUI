@@ -84,12 +84,13 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="D3D10\bitmapclass.h" />
+    <ClInclude Include="D3D10\cameraclass.h" />
+    <ClInclude Include="D3D10\d3dclass.h" />
+    <ClInclude Include="D3D10\graphicsclass.h" />
+    <ClInclude Include="D3D10\textureclass.h" />
+    <ClInclude Include="D3D10\textureshaderclass.h" />
     <ClInclude Include="DXFramework.h" />
-    <ClInclude Include="D3D10Device.h" />
-    <ClInclude Include="D3D10Graphics.h" />
-    <ClInclude Include="D3D10Texture.h" />
-    <ClInclude Include="D3D10TextureShader.h" />
-    <ClInclude Include="D3D10Bitmap.h" />
     <ClInclude Include="DXApplication.h" />
     <ClInclude Include="DXIdleHandler.h" />
     <ClInclude Include="DXWindow.h" />
@@ -97,12 +98,13 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="D3D10\bitmapclass.cpp" />
+    <ClCompile Include="D3D10\cameraclass.cpp" />
+    <ClCompile Include="D3D10\d3dclass.cpp" />
+    <ClCompile Include="D3D10\graphicsclass.cpp" />
+    <ClCompile Include="D3D10\textureclass.cpp" />
+    <ClCompile Include="D3D10\textureshaderclass.cpp" />
     <ClCompile Include="DXFramework.cpp" />
-    <ClCompile Include="D3D10Device.cpp" />
-    <ClCompile Include="D3D10Graphics.cpp" />
-    <ClCompile Include="D3D10Texture.cpp" />
-    <ClCompile Include="D3D10TextureShader.cpp" />
-    <ClCompile Include="D3D10Bitmap.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
