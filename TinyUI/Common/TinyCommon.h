@@ -737,53 +737,59 @@ private:\
 	public:
 		explicit TinyScopedArray(T* ps = 0);
 		~TinyScopedArray();
+		BOOL IsEmpty() const;
 		void Reset(T* ps = 0) throw();
 		T& operator[](INT i) const;
 		BOOL operator==(T* ps) const;
 		BOOL operator!=(T* ps) const;
 		T* Ptr() const throw();
 	public:
-		T* _myP;
+		T* m_myP;
 	};
 	template<class T>
 	TinyScopedArray<T>::TinyScopedArray(T* ps)
-		: _myP(ps)
+		: m_myP(ps)
 	{
 
 	}
 	template<class T>
 	TinyScopedArray<T>::~TinyScopedArray()
 	{
-		SAFE_DELETE_ARRAY(_myP);
+		SAFE_DELETE_ARRAY(m_myP);
+	}
+	template<class T>
+	BOOL TinyScopedArray<T>::IsEmpty() const
+	{
+		return m_myP == NULL;
 	}
 	template<class T>
 	T& TinyScopedArray<T>::operator[](INT i) const
 	{
 		ASSERT(i >= 0);
-		ASSERT(_myP != NULL);
-		return _myP[i];
+		ASSERT(m_myP != NULL);
+		return m_myP[i];
 	}
 	template<class T>
 	BOOL TinyScopedArray<T>::operator==(T* ps) const
 	{
-		return _myP == ps;
+		return m_myP == ps;
 	}
 	template<class T>
 	BOOL TinyScopedArray<T>::operator!=(T* ps) const
 	{
-		return _myP != ps;
+		return m_myP != ps;
 	}
 	template<class T>
 	void TinyScopedArray<T>::Reset(T* ps) throw()
 	{
-		if (ps != _myP)
-			delete[] _myP;
-		_myP = ps;
+		if (ps != m_myP)
+			delete[] m_myP;
+		m_myP = ps;
 	}
 	template<class T>
 	T* TinyScopedArray<T>::Ptr() const throw()
 	{
-		return _myP;
+		return m_myP;
 	}
 	/// <summary>
 	/// 引用计数智能指针,T必须显示实现AddRef,Release接口 

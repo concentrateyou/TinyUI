@@ -81,7 +81,7 @@ namespace TinyUI
 			GdiplusStartupInput input;
 			GdiplusStartupOutput output;
 			Status status = GdiplusStartup(&m_token, &input, &output);
-			return (status != Ok);
+			return (status == Ok);
 		}
 		return TRUE;
 	}

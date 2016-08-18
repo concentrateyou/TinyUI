@@ -18,17 +18,10 @@ namespace DXFramework
 		INT Run();
 	private:
 		BOOL Uninitialize();
-	public:
-		void onDXWindowCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		void onDXWindowDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	private:
-		TinyMessageLoop	m_msgLoop;
-		DXIdleHandler	m_idle;
-		TinyScopedPtr<DXWindow>			m_window;
-		TinyScopedPtr<D3D10Graphics>	m_graphics;
-	private:
-		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onDXWindowCreate;
-		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onDXWindowDestory;
+		TinyMessageLoop				m_msgLoop;
+		DXIdleHandler				m_idle;
+		TinyScopedPtr<DXWindow>		m_window;
 	};
 }
 

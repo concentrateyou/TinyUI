@@ -186,4 +186,17 @@ namespace DXFramework
 		//0,0越快越好
 		m_swapChain->Present(0, 0);
 	}
+
+	void D3D10Device::GetProjectionMatrix(D3DXMATRIX& m)
+	{
+		m = m_projectionMatrix;
+	}
+	void D3D10Device::GetWorldMatrix(D3DXMATRIX& m)
+	{
+		m = m_worldMatrix;
+	}
+	void D3D10Device::GetOrthoMatrix(D3DXMATRIX& m)
+	{
+		m = m_orthoMatrix;
+	}
 }

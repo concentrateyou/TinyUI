@@ -11,6 +11,7 @@ namespace DXFramework
 		~D3D10Texture();
 		BOOL Initialize(ID3D10Device* pDevice, CHAR* pzFile);
 		BOOL Initialize(ID3D10Device* pDevice, HANDLE hResource);
+		TinySize GetSize() const;
 		ID3D10ShaderResourceView*  GetTexture() const;
 	private:
 		TinyComPtr<ID3D10ShaderResourceView>	m_texture;

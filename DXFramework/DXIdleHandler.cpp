@@ -11,5 +11,8 @@ namespace DXFramework
 	DXIdleHandler::~DXIdleHandler()
 	{
 	}
-
+	BOOL DXIdleHandler::OnIdle()
+	{
+		return FALSE;
+	}
 }

@@ -15,6 +15,9 @@ namespace DXFramework
 		void BeginScene(FLOAT r, FLOAT g, FLOAT b, FLOAT a);
 		void EndScene();
 		ID3D10Device1* GetDevice() const;
+		void GetProjectionMatrix(D3DXMATRIX& m);
+		void GetWorldMatrix(D3DXMATRIX& m);
+		void GetOrthoMatrix(D3DXMATRIX& m);
 	private:
 		TinyComPtr<IDXGISwapChain>				m_swapChain;
 		TinyComPtr<ID3D10Device1>				m_device;

@@ -54,11 +54,7 @@ namespace DXFramework
 			return FALSE;
 		if (!m_msgLoop.AddIdleHandler(&m_idle))
 			return FALSE;
-		m_onDXWindowCreate.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &DXApplication::onDXWindowCreate));
-		m_onDXWindowDestory.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &DXApplication::onDXWindowDestory));
 		m_window.Reset(new DXWindow());
-		m_window->EVENT_Create += m_onDXWindowCreate;
-		m_window->EVENT_Destory += m_onDXWindowDestory;
 		return m_window->Create(NULL, 0, 0, 0, 0);
 	}
 	INT DXApplication::Run()
@@ -69,8 +65,6 @@ namespace DXFramework
 	}
 	BOOL DXApplication::Uninitialize()
 	{
-		m_window->EVENT_Create -= m_onDXWindowCreate;
-		m_window->EVENT_Destory -= m_onDXWindowDestory;
 		if (!m_msgLoop.RemoveIdleHandler(&m_idle))
 			return FALSE;
 		if (!TinyApplication::GetInstance()->RemoveMessageLoop())
@@ -82,16 +76,5 @@ namespace DXFramework
 	DXWindow* DXApplication::GetDXWindow()
 	{
 		return m_window.Ptr();
-	}
-
-	void DXApplication::onDXWindowCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		m_graphics.Reset(new D3D10Graphics());
-		m_window->CenterWindow(NULL, { 600, 600 });
-		m_graphics->Initialize(m_window->Handle(), 600, 600);
-	}
-	void DXApplication::onDXWindowDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-
 	}
 }

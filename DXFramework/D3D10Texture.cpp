@@ -49,6 +49,10 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
+	TinySize D3D10Texture::GetSize() const
+	{
+		return m_size;
+	}
 	ID3D10ShaderResourceView*  D3D10Texture::GetTexture() const
 	{
 		return m_texture;

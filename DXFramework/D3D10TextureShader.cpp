@@ -60,15 +60,23 @@ namespace DXFramework
 	void D3D10TextureShader::SetShaderParameters(D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, ID3D10ShaderResourceView* texture)
 	{
 		if (m_worldMatrixPtr)
+		{
 			m_worldMatrixPtr->SetMatrix((FLOAT*)&worldMatrix);
+		}
 		if (m_viewMatrixPtr)
+		{
 			m_viewMatrixPtr->SetMatrix((FLOAT*)&viewMatrix);
+		}
 		if (m_projectionMatrixPtr)
+		{
 			m_projectionMatrixPtr->SetMatrix((FLOAT*)&projectionMatrix);
+		}
 		if (m_texturePtr)
+		{
 			m_texturePtr->SetResource(texture);
+		}
 	}
-	void D3D10TextureShader::RenderShader(ID3D10Device* pDevice, int indexCount)
+	void D3D10TextureShader::RenderShader(ID3D10Device* pDevice)
 	{
 		ASSERT(pDevice);
 		D3D10_TECHNIQUE_DESC techniqueDesc;
@@ -77,13 +85,13 @@ namespace DXFramework
 		for (INT i = 0; i < techniqueDesc.Passes; ++i)
 		{
 			m_techniquePtr->GetPassByIndex(i)->Apply(0);
-			pDevice->DrawIndexed(indexCount, 0, 0);
+			pDevice->DrawIndexed(6, 0, 0);
 		}
 	}
-	void D3D10TextureShader::Render(ID3D10Device* pDevice, INT indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, ID3D10ShaderResourceView* texture)
+	void D3D10TextureShader::Render(ID3D10Device* pDevice, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, ID3D10ShaderResourceView* texture)
 	{
 		ASSERT(pDevice);
 		SetShaderParameters(worldMatrix, viewMatrix, projectionMatrix, texture);
-		RenderShader(pDevice, indexCount);
+		RenderShader(pDevice);
 	}
 }

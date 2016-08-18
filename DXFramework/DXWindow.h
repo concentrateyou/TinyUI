@@ -21,6 +21,8 @@ namespace DXFramework
 		LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
+	private:
+		D3D10Graphics m_graphics;
 	};
 }
 
