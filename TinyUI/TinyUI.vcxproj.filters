@@ -348,6 +348,9 @@
     <ClInclude Include="Control\TinyComboBox.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
+    <ClInclude Include="Render\TinyDDraw.h">
+      <Filter>头文件\Render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -628,6 +631,9 @@
     </ClCompile>
     <ClCompile Include="Control\TinyComboBox.cpp">
       <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\TinyDDraw.cpp">
+      <Filter>源文件\Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
