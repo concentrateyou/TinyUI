@@ -5,6 +5,9 @@
 #include "VideoCaptureParam.h"
 #include "SinkFilter.h"
 #include "ScopedMediaType.h"
+
+#include "Render/TinyDDraw.h"
+
 using namespace std;
 using namespace TinyUI;
 
@@ -65,5 +68,9 @@ namespace Media
 		TinyComPtr<IPin>					m_avI;//IN
 		TinyComPtr<IPin>					m_sinkI;
 		TinyScopedReferencePtr<SinkFilter>	m_sinkFilter;
+
+		TinyImageSurface					m_imageSurface;
+		TinySurface							m_surface;
+
 	};
 }

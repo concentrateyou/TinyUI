@@ -8,6 +8,7 @@
 #include "Network/TinyConnector.h"
 #include "Windowless/TinyVisualHWND.h"
 #include "Windowless/TinyVisualRichText.h"
+#include "Render/TinyDDraw.h"
 
 BOOL LoadSeDebugPrivilege()
 {
@@ -41,6 +42,12 @@ BOOL LoadSeDebugPrivilege()
 }
 
 
+void Test()
+{
+	TinySurface surface;
+	surface.Initialize(10, 10);
+}
+
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -54,8 +61,9 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	WSAStartup(MAKEWORD(2, 2), &wsd);
 	HRESULT hRes = OleInitialize(NULL);
 
-
 	LoadSeDebugPrivilege();
+
+	Test();
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));

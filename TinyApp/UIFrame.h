@@ -27,7 +27,6 @@ public:
 	LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	//·½·¨
 	BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
-
 	void OnSelectChange1(INT index);
 	void OnSelectChange2(INT index);
 	void OnStart(void*, INT);

@@ -52,7 +52,7 @@ namespace Media
 			RECT rectangle = { 0 };
 			GetWindowRect(m_hWND, &rectangle);
 			VIDEOINFOHEADER* h = reinterpret_cast<VIDEOINFOHEADER*>(pMediaType->pbFormat);
-			TinyUI::TinyWindowDC wdc(m_hWND);
+			/*TinyUI::TinyWindowDC wdc(m_hWND);
 			BITMAPINFO bi = { 0 };
 			bi.bmiHeader = h->bmiHeader;
 			BYTE* pvBits = NULL;
@@ -60,7 +60,7 @@ namespace Media
 			memcpy(pvBits, data, size);
 			TinyUI::TinyMemDC mdc(wdc, hBitmap);
 			::BitBlt(wdc, 0, 0, TO_CX(rectangle), TO_CY(rectangle), mdc, 0, 0, SRCCOPY);
-			DeleteObject(hBitmap);
+			DeleteObject(hBitmap);*/
 		}
 	}
 
@@ -170,8 +170,7 @@ namespace Media
 						if (!m_mjpgI)
 							return FALSE;
 						h = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
-						if (h->bmiHeader.biWidth == param.GetSize().cx &&
-							h->bmiHeader.biHeight == param.GetSize().cy)
+						if (h->bmiHeader.biWidth == param.GetSize().cx && h->bmiHeader.biHeight == param.GetSize().cy)
 						{
 							hRes = m_builder->ConnectDirect(m_captureO, m_mjpgI, mediaType.Ptr());
 							if (hRes != S_OK)
@@ -204,8 +203,7 @@ namespace Media
 						if (!m_avI)
 							return FALSE;
 						h = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
-						if (h->bmiHeader.biWidth == param.GetSize().cx &&
-							h->bmiHeader.biHeight == param.GetSize().cy)
+						if (h->bmiHeader.biWidth == param.GetSize().cx && h->bmiHeader.biHeight == param.GetSize().cy)
 						{
 							hRes = m_builder->ConnectDirect(m_captureO, m_avI, mediaType.Ptr());
 							if (hRes != S_OK)
@@ -229,9 +227,6 @@ namespace Media
 					}
 					break;
 					}
-					hRes = m_control->Pause();
-					if (hRes != S_OK)
-						return FALSE;
 					return TRUE;
 				}
 			}

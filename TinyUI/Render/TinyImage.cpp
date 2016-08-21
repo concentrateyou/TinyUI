@@ -126,11 +126,11 @@ namespace TinyUI
 		stbi_image_free(pData);
 		return S_FALSE;
 	}
-	BOOL TinyImage::Load(BYTE* p, DWORD size)
+	BOOL TinyImage::Load(BYTE* ps, DWORD size)
 	{
-		if (!p) return S_FALSE;
+		if (!ps) return S_FALSE;
 		INT comp = 0;
-		BYTE* pData = stbi_load_from_memory_ex(p, size, &m_cx, &m_cy, &comp, 4, &m_count);
+		BYTE* pData = stbi_load_from_memory_ex(ps, size, &m_cx, &m_cy, &comp, 4, &m_count);
 		if (!pData)
 		{
 			goto error;
