@@ -7,7 +7,7 @@ namespace TinyUI
 	{
 
 	}
-	BOOL TinyImageSurface::Create(LPDIRECTDRAW7 pDD7, INT cx, INT cy, LPVOID ps, DWORD size)
+	BOOL TinyImageSurface::Create(LPDIRECTDRAW7 pDD7, INT cx, INT cy)
 	{
 		m_size.cx = cx;
 		m_size.cy = cy;
@@ -30,12 +30,7 @@ namespace TinyUI
 			if (hRes != DD_OK)
 				return FALSE;
 		}
-		ZeroMemory(&ddsd, sizeof(ddsd));
-		hRes = m_dds->Lock(NULL, &ddsd, DDLOCK_NOSYSLOCK | DDLOCK_WRITEONLY, NULL);
-		if (hRes != DD_OK)
-			return FALSE;
-		memcpy(ddsd.lpSurface, ps, size);
-		return m_dds->Unlock(NULL) == DD_OK;
+		return TRUE;
 	}
 	BOOL TinyImageSurface::LoadImage(LPDIRECTDRAW7 pDD7, LPCSTR pzFile)
 	{
@@ -69,7 +64,7 @@ namespace TinyUI
 		HDC hDC = NULL;
 		if ((hRes = m_dds->GetDC(&hDC)) == DD_OK)
 		{
-			StretchBlt(hDC, 0, 0, ddsd.dwWidth, ddsd.dwHeight, hMenDC, 0, 0, ddsd.dwWidth, ddsd.dwHeight, SRCCOPY);
+			BitBlt(hDC, 0, 0, m_size.cx, m_size.cy, hMenDC, 0, 0, SRCCOPY);
 			m_dds->ReleaseDC(hDC);
 		}
 		SelectObject(hMenDC, hObj);
@@ -108,12 +103,24 @@ namespace TinyUI
 		HDC hDC = NULL;
 		if ((hRes = m_dds->GetDC(&hDC)) == DD_OK)
 		{
-			StretchBlt(hDC, 0, 0, ddsd.dwWidth, ddsd.dwHeight, hMenDC, 0, 0, ddsd.dwWidth, ddsd.dwHeight, SRCCOPY);
+			BitBlt(hDC, 0, 0, m_size.cx, m_size.cy, hMenDC, 0, 0, SRCCOPY);
 			m_dds->ReleaseDC(hDC);
 		}
 		SelectObject(hMenDC, hObj);
 		DeleteDC(hMenDC);
 		return TRUE;
+	}
+	BOOL TinyImageSurface::Fill(LPVOID ps, DWORD dwSize)
+	{
+		HRESULT hRes;
+		DDSURFACEDESC2 ddsd;
+		ZeroMemory(&ddsd, sizeof(ddsd));
+		m_dds->Restore();
+		hRes = m_dds->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL);
+		if (hRes != DD_OK)
+			return FALSE;
+		memcpy(ddsd.lpSurface, ps, dwSize);
+		return m_dds->Unlock(NULL) == DD_OK;
 	}
 	BOOL TinyImageSurface::Draw(LPDIRECTDRAWSURFACE7 lpDest, INT destX, INT destY, INT srcX, INT srcY, INT srcCX, INT srcCY)
 	{
@@ -154,7 +161,7 @@ namespace TinyUI
 	{
 
 	}
-	BOOL TinySurface::Initialize(INT cx, INT cy)
+	BOOL TinySurface::Create()
 	{
 		HRESULT hRes = DirectDrawCreateEx(NULL, (VOID**)&m_dd7, IID_IDirectDraw7, NULL);
 		if (FAILED(hRes))
@@ -162,34 +169,15 @@ namespace TinyUI
 		hRes = m_dd7->SetCooperativeLevel(NULL, DDSCL_NORMAL);
 		if (FAILED(hRes))
 			return FALSE;
-		hRes = m_dd7->EnumDisplayModes(DDEDM_REFRESHRATES, NULL, this, TinySurface::EnumModesCallback2);
-		if (FAILED(hRes))
-			return FALSE;
 		DDSURFACEDESC2 ddsd;
 		ZeroMemory(&ddsd, sizeof(ddsd));
 		ddsd.dwSize = sizeof(ddsd);
-		ddsd.dwFlags = DDSD_CAPS | DDSD_BACKBUFFERCOUNT;
-		ddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE | DDSCAPS_FLIP | DDSCAPS_COMPLEX;
-		ddsd.dwBackBufferCount = 1;
+		ddsd.dwFlags = DDSD_CAPS;
+		ddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
 		hRes = m_dd7->CreateSurface(&ddsd, &m_ddsPrimary, NULL);
 		if (FAILED(hRes))
 			return FALSE;
-		DDSCAPS2  ddscaps;
-		ZeroMemory(&ddscaps, sizeof(ddscaps));
-		ddscaps.dwCaps = DDSCAPS_BACKBUFFER | DDSCAPS_OFFSCREENPLAIN;
-		hRes = m_ddsPrimary->GetAttachedSurface(&ddscaps, &m_ddsBack);
-		if (FAILED(hRes))
-			return FALSE;
 		return TRUE;
-	}
-	HRESULT TinySurface::EnumModesCallback2(LPDDSURFACEDESC2 lpDDSurfaceDesc, LPVOID  lpContext)
-	{
-		TinySurface* ps = static_cast<TinySurface*>(lpContext);
-		if (ps)
-		{
-			TRACE("%d,%d,%d\n", lpDDSurfaceDesc->dwWidth, lpDDSurfaceDesc->dwHeight, lpDDSurfaceDesc->ddpfPixelFormat);
-		}
-		return DDENUMRET_OK;
 	}
 	void TinySurface::Render()
 	{

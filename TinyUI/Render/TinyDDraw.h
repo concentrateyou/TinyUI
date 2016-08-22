@@ -12,9 +12,10 @@ namespace TinyUI
 	{
 	public:
 		TinyImageSurface();
-		BOOL Create(LPDIRECTDRAW7 pDD7, INT cx, INT cy, LPVOID ps, DWORD size);
+		BOOL Create(LPDIRECTDRAW7 pDD7, INT cx, INT cy);
 		BOOL LoadImage(LPDIRECTDRAW7 pDD7, LPCSTR pzFile);
-		BOOL LoadImage(LPDIRECTDRAW7 pDD7, BYTE* p, DWORD size);
+		BOOL LoadImage(LPDIRECTDRAW7 pDD7, BYTE* p, DWORD dwSize);
+		BOOL Fill(LPVOID ps, DWORD dwSize);
 		BOOL Draw(LPDIRECTDRAWSURFACE7 lpDest, INT destX, INT destY, INT srcX, INT srcY, INT srcCX, INT srcCY);
 		LPDIRECTDRAWSURFACE7 GetSurface() const;
 	public:
@@ -30,14 +31,11 @@ namespace TinyUI
 	public:
 		TinySurface();
 		~TinySurface();
-		BOOL Initialize(INT cx, INT cy);
+		BOOL Create();
 		void Render();
 		LPDIRECTDRAW7 GetDirectDraw() const;
-	private:
-		static HRESULT WINAPI EnumModesCallback2(LPDDSURFACEDESC2 lpDDSurfaceDesc, LPVOID  lpContext);
 	public:
 		TinyComPtr<IDirectDrawSurface7> m_ddsPrimary;
-		TinyComPtr<IDirectDrawSurface7> m_ddsBack;
 		TinyComPtr<IDirectDraw7>		m_dd7;
 	};
 };

@@ -49,15 +49,21 @@ namespace Media
 		AM_MEDIA_TYPE* pMediaType = static_cast<AM_MEDIA_TYPE*>(lpData);
 		if (pMediaType)
 		{
-			RECT rectangle = { 0 };
-			GetWindowRect(m_hWND, &rectangle);
 			VIDEOINFOHEADER* h = reinterpret_cast<VIDEOINFOHEADER*>(pMediaType->pbFormat);
-			/*TinyUI::TinyWindowDC wdc(m_hWND);
+			RGB24 rgb;
+			rgb.cx = h->bmiHeader.biWidth;
+			rgb.cy = h->bmiHeader.biHeight;
+			rgb.data = (BYTE*)_aligned_malloc(rgb.cx*rgb.cy * 3, 32);
+			m_converter->ToRGB24(data, size, rgb);
+			SaveBitmap(h->bmiHeader, rgb.cx*rgb.cy * 3, rgb.data);
+			/*RECT rectangle = { 0 };
+			GetWindowRect(m_hWND, &rectangle);
+			TinyUI::TinyWindowDC wdc(m_hWND);
 			BITMAPINFO bi = { 0 };
 			bi.bmiHeader = h->bmiHeader;
 			BYTE* pvBits = NULL;
 			HBITMAP hBitmap = ::CreateDIBSection(wdc, &bi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pvBits), NULL, 0);
-			memcpy(pvBits, data, size);
+			memcpy(pvBits, rgb.data, rgb.cx*rgb.cy * 3);
 			TinyUI::TinyMemDC mdc(wdc, hBitmap);
 			::BitBlt(wdc, 0, 0, TO_CX(rectangle), TO_CY(rectangle), mdc, 0, 0, SRCCOPY);
 			DeleteObject(hBitmap);*/
@@ -110,19 +116,19 @@ namespace Media
 		if (m_builder)
 		{
 			m_builder->RemoveFilter(m_sinkFilter);
-			m_builder->RemoveFilter(m_mjpgFilter);
-			m_builder->RemoveFilter(m_avFilter);
+			//m_builder->RemoveFilter(m_mjpgFilter);
+			//m_builder->RemoveFilter(m_avFilter);
 			m_builder->RemoveFilter(m_captureFilter);
 		}
 		m_captureO.Release();
-		m_mjpgO.Release();
-		m_mjpgI.Release();
-		m_avO.Release();
-		m_avI.Release();
+		/*	m_mjpgO.Release();
+			m_mjpgI.Release();
+			m_avO.Release();
+			m_avI.Release();*/
 		m_sinkI.Release();
 		m_captureFilter.Release();
-		m_avFilter.Release();
-		m_mjpgFilter.Release();
+		/*	m_avFilter.Release();
+			m_mjpgFilter.Release();*/
 		m_control.Release();
 		m_builder.Release();
 		m_sinkFilter = NULL;
@@ -153,80 +159,86 @@ namespace Media
 					param.GetSize() == TinySize(h->bmiHeader.biWidth, h->bmiHeader.biHeight))
 				{
 					SetAntiFlickerInCaptureFilter();
-					switch (param.GetFormat())
-					{
-					case PIXEL_FORMAT_MJPEG:
-					{
-						hRes = m_mjpgFilter.CoCreateInstance(CLSID_MjpegDec, NULL, CLSCTX_INPROC);
-						if (hRes != S_OK)
-							return FALSE;
-						hRes = m_builder->AddFilter(m_mjpgFilter, NULL);
-						if (FAILED(hRes))
-							return FALSE;
-						m_mjpgO = GetPin(m_mjpgFilter, PINDIR_OUTPUT, GUID_NULL);
-						if (!m_mjpgO)
-							return FALSE;
-						m_mjpgI = GetPin(m_mjpgFilter, PINDIR_INPUT, GUID_NULL);
-						if (!m_mjpgI)
-							return FALSE;
-						h = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
-						if (h->bmiHeader.biWidth == param.GetSize().cx && h->bmiHeader.biHeight == param.GetSize().cy)
-						{
-							hRes = m_builder->ConnectDirect(m_captureO, m_mjpgI, mediaType.Ptr());
-							if (hRes != S_OK)
-								return FALSE;
-							ScopedMediaType type;
-							if (!VideoCapture::GetMediaType(m_mjpgO, MEDIASUBTYPE_RGB24, type.Receive()))
-								return FALSE;
-							m_sinkFilter->SetMediaType(type.Ptr());
-							hRes = m_builder->ConnectDirect(m_mjpgO, m_sinkI, NULL);
-							if (hRes != S_OK)
-								return FALSE;
-						}
-					}
-					break;
-					case PIXEL_FORMAT_UYVY:
-					case PIXEL_FORMAT_YUY2:
-					case PIXEL_FORMAT_YV12:
-					case PIXEL_FORMAT_I420:
-					{
-						hRes = m_avFilter.CoCreateInstance(CLSID_AVIDec, NULL, CLSCTX_INPROC);
-						if (hRes != S_OK)
-							return FALSE;
-						hRes = m_builder->AddFilter(m_avFilter, NULL);
-						if (FAILED(hRes))
-							return FALSE;
-						m_avO = GetPin(m_avFilter, PINDIR_OUTPUT, GUID_NULL);
-						if (!m_avO)
-							return FALSE;
-						m_avI = GetPin(m_avFilter, PINDIR_INPUT, GUID_NULL);
-						if (!m_avI)
-							return FALSE;
-						h = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
-						if (h->bmiHeader.biWidth == param.GetSize().cx && h->bmiHeader.biHeight == param.GetSize().cy)
-						{
-							hRes = m_builder->ConnectDirect(m_captureO, m_avI, mediaType.Ptr());
-							if (hRes != S_OK)
-								return FALSE;
-							ScopedMediaType type;
-							if (!VideoCapture::GetMediaType(m_avO, MEDIASUBTYPE_RGB24, type.Receive()))
-								return FALSE;
-							m_sinkFilter->SetMediaType(type.Ptr());
-							hRes = m_builder->ConnectDirect(m_avO, m_sinkI, NULL);
-							if (hRes != S_OK)
-								return FALSE;
-						}
-					}
-					break;
-					default:
-					{
-						m_sinkFilter->SetMediaType(mediaType.Ptr());
-						hRes = m_builder->ConnectDirect(m_captureO, m_sinkI, NULL);
-						if (hRes != S_OK)
-							return FALSE;
-					}
-					break;
-					}
+					m_sinkFilter->SetMediaType(mediaType.Ptr());
+					m_converter.Reset(new BitmapConverter());
+					m_converter->Initialize(mediaType->subtype, h->bmiHeader.biWidth, h->bmiHeader.biHeight, h->bmiHeader.biWidth, h->bmiHeader.biHeight);
+					hRes = m_builder->ConnectDirect(m_captureO, m_sinkI, NULL);
+					if (hRes != S_OK)
+						return FALSE;
+					//switch (param.GetFormat())
+					//{
+					//case PIXEL_FORMAT_MJPEG:
+					//{
+					//	hRes = m_mjpgFilter.CoCreateInstance(CLSID_MjpegDec, NULL, CLSCTX_INPROC);
+					//	if (hRes != S_OK)
+					//		return FALSE;
+					//	hRes = m_builder->AddFilter(m_mjpgFilter, NULL);
+					//	if (FAILED(hRes))
+					//		return FALSE;
+					//	m_mjpgO = GetPin(m_mjpgFilter, PINDIR_OUTPUT, GUID_NULL);
+					//	if (!m_mjpgO)
+					//		return FALSE;
+					//	m_mjpgI = GetPin(m_mjpgFilter, PINDIR_INPUT, GUID_NULL);
+					//	if (!m_mjpgI)
+					//		return FALSE;
+					//	h = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
+					//	if (h->bmiHeader.biWidth == param.GetSize().cx && h->bmiHeader.biHeight == param.GetSize().cy)
+					//	{
+					//		hRes = m_builder->ConnectDirect(m_captureO, m_mjpgI, mediaType.Ptr());
+					//		if (hRes != S_OK)
+					//			return FALSE;
+					//		ScopedMediaType type;
+					//		if (!VideoCapture::GetMediaType(m_mjpgO, MEDIASUBTYPE_RGB24, type.Receive()))
+					//			return FALSE;
+					//		m_sinkFilter->SetMediaType(type.Ptr());
+					//		hRes = m_builder->ConnectDirect(m_mjpgO, m_sinkI, NULL);
+					//		if (hRes != S_OK)
+					//			return FALSE;
+					//	}
+					//}
+					//break;
+					//case PIXEL_FORMAT_UYVY:
+					//case PIXEL_FORMAT_YUY2:
+					//case PIXEL_FORMAT_YV12:
+					//case PIXEL_FORMAT_I420:
+					//{
+					//	hRes = m_avFilter.CoCreateInstance(CLSID_AVIDec, NULL, CLSCTX_INPROC);
+					//	if (hRes != S_OK)
+					//		return FALSE;
+					//	hRes = m_builder->AddFilter(m_avFilter, NULL);
+					//	if (FAILED(hRes))
+					//		return FALSE;
+					//	m_avO = GetPin(m_avFilter, PINDIR_OUTPUT, GUID_NULL);
+					//	if (!m_avO)
+					//		return FALSE;
+					//	m_avI = GetPin(m_avFilter, PINDIR_INPUT, GUID_NULL);
+					//	if (!m_avI)
+					//		return FALSE;
+					//	h = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
+					//	if (h->bmiHeader.biWidth == param.GetSize().cx && h->bmiHeader.biHeight == param.GetSize().cy)
+					//	{
+					//		hRes = m_builder->ConnectDirect(m_captureO, m_avI, mediaType.Ptr());
+					//		if (hRes != S_OK)
+					//			return FALSE;
+					//		ScopedMediaType type;
+					//		if (!VideoCapture::GetMediaType(m_avO, MEDIASUBTYPE_RGB24, type.Receive()))
+					//			return FALSE;
+					//		m_sinkFilter->SetMediaType(type.Ptr());
+					//		hRes = m_builder->ConnectDirect(m_avO, m_sinkI, NULL);
+					//		if (hRes != S_OK)
+					//			return FALSE;
+					//	}
+					//}
+					//break;
+					//default:
+					//{
+					//	m_sinkFilter->SetMediaType(mediaType.Ptr());
+					//	hRes = m_builder->ConnectDirect(m_captureO, m_sinkI, NULL);
+					//	if (hRes != S_OK)
+					//		return FALSE;
+					//}
+					//break;
+					//}
 					return TRUE;
 				}
 			}
