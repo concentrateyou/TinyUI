@@ -60,12 +60,6 @@ namespace Media
 		TinyComPtr<IMediaControl>			m_control;
 		TinyComPtr<IBaseFilter>				m_captureFilter;
 		TinyComPtr<IPin>					m_captureO;
-		//TinyComPtr<IBaseFilter>				m_mjpgFilter;
-		//TinyComPtr<IPin>					m_mjpgO;//OUT
-		//TinyComPtr<IPin>					m_mjpgI;//IN
-		//TinyComPtr<IBaseFilter>				m_avFilter;
-		//TinyComPtr<IPin>					m_avO;//OUT
-		//TinyComPtr<IPin>					m_avI;//IN
 		TinyComPtr<IPin>					m_sinkI;
 		TinyScopedReferencePtr<SinkFilter>	m_sinkFilter;
 		TinyScopedPtr<BitmapConverter>		m_converter;

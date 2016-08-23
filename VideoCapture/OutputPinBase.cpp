@@ -13,10 +13,10 @@ namespace Media
 	HRESULT OutputPinBase::CheckConnect(IPin *pPin)
 	{
 		HRESULT hRes = PinBase::CheckConnect(pPin);
-		if (FAILED(hRes))
+		if (hRes != NOERROR)
 			return hRes;
 		hRes = pPin->QueryInterface(IID_IMemInputPin, (void **)&m_inputPin);
-		if (FAILED(hRes))
+		if (hRes != NOERROR)
 			return hRes;
 		return NOERROR;
 	}
@@ -30,7 +30,7 @@ namespace Media
 		if (m_allocator)
 		{
 			HRESULT hRes = m_allocator->Decommit();
-			if (FAILED(hRes))
+			if (hRes != NOERROR)
 				return hRes;
 			m_allocator.Release();
 		}

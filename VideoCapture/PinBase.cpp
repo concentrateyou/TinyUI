@@ -124,7 +124,7 @@ namespace Media
 	HRESULT PinBase::TryConnection(IPin* pReceivePin, const AM_MEDIA_TYPE* pmt)
 	{
 		HRESULT hRes = CheckConnect(pReceivePin);
-		if (FAILED(hRes))
+		if (hRes != NOERROR)
 		{
 			return S_FALSE;
 		}
@@ -167,7 +167,7 @@ namespace Media
 	HRESULT PinBase::TryMediaTypes(IPin *pReceivePin, const AM_MEDIA_TYPE *pmt, IEnumMediaTypes *pEnum)
 	{
 		HRESULT hRes = pEnum->Reset();
-		if (FAILED(hRes))
+		if (hRes != NOERROR)
 		{
 			return hRes;
 		}
@@ -259,7 +259,7 @@ namespace Media
 			return VFW_E_ALREADY_CONNECTED;
 		}
 		HRESULT hRes = AgreeMediaType(pReceivePin, pmt);
-		if (FAILED(hRes))
+		if (hRes != NOERROR)
 			return hRes;
 		return NOERROR;
 	}
@@ -284,7 +284,7 @@ namespace Media
 		}
 
 		hRes = CheckMediaType(pmt);
-		if (FAILED(hRes))
+		if (hRes != NOERROR)
 		{
 			ASSERT(OnDisconnect() == NOERROR);
 			if (SUCCEEDED(hRes) || (hRes == E_FAIL) || (hRes == E_INVALIDARG))
@@ -295,7 +295,7 @@ namespace Media
 		}
 		m_connector = pConnector;
 		hRes = SetMediaType(pmt);
-		if (SUCCEEDED(hRes))
+		if (hRes == S_OK)
 		{
 			OnConnect(pConnector);
 			return hRes;
@@ -365,7 +365,7 @@ namespace Media
 	{
 		size_t size;
 		HRESULT hRes = StringCbLengthW(m_pzName, 100000, &size);
-		if (FAILED(hRes))
+		if (hRes != NOERROR)
 			return hRes;
 		*Id = (LPWSTR)CoTaskMemAlloc(size + sizeof(WCHAR));
 		if (*Id == NULL)
@@ -378,7 +378,7 @@ namespace Media
 	HRESULT STDMETHODCALLTYPE PinBase::QueryAccept(const AM_MEDIA_TYPE *pmt)
 	{
 		HRESULT hRes = CheckMediaType(pmt);
-		if (FAILED(hRes))
+		if (hRes != NOERROR)
 		{
 			return S_FALSE;
 		}

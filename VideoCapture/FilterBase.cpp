@@ -89,7 +89,7 @@ namespace Media
 				if (pPin->IsConnected())
 				{
 					HRESULT hRes = pPin->OnActive(FALSE);
-					if (FAILED(hRes))
+					if (hRes != NOERROR)
 					{
 						return hRes;
 					}
@@ -115,7 +115,7 @@ namespace Media
 				if (pPin->IsConnected())
 				{
 					HRESULT hRes = pPin->OnActive(TRUE);
-					if (FAILED(hRes))
+					if (hRes != NOERROR)
 					{
 						return hRes;
 					}
@@ -132,7 +132,7 @@ namespace Media
 		if (m_state == State_Stopped)
 		{
 			HRESULT hRes = Pause();
-			if (FAILED(hRes))
+			if (hRes != NOERROR)
 			{
 				return hRes;
 			}
@@ -150,7 +150,7 @@ namespace Media
 				if (pPin->IsConnected())
 				{
 					HRESULT hRes = pPin->OnRun(tStart);
-					if (FAILED(hRes))
+					if (hRes != NOERROR)
 					{
 						return hRes;
 					}

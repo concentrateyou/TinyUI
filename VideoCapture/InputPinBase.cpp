@@ -39,7 +39,7 @@ namespace Media
 				CLSCTX_INPROC_SERVER,
 				IID_IMemAllocator,
 				(void **)&m_allocator);
-			if (FAILED(hRes))
+			if (hRes != NOERROR)
 			{
 				return hRes;
 			}
@@ -70,7 +70,7 @@ namespace Media
 	{
 		ASSERT(m_observer);
 		HRESULT hRes = CheckStreaming();
-		if (FAILED(hRes))
+		if (hRes != NOERROR)
 		{
 			return hRes;
 		}
@@ -109,7 +109,7 @@ namespace Media
 			}
 			PIN_DIRECTION pd;
 			HRESULT hRes = pPin->QueryDirection(&pd);
-			if (FAILED(hRes))
+			if (hRes != NOERROR)
 			{
 				return hRes;
 			}
