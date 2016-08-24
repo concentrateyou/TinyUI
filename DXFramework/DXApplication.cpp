@@ -37,8 +37,6 @@ namespace DXFramework
 	DXApplication::DXApplication()
 	{
 	}
-
-
 	DXApplication::~DXApplication()
 	{
 	}

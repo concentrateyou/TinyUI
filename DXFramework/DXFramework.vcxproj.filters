@@ -13,10 +13,10 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="头文件\D3D10">
+    <Filter Include="头文件\DX10">
       <UniqueIdentifier>{47f599bd-eac4-4beb-8b39-f8d8ee4c7490}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\D3D10">
+    <Filter Include="源文件\DX10">
       <UniqueIdentifier>{654a1fe6-92b0-449a-843c-9aa062c28242}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -42,24 +42,6 @@
     <ClInclude Include="DXFramework.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="D3D10\bitmapclass.h">
-      <Filter>头文件\D3D10</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D10\cameraclass.h">
-      <Filter>头文件\D3D10</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D10\d3dclass.h">
-      <Filter>头文件\D3D10</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D10\graphicsclass.h">
-      <Filter>头文件\D3D10</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D10\textureclass.h">
-      <Filter>头文件\D3D10</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D10\textureshaderclass.h">
-      <Filter>头文件\D3D10</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -79,24 +61,6 @@
     </ClCompile>
     <ClCompile Include="DXFramework.cpp">
       <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D10\bitmapclass.cpp">
-      <Filter>源文件\D3D10</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D10\cameraclass.cpp">
-      <Filter>源文件\D3D10</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D10\d3dclass.cpp">
-      <Filter>源文件\D3D10</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D10\graphicsclass.cpp">
-      <Filter>源文件\D3D10</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D10\textureclass.cpp">
-      <Filter>源文件\D3D10</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D10\textureshaderclass.cpp">
-      <Filter>源文件\D3D10</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

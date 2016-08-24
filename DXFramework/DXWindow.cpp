@@ -38,7 +38,7 @@ namespace DXFramework
 		bHandled = FALSE;
 		TinySize size(600, 600);
 		CenterWindow(NULL, size);
-		m_graphics.Initialize(600, 600, m_hWND);
+	
 		return FALSE;
 	}
 	LRESULT DXWindow::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -55,7 +55,6 @@ namespace DXFramework
 	LRESULT DXWindow::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		m_graphics.Frame();
 		return FALSE;
 	}
 	LRESULT DXWindow::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
