@@ -68,7 +68,7 @@ namespace Media
 		pvi->bmiHeader.biClrUsed = 0;
 		if (m_param.GetRate() > 0)
 		{
-			pvi->AvgTimePerFrame = SecondsToReferenceTime / m_param.GetRate();
+			pvi->AvgTimePerFrame = static_cast<REFERENCE_TIME>(SecondsToReferenceTime / m_param.GetRate());
 		}
 		pMediaType->majortype = MEDIATYPE_Video;
 		pMediaType->formattype = FORMAT_VideoInfo;

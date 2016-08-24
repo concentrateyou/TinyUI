@@ -30,7 +30,7 @@ namespace Media
 		};
 		void OnFrameReceive(const BYTE* data, INT size, void*) OVERRIDE;
 	public:
-		explicit VideoCapture();
+		VideoCapture();
 		virtual ~VideoCapture();
 		BOOL Initialize(const Name& name, HWND hWND);
 		void Uninitialize();

@@ -1,5 +1,5 @@
 #pragma once
-#include "VideoCommon.h"
+#include "DShowCommon.h"
 
 namespace Media
 {

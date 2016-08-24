@@ -60,16 +60,16 @@
     <ClInclude Include="VideoCapture.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="VideoCaptureCapability.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="VideoCaptureParam.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="VideoCommon.h">
+    <ClInclude Include="AudioCapture.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="VideoFrame.h">
+    <ClInclude Include="DShowCommon.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioCaptureParam.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -113,16 +113,16 @@
     <ClCompile Include="VideoCapture.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="VideoCaptureCapability.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="VideoCaptureParam.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="VideoCommon.cpp">
+    <ClCompile Include="AudioCapture.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="VideoFrame.cpp">
+    <ClCompile Include="DShowCommon.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioCaptureParam.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

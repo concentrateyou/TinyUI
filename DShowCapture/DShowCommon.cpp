@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "VideoCommon.h"
+#include "DShowCommon.h"
 
 GUID MediaSubTypeI420 =
 {
@@ -55,5 +55,31 @@ void WINAPI DeleteMediaType(AM_MEDIA_TYPE *pmt)
 	{
 		FreeMediaType(*pmt);
 		CoTaskMemFree((PVOID)pmt);
+	}
+}
+//////////////////////////////////////////////////////////////////////////
+namespace Media
+{
+	CaptureParam::CaptureParam()
+		:m_rate(0.0F)
+	{
+
+	}
+	CaptureParam::CaptureParam(FLOAT rate)
+		: m_rate(rate)
+	{
+
+	}
+	CaptureParam::~CaptureParam()
+	{
+
+	}
+	void CaptureParam::SetRate(FLOAT rate)
+	{
+		m_rate = rate;
+	}
+	FLOAT CaptureParam::GetRate() const
+	{
+		return m_rate;
 	}
 }

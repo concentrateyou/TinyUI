@@ -79,6 +79,8 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AudioCapture.h" />
+    <ClInclude Include="AudioCaptureParam.h" />
     <ClInclude Include="FilterBase.h" />
     <ClInclude Include="FilterObserver.h" />
     <ClInclude Include="InputPinBase.h" />
@@ -93,12 +95,12 @@
     <ClInclude Include="TaskRunner.h" />
     <ClInclude Include="TypeEnumerator.h" />
     <ClInclude Include="VideoCapture.h" />
-    <ClInclude Include="VideoCaptureCapability.h" />
     <ClInclude Include="VideoCaptureParam.h" />
-    <ClInclude Include="VideoCommon.h" />
-    <ClInclude Include="VideoFrame.h" />
+    <ClInclude Include="DShowCommon.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AudioCapture.cpp" />
+    <ClCompile Include="AudioCaptureParam.cpp" />
     <ClCompile Include="FilterBase.cpp" />
     <ClCompile Include="FilterObserver.cpp" />
     <ClCompile Include="InputPinBase.cpp" />
@@ -115,10 +117,8 @@
     <ClCompile Include="TaskRunner.cpp" />
     <ClCompile Include="TypeEnumerator.cpp" />
     <ClCompile Include="VideoCapture.cpp" />
-    <ClCompile Include="VideoCaptureCapability.cpp" />
     <ClCompile Include="VideoCaptureParam.cpp" />
-    <ClCompile Include="VideoCommon.cpp" />
-    <ClCompile Include="VideoFrame.cpp" />
+    <ClCompile Include="DShowCommon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TinyUI\TinyUI.vcxproj">

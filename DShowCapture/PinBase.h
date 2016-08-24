@@ -1,5 +1,5 @@
 #pragma once
-#include "VideoCommon.h"
+#include "DShowCommon.h"
 #include "FilterObserver.h"
 #include "VideoCaptureParam.h"
 

@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "VideoCommon.h"
+#include "DShowCommon.h"
 #include "ScopedMediaType.h"
 
 namespace Media

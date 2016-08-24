@@ -103,11 +103,9 @@ namespace Media
 	void VideoCapture::Uninitialize()
 	{
 		DeAllocate();
-		if (m_control != NULL)
-		{
+		if (m_control)
 			m_control->Pause();
-		}
-		if (m_builder != NULL)
+		if (m_builder)
 		{
 			m_builder->RemoveFilter(m_sinkFilter);
 			m_builder->RemoveFilter(m_mjpgFilter);
@@ -239,17 +237,12 @@ namespace Media
 	{
 		if (m_builder)
 		{
-			if (m_captureO)
-			{
-				m_builder->Disconnect(m_captureO);
-			}
-			if (m_sinkI)
-			{
-				m_builder->Disconnect(m_captureO);
-			}
-			m_builder->Disconnect(m_captureO);
 			m_builder->Disconnect(m_captureO);
 			m_builder->Disconnect(m_sinkI);
+			m_builder->Disconnect(m_mjpgI);
+			m_builder->Disconnect(m_mjpgO);
+			m_builder->Disconnect(m_avI);
+			m_builder->Disconnect(m_avO);
 		}
 	}
 	BOOL VideoCapture::Start()
