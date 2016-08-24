@@ -20,10 +20,6 @@ namespace Media
 	{
 		FreeMediaType(m_mediaType);
 	}
-	void PinBase::SetCaptureParam(const VideoCaptureParam& param)
-	{
-		m_param = param;
-	}
 	HRESULT PinBase::CheckConnect(IPin *pPin)
 	{
 		PIN_DIRECTION pd;

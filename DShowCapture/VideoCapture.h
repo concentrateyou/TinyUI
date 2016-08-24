@@ -3,7 +3,7 @@
 #include "FilterObserver.h"
 #include "FilterObserver.h"
 #include "VideoCaptureParam.h"
-#include "SinkFilter.h"
+#include "VideoSinkFilter.h"
 #include "ScopedMediaType.h"
 using namespace std;
 using namespace TinyUI;
@@ -64,6 +64,6 @@ namespace Media
 		TinyComPtr<IPin>					m_avO;//OUT
 		TinyComPtr<IPin>					m_avI;//IN
 		TinyComPtr<IPin>					m_sinkI;
-		TinyScopedReferencePtr<SinkFilter>	m_sinkFilter;
+		TinyScopedReferencePtr<VideoSinkFilter>	m_sinkFilter;
 	};
 }

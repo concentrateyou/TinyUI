@@ -89,7 +89,7 @@ namespace Media
 		hRes = m_builder->AddFilter(m_captureFilter, NULL);
 		if (FAILED(hRes))
 			return FALSE;
-		m_sinkFilter = new SinkFilter(this);
+		m_sinkFilter = new VideoSinkFilter(this);
 		if (!m_sinkFilter)
 			return FALSE;
 		m_sinkI = m_sinkFilter->GetPin(0);

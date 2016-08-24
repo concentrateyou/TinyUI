@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "SinkInputPin.h"
+#include "VideoSinkInputPin.h"
 
 namespace Media
 {
@@ -29,14 +29,18 @@ namespace Media
 		return PIXEL_FORMAT_UNKNOWN;
 	}
 
-	SinkInputPin::SinkInputPin(FilterBase* pFilter, FilterObserver* observer)
+	VideoSinkInputPin::VideoSinkInputPin(FilterBase* pFilter, FilterObserver* observer)
 		:InputPinBase(pFilter, PIN_NAME, observer)
 	{
 	}
-	SinkInputPin::~SinkInputPin()
+	VideoSinkInputPin::~VideoSinkInputPin()
 	{
 	}
-	HRESULT SinkInputPin::CheckMediaType(const AM_MEDIA_TYPE* pMediaType)
+	void VideoSinkInputPin::SetCaptureParam(const VideoCaptureParam& param)
+	{
+		m_param = param;
+	}
+	HRESULT VideoSinkInputPin::CheckMediaType(const AM_MEDIA_TYPE* pMediaType)
 	{
 		GUID type = pMediaType->majortype;
 		if (type != MEDIATYPE_Video)
@@ -52,7 +56,7 @@ namespace Media
 			return NOERROR;
 		return S_FALSE;
 	}
-	HRESULT SinkInputPin::GetMediaType(INT position, AM_MEDIA_TYPE* pMediaType)
+	HRESULT VideoSinkInputPin::GetMediaType(INT position, AM_MEDIA_TYPE* pMediaType)
 	{
 		if (position != 0)
 			return S_FALSE;

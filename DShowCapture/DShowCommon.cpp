@@ -57,29 +57,3 @@ void WINAPI DeleteMediaType(AM_MEDIA_TYPE *pmt)
 		CoTaskMemFree((PVOID)pmt);
 	}
 }
-//////////////////////////////////////////////////////////////////////////
-namespace Media
-{
-	CaptureParam::CaptureParam()
-		:m_rate(0.0F)
-	{
-
-	}
-	CaptureParam::CaptureParam(FLOAT rate)
-		: m_rate(rate)
-	{
-
-	}
-	CaptureParam::~CaptureParam()
-	{
-
-	}
-	void CaptureParam::SetRate(FLOAT rate)
-	{
-		m_rate = rate;
-	}
-	FLOAT CaptureParam::GetRate() const
-	{
-		return m_rate;
-	}
-}

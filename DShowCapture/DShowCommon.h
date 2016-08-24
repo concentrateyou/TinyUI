@@ -21,22 +21,3 @@ extern GUID MediaSubTypeHDYC;
 HRESULT WINAPI CopyMediaType(AM_MEDIA_TYPE *pmtTarget, const AM_MEDIA_TYPE *pmtSource);
 void WINAPI FreeMediaType(AM_MEDIA_TYPE& mt);
 void WINAPI DeleteMediaType(AM_MEDIA_TYPE *pmt);
-
-namespace Media
-{
-	class  CaptureParam
-	{
-	public:
-		CaptureParam();
-		CaptureParam(FLOAT rate);
-		virtual ~CaptureParam();
-		virtual	GUID MediaType() = 0;
-		virtual BOOL IsValid() const = 0;
-		virtual string ToString() const = 0;
-		void	SetRate(FLOAT rate);
-		FLOAT	GetRate() const;
-	protected:
-		FLOAT	m_rate;
-	};
-
-}

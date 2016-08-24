@@ -12,7 +12,6 @@ namespace Media
 	public:
 		explicit PinBase(FilterBase* pFilter, PIN_DIRECTION dir, WCHAR* pzName);
 		virtual ~PinBase();
-		virtual void	SetCaptureParam(const VideoCaptureParam& param);
 		virtual HRESULT CheckMediaType(const AM_MEDIA_TYPE* mediaType) = 0;
 		virtual HRESULT GetMediaType(INT position, AM_MEDIA_TYPE* mediaType) = 0;
 		virtual HRESULT CheckConnect(IPin *pPin);
@@ -59,6 +58,5 @@ namespace Media
 		REFERENCE_TIME		m_startTime;
 		REFERENCE_TIME		m_stopTime;
 		DOUBLE				m_rate;
-		VideoCaptureParam	m_param;
 	};
 }

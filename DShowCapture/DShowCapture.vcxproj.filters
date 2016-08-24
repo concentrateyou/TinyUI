@@ -45,16 +45,16 @@
     <ClInclude Include="ScopedMediaType.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="SinkFilter.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="SinkInputPin.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="TaskRunner.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="TypeEnumerator.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DShowCommon.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioCapture.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="VideoCapture.h">
@@ -63,13 +63,19 @@
     <ClInclude Include="VideoCaptureParam.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="AudioCapture.h">
+    <ClInclude Include="VideoSinkFilter.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DShowCommon.h">
+    <ClInclude Include="VideoSinkInputPin.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="AudioCaptureParam.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioSinkFilter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioSinkInputPin.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -98,12 +104,6 @@
     <ClCompile Include="ScopedMediaType.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="SinkFilter.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="SinkInputPin.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="TaskRunner.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -113,16 +113,28 @@
     <ClCompile Include="VideoCapture.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="VideoCaptureParam.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="AudioCapture.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DShowCommon.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="VideoSinkInputPin.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoSinkFilter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoCaptureParam.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
     <ClCompile Include="AudioCaptureParam.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioSinkFilter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioSinkInputPin.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

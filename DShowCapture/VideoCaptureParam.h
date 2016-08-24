@@ -42,8 +42,6 @@ namespace Media
 		MaxKeySystemLength = 256,
 	};
 
-	const int FrameRatePrecision = 10000;
-
 	class  VideoCaptureParam
 	{
 	public:
