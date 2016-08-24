@@ -153,6 +153,20 @@ namespace Media
 					param.GetSize() == TinySize(h->bmiHeader.biWidth, h->bmiHeader.biHeight))
 				{
 					SetAntiFlickerInCaptureFilter();
+					h->AvgTimePerFrame = static_cast<REFERENCE_TIME>(SecondsToReferenceTime / param.GetRate());
+					if (h->AvgTimePerFrame > caps.MaxFrameInterval)
+						return FALSE;
+					hRes = streamConfig->SetFormat(mediaType.Ptr());
+					if (hRes != S_OK)
+						return FALSE;
+					//1.尝试RGB24硬件是否支持
+					VideoCaptureParam ps = param;
+					ps.SetFormat(PIXEL_FORMAT_RGB24);
+					m_sinkFilter->SetCaptureParam(ps);
+					hRes = m_builder->Connect(m_captureO, m_sinkI);
+					if (hRes != S_OK)
+						return FALSE;
+					//2. 如果失败再尝试微软自带的Dec Filter
 					switch (param.GetFormat())
 					{
 					case PIXEL_FORMAT_MJPEG:
@@ -161,7 +175,7 @@ namespace Media
 						if (hRes != S_OK)
 							return FALSE;
 						hRes = m_builder->AddFilter(m_mjpgFilter, NULL);
-						if (FAILED(hRes))
+						if (hRes != S_OK)
 							return FALSE;
 						m_mjpgO = GetPin(m_mjpgFilter, PINDIR_OUTPUT, GUID_NULL);
 						if (!m_mjpgO)
@@ -169,21 +183,18 @@ namespace Media
 						m_mjpgI = GetPin(m_mjpgFilter, PINDIR_INPUT, GUID_NULL);
 						if (!m_mjpgI)
 							return FALSE;
-						h = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
-						if (h->bmiHeader.biWidth == param.GetSize().cx &&
-							h->bmiHeader.biHeight == param.GetSize().cy)
-						{
-							hRes = m_builder->ConnectDirect(m_captureO, m_mjpgI, mediaType.Ptr());
-							if (hRes != S_OK)
-								return FALSE;
-							ScopedMediaType type;
-							if (!VideoCapture::GetMediaType(m_mjpgO, MEDIASUBTYPE_RGB24, type.Receive()))
-								return FALSE;
-							m_sinkFilter->SetMediaType(type.Ptr());
-							hRes = m_builder->ConnectDirect(m_mjpgO, m_sinkI, NULL);
-							if (hRes != S_OK)
-								return FALSE;
-						}
+						hRes = m_builder->ConnectDirect(m_captureO, m_mjpgI, mediaType.Ptr());
+						if (hRes != S_OK)
+							return FALSE;
+						//判断MjpegDec输出是否支持RGB24
+						ScopedMediaType type;
+						if (!VideoCapture::GetMediaType(m_mjpgO, MEDIASUBTYPE_RGB24, type.Receive()))
+							return FALSE;
+						ps.SetFormat(PIXEL_FORMAT_RGB24);
+						m_sinkFilter->SetCaptureParam(ps);
+						hRes = m_builder->ConnectDirect(m_mjpgO, m_sinkI, NULL);
+						if (hRes != S_OK)
+							return FALSE;
 					}
 					break;
 					case PIXEL_FORMAT_UYVY:
@@ -203,35 +214,21 @@ namespace Media
 						m_avI = GetPin(m_avFilter, PINDIR_INPUT, GUID_NULL);
 						if (!m_avI)
 							return FALSE;
-						h = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
-						if (h->bmiHeader.biWidth == param.GetSize().cx &&
-							h->bmiHeader.biHeight == param.GetSize().cy)
-						{
-							hRes = m_builder->ConnectDirect(m_captureO, m_avI, mediaType.Ptr());
-							if (hRes != S_OK)
-								return FALSE;
-							ScopedMediaType type;
-							if (!VideoCapture::GetMediaType(m_avO, MEDIASUBTYPE_RGB24, type.Receive()))
-								return FALSE;
-							m_sinkFilter->SetMediaType(type.Ptr());
-							hRes = m_builder->ConnectDirect(m_avO, m_sinkI, NULL);
-							if (hRes != S_OK)
-								return FALSE;
-						}
-					}
-					break;
-					default:
-					{
-						m_sinkFilter->SetMediaType(mediaType.Ptr());
-						hRes = m_builder->ConnectDirect(m_captureO, m_sinkI, mediaType.Ptr());
+						hRes = m_builder->ConnectDirect(m_captureO, m_avI, mediaType.Ptr());
+						if (hRes != S_OK)
+							return FALSE;
+						//判断AVIDec输出是否支持RGB24
+						ScopedMediaType type;
+						if (!VideoCapture::GetMediaType(m_avO, MEDIASUBTYPE_RGB24, type.Receive()))
+							return FALSE;
+						ps.SetFormat(PIXEL_FORMAT_RGB24);
+						m_sinkFilter->SetCaptureParam(ps);
+						hRes = m_builder->ConnectDirect(m_avO, m_sinkI, NULL);
 						if (hRes != S_OK)
 							return FALSE;
 					}
 					break;
 					}
-					hRes = m_control->Pause();
-					if (hRes != S_OK)
-						return FALSE;
 					return TRUE;
 				}
 			}

@@ -20,18 +20,9 @@ namespace Media
 	{
 		FreeMediaType(m_mediaType);
 	}
-	HRESULT PinBase::SetMediaType(const AM_MEDIA_TYPE *mediaType)
+	void PinBase::SetCaptureParam(const VideoCaptureParam& param)
 	{
-		if (&m_mediaType != mediaType)
-		{
-			if (mediaType)
-			{
-				VIDEOINFOHEADER* h = reinterpret_cast<VIDEOINFOHEADER*>(mediaType->pbFormat);
-				TRACE("PinBase cx:%d,cy:%d\n", h->bmiHeader.biWidth, h->bmiHeader.biHeight);
-				CopyMediaType(&m_mediaType, mediaType);
-			}
-		}
-		return NOERROR;
+		m_param = param;
 	}
 	HRESULT PinBase::CheckConnect(IPin *pPin)
 	{
@@ -76,6 +67,10 @@ namespace Media
 	REFERENCE_TIME PinBase::GetCurrentStopTime() const
 	{
 		return m_stopTime;
+	}
+	HRESULT PinBase::SetMediaType(const AM_MEDIA_TYPE *mediaType)
+	{
+		return CopyMediaType(&m_mediaType, mediaType);
 	}
 	HRESULT PinBase::AgreeMediaType(IPin *pReceivePin, const AM_MEDIA_TYPE *pmt)
 	{
@@ -265,9 +260,10 @@ namespace Media
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::ReceiveConnection(IPin *pConnector, const AM_MEDIA_TYPE *pmt)
 	{
+		VIDEOINFOHEADER* h = reinterpret_cast<VIDEOINFOHEADER*>(pmt->pbFormat);
 		WCHAR str[39];
 		StringFromGUID2(pmt->subtype, str, 39);
-		TRACE("ReceiveConnection-subtype:%s\n", UTF16ToUTF8(str).c_str());
+		TRACE("ReceiveConnection-subtype:%s,cx:%d,cy:%d\n", UTF16ToUTF8(str).c_str(), h->bmiHeader.biWidth, h->bmiHeader.biHeight);
 		if (!pConnector || !pmt)
 		{
 			return E_POINTER;

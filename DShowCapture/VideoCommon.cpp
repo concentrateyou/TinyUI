@@ -33,7 +33,7 @@ HRESULT WINAPI CopyMediaType(AM_MEDIA_TYPE *pmtTarget, const AM_MEDIA_TYPE *pmtS
 	{
 		pmtTarget->pUnk->AddRef();
 	}
-	return S_OK;
+	return NOERROR;
 }
 void WINAPI FreeMediaType(AM_MEDIA_TYPE& mt)
 {

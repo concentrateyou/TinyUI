@@ -13,7 +13,7 @@ namespace Media
 	public:
 		explicit SinkFilter(FilterObserver* observer);
 		virtual ~SinkFilter();
-		HRESULT SetMediaType(const AM_MEDIA_TYPE* mediaType);
+		HRESULT SetMediaType();
 		INT GetPinCount() OVERRIDE;
 		IPin* GetPin(INT index) OVERRIDE;
 	private:

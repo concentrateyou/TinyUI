@@ -49,7 +49,7 @@ namespace Media
 				return E_OUTOFMEMORY;
 			}
 			type->pbFormat = format;
-			if (m_pin->GetMediaType(m_position++, type) == S_OK)
+			if (m_pin->GetMediaType(m_position++, type) == NOERROR)
 			{
 				ppMediaTypes[cFetched++] = type;
 			}

@@ -1,6 +1,7 @@
 #pragma once
 #include "VideoCommon.h"
 #include "FilterObserver.h"
+#include "VideoCaptureParam.h"
 
 namespace Media
 {
@@ -11,9 +12,9 @@ namespace Media
 	public:
 		explicit PinBase(FilterBase* pFilter, PIN_DIRECTION dir, WCHAR* pzName);
 		virtual ~PinBase();
+		virtual void	SetCaptureParam(const VideoCaptureParam& param);
 		virtual HRESULT CheckMediaType(const AM_MEDIA_TYPE* mediaType) = 0;
 		virtual HRESULT GetMediaType(INT position, AM_MEDIA_TYPE* mediaType) = 0;
-		virtual HRESULT SetMediaType(const AM_MEDIA_TYPE *mediaType);
 		virtual HRESULT CheckConnect(IPin *pPin);
 		virtual HRESULT OnConnect(IPin *pReceivePin);
 		virtual HRESULT OnDisconnect();
@@ -43,6 +44,7 @@ namespace Media
 		ULONG STDMETHODCALLTYPE AddRef(void) OVERRIDE;
 		ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
 	protected:
+		HRESULT SetMediaType(const AM_MEDIA_TYPE *mediaType);
 		HRESULT AgreeMediaType(IPin *pReceivePin, const AM_MEDIA_TYPE *pmt);
 		HRESULT TryConnection(IPin* pReceivePin, const AM_MEDIA_TYPE* pmt);
 		HRESULT TryMediaTypes(IPin *pReceivePin, const AM_MEDIA_TYPE *pmt, IEnumMediaTypes *pEnum);
@@ -57,5 +59,6 @@ namespace Media
 		REFERENCE_TIME		m_startTime;
 		REFERENCE_TIME		m_stopTime;
 		DOUBLE				m_rate;
+		VideoCaptureParam	m_param;
 	};
 }
