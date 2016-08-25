@@ -33,6 +33,8 @@ namespace Media
 		virtual BOOL Allocate(const AudioCaptureParam& param);
 		virtual void DeAllocate();
 		void OnFrameReceive(const BYTE* data, INT size, LPVOID lpParameter) OVERRIDE;
+		void SetVolume(INT volume);
+		INT GetVolume() const;
 	public:
 		static BOOL GetDevices(vector<Name>& names);
 		static BOOL GetDeviceParams(const AudioCapture::Name& device, vector<AudioCaptureParam>& formats);

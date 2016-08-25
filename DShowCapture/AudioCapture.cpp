@@ -84,6 +84,14 @@ namespace Media
 		m_builder.Release();
 		m_sinkFilter = NULL;
 	}
+	void AudioCapture::SetVolume(INT volume)
+	{
+
+	}
+	INT AudioCapture::GetVolume() const
+	{
+		return 0;
+	}
 	BOOL AudioCapture::Start()
 	{
 		if (!m_control)

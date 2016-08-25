@@ -84,6 +84,11 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DX10.h" />
+    <ClInclude Include="DX10Image.h" />
+    <ClInclude Include="DX10Texture.h" />
+    <ClInclude Include="DX10TextureShader.h" />
+    <ClInclude Include="DXCamera.h" />
     <ClInclude Include="DXFramework.h" />
     <ClInclude Include="DXApplication.h" />
     <ClInclude Include="DXIdleHandler.h" />
@@ -92,6 +97,11 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DX10.cpp" />
+    <ClCompile Include="DX10Image.cpp" />
+    <ClCompile Include="DX10Texture.cpp" />
+    <ClCompile Include="DX10TextureShader.cpp" />
+    <ClCompile Include="DXCamera.cpp" />
     <ClCompile Include="DXFramework.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>

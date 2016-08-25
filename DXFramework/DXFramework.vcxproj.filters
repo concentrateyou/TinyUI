@@ -13,12 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="头文件\DX10">
-      <UniqueIdentifier>{47f599bd-eac4-4beb-8b39-f8d8ee4c7490}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="源文件\DX10">
-      <UniqueIdentifier>{654a1fe6-92b0-449a-843c-9aa062c28242}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -42,6 +36,21 @@
     <ClInclude Include="DXFramework.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="DX10.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX10Texture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX10TextureShader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DXCamera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX10Image.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -60,6 +69,21 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DXFramework.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX10.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX10Texture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX10TextureShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DXCamera.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX10Image.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
