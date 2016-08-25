@@ -16,18 +16,20 @@ namespace DXFramework
 	public:
 		DX10Image();
 		~DX10Image();
-		BOOL Load(const DX10& dx10, HANDLE hResource);
-		BOOL Load(const DX10& dx10, const CHAR* pzFile);
-		BOOL Load(const DX10& dx10, const BYTE* pData, INT size);
+		BOOL Load(const DX10& dx10, HANDLE hResource, INT scaleX, INT scaleY);
+		BOOL Load(const DX10& dx10, const CHAR* pzFile, INT scaleX, INT scaleY);
+		BOOL Load(const DX10& dx10, const BYTE* pData, INT size, INT scaleX, INT scaleY);
 		BOOL Render(const DX10& dx10, INT positionX, INT positionY);
 		INT	 GetIndexCount() const;
-		ID3D10Texture2D* GetTexture2D() const;
+		DX10Texture* GetTexture();
 	private:
 		BOOL Initialize(const DX10& dx10);
 		BOOL Update(const DX10& dx10, INT positionX, int positionY);
 	private:
 		TinyComPtr<ID3D10Buffer>	m_vertexBuffer;
 		TinyComPtr<ID3D10Buffer>	m_indexBuffer;
+		INT							m_scaleX;
+		INT							m_scaleY;
 		INT							m_previousPosX;
 		INT							m_previousPosY;
 		INT							m_vertexCount;

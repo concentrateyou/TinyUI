@@ -25,6 +25,7 @@ namespace DXFramework
 		TinyComPtr<IDXGIFactory1>			m_factory;
 		TinyComPtr<ID3D10RenderTargetView>	m_renderView;
 		TinyComPtr<ID3D10DepthStencilView>	m_depthStencilView;
+		TinyComPtr<ID3D10Texture2D>			m_depthStencilBuffer;
 		TinyComPtr<ID3D10Device1>			m_d3d;
 		TinyComPtr<ID3D10DepthStencilState>	m_depthStencilState;
 		TinyComPtr<ID3D10DepthStencilState> m_disableDepthState;

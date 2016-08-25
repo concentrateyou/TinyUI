@@ -64,6 +64,31 @@ namespace DXFramework
 		if (FAILED(hRes))
 			return FALSE;
 		m_d3d->OMSetDepthStencilState(m_depthStencilState, 0);
+		D3D10_TEXTURE2D_DESC depthBufferDesc;
+		ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
+		depthBufferDesc.Width = cx;
+		depthBufferDesc.Height = cy;
+		depthBufferDesc.MipLevels = 1;
+		depthBufferDesc.ArraySize = 1;
+		depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthBufferDesc.SampleDesc.Count = 1;
+		depthBufferDesc.SampleDesc.Quality = 0;
+		depthBufferDesc.Usage = D3D10_USAGE_DEFAULT;
+		depthBufferDesc.BindFlags = D3D10_BIND_DEPTH_STENCIL;
+		depthBufferDesc.CPUAccessFlags = 0;
+		depthBufferDesc.MiscFlags = 0;
+		hRes = m_d3d->CreateTexture2D(&depthBufferDesc, NULL, &m_depthStencilBuffer);
+		if (FAILED(hRes))
+			return FALSE;
+		D3D10_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
+		ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
+		depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthStencilViewDesc.ViewDimension = D3D10_DSV_DIMENSION_TEXTURE2D;
+		depthStencilViewDesc.Texture2D.MipSlice = 0;
+		hRes = m_d3d->CreateDepthStencilView(m_depthStencilBuffer, &depthStencilViewDesc, &m_depthStencilView);
+		if (FAILED(hRes))
+			return FALSE;
+		m_d3d->OMSetRenderTargets(1, &m_renderView, m_depthStencilView);
 		//½ûÓÃ±³ÃæÏûÒþ
 		D3D10_RASTERIZER_DESC rasterizerDesc;
 		ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
@@ -82,7 +107,7 @@ namespace DXFramework
 			return FALSE;
 		m_d3d->RSSetState(m_rasterizerState);
 		TinyComPtr<ID3D10Texture2D> backBuffer;
-		hRes = m_swap->GetBuffer(0, IID_ID3D10Texture2D, (void**)&backBuffer);
+		hRes = m_swap->GetBuffer(0, __uuidof(ID3D10Texture2D), (void**)&backBuffer);
 		if (FAILED(hRes))
 			return FALSE;
 		hRes = m_d3d->CreateRenderTargetView(backBuffer, NULL, &m_renderView);
@@ -132,7 +157,7 @@ namespace DXFramework
 		if (FAILED(hRes))
 			return FALSE;
 		TinyComPtr<ID3D10Texture2D> backBuffer;
-		hRes = m_swap->GetBuffer(0, IID_ID3D10Texture2D, (void**)&backBuffer);
+		hRes = m_swap->GetBuffer(0, __uuidof(ID3D10Texture2D), (void**)&backBuffer);
 		if (FAILED(hRes))
 			return FALSE;
 		hRes = m_d3d->CreateRenderTargetView(backBuffer, NULL, &m_renderView);

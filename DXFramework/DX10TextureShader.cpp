@@ -19,7 +19,7 @@ namespace DXFramework
 		m_projectionMatrix = NULL;
 		m_shaderTexture = NULL;
 	}
-	BOOL DX10TextureShader::LoadShader(const DX10& dx10, const CHAR* pzFile)
+	BOOL DX10TextureShader::Initialize(const DX10& dx10, const CHAR* pzFile)
 	{
 		HRESULT hRes = S_OK;
 		D3D10_INPUT_ELEMENT_DESC layout[2];
@@ -55,7 +55,7 @@ namespace DXFramework
 		m_shaderTexture = m_effect->GetVariableByName("shaderTexture")->AsShaderResource();
 		return TRUE;
 	}
-	void DX10TextureShader::Draw(const DX10& dx10, INT indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, DX10Texture* texture)
+	void DX10TextureShader::Render(const DX10& dx10, INT indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, DX10Texture* texture)
 	{
 		m_worldMatrix->SetMatrix((FLOAT*)&worldMatrix);
 		m_viewMatrix->SetMatrix((FLOAT*)&viewMatrix);

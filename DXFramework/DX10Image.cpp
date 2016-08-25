@@ -4,31 +4,44 @@
 namespace DXFramework
 {
 	DX10Image::DX10Image()
+		:m_scaleX(0),
+		m_scaleY(0),
+		m_previousPosX(-1),
+		m_previousPosY(-1),
+		m_vertexCount(0),
+		m_indexCount(0)
 	{
 	}
 	DX10Image::~DX10Image()
 	{
 	}
-	BOOL DX10Image::Load(const DX10& dx10, HANDLE hResource)
+	BOOL DX10Image::Load(const DX10& dx10, HANDLE hResource, INT scaleX, INT scaleY)
 	{
 		if (!Initialize(dx10))
 			return FALSE;
+		m_scaleX = scaleX;
+		m_scaleY = scaleY;
 		return m_texture.LoadTexture(dx10, hResource);
 	}
-	BOOL DX10Image::Load(const DX10& dx10, const CHAR* pzFile)
+	BOOL DX10Image::Load(const DX10& dx10, const CHAR* pzFile, INT scaleX, INT scaleY)
 	{
 		if (!Initialize(dx10))
 			return FALSE;
+		m_scaleX = scaleX;
+		m_scaleY = scaleY;
 		return m_texture.LoadTexture(dx10, pzFile);
 	}
-	BOOL DX10Image::Load(const DX10& dx10, const BYTE* pData, INT size)
+	BOOL DX10Image::Load(const DX10& dx10, const BYTE* pData, INT size, INT scaleX, INT scaleY)
 	{
 		if (!Initialize(dx10))
 			return FALSE;
+		m_scaleX = scaleX;
+		m_scaleY = scaleY;
 		return m_texture.LoadTexture(dx10, pData, size);
 	}
 	BOOL DX10Image::Initialize(const DX10& dx10)
 	{
+		//创建顶点和索引缓冲区
 		D3D10_BUFFER_DESC vertexBufferDesc;
 		D3D10_BUFFER_DESC indexBufferDesc;
 		D3D10_SUBRESOURCE_DATA vertexData;
@@ -70,12 +83,11 @@ namespace DXFramework
 			return TRUE;
 		m_previousPosX = positionX;
 		m_previousPosY = positionY;
-		SIZE size = dx10.GetSize();
-		SIZE imageSize = m_texture.GetSize();
+		SIZE size = dx10.GetSize();;
 		left = (FLOAT)((size.cx / 2) * -1) + (FLOAT)positionX;
-		right = left + (FLOAT)imageSize.cx;
+		right = left + (FLOAT)m_scaleX;
 		top = (FLOAT)(size.cx / 2) - (FLOAT)positionY;
-		bottom = top - (FLOAT)imageSize.cy;
+		bottom = top - (FLOAT)m_scaleY;
 		TinyScopedArray<VERTEXTYPE> vertices(new VERTEXTYPE[m_vertexCount]);
 		vertices[0].position = D3DXVECTOR3(left, top, 0.0F);
 		vertices[0].texture = D3DXVECTOR2(0.0F, 0.0F);
@@ -101,11 +113,11 @@ namespace DXFramework
 	{
 		return m_indexCount;
 	}
-	ID3D10Texture2D* DX10Image::GetTexture2D() const
+	DX10Texture* DX10Image::GetTexture()
 	{
-		return m_texture.GetTexture2D();
+		return &m_texture;
 	}
-	BOOL DX10Image::Render(const DX10& dx10, int positionX, int positionY)
+	BOOL DX10Image::Render(const DX10& dx10, INT positionX, INT positionY)
 	{
 		if (!this->Update(dx10, positionX, positionY))
 			return FALSE;

@@ -4,6 +4,7 @@
 namespace DXFramework
 {
 	DXWindow::DXWindow()
+		:m_success(FALSE)
 	{
 	}
 	DXWindow::~DXWindow()
@@ -38,7 +39,14 @@ namespace DXFramework
 		bHandled = FALSE;
 		TinySize size(600, 600);
 		CenterWindow(NULL, size);
-	
+		if (m_dx10.Initialize(m_hWND, 0, 0, 600, 600))
+		{
+			m_camera.SetPosition(0.0F, 0.0F, -10.0F);
+			if (m_textureShader.Initialize(m_dx10, TEXT("D:\\Develop\\GitHub\\TinyUI\\DXFramework\\texture.fx")))
+			{
+				m_dxImage.Load(m_dx10, TEXT("D:\\image.bmp"), 400, 400);
+			}
+		}
 		return FALSE;
 	}
 	LRESULT DXWindow::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -55,11 +63,38 @@ namespace DXFramework
 	LRESULT DXWindow::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		Render();
 		return FALSE;
 	}
 	LRESULT DXWindow::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = TRUE;
 		return FALSE;
+	}
+	BOOL DXWindow::Render()
+	{
+		static FLOAT rotation = 0.0F;
+		rotation += (FLOAT)D3DX_PI * 0.005F;
+		if (rotation > 360.0F)
+		{
+			rotation -= 360.0F;
+		}
+		return Render(rotation);
+	}
+	BOOL DXWindow::Render(FLOAT rotation)
+	{
+		m_dx10.BeginScene();
+		m_camera.Update();
+		D3DXMATRIX viewMatrix = m_camera.GetViewMatrix();
+		D3DXMATRIX worldMatrix = m_dx10.GetWorldMatrix();
+		D3DXMATRIX projectionMatrix = m_dx10.GetProjectionMatrix();
+		D3DXMATRIX orthoMatrix = m_dx10.GetOrthoMatrix();
+		m_dx10.AllowDepth(FALSE);
+		if (!m_dxImage.Render(m_dx10, 100, 100))
+			return FALSE;
+		m_textureShader.Render(m_dx10, m_dxImage.GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_dxImage.GetTexture());
+		m_dx10.AllowDepth(TRUE);
+		m_dx10.EndScene();
+		return TRUE;
 	}
 }

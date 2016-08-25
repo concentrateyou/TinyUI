@@ -50,7 +50,7 @@ namespace D3D
 			return FALSE;
 		//创建渲染目标视图
 		TinyComPtr<ID3D10Texture2D> backBuffer;
-		hRes = m_swap->GetBuffer(0, IID_ID3D10Texture2D, (void**)&backBuffer);
+		hRes = m_swap->GetBuffer(0, __uuidof(ID3D10Texture2D), (void**)&backBuffer);
 		if (FAILED(hRes))
 			return FALSE;
 		hRes = m_d3d->CreateRenderTargetView(backBuffer, NULL, &m_renderView);
@@ -132,7 +132,7 @@ namespace D3D
 		m_renderView.Release();
 		m_swap->ResizeBuffers(2, 0, 0, DXGI_FORMAT_B8G8R8A8_UNORM, 0);
 		TinyComPtr<ID3D10Texture2D> backBuffer;
-		if (FAILED(m_swap->GetBuffer(0, IID_ID3D10Texture2D, (void**)&backBuffer)))
+		if (FAILED(m_swap->GetBuffer(0, __uuidof(ID3D10Texture2D), (void**)&backBuffer)))
 		{
 			return FALSE;
 		}
