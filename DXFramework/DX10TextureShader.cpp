@@ -7,11 +7,13 @@ namespace DXFramework
 		:m_worldMatrix(NULL),
 		m_viewMatrix(NULL),
 		m_projectionMatrix(NULL),
-		m_shaderTexture(NULL)
+		m_shaderTexture(NULL),
+		m_technique(NULL)
 	{
 	}
 	DX10TextureShader::~DX10TextureShader()
 	{
+		m_technique = NULL;
 		m_worldMatrix = NULL;
 		m_viewMatrix = NULL;
 		m_projectionMatrix = NULL;
@@ -44,7 +46,7 @@ namespace DXFramework
 		layout[1].InstanceDataStepRate = 0;
 		INT size = sizeof(layout) / sizeof(layout[0]);
 		m_technique->GetPassByIndex(0)->GetDesc(&desc);
-		hRes = dx10.GetD3D->CreateInputLayout(layout, size, desc.pIAInputSignature, desc.IAInputSignatureSize, &m_layout);
+		hRes = dx10.GetD3D()->CreateInputLayout(layout, size, desc.pIAInputSignature, desc.IAInputSignatureSize, &m_layout);
 		if (FAILED(hRes))
 			return FALSE;
 		m_worldMatrix = m_effect->GetVariableByName("worldMatrix")->AsMatrix();
@@ -62,7 +64,7 @@ namespace DXFramework
 		D3D10_TECHNIQUE_DESC desc;
 		dx10.GetD3D()->IASetInputLayout(m_layout);
 		m_technique->GetDesc(&desc);
-		for (INT i = 0; i < desc.Passes; ++i)
+		for (UINT i = 0; i < desc.Passes; ++i)
 		{
 			m_technique->GetPassByIndex(i)->Apply(0);
 			dx10.GetD3D()->DrawIndexed(indexCount, 0, 0);

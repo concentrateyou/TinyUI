@@ -6,13 +6,26 @@ namespace DXFramework
 	DX10Image::DX10Image()
 	{
 	}
-
 	DX10Image::~DX10Image()
 	{
 	}
 	BOOL DX10Image::Load(const DX10& dx10, HANDLE hResource)
 	{
-
+		if (!Initialize(dx10))
+			return FALSE;
+		return m_texture.LoadTexture(dx10, hResource);
+	}
+	BOOL DX10Image::Load(const DX10& dx10, const CHAR* pzFile)
+	{
+		if (!Initialize(dx10))
+			return FALSE;
+		return m_texture.LoadTexture(dx10, pzFile);
+	}
+	BOOL DX10Image::Load(const DX10& dx10, const BYTE* pData, INT size)
+	{
+		if (!Initialize(dx10))
+			return FALSE;
+		return m_texture.LoadTexture(dx10, pData, size);
 	}
 	BOOL DX10Image::Initialize(const DX10& dx10)
 	{
@@ -47,25 +60,22 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-
-	BOOL DX10Image::Update(const DX10& dx10, INT positionX, int positionY)
+	BOOL DX10Image::Update(const DX10& dx10, INT positionX, INT positionY)
 	{
 		FLOAT left;
 		FLOAT right;
 		FLOAT top;
 		FLOAT bottom;
-		VERTEXTYPE* vertices;
-		if ((positionX == m_previousPosX) &&
-			(positionY == m_previousPosY))
+		if ((positionX == m_previousPosX) && (positionY == m_previousPosY))
 			return TRUE;
 		m_previousPosX = positionX;
 		m_previousPosY = positionY;
 		SIZE size = dx10.GetSize();
-		SIZE imageSize = m_dx10Texture.GetSize();
+		SIZE imageSize = m_texture.GetSize();
 		left = (FLOAT)((size.cx / 2) * -1) + (FLOAT)positionX;
 		right = left + (FLOAT)imageSize.cx;
 		top = (FLOAT)(size.cx / 2) - (FLOAT)positionY;
-		bottom = top - (float)imageSize.cy;
+		bottom = top - (FLOAT)imageSize.cy;
 		TinyScopedArray<VERTEXTYPE> vertices(new VERTEXTYPE[m_vertexCount]);
 		vertices[0].position = D3DXVECTOR3(left, top, 0.0F);
 		vertices[0].texture = D3DXVECTOR2(0.0F, 0.0F);
@@ -79,12 +89,31 @@ namespace DXFramework
 		vertices[4].texture = D3DXVECTOR2(1.0F, 0.0F);
 		vertices[5].position = D3DXVECTOR3(right, bottom, 0.0F);
 		vertices[5].texture = D3DXVECTOR2(1.0F, 1.0F);
-		void* pData = 0;
+		void* pData = NULL;
 		HRESULT hRes = m_vertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, (void**)&pData);
 		if (FAILED(hRes))
 			return FALSE;
-		memcpy(pData, (void*)vertices, (sizeof(VERTEXTYPE) * m_vertexCount));
+		memcpy(pData, (void*)vertices.Ptr(), (sizeof(VERTEXTYPE)*m_vertexCount));
 		m_vertexBuffer->Unmap();
+		return TRUE;
+	}
+	INT	 DX10Image::GetIndexCount() const
+	{
+		return m_indexCount;
+	}
+	ID3D10Texture2D* DX10Image::GetTexture2D() const
+	{
+		return m_texture.GetTexture2D();
+	}
+	BOOL DX10Image::Render(const DX10& dx10, int positionX, int positionY)
+	{
+		if (!this->Update(dx10, positionX, positionY))
+			return FALSE;
+		UINT stride = sizeof(VERTEXTYPE);
+		UINT offset = 0;
+		dx10.GetD3D()->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
+		dx10.GetD3D()->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		dx10.GetD3D()->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		return TRUE;
 	}
 }
