@@ -44,14 +44,14 @@ namespace Media
 	{
 		GUID type = pMediaType->majortype;
 		if (type != MEDIATYPE_Video)
-			return S_FALSE;
+			return E_INVALIDARG;
 		GUID formatType = pMediaType->formattype;
 		if (formatType != FORMAT_VideoInfo)
-			return S_FALSE;
+			return E_INVALIDARG;
 		GUID subType = pMediaType->subtype;
 		VIDEOINFOHEADER* pvi = reinterpret_cast<VIDEOINFOHEADER*>(pMediaType->pbFormat);
 		if (pvi == NULL)
-			return S_FALSE;
+			return E_INVALIDARG;
 		if (m_param.GetFormat() == GetPixelFormat(subType))
 			return NOERROR;
 		return S_FALSE;

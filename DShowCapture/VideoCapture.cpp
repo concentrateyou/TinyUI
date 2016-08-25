@@ -151,8 +151,7 @@ namespace Media
 					param.GetSize() == TinySize(h->bmiHeader.biWidth, h->bmiHeader.biHeight))
 				{
 					SetAntiFlickerInCaptureFilter();
-					h->AvgTimePerFrame = static_cast<REFERENCE_TIME>(SecondsToReferenceTime / param.GetRate());
-					if (h->AvgTimePerFrame > caps.MaxFrameInterval)
+					if (h->AvgTimePerFrame > caps.MaxFrameInterval || h->AvgTimePerFrame < caps.MinFrameInterval)
 						return FALSE;
 					hRes = streamConfig->SetFormat(mediaType.Ptr());
 					if (hRes != S_OK)
@@ -263,9 +262,11 @@ namespace Media
 			return FALSE;
 		return m_control->Pause() == S_OK;
 	}
-	FILTER_STATE VideoCapture::GetState() const
+	BOOL VideoCapture::GetState(FILTER_STATE& state)
 	{
-		return State_Stopped;
+		if (!m_control)
+			return FALSE;
+		return m_control->GetState(0, (OAFilterState*)&state) == S_OK;
 	}
 	BOOL VideoCapture::GetDevices(vector<Name>& names)
 	{
