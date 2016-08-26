@@ -32,7 +32,7 @@ namespace Media
 	public:
 		VideoCapture();
 		virtual ~VideoCapture();
-		BOOL Initialize(const Name& name, HWND hWND);
+		BOOL Initialize(const Name& name, HWND hWND, Callback<void(const BYTE*, INT, LPVOID)>& receiveCB);
 		void Uninitialize();
 		BOOL Start();
 		BOOL Stop();
@@ -51,19 +51,20 @@ namespace Media
 		static VideoPixelFormat TranslateMediaSubtypeToPixelFormat(const GUID& subType);
 		void SetAntiFlickerInCaptureFilter();
 	private:
-		HWND									m_hWND;
-		VideoCaptureParam						m_vcp;
-		TinyComPtr<IGraphBuilder>				m_builder;
-		TinyComPtr<IMediaControl>				m_control;
-		TinyComPtr<IBaseFilter>					m_captureFilter;
-		TinyComPtr<IPin>						m_captureO;
-		TinyComPtr<IBaseFilter>					m_mjpgFilter;
-		TinyComPtr<IPin>						m_mjpgO;//OUT
-		TinyComPtr<IPin>						m_mjpgI;//IN
-		TinyComPtr<IBaseFilter>					m_avFilter;
-		TinyComPtr<IPin>						m_avO;//OUT
-		TinyComPtr<IPin>						m_avI;//IN
-		TinyComPtr<IPin>						m_sinkI;
-		TinyScopedReferencePtr<VideoSinkFilter>	m_sinkFilter;
+		HWND										m_hWND;
+		VideoCaptureParam							m_vcp;
+		TinyComPtr<IGraphBuilder>					m_builder;
+		TinyComPtr<IMediaControl>					m_control;
+		TinyComPtr<IBaseFilter>						m_captureFilter;
+		TinyComPtr<IPin>							m_captureO;
+		TinyComPtr<IBaseFilter>						m_mjpgFilter;
+		TinyComPtr<IPin>							m_mjpgO;//OUT
+		TinyComPtr<IPin>							m_mjpgI;//IN
+		TinyComPtr<IBaseFilter>						m_avFilter;
+		TinyComPtr<IPin>							m_avO;//OUT
+		TinyComPtr<IPin>							m_avI;//IN
+		TinyComPtr<IPin>							m_sinkI;
+		TinyScopedReferencePtr<VideoSinkFilter>		m_sinkFilter;
+		Callback<void(const BYTE*, INT, LPVOID)>	m_callback;
 	};
 }

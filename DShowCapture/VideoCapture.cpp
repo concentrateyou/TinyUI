@@ -28,42 +28,13 @@ namespace Media
 	{
 		return m_id;
 	}
-
-	void SaveBitmap(BITMAPINFOHEADER bi, INT size, const BYTE* pdata)
-	{
-		BITMAPFILEHEADER  bmfHeader = { 0 };
-		DWORD dwSizeofDIB = size + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
-		bmfHeader.bfOffBits = (DWORD)sizeof(BITMAPFILEHEADER) + (DWORD)sizeof(BITMAPINFOHEADER);
-		bmfHeader.bfSize = dwSizeofDIB;
-		bmfHeader.bfType = 0x4D42;
-		HANDLE hFile = CreateFile("D:\\test.bmp", GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-		DWORD dwBytesWritten = 0;
-		WriteFile(hFile, (LPSTR)&bmfHeader, sizeof(BITMAPFILEHEADER), &dwBytesWritten, NULL);
-		WriteFile(hFile, (LPSTR)&bi, sizeof(BITMAPINFOHEADER), &dwBytesWritten, NULL);
-		WriteFile(hFile, (LPSTR)pdata, size, &dwBytesWritten, NULL);
-		CloseHandle(hFile);
-	}
-
 	void VideoCapture::OnFrameReceive(const BYTE* data, INT size, LPVOID lpData)
 	{
-		AM_MEDIA_TYPE* pMediaType = static_cast<AM_MEDIA_TYPE*>(lpData);
-		if (pMediaType)
+		if (!m_callback.IsNull())
 		{
-			RECT rectangle = { 0 };
-			GetWindowRect(m_hWND, &rectangle);
-			VIDEOINFOHEADER* h = reinterpret_cast<VIDEOINFOHEADER*>(pMediaType->pbFormat);
-			TinyUI::TinyWindowDC wdc(m_hWND);
-			BITMAPINFO bi = { 0 };
-			bi.bmiHeader = h->bmiHeader;
-			BYTE* pvBits = NULL;
-			HBITMAP hBitmap = ::CreateDIBSection(wdc, &bi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pvBits), NULL, 0);
-			memcpy(pvBits, data, size);
-			TinyUI::TinyMemDC mdc(wdc, hBitmap);
-			::BitBlt(wdc, 0, 0, TO_CX(rectangle), TO_CY(rectangle), mdc, 0, 0, SRCCOPY);
-			DeleteObject(hBitmap);
+			m_callback(data, size, lpData);
 		}
 	}
-
 	VideoCapture::VideoCapture()
 	{
 
@@ -72,9 +43,10 @@ namespace Media
 	{
 		Uninitialize();
 	}
-	BOOL VideoCapture::Initialize(const Name& name, HWND hWND)
+	BOOL VideoCapture::Initialize(const Name& name, HWND hWND, Callback<void(const BYTE*, INT, LPVOID)>& callback)
 	{
 		m_hWND = hWND;
+		m_callback = callback;
 		HRESULT hRes = m_builder.CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER);
 		if (FAILED(hRes))
 			return FALSE;
@@ -125,7 +97,6 @@ namespace Media
 		m_builder.Release();
 		m_sinkFilter = NULL;
 	}
-
 	BOOL VideoCapture::Allocate(const VideoCaptureParam& param)
 	{
 		TinyComPtr<IAMStreamConfig> streamConfig;

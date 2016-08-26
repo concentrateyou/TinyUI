@@ -2,6 +2,7 @@
 #include "Common/TinyCommon.h"
 #include "Common/TinyString.h"
 #include "Render/TinyGDI.h"
+#include "Common/TinyCallback.h"
 #include <dshow.h>
 #include <uuids.h>
 #include <string>
@@ -21,3 +22,4 @@ extern GUID MediaSubTypeHDYC;
 HRESULT WINAPI CopyMediaType(AM_MEDIA_TYPE *pmtTarget, const AM_MEDIA_TYPE *pmtSource);
 void WINAPI FreeMediaType(AM_MEDIA_TYPE& mt);
 void WINAPI DeleteMediaType(AM_MEDIA_TYPE *pmt);
+void WINAPI SaveBitmap(BITMAPINFOHEADER bi, const BYTE* pBits, DWORD dwSize);

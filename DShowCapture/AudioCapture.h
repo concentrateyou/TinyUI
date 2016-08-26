@@ -24,7 +24,7 @@ namespace Media
 	public:
 		AudioCapture();
 		virtual ~AudioCapture();
-		BOOL Initialize(const Name& name);
+		BOOL Initialize(const Name& name, Callback<void(const BYTE*, INT, LPVOID)>& callback);
 		void Uninitialize();
 		BOOL Start();
 		BOOL Stop();
@@ -43,12 +43,13 @@ namespace Media
 		static BOOL GetPinCategory(IPin* pin, REFGUID category);
 		static TinyComPtr<IPin> GetPin(IBaseFilter* filter, PIN_DIRECTION pin_dir, REFGUID category);
 	private:
-		TinyComPtr<IBaseFilter>					m_captureFilter;
-		TinyComPtr<IGraphBuilder>				m_builder;
-		TinyComPtr<IMediaControl>				m_control;
-		TinyComPtr<IPin>						m_captureO;
-		TinyComPtr<IPin>						m_sinkI;
-		TinyScopedReferencePtr<AudioSinkFilter>	m_sinkFilter;
+		TinyComPtr<IBaseFilter>						m_captureFilter;
+		TinyComPtr<IGraphBuilder>					m_builder;
+		TinyComPtr<IMediaControl>					m_control;
+		TinyComPtr<IPin>							m_captureO;
+		TinyComPtr<IPin>							m_sinkI;
+		TinyScopedReferencePtr<AudioSinkFilter>		m_sinkFilter;
+		Callback<void(const BYTE*, INT, LPVOID)>	m_callback;
 	};
 }
 

@@ -40,8 +40,9 @@ namespace Media
 	{
 
 	}
-	BOOL AudioCapture::Initialize(const Name& name)
+	BOOL AudioCapture::Initialize(const Name& name, Callback<void(const BYTE*, INT, LPVOID)>& callback)
 	{
+		m_callback = callback;
 		HRESULT hRes = m_builder.CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER);
 		if (FAILED(hRes))
 			return FALSE;
