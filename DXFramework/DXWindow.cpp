@@ -37,14 +37,15 @@ namespace DXFramework
 	LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		TinySize size(600, 600);
+		TinySize size(1200, 800);
 		CenterWindow(NULL, size);
-		if (m_dx10.Initialize(m_hWND, 0, 0, 600, 600))
+		if (m_dx10.Initialize(m_hWND, 0, 0, 1200, 800))
 		{
 			m_camera.SetPosition(0.0F, 0.0F, -10.0F);
 			if (m_textureShader.Initialize(m_dx10, TEXT("D:\\Develop\\GitHub\\TinyUI\\DXFramework\\texture.fx")))
 			{
-				m_dxImage.Load(m_dx10, TEXT("D:\\test.bmp"), 400, 400);
+				m_dxImage1.Load(m_dx10, TEXT("D:\\1.jpg"), 360, 225);
+				m_dxImage2.Load(m_dx10, TEXT("D:\\2.jpg"), 512, 341);
 			}
 		}
 		return FALSE;
@@ -84,15 +85,18 @@ namespace DXFramework
 	BOOL DXWindow::Render(FLOAT rotation)
 	{
 		m_dx10.BeginScene();
-		m_camera.Update();
+		m_camera.UpdatePosition();
 		D3DXMATRIX viewMatrix = m_camera.GetViewMatrix();
 		D3DXMATRIX worldMatrix = m_dx10.GetWorldMatrix();
 		D3DXMATRIX projectionMatrix = m_dx10.GetProjectionMatrix();
 		D3DXMATRIX orthoMatrix = m_dx10.GetOrthoMatrix();
 		m_dx10.AllowDepth(FALSE);
-		if (!m_dxImage.Render(m_dx10, 100, 100))
+		if (!m_dxImage1.Render(m_dx10, 0, 200))
 			return FALSE;
-		m_textureShader.Render(m_dx10, m_dxImage.GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_dxImage.GetTexture());
+		m_textureShader.Render(m_dx10, m_dxImage1.GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_dxImage1.GetTexture());
+		if (!m_dxImage2.Render(m_dx10, 400, 200))
+			return FALSE;
+		m_textureShader.Render(m_dx10, m_dxImage2.GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_dxImage2.GetTexture());
 		m_dx10.AllowDepth(TRUE);
 		m_dx10.EndScene();
 		return TRUE;

@@ -63,7 +63,7 @@ namespace DXFramework
 		if (FAILED(hRes))
 			return FALSE;
 		indexBufferDesc.Usage = D3D10_USAGE_DEFAULT;
-		indexBufferDesc.ByteWidth = sizeof(unsigned long) * m_indexCount;
+		indexBufferDesc.ByteWidth = sizeof(ULONG) * m_indexCount;
 		indexBufferDesc.BindFlags = D3D10_BIND_INDEX_BUFFER;
 		indexBufferDesc.CPUAccessFlags = 0;
 		indexBufferDesc.MiscFlags = 0;

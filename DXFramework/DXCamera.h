@@ -12,7 +12,7 @@ namespace DXFramework
 		void SetRotation(FLOAT, FLOAT, FLOAT);
 		D3DXVECTOR3 GetPosition();
 		D3DXVECTOR3 GetRotation();
-		void Update();
+		void UpdatePosition();
 		D3DXMATRIX GetViewMatrix();
 	private:
 		FLOAT m_positionX;

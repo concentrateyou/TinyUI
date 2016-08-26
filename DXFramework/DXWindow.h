@@ -30,7 +30,8 @@ namespace DXFramework
 	private:
 		BOOL				m_success;
 		DX10				m_dx10;
-		DX10Image			m_dxImage;
+		DX10Image			m_dxImage1;
+		DX10Image			m_dxImage2;
 		DXCamera			m_camera;
 		DX10TextureShader	m_textureShader;
 	};

@@ -35,10 +35,14 @@ namespace DXFramework
 	{
 		return D3DXVECTOR3(m_rotationX, m_rotationY, m_rotationZ);
 	}
-	void DXCamera::Update()
+	void DXCamera::UpdatePosition()
 	{
-		D3DXVECTOR3 up, position, lookAt;
-		FLOAT yaw, pitch, roll;
+		D3DXVECTOR3 up;
+		D3DXVECTOR3 position;
+		D3DXVECTOR3 lookAt;
+		FLOAT yaw;
+		FLOAT pitch;
+		FLOAT roll;
 		D3DXMATRIX rotationMatrix;
 		up.x = 0.0F;
 		up.y = 1.0F;
