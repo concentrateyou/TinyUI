@@ -26,7 +26,7 @@ namespace DXFramework
 			return FALSE;
 		DXGI_SWAP_CHAIN_DESC swapDesc;
 		ZeroMemory(&swapDesc, sizeof(swapDesc));
-		swapDesc.BufferCount = 1;
+		swapDesc.BufferCount = 2;
 		swapDesc.BufferDesc.Width = cx;
 		swapDesc.BufferDesc.Height = cy;
 		swapDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;

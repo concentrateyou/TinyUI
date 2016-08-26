@@ -12,5 +12,5 @@ using namespace TinyUI;
 
 namespace DXFramework
 {
-	
+	BOOL WINAPI InjectLibrary(HANDLE hProcess, const CHAR *pszDLL);
 }

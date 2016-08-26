@@ -64,15 +64,6 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 	m_inject.EVENT_Click += m_onInjectClick;
 	m_lblState.Create(m_hWND, 130, 16, 100, 25);
 	m_lblState.SetText("×´Ì¬");
-	memset(&m_cf, 0, sizeof(m_cf));
-	m_cf.dwMask = CFM_COLOR | CFM_FACE | CFM_SIZE | CFM_EFFECTS;
-	m_cf.dwEffects |= CFE_BOLD;
-	m_cf.sSpacing = 5;
-	m_cf.cbSize = sizeof(CHARFORMAT2);
-	m_cf.crTextColor = RGB(0, 114, 193);
-	m_cf.yHeight = 180;
-	string str(_T("Î¢ÈíÑÅºÚ"));
-	strcpy_s(m_cf.szFaceName, str.size(),str.c_str());
 	m_drawCtrl.Create(m_hWND, 10, 40, 400, 400);
 	return FALSE;
 }
