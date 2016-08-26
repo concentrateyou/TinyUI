@@ -44,7 +44,7 @@ namespace DXFramework
 			m_camera.SetPosition(0.0F, 0.0F, -10.0F);
 			if (m_textureShader.Initialize(m_dx10, TEXT("D:\\Develop\\GitHub\\TinyUI\\DXFramework\\texture.fx")))
 			{
-				m_dxImage.Load(m_dx10, TEXT("D:\\image.bmp"), 400, 400);
+				m_dxImage.Load(m_dx10, TEXT("D:\\test.bmp"), 400, 400);
 			}
 		}
 		return FALSE;

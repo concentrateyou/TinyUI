@@ -30,9 +30,6 @@ namespace DXFramework
 		TinyComPtr<ID3D10DepthStencilState>	m_depthStencilState;
 		TinyComPtr<ID3D10DepthStencilState> m_disableDepthState;
 		TinyComPtr<ID3D10RasterizerState>	m_rasterizerState;
-		TinyComPtr<ID3D10RasterizerState>	m_scissorState;
-		TinyComPtr<ID3D10BlendState>		m_blendState;
-		TinyComPtr<ID3D10BlendState>		m_disableblendState;
 		HWND								m_hWND;
 		POINT								m_pos;
 		SIZE								m_size;

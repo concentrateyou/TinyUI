@@ -17,9 +17,9 @@ Texture2D shaderTexture;
 ///////////////////
 SamplerState SampleType
 {
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = Wrap;
-    AddressV = Wrap;
+	Filter = MIN_MAG_MIP_LINEAR;
+	AddressU = Wrap;
+	AddressV = Wrap;
 };
 
 
@@ -28,14 +28,14 @@ SamplerState SampleType
 //////////////
 struct VertexInputType
 {
-    float4 position : POSITION;
-    float2 tex : TEXCOORD0;
+	float4 position : POSITION;
+	float2 tex : TEXCOORD0;
 };
 
 struct PixelInputType
 {
-    float4 position : SV_POSITION;
-    float2 tex : TEXCOORD0;
+	float4 position : SV_POSITION;
+	float2 tex : TEXCOORD0;
 };
 
 
@@ -44,12 +44,20 @@ struct PixelInputType
 ////////////////////////////////////////////////////////////////////////////////
 PixelInputType TextureVertexShader(VertexInputType input)
 {
-    PixelInputType output;
-    input.position.w = 1.0f;
-    output.position = mul(input.position, worldMatrix);
-    output.position = mul(output.position, viewMatrix);
-    output.position = mul(output.position, projectionMatrix);
-    output.tex = input.tex;
+	PixelInputType output;
+
+
+	// Change the position vector to be 4 units for proper matrix calculations.
+	input.position.w = 1.0f;
+
+	// Calculate the position of the vertex against the world, view, and projection matrices.
+	output.position = mul(input.position, worldMatrix);
+	output.position = mul(output.position, viewMatrix);
+	output.position = mul(output.position, projectionMatrix);
+
+	// Store the texture coordinates for the pixel shader.
+	output.tex = input.tex;
+
 	return output;
 }
 
@@ -60,8 +68,12 @@ PixelInputType TextureVertexShader(VertexInputType input)
 float4 TexturePixelShader(PixelInputType input) : SV_Target
 {
 	float4 textureColor;
+
+
+	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
 	textureColor = shaderTexture.Sample(SampleType, input.tex);
-    return textureColor;
+
+	return textureColor;
 }
 
 
@@ -70,10 +82,10 @@ float4 TexturePixelShader(PixelInputType input) : SV_Target
 ////////////////////////////////////////////////////////////////////////////////
 technique10 TextureTechnique
 {
-    pass pass0
-    {
-        SetVertexShader(CompileShader(vs_4_0, TextureVertexShader()));
-        SetPixelShader(CompileShader(ps_4_0, TexturePixelShader()));
-        SetGeometryShader(NULL);
-    }
+	pass pass0
+	{
+		SetVertexShader(CompileShader(vs_4_0, TextureVertexShader()));
+		SetPixelShader(CompileShader(ps_4_0, TexturePixelShader()));
+		SetGeometryShader(NULL);
+	}
 }
