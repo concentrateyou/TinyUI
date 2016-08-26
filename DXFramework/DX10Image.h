@@ -16,6 +16,8 @@ namespace DXFramework
 	public:
 		DX10Image();
 		~DX10Image();
+		BOOL Create(const DX10& dx10, INT cx, INT cy, INT scaleX, INT scaleY);
+		BOOL FillImage(const BYTE* pBits, INT cx, INT cy);
 		BOOL Load(const DX10& dx10, HANDLE hResource, INT scaleX, INT scaleY);
 		BOOL Load(const DX10& dx10, const CHAR* pzFile, INT scaleX, INT scaleY);
 		BOOL Load(const DX10& dx10, const BYTE* pData, INT size, INT scaleX, INT scaleY);

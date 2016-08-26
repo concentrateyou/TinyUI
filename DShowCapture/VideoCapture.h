@@ -32,7 +32,7 @@ namespace Media
 	public:
 		VideoCapture();
 		virtual ~VideoCapture();
-		BOOL Initialize(const Name& name, HWND hWND, Callback<void(const BYTE*, INT, LPVOID)>& receiveCB);
+		BOOL Initialize(const Name& name, Callback<void(const BYTE*, INT, LPVOID)>& receiveCB);
 		void Uninitialize();
 		BOOL Start();
 		BOOL Stop();
@@ -51,7 +51,6 @@ namespace Media
 		static VideoPixelFormat TranslateMediaSubtypeToPixelFormat(const GUID& subType);
 		void SetAntiFlickerInCaptureFilter();
 	private:
-		HWND										m_hWND;
 		VideoCaptureParam							m_vcp;
 		TinyComPtr<IGraphBuilder>					m_builder;
 		TinyComPtr<IMediaControl>					m_control;

@@ -52,7 +52,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;$(DXSDK_DIR)Include;..\DXFramework;..\ThirdParty\vld</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;$(DXSDK_DIR)Include;..\DXFramework;..\ThirdParty\vld;..\DShowCapture</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

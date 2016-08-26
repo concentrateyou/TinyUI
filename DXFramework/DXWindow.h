@@ -3,6 +3,7 @@
 #include "DXCamera.h"
 #include "DX10Image.h"
 #include "DX10TextureShader.h"
+#include "VideoCapture.h"
 
 namespace DXFramework
 {
@@ -26,14 +27,15 @@ namespace DXFramework
 	public:
 		BOOL Render();
 	private:
-		BOOL Render(FLOAT rotation);
+		void OnVideo(const BYTE* pBits, INT size, LPVOID lpParamer);
 	private:
 		BOOL				m_success;
 		DX10				m_dx10;
-		DX10Image			m_dxImage1;
-		DX10Image			m_dxImage2;
+		DX10Image			m_dxImage;
 		DXCamera			m_camera;
 		DX10TextureShader	m_textureShader;
+		Media::VideoCapture	m_videoCapture;
+		Callback<void(const BYTE*, INT, LPVOID)> m_videoCB;
 	};
 }
 

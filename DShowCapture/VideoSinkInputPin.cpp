@@ -17,6 +17,7 @@ namespace Media
 			{ MediaSubTypeI420, PIXEL_FORMAT_I420 },
 			{ MEDIASUBTYPE_IYUV, PIXEL_FORMAT_I420 },
 			{ MEDIASUBTYPE_RGB24, PIXEL_FORMAT_RGB24 },
+			{ MEDIASUBTYPE_RGB32, PIXEL_FORMAT_RGB32 },
 			{ MEDIASUBTYPE_YUY2, PIXEL_FORMAT_YUY2 },
 			{ MEDIASUBTYPE_MJPG, PIXEL_FORMAT_MJPEG },
 			{ MEDIASUBTYPE_UYVY, PIXEL_FORMAT_UYVY }
@@ -107,6 +108,16 @@ namespace Media
 			pvi->bmiHeader.biHeight = m_param.GetSize().cy;
 			pvi->bmiHeader.biSizeImage = m_param.GetSize().cx * m_param.GetSize().cy * 3;
 			pMediaType->subtype = MEDIASUBTYPE_RGB24;
+			break;
+		}
+		case PIXEL_FORMAT_RGB32:
+		{
+			pvi->bmiHeader.biCompression = BI_RGB;
+			pvi->bmiHeader.biBitCount = 32;
+			pvi->bmiHeader.biWidth = m_param.GetSize().cx;
+			pvi->bmiHeader.biHeight = m_param.GetSize().cy;
+			pvi->bmiHeader.biSizeImage = m_param.GetSize().cx * m_param.GetSize().cy * 4;
+			pMediaType->subtype = MEDIASUBTYPE_RGB32;
 			break;
 		}
 		default:

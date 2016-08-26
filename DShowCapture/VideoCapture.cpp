@@ -28,11 +28,11 @@ namespace Media
 	{
 		return m_id;
 	}
-	void VideoCapture::OnFrameReceive(const BYTE* data, INT size, LPVOID lpData)
+	void VideoCapture::OnFrameReceive(const BYTE* pBits, INT size, LPVOID lpParameter)
 	{
 		if (!m_callback.IsNull())
 		{
-			m_callback(data, size, lpData);
+			m_callback(pBits, size, lpParameter);
 		}
 	}
 	VideoCapture::VideoCapture()
@@ -43,9 +43,8 @@ namespace Media
 	{
 		Uninitialize();
 	}
-	BOOL VideoCapture::Initialize(const Name& name, HWND hWND, Callback<void(const BYTE*, INT, LPVOID)>& callback)
+	BOOL VideoCapture::Initialize(const Name& name, Callback<void(const BYTE*, INT, LPVOID)>& callback)
 	{
-		m_hWND = hWND;
 		m_callback = callback;
 		HRESULT hRes = m_builder.CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER);
 		if (FAILED(hRes))
@@ -132,8 +131,8 @@ namespace Media
 					ps.SetFormat(PIXEL_FORMAT_RGB24);
 					m_sinkFilter->SetCaptureParam(ps);
 					hRes = m_builder->Connect(m_captureO, m_sinkI);
-					if (hRes != S_OK)
-						return FALSE;
+					if (hRes == S_OK)
+						return TRUE;
 					//2. 如果失败再尝试微软自带的Dec Filter
 					switch (param.GetFormat())
 					{
@@ -161,8 +160,8 @@ namespace Media
 						ps.SetFormat(PIXEL_FORMAT_RGB24);
 						m_sinkFilter->SetCaptureParam(ps);
 						hRes = m_builder->ConnectDirect(m_mjpgO, m_sinkI, NULL);
-						if (hRes != S_OK)
-							return FALSE;
+						if (hRes == S_OK)
+							return TRUE;
 					}
 					break;
 					case PIXEL_FORMAT_UYVY:
@@ -192,12 +191,11 @@ namespace Media
 						ps.SetFormat(PIXEL_FORMAT_RGB24);
 						m_sinkFilter->SetCaptureParam(ps);
 						hRes = m_builder->ConnectDirect(m_avO, m_sinkI, NULL);
-						if (hRes != S_OK)
-							return FALSE;
+						if (hRes == S_OK)
+							return TRUE;
 					}
 					break;
 					}
-					return TRUE;
 				}
 			}
 		}
@@ -419,6 +417,7 @@ namespace Media
 			{ MediaSubTypeI420, PIXEL_FORMAT_I420 },
 			{ MEDIASUBTYPE_IYUV, PIXEL_FORMAT_I420 },
 			{ MEDIASUBTYPE_RGB24, PIXEL_FORMAT_RGB24 },
+			{ MEDIASUBTYPE_RGB32, PIXEL_FORMAT_RGB32 },
 			{ MEDIASUBTYPE_YUY2, PIXEL_FORMAT_YUY2 },
 			{ MEDIASUBTYPE_MJPG, PIXEL_FORMAT_MJPEG },
 			{ MEDIASUBTYPE_UYVY, PIXEL_FORMAT_UYVY }

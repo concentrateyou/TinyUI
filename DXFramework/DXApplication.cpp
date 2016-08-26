@@ -50,8 +50,6 @@ namespace DXFramework
 			return FALSE;
 		if (!TinyApplication::GetInstance()->AddMessageLoop(&m_msgLoop))
 			return FALSE;
-		if (!m_msgLoop.AddIdleHandler(&m_idle))
-			return FALSE;
 		m_window.Reset(new DXWindow());
 		return m_window->Create(NULL, 0, 0, 0, 0);
 	}
@@ -63,8 +61,6 @@ namespace DXFramework
 	}
 	BOOL DXApplication::Uninitialize()
 	{
-		if (!m_msgLoop.RemoveIdleHandler(&m_idle))
-			return FALSE;
 		if (!TinyApplication::GetInstance()->RemoveMessageLoop())
 			return FALSE;
 		if (!TinyApplication::GetInstance()->Uninitialize())

@@ -19,7 +19,7 @@ namespace DXFramework
 		D3DXMATRIX		GetProjectionMatrix();
 		D3DXMATRIX		GetWorldMatrix();
 		D3DXMATRIX		GetOrthoMatrix();
-		SIZE			GetSize() const;
+		TinySize			GetSize() const;
 	private:
 		TinyComPtr<IDXGISwapChain>			m_swap;
 		TinyComPtr<IDXGIFactory1>			m_factory;
@@ -32,7 +32,7 @@ namespace DXFramework
 		TinyComPtr<ID3D10RasterizerState>	m_rasterizerState;
 		HWND								m_hWND;
 		POINT								m_pos;
-		SIZE								m_size;
+		TinySize								m_size;
 		D3DXMATRIX							m_projectionMatrix;
 		D3DXMATRIX							m_worldMatrix;
 		D3DXMATRIX							m_orthoMatrix;

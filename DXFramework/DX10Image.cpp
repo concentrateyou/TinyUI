@@ -15,6 +15,19 @@ namespace DXFramework
 	DX10Image::~DX10Image()
 	{
 	}
+	BOOL DX10Image::Create(const DX10& dx10, INT cx, INT cy, INT scaleX, INT scaleY)
+	{
+		if (!Initialize(dx10))
+			return FALSE;
+		m_scaleX = scaleX;
+		m_scaleY = scaleY;
+		return m_texture.CreateTexture(dx10, cx, cy);
+	}
+	BOOL DX10Image::FillImage(const BYTE* pBits, INT cx, INT cy)
+	{
+		ASSERT(m_texture.IsValid());
+		return m_texture.FillTexture(pBits, cx, cy);
+	}
 	BOOL DX10Image::Load(const DX10& dx10, HANDLE hResource, INT scaleX, INT scaleY)
 	{
 		if (!Initialize(dx10))
@@ -83,7 +96,7 @@ namespace DXFramework
 			return TRUE;
 		m_previousPosX = positionX;
 		m_previousPosY = positionY;
-		SIZE size = dx10.GetSize();;
+		TinySize size = dx10.GetSize();;
 		left = (FLOAT)((size.cx / 2) * -1) + (FLOAT)positionX;
 		right = left + (FLOAT)m_scaleX;
 		top = (FLOAT)(size.cx / 2) - (FLOAT)positionY;

@@ -36,9 +36,12 @@ namespace Media
 		Uninitialize();
 	}
 
-	void AudioCapture::OnFrameReceive(const BYTE* data, INT size, LPVOID lpParameter)
+	void AudioCapture::OnFrameReceive(const BYTE* pBits, INT size, LPVOID lpParameter)
 	{
-
+		if (!m_callback.IsNull())
+		{
+			m_callback(pBits, size, lpParameter);
+		}
 	}
 	BOOL AudioCapture::Initialize(const Name& name, Callback<void(const BYTE*, INT, LPVOID)>& callback)
 	{

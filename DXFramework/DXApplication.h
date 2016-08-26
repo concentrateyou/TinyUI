@@ -1,7 +1,6 @@
 #pragma once
 #include "DXWindow.h"
 #include "DXFramework.h"
-#include "DXIdleHandler.h"
 
 BOOL LoadSeDebugPrivilege();
 
@@ -19,9 +18,8 @@ namespace DXFramework
 	private:
 		BOOL Uninitialize();
 	private:
-		TinyMessageLoop				m_msgLoop;
-		DXIdleHandler				m_idle;
-		TinyScopedPtr<DXWindow>		m_window;
+		TinyMessageLoop					m_msgLoop;
+		TinyScopedPtr<DXWindow>			m_window;
 	};
 }
 

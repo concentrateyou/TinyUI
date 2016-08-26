@@ -192,7 +192,7 @@ namespace DXFramework
 	{
 		return m_hWND;
 	}
-	SIZE DX10::GetSize() const
+	TinySize DX10::GetSize() const
 	{
 		return m_size;
 	}
