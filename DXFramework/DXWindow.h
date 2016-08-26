@@ -29,13 +29,15 @@ namespace DXFramework
 	private:
 		void OnVideo(const BYTE* pBits, INT size, LPVOID lpParamer);
 	private:
-		BOOL				m_success;
-		DX10				m_dx10;
-		DX10Image			m_dxImage;
-		DXCamera			m_camera;
-		DX10TextureShader	m_textureShader;
-		Media::VideoCapture	m_videoCapture;
+		BOOL					m_success;
+		DX10					m_dx10;
+		DX10Image				m_dxVideo;
+		DX10Image				m_dxGame;
+		DXCamera				m_camera;
+		DX10TextureShader		m_textureShader;
+		Media::VideoCapture		m_videoCapture;
 		Callback<void(const BYTE*, INT, LPVOID)> m_videoCB;
+		IO::TinySharedMemory	m_memory;
 	};
 }
 

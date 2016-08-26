@@ -13,10 +13,9 @@ namespace GameDetour
 		m_hWND(NULL),
 		m_hWNDOpenGL(NULL),
 		m_hWNDD3D(NULL),
-		m_bD3D8Hook(FALSE),
-		m_bD3D9Hook(FALSE),
-		m_bD3D10Hook(FALSE),
-		m_bD3D11Hook(FALSE)
+		m_bD3D9Detour(FALSE),
+		m_bD3D10Detour(FALSE),
+		m_bD3D11Detour(FALSE)
 	{
 
 	}
@@ -54,11 +53,11 @@ namespace GameDetour
 	{
 		if (!m_hWNDD3D || !m_hWNDOpenGL)
 			return FALSE;
-		if (!m_bD3D9Hook)
+		if (!m_bD3D9Detour)
 		{
-			m_bD3D9Hook = DX9Capture::Instance().Initialize(m_hWNDD3D);
+			m_bD3D9Detour = DX9Capture::Instance().Initialize(m_hWNDD3D);
 		}
-		return m_bD3D9Hook;
+		return m_bD3D9Detour;
 	}
 	DWORD WINAPI GameCapture::CaptureTask(LPVOID ps)
 	{

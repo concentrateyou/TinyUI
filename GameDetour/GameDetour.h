@@ -27,10 +27,9 @@ namespace GameDetour
 		HWND			m_hWND;
 		HWND			m_hWNDOpenGL;
 		HWND			m_hWNDD3D;
-		BOOL			m_bD3D8Hook;
-		BOOL			m_bD3D9Hook;
-		BOOL			m_bD3D10Hook;
-		BOOL			m_bD3D11Hook;
+		BOOL			m_bD3D9Detour;
+		BOOL			m_bD3D10Detour;
+		BOOL			m_bD3D11Detour;
 	};
 }
 

@@ -41,8 +41,18 @@ namespace DXFramework
 		if (pMediaType)
 		{
 			VIDEOINFOHEADER* h = reinterpret_cast<VIDEOINFOHEADER*>(pMediaType->pbFormat);
-			m_dxImage.FillImage(pBits, h->bmiHeader.biWidth, h->bmiHeader.biHeight);
-			Render();
+			m_dx10.BeginScene();
+			m_camera.UpdatePosition();
+			D3DXMATRIX viewMatrix = m_camera.GetViewMatrix();
+			D3DXMATRIX worldMatrix = m_dx10.GetWorldMatrix();
+			D3DXMATRIX projectionMatrix = m_dx10.GetProjectionMatrix();
+			D3DXMATRIX orthoMatrix = m_dx10.GetOrthoMatrix();
+			m_dx10.AllowDepth(FALSE);
+			m_dxVideo.FillImage(pBits, h->bmiHeader.biWidth, h->bmiHeader.biHeight);
+			m_dxVideo.Render(m_dx10, 25, 150);
+			m_textureShader.Render(m_dx10, m_dxVideo.GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_dxVideo.GetTexture());
+			m_dx10.AllowDepth(TRUE);
+			m_dx10.EndScene();
 		}
 	}
 
@@ -74,7 +84,7 @@ namespace DXFramework
 			m_camera.SetPosition(0.0F, 0.0F, -10.0F);
 			if (m_textureShader.Initialize(m_dx10, TEXT("D:\\Develop\\GitHub\\TinyUI\\DXFramework\\texture.fx")))
 			{
-				m_dxImage.Create(m_dx10, 800, 600, 800, 600);
+				m_dxVideo.Create(m_dx10, 800, 600, 400, 300);
 				m_videoCapture.Start();
 			}
 		}
@@ -94,7 +104,6 @@ namespace DXFramework
 	LRESULT DXWindow::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		Render();
 		return FALSE;
 	}
 	LRESULT DXWindow::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -111,9 +120,9 @@ namespace DXFramework
 		D3DXMATRIX projectionMatrix = m_dx10.GetProjectionMatrix();
 		D3DXMATRIX orthoMatrix = m_dx10.GetOrthoMatrix();
 		m_dx10.AllowDepth(FALSE);
-		if (!m_dxImage.Render(m_dx10, 0, 0))
+		if (!m_dxVideo.Render(m_dx10, 25, 100))
 			return FALSE;
-		m_textureShader.Render(m_dx10, m_dxImage.GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_dxImage.GetTexture());
+		m_textureShader.Render(m_dx10, m_dxVideo.GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_dxVideo.GetTexture());
 		m_dx10.AllowDepth(TRUE);
 		m_dx10.EndScene();
 		return TRUE;
