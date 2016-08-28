@@ -24,7 +24,6 @@ namespace TinyUI
 		virtual void OnFinalMessage(HWND hWnd);
 		virtual BOOL DestroyWindow();
 	private:
-		BOOL IsDialogMessage(LPMSG lpMsg) throw();
 		static INT_PTR CALLBACK BeginLoop(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 		static INT_PTR CALLBACK EndLoop(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	public:

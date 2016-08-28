@@ -139,17 +139,17 @@ namespace TinyUI
 		/// <summary>
 		/// Accept任务
 		/// </summary>
-		class AcceptTask : public TinyBasicTask
+		/*class AcceptTask : public TinyBasicTask
 		{
 		public:
-			AcceptTask(SOCKET	socket);
-			static void TaskComplete(void* owner, TinyBasicTask* op, const error_code& ec, UINT bytes_transferred);
-			SOCKET	socket();
-			CHAR*	data();
+		AcceptTask(SOCKET	socket);
+		static void TaskComplete(void* owner, TinyBasicTask* op, const error_code& ec, UINT bytes_transferred);
+		SOCKET	socket();
+		CHAR*	data();
 		private:
-			SOCKET	m_socket;
-			CHAR	m_data[1024];
-		};
+		SOCKET	m_socket;
+		CHAR	m_data[1024];
+		};*/
 	};
 }
 

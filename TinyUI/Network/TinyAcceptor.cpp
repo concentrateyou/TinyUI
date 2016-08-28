@@ -39,7 +39,7 @@ namespace TinyUI
 			{
 				return FALSE;
 			}
-			IO::AcceptTask* op = new IO::AcceptTask(socket);
+			/*IO::AcceptTask* op = new IO::AcceptTask(socket);
 			LPFN_ACCEPTEX lpfnAcceptEx = static_cast<LPFN_ACCEPTEX>(GetExtensionPtr(m_socket, WSAID_ACCEPTEX));
 			if (!lpfnAcceptEx(m_socket,
 				op->socket(),
@@ -55,7 +55,7 @@ namespace TinyUI
 					SAFE_DELETE(op);
 					return FALSE;
 				}
-			}
+			}*/
 			return TRUE;
 		}
 		void TinyAcceptor::Close()

@@ -9,6 +9,7 @@
 #include "Common/TinyString.h"
 #include "IO/TinySharedMemory.h"
 using namespace TinyUI;
+#pragma comment(lib,"TinyUI.lib")
 
 namespace DXCapture
 {

@@ -87,10 +87,10 @@ namespace DXFramework
 	}
 	BOOL DX11Image::Update(const DX11& dx11, INT positionX, INT positionY)
 	{
-		FLOAT left;
-		FLOAT right;
-		FLOAT top;
-		FLOAT bottom;
+		FLOAT left = 0.0F;
+		FLOAT right = 0.0F;
+		FLOAT top = 0.0F;
+		FLOAT bottom = 0.0F;
 		if ((positionX == m_previousPosX) && (positionY == m_previousPosY))
 			return TRUE;
 		m_previousPosX = positionX;
@@ -98,7 +98,7 @@ namespace DXFramework
 		TinySize size = dx11.GetSize();
 		left = (FLOAT)((size.cx / 2) * -1) + (FLOAT)positionX;
 		right = left + (FLOAT)m_scaleX;
-		top = (FLOAT)(size.cx / 2) - (FLOAT)positionY;
+		top = (FLOAT)(size.cy / 2) - (FLOAT)positionY;
 		bottom = top - (FLOAT)m_scaleY;
 		TinyScopedArray<VERTEXTYPE> vertices(new VERTEXTYPE[m_vertexCount]);
 		vertices[0].position = D3DXVECTOR3(left, top, 0.0F);

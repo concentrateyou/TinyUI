@@ -273,7 +273,7 @@ namespace TinyUI
 		}
 		HTREEITEM hTreeItem = GetRootItem();
 		SendMessage(m_hWND, WM_SETREDRAW, (WPARAM)FALSE, 0);
-		if (GetPIDLSize(newPIDL) != 0)//不是桌面
+		//if (GetPIDLSize(newPIDL) != 0)//不是桌面
 		{
 			LPCITEMIDLIST currentPIDL = newPIDL;
 			LPITEMIDLIST parentPIDL = NULL;

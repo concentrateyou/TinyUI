@@ -6,7 +6,7 @@ namespace TinyUI
 {
 	namespace Network
 	{
-		PVOID GetExtensionPtr(SOCKET socket, GUID guid)
+		PVOID WINAPI GetExtensionPtr(SOCKET socket, GUID guid)
 		{
 			LPVOID ps = NULL;
 			DWORD dwBytes = 0;

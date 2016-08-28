@@ -36,7 +36,7 @@ namespace TinyUI
 	}
 	BOOL TinyDialog::PreTranslateMessage(MSG* pMsg)
 	{
-		return IsDialogMessage(pMsg);
+		return ::IsDialogMessage(m_hWND, pMsg);
 	}
 	LRESULT TinyDialog::DefWindowProc()
 	{

@@ -6,14 +6,14 @@
 #include "../IO/TinyTask.h"
 #include <WinSock2.h>
 #include <mswsock.h>
-#pragma comment(lib,"mswsock.lib")
+#pragma comment(lib,"Mswsock.lib")
 #pragma comment(lib,"Ws2_32.lib")
 
 namespace TinyUI
 {
 	namespace Network
 	{
-		PVOID GetExtensionPtr(SOCKET socket, GUID guid);
+		PVOID WINAPI GetExtensionPtr(SOCKET socket, GUID guid);
 		/*LPFN_GETACCEPTEXSOCKADDRS   lpfnGetAcceptExSockaddrs = NULL;
 		GUID guidGetAcceptExSockaddrs = WSAID_GETACCEPTEXSOCKADDRS;
 		DWORD dwBytes = 0;

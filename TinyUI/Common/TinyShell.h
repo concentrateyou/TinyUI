@@ -7,9 +7,6 @@ namespace TinyUI
 #define PIDLNext(relativePIDL)		PIDLSkip(relativePIDL, (relativePIDL)->mkid.cb)
 #define PIDLIsEmpty(allocPIDL)         ((allocPIDL) == NULL || (allocPIDL)->mkid.cb==0)
 #define PIDLIsChild(allocPIDL)         (PIDLIsEmpty(allocPIDL) || PIDLIsEmpty(PIDLNext(allocPIDL)))
-	UINT GetPIDLSize(LPCITEMIDLIST pidl);
-	LPITEMIDLIST CopyPIDL(LPMALLOC pMalloc, LPCITEMIDLIST pidlSource);
-	VOID FreePIDL(LPITEMIDLIST pidl);
 	typedef struct tagSHELLITEMINFO
 	{
 		LPSHELLFOLDER  pParentFolder;//¸¸´°¿ÚµÄShellFoler

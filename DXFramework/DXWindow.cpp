@@ -48,7 +48,7 @@ namespace DXFramework
 			D3DXMATRIX orthoMatrix = m_dx11.GetOrthoMatrix();
 			m_dx11.AllowDepth(FALSE);
 			m_dxVideo.FillImage(m_dx11, pBits, h->bmiHeader.biWidth, h->bmiHeader.biHeight);
-			m_dxVideo.Render(m_dx11, 25, 150);
+			m_dxVideo.Render(m_dx11, 5, 5);
 			m_textureShader.Render(m_dx11, m_dxVideo.GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_dxVideo.GetTexture());
 			m_dx11.AllowDepth(TRUE);
 			m_dx11.EndScene();
@@ -80,7 +80,10 @@ namespace DXFramework
 		if (m_dx11.Initialize(m_hWND, 0, 0, 800, 600))
 		{
 			m_camera.SetPosition(0.0F, 0.0F, -10.0F);
-			if (m_textureShader.Initialize(m_dx11, TEXT("D:\\Develop\\GitHub\\TinyUI\\DXFramework\\texture.vs"), TEXT("D:\\Develop\\GitHub\\TinyUI\\DXFramework\\texture.ps")))
+			m_captureSource.BeginCapture(m_dx11,"War3.exe","D:\\Develop\\GitHub\\TinyUI\\Debug\\GameDetour.dll");
+			if (m_textureShader.Initialize(m_dx11,
+				TEXT("D:\\Develop\\GitHub\\TinyUI\\DXFramework\\texture.vs"),
+				TEXT("D:\\Develop\\GitHub\\TinyUI\\DXFramework\\texture.ps")))
 			{
 				m_dxVideo.Create(m_dx11, 640, 360, 640, 360);
 				m_videoCapture.Start();
@@ -118,7 +121,7 @@ namespace DXFramework
 		D3DXMATRIX projectionMatrix = m_dx11.GetProjectionMatrix();
 		D3DXMATRIX orthoMatrix = m_dx11.GetOrthoMatrix();
 		m_dx11.AllowDepth(FALSE);
-		if (!m_dxVideo.Render(m_dx11, 25, 100))
+		if (!m_dxVideo.Render(m_dx11, 1, 1))
 			return FALSE;
 		m_textureShader.Render(m_dx11, m_dxVideo.GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_dxVideo.GetTexture());
 		m_dx11.AllowDepth(TRUE);

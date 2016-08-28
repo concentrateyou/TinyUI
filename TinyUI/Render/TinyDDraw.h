@@ -5,6 +5,7 @@
 #include "TinyImage.h"
 #include "TinyTransform.h"
 #pragma comment(lib,"ddraw.lib")
+#pragma comment(lib,"dxguid.lib")
 
 namespace TinyUI
 {

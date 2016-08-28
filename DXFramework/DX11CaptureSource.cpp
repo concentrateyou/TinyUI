@@ -135,7 +135,7 @@ namespace DXFramework
 			return FALSE;
 		if (!m_bInject)
 		{
-			m_bInject = InjectLibrary(m_targetWND.hProcess, dll.STR());
+			m_bInject = InjectLibrary(m_targetWND.hProcess, "D:\\Develop\\GitHub\\TinyUI\\Debug\\GameDetour.dll");
 			if (!m_bInject)
 				return FALSE;
 		}
