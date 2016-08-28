@@ -1,8 +1,8 @@
 #pragma once
-#include "DX10.h"
+#include "DX11.h"
 #include "DXCamera.h"
-#include "DX10Image.h"
-#include "DX10TextureShader.h"
+#include "DX11Image.h"
+#include "DX11TextureShader.h"
 #include "VideoCapture.h"
 
 namespace DXFramework
@@ -30,14 +30,13 @@ namespace DXFramework
 		void OnVideo(const BYTE* pBits, INT size, LPVOID lpParamer);
 	private:
 		BOOL					m_success;
-		DX10					m_dx10;
-		DX10Image				m_dxVideo;
-		DX10Image				m_dxGame;
+		DX11					m_dx11;
+		DX11Image				m_dxVideo;
+		DX11Image				m_dxGame;
 		DXCamera				m_camera;
-		DX10TextureShader		m_textureShader;
+		DX11TextureShader		m_textureShader;
 		Media::VideoCapture		m_videoCapture;
 		Callback<void(const BYTE*, INT, LPVOID)> m_videoCB;
-		IO::TinySharedMemory	m_memory;
 	};
 }
 

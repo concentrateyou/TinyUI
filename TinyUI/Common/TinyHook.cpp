@@ -253,9 +253,9 @@ namespace TinyUI
 			return FALSE;
 		m_pfnOrig = pfnOrig;
 		m_pfnNew = pfnNew;
-		if (!VirtualProtect((LPVOID)m_pfnOrig, 5, PAGE_EXECUTE_READWRITE, &m_dwOrigProtect))
+		if (!VirtualProtect((LPVOID)m_pfnOrig, JMP_32_SIZE, PAGE_EXECUTE_READWRITE, &m_dwOrigProtect))
 			return FALSE;
-		memcpy(m_data, (const void*)m_pfnOrig, 5);
+		memcpy(m_data, (const void*)m_pfnOrig, JMP_32_SIZE);
 		return TRUE;
 	}
 	BOOL TinyDetour::BeginDetour()
@@ -268,9 +268,9 @@ namespace TinyUI
 		ULONG64 diff = 0;
 		//http://www.cnblogs.com/zhangdongsheng/archive/2012/12/06/2804234.html
 		//计算偏移量(JMP的地址–代码地址–5 = 机器码跳转地址 x86)
-		offset = target - (start + 5);
+		offset = target - (start + JMP_32_SIZE);
 		DWORD oldProtect;
-		VirtualProtect((LPVOID)m_pfnOrig, 5, PAGE_EXECUTE_READWRITE, &oldProtect);
+		VirtualProtect((LPVOID)m_pfnOrig, JMP_32_SIZE, PAGE_EXECUTE_READWRITE, &oldProtect);
 		LPBYTE ps = (LPBYTE)m_pfnOrig;
 		*ps = 0xE9;
 		*(DWORD*)(ps + 1) = DWORD(offset);
@@ -281,9 +281,9 @@ namespace TinyUI
 	{
 		if (!m_bDetour) return FALSE;
 		DWORD oldProtect;
-		VirtualProtect((LPVOID)m_pfnOrig, 5, PAGE_EXECUTE_READWRITE, &oldProtect);
-		memcpy((void*)m_pfnOrig, m_data, 5);
-		VirtualProtect((LPVOID)m_pfnOrig, 5, m_dwOrigProtect, &oldProtect);
+		VirtualProtect((LPVOID)m_pfnOrig, JMP_32_SIZE, PAGE_EXECUTE_READWRITE, &oldProtect);
+		memcpy((void*)m_pfnOrig, m_data, JMP_32_SIZE);
+		VirtualProtect((LPVOID)m_pfnOrig, JMP_32_SIZE, m_dwOrigProtect, &oldProtect);
 		m_bDetour = FALSE;
 		return TRUE;
 	}

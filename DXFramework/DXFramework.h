@@ -1,9 +1,10 @@
 #pragma once
-#include <D3D10_1.h>
-#include <D3DX10.h>
-#include <D3DX10Tex.h>
+#include <dxgi.h>
+#include <d3dcommon.h>
+#include <d3d11.h>
+#include <d3dx10math.h>
+#include <d3dx11tex.h>
 #include <DXGI.h>
-#include <D3dx9math.h>
 #include <TlHelp32.h>
 #include <string>
 #include "Common/TinyCommon.h"

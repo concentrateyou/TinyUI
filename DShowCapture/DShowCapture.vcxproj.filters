@@ -45,9 +45,6 @@
     <ClInclude Include="ScopedMediaType.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="TaskRunner.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="TypeEnumerator.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -102,9 +99,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ScopedMediaType.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TaskRunner.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="TypeEnumerator.cpp">

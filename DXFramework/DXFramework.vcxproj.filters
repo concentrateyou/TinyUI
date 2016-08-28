@@ -33,25 +33,28 @@
     <ClInclude Include="DXFramework.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DX10.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DX10Texture.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DX10TextureShader.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="DXCamera.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DX10Image.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DXGraphics.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DX10CaptureSource.h">
+    <ClInclude Include="TaskRunner.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11CaptureSource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Image.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Texture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11TextureShader.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -71,30 +74,36 @@
     <ClCompile Include="DXFramework.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DX10.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DX10Texture.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DX10TextureShader.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="DXCamera.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DX10Image.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DXGraphics.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DX10CaptureSource.cpp">
+    <ClCompile Include="TaskRunner.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11CaptureSource.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Image.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Texture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11TextureShader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="texture.fx">
+    <None Include="texture.ps">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="texture.vs">
       <Filter>资源文件</Filter>
     </None>
   </ItemGroup>

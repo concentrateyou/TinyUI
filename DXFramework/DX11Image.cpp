@@ -1,9 +1,9 @@
 #include "stdafx.h"
-#include "DX10Image.h"
+#include "DX11Image.h"
 
 namespace DXFramework
 {
-	DX10Image::DX10Image()
+	DX11Image::DX11Image()
 		:m_scaleX(0),
 		m_scaleY(0),
 		m_previousPosX(-1),
@@ -12,52 +12,52 @@ namespace DXFramework
 		m_indexCount(0)
 	{
 	}
-	DX10Image::~DX10Image()
+	DX11Image::~DX11Image()
 	{
 	}
-	BOOL DX10Image::Create(const DX10& dx10, INT cx, INT cy, INT scaleX, INT scaleY)
+	BOOL DX11Image::Create(const DX11& dx11, INT cx, INT cy, INT scaleX, INT scaleY)
 	{
-		if (!Initialize(dx10))
+		if (!Initialize(dx11))
 			return FALSE;
 		m_scaleX = scaleX;
 		m_scaleY = scaleY;
-		return m_texture.CreateTexture(dx10, cx, cy, DXGI_FORMAT_R8G8B8A8_UNORM, NULL);
+		return m_texture.CreateTexture(dx11, cx, cy, DXGI_FORMAT_B8G8R8X8_UNORM, NULL);
 	}
-	BOOL DX10Image::FillImage(const BYTE* pBits, INT cx, INT cy)
+	BOOL DX11Image::FillImage(const DX11& dx11, const BYTE* pBits, INT cx, INT cy)
 	{
 		ASSERT(m_texture.IsValid());
-		return m_texture.FillTexture(pBits, cx, cy);
+		return m_texture.FillTexture(dx11, pBits, cx, cy);
 	}
-	BOOL DX10Image::Load(const DX10& dx10, HANDLE hResource, INT scaleX, INT scaleY)
+	BOOL DX11Image::Load(const DX11& dx11, HANDLE hResource, INT scaleX, INT scaleY)
 	{
-		if (!Initialize(dx10))
+		if (!Initialize(dx11))
 			return FALSE;
 		m_scaleX = scaleX;
 		m_scaleY = scaleY;
-		return m_texture.LoadTexture(dx10, hResource);
+		return m_texture.LoadTexture(dx11, hResource);
 	}
-	BOOL DX10Image::Load(const DX10& dx10, const CHAR* pzFile, INT scaleX, INT scaleY)
+	BOOL DX11Image::Load(const DX11& dx11, const CHAR* pzFile, INT scaleX, INT scaleY)
 	{
-		if (!Initialize(dx10))
+		if (!Initialize(dx11))
 			return FALSE;
 		m_scaleX = scaleX;
 		m_scaleY = scaleY;
-		return m_texture.LoadTexture(dx10, pzFile);
+		return m_texture.LoadTexture(dx11, pzFile);
 	}
-	BOOL DX10Image::Load(const DX10& dx10, const BYTE* pData, DWORD dwSize, INT scaleX, INT scaleY)
+	BOOL DX11Image::Load(const DX11& dx11, const BYTE* pData, DWORD dwSize, INT scaleX, INT scaleY)
 	{
-		if (!Initialize(dx10))
+		if (!Initialize(dx11))
 			return FALSE;
 		m_scaleX = scaleX;
 		m_scaleY = scaleY;
-		return m_texture.LoadTexture(dx10, pData, dwSize);
+		return m_texture.LoadTexture(dx11, pData, dwSize);
 	}
-	BOOL DX10Image::Initialize(const DX10& dx10)
+	BOOL DX11Image::Initialize(const DX11& dx11)
 	{
-		D3D10_BUFFER_DESC vertexBufferDesc;
-		D3D10_BUFFER_DESC indexBufferDesc;
-		D3D10_SUBRESOURCE_DATA vertexData;
-		D3D10_SUBRESOURCE_DATA indexData;
+		D3D11_BUFFER_DESC		vertexBufferDesc;
+		D3D11_BUFFER_DESC		indexBufferDesc;
+		D3D11_SUBRESOURCE_DATA	vertexData;
+		D3D11_SUBRESOURCE_DATA	indexData;
 		m_vertexCount = 6;
 		m_indexCount = m_vertexCount;
 		TinyScopedArray<VERTEXTYPE> vertices(new VERTEXTYPE[m_vertexCount]);
@@ -65,27 +65,27 @@ namespace DXFramework
 		ZeroMemory(vertices.Ptr(), (sizeof(VERTEXTYPE) * m_vertexCount));
 		for (INT i = 0; i < m_indexCount; i++)
 			indices[i] = i;
-		vertexBufferDesc.Usage = D3D10_USAGE_DYNAMIC;
+		vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 		vertexBufferDesc.ByteWidth = sizeof(VERTEXTYPE) * m_vertexCount;
-		vertexBufferDesc.BindFlags = D3D10_BIND_VERTEX_BUFFER;
-		vertexBufferDesc.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
+		vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		vertexBufferDesc.MiscFlags = 0;
 		vertexData.pSysMem = vertices.Ptr();
-		HRESULT hRes = dx10.GetD3D()->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
+		HRESULT hRes = dx11.GetD3D()->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
 		if (FAILED(hRes))
 			return FALSE;
-		indexBufferDesc.Usage = D3D10_USAGE_DEFAULT;
+		indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 		indexBufferDesc.ByteWidth = sizeof(ULONG) * m_indexCount;
-		indexBufferDesc.BindFlags = D3D10_BIND_INDEX_BUFFER;
+		indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 		indexBufferDesc.CPUAccessFlags = 0;
 		indexBufferDesc.MiscFlags = 0;
 		indexData.pSysMem = indices.Ptr();
-		hRes = dx10.GetD3D()->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
+		hRes = dx11.GetD3D()->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
 		if (FAILED(hRes))
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX10Image::Update(const DX10& dx10, INT positionX, INT positionY)
+	BOOL DX11Image::Update(const DX11& dx11, INT positionX, INT positionY)
 	{
 		FLOAT left;
 		FLOAT right;
@@ -95,7 +95,7 @@ namespace DXFramework
 			return TRUE;
 		m_previousPosX = positionX;
 		m_previousPosY = positionY;
-		TinySize size = dx10.GetSize();;
+		TinySize size = dx11.GetSize();
 		left = (FLOAT)((size.cx / 2) * -1) + (FLOAT)positionX;
 		right = left + (FLOAT)m_scaleX;
 		top = (FLOAT)(size.cx / 2) - (FLOAT)positionY;
@@ -113,31 +113,31 @@ namespace DXFramework
 		vertices[4].texture = D3DXVECTOR2(1.0F, 0.0F);
 		vertices[5].position = D3DXVECTOR3(right, bottom, 0.0F);
 		vertices[5].texture = D3DXVECTOR2(1.0F, 1.0F);
-		void* pData = NULL;
-		HRESULT hRes = m_vertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, (void**)&pData);
+		D3D11_MAPPED_SUBRESOURCE mappedResource;
+		HRESULT hRes = dx11.GetContext()->Map(m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		if (FAILED(hRes))
 			return FALSE;
-		memcpy(pData, (void*)vertices.Ptr(), (sizeof(VERTEXTYPE)*m_vertexCount));
-		m_vertexBuffer->Unmap();
+		memcpy(mappedResource.pData, (void*)vertices.Ptr(), sizeof(VERTEXTYPE) * m_vertexCount);
+		dx11.GetContext()->Unmap(m_vertexBuffer, 0);
 		return TRUE;
 	}
-	INT	 DX10Image::GetIndexCount() const
+	INT	 DX11Image::GetIndexCount() const
 	{
 		return m_indexCount;
 	}
-	DX10Texture* DX10Image::GetTexture()
+	DX11Texture* DX11Image::GetTexture()
 	{
 		return &m_texture;
 	}
-	BOOL DX10Image::Render(const DX10& dx10, INT positionX, INT positionY)
+	BOOL DX11Image::Render(const DX11& dx11, INT positionX, INT positionY)
 	{
-		if (!this->Update(dx10, positionX, positionY))
+		if (!this->Update(dx11, positionX, positionY))
 			return FALSE;
 		UINT stride = sizeof(VERTEXTYPE);
 		UINT offset = 0;
-		dx10.GetD3D()->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
-		dx10.GetD3D()->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-		dx10.GetD3D()->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		dx11.GetContext()->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
+		dx11.GetContext()->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		dx11.GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		return TRUE;
 	}
 }

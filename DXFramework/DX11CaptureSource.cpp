@@ -1,53 +1,53 @@
 #include "stdafx.h"
-#include "DX10CaptureSource.h"
+#include "DX11CaptureSource.h"
 
 namespace DXFramework
 {
-	DX10CaptureSource::DX10CaptureSource()
+	DX11CaptureSource::DX11CaptureSource()
 	{
 	}
-	DX10CaptureSource::~DX10CaptureSource()
+	DX11CaptureSource::~DX11CaptureSource()
 	{
 	}
-	BOOL DX10CaptureSource::Initialize(const TinyString& processName)
+	BOOL DX11CaptureSource::Initialize(const TinyString& processName)
 	{
 		if (!FindWindow(processName))
 			return FALSE;
 		string name = StringPrintf("%s%d", BEGIN_CAPTURE_EVENT, m_targetWND.dwProcessID);
-		if (!m_eventBegin.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
+		if (!m_begin.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
 		{
-			if (!m_eventBegin.CreateEvent(FALSE, FALSE, name.c_str()))
+			if (!m_begin.CreateEvent(FALSE, FALSE, name.c_str()))
 			{
 				return FALSE;
 			}
 		}
 		name = StringPrintf("%s%d", END_CAPTURE_EVENT, m_targetWND.dwProcessID);
-		if (!m_eventEnd.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
+		if (!m_end.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
 		{
-			if (!m_eventEnd.CreateEvent(FALSE, FALSE, name.c_str()))
+			if (!m_end.CreateEvent(FALSE, FALSE, name.c_str()))
 			{
 				return FALSE;
 			}
 		}
 		name = StringPrintf("%s%d", CAPTURE_READY_EVENT, m_targetWND.dwProcessID);
-		if (!m_eventReady.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
+		if (!m_ready.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
 		{
-			if (!m_eventReady.CreateEvent(FALSE, FALSE, name.c_str()))
+			if (!m_ready.CreateEvent(FALSE, FALSE, name.c_str()))
 			{
 				return FALSE;
 			}
 		}
 		name = StringPrintf("%s%d", APP_EXIT_EVENT, m_targetWND.dwProcessID);
-		if (!m_eventExit.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
+		if (!m_exit.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
 		{
-			if (!m_eventExit.CreateEvent(FALSE, FALSE, name.c_str()))
+			if (!m_exit.CreateEvent(FALSE, FALSE, name.c_str()))
 			{
 				return FALSE;
 			}
 		}
 		return TRUE;
 	}
-	DWORD DX10CaptureSource::FindProcess(const TinyString& processName)
+	DWORD DX11CaptureSource::FindProcess(const TinyString& processName)
 	{
 		DWORD dwProcessID = 0;
 		HANDLE hProcessSnap = NULL;
@@ -71,7 +71,7 @@ namespace DXFramework
 		CloseHandle(hProcessSnap);
 		return dwProcessID;
 	}
-	BOOL DX10CaptureSource::FindWindow(const TinyString& processName)
+	BOOL DX11CaptureSource::FindWindow(const TinyString& processName)
 	{
 		if (m_targetWND.hProcess)
 			CloseHandle(m_targetWND.hProcess);
@@ -90,7 +90,7 @@ namespace DXFramework
 		}
 		WNDINFO ws;
 		ws.dwProcessID = m_targetWND.dwProcessID;
-		bRes = EnumWindows(DX10CaptureSource::EnumWindow, reinterpret_cast<LPARAM>(&ws));
+		bRes = EnumWindows(DX11CaptureSource::EnumWindow, reinterpret_cast<LPARAM>(&ws));
 		m_targetWND.dwThreadID = ws.dwThreadID;
 		m_targetWND.hWND = ws.hWND;
 	D3DERROR:
@@ -101,7 +101,7 @@ namespace DXFramework
 		}
 		return bRes == S_OK;
 	}
-	SharedCapture* DX10CaptureSource::GetSharedCapture()
+	SharedCapture* DX11CaptureSource::GetSharedCapture()
 	{
 		if (m_sharedMemory.Open(SHAREDCAPTURE_MEMORY) && m_sharedMemory.Map())
 		{
@@ -109,7 +109,7 @@ namespace DXFramework
 		}
 		return NULL;
 	}
-	BOOL CALLBACK DX10CaptureSource::EnumWindow(HWND hwnd, LPARAM lParam)
+	BOOL CALLBACK DX11CaptureSource::EnumWindow(HWND hwnd, LPARAM lParam)
 	{
 		LPWNDINFO ws = reinterpret_cast<LPWNDINFO>(lParam);
 		DWORD dwProcessId;
@@ -127,5 +127,46 @@ namespace DXFramework
 			return FALSE;
 		}
 		return TRUE;
+	}
+	BOOL DX11CaptureSource::BeginCapture(const DX11& dx10, const TinyString& processName, const TinyString& dll)
+	{
+		BOOL bRes = S_OK;
+		if (!Initialize(processName))
+			return FALSE;
+		if (!m_bInject)
+		{
+			m_bInject = InjectLibrary(m_targetWND.hProcess, dll.STR());
+			if (!m_bInject)
+				return FALSE;
+		}
+		if (m_ready.Lock(0))
+		{
+			SharedCapture* ps = GetSharedCapture();
+			if (!ps)
+				return FALSE;
+			if (!m_textureCapture.Initialize(dx10, ps))
+				return FALSE;
+			m_bCapturing = TRUE;
+		}
+		m_begin.SetEvent();
+		return TRUE;
+	}
+
+	BOOL DX11CaptureSource::EndCapture()
+	{
+		m_bCapturing = FALSE;
+		m_end.SetEvent();
+		return TRUE;
+	}
+	void DX11CaptureSource::Tick(const DX11& dx10)
+	{
+		if (m_exit && m_exit.Lock(0))
+		{
+			EndCapture();
+		}
+		if (!m_bCapturing)
+		{
+			BeginCapture(dx10, TEXT("War3.exe"), TEXT("D:\\Develop\\GitHub\\TinyUI\\Debug\\GameDetour.dll"));
+		}
 	}
 }

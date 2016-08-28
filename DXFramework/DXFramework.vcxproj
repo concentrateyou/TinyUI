@@ -60,7 +60,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\TinyUI;..\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d10_1.lib;d3dx10.lib;dxgi.lib;TinyUI.lib</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d3dx11.lib;d3dx10.lib;dxgi.lib;TinyUI.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -84,11 +84,11 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DX10.h" />
-    <ClInclude Include="DX10CaptureSource.h" />
-    <ClInclude Include="DX10Image.h" />
-    <ClInclude Include="DX10Texture.h" />
-    <ClInclude Include="DX10TextureShader.h" />
+    <ClInclude Include="DX11.h" />
+    <ClInclude Include="DX11CaptureSource.h" />
+    <ClInclude Include="DX11Image.h" />
+    <ClInclude Include="DX11Texture.h" />
+    <ClInclude Include="DX11TextureShader.h" />
     <ClInclude Include="DXCamera.h" />
     <ClInclude Include="DXFramework.h" />
     <ClInclude Include="DXApplication.h" />
@@ -96,13 +96,14 @@
     <ClInclude Include="DXWindow.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TaskRunner.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DX10.cpp" />
-    <ClCompile Include="DX10Image.cpp" />
-    <ClCompile Include="DX10CaptureSource.cpp" />
-    <ClCompile Include="DX10Texture.cpp" />
-    <ClCompile Include="DX10TextureShader.cpp" />
+    <ClCompile Include="DX11.cpp" />
+    <ClCompile Include="DX11Image.cpp" />
+    <ClCompile Include="DX11CaptureSource.cpp" />
+    <ClCompile Include="DX11Texture.cpp" />
+    <ClCompile Include="DX11TextureShader.cpp" />
     <ClCompile Include="DXCamera.cpp" />
     <ClCompile Include="DXFramework.cpp" />
     <ClCompile Include="dllmain.cpp">
@@ -120,16 +121,16 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="texture.fx">
-      <FileType>Document</FileType>
-    </None>
+    <ClCompile Include="TaskRunner.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DShowCapture\DShowCapture.vcxproj">
       <Project>{b8f16b34-e13e-4757-b09a-792046bcc2d3}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="texture.ps" />
+    <None Include="texture.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

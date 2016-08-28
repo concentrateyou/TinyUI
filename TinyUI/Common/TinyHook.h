@@ -60,6 +60,8 @@ namespace TinyUI
 		static PVOID        m_pMaximumApplicationAddress;
 	};
 	SELECTANY PVOID TinyIATFunction::m_pMaximumApplicationAddress = NULL;
+#define JMP_64_SIZE            14
+#define JMP_32_SIZE            5
 	/// <summary>
 	/// –È±ÌHook
 	/// </summary>
