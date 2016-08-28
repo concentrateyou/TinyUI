@@ -3,43 +3,50 @@
 
 namespace DXFramework
 {
+	INT GetBits(DXGI_FORMAT dxgi)
+	{
+		switch (dxgi)
+		{
+		case DXGI_FORMAT_B8G8R8X8_UNORM:
+		case DXGI_FORMAT_B8G8R8A8_UNORM:
+			return 4;
+		default:
+			return 2;
+		}
+	}
 	DX10Texture::DX10Texture()
 	{
 	}
-
-
 	DX10Texture::~DX10Texture()
 	{
 	}
-	BOOL DX10Texture::CreateTexture(const DX10& dx10, INT cx, INT cy)
+	BOOL DX10Texture::CreateTexture(const DX10& dx10, INT cx, INT cy, DXGI_FORMAT dxgi, void *lpData)
 	{
-		TinyScopedArray<BYTE> bits(new BYTE[cx*cy * 4]);
-		memset(bits.Ptr(), 0xFFFF0000, cx*cy * 4);
 		D3D10_TEXTURE2D_DESC textureDesc;
 		ZeroMemory(&textureDesc, sizeof(textureDesc));
 		textureDesc.Width = cx;
 		textureDesc.Height = cy;
 		textureDesc.MipLevels = 1;
 		textureDesc.ArraySize = 1;
-		textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		textureDesc.Format = dxgi;
 		textureDesc.BindFlags = D3D10_BIND_SHADER_RESOURCE;
 		textureDesc.SampleDesc.Count = 1;
 		textureDesc.Usage = D3D10_USAGE_DYNAMIC;
 		textureDesc.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
-		D3D10_SUBRESOURCE_DATA srd;
+		D3D10_SUBRESOURCE_DATA dsd;
 		D3D10_SUBRESOURCE_DATA *lpSRD = NULL;
-		if (bits.Ptr())
+		if (lpData)
 		{
-			srd.pSysMem = static_cast<const void*>(bits.Ptr());
-			srd.SysMemPitch = cx * 4;
-			srd.SysMemSlicePitch = 0;
-			lpSRD = &srd;
+			dsd.pSysMem = lpData;
+			dsd.SysMemPitch = cx * GetBits(dxgi);
+			dsd.SysMemSlicePitch = 0;
+			lpSRD = &dsd;
 		}
 		if (FAILED(dx10.GetD3D()->CreateTexture2D(&textureDesc, lpSRD, &m_texture2D)))
 			return FALSE;
 		D3D10_SHADER_RESOURCE_VIEW_DESC resourceDesc;
 		ZeroMemory(&resourceDesc, sizeof(resourceDesc));
-		resourceDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		resourceDesc.Format = dxgi;
 		resourceDesc.ViewDimension = D3D10_SRV_DIMENSION_TEXTURE2D;
 		resourceDesc.Texture2D.MipLevels = 1;
 		if (FAILED(dx10.GetD3D()->CreateShaderResourceView(m_texture2D, &resourceDesc, &m_resourceView)))
@@ -53,22 +60,7 @@ namespace DXFramework
 		HRESULT hRes = m_texture2D->Map(0, D3D10_MAP_WRITE_DISCARD, 0, &map);
 		if (FAILED(hRes))
 			return FALSE;
-		INT linesize = ((((24 * cx) + 31) / 32) * 4);
-		BYTE* src = const_cast<BYTE*>(pBits);
-		BYTE* dst = static_cast<BYTE*>(map.pData);
-		BOOL bFlipY = TRUE;
-		for (INT row = 0; row < cy; row++)
-		{
-			INT y = bFlipY ? cy - 1 - row : row;
-			for (INT col = 0; col < cx; col++)
-			{
-				BYTE* iDst = src + y * linesize + col * 3;
-				*dst++ = *iDst++;
-				*dst++ = *iDst++;
-				*dst++ = *iDst++;
-				*dst++ = 0;
-			}
-		}
+		memcpy(map.pData, pBits, map.RowPitch * cy);
 		m_texture2D->Unmap(0);
 		return TRUE;
 	}
@@ -114,12 +106,12 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX10Texture::LoadTexture(const DX10& dx10, const BYTE* pBits, INT size)
+	BOOL DX10Texture::LoadTexture(const DX10& dx10, const BYTE* pBits, DWORD dwSize)
 	{
 		if (!pBits)
 			return FALSE;
 		HRESULT hRes = S_OK;
-		if (FAILED(hRes = D3DX10CreateShaderResourceViewFromMemory(dx10.GetD3D(), pBits, size, NULL, NULL, &m_resourceView, NULL)))
+		if (FAILED(hRes = D3DX10CreateShaderResourceViewFromMemory(dx10.GetD3D(), pBits, dwSize, NULL, NULL, &m_resourceView, NULL)))
 			return FALSE;
 		TinyComPtr<ID3D10Resource> resource;
 		m_resourceView->GetResource(&resource);
@@ -137,6 +129,12 @@ namespace DXFramework
 	{
 		return m_resourceView;
 	}
+	TinyComPtr<IDXGISurface1> DX10Texture::GetSurface()
+	{
+		TinyComPtr<IDXGISurface1> surface;
+		m_texture2D->QueryInterface(__uuidof(IDXGISurface1), (void**)&surface);
+		return surface;
+	}
 	TinySize DX10Texture::GetSize()
 	{
 		ASSERT(m_texture2D);
@@ -147,5 +145,39 @@ namespace DXFramework
 	BOOL DX10Texture::IsValid() const
 	{
 		return m_texture2D != NULL;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	SharedTextureCapture::SharedTextureCapture()
+		:m_hWND(NULL)
+	{
+
+	}
+	SharedTextureCapture::~SharedTextureCapture()
+	{
+
+	}
+	BOOL SharedTextureCapture::Initialize(const DX10& dx10, SharedCapture* sharedCapture)
+	{
+		if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE))
+			return FALSE;
+		if (!m_textureMemery.Map(0, sizeof(SharedTexture)))
+			return FALSE;
+		SharedTexture* pTexture = reinterpret_cast<SharedTexture*>(m_textureMemery.Address());
+		if (!pTexture)
+			return FALSE;
+		if (!m_sharedTexture.LoadTexture(dx10, pTexture->TextureHandle))
+			return FALSE;
+		if (!m_texture.CreateTexture(dx10, sharedCapture->Size.cx, sharedCapture->Size.cy, (DXGI_FORMAT)sharedCapture->Format, NULL))
+			return FALSE;
+		return TRUE;
+	}
+	DX10Texture* SharedTextureCapture::LockTexture(const DX10& dx10)
+	{
+		dx10.GetD3D()->CopyResource(m_texture.GetTexture2D(), m_sharedTexture.GetTexture2D());
+		return &m_texture;
+	}
+	DX10Texture* SharedTextureCapture::GetSharedTexture()
+	{
+		return &m_sharedTexture;
 	}
 }

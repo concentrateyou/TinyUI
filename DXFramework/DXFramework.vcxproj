@@ -85,6 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX10.h" />
+    <ClInclude Include="DX10CaptureSource.h" />
     <ClInclude Include="DX10Image.h" />
     <ClInclude Include="DX10Texture.h" />
     <ClInclude Include="DX10TextureShader.h" />
@@ -99,6 +100,7 @@
   <ItemGroup>
     <ClCompile Include="DX10.cpp" />
     <ClCompile Include="DX10Image.cpp" />
+    <ClCompile Include="DX10CaptureSource.cpp" />
     <ClCompile Include="DX10Texture.cpp" />
     <ClCompile Include="DX10TextureShader.cpp" />
     <ClCompile Include="DXCamera.cpp" />

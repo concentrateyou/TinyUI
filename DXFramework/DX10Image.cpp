@@ -21,7 +21,7 @@ namespace DXFramework
 			return FALSE;
 		m_scaleX = scaleX;
 		m_scaleY = scaleY;
-		return m_texture.CreateTexture(dx10, cx, cy);
+		return m_texture.CreateTexture(dx10, cx, cy, DXGI_FORMAT_R8G8B8A8_UNORM, NULL);
 	}
 	BOOL DX10Image::FillImage(const BYTE* pBits, INT cx, INT cy)
 	{
@@ -44,17 +44,16 @@ namespace DXFramework
 		m_scaleY = scaleY;
 		return m_texture.LoadTexture(dx10, pzFile);
 	}
-	BOOL DX10Image::Load(const DX10& dx10, const BYTE* pData, INT size, INT scaleX, INT scaleY)
+	BOOL DX10Image::Load(const DX10& dx10, const BYTE* pData, DWORD dwSize, INT scaleX, INT scaleY)
 	{
 		if (!Initialize(dx10))
 			return FALSE;
 		m_scaleX = scaleX;
 		m_scaleY = scaleY;
-		return m_texture.LoadTexture(dx10, pData, size);
+		return m_texture.LoadTexture(dx10, pData, dwSize);
 	}
 	BOOL DX10Image::Initialize(const DX10& dx10)
 	{
-		//创建顶点和索引缓冲区
 		D3D10_BUFFER_DESC vertexBufferDesc;
 		D3D10_BUFFER_DESC indexBufferDesc;
 		D3D10_SUBRESOURCE_DATA vertexData;

@@ -34,7 +34,6 @@ namespace DXFramework
 	{
 		return NULL;
 	}
-
 	void DXWindow::OnVideo(const BYTE* pBits, INT size, LPVOID lpParamer)
 	{
 		AM_MEDIA_TYPE* pMediaType = static_cast<AM_MEDIA_TYPE*>(lpParamer);
@@ -55,7 +54,6 @@ namespace DXFramework
 			m_dx10.EndScene();
 		}
 	}
-
 	LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
@@ -67,7 +65,7 @@ namespace DXFramework
 		Media::VideoCaptureParam param;
 		for (INT i = 0; i < params.size(); i++)
 		{
-			if (params[i].GetSize() == TinySize(800, 600))
+			if (params[i].GetSize() == TinySize(640, 360))
 			{
 				param = params[i];
 				break;
@@ -84,7 +82,7 @@ namespace DXFramework
 			m_camera.SetPosition(0.0F, 0.0F, -10.0F);
 			if (m_textureShader.Initialize(m_dx10, TEXT("D:\\Develop\\GitHub\\TinyUI\\DXFramework\\texture.fx")))
 			{
-				m_dxVideo.Create(m_dx10, 800, 600, 400, 300);
+				m_dxVideo.Create(m_dx10, 640, 360, 640, 360);
 				m_videoCapture.Start();
 			}
 		}

@@ -20,7 +20,7 @@ namespace DXFramework
 		BOOL FillImage(const BYTE* pBits, INT cx, INT cy);
 		BOOL Load(const DX10& dx10, HANDLE hResource, INT scaleX, INT scaleY);
 		BOOL Load(const DX10& dx10, const CHAR* pzFile, INT scaleX, INT scaleY);
-		BOOL Load(const DX10& dx10, const BYTE* pData, INT size, INT scaleX, INT scaleY);
+		BOOL Load(const DX10& dx10, const BYTE* pData, DWORD dwSize, INT scaleX, INT scaleY);
 		BOOL Render(const DX10& dx10, INT positionX, INT positionY);
 		INT	 GetIndexCount() const;
 		DX10Texture* GetTexture();
