@@ -21,6 +21,7 @@ namespace DXCapture
 		BOOL DX9GPUHook(IDirect3DDevice9 *device);
 		static DX9Capture& Instance();
 	private:
+		static LRESULT CALLBACK CbtFilterHook(INT code, WPARAM wParam, LPARAM lParam);
 		static HRESULT STDMETHODCALLTYPE DX9EndScene(IDirect3DDevice9 *pThis);
 		static HRESULT STDMETHODCALLTYPE DX9Present(IDirect3DDevice9 *pThis, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion);
 		static HRESULT STDMETHODCALLTYPE DX9PresentEx(IDirect3DDevice9Ex *pThis, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion, DWORD dwFlags);
@@ -53,6 +54,7 @@ namespace DXCapture
 		TinyScopedLibrary				m_dxgi;
 		IO::TinySharedMemory			m_sharedCaptureMemery;
 		IO::TinySharedMemory			m_textureMemery;
+		HHOOK							m_hhk;
 	};
 }
 

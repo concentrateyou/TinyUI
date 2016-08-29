@@ -30,6 +30,7 @@ namespace GameDetour
 		BOOL			m_bDX9Detour;
 		BOOL			m_bDX10Detour;
 		BOOL			m_bDX11Detour;
+		HHOOK			m_hHook;
 	};
 }
 

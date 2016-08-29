@@ -21,6 +21,7 @@ namespace DXFramework
 		DWORD	FindProcess(const TinyString& processName);
 		BOOL	FindWindow(const TinyString& processName);
 		SharedCapture* GetSharedCapture();
+		WNDINFO	GetWNDINFO();
 		static BOOL CALLBACK EnumWindow(HWND hwnd, LPARAM lParam);
 	private:
 		TinyEvent			m_start;

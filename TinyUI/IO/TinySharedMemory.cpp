@@ -72,7 +72,12 @@ namespace TinyUI
 		{
 			if (!m_hFileMap)
 				return FALSE;
-			return ::CloseHandle(m_hFileMap);
+			if (::CloseHandle(m_hFileMap))
+			{
+				m_hFileMap = NULL;
+				return TRUE;
+			}
+			return FALSE;
 		}
 		BOOL TinySharedMemory::Map(ULONGLONG offset, DWORD dwBytes)
 		{

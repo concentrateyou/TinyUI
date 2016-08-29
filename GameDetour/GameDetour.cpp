@@ -15,7 +15,8 @@ namespace GameDetour
 		m_hWNDD3D(NULL),
 		m_bDX9Detour(FALSE),
 		m_bDX10Detour(FALSE),
-		m_bDX11Detour(FALSE)
+		m_bDX11Detour(FALSE),
+		m_hHook(NULL)
 	{
 
 	}

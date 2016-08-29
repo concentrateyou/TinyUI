@@ -103,12 +103,15 @@ namespace DXCapture
 		m_bDetour(FALSE),
 		m_bCapturing(FALSE),
 		m_bTextures(FALSE),
-		m_patchType(0)
+		m_patchType(0),
+		m_hhk(NULL)
 	{
 
 	}
 	DX9Capture::~DX9Capture()
 	{
+		if (m_hhk != NULL)
+			UnhookWindowsHookEx(m_hhk);
 		m_dX9TextureSurface.Detach();
 		m_d3d.Detach();
 	}
@@ -257,6 +260,9 @@ namespace DXCapture
 				sharedCapture->Size.cx = pp.BackBufferWidth;
 				sharedCapture->Size.cy = pp.BackBufferHeight;
 				sharedCapture->HwndCapture = pp.hDeviceWindow;
+				if (m_hhk != NULL)
+					UnhookWindowsHookEx(m_hhk);
+				m_hhk = SetWindowsHookEx(WH_CBT, DX9Capture::CbtFilterHook, NULL, GetCurrentThreadId());
 				DX9Capture::Instance().m_dX9PresentEx.Initialize(GetVTable(pThis, (484 / 4)), (FARPROC)DX9PresentEx);
 				DX9Capture::Instance().m_dX9PresentEx.BeginDetour();
 				DX9Capture::Instance().m_dX9ResetEx.Initialize(GetVTable(pThis, (528 / 4)), (FARPROC)DX9ResetEx);
@@ -429,5 +435,17 @@ namespace DXCapture
 		HRESULT hRes = pThis->ResetEx(params, fullscreenData);
 		DX9Capture::Instance().m_dX9ResetEx.BeginDetour();
 		return hRes;
+	}
+	LRESULT CALLBACK DX9Capture::CbtFilterHook(INT code, WPARAM wParam, LPARAM lParam)
+	{
+		if (code != HCBT_DESTROYWND)
+			return CallNextHookEx(DX9Capture::Instance().m_hhk, code, wParam, lParam);
+		SharedCapture* sharedCapture = (SharedCapture*)DX9Capture::Instance().m_sharedCaptureMemery.Address();
+		if (sharedCapture->HwndCapture == reinterpret_cast<HWND>(wParam))
+		{
+			DX9Capture::Instance().Reset();
+			DX9Capture::Instance().m_exit.SetEvent();
+		}
+		return CallNextHookEx(DX9Capture::Instance().m_hhk, code, wParam, lParam);
 	}
 }

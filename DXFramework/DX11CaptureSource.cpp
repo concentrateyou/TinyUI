@@ -169,7 +169,6 @@ namespace DXFramework
 		}
 		if (m_ready && m_ready.Lock(0))
 		{
-			SharedCapture* ps = GetSharedCapture();
 			m_sharedTexture.Initialize(dx11, 600, 400);
 			m_bCapturing = TRUE;
 		}
@@ -177,5 +176,9 @@ namespace DXFramework
 	DX11Image*	DX11CaptureSource::GetTexture()
 	{
 		return m_sharedTexture.GetTexture();
+	}
+	WNDINFO	DX11CaptureSource::GetWNDINFO()
+	{
+		return m_targetWND;
 	}
 }
