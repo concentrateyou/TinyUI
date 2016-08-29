@@ -50,6 +50,12 @@ namespace DXFramework
 			m_dxVideo.FillImage(m_dx11, pBits, h->bmiHeader.biWidth, h->bmiHeader.biHeight);
 			m_dxVideo.Render(m_dx11, 5, 5);
 			m_textureShader.Render(m_dx11, m_dxVideo.GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_dxVideo.GetTexture());
+			DX11Image* dxImage = m_captureTask.GetTexture();
+			if (dxImage && dxImage->IsValid())
+			{
+				dxImage->Render(m_dx11, 150, 150);
+				m_textureShader.Render(m_dx11, dxImage->GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, dxImage->GetTexture());
+			}
 			m_dx11.AllowDepth(TRUE);
 			m_dx11.EndScene();
 		}
@@ -57,7 +63,6 @@ namespace DXFramework
 	LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-
 		vector<Media::VideoCapture::Name> names;
 		Media::VideoCapture::GetDevices(names);
 		vector<Media::VideoCaptureParam> params;
@@ -74,7 +79,6 @@ namespace DXFramework
 		m_videoCB = BindCallback(&DXWindow::OnVideo, this);
 		m_videoCapture.Initialize(names[0], m_videoCB);
 		m_videoCapture.Allocate(param);
-
 		TinySize size(800, 600);
 		CenterWindow(NULL, size);
 		if (m_dx11.Initialize(m_hWND, 0, 0, 800, 600))
@@ -85,7 +89,7 @@ namespace DXFramework
 				TEXT("D:\\Develop\\GitHub\\TinyUI\\DXFramework\\texture.ps")))
 			{
 				m_captureTask.Initialize(&m_dx11);
-				m_dxVideo.Create(m_dx11, 640, 360, 640, 360);
+				m_dxVideo.Create(m_dx11, 640, 360, 320, 180);
 				m_videoCapture.Start();
 			}
 		}

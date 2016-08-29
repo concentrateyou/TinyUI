@@ -54,6 +54,10 @@ namespace DXFramework
 	}
 	BOOL DX11Image::Initialize(const DX11& dx11)
 	{
+		m_previousPosX = -1;
+		m_previousPosY = -1;
+		m_vertexBuffer.Release();
+		m_indexBuffer.Release();
 		D3D11_BUFFER_DESC		vertexBufferDesc;
 		D3D11_BUFFER_DESC		indexBufferDesc;
 		D3D11_SUBRESOURCE_DATA	vertexData;
@@ -129,6 +133,10 @@ namespace DXFramework
 	{
 		return &m_texture;
 	}
+	BOOL DX11Image::IsValid() const
+	{
+		return m_texture.IsValid();
+	}
 	BOOL DX11Image::Render(const DX11& dx11, INT positionX, INT positionY)
 	{
 		if (!this->Update(dx11, positionX, positionY))
@@ -139,5 +147,33 @@ namespace DXFramework
 		dx11.GetContext()->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 		dx11.GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		return TRUE;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	SharedTexture::SharedTexture()
+		:m_hWND(NULL)
+	{
+
+	}
+	SharedTexture::~SharedTexture()
+	{
+
+	}
+	BOOL SharedTexture::Initialize(const DX11& dx11, INT scaleX, INT scaleY)
+	{
+		m_textureMemery.Unmap();
+		if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE))
+			return FALSE;
+		if (!m_textureMemery.Map(0, sizeof(SharedTextureDATA)))
+			return FALSE;
+		SharedTextureDATA* pTexture = reinterpret_cast<SharedTextureDATA*>(m_textureMemery.Address());
+		if (!pTexture)
+			return FALSE;
+		if (!m_image.Load(dx11, pTexture->TextureHandle, scaleX, scaleY))
+			return FALSE;
+		return TRUE;
+	}
+	DX11Image* SharedTexture::GetTexture()
+	{
+		return &m_image;
 	}
 }

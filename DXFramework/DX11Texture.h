@@ -52,22 +52,5 @@ namespace DXFramework
 		HANDLE      TextureHandle;
 	}SharedTextureDATA;
 #pragma pack(pop)
-	/// <summary>
-	/// π≤œÌŒ∆¿Ì
-	/// </summary>
-	class SharedTexture
-	{
-	public:
-		SharedTexture();
-		~SharedTexture();
-		BOOL Initialize(const DX11& dx10, SharedCapture* sharedCapture);
-		DX11Texture* GetTexture();
-		DX11Texture* LockTexture(const DX11& dx10);
-	private:
-		DX11Texture				m_texture;
-		DX11Texture				m_copyTexture;
-		IO::TinySharedMemory	m_textureMemery;
-		HWND					m_hWND;
-	};
 }
 

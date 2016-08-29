@@ -14,17 +14,17 @@ namespace DXFramework
 		if (!FindWindow(processName))
 			return FALSE;
 		string name = StringPrintf("%s%d", BEGIN_CAPTURE_EVENT, m_targetWND.dwProcessID);
-		if (!m_begin.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
+		if (!m_start.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
 		{
-			if (!m_begin.CreateEvent(FALSE, FALSE, name.c_str()))
+			if (!m_start.CreateEvent(FALSE, FALSE, name.c_str()))
 			{
 				return FALSE;
 			}
 		}
 		name = StringPrintf("%s%d", END_CAPTURE_EVENT, m_targetWND.dwProcessID);
-		if (!m_end.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
+		if (!m_stop.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
 		{
-			if (!m_end.CreateEvent(FALSE, FALSE, name.c_str()))
+			if (!m_stop.CreateEvent(FALSE, FALSE, name.c_str()))
 			{
 				return FALSE;
 			}
@@ -128,7 +128,7 @@ namespace DXFramework
 		}
 		return TRUE;
 	}
-	BOOL DX11CaptureSource::BeginCapture(const DX11& dx10, const TinyString& processName, const TinyString& dll)
+	BOOL DX11CaptureSource::BeginCapture(const DX11& dx11, const TinyString& processName, const TinyString& dll)
 	{
 		BOOL bRes = S_OK;
 		if (!Initialize(processName))
@@ -144,20 +144,20 @@ namespace DXFramework
 			SharedCapture* ps = GetSharedCapture();
 			if (!ps)
 				return FALSE;
-			if (!m_textureCapture.Initialize(dx10, ps))
+			if (!m_sharedTexture.Initialize(dx11, 600, 400))
 				return FALSE;
 			m_bCapturing = TRUE;
 		}
-		m_begin.SetEvent();
+		m_start.SetEvent();
 		return TRUE;
 	}
 	BOOL DX11CaptureSource::EndCapture()
 	{
 		m_bCapturing = FALSE;
-		m_end.SetEvent();
+		m_stop.SetEvent();
 		return TRUE;
 	}
-	void DX11CaptureSource::Tick(const DX11& dx10)
+	void DX11CaptureSource::Tick(const DX11& dx11)
 	{
 		if (m_exit && m_exit.Lock(0))
 		{
@@ -165,8 +165,17 @@ namespace DXFramework
 		}
 		if (!m_bCapturing)
 		{
-			BeginCapture(dx10, TEXT("War3.exe"), TEXT("D:\\Develop\\GitHub\\TinyUI\\Debug\\GameDetour.dll"));
+			BeginCapture(dx11, TEXT("War3.exe"), TEXT("D:\\Develop\\GitHub\\TinyUI\\Debug\\GameDetour.dll"));
 		}
-		Sleep(1);
+		if (m_ready && m_ready.Lock(0))
+		{
+			SharedCapture* ps = GetSharedCapture();
+			m_sharedTexture.Initialize(dx11, 600, 400);
+			m_bCapturing = TRUE;
+		}
+	}
+	DX11Image*	DX11CaptureSource::GetTexture()
+	{
+		return m_sharedTexture.GetTexture();
 	}
 }

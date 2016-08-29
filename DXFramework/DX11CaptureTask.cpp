@@ -26,7 +26,11 @@ namespace DXFramework
 	}
 	DX11CaptureSource*	DX11CaptureTask::GetSource()
 	{
-		return &m_capture;
+		return &m_source;
+	}
+	DX11Image* DX11CaptureTask::GetTexture()
+	{
+		return m_source.GetTexture();
 	}
 	DWORD DX11CaptureTask::Loop(LPVOID lpUnused)
 	{

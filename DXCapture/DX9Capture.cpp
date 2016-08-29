@@ -103,8 +103,7 @@ namespace DXCapture
 		m_bDetour(FALSE),
 		m_bCapturing(FALSE),
 		m_bTextures(FALSE),
-		m_patchType(0),
-		m_dwCurrentCapture(0)
+		m_patchType(0)
 	{
 
 	}
@@ -218,7 +217,6 @@ namespace DXCapture
 			}
 			if (m_bTextures)
 			{
-				DWORD dwNextCapture = m_dwCurrentCapture == 0 ? 1 : 0;
 				TinyComPtr<IDirect3DSurface9> backBuffer;
 				if (FAILED(d3d->GetRenderTarget(0, &backBuffer)))
 				{
@@ -231,7 +229,6 @@ namespace DXCapture
 				{
 					return FALSE;
 				}
-				m_dwCurrentCapture = dwNextCapture;
 			}
 		}
 		return TRUE;
@@ -244,6 +241,34 @@ namespace DXCapture
 		m_d3d.Release();
 		m_textureMemery.Unmap();
 		m_textureMemery.Close();
+	}
+	void DX9Capture::Setup(IDirect3DDevice9 *pThis)
+	{
+		TinyComPtr<IDirect3DSwapChain9> swapChain;
+		if (SUCCEEDED(pThis->GetSwapChain(0, &swapChain)))
+		{
+			D3DPRESENT_PARAMETERS pp;
+			if (SUCCEEDED(swapChain->GetPresentParameters(&pp)))
+			{
+				SharedCapture* sharedCapture = (SharedCapture*)DX9Capture::Instance().m_sharedCaptureMemery.Address();
+				ASSERT(sharedCapture);
+				sharedCapture->CaptureType = CAPTURETYPE_SHAREDTEX;
+				sharedCapture->Format = pp.BackBufferFormat;
+				sharedCapture->Size.cx = pp.BackBufferWidth;
+				sharedCapture->Size.cy = pp.BackBufferHeight;
+				sharedCapture->HwndCapture = pp.hDeviceWindow;
+				DX9Capture::Instance().m_dX9PresentEx.Initialize(GetVTable(pThis, (484 / 4)), (FARPROC)DX9PresentEx);
+				DX9Capture::Instance().m_dX9PresentEx.BeginDetour();
+				DX9Capture::Instance().m_dX9ResetEx.Initialize(GetVTable(pThis, (528 / 4)), (FARPROC)DX9ResetEx);
+				DX9Capture::Instance().m_dX9ResetEx.BeginDetour();
+				DX9Capture::Instance().m_dX9Present.Initialize(GetVTable(pThis, (68 / 4)), (FARPROC)DX9Present);
+				DX9Capture::Instance().m_dX9Present.BeginDetour();
+				DX9Capture::Instance().m_dX9Reset.Initialize(GetVTable(pThis, (64 / 4)), (FARPROC)DX9Reset);
+				DX9Capture::Instance().m_dX9Reset.BeginDetour();
+				DX9Capture::Instance().m_dX9SwapPresent.Initialize(GetVTable(swapChain, (12 / 4)), (FARPROC)DX9SwapPresent);
+				DX9Capture::Instance().m_dX9SwapPresent.BeginDetour();
+			}
+		}
 	}
 	BOOL DX9Capture::DX9GPUHook(IDirect3DDevice9 *pThis)
 	{
@@ -330,8 +355,11 @@ namespace DXCapture
 		{
 			return FALSE;
 		}
-		if (!m_textureMemery.Create(TEXTURE_MEMORY, sizeof(SharedTextureDATA)))
-			return FALSE;
+		if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE))
+		{
+			if (!m_textureMemery.Create(TEXTURE_MEMORY, sizeof(SharedTextureDATA)))
+				return FALSE;
+		}
 		if (!m_textureMemery.Map(0, 0))
 			return FALSE;
 		if (SharedTextureDATA* sharedTexture = (SharedTextureDATA*)m_textureMemery.Address())
@@ -351,31 +379,7 @@ namespace DXCapture
 		if (!DX9Capture::Instance().m_bDetour)
 		{
 			DX9Capture::Instance().m_bDetour = TRUE;
-			TinyComPtr<IDirect3DSwapChain9> swapChain;
-			if (SUCCEEDED(pThis->GetSwapChain(0, &swapChain)))
-			{
-				D3DPRESENT_PARAMETERS pp;
-				if (SUCCEEDED(swapChain->GetPresentParameters(&pp)))
-				{
-					SharedCapture* sharedCapture = (SharedCapture*)DX9Capture::Instance().m_sharedCaptureMemery.Address();
-					ASSERT(sharedCapture);
-					sharedCapture->CaptureType = CAPTURETYPE_SHAREDTEX;
-					sharedCapture->Format = pp.BackBufferFormat;
-					sharedCapture->Size.cx = pp.BackBufferWidth;
-					sharedCapture->Size.cy = pp.BackBufferHeight;
-					sharedCapture->HwndCapture = pp.hDeviceWindow;
-					DX9Capture::Instance().m_dX9PresentEx.Initialize(GetVTable(pThis, (484 / 4)), (FARPROC)DX9PresentEx);
-					DX9Capture::Instance().m_dX9PresentEx.BeginDetour();
-					DX9Capture::Instance().m_dX9ResetEx.Initialize(GetVTable(pThis, (528 / 4)), (FARPROC)DX9ResetEx);
-					DX9Capture::Instance().m_dX9ResetEx.BeginDetour();
-					DX9Capture::Instance().m_dX9Present.Initialize(GetVTable(pThis, (68 / 4)), (FARPROC)DX9Present);
-					DX9Capture::Instance().m_dX9Present.BeginDetour();
-					DX9Capture::Instance().m_dX9Reset.Initialize(GetVTable(pThis, (64 / 4)), (FARPROC)DX9Reset);
-					DX9Capture::Instance().m_dX9Reset.BeginDetour();
-					DX9Capture::Instance().m_dX9SwapPresent.Initialize(GetVTable(swapChain, (12 / 4)), (FARPROC)DX9SwapPresent);
-					DX9Capture::Instance().m_dX9SwapPresent.BeginDetour();
-				}
-			}
+			DX9Capture::Instance().Setup(pThis);
 		}
 		DX9Capture::Instance().m_lock.Release();
 		hRes = pThis->EndScene();
@@ -401,7 +405,11 @@ namespace DXCapture
 	HRESULT STDMETHODCALLTYPE DX9Capture::DX9SwapPresent(IDirect3DSwapChain9 *pThis, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion, DWORD dwFlags)
 	{
 		DX9Capture::Instance().m_dX9SwapPresent.EndDetour();
-		DX9Capture::Instance().Reset();
+		TinyComPtr<IDirect3DDevice9> device;
+		if (SUCCEEDED(pThis->GetDevice(&device)))
+		{
+			DX9Capture::Instance().Render(device);
+		}
 		HRESULT hRes = pThis->Present(pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion, dwFlags);
 		DX9Capture::Instance().m_dX9SwapPresent.BeginDetour();
 		return hRes;

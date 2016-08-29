@@ -17,6 +17,7 @@ namespace DXCapture
 		BOOL Initialize(HWND hWND);
 		BOOL Render(IDirect3DDevice9 *device);
 		void Reset();
+		void Setup(IDirect3DDevice9 *pThis);
 		BOOL DX9GPUHook(IDirect3DDevice9 *device);
 		static DX9Capture& Instance();
 	private:
@@ -33,7 +34,6 @@ namespace DXCapture
 		BOOL							m_bDetour;
 		BOOL							m_bCapturing;
 		BOOL							m_bTextures;
-		DWORD							m_dwCurrentCapture;
 		HANDLE							m_hTextureHandle;
 		TinyLock						m_lock;
 		TinyComPtr<ID3D10Device1>		m_d3d;

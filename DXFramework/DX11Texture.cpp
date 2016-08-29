@@ -22,6 +22,8 @@ namespace DXFramework
 	}
 	BOOL DX11Texture::CreateTexture(const DX11& dx11, INT cx, INT cy, DXGI_FORMAT dxgi, void *lpData)
 	{
+		m_texture2D.Release();
+		m_resourceView.Release();
 		D3D11_TEXTURE2D_DESC textureDesc;
 		ZeroMemory(&textureDesc, sizeof(textureDesc));
 		textureDesc.Width = cx;
@@ -88,6 +90,8 @@ namespace DXFramework
 	{
 		if (!pzFile)
 			return FALSE;
+		m_texture2D.Release();
+		m_resourceView.Release();
 		HRESULT hRes = S_OK;
 		if (FAILED(hRes = D3DX11CreateShaderResourceViewFromFile(dx11.GetD3D(), pzFile, NULL, NULL, &m_resourceView, NULL)))
 			return FALSE;
@@ -104,6 +108,8 @@ namespace DXFramework
 	{
 		if (!hResource)
 			return FALSE;
+		m_texture2D.Release();
+		m_resourceView.Release();
 		HRESULT hRes = S_OK;
 		TinyComPtr<ID3D11Resource> resource;
 		if (FAILED(hRes = dx11.GetD3D()->OpenSharedResource(hResource, __uuidof(ID3D11Resource), (void**)&resource)))
@@ -125,6 +131,8 @@ namespace DXFramework
 	{
 		if (!pBits)
 			return FALSE;
+		m_texture2D.Release();
+		m_resourceView.Release();
 		HRESULT hRes = S_OK;
 		if (FAILED(hRes = D3DX11CreateShaderResourceViewFromMemory(dx11.GetD3D(), pBits, dwSize, NULL, NULL, &m_resourceView, NULL)))
 			return FALSE;
@@ -160,39 +168,5 @@ namespace DXFramework
 	BOOL DX11Texture::IsValid() const
 	{
 		return m_texture2D != NULL;
-	}
-	//////////////////////////////////////////////////////////////////////////
-	SharedTexture::SharedTexture()
-		:m_hWND(NULL)
-	{
-
-	}
-	SharedTexture::~SharedTexture()
-	{
-
-	}
-	BOOL SharedTexture::Initialize(const DX11& dx11, SharedCapture* sharedCapture)
-	{
-		if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE))
-			return FALSE;
-		if (!m_textureMemery.Map(0, sizeof(SharedTextureDATA)))
-			return FALSE;
-		SharedTextureDATA* pTexture = reinterpret_cast<SharedTextureDATA*>(m_textureMemery.Address());
-		if (!pTexture)
-			return FALSE;
-		if (!m_texture.LoadTexture(dx11, pTexture->TextureHandle))
-			return FALSE;
-		if (!m_copyTexture.CreateTexture(dx11, sharedCapture->Size.cx, sharedCapture->Size.cy, (DXGI_FORMAT)sharedCapture->Format, NULL))
-			return FALSE;
-		return TRUE;
-	}
-	DX11Texture* SharedTexture::GetTexture()
-	{
-		return &m_texture;
-	}
-	DX11Texture* SharedTexture::LockTexture(const DX11& dx11)
-	{
-		dx11.GetContext()->CopyResource(m_copyTexture.GetTexture2D(), m_texture.GetTexture2D());
-		return &m_copyTexture;
 	}
 }
