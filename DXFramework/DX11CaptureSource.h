@@ -14,8 +14,6 @@ namespace DXFramework
 		BOOL	BeginCapture(const DX11& dx10, const TinyString& processName, const TinyString& dll);
 		BOOL	EndCapture();
 		void	Tick(const DX11& dx10);
-		BOOL	Render(const D3DXVECTOR2 &pos, const D3DXVECTOR2 &size);
-		BOOL	Save(const CHAR* pzFile);
 	private:
 		BOOL	Initialize(const TinyString& processName);
 		DWORD	FindProcess(const TinyString& processName);

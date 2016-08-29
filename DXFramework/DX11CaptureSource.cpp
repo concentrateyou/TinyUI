@@ -37,7 +37,7 @@ namespace DXFramework
 				return FALSE;
 			}
 		}
-		name = StringPrintf("%s%d", APP_EXIT_EVENT, m_targetWND.dwProcessID);
+		name = StringPrintf("%s%d", CAPTURE_EXIT_EVENT, m_targetWND.dwProcessID);
 		if (!m_exit.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
 		{
 			if (!m_exit.CreateEvent(FALSE, FALSE, name.c_str()))
@@ -167,5 +167,6 @@ namespace DXFramework
 		{
 			BeginCapture(dx10, TEXT("War3.exe"), TEXT("D:\\Develop\\GitHub\\TinyUI\\Debug\\GameDetour.dll"));
 		}
+		Sleep(1);
 	}
 }

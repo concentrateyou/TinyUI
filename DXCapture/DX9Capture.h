@@ -15,7 +15,6 @@ namespace DXCapture
 		DX9Capture();
 		~DX9Capture();
 		BOOL Initialize(HWND hWND);
-		void Uninitialize();
 		BOOL Render(IDirect3DDevice9 *device);
 		void Reset();
 		BOOL DX9GPUHook(IDirect3DDevice9 *device);
@@ -48,6 +47,7 @@ namespace DXCapture
 		TinyEvent						m_start;
 		TinyEvent						m_stop;
 		TinyEvent						m_ready;
+		TinyEvent						m_exit;
 		TinyScopedLibrary				m_d3d9;
 		TinyScopedLibrary				m_d3d10_1;
 		TinyScopedLibrary				m_dxgi;

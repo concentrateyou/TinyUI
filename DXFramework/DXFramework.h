@@ -26,7 +26,7 @@ namespace DXFramework
 #define BEGIN_CAPTURE_EVENT		TEXT("BeginCapture")
 #define END_CAPTURE_EVENT       TEXT("EndCapture")
 #define CAPTURE_READY_EVENT     TEXT("CaptureReady")
-#define APP_EXIT_EVENT          TEXT("AppExit")
+#define CAPTURE_EXIT_EVENT      TEXT("CaptureExit")
 #define SHAREDCAPTURE_MEMORY	TEXT("Local\\SharedCaptureMemory")
 #define TEXTURE_MEMORY          TEXT("Local\\TextureMemory")
 

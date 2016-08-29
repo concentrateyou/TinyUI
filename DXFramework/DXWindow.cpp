@@ -79,12 +79,12 @@ namespace DXFramework
 		CenterWindow(NULL, size);
 		if (m_dx11.Initialize(m_hWND, 0, 0, 800, 600))
 		{
-			m_captureTask.Initialize(&m_dx11);
 			m_camera.SetPosition(0.0F, 0.0F, -10.0F);
 			if (m_textureShader.Initialize(m_dx11,
 				TEXT("D:\\Develop\\GitHub\\TinyUI\\DXFramework\\texture.vs"),
 				TEXT("D:\\Develop\\GitHub\\TinyUI\\DXFramework\\texture.ps")))
 			{
+				m_captureTask.Initialize(&m_dx11);
 				m_dxVideo.Create(m_dx11, 640, 360, 640, 360);
 				m_videoCapture.Start();
 			}

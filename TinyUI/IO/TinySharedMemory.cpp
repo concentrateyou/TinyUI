@@ -42,6 +42,7 @@ namespace TinyUI
 		}
 		TinySharedMemory::~TinySharedMemory()
 		{
+			Unmap();
 			Close();
 		}
 		TinySharedMemory::operator HANDLE() const

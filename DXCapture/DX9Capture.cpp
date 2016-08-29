@@ -73,7 +73,7 @@ namespace DXCapture
 
 		return DXGI_FORMAT_UNKNOWN;
 	}
-	INT GetD3D9PatchType(HMODULE hModule)
+	INT GetDX9PatchType(HMODULE hModule)
 	{
 		LPBYTE lpBaseAddress = (LPBYTE)hModule;
 		for (int i = 0; i < NUM_KNOWN_PATCHES; i++)
@@ -86,7 +86,7 @@ namespace DXCapture
 
 		return 0;
 	}
-	LPBYTE GetD3D9PatchAddress(HMODULE hModule, INT patchType)
+	LPBYTE GetDX9PatchAddress(HMODULE hModule, INT patchType)
 	{
 		if (patchType)
 		{
@@ -110,7 +110,8 @@ namespace DXCapture
 	}
 	DX9Capture::~DX9Capture()
 	{
-		Reset();
+		m_dX9TextureSurface.Detach();
+		m_d3d.Detach();
 	}
 	DX9Capture& DX9Capture::Instance()
 	{
@@ -121,7 +122,7 @@ namespace DXCapture
 	{
 		DWORD dwProcessID = GetCurrentProcessId();
 		string name = StringPrintf("%s%d", BEGIN_CAPTURE_EVENT, dwProcessID);
-		if (!m_start.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()) && 
+		if (!m_start.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()) &&
 			!m_start.CreateEvent(FALSE, FALSE, name.c_str()))
 			return FALSE;
 		name = StringPrintf("%s%d", END_CAPTURE_EVENT, dwProcessID);
@@ -131,6 +132,10 @@ namespace DXCapture
 		name = StringPrintf("%s%d", CAPTURE_READY_EVENT, dwProcessID);
 		if (!m_ready.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()) &&
 			!m_ready.CreateEvent(FALSE, FALSE, name.c_str()))
+			return FALSE;
+		name = StringPrintf("%s%d", CAPTURE_EXIT_EVENT, dwProcessID);
+		if (!m_exit.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()) &&
+			!m_exit.CreateEvent(FALSE, FALSE, name.c_str()))
 			return FALSE;
 		if (!m_sharedCaptureMemery.Open(SHAREDCAPTURE_MEMORY) &&
 			!m_sharedCaptureMemery.Create(SHAREDCAPTURE_MEMORY, sizeof(SharedCapture)))
@@ -175,20 +180,13 @@ namespace DXCapture
 		}
 		return FALSE;
 	}
-	void DX9Capture::Uninitialize()
+	BOOL DX9Capture::Render(IDirect3DDevice9 *d3d)
 	{
-		m_dX9TextureSurface.Release();
-		m_d3d.Release();
-		m_bCapturing = FALSE;
-		m_bTextures = FALSE;
-		m_hTextureHandle = NULL;
-	}
-	BOOL DX9Capture::Render(IDirect3DDevice9 *device)
-	{
-		ASSERT(device);
+		ASSERT(d3d);
 		if (m_bCapturing && m_stop.Lock(0))
 		{
 			m_bCapturing = FALSE;
+			Reset();
 			return FALSE;
 		}
 		if (!m_bCapturing && m_start.Lock(0))
@@ -199,9 +197,9 @@ namespace DXCapture
 		{
 			if (!m_bTextures)
 			{
-				m_patchType = GetD3D9PatchType(m_d3d9);
+				m_patchType = GetDX9PatchType(m_d3d9);
 				TinyComPtr<IDirect3DSurface9> backBuffer;
-				if (SUCCEEDED(device->GetRenderTarget(0, &backBuffer)))
+				if (SUCCEEDED(d3d->GetRenderTarget(0, &backBuffer)))
 				{
 					D3DSURFACE_DESC sd;
 					::ZeroMemory(&sd, sizeof(sd));
@@ -214,7 +212,7 @@ namespace DXCapture
 						sharedCapture->Format = sd.Format;
 						sharedCapture->Size.cx = sd.Width;
 						sharedCapture->Size.cy = sd.Height;
-						m_bTextures = DX9GPUHook(device);
+						m_bTextures = DX9GPUHook(d3d);
 					}
 				}
 			}
@@ -222,14 +220,14 @@ namespace DXCapture
 			{
 				DWORD dwNextCapture = m_dwCurrentCapture == 0 ? 1 : 0;
 				TinyComPtr<IDirect3DSurface9> backBuffer;
-				if (FAILED(device->GetRenderTarget(0, &backBuffer)))
+				if (FAILED(d3d->GetRenderTarget(0, &backBuffer)))
 				{
-					if (FAILED(device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer)))
+					if (FAILED(d3d->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer)))
 					{
 						return FALSE;
 					}
 				}
-				if (!backBuffer || FAILED(device->StretchRect(backBuffer, NULL, m_dX9TextureSurface, NULL, D3DTEXF_NONE)))
+				if (!backBuffer || FAILED(d3d->StretchRect(backBuffer, NULL, m_dX9TextureSurface, NULL, D3DTEXF_NONE)))
 				{
 					return FALSE;
 				}
@@ -241,6 +239,7 @@ namespace DXCapture
 	void DX9Capture::Reset()
 	{
 		m_bTextures = FALSE;
+		m_hTextureHandle = NULL;
 		m_dX9TextureSurface.Release();
 		m_d3d.Release();
 		m_textureMemery.Unmap();
@@ -302,7 +301,7 @@ namespace DXCapture
 		{
 			return FALSE;
 		}
-		LPBYTE patchAddress = (m_patchType != 0) ? GetD3D9PatchAddress(m_d3d9, m_patchType) : NULL;
+		LPBYTE patchAddress = (m_patchType != 0) ? GetDX9PatchAddress(m_d3d9, m_patchType) : NULL;
 		DWORD dwOldProtect;
 		size_t patchSize;
 		TinyScopedArray<BYTE> patchData;
