@@ -1,6 +1,5 @@
 #include "../stdafx.h"
 #include "TinyImage.h"
-#include "vld.h"
 
 namespace TinyUI
 {

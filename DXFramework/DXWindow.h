@@ -4,7 +4,7 @@
 #include "DX11Image.h"
 #include "DX11TextureShader.h"
 #include "VideoCapture.h"
-#include "DX11CaptureSource.h"
+#include "DX11CaptureTask.h"
 
 namespace DXFramework
 {
@@ -38,7 +38,7 @@ namespace DXFramework
 		DX11TextureShader		m_textureShader;
 		Media::VideoCapture		m_videoCapture;
 		Callback<void(const BYTE*, INT, LPVOID)> m_videoCB;
-		DX11CaptureSource		m_captureSource;
+		DX11CaptureTask			m_captureTask;
 	};
 }
 

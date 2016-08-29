@@ -103,9 +103,9 @@ namespace DXFramework
 	}
 	SharedCapture* DX11CaptureSource::GetSharedCapture()
 	{
-		if (m_sharedMemory.Open(SHAREDCAPTURE_MEMORY) && m_sharedMemory.Map())
+		if (m_memory.Open(SHAREDCAPTURE_MEMORY) && m_memory.Map())
 		{
-			return reinterpret_cast<SharedCapture*>(m_sharedMemory.Address());
+			return reinterpret_cast<SharedCapture*>(m_memory.Address());
 		}
 		return NULL;
 	}
@@ -151,7 +151,6 @@ namespace DXFramework
 		m_begin.SetEvent();
 		return TRUE;
 	}
-
 	BOOL DX11CaptureSource::EndCapture()
 	{
 		m_bCapturing = FALSE;

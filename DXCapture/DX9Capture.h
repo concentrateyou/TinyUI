@@ -18,15 +18,15 @@ namespace DXCapture
 		void Uninitialize();
 		BOOL Render(IDirect3DDevice9 *device);
 		void Reset();
-		BOOL D3D9GPUHook(IDirect3DDevice9 *device);
+		BOOL DX9GPUHook(IDirect3DDevice9 *device);
 		static DX9Capture& Instance();
 	private:
-		static HRESULT STDMETHODCALLTYPE D3D9EndScene(IDirect3DDevice9 *pThis);
-		static HRESULT STDMETHODCALLTYPE D3D9Present(IDirect3DDevice9 *pThis, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion);
-		static HRESULT STDMETHODCALLTYPE D3D9PresentEx(IDirect3DDevice9Ex *pThis, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion, DWORD dwFlags);
-		static HRESULT STDMETHODCALLTYPE D3D9SwapPresent(IDirect3DSwapChain9 *swap, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion, DWORD dwFlags);
-		static HRESULT STDMETHODCALLTYPE D3D9Reset(IDirect3DDevice9 *pThis, D3DPRESENT_PARAMETERS *params);
-		static HRESULT STDMETHODCALLTYPE D3D9ResetEx(IDirect3DDevice9Ex *pThis, D3DPRESENT_PARAMETERS *params, D3DDISPLAYMODEEX *fullscreenData);
+		static HRESULT STDMETHODCALLTYPE DX9EndScene(IDirect3DDevice9 *pThis);
+		static HRESULT STDMETHODCALLTYPE DX9Present(IDirect3DDevice9 *pThis, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion);
+		static HRESULT STDMETHODCALLTYPE DX9PresentEx(IDirect3DDevice9Ex *pThis, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion, DWORD dwFlags);
+		static HRESULT STDMETHODCALLTYPE DX9SwapPresent(IDirect3DSwapChain9 *swap, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion, DWORD dwFlags);
+		static HRESULT STDMETHODCALLTYPE DX9Reset(IDirect3DDevice9 *pThis, D3DPRESENT_PARAMETERS *params);
+		static HRESULT STDMETHODCALLTYPE DX9ResetEx(IDirect3DDevice9Ex *pThis, D3DPRESENT_PARAMETERS *params, D3DDISPLAYMODEEX *fullscreenData);
 	public:
 		D3DFORMAT						m_d3dFormat;
 		DXGI_FORMAT						m_dxgiFormat;
@@ -37,14 +37,14 @@ namespace DXCapture
 		DWORD							m_dwCurrentCapture;
 		HANDLE							m_hTextureHandle;
 		TinyLock						m_lock;
-		TinyComPtr<ID3D10Device1>		m_d3d10Device1;
-		TinyComPtr<IDirect3DSurface9>	m_d3d9TextureSurface;
-		TinyDetour						m_d3d9EndScene;
-		TinyDetour						m_d3d9Reset;
-		TinyDetour						m_d3d9ResetEx;
-		TinyDetour						m_d3d9Present;
-		TinyDetour						m_d3d9PresentEx;
-		TinyDetour						m_d3d9SwapPresent;
+		TinyComPtr<ID3D10Device1>		m_d3d;
+		TinyComPtr<IDirect3DSurface9>	m_dX9TextureSurface;
+		TinyDetour						m_dX9EndScene;
+		TinyDetour						m_dX9Reset;
+		TinyDetour						m_dX9ResetEx;
+		TinyDetour						m_dX9Present;
+		TinyDetour						m_dX9PresentEx;
+		TinyDetour						m_dX9SwapPresent;
 		TinyEvent						m_start;
 		TinyEvent						m_stop;
 		TinyEvent						m_ready;

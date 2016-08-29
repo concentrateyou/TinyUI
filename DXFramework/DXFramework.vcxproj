@@ -86,6 +86,7 @@
   <ItemGroup>
     <ClInclude Include="DX11.h" />
     <ClInclude Include="DX11CaptureSource.h" />
+    <ClInclude Include="DX11CaptureTask.h" />
     <ClInclude Include="DX11Image.h" />
     <ClInclude Include="DX11Texture.h" />
     <ClInclude Include="DX11TextureShader.h" />
@@ -100,6 +101,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX11.cpp" />
+    <ClCompile Include="DX11CaptureTask.cpp" />
     <ClCompile Include="DX11Image.cpp" />
     <ClCompile Include="DX11CaptureSource.cpp" />
     <ClCompile Include="DX11Texture.cpp" />

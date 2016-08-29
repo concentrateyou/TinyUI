@@ -31,7 +31,7 @@ namespace DXFramework
 		BOOL				m_bCapturing;
 		BOOL				m_bInject;
 		SharedTexture		m_textureCapture;
-		TinySharedMemory	m_sharedMemory;
+		TinySharedMemory	m_memory;
 	};
 }
 

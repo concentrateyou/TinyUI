@@ -34,10 +34,10 @@ namespace DXCapture
 		HWND		HwndCapture;
 	}SharedCapture;
 #pragma pack(push, 8)
-	typedef struct tagSharedTexture
+	typedef struct tagSharedTextureDATA
 	{
 		LONGLONG    FrameTime;
 		HANDLE      TextureHandle;
-	}SharedTexture;
+	}SharedTextureDATA;
 #pragma pack(pop)
 }

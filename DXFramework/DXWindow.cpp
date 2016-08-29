@@ -79,8 +79,8 @@ namespace DXFramework
 		CenterWindow(NULL, size);
 		if (m_dx11.Initialize(m_hWND, 0, 0, 800, 600))
 		{
+			m_captureTask.Initialize(&m_dx11);
 			m_camera.SetPosition(0.0F, 0.0F, -10.0F);
-			m_captureSource.BeginCapture(m_dx11,"War3.exe","D:\\Develop\\GitHub\\TinyUI\\Debug\\GameDetour.dll");
 			if (m_textureShader.Initialize(m_dx11,
 				TEXT("D:\\Develop\\GitHub\\TinyUI\\DXFramework\\texture.vs"),
 				TEXT("D:\\Develop\\GitHub\\TinyUI\\DXFramework\\texture.ps")))

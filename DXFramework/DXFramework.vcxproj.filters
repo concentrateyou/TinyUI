@@ -57,6 +57,9 @@
     <ClInclude Include="DX11TextureShader.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="DX11CaptureTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -96,6 +99,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DX11TextureShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11CaptureTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
