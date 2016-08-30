@@ -36,6 +36,7 @@ namespace DXFramework
 	}
 	void DXWindow::OnVideo(const BYTE* pBits, INT size, LPVOID lpParamer)
 	{
+		Sleep(1);
 		AM_MEDIA_TYPE* pMediaType = static_cast<AM_MEDIA_TYPE*>(lpParamer);
 		if (pMediaType)
 		{

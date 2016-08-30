@@ -48,6 +48,7 @@ namespace DXFramework
 				task->GetSource()->EndCapture();
 				return FALSE;
 			}
+			Sleep(1);
 		}
 		return FALSE;
 	}
