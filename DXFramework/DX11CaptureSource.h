@@ -12,14 +12,13 @@ namespace DXFramework
 		DX11CaptureSource();
 		~DX11CaptureSource();
 	public:
-		BOOL		BeginCapture(const DX11& dx10, const TinyString& processName, const TinyString& dll);
+		BOOL		BeginCapture(const DX11& dx10);
 		BOOL		EndCapture();
 		void		Tick(const DX11& dx10);
 		DX11Image*	GetTexture();
+		BOOL		AttemptCapture(const TinyString& className, const TinyString& exeName, const TinyString& dllName);
 	private:
-		BOOL	Initialize(const TinyString& processName);
-		DWORD	FindProcess(const TinyString& processName);
-		BOOL	FindWindow(const TinyString& processName);
+		DWORD	InitializeSignal();
 		SharedCaptureDATA* GetSharedCapture();
 		WNDINFO	GetWNDINFO();
 		static BOOL CALLBACK EnumWindow(HWND hwnd, LPARAM lParam);
@@ -30,8 +29,7 @@ namespace DXFramework
 		TinyEvent			m_exit;
 		WNDINFO				m_targetWND;
 		BOOL				m_bCapturing;
-		BOOL				m_bInject;
-		SharedTexture		m_sharedTexture;
+		SharedTexture		m_texture;
 		TinySharedMemory	m_memory;
 	};
 }

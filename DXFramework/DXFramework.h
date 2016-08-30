@@ -12,11 +12,14 @@
 #include "Render/TinyGDI.h"
 #include "IO/TinySharedMemory.h"
 using namespace TinyUI;
+using namespace std;
 
 namespace DXFramework
 {
 	typedef struct tagWNDINFO
 	{
+		CHAR	className[MAX_PATH];
+		CHAR	exeName[MAX_PATH];
 		HWND	hWND;
 		DWORD	dwProcessID;
 		DWORD	dwThreadID;
