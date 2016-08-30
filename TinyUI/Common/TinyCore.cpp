@@ -43,11 +43,7 @@ namespace TinyUI
 	}
 	TinyEvent::~TinyEvent()
 	{
-		if (m_hEvent != NULL)
-		{
-			::CloseHandle(m_hEvent);
-			m_hEvent = NULL;
-		}
+		Close();
 	}
 	TinyEvent::operator HANDLE() const
 	{
@@ -96,6 +92,14 @@ namespace TinyUI
 	{
 		return TRUE;
 	}
+	void TinyEvent::Close()
+	{
+		if (m_hEvent != NULL)
+		{
+			::CloseHandle(m_hEvent);
+			m_hEvent = NULL;
+		}
+	}
 	/////////////////////////////////////////////////////////////////////////
 	TinyMutex::TinyMutex()
 		:m_hMutex(NULL)
@@ -104,11 +108,7 @@ namespace TinyUI
 	}
 	TinyMutex::~TinyMutex()
 	{
-		if (m_hMutex != NULL)
-		{
-			::CloseHandle(m_hMutex);
-			m_hMutex = NULL;
-		}
+		Close();
 	}
 	BOOL TinyMutex::Create(BOOL bInitiallyOwn, LPCTSTR lpszName, LPSECURITY_ATTRIBUTES lpsaAttribute)
 	{
@@ -141,6 +141,14 @@ namespace TinyUI
 	{
 		ASSERT(m_hMutex != NULL);
 		return ::ReleaseMutex(m_hMutex);
+	}
+	void TinyMutex::Close()
+	{
+		if (m_hMutex != NULL)
+		{
+			::CloseHandle(m_hMutex);
+			m_hMutex = NULL;
+		}
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinyLock::TinyLock()

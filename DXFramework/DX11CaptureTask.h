@@ -14,10 +14,12 @@ namespace DXFramework
 		DX11* GetDX11() const;
 		DX11CaptureSource*	GetSource();
 		DX11Image*			GetTexture();
-		static DWORD Loop(LPVOID lpUnused);
+		static DWORD MessageLoop(LPVOID lpUnused);
 	private:
 		DX11*				m_dx11;
 		HANDLE				m_hTask;
 		DX11CaptureSource	m_source;
+	public:
+		TinyEvent			m_close;
 	};
 }

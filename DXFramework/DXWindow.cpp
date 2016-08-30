@@ -63,6 +63,13 @@ namespace DXFramework
 	LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+
+		if (!m_close.OpenEvent(EVENT_ALL_ACCESS, FALSE, TEXT("E_CLOSE")) &&
+			!m_close.CreateEvent(FALSE, FALSE, TEXT("E_CLOSE")))
+		{
+
+		}
+
 		vector<Media::VideoCapture::Name> names;
 		Media::VideoCapture::GetDevices(names);
 		vector<Media::VideoCaptureParam> params;
@@ -103,6 +110,7 @@ namespace DXFramework
 	LRESULT DXWindow::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		m_close.SetEvent();
 		PostQuitMessage(0);
 		return FALSE;
 	}

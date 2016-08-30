@@ -12,11 +12,11 @@ namespace DXFramework
 		DX11CaptureSource();
 		~DX11CaptureSource();
 	public:
-		BOOL		BeginCapture(const DX11& dx10);
+		BOOL		BeginCapture(const DX11& dx11);
 		BOOL		EndCapture();
-		void		Tick(const DX11& dx10);
+		void		Tick(const DX11& dx11);
 		DX11Image*	GetTexture();
-		BOOL		AttemptCapture(const TinyString& className, const TinyString& exeName, const TinyString& dllName);
+		BOOL		AttemptCapture(const DX11& dx11,const TinyString& className, const TinyString& exeName, const TinyString& dllName);
 	private:
 		DWORD	InitializeSignal();
 		SharedCaptureDATA* GetSharedCapture();

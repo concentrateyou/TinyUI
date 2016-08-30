@@ -6,6 +6,7 @@ namespace DXFramework
 	DX11CaptureSource::DX11CaptureSource()
 		:m_bCapturing(FALSE)
 	{
+		ZeroMemory(&m_targetWND, sizeof(m_targetWND));
 	}
 	DX11CaptureSource::~DX11CaptureSource()
 	{
@@ -106,6 +107,10 @@ namespace DXFramework
 	}
 	BOOL DX11CaptureSource::EndCapture()
 	{
+		m_start.Close();
+		m_stop.Close();
+		m_ready.Close();
+		m_exit.Close();
 		if (m_targetWND.hProcess)
 		{
 			CloseHandle(m_targetWND.hProcess);
@@ -115,7 +120,7 @@ namespace DXFramework
 		m_bCapturing = FALSE;
 		return TRUE;
 	}
-	BOOL DX11CaptureSource::AttemptCapture(const TinyString& className, const TinyString& exeName, const TinyString& dllName)
+	BOOL DX11CaptureSource::AttemptCapture(const DX11& dx11, const TinyString& className, const TinyString& exeName, const TinyString& dllName)
 	{
 		HANDLE hProcess = NULL;
 		HWND hWND = ::FindWindow(className.STR(), NULL);
@@ -158,7 +163,8 @@ namespace DXFramework
 			goto _ERROR;
 		}
 		m_start.SetEvent();
-		m_bCapturing = TRUE;
+		Sleep(300);
+		m_bCapturing = BeginCapture(dx11);
 	_ERROR:
 		if (hProcess)
 		{
@@ -187,7 +193,7 @@ namespace DXFramework
 		}
 		if (!m_bCapturing)
 		{
-			AttemptCapture(TEXT("Warcraft III"), TEXT("war3.exe"), TEXT("D:\\Develop\\GitHub\\TinyUI\\Debug\\GameDetour.dll"));
+			AttemptCapture(dx11, TEXT("Warcraft III"), TEXT("war3.exe"), TEXT("D:\\Develop\\GitHub\\TinyUI\\Debug\\GameDetour.dll"));
 		}
 		else
 		{

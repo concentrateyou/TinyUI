@@ -39,6 +39,7 @@ namespace DXFramework
 		Media::VideoCapture		m_videoCapture;
 		Callback<void(const BYTE*, INT, LPVOID)> m_videoCB;
 		DX11CaptureTask			m_captureTask;
+		TinyEvent				m_close;
 	};
 }
 
