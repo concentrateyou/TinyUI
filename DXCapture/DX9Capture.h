@@ -52,7 +52,7 @@ namespace DXCapture
 		TinyScopedLibrary				m_d3d9;
 		TinyScopedLibrary				m_d3d10_1;
 		TinyScopedLibrary				m_dxgi;
-		IO::TinySharedMemory			m_sharedCaptureMemery;
+		IO::TinySharedMemory			m_memery;
 		IO::TinySharedMemory			m_textureMemery;
 		HHOOK							m_hhk;
 	};

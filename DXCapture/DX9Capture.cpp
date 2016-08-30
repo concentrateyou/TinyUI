@@ -112,8 +112,6 @@ namespace DXCapture
 	{
 		if (m_hhk != NULL)
 			UnhookWindowsHookEx(m_hhk);
-		m_dX9TextureSurface.Detach();
-		m_d3d.Detach();
 	}
 	DX9Capture& DX9Capture::Instance()
 	{
@@ -139,10 +137,10 @@ namespace DXCapture
 		if (!m_exit.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()) &&
 			!m_exit.CreateEvent(FALSE, FALSE, name.c_str()))
 			return FALSE;
-		if (!m_sharedCaptureMemery.Open(SHAREDCAPTURE_MEMORY) &&
-			!m_sharedCaptureMemery.Create(SHAREDCAPTURE_MEMORY, sizeof(SharedCapture)))
+		if (!m_memery.Open(SHAREDCAPTURE_MEMORY) &&
+			!m_memery.Create(SHAREDCAPTURE_MEMORY, sizeof(SharedCaptureDATA)))
 			return FALSE;
-		if (!m_sharedCaptureMemery.Map(0, 0))
+		if (!m_memery.Map(0, 0))
 			return FALSE;
 		HRESULT hRes = S_OK;
 		CHAR szD3DPath[MAX_PATH];
@@ -209,7 +207,7 @@ namespace DXCapture
 					{
 						m_d3dFormat = sd.Format;
 						m_dxgiFormat = GetDXGIFormat(sd.Format);
-						SharedCapture* sharedCapture = (SharedCapture*)m_sharedCaptureMemery.Address();
+						SharedCaptureDATA* sharedCapture = (SharedCaptureDATA*)m_memery.Address();
 						ASSERT(sharedCapture);
 						sharedCapture->Format = sd.Format;
 						sharedCapture->Size.cx = sd.Width;
@@ -253,7 +251,7 @@ namespace DXCapture
 			D3DPRESENT_PARAMETERS pp;
 			if (SUCCEEDED(swapChain->GetPresentParameters(&pp)))
 			{
-				SharedCapture* sharedCapture = (SharedCapture*)DX9Capture::Instance().m_sharedCaptureMemery.Address();
+				SharedCaptureDATA* sharedCapture = (SharedCaptureDATA*)DX9Capture::Instance().m_memery.Address();
 				ASSERT(sharedCapture);
 				sharedCapture->CaptureType = CAPTURETYPE_SHAREDTEX;
 				sharedCapture->Format = pp.BackBufferFormat;
@@ -305,7 +303,7 @@ namespace DXCapture
 				return FALSE;
 			}
 		}
-		SharedCapture* sharedCapture = reinterpret_cast<SharedCapture*>(m_sharedCaptureMemery.Address());
+		SharedCaptureDATA* sharedCapture = reinterpret_cast<SharedCaptureDATA*>(m_memery.Address());
 		ASSERT(sharedCapture);
 		D3D10_TEXTURE2D_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
@@ -440,7 +438,7 @@ namespace DXCapture
 	{
 		if (code != HCBT_DESTROYWND)
 			return CallNextHookEx(DX9Capture::Instance().m_hhk, code, wParam, lParam);
-		SharedCapture* sharedCapture = (SharedCapture*)DX9Capture::Instance().m_sharedCaptureMemery.Address();
+		SharedCaptureDATA* sharedCapture = (SharedCaptureDATA*)DX9Capture::Instance().m_memery.Address();
 		if (sharedCapture->HwndCapture == reinterpret_cast<HWND>(wParam))
 		{
 			DX9Capture::Instance().Reset();

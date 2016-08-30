@@ -32,7 +32,7 @@ namespace DXFramework
 		TinyComPtr<ID3D11ShaderResourceView>	m_resourceView;
 	};
 
-	typedef struct tagSharedCapture
+	typedef struct tagSharedCaptureDATA
 	{
 		UINT		CaptureType;
 		DWORD		Format;
@@ -41,7 +41,7 @@ namespace DXFramework
 		UINT		Pitch;
 		DWORD		MapSize;
 		HWND		HwndCapture;
-	}SharedCapture;
+	}SharedCaptureDATA;
 #pragma pack(push, 8)
 	/// <summary>
 	/// 共享纹理数据

@@ -53,21 +53,23 @@ namespace DXFramework
 		HANDLE hProcessSnap = NULL;
 		PROCESSENTRY32 pe32 = { 0 };
 		hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-		if (hProcessSnap == (HANDLE)-1)
+		if (hProcessSnap == INVALID_HANDLE_VALUE)
 			return FALSE;
 		pe32.dwSize = sizeof(PROCESSENTRY32);
-		if (Process32First(hProcessSnap, &pe32))
+		if (!Process32First(hProcessSnap, &pe32))
 		{
-			do
-			{
-				TinyString szExeFile(pe32.szExeFile);
-				if (szExeFile == processName)
-				{
-					dwProcessID = pe32.th32ProcessID;
-					break;
-				}
-			} while (Process32Next(hProcessSnap, &pe32));
+			CloseHandle(hProcessSnap);
+			return dwProcessID;
 		}
+		do
+		{
+			TinyString szExeFile(pe32.szExeFile);
+			if (szExeFile == processName)
+			{
+				dwProcessID = pe32.th32ProcessID;
+				break;
+			}
+		} while (Process32Next(hProcessSnap, &pe32));
 		CloseHandle(hProcessSnap);
 		return dwProcessID;
 	}
@@ -101,11 +103,12 @@ namespace DXFramework
 		}
 		return bRes == S_OK;
 	}
-	SharedCapture* DX11CaptureSource::GetSharedCapture()
+	SharedCaptureDATA* DX11CaptureSource::GetSharedCapture()
 	{
+		m_memory.Unmap();
 		if (m_memory.Open(SHAREDCAPTURE_MEMORY) && m_memory.Map())
 		{
-			return reinterpret_cast<SharedCapture*>(m_memory.Address());
+			return reinterpret_cast<SharedCaptureDATA*>(m_memory.Address());
 		}
 		return NULL;
 	}
@@ -141,7 +144,7 @@ namespace DXFramework
 		}
 		if (m_ready.Lock(0))
 		{
-			SharedCapture* ps = GetSharedCapture();
+			SharedCaptureDATA* ps = GetSharedCapture();
 			if (!ps)
 				return FALSE;
 			if (!m_sharedTexture.Initialize(dx11, 600, 400))
@@ -153,8 +156,9 @@ namespace DXFramework
 	}
 	BOOL DX11CaptureSource::EndCapture()
 	{
+		Sleep(100);
 		m_bCapturing = FALSE;
-		m_stop.SetEvent();
+		m_bInject = FALSE;
 		return TRUE;
 	}
 	void DX11CaptureSource::Tick(const DX11& dx11)
@@ -169,8 +173,10 @@ namespace DXFramework
 		}
 		if (m_ready && m_ready.Lock(0))
 		{
+			SharedCaptureDATA* ps = GetSharedCapture();
+			if (!ps)
+				return;
 			m_sharedTexture.Initialize(dx11, 600, 400);
-			m_bCapturing = TRUE;
 		}
 	}
 	DX11Image*	DX11CaptureSource::GetTexture()

@@ -24,7 +24,7 @@ namespace DXCapture
 #define CAPTURE_EXIT_EVENT     TEXT("CaptureExit")
 #define CAPTURETYPE_MEMORY      1
 #define CAPTURETYPE_SHAREDTEX   2
-	typedef struct tagSharedCapture
+	typedef struct tagSharedCaptureDATA
 	{
 		UINT		CaptureType;
 		DWORD		Format;
@@ -33,7 +33,7 @@ namespace DXCapture
 		UINT		Pitch;
 		DWORD		MapSize;
 		HWND		HwndCapture;
-	}SharedCapture;
+	}SharedCaptureDATA;
 #pragma pack(push, 8)
 	typedef struct tagSharedTextureDATA
 	{
