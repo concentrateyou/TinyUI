@@ -237,6 +237,27 @@ namespace Media
 			return FALSE;
 		return m_control->GetState(0, (OAFilterState*)&state) == S_OK;
 	}
+	BOOL VideoCapture::ShowProperty(HWND hWND)
+	{
+		if (!m_captureFilter)
+			return FALSE;
+		TinyComPtr<ISpecifyPropertyPages> pages;
+		if (FAILED(m_captureFilter->QueryInterface(__uuidof(ISpecifyPropertyPages), reinterpret_cast<void**>(&pages))))
+			return FALSE;
+		CAUUID cauuid;
+		if (FAILED(pages->GetPages(&cauuid)))
+			return FALSE;
+		if (cauuid.cElems > 0)
+		{
+			FILTER_INFO filterInfo;
+			if (SUCCEEDED(m_captureFilter->QueryFilterInfo(&filterInfo)))
+			{
+				OleCreatePropertyFrame(hWND, 30, 30, filterInfo.achName, 1, (LPUNKNOWN*)&m_captureFilter, cauuid.cElems, cauuid.pElems, 0, 0, NULL);
+			}
+			CoTaskMemFree(cauuid.pElems);
+		}
+		return FALSE;
+	}
 	BOOL VideoCapture::GetDevices(vector<Name>& names)
 	{
 		TinyComPtr<ICreateDevEnum> devEnum;

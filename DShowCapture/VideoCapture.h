@@ -38,6 +38,7 @@ namespace Media
 		BOOL Stop();
 		BOOL Pause();
 		BOOL GetState(FILTER_STATE& state);
+		BOOL ShowProperty(HWND hWND);
 		virtual BOOL Allocate(const VideoCaptureParam& param);
 		virtual void DeAllocate();
 	public:

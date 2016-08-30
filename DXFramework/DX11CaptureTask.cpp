@@ -19,7 +19,7 @@ namespace DXFramework
 		if (!m_close.OpenEvent(EVENT_ALL_ACCESS, FALSE, TEXT("E_CLOSE")) &&
 			!m_close.CreateEvent(FALSE, FALSE, TEXT("E_CLOSE")))
 		{
-
+			return FALSE;
 		}
 		m_dx11 = dx11;
 		m_hTask = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)DX11CaptureTask::MessageLoop, this, 0, 0);

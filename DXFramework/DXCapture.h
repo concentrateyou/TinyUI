@@ -3,11 +3,11 @@
 
 namespace Media
 {
-	class DXGraphics
+	class DXCapture
 	{
 	public:
-		DXGraphics();
-		~DXGraphics();
+		DXCapture();
+		~DXCapture();
 	};
 }
 

@@ -175,6 +175,7 @@ void CUIFrame::OnVideoSelectChange2(INT index)
 	m_videoDevice.Uninitialize();
 	m_videoDevice.Initialize(m_videoNames[m_videoDevice1.GetCurSel()], m_videoCB);
 	m_videoDevice.Allocate(param);
+	m_videoDevice.ShowProperty(m_hWND);
 }
 
 void CUIFrame::OnAudioSelectChange1(INT index)
