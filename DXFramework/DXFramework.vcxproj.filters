@@ -24,19 +24,10 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DXApplication.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DXWindow.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="DXFramework.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DXCamera.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TaskRunner.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DX11.h">
@@ -68,19 +59,10 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DXApplication.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DXWindow.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="DXFramework.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DXCamera.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TaskRunner.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DX11.cpp">
