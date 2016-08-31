@@ -13,12 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="头文件\D3D10">
-      <UniqueIdentifier>{9796037a-ffe4-48a5-b110-c5fb80cfc9ac}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="源文件\D3D10">
-      <UniqueIdentifier>{204c3f67-9a47-4bf3-b151-057bb94ab6b1}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -39,43 +33,10 @@
     <ClInclude Include="MainFrame.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="D3DHook.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="D3DDrawPanel.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="D3DCaptureSource.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="SharedTextureCapture.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D10PixelShader.h">
-      <Filter>头文件\D3D10</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D10Texture.h">
-      <Filter>头文件\D3D10</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D10Device.h">
-      <Filter>头文件\D3D10</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D10VertexShader.h">
-      <Filter>头文件\D3D10</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D10VertexBuffer.h">
-      <Filter>头文件\D3D10</Filter>
-    </ClInclude>
     <ClInclude Include="Vector2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="D3DUtility.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="UIFrame.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="VideoCapture1.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -89,40 +50,7 @@
     <ClCompile Include="MainFrame.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="D3DHook.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="D3DDrawPanel.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="D3DCaptureSource.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="SharedTextureCapture.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D10PixelShader.cpp">
-      <Filter>源文件\D3D10</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D10Texture.cpp">
-      <Filter>源文件\D3D10</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D10Device.cpp">
-      <Filter>源文件\D3D10</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D10VertexShader.cpp">
-      <Filter>源文件\D3D10</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D10VertexBuffer.cpp">
-      <Filter>源文件\D3D10</Filter>
-    </ClCompile>
-    <ClCompile Include="D3DUtility.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="UIFrame.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="VideoCapture1.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

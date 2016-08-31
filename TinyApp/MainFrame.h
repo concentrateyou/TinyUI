@@ -8,11 +8,9 @@
 #include "Control/TinyButton.h"
 #include "Control/TinyRichTextBox.h"
 #include "Common/TinyEvent.h"
-#include "D3DDrawPanel.h"
 #include <algorithm>
 #include <map>
-#include <functional>
-#include "VideoCapture1.h"
+using namespace TinyUI;
 
 class CMainFrame : public TinyControl
 {
@@ -39,8 +37,6 @@ private:
 protected:
 	TinyButton			m_inject;
 	TinyLabel			m_lblState;
-	CD3DDrawPanel		m_drawCtrl;
 	TinyScopedPtr<Delegate<void(void*, INT)>> m_onInjectClick;
-	CVideoCapture		m_videoCapture;
 };
 
