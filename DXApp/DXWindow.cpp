@@ -35,6 +35,7 @@ HICON DXWindow::RetrieveIcon()
 }
 void DXWindow::OnVideo(const BYTE* pBits, INT size, LPVOID lpParamer)
 {
+	ASSERT(m_captureTask);
 	Sleep(1);
 	AM_MEDIA_TYPE* pMediaType = static_cast<AM_MEDIA_TYPE*>(lpParamer);
 	if (pMediaType)
@@ -50,7 +51,7 @@ void DXWindow::OnVideo(const BYTE* pBits, INT size, LPVOID lpParamer)
 		m_dxVideo.FillImage(m_dx11, pBits, h->bmiHeader.biWidth, h->bmiHeader.biHeight);
 		m_dxVideo.Render(m_dx11, 5, 5);
 		m_textureShader.Render(m_dx11, m_dxVideo.GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_dxVideo.GetTexture());
-		DX11Image* dxImage = m_captureTask.GetTexture();
+		DX11Image* dxImage = m_captureTask->GetTexture();
 		if (dxImage && dxImage->IsValid())
 		{
 			dxImage->Render(m_dx11, 150, 150);
@@ -67,7 +68,7 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	if (!m_close.OpenEvent(EVENT_ALL_ACCESS, FALSE, TEXT("E_CLOSE")) &&
 		!m_close.CreateEvent(FALSE, FALSE, TEXT("E_CLOSE")))
 	{
-
+		return FALSE;
 	}
 
 	vector<Media::VideoCapture::Name> names;
@@ -75,7 +76,7 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	vector<Media::VideoCaptureParam> params;
 	Media::VideoCapture::GetDeviceParams(names[0], params);
 	Media::VideoCaptureParam param;
-	for (INT i = 0; i < params.size(); i++)
+	for (UINT i = 0; i < params.size(); i++)
 	{
 		if (params[i].GetSize() == TinySize(640, 360))
 		{
@@ -95,7 +96,7 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 			TEXT("D:\\Develop\\GitHub\\TinyUI\\DXFramework\\texture.vs"),
 			TEXT("D:\\Develop\\GitHub\\TinyUI\\DXFramework\\texture.ps")))
 		{
-			m_captureTask.Initialize(&m_dx11);
+			m_captureTask.Reset(new DX11CaptureTask(&m_dx11));
 			m_dxVideo.Create(m_dx11, 640, 360, 320, 180);
 			m_videoCapture.Start();
 		}

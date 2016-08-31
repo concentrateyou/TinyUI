@@ -30,7 +30,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		PTP_WORK TinyTaskPool::SubmitTask(PVOID pv, PTP_WORK_CALLBACK cb)
+		PTP_WORK TinyTaskPool::SubmitWork(PVOID pv, PTP_WORK_CALLBACK cb)
 		{
 			PTP_WORK ps = NULL;
 			if ((ps = CreateThreadpoolWork(cb, pv, &m_cbe)) != NULL)
@@ -39,11 +39,11 @@ namespace TinyUI
 			}
 			return ps;
 		}
-		void TinyTaskPool::WaitTask(PTP_WORK ps, BOOL fCancelPendingCallbacks)
+		void TinyTaskPool::WaitWork(PTP_WORK ps, BOOL fCancelPendingCallbacks)
 		{
 			WaitForThreadpoolWorkCallbacks(ps, fCancelPendingCallbacks);
 		}
-		void TinyTaskPool::CloseTask(PTP_WORK ps)
+		void TinyTaskPool::CloseWork(PTP_WORK ps)
 		{
 			CloseThreadpoolWork(ps);
 		}
@@ -62,6 +62,41 @@ namespace TinyUI
 		TinyTaskPool::~TinyTaskPool()
 		{
 			Close();
+		}
+		//////////////////////////////////////////////////////////////////////////
+		TinyTask::TinyTask(TinyTaskPool* pWorks)
+			:m_pWorks(pWorks),
+			m_work(NULL)
+		{
+
+		}
+		BOOL TinyTask::Create(Callback<void(void*)>& callback)
+		{
+			ASSERT(m_pWorks);
+			m_callback = callback;
+			m_work = m_pWorks->SubmitWork(this, TinyTask::WorkCallback);
+			return m_work != NULL;
+		}
+		BOOL TinyTask::Destory()
+		{
+			ASSERT(m_pWorks);
+			if (m_work)
+			{
+				m_pWorks->CloseWork(m_work);
+				return TRUE;
+			}
+			return FALSE;
+		}
+		void TinyTask::WorkCallback(PTP_CALLBACK_INSTANCE Instance, PVOID  Context, PTP_WORK  Work)
+		{
+			TinyTask* pWork = reinterpret_cast<TinyTask*>(Context);
+			if (pWork->m_work == Work)
+			{
+				if (!pWork->m_callback.IsNull())
+				{
+					pWork->m_callback(Context);
+				}
+			}
 		}
 	}
 }

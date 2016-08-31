@@ -279,9 +279,6 @@
     <ClInclude Include="Windowless\TinyVisual.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
-    <ClInclude Include="IO\TinyTaskPool.h">
-      <Filter>头文件\IO</Filter>
-    </ClInclude>
     <ClInclude Include="Common\TinyHook.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
@@ -350,6 +347,9 @@
     </ClInclude>
     <ClInclude Include="Render\TinyDDraw.h">
       <Filter>头文件\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\TinyTaskPool.h">
+      <Filter>头文件\IO</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -560,9 +560,6 @@
     <ClCompile Include="Windowless\TinyVisual.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
-    <ClCompile Include="IO\TinyTaskPool.cpp">
-      <Filter>源文件\IO</Filter>
-    </ClCompile>
     <ClCompile Include="Common\TinyHook.cpp">
       <Filter>源文件\Common</Filter>
     </ClCompile>
@@ -634,6 +631,9 @@
     </ClCompile>
     <ClCompile Include="Render\TinyDDraw.cpp">
       <Filter>源文件\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\TinyTaskPool.cpp">
+      <Filter>源文件\IO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

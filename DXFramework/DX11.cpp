@@ -109,12 +109,12 @@ namespace DXFramework
 			return FALSE;
 		m_context->RSSetState(m_rasterizerState);
 		D3D11_VIEWPORT viewport;
-		viewport.Width = cx;
-		viewport.Height = cy;
+		viewport.Width = static_cast<FLOAT>(cx);
+		viewport.Height = static_cast<FLOAT>(cy);
 		viewport.MinDepth = 0.0F;
 		viewport.MaxDepth = 1.0F;
-		viewport.TopLeftX = 0;
-		viewport.TopLeftY = 0;
+		viewport.TopLeftX = 0.0F;
+		viewport.TopLeftY = 0.0F;
 		m_context->RSSetViewports(1, &viewport);
 		FLOAT fov = (FLOAT)D3DX_PI / 4.0F;
 		FLOAT aspect = (FLOAT)cx / (FLOAT)cy;
