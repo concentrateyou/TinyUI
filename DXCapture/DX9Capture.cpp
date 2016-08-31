@@ -120,7 +120,7 @@ namespace DXCapture
 	}
 	BOOL DX9Capture::Initialize(HWND hWND)
 	{
-		if (!InitializeEvent())
+		if (!BuildEvents())
 			return FALSE;
 		if (!m_memery.Open(SHAREDCAPTURE_MEMORY) &&
 			!m_memery.Create(SHAREDCAPTURE_MEMORY, sizeof(SharedCaptureDATA)))
@@ -165,7 +165,7 @@ namespace DXCapture
 		}
 		return FALSE;
 	}
-	BOOL DX9Capture::InitializeEvent()
+	BOOL DX9Capture::BuildEvents()
 	{
 		DWORD dwProcessID = GetCurrentProcessId();
 		if (!m_start)

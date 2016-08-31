@@ -8,6 +8,7 @@
 #include "DX11CaptureTask.h"
 using namespace DXFramework;
 
+#define WINDOW_CLOSE_EVENT      TEXT("WindowClose")
 class DXWindow : public TinyControl
 {
 	DECLARE_DYNAMIC(DXWindow)
@@ -40,5 +41,6 @@ private:
 	Callback<void(const BYTE*, INT, LPVOID)> m_videoCB;
 	TinyScopedPtr<DX11CaptureTask>	m_captureTask;
 	TinyEvent				m_close;
+	TinyTaskPool			m_tasks;
 };
 

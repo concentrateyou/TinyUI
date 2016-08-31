@@ -3,16 +3,23 @@
 
 namespace DXFramework
 {
-	DX11CaptureTask::DX11CaptureTask(DX11* pDX11)
-		:m_bCapturing(FALSE),
+	DX11CaptureTask::DX11CaptureTask(DX11* pDX11, TinyTaskPool* pWorks)
+		:TinyTask(pWorks),
+		m_bCapturing(FALSE),
 		m_pDX11(pDX11)
 	{
 		ZeroMemory(&m_targetWND, sizeof(m_targetWND));
+
 	}
 	DX11CaptureTask::~DX11CaptureTask()
 	{
 	}
-	DWORD DX11CaptureTask::InitializeEvent()
+	BOOL DX11CaptureTask::Submit()
+	{
+		Closure s = BindCallback(&DX11CaptureTask::MessagePump, this);
+		return TinyTask::Submit(s);
+	}
+	DWORD DX11CaptureTask::BuildEvents()
 	{
 		if (!m_start)
 		{
@@ -70,21 +77,6 @@ namespace DXFramework
 		}
 		return NULL;
 	}
-	DWORD DX11CaptureTask::MessageLoop(LPVOID lpData)
-	{
-		DX11CaptureTask* task = reinterpret_cast<DX11CaptureTask*>(lpData);
-		for (;;)
-		{
-			task->Tick();
-			if (task->Wait(0))
-			{
-				task->EndCapture();
-				return FALSE;
-			}
-			Sleep(1);
-		}
-		return FALSE;
-	}
 	BOOL CALLBACK DX11CaptureTask::EnumWindow(HWND hwnd, LPARAM lParam)
 	{
 		LPWNDINFO ws = reinterpret_cast<LPWNDINFO>(lParam);
@@ -121,7 +113,7 @@ namespace DXFramework
 	{
 		ASSERT(m_pDX11);
 		BOOL bRes = S_OK;
-		if (!InitializeEvent())
+		if (!BuildEvents())
 			return FALSE;
 		SharedCaptureDATA* pDATA = GetSharedCapture();
 		if (!pDATA)
@@ -171,7 +163,7 @@ namespace DXFramework
 			m_bCapturing = FALSE;
 			goto _ERROR;
 		}
-		if (!InitializeEvent())
+		if (!BuildEvents())
 		{
 			goto _ERROR;
 		}
@@ -207,7 +199,7 @@ namespace DXFramework
 		}
 		if (m_bCapturing && !m_ready && m_targetWND.dwProcessID)
 		{
-			InitializeEvent();
+			BuildEvents();
 		}
 		if (m_ready && m_ready.Lock(0))
 		{
@@ -229,6 +221,19 @@ namespace DXFramework
 			}
 		}
 	}
+	void DX11CaptureTask::MessagePump()
+	{
+		for (;;)
+		{
+			Tick();
+			if (m_close && m_close.Lock(0))
+			{
+				EndCapture();
+				return;
+			}
+			Sleep(1);
+		}
+	}
 	DX11Image*	DX11CaptureTask::GetTexture()
 	{
 		return m_texture.GetTexture();
@@ -236,9 +241,5 @@ namespace DXFramework
 	WNDINFO	DX11CaptureTask::GetWNDINFO()
 	{
 		return m_targetWND;
-	}
-	BOOL DX11CaptureTask::Wait(DWORD dwTime)
-	{
-		return m_close.Lock(dwTime);
 	}
 }

@@ -21,7 +21,7 @@ namespace DXCapture
 		BOOL DX9GPUHook(IDirect3DDevice9 *device);
 		static DX9Capture& Instance();
 	private:
-		BOOL InitializeEvent();
+		BOOL BuildEvents();
 	private:
 		static LRESULT CALLBACK CbtFilterHook(INT code, WPARAM wParam, LPARAM lParam);
 		static HRESULT STDMETHODCALLTYPE DX9EndScene(IDirect3DDevice9 *pThis);

@@ -11,6 +11,7 @@
 #include "Control/TinyControl.h"
 #include "Render/TinyGDI.h"
 #include "IO/TinySharedMemory.h"
+#include "IO/TinyTaskPool.h"
 using namespace TinyUI;
 using namespace std;
 

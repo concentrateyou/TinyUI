@@ -65,12 +65,11 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 {
 	bHandled = FALSE;
 
-	if (!m_close.OpenEvent(EVENT_ALL_ACCESS, FALSE, TEXT("E_CLOSE")) &&
-		!m_close.CreateEvent(FALSE, FALSE, TEXT("E_CLOSE")))
+	if (!m_close.OpenEvent(EVENT_ALL_ACCESS, FALSE, WINDOW_CLOSE_EVENT) &&
+		!m_close.CreateEvent(FALSE, FALSE, WINDOW_CLOSE_EVENT))
 	{
 		return FALSE;
 	}
-
 	vector<Media::VideoCapture::Name> names;
 	Media::VideoCapture::GetDevices(names);
 	vector<Media::VideoCaptureParam> params;
@@ -89,6 +88,7 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	m_videoCapture.Allocate(param);
 	TinySize size(800, 600);
 	CenterWindow(NULL, size);
+	m_tasks.Initialize(0, 10);
 	if (m_dx11.Initialize(m_hWND, 0, 0, 800, 600))
 	{
 		m_camera.SetPosition(0.0F, 0.0F, -10.0F);
@@ -96,7 +96,8 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 			TEXT("D:\\Develop\\GitHub\\TinyUI\\DXFramework\\texture.vs"),
 			TEXT("D:\\Develop\\GitHub\\TinyUI\\DXFramework\\texture.ps")))
 		{
-			m_captureTask.Reset(new DX11CaptureTask(&m_dx11));
+			m_captureTask.Reset(new DX11CaptureTask(&m_dx11, &m_tasks));
+			m_captureTask->Submit();
 			m_dxVideo.Create(m_dx11, 640, 360, 320, 180);
 			m_videoCapture.Start();
 		}
