@@ -11,8 +11,8 @@ namespace DXFramework
 	public:
 		DX11CaptureTask(DX11* pDX11, TinyTaskPool* pWorks);
 		virtual ~DX11CaptureTask();
-		DX11Image*			GetTexture();
-		BOOL				Submit();
+		DX11Image*				GetTexture();
+		BOOL					Submit();
 	private:
 		void					MessagePump();
 		WNDINFO					GetWNDINFO();
@@ -24,17 +24,17 @@ namespace DXFramework
 		DWORD					BuildEvents();
 		static BOOL CALLBACK	EnumWindow(HWND hwnd, LPARAM lParam);
 	private:
-		BOOL				m_bCapturing;
-		DX11*				m_pDX11;
-		TinyEvent			m_start;
-		TinyEvent			m_stop;
-		TinyEvent			m_ready;
-		TinyEvent			m_exit;
-		TinyEvent			m_close;
-		HANDLE				m_hTask;
-		WNDINFO				m_targetWND;
-		SharedTexture		m_texture;
-		TinySharedMemory	m_memory;
+		BOOL					m_bCapturing;
+		DX11*					m_pDX11;
+		TinyEvent				m_start;
+		TinyEvent				m_stop;
+		TinyEvent				m_ready;
+		TinyEvent				m_exit;
+		TinyEvent				m_close;
+		HANDLE					m_hTask;
+		WNDINFO					m_targetWND;
+		SharedTexture			m_texture;
+		TinySharedMemory		m_memory;
 	};
 }
 

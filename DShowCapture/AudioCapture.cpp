@@ -38,14 +38,23 @@ namespace Media
 
 	void AudioCapture::OnFrameReceive(const BYTE* pBits, INT size, LPVOID lpParameter)
 	{
+		Sleep(1);
 		if (!m_callback.IsNull())
 		{
 			m_callback(pBits, size, lpParameter);
 		}
+		else
+		{
+			if (m_size != size)
+			{
+				m_size = size;
+				m_bits.Reset(new BYTE[size]);
+			}
+			memcpy_s(m_bits, size, pBits, size);
+		}
 	}
-	BOOL AudioCapture::Initialize(const Name& name, Callback<void(const BYTE*, INT, LPVOID)>& callback)
+	BOOL AudioCapture::Initialize(const Name& name)
 	{
-		m_callback = callback;
 		HRESULT hRes = m_builder.CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER);
 		if (FAILED(hRes))
 			return FALSE;
@@ -71,6 +80,15 @@ namespace Media
 			return FALSE;
 		return TRUE;
 	}
+	BOOL AudioCapture::Initialize(const Name& name, Callback<void(const BYTE*, INT, LPVOID)>& callback)
+	{
+		if (Initialize(name))
+		{
+			m_callback = callback;
+			return TRUE;
+		}
+		return FALSE;
+	}
 	void AudioCapture::Uninitialize()
 	{
 		DeAllocate();
@@ -95,6 +113,14 @@ namespace Media
 	INT AudioCapture::GetVolume() const
 	{
 		return 0;
+	}
+	BYTE* AudioCapture::GetData() const
+	{
+		return m_bits;
+	}
+	INT	AudioCapture::GetSize() const
+	{
+		return m_size;
 	}
 	BOOL AudioCapture::Start()
 	{
