@@ -4,16 +4,16 @@
 using namespace TinyUI::IO;
 
 class GraphicsCapture;
-class RenderTask : public TinyTask
+class PublishTask : public TinyTask
 {
 public:
-	RenderTask(GraphicsCapture* pSys, TinyTaskPool* pWorks);
-	~RenderTask();
+	PublishTask(GraphicsCapture* pSys, TinyTaskPool* pWorks);
+	~PublishTask();
 	BOOL	Submit();
 private:
 	void	MessagePump();
 private:
 	GraphicsCapture*	m_pSys;
-	TinyEvent			m_render;
+	TinyEvent			m_publish;
 };
 

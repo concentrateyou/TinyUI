@@ -188,6 +188,10 @@ namespace DXFramework
 	{
 		return m_context;
 	}
+	IDXGISwapChain*	DX11::GetSwap() const
+	{
+		return m_swap;
+	}
 	HWND DX11::GetHWND() const
 	{
 		return m_hWND;

@@ -16,6 +16,7 @@ namespace DXFramework
 		void AllowDepth(BOOL allow);
 		ID3D11Device*			GetD3D() const;
 		ID3D11DeviceContext*	GetContext() const;
+		IDXGISwapChain*			GetSwap() const;
 		HWND					GetHWND() const;
 		D3DXMATRIX				GetProjectionMatrix();
 		D3DXMATRIX				GetWorldMatrix();

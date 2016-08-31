@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "GraphicsCapture.h"
+#include <DXGIFormat.h>
 
 
 GraphicsCapture::GraphicsCapture()
@@ -9,6 +10,30 @@ GraphicsCapture::GraphicsCapture()
 
 GraphicsCapture::~GraphicsCapture()
 {
+}
+
+BOOL GraphicsCapture::CreatePublishTexture(INT cx, INT cy)
+{
+	DXGI_SWAP_CHAIN_DESC scd;
+	if (FAILED(m_dx11.GetSwap()->GetDesc(&scd)))
+		return FALSE;
+	D3D11_TEXTURE2D_DESC desc;
+	ZeroMemory(&desc, sizeof(desc));
+	desc.Width = cx;
+	desc.Height = cy;
+	desc.MipLevels = 1;
+	desc.ArraySize = 1;
+	desc.Format = scd.BufferDesc.Format;
+	desc.SampleDesc.Count = 1;
+	desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
+	TinyComPtr<ID3D11Texture2D>	texture;
+	if (FAILED(m_dx11.GetD3D()->CreateTexture2D(&desc, NULL, &texture)))
+		return FALSE;
+	if (FAILED(texture->QueryInterface(__uuidof(ID3D11Resource), (void**)&m_publishRes)))
+		return FALSE;
+	return TRUE;
 }
 
 BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
@@ -43,6 +68,10 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 				return FALSE;
 			if (!m_videoCapture.Start())
 				return FALSE;
+			if (!CreatePublishTexture(cx, cy))
+				return FALSE;
+			m_publishTask.Reset(new PublishTask(this, &m_tasks));
+			m_publishTask->Submit();
 			m_renderTask.Reset(new RenderTask(this, &m_tasks));
 			m_renderTask->Submit();
 			m_captureTask.Reset(new DX11CaptureTask(&m_dx11, &m_tasks));
@@ -76,4 +105,15 @@ void GraphicsCapture::Render()
 	}
 	m_dx11.AllowDepth(TRUE);
 	m_dx11.EndScene();
+}
+
+void GraphicsCapture::Publish()
+{
+	TinyComPtr<ID3D11Resource> backBuffer;
+	if (SUCCEEDED(m_dx11.GetSwap()->GetBuffer(0, __uuidof(ID3D11Resource), (void**)&backBuffer)))
+	{
+		m_dx11.GetContext()->CopyResource(m_publishRes, backBuffer);
+		HRESULT hRes = D3DX11SaveTextureToFile(m_dx11.GetContext(), m_publishRes, D3DX11_IFF_BMP, "D:\\123.bmp");
+		INT a = 0;
+	}
 }

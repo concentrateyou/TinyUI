@@ -88,6 +88,7 @@
   <ItemGroup>
     <ClInclude Include="DXApp.h" />
     <ClInclude Include="DXApplication.h" />
+    <ClInclude Include="PublishTask.h" />
     <ClInclude Include="RenderTask.h" />
     <ClInclude Include="GraphicsCapture.h" />
     <ClInclude Include="DXWindow.h" />
@@ -98,6 +99,7 @@
   <ItemGroup>
     <ClCompile Include="DXApp.cpp" />
     <ClCompile Include="DXApplication.cpp" />
+    <ClCompile Include="PublishTask.cpp" />
     <ClCompile Include="RenderTask.cpp" />
     <ClCompile Include="GraphicsCapture.cpp" />
     <ClCompile Include="DXWindow.cpp" />

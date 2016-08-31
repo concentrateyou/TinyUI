@@ -21,8 +21,11 @@ public:
 	LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 private:
+	BOOL BuildEvents();
+private:
 	TinyEvent		m_close;
 	TinyEvent		m_render;
+	TinyEvent		m_publish;
 	GraphicsCapture	m_graphics;
 };
 
