@@ -34,7 +34,7 @@ namespace Media
 		BOOL	GetState(FILTER_STATE& state);
 		void	SetVolume(INT volume);
 		INT		GetVolume() const;
-		BYTE*	GetData() const;
+		BYTE*	GetPointer() const;
 		INT		GetSize() const;
 		virtual BOOL Allocate(const AudioCaptureParam& param);
 		virtual void DeAllocate();
@@ -53,7 +53,7 @@ namespace Media
 		TinyComPtr<IPin>							m_sinkI;
 		TinyScopedReferencePtr<AudioSinkFilter>		m_sinkFilter;
 		Callback<void(const BYTE*, INT, LPVOID)>	m_callback;
-		TinyScopedPtr<BYTE>							m_bits;
+		BYTE*										m_pBits;
 		INT											m_size;
 	};
 }

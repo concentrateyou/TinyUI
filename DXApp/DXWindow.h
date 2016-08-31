@@ -1,9 +1,8 @@
 #pragma once
 #include "Control/TinyControl.h"
-#include "DXSystem.h"
+#include "GraphicsCapture.h"
 using namespace DXFramework;
 
-#define WINDOW_CLOSE_EVENT      TEXT("WindowClose")
 class DXWindow : public TinyControl
 {
 	DECLARE_DYNAMIC(DXWindow)
@@ -22,7 +21,8 @@ public:
 	LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 private:
-	TinyEvent	m_close;
-	DXSystem	m_system;
+	TinyEvent		m_close;
+	TinyEvent		m_render;
+	GraphicsCapture	m_graphics;
 };
 

@@ -28,6 +28,8 @@ namespace Media
 	}
 
 	AudioCapture::AudioCapture()
+		:m_size(0),
+		m_pBits(NULL)
 	{
 	}
 
@@ -39,18 +41,11 @@ namespace Media
 	void AudioCapture::OnFrameReceive(const BYTE* pBits, INT size, LPVOID lpParameter)
 	{
 		Sleep(1);
+		m_size = size;
+		m_pBits = const_cast<BYTE*>(pBits);
 		if (!m_callback.IsNull())
 		{
 			m_callback(pBits, size, lpParameter);
-		}
-		else
-		{
-			if (m_size != size)
-			{
-				m_size = size;
-				m_bits.Reset(new BYTE[size]);
-			}
-			memcpy_s(m_bits, size, pBits, size);
 		}
 	}
 	BOOL AudioCapture::Initialize(const Name& name)
@@ -114,9 +109,9 @@ namespace Media
 	{
 		return 0;
 	}
-	BYTE* AudioCapture::GetData() const
+	BYTE* AudioCapture::GetPointer() const
 	{
-		return m_bits;
+		return m_pBits;
 	}
 	INT	AudioCapture::GetSize() const
 	{

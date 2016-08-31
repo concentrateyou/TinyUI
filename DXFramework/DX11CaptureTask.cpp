@@ -228,8 +228,9 @@ namespace DXFramework
 			Tick();
 			if (m_close && m_close.Lock(0))
 			{
+				TRACE("DX11CaptureTask::MessagePump - m_close\n");
 				EndCapture();
-				return;
+				break;
 			}
 			Sleep(1);
 		}

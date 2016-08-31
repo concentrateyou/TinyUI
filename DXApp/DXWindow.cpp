@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "DXWindow.h"
 
+#define WINDOW_CLOSE_EVENT      TEXT("WindowClose")
+#define RENDER_FINISH_EVENT     TEXT("RenderFinish")
 
 DXWindow::DXWindow()
 {
@@ -40,13 +42,18 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	{
 		m_close.CreateEvent(FALSE, FALSE, WINDOW_CLOSE_EVENT);
 	}
+	if (!m_render.OpenEvent(EVENT_ALL_ACCESS, FALSE, RENDER_FINISH_EVENT))
+	{
+		m_render.CreateEvent(FALSE, FALSE, RENDER_FINISH_EVENT);
+	}
 	CenterWindow(NULL, { 800, 600 });
-	m_system.Initialize(m_hWND, 800, 600);
+	m_graphics.Initialize(m_hWND, 800, 600);
 	return FALSE;
 }
 LRESULT DXWindow::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
+	m_render.SetEvent();
 	m_close.SetEvent();
 	return FALSE;
 }

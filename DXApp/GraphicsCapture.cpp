@@ -1,17 +1,17 @@
 #include "stdafx.h"
-#include "DXSystem.h"
+#include "GraphicsCapture.h"
 
 
-DXSystem::DXSystem()
+GraphicsCapture::GraphicsCapture()
 {
 }
 
 
-DXSystem::~DXSystem()
+GraphicsCapture::~GraphicsCapture()
 {
 }
 
-BOOL DXSystem::Initialize(HWND hWND, INT cx, INT cy)
+BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 {
 	vector<Media::VideoCapture::Name> names;
 	Media::VideoCapture::GetDevices(names);
@@ -43,7 +43,7 @@ BOOL DXSystem::Initialize(HWND hWND, INT cx, INT cy)
 				return FALSE;
 			if (!m_videoCapture.Start())
 				return FALSE;
-			m_renderTask.Reset(new DXRenderTask(this, &m_tasks));
+			m_renderTask.Reset(new RenderTask(this, &m_tasks));
 			m_renderTask->Submit();
 			m_captureTask.Reset(new DX11CaptureTask(&m_dx11, &m_tasks));
 			m_captureTask->Submit();
@@ -52,7 +52,7 @@ BOOL DXSystem::Initialize(HWND hWND, INT cx, INT cy)
 	return TRUE;
 }
 
-void DXSystem::Render()
+void GraphicsCapture::Render()
 {
 	m_dx11.BeginScene();
 	m_camera.UpdatePosition();
@@ -61,7 +61,7 @@ void DXSystem::Render()
 	D3DXMATRIX projectionMatrix = m_dx11.GetProjectionMatrix();
 	D3DXMATRIX orthoMatrix = m_dx11.GetOrthoMatrix();
 	m_dx11.AllowDepth(FALSE);
-	BYTE* pBits = m_videoCapture.GetData();
+	BYTE* pBits = m_videoCapture.GetPointer();
 	if (pBits)
 	{
 		m_dxVideo.FillImage(m_dx11, pBits, 640, 360);
@@ -76,10 +76,4 @@ void DXSystem::Render()
 	}
 	m_dx11.AllowDepth(TRUE);
 	m_dx11.EndScene();
-}
-
-void DXSystem::Cancel()
-{
-	if (m_renderTask)
-		m_renderTask->Cancel();
 }

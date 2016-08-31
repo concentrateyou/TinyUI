@@ -36,10 +36,10 @@
     <ClInclude Include="DXApplication.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DXRenderTask.h">
+    <ClInclude Include="GraphicsCapture.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DXSystem.h">
+    <ClInclude Include="RenderTask.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -56,10 +56,10 @@
     <ClCompile Include="DXApplication.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DXRenderTask.cpp">
+    <ClCompile Include="GraphicsCapture.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DXSystem.cpp">
+    <ClCompile Include="RenderTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
