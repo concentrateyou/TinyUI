@@ -14,16 +14,13 @@ GraphicsCapture::~GraphicsCapture()
 
 BOOL GraphicsCapture::CreatePublishTexture(INT cx, INT cy)
 {
-	DXGI_SWAP_CHAIN_DESC scd;
-	if (FAILED(m_dx11.GetSwap()->GetDesc(&scd)))
-		return FALSE;
 	D3D11_TEXTURE2D_DESC desc;
 	ZeroMemory(&desc, sizeof(desc));
 	desc.Width = cx;
 	desc.Height = cy;
 	desc.MipLevels = 1;
 	desc.ArraySize = 1;
-	desc.Format = scd.BufferDesc.Format;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	desc.SampleDesc.Count = 1;
 	desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	desc.Usage = D3D11_USAGE_DEFAULT;
@@ -83,6 +80,7 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 
 void GraphicsCapture::Render()
 {
+	m_lock.Acquire();
 	m_dx11.BeginScene();
 	m_camera.UpdatePosition();
 	D3DXMATRIX viewMatrix = m_camera.GetViewMatrix();
@@ -105,10 +103,12 @@ void GraphicsCapture::Render()
 	}
 	m_dx11.AllowDepth(TRUE);
 	m_dx11.EndScene();
+	m_lock.Release();
 }
 
 void GraphicsCapture::Publish()
 {
+	m_lock.Acquire();
 	TinyComPtr<ID3D11Resource> backBuffer;
 	if (SUCCEEDED(m_dx11.GetSwap()->GetBuffer(0, __uuidof(ID3D11Resource), (void**)&backBuffer)))
 	{
@@ -119,4 +119,5 @@ void GraphicsCapture::Publish()
 			m_dx11.GetContext()->Unmap(m_publishRes, 0);
 		}
 	}
+	m_lock.Release();
 }

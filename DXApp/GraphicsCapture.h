@@ -32,5 +32,6 @@ private:
 	TinyScopedPtr<RenderTask>		m_renderTask;
 	TinyScopedPtr<DX11CaptureTask>	m_captureTask;
 	TinyTaskPool					m_tasks;
+	TinyLock						m_lock;
 };
 
