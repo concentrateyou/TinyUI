@@ -15,14 +15,15 @@ class GraphicsCapture
 public:
 	GraphicsCapture();
 	~GraphicsCapture();
-	BOOL Initialize(HWND hWND, INT cx, INT cy);
-	BOOL Resize(INT cx, INT cy);
-	void Render();
-	void Publish();
+	BOOL	Initialize(HWND hWND, INT cx, INT cy);
+	BOOL	Resize(INT cx, INT cy);
+	void	Render();
+	void	Publish();
 	BYTE*	GetPointer() const;
 	DWORD	GetSize() const;
 private:
-	BOOL CreatePublishTexture(INT cx, INT cy);
+	BOOL	CreatePublishTexture(INT cx, INT cy);
+	BOOL	BuildEvents();
 private:
 	TinyComPtr<ID3D11Resource>		m_resource;//屏幕纹理
 	DWORD							m_dwSize;//纹理大小

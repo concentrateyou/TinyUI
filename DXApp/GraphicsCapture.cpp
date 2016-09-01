@@ -2,7 +2,6 @@
 #include "GraphicsCapture.h"
 #include <DXGIFormat.h>
 
-
 GraphicsCapture::GraphicsCapture()
 	:m_dwSize(0)
 {
@@ -33,6 +32,10 @@ BOOL GraphicsCapture::CreatePublishTexture(INT cx, INT cy)
 		return FALSE;
 	return TRUE;
 }
+BOOL GraphicsCapture::BuildEvents()
+{
+	return TRUE;
+}
 
 BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 {
@@ -51,6 +54,10 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 			break;
 		}
 	}
+
+	if (!BuildEvents())
+		return FALSE;
+
 	if (!m_videoCapture.Initialize(names[0]))
 		return FALSE;
 	if (!m_videoCapture.Allocate(param))
@@ -85,8 +92,7 @@ BOOL GraphicsCapture::Resize(INT cx, INT cy)
 {
 	m_cx = cx;
 	m_cy = cy;
-	BOOL bRes = m_dx11.ResizeView(cx, cy);
-	return bRes;
+	return m_dx11.ResizeView(cx, cy);
 }
 
 void GraphicsCapture::Render()

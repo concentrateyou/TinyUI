@@ -2,7 +2,7 @@
 #include "RenderTask.h"
 #include "GraphicsCapture.h"
 
-#define RENDER_FINISH_EVENT     TEXT("RenderFinish")
+#define RENDER_FINISH_EVENT     TEXT("RENDER_FINISH")
 
 RenderTask::RenderTask(GraphicsCapture* pSys, TinyTaskPool* pWorks)
 	:TinyTask(pWorks),

@@ -32,7 +32,7 @@ namespace DXFramework
 #define END_CAPTURE_EVENT       TEXT("EndCapture")
 #define CAPTURE_READY_EVENT     TEXT("CaptureReady")
 #define CAPTURE_EXIT_EVENT      TEXT("CaptureExit")
-#define WINDOW_CLOSE_EVENT      TEXT("WindowClose")
+#define WINDOW_CLOSE_EVENT      TEXT("WINDOW_CLOSE")
 #define SHAREDCAPTURE_MEMORY	TEXT("Local\\SharedCaptureMemory")
 #define TEXTURE_MEMORY          TEXT("Local\\TextureMemory")
 

@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "DXWindow.h"
 
-#define WINDOW_CLOSE_EVENT      TEXT("WindowClose")
-#define RENDER_FINISH_EVENT     TEXT("RenderFinish")
-#define PUBLISH_FINISH_EVENT    TEXT("PublishFinish")
+#define WINDOW_CLOSE_EVENT      TEXT("WINDOW_CLOSE")
+#define RENDER_FINISH_EVENT     TEXT("RENDER_FINISH")
+#define PUBLISH_FINISH_EVENT    TEXT("PUBLISH_FINISH")
 
 DXWindow::DXWindow()
 {

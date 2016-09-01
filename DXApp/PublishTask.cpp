@@ -2,7 +2,7 @@
 #include "PublishTask.h"
 #include "GraphicsCapture.h"
 
-#define PUBLISH_FINISH_EVENT     TEXT("PublishFinish")
+#define PUBLISH_FINISH_EVENT     TEXT("PUBLISH_FINISH")
 
 PublishTask::PublishTask(GraphicsCapture* pSys, TinyTaskPool* pWorks)
 	:TinyTask(pWorks),
