@@ -142,13 +142,13 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11::ResizeView()
+	BOOL DX11::ResizeView(INT cx, INT cy)
 	{
 		ASSERT(m_d3d && m_swap && m_context);
 		LPVOID val = NULL;
 		m_context->OMSetRenderTargets(1, (ID3D11RenderTargetView**)&val, NULL);
 		m_renderView.Release();
-		HRESULT hRes = m_swap->ResizeBuffers(2, 0, 0, DXGI_FORMAT_B8G8R8A8_UNORM, 0);
+		HRESULT hRes = m_swap->ResizeBuffers(2, cx, cy, DXGI_FORMAT_B8G8R8A8_UNORM, 0);
 		if (FAILED(hRes))
 			return FALSE;
 		TinyComPtr<ID3D11Texture2D> backBuffer;

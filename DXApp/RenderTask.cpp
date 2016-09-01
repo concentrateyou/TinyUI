@@ -30,7 +30,8 @@ void RenderTask::MessagePump()
 {
 	for (;;)
 	{
-		if (m_render && m_render.Lock(33))
+		Sleep(3);
+		if (m_render && m_render.Lock(20))
 		{
 			break;
 		}

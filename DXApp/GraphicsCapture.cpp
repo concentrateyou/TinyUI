@@ -4,6 +4,7 @@
 
 
 GraphicsCapture::GraphicsCapture()
+	:m_dwSize(0)
 {
 }
 
@@ -28,13 +29,15 @@ BOOL GraphicsCapture::CreatePublishTexture(INT cx, INT cy)
 	TinyComPtr<ID3D11Texture2D>	texture;
 	if (FAILED(m_dx11.GetD3D()->CreateTexture2D(&desc, NULL, &texture)))
 		return FALSE;
-	if (FAILED(texture->QueryInterface(__uuidof(ID3D11Resource), (void**)&m_publishRes)))
+	if (FAILED(texture->QueryInterface(__uuidof(ID3D11Resource), (void**)&m_resource)))
 		return FALSE;
 	return TRUE;
 }
 
 BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 {
+	m_cx = cx;
+	m_cy = cy;
 	vector<Media::VideoCapture::Name> names;
 	Media::VideoCapture::GetDevices(names);
 	vector<Media::VideoCaptureParam> params;
@@ -78,9 +81,16 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 	return TRUE;
 }
 
+BOOL GraphicsCapture::Resize(INT cx, INT cy)
+{
+	m_cx = cx;
+	m_cy = cy;
+	return m_dx11.ResizeView(cx, cy);
+}
+
 void GraphicsCapture::Render()
 {
-	m_lock.Acquire();
+	//绘制
 	m_dx11.BeginScene();
 	m_camera.UpdatePosition();
 	D3DXMATRIX viewMatrix = m_camera.GetViewMatrix();
@@ -103,21 +113,39 @@ void GraphicsCapture::Render()
 	}
 	m_dx11.AllowDepth(TRUE);
 	m_dx11.EndScene();
-	m_lock.Release();
+	//拷贝屏幕纹理数据
+	TinyComPtr<ID3D11Resource> backBuffer;
+	if (SUCCEEDED(m_dx11.GetSwap()->GetBuffer(0, __uuidof(ID3D11Resource), (void**)&backBuffer)))
+	{
+		m_dx11.GetContext()->CopyResource(m_resource, backBuffer);
+		D3D11_MAPPED_SUBRESOURCE ms;
+		if (SUCCEEDED(m_dx11.GetContext()->Map(m_resource, 0, D3D11_MAP_READ, 0, &ms)))
+		{
+			DWORD dwSize = m_cy * ms.RowPitch;
+			if (dwSize != m_dwSize)
+			{
+				m_dwSize = dwSize;
+				m_bits.Reset(new BYTE[dwSize]);
+			}
+			if (m_bits)
+			{
+				memcpy(m_bits, ms.pData, dwSize);
+			}
+			m_dx11.GetContext()->Unmap(m_resource, 0);
+		}
+	}
 }
 
 void GraphicsCapture::Publish()
 {
-	m_lock.Acquire();
-	TinyComPtr<ID3D11Resource> backBuffer;
-	if (SUCCEEDED(m_dx11.GetSwap()->GetBuffer(0, __uuidof(ID3D11Resource), (void**)&backBuffer)))
-	{
-		m_dx11.GetContext()->CopyResource(m_publishRes, backBuffer);
-		D3D11_MAPPED_SUBRESOURCE mappedResource;
-		if (SUCCEEDED(m_dx11.GetContext()->Map(m_publishRes, 0, D3D11_MAP_READ, 0, &mappedResource)))
-		{
-			m_dx11.GetContext()->Unmap(m_publishRes, 0);
-		}
-	}
-	m_lock.Release();
+
+}
+
+BYTE* GraphicsCapture::GetPointer() const
+{
+	return m_bits;
+}
+DWORD GraphicsCapture::GetSize() const
+{
+	return m_dwSize;
 }

@@ -10,7 +10,7 @@ namespace DXFramework
 		DX11();
 		~DX11();
 		BOOL Initialize(HWND hWND, INT x, INT y, INT cx, INT cy);
-		BOOL ResizeView();
+		BOOL ResizeView(INT cx = 0, INT cy = 0);
 		void BeginScene();
 		void EndScene();
 		void AllowDepth(BOOL allow);
