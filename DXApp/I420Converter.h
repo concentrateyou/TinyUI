@@ -5,10 +5,10 @@
 #include "libavformat/avformat.h"
 #include "libswscale/swscale.h"
 #include "libavcodec/avcodec.h"
-#pragma comment(lib, "avformat.lib")
 #pragma comment(lib, "avutil.lib")
-#pragma comment(lib, "avcodec.lib")
 #pragma comment(lib, "swscale.lib")
+#pragma comment(lib, "avcodec.lib")
+#pragma comment(lib, "avformat.lib")
 
 class I420Converter
 {
@@ -18,6 +18,6 @@ public:
 	BOOL BRGAToI420();
 private:
 	AVFrame*	m_yuv;
-	AVFrame*	m_bgra;
+	AVFrame*	m_new;
 };
 

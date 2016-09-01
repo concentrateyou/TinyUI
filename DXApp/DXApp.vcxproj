@@ -52,7 +52,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;__STDC_CONSTANT_MACROS;__STDC_LIMIT_MACROS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;$(DXSDK_DIR)Include;..\DXFramework;..\DShowCapture;..\ThirdParty\vld;..\ThirdParty\x264;..\ThirdParty\ffmpeg\include;..\ThirdParty\librtmp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DXSDK_DIR)Include;..\TinyUI;..\DXFramework;..\DShowCapture;..\ThirdParty\vld;..\ThirdParty\x264;..\ThirdParty\ffmpeg\include;..\ThirdParty\librtmp\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

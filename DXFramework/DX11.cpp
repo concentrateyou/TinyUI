@@ -144,10 +144,13 @@ namespace DXFramework
 	}
 	BOOL DX11::ResizeView(INT cx, INT cy)
 	{
-		ASSERT(m_d3d && m_swap && m_context);
+		if (!m_d3d || !m_swap || !m_context)
+			return FALSE;
 		LPVOID val = NULL;
 		m_context->OMSetRenderTargets(1, (ID3D11RenderTargetView**)&val, NULL);
 		m_renderView.Release();
+		m_depthStencilView.Release();
+		m_depthStencilBuffer.Release();
 		HRESULT hRes = m_swap->ResizeBuffers(2, cx, cy, DXGI_FORMAT_B8G8R8A8_UNORM, 0);
 		if (FAILED(hRes))
 			return FALSE;
@@ -158,27 +161,56 @@ namespace DXFramework
 		hRes = m_d3d->CreateRenderTargetView(backBuffer, NULL, &m_renderView);
 		if (FAILED(hRes))
 			return FALSE;
+		D3D11_TEXTURE2D_DESC depthBufferDesc;
+		ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
+		depthBufferDesc.Width = cx;
+		depthBufferDesc.Height = cy;
+		depthBufferDesc.MipLevels = 1;
+		depthBufferDesc.ArraySize = 1;
+		depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthBufferDesc.SampleDesc.Count = 1;
+		depthBufferDesc.SampleDesc.Quality = 0;
+		depthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		depthBufferDesc.CPUAccessFlags = 0;
+		depthBufferDesc.MiscFlags = 0;
+		hRes = m_d3d->CreateTexture2D(&depthBufferDesc, NULL, &m_depthStencilBuffer);
+		if (FAILED(hRes))
+			return FALSE;
+		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
+		ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
+		depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		depthStencilViewDesc.Texture2D.MipSlice = 0;
+		hRes = m_d3d->CreateDepthStencilView(m_depthStencilBuffer, &depthStencilViewDesc, &m_depthStencilView);
+		if (FAILED(hRes))
+			return FALSE;
+		m_context->OMSetRenderTargets(1, &m_renderView, m_depthStencilView);
 		return TRUE;
 	}
 	void DX11::BeginScene()
 	{
-		ASSERT(m_context);
-		FLOAT color[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
-		m_context->ClearRenderTargetView(m_renderView, color);
-		m_context->ClearDepthStencilView(m_depthStencilView, D3D10_CLEAR_DEPTH, 1.0F, 0);
+		if (m_context)
+		{
+			FLOAT color[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
+			m_context->ClearRenderTargetView(m_renderView, color);
+			m_context->ClearDepthStencilView(m_depthStencilView, D3D10_CLEAR_DEPTH, 1.0F, 0);
+		}
 	}
 	void DX11::EndScene()
 	{
-		ASSERT(m_swap);
-		m_swap->Present(0, 0);
+		if (m_swap)
+			m_swap->Present(0, 0);
 	}
 	void DX11::AllowDepth(BOOL allow)
 	{
-		ASSERT(m_context);
-		if (allow)
-			m_context->OMSetDepthStencilState(m_depthStencilState, 1);
-		else
-			m_context->OMSetDepthStencilState(m_disableDepthState, 1);
+		if (m_context)
+		{
+			if (allow)
+				m_context->OMSetDepthStencilState(m_depthStencilState, 1);
+			else
+				m_context->OMSetDepthStencilState(m_disableDepthState, 1);
+		}
 	}
 	ID3D11Device* DX11::GetD3D() const
 	{

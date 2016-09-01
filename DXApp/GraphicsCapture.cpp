@@ -85,7 +85,8 @@ BOOL GraphicsCapture::Resize(INT cx, INT cy)
 {
 	m_cx = cx;
 	m_cy = cy;
-	return m_dx11.ResizeView(cx, cy);
+	BOOL bRes = m_dx11.ResizeView(cx, cy);
+	return bRes;
 }
 
 void GraphicsCapture::Render()
