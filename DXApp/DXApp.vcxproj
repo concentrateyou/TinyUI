@@ -52,13 +52,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;$(DXSDK_DIR)Include;..\DXFramework;..\DShowCapture;..\ThirdParty\vld;..\ThirdParty\x264;..\ThirdParty\libyuv;..\ThirdParty\librtmp</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;$(DXSDK_DIR)Include;..\DXFramework;..\DShowCapture;..\ThirdParty\vld;..\ThirdParty\x264;..\ThirdParty\ffmpeg\include;..\ThirdParty\librtmp\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\TinyUI;..\Debug;..\ThirdParty\vld\x86</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DXFramework.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\TinyUI;..\Debug;..\ThirdParty\vld\x86;..\ThirdParty\ffmpeg\lib;..\ThirdParty\librtmp\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DXFramework.lib;librtmp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -96,6 +96,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="x264Encode.h" />
+    <ClInclude Include="YUVConverter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXApp.cpp" />
@@ -109,6 +110,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="x264Encode.cpp" />
+    <ClCompile Include="YUVConverter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DXApp.rc" />
