@@ -113,7 +113,10 @@ void GraphicsCapture::Publish()
 	if (SUCCEEDED(m_dx11.GetSwap()->GetBuffer(0, __uuidof(ID3D11Resource), (void**)&backBuffer)))
 	{
 		m_dx11.GetContext()->CopyResource(m_publishRes, backBuffer);
-		HRESULT hRes = D3DX11SaveTextureToFile(m_dx11.GetContext(), m_publishRes, D3DX11_IFF_BMP, "D:\\123.bmp");
-		INT a = 0;
+		D3D11_MAPPED_SUBRESOURCE mappedResource;
+		if (SUCCEEDED(m_dx11.GetContext()->Map(m_publishRes, 0, D3D11_MAP_READ, 0, &mappedResource)))
+		{
+			m_dx11.GetContext()->Unmap(m_publishRes, 0);
+		}
 	}
 }

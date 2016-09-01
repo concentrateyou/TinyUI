@@ -3,7 +3,7 @@
 
 #define WINDOW_CLOSE_EVENT      TEXT("WindowClose")
 #define RENDER_FINISH_EVENT     TEXT("RenderFinish")
-#define PUBLISH_FINISH_EVENT     TEXT("PublishFinish")
+#define PUBLISH_FINISH_EVENT    TEXT("PublishFinish")
 
 DXWindow::DXWindow()
 {
@@ -44,12 +44,12 @@ BOOL DXWindow::BuildEvents()
 		return FALSE;
 	}
 	if (!m_render.OpenEvent(EVENT_ALL_ACCESS, FALSE, RENDER_FINISH_EVENT) &&
-		m_render.CreateEvent(FALSE, FALSE, RENDER_FINISH_EVENT))
+		!m_render.CreateEvent(FALSE, FALSE, RENDER_FINISH_EVENT))
 	{
 		return FALSE;
 	}
 	if (!m_publish.OpenEvent(EVENT_ALL_ACCESS, FALSE, PUBLISH_FINISH_EVENT) &&
-		m_publish.CreateEvent(FALSE, FALSE, PUBLISH_FINISH_EVENT))
+		!m_publish.CreateEvent(FALSE, FALSE, PUBLISH_FINISH_EVENT))
 	{
 		return FALSE;
 	}

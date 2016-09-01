@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Wed Aug 31 20:03:18 2016
+/* at Thu Sep 01 09:23:36 2016
  */
 /* Compiler settings for smiley.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
