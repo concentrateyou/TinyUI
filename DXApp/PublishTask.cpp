@@ -4,8 +4,8 @@
 
 #define PUBLISH_FINISH_EVENT     TEXT("PUBLISH_FINISH")
 
-PublishTask::PublishTask(GraphicsCapture* pSys, TinyTaskPool* pWorks)
-	:TinyTask(pWorks),
+PublishTask::PublishTask(GraphicsCapture* pSys, TinyWin32TaskPool* pWorks)
+	:TinyWin32Task(pWorks),
 	m_pSys(pSys)
 {
 }
@@ -18,7 +18,7 @@ BOOL PublishTask::Submit()
 		return FALSE;
 	}
 	Closure s = BindCallback(&PublishTask::MessagePump, this);
-	return TinyTask::Submit(s);
+	return TinyWin32Task::Submit(s);
 }
 
 

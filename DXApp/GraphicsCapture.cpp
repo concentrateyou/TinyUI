@@ -10,6 +10,7 @@ GraphicsCapture::GraphicsCapture()
 
 GraphicsCapture::~GraphicsCapture()
 {
+
 }
 
 BOOL GraphicsCapture::CreatePublishTexture(INT cx, INT cy)
@@ -88,16 +89,27 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 	return TRUE;
 }
 
+void GraphicsCapture::Uninitialize()
+{
+
+}
+
 BOOL GraphicsCapture::Resize(INT cx, INT cy)
 {
+	if (!m_dx11.TryLock())
+		return FALSE;
 	m_cx = cx;
 	m_cy = cy;
-	return m_dx11.ResizeView(cx, cy);
+	BOOL bRes = m_dx11.ResizeView(cx, cy);
+	m_dx11.Unlock();
+	return bRes;
 }
 
 void GraphicsCapture::Render()
 {
-	//»æÖÆ
+	if (!m_dx11.TryLock())
+		return;
+	//»æÖÆÎÆÀí
 	m_dx11.BeginScene();
 	m_camera.UpdatePosition();
 	D3DXMATRIX viewMatrix = m_camera.GetViewMatrix();
@@ -141,6 +153,7 @@ void GraphicsCapture::Render()
 			m_dx11.GetContext()->Unmap(m_resource, 0);
 		}
 	}
+	m_dx11.Unlock();
 }
 
 void GraphicsCapture::Publish()

@@ -1,13 +1,13 @@
 #pragma once
 #include "DXFramework.h"
-#include "IO/TinyTaskPool.h"
+#include "IO/TinyWin32TaskPool.h"
 using namespace TinyUI::IO;
 
 class GraphicsCapture;
-class RenderTask : public TinyTask
+class RenderTask : public TinyWin32Task
 {
 public:
-	RenderTask(GraphicsCapture* pSys, TinyTaskPool* pWorks);
+	RenderTask(GraphicsCapture* pSys, TinyWin32TaskPool* pWorks);
 	~RenderTask();
 	BOOL	Submit();
 private:

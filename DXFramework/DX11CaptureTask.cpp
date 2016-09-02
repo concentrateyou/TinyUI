@@ -3,8 +3,8 @@
 
 namespace DXFramework
 {
-	DX11CaptureTask::DX11CaptureTask(DX11* pDX11, TinyTaskPool* pWorks)
-		:TinyTask(pWorks),
+	DX11CaptureTask::DX11CaptureTask(DX11* pDX11, TinyWin32TaskPool* pWorks)
+		:TinyWin32Task(pWorks),
 		m_bCapturing(FALSE),
 		m_pDX11(pDX11)
 	{
@@ -17,7 +17,7 @@ namespace DXFramework
 	BOOL DX11CaptureTask::Submit()
 	{
 		Closure s = BindCallback(&DX11CaptureTask::MessagePump, this);
-		return TinyTask::Submit(s);
+		return TinyWin32Task::Submit(s);
 	}
 	DWORD DX11CaptureTask::BuildEvents()
 	{

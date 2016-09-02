@@ -6,34 +6,30 @@ namespace TinyUI
 	/////////////////////////////////////////////////////////////////////////
 	TinyCriticalSection::TinyCriticalSection() throw()
 	{
-		memset(&section, 0, sizeof(CRITICAL_SECTION));
+		ZeroMemory(&section, sizeof(section));
 	}
 	TinyCriticalSection::~TinyCriticalSection()
 	{
 	}
-	HRESULT TinyCriticalSection::Lock() throw()
+	void TinyCriticalSection::Lock() throw()
 	{
 		EnterCriticalSection(&section);
-		return S_OK;
 	}
-	BOOL TinyCriticalSection::Try() throw()
+	BOOL TinyCriticalSection::TryLock() throw()
 	{
 		return ::TryEnterCriticalSection(&section);
 	}
-	HRESULT TinyCriticalSection::Unlock() throw()
+	void TinyCriticalSection::Unlock() throw()
 	{
 		LeaveCriticalSection(&section);
-		return S_OK;
 	}
-	HRESULT TinyCriticalSection::Initialize() throw()
+	void TinyCriticalSection::Initialize() throw()
 	{
 		InitializeCriticalSection(&section);
-		return S_OK;
 	}
-	HRESULT TinyCriticalSection::Uninitialize() throw()
+	void TinyCriticalSection::Uninitialize() throw()
 	{
 		DeleteCriticalSection(&section);
-		return S_OK;
 	}
 	/////////////////////////////////////////////////////////////////////////
 	TinyEvent::TinyEvent()
@@ -108,7 +104,7 @@ namespace TinyUI
 	}
 	TinyMutex::~TinyMutex()
 	{
-		Close();
+
 	}
 	BOOL TinyMutex::Create(BOOL bInitiallyOwn, LPCTSTR lpszName, LPSECURITY_ATTRIBUTES lpsaAttribute)
 	{
@@ -142,14 +138,6 @@ namespace TinyUI
 		ASSERT(m_hMutex != NULL);
 		return ::ReleaseMutex(m_hMutex);
 	}
-	void TinyMutex::Close()
-	{
-		if (m_hMutex != NULL)
-		{
-			::CloseHandle(m_hMutex);
-			m_hMutex = NULL;
-		}
-	}
 	//////////////////////////////////////////////////////////////////////////
 	TinyLock::TinyLock()
 	{
@@ -169,7 +157,7 @@ namespace TinyUI
 	}
 	BOOL TinyLock::Try()
 	{
-		return m_section.Try();
+		return m_section.TryLock();
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinyAutoLock::TinyAutoLock(TinyLock& lock) : m_lock(lock)
@@ -179,6 +167,75 @@ namespace TinyUI
 	TinyAutoLock::~TinyAutoLock()
 	{
 		m_lock.Release();
+	}
+	//////////////////////////////////////////////////////////////////////////
+	TinySpinLock::TinySpinLock()
+	{
+		ZeroMemory(&section, sizeof(section));
+	}
+	TinySpinLock::~TinySpinLock()
+	{
+
+	}
+	BOOL TinySpinLock::Initialize(DWORD dwSpinCount) throw()
+	{
+		return InitializeCriticalSectionAndSpinCount(&section, dwSpinCount);
+	}
+	void TinySpinLock::Uninitialize()throw()
+	{
+		DeleteCriticalSection(&section);
+	}
+	void TinySpinLock::Lock()
+	{
+		EnterCriticalSection(&section);
+	}
+	BOOL TinySpinLock::TryLock()
+	{
+		return TryEnterCriticalSection(&section);
+	}
+	void TinySpinLock::Unlock()
+	{
+		LeaveCriticalSection(&section);
+	}
+	//////////////////////////////////////////////////////////////////////////
+	TinySemaphore::TinySemaphore()
+		:m_hSemaphore(NULL)
+	{
+	}
+	TinySemaphore::~TinySemaphore()
+	{
+
+	}
+	BOOL TinySemaphore::Create(LONG lInitialCount, LONG lMaxCount, LPCTSTR pstrName, LPSECURITY_ATTRIBUTES lpsaAttributes)
+	{
+		m_hSemaphore = ::CreateSemaphore(lpsaAttributes, lInitialCount, lMaxCount, pstrName);
+		return m_hSemaphore != NULL;
+	}
+	BOOL TinySemaphore::Open(DWORD dwDesiredAccess, BOOL bInheritHandle, LPCTSTR lpName)
+	{
+		m_hSemaphore = ::OpenSemaphore(dwDesiredAccess, bInheritHandle, lpName);
+		return m_hSemaphore != NULL;
+	}
+	TinySemaphore::operator HANDLE() const
+	{
+		return m_hSemaphore;
+	}
+	HANDLE TinySemaphore::Handle() const
+	{
+		return m_hSemaphore;
+	}
+	BOOL TinySemaphore::Lock(DWORD dwTimeout)
+	{
+		ASSERT(m_hSemaphore != NULL);
+		DWORD dwRet = ::WaitForSingleObject(m_hSemaphore, dwTimeout);
+		if (dwRet == WAIT_OBJECT_0 || dwRet == WAIT_ABANDONED)
+			return TRUE;
+		else
+			return FALSE;
+	}
+	BOOL TinySemaphore::Unlock(LONG lCount, LPLONG lprevCount)
+	{
+		return ::ReleaseSemaphore(m_hSemaphore, lCount, lprevCount);
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinyScopedLibrary::TinyScopedLibrary()

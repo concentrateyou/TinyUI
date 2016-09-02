@@ -348,7 +348,7 @@
     <ClInclude Include="Render\TinyDDraw.h">
       <Filter>头文件\Render</Filter>
     </ClInclude>
-    <ClInclude Include="IO\TinyTaskPool.h">
+    <ClInclude Include="IO\TinyWin32TaskPool.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
   </ItemGroup>
@@ -632,7 +632,7 @@
     <ClCompile Include="Render\TinyDDraw.cpp">
       <Filter>源文件\Render</Filter>
     </ClCompile>
-    <ClCompile Include="IO\TinyTaskPool.cpp">
+    <ClCompile Include="IO\TinyWin32TaskPool.cpp">
       <Filter>源文件\IO</Filter>
     </ClCompile>
   </ItemGroup>

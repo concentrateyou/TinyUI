@@ -1,18 +1,18 @@
 #include "../stdafx.h"
 #include <process.h>
-#include "TinyTaskPool.h"
+#include "TinyWin32TaskPool.h"
 
 namespace TinyUI
 {
 	namespace IO
 	{
-		TinyTaskPool::TinyTaskPool()
+		TinyWin32TaskPool::TinyWin32TaskPool()
 			:m_pPool(NULL),
 			m_pCleanup(NULL)
 		{
 			memset(&m_cbe, 0, sizeof(m_cbe));
 		}
-		BOOL TinyTaskPool::Initialize(DWORD dwMin, DWORD dwMax)
+		BOOL TinyWin32TaskPool::Initialize(DWORD dwMin, DWORD dwMax)
 		{
 			InitializeThreadpoolEnvironment(&m_cbe);
 			if ((m_pPool = CreateThreadpool(NULL)) != NULL)
@@ -30,7 +30,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		PTP_WORK TinyTaskPool::SubmitTask(PVOID pv, PTP_WORK_CALLBACK cb)
+		PTP_WORK TinyWin32TaskPool::SubmitTask(PVOID pv, PTP_WORK_CALLBACK cb)
 		{
 			PTP_WORK ps = NULL;
 			if ((ps = CreateThreadpoolWork(cb, pv, &m_cbe)) != NULL)
@@ -39,19 +39,19 @@ namespace TinyUI
 			}
 			return ps;
 		}
-		void TinyTaskPool::WaitTask(PTP_WORK ps, BOOL fCancelPendingCallbacks)
+		void TinyWin32TaskPool::WaitTask(PTP_WORK ps, BOOL fCancelPendingCallbacks)
 		{
 			WaitForThreadpoolWorkCallbacks(ps, fCancelPendingCallbacks);
 		}
-		void TinyTaskPool::CloseTask(PTP_WORK ps)
+		void TinyWin32TaskPool::CloseTask(PTP_WORK ps)
 		{
 			CloseThreadpoolWork(ps);
 		}
-		void TinyTaskPool::CancelPending()
+		void TinyWin32TaskPool::CancelPending()
 		{
 			CloseThreadpoolCleanupGroupMembers(m_pCleanup, TRUE, NULL);
 		}
-		void TinyTaskPool::Close()
+		void TinyWin32TaskPool::Close()
 		{
 			DestroyThreadpoolEnvironment(&m_cbe);
 			CloseThreadpoolCleanupGroup(m_pCleanup);
@@ -59,32 +59,32 @@ namespace TinyUI
 			m_pCleanup = NULL;
 			m_pPool = NULL;
 		}
-		TinyTaskPool::~TinyTaskPool()
+		TinyWin32TaskPool::~TinyWin32TaskPool()
 		{
 			Close();
 		}
 		//////////////////////////////////////////////////////////////////////////
-		TinyTask::TinyTask(TinyTaskPool* pWorks)
+		TinyWin32Task::TinyWin32Task(TinyWin32TaskPool* pWorks)
 			:m_pWorks(pWorks),
 			m_work(NULL)
 		{
 
 		}
-		TinyTask::~TinyTask()
+		TinyWin32Task::~TinyWin32Task()
 		{
 
 		}
-		BOOL TinyTask::Submit(Closure& callback)
+		BOOL TinyWin32Task::Submit(Closure& callback)
 		{
 			if (m_pWorks)
 			{
 				m_callback = callback;
-				m_work = m_pWorks->SubmitTask(this, TinyTask::WorkCallback);
+				m_work = m_pWorks->SubmitTask(this, TinyWin32Task::WorkCallback);
 				return m_work != NULL;
 			}
 			return FALSE;
 		}
-		BOOL TinyTask::Close()
+		BOOL TinyWin32Task::Close()
 		{
 			if (m_pWorks && m_work)
 			{
@@ -93,9 +93,9 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		void TinyTask::WorkCallback(PTP_CALLBACK_INSTANCE Instance, PVOID  Context, PTP_WORK  Work)
+		void TinyWin32Task::WorkCallback(PTP_CALLBACK_INSTANCE Instance, PVOID  Context, PTP_WORK  Work)
 		{
-			TinyTask* pWork = reinterpret_cast<TinyTask*>(Context);
+			TinyWin32Task* pWork = reinterpret_cast<TinyWin32Task*>(Context);
 			if (pWork->m_work == Work)
 			{
 				if (!pWork->m_callback.IsNull())

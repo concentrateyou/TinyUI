@@ -4,8 +4,8 @@
 
 #define RENDER_FINISH_EVENT     TEXT("RENDER_FINISH")
 
-RenderTask::RenderTask(GraphicsCapture* pSys, TinyTaskPool* pWorks)
-	:TinyTask(pWorks),
+RenderTask::RenderTask(GraphicsCapture* pSys, TinyWin32TaskPool* pWorks)
+	:TinyWin32Task(pWorks),
 	m_pSys(pSys)
 {
 
@@ -24,7 +24,7 @@ BOOL RenderTask::Submit()
 		return FALSE;
 	}
 	Closure s = BindCallback(&RenderTask::MessagePump, this);
-	return TinyTask::Submit(s);
+	return TinyWin32Task::Submit(s);
 }
 void RenderTask::MessagePump()
 {

@@ -16,6 +16,7 @@ public:
 	GraphicsCapture();
 	~GraphicsCapture();
 	BOOL	Initialize(HWND hWND, INT cx, INT cy);
+	void	Uninitialize();
 	BOOL	Resize(INT cx, INT cy);
 	void	Render();
 	void	Publish();
@@ -39,6 +40,6 @@ private:
 	TinyScopedPtr<PublishTask>		m_publishTask;
 	TinyScopedPtr<RenderTask>		m_renderTask;
 	TinyScopedPtr<DX11CaptureTask>	m_captureTask;
-	TinyTaskPool					m_tasks;
+	TinyWin32TaskPool				m_tasks;
 };
 

@@ -120,36 +120,8 @@ namespace TinyUI
 				m_prevTask = m_prevTask = task;
 			}
 		}
-		/// <summary>
-		/// 任务基类，所有的操作都是Task
-		/// </summary>
-		class TinyBasicTask : public OVERLAPPED
-		{
-		protected:
-			typedef void(*FunctionType)(void*, TinyBasicTask*, const error_code&, UINT);
-		public:
-			TinyBasicTask(FunctionType functionType);
-			~TinyBasicTask();
-			void Complete(void* owner, const error_code& ec, UINT bytes_transferred);
-			void Reset();
-			void Destory();
-		private:
-			FunctionType m_functionType;
-		};
-		/// <summary>
-		/// Accept任务
-		/// </summary>
-		/*class AcceptTask : public TinyBasicTask
-		{
-		public:
-		AcceptTask(SOCKET	socket);
-		static void TaskComplete(void* owner, TinyBasicTask* op, const error_code& ec, UINT bytes_transferred);
-		SOCKET	socket();
-		CHAR*	data();
-		private:
-		SOCKET	m_socket;
-		CHAR	m_data[1024];
-		};*/
+
+
 	};
 }
 

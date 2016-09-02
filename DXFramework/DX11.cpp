@@ -6,14 +6,18 @@ namespace DXFramework
 	DX11::DX11()
 		:m_hWND(NULL)
 	{
-		m_size.cx = m_size.cy = 0;
-		m_pos.x = m_pos.y = 0;
+
 	}
 	DX11::~DX11()
 	{
+		m_lock.Uninitialize();
 	}
 	BOOL DX11::Initialize(HWND hWND, INT x, INT y, INT cx, INT cy)
 	{
+
+		if (!m_lock.Initialize())
+			return FALSE;
+
 		m_hWND = hWND;
 		m_pos.x = x;
 		m_pos.y = y;
@@ -190,17 +194,15 @@ namespace DXFramework
 	}
 	void DX11::BeginScene()
 	{
-		if (m_context)
-		{
-			FLOAT color[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
-			m_context->ClearRenderTargetView(m_renderView, color);
-			m_context->ClearDepthStencilView(m_depthStencilView, D3D10_CLEAR_DEPTH, 1.0F, 0);
-		}
+		ASSERT(m_context);
+		FLOAT color[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
+		m_context->ClearRenderTargetView(m_renderView, color);
+		m_context->ClearDepthStencilView(m_depthStencilView, D3D10_CLEAR_DEPTH, 1.0F, 0);
 	}
 	void DX11::EndScene()
 	{
-		if (m_swap)
-			m_swap->Present(0, 0);
+		ASSERT(m_swap);
+		m_swap->Present(0, 0);
 	}
 	void DX11::AllowDepth(BOOL allow)
 	{
@@ -243,5 +245,13 @@ namespace DXFramework
 	D3DXMATRIX DX11::GetOrthoMatrix()
 	{
 		return m_orthoMatrix;
+	}
+	BOOL DX11::TryLock()
+	{
+		return m_lock.TryLock();
+	}
+	void DX11::Unlock()
+	{
+		m_lock.Unlock();
 	}
 }

@@ -15,12 +15,12 @@ namespace TinyUI
 		/// <summary>
 		/// 线程池
 		/// </summary>
-		class TinyTaskPool : public TinyReference < TinyTaskPool >
+		class TinyWin32TaskPool : public TinyReference < TinyWin32TaskPool >
 		{
-			DISALLOW_COPY_AND_ASSIGN(TinyTaskPool);
+			DISALLOW_COPY_AND_ASSIGN(TinyWin32TaskPool);
 		public:
-			TinyTaskPool();
-			~TinyTaskPool();
+			TinyWin32TaskPool();
+			~TinyWin32TaskPool();
 			BOOL		Initialize(DWORD dwMin, DWORD dwMax);
 			PTP_WORK	SubmitTask(PVOID ps, PTP_WORK_CALLBACK cb);
 			void		WaitTask(PTP_WORK ps, BOOL fCancelPendingCallbacks);
@@ -35,19 +35,19 @@ namespace TinyUI
 		/// <summary>
 		/// Win32任务
 		/// </summary>
-		class TinyTask
+		class TinyWin32Task
 		{
-			DISALLOW_COPY_AND_ASSIGN(TinyTask);
+			DISALLOW_COPY_AND_ASSIGN(TinyWin32Task);
 		public:
-			explicit TinyTask(TinyTaskPool* pWorks);
-			virtual ~TinyTask();
+			explicit TinyWin32Task(TinyWin32TaskPool* pWorks);
+			virtual ~TinyWin32Task();
 			BOOL Submit(Closure& callback);
 			BOOL Close();
 		private:
 			static void NTAPI WorkCallback(PTP_CALLBACK_INSTANCE Instance, PVOID  Context, PTP_WORK  Work);
 		protected:
 			PTP_WORK				m_work;
-			TinyTaskPool*			m_pWorks;
+			TinyWin32TaskPool*			m_pWorks;
 			Closure					m_callback;
 		};
 	}
