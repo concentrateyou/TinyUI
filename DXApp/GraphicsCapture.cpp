@@ -13,7 +13,7 @@ GraphicsCapture::~GraphicsCapture()
 
 }
 
-BOOL GraphicsCapture::CreatePublishTexture(INT cx, INT cy)
+BOOL GraphicsCapture::CreateTexture(INT cx, INT cy)
 {
 	D3D11_TEXTURE2D_DESC desc;
 	ZeroMemory(&desc, sizeof(desc));
@@ -21,11 +21,14 @@ BOOL GraphicsCapture::CreatePublishTexture(INT cx, INT cy)
 	desc.Height = cy;
 	desc.MipLevels = 1;
 	desc.ArraySize = 1;
-	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	desc.SampleDesc.Count = 1;
-	desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-	desc.Usage = D3D11_USAGE_DEFAULT;
-	desc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
+	desc.SampleDesc.Quality = 0;
+	desc.Usage = D3D11_USAGE_STAGING;
+	desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+	desc.MiscFlags = 0;
+	desc.BindFlags = 0;
+
 	TinyComPtr<ID3D11Texture2D>	texture;
 	if (FAILED(m_dx11.GetD3D()->CreateTexture2D(&desc, NULL, &texture)))
 		return FALSE;
@@ -33,13 +36,10 @@ BOOL GraphicsCapture::CreatePublishTexture(INT cx, INT cy)
 		return FALSE;
 	return TRUE;
 }
-BOOL GraphicsCapture::BuildEvents()
-{
-	return TRUE;
-}
 
 BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 {
+	m_converter.Reset(new I420Converter(cx, cy));
 	m_cx = cx;
 	m_cy = cy;
 	vector<Media::VideoCapture::Name> names;
@@ -55,10 +55,6 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 			break;
 		}
 	}
-
-	if (!BuildEvents())
-		return FALSE;
-
 	if (!m_videoCapture.Initialize(names[0]))
 		return FALSE;
 	if (!m_videoCapture.Allocate(param))
@@ -76,7 +72,7 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 				return FALSE;
 			if (!m_videoCapture.Start())
 				return FALSE;
-			if (!CreatePublishTexture(cx, cy))
+			if (!CreateTexture(cx, cy))
 				return FALSE;
 			m_publishTask.Reset(new PublishTask(this, &m_tasks));
 			m_publishTask->Submit();
@@ -87,11 +83,6 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 		}
 	}
 	return TRUE;
-}
-
-void GraphicsCapture::Uninitialize()
-{
-
 }
 
 BOOL GraphicsCapture::Resize(INT cx, INT cy)
@@ -137,18 +128,20 @@ void GraphicsCapture::Render()
 	if (SUCCEEDED(m_dx11.GetSwap()->GetBuffer(0, __uuidof(ID3D11Resource), (void**)&backBuffer)))
 	{
 		m_dx11.GetContext()->CopyResource(m_resource, backBuffer);
-		D3D11_MAPPED_SUBRESOURCE ms;
+		D3D11_MAPPED_SUBRESOURCE ms = { 0 };
 		if (SUCCEEDED(m_dx11.GetContext()->Map(m_resource, 0, D3D11_MAP_READ, 0, &ms)))
 		{
 			DWORD dwSize = m_cy * ms.RowPitch;
 			if (dwSize != m_dwSize)
 			{
+				m_x264Encode.Close();
+				m_x264Encode.Open(m_cx, m_cy);
 				m_dwSize = dwSize;
 				m_bits.Reset(new BYTE[dwSize]);
 			}
 			if (m_bits)
 			{
-				memcpy(m_bits, ms.pData, dwSize);
+				memcpy(m_bits, ms.pData, m_dwSize);
 			}
 			m_dx11.GetContext()->Unmap(m_resource, 0);
 		}
@@ -158,7 +151,11 @@ void GraphicsCapture::Render()
 
 void GraphicsCapture::Publish()
 {
-
+	if (m_bits)
+	{
+		m_converter->BRGAToI420(m_bits);
+		m_x264Encode.Encode(m_converter->GetI420());
+	}
 }
 
 BYTE* GraphicsCapture::GetPointer() const

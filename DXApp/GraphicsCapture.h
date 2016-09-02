@@ -7,6 +7,8 @@
 #include "DX11CaptureTask.h"
 #include "RenderTask.h"
 #include "PublishTask.h"
+#include "I420Converter.h"
+#include "x264Encode.h"
 using namespace DXFramework;
 using namespace Media;
 
@@ -16,15 +18,13 @@ public:
 	GraphicsCapture();
 	~GraphicsCapture();
 	BOOL	Initialize(HWND hWND, INT cx, INT cy);
-	void	Uninitialize();
 	BOOL	Resize(INT cx, INT cy);
 	void	Render();
 	void	Publish();
 	BYTE*	GetPointer() const;
 	DWORD	GetSize() const;
 private:
-	BOOL	CreatePublishTexture(INT cx, INT cy);
-	BOOL	BuildEvents();
+	BOOL	CreateTexture(INT cx, INT cy);
 private:
 	TinyComPtr<ID3D11Resource>		m_resource;//屏幕纹理
 	DWORD							m_dwSize;//纹理大小
@@ -41,5 +41,7 @@ private:
 	TinyScopedPtr<RenderTask>		m_renderTask;
 	TinyScopedPtr<DX11CaptureTask>	m_captureTask;
 	TinyWin32TaskPool				m_tasks;
+	TinyScopedPtr<I420Converter>	m_converter;
+	x264Encode						m_x264Encode;
 };
 

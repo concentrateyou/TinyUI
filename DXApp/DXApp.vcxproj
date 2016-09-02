@@ -57,7 +57,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\TinyUI;..\Debug;..\ThirdParty\vld\x86;..\ThirdParty\ffmpeg\lib;..\ThirdParty\librtmp\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\TinyUI;..\Debug;..\ThirdParty\vld\x86;..\ThirdParty\ffmpeg\lib\32bit;..\ThirdParty\librtmp\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>DXFramework.lib;librtmp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

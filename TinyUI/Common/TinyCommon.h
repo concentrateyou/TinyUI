@@ -739,6 +739,7 @@ private:\
 		~TinyScopedArray();
 		BOOL IsEmpty() const;
 		void Reset(T* ps = 0) throw();
+		operator T*() const throw();
 		T& operator[](INT i) const;
 		BOOL operator==(T* ps) const;
 		BOOL operator!=(T* ps) const;
@@ -788,6 +789,11 @@ private:\
 	}
 	template<class T>
 	T* TinyScopedArray<T>::Ptr() const throw()
+	{
+		return m_myP;
+	}
+	template<class T>
+	TinyScopedArray<T>::operator T*() const throw()
 	{
 		return m_myP;
 	}
