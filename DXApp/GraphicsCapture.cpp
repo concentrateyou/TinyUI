@@ -3,7 +3,8 @@
 #include <DXGIFormat.h>
 
 GraphicsCapture::GraphicsCapture()
-	:m_dwSize(0)
+	:m_dwSize(0),
+	m_bResize(FALSE)
 {
 }
 
@@ -28,7 +29,6 @@ BOOL GraphicsCapture::CreateTexture(INT cx, INT cy)
 	desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
 	desc.MiscFlags = 0;
 	desc.BindFlags = 0;
-
 	TinyComPtr<ID3D11Texture2D>	texture;
 	if (FAILED(m_dx11.GetD3D()->CreateTexture2D(&desc, NULL, &texture)))
 		return FALSE;
@@ -39,6 +39,8 @@ BOOL GraphicsCapture::CreateTexture(INT cx, INT cy)
 
 BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 {
+	m_publisher.Connect("rtmp://10.121.86.127/live/test");
+
 	m_converter.Reset(new I420Converter(cx, cy));
 	m_cx = cx;
 	m_cy = cy;
@@ -59,8 +61,6 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 		return FALSE;
 	if (!m_videoCapture.Allocate(param))
 		return FALSE;
-	if (!m_tasks.Initialize(0, 10))
-		return FALSE;
 	if (m_dx11.Initialize(hWND, 0, 0, cx, cy))
 	{
 		m_camera.SetPosition(0.0F, 0.0F, -10.0F);
@@ -68,39 +68,41 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 			TEXT("D:\\Develop\\GitHub\\TinyUI\\DXFramework\\texture.vs"),
 			TEXT("D:\\Develop\\GitHub\\TinyUI\\DXFramework\\texture.ps")))
 		{
+			if (!CreateTexture(1920, 1080))
+				return FALSE;
 			if (!m_dxVideo.Create(m_dx11, 640, 360, 320, 180))
 				return FALSE;
 			if (!m_videoCapture.Start())
 				return FALSE;
-			if (!CreateTexture(cx, cy))
-				return FALSE;
-			m_publishTask.Reset(new PublishTask(this, &m_tasks));
+			m_publishTask.Reset(new PublishTask(this));
 			m_publishTask->Submit();
-			m_renderTask.Reset(new RenderTask(this, &m_tasks));
+			m_renderTask.Reset(new RenderTask(this));
 			m_renderTask->Submit();
-			m_captureTask.Reset(new DX11CaptureTask(&m_dx11, &m_tasks));
+			m_captureTask.Reset(new DX11CaptureTask(&m_dx11));
 			m_captureTask->Submit();
 		}
 	}
 	return TRUE;
 }
 
-BOOL GraphicsCapture::Resize(INT cx, INT cy)
+void GraphicsCapture::Resize(INT cx, INT cy)
 {
-	if (!m_dx11.TryLock())
-		return FALSE;
 	m_cx = cx;
 	m_cy = cy;
-	BOOL bRes = m_dx11.ResizeView(cx, cy);
-	m_dx11.Unlock();
-	return bRes;
+	m_bResize = TRUE;
 }
 
 void GraphicsCapture::Render()
 {
-	if (!m_dx11.TryLock())
-		return;
 	//ªÊ÷∆Œ∆¿Ì
+	if (!m_lock.Try())
+		return;
+	if (m_bResize)
+	{
+		m_dx11.ResizeView(m_cx, m_cy);
+		m_camera.SetPosition(0.0F, 0.0F, -10.0F);
+		m_bResize = FALSE;
+	}
 	m_dx11.BeginScene();
 	m_camera.UpdatePosition();
 	D3DXMATRIX viewMatrix = m_camera.GetViewMatrix();
@@ -123,7 +125,7 @@ void GraphicsCapture::Render()
 	}
 	m_dx11.AllowDepth(TRUE);
 	m_dx11.EndScene();
-	//øΩ±¥∆¡ƒªŒ∆¿Ì ˝æ›
+	//øΩ±¥Œ∆¿Ì
 	TinyComPtr<ID3D11Resource> backBuffer;
 	if (SUCCEEDED(m_dx11.GetSwap()->GetBuffer(0, __uuidof(ID3D11Resource), (void**)&backBuffer)))
 	{
@@ -131,30 +133,29 @@ void GraphicsCapture::Render()
 		D3D11_MAPPED_SUBRESOURCE ms = { 0 };
 		if (SUCCEEDED(m_dx11.GetContext()->Map(m_resource, 0, D3D11_MAP_READ, 0, &ms)))
 		{
-			DWORD dwSize = m_cy * ms.RowPitch;
-			if (dwSize != m_dwSize)
-			{
-				m_x264Encode.Close();
-				m_x264Encode.Open(m_cx, m_cy);
-				m_dwSize = dwSize;
-				m_bits.Reset(new BYTE[dwSize]);
-			}
-			if (m_bits)
-			{
-				memcpy(m_bits, ms.pData, m_dwSize);
-			}
+			m_dwSize = m_cy * ms.RowPitch;
+			/*m_bits.Reset(new BYTE[m_dwSize]);
+			memcpy(static_cast<void*>(m_bits), ms.pData, m_dwSize);*/
 			m_dx11.GetContext()->Unmap(m_resource, 0);
 		}
 	}
-	m_dx11.Unlock();
+	m_lock.Release();
 }
 
 void GraphicsCapture::Publish()
 {
 	if (m_bits)
 	{
+		/*	m_x264Encode.Close();
+			m_x264Encode.Open(m_cx, m_cy);*/
+		/*if (m_dx11.TryLock())
+		{
 		m_converter->BRGAToI420(m_bits);
 		m_x264Encode.Encode(m_converter->GetI420());
+		m_publisher.Write(m_x264Encode.GetPointer(), m_x264Encode.GetSize());
+		m_dx11.Unlock();
+		}*/
+
 	}
 }
 

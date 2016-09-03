@@ -51,6 +51,9 @@
     <ClInclude Include="I420Converter.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="RTMPPublisher.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -78,6 +81,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="I420Converter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RTMPPublisher.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

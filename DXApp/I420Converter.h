@@ -25,7 +25,7 @@ public:
 	BOOL		BRGAToI420(BYTE* pBGRA);
 	AVFrame*	GetI420() const;
 private:
-	AVFrame*				m_yuv;
+	AVFrame*				m_i420;
 	AVFrame*				m_bgra;
 	SwsContext*				m_sws;
 	INT						m_cx;

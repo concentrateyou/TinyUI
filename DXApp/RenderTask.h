@@ -4,10 +4,10 @@
 using namespace TinyUI::IO;
 
 class GraphicsCapture;
-class RenderTask : public TinyWin32Task
+class RenderTask : public TinyTask
 {
 public:
-	RenderTask(GraphicsCapture* pSys, TinyWin32TaskPool* pWorks);
+	RenderTask(GraphicsCapture* pSys);
 	~RenderTask();
 	BOOL	Submit();
 private:

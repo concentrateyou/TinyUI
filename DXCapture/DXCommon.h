@@ -21,7 +21,7 @@ namespace DXCapture
 #define BEGIN_CAPTURE_EVENT		TEXT("BeginCapture")
 #define END_CAPTURE_EVENT       TEXT("EndCapture")
 #define CAPTURE_READY_EVENT     TEXT("CaptureReady")
-#define CAPTURE_EXIT_EVENT     TEXT("CaptureExit")
+#define CAPTURE_EXIT_EVENT		TEXT("CaptureExit")
 #define CAPTURETYPE_MEMORY      1
 #define CAPTURETYPE_SHAREDTEX   2
 	typedef struct tagSharedCaptureDATA

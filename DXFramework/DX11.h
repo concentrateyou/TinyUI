@@ -22,8 +22,6 @@ namespace DXFramework
 		D3DXMATRIX				GetWorldMatrix();
 		D3DXMATRIX				GetOrthoMatrix();
 		TinySize				GetSize() const;
-		BOOL					TryLock();
-		void					Unlock();
 	private:
 		TinyComPtr<IDXGISwapChain>			m_swap;
 		TinyComPtr<ID3D11RenderTargetView>	m_renderView;
@@ -40,7 +38,6 @@ namespace DXFramework
 		D3DXMATRIX							m_projectionMatrix;
 		D3DXMATRIX							m_worldMatrix;
 		D3DXMATRIX							m_orthoMatrix;
-		TinySpinLock						m_lock;
 	};
 }
 

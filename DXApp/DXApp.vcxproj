@@ -52,13 +52,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;__STDC_CONSTANT_MACROS;__STDC_LIMIT_MACROS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(DXSDK_DIR)Include;..\TinyUI;..\DXFramework;..\DShowCapture;..\ThirdParty\vld;..\ThirdParty\x264;..\ThirdParty\ffmpeg\include;..\ThirdParty\librtmp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DXSDK_DIR)Include;..\TinyUI;..\DXFramework;..\DShowCapture;..\ThirdParty\vld;..\ThirdParty\x264;..\ThirdParty\ffmpeg\include;..\ThirdParty\libRTMP\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\TinyUI;..\Debug;..\ThirdParty\vld\x86;..\ThirdParty\ffmpeg\lib\32bit;..\ThirdParty\librtmp\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\TinyUI;..\Debug;..\ThirdParty\vld\x86;..\ThirdParty\ffmpeg\lib;..\ThirdParty\libRTMP\lib;..\ThirdParty\x264\libs\32bit</AdditionalLibraryDirectories>
       <AdditionalDependencies>DXFramework.lib;librtmp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>LIBCMTD.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -93,6 +94,7 @@
     <ClInclude Include="GraphicsCapture.h" />
     <ClInclude Include="DXWindow.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="RTMPPublisher.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="x264Encode.h" />
@@ -105,6 +107,7 @@
     <ClCompile Include="RenderTask.cpp" />
     <ClCompile Include="GraphicsCapture.cpp" />
     <ClCompile Include="DXWindow.cpp" />
+    <ClCompile Include="RTMPPublisher.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

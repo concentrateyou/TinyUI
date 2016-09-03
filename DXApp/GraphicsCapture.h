@@ -9,6 +9,7 @@
 #include "PublishTask.h"
 #include "I420Converter.h"
 #include "x264Encode.h"
+#include "RTMPPublisher.h"
 using namespace DXFramework;
 using namespace Media;
 
@@ -18,7 +19,7 @@ public:
 	GraphicsCapture();
 	~GraphicsCapture();
 	BOOL	Initialize(HWND hWND, INT cx, INT cy);
-	BOOL	Resize(INT cx, INT cy);
+	void	Resize(INT cx, INT cy);
 	void	Render();
 	void	Publish();
 	BYTE*	GetPointer() const;
@@ -26,11 +27,12 @@ public:
 private:
 	BOOL	CreateTexture(INT cx, INT cy);
 private:
-	TinyComPtr<ID3D11Resource>		m_resource;//屏幕纹理
+	TinyComPtr<ID3D11Resource>		m_resource;
 	DWORD							m_dwSize;//纹理大小
 	TinyScopedPtr<BYTE>				m_bits;//纹理数据
 	INT								m_cx;
 	INT								m_cy;
+	BOOL							m_bResize;
 	DX11							m_dx11;
 	DX11Image						m_dxVideo;
 	DX11Image						m_dxGame;
@@ -40,8 +42,9 @@ private:
 	TinyScopedPtr<PublishTask>		m_publishTask;
 	TinyScopedPtr<RenderTask>		m_renderTask;
 	TinyScopedPtr<DX11CaptureTask>	m_captureTask;
-	TinyWin32TaskPool				m_tasks;
 	TinyScopedPtr<I420Converter>	m_converter;
 	x264Encode						m_x264Encode;
+	RTMPPublisher					m_publisher;
+	TinyLock						m_lock;
 };
 

@@ -5,8 +5,7 @@
 x264Encode::x264Encode()
 	:m_x264Image(NULL),
 	m_hx264(NULL),
-	m_x264Param(NULL),
-	m_pBits(NULL)
+	m_x264Param(NULL)
 {
 }
 
@@ -26,10 +25,12 @@ BOOL x264Encode::Open(INT cx, INT cy)
 
 BOOL x264Encode::BuildParam(INT cx, INT cy)
 {
+
+	m_bits.Reset(new BYTE[1024 * 1024 * 4]);
+
 	m_x264Param = new x264_param_t();
 	if (!m_x264Param)
 		return FALSE;
-	ZeroMemory(&m_x264Param, sizeof(x264_param_t));
 	x264_param_default(m_x264Param);
 	x264_param_default_preset(m_x264Param, "superfast", "zerolatency");
 	m_x264Param->i_frame_total = 0;
@@ -41,7 +42,7 @@ BOOL x264Encode::BuildParam(INT cx, INT cy)
 	m_x264Param->i_fps_num = 30;
 	m_x264Param->i_fps_den = 1;
 	m_x264Param->b_cabac = 1; /*cabac的开关*/
-	m_x264Param->rc.i_rc_method = X264_RC_ABR;/*恒定码率*/
+	m_x264Param->rc.i_rc_method = X264_RC_CRF;/*恒定码率*/
 	m_x264Param->rc.i_bitrate = 1000;/*设置平均码率大小*/
 	m_x264Param->rc.f_rate_tolerance = 0.1F;
 	m_x264Param->rc.i_vbv_max_bitrate = static_cast<INT>(1000 * 1.2);
@@ -50,6 +51,7 @@ BOOL x264Encode::BuildParam(INT cx, INT cy)
 
 BOOL x264Encode::Encode(AVFrame* pI420)
 {
+	m_size = 0;
 	if (!m_x264Image || !pI420)
 		return FALSE;
 	m_x264Image->img.plane[0] = pI420->data[0];
@@ -65,16 +67,15 @@ BOOL x264Encode::Encode(AVFrame* pI420)
 	x264_nal_t * nal = NULL;
 	INT i_nal = 0;
 	INT encode_error_code = x264_encoder_encode(m_hx264, &nal, &i_nal, m_x264Image, &image);
-	UINT size = 0;
 	for (INT i = 0; i < i_nal; i++)
 	{
 		if (memcmp(nal[i].p_payload, "\0\0\1", 3) == 0)
 		{
-			memcpy(m_pBits + size, "\0", 1);
-			size++;
+			memcpy(m_bits + m_size, "\0", 1);
+			m_size++;
 		}
-		memcpy(m_pBits + size, nal[i].p_payload, nal[i].i_payload);
-		size += nal[i].i_payload;
+		memcpy(m_bits + m_size, nal[i].p_payload, nal[i].i_payload);
+		m_size += nal[i].i_payload;
 	}
 	return TRUE;
 }
@@ -88,6 +89,15 @@ void x264Encode::Close()
 	}
 	SAFE_DELETE(m_x264Param);
 	SAFE_DELETE(m_x264Image);
+}
+
+BYTE* x264Encode::GetPointer() const
+{
+	return m_bits;
+}
+INT	x264Encode::GetSize() const
+{
+	return m_size;
 }
 
 x264Encode::~x264Encode()

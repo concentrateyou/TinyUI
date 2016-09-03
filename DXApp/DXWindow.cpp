@@ -67,14 +67,14 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 LRESULT DXWindow::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	m_publish.SetEvent();
-	m_render.SetEvent();
-	m_close.SetEvent();
 	return FALSE;
 }
 LRESULT DXWindow::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
+	m_publish.SetEvent();
+	m_render.SetEvent();
+	m_close.SetEvent();
 	PostQuitMessage(0);
 	return FALSE;
 }

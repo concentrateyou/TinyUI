@@ -6,10 +6,10 @@ using namespace TinyUI::IO;
 
 namespace DXFramework
 {
-	class DX11CaptureTask : public TinyWin32Task
+	class DX11CaptureTask : public TinyTask
 	{
 	public:
-		DX11CaptureTask(DX11* pDX11, TinyWin32TaskPool* pWorks);
+		DX11CaptureTask(DX11* pDX11);
 		virtual ~DX11CaptureTask();
 		DX11Image*				GetTexture();
 		BOOL					Submit();
@@ -26,12 +26,11 @@ namespace DXFramework
 	private:
 		BOOL					m_bCapturing;
 		DX11*					m_pDX11;
-		TinyEvent				m_start;
-		TinyEvent				m_stop;
-		TinyEvent				m_ready;
-		TinyEvent				m_exit;
-		TinyEvent				m_close;
-		HANDLE					m_hTask;
+		TinyEvent				m_captureStart;
+		TinyEvent				m_captureStop;
+		TinyEvent				m_captureReady;
+		TinyEvent				m_captureExit;
+		TinyEvent				m_windowClose;
 		WNDINFO					m_targetWND;
 		SharedTexture			m_texture;
 		TinySharedMemory		m_memory;

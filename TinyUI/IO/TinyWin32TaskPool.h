@@ -47,7 +47,7 @@ namespace TinyUI
 			static void NTAPI WorkCallback(PTP_CALLBACK_INSTANCE Instance, PVOID  Context, PTP_WORK  Work);
 		protected:
 			PTP_WORK				m_work;
-			TinyWin32TaskPool*			m_pWorks;
+			TinyWin32TaskPool*		m_pWorks;
 			Closure					m_callback;
 		};
 	}
