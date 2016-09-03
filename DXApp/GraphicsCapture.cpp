@@ -6,12 +6,14 @@ GraphicsCapture::GraphicsCapture()
 	:m_dwSize(0),
 	m_bResize(FALSE)
 {
+	m_lock.Initialize();
 }
 
 
 GraphicsCapture::~GraphicsCapture()
 {
 	WaitAll();
+	m_lock.Uninitialize();
 }
 
 BOOL GraphicsCapture::CreateTexture(INT cx, INT cy)
@@ -90,18 +92,18 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 
 void GraphicsCapture::Resize(INT cx, INT cy)
 {
-	if (!m_lock.Try())
+	if (!m_lock.TryLock())
 		return;
 	m_cx = cx;
 	m_cy = cy;
 	m_bResize = TRUE;
-	m_lock.Release();
+	m_lock.Unlock();
 }
 
 void GraphicsCapture::Render()
 {
 	//»æÖÆÎÆÀí
-	if (!m_lock.Try())
+	if (!m_lock.TryLock())
 		return;
 	if (m_bResize)
 	{
@@ -153,18 +155,18 @@ void GraphicsCapture::Render()
 			}
 		}
 	}
-	m_lock.Release();
+	m_lock.Unlock();
 }
 
 void GraphicsCapture::Publish()
 {
 	if (m_bits)
 	{
-		if (!m_lock.Try())
+		if (!m_lock.TryLock())
 			return;
 		m_converter->BRGAToI420(m_bits);
 		m_x264Encode.Encode(m_converter->GetI420(), &m_publisher);
-		m_lock.Release();
+		m_lock.Unlock();
 	}
 }
 

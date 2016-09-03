@@ -45,7 +45,7 @@ private:
 	TinyScopedPtr<DX11CaptureTask>	m_captureTask;
 	TinyScopedPtr<I420Converter>	m_converter;
 	x264Encode						m_x264Encode;
-	TinyLock						m_lock;
+	TinySpinLock					m_lock;
 	RTMPPublisher					m_publisher;
 };
 

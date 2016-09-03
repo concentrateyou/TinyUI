@@ -6,6 +6,8 @@
 /// </summary>
 namespace TinyUI
 {
+
+
 	/// <summary>
 	/// 临界区
 	/// </summary>
@@ -121,7 +123,7 @@ namespace TinyUI
 		DECLARE_DYNAMIC(TinySemaphore);
 		DISALLOW_COPY_AND_ASSIGN(TinySemaphore);
 	public:
-		explicit TinySemaphore();
+		TinySemaphore();
 		BOOL Create(LONG lInitialCount = 1, LONG lMaxCount = 1, LPCTSTR pstrName = NULL, LPSECURITY_ATTRIBUTES lpsaAttributes = NULL);
 		BOOL Open(DWORD dwDesiredAccess, BOOL bInheritHandle, LPCTSTR lpName);
 		operator HANDLE() const;
@@ -133,6 +135,16 @@ namespace TinyUI
 	private:
 		HANDLE  m_hSemaphore;
 	};
+	/// <summary>
+	/// 高性能锁
+	/// </summary>
+	class TinyPerformanceLock : public TinyObject
+	{
+		DECLARE_DYNAMIC(TinyPerformanceLock);
+		DISALLOW_COPY_AND_ASSIGN(TinyPerformanceLock);
+	public:
+
+	}
 	/// <summary>
 	/// Library封装 
 	/// </summary>
