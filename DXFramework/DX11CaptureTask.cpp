@@ -222,7 +222,7 @@ namespace DXFramework
 			{
 				EndCapture();
 				break;
-			}
+			}	
 			Tick();
 		}
 	}

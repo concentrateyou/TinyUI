@@ -24,6 +24,7 @@ public:
 	void	Publish();
 	BYTE*	GetPointer() const;
 	DWORD	GetSize() const;
+	void	WaitAll();
 private:
 	BOOL	CreateTexture(INT cx, INT cy);
 private:
@@ -44,7 +45,7 @@ private:
 	TinyScopedPtr<DX11CaptureTask>	m_captureTask;
 	TinyScopedPtr<I420Converter>	m_converter;
 	x264Encode						m_x264Encode;
-	RTMPPublisher					m_publisher;
 	TinyLock						m_lock;
+	RTMPPublisher					m_publisher;
 };
 

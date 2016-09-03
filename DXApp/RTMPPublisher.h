@@ -14,9 +14,18 @@ public:
 	~RTMPPublisher();
 public:
 	BOOL Connect(const TinyString& url);
-	BOOL Write(BYTE* pBits,INT size);
+	void SetSPS(BYTE* sps, DWORD dwSPS);
+	void SetPPS(BYTE* pps, DWORD dwPPS);
+	BOOL SendVideoSPSPPS();
+	BOOL SendVideo(BYTE* pBits, INT size);
 	BOOL Reconnect();
+
 private:
-	RTMP*	m_pRTMP;
+	RTMP*		m_pRTMP;
+	DWORD		m_dwStart;
+	DWORD		m_dwSPS;
+	DWORD		m_dwPPS;
+	BYTE		m_sps[10000];
+	BYTE		m_pps[10000];
 };
 

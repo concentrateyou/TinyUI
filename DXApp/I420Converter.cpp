@@ -47,26 +47,6 @@ BOOL I420Converter::BRGAToI420(BYTE* pBGRA)
 	av_image_fill_arrays(m_i420->data, m_i420->linesize, m_bits.Ptr(), AV_PIX_FMT_YUV420P, m_cx, m_cy, 1);
 	sws_scale(m_sws, m_bgra->data, m_bgra->linesize, 0, m_cy, m_i420->data, m_i420->linesize);
 
-	/*FILE* fileHandle = NULL;
-	INT cx = m_cx;
-	INT cy = m_cy;
-	fopen_s(&fileHandle, "D:\\1234.yuv", "wb");
-	for (INT y = 0; y < cy; y++)
-	{
-		fwrite(m_i420->data[0] + y*m_i420->linesize[0], 1, m_cx, fileHandle);
-	}
-	cx >>= 1;
-	cy >>= 1;
-	for (INT y = 0; y < cy; y++)
-	{
-		fwrite(m_i420->data[1] + y*m_i420->linesize[1], 1, cx, fileHandle);
-	}
-	for (INT y = 0; y < cy; y++)
-	{
-		fwrite(m_i420->data[2] + y*m_i420->linesize[2], 1, cx, fileHandle);
-	}
-	fclose(fileHandle);*/
-
 	return TRUE;
 }
 

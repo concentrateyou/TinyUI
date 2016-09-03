@@ -1,6 +1,6 @@
 #pragma once
 #include "I420Converter.h"
-
+#include "RTMPPublisher.h"
 extern "C"
 {
 #include "x264_config.h"
@@ -9,13 +9,15 @@ extern "C"
 
 #pragma comment(lib,"libx264.lib")
 
+class RTMPPublisher;
+
 class x264Encode
 {
 public:
 	x264Encode();
 	~x264Encode();
 	BOOL	Open(INT cx, INT cy);
-	BOOL	Encode(AVFrame* pAV);
+	BOOL	Encode(AVFrame* pI420, RTMPPublisher* publisher);
 	void	Close();
 	BYTE*	GetPointer() const;
 	INT		GetSize() const;

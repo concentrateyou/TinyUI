@@ -11,6 +11,7 @@ x264Encode::x264Encode()
 
 BOOL x264Encode::Open(INT cx, INT cy)
 {
+
 	if (!BuildParam(cx, cy))
 		return FALSE;
 	if ((m_hx264 = x264_encoder_open(m_x264Param)) == NULL)
@@ -37,19 +38,23 @@ BOOL x264Encode::BuildParam(INT cx, INT cy)
 	m_x264Param->i_threads = 0;
 	m_x264Param->b_sliced_threads = 0;
 	m_x264Param->i_csp = X264_CSP_I420;
+	m_x264Param->b_open_gop = 1;
 	m_x264Param->i_width = cx;
 	m_x264Param->i_height = cy;
 	m_x264Param->i_fps_num = 30;
 	m_x264Param->i_fps_den = 1;
 	m_x264Param->b_cabac = 1; /*cabac的开关*/
-	m_x264Param->rc.i_rc_method = X264_RC_CRF;/*恒定码率*/
-	m_x264Param->rc.i_bitrate = 1000;/*设置平均码率大小*/
+	m_x264Param->rc.b_mb_tree = 0;
+	m_x264Param->rc.i_rc_method = X264_RC_ABR;
+	m_x264Param->rc.f_rf_constant = 25;
+	m_x264Param->rc.f_rf_constant_max = 45;
+	m_x264Param->rc.i_bitrate = 1024;/*设置平均码率大小*/
 	m_x264Param->rc.f_rate_tolerance = 0.1F;
-	m_x264Param->rc.i_vbv_max_bitrate = static_cast<INT>(1000 * 1.2);
+	m_x264Param->rc.i_vbv_max_bitrate = static_cast<INT>(1024 * 1.2);
 	return TRUE;
 }
 
-BOOL x264Encode::Encode(AVFrame* pI420)
+BOOL x264Encode::Encode(AVFrame* pI420, RTMPPublisher* publisher)
 {
 	m_size = 0;
 	if (!m_x264Image || !pI420)
@@ -66,15 +71,24 @@ BOOL x264Encode::Encode(AVFrame* pI420)
 	x264_picture_t image;
 	x264_nal_t * nal = NULL;
 	INT i_nal = 0;
-	INT encode_error_code = x264_encoder_encode(m_hx264, &nal, &i_nal, m_x264Image, &image);
+	INT size = x264_encoder_encode(m_hx264, &nal, &i_nal, m_x264Image, &image);
 	for (INT i = 0; i < i_nal; i++)
 	{
-		if (memcmp(nal[i].p_payload, "\0\0\1", 3) == 0)
+		if (nal[i].i_type == NAL_SPS)
 		{
-			memcpy(m_bits + m_size, "\0", 1);
-			m_size++;
+			publisher->SetSPS(nal[i].p_payload + 4, nal[i].i_payload - 4);
+
 		}
-		memcpy(m_bits + m_size, nal[i].p_payload, nal[i].i_payload);
+		else if (nal[i].i_type == NAL_PPS)
+		{
+			publisher->SetPPS(nal[i].p_payload + 4, nal[i].i_payload - 4);
+			publisher->SendVideoSPSPPS();
+
+		}
+		else
+		{
+			publisher->SendVideo(nal[i].p_payload, size - m_size);
+		}
 		m_size += nal[i].i_payload;
 	}
 	return TRUE;

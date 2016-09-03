@@ -39,7 +39,7 @@ namespace TinyUI
 					return TRUE;
 				}
 			}
-			return TRUE;
+			return FALSE;
 		}
 
 		BOOL TinyTask::IsValid() const

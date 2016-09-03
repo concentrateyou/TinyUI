@@ -11,7 +11,7 @@ GraphicsCapture::GraphicsCapture()
 
 GraphicsCapture::~GraphicsCapture()
 {
-
+	WaitAll();
 }
 
 BOOL GraphicsCapture::CreateTexture(INT cx, INT cy)
@@ -40,7 +40,6 @@ BOOL GraphicsCapture::CreateTexture(INT cx, INT cy)
 BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 {
 	m_publisher.Connect("rtmp://10.121.86.127/live/test");
-
 	m_converter.Reset(new I420Converter(cx, cy));
 	m_cx = cx;
 	m_cy = cy;
@@ -57,6 +56,10 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 			break;
 		}
 	}
+
+	m_x264Encode.Close();
+	m_x264Encode.Open(m_cx, m_cy);
+
 	if (!m_videoCapture.Initialize(names[0]))
 		return FALSE;
 	if (!m_videoCapture.Allocate(param))
@@ -87,9 +90,12 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 
 void GraphicsCapture::Resize(INT cx, INT cy)
 {
+	if (!m_lock.Try())
+		return;
 	m_cx = cx;
 	m_cy = cy;
 	m_bResize = TRUE;
+	m_lock.Release();
 }
 
 void GraphicsCapture::Render()
@@ -100,7 +106,8 @@ void GraphicsCapture::Render()
 	if (m_bResize)
 	{
 		m_dx11.ResizeView(m_cx, m_cy);
-		m_camera.SetPosition(0.0F, 0.0F, -10.0F);
+		m_resource.Release();
+		CreateTexture(m_cx, m_cy);
 		m_bResize = FALSE;
 	}
 	m_dx11.BeginScene();
@@ -129,14 +136,21 @@ void GraphicsCapture::Render()
 	TinyComPtr<ID3D11Resource> backBuffer;
 	if (SUCCEEDED(m_dx11.GetSwap()->GetBuffer(0, __uuidof(ID3D11Resource), (void**)&backBuffer)))
 	{
-		m_dx11.GetContext()->CopyResource(m_resource, backBuffer);
-		D3D11_MAPPED_SUBRESOURCE ms = { 0 };
-		if (SUCCEEDED(m_dx11.GetContext()->Map(m_resource, 0, D3D11_MAP_READ, 0, &ms)))
+		if (m_resource)
 		{
-			m_dwSize = m_cy * ms.RowPitch;
-			/*m_bits.Reset(new BYTE[m_dwSize]);
-			memcpy(static_cast<void*>(m_bits), ms.pData, m_dwSize);*/
-			m_dx11.GetContext()->Unmap(m_resource, 0);
+			m_dx11.GetContext()->CopyResource(m_resource, backBuffer);
+			D3D11_MAPPED_SUBRESOURCE ms = { 0 };
+			if (SUCCEEDED(m_dx11.GetContext()->Map(m_resource, 0, D3D11_MAP_READ, 0, &ms)))
+			{
+				DWORD dwSize = m_cy * ms.RowPitch;
+				if (m_dwSize != dwSize)
+				{
+					m_dwSize = dwSize;
+					m_bits.Reset(new BYTE[m_dwSize]);
+				}
+				memcpy(static_cast<void*>(m_bits), ms.pData, m_dwSize);
+				m_dx11.GetContext()->Unmap(m_resource, 0);
+			}
 		}
 	}
 	m_lock.Release();
@@ -146,17 +160,19 @@ void GraphicsCapture::Publish()
 {
 	if (m_bits)
 	{
-		/*	m_x264Encode.Close();
-			m_x264Encode.Open(m_cx, m_cy);*/
-		/*if (m_dx11.TryLock())
-		{
+		if (!m_lock.Try())
+			return;
 		m_converter->BRGAToI420(m_bits);
-		m_x264Encode.Encode(m_converter->GetI420());
-		m_publisher.Write(m_x264Encode.GetPointer(), m_x264Encode.GetSize());
-		m_dx11.Unlock();
-		}*/
-
+		m_x264Encode.Encode(m_converter->GetI420(), &m_publisher);
+		m_lock.Release();
 	}
+}
+
+void GraphicsCapture::WaitAll()
+{
+	m_publishTask->Wait(INFINITE);
+	m_renderTask->Wait(INFINITE);
+	m_captureTask->Wait(INFINITE);
 }
 
 BYTE* GraphicsCapture::GetPointer() const
