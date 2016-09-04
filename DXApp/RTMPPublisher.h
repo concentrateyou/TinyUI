@@ -16,7 +16,7 @@ public:
 	BOOL Connect(const TinyString& url);
 	void SetSPS(BYTE* sps, DWORD dwSPS);
 	void SetPPS(BYTE* pps, DWORD dwPPS);
-	BOOL SendVideoSPSPPS();
+	BOOL SendSPSPPS();
 	BOOL SendVideo(BYTE* pBits, INT size);
 	BOOL Reconnect();
 

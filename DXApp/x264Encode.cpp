@@ -11,7 +11,6 @@ x264Encode::x264Encode()
 
 BOOL x264Encode::Open(INT cx, INT cy)
 {
-
 	if (!BuildParam(cx, cy))
 		return FALSE;
 	if ((m_hx264 = x264_encoder_open(m_x264Param)) == NULL)
@@ -21,14 +20,13 @@ BOOL x264Encode::Open(INT cx, INT cy)
 	x264_picture_init(m_x264Image);
 	m_x264Image->img.i_csp = X264_CSP_I420;
 	m_x264Image->img.i_plane = 3;
+
 	return TRUE;
 }
 
 BOOL x264Encode::BuildParam(INT cx, INT cy)
 {
-
 	m_bits.Reset(new BYTE[1024 * 1024 * 4]);
-
 	m_x264Param = new x264_param_t();
 	if (!m_x264Param)
 		return FALSE;
@@ -59,6 +57,22 @@ BOOL x264Encode::Encode(AVFrame* pI420, RTMPPublisher* publisher)
 	m_size = 0;
 	if (!m_x264Image || !pI420)
 		return FALSE;
+
+	x264_nal_t * pNAL = NULL;
+	INT iNAL = 0;
+	INT size = x264_encoder_headers(m_hx264, &pNAL, &iNAL);
+	for (INT i = 0; i < iNAL; i++)
+	{
+		if (pNAL[i].i_type == NAL_SPS)
+		{
+			publisher->SetSPS(pNAL[i].p_payload + 4, pNAL[i].i_payload - 4);
+		}
+		if (pNAL[i].i_type == NAL_PPS)
+		{
+			publisher->SetPPS(pNAL[i].p_payload + 4, pNAL[i].i_payload - 4);
+		}
+	}
+	publisher->SendSPSPPS();
 	m_x264Image->img.plane[0] = pI420->data[0];
 	m_x264Image->img.plane[1] = pI420->data[1];
 	m_x264Image->img.plane[2] = pI420->data[2];
@@ -69,27 +83,14 @@ BOOL x264Encode::Encode(AVFrame* pI420, RTMPPublisher* publisher)
 	m_x264Image->img.i_stride[3] = pI420->linesize[3];
 	m_x264Image->i_pts = (LONGLONG)m_x264Param->i_frame_total;
 	x264_picture_t image;
-	x264_nal_t * nal = NULL;
-	INT i_nal = 0;
-	INT size = x264_encoder_encode(m_hx264, &nal, &i_nal, m_x264Image, &image);
-	for (INT i = 0; i < i_nal; i++)
+	size = x264_encoder_encode(m_hx264, &pNAL, &iNAL, m_x264Image, &image);
+	for (INT i = 0; i < iNAL; i++)
 	{
-		if (nal[i].i_type == NAL_SPS)
+		if (pNAL[i].i_type != NAL_SPS && pNAL[i].i_type != NAL_PPS)
 		{
-			publisher->SetSPS(nal[i].p_payload + 4, nal[i].i_payload - 4);
-
+			publisher->SendVideo(pNAL[i].p_payload, size - m_size);
 		}
-		else if (nal[i].i_type == NAL_PPS)
-		{
-			publisher->SetPPS(nal[i].p_payload + 4, nal[i].i_payload - 4);
-			publisher->SendVideoSPSPPS();
-
-		}
-		else
-		{
-			publisher->SendVideo(nal[i].p_payload, size - m_size);
-		}
-		m_size += nal[i].i_payload;
+		m_size += pNAL[i].i_payload;
 	}
 	return TRUE;
 }

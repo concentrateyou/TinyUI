@@ -241,6 +241,7 @@ namespace TinyUI
 		BOOL		IsEmpty() const;
 		BOOL		Add(const T& myT);
 		BOOL		Insert(INT index, const T& myT);
+		BOOL		Resize(INT newSize);
 		BOOL		Remove(const T& myT);
 		BOOL		RemoveAt(INT index);
 		void		RemoveAll();
@@ -339,19 +340,19 @@ namespace TinyUI
 	{
 		if (m_size == m_alloc_size)//需要重新分配内存
 		{
-			T* _myP = NULL;
+			T* myP = NULL;
 			INT size = (m_alloc_size == 0) ? 1 : (m_size * 2);
 			if (size < 0 || size >(INT_MAX / sizeof(T)))
 			{
 				return FALSE;
 			}
-			_myP = (T*)_recalloc(m_value, size, sizeof(T));
-			if (_myP == NULL)
+			myP = (T*)_recalloc(m_value, size, sizeof(T));
+			if (myP == NULL)
 			{
 				return FALSE;
 			}
 			m_alloc_size = size;
-			m_value = _myP;
+			m_value = myP;
 		}
 #pragma push_macro("new")
 #undef new
@@ -414,19 +415,19 @@ namespace TinyUI
 		//需要重新分配内存
 		if (m_size == m_alloc_size)
 		{
-			T* _myP = NULL;
+			T* myP = NULL;
 			INT size = (m_alloc_size == 0) ? 1 : (m_size * 2);
 			if (size < 0 || size >(INT_MAX / sizeof(T)))
 			{
 				return FALSE;
 			}
-			_myP = (T*)_recalloc(m_value, size, sizeof(T));
-			if (_myP == NULL)
+			myP = (T*)_recalloc(m_value, size, sizeof(T));
+			if (myP == NULL)
 			{
 				return FALSE;
 			}
 			m_alloc_size = size;
-			m_value = _myP;
+			m_value = myP;
 		}
 		//向后移动一个T大小内存
 		memmove_s((void*)(m_value + index + 1),
@@ -440,6 +441,29 @@ namespace TinyUI
 		m_size++;
 		return TRUE;
 	}
+	template<class T>
+	BOOL TinyArray<T>::Resize(INT newSize)
+	{
+		if (newSize > m_alloc_size)
+		{
+			T* myP = NULL;
+			INT size = newSize;
+			if (size < 0 || size >(INT_MAX / sizeof(T)))
+			{
+				return FALSE;
+			}
+			myP = (T*)_recalloc(m_value, size, sizeof(T));
+			if (myP == NULL)
+			{
+				return FALSE;
+			}
+			m_alloc_size = size;
+			m_value = myP;
+		}
+		m_size = newSize;
+		return TRUE;
+	}
+
 	template<class T>
 	INT	TinyArray<T>::Lookup(const T& myT) const
 	{

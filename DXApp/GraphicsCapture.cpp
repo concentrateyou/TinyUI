@@ -127,18 +127,17 @@ void GraphicsCapture::Render()
 	D3DXMATRIX projectionMatrix = m_dx11.GetProjectionMatrix();
 	D3DXMATRIX orthoMatrix = m_dx11.GetOrthoMatrix();
 	m_dx11.AllowDepth(FALSE);
-	BYTE* pBits = m_videoCapture.GetPointer();
-	if (pBits)
-	{
-		m_dxVideo.FillImage(m_dx11, pBits, 640, 360);
-		m_dxVideo.Render(m_dx11, 1, 1);
-		m_textureShader.Render(m_dx11, m_dxVideo.GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_dxVideo.GetTexture());
-	}
 	DX11Image* dxImage = m_captureTask->GetTexture();
 	if (dxImage && dxImage->IsValid())
 	{
-		dxImage->Render(m_dx11, 150, 150);
+		dxImage->Render(m_dx11, 1, 1);
 		m_textureShader.Render(m_dx11, dxImage->GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, dxImage->GetTexture());
+	}
+	if (m_videoCapture.GetPointer())
+	{
+		m_dxVideo.FillImage(m_dx11, m_videoCapture.GetPointer(), m_videoSize.cx, m_videoSize.cy);
+		m_dxVideo.Render(m_dx11, m_cx - m_videoSize.cx / 2 - 1, m_cy - m_videoSize.cy / 2 - 1);
+		m_textureShader.Render(m_dx11, m_dxVideo.GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_dxVideo.GetTexture());
 	}
 	m_dx11.AllowDepth(TRUE);
 	m_dx11.EndScene();
@@ -168,14 +167,14 @@ void GraphicsCapture::Render()
 
 void GraphicsCapture::Publish()
 {
-	/*if (!m_lock.TryLock())
+	if (!m_lock.TryLock())
 		return;
-		if (m_bits)
-		{
+	if (m_bits)
+	{
 		m_converter->BRGAToI420(m_bits);
 		m_x264Encode.Encode(m_converter->GetI420(), &m_publisher);
-		}
-		m_lock.Unlock();*/
+	}
+	m_lock.Unlock();
 }
 
 void GraphicsCapture::WaitAll()

@@ -53,7 +53,7 @@ void RTMPPublisher::SetPPS(BYTE* pps, DWORD dwPPS)
 	memcpy(m_pps, pps, m_dwSPS);
 }
 
-BOOL RTMPPublisher::SendVideoSPSPPS()
+BOOL RTMPPublisher::SendSPSPPS()
 {
 	ASSERT(m_pRTMP);
 	if (!RTMP_IsConnected(m_pRTMP))
