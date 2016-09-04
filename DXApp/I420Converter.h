@@ -20,7 +20,7 @@ class I420Converter
 {
 	DISALLOW_COPY_AND_ASSIGN(I420Converter);
 public:
-	I420Converter(INT cx, INT cy);
+	I420Converter(const TinySize& srcSize, const TinySize& dstSize);
 	~I420Converter();
 	BOOL		BRGAToI420(BYTE* pBGRA);
 	AVFrame*	GetI420() const;
@@ -28,8 +28,8 @@ private:
 	AVFrame*				m_i420;
 	AVFrame*				m_bgra;
 	SwsContext*				m_sws;
-	INT						m_cx;
-	INT						m_cy;
+	TinySize				m_srcSize;
+	TinySize				m_dstSize;
 	INT						m_size;
 	TinyScopedArray<BYTE>	m_bits;
 };

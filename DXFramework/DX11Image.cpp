@@ -6,14 +6,19 @@ namespace DXFramework
 	DX11Image::DX11Image()
 		:m_scaleX(0),
 		m_scaleY(0),
-		m_previousPosX(-1),
-		m_previousPosY(-1),
+		m_positionX(-1),
+		m_positionY(-1),
 		m_vertexCount(0),
 		m_indexCount(0)
 	{
 	}
 	DX11Image::~DX11Image()
 	{
+	}
+	void DX11Image::SetPosition(INT x, INT y)
+	{
+		m_positionX = x;
+		m_positionY = y;
 	}
 	BOOL DX11Image::Create(const DX11& dx11, INT cx, INT cy, INT scaleX, INT scaleY)
 	{
@@ -54,8 +59,8 @@ namespace DXFramework
 	}
 	BOOL DX11Image::Initialize(const DX11& dx11)
 	{
-		m_previousPosX = -1;
-		m_previousPosY = -1;
+		m_positionX = -1;
+		m_positionY = -1;
 		m_vertexBuffer.Release();
 		m_indexBuffer.Release();
 		D3D11_BUFFER_DESC		vertexBufferDesc;
@@ -95,10 +100,10 @@ namespace DXFramework
 		FLOAT right = 0.0F;
 		FLOAT top = 0.0F;
 		FLOAT bottom = 0.0F;
-		if ((positionX == m_previousPosX) && (positionY == m_previousPosY))
+		if ((positionX == m_positionX) && (positionY == m_positionY))
 			return TRUE;
-		m_previousPosX = positionX;
-		m_previousPosY = positionY;
+		m_positionX = positionX;
+		m_positionY = positionY;
 		TinySize size = dx11.GetSize();
 		left = (FLOAT)((size.cx / 2) * -1) + (FLOAT)positionX;
 		right = left + (FLOAT)m_scaleX;

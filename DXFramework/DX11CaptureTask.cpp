@@ -3,9 +3,11 @@
 
 namespace DXFramework
 {
-	DX11CaptureTask::DX11CaptureTask(DX11* pDX11)
+	DX11CaptureTask::DX11CaptureTask(DX11* pDX11, INT cx, INT cy)
 		:m_bCapturing(FALSE),
-		m_pDX11(pDX11)
+		m_pDX11(pDX11),
+		m_cx(cx),
+		m_cy(cy)
 	{
 		ZeroMemory(&m_targetWND, sizeof(m_targetWND));
 		m_windowClose.CreateEvent(FALSE, FALSE, WINDOW_CLOSE_EVENT);
@@ -110,7 +112,7 @@ namespace DXFramework
 		SharedCaptureDATA* pDATA = GetSharedCapture();
 		if (!pDATA)
 			return FALSE;
-		if (!m_texture.Initialize(*m_pDX11, 600, 400))
+		if (!m_texture.Initialize(*m_pDX11, m_cx, m_cy))
 			return FALSE;
 		return TRUE;
 	}
@@ -222,7 +224,7 @@ namespace DXFramework
 			{
 				EndCapture();
 				break;
-			}	
+			}
 			Tick();
 		}
 	}

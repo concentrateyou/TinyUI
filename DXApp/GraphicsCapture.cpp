@@ -45,6 +45,8 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 	m_converter.Reset(new I420Converter(cx, cy));
 	m_cx = cx;
 	m_cy = cy;
+	m_videoSize.cx = 640;
+	m_videoSize.cy = 360;
 	vector<Media::VideoCapture::Name> names;
 	Media::VideoCapture::GetDevices(names);
 	vector<Media::VideoCaptureParam> params;
@@ -52,7 +54,7 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 	Media::VideoCaptureParam param;
 	for (UINT i = 0; i < params.size(); i++)
 	{
-		if (params[i].GetSize() == TinySize(640, 360))
+		if (params[i].GetSize() == m_videoSize)
 		{
 			param = params[i];
 			break;
@@ -66,16 +68,16 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 		return FALSE;
 	if (!m_videoCapture.Allocate(param))
 		return FALSE;
-	if (m_dx11.Initialize(hWND, 0, 0, cx, cy))
+	if (m_dx11.Initialize(hWND, 0, 0, m_cx, m_cy))
 	{
 		m_camera.SetPosition(0.0F, 0.0F, -10.0F);
 		if (m_textureShader.Initialize(m_dx11,
 			TEXT("D:\\Develop\\GitHub\\TinyUI\\DXFramework\\texture.vs"),
 			TEXT("D:\\Develop\\GitHub\\TinyUI\\DXFramework\\texture.ps")))
 		{
-			if (!CreateTexture(1920, 1080))
+			if (!CreateTexture(m_cx, m_cy))
 				return FALSE;
-			if (!m_dxVideo.Create(m_dx11, 640, 360, 320, 180))
+			if (!m_dxVideo.Create(m_dx11, m_videoSize.cx, m_videoSize.cy, m_videoSize.cx / 2, m_videoSize.cy / 2))
 				return FALSE;
 			if (!m_videoCapture.Start())
 				return FALSE;
@@ -83,7 +85,7 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 			m_publishTask->Submit();
 			m_renderTask.Reset(new RenderTask(this));
 			m_renderTask->Submit();
-			m_captureTask.Reset(new DX11CaptureTask(&m_dx11));
+			m_captureTask.Reset(new DX11CaptureTask(&m_dx11, m_cx, m_cy));
 			m_captureTask->Submit();
 		}
 	}
@@ -108,8 +110,14 @@ void GraphicsCapture::Render()
 	if (m_bResize)
 	{
 		m_dx11.ResizeView(m_cx, m_cy);
+		m_camera.SetPosition(0.0F, 0.0F, -10.0F);
 		m_resource.Release();
 		CreateTexture(m_cx, m_cy);
+		m_converter.Reset(new I420Converter(TinySize(m_cx, m_cy), TinySize(m_cx, m_cy)));
+		m_dxVideo.SetPosition(-1, -1);
+		DX11Image* dxImage = m_captureTask->GetTexture();
+		if (dxImage && dxImage->IsValid())
+			dxImage->SetPosition(-1, -1);
 		m_bResize = FALSE;
 	}
 	m_dx11.BeginScene();
@@ -123,7 +131,7 @@ void GraphicsCapture::Render()
 	if (pBits)
 	{
 		m_dxVideo.FillImage(m_dx11, pBits, 640, 360);
-		m_dxVideo.Render(m_dx11, 5, 5);
+		m_dxVideo.Render(m_dx11, 1, 1);
 		m_textureShader.Render(m_dx11, m_dxVideo.GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_dxVideo.GetTexture());
 	}
 	DX11Image* dxImage = m_captureTask->GetTexture();
@@ -160,14 +168,14 @@ void GraphicsCapture::Render()
 
 void GraphicsCapture::Publish()
 {
-	if (m_bits)
-	{
-		if (!m_lock.TryLock())
-			return;
+	/*if (!m_lock.TryLock())
+		return;
+		if (m_bits)
+		{
 		m_converter->BRGAToI420(m_bits);
 		m_x264Encode.Encode(m_converter->GetI420(), &m_publisher);
-		m_lock.Unlock();
-	}
+		}
+		m_lock.Unlock();*/
 }
 
 void GraphicsCapture::WaitAll()
@@ -175,13 +183,4 @@ void GraphicsCapture::WaitAll()
 	m_publishTask->Wait(INFINITE);
 	m_renderTask->Wait(INFINITE);
 	m_captureTask->Wait(INFINITE);
-}
-
-BYTE* GraphicsCapture::GetPointer() const
-{
-	return m_bits;
-}
-DWORD GraphicsCapture::GetSize() const
-{
-	return m_dwSize;
 }

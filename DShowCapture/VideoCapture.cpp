@@ -166,7 +166,7 @@ namespace Media
 						hRes = m_builder->ConnectDirect(m_captureO, m_mjpgI, mediaType.Ptr());
 						if (hRes != S_OK)
 							return FALSE;
-						//判断MjpegDec输出是否支持RGB23
+						//判断MjpegDec输出是否支持RGB24
 						ScopedMediaType type;
 						if (!VideoCapture::GetMediaType(m_mjpgO, MEDIASUBTYPE_RGB24, type.Receive()))
 							return FALSE;

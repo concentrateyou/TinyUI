@@ -146,10 +146,12 @@ namespace DXFramework
 	{
 		if (!m_context)
 			return FALSE;
+		m_size.cx = cx;
+		m_size.cy = cy;
 		LPVOID val = NULL;
-		m_context->OMSetRenderTargets(1, (ID3D11RenderTargetView**)&val, NULL);
+		m_context->OMSetRenderTargets(0, 0, 0);
 		m_renderView.Release();
-		HRESULT hRes = m_swap->ResizeBuffers(2, cx, cy, DXGI_FORMAT_B8G8R8A8_UNORM, 0);
+		HRESULT hRes = m_swap->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
 		if (FAILED(hRes))
 			return FALSE;
 		TinyComPtr<ID3D11Texture2D> backBuffer;
@@ -162,8 +164,8 @@ namespace DXFramework
 		m_depthStencilBuffer.Release();
 		D3D11_TEXTURE2D_DESC depthBufferDesc;
 		ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
-		depthBufferDesc.Width = cx;
-		depthBufferDesc.Height = cy;
+		depthBufferDesc.Width = m_size.cx;
+		depthBufferDesc.Height = m_size.cy;
 		depthBufferDesc.MipLevels = 1;
 		depthBufferDesc.ArraySize = 1;
 		depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -188,18 +190,18 @@ namespace DXFramework
 		m_context->OMSetRenderTargets(1, &m_renderView, m_depthStencilView);
 		//更新视口
 		D3D11_VIEWPORT viewport;
-		viewport.Width = static_cast<FLOAT>(cx);
-		viewport.Height = static_cast<FLOAT>(cy);
+		viewport.Width = static_cast<FLOAT>(m_size.cx);
+		viewport.Height = static_cast<FLOAT>(m_size.cy);
 		viewport.MinDepth = 0.0F;
 		viewport.MaxDepth = 1.0F;
 		viewport.TopLeftX = 0.0F;
 		viewport.TopLeftY = 0.0F;
 		m_context->RSSetViewports(1, &viewport);
 		FLOAT fov = (FLOAT)D3DX_PI / 4.0F;
-		FLOAT aspect = (FLOAT)cx / (FLOAT)cy;
+		FLOAT aspect = (FLOAT)m_size.cx / (FLOAT)m_size.cy;
 		D3DXMatrixPerspectiveFovLH(&m_projectionMatrix, fov, aspect, 1000.0F, 0.1F);
 		D3DXMatrixIdentity(&m_worldMatrix);
-		D3DXMatrixOrthoLH(&m_orthoMatrix, (FLOAT)cx, (FLOAT)cy, 1000.0F, 0.1F);
+		D3DXMatrixOrthoLH(&m_orthoMatrix, (FLOAT)m_size.cx, (FLOAT)m_size.cy, 1000.0F, 0.1F);
 		return TRUE;
 	}
 	void DX11::BeginScene()

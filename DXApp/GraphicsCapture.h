@@ -27,12 +27,14 @@ public:
 	void	WaitAll();
 private:
 	BOOL	CreateTexture(INT cx, INT cy);
+
 private:
 	TinyComPtr<ID3D11Resource>		m_resource;
 	DWORD							m_dwSize;//纹理大小
 	TinyScopedPtr<BYTE>				m_bits;//纹理数据
 	INT								m_cx;
 	INT								m_cy;
+	TinySize						m_videoSize;
 	BOOL							m_bResize;
 	DX11							m_dx11;
 	DX11Image						m_dxVideo;

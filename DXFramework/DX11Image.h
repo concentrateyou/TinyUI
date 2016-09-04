@@ -16,6 +16,7 @@ namespace DXFramework
 	public:
 		DX11Image();
 		~DX11Image();
+		void SetPosition(INT cx, INT cy);
 		BOOL Create(const DX11& dx11, INT cx, INT cy, INT scaleX, INT scaleY);
 		BOOL FillImage(const DX11& dx11, const BYTE* pBits, INT cx, INT cy);
 		BOOL Load(const DX11& dx11, HANDLE hResource, INT scaleX, INT scaleY);
@@ -33,8 +34,8 @@ namespace DXFramework
 		TinyComPtr<ID3D11Buffer>	m_indexBuffer;
 		INT							m_scaleX;
 		INT							m_scaleY;
-		INT							m_previousPosX;
-		INT							m_previousPosY;
+		INT							m_positionX;
+		INT							m_positionY;
 		INT							m_vertexCount;
 		INT							m_indexCount;
 		DX11Texture					m_texture;
