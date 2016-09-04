@@ -351,6 +351,9 @@
     <ClInclude Include="IO\TinyWin32TaskPool.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
+    <ClInclude Include="IO\TinyRingQueue.h">
+      <Filter>头文件\IO</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -633,6 +636,9 @@
       <Filter>源文件\Render</Filter>
     </ClCompile>
     <ClCompile Include="IO\TinyWin32TaskPool.cpp">
+      <Filter>源文件\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\TinyRingQueue.cpp">
       <Filter>源文件\IO</Filter>
     </ClCompile>
   </ItemGroup>

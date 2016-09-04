@@ -144,7 +144,7 @@ namespace TinyUI
 		DISALLOW_COPY_AND_ASSIGN(TinyPerformanceLock);
 	public:
 
-	}
+	};
 	/// <summary>
 	/// Library·â×° 
 	/// </summary>

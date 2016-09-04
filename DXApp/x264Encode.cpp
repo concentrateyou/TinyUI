@@ -38,7 +38,7 @@ BOOL x264Encode::BuildParam(INT cx, INT cy)
 	m_x264Param->i_threads = 0;
 	m_x264Param->b_sliced_threads = 0;
 	m_x264Param->i_csp = X264_CSP_I420;
-	m_x264Param->b_open_gop = 1;
+	m_x264Param->i_keyint_max = 90;
 	m_x264Param->i_width = cx;
 	m_x264Param->i_height = cy;
 	m_x264Param->i_fps_num = 30;

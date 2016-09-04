@@ -143,6 +143,7 @@
     <ClInclude Include="Database\TinySqlite.h" />
     <ClInclude Include="IO\TinyIO.h" />
     <ClInclude Include="IO\TinyIOCP.h" />
+    <ClInclude Include="IO\TinyRingQueue.h" />
     <ClInclude Include="IO\TinySharedMemory.h" />
     <ClInclude Include="IO\TinyTask.h" />
     <ClInclude Include="IO\TinyWin32TaskPool.h" />
@@ -238,6 +239,7 @@
     <ClCompile Include="Database\TinySqlite.cpp" />
     <ClCompile Include="IO\TinyIO.cpp" />
     <ClCompile Include="IO\TinyIOCP.cpp" />
+    <ClCompile Include="IO\TinyRingQueue.cpp" />
     <ClCompile Include="IO\TinySharedMemory.cpp" />
     <ClCompile Include="IO\TinyTask.cpp" />
     <ClCompile Include="IO\TinyWin32TaskPool.cpp" />
