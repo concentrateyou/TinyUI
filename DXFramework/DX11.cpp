@@ -24,7 +24,7 @@ namespace DXFramework
 		swapDesc.BufferCount = 2;
 		swapDesc.BufferDesc.Width = cx;
 		swapDesc.BufferDesc.Height = cy;
-		swapDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		swapDesc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 		swapDesc.BufferDesc.RefreshRate.Numerator = 0;
 		swapDesc.BufferDesc.RefreshRate.Denominator = 1;
 		swapDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
