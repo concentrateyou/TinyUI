@@ -45,8 +45,8 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 	m_converter.Reset(new I420Converter(cx, cy));
 	m_cx = cx;
 	m_cy = cy;
-	m_videoSize.cx = 640;
-	m_videoSize.cy = 360;
+	m_videoSize.cx = 800;
+	m_videoSize.cy = 600;
 	vector<Media::VideoCapture::Name> names;
 	Media::VideoCapture::GetDevices(names);
 	vector<Media::VideoCaptureParam> params;
@@ -77,7 +77,7 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 		{
 			if (!CreateTexture(m_cx, m_cy))
 				return FALSE;
-			if (!m_dxVideo.Create(m_dx11, m_videoSize.cx, m_videoSize.cy, m_videoSize.cx / 2, m_videoSize.cy / 2))
+			if (!m_dxVideo.Create(m_dx11, m_videoSize.cx, m_videoSize.cy, m_videoSize.cx, m_videoSize.cy))
 				return FALSE;
 			if (!m_videoCapture.Start())
 				return FALSE;
@@ -127,19 +127,20 @@ void GraphicsCapture::Render()
 	D3DXMATRIX projectionMatrix = m_dx11.GetProjectionMatrix();
 	D3DXMATRIX orthoMatrix = m_dx11.GetOrthoMatrix();
 	m_dx11.AllowDepth(FALSE);
-	DX11Image* dxImage = m_captureTask->GetTexture();
+	/*DX11Image* dxImage = m_captureTask->GetTexture();
 	if (dxImage && dxImage->IsValid())
 	{
-		dxImage->Render(m_dx11, 1, 1);
-		m_textureShader.Render(m_dx11, dxImage->GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, dxImage->GetTexture());
-	}
+	dxImage->Render(m_dx11, 1, 1);
+	m_textureShader.Render(m_dx11, dxImage->GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, dxImage->GetTexture());
+	}*/
 	m_videoCapture.Lock();
 	if (m_videoCapture.GetPointer())
 	{
 		m_dxVideo.FillImage(m_dx11, m_videoCapture.GetPointer(), m_videoSize.cx, m_videoSize.cy);
 	}
 	m_videoCapture.Unlock();
-	m_dxVideo.Render(m_dx11, m_cx - m_videoSize.cx / 2 - 1, m_cy - m_videoSize.cy / 2 - 1);
+	m_dxVideo.Render(m_dx11, 1, 1);
+	/*m_dxVideo.Render(m_dx11, m_cx - m_videoSize.cx / 2 - 1, m_cy - m_videoSize.cy / 2 - 1);*/
 	m_textureShader.Render(m_dx11, m_dxVideo.GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_dxVideo.GetTexture());
 	m_dx11.AllowDepth(TRUE);
 	m_dx11.EndScene();

@@ -46,9 +46,15 @@ BOOL RTMPPublisher::SendSPSPPS(const vector<BYTE>& pps, const vector<BYTE>& sps)
 {
 	ASSERT(m_pRTMP);
 	if (!RTMP_IsConnected(m_pRTMP))
+	{
+		TRACE("SendVideoRTMP Disconnect\n");
 		return FALSE;
+	}
 	if (RTMP_IsTimedout(m_pRTMP))
+	{
+		TRACE("SendVideoRTMP Timeout\n");
 		return FALSE;
+	}
 	RTMPPacket* packet = NULL;
 	BYTE* body = NULL;
 	packet = (RTMPPacket *)malloc(RTMP_HEAD_SIZE + 1024);
@@ -91,9 +97,15 @@ BOOL RTMPPublisher::SendSPSPPS(const vector<BYTE>& pps, const vector<BYTE>& sps)
 BOOL RTMPPublisher::SendVideoRTMP(BYTE* pBits, INT size)
 {
 	if (!RTMP_IsConnected(m_pRTMP))
+	{
+		TRACE("SendVideoRTMP Disconnect\n");
 		return FALSE;
+	}
 	if (RTMP_IsTimedout(m_pRTMP))
+	{
+		TRACE("SendVideoRTMP Timeout\n");
 		return FALSE;
+	}
 	DWORD timeoffset = 0;
 	RTMPPacket* packet = NULL;
 	BYTE* body = NULL;

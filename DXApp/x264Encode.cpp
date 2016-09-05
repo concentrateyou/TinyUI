@@ -32,6 +32,7 @@ BOOL x264Encode::BuildParam(INT cx, INT cy)
 		return FALSE;
 	x264_param_default(m_x264Param);
 	x264_param_default_preset(m_x264Param, "superfast", "zerolatency");
+	/*x264_param_default_preset(m_x264Param, "fast", "zerolatency");*/
 	m_x264Param->i_frame_total = 0;
 	m_x264Param->i_threads = 0;
 	m_x264Param->b_sliced_threads = 0;
