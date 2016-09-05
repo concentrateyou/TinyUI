@@ -140,7 +140,14 @@ namespace TinyUI
 		DECLARE_DYNAMIC(TinyPerformanceLock);
 		DISALLOW_COPY_AND_ASSIGN(TinyPerformanceLock);
 	public:
-
+		TinyPerformanceLock();
+		~TinyPerformanceLock();
+	public:
+		void Lock(LONG value = 1, UINT spin = 2048);
+		void Unlock();
+	private:
+		SYSTEM_INFO  m_si;
+		volatile LONG* m_lock;
 	};
 	/// <summary>
 	/// Library·â×° 

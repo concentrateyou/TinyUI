@@ -135,7 +135,7 @@ namespace TinyUI
 	//////////////////////////////////////////////////////////////////////////
 	TinyLock::TinyLock()
 	{
-		
+
 	}
 	TinyLock::~TinyLock()
 	{
@@ -168,7 +168,7 @@ namespace TinyUI
 	}
 	TinySpinLock::~TinySpinLock()
 	{
-
+		Uninitialize();
 	}
 	BOOL TinySpinLock::Initialize(DWORD dwSpinCount) throw()
 	{
@@ -190,6 +190,45 @@ namespace TinyUI
 	{
 		LeaveCriticalSection(&section);
 	}
+	//////////////////////////////////////////////////////////////////////////
+	TinyPerformanceLock::TinyPerformanceLock()
+		:m_lock(NULL)
+	{
+		GetSystemInfo(&m_si);
+	}
+	TinyPerformanceLock::~TinyPerformanceLock()
+	{
+
+	}
+	void TinyPerformanceLock::Lock(LONG value, UINT spin)
+	{
+		for (;;)
+		{
+			if (*m_lock == 0 && InterlockedCompareExchange(m_lock, 0, value))
+			{
+				return;
+			}
+			if (m_si.dwNumberOfProcessors > 1)
+			{
+				for (UINT s = 1; s < spin; s <<= 1)
+				{
+					for (UINT v = 0; v < s; v++)
+					{
+						__asm { pause };
+					}
+					if (*m_lock == 0 && InterlockedCompareExchange(m_lock, 0, value))
+					{
+						return;
+					}
+				}
+			}
+			SwitchToThread();
+		}
+	}
+	void TinyPerformanceLock::Unlock()
+	{
+		*(m_lock) = 0;
+	};
 	//////////////////////////////////////////////////////////////////////////
 	TinySemaphore::TinySemaphore()
 		:m_hSemaphore(NULL)
