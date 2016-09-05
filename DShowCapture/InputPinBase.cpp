@@ -74,18 +74,13 @@ namespace Media
 		{
 			return hRes;
 		}
-		m_observer->Lock();
+		TinyAutoLock lock(*m_observer);
+		const INT size = pSample->GetActualDataLength();
 		BYTE* data = NULL;
-		hRes = pSample->GetPointer(&data);
-		if (SUCCEEDED(hRes))
-		{
-			const INT size = pSample->GetActualDataLength();
-			m_observer->OnFrameReceive(data, size, &m_mediaType);
-			m_observer->Unlock();
-			return NOERROR;
-		}
-		m_observer->Unlock();
-		return hRes;
+		if (FAILED(pSample->GetPointer(&data)))
+			return S_FALSE;
+		m_observer->OnFrameReceive(data, size, &m_mediaType);
+		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE InputPinBase::ReceiveMultiple(_In_reads_(nSamples) IMediaSample **pSamples, long nSamples, _Out_ long *nSamplesProcessed)
 	{

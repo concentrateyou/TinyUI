@@ -5,16 +5,14 @@ using namespace TinyUI;
 
 namespace Media
 {
-	class FilterObserver
+	class FilterObserver : public TinyLock
 	{
+		DECLARE_DYNAMIC(FilterObserver);
+		DISALLOW_COPY_AND_ASSIGN(FilterObserver);
 	public:
 		FilterObserver();
-		void Lock();
-		void Unlock();
 		virtual void OnFrameReceive(const BYTE* data, INT size, LPVOID lpParameter) = 0;
 	protected:
-		virtual ~FilterObserver(); 
-	protected:
-		TinyLock	m_lock;
+		virtual ~FilterObserver();
 	};
 }

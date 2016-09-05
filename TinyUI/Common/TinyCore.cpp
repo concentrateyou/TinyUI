@@ -7,9 +7,11 @@ namespace TinyUI
 	TinyCriticalSection::TinyCriticalSection() throw()
 	{
 		ZeroMemory(&section, sizeof(section));
+		InitializeCriticalSection(&section);
 	}
 	TinyCriticalSection::~TinyCriticalSection()
 	{
+		DeleteCriticalSection(&section);
 	}
 	void TinyCriticalSection::Lock() throw()
 	{
@@ -22,14 +24,6 @@ namespace TinyUI
 	void TinyCriticalSection::Unlock() throw()
 	{
 		LeaveCriticalSection(&section);
-	}
-	void TinyCriticalSection::Initialize() throw()
-	{
-		InitializeCriticalSection(&section);
-	}
-	void TinyCriticalSection::Uninitialize() throw()
-	{
-		DeleteCriticalSection(&section);
 	}
 	/////////////////////////////////////////////////////////////////////////
 	TinyEvent::TinyEvent()
@@ -141,32 +135,31 @@ namespace TinyUI
 	//////////////////////////////////////////////////////////////////////////
 	TinyLock::TinyLock()
 	{
-		m_section.Initialize();
+		
 	}
 	TinyLock::~TinyLock()
 	{
-		m_section.Uninitialize();
 	}
-	void TinyLock::Acquire()
+	void TinyLock::Lock()
 	{
 		m_section.Lock();
 	}
-	void TinyLock::Release()
+	void TinyLock::Unlock()
 	{
 		m_section.Unlock();
 	}
-	BOOL TinyLock::Try()
+	BOOL TinyLock::TryLock()
 	{
 		return m_section.TryLock();
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinyAutoLock::TinyAutoLock(TinyLock& lock) : m_lock(lock)
 	{
-		m_lock.Acquire();
+		m_lock.Lock();
 	}
 	TinyAutoLock::~TinyAutoLock()
 	{
-		m_lock.Release();
+		m_lock.Unlock();
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinySpinLock::TinySpinLock()

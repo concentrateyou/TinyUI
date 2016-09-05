@@ -56,6 +56,10 @@ namespace Media
 	{
 		return m_connector;
 	}
+	BOOL PinBase::IsFlushing() const
+	{
+		return m_bFlushing;
+	}
 	REFERENCE_TIME PinBase::GetCurrentStartTime() const
 	{
 		return m_startTime;

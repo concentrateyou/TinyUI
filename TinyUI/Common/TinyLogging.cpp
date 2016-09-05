@@ -75,9 +75,9 @@ namespace TinyUI
 		if (NULL == m_pInstance)
 		{
 			TinyLock lock;
-			lock.Acquire();
+			lock.Lock();
 			m_pInstance = new SymbolContext();
-			lock.Release();
+			lock.Unlock();
 		}
 		return m_pInstance;
 	}

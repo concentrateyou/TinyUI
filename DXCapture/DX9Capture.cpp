@@ -397,13 +397,13 @@ namespace DXCapture
 	{
 		DX9Capture::Instance().m_dX9EndScene.EndDetour();
 		HRESULT hRes = S_OK;
-		DX9Capture::Instance().m_lock.Acquire();
+		DX9Capture::Instance().m_lock.Lock();
 		if (!DX9Capture::Instance().m_bDetour)
 		{
 			DX9Capture::Instance().m_bDetour = TRUE;
 			DX9Capture::Instance().Setup(pThis);
 		}
-		DX9Capture::Instance().m_lock.Release();
+		DX9Capture::Instance().m_lock.Unlock();
 		hRes = pThis->EndScene();
 		DX9Capture::Instance().m_dX9EndScene.BeginDetour();
 		return hRes;

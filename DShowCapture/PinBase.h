@@ -19,8 +19,9 @@ namespace Media
 		virtual HRESULT OnDisconnect();
 		virtual HRESULT	OnActive(BOOL active);
 		virtual HRESULT OnRun(REFERENCE_TIME tStart);
-		BOOL IsConnected(void) const;
-		IPin* GetConnector();
+		BOOL	IsConnected(void) const;
+		IPin*	GetConnector();
+		BOOL	IsFlushing() const;
 		REFERENCE_TIME GetCurrentStartTime() const;
 		REFERENCE_TIME GetCurrentStopTime() const;
 	public:

@@ -11,6 +11,7 @@ x264Encode::x264Encode()
 
 BOOL x264Encode::Open(INT cx, INT cy)
 {
+	Close();
 	if (!BuildParam(cx, cy))
 		return FALSE;
 	if ((m_hx264 = x264_encoder_open(m_x264Param)) == NULL)
@@ -106,4 +107,5 @@ void x264Encode::Close()
 
 x264Encode::~x264Encode()
 {
+	Close();
 }

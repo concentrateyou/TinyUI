@@ -69,7 +69,7 @@ namespace Media
 		TinyComPtr<IPin>							m_sinkI;
 		TinyScopedReferencePtr<VideoSinkFilter>		m_sinkFilter;
 		Callback<void(const BYTE*, INT, LPVOID)>	m_callback;
-		BYTE*										m_pBits;
+		BYTE*										m_data;
 		INT											m_size;
 	};
 }

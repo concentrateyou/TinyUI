@@ -27,7 +27,6 @@ public:
 	void	WaitAll();
 private:
 	BOOL	CreateTexture(INT cx, INT cy);
-
 private:
 	TinyComPtr<ID3D11Resource>		m_resource;
 	DWORD							m_dwSize;//Œ∆¿Ì¥Û–°

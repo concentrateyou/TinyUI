@@ -137,10 +137,10 @@ void GraphicsCapture::Render()
 	if (m_videoCapture.GetPointer())
 	{
 		m_dxVideo.FillImage(m_dx11, m_videoCapture.GetPointer(), m_videoSize.cx, m_videoSize.cy);
-		m_dxVideo.Render(m_dx11, m_cx - m_videoSize.cx / 2 - 1, m_cy - m_videoSize.cy / 2 - 1);
-		m_textureShader.Render(m_dx11, m_dxVideo.GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_dxVideo.GetTexture());
 	}
 	m_videoCapture.Unlock();
+	m_dxVideo.Render(m_dx11, m_cx - m_videoSize.cx / 2 - 1, m_cy - m_videoSize.cy / 2 - 1);
+	m_textureShader.Render(m_dx11, m_dxVideo.GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_dxVideo.GetTexture());
 	m_dx11.AllowDepth(TRUE);
 	m_dx11.EndScene();
 	//øΩ±¥Œ∆¿Ì

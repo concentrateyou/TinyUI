@@ -29,7 +29,7 @@ namespace Media
 
 	AudioCapture::AudioCapture()
 		:m_size(0),
-		m_pBits(NULL)
+		m_data(NULL)
 	{
 	}
 
@@ -42,7 +42,7 @@ namespace Media
 	{
 		Sleep(1);
 		m_size = size;
-		m_pBits = const_cast<BYTE*>(pBits);
+		m_data = const_cast<BYTE*>(pBits);
 		if (!m_callback.IsNull())
 		{
 			m_callback(pBits, size, lpParameter);
@@ -111,7 +111,7 @@ namespace Media
 	}
 	BYTE* AudioCapture::GetPointer() const
 	{
-		return m_pBits;
+		return m_data;
 	}
 	INT	AudioCapture::GetSize() const
 	{

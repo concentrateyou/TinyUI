@@ -11,12 +11,4 @@ namespace Media
 	{
 
 	}
-	void FilterObserver::Lock()
-	{
-		m_lock.Acquire();
-	}
-	void FilterObserver::Unlock()
-	{
-		m_lock.Release();
-	}
 }
