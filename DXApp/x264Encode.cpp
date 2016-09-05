@@ -26,7 +26,6 @@ BOOL x264Encode::Open(INT cx, INT cy)
 
 BOOL x264Encode::BuildParam(INT cx, INT cy)
 {
-	m_bits.Reset(new BYTE[1024 * 1024 * 4]);
 	m_x264Param = new x264_param_t();
 	if (!m_x264Param)
 		return FALSE;
@@ -57,7 +56,6 @@ BOOL x264Encode::Encode(AVFrame* pI420, RTMPPublisher* publisher)
 	m_size = 0;
 	if (!m_x264Image || !pI420)
 		return FALSE;
-
 	x264_nal_t * pNAL = NULL;
 	INT iNAL = 0;
 	INT size = x264_encoder_headers(m_hx264, &pNAL, &iNAL);
@@ -104,15 +102,6 @@ void x264Encode::Close()
 	}
 	SAFE_DELETE(m_x264Param);
 	SAFE_DELETE(m_x264Image);
-}
-
-BYTE* x264Encode::GetPointer() const
-{
-	return m_bits;
-}
-INT	x264Encode::GetSize() const
-{
-	return m_size;
 }
 
 x264Encode::~x264Encode()

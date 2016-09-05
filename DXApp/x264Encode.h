@@ -19,15 +19,13 @@ public:
 	BOOL	Open(INT cx, INT cy);
 	BOOL	Encode(AVFrame* pI420, RTMPPublisher* publisher);
 	void	Close();
-	BYTE*	GetPointer() const;
-	INT		GetSize() const;
 private:
-	BOOL BuildParam(INT cx, INT cy);
+	BOOL	BuildParam(INT cx, INT cy);
 private:
 	x264_param_t*			m_x264Param;
 	x264_picture_t*			m_x264Image;
 	x264_t*					m_hx264;
-	TinyScopedArray<BYTE>	m_bits;
+
 	INT						m_size;
 };
 
