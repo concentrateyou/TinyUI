@@ -36,7 +36,7 @@ I420Converter::~I420Converter()
 
 BOOL I420Converter::BRGAToI420(BYTE* pBGRA)
 {
-	if (m_sws && m_i420 && m_bgra)
+	if (m_sws)
 	{
 		av_image_fill_arrays(m_bgra->data, m_bgra->linesize, pBGRA, AV_PIX_FMT_BGRA, m_srcSize.cx, m_srcSize.cy, 1);
 		m_size = av_image_get_buffer_size(AV_PIX_FMT_YUV420P, m_dstSize.cx, m_dstSize.cy, 1);
@@ -49,10 +49,7 @@ BOOL I420Converter::BRGAToI420(BYTE* pBGRA)
 		sws_scale(m_sws, m_bgra->data, m_bgra->linesize, 0, m_srcSize.cy, m_i420->data, m_i420->linesize);
 		return TRUE;
 	}
-	else
-	{
-		INT a = 0;
-	}
+	return FALSE;
 }
 
 AVFrame* I420Converter::GetI420() const
