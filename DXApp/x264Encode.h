@@ -25,7 +25,9 @@ private:
 	x264_param_t*			m_x264Param;
 	x264_picture_t*			m_x264Image;
 	x264_t*					m_hx264;
-
+	vector<BYTE>			m_pps;
+	vector<BYTE>			m_sps;
+	vector<BYTE>			m_sei;
 	INT						m_size;
 };
 

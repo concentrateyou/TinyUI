@@ -173,8 +173,8 @@ void GraphicsCapture::Publish()
 		return;
 	if (m_bits)
 	{
-		m_converter->BRGAToI420(m_bits);
-		m_x264Encode.Encode(m_converter->GetI420(), &m_publisher);
+		if (m_converter->BRGAToI420(m_bits))
+			m_x264Encode.Encode(m_converter->GetI420(), &m_publisher);
 	}
 	m_lock.Unlock();
 }

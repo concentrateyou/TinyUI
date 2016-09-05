@@ -57,21 +57,6 @@ BOOL x264Encode::Encode(AVFrame* pI420, RTMPPublisher* publisher)
 	m_size = 0;
 	if (!m_x264Image || !pI420)
 		return FALSE;
-	x264_nal_t * pNAL = NULL;
-	INT iNAL = 0;
-	INT size = x264_encoder_headers(m_hx264, &pNAL, &iNAL);
-	for (INT i = 0; i < iNAL; i++)
-	{
-		if (pNAL[i].i_type == NAL_SPS)
-		{
-			publisher->SetSPS(pNAL[i].p_payload + 4, pNAL[i].i_payload - 4);
-		}
-		if (pNAL[i].i_type == NAL_PPS)
-		{
-			publisher->SetPPS(pNAL[i].p_payload + 4, pNAL[i].i_payload - 4);
-		}
-	}
-	publisher->SendSPSPPS();
 	m_x264Image->img.plane[0] = pI420->data[0];
 	m_x264Image->img.plane[1] = pI420->data[1];
 	m_x264Image->img.plane[2] = pI420->data[2];
@@ -82,13 +67,28 @@ BOOL x264Encode::Encode(AVFrame* pI420, RTMPPublisher* publisher)
 	m_x264Image->img.i_stride[3] = pI420->linesize[3];
 	m_x264Image->i_pts = (LONGLONG)m_x264Param->i_frame_total;
 	x264_picture_t image;
-	size = x264_encoder_encode(m_hx264, &pNAL, &iNAL, m_x264Image, &image);
+	x264_nal_t * pNAL = NULL;
+	INT iNAL = 0;
+	INT size = x264_encoder_encode(m_hx264, &pNAL, &iNAL, m_x264Image, &image);
 	for (INT i = 0; i < iNAL; i++)
 	{
-		if (pNAL[i].i_type != NAL_SPS && pNAL[i].i_type != NAL_PPS)
+		do
 		{
-			publisher->SendVideo(pNAL[i].p_payload, size - m_size);
-		}
+			if (pNAL[i].i_type == NAL_SPS)
+			{
+				m_sps.resize(pNAL[i].i_payload - 4);
+				memcpy(&m_sps[0], pNAL[i].p_payload + 4, m_sps.size());
+				break;
+			}
+			if (pNAL[i].i_type == NAL_PPS)
+			{
+				m_pps.resize(pNAL[i].i_payload - 4);
+				memcpy(&m_pps[0], pNAL[i].p_payload + 4, m_pps.size());
+				publisher->SendSPSPPS(m_pps, m_sps);
+				break;
+			}
+			publisher->SendVideoRTMP(pNAL[i].p_payload, size - m_size);
+		} while (FALSE);
 		m_size += pNAL[i].i_payload;
 	}
 	return TRUE;

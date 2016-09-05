@@ -7,7 +7,7 @@
 RTMPPublisher::RTMPPublisher()
 	:m_pRTMP(NULL)
 {
-	
+
 }
 
 
@@ -42,18 +42,7 @@ BOOL RTMPPublisher::Connect(const TinyString& url)
 	return TRUE;
 }
 
-void RTMPPublisher::SetSPS(BYTE* sps, DWORD dwSPS)
-{
-	m_dwSPS = dwSPS;
-	memcpy(m_sps, sps, m_dwSPS);
-}
-void RTMPPublisher::SetPPS(BYTE* pps, DWORD dwPPS)
-{
-	m_dwPPS = dwPPS;
-	memcpy(m_pps, pps, m_dwSPS);
-}
-
-BOOL RTMPPublisher::SendSPSPPS()
+BOOL RTMPPublisher::SendSPSPPS(const vector<BYTE>& pps, const vector<BYTE>& sps)
 {
 	ASSERT(m_pRTMP);
 	if (!RTMP_IsConnected(m_pRTMP))
@@ -73,20 +62,20 @@ BOOL RTMPPublisher::SendSPSPPS()
 	body[i++] = 0x00;
 	body[i++] = 0x00;
 	body[i++] = 0x01;
-	body[i++] = m_sps[1];
-	body[i++] = m_sps[2];
-	body[i++] = m_sps[3];
+	body[i++] = sps[1];
+	body[i++] = sps[2];
+	body[i++] = sps[3];
 	body[i++] = 0xff;
 	body[i++] = 0xe1;
-	body[i++] = (m_dwSPS >> 8) & 0xff;
-	body[i++] = m_dwSPS & 0xff;
-	memcpy(&body[i], m_sps, m_dwSPS);
-	i += m_dwSPS;
+	body[i++] = (sps.size() >> 8) & 0xFF;
+	body[i++] = sps.size() & 0xFF;
+	memcpy(&body[i], &sps[0], sps.size());
+	i += sps.size();
 	body[i++] = 0x01;
-	body[i++] = (m_dwPPS >> 8) & 0xff;
-	body[i++] = (m_dwPPS)& 0xff;
-	memcpy(&body[i], m_pps, m_dwPPS);
-	i += m_dwPPS;
+	body[i++] = (pps.size() >> 8) & 0xFF;
+	body[i++] = (pps.size()) & 0xFF;
+	memcpy(&body[i], &pps[0], pps.size());
+	i += pps.size();
 	packet->m_packetType = RTMP_PACKET_TYPE_VIDEO;
 	packet->m_nBodySize = i;
 	packet->m_nChannel = 0x04;
@@ -99,7 +88,7 @@ BOOL RTMPPublisher::SendSPSPPS()
 	return TRUE;
 }
 
-BOOL RTMPPublisher::SendVideo(BYTE* pBits, INT size)
+BOOL RTMPPublisher::SendVideoRTMP(BYTE* pBits, INT size)
 {
 	if (!RTMP_IsConnected(m_pRTMP))
 		return FALSE;
@@ -136,9 +125,9 @@ BOOL RTMPPublisher::SendVideo(BYTE* pBits, INT size)
 	body[2] = 0x00;
 	body[3] = 0x00;
 	body[4] = 0x00;
-	body[5] = (size >> 24) & 0xff;
-	body[6] = (size >> 16) & 0xff;
-	body[7] = (size >> 8) & 0xff;
+	body[5] = (size >> 24) & 0xFF;
+	body[6] = (size >> 16) & 0xFF;
+	body[7] = (size >> 8) & 0xFF;
 	body[8] = (size)& 0xff;
 	memcpy(&body[9], pBits, size);
 	packet->m_hasAbsTimestamp = 0;
