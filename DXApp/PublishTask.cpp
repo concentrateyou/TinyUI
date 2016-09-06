@@ -25,7 +25,7 @@ void PublishTask::MessagePump()
 {
 	for (;;)
 	{
-		if (m_publish && m_publish.Lock(25))
+		if (m_publish && m_publish.Lock(3))
 		{
 			break;
 		}

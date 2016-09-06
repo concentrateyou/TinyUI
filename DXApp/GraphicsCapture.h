@@ -13,13 +13,12 @@
 using namespace DXFramework;
 using namespace Media;
 
-class GraphicsCapture
+class GraphicsCapture : public TinyLock
 {
 public:
 	GraphicsCapture();
 	~GraphicsCapture();
 	BOOL	Initialize(HWND hWND, INT cx, INT cy);
-	void	Resize(INT cx, INT cy);
 	void	Render();
 	void	Publish();
 	BYTE*	GetPointer() const;
@@ -34,7 +33,6 @@ private:
 	INT								m_cx;
 	INT								m_cy;
 	TinySize						m_videoSize;
-	BOOL							m_bResize;
 	DX11							m_dx11;
 	DX11Image						m_dxVideo;
 	DX11Image						m_dxGame;
@@ -46,7 +44,6 @@ private:
 	TinyScopedPtr<DX11CaptureTask>	m_captureTask;
 	TinyScopedPtr<I420Converter>	m_converter;
 	x264Encode						m_x264Encode;
-	TinySpinLock					m_lock;
 	RTMPPublisher					m_publisher;
 };
 

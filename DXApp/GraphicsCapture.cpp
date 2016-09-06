@@ -3,17 +3,14 @@
 #include <DXGIFormat.h>
 
 GraphicsCapture::GraphicsCapture()
-	:m_dwSize(0),
-	m_bResize(FALSE)
+	:m_dwSize(0)
 {
-	m_lock.Initialize();
 }
 
 
 GraphicsCapture::~GraphicsCapture()
 {
 	WaitAll();
-	m_lock.Uninitialize();
 }
 
 BOOL GraphicsCapture::CreateTexture(INT cx, INT cy)
@@ -41,8 +38,6 @@ BOOL GraphicsCapture::CreateTexture(INT cx, INT cy)
 
 BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 {
-	m_publisher.Connect("rtmp://10.121.86.127/live/test");
-	m_converter.Reset(new I420Converter(cx, cy));
 	m_cx = cx;
 	m_cy = cy;
 	m_videoSize.cx = 800;
@@ -60,10 +55,10 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 			break;
 		}
 	}
-
+	m_publisher.Connect("rtmp://10.121.86.127/live/test");
+	m_converter.Reset(new I420Converter(TinySize(m_cx, m_cy), TinySize(m_cx, m_cy)));
 	m_x264Encode.Close();
 	m_x264Encode.Open(m_cx, m_cy);
-
 	if (!m_videoCapture.Initialize(names[0]))
 		return FALSE;
 	if (!m_videoCapture.Allocate(param))
@@ -92,34 +87,8 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 	return TRUE;
 }
 
-void GraphicsCapture::Resize(INT cx, INT cy)
-{
-	if (!m_lock.TryLock())
-		return;
-	m_cx = cx;
-	m_cy = cy;
-	m_bResize = TRUE;
-	m_lock.Unlock();
-}
-
 void GraphicsCapture::Render()
 {
-	//ªÊ÷∆Œ∆¿Ì
-	if (!m_lock.TryLock())
-		return;
-	if (m_bResize)
-	{
-		m_dx11.ResizeView(m_cx, m_cy);
-		m_camera.SetPosition(0.0F, 0.0F, -10.0F);
-		m_resource.Release();
-		CreateTexture(m_cx, m_cy);
-		m_converter.Reset(new I420Converter(TinySize(m_cx, m_cy), TinySize(m_cx, m_cy)));
-		m_dxVideo.SetPosition(-1, -1);
-		DX11Image* dxImage = m_captureTask->GetTexture();
-		if (dxImage && dxImage->IsValid())
-			dxImage->SetPosition(-1, -1);
-		m_bResize = FALSE;
-	}
 	m_dx11.BeginScene();
 	m_camera.UpdatePosition();
 	D3DXMATRIX viewMatrix = m_camera.GetViewMatrix();
@@ -127,24 +96,20 @@ void GraphicsCapture::Render()
 	D3DXMATRIX projectionMatrix = m_dx11.GetProjectionMatrix();
 	D3DXMATRIX orthoMatrix = m_dx11.GetOrthoMatrix();
 	m_dx11.AllowDepth(FALSE);
-	/*DX11Image* dxImage = m_captureTask->GetTexture();
+	DX11Image* dxImage = m_captureTask->GetTexture();
 	if (dxImage && dxImage->IsValid())
 	{
-	dxImage->Render(m_dx11, 1, 1);
-	m_textureShader.Render(m_dx11, dxImage->GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, dxImage->GetTexture());
-	}*/
-	m_videoCapture.Lock();
+		dxImage->Render(m_dx11, 1, 1);
+		m_textureShader.Render(m_dx11, dxImage->GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, dxImage->GetTexture());
+	}
 	if (m_videoCapture.GetPointer())
 	{
 		m_dxVideo.FillImage(m_dx11, m_videoCapture.GetPointer(), m_videoSize.cx, m_videoSize.cy);
 	}
-	m_videoCapture.Unlock();
-	m_dxVideo.Render(m_dx11, 1, 1);
-	/*m_dxVideo.Render(m_dx11, m_cx - m_videoSize.cx / 2 - 1, m_cy - m_videoSize.cy / 2 - 1);*/
+	m_dxVideo.Render(m_dx11, m_cx - m_videoSize.cx / 2 - 1, m_cy - m_videoSize.cy / 2 - 1);
 	m_textureShader.Render(m_dx11, m_dxVideo.GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_dxVideo.GetTexture());
 	m_dx11.AllowDepth(TRUE);
 	m_dx11.EndScene();
-	//øΩ±¥Œ∆¿Ì
 	TinyComPtr<ID3D11Resource> backBuffer;
 	if (SUCCEEDED(m_dx11.GetSwap()->GetBuffer(0, __uuidof(ID3D11Resource), (void**)&backBuffer)))
 	{
@@ -154,6 +119,7 @@ void GraphicsCapture::Render()
 			D3D11_MAPPED_SUBRESOURCE ms = { 0 };
 			if (SUCCEEDED(m_dx11.GetContext()->Map(m_resource, 0, D3D11_MAP_READ, 0, &ms)))
 			{
+				this->Lock();
 				DWORD dwSize = m_cy * ms.RowPitch;
 				if (m_dwSize != dwSize)
 				{
@@ -161,23 +127,21 @@ void GraphicsCapture::Render()
 					m_bits.Reset(new BYTE[m_dwSize]);
 				}
 				memcpy(static_cast<void*>(m_bits), ms.pData, m_dwSize);
+				this->Unlock();
 				m_dx11.GetContext()->Unmap(m_resource, 0);
 			}
 		}
 	}
-	m_lock.Unlock();
 }
 
 void GraphicsCapture::Publish()
 {
-	if (!m_lock.TryLock())
-		return;
-	if (m_bits)
+	this->Lock();
+	if (m_converter->BRGAToI420(m_bits))
 	{
-		if (m_converter->BRGAToI420(m_bits))
-			m_x264Encode.Encode(m_converter->GetI420(), &m_publisher);
+		m_x264Encode.Encode(m_converter->GetI420(), &m_publisher);
 	}
-	m_lock.Unlock();
+	this->Unlock();
 }
 
 void GraphicsCapture::WaitAll()

@@ -45,9 +45,9 @@ BOOL x264Encode::BuildParam(INT cx, INT cy)
 	m_x264Param->rc.i_rc_method = X264_RC_ABR;
 	m_x264Param->rc.f_rf_constant = 25;
 	m_x264Param->rc.f_rf_constant_max = 45;
-	m_x264Param->rc.i_bitrate = 1024;/*设置平均码率大小*/
+	m_x264Param->rc.i_bitrate = 512;/*设置平均码率大小*/
 	m_x264Param->rc.f_rate_tolerance = 0.1F;
-	m_x264Param->rc.i_vbv_max_bitrate = static_cast<INT>(1024 * 1.2);
+	m_x264Param->rc.i_vbv_max_bitrate = static_cast<INT>(512 * 1.2);
 	return TRUE;
 }
 
