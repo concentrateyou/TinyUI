@@ -15,7 +15,7 @@ public:
 	~RTMPPublisher();
 public:
 	BOOL Connect(const TinyString& url);
-	BOOL SendMetadata(INT cx, INT cy, INT rate);
+	BOOL SendMetadata(INT cx, INT cy, INT fps, INT rate);
 	BOOL SendSPSPPS(const vector<BYTE>& pps, const vector<BYTE>& sps);
 	BOOL SendVideoRTMP(BYTE* data, INT size);
 	BOOL SendAudioRTMP(BYTE* data, INT size);

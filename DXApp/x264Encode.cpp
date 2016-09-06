@@ -35,7 +35,7 @@ BOOL x264Encode::BuildParam(INT cx, INT cy)
 	m_x264Param->i_threads = 0;
 	m_x264Param->b_sliced_threads = 0;
 	m_x264Param->i_csp = X264_CSP_I420;
-	m_x264Param->i_keyint_max = 90;
+	m_x264Param->i_keyint_max = 60;
 	m_x264Param->i_width = cx;
 	m_x264Param->i_height = cy;
 	m_x264Param->i_fps_num = 30;
@@ -45,9 +45,9 @@ BOOL x264Encode::BuildParam(INT cx, INT cy)
 	m_x264Param->rc.i_rc_method = X264_RC_CRF;
 	m_x264Param->rc.f_rf_constant = 25;
 	m_x264Param->rc.f_rf_constant_max = 45;
-	m_x264Param->rc.i_bitrate = 512;/*设置平均码率大小*/
+	m_x264Param->rc.i_bitrate = 1000;/*设置平均码率大小*/
 	m_x264Param->rc.f_rate_tolerance = 0.1F;
-	m_x264Param->rc.i_vbv_max_bitrate = static_cast<INT>(512 * 1.2);
+	m_x264Param->rc.i_vbv_max_bitrate = static_cast<INT>(1000 * 1.2);
 	return TRUE;
 }
 
@@ -55,7 +55,7 @@ BOOL x264Encode::Encode(AVFrame* pI420, RTMPPublisher* publisher)
 {
 	if (!m_x264Image || !pI420)
 		return FALSE;
-	publisher->SendMetadata(m_x264Param->i_width, m_x264Param->i_height, m_x264Param->i_fps_num);
+	publisher->SendMetadata(m_x264Param->i_width, m_x264Param->i_height, m_x264Param->i_fps_num, m_x264Param->rc.i_bitrate);
 	m_x264Image->img.plane[0] = pI420->data[0];
 	m_x264Image->img.plane[1] = pI420->data[1];
 	m_x264Image->img.plane[2] = pI420->data[2];

@@ -3,13 +3,31 @@
 #include "x264Encode.h"
 
 #define RTMP_HEAD_SIZE   (sizeof(RTMPPacket)+RTMP_MAX_HEADER_SIZE)
+#define SAVC(x)    static const AVal av_##x = AVC(#x)
+static const AVal av_setDataFrame = AVC("@setDataFrame");
+SAVC(onMetaData);
+SAVC(duration);
+SAVC(width);
+SAVC(height);
+SAVC(videocodecid);
+SAVC(videodatarate);
+SAVC(framerate);
+SAVC(audiocodecid);
+SAVC(audiodatarate);
+SAVC(audiosamplerate);
+SAVC(audiosamplesize);
+SAVC(audiochannels);
+SAVC(stereo);
+SAVC(encoder);
+SAVC(av_stereo);
+SAVC(avc1);
+SAVC(fileSize);
 
 RTMPPublisher::RTMPPublisher()
 	:m_pRTMP(NULL)
 {
 
 }
-
 
 RTMPPublisher::~RTMPPublisher()
 {
@@ -42,11 +60,12 @@ BOOL RTMPPublisher::Connect(const TinyString& url)
 	return TRUE;
 }
 
-BOOL RTMPPublisher::SendMetadata(INT cx, INT cy, INT rate)
+BOOL RTMPPublisher::SendMetadata(INT cx, INT cy, INT fps, INT rate)
 {
 	ASSERT(m_pRTMP);
 	if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
 	{
+		TRACE("SendMetadata Fail\n");
 		return FALSE;
 	}
 	RTMPPacket* packet = NULL;
@@ -56,25 +75,22 @@ BOOL RTMPPublisher::SendMetadata(INT cx, INT cy, INT rate)
 	packet->m_body = (CHAR*)packet + RTMP_HEAD_SIZE;
 	body = (CHAR*)packet->m_body;
 	CHAR* ebody = body + 1024;
-	CHAR* ps = body;
-	AVal val = AVC("width");
-	body = AMF_EncodeString(body, ebody, &val);
-	body = AMF_EncodeNumber(body, ebody, static_cast<double>(cx));
-	val = AVC("height");
-	body = AMF_EncodeString(body, ebody, &val);
-	body = AMF_EncodeNumber(body, ebody, static_cast<double>(cy));
-	val = AVC("framerate");
-	body = AMF_EncodeString(body, ebody, &val);
-	body = AMF_EncodeNumber(body, ebody, static_cast<double>(rate));
-	val = AVC("videocodecid");
-	body = AMF_EncodeString(body, ebody, &val);
-	body = AMF_EncodeNumber(body, ebody, static_cast<double>(7));
-	val = AVC("");
-	body = AMF_EncodeString(body, ebody, &val);
-	body = AMF_EncodeInt16(body, ebody, AMF_OBJECT_END);
-	packet->m_nBodySize = body - ps;
+	body = AMF_EncodeString(body, ebody, &av_setDataFrame);
+	body = AMF_EncodeString(body, ebody, &av_onMetaData);
+	*body++ = AMF_OBJECT;
+	body = AMF_EncodeNamedNumber(body, ebody, &av_duration, 0.0);
+	body = AMF_EncodeNamedNumber(body, ebody, &av_fileSize, 0.0);
+	body = AMF_EncodeNamedNumber(body, ebody, &av_width, static_cast<double>(cx));
+	body = AMF_EncodeNamedNumber(body, ebody, &av_height, static_cast<double>(cy));
+	body = AMF_EncodeNamedString(body, ebody, &av_videocodecid, &av_avc1);
+	body = AMF_EncodeNamedNumber(body, ebody, &av_videodatarate, static_cast<double>(rate));
+	body = AMF_EncodeNamedNumber(body, ebody, &av_framerate, static_cast<double>(fps));
+	*body++ = 0;
+	*body++ = 0;
+	*body++ = AMF_OBJECT_END;
+	packet->m_nBodySize = body - packet->m_body;
 	packet->m_packetType = RTMP_PACKET_TYPE_INFO;
-	packet->m_nChannel = 0x04;
+	packet->m_nChannel = 0x03;
 	packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
 	packet->m_nTimeStamp = 0;
 	packet->m_hasAbsTimestamp = 0;
@@ -88,6 +104,7 @@ BOOL RTMPPublisher::SendSPSPPS(const vector<BYTE>& pps, const vector<BYTE>& sps)
 	ASSERT(m_pRTMP);
 	if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
 	{
+		TRACE("SendSPSPPS Fail\n");
 		return FALSE;
 	}
 	RTMPPacket* packet = NULL;
@@ -146,6 +163,7 @@ BOOL RTMPPublisher::SendVideoRTMP(BYTE* data, INT size)
 {
 	if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
 	{
+		TRACE("SendVideoRTMP Fail\n");
 		return FALSE;
 	}
 	DWORD timeoffset = 0;

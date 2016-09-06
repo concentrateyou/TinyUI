@@ -40,8 +40,8 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 {
 	m_cx = cx;
 	m_cy = cy;
-	m_videoSize.cx = 800;
-	m_videoSize.cy = 600;
+	m_videoSize.cx = 640;
+	m_videoSize.cy = 360;
 	vector<Media::VideoCapture::Name> names;
 	Media::VideoCapture::GetDevices(names);
 	vector<Media::VideoCaptureParam> params;
