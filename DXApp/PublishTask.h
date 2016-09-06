@@ -14,6 +14,6 @@ private:
 	void	MessagePump();
 private:
 	GraphicsCapture*	m_pSys;
-	TinyEvent			m_publish;
+	TinyEvent			m_break;
 };
 
