@@ -59,7 +59,7 @@ namespace DXFramework
 	{
 		ASSERT(m_texture2D);
 		D3D11_MAPPED_SUBRESOURCE  mapResource;
-		HRESULT hRes = dx11.GetContext()->Map(m_texture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapResource);
+		HRESULT hRes = dx11.GetImmediateContext()->Map(m_texture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapResource);
 		if (FAILED(hRes))
 			return FALSE;
 		INT linesize = ((((24 * cx) + 31) / 32) * 4);
@@ -78,13 +78,13 @@ namespace DXFramework
 				*dst++ = 0;
 			}
 		}
-		dx11.GetContext()->Unmap(m_texture2D, 0);
+		dx11.GetImmediateContext()->Unmap(m_texture2D, 0);
 		return TRUE;
 	}
 	BOOL DX11Texture::Save(const DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT format)
 	{
 		ASSERT(m_texture2D);
-		return D3DX11SaveTextureToFile(dx11.GetContext(), m_texture2D, format, pzFile) == S_OK;
+		return D3DX11SaveTextureToFile(dx11.GetImmediateContext(), m_texture2D, format, pzFile) == S_OK;
 	}
 	BOOL DX11Texture::LoadTexture(const DX11& dx11, const CHAR* pzFile)
 	{

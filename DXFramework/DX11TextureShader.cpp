@@ -80,21 +80,21 @@ namespace DXFramework
 		D3DXMatrixTranspose(&viewMatrix, &viewMatrix);
 		D3DXMatrixTranspose(&projectionMatrix, &projectionMatrix);
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
-		if (SUCCEEDED(dx11.GetContext()->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource)))
+		if (SUCCEEDED(dx11.GetImmediateContext()->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource)))
 		{
 			MATRIXBUFFER* dataPtr = (MATRIXBUFFER*)mappedResource.pData;
 			dataPtr->world = worldMatrix;
 			dataPtr->view = viewMatrix;
 			dataPtr->projection = projectionMatrix;
-			dx11.GetContext()->Unmap(m_matrixBuffer, 0);
-			dx11.GetContext()->VSSetConstantBuffers(0, 1, &m_matrixBuffer);
+			dx11.GetImmediateContext()->Unmap(m_matrixBuffer, 0);
+			dx11.GetImmediateContext()->VSSetConstantBuffers(0, 1, &m_matrixBuffer);
 			ID3D11ShaderResourceView* pps = texture->GetSRView();
-			dx11.GetContext()->PSSetShaderResources(0, 1, &pps);
-			dx11.GetContext()->IASetInputLayout(m_layout);
-			dx11.GetContext()->VSSetShader(m_vertexShader, NULL, 0);
-			dx11.GetContext()->PSSetShader(m_pixelShader, NULL, 0);
-			dx11.GetContext()->PSSetSamplers(0, 1, &m_sampleState);
-			dx11.GetContext()->DrawIndexed(indexCount, 0, 0);
+			dx11.GetImmediateContext()->PSSetShaderResources(0, 1, &pps);
+			dx11.GetImmediateContext()->IASetInputLayout(m_layout);
+			dx11.GetImmediateContext()->VSSetShader(m_vertexShader, NULL, 0);
+			dx11.GetImmediateContext()->PSSetShader(m_pixelShader, NULL, 0);
+			dx11.GetImmediateContext()->PSSetSamplers(0, 1, &m_sampleState);
+			dx11.GetImmediateContext()->DrawIndexed(indexCount, 0, 0);
 		}
 	}
 }

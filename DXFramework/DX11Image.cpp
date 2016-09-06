@@ -123,11 +123,11 @@ namespace DXFramework
 		vertices[5].position = D3DXVECTOR3(right, bottom, 0.0F);
 		vertices[5].texture = D3DXVECTOR2(1.0F, 1.0F);
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
-		HRESULT hRes = dx11.GetContext()->Map(m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		HRESULT hRes = dx11.GetImmediateContext()->Map(m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		if (FAILED(hRes))
 			return FALSE;
 		memcpy(mappedResource.pData, (void*)vertices.Ptr(), sizeof(VERTEXTYPE) * m_vertexCount);
-		dx11.GetContext()->Unmap(m_vertexBuffer, 0);
+		dx11.GetImmediateContext()->Unmap(m_vertexBuffer, 0);
 		return TRUE;
 	}
 	INT	 DX11Image::GetIndexCount() const
@@ -148,9 +148,9 @@ namespace DXFramework
 			return FALSE;
 		UINT stride = sizeof(VERTEXTYPE);
 		UINT offset = 0;
-		dx11.GetContext()->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
-		dx11.GetContext()->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-		dx11.GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		dx11.GetImmediateContext()->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
+		dx11.GetImmediateContext()->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		dx11.GetImmediateContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		return TRUE;
 	}
 	//////////////////////////////////////////////////////////////////////////

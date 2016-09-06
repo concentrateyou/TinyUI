@@ -38,7 +38,7 @@ namespace DXFramework
 		swapDesc.Flags = 0;
 		HRESULT hRes = S_OK;
 		D3D_FEATURE_LEVEL level = D3D_FEATURE_LEVEL_11_0;
-		hRes = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, &level, 1, D3D11_SDK_VERSION, &swapDesc, &m_swap, &m_d3d, NULL, &m_context);
+		hRes = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, &level, 1, D3D11_SDK_VERSION, &swapDesc, &m_swap, &m_d3d, NULL, &m_immediateContext);
 		if (FAILED(hRes))
 			return FALSE;
 		TinyComPtr<ID3D11Texture2D> backBuffer;
@@ -83,7 +83,7 @@ namespace DXFramework
 		hRes = m_d3d->CreateDepthStencilState(&depthStencilDesc, &m_depthStencilState);
 		if (FAILED(hRes))
 			return FALSE;
-		m_context->OMSetDepthStencilState(m_depthStencilState, 1);
+		m_immediateContext->OMSetDepthStencilState(m_depthStencilState, 1);
 		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
 		ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
 		depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -92,7 +92,7 @@ namespace DXFramework
 		hRes = m_d3d->CreateDepthStencilView(m_depthStencilBuffer, &depthStencilViewDesc, &m_depthStencilView);
 		if (FAILED(hRes))
 			return FALSE;
-		m_context->OMSetRenderTargets(1, &m_renderView, m_depthStencilView);
+		m_immediateContext->OMSetRenderTargets(1, &m_renderView, m_depthStencilView);
 		D3D11_RASTERIZER_DESC rasterDesc;
 		rasterDesc.AntialiasedLineEnable = FALSE;
 		rasterDesc.CullMode = D3D11_CULL_BACK;
@@ -107,7 +107,7 @@ namespace DXFramework
 		hRes = m_d3d->CreateRasterizerState(&rasterDesc, &m_rasterizerState);
 		if (FAILED(hRes))
 			return FALSE;
-		m_context->RSSetState(m_rasterizerState);
+		m_immediateContext->RSSetState(m_rasterizerState);
 		D3D11_VIEWPORT viewport;
 		viewport.Width = static_cast<FLOAT>(cx);
 		viewport.Height = static_cast<FLOAT>(cy);
@@ -115,7 +115,7 @@ namespace DXFramework
 		viewport.MaxDepth = 1.0F;
 		viewport.TopLeftX = 0.0F;
 		viewport.TopLeftY = 0.0F;
-		m_context->RSSetViewports(1, &viewport);
+		m_immediateContext->RSSetViewports(1, &viewport);
 		FLOAT fov = (FLOAT)D3DX_PI / 4.0F;
 		FLOAT aspect = (FLOAT)cx / (FLOAT)cy;
 		D3DXMatrixPerspectiveFovLH(&m_projectionMatrix, fov, aspect, 1000.0F, 0.1F);
@@ -144,12 +144,12 @@ namespace DXFramework
 	}
 	BOOL DX11::ResizeView(INT cx, INT cy)
 	{
-		if (!m_context)
+		if (!m_immediateContext)
 			return FALSE;
 		m_size.cx = cx;
 		m_size.cy = cy;
 		LPVOID val = NULL;
-		m_context->OMSetRenderTargets(0, 0, 0);
+		m_immediateContext->OMSetRenderTargets(0, 0, 0);
 		m_renderView.Release();
 		HRESULT hRes = m_swap->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
 		if (FAILED(hRes))
@@ -187,7 +187,7 @@ namespace DXFramework
 		hRes = m_d3d->CreateDepthStencilView(m_depthStencilBuffer, &depthStencilViewDesc, &m_depthStencilView);
 		if (FAILED(hRes))
 			return FALSE;
-		m_context->OMSetRenderTargets(1, &m_renderView, m_depthStencilView);
+		m_immediateContext->OMSetRenderTargets(1, &m_renderView, m_depthStencilView);
 		//更新视口
 		D3D11_VIEWPORT viewport;
 		viewport.Width = static_cast<FLOAT>(m_size.cx);
@@ -196,7 +196,7 @@ namespace DXFramework
 		viewport.MaxDepth = 1.0F;
 		viewport.TopLeftX = 0.0F;
 		viewport.TopLeftY = 0.0F;
-		m_context->RSSetViewports(1, &viewport);
+		m_immediateContext->RSSetViewports(1, &viewport);
 		FLOAT fov = (FLOAT)D3DX_PI / 4.0F;
 		FLOAT aspect = (FLOAT)m_size.cx / (FLOAT)m_size.cy;
 		D3DXMatrixPerspectiveFovLH(&m_projectionMatrix, fov, aspect, 1000.0F, 0.1F);
@@ -206,31 +206,31 @@ namespace DXFramework
 	}
 	void DX11::BeginScene()
 	{
-		ASSERT(m_context);
+		ASSERT(m_immediateContext);
 		FLOAT color[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
-		m_context->ClearRenderTargetView(m_renderView, color);
-		m_context->ClearDepthStencilView(m_depthStencilView, D3D10_CLEAR_DEPTH, 1.0F, 0);
+		m_immediateContext->ClearRenderTargetView(m_renderView, color);
+		m_immediateContext->ClearDepthStencilView(m_depthStencilView, D3D10_CLEAR_DEPTH, 1.0F, 0);
 	}
 	void DX11::EndScene()
 	{
-		ASSERT(m_swap && m_context);
+		ASSERT(m_swap && m_immediateContext);
 		m_swap->Present(0, 0);
-		m_context->Flush();
+		m_immediateContext->Flush();
 	}
 	void DX11::AllowDepth(BOOL allow)
 	{
-		if (m_context)
+		if (m_immediateContext)
 		{
-			m_context->OMSetDepthStencilState(allow ? m_depthStencilState : m_disableDepthState, 1);
+			m_immediateContext->OMSetDepthStencilState(allow ? m_depthStencilState : m_disableDepthState, 1);
 		}
 	}
 	ID3D11Device* DX11::GetD3D() const
 	{
 		return m_d3d;
 	}
-	ID3D11DeviceContext* DX11::GetContext() const
+	ID3D11DeviceContext* DX11::GetImmediateContext() const
 	{
-		return m_context;
+		return m_immediateContext;
 	}
 	IDXGISwapChain*	DX11::GetSwap() const
 	{

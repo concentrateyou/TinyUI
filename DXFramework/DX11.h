@@ -15,7 +15,7 @@ namespace DXFramework
 		void EndScene();
 		void AllowDepth(BOOL allow);
 		ID3D11Device*			GetD3D() const;
-		ID3D11DeviceContext*	GetContext() const;
+		ID3D11DeviceContext*	GetImmediateContext() const;
 		IDXGISwapChain*			GetSwap() const;
 		HWND					GetHWND() const;
 		D3DXMATRIX				GetProjectionMatrix();
@@ -28,7 +28,7 @@ namespace DXFramework
 		TinyComPtr<ID3D11DepthStencilView>	m_depthStencilView;
 		TinyComPtr<ID3D11Texture2D>			m_depthStencilBuffer;
 		TinyComPtr<ID3D11Device>			m_d3d;
-		TinyComPtr<ID3D11DeviceContext>		m_context;
+		TinyComPtr<ID3D11DeviceContext>		m_immediateContext;
 		TinyComPtr<ID3D11DepthStencilState>	m_depthStencilState;
 		TinyComPtr<ID3D11DepthStencilState> m_disableDepthState;
 		TinyComPtr<ID3D11RasterizerState>	m_rasterizerState;

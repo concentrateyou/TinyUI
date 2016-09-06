@@ -115,9 +115,9 @@ void GraphicsCapture::Render()
 	{
 		if (m_resource)
 		{
-			m_dx11.GetContext()->CopyResource(m_resource, backBuffer);
+			m_dx11.GetImmediateContext()->CopyResource(m_resource, backBuffer);
 			D3D11_MAPPED_SUBRESOURCE ms = { 0 };
-			if (SUCCEEDED(m_dx11.GetContext()->Map(m_resource, 0, D3D11_MAP_READ, 0, &ms)))
+			if (SUCCEEDED(m_dx11.GetImmediateContext()->Map(m_resource, 0, D3D11_MAP_READ, 0, &ms)))
 			{
 				this->Lock();
 				DWORD dwSize = m_cy * ms.RowPitch;
@@ -128,7 +128,7 @@ void GraphicsCapture::Render()
 				}
 				memcpy(static_cast<void*>(m_bits), ms.pData, m_dwSize);
 				this->Unlock();
-				m_dx11.GetContext()->Unmap(m_resource, 0);
+				m_dx11.GetImmediateContext()->Unmap(m_resource, 0);
 			}
 		}
 	}
