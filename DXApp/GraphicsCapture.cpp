@@ -72,7 +72,7 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 		{
 			if (!CreateTexture(m_cx, m_cy))
 				return FALSE;
-			if (!m_dxVideo.Create(m_dx11, m_videoSize.cx, m_videoSize.cy, m_videoSize.cx, m_videoSize.cy))
+			if (!m_dxVideo.Create(m_dx11, m_videoSize.cx, m_videoSize.cy, m_videoSize.cx / 2, m_videoSize.cy / 2))
 				return FALSE;
 			if (!m_videoCapture.Start())
 				return FALSE;

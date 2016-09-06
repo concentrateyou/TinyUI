@@ -29,7 +29,7 @@ void RenderTask::MessagePump()
 {
 	for (;;)
 	{
-		if (m_render && m_render.Lock(25))
+		if (m_render && m_render.Lock(0))
 		{
 			break;
 		}
@@ -37,5 +37,6 @@ void RenderTask::MessagePump()
 		{
 			m_pSys->Render();
 		}
+		Sleep(23);
 	}
 }

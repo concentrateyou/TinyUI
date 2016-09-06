@@ -42,7 +42,7 @@ BOOL x264Encode::BuildParam(INT cx, INT cy)
 	m_x264Param->i_fps_den = 1;
 	m_x264Param->b_cabac = 1; /*cabac的开关*/
 	m_x264Param->rc.b_mb_tree = 0;
-	m_x264Param->rc.i_rc_method = X264_RC_ABR;
+	m_x264Param->rc.i_rc_method = X264_RC_CRF;
 	m_x264Param->rc.f_rf_constant = 25;
 	m_x264Param->rc.f_rf_constant_max = 45;
 	m_x264Param->rc.i_bitrate = 512;/*设置平均码率大小*/

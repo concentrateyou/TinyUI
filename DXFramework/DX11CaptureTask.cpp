@@ -219,13 +219,13 @@ namespace DXFramework
 	{
 		for (;;)
 		{
-			Sleep(3);
 			if (m_windowClose && m_windowClose.Lock(0))
 			{
 				EndCapture();
 				break;
 			}
 			Tick();
+			Sleep(10);
 		}
 	}
 	DX11Image*	DX11CaptureTask::GetTexture()

@@ -25,7 +25,7 @@ void PublishTask::MessagePump()
 {
 	for (;;)
 	{
-		if (m_publish && m_publish.Lock(3))
+		if (m_publish && m_publish.Lock(0))
 		{
 			break;
 		}
@@ -33,6 +33,7 @@ void PublishTask::MessagePump()
 		{
 			m_pSys->Publish();
 		}
+		Sleep(20);
 	}
 }
 
