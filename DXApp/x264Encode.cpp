@@ -21,7 +21,6 @@ BOOL x264Encode::Open(INT cx, INT cy)
 	x264_picture_init(m_x264Image);
 	m_x264Image->img.i_csp = X264_CSP_I420;
 	m_x264Image->img.i_plane = 3;
-
 	return TRUE;
 }
 
@@ -32,7 +31,6 @@ BOOL x264Encode::BuildParam(INT cx, INT cy)
 		return FALSE;
 	x264_param_default(m_x264Param);
 	x264_param_default_preset(m_x264Param, "superfast", "zerolatency");
-	/*x264_param_default_preset(m_x264Param, "fast", "zerolatency");*/
 	m_x264Param->i_frame_total = 0;
 	m_x264Param->i_threads = 0;
 	m_x264Param->b_sliced_threads = 0;
@@ -55,9 +53,9 @@ BOOL x264Encode::BuildParam(INT cx, INT cy)
 
 BOOL x264Encode::Encode(AVFrame* pI420, RTMPPublisher* publisher)
 {
-	m_size = 0;
 	if (!m_x264Image || !pI420)
 		return FALSE;
+	publisher->SendMetadata(m_x264Param->i_width, m_x264Param->i_height, m_x264Param->i_fps_num);
 	m_x264Image->img.plane[0] = pI420->data[0];
 	m_x264Image->img.plane[1] = pI420->data[1];
 	m_x264Image->img.plane[2] = pI420->data[2];
@@ -70,29 +68,34 @@ BOOL x264Encode::Encode(AVFrame* pI420, RTMPPublisher* publisher)
 	x264_picture_t image;
 	x264_nal_t * pNAL = NULL;
 	INT iNAL = 0;
+	m_size = 0;
 	INT size = x264_encoder_encode(m_hx264, &pNAL, &iNAL, m_x264Image, &image);
-	for (INT i = 0; i < iNAL; i++)
+	if (size > 0)
 	{
-		do
+		for (INT i = 0; i < iNAL; i++)
 		{
-			if (pNAL[i].i_type == NAL_SPS)
+			do
 			{
-				m_sps.resize(pNAL[i].i_payload - 4);
-				memcpy(&m_sps[0], pNAL[i].p_payload + 4, m_sps.size());
-				break;
-			}
-			if (pNAL[i].i_type == NAL_PPS)
-			{
-				m_pps.resize(pNAL[i].i_payload - 4);
-				memcpy(&m_pps[0], pNAL[i].p_payload + 4, m_pps.size());
-				publisher->SendSPSPPS(m_pps, m_sps);
-				break;
-			}
-			publisher->SendVideoRTMP(pNAL[i].p_payload, size - m_size);
-		} while (FALSE);
-		m_size += pNAL[i].i_payload;
+				if (pNAL[i].i_type == NAL_SPS)
+				{
+					m_sps.resize(pNAL[i].i_payload - 4);
+					memcpy(&m_sps[0], pNAL[i].p_payload + 4, m_sps.size());
+					break;
+				}
+				if (pNAL[i].i_type == NAL_PPS)
+				{
+					m_pps.resize(pNAL[i].i_payload - 4);
+					memcpy(&m_pps[0], pNAL[i].p_payload + 4, m_pps.size());
+					publisher->SendSPSPPS(m_pps, m_sps);
+					break;
+				}
+				publisher->SendVideoRTMP(pNAL[i].p_payload, size - m_size);
+			} while (FALSE);
+			m_size += pNAL[i].i_payload;
+		}
+		return TRUE;
 	}
-	return TRUE;
+	return FALSE;
 }
 
 void x264Encode::Close()
