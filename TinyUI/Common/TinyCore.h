@@ -113,6 +113,21 @@ namespace TinyUI
 		CRITICAL_SECTION section;
 	};
 	/// <summary>
+	/// ¶ÁÐ´Ëø
+	/// </summary>
+	class TinySRWLock : public TinyObject
+	{
+		DECLARE_DYNAMIC(TinySRWLock);
+		DISALLOW_COPY_AND_ASSIGN(TinySRWLock);
+	public:
+		TinySRWLock();
+		virtual ~TinySRWLock();
+		void Lock(BOOL write);
+		void Unlock(BOOL write);
+	private:
+		SRWLOCK	 m_SRW;
+	};
+	/// <summary>
 	/// ÐÅºÅÁ¿
 	/// </summary>
 	class TinySemaphore : public TinyObject

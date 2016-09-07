@@ -5,7 +5,7 @@ using namespace TinyUI;
 
 namespace Media
 {
-	class FilterObserver
+	class FilterObserver : public TinySRWLock
 	{
 		DECLARE_DYNAMIC(FilterObserver);
 		DISALLOW_COPY_AND_ASSIGN(FilterObserver);

@@ -74,7 +74,6 @@ namespace Media
 		{
 			return hRes;
 		}
-		//TinyAutoLock lock(*m_observer);
 		const INT size = pSample->GetActualDataLength();
 		BYTE* data = NULL;
 		if (FAILED(pSample->GetPointer(&data)))

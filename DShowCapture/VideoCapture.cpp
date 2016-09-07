@@ -28,19 +28,23 @@ namespace Media
 	{
 		return m_id;
 	}
-	void VideoCapture::OnFrameReceive(const BYTE* pBits, INT size, LPVOID lpParameter)
+	void VideoCapture::OnFrameReceive(const BYTE* data, INT size, LPVOID lpParameter)
 	{
-		Sleep(1);
-		m_size = size;
-		m_data = const_cast<BYTE*>(pBits);
+		if (m_size != size)
+		{
+			m_size = size;
+			m_bits.Reset(new BYTE[m_size]);
+		}
+		this->Lock(TRUE);
+		memcpy_s((void*)m_bits, m_size, data, m_size);
+		this->Unlock(TRUE);
 		if (!m_callback.IsNull())
 		{
-			m_callback(pBits, size, lpParameter);
+			m_callback(data, size, lpParameter);
 		}
 	}
 	VideoCapture::VideoCapture()
-		:m_size(0),
-		m_data(NULL)
+		:m_size(0)
 	{
 
 	}
@@ -273,7 +277,7 @@ namespace Media
 	}
 	BYTE* VideoCapture::GetPointer() const
 	{
-		return m_data;
+		return m_bits;
 	}
 	INT	VideoCapture::GetSize() const
 	{

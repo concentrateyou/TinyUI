@@ -191,6 +191,29 @@ namespace TinyUI
 		LeaveCriticalSection(&section);
 	}
 	//////////////////////////////////////////////////////////////////////////
+	TinySRWLock::TinySRWLock()
+	{
+		InitializeSRWLock(&m_SRW);
+	}
+	TinySRWLock::~TinySRWLock()
+	{
+
+	}
+	void TinySRWLock::Lock(BOOL write)
+	{
+		if (write)
+			AcquireSRWLockExclusive(&m_SRW);
+		else
+			AcquireSRWLockShared(&m_SRW);
+	}
+	void TinySRWLock::Unlock(BOOL write)
+	{
+		if (write)
+			ReleaseSRWLockExclusive(&m_SRW);
+		else
+			ReleaseSRWLockShared(&m_SRW);
+	}
+	//////////////////////////////////////////////////////////////////////////
 	TinyPerformanceLock::TinyPerformanceLock()
 		:m_lock(NULL)
 	{
