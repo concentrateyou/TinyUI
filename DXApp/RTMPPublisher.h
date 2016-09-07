@@ -17,11 +17,10 @@ public:
 	BOOL Connect(const TinyString& url);
 	BOOL SendMetadata(INT cx, INT cy, INT fps, INT rate);
 	BOOL SendSPSPPS(const vector<BYTE>& pps, const vector<BYTE>& sps);
-	BOOL SendVideoRTMP(BYTE* data, INT size);
-	BOOL SendAudioRTMP(BYTE* data, INT size);
+	BOOL SendVideoRTMP(BYTE* data, INT size, DWORD timeoffset);
+	BOOL SendAudioRTMP(BYTE* data, INT size, DWORD timeoffset);
 	BOOL Reconnect();
 private:
 	RTMP*		m_pRTMP;
-	DWORD		m_dwStart;
 };
 

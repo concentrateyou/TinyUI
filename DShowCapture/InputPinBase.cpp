@@ -78,6 +78,10 @@ namespace Media
 		BYTE* bits = NULL;
 		if (FAILED(pSample->GetPointer(&bits)))
 			return S_FALSE;
+		REFERENCE_TIME times;
+		REFERENCE_TIME timee;
+		if (FAILED(pSample->GetTime(&times, &timee)))
+			return S_FALSE;
 		m_observer->m_bits = bits;
 		m_observer->m_size = size;
 		m_observer->OnFrameReceive(bits, size, &m_mediaType);

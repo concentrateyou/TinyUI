@@ -4,7 +4,7 @@
 
 x264Encode::x264Encode()
 	:m_x264Image(NULL),
-	m_hx264(NULL),
+	m_x264(NULL),
 	m_x264Param(NULL)
 {
 }
@@ -14,7 +14,7 @@ BOOL x264Encode::Open(INT cx, INT cy)
 	Close();
 	if (!BuildParam(cx, cy))
 		return FALSE;
-	if ((m_hx264 = x264_encoder_open(m_x264Param)) == NULL)
+	if ((m_x264 = x264_encoder_open(m_x264Param)) == NULL)
 		return FALSE;
 	if ((m_x264Image = new x264_picture_t()) == NULL)
 		return FALSE;
@@ -51,11 +51,10 @@ BOOL x264Encode::BuildParam(INT cx, INT cy)
 	return TRUE;
 }
 
-BOOL x264Encode::Encode(AVFrame* pI420, RTMPPublisher* publisher)
+BOOL x264Encode::Encode(AVFrame* pI420)
 {
 	if (!m_x264Image || !pI420)
 		return FALSE;
-	publisher->SendMetadata(m_x264Param->i_width, m_x264Param->i_height, m_x264Param->i_fps_num, m_x264Param->rc.i_bitrate);
 	m_x264Image->img.plane[0] = pI420->data[0];
 	m_x264Image->img.plane[1] = pI420->data[1];
 	m_x264Image->img.plane[2] = pI420->data[2];
@@ -69,9 +68,10 @@ BOOL x264Encode::Encode(AVFrame* pI420, RTMPPublisher* publisher)
 	x264_nal_t * pNAL = NULL;
 	INT iNAL = 0;
 	m_size = 0;
-	INT size = x264_encoder_encode(m_hx264, &pNAL, &iNAL, m_x264Image, &image);
+	INT size = x264_encoder_encode(m_x264, &pNAL, &iNAL, m_x264Image, &image);
 	if (size > 0)
 	{
+		m_data.resize(size);
 		for (INT i = 0; i < iNAL; i++)
 		{
 			do
@@ -86,11 +86,11 @@ BOOL x264Encode::Encode(AVFrame* pI420, RTMPPublisher* publisher)
 				{
 					m_pps.resize(pNAL[i].i_payload - 4);
 					memcpy(&m_pps[0], pNAL[i].p_payload + 4, m_pps.size());
-					publisher->SendSPSPPS(m_pps, m_sps);
+					//publisher->SendSPSPPS(m_pps, m_sps);
 					break;
 				}
-				publisher->SendVideoRTMP(pNAL[i].p_payload, size - m_size);
-			} while (FALSE);
+				//publisher->SendVideoRTMP(pNAL[i].p_payload, size - m_size);
+			} while (0);
 			m_size += pNAL[i].i_payload;
 		}
 		return TRUE;
@@ -98,12 +98,25 @@ BOOL x264Encode::Encode(AVFrame* pI420, RTMPPublisher* publisher)
 	return FALSE;
 }
 
+BYTE* x264Encode::GetVideoPointer() const
+{
+	return NULL;
+}
+INT	 x264Encode::GetSize() const
+{
+	return 0;
+}
+DWORD x264Encode::GetTimespan() const
+{
+	return 0;
+}
+
 void x264Encode::Close()
 {
-	if (m_hx264)
+	if (m_x264)
 	{
-		x264_encoder_close(m_hx264);
-		m_hx264 = NULL;
+		x264_encoder_close(m_x264);
+		m_x264 = NULL;
 	}
 	SAFE_DELETE(m_x264Param);
 	SAFE_DELETE(m_x264Image);

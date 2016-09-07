@@ -54,6 +54,12 @@
     <ClInclude Include="PublishTask.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="aacEncode.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="EncodeTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -84,6 +90,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="PublishTask.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="aacEncode.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="EncodeTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
