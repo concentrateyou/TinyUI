@@ -39,8 +39,8 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 {
 	m_cx = cx;
 	m_cy = cy;
-	m_videoSize.cx = 800;
-	m_videoSize.cy = 600;
+	m_videoSize.cx = 640;
+	m_videoSize.cy = 480;
 	vector<Media::VideoCapture::Name> names;
 	Media::VideoCapture::GetDevices(names);
 	vector<Media::VideoCaptureParam> params;
@@ -54,7 +54,7 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 			break;
 		}
 	}
-	m_publisher.Connect("rtmp://10.121.86.127/live/test");
+	//m_publisher.Connect("rtmp://10.121.86.127/live/test");
 	m_converter.Reset(new I420Converter(TinySize(m_cx, m_cy), TinySize(m_cx, m_cy)));
 	m_x264Encode.Close();
 	m_x264Encode.Open(m_cx, m_cy);

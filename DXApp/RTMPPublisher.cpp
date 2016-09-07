@@ -146,7 +146,6 @@ BOOL RTMPPublisher::SendAudioRTMP(BYTE* data, INT size, DWORD timeoffset)
 	{
 		return FALSE;
 	}
-	DWORD timeoffset = 0;
 	RTMPPacket* packet = NULL;
 	BYTE* body = NULL;
 	if (data[2] == 0x00)
@@ -197,7 +196,6 @@ BOOL RTMPPublisher::SendVideoRTMP(BYTE* data, INT size, DWORD timeoffset)
 	{
 		return FALSE;
 	}
-	DWORD timeoffset = 0;
 	RTMPPacket* packet = NULL;
 	BYTE* body = NULL;
 	if (data[2] == 0x00)

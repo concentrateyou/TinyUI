@@ -80,8 +80,10 @@ namespace Media
 			return S_FALSE;
 		REFERENCE_TIME times;
 		REFERENCE_TIME timee;
+		//°´ÕÕ100ns¼ÆËã 10000000/30 = 333333.33
 		if (FAILED(pSample->GetTime(&times, &timee)))
 			return S_FALSE;
+		FLOAT ms = (timee - times) * 1000 / 10000000;
 		m_observer->m_bits = bits;
 		m_observer->m_size = size;
 		m_observer->OnFrameReceive(bits, size, &m_mediaType);
