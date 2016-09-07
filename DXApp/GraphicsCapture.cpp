@@ -3,7 +3,6 @@
 #include <DXGIFormat.h>
 
 GraphicsCapture::GraphicsCapture()
-	:m_dwSize(0)
 {
 }
 
@@ -40,8 +39,8 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 {
 	m_cx = cx;
 	m_cy = cy;
-	m_videoSize.cx = 640;
-	m_videoSize.cy = 360;
+	m_videoSize.cx = 800;
+	m_videoSize.cy = 600;
 	vector<Media::VideoCapture::Name> names;
 	Media::VideoCapture::GetDevices(names);
 	vector<Media::VideoCaptureParam> params;
@@ -72,7 +71,7 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 		{
 			if (!CreateTexture(m_cx, m_cy))
 				return FALSE;
-			if (!m_dxVideo.Create(m_dx11, m_videoSize.cx, m_videoSize.cy, m_videoSize.cx / 2, m_videoSize.cy / 2))
+			if (!m_videoImage.Create(m_dx11, m_videoSize.cx, m_videoSize.cy, m_videoSize.cx / 2, m_videoSize.cy / 2))
 				return FALSE;
 			if (!m_videoCapture.Start())
 				return FALSE;
@@ -104,10 +103,10 @@ void GraphicsCapture::Render()
 	}
 	if (m_videoCapture.GetPointer())
 	{
-		m_dxVideo.FillImage(m_dx11, m_videoCapture.GetPointer(), m_videoSize.cx, m_videoSize.cy);
+		m_videoImage.FillImage(m_dx11, m_videoCapture.GetPointer(), m_videoSize.cx, m_videoSize.cy);
+		m_videoImage.Render(m_dx11, m_cx - m_videoSize.cx / 2 - 1, m_cy - m_videoSize.cy / 2 - 1);
+		m_textureShader.Render(m_dx11, m_videoImage.GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_videoImage.GetTexture());
 	}
-	m_dxVideo.Render(m_dx11, m_cx - m_videoSize.cx / 2 - 1, m_cy - m_videoSize.cy / 2 - 1);
-	m_textureShader.Render(m_dx11, m_dxVideo.GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_dxVideo.GetTexture());
 	m_dx11.AllowDepth(TRUE);
 	m_dx11.EndScene();
 	TinyComPtr<ID3D11Resource> backBuffer;
@@ -119,15 +118,7 @@ void GraphicsCapture::Render()
 			D3D11_MAPPED_SUBRESOURCE ms = { 0 };
 			if (SUCCEEDED(m_dx11.GetImmediateContext()->Map(m_resource, 0, D3D11_MAP_READ, 0, &ms)))
 			{
-				this->Lock();
-				DWORD dwSize = m_cy * ms.RowPitch;
-				if (m_dwSize != dwSize)
-				{
-					m_dwSize = dwSize;
-					m_bits.Reset(new BYTE[m_dwSize]);
-				}
-				memcpy(static_cast<void*>(m_bits), ms.pData, m_dwSize);
-				this->Unlock();
+				m_bits = static_cast<BYTE*>(ms.pData);
 				m_dx11.GetImmediateContext()->Unmap(m_resource, 0);
 			}
 		}
@@ -136,12 +127,10 @@ void GraphicsCapture::Render()
 
 void GraphicsCapture::Publish()
 {
-	this->Lock();
 	if (m_converter->BRGAToI420(m_bits))
 	{
 		m_x264Encode.Encode(m_converter->GetI420(), &m_publisher);
 	}
-	this->Unlock();
 }
 
 void GraphicsCapture::WaitAll()

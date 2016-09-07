@@ -32,7 +32,6 @@ void PublishTask::MessagePump()
 		{
 			m_pSys->Publish();
 		}
-		Sleep(20);
 	}
 }
 

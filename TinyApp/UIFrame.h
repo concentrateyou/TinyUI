@@ -38,8 +38,8 @@ public:
 	void OnAudioStart(void*, INT);
 	void OnAudioStop(void*, INT);
 
-	void OnVideo(const BYTE*, INT, LPVOID);
-	void OnAudio(const BYTE*, INT, LPVOID);
+	void OnVideo(BYTE*, LONG, LPVOID);
+	void OnAudio(BYTE*, LONG, LPVOID);
 
 private:
 	TinyLabel			m_control;
@@ -67,7 +67,7 @@ private:
 	TinyButton			m_audioStart;
 	TinyButton			m_audioStop;
 
-	Callback<void(const BYTE*, INT, LPVOID)> m_videoCB;
-	Callback<void(const BYTE*, INT, LPVOID)> m_audioCB;
+	Callback<void(BYTE*, LONG, LPVOID)> m_videoCB;
+	Callback<void(BYTE*, LONG, LPVOID)> m_audioCB;
 };
 

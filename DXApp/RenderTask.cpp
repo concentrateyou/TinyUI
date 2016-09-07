@@ -36,6 +36,6 @@ void RenderTask::MessagePump()
 		{
 			m_pSys->Render();
 		}
-		Sleep(23);
+		
 	}
 }

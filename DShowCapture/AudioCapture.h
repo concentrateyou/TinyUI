@@ -21,12 +21,12 @@ namespace Media
 			string	m_name;
 			string	m_id;
 		};
-		void	OnFrameReceive(const BYTE* data, INT size, LPVOID lpParameter) OVERRIDE;
+		void	OnFrameReceive(BYTE* bits, LONG size, LPVOID lpParameter) OVERRIDE;
 	public:
 		AudioCapture();
 		virtual ~AudioCapture();
 		BOOL	Initialize(const Name& name);
-		BOOL	Initialize(const Name& name, Callback<void(const BYTE*, INT, LPVOID)>& callback);
+		BOOL	Initialize(const Name& name, Callback<void(BYTE*, LONG, LPVOID)>& callback);
 		void	Uninitialize();
 		BOOL	Start();
 		BOOL	Stop();
@@ -34,8 +34,6 @@ namespace Media
 		BOOL	GetState(FILTER_STATE& state);
 		void	SetVolume(INT volume);
 		INT		GetVolume() const;
-		BYTE*	GetPointer() const;
-		INT		GetSize() const;
 		virtual BOOL Allocate(const AudioCaptureParam& param);
 		virtual void DeAllocate();
 	public:
@@ -52,9 +50,7 @@ namespace Media
 		TinyComPtr<IPin>							m_captureO;
 		TinyComPtr<IPin>							m_sinkI;
 		TinyScopedReferencePtr<AudioSinkFilter>		m_sinkFilter;
-		Callback<void(const BYTE*, INT, LPVOID)>	m_callback;
-		TinyScopedPtr<BYTE>							m_bits;
-		INT											m_size;
+		Callback<void(BYTE*, LONG, LPVOID)>			m_callback;
 	};
 }
 

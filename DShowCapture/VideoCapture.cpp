@@ -28,25 +28,17 @@ namespace Media
 	{
 		return m_id;
 	}
-	void VideoCapture::OnFrameReceive(const BYTE* data, INT size, LPVOID lpParameter)
+	void VideoCapture::OnFrameReceive(BYTE* bits, LONG size, LPVOID lpParameter)
 	{
-		if (m_size != size)
-		{
-			m_size = size;
-			m_bits.Reset(new BYTE[m_size]);
-		}
-		this->Lock(TRUE);
-		memcpy_s((void*)m_bits, m_size, data, m_size);
-		this->Unlock(TRUE);
 		if (!m_callback.IsNull())
 		{
-			m_callback(data, size, lpParameter);
+			m_callback(bits, size, lpParameter);
 		}
 	}
 	VideoCapture::VideoCapture()
 		:m_size(0)
 	{
-
+		m_bits = NULL;
 	}
 	VideoCapture::~VideoCapture()
 	{
@@ -79,7 +71,7 @@ namespace Media
 			return FALSE;
 		return TRUE;
 	}
-	BOOL VideoCapture::Initialize(const Name& name, Callback<void(const BYTE*, INT, LPVOID)>& callback)
+	BOOL VideoCapture::Initialize(const Name& name, Callback<void(BYTE*, LONG, LPVOID)>& callback)
 	{
 		if (Initialize(name))
 		{
@@ -274,14 +266,6 @@ namespace Media
 			CoTaskMemFree(cauuid.pElems);
 		}
 		return FALSE;
-	}
-	BYTE* VideoCapture::GetPointer() const
-	{
-		return m_bits;
-	}
-	INT	VideoCapture::GetSize() const
-	{
-		return m_size;
 	}
 	BOOL VideoCapture::GetDevices(vector<Name>& names)
 	{

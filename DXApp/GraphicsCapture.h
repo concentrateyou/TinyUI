@@ -28,14 +28,12 @@ private:
 	BOOL	CreateTexture(INT cx, INT cy);
 private:
 	TinyComPtr<ID3D11Resource>		m_resource;
-	DWORD							m_dwSize;//纹理大小
-	TinyScopedPtr<BYTE>				m_bits;//纹理数据
+	BYTE*							m_bits;
 	INT								m_cx;
 	INT								m_cy;
 	TinySize						m_videoSize;
 	DX11							m_dx11;
-	DX11Image						m_dxVideo;
-	DX11Image						m_dxGame;
+	DX11Image						m_videoImage;
 	DXCamera						m_camera;
 	DX11TextureShader				m_textureShader;
 	VideoCapture					m_videoCapture;

@@ -74,11 +74,13 @@ namespace Media
 		{
 			return hRes;
 		}
-		const INT size = pSample->GetActualDataLength();
-		BYTE* data = NULL;
-		if (FAILED(pSample->GetPointer(&data)))
+		const LONG size = pSample->GetActualDataLength();
+		BYTE* bits = NULL;
+		if (FAILED(pSample->GetPointer(&bits)))
 			return S_FALSE;
-		m_observer->OnFrameReceive(data, size, &m_mediaType);
+		m_observer->m_bits = bits;
+		m_observer->m_size = size;
+		m_observer->OnFrameReceive(bits, size, &m_mediaType);
 		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE InputPinBase::ReceiveMultiple(_In_reads_(nSamples) IMediaSample **pSamples, long nSamples, _Out_ long *nSamplesProcessed)

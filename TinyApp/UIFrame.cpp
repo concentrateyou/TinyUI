@@ -106,7 +106,7 @@ LRESULT CUIFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	return FALSE;
 }
 
-void CUIFrame::OnVideo(const BYTE* pBits, INT size, LPVOID lpData)
+void CUIFrame::OnVideo(BYTE* pBits, LONG size, LPVOID lpData)
 {
 	Sleep(3);
 	AM_MEDIA_TYPE* pMediaType = static_cast<AM_MEDIA_TYPE*>(lpData);
@@ -126,7 +126,7 @@ void CUIFrame::OnVideo(const BYTE* pBits, INT size, LPVOID lpData)
 		DeleteObject(hBitmap);
 	}
 }
-void CUIFrame::OnAudio(const BYTE*, INT, LPVOID)
+void CUIFrame::OnAudio(BYTE*, LONG, LPVOID)
 {
 
 }

@@ -28,20 +28,18 @@ namespace Media
 			string	m_name;
 			string	m_id;
 		};
-		void OnFrameReceive(const BYTE* data, INT size, void*) OVERRIDE;
+		void OnFrameReceive(BYTE* bits, LONG size, void*) OVERRIDE;
 	public:
 		VideoCapture();
 		virtual ~VideoCapture();
 		BOOL	Initialize(const Name& name);
-		BOOL	Initialize(const Name& name, Callback<void(const BYTE*, INT, LPVOID)>& receiveCB);
+		BOOL	Initialize(const Name& name, Callback<void(BYTE*, LONG, LPVOID)>& receiveCB);
 		void	Uninitialize();
 		BOOL	Start();
 		BOOL	Stop();
 		BOOL	Pause();
 		BOOL	GetState(FILTER_STATE& state);
 		BOOL	ShowProperty(HWND hWND);
-		BYTE*	GetPointer() const;
-		INT		GetSize() const;
 		virtual BOOL Allocate(const VideoCaptureParam& param);
 		virtual void DeAllocate();
 	public:
@@ -68,8 +66,8 @@ namespace Media
 		TinyComPtr<IPin>							m_avI;//IN
 		TinyComPtr<IPin>							m_sinkI;
 		TinyScopedReferencePtr<VideoSinkFilter>		m_sinkFilter;
-		Callback<void(const BYTE*, INT, LPVOID)>	m_callback;
-		TinyScopedPtr<BYTE>							m_bits;
+		Callback<void(BYTE*, LONG, LPVOID)>	m_callback;
+		BYTE*										m_bits;
 		INT											m_size;
 	};
 }
