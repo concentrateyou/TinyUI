@@ -17,19 +17,18 @@ RenderTask::~RenderTask()
 
 BOOL RenderTask::Submit()
 {
-	if (!m_render.OpenEvent(EVENT_ALL_ACCESS, FALSE, RENDER_FINISH_EVENT) &&
-		!m_render.CreateEvent(FALSE, FALSE, RENDER_FINISH_EVENT))
+	if (m_break.CreateEvent(FALSE, FALSE, RENDER_FINISH_EVENT) != NULL)
 	{
-		return FALSE;
+		Closure s = BindCallback(&RenderTask::MessagePump, this);
+		return  TinyTask::Submit(s);
 	}
-	Closure s = BindCallback(&RenderTask::MessagePump, this);
-	return  TinyTask::Submit(s);
+	return FALSE;
 }
 void RenderTask::MessagePump()
 {
 	for (;;)
 	{
-		if (m_render && m_render.Lock(0))
+		if (m_break.Lock(0))
 		{
 			break;
 		}

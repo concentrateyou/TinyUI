@@ -11,13 +11,12 @@ PublishTask::PublishTask(GraphicsCapture* pSys)
 
 BOOL PublishTask::Submit()
 {
-	if (!m_publish.OpenEvent(EVENT_ALL_ACCESS, FALSE, PUBLISH_FINISH_EVENT) &&
-		!m_publish.CreateEvent(FALSE, FALSE, PUBLISH_FINISH_EVENT))
+	if (m_break.CreateEvent(FALSE, FALSE, PUBLISH_FINISH_EVENT))
 	{
-		return FALSE;
+		Closure s = BindCallback(&PublishTask::MessagePump, this);
+		return TinyTask::Submit(s);
 	}
-	Closure s = BindCallback(&PublishTask::MessagePump, this);
-	return TinyTask::Submit(s);
+	return FALSE;
 }
 
 
@@ -25,7 +24,7 @@ void PublishTask::MessagePump()
 {
 	for (;;)
 	{
-		if (m_publish && m_publish.Lock(0))
+		if (m_break.Lock(0))
 		{
 			break;
 		}
