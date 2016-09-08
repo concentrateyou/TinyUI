@@ -26,8 +26,9 @@ BOOL aacEncode::GetSpecificInfo(vector<BYTE>& info)
 	return TRUE;
 }
 
-BOOL aacEncode::Open(const WAVEFORMATEX& wfx, INT bitRate)
+BOOL aacEncode::Open(const WAVEFORMATEX& wfx)
 {
+	m_wfx = wfx;
 	m_aac = faacEncOpen(wfx.nSamplesPerSec, wfx.nChannels, &m_inputSamples, &m_maxOutputBytes);
 	if (!m_aac)
 		return FALSE;
@@ -52,18 +53,28 @@ BOOL aacEncode::Open(const WAVEFORMATEX& wfx, INT bitRate)
 	m_config->allowMidside = 1;//M/S±àÂë
 	m_config->shortctl = SHORTCTL_NORMAL;
 	m_config->bandWidth = 0;
-	m_config->bitRate = (bitRate * 1000) / wfx.nChannels;
+	m_config->bitRate = wfx.nAvgBytesPerSec * 8;//±ÈÌØÎ»
 	if (!faacEncSetConfiguration(m_aac, m_config))
 		return FALSE;
 	m_output.resize(m_maxOutputBytes);
 	return TRUE;
 }
-BOOL aacEncode::Encode(BYTE* bits, LONG size)
+BOOL aacEncode::Encode(BYTE* bits, LONG size, EncoderPacket& packet)
 {
+	ZeroMemory(&packet, sizeof(packet));
+	packet.type = ENCODER_AUDIO;
 	if (!bits)
 		return FALSE;
-	INT bufferSize = faacEncEncode(m_aac, (int32_t*)bits, m_inputSamples, &m_output[0], m_maxOutputBytes);
-	return bufferSize > 0;
+	packet.size = faacEncEncode(m_aac, (int32_t*)bits, m_inputSamples, &m_output[0], m_maxOutputBytes);
+	if (packet.size > 0)
+	{
+		packet.bits = new BYTE[packet.size];
+		memcpy(packet.bits, &m_output[0], packet.size);
+		packet.timestamp = m_timestamp;
+		packet.duration = (1024 * 1000) / m_wfx.nSamplesPerSec;
+		return TRUE;
+	}
+	return FALSE;
 }
 void aacEncode::Close()
 {

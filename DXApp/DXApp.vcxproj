@@ -90,6 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aacEncode.h" />
+    <ClInclude Include="BaseEncode.h" />
     <ClInclude Include="DXApp.h" />
     <ClInclude Include="DXApplication.h" />
     <ClInclude Include="EncodeTask.h" />
@@ -106,6 +107,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="aacEncode.cpp" />
+    <ClCompile Include="BaseEncode.cpp" />
     <ClCompile Include="DXApp.cpp" />
     <ClCompile Include="DXApplication.cpp" />
     <ClCompile Include="EncodeTask.cpp" />

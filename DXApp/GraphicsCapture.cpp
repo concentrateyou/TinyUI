@@ -54,10 +54,37 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 			break;
 		}
 	}
-	//m_publisher.Connect("rtmp://10.121.86.127/live/test");
+
+	vector<Media::AudioCapture::Name> names1;
+	Media::AudioCapture::GetDevices(names1);
+	vector<Media::AudioCaptureParam> params1;
+	Media::AudioCapture::GetDeviceParams(names1[0], params1);
+	Media::AudioCaptureParam param1;
+	WAVEFORMATEX defaultWFX = Media::AudioCaptureParam::GetDefaultFormat();
+	for (UINT i = 0; i < params1.size(); i++)
+	{
+		WAVEFORMATEX wfx = params1[i].GetFormat();
+		if (wfx.nAvgBytesPerSec == defaultWFX.nAvgBytesPerSec &&
+			wfx.nBlockAlign == defaultWFX.nBlockAlign &&
+			wfx.nChannels == defaultWFX.nChannels &&
+			wfx.nSamplesPerSec == defaultWFX.nSamplesPerSec &&
+			wfx.wBitsPerSample == defaultWFX.wBitsPerSample &&
+			wfx.wFormatTag == defaultWFX.wFormatTag)
+		{
+			param1 = params1[i];
+			break;
+		}
+	}
+
+	if (!m_audioCapture.Initialize(names1[0]))
+		return FALSE;
+	if (!m_audioCapture.Allocate(param1))
+		return FALSE;
+
+	m_publisher.Connect("rtmp://10.121.86.127/live/test");
 	m_converter.Reset(new I420Converter(TinySize(m_cx, m_cy), TinySize(m_cx, m_cy)));
 	m_x264Encode.Close();
-	m_x264Encode.Open(m_cx, m_cy);
+	m_x264Encode.Open(m_cx, m_cy, param.GetRate());
 	if (!m_videoCapture.Initialize(names[0]))
 		return FALSE;
 	if (!m_videoCapture.Allocate(param))
@@ -74,6 +101,8 @@ BOOL GraphicsCapture::Initialize(HWND hWND, INT cx, INT cy)
 			if (!m_videoImage.Create(m_dx11, m_videoSize.cx, m_videoSize.cy, m_videoSize.cx / 2, m_videoSize.cy / 2))
 				return FALSE;
 			if (!m_videoCapture.Start())
+				return FALSE;
+			if (!m_audioCapture.Start())
 				return FALSE;
 			m_publishTask.Reset(new PublishTask(this));
 			m_publishTask->Submit();
@@ -127,10 +156,12 @@ void GraphicsCapture::Render()
 
 void GraphicsCapture::Publish()
 {
-	/*if (m_converter->BRGAToI420(m_bits))
+	EncoderPacket packet;
+	if (m_converter->BRGAToI420(m_bits))
 	{
-	m_x264Encode.Encode(m_converter->GetI420(), &m_publisher);
-	}*/
+		m_x264Encode.Encode(m_converter->GetI420(), packet);
+	}
+	SAFE_DELETE_ARRAY(packet.bits);
 }
 
 void GraphicsCapture::WaitAll()

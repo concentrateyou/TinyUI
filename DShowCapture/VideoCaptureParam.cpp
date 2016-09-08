@@ -81,6 +81,6 @@ namespace Media
 	}
 	string VideoCaptureParam::ToString() const
 	{
-		return StringPrintf("%s,%d*%d", PixelFormatToString(m_vpf).c_str(), m_size.cx, m_size.cy);
+		return StringPrintf("%s,%d*%d,%.3f", PixelFormatToString(m_vpf).c_str(), m_size.cx, m_size.cy, m_rate);
 	}
 }

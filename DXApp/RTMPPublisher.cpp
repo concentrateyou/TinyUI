@@ -57,7 +57,7 @@ BOOL RTMPPublisher::Connect(const TinyString& url)
 	return TRUE;
 }
 
-BOOL RTMPPublisher::SendMetadata(INT cx, INT cy, INT fps, INT rate)
+BOOL RTMPPublisher::SendMetadataPacket(INT cx, INT cy, INT fps, INT rate)
 {
 	ASSERT(m_pRTMP);
 	if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
@@ -86,7 +86,7 @@ BOOL RTMPPublisher::SendMetadata(INT cx, INT cy, INT fps, INT rate)
 	*body++ = AMF_OBJECT_END;
 	packet->m_nBodySize = body - packet->m_body;
 	packet->m_packetType = RTMP_PACKET_TYPE_INFO;
-	packet->m_nChannel = 0x03;
+	packet->m_nChannel = STREAM_CHANNEL_METADATA;
 	packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
 	packet->m_nTimeStamp = 0;
 	packet->m_hasAbsTimestamp = 0;
@@ -95,7 +95,7 @@ BOOL RTMPPublisher::SendMetadata(INT cx, INT cy, INT fps, INT rate)
 	SAFE_FREE(packet);
 	return TRUE;
 }
-BOOL RTMPPublisher::SendSPSPPS(const vector<BYTE>& pps, const vector<BYTE>& sps)
+BOOL RTMPPublisher::SendSPSPPSPacket(const vector<BYTE>& pps, const vector<BYTE>& sps)
 {
 	ASSERT(m_pRTMP);
 	if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
@@ -118,8 +118,8 @@ BOOL RTMPPublisher::SendSPSPPS(const vector<BYTE>& pps, const vector<BYTE>& sps)
 	body[i++] = sps[1];
 	body[i++] = sps[2];
 	body[i++] = sps[3];
-	body[i++] = 0xff;
-	body[i++] = 0xe1;
+	body[i++] = 0xFF;
+	body[i++] = 0xE1;
 	body[i++] = (sps.size() >> 8) & 0xFF;
 	body[i++] = sps.size() & 0xFF;
 	memcpy(&body[i], &sps[0], sps.size());
@@ -131,7 +131,7 @@ BOOL RTMPPublisher::SendSPSPPS(const vector<BYTE>& pps, const vector<BYTE>& sps)
 	i += pps.size();
 	packet->m_packetType = RTMP_PACKET_TYPE_VIDEO;
 	packet->m_nBodySize = i;
-	packet->m_nChannel = 0x04;
+	packet->m_nChannel = STREAM_CHANNEL_VIDEO;
 	packet->m_nTimeStamp = 0;
 	packet->m_hasAbsTimestamp = 0;
 	packet->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
@@ -140,7 +140,7 @@ BOOL RTMPPublisher::SendSPSPPS(const vector<BYTE>& pps, const vector<BYTE>& sps)
 	SAFE_FREE(packet);
 	return TRUE;
 }
-BOOL RTMPPublisher::SendAudioRTMP(BYTE* data, INT size, DWORD timeoffset)
+BOOL RTMPPublisher::SendaAACPacket(BYTE* bits, INT size)
 {
 	if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
 	{
@@ -148,67 +148,70 @@ BOOL RTMPPublisher::SendAudioRTMP(BYTE* data, INT size, DWORD timeoffset)
 	}
 	RTMPPacket* packet = NULL;
 	BYTE* body = NULL;
-	if (data[2] == 0x00)
-	{
-		data += 4;
-		size -= 4;
-	}
-	if (data[2] == 0x01)
-	{
-		data += 3;
-		size -= 3;
-	}
-	INT type = data[0] & 0x1f;
-	packet = (RTMPPacket*)malloc(RTMP_HEAD_SIZE + size + 9);
+	INT type = bits[0] & 0x1F;
+	packet = (RTMPPacket*)malloc(RTMP_HEAD_SIZE + size + 2);
 	memset(packet, 0, RTMP_HEAD_SIZE);
 	packet->m_body = (CHAR*)packet + RTMP_HEAD_SIZE;
-	packet->m_nBodySize = size + 9;
-	body = (BYTE*)packet->m_body;
-	memset(body, 0, size + 9);
-	body[0] = 0x27;
-	if (type == NAL_SLICE_IDR)
-	{
-		body[0] = 0x17;
-	}
-	body[1] = 0x01;
-	body[2] = 0x00;
-	body[3] = 0x00;
-	body[4] = 0x00;
-	body[5] = (size >> 24) & 0xFF;
-	body[6] = (size >> 16) & 0xFF;
-	body[7] = (size >> 8) & 0xFF;
-	body[8] = (size)& 0xFF;
-	memcpy(&body[9], data, size);
+	body[0] = 0xAF;
+	body[1] = 0x00;//AAC信息
+	memcpy(&body[2], bits, size);
 	packet->m_hasAbsTimestamp = 0;
 	packet->m_packetType = RTMP_PACKET_TYPE_AUDIO;
 	packet->m_nInfoField2 = m_pRTMP->m_stream_id;
-	packet->m_nChannel = 0x05;
+	packet->m_nChannel = STREAM_CHANNEL_AUDIO;
 	packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
-	packet->m_nTimeStamp = timeoffset;
+	packet->m_nTimeStamp = 0;
 	RTMP_SendPacket(m_pRTMP, packet, TRUE);
 	SAFE_FREE(packet);
 	return TRUE;
-	return TRUE;
+
 }
-BOOL RTMPPublisher::SendVideoRTMP(BYTE* data, INT size, DWORD timeoffset)
+BOOL RTMPPublisher::SendAudioPacket(BYTE* bits, INT size, DWORD timestamp)
 {
 	if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
 	{
 		return FALSE;
 	}
+	bits += 7;
+	size -= 7;
 	RTMPPacket* packet = NULL;
 	BYTE* body = NULL;
-	if (data[2] == 0x00)
+	packet = (RTMPPacket*)malloc(RTMP_HEAD_SIZE + size + 2);
+	memset(packet, 0, RTMP_HEAD_SIZE);
+	packet->m_body = (CHAR*)packet + RTMP_HEAD_SIZE;
+	body[0] = 0xAF;
+	body[1] = 0x01;//原始数据
+	memcpy(&body[2], bits, size);
+	packet->m_hasAbsTimestamp = 0;
+	packet->m_packetType = RTMP_PACKET_TYPE_AUDIO;
+	packet->m_nInfoField2 = m_pRTMP->m_stream_id;
+	packet->m_nChannel = STREAM_CHANNEL_AUDIO;
+	packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
+	packet->m_hasAbsTimestamp = 0;
+	packet->m_nTimeStamp = timestamp;
+	RTMP_SendPacket(m_pRTMP, packet, TRUE);
+	SAFE_FREE(packet);
+	return TRUE;
+}
+BOOL RTMPPublisher::SendVideoPacket(BYTE* bits, INT size, DWORD timestamp)
+{
+	if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
 	{
-		data += 4;
+		return FALSE;
+	}
+	switch (bits[2])
+	{
+	case 0x00:
+		bits += 4;
 		size -= 4;
-	}
-	if (data[2] == 0x01)
-	{
-		data += 3;
+	case 0x01:
+		bits += 3;
 		size -= 3;
+		break;
 	}
-	INT type = data[0] & 0x1f;
+	RTMPPacket* packet = NULL;
+	BYTE* body = NULL;
+	INT type = bits[0] & 0x1F;
 	packet = (RTMPPacket*)malloc(RTMP_HEAD_SIZE + size + 9);
 	memset(packet, 0, RTMP_HEAD_SIZE);
 	packet->m_body = (CHAR*)packet + RTMP_HEAD_SIZE;
@@ -220,7 +223,11 @@ BOOL RTMPPublisher::SendVideoRTMP(BYTE* data, INT size, DWORD timeoffset)
 	{
 		body[0] = 0x17;
 	}
-	body[1] = 0x01;
+	if (type == NAL_SLICE)
+	{
+		body[0] = 0x27;
+	}
+	body[1] = 0x01;// AVC NALU  
 	body[2] = 0x00;
 	body[3] = 0x00;
 	body[4] = 0x00;
@@ -228,13 +235,13 @@ BOOL RTMPPublisher::SendVideoRTMP(BYTE* data, INT size, DWORD timeoffset)
 	body[6] = (size >> 16) & 0xFF;
 	body[7] = (size >> 8) & 0xFF;
 	body[8] = (size)& 0xFF;
-	memcpy(&body[9], data, size);
+	memcpy(&body[9], bits, size);
 	packet->m_hasAbsTimestamp = 0;
 	packet->m_packetType = RTMP_PACKET_TYPE_VIDEO;
 	packet->m_nInfoField2 = m_pRTMP->m_stream_id;
-	packet->m_nChannel = 0x04;
+	packet->m_nChannel = STREAM_CHANNEL_VIDEO;
 	packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
-	packet->m_nTimeStamp = timeoffset;
+	packet->m_nTimeStamp = timestamp;
 	RTMP_SendPacket(m_pRTMP, packet, TRUE);
 	SAFE_FREE(packet);
 	return TRUE;

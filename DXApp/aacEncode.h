@@ -1,5 +1,5 @@
 #pragma once
-#include "DXFramework.h"
+#include "BaseEncode.h"
 extern "C"
 {
 #include "faac.h"
@@ -13,8 +13,8 @@ public:
 	aacEncode();
 	~aacEncode();
 private:
-	BOOL	Open(const WAVEFORMATEX& wfx, INT bitRate);
-	BOOL	Encode(BYTE* bits,LONG size);
+	BOOL	Open(const WAVEFORMATEX& wfx);
+	BOOL	Encode(BYTE* bits, LONG size, EncoderPacket& packet);
 	void	Close();
 	BOOL	GetSpecificInfo(vector<BYTE>& info);
 private:
@@ -23,6 +23,7 @@ private:
 	ULONG					m_inputSamples;
 	ULONG					m_maxOutputBytes;
 	vector<BYTE>			m_output;
-	vector<BYTE>			m_header;
+	WAVEFORMATEX			m_wfx;
+	LONG					m_timestamp;
 };
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "I420Converter.h"
+#include "BaseEncode.h"
 extern "C"
 {
 #include "x264_config.h"
@@ -15,12 +16,10 @@ class x264Encode
 public:
 	x264Encode();
 	~x264Encode();
-	BOOL	Open(INT cx, INT cy);
-	BOOL	Encode(AVFrame* pI420);
+	BOOL	Open(INT cx, INT cy, INT bitRate);
+	BOOL	Encode(AVFrame* pI420, EncoderPacket& packet);
 	void	Close();
-	BYTE*	GetVideoPointer() const;
-	INT		GetSize() const;
-	DWORD	GetTimespan() const;
+	LONG	GetTimespan() const;
 private:
 	BOOL	BuildParam(INT cx, INT cy);
 private:
@@ -30,7 +29,7 @@ private:
 	vector<BYTE>			m_pps;
 	vector<BYTE>			m_sps;
 	vector<BYTE>			m_sei;
-	vector<BYTE>			m_data;
-	INT						m_size;
+	INT						m_bitRate;
+	LONG					m_timestamp;
 };
 

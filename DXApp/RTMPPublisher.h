@@ -8,6 +8,10 @@ extern "C"
 }
 #pragma comment(lib,"librtmp.lib")
 
+#define STREAM_CHANNEL_METADATA  0x03  
+#define STREAM_CHANNEL_VIDEO     0x04  
+#define STREAM_CHANNEL_AUDIO     0x05  
+
 class RTMPPublisher
 {
 public:
@@ -15,10 +19,11 @@ public:
 	~RTMPPublisher();
 public:
 	BOOL Connect(const TinyString& url);
-	BOOL SendMetadata(INT cx, INT cy, INT fps, INT rate);
-	BOOL SendSPSPPS(const vector<BYTE>& pps, const vector<BYTE>& sps);
-	BOOL SendVideoRTMP(BYTE* data, INT size, DWORD timeoffset);
-	BOOL SendAudioRTMP(BYTE* data, INT size, DWORD timeoffset);
+	BOOL SendMetadataPacket(INT cx, INT cy, INT fps, INT rate);
+	BOOL SendSPSPPSPacket(const vector<BYTE>& pps, const vector<BYTE>& sps);
+	BOOL SendaAACPacket(BYTE* bits, INT size);
+	BOOL SendVideoPacket(BYTE* bits, INT size, DWORD timeoffset);
+	BOOL SendAudioPacket(BYTE* bits, INT size, DWORD timeoffset);
 	BOOL Reconnect();
 private:
 	RTMP*		m_pRTMP;
