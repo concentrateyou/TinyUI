@@ -61,7 +61,7 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	bHandled = FALSE;
 	BuildEvents();
 	CenterWindow(NULL, { 800, 600 });
-	m_graphics.InitializeDX(m_hWND, 800, 600);
+	m_graphics.Initialize(m_hWND, 800, 600);
 
 	vector<Media::VideoCapture::Name> names;
 	Media::VideoCapture::GetDevices(names);

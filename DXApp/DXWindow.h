@@ -1,6 +1,6 @@
 #pragma once
 #include "Control/TinyControl.h"
-#include "GraphicsCapture.h"
+#include "DXGraphics.h"
 using namespace DXFramework;
 
 class DXWindow : public TinyControl
@@ -27,6 +27,6 @@ private:
 	TinyEvent		m_close;
 	TinyEvent		m_render;
 	TinyEvent		m_publish;
-	GraphicsCapture	m_graphics;
+	DXGraphics	m_graphics;
 };
 

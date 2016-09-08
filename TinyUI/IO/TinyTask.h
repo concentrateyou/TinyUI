@@ -12,7 +12,6 @@ namespace TinyUI
 {
 	namespace IO
 	{
-
 		class TinyTask
 		{
 		public:
