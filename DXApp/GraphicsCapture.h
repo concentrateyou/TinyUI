@@ -8,9 +8,7 @@
 #include "DX11CaptureTask.h"
 #include "RenderTask.h"
 #include "PublishTask.h"
-#include "I420Converter.h"
-#include "aacEncode.h"
-#include "x264Encode.h"
+#include "EncodeTask.h"
 #include "RTMPPublisher.h"
 using namespace DXFramework;
 using namespace Media;
@@ -20,8 +18,12 @@ class GraphicsCapture : public TinyLock
 public:
 	GraphicsCapture();
 	~GraphicsCapture();
-	BOOL	Initialize(HWND hWND, INT cx, INT cy);
+	BOOL	InitializeVideo(const VideoCapture::Name& name, const VideoCaptureParam& param);
+	BOOL	InitializeAudio(const AudioCapture::Name& name, const AudioCaptureParam& param);
+	BOOL	InitializeDX(HWND hWND, INT cx, INT cy);
+	BOOL	Start();
 	void	Render();
+	BOOL	Stop();
 	void	Publish();
 	BYTE*	GetPointer() const;
 	DWORD	GetSize() const;
@@ -29,8 +31,12 @@ public:
 private:
 	BOOL	CreateTexture(INT cx, INT cy);
 private:
-	INT								m_cx;
-	INT								m_cy;
+	VideoCapture::Name				m_videoName;
+	VideoCaptureParam				m_videoParam;
+	AudioCapture::Name				m_audioName;
+	AudioCaptureParam				m_audioParam;
+
+	TinySize						m_size;
 	TinyComPtr<ID3D11Resource>		m_resource;
 	BYTE*							m_bits;
 	DX11							m_dx11;
@@ -45,10 +51,8 @@ private:
 	TinyScopedPtr<PublishTask>		m_publishTask;
 	TinyScopedPtr<RenderTask>		m_renderTask;
 	TinyScopedPtr<DX11CaptureTask>	m_captureTask;
-	TinyScopedPtr<I420Converter>	m_converter;
 
-	aacEncode						m_aacEncode;
-	x264Encode						m_x264Encode;
-	RTMPPublisher					m_publisher;
+	TinyScopedPtr<EncodeTask>		m_encodeTask;
+
 };
 

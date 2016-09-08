@@ -61,7 +61,44 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	bHandled = FALSE;
 	BuildEvents();
 	CenterWindow(NULL, { 800, 600 });
-	m_graphics.Initialize(m_hWND, 800, 600);
+	m_graphics.InitializeDX(m_hWND, 800, 600);
+
+	vector<Media::VideoCapture::Name> names;
+	Media::VideoCapture::GetDevices(names);
+	vector<Media::VideoCaptureParam> params;
+	Media::VideoCapture::GetDeviceParams(names[0], params);
+	Media::VideoCaptureParam param;
+	for (UINT i = 0; i < params.size(); i++)
+	{
+		if (params[i].GetSize() == TinySize(800, 600))
+		{
+			param = params[i];
+			break;
+		}
+	}
+	vector<Media::AudioCapture::Name> names1;
+	Media::AudioCapture::GetDevices(names1);
+	vector<Media::AudioCaptureParam> params1;
+	Media::AudioCapture::GetDeviceParams(names1[0], params1);
+	Media::AudioCaptureParam param1;
+	WAVEFORMATEX defaultWFX = Media::AudioCaptureParam::GetDefaultFormat();
+	for (UINT i = 0; i < params1.size(); i++)
+	{
+		WAVEFORMATEX wfx = params1[i].GetFormat();
+		if (wfx.nAvgBytesPerSec == defaultWFX.nAvgBytesPerSec &&
+			wfx.nBlockAlign == defaultWFX.nBlockAlign &&
+			wfx.nChannels == defaultWFX.nChannels &&
+			wfx.nSamplesPerSec == defaultWFX.nSamplesPerSec &&
+			wfx.wBitsPerSample == defaultWFX.wBitsPerSample &&
+			wfx.wFormatTag == defaultWFX.wFormatTag)
+		{
+			param1 = params1[i];
+			break;
+		}
+	}
+	m_graphics.InitializeVideo(names[0], param);
+	m_graphics.InitializeAudio(names1[0], param1);
+
 	return FALSE;
 }
 LRESULT DXWindow::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

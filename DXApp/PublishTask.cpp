@@ -22,6 +22,7 @@ BOOL PublishTask::Submit()
 
 void PublishTask::MessagePump()
 {
+	m_publisher.Connect()
 	for (;;)
 	{
 		if (m_break.Lock(0))
