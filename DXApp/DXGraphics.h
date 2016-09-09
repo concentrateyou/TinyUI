@@ -32,5 +32,9 @@ private:
 	DXCamera						m_camera;
 	TinyComPtr<ID3D11Resource>		m_resource;
 	BYTE*							m_bits;
+	D3DXMATRIX						m_viewMatrix;
+	D3DXMATRIX						m_worldMatrix;
+	D3DXMATRIX						m_projectionMatrix;
+	D3DXMATRIX						m_orthoMatrix;
 };
 

@@ -55,21 +55,23 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11Texture::FillTexture(const DX11& dx11, const BYTE* pBits, INT cx, INT cy)
+	BOOL DX11Texture::FillTexture(const DX11& dx11, const BYTE* pBits)
 	{
 		ASSERT(m_texture2D);
 		D3D11_MAPPED_SUBRESOURCE  mapResource;
 		HRESULT hRes = dx11.GetImmediateContext()->Map(m_texture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapResource);
 		if (FAILED(hRes))
 			return FALSE;
-		INT linesize = ((((24 * cx) + 31) / 32) * 4);
+		D3D11_TEXTURE2D_DESC desc;
+		m_texture2D->GetDesc(&desc);
+		INT linesize = ((((24 * desc.Width) + 31) / 32) * 4);
 		BYTE* src = const_cast<BYTE*>(pBits);
 		BYTE* dst = static_cast<BYTE*>(mapResource.pData);
 		BOOL bFlipY = TRUE;
-		for (INT row = 0; row < cy; row++)
+		for (INT row = 0; row < desc.Height; row++)
 		{
-			INT y = bFlipY ? cy - 1 - row : row;
-			for (INT col = 0; col < cx; col++)
+			INT y = bFlipY ? desc.Height - 1 - row : row;
+			for (INT col = 0; col < desc.Width; col++)
 			{
 				BYTE* iDst = src + y * linesize + col * 3;
 				*dst++ = *iDst++;

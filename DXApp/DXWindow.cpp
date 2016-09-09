@@ -151,13 +151,13 @@ void DXWindow::OnPublish()
 void DXWindow::OnRender()
 {
 	m_graphics.BeginScene();
-	m_graphics.DrawImage(m_captureTask->GetTexture(), 1, 1);
 	if (m_mediaCapture.GetVideoPointer())
 	{
 		TinySize size = m_mediaCapture.GetVideoParam().GetSize();
-		m_videoImage.FillImage(m_graphics.GetD3D(), m_mediaCapture.GetVideoPointer(), size.cx, size.cy);
+		m_videoImage.FillImage(m_graphics.GetD3D(), m_mediaCapture.GetVideoPointer());
 		m_graphics.DrawImage(m_videoImage, 1, 1);
 	}
+	m_graphics.DrawImage(m_captureTask->GetTexture(), 1, 1);
 	m_graphics.EndScene();
 }
 void DXWindow::OnEncode()

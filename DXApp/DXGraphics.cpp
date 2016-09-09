@@ -53,6 +53,10 @@ BOOL DXGraphics::BeginScene()
 {
 	m_dx11.BeginScene();
 	m_camera.UpdatePosition();
+	m_viewMatrix = m_camera.GetViewMatrix();
+	m_worldMatrix = m_dx11.GetWorldMatrix();
+	m_projectionMatrix = m_dx11.GetProjectionMatrix();
+	m_orthoMatrix = m_dx11.GetOrthoMatrix();
 	return TRUE;
 }
 BOOL DXGraphics::EndScene()
@@ -81,11 +85,7 @@ BOOL DXGraphics::DrawImage(DX11Image& image, INT x, INT y)
 		return FALSE;
 	if (image.Render(m_dx11, x, y))
 	{
-		D3DXMATRIX viewMatrix = m_camera.GetViewMatrix();
-		D3DXMATRIX worldMatrix = m_dx11.GetWorldMatrix();
-		D3DXMATRIX projectionMatrix = m_dx11.GetProjectionMatrix();
-		D3DXMATRIX orthoMatrix = m_dx11.GetOrthoMatrix();
-		m_textureShader.Render(m_dx11, image.GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, image.GetTexture());
+		m_textureShader.Render(m_dx11, image.GetIndexCount(), m_worldMatrix, m_viewMatrix, m_orthoMatrix, image.GetTexture());
 		return TRUE;
 	}
 	return FALSE;

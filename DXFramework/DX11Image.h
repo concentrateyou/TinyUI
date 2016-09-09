@@ -18,7 +18,7 @@ namespace DXFramework
 		~DX11Image();
 		void SetPosition(INT cx, INT cy);
 		BOOL Create(const DX11& dx11, INT cx, INT cy, INT scaleX, INT scaleY);
-		BOOL FillImage(const DX11& dx11, const BYTE* pBits, INT cx, INT cy);
+		BOOL FillImage(const DX11& dx11, const BYTE* pBits);
 		BOOL Load(const DX11& dx11, HANDLE hResource, INT scaleX, INT scaleY);
 		BOOL Load(const DX11& dx11, const CHAR* pzFile, INT scaleX, INT scaleY);
 		BOOL Load(const DX11& dx11, const BYTE* pData, DWORD dwSize, INT scaleX, INT scaleY);

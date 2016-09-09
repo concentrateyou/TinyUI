@@ -17,7 +17,7 @@ namespace DXFramework
 		DX11Texture();
 		~DX11Texture();
 		BOOL CreateTexture(const DX11& dx11, INT cx, INT cy, DXGI_FORMAT dxgi, void *lpData);
-		BOOL FillTexture(const DX11& dx11, const BYTE* pBits, INT cx, INT cy);
+		BOOL FillTexture(const DX11& dx11, const BYTE* pBits);
 		BOOL Save(const DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT dxgi);
 		BOOL LoadTexture(const DX11& dx11, const BYTE* pBits, DWORD dwSize);
 		BOOL LoadTexture(const DX11& dx11, HANDLE hResource);

@@ -28,10 +28,10 @@ namespace DXFramework
 		m_scaleY = scaleY;
 		return m_texture.CreateTexture(dx11, cx, cy, DXGI_FORMAT_B8G8R8X8_UNORM, NULL);
 	}
-	BOOL DX11Image::FillImage(const DX11& dx11, const BYTE* pBits, INT cx, INT cy)
+	BOOL DX11Image::FillImage(const DX11& dx11, const BYTE* pBits)
 	{
 		ASSERT(m_texture.IsValid());
-		return m_texture.FillTexture(dx11, pBits, cx, cy);
+		return m_texture.FillTexture(dx11, pBits);
 	}
 	BOOL DX11Image::Load(const DX11& dx11, HANDLE hResource, INT scaleX, INT scaleY)
 	{
