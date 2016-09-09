@@ -85,7 +85,7 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	m_mediaCapture.InitializeVideo(videoNames[0], videoParam);
 	m_mediaCapture.InitializeAudio(audioNames[0], audioParam);
 
-	m_videoImage.Create(m_graphics.GetD3D(), 800, 600, 800, 600);
+	m_videoImage.Create(m_graphics.GetD3D(), 800, 600, 200, 150);
 
 	Closure s = BindCallback(&DXWindow::OnPublish, this);
 	m_publishTask.Reset(new PublishTask(s));
@@ -97,10 +97,10 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 
 	m_mediaCapture.Start();
 
+	m_captureTask->Submit();
 	m_publishTask->Submit();
 	m_renderTask->Submit();
 	m_encodeTask->Submit();
-	m_captureTask->Submit();
 
 	return FALSE;
 }
@@ -117,7 +117,6 @@ LRESULT DXWindow::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandle
 
 	m_captureTask->Quit();
 	m_captureTask->Wait(INFINITE);
-
 	m_publishTask->Quit();
 	m_publishTask->Wait(INFINITE);
 	m_renderTask->Quit();
@@ -152,6 +151,7 @@ void DXWindow::OnPublish()
 void DXWindow::OnRender()
 {
 	m_graphics.BeginScene();
+	m_graphics.DrawImage(m_captureTask->GetTexture(), 1, 1);
 	if (m_mediaCapture.GetVideoPointer())
 	{
 		TinySize size = m_mediaCapture.GetVideoParam().GetSize();

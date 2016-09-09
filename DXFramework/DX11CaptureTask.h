@@ -11,7 +11,7 @@ namespace DXFramework
 	public:
 		DX11CaptureTask(DX11* pDX11, INT cx, INT cy);
 		virtual ~DX11CaptureTask();
-		DX11Image*				GetTexture();
+		DX11Image&				GetTexture();
 		BOOL					Submit();
 		void					Quit() OVERRIDE;
 	private:

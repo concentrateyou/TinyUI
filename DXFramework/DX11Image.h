@@ -49,7 +49,7 @@ namespace DXFramework
 		SharedTexture();
 		~SharedTexture();
 		BOOL Initialize(const DX11& dx10, INT scaleX, INT scaleY);
-		DX11Image* GetTexture();
+		DX11Image& GetTexture();
 	private:
 		DX11Image				m_image;
 		IO::TinySharedMemory	m_textureMemery;

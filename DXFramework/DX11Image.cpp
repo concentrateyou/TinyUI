@@ -177,8 +177,8 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	DX11Image* SharedTexture::GetTexture()
+	DX11Image& SharedTexture::GetTexture()
 	{
-		return &m_image;
+		return m_image;
 	}
 }

@@ -233,7 +233,7 @@ namespace DXFramework
 			Sleep(10);
 		}
 	}
-	DX11Image*	DX11CaptureTask::GetTexture()
+	DX11Image&	DX11CaptureTask::GetTexture()
 	{
 		return m_texture.GetTexture();
 	}
