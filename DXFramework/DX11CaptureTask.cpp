@@ -230,7 +230,7 @@ namespace DXFramework
 				break;
 			}
 			Tick();
-			Sleep(10);
+			Sleep(20);
 		}
 	}
 	DX11Image&	DX11CaptureTask::GetTexture()

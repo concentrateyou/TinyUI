@@ -87,20 +87,23 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 
 	m_videoImage.Create(m_graphics.GetD3D(), 800, 600, 200, 150);
 
-	Closure s = BindCallback(&DXWindow::OnPublish, this);
-	m_publishTask.Reset(new PublishTask(s));
-	s = BindCallback(&DXWindow::OnRender, this);
+	m_captureTask.Reset(new DX11CaptureTask(&m_graphics.GetD3D(), 800, 600));
+
+	Closure s = BindCallback(&DXWindow::OnRender, this);
 	m_renderTask.Reset(new RenderTask(s));
+
 	s = BindCallback(&DXWindow::OnEncode, this);
 	m_encodeTask.Reset(new EncodeTask(s));
-	m_captureTask.Reset(new DX11CaptureTask(&m_graphics.GetD3D(), 800, 600));
+
+	s = BindCallback(&DXWindow::OnPublish, this);
+	m_publishTask.Reset(new PublishTask(s));
 
 	m_mediaCapture.Start();
 
 	m_captureTask->Submit();
-	m_publishTask->Submit();
 	m_renderTask->Submit();
-	m_encodeTask->Submit();
+	//m_encodeTask->Submit();
+	//m_publishTask->Submit();
 
 	return FALSE;
 }
@@ -117,12 +120,12 @@ LRESULT DXWindow::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandle
 
 	m_captureTask->Quit();
 	m_captureTask->Wait(INFINITE);
-	m_publishTask->Quit();
-	m_publishTask->Wait(INFINITE);
+	//m_publishTask->Quit();
+	//m_publishTask->Wait(INFINITE);
 	m_renderTask->Quit();
 	m_renderTask->Wait(INFINITE);
-	m_encodeTask->Quit();
-	m_encodeTask->Wait(INFINITE);
+	//m_encodeTask->Quit();
+	//m_encodeTask->Wait(INFINITE);
 
 	PostQuitMessage(0);
 	return FALSE;
@@ -146,10 +149,11 @@ LRESULT DXWindow::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 
 void DXWindow::OnPublish()
 {
-
+	SwitchToThread();
 }
 void DXWindow::OnRender()
 {
+	Sleep(25);
 	m_graphics.BeginScene();
 	if (m_mediaCapture.GetVideoPointer())
 	{
@@ -162,5 +166,5 @@ void DXWindow::OnRender()
 }
 void DXWindow::OnEncode()
 {
-
+	SwitchToThread();
 }
