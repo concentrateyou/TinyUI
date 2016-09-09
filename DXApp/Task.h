@@ -1,18 +1,19 @@
 #pragma once
 #include "DXFramework.h"
+#include "Common\TinyUtility.h"
 using namespace TinyUI::IO;
 
-class BaseWorker : public TinyTask
+class Task : public TinyTaskBase
 {
 public:
-	BaseWorker(Closure& callback);
-	~BaseWorker();
+	Task(Closure& invoke);
+	~Task();
 	BOOL	Submit();
-	BOOL	Quit();
+	void	Quit() OVERRIDE;
 private:
 	void	MessagePump();
 private:
 	TinyEvent	m_break;
-	Closure		m_callback;
+	Closure		m_invoke;
 };
 

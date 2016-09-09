@@ -3,7 +3,7 @@
 #include "../IO/TinyIO.h"
 #include "../Common/TinyCallback.h"
 #include "../IO/TinyIOCP.h"
-#include "../IO/TinyTask.h"
+#include "../IO/TinyTaskBase.h"
 #include <WinSock2.h>
 #include <mswsock.h>
 #pragma comment(lib,"Mswsock.lib")

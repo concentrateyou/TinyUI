@@ -1,6 +1,7 @@
 #pragma once
 #include "Control/TinyControl.h"
 #include "DXGraphics.h"
+#include "MediaCapture.h"
 using namespace DXFramework;
 
 class DXWindow : public TinyControl
@@ -22,11 +23,17 @@ public:
 	LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 private:
-	BOOL BuildEvents();
+	BOOL	BuildEvents();
+	void	OnPublish();
+	void	OnRender();
+	void	OnEncode();
 private:
-	TinyEvent		m_close;
-	TinyEvent		m_render;
-	TinyEvent		m_publish;
-	DXGraphics	m_graphics;
+	DXGraphics						m_graphics;
+	MediaCapture					m_mediaCapture;
+	DX11Image						m_videoImage;
+	TinyScopedPtr<PublishTask>		m_publishTask;
+	TinyScopedPtr<RenderTask>		m_renderTask;
+	TinyScopedPtr<EncodeTask>		m_encodeTask;
+	TinyScopedPtr<DX11CaptureTask>	m_captureTask;
 };
 

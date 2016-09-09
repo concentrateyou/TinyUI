@@ -1,18 +1,18 @@
 #include "../stdafx.h"
 #include <process.h>
-#include "TinyTask.h"
+#include "TinyTaskBase.h"
 
 namespace TinyUI
 {
 	namespace IO
 	{
-		TinyTask::TinyTask()
+		TinyTaskBase::TinyTaskBase()
 			:m_hTask(NULL)
 		{
 
 		}
 
-		TinyTask::~TinyTask()
+		TinyTaskBase::~TinyTaskBase()
 		{
 			if (m_hTask)
 			{
@@ -21,13 +21,13 @@ namespace TinyUI
 			}
 		}
 
-		BOOL TinyTask::Submit(Closure& callback)
+		BOOL TinyTaskBase::Submit(Closure& callback)
 		{
 			m_callback = callback;
-			m_hTask = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)TinyTask::Callback, (LPVOID)this, 0, &m_dwTaskID);
+			m_hTask = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)TinyTaskBase::Callback, (LPVOID)this, 0, &m_dwTaskID);
 			return m_hTask != NULL;
 		}
-		BOOL TinyTask::Wait(DWORD dwMs)
+		BOOL TinyTaskBase::Wait(DWORD dwMs)
 		{
 			if (m_hTask)
 			{
@@ -42,7 +42,7 @@ namespace TinyUI
 			return FALSE;
 		}
 
-		BOOL TinyTask::IsValid() const
+		BOOL TinyTaskBase::IsValid() const
 		{
 			if (m_hTask)
 			{
@@ -52,11 +52,11 @@ namespace TinyUI
 			return FALSE;
 		}
 
-		DWORD WINAPI TinyTask::Callback(LPVOID ps)
+		DWORD WINAPI TinyTaskBase::Callback(LPVOID ps)
 		{
 			try
 			{
-				TinyTask* pTask = reinterpret_cast<TinyTask*>(ps);
+				TinyTaskBase* pTask = reinterpret_cast<TinyTaskBase*>(ps);
 				if (pTask)
 				{
 					pTask->m_callback();

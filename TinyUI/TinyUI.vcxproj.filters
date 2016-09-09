@@ -252,9 +252,6 @@
     <ClInclude Include="IO\TinyIOCP.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
-    <ClInclude Include="IO\TinyTask.h">
-      <Filter>头文件\IO</Filter>
-    </ClInclude>
     <ClInclude Include="Network\TinyAcceptor.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
@@ -352,6 +349,9 @@
       <Filter>头文件\IO</Filter>
     </ClInclude>
     <ClInclude Include="IO\TinyRingQueue.h">
+      <Filter>头文件\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\TinyTaskBase.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
   </ItemGroup>
@@ -536,9 +536,6 @@
     <ClCompile Include="IO\TinyIOCP.cpp">
       <Filter>源文件\IO</Filter>
     </ClCompile>
-    <ClCompile Include="IO\TinyTask.cpp">
-      <Filter>源文件\IO</Filter>
-    </ClCompile>
     <ClCompile Include="Network\TinyAcceptor.cpp">
       <Filter>源文件\Network</Filter>
     </ClCompile>
@@ -639,6 +636,9 @@
       <Filter>源文件\IO</Filter>
     </ClCompile>
     <ClCompile Include="IO\TinyRingQueue.cpp">
+      <Filter>源文件\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\TinyTaskBase.cpp">
       <Filter>源文件\IO</Filter>
     </ClCompile>
   </ItemGroup>

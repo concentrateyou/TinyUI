@@ -1,6 +1,7 @@
 #pragma once
 #include "VideoCapture.h"
 #include "AudioCapture.h"
+using namespace Media;
 
 class MediaCapture
 {
@@ -15,7 +16,9 @@ public:
 	BYTE*	GetVideoPointer() const;
 	INT		GetVideoSize() const;
 	BYTE*	GetAudioPointer() const;
-	INT		GetAudioPointer() const;
+	INT		GetAudioSize() const;
+	AudioCaptureParam	GetAudioParam();
+	VideoCaptureParam	GetVideoParam();
 private:
 	VideoCapture		m_videoCapture;
 	AudioCapture		m_audioCapture;

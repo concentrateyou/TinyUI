@@ -12,7 +12,7 @@
 #include "Control/TinyControl.h"
 #include "Render/TinyGDI.h"
 #include "IO/TinySharedMemory.h"
-#include "IO/TinyTask.h"
+#include "IO/TinyTaskBase.h"
 using namespace TinyUI;
 using namespace std;
 

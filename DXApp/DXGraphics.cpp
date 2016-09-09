@@ -53,6 +53,7 @@ BOOL DXGraphics::BeginScene()
 {
 	m_dx11.BeginScene();
 	m_camera.UpdatePosition();
+	return TRUE;
 }
 BOOL DXGraphics::EndScene()
 {
@@ -72,6 +73,27 @@ BOOL DXGraphics::EndScene()
 		}
 	}
 	return FALSE;
+}
+
+BOOL DXGraphics::DrawImage(DX11Image& image, INT x, INT y)
+{
+	if (!image.IsValid())
+		return FALSE;
+	if (image.Render(m_dx11, x, y))
+	{
+		D3DXMATRIX viewMatrix = m_camera.GetViewMatrix();
+		D3DXMATRIX worldMatrix = m_dx11.GetWorldMatrix();
+		D3DXMATRIX projectionMatrix = m_dx11.GetProjectionMatrix();
+		D3DXMATRIX orthoMatrix = m_dx11.GetOrthoMatrix();
+		m_textureShader.Render(m_dx11, image.GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, image.GetTexture());
+		return TRUE;
+	}
+	return FALSE;
+}
+
+DX11& DXGraphics::GetD3D()
+{
+	return m_dx11;
 }
 
 BYTE* DXGraphics::GetPointer() const

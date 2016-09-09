@@ -12,14 +12,15 @@ namespace TinyUI
 {
 	namespace IO
 	{
-		class TinyTask
+		class TinyTaskBase
 		{
 		public:
-			TinyTask();
-			virtual ~TinyTask();
-			BOOL Submit(Closure& callback);
-			BOOL Wait(DWORD dwMs);
-			BOOL IsValid() const;
+			TinyTaskBase();
+			virtual ~TinyTaskBase();
+			BOOL	IsValid() const;
+			virtual BOOL Submit(Closure& callback);
+			virtual BOOL Wait(DWORD dwMs);
+			virtual void Quit() = 0;
 		private:
 			static DWORD WINAPI Callback(LPVOID ps);
 		private:

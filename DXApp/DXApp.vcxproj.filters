@@ -54,19 +54,19 @@
     <ClInclude Include="DXGraphics.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DXModule.h">
+    <ClInclude Include="PublishTask.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="BaseWorker.h">
+    <ClInclude Include="EncodeTask.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="PublishWorker.h">
+    <ClInclude Include="RenderTask.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="RenderWorker.h">
+    <ClInclude Include="MediaCapture.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="EncodeWorker.h">
+    <ClInclude Include="Task.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -101,22 +101,19 @@
     <ClCompile Include="DXGraphics.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DXModule.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="MediaCapture.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="BaseWorker.cpp">
+    <ClCompile Include="PublishTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="PublishWorker.cpp">
+    <ClCompile Include="EncodeTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="RenderWorker.cpp">
+    <ClCompile Include="RenderTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="EncodeWorker.cpp">
+    <ClCompile Include="Task.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

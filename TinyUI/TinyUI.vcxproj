@@ -145,7 +145,7 @@
     <ClInclude Include="IO\TinyIOCP.h" />
     <ClInclude Include="IO\TinyRingQueue.h" />
     <ClInclude Include="IO\TinySharedMemory.h" />
-    <ClInclude Include="IO\TinyTask.h" />
+    <ClInclude Include="IO\TinyTaskBase.h" />
     <ClInclude Include="IO\TinyWin32TaskPool.h" />
     <ClInclude Include="Media\TinyMedia.h" />
     <ClInclude Include="Media\TinyWave.h" />
@@ -241,7 +241,7 @@
     <ClCompile Include="IO\TinyIOCP.cpp" />
     <ClCompile Include="IO\TinyRingQueue.cpp" />
     <ClCompile Include="IO\TinySharedMemory.cpp" />
-    <ClCompile Include="IO\TinyTask.cpp" />
+    <ClCompile Include="IO\TinyTaskBase.cpp" />
     <ClCompile Include="IO\TinyWin32TaskPool.cpp" />
     <ClCompile Include="Media\TinyMedia.cpp" />
     <ClCompile Include="Media\TinyWave.cpp" />

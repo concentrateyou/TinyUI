@@ -70,7 +70,16 @@ BYTE* MediaCapture::GetAudioPointer() const
 {
 	return m_audioCapture.GetPointer();
 }
-INT	MediaCapture::GetAudioPointer() const
+INT	MediaCapture::GetAudioSize() const
 {
 	return m_audioCapture.GetSize();
+}
+
+AudioCaptureParam	MediaCapture::GetAudioParam()
+{
+	return m_audioParam;
+}
+VideoCaptureParam	MediaCapture::GetVideoParam()
+{
+	return m_videoParam;
 }

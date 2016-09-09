@@ -19,7 +19,12 @@ namespace DXFramework
 	BOOL DX11CaptureTask::Submit()
 	{
 		Closure s = BindCallback(&DX11CaptureTask::MessagePump, this);
-		return TinyTask::Submit(s);
+		return TinyTaskBase::Submit(s);
+	}
+	void DX11CaptureTask::Quit()
+	{
+		if (m_windowClose)
+			m_windowClose.SetEvent();
 	}
 	DWORD DX11CaptureTask::BuildEvents()
 	{
