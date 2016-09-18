@@ -21,7 +21,7 @@ namespace TinyUI
 		: m_invoke(invoke),
 		m_storage(storage)
 	{
-
+	
 	}
 
 	CallbackBase::CallbackBase(CallbackBase&& other)
@@ -29,6 +29,7 @@ namespace TinyUI
 		m_invoke(other.m_invoke)
 	{
 		other.m_invoke = NULL;
+		TRACE("CallbackBase 移动构造\n");
 	}
 
 	CallbackBase::CallbackBase(const CallbackBase& other)
@@ -41,6 +42,7 @@ namespace TinyUI
 		m_storage = std::move(other.m_storage);
 		m_invoke = other.m_invoke;
 		other.m_invoke = nullptr;
+		TRACE("CallbackBase 移动赋值\n");
 		return *this;
 	}
 	CallbackBase& CallbackBase::operator = (const CallbackBase& other)

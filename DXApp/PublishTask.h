@@ -7,6 +7,7 @@ class PublishTask : public Task
 {
 public:
 	PublishTask(Closure& callback);
+	PublishTask(Closure&& callback);
 	~PublishTask();
 };
 

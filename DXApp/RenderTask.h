@@ -7,6 +7,7 @@ class RenderTask : public Task
 {
 public:
 	RenderTask(Closure& callback);
+	RenderTask(Closure&& callback);
 	~RenderTask();
 };
 

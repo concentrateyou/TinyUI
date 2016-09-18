@@ -8,6 +8,12 @@ RenderTask::RenderTask(Closure& callback)
 
 }
 
+RenderTask::RenderTask(Closure&& callback)
+	: Task(std::move(callback))
+{
+
+}
+
 
 RenderTask::~RenderTask()
 {

@@ -91,12 +91,9 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	m_videoImage.Create(m_graphics.GetD3D(), videoParam.GetSize().cx, videoParam.GetSize().cy, videoParam.GetSize().cx / 4, videoParam.GetSize().cy / 4);
 
 	m_captureTask.Reset(new DX11CaptureTask(&m_graphics.GetD3D(), 800, 600));
-	Closure s = BindCallback(&DXWindow::OnRender, this);
-	m_renderTask.Reset(new RenderTask(s));
-	s = BindCallback(&DXWindow::OnPublish, this);
-	m_publishTask.Reset(new PublishTask(s));
+	m_renderTask.Reset(new RenderTask(BindCallback(&DXWindow::OnRender, this)));
+	m_publishTask.Reset(new PublishTask(BindCallback(&DXWindow::OnPublish, this)));
 
-	
 
 	m_mediaCapture.Start();
 
@@ -156,15 +153,13 @@ void DXWindow::OnPublish()
 	if (m_converter->BRGAToI420(m_graphics.GetPointer()))
 	{
 		EncoderPacket packet;
-		m_x264.Encode(m_converter->GetI420(), packet);
-		if (packet.bits && packet.size > 0)
+		if (m_x264.Encode(m_converter->GetI420(), packet))
 		{
 			m_publisher.SendVideoPacket(packet.bits, packet.size, 0);
 		}
 	}
 	EncoderPacket packet;
-	m_aac.Encode(m_mediaCapture.GetAudioPointer(), m_mediaCapture.GetAudioSize(), packet);
-	if (packet.bits && packet.size > 0)
+	if (m_aac.Encode(m_mediaCapture.GetAudioPointer(), m_mediaCapture.GetAudioSize(), packet))
 	{
 		m_publisher.SendAudioPacket(packet.bits, packet.size, 0);
 	}

@@ -7,6 +7,7 @@ class Task : public TinyTaskBase
 {
 public:
 	Task(Closure& invoke);
+	Task(Closure&& invoke);
 	~Task();
 	BOOL	Submit();
 	void	Quit() OVERRIDE;

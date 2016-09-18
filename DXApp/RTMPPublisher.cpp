@@ -226,13 +226,14 @@ BOOL RTMPPublisher::SendVideoPacket(BYTE* bits, INT size, DWORD timestamp)
 	body = (BYTE*)packet->m_body;
 	memset(body, 0, size + 9);
 	body[0] = 0x27;
-	if (type == NAL_SLICE_IDR)
+	switch (type)
 	{
+	case NAL_SLICE_IDR:
 		body[0] = 0x17;
-	}
-	if (type == NAL_SLICE)
-	{
+		break;
+	case NAL_SLICE:
 		body[0] = 0x27;
+		break;
 	}
 	body[1] = 0x01;// AVC NALU  
 	body[2] = 0x00;

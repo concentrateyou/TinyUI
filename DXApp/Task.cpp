@@ -10,6 +10,13 @@ Task::Task(Closure& invoke)
 		throw("create event error!");
 }
 
+Task::Task(Closure&& invoke)
+	:m_invoke(std::move(invoke))
+{
+	string str = GenerateGUID();
+	if (!m_break.CreateEvent(FALSE, FALSE, str.c_str(), NULL))
+		throw("create event error!");
+}
 
 Task::~Task()
 {

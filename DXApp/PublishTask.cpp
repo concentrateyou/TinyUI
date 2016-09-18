@@ -7,6 +7,11 @@ PublishTask::PublishTask(Closure& callback)
 {
 }
 
+PublishTask::PublishTask(Closure&& callback)
+	: Task(callback)
+{
+
+}
 
 PublishTask::~PublishTask()
 {

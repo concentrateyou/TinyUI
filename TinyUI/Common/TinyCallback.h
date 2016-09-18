@@ -201,7 +201,7 @@ namespace TinyUI
 
 		}
 		Callback(Callback&& other)
-			: CallbackBase(other)
+			: CallbackBase(std::move(other))
 		{
 
 		}
@@ -212,7 +212,7 @@ namespace TinyUI
 		}
 		Callback& operator=(Callback&& other)
 		{
-			CallbackBase::operator=(other);
+			*static_cast<CallbackBase*>(this) = std::move(other);
 			return *this;
 		}
 		BOOL operator == (const Callback& other) const
