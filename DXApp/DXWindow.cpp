@@ -150,6 +150,7 @@ LRESULT DXWindow::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 void DXWindow::OnPublish()
 {
 	ASSERT(m_converter);
+	Sleep(25);
 	if (m_converter->BRGAToI420(m_graphics.GetPointer()))
 	{
 		EncoderPacket packet;
@@ -159,7 +160,7 @@ void DXWindow::OnPublish()
 
 void DXWindow::OnRender()
 {
-	Sleep(20);
+	Sleep(25);
 	m_graphics.BeginScene();
 	if (m_mediaCapture.GetVideoPointer())
 	{
