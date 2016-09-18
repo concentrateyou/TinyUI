@@ -94,7 +94,6 @@
     <ClInclude Include="Task.h" />
     <ClInclude Include="DXApp.h" />
     <ClInclude Include="DXApplication.h" />
-    <ClInclude Include="EncodeTask.h" />
     <ClInclude Include="MediaCapture.h" />
     <ClInclude Include="PublishTask.h" />
     <ClInclude Include="RenderTask.h" />
@@ -114,7 +113,6 @@
     <ClCompile Include="MediaCapture.cpp" />
     <ClCompile Include="DXApp.cpp" />
     <ClCompile Include="DXApplication.cpp" />
-    <ClCompile Include="EncodeTask.cpp" />
     <ClCompile Include="PublishTask.cpp" />
     <ClCompile Include="RenderTask.cpp" />
     <ClCompile Include="DXGraphics.cpp" />

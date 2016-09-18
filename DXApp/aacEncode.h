@@ -12,7 +12,7 @@ class aacEncode
 public:
 	aacEncode();
 	~aacEncode();
-private:
+public:
 	BOOL	Open(const WAVEFORMATEX& wfx);
 	BOOL	Encode(BYTE* bits, LONG size, EncoderPacket& packet);
 	void	Close();

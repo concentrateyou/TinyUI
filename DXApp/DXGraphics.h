@@ -8,7 +8,6 @@
 #include "DX11CaptureTask.h"
 #include "RenderTask.h"
 #include "PublishTask.h"
-#include "EncodeTask.h"
 #include "RTMPPublisher.h"
 using namespace DXFramework;
 using namespace Media;

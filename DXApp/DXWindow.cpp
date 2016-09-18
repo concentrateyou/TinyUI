@@ -85,25 +85,27 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	m_mediaCapture.InitializeVideo(videoNames[0], videoParam);
 	m_mediaCapture.InitializeAudio(audioNames[0], audioParam);
 
-	m_videoImage.Create(m_graphics.GetD3D(), 800, 600, 200, 150);
+	m_converter.Reset(new I420Converter(TinySize(800, 600), TinySize(800, 600)));
+
+	m_videoImage.Create(m_graphics.GetD3D(), videoParam.GetSize().cx, videoParam.GetSize().cy, videoParam.GetSize().cx / 4, videoParam.GetSize().cy / 4);
 
 	m_captureTask.Reset(new DX11CaptureTask(&m_graphics.GetD3D(), 800, 600));
 
 	Closure s = BindCallback(&DXWindow::OnRender, this);
 	m_renderTask.Reset(new RenderTask(s));
 
-	s = BindCallback(&DXWindow::OnEncode, this);
-	m_encodeTask.Reset(new EncodeTask(s));
-
 	s = BindCallback(&DXWindow::OnPublish, this);
 	m_publishTask.Reset(new PublishTask(s));
 
 	m_mediaCapture.Start();
 
+	m_publisher.Connect("rtmp://10.121.86.127/live/test");
+	m_x264.Open(videoParam.GetSize().cx, videoParam.GetSize().cy, videoParam.GetRate());
+	m_aac.Open(audioParam.GetFormat());
+
 	m_captureTask->Submit();
 	m_renderTask->Submit();
-	//m_encodeTask->Submit();
-	//m_publishTask->Submit();
+	m_publishTask->Submit();
 
 	return FALSE;
 }
@@ -120,12 +122,10 @@ LRESULT DXWindow::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandle
 
 	m_captureTask->Quit();
 	m_captureTask->Wait(INFINITE);
-	//m_publishTask->Quit();
-	//m_publishTask->Wait(INFINITE);
+	m_publishTask->Quit();
+	m_publishTask->Wait(INFINITE);
 	m_renderTask->Quit();
 	m_renderTask->Wait(INFINITE);
-	//m_encodeTask->Quit();
-	//m_encodeTask->Wait(INFINITE);
 
 	PostQuitMessage(0);
 	return FALSE;
@@ -149,11 +149,17 @@ LRESULT DXWindow::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 
 void DXWindow::OnPublish()
 {
-	SwitchToThread();
+	ASSERT(m_converter);
+	if (m_converter->BRGAToI420(m_graphics.GetPointer()))
+	{
+		EncoderPacket packet;
+		m_x264.Encode(m_converter->GetI420(), packet);
+	}
 }
+
 void DXWindow::OnRender()
 {
-	Sleep(25);
+	Sleep(20);
 	m_graphics.BeginScene();
 	if (m_mediaCapture.GetVideoPointer())
 	{
@@ -163,8 +169,4 @@ void DXWindow::OnRender()
 	}
 	m_graphics.DrawImage(m_captureTask->GetTexture(), 1, 1);
 	m_graphics.EndScene();
-}
-void DXWindow::OnEncode()
-{
-	SwitchToThread();
 }

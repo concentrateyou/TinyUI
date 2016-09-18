@@ -2,6 +2,8 @@
 #include "Control/TinyControl.h"
 #include "DXGraphics.h"
 #include "MediaCapture.h"
+#include "x264Encode.h"
+#include "aacEncode.h"
 using namespace DXFramework;
 
 class DXWindow : public TinyControl
@@ -27,14 +29,16 @@ private:
 	BOOL	BuildEvents();
 	void	OnPublish();
 	void	OnRender();
-	void	OnEncode();
 private:
 	DXGraphics						m_graphics;
 	MediaCapture					m_mediaCapture;
 	DX11Image						m_videoImage;
 	TinyScopedPtr<PublishTask>		m_publishTask;
 	TinyScopedPtr<RenderTask>		m_renderTask;
-	TinyScopedPtr<EncodeTask>		m_encodeTask;
 	TinyScopedPtr<DX11CaptureTask>	m_captureTask;
+	TinyScopedPtr<I420Converter>	m_converter;
+	RTMPPublisher					m_publisher;
+	x264Encode						m_x264;
+	aacEncode						m_aac;
 };
 
