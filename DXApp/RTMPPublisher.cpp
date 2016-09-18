@@ -38,6 +38,11 @@ RTMPPublisher::~RTMPPublisher()
 	}
 }
 
+UINT RTMPPublisher::GetTime()
+{
+	return RTMP_GetTime();
+}
+
 BOOL RTMPPublisher::Connect(const TinyString& url)
 {
 	if (m_pRTMP)
@@ -140,7 +145,7 @@ BOOL RTMPPublisher::SendSPSPPSPacket(const vector<BYTE>& pps, const vector<BYTE>
 	SAFE_FREE(packet);
 	return TRUE;
 }
-BOOL RTMPPublisher::SendaAACPacket(BYTE* bits, INT size)
+BOOL RTMPPublisher::SendAACPacket(BYTE* bits, INT size)
 {
 	if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
 	{
@@ -152,6 +157,7 @@ BOOL RTMPPublisher::SendaAACPacket(BYTE* bits, INT size)
 	packet = (RTMPPacket*)malloc(RTMP_HEAD_SIZE + size + 2);
 	memset(packet, 0, RTMP_HEAD_SIZE);
 	packet->m_body = (CHAR*)packet + RTMP_HEAD_SIZE;
+	body = (BYTE*)packet->m_body;
 	body[0] = 0xAF;
 	body[1] = 0x00;//AAC信息
 	memcpy(&body[2], bits, size);
@@ -179,6 +185,7 @@ BOOL RTMPPublisher::SendAudioPacket(BYTE* bits, INT size, DWORD timestamp)
 	packet = (RTMPPacket*)malloc(RTMP_HEAD_SIZE + size + 2);
 	memset(packet, 0, RTMP_HEAD_SIZE);
 	packet->m_body = (CHAR*)packet + RTMP_HEAD_SIZE;
+	body = (BYTE*)packet->m_body;
 	body[0] = 0xAF;
 	body[1] = 0x01;//原始数据
 	memcpy(&body[2], bits, size);

@@ -6,6 +6,7 @@
 #define PUBLISH_FINISH_EVENT    TEXT("PUBLISH_FINISH")
 
 DXWindow::DXWindow()
+	:m_startTime(0)
 {
 }
 DXWindow::~DXWindow()
@@ -90,16 +91,17 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	m_videoImage.Create(m_graphics.GetD3D(), videoParam.GetSize().cx, videoParam.GetSize().cy, videoParam.GetSize().cx / 4, videoParam.GetSize().cy / 4);
 
 	m_captureTask.Reset(new DX11CaptureTask(&m_graphics.GetD3D(), 800, 600));
-
 	Closure s = BindCallback(&DXWindow::OnRender, this);
 	m_renderTask.Reset(new RenderTask(s));
-
 	s = BindCallback(&DXWindow::OnPublish, this);
 	m_publishTask.Reset(new PublishTask(s));
+
+	
 
 	m_mediaCapture.Start();
 
 	m_publisher.Connect("rtmp://10.121.86.127/live/test");
+
 	m_x264.Open(videoParam.GetSize().cx, videoParam.GetSize().cy, videoParam.GetRate());
 	m_aac.Open(audioParam.GetFormat());
 
@@ -150,11 +152,21 @@ LRESULT DXWindow::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 void DXWindow::OnPublish()
 {
 	ASSERT(m_converter);
-	Sleep(25);
+	Sleep(10);
 	if (m_converter->BRGAToI420(m_graphics.GetPointer()))
 	{
 		EncoderPacket packet;
 		m_x264.Encode(m_converter->GetI420(), packet);
+		if (packet.bits && packet.size > 0)
+		{
+			m_publisher.SendVideoPacket(packet.bits, packet.size, 0);
+		}
+	}
+	EncoderPacket packet;
+	m_aac.Encode(m_mediaCapture.GetAudioPointer(), m_mediaCapture.GetAudioSize(), packet);
+	if (packet.bits && packet.size > 0)
+	{
+		m_publisher.SendAudioPacket(packet.bits, packet.size, 0);
 	}
 }
 

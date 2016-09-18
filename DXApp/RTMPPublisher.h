@@ -18,10 +18,11 @@ public:
 	RTMPPublisher();
 	~RTMPPublisher();
 public:
+	UINT GetTime();
 	BOOL Connect(const TinyString& url);
 	BOOL SendMetadataPacket(INT cx, INT cy, INT fps, INT rate);
 	BOOL SendSPSPPSPacket(const vector<BYTE>& pps, const vector<BYTE>& sps);
-	BOOL SendaAACPacket(BYTE* bits, INT size);
+	BOOL SendAACPacket(BYTE* bits, INT size);
 	BOOL SendVideoPacket(BYTE* bits, INT size, DWORD timeoffset);
 	BOOL SendAudioPacket(BYTE* bits, INT size, DWORD timeoffset);
 	BOOL Reconnect();

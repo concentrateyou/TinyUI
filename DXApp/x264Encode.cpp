@@ -122,6 +122,15 @@ LONG x264Encode::GetTimespan() const
 	return m_timestamp;
 }
 
+void x264Encode::GetPPS(vector<BYTE>& pps)
+{
+	pps = m_pps;
+}
+void x264Encode::GetSPS(vector<BYTE>& sps)
+{
+	sps = m_sps;
+}
+
 void x264Encode::Close()
 {
 	m_timestamp = 0;

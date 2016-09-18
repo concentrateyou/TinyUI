@@ -20,6 +20,8 @@ public:
 	BOOL	Encode(AVFrame* pI420, EncoderPacket& packet);
 	void	Close();
 	LONG	GetTimespan() const;
+	void	GetPPS(vector<BYTE>& pps);
+	void	GetSPS(vector<BYTE>& sps);
 private:
 	BOOL	BuildParam(INT cx, INT cy);
 private:

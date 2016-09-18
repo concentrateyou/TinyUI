@@ -40,5 +40,6 @@ private:
 	RTMPPublisher					m_publisher;
 	x264Encode						m_x264;
 	aacEncode						m_aac;
+	UINT							m_startTime;
 };
 

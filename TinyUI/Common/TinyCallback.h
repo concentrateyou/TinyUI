@@ -200,7 +200,17 @@ namespace TinyUI
 		{
 
 		}
+		Callback(Callback&& other)
+			: CallbackBase(other)
+		{
+
+		}
 		Callback& operator=(const Callback& other)
+		{
+			CallbackBase::operator=(other);
+			return *this;
+		}
+		Callback& operator=(Callback&& other)
 		{
 			CallbackBase::operator=(other);
 			return *this;
