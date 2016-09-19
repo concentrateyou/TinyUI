@@ -42,9 +42,6 @@
     <ClInclude Include="I420Converter.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="RTMPPublisher.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="aacEncode.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -64,6 +61,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Task.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RTMPClient.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="EncodePublishTask.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -86,9 +89,6 @@
     <ClCompile Include="I420Converter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="RTMPPublisher.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="aacEncode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -108,6 +108,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Task.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RTMPClient.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="EncodePublishTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

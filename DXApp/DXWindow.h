@@ -1,9 +1,11 @@
 #pragma once
 #include "Control/TinyControl.h"
 #include "DXGraphics.h"
+#include "DX11CaptureTask.h"
 #include "MediaCapture.h"
-#include "x264Encode.h"
-#include "aacEncode.h"
+#include "RenderTask.h"
+#include "EncodePublishTask.h"
+#include "RTMPClient.h"
 using namespace DXFramework;
 
 class DXWindow : public TinyControl
@@ -27,19 +29,13 @@ public:
 	BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 private:
 	BOOL	BuildEvents();
-	void	OnPublish();
 	void	OnRender();
 private:
-	DXGraphics						m_graphics;
-	MediaCapture					m_mediaCapture;
-	DX11Image						m_videoImage;
-	TinyScopedPtr<PublishTask>		m_publishTask;
-	TinyScopedPtr<RenderTask>		m_renderTask;
-	TinyScopedPtr<DX11CaptureTask>	m_captureTask;
-	TinyScopedPtr<I420Converter>	m_converter;
-	RTMPPublisher					m_publisher;
-	x264Encode						m_x264;
-	aacEncode						m_aac;
-	UINT							m_startTime;
+	DXGraphics							m_graphics;
+	MediaCapture						m_mediaCapture;
+	DX11Image							m_videoImage;
+	TinyScopedPtr<RenderTask>			m_renderTask;
+	TinyScopedPtr<EncodePublishTask>	m_encodeTask;
+	TinyScopedPtr<DX11CaptureTask>		m_captureTask;
 };
 

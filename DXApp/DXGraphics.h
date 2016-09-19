@@ -3,14 +3,7 @@
 #include "DX11Image.h"
 #include "DXCamera.h"
 #include "DX11TextureShader.h"
-#include "VideoCapture.h"
-#include "AudioCapture.h"
-#include "DX11CaptureTask.h"
-#include "RenderTask.h"
-#include "PublishTask.h"
-#include "RTMPPublisher.h"
 using namespace DXFramework;
-using namespace Media;
 
 class DXGraphics : public TinyLock
 {

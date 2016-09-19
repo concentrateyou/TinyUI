@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "RTMPPublisher.h"
+#include "RTMPClient.h"
 #include "x264Encode.h"
 
 #define RTMP_HEAD_SIZE   (sizeof(RTMPPacket)+RTMP_MAX_HEADER_SIZE)
@@ -23,13 +23,13 @@ SAVC(av_stereo);
 SAVC(avc1);
 SAVC(fileSize);
 
-RTMPPublisher::RTMPPublisher()
+RTMPClient::RTMPClient()
 	:m_pRTMP(NULL)
 {
 
 }
 
-RTMPPublisher::~RTMPPublisher()
+RTMPClient::~RTMPClient()
 {
 	if (m_pRTMP)
 	{
@@ -38,12 +38,12 @@ RTMPPublisher::~RTMPPublisher()
 	}
 }
 
-UINT RTMPPublisher::GetTime()
+UINT RTMPClient::GetTime()
 {
 	return RTMP_GetTime();
 }
 
-BOOL RTMPPublisher::Connect(const TinyString& url)
+BOOL RTMPClient::Connect(const TinyString& url)
 {
 	if (m_pRTMP)
 	{
@@ -62,7 +62,7 @@ BOOL RTMPPublisher::Connect(const TinyString& url)
 	return TRUE;
 }
 
-BOOL RTMPPublisher::SendMetadataPacket(INT cx, INT cy, INT fps, INT rate)
+BOOL RTMPClient::SendMetadataPacket(INT cx, INT cy, INT fps, INT rate)
 {
 	ASSERT(m_pRTMP);
 	if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
@@ -100,7 +100,7 @@ BOOL RTMPPublisher::SendMetadataPacket(INT cx, INT cy, INT fps, INT rate)
 	SAFE_FREE(packet);
 	return TRUE;
 }
-BOOL RTMPPublisher::SendSPSPPSPacket(const vector<BYTE>& pps, const vector<BYTE>& sps)
+BOOL RTMPClient::SendSPSPPSPacket(const vector<BYTE>& pps, const vector<BYTE>& sps)
 {
 	ASSERT(m_pRTMP);
 	if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
@@ -145,7 +145,7 @@ BOOL RTMPPublisher::SendSPSPPSPacket(const vector<BYTE>& pps, const vector<BYTE>
 	SAFE_FREE(packet);
 	return TRUE;
 }
-BOOL RTMPPublisher::SendAACPacket(BYTE* bits, INT size)
+BOOL RTMPClient::SendAACPacket(BYTE* bits, INT size)
 {
 	if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
 	{
@@ -172,7 +172,7 @@ BOOL RTMPPublisher::SendAACPacket(BYTE* bits, INT size)
 	return TRUE;
 
 }
-BOOL RTMPPublisher::SendAudioPacket(BYTE* bits, INT size, DWORD timestamp)
+BOOL RTMPClient::SendAudioPacket(BYTE* bits, INT size, DWORD timestamp)
 {
 	if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
 	{
@@ -200,7 +200,7 @@ BOOL RTMPPublisher::SendAudioPacket(BYTE* bits, INT size, DWORD timestamp)
 	SAFE_FREE(packet);
 	return TRUE;
 }
-BOOL RTMPPublisher::SendVideoPacket(BYTE* bits, INT size, DWORD timestamp)
+BOOL RTMPClient::SendVideoPacket(BYTE* bits, INT size, DWORD timestamp)
 {
 	if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
 	{
@@ -211,6 +211,7 @@ BOOL RTMPPublisher::SendVideoPacket(BYTE* bits, INT size, DWORD timestamp)
 	case 0x00:
 		bits += 4;
 		size -= 4;
+		break;
 	case 0x01:
 		bits += 3;
 		size -= 3;
@@ -255,7 +256,7 @@ BOOL RTMPPublisher::SendVideoPacket(BYTE* bits, INT size, DWORD timestamp)
 	return TRUE;
 }
 
-BOOL RTMPPublisher::Reconnect()
+BOOL RTMPClient::Reconnect()
 {
 	ASSERT(m_pRTMP);
 	if (!RTMP_ReconnectStream(m_pRTMP, 0))

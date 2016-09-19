@@ -9,29 +9,28 @@ extern "C"
 
 #pragma comment(lib,"libx264.lib")
 
-class RTMPPublisher;
+class RTMPClient;
 
 class x264Encode
 {
 public:
 	x264Encode();
 	~x264Encode();
-	BOOL	Open(INT cx, INT cy, INT bitRate);
-	BOOL	Encode(AVFrame* pI420, EncoderPacket& packet);
+	BOOL	Open(INT cx, INT cy, INT rate = 1000);//rateÆ½¾ùÂëÂÊ
+	BOOL	Encode(AVFrame* pI420);
 	void	Close();
 	LONG	GetTimespan() const;
-	void	GetPPS(vector<BYTE>& pps);
-	void	GetSPS(vector<BYTE>& sps);
+public:
+	virtual void OnDone(BYTE*, INT, INT);
+public:
+	Event<void(BYTE*, INT, INT)> EVENT_DONE;
 private:
 	BOOL	BuildParam(INT cx, INT cy);
 private:
 	x264_param_t*			m_x264Param;
 	x264_picture_t*			m_x264Image;
 	x264_t*					m_x264;
-	vector<BYTE>			m_pps;
-	vector<BYTE>			m_sps;
-	vector<BYTE>			m_sei;
-	INT						m_bitRate;
+	INT						m_rate;
 	LONG					m_timestamp;
 };
 

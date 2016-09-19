@@ -14,9 +14,13 @@ public:
 	~aacEncode();
 public:
 	BOOL	Open(const WAVEFORMATEX& wfx);
-	BOOL	Encode(BYTE* bits, LONG size, EncoderPacket& packet);
+	BOOL	Encode(BYTE* bits);
 	void	Close();
 	BOOL	GetSpecificInfo(vector<BYTE>& info);
+public:
+	virtual void OnDone(BYTE*, INT);
+public:
+	Event<void(BYTE*, INT)> EVENT_DONE;
 private:
 	faacEncHandle			m_aac;
 	faacEncConfigurationPtr	m_config;
@@ -24,6 +28,5 @@ private:
 	ULONG					m_maxOutputBytes;
 	vector<BYTE>			m_output;
 	WAVEFORMATEX			m_wfx;
-	LONG					m_timestamp;
 };
 

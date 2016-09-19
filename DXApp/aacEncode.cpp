@@ -61,19 +61,14 @@ BOOL aacEncode::Open(const WAVEFORMATEX& wfx)
 	m_output.resize(m_maxOutputBytes);
 	return TRUE;
 }
-BOOL aacEncode::Encode(BYTE* bits, LONG size, EncoderPacket& packet)
+BOOL aacEncode::Encode(BYTE* bits)
 {
 	if (!bits)
 		return FALSE;
-	ZeroMemory(&packet, sizeof(packet));
-	packet.type = ENCODER_AUDIO;
-	packet.size = faacEncEncode(m_aac, (int32_t*)bits, m_inputSamples, &m_output[0], m_maxOutputBytes);
-	if (packet.size > 0)
+	INT size = faacEncEncode(m_aac, (int32_t*)bits, m_inputSamples, &m_output[0], m_maxOutputBytes);
+	if (size > 0)
 	{
-		packet.bits = new BYTE[packet.size];
-		memcpy(packet.bits, &m_output[0], packet.size);
-		packet.timestamp = m_timestamp;
-		packet.duration = (1024 * 1000) / m_wfx.nSamplesPerSec;
+		OnDone(&m_output[0], size);
 		return TRUE;
 	}
 	return FALSE;
@@ -85,4 +80,8 @@ void aacEncode::Close()
 		faacEncClose(m_aac);
 		m_aac = NULL;
 	}
+}
+void aacEncode::OnDone(BYTE* bits, INT size)
+{
+	EVENT_DONE(bits, size);
 }
