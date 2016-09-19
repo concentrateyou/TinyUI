@@ -14,7 +14,7 @@ class EncodePublishTask : public TinyTaskBase
 public:
 	EncodePublishTask(DXGraphics* graphics, MediaCapture* capture);
 	~EncodePublishTask();
-	BOOL	Open(INT cx, INT cy, INT scaleX, INT scaleY, INT fps, INT rate, const WAVEFORMATEX& wfx);
+	BOOL	Open(INT cx, INT cy, INT scaleX, INT scaleY, INT frameRate, INT videoRate, const WAVEFORMATEX& wfx);
 	BOOL	Submit();
 	void	Exit() OVERRIDE;
 private:
@@ -24,8 +24,9 @@ private:
 private:
 	DXGraphics*		m_graphics;
 	MediaCapture*	m_capture;
-	DWORD			m_dwTime;
-	TinyEvent		m_exit;
+	DWORD			m_dwVideoTime;
+	DWORD			m_dwAudioTime;
+	TinyEvent		m_event;
 private:
 	x264Encode										m_x264;
 	aacEncode										m_aac;
@@ -35,5 +36,6 @@ private:
 	RTMPClient										m_client;
 	vector<BYTE>									m_pps;
 	vector<BYTE>									m_sps;
+	INT												m_frameRate;
 };
 

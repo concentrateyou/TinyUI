@@ -7,7 +7,7 @@ EncodePublishTask::EncodePublishTask(DXGraphics* graphics, MediaCapture* capture
 	m_capture(capture)
 {
 	string str = GenerateGUID();
-	if (!m_exit.CreateEvent(FALSE, FALSE, str.c_str(), NULL))
+	if (!m_event.CreateEvent(FALSE, FALSE, str.c_str(), NULL))
 		throw("create event error!");
 	m_x264Done.Reset(new Delegate<void(BYTE*, INT, INT)>(this, &EncodePublishTask::x264Done));
 	m_x264.EVENT_DONE += m_x264Done;
@@ -23,7 +23,7 @@ EncodePublishTask::~EncodePublishTask()
 
 void EncodePublishTask::x264Done(BYTE* bits, INT size, INT type)
 {
-	DWORD dwTime = timeGetTime() - m_dwTime;
+	DWORD dwTime = timeGetTime() - m_dwVideoTime;
 	switch (type)
 	{
 	case NAL_SPS:
@@ -33,7 +33,7 @@ void EncodePublishTask::x264Done(BYTE* bits, INT size, INT type)
 	case NAL_PPS:
 		m_pps.resize(size);
 		memcpy(&m_pps[0], bits, size);
-		m_client.SendSPSPPSPacket(m_pps, m_sps, dwTime);
+		m_client.SendSPPacket(m_pps, m_sps, dwTime);
 		break;
 	default:
 		m_client.SendVideoPacket(bits, size, dwTime);
@@ -42,12 +42,21 @@ void EncodePublishTask::x264Done(BYTE* bits, INT size, INT type)
 }
 void EncodePublishTask::aacDone(BYTE* bits, INT size)
 {
-	DWORD dwTime = timeGetTime() - m_dwTime;
+	//音视频交错 音频在视频后面 
+	DWORD dwTime = timeGetTime();
+	DWORD dwVideoTime = dwTime - m_dwVideoTime;
+	DWORD dwAudioTime = dwTime - m_dwAudioTime;
+	if (dwAudioTime < dwVideoTime)
+	{
+		m_client.SendAudioPacket(bits, size, dwAudioTime);
+	}
+	TRACE("dwAudioTime:%d,dwVideoTime:%d\n", dwAudioTime, dwVideoTime);
 }
 
-BOOL EncodePublishTask::Open(INT cx, INT cy, INT scaleX, INT scaleY, INT fps, INT rate, const WAVEFORMATEX& wfx)
+BOOL EncodePublishTask::Open(INT cx, INT cy, INT scaleX, INT scaleY, INT frameRate, INT videoRate, const WAVEFORMATEX& wfx)
 {
-	BOOL bRes = m_x264.Open(cx, cy, rate);
+	m_frameRate = frameRate;
+	BOOL bRes = m_x264.Open(cx, cy, frameRate, videoRate);
 	if (!bRes)
 		return FALSE;
 	bRes = m_aac.Open(wfx);
@@ -57,28 +66,35 @@ BOOL EncodePublishTask::Open(INT cx, INT cy, INT scaleX, INT scaleY, INT fps, IN
 	bRes = m_client.Connect("rtmp://10.121.86.127/live/test");
 	if (!bRes)
 		return FALSE;
-	bRes = m_client.SendMetadataPacket(cx, cy, fps, rate);
+	bRes = m_client.SendMetadataPacket(cx, cy, frameRate, videoRate);
+	if (!bRes)
+		return FALSE;
+	vector<BYTE> info;
+	m_aac.GetSpecificInfo(info);
+	bRes = m_client.SendAACPacket(&info[0], info.size());
 	if (!bRes)
 		return FALSE;
 	return TRUE;
 }
 BOOL EncodePublishTask::Submit()
 {
-	m_dwTime = timeGetTime();
+	m_dwVideoTime = timeGetTime();
+	m_dwAudioTime = timeGetTime();
 	Closure s = BindCallback(&EncodePublishTask::MessagePump, this);
 	return TinyTaskBase::Submit(s);
 }
 
 void EncodePublishTask::Exit()
 {
-	m_exit.SetEvent();
+	m_event.SetEvent();
 }
 
 void EncodePublishTask::MessagePump()
 {
 	for (;;)
 	{
-		if (m_exit.Lock(20))
+		INT s = 1000 / m_frameRate;
+		if (m_event.Lock(s))
 			break;
 		if (m_converter->BRGAToI420(m_graphics->GetPointer()))
 		{

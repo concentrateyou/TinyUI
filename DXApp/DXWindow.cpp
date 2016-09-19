@@ -2,6 +2,7 @@
 #include "DXWindow.h"
 
 #define WINDOW_CLOSE_EVENT      TEXT("WINDOW_CLOSE")
+#define FRAME_RATE				30
 
 DXWindow::DXWindow()
 {
@@ -79,12 +80,12 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 
 	m_videoImage.Create(m_graphics.GetD3D(), videoParam.GetSize().cx, videoParam.GetSize().cy, videoParam.GetSize().cx / 2, videoParam.GetSize().cy / 2);
 	m_captureTask.Reset(new DX11CaptureTask(&m_graphics.GetD3D(), 800, 600));
-	m_renderTask.Reset(new RenderTask(this));
+	m_renderTask.Reset(new RenderTask(this, FRAME_RATE));
 	m_mediaCapture.Start();
 	m_captureTask->Submit();
 	m_renderTask->Submit();
 	m_encodeTask.Reset(new EncodePublishTask(&m_graphics, &m_mediaCapture));
-	m_encodeTask->Open(800, 600, 800, 600, videoParam.GetRate(), 1000, audioParam.GetFormat());
+	m_encodeTask->Open(800, 600, 800, 600, FRAME_RATE, 1000, audioParam.GetFormat());
 	m_encodeTask->Submit();
 	return FALSE;
 }

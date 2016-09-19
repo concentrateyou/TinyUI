@@ -15,7 +15,7 @@ BOOL aacEncode::GetSpecificInfo(vector<BYTE>& info)
 {
 	BYTE* buffer = NULL;
 	ULONG size = 0;
-	if (!faacEncGetDecoderSpecificInfo(m_aac, &buffer, &size))
+	if (faacEncGetDecoderSpecificInfo(m_aac, &buffer, &size) != 0)
 	{
 		SAFE_FREE(buffer);
 		return FALSE;

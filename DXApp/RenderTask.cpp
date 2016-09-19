@@ -2,8 +2,9 @@
 #include "RenderTask.h"
 #include "DXWindow.h"
 
-RenderTask::RenderTask(DXWindow* window)
-	:m_window(window)
+RenderTask::RenderTask(DXWindow* window, INT frameRate)
+	:m_window(window),
+	m_frameRate(frameRate)
 {
 	string str = GenerateGUID();
 	if (!m_event.CreateEvent(FALSE, FALSE, str.c_str(), NULL))
@@ -29,7 +30,8 @@ void RenderTask::MessagePump()
 {
 	for (;;)
 	{
-		if (m_event.Lock(20))
+		INT s = 1000 / m_frameRate;
+		if (m_event.Lock(s))
 			break;
 		m_window->Render();
 	}

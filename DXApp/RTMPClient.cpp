@@ -62,7 +62,7 @@ BOOL RTMPClient::Connect(const TinyString& url)
 	return TRUE;
 }
 
-BOOL RTMPClient::SendMetadataPacket(INT cx, INT cy, INT fps, INT rate)
+BOOL RTMPClient::SendMetadataPacket(INT cx, INT cy, INT framerate, INT videodatarate)
 {
 	ASSERT(m_pRTMP);
 	if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
@@ -84,8 +84,8 @@ BOOL RTMPClient::SendMetadataPacket(INT cx, INT cy, INT fps, INT rate)
 	body = AMF_EncodeNamedNumber(body, ebody, &av_width, static_cast<double>(cx));
 	body = AMF_EncodeNamedNumber(body, ebody, &av_height, static_cast<double>(cy));
 	body = AMF_EncodeNamedString(body, ebody, &av_videocodecid, &av_avc1);
-	body = AMF_EncodeNamedNumber(body, ebody, &av_videodatarate, static_cast<double>(rate));
-	body = AMF_EncodeNamedNumber(body, ebody, &av_framerate, static_cast<double>(fps));
+	body = AMF_EncodeNamedNumber(body, ebody, &av_videodatarate, static_cast<double>(videodatarate));
+	body = AMF_EncodeNamedNumber(body, ebody, &av_framerate, static_cast<double>(framerate));
 	*body++ = 0;
 	*body++ = 0;
 	*body++ = AMF_OBJECT_END;
@@ -100,7 +100,7 @@ BOOL RTMPClient::SendMetadataPacket(INT cx, INT cy, INT fps, INT rate)
 	SAFE_FREE(packet);
 	return TRUE;
 }
-BOOL RTMPClient::SendSPSPPSPacket(const vector<BYTE>& pps, const vector<BYTE>& sps, DWORD timestamp)
+BOOL RTMPClient::SendSPPacket(const vector<BYTE>& pps, const vector<BYTE>& sps, DWORD timestamp)
 {
 	ASSERT(m_pRTMP);
 	if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))

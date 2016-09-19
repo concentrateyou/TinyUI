@@ -16,7 +16,7 @@ class x264Encode
 public:
 	x264Encode();
 	~x264Encode();
-	BOOL	Open(INT cx, INT cy, INT rate = 1000);//rate平均码率
+	BOOL	Open(INT cx, INT cy, INT fps = 50, INT bitrate = 1000);//rate平均码率
 	BOOL	Encode(AVFrame* pI420);
 	void	Close();
 	LONG	GetTimespan() const;
@@ -25,12 +25,12 @@ public:
 public:
 	Event<void(BYTE*, INT, INT)> EVENT_DONE;
 private:
-	BOOL	BuildParam(INT cx, INT cy);
+	BOOL	BuildParam(INT cx, INT cy, INT fps, INT bitrate);
 private:
 	x264_param_t*			m_x264Param;
 	x264_picture_t*			m_x264Image;
 	x264_t*					m_x264;
-	INT						m_rate;
+	INT						m_bitrate;
 	LONG					m_timestamp;
 };
 

@@ -6,16 +6,16 @@ x264Encode::x264Encode()
 	:m_x264Image(NULL),
 	m_x264(NULL),
 	m_x264Param(NULL),
-	m_rate(0)
+	m_bitrate(0)
 {
 }
 
-BOOL x264Encode::Open(INT cx, INT cy, INT rate)
+BOOL x264Encode::Open(INT cx, INT cy, INT fps, INT bitrate)
 {
-	m_rate = rate;
+	m_bitrate = bitrate;
 	m_timestamp = 0;
 	Close();
-	if (!BuildParam(cx, cy))
+	if (!BuildParam(cx, cy, fps, bitrate))
 		return FALSE;
 	if ((m_x264 = x264_encoder_open(m_x264Param)) == NULL)
 		return FALSE;
@@ -27,7 +27,7 @@ BOOL x264Encode::Open(INT cx, INT cy, INT rate)
 	return TRUE;
 }
 
-BOOL x264Encode::BuildParam(INT cx, INT cy)
+BOOL x264Encode::BuildParam(INT cx, INT cy, INT fps, INT bitrate)
 {
 	m_x264Param = new x264_param_t();
 	if (!m_x264Param)
@@ -39,20 +39,20 @@ BOOL x264Encode::BuildParam(INT cx, INT cy)
 	m_x264Param->b_sliced_threads = 0;
 	m_x264Param->b_repeat_headers = 1;//重复SPS/PPS 放到关键帧前面 
 	m_x264Param->i_csp = X264_CSP_I420;
-	m_x264Param->i_keyint_max = 45;
 	m_x264Param->i_width = cx;
 	m_x264Param->i_height = cy;
-	m_x264Param->i_fps_num = 30;
+	m_x264Param->i_fps_num = fps;
 	m_x264Param->i_fps_den = 1;
+	m_x264Param->i_keyint_max = m_x264Param->i_fps_num * 2;
 	m_x264Param->b_cabac = 1; /*cabac的开关*/
 	m_x264Param->rc.b_mb_tree = 0;
 	m_x264Param->i_bframe_pyramid = 2;
 	m_x264Param->rc.i_rc_method = X264_RC_ABR;//CQP(恒定质量)，CRF(恒定码率)，ABR(平均码率)
 	m_x264Param->rc.f_rf_constant = 25;
-	m_x264Param->rc.f_rf_constant_max = 45;
-	m_x264Param->rc.i_bitrate = m_rate;/*设置平均码率大小*/
+	m_x264Param->rc.f_rf_constant_max = 40;
+	m_x264Param->rc.i_bitrate = bitrate;/*设置平均码率大小*/
 	m_x264Param->rc.f_rate_tolerance = 0.1F;
-	m_x264Param->rc.i_vbv_max_bitrate = static_cast<INT>(m_rate * 1.2);
+	m_x264Param->rc.i_vbv_max_bitrate = static_cast<INT>(bitrate * 1.2);
 	x264_param_apply_profile(m_x264Param, "baseline");
 	return TRUE;
 }
