@@ -6,16 +6,15 @@ x264Encode::x264Encode()
 	:m_x264Image(NULL),
 	m_x264(NULL),
 	m_x264Param(NULL),
-	m_bitrate(0)
+	m_bitRate(0)
 {
 }
 
-BOOL x264Encode::Open(INT cx, INT cy, INT fps, INT bitrate)
+BOOL x264Encode::Open(INT cx, INT cy, INT fps, INT bitRate)
 {
-	m_bitrate = bitrate;
-	m_timestamp = 0;
+	m_bitRate = bitRate;
 	Close();
-	if (!BuildParam(cx, cy, fps, bitrate))
+	if (!BuildParam(cx, cy, fps, bitRate))
 		return FALSE;
 	if ((m_x264 = x264_encoder_open(m_x264Param)) == NULL)
 		return FALSE;
@@ -76,8 +75,6 @@ BOOL x264Encode::Encode(AVFrame* pI420)
 	INT size = x264_encoder_encode(m_x264, &pNAL, &iNAL, m_x264Image, &image);
 	if (size > 0)
 	{
-
-		INT offset = 0;
 		for (INT i = 0; i < iNAL; i++)
 		{
 			switch (pNAL[i].i_type)
@@ -103,14 +100,8 @@ BOOL x264Encode::Encode(AVFrame* pI420)
 	return FALSE;
 }
 
-LONG x264Encode::GetTimespan() const
-{
-	return m_timestamp;
-}
-
 void x264Encode::Close()
 {
-	m_timestamp = 0;
 	if (m_x264)
 	{
 		x264_encoder_close(m_x264);

@@ -14,7 +14,7 @@ class EncodePublishTask : public TinyTaskBase
 public:
 	EncodePublishTask(DXGraphics* graphics, MediaCapture* capture);
 	~EncodePublishTask();
-	BOOL	Open(INT cx, INT cy, INT scaleX, INT scaleY, INT frameRate, INT videoRate, const WAVEFORMATEX& wfx);
+	BOOL	Open(INT cx, INT cy, INT scaleX, INT scaleY, INT frameRate, INT videoRate, const WAVEFORMATEX& wfx, INT audioRate);
 	BOOL	Submit();
 	void	Exit() OVERRIDE;
 private:

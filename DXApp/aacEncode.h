@@ -13,7 +13,7 @@ public:
 	aacEncode();
 	~aacEncode();
 public:
-	BOOL	Open(const WAVEFORMATEX& wfx);
+	BOOL	Open(const WAVEFORMATEX& wfx, INT audioRate);
 	BOOL	Encode(BYTE* bits);
 	void	Close();
 	BOOL	GetSpecificInfo(vector<BYTE>& info);

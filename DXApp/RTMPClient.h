@@ -20,7 +20,7 @@ public:
 public:
 	UINT GetTime();
 	BOOL Connect(const TinyString& url);
-	BOOL SendMetadataPacket(INT cx, INT cy, INT framerate, INT videodatarate);
+	BOOL SendMetadataPacket(INT cx, INT cy, INT frameRate, INT videoRate, const WAVEFORMATEX& wfx, INT audioRate);
 	BOOL SendSPPacket(const vector<BYTE>& pps, const vector<BYTE>& sps, DWORD timestamp);
 	BOOL SendAACPacket(BYTE* bits, INT size);
 	BOOL SendVideoPacket(BYTE* bits, INT size, DWORD timestamp);

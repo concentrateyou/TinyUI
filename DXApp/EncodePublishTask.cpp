@@ -46,27 +46,25 @@ void EncodePublishTask::aacDone(BYTE* bits, INT size)
 	DWORD dwTime = timeGetTime();
 	DWORD dwVideoTime = dwTime - m_dwVideoTime;
 	DWORD dwAudioTime = dwTime - m_dwAudioTime;
-	if (dwAudioTime < dwVideoTime)
-	{
-		m_client.SendAudioPacket(bits, size, dwAudioTime);
-	}
+	dwAudioTime += 9;
+	m_client.SendAudioPacket(bits, size, dwAudioTime);
 	TRACE("dwAudioTime:%d,dwVideoTime:%d\n", dwAudioTime, dwVideoTime);
 }
 
-BOOL EncodePublishTask::Open(INT cx, INT cy, INT scaleX, INT scaleY, INT frameRate, INT videoRate, const WAVEFORMATEX& wfx)
+BOOL EncodePublishTask::Open(INT cx, INT cy, INT scaleX, INT scaleY, INT frameRate, INT videoRate, const WAVEFORMATEX& wfx, INT audioRate)
 {
 	m_frameRate = frameRate;
 	BOOL bRes = m_x264.Open(cx, cy, frameRate, videoRate);
 	if (!bRes)
 		return FALSE;
-	bRes = m_aac.Open(wfx);
+	bRes = m_aac.Open(wfx, audioRate);
 	if (!bRes)
 		return FALSE;
 	m_converter.Reset(new I420Converter(TinySize(cx, cy), TinySize(scaleX, scaleY)));
 	bRes = m_client.Connect("rtmp://10.121.86.127/live/test");
 	if (!bRes)
 		return FALSE;
-	bRes = m_client.SendMetadataPacket(cx, cy, frameRate, videoRate);
+	bRes = m_client.SendMetadataPacket(cx, cy, frameRate, videoRate, wfx, audioRate);
 	if (!bRes)
 		return FALSE;
 	vector<BYTE> info;

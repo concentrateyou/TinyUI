@@ -85,7 +85,7 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	m_captureTask->Submit();
 	m_renderTask->Submit();
 	m_encodeTask.Reset(new EncodePublishTask(&m_graphics, &m_mediaCapture));
-	m_encodeTask->Open(800, 600, 800, 600, FRAME_RATE, 1000, audioParam.GetFormat());
+	m_encodeTask->Open(800, 600, 800, 600, FRAME_RATE, 1000, audioParam.GetFormat(), 128);
 	m_encodeTask->Submit();
 	return FALSE;
 }

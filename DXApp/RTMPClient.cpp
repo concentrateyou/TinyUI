@@ -22,6 +22,7 @@ SAVC(encoder);
 SAVC(av_stereo);
 SAVC(avc1);
 SAVC(fileSize);
+SAVC(mp4a);
 
 RTMPClient::RTMPClient()
 	:m_pRTMP(NULL)
@@ -62,7 +63,7 @@ BOOL RTMPClient::Connect(const TinyString& url)
 	return TRUE;
 }
 
-BOOL RTMPClient::SendMetadataPacket(INT cx, INT cy, INT framerate, INT videodatarate)
+BOOL RTMPClient::SendMetadataPacket(INT cx, INT cy, INT framerate, INT videoRate, const WAVEFORMATEX& wfx, INT audioRate)
 {
 	ASSERT(m_pRTMP);
 	if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
@@ -84,8 +85,13 @@ BOOL RTMPClient::SendMetadataPacket(INT cx, INT cy, INT framerate, INT videodata
 	body = AMF_EncodeNamedNumber(body, ebody, &av_width, static_cast<double>(cx));
 	body = AMF_EncodeNamedNumber(body, ebody, &av_height, static_cast<double>(cy));
 	body = AMF_EncodeNamedString(body, ebody, &av_videocodecid, &av_avc1);
-	body = AMF_EncodeNamedNumber(body, ebody, &av_videodatarate, static_cast<double>(videodatarate));
+	body = AMF_EncodeNamedNumber(body, ebody, &av_videodatarate, static_cast<double>(videoRate));
 	body = AMF_EncodeNamedNumber(body, ebody, &av_framerate, static_cast<double>(framerate));
+	body = AMF_EncodeNamedString(body, ebody, &av_audiocodecid, &av_mp4a);
+	body = AMF_EncodeNamedNumber(body, ebody, &av_audiosamplerate, static_cast<double>(audioRate));
+	body = AMF_EncodeNamedNumber(body, ebody, &av_audiosamplesize, static_cast<double>(wfx.nSamplesPerSec));
+	body = AMF_EncodeNamedNumber(body, ebody, &av_audiochannels, static_cast<double>(wfx.nChannels));
+	body = AMF_EncodeNamedBoolean(body, ebody, &av_stereo, wfx.nChannels == 2);
 	*body++ = 0;
 	*body++ = 0;
 	*body++ = AMF_OBJECT_END;

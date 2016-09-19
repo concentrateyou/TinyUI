@@ -26,7 +26,7 @@ BOOL aacEncode::GetSpecificInfo(vector<BYTE>& info)
 	return TRUE;
 }
 
-BOOL aacEncode::Open(const WAVEFORMATEX& wfx)
+BOOL aacEncode::Open(const WAVEFORMATEX& wfx, INT audioRate)
 {
 	m_wfx = wfx;
 	m_aac = faacEncOpen(wfx.nSamplesPerSec, wfx.nChannels, &m_inputSamples, &m_maxOutputBytes);
@@ -55,7 +55,7 @@ BOOL aacEncode::Open(const WAVEFORMATEX& wfx)
 	m_config->shortctl = SHORTCTL_NORMAL;
 	m_config->bandWidth = 0;
 	m_config->mpegVersion = MPEG4;
-	m_config->bitRate = 128 * 1000 / wfx.nChannels;//比特位
+	m_config->bitRate = audioRate * 1000 / wfx.nChannels;//比特位
 	if (!faacEncSetConfiguration(m_aac, m_config))
 		return FALSE;
 	m_output.resize(m_maxOutputBytes);

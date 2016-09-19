@@ -30,7 +30,6 @@ private:
 	x264_param_t*			m_x264Param;
 	x264_picture_t*			m_x264Image;
 	x264_t*					m_x264;
-	INT						m_bitrate;
-	LONG					m_timestamp;
+	INT						m_bitRate;
 };
 
