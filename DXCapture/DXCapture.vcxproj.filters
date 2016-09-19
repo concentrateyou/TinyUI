@@ -30,6 +30,15 @@
     <ClInclude Include="DXCommon.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="DX10Capture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Capture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGLCapture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -39,6 +48,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DXCommon.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX10Capture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Capture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGLCapture.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
