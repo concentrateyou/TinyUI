@@ -100,7 +100,7 @@ BOOL RTMPClient::SendMetadataPacket(INT cx, INT cy, INT fps, INT rate)
 	SAFE_FREE(packet);
 	return TRUE;
 }
-BOOL RTMPClient::SendSPSPPSPacket(const vector<BYTE>& pps, const vector<BYTE>& sps)
+BOOL RTMPClient::SendSPSPPSPacket(const vector<BYTE>& pps, const vector<BYTE>& sps, DWORD timestamp)
 {
 	ASSERT(m_pRTMP);
 	if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
@@ -137,7 +137,7 @@ BOOL RTMPClient::SendSPSPPSPacket(const vector<BYTE>& pps, const vector<BYTE>& s
 	packet->m_packetType = RTMP_PACKET_TYPE_VIDEO;
 	packet->m_nBodySize = i;
 	packet->m_nChannel = STREAM_CHANNEL_VIDEO;
-	packet->m_nTimeStamp = 0;
+	packet->m_nTimeStamp = timestamp;
 	packet->m_hasAbsTimestamp = 0;
 	packet->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
 	packet->m_nInfoField2 = m_pRTMP->m_stream_id;
@@ -189,7 +189,6 @@ BOOL RTMPClient::SendAudioPacket(BYTE* bits, INT size, DWORD timestamp)
 	body[0] = 0xAF;
 	body[1] = 0x01;//原始数据
 	memcpy(&body[2], bits, size);
-	packet->m_hasAbsTimestamp = 0;
 	packet->m_packetType = RTMP_PACKET_TYPE_AUDIO;
 	packet->m_nInfoField2 = m_pRTMP->m_stream_id;
 	packet->m_nChannel = STREAM_CHANNEL_AUDIO;
@@ -245,11 +244,11 @@ BOOL RTMPClient::SendVideoPacket(BYTE* bits, INT size, DWORD timestamp)
 	body[7] = (size >> 8) & 0xFF;
 	body[8] = (size)& 0xFF;
 	memcpy(&body[9], bits, size);
-	packet->m_hasAbsTimestamp = 0;
 	packet->m_packetType = RTMP_PACKET_TYPE_VIDEO;
 	packet->m_nInfoField2 = m_pRTMP->m_stream_id;
 	packet->m_nChannel = STREAM_CHANNEL_VIDEO;
 	packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
+	packet->m_hasAbsTimestamp = 0;
 	packet->m_nTimeStamp = timestamp;
 	RTMP_SendPacket(m_pRTMP, packet, TRUE);
 	SAFE_FREE(packet);

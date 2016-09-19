@@ -13,7 +13,7 @@ namespace DXFramework
 		virtual ~DX11CaptureTask();
 		DX11Image&				GetTexture();
 		BOOL					Submit();
-		void					Quit() OVERRIDE;
+		void					Exit() OVERRIDE;
 	private:
 		void					MessagePump();
 		WNDINFO					GetWNDINFO();

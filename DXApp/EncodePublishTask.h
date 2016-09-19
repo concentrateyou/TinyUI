@@ -1,6 +1,6 @@
 #pragma once
 #include "DXFramework.h"
-#include "Task.h"
+#include "RenderTask.h"
 #include "DXGraphics.h"
 #include "MediaCapture.h"
 #include "x264Encode.h"
@@ -16,7 +16,7 @@ public:
 	~EncodePublishTask();
 	BOOL	Open(INT cx, INT cy, INT scaleX, INT scaleY, INT fps, INT rate, const WAVEFORMATEX& wfx);
 	BOOL	Submit();
-	void	Quit() OVERRIDE;
+	void	Exit() OVERRIDE;
 private:
 	void	MessagePump();
 	void	x264Done(BYTE*, INT, INT);
@@ -24,9 +24,8 @@ private:
 private:
 	DXGraphics*		m_graphics;
 	MediaCapture*	m_capture;
-	TinyEvent		m_break;
-	Closure			m_invoke;
 	DWORD			m_dwTime;
+	TinyEvent		m_exit;
 private:
 	x264Encode										m_x264;
 	aacEncode										m_aac;

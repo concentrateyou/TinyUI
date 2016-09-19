@@ -27,9 +27,7 @@ public:
 	LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 public:
 	BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
-private:
-	BOOL	BuildEvents();
-	void	OnRender();
+	void Render();
 private:
 	DXGraphics							m_graphics;
 	MediaCapture						m_mediaCapture;

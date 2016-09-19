@@ -92,12 +92,10 @@
     <ClInclude Include="aacEncode.h" />
     <ClInclude Include="BaseEncode.h" />
     <ClInclude Include="EncodePublishTask.h" />
-    <ClInclude Include="Task.h" />
+    <ClInclude Include="RenderTask.h" />
     <ClInclude Include="DXApp.h" />
     <ClInclude Include="DXApplication.h" />
     <ClInclude Include="MediaCapture.h" />
-    <ClInclude Include="PublishTask.h" />
-    <ClInclude Include="RenderTask.h" />
     <ClInclude Include="DXGraphics.h" />
     <ClInclude Include="DXWindow.h" />
     <ClInclude Include="Resource.h" />
@@ -111,12 +109,10 @@
     <ClCompile Include="aacEncode.cpp" />
     <ClCompile Include="BaseEncode.cpp" />
     <ClCompile Include="EncodePublishTask.cpp" />
-    <ClCompile Include="Task.cpp" />
+    <ClCompile Include="RenderTask.cpp" />
     <ClCompile Include="MediaCapture.cpp" />
     <ClCompile Include="DXApp.cpp" />
     <ClCompile Include="DXApplication.cpp" />
-    <ClCompile Include="PublishTask.cpp" />
-    <ClCompile Include="RenderTask.cpp" />
     <ClCompile Include="DXGraphics.cpp" />
     <ClCompile Include="DXWindow.cpp" />
     <ClCompile Include="RTMPClient.cpp" />

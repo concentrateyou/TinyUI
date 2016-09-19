@@ -21,7 +21,7 @@ namespace DXFramework
 		Closure s = BindCallback(&DX11CaptureTask::MessagePump, this);
 		return TinyTaskBase::Submit(s);
 	}
-	void DX11CaptureTask::Quit()
+	void DX11CaptureTask::Exit()
 	{
 		if (m_windowClose)
 			m_windowClose.SetEvent();

@@ -34,15 +34,9 @@ HICON DXWindow::RetrieveIcon()
 	return NULL;
 }
 
-BOOL DXWindow::BuildEvents()
-{
-	return TRUE;
-}
-
 LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	BuildEvents();
 	CenterWindow(NULL, { 800, 600 });
 	m_graphics.Initialize(m_hWND, 800, 600);
 
@@ -83,9 +77,9 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	m_mediaCapture.InitializeVideo(videoNames[0], videoParam);
 	m_mediaCapture.InitializeAudio(audioNames[0], audioParam);
 
-	m_videoImage.Create(m_graphics.GetD3D(), videoParam.GetSize().cx, videoParam.GetSize().cy, videoParam.GetSize().cx / 4, videoParam.GetSize().cy / 4);
+	m_videoImage.Create(m_graphics.GetD3D(), videoParam.GetSize().cx, videoParam.GetSize().cy, videoParam.GetSize().cx / 2, videoParam.GetSize().cy / 2);
 	m_captureTask.Reset(new DX11CaptureTask(&m_graphics.GetD3D(), 800, 600));
-	m_renderTask.Reset(new RenderTask(BindCallback(&DXWindow::OnRender, this)));
+	m_renderTask.Reset(new RenderTask(this));
 	m_mediaCapture.Start();
 	m_captureTask->Submit();
 	m_renderTask->Submit();
@@ -105,11 +99,11 @@ LRESULT DXWindow::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandle
 
 	m_mediaCapture.Pause();
 
-	m_captureTask->Quit();
+	m_captureTask->Exit();
 	m_captureTask->Wait(INFINITE);
-	m_renderTask->Quit();
+	m_renderTask->Exit();
 	m_renderTask->Wait(INFINITE);
-	m_encodeTask->Quit();
+	m_encodeTask->Exit();
 	m_encodeTask->Wait(INFINITE);
 
 	PostQuitMessage(0);
@@ -132,7 +126,7 @@ LRESULT DXWindow::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 	return FALSE;
 }
 
-void DXWindow::OnRender()
+void DXWindow::Render()
 {
 	m_graphics.BeginScene();
 	if (m_mediaCapture.GetVideoPointer())

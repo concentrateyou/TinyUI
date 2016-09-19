@@ -20,7 +20,7 @@ namespace TinyUI
 			BOOL	IsValid() const;
 			virtual BOOL Submit(Closure& callback);
 			virtual BOOL Wait(DWORD dwMs);
-			virtual void Quit() = 0;
+			virtual void Exit() = 0;
 		private:
 			static DWORD WINAPI Callback(LPVOID ps);
 		private:
