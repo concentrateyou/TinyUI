@@ -75,6 +75,9 @@
     <ClInclude Include="AudioSinkInputPin.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="SoundPlayer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -129,6 +132,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="AudioSinkInputPin.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundPlayer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -96,6 +96,7 @@
     <ClInclude Include="PinBase.h" />
     <ClInclude Include="PinEnumerator.h" />
     <ClInclude Include="ScopedMediaType.h" />
+    <ClInclude Include="SoundPlayer.h" />
     <ClInclude Include="VideoSinkFilter.h" />
     <ClInclude Include="VideoSinkInputPin.h" />
     <ClInclude Include="stdafx.h" />
@@ -117,6 +118,7 @@
     <ClCompile Include="PinBase.cpp" />
     <ClCompile Include="PinEnumerator.cpp" />
     <ClCompile Include="ScopedMediaType.cpp" />
+    <ClCompile Include="SoundPlayer.cpp" />
     <ClCompile Include="VideoSinkFilter.cpp" />
     <ClCompile Include="VideoSinkInputPin.cpp" />
     <ClCompile Include="stdafx.cpp">
