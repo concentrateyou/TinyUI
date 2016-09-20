@@ -6,6 +6,7 @@
 #include "Control/TinyLabel.h"
 #include "VideoCapture.h"
 #include "AudioCapture.h"
+#include "SoundPlayer.h"
 using namespace TinyUI;
 
 class CUIFrame : public TinyControl
@@ -69,5 +70,7 @@ private:
 
 	Callback<void(BYTE*, LONG, LPVOID)> m_videoCB;
 	Callback<void(BYTE*, LONG, LPVOID)> m_audioCB;
+
+	Media::SoundPlayer	m_player;
 };
 

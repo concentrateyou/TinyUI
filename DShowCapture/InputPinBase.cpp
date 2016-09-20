@@ -32,6 +32,7 @@ namespace Media
 	}
 	HRESULT STDMETHODCALLTYPE InputPinBase::GetAllocator(_Out_ IMemAllocator **ppAllocator)
 	{
+		TinyAutoLock lock(m_lock);
 		if (m_allocator == NULL)
 		{
 			HRESULT hRes = CoCreateInstance(CLSID_MemoryAllocator,

@@ -13,14 +13,16 @@ namespace Media
 		SoundPlayer();
 		~SoundPlayer();
 	public:
-		BOOL	Initialize(HWND hWND,const WAVEFORMATEX& wfx);
+		BOOL	Initialize(HWND hWND, const WAVEFORMATEX& wfx);
 		BOOL	GetCaps(DSCAPS& caps);
 		BOOL	Play(BYTE* bits, INT size);
 		BOOL	Stop();
 	private:
 		TinyComPtr<IDirectSound8>		m_sound;
-		TinyComPtr<IDirectSoundBuffer8>	m_buffer;
-		TinyComPtr<IDirectSoundNotify8>	m_notify;
+		TinyComPtr<IDirectSoundBuffer>	m_primaryDSB;
+		TinyComPtr<IDirectSoundBuffer8>	m_secondaryDSB;
+		DWORD							m_dwOffset;
+		WAVEFORMATEX					m_wave;
 	};
 }
 

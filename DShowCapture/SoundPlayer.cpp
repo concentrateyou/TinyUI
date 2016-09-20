@@ -5,6 +5,7 @@
 namespace Media
 {
 	SoundPlayer::SoundPlayer()
+		:m_dwOffset(0)
 	{
 	}
 
@@ -14,30 +15,38 @@ namespace Media
 
 	BOOL SoundPlayer::Initialize(HWND hWND, const WAVEFORMATEX& wfx)
 	{
+		m_wave = wfx;
 		HRESULT hRes = S_OK;
 		hRes = DirectSoundCreate8(NULL, &m_sound, NULL);
-		if (FAILED(hRes))
-			return FALSE;
-		hRes = m_sound->Initialize(NULL);
 		if (FAILED(hRes))
 			return FALSE;
 		hRes = m_sound->SetCooperativeLevel(hWND, DSSCL_PRIORITY);
 		if (FAILED(hRes))
 			return FALSE;
-		DSBUFFERDESC desc;
-		memset(&desc, 0, sizeof(desc));
-		desc.dwSize = sizeof(desc);
-		desc.dwFlags = DSBCAPS_CTRLPAN | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLPOSITIONNOTIFY | DSBCAPS_CTRLFREQUENCY;
-		desc.dwBufferBytes = 3 * wfx.nAvgBytesPerSec;
-		desc.lpwfxFormat = &wfx;
-		TinyComPtr<IDirectSoundBuffer> dsbPrimary;
-		hRes = m_sound->CreateSoundBuffer(&desc, &dsbPrimary, NULL);
+		//…Ë÷√÷˜ª∫≥Â
+		DSBUFFERDESC dbdesc;
+		ZeroMemory(&dbdesc, sizeof(dbdesc));
+		dbdesc.dwSize = sizeof(dbdesc);
+		dbdesc.dwFlags = DSBCAPS_PRIMARYBUFFER | DSBCAPS_CTRLVOLUME;
+		hRes = m_sound->CreateSoundBuffer(&dbdesc, &m_primaryDSB, NULL);
 		if (FAILED(hRes))
 			return FALSE;
-		hRes = dsbPrimary->QueryInterface(IID_IDirectSoundBuffer8, (LPVOID*)&m_buffer);
+		hRes = m_primaryDSB->SetFormat(&m_wave);
 		if (FAILED(hRes))
 			return FALSE;
-		m_buffer->SetCurrentPosition(0);
+		//…Ë÷√æ≤Ã¨ª∫≥Â«¯
+		ZeroMemory(&dbdesc, sizeof(dbdesc));
+		dbdesc.dwSize = sizeof(dbdesc);
+		dbdesc.dwFlags = DSBCAPS_STATIC | DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_STICKYFOCUS | DSBCAPS_GLOBALFOCUS;
+		dbdesc.dwBufferBytes = 3 * m_wave.nAvgBytesPerSec;//3√Î
+		dbdesc.lpwfxFormat = &m_wave;
+		TinyComPtr<IDirectSoundBuffer> dsb;
+		hRes = m_sound->CreateSoundBuffer(&dbdesc, &dsb, NULL);
+		if (FAILED(hRes))
+			return FALSE;
+		hRes = dsb->QueryInterface(IID_IDirectSoundBuffer8, (void**)&m_secondaryDSB);
+		if (FAILED(hRes))
+			return FALSE;
 		return TRUE;
 	}
 	BOOL SoundPlayer::GetCaps(DSCAPS& caps)
@@ -48,24 +57,30 @@ namespace Media
 	}
 	BOOL SoundPlayer::Play(BYTE* bits, INT size)
 	{
-		ASSERT(m_buffer);
+		ASSERT(m_secondaryDSB);
 		HRESULT hRes = S_OK;
-		hRes = m_buffer->Play(0, 0, DSBPLAY_LOOPING);
+		hRes = m_secondaryDSB->SetCurrentPosition(0);
 		if (FAILED(hRes))
 			return FALSE;
-		LPVOID	ppvAudioPtr1 = NULL;
-		DWORD	dwAudioBytes1 = 0;
-		LPVOID	ppvAudioPtr2 = NULL;
-		DWORD	dwAudioBytes2 = 0;
-		hRes = m_buffer->Lock(0, 0, &ppvAudioPtr1, &dwAudioBytes1, &ppvAudioPtr2, &dwAudioBytes2, 0);
+		hRes = m_secondaryDSB->Play(0, 0, 0);
 		if (FAILED(hRes))
 			return FALSE;
-
-		m_buffer->Unlock(ppvAudioPtr1, dwAudioBytes1, ppvAudioPtr2, dwAudioBytes2);
+		LPVOID	ppvAudioPtr = NULL;
+		DWORD	dwAudioBytes = 0;
+		hRes = m_secondaryDSB->Lock(0, 0, &ppvAudioPtr, &dwAudioBytes, NULL, 0, DSBLOCK_ENTIREBUFFER);
+		if (FAILED(hRes))
+			return FALSE;
+		memcpy(ppvAudioPtr, bits, size);
+		m_secondaryDSB->Unlock(ppvAudioPtr, dwAudioBytes, NULL, 0);
 		return TRUE;
 	}
 	BOOL SoundPlayer::Stop()
 	{
-
+		ASSERT(m_secondaryDSB);
+		HRESULT hRes = S_OK;
+		hRes = m_secondaryDSB->Restore();
+		if (FAILED(hRes))
+			return FALSE;
+		return m_secondaryDSB->Stop() == S_OK;
 	}
 }

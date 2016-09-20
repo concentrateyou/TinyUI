@@ -59,5 +59,6 @@ namespace Media
 		REFERENCE_TIME		m_startTime;
 		REFERENCE_TIME		m_stopTime;
 		DOUBLE				m_rate;
+		TinyLock			m_lock;
 	};
 }
