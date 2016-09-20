@@ -6,9 +6,6 @@ EncodePublishTask::EncodePublishTask(DXGraphics* graphics, MediaCapture* capture
 	:m_graphics(graphics),
 	m_capture(capture)
 {
-	string str = GenerateGUID();
-	if (!m_event.CreateEvent(FALSE, FALSE, str.c_str(), NULL))
-		throw("create event error!");
 	m_x264Done.Reset(new Delegate<void(BYTE*, INT, INT)>(this, &EncodePublishTask::x264Done));
 	m_x264.EVENT_DONE += m_x264Done;
 	m_aacDone.Reset(new Delegate<void(BYTE*, INT)>(this, &EncodePublishTask::aacDone));
@@ -48,7 +45,6 @@ void EncodePublishTask::aacDone(BYTE* bits, INT size)
 	DWORD dwAudioTime = dwTime - m_dwAudioTime;
 	dwAudioTime += 9;
 	m_client.SendAudioPacket(bits, size, dwAudioTime);
-	TRACE("dwAudioTime:%d,dwVideoTime:%d\n", dwAudioTime, dwVideoTime);
 }
 
 BOOL EncodePublishTask::Open(INT cx, INT cy, INT scaleX, INT scaleY, INT frameRate, INT videoRate, const WAVEFORMATEX& wfx, INT audioRate)
@@ -84,7 +80,7 @@ BOOL EncodePublishTask::Submit()
 
 void EncodePublishTask::Exit()
 {
-	m_event.SetEvent();
+	m_signal.SetEvent();
 }
 
 void EncodePublishTask::MessagePump()
@@ -92,7 +88,7 @@ void EncodePublishTask::MessagePump()
 	for (;;)
 	{
 		INT s = 1000 / m_frameRate;
-		if (m_event.Lock(s))
+		if (m_signal.Lock(s))
 			break;
 		if (m_converter->BRGAToI420(m_graphics->GetPointer()))
 		{

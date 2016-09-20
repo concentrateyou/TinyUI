@@ -7,7 +7,7 @@ class DXWindow;
 class RenderTask : public TinyTaskBase
 {
 public:
-	RenderTask(DXWindow* window,INT frameRate);
+	RenderTask(DXWindow* window, DWORD dwFPS);
 	~RenderTask();
 	BOOL	Submit();
 	void	Exit() OVERRIDE;
@@ -15,7 +15,6 @@ private:
 	void	MessagePump();
 private:
 	DXWindow*	m_window;
-	TinyEvent	m_event;
-	INT			m_frameRate;
+	DWORD		m_dwFPS;
 };
 

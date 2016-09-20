@@ -170,7 +170,7 @@ BOOL RTMPClient::SendAACPacket(BYTE* bits, INT size)
 	packet->m_packetType = RTMP_PACKET_TYPE_AUDIO;
 	packet->m_nInfoField2 = m_pRTMP->m_stream_id;
 	packet->m_nChannel = STREAM_CHANNEL_AUDIO;
-	packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
+	packet->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
 	packet->m_hasAbsTimestamp = 0;
 	packet->m_nTimeStamp = 0;
 	RTMP_SendPacket(m_pRTMP, packet, TRUE);
@@ -185,7 +185,7 @@ BOOL RTMPClient::SendAudioPacket(BYTE* bits, INT size, DWORD timestamp)
 		return FALSE;
 	}
 	bits += 7;
-	size -= 7;
+	size += 7;
 	RTMPPacket* packet = NULL;
 	BYTE* body = NULL;
 	packet = (RTMPPacket*)malloc(RTMP_HEAD_SIZE + size + 2);

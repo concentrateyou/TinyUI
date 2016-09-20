@@ -2,13 +2,11 @@
 #include "RenderTask.h"
 #include "DXWindow.h"
 
-RenderTask::RenderTask(DXWindow* window, INT frameRate)
+RenderTask::RenderTask(DXWindow* window, DWORD dwFPS)
 	:m_window(window),
-	m_frameRate(frameRate)
+	m_dwFPS(dwFPS)
 {
-	string str = GenerateGUID();
-	if (!m_event.CreateEvent(FALSE, FALSE, str.c_str(), NULL))
-		throw("create event error!");
+
 }
 
 RenderTask::~RenderTask()
@@ -23,15 +21,15 @@ BOOL RenderTask::Submit()
 
 void RenderTask::Exit()
 {
-	m_event.SetEvent();
+	m_signal.SetEvent();
 }
 
 void RenderTask::MessagePump()
 {
 	for (;;)
 	{
-		INT s = 1000 / m_frameRate;
-		if (m_event.Lock(s))
+		DWORD s = 1000 / m_dwFPS;
+		if (m_signal.Lock(s))
 			break;
 		m_window->Render();
 	}

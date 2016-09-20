@@ -1,6 +1,8 @@
 #include "../stdafx.h"
 #include <process.h>
+#include "../Common/TinyUtility.h"
 #include "TinyTaskBase.h"
+
 
 namespace TinyUI
 {
@@ -9,7 +11,8 @@ namespace TinyUI
 		TinyTaskBase::TinyTaskBase()
 			:m_hTask(NULL)
 		{
-
+			if (!m_signal.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL))
+				throw("create event error!");
 		}
 
 		TinyTaskBase::~TinyTaskBase()

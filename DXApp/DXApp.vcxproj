@@ -90,8 +90,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aacEncode.h" />
+    <ClInclude Include="AudioEncodeTask.h" />
     <ClInclude Include="BaseEncode.h" />
     <ClInclude Include="EncodePublishTask.h" />
+    <ClInclude Include="PublishTask.h" />
     <ClInclude Include="RenderTask.h" />
     <ClInclude Include="DXApp.h" />
     <ClInclude Include="DXApplication.h" />
@@ -102,13 +104,16 @@
     <ClInclude Include="RTMPClient.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="VideoEncodeTask.h" />
     <ClInclude Include="x264Encode.h" />
     <ClInclude Include="I420Converter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="aacEncode.cpp" />
+    <ClCompile Include="AudioEncodeTask.cpp" />
     <ClCompile Include="BaseEncode.cpp" />
     <ClCompile Include="EncodePublishTask.cpp" />
+    <ClCompile Include="PublishTask.cpp" />
     <ClCompile Include="RenderTask.cpp" />
     <ClCompile Include="MediaCapture.cpp" />
     <ClCompile Include="DXApp.cpp" />
@@ -120,6 +125,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="VideoEncodeTask.cpp" />
     <ClCompile Include="x264Encode.cpp" />
     <ClCompile Include="I420Converter.cpp" />
   </ItemGroup>

@@ -23,10 +23,11 @@ namespace TinyUI
 			virtual void Exit() = 0;
 		private:
 			static DWORD WINAPI Callback(LPVOID ps);
-		private:
+		protected:
 			DWORD		m_dwTaskID;
 			HANDLE		m_hTask;
 			Closure		m_callback;
+			TinyEvent	m_signal;
 		};
 	};
 }

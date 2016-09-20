@@ -63,6 +63,15 @@
     <ClInclude Include="RenderTask.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="VideoEncodeTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioEncodeTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PublishTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -102,6 +111,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="RenderTask.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoEncodeTask.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioEncodeTask.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PublishTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

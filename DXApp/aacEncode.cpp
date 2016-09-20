@@ -33,8 +33,8 @@ BOOL aacEncode::Open(const WAVEFORMATEX& wfx, INT audioRate)
 	if (!m_aac)
 		return FALSE;
 	m_config = faacEncGetCurrentConfiguration(m_aac);
-	m_config->outputFormat = 1;
-	m_config->inputFormat = FAAC_INPUT_16BIT;
+	m_config->aacObjectType = LOW;
+	m_config->quantqual = 100;
 	switch (wfx.wBitsPerSample)
 	{
 	case 16:
@@ -50,14 +50,9 @@ BOOL aacEncode::Open(const WAVEFORMATEX& wfx, INT audioRate)
 		m_config->inputFormat = FAAC_INPUT_FLOAT;
 		break;
 	}
-	m_config->aacObjectType = MAIN;//编码类型, LOW:LC编码
-	m_config->useTns = 1;//瞬时噪声定形(temporal noise shaping，TNS)滤波器
-	m_config->outputFormat = 0;//RAW_STREAM = 0, ADTS_STREAM 1
-	m_config->quantqual = 100;
-	m_config->allowMidside = 1;//M/S编码
-	m_config->shortctl = SHORTCTL_NORMAL;
-	m_config->bandWidth = 0;
 	m_config->mpegVersion = MPEG4;
+	m_config->useLfe = 0;
+	m_config->outputFormat = 0;
 	m_config->bitRate = audioRate * 1000 / wfx.nChannels;//比特位
 	if (!faacEncSetConfiguration(m_aac, m_config))
 		return FALSE;

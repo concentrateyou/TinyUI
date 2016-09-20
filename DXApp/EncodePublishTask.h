@@ -26,7 +26,6 @@ private:
 	MediaCapture*	m_capture;
 	DWORD			m_dwVideoTime;
 	DWORD			m_dwAudioTime;
-	TinyEvent		m_event;
 private:
 	x264Encode										m_x264;
 	aacEncode										m_aac;
