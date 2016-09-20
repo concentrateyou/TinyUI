@@ -26,7 +26,7 @@ private:
 	faacEncConfigurationPtr	m_config;
 	ULONG					m_inputSamples;
 	ULONG					m_maxOutputBytes;
-	vector<BYTE>			m_output;
+	TinyScopedArray<BYTE>	m_bits;
 	WAVEFORMATEX			m_wfx;
 };
 

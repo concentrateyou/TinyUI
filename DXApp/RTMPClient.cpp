@@ -143,8 +143,8 @@ BOOL RTMPClient::SendSPPacket(const vector<BYTE>& pps, const vector<BYTE>& sps, 
 	packet->m_packetType = RTMP_PACKET_TYPE_VIDEO;
 	packet->m_nBodySize = i;
 	packet->m_nChannel = STREAM_CHANNEL_VIDEO;
-	packet->m_nTimeStamp = timestamp;
 	packet->m_hasAbsTimestamp = 0;
+	packet->m_nTimeStamp = timestamp;
 	packet->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
 	packet->m_nInfoField2 = m_pRTMP->m_stream_id;
 	RTMP_SendPacket(m_pRTMP, packet, TRUE);
@@ -159,19 +159,19 @@ BOOL RTMPClient::SendAACPacket(BYTE* bits, INT size)
 	}
 	RTMPPacket* packet = NULL;
 	BYTE* body = NULL;
-	INT type = bits[0] & 0x1F;
 	packet = (RTMPPacket*)malloc(RTMP_HEAD_SIZE + size + 2);
 	memset(packet, 0, RTMP_HEAD_SIZE);
 	packet->m_body = (CHAR*)packet + RTMP_HEAD_SIZE;
+	packet->m_nBodySize = size + 2;
 	body = (BYTE*)packet->m_body;
 	body[0] = 0xAF;
 	body[1] = 0x00;//AAC信息
 	memcpy(&body[2], bits, size);
-	packet->m_hasAbsTimestamp = 0;
 	packet->m_packetType = RTMP_PACKET_TYPE_AUDIO;
 	packet->m_nInfoField2 = m_pRTMP->m_stream_id;
 	packet->m_nChannel = STREAM_CHANNEL_AUDIO;
 	packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
+	packet->m_hasAbsTimestamp = 0;
 	packet->m_nTimeStamp = 0;
 	RTMP_SendPacket(m_pRTMP, packet, TRUE);
 	SAFE_FREE(packet);
@@ -191,6 +191,7 @@ BOOL RTMPClient::SendAudioPacket(BYTE* bits, INT size, DWORD timestamp)
 	packet = (RTMPPacket*)malloc(RTMP_HEAD_SIZE + size + 2);
 	memset(packet, 0, RTMP_HEAD_SIZE);
 	packet->m_body = (CHAR*)packet + RTMP_HEAD_SIZE;
+	packet->m_nBodySize = size + 2;
 	body = (BYTE*)packet->m_body;
 	body[0] = 0xAF;
 	body[1] = 0x01;//原始数据

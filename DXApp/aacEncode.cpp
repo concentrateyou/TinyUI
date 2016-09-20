@@ -46,10 +46,13 @@ BOOL aacEncode::Open(const WAVEFORMATEX& wfx, INT audioRate)
 	case 32:
 		m_config->inputFormat = FAAC_INPUT_32BIT;
 		break;
+	default:
+		m_config->inputFormat = FAAC_INPUT_FLOAT;
+		break;
 	}
-	m_config->aacObjectType = LOW;//±àÂëÀàÐÍ, LOW:LC±àÂë
-	m_config->useTns = 0;//Ë²Ê±ÔëÉù¶¨ÐÎ(temporal noise shaping£¬TNS)ÂË²¨Æ÷
-	m_config->outputFormat = 0;
+	m_config->aacObjectType = MAIN;//±àÂëÀàÐÍ, LOW:LC±àÂë
+	m_config->useTns = 1;//Ë²Ê±ÔëÉù¶¨ÐÎ(temporal noise shaping£¬TNS)ÂË²¨Æ÷
+	m_config->outputFormat = 0;//RAW_STREAM = 0, ADTS_STREAM 1
 	m_config->quantqual = 100;
 	m_config->allowMidside = 1;//M/S±àÂë
 	m_config->shortctl = SHORTCTL_NORMAL;
@@ -58,17 +61,17 @@ BOOL aacEncode::Open(const WAVEFORMATEX& wfx, INT audioRate)
 	m_config->bitRate = audioRate * 1000 / wfx.nChannels;//±ÈÌØÎ»
 	if (!faacEncSetConfiguration(m_aac, m_config))
 		return FALSE;
-	m_output.resize(m_maxOutputBytes);
+	m_bits.Reset(new BYTE[m_maxOutputBytes]);
 	return TRUE;
 }
 BOOL aacEncode::Encode(BYTE* bits)
 {
 	if (!bits)
 		return FALSE;
-	INT size = faacEncEncode(m_aac, (int32_t*)bits, m_inputSamples, &m_output[0], m_maxOutputBytes);
+	INT size = faacEncEncode(m_aac, (int32_t*)bits, m_inputSamples, m_bits, m_maxOutputBytes);
 	if (size > 0)
 	{
-		OnDone(&m_output[0], size);
+		OnDone(m_bits, size);
 		return TRUE;
 	}
 	return FALSE;
