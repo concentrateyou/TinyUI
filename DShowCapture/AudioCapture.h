@@ -8,6 +8,7 @@ namespace Media
 {
 	class AudioCapture : public FilterObserver
 	{
+		DISALLOW_COPY_AND_ASSIGN(AudioCapture);
 	public:
 		class Name
 		{

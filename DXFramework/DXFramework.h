@@ -9,6 +9,7 @@
 #include <TlHelp32.h>
 #include <string>
 #include "Common/TinyCommon.h"
+#include "Common/TinyUtility.h"
 #include "Control/TinyControl.h"
 #include "Render/TinyGDI.h"
 #include "IO/TinySharedMemory.h"

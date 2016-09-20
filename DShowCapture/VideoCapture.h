@@ -15,6 +15,7 @@ namespace Media
 	/// </summary>
 	class VideoCapture : public FilterObserver
 	{
+		DISALLOW_COPY_AND_ASSIGN(VideoCapture);
 	public:
 		class Name
 		{

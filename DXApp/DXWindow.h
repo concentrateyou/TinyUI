@@ -1,10 +1,6 @@
 #pragma once
 #include "Control/TinyControl.h"
-#include "DXGraphics.h"
-#include "DX11CaptureTask.h"
-#include "MediaCapture.h"
 #include "RenderTask.h"
-#include "EncodePublishTask.h"
 #include "RTMPClient.h"
 using namespace DXFramework;
 
@@ -27,13 +23,7 @@ public:
 	LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 public:
 	BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
-	void Render();
 private:
-	DXGraphics							m_graphics;
-	MediaCapture						m_mediaCapture;
-	DX11Image							m_videoImage;
 	TinyScopedPtr<RenderTask>			m_renderTask;
-	TinyScopedPtr<EncodePublishTask>	m_encodeTask;
-	TinyScopedPtr<DX11CaptureTask>		m_captureTask;
 };
 

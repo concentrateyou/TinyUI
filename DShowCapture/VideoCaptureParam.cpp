@@ -63,6 +63,11 @@ namespace Media
 		m_size.cx = cx;
 		m_size.cy = cy;
 	}
+	void VideoCaptureParam::SetScale(INT cx, INT cy)
+	{
+		m_scale.cx = cx;
+		m_scale.cy = cy;
+	}
 	void VideoCaptureParam::SetRate(FLOAT rate)
 	{
 		m_rate = rate;
@@ -70,6 +75,10 @@ namespace Media
 	const TinySize& VideoCaptureParam::GetSize() const
 	{
 		return m_size;
+	}
+	const TinySize&	VideoCaptureParam::GetScale() const
+	{
+		return m_scale;
 	}
 	FLOAT VideoCaptureParam::GetRate() const
 	{

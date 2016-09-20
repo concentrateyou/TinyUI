@@ -1,20 +1,29 @@
 #pragma once
 #include "DXFramework.h"
-#include "Common\TinyUtility.h"
+#include "DXGraphics.h"
+#include "DX11CaptureTask.h"
+#include "VideoCapture.h"
 using namespace TinyUI::IO;
+using namespace Media;
 
-class DXWindow;
 class RenderTask : public TinyTaskBase
 {
 public:
-	RenderTask(DXWindow* window, DWORD dwFPS);
-	~RenderTask();
+	RenderTask();
+	virtual ~RenderTask();
+	BOOL	Initialize(HWND hWND, INT cx, INT cy, const VideoCapture::Name& name, const VideoCaptureParam& param);
+	void	Render();
 	BOOL	Submit();
 	void	Exit() OVERRIDE;
 private:
 	void	MessagePump();
+	void	OnExit();
 private:
-	DXWindow*	m_window;
-	DWORD		m_dwFPS;
+	VideoCapture						m_videoCapture;
+	VideoCaptureParam					m_videoParam;
+	VideoCapture::Name					m_deviceName;
+	DXGraphics							m_graphics;
+	DX11Image							m_image;
+	TinyScopedPtr<DX11CaptureTask>		m_dx11CaptureTask;
 };
 

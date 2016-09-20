@@ -22,7 +22,7 @@ namespace Media
 		TinyComPtr<IDirectSoundBuffer>	m_primaryDSB;
 		TinyComPtr<IDirectSoundBuffer8>	m_secondaryDSB;
 		DWORD							m_dwOffset;
-		WAVEFORMATEX					m_wave;
+		WAVEFORMATEX					m_wfx;
 	};
 }
 
