@@ -63,14 +63,17 @@ void RenderTask::Exit()
 }
 void RenderTask::OnExit()
 {
+	ASSERT(m_dx11CaptureTask);
 	m_videoCapture.Pause();
 	m_videoCapture.Uninitialize();
+	m_dx11CaptureTask->Exit();
+	m_dx11CaptureTask->Wait(INFINITE);
 }
 void RenderTask::MessagePump()
 {
 	for (;;)
 	{
-		DWORD s = m_videoParam.GetRate();
+		DWORD s = 1000 / m_videoParam.GetRate();
 		if (m_signal.Lock(s))
 		{
 			OnExit();
