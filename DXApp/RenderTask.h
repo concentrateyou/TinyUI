@@ -11,13 +11,16 @@ class RenderTask : public TinyTaskBase
 public:
 	RenderTask();
 	virtual	~RenderTask();
-	BOOL	Initialize(HWND hWND, INT cx, INT cy, DWORD dwFPS, const VideoCapture::Name& name, const VideoCaptureParam& param);
-	DWORD	Render();//返回渲染的毫秒数
-	BOOL	Submit();
-	void	Exit() OVERRIDE;
+	BOOL				Initialize(HWND hWND, INT cx, INT cy, DWORD dwFPS, const VideoCapture::Name& name, const VideoCaptureParam& param);
+	DWORD				Render();//返回渲染的毫秒数
+	BOOL				Submit();
+	void				Exit() OVERRIDE;
+	VideoCapture*		GetCapture();
+	BYTE*				GetPointer() const;
+	VideoCaptureParam*	GetParam();
 private:
-	void	MessagePump();
-	void	OnExit();
+	void				OnMessagePump();
+	void				OnExit();
 private:
 	DWORD								m_dwFPS;
 	VideoCapture						m_videoCapture;

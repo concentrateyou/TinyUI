@@ -51,13 +51,7 @@
     <ClInclude Include="DXGraphics.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MediaCapture.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="RTMPClient.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="EncodePublishTask.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="RenderTask.h">
@@ -101,13 +95,7 @@
     <ClCompile Include="DXGraphics.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MediaCapture.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="RTMPClient.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="EncodePublishTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="RenderTask.cpp">

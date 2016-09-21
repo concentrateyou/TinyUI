@@ -1,26 +1,30 @@
 #pragma once
 #include "DXFramework.h"
-#include "MediaCapture.h"
+#include "AudioCapture.h"
 #include "aacEncode.h"
 #include "RTMPClient.h"
 using namespace TinyUI::IO;
+using namespace Media;
 
 class AudioEncodeTask : public TinyTaskBase
 {
 public:
-	AudioEncodeTask(MediaCapture* capture);
+	AudioEncodeTask();
 	virtual ~AudioEncodeTask();
-	BOOL		Open(const WAVEFORMATEX& wfx, DWORD dwAudioRate);
-	BOOL		Submit();
-	void		Exit() OVERRIDE;
-	aacEncode*	GetEncode();
-public:
-	Event<void(BYTE*, INT)> EVENT_DONE;
+	BOOL			Initialize(const AudioCapture::Name& name, const AudioCaptureParam& param);
+	BOOL			Open(const WAVEFORMATEX& wfx, DWORD dwAudioRate);
+	BOOL			Submit();
+	void			Exit() OVERRIDE;
+	aacEncode*		GetEncode();
+	AudioCapture*	GetCapture();
 private:
-	void	MessagePump();
+	void			OnMessagePump();
+	void			OnExit();
+	void			OnDone(BYTE* bits, INT size);
 private:
-	MediaCapture*								m_capture;
+	AudioCapture::Name							m_deviceName;
+	AudioCaptureParam							m_audioParam;
+	AudioCapture								m_audioCapture;
 	aacEncode									m_aac;
-	TinyScopedPtr<Delegate<void(BYTE*, INT)>>	m_aacDone;
 };
 

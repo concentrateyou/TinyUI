@@ -54,7 +54,6 @@ namespace Media
 		static VideoPixelFormat TranslateMediaSubtypeToPixelFormat(const GUID& subType);
 		void SetAntiFlickerInCaptureFilter();
 	private:
-		VideoCaptureParam							m_vcp;
 		TinyComPtr<IGraphBuilder>					m_builder;
 		TinyComPtr<IMediaControl>					m_control;
 		TinyComPtr<IBaseFilter>						m_captureFilter;
@@ -67,7 +66,7 @@ namespace Media
 		TinyComPtr<IPin>							m_avI;//IN
 		TinyComPtr<IPin>							m_sinkI;
 		TinyScopedReferencePtr<VideoSinkFilter>		m_sinkFilter;
-		Callback<void(BYTE*, LONG, LPVOID)>	m_callback;
+		Callback<void(BYTE*, LONG, LPVOID)>			m_callback;
 		BYTE*										m_bits;
 		INT											m_size;
 	};

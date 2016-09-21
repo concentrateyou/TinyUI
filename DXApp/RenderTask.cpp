@@ -35,12 +35,26 @@ BOOL RenderTask::Initialize(HWND hWND, INT cx, INT cy, DWORD dwFPS, const VideoC
 		return FALSE;
 	return TRUE;
 }
+VideoCapture* RenderTask::GetCapture()
+{
+	return &m_videoCapture;
+}
+BYTE* RenderTask::GetPointer() const
+{
+	return m_graphics.GetPointer();
+}
+
+VideoCaptureParam* RenderTask::GetParam()
+{
+	return &m_videoParam;
+}
+
 BOOL RenderTask::Submit()
 {
 	ASSERT(m_dx11CaptureTask);
 	m_dx11CaptureTask->Submit();
 	m_videoCapture.Start();
-	Closure s = BindCallback(&RenderTask::MessagePump, this);
+	Closure s = BindCallback(&RenderTask::OnMessagePump, this);
 	return TinyTaskBase::Submit(s);
 }
 DWORD RenderTask::Render()
@@ -71,12 +85,11 @@ void RenderTask::Exit()
 void RenderTask::OnExit()
 {
 	ASSERT(m_dx11CaptureTask);
-	m_videoCapture.Pause();
 	m_videoCapture.Uninitialize();
 	m_dx11CaptureTask->Exit();
 	m_dx11CaptureTask->Wait(INFINITE);
 }
-void RenderTask::MessagePump()
+void RenderTask::OnMessagePump()
 {
 	DWORD offset = 0;
 	for (;;)
