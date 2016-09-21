@@ -30,5 +30,6 @@ private:
 	RenderTask*						m_renderTask;
 	x264Encode						m_x264;
 	TinyScopedPtr<I420Converter>	m_converter;
+	TinyPerformanceTimer			m_timer;
 };
 

@@ -27,17 +27,17 @@ BOOL RenderTask::Initialize(HWND hWND, INT cx, INT cy, DWORD dwFPS, const VideoC
 	//游戏捕获
 	m_dx11CaptureTask.Reset(new DX11CaptureTask(&m_graphics.GetD3D(), cx, cy));
 	//初始化视频捕获
-	bRes = m_videoCapture.Initialize(m_deviceName);
+	bRes = m_capture.Initialize(m_deviceName);
 	if (!bRes)
 		return FALSE;
-	bRes = m_videoCapture.Allocate(m_videoParam);
+	bRes = m_capture.Allocate(m_videoParam);
 	if (!bRes)
 		return FALSE;
 	return TRUE;
 }
 VideoCapture* RenderTask::GetCapture()
 {
-	return &m_videoCapture;
+	return &m_capture;
 }
 BYTE* RenderTask::GetPointer() const
 {
@@ -53,7 +53,7 @@ BOOL RenderTask::Submit()
 {
 	ASSERT(m_dx11CaptureTask);
 	m_dx11CaptureTask->Submit();
-	m_videoCapture.Start();
+	m_capture.Start();
 	Closure s = BindCallback(&RenderTask::OnMessagePump, this);
 	return TinyTaskBase::Submit(s);
 }
@@ -62,10 +62,10 @@ DWORD RenderTask::Render()
 	m_timer.BeginTime();
 	if (m_graphics.BeginScene())
 	{
-		if (m_videoCapture.GetPointer())
+		if (m_capture.GetPointer())
 		{
 			TinySize size = m_videoParam.GetSize();
-			m_image.FillImage(m_graphics.GetD3D(), m_videoCapture.GetPointer());
+			m_image.FillImage(m_graphics.GetD3D(), m_capture.GetPointer());
 			m_graphics.DrawImage(m_image, 1, 1);
 		}
 		if (m_dx11CaptureTask)
@@ -85,7 +85,7 @@ void RenderTask::Exit()
 void RenderTask::OnExit()
 {
 	ASSERT(m_dx11CaptureTask);
-	m_videoCapture.Uninitialize();
+	m_capture.Uninitialize();
 	m_dx11CaptureTask->Exit();
 	m_dx11CaptureTask->Wait(INFINITE);
 }

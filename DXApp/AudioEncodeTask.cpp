@@ -18,20 +18,19 @@ aacEncode*	AudioEncodeTask::GetEncode()
 
 AudioCapture* AudioEncodeTask::GetCapture()
 {
-	return &m_audioCapture;
+	return &m_capture;
 }
 
 BOOL AudioEncodeTask::Initialize(const AudioCapture::Name& name, const AudioCaptureParam& param)
 {
 	m_deviceName = name;
 	m_audioParam = param;
-	BOOL bRes = m_audioCapture.Initialize(m_deviceName);
+	BOOL bRes = m_capture.Initialize(m_deviceName);
 	if (!bRes)
 		return FALSE;
-	bRes = m_audioCapture.Allocate(param);
+	bRes = m_capture.Allocate(param);
 	if (!bRes)
 		return FALSE;
-	
 	return TRUE;
 }
 
@@ -45,7 +44,7 @@ BOOL AudioEncodeTask::Open(DWORD dwAudioRate)
 
 BOOL AudioEncodeTask::Submit()
 {
-	m_audioCapture.Start();
+	m_capture.Start();
 	Closure s = BindCallback(&AudioEncodeTask::OnMessagePump, this);
 	return TinyTaskBase::Submit(s);
 }
@@ -57,7 +56,7 @@ void AudioEncodeTask::Exit()
 
 void AudioEncodeTask::OnExit()
 {
-	m_audioCapture.Uninitialize();
+	m_capture.Uninitialize();
 	m_aac.Close();
 }
 
@@ -70,6 +69,6 @@ void AudioEncodeTask::OnMessagePump()
 			OnExit();
 			break;
 		}
-		m_aac.Encode(m_audioCapture.GetPointer());
+		m_aac.Encode(m_capture.GetPointer());
 	}
 }

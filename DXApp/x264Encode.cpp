@@ -5,7 +5,12 @@
 x264Encode::x264Encode()
 	:m_x264Image(NULL),
 	m_x264(NULL),
-	m_x264Param(NULL)
+	m_x264Param(NULL),
+	m_dwPTS(0),
+	m_dwINC(0),
+	m_dwDTS(0),
+	m_dwTotal(0),
+	m_duration(0)
 {
 }
 
@@ -43,7 +48,6 @@ BOOL x264Encode::BuildParam(INT cx, INT cy, INT fps, INT bitrate)
 	m_x264Param->i_keyint_max = m_x264Param->i_fps_num * 2;
 	m_x264Param->b_cabac = 1; /*cabac的开关*/
 	m_x264Param->rc.b_mb_tree = 0;
-	m_x264Param->i_bframe_pyramid = 2;
 	m_x264Param->rc.i_rc_method = X264_RC_ABR;//CQP(恒定质量)，CRF(恒定码率)，ABR(平均码率)
 	m_x264Param->rc.f_rf_constant = 25;
 	m_x264Param->rc.f_rf_constant_max = 40;
@@ -66,7 +70,7 @@ BOOL x264Encode::Encode(AVFrame* pI420)
 	m_x264Image->img.i_stride[1] = pI420->linesize[1];
 	m_x264Image->img.i_stride[2] = pI420->linesize[2];
 	m_x264Image->img.i_stride[3] = pI420->linesize[3];
-	m_x264Image->i_pts = (LONGLONG)m_x264Param->i_frame_total;
+	m_x264Image->i_pts = m_dwTotal;
 	x264_picture_t image;
 	x264_nal_t * pNAL = NULL;
 	INT iNAL = 0;
@@ -78,11 +82,22 @@ BOOL x264Encode::Encode(AVFrame* pI420)
 			switch (pNAL[i].i_type)
 			{
 			case NAL_SPS:
-				OnDone(pNAL[i].p_payload + 4, pNAL[i].i_payload - 4, pNAL[i].i_type);
-				break;
+			{
+				//分隔符00 00 00 01 4个字节
+				BYTE* sps = pNAL[i].p_payload + SPS_SEP;
+				INT	size = pNAL[i].i_payload - SPS_SEP;
+				
+				OnDone(sps, size, pNAL[i].i_type);
+			}
+			break;
 			case NAL_PPS:
-				OnDone(pNAL[i].p_payload + 4, pNAL[i].i_payload - 4, pNAL[i].i_type);
-				break;
+			{
+				//分隔符00 00 00 01 4个字节
+				BYTE* pps = pNAL[i].p_payload + PPS_SEP;
+				INT	size = pNAL[i].i_payload - PPS_SEP;
+				OnDone(pps, size, pNAL[i].i_type);
+			}
+			break;
 			case NAL_SLICE:
 			case NAL_SLICE_DPA:
 			case NAL_SLICE_DPB:
@@ -93,9 +108,27 @@ BOOL x264Encode::Encode(AVFrame* pI420)
 				break;
 			}
 		}
+		if (iNAL)
+			m_dwINC++;
+		m_dwTotal++;
+		m_dwPTS = m_dwINC * m_duration;
+		switch (image.i_type)
+		{
+		case X264_TYPE_I:
+			break;
+		case X264_TYPE_P:
+			break;
+		case X264_TYPE_B:
+			break;
+		}
 		return TRUE;
 	}
 	return FALSE;
+}
+
+DWORD x264Encode::GetLatestPTS() const
+{
+	return m_dwPTS;
 }
 
 void x264Encode::Close()

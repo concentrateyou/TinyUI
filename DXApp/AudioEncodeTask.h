@@ -22,9 +22,10 @@ private:
 	void			OnExit();
 	void			OnDone(BYTE* bits, INT size);
 private:
-	AudioCapture::Name							m_deviceName;
-	AudioCaptureParam							m_audioParam;
-	AudioCapture								m_audioCapture;
-	aacEncode									m_aac;
+	aacEncode				m_aac;
+	AudioCapture			m_capture;
+	AudioCapture::Name		m_deviceName;
+	AudioCaptureParam		m_audioParam;
+	TinyPerformanceTimer	m_timer;
 };
 

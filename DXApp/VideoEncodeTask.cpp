@@ -45,10 +45,10 @@ BOOL VideoEncodeTask::Open(const TinySize& scale, DWORD dwFPS, DWORD dwVideoRate
 	ASSERT(m_renderTask);
 	m_dwFPS = dwFPS;
 	m_dwVideoRate = dwVideoRate;
-	TinySize size = m_renderTask->GetParam()->GetSize();
-	BOOL bRes = m_x264.Open(size.cx, size.cy, (INT)dwFPS, (INT)dwVideoRate);
+	BOOL bRes = m_x264.Open(scale.cx, scale.cy, (INT)dwFPS, (INT)dwVideoRate);
 	if (!bRes)
 		return FALSE;
+	TinySize size = m_renderTask->GetParam()->GetSize();
 	m_converter.Reset(new I420Converter(size, scale));
 	return TRUE;
 }

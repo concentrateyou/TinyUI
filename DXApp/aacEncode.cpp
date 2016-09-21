@@ -3,6 +3,11 @@
 
 
 aacEncode::aacEncode()
+	:m_duration(0),
+	m_inputSamples(0),
+	m_maxOutputBytes(0),
+	m_dwINC(0),
+	m_dwPTS(0)
 {
 }
 
@@ -25,16 +30,22 @@ BOOL aacEncode::GetSpecificInfo(vector<BYTE>& info)
 	SAFE_FREE(buffer);
 	return TRUE;
 }
-
+DWORD aacEncode::GetLatestPTS() const
+{
+	return m_dwPTS;
+}
 BOOL aacEncode::Open(const WAVEFORMATEX& wfx, INT audioRate)
 {
+	Close();
 	m_wfx = wfx;
 	m_aac = faacEncOpen(wfx.nSamplesPerSec, wfx.nChannels, &m_inputSamples, &m_maxOutputBytes);
 	if (!m_aac)
 		return FALSE;
+	//AAC固定1024
+	DWORD time_base = 1024;
+	DWORD time_scale = 1000;
+	m_duration = time_base * time_scale / wfx.nSamplesPerSec;//播放一帧时间
 	m_config = faacEncGetCurrentConfiguration(m_aac);
-	m_config->aacObjectType = LOW;
-	m_config->quantqual = 100;
 	switch (wfx.wBitsPerSample)
 	{
 	case 16:
@@ -50,9 +61,11 @@ BOOL aacEncode::Open(const WAVEFORMATEX& wfx, INT audioRate)
 		m_config->inputFormat = FAAC_INPUT_FLOAT;
 		break;
 	}
+	m_config->aacObjectType = LOW;
 	m_config->mpegVersion = MPEG4;
+	m_config->quantqual = 100;
 	m_config->useLfe = 0;
-	m_config->outputFormat = 0;
+	m_config->outputFormat = 1;//0 = Raw; 1 = ADTS, TS format
 	m_config->bitRate = audioRate * 1000 / wfx.nChannels;//比特位
 	if (!faacEncSetConfiguration(m_aac, m_config))
 		return FALSE;
@@ -66,6 +79,7 @@ BOOL aacEncode::Encode(BYTE* bits)
 	INT size = faacEncEncode(m_aac, (int32_t*)bits, m_inputSamples, m_bits, m_maxOutputBytes);
 	if (size > 0)
 	{
+		m_dwPTS = m_dwINC++ * m_duration;
 		OnDone(m_bits, size);
 		return TRUE;
 	}

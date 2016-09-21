@@ -23,7 +23,7 @@ private:
 	void				OnExit();
 private:
 	DWORD								m_dwFPS;
-	VideoCapture						m_videoCapture;
+	VideoCapture						m_capture;
 	VideoCaptureParam					m_videoParam;
 	VideoCapture::Name					m_deviceName;
 	DXGraphics							m_graphics;

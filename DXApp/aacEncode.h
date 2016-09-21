@@ -1,6 +1,5 @@
 #pragma once
-#include "DXFramework.h"
-using namespace TinyUI;
+#include "Utility.h"
 extern "C"
 {
 #include "faac.h"
@@ -18,6 +17,7 @@ public:
 	BOOL	Encode(BYTE* bits);
 	void	Close();
 	BOOL	GetSpecificInfo(vector<BYTE>& info);
+	DWORD	GetLatestPTS() const;
 public:
 	virtual void OnDone(BYTE*, INT);
 public:
@@ -25,8 +25,11 @@ public:
 private:
 	faacEncHandle			m_aac;
 	faacEncConfigurationPtr	m_config;
-	ULONG					m_inputSamples;
-	ULONG					m_maxOutputBytes;
+	DWORD					m_inputSamples;
+	DWORD					m_maxOutputBytes;
+	DWORD					m_duration;
+	DWORD					m_dwINC;
+	DWORD					m_dwPTS;
 	TinyScopedArray<BYTE>	m_bits;
 	WAVEFORMATEX			m_wfx;
 };
