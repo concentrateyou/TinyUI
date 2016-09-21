@@ -1,5 +1,6 @@
 #pragma once
-#include "BaseEncode.h"
+#include "DXFramework.h"
+using namespace TinyUI;
 extern "C"
 {
 #include "faac.h"

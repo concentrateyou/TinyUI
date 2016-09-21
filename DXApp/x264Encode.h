@@ -1,6 +1,7 @@
 #pragma once
+#include "DXFramework.h"
 #include "I420Converter.h"
-#include "BaseEncode.h"
+using namespace TinyUI;
 extern "C"
 {
 #include "x264_config.h"
@@ -16,7 +17,7 @@ class x264Encode
 public:
 	x264Encode();
 	~x264Encode();
-	BOOL	Open(INT cx, INT cy, INT fps = 50, INT bitrate = 1000);//rate平均码率
+	BOOL	Open(INT cx, INT cy, INT fps = 50, INT rate = 1000);//rate平均码率
 	BOOL	Encode(AVFrame* pI420);
 	void	Close();
 	LONG	GetTimespan() const;
@@ -30,6 +31,5 @@ private:
 	x264_param_t*			m_x264Param;
 	x264_picture_t*			m_x264Image;
 	x264_t*					m_x264;
-	INT						m_bitRate;
 };
 

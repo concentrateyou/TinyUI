@@ -12,7 +12,7 @@ public:
 	AudioEncodeTask();
 	virtual ~AudioEncodeTask();
 	BOOL			Initialize(const AudioCapture::Name& name, const AudioCaptureParam& param);
-	BOOL			Open(const WAVEFORMATEX& wfx, DWORD dwAudioRate);
+	BOOL			Open(DWORD dwAudioRate);
 	BOOL			Submit();
 	void			Exit() OVERRIDE;
 	aacEncode*		GetEncode();

@@ -14,7 +14,8 @@ public:
 	BOOL	Submit();
 	void	Exit() OVERRIDE;
 private:
-	void	MessagePump();
+	void	OnMessagePump();
+	void	OnExit();
 	void	OnVideoDone(BYTE* bits, INT size, INT type);
 	void	OnAudioDone(BYTE* bits, INT size);
 private:

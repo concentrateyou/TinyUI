@@ -45,9 +45,6 @@
     <ClInclude Include="aacEncode.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="BaseEncode.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="DXGraphics.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -87,9 +84,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="aacEncode.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="BaseEncode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DXGraphics.cpp">

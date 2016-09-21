@@ -36,7 +36,7 @@ I420Converter::~I420Converter()
 
 BOOL I420Converter::BRGAToI420(BYTE* pBGRA)
 {
-	if (m_sws)
+	if (m_sws && pBGRA)
 	{
 		av_image_fill_arrays(m_bgra->data, m_bgra->linesize, pBGRA, AV_PIX_FMT_BGRA, m_srcSize.cx, m_srcSize.cy, 1);
 		m_size = av_image_get_buffer_size(AV_PIX_FMT_YUV420P, m_dstSize.cx, m_dstSize.cy, 1);

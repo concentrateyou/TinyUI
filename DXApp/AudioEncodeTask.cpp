@@ -35,9 +35,9 @@ BOOL AudioEncodeTask::Initialize(const AudioCapture::Name& name, const AudioCapt
 	return TRUE;
 }
 
-BOOL AudioEncodeTask::Open(const WAVEFORMATEX& wfx, DWORD dwAudioRate)
+BOOL AudioEncodeTask::Open(DWORD dwAudioRate)
 {
-	BOOL bRes = m_aac.Open(wfx, (DWORD)dwAudioRate);
+	BOOL bRes = m_aac.Open(m_audioParam.GetFormat(), (DWORD)dwAudioRate);
 	if (!bRes)
 		return FALSE;
 	return TRUE;

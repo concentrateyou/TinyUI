@@ -5,16 +5,14 @@
 x264Encode::x264Encode()
 	:m_x264Image(NULL),
 	m_x264(NULL),
-	m_x264Param(NULL),
-	m_bitRate(0)
+	m_x264Param(NULL)
 {
 }
 
-BOOL x264Encode::Open(INT cx, INT cy, INT fps, INT bitRate)
+BOOL x264Encode::Open(INT cx, INT cy, INT fps, INT rate)
 {
-	m_bitRate = bitRate;
 	Close();
-	if (!BuildParam(cx, cy, fps, bitRate))
+	if (!BuildParam(cx, cy, fps, rate))
 		return FALSE;
 	if ((m_x264 = x264_encoder_open(m_x264Param)) == NULL)
 		return FALSE;
