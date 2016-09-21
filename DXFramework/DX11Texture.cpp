@@ -64,6 +64,7 @@ namespace DXFramework
 			return FALSE;
 		D3D11_TEXTURE2D_DESC desc;
 		m_texture2D->GetDesc(&desc);
+		//RGB24->RGB32
 		INT linesize = ((((24 * desc.Width) + 31) / 32) * 4);
 		BYTE* src = const_cast<BYTE*>(pBits);
 		BYTE* dst = static_cast<BYTE*>(mapResource.pData);

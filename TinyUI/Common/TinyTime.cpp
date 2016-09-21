@@ -1367,7 +1367,7 @@ namespace TinyUI
 		LARGE_INTEGER currentPerformanceCount;
 		QueryPerformanceCounter(&currentPerformanceCount);
 		SetThreadAffinityMask(hHandle, oldMask);
-		LONGLONG elapseTime = currentPerformanceCount.QuadPart - currentPerformanceCount.QuadPart;
+		LONGLONG elapseTime = currentPerformanceCount.QuadPart - m_startPerformanceCount.QuadPart;
 		LONGLONG elapseTicks = (LONGLONG)(1000 * elapseTime / m_lFrequency.QuadPart);
 		ULONG check = GetTickCount() - m_dwTick;
 		SLONG offset = (SLONG)(elapseTicks - check);

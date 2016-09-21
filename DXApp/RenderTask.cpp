@@ -10,8 +10,9 @@ RenderTask::~RenderTask()
 {
 
 }
-BOOL RenderTask::Initialize(HWND hWND, INT cx, INT cy, const VideoCapture::Name& name, const VideoCaptureParam& param)
+BOOL RenderTask::Initialize(HWND hWND, INT cx, INT cy, DWORD dwFPS, const VideoCapture::Name& name, const VideoCaptureParam& param)
 {
+	m_dwFPS = dwFPS;
 	m_videoParam = param;
 	m_deviceName = name;
 	//³õÊ¼»¯DX
@@ -42,20 +43,26 @@ BOOL RenderTask::Submit()
 	Closure s = BindCallback(&RenderTask::MessagePump, this);
 	return TinyTaskBase::Submit(s);
 }
-void RenderTask::Render()
+DWORD RenderTask::Render()
 {
-	m_graphics.BeginScene();
-	if (m_videoCapture.GetPointer())
+	m_timer.BeginTime();
+	if (m_graphics.BeginScene())
 	{
-		TinySize size = m_videoParam.GetSize();
-		m_image.FillImage(m_graphics.GetD3D(), m_videoCapture.GetPointer());
-		m_graphics.DrawImage(m_image, 1, 1);
+		if (m_videoCapture.GetPointer())
+		{
+			TinySize size = m_videoParam.GetSize();
+			m_image.FillImage(m_graphics.GetD3D(), m_videoCapture.GetPointer());
+			m_graphics.DrawImage(m_image, 1, 1);
+		}
+		if (m_dx11CaptureTask)
+		{
+			m_graphics.DrawImage(m_dx11CaptureTask->GetTexture(), 1, 1);
+		}
+		m_graphics.EndScene();
 	}
-	if (m_dx11CaptureTask)
-	{
-		m_graphics.DrawImage(m_dx11CaptureTask->GetTexture(), 1, 1);
-	}
-	m_graphics.EndScene();
+	m_timer.EndTime();
+	LONGLONG s = m_timer.GetMicroseconds();
+	return s / 1000;
 }
 void RenderTask::Exit()
 {
@@ -71,14 +78,16 @@ void RenderTask::OnExit()
 }
 void RenderTask::MessagePump()
 {
+	DWORD offset = 0;
 	for (;;)
 	{
-		DWORD s = 1000 / m_videoParam.GetRate();
+		DWORD s = 1000 / m_dwFPS;
+		s = offset > s ? 0 : s - offset;
 		if (m_signal.Lock(s))
 		{
 			OnExit();
 			break;
 		}
-		this->Render();
+		offset = this->Render();
 	}
 }

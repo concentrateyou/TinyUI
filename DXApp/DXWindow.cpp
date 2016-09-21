@@ -75,9 +75,10 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 			break;
 		}
 	}
+
 	videoParam.SetScale(videoParam.GetSize().cx / 2, videoParam.GetSize().cy / 2);
 	m_renderTask.Reset(new RenderTask());
-	if (m_renderTask->Initialize(m_hWND, 1280, 720, videoNames[0], videoParam))
+	if (m_renderTask->Initialize(m_hWND, 1280, 720, 30, videoNames[0], videoParam))
 	{
 		m_renderTask->Submit();
 	}

@@ -10,6 +10,7 @@
 #include <string>
 #include "Common/TinyCommon.h"
 #include "Common/TinyUtility.h"
+#include "Common/TinyTime.h"
 #include "Control/TinyControl.h"
 #include "Render/TinyGDI.h"
 #include "IO/TinySharedMemory.h"
