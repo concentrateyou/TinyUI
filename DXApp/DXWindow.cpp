@@ -87,21 +87,21 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	bRes = m_videoTask->Open({ 800, 600 }, 30, 1000);
 	if (!bRes)
 		return FALSE;
-	//m_audioTask.Reset(new AudioEncodeTask());
-	/*bRes = m_audioTask->Initialize(audioNames[0], audioParam);
+	m_audioTask.Reset(new AudioEncodeTask());
+	bRes = m_audioTask->Initialize(audioNames[0], audioParam);
 	if (!bRes)
 		return FALSE;
 	bRes = m_audioTask->Open(128);
 	if (!bRes)
-		return FALSE;*/
-	/*bRes = m_publishTask->Connect();
+		return FALSE;
+	bRes = m_publishTask->Connect();
 	if (!bRes)
-	return FALSE;*/
+		return FALSE;
 
 	m_renderTask->Submit();
 	m_videoTask->Submit();
-	//m_audioTask->Submit();
-	//m_publishTask->Submit();
+	m_audioTask->Submit();
+	m_publishTask->Submit();
 
 	return TRUE;
 }
@@ -116,6 +116,15 @@ LRESULT DXWindow::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandle
 
 	m_renderTask->Exit();
 	m_renderTask->Wait(INFINITE);
+
+	m_videoTask->Exit();
+	m_videoTask->Wait(INFINITE);
+
+	m_audioTask->Exit();
+	m_audioTask->Wait(INFINITE);
+
+	m_publishTask->Exit();
+	m_publishTask->Wait(INFINITE);
 
 	PostQuitMessage(0);
 	return FALSE;

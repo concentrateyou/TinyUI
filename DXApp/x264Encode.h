@@ -9,9 +9,6 @@ extern "C"
 }
 
 #pragma comment(lib,"libx264.lib")
-
-class RTMPClient;
-
 class x264Encode
 {
 public:
@@ -28,8 +25,8 @@ public:
 private:
 	BOOL	BuildParam(INT cx, INT cy, INT fps, INT bitrate);
 private:
-	x264_param_t*			m_x264Param;
-	x264_picture_t*			m_x264Image;
-	x264_t*					m_x264;
+	x264_t*				m_x264;
+	x264_param_t*		m_x264Param;
+	x264_picture_t*		m_x264Image;
 };
 

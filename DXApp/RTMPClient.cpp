@@ -53,9 +53,11 @@ BOOL RTMPClient::Connect(const TinyString& url)
 	}
 	m_pRTMP = RTMP_Alloc();
 	RTMP_Init(m_pRTMP);
+	m_pRTMP->Link.timeout = 5;
 	if (!RTMP_SetupURL(m_pRTMP, url.STR()))
 		return FALSE;
 	RTMP_EnableWrite(m_pRTMP);
+	RTMP_SetBufferMS(m_pRTMP, 60 * 1000);
 	if (!RTMP_Connect(m_pRTMP, NULL))
 		return FALSE;
 	if (!RTMP_ConnectStream(m_pRTMP, 0))
