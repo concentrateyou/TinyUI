@@ -3,7 +3,7 @@
 
 
 aacEncode::aacEncode()
-	:m_duration(0),
+	:m_dwTime(0),
 	m_inputSamples(0),
 	m_maxOutputBytes(0),
 	m_dwINC(0),
@@ -44,7 +44,7 @@ BOOL aacEncode::Open(const WAVEFORMATEX& wfx, INT audioRate)
 	//AAC固定1024
 	DWORD time_base = 1024;
 	DWORD time_scale = 1000;
-	m_duration = time_base * time_scale / wfx.nSamplesPerSec;//播放一帧时间
+	m_dwTime = time_base * time_scale / wfx.nSamplesPerSec;//播放一帧时间
 	m_config = faacEncGetCurrentConfiguration(m_aac);
 	switch (wfx.wBitsPerSample)
 	{
@@ -79,7 +79,8 @@ BOOL aacEncode::Encode(BYTE* bits)
 	INT size = faacEncEncode(m_aac, (int32_t*)bits, m_inputSamples, m_bits, m_maxOutputBytes);
 	if (size > 0)
 	{
-		m_dwPTS = m_dwINC++ * m_duration;
+		m_dwPTS = m_dwINC++ * m_dwTime;
+		TRACE("Audio PTS:%d\n", m_dwPTS);
 		OnDone(m_bits, size);
 		return TRUE;
 	}

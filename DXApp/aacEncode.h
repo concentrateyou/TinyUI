@@ -27,7 +27,7 @@ private:
 	faacEncConfigurationPtr	m_config;
 	DWORD					m_inputSamples;
 	DWORD					m_maxOutputBytes;
-	DWORD					m_duration;
+	DWORD					m_dwTime;
 	DWORD					m_dwINC;
 	DWORD					m_dwPTS;
 	TinyScopedArray<BYTE>	m_bits;

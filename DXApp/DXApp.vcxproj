@@ -91,6 +91,7 @@
   <ItemGroup>
     <ClInclude Include="aacEncode.h" />
     <ClInclude Include="AudioEncodeTask.h" />
+    <ClInclude Include="SampleQueue.h" />
     <ClInclude Include="PublishTask.h" />
     <ClInclude Include="RenderTask.h" />
     <ClInclude Include="DXApp.h" />
@@ -109,6 +110,7 @@
   <ItemGroup>
     <ClCompile Include="aacEncode.cpp" />
     <ClCompile Include="AudioEncodeTask.cpp" />
+    <ClCompile Include="SampleQueue.cpp" />
     <ClCompile Include="PublishTask.cpp" />
     <ClCompile Include="RenderTask.cpp" />
     <ClCompile Include="DXApp.cpp" />

@@ -377,10 +377,8 @@ private:
 	x264_t*				m_x264;
 	x264_param_t*		m_x264Param;
 	x264_picture_t*		m_x264Image;
-	DWORD				m_duration;
 	DWORD				m_dwINC;
 	DWORD				m_dwPTS;
-	DWORD				m_dwDTS;
-	DWORD				m_dwTotal;
+	DWORD				m_dwTime;
 };
 
