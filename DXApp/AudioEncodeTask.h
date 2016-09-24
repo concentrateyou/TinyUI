@@ -20,7 +20,6 @@ public:
 private:
 	void			OnMessagePump();
 	void			OnExit();
-	void			OnDone(BYTE* bits, INT size);
 private:
 	aacEncode				m_aac;
 	AudioCapture			m_capture;

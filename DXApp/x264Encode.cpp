@@ -77,6 +77,8 @@ BOOL x264Encode::Encode(AVFrame* pI420)
 	INT size = x264_encoder_encode(m_x264, &pNAL, &iNAL, m_x264Image, &image);
 	if (size  && iNAL)
 	{
+		m_dwINC++;
+		m_dwPTS = image.i_pts * (1000 / m_x264Param->i_fps_num);
 		for (INT i = 0; i < iNAL; i++)
 		{
 			switch (pNAL[i].i_type)
@@ -85,14 +87,28 @@ BOOL x264Encode::Encode(AVFrame* pI420)
 			{
 				BYTE* sps = pNAL[i].p_payload + SPS_SEP;
 				INT	size = pNAL[i].i_payload - SPS_SEP;
-				OnDone(sps, size, pNAL[i].i_type);
+				TinyScopedReferencePtr<Sample> sample(new Sample(size));
+				sample->Fill(sps, size);
+				sample->INC = m_dwINC;
+				sample->PTS = m_dwPTS;
+				sample->DTS = 0;
+				sample->Track = 0;
+				sample->Flag = pNAL[i].i_type;
+				OnDone(sample);
 			}
 			break;
 			case NAL_PPS:
 			{
 				BYTE* pps = pNAL[i].p_payload + PPS_SEP;
-				INT	size = pNAL[i].i_payload - PPS_SEP;
-				OnDone(pps, size, pNAL[i].i_type);
+				INT size = pNAL[i].i_payload - PPS_SEP;
+				TinyScopedReferencePtr<Sample> sample(new Sample(size));
+				sample->Fill(pps, size);
+				sample->INC = m_dwINC;
+				sample->PTS = m_dwPTS;
+				sample->DTS = 0;
+				sample->Track = 0;
+				sample->Flag = pNAL[i].i_type;
+				OnDone(sample);
 			}
 			break;
 			case NAL_SLICE:
@@ -100,24 +116,21 @@ BOOL x264Encode::Encode(AVFrame* pI420)
 			case NAL_SLICE_DPB:
 			case NAL_SLICE_DPC:
 			case NAL_SLICE_IDR:
-				OnDone(pNAL[i].p_payload, pNAL[i].i_payload, pNAL[i].i_type);
-			default:
-				break;
+			{
+				BYTE* bits = pNAL[i].p_payload;
+				INT	size = pNAL[i].i_payload;
+				TinyScopedReferencePtr<Sample> sample(new Sample(size));
+				sample->Fill(bits, size);
+				sample->INC = m_dwINC;
+				sample->PTS = m_dwPTS;
+				sample->DTS = 0;
+				sample->Track = 0;
+				sample->Flag = pNAL[i].i_type;
+				OnDone(sample);
+			}
+			break;
 			}
 		}
-		switch (image.i_type)
-		{
-		case X264_TYPE_IDR:
-			break;
-		case X264_TYPE_I:
-			break;
-		case X264_TYPE_P:
-			break;
-		case X264_TYPE_B:
-			break;
-		}
-		m_dwINC++;
-		m_dwPTS = image.i_pts * (1000 / m_x264Param->i_fps_num);
 		return TRUE;
 	}
 	return FALSE;
@@ -139,9 +152,9 @@ void x264Encode::Close()
 	SAFE_DELETE(m_x264Image);
 }
 
-void x264Encode::OnDone(BYTE* bits, INT size, INT type)
+void x264Encode::OnDone(TinyScopedReferencePtr<Sample>& sample)
 {
-	EVENT_DONE(bits, size, type);
+	EVENT_DONE(sample);
 }
 
 x264Encode::~x264Encode()

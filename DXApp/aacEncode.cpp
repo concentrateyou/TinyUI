@@ -80,8 +80,13 @@ BOOL aacEncode::Encode(BYTE* bits)
 	if (size > 0)
 	{
 		m_dwPTS = m_dwINC++ * m_dwTime;
-		TRACE("Audio PTS:%d\n", m_dwPTS);
-		OnDone(m_bits, size);
+		TinyScopedReferencePtr<Sample> sample(new Sample(size));
+		sample->Fill(bits, size);
+		sample->INC = m_dwINC;
+		sample->PTS = m_dwPTS;
+		sample->DTS = 0;
+		sample->Track = 1;//“Ù∆µ
+		OnDone(sample);
 		return TRUE;
 	}
 	return FALSE;
@@ -94,7 +99,7 @@ void aacEncode::Close()
 		m_aac = NULL;
 	}
 }
-void aacEncode::OnDone(BYTE* bits, INT size)
+void aacEncode::OnDone(TinyScopedReferencePtr<Sample>& sample)
 {
-	EVENT_DONE(bits, size);
+	EVENT_DONE(sample);
 }

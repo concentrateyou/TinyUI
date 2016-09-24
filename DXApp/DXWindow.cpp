@@ -87,7 +87,6 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	bRes = m_videoTask->Open({ 800, 600 }, 30, 1000);
 	if (!bRes)
 		return FALSE;
-	m_audioTask.Reset(new AudioEncodeTask());
 	bRes = m_audioTask->Initialize(audioNames[0], audioParam);
 	if (!bRes)
 		return FALSE;

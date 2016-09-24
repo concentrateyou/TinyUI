@@ -368,9 +368,9 @@ public:
 	void	Close();
 	DWORD	GetLatestPTS() const;
 public:
-	virtual void OnDone(BYTE* bits, INT size, INT type);
+	virtual void OnDone(TinyScopedReferencePtr<Sample>& sample);
 public:
-	Event<void(BYTE*, INT, INT)> EVENT_DONE;
+	Event<void(TinyScopedReferencePtr<Sample>&)> EVENT_DONE;
 private:
 	BOOL	BuildParam(INT cx, INT cy, INT fps, INT bitrate);
 private:

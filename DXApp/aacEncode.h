@@ -19,9 +19,9 @@ public:
 	BOOL	GetSpecificInfo(vector<BYTE>& info);
 	DWORD	GetLatestPTS() const;
 public:
-	virtual void OnDone(BYTE*, INT);
+	virtual void OnDone(TinyScopedReferencePtr<Sample>& sample);
 public:
-	Event<void(BYTE*, INT)> EVENT_DONE;
+	Event<void(TinyScopedReferencePtr<Sample>&)> EVENT_DONE;
 private:
 	faacEncHandle			m_aac;
 	faacEncConfigurationPtr	m_config;

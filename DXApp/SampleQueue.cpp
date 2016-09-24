@@ -2,6 +2,21 @@
 #include "SampleQueue.h"
 
 
+Sample::Sample(DWORD size)
+	:Size(size)
+{
+	Bits.Reset(new BYTE[Size]);
+}
+Sample::~Sample()
+{
+
+}
+void Sample::Fill(BYTE* bits, DWORD size)
+{
+	ASSERT(Size == size);
+	memcpy(Bits, bits, size);
+}
+//////////////////////////////////////////////////////////////////////////
 SampleQueue::SampleQueue()
 {
 }
@@ -16,10 +31,9 @@ BOOL SampleQueue::IsEmpty() const
 	return m_samples.empty();
 }
 
-void SampleQueue::Add( Sample& sample)
+void SampleQueue::Add(Sample* sample)
 {
 	TinyAutoLock lock(m_lock);
-	sample.INC++;
 	m_samples.push_back(sample);
 }
 void SampleQueue::Remove()
@@ -28,7 +42,7 @@ void SampleQueue::Remove()
 	m_samples.pop_front();
 }
 
-Sample&	SampleQueue::GetSample()
+Sample*	SampleQueue::GetSample()
 {
 	return m_samples.front();
 }

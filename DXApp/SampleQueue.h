@@ -4,14 +4,20 @@
 using namespace std;
 using namespace TinyUI::IO;
 
-class Sample
+class Sample : public TinyReference < Sample >
 {
 public:
-	BYTE*				Bits;
-	INT					INC;
-	INT					PTS;
-	INT					DTS;
-	INT					Type;//0:video.1.audio
+	Sample(DWORD size);
+	~Sample();
+	void Fill(BYTE* bits,DWORD size);
+public:
+	TinyScopedPtr<BYTE>	Bits;
+	DWORD		Size;
+	DWORD		INC;
+	DWORD		PTS;
+	DWORD		DTS;
+	DWORD		Track;//0:video.1.audio
+	DWORD		Flag;
 };
 
 class SampleQueue
@@ -21,11 +27,11 @@ public:
 	~SampleQueue();
 public:
 	BOOL	IsEmpty() const;
-	void	Add(Sample& sample);
+	void	Add(Sample* sample);
 	void	Remove();
-	Sample&	GetSample();
+	Sample*	GetSample();
 private:
-	deque<Sample>	m_samples;
+	deque<TinyScopedReferencePtr<Sample>>	m_samples;
 	TinyLock		m_lock;
 };
 
