@@ -69,6 +69,7 @@ void AudioEncodeTask::OnMessagePump()
 			OnExit();
 			break;
 		}
-		m_aac.Encode(m_capture.GetPointer());
+		TinyAutoLock lock(m_capture);
+		m_aac.Encode(m_capture.GetPointer(), m_capture.GetSize());
 	}
 }

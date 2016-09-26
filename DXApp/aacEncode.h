@@ -7,6 +7,9 @@ extern "C"
 }
 #pragma comment(lib,"libfaac.lib")
 
+#define  AAC_TIMEBASE 1024
+#define  AAC_TIMEDEN  1000
+
 class aacEncode
 {
 public:
@@ -14,7 +17,7 @@ public:
 	~aacEncode();
 public:
 	BOOL	Open(const WAVEFORMATEX& wfx, INT audioRate);
-	BOOL	Encode(BYTE* bits);
+	BOOL	Encode(BYTE* bits, INT size);
 	void	Close();
 	BOOL	GetSpecificInfo(vector<BYTE>& info);
 	DWORD	GetLatestPTS() const;
@@ -32,5 +35,6 @@ private:
 	DWORD					m_dwPTS;
 	TinyScopedArray<BYTE>	m_bits;
 	WAVEFORMATEX			m_wfx;
+	FILE*					m_aacFile;
 };
 

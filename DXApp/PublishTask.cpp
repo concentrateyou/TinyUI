@@ -48,13 +48,13 @@ void PublishTask::OnExit()
 
 void PublishTask::OnVideoDone(TinyScopedReferencePtr<Sample>& sample)
 {
-	TRACE("Video-PTS:%d\n", sample->PTS);
+	/*TRACE("Video-PTS:%d\n", sample->PTS);*/
 	//m_queue.Add(std::move(sample));
 }
 
 void PublishTask::OnAudioDone(TinyScopedReferencePtr<Sample>& sample)
 {
-	TRACE("Audio-PTS:%d\n", sample->PTS);
+	//TRACE("Audio-PTS:%d\n", sample->PTS);
 	//m_queue.Add(std::move(sample));
 }
 

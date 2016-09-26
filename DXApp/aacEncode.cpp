@@ -7,13 +7,15 @@ aacEncode::aacEncode()
 	m_inputSamples(0),
 	m_maxOutputBytes(0),
 	m_dwINC(0),
-	m_dwPTS(0)
+	m_dwPTS(0),
+	m_aacFile(NULL)
 {
+	fopen_s(&m_aacFile, "D:\\123.aac", "wb");;
 }
-
 
 aacEncode::~aacEncode()
 {
+	fclose(m_aacFile);
 }
 
 BOOL aacEncode::GetSpecificInfo(vector<BYTE>& info)
@@ -42,9 +44,7 @@ BOOL aacEncode::Open(const WAVEFORMATEX& wfx, INT audioRate)
 	if (!m_aac)
 		return FALSE;
 	//AAC固定1024
-	DWORD time_base = 1024;
-	DWORD time_scale = 1000;
-	m_dwTime = time_base * time_scale / wfx.nSamplesPerSec;//播放一帧时间
+	m_dwTime = AAC_TIMEBASE * AAC_TIMEDEN / wfx.nSamplesPerSec;//播放一帧时间
 	m_config = faacEncGetCurrentConfiguration(m_aac);
 	switch (wfx.wBitsPerSample)
 	{
@@ -64,29 +64,33 @@ BOOL aacEncode::Open(const WAVEFORMATEX& wfx, INT audioRate)
 	m_config->aacObjectType = LOW;
 	m_config->mpegVersion = MPEG4;
 	m_config->quantqual = 100;
-	m_config->useLfe = 0;
+	m_config->useLfe = FALSE;
+	m_config->useTns = TRUE;
+	m_config->shortctl = SHORTCTL_NORMAL;
 	m_config->outputFormat = 1;//0 = Raw; 1 = ADTS, TS format
 	m_config->bitRate = audioRate * 1000 / wfx.nChannels;//比特位
-	if (!faacEncSetConfiguration(m_aac, m_config))
+	INT iRes = faacEncSetConfiguration(m_aac, m_config);
+	if (!iRes)
 		return FALSE;
 	m_bits.Reset(new BYTE[m_maxOutputBytes]);
 	return TRUE;
 }
-BOOL aacEncode::Encode(BYTE* bits)
+BOOL aacEncode::Encode(BYTE* bits, INT size)
 {
 	if (!bits)
 		return FALSE;
-	INT size = faacEncEncode(m_aac, (int32_t*)bits, m_inputSamples, m_bits, m_maxOutputBytes);
-	if (size > 0)
+	INT s = faacEncEncode(m_aac, (int32_t*)bits, m_inputSamples, m_bits, m_maxOutputBytes);
+	if (s > 0)
 	{
 		m_dwPTS = m_dwINC++ * m_dwTime;
-		TinyScopedReferencePtr<Sample> sample(new Sample(size));
-		sample->Fill(bits, size);
+		TinyScopedReferencePtr<Sample> sample(new Sample(s));
+		sample->Fill(bits, s);
 		sample->INC = m_dwINC;
 		sample->PTS = m_dwPTS;
 		sample->DTS = 0;
 		sample->Track = 1;//音频
 		OnDone(sample);
+		fwrite(m_bits, s, 1, m_aacFile);
 		return TRUE;
 	}
 	return FALSE;
