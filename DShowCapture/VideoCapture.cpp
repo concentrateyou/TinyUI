@@ -251,7 +251,7 @@ namespace Media
 		if (!m_captureFilter)
 			return FALSE;
 		TinyComPtr<ISpecifyPropertyPages> pages;
-		if (FAILED(m_captureFilter->QueryInterface(__uuidof(ISpecifyPropertyPages), reinterpret_cast<void**>(&pages))))
+		if (FAILED(m_captureFilter->QueryInterface(__uuidof(ISpecifyPropertyPages), (void **)&pages)))
 			return FALSE;
 		CAUUID cauuid;
 		if (FAILED(pages->GetPages(&cauuid)))
@@ -259,11 +259,15 @@ namespace Media
 		if (cauuid.cElems > 0)
 		{
 			FILTER_INFO filterInfo;
-			if (SUCCEEDED(m_captureFilter->QueryFilterInfo(&filterInfo)))
+			TinyComPtr<IUnknown> unknow;
+			if (SUCCEEDED(m_captureFilter->QueryFilterInfo(&filterInfo)) &&
+				SUCCEEDED(m_captureFilter->QueryInterface(IID_IUnknown, (void **)&unknow)))
 			{
-				OleCreatePropertyFrame(hWND, 30, 30, filterInfo.achName, 1, (LPUNKNOWN*)&m_captureFilter, cauuid.cElems, cauuid.pElems, 0, 0, NULL);
+				OleCreatePropertyFrame(hWND, 0, 0, filterInfo.achName, 1, &unknow, cauuid.cElems, cauuid.pElems, 0, 0, NULL);
 			}
 			CoTaskMemFree(cauuid.pElems);
+			filterInfo.pGraph->Release();
+			return TRUE;
 		}
 		return FALSE;
 	}

@@ -105,7 +105,6 @@ LRESULT CUIFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 
 void CUIFrame::OnVideo(BYTE* pBits, LONG size, LPVOID lpData)
 {
-	Sleep(3);
 	AM_MEDIA_TYPE* pMediaType = static_cast<AM_MEDIA_TYPE*>(lpData);
 	if (pMediaType)
 	{

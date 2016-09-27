@@ -61,13 +61,14 @@ BOOL aacEncode::Open(const WAVEFORMATEX& wfx, INT audioRate)
 		m_config->inputFormat = FAAC_INPUT_FLOAT;
 		break;
 	}
-	m_config->aacObjectType = LOW;
 	m_config->mpegVersion = MPEG4;
+	m_config->aacObjectType = LOW;
+	m_config->allowMidside = 1;
+	m_config->useLfe = 0;
+	m_config->useTns = 0;
 	m_config->quantqual = 100;
-	m_config->useLfe = FALSE;
-	m_config->useTns = TRUE;
-	m_config->shortctl = SHORTCTL_NORMAL;
-	m_config->outputFormat = 1;//0 = Raw; 1 = ADTS, TS format
+	m_config->bandWidth = 0;
+	m_config->outputFormat = 1; //ADTS
 	m_config->bitRate = audioRate * 1000 / wfx.nChannels;//±»ÃÿŒª
 	INT iRes = faacEncSetConfiguration(m_aac, m_config);
 	if (!iRes)
@@ -90,7 +91,7 @@ BOOL aacEncode::Encode(BYTE* bits, INT size)
 		sample->DTS = 0;
 		sample->Track = 1;//“Ù∆µ
 		OnDone(sample);
-		fwrite(m_bits, s, 1, m_aacFile);
+		fwrite(m_bits, 1, s, m_aacFile);
 		return TRUE;
 	}
 	return FALSE;
