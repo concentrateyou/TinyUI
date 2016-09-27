@@ -24,8 +24,8 @@ namespace TinyUI
 			{
 				BYTE*	data;
 				UINT	size;
-				UINT	in;
-				UINT	out;
+				UINT	offsetI;
+				UINT	offsetO;
 			}FIFO;
 		public:
 			TinyRingQueue();
@@ -34,6 +34,7 @@ namespace TinyUI
 			UINT	GetSize();
 			UINT	Read(BYTE *data, UINT size);
 			UINT	Write(BYTE *data, UINT size);
+			void	Reset();
 		protected:
 			TinyScopedArray<BYTE>	m_data;
 			FIFO	m_io;
