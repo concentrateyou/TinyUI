@@ -71,6 +71,6 @@ private:
 	Callback<void(BYTE*, LONG, LPVOID)> m_videoCB;
 	Callback<void(BYTE*, LONG, LPVOID)> m_audioCB;
 
-	Media::SoundPlayer	m_player;
+	//Media::SoundPlayer	m_player;
 };
 

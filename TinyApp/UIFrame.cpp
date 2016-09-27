@@ -125,14 +125,14 @@ void CUIFrame::OnVideo(BYTE* pBits, LONG size, LPVOID lpData)
 }
 void CUIFrame::OnAudio(BYTE* bits, LONG size, LPVOID)
 {
-	m_player.Play(bits, size);
+	//m_player.Play(bits, size);
 }
 
 LRESULT CUIFrame::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
 
-	m_player.Stop();
+	//m_player.Stop();
 
 	m_videoStart.EVENT_Click -= m_onVideoStart;
 	m_videoStop.EVENT_Click -= m_onVideoStop;
@@ -195,7 +195,7 @@ void CUIFrame::OnAudioSelectChange2(INT index)
 	m_audioDevice.Uninitialize();
 	m_audioDevice.Initialize(m_audioNames[m_audioDevice1.GetCurSel()], m_audioCB);
 	m_audioDevice.Allocate(param);
-	m_player.Initialize(m_hWND, param.GetFormat());
+	//m_player.Initialize(m_hWND, param.GetFormat());
 }
 
 void CUIFrame::OnVideoStart(void*, INT)

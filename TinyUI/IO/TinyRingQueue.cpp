@@ -8,70 +8,51 @@ namespace TinyUI
 	{
 		TinyRingQueue::TinyRingQueue()
 		{
-			m_lock.Initialize();
+			ZeroMemory(&m_io, sizeof(m_io));
 		}
 		TinyRingQueue::~TinyRingQueue()
 		{
-			m_lock.Uninitialize();
+
 		}
-		BOOL TinyRingQueue::Initialize(BYTE* buffer, UINT size)
+		BOOL TinyRingQueue::Initialize(UINT size)
 		{
-			if (is_power_of_2(size))
+			if (IS_POWER_OF_2(size))
 			{
-				m_s.buffer = buffer;
-				m_s.size = size;
-				m_s.in = 0;
-				m_s.out = 0;
+				m_data.Reset(new BYTE[size]);
+				m_io.data = m_data;
+				m_io.size = size;
+				m_io.in = 0;
+				m_io.out = 0;
 				return TRUE;
 			}
 			return FALSE;
 		}
 		UINT TinyRingQueue::GetSize()
 		{
-			m_lock.Lock();
-			UINT ts = (m_s.in - m_s.out);
-			m_lock.Unlock();
-			return ts;
+			TinyAutoLock lock(*this);
+			return (m_io.in - m_io.out);
 		}
-		UINT TinyRingQueue::InternalGet(BYTE *buffer, UINT size)
+		UINT TinyRingQueue::Read(BYTE *data, UINT size)
 		{
-			ASSERT(buffer);
-			UINT ts = 0;
-			size = min(size, m_s.in - m_s.out);
-			ts = min(size, m_s.size - (m_s.out & (m_s.size - 1)));
-			memcpy(buffer, m_s.buffer + (m_s.out & (m_s.size - 1)), ts);
-			memcpy(buffer + ts, m_s.buffer, size - ts);
-			m_s.out += size;
-			return size;
+			TinyAutoLock lock(*this);
+			size = min(size, m_io.in - m_io.out);
+			UINT s = min(size, m_io.size - (m_io.out & (m_io.size - 1)));
+			memcpy(data, m_io.data + (m_io.out & (m_io.size - 1)), s);
+			memcpy(data + s, m_io.data, size - s);
+			m_io.out += size;
+			if (m_io.in == m_io.out)
+				m_io.in = m_io.out = 0;
+			return s;
 		}
-		UINT TinyRingQueue::InternalPut(BYTE *buffer, UINT size)
+		UINT TinyRingQueue::Write(BYTE *data, UINT size)
 		{
-			ASSERT(buffer);
-			UINT ts = 0;
-			size = min(size, m_s.size - m_s.in + m_s.out);
-			ts = min(size, m_s.size - (m_s.in & (m_s.size - 1)));
-			memcpy(m_s.buffer + (m_s.in & (m_s.size - 1)), buffer, ts);
-			memcpy(m_s.buffer, buffer + ts, size - ts);
-			m_s.in += size;
-			return size;
-		}
-		UINT TinyRingQueue::Get(BYTE *buffer, UINT size)
-		{
-			UINT ts;
-			m_lock.Lock();
-			ts = InternalGet(buffer, size);
-			if (m_s.in == m_s.out)
-				m_s.in = m_s.out = 0;
-			m_lock.Unlock();
-			return ts;
-		}
-		UINT TinyRingQueue::Put(BYTE *buffer, UINT size)
-		{
-			UINT ts;
-			m_lock.Lock();
-			ts = InternalPut(buffer, size);
-			m_lock.Unlock();
-			return ts;
+			TinyAutoLock lock(*this);
+			size = min(size, m_io.size - m_io.in + m_io.out);
+			UINT s = min(size, m_io.size - (m_io.in & (m_io.size - 1)));
+			memcpy(m_io.data + (m_io.in & (m_io.size - 1)), data, s);
+			memcpy(m_io.data, data + s, size - s);
+			m_io.in += size;
+			return s;
 		}
 	}
 }

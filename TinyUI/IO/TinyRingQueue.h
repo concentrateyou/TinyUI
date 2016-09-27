@@ -7,20 +7,22 @@
 #include <algorithm>
 using namespace std;
 
-#define is_power_of_2(x)   ((x) != 0 && (((x) & ((x) - 1)) == 0))
-
+#ifndef IS_POWER_OF_2
+#define IS_POWER_OF_2(x)   ((x) != 0 && (((x) & ((x) - 1)) == 0))
+#endif 
 namespace TinyUI
 {
 	namespace IO
 	{
 		/// <summary>
-		/// 高效的循环队列(Linux kfifo)
+		/// 高效的循环队列(Linux FIFO)
+		/// 大小必须是2的整数幂
 		/// </summary>
-		class TinyRingQueue
+		class TinyRingQueue : public TinyLock
 		{
 			typedef struct tagFIFO
 			{
-				BYTE*	buffer;
+				BYTE*	data;
 				UINT	size;
 				UINT	in;
 				UINT	out;
@@ -28,16 +30,13 @@ namespace TinyUI
 		public:
 			TinyRingQueue();
 			~TinyRingQueue();
-			BOOL	Initialize(BYTE* buffer, UINT size);
+			BOOL	Initialize(UINT size);
 			UINT	GetSize();
-			UINT	Get(BYTE *buffer, UINT size);
-			UINT	Put(BYTE *buffer, UINT size);
-		private:
-			UINT	InternalGet(BYTE *buffer, UINT size);
-			UINT	InternalPut(BYTE *buffer, UINT size);
-		private:
-			FIFO			m_s;
-			TinySpinLock	m_lock;
+			UINT	Read(BYTE *data, UINT size);
+			UINT	Write(BYTE *data, UINT size);
+		protected:
+			TinyScopedArray<BYTE>	m_data;
+			FIFO	m_io;
 		};
 	};
 }
