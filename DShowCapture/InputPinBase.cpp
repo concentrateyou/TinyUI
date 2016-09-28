@@ -85,8 +85,6 @@ namespace Media
 		if (FAILED(pSample->GetTime(&times, &timee)))
 			return S_FALSE;
 		FLOAT ms = static_cast<FLOAT>((timee - times) * 1000 / 10000000);
-		m_observer->m_bits = bits;
-		m_observer->m_size = size;
 		m_observer->OnFrameReceive(bits, size, &m_mediaType);
 		return NOERROR;
 	}

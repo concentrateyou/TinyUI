@@ -36,9 +36,8 @@ namespace Media
 		}
 	}
 	VideoCapture::VideoCapture()
-		:m_size(0)
 	{
-		m_bits = NULL;
+
 	}
 	VideoCapture::~VideoCapture()
 	{

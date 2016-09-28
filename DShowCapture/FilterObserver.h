@@ -14,13 +14,8 @@ namespace Media
 		DISALLOW_COPY_AND_ASSIGN(FilterObserver);
 	public:
 		FilterObserver();
-		BYTE*	GetPointer() const;
-		INT		GetSize() const;
 		virtual void OnFrameReceive(BYTE* bits, LONG size, LPVOID lpParameter) = 0;
 	protected:
 		virtual ~FilterObserver();
-	private:
-		BYTE*	m_bits;
-		LONG	m_size;
 	};
 }

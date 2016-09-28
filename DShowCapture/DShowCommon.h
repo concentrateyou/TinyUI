@@ -1,8 +1,10 @@
 #pragma once
 #include "Common/TinyCommon.h"
 #include "Common/TinyString.h"
-#include "Render/TinyGDI.h"
 #include "Common/TinyCallback.h"
+#include "Common/TinyUtility.h"
+#include "IO/TinyRingQueue.h"
+#include "Render/TinyGDI.h"
 #include <dshow.h>
 #include <uuids.h>
 #include <string>

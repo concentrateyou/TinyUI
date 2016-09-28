@@ -41,6 +41,7 @@ namespace Media
 		BOOL	Pause();
 		BOOL	GetState(FILTER_STATE& state);
 		BOOL	ShowProperty(HWND hWND);
+	public:
 		virtual BOOL Allocate(const VideoCaptureParam& param);
 		virtual void DeAllocate();
 	public:
@@ -67,7 +68,5 @@ namespace Media
 		TinyComPtr<IPin>							m_sinkI;
 		TinyScopedReferencePtr<VideoSinkFilter>		m_sinkFilter;
 		Callback<void(BYTE*, LONG, LPVOID)>			m_callback;
-		BYTE*										m_bits;
-		INT											m_size;
 	};
 }

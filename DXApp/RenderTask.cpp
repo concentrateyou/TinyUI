@@ -3,6 +3,7 @@
 #include "DXWindow.h"
 
 RenderTask::RenderTask()
+	:m_size(0)
 {
 
 }
@@ -27,7 +28,8 @@ BOOL RenderTask::Initialize(HWND hWND, INT cx, INT cy, DWORD dwFPS, const VideoC
 	//游戏捕获
 	m_dx11CaptureTask.Reset(new DX11CaptureTask(&m_graphics.GetD3D(), cx, cy));
 	//初始化视频捕获
-	bRes = m_capture.Initialize(m_deviceName);
+	m_videoCB = BindCallback(&RenderTask::OnVideo, this);
+	bRes = m_capture.Initialize(m_deviceName, m_videoCB);
 	if (!bRes)
 		return FALSE;
 	bRes = m_capture.Allocate(m_videoParam);
@@ -39,6 +41,18 @@ VideoCapture* RenderTask::GetCapture()
 {
 	return &m_capture;
 }
+
+void RenderTask::OnVideo(BYTE* bits, LONG size, LPVOID ps)
+{
+	if (m_size != size)
+	{
+		m_size = size;
+		m_bits.Reset(new BYTE[m_size]);
+		m_queue.Initialize(ROUNDUP_POW_2(m_size * 3));
+	}
+	m_queue.Write(bits, size);
+}
+
 BYTE* RenderTask::GetPointer() const
 {
 	return m_graphics.GetPointer();
@@ -62,10 +76,11 @@ DWORD RenderTask::Render()
 	m_timer.BeginTime();
 	if (m_graphics.BeginScene())
 	{
-		if (m_capture.GetPointer())
+		if (!m_bits.IsEmpty())
 		{
+			m_queue.Read(m_bits, m_size);
 			TinySize size = m_videoParam.GetSize();
-			m_image.FillImage(m_graphics.GetD3D(), m_capture.GetPointer());
+			m_image.FillImage(m_graphics.GetD3D(), m_bits);
 			m_graphics.DrawImage(m_image, 1, 1);
 		}
 		if (m_dx11CaptureTask)

@@ -19,6 +19,7 @@ public:
 	BYTE*				GetPointer() const;
 	VideoCaptureParam*	GetParam();
 private:
+	void				OnVideo(BYTE* bits, LONG size, LPVOID ps);
 	void				OnMessagePump();
 	void				OnExit();
 private:
@@ -30,5 +31,9 @@ private:
 	DX11Image							m_image;
 	TinyScopedPtr<DX11CaptureTask>		m_dx11CaptureTask;
 	TinyPerformanceTimer				m_timer;
+	LONG								m_size;
+	TinyScopedArray<BYTE>				m_bits;
+	IO::TinyRingQueue					m_queue;
+	TinyUI::Callback<void(BYTE*, LONG, LPVOID)> m_videoCB;
 };
 
