@@ -28,8 +28,8 @@ public:
 	BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 private:
 	TinyScopedPtr<RenderTask>			m_renderTask;
-	TinyScopedPtr<AudioEncodeTask>		m_audioTask;
+	//TinyScopedPtr<AudioEncodeTask>		m_audioTask;
 	TinyScopedPtr<VideoEncodeTask>		m_videoTask;
-	TinyScopedPtr<PublishTask>			m_publishTask;
+	//TinyScopedPtr<PublishTask>			m_publishTask;
 };
 

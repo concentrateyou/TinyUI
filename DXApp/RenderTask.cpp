@@ -59,7 +59,6 @@ BOOL RenderTask::Submit()
 }
 DWORD RenderTask::Render()
 {
-	TinyAutoLock lock(m_capture);
 	m_timer.BeginTime();
 	if (m_graphics.BeginScene())
 	{

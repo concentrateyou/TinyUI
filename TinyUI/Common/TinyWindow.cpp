@@ -59,24 +59,26 @@ namespace TinyUI
 		ATOM atom = 0;
 		WNDCLASSEX class_ex;
 		memset(&class_ex, 0, sizeof(WNDCLASSEX));
-		atom = (ATOM)::GetClassInfoEx(hInstance, lpszClass, &class_ex);
-		if (atom == 0)
+		if (!::GetClassInfoEx(NULL, lpszClass, &class_ex))
 		{
-			class_ex.cbSize = sizeof(WNDCLASSEX);
-			class_ex.lpfnWndProc = TinyWindow::BeginLoop;
-			class_ex.cbClsExtra = 0;
-			class_ex.cbWndExtra = 0;
-			class_ex.hInstance = hInstance;
-			class_ex.hIcon = RetrieveIcon();
-			class_ex.style &= ~CS_GLOBALCLASS;
-			class_ex.style |= CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
-			class_ex.hCursor = LoadCursor(NULL, IDC_ARROW);
-			class_ex.hbrBackground = GetSysColorBrush(0x0F);
-			class_ex.lpszMenuName = NULL;
-			class_ex.lpszClassName = lpszClass;
-			class_ex.hIconSm = class_ex.hIcon;
-			atom = ::RegisterClassEx(&class_ex);
-			return MAKEINTATOM(atom);
+			if (!::GetClassInfoEx(hInstance, lpszClass, &class_ex))
+			{
+				class_ex.cbSize = sizeof(WNDCLASSEX);
+				class_ex.lpfnWndProc = TinyWindow::BeginLoop;
+				class_ex.cbClsExtra = 0;
+				class_ex.cbWndExtra = 0;
+				class_ex.hInstance = hInstance;
+				class_ex.hIcon = RetrieveIcon();
+				class_ex.style &= ~CS_GLOBALCLASS;
+				class_ex.style |= CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
+				class_ex.hCursor = LoadCursor(NULL, IDC_ARROW);
+				class_ex.hbrBackground = GetSysColorBrush(0x0F);
+				class_ex.lpszMenuName = NULL;
+				class_ex.lpszClassName = lpszClass;
+				class_ex.hIconSm = class_ex.hIcon;
+				atom = ::RegisterClassEx(&class_ex);
+				return MAKEINTATOM(atom);
+			}
 		}
 		return lpszClass;
 	};
@@ -91,7 +93,7 @@ namespace TinyUI
 		if (result == FALSE)
 		{
 			SetLastError(ERROR_OUTOFMEMORY);
-			return FALSE;
+			return FALSE; 
 		}
 		HINSTANCE hInstance = TinyApplication::GetInstance()->Handle();
 		if (hInstance == NULL)

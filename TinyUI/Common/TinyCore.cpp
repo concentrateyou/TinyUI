@@ -7,23 +7,24 @@ namespace TinyUI
 	TinyCriticalSection::TinyCriticalSection() throw()
 	{
 		ZeroMemory(&section, sizeof(section));
-		InitializeCriticalSection(&section);
+
 	}
 	TinyCriticalSection::~TinyCriticalSection()
 	{
-		DeleteCriticalSection(&section);
+		::DeleteCriticalSection(&section);
 	}
-	void TinyCriticalSection::Lock() throw()
+	BOOL TinyCriticalSection::Initialize() throw()
 	{
-		EnterCriticalSection(&section);
+		return ::InitializeCriticalSectionEx(&section, 0, 0);
 	}
-	BOOL TinyCriticalSection::TryLock() throw()
+	BOOL TinyCriticalSection::Lock() throw()
 	{
-		return ::TryEnterCriticalSection(&section);
+		::EnterCriticalSection(&section);
+		return TRUE;
 	}
 	void TinyCriticalSection::Unlock() throw()
 	{
-		LeaveCriticalSection(&section);
+		::LeaveCriticalSection(&section);
 	}
 	/////////////////////////////////////////////////////////////////////////
 	TinyEvent::TinyEvent()
@@ -135,22 +136,18 @@ namespace TinyUI
 	//////////////////////////////////////////////////////////////////////////
 	TinyLock::TinyLock()
 	{
-
+		m_s.Initialize();
 	}
 	TinyLock::~TinyLock()
 	{
 	}
-	void TinyLock::Lock()
+	BOOL TinyLock::Lock()
 	{
-		m_section.Lock();
+		return m_s.Lock();
 	}
 	void TinyLock::Unlock()
 	{
-		m_section.Unlock();
-	}
-	BOOL TinyLock::TryLock()
-	{
-		return m_section.TryLock();
+		m_s.Unlock();
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinyAutoLock::TinyAutoLock(TinyLock& lock) : m_lock(lock)

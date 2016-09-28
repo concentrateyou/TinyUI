@@ -18,7 +18,7 @@ namespace TinyUI
 	/// <summary>
 	/// TinyUI的应用实例
 	/// </summary>
-	class TinyApplication
+	class TinyApplication : public TinyLock
 	{
 	private:
 		INT					m_iCmdShow;
@@ -54,6 +54,7 @@ namespace TinyUI
 		TinyHandleMap<HIMAGELIST, TinyHandleHIMAGELIST*>&	GetMapHIMAGELIST();
 	private:
 		TinySimpleMap<DWORD, TinyMessageLoop*>			m_msgLoops;
+		TinyLock										m_lock;
 	private:
 		TinyHandleMap<HWND, TinyHandleHWND*>			m_MapHWND;
 		TinyHandleMap<HMENU, TinyHandleHMENU*>			m_MapHMENU;

@@ -7,7 +7,7 @@ namespace Media
 {
 	class InputPinBase;
 
-	class FilterObserver : public TinyLock
+	class FilterObserver
 	{
 		friend class InputPinBase;
 		DECLARE_DYNAMIC(FilterObserver);

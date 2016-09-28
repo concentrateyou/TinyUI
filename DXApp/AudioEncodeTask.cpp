@@ -64,12 +64,11 @@ void AudioEncodeTask::OnMessagePump()
 {
 	for (;;)
 	{
-		if (m_signal.Lock(0))
+		if (m_signal.Lock(25))
 		{
 			OnExit();
 			break;
 		}
-		TinyAutoLock lock(m_capture);
-		m_aac.Encode(m_capture.GetPointer(), m_capture.GetSize());
+		//m_aac.Encode(m_capture.GetPointer(), m_capture.GetSize());
 	}
 }

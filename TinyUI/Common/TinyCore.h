@@ -17,8 +17,8 @@ namespace TinyUI
 	public:
 		TinyCriticalSection() throw();
 		virtual ~TinyCriticalSection();
-		void Lock() throw();
-		BOOL TryLock() throw();
+		BOOL Initialize() throw();
+		BOOL Lock() throw();
 		void Unlock() throw();
 	private:
 		CRITICAL_SECTION section;
@@ -75,11 +75,10 @@ namespace TinyUI
 	public:
 		TinyLock();
 		virtual ~TinyLock();
-		void Lock();
+		BOOL Lock();
 		void Unlock();
-		BOOL TryLock();
 	private:
-		TinyCriticalSection m_section;
+		TinyCriticalSection m_s;
 	};
 	/// <summary>
 	/// ×Ô¶¯Ëø

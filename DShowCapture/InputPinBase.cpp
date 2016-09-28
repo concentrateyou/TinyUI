@@ -75,7 +75,6 @@ namespace Media
 		{
 			return hRes;
 		}
-		TinyAutoLock lock(*m_observer);
 		const LONG size = pSample->GetActualDataLength();
 		BYTE* bits = NULL;
 		if (FAILED(pSample->GetPointer(&bits)))
@@ -85,7 +84,7 @@ namespace Media
 		//°´ÕÕ100ns¼ÆËã 10000000/30 = 333333.33
 		if (FAILED(pSample->GetTime(&times, &timee)))
 			return S_FALSE;
-		FLOAT ms = (timee - times) * 1000 / 10000000;
+		FLOAT ms = static_cast<FLOAT>((timee - times) * 1000 / 10000000);
 		m_observer->m_bits = bits;
 		m_observer->m_size = size;
 		m_observer->OnFrameReceive(bits, size, &m_mediaType);

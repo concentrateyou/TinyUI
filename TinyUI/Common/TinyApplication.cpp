@@ -22,49 +22,22 @@ namespace TinyUI
 	}
 	BOOL TinyApplication::AddMessageLoop(TinyMessageLoop* pMsgLoop)
 	{
-		TinySpinLock spin;
-		if (!spin.Initialize())
-		{
-			TRACE(_T("ERROR : Unable to lock critical section in AddMessageLoop.\n"));
-			ASSERT(FALSE);
-			return FALSE;
-		}
-		spin.Lock();
+		TinyAutoLock lock(m_lock);
 		ASSERT(pMsgLoop != NULL);
 		ASSERT(m_msgLoops.Lookup(::GetCurrentThreadId()) == NULL);
 		BOOL bRet = m_msgLoops.Add(::GetCurrentThreadId(), pMsgLoop) != NULL;
-		spin.Unlock();
-		spin.Uninitialize();
 		return bRet;
 	}
 	BOOL TinyApplication::RemoveMessageLoop()
 	{
-		TinySpinLock spin;
-		if (!spin.Initialize())
-		{
-			TRACE(_T("ERROR : Unable to lock critical section in RemoveMessageLoop.\n"));
-			ASSERT(FALSE);
-			return FALSE;
-		}
-		spin.Lock();
+		TinyAutoLock lock(m_lock);
 		BOOL bRet = m_msgLoops.Remove(::GetCurrentThreadId());
-		spin.Unlock();
-		spin.Uninitialize();
 		return bRet;
 	}
 	TinyMessageLoop* TinyApplication::GetMessageLoop(DWORD dwThreadID)
 	{
-		TinySpinLock spin;
-		if (!spin.Initialize())
-		{
-			TRACE(_T("ERROR : Unable to lock critical section in SysMessageLoop::GetMessageLoop.\n"));
-			ASSERT(FALSE);
-			return NULL;
-		}
-		spin.Lock();
+		TinyAutoLock lock(m_lock);
 		TinyMessageLoop* ps = *m_msgLoops.Lookup(dwThreadID);
-		spin.Unlock();
-		spin.Uninitialize();
 		return ps;
 	}
 	BOOL TinyApplication::Initialize(HINSTANCE m_hInstance, LPTSTR m_lpCmdLine, INT m_nCmdShow, LPCTSTR lpTableName)
