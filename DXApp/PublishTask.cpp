@@ -67,5 +67,6 @@ void PublishTask::OnMessagePump()
 			OnExit();
 			break;
 		}
+		Sleep(100);
 	}
 }

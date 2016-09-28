@@ -3,6 +3,7 @@
 
 
 AudioEncodeTask::AudioEncodeTask()
+	:m_size(0)
 {
 }
 
@@ -25,7 +26,8 @@ BOOL AudioEncodeTask::Initialize(const AudioCapture::Name& name, const AudioCapt
 {
 	m_deviceName = name;
 	m_audioParam = param;
-	BOOL bRes = m_capture.Initialize(m_deviceName);
+	m_audioCB = BindCallback(&AudioEncodeTask::OnAudio, this);
+	BOOL bRes = m_capture.Initialize(m_deviceName, m_audioCB);
 	if (!bRes)
 		return FALSE;
 	bRes = m_capture.Allocate(param);
@@ -60,15 +62,30 @@ void AudioEncodeTask::OnExit()
 	m_aac.Close();
 }
 
+void AudioEncodeTask::OnAudio(BYTE* bits, LONG size, LPVOID ps)
+{
+	if (m_size != size)
+	{
+		m_size = size;
+		m_bits.Reset(new BYTE[m_size]);
+		m_queue.Initialize(ROUNDUP_POW_2(m_size * 3));
+	}
+	m_queue.Write(bits, size);
+}
+
 void AudioEncodeTask::OnMessagePump()
 {
 	for (;;)
 	{
-		if (m_signal.Lock(25))
+		if (m_signal.Lock(2))
 		{
 			OnExit();
 			break;
 		}
-		//m_aac.Encode(m_capture.GetPointer(), m_capture.GetSize());
+		INT size = m_queue.Read(m_bits, m_size);
+		if (size)
+		{
+			m_aac.Encode(m_bits, size);
+		}
 	}
 }

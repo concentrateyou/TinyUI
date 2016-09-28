@@ -16,7 +16,7 @@ public:
 	BOOL				Submit();
 	void				Exit() OVERRIDE;
 	VideoCapture*		GetCapture();
-	BYTE*				GetPointer() const;
+	BYTE*				GetPointer();
 	VideoCaptureParam*	GetParam();
 private:
 	void				OnVideo(BYTE* bits, LONG size, LPVOID ps);

@@ -14,7 +14,7 @@ public:
 	BOOL	BeginScene();
 	BOOL	EndScene();
 	DX11&	GetD3D();
-	BYTE*	GetPointer() const;
+	BYTE*	GetPointer();
 	BOOL	DrawImage(DX11Image& image, INT x, INT y);
 private:
 	BOOL	CreateTexture(INT cx, INT cy);
@@ -23,10 +23,13 @@ private:
 	DX11TextureShader				m_textureShader;
 	DXCamera						m_camera;
 	TinyComPtr<ID3D11Resource>		m_resource;
-	BYTE*							m_bits;
 	D3DXMATRIX						m_viewMatrix;
 	D3DXMATRIX						m_worldMatrix;
 	D3DXMATRIX						m_projectionMatrix;
 	D3DXMATRIX						m_orthoMatrix;
+	INT								m_cy;
+	LONG							m_size;
+	TinyScopedArray<BYTE>			m_bits;
+	IO::TinyRingQueue				m_queue;
 };
 

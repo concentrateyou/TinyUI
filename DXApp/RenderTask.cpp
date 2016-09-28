@@ -53,7 +53,7 @@ void RenderTask::OnVideo(BYTE* bits, LONG size, LPVOID ps)
 	m_queue.Write(bits, size);
 }
 
-BYTE* RenderTask::GetPointer() const
+BYTE* RenderTask::GetPointer() 
 {
 	return m_graphics.GetPointer();
 }
@@ -79,7 +79,6 @@ DWORD RenderTask::Render()
 		if (!m_bits.IsEmpty())
 		{
 			m_queue.Read(m_bits, m_size);
-			TinySize size = m_videoParam.GetSize();
 			m_image.FillImage(m_graphics.GetD3D(), m_bits);
 			m_graphics.DrawImage(m_image, 1, 1);
 		}

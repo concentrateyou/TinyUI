@@ -58,7 +58,7 @@ void VideoEncodeTask::OnMessagePump()
 	ASSERT(m_renderTask || m_converter);
 	for (;;)
 	{
-		if (m_signal.Lock(0))
+		if (m_signal.Lock(120))
 		{
 			OnExit();
 			break;

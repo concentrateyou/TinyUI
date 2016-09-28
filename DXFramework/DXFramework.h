@@ -15,6 +15,7 @@
 #include "Render/TinyGDI.h"
 #include "IO/TinySharedMemory.h"
 #include "IO/TinyTaskBase.h"
+#include "IO/TinyRingQueue.h"
 using namespace TinyUI;
 using namespace std;
 

@@ -3,6 +3,8 @@
 #include <DXGIFormat.h>
 
 DXGraphics::DXGraphics()
+	:m_size(0),
+	m_cy(0)
 {
 }
 
@@ -32,6 +34,7 @@ BOOL DXGraphics::CreateTexture(INT cx, INT cy)
 		return FALSE;
 	if (FAILED(texture->QueryInterface(__uuidof(ID3D11Resource), (void**)&m_resource)))
 		return FALSE;
+	m_cy = cy;
 	return TRUE;
 }
 
@@ -71,7 +74,13 @@ BOOL DXGraphics::EndScene()
 		D3D11_MAPPED_SUBRESOURCE ms = { 0 };
 		if (SUCCEEDED(m_dx11.GetImmediateContext()->Map(m_resource, 0, D3D11_MAP_READ, 0, &ms)))
 		{
-			m_bits = static_cast<BYTE*>(ms.pData);
+			if (m_size != (ms.RowPitch * m_cy))
+			{
+				m_size = ms.RowPitch * m_cy;
+				m_bits.Reset(new BYTE[m_size]);
+				m_queue.Initialize(ROUNDUP_POW_2(m_size * 3));
+			}
+			m_queue.Write(static_cast<BYTE*>(ms.pData), m_size);
 			m_dx11.GetImmediateContext()->Unmap(m_resource, 0);
 			return TRUE;
 		}
@@ -96,7 +105,8 @@ DX11& DXGraphics::GetD3D()
 	return m_dx11;
 }
 
-BYTE* DXGraphics::GetPointer() const
+BYTE* DXGraphics::GetPointer()
 {
+	m_queue.Read(m_bits, m_size);
 	return m_bits;
 }
