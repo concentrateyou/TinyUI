@@ -32,12 +32,10 @@ namespace TinyUI
 		}
 		UINT TinyRingQueue::GetSize()
 		{
-			TinyAutoLock lock(*this);
 			return (m_io.offsetI - m_io.offsetO);
 		}
 		UINT TinyRingQueue::Read(BYTE *data, UINT size)
 		{
-			TinyAutoLock lock(*this);
 			size = min(size, m_io.offsetI - m_io.offsetO);
 			UINT s = min(size, m_io.size - (m_io.offsetO & (m_io.size - 1)));
 			memcpy(data, m_io.data + (m_io.offsetO & (m_io.size - 1)), s);
@@ -45,21 +43,19 @@ namespace TinyUI
 			m_io.offsetO += size;
 			if (m_io.offsetI == m_io.offsetO)
 				m_io.offsetI = m_io.offsetO = 0;
-			return s;
+			return size;
 		}
 		UINT TinyRingQueue::Write(BYTE *data, UINT size)
 		{
-			TinyAutoLock lock(*this);
 			size = min(size, m_io.size - m_io.offsetI + m_io.offsetO);
 			UINT s = min(size, m_io.size - (m_io.offsetI & (m_io.size - 1)));
 			memcpy(m_io.data + (m_io.offsetI & (m_io.size - 1)), data, s);
 			memcpy(m_io.data, data + s, size - s);
 			m_io.offsetI += size;
-			return s;
+			return size;
 		}
 		void TinyRingQueue::Reset()
 		{
-			TinyAutoLock lock(*this);
 			m_io.offsetI = m_io.offsetO = 0;
 		}
 	}

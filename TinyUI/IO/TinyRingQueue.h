@@ -18,7 +18,7 @@ namespace TinyUI
 		/// 高效的循环队列(Linux FIFO)
 		/// 大小必须是2的整数幂
 		/// </summary>
-		class TinyRingQueue : public TinyLock
+		class TinyRingQueue
 		{
 			typedef struct tagFIFO
 			{
@@ -37,7 +37,7 @@ namespace TinyUI
 			void	Reset();
 		protected:
 			TinyScopedArray<BYTE>	m_data;
-			FIFO	m_io;
+			FIFO					m_io;
 		};
 	};
 }
