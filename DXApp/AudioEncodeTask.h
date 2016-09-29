@@ -18,10 +18,11 @@ public:
 	aacEncode*		GetEncode();
 	AudioCapture*	GetCapture();
 private:
-	void			OnAudio(BYTE* bits, LONG size,LPVOID ps);
+	void			OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps);
 	void			OnMessagePump();
 	void			OnExit();
 private:
+	LONG								m_ts;
 	aacEncode							m_aac;
 	AudioCapture						m_capture;
 	AudioCapture::Name					m_deviceName;
@@ -30,6 +31,6 @@ private:
 	LONG								m_size;
 	TinyScopedArray<BYTE>				m_bits;
 	IO::TinyRingQueue					m_queue;
-	TinyUI::Callback<void(BYTE*, LONG,LPVOID)> m_audioCB;
+	TinyUI::Callback<void(BYTE*, LONG, FLOAT, LPVOID)> m_audioCB;
 };
 

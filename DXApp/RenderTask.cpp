@@ -42,7 +42,7 @@ VideoCapture* RenderTask::GetCapture()
 	return &m_capture;
 }
 
-void RenderTask::OnVideo(BYTE* bits, LONG size, LPVOID ps)
+void RenderTask::OnVideo(BYTE* bits, LONG size,FLOAT ts, LPVOID ps)
 {
 	if (m_size != size)
 	{

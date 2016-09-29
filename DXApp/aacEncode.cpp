@@ -7,15 +7,13 @@ aacEncode::aacEncode()
 	m_inputSamples(0),
 	m_maxOutputBytes(0),
 	m_dwINC(0),
-	m_dwPTS(0),
-	m_aacFile(NULL)
+	m_dwPTS(0)
 {
-	fopen_s(&m_aacFile, "D:\\123.aac", "wb");;
 }
 
 aacEncode::~aacEncode()
 {
-	fclose(m_aacFile);
+
 }
 
 BOOL aacEncode::GetSpecificInfo(vector<BYTE>& info)
@@ -91,7 +89,6 @@ BOOL aacEncode::Encode(BYTE* bits, INT size)
 		sample->DTS = 0;
 		sample->Track = 1;//“Ù∆µ
 		OnDone(sample);
-		fwrite(m_bits, 1, s, m_aacFile);
 		return TRUE;
 	}
 	return FALSE;

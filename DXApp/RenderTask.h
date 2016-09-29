@@ -19,7 +19,7 @@ public:
 	BYTE*				GetPointer();
 	VideoCaptureParam*	GetParam();
 private:
-	void				OnVideo(BYTE* bits, LONG size, LPVOID ps);
+	void				OnVideo(BYTE* bits, LONG size, FLOAT ts, LPVOID ps);
 	void				OnMessagePump();
 	void				OnExit();
 private:
@@ -34,6 +34,6 @@ private:
 	LONG								m_size;
 	TinyScopedArray<BYTE>				m_bits;
 	IO::TinyRingQueue					m_queue;
-	TinyUI::Callback<void(BYTE*, LONG, LPVOID)> m_videoCB;
+	TinyUI::Callback<void(BYTE*, LONG, FLOAT, LPVOID)> m_videoCB;
 };
 

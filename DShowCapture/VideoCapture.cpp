@@ -28,11 +28,11 @@ namespace Media
 	{
 		return m_id;
 	}
-	void VideoCapture::OnFrameReceive(BYTE* bits, LONG size, LPVOID lpParameter)
+	void VideoCapture::OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter)
 	{
 		if (!m_callback.IsNull())
 		{
-			m_callback(bits, size, lpParameter);
+			m_callback(bits, size, ts, lpParameter);
 		}
 	}
 	VideoCapture::VideoCapture()
@@ -70,7 +70,7 @@ namespace Media
 			return FALSE;
 		return TRUE;
 	}
-	BOOL VideoCapture::Initialize(const Name& name, Callback<void(BYTE*, LONG, LPVOID)>& callback)
+	BOOL VideoCapture::Initialize(const Name& name, Callback<void(BYTE*, LONG, FLOAT, LPVOID)>& callback)
 	{
 		if (Initialize(name))
 		{

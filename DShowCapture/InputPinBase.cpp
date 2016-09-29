@@ -84,8 +84,8 @@ namespace Media
 		//°´ÕÕ100ns¼ÆËã 10000000/30 = 333333.33
 		if (FAILED(pSample->GetTime(&times, &timee)))
 			return S_FALSE;
-		FLOAT ms = static_cast<FLOAT>((timee - times) * 1000 / 10000000);
-		m_observer->OnFrameReceive(bits, size, &m_mediaType);
+		FLOAT ts = static_cast<FLOAT>((timee - times) * 1000 / 10000000);
+		m_observer->OnFrameReceive(bits, size, ts, &m_mediaType);
 		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE InputPinBase::ReceiveMultiple(_In_reads_(nSamples) IMediaSample **pSamples, long nSamples, _Out_ long *nSamplesProcessed)

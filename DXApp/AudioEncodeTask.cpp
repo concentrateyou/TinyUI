@@ -3,7 +3,8 @@
 
 
 AudioEncodeTask::AudioEncodeTask()
-	:m_size(0)
+	:m_size(0),
+	m_ts(0)
 {
 }
 
@@ -62,7 +63,7 @@ void AudioEncodeTask::OnExit()
 	m_aac.Close();
 }
 
-void AudioEncodeTask::OnAudio(BYTE* bits, LONG size, LPVOID ps)
+void AudioEncodeTask::OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)
 {
 	if (m_size != size)
 	{

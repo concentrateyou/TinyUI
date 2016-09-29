@@ -68,8 +68,8 @@ private:
 	TinyButton			m_audioStart;
 	TinyButton			m_audioStop;
 
-	Callback<void(BYTE*, LONG, LPVOID)> m_videoCB;
-	Callback<void(BYTE*, LONG, LPVOID)> m_audioCB;
+	Callback<void(BYTE*, LONG, FLOAT, LPVOID)> m_videoCB;
+	Callback<void(BYTE*, LONG, FLOAT, LPVOID)> m_audioCB;
 
 	//Media::SoundPlayer	m_player;
 };

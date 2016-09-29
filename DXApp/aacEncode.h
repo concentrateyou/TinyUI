@@ -35,6 +35,5 @@ private:
 	DWORD					m_dwPTS;
 	TinyScopedArray<BYTE>	m_bits;
 	WAVEFORMATEX			m_wfx;
-	FILE*					m_aacFile;
 };
 
