@@ -3,6 +3,7 @@
 
 
 CUIFrame::CUIFrame()
+	:m_bits(NULL)
 {
 
 }
@@ -103,26 +104,27 @@ LRESULT CUIFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	return FALSE;
 }
 
-void CUIFrame::OnVideo(BYTE* pBits, LONG size, LPVOID lpData)
+void CUIFrame::OnVideo(BYTE* pBits, LONG size, FLOAT ts, LPVOID lpData)
 {
-	AM_MEDIA_TYPE* pMediaType = static_cast<AM_MEDIA_TYPE*>(lpData);
+	m_bits = pBits;
+	/*AM_MEDIA_TYPE* pMediaType = static_cast<AM_MEDIA_TYPE*>(lpData);
 	if (pMediaType)
 	{
-		RECT rectangle = { 0 };
-		::GetWindowRect(m_control.Handle(), &rectangle);
-		VIDEOINFOHEADER* h = reinterpret_cast<VIDEOINFOHEADER*>(pMediaType->pbFormat);
-		TinyUI::TinyWindowDC wdc(m_control.Handle());
-		BITMAPINFO bi = { 0 };
-		bi.bmiHeader = h->bmiHeader;
-		BYTE* pvBits = NULL;
-		HBITMAP hBitmap = ::CreateDIBSection(wdc, &bi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pvBits), NULL, 0);
-		memcpy(pvBits, pBits, size);
-		TinyUI::TinyMemDC mdc(wdc, hBitmap);
-		::BitBlt(wdc, 0, 0, TO_CX(rectangle), TO_CY(rectangle), mdc, 0, 0, SRCCOPY);
-		DeleteObject(hBitmap);
-	}
+	RECT rectangle = { 0 };
+	::GetWindowRect(m_control.Handle(), &rectangle);
+	VIDEOINFOHEADER* h = reinterpret_cast<VIDEOINFOHEADER*>(pMediaType->pbFormat);
+	TinyUI::TinyWindowDC wdc(m_control.Handle());
+	BITMAPINFO bi = { 0 };
+	bi.bmiHeader = h->bmiHeader;
+	BYTE* pvBits = NULL;
+	HBITMAP hBitmap = ::CreateDIBSection(wdc, &bi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pvBits), NULL, 0);
+	memcpy(pvBits, pBits, size);
+	TinyUI::TinyMemDC mdc(wdc, hBitmap);
+	::BitBlt(wdc, 0, 0, TO_CX(rectangle), TO_CY(rectangle), mdc, 0, 0, SRCCOPY);
+	DeleteObject(hBitmap);
+	}*/
 }
-void CUIFrame::OnAudio(BYTE* bits, LONG size, LPVOID)
+void CUIFrame::OnAudio(BYTE* bits, LONG size, FLOAT, LPVOID)
 {
 	//m_player.Play(bits, size);
 }
@@ -130,7 +132,11 @@ void CUIFrame::OnAudio(BYTE* bits, LONG size, LPVOID)
 LRESULT CUIFrame::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-
+	if (m_renderTask)
+	{
+		m_renderTask->Exit();
+		m_renderTask->Wait(INFINITE);
+	}
 	//m_player.Stop();
 
 	m_videoStart.EVENT_Click -= m_onVideoStart;
@@ -175,7 +181,13 @@ void CUIFrame::OnVideoSelectChange2(INT index)
 	m_videoDevice.Uninitialize();
 	m_videoDevice.Initialize(m_videoNames[m_videoDevice1.GetCurSel()], m_videoCB);
 	m_videoDevice.Allocate(param);
-	m_videoDevice.ShowProperty(m_hWND);
+	if (m_renderTask)
+	{
+		m_renderTask->Exit();
+		m_renderTask->Wait(INFINITE);
+	}
+	m_renderTask.Reset(new RenderTask(m_bits, m_control.Handle(), param));
+	m_renderTask->Submit();
 }
 
 void CUIFrame::OnAudioSelectChange1(INT index)
@@ -194,7 +206,6 @@ void CUIFrame::OnAudioSelectChange2(INT index)
 	m_audioDevice.Uninitialize();
 	m_audioDevice.Initialize(m_audioNames[m_audioDevice1.GetCurSel()], m_audioCB);
 	m_audioDevice.Allocate(param);
-	//m_player.Initialize(m_hWND, param.GetFormat());
 }
 
 void CUIFrame::OnVideoStart(void*, INT)

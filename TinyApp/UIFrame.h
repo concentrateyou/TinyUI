@@ -7,6 +7,7 @@
 #include "VideoCapture.h"
 #include "AudioCapture.h"
 #include "SoundPlayer.h"
+#include "RenderTask.h"
 using namespace TinyUI;
 
 class CUIFrame : public TinyControl
@@ -39,8 +40,8 @@ public:
 	void OnAudioStart(void*, INT);
 	void OnAudioStop(void*, INT);
 
-	void OnVideo(BYTE*, LONG, LPVOID);
-	void OnAudio(BYTE*, LONG, LPVOID);
+	void OnVideo(BYTE*, LONG, FLOAT, LPVOID);
+	void OnAudio(BYTE*, LONG, FLOAT, LPVOID);
 
 private:
 	TinyLabel			m_control;
@@ -68,9 +69,10 @@ private:
 	TinyButton			m_audioStart;
 	TinyButton			m_audioStop;
 
-	Callback<void(BYTE*, LONG, FLOAT, LPVOID)> m_videoCB;
-	Callback<void(BYTE*, LONG, FLOAT, LPVOID)> m_audioCB;
-
+	Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_videoCB;
+	Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_audioCB;
+	BYTE*										m_bits;
+	TinyScopedPtr<RenderTask>				  	m_renderTask;
 	//Media::SoundPlayer	m_player;
 };
 
