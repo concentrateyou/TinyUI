@@ -272,7 +272,7 @@ namespace Media
 	}
 	BOOL VideoCapture::GetDevices(vector<Name>& names)
 	{
-		TinyComPtr<ICreateDevEnum> devEnum;
+		TinyComPtr<ICreateDevEnum> devEnum; 
 		HRESULT hRes = devEnum.CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC);
 		if (FAILED(hRes))
 			return FALSE;

@@ -12,7 +12,7 @@ public:
 	RenderTask();
 	virtual	~RenderTask();
 	BOOL				Initialize(HWND hWND, INT cx, INT cy, DWORD dwFPS, const VideoCapture::Name& name, const VideoCaptureParam& param);
-	DWORD				Render();//∑µªÿ‰÷»æµƒ∫¡√Î ˝
+	DWORD				Render();
 	BOOL				Submit();
 	void				Exit() OVERRIDE;
 	VideoCapture*		GetCapture();

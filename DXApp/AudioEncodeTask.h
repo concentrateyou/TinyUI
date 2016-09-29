@@ -1,7 +1,7 @@
 #pragma once
 #include "DXFramework.h"
 #include "AudioCapture.h"
-#include "aacEncode.h"
+#include "FaacEncode.h"
 #include "RTMPClient.h"
 using namespace TinyUI::IO;
 using namespace Media;
@@ -15,7 +15,7 @@ public:
 	BOOL			Open(DWORD dwAudioRate);
 	BOOL			Submit();
 	void			Exit() OVERRIDE;
-	aacEncode*		GetEncode();
+	FaacEncode*		GetEncode();
 	AudioCapture*	GetCapture();
 private:
 	void			OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps);
@@ -23,7 +23,7 @@ private:
 	void			OnExit();
 private:
 	LONG								m_ts;
-	aacEncode							m_aac;
+	FaacEncode							m_aac;
 	AudioCapture						m_capture;
 	AudioCapture::Name					m_deviceName;
 	AudioCaptureParam					m_audioParam;

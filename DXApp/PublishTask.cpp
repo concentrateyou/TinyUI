@@ -62,11 +62,10 @@ void PublishTask::OnMessagePump()
 {
 	for (;;)
 	{
-		if (m_signal.Lock(0))
+		if (m_signal.Lock(3))
 		{
 			OnExit();
 			break;
 		}
-		Sleep(100);
 	}
 }

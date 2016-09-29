@@ -1,25 +1,39 @@
 #pragma once
-#include "RTMPPublisher.h"
+#include "Utility.h"
 extern "C"
 {
-#include "faaccfg.h"
 #include "faac.h"
+#include "faaccfg.h"
 }
 #pragma comment(lib,"libfaac.lib")
 
-class RTMPPublisher;
-/// <summary>
-/// “Ù∆µ±‡¬Î
-/// </summary>
-class faacEncode
+#define  AAC_TIMEBASE 1024
+#define  AAC_TIMEDEN  1000
+
+class FaacEncode
 {
 public:
-	faacEncode();
-	~faacEncode();
-	BOOL Open();
-	BOOL Encode();
-	BOOL Close();
+	FaacEncode();
+	~FaacEncode();
+public:
+	BOOL	Open(const WAVEFORMATEX& wfx, INT audioRate);
+	BOOL	Encode(BYTE* bits, INT size);
+	void	Close();
+	BOOL	GetSpecificInfo(vector<BYTE>& info);
+	DWORD	GetLatestPTS() const;
+public:
+	virtual void OnDone(TinyScopedReferencePtr<Sample>& sample);
+public:
+	Event<void(TinyScopedReferencePtr<Sample>&)> EVENT_DONE;
 private:
-	faacEncHandle m_handle;
+	faacEncHandle			m_aac;
+	faacEncConfigurationPtr	m_config;
+	DWORD					m_inputSamples;
+	DWORD					m_maxOutputBytes;
+	DWORD					m_dwTime;
+	DWORD					m_dwINC;
+	DWORD					m_dwPTS;
+	TinyScopedArray<BYTE>	m_bits;
+	WAVEFORMATEX			m_wfx;
 };
 

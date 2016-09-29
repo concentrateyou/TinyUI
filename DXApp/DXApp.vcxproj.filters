@@ -42,9 +42,6 @@
     <ClInclude Include="I420Converter.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="aacEncode.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="DXGraphics.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -69,6 +66,9 @@
     <ClInclude Include="SampleQueue.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="FaacEncode.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -87,9 +87,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="I420Converter.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="aacEncode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DXGraphics.cpp">
@@ -114,6 +111,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="SampleQueue.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FaacEncode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

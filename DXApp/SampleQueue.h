@@ -31,7 +31,7 @@ public:
 	void	Remove();
 	Sample*	GetSample();
 private:
+	TinyLock								m_lock;
 	deque<TinyScopedReferencePtr<Sample>>	m_samples;
-	TinyLock		m_lock;
 };
 

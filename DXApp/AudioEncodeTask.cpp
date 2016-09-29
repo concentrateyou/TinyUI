@@ -13,7 +13,7 @@ AudioEncodeTask::~AudioEncodeTask()
 {
 }
 
-aacEncode*	AudioEncodeTask::GetEncode()
+FaacEncode*	AudioEncodeTask::GetEncode()
 {
 	return &m_aac;
 }
