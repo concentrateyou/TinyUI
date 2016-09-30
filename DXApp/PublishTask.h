@@ -13,10 +13,10 @@ public:
 	~PublishTask();
 	BOOL	Connect();
 	BOOL	Submit();
-	void	Exit() OVERRIDE;
+	BOOL	Close(DWORD dwMS) OVERRIDE;
 private:
 	void	OnMessagePump();
-	void	OnExit();
+	void	OnClose();
 	void	OnVideoDone(TinyScopedReferencePtr<Sample>& sample);
 	void	OnAudioDone(TinyScopedReferencePtr<Sample>& sample);
 private:
@@ -24,6 +24,7 @@ private:
 	VideoEncodeTask*	m_videoTask;
 	AudioEncodeTask*	m_audioTask;
 	SampleQueue			m_queue;
+	TinyEvent			m_close;
 	TinyScopedPtr<Delegate<void(TinyScopedReferencePtr<Sample>&)>>	m_videoDone;
 	TinyScopedPtr<Delegate<void(TinyScopedReferencePtr<Sample>&)>>	m_audioDone;
 };

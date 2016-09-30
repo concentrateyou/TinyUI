@@ -47,17 +47,19 @@ BOOL AudioEncodeTask::Open(DWORD dwAudioRate)
 
 BOOL AudioEncodeTask::Submit()
 {
+	m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
 	m_capture.Start();
 	Closure s = BindCallback(&AudioEncodeTask::OnMessagePump, this);
 	return TinyTaskBase::Submit(s);
 }
 
-void AudioEncodeTask::Exit()
+BOOL AudioEncodeTask::Close(DWORD dwMS)
 {
-	m_signal.SetEvent();
+	m_close.SetEvent();
+	return TinyTaskBase::Close(dwMS);
 }
 
-void AudioEncodeTask::OnExit()
+void AudioEncodeTask::OnClose()
 {
 	m_capture.Uninitialize();
 	m_aac.Close();
@@ -78,9 +80,9 @@ void AudioEncodeTask::OnMessagePump()
 {
 	for (;;)
 	{
-		if (m_signal.Lock(2))
+		if (m_close.Lock(2))
 		{
-			OnExit();
+			OnClose();
 			break;
 		}
 		INT size = m_queue.Read(m_bits, m_size);

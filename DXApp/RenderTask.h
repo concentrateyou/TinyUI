@@ -14,10 +14,10 @@ public:
 	BOOL				Initialize(HWND hWND, INT cx, INT cy, DWORD dwFPS, const VideoCapture::Name& name, const VideoCaptureParam& param);
 	DWORD				Render();
 	BOOL				Submit();
-	void				Exit() OVERRIDE;
 	VideoCapture*		GetCapture();
-	BYTE*				GetPointer();
 	VideoCaptureParam*	GetParam();
+	BYTE*				GetPointer();
+	BOOL Close(DWORD dwMs = INFINITE) OVERRIDE;
 private:
 	void				OnVideo(BYTE* bits, LONG size, FLOAT ts, LPVOID ps);
 	void				OnMessagePump();
@@ -34,6 +34,7 @@ private:
 	LONG								m_size;
 	TinyScopedArray<BYTE>				m_bits;
 	IO::TinyRingQueue					m_queue;
+	TinyEvent							m_close;
 	TinyUI::Callback<void(BYTE*, LONG, FLOAT, LPVOID)> m_videoCB;
 };
 

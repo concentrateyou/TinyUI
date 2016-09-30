@@ -42,7 +42,7 @@ VideoCapture* RenderTask::GetCapture()
 	return &m_capture;
 }
 
-void RenderTask::OnVideo(BYTE* bits, LONG size,FLOAT ts, LPVOID ps)
+void RenderTask::OnVideo(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)
 {
 	if (m_size != size)
 	{
@@ -53,7 +53,7 @@ void RenderTask::OnVideo(BYTE* bits, LONG size,FLOAT ts, LPVOID ps)
 	m_queue.Write(bits, size);
 }
 
-BYTE* RenderTask::GetPointer() 
+BYTE* RenderTask::GetPointer()
 {
 	return m_graphics.GetPointer();
 }
@@ -63,9 +63,16 @@ VideoCaptureParam* RenderTask::GetParam()
 	return &m_videoParam;
 }
 
+BOOL RenderTask::Close(DWORD dwMs)
+{
+	m_close.SetEvent();
+	return TinyTaskBase::Close(dwMs);
+}
+
 BOOL RenderTask::Submit()
 {
 	ASSERT(m_dx11CaptureTask);
+	m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
 	m_dx11CaptureTask->Submit();
 	m_capture.Start();
 	Closure s = BindCallback(&RenderTask::OnMessagePump, this);
@@ -92,16 +99,12 @@ DWORD RenderTask::Render()
 	LONGLONG s = m_timer.GetMicroseconds();
 	return s / 1000;
 }
-void RenderTask::Exit()
-{
-	m_signal.SetEvent();
-}
+
 void RenderTask::OnExit()
 {
 	ASSERT(m_dx11CaptureTask);
 	m_capture.Uninitialize();
-	m_dx11CaptureTask->Exit();
-	m_dx11CaptureTask->Wait(INFINITE);
+	m_dx11CaptureTask->Close(INFINITE);
 }
 void RenderTask::OnMessagePump()
 {
@@ -110,7 +113,7 @@ void RenderTask::OnMessagePump()
 	{
 		DWORD s = 1000 / m_dwFPS;
 		s = offset > s ? 0 : s - offset;
-		if (m_signal.Lock(s))
+		if (m_close.Lock(s))
 		{
 			OnExit();
 			break;

@@ -31,15 +31,17 @@ BOOL PublishTask::Connect()
 
 BOOL PublishTask::Submit()
 {
+	m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
 	Closure s = BindCallback(&PublishTask::OnMessagePump, this);
 	return TinyTaskBase::Submit(s);
 }
-void PublishTask::Exit()
+BOOL PublishTask::Close(DWORD dwMS)
 {
-	m_signal.SetEvent();
+	m_close.SetEvent();
+	return TinyTaskBase::Close(dwMS);
 }
 
-void PublishTask::OnExit()
+void PublishTask::OnClose()
 {
 	ASSERT(m_audioTask || m_videoTask);
 	m_videoTask->GetEncode()->EVENT_DONE -= m_videoDone;
@@ -62,9 +64,9 @@ void PublishTask::OnMessagePump()
 {
 	for (;;)
 	{
-		if (m_signal.Lock(3))
+		if (m_close.Lock(3))
 		{
-			OnExit();
+			OnClose();
 			break;
 		}
 	}

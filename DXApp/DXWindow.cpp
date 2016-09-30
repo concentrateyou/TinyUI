@@ -2,7 +2,6 @@
 #include "DXWindow.h"
 #include "VideoCapture.h"
 #include "AudioCapture.h"
-#define WINDOW_CLOSE_EVENT      TEXT("WINDOW_CLOSE")
 #define FRAME_RATE				30
 
 DXWindow::DXWindow()
@@ -113,17 +112,10 @@ LRESULT DXWindow::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandle
 {
 	bHandled = FALSE;
 
-	m_videoTask->Exit();
-	m_videoTask->Wait(INFINITE);
-
-	m_audioTask->Exit();
-	m_audioTask->Wait(INFINITE);
-
-	m_publishTask->Exit();
-	m_publishTask->Wait(INFINITE);
-
-	m_renderTask->Exit();
-	m_renderTask->Wait(INFINITE);
+	m_videoTask->Close(INFINITE);
+	m_audioTask->Close(INFINITE);
+	m_publishTask->Close(INFINITE);
+	m_renderTask->Close(INFINITE);
 
 	PostQuitMessage(0);
 	return FALSE;

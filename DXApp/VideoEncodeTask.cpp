@@ -31,13 +31,15 @@ VideoCaptureParam* VideoEncodeTask::GetParam()
 
 BOOL VideoEncodeTask::Submit()
 {
+	m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
 	Closure s = BindCallback(&VideoEncodeTask::OnMessagePump, this);
 	return TinyTaskBase::Submit(s);
 }
 
-void VideoEncodeTask::Exit()
+BOOL VideoEncodeTask::Close(DWORD dwMS)
 {
-	m_signal.SetEvent();
+	m_close.SetEvent();
+	return TinyTaskBase::Close(dwMS);
 }
 
 BOOL VideoEncodeTask::Open(const TinySize& scale, DWORD dwFPS, DWORD dwVideoRate)
@@ -58,9 +60,9 @@ void VideoEncodeTask::OnMessagePump()
 	ASSERT(m_renderTask || m_converter);
 	for (;;)
 	{
-		if (m_signal.Lock(120))
+		if (m_close.Lock(120))
 		{
-			OnExit();
+			OnClose();
 			break;
 		}
 		if (m_converter->BRGAToI420(m_renderTask->GetPointer()))
@@ -70,7 +72,7 @@ void VideoEncodeTask::OnMessagePump()
 	}
 }
 
-void VideoEncodeTask::OnExit()
+void VideoEncodeTask::OnClose()
 {
 	m_x264.Close();
 }

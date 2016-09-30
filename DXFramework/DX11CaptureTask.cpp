@@ -10,7 +10,7 @@ namespace DXFramework
 		m_cy(cy)
 	{
 		ZeroMemory(&m_targetWND, sizeof(m_targetWND));
-		m_windowClose.CreateEvent(FALSE, FALSE, WINDOW_CLOSE_EVENT);
+		m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
 	}
 	DX11CaptureTask::~DX11CaptureTask()
 	{
@@ -21,10 +21,10 @@ namespace DXFramework
 		Closure s = BindCallback(&DX11CaptureTask::MessagePump, this);
 		return TinyTaskBase::Submit(s);
 	}
-	void DX11CaptureTask::Exit()
+	BOOL DX11CaptureTask::Close(DWORD dwMS)
 	{
-		if (m_windowClose)
-			m_windowClose.SetEvent();
+		m_close.SetEvent();
+		return TinyTaskBase::Close(dwMS);
 	}
 	DWORD DX11CaptureTask::BuildEvents()
 	{
@@ -224,13 +224,12 @@ namespace DXFramework
 	{
 		for (;;)
 		{
-			if (m_windowClose && m_windowClose.Lock(0))
+			if (m_close.Lock(20))
 			{
 				EndCapture();
 				break;
 			}
 			Tick();
-			Sleep(20);
 		}
 	}
 	DX11Image&	DX11CaptureTask::GetTexture()

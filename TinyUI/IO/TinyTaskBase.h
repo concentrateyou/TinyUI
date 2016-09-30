@@ -19,15 +19,13 @@ namespace TinyUI
 			virtual ~TinyTaskBase();
 			BOOL	IsValid() const;
 			virtual BOOL Submit(Closure& callback);
-			virtual BOOL Wait(DWORD dwMs);
-			virtual void Exit() = 0;
+			virtual BOOL Close(DWORD dwMs);
 		private:
 			static DWORD WINAPI Callback(LPVOID ps);
 		protected:
 			DWORD		m_dwTaskID;
 			HANDLE		m_hTask;
 			Closure		m_callback;
-			TinyEvent	m_signal;
 		};
 	};
 }

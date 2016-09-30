@@ -13,7 +13,7 @@ namespace DXFramework
 		virtual ~DX11CaptureTask();
 		DX11Image&				GetTexture();
 		BOOL					Submit();
-		void					Exit() OVERRIDE;
+		BOOL					Close(DWORD dwMS = INFINITE) OVERRIDE;
 	private:
 		void					MessagePump();
 		WNDINFO					GetWNDINFO();
@@ -33,7 +33,7 @@ namespace DXFramework
 		TinyEvent				m_captureStop;
 		TinyEvent				m_captureReady;
 		TinyEvent				m_captureExit;
-		TinyEvent				m_windowClose;
+		TinyEvent				m_close;
 		WNDINFO					m_targetWND;
 		SharedTexture			m_texture;
 		TinySharedMemory		m_memory;

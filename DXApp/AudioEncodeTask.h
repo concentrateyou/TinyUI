@@ -14,13 +14,13 @@ public:
 	BOOL			Initialize(const AudioCapture::Name& name, const AudioCaptureParam& param);
 	BOOL			Open(DWORD dwAudioRate);
 	BOOL			Submit();
-	void			Exit() OVERRIDE;
+	BOOL			Close(DWORD dwMS = INFINITE) OVERRIDE;
 	FaacEncode*		GetEncode();
 	AudioCapture*	GetCapture();
 private:
 	void			OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps);
 	void			OnMessagePump();
-	void			OnExit();
+	void			OnClose();
 private:
 	LONG								m_ts;
 	FaacEncode							m_aac;
@@ -31,6 +31,7 @@ private:
 	LONG								m_size;
 	TinyScopedArray<BYTE>				m_bits;
 	IO::TinyRingQueue					m_queue;
+	TinyEvent							m_close;
 	TinyUI::Callback<void(BYTE*, LONG, FLOAT, LPVOID)> m_audioCB;
 };
 

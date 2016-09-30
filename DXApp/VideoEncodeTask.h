@@ -17,13 +17,13 @@ public:
 	virtual ~VideoEncodeTask();
 	BOOL				Open(const TinySize& scale, DWORD dwFPS, DWORD dwVideoRate);
 	BOOL				Submit();
-	void				Exit() OVERRIDE;
+	BOOL				Close(DWORD dwMS) OVERRIDE;
 	x264Encode*			GetEncode();
 	VideoCapture*		GetCapture();
 	VideoCaptureParam*	GetParam();
 private:
 	void				OnMessagePump();
-	void				OnExit();
+	void				OnClose();
 private:
 	DWORD							m_dwFPS;
 	DWORD							m_dwVideoRate;
@@ -31,5 +31,6 @@ private:
 	x264Encode						m_x264;
 	TinyScopedPtr<I420Converter>	m_converter;
 	TinyPerformanceTimer			m_timer;
+	TinyEvent						m_close;
 };
 

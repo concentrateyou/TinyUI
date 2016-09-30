@@ -11,8 +11,6 @@ namespace TinyUI
 		TinyTaskBase::TinyTaskBase()
 			:m_hTask(NULL)
 		{
-			if (!m_signal.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL))
-				throw("create event error!");
 		}
 
 		TinyTaskBase::~TinyTaskBase()
@@ -30,7 +28,7 @@ namespace TinyUI
 			m_hTask = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)TinyTaskBase::Callback, (LPVOID)this, 0, &m_dwTaskID);
 			return m_hTask != NULL;
 		}
-		BOOL TinyTaskBase::Wait(DWORD dwMs)
+		BOOL TinyTaskBase::Close(DWORD dwMs)
 		{
 			if (m_hTask)
 			{
