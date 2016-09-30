@@ -73,6 +73,5 @@ private:
 	Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_audioCB;
 	BYTE*										m_bits;
 	TinyScopedPtr<RenderTask>				  	m_renderTask;
-	//Media::SoundPlayer	m_player;
 };
 
