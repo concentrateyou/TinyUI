@@ -134,8 +134,7 @@ LRESULT CUIFrame::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHand
 	bHandled = FALSE;
 	if (m_renderTask)
 	{
-		m_renderTask->Exit();
-		m_renderTask->Wait(INFINITE);
+		m_renderTask->Close(INFINITE);
 	}
 	//m_player.Stop();
 
@@ -183,8 +182,7 @@ void CUIFrame::OnVideoSelectChange2(INT index)
 	m_videoDevice.Allocate(param);
 	if (m_renderTask)
 	{
-		m_renderTask->Exit();
-		m_renderTask->Wait(INFINITE);
+		m_renderTask->Close(INFINITE);
 	}
 	m_renderTask.Reset(new RenderTask(m_bits, m_control.Handle(), param));
 	m_renderTask->Submit();

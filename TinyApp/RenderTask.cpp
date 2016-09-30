@@ -17,18 +17,20 @@ RenderTask::~RenderTask()
 
 BOOL RenderTask::Submit()
 {
+	m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
 	Closure s = BindCallback(&RenderTask::OnMessagePump, this);
 	return TinyTaskBase::Submit(s);
 }
-void RenderTask::Exit()
+BOOL RenderTask::Close(DWORD dwMS)
 {
-	m_signal.SetEvent();
+	m_close.SetEvent();
+	return TinyTaskBase::Close(dwMS);
 }
 void RenderTask::OnMessagePump()
 {
 	for (;;)
 	{
-		if (m_signal.Lock(100))
+		if (m_close.Lock(100))
 			break;;
 		if (m_bits)
 		{
@@ -55,5 +57,5 @@ void RenderTask::OnMessagePump()
 }
 void RenderTask::OnExit()
 {
-	m_signal.SetEvent();
+	m_close.SetEvent();
 }

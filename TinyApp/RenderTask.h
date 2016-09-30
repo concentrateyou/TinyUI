@@ -12,7 +12,7 @@ public:
 	RenderTask(BYTE*& bits,HWND hWND,const Media::VideoCaptureParam& param);
 	~RenderTask();
 	BOOL				Submit();
-	void				Exit() OVERRIDE;
+	BOOL				Close(DWORD dwMS) OVERRIDE;
 private:
 	void				OnMessagePump();
 	void				OnExit();
@@ -20,5 +20,6 @@ private:
 	BYTE*&						m_bits;
 	Media::VideoCaptureParam	m_param;
 	HWND						m_hWND;
+	TinyEvent					m_close;
 };
 
