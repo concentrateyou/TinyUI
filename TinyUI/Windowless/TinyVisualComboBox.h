@@ -12,8 +12,8 @@ namespace TinyUI
 		class TinyVisualComboBox : public TinyVisual
 		{
 			friend class TinyVisualDocument;
-			DECLARE_DYNAMIC(TinyVisualComboBox);
-			DISALLOW_COPY_AND_ASSIGN(TinyVisualComboBox);
+			DECLARE_DYNAMIC(TinyVisualComboBox)
+			DISALLOW_COPY_AND_ASSIGN(TinyVisualComboBox)
 		protected:
 			TinyVisualComboBox(TinyVisual* spvisParent, TinyVisualDocument* document);
 		public:

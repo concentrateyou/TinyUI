@@ -5,7 +5,7 @@ namespace Media
 {
 	class FilterBase : public IBaseFilter, public TinyUI::TinyReference < FilterBase >
 	{
-		DISALLOW_COPY_AND_ASSIGN(FilterBase);
+		DISALLOW_COPY_AND_ASSIGN(FilterBase)
 	public:
 		FilterBase(REFCLSID  clsid, LPWSTR pzName = NULL);
 		virtual ~FilterBase();

@@ -17,7 +17,7 @@ namespace TinyUI
 		/// </summary>
 		class TinyWin32TaskPool : public TinyReference < TinyWin32TaskPool >
 		{
-			DISALLOW_COPY_AND_ASSIGN(TinyWin32TaskPool);
+			DISALLOW_COPY_AND_ASSIGN(TinyWin32TaskPool)
 		public:
 			TinyWin32TaskPool();
 			~TinyWin32TaskPool();
@@ -37,7 +37,7 @@ namespace TinyUI
 		/// </summary>
 		class TinyWin32Task
 		{
-			DISALLOW_COPY_AND_ASSIGN(TinyWin32Task);
+			DISALLOW_COPY_AND_ASSIGN(TinyWin32Task)
 		public:
 			explicit TinyWin32Task(TinyWin32TaskPool* pWorks);
 			virtual ~TinyWin32Task();

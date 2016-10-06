@@ -12,8 +12,8 @@ namespace TinyUI
 	/// </summary>
 	class TinyCriticalSection : public TinyObject
 	{
-		DECLARE_DYNAMIC(TinyCriticalSection);
-		DISALLOW_COPY_AND_ASSIGN(TinyCriticalSection);
+		DECLARE_DYNAMIC(TinyCriticalSection)
+		DISALLOW_COPY_AND_ASSIGN(TinyCriticalSection)
 	public:
 		TinyCriticalSection() throw();
 		virtual ~TinyCriticalSection();
@@ -28,8 +28,8 @@ namespace TinyUI
 	/// </summary>
 	class TinyEvent : public TinyObject
 	{
-		DECLARE_DYNAMIC(TinyEvent);
-		DISALLOW_COPY_AND_ASSIGN(TinyEvent);
+		DECLARE_DYNAMIC(TinyEvent)
+		DISALLOW_COPY_AND_ASSIGN(TinyEvent)
 	public:
 		TinyEvent();
 		virtual ~TinyEvent();
@@ -51,8 +51,8 @@ namespace TinyUI
 	/// </summary>
 	class TinyMutex : public TinyObject
 	{
-		DECLARE_DYNAMIC(TinyMutex);
-		DISALLOW_COPY_AND_ASSIGN(TinyMutex);
+		DECLARE_DYNAMIC(TinyMutex)
+		DISALLOW_COPY_AND_ASSIGN(TinyMutex)
 	public:
 		TinyMutex();
 		virtual ~TinyMutex();
@@ -98,8 +98,8 @@ namespace TinyUI
 	/// </summary>
 	class TinySpinLock : public TinyObject
 	{
-		DECLARE_DYNAMIC(TinySpinLock);
-		DISALLOW_COPY_AND_ASSIGN(TinySpinLock);
+		DECLARE_DYNAMIC(TinySpinLock)
+		DISALLOW_COPY_AND_ASSIGN(TinySpinLock)
 	public:
 		TinySpinLock();
 		virtual ~TinySpinLock();
@@ -116,8 +116,8 @@ namespace TinyUI
 	/// </summary>
 	class TinySRWLock : public TinyObject
 	{
-		DECLARE_DYNAMIC(TinySRWLock);
-		DISALLOW_COPY_AND_ASSIGN(TinySRWLock);
+		DECLARE_DYNAMIC(TinySRWLock)
+		DISALLOW_COPY_AND_ASSIGN(TinySRWLock)
 	public:
 		TinySRWLock();
 		virtual ~TinySRWLock();
@@ -131,8 +131,8 @@ namespace TinyUI
 	/// </summary>
 	class TinySemaphore : public TinyObject
 	{
-		DECLARE_DYNAMIC(TinySemaphore);
-		DISALLOW_COPY_AND_ASSIGN(TinySemaphore);
+		DECLARE_DYNAMIC(TinySemaphore)
+		DISALLOW_COPY_AND_ASSIGN(TinySemaphore)
 	public:
 		TinySemaphore();
 		BOOL Create(LONG lInitialCount = 1, LONG lMaxCount = 1, LPCTSTR pstrName = NULL, LPSECURITY_ATTRIBUTES lpsaAttributes = NULL);
@@ -151,8 +151,8 @@ namespace TinyUI
 	/// </summary>
 	class TinyPerformanceLock : public TinyObject
 	{
-		DECLARE_DYNAMIC(TinyPerformanceLock);
-		DISALLOW_COPY_AND_ASSIGN(TinyPerformanceLock);
+		DECLARE_DYNAMIC(TinyPerformanceLock)
+		DISALLOW_COPY_AND_ASSIGN(TinyPerformanceLock)
 	public:
 		TinyPerformanceLock();
 		~TinyPerformanceLock();
@@ -168,7 +168,7 @@ namespace TinyUI
 	/// </summary>
 	class TinyScopedLibrary
 	{
-		DISALLOW_COPY_AND_ASSIGN(TinyScopedLibrary);
+		DISALLOW_COPY_AND_ASSIGN(TinyScopedLibrary)
 	public:
 		TinyScopedLibrary();
 		explicit TinyScopedLibrary(LPCSTR pzName);

@@ -5,7 +5,7 @@ namespace Media
 {
 	class PinEnumerator : public IEnumPins, public TinyReference < PinEnumerator >
 	{
-		DISALLOW_COPY_AND_ASSIGN(PinEnumerator);
+		DISALLOW_COPY_AND_ASSIGN(PinEnumerator)
 	public:
 		explicit PinEnumerator(FilterBase* pFilter);
 		~PinEnumerator();

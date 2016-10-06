@@ -24,7 +24,7 @@ namespace TinyUI
 	class ADOConnection : public IDbConnection
 	{
 		friend class ADOCommand;
-		DISALLOW_COPY_AND_ASSIGN(ADOConnection);
+		DISALLOW_COPY_AND_ASSIGN(ADOConnection)
 	public:
 		ADOConnection();
 		virtual ~ADOConnection();
@@ -129,7 +129,7 @@ namespace TinyUI
 	class ADODataReader : public IDbDataReader
 	{
 		friend class ADOCommand;
-		DISALLOW_COPY_AND_ASSIGN(ADODataReader);
+		DISALLOW_COPY_AND_ASSIGN(ADODataReader)
 	public:
 		ADODataReader();
 		virtual ~ADODataReader();

@@ -11,8 +11,8 @@ namespace TinyUI
 		class TinyVisualButton : public TinyVisual
 		{
 			friend class TinyVisualDocument;
-			DECLARE_DYNAMIC(TinyVisualButton);
-			DISALLOW_COPY_AND_ASSIGN(TinyVisualButton);
+			DECLARE_DYNAMIC(TinyVisualButton)
+			DISALLOW_COPY_AND_ASSIGN(TinyVisualButton)
 		protected:
 			TinyVisualButton(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:

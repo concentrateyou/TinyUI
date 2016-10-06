@@ -11,15 +11,13 @@ namespace TinyUI
 {
 	const INT maxTimeBufferSize = 128;
 	const LONG maxDaysInSpan = 3615897L;
-	inline BOOL ConvertSystemTimeToVariantTime(const SYSTEMTIME& systimeSrc, double* pVarDtTm);
 	extern SELECTANY const TCHAR * const szInvalidDateTime = _T("Invalid DateTime");
-
+	inline BOOL ConvertSystemTimeToVariantTime(const SYSTEMTIME& systimeSrc, double* pVarDtTm);
 	/// <summary>
 	/// 时间间隔类
 	/// </summary>
-	class TinyTimeSpan : public TinyObject
+	class TinyTimeSpan
 	{
-		DECLARE_DYNAMIC(TinyTimeSpan);
 	public:
 		TinyTimeSpan() throw();
 		TinyTimeSpan(__time64_t time) throw();
@@ -56,7 +54,6 @@ namespace TinyUI
 
 		TinyTime() throw();
 		TinyTime(__time64_t time) throw();
-
 		__time64_t GetTime() const throw();
 
 		TinyTime(INT nYear, INT nMonth, INT nDay, INT nHour, INT nMin, INT nSec, INT nDST = -1);
@@ -292,8 +289,8 @@ namespace TinyUI
 	class Timestamp
 	{
 	public:
-		static const INT64 TIMEVAL_MIN; 
-		static const INT64 TIMEVAL_MAX; 
+		static const INT64 TIMEVAL_MIN;
+		static const INT64 TIMEVAL_MAX;
 		Timestamp();
 		Timestamp(INT64 tv);
 		Timestamp(const Timestamp& other);
@@ -335,7 +332,7 @@ namespace TinyUI
 	/// </summary>
 	class TinyPerformanceTimer
 	{
-		DISALLOW_COPY_AND_ASSIGN(TinyPerformanceTimer);
+		DISALLOW_COPY_AND_ASSIGN(TinyPerformanceTimer)
 	public:
 		TinyPerformanceTimer();
 		~TinyPerformanceTimer();

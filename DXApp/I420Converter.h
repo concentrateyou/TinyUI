@@ -18,7 +18,7 @@ extern "C"
 
 class I420Converter
 {
-	DISALLOW_COPY_AND_ASSIGN(I420Converter);
+	DISALLOW_COPY_AND_ASSIGN(I420Converter)
 public:
 	I420Converter(const TinySize& srcSize, const TinySize& dstSize);
 	~I420Converter();

@@ -8,8 +8,8 @@ namespace TinyUI
 		class TinyVisualWindow : public TinyVisual
 		{
 			friend class TinyVisualDocument;
-			DECLARE_DYNAMIC(TinyVisualWindow);
-			DISALLOW_COPY_AND_ASSIGN(TinyVisualWindow);
+			DECLARE_DYNAMIC(TinyVisualWindow)
+			DISALLOW_COPY_AND_ASSIGN(TinyVisualWindow)
 		protected:
 			TinyVisualWindow(TinyVisual* spvisParent, TinyVisualDocument* document);
 		public:

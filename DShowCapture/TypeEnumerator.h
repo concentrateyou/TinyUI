@@ -5,7 +5,7 @@ namespace Media
 {
 	class TypeEnumerator : public IEnumMediaTypes, TinyUI::TinyReference < TypeEnumerator >
 	{
-		DISALLOW_COPY_AND_ASSIGN(TypeEnumerator);
+		DISALLOW_COPY_AND_ASSIGN(TypeEnumerator)
 	public:
 		explicit TypeEnumerator(PinBase* pPin);
 		~TypeEnumerator();

@@ -11,8 +11,8 @@ namespace TinyUI
 		{
 			friend class TinyVisualDocument;
 			friend class TinyTextHost;
-			DECLARE_DYNAMIC(TinyVisualRichText);
-			DISALLOW_COPY_AND_ASSIGN(TinyVisualRichText);
+			DECLARE_DYNAMIC(TinyVisualRichText)
+			DISALLOW_COPY_AND_ASSIGN(TinyVisualRichText)
 		protected:
 			TinyVisualRichText(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:

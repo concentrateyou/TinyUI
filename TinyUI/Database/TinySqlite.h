@@ -54,7 +54,7 @@ namespace TinyUI
 	class SqliteConnection : public IDbConnection
 	{
 		friend class SqliteCommand;
-		DISALLOW_COPY_AND_ASSIGN(SqliteConnection);
+		DISALLOW_COPY_AND_ASSIGN(SqliteConnection)
 	public:
 		SqliteConnection();
 		virtual ~SqliteConnection();
@@ -80,7 +80,7 @@ namespace TinyUI
 	class SqliteCommand : public IDbCommand
 	{
 		friend class SqliteConnection;
-		DISALLOW_COPY_AND_ASSIGN(SqliteCommand);
+		DISALLOW_COPY_AND_ASSIGN(SqliteCommand)
 	public:
 		SqliteCommand(SqliteConnection& connection);
 		virtual ~SqliteCommand();
@@ -117,7 +117,7 @@ namespace TinyUI
 	{
 		friend class SqliteConnection;
 		friend class SqliteCommand;
-		DISALLOW_COPY_AND_ASSIGN(SqlliteParameter);
+		DISALLOW_COPY_AND_ASSIGN(SqlliteParameter)
 	public:
 		SqlliteParameter(SqliteCommand& command);
 		virtual ~SqlliteParameter();
@@ -172,7 +172,7 @@ namespace TinyUI
 	{
 		friend class SqliteConnection;
 		friend class SqliteCommand;
-		DISALLOW_COPY_AND_ASSIGN(SqliteDataReader);
+		DISALLOW_COPY_AND_ASSIGN(SqliteDataReader)
 	public:
 		SqliteDataReader();
 		virtual ~SqliteDataReader();

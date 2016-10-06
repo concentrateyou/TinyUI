@@ -7,7 +7,7 @@ namespace DXFramework
 {
 	class DX11Image
 	{
-		DISALLOW_COPY_AND_ASSIGN(DX11Image);
+		DISALLOW_COPY_AND_ASSIGN(DX11Image)
 		struct VERTEXTYPE
 		{
 			D3DXVECTOR3 position;

@@ -786,7 +786,7 @@ namespace TinyUI
 	template<class K, class V, class KTraits = DefaultTraits< K >, class VTraits = DefaultTraits< V >>
 	class TinyMap
 	{
-		DISALLOW_COPY_AND_ASSIGN(TinyMap);
+		DISALLOW_COPY_AND_ASSIGN(TinyMap)
 	protected:
 		class TinyNode : public __ITERATOR
 		{
@@ -1509,7 +1509,7 @@ namespace TinyUI
 	/// </summary>
 	class TinyPtrMap
 	{
-		DISALLOW_COPY_AND_ASSIGN(TinyPtrMap);
+		DISALLOW_COPY_AND_ASSIGN(TinyPtrMap)
 	protected:
 		class TinyNode : public __ITERATOR
 		{

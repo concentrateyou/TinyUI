@@ -14,7 +14,7 @@ public: \
 	/// </summary>
 	class TinyObject 
 	{
-		DISALLOW_COPY_AND_ASSIGN(TinyObject);
+		DISALLOW_COPY_AND_ASSIGN(TinyObject)
 	public:
 		TinyObject();
 	public:

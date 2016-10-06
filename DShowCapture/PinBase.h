@@ -8,7 +8,7 @@ namespace Media
 	class FilterBase;
 	class PinBase : public IPin, public TinyReference < PinBase >
 	{
-		DISALLOW_COPY_AND_ASSIGN(PinBase);
+		DISALLOW_COPY_AND_ASSIGN(PinBase)
 	public:
 		explicit PinBase(FilterBase* pFilter, PIN_DIRECTION dir, WCHAR* pzName);
 		virtual ~PinBase();

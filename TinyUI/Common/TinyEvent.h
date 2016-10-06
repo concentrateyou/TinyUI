@@ -8,7 +8,7 @@ namespace TinyUI
 	template<typename... Args>
 	class Event < void(Args...) >
 	{
-		DISALLOW_COPY_AND_ASSIGN(Event);
+		DISALLOW_COPY_AND_ASSIGN(Event)
 		using DelegateType = Delegate < void(Args...) > ;
 	public:
 		void operator+= (DelegateType* ps)

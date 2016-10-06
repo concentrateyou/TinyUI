@@ -28,7 +28,7 @@ namespace TinyUI
 
 	class TinySurface
 	{
-		DISALLOW_COPY_AND_ASSIGN(TinySurface);
+		DISALLOW_COPY_AND_ASSIGN(TinySurface)
 	public:
 		TinySurface();
 		~TinySurface();

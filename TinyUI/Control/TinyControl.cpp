@@ -247,7 +247,7 @@ namespace TinyUI
 	}
 	LRESULT TinyControl::OnMButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
-		bHandled = FALSE;;
+		bHandled = FALSE;
 		return FALSE;
 	}
 	LRESULT TinyControl::OnMButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

@@ -27,7 +27,7 @@ namespace TinyUI
 			friend class TinyVisualParse;
 			friend class TinyVisualFactory;
 			friend class TinyVisualHWND;
-			DISALLOW_COPY_AND_ASSIGN(TinyVisualDocument);
+			DISALLOW_COPY_AND_ASSIGN(TinyVisualDocument)
 		public:
 			TinyVisualDocument(TinyVisualHWND* pv);
 			~TinyVisualDocument();
@@ -95,7 +95,7 @@ namespace TinyUI
 			{
 				friend class TinyVisual;
 				friend class TinyVisualDocument;
-				DISALLOW_COPY_AND_ASSIGN(TinyVisualFactory);
+				DISALLOW_COPY_AND_ASSIGN(TinyVisualFactory)
 			private:
 				TinyVisualFactory(TinyVisualDocument* vtree);
 			public:
@@ -125,7 +125,7 @@ namespace TinyUI
 		{
 			ASSERT(m_fs);
 			//T±ØÐëÒª¼Ì³Ð×ÔTinyVisual
-			COMPILE_ASSERT((std::is_convertible<T, TinyVisual>::value), T_must_convertible_to_TinyVisual);
+			COMPILE_ASSERT((std::is_convertible<T*, TinyVisual*>::value), T_must_convertible_to_TinyVisual);
 			return m_fs->Create<T>(x, y, cx, cy, spvisParent);
 		}
 		template<typename T>

@@ -28,8 +28,8 @@ namespace TinyUI
 		class TinyVisualHScrollBar : public TinyVisual
 		{
 			friend class TinyVisualDocument;
-			DECLARE_DYNAMIC(TinyVisualHScrollBar);
-			DISALLOW_COPY_AND_ASSIGN(TinyVisualHScrollBar);
+			DECLARE_DYNAMIC(TinyVisualHScrollBar)
+			DISALLOW_COPY_AND_ASSIGN(TinyVisualHScrollBar)
 		protected:
 			TinyVisualHScrollBar(TinyVisual* spvisParent, TinyVisualDocument* document);
 		public:
@@ -66,8 +66,8 @@ namespace TinyUI
 		class TinyVisualVScrollBar : public TinyVisual
 		{
 			friend class TinyVisualDocument;
-			DECLARE_DYNAMIC(TinyVisualVScrollBar);
-			DISALLOW_COPY_AND_ASSIGN(TinyVisualVScrollBar);
+			DECLARE_DYNAMIC(TinyVisualVScrollBar)
+			DISALLOW_COPY_AND_ASSIGN(TinyVisualVScrollBar)
 		protected:
 			TinyVisualVScrollBar(TinyVisual* spvisParent, TinyVisualDocument* document);
 		public:

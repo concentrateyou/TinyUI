@@ -15,7 +15,7 @@ namespace TinyUI
 	/// </summary>
 	class SymbolContext
 	{
-		DISALLOW_COPY_AND_ASSIGN(SymbolContext);
+		DISALLOW_COPY_AND_ASSIGN(SymbolContext)
 	public:
 		static SymbolContext* GetInstance();
 		DWORD GetError() const;
@@ -32,7 +32,7 @@ namespace TinyUI
 	/// </summary>
 	class StackTrace
 	{
-		DISALLOW_COPY_AND_ASSIGN(StackTrace);
+		DISALLOW_COPY_AND_ASSIGN(StackTrace)
 	public:
 		StackTrace();
 		StackTrace(const void* const* trace, size_t count);
@@ -54,7 +54,7 @@ namespace TinyUI
 	/// </summary>
 	class LogException
 	{
-		DISALLOW_COPY_AND_ASSIGN(LogException);
+		DISALLOW_COPY_AND_ASSIGN(LogException)
 	public:
 		LogException(LPCSTR pFileName, INT line);
 		~LogException();

@@ -10,8 +10,8 @@ namespace Media
 	class FilterObserver
 	{
 		friend class InputPinBase;
-		DECLARE_DYNAMIC(FilterObserver);
-		DISALLOW_COPY_AND_ASSIGN(FilterObserver);
+		DECLARE_DYNAMIC(FilterObserver)
+		DISALLOW_COPY_AND_ASSIGN(FilterObserver)
 	public:
 		FilterObserver();
 		virtual void OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter) = 0;

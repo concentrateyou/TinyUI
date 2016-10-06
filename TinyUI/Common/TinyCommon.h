@@ -122,11 +122,11 @@ namespace TinyUI
 #endif
 
 #ifndef WM_COMMANDREFLECT
-#define WM_COMMANDREFLECT (WM_COMMAND+WM_REFLECT)
+#define WM_COMMANDREFLECT (WM_COMMAND + WM_REFLECT)
 #endif
 
 #ifndef WM_NOTIFYREFLECT
-#define WM_NOTIFYREFLECT (WM_NOTIFY+WM_REFLECT)
+#define WM_NOTIFYREFLECT (WM_NOTIFY + WM_REFLECT)
 #endif
 
 #ifndef WM_DRAWITEMREFLECT
@@ -200,32 +200,32 @@ private:\
 	template<typename T>
 	struct IsVoidType
 	{
-		enum{ Result = 0 };
+		enum { Result = 0 };
 	};
 	template<>
 	struct IsVoidType < void >
 	{
-		enum{ Result = 1 };
+		enum { Result = 1 };
 	};
 	template<typename T>
 	struct IsBoolType
 	{
-		enum{ Result = 0 };
+		enum { Result = 0 };
 	};
 	template<>
 	struct IsBoolType < bool >
 	{
-		enum{ Result = 1 };
+		enum { Result = 1 };
 	};
 	template <typename T>
 	struct IsReference
 	{
-		enum{ Result = 0 };
+		enum { Result = 0 };
 	};
 	template <typename T>
 	struct IsReference < T& >
 	{
-		enum{ Result = 1 };
+		enum { Result = 1 };
 	};
 	template <typename T>
 	struct IsPointer
@@ -245,7 +245,7 @@ private:\
 	template <typename T>
 	struct IsFunctionPointer
 	{
-		enum{ Result = 0 };
+		enum { Result = 0 };
 	};
 	template <typename T>
 	struct IsFunctionPointer < T(*)() >
@@ -300,7 +300,7 @@ private:\
 	template <typename T>
 	struct IsMemberFunctionPointer
 	{
-		enum{ Result = 0 };
+		enum { Result = 0 };
 	};
 	template <typename T, typename S>
 	struct IsMemberFunctionPointer < T(S::*)() >
@@ -506,7 +506,7 @@ private:\
 	/// </summary>
 	class TinyReferenceBase
 	{
-		DISALLOW_COPY_AND_ASSIGN(TinyReferenceBase);
+		DISALLOW_COPY_AND_ASSIGN(TinyReferenceBase)
 	public:
 		/// <summary>
 		/// 获得当前的引用计数
@@ -540,8 +540,8 @@ private:\
 	template<typename T, typename Traits = DefaultTinyReferenceTraits<T>>
 	class TinyReference : public TinyReferenceBase
 	{
-		friend class DefaultTinyReferenceTraits < T > ;
-		DISALLOW_COPY_AND_ASSIGN(TinyReference);
+		friend class DefaultTinyReferenceTraits < T >;
+		DISALLOW_COPY_AND_ASSIGN(TinyReference)
 	public:
 		TinyReference();
 		void AddRef() const;
@@ -667,7 +667,7 @@ private:\
 	template <class T>
 	class TinyScopedPtr
 	{
-		DISALLOW_COPY_AND_ASSIGN(TinyScopedPtr);
+		DISALLOW_COPY_AND_ASSIGN(TinyScopedPtr)
 	public:
 		explicit TinyScopedPtr(T* ps = 0);
 		~TinyScopedPtr();
@@ -733,7 +733,7 @@ private:\
 	template <class T>
 	class TinyScopedArray
 	{
-		DISALLOW_COPY_AND_ASSIGN(TinyScopedArray);
+		DISALLOW_COPY_AND_ASSIGN(TinyScopedArray)
 	public:
 		explicit TinyScopedArray(T* ps = 0);
 		~TinyScopedArray();
@@ -1110,7 +1110,7 @@ private:\
 	/// </summary>
 	class ScopedVariant
 	{
-		DISALLOW_COPY_AND_ASSIGN(ScopedVariant);
+		DISALLOW_COPY_AND_ASSIGN(ScopedVariant)
 	public:
 		ScopedVariant();
 		~ScopedVariant();
