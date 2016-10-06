@@ -13,9 +13,12 @@
 
 // C 运行时头文件
 #include <stdlib.h>
+#include <stdio.h>
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
+using namespace std;
 
+extern "C" { FILE __iob_func[3] = { *stdin,*stdout,*stderr }; }
 
 // TODO:  在此处引用程序需要的其他头文件

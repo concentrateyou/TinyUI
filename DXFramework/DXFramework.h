@@ -3,8 +3,8 @@
 #include <d3dcommon.h>
 #include <d3d11.h>
 #include <DXGIFormat.h>
-#include <d3dx10math.h>
-#include <d3dx11tex.h>
+#include <D3DX10math.h>
+#include <D3DX11tex.h>
 #include <DXGI.h>
 #include <TlHelp32.h>
 #include <string>

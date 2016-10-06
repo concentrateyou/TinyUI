@@ -44,8 +44,8 @@ BOOL DXGraphics::Initialize(HWND hWND, INT cx, INT cy)
 		return FALSE;
 	m_camera.SetPosition(0.0F, 0.0F, -10.0F);
 	if (!m_textureShader.Initialize(m_dx11,
-		TEXT("D:\\Develop\\GitHub\\TinyUI\\DXFramework\\texture.vs"),
-		TEXT("D:\\Develop\\GitHub\\TinyUI\\DXFramework\\texture.ps")))
+		TEXT("D:\\Develop\\TinyUI\\DXFramework\\texture.vs"),
+		TEXT("D:\\Develop\\TinyUI\\DXFramework\\texture.ps")))
 		return FALSE;
 	if (!CreateTexture(cx, cy))
 		return FALSE;
