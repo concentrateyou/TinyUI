@@ -30,7 +30,7 @@ void RenderTask::OnMessagePump()
 {
 	for (;;)
 	{
-		if (m_close.Lock(100))
+		if (m_close.Lock(33))
 			break;;
 		if (m_bits)
 		{

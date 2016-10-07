@@ -33,13 +33,7 @@
     <ClInclude Include="MainFrame.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Vector2D.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="UIFrame.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TestIO.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="RenderTask.h">
@@ -57,9 +51,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="UIFrame.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TestIO.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="RenderTask.cpp">

@@ -4,14 +4,13 @@
 
 DXGraphics::DXGraphics()
 	:m_size(0),
+	m_bits(NULL),
 	m_cy(0)
 {
 }
 
-
 DXGraphics::~DXGraphics()
 {
-
 }
 
 BOOL DXGraphics::CreateTexture(INT cx, INT cy)
@@ -74,13 +73,8 @@ BOOL DXGraphics::EndScene()
 		D3D11_MAPPED_SUBRESOURCE ms = { 0 };
 		if (SUCCEEDED(m_dx11.GetImmediateContext()->Map(m_resource, 0, D3D11_MAP_READ, 0, &ms)))
 		{
-			if (m_size != (ms.RowPitch * m_cy))
-			{
-				m_size = ms.RowPitch * m_cy;
-				m_bits.Reset(new BYTE[m_size]);
-				m_queue.Initialize(ROUNDUP_POW_2(m_size * 3));
-			}
-			m_queue.Write(static_cast<BYTE*>(ms.pData), m_size);
+			m_bits = static_cast<BYTE*>(ms.pData);
+			m_size = ms.RowPitch * m_cy;
 			m_dx11.GetImmediateContext()->Unmap(m_resource, 0);
 			return TRUE;
 		}
@@ -107,6 +101,5 @@ DX11& DXGraphics::GetD3D()
 
 BYTE* DXGraphics::GetPointer()
 {
-	m_queue.Read(m_bits, m_size);
 	return m_bits;
 }

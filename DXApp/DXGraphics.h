@@ -29,7 +29,6 @@ private:
 	D3DXMATRIX						m_orthoMatrix;
 	INT								m_cy;
 	LONG							m_size;
-	TinyScopedArray<BYTE>			m_bits;
-	IO::TinyRingQueue				m_queue;
+	BYTE*							m_bits;
 };
 

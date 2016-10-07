@@ -29,11 +29,10 @@ private:
 	VideoCapture::Name					m_deviceName;
 	DXGraphics							m_graphics;
 	DX11Image							m_image;
-	TinyScopedPtr<DX11CaptureTask>		m_dx11CaptureTask;
+	TinyScopedPtr<DX11CaptureTask>		m_captureTask;
 	TinyPerformanceTimer				m_timer;
 	LONG								m_size;
-	TinyScopedArray<BYTE>				m_bits;
-	IO::TinyRingQueue					m_queue;
+	BYTE*								m_bits;
 	TinyEvent							m_close;
 	TinyUI::Callback<void(BYTE*, LONG, FLOAT, LPVOID)> m_videoCB;
 };

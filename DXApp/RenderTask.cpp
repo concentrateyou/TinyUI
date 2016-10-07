@@ -3,14 +3,17 @@
 #include "DXWindow.h"
 
 RenderTask::RenderTask()
-	:m_size(0)
+	:m_size(0),
+	m_bits(NULL)
 {
 
 }
+
 RenderTask::~RenderTask()
 {
 
 }
+
 BOOL RenderTask::Initialize(HWND hWND, INT cx, INT cy, DWORD dwFPS, const VideoCapture::Name& name, const VideoCaptureParam& param)
 {
 	m_dwFPS = dwFPS;
@@ -26,7 +29,7 @@ BOOL RenderTask::Initialize(HWND hWND, INT cx, INT cy, DWORD dwFPS, const VideoC
 	if (!bRes)
 		return FALSE;
 	//游戏捕获
-	m_dx11CaptureTask.Reset(new DX11CaptureTask(&m_graphics.GetD3D(), cx, cy));
+	m_captureTask.Reset(new DX11CaptureTask(&m_graphics.GetD3D(), cx, cy));
 	//初始化视频捕获
 	m_videoCB = BindCallback(&RenderTask::OnVideo, this);
 	bRes = m_capture.Initialize(m_deviceName, m_videoCB);
@@ -37,6 +40,7 @@ BOOL RenderTask::Initialize(HWND hWND, INT cx, INT cy, DWORD dwFPS, const VideoC
 		return FALSE;
 	return TRUE;
 }
+
 VideoCapture* RenderTask::GetCapture()
 {
 	return &m_capture;
@@ -44,13 +48,8 @@ VideoCapture* RenderTask::GetCapture()
 
 void RenderTask::OnVideo(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)
 {
-	if (m_size != size)
-	{
-		m_size = size;
-		m_bits.Reset(new BYTE[m_size]);
-		m_queue.Initialize(ROUNDUP_POW_2(m_size * 3));
-	}
-	m_queue.Write(bits, size);
+	m_bits = bits;
+	m_size = size;
 }
 
 BYTE* RenderTask::GetPointer()
@@ -71,30 +70,28 @@ BOOL RenderTask::Close(DWORD dwMs)
 
 BOOL RenderTask::Submit()
 {
-	ASSERT(m_dx11CaptureTask);
+	ASSERT(m_captureTask);
 	m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
-	m_dx11CaptureTask->Submit();
+	m_captureTask->Submit();
 	m_capture.Start();
 	Closure s = BindCallback(&RenderTask::OnMessagePump, this);
 	return TinyTaskBase::Submit(s);
 }
+
 DWORD RenderTask::Render()
 {
 	m_timer.BeginTime();
-	if (m_graphics.BeginScene())
+	m_graphics.BeginScene();
+	if (m_bits != NULL)
 	{
-		if (!m_bits.IsEmpty())
-		{
-			m_queue.Read(m_bits, m_size);
-			m_image.FillImage(m_graphics.GetD3D(), m_bits);
-			m_graphics.DrawImage(m_image, 1, 1);
-		}
-		if (m_dx11CaptureTask)
-		{
-			m_graphics.DrawImage(m_dx11CaptureTask->GetTexture(), 1, 1);
-		}
-		m_graphics.EndScene();
+		m_image.FillImage(m_graphics.GetD3D(), m_bits);
+		m_graphics.DrawImage(m_image, 1, 1);
 	}
+	if (m_captureTask != NULL)
+	{
+		m_graphics.DrawImage(m_captureTask->GetTexture(), 1, 1);
+	}
+	m_graphics.EndScene();
 	m_timer.EndTime();
 	LONGLONG s = m_timer.GetMicroseconds();
 	return s / 1000;
@@ -102,22 +99,22 @@ DWORD RenderTask::Render()
 
 void RenderTask::OnExit()
 {
-	ASSERT(m_dx11CaptureTask);
+	ASSERT(m_captureTask);
 	m_capture.Uninitialize();
-	m_dx11CaptureTask->Close(INFINITE);
+	m_captureTask->Close(INFINITE);
 }
 void RenderTask::OnMessagePump()
 {
-	DWORD offset = 0;
+	DWORD time = 0;
 	for (;;)
 	{
 		DWORD s = 1000 / m_dwFPS;
-		s = offset > s ? 0 : s - offset;
+		s = time > s ? 0 : s - time;
 		if (m_close.Lock(s))
 		{
 			OnExit();
 			break;
 		}
-		offset = this->Render();
+		time = this->Render();
 	}
 }

@@ -34,7 +34,7 @@ namespace TinyUI
 		{
 			return (m_io.offsetI - m_io.offsetO);
 		}
-		UINT TinyRingQueue::Read(BYTE *data, UINT size)
+		UINT TinyRingQueue::ReadBytes(BYTE *data, UINT size)
 		{
 			size = min(size, m_io.offsetI - m_io.offsetO);
 			UINT s = min(size, m_io.size - (m_io.offsetO & (m_io.size - 1)));
@@ -45,7 +45,7 @@ namespace TinyUI
 				m_io.offsetI = m_io.offsetO = 0;
 			return size;
 		}
-		UINT TinyRingQueue::Write(BYTE *data, UINT size)
+		UINT TinyRingQueue::WriteBytes(BYTE *data, UINT size)
 		{
 			size = min(size, m_io.size - m_io.offsetI + m_io.offsetO);
 			UINT s = min(size, m_io.size - (m_io.offsetI & (m_io.size - 1)));

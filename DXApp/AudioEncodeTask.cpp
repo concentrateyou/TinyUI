@@ -73,19 +73,19 @@ void AudioEncodeTask::OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)
 		m_bits.Reset(new BYTE[m_size]);
 		m_queue.Initialize(ROUNDUP_POW_2(m_size * 3));
 	}
-	m_queue.Write(bits, size);
+	m_queue.WriteBytes(bits, size);
 }
 
 void AudioEncodeTask::OnMessagePump()
 {
 	for (;;)
 	{
-		if (m_close.Lock(2))
+		if (m_close.Lock(10))
 		{
 			OnClose();
 			break;
 		}
-		INT size = m_queue.Read(m_bits, m_size);
+		INT size = m_queue.ReadBytes(m_bits, m_size);
 		if (size)
 		{
 			m_aac.Encode(m_bits, size);

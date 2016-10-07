@@ -32,8 +32,8 @@ namespace TinyUI
 			~TinyRingQueue();
 			BOOL	Initialize(UINT size);
 			UINT	GetSize();
-			UINT	Read(BYTE *data, UINT size);
-			UINT	Write(BYTE *data, UINT size);
+			UINT	ReadBytes(BYTE *data, UINT size);
+			UINT	WriteBytes(BYTE *data, UINT size);
 			void	Reset();
 		protected:
 			TinyScopedArray<BYTE>	m_data;

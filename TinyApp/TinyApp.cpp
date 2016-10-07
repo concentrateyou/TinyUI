@@ -10,8 +10,6 @@
 #include "Windowless/TinyVisualRichText.h"
 #include "Render/TinyDDraw.h"
 
-#include "TestIO.h"
-
 BOOL LoadSeDebugPrivilege()
 {
 	DWORD   err;
@@ -58,8 +56,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	HRESULT hRes = OleInitialize(NULL);
 
 	LoadSeDebugPrivilege();
-
-	//TestIO testIO;
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
