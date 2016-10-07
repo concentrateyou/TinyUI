@@ -22,6 +22,7 @@ private:
 	void			OnMessagePump();
 	void			OnClose();
 private:
+	BOOL								m_bFull;
 	LONG								m_ts;
 	FaacEncode							m_aac;
 	AudioCapture						m_capture;

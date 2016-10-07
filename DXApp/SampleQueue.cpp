@@ -18,7 +18,9 @@ void Sample::Fill(BYTE* bits, DWORD size)
 }
 //////////////////////////////////////////////////////////////////////////
 RawSample::RawSample(DWORD size)
-	:Size(size)
+	:Size(size),
+	SampleTime(0),
+	Time(0)
 {
 	Bits.Reset(new BYTE[Size]);
 	Time = timeGetTime();

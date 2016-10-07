@@ -92,15 +92,15 @@ DWORD RenderTask::Render()
 		m_graphics.DrawImage(m_captureTask->GetTexture(), 1, 1);
 	}
 	m_graphics.EndScene();
-	this->OnRender(m_graphics.GetPointer(), m_graphics.GetSize());
+	this->OnRender(m_graphics.GetPointer(), m_graphics.GetSize(), (FLOAT)m_dwFPS);
 	m_timer.EndTime();
 	DWORD dwTime = m_timer.GetMicroseconds() / 1000;
 	return dwTime;
 }
 
-void RenderTask::OnRender(BYTE* bits, LONG size)
+void RenderTask::OnRender(BYTE* bits, LONG size, FLOAT ts)
 {
-	EVENT_RENDER(bits, size);
+	EVENT_RENDER(bits, size, ts);
 }
 
 void RenderTask::OnExit()

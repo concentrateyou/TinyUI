@@ -4,10 +4,12 @@
 
 
 VideoEncodeTask::VideoEncodeTask(RenderTask* renderTask)
-	:m_renderTask(renderTask)
+	:m_renderTask(renderTask),
+	m_ts(0),
+	m_bFull(FALSE)
 {
 	ASSERT(m_renderTask);
-	m_render.Reset(new Delegate<void(BYTE*, LONG)>(this, &VideoEncodeTask::OnRender));
+	m_render.Reset(new Delegate<void(BYTE*, LONG, FLOAT)>(this, &VideoEncodeTask::OnRender));
 	m_renderTask->EVENT_RENDER += m_render;
 }
 
@@ -59,11 +61,22 @@ BOOL VideoEncodeTask::Open(const TinySize& scale, DWORD dwFPS, DWORD dwVideoRate
 	return TRUE;
 }
 
-void VideoEncodeTask::OnRender(BYTE* bits, LONG size)
+void VideoEncodeTask::OnRender(BYTE* bits, LONG size, FLOAT ts)
 {
-	TinyScopedReferencePtr<RawSample> sample(new RawSample(size));
-	sample->Fill(bits, size);
-	m_queue.Add(sample);
+	if (m_ts <= 500)
+	{
+		TRACE("Video-ts:%d\n", m_ts);
+		TinyScopedReferencePtr<RawSample> sample(new RawSample(size));
+		sample->SampleTime = ts;
+		sample->Fill(bits, size);
+		m_queue.Add(sample);
+		m_ts += ts;
+		m_bFull = FALSE;
+	}
+	else
+	{
+		m_bFull = TRUE;
+	}
 }
 
 void VideoEncodeTask::OnMessagePump()
@@ -80,14 +93,15 @@ void VideoEncodeTask::OnMessagePump()
 			break;
 		}
 		m_timer.BeginTime();
-		if (!m_queue.IsEmpty())
+		if (m_bFull && !m_queue.IsEmpty())
 		{
-			RawSample* sample = m_queue.GetSample();
-			if (sample == NULL)
-				TRACE("Video:sample == NULL");
-			if (m_converter->BRGAToI420(sample->Bits))
+			if (RawSample* sample = m_queue.GetSample())
 			{
-				m_x264.Encode(m_converter->GetI420());
+				if (m_converter->BRGAToI420(sample->Bits))
+				{
+					m_x264.Encode(m_converter->GetI420());
+				}
+				m_ts -= sample->SampleTime;
 			}
 			m_queue.Remove();
 		}

@@ -4,7 +4,8 @@
 
 AudioEncodeTask::AudioEncodeTask()
 	:m_size(0),
-	m_ts(0)
+	m_ts(0),
+	m_bFull(FALSE)
 {
 }
 
@@ -67,9 +68,21 @@ void AudioEncodeTask::OnClose()
 
 void AudioEncodeTask::OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)
 {
-	TinyScopedReferencePtr<RawSample> sample(new RawSample(size));
-	sample->Fill(bits, size);
-	m_queue.Add(sample);
+	//œ»ª∫≥Â1s
+	if (m_ts <= 500)
+	{
+		TRACE("Audio-ts:%d\n", m_ts);
+		TinyScopedReferencePtr<RawSample> sample(new RawSample(size));
+		sample->SampleTime = ts;
+		sample->Fill(bits, size);
+		m_queue.Add(sample);
+		m_ts += ts;
+		m_bFull = FALSE;
+	}
+	else
+	{
+		m_bFull = TRUE;
+	}
 }
 
 void AudioEncodeTask::OnMessagePump()
@@ -85,12 +98,13 @@ void AudioEncodeTask::OnMessagePump()
 			break;
 		}
 		m_timer.BeginTime();
-		if (!m_queue.IsEmpty())
+		if (m_bFull && !m_queue.IsEmpty())
 		{
-			RawSample* sample = m_queue.GetSample();
-			if (sample == NULL)
-				TRACE("Audio:sample == NULL");
-			m_aac.Encode(sample->Bits, sample->Size);
+			if (RawSample* sample = m_queue.GetSample())
+			{
+				m_aac.Encode(sample->Bits, sample->Size);
+				m_ts -= sample->SampleTime;
+			}
 			m_queue.Remove();
 		}
 		m_timer.EndTime();

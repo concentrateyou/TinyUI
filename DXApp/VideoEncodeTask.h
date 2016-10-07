@@ -24,8 +24,10 @@ public:
 private:
 	void				OnMessagePump();
 	void				OnClose();
-	void				OnRender(BYTE* bits, LONG size);
+	void				OnRender(BYTE* bits, LONG size, FLOAT ts);
 private:
+	BOOL							m_bFull;
+	LONG							m_ts;
 	DWORD							m_dwFPS;
 	DWORD							m_dwVideoRate;
 	RenderTask*						m_renderTask;
@@ -34,6 +36,6 @@ private:
 	TinyPerformanceTimer			m_timer;
 	TinyEvent						m_close;
 	RawSampleQueue					m_queue;
-	TinyScopedPtr<Delegate<void(BYTE*,LONG)>>	m_render;
+	TinyScopedPtr<Delegate<void(BYTE*, LONG, FLOAT)>>	m_render;
 };
 

@@ -28,6 +28,7 @@ public:
 	TinyScopedPtr<BYTE>	Bits;
 	LONG	Size;
 	DWORD	Time;
+	DWORD	SampleTime;
 	void	Fill(BYTE* bits, DWORD size);
 };
 
