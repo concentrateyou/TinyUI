@@ -6,6 +6,9 @@
 VideoEncodeTask::VideoEncodeTask(RenderTask* renderTask)
 	:m_renderTask(renderTask)
 {
+	ASSERT(m_renderTask);
+	m_render.Reset(new Delegate<void(BYTE*, LONG)>(this, &VideoEncodeTask::OnRender));
+	m_renderTask->EVENT_RENDER += m_render;
 }
 
 VideoEncodeTask::~VideoEncodeTask()
@@ -39,6 +42,7 @@ BOOL VideoEncodeTask::Submit()
 BOOL VideoEncodeTask::Close(DWORD dwMS)
 {
 	m_close.SetEvent();
+	m_renderTask->EVENT_RENDER -= m_render;
 	return TinyTaskBase::Close(dwMS);
 }
 
@@ -55,20 +59,40 @@ BOOL VideoEncodeTask::Open(const TinySize& scale, DWORD dwFPS, DWORD dwVideoRate
 	return TRUE;
 }
 
+void VideoEncodeTask::OnRender(BYTE* bits, LONG size)
+{
+	TinyScopedReferencePtr<RawSample> sample(new RawSample(size));
+	sample->Fill(bits, size);
+	m_queue.Add(sample);
+}
+
 void VideoEncodeTask::OnMessagePump()
 {
 	ASSERT(m_renderTask || m_converter);
+	DWORD dwTime = 0;
 	for (;;)
 	{
-		if (m_close.Lock(120))
+		DWORD s = 1000 / m_dwFPS;
+		s = dwTime > s ? 0 : s - dwTime;
+		if (m_close.Lock(s))
 		{
 			OnClose();
 			break;
 		}
-		if (m_converter->BRGAToI420(m_renderTask->GetPointer()))
+		m_timer.BeginTime();
+		if (!m_queue.IsEmpty())
 		{
-			m_x264.Encode(m_converter->GetI420());
+			RawSample* sample = m_queue.GetSample();
+			if (sample == NULL)
+				TRACE("Video:sample == NULL");
+			if (m_converter->BRGAToI420(sample->Bits))
+			{
+				m_x264.Encode(m_converter->GetI420());
+			}
+			m_queue.Remove();
 		}
+		m_timer.EndTime();
+		dwTime = m_timer.GetMicroseconds() / 1000;
 	}
 }
 
@@ -76,3 +100,5 @@ void VideoEncodeTask::OnClose()
 {
 	m_x264.Close();
 }
+
+

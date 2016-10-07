@@ -10,3 +10,7 @@
 /GameDetour/Debug
 /ipch
 /TinyApp/Debug
+/TinySmiley/Debug
+/TinyUI/Debug
+*.db
+*.opendb

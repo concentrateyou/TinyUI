@@ -17,7 +17,10 @@ public:
 	VideoCapture*		GetCapture();
 	VideoCaptureParam*	GetParam();
 	BYTE*				GetPointer();
-	BOOL Close(DWORD dwMs = INFINITE) OVERRIDE;
+	BOOL				Close(DWORD dwMs = INFINITE) OVERRIDE;
+	virtual void		OnRender(BYTE* bits, LONG size);
+public:
+	Event<void(BYTE*, LONG)> EVENT_RENDER;
 private:
 	void				OnVideo(BYTE* bits, LONG size, FLOAT ts, LPVOID ps);
 	void				OnMessagePump();
@@ -35,5 +38,6 @@ private:
 	BYTE*								m_bits;
 	TinyEvent							m_close;
 	TinyUI::Callback<void(BYTE*, LONG, FLOAT, LPVOID)> m_videoCB;
+
 };
 

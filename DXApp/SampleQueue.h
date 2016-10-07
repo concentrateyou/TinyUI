@@ -20,6 +20,33 @@ public:
 	DWORD		Flag;
 };
 
+class RawSample : public TinyReference < RawSample >
+{
+public:
+	RawSample(DWORD size);
+	~RawSample();
+	TinyScopedPtr<BYTE>	Bits;
+	LONG	Size;
+	DWORD	Time;
+	void	Fill(BYTE* bits, DWORD size);
+};
+
+class RawSampleQueue
+{
+public:
+	RawSampleQueue();
+	~RawSampleQueue();
+public:
+	BOOL	IsEmpty() const;
+	void	Add(RawSample* sample);
+	void	Remove();
+	RawSample*	GetSample();
+private:
+	TinyLock									m_lock;
+	deque<TinyScopedReferencePtr<RawSample>>	m_samples;
+};
+
+
 class SampleQueue
 {
 public:

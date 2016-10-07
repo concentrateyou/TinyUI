@@ -103,3 +103,8 @@ BYTE* DXGraphics::GetPointer()
 {
 	return m_bits;
 }
+
+LONG DXGraphics::GetSize() const
+{
+	return m_size;
+}

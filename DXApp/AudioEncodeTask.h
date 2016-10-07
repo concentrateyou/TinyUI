@@ -30,7 +30,7 @@ private:
 	TinyPerformanceTimer				m_timer;
 	LONG								m_size;
 	TinyScopedArray<BYTE>				m_bits;
-	IO::TinyRingQueue					m_queue;
+	RawSampleQueue						m_queue;
 	TinyEvent							m_close;
 	TinyUI::Callback<void(BYTE*, LONG, FLOAT, LPVOID)> m_audioCB;
 };

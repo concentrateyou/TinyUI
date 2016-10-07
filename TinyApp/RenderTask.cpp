@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "RenderTask.h"
+#include "UIFrame.h"
 
-
-RenderTask::RenderTask(BYTE*& bits, HWND hWND, const Media::VideoCaptureParam& param)
-	:m_bits(bits),
+RenderTask::RenderTask(CUIFrame* pThis, HWND hWND, const Media::VideoCaptureParam& param)
+	:m_pThis(pThis),
 	m_hWND(hWND),
 	m_param(param)
 {
@@ -31,8 +31,9 @@ void RenderTask::OnMessagePump()
 	for (;;)
 	{
 		if (m_close.Lock(33))
-			break;;
-		if (m_bits)
+			break;
+		BYTE* bits = m_pThis->GetPointer();
+		if (bits)
 		{
 			RECT rectangle = { 0 };
 			::GetWindowRect(m_hWND, &rectangle);
@@ -48,7 +49,7 @@ void RenderTask::OnMessagePump()
 			bmi.bmiHeader.biSizeImage = size.cx * size.cy * 3;
 			BYTE* pvBits = NULL;
 			HBITMAP hBitmap = ::CreateDIBSection(wdc, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pvBits), NULL, 0);
-			memcpy(pvBits, m_bits, bmi.bmiHeader.biSizeImage);
+			memcpy(pvBits, bits, bmi.bmiHeader.biSizeImage);
 			TinyUI::TinyMemDC mdc(wdc, hBitmap);
 			::BitBlt(wdc, 0, 0, TO_CX(rectangle), TO_CY(rectangle), mdc, 0, 0, SRCCOPY);
 			DeleteObject(hBitmap);

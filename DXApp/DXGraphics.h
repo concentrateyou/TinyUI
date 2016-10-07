@@ -15,6 +15,7 @@ public:
 	BOOL	EndScene();
 	DX11&	GetD3D();
 	BYTE*	GetPointer();
+	LONG	GetSize() const;
 	BOOL	DrawImage(DX11Image& image, INT x, INT y);
 private:
 	BOOL	CreateTexture(INT cx, INT cy);

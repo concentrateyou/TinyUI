@@ -43,6 +43,8 @@ public:
 	void OnVideo(BYTE*, LONG, FLOAT, LPVOID);
 	void OnAudio(BYTE*, LONG, FLOAT, LPVOID);
 
+	BYTE*	GetPointer();
+
 private:
 	TinyLabel			m_control;
 	Media::VideoCapture m_videoDevice;
@@ -71,7 +73,9 @@ private:
 
 	Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_videoCB;
 	Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_audioCB;
-	BYTE*										m_bits;
+	TinyScopedPtr<BYTE>							m_bits;
+	TinyUI::IO::TinyRingQueue					m_queue;
+	LONG										m_size;
 	TinyScopedPtr<RenderTask>				  	m_renderTask;
 };
 

@@ -24,6 +24,7 @@ public:
 private:
 	void				OnMessagePump();
 	void				OnClose();
+	void				OnRender(BYTE* bits, LONG size);
 private:
 	DWORD							m_dwFPS;
 	DWORD							m_dwVideoRate;
@@ -32,5 +33,7 @@ private:
 	TinyScopedPtr<I420Converter>	m_converter;
 	TinyPerformanceTimer			m_timer;
 	TinyEvent						m_close;
+	RawSampleQueue					m_queue;
+	TinyScopedPtr<Delegate<void(BYTE*,LONG)>>	m_render;
 };
 

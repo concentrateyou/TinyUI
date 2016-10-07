@@ -67,28 +67,33 @@ void AudioEncodeTask::OnClose()
 
 void AudioEncodeTask::OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)
 {
-	if (m_size != size)
-	{
-		m_size = size;
-		m_bits.Reset(new BYTE[m_size]);
-		m_queue.Initialize(ROUNDUP_POW_2(m_size * 3));
-	}
-	m_queue.WriteBytes(bits, size);
+	TinyScopedReferencePtr<RawSample> sample(new RawSample(size));
+	sample->Fill(bits, size);
+	m_queue.Add(sample);
 }
 
 void AudioEncodeTask::OnMessagePump()
 {
+	DWORD dwTime = 0;
 	for (;;)
 	{
-		if (m_close.Lock(10))
+		DWORD s = 1000 / 30;
+		s = dwTime > s ? 0 : s - dwTime;
+		if (m_close.Lock(s))
 		{
 			OnClose();
 			break;
 		}
-		INT size = m_queue.ReadBytes(m_bits, m_size);
-		if (size)
+		m_timer.BeginTime();
+		if (!m_queue.IsEmpty())
 		{
-			m_aac.Encode(m_bits, size);
+			RawSample* sample = m_queue.GetSample();
+			if (sample == NULL)
+				TRACE("Audio:sample == NULL");
+			m_aac.Encode(sample->Bits, sample->Size);
+			m_queue.Remove();
 		}
+		m_timer.EndTime();
+		dwTime = m_timer.GetMicroseconds() / 1000;
 	}
 }

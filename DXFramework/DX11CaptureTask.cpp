@@ -206,7 +206,7 @@ namespace DXFramework
 		}
 		if (!m_bCapturing)
 		{
-			AttemptCapture(TEXT("Warcraft III"), TEXT("war3.exe"), TEXT("D:\\Develop\\GitHub\\TinyUI\\Debug\\GameDetour.dll"));
+			AttemptCapture(TEXT("Warcraft III"), TEXT("war3.exe"), TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));
 		}
 		else
 		{

@@ -130,17 +130,17 @@ namespace TinyUI
 	{
 
 	}
-	BOOL TinyWindow::SubclassWindow(HWND hWnd)
+	BOOL TinyWindow::SubclassWindow(HWND hWND)
 	{
-		ASSERT(::IsWindow(hWnd));
+		ASSERT(::IsWindow(hWND));
 		PreSubclassWindow();
 		BOOL result = m_thunk.Initialize(TinyWindow::EndLoop, this);
 		if (result == FALSE) return FALSE;
 		WNDPROC hProc = m_thunk.GetWNDPROC();
-		WNDPROC hOldProc = (WNDPROC)::SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)hProc);
+		WNDPROC hOldProc = (WNDPROC)::SetWindowLongPtr(hWND, GWLP_WNDPROC, (LONG_PTR)hProc);
 		if (hOldProc == NULL) return FALSE;
 		m_hPrimaryProc = hOldProc;
-		m_hWND = hWnd;
+		m_hWND = hWND;
 		return TRUE;
 	};
 	void TinyWindow::PreSubclassDlgItem()

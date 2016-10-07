@@ -3,7 +3,7 @@
 
 
 CUIFrame::CUIFrame()
-	:m_bits(NULL)
+	:m_size(0)
 {
 
 }
@@ -106,24 +106,21 @@ LRESULT CUIFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 
 void CUIFrame::OnVideo(BYTE* pBits, LONG size, FLOAT ts, LPVOID lpData)
 {
-	m_bits = pBits;
-	/*AM_MEDIA_TYPE* pMediaType = static_cast<AM_MEDIA_TYPE*>(lpData);
-	if (pMediaType)
+	if (m_size != size)
 	{
-	RECT rectangle = { 0 };
-	::GetWindowRect(m_control.Handle(), &rectangle);
-	VIDEOINFOHEADER* h = reinterpret_cast<VIDEOINFOHEADER*>(pMediaType->pbFormat);
-	TinyUI::TinyWindowDC wdc(m_control.Handle());
-	BITMAPINFO bi = { 0 };
-	bi.bmiHeader = h->bmiHeader;
-	BYTE* pvBits = NULL;
-	HBITMAP hBitmap = ::CreateDIBSection(wdc, &bi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pvBits), NULL, 0);
-	memcpy(pvBits, pBits, size);
-	TinyUI::TinyMemDC mdc(wdc, hBitmap);
-	::BitBlt(wdc, 0, 0, TO_CX(rectangle), TO_CY(rectangle), mdc, 0, 0, SRCCOPY);
-	DeleteObject(hBitmap);
-	}*/
+		m_size = size;
+		m_bits.Reset(new BYTE[m_size]);
+		m_queue.Initialize(ROUNDUP_POW_2(m_size * 3));
+	}
+	m_queue.WriteBytes(pBits, m_size);
 }
+
+BYTE* CUIFrame::GetPointer()
+{
+	m_queue.ReadBytes(m_bits, m_size);
+	return m_bits;
+}
+
 void CUIFrame::OnAudio(BYTE* bits, LONG size, FLOAT, LPVOID)
 {
 	//m_player.Play(bits, size);
@@ -184,7 +181,7 @@ void CUIFrame::OnVideoSelectChange2(INT index)
 	{
 		m_renderTask->Close(INFINITE);
 	}
-	m_renderTask.Reset(new RenderTask(m_bits, m_control.Handle(), param));
+	m_renderTask.Reset(new RenderTask(this, m_control.Handle(), param));
 	m_renderTask->Submit();
 }
 

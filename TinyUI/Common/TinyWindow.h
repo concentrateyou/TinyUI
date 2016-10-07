@@ -4,6 +4,7 @@
 
 namespace TinyUI
 {
+#undef SubclassWindow
 	/// <summary>
 	/// ÆÕÍ¨´°¿ÚÀà
 	/// </summary>
