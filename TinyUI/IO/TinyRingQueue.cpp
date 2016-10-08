@@ -42,7 +42,9 @@ namespace TinyUI
 			memcpy(data + s, m_io.data, size - s);
 			m_io.offsetO += size;
 			if (m_io.offsetI == m_io.offsetO)
+			{
 				m_io.offsetI = m_io.offsetO = 0;
+			}
 			return size;
 		}
 		UINT TinyRingQueue::WriteBytes(BYTE *data, UINT size)

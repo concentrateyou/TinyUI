@@ -110,7 +110,7 @@ void CUIFrame::OnVideo(BYTE* pBits, LONG size, FLOAT ts, LPVOID lpData)
 	{
 		m_size = size;
 		m_bits.Reset(new BYTE[m_size]);
-		m_queue.Initialize(ROUNDUP_POW_2(m_size * 3));
+		m_queue.Initialize(ROUNDUP_POW_2(m_size));
 	}
 	m_queue.WriteBytes(pBits, m_size);
 }
