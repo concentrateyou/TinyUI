@@ -64,7 +64,7 @@ void PublishTask::OnMessagePump()
 {
 	for (;;)
 	{
-		if (m_close.Lock(3))
+		if (m_close.Lock(10))
 		{
 			OnClose();
 			break;

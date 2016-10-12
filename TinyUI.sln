@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TinyUI", "TinyUI\TinyUI.vcxproj", "{58903BE2-BB4F-4983-B8B7-905D2DB5393D}"
 EndProject
@@ -18,6 +18,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DXApp", "DXApp\DXApp.vcxproj", "{EA50F556-9269-4D52-8440-A5C67CD79714}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DShowCapture", "DShowCapture\DShowCapture.vcxproj", "{B8F16B34-E13E-4757-B09A-792046BCC2D3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Encode", "Encode\Encode.vcxproj", "{83BDB3B4-36F9-4646-BD49-F29A3CC3CEBE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -153,6 +155,26 @@ Global
 		{B8F16B34-E13E-4757-B09A-792046BCC2D3}.Release|Win32.ActiveCfg = Release|Win32
 		{B8F16B34-E13E-4757-B09A-792046BCC2D3}.Release|Win32.Build.0 = Release|Win32
 		{B8F16B34-E13E-4757-B09A-792046BCC2D3}.Release|x64.ActiveCfg = Release|Win32
+		{83BDB3B4-36F9-4646-BD49-F29A3CC3CEBE}.Debug_MBCS|Win32.ActiveCfg = Debug|Win32
+		{83BDB3B4-36F9-4646-BD49-F29A3CC3CEBE}.Debug_MBCS|Win32.Build.0 = Debug|Win32
+		{83BDB3B4-36F9-4646-BD49-F29A3CC3CEBE}.Debug_MBCS|x64.ActiveCfg = Debug|x64
+		{83BDB3B4-36F9-4646-BD49-F29A3CC3CEBE}.Debug_MBCS|x64.Build.0 = Debug|x64
+		{83BDB3B4-36F9-4646-BD49-F29A3CC3CEBE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{83BDB3B4-36F9-4646-BD49-F29A3CC3CEBE}.Debug|Win32.Build.0 = Debug|Win32
+		{83BDB3B4-36F9-4646-BD49-F29A3CC3CEBE}.Debug|x64.ActiveCfg = Debug|x64
+		{83BDB3B4-36F9-4646-BD49-F29A3CC3CEBE}.Debug|x64.Build.0 = Debug|x64
+		{83BDB3B4-36F9-4646-BD49-F29A3CC3CEBE}.Release_MBCS|Win32.ActiveCfg = Release|Win32
+		{83BDB3B4-36F9-4646-BD49-F29A3CC3CEBE}.Release_MBCS|Win32.Build.0 = Release|Win32
+		{83BDB3B4-36F9-4646-BD49-F29A3CC3CEBE}.Release_MBCS|x64.ActiveCfg = Release|x64
+		{83BDB3B4-36F9-4646-BD49-F29A3CC3CEBE}.Release_MBCS|x64.Build.0 = Release|x64
+		{83BDB3B4-36F9-4646-BD49-F29A3CC3CEBE}.Release_MT|Win32.ActiveCfg = Release|Win32
+		{83BDB3B4-36F9-4646-BD49-F29A3CC3CEBE}.Release_MT|Win32.Build.0 = Release|Win32
+		{83BDB3B4-36F9-4646-BD49-F29A3CC3CEBE}.Release_MT|x64.ActiveCfg = Release|x64
+		{83BDB3B4-36F9-4646-BD49-F29A3CC3CEBE}.Release_MT|x64.Build.0 = Release|x64
+		{83BDB3B4-36F9-4646-BD49-F29A3CC3CEBE}.Release|Win32.ActiveCfg = Release|Win32
+		{83BDB3B4-36F9-4646-BD49-F29A3CC3CEBE}.Release|Win32.Build.0 = Release|Win32
+		{83BDB3B4-36F9-4646-BD49-F29A3CC3CEBE}.Release|x64.ActiveCfg = Release|x64
+		{83BDB3B4-36F9-4646-BD49-F29A3CC3CEBE}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
