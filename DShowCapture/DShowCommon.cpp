@@ -58,7 +58,7 @@ void WINAPI DeleteMediaType(AM_MEDIA_TYPE *pmt)
 	}
 }
 
-void WINAPI SaveBitmap(BITMAPINFOHEADER bi, const BYTE* pBits, DWORD dwSize)
+void WINAPI SaveBitmap(const BITMAPINFOHEADER& bi, const BYTE* pBits, DWORD dwSize)
 {
 	BITMAPFILEHEADER  bmfHeader = { 0 };
 	DWORD dwSizeofDIB = dwSize + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
