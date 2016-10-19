@@ -1,15 +1,13 @@
 #pragma once
 #include "Common/TinyModule.h"
 #include "Windowless/TinyVisualHWND.h"
-#include "Common/TinyLogging.h"
-#include "Common/TinyHook.h"
-#include "Common/TinyEvent.h"
-#include "Control/TinyLabel.h"
+#include "Control/TinyComboBox.h"
 #include "Control/TinyButton.h"
-#include "Control/TinyRichTextBox.h"
-#include "Common/TinyEvent.h"
-#include <algorithm>
-#include <map>
+#include "Control/TinyLabel.h"
+#include "VideoCapture.h"
+#include "AudioCapture.h"
+#include "SoundPlayer.h"
+#include "RenderTask.h"
 using namespace TinyUI;
 
 class CMainFrame : public TinyControl
@@ -32,11 +30,52 @@ public:
 	LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	//·½·¨
 	BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
+	void OnVideoSelectChange1(INT index);
+	void OnVideoSelectChange2(INT index);
+	void OnVideoStart(void*, INT);
+	void OnVideoStop(void*, INT);
+
+	void OnAudioSelectChange1(INT index);
+	void OnAudioSelectChange2(INT index);
+	void OnAudioStart(void*, INT);
+	void OnAudioStop(void*, INT);
+
+	void OnVideo(BYTE*, LONG, FLOAT, LPVOID);
+	void OnAudio(BYTE*, LONG, FLOAT, LPVOID);
+
+	BYTE*	GetPointer();
+
 private:
-	void OnInjectLibrary(void*, INT);
-protected:
-	TinyButton			m_inject;
-	TinyLabel			m_lblState;
-	TinyScopedPtr<Delegate<void(void*, INT)>> m_onInjectClick;
+	TinyLabel			m_control;
+	Media::VideoCapture m_videoDevice;
+	TinyComboBox		m_videoDevice1;
+	TinyScopedPtr<Delegate<void(INT)>> m_onVideoChange1;
+	TinyComboBox		m_videoDevice2;
+	TinyScopedPtr<Delegate<void(INT)>> m_onVideoChange2;
+	TinyButton			m_videoStart;
+	TinyScopedPtr<Delegate<void(void*, INT)>> m_onVideoStart;
+	TinyButton			m_videoStop;
+	TinyScopedPtr<Delegate<void(void*, INT)>> m_onVideoStop;
+	vector<Media::VideoCapture::Name> m_videoNames;
+	vector<Media::VideoCaptureParam>  m_videoParams;
+
+	Media::AudioCapture m_audioDevice;
+	vector<Media::AudioCapture::Name> m_audioNames;
+	vector<Media::AudioCaptureParam>  m_audioParams;
+	TinyScopedPtr<Delegate<void(INT)>> m_onAudioChange1;
+	TinyScopedPtr<Delegate<void(INT)>> m_onAudioChange2;
+	TinyScopedPtr<Delegate<void(void*, INT)>> m_onAudioStart;
+	TinyScopedPtr<Delegate<void(void*, INT)>> m_onAudioStop;
+	TinyComboBox		m_audioDevice1;
+	TinyComboBox		m_audioDevice2;
+	TinyButton			m_audioStart;
+	TinyButton			m_audioStop;
+
+	Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_videoCB;
+	Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_audioCB;
+	TinyScopedPtr<BYTE>							m_bits;
+	TinyUI::IO::TinyRingQueue					m_queue;
+	LONG										m_size;
+	TinyScopedPtr<RenderTask>				  	m_renderTask;
 };
 
