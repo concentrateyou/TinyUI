@@ -78,6 +78,12 @@
     <ClInclude Include="SoundPlayer.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="ReferenceTime.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaFilterBase.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -135,6 +141,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="SoundPlayer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ReferenceTime.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaFilterBase.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

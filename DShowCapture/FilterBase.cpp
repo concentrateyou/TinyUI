@@ -5,9 +5,10 @@
 
 namespace Media
 {
-	FilterBase::FilterBase(REFCLSID  clsid, LPWSTR pzName)
+	FilterBase::FilterBase(LPWSTR pzName, REFCLSID  clsid, TinyLock* lock)
 		:m_clsid(clsid),
 		m_pzName(pzName),
+		m_lock(lock),
 		m_state(State_Stopped)
 	{
 
@@ -15,6 +16,24 @@ namespace Media
 	FilterBase::~FilterBase()
 	{
 
+	}
+	HRESULT FilterBase::StreamTime(ReferenceTime& rtStream)
+	{
+		if (m_clock == NULL)
+		{
+			return VFW_E_NO_CLOCK;
+		}
+		HRESULT hRes = m_clock->GetTime((REFERENCE_TIME*)&rtStream);
+		if (FAILED(hRes))
+		{
+			return hRes;
+		}
+		rtStream -= m_start;
+		return S_OK;
+	}
+	LPSETUP_FILTER FilterBase::GetSetupData()
+	{
+		return  NULL;
 	}
 	HRESULT STDMETHODCALLTYPE FilterBase::EnumPins(_Out_ IEnumPins **ppEnum)
 	{
@@ -27,6 +46,8 @@ namespace Media
 
 	HRESULT STDMETHODCALLTYPE FilterBase::FindPin(LPCWSTR Id, _Out_ IPin **ppPin)
 	{
+		CheckPointer(ppPin, E_POINTER);
+		TinyAutoLock lock(*m_lock);
 		INT count = GetPinCount();
 		for (INT i = 0; i < count; i++)
 		{
@@ -76,6 +97,7 @@ namespace Media
 
 	HRESULT STDMETHODCALLTYPE FilterBase::Stop(void)
 	{
+		TinyAutoLock lock(*m_lock);
 		if (m_state != State_Stopped)
 		{
 			INT count = GetPinCount();
@@ -86,7 +108,7 @@ namespace Media
 				{
 					break;
 				}
-				if (pPin->IsConnected())
+				if (pPin->IsConnect())
 				{
 					HRESULT hRes = pPin->OnActive(FALSE);
 					if (hRes != NOERROR)
@@ -102,6 +124,7 @@ namespace Media
 
 	HRESULT STDMETHODCALLTYPE FilterBase::Pause(void)
 	{
+		TinyAutoLock lock(*m_lock);
 		if (m_state == State_Stopped)
 		{
 			INT count = GetPinCount();
@@ -112,7 +135,7 @@ namespace Media
 				{
 					break;
 				}
-				if (pPin->IsConnected())
+				if (pPin->IsConnect())
 				{
 					HRESULT hRes = pPin->OnActive(TRUE);
 					if (hRes != NOERROR)
@@ -128,6 +151,7 @@ namespace Media
 
 	HRESULT STDMETHODCALLTYPE FilterBase::Run(REFERENCE_TIME tStart)
 	{
+		TinyAutoLock lock(*m_lock);
 		m_start = tStart;
 		if (m_state == State_Stopped)
 		{
@@ -147,7 +171,7 @@ namespace Media
 				{
 					break;
 				}
-				if (pPin->IsConnected())
+				if (pPin->IsConnect())
 				{
 					HRESULT hRes = pPin->OnRun(tStart);
 					if (hRes != NOERROR)
@@ -163,18 +187,23 @@ namespace Media
 
 	HRESULT STDMETHODCALLTYPE FilterBase::GetState(DWORD dwMilliSecsTimeout, _Out_ FILTER_STATE *State)
 	{
+		UNREFERENCED_PARAMETER(dwMilliSecsTimeout);
+		CheckPointer(State, E_POINTER);
 		*State = m_state;
 		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE FilterBase::SetSyncSource(_In_opt_ IReferenceClock *pClock)
 	{
+		TinyAutoLock lock(*m_lock);
 		m_clock = pClock;
 		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE FilterBase::GetSyncSource(_Outptr_result_maybenull_ IReferenceClock **pClock)
 	{
+		CheckPointer(pClock, E_POINTER);
+		TinyAutoLock lock(*m_lock);
 		*pClock = m_clock;
 		(*pClock)->AddRef();
 		return S_OK;
@@ -182,6 +211,7 @@ namespace Media
 
 	HRESULT STDMETHODCALLTYPE FilterBase::GetClassID(__RPC__out CLSID *pClassID)
 	{
+		CheckPointer(pClassID, E_POINTER);
 		*pClassID = m_clsid;
 		return S_OK;
 	}
@@ -200,6 +230,10 @@ namespace Media
 		{
 			*ppvObject = static_cast<IBaseFilter*>(this);
 		}
+		else if (IsEqualIID(riid, IID_IAMovieSetup))
+		{
+			*ppvObject = static_cast<IAMovieSetup*>(this);
+		}
 		else
 		{
 			*ppvObject = NULL;
@@ -207,6 +241,52 @@ namespace Media
 		}
 		AddRef();
 		return NOERROR;
+	}
+	HRESULT STDMETHODCALLTYPE FilterBase::Register()
+	{
+		LPAMOVIESETUP_FILTER psetupdata = GetSetupData();
+		if (NULL == psetupdata)
+			return S_FALSE;
+		HRESULT hRes = CoInitialize((LPVOID)NULL);
+		ASSERT(SUCCEEDED(hRes));
+		IFilterMapper *pIFM = NULL;
+		hRes = CoCreateInstance(CLSID_FilterMapper
+			, NULL
+			, CLSCTX_INPROC_SERVER
+			, IID_IFilterMapper
+			, (void **)&pIFM);
+		if (SUCCEEDED(hRes))
+		{
+			hRes = AMovieSetupRegisterFilter(psetupdata, pIFM, TRUE);
+			pIFM->Release();
+		}
+		CoFreeUnusedLibraries();
+		CoUninitialize();
+	}
+	HRESULT STDMETHODCALLTYPE FilterBase::Unregister()
+	{
+		LPAMOVIESETUP_FILTER psetupdata = GetSetupData();
+		if (NULL == psetupdata)
+			return S_FALSE;
+		HRESULT hRes = CoInitialize((LPVOID)NULL);
+		ASSERT(SUCCEEDED(hRes));
+		IFilterMapper *pIFM = NULL;
+		hRes = CoCreateInstance(CLSID_FilterMapper
+			, NULL
+			, CLSCTX_INPROC_SERVER
+			, IID_IFilterMapper
+			, (void **)&pIFM);
+		if (SUCCEEDED(hRes))
+		{
+			hRes = AMovieSetupRegisterFilter(psetupdata, pIFM, FALSE);
+			pIFM->Release();
+		}
+		CoFreeUnusedLibraries();
+		CoUninitialize();
+		if (0x80070002 == hRes)
+			return NOERROR;
+		else
+			return hRes;
 	}
 
 	ULONG STDMETHODCALLTYPE FilterBase::AddRef(void)

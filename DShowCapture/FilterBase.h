@@ -1,16 +1,20 @@
 #pragma once
 #include "DShowCommon.h"
+#include "ReferenceTime.h"
 
 namespace Media
 {
-	class FilterBase : public IBaseFilter, public TinyUI::TinyReference < FilterBase >
+	class FilterBase : public IBaseFilter, public IAMovieSetup, public TinyUI::TinyReference < FilterBase >
 	{
+		friend class PinBase;
 		DISALLOW_COPY_AND_ASSIGN(FilterBase)
 	public:
-		FilterBase(REFCLSID  clsid, LPWSTR pzName = NULL);
+		FilterBase(LPWSTR pzName, REFCLSID  clsid, TinyLock* lock);
 		virtual ~FilterBase();
 		virtual INT	GetPinCount() = 0;
 		virtual IPin* GetPin(INT index) = 0;
+		virtual HRESULT StreamTime(ReferenceTime& rtStream);
+		virtual LPAMOVIESETUP_FILTER GetSetupData();
 	public:
 		HRESULT STDMETHODCALLTYPE EnumPins(_Out_ IEnumPins **ppEnum) OVERRIDE;
 		HRESULT STDMETHODCALLTYPE FindPin(LPCWSTR Id, _Out_ IPin **ppPin) OVERRIDE;
@@ -27,12 +31,16 @@ namespace Media
 		HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject) OVERRIDE;
 		ULONG STDMETHODCALLTYPE AddRef(void) OVERRIDE;
 		ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
-	private:
+		HRESULT STDMETHODCALLTYPE Register() OVERRIDE;
+		HRESULT STDMETHODCALLTYPE Unregister() OVERRIDE;
+	protected:
 		FILTER_STATE				m_state;
 		LPCWSTR						m_pzName;
 		CLSID						m_clsid;
-		REFERENCE_TIME				m_start;
-		TinyComPtr<IFilterGraph>	m_graph;
+		ReferenceTime				m_start;
 		TinyComPtr<IReferenceClock> m_clock;
+		TinyComPtr<IFilterGraph>	m_graph;
+		TinyComPtr<IMediaEventSink> m_sink;
+		TinyLock*					m_lock;
 	};
 }

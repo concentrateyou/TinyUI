@@ -11,6 +11,51 @@ GUID MediaSubTypeHDYC =
 };
 const REFERENCE_TIME SecondsToReferenceTime = 10000000;
 
+HRESULT WINAPI AMovieSetupRegisterFilter(const AMOVIESETUP_FILTER * const psetupdata, IFilterMapper* pIFM, BOOL bRegister)
+{
+	if (NULL == psetupdata)
+		return S_FALSE;
+	HRESULT hRes = pIFM->UnregisterFilter(*(psetupdata->clsID));
+	if (bRegister)
+	{
+		hRes = pIFM->RegisterFilter(*(psetupdata->clsID)
+			, psetupdata->strName
+			, psetupdata->dwMerit);
+		if (SUCCEEDED(hRes))
+		{
+			for (UINT m1 = 0; m1 < psetupdata->nPins; m1++)
+			{
+				hRes = pIFM->RegisterPin(*(psetupdata->clsID)
+					, psetupdata->lpPin[m1].strName
+					, psetupdata->lpPin[m1].bRendered
+					, psetupdata->lpPin[m1].bOutput
+					, psetupdata->lpPin[m1].bZero
+					, psetupdata->lpPin[m1].bMany
+					, *(psetupdata->lpPin[m1].clsConnectsToFilter)
+					, psetupdata->lpPin[m1].strConnectsToPin);
+
+				if (SUCCEEDED(hRes))
+				{
+					for (UINT m2 = 0; m2 < psetupdata->lpPin[m1].nMediaTypes; m2++)
+					{
+						hRes = pIFM->RegisterPinType(*(psetupdata->clsID)
+							, psetupdata->lpPin[m1].strName
+							, *(psetupdata->lpPin[m1].lpMediaType[m2].clsMajorType)
+							, *(psetupdata->lpPin[m1].lpMediaType[m2].clsMinorType));
+						if (FAILED(hRes)) break;
+					}
+					if (FAILED(hRes)) break;
+				}
+				if (FAILED(hRes)) break;
+			}
+		}
+	}
+	if (0x80070002 == hRes)
+		return NOERROR;
+	else
+		return hRes;
+}
+
 HRESULT WINAPI CopyMediaType(AM_MEDIA_TYPE *pmtTarget, const AM_MEDIA_TYPE *pmtSource)
 {
 	ASSERT(pmtSource != pmtTarget);
@@ -57,7 +102,6 @@ void WINAPI DeleteMediaType(AM_MEDIA_TYPE *pmt)
 		CoTaskMemFree((PVOID)pmt);
 	}
 }
-
 void WINAPI SaveBitmap(BITMAPINFOHEADER bi, const BYTE* pBits, DWORD dwSize)
 {
 	BITMAPFILEHEADER  bmfHeader = { 0 };

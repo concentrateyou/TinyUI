@@ -48,10 +48,14 @@ namespace Media
 	{
 		return NOERROR;
 	}
-	BOOL PinBase::IsConnected(void) const
+	BOOL PinBase::IsConnect(void) const
 	{
 		return m_connector != NULL;
 	}
+	BOOL PinBase::IsStop() const
+	{
+		return (m_pFilter->m_state == State_Stopped);
+	};
 	IPin* PinBase::GetConnector()
 	{
 		return m_connector;
@@ -68,6 +72,7 @@ namespace Media
 	{
 		return m_stopTime;
 	}
+
 	HRESULT PinBase::SetMediaType(const AM_MEDIA_TYPE *mediaType)
 	{
 		return CopyMediaType(&m_mediaType, mediaType);
@@ -82,7 +87,7 @@ namespace Media
 		{
 			return TryConnection(pReceivePin, pmt);
 		}
-		HRESULT hrFailure = VFW_E_NO_ACCEPTABLE_TYPES;
+		HRESULT hResFailure = VFW_E_NO_ACCEPTABLE_TYPES;
 		for (INT i = 0; i < 2; i++)
 		{
 			HRESULT hRes;
@@ -109,18 +114,19 @@ namespace Media
 						(hRes != E_INVALIDARG) &&
 						(hRes != VFW_E_TYPE_NOT_ACCEPTED))
 					{
-						hrFailure = hRes;
+						hResFailure = hRes;
 					}
 				}
 			}
 		}
-		return hrFailure;
+		return hResFailure;
 	}
 	HRESULT PinBase::TryConnection(IPin* pReceivePin, const AM_MEDIA_TYPE* pmt)
 	{
 		HRESULT hRes = CheckConnect(pReceivePin);
 		if (hRes != NOERROR)
 		{
+			ASSERT(SUCCEEDED(OnDisconnect()));
 			return S_FALSE;
 		}
 		hRes = CheckMediaType(pmt);
@@ -152,10 +158,11 @@ namespace Media
 				hRes = VFW_E_TYPE_NOT_ACCEPTED;
 			}
 		}
-		OnDisconnect();
+		ASSERT(SUCCEEDED(OnDisconnect()));
 		if (m_connector)
 		{
 			m_connector.Release();
+			m_connector = NULL;
 		}
 		return hRes;
 	}
@@ -243,6 +250,16 @@ namespace Media
 		}
 		return TRUE;
 	}
+	HRESULT STDMETHODCALLTYPE PinBase::Notify(IBaseFilter *pSelf, Quality q)
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	HRESULT STDMETHODCALLTYPE PinBase::SetSink(IQualityControl *piqc)
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
 	HRESULT STDMETHODCALLTYPE PinBase::Connect(IPin *pReceivePin, _In_opt_ const AM_MEDIA_TYPE *pmt)
 	{
 		if (!pReceivePin || !pmt)
@@ -261,9 +278,9 @@ namespace Media
 	HRESULT STDMETHODCALLTYPE PinBase::ReceiveConnection(IPin *pConnector, const AM_MEDIA_TYPE *pmt)
 	{
 		VIDEOINFOHEADER* h = reinterpret_cast<VIDEOINFOHEADER*>(pmt->pbFormat);
-		WCHAR str[39];
-		StringFromGUID2(pmt->subtype, str, 39);
-		TRACE("ReceiveConnection-subtype:%s,cx:%d,cy:%d\n", UTF16ToUTF8(str).c_str(), h->bmiHeader.biWidth, h->bmiHeader.biHeight);
+		//WCHAR str[39];
+		//StringFromGUID2(pmt->subtype, str, 39);
+		//TRACE("ReceiveConnection-subtype:%s,cx:%d,cy:%d\n", UTF16ToUTF8(str).c_str(), h->bmiHeader.biWidth, h->bmiHeader.biHeight);
 		if (!pConnector || !pmt)
 		{
 			return E_POINTER;
@@ -306,6 +323,7 @@ namespace Media
 			return S_FALSE;
 		ASSERT(OnDisconnect() == NOERROR);
 		m_connector.Release();
+		m_connector = NULL;
 		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::ConnectedTo(_Out_ IPin **ppPin)

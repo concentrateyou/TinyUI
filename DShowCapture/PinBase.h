@@ -1,12 +1,13 @@
 #pragma once
 #include "DShowCommon.h"
+#include "ReferenceTime.h"
 #include "FilterObserver.h"
 #include "VideoCaptureParam.h"
 
 namespace Media
 {
 	class FilterBase;
-	class PinBase : public IPin, public TinyReference < PinBase >
+	class PinBase : public IPin, public IQualityControl, public TinyReference < PinBase >
 	{
 		DISALLOW_COPY_AND_ASSIGN(PinBase)
 	public:
@@ -19,8 +20,9 @@ namespace Media
 		virtual HRESULT OnDisconnect();
 		virtual HRESULT	OnActive(BOOL active);
 		virtual HRESULT OnRun(REFERENCE_TIME tStart);
-		BOOL	IsConnected(void) const;
+		BOOL	IsConnect() const;
 		IPin*	GetConnector();
+		BOOL	IsStop() const;
 		BOOL	IsFlushing() const;
 		REFERENCE_TIME GetCurrentStartTime() const;
 		REFERENCE_TIME GetCurrentStopTime() const;
@@ -43,6 +45,8 @@ namespace Media
 		HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject) OVERRIDE;
 		ULONG STDMETHODCALLTYPE AddRef(void) OVERRIDE;
 		ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
+		HRESULT STDMETHODCALLTYPE Notify(IBaseFilter *pSelf, Quality q) OVERRIDE;
+		HRESULT STDMETHODCALLTYPE SetSink(IQualityControl *piqc) OVERRIDE;
 	protected:
 		HRESULT SetMediaType(const AM_MEDIA_TYPE *mediaType);
 		HRESULT AgreeMediaType(IPin *pReceivePin, const AM_MEDIA_TYPE *pmt);
@@ -56,8 +60,8 @@ namespace Media
 		FilterBase*			m_pFilter;
 		WCHAR*				m_pzName;
 		BOOL				m_bFlushing;
-		REFERENCE_TIME		m_startTime;
-		REFERENCE_TIME		m_stopTime;
+		ReferenceTime		m_startTime;
+		ReferenceTime		m_stopTime;
 		DOUBLE				m_rate;
 		TinyLock			m_lock;
 	};
