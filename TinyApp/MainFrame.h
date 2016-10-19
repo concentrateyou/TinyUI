@@ -70,7 +70,7 @@ private:
 	TinyComboBox		m_audioDevice2;
 	TinyButton			m_audioStart;
 	TinyButton			m_audioStop;
-
+	Media::SoundPlayer	m_player;
 	Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_videoCB;
 	Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_audioCB;
 	TinyScopedPtr<BYTE>							m_bits;

@@ -83,4 +83,24 @@ namespace Media
 			return FALSE;
 		return m_secondaryDSB->Stop() == S_OK;
 	}
+	BOOL SoundPlayer::Close()
+	{
+		ASSERT(m_secondaryDSB);
+		HRESULT hRes = S_OK;
+		hRes = m_secondaryDSB->Restore();
+		if (FAILED(hRes))
+			return FALSE;
+		hRes = m_secondaryDSB->Stop();
+		if (FAILED(hRes))
+			return FALSE;
+		hRes = m_primaryDSB->Restore();
+		if (FAILED(hRes))
+			return FALSE;
+		hRes = m_primaryDSB->Stop();
+		if (FAILED(hRes))
+			return FALSE;
+		m_secondaryDSB.Release();
+		m_primaryDSB.Release();
+		return TRUE;
+	}
 }

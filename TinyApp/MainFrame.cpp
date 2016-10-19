@@ -101,6 +101,7 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 	{
 		m_audioDevice1.AddString(m_audioNames[i].name().c_str());
 	}
+
 	return FALSE;
 }
 
@@ -123,7 +124,7 @@ BYTE* CMainFrame::GetPointer()
 
 void CMainFrame::OnAudio(BYTE* bits, LONG size, FLOAT, LPVOID)
 {
-	//m_player.Play(bits, size);
+	m_player.Play(bits, size);
 }
 
 LRESULT CMainFrame::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -133,7 +134,9 @@ LRESULT CMainFrame::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHa
 	{
 		m_renderTask->Close(INFINITE);
 	}
-	//m_player.Stop();
+	m_videoDevice.Uninitialize();
+	m_audioDevice.Uninitialize();
+	m_player.Close();
 
 	m_videoStart.EVENT_Click -= m_onVideoStart;
 	m_videoStop.EVENT_Click -= m_onVideoStop;
@@ -198,6 +201,7 @@ void CMainFrame::OnAudioSelectChange1(INT index)
 void CMainFrame::OnAudioSelectChange2(INT index)
 {
 	const Media::AudioCaptureParam& param = m_audioParams[index];
+	m_player.Initialize(m_hWND, param.GetFormat());
 	m_audioDevice.Uninitialize();
 	m_audioDevice.Initialize(m_audioNames[m_audioDevice1.GetCurSel()], m_audioCB);
 	m_audioDevice.Allocate(param);
