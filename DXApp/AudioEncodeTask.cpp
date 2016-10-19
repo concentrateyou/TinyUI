@@ -24,6 +24,11 @@ AudioCapture* AudioEncodeTask::GetCapture()
 	return &m_capture;
 }
 
+AudioCaptureParam*	AudioEncodeTask::GetParam()
+{
+	return &m_audioParam;
+}
+
 BOOL AudioEncodeTask::Initialize(const AudioCapture::Name& name, const AudioCaptureParam& param)
 {
 	m_deviceName = name;
@@ -68,12 +73,12 @@ void AudioEncodeTask::OnClose()
 
 void AudioEncodeTask::OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)
 {
-	//œ»ª∫≥Â1s
+	//ª∫≥Â0.5s
 	if (m_ts <= 500)
 	{
-		TRACE("Audio-ts:%d\n", m_ts);
 		TinyScopedReferencePtr<RawSample> sample(new RawSample(size));
 		sample->SampleTime = ts;
+		sample->Time = GetCurrentTime();
 		sample->Fill(bits, size);
 		m_queue.Add(sample);
 		m_ts += ts;
@@ -102,7 +107,7 @@ void AudioEncodeTask::OnMessagePump()
 		{
 			if (RawSample* sample = m_queue.GetSample())
 			{
-				m_aac.Encode(sample->Bits, sample->Size);
+				m_aac.Encode(sample->Bits, sample->Size, sample->Time);
 				m_ts -= sample->SampleTime;
 			}
 			m_queue.Remove();

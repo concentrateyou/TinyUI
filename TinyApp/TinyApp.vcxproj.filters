@@ -30,13 +30,10 @@
     <ClInclude Include="TinyApp.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MainFrame.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="UIFrame.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="RenderTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MainFrame.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -47,13 +44,10 @@
     <ClCompile Include="TinyApp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MainFrame.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="UIFrame.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="RenderTask.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MainFrame.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

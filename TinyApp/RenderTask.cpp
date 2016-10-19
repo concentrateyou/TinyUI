@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "RenderTask.h"
-#include "UIFrame.h"
+#include "MainFrame.h"
 
-RenderTask::RenderTask(CUIFrame* pThis, HWND hWND, const Media::VideoCaptureParam& param)
+RenderTask::RenderTask(CMainFrame* pThis, HWND hWND, const Media::VideoCaptureParam& param)
 	:m_pThis(pThis),
 	m_hWND(hWND),
 	m_param(param)

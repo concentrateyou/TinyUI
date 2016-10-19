@@ -139,12 +139,14 @@
   <ItemGroup>
     <ClInclude Include="Common.h" />
     <ClInclude Include="EncodeBase.h" />
+    <ClInclude Include="SampleFilter.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="EncodeBase.cpp" />
+    <ClCompile Include="SampleFilter.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

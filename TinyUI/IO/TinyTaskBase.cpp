@@ -8,6 +8,8 @@ namespace TinyUI
 {
 	namespace IO
 	{
+		DWORD TinyTaskBase::m_dwTime = timeGetTime();
+
 		TinyTaskBase::TinyTaskBase()
 			:m_hTask(NULL)
 		{
@@ -69,6 +71,9 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-
+		DWORD TinyTaskBase::GetCurrentTime() const
+		{
+			return timeGetTime() - TinyTaskBase::m_dwTime;
+		}
 	}
 }

@@ -63,11 +63,12 @@ BOOL VideoEncodeTask::Open(const TinySize& scale, DWORD dwFPS, DWORD dwVideoRate
 
 void VideoEncodeTask::OnRender(BYTE* bits, LONG size, FLOAT ts)
 {
+	//»º³å0.5s
 	if (m_ts <= 500)
 	{
-		TRACE("Video-ts:%d\n", m_ts);
 		TinyScopedReferencePtr<RawSample> sample(new RawSample(size));
 		sample->SampleTime = ts;
+		sample->Time = GetCurrentTime();
 		sample->Fill(bits, size);
 		m_queue.Add(sample);
 		m_ts += ts;
@@ -99,7 +100,7 @@ void VideoEncodeTask::OnMessagePump()
 			{
 				if (m_converter->BRGAToI420(sample->Bits))
 				{
-					m_x264.Encode(m_converter->GetI420());
+					m_x264.Encode(m_converter->GetI420(), sample->Time);
 				}
 				m_ts -= sample->SampleTime;
 			}

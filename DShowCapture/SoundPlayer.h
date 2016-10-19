@@ -17,6 +17,7 @@ namespace Media
 		BOOL	GetCaps(DSCAPS& caps);
 		BOOL	Play(BYTE* bits, INT size);
 		BOOL	Stop();
+		BOOL	Close();
 	private:
 		TinyComPtr<IDirectSound8>		m_sound;
 		TinyComPtr<IDirectSoundBuffer>	m_primaryDSB;

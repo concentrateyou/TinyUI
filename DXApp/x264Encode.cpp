@@ -57,7 +57,7 @@ BOOL x264Encode::BuildParam(INT cx, INT cy, INT fps, INT bitrate)
 	return TRUE;
 }
 
-BOOL x264Encode::Encode(AVFrame* pI420)
+BOOL x264Encode::Encode(AVFrame* pI420, DWORD dwTime)
 {
 	if (!m_x264Image || !pI420)
 		return FALSE;
@@ -94,6 +94,7 @@ BOOL x264Encode::Encode(AVFrame* pI420)
 				sample->DTS = 0;
 				sample->Track = 0;
 				sample->Flag = pNAL[i].i_type;
+				sample->Time = dwTime;
 				OnDone(sample);
 			}
 			break;
@@ -108,6 +109,7 @@ BOOL x264Encode::Encode(AVFrame* pI420)
 				sample->DTS = 0;
 				sample->Track = 0;
 				sample->Flag = pNAL[i].i_type;
+				sample->Time = dwTime;
 				OnDone(sample);
 			}
 			break;
@@ -126,6 +128,7 @@ BOOL x264Encode::Encode(AVFrame* pI420)
 				sample->DTS = 0;
 				sample->Track = 0;
 				sample->Flag = pNAL[i].i_type;
+				sample->Time = dwTime;
 				OnDone(sample);
 			}
 			break;

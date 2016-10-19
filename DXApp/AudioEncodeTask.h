@@ -11,12 +11,13 @@ class AudioEncodeTask : public TinyTaskBase
 public:
 	AudioEncodeTask();
 	virtual ~AudioEncodeTask();
-	BOOL			Initialize(const AudioCapture::Name& name, const AudioCaptureParam& param);
-	BOOL			Open(DWORD dwAudioRate);
-	BOOL			Submit();
-	BOOL			Close(DWORD dwMS = INFINITE) OVERRIDE;
-	FaacEncode*		GetEncode();
-	AudioCapture*	GetCapture();
+	BOOL				Initialize(const AudioCapture::Name& name, const AudioCaptureParam& param);
+	BOOL				Open(DWORD dwAudioRate);
+	BOOL				Submit();
+	BOOL				Close(DWORD dwMS = INFINITE) OVERRIDE;
+	FaacEncode*			GetEncode();
+	AudioCapture*		GetCapture();
+	AudioCaptureParam*	GetParam();
 private:
 	void			OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps);
 	void			OnMessagePump();

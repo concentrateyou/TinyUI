@@ -26,6 +26,7 @@ extern GUID MediaSubTypeHDYC;
 HRESULT WINAPI CopyMediaType(AM_MEDIA_TYPE *pmtTarget, const AM_MEDIA_TYPE *pmtSource);
 void WINAPI FreeMediaType(AM_MEDIA_TYPE& mt);
 void WINAPI DeleteMediaType(AM_MEDIA_TYPE *pmt);
+<<<<<<< .mine
 void WINAPI SaveBitmap(BITMAPINFOHEADER bi, const BYTE* pBits, DWORD dwSize);
 HRESULT WINAPI AMovieSetupRegisterFilter(const AMOVIESETUP_FILTER * const psetupdata, IFilterMapper* pIFM, BOOL bRegister);
 
@@ -45,3 +46,24 @@ typedef struct _AMOVIESETUP_FILTER
 }
 AMOVIESETUP_FILTER, *PAMOVIESETUP_FILTER, *FAR LPAMOVIESETUP_FILTER;
 
+=======
+void WINAPI SaveBitmap(const  BITMAPINFOHEADER& bi, const BYTE* pBits, DWORD dwSize);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> .theirs
