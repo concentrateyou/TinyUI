@@ -25,6 +25,8 @@ private:
 	AudioEncodeTask*	m_audioTask;
 	SampleQueue			m_queue;
 	TinyEvent			m_close;
+	vector<BYTE>		m_latestPPS;
+	vector<BYTE>		m_latestSPS;
 	TinyScopedPtr<Delegate<void(TinyScopedReferencePtr<Sample>&)>>	m_videoDone;
 	TinyScopedPtr<Delegate<void(TinyScopedReferencePtr<Sample>&)>>	m_audioDone;
 };

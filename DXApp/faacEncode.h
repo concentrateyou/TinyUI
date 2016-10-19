@@ -17,7 +17,7 @@ public:
 	~FaacEncode();
 public:
 	BOOL	Open(const WAVEFORMATEX& wfx, INT audioRate);
-	BOOL	Encode(BYTE* bits, INT size);
+	BOOL	Encode(BYTE* bits, INT size, DWORD dwTime);
 	void	Close();
 	BOOL	GetSpecificInfo(vector<BYTE>& info);
 	DWORD	GetLatestPTS() const;

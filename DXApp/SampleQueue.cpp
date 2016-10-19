@@ -3,7 +3,13 @@
 
 
 Sample::Sample(DWORD size)
-	:Size(size)
+	:Size(size),
+	Time(0),
+	INC(0),
+	PTS(0),
+	DTS(0),
+	Track(0),
+	Flag(0)
 {
 	Bits.Reset(new BYTE[Size]);
 }
@@ -59,7 +65,10 @@ void RawSampleQueue::Remove()
 	TinyAutoLock lock(m_lock);
 	m_samples.pop_front();
 }
-
+size_t  RawSampleQueue::GetSize() const
+{
+	return m_samples.size();
+}
 RawSample*	RawSampleQueue::GetSample()
 {
 	return m_samples.front();
@@ -100,4 +109,8 @@ void SampleQueue::Remove()
 Sample*	SampleQueue::GetSample()
 {
 	return m_samples.front();
+}
+size_t  SampleQueue::GetSize() const
+{
+	return m_samples.size();
 }

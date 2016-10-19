@@ -16,6 +16,7 @@ public:
 	DWORD		INC;
 	DWORD		PTS;
 	DWORD		DTS;
+	DWORD		Time;
 	DWORD		Track;//0:video.1.audio
 	DWORD		Flag;
 };
@@ -38,6 +39,7 @@ public:
 	RawSampleQueue();
 	~RawSampleQueue();
 public:
+	size_t  GetSize() const;
 	BOOL	IsEmpty() const;
 	void	Add(RawSample* sample);
 	void	Remove();
@@ -54,6 +56,7 @@ public:
 	SampleQueue();
 	~SampleQueue();
 public:
+	size_t  GetSize() const;
 	BOOL	IsEmpty() const;
 	void	Add(Sample* sample);
 	void	Remove();

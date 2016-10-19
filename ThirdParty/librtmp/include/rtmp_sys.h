@@ -24,36 +24,19 @@
 
 #ifdef _WIN32
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-#include <ctype.h>
-#include <stddef.h>
-#include <errno.h>
-#include <stdarg.h>
-#include <limits.h>
-#include <time.h>
-
 #include <winsock2.h>
 #include <ws2tcpip.h>
-#include <Mstcpip.h>
-
-#include "stdint.h"
 
 #ifdef _MSC_VER	/* MSVC */
-#define snprintf _snprintf
-#define strcasecmp stricmp
-#define strncasecmp strnicmp
-#define vsnprintf _vsnprintf
+//#define snprintf _snprintf
+#define strcasecmp _stricmp
+#define strncasecmp _strnicmp
+//#define vsnprintf _vsnprintf
 #endif
 
 #define GetSockError()	WSAGetLastError()
 #define SetSockError(e)	WSASetLastError(e)
 #define setsockopt(a,b,c,d,e)	(setsockopt)(a,b,c,(const char *)d,(int)e)
-#ifdef EWOULDBLOCK
-#undef EWOULDBLOCK
-#endif
 #define EWOULDBLOCK	WSAETIMEDOUT	/* we don't use nonblocking, but we do use timeouts */
 #define sleep(n)	Sleep(n*1000)
 #define msleep(n)	Sleep(n)
@@ -90,18 +73,16 @@
 #else
 #define	SSL_SET_SESSION(S,resume,timeout,ctx)	ssl_set_session(S,resume,timeout,ctx)
 #endif
-typedef struct tls_ctx
-{
-    havege_state hs;
-    ssl_session ssn;
+typedef struct tls_ctx {
+	havege_state hs;
+	ssl_session ssn;
 } tls_ctx;
-typedef struct tls_server_ctx
-{
-    havege_state *hs;
-    x509_cert cert;
-    rsa_context key;
-    ssl_session ssn;
-    const char *dhm_P, *dhm_G;
+typedef struct tls_server_ctx {
+	havege_state *hs;
+	x509_cert cert;
+	rsa_context key;
+	ssl_session ssn;
+	const char *dhm_P, *dhm_G;
 } tls_server_ctx;
 
 #define TLS_CTX tls_ctx *
@@ -127,10 +108,9 @@ typedef struct tls_server_ctx
 
 #elif defined(USE_GNUTLS)
 #include <gnutls/gnutls.h>
-typedef struct tls_ctx
-{
-    gnutls_certificate_credentials_t cred;
-    gnutls_priority_t prios;
+typedef struct tls_ctx {
+	gnutls_certificate_credentials_t cred;
+	gnutls_priority_t prios;
 } tls_ctx;
 #define TLS_CTX	tls_ctx *
 #define TLS_client(ctx,s)	gnutls_init((gnutls_session_t *)(&s), GNUTLS_CLIENT); gnutls_priority_set(s, ctx->prios); gnutls_credentials_set(s, GNUTLS_CRD_CERTIFICATE, ctx->cred)
@@ -142,11 +122,6 @@ typedef struct tls_ctx
 #define TLS_write(s,b,l)	gnutls_record_send(s,b,l)
 #define TLS_shutdown(s)	gnutls_bye(s, GNUTLS_SHUT_RDWR)
 #define TLS_close(s)	gnutls_deinit(s)
-
-#elif defined(USE_ONLY_MD5)
-#include "md5.h"
-#include "cencode.h"
-#define MD5_DIGEST_LENGTH 16
 
 #else	/* USE_OPENSSL */
 #define TLS_CTX	SSL_CTX *

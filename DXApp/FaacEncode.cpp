@@ -74,7 +74,7 @@ BOOL FaacEncode::Open(const WAVEFORMATEX& wfx, INT audioRate)
 	m_bits.Reset(new BYTE[m_maxOutputBytes]);
 	return TRUE;
 }
-BOOL FaacEncode::Encode(BYTE* bits, INT size)
+BOOL FaacEncode::Encode(BYTE* bits, INT size,DWORD dwTime)
 {
 	if (!bits)
 		return FALSE;
@@ -88,6 +88,7 @@ BOOL FaacEncode::Encode(BYTE* bits, INT size)
 		sample->PTS = m_dwPTS;
 		sample->DTS = 0;
 		sample->Track = 1;//ÒôÆµ
+		sample->Time = dwTime;
 		OnDone(sample);
 		return TRUE;
 	}

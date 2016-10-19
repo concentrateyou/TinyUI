@@ -364,7 +364,7 @@ public:
 	x264Encode();
 	~x264Encode();
 	BOOL	Open(INT cx, INT cy, INT fps = 50, INT rate = 1000);//rateÆ½¾ùÂëÂÊ
-	BOOL	Encode(AVFrame* pI420);
+	BOOL	Encode(AVFrame* pI420,DWORD dwTime);
 	void	Close();
 	DWORD	GetLatestPTS() const;
 public:
