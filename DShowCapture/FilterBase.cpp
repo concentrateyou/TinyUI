@@ -31,7 +31,7 @@ namespace Media
 		rtStream -= m_start;
 		return S_OK;
 	}
-	LPSETUP_FILTER FilterBase::GetSetupData()
+	LPAMOVIESETUP_FILTER FilterBase::GetSetupData()
 	{
 		return  NULL;
 	}
