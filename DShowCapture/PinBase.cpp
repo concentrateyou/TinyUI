@@ -129,7 +129,6 @@ namespace Media
 		if (hRes == NOERROR)
 		{
 			m_connector = pReceivePin;
-			m_connector->AddRef();
 			hRes = SetMediaType(pmt);
 			if (SUCCEEDED(hRes))
 			{
@@ -349,9 +348,6 @@ namespace Media
 			return VFW_E_NOT_CONNECTED;
 		}
 		CopyMediaType(pmt, &m_mediaType);
-		WCHAR str[39];
-		StringFromGUID2(m_mediaType.subtype, str, 39);
-		TRACE("ConnectionMediaType subtype:%s\n", UTF16ToUTF8(str).c_str());
 		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::QueryPinInfo(_Out_ PIN_INFO *pInfo)
@@ -375,7 +371,6 @@ namespace Media
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::QueryDirection(_Out_ PIN_DIRECTION *pPinDir)
 	{
-		TRACE("QueryDirection\n");
 		CheckPointer(pPinDir, E_POINTER);
 		*pPinDir = m_dir;
 		return NOERROR;
