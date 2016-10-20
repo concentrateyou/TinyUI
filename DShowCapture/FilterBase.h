@@ -44,6 +44,6 @@ namespace Media
 		TinyComPtr<IReferenceClock> m_clock;
 		IFilterGraph*				m_pGraph;
 		IMediaEventSink*			m_pSink;
-		TinyLock*					m_pLock;
+		TinyLock*					m_lock;
 	};
 }

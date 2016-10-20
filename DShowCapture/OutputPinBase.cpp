@@ -30,14 +30,13 @@ namespace Media
 		if (m_allocator)
 		{
 			HRESULT hRes = m_allocator->Decommit();
-			if (hRes != NOERROR)
+			if (FAILED(hRes))
+			{
 				return hRes;
+			}
 			m_allocator.Release();
 		}
-		if (m_inputPin)
-		{
-			m_inputPin.Release();
-		}
+		m_inputPin.Release();
 		return NOERROR;
 	}
 	HRESULT OutputPinBase::OnActive(BOOL active)
@@ -87,6 +86,14 @@ namespace Media
 		}
 		return m_connector->NewSegment(tStart, tStop, dRate);
 	}
+	HRESULT OutputPinBase::InitializeAllocator(IMemAllocator **ppAlloc)
+	{
+		return CoCreateInstance(CLSID_MemoryAllocator,
+			0,
+			CLSCTX_INPROC_SERVER,
+			IID_IMemAllocator,
+			(void **)ppAlloc);
+	}
 	HRESULT OutputPinBase::GetAllocator(IMemInputPin * pPin, IMemAllocator ** ppAlloc)
 	{
 		HRESULT hRes = NOERROR;
@@ -102,7 +109,7 @@ namespace Media
 		if (SUCCEEDED(hRes))
 		{
 
-			hRes = GetAllocatorSize(*ppAlloc, &prop);
+			hRes = Allocate(*ppAlloc, &prop);
 			if (SUCCEEDED(hRes))
 			{
 				hRes = pPin->NotifyAllocator(*ppAlloc, FALSE);
@@ -124,7 +131,7 @@ namespace Media
 			(void **)ppAlloc);
 		if (SUCCEEDED(hRes))
 		{
-			hRes = GetAllocatorSize(*ppAlloc, &prop);
+			hRes = Allocate(*ppAlloc, &prop);
 			if (SUCCEEDED(hRes))
 			{
 				hRes = pPin->NotifyAllocator(*ppAlloc, FALSE);
@@ -141,7 +148,7 @@ namespace Media
 		}
 		return hRes;
 	}
-	HRESULT OutputPinBase::GetAllocatorData(IMediaSample ** ppSample, REFERENCE_TIME * pStartTime, REFERENCE_TIME * pEndTime, DWORD dwFlags)
+	HRESULT OutputPinBase::GetSample(IMediaSample ** ppSample, REFERENCE_TIME * pStartTime, REFERENCE_TIME * pEndTime, DWORD dwFlags)
 	{
 		if (m_allocator)
 		{
@@ -149,7 +156,7 @@ namespace Media
 		}
 		return E_NOINTERFACE;
 	}
-	HRESULT OutputPinBase::Fill(IMediaSample *pSample)
+	HRESULT OutputPinBase::FillSample(IMediaSample *pSample)
 	{
 		if (!m_inputPin)
 		{

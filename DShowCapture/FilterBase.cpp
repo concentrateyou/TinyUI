@@ -7,7 +7,7 @@ namespace Media
 {
 	FilterBase::FilterBase(REFCLSID  clsid, TinyLock* lock)
 		:m_clsid(clsid),
-		m_pLock(lock),
+		m_lock(lock),
 		m_pName(NULL),
 		m_pSink(NULL),
 		m_pGraph(NULL),
@@ -75,7 +75,7 @@ namespace Media
 	HRESULT STDMETHODCALLTYPE FilterBase::FindPin(LPCWSTR Id, _Out_ IPin **ppPin)
 	{
 		CheckPointer(ppPin, E_POINTER);
-		TinyAutoLock lock(*m_pLock);
+		TinyAutoLock lock(*m_lock);
 		INT count = GetPinCount();
 		for (INT i = 0; i < count; i++)
 		{
@@ -122,7 +122,7 @@ namespace Media
 
 	HRESULT STDMETHODCALLTYPE FilterBase::JoinFilterGraph(_In_opt_ IFilterGraph *pGraph, _In_opt_ LPCWSTR pName)
 	{
-		TinyAutoLock lock(*m_pLock);
+		TinyAutoLock lock(*m_lock);
 		m_pGraph = pGraph;
 		if (m_pGraph)
 		{
@@ -170,7 +170,7 @@ namespace Media
 
 	HRESULT STDMETHODCALLTYPE FilterBase::Stop(void)
 	{
-		TinyAutoLock lock(*m_pLock);
+		TinyAutoLock lock(*m_lock);
 		if (m_state != State_Stopped)
 		{
 			INT count = GetPinCount();
@@ -197,7 +197,7 @@ namespace Media
 
 	HRESULT STDMETHODCALLTYPE FilterBase::Pause(void)
 	{
-		TinyAutoLock lock(*m_pLock);
+		TinyAutoLock lock(*m_lock);
 		if (m_state == State_Stopped)
 		{
 			INT count = GetPinCount();
@@ -224,7 +224,7 @@ namespace Media
 
 	HRESULT STDMETHODCALLTYPE FilterBase::Run(REFERENCE_TIME tStart)
 	{
-		TinyAutoLock lock(*m_pLock);
+		TinyAutoLock lock(*m_lock);
 		m_start = tStart;
 		if (m_state == State_Stopped)
 		{
@@ -268,7 +268,7 @@ namespace Media
 
 	HRESULT STDMETHODCALLTYPE FilterBase::SetSyncSource(_In_opt_ IReferenceClock *pClock)
 	{
-		TinyAutoLock lock(*m_pLock);
+		TinyAutoLock lock(*m_lock);
 		m_clock = pClock;
 		return S_OK;
 	}
@@ -276,7 +276,7 @@ namespace Media
 	HRESULT STDMETHODCALLTYPE FilterBase::GetSyncSource(_Outptr_result_maybenull_ IReferenceClock **pClock)
 	{
 		CheckPointer(pClock, E_POINTER);
-		TinyAutoLock lock(*m_pLock);
+		TinyAutoLock lock(*m_lock);
 		*pClock = m_clock;
 		(*pClock)->AddRef();
 		return S_OK;

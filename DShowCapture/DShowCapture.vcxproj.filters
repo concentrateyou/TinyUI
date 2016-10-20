@@ -81,7 +81,10 @@
     <ClInclude Include="ReferenceTime.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MediaFilterBase.h">
+    <ClInclude Include="SourceStream.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamSource.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -146,7 +149,10 @@
     <ClCompile Include="ReferenceTime.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MediaFilterBase.cpp">
+    <ClCompile Include="SourceStream.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamSource.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
