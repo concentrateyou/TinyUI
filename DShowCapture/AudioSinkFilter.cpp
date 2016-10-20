@@ -4,8 +4,8 @@
 
 namespace Media
 {
-	AudioSinkFilter::AudioSinkFilter(FilterObserver* observer)
-		:FilterBase(__uuidof(AudioSinkFilter), FILTER_NAME)
+	AudioSinkFilter::AudioSinkFilter(FilterObserver* observer,TinyLock* lock)
+		:FilterBase(__uuidof(AudioSinkFilter), lock)
 	{
 		m_sinkInputPin = new AudioSinkInputPin(this, observer);
 	}

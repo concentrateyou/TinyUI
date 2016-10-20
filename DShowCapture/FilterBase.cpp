@@ -5,17 +5,19 @@
 
 namespace Media
 {
-	FilterBase::FilterBase(LPWSTR pzName, REFCLSID  clsid, TinyLock* lock)
+	FilterBase::FilterBase(REFCLSID  clsid, TinyLock* lock)
 		:m_clsid(clsid),
-		m_pzName(pzName),
-		m_lock(lock),
+		m_pLock(lock),
+		m_pName(NULL),
+		m_pSink(NULL),
+		m_pGraph(NULL),
 		m_state(State_Stopped)
 	{
 
 	}
 	FilterBase::~FilterBase()
 	{
-
+		SAFE_DELETE_ARRAY(m_pName);
 	}
 	HRESULT FilterBase::StreamTime(ReferenceTime& rtStream)
 	{
@@ -35,6 +37,32 @@ namespace Media
 	{
 		return  NULL;
 	}
+	IFilterGraph* FilterBase::GetFilterGraph()
+	{
+		return m_pGraph;
+	}
+	HRESULT FilterBase::ReconnectPin(IPin *pPin, const AM_MEDIA_TYPE* pmt)
+	{
+		IFilterGraph2 *pGraph2;
+		if (m_pGraph)
+		{
+			HRESULT hRes = m_pGraph->QueryInterface(IID_IFilterGraph2, (void **)&pGraph2);
+			if (SUCCEEDED(hRes))
+			{
+				hRes = pGraph2->ReconnectEx(pPin, pmt);
+				pGraph2->Release();
+				return hRes;
+			}
+			else
+			{
+				return m_pGraph->Reconnect(pPin);
+			}
+		}
+		else
+		{
+			return E_NOINTERFACE;
+		}
+	}
 	HRESULT STDMETHODCALLTYPE FilterBase::EnumPins(_Out_ IEnumPins **ppEnum)
 	{
 		*ppEnum = new PinEnumerator(this);
@@ -47,7 +75,7 @@ namespace Media
 	HRESULT STDMETHODCALLTYPE FilterBase::FindPin(LPCWSTR Id, _Out_ IPin **ppPin)
 	{
 		CheckPointer(ppPin, E_POINTER);
-		TinyAutoLock lock(*m_lock);
+		TinyAutoLock lock(*m_pLock);
 		INT count = GetPinCount();
 		for (INT i = 0; i < count; i++)
 		{
@@ -75,8 +103,16 @@ namespace Media
 
 	HRESULT STDMETHODCALLTYPE FilterBase::QueryFilterInfo(_Out_ FILTER_INFO *pInfo)
 	{
-		memcpy(pInfo->achName, FILTER_NAME, sizeof(FILTER_NAME));
-		pInfo->pGraph = m_graph;
+		CheckPointer(pInfo, E_POINTER);
+		if (m_pName)
+		{
+			(void)StringCchCopyW(pInfo->achName, NUMELMS(pInfo->achName), m_pName);
+		}
+		else
+		{
+			pInfo->achName[0] = L'\0';
+		}
+		pInfo->pGraph = m_pGraph;
 		if (pInfo->pGraph)
 		{
 			pInfo->pGraph->AddRef();
@@ -86,18 +122,55 @@ namespace Media
 
 	HRESULT STDMETHODCALLTYPE FilterBase::JoinFilterGraph(_In_opt_ IFilterGraph *pGraph, _In_opt_ LPCWSTR pName)
 	{
-		m_graph = pGraph;
-		return S_OK;
+		TinyAutoLock lock(*m_pLock);
+		m_pGraph = pGraph;
+		if (m_pGraph)
+		{
+			HRESULT hRes = m_pGraph->QueryInterface(IID_IMediaEventSink, (void**)&m_pSink);
+			if (FAILED(hRes)) 
+			{
+				ASSERT(m_pSink == NULL);
+			}
+			else
+			{
+				m_pSink->Release();
+			}
+		}
+		else
+		{
+			m_pSink = NULL;
+		}
+		SAFE_DELETE_ARRAY(m_pName);
+		if (pName)
+		{
+			size_t size;
+			HRESULT hRes = StringCchLengthW(pName, STRSAFE_MAX_CCH, &size);
+			if (FAILED(hRes))
+			{
+				return hRes;
+			}
+			m_pName = new WCHAR[size + 1];
+			if (m_pName)
+			{
+				(void)StringCchCopyW(m_pName, size + 1, pName);
+			}
+			else
+			{
+				return E_OUTOFMEMORY;
+			}
+		}
+		return NOERROR;
 	}
 
 	HRESULT STDMETHODCALLTYPE FilterBase::QueryVendorInfo(_Out_ LPWSTR *pVendorInfo)
 	{
+		UNREFERENCED_PARAMETER(pVendorInfo);
 		return E_NOTIMPL;
 	}
 
 	HRESULT STDMETHODCALLTYPE FilterBase::Stop(void)
 	{
-		TinyAutoLock lock(*m_lock);
+		TinyAutoLock lock(*m_pLock);
 		if (m_state != State_Stopped)
 		{
 			INT count = GetPinCount();
@@ -124,7 +197,7 @@ namespace Media
 
 	HRESULT STDMETHODCALLTYPE FilterBase::Pause(void)
 	{
-		TinyAutoLock lock(*m_lock);
+		TinyAutoLock lock(*m_pLock);
 		if (m_state == State_Stopped)
 		{
 			INT count = GetPinCount();
@@ -151,7 +224,7 @@ namespace Media
 
 	HRESULT STDMETHODCALLTYPE FilterBase::Run(REFERENCE_TIME tStart)
 	{
-		TinyAutoLock lock(*m_lock);
+		TinyAutoLock lock(*m_pLock);
 		m_start = tStart;
 		if (m_state == State_Stopped)
 		{
@@ -195,7 +268,7 @@ namespace Media
 
 	HRESULT STDMETHODCALLTYPE FilterBase::SetSyncSource(_In_opt_ IReferenceClock *pClock)
 	{
-		TinyAutoLock lock(*m_lock);
+		TinyAutoLock lock(*m_pLock);
 		m_clock = pClock;
 		return S_OK;
 	}
@@ -203,7 +276,7 @@ namespace Media
 	HRESULT STDMETHODCALLTYPE FilterBase::GetSyncSource(_Outptr_result_maybenull_ IReferenceClock **pClock)
 	{
 		CheckPointer(pClock, E_POINTER);
-		TinyAutoLock lock(*m_lock);
+		TinyAutoLock lock(*m_pLock);
 		*pClock = m_clock;
 		(*pClock)->AddRef();
 		return S_OK;
@@ -262,6 +335,7 @@ namespace Media
 		}
 		CoFreeUnusedLibraries();
 		CoUninitialize();
+		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE FilterBase::Unregister()
 	{

@@ -3,8 +3,8 @@
 
 namespace Media
 {
-	OutputPinBase::OutputPinBase(FilterBase* pFilter, WCHAR* pzName)
-		:PinBase(pFilter, PINDIR_OUTPUT, pzName)
+	OutputPinBase::OutputPinBase(FilterBase* pFilter, WCHAR* pzName, TinyLock* lock)
+		:PinBase(pFilter, PINDIR_OUTPUT, pzName, lock)
 	{
 	}
 	OutputPinBase::~OutputPinBase()

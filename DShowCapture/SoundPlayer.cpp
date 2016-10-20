@@ -85,8 +85,9 @@ namespace Media
 	}
 	BOOL SoundPlayer::Close()
 	{
-		ASSERT(m_secondaryDSB);
 		HRESULT hRes = S_OK;
+		if (!m_secondaryDSB || !m_primaryDSB)
+			return hRes;
 		hRes = m_secondaryDSB->Restore();
 		if (FAILED(hRes))
 			return FALSE;

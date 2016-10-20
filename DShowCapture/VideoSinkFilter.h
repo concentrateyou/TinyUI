@@ -11,7 +11,7 @@ namespace Media
 	{
 		DISALLOW_IMPLICIT_CONSTRUCTORS(VideoSinkFilter);
 	public:
-		explicit VideoSinkFilter(FilterObserver* observer);
+		explicit VideoSinkFilter(FilterObserver* observer, TinyLock* lock);
 		virtual ~VideoSinkFilter();
 		void SetCaptureParam(const VideoCaptureParam& param);
 		INT GetPinCount() OVERRIDE;

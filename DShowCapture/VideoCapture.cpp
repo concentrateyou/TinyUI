@@ -59,13 +59,13 @@ namespace Media
 		hRes = m_builder->AddFilter(m_captureFilter, NULL);
 		if (FAILED(hRes))
 			return FALSE;
-		m_sinkFilter = new VideoSinkFilter(this);
+		m_sinkFilter = new VideoSinkFilter(this, &m_lock);
 		if (!m_sinkFilter)
 			return FALSE;
 		m_sinkI = m_sinkFilter->GetPin(0);
 		if (!m_sinkI)
 			return FALSE;
-		hRes = m_builder->AddFilter(m_sinkFilter, NULL);
+		hRes = m_builder->AddFilter(m_sinkFilter, FILTER_NAME);
 		if (FAILED(hRes))
 			return FALSE;
 		return TRUE;
@@ -272,7 +272,7 @@ namespace Media
 	}
 	BOOL VideoCapture::GetDevices(vector<Name>& names)
 	{
-		TinyComPtr<ICreateDevEnum> devEnum; 
+		TinyComPtr<ICreateDevEnum> devEnum;
 		HRESULT hRes = devEnum.CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC);
 		if (FAILED(hRes))
 			return FALSE;

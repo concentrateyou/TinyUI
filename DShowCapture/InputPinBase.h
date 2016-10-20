@@ -23,6 +23,7 @@ namespace Media
 	protected:
 		BOOL						m_bReadOnly;
 		TinyComPtr<IMemAllocator>	m_allocator;
+		AM_SAMPLE2_PROPERTIES		m_sampleProps;
 		FilterObserver*				m_observer;
 	};
 }

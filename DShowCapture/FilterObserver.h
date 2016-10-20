@@ -17,5 +17,7 @@ namespace Media
 		virtual void OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter) = 0;
 	protected:
 		virtual ~FilterObserver();
+	protected:
+		TinyLock	m_lock;
 	};
 }

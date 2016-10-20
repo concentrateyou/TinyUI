@@ -5,8 +5,8 @@
 namespace Media
 {
 
-	VideoSinkFilter::VideoSinkFilter(FilterObserver* observer)
-		:FilterBase(__uuidof(VideoSinkFilter), FILTER_NAME)
+	VideoSinkFilter::VideoSinkFilter(FilterObserver* observer,TinyLock* lock)
+		:FilterBase(__uuidof(VideoSinkFilter), lock)
 	{
 		m_sinkInputPin = new VideoSinkInputPin(this, observer);
 	}

@@ -11,7 +11,7 @@ namespace Media
 	{
 	public:
 		SoundPlayer();
-		~SoundPlayer();
+		virtual ~SoundPlayer();
 	public:
 		BOOL	Initialize(HWND hWND, const WAVEFORMATEX& wfx);
 		BOOL	GetCaps(DSCAPS& caps);

@@ -5,13 +5,13 @@
 
 namespace Media
 {
-	PinBase::PinBase(FilterBase* pFilter, PIN_DIRECTION dir, WCHAR* pzName)
+	PinBase::PinBase(FilterBase* pFilter, PIN_DIRECTION dir, WCHAR* pzName, TinyLock* lock)
 		:m_pFilter(pFilter),
 		m_dir(dir),
 		m_pzName(pzName),
+		m_pLock(lock),
+		m_pQSink(NULL),
 		m_bFlushing(FALSE),
-		m_startTime(0),
-		m_stopTime(0),
 		m_rate(0.0F)
 	{
 		ZeroMemory((void*)&m_mediaType, sizeof(m_mediaType));
@@ -52,10 +52,6 @@ namespace Media
 	{
 		return m_connector != NULL;
 	}
-	BOOL PinBase::IsStop() const
-	{
-		return (m_pFilter->m_state == State_Stopped);
-	};
 	IPin* PinBase::GetConnector()
 	{
 		return m_connector;
@@ -252,12 +248,16 @@ namespace Media
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::Notify(IBaseFilter *pSelf, Quality q)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		UNREFERENCED_PARAMETER(q);
+		UNREFERENCED_PARAMETER(pSelf);
+		return E_NOTIMPL;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::SetSink(IQualityControl *piqc)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		TinyAutoLock lock(*m_pLock);
+		m_pQSink = piqc;
+		return NOERROR;
 	}
 
 	HRESULT STDMETHODCALLTYPE PinBase::Connect(IPin *pReceivePin, _In_opt_ const AM_MEDIA_TYPE *pmt)
@@ -277,20 +277,16 @@ namespace Media
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::ReceiveConnection(IPin *pConnector, const AM_MEDIA_TYPE *pmt)
 	{
+		CheckPointer(pConnector, E_POINTER);
+		CheckPointer(pmt, E_POINTER);
+		TinyAutoLock lock(*m_pLock);
 		VIDEOINFOHEADER* h = reinterpret_cast<VIDEOINFOHEADER*>(pmt->pbFormat);
-		//WCHAR str[39];
-		//StringFromGUID2(pmt->subtype, str, 39);
-		//TRACE("ReceiveConnection-subtype:%s,cx:%d,cy:%d\n", UTF16ToUTF8(str).c_str(), h->bmiHeader.biWidth, h->bmiHeader.biHeight);
-		if (!pConnector || !pmt)
-		{
-			return E_POINTER;
-		}
 		if (m_connector)
 		{
 			return VFW_E_ALREADY_CONNECTED;
 		}
 		HRESULT hRes = CheckConnect(pConnector);
-		if (hRes != NOERROR)
+		if (FAILED(hRes))
 		{
 			ASSERT(OnDisconnect() == NOERROR);
 			return hRes;
@@ -313,31 +309,38 @@ namespace Media
 			OnConnect(pConnector);
 			return hRes;
 		}
-		m_connector->Release();
-		m_connector = NULL;
+		m_connector.Release();
 		return hRes;
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::Disconnect(void)
 	{
-		if (!m_connector)
-			return S_FALSE;
-		ASSERT(OnDisconnect() == NOERROR);
-		m_connector.Release();
-		m_connector = NULL;
-		return NOERROR;
+		TinyAutoLock lock(*m_pLock);
+		if (m_connector)
+		{
+			HRESULT hRes = OnDisconnect();
+			if (FAILED(hRes))
+			{
+				return hRes;
+			}
+			m_connector.Release();
+			return S_OK;
+		}
+		return S_FALSE;
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::ConnectedTo(_Out_ IPin **ppPin)
 	{
+		CheckPointer(ppPin, E_POINTER);
 		IPin *pPin = m_connector;
 		*ppPin = pPin;
 		if (!m_connector)
 			return VFW_E_NOT_CONNECTED;
 		m_connector->AddRef();
-		TRACE("ConnectedTo : OK\n");
 		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::ConnectionMediaType(_Out_ AM_MEDIA_TYPE *pmt)
 	{
+		CheckPointer(pmt, E_POINTER);
+		TinyAutoLock lock(*m_pLock);
 		if (!m_connector)
 		{
 			ZeroMemory(pmt, sizeof(AM_MEDIA_TYPE));
@@ -353,6 +356,7 @@ namespace Media
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::QueryPinInfo(_Out_ PIN_INFO *pInfo)
 	{
+		CheckPointer(pInfo, E_POINTER);
 		pInfo->pFilter = m_pFilter;
 		if (m_pFilter)
 		{
@@ -372,6 +376,7 @@ namespace Media
 	HRESULT STDMETHODCALLTYPE PinBase::QueryDirection(_Out_ PIN_DIRECTION *pPinDir)
 	{
 		TRACE("QueryDirection\n");
+		CheckPointer(pPinDir, E_POINTER);
 		*pPinDir = m_dir;
 		return NOERROR;
 	}
@@ -400,6 +405,7 @@ namespace Media
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::EnumMediaTypes(_Out_ IEnumMediaTypes **ppEnum)
 	{
+		CheckPointer(ppEnum, E_POINTER);
 		if (*ppEnum = new TypeEnumerator(this))
 		{
 			(*ppEnum)->AddRef();

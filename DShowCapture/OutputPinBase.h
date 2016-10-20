@@ -9,7 +9,7 @@ namespace Media
 	class OutputPinBase : public PinBase
 	{
 	public:
-		explicit OutputPinBase(FilterBase* pFilter, WCHAR* pzName);
+		explicit OutputPinBase(FilterBase* pFilter, WCHAR* pzName,TinyLock* lock);
 		virtual ~OutputPinBase();
 		HRESULT CheckConnect(IPin *pPin) OVERRIDE;
 		HRESULT OnConnect(IPin *pReceivePin) OVERRIDE;

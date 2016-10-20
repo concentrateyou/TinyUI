@@ -5,12 +5,12 @@
 namespace Media
 {
 	InputPinBase::InputPinBase(FilterBase* pFilter, WCHAR* pzName, FilterObserver* observer)
-		:PinBase(pFilter, PINDIR_INPUT, pzName),
+		:PinBase(pFilter, PINDIR_INPUT, pzName, &observer->m_lock),
 		m_observer(observer),
 		m_allocator(NULL),
 		m_bReadOnly(FALSE)
 	{
-
+		ZeroMemory(&m_sampleProps, sizeof(m_sampleProps));
 	}
 	InputPinBase::~InputPinBase()
 	{
@@ -32,7 +32,8 @@ namespace Media
 	}
 	HRESULT STDMETHODCALLTYPE InputPinBase::GetAllocator(_Out_ IMemAllocator **ppAllocator)
 	{
-		TinyAutoLock lock(m_lock);
+		CheckPointer(ppAllocator, E_POINTER);
+		TinyAutoLock lock(*m_pLock);
 		if (m_allocator == NULL)
 		{
 			HRESULT hRes = CoCreateInstance(CLSID_MemoryAllocator,

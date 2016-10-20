@@ -11,7 +11,7 @@ namespace Media
 	{
 		DISALLOW_COPY_AND_ASSIGN(PinBase)
 	public:
-		explicit PinBase(FilterBase* pFilter, PIN_DIRECTION dir, WCHAR* pzName);
+		explicit PinBase(FilterBase* pFilter, PIN_DIRECTION dir, WCHAR* pzName,TinyLock* lock);
 		virtual ~PinBase();
 		virtual HRESULT CheckMediaType(const AM_MEDIA_TYPE* mediaType) = 0;
 		virtual HRESULT GetMediaType(INT position, AM_MEDIA_TYPE* mediaType) = 0;
@@ -22,7 +22,6 @@ namespace Media
 		virtual HRESULT OnRun(REFERENCE_TIME tStart);
 		BOOL	IsConnect() const;
 		IPin*	GetConnector();
-		BOOL	IsStop() const;
 		BOOL	IsFlushing() const;
 		REFERENCE_TIME GetCurrentStartTime() const;
 		REFERENCE_TIME GetCurrentStopTime() const;
@@ -57,12 +56,13 @@ namespace Media
 		AM_MEDIA_TYPE		m_mediaType;
 		PIN_DIRECTION		m_dir;
 		TinyComPtr<IPin>	m_connector;
+		IQualityControl*	m_pQSink;
 		FilterBase*			m_pFilter;
 		WCHAR*				m_pzName;
+		TinyLock*			m_pLock;
 		BOOL				m_bFlushing;
 		ReferenceTime		m_startTime;
 		ReferenceTime		m_stopTime;
 		DOUBLE				m_rate;
-		TinyLock			m_lock;
 	};
 }

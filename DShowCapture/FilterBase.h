@@ -9,12 +9,15 @@ namespace Media
 		friend class PinBase;
 		DISALLOW_COPY_AND_ASSIGN(FilterBase)
 	public:
-		FilterBase(LPWSTR pzName, REFCLSID  clsid, TinyLock* lock);
+		FilterBase(REFCLSID  clsid, TinyLock* lock);
 		virtual ~FilterBase();
 		virtual INT	GetPinCount() = 0;
 		virtual IPin* GetPin(INT index) = 0;
 		virtual HRESULT StreamTime(ReferenceTime& rtStream);
 		virtual LPAMOVIESETUP_FILTER GetSetupData();
+	public:
+		IFilterGraph *GetFilterGraph();
+		HRESULT ReconnectPin(IPin *pPin, const AM_MEDIA_TYPE* pmt);
 	public:
 		HRESULT STDMETHODCALLTYPE EnumPins(_Out_ IEnumPins **ppEnum) OVERRIDE;
 		HRESULT STDMETHODCALLTYPE FindPin(LPCWSTR Id, _Out_ IPin **ppPin) OVERRIDE;
@@ -35,12 +38,12 @@ namespace Media
 		HRESULT STDMETHODCALLTYPE Unregister() OVERRIDE;
 	protected:
 		FILTER_STATE				m_state;
-		LPCWSTR						m_pzName;
+		LPWSTR						m_pName;
 		CLSID						m_clsid;
 		ReferenceTime				m_start;
 		TinyComPtr<IReferenceClock> m_clock;
-		TinyComPtr<IFilterGraph>	m_graph;
-		TinyComPtr<IMediaEventSink> m_sink;
-		TinyLock*					m_lock;
+		IFilterGraph*				m_pGraph;
+		IMediaEventSink*			m_pSink;
+		TinyLock*					m_pLock;
 	};
 }

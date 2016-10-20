@@ -7,11 +7,11 @@
 namespace Media
 {
 	class __declspec(uuid("{F5997302-B10C-4AE9-8933-B24484950594}"))
-	AudioSinkFilter : public FilterBase
+		AudioSinkFilter : public FilterBase
 	{
 		DISALLOW_IMPLICIT_CONSTRUCTORS(AudioSinkFilter);
 	public:
-		explicit AudioSinkFilter(FilterObserver* observer);
+		explicit AudioSinkFilter(FilterObserver* observer, TinyLock* lock);
 		virtual ~AudioSinkFilter();
 		void SetCaptureParam(const AudioCaptureParam& param);
 		INT GetPinCount() OVERRIDE;
