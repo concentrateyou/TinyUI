@@ -253,7 +253,7 @@ namespace DXCapture
 		m_bTextures = FALSE;
 		m_hTextureHandle = NULL;
 		m_dX9TextureSurface.Release();
-		m_d3d.Release();
+		m_d3d10.Release();
 		m_textureMemery.Unmap();
 		m_textureMemery.Close();
 	}
@@ -310,9 +310,9 @@ namespace DXCapture
 		{
 			return FALSE;
 		}
-		if (FAILED((*d3d10CreateDevice1)(adapter, D3D10_DRIVER_TYPE_HARDWARE, NULL, 0, D3D10_FEATURE_LEVEL_10_1, D3D10_1_SDK_VERSION, &m_d3d)))
+		if (FAILED((*d3d10CreateDevice1)(adapter, D3D10_DRIVER_TYPE_HARDWARE, NULL, 0, D3D10_FEATURE_LEVEL_10_1, D3D10_1_SDK_VERSION, &m_d3d10)))
 		{
-			if (FAILED((*d3d10CreateDevice1)(adapter, D3D10_DRIVER_TYPE_HARDWARE, NULL, 0, D3D10_FEATURE_LEVEL_9_3, D3D10_1_SDK_VERSION, &m_d3d)))
+			if (FAILED((*d3d10CreateDevice1)(adapter, D3D10_DRIVER_TYPE_HARDWARE, NULL, 0, D3D10_FEATURE_LEVEL_9_3, D3D10_1_SDK_VERSION, &m_d3d10)))
 			{
 				return FALSE;
 			}
@@ -331,7 +331,7 @@ namespace DXCapture
 		desc.Usage = D3D10_USAGE_DEFAULT;
 		desc.MiscFlags = D3D10_RESOURCE_MISC_SHARED;
 		TinyComPtr<ID3D10Texture2D> d3d10Texture2D;
-		if (FAILED(m_d3d->CreateTexture2D(&desc, NULL, &d3d10Texture2D)))
+		if (FAILED(m_d3d10->CreateTexture2D(&desc, NULL, &d3d10Texture2D)))
 		{
 			return FALSE;
 		}

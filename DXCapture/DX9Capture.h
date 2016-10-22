@@ -39,7 +39,7 @@ namespace DXCapture
 		BOOL							m_bTextures;
 		HANDLE							m_hTextureHandle;
 		TinyLock						m_lock;
-		TinyComPtr<ID3D10Device1>		m_d3d;
+		TinyComPtr<ID3D10Device1>		m_d3d10;
 		TinyComPtr<IDirect3DSurface9>	m_dX9TextureSurface;
 		TinyDetour						m_dX9EndScene;
 		TinyDetour						m_dX9Reset;

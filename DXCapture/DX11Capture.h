@@ -1,8 +1,12 @@
 #pragma once
-class DX11Capture
+
+namespace DXCapture
 {
-public:
-	DX11Capture();
-	~DX11Capture();
-};
+	class DX11Capture
+	{
+	public:
+		DX11Capture();
+		~DX11Capture();
+	};
+}
 
