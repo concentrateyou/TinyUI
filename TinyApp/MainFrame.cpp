@@ -3,7 +3,6 @@
 
 
 CMainFrame::CMainFrame()
-	:m_size(0)
 {
 
 }
@@ -51,9 +50,6 @@ HICON CMainFrame::RetrieveIcon()
 LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-
-	m_videoCB = BindCallback(&CMainFrame::OnVideo, this);
-	m_audioCB = BindCallback(&CMainFrame::OnAudio, this);
 
 	m_onVideoStart.Reset(new Delegate<void(void*, INT)>(this, &CMainFrame::OnVideoStart));
 	m_onVideoStop.Reset(new Delegate<void(void*, INT)>(this, &CMainFrame::OnVideoStop));
@@ -105,28 +101,6 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 	return FALSE;
 }
 
-void CMainFrame::OnVideo(BYTE* pBits, LONG size, FLOAT ts, LPVOID lpData)
-{
-	if (m_size != size)
-	{
-		m_size = size;
-		m_bits.Reset(new BYTE[m_size]);
-		m_queue.Initialize(ROUNDUP_POW_2(m_size));
-	}
-	m_queue.WriteBytes(pBits, m_size);
-}
-
-BYTE* CMainFrame::GetPointer()
-{
-	m_queue.ReadBytes(m_bits, m_size);
-	return m_bits;
-}
-
-void CMainFrame::OnAudio(BYTE* bits, LONG size, FLOAT, LPVOID)
-{
-	m_player.Play(bits, size);
-}
-
 LRESULT CMainFrame::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
@@ -136,7 +110,6 @@ LRESULT CMainFrame::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHa
 	}
 	m_videoDevice.Uninitialize();
 	m_audioDevice.Uninitialize();
-	m_player.Close();
 
 	m_videoStart.EVENT_Click -= m_onVideoStart;
 	m_videoStop.EVENT_Click -= m_onVideoStop;
@@ -178,13 +151,13 @@ void CMainFrame::OnVideoSelectChange2(INT index)
 {
 	const Media::VideoCaptureParam& param = m_videoParams[index];
 	m_videoDevice.Uninitialize();
-	m_videoDevice.Initialize(m_videoNames[m_videoDevice1.GetCurSel()], m_videoCB);
+	m_videoDevice.Initialize(m_videoNames[m_videoDevice1.GetCurSel()]);
 	m_videoDevice.Allocate(param);
 	if (m_renderTask)
 	{
 		m_renderTask->Close(INFINITE);
 	}
-	m_renderTask.Reset(new RenderTask(this, m_control.Handle(), param));
+	m_renderTask.Reset(new RenderTask(m_control.Handle(), &m_videoDevice, param));
 	m_renderTask->Submit();
 }
 
@@ -201,9 +174,8 @@ void CMainFrame::OnAudioSelectChange1(INT index)
 void CMainFrame::OnAudioSelectChange2(INT index)
 {
 	const Media::AudioCaptureParam& param = m_audioParams[index];
-	m_player.Initialize(m_hWND, param.GetFormat());
 	m_audioDevice.Uninitialize();
-	m_audioDevice.Initialize(m_audioNames[m_audioDevice1.GetCurSel()], m_audioCB);
+	m_audioDevice.Initialize(m_audioNames[m_audioDevice1.GetCurSel()]);
 	m_audioDevice.Allocate(param);
 }
 

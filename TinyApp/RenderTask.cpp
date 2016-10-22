@@ -2,10 +2,10 @@
 #include "RenderTask.h"
 #include "MainFrame.h"
 
-RenderTask::RenderTask(CMainFrame* pThis, HWND hWND, const Media::VideoCaptureParam& param)
-	:m_pThis(pThis),
-	m_hWND(hWND),
-	m_param(param)
+RenderTask::RenderTask(HWND hWND, Media::VideoCapture* pVideo, const Media::VideoCaptureParam& videoParam)
+	:m_hWND(hWND),
+	m_pVideo(pVideo),
+	m_videoParam(videoParam)
 {
 
 }
@@ -32,13 +32,13 @@ void RenderTask::OnMessagePump()
 	{
 		if (m_close.Lock(33))
 			break;
-		BYTE* bits = m_pThis->GetPointer();
+		BYTE* bits = m_pVideo->GetPointer();
 		if (bits)
 		{
 			RECT rectangle = { 0 };
 			::GetWindowRect(m_hWND, &rectangle);
 			TinyUI::TinyWindowDC wdc(m_hWND);
-			TinySize size = m_param.GetSize();
+			TinySize size = m_videoParam.GetSize();
 			BITMAPINFO bmi = { 0 };
 			bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 			bmi.bmiHeader.biWidth = size.cx;

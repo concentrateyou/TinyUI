@@ -28,6 +28,7 @@ namespace Media
 	}
 
 	AudioCapture::AudioCapture()
+		:m_size(0)
 	{
 	}
 
@@ -41,6 +42,16 @@ namespace Media
 		if (!m_callback.IsNull())
 		{
 			m_callback(bits, size, ts, lpParameter);
+		}
+		else
+		{
+			if (m_size != size)
+			{
+				m_bits.Reset(new BYTE[size]);
+				m_queue.Initialize(ROUNDUP_POW_2(size * 2));
+				m_size = size;
+			}
+			m_queue.WriteBytes(bits, size);
 		}
 	}
 	BOOL AudioCapture::Initialize(const Name& name)
@@ -121,6 +132,15 @@ namespace Media
 		if (!m_control)
 			return FALSE;
 		return m_control->Pause() == S_OK;
+	}
+	BYTE* AudioCapture::GetPointer()
+	{
+		m_queue.ReadBytes(m_bits, m_size);
+		return m_bits;
+	}
+	LONG AudioCapture::GetSize()
+	{
+		return m_size;
 	}
 	BOOL AudioCapture::GetState(FILTER_STATE& state)
 	{

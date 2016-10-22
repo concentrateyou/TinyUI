@@ -41,6 +41,8 @@ namespace Media
 		BOOL	Pause();
 		BOOL	GetState(FILTER_STATE& state);
 		BOOL	ShowProperty(HWND hWND);
+		BYTE*	GetPointer();
+		LONG	GetSize();
 	public:
 		virtual BOOL Allocate(const VideoCaptureParam& param);
 		virtual void DeAllocate();
@@ -55,6 +57,9 @@ namespace Media
 		static VideoPixelFormat TranslateMediaSubtypeToPixelFormat(const GUID& subType);
 		void SetAntiFlickerInCaptureFilter();
 	private:
+		LONG										m_size;
+		IO::TinyRingQueue							m_queue;
+		TinyScopedPtr<BYTE>							m_bits;
 		TinyComPtr<IGraphBuilder>					m_builder;
 		TinyComPtr<IMediaControl>					m_control;
 		TinyComPtr<IBaseFilter>						m_captureFilter;

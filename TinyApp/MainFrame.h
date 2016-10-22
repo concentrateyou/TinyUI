@@ -40,11 +40,6 @@ public:
 	void OnAudioStart(void*, INT);
 	void OnAudioStop(void*, INT);
 
-	void OnVideo(BYTE*, LONG, FLOAT, LPVOID);
-	void OnAudio(BYTE*, LONG, FLOAT, LPVOID);
-
-	BYTE*	GetPointer();
-
 private:
 	TinyLabel			m_control;
 	Media::VideoCapture m_videoDevice;
@@ -62,6 +57,9 @@ private:
 	Media::AudioCapture m_audioDevice;
 	vector<Media::AudioCapture::Name> m_audioNames;
 	vector<Media::AudioCaptureParam>  m_audioParams;
+
+	TinyScopedPtr<RenderTask>		m_renderTask;
+
 	TinyScopedPtr<Delegate<void(INT)>> m_onAudioChange1;
 	TinyScopedPtr<Delegate<void(INT)>> m_onAudioChange2;
 	TinyScopedPtr<Delegate<void(void*, INT)>> m_onAudioStart;
@@ -70,12 +68,6 @@ private:
 	TinyComboBox		m_audioDevice2;
 	TinyButton			m_audioStart;
 	TinyButton			m_audioStop;
-	Media::SoundPlayer	m_player;
-	Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_videoCB;
-	Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_audioCB;
-	TinyScopedPtr<BYTE>							m_bits;
-	TinyUI::IO::TinyRingQueue					m_queue;
-	LONG										m_size;
-	TinyScopedPtr<RenderTask>				  	m_renderTask;
+
 };
 

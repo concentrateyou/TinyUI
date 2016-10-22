@@ -35,6 +35,8 @@ namespace Media
 		BOOL	GetState(FILTER_STATE& state);
 		void	SetVolume(INT volume);
 		INT		GetVolume() const;
+		BYTE*	GetPointer();
+		LONG	GetSize();
 		virtual BOOL Allocate(const AudioCaptureParam& param);
 		virtual void DeAllocate();
 	public:
@@ -45,6 +47,9 @@ namespace Media
 		static BOOL GetPinCategory(IPin* pin, REFGUID category);
 		static TinyComPtr<IPin> GetPin(IBaseFilter* filter, PIN_DIRECTION pin_dir, REFGUID category);
 	private:
+		LONG										m_size;
+		IO::TinyRingQueue							m_queue;
+		TinyScopedPtr<BYTE>							m_bits;
 		TinyComPtr<IBaseFilter>						m_captureFilter;
 		TinyComPtr<IGraphBuilder>					m_builder;
 		TinyComPtr<IMediaControl>					m_control;

@@ -21,8 +21,6 @@ public:
 	virtual void		OnRender(BYTE* bits, LONG size,FLOAT ts);
 public:
 	Event<void(BYTE*, LONG, FLOAT)> EVENT_RENDER;
-private:
-	void				OnVideo(BYTE* bits, LONG size, FLOAT ts, LPVOID ps);
 	void				OnMessagePump();
 	void				OnExit();
 private:

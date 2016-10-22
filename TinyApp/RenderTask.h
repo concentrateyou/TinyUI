@@ -6,11 +6,13 @@
 using namespace TinyUI;
 using namespace TinyUI::IO;
 
-class CMainFrame;
 class RenderTask : public TinyTaskBase
 {
 public:
-	RenderTask(CMainFrame* pThis, HWND hWND, const Media::VideoCaptureParam& param);
+	RenderTask(HWND hWND, Media::VideoCapture* pVideo, const Media::VideoCaptureParam& videpParam);
+	// Media::AudioCapture* pAudio, const Media::AudioCaptureParam& audioParam
+	//Media::AudioCapture*		m_pAudio;
+	//Media::AudioCaptureParam	m_audioParam;
 	~RenderTask();
 	BOOL				Submit();
 	BOOL				Close(DWORD dwMS) OVERRIDE;
@@ -18,8 +20,8 @@ private:
 	void				OnMessagePump();
 	void				OnExit();
 private:
-	CMainFrame*					m_pThis;
-	Media::VideoCaptureParam	m_param;
+	Media::VideoCapture*		m_pVideo;
+	Media::VideoCaptureParam	m_videoParam;
 	HWND						m_hWND;
 	TinyEvent					m_close;
 };
