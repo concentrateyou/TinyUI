@@ -42,8 +42,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
-    <LibraryPath>$(UniversalCRT_LibraryPath_x86);$(LibraryPath)</LibraryPath>
-    <IncludePath>$(UniversalCRT_IncludePath);$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>

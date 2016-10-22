@@ -41,9 +41,9 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <ExecutablePath>$(UniversalCRT_IncludePath);$(ExecutablePath)</ExecutablePath>
-    <IncludePath>$(UniversalCRT_IncludePath);$(IncludePath)</IncludePath>
-    <LibraryPath>$(UniversalCRT_LibraryPath_x86);$(LibraryPath)</LibraryPath>
+    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>

@@ -171,29 +171,25 @@ namespace DXCapture
 		if (!m_start)
 		{
 			string name = StringPrintf("%s%d", BEGIN_CAPTURE_EVENT, dwProcessID);
-			if (!m_start.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()) &&
-				!m_start.CreateEvent(FALSE, FALSE, name.c_str()))
+			if (!m_start.CreateEvent(FALSE, FALSE, name.c_str()))
 				return FALSE;
 		}
 		if (!m_stop)
 		{
 			string name = StringPrintf("%s%d", END_CAPTURE_EVENT, dwProcessID);
-			if (!m_stop.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()) &&
-				!m_stop.CreateEvent(FALSE, FALSE, name.c_str()))
+			if (!m_stop.CreateEvent(FALSE, FALSE, name.c_str()))
 				return FALSE;
 		}
 		if (!m_ready)
 		{
 			string name = StringPrintf("%s%d", CAPTURE_READY_EVENT, dwProcessID);
-			if (!m_ready.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()) &&
-				!m_ready.CreateEvent(FALSE, FALSE, name.c_str()))
+			if (!m_ready.CreateEvent(FALSE, FALSE, name.c_str()))
 				return FALSE;
 		}
 		if (!m_exit)
 		{
 			string name = StringPrintf("%s%d", CAPTURE_EXIT_EVENT, dwProcessID);
-			if (!m_exit.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()) &&
-				!m_exit.CreateEvent(FALSE, FALSE, name.c_str()))
+			if (!m_exit.CreateEvent(FALSE, FALSE, name.c_str()))
 				return FALSE;
 		}
 		return TRUE;
