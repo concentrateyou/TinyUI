@@ -31,8 +31,7 @@ namespace DXFramework
 		if (!m_captureStart)
 		{
 			string name = StringPrintf("%s%d", BEGIN_CAPTURE_EVENT, m_targetWND.dwProcessID);
-			if (!m_captureStart.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()) &&
-				!m_captureStart.CreateEvent(FALSE, FALSE, name.c_str()))
+			if (!m_captureStart.CreateEvent(FALSE, FALSE, name.c_str()))
 			{
 				return FALSE;
 			}
@@ -40,8 +39,7 @@ namespace DXFramework
 		if (!m_captureStop)
 		{
 			string name = StringPrintf("%s%d", END_CAPTURE_EVENT, m_targetWND.dwProcessID);
-			if (!m_captureStop.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()) &&
-				!m_captureStop.CreateEvent(FALSE, FALSE, name.c_str()))
+			if (!m_captureStop.CreateEvent(FALSE, FALSE, name.c_str()))
 			{
 				return FALSE;
 			}
@@ -49,8 +47,7 @@ namespace DXFramework
 		if (!m_captureReady)
 		{
 			string name = StringPrintf("%s%d", CAPTURE_READY_EVENT, m_targetWND.dwProcessID);
-			if (!m_captureReady.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()) &&
-				!m_captureReady.CreateEvent(FALSE, FALSE, name.c_str()))
+			if (!m_captureReady.CreateEvent(FALSE, FALSE, name.c_str()))
 			{
 				return FALSE;
 			}
@@ -58,8 +55,7 @@ namespace DXFramework
 		if (!m_captureExit)
 		{
 			string name = StringPrintf("%s%d", CAPTURE_EXIT_EVENT, m_targetWND.dwProcessID);
-			if (!m_captureExit.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()) &&
-				!m_captureExit.CreateEvent(FALSE, FALSE, name.c_str()))
+			if (!m_captureExit.CreateEvent(FALSE, FALSE, name.c_str()))
 			{
 				return FALSE;
 			}
