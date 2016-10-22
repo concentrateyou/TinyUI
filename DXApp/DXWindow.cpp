@@ -74,7 +74,7 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 			break;
 		}
 	}
-	videoParam.SetScale(videoParam.GetSize().cx / 2, videoParam.GetSize().cy / 2);
+	videoParam.SetScale(videoParam.GetSize().cx / 4, videoParam.GetSize().cy / 4);
 	m_renderTask.Reset(new RenderTask());
 	m_videoTask.Reset(new VideoEncodeTask(m_renderTask));
 	m_audioTask.Reset(new AudioEncodeTask());

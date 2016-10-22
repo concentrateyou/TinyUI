@@ -29,7 +29,7 @@ BOOL RenderTask::Initialize(HWND hWND, INT cx, INT cy, DWORD dwFPS, const VideoC
 	if (!bRes)
 		return FALSE;
 	//游戏捕获
-	m_captureTask.Reset(new DX11CaptureTask(&m_graphics.GetD3D(), cx, cy));
+	m_captureTask.Reset(new DX11CaptureTask(&m_graphics.GetD3D(), cx * 2 / 3, cy * 2 / 3));
 	//初始化视频捕获
 	m_videoCB = BindCallback(&RenderTask::OnVideo, this);
 	bRes = m_capture.Initialize(m_deviceName, m_videoCB);
@@ -85,7 +85,8 @@ DWORD RenderTask::Render()
 	if (m_bits != NULL)
 	{
 		m_image.FillImage(m_graphics.GetD3D(), m_bits);
-		m_graphics.DrawImage(m_image, 1, 1);
+		TinySize size = m_graphics.GetD3D().GetSize();
+		m_graphics.DrawImage(m_image, size.cx * 2 / 3 + 1, 1);
 	}
 	if (m_captureTask != NULL)
 	{
