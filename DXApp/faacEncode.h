@@ -17,22 +17,15 @@ public:
 	~FaacEncode();
 public:
 	BOOL	Open(const WAVEFORMATEX& wfx, INT audioRate);
-	BOOL	Encode(BYTE* bits, INT size, DWORD dwTime);
+	BOOL	Encode(BYTE* bits, LONG size,DWORD& dwINC);
 	void	Close();
 	BOOL	GetSpecificInfo(vector<BYTE>& info);
-	DWORD	GetLatestPTS() const;
-public:
-	virtual void OnDone(TinyScopedReferencePtr<Sample>& sample);
-public:
-	Event<void(TinyScopedReferencePtr<Sample>&)> EVENT_DONE;
 private:
 	faacEncHandle			m_aac;
 	faacEncConfigurationPtr	m_config;
 	DWORD					m_inputSamples;
 	DWORD					m_maxOutputBytes;
-	DWORD					m_dwTime;
 	DWORD					m_dwINC;
-	DWORD					m_dwPTS;
 	TinyScopedArray<BYTE>	m_bits;
 	WAVEFORMATEX			m_wfx;
 };

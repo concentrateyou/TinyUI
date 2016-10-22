@@ -94,7 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FaacEncode.h" />
-    <ClInclude Include="AudioEncodeTask.h" />
+    <ClInclude Include="AudioEncode.h" />
     <ClInclude Include="SampleQueue.h" />
     <ClInclude Include="PublishTask.h" />
     <ClInclude Include="RenderTask.h" />
@@ -113,7 +113,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FaacEncode.cpp" />
-    <ClCompile Include="AudioEncodeTask.cpp" />
+    <ClCompile Include="AudioEncode.cpp" />
     <ClCompile Include="SampleQueue.cpp" />
     <ClCompile Include="PublishTask.cpp" />
     <ClCompile Include="RenderTask.cpp" />

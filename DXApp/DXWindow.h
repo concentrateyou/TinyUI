@@ -1,7 +1,7 @@
 #pragma once
 #include "Control/TinyControl.h"
 #include "RenderTask.h"
-#include "AudioEncodeTask.h"
+#include "AudioEncode.h"
 #include "VideoEncodeTask.h"
 #include "PublishTask.h"
 
@@ -28,7 +28,7 @@ public:
 	BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 private:
 	TinyScopedPtr<RenderTask>			m_renderTask;
-	TinyScopedPtr<AudioEncodeTask>		m_audioTask;
+	TinyScopedPtr<AudioEncode>		m_audioTask;
 	TinyScopedPtr<VideoEncodeTask>		m_videoTask;
 	TinyScopedPtr<PublishTask>			m_publishTask;
 };

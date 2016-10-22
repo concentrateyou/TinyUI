@@ -77,7 +77,7 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	videoParam.SetScale(videoParam.GetSize().cx / 4, videoParam.GetSize().cy / 4);
 	m_renderTask.Reset(new RenderTask());
 	m_videoTask.Reset(new VideoEncodeTask(m_renderTask));
-	m_audioTask.Reset(new AudioEncodeTask());
+	m_audioTask.Reset(new AudioEncode());
 	m_publishTask.Reset(new PublishTask(m_audioTask, m_videoTask));
 
 	BOOL bRes = m_renderTask->Initialize(m_hWND, 1280, 720, 30, videoNames[0], videoParam);
@@ -98,7 +98,7 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 
 	m_renderTask->Submit();
 	m_videoTask->Submit();
-	m_audioTask->Submit();
+	m_audioTask->Run();
 	m_publishTask->Submit();
 
 	return TRUE;

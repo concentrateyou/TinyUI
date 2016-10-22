@@ -30,10 +30,6 @@ BOOL FaacEncode::GetSpecificInfo(vector<BYTE>& info)
 	SAFE_FREE(buffer);
 	return TRUE;
 }
-DWORD FaacEncode::GetLatestPTS() const
-{
-	return m_dwPTS;
-}
 BOOL FaacEncode::Open(const WAVEFORMATEX& wfx, INT audioRate)
 {
 	Close();
@@ -42,7 +38,7 @@ BOOL FaacEncode::Open(const WAVEFORMATEX& wfx, INT audioRate)
 	if (!m_aac)
 		return FALSE;
 	//AAC固定1024
-	m_dwTime = AAC_TIMEBASE * AAC_TIMEDEN / wfx.nSamplesPerSec;//播放一帧时间
+	//m_dwTime = AAC_TIMEBASE * AAC_TIMEDEN / wfx.nSamplesPerSec;//播放一帧时间
 	m_config = faacEncGetCurrentConfiguration(m_aac);
 	switch (wfx.wBitsPerSample)
 	{
@@ -74,22 +70,14 @@ BOOL FaacEncode::Open(const WAVEFORMATEX& wfx, INT audioRate)
 	m_bits.Reset(new BYTE[m_maxOutputBytes]);
 	return TRUE;
 }
-BOOL FaacEncode::Encode(BYTE* bits, INT size,DWORD dwTime)
+BOOL FaacEncode::Encode(BYTE* bits, LONG size, DWORD& dwINC)
 {
 	if (!bits)
 		return FALSE;
 	INT s = faacEncEncode(m_aac, (int32_t*)bits, m_inputSamples, m_bits, m_maxOutputBytes);
 	if (s > 0)
 	{
-		m_dwPTS = m_dwINC++ * m_dwTime;
-		TinyScopedReferencePtr<Sample> sample(new Sample(s));
-		sample->Fill(bits, s);
-		sample->INC = m_dwINC;
-		sample->PTS = m_dwPTS;
-		sample->DTS = 0;
-		sample->Track = 1;//音频
-		sample->Time = dwTime;
-		OnDone(sample);
+		dwINC = ++m_dwINC;
 		return TRUE;
 	}
 	return FALSE;
@@ -101,8 +89,4 @@ void FaacEncode::Close()
 		faacEncClose(m_aac);
 		m_aac = NULL;
 	}
-}
-void FaacEncode::OnDone(TinyScopedReferencePtr<Sample>& sample)
-{
-	EVENT_DONE(sample);
 }

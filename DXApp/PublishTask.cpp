@@ -2,7 +2,7 @@
 #include "PublishTask.h"
 
 
-PublishTask::PublishTask(AudioEncodeTask* audioTask, VideoEncodeTask* videoTask)
+PublishTask::PublishTask(AudioEncode* audioTask, VideoEncodeTask* videoTask)
 	:m_audioTask(audioTask),
 	m_videoTask(videoTask)
 {

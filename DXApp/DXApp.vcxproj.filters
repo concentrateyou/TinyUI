@@ -54,9 +54,6 @@
     <ClInclude Include="VideoEncodeTask.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="AudioEncodeTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="PublishTask.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -67,6 +64,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="FaacEncode.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioEncode.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -101,9 +101,6 @@
     <ClCompile Include="VideoEncodeTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="AudioEncodeTask.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="PublishTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -114,6 +111,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="FaacEncode.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioEncode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
