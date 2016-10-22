@@ -15,3 +15,12 @@
 *.db
 *.opendb
 /Encode/Debug
+/DShowCapture/Release
+/DXApp/Release
+/DXCapture/Release
+/DXFramework/Release
+/GameDetour/Release
+/Release
+/TinyApp/Release
+/TinySmiley/Release
+/TinyUI/Release

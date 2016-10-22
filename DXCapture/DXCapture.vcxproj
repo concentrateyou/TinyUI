@@ -90,6 +90,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DX101Capture.h" />
     <ClInclude Include="DX10Capture.h" />
     <ClInclude Include="DX11Capture.h" />
     <ClInclude Include="DXCommon.h" />
@@ -99,6 +100,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DX101Capture.cpp" />
     <ClCompile Include="DX10Capture.cpp" />
     <ClCompile Include="DX11Capture.cpp" />
     <ClCompile Include="DXCommon.cpp" />
