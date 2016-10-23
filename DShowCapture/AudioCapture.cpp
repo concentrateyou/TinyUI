@@ -48,7 +48,7 @@ namespace Media
 			if (m_size != size)
 			{
 				m_bits.Reset(new BYTE[size]);
-				m_queue.Initialize(ROUNDUP_POW_2(size * 2));
+				m_queue.Initialize(ROUNDUP_POW_2(size * 3));
 				m_size = size;
 			}
 			m_queue.WriteBytes(bits, size);
