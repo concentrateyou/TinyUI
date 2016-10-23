@@ -51,22 +51,19 @@
     <ClInclude Include="RenderTask.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="VideoEncodeTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="PublishTask.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Utility.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="SampleQueue.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="FaacEncode.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="AudioEncode.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoEncode.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -98,22 +95,19 @@
     <ClCompile Include="RenderTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="VideoEncodeTask.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="PublishTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Utility.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="SampleQueue.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="FaacEncode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="AudioEncode.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoEncode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

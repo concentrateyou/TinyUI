@@ -2,7 +2,7 @@
 #include "Control/TinyControl.h"
 #include "RenderTask.h"
 #include "AudioEncode.h"
-#include "VideoEncodeTask.h"
+#include "VideoEncode.h"
 #include "PublishTask.h"
 
 using namespace DXFramework;
@@ -29,7 +29,7 @@ public:
 private:
 	TinyScopedPtr<RenderTask>			m_renderTask;
 	TinyScopedPtr<AudioEncode>		m_audioTask;
-	TinyScopedPtr<VideoEncodeTask>		m_videoTask;
+	TinyScopedPtr<VideoEncode>		m_videoTask;
 	TinyScopedPtr<PublishTask>			m_publishTask;
 };
 

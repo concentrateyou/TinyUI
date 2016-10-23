@@ -6,7 +6,6 @@ x264Encode::x264Encode()
 	:m_x264Image(NULL),
 	m_x264(NULL),
 	m_x264Param(NULL),
-	m_dwPTS(0),
 	m_dwINC(0)
 {
 }
@@ -57,7 +56,7 @@ BOOL x264Encode::BuildParam(INT cx, INT cy, INT fps, INT bitrate)
 	return TRUE;
 }
 
-BOOL x264Encode::Encode(AVFrame* pI420, DWORD dwTime)
+BOOL x264Encode::Encode(AVFrame* pI420)
 {
 	if (!m_x264Image || !pI420)
 		return FALSE;
@@ -77,8 +76,6 @@ BOOL x264Encode::Encode(AVFrame* pI420, DWORD dwTime)
 	INT size = x264_encoder_encode(m_x264, &pNAL, &iNAL, m_x264Image, &image);
 	if (size  && iNAL)
 	{
-		m_dwINC++;
-		m_dwPTS = image.i_pts * (1000 / m_x264Param->i_fps_num);
 		for (INT i = 0; i < iNAL; i++)
 		{
 			switch (pNAL[i].i_type)
@@ -87,30 +84,14 @@ BOOL x264Encode::Encode(AVFrame* pI420, DWORD dwTime)
 			{
 				BYTE* sps = pNAL[i].p_payload + SPS_SEP;
 				INT	size = pNAL[i].i_payload - SPS_SEP;
-				TinyScopedReferencePtr<Sample> sample(new Sample(size));
-				sample->Fill(sps, size);
-				sample->INC = m_dwINC;
-				sample->PTS = m_dwPTS;
-				sample->DTS = 0;
-				sample->Track = 0;
-				sample->Flag = pNAL[i].i_type;
-				sample->Time = dwTime;
-				OnDone(sample);
+				OnDone(sps, size, ++m_dwINC, pNAL[i].i_type);
 			}
 			break;
 			case NAL_PPS:
 			{
 				BYTE* pps = pNAL[i].p_payload + PPS_SEP;
 				INT size = pNAL[i].i_payload - PPS_SEP;
-				TinyScopedReferencePtr<Sample> sample(new Sample(size));
-				sample->Fill(pps, size);
-				sample->INC = m_dwINC;
-				sample->PTS = m_dwPTS;
-				sample->DTS = 0;
-				sample->Track = 0;
-				sample->Flag = pNAL[i].i_type;
-				sample->Time = dwTime;
-				OnDone(sample);
+				OnDone(pps, size, ++m_dwINC, pNAL[i].i_type);
 			}
 			break;
 			case NAL_SLICE:
@@ -121,15 +102,7 @@ BOOL x264Encode::Encode(AVFrame* pI420, DWORD dwTime)
 			{
 				BYTE* bits = pNAL[i].p_payload;
 				INT	size = pNAL[i].i_payload;
-				TinyScopedReferencePtr<Sample> sample(new Sample(size));
-				sample->Fill(bits, size);
-				sample->INC = m_dwINC;
-				sample->PTS = m_dwPTS;
-				sample->DTS = 0;
-				sample->Track = 0;
-				sample->Flag = pNAL[i].i_type;
-				sample->Time = dwTime;
-				OnDone(sample);
+				OnDone(bits, size, ++m_dwINC, pNAL[i].i_type);
 			}
 			break;
 			}
@@ -138,12 +111,10 @@ BOOL x264Encode::Encode(AVFrame* pI420, DWORD dwTime)
 	}
 	return FALSE;
 }
-
-DWORD x264Encode::GetLatestPTS() const
+void x264Encode::OnDone(BYTE* bits, LONG size, LONG inc, DWORD dwFlag)
 {
-	return m_dwPTS;
+	EVENT_DONE(bits, size, inc, dwFlag);
 }
-
 void x264Encode::Close()
 {
 	if (m_x264)
@@ -153,11 +124,6 @@ void x264Encode::Close()
 	}
 	SAFE_DELETE(m_x264Param);
 	SAFE_DELETE(m_x264Image);
-}
-
-void x264Encode::OnDone(TinyScopedReferencePtr<Sample>& sample)
-{
-	EVENT_DONE(sample);
 }
 
 x264Encode::~x264Encode()

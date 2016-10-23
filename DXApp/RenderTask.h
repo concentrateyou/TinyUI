@@ -32,8 +32,6 @@ private:
 	DX11Image							m_image;
 	TinyScopedPtr<DX11CaptureTask>		m_captureTask;
 	TinyPerformanceTimer				m_timer;
-	LONG								m_size;
-	BYTE*								m_bits;
 	TinyEvent							m_close;
 	TinyUI::Callback<void(BYTE*, LONG, FLOAT, LPVOID)> m_videoCB;
 

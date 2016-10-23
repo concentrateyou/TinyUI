@@ -3,8 +3,6 @@
 #include "DXWindow.h"
 
 RenderTask::RenderTask()
-	:m_size(0),
-	m_bits(NULL)
 {
 
 }

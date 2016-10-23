@@ -76,7 +76,7 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	}
 	videoParam.SetScale(videoParam.GetSize().cx / 4, videoParam.GetSize().cy / 4);
 	m_renderTask.Reset(new RenderTask());
-	m_videoTask.Reset(new VideoEncodeTask(m_renderTask));
+	m_videoTask.Reset(new VideoEncode(m_renderTask));
 	m_audioTask.Reset(new AudioEncode());
 	m_publishTask.Reset(new PublishTask(m_audioTask, m_videoTask));
 
@@ -97,8 +97,8 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 		return FALSE;
 
 	m_renderTask->Submit();
-	m_videoTask->Submit();
-	m_audioTask->Run();
+	m_videoTask->Encode();
+	m_audioTask->Encode();
 	m_publishTask->Submit();
 
 	return TRUE;
@@ -112,8 +112,8 @@ LRESULT DXWindow::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandle
 {
 	bHandled = FALSE;
 
-	m_videoTask->Close(INFINITE);
-	m_audioTask->Close(INFINITE);
+	m_videoTask->Close();
+	m_audioTask->Close();
 	m_publishTask->Close(INFINITE);
 	m_renderTask->Close(INFINITE);
 

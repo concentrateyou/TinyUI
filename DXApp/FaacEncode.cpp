@@ -3,11 +3,9 @@
 
 
 FaacEncode::FaacEncode()
-	:m_dwTime(0),
-	m_inputSamples(0),
+	:m_inputSamples(0),
 	m_maxOutputBytes(0),
-	m_dwINC(0),
-	m_dwPTS(0)
+	m_dwINC(0)
 {
 }
 
@@ -77,7 +75,7 @@ BOOL FaacEncode::Encode(BYTE* bits, LONG size, DWORD& dwINC)
 	INT s = faacEncEncode(m_aac, (int32_t*)bits, m_inputSamples, m_bits, m_maxOutputBytes);
 	if (s > 0)
 	{
-		dwINC = ++m_dwINC;
+		OnDone(m_bits, s, ++m_dwINC, 0);
 		return TRUE;
 	}
 	return FALSE;
@@ -89,4 +87,8 @@ void FaacEncode::Close()
 		faacEncClose(m_aac);
 		m_aac = NULL;
 	}
+}
+void FaacEncode::OnDone(BYTE* bits, LONG size, LONG inc, DWORD dwFlag)
+{
+	EVENT_DONE(bits, size, inc, dwFlag);
 }

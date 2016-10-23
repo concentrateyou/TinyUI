@@ -17,13 +17,11 @@ public:
 	x264Encode();
 	~x264Encode();
 	BOOL	Open(INT cx, INT cy, INT fps = 50, INT rate = 1000);//rateÆ½¾ùÂëÂÊ
-	BOOL	Encode(AVFrame* pI420,DWORD dwTime);
+	BOOL	Encode(AVFrame* pI420);
 	void	Close();
-	DWORD	GetLatestPTS() const;
 public:
-	virtual void OnDone(TinyScopedReferencePtr<Sample>& sample);
-public:
-	Event<void(TinyScopedReferencePtr<Sample>&)> EVENT_DONE;
+	virtual void OnDone(BYTE*, LONG, LONG, DWORD);
+	Event<void(BYTE*, LONG, LONG, DWORD)> EVENT_DONE;
 private:
 	BOOL	BuildParam(INT cx, INT cy, INT fps, INT bitrate);
 private:
@@ -31,7 +29,6 @@ private:
 	x264_param_t*		m_x264Param;
 	x264_picture_t*		m_x264Image;
 	DWORD				m_dwINC;
-	DWORD				m_dwPTS;
 	DWORD				m_dwTime;
 };
 

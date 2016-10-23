@@ -20,6 +20,9 @@ public:
 	BOOL	Encode(BYTE* bits, LONG size,DWORD& dwINC);
 	void	Close();
 	BOOL	GetSpecificInfo(vector<BYTE>& info);
+public:
+	virtual void OnDone(BYTE*, LONG, LONG, DWORD);
+	Event<void(BYTE*, LONG, LONG, DWORD)> EVENT_DONE;
 private:
 	faacEncHandle			m_aac;
 	faacEncConfigurationPtr	m_config;

@@ -1,15 +1,16 @@
 #pragma once
 #include "AudioEncode.h"
-#include "VideoEncodeTask.h"
+#include "VideoEncode.h"
 #include "RTMPClient.h"
-#include "SampleQueue.h"
 using namespace TinyUI::IO;
 using namespace Media;
+
+
 
 class PublishTask : public TinyTaskBase
 {
 public:
-	PublishTask(AudioEncode* audioTask, VideoEncodeTask* videoTask);
+	PublishTask(AudioEncode* audioTask, VideoEncode* videoTask);
 	~PublishTask();
 	BOOL	Connect();
 	BOOL	Submit();
@@ -17,17 +18,16 @@ public:
 private:
 	void	OnMessagePump();
 	void	OnClose();
-	void	OnVideoDone(TinyScopedReferencePtr<Sample>& sample);
-	void	OnAudioDone(TinyScopedReferencePtr<Sample>& sample);
+	void	OnVideoDone(BYTE*, LONG, LONG, DWORD);
+	void	OnAudioDone(BYTE*, LONG, LONG, DWORD);
 private:
-	RTMPClient			m_client;
-	VideoEncodeTask*	m_videoTask;
+	RTMPClient		m_client;
+	VideoEncode*	m_videoTask;
 	AudioEncode*	m_audioTask;
-	SampleQueue			m_queue;
-	TinyEvent			m_close;
-	vector<BYTE>		m_latestPPS;
-	vector<BYTE>		m_latestSPS;
-	TinyScopedPtr<Delegate<void(TinyScopedReferencePtr<Sample>&)>>	m_videoDone;
-	TinyScopedPtr<Delegate<void(TinyScopedReferencePtr<Sample>&)>>	m_audioDone;
+	TinyEvent		m_close;
+	vector<BYTE>	m_latestPPS;
+	vector<BYTE>	m_latestSPS;
+	TinyScopedPtr<Delegate<void(BYTE*, LONG, LONG, DWORD)>>	m_videoDone;
+	TinyScopedPtr<Delegate<void(BYTE*, LONG, LONG, DWORD)>>	m_audioDone;
 };
 
