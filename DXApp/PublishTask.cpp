@@ -49,6 +49,7 @@ void PublishTask::OnClose()
 
 void PublishTask::OnVideoDone(BYTE* bits, LONG size, LONG inc, DWORD dwFlag)
 {
+
 	if (inc == 1)
 	{
 		WAVEFORMATEX wfx = m_audioTask->GetParam()->GetFormat();

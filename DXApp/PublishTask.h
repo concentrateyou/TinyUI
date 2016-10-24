@@ -5,8 +5,6 @@
 using namespace TinyUI::IO;
 using namespace Media;
 
-
-
 class PublishTask : public TinyTaskBase
 {
 public:
