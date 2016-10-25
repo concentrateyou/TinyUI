@@ -2,14 +2,15 @@
 #include "DXFramework.h"
 using namespace TinyUI;
 
-struct Sample
+class Sample
 {
+public:
 	DWORD	dwType;
 	DWORD	dwFlag;
-	DWORD	dwIndex;
+	DWORD	dwINC;
 	DWORD	dwTime;
 	DWORD	dwPTS;
 	DWORD	dwDTS;
 	DWORD	dwSize;
-	BYTE*	sample;
+	BYTE*	bits;
 };
