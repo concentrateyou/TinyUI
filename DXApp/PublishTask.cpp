@@ -82,7 +82,7 @@ void PublishTask::OnMessagePump()
 {
 	for (;;)
 	{
-		if (m_close.Lock(10))
+		if (m_close.Lock(8))
 		{
 			OnClose();
 			break;
@@ -95,7 +95,6 @@ void PublishTask::OnMessagePump()
 			{
 			case 0://Video
 			{
-				TRACE("OnVideoDone:%d\n", sample.dwTime);
 				if (sample.dwINC == 1)
 				{
 					WAVEFORMATEX wfx = m_audioTask->GetParam()->GetFormat();
@@ -116,6 +115,7 @@ void PublishTask::OnMessagePump()
 					memcpy(&m_latestPPS[0], sample.bits, sample.dwSize);
 					m_client.SendSPPacket(m_latestPPS, m_latestSPS, sample.dwTime);
 				}
+				break;
 				case NAL_SLICE:
 				case NAL_SLICE_DPA:
 				case NAL_SLICE_DPB:
@@ -130,7 +130,6 @@ void PublishTask::OnMessagePump()
 			break;
 			case 1://Audio
 			{
-				TRACE("OnAudioDone:%d\n", sample.dwTime);
 				if (sample.dwINC == 1)
 				{
 					vector<BYTE> info;
