@@ -15,21 +15,22 @@ public:
 	BOOL	Submit();
 	BOOL	Close(DWORD dwMS) OVERRIDE;
 private:
+	void	Publish(Sample& sample);
 	void	OnMessagePump();
 	void	OnClose();
-	void	OnVideoDone(BYTE*, LONG, LONG, DWORD);
-	void	OnAudioDone(BYTE*, LONG, LONG, DWORD);
+	void	OnVideoDone(BYTE*, LONG, const MediaTag&);
+	void	OnAudioDone(BYTE*, LONG, const MediaTag&);
 private:
-	RTMPClient		m_client;
-	VideoEncode*	m_videoTask;
-	AudioEncode*	m_audioTask;
-	TinyEvent		m_close;
-	vector<BYTE>	m_latestPPS;
-	vector<BYTE>	m_latestSPS;
-	std::queue<Sample>	m_samples;
-	TinyLock			m_lock;
 	DWORD				m_baseTime;
-	TinyScopedPtr<Delegate<void(BYTE*, LONG, LONG, DWORD)>>	m_videoDone;
-	TinyScopedPtr<Delegate<void(BYTE*, LONG, LONG, DWORD)>>	m_audioDone;
+	TinyLock			m_lock;
+	RTMPClient			m_client;
+	VideoEncode*		m_videoTask;
+	AudioEncode*		m_audioTask;
+	TinyEvent			m_close;
+	vector<BYTE>		m_latestPPS;
+	vector<BYTE>		m_latestSPS;
+	std::queue<Sample>	m_samples;
+	TinyScopedPtr<Delegate<void(BYTE*, LONG, const MediaTag&)>>	m_videoDone;
+	TinyScopedPtr<Delegate<void(BYTE*, LONG, const MediaTag&)>>	m_audioDone;
 };
 

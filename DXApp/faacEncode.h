@@ -17,18 +17,19 @@ public:
 	~FaacEncode();
 public:
 	BOOL	Open(const WAVEFORMATEX& wfx, INT audioRate);
-	BOOL	Encode(BYTE* bits, LONG size,DWORD& dwINC);
+	BOOL	Encode(BYTE* bits, LONG size, DWORD& dwINC);
 	void	Close();
 	BOOL	GetSpecificInfo(vector<BYTE>& info);
 public:
-	virtual void OnDone(BYTE*, LONG, LONG, DWORD);
-	Event<void(BYTE*, LONG, LONG, DWORD)> EVENT_DONE;
+	virtual void OnDone(BYTE*, LONG, const MediaTag&);
+	Event<void(BYTE*, LONG, const MediaTag&)> EVENT_DONE;
 private:
 	faacEncHandle			m_aac;
 	faacEncConfigurationPtr	m_config;
 	DWORD					m_inputSamples;
 	DWORD					m_maxOutputBytes;
 	DWORD					m_dwINC;
+	DWORD					m_dwPTS;
 	TinyScopedArray<BYTE>	m_bits;
 	WAVEFORMATEX			m_wfx;
 };

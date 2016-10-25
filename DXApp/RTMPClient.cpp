@@ -66,7 +66,7 @@ BOOL RTMPClient::Connect(const TinyString& url)
 	return TRUE;
 }
 
-BOOL RTMPClient::SendMetadataPacket(INT cx, INT cy, INT framerate, INT videoRate, const WAVEFORMATEX& wfx, INT audioRate)
+BOOL RTMPClient::SendMetadata(INT cx, INT cy, INT framerate, INT videoRate, const WAVEFORMATEX& wfx, INT audioRate)
 {
 	ASSERT(m_pRTMP);
 	if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
@@ -109,7 +109,7 @@ BOOL RTMPClient::SendMetadataPacket(INT cx, INT cy, INT framerate, INT videoRate
 	SAFE_FREE(packet);
 	return TRUE;
 }
-BOOL RTMPClient::SendSPPacket(const vector<BYTE>& pps, const vector<BYTE>& sps, DWORD timestamp)
+BOOL RTMPClient::SendSPP(const vector<BYTE>& pps, const vector<BYTE>& sps, DWORD timestamp)
 {
 	ASSERT(m_pRTMP);
 	if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
@@ -154,7 +154,7 @@ BOOL RTMPClient::SendSPPacket(const vector<BYTE>& pps, const vector<BYTE>& sps, 
 	SAFE_FREE(packet);
 	return TRUE;
 }
-BOOL RTMPClient::SendAACPacket(BYTE* bits, INT size)
+BOOL RTMPClient::SendAAC(BYTE* bits, INT size)
 {
 	if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
 	{
@@ -181,7 +181,7 @@ BOOL RTMPClient::SendAACPacket(BYTE* bits, INT size)
 	return TRUE;
 
 }
-BOOL RTMPClient::SendAudioPacket(BYTE* bits, INT size, DWORD timestamp)
+BOOL RTMPClient::SendAudio(BYTE* bits, INT size, DWORD timestamp)
 {
 	if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
 	{
@@ -209,7 +209,7 @@ BOOL RTMPClient::SendAudioPacket(BYTE* bits, INT size, DWORD timestamp)
 	SAFE_FREE(packet);
 	return TRUE;
 }
-BOOL RTMPClient::SendVideoPacket(BYTE* bits, INT size, DWORD timestamp)
+BOOL RTMPClient::SendVideo(BYTE* bits, INT size, DWORD timestamp)
 {
 	if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
 	{

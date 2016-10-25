@@ -22,6 +22,7 @@ BOOL x264Encode::Open(INT cx, INT cy, INT fps, INT rate)
 	x264_picture_init(m_x264Image);
 	m_x264Image->img.i_csp = X264_CSP_I420;
 	m_x264Image->img.i_plane = 3;
+	m_x264Image->i_pts = 0;
 	return TRUE;
 }
 
@@ -52,6 +53,7 @@ BOOL x264Encode::BuildParam(INT cx, INT cy, INT fps, INT bitrate)
 	m_x264Param->rc.i_bitrate = bitrate;/*设置平均码率大小*/
 	m_x264Param->rc.f_rate_tolerance = 0.1F;
 	m_x264Param->rc.i_vbv_max_bitrate = static_cast<INT>(bitrate * 1.2);
+	m_dwPTS = (1000 / m_x264Param->i_fps_num);
 	x264_param_apply_profile(m_x264Param, "baseline");
 	return TRUE;
 }
@@ -68,7 +70,6 @@ BOOL x264Encode::Encode(AVFrame* pI420)
 	m_x264Image->img.i_stride[1] = pI420->linesize[1];
 	m_x264Image->img.i_stride[2] = pI420->linesize[2];
 	m_x264Image->img.i_stride[3] = pI420->linesize[3];
-	m_x264Image->i_pts = m_dwINC;
 	m_x264Image->i_type = X264_TYPE_AUTO;
 	x264_picture_t image;
 	x264_nal_t * pNAL = NULL;
@@ -76,6 +77,7 @@ BOOL x264Encode::Encode(AVFrame* pI420)
 	INT size = x264_encoder_encode(m_x264, &pNAL, &iNAL, m_x264Image, &image);
 	if (size  && iNAL)
 	{
+		m_x264Image->i_pts++;
 		for (INT i = 0; i < iNAL; i++)
 		{
 			switch (pNAL[i].i_type)
@@ -84,14 +86,28 @@ BOOL x264Encode::Encode(AVFrame* pI420)
 			{
 				BYTE* sps = pNAL[i].p_payload + SPS_SEP;
 				INT	size = pNAL[i].i_payload - SPS_SEP;
-				OnDone(sps, size, ++m_dwINC, pNAL[i].i_type);
+				MediaTag tag = { 0 };
+				tag.dwType = 0;
+				tag.dwPTS = m_dwPTS;
+				tag.dwDTS = image.i_dts;
+				tag.dwTime = timeGetTime();
+				tag.dwFlag = pNAL[i].i_type;
+				tag.dwINC = ++m_dwINC;
+				OnDone(sps, size, tag);
 			}
 			break;
 			case NAL_PPS:
 			{
 				BYTE* pps = pNAL[i].p_payload + PPS_SEP;
 				INT size = pNAL[i].i_payload - PPS_SEP;
-				OnDone(pps, size, ++m_dwINC, pNAL[i].i_type);
+				MediaTag tag = { 0 };
+				tag.dwType = 0;
+				tag.dwPTS = m_dwPTS;
+				tag.dwDTS = image.i_dts;
+				tag.dwTime = timeGetTime();
+				tag.dwFlag = pNAL[i].i_type;
+				tag.dwINC = ++m_dwINC;
+				OnDone(pps, size, tag);
 			}
 			break;
 			case NAL_SLICE:
@@ -102,7 +118,14 @@ BOOL x264Encode::Encode(AVFrame* pI420)
 			{
 				BYTE* bits = pNAL[i].p_payload;
 				INT	size = pNAL[i].i_payload;
-				OnDone(bits, size, ++m_dwINC, pNAL[i].i_type);
+				MediaTag tag = { 0 };
+				tag.dwType = 0;
+				tag.dwPTS = m_dwPTS;
+				tag.dwDTS = image.i_dts;
+				tag.dwTime = timeGetTime();
+				tag.dwFlag = pNAL[i].i_type;
+				tag.dwINC = ++m_dwINC;
+				OnDone(bits, size, tag);
 			}
 			break;
 			}
@@ -111,9 +134,9 @@ BOOL x264Encode::Encode(AVFrame* pI420)
 	}
 	return FALSE;
 }
-void x264Encode::OnDone(BYTE* bits, LONG size, LONG inc, DWORD dwFlag)
+void x264Encode::OnDone(BYTE* bits, LONG size, const MediaTag& tag)
 {
-	EVENT_DONE(bits, size, inc, dwFlag);
+	EVENT_DONE(bits, size, tag);
 }
 void x264Encode::Close()
 {

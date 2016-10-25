@@ -5,7 +5,8 @@
 FaacEncode::FaacEncode()
 	:m_inputSamples(0),
 	m_maxOutputBytes(0),
-	m_dwINC(0)
+	m_dwINC(0),
+	m_dwPTS(0)
 {
 }
 
@@ -36,7 +37,7 @@ BOOL FaacEncode::Open(const WAVEFORMATEX& wfx, INT audioRate)
 	if (!m_aac)
 		return FALSE;
 	//AAC固定1024
-	//m_dwTime = AAC_TIMEBASE * AAC_TIMEDEN / wfx.nSamplesPerSec;//播放一帧时间
+	m_dwPTS = AAC_TIMEBASE * AAC_TIMEDEN / wfx.nSamplesPerSec;//播放一帧时间
 	m_config = faacEncGetCurrentConfiguration(m_aac);
 	switch (wfx.wBitsPerSample)
 	{
@@ -75,7 +76,14 @@ BOOL FaacEncode::Encode(BYTE* bits, LONG size, DWORD& dwINC)
 	INT s = faacEncEncode(m_aac, (int32_t*)bits, m_inputSamples, m_bits, m_maxOutputBytes);
 	if (s > 0)
 	{
-		OnDone(m_bits, s, ++m_dwINC, 0);
+		MediaTag tag;
+		tag.dwPTS = m_dwPTS;
+		tag.dwDTS = 0;
+		tag.dwType = 1;
+		tag.dwTime = timeGetTime();
+		tag.dwFlag = 0;
+		tag.dwINC = ++m_dwINC;
+		OnDone(m_bits, s, tag);
 		return TRUE;
 	}
 	return FALSE;
@@ -88,7 +96,7 @@ void FaacEncode::Close()
 		m_aac = NULL;
 	}
 }
-void FaacEncode::OnDone(BYTE* bits, LONG size, LONG inc, DWORD dwFlag)
+void FaacEncode::OnDone(BYTE* bits, LONG size, const MediaTag& tag)
 {
-	EVENT_DONE(bits, size, inc, dwFlag);
+	EVENT_DONE(bits, size, tag);
 }

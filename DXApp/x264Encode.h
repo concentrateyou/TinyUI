@@ -20,8 +20,8 @@ public:
 	BOOL	Encode(AVFrame* pI420);
 	void	Close();
 public:
-	virtual void OnDone(BYTE*, LONG, LONG, DWORD);
-	Event<void(BYTE*, LONG, LONG, DWORD)> EVENT_DONE;
+	virtual void OnDone(BYTE*, LONG, const MediaTag&);
+	Event<void(BYTE*, LONG, const MediaTag&)> EVENT_DONE;
 private:
 	BOOL	BuildParam(INT cx, INT cy, INT fps, INT bitrate);
 private:
@@ -29,6 +29,6 @@ private:
 	x264_param_t*		m_x264Param;
 	x264_picture_t*		m_x264Image;
 	DWORD				m_dwINC;
-	DWORD				m_dwTime;
+	DWORD				m_dwPTS;
 };
 
