@@ -50,7 +50,6 @@ void PublishTask::OnClose()
 
 void PublishTask::OnVideoDone(BYTE* bits, LONG size, const MediaTag& tag)
 {
-	m_lock.Lock();
 	Sample sample;
 	memcpy(&sample.mediaTag, &tag, sizeof(tag));
 	sample.size = size;
@@ -58,12 +57,10 @@ void PublishTask::OnVideoDone(BYTE* bits, LONG size, const MediaTag& tag)
 	memcpy(sample.bits, bits, size);
 	sample.mediaTag.dwTime = timeGetTime() - m_baseTime + sample.mediaTag.dwPTS;
 	m_samples.push(sample);
-	m_lock.Unlock();
 }
 
 void PublishTask::OnAudioDone(BYTE* bits, LONG size, const MediaTag& tag)
 {
-	m_lock.Lock();
 	Sample sample;
 	memcpy(&sample.mediaTag, &tag, sizeof(tag));
 	sample.size = size;
@@ -71,7 +68,6 @@ void PublishTask::OnAudioDone(BYTE* bits, LONG size, const MediaTag& tag)
 	memcpy(sample.bits, bits, size);
 	sample.mediaTag.dwTime = timeGetTime() - m_baseTime + sample.mediaTag.dwPTS;
 	m_samples.push(sample);
-	m_lock.Unlock();
 }
 
 void PublishTask::Publish(Sample& sample)
@@ -137,13 +133,14 @@ void PublishTask::OnMessagePump()
 			OnClose();
 			break;
 		}
-		m_lock.Lock();
 		if (!m_samples.empty())
 		{
-			Sample& sample = m_samples.front();
-			Publish(sample);
-			m_samples.pop();
+			Sample sample;
+			if (m_samples.try_pop(sample))
+			{
+				Publish(sample);
+				SAFE_DELETE_ARRAY(sample.bits);
+			}
 		}
-		m_lock.Unlock();
 	}
 }

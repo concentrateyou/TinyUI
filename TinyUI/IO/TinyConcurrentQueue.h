@@ -11,11 +11,11 @@ namespace TinyUI
 {
 	namespace IO
 	{
-		/// <summary>
+		/*/// <summary>
 		/// 多线程安全队列
 		/// http://www.cs.rochester.edu/research/synchronization/pseudocode/queues.html
 		/// </summary>
-	/*	template<class T>
+		template<class T>
 		class TinyConcurrentQueue
 		{
 			DISALLOW_COPY_AND_ASSIGN(TinyConcurrentQueue)
@@ -58,19 +58,15 @@ namespace TinyUI
 			void Push(const T& value);
 			void Pop();
 		protected:
-			TinyNode*		m_pNode;
-			TinyPointer*	m_pHEAD;
-			TinyPointer*	m_pTAIL;
+			TinyPointer		m_HEAD;
+			TinyPointer		m_TAIL;
 		};
 		template<typename T>
 		TinyConcurrentQueue<T>::TinyConcurrentQueue()
-			:m_pNode(NULL),
-			m_pHEAD(NULL),
-			m_pTAIL(NULL)
+			:m_HEAD(NULL),
+			m_TAIL(NULL)
 		{
-			m_pNode = new TinyNode();
-			m_pHEAD->m_pNode = m_pNode;
-			m_pTAIL->m_pNode = m_pNode;
+
 		}
 		template<typename T>
 		TinyConcurrentQueue<T>::TinyConcurrentQueue()
@@ -83,9 +79,9 @@ namespace TinyUI
 			TinyNode* pNode = new TinyNode(value);
 			for (;;)
 			{
-				TinyPointer* pLast = m_pTAIL;
+				TinyPointer* pLast = &m_TAIL;
 				TinyNode* pNext = pLast->m_pNext;
-				if (pLast == m_pTAIL)
+				if (pLast == m_TAIL)
 				{
 					if (pNext == NULL)
 					{
@@ -106,8 +102,8 @@ namespace TinyUI
 		{
 			for (;;)
 			{
-				TinyNode* pHEAD = m_pHEAD->m_pNode;
-				TinyNode* pTAIL = m_pTAIL->m_pNode;
+				TinyNode* pHEAD = m_HEAD->m_pNode;
+				TinyNode* pTAIL = m_TAIL->m_pNode;
 				TinyNode* pNEXT = pHEAD->m_pNode;
 				if (pHEAD == pHEAD->m_pNode)
 				{
