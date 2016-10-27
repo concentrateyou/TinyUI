@@ -2,7 +2,7 @@
 #include "VideoCaptureParam.h"
 #include "VideoCapture.h"
 
-namespace Media
+namespace DShow
 {
 	VideoCaptureParam::VideoCaptureParam()
 		:m_rate(0.0F), m_vpf(PIXEL_FORMAT_UNKNOWN)

@@ -2,7 +2,7 @@
 #include "DShowCommon.h"
 #include "ScopedMediaType.h"
 
-namespace Media
+namespace DShow
 {
 	ScopedMediaType::ScopedMediaType()
 		:m_mediaType(NULL)

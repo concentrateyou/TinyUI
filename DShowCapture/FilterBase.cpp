@@ -3,7 +3,7 @@
 #include "PinBase.h"
 #include "PinEnumerator.h"
 
-namespace Media
+namespace DShow
 {
 	FilterBase::FilterBase(REFCLSID  clsid, TinyLock* lock)
 		:m_clsid(clsid),

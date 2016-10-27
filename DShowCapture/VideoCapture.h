@@ -8,7 +8,7 @@
 using namespace std;
 using namespace TinyUI;
 
-namespace Media
+namespace DShow
 {
 	/// <summary>
 	///  ”∆µ≤∂ªÒ
@@ -21,6 +21,7 @@ namespace Media
 		{
 		public:
 			Name();
+			Name(string&& name, string&& id);
 			Name(const string& name, const string& id);
 			~Name();
 			const string& name() const;

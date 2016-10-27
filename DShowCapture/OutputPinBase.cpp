@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "OutputPinBase.h"
 
-namespace Media
+namespace DShow
 {
 	OutputPinBase::OutputPinBase(FilterBase* pFilter, WCHAR* pzName, TinyLock* lock)
 		:PinBase(pFilter, PINDIR_OUTPUT, pzName, lock)

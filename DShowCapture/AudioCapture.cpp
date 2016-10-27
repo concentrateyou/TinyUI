@@ -2,7 +2,7 @@
 #include "AudioCapture.h"
 #include "ScopedMediaType.h"
 
-namespace Media
+namespace DShow
 {
 	AudioCapture::Name::Name()
 	{
@@ -11,6 +11,12 @@ namespace Media
 	AudioCapture::Name::Name(const string& name, const string& id)
 		:m_name(name),
 		m_id(id)
+	{
+
+	}
+	AudioCapture::Name::Name(string&& name, string&& id)
+		: m_name(std::move(name)),
+		m_id(std::move(id))
 	{
 
 	}
@@ -291,7 +297,7 @@ namespace Media
 				{
 					id = WStringToString(V_BSTR(&variant));
 				}
-				names.push_back(Name(name, id));
+				names.push_back(std::move(Name(std::move(name), std::move(id))));
 			}
 			moniker.Release();
 		}

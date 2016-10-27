@@ -5,7 +5,7 @@
 #include <dsound.h>
 using namespace TinyUI;
 
-namespace Media
+namespace DShow
 {
 	class SoundPlayer
 	{

@@ -2,7 +2,7 @@
 #include "AudioSinkFilter.h"
 #include "AudioSinkInputPin.h"
 
-namespace Media
+namespace DShow
 {
 	AudioSinkFilter::AudioSinkFilter(FilterObserver* observer,TinyLock* lock)
 		:FilterBase(__uuidof(AudioSinkFilter), lock)

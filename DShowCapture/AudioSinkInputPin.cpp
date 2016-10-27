@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "AudioSinkInputPin.h"
 
-namespace Media
+namespace DShow
 {
 	AudioSinkInputPin::AudioSinkInputPin(FilterBase* pFilter, FilterObserver* observer)
 		:InputPinBase(pFilter, PIN_NAME, observer)

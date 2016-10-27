@@ -2,7 +2,7 @@
 #include "DShowCommon.h"
 #include "ReferenceTime.h"
 
-namespace Media
+namespace DShow
 {
 	class FilterBase : public IBaseFilter, public IAMovieSetup, public TinyUI::TinyReference < FilterBase >
 	{

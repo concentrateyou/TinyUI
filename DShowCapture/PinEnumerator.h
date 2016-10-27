@@ -1,7 +1,7 @@
 #pragma once
 #include "FilterBase.h"
 
-namespace Media
+namespace DShow
 {
 	class PinEnumerator : public IEnumPins, public TinyReference < PinEnumerator >
 	{

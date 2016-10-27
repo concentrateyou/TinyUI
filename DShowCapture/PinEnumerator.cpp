@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "PinEnumerator.h"
 
-namespace Media
+namespace DShow
 {
 	PinEnumerator::PinEnumerator(FilterBase* pFilter)
 		:m_pFilter(pFilter), m_position(0), m_count(0)

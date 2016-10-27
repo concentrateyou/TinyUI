@@ -357,6 +357,9 @@
     <ClInclude Include="IO\TinyConcurrentQueue.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
+    <ClInclude Include="Media\TinyWASAPI.h">
+      <Filter>头文件\Media</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -646,6 +649,9 @@
     </ClCompile>
     <ClCompile Include="IO\TinyConcurrentQueue.cpp">
       <Filter>源文件\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\TinyWASAPI.cpp">
+      <Filter>源文件\Media</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

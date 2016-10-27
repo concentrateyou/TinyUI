@@ -3,7 +3,7 @@
 #include "FilterObserver.h"
 #include "VideoCaptureParam.h"
 
-namespace Media
+namespace DShow
 {
 	class VideoSinkInputPin : public InputPinBase
 	{

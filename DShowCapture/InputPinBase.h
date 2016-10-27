@@ -2,7 +2,7 @@
 #include "PinBase.h"
 #include "FilterBase.h"
 
-namespace Media
+namespace DShow
 {
 	class InputPinBase : public PinBase, public IMemInputPin
 	{

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "VideoSinkInputPin.h"
 
-namespace Media
+namespace DShow
 {
 	const REFERENCE_TIME SecondsToReferenceTime = 10000000;
 

@@ -4,7 +4,7 @@
 #include "AudioCaptureParam.h"
 #include "AudioSinkFilter.h"
 
-namespace Media
+namespace DShow
 {
 	class AudioCapture : public FilterObserver
 	{
@@ -14,6 +14,7 @@ namespace Media
 		{
 		public:
 			Name();
+			Name(string&& name, string&& id);
 			Name(const string& name, const string& id);
 			~Name();
 			const string& name() const;

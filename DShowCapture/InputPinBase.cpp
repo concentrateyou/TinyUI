@@ -2,7 +2,7 @@
 #include "InputPinBase.h"
 #include "PinEnumerator.h"
 
-namespace Media
+namespace DShow
 {
 	InputPinBase::InputPinBase(FilterBase* pFilter, WCHAR* pzName, FilterObserver* observer)
 		:PinBase(pFilter, PINDIR_INPUT, pzName, &observer->m_lock),

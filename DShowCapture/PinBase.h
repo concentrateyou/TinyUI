@@ -4,7 +4,7 @@
 #include "FilterObserver.h"
 #include "VideoCaptureParam.h"
 
-namespace Media
+namespace DShow
 {
 	class FilterBase;
 	class PinBase : public IPin, public IQualityControl, public TinyReference < PinBase >

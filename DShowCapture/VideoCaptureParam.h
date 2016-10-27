@@ -4,7 +4,7 @@
 using namespace std;
 using namespace TinyUI;
 
-namespace Media
+namespace DShow
 {
 	enum VideoPixelFormat
 	{

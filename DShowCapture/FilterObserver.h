@@ -3,7 +3,7 @@
 #include "Common/TinyCore.h"
 using namespace TinyUI;
 
-namespace Media
+namespace DShow
 {
 	class InputPinBase;
 

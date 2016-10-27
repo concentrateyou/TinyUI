@@ -3,7 +3,7 @@
 #include "PinBase.h"
 #include "TypeEnumerator.h"
 
-namespace Media
+namespace DShow
 {
 	PinBase::PinBase(FilterBase* pFilter, PIN_DIRECTION dir, WCHAR* pzName, TinyLock* lock)
 		:m_pFilter(pFilter),

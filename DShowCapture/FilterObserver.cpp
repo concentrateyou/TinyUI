@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "FilterObserver.h"
 
-namespace Media
+namespace DShow
 {
 	FilterObserver::FilterObserver()
 	{

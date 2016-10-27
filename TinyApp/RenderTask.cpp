@@ -2,12 +2,12 @@
 #include "RenderTask.h"
 #include "MainFrame.h"
 
-RenderTask::RenderTask(HWND hWND, Media::VideoCapture* pVideo, const Media::VideoCaptureParam& videoParam)
+RenderTask::RenderTask(HWND hWND, DShow::VideoCapture* pVideo, const DShow::VideoCaptureParam& videoParam)
 	:m_hWND(hWND),
 	m_pVideo(pVideo),
 	m_videoParam(videoParam)
 {
-
+	
 }
 
 

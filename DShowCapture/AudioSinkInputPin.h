@@ -3,7 +3,7 @@
 #include "FilterObserver.h"
 #include "AudioCaptureParam.h"
 
-namespace Media
+namespace DShow
 {
 	class AudioSinkInputPin : public InputPinBase
 	{

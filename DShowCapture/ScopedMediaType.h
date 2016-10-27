@@ -1,7 +1,7 @@
 #pragma once
 #include <strmif.h>
 
-namespace Media
+namespace DShow
 {
 	class ScopedMediaType
 	{

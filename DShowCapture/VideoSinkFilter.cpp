@@ -2,7 +2,7 @@
 #include "VideoSinkFilter.h"
 #include "VideoSinkInputPin.h"
 
-namespace Media
+namespace DShow
 {
 
 	VideoSinkFilter::VideoSinkFilter(FilterObserver* observer,TinyLock* lock)

@@ -3,15 +3,21 @@
 #include <ks.h>
 #include <ksmedia.h>
 
-namespace Media
+namespace DShow
 {
 	//////////////////////////////////////////////////////////////////////////
 	VideoCapture::Name::Name()
 	{
 
 	}
+	VideoCapture::Name::Name(string&& name, string&& id)
+		:m_name(std::move(name)),
+		m_id(std::move(id))
+	{
+
+	}
 	VideoCapture::Name::Name(const string& name, const string& id)
-		:m_name(name),
+		: m_name(name),
 		m_id(id)
 	{
 
@@ -333,7 +339,7 @@ namespace Media
 				{
 					id = WStringToString(V_BSTR(&variant));
 				}
-				names.push_back(Name(name, id));
+				names.push_back(std::move(Name(std::move(name), std::move(id))));
 			}
 			moniker.Release();
 		}

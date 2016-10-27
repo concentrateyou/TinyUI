@@ -2,7 +2,7 @@
 #include "TypeEnumerator.h"
 #include "ScopedMediaType.h"
 
-namespace Media
+namespace DShow
 {
 	TypeEnumerator::TypeEnumerator(PinBase* pPin)
 		:m_pin(pPin)

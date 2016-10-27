@@ -1,7 +1,7 @@
 #pragma once
 #include "PinBase.h"
 
-namespace Media
+namespace DShow
 {
 	class TypeEnumerator : public IEnumMediaTypes, TinyUI::TinyReference < TypeEnumerator >
 	{

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "AudioCaptureParam.h"
 
-namespace Media
+namespace DShow
 {
 	AudioCaptureParam::AudioCaptureParam()
 	{

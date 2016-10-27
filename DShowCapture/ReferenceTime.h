@@ -8,7 +8,7 @@ const LONGLONG UNITS = (NANOSECONDS / 100);      // 10 ^ 7
 #define MILLISECONDS_TO_100NS_UNITS(lMs) \
     Int32x32To64((lMs), (UNITS / MILLISECONDS))
 
-namespace Media
+namespace DShow
 {
 	class ReferenceTime
 	{

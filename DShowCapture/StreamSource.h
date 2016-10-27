@@ -2,7 +2,7 @@
 #include "DShowCommon.h"
 #include "FilterBase.h"
 
-namespace Media
+namespace DShow
 {
 	class SourceStream;
 	/// <summary>

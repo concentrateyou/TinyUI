@@ -4,7 +4,7 @@
 #include "FilterBase.h"
 #include "InputPinBase.h"
 
-namespace Media
+namespace DShow
 {
 	class OutputPinBase : public PinBase
 	{

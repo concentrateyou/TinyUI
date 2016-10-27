@@ -2,7 +2,7 @@
 #include "DShowCommon.h"
 #include "OutputPinBase.h"
 
-namespace Media
+namespace DShow
 {
 	class SourceStream : public OutputPinBase
 	{

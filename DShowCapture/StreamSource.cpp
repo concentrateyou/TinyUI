@@ -2,7 +2,7 @@
 #include "StreamSource.h"
 #include "SourceStream.h"
 
-namespace Media
+namespace DShow
 {
 	StreamSource::StreamSource(REFCLSID  clsid)
 		:FilterBase(clsid, &m_lock),

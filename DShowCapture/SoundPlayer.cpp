@@ -2,7 +2,7 @@
 #include "SoundPlayer.h"
 #pragma comment(lib,"dsound.lib")
 
-namespace Media
+namespace DShow
 {
 	SoundPlayer::SoundPlayer()
 		:m_dwOffset(0)

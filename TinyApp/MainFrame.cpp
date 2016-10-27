@@ -51,6 +51,10 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 {
 	bHandled = FALSE;
 
+	vector<Media::TinyWASAPI::Name> names;
+	m_waAPI.GetDevices(names);
+
+
 	m_onVideoStart.Reset(new Delegate<void(void*, INT)>(this, &CMainFrame::OnVideoStart));
 	m_onVideoStop.Reset(new Delegate<void(void*, INT)>(this, &CMainFrame::OnVideoStop));
 	m_videoStart.Create(m_hWND, 20, 50, 150, 23);
@@ -79,7 +83,7 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 	m_onVideoChange2.Reset(new Delegate<void(INT)>(this, &CMainFrame::OnVideoSelectChange2));
 	m_videoDevice2.EVENT_SelectChange += m_onVideoChange2;
 	m_videoNames.clear();
-	Media::VideoCapture::GetDevices(m_videoNames);
+	DShow::VideoCapture::GetDevices(m_videoNames);
 	for (UINT i = 0; i < m_videoNames.size(); i++)
 	{
 		m_videoDevice1.AddString(m_videoNames[i].name().c_str());
@@ -92,7 +96,7 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 	m_onAudioChange2.Reset(new Delegate<void(INT)>(this, &CMainFrame::OnAudioSelectChange2));
 	m_audioDevice2.EVENT_SelectChange += m_onAudioChange2;
 	m_audioNames.clear();
-	Media::AudioCapture::GetDevices(m_audioNames);
+	DShow::AudioCapture::GetDevices(m_audioNames);
 	for (UINT i = 0; i < m_audioNames.size(); i++)
 	{
 		m_audioDevice1.AddString(m_audioNames[i].name().c_str());
@@ -140,7 +144,7 @@ void CMainFrame::OnVideoSelectChange1(INT index)
 {
 	m_videoParams.clear();
 	m_videoDevice2.ResetContent();
-	Media::VideoCapture::GetDeviceParams(m_videoNames[index], m_videoParams);
+	DShow::VideoCapture::GetDeviceParams(m_videoNames[index], m_videoParams);
 	for (UINT i = 0; i < m_videoParams.size(); i++)
 	{
 		m_videoDevice2.AddString(m_videoParams[i].ToString().c_str());
@@ -149,7 +153,7 @@ void CMainFrame::OnVideoSelectChange1(INT index)
 
 void CMainFrame::OnVideoSelectChange2(INT index)
 {
-	const Media::VideoCaptureParam& param = m_videoParams[index];
+	const DShow::VideoCaptureParam& param = m_videoParams[index];
 	m_videoDevice.Uninitialize();
 	m_videoDevice.Initialize(m_videoNames[m_videoDevice1.GetCurSel()]);
 	m_videoDevice.Allocate(param);
@@ -165,7 +169,7 @@ void CMainFrame::OnAudioSelectChange1(INT index)
 {
 	m_audioParams.clear();
 	m_audioDevice2.ResetContent();
-	Media::AudioCapture::GetDeviceParams(m_audioNames[index], m_audioParams);
+	DShow::AudioCapture::GetDeviceParams(m_audioNames[index], m_audioParams);
 	for (UINT i = 0; i < m_audioParams.size(); i++)
 	{
 		m_audioDevice2.AddString(m_audioParams[i].ToString().c_str());
@@ -173,7 +177,7 @@ void CMainFrame::OnAudioSelectChange1(INT index)
 }
 void CMainFrame::OnAudioSelectChange2(INT index)
 {
-	const Media::AudioCaptureParam& param = m_audioParams[index];
+	const DShow::AudioCaptureParam& param = m_audioParams[index];
 	m_audioDevice.Uninitialize();
 	m_audioDevice.Initialize(m_audioNames[m_audioDevice1.GetCurSel()]);
 	m_audioDevice.Allocate(param);

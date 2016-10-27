@@ -1,7 +1,7 @@
 #pragma once
 #include "DShowCommon.h"
 
-namespace Media
+namespace DShow
 {
 	class AudioCaptureParam
 	{

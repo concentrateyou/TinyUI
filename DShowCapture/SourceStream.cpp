@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "SourceStream.h"
 
-namespace Media
+namespace DShow
 {
 	SourceStream::SourceStream(FilterBase* pFilter, WCHAR* pzName, TinyLock* lock)
 		:OutputPinBase(pFilter, pzName, lock)

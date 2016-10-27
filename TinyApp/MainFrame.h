@@ -41,8 +41,11 @@ public:
 	void OnAudioStop(void*, INT);
 
 private:
+
+	Media::TinyWASAPI	m_waAPI;
+
 	TinyLabel			m_control;
-	Media::VideoCapture m_videoDevice;
+	DShow::VideoCapture m_videoDevice;
 	TinyComboBox		m_videoDevice1;
 	TinyScopedPtr<Delegate<void(INT)>> m_onVideoChange1;
 	TinyComboBox		m_videoDevice2;
@@ -51,12 +54,12 @@ private:
 	TinyScopedPtr<Delegate<void(void*, INT)>> m_onVideoStart;
 	TinyButton			m_videoStop;
 	TinyScopedPtr<Delegate<void(void*, INT)>> m_onVideoStop;
-	vector<Media::VideoCapture::Name> m_videoNames;
-	vector<Media::VideoCaptureParam>  m_videoParams;
+	vector<DShow::VideoCapture::Name> m_videoNames;
+	vector<DShow::VideoCaptureParam>  m_videoParams;
 
-	Media::AudioCapture m_audioDevice;
-	vector<Media::AudioCapture::Name> m_audioNames;
-	vector<Media::AudioCaptureParam>  m_audioParams;
+	DShow::AudioCapture m_audioDevice;
+	vector<DShow::AudioCapture::Name> m_audioNames;
+	vector<DShow::AudioCaptureParam>  m_audioParams;
 
 	TinyScopedPtr<RenderTask>		m_renderTask;
 

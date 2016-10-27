@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "ReferenceTime.h"
 
-namespace Media
+namespace DShow
 {
 	ReferenceTime::ReferenceTime()
 		:m_time(0)
