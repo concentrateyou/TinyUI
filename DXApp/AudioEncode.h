@@ -4,7 +4,7 @@
 #include "FaacEncode.h"
 #include "RTMPClient.h"
 using namespace TinyUI::IO;
-using namespace Media;
+using namespace DShow;
 
 class AudioEncode
 {

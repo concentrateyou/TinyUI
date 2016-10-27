@@ -51,8 +51,8 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 {
 	bHandled = FALSE;
 
-	vector<Media::TinyWASAPI::Name> names;
-	m_waAPI.GetDevices(names);
+	/*vector<Media::TinyWASAPI::Name> names;
+	m_waAPI.GetDevices(names);*/
 
 
 	m_onVideoStart.Reset(new Delegate<void(void*, INT)>(this, &CMainFrame::OnVideoStart));

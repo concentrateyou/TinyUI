@@ -6,7 +6,7 @@
 #include "I420Converter.h"
 #include "RTMPClient.h"
 using namespace TinyUI::IO;
-using namespace Media;
+using namespace DShow;
 
 class RenderTask;
 

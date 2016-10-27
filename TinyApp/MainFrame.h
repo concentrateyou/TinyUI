@@ -42,7 +42,7 @@ public:
 
 private:
 
-	Media::TinyWASAPI	m_waAPI;
+	/*Media::TinyWASAPI	m_waAPI;*/
 
 	TinyLabel			m_control;
 	DShow::VideoCapture m_videoDevice;

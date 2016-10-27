@@ -4,7 +4,7 @@
 #include "RTMPClient.h"
 #include <concurrent_queue.h>
 using namespace TinyUI::IO;
-using namespace Media;
+using namespace DShow;
 
 class PublishTask : public TinyTaskBase
 {

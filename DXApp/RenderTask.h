@@ -4,7 +4,7 @@
 #include "DX11CaptureTask.h"
 #include "VideoCapture.h"
 using namespace TinyUI::IO;
-using namespace Media;
+using namespace DShow;
 
 class RenderTask : public TinyTaskBase
 {

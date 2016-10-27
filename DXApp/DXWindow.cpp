@@ -40,11 +40,11 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	bHandled = FALSE;
 	CenterWindow(NULL, { 1280, 720 });
 
-	vector<Media::VideoCapture::Name> videoNames;
-	Media::VideoCapture::GetDevices(videoNames);
-	vector<Media::VideoCaptureParam> videoParams;
-	Media::VideoCapture::GetDeviceParams(videoNames[0], videoParams);
-	Media::VideoCaptureParam videoParam;
+	vector<DShow::VideoCapture::Name> videoNames;
+	DShow::VideoCapture::GetDevices(videoNames);
+	vector<DShow::VideoCaptureParam> videoParams;
+	DShow::VideoCapture::GetDeviceParams(videoNames[0], videoParams);
+	DShow::VideoCaptureParam videoParam;
 	for (UINT i = 0; i < videoParams.size(); i++)
 	{
 		if (videoParams[i].GetSize() == TinySize(1280, 720))
@@ -54,12 +54,12 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 		}
 	}
 
-	vector<Media::AudioCapture::Name> audioNames;
-	Media::AudioCapture::GetDevices(audioNames);
-	vector<Media::AudioCaptureParam> audioParams;
-	Media::AudioCapture::GetDeviceParams(audioNames[0], audioParams);
-	Media::AudioCaptureParam audioParam;
-	WAVEFORMATEX defaultWFX = Media::AudioCaptureParam::GetDefaultFormat();
+	vector<DShow::AudioCapture::Name> audioNames;
+	DShow::AudioCapture::GetDevices(audioNames);
+	vector<DShow::AudioCaptureParam> audioParams;
+	DShow::AudioCapture::GetDeviceParams(audioNames[0], audioParams);
+	DShow::AudioCaptureParam audioParam;
+	WAVEFORMATEX defaultWFX = DShow::AudioCaptureParam::GetDefaultFormat();
 	for (UINT i = 0; i < audioParams.size(); i++)
 	{
 		WAVEFORMATEX wfx = audioParams[i].GetFormat();
