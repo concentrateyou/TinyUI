@@ -11,6 +11,13 @@ namespace TinyUI
 {
 	namespace Media
 	{
-
+		class AudioParameter
+		{
+		public:
+			AudioParameter(const WAVEFORMATEX& wfx);
+			WAVEFORMATEX GetFormat() const;
+		private:
+			WAVEFORMATEX m_wfx;
+		};
 	};
 }
