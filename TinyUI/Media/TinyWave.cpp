@@ -576,26 +576,37 @@ namespace TinyUI
 		}
 		//////////////////////////////////////////////////////////////////////////
 		//Wave File http://msdn.microsoft.com/en-us/library/windows/desktop/dd742884(v=vs.85).aspx
+		BOOL TinyWaveFile::Create(LPTSTR pzFile, const WAVEFORMATEX& waveEx)
+		{
+			m_waveEx = waveEx;
+			return TRUE;
+		}
+		BOOL TinyWaveFile::Write(BYTE* lpBuffer, DWORD nNumberOfBytesToRead)
+		{
+			return TRUE;
+		}
 		BOOL TinyWaveFile::Open(LPTSTR pzFile)
 		{
-			if (!pzFile) return FALSE;
-			if (hmmio != NULL)
+			if (!pzFile)
+				return FALSE;
+			if (m_hmmio != NULL)
 			{
-				mmioClose(hmmio, 0);
-				hmmio = NULL;
+				mmioClose(m_hmmio, 0);
+				m_hmmio = NULL;
 			}
-			if ((hmmio = mmioOpen(pzFile, NULL, MMIO_READ | MMIO_ALLOCBUF)) == NULL) return FALSE;
+			if ((m_hmmio = mmioOpen(pzFile, NULL, MMIO_READWRITE | MMIO_ALLOCBUF)) == NULL)
+				return FALSE;
 			MMCKINFO    mmckRIFF;
 			MMCKINFO    mmck;
 			MMRESULT    wError;
 			WORD		wFormatSize;
 			mmckRIFF.fccType = mmioWAVE;
-			if (wError = mmioDescend(hmmio, &mmckRIFF, NULL, MMIO_FINDRIFF))
+			if (wError = mmioDescend(m_hmmio, &mmckRIFF, NULL, MMIO_FINDRIFF))
 			{
 				return FALSE;
 			}
 			mmck.ckid = mmioFMT;
-			if (wError = mmioDescend(hmmio, &mmck, &mmckRIFF, MMIO_FINDCHUNK))
+			if (wError = mmioDescend(m_hmmio, &mmck, &mmckRIFF, MMIO_FINDCHUNK))
 			{
 				return FALSE;
 			}
@@ -604,11 +615,11 @@ namespace TinyUI
 				return FALSE;
 			}
 			wFormatSize = (WORD)mmck.cksize;
-			if ((DWORD)mmioRead(hmmio, (HPSTR)&waveEx, mmck.cksize) != mmck.cksize)//读取WAVEFORMAT
+			if ((DWORD)mmioRead(m_hmmio, (HPSTR)&m_waveEx, mmck.cksize) != mmck.cksize)//读取WAVEFORMAT
 			{
 				goto MMIO_ERROR;
 			}
-			if (waveEx.wFormatTag == WAVE_FORMAT_PCM)//PCM格式
+			if (m_waveEx.wFormatTag == WAVE_FORMAT_PCM)//PCM格式
 			{
 				if (wFormatSize < sizeof(PCMWAVEFORMAT))
 				{
@@ -617,16 +628,16 @@ namespace TinyUI
 			}
 			else
 			{
-				if ((wFormatSize < sizeof(WAVEFORMATEX)) || (wFormatSize < sizeof(WAVEFORMATEX) + waveEx.cbSize))
+				if ((wFormatSize < sizeof(WAVEFORMATEX)) || (wFormatSize < sizeof(WAVEFORMATEX) + m_waveEx.cbSize))
 				{
 					goto MMIO_ERROR;
 				}
-				if (waveEx.cbSize != 0)
+				if (m_waveEx.cbSize != 0)
 				{
-					LPBYTE extraBytes = (LPBYTE)LocalAlloc(LPTR, waveEx.cbSize);
+					LPBYTE extraBytes = (LPBYTE)LocalAlloc(LPTR, m_waveEx.cbSize);
 					if (extraBytes != NULL)
 					{
-						if (mmioRead(hmmio, (HPSTR)extraBytes, waveEx.cbSize) != waveEx.cbSize)
+						if (mmioRead(m_hmmio, (HPSTR)extraBytes, m_waveEx.cbSize) != m_waveEx.cbSize)
 						{
 							SAFE_LOCAL_DELETE(extraBytes);
 							goto MMIO_ERROR;
@@ -634,33 +645,34 @@ namespace TinyUI
 					}
 				}
 			}
-			if (wError = mmioAscend(hmmio, &mmck, 0))
+			if (wError = mmioAscend(m_hmmio, &mmck, 0))
 			{
 				goto MMIO_ERROR;
 			}
 			mmck.ckid = mmioDATA;
-			if (wError = mmioDescend(hmmio, &mmck, &mmckRIFF, MMIO_FINDCHUNK))
+			if (wError = mmioDescend(m_hmmio, &mmck, &mmckRIFF, MMIO_FINDCHUNK))
 			{
 				goto MMIO_ERROR;
 			}
-			dwLSize = dwSize = mmck.cksize;
-			dwDataOffset = mmck.dwDataOffset;
-			if (-1 == mmioSeek(hmmio, mmck.dwDataOffset, SEEK_SET))
+			m_dwLSize = m_dwSize = mmck.cksize;
+			m_dwDataOffset = mmck.dwDataOffset;
+			if (-1 == mmioSeek(m_hmmio, mmck.dwDataOffset, SEEK_SET))
 			{
 				goto MMIO_ERROR;
 			}
 			return TRUE;
 		MMIO_ERROR:
-			mmioClose(hmmio, 0);
+			mmioClose(m_hmmio, 0);
 			return FALSE;
 		}
 		BOOL TinyWaveFile::Open(LPVOID pStream, DWORD bufferSize)
 		{
-			if (pStream == NULL) return FALSE;
-			if (hmmio != NULL)
+			if (pStream == NULL)
+				return FALSE;
+			if (m_hmmio != NULL)
 			{
-				mmioClose(hmmio, 0);
-				hmmio = NULL;
+				mmioClose(m_hmmio, 0);
+				m_hmmio = NULL;
 			}
 			//内存流
 			MMIOINFO mmioInfo;
@@ -668,18 +680,19 @@ namespace TinyUI
 			mmioInfo.fccIOProc = FOURCC_MEM;
 			mmioInfo.cchBuffer = bufferSize;
 			mmioInfo.pchBuffer = (CHAR*)pStream;
-			if ((hmmio = mmioOpen(NULL, &mmioInfo, MMIO_READ | MMIO_ALLOCBUF)) == NULL) return FALSE;
+			if ((m_hmmio = mmioOpen(NULL, &mmioInfo, MMIO_READ | MMIO_ALLOCBUF)) == NULL)
+				return FALSE;
 			MMCKINFO    mmckRIFF;
 			MMCKINFO    mmck;
 			MMRESULT    wError;
 			WORD		wFormatSize;
 			mmckRIFF.fccType = mmioWAVE;
-			if (wError = mmioDescend(hmmio, &mmckRIFF, NULL, MMIO_FINDRIFF))
+			if (wError = mmioDescend(m_hmmio, &mmckRIFF, NULL, MMIO_FINDRIFF))
 			{
 				return FALSE;
 			}
 			mmck.ckid = mmioFMT;
-			if (wError = mmioDescend(hmmio, &mmck, &mmckRIFF, MMIO_FINDCHUNK))
+			if (wError = mmioDescend(m_hmmio, &mmck, &mmckRIFF, MMIO_FINDCHUNK))
 			{
 				return FALSE;
 			}
@@ -688,11 +701,11 @@ namespace TinyUI
 				return FALSE;
 			}
 			wFormatSize = (WORD)mmck.cksize;
-			if ((DWORD)mmioRead(hmmio, (HPSTR)&waveEx, mmck.cksize) != mmck.cksize)//读取WAVEFORMAT
+			if ((DWORD)mmioRead(m_hmmio, (HPSTR)&m_waveEx, mmck.cksize) != mmck.cksize)//读取WAVEFORMAT
 			{
 				goto MMIO_ERROR;
 			}
-			if (waveEx.wFormatTag == WAVE_FORMAT_PCM)//PCM格式
+			if (m_waveEx.wFormatTag == WAVE_FORMAT_PCM)//PCM格式
 			{
 				if (wFormatSize < sizeof(PCMWAVEFORMAT))
 				{
@@ -701,16 +714,16 @@ namespace TinyUI
 			}
 			else
 			{
-				if ((wFormatSize < sizeof(WAVEFORMATEX)) || (wFormatSize < sizeof(WAVEFORMATEX) + waveEx.cbSize))
+				if ((wFormatSize < sizeof(WAVEFORMATEX)) || (wFormatSize < sizeof(WAVEFORMATEX) + m_waveEx.cbSize))
 				{
 					goto MMIO_ERROR;
 				}
-				if (waveEx.cbSize != 0)
+				if (m_waveEx.cbSize != 0)
 				{
-					LPBYTE extraBytes = (LPBYTE)LocalAlloc(LPTR, waveEx.cbSize);
+					LPBYTE extraBytes = (LPBYTE)LocalAlloc(LPTR, m_waveEx.cbSize);
 					if (extraBytes != NULL)
 					{
-						if (mmioRead(hmmio, (HPSTR)extraBytes, waveEx.cbSize) != waveEx.cbSize)
+						if (mmioRead(m_hmmio, (HPSTR)extraBytes, m_waveEx.cbSize) != m_waveEx.cbSize)
 						{
 							SAFE_LOCAL_DELETE(extraBytes);
 							goto MMIO_ERROR;
@@ -718,79 +731,86 @@ namespace TinyUI
 					}
 				}
 			}
-			if (wError = mmioAscend(hmmio, &mmck, 0))
+			if (wError = mmioAscend(m_hmmio, &mmck, 0))
 			{
 				goto MMIO_ERROR;
 			}
 			mmck.ckid = mmioDATA;
-			if (wError = mmioDescend(hmmio, &mmck, &mmckRIFF, MMIO_FINDCHUNK))
+			if (wError = mmioDescend(m_hmmio, &mmck, &mmckRIFF, MMIO_FINDCHUNK))
 			{
 				goto MMIO_ERROR;
 			}
-			dwLSize = dwSize = mmck.cksize;
-			dwDataOffset = mmck.dwDataOffset;
-			if (-1 == mmioSeek(hmmio, mmck.dwDataOffset, SEEK_SET))
+			m_dwLSize = m_dwSize = mmck.cksize;
+			m_dwDataOffset = mmck.dwDataOffset;
+			if (-1 == mmioSeek(m_hmmio, mmck.dwDataOffset, SEEK_SET))
 			{
 				goto MMIO_ERROR;
 			}
 			return TRUE;
 		MMIO_ERROR:
-			mmioClose(hmmio, 0);
+			mmioClose(m_hmmio, 0);
 			return FALSE;
 		}
 		void TinyWaveFile::Close()
 		{
-			if (hmmio != NULL)
+			if (m_hmmio != NULL)
 			{
-				mmioClose(hmmio, 0);
-				hmmio = NULL;
+				mmioClose(m_hmmio, 0);
+				m_hmmio = NULL;
 			}
-			dwSize = dwLSize = dwDataOffset = 0;
+			m_dwSize = m_dwLSize = m_dwDataOffset = 0;
 		}
 		BOOL TinyWaveFile::Read(BYTE* lpBuffer, DWORD nNumberOfBytesToRead, LPDWORD lpNumberOfBytesRead)
 		{
-			if (hmmio == NULL) return FALSE;
+			if (m_hmmio == NULL)
+				return FALSE;
 			*lpNumberOfBytesRead = 0;
 			MMIOINFO mmioinfo;
-			if (MMSYSERR_NOERROR != mmioGetInfo(hmmio, &mmioinfo, 0)) return FALSE;
+			if (MMSYSERR_NOERROR != mmioGetInfo(m_hmmio, &mmioinfo, 0))
+				return FALSE;
 			UINT cbDataIn = nNumberOfBytesToRead;
-			if (cbDataIn > dwSize) cbDataIn = dwLSize;
-			dwLSize -= cbDataIn;
+			if (cbDataIn > m_dwSize) cbDataIn = m_dwLSize;
+			m_dwLSize -= cbDataIn;
 			for (DWORD cT = 0; cT < cbDataIn; cT++)
 			{
 				if (mmioinfo.pchNext == mmioinfo.pchEndRead)
 				{
-					if (MMSYSERR_NOERROR != mmioAdvance(hmmio, &mmioinfo, MMIO_READ)) return FALSE;
-					if (mmioinfo.pchNext == mmioinfo.pchEndRead) return FALSE;
+					if (MMSYSERR_NOERROR != mmioAdvance(m_hmmio, &mmioinfo, MMIO_READ))
+						return FALSE;
+					if (mmioinfo.pchNext == mmioinfo.pchEndRead)
+						return FALSE;
 				}
 				*((BYTE*)lpBuffer + cT) = *((BYTE*)mmioinfo.pchNext);
 				mmioinfo.pchNext++;
 			}
-			if (MMSYSERR_NOERROR != mmioSetInfo(hmmio, &mmioinfo, 0)) return FALSE;
+			if (MMSYSERR_NOERROR != mmioSetInfo(m_hmmio, &mmioinfo, 0))
+				return FALSE;
 			*lpNumberOfBytesRead = cbDataIn;
 			return TRUE;
 		}
 		BOOL TinyWaveFile::Seek(LONG lOffset, INT iOrigin)
 		{
-			if (hmmio == NULL) return FALSE;
-			if (-1 == mmioSeek(hmmio, lOffset, iOrigin)) return FALSE;
+			if (m_hmmio == NULL)
+				return FALSE;
+			if (-1 == mmioSeek(m_hmmio, lOffset, iOrigin))
+				return FALSE;
 			return TRUE;
 		}
 		WAVEFORMATEX TinyWaveFile::GetFormat()
 		{
-			return waveEx;
+			return m_waveEx;
 		}
 		DWORD TinyWaveFile::GetDataSize()
 		{
-			return dwSize;
+			return m_dwSize;
 		}
 		DWORD TinyWaveFile::GetDataOffset()
 		{
-			return dwDataOffset;
+			return m_dwDataOffset;
 		}
 		BOOL TinyWaveFile::ResetFile()
 		{
-			return Seek(dwDataOffset, SEEK_SET);
+			return Seek(m_dwDataOffset, SEEK_SET);
 		}
 	};
 }

@@ -90,6 +90,7 @@ namespace TinyUI
 			}
 			m_captureBufferSize = m_wfx.nAvgBytesPerSec * 2;
 			m_captureBuffer.Reset(new BYTE[m_captureBufferSize]);
+			m_player.Initialize(NULL, m_wfx);
 			return TRUE;
 		}
 

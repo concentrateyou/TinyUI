@@ -5,7 +5,7 @@
 
 namespace TinyUI
 {
-	namespace Media{
+	namespace Media {
 
 
 #define mmioWAVE    mmioFOURCC('W','A','V','E')
@@ -29,12 +29,14 @@ namespace TinyUI
 		class TinyWaveFile
 		{
 		private:
-			WAVEFORMATEX waveEx;
-			DWORD dwSize;//数据大小
-			DWORD dwLSize;//剩余数据大小
-			DWORD dwDataOffset;//波形数据的偏移量
-			HMMIO hmmio;
+			WAVEFORMATEX m_waveEx;
+			DWORD m_dwSize;//数据大小
+			DWORD m_dwLSize;//剩余数据大小
+			DWORD m_dwDataOffset;//波形数据的偏移量
+			HMMIO m_hmmio;
 		public:
+			BOOL Create(LPTSTR pzFile, const WAVEFORMATEX& waveEx);
+			BOOL Write(BYTE* lpBuffer, DWORD nNumberOfBytesToRead);
 			BOOL Open(LPTSTR pzFile);
 			BOOL Open(LPVOID pStream, DWORD bufferSize);
 			BOOL Read(BYTE* lpBuffer, DWORD nNumberOfBytesToRead, LPDWORD lpNumberOfBytesRead);
