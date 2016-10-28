@@ -1,5 +1,6 @@
 #include "../stdafx.h"
 #include "TinyWASAPIAudioCapture.h"
+#include <algorithm>
 
 namespace TinyUI
 {
@@ -8,7 +9,8 @@ namespace TinyUI
 		TinyWASAPIAudioCapture::TinyWASAPIAudioCapture(DWORD dwFlag)
 			:m_dwFlag(dwFlag),
 			m_bufferFrameIndex(0),
-			m_bufferSize(0)
+			m_bufferSize(0),
+			m_captureBufferSize(0)
 		{
 			m_audioSamplesReady.CreateEvent(FALSE, FALSE, NULL, NULL);
 			m_audioStop.CreateEvent(FALSE, FALSE, NULL, NULL);
@@ -37,11 +39,12 @@ namespace TinyUI
 			hRes = m_mmDevice->Activate(__uuidof(IAudioClient), CLSCTX_INPROC_SERVER, NULL, (void**)&m_audioClient);
 			if (FAILED(hRes))
 				return FALSE;
-			WAVEFORMATEX* pWFX = NULL;
-			hRes = m_audioClient->GetMixFormat(&pWFX);
+			WAVEFORMATEX* pFormat = NULL;
+			hRes = m_audioClient->GetMixFormat(&pFormat);
 			if (FAILED(hRes))
 				return FALSE;
-			hRes = m_audioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, m_dwFlag, 0, 0, pWFX, NULL);
+			m_wfx = *pFormat;
+			hRes = m_audioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, m_dwFlag, 0, 0, pFormat, NULL);
 			if (FAILED(hRes))
 				return FALSE;
 			hRes = m_audioClient->GetBufferSize(&m_bufferSize);
@@ -55,13 +58,13 @@ namespace TinyUI
 				return FALSE;
 			if (m_dwFlag & AUDCLNT_STREAMFLAGS_LOOPBACK)
 			{
-				hRes = m_mmDevice->Activate(__uuidof(IAudioClient), CLSCTX_INPROC_SERVER, NULL, (void**)&m_lbClient);
+				hRes = m_mmDevice->Activate(__uuidof(IAudioClient), CLSCTX_INPROC_SERVER, NULL, (void**)&m_audioClientLB);
 				if (FAILED(hRes))
 					return FALSE;
-				hRes = m_lbClient->Initialize(AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST, 0, 0, pWFX, NULL);
+				hRes = m_audioClientLB->Initialize(AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST, 0, 0, pFormat, NULL);
 				if (FAILED(hRes))
 					return FALSE;
-				hRes = m_lbClient->SetEventHandle(m_audioSamplesReady);
+				hRes = m_audioClientLB->SetEventHandle(m_audioSamplesReady);
 				if (FAILED(hRes))
 					return FALSE;
 			}
@@ -80,11 +83,13 @@ namespace TinyUI
 			hRes = m_audioClient->GetService(__uuidof(ISimpleAudioVolume), (void**)&m_audioVolume);
 			if (FAILED(hRes))
 				return FALSE;
-			if (pWFX)
+			if (pFormat)
 			{
-				CoTaskMemFree(pWFX);
-				pWFX = NULL;
+				CoTaskMemFree(pFormat);
+				pFormat = NULL;
 			}
+			m_captureBufferSize = m_wfx.nAvgBytesPerSec * 2;
+			m_captureBuffer.Reset(new BYTE[m_captureBufferSize]);
 			return TRUE;
 		}
 
@@ -98,9 +103,9 @@ namespace TinyUI
 			HRESULT hRes = m_audioClient->Start();
 			if (FAILED(hRes))
 				return FALSE;
-			if (m_lbClient)
+			if (m_audioClientLB)
 			{
-				hRes = m_lbClient->Start();
+				hRes = m_audioClientLB->Start();
 				if (FAILED(hRes))
 					return FALSE;
 			}
@@ -112,6 +117,7 @@ namespace TinyUI
 			DWORD dwTaskIndex = 0;
 			HANDLE hMM = AvSetMmThreadCharacteristics("Audio", &dwTaskIndex);
 			ASSERT(hMM);
+			AvSetMmThreadPriority(hMM, AVRT_PRIORITY_CRITICAL);
 			BOOL error = FALSE;
 			BOOL recording = TRUE;
 			HANDLE waits[2] = { m_audioStop ,m_audioSamplesReady };
@@ -142,15 +148,14 @@ namespace TinyUI
 					}
 					if (numFramesToRead != 0)
 					{
-						size_t pos = m_bufferFrameIndex * m_wfx.nBlockAlign;
-						size_t num_bytes = numFramesToRead * m_wfx.nBlockAlign;
+						UINT32 framesToCopy = std::min<UINT32>(numFramesToRead, static_cast<UINT32>((m_captureBufferSize - m_bufferFrameIndex)) / m_wfx.nBlockAlign);
 						if (dwFlags & AUDCLNT_BUFFERFLAGS_SILENT)
 						{
-							//memset(&capture_buffer[pos], 0, num_bytes);
+							ZeroMemory(&m_captureBuffer[m_bufferFrameIndex], framesToCopy * m_wfx.nBlockAlign);
 						}
 						else
 						{
-							//memcpy(&capture_buffer[pos], data_ptr, num_bytes);
+							CopyMemory(&m_captureBuffer[m_bufferFrameIndex], pData, framesToCopy * m_wfx.nBlockAlign);
 						}
 						m_bufferFrameIndex += numFramesToRead;
 					}
@@ -186,7 +191,14 @@ namespace TinyUI
 
 		BOOL TinyWASAPIAudioCapture::Close()
 		{
-			throw std::logic_error("The method or operation is not implemented.");
+			if (Stop())
+			{
+				if (m_audioClientLB)
+				{
+					return SUCCEEDED(m_audioClientLB->Stop());
+				}
+			}
+			return TRUE;
 		}
 	}
 }

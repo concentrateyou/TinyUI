@@ -33,10 +33,12 @@ namespace TinyUI
 			IO::TinyTaskBase				m_task;
 			TinyComPtr<IMMDevice>			m_mmDevice;
 			TinyComPtr<IAudioClient>		m_audioClient;
-			TinyComPtr<IAudioClient>		m_lbClient;
+			TinyComPtr<IAudioClient>		m_audioClientLB;
 			TinyComPtr<IAudioClock>			m_audioClock;;
 			TinyComPtr<IAudioCaptureClient>	m_audioCapture;
 			TinyComPtr<ISimpleAudioVolume>	m_audioVolume;
+			TinyScopedArray<BYTE>			m_captureBuffer;
+			UINT							m_captureBufferSize;
 			TinyEvent						m_audioSamplesReady;
 			TinyEvent						m_audioStop;
 			DWORD							m_dwFlag;
