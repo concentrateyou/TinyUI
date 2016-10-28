@@ -90,7 +90,6 @@ namespace TinyUI
 			}
 			m_captureBufferSize = m_wfx.nAvgBytesPerSec * 2;
 			m_captureBuffer.Reset(new BYTE[m_captureBufferSize]);
-			m_player.Initialize(NULL, m_wfx);
 			return TRUE;
 		}
 
@@ -192,12 +191,9 @@ namespace TinyUI
 
 		BOOL TinyWASAPIAudioCapture::Close()
 		{
-			if (Stop())
+			if (Stop() && m_audioClientLB)
 			{
-				if (m_audioClientLB)
-				{
-					return SUCCEEDED(m_audioClientLB->Stop());
-				}
+				return SUCCEEDED(m_audioClientLB->Stop());
 			}
 			return TRUE;
 		}

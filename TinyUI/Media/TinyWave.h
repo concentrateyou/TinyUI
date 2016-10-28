@@ -35,11 +35,13 @@ namespace TinyUI
 			DWORD m_dwDataOffset;//波形数据的偏移量
 			HMMIO m_hmmio;
 		public:
+			TinyWaveFile();
+			~TinyWaveFile();
 			BOOL Create(LPTSTR pzFile, const WAVEFORMATEX& waveEx);
-			BOOL Write(BYTE* lpBuffer, DWORD nNumberOfBytesToRead);
 			BOOL Open(LPTSTR pzFile);
-			BOOL Open(LPVOID pStream, DWORD bufferSize);
-			BOOL Read(BYTE* lpBuffer, DWORD nNumberOfBytesToRead, LPDWORD lpNumberOfBytesRead);
+			BOOL Open(LPVOID pStream, LONG bufferSize);
+			BOOL Read(BYTE* lpBuffer, LONG nNumberOfBytesToRead, LPLONG lpNumberOfBytesRead);
+			BOOL Write(BYTE* lpBuffer, LONG nNumberOfBytesToRead);
 			BOOL Seek(LONG lOffset, INT iOrigin);
 			BOOL ResetFile();
 			void Close();
