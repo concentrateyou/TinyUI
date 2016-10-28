@@ -3,7 +3,6 @@
 #include "IO/TinyRingQueue.h"
 #include "DShowCommon.h"
 #include "VideoCapture.h"
-#include "Media/TinyWASAPI.h"
 using namespace TinyUI;
 using namespace TinyUI::IO;
 

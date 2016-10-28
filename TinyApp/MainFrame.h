@@ -4,6 +4,7 @@
 #include "Control/TinyComboBox.h"
 #include "Control/TinyButton.h"
 #include "Control/TinyLabel.h"
+#include "Media/TinyWASAPIAudioCapture.h"
 #include "VideoCapture.h"
 #include "AudioCapture.h"
 #include "SoundPlayer.h"
@@ -42,7 +43,7 @@ public:
 
 private:
 
-	/*Media::TinyWASAPI	m_waAPI;*/
+	Media::TinyWASAPIAudioCapture m_capture;
 
 	TinyLabel			m_control;
 	DShow::VideoCapture m_videoDevice;

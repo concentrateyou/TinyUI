@@ -48,7 +48,7 @@ namespace DShow
 
 	LONG ReferenceTime::Millisecs()
 	{
-		return (LONG)(m_time / (UNITS / MILLISECONDS));
+		return (LONG)(m_time / (CONST_UNITS / CONST_MILLISECONDS));
 	};
 
 	LONGLONG ReferenceTime::GetUnits()

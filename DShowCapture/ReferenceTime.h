@@ -1,12 +1,12 @@
 #pragma once
 #include "DShowCommon.h"
 
-const LONGLONG MILLISECONDS = (1000);            // 10 ^ 3
-const LONGLONG NANOSECONDS = (1000000000);       // 10 ^ 9
-const LONGLONG UNITS = (NANOSECONDS / 100);      // 10 ^ 7
+const LONGLONG CONST_MILLISECONDS = (1000);            // 10 ^ 3
+const LONGLONG CONST_NANOSECONDS = (1000000000);       // 10 ^ 9
+const LONGLONG CONST_UNITS = (CONST_NANOSECONDS / 100);      // 10 ^ 7
 
 #define MILLISECONDS_TO_100NS_UNITS(lMs) \
-    Int32x32To64((lMs), (UNITS / MILLISECONDS))
+    Int32x32To64((lMs), (CONST_UNITS / CONST_MILLISECONDS))
 
 namespace DShow
 {

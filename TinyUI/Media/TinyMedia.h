@@ -4,20 +4,18 @@
 #include "../Common/TinyCallback.h"
 #include <mmsystem.h>
 #include <dshow.h>
+#include <MMDeviceAPI.h>
+#include <AudioClient.h>
+#include <AudioPolicy.h>
+#include <avrt.h>
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "strmiids.lib")
+#pragma comment(lib, "avrt.lib")
 
 namespace TinyUI
 {
 	namespace Media
 	{
-		class AudioParameter
-		{
-		public:
-			AudioParameter(const WAVEFORMATEX& wfx);
-			WAVEFORMATEX GetFormat() const;
-		private:
-			WAVEFORMATEX m_wfx;
-		};
+
 	};
 }
