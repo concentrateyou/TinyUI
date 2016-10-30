@@ -597,18 +597,24 @@ namespace TinyUI
 		//////////////////////////////////////////////////////////////////////////
 		//Wave File http://msdn.microsoft.com/en-us/library/windows/desktop/dd742884(v=vs.85).aspx
 		TinyWaveFile::TinyWaveFile()
+			:m_hmmio(NULL),
+			m_reading(0)
 		{
 			ZeroMemory(&m_waveEx, sizeof(m_waveEx));
+			ZeroMemory(&m_mmckRIFF, sizeof(m_mmckRIFF));
+			ZeroMemory(&m_mmckFMT, sizeof(m_mmckFMT));
+			ZeroMemory(&m_mmckFACT, sizeof(m_mmckFACT));
+			ZeroMemory(&m_mmckDATA, sizeof(m_mmckDATA));
 		}
 		TinyWaveFile::~TinyWaveFile()
 		{
 			Close();
 		}
-		BOOL TinyWaveFile::Create(LPTSTR pzFile, const WAVEFORMATEX& waveEx)
+		BOOL TinyWaveFile::Create(LPTSTR pzFile, WAVEFORMATEX* pWaveEx)
 		{
 			if (!pzFile)
 				return FALSE;
-			m_waveEx = waveEx;
+			m_waveEx = *pWaveEx;
 			if (m_hmmio != NULL)
 			{
 				mmioClose(m_hmmio, 0);
@@ -616,31 +622,36 @@ namespace TinyUI
 			}
 			if ((m_hmmio = mmioOpen(pzFile, NULL, MMIO_CREATE | MMIO_READWRITE | MMIO_EXCLUSIVE | MMIO_ALLOCBUF)) == NULL)
 				return FALSE;
+			m_reading = FALSE;
 			MMRESULT  mmRes = MMSYSERR_NOERROR;
-			MMCKINFO  mmckRIFF = { 0 };
-			mmckRIFF.fccType = mmioWAVE;
-			mmckRIFF.cksize = 0L;
-			MMCKINFO mmckFMT = { 0 };
-			mmckFMT.fccType = 0;
-			mmckFMT.ckid = mmioFMT;
-			mmckFMT.cksize = sizeof(PCMWAVEFORMAT);
-			MMCKINFO mmckDATA = { 0 };
-			mmckDATA.cksize = 0;
-			mmckDATA.fccType = 0;
-			mmckDATA.ckid = mmioDATA;
-			mmRes = mmioCreateChunk(m_hmmio, &mmckRIFF, MMIO_CREATERIFF);
-			if (mmRes != MMSYSERR_NOERROR)
-				goto MMIO_ERROR;		
-			mmRes = mmioCreateChunk(m_hmmio, &mmckFMT, 0);
+			m_mmckRIFF.ckid = mmioRIFF;
+			m_mmckRIFF.fccType = mmioWAVE;
+			mmRes = mmioCreateChunk(m_hmmio, &m_mmckRIFF, MMIO_CREATERIFF);
 			if (mmRes != MMSYSERR_NOERROR)
 				goto MMIO_ERROR;
-			if (-1 == mmioWrite(m_hmmio, (const char*)(&waveEx), (WAVE_FORMAT_PCM == waveEx.wFormatTag)
-				? sizeof(PCMWAVEFORMAT) : sizeof(WAVEFORMATEX) + waveEx.cbSize))
-				goto MMIO_ERROR;
-			mmRes = mmioAscend(m_hmmio, &mmckFMT, 0);
+			m_mmckFMT.ckid = mmioFMT;
+			mmRes = mmioCreateChunk(m_hmmio, &m_mmckFMT, 0);
 			if (mmRes != MMSYSERR_NOERROR)
 				goto MMIO_ERROR;
-			mmRes = mmioCreateChunk(m_hmmio, &mmckDATA, 0);
+			DWORD dwSize = sizeof(WAVEFORMATEX) + pWaveEx->cbSize;
+			if (dwSize != mmioWrite(m_hmmio, (const char*)pWaveEx, dwSize))
+				goto MMIO_ERROR;
+			mmRes = mmioAscend(m_hmmio, &m_mmckFMT, 0);
+			if (mmRes != MMSYSERR_NOERROR)
+				goto MMIO_ERROR;
+			m_mmckFACT.ckid = mmioFACT;
+			mmRes = mmioCreateChunk(m_hmmio, &m_mmckFACT, 0);
+			if (mmRes != MMSYSERR_NOERROR)
+				goto MMIO_ERROR;
+			DWORD dwSamples = 0;
+			dwSize = sizeof(DWORD);
+			if (dwSize != mmioWrite(m_hmmio, (HPSTR)&dwSamples, dwSize))
+				goto MMIO_ERROR;
+			mmRes = mmioAscend(m_hmmio, &m_mmckFACT, 0);
+			if (mmRes != MMSYSERR_NOERROR)
+				goto MMIO_ERROR;
+			m_mmckDATA.ckid = mmioDATA;
+			mmRes = mmioCreateChunk(m_hmmio, &m_mmckDATA, 0);
 			if (mmRes != MMSYSERR_NOERROR)
 				goto MMIO_ERROR;
 			return TRUE;
@@ -666,6 +677,7 @@ namespace TinyUI
 			}
 			if ((m_hmmio = mmioOpen(pzFile, NULL, MMIO_READWRITE | MMIO_ALLOCBUF)) == NULL)
 				return FALSE;
+			m_reading = TRUE;
 			MMCKINFO    mmckRIFF = { 0 };
 			MMCKINFO    mmck = { 0 };
 			MMRESULT    mmRes = MMSYSERR_NOERROR;
@@ -739,6 +751,7 @@ namespace TinyUI
 			mmioInfo.pchBuffer = (CHAR*)pStream;
 			if ((m_hmmio = mmioOpen(NULL, &mmioInfo, MMIO_READ | MMIO_ALLOCBUF)) == NULL)
 				return FALSE;
+			m_reading = TRUE;
 			MMCKINFO    mmckRIFF = { 0 };
 			MMCKINFO    mmck = { 0 };
 			MMRESULT    mmRes = MMSYSERR_NOERROR;
@@ -796,6 +809,11 @@ namespace TinyUI
 		}
 		void TinyWaveFile::Close()
 		{
+			if (!m_reading)
+			{
+				mmioAscend(m_hmmio, &m_mmckDATA, 0);
+				mmioAscend(m_hmmio, &m_mmckRIFF, 0);
+			}
 			if (m_hmmio != NULL)
 			{
 				mmioClose(m_hmmio, 0);

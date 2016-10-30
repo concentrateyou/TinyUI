@@ -5,12 +5,13 @@
 
 namespace TinyUI
 {
-	namespace Media {
-
-
+	namespace Media
+	{
+#define mmioRIFF    mmioFOURCC('R', 'I', 'F', 'F');
 #define mmioWAVE    mmioFOURCC('W','A','V','E')
 #define mmioFMT     mmioFOURCC('f','m','t',' ')
 #define mmioDATA    mmioFOURCC('d','a','t','a')
+#define mmioFACT    mmioFOURCC('f','a','c','t')
 #define WAVE_READ   0;
 #define WAVE_WRITE  1;
 #define PI 3.14159265
@@ -29,15 +30,20 @@ namespace TinyUI
 		class TinyWaveFile
 		{
 		private:
-			WAVEFORMATEX m_waveEx;
-			DWORD m_dwSize;//数据大小
-			DWORD m_dwLSize;//剩余数据大小
-			DWORD m_dwDataOffset;//波形数据的偏移量
-			HMMIO m_hmmio;
+			WAVEFORMATEX	m_waveEx;
+			DWORD			m_dwSize;//数据大小
+			DWORD			m_dwLSize;//剩余数据大小
+			DWORD			m_dwDataOffset;//波形数据的偏移量
+			HMMIO			m_hmmio;
+			BOOL			m_reading;
+			MMCKINFO		m_mmckRIFF;
+			MMCKINFO		m_mmckFMT;
+			MMCKINFO		m_mmckFACT;
+			MMCKINFO		m_mmckDATA;
 		public:
 			TinyWaveFile();
 			~TinyWaveFile();
-			BOOL Create(LPTSTR pzFile, const WAVEFORMATEX& waveEx);
+			BOOL Create(LPTSTR pzFile, WAVEFORMATEX* pWaveEx);
 			BOOL Open(LPTSTR pzFile);
 			BOOL Open(LPVOID pStream, LONG bufferSize);
 			BOOL Read(BYTE* lpBuffer, LONG nNumberOfBytesToRead, LPLONG lpNumberOfBytesRead);

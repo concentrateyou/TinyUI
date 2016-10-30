@@ -8,9 +8,10 @@ namespace TinyUI
 	{
 		TinyWASAPIAudioCapture::TinyWASAPIAudioCapture(DWORD dwFlag)
 			:m_dwFlag(dwFlag),
-			m_bufferFrameIndex(0),
+			m_bufferOffset(0),
 			m_bufferSize(0),
-			m_captureBufferSize(0)
+			m_captureBufferSize(0),
+			m_pWaveFormat(NULL)
 		{
 			m_audioSamplesReady.CreateEvent(FALSE, FALSE, NULL, NULL);
 			m_audioStop.CreateEvent(FALSE, FALSE, NULL, NULL);
@@ -18,7 +19,7 @@ namespace TinyUI
 
 		TinyWASAPIAudioCapture::~TinyWASAPIAudioCapture()
 		{
-
+			Close();
 		}
 
 		BOOL TinyWASAPIAudioCapture::Open()
@@ -39,12 +40,11 @@ namespace TinyUI
 			hRes = m_mmDevice->Activate(__uuidof(IAudioClient), CLSCTX_INPROC_SERVER, NULL, (void**)&m_audioClient);
 			if (FAILED(hRes))
 				return FALSE;
-			WAVEFORMATEX* pFormat = NULL;
-			hRes = m_audioClient->GetMixFormat(&pFormat);
+			hRes = m_audioClient->GetMixFormat(&m_pWaveFormat);
 			if (FAILED(hRes))
 				return FALSE;
-			m_wfx = *pFormat;
-			hRes = m_audioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, m_dwFlag, 0, 0, pFormat, NULL);
+			m_wFile.Create("D:\\123.wav", m_pWaveFormat);
+			hRes = m_audioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, m_dwFlag, 0, 0, m_pWaveFormat, NULL);
 			if (FAILED(hRes))
 				return FALSE;
 			hRes = m_audioClient->GetBufferSize(&m_bufferSize);
@@ -61,7 +61,7 @@ namespace TinyUI
 				hRes = m_mmDevice->Activate(__uuidof(IAudioClient), CLSCTX_INPROC_SERVER, NULL, (void**)&m_audioClientLB);
 				if (FAILED(hRes))
 					return FALSE;
-				hRes = m_audioClientLB->Initialize(AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST, 0, 0, pFormat, NULL);
+				hRes = m_audioClientLB->Initialize(AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST, 0, 0, m_pWaveFormat, NULL);
 				if (FAILED(hRes))
 					return FALSE;
 				hRes = m_audioClientLB->SetEventHandle(m_audioSamplesReady);
@@ -77,18 +77,10 @@ namespace TinyUI
 			hRes = m_audioClient->GetService(__uuidof(IAudioCaptureClient), (void**)&m_audioCapture);
 			if (FAILED(hRes))
 				return FALSE;
-			hRes = m_audioClient->GetService(__uuidof(IAudioClock), (void**)&m_audioClock);
-			if (FAILED(hRes))
-				return FALSE;
 			hRes = m_audioClient->GetService(__uuidof(ISimpleAudioVolume), (void**)&m_audioVolume);
 			if (FAILED(hRes))
 				return FALSE;
-			if (pFormat)
-			{
-				CoTaskMemFree(pFormat);
-				pFormat = NULL;
-			}
-			m_captureBufferSize = m_wfx.nAvgBytesPerSec * 2;
+			m_captureBufferSize = m_bufferSize * m_pWaveFormat->nBlockAlign;
 			m_captureBuffer.Reset(new BYTE[m_captureBufferSize]);
 			return TRUE;
 		}
@@ -142,22 +134,24 @@ namespace TinyUI
 					dwRes = m_audioCapture->GetBuffer(&pData, &numFramesToRead, &dwFlags, &devicePosition, &qpcPosition);
 					if (FAILED(dwRes))
 						continue;
-					if (m_audioClock)
-					{
-						m_audioClock->GetPosition(&devicePosition, &qpcPosition);
-					}
 					if (numFramesToRead != 0)
 					{
-						UINT32 framesToCopy = std::min<UINT32>(numFramesToRead, static_cast<UINT32>((m_captureBufferSize - m_bufferFrameIndex)) / m_wfx.nBlockAlign);
+						UINT32 numBytes = numFramesToRead * m_pWaveFormat->nBlockAlign;
+						UINT32 remainingBytes = std::max<UINT32>(0, m_captureBufferSize - m_bufferOffset);
+						if (remainingBytes < numBytes && m_bufferOffset > 0)
+						{
+							m_bufferOffset = 0;
+						}
 						if (dwFlags & AUDCLNT_BUFFERFLAGS_SILENT)
 						{
-							ZeroMemory(&m_captureBuffer[m_bufferFrameIndex], framesToCopy * m_wfx.nBlockAlign);
+							memset(&m_captureBuffer[m_bufferOffset], 0, numBytes);
 						}
 						else
 						{
-							CopyMemory(&m_captureBuffer[m_bufferFrameIndex], pData, framesToCopy * m_wfx.nBlockAlign);
+							m_wFile.Write(pData, numBytes);
+							memcpy(&m_captureBuffer[m_bufferOffset], pData, numBytes);
 						}
-						m_bufferFrameIndex += numFramesToRead;
+						m_bufferOffset += numBytes;
 					}
 					m_audioCapture->ReleaseBuffer(numFramesToRead);
 				}
@@ -191,6 +185,11 @@ namespace TinyUI
 
 		BOOL TinyWASAPIAudioCapture::Close()
 		{
+			if (m_pWaveFormat != NULL)
+			{
+				CoTaskMemFree(m_pWaveFormat);
+				m_pWaveFormat = NULL;
+			}
 			if (Stop() && m_audioClientLB)
 			{
 				return SUCCEEDED(m_audioClientLB->Stop());
