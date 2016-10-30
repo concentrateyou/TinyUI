@@ -5,7 +5,7 @@
 namespace DShow
 {
 	InputPinBase::InputPinBase(FilterBase* pFilter, WCHAR* pzName, FilterObserver* observer)
-		:PinBase(pFilter, PINDIR_INPUT, pzName, &observer->m_lock),
+		:PinBase(pFilter, PINDIR_INPUT, pzName, observer),
 		m_observer(observer),
 		m_allocator(NULL),
 		m_bReadOnly(FALSE)

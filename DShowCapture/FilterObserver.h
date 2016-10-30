@@ -7,7 +7,7 @@ namespace DShow
 {
 	class InputPinBase;
 
-	class FilterObserver
+	class FilterObserver : public TinyLock
 	{
 		friend class InputPinBase;
 		DECLARE_DYNAMIC(FilterObserver)
@@ -17,7 +17,5 @@ namespace DShow
 		virtual void OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter) = 0;
 	protected:
 		virtual ~FilterObserver();
-	protected:
-		TinyLock	m_lock;
 	};
 }

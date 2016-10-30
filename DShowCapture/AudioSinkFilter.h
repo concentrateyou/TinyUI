@@ -11,7 +11,7 @@ namespace DShow
 	{
 		DISALLOW_IMPLICIT_CONSTRUCTORS(AudioSinkFilter);
 	public:
-		explicit AudioSinkFilter(FilterObserver* observer, TinyLock* lock);
+		explicit AudioSinkFilter(FilterObserver* observer);
 		virtual ~AudioSinkFilter();
 		void SetCaptureParam(const AudioCaptureParam& param);
 		INT GetPinCount() OVERRIDE;

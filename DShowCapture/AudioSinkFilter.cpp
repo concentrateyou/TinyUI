@@ -4,8 +4,8 @@
 
 namespace DShow
 {
-	AudioSinkFilter::AudioSinkFilter(FilterObserver* observer,TinyLock* lock)
-		:FilterBase(__uuidof(AudioSinkFilter), lock)
+	AudioSinkFilter::AudioSinkFilter(FilterObserver* observer)
+		:FilterBase(__uuidof(AudioSinkFilter), observer)
 	{
 		m_sinkInputPin = new AudioSinkInputPin(this, observer);
 	}

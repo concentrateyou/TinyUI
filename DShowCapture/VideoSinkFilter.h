@@ -7,11 +7,11 @@
 namespace DShow
 {
 	class __declspec(uuid("88cdbbdc-a73b-4afa-acbf-15d5e2ce12c3"))
-	VideoSinkFilter : public FilterBase
+		VideoSinkFilter : public FilterBase
 	{
 		DISALLOW_IMPLICIT_CONSTRUCTORS(VideoSinkFilter);
 	public:
-		explicit VideoSinkFilter(FilterObserver* observer, TinyLock* lock);
+		explicit VideoSinkFilter(FilterObserver* observer);
 		virtual ~VideoSinkFilter();
 		void SetCaptureParam(const VideoCaptureParam& param);
 		INT GetPinCount() OVERRIDE;

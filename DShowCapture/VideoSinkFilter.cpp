@@ -5,8 +5,8 @@
 namespace DShow
 {
 
-	VideoSinkFilter::VideoSinkFilter(FilterObserver* observer,TinyLock* lock)
-		:FilterBase(__uuidof(VideoSinkFilter), lock)
+	VideoSinkFilter::VideoSinkFilter(FilterObserver* observer)
+		:FilterBase(__uuidof(VideoSinkFilter), observer)
 	{
 		m_sinkInputPin = new VideoSinkInputPin(this, observer);
 	}
