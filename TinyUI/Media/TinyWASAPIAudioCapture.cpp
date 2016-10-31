@@ -199,6 +199,12 @@ namespace TinyUI
 		}
 		void TinyWASAPIAudioCapture::OnMessagePump()
 		{
+			REFERENCE_TIME latency = 0;
+			m_audioClient->GetStreamLatency(&latency);
+
+			TRACE("latency1:%d\n", latency / MFTIMES_PER_MS);
+			TRACE("latency2:%d\n", MFTIMES_PER_MS * m_dwLatency / 2);
+
 			WAVEFORMATEX* pFormat = GetFormat();
 			TinyScopedAvrt avrt("Pro Audio");
 			avrt.SetPriority();
