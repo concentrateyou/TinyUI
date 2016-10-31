@@ -30,7 +30,7 @@ namespace TinyUI
 		class TinyWASAPIAudioCapture : public AudioObserver
 		{
 		public:
-			TinyWASAPIAudioCapture(DWORD dwFlag = AUDCLNT_STREAMFLAGS_LOOPBACK | AUDCLNT_STREAMFLAGS_NOPERSIST, DWORD dwLatency = 20);
+			TinyWASAPIAudioCapture(DWORD dwFlag = AUDCLNT_STREAMFLAGS_LOOPBACK | AUDCLNT_STREAMFLAGS_NOPERSIST, DWORD dwLatency = 100);
 			virtual ~TinyWASAPIAudioCapture();
 			virtual void OnDataAvailable(BYTE* bits, LONG size, DWORD dwFlag, LPVOID lpParameter) OVERRIDE;
 		public:
