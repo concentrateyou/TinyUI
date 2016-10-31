@@ -14,11 +14,22 @@
 #include <mferror.h>
 #include <mfcaptureengine.h>
 #include <Mftransform.h>
+#include <Wmcodecdsp.h>
+#include <mfplay.h>
+#include <mfreadwrite.h>
+#include <mmdeviceapi.h>
+#include <Wmcodecdsp.h>
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "strmiids.lib")
 #pragma comment(lib, "avrt.lib")
 #pragma comment(lib, "Mfplat.lib")
 #pragma comment(lib, "Mfuuid.lib")
+#pragma comment(lib, "mf.lib")
+#pragma comment(lib, "mfplat.lib")
+#pragma comment(lib, "mfplay.lib")
+#pragma comment(lib, "mfreadwrite.lib")
+#pragma comment(lib, "mfuuid.lib")
+#pragma comment(lib, "wmcodecdspuuid")
 
 namespace TinyUI
 {

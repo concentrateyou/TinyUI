@@ -212,7 +212,7 @@ namespace TinyUI
 				{
 				case WAIT_TIMEOUT:
 				case WAIT_OBJECT_0 + 1:
-					OnSampleDone(pFormat->nBlockAlign);
+					OnDataDone((pFormat->nChannels*pFormat->wBitsPerSample) / 8);
 					break;
 				case WAIT_FAILED:
 				case WAIT_ABANDONED:
@@ -222,17 +222,17 @@ namespace TinyUI
 			}
 		}
 
-		void TinyWASAPIAudioCapture::OnSampleDone(UINT32 blockAlign)
+		void TinyWASAPIAudioCapture::OnDataDone(UINT32 bytesPerSample)
 		{
 			DWORD	dwFlags = 0;
-			UINT32	available = 0;
+			UINT32	size = 0;
 			UINT64	devicePosition = 0;
 			UINT64	qpcPosition = 0;
 			BYTE*	bits = NULL;
-			if (SUCCEEDED(m_audioCapture->GetBuffer(&bits, &available, &dwFlags, &devicePosition, &qpcPosition)))
+			if (SUCCEEDED(m_audioCapture->GetBuffer(&bits, &size, &dwFlags, &devicePosition, &qpcPosition)))
 			{
-				OnDataAvailable(bits, available * blockAlign, dwFlags, this);
-				m_audioCapture->ReleaseBuffer(available);
+				OnDataAvailable(bits, size * bytesPerSample, dwFlags, this);
+				m_audioCapture->ReleaseBuffer(size);
 			}
 		}
 	}

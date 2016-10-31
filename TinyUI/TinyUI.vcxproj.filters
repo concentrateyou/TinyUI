@@ -363,6 +363,9 @@
     <ClInclude Include="Media\TinyMFAPI.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
+    <ClInclude Include="Media\TinyResampler.h">
+      <Filter>头文件\Media</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -657,6 +660,9 @@
       <Filter>源文件\Media</Filter>
     </ClCompile>
     <ClCompile Include="Media\TinyMFAPI.cpp">
+      <Filter>源文件\Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\TinyResampler.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
   </ItemGroup>

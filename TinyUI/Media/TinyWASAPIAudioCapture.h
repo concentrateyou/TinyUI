@@ -50,7 +50,7 @@ namespace TinyUI
 			BOOL			GetStreamLatency(REFERENCE_TIME& latency);
 		private:
 			void			OnMessagePump();
-			void			OnSampleDone(UINT32 blockAlign);
+			void			OnDataDone(UINT32 blockAlign);
 		private:
 			DWORD							m_dwLatency;
 			DWORD							m_dwFlag;
