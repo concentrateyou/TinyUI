@@ -117,27 +117,5 @@ namespace TinyUI
 			CoTaskMemFree(ppCLSIDs);
 			return hRes;
 		}
-		HRESULT TinyMFAPI::ConvertAudioType(const BYTE* pFromType, const BYTE* pToType)
-		{
-			HRESULT hRes = S_OK;
-			IMFMediaType* pFromMFType = NULL;
-			hRes = MFCreateMediaType(&pFromMFType);
-			if (FAILED(hRes))
-				return hRes;
-			const WAVEFORMATEX* pWaveFrom = reinterpret_cast<const WAVEFORMATEX*>(pFromType);
-			hRes = MFInitMediaTypeFromWaveFormatEx(pFromMFType, pWaveFrom, pWaveFrom->cbSize);
-			if (FAILED(hRes))
-				return hRes;
-
-			IMFMediaType* pToMFType = NULL;
-			hRes = MFCreateMediaType(&pToMFType);
-			if (FAILED(hRes))
-				return hRes;
-			const WAVEFORMATEX* pWaveTo = reinterpret_cast<const WAVEFORMATEX*>(pToType);
-			hRes = MFInitMediaTypeFromWaveFormatEx(pToMFType, pWaveTo, pWaveTo->cbSize);
-			if (FAILED(hRes))
-				return hRes;
-			return S_OK;
-		}
 	};
 }

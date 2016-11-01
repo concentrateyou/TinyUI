@@ -43,7 +43,7 @@ namespace TinyUI
 		public:
 			TinyWaveFile();
 			~TinyWaveFile();
-			BOOL Create(LPTSTR pzFile, WAVEFORMATEX* pWaveEx);
+			BOOL Create(LPTSTR pzFile,const WAVEFORMATEX* pWaveEx);
 			BOOL Open(LPTSTR pzFile);
 			BOOL Open(LPVOID pStream, LONG bufferSize);
 			BOOL Read(BYTE* lpBuffer, LONG nNumberOfBytesToRead, LPLONG lpNumberOfBytesRead);

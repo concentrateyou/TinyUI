@@ -45,7 +45,7 @@ namespace TinyUI
 
 		void TinyWASAPIAudioCapture::OnDataAvailable(BYTE* bits, LONG size, DWORD dwFlag, LPVOID lpParameter)
 		{
-
+			m_resampler.Resample(bits, size);
 		}
 
 		BOOL TinyWASAPIAudioCapture::Open()
@@ -110,6 +110,15 @@ namespace TinyUI
 			hRes = m_audioClient->GetService(__uuidof(ISimpleAudioVolume), (void**)&m_audioVolume);
 			if (FAILED(hRes))
 				goto MMERROR;
+			WAVEFORMATEX output = { 0 };
+			output.wFormatTag = 1;
+			output.nChannels = 2;
+			output.nSamplesPerSec = 44100;
+			output.nAvgBytesPerSec = 176400;
+			output.nBlockAlign = 4;
+			output.wBitsPerSample = 16;
+			m_resampler.Open(ps, &output);
+
 			return TRUE;
 		MMERROR:
 			if (ps)
@@ -191,6 +200,7 @@ namespace TinyUI
 		}
 		BOOL TinyWASAPIAudioCapture::Close()
 		{
+			m_resampler.Close();
 			if (Stop() && m_audioClientLB)
 			{
 				return SUCCEEDED(m_audioClientLB->Stop());
@@ -203,20 +213,21 @@ namespace TinyUI
 			TinyScopedAvrt avrt("Pro Audio");
 			avrt.SetPriority();
 			HANDLE waits[2] = { m_audioStop ,m_sampleReady };
-			BOOL recording = FALSE;
-			while (!recording)
+			BOOL _break = FALSE;
+			while (!_break)
 			{
 				DWORD dwMS = m_dwFlag & AUDCLNT_STREAMFLAGS_EVENTCALLBACK ? INFINITE : MFTIMES_PER_MS * m_dwLatency / 2;
 				DWORD dwRes = WaitForMultipleObjects(2, waits, FALSE, dwMS);
 				switch (dwRes)
 				{
+				case WAIT_OBJECT_0 + 0:
+				case WAIT_FAILED:
+				case WAIT_ABANDONED:
+					_break = TRUE;
+					break;
 				case WAIT_TIMEOUT:
 				case WAIT_OBJECT_0 + 1:
 					OnDataDone((pFormat->nChannels*pFormat->wBitsPerSample) / 8);
-					break;
-				case WAIT_FAILED:
-				case WAIT_ABANDONED:
-					recording = TRUE;
 					break;
 				}
 			}

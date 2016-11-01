@@ -52,6 +52,8 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	WSADATA   wsd;
 	WSAStartup(MAKEWORD(2, 2), &wsd);
+	MFStartup(MF_VERSION);
+
 	HRESULT hRes = OleInitialize(NULL);
 
 	LoadSeDebugPrivilege();
@@ -68,6 +70,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->RemoveMessageLoop();
 	TinyApplication::GetInstance()->Uninitialize();
 	OleUninitialize();
+	MFShutdown();
 	WSACleanup();
 	return loopRes;
 };

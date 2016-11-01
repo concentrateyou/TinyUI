@@ -610,7 +610,7 @@ namespace TinyUI
 		{
 			Close();
 		}
-		BOOL TinyWaveFile::Create(LPTSTR pzFile, WAVEFORMATEX* pWaveEx)
+		BOOL TinyWaveFile::Create(LPTSTR pzFile, const WAVEFORMATEX* pWaveEx)
 		{
 			if (!pzFile)
 				return FALSE;
@@ -809,13 +809,13 @@ namespace TinyUI
 		}
 		void TinyWaveFile::Close()
 		{
-			if (!m_reading)
-			{
-				mmioAscend(m_hmmio, &m_mmckDATA, 0);
-				mmioAscend(m_hmmio, &m_mmckRIFF, 0);
-			}
 			if (m_hmmio != NULL)
 			{
+				if (!m_reading)
+				{
+					mmioAscend(m_hmmio, &m_mmckDATA, 0);
+					mmioAscend(m_hmmio, &m_mmckRIFF, 0);
+				}
 				mmioClose(m_hmmio, 0);
 				m_hmmio = NULL;
 			}

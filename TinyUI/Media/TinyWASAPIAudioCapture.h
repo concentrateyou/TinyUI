@@ -8,6 +8,8 @@
 #include "TinyWave.h"
 #include <functiondiscoverykeys.h>
 
+#include "TinyResampler.h"
+
 namespace TinyUI
 {
 	namespace Media
@@ -63,6 +65,8 @@ namespace TinyUI
 			TinyComPtr<IAudioCaptureClient>	m_audioCapture;
 			TinyComPtr<ISimpleAudioVolume>	m_audioVolume;
 			IO::TinyTaskBase				m_task;
+
+			TinyResampler					m_resampler;
 		};
 	}
 }
