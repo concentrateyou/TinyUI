@@ -152,7 +152,6 @@
     <ClInclude Include="IO\TinyTaskBase.h" />
     <ClInclude Include="IO\TinyWin32TaskPool.h" />
     <ClInclude Include="Media\TinyMedia.h" />
-    <ClInclude Include="Media\TinyMFAPI.h" />
     <ClInclude Include="Media\TinyResampler.h" />
     <ClInclude Include="Media\TinyWASAPIAudioCapture.h" />
     <ClInclude Include="Media\TinyWave.h" />
@@ -252,7 +251,6 @@
     <ClCompile Include="IO\TinyTaskBase.cpp" />
     <ClCompile Include="IO\TinyWin32TaskPool.cpp" />
     <ClCompile Include="Media\TinyMedia.cpp" />
-    <ClCompile Include="Media\TinyMFAPI.cpp" />
     <ClCompile Include="Media\TinyResampler.cpp" />
     <ClCompile Include="Media\TinyWASAPIAudioCapture.cpp" />
     <ClCompile Include="Media\TinyWave.cpp" />

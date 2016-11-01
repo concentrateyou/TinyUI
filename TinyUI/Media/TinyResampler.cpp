@@ -52,12 +52,10 @@ namespace TinyUI
 				return FALSE;
 			return TRUE;
 		}
-		BOOL TinyResampler::Open(const WAVEFORMATEX* pInputFormat, const WAVEFORMATEX* pOutputFormat)
+		BOOL TinyResampler::Open(const WAVEFORMATEX* pInputFormat, const WAVEFORMATEX* pOutputFormat, Callback<void(BYTE*, LONG, LPVOID)>& callback)
 		{
 			ASSERT(pInputFormat || pOutputFormat);
-
-			m_waveFile.Create("D:\\12345.wav", pOutputFormat);
-
+			m_callback = std::move(callback);
 			m_inputFormat = *pInputFormat;
 			m_outputFormat = *pOutputFormat;
 			if (!CreateResampler(pInputFormat, pOutputFormat))
@@ -190,12 +188,14 @@ namespace TinyUI
 			hRes = m_resampler->ProcessMessage(MFT_MESSAGE_NOTIFY_END_STREAMING, NULL);
 			if (FAILED(hRes))
 				return FALSE;
-			m_waveFile.Close();
 			return TRUE;
 		}
 		void TinyResampler::OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
 		{
-			m_waveFile.Write(bits, size);
+			if (!m_callback.IsNull())
+			{
+				m_callback(bits, size, lpParameter);
+			}
 		}
 	};
 }

@@ -36,6 +36,7 @@ namespace TinyUI
 		{
 			m_sampleReady.CreateEvent(FALSE, FALSE, NULL, NULL);
 			m_audioStop.CreateEvent(FALSE, FALSE, NULL, NULL);
+
 		}
 
 		TinyWASAPIAudioCapture::~TinyWASAPIAudioCapture()
@@ -43,11 +44,10 @@ namespace TinyUI
 			Close();
 		}
 
-		void TinyWASAPIAudioCapture::OnDataAvailable(BYTE* bits, LONG size, DWORD dwFlag, LPVOID lpParameter)
+		void TinyWASAPIAudioCapture::SetCallback(Callback<void(BYTE*, LONG, LPVOID)>& callback)
 		{
-			m_resampler.Resample(bits, size);
+			m_callback = callback;
 		}
-
 		BOOL TinyWASAPIAudioCapture::Open()
 		{
 			WAVEFORMATEX* ps = NULL;
@@ -110,16 +110,8 @@ namespace TinyUI
 			hRes = m_audioClient->GetService(__uuidof(ISimpleAudioVolume), (void**)&m_audioVolume);
 			if (FAILED(hRes))
 				goto MMERROR;
-			WAVEFORMATEX output = { 0 };
-			output.wFormatTag = 1;
-			output.nChannels = 2;
-			output.nSamplesPerSec = 44100;
-			output.nAvgBytesPerSec = 176400;
-			output.nBlockAlign = 4;
-			output.wBitsPerSample = 16;
-			m_resampler.Open(ps, &output);
-
-			return TRUE;
+			m_callback = BindCallback(&TinyWASAPIAudioCapture::OnDataAvailable, this);
+			return m_resampler.Open(ps, &m_outputFormat, m_callback);
 		MMERROR:
 			if (ps)
 			{
@@ -190,7 +182,11 @@ namespace TinyUI
 		{
 			return m_audioClient->GetStreamLatency(&latency) == S_OK;
 		}
-		WAVEFORMATEX* TinyWASAPIAudioCapture::GetFormat() const
+		void TinyWASAPIAudioCapture::SetOutputFormat(const WAVEFORMATEX& ws)
+		{
+			m_outputFormat = ws;
+		}
+		WAVEFORMATEX* TinyWASAPIAudioCapture::GetInputFormat() const
 		{
 			if (m_waveEx)
 			{
@@ -209,7 +205,7 @@ namespace TinyUI
 		}
 		void TinyWASAPIAudioCapture::OnMessagePump()
 		{
-			WAVEFORMATEX* pFormat = GetFormat();
+			WAVEFORMATEX* pFormat = GetInputFormat();
 			TinyScopedAvrt avrt("Pro Audio");
 			avrt.SetPriority();
 			HANDLE waits[2] = { m_audioStop ,m_sampleReady };
@@ -242,8 +238,19 @@ namespace TinyUI
 			BYTE*	bits = NULL;
 			if (SUCCEEDED(m_audioCapture->GetBuffer(&bits, &size, &dwFlags, &devicePosition, &qpcPosition)))
 			{
-				OnDataAvailable(bits, size * bytesPerSample, dwFlags, this);
+				if (!(dwFlags & AUDCLNT_BUFFERFLAGS_SILENT))
+				{
+					m_resampler.Resample(bits, size);
+				}
 				m_audioCapture->ReleaseBuffer(size);
+			}
+		}
+
+		void TinyWASAPIAudioCapture::OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
+		{
+			if (!m_callback.IsNull())
+			{
+				m_callback(bits, size, lpParameter);
 			}
 		}
 	}

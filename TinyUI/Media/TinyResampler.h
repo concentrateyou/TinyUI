@@ -1,5 +1,5 @@
 #pragma once
-#include "TinyMFAPI.h"
+#include "TinyMedia.h"
 #include "TinyWave.h"
 
 namespace TinyUI
@@ -11,11 +11,12 @@ namespace TinyUI
 		/// </summary>
 		class TinyResampler
 		{
+			DISALLOW_COPY_AND_ASSIGN(TinyResampler);
 		public:
 			TinyResampler();
 			~TinyResampler();
 		public:
-			BOOL Open(const WAVEFORMATEX* pInputType, const WAVEFORMATEX* pOutputType);
+			BOOL Open(const WAVEFORMATEX* pInputType, const WAVEFORMATEX* pOutputType, Callback<void(BYTE*, LONG, LPVOID)>& callback);
 			BOOL Resample(const BYTE* bits, DWORD size);
 			BOOL Close();
 			virtual void OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter);
@@ -28,7 +29,7 @@ namespace TinyUI
 			TinyComPtr<IMFTransform>	m_resampler;
 			WAVEFORMATEX				m_inputFormat;
 			WAVEFORMATEX				m_outputFormat;
-			TinyWaveFile				m_waveFile;
+			Callback<void(BYTE*, LONG, LPVOID)> m_callback;
 		};
 	};
 }

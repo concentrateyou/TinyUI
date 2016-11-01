@@ -16,6 +16,7 @@
 #include "IO/TinySharedMemory.h"
 #include "IO/TinyTaskBase.h"
 #include "IO/TinyRingQueue.h"
+#include "Media/TinyWASAPIAudioCapture.h"
 using namespace TinyUI;
 using namespace std;
 

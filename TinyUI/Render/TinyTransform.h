@@ -5,9 +5,15 @@
 
 namespace TinyUI
 {
+#ifndef PI
 #define PI             3.14159265F
+#endif
+#ifndef DegreesToRadians
 #define DegreesToRadians(degrees) ((degrees) * (PI / 180))
-#define FLOAT_NearlyZero         (1.0F / (1 << 12))
+#endif
+#ifndef FLOAT_NearlyZero
+#define FLOAT_NearlyZero   (1.0F / (1 << 12))
+#endif
 
 	inline BOOL NearlyZero(FLOAT x, FLOAT tolerance = FLOAT_NearlyZero);
 	FLOAT SinCos(FLOAT radians, FLOAT* cosValue);

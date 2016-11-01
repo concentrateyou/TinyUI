@@ -19,6 +19,7 @@ public:
 	AudioCapture*		GetCapture();
 	AudioCaptureParam*	GetParam();
 private:
+	void				OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter);
 	void				OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps);
 private:
 	DWORD				m_dwINC;
@@ -26,6 +27,8 @@ private:
 	AudioCapture		m_capture;
 	AudioCapture::Name	m_name;
 	AudioCaptureParam	m_audioParam;
+	Media::TinyWASAPIAudioCapture	m_wasCapture;
+	TinyUI::Callback<void(BYTE*, LONG, LPVOID)> m_wasCB;
 	TinyUI::Callback<void(BYTE*, LONG, FLOAT, LPVOID)> m_audioCB;
 };
 
