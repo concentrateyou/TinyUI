@@ -126,9 +126,13 @@ namespace TinyUI
 				if (FAILED(hRes))
 				{
 					if (hRes == MF_E_TRANSFORM_NEED_MORE_INPUT)
+					{
 						break;
+					}
 					else
+					{
 						goto MTFERROR;
+					}
 				}
 				TinyComPtr<IMFMediaBuffer> buffer;
 				hRes = samples.pSample->ConvertToContiguousBuffer(&buffer);
@@ -165,13 +169,16 @@ namespace TinyUI
 			DWORD dwStatus = 0;
 			HRESULT hRes = m_resampler->GetInputStatus(0, &dwStatus);
 			if (MFT_INPUT_STATUS_ACCEPT_DATA != dwStatus)
+			{
+				TRACE("Resample : MFT_INPUT_STATUS_ACCEPT_DATA != dwStatus");
 				return TRUE;
+			}
 			hRes = m_resampler->ProcessInput(0, inputSample, 0);
 			if (FAILED(hRes))
 				return FALSE;
 			DWORD dwOutputBytes = (DWORD)((LONGLONG)size * m_outputFormat.nAvgBytesPerSec / m_outputFormat.nAvgBytesPerSec);
 			dwOutputBytes = (dwOutputBytes + (m_outputFormat.nBlockAlign - 1)) / m_outputFormat.nBlockAlign * m_outputFormat.nBlockAlign;
-			dwOutputBytes += 16 * m_outputFormat.nBlockAlign;
+			dwOutputBytes += 16 * m_outputFormat.nBlockAlign * 10;
 			TinyComPtr<IMFSample> outputSample;
 			return GetOutputSample(outputSample, dwOutputBytes);
 		}
@@ -188,6 +195,7 @@ namespace TinyUI
 			hRes = m_resampler->ProcessMessage(MFT_MESSAGE_NOTIFY_END_STREAMING, NULL);
 			if (FAILED(hRes))
 				return FALSE;
+			m_resampler.Release();
 			return TRUE;
 		}
 		void TinyResampler::OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)

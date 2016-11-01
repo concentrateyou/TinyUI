@@ -41,9 +41,10 @@ public:
 	void OnAudioStart(void*, INT);
 	void OnAudioStop(void*, INT);
 
-private:
+	void OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter);
 
-	Media::TinyWASAPIAudioCapture m_capture;
+private:
+	Media::TinyWASAPIAudioCapture	m_capture;
 
 	TinyLabel			m_control;
 	DShow::VideoCapture m_videoDevice;
@@ -68,6 +69,9 @@ private:
 	TinyScopedPtr<Delegate<void(INT)>> m_onAudioChange2;
 	TinyScopedPtr<Delegate<void(void*, INT)>> m_onAudioStart;
 	TinyScopedPtr<Delegate<void(void*, INT)>> m_onAudioStop;
+
+	TinyUI::Callback<void(BYTE*, LONG, LPVOID)> m_wasCB;
+
 	TinyComboBox		m_audioDevice1;
 	TinyComboBox		m_audioDevice2;
 	TinyButton			m_audioStart;

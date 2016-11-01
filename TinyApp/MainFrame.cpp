@@ -51,10 +51,6 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 {
 	bHandled = FALSE;
 
-	m_capture.Open();
-	m_capture.Start();
-
-
 	m_onVideoStart.Reset(new Delegate<void(void*, INT)>(this, &CMainFrame::OnVideoStart));
 	m_onVideoStop.Reset(new Delegate<void(void*, INT)>(this, &CMainFrame::OnVideoStop));
 	m_videoStart.Create(m_hWND, 20, 50, 150, 23);
@@ -125,6 +121,8 @@ LRESULT CMainFrame::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHa
 	m_audioDevice1.EVENT_SelectChange -= m_onAudioChange1;
 	m_audioDevice2.EVENT_SelectChange -= m_onAudioChange2;
 
+	m_capture.Close();
+
 	return FALSE;
 }
 
@@ -181,6 +179,12 @@ void CMainFrame::OnAudioSelectChange2(INT index)
 	m_audioDevice.Uninitialize();
 	m_audioDevice.Initialize(m_audioNames[m_audioDevice1.GetCurSel()]);
 	m_audioDevice.Allocate(param);
+
+	m_capture.SetOutputFormat(param.GetFormat());
+	m_wasCB = BindCallback(&CMainFrame::OnDataAvailable, this);
+	m_capture.SetCallback(m_wasCB);
+	m_capture.Open();
+	m_capture.Start();
 }
 
 void CMainFrame::OnVideoStart(void*, INT)
@@ -199,5 +203,10 @@ void CMainFrame::OnAudioStart(void*, INT)
 void CMainFrame::OnAudioStop(void*, INT)
 {
 	m_audioDevice.Stop();
+}
+
+void CMainFrame::OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
+{
+	//m_waveFile.Write(bits, size);
 }
 

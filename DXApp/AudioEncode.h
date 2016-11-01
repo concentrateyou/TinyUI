@@ -3,6 +3,7 @@
 #include "AudioCapture.h"
 #include "FaacEncode.h"
 #include "RTMPClient.h"
+#include "Media/TinyWave.h"
 using namespace TinyUI::IO;
 using namespace DShow;
 
@@ -22,6 +23,7 @@ private:
 	void				OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter);
 	void				OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps);
 private:
+	TinyLock			m_lock;
 	DWORD				m_dwINC;
 	FaacEncode			m_aac;
 	AudioCapture		m_capture;

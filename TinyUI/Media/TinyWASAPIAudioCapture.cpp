@@ -110,8 +110,21 @@ namespace TinyUI
 			hRes = m_audioClient->GetService(__uuidof(ISimpleAudioVolume), (void**)&m_audioVolume);
 			if (FAILED(hRes))
 				goto MMERROR;
-			m_callback = BindCallback(&TinyWASAPIAudioCapture::OnDataAvailable, this);
-			return m_resampler.Open(ps, &m_outputFormat, m_callback);
+			m_resampleCB = BindCallback(&TinyWASAPIAudioCapture::OnDataAvailable, this);
+			if (m_resampler.Open(ps, &m_outputFormat, m_resampleCB))
+			{
+#ifdef _DEBUG
+				WAVEFORMATEX wave = { 0 };
+				wave.nChannels = 2;
+				wave.wFormatTag = 1;
+				wave.nAvgBytesPerSec = 44100;
+				wave.nBlockAlign = 4;
+				wave.wBitsPerSample = 16;
+				wave.cbSize = 0;
+				m_waveFile.Create("D:\\1234.wav", &wave);
+#endif 
+				return TRUE;
+			}
 		MMERROR:
 			if (ps)
 			{
@@ -196,9 +209,12 @@ namespace TinyUI
 		}
 		BOOL TinyWASAPIAudioCapture::Close()
 		{
-			m_resampler.Close();
+#ifdef _DEBUG
+			m_waveFile.Close();
+#endif 
 			if (Stop() && m_audioClientLB)
 			{
+				m_resampler.Close();
 				return SUCCEEDED(m_audioClientLB->Stop());
 			}
 			return TRUE;
@@ -238,20 +254,20 @@ namespace TinyUI
 			BYTE*	bits = NULL;
 			if (SUCCEEDED(m_audioCapture->GetBuffer(&bits, &size, &dwFlags, &devicePosition, &qpcPosition)))
 			{
-				if (!(dwFlags & AUDCLNT_BUFFERFLAGS_SILENT))
-				{
-					m_resampler.Resample(bits, size);
-				}
+				m_resampler.Resample(bits, size);
 				m_audioCapture->ReleaseBuffer(size);
 			}
 		}
 
 		void TinyWASAPIAudioCapture::OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
 		{
-			if (!m_callback.IsNull())
+#ifdef _DEBUG
+			m_waveFile.Write(bits, size);
+#endif 
+			/*if (!m_callback.IsNull())
 			{
 				m_callback(bits, size, lpParameter);
-			}
+			}*/
 		}
 	}
 }
