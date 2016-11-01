@@ -30,7 +30,10 @@ private:
 	AudioCapture::Name	m_name;
 	AudioCaptureParam	m_audioParam;
 	Media::TinyWASAPIAudioCapture	m_wasCapture;
+	Media::TinyWaveFile				m_waveFile;
 	TinyUI::Callback<void(BYTE*, LONG, LPVOID)> m_wasCB;
 	TinyUI::Callback<void(BYTE*, LONG, FLOAT, LPVOID)> m_audioCB;
+
+
 };
 

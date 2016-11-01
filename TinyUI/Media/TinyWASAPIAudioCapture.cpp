@@ -75,7 +75,7 @@ namespace TinyUI
 			if (m_dwFlag & AUDCLNT_STREAMFLAGS_EVENTCALLBACK)
 			{
 				//事件模式
-				hRes = m_audioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, m_dwFlag, 0, 0, ps, NULL);
+				hRes = m_audioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, m_dwFlag, m_dwLatency * MFTIMES_PER_MS, 0, ps, NULL);
 				if (FAILED(hRes))
 					goto MMERROR;
 			}
@@ -113,16 +113,6 @@ namespace TinyUI
 			m_resampleCB = BindCallback(&TinyWASAPIAudioCapture::OnDataAvailable, this);
 			if (m_resampler.Open(ps, &m_outputFormat, m_resampleCB))
 			{
-#ifdef _DEBUG
-				WAVEFORMATEX wave = { 0 };
-				wave.nChannels = 2;
-				wave.wFormatTag = 1;
-				wave.nAvgBytesPerSec = 44100;
-				wave.nBlockAlign = 4;
-				wave.wBitsPerSample = 16;
-				wave.cbSize = 0;
-				m_waveFile.Create("D:\\1234.wav", &wave);
-#endif 
 				return TRUE;
 			}
 		MMERROR:
@@ -209,9 +199,6 @@ namespace TinyUI
 		}
 		BOOL TinyWASAPIAudioCapture::Close()
 		{
-#ifdef _DEBUG
-			m_waveFile.Close();
-#endif 
 			if (Stop() && m_audioClientLB)
 			{
 				m_resampler.Close();
@@ -222,7 +209,7 @@ namespace TinyUI
 		void TinyWASAPIAudioCapture::OnMessagePump()
 		{
 			WAVEFORMATEX* pFormat = GetInputFormat();
-			TinyScopedAvrt avrt("Pro Audio");
+			TinyScopedAvrt avrt("Audio");
 			avrt.SetPriority();
 			HANDLE waits[2] = { m_audioStop ,m_sampleReady };
 			BOOL _break = FALSE;
@@ -254,20 +241,24 @@ namespace TinyUI
 			BYTE*	bits = NULL;
 			if (SUCCEEDED(m_audioCapture->GetBuffer(&bits, &size, &dwFlags, &devicePosition, &qpcPosition)))
 			{
-				m_resampler.Resample(bits, size);
+				if (dwFlags & AUDCLNT_BUFFERFLAGS_SILENT)
+				{
+					TRACE("AUDCLNT_BUFFERFLAGS_SILENT\n");
+				}
+				else
+				{
+					m_resampler.Resample(bits, size * bytesPerSample);
+				}
 				m_audioCapture->ReleaseBuffer(size);
 			}
 		}
 
 		void TinyWASAPIAudioCapture::OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
 		{
-#ifdef _DEBUG
-			m_waveFile.Write(bits, size);
-#endif 
-			/*if (!m_callback.IsNull())
+			if (!m_callback.IsNull())
 			{
 				m_callback(bits, size, lpParameter);
-			}*/
+			}
 		}
 	}
 }

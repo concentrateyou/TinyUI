@@ -45,6 +45,7 @@ public:
 
 private:
 	Media::TinyWASAPIAudioCapture	m_capture;
+	Media::TinyWaveFile				m_waveFile;
 
 	TinyLabel			m_control;
 	DShow::VideoCapture m_videoDevice;

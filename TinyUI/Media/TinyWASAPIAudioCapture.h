@@ -68,9 +68,6 @@ namespace TinyUI
 			IO::TinyTaskBase				m_task;
 			Callback<void(BYTE*, LONG, LPVOID)>	m_resampleCB;
 			Callback<void(BYTE*, LONG, LPVOID)>	m_callback;
-#ifdef _DEBUG
-			Media::TinyWaveFile				m_waveFile;
-#endif 
 		};
 	}
 }

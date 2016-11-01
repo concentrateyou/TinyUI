@@ -6,6 +6,18 @@ namespace TinyUI
 {
 	namespace Media
 	{
+		class SampleBuffer
+		{
+		public:
+			SampleBuffer();
+			SampleBuffer(BYTE* bits, DWORD size);
+			~SampleBuffer();
+			BOOL Add(BYTE* mybits, DWORD mysize);
+			void Release();
+		public:
+			DWORD	m_size;
+			BYTE*	m_bits;
+		};
 		/// <summary>
 		/// ÖØ²ÉÑù
 		/// </summary>

@@ -44,7 +44,8 @@ BOOL AudioEncode::Initialize(const AudioCapture::Name& name, const AudioCaptureP
 
 BOOL AudioEncode::Open(DWORD dwAudioRate)
 {
-	//m_waveFile.Create("D:\\1234.wav", &m_audioParam.GetFormat());
+	//m_waveFile.Create("D:\\12345.wav", &m_audioParam.GetFormat());
+
 	m_wasCapture.SetOutputFormat(m_audioParam.GetFormat());
 	BOOL bRes = m_aac.Open(m_audioParam.GetFormat(), (DWORD)dwAudioRate);
 	if (!bRes)
@@ -77,10 +78,10 @@ BOOL AudioEncode::Close()
 void AudioEncode::OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
 {
 	//m_waveFile.Write(bits, size);
-	//m_aac.Encode(bits, size, m_dwINC);
+	m_aac.Encode(bits, size, m_dwINC);
 }
 
 void AudioEncode::OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)
 {
-	m_aac.Encode(bits, size, m_dwINC);
+	//m_aac.Encode(bits, size, m_dwINC);
 }

@@ -5,6 +5,40 @@ namespace TinyUI
 {
 	namespace Media
 	{
+		SampleBuffer::SampleBuffer()
+			:m_bits(NULL),
+			m_size(0)
+		{
+
+		}
+		SampleBuffer::SampleBuffer(BYTE* bits, DWORD size)
+			: m_bits(bits),
+			m_size(size)
+		{
+
+		}
+		BOOL SampleBuffer::Add(BYTE* newbits, DWORD newsize)
+		{
+			BYTE *bits = new BYTE[m_size + newsize];
+			if (NULL == bits)
+				return FALSE;
+			memcpy(bits, m_bits, m_size);
+			memcpy(&bits[m_size], newbits, newsize);
+			SAFE_DELETE_ARRAY(m_bits);
+			m_bits = bits;
+			m_size += newsize;
+			return TRUE;
+		}
+		void SampleBuffer::Release()
+		{
+			SAFE_DELETE_ARRAY(m_bits);
+			m_size = 0;
+		}
+		SampleBuffer::~SampleBuffer()
+		{
+			Release();
+		}
+		//////////////////////////////////////////////////////////////////////////
 		TinyResampler::TinyResampler()
 		{
 
@@ -111,15 +145,13 @@ namespace TinyUI
 		BOOL TinyResampler::GetOutputSample(TinyComPtr<IMFSample>& sample, DWORD dwSize)
 		{
 			ASSERT(m_resampler);
-			DWORD dwTotalSize = 0;
-			DWORD dwOffsetSize = 0;
-			BYTE* bits = NULL;
+			SampleBuffer sampleBuffer;
 			for (;;)
 			{
 				MFT_OUTPUT_DATA_BUFFER samples = { 0 };
 				TinyComPtr<IMFSample> s;
 				if (!CreateOutputSample(s, dwSize))
-					goto MTFERROR;
+					return FALSE;
 				samples.pSample = s;
 				DWORD dwStatus;
 				HRESULT hRes = m_resampler->ProcessOutput(0, 1, &samples, &dwStatus);
@@ -129,10 +161,7 @@ namespace TinyUI
 					{
 						break;
 					}
-					else
-					{
-						goto MTFERROR;
-					}
+					return FALSE;
 				}
 				TinyComPtr<IMFMediaBuffer> buffer;
 				hRes = samples.pSample->ConvertToContiguousBuffer(&buffer);
@@ -145,20 +174,13 @@ namespace TinyUI
 				BYTE* pBuffer = NULL;
 				hRes = buffer->Lock(&pBuffer, NULL, NULL);
 				if (FAILED(hRes))
-					goto MTFERROR;
-				BYTE* myPtr = NULL;
-				myPtr = (BYTE*)_recalloc(bits, dwTotalSize + dwCurrentSize, sizeof(BYTE*));
-				bits = myPtr;
-				memcpy(bits + dwOffsetSize, pBuffer, dwCurrentSize);
-				dwOffsetSize = dwCurrentSize;
-				dwTotalSize += dwCurrentSize;
+					return FALSE;
+				sampleBuffer.Add(pBuffer, dwCurrentSize);
 				hRes = buffer->Unlock();
 				if (FAILED(hRes))
-					goto MTFERROR;
+					return FALSE;
 			}
-			OnDataAvailable(bits, dwTotalSize, this);
-		MTFERROR:
-			SAFE_FREE(bits);
+			OnDataAvailable(sampleBuffer.m_bits, sampleBuffer.m_size, this);
 			return TRUE;
 		}
 		BOOL TinyResampler::Resample(const BYTE* bits, DWORD size)
@@ -170,15 +192,14 @@ namespace TinyUI
 			HRESULT hRes = m_resampler->GetInputStatus(0, &dwStatus);
 			if (MFT_INPUT_STATUS_ACCEPT_DATA != dwStatus)
 			{
-				TRACE("Resample : MFT_INPUT_STATUS_ACCEPT_DATA != dwStatus");
 				return TRUE;
 			}
 			hRes = m_resampler->ProcessInput(0, inputSample, 0);
 			if (FAILED(hRes))
 				return FALSE;
-			DWORD dwOutputBytes = (DWORD)((LONGLONG)size * m_outputFormat.nAvgBytesPerSec / m_outputFormat.nAvgBytesPerSec);
+			DWORD dwOutputBytes = (DWORD)((LONGLONG)size * m_outputFormat.nAvgBytesPerSec / m_inputFormat.nAvgBytesPerSec);
 			dwOutputBytes = (dwOutputBytes + (m_outputFormat.nBlockAlign - 1)) / m_outputFormat.nBlockAlign * m_outputFormat.nBlockAlign;
-			dwOutputBytes += 16 * m_outputFormat.nBlockAlign * 10;
+			dwOutputBytes += 16 * m_outputFormat.nBlockAlign;
 			TinyComPtr<IMFSample> outputSample;
 			return GetOutputSample(outputSample, dwOutputBytes);
 		}
