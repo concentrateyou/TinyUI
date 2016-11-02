@@ -47,7 +47,7 @@ namespace TinyUI
 		{
 			Close();
 		}
-		BOOL TinyMFResampler::CreateResampler(const WAVEFORMATEX* pInputType, const WAVEFORMATEX* pOutputType)
+		BOOL TinyMFResampler::CreateResampler(const WAVEFORMATEX* pInputFormat, const WAVEFORMATEX* pOutputFormat)
 		{
 			HRESULT hRes = S_OK;
 			TinyComPtr<IUnknown> transform;
@@ -61,9 +61,16 @@ namespace TinyUI
 			hRes = MFCreateMediaType(&inputMediaType);
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = MFInitMediaTypeFromWaveFormatEx(inputMediaType, pInputType, sizeof(WAVEFORMATEX) + pInputType->cbSize);
+			hRes = MFInitMediaTypeFromWaveFormatEx(inputMediaType, pInputFormat, sizeof(WAVEFORMATEX) + pInputFormat->cbSize);
 			if (hRes != S_OK)
 				return FALSE;
+		/*	GUID s;
+			inputMediaType->GetGUID(MF_MT_SUBTYPE,&s);
+			if (s == MFAudioFormat_Float)
+			{
+				TRACE("MFAudioFormat_Float\n");
+			}*/
+
 			hRes = m_resampler->SetInputType(0, inputMediaType, 0);
 			if (hRes != S_OK)
 				return FALSE;
@@ -71,7 +78,7 @@ namespace TinyUI
 			hRes = MFCreateMediaType(&outputMediaType);
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = MFInitMediaTypeFromWaveFormatEx(outputMediaType, pOutputType, sizeof(WAVEFORMATEX) + pOutputType->cbSize);
+			hRes = MFInitMediaTypeFromWaveFormatEx(outputMediaType, pOutputFormat, sizeof(WAVEFORMATEX) + pOutputFormat->cbSize);
 			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_resampler->SetOutputType(0, outputMediaType, 0);

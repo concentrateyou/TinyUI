@@ -75,7 +75,7 @@ namespace TinyUI
 			virtual ~TinyFile();
 			HANDLE Handle() const;
 			BOOL GetStatus(FileStatus& rStatus) const;
-			virtual BOOL Create(LPCTSTR lpszFileName, DWORD dwFlagsAndAttributes);
+			virtual BOOL Create(LPCTSTR lpszFileName, DWORD dwFlagsAndAttributes = 0);
 			virtual BOOL Open(LPCTSTR lpszFileName, DWORD dwDesiredAccess, DWORD dwShareMode, DWORD dwFlagsAndAttributes);
 			virtual LONGLONG GetPosition() const;
 			virtual LPTSTR GetTitle() const;

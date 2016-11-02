@@ -244,7 +244,7 @@ namespace TinyUI
 			BYTE*	bits = NULL;
 			if (SUCCEEDED(m_audioCapture->GetBuffer(&bits, &size, &dwFlags, &devicePosition, &qpcPosition)))
 			{
-				OnDataAvailable(bits, size, dwFlags, this);
+				OnDataAvailable(bits, size * bytesPerSample, dwFlags, this);
 				m_audioCapture->ReleaseBuffer(size);
 			}
 		}

@@ -5,6 +5,8 @@
 #include "RTMPClient.h"
 #include "Media/TinyMFResampler.h"
 #include "Media/TinyWave.h"
+#include "IO/TinyIO.h"
+#include "Resampler.h"
 using namespace TinyUI::IO;
 using namespace DShow;
 
@@ -34,6 +36,8 @@ private:
 	TinyUI::Callback<void(BYTE*, LONG, LPVOID)>			m_resampleCB;
 	TinyUI::Callback<void(BYTE*, LONG, DWORD, LPVOID)>	m_wasCB;
 	TinyUI::Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_audioCB;
-	Media::TinyMFResampler		m_resampler;
+	TinyFile				m_file;
+	//Media::TinyMFResampler		m_resampler;
+	//Resampler						m_resampler;
 };
 
