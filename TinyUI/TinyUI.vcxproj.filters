@@ -360,7 +360,7 @@
     <ClInclude Include="Media\TinyWASAPIAudioCapture.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
-    <ClInclude Include="Media\TinyResampler.h">
+    <ClInclude Include="Media\TinyMFResampler.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
   </ItemGroup>
@@ -656,7 +656,7 @@
     <ClCompile Include="Media\TinyWASAPIAudioCapture.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
-    <ClCompile Include="Media\TinyResampler.cpp">
+    <ClCompile Include="Media\TinyMFResampler.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
   </ItemGroup>

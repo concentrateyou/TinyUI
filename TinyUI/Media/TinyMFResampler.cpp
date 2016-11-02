@@ -1,5 +1,5 @@
 #include "../stdafx.h"
-#include "TinyResampler.h"
+#include "TinyMFResampler.h"
 
 namespace TinyUI
 {
@@ -39,15 +39,15 @@ namespace TinyUI
 			Release();
 		}
 		//////////////////////////////////////////////////////////////////////////
-		TinyResampler::TinyResampler()
+		TinyMFResampler::TinyMFResampler()
 		{
 
 		}
-		TinyResampler::~TinyResampler()
+		TinyMFResampler::~TinyMFResampler()
 		{
 			Close();
 		}
-		BOOL TinyResampler::CreateResampler(const WAVEFORMATEX* pInputType, const WAVEFORMATEX* pOutputType)
+		BOOL TinyMFResampler::CreateResampler(const WAVEFORMATEX* pInputType, const WAVEFORMATEX* pOutputType)
 		{
 			HRESULT hRes = S_OK;
 			TinyComPtr<IUnknown> transform;
@@ -86,7 +86,7 @@ namespace TinyUI
 				return FALSE;
 			return TRUE;
 		}
-		BOOL TinyResampler::Open(const WAVEFORMATEX* pInputFormat, const WAVEFORMATEX* pOutputFormat, Callback<void(BYTE*, LONG, LPVOID)>& callback)
+		BOOL TinyMFResampler::Open(const WAVEFORMATEX* pInputFormat, const WAVEFORMATEX* pOutputFormat, Callback<void(BYTE*, LONG, LPVOID)>& callback)
 		{
 			ASSERT(pInputFormat || pOutputFormat);
 			m_callback = std::move(callback);
@@ -106,7 +106,7 @@ namespace TinyUI
 				return FALSE;
 			return TRUE;
 		}
-		BOOL TinyResampler::CreateInputSample(const BYTE* bits, DWORD size, TinyComPtr<IMFSample>& sample)
+		BOOL TinyMFResampler::CreateInputSample(const BYTE* bits, DWORD size, TinyComPtr<IMFSample>& sample)
 		{
 			HRESULT hRes = MFCreateSample(&sample);
 			if (FAILED(hRes))
@@ -128,7 +128,7 @@ namespace TinyUI
 				return FALSE;
 			return sample->AddBuffer(buffer) == S_OK;
 		}
-		BOOL TinyResampler::CreateOutputSample(TinyComPtr<IMFSample>& sample, DWORD dwSize)
+		BOOL TinyMFResampler::CreateOutputSample(TinyComPtr<IMFSample>& sample, DWORD dwSize)
 		{
 			HRESULT hRes = MFCreateSample(&sample);
 			if (FAILED(hRes))
@@ -142,7 +142,7 @@ namespace TinyUI
 				return FALSE;
 			return TRUE;
 		}
-		BOOL TinyResampler::GetOutputSample(TinyComPtr<IMFSample>& sample, DWORD dwSize)
+		BOOL TinyMFResampler::GetOutputSample(TinyComPtr<IMFSample>& sample, DWORD dwSize)
 		{
 			ASSERT(m_resampler);
 			SampleBuffer sampleBuffer;
@@ -183,7 +183,7 @@ namespace TinyUI
 			OnDataAvailable(sampleBuffer.m_bits, sampleBuffer.m_size, this);
 			return TRUE;
 		}
-		BOOL TinyResampler::Resample(const BYTE* bits, DWORD size)
+		BOOL TinyMFResampler::Resample(const BYTE* bits, DWORD size)
 		{
 			TinyComPtr<IMFSample> inputSample;
 			if (!CreateInputSample(bits, size, inputSample))
@@ -203,7 +203,7 @@ namespace TinyUI
 			TinyComPtr<IMFSample> outputSample;
 			return GetOutputSample(outputSample, dwOutputBytes);
 		}
-		BOOL TinyResampler::Close()
+		BOOL TinyMFResampler::Close()
 		{
 			if (!m_resampler)
 				return FALSE;
@@ -219,7 +219,7 @@ namespace TinyUI
 			m_resampler.Release();
 			return TRUE;
 		}
-		void TinyResampler::OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
+		void TinyMFResampler::OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
 		{
 			if (!m_callback.IsNull())
 			{

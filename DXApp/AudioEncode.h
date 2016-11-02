@@ -23,17 +23,16 @@ private:
 	void				OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter);
 	void				OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps);
 private:
-	TinyLock			m_lock;
 	DWORD				m_dwINC;
 	FaacEncode			m_aac;
 	AudioCapture		m_capture;
 	AudioCapture::Name	m_name;
 	AudioCaptureParam	m_audioParam;
 	Media::TinyWASAPIAudioCapture	m_wasCapture;
-	Media::TinyWaveFile				m_waveFile;
-	TinyUI::Callback<void(BYTE*, LONG, LPVOID)> m_wasCB;
-	TinyUI::Callback<void(BYTE*, LONG, FLOAT, LPVOID)> m_audioCB;
-
-
+	TinyUI::Callback<void(BYTE*, LONG, LPVOID)>			m_wasCB;
+	TinyUI::Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_audioCB;
+#ifdef _DEBUG
+	Media::TinyWaveFile	m_waveFile;
+#endif
 };
 

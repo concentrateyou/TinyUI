@@ -21,12 +21,12 @@ namespace TinyUI
 		/// <summary>
 		/// ÖØ²ÉÑù
 		/// </summary>
-		class TinyResampler
+		class TinyMFResampler
 		{
-			DISALLOW_COPY_AND_ASSIGN(TinyResampler);
+			DISALLOW_COPY_AND_ASSIGN(TinyMFResampler);
 		public:
-			TinyResampler();
-			~TinyResampler();
+			TinyMFResampler();
+			~TinyMFResampler();
 		public:
 			BOOL Open(const WAVEFORMATEX* pInputType, const WAVEFORMATEX* pOutputType, Callback<void(BYTE*, LONG, LPVOID)>& callback);
 			BOOL Resample(const BYTE* bits, DWORD size);

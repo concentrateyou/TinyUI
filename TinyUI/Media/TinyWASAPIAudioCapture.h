@@ -8,7 +8,7 @@
 #include "TinyWave.h"
 #include <functiondiscoverykeys.h>
 
-#include "TinyResampler.h"
+#include "TinyMFResampler.h"
 
 namespace TinyUI
 {
@@ -59,7 +59,7 @@ namespace TinyUI
 			TinyEvent						m_audioStop;
 			TinyScopedArray<BYTE>			m_waveEx;
 			WAVEFORMATEX					m_outputFormat;
-			TinyResampler					m_resampler;
+			TinyMFResampler					m_resampler;
 			TinyComPtr<IMMDevice>			m_mmDevice;
 			TinyComPtr<IAudioClient>		m_audioClient;
 			TinyComPtr<IAudioClient>		m_audioClientLB;
