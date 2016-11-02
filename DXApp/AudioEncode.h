@@ -38,7 +38,7 @@ private:
 	TinyUI::Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_audioCB;
 	/*TinyFile					m_rawFile;
 	Media::TinyWaveFile			m_waveFile;*/
-	//Media::TinyMFResampler		m_resampler;
-	Resampler						m_resampler;
+	Media::TinyMFResampler		m_resampler;
+	//Resampler						m_resampler;
 };
 

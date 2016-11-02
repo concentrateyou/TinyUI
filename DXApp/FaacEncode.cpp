@@ -54,14 +54,11 @@ BOOL FaacEncode::Open(const WAVEFORMATEX& wfx, INT audioRate)
 		m_config->inputFormat = FAAC_INPUT_FLOAT;
 		break;
 	}
+	m_config->quantqual = 100;
 	m_config->mpegVersion = MPEG4;
 	m_config->aacObjectType = LOW;
-	m_config->allowMidside = 1;
 	m_config->useLfe = 0;
-	m_config->useTns = 0;
-	m_config->quantqual = 100;
-	m_config->bandWidth = 0;
-	m_config->outputFormat = 1; //ADTS
+	m_config->outputFormat = 0;
 	m_config->bitRate = audioRate * 1000 / wfx.nChannels;//╠хльн╩
 	INT iRes = faacEncSetConfiguration(m_aac, m_config);
 	if (!iRes)
