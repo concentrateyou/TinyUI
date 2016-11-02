@@ -63,13 +63,11 @@ BOOL Resampler::Resample(BYTE* bits, LONG size)
 		break;
 	}
 	int32_t nb_samples = size / m_inputFormat.nBlockAlign;
-	//int out_samples = nb_samples + 256;
 	int  out_samples = av_rescale_rnd(nb_samples, m_outFormat.nSamplesPerSec, m_inputFormat.nSamplesPerSec, AV_ROUND_UP);
 	int output_data_size = av_samples_get_buffer_size(NULL, m_outFormat.nChannels, out_samples, sampleOUT, 1);
 	unsigned int buf_size = 0;
 	uint8_t* buffer = new uint8_t[10240];
 	out_samples = swr_convert(m_resample, (uint8_t **)&buffer, out_samples, (const uint8_t **)bits, nb_samples);
-
 	av_freep(buffer);
 	return TRUE;
 

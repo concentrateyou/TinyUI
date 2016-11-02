@@ -64,13 +64,6 @@ namespace TinyUI
 			hRes = MFInitMediaTypeFromWaveFormatEx(inputMediaType, pInputFormat, sizeof(WAVEFORMATEX) + pInputFormat->cbSize);
 			if (hRes != S_OK)
 				return FALSE;
-		/*	GUID s;
-			inputMediaType->GetGUID(MF_MT_SUBTYPE,&s);
-			if (s == MFAudioFormat_Float)
-			{
-				TRACE("MFAudioFormat_Float\n");
-			}*/
-
 			hRes = m_resampler->SetInputType(0, inputMediaType, 0);
 			if (hRes != S_OK)
 				return FALSE;
@@ -88,7 +81,7 @@ namespace TinyUI
 			hRes = transform->QueryInterface(IID_PPV_ARGS(&resamplerProps));
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = resamplerProps->SetHalfFilterLength(100);
+			hRes = resamplerProps->SetHalfFilterLength(60);
 			if (hRes != S_OK)
 				return FALSE;
 			return TRUE;
