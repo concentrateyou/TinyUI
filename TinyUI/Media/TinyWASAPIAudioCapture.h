@@ -58,7 +58,6 @@ namespace TinyUI
 			TinyEvent									m_audioStop;
 			IO::TinyTaskBase							m_task;
 			TinyScopedArray<BYTE>						m_waveEx;
-			TinyComPtr<IMMDevice>						m_mmDevice;
 			TinyComPtr<IAudioClient>					m_audioClient;
 			TinyComPtr<IAudioClient>					m_audioClientLB;
 			TinyComPtr<IAudioCaptureClient>				m_audioCapture;
