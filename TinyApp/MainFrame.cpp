@@ -97,9 +97,6 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 	{
 		m_audioDevice1.AddString(m_audioNames[i].name().c_str());
 	}
-
-
-
 	return FALSE;
 }
 
@@ -182,13 +179,14 @@ void CMainFrame::OnAudioSelectChange2(INT index)
 	m_audioDevice.Initialize(m_audioNames[m_audioDevice1.GetCurSel()]);
 	m_audioDevice.Allocate(param);
 
-	m_waveFile.Create("D:\\1234.wav", &param.GetFormat());
-	m_capture.SetOutputFormat(param.GetFormat());
-	m_wasCB = BindCallback(&CMainFrame::OnDataAvailable, this);
-	m_capture.SetCallback(m_wasCB);
-	m_capture.Open();
-	m_capture.Start();
+	m_resampleCB = BindCallback(&CMainFrame::OnResmpleDataAvailable, this);
+	m_wasCB = BindCallback(&CMainFrame::OnWASDataAvailable, this);
+	m_wasAudio.Initialize(m_wasCB);
+	m_wasAudio.Open();
+	m_wasAudio.Start();
+
 }
+
 
 void CMainFrame::OnVideoStart(void*, INT)
 {
@@ -208,8 +206,14 @@ void CMainFrame::OnAudioStop(void*, INT)
 	m_audioDevice.Stop();
 }
 
-void CMainFrame::OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
+
+void CMainFrame::OnResmpleDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
 {
-	m_waveFile.Write(bits, size);
+
+}
+
+void CMainFrame::OnWASDataAvailable(BYTE* bits, LONG size, DWORD dwFlag, LPVOID lpParameter)
+{
+
 }
 

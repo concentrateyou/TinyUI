@@ -41,7 +41,8 @@ public:
 	void OnAudioStart(void*, INT);
 	void OnAudioStop(void*, INT);
 
-	void OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter);
+	void OnWASDataAvailable(BYTE* bits, LONG size, DWORD dwFlag, LPVOID lpParameter);
+	void OnResmpleDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter);
 
 private:
 	Media::TinyWASAPIAudioCapture	m_capture;
@@ -71,7 +72,10 @@ private:
 	TinyScopedPtr<Delegate<void(void*, INT)>> m_onAudioStart;
 	TinyScopedPtr<Delegate<void(void*, INT)>> m_onAudioStop;
 
-	TinyUI::Callback<void(BYTE*, LONG, LPVOID)> m_wasCB;
+	TinyUI::Callback<void(BYTE*, LONG, DWORD, LPVOID)> m_wasCB;
+	Media::TinyWASAPIAudioCapture				m_wasAudio;
+	TinyUI::Callback<void(BYTE*, LONG, LPVOID)> m_resampleCB;
+
 
 	TinyComboBox		m_audioDevice1;
 	TinyComboBox		m_audioDevice2;

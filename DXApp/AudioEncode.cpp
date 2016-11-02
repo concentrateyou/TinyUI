@@ -38,21 +38,21 @@ BOOL AudioEncode::Initialize(const AudioCapture::Name& name, const AudioCaptureP
 	if (!bRes)
 		return FALSE;
 	m_wasCB = BindCallback(&AudioEncode::OnDataAvailable, this);
-	m_wasCapture.SetCallback(m_wasCB);
+	m_wasCapture.Initialize(m_wasCB);
+
 	return TRUE;
 }
 
 BOOL AudioEncode::Open(DWORD dwAudioRate)
 {
-#ifdef _DEBUG
-	m_waveFile.Create("D:\\12345.wav", &m_audioParam.GetFormat());
-#endif
-
-	m_wasCapture.SetOutputFormat(m_audioParam.GetFormat());
 	BOOL bRes = m_aac.Open(m_audioParam.GetFormat(), (DWORD)dwAudioRate);
 	if (!bRes)
 		return FALSE;
 	bRes = m_wasCapture.Open();
+	if (!bRes)
+		return FALSE;
+	m_resampleCB = BindCallback(&AudioEncode::OnResampleDataAvailable, this);
+	bRes = m_resampler.Open(m_wasCapture.GetInputFormat(), &m_audioParam.GetFormat(), m_resampleCB);
 	if (!bRes)
 		return FALSE;
 	bRes = m_capture.Start();
@@ -76,13 +76,13 @@ BOOL AudioEncode::Close()
 	m_wasCapture.Close();
 	return TRUE;
 }
-
-void AudioEncode::OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
+void AudioEncode::OnResampleDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
 {
-#ifdef _DEBUG
-	m_waveFile.Write(bits, size);
-#endif
 	m_aac.Encode(bits, size, m_dwINC);
+}
+void AudioEncode::OnDataAvailable(BYTE* bits, LONG size, DWORD dwFlag, LPVOID lpParameter)
+{
+	m_resampler.Resample(bits, size);
 }
 
 void AudioEncode::OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)

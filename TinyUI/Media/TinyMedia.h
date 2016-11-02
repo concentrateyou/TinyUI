@@ -44,7 +44,7 @@ namespace TinyUI
 			DISALLOW_COPY_AND_ASSIGN(AudioObserver)
 		public:
 			AudioObserver();
-			virtual void OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter) = 0;
+			virtual void OnDataAvailable(BYTE* bits, LONG size, DWORD dwFlag, LPVOID lpParameter) = 0;
 		protected:
 			virtual ~AudioObserver();
 		};

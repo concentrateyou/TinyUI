@@ -36,6 +36,7 @@ namespace TinyUI
 		operator HANDLE() const;
 		HANDLE Handle() const;
 		BOOL CreateEvent(BOOL bInitiallyOwn = FALSE, BOOL bManualReset = FALSE, LPCTSTR lpszNAme = NULL, LPSECURITY_ATTRIBUTES lpsaAttribute = NULL);
+		BOOL CreateEventEx(LPSECURITY_ATTRIBUTES lpEventAttributes = NULL, LPCTSTR   lpName = NULL, DWORD  dwFlags = 0, DWORD  dwDesiredAccess = EVENT_MODIFY_STATE | SYNCHRONIZE);
 		BOOL OpenEvent(DWORD dwDesiredAccess, BOOL bInheritHandle, LPCTSTR lpName);
 		BOOL SetEvent();
 		BOOL PulseEvent();

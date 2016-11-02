@@ -46,8 +46,12 @@ namespace TinyUI
 	}
 	BOOL TinyEvent::CreateEvent(BOOL bInitiallyOwn, BOOL bManualReset, LPCTSTR lpszNAme, LPSECURITY_ATTRIBUTES lpsaAttribute)
 	{
-		m_hEvent = ::CreateEvent(lpsaAttribute, bManualReset,
-			bInitiallyOwn, lpszNAme);
+		m_hEvent = ::CreateEvent(lpsaAttribute, bManualReset, bInitiallyOwn, lpszNAme);
+		return m_hEvent == NULL ? FALSE : TRUE;
+	}
+	BOOL TinyEvent::CreateEventEx(LPSECURITY_ATTRIBUTES lpEventAttributes, LPCTSTR   lpName, DWORD  dwFlags, DWORD  dwDesiredAccess)
+	{
+		m_hEvent = ::CreateEventEx(lpEventAttributes, lpName, dwFlags, dwDesiredAccess);
 		return m_hEvent == NULL ? FALSE : TRUE;
 	}
 	BOOL TinyEvent::OpenEvent(DWORD dwDesiredAccess, BOOL bInheritHandle, LPCTSTR lpName)
