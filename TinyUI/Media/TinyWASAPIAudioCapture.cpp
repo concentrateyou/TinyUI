@@ -30,9 +30,9 @@ namespace TinyUI
 			return AvSetMmThreadPriority(m_hMM, priority);
 		}
 		//////////////////////////////////////////////////////////////////////////
-		TinyWASAPIAudioCapture::TinyWASAPIAudioCapture(DWORD dwFlag, DWORD dwLatency)
+		TinyWASAPIAudioCapture::TinyWASAPIAudioCapture(DWORD dwFlag)
 			:m_dwFlag(dwFlag),
-			m_dwLatency(dwLatency)
+			m_bufferFrames(0)
 		{
 			m_sampleReady.CreateEvent(FALSE, FALSE, NULL, NULL);
 			m_audioStop.CreateEvent(FALSE, FALSE, NULL, NULL);
@@ -74,23 +74,33 @@ namespace TinyUI
 			if (m_dwFlag & AUDCLNT_STREAMFLAGS_EVENTCALLBACK)
 			{
 				//事件模式
-				hRes = m_audioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, m_dwFlag, m_dwLatency * MFTIMES_PER_MS, 0, pFormat, NULL);
+				hRes = m_audioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, m_dwFlag, 0, 0, pFormat, NULL);
 				if (hRes != S_OK)
 					goto MMERROR;
 			}
 			else
 			{
 				//主动模式
-				hRes = m_audioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, m_dwFlag, m_dwLatency * MFTIMES_PER_MS, 0, pFormat, NULL);
+				hRes = m_audioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, m_dwFlag, 100 * MFTIMES_PER_MS, 0, pFormat, NULL);
 				if (hRes != S_OK)
 					goto MMERROR;
 			}
+			//一般都是960
+			hRes = m_audioClient->GetBufferSize(&m_bufferFrames);
+			if (FAILED(hRes))
+				return hRes;
+			REFERENCE_TIME defaultPeriod = 0;
+			hRes = m_audioClient->GetDevicePeriod(&defaultPeriod, NULL);
+			if (FAILED(hRes))
+				return hRes;
+			DOUBLE period = (0.1 * defaultPeriod + 0.5) / (1000 * 1000) + 0.5;
+			UINT32 framesBuffer = static_cast<int>(pFormat->nSamplesPerSec * period + 0.5);
 			if (m_dwFlag & AUDCLNT_STREAMFLAGS_LOOPBACK)
 			{
 				hRes = mmDevice->Activate(__uuidof(IAudioClient), CLSCTX_INPROC_SERVER, NULL, (void**)&m_audioClientLB);
 				if (hRes != S_OK)
 					goto MMERROR;
-				hRes = m_audioClientLB->Initialize(AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST, m_dwLatency * MFTIMES_PER_MS, 0, pFormat, NULL);
+				hRes = m_audioClientLB->Initialize(AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST, 0, 0, pFormat, NULL);
 				if (hRes != S_OK)
 					goto MMERROR;
 				hRes = m_audioClientLB->SetEventHandle(m_sampleReady);
@@ -211,13 +221,13 @@ namespace TinyUI
 		void TinyWASAPIAudioCapture::OnMessagePump()
 		{
 			WAVEFORMATEX* pFormat = GetInputFormat();
-			TinyScopedAvrt avrt("Audio");
+			TinyScopedAvrt avrt("Pro Audio");
 			avrt.SetPriority();
 			HANDLE waits[2] = { m_audioStop ,m_sampleReady };
 			BOOL _break = FALSE;
 			while (!_break)
 			{
-				DWORD dwMS = m_dwFlag & AUDCLNT_STREAMFLAGS_EVENTCALLBACK ? INFINITE : m_dwLatency / 2;
+				DWORD dwMS = m_dwFlag & AUDCLNT_STREAMFLAGS_EVENTCALLBACK ? INFINITE : 50;
 				DWORD dwRes = WaitForMultipleObjects(2, waits, FALSE, dwMS);
 				switch (dwRes)
 				{
