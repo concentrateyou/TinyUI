@@ -10,7 +10,11 @@ Resampler::Resampler()
 
 Resampler::~Resampler()
 {
-
+	if (m_resample != NULL)
+	{
+		swr_free(&m_resample);
+		m_resample = NULL;
+	}
 }
 
 BOOL Resampler::Initialize(const WAVEFORMATEX* pInputFormat, const WAVEFORMATEX* pOutFormat)
@@ -18,7 +22,6 @@ BOOL Resampler::Initialize(const WAVEFORMATEX* pInputFormat, const WAVEFORMATEX*
 	ASSERT(pInputFormat && pOutFormat);
 	m_inputFormat = *pInputFormat;
 	m_outFormat = *pOutFormat;
-	//m_waveFile.Create("D:\\abc.wav", pInputFormat);
 	AVSampleFormat sampleIN = AV_SAMPLE_FMT_NONE;
 	switch (pInputFormat->wBitsPerSample)
 	{
@@ -27,7 +30,7 @@ BOOL Resampler::Initialize(const WAVEFORMATEX* pInputFormat, const WAVEFORMATEX*
 		sampleIN = AV_SAMPLE_FMT_S16;
 		break;
 	case 32:
-		sampleIN = AV_SAMPLE_FMT_S32;
+		sampleIN = AV_SAMPLE_FMT_FLT;
 		break;
 	}
 	AVSampleFormat sampleOUT = AV_SAMPLE_FMT_NONE;
@@ -38,7 +41,7 @@ BOOL Resampler::Initialize(const WAVEFORMATEX* pInputFormat, const WAVEFORMATEX*
 		sampleOUT = AV_SAMPLE_FMT_S16;
 		break;
 	case 32:
-		sampleOUT = AV_SAMPLE_FMT_S32;
+		sampleOUT = AV_SAMPLE_FMT_FLT;
 		break;
 	}
 	int64_t out_ch_layout = av_get_default_channel_layout(pOutFormat->nChannels);
@@ -50,7 +53,6 @@ BOOL Resampler::Initialize(const WAVEFORMATEX* pInputFormat, const WAVEFORMATEX*
 
 BOOL Resampler::Resample(BYTE* bits, LONG size)
 {
-	//m_waveFile.Write(bits, size);
 	AVSampleFormat sampleOUT = AV_SAMPLE_FMT_NONE;
 	switch (m_outFormat.wBitsPerSample)
 	{

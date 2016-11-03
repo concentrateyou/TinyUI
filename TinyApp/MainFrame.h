@@ -44,6 +44,8 @@ public:
 	void OnWASDataAvailable(BYTE* bits, LONG size, DWORD dwFlag, LPVOID lpParameter);
 	void OnResmpleDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter);
 
+	void OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps);
+
 private:
 	Media::TinyWASAPIAudioCapture	m_capture;
 	Media::TinyWaveFile				m_waveFile;
@@ -72,6 +74,8 @@ private:
 	TinyScopedPtr<Delegate<void(void*, INT)>> m_onAudioStart;
 	TinyScopedPtr<Delegate<void(void*, INT)>> m_onAudioStop;
 
+	TinyUI::Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_audioCB;
+
 	TinyUI::Callback<void(BYTE*, LONG, DWORD, LPVOID)> m_wasCB;
 	Media::TinyWASAPIAudioCapture				m_wasAudio;
 	TinyUI::Callback<void(BYTE*, LONG, LPVOID)> m_resampleCB;
@@ -82,5 +86,6 @@ private:
 	TinyButton			m_audioStart;
 	TinyButton			m_audioStop;
 
+	//Media::TinyWavePlayer	m_player;
 };
 

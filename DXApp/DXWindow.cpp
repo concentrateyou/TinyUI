@@ -112,10 +112,10 @@ LRESULT DXWindow::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandle
 {
 	bHandled = FALSE;
 
-	m_videoTask->Close();
-	m_audioTask->Close();
 	m_publishTask->Close(INFINITE);
 	m_renderTask->Close(INFINITE);
+	m_videoTask->Close();
+	m_audioTask->Close();
 
 	PostQuitMessage(0);
 	return FALSE;

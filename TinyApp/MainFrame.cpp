@@ -97,6 +97,10 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 	{
 		m_audioDevice1.AddString(m_audioNames[i].name().c_str());
 	}
+
+	/*m_player.LoadFile("D:\\12345.wav");
+	m_player.Play(FALSE);
+*/
 	return FALSE;
 }
 
@@ -176,7 +180,8 @@ void CMainFrame::OnAudioSelectChange2(INT index)
 {
 	const DShow::AudioCaptureParam& param = m_audioParams[index];
 	m_audioDevice.Uninitialize();
-	m_audioDevice.Initialize(m_audioNames[m_audioDevice1.GetCurSel()]);
+	m_audioCB = BindCallback(&CMainFrame::OnAudio, this);
+	m_audioDevice.Initialize(m_audioNames[m_audioDevice1.GetCurSel()], m_audioCB);
 	m_audioDevice.Allocate(param);
 
 	m_resampleCB = BindCallback(&CMainFrame::OnResmpleDataAvailable, this);
@@ -184,6 +189,11 @@ void CMainFrame::OnAudioSelectChange2(INT index)
 	m_wasAudio.Initialize(m_wasCB);
 	m_wasAudio.Open();
 	m_wasAudio.Start();
+
+}
+
+void CMainFrame::OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)
+{
 
 }
 
