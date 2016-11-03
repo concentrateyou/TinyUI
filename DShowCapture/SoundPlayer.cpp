@@ -13,9 +13,9 @@ namespace DShow
 	{
 	}
 
-	BOOL SoundPlayer::Initialize(HWND hWND, const WAVEFORMATEX& wfx)
+	BOOL SoundPlayer::Initialize(HWND hWND, WAVEFORMATEX* pFMT)
 	{
-		m_wfx = wfx;
+		m_waveFMT = *pFMT;
 		HRESULT hRes = S_OK;
 		hRes = DirectSoundCreate8(NULL, &m_sound, NULL);
 		if (FAILED(hRes))
@@ -31,15 +31,15 @@ namespace DShow
 		hRes = m_sound->CreateSoundBuffer(&dbdesc, &m_primaryDSB, NULL);
 		if (FAILED(hRes))
 			return FALSE;
-		hRes = m_primaryDSB->SetFormat(&m_wfx);
+		hRes = m_primaryDSB->SetFormat(pFMT);
 		if (FAILED(hRes))
 			return FALSE;
 		//…Ë÷√æ≤Ã¨ª∫≥Â«¯
 		ZeroMemory(&dbdesc, sizeof(dbdesc));
 		dbdesc.dwSize = sizeof(dbdesc);
 		dbdesc.dwFlags = DSBCAPS_STATIC | DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_STICKYFOCUS | DSBCAPS_GLOBALFOCUS;
-		dbdesc.dwBufferBytes = 3 * m_wfx.nAvgBytesPerSec;//3√Î
-		dbdesc.lpwfxFormat = &m_wfx;
+		dbdesc.dwBufferBytes = 3 * pFMT->nAvgBytesPerSec;//3√Î
+		dbdesc.lpwfxFormat = pFMT;
 		TinyComPtr<IDirectSoundBuffer> dsb;
 		hRes = m_sound->CreateSoundBuffer(&dbdesc, &dsb, NULL);
 		if (FAILED(hRes))

@@ -69,8 +69,8 @@ namespace TinyUI
 			hRes = m_audioClient->GetMixFormat(&pFormat);
 			if (hRes != S_OK)
 				goto MMERROR;
-			m_waveEx.Reset(new BYTE[sizeof(WAVEFORMATEX) + pFormat->cbSize]);
-			memcpy(m_waveEx, (BYTE*)pFormat, sizeof(WAVEFORMATEX) + pFormat->cbSize);
+			m_waveFMT.Reset(new BYTE[sizeof(WAVEFORMATEX) + pFormat->cbSize]);
+			memcpy(m_waveFMT, (BYTE*)pFormat, sizeof(WAVEFORMATEX) + pFormat->cbSize);
 			if (m_dwFlag & AUDCLNT_STREAMFLAGS_EVENTCALLBACK)
 			{
 				//事件模式
@@ -204,9 +204,9 @@ namespace TinyUI
 		}
 		WAVEFORMATEX* TinyWASAPIAudioCapture::GetInputFormat() const
 		{
-			if (m_waveEx)
+			if (m_waveFMT)
 			{
-				return reinterpret_cast<WAVEFORMATEX*>(m_waveEx.Ptr());
+				return reinterpret_cast<WAVEFORMATEX*>(m_waveFMT.Ptr());
 			}
 			return NULL;
 		}

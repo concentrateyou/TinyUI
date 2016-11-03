@@ -6,7 +6,7 @@
 #include "Media/TinyMFResampler.h"
 #include "Media/TinyWave.h"
 #include "IO/TinyIO.h"
-#include "Resampler.h"
+#include "SoundPlayer.h"
 using namespace TinyUI::IO;
 using namespace DShow;
 
@@ -37,7 +37,7 @@ private:
 	TinyUI::Callback<void(BYTE*, LONG, DWORD, LPVOID)>	m_wasCB;
 	TinyUI::Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_audioCB;
 	Media::TinyMFResampler		m_resampler;
-
-	Media::TinyWaveFile			m_waveFile;
+	SoundPlayer					m_soundPlayer;
+	//Media::TinyWaveFile			m_waveFile;
 };
 
