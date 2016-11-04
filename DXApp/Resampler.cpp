@@ -3,74 +3,72 @@
 
 
 Resampler::Resampler()
-	:m_resample(NULL)
+	:m_resampler(NULL)
 {
 }
 
 
 Resampler::~Resampler()
 {
-	if (m_resample != NULL)
-	{
-		swr_free(&m_resample);
-		m_resample = NULL;
-	}
+
 }
 
-BOOL Resampler::Initialize(const WAVEFORMATEX* pInputFormat, const WAVEFORMATEX* pOutFormat)
+BOOL Resampler::Initialize(const WAVEFORMATEX* pInputFMT, const WAVEFORMATEX* pOutputFMT, Callback<void(FLOAT*, LONG, LPVOID)>& callback)
 {
-	ASSERT(pInputFormat && pOutFormat);
-	m_inputFormat = *pInputFormat;
-	m_outFormat = *pOutFormat;
-	AVSampleFormat sampleIN = AV_SAMPLE_FMT_NONE;
-	switch (pInputFormat->wBitsPerSample)
+	ASSERT(pInputFMT && pOutputFMT);
+	m_pInputFMT = pInputFMT;
+	m_pOutputFMT = pOutputFMT;
+	m_callback = callback;
+	INT converterType = SRC_SINC_BEST_QUALITY;
+	INT iRes = 0;
+	m_resampler = src_new(converterType, 2, &iRes);
+	if (iRes != 0)
+		return FALSE;
+	m_resampleRatio = DOUBLE(pOutputFMT->nSamplesPerSec) / DOUBLE(pInputFMT->nSamplesPerSec);
+	m_dwBytesPerSample = (pInputFMT->nChannels * pInputFMT->wBitsPerSample) / 8;
+	m_player.Initialize(GetDesktopWindow(), const_cast<WAVEFORMATEX*>(pOutputFMT));
+
+	SRC_DATA data;
+	data.src_ratio = m_resampleRatio;
+	TinyScopedArray<FLOAT> blank(new FLOAT[pInputFMT->nSamplesPerSec / 100 * 2]);
+	data.data_in = blank;
+	data.input_frames = pInputFMT->nSamplesPerSec / 100;
+	UINT adjust = UINT((DOUBLE(data.input_frames) * m_resampleRatio) + 1.0);
+	UINT newSize = adjust * 2;
+	TinyScopedArray<FLOAT> blank2(new FLOAT[newSize]);
+	data.data_out = blank2;
+	data.output_frames = adjust;
+	data.end_of_input = 0;
+	return src_process(m_resampler, &data) == 0;
+}
+
+BOOL Resampler::Resample(BYTE* bits, LONG count)
+{
+	ASSERT(m_resampler);
+	if (m_size != count * m_dwBytesPerSample)
 	{
-	case 16:
-	case 24:
-		sampleIN = AV_SAMPLE_FMT_S16;
-		break;
-	case 32:
-		sampleIN = AV_SAMPLE_FMT_FLT;
-		break;
+		m_bits.Reset(new FLOAT[count * m_dwBytesPerSample]);
 	}
-	AVSampleFormat sampleOUT = AV_SAMPLE_FMT_NONE;
-	switch (pOutFormat->wBitsPerSample)
-	{
-	case 16:
-	case 24:
-		sampleOUT = AV_SAMPLE_FMT_S16;
-		break;
-	case 32:
-		sampleOUT = AV_SAMPLE_FMT_FLT;
-		break;
-	}
-	int64_t out_ch_layout = av_get_default_channel_layout(pOutFormat->nChannels);
-	int64_t in_ch_layout = av_get_default_channel_layout(pInputFormat->nChannels);
-	m_resample = swr_alloc_set_opts(NULL, out_ch_layout, sampleOUT, pOutFormat->nSamplesPerSec, in_ch_layout, sampleIN, pInputFormat->nSamplesPerSec, 0, NULL);
-	int s = swr_init(m_resample);
+	memcpy(m_bits, (FLOAT*)bits, count * m_dwBytesPerSample);
+	UINT outputFrame = UINT((DOUBLE(count) * m_resampleRatio) + 1.0);
+	TinyScopedArray<FLOAT> output(new FLOAT[outputFrame * 2]);
+	SRC_DATA data;
+	data.src_ratio = m_resampleRatio;
+	data.data_in = m_bits;
+	data.input_frames = count;
+	data.data_out = output;
+	data.output_frames = outputFrame;
+	data.end_of_input = 0;
+	if (src_process(m_resampler, &data) != 0)
+		return FALSE;
+	OnDataAvailable(output, data.output_frames_gen * 2, this);
 	return TRUE;
 }
 
-BOOL Resampler::Resample(BYTE* bits, LONG size)
+void Resampler::OnDataAvailable(FLOAT* bits, LONG size, LPVOID lpParameter)
 {
-	AVSampleFormat sampleOUT = AV_SAMPLE_FMT_NONE;
-	switch (m_outFormat.wBitsPerSample)
+	if (!m_callback.IsNull())
 	{
-	case 16:
-	case 24:
-		sampleOUT = AV_SAMPLE_FMT_S16;
-		break;
-	case 32:
-		sampleOUT = AV_SAMPLE_FMT_FLT;
-		break;
+		m_callback(bits, size, lpParameter);
 	}
-	int32_t nb_samples = size / m_inputFormat.nBlockAlign;
-	int  out_samples = av_rescale_rnd(nb_samples, m_outFormat.nSamplesPerSec, m_inputFormat.nSamplesPerSec, AV_ROUND_UP);
-	int output_data_size = av_samples_get_buffer_size(NULL, m_outFormat.nChannels, out_samples, sampleOUT, 1);
-	unsigned int buf_size = 0;
-	uint8_t* buffer = new uint8_t[10240];
-	out_samples = swr_convert(m_resample, (uint8_t **)&buffer, out_samples, (const uint8_t **)bits, nb_samples);
-	av_freep(buffer);
-	return TRUE;
-
 }

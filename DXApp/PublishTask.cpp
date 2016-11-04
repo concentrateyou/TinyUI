@@ -31,6 +31,7 @@ BOOL PublishTask::Connect()
 
 BOOL PublishTask::Submit()
 {
+	//m_file.Create("D:\\abc.aac");
 	m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
 	Closure s = BindCallback(&PublishTask::OnMessagePump, this);
 	return TinyTaskBase::Submit(s);
@@ -79,6 +80,8 @@ void PublishTask::Publish(Sample& sample)
 		if (sample.mediaTag.dwINC == 1)
 		{
 			WAVEFORMATEX wfx = m_audioTask->GetParam()->GetFormat();
+			wfx.nSamplesPerSec = 48000;
+			wfx.nAvgBytesPerSec = wfx.nSamplesPerSec * wfx.nBlockAlign;
 			VideoCaptureParam* param = m_videoTask->GetParam();
 			m_client.SendMetadata(800, 600, param->GetRate(), 1000, wfx, 128);
 		}

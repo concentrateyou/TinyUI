@@ -29,30 +29,35 @@ BOOL FaacEncode::GetSpecificInfo(vector<BYTE>& info)
 	SAFE_FREE(buffer);
 	return TRUE;
 }
-BOOL FaacEncode::Open(const WAVEFORMATEX& wfx, INT audioRate)
+BOOL FaacEncode::Open(const WAVEFORMATEX& waveFMT, INT audioRate, BOOL bAllowF)
 {
 	Close();
-	m_wfx = wfx;
-	m_aac = faacEncOpen(wfx.nSamplesPerSec, wfx.nChannels, &m_inputSamples, &m_maxOutputBytes);
+	m_bAllowF = bAllowF;
+	m_waveFMT = waveFMT;
+	m_aac = faacEncOpen(waveFMT.nSamplesPerSec, waveFMT.nChannels, &m_inputSamples, &m_maxOutputBytes);
 	if (!m_aac)
 		return FALSE;
 	//AAC固定1024
-	m_dwPTS = AAC_TIMEBASE * AAC_TIMEDEN / wfx.nSamplesPerSec;//播放一帧时间
+	m_dwPTS = AAC_TIMEBASE * AAC_TIMEDEN / waveFMT.nSamplesPerSec;//播放一帧时间
 	m_config = faacEncGetCurrentConfiguration(m_aac);
-	switch (wfx.wBitsPerSample)
+	if (m_bAllowF)
 	{
-	case 16:
-		m_config->inputFormat = FAAC_INPUT_16BIT;
-		break;
-	case 24:
-		m_config->inputFormat = FAAC_INPUT_24BIT;
-		break;
-	case 32:
-		m_config->inputFormat = FAAC_INPUT_32BIT;
-		break;
-	default:
 		m_config->inputFormat = FAAC_INPUT_FLOAT;
-		break;
+	}
+	else
+	{
+		switch (waveFMT.wBitsPerSample)
+		{
+		case 16:
+			m_config->inputFormat = FAAC_INPUT_16BIT;
+			break;
+		case 24:
+			m_config->inputFormat = FAAC_INPUT_24BIT;
+			break;
+		case 32:
+			m_config->inputFormat = FAAC_INPUT_32BIT;
+			break;
+		}
 	}
 	m_config->quantqual = 100;
 	m_config->mpegVersion = MPEG4;
@@ -62,7 +67,7 @@ BOOL FaacEncode::Open(const WAVEFORMATEX& wfx, INT audioRate)
 	m_config->bandWidth = 0;
 	m_config->outputFormat = 1;//ADT
 	m_config->shortctl = SHORTCTL_NORMAL;
-	m_config->bitRate = audioRate * 1000 / wfx.nChannels;//比特位
+	m_config->bitRate = audioRate * 1000 / waveFMT.nChannels;//比特位
 	INT iRes = faacEncSetConfiguration(m_aac, m_config);
 	if (!iRes)
 		return FALSE;

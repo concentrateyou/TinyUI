@@ -16,7 +16,7 @@ public:
 	FaacEncode();
 	~FaacEncode();
 public:
-	BOOL	Open(const WAVEFORMATEX& wfx, INT audioRate);
+	BOOL	Open(const WAVEFORMATEX& waveFMT, INT audioRate, BOOL bAllowF = TRUE);
 	BOOL	Encode(BYTE* bits, LONG size, DWORD& dwINC);
 	void	Close();
 	BOOL	GetSpecificInfo(vector<BYTE>& info);
@@ -26,11 +26,12 @@ public:
 private:
 	faacEncHandle			m_aac;
 	faacEncConfigurationPtr	m_config;
+	BOOL					m_bAllowF;
 	DWORD					m_inputSamples;
 	DWORD					m_maxOutputBytes;
 	DWORD					m_dwINC;
 	DWORD					m_dwPTS;
 	TinyScopedArray<BYTE>	m_bits;
-	WAVEFORMATEX			m_wfx;
+	WAVEFORMATEX			m_waveFMT;
 };
 

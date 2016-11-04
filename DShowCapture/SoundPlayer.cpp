@@ -12,7 +12,18 @@ namespace DShow
 	SoundPlayer::~SoundPlayer()
 	{
 	}
-
+	BOOL SoundPlayer::LoadFile(LPSTR szFilename)
+	{
+		m_waveFile.Close();
+		if (!m_waveFile.Open(szFilename))
+			return FALSE;
+		m_waveFMT = m_waveFile.GetFormat();
+		return TRUE;
+	}
+	BOOL SoundPlayer::LoadStream(LPVOID pStream, DWORD bufferSize)
+	{
+		return TRUE;
+	}
 	BOOL SoundPlayer::Initialize(HWND hWND, WAVEFORMATEX* pFMT)
 	{
 		m_waveFMT = *pFMT;

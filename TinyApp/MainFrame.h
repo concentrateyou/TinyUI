@@ -41,7 +41,7 @@ public:
 	void OnAudioStart(void*, INT);
 	void OnAudioStop(void*, INT);
 
-	void OnWASDataAvailable(BYTE* bits, LONG size, DWORD dwFlag, LPVOID lpParameter);
+	void OnWASDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter);
 	void OnResmpleDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter);
 
 	void OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps);
@@ -76,7 +76,7 @@ private:
 
 	TinyUI::Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_audioCB;
 
-	TinyUI::Callback<void(BYTE*, LONG, DWORD, LPVOID)> m_wasCB;
+	TinyUI::Callback<void(BYTE*, LONG, LPVOID)> m_wasCB;
 	Media::TinyWASAPIAudioCapture				m_wasAudio;
 	TinyUI::Callback<void(BYTE*, LONG, LPVOID)> m_resampleCB;
 
@@ -86,6 +86,8 @@ private:
 	TinyButton			m_audioStart;
 	TinyButton			m_audioStop;
 
-	//Media::TinyWavePlayer	m_player;
+	//DShow::SoundPlayer		m_player;
+
+	Media::TinyWavePlayer	m_player;
 };
 

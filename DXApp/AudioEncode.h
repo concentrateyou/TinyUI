@@ -6,7 +6,7 @@
 #include "Media/TinyMFResampler.h"
 #include "Media/TinyWave.h"
 #include "IO/TinyIO.h"
-#include "SoundPlayer.h"
+#include "Resampler.h"
 using namespace TinyUI::IO;
 using namespace DShow;
 
@@ -23,8 +23,8 @@ public:
 	AudioCapture*		GetCapture();
 	AudioCaptureParam*	GetParam();
 private:
-	void				OnResampleDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter);
-	void				OnDataAvailable(BYTE* bits, LONG size, DWORD dwFlag, LPVOID lpParameter);
+	void				OnResampleDataAvailable(FLOAT* bits, LONG size, LPVOID lpParameter);
+	void				OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter);
 	void				OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps);
 private:
 	DWORD				m_dwINC;
@@ -33,11 +33,9 @@ private:
 	AudioCapture::Name	m_name;
 	AudioCaptureParam	m_audioParam;
 	Media::TinyWASAPIAudioCapture	m_wasCapture;
-	TinyUI::Callback<void(BYTE*, LONG, LPVOID)>			m_resampleCB;
-	TinyUI::Callback<void(BYTE*, LONG, DWORD, LPVOID)>	m_wasCB;
+	TinyUI::Callback<void(FLOAT*, LONG, LPVOID)>		m_resampleCB;
+	TinyUI::Callback<void(BYTE*, LONG, LPVOID)>			m_wasCB;
 	TinyUI::Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_audioCB;
-	Media::TinyMFResampler		m_resampler;
-	SoundPlayer					m_soundPlayer;
-	//Media::TinyWaveFile			m_waveFile;
+	Resampler			m_resampler;
 };
 

@@ -1,37 +1,33 @@
 #pragma once
 #include "Utility.h"
 #include "Media/TinyWave.h"
+#include "SoundPlayer.h"
 extern "C"
 {
-#include "libavutil/avutil.h"
-#include "libavutil/imgutils.h"
-#include "libavformat/avformat.h"
-#include "libavdevice/avdevice.h"
-#include <libavcodec/avcodec.h>
-#include "libswscale/swscale.h"
-#include "libswresample/swresample.h"
+#include "samplerate.h"
 }
-#pragma comment(lib, "avcodec.lib")
-#pragma comment(lib, "avdevice.lib")
-#pragma comment(lib, "avfilter.lib")
-#pragma comment(lib, "avformat.lib")
-#pragma comment(lib, "avutil.lib")
-#pragma comment(lib, "swresample.lib")
-#pragma comment(lib, "swscale.lib")
+#pragma comment(lib, "libsamplerate.lib")
 using namespace TinyUI::IO;
 
 class Resampler
 {
+	DISALLOW_COPY_AND_ASSIGN(Resampler);
 public:
 	Resampler();
 	~Resampler();
-	BOOL Initialize(const WAVEFORMATEX* pInputFormat, const WAVEFORMATEX* pOutFormat);
-	BOOL Resample(BYTE* bits, LONG size);
+	BOOL Initialize(const WAVEFORMATEX* pInputFMT, const WAVEFORMATEX* pOutputFMT, Callback<void(FLOAT*, LONG, LPVOID)>& callback);
+	BOOL Resample(BYTE* bits, LONG count);
+public:
+	virtual void OnDataAvailable(FLOAT* bits, LONG size, LPVOID lpParameter);
 private:
-	WAVEFORMATEX			m_inputFormat;
-	WAVEFORMATEX			m_outFormat;
-	SwrContext*				m_resample;
-	TinyScopedArray<BYTE>	m_bits;
-	Media::TinyWaveFile		m_waveFile;
+	const WAVEFORMATEX*		m_pInputFMT;
+	const WAVEFORMATEX*		m_pOutputFMT;
+	SRC_STATE*				m_resampler;
+	DOUBLE					m_resampleRatio;
+	TinyScopedArray<FLOAT>	m_bits;
+	LONG					m_size;
+	DWORD					m_dwBytesPerSample;
+	DShow::SoundPlayer		m_player;
+	Callback<void(FLOAT*, LONG, LPVOID)> m_callback;
 };
 

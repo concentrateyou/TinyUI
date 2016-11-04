@@ -5,40 +5,6 @@ namespace TinyUI
 {
 	namespace Media
 	{
-		SampleBuffer::SampleBuffer()
-			:m_bits(NULL),
-			m_size(0)
-		{
-
-		}
-		SampleBuffer::SampleBuffer(BYTE* bits, DWORD size)
-			: m_bits(bits),
-			m_size(size)
-		{
-
-		}
-		BOOL SampleBuffer::Add(BYTE* newbits, DWORD newsize)
-		{
-			BYTE *bits = new BYTE[m_size + newsize];
-			if (NULL == bits)
-				return FALSE;
-			memcpy(bits, m_bits, m_size);
-			memcpy(&bits[m_size], newbits, newsize);
-			SAFE_DELETE_ARRAY(m_bits);
-			m_bits = bits;
-			m_size += newsize;
-			return TRUE;
-		}
-		void SampleBuffer::Release()
-		{
-			SAFE_DELETE_ARRAY(m_bits);
-			m_size = 0;
-		}
-		SampleBuffer::~SampleBuffer()
-		{
-			Release();
-		}
-		//////////////////////////////////////////////////////////////////////////
 		TinyMFResampler::TinyMFResampler()
 		{
 
@@ -145,7 +111,7 @@ namespace TinyUI
 		BOOL TinyMFResampler::GetOutputSample(TinyComPtr<IMFSample>& sample, DWORD dwSize)
 		{
 			ASSERT(m_resampler);
-			SampleBuffer sampleBuffer;
+			TinyBufferArray sampleBuffer;
 			for (;;)
 			{
 				MFT_OUTPUT_DATA_BUFFER samples = { 0 };
@@ -180,7 +146,7 @@ namespace TinyUI
 				if (hRes != S_OK)
 					return FALSE;
 			}
-			OnDataAvailable(sampleBuffer.m_bits, sampleBuffer.m_size, this);
+			OnDataAvailable(sampleBuffer.m_value, sampleBuffer.m_size, this);
 			return TRUE;
 		}
 		BOOL TinyMFResampler::Resample(const BYTE* bits, DWORD size)

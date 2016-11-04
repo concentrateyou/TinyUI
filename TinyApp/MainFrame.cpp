@@ -98,6 +98,8 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 		m_audioDevice1.AddString(m_audioNames[i].name().c_str());
 	}
 
+	m_player.LoadFile("D:\\abc.wav");
+	m_player.Play(FALSE);
 	/*m_player.LoadFile("D:\\12345.wav");
 	m_player.Play(FALSE);
 */
@@ -222,7 +224,7 @@ void CMainFrame::OnResmpleDataAvailable(BYTE* bits, LONG size, LPVOID lpParamete
 
 }
 
-void CMainFrame::OnWASDataAvailable(BYTE* bits, LONG size, DWORD dwFlag, LPVOID lpParameter)
+void CMainFrame::OnWASDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
 {
 
 }

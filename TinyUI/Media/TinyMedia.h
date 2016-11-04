@@ -44,9 +44,29 @@ namespace TinyUI
 			DISALLOW_COPY_AND_ASSIGN(AudioObserver)
 		public:
 			AudioObserver();
-			virtual void OnDataAvailable(BYTE* bits, LONG size, DWORD dwFlag, LPVOID lpParameter) = 0;
+			virtual void OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter) = 0;
 		protected:
 			virtual ~AudioObserver();
+		};
+		/// <summary>
+		/// »º³åÊý×é
+		/// </summary>
+		template<class T>
+		class TinyBufferArray
+		{
+			DISALLOW_COPY_AND_ASSIGN(TinyBufferArray);
+		public:
+			TinyBufferArray();
+			TinyBufferArray(T* val, INT size);
+			~TinyBufferArray();
+			BOOL Add(T* val, INT size);
+			BOOL Insert(INT offset, T* val, INT size);
+			void Clear();
+		private:
+			BOOL SetSize(INT size);
+		public:
+			INT		m_size;
+			T*		m_value;
 		};
 	};
 }
