@@ -97,12 +97,6 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 	{
 		m_audioDevice1.AddString(m_audioNames[i].name().c_str());
 	}
-
-	m_player.LoadFile("D:\\abc.wav");
-	m_player.Play(FALSE);
-	/*m_player.LoadFile("D:\\12345.wav");
-	m_player.Play(FALSE);
-*/
 	return FALSE;
 }
 
@@ -181,17 +175,17 @@ void CMainFrame::OnAudioSelectChange1(INT index)
 void CMainFrame::OnAudioSelectChange2(INT index)
 {
 	const DShow::AudioCaptureParam& param = m_audioParams[index];
-	m_audioDevice.Uninitialize();
-	m_audioCB = BindCallback(&CMainFrame::OnAudio, this);
-	m_audioDevice.Initialize(m_audioNames[m_audioDevice1.GetCurSel()], m_audioCB);
-	m_audioDevice.Allocate(param);
+	//m_audioDevice.Uninitialize();
+	//m_audioCB = BindCallback(&CMainFrame::OnAudio, this);
+	//m_audioDevice.Initialize(m_audioNames[m_audioDevice1.GetCurSel()], m_audioCB);
+	//m_audioDevice.Allocate(param);
 
 	m_resampleCB = BindCallback(&CMainFrame::OnResmpleDataAvailable, this);
 	m_wasCB = BindCallback(&CMainFrame::OnWASDataAvailable, this);
 	m_wasAudio.Initialize(m_wasCB);
 	m_wasAudio.Open();
+	m_resampler.Open(m_wasAudio.GetInputFormat(), &param.GetFormat(), m_resampleCB);
 	m_wasAudio.Start();
-
 }
 
 void CMainFrame::OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)
@@ -211,21 +205,29 @@ void CMainFrame::OnVideoStop(void*, INT)
 
 void CMainFrame::OnAudioStart(void*, INT)
 {
-	m_audioDevice.Start();
+	//m_audioDevice.Start();
 }
 void CMainFrame::OnAudioStop(void*, INT)
 {
-	m_audioDevice.Stop();
+	//m_audioDevice.Stop();
 }
 
 
 void CMainFrame::OnResmpleDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
 {
-
+	if (m_buffer.m_size >= 2048)
+	{
+		m_buffer.Add(bits, size);
+	}
+	else
+	{
+		m_buffer.Remove(0, size);
+	}
 }
 
-void CMainFrame::OnWASDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
+void CMainFrame::OnWASDataAvailable(BYTE* bits, LONG count, LPVOID lpParameter)
 {
-
+	INT s = m_wasAudio.GetInputFormat()->nBlockAlign;
+	m_resampler.Resample(bits, s*count);
 }
 

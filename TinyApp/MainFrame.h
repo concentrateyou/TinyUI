@@ -79,15 +79,12 @@ private:
 	TinyUI::Callback<void(BYTE*, LONG, LPVOID)> m_wasCB;
 	Media::TinyWASAPIAudioCapture				m_wasAudio;
 	TinyUI::Callback<void(BYTE*, LONG, LPVOID)> m_resampleCB;
-
+	Media::TinyMFResampler						m_resampler;
+	TinyFile									m_aacFile;
 
 	TinyComboBox		m_audioDevice1;
 	TinyComboBox		m_audioDevice2;
 	TinyButton			m_audioStart;
 	TinyButton			m_audioStop;
-
-	//DShow::SoundPlayer		m_player;
-
-	Media::TinyWavePlayer	m_player;
 };
 

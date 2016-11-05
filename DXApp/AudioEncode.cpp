@@ -50,8 +50,8 @@ BOOL AudioEncode::Open(DWORD dwAudioRate)
 	bRes = m_wasCapture.Open();
 	if (!bRes)
 		return FALSE;
-	m_resampleCB = BindCallback(&AudioEncode::OnResampleDataAvailable, this);
-	m_resampler.Initialize(m_wasCapture.GetInputFormat(), &s, m_resampleCB);
+	m_resample16CB = BindCallback(&AudioEncode::OnResampleDataAvailable16, this);
+	m_resampler.Open(m_wasCapture.GetInputFormat(), &s, m_resample16CB);
 	bRes = m_capture.Start();
 	if (!bRes)
 		return FALSE;
@@ -74,13 +74,18 @@ BOOL AudioEncode::Close()
 	return TRUE;
 }
 
-void AudioEncode::OnResampleDataAvailable(FLOAT* bits, LONG size, LPVOID lpParameter)
+void AudioEncode::OnResampleDataAvailable16(BYTE* bits, LONG size, LPVOID lpParameter)
 {
-
+	if (m_buffer.m_size >= 2048)
+	{
+		m_aac.Encode(m_buffer.m_value, m_buffer.m_size, m_dwINC);
+		m_buffer.Remove(0, m_buffer.m_size);
+	}
+	m_buffer.Add(bits, size);
 }
 void AudioEncode::OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
 {
-	m_resampler.Resample(bits, size);
+	m_resampler.Resample(bits, size * 8);
 }
 
 void AudioEncode::OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)

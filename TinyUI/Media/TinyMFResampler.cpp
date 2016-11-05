@@ -111,7 +111,7 @@ namespace TinyUI
 		BOOL TinyMFResampler::GetOutputSample(TinyComPtr<IMFSample>& sample, DWORD dwSize)
 		{
 			ASSERT(m_resampler);
-			TinyBufferArray sampleBuffer;
+			TinyBufferArray<BYTE>	sampleBuffer;
 			for (;;)
 			{
 				MFT_OUTPUT_DATA_BUFFER samples = { 0 };

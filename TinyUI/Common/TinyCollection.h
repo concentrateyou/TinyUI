@@ -505,7 +505,7 @@ namespace TinyUI
 	/// <summary>
 	/// 迭代器的内部指针
 	/// </summary>
-	struct __ITERATOR{};
+	struct __ITERATOR {};
 	typedef __ITERATOR* ITERATOR;
 	/// <summary>
 	/// 类型萃取器
@@ -1548,4 +1548,170 @@ namespace TinyUI
 		TinyNode*	m_pFreeList;
 		TinyPlex*	m_pBlocks;
 	};
+	/// <summary>
+	/// 缓冲数组
+	/// </summary>
+	template<class T>
+	class TinyBufferArray
+	{
+		DISALLOW_COPY_AND_ASSIGN(TinyBufferArray)
+	public:
+		TinyBufferArray();
+		TinyBufferArray(T* value, INT size);
+		~TinyBufferArray();
+		INT		GetSize() const;
+		T*		GetPointer();
+		BOOL	Add(T* value, INT size);
+		BOOL	Insert(INT offset, T* value, INT size);
+		BOOL	Remove(INT start, INT end);
+		BOOL	Copy(T* value, INT size);
+		void	Clear();
+		T&		operator[](INT index);
+	public:
+		INT		m_size;
+		T*		m_value;
+	private:
+		INT		m_alloc_size;
+	};
+	template<class T>
+	TinyBufferArray<T>::TinyBufferArray()
+		:m_value(NULL),
+		m_size(0),
+		m_alloc_size(0)
+	{
+	}
+	template<class T>
+	TinyBufferArray<T>::TinyBufferArray(T* value, INT size)
+		: m_value(value),
+		m_size(size)
+	{
+
+	}
+	template<class T>
+	INT	 TinyBufferArray<T>::GetSize() const
+	{
+		return m_size;
+	}
+	template<class T>
+	T*  TinyBufferArray<T>::GetPointer()
+	{
+		return m_value;
+	}
+	template<class T>
+	BOOL TinyBufferArray<T>::Add(T* value, INT size)
+	{
+		if ((m_size + size) >= m_alloc_size)
+		{
+			T* myP = NULL;
+			INT s = (m_alloc_size == 0) ? (m_size + size) : ((m_size + size) * 2);
+			if (s < 0 || s >(INT_MAX / sizeof(T)))
+			{
+				return FALSE;
+			}
+			myP = (T*)_recalloc(m_value, s, sizeof(T));
+			if (myP == NULL)
+			{
+				return FALSE;
+			}
+			m_alloc_size = s;
+			m_value = myP;
+		}
+		memcpy(m_value + m_size, value, sizeof(T) * size);
+		m_size += size;
+		return TRUE;
+	}
+	template<class T>
+	BOOL TinyBufferArray<T>::Insert(INT offset, T* value, INT size)
+	{
+		if (offset < 0 || offset > m_size)
+		{
+			return FALSE;
+		}
+		if ((m_size + size) >= m_alloc_size)
+		{
+			T* myP = NULL;
+			INT s = (m_alloc_size == 0) ? (m_size + size) : ((m_size + size) * 2);
+			if (s < 0 || s >(INT_MAX / sizeof(T)))
+			{
+				return FALSE;
+			}
+			myP = (T*)_recalloc(m_value, s, sizeof(T));
+			if (myP == NULL)
+			{
+				return FALSE;
+			}
+			m_alloc_size = s;
+			m_value = myP;
+		}
+		memmove_s((void*)(m_value + offset + size),
+			(m_size - offset) * sizeof(T),
+			(void*)(m_value + offset),
+			(m_size - offset) * sizeof(T));
+		memcpy(m_value + offset, value, sizeof(T)*size);
+		m_size += size;
+		return TRUE;
+	}
+	template<class T>
+	BOOL TinyBufferArray<T>::Remove(INT start, INT end)
+	{
+		if (start < 0 ||
+			end < 0 ||
+			start > m_size ||
+			end > m_size)
+		{
+			return FALSE;
+		}
+		INT count = end - start;
+		if (count < 0)
+		{
+			return FALSE;
+		}
+		memmove_s((void*)(m_value + start),
+			(m_size - end) * sizeof(T),
+			(void*)(m_value + end),
+			(m_size - end) * sizeof(T));
+		m_size -= count;
+		return TRUE;
+	}
+	template<class T>
+	BOOL TinyBufferArray<T>::Copy(T* value, INT size)
+	{
+		if (size >= m_alloc_size)
+		{
+			T* myP = NULL;
+			INT s = (m_alloc_size == 0) ? size : (size * 2);
+			if (s < 0 || s >(INT_MAX / sizeof(T)))
+			{
+				return FALSE;
+			}
+			myP = (T*)_recalloc(m_value, s, sizeof(T));
+			if (myP == NULL)
+			{
+				return FALSE;
+			}
+			m_alloc_size = s;
+			m_value = myP;
+		}
+		memcpy(m_value, value, sizeof(T) * size);
+		m_size = size;
+		return TRUE;
+	}
+	template<class T>
+	void TinyBufferArray<T>::Clear()
+	{
+		SAFE_DELETE_ARRAY(m_value);
+		m_size = 0;
+	}
+	template<class T>
+	T& TinyBufferArray<T>::operator[](INT index)
+	{
+		if (index < 0 || index >= m_size)
+			throw("无效的index");
+		return m_value[index];
+	}
+	template<class T>
+	TinyBufferArray<T>::~TinyBufferArray()
+	{
+		Clear();
+	}
 }

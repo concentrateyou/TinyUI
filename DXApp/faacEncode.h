@@ -16,7 +16,7 @@ public:
 	FaacEncode();
 	~FaacEncode();
 public:
-	BOOL	Open(const WAVEFORMATEX& waveFMT, INT audioRate, BOOL bAllowF = TRUE);
+	BOOL	Open(const WAVEFORMATEX& waveFMT, INT audioRate, BOOL bAllowF = FALSE);
 	BOOL	Encode(BYTE* bits, LONG size, DWORD& dwINC);
 	void	Close();
 	BOOL	GetSpecificInfo(vector<BYTE>& info);
