@@ -25,7 +25,6 @@ public:
 	AudioCaptureParam*	GetParam();
 private:
 	void				OnResampleDataAvailable16(BYTE* bits, LONG size, LPVOID lpParameter);
-	void				OnResampleDataAvailable16F(FLOAT* bits, LONG count, LPVOID lpParameter);
 	void				OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter);
 	void				OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps);
 private:
@@ -36,9 +35,7 @@ private:
 	AudioCapture::Name	m_name;
 	AudioCaptureParam	m_audioParam;
 	Media::TinyWASAPIAudioCapture	m_wasCapture;
-	FFmpegResampler		m_resampler;
-	//TinyMFResampler		m_resampler;
-	//Resampler			m_resampler;
+	TinyMFResampler		m_resampler;
 	BYTE				m_buffer[4096];
 	TinyUI::Callback<void(BYTE*, LONG, LPVOID)>			m_resample16CB;
 	TinyUI::Callback<void(FLOAT*, LONG, LPVOID)>		m_resample16CBF;

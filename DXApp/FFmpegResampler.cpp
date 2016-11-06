@@ -52,7 +52,6 @@ FFmpegResampler::~FFmpegResampler()
 BOOL FFmpegResampler::Open(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO, Callback<void(BYTE*, LONG, LPVOID)>& callback)
 {
 	ASSERT(pFMTI && pFMTO);
-	m_waveFile.Create("D:\\1234.wav", pFMTO);
 	m_waveFMTI = *pFMTI;
 	m_waveFMTO = *pFMTO;
 	m_callback = callback;
@@ -113,6 +112,10 @@ void FFmpegResampler::OnDataAvailable(BYTE* bits, LONG count, LPVOID lpParameter
 
 BOOL FFmpegResampler::Close()
 {
+	if (m_output_buffer[0])
+	{
+		av_freep(&m_output_buffer[0]);
+	}
 	m_waveFile.Close();
 	return TRUE;
 }
