@@ -13,26 +13,24 @@ Resampler::~Resampler()
 
 }
 
-BOOL Resampler::Initialize(const WAVEFORMATEX* pInputFMT, const WAVEFORMATEX* pOutputFMT, Callback<void(FLOAT*, LONG, LPVOID)>& callback)
+BOOL Resampler::Open(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO, Callback<void(FLOAT*, LONG, LPVOID)>& callback)
 {
-	ASSERT(pInputFMT && pOutputFMT);
-	m_pInputFMT = pInputFMT;
-	m_pOutputFMT = pOutputFMT;
+	ASSERT(pFMTI && pFMTO);
+	m_pFMTI = pFMTI;
+	m_pFMTO = pFMTO;
 	m_callback = callback;
 	INT converterType = SRC_SINC_BEST_QUALITY;
 	INT iRes = 0;
 	m_resampler = src_new(converterType, 2, &iRes);
 	if (iRes != 0)
 		return FALSE;
-	m_resampleRatio = DOUBLE(pOutputFMT->nSamplesPerSec) / DOUBLE(pInputFMT->nSamplesPerSec);
-	m_dwBytesPerSample = (pInputFMT->nChannels * pInputFMT->wBitsPerSample) / 8;
-	m_player.Initialize(GetDesktopWindow(), const_cast<WAVEFORMATEX*>(pOutputFMT));
-
+	m_resampleRatio = DOUBLE(pFMTO->nSamplesPerSec) / DOUBLE(pFMTI->nSamplesPerSec);
+	m_dwBytesPerSample = (pFMTI->nChannels * pFMTI->wBitsPerSample) / 8;
 	SRC_DATA data;
 	data.src_ratio = m_resampleRatio;
-	TinyScopedArray<FLOAT> blank(new FLOAT[pInputFMT->nSamplesPerSec / 100 * 2]);
+	TinyScopedArray<FLOAT> blank(new FLOAT[pFMTI->nSamplesPerSec / 100 * 2]);
 	data.data_in = blank;
-	data.input_frames = pInputFMT->nSamplesPerSec / 100;
+	data.input_frames = pFMTI->nSamplesPerSec / 100;
 	UINT adjust = UINT((DOUBLE(data.input_frames) * m_resampleRatio) + 1.0);
 	UINT newSize = adjust * 2;
 	TinyScopedArray<FLOAT> blank2(new FLOAT[newSize]);
@@ -64,7 +62,10 @@ BOOL Resampler::Resample(BYTE* bits, LONG count)
 	OnDataAvailable(output, data.output_frames_gen * 2, this);
 	return TRUE;
 }
-
+BOOL Resampler::Close()
+{
+	return TRUE;
+}
 void Resampler::OnDataAvailable(FLOAT* bits, LONG size, LPVOID lpParameter)
 {
 	if (!m_callback.IsNull())

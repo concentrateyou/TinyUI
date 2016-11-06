@@ -15,19 +15,19 @@ class Resampler
 public:
 	Resampler();
 	~Resampler();
-	BOOL Initialize(const WAVEFORMATEX* pInputFMT, const WAVEFORMATEX* pOutputFMT, Callback<void(FLOAT*, LONG, LPVOID)>& callback);
+	BOOL Open(const WAVEFORMATEX* pInputFMT, const WAVEFORMATEX* pOutputFMT, Callback<void(FLOAT*, LONG, LPVOID)>& callback);
 	BOOL Resample(BYTE* bits, LONG count);
+	BOOL Close();
 public:
 	virtual void OnDataAvailable(FLOAT* bits, LONG size, LPVOID lpParameter);
 private:
-	const WAVEFORMATEX*		m_pInputFMT;
-	const WAVEFORMATEX*		m_pOutputFMT;
+	const WAVEFORMATEX*		m_pFMTI;
+	const WAVEFORMATEX*		m_pFMTO;
 	SRC_STATE*				m_resampler;
 	DOUBLE					m_resampleRatio;
 	TinyScopedArray<FLOAT>	m_bits;
 	LONG					m_size;
 	DWORD					m_dwBytesPerSample;
-	DShow::SoundPlayer		m_player;
 	Callback<void(FLOAT*, LONG, LPVOID)> m_callback;
 };
 

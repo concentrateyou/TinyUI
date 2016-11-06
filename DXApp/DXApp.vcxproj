@@ -95,6 +95,7 @@
   <ItemGroup>
     <ClInclude Include="FaacEncode.h" />
     <ClInclude Include="AudioEncode.h" />
+    <ClInclude Include="FFmpegResampler.h" />
     <ClInclude Include="PublishTask.h" />
     <ClInclude Include="RenderTask.h" />
     <ClInclude Include="DXApp.h" />
@@ -114,6 +115,7 @@
   <ItemGroup>
     <ClCompile Include="FaacEncode.cpp" />
     <ClCompile Include="AudioEncode.cpp" />
+    <ClCompile Include="FFmpegResampler.cpp" />
     <ClCompile Include="PublishTask.cpp" />
     <ClCompile Include="RenderTask.cpp" />
     <ClCompile Include="DXApp.cpp" />

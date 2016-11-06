@@ -30,11 +30,10 @@ namespace TinyUI
 			return AvSetMmThreadPriority(m_hMM, priority);
 		}
 		//////////////////////////////////////////////////////////////////////////
-		TinyWASAPIAudioCapture::TinyWASAPIAudioCapture(DWORD dwFlag, BOOL bUse16)
+		TinyWASAPIAudioCapture::TinyWASAPIAudioCapture(DWORD dwFlag)
 			:m_dwFlag(dwFlag),
-			m_bUse16(bUse16),
-			m_bufferFrames(0),
-			m_captureBufferSize(0)
+			m_count(0),
+			m_dwChannelMask(0)
 		{
 			m_sampleReady.CreateEvent(FALSE, FALSE, NULL, NULL);
 			m_audioStop.CreateEvent(FALSE, FALSE, NULL, NULL);
@@ -71,19 +70,6 @@ namespace TinyUI
 			hRes = m_audioClient->GetMixFormat(&pFMT);
 			if (hRes != S_OK)
 				goto MMERROR;
-			if (m_bUse16)
-			{
-				if ((pFMT->wFormatTag == WAVE_FORMAT_IEEE_FLOAT) ||
-					((pFMT->wFormatTag == WAVE_FORMAT_EXTENSIBLE) &&
-					(reinterpret_cast<WAVEFORMATEXTENSIBLE *>(pFMT)->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)))
-				{
-					pFMT->wFormatTag = WAVE_FORMAT_PCM;
-					pFMT->wBitsPerSample = 16;
-					pFMT->nBlockAlign = (pFMT->nChannels  * pFMT->wBitsPerSample) / 8;
-					pFMT->nAvgBytesPerSec = pFMT->nSamplesPerSec * pFMT->nBlockAlign;
-					pFMT->cbSize = 0;
-				}
-			}
 			if (m_dwFlag & AUDCLNT_STREAMFLAGS_EVENTCALLBACK)
 			{
 				//事件模式
@@ -101,7 +87,7 @@ namespace TinyUI
 			m_waveFMT.Reset(new BYTE[sizeof(WAVEFORMATEX) + pFMT->cbSize]);
 			memcpy(m_waveFMT, (BYTE*)pFMT, sizeof(WAVEFORMATEX) + pFMT->cbSize);
 			//一般都是960
-			hRes = m_audioClient->GetBufferSize(&m_bufferFrames);
+			hRes = m_audioClient->GetBufferSize(&m_count);
 			if (FAILED(hRes))
 				return hRes;
 			REFERENCE_TIME defaultPeriod = 0;
@@ -132,9 +118,6 @@ namespace TinyUI
 			hRes = m_audioClient->GetService(__uuidof(ISimpleAudioVolume), (void**)&m_audioVolume);
 			if (hRes != S_OK)
 				goto MMERROR;
-			m_captureBufferSize = m_bufferFrames * ((pFMT->nChannels*pFMT->wBitsPerSample) / 8);
-			m_captureBuffer.Reset(new BYTE[m_captureBufferSize]);
-			m_captureBuffer[m_captureBufferSize - 1] = -32768;
 			return TRUE;
 		MMERROR:
 			if (pFMT)
@@ -144,7 +127,6 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-
 		BOOL TinyWASAPIAudioCapture::Start()
 		{
 			ASSERT(m_audioClient);

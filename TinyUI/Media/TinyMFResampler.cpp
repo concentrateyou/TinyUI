@@ -52,13 +52,13 @@ namespace TinyUI
 				return FALSE;
 			return TRUE;
 		}
-		BOOL TinyMFResampler::Open(const WAVEFORMATEX* pInputFormat, const WAVEFORMATEX* pOutputFormat, Callback<void(BYTE*, LONG, LPVOID)>& callback)
+		BOOL TinyMFResampler::Open(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO, Callback<void(BYTE*, LONG, LPVOID)>& callback)
 		{
-			ASSERT(pInputFormat || pOutputFormat);
+			ASSERT(pFMTI || pFMTO);
 			m_callback = std::move(callback);
-			m_inputFormat = *pInputFormat;
-			m_outputFormat = *pOutputFormat;
-			if (!CreateResampler(pInputFormat, pOutputFormat))
+			m_waveFMTI = *pFMTI;
+			m_waveFMTO = *pFMTO;
+			if (!CreateResampler(pFMTI, pFMTO))
 				return FALSE;
 			HRESULT hRes = S_OK;
 			hRes = m_resampler->ProcessMessage(MFT_MESSAGE_COMMAND_FLUSH, NULL);
@@ -163,9 +163,10 @@ namespace TinyUI
 			hRes = m_resampler->ProcessInput(0, inputSample, 0);
 			if (hRes != S_OK)
 				return FALSE;
-			DWORD dwSize = (DWORD)((LONGLONG)size * m_outputFormat.nAvgBytesPerSec / m_inputFormat.nAvgBytesPerSec);
-			dwSize = (dwSize + (m_outputFormat.nBlockAlign - 1)) / m_outputFormat.nBlockAlign * m_outputFormat.nBlockAlign;
-			dwSize += 16 * m_outputFormat.nBlockAlign;
+			DWORD dwSize = (DWORD)((LONGLONG)size * m_waveFMTO.nAvgBytesPerSec / m_waveFMTI.nAvgBytesPerSec);
+			dwSize = (dwSize + (m_waveFMTO.nBlockAlign - 1)) / m_waveFMTO.nBlockAlign * m_waveFMTO.nBlockAlign;
+			dwSize += 16 * m_waveFMTO.nBlockAlign;
+			//DWORD dwSize = 441;
 			TinyComPtr<IMFSample> outputSample;
 			return GetOutputSample(outputSample, dwSize);
 		}

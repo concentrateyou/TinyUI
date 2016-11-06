@@ -363,6 +363,12 @@
     <ClInclude Include="Media\TinyMFResampler.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
+    <ClInclude Include="Media\TinyMFH264Encode.h">
+      <Filter>头文件\Media</Filter>
+    </ClInclude>
+    <ClInclude Include="Media\TinyMFAACEncode.h">
+      <Filter>头文件\Media</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -657,6 +663,12 @@
       <Filter>源文件\Media</Filter>
     </ClCompile>
     <ClCompile Include="Media\TinyMFResampler.cpp">
+      <Filter>源文件\Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\TinyMFAACEncode.cpp">
+      <Filter>源文件\Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\TinyMFH264Encode.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
   </ItemGroup>

@@ -215,14 +215,14 @@ void CMainFrame::OnAudioStop(void*, INT)
 
 void CMainFrame::OnResmpleDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
 {
-	if (m_buffer.m_size >= 2048)
+	/*if (m_buffer.m_size >= 2048)
 	{
 		m_buffer.Add(bits, size);
 	}
 	else
 	{
 		m_buffer.Remove(0, size);
-	}
+	}*/
 }
 
 void CMainFrame::OnWASDataAvailable(BYTE* bits, LONG count, LPVOID lpParameter)

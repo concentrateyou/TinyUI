@@ -35,7 +35,7 @@ namespace TinyUI
 		class TinyWASAPIAudioCapture : public AudioObserver
 		{
 		public:
-			TinyWASAPIAudioCapture(DWORD dwFlag = AUDCLNT_STREAMFLAGS_LOOPBACK | AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST, BOOL bUse16 = FALSE);
+			TinyWASAPIAudioCapture(DWORD dwFlag = AUDCLNT_STREAMFLAGS_LOOPBACK | AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST);
 			virtual ~TinyWASAPIAudioCapture();
 			virtual void OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter) OVERRIDE;
 		public:
@@ -50,18 +50,17 @@ namespace TinyUI
 			virtual BOOL	SetMute(BOOL bMute);
 			virtual BOOL	GetMute(BOOL* bMute);
 			WAVEFORMATEX*	GetInputFormat() const;
+			SpeakerLayout	GetSpeakerLayout() const;
 			BOOL			GetStreamLatency(REFERENCE_TIME& latency);
 		private:
 			void			OnMessagePump();
 		private:
-			BOOL										m_bUse16;
+			DWORD										m_dwChannelMask;
 			DWORD										m_dwFlag;
-			UINT32										m_bufferFrames;
-			UINT32										m_captureBufferSize;
+			UINT32										m_count;
 			TinyEvent									m_sampleReady;
 			TinyEvent									m_audioStop;
 			IO::TinyTaskBase							m_task;
-			TinyScopedArray<BYTE>						m_captureBuffer;
 			TinyScopedArray<BYTE>						m_waveFMT;
 			TinyComPtr<IAudioClient>					m_audioClient;
 			TinyComPtr<IAudioClient>					m_audioClientLB;
