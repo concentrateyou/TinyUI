@@ -175,22 +175,21 @@ void CMainFrame::OnAudioSelectChange1(INT index)
 void CMainFrame::OnAudioSelectChange2(INT index)
 {
 	const DShow::AudioCaptureParam& param = m_audioParams[index];
-	//m_audioDevice.Uninitialize();
-	//m_audioCB = BindCallback(&CMainFrame::OnAudio, this);
-	//m_audioDevice.Initialize(m_audioNames[m_audioDevice1.GetCurSel()], m_audioCB);
-	//m_audioDevice.Allocate(param);
-
-	m_resampleCB = BindCallback(&CMainFrame::OnResmpleDataAvailable, this);
+	m_audioDevice.Uninitialize();
+	m_audioCB = BindCallback(&CMainFrame::OnAudio, this);
+	m_audioDevice.Initialize(m_audioNames[m_audioDevice1.GetCurSel()], m_audioCB);
+	m_audioDevice.Allocate(param);
+	/*m_resampleCB = BindCallback(&CMainFrame::OnResmpleDataAvailable, this);
 	m_wasCB = BindCallback(&CMainFrame::OnWASDataAvailable, this);
 	m_wasAudio.Initialize(m_wasCB);
 	m_wasAudio.Open();
 	m_resampler.Open(m_wasAudio.GetInputFormat(), &param.GetFormat(), m_resampleCB);
-	m_wasAudio.Start();
+	m_wasAudio.Start();*/
 }
 
 void CMainFrame::OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)
 {
-
+	m_waveFile.Write(bits, size);
 }
 
 
@@ -205,11 +204,11 @@ void CMainFrame::OnVideoStop(void*, INT)
 
 void CMainFrame::OnAudioStart(void*, INT)
 {
-	//m_audioDevice.Start();
+	m_audioDevice.Start();
 }
 void CMainFrame::OnAudioStop(void*, INT)
 {
-	//m_audioDevice.Stop();
+	m_audioDevice.Stop();
 }
 
 
@@ -227,7 +226,7 @@ void CMainFrame::OnResmpleDataAvailable(BYTE* bits, LONG size, LPVOID lpParamete
 
 void CMainFrame::OnWASDataAvailable(BYTE* bits, LONG count, LPVOID lpParameter)
 {
-	INT s = m_wasAudio.GetInputFormat()->nBlockAlign;
-	m_resampler.Resample(bits, s*count);
+	//INT s = m_wasAudio.GetInputFormat()->nBlockAlign;
+	//m_resampler.Resample(bits, s*count);
 }
 
