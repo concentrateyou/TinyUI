@@ -25,7 +25,7 @@ namespace DShow
 	WAVEFORMATEX AudioCaptureParam::GetDefaultFormat()
 	{
 		WAVEFORMATEX w;
-		w.cbSize = sizeof(w);
+		w.cbSize = 0;
 		w.nChannels = 2;
 		w.nSamplesPerSec = 44100;
 		w.wBitsPerSample = 16;

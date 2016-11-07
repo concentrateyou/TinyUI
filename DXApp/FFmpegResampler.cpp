@@ -21,28 +21,39 @@ static inline uint64_t ConvertSpeakerLayoutToFFmpeg(const WAVEFORMATEX* pFMT)
 	return 0;
 }
 
-static inline enum AVSampleFormat ConvertAudioFormat(enum Media::AudioFormat s)
+static inline enum AVSampleFormat ConvertAudioFormat(const WAVEFORMATEX* pFMT)
 {
-	switch (s)
+	if (pFMT->wFormatTag == WAVE_FORMAT_PCM)
 	{
-	case Media::AUDIO_FORMAT_UNKNOWN:      return AV_SAMPLE_FMT_S16;
-	case Media::AUDIO_FORMAT_U8BIT:        return AV_SAMPLE_FMT_U8;
-	case Media::AUDIO_FORMAT_16BIT:        return AV_SAMPLE_FMT_S16;
-	case Media::AUDIO_FORMAT_32BIT:        return AV_SAMPLE_FMT_S32;
-	case Media::AUDIO_FORMAT_FLOAT:        return AV_SAMPLE_FMT_FLT;
-	case Media::AUDIO_FORMAT_U8BIT_PLANAR: return AV_SAMPLE_FMT_U8P;
-	case Media::AUDIO_FORMAT_16BIT_PLANAR: return AV_SAMPLE_FMT_S16P;
-	case Media::AUDIO_FORMAT_32BIT_PLANAR: return AV_SAMPLE_FMT_S32P;
-	case Media::AUDIO_FORMAT_FLOAT_PLANAR: return AV_SAMPLE_FMT_FLTP;
+		switch (pFMT->wBitsPerSample)
+		{
+		case 8:
+			return AV_SAMPLE_FMT_U8;
+		case 16:
+			return AV_SAMPLE_FMT_S16;
+		case 32:
+			return AV_SAMPLE_FMT_S32;
+		}
 	}
-	return AV_SAMPLE_FMT_S16;
+	if (pFMT->wFormatTag == WAVE_FORMAT_IEEE_FLOAT
+		|| pFMT->wFormatTag == WAVE_FORMAT_EXTENSIBLE)
+	{
+		return AV_SAMPLE_FMT_FLT;
+	}
+	return AV_SAMPLE_FMT_NONE;
 }
 
 
 FFmpegResampler::FFmpegResampler()
-	:m_context(NULL)
+	:m_context(NULL),
+	m_output_size(0),
+	m_input_format(AV_SAMPLE_FMT_NONE),
+	m_output_format(AV_SAMPLE_FMT_NONE),
+	m_input_layout(0),
+	m_output_layout(0)
 {
-
+	memset(m_input_buffer, 0, sizeof(uint8_t*)*MAX_AV_PLANES);
+	memset(m_output_buffer, 0, sizeof(uint8_t*)*MAX_AV_PLANES);
 }
 
 FFmpegResampler::~FFmpegResampler()
@@ -55,14 +66,16 @@ BOOL FFmpegResampler::Open(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO,
 	m_waveFMTI = *pFMTI;
 	m_waveFMTO = *pFMTO;
 	m_callback = callback;
-	uint64_t output_layout = ConvertSpeakerLayoutToFFmpeg(pFMTO);
-	uint64_t input_layout = ConvertSpeakerLayoutToFFmpeg(pFMTI);
+	m_output_layout = ConvertSpeakerLayoutToFFmpeg(pFMTO);
+	m_input_layout = ConvertSpeakerLayoutToFFmpeg(pFMTI);
+	m_input_format = ConvertAudioFormat(pFMTI);
+	m_output_format = ConvertAudioFormat(pFMTO);
 	m_context = swr_alloc_set_opts(NULL,
-		output_layout,
-		AV_SAMPLE_FMT_S16,
+		m_output_layout,
+		m_output_format,
 		pFMTO->nSamplesPerSec,
-		input_layout,
-		AV_SAMPLE_FMT_FLT,
+		m_input_layout,
+		m_input_format,
 		pFMTI->nSamplesPerSec,
 		0,
 		NULL);
@@ -78,21 +91,26 @@ BOOL FFmpegResampler::Resample(BYTE* bits, LONG count)
 		(int64_t)m_waveFMTO.nSamplesPerSec,
 		(int64_t)m_waveFMTI.nSamplesPerSec,
 		AV_ROUND_UP);
-	if (m_output_buffer[0])
+	if (estimated > m_output_size)
 	{
-		av_freep(&m_output_buffer[0]);
+		if (m_output_buffer[0])
+		{
+			av_freep(&m_output_buffer[0]);
+			m_output_buffer[0] = NULL;
+		}
+		av_samples_alloc(m_output_buffer,
+			NULL,
+			m_waveFMTO.nChannels,
+			estimated,
+			m_output_format,
+			0);
+		m_output_size = estimated;
 	}
-	av_samples_alloc(m_output_buffer,
-		NULL,
-		m_waveFMTO.nChannels,
-		estimated,
-		AV_SAMPLE_FMT_S16,
-		0);
 	m_input_buffer[0] = bits;
-	int size = swr_convert(m_context,
+	int32_t size = swr_convert(m_context,
 		m_output_buffer,
-		estimated,
-		(const uint8_t**)m_input_buffer,
+		m_output_size,
+		(const BYTE**)m_input_buffer,
 		count);
 	if (size && m_output_buffer[0])
 	{
@@ -115,7 +133,7 @@ BOOL FFmpegResampler::Close()
 	if (m_output_buffer[0])
 	{
 		av_freep(&m_output_buffer[0]);
+		m_output_buffer[0] = NULL;
 	}
-	m_waveFile.Close();
 	return TRUE;
 }

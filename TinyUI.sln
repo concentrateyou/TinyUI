@@ -19,6 +19,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DXApp", "DXApp\DXApp.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DShowCapture", "DShowCapture\DShowCapture.vcxproj", "{B8F16B34-E13E-4757-B09A-792046BCC2D3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebRTCNS", "WebRTCNS\WebRTCNS.vcxproj", "{E1D96099-8278-447E-98DB-B013583B5349}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_MBCS|Win32 = Debug_MBCS|Win32
@@ -153,6 +155,26 @@ Global
 		{B8F16B34-E13E-4757-B09A-792046BCC2D3}.Release|Win32.ActiveCfg = Release|Win32
 		{B8F16B34-E13E-4757-B09A-792046BCC2D3}.Release|Win32.Build.0 = Release|Win32
 		{B8F16B34-E13E-4757-B09A-792046BCC2D3}.Release|x64.ActiveCfg = Release|Win32
+		{E1D96099-8278-447E-98DB-B013583B5349}.Debug_MBCS|Win32.ActiveCfg = Debug|Win32
+		{E1D96099-8278-447E-98DB-B013583B5349}.Debug_MBCS|Win32.Build.0 = Debug|Win32
+		{E1D96099-8278-447E-98DB-B013583B5349}.Debug_MBCS|x64.ActiveCfg = Debug|x64
+		{E1D96099-8278-447E-98DB-B013583B5349}.Debug_MBCS|x64.Build.0 = Debug|x64
+		{E1D96099-8278-447E-98DB-B013583B5349}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E1D96099-8278-447E-98DB-B013583B5349}.Debug|Win32.Build.0 = Debug|Win32
+		{E1D96099-8278-447E-98DB-B013583B5349}.Debug|x64.ActiveCfg = Debug|x64
+		{E1D96099-8278-447E-98DB-B013583B5349}.Debug|x64.Build.0 = Debug|x64
+		{E1D96099-8278-447E-98DB-B013583B5349}.Release_MBCS|Win32.ActiveCfg = Release|Win32
+		{E1D96099-8278-447E-98DB-B013583B5349}.Release_MBCS|Win32.Build.0 = Release|Win32
+		{E1D96099-8278-447E-98DB-B013583B5349}.Release_MBCS|x64.ActiveCfg = Release|x64
+		{E1D96099-8278-447E-98DB-B013583B5349}.Release_MBCS|x64.Build.0 = Release|x64
+		{E1D96099-8278-447E-98DB-B013583B5349}.Release_MT|Win32.ActiveCfg = Release|Win32
+		{E1D96099-8278-447E-98DB-B013583B5349}.Release_MT|Win32.Build.0 = Release|Win32
+		{E1D96099-8278-447E-98DB-B013583B5349}.Release_MT|x64.ActiveCfg = Release|x64
+		{E1D96099-8278-447E-98DB-B013583B5349}.Release_MT|x64.Build.0 = Release|x64
+		{E1D96099-8278-447E-98DB-B013583B5349}.Release|Win32.ActiveCfg = Release|Win32
+		{E1D96099-8278-447E-98DB-B013583B5349}.Release|Win32.Build.0 = Release|Win32
+		{E1D96099-8278-447E-98DB-B013583B5349}.Release|x64.ActiveCfg = Release|x64
+		{E1D96099-8278-447E-98DB-B013583B5349}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

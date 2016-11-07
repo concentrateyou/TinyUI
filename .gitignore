@@ -25,3 +25,5 @@
 /TinySmiley/Release
 /TinyUI/Release
 *.suo
+/WebRTCNS/Debug/WebRTCNS.tlog
+/WebRTCNS/Debug

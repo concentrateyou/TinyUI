@@ -16,7 +16,7 @@ using namespace TinyUI::IO;
 #define MAX_AV_PLANES 8
 
 static inline uint64_t ConvertSpeakerLayoutToFFmpeg(const WAVEFORMATEX* pFMT);
-static inline enum AVSampleFormat ConvertAudioFormat(enum Media::AudioFormat s);
+static inline enum AVSampleFormat ConvertAudioFormat(const WAVEFORMATEX* pFMT);
 
 class FFmpegResampler
 {
@@ -34,8 +34,11 @@ private:
 	WAVEFORMATEX			m_waveFMTI;
 	WAVEFORMATEX			m_waveFMTO;
 	uint64_t				m_input_layout;
+	uint64_t				m_output_layout;
+	AVSampleFormat			m_input_format;
+	AVSampleFormat			m_output_format;
 	uint8_t*				m_output_buffer[MAX_AV_PLANES];
 	uint8_t*				m_input_buffer[MAX_AV_PLANES];
+	int32_t					m_output_size;
 	Callback<void(BYTE*, LONG, LPVOID)>	m_callback;
-	Media::TinyWaveFile			m_waveFile;
 };

@@ -5,8 +5,6 @@ namespace TinyUI
 {
 	namespace Media
 	{
-
-
 		AudioObserver::AudioObserver()
 		{
 

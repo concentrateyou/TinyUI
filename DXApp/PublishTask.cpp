@@ -31,7 +31,6 @@ BOOL PublishTask::Connect()
 
 BOOL PublishTask::Submit()
 {
-	m_aacFile.Create("D:\\abc.aac");
 	m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
 	Closure s = BindCallback(&PublishTask::OnMessagePump, this);
 	return TinyTaskBase::Submit(s);
@@ -62,7 +61,6 @@ void PublishTask::OnVideoDone(BYTE* bits, LONG size, const MediaTag& tag)
 
 void PublishTask::OnAudioDone(BYTE* bits, LONG size, const MediaTag& tag)
 {
-	m_aacFile.Write(bits, size);
 	Sample sample;
 	memcpy(&sample.mediaTag, &tag, sizeof(tag));
 	sample.size = size;

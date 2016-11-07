@@ -55,7 +55,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;__STDC_CONSTANT_MACROS;__STDC_LIMIT_MACROS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(DXSDK_DIR)Include;..\TinyUI;..\DXFramework;..\DShowCapture;..\ThirdParty\vld;..\ThirdParty\librtmp\include;..\ThirdParty\libfaac\include;..\ThirdParty\ffmpeg\include;..\ThirdParty\x264;..\ThirdParty\libsamplerate\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DXSDK_DIR)Include;..\TinyUI;..\DXFramework;..\DShowCapture;..\WebRTCNS;..\ThirdParty\vld;..\ThirdParty\librtmp\include;..\ThirdParty\libfaac\include;..\ThirdParty\ffmpeg\include;..\ThirdParty\x264;..\ThirdParty\libsamplerate\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -96,6 +96,7 @@
     <ClInclude Include="FaacEncode.h" />
     <ClInclude Include="AudioEncode.h" />
     <ClInclude Include="FFmpegResampler.h" />
+    <ClInclude Include="NoiseSuppression.h" />
     <ClInclude Include="PublishTask.h" />
     <ClInclude Include="RenderTask.h" />
     <ClInclude Include="DXApp.h" />
@@ -116,6 +117,7 @@
     <ClCompile Include="FaacEncode.cpp" />
     <ClCompile Include="AudioEncode.cpp" />
     <ClCompile Include="FFmpegResampler.cpp" />
+    <ClCompile Include="NoiseSuppression.cpp" />
     <ClCompile Include="PublishTask.cpp" />
     <ClCompile Include="RenderTask.cpp" />
     <ClCompile Include="DXApp.cpp" />

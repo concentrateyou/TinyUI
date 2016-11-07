@@ -34,9 +34,9 @@ private:
 	AudioCapture		m_capture;
 	AudioCapture::Name	m_name;
 	AudioCaptureParam	m_audioParam;
-	Media::TinyWASAPIAudioCapture	m_wasCapture;
-	TinyMFResampler		m_resampler;
-	BYTE				m_buffer[4096];
+	FFmpegResampler		m_resampler;
+	BYTE				m_bits[4096];
+	Media::TinyWASAPIAudioCapture						m_wasCapture;
 	TinyUI::Callback<void(BYTE*, LONG, LPVOID)>			m_resample16CB;
 	TinyUI::Callback<void(FLOAT*, LONG, LPVOID)>		m_resample16CBF;
 	TinyUI::Callback<void(BYTE*, LONG, LPVOID)>			m_wasCB;
