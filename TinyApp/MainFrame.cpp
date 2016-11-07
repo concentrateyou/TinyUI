@@ -60,14 +60,23 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 	m_videoStop.EVENT_Click += m_onVideoStop;
 	m_videoStop.SetText("‘›Õ£ ”∆µ≤∂ªÒ");
 
-	m_onAudioStart.Reset(new Delegate<void(void*, INT)>(this, &CMainFrame::OnAudioStart));
-	m_onAudioStop.Reset(new Delegate<void(void*, INT)>(this, &CMainFrame::OnAudioStop));
-	m_audioStart.Create(m_hWND, 400, 50, 150, 23);
-	m_audioStart.EVENT_Click += m_onAudioStart;
-	m_audioStart.SetText("ø™ º“Ù∆µ≤∂ªÒ");
-	m_audioStop.Create(m_hWND, 400, 80, 150, 23);
-	m_audioStop.EVENT_Click += m_onAudioStop;
-	m_audioStop.SetText("‘›Õ£“Ù∆µ≤∂ªÒ");
+	m_onAudioInputStart.Reset(new Delegate<void(void*, INT)>(this, &CMainFrame::OnAudioInputStart));
+	m_onAudioInputStop.Reset(new Delegate<void(void*, INT)>(this, &CMainFrame::OnAudioInputStop));
+	m_audioInputStart.Create(m_hWND, 400, 50, 150, 23);
+	m_audioInputStart.EVENT_Click += m_onAudioInputStart;
+	m_audioInputStart.SetText("ø™ º“Ù∆µ≤∂ªÒ");
+	m_audioInputStop.Create(m_hWND, 400, 80, 150, 23);
+	m_audioInputStop.EVENT_Click += m_onAudioInputStop;
+	m_audioInputStop.SetText("‘›Õ£“Ù∆µ≤∂ªÒ");
+
+	m_onAudioOutputStart.Reset(new Delegate<void(void*, INT)>(this, &CMainFrame::OnAudioOutputStart));
+	m_onAudioOutputStop.Reset(new Delegate<void(void*, INT)>(this, &CMainFrame::OnAudioOutputStop));
+	m_audioOutputStart.Create(m_hWND, 800, 50, 150, 23);
+	m_audioOutputStart.EVENT_Click += m_onAudioOutputStart;
+	m_audioOutputStart.SetText("ø™ º“Ù∆µ≤∂ªÒ");
+	m_audioOutputStop.Create(m_hWND, 800, 80, 150, 23);
+	m_audioOutputStop.EVENT_Click += m_onAudioOutputStop;
+	m_audioOutputStop.SetText("‘›Õ£“Ù∆µ≤∂ªÒ");
 
 	m_control.Create(m_hWND, 20, 120, 1024, 768);
 	m_control.SetText("≤‚ ‘");
@@ -85,18 +94,32 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 		m_videoDevice1.AddString(m_videoNames[i].name().c_str());
 	}
 
-	m_audioDevice1.Create(m_hWND, 400, 20, 150, 23);
-	m_onAudioChange1.Reset(new Delegate<void(INT)>(this, &CMainFrame::OnAudioSelectChange1));
-	m_audioDevice1.EVENT_SelectChange += m_onAudioChange1;
-	m_audioDevice2.Create(m_hWND, 600, 20, 150, 23);
-	m_onAudioChange2.Reset(new Delegate<void(INT)>(this, &CMainFrame::OnAudioSelectChange2));
-	m_audioDevice2.EVENT_SelectChange += m_onAudioChange2;
-	m_audioNames.clear();
-	DShow::AudioCapture::GetDevices(m_audioNames);
-	for (UINT i = 0; i < m_audioNames.size(); i++)
+	m_audioInput1.Create(m_hWND, 400, 20, 150, 23);
+	m_onAudioInputChange1.Reset(new Delegate<void(INT)>(this, &CMainFrame::OnAudioInputSelectChange1));
+	m_audioInput1.EVENT_SelectChange += m_onAudioInputChange1;
+	m_audioInput2.Create(m_hWND, 600, 20, 150, 23);
+	m_onAudioInputChange2.Reset(new Delegate<void(INT)>(this, &CMainFrame::OnAudioInputSelectChange2));
+	m_audioInput2.EVENT_SelectChange += m_onAudioInputChange2;
+	m_audioInputNames.clear();
+	DShow::AudioCapture::GetDevices(m_audioInputNames);
+	for (UINT i = 0; i < m_audioInputNames.size(); i++)
 	{
-		m_audioDevice1.AddString(m_audioNames[i].name().c_str());
+		m_audioInput1.AddString(m_audioInputNames[i].name().c_str());
 	}
+
+	m_audioOutput1.Create(m_hWND, 800, 20, 150, 23);
+	m_onAudioOutputChange1.Reset(new Delegate<void(INT)>(this, &CMainFrame::OnAudioOutputSelectChange1));
+	m_audioOutput1.EVENT_SelectChange += m_onAudioInputChange1;
+	m_audioOutput2.Create(m_hWND, 1000, 20, 150, 23);
+	m_onAudioOutputChange2.Reset(new Delegate<void(INT)>(this, &CMainFrame::OnAudioOutputSelectChange2));
+	m_audioOutput2.EVENT_SelectChange += m_onAudioOutputChange2;
+	m_audioOutputNames.clear();
+	DShow::AudioCapture::GetDevices(m_audioOutputNames);
+	for (UINT i = 0; i < m_audioOutputNames.size(); i++)
+	{
+		m_audioOutput1.AddString(m_audioOutputNames[i].name().c_str());
+	}
+
 	return FALSE;
 }
 
@@ -108,17 +131,22 @@ LRESULT CMainFrame::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHa
 		m_renderTask->Close(INFINITE);
 	}
 	m_videoDevice.Uninitialize();
-	m_audioDevice.Uninitialize();
+	m_audioInput.Uninitialize();
 
 	m_videoStart.EVENT_Click -= m_onVideoStart;
 	m_videoStop.EVENT_Click -= m_onVideoStop;
 	m_videoDevice1.EVENT_SelectChange -= m_onVideoChange1;
 	m_videoDevice2.EVENT_SelectChange -= m_onVideoChange2;
 
-	m_audioStart.EVENT_Click -= m_onAudioStart;
-	m_audioStop.EVENT_Click -= m_onAudioStop;
-	m_audioDevice1.EVENT_SelectChange -= m_onAudioChange1;
-	m_audioDevice2.EVENT_SelectChange -= m_onAudioChange2;
+	m_audioInputStart.EVENT_Click -= m_onAudioInputStart;
+	m_audioInputStop.EVENT_Click -= m_onAudioInputStop;
+	m_audioInput1.EVENT_SelectChange -= m_onAudioInputChange1;
+	m_audioInput2.EVENT_SelectChange -= m_onAudioInputChange2;
+
+	m_audioOutputStart.EVENT_Click -= m_onAudioOutputStart;
+	m_audioOutputStop.EVENT_Click -= m_onAudioOutputStop;
+	m_audioOutput1.EVENT_SelectChange -= m_onAudioOutputChange1;
+	m_audioOutput2.EVENT_SelectChange -= m_onAudioOutputChange2;
 
 	m_capture.Close();
 
@@ -162,34 +190,59 @@ void CMainFrame::OnVideoSelectChange2(INT index)
 	m_renderTask->Submit();
 }
 
-void CMainFrame::OnAudioSelectChange1(INT index)
+void CMainFrame::OnAudioInputSelectChange1(INT index)
 {
-	m_audioParams.clear();
-	m_audioDevice2.ResetContent();
-	DShow::AudioCapture::GetDeviceParams(m_audioNames[index], m_audioParams);
-	for (UINT i = 0; i < m_audioParams.size(); i++)
+	m_audioInputParams.clear();
+	m_audioInput2.ResetContent();
+	DShow::AudioCapture::GetDeviceParams(m_audioInputNames[index], m_audioInputParams);
+	for (UINT i = 0; i < m_audioInputParams.size(); i++)
 	{
-		m_audioDevice2.AddString(m_audioParams[i].ToString().c_str());
+		m_audioInput2.AddString(m_audioInputParams[i].ToString().c_str());
 	}
 }
-void CMainFrame::OnAudioSelectChange2(INT index)
+void CMainFrame::OnAudioInputSelectChange2(INT index)
 {
-	const DShow::AudioCaptureParam& param = m_audioParams[index];
-	m_audioDevice.Uninitialize();
-	m_audioCB = BindCallback(&CMainFrame::OnAudio, this);
-	m_audioDevice.Initialize(m_audioNames[m_audioDevice1.GetCurSel()], m_audioCB);
-	m_audioDevice.Allocate(param);
-	/*m_resampleCB = BindCallback(&CMainFrame::OnResmpleDataAvailable, this);
-	m_wasCB = BindCallback(&CMainFrame::OnWASDataAvailable, this);
-	m_wasAudio.Initialize(m_wasCB);
-	m_wasAudio.Open();
-	m_resampler.Open(m_wasAudio.GetInputFormat(), &param.GetFormat(), m_resampleCB);
-	m_wasAudio.Start();*/
+	const DShow::AudioCaptureParam& param = m_audioInputParams[index];
+	m_audioInput.Uninitialize();
+	m_audioInputCB = BindCallback(&CMainFrame::OnAudioInput, this);
+	m_audioInput.Initialize(m_audioInputNames[m_audioInput1.GetCurSel()], m_audioInputCB);
+	m_audioInput.Allocate(param);
 }
 
-void CMainFrame::OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)
+void CMainFrame::OnAudioInput(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)
 {
-	m_waveFile.Write(bits, size);
+
+}
+
+void CMainFrame::OnAudioOutputSelectChange1(INT index)
+{
+	m_audioOutputParams.clear();
+	m_audioOutput2.ResetContent();
+	DShow::AudioCapture::GetDeviceParams(m_audioOutputNames[index], m_audioOutputParams);
+	for (UINT i = 0; i < m_audioOutputParams.size(); i++)
+	{
+		m_audioOutput2.AddString(m_audioOutputParams[i].ToString().c_str());
+	}
+}
+void CMainFrame::OnAudioOutputSelectChange2(INT index)
+{
+	const DShow::AudioCaptureParam& param = m_audioOutputParams[index];
+	m_audioOutput.Uninitialize();
+	m_audioOutputCB = BindCallback(&CMainFrame::OnAudioOutput, this);
+	m_audioOutput.Initialize(m_audioOutputNames[m_audioOutput1.GetCurSel()], m_audioOutputCB);
+	m_audioOutput.Allocate(param);
+}
+void CMainFrame::OnAudioOutputStart(void*, INT)
+{
+
+}
+void CMainFrame::OnAudioOutputStop(void*, INT)
+{
+
+}
+void CMainFrame::OnAudioOutput(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)
+{
+
 }
 
 
@@ -202,31 +255,11 @@ void CMainFrame::OnVideoStop(void*, INT)
 	m_videoDevice.Stop();
 }
 
-void CMainFrame::OnAudioStart(void*, INT)
+void CMainFrame::OnAudioInputStart(void*, INT)
 {
-	m_audioDevice.Start();
+	m_audioInput.Start();
 }
-void CMainFrame::OnAudioStop(void*, INT)
+void CMainFrame::OnAudioInputStop(void*, INT)
 {
-	m_audioDevice.Stop();
+	m_audioInput.Stop();
 }
-
-
-void CMainFrame::OnResmpleDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
-{
-	/*if (m_buffer.m_size >= 2048)
-	{
-		m_buffer.Add(bits, size);
-	}
-	else
-	{
-		m_buffer.Remove(0, size);
-	}*/
-}
-
-void CMainFrame::OnWASDataAvailable(BYTE* bits, LONG count, LPVOID lpParameter)
-{
-	//INT s = m_wasAudio.GetInputFormat()->nBlockAlign;
-	//m_resampler.Resample(bits, s*count);
-}
-

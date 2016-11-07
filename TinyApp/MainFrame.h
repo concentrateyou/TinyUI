@@ -36,15 +36,17 @@ public:
 	void OnVideoStart(void*, INT);
 	void OnVideoStop(void*, INT);
 
-	void OnAudioSelectChange1(INT index);
-	void OnAudioSelectChange2(INT index);
-	void OnAudioStart(void*, INT);
-	void OnAudioStop(void*, INT);
+	void OnAudioInputSelectChange1(INT index);
+	void OnAudioInputSelectChange2(INT index);
+	void OnAudioInputStart(void*, INT);
+	void OnAudioInputStop(void*, INT);
+	void OnAudioInput(BYTE* bits, LONG size, FLOAT ts, LPVOID ps);
 
-	void OnWASDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter);
-	void OnResmpleDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter);
-
-	void OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps);
+	void OnAudioOutputSelectChange1(INT index);
+	void OnAudioOutputSelectChange2(INT index);
+	void OnAudioOutputStart(void*, INT);
+	void OnAudioOutputStop(void*, INT);
+	void OnAudioOutput(BYTE* bits, LONG size, FLOAT ts, LPVOID ps);
 
 private:
 	Media::TinyWASAPIAudioCapture	m_capture;
@@ -62,28 +64,34 @@ private:
 	vector<DShow::VideoCapture::Name> m_videoNames;
 	vector<DShow::VideoCaptureParam>  m_videoParams;
 
-	DShow::AudioCapture m_audioDevice;
-	vector<DShow::AudioCapture::Name> m_audioNames;
-	vector<DShow::AudioCaptureParam>  m_audioParams;
-
 	TinyScopedPtr<RenderTask>		m_renderTask;
 
-	TinyScopedPtr<Delegate<void(INT)>> m_onAudioChange1;
-	TinyScopedPtr<Delegate<void(INT)>> m_onAudioChange2;
-	TinyScopedPtr<Delegate<void(void*, INT)>> m_onAudioStart;
-	TinyScopedPtr<Delegate<void(void*, INT)>> m_onAudioStop;
+	DShow::AudioCapture m_audioInput;
+	vector<DShow::AudioCapture::Name> m_audioInputNames;
+	vector<DShow::AudioCaptureParam>  m_audioInputParams;
+	TinyScopedPtr<Delegate<void(INT)>> m_onAudioInputChange1;
+	TinyScopedPtr<Delegate<void(INT)>> m_onAudioInputChange2;
+	TinyScopedPtr<Delegate<void(void*, INT)>> m_onAudioInputStart;
+	TinyScopedPtr<Delegate<void(void*, INT)>> m_onAudioInputStop;
+	TinyUI::Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_audioInputCB;
+	TinyComboBox		m_audioInput1;
+	TinyComboBox		m_audioInput2;
+	TinyButton			m_audioInputStart;
+	TinyButton			m_audioInputStop;
 
-	TinyUI::Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_audioCB;
 
-	TinyUI::Callback<void(BYTE*, LONG, LPVOID)> m_wasCB;
-	Media::TinyWASAPIAudioCapture				m_wasAudio;
-	TinyUI::Callback<void(BYTE*, LONG, LPVOID)> m_resampleCB;
-	Media::TinyMFResampler						m_resampler;
-	TinyFile									m_aacFile;
+	DShow::AudioCapture m_audioOutput;
+	vector<DShow::AudioCapture::Name> m_audioOutputNames;
+	vector<DShow::AudioCaptureParam>  m_audioOutputParams;
+	TinyScopedPtr<Delegate<void(INT)>> m_onAudioOutputChange1;
+	TinyScopedPtr<Delegate<void(INT)>> m_onAudioOutputChange2;
+	TinyScopedPtr<Delegate<void(void*, INT)>> m_onAudioOutputStart;
+	TinyScopedPtr<Delegate<void(void*, INT)>> m_onAudioOutputStop;
+	TinyUI::Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_audioOutputCB;
+	TinyComboBox		m_audioOutput1;
+	TinyComboBox		m_audioOutput2;
+	TinyButton			m_audioOutputStart;
+	TinyButton			m_audioOutputStop;
 
-	TinyComboBox		m_audioDevice1;
-	TinyComboBox		m_audioDevice2;
-	TinyButton			m_audioStart;
-	TinyButton			m_audioStop;
 };
 
