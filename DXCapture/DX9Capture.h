@@ -19,7 +19,6 @@ namespace DXCapture
 		void Reset();
 		void Setup(IDirect3DDevice9 *pThis);
 		BOOL DX9GPUHook(IDirect3DDevice9 *device);
-		BOOL SaveBitmap(LPCSTR pzFile);
 		static DX9Capture& Instance();
 	private:
 		BOOL BuildEvents();

@@ -37,8 +37,6 @@ BOOL AudioEncode::Initialize(const AudioCapture::Name& name, const AudioCaptureP
 	bRes = m_capture.Allocate(param);
 	if (!bRes)
 		return FALSE;
-	m_wasCB = BindCallback(&AudioEncode::OnDataAvailable, this);
-	m_wasCapture.Initialize(m_wasCB);
 	return TRUE;
 }
 
@@ -46,16 +44,6 @@ BOOL AudioEncode::Open(DWORD dwAudioRate)
 {
 	WAVEFORMATEX s = m_audioParam.GetFormat();
 	BOOL bRes = m_aac.Open(s, (DWORD)dwAudioRate);
-	if (!bRes)
-		return FALSE;
-	bRes = m_wasCapture.Open();
-	if (!bRes)
-		return FALSE;
-	m_resample16CB = BindCallback(&AudioEncode::OnResampleDataAvailable16, this);
-	m_resampler.Open(m_wasCapture.GetInputFormat(), &s, m_resample16CB);
-	if (!bRes)
-		return FALSE;
-	bRes = m_wasCapture.Start();
 	if (!bRes)
 		return FALSE;
 	return TRUE;
@@ -70,32 +58,7 @@ BOOL AudioEncode::Close()
 {
 	m_capture.Uninitialize();
 	m_aac.Close();
-	m_wasCapture.Close();
-	m_resampler.Close();
 	return TRUE;
-}
-
-void AudioEncode::OnResampleDataAvailable16(BYTE* bits, LONG count, LPVOID lpParameter)
-{
-	if ((m_dwOffset + count * 4) >= 4096)
-	{
-		DWORD dwL = 4096 - m_dwOffset;
-		memcpy(m_bits + m_dwOffset, bits, dwL);
-		m_aac.Encode(m_bits, 4096, m_dwINC);
-		memset(m_bits, 0, 4096);
-		m_dwOffset = count * 4 - dwL;
-		memcpy(m_bits, bits + dwL, m_dwOffset);
-	}
-	else
-	{
-		memcpy(m_bits + m_dwOffset, bits, count * 4);
-		m_dwOffset += (count * 4);
-	}
-}
-
-void AudioEncode::OnDataAvailable(BYTE* bits, LONG count, LPVOID lpParameter)
-{
-	m_resampler.Resample(bits, count);
 }
 
 void AudioEncode::OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)

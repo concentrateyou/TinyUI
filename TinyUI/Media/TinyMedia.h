@@ -89,7 +89,6 @@ namespace TinyUI
 			return (SpeakerLayout)pFMT->nChannels;
 		}
 
-
 		class AudioObserver : public TinyLock
 		{
 			DECLARE_DYNAMIC(AudioObserver)

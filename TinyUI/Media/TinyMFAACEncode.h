@@ -13,9 +13,14 @@ namespace TinyUI
 			TinyMFAACEncode();
 			~TinyMFAACEncode();
 		public:
+			BOOL Initialize(const WAVEFORMATEX* pFMTI,const WAVEFORMATEX* pFMTO);
+		public:
 			BOOL Open();
-			BOOL Encode();
 			BOOL Close();
+		private:
+			TinyComPtr<IMFTransform>	m_transform;
+			TinyComPtr<IMFMediaType>	m_inputType;
+			TinyComPtr<IMFMediaType>	m_outputType;
 		};
 	};
 }

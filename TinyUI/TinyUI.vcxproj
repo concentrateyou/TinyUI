@@ -151,6 +151,7 @@
     <ClInclude Include="IO\TinySharedMemory.h" />
     <ClInclude Include="IO\TinyTaskBase.h" />
     <ClInclude Include="IO\TinyWin32TaskPool.h" />
+    <ClInclude Include="Media\TinyAudioAEC.h" />
     <ClInclude Include="Media\TinyMedia.h" />
     <ClInclude Include="Media\TinyMFAACEncode.h" />
     <ClInclude Include="Media\TinyMFH264Encode.h" />
@@ -252,6 +253,7 @@
     <ClCompile Include="IO\TinySharedMemory.cpp" />
     <ClCompile Include="IO\TinyTaskBase.cpp" />
     <ClCompile Include="IO\TinyWin32TaskPool.cpp" />
+    <ClCompile Include="Media\TinyAudioAEC.cpp" />
     <ClCompile Include="Media\TinyMedia.cpp" />
     <ClCompile Include="Media\TinyMFAACEncode.cpp" />
     <ClCompile Include="Media\TinyMFH264Encode.cpp" />

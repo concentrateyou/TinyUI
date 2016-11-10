@@ -16,11 +16,11 @@ namespace TinyUI
 		BOOL TinyMFResampler::CreateResampler(const WAVEFORMATEX* pInputFormat, const WAVEFORMATEX* pOutputFormat)
 		{
 			HRESULT hRes = S_OK;
-			TinyComPtr<IUnknown> transform;
-			hRes = transform.CoCreateInstance(CLSID_CResamplerMediaObject, NULL, CLSCTX_INPROC_SERVER);
+			TinyComPtr<IUnknown> unknow;
+			hRes = unknow.CoCreateInstance(CLSID_CResamplerMediaObject, NULL, CLSCTX_INPROC_SERVER);
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = transform->QueryInterface(IID_PPV_ARGS(&m_resampler));
+			hRes = unknow->QueryInterface(IID_PPV_ARGS(&m_resampler));
 			if (hRes != S_OK)
 				return FALSE;
 			TinyComPtr<IMFMediaType> inputMediaType;
@@ -44,7 +44,7 @@ namespace TinyUI
 			if (hRes != S_OK)
 				return FALSE;
 			TinyComPtr<IWMResamplerProps> resamplerProps;
-			hRes = transform->QueryInterface(IID_PPV_ARGS(&resamplerProps));
+			hRes = unknow->QueryInterface(IID_PPV_ARGS(&resamplerProps));
 			if (hRes != S_OK)
 				return FALSE;
 			hRes = resamplerProps->SetHalfFilterLength(60);

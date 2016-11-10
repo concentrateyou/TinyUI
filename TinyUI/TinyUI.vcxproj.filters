@@ -369,6 +369,9 @@
     <ClInclude Include="Media\TinyMFAACEncode.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
+    <ClInclude Include="Media\TinyAudioAEC.h">
+      <Filter>头文件\Media</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -669,6 +672,9 @@
       <Filter>源文件\Media</Filter>
     </ClCompile>
     <ClCompile Include="Media\TinyMFH264Encode.cpp">
+      <Filter>源文件\Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\TinyAudioAEC.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
   </ItemGroup>
