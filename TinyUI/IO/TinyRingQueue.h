@@ -15,9 +15,9 @@ namespace TinyUI
 	namespace IO
 	{
 		/// <summary>
-		/// 高效的循环队列(Linux FIFO)
+		/// 高效的无锁循环队列(Linux FIFO)
 		/// 大小必须是2的整数幂
-		/// 适用单个消费者和生产者
+		/// 适用单个消费者和生产者(线程安全)
 		/// </summary>
 		class TinyRingQueue
 		{

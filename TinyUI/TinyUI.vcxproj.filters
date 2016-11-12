@@ -354,9 +354,6 @@
     <ClInclude Include="IO\TinyTaskBase.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
-    <ClInclude Include="IO\TinyConcurrentQueue.h">
-      <Filter>头文件\IO</Filter>
-    </ClInclude>
     <ClInclude Include="Media\TinyWASAPIAudioCapture.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
@@ -657,9 +654,6 @@
       <Filter>源文件\IO</Filter>
     </ClCompile>
     <ClCompile Include="IO\TinyTaskBase.cpp">
-      <Filter>源文件\IO</Filter>
-    </ClCompile>
-    <ClCompile Include="IO\TinyConcurrentQueue.cpp">
       <Filter>源文件\IO</Filter>
     </ClCompile>
     <ClCompile Include="Media\TinyWASAPIAudioCapture.cpp">
