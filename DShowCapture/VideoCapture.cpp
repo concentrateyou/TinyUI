@@ -137,7 +137,7 @@ namespace DShow
 			ScopedMediaType mediaType;
 			VIDEO_STREAM_CONFIG_CAPS caps;
 			hRes = streamConfig->GetStreamCaps(i, mediaType.Receive(), (BYTE*)&caps);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			if (mediaType->majortype == MEDIATYPE_Video && mediaType->formattype == FORMAT_VideoInfo)
 			{

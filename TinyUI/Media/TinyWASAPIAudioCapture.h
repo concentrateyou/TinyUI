@@ -50,7 +50,6 @@ namespace TinyUI
 			virtual BOOL	SetMute(BOOL bMute);
 			virtual BOOL	GetMute(BOOL* bMute);
 			WAVEFORMATEX*	GetInputFormat() const;
-			SpeakerLayout	GetSpeakerLayout() const;
 			BOOL			GetStreamLatency(REFERENCE_TIME& latency);
 		private:
 			void			OnMessagePump();

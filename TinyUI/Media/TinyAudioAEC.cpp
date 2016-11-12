@@ -17,16 +17,16 @@ namespace TinyUI
 		{
 			TinyComPtr<IUnknown> unknow;
 			HRESULT hRes = unknow.CoCreateInstance(CLSID_CWMAudioAEC, NULL, CLSCTX_INPROC_SERVER);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			hRes = unknow->QueryInterface(IID_PPV_ARGS(&m_dmo));
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			hRes = m_dmo->QueryInterface(IID_IPropertyStore, reinterpret_cast<void**>(&m_propertyStore));
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			hRes = MoInitMediaType(&m_mediaType, sizeof(WAVEFORMATEX));
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			m_mediaType.majortype = MEDIATYPE_Audio;
 			m_mediaType.subtype = MEDIASUBTYPE_PCM;

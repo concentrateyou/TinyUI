@@ -22,11 +22,13 @@ namespace TinyUI
 			virtual void OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter);
 		private:
 			BOOL CreateResampler(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO);
-			BOOL CreateInputSample(const BYTE* bits, DWORD size, TinyComPtr<IMFSample>& sample);
-			BOOL CreateOutputSample(TinyComPtr<IMFSample>& sample, DWORD dwSize);
-			BOOL GetOutputSample(TinyComPtr<IMFSample>& sample, DWORD dwSize);
+			BOOL CreateInputSample(const BYTE* bits, DWORD size);
+			BOOL CreateOutputSample(DWORD dwSize);
+			BOOL GetOutputSample(DWORD dwSize);
 		private:
 			TinyComPtr<IMFTransform>	m_resampler;
+			TinyComPtr<IMFSample>		m_inputSample;
+			TinyComPtr<IMFSample>		m_outputSample;
 			WAVEFORMATEX				m_waveFMTI;
 			WAVEFORMATEX				m_waveFMTO;
 			Callback<void(BYTE*, LONG, LPVOID)> m_callback;

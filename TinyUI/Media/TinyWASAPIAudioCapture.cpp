@@ -52,20 +52,20 @@ namespace TinyUI
 			WAVEFORMATEX* pFMT = NULL;
 			TinyComPtr<IMMDeviceEnumerator> enumerator;
 			HRESULT hRes = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			TinyComPtr<IMMDevice> mmDevice;
 			hRes = enumerator->GetDefaultAudioEndpoint(eRender, eConsole, &mmDevice);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			DWORD state = DEVICE_STATE_DISABLED;
 			hRes = mmDevice->GetState(&state);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			if (!(state & DEVICE_STATE_ACTIVE))
 				return FALSE;
 			hRes = mmDevice->Activate(__uuidof(IAudioClient), CLSCTX_INPROC_SERVER, NULL, (void**)&m_audioClient);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			hRes = m_audioClient->GetMixFormat(&pFMT);
 			if (hRes != S_OK)
@@ -136,7 +136,7 @@ namespace TinyUI
 			if (!m_task.Submit(s))
 				return FALSE;
 			HRESULT hRes = m_audioClient->Start();
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			if (m_audioClientLB)
 			{
@@ -166,7 +166,7 @@ namespace TinyUI
 		BOOL TinyWASAPIAudioCapture::Reset()
 		{
 			HRESULT hRes = m_audioClient->Reset();
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			return TRUE;
 		}

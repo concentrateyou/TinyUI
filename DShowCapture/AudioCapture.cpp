@@ -171,7 +171,7 @@ namespace DShow
 			ScopedMediaType mediaType;
 			AUDIO_STREAM_CONFIG_CAPS caps;
 			hRes = streamConfig->GetStreamCaps(i, mediaType.Receive(), (BYTE*)&caps);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			//目前只支持PCM采集
 			if (mediaType->majortype == MEDIATYPE_Audio && mediaType->formattype == FORMAT_WaveFormatEx)

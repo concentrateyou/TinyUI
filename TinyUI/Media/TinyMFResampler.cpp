@@ -18,37 +18,37 @@ namespace TinyUI
 			HRESULT hRes = S_OK;
 			TinyComPtr<IUnknown> unknow;
 			hRes = unknow.CoCreateInstance(CLSID_CResamplerMediaObject, NULL, CLSCTX_INPROC_SERVER);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			hRes = unknow->QueryInterface(IID_PPV_ARGS(&m_resampler));
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			TinyComPtr<IMFMediaType> inputMediaType;
 			hRes = MFCreateMediaType(&inputMediaType);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			hRes = MFInitMediaTypeFromWaveFormatEx(inputMediaType, pInputFormat, sizeof(WAVEFORMATEX) + pInputFormat->cbSize);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			hRes = m_resampler->SetInputType(0, inputMediaType, 0);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			TinyComPtr<IMFMediaType> outputMediaType;
 			hRes = MFCreateMediaType(&outputMediaType);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			hRes = MFInitMediaTypeFromWaveFormatEx(outputMediaType, pOutputFormat, sizeof(WAVEFORMATEX) + pOutputFormat->cbSize);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			hRes = m_resampler->SetOutputType(0, outputMediaType, 0);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			TinyComPtr<IWMResamplerProps> resamplerProps;
 			hRes = unknow->QueryInterface(IID_PPV_ARGS(&resamplerProps));
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			hRes = resamplerProps->SetHalfFilterLength(60);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			return TRUE;
 		}
@@ -62,63 +62,108 @@ namespace TinyUI
 				return FALSE;
 			HRESULT hRes = S_OK;
 			hRes = m_resampler->ProcessMessage(MFT_MESSAGE_COMMAND_FLUSH, NULL);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			hRes = m_resampler->ProcessMessage(MFT_MESSAGE_NOTIFY_BEGIN_STREAMING, NULL);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			hRes = m_resampler->ProcessMessage(MFT_MESSAGE_NOTIFY_START_OF_STREAM, NULL);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			return TRUE;
 		}
-		BOOL TinyMFResampler::CreateInputSample(const BYTE* bits, DWORD size, TinyComPtr<IMFSample>& sample)
+		BOOL TinyMFResampler::CreateInputSample(const BYTE* bits, DWORD size)
 		{
-			HRESULT hRes = MFCreateSample(&sample);
-			if (hRes != S_OK)
-				return FALSE;
+			HRESULT hRes = S_OK;
 			TinyComPtr<IMFMediaBuffer> buffer;
-			hRes = MFCreateMemoryBuffer(size, &buffer);
-			if (hRes != S_OK)
+			if (!m_inputSample)
+			{
+				hRes = MFCreateSample(&m_inputSample);
+				if (FAILED(hRes))
+					return FALSE;
+				hRes = MFCreateMemoryBuffer(size, &buffer);
+				if (FAILED(hRes))
+					return FALSE;
+			}
+			hRes = m_inputSample->GetBufferByIndex(0, &buffer);
+			if (FAILED(hRes))
 				return FALSE;
+			DWORD dwMax = 0;
+			hRes = buffer->GetMaxLength(&dwMax);
+			if (FAILED(hRes))
+				return FALSE;
+			if (dwMax < size)
+			{
+				hRes = m_inputSample->RemoveAllBuffers();
+				if (FAILED(hRes))
+					return FALSE;
+				hRes = MFCreateMemoryBuffer(size, &buffer);
+				if (FAILED(hRes))
+					return FALSE;
+				hRes = m_inputSample->AddBuffer(buffer);
+				if (FAILED(hRes))
+					return FALSE;
+			}
 			BYTE* ps = NULL;
 			hRes = buffer->Lock(&ps, NULL, NULL);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			memcpy(ps, bits, size);
 			hRes = buffer->Unlock();
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			hRes = buffer->SetCurrentLength(size);
-			if (hRes != S_OK)
-				return FALSE;
-			return sample->AddBuffer(buffer) == S_OK;
-		}
-		BOOL TinyMFResampler::CreateOutputSample(TinyComPtr<IMFSample>& sample, DWORD dwSize)
-		{
-			HRESULT hRes = MFCreateSample(&sample);
-			if (hRes != S_OK)
-				return FALSE;
-			TinyComPtr<IMFMediaBuffer> buffer;
-			hRes = MFCreateMemoryBuffer(dwSize, &buffer);
-			if (hRes != S_OK)
-				return FALSE;
-			hRes = sample->AddBuffer(buffer);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			return TRUE;
 		}
-		BOOL TinyMFResampler::GetOutputSample(TinyComPtr<IMFSample>& sample, DWORD dwSize)
+		BOOL TinyMFResampler::CreateOutputSample(DWORD dwSize)
+		{
+			HRESULT hRes = S_OK;
+			TinyComPtr<IMFMediaBuffer> buffer;
+			if (!m_outputSample)
+			{
+				hRes = MFCreateSample(&m_outputSample);
+				if (FAILED(hRes))
+					return FALSE;
+				hRes = MFCreateMemoryBuffer(dwSize, &buffer);
+				if (FAILED(hRes))
+					return FALSE;
+				hRes = m_outputSample->AddBuffer(buffer);
+				if (FAILED(hRes))
+					return FALSE;
+			}
+			hRes = m_outputSample->GetBufferByIndex(0, &buffer);
+			if (FAILED(hRes))
+				return FALSE;
+			DWORD dwMax = 0;
+			hRes = buffer->GetMaxLength(&dwMax);
+			if (FAILED(hRes))
+				return FALSE;
+			if (dwMax < dwSize)
+			{
+				hRes = m_outputSample->RemoveAllBuffers();
+				if (FAILED(hRes))
+					return FALSE;
+				hRes = MFCreateMemoryBuffer(dwSize, &buffer);
+				if (FAILED(hRes))
+					return FALSE;
+				hRes = m_outputSample->AddBuffer(buffer);
+				if (FAILED(hRes))
+					return FALSE;
+			}
+			return TRUE;
+		}
+		BOOL TinyMFResampler::GetOutputSample(DWORD dwSize)
 		{
 			ASSERT(m_resampler);
 			TinyBufferArray<BYTE>	sampleBuffer;
 			for (;;)
 			{
 				MFT_OUTPUT_DATA_BUFFER samples = { 0 };
-				TinyComPtr<IMFSample> s;
-				if (!CreateOutputSample(s, dwSize))
+				if (!CreateOutputSample(dwSize))
 					return FALSE;
-				samples.pSample = s;
+				samples.pSample = m_outputSample;
 				DWORD dwStatus;
 				HRESULT hRes = m_resampler->ProcessOutput(0, 1, &samples, &dwStatus);
 				if (hRes != S_OK)
@@ -151,8 +196,7 @@ namespace TinyUI
 		}
 		BOOL TinyMFResampler::Resample(const BYTE* bits, DWORD size)
 		{
-			TinyComPtr<IMFSample> inputSample;
-			if (!CreateInputSample(bits, size, inputSample))
+			if (!CreateInputSample(bits, size))
 				return FALSE;
 			DWORD dwStatus = 0;
 			HRESULT hRes = m_resampler->GetInputStatus(0, &dwStatus);
@@ -160,28 +204,26 @@ namespace TinyUI
 			{
 				return TRUE;
 			}
-			hRes = m_resampler->ProcessInput(0, inputSample, 0);
-			if (hRes != S_OK)
+			hRes = m_resampler->ProcessInput(0, m_inputSample, 0);
+			if (FAILED(hRes))
 				return FALSE;
 			DWORD dwSize = (DWORD)((LONGLONG)size * m_waveFMTO.nAvgBytesPerSec / m_waveFMTI.nAvgBytesPerSec);
 			dwSize = (dwSize + (m_waveFMTO.nBlockAlign - 1)) / m_waveFMTO.nBlockAlign * m_waveFMTO.nBlockAlign;
 			dwSize += 16 * m_waveFMTO.nBlockAlign;
-			//DWORD dwSize = 441;
-			TinyComPtr<IMFSample> outputSample;
-			return GetOutputSample(outputSample, dwSize);
+			return GetOutputSample(dwSize);
 		}
 		BOOL TinyMFResampler::Close()
 		{
 			if (!m_resampler)
 				return FALSE;
 			HRESULT hRes = m_resampler->ProcessMessage(MFT_MESSAGE_NOTIFY_END_OF_STREAM, NULL);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			hRes = m_resampler->ProcessMessage(MFT_MESSAGE_COMMAND_DRAIN, NULL);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			hRes = m_resampler->ProcessMessage(MFT_MESSAGE_NOTIFY_END_STREAMING, NULL);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			m_resampler.Release();
 			return TRUE;
