@@ -16,7 +16,7 @@ FaacEncode*	AudioEncode::GetEncode()
 	return &m_aac;
 }
 
-AudioCapture* AudioEncode::GetCapture()
+AudioInputCapture* AudioEncode::GetCapture()
 {
 	return &m_capture;
 }
@@ -26,7 +26,7 @@ AudioCaptureParam*	AudioEncode::GetParam()
 	return &m_audioParam;
 }
 
-BOOL AudioEncode::Initialize(const AudioCapture::Name& name, const AudioCaptureParam& param)
+BOOL AudioEncode::Initialize(const AudioInputCapture::Name& name, const AudioCaptureParam& param)
 {
 	m_name = name;
 	m_audioParam = param;

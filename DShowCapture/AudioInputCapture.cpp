@@ -1,49 +1,49 @@
 #include "stdafx.h"
-#include "AudioCapture.h"
+#include "AudioInputCapture.h"
 #include "ScopedMediaType.h"
 
 namespace DShow
 {
-	AudioCapture::Name::Name()
+	AudioInputCapture::Name::Name()
 	{
 
 	}
-	AudioCapture::Name::Name(const string& name, const string& id)
+	AudioInputCapture::Name::Name(const string& name, const string& id)
 		:m_name(name),
 		m_id(id)
 	{
 
 	}
-	AudioCapture::Name::Name(string&& name, string&& id)
+	AudioInputCapture::Name::Name(string&& name, string&& id)
 		: m_name(std::move(name)),
 		m_id(std::move(id))
 	{
 
 	}
-	AudioCapture::Name::~Name()
+	AudioInputCapture::Name::~Name()
 	{
 
 	}
-	const string& AudioCapture::Name::name() const
+	const string& AudioInputCapture::Name::name() const
 	{
 		return m_name;
 	}
-	const string& AudioCapture::Name::id() const
+	const string& AudioInputCapture::Name::id() const
 	{
 		return m_id;
 	}
 
-	AudioCapture::AudioCapture()
+	AudioInputCapture::AudioInputCapture()
 		:m_size(0)
 	{
 	}
 
-	AudioCapture::~AudioCapture()
+	AudioInputCapture::~AudioInputCapture()
 	{
 		Uninitialize();
 	}
 
-	void AudioCapture::OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter)
+	void AudioInputCapture::OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter)
 	{
 		if (!m_callback.IsNull())
 		{
@@ -60,7 +60,7 @@ namespace DShow
 			m_queue.WriteBytes(bits, size);
 		}
 	}
-	BOOL AudioCapture::Initialize(const Name& name)
+	BOOL AudioInputCapture::Initialize(const Name& name)
 	{
 		HRESULT hRes = m_builder.CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER);
 		if (FAILED(hRes))
@@ -87,7 +87,7 @@ namespace DShow
 			return FALSE;
 		return TRUE;
 	}
-	BOOL AudioCapture::Initialize(const Name& name, Callback<void(BYTE*, LONG, FLOAT, LPVOID)>& callback)
+	BOOL AudioInputCapture::Initialize(const Name& name, Callback<void(BYTE*, LONG, FLOAT, LPVOID)>& callback)
 	{
 		if (Initialize(name))
 		{
@@ -96,7 +96,7 @@ namespace DShow
 		}
 		return FALSE;
 	}
-	void AudioCapture::Uninitialize()
+	void AudioInputCapture::Uninitialize()
 	{
 		DeAllocate();
 		if (m_control)
@@ -113,48 +113,48 @@ namespace DShow
 		m_builder.Release();
 		m_sinkFilter = NULL;
 	}
-	void AudioCapture::SetVolume(INT volume)
+	void AudioInputCapture::SetVolume(INT volume)
 	{
 
 	}
-	INT AudioCapture::GetVolume() const
+	INT AudioInputCapture::GetVolume() const
 	{
 		return 0;
 	}
-	BOOL AudioCapture::Start()
+	BOOL AudioInputCapture::Start()
 	{
 		if (!m_control)
 			return FALSE;
 		return m_control->Run() == S_OK;
 	}
-	BOOL AudioCapture::Stop()
+	BOOL AudioInputCapture::Stop()
 	{
 		if (!m_control)
 			return FALSE;
 		return m_control->Stop() == S_OK;
 	}
-	BOOL AudioCapture::Pause()
+	BOOL AudioInputCapture::Pause()
 	{
 		if (!m_control)
 			return FALSE;
 		return m_control->Pause() == S_OK;
 	}
-	BYTE* AudioCapture::GetPointer()
+	BYTE* AudioInputCapture::GetPointer()
 	{
 		m_queue.ReadBytes(m_bits, m_size);
 		return m_bits;
 	}
-	LONG AudioCapture::GetSize()
+	LONG AudioInputCapture::GetSize()
 	{
 		return m_size;
 	}
-	BOOL AudioCapture::GetState(FILTER_STATE& state)
+	BOOL AudioInputCapture::GetState(FILTER_STATE& state)
 	{
 		if (!m_control)
 			return FALSE;
 		return m_control->GetState(0, (OAFilterState*)&state) == S_OK;
 	}
-	BOOL AudioCapture::Allocate(const AudioCaptureParam& param)
+	BOOL AudioInputCapture::Allocate(const AudioCaptureParam& param)
 	{
 		TinyComPtr<IAMStreamConfig> streamConfig;
 		HRESULT hRes = m_captureO->QueryInterface(&streamConfig);
@@ -204,7 +204,7 @@ namespace DShow
 		}
 		return FALSE;
 	}
-	void AudioCapture::DeAllocate()
+	void AudioInputCapture::DeAllocate()
 	{
 		if (m_builder)
 		{
@@ -212,7 +212,7 @@ namespace DShow
 			m_builder->Disconnect(m_sinkI);
 		}
 	}
-	BOOL AudioCapture::GetPinCategory(IPin* pPin, REFGUID category)
+	BOOL AudioInputCapture::GetPinCategory(IPin* pPin, REFGUID category)
 	{
 		ASSERT(pPin);
 		BOOL bFlag = FALSE;
@@ -230,7 +230,7 @@ namespace DShow
 		}
 		return bFlag;
 	}
-	TinyComPtr<IPin> AudioCapture::GetPin(IBaseFilter* pFilter, PIN_DIRECTION dest, REFGUID category)
+	TinyComPtr<IPin> AudioInputCapture::GetPin(IBaseFilter* pFilter, PIN_DIRECTION dest, REFGUID category)
 	{
 		ASSERT(pFilter);
 		TinyComPtr<IPin> pin;
@@ -254,7 +254,7 @@ namespace DShow
 		}
 		return pin;
 	}
-	BOOL AudioCapture::GetDevices(vector<Name>& names)
+	BOOL AudioInputCapture::GetDevices(vector<Name>& names)
 	{
 		TinyComPtr<ICreateDevEnum> devEnum;
 		HRESULT hRes = devEnum.CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC);
@@ -303,7 +303,7 @@ namespace DShow
 		}
 		return TRUE;
 	}
-	BOOL AudioCapture::GetDeviceFilter(const Name& name, IBaseFilter** ps)
+	BOOL AudioInputCapture::GetDeviceFilter(const Name& name, IBaseFilter** ps)
 	{
 		TinyComPtr<ICreateDevEnum> dev;
 		HRESULT hRes = dev.CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC);
@@ -352,7 +352,7 @@ namespace DShow
 		}
 		return FALSE;
 	}
-	BOOL AudioCapture::GetDeviceParams(const AudioCapture::Name& device, vector<AudioCaptureParam>& params)
+	BOOL AudioInputCapture::GetDeviceParams(const AudioInputCapture::Name& device, vector<AudioCaptureParam>& params)
 	{
 		TinyComPtr<ICreateDevEnum> devEnum;
 		HRESULT hRes = devEnum.CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC);

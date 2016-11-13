@@ -88,7 +88,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AudioCapture.h" />
+    <ClInclude Include="AudioInputCapture.h" />
     <ClInclude Include="AudioCaptureParam.h" />
     <ClInclude Include="AudioSinkFilter.h" />
     <ClInclude Include="AudioSinkInputPin.h" />
@@ -113,7 +113,7 @@
     <ClInclude Include="DShowCommon.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AudioCapture.cpp" />
+    <ClCompile Include="AudioInputCapture.cpp" />
     <ClCompile Include="AudioCaptureParam.cpp" />
     <ClCompile Include="AudioSinkFilter.cpp" />
     <ClCompile Include="AudioSinkInputPin.cpp" />

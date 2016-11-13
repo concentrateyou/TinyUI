@@ -101,7 +101,7 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 	m_onAudioInputChange2.Reset(new Delegate<void(INT)>(this, &CMainFrame::OnAudioInputSelectChange2));
 	m_audioInput2.EVENT_SelectChange += m_onAudioInputChange2;
 	m_audioInputNames.clear();
-	DShow::AudioCapture::GetDevices(m_audioInputNames);
+	DShow::AudioInputCapture::GetDevices(m_audioInputNames);
 	for (UINT i = 0; i < m_audioInputNames.size(); i++)
 	{
 		m_audioInput1.AddString(m_audioInputNames[i].name().c_str());
@@ -114,7 +114,7 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 	m_onAudioOutputChange2.Reset(new Delegate<void(INT)>(this, &CMainFrame::OnAudioOutputSelectChange2));
 	m_audioOutput2.EVENT_SelectChange += m_onAudioOutputChange2;
 	m_audioOutputNames.clear();
-	DShow::AudioCapture::GetDevices(m_audioOutputNames);
+	DShow::AudioInputCapture::GetDevices(m_audioOutputNames);
 	for (UINT i = 0; i < m_audioOutputNames.size(); i++)
 	{
 		m_audioOutput1.AddString(m_audioOutputNames[i].name().c_str());
@@ -194,7 +194,7 @@ void CMainFrame::OnAudioInputSelectChange1(INT index)
 {
 	m_audioInputParams.clear();
 	m_audioInput2.ResetContent();
-	DShow::AudioCapture::GetDeviceParams(m_audioInputNames[index], m_audioInputParams);
+	DShow::AudioInputCapture::GetDeviceParams(m_audioInputNames[index], m_audioInputParams);
 	for (UINT i = 0; i < m_audioInputParams.size(); i++)
 	{
 		m_audioInput2.AddString(m_audioInputParams[i].ToString().c_str());
@@ -207,18 +207,20 @@ void CMainFrame::OnAudioInputSelectChange2(INT index)
 	m_audioInputCB = BindCallback(&CMainFrame::OnAudioInput, this);
 	m_audioInput.Initialize(m_audioInputNames[m_audioInput1.GetCurSel()], m_audioInputCB);
 	m_audioInput.Allocate(param);
+
+	m_waveFile.Create("D:\\123.wav", &param.GetFormat());
 }
 
 void CMainFrame::OnAudioInput(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)
 {
-	
+	m_waveFile.Write(bits, size);
 }
 
 void CMainFrame::OnAudioOutputSelectChange1(INT index)
 {
 	m_audioOutputParams.clear();
 	m_audioOutput2.ResetContent();
-	DShow::AudioCapture::GetDeviceParams(m_audioOutputNames[index], m_audioOutputParams);
+	DShow::AudioInputCapture::GetDeviceParams(m_audioOutputNames[index], m_audioOutputParams);
 	for (UINT i = 0; i < m_audioOutputParams.size(); i++)
 	{
 		m_audioOutput2.AddString(m_audioOutputParams[i].ToString().c_str());
