@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "DXWindow.h"
 #include "VideoCapture.h"
-#include "AudioInputCapture.h"
+#include "AudioCapture.h"
 #define FRAME_RATE				30
 
 DXWindow::DXWindow()
@@ -54,10 +54,10 @@ LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 		}
 	}
 
-	vector<DShow::AudioInputCapture::Name> audioNames;
-	DShow::AudioInputCapture::GetDevices(audioNames);
+	vector<DShow::AudioCapture::Name> audioNames;
+	DShow::AudioCapture::GetDevices(audioNames);
 	vector<DShow::AudioCaptureParam> audioParams;
-	DShow::AudioInputCapture::GetDeviceParams(audioNames[0], audioParams);
+	DShow::AudioCapture::GetDeviceParams(audioNames[0], audioParams);
 	DShow::AudioCaptureParam audioParam;
 	WAVEFORMATEX defaultWFX = DShow::AudioCaptureParam::GetDefaultFormat();
 	for (UINT i = 0; i < audioParams.size(); i++)

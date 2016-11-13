@@ -6,7 +6,8 @@
 #include "Control/TinyLabel.h"
 #include "Media/TinyWASAPIAudioCapture.h"
 #include "VideoCapture.h"
-#include "AudioInputCapture.h"
+#include "AudioCapture.h"
+#include "AudioCapture.h"
 #include "SoundPlayer.h"
 #include "RenderTask.h"
 using namespace TinyUI;
@@ -66,8 +67,8 @@ private:
 
 	TinyScopedPtr<RenderTask>		m_renderTask;
 
-	DShow::AudioInputCapture m_audioInput;
-	vector<DShow::AudioInputCapture::Name> m_audioInputNames;
+	DShow::AudioCapture m_audioInput;
+	vector<DShow::AudioCapture::Name> m_audioInputNames;
 	vector<DShow::AudioCaptureParam>  m_audioInputParams;
 	TinyScopedPtr<Delegate<void(INT)>> m_onAudioInputChange1;
 	TinyScopedPtr<Delegate<void(INT)>> m_onAudioInputChange2;
@@ -80,8 +81,8 @@ private:
 	TinyButton			m_audioInputStop;
 
 
-	DShow::AudioInputCapture m_audioOutput;
-	vector<DShow::AudioInputCapture::Name> m_audioOutputNames;
+	DShow::AudioCapture m_audioOutput;
+	vector<DShow::AudioCapture::Name> m_audioOutputNames;
 	vector<DShow::AudioCaptureParam>  m_audioOutputParams;
 	TinyScopedPtr<Delegate<void(INT)>> m_onAudioOutputChange1;
 	TinyScopedPtr<Delegate<void(INT)>> m_onAudioOutputChange2;

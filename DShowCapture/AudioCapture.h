@@ -6,9 +6,9 @@
 
 namespace DShow
 {
-	class AudioInputCapture : public FilterObserver
+	class AudioCapture : public FilterObserver
 	{
-		DISALLOW_COPY_AND_ASSIGN(AudioInputCapture)
+		DISALLOW_COPY_AND_ASSIGN(AudioCapture)
 	public:
 		class Name
 		{
@@ -25,8 +25,8 @@ namespace DShow
 		};
 		void	OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter) OVERRIDE;
 	public:
-		AudioInputCapture();
-		virtual ~AudioInputCapture();
+		AudioCapture();
+		virtual ~AudioCapture();
 		BOOL	Initialize(const Name& name);
 		BOOL	Initialize(const Name& name, Callback<void(BYTE*, LONG, FLOAT, LPVOID)>& callback);
 		void	Uninitialize();
@@ -42,7 +42,7 @@ namespace DShow
 		virtual void DeAllocate();
 	public:
 		static BOOL GetDevices(vector<Name>& names);
-		static BOOL GetDeviceParams(const AudioInputCapture::Name& device, vector<AudioCaptureParam>& formats);
+		static BOOL GetDeviceParams(const AudioCapture::Name& device, vector<AudioCaptureParam>& formats);
 		static BOOL GetDeviceFilter(const Name& name, IBaseFilter** filter);
 	private:
 		static BOOL GetPinCategory(IPin* pin, REFGUID category);
