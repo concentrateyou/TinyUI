@@ -211,7 +211,7 @@ void CMainFrame::OnAudioInputSelectChange2(INT index)
 
 void CMainFrame::OnAudioInput(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)
 {
-
+	
 }
 
 void CMainFrame::OnAudioOutputSelectChange1(INT index)

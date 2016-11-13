@@ -1,5 +1,6 @@
 #pragma once
 #include "Utility.h"
+#include "IO/TinyIO.h"
 extern "C"
 {
 #include "faac.h"
@@ -33,5 +34,6 @@ private:
 	DWORD					m_dwPTS;
 	TinyScopedArray<BYTE>	m_bits;
 	WAVEFORMATEX			m_waveFMT;
+	IO::TinyFile			m_aacFile;
 };
 

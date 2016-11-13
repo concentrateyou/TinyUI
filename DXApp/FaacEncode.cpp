@@ -73,6 +73,7 @@ BOOL FaacEncode::Open(const WAVEFORMATEX& waveFMT, INT audioRate, BOOL bAllowF)
 	if (!iRes)
 		return FALSE;
 	m_bits.Reset(new BYTE[m_maxOutputBytes]);
+	m_aacFile.Create("D:\\1234.aac");
 	return TRUE;
 }
 BOOL FaacEncode::Encode(BYTE* bits, LONG size, DWORD& dwINC)
@@ -96,6 +97,7 @@ BOOL FaacEncode::Encode(BYTE* bits, LONG size, DWORD& dwINC)
 }
 void FaacEncode::Close()
 {
+	m_aacFile.Close();
 	if (m_aac)
 	{
 		faacEncClose(m_aac);
@@ -104,5 +106,6 @@ void FaacEncode::Close()
 }
 void FaacEncode::OnDone(BYTE* bits, LONG size, const MediaTag& tag)
 {
+	m_aacFile.Write(bits, size);
 	EVENT_DONE(bits, size, tag);
 }

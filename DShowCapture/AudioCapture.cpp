@@ -186,7 +186,7 @@ namespace DShow
 					if (SUCCEEDED(m_captureO->QueryInterface(IID_IAMBufferNegotiation, (void**)&neg)))
 					{
 						ALLOCATOR_PROPERTIES prop = { 0 };
-						prop.cbBuffer = 4096;
+						prop.cbBuffer = 1024 * w.nBlockAlign;
 						prop.cBuffers = 4;
 						prop.cbAlign = 1;
 						hRes = neg->SuggestAllocatorProperties(&prop);
