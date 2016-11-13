@@ -7,7 +7,6 @@
 #include "Media/TinyWave.h"
 #include "IO/TinyIO.h"
 #include "FFmpegResampler.h"
-#include "Resampler.h"
 using namespace TinyUI::IO;
 using namespace DShow;
 

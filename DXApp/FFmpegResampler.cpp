@@ -79,6 +79,8 @@ BOOL FFmpegResampler::Open(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO,
 		pFMTI->nSamplesPerSec,
 		0,
 		NULL);
+	if (!m_context)
+		return FALSE;
 	return swr_init(m_context) == 0;
 }
 BOOL FFmpegResampler::Resample(BYTE* bits, LONG count)
