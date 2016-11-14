@@ -15,7 +15,7 @@ using namespace TinyUI::IO;
 
 #define MAX_AV_PLANES 8
 
-static inline uint64_t ConvertSpeakerLayoutToFFmpeg(const WAVEFORMATEX* pFMT);
+static inline uint64_t ConvertChannelLayoutToFFmpeg(const WAVEFORMATEX* pFMT);
 static inline enum AVSampleFormat ConvertAudioFormat(const WAVEFORMATEX* pFMT);
 
 class FFmpegResampler

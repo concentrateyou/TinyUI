@@ -2,21 +2,21 @@
 #include "FFmpegResampler.h"
 #include "Media/TinyMedia.h"
 
-static inline uint64_t ConvertSpeakerLayoutToFFmpeg(const WAVEFORMATEX* pFMT)
+static inline uint64_t ConvertChannelLayoutToFFmpeg(const WAVEFORMATEX* pFMT)
 {
-	switch (Media::ConvertSpeakerLayout(pFMT))
+	switch (Media::ConvertChannelLayout(pFMT))
 	{
-	case Media::SPEAKERS_UNKNOWN:          return 0;
-	case Media::SPEAKERS_MONO:             return AV_CH_LAYOUT_MONO;
-	case Media::SPEAKERS_STEREO:           return AV_CH_LAYOUT_STEREO;
-	case Media::SPEAKERS_2POINT1:          return AV_CH_LAYOUT_2_1;
-	case Media::SPEAKERS_QUAD:             return AV_CH_LAYOUT_QUAD;
-	case Media::SPEAKERS_4POINT1:          return AV_CH_LAYOUT_4POINT1;
-	case Media::SPEAKERS_5POINT1:          return AV_CH_LAYOUT_5POINT1;
-	case Media::SPEAKERS_5POINT1_SURROUND: return AV_CH_LAYOUT_5POINT1_BACK;
-	case Media::SPEAKERS_7POINT1:          return AV_CH_LAYOUT_7POINT1;
-	case Media::SPEAKERS_7POINT1_SURROUND: return AV_CH_LAYOUT_7POINT1_WIDE_BACK;
-	case Media::SPEAKERS_SURROUND:         return AV_CH_LAYOUT_SURROUND;
+	case Media::CHANNEL_UNKNOWN:          return 0;
+	case Media::CHANNEL_MONO:             return AV_CH_LAYOUT_MONO;
+	case Media::CHANNEL_STEREO:           return AV_CH_LAYOUT_STEREO;
+	case Media::CHANNEL_2POINT1:          return AV_CH_LAYOUT_2_1;
+	case Media::CHANNEL_QUAD:             return AV_CH_LAYOUT_QUAD;
+	case Media::CHANNEL_4POINT1:          return AV_CH_LAYOUT_4POINT1;
+	case Media::CHANNEL_5POINT1:          return AV_CH_LAYOUT_5POINT1;
+	case Media::CHANNEL_5POINT1_SURROUND: return AV_CH_LAYOUT_5POINT1_BACK;
+	case Media::CHANNEL_7POINT1:          return AV_CH_LAYOUT_7POINT1;
+	case Media::CHANNEL_7POINT1_SURROUND: return AV_CH_LAYOUT_7POINT1_WIDE_BACK;
+	case Media::CHANNEL_SURROUND:         return AV_CH_LAYOUT_SURROUND;
 	}
 	return 0;
 }
@@ -66,8 +66,8 @@ BOOL FFmpegResampler::Open(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO,
 	m_waveFMTI = *pFMTI;
 	m_waveFMTO = *pFMTO;
 	m_callback = callback;
-	m_output_layout = ConvertSpeakerLayoutToFFmpeg(pFMTO);
-	m_input_layout = ConvertSpeakerLayoutToFFmpeg(pFMTI);
+	m_output_layout = ConvertChannelLayoutToFFmpeg(pFMTO);
+	m_input_layout = ConvertChannelLayoutToFFmpeg(pFMTI);
 	m_input_format = ConvertAudioFormat(pFMTI);
 	m_output_format = ConvertAudioFormat(pFMTO);
 	m_context = swr_alloc_set_opts(NULL,
