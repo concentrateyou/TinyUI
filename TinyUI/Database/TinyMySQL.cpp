@@ -214,20 +214,18 @@ namespace TinyUI
 		s.buffer_type = (enum_field_types)param->GetDbType();
 		s.buffer = const_cast<void*>(buffer);
 		s.buffer_length = length;
-		s.is_unsigned = isUnsigned;
 		if (mysql_stmt_bind_param(statement, &s) != 0)
 			return FALSE;
 		return TRUE;
 	}
 	BOOL MySqlCommand::BindParameters(MYSQL_BIND* statement)
 	{
+		TinyScopedArray<MYSQL_BIND>	binds(new MYSQL_BIND[m_parameters.GetSize()]);
 		for (INT i = 0; i < m_parameters.GetSize(); i++)
 		{
-			IDbDataParameter
-				if (!BindParameter(statement, m_parameters[i]))
-				{
-					return FALSE;
-				}
+			IDbDataParameter* parameter = m_parameters[i];
+			binds[i].buffer_type = (enum_field_types)parameter->GetDbType();
+
 		}
 		return TRUE;
 	}
