@@ -993,5 +993,19 @@ namespace TinyUI
 	{
 		SplitStringT(str, sep, true, r);
 	}
+	void SplitString2(const std::string& str, char sep1, char sep2, std::map<std::string, std::string>& map)
+	{
+		vector<string> strs;
+		SplitString(str, sep1, &strs);
+		for (vector<string>::iterator s = strs.begin(); iter1 != strs.end(); ++s)
+		{
+			vector<string> vals;
+			SplitString(*s, sep2, &vals);
+			if (vals.size() == 2)
+			{
+				map[vals[0]] = vals[1];
+			}
+		}
+	}
 }
 

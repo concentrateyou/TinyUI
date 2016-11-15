@@ -68,7 +68,7 @@ namespace TinyUI
 		virtual BOOL	BeginTransaction(INT iIsolationLevel = 0);
 		virtual BOOL	CommitTransaction();
 		virtual BOOL	RollbackTransaction();
-		virtual void	GetErrors(LPSTR pzError, INT& size);
+		virtual void	GetLatestError(string& error);
 		INT64			GetRowID();//最新的行号
 	private:
 		TinyString				m_connectionString;
@@ -105,10 +105,10 @@ namespace TinyUI
 		BOOL						BindParameter(sqlite3_stmt* statement, IDbDataParameter* value);
 		BOOL						BindParameters(sqlite3_stmt* statement);
 	private:
-		TinyArray<IDbDataParameter*>m_parameters;
+		INT							m_queryTime;
 		TinyString					m_commandText;
 		SqliteConnection&			m_connection;
-		INT							m_queryTime;
+		TinyArray<IDbDataParameter*>m_parameters;
 	};
 	/// <summary>
 	/// Sqlite参数

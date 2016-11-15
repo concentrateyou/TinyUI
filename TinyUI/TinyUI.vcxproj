@@ -50,7 +50,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>$(DXSDK_DIR)Include;..\ThirdParty\sqlite;..\ThirdParty\vld;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DXSDK_DIR)Include;$(MYSQLSDK_DIR)Include;..\ThirdParty\sqlite;..\ThirdParty\vld;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -62,7 +62,7 @@
       </AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\ThirdParty\sqlite;..\ThirdParty\vld\x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;$(MYSQLSDK_DIR)Lib;..\ThirdParty\sqlite;..\ThirdParty\vld\x86</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -143,6 +143,7 @@
     <ClInclude Include="Control\TinyTreeView.h" />
     <ClInclude Include="Database\TinyAdo.h" />
     <ClInclude Include="Database\TinyDatabase.h" />
+    <ClInclude Include="Database\TinyMySQL.h" />
     <ClInclude Include="Database\TinySqlite.h" />
     <ClInclude Include="IO\TinyIO.h" />
     <ClInclude Include="IO\TinyIOCP.h" />
@@ -245,6 +246,7 @@
     <ClCompile Include="Control\TinyTreeView.cpp" />
     <ClCompile Include="Database\TinyAdo.cpp" />
     <ClCompile Include="Database\TinyDatabase.cpp" />
+    <ClCompile Include="Database\TinyMySQL.cpp" />
     <ClCompile Include="Database\TinySqlite.cpp" />
     <ClCompile Include="IO\TinyIO.cpp" />
     <ClCompile Include="IO\TinyIOCP.cpp" />

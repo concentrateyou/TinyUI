@@ -75,11 +75,10 @@ namespace TinyUI
 	{
 		return sqlite3_exec(m_sqlite, "ROLLBACK TRANSACTION", NULL, NULL, NULL) == SQLITE_OK;
 	}
-	void SqliteConnection::GetErrors(LPSTR ps, INT& size)
+	void SqliteConnection::GetLatestError(string& error)
 	{
 		ASSERT(m_sqlite);
-		ps = const_cast<LPSTR>(sqlite3_errmsg(m_sqlite));
-		size = strlen(ps);
+		error = const_cast<LPSTR>(sqlite3_errmsg(m_sqlite));
 	}
 	INT64 SqliteConnection::GetRowID()
 	{
@@ -239,23 +238,23 @@ namespace TinyUI
 				break;
 			case VARENUM::VT_DATE:
 			{
-									 DATE date = value->GetDateTime();
-									 TinyOleDateTime oleDate(date);
-									 TinyString str = oleDate.Format("yyyy-MM-dd HH:mm:ss.fff");
-									 iRes = sqlite3_bind_text(statement, index, str.STR(), str.GetSize(), SQLITE_STATIC);
+				DATE date = value->GetDateTime();
+				TinyOleDateTime oleDate(date);
+				TinyString str = oleDate.Format("yyyy-MM-dd HH:mm:ss.fff");
+				iRes = sqlite3_bind_text(statement, index, str.STR(), str.GetSize(), SQLITE_STATIC);
 			}
-				break;
+			break;
 			case VARENUM::VT_LPSTR:
 				iRes = sqlite3_bind_text(statement, index, value->GetString(), -1, NULL);
 				break;
 			case VARENUM::VT_BLOB:
 			{
-									 INT size = value->GetBlob(NULL);
-									 BYTE* ps = new BYTE[size];
-									 size = value->GetBlob(ps);
-									 iRes = sqlite3_bind_blob(statement, index, ps, size, NULL);
+				INT size = value->GetBlob(NULL);
+				BYTE* ps = new BYTE[size];
+				size = value->GetBlob(ps);
+				iRes = sqlite3_bind_blob(statement, index, ps, size, NULL);
 			}
-				break;
+			break;
 			}
 		}
 		return iRes == SQLITE_OK;
@@ -318,19 +317,19 @@ namespace TinyUI
 	}
 	BYTE SqlliteParameter::GetPrecision()
 	{
-		throw exception("不支持的方法!");
+		throw exception("does not support method!");
 	}
 	void SqlliteParameter::SetPrecision(BYTE precision)
 	{
-		throw exception("不支持的方法!");
+		throw exception("does not support method!");
 	}
 	BYTE SqlliteParameter::GetScale()
 	{
-		throw exception("不支持的方法!");
+		throw exception("does not support method!");
 	}
 	void SqlliteParameter::SetScale(BYTE scale)
 	{
-		throw exception("不支持的方法!");
+		throw exception("does not support method!");
 	}
 	INT SqlliteParameter::GetSize()
 	{
@@ -372,7 +371,7 @@ namespace TinyUI
 	}
 	void SqlliteParameter::SetDecimal(DECIMAL val)
 	{
-		throw exception("不支持的方法!");
+		throw exception("does not support method!");
 	}
 	void SqlliteParameter::SetDouble(DOUBLE val)
 	{
@@ -430,7 +429,7 @@ namespace TinyUI
 	}
 	DECIMAL SqlliteParameter::GetDecimal()
 	{
-		throw exception("不支持的方法!");
+		throw exception("does not support method!");
 	}
 	DOUBLE SqlliteParameter::GetDouble()
 	{
@@ -473,15 +472,15 @@ namespace TinyUI
 	}
 	BOOL SqliteDataReader::ReadPrevious()
 	{
-		throw exception("不支持的方法!");
+		throw exception("does not support method!");
 	}
 	BOOL SqliteDataReader::ReadFirst()
 	{
-		throw exception("不支持的方法!");
+		throw exception("does not support method!");
 	}
 	BOOL SqliteDataReader::ReadLast()
 	{
-		throw exception("不支持的方法!");
+		throw exception("does not support method!");
 	}
 	BOOL SqliteDataReader::Close()
 	{

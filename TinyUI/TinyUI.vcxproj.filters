@@ -372,6 +372,9 @@
     <ClInclude Include="Media\TinyAudioMixer.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
+    <ClInclude Include="Database\TinyMySQL.h">
+      <Filter>头文件\Database</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -676,6 +679,9 @@
     </ClCompile>
     <ClCompile Include="Media\TinyAudioMixer.cpp">
       <Filter>源文件\Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Database\TinyMySQL.cpp">
+      <Filter>源文件\Database</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

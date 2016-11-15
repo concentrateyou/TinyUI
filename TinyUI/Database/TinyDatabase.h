@@ -19,14 +19,14 @@ namespace TinyUI
 		virtual LPCSTR			GetConnectionString() const = 0;
 		virtual void			SetConnectionString(LPCSTR pzText) = 0;
 		virtual LONG			GetConnectionTimeout() const = 0;
-		virtual void			SetConnectionTimeout(LONG time) = 0;
+		virtual void			SetConnectionTimeout(LONG timeout) = 0;
 		virtual BOOL			Open() = 0;
 		virtual BOOL			Close() = 0;
 		virtual	LONG			GetConnectionState() = 0;
 		virtual BOOL			BeginTransaction(INT iIsolationLevel = 0) = 0;
 		virtual BOOL			CommitTransaction() = 0;
 		virtual BOOL			RollbackTransaction() = 0;
-		virtual void			GetErrors(LPSTR pzError, INT& size) = 0;
+		virtual void			GetLatestError(string& error) = 0;
 	};
 	/// <summary>
 	/// 数据库命令接口

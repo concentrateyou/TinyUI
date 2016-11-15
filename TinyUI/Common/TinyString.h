@@ -194,6 +194,7 @@ namespace TinyUI
 	template<typename STR>
 	static void SplitStringT(const STR& str, const typename STR::value_type s, bool trim_whitespace, std::vector<STR>* r);
 	void SplitString(const std::string& str, char sep, std::vector<std::string>* r);
+	void SplitString2(const std::string& str, char sep1,char sep2, std::map<std::string, std::string>& map);
 }
 
 

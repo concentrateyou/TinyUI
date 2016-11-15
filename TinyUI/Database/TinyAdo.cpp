@@ -127,7 +127,7 @@ namespace TinyUI
 		}
 		return FALSE;
 	}
-	void	ADOConnection::GetErrors(LPSTR pzError, INT& size)
+	void	ADOConnection::GetLatestError(string& error)
 	{
 		ASSERT(m_connectionPtr);
 		m_connectionPtr->Errors->Clear();
@@ -139,7 +139,7 @@ namespace TinyUI
 			TinyString desc = TinyString::Format("Number:%d,SQLState:%s,Desc:%s\n", errorPtr->GetNumber(), errorPtr->GetSQLState(), errorPtr->GetDescription());
 			str += desc;
 		}
-		strcpy_s(pzError, size, str.STR());
+		error = str.STR();
 	}
 	//////////////////////////////////////////////////////////////////////////
 	ADOCommand::ADOCommand(ADOConnection& connection)

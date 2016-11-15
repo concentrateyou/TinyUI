@@ -38,7 +38,7 @@ namespace TinyUI
 		virtual BOOL			BeginTransaction(INT iIsolationLevel = adXactReadUncommitted);
 		virtual BOOL			CommitTransaction();
 		virtual BOOL			RollbackTransaction();
-		virtual void			GetErrors(LPSTR pzError, INT& size);
+		virtual void			GetLatestError(string& error);
 	private:
 		ADOConnectionPtr	m_connectionPtr;
 	};
