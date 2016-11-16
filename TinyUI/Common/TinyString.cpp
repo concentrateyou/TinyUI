@@ -997,7 +997,7 @@ namespace TinyUI
 	{
 		vector<string> strs;
 		SplitString(str, sep1, &strs);
-		for (vector<string>::iterator s = strs.begin(); iter1 != strs.end(); ++s)
+		for (vector<string>::iterator s = strs.begin(); s != strs.end(); ++s)
 		{
 			vector<string> vals;
 			SplitString(*s, sep2, &vals);
