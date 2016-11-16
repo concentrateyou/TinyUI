@@ -13,24 +13,79 @@ namespace TinyUI
 {
 	namespace Network
 	{
-		PVOID WINAPI GetExtensionPtr(SOCKET socket, GUID guid);
-		/*LPFN_GETACCEPTEXSOCKADDRS   lpfnGetAcceptExSockaddrs = NULL;
-		GUID guidGetAcceptExSockaddrs = WSAID_GETACCEPTEXSOCKADDRS;
-		DWORD dwBytes = 0;
-		if (WSAIoctl(
-		m_socket,
-		SIO_GET_EXTENSION_FUNCTION_POINTER,
-		&guidGetAcceptExSockaddrs,
-		sizeof(guidGetAcceptExSockaddrs),
-		&lpfnGetAcceptExSockaddrs,
-		sizeof(lpfnGetAcceptExSockaddrs),
-		&dwBytes,
-		NULL,
-		NULL) == SOCKET_ERROR)
+		class IPAddress
 		{
-		return FALSE;
-		}*/
+			enum : size_t { IPv4AddressSize = 4, IPv6AddressSize = 16 };
+		public:
+			IPAddress();
+			explicit IPAddress(const vector<BYTE>& address);
+			IPAddress(IPAddress&& other);
+			IPAddress(const IPAddress& other);
+			template <INT N>
+			IPAddress(const BYTE(&address)[N])
+				: IPAddress(address, N)
+			{}
+			IPAddress(const BYTE* address, DWORD size);
+			IPAddress(BYTE b0, BYTE b1, BYTE b2, BYTE b3);
+			IPAddress(BYTE b0,
+				BYTE b1,
+				BYTE b2,
+				BYTE b3,
+				BYTE b4,
+				BYTE b5,
+				BYTE b6,
+				BYTE b7,
+				BYTE b8,
+				BYTE b9,
+				BYTE b10,
+				BYTE b11,
+				BYTE b12,
+				BYTE b13,
+				BYTE b14,
+				BYTE b15);
+			~IPAddress();
+			BOOL operator==(const IPAddress& other) const;
+			BOOL operator!=(const IPAddress& other) const;
+			BOOL operator<(const IPAddress& other) const;
+			BOOL IsIPv4() const;
+			BOOL IsIPv6() const;
+			BOOL IsValid() const;
+			BOOL IsZero() const;
+			BOOL IsEmpty() const;
+			std::string ToString() const;
+			DWORD Size() const;
+			const std::vector<BYTE>& Address() const;
+			/*	static IPAddress IPv4Localhost();
+				static IPAddress IPv6Localhost();
+				static IPAddress AllZeros(DWORD bytes);
+				static IPAddress IPv4AllZeros();
+				static IPAddress IPv6AllZeros();*/
+		private:
+			std::vector<uint8_t> m_address;
+		};
+		using IPAddressList = std::vector<IPAddress>;
+		enum AddressFamily
+		{
+			ADDRESS_FAMILY_UNSPECIFIED,
+			ADDRESS_FAMILY_IPV4,
+			ADDRESS_FAMILY_IPV6,
+			ADDRESS_FAMILY_LAST = ADDRESS_FAMILY_IPV6
+		};
+		//////////////////////////////////////////////////////////////////////////
+		class IPEndPoint
+		{
+		public:
+			IPEndPoint();
+			~IPEndPoint();
+			IPEndPoint(const IPAddress& address, USHORT port);
+			IPEndPoint(const IPEndPoint& endpoint);
+			IPEndPoint(IPEndPoint&& endpoint);
+			const IPAddress& Address() const;
+			USHORT Port() const;
+		private:
+			IPAddress	m_address;
+			USHORT		m_port;
+		};
 	}
-
 }
 
