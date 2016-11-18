@@ -375,6 +375,15 @@
     <ClInclude Include="Database\TinyMySQL.h">
       <Filter>头文件\Database</Filter>
     </ClInclude>
+    <ClInclude Include="Network\TinyHTTPClient.h">
+      <Filter>头文件\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\TinyHTTPRequest.h">
+      <Filter>头文件\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\TinyHTTPResponse.h">
+      <Filter>头文件\Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -682,6 +691,15 @@
     </ClCompile>
     <ClCompile Include="Database\TinyMySQL.cpp">
       <Filter>源文件\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\TinyHTTPClient.cpp">
+      <Filter>源文件\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\TinyHTTPRequest.cpp">
+      <Filter>源文件\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\TinyHTTPResponse.cpp">
+      <Filter>源文件\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

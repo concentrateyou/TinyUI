@@ -55,11 +55,6 @@ namespace TinyUI
 			std::string ToString() const;
 			DWORD Size() const;
 			const std::vector<BYTE>& Address() const;
-			/*	static IPAddress IPv4Localhost();
-				static IPAddress IPv6Localhost();
-				static IPAddress AllZeros(DWORD bytes);
-				static IPAddress IPv4AllZeros();
-				static IPAddress IPv6AllZeros();*/
 		private:
 			std::vector<uint8_t> m_address;
 		};
