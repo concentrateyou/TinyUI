@@ -384,6 +384,9 @@
     <ClInclude Include="Network\TinyHTTPResponse.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
+    <ClInclude Include="Network\TinySocket.h">
+      <Filter>头文件\Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -699,6 +702,9 @@
       <Filter>源文件\Network</Filter>
     </ClCompile>
     <ClCompile Include="Network\TinyHTTPResponse.cpp">
+      <Filter>源文件\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\TinySocket.cpp">
       <Filter>源文件\Network</Filter>
     </ClCompile>
   </ItemGroup>

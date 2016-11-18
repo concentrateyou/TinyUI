@@ -19,10 +19,11 @@ namespace TinyUI
 			void	Close();
 			BOOL	Shutdown(INT how);
 			BOOL	BeginAccept();
-			static  PVOID GetExtensionPtr(SOCKET socket, GUID guid);
+		private:
+			
 		protected:
 			SOCKET			m_socket;
-			IO::TinyIOCP&		m_iocp;
+			IO::TinyIOCP&	m_iocp;
 		};
 	}
 }
