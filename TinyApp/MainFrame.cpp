@@ -47,9 +47,108 @@ HICON CMainFrame::RetrieveIcon()
 	return NULL;
 }
 
+typedef struct tagM3U8TS
+{
+	int				duration;
+	std::string		url;
+	std::string		index;
+}M3U8TS;
+
+typedef struct tagM3U8
+{
+	int						maxduration;
+	int						sequence;
+	std::vector<M3U8TS>		tss;
+}M3U8;
+
+
+static const char ENDLIST[] = "#EXT-X-ENDLIST";
+static const char TARGETDURATION[] = "#EXT-X-TARGETDURATION";
+static const char SEQUENCE[] = "#EXT-X-MEDIA-SEQUENCE";
+static const char M3U[] = "#EXTM3U";
+static const char EXTINF[] = "#EXTINF";
+static const char HTTP[] = "http://";
+static const char TS[] = ".ts";
+
+bool ParseM8U3(const string& m3u8URL, const string& value, M3U8& m8u3)
+{
+	m8u3.tss.clear();
+	//不是有效的m8u3文件
+	if (value.find(M3U) == string::npos)
+		return false;
+	vector<string> strs;
+	SplitString(value, '\n', &strs);
+	M3U8TS ts;
+	for (size_t i = 0;i < strs.size();i++)
+	{
+		const string& str = strs[i];
+		size_t pos = str.find(TARGETDURATION);
+		if (pos != string::npos)
+		{
+			vector<string> vals;
+			SplitString(str, ':', &vals);
+			m8u3.maxduration = atoi(vals[1].c_str());
+			continue;
+		}
+		pos = str.find(SEQUENCE);
+		if (pos != string::npos)
+		{
+			vector<string> vals;
+			SplitString(str, ':', &vals);
+			m8u3.sequence = atoi(vals[1].c_str());
+			continue;
+		}
+		pos = str.find(EXTINF);
+		if (pos != string::npos)
+		{
+			vector<string> vals;
+			SplitString(str, ':', &vals);
+			ts.duration = atoi(vals[1].c_str());
+			continue;
+		}
+		pos = str.find(TS);
+		if (pos != string::npos)
+		{
+			pos = str.find(HTTP);
+			if (pos != string::npos)
+			{
+				ts.url = str;
+				pos = str.find_last_of("/");
+				size_t tspos = str.find(TS);
+				ts.index = str.substr(pos + 1, tspos - pos - 1);
+				m8u3.tss.push_back(ts);
+			}
+			else
+			{
+				string url = m3u8URL.substr(0, m3u8URL.find_last_of("/") + 1);
+				pos = str.find_last_of("/");
+				size_t tspos = str.find(TS);
+				ts.index = str.substr(pos + 1, tspos - pos - 1);
+				ts.url = url + ts.index + TS;
+				m8u3.tss.push_back(ts);
+			}
+			continue;
+		}
+		pos = str.find(ENDLIST);
+		if (pos != string::npos)
+			return false;
+	}
+	return true;
+}
+
 LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
+
+	TinyFile file;
+	file.Open("D:\\live.m3u8", GENERIC_READ, FILE_SHARE_READ, NULL);
+	string str;
+	str.resize(file.GetSize());
+	file.Read(&str[0], str.size());
+
+	M3U8 m8u3;
+	ParseM8U3("http://10.121.33.213/ts/qiehuantest/qiehuantest.m3u8", str, m8u3);
+
 
 	m_onVideoStart.Reset(new Delegate<void(void*, INT)>(this, &CMainFrame::OnVideoStart));
 	m_onVideoStop.Reset(new Delegate<void(void*, INT)>(this, &CMainFrame::OnVideoStop));

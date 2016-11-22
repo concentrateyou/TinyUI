@@ -9,5 +9,6 @@ namespace DXCapture
 
 	DX10Capture::~DX10Capture()
 	{
+		
 	}
 }

@@ -16,14 +16,13 @@ namespace DXCapture
 	typedef HRESULT(WINAPI *CREATEDXGIFACTORY1PROC)(REFIID riid, void **ppFactory);
 #define SHAREDCAPTURE_MEMORY	TEXT("Local\\SharedCaptureMemory")
 #define TEXTURE_MEMORY          TEXT("Local\\TextureMemory")
-#define NUM_BUFFERS				3
-#define ZERO_ARRAY				{0, 0, 0}
 #define BEGIN_CAPTURE_EVENT		TEXT("BeginCapture")
 #define END_CAPTURE_EVENT       TEXT("EndCapture")
 #define CAPTURE_READY_EVENT     TEXT("CaptureReady")
 #define CAPTURE_EXIT_EVENT		TEXT("CaptureExit")
 #define CAPTURETYPE_MEMORY      1
 #define CAPTURETYPE_SHAREDTEX   2
+
 	typedef struct tagSharedCaptureDATA
 	{
 		UINT		CaptureType;

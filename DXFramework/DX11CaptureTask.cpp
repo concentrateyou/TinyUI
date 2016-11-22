@@ -79,27 +79,30 @@ namespace DXFramework
 			return TRUE;
 		TCHAR windowClass[MAX_PATH];
 		TCHAR windowExecutable[MAX_PATH];
-		if (GetClassName(hwnd, windowClass, MAX_PATH) &&
-			strncasecmp(windowClass, ws->className, strlen(ws->className)) == 0)
+		if (GetClassName(hwnd, windowClass, MAX_PATH))
 		{
-			DWORD processID;
-			GetWindowThreadProcessId(hwnd, &processID);
-			if (HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processID))
+			TRACE("windowClass:%s\n", windowClass);
+			if (strncasecmp(windowClass, ws->className, strlen(ws->className)) == 0)
 			{
-				DWORD size = MAX_PATH;
-				if (QueryFullProcessImageName(hProcess, 0, windowExecutable, &size))
+				DWORD processID;
+				GetWindowThreadProcessId(hwnd, &processID);
+				if (HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processID))
 				{
-					CHAR* pzName = PathFindFileName(windowExecutable);
-					if (strncasecmp(pzName, ws->exeName, strlen(pzName)) == 0)
+					DWORD size = MAX_PATH;
+					if (QueryFullProcessImageName(hProcess, 0, windowExecutable, &size))
 					{
-						ws->hWND = hwnd;
-						CloseHandle(hProcess);
-						hProcess = NULL;
-						return FALSE;
+						CHAR* pzName = PathFindFileName(windowExecutable);
+						if (strncasecmp(pzName, ws->exeName, strlen(pzName)) == 0)
+						{
+							ws->hWND = hwnd;
+							CloseHandle(hProcess);
+							hProcess = NULL;
+							return FALSE;
+						}
 					}
+					CloseHandle(hProcess);
+					hProcess = NULL;
 				}
-				CloseHandle(hProcess);
-				hProcess = NULL;
 			}
 		}
 		return TRUE;
@@ -202,7 +205,7 @@ namespace DXFramework
 		}
 		if (!m_bCapturing)
 		{
-			AttemptCapture(TEXT("Warcraft III"), TEXT("war3.exe"), TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));
+			AttemptCapture(TEXT("ApolloRuntimeContentWindow"), TEXT("LolClient.exe"), TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));
 		}
 		else
 		{
