@@ -140,14 +140,14 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 {
 	bHandled = FALSE;
 
-	TinyFile file;
+	/*TinyFile file;
 	file.Open("D:\\live.m3u8", GENERIC_READ, FILE_SHARE_READ, NULL);
 	string str;
 	str.resize(file.GetSize());
 	file.Read(&str[0], str.size());
 
 	M3U8 m8u3;
-	ParseM8U3("http://10.121.33.213/ts/qiehuantest/qiehuantest.m3u8", str, m8u3);
+	ParseM8U3("http://10.121.33.213/ts/qiehuantest/qiehuantest.m3u8", str, m8u3);*/
 
 
 	m_onVideoStart.Reset(new Delegate<void(void*, INT)>(this, &CMainFrame::OnVideoStart));
