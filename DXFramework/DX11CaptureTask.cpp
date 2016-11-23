@@ -205,7 +205,7 @@ namespace DXFramework
 		if (!m_bCapturing)
 		{
 			/*AttemptCapture(TEXT("ApolloRuntimeContentWindow"), TEXT("LolClient.exe"), TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));*/
-			AttemptCapture(TEXT("Direct3DWindowClass"), TEXT("RaycastTerrain.exe"), TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));
+			AttemptCapture(TEXT("Direct3DWindowClass"), TEXT("SubD11.exe"), TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));
 		}
 		else
 		{
