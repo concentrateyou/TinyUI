@@ -81,7 +81,6 @@ namespace DXFramework
 		TCHAR windowExecutable[MAX_PATH];
 		if (GetClassName(hwnd, windowClass, MAX_PATH))
 		{
-			TRACE("windowClass:%s\n", windowClass);
 			if (strncasecmp(windowClass, ws->className, strlen(ws->className)) == 0)
 			{
 				DWORD processID;
@@ -205,7 +204,8 @@ namespace DXFramework
 		}
 		if (!m_bCapturing)
 		{
-			AttemptCapture(TEXT("ApolloRuntimeContentWindow"), TEXT("LolClient.exe"), TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));
+			/*AttemptCapture(TEXT("ApolloRuntimeContentWindow"), TEXT("LolClient.exe"), TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));*/
+			AttemptCapture(TEXT("Direct3DWindowClass"), TEXT("RaycastTerrain.exe"), TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));
 		}
 		else
 		{
@@ -223,7 +223,7 @@ namespace DXFramework
 	{
 		for (;;)
 		{
-			if (m_close.Lock(20))
+			if (m_close.Lock(0))
 			{
 				EndCapture();
 				break;
