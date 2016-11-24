@@ -29,6 +29,8 @@ namespace TinyUI
 			virtual BOOL UnlockRange(ULONGLONG dwPos, ULONGLONG dwCount) = 0;
 			virtual BOOL Flush() = 0;
 			virtual BOOL Close() = 0;
+			virtual LONGLONG GetPosition() const = 0;
+			virtual LONGLONG GetSize() const = 0;
 		};
 		/// <summary>
 		/// 文件操作类
@@ -36,38 +38,6 @@ namespace TinyUI
 		class TinyFile : public TinyIO
 		{
 			DECLARE_DYNAMIC(TinyFile)
-		public:
-			enum OpenFlags
-			{
-				modeRead = (INT)0x00000,
-				modeWrite = (INT)0x00001,
-				modeReadWrite = (INT)0x00002,
-				shareCompat = (INT)0x00000,
-				shareExclusive = (INT)0x00010,
-				shareDenyWrite = (INT)0x00020,
-				shareDenyRead = (INT)0x00030,
-				shareDenyNone = (INT)0x00040,
-				modeNoInherit = (INT)0x00080,
-				modeCreate = (INT)0x01000,
-				modeNoTruncate = (INT)0x02000,
-				typeText = (INT)0x04000, // typeText and typeBinary are
-				typeBinary = (INT)0x08000, // used in derived classes only
-				osNoBuffer = (INT)0x10000,
-				osWriteThrough = (INT)0x20000,
-				osRandomAccess = (INT)0x40000,
-				osSequentialScan = (INT)0x80000,
-			};
-
-			enum Attribute
-			{
-				normal = 0x00,
-				readOnly = 0x01,
-				hidden = 0x02,
-				system = 0x04,
-				volume = 0x08,
-				directory = 0x10,
-				archive = 0x20
-			};
 		public:
 			static const HANDLE hFileNull;
 			TinyFile();
@@ -77,22 +47,22 @@ namespace TinyUI
 			BOOL GetStatus(FileStatus& rStatus) const;
 			virtual BOOL Create(LPCTSTR lpszFileName, DWORD dwFlagsAndAttributes = 0);
 			virtual BOOL Open(LPCTSTR lpszFileName, DWORD dwDesiredAccess, DWORD dwShareMode, DWORD dwFlagsAndAttributes);
-			virtual LONGLONG GetPosition() const;
 			virtual LPTSTR GetTitle() const;
 			virtual LPTSTR GetPath() const;
 			virtual BOOL SetSize(ULARGE_INTEGER dwNewLen);
-			virtual DWORD GetSize() const;
 			virtual DWORD GetType() const;
 			//////////////////////////////////////////////////////////////////////////
 			ULONGLONG SeekToEnd();
 			ULONGLONG SeekToBegin();
-			virtual LONGLONG Seek(LONGLONG lOff, DWORD dwMoveMethod);
-			virtual DWORD Read(void* pData, DWORD cbData);
-			virtual DWORD Write(const void* pData, DWORD cbData);
-			virtual BOOL LockRange(ULONGLONG dwPos, ULONGLONG dwCount);
-			virtual BOOL UnlockRange(ULONGLONG dwPos, ULONGLONG dwCount);
-			virtual BOOL Flush();
-			virtual BOOL Close();
+			LONGLONG Seek(LONGLONG lOff, DWORD dwMoveMethod) OVERRIDE;
+			DWORD Read(void* pData, DWORD cbData) OVERRIDE;
+			DWORD Write(const void* pData, DWORD cbData) OVERRIDE;
+			BOOL LockRange(ULONGLONG dwPos, ULONGLONG dwCount) OVERRIDE;
+			BOOL UnlockRange(ULONGLONG dwPos, ULONGLONG dwCount) OVERRIDE;
+			BOOL Flush() OVERRIDE;
+			BOOL Close() OVERRIDE;
+			LONGLONG GetPosition() const OVERRIDE;
+			LONGLONG GetSize() const OVERRIDE;
 			//////////////////////////////////////////////////////////////////////////
 			static BOOL PASCAL GetStatus(LPCTSTR lpszFileName, FileStatus& rStatus);
 			static void PASCAL SetStatus(LPCTSTR lpszFileName, const FileStatus& status);
@@ -100,11 +70,34 @@ namespace TinyUI
 			static BOOL Rename(LPCSTR lpszOldName, LPCTSTR lpszNewName);
 			static BOOL Remove(LPCSTR lpszFileName);
 			static BOOL GetFileNameFromHandle(HANDLE hFile, LPTSTR pszFileName);//获得文件的绝对路径
-		private:
+		protected:
 			HANDLE	m_hFile;
 			LPCTSTR m_pzFileName;
 			TCHAR	m_pzFileTitle[MAX_PATH];
 			TCHAR	m_pzPath[MAX_PATH];
+		};
+		/// <summary>
+		/// 标准库IO
+		/// </summary>
+		class TinyStdioFile : public TinyIO
+		{
+			DECLARE_DYNAMIC(TinyStdioFile)
+		public:
+			TinyStdioFile(FILE* pOpenStream);
+			TinyStdioFile(LPCTSTR lpszFileName, CHAR mode);
+			virtual ~TinyStdioFile();
+		public:
+			LONGLONG Seek(LONGLONG lOff, DWORD dwMoveMethod) OVERRIDE;
+			DWORD Read(void* pData, DWORD cbData) OVERRIDE;
+			DWORD Write(const void* pData, DWORD cbData) OVERRIDE;
+			BOOL LockRange(ULONGLONG dwPos, ULONGLONG dwCount) OVERRIDE;
+			BOOL UnlockRange(ULONGLONG dwPos, ULONGLONG dwCount) OVERRIDE;
+			BOOL Flush() OVERRIDE;
+			BOOL Close() OVERRIDE;
+			LONGLONG GetPosition() const OVERRIDE;
+			LONGLONG GetSize() const OVERRIDE;
+		protected:
+			FILE*	m_hFile;
 		};
 		/// <summary>
 		/// 内存文件

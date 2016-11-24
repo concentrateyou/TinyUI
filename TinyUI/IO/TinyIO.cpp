@@ -1,5 +1,8 @@
 #include "../stdafx.h"
 #include "TinyIO.h"
+#include <corecrt_io.h>
+#include <exception>
+using namespace std;
 
 namespace TinyUI
 {
@@ -84,10 +87,10 @@ namespace TinyUI
 			if (newPos == -1) return FALSE;
 			return ::SetEndOfFile(m_hFile);
 		}
-		DWORD TinyFile::GetSize() const
+		LONGLONG TinyFile::GetSize() const
 		{
 			ASSERT(m_hFile != INVALID_HANDLE_VALUE);
-			return ::GetFileSize(m_hFile, NULL);
+			return (LONGLONG)::GetFileSize(m_hFile, NULL);
 		}
 
 		BOOL TinyFile::LockRange(ULONGLONG dwPos, ULONGLONG dwCount)
@@ -390,6 +393,107 @@ namespace TinyUI
 			return(bSuccess);
 		}
 		//////////////////////////////////////////////////////////////////////////
+		TinyStdioFile::TinyStdioFile(FILE* pOpenStream)
+			:m_hFile(pOpenStream)
+		{
+
+		}
+		TinyStdioFile::TinyStdioFile(LPCTSTR lpszFileName, CHAR mode)
+		{
+			m_hFile = fopen(lpszFileName, &mode);
+		}
+		TinyStdioFile::~TinyStdioFile()
+		{
+			Close();
+		}
+		LONGLONG TinyStdioFile::Seek(LONGLONG lOff, DWORD dwMoveMethod)
+		{
+			ASSERT(m_hFile);
+			ASSERT(dwMoveMethod == SEEK_SET || dwMoveMethod == SEEK_CUR || dwMoveMethod == SEEK_END);
+			if ((lOff < LONG_MIN) || (lOff > LONG_MAX))
+			{
+				throw exception("badSeek");
+			}
+			INT iRes = 0;
+			switch (dwMoveMethod)
+			{
+			case SEEK_SET:
+				iRes = fseek(m_hFile, 0, SEEK_SET);
+				break;
+			case SEEK_END:
+				iRes = fseek(m_hFile, 0, SEEK_END);
+				break;
+			case SEEK_CUR:
+				LONG lOff32 = (LONG)lOff;
+				iRes = fseek(m_hFile, lOff32, SEEK_CUR);
+				break;
+			}
+			if (iRes != 0)
+				throw exception("badSeek");
+			LONG pos = ftell(m_hFile);
+			return pos;
+		}
+		DWORD TinyStdioFile::Read(void* pData, DWORD cbData)
+		{
+			ASSERT(m_hFile);
+			if (cbData == 0)
+				return 0;
+			return (DWORD)fread(pData, sizeof(BYTE), cbData, m_hFile);
+		}
+		DWORD TinyStdioFile::Write(const void* pData, DWORD cbData)
+		{
+			ASSERT(m_hFile);
+			if (cbData == 0)
+				return 0;
+			return fwrite(pData, sizeof(BYTE), cbData, m_hFile);
+		}
+		BOOL TinyStdioFile::LockRange(ULONGLONG dwPos, ULONGLONG dwCount)
+		{
+			throw std::logic_error("The method or operation is not implemented.");
+		}
+		BOOL TinyStdioFile::UnlockRange(ULONGLONG dwPos, ULONGLONG dwCount)
+		{
+			throw std::logic_error("The method or operation is not implemented.");
+		}
+		BOOL TinyStdioFile::Flush()
+		{
+			ASSERT(m_hFile);
+			return fflush(m_hFile) == 0;
+		}
+		BOOL TinyStdioFile::Close()
+		{
+			ASSERT(m_hFile);
+			return fclose(m_hFile) == 0;
+		}
+		LONGLONG TinyStdioFile::GetPosition() const
+		{
+			ASSERT(m_hFile);
+			LONG pos = ftell(m_hFile);
+			if (pos == -1)
+				throw exception("badSeek");
+			return pos;
+		}
+		LONGLONG TinyStdioFile::GetSize() const
+		{
+			ASSERT(m_hFile);
+			LONG nCurrent;
+			LONG nLength;
+			LONG nResult;
+			nCurrent = ftell(m_hFile);
+			if (nCurrent == -1)
+				throw exception("invalidFile");
+			nResult = fseek(m_hFile, 0, SEEK_END);
+			if (nResult != 0)
+				throw exception("badSeek");
+			nLength = ftell(m_hFile);
+			if (nLength == -1)
+				throw exception("invalidFile");
+			nResult = fseek(m_hFile, nCurrent, SEEK_SET);
+			if (nResult != 0)
+				throw exception("badSeek");
+			return nLength;
+		}
+		//////////////////////////////////////////////////////////////////////////
 		TinyFileStream::TinyFileStream(HANDLE hf, DWORD grfMode)
 			:m_cRef(1),
 			m_hFile(hf)
@@ -690,13 +794,13 @@ namespace TinyUI
 			*ppstm = NULL;
 			if (grfMode &
 				~(STGM_READ |
-				STGM_WRITE |
-				STGM_SHARE_DENY_NONE |
-				STGM_SHARE_DENY_READ |
-				STGM_SHARE_DENY_WRITE |
-				STGM_SHARE_EXCLUSIVE |
-				STGM_READWRITE |
-				STGM_CREATE))
+					STGM_WRITE |
+					STGM_SHARE_DENY_NONE |
+					STGM_SHARE_DENY_READ |
+					STGM_SHARE_DENY_WRITE |
+					STGM_SHARE_EXCLUSIVE |
+					STGM_READWRITE |
+					STGM_CREATE))
 			{
 				TRACE(TEXT("CreateSreamOnFile: Invalid STGM_ mode"));
 				return E_INVALIDARG;
