@@ -1,26 +1,23 @@
 #pragma once
 #include "TinyNetwork.h"
+#include "TinySocket.h"
 
 namespace TinyUI
 {
 	namespace Network
 	{
-#define OP_ACCEPT	1
-#define OP_RECV		2
-#define OP_SEND		3
+#define OP_ACCEPT	0x01
+#define OP_RECV		0x02
+#define OP_SEND		0x03
 		/// <summary>
 		/// ½ÓÊÕÌ×½Ó×Ö
 		/// </summary>
-		class TinyAcceptor
+		class TinyAcceptor : public TinySocket
 		{
 		public:
 			TinyAcceptor(IO::TinyIOCP& iocp, SOCKET socket);
 			BOOL	Open(SOCKADDR_IN address);
-			void	Close();
-			BOOL	Shutdown(INT how);
 			BOOL	BeginAccept();
-		private:
-			
 		protected:
 			SOCKET			m_socket;
 			IO::TinyIOCP&	m_iocp;

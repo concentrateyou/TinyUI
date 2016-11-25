@@ -7,7 +7,7 @@ namespace TinyUI
 	namespace Network
 	{
 		TinyAcceptor::TinyAcceptor(IO::TinyIOCP& iocp, SOCKET socket)
-			:m_socket(socket),
+			:TinySocket(socket),
 			m_iocp(iocp)
 		{
 
@@ -39,40 +39,7 @@ namespace TinyUI
 			{
 				return FALSE;
 			}
-			/*IO::AcceptTask* op = new IO::AcceptTask(socket);
-			LPFN_ACCEPTEX lpfnAcceptEx = static_cast<LPFN_ACCEPTEX>(GetExtensionPtr(m_socket, WSAID_ACCEPTEX));
-			if (!lpfnAcceptEx(m_socket,
-				op->socket(),
-				op->data(),
-				0,
-				sizeof(SOCKADDR_IN) + 16,
-				sizeof(SOCKADDR_IN) + 16,
-				0,
-				op))
-			{
-				if (WSAGetLastError() != WSA_FLAG_OVERLAPPED)
-				{
-					SAFE_DELETE(op);
-					return FALSE;
-				}
-			}*/
 			return TRUE;
-		}
-		void TinyAcceptor::Close()
-		{
-			if (m_socket != INVALID_SOCKET)
-			{
-				closesocket(m_socket);
-				m_socket = NULL;
-			}
-		}
-		BOOL TinyAcceptor::Shutdown(INT how)
-		{
-			if (m_socket != INVALID_SOCKET)
-			{
-				return shutdown(m_socket, how) != SOCKET_ERROR;
-			}
-			return FALSE;
 		}
 	}
 }

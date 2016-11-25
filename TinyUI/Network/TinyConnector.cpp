@@ -7,7 +7,11 @@ namespace TinyUI
 	namespace Network
 	{
 		TinyConnector::TinyConnector(SOCKET socket)
-			:m_socket(socket)
+			:TinySocket(socket)
+		{
+
+		}
+		TinyConnector::~TinyConnector()
 		{
 
 		}

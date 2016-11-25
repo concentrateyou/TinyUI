@@ -153,13 +153,37 @@ namespace TinyUI
 			return m_port;
 		}
 		//////////////////////////////////////////////////////////////////////////
-		TinySocket::TinySocket()
+		TinySocket::TinySocket(SOCKET socket)
+			:m_socket(socket)
 		{
-
+			GetAcceptEx(m_socket, &m_acceptex);
+			GetConnectEx(m_socket, &m_connectex);
+			GetAcceptExSockaddrs(m_socket, &m_getAcceptExSockaddrs);
+			GetDisconnectEx(m_socket, &m_diconnectex);
 		}
 		TinySocket::~TinySocket()
 		{
 
+		}
+		TinySocket::operator SOCKET() const
+		{
+			return m_socket;
+		}
+		void TinySocket::Close()
+		{
+			if (m_socket != INVALID_SOCKET)
+			{
+				closesocket(m_socket);
+				m_socket = NULL;
+			}
+		}
+		BOOL TinySocket::Shutdown(INT how)
+		{
+			if (m_socket != INVALID_SOCKET)
+			{
+				return shutdown(m_socket, how) != SOCKET_ERROR;
+			}
+			return FALSE;
 		}
 		BOOL TinySocket::GetAcceptEx(SOCKET socket, LPFN_ACCEPTEX* target)
 		{

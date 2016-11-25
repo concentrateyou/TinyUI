@@ -81,11 +81,15 @@ namespace TinyUI
 			static BOOL GetAcceptExSockaddrs(SOCKET socket, LPFN_GETACCEPTEXSOCKADDRS* target);
 			static BOOL GetDisconnectEx(SOCKET socket, LPFN_DISCONNECTEX* target);
 		public:
-			TinySocket();
+			TinySocket(SOCKET socket);
 			virtual ~TinySocket();
+			operator SOCKET() const;
+			virtual void Close();
+			virtual BOOL Shutdown(INT how);
 			virtual INT Read(BYTE* data, INT size, const CompletionCallback& callback) = 0;
 			virtual INT Write(BYTE* data, INT size, const CompletionCallback& callback) = 0;
 		protected:
+			SOCKET						m_socket;
 			LPFN_ACCEPTEX				m_acceptex;
 			LPFN_CONNECTEX				m_connectex;
 			LPFN_DISCONNECTEX			m_diconnectex;

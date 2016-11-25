@@ -1,5 +1,6 @@
 #pragma once
 #include "TinyNetwork.h"
+#include "TinySocket.h"
 
 namespace TinyUI
 {
@@ -12,15 +13,13 @@ namespace TinyUI
 		/// <summary>
 		/// ½ÓÊÕÌ×½Ó×Ö
 		/// </summary>
-		class TinyConnector
+		class TinyConnector : public TinySocket
 		{
 			friend class TinyAcceptor;
 		public:
 			TinyConnector(SOCKET socket = INVALID_SOCKET);
-			~TinyConnector();
+			virtual ~TinyConnector();
 			BOOL	BeginConnect(SOCKADDR_IN address);
-		protected:
-			SOCKET	m_socket;
 		};
 	};
 }

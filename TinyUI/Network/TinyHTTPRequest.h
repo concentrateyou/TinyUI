@@ -28,6 +28,7 @@ namespace TinyUI
 			};
 			typedef std::vector<HeaderKeyValuePair> HeaderVector;
 			static const char GetMethod[];
+			static const char PostMethod[];
 			static const char AcceptCharset[];
 			static const char AcceptEncoding[];
 			static const char AcceptLanguage[];

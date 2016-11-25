@@ -7,6 +7,7 @@ namespace TinyUI
 	namespace Network
 	{
 		const char HTTPRequestHeaders::GetMethod[] = "GET";
+		const char HTTPRequestHeaders::PostMethod[] = "POST";
 		const char HTTPRequestHeaders::AcceptCharset[] = "Accept-Charset";
 		const char HTTPRequestHeaders::AcceptEncoding[] = "Accept-Encoding";
 		const char HTTPRequestHeaders::AcceptLanguage[] = "Accept-Language";

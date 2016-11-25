@@ -12,6 +12,9 @@ namespace TinyUI
 {
 	namespace IO
 	{
+		/// <summary>
+		/// 线程基类
+		/// </summary>
 		class TinyTaskBase
 		{
 		public:
