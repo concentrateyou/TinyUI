@@ -8,8 +8,8 @@ namespace TinyUI
 	namespace Network
 	{
 		class TinyInternet;
-		class TinyHTTPConnection;
 		class TinyInternetSession;
+		class TinyHTTPConnection;
 
 		class TinyInternet
 		{
@@ -30,10 +30,10 @@ namespace TinyUI
 			BOOL QueryOption(DWORD dwOption, DWORD& dwValue) const;
 			BOOL SetOption(DWORD dwOption, LPVOID lpBuffer, DWORD dwBufferLength);
 			BOOL SetOption(DWORD dwOption, DWORD dwValue);
+			static BOOL ParseURL(LPCSTR lpszUrl, DWORD& dwServiceType, TinyString& strServer, TinyString& strObject, INTERNET_PORT& nPort, TinyString& strUsername, TinyString& strPassword);
 		protected:
-			HINTERNET	m_hNET;
-		private:
-			static TinyPtrMap m_sessionMap;
+			HINTERNET			m_hNET;
+			static  TinyPtrMap	m_sessionMap;
 		};
 		//////////////////////////////////////////////////////////////////////////
 		class TinyInternetSession : public TinyInternet
@@ -74,6 +74,7 @@ namespace TinyUI
 			virtual ~TinyInternetConnection();
 			DWORD_PTR GetContext() const;
 			TinyInternetSession* GetSession() const;
+			TinyString GetServer() const;
 		private:
 			TinyInternetSession*	m_pSession;
 			TinyString				m_server;
@@ -88,6 +89,13 @@ namespace TinyUI
 			DISALLOW_COPY_AND_ASSIGN(TinyInternetStream)
 		public:
 			TinyInternetStream(HINTERNET hRequest, TinyInternetConnection* pConnection, LPCTSTR pstrObject, LPCTSTR pstrServer, LPCTSTR pstrVerb, DWORD_PTR dwContext);
+			BOOL SetWriteBufferSize(UINT nWriteSize);
+			BOOL SetReadBufferSize(UINT nReadSize);
+			LONGLONG Seek(LONGLONG lOff, DWORD dwMoveMethod);
+			DWORD Read(void* pData, DWORD cbData);
+			DWORD Write(const void* pData, DWORD cbData);
+			BOOL Flush();
+			LONGLONG GetSize() const;
 		public:
 			TinyString	GetObject() const;
 			TinyString	GetServer() const;
@@ -97,6 +105,14 @@ namespace TinyUI
 		public:
 			virtual ~TinyInternetStream();
 		protected:
+			UINT					m_nWriteBufferSize;
+			UINT					m_nWriteBufferPos;
+			LPBYTE					m_pbWriteBuffer;
+			UINT					m_nReadBufferSize;
+			UINT					m_nReadBufferPos;
+			LPBYTE					m_pbReadBuffer;
+			UINT					m_nReadBufferBytes;
+			DWORD_PTR				m_dwContext;
 			TinyString				m_strObject;
 			TinyString				m_strVerb;
 			TinyString				m_strServer;
@@ -126,12 +142,32 @@ namespace TinyUI
 		{
 			DISALLOW_COPY_AND_ASSIGN(TinyHTTPConnection)
 		public:
+			enum
+			{
+				_HTTP_VERB_MIN = 0,
+				HTTP_VERB_POST = 0,
+				HTTP_VERB_GET = 1,
+				HTTP_VERB_HEAD = 2,
+				HTTP_VERB_PUT = 3,
+				HTTP_VERB_LINK = 4,
+				HTTP_VERB_DELETE = 5,
+				HTTP_VERB_UNLINK = 6,
+				_HTTP_VERB_MAX = 6,
+			};
+		public:
 			TinyHTTPConnection(TinyInternetSession* pSession, HINTERNET hConnected,
 				LPCTSTR pstrServer, DWORD_PTR dwContext);
 			TinyHTTPConnection(TinyInternetSession* pSession, LPCTSTR pstrServer,
 				INTERNET_PORT nPort = INTERNET_INVALID_PORT_NUMBER,
 				LPCTSTR pstrUserName = NULL, LPCTSTR pstrPassword = NULL,
 				DWORD_PTR dwContext = 1);
+			TinyHTTPStream* OpenRequest(LPCTSTR pstrVerb,
+				LPCTSTR pstrObjectName, LPCTSTR pstrReferer, DWORD_PTR dwContext,
+				LPCTSTR* ppstrAcceptTypes, LPCTSTR pstrVersion, DWORD dwFlags);
+			TinyHTTPStream* OpenRequest(INT nVerb, LPCTSTR pstrObjectName,
+				LPCTSTR pstrReferer = NULL, DWORD_PTR dwContext = 1,
+				LPCTSTR* ppstrAcceptTypes = NULL, LPCTSTR pstrVersion = NULL,
+				DWORD dwFlags = INTERNET_FLAG_EXISTING_CONNECT);
 			virtual ~TinyHTTPConnection();
 		protected:
 			static const LPCTSTR szHtmlVerbs[];

@@ -109,6 +109,7 @@ namespace TinyUI
 		BOOL		operator!=(CHAR* s);
 		BOOL		operator!=(const string& str);
 		BOOL		operator!=(string& str);
+		void		Resize(size_t _Newsize);
 		TinyString& Erase(size_t pos);
 		TinyString& Erase(size_t pos, size_t size);
 		TinyString& Insert(size_t pos, const CHAR* s);

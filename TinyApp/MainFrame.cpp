@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "MainFrame.h"
+#include "Network/TinyInternet.h"
 
 
 CMainFrame::CMainFrame()
@@ -136,18 +137,38 @@ bool ParseM8U3(const string& m3u8URL, const string& value, M3U8& m8u3)
 	return true;
 }
 
+
+
 LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
 
-	/*TinyFile file;
-	file.Open("D:\\live.m3u8", GENERIC_READ, FILE_SHARE_READ, NULL);
-	string str;
-	str.resize(file.GetSize());
-	file.Read(&str[0], str.size());
+	//DWORD dwServiceType;
+	//TinyString strServer;
+	//TinyString strObject;
+	//INTERNET_PORT nPort;
+	//TinyString strUsername;
+	//TinyString strPassword;
+	//Network::TinyInternet::ParseURL("http://10.121.33.213/ts/qiehuantest/qiehuantest.m3u8", dwServiceType, strServer, strObject, nPort, strUsername, strPassword);
 
-	M3U8 m8u3;
-	ParseM8U3("http://10.121.33.213/ts/qiehuantest/qiehuantest.m3u8", str, m8u3);*/
+	//Network::TinyInternetSession session;
+	//Network::TinyHTTPConnection* connect = session.GetHttpConnection(strServer.STR(), INTERNET_DEFAULT_HTTP_PORT, strUsername.STR(), strPassword.STR());
+	//Network::TinyHTTPStream* stream = connect->OpenRequest(Network::TinyHTTPConnection::HTTP_VERB_GET, strObject.STR());
+	////BOOL bRes = stream->AddRequestHeaders(_T("Accept: */*"));
+	//bRes = stream->SendRequest();
+	//DWORD dwStatus = 0;
+	//bRes = stream->QueryInfoStatusCode(dwStatus);
+	//if (bRes && dwStatus == HTTP_STATUS_OK)
+	//{
+	//	DWORD size = stream->GetSize();
+	//	stream->SetReadBufferSize(size);
+	//	string str;
+	//	str.resize(size);
+	//	stream->Read(&str[0], size);
+	//	INT a = 0;
+	//}
+	//SAFE_DELETE(connect);
+	//SAFE_DELETE(stream);
 
 
 	m_onVideoStart.Reset(new Delegate<void(void*, INT)>(this, &CMainFrame::OnVideoStart));

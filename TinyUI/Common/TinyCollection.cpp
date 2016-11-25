@@ -39,11 +39,11 @@ namespace TinyUI
 	{
 		RemoveAll();
 	}
-	DWORD	TinyPtrMap::GetSize() const
+	DWORD TinyPtrMap::GetSize() const
 	{
 		return m_dwCount;
 	}
-	BOOL	TinyPtrMap::IsEmpty() const
+	BOOL TinyPtrMap::IsEmpty() const
 	{
 		return m_dwCount == 0;
 	}

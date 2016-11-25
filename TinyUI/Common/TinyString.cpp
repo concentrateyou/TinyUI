@@ -148,7 +148,6 @@ namespace TinyUI
 	}
 	TinyString& TinyString::Append(const CHAR* s, size_t _Newsize)
 	{
-		ASSERT(s);
 		if (_Newsize > 0)
 		{
 			size_t Newsize = this->_Mysize + _Newsize;
@@ -165,12 +164,16 @@ namespace TinyUI
 				ASSERT(_Newres >= _Newsize);
 				CHAR *_Ptr = NULL;
 				_Ptr = new CHAR[_Newres + 1];
+				memset(_Ptr, 0, _Newres + 1);
 				if (0 < this->_Mysize)//拷贝存在的
 				{
 					memcpy(_Ptr, this->_Mystr, this->_Mysize);
 				}
 				this->_Myres = _Newres;
-				memcpy(_Ptr + this->_Mysize, s, _Newsize);//附加内存
+				if (s)
+				{
+					memcpy(_Ptr + this->_Mysize, s, _Newsize);//附加内存
+				}
 				this->_Mysize = Newsize;
 				_Ptr[this->_Mysize] = '\0';
 				SAFE_DELETE_ARRAY(this->_Mystr);
@@ -178,7 +181,10 @@ namespace TinyUI
 			}
 			else//拷贝内存
 			{
-				memcpy(this->_Mystr + this->_Mysize, s, _Newsize);
+				if (s)
+				{
+					memcpy(this->_Mystr + this->_Mysize, s, _Newsize);
+				}
 				this->_Mysize = Newsize;
 				this->_Mystr[this->_Mysize] = '\0';
 			}
@@ -565,6 +571,17 @@ namespace TinyUI
 	const CHAR*	TinyString::CSTR() const
 	{
 		return _Mystr;
+	}
+	void TinyString::Resize(size_t _Newsize)
+	{
+		if (_Newsize <= this->_Mysize)
+		{
+			Erase(_Newsize, this->_Mysize - _Newsize);
+		}
+		else
+		{
+			Append(NULL, _Newsize - this->_Mysize);
+		}
 	}
 	TinyString _cdecl TinyString::Format(const CHAR* s, ...)
 	{

@@ -1,5 +1,5 @@
 #pragma once
-#include "../Common//TinyCollection.h"
+#include "../Common/TinyCollection.h"
 #include "../IO/TinyIO.h"
 #include "../Common/TinyCallback.h"
 #include "../IO/TinyIOCP.h"
