@@ -7,21 +7,25 @@ namespace TinyUI
 {
 	namespace Network
 	{
-		class Runable
+#define OP_ACCEPT	0x01
+#define OP_RECV		0x02
+#define OP_SEND		0x03
+
+		class NO_VTABLE IO_CONTEXT : public OVERLAPPED
 		{
 		public:
-			Runable();
-			virtual ~Runable();
-			virtual void Run();
+			DWORD	OP;
 		};
 
 		class TinyIOTask : public IO::TinyTaskBase
 		{
+			DISALLOW_COPY_AND_ASSIGN(TinyIOTask)
 		public:
-			TinyIOTask(IO::TinyIOCP* ps);
+			explicit TinyIOTask(IO::TinyIOCP* ps);
 			virtual	~TinyIOTask();
 			BOOL Close(DWORD dwMs = INFINITE) OVERRIDE;
 			BOOL Submit();
+			virtual void OnCompletionStatus(IO_CONTEXT* pIO, DWORD dwError);
 		private:
 			void OnMessagePump();
 		private:
@@ -32,20 +36,27 @@ namespace TinyUI
 
 		class TinyScopedIOTaskArray
 		{
+			DISALLOW_COPY_AND_ASSIGN(TinyScopedIOTaskArray)
 		public:
 			TinyScopedIOTaskArray(DWORD dwCount, IO::TinyIOCP* ps);
 			~TinyScopedIOTaskArray();
+			DWORD	GetSize() const;
+			operator TinyIOTask*() const;
+			const TinyIOTask*	operator[](INT index) const;
+			TinyIOTask*			operator[](INT index);
 		private:
-			void*			m_myPtr;
+			void*			m_myP;
 			DWORD			m_dwCount;
 			IO::TinyIOCP*	m_pIOCP;
 		};
-
-		class TinyIOServer : public Runable
+		class TinyIOServer
 		{
+			DISALLOW_COPY_AND_ASSIGN(TinyIOServer)
 		public:
-			TinyIOServer(DWORD dwConcurrency);
-			virtual void Run() OVERRIDE;
+			explicit TinyIOServer(DWORD dwConcurrency);
+			virtual void Invoke();
+			virtual void Close();
+			//static void WINAPI CompletionRoutineCallback(DWORD dwError, DWORD cbTransferred, LPWSAOVERLAPPED lpOverlapped, DWORD dwFlags);
 		protected:
 			TinyScopedPtr<IO::TinyIOCP>				m_iocp;
 			TinyScopedPtr<TinyScopedIOTaskArray>	m_tasks;

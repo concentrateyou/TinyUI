@@ -6,40 +6,29 @@ namespace TinyUI
 {
 	namespace Network
 	{
-		TinyAcceptor::TinyAcceptor(IO::TinyIOCP& iocp, SOCKET socket)
-			:TinySocket(socket),
-			m_iocp(iocp)
+		TinyAcceptor::TinyAcceptor(SOCKET listen)
+			:m_listen(listen)
 		{
 
 		}
-		BOOL TinyAcceptor::Open(SOCKADDR_IN address)
+		BOOL TinyAcceptor::BeginAccept(SOCKET socket)
 		{
-			if (m_socket == INVALID_SOCKET)
+			ASSERT(socket);
+			LPFN_ACCEPTEX acceptex = NULL;
+			if (TinySocket::GetAcceptEx(socket, &acceptex))
 			{
-				return FALSE;
+				ACCEPT_IO_CONTEXT* context = new ACCEPT_IO_CONTEXT();
+				context->OP = OP_ACCEPT;
+				context->socket = socket;
 			}
-			if (bind(m_socket, (SOCKADDR *)&address, sizeof(SOCKADDR_IN)) == SOCKET_ERROR)
-			{
-				return FALSE;
-			}
-			if (listen(m_socket, 5) == SOCKET_ERROR)
-			{
-				return FALSE;
-			}
-			return TRUE;
 		}
-		BOOL TinyAcceptor::BeginAccept()
+		ACCEPT_IO_CONTEXT* TinyAcceptor::EndAccept()
 		{
-			if (m_socket == INVALID_SOCKET)
-			{
-				return FALSE;
-			}
-			SOCKET socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
-			if (socket == INVALID_SOCKET)
-			{
-				return FALSE;
-			}
-			return TRUE;
+			return NULL;
+		}
+		void TinyAcceptor::OnCompletionStatus(IO_CONTEXT* pIO, DWORD dwError)
+		{
+
 		}
 	}
 }

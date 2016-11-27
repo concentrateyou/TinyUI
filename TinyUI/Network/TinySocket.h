@@ -73,6 +73,7 @@ namespace TinyUI
 			USHORT		m_port;
 		};
 		typedef Callback<void(INT)> CompletionCallback;
+
 		class TinySocket
 		{
 		public:
@@ -90,10 +91,10 @@ namespace TinyUI
 			virtual INT Write(BYTE* data, INT size, const CompletionCallback& callback) = 0;
 		protected:
 			SOCKET						m_socket;
-			LPFN_ACCEPTEX				m_acceptex;
-			LPFN_CONNECTEX				m_connectex;
-			LPFN_DISCONNECTEX			m_diconnectex;
-			LPFN_GETACCEPTEXSOCKADDRS	m_getAcceptExSockaddrs;
+			//LPFN_ACCEPTEX				m_acceptex;
+			//LPFN_CONNECTEX				m_connectex;
+			//LPFN_DISCONNECTEX			m_diconnectex;
+			//LPFN_GETACCEPTEXSOCKADDRS	m_getAcceptExSockaddrs;
 		};
 	}
 }
