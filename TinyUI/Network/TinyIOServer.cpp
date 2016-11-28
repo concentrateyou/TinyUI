@@ -30,7 +30,7 @@ namespace TinyUI
 		void TinyIOTask::OnMessagePump()
 		{
 			ASSERT(m_pIOCP);
-			ULONG_PTR completionKey;
+			ULONG_PTR completionKey = 1111;
 			for (;;)
 			{
 				if (m_close.Lock(0))
@@ -41,12 +41,14 @@ namespace TinyUI
 				LPOVERLAPPED lpIO = NULL;
 				if (!GetQueuedCompletionStatus(m_pIOCP->Handle(), &dwNumberOfBytesTransferred, &completionKey, &lpIO, INFINITE))
 				{
+					TRACE("GetQueuedCompletionStatus error\n");
 					if (lpIO == NULL)
 					{
 						break;
 					}
 					continue;
 				}
+				TRACE("GetQueuedCompletionStatus success\n");
 				IO_CONTEXT* s = static_cast<IO_CONTEXT*>(lpIO);
 				switch (s->OP)
 				{
@@ -62,7 +64,7 @@ namespace TinyUI
 					{
 						m_pIOCP->Register((HANDLE)aio->socket, 0);
 					}
-					//aio->callback(dwError, dwNumberOfBytesTransferred, s);
+					aio->callback(dwError, dwNumberOfBytesTransferred, s);
 				}
 				break;
 				case OP_RECV:
@@ -129,6 +131,14 @@ namespace TinyUI
 			m_tasks.Reset(new TinyScopedIOTasks(dwConcurrency, m_iocp));
 			if (!m_tasks)
 				throw exception("new TinyScopedIOTasks Fail");
+		}
+		TinyIOServer::~TinyIOServer()
+		{
+			Close();
+		}
+		IO::TinyIOCP*	TinyIOServer::GetIOCP() const
+		{
+			return m_iocp;
 		}
 		void TinyIOServer::Invoke()
 		{

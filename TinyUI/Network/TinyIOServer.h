@@ -18,7 +18,7 @@ namespace TinyUI
 		public:
 			DWORD		OP;
 			ULONG_PTR	CompletionKey;
-			//Callback<void(DWORD, DWORD, IO_CONTEXT*)> callback;
+			Callback<void(DWORD, DWORD, IO_CONTEXT*)> callback;
 		};
 
 		class NO_VTABLE ACCEPT_IO_CONTEXT : public IO_CONTEXT
@@ -64,6 +64,8 @@ namespace TinyUI
 			DISALLOW_COPY_AND_ASSIGN(TinyIOServer)
 		public:
 			explicit TinyIOServer(DWORD dwConcurrency);
+			virtual ~TinyIOServer();
+			IO::TinyIOCP* GetIOCP() const;
 			virtual void Invoke();
 			virtual void Close();
 		protected:

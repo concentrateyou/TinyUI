@@ -61,10 +61,11 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	SYSTEM_INFO si;
 	GetSystemInfo(&si);
-	TinyUI::Network::TinyIOServer ioserver(si.dwNumberOfProcessors * 2);
+	//si.dwNumberOfProcessors * 2
+	TinyUI::Network::TinyIOServer ioserver(1);
 	ioserver.Invoke();
 
-	TinyUI::Network::TinyTCPServer server(50002);
+	TinyUI::Network::TinyTCPServer server(&ioserver, 50002);
 	server.Initialize();
 	server.BeginAccept();
 

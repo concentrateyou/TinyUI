@@ -26,7 +26,7 @@ namespace TinyUI
 				ACCEPT_IO_CONTEXT* context = new ACCEPT_IO_CONTEXT();
 				context->OP = OP_ACCEPT;
 				context->socket = socket;
-				//context->callback = BindCallback(&TinyAcceptor::IOCompletion, this);
+				context->callback = BindCallback(&TinyAcceptor::IOCompletion, this);
 				DWORD dwBytes = 0;
 				return acceptex(m_listen, socket, m_data, 0, sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, &dwBytes, context);
 			}
