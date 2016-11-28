@@ -9,12 +9,22 @@ namespace TinyUI
 	{
 #define OP_ACCEPT	0x01
 #define OP_RECV		0x02
-#define OP_SEND		0x03
+#define OP_RECVFROM	0x03
+#define OP_SEND		0x04
+#define OP_SENDTO	0x05
 
 		class NO_VTABLE IO_CONTEXT : public OVERLAPPED
 		{
 		public:
-			DWORD	OP;
+			DWORD		OP;
+			ULONG_PTR	CompletionKey;
+			//Callback<void(DWORD, DWORD, IO_CONTEXT*)> callback;
+		};
+
+		class NO_VTABLE ACCEPT_IO_CONTEXT : public IO_CONTEXT
+		{
+		public:
+			SOCKET	socket;
 		};
 
 		class TinyIOTask : public IO::TinyTaskBase
@@ -34,14 +44,13 @@ namespace TinyUI
 			TinyEvent		m_close;
 		};
 
-		class TinyScopedIOTaskArray
+		class TinyScopedIOTasks
 		{
-			DISALLOW_COPY_AND_ASSIGN(TinyScopedIOTaskArray)
+			DISALLOW_COPY_AND_ASSIGN(TinyScopedIOTasks)
 		public:
-			TinyScopedIOTaskArray(DWORD dwCount, IO::TinyIOCP* ps);
-			~TinyScopedIOTaskArray();
+			TinyScopedIOTasks(DWORD dwCount, IO::TinyIOCP* ps);
+			~TinyScopedIOTasks();
 			DWORD	GetSize() const;
-			operator TinyIOTask*() const;
 			const TinyIOTask*	operator[](INT index) const;
 			TinyIOTask*			operator[](INT index);
 		private:
@@ -49,6 +58,7 @@ namespace TinyUI
 			DWORD			m_dwCount;
 			IO::TinyIOCP*	m_pIOCP;
 		};
+
 		class TinyIOServer
 		{
 			DISALLOW_COPY_AND_ASSIGN(TinyIOServer)
@@ -56,10 +66,9 @@ namespace TinyUI
 			explicit TinyIOServer(DWORD dwConcurrency);
 			virtual void Invoke();
 			virtual void Close();
-			//static void WINAPI CompletionRoutineCallback(DWORD dwError, DWORD cbTransferred, LPWSAOVERLAPPED lpOverlapped, DWORD dwFlags);
 		protected:
-			TinyScopedPtr<IO::TinyIOCP>				m_iocp;
-			TinyScopedPtr<TinyScopedIOTaskArray>	m_tasks;
+			TinyScopedReferencePtr<IO::TinyIOCP>	m_iocp;
+			TinyScopedPtr<TinyScopedIOTasks>		m_tasks;
 		};
 	}
 }

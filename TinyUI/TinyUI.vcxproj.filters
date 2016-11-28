@@ -393,6 +393,12 @@
     <ClInclude Include="Network\TinyIOServer.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
+    <ClInclude Include="Network\TinyTCPServer.h">
+      <Filter>头文件\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\TinyTCPClient.h">
+      <Filter>头文件\Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -717,6 +723,12 @@
       <Filter>源文件\Network</Filter>
     </ClCompile>
     <ClCompile Include="Network\TinyIOServer.cpp">
+      <Filter>源文件\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\TinyTCPServer.cpp">
+      <Filter>源文件\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\TinyTCPClient.cpp">
       <Filter>源文件\Network</Filter>
     </ClCompile>
   </ItemGroup>

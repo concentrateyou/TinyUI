@@ -156,10 +156,7 @@ namespace TinyUI
 		TinySocket::TinySocket(SOCKET socket)
 			:m_socket(socket)
 		{
-			/*	GetAcceptEx(m_socket, &m_acceptex);
-				GetConnectEx(m_socket, &m_connectex);
-				GetAcceptExSockaddrs(m_socket, &m_getAcceptExSockaddrs);
-				GetDisconnectEx(m_socket, &m_diconnectex);*/
+
 		}
 		TinySocket::~TinySocket()
 		{

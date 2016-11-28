@@ -7,22 +7,17 @@ namespace TinyUI
 {
 	namespace Network
 	{
-		class NO_VTABLE ACCEPT_IO_CONTEXT : public IO_CONTEXT
+		class TinyAcceptor
 		{
 		public:
-			SOCKET	socket;
-		};
-
-		class TinyAcceptor : public TinyReference<TinyAcceptor>, public TinyIOTask
-		{
+			explicit TinyAcceptor(SOCKET listen);
+			virtual ~TinyAcceptor();
 		public:
-			TinyAcceptor(SOCKET listen);
-		public:
-			BOOL	BeginAccept(SOCKET socket);
-			ACCEPT_IO_CONTEXT*	EndAccept();
-			void OnCompletionStatus(IO_CONTEXT* pIO, DWORD dwError) OVERRIDE;
+			BOOL	BeginAccept();
+			virtual void IOCompletion(DWORD dwCode, DWORD dwBytes, IO_CONTEXT*ps);
 		private:
-			SOCKET m_listen;
+			SOCKET	m_listen;
+			CHAR	m_data[1024];
 		};
 	}
 }

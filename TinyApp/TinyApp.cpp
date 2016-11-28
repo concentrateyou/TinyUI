@@ -8,6 +8,7 @@
 #include "Windowless/TinyVisualHWND.h"
 #include "Windowless/TinyVisualRichText.h"
 #include "Render/TinyDDraw.h"
+#include "Network/TinyTCPServer.h"
 
 BOOL LoadSeDebugPrivilege()
 {
@@ -58,6 +59,16 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
+	SYSTEM_INFO si;
+	GetSystemInfo(&si);
+	TinyUI::Network::TinyIOServer ioserver(si.dwNumberOfProcessors * 2);
+	ioserver.Invoke();
+
+	TinyUI::Network::TinyTCPServer server(50002);
+	server.Initialize();
+	server.BeginAccept();
+
+
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
@@ -69,6 +80,9 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	INT loopRes = theLoop.MessageLoop();
 	TinyApplication::GetInstance()->RemoveMessageLoop();
 	TinyApplication::GetInstance()->Uninitialize();
+
+	ioserver.Close();
+
 	OleUninitialize();
 	MFShutdown();
 	WSACleanup();
