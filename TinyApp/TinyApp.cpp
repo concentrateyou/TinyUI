@@ -65,8 +65,8 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyUI::Network::TinyIOServer ioserver(1);
 	ioserver.Invoke();
 
-	TinyUI::Network::TinyTCPServer server(&ioserver, 50002);
-	server.Initialize();
+	TinyUI::Network::TinyTCPServer server(&ioserver, 4001);
+	server.Initialize(1);
 	server.BeginAccept();
 
 

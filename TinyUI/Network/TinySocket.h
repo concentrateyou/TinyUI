@@ -67,10 +67,10 @@ namespace TinyUI
 			IPEndPoint(const IPEndPoint& endpoint);
 			IPEndPoint(IPEndPoint&& endpoint);
 			const IPAddress& Address() const;
-			USHORT Port() const;
+			USHORT PORT() const;
 		private:
 			IPAddress	m_address;
-			USHORT		m_port;
+			USHORT		m_sPORT;
 		};
 		typedef Callback<void(INT)> CompletionCallback;
 

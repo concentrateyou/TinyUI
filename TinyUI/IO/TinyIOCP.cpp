@@ -58,7 +58,7 @@ namespace TinyUI
 			}
 			if (hFileHandle != m_hFileHandle)
 			{
-				hFileHandle = m_hFileHandle;
+				m_hFileHandle = hFileHandle;
 				return ::CreateIoCompletionPort(hFileHandle, m_hIOCP, completionKey, 0) != NULL;
 			}
 			return FALSE;

@@ -118,7 +118,7 @@ namespace TinyUI
 		}
 		//////////////////////////////////////////////////////////////////////////
 		IPEndPoint::IPEndPoint()
-			:m_port(0)
+			:m_sPORT(0)
 		{
 
 		}
@@ -126,21 +126,21 @@ namespace TinyUI
 		{
 
 		}
-		IPEndPoint::IPEndPoint(const IPAddress& address, USHORT port)
+		IPEndPoint::IPEndPoint(const IPAddress& address, USHORT sPORT)
 			:m_address(std::move(address)),
-			m_port(port)
+			m_sPORT(sPORT)
 		{
 
 		}
 		IPEndPoint::IPEndPoint(const IPEndPoint& endpoint)
 			: m_address(std::move(endpoint.m_address)),
-			m_port(endpoint.m_port)
+			m_sPORT(endpoint.m_sPORT)
 		{
 
 		}
 		IPEndPoint::IPEndPoint(IPEndPoint&& endpoint)
 			: m_address(std::move(endpoint.m_address)),
-			m_port(endpoint.m_port)
+			m_sPORT(endpoint.m_sPORT)
 		{
 
 		}
@@ -148,9 +148,9 @@ namespace TinyUI
 		{
 			return m_address;
 		}
-		USHORT IPEndPoint::Port() const
+		USHORT IPEndPoint::PORT() const
 		{
-			return m_port;
+			return m_sPORT;
 		}
 		//////////////////////////////////////////////////////////////////////////
 		TinySocket::TinySocket(SOCKET socket)

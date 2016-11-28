@@ -19,16 +19,22 @@ namespace TinyUI
 
 		BOOL TinyAcceptor::BeginAccept()
 		{
-			SOCKET socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
+			SOCKET socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
 			LPFN_ACCEPTEX acceptex = NULL;
 			if (TinySocket::GetAcceptEx(socket, &acceptex))
 			{
 				ACCEPT_IO_CONTEXT* context = new ACCEPT_IO_CONTEXT();
+				ZeroMemory(context, sizeof(ACCEPT_IO_CONTEXT));
 				context->OP = OP_ACCEPT;
-				context->socket = socket;
-				context->callback = BindCallback(&TinyAcceptor::IOCompletion, this);
+				context->Socket = socket;
+				//context->callback = BindCallback(&TinyAcceptor::IOCompletion, this);
 				DWORD dwBytes = 0;
-				return acceptex(m_listen, socket, m_data, 0, sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, &dwBytes, context);
+				DWORD dwAddressSize = sizeof(SOCKADDR_IN) + 16;
+				CHAR data[(sizeof(SOCKADDR_IN) + 16) * 2];
+				ZeroMemory(data, (sizeof(SOCKADDR_IN) + 16) * 2);
+				BOOL bRes = acceptex(m_listen, socket, data, 0, dwAddressSize, dwAddressSize, &dwBytes, &(context->OverLapped));
+				DWORD dwError = WSAGetLastError();
+				return bRes;
 			}
 			return FALSE;
 		}
@@ -40,12 +46,12 @@ namespace TinyUI
 				if (dwBytes > 0)
 				{
 					//第一个数据块
-					ACCEPT_IO_CONTEXT* s = static_cast<ACCEPT_IO_CONTEXT*>(ps);
-					LPFN_GETACCEPTEXSOCKADDRS getAcceptExSockaddrs = NULL;
+					//ACCEPT_IO_CONTEXT* s = static_cast<ACCEPT_IO_CONTEXT*>(ps);
+					/*LPFN_GETACCEPTEXSOCKADDRS getAcceptExSockaddrs = NULL;
 					if (TinySocket::GetAcceptExSockaddrs(s->socket, &getAcceptExSockaddrs))
 					{
 
-					}
+					}*/
 				}
 				//继续异步调用
 				this->BeginAccept();

@@ -13,19 +13,20 @@ namespace TinyUI
 #define OP_SEND		0x04
 #define OP_SENDTO	0x05
 
-		class NO_VTABLE IO_CONTEXT : public OVERLAPPED
+		typedef struct tagIO_CONTEXT
 		{
-		public:
+			OVERLAPPED	OverLapped;
 			DWORD		OP;
 			ULONG_PTR	CompletionKey;
-			Callback<void(DWORD, DWORD, IO_CONTEXT*)> callback;
-		};
+		}IO_CONTEXT;
 
-		class NO_VTABLE ACCEPT_IO_CONTEXT : public IO_CONTEXT
+		typedef struct tagACCEPT_IO_CONTEXT
 		{
-		public:
-			SOCKET	socket;
-		};
+			OVERLAPPED	OverLapped;
+			DWORD		OP;
+			ULONG_PTR	CompletionKey;
+			SOCKET		Socket;
+		}ACCEPT_IO_CONTEXT;
 
 		class TinyIOTask : public IO::TinyTaskBase
 		{
