@@ -1,6 +1,7 @@
 #include "../stdafx.h"
 #include "../Common/TinyUtility.h"
 #include "TinyIOServer.h"
+#include "TinyTCPSocket.h"
 #include <process.h>
 
 namespace TinyUI
@@ -26,12 +27,7 @@ namespace TinyUI
 		}
 		void PER_IO_CONTEXT::Destory()
 		{
-			if (AcceptSocket)
-			{
-				closesocket(AcceptSocket);
-				AcceptSocket = NULL;
-			}
-			SAFE_DELETE(Buffer.buf);
+
 		}
 		//////////////////////////////////////////////////////////////////////////
 		TinyIOTask::TinyIOTask(IO::TinyIOCP* ps)
@@ -59,7 +55,7 @@ namespace TinyUI
 		void TinyIOTask::OnMessagePump()
 		{
 			ASSERT(m_pIOCP);
-			ULONG_PTR completionKey = 0;//TODO
+			ULONG_PTR completionKey = 0;
 			for (;;)
 			{
 				if (m_close.Lock(0))
@@ -82,21 +78,26 @@ namespace TinyUI
 				{
 				case OP_ACCEPT:
 				{
-					DWORD dwError = 0;
-					if (setsockopt(context->AcceptSocket, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, (char *)&context->ListenSocket, sizeof(context->ListenSocket)) == SOCKET_ERROR)
+					SOCKET listen = static_cast<SOCKET>(completionKey);
+					TinyTCPSocket* socket = reinterpret_cast<TinyTCPSocket*>(context->Key);
+					if (socket)
 					{
-						dwError = WSAGetLastError();
+						DWORD dwError = 0;
+						if (setsockopt(socket->Handle(), SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, (char *)&listen, sizeof(listen)) == SOCKET_ERROR)
+						{
+							dwError = WSAGetLastError();
+						}
+						else
+						{
+							m_pIOCP->Register((HANDLE)socket->Handle(), 0);
+						}
+						socket->OnAccept(dwError, dwNumberOfBytesTransferred, socket);
 					}
-					else
-					{
-						m_pIOCP->Register((HANDLE)context->AcceptSocket, 0);
-					}
-					context->IOCompletion(dwError, dwNumberOfBytesTransferred, context);
 				}
 				break;
 				case OP_RECV:
 				{
-					
+
 				}
 				break;
 				case OP_SEND:

@@ -7,10 +7,12 @@ namespace TinyUI
 	{
 		class IPAddress
 		{
+		public:
 			enum : size_t { IPv4AddressSize = 4, IPv6AddressSize = 16 };
 		public:
 			IPAddress();
 			explicit IPAddress(const vector<BYTE>& address);
+			explicit IPAddress(const string& ip);
 			IPAddress(IPAddress&& other);
 			IPAddress(const IPAddress& other);
 			template <INT N>
@@ -59,46 +61,49 @@ namespace TinyUI
 			ADDRESS_FAMILY_LAST = ADDRESS_FAMILY_IPV6
 		};
 
+		class TinySocket;
 		class NO_VTABLE PER_IO_CONTEXT : public OVERLAPPED
 		{
-			using IOCompletionCallback = Callback<void(DWORD, DWORD, PER_IO_CONTEXT*)>;
 		public:
 			PER_IO_CONTEXT();
 			~PER_IO_CONTEXT();
 		public:
-			DWORD					OP;
-			SOCKET					AcceptSocket;
-			SOCKET					ListenSocket;
-			WSABUF					Buffer;
-			DWORD					NumberOfBytes;
-			DWORD					NumberOfBytesTransferred;
-			IOCompletionCallback	IOCompletion;
+			DWORD		OP;
+			DWORD		NumberOfBytesTransferred;
+			LONG_PTR	Key;
 		public:
 			void Reset();
 			void Destory();
 		};
-
-		using CompleteCallback = Callback<void(DWORD, DWORD)>;
-
 		/// <summary>
-		/// 套接字
+		/// 套接字基类
 		/// </summary>
 		class TinySocket
 		{
+			friend class TinyTCPSocket;
+			DISALLOW_COPY_AND_ASSIGN(TinySocket)
+		public:
+			TinySocket();
+			virtual ~TinySocket();
+			operator SOCKET() const;
+			SOCKET Handle() const;
+			BOOL operator == (const TinySocket& obj) const;
+			BOOL operator != (const TinySocket& obj) const;
+			BOOL Attach(SOCKET socket);
+			SOCKET Detach();
+			TinySocket* Lookup(SOCKET socket);
+		public:
+			virtual void Close();
+			virtual BOOL Shutdown(INT how);
 		public:
 			static BOOL GetAcceptEx(SOCKET socket, LPFN_ACCEPTEX* target);
 			static BOOL GetConnectEx(SOCKET socket, LPFN_CONNECTEX* target);
 			static BOOL GetAcceptExSockaddrs(SOCKET socket, LPFN_GETACCEPTEXSOCKADDRS* target);
 			static BOOL GetDisconnectEx(SOCKET socket, LPFN_DISCONNECTEX* target);
-		public:
-			TinySocket(SOCKET socket);
-			virtual ~TinySocket();
-			operator SOCKET() const;
-			virtual void Close();
-			virtual BOOL Shutdown(INT how);
 		protected:
-			SOCKET			m_socket;
-			PER_IO_CONTEXT	m_io;
+			SOCKET				m_socket;
+			PER_IO_CONTEXT		m_context;
+			static  TinyPtrMap	m_socketMap;
 		};
 	}
 }

@@ -252,9 +252,6 @@
     <ClInclude Include="IO\TinyIOCP.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
-    <ClInclude Include="Network\TinyAcceptor.h">
-      <Filter>头文件\Network</Filter>
-    </ClInclude>
     <ClInclude Include="Network\TinyConnector.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
@@ -393,10 +390,7 @@
     <ClInclude Include="Network\TinyIOServer.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
-    <ClInclude Include="Network\TinyTCPServer.h">
-      <Filter>头文件\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="Network\TinyTCPClient.h">
+    <ClInclude Include="Network\TinyTCPSocket.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
   </ItemGroup>
@@ -581,9 +575,6 @@
     <ClCompile Include="IO\TinyIOCP.cpp">
       <Filter>源文件\IO</Filter>
     </ClCompile>
-    <ClCompile Include="Network\TinyAcceptor.cpp">
-      <Filter>源文件\Network</Filter>
-    </ClCompile>
     <ClCompile Include="Network\TinyConnector.cpp">
       <Filter>源文件\Network</Filter>
     </ClCompile>
@@ -725,10 +716,7 @@
     <ClCompile Include="Network\TinyIOServer.cpp">
       <Filter>源文件\Network</Filter>
     </ClCompile>
-    <ClCompile Include="Network\TinyTCPServer.cpp">
-      <Filter>源文件\Network</Filter>
-    </ClCompile>
-    <ClCompile Include="Network\TinyTCPClient.cpp">
+    <ClCompile Include="Network\TinyTCPSocket.cpp">
       <Filter>源文件\Network</Filter>
     </ClCompile>
   </ItemGroup>

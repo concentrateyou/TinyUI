@@ -10,10 +10,14 @@ namespace TinyUI
 		{
 			TRACE("IPAddress构造-0\n");
 		}
-		IPAddress::IPAddress(const std::vector<uint8_t>& address)
+		IPAddress::IPAddress(const std::vector<BYTE>& address)
 			: m_address(std::move(address))
 		{
 			TRACE("IPAddress构造-1\n");
+		}
+		IPAddress::IPAddress(const string& ip)
+		{
+
 		}
 		IPAddress::IPAddress(const IPAddress& other)
 			: m_address(std::move(other.m_address))
@@ -117,18 +121,60 @@ namespace TinyUI
 			return m_address;
 		}
 		//////////////////////////////////////////////////////////////////////////
-		TinySocket::TinySocket(SOCKET socket)
-			:m_socket(socket)
+		TinyPtrMap TinySocket::m_socketMap;
+
+		TinySocket::TinySocket()
 		{
 
 		}
 		TinySocket::~TinySocket()
 		{
-
+			m_context.Destory();
+			Close();
 		}
 		TinySocket::operator SOCKET() const
 		{
 			return m_socket;
+		}
+		SOCKET TinySocket::Handle() const
+		{
+			return m_socket;
+		}
+		BOOL TinySocket::operator == (const TinySocket& obj) const
+		{
+			return m_socket == obj.m_socket;
+		}
+		BOOL TinySocket::operator != (const TinySocket& obj) const
+		{
+			return m_socket != obj.m_socket;
+		}
+		BOOL TinySocket::Attach(SOCKET socket)
+		{
+			if (socket == INVALID_SOCKET)
+				return FALSE;
+			m_socket = socket;
+			TinyPtrMap& map = TinySocket::m_socketMap;
+			map.Add((UINT_PTR)socket, (UINT_PTR)this);
+			return TRUE;
+		}
+		SOCKET TinySocket::Detach()
+		{
+			SOCKET socket = m_socket;
+			if (socket != INVALID_SOCKET)
+			{
+				TinyPtrMap& map = TinySocket::m_socketMap;
+				map.Remove((UINT_PTR)socket);
+			}
+			m_socket = NULL;
+			return socket;
+		}
+		TinySocket* TinySocket::Lookup(SOCKET socket)
+		{
+			TinyPtrMap& map = TinySocket::m_socketMap;
+			UINT_PTR val = 0;
+			if (!map.Lookup((UINT_PTR)socket, val))
+				return NULL;
+			return reinterpret_cast<TinySocket*>(val);
 		}
 		void TinySocket::Close()
 		{
@@ -146,7 +192,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		
+
 		BOOL TinySocket::GetAcceptEx(SOCKET socket, LPFN_ACCEPTEX* target)
 		{
 			return GetExtensionPtr(socket, WSAID_ACCEPTEX, (void**)target);

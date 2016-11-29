@@ -8,7 +8,7 @@
 #include "Windowless/TinyVisualHWND.h"
 #include "Windowless/TinyVisualRichText.h"
 #include "Render/TinyDDraw.h"
-#include "Network/TinyTCPServer.h"
+#include "Network/TinyTCPSocket.h"
 
 BOOL LoadSeDebugPrivilege()
 {
