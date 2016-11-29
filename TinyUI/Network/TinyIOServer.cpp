@@ -41,43 +41,42 @@ namespace TinyUI
 				LPOVERLAPPED lpIO = NULL;
 				if (!GetQueuedCompletionStatus(m_pIOCP->Handle(), &dwNumberOfBytesTransferred, &completionKey, &lpIO, INFINITE))
 				{
-					TRACE("GetQueuedCompletionStatus error\n");
 					if (lpIO == NULL)
 					{
 						break;
 					}
 					continue;
 				}
-				TRACE("GetQueuedCompletionStatus success\n");
-				//IO_CONTEXT* s = static_cast<IO_CONTEXT*>(lpIO);
-				//switch (s->OP)
-				//{
-				//case OP_ACCEPT:
-				//{
-				//	ACCEPT_IO_CONTEXT* aio = static_cast<ACCEPT_IO_CONTEXT*>(lpIO);
-				//	DWORD dwError = 0;
-				//	if (setsockopt(aio->socket, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, NULL, 0) == SOCKET_ERROR)
-				//	{
-				//		dwError = WSAGetLastError();
-				//	}
-				//	else
-				//	{
-				//		m_pIOCP->Register((HANDLE)aio->socket, 0);
-				//	}
-				//	//aio->callback(dwError, dwNumberOfBytesTransferred, s);
-				//}
-				//break;
-				//case OP_RECV:
-				//{
+				IO_CONTEXT* s = static_cast<IO_CONTEXT*>(lpIO);
+				switch (s->OP)
+				{
+				case OP_ACCEPT:
+				{
+					ACCEPT_IO_CONTEXT* aio = static_cast<ACCEPT_IO_CONTEXT*>(lpIO);
+					DWORD dwError = 0;
+					if (setsockopt(aio->AcceptSocket, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, (char *)&aio->ListenSocket, sizeof(aio->ListenSocket)) == SOCKET_ERROR)
+					{
+						dwError = WSAGetLastError();
+					}
+					else
+					{
+						m_pIOCP->Register((HANDLE)aio->AcceptSocket, aio->CompletionKey);
+					}
+					aio->Callback(dwError, dwNumberOfBytesTransferred, s);
+					SAFE_DELETE(aio);
+				}
+				break;
+				case OP_RECV:
+				{
 
-				//}
-				//break;
-				//case OP_SEND:
-				//{
+				}
+				break;
+				case OP_SEND:
+				{
 
-				//}
-				//break;
-				//}
+				}
+				break;
+				}
 			}
 		}
 		void TinyIOTask::OnCompletionStatus(IO_CONTEXT* pIO, DWORD dwError)

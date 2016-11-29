@@ -11,13 +11,13 @@ namespace TinyUI
 		{
 			DISALLOW_COPY_AND_ASSIGN(TinyTCPServer)
 		public:
-			TinyTCPServer(TinyIOServer* pIOServer, DWORD dwPORT);
+			TinyTCPServer(TinyIOServer* ioserver, DWORD dwPORT);
 			virtual ~TinyTCPServer();
 			BOOL Initialize(ULONG_PTR completionKey = 0);
 			BOOL BeginAccept();
 			BOOL Close();
 		private:
-			TinyIOServer*				m_pIOServer;
+			TinyIOServer*				m_ioserver;
 			TinyScopedPtr<TinyAcceptor> m_acceptor;
 			SOCKET			m_listen;
 			DWORD			m_dwPORT;

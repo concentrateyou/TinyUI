@@ -6,8 +6,8 @@ namespace TinyUI
 {
 	namespace Network
 	{
-		TinyTCPServer::TinyTCPServer(TinyIOServer* pIOServer, DWORD dwPORT)
-			:m_pIOServer(pIOServer),
+		TinyTCPServer::TinyTCPServer(TinyIOServer* ioserver, DWORD dwPORT)
+			:m_ioserver(ioserver),
 			m_dwPORT(dwPORT),
 			m_listen(NULL)
 		{
@@ -19,10 +19,11 @@ namespace TinyUI
 		}
 		BOOL TinyTCPServer::Initialize(ULONG_PTR completionKey)
 		{
-			ASSERT(m_pIOServer);
+			ASSERT(m_ioserver);
 			m_listen = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
-			BOOL bRes = m_pIOServer->GetIOCP()->Register(reinterpret_cast<HANDLE>(m_listen), completionKey);
-			if (!bRes)
+			if (m_listen == INVALID_SOCKET)
+				return FALSE;
+			if (!m_ioserver->GetIOCP()->Register(reinterpret_cast<HANDLE>(m_listen), completionKey))
 				return FALSE;
 			SOCKADDR_IN si;
 			ZeroMemory(&si, sizeof(si));

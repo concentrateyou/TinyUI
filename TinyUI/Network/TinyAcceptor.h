@@ -13,11 +13,10 @@ namespace TinyUI
 			explicit TinyAcceptor(SOCKET listen);
 			virtual ~TinyAcceptor();
 		public:
-			BOOL	BeginAccept();
+			BOOL	BeginAccept(ULONG_PTR completionKey);
 			virtual void IOCompletion(DWORD dwCode, DWORD dwBytes, IO_CONTEXT*ps);
 		private:
-			SOCKET	m_listen;
-			CHAR	m_data[1024];
+			SOCKET	m_listenSocket;
 		};
 	}
 }
