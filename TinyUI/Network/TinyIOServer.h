@@ -13,20 +13,7 @@ namespace TinyUI
 #define OP_SEND		0x04
 #define OP_SENDTO	0x05
 
-		class NO_VTABLE IO_CONTEXT : public OVERLAPPED
-		{
-		public:
-			DWORD		OP;
-			ULONG_PTR	CompletionKey;
-			Callback<void(DWORD, DWORD, IO_CONTEXT*)> Callback;
-		};
-
-		class NO_VTABLE ACCEPT_IO_CONTEXT : public IO_CONTEXT
-		{
-		public:
-			SOCKET ListenSocket;
-			SOCKET AcceptSocket;
-		};
+#define MAX_BUFFER_SIZE   4096
 
 		class TinyIOTask : public IO::TinyTaskBase
 		{
@@ -36,13 +23,14 @@ namespace TinyUI
 			virtual	~TinyIOTask();
 			BOOL Close(DWORD dwMs = INFINITE) OVERRIDE;
 			BOOL Submit();
-			virtual void OnCompletionStatus(IO_CONTEXT* pIO, DWORD dwError);
 		private:
 			void OnMessagePump();
 		private:
 			IO::TinyIOCP*	m_pIOCP;
 			TinyUI::Closure	m_closure;
 			TinyEvent		m_close;
+			WSABUF			m_recv;
+			WSABUF			m_send;
 		};
 
 		class TinyScopedIOTasks
@@ -67,7 +55,7 @@ namespace TinyUI
 			explicit TinyIOServer(DWORD dwConcurrency);
 			virtual ~TinyIOServer();
 			IO::TinyIOCP* GetIOCP() const;
-			virtual void Invoke();
+			virtual void Run();
 			virtual void Close();
 		protected:
 			TinyScopedReferencePtr<IO::TinyIOCP>	m_iocp;

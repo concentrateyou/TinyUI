@@ -14,10 +14,19 @@ namespace TinyUI
 
 		TinyAcceptor::~TinyAcceptor()
 		{
-
+			Close();
 		}
 
-		BOOL TinyAcceptor::BeginAccept(ULONG_PTR completionKey)
+		void TinyAcceptor::Close()
+		{
+			if (m_listenSocket)
+			{
+				closesocket(m_listenSocket);
+				m_listenSocket = NULL;
+			}
+		}
+
+		BOOL TinyAcceptor::BeginAccept()
 		{
 			SOCKET acceptSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 			if (acceptSocket == INVALID_SOCKET)
@@ -25,47 +34,55 @@ namespace TinyUI
 			LPFN_ACCEPTEX acceptex = NULL;
 			if (TinySocket::GetAcceptEx(m_listenSocket, &acceptex))
 			{
-				ACCEPT_IO_CONTEXT* context = new ACCEPT_IO_CONTEXT();
-				ZeroMemory(context, sizeof(ACCEPT_IO_CONTEXT));
+				PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
+				ZeroMemory(context, sizeof(PER_IO_CONTEXT));
 				context->OP = OP_ACCEPT;
 				context->ListenSocket = m_listenSocket;
 				context->AcceptSocket = acceptSocket;
-				context->CompletionKey = completionKey;
-				context->Callback = BindCallback(&TinyAcceptor::IOCompletion, this);
+				context->IOCompletion = BindCallback(&TinyAcceptor::OnIOCompletion, this);
 				DWORD dwBytes = 0;
 				DWORD dwAddressSize = sizeof(SOCKADDR_IN) + 16;
 				CHAR data[(sizeof(SOCKADDR_IN) + 16) * 2];
 				ZeroMemory(data, (sizeof(SOCKADDR_IN) + 16) * 2);
 				LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
-				if (!acceptex(m_listenSocket, acceptSocket, data, 0, dwAddressSize, dwAddressSize, &dwBytes, ps))
+				if (!acceptex(m_listenSocket, acceptSocket, data, 0, dwAddressSize, dwAddressSize, &dwBytes, ps) &&
+					ERROR_IO_PENDING != WSAGetLastError())
 				{
-					if (WSAGetLastError() != ERROR_IO_PENDING)
-					{
-						closesocket(acceptSocket);
-						SAFE_DELETE(context);
-						return FALSE;
-					}
+					closesocket(acceptSocket);
+					SAFE_DELETE(context);
+					return FALSE;
 				}
+				m_contexts.InsertLast(context);
 				return TRUE;
 			}
 			return FALSE;
 		}
 
-		void TinyAcceptor::IOCompletion(DWORD dwCode, DWORD dwBytes, IO_CONTEXT*ps)
+		void TinyAcceptor::OnIOCompletion(DWORD dwCode, DWORD dwBytes, PER_IO_CONTEXT*context)
 		{
 			if (dwCode == 0)
 			{
-				if (dwBytes > 0)
+				LPOVERLAPPED ps = reinterpret_cast<LPOVERLAPPED>(context);
+				ZeroMemory(ps, sizeof(OVERLAPPED));
+				context->Buffer.buf = new CHAR[MAX_BUFFER_SIZE];
+				context->Buffer.len = MAX_BUFFER_SIZE;
+				DWORD	dwRecvBytes = 0;
+				DWORD	dwFlag = 0;
+				context->OP = OP_RECV;
+				if (WSARecv(context->AcceptSocket, &context->Buffer, 1, &dwRecvBytes, &dwFlag, context, NULL) == SOCKET_ERROR
+					&& ERROR_IO_PENDING != WSAGetLastError())
 				{
-					ACCEPT_IO_CONTEXT* s = static_cast<ACCEPT_IO_CONTEXT*>(ps);
-					LPFN_GETACCEPTEXSOCKADDRS getAcceptExSockaddrs = NULL;
-					if (TinySocket::GetAcceptExSockaddrs(s->AcceptSocket, &getAcceptExSockaddrs))
+					ITERATOR pos = m_contexts.Lookup(context);
+					if (pos)
 					{
-
+						m_contexts.RemoveAt(pos);
 					}
+					SAFE_DELETE(context);
 				}
-				//继续异步调用
-				this->BeginAccept(ps->CompletionKey);
+				if (context->OP == OP_ACCEPT)
+				{
+					this->BeginAccept();
+				}
 			}
 		}
 	}

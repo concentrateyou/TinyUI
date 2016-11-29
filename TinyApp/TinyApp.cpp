@@ -62,7 +62,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	SYSTEM_INFO si;
 	GetSystemInfo(&si);
 	TinyUI::Network::TinyIOServer ioserver(1);
-	ioserver.Invoke();
+	ioserver.Run();
 
 	TinyUI::Network::TinyTCPServer server(&ioserver, 5500);
 	server.Initialize(1);

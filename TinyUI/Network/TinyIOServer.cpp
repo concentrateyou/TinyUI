@@ -7,6 +7,33 @@ namespace TinyUI
 {
 	namespace Network
 	{
+		PER_IO_CONTEXT::PER_IO_CONTEXT()
+		{
+			Reset();
+		}
+		PER_IO_CONTEXT::~PER_IO_CONTEXT()
+		{
+			Destory();
+		}
+		void PER_IO_CONTEXT::Reset()
+		{
+			this->Internal = 0;
+			this->InternalHigh = 0;
+			this->Offset = 0;
+			this->OffsetHigh = 0;
+			this->Pointer = NULL;
+			this->hEvent = NULL;
+		}
+		void PER_IO_CONTEXT::Destory()
+		{
+			if (AcceptSocket)
+			{
+				closesocket(AcceptSocket);
+				AcceptSocket = NULL;
+			}
+			SAFE_DELETE(Buffer.buf);
+		}
+		//////////////////////////////////////////////////////////////////////////
 		TinyIOTask::TinyIOTask(IO::TinyIOCP* ps)
 			:m_pIOCP(ps)
 		{
@@ -18,6 +45,8 @@ namespace TinyUI
 		}
 		BOOL TinyIOTask::Close(DWORD dwMs)
 		{
+			ASSERT(m_pIOCP);
+			PostQueuedCompletionStatus(m_pIOCP->Handle(), 0, 0, NULL);
 			m_close.SetEvent();
 			return TinyTaskBase::Close(dwMs);
 		}
@@ -30,7 +59,7 @@ namespace TinyUI
 		void TinyIOTask::OnMessagePump()
 		{
 			ASSERT(m_pIOCP);
-			ULONG_PTR completionKey = 1111;
+			ULONG_PTR completionKey = 0;//TODO
 			for (;;)
 			{
 				if (m_close.Lock(0))
@@ -38,37 +67,36 @@ namespace TinyUI
 					break;
 				}
 				DWORD dwNumberOfBytesTransferred = 0;
-				LPOVERLAPPED lpIO = NULL;
-				if (!GetQueuedCompletionStatus(m_pIOCP->Handle(), &dwNumberOfBytesTransferred, &completionKey, &lpIO, INFINITE))
-				{
-					if (lpIO == NULL)
-					{
-						break;
-					}
+				LPOVERLAPPED lpOP = NULL;
+				if (!GetQueuedCompletionStatus(m_pIOCP->Handle(), &dwNumberOfBytesTransferred, &completionKey, &lpOP, INFINITE))
 					continue;
+				if (lpOP == NULL)
+					break;
+				PER_IO_CONTEXT* context = static_cast<PER_IO_CONTEXT*>(lpOP);
+				if (dwNumberOfBytesTransferred == 0 && context->OP >= OP_RECV)
+				{
+					SAFE_DELETE(context);
+					break;
 				}
-				IO_CONTEXT* s = static_cast<IO_CONTEXT*>(lpIO);
-				switch (s->OP)
+				switch (context->OP)
 				{
 				case OP_ACCEPT:
 				{
-					ACCEPT_IO_CONTEXT* aio = static_cast<ACCEPT_IO_CONTEXT*>(lpIO);
 					DWORD dwError = 0;
-					if (setsockopt(aio->AcceptSocket, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, (char *)&aio->ListenSocket, sizeof(aio->ListenSocket)) == SOCKET_ERROR)
+					if (setsockopt(context->AcceptSocket, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, (char *)&context->ListenSocket, sizeof(context->ListenSocket)) == SOCKET_ERROR)
 					{
 						dwError = WSAGetLastError();
 					}
 					else
 					{
-						m_pIOCP->Register((HANDLE)aio->AcceptSocket, aio->CompletionKey);
+						m_pIOCP->Register((HANDLE)context->AcceptSocket, 0);
 					}
-					aio->Callback(dwError, dwNumberOfBytesTransferred, s);
-					SAFE_DELETE(aio);
+					context->IOCompletion(dwError, dwNumberOfBytesTransferred, context);
 				}
 				break;
 				case OP_RECV:
 				{
-
+					
 				}
 				break;
 				case OP_SEND:
@@ -78,10 +106,6 @@ namespace TinyUI
 				break;
 				}
 			}
-		}
-		void TinyIOTask::OnCompletionStatus(IO_CONTEXT* pIO, DWORD dwError)
-		{
-
 		}
 		//////////////////////////////////////////////////////////////////////////
 		TinyScopedIOTasks::TinyScopedIOTasks(DWORD dwCount, IO::TinyIOCP* ps)
@@ -139,9 +163,9 @@ namespace TinyUI
 		{
 			return m_iocp;
 		}
-		void TinyIOServer::Invoke()
+		void TinyIOServer::Run()
 		{
-			for (INT i = 0;i < m_tasks->GetSize();i++)
+			for (DWORD i = 0;i < m_tasks->GetSize();i++)
 			{
 				TinyIOTask* task = (*m_tasks)[i];
 				task->Submit();
@@ -149,7 +173,7 @@ namespace TinyUI
 		}
 		void TinyIOServer::Close()
 		{
-			for (INT i = 0;i < m_tasks->GetSize();i++)
+			for (DWORD i = 0;i < m_tasks->GetSize();i++)
 			{
 				TinyIOTask* task = (*m_tasks)[i];
 				task->Close(INFINITE);

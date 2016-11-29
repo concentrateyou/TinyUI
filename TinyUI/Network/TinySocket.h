@@ -58,22 +58,31 @@ namespace TinyUI
 			ADDRESS_FAMILY_IPV6,
 			ADDRESS_FAMILY_LAST = ADDRESS_FAMILY_IPV6
 		};
-		class IPEndPoint
-		{
-		public:
-			IPEndPoint();
-			~IPEndPoint();
-			IPEndPoint(const IPAddress& address, USHORT port);
-			IPEndPoint(const IPEndPoint& endpoint);
-			IPEndPoint(IPEndPoint&& endpoint);
-			const IPAddress& Address() const;
-			USHORT PORT() const;
-		private:
-			IPAddress	m_address;
-			USHORT		m_sPORT;
-		};
-		typedef Callback<void(INT)> CompletionCallback;
 
+		class NO_VTABLE PER_IO_CONTEXT : public OVERLAPPED
+		{
+			using IOCompletionCallback = Callback<void(DWORD, DWORD, PER_IO_CONTEXT*)>;
+		public:
+			PER_IO_CONTEXT();
+			~PER_IO_CONTEXT();
+		public:
+			DWORD					OP;
+			SOCKET					AcceptSocket;
+			SOCKET					ListenSocket;
+			WSABUF					Buffer;
+			DWORD					NumberOfBytes;
+			DWORD					NumberOfBytesTransferred;
+			IOCompletionCallback	IOCompletion;
+		public:
+			void Reset();
+			void Destory();
+		};
+
+		using CompleteCallback = Callback<void(DWORD, DWORD)>;
+
+		/// <summary>
+		/// Ì×½Ó×Ö
+		/// </summary>
 		class TinySocket
 		{
 		public:
@@ -87,10 +96,9 @@ namespace TinyUI
 			operator SOCKET() const;
 			virtual void Close();
 			virtual BOOL Shutdown(INT how);
-			virtual INT Read(BYTE* data, INT size, const CompletionCallback& callback) = 0;
-			virtual INT Write(BYTE* data, INT size, const CompletionCallback& callback) = 0;
 		protected:
-			SOCKET						m_socket;
+			SOCKET			m_socket;
+			PER_IO_CONTEXT	m_io;
 		};
 	}
 }

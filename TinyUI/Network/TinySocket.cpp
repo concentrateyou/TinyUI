@@ -117,42 +117,6 @@ namespace TinyUI
 			return m_address;
 		}
 		//////////////////////////////////////////////////////////////////////////
-		IPEndPoint::IPEndPoint()
-			:m_sPORT(0)
-		{
-
-		}
-		IPEndPoint::~IPEndPoint()
-		{
-
-		}
-		IPEndPoint::IPEndPoint(const IPAddress& address, USHORT sPORT)
-			:m_address(std::move(address)),
-			m_sPORT(sPORT)
-		{
-
-		}
-		IPEndPoint::IPEndPoint(const IPEndPoint& endpoint)
-			: m_address(std::move(endpoint.m_address)),
-			m_sPORT(endpoint.m_sPORT)
-		{
-
-		}
-		IPEndPoint::IPEndPoint(IPEndPoint&& endpoint)
-			: m_address(std::move(endpoint.m_address)),
-			m_sPORT(endpoint.m_sPORT)
-		{
-
-		}
-		const IPAddress& IPEndPoint::Address() const
-		{
-			return m_address;
-		}
-		USHORT IPEndPoint::PORT() const
-		{
-			return m_sPORT;
-		}
-		//////////////////////////////////////////////////////////////////////////
 		TinySocket::TinySocket(SOCKET socket)
 			:m_socket(socket)
 		{
@@ -182,6 +146,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
+		
 		BOOL TinySocket::GetAcceptEx(SOCKET socket, LPFN_ACCEPTEX* target)
 		{
 			return GetExtensionPtr(socket, WSAID_ACCEPTEX, (void**)target);
