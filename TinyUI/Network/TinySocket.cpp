@@ -17,7 +17,12 @@ namespace TinyUI
 		}
 		IPAddress::IPAddress(const string& ip)
 		{
-
+			ULONG si = inet_addr(ip.c_str());
+			m_address.reserve(4);
+			m_address.push_back((BYTE)(si & 0xFF));
+			m_address.push_back((BYTE)(si >> 8 & 0xFF));
+			m_address.push_back((BYTE)(si >> 16 & 0xFF));
+			m_address.push_back((BYTE)(si >> 24 & 0xFF));
 		}
 		IPAddress::IPAddress(const IPAddress& other)
 			: m_address(std::move(other.m_address))
@@ -121,6 +126,25 @@ namespace TinyUI
 			return m_address;
 		}
 		//////////////////////////////////////////////////////////////////////////
+		PER_IO_CONTEXT::PER_IO_CONTEXT()
+		{
+			this->Internal = 0;
+			this->InternalHigh = 0;
+			this->Offset = 0;
+			this->OffsetHigh = 0;
+			this->Pointer = NULL;
+			this->hEvent = NULL;
+		}
+		void PER_IO_CONTEXT::Reset()
+		{
+			this->Internal = 0;
+			this->InternalHigh = 0;
+			this->Offset = 0;
+			this->OffsetHigh = 0;
+			this->Pointer = NULL;
+			this->hEvent = NULL;
+		}
+		//////////////////////////////////////////////////////////////////////////
 		TinyPtrMap TinySocket::m_socketMap;
 
 		TinySocket::TinySocket()
@@ -129,7 +153,6 @@ namespace TinyUI
 		}
 		TinySocket::~TinySocket()
 		{
-			m_context.Destory();
 			Close();
 		}
 		TinySocket::operator SOCKET() const

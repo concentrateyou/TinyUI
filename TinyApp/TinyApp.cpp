@@ -8,7 +8,7 @@
 #include "Windowless/TinyVisualHWND.h"
 #include "Windowless/TinyVisualRichText.h"
 #include "Render/TinyDDraw.h"
-#include "Network/TinyTCPSocket.h"
+#include "Network/TinyTCPServer.h"
 
 BOOL LoadSeDebugPrivilege()
 {
@@ -41,6 +41,17 @@ BOOL LoadSeDebugPrivilege()
 	return TRUE;
 }
 
+void OnAccept(DWORD, DWORD, ULONG_PTR)
+{
+
+}
+
+
+
+void Test(int a, int b)
+{
+
+}
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -59,14 +70,18 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
-	SYSTEM_INFO si;
+	Callback<void(int, int)> abc = BindCallback(&Test);
+
+	//TinyUI::Network::CompleteCallback cb = BindCallback(&OnAccept);
+	/*SYSTEM_INFO si;
 	GetSystemInfo(&si);
 	TinyUI::Network::TinyIOServer ioserver(1);
 	ioserver.Run();
 
-	TinyUI::Network::TinyTCPServer server(&ioserver, 5500);
-	server.Initialize(1);
-	server.BeginAccept();
+	TinyUI::Network::TinyTCPServer server(&ioserver);
+	server.Initialize(4001);
+	TinyUI::Network::CompleteCallback cb = BindCallback(&OnAccept);
+	server.BeginAccept(cb);*/
 
 
 	::DefWindowProc(NULL, 0, 0, 0L);
@@ -81,7 +96,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->RemoveMessageLoop();
 	TinyApplication::GetInstance()->Uninitialize();
 
-	ioserver.Close();
+	//ioserver.Close();
 
 	OleUninitialize();
 	MFShutdown();

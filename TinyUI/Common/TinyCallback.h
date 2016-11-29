@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "TinyCommon.h"
+#include <typeinfo>
 
 namespace TinyUI
 {
@@ -29,7 +30,7 @@ namespace TinyUI
 	template <typename T>
 	struct FunctorTraits
 	{
-		using RunnableType = RunnableAdapter < T > ;
+		using RunnableType = RunnableAdapter < T >;
 		using RunType = typename RunnableType::RunType;
 	};
 	template <typename T>
@@ -193,7 +194,10 @@ namespace TinyUI
 		Callback(const Caller<InvokerStorage>& caller)
 			: CallbackBase(reinterpret_cast<InvokeFunctionBase>(&InvokerStorage::InvokerType::DoInvoke), caller.m_storage.Ptr())
 		{
-			COMPILE_ASSERT((IsSameType<InvokeFunction, typename InvokerStorage::InvokerType::DoInvokeType>::Result), callback_type_not_match);
+			auto s = typeid(InvokeFunction).name();
+			auto sq = typeid(typename InvokerStorage::InvokerType::DoInvokeType).name();
+			int a = 0;
+			//COMPILE_ASSERT((IsSameType<InvokeFunction, typename InvokerStorage::InvokerType::DoInvokeType>::Result), callback_type_not_match);
 		}
 		Callback(const Callback& callback)
 			: CallbackBase(callback)

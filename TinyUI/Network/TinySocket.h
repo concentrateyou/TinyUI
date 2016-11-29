@@ -60,27 +60,25 @@ namespace TinyUI
 			ADDRESS_FAMILY_IPV6,
 			ADDRESS_FAMILY_LAST = ADDRESS_FAMILY_IPV6
 		};
-
 		class TinySocket;
+		using CompleteCallback = Callback<void(DWORD, DWORD, ULONG_PTR)>;
 		class NO_VTABLE PER_IO_CONTEXT : public OVERLAPPED
 		{
 		public:
 			PER_IO_CONTEXT();
-			~PER_IO_CONTEXT();
+			void Reset();
 		public:
 			DWORD		OP;
-			DWORD		NumberOfBytesTransferred;
-			LONG_PTR	Key;
-		public:
-			void Reset();
-			void Destory();
+			DWORD		Bytes;
+			ULONG_PTR	Key;
+			CompleteCallback Complete;
 		};
 		/// <summary>
 		/// Ì×½Ó×Ö»ùÀà
 		/// </summary>
 		class TinySocket
 		{
-			friend class TinyTCPSocket;
+			friend class TinyTCPServer;
 			DISALLOW_COPY_AND_ASSIGN(TinySocket)
 		public:
 			TinySocket();
@@ -92,6 +90,11 @@ namespace TinyUI
 			BOOL Attach(SOCKET socket);
 			SOCKET Detach();
 			TinySocket* Lookup(SOCKET socket);
+		public:
+			/*BOOL	BeginConnect(IPAddress& address, DWORD dwPORT, CompleteCallback& callback);
+			BOOL	BeginDisconnect(CompleteCallback& callback);
+			BOOL	BeginSend(BYTE* data, INT offset, INT size);
+			BOOL	BeginReceive(BYTE* data, INT offset, INT size, CompleteCallback& callback);*/
 		public:
 			virtual void Close();
 			virtual BOOL Shutdown(INT how);

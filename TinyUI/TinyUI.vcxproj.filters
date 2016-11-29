@@ -390,7 +390,7 @@
     <ClInclude Include="Network\TinyIOServer.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
-    <ClInclude Include="Network\TinyTCPSocket.h">
+    <ClInclude Include="Network\TinyTCPServer.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
   </ItemGroup>
@@ -716,7 +716,7 @@
     <ClCompile Include="Network\TinyIOServer.cpp">
       <Filter>源文件\Network</Filter>
     </ClCompile>
-    <ClCompile Include="Network\TinyTCPSocket.cpp">
+    <ClCompile Include="Network\TinyTCPServer.cpp">
       <Filter>源文件\Network</Filter>
     </ClCompile>
   </ItemGroup>
