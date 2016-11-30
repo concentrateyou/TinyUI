@@ -33,7 +33,8 @@ namespace TinyUI
 		void TinyIOTask::OnMessagePump()
 		{
 			ASSERT(m_pIOCP);
-			ULONG_PTR completionKey = 0;
+			DWORD		errorCode = 0;
+			ULONG_PTR	completionKey = 0;
 			for (;;)
 			{
 				if (m_close.Lock(0))
@@ -57,90 +58,96 @@ namespace TinyUI
 				case OP_ACCEPT:
 				{
 					SOCKET listen = static_cast<SOCKET>(completionKey);
-					TinySocket* socket = reinterpret_cast<TinySocket*>(context->AsyncState);
-					if (socket)
+					TinySocket* s = reinterpret_cast<TinySocket*>(context->Reserve);
+					if (s != NULL)
 					{
-						DWORD dwError = 0;
-						if (setsockopt(socket->Handle(), SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, (CHAR*)&listen, sizeof(listen)) == SOCKET_ERROR)
+						if (setsockopt(s->Handle(), SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, (CHAR*)&listen, sizeof(listen)) == SOCKET_ERROR)
 						{
-							dwError = WSAGetLastError();
+							errorCode = WSAGetLastError();
 						}
 						else
 						{
-							if (!m_pIOCP->Register((HANDLE)socket->Handle(), 0))
+							if (!m_pIOCP->Register((HANDLE)s->Handle(), 0))
 							{
-								dwError = WSAGetLastError();
+								errorCode = WSAGetLastError();
 							}
 						}
 						if (!context->Complete.IsNull())
 						{
-							context->Complete(dwError, dwNumberOfBytesTransferred, context->AsyncState);
+							context->Complete(errorCode, dwNumberOfBytesTransferred, &context->Address, context->AsyncState);
 						}
 					}
 				}
 				break;
 				case OP_RECV:
 				{
-					TinySocket* socket = reinterpret_cast<TinySocket*>(context->AsyncState);
-					if (socket)
+					TinySocket* s = reinterpret_cast<TinySocket*>(context->Reserve);
+					if (s != NULL && !context->Complete.IsNull())
 					{
-						if (!context->Complete.IsNull())
-						{
-							context->Complete(0, dwNumberOfBytesTransferred, context->AsyncState);
-						}
+						context->Complete(errorCode, dwNumberOfBytesTransferred, &context->Address, context->AsyncState);
 					}
 				}
 				break;
 				case OP_RECVFROM:
 				{
-
+					TinySocket* s = reinterpret_cast<TinySocket*>(context->Reserve);
+					if (s != NULL && !context->Complete.IsNull())
+					{
+						context->Complete(errorCode, dwNumberOfBytesTransferred, &context->Address, context->AsyncState);
+					}
 				}
 				break;
 				case OP_SEND:
 				{
-
+					TinySocket* s = reinterpret_cast<TinySocket*>(context->Reserve);
+					if (s != NULL && !context->Complete.IsNull())
+					{
+						context->Complete(errorCode, dwNumberOfBytesTransferred, &context->Address, context->AsyncState);
+					}
 				}
 				break;
 				case OP_SENDTO:
 				{
-
+					TinySocket* s = reinterpret_cast<TinySocket*>(context->Reserve);
+					if (s != NULL && !context->Complete.IsNull())
+					{
+						context->Complete(errorCode, dwNumberOfBytesTransferred, &context->Address, context->AsyncState);
+					}
 				}
 				break;
 				case OP_CONNECT:
 				{
-					TinySocket* socket = reinterpret_cast<TinySocket*>(context->AsyncState);
-					if (socket)
+					TinySocket* s = reinterpret_cast<TinySocket*>(context->Reserve);
+					if (s != NULL)
 					{
-						DWORD dwError = 0;
-						if (setsockopt(socket->Handle(), SOL_SOCKET, SO_UPDATE_CONNECT_CONTEXT, NULL, 0) == SOCKET_ERROR)
+						if (setsockopt(s->Handle(), SOL_SOCKET, SO_UPDATE_CONNECT_CONTEXT, NULL, 0) == SOCKET_ERROR)
 						{
-							dwError = WSAGetLastError();
+							errorCode = WSAGetLastError();
 						}
 						else
 						{
-							if (!m_pIOCP->Register((HANDLE)socket->Handle(), 0))
+							if (!m_pIOCP->Register((HANDLE)s->Handle(), 0))
 							{
-								dwError = WSAGetLastError();
+								errorCode = WSAGetLastError();
 							}
 						}
-						socket->m_connect = TRUE;
+						s->m_connect = TRUE;
 						if (!context->Complete.IsNull())
 						{
-							context->Complete(dwError, dwNumberOfBytesTransferred, context->AsyncState);
+							context->Complete(errorCode, dwNumberOfBytesTransferred, &context->Address, context->AsyncState);
 						}
 					}
 				}
 				break;
 				case OP_DISCONNECT:
 				{
-					TinySocket* scoekt = reinterpret_cast<TinySocket*>(context->AsyncState);
-					if (scoekt)
+					TinySocket* s = reinterpret_cast<TinySocket*>(context->Reserve);
+					if (s != NULL)
 					{
-						DWORD dwError = 0;
-						scoekt->m_connect = FALSE;
+						s->m_connect = FALSE;
 						if (!context->Complete.IsNull())
 						{
-							context->Complete(dwError, dwNumberOfBytesTransferred, context->AsyncState);
+							context->Complete(errorCode, dwNumberOfBytesTransferred, &context->Address, context->AsyncState);
 						}
 					}
 				}

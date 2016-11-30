@@ -63,7 +63,10 @@ namespace TinyUI
 			ADDRESS_FAMILY_LAST = ADDRESS_FAMILY_IPV6
 		};
 		class TinySocket;
-		using CompleteCallback = Callback<void(DWORD, DWORD, LPVOID)>;
+		using CompleteCallback = Callback<void(DWORD, DWORD, SOCKADDR_IN*, LPVOID)>;
+		/// <summary>
+		/// OVERLAPPED拓展结构
+		/// </summary>
 		class NO_VTABLE PER_IO_CONTEXT : public OVERLAPPED
 		{
 		public:
@@ -73,7 +76,9 @@ namespace TinyUI
 			DWORD				OP;
 			DWORD				Bytes;
 			LPVOID				AsyncState;
-			WSABUF				Buffer;
+			LONG_PTR			Reserve;//保留的
+			WSABUF				Element;
+			SOCKADDR_IN			Address;
 			CompleteCallback	Complete;
 		};
 		/// <summary>
@@ -93,8 +98,8 @@ namespace TinyUI
 			SOCKET Detach();
 			TinyHandleSOCKET* Lookup(SOCKET socket);
 		public:
-			BOOL SetOption(INT opt, const CHAR* optval, INT size);
-			BOOL GetOption(INT opt, CHAR* optval, INT& size);
+			BOOL SetOption(INT level, INT opt, const CHAR* optval, INT size);
+			BOOL GetOption(INT level, INT opt, CHAR* optval, INT& size);
 		public:
 			static BOOL GetAcceptEx(SOCKET socket, LPFN_ACCEPTEX* target);
 			static BOOL GetConnectEx(SOCKET socket, LPFN_CONNECTEX* target);
@@ -118,6 +123,10 @@ namespace TinyUI
 			virtual ~TinySocket();
 			BOOL	IsConnect() const;
 			BOOL	Open(INT addressFamily = AF_INET, INT socketType = SOCK_STREAM, INT protocolType = IPPROTO_TCP);
+			BOOL	KeepAlive(BOOL bAllow);
+			BOOL	IsKeepAlive();
+			INT		Available();
+			BOOL	Blocking(BOOL bAllow);
 		public:
 			BOOL Bind(const IPAddress& address, DWORD dwPORT);
 			BOOL Listen(DWORD backlog = SOMAXCONN);
@@ -126,7 +135,7 @@ namespace TinyUI
 			BOOL BeginSend(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg);
 			BOOL BeginReceive(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg);
 			BOOL BeginSendTo(CHAR* data, DWORD dwSize, DWORD dwFlags, const IPAddress& address, DWORD dwPORT, CompleteCallback& callback, LPVOID arg);
-			BOOL BeginReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, const IPAddress& address, DWORD dwPORT, CompleteCallback& callback, LPVOID arg);
+			BOOL BeginReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg);
 			BOOL BeginDisconnect(CompleteCallback& callback, LPVOID arg);
 		public:
 			virtual void Close();
@@ -138,7 +147,6 @@ namespace TinyUI
 			INT					m_socketType;
 			INT					m_protocolType;
 			BOOL				m_connect;
-			PER_IO_CONTEXT		m_context;
 			LPFN_DISCONNECTEX	m_disconnectex;
 			LPFN_CONNECTEX		m_connectex;
 			LPFN_ACCEPTEX		m_acceptex;

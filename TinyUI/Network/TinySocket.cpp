@@ -8,12 +8,12 @@ namespace TinyUI
 	{
 		IPAddress::IPAddress()
 		{
-			TRACE("IPAddress构造-0\n");
+			//TRACE("IPAddress构造-0\n");
 		}
 		IPAddress::IPAddress(const std::vector<BYTE>& address)
 			: m_address(std::move(address))
 		{
-			TRACE("IPAddress构造-1\n");
+			//TRACE("IPAddress构造-1\n");
 		}
 		IPAddress::IPAddress(const string& ip)
 		{
@@ -27,12 +27,12 @@ namespace TinyUI
 		IPAddress::IPAddress(const IPAddress& other)
 			: m_address(std::move(other.m_address))
 		{
-			TRACE("IPAddress拷贝构造\n");
+			//TRACE("IPAddress拷贝构造\n");
 		}
 		IPAddress::IPAddress(IPAddress&& other)
 			: m_address(std::move(other.m_address))
 		{
-			TRACE("IPAddress移动构造\n");
+			//TRACE("IPAddress移动构造\n");
 		}
 		IPAddress::IPAddress(const BYTE* address, DWORD size)
 			: m_address(address, address + size)
@@ -84,7 +84,7 @@ namespace TinyUI
 		}
 		IPAddress::~IPAddress()
 		{
-			TRACE("IPAddress析构\n");
+			//TRACE("IPAddress析构\n");
 		}
 		BOOL IPAddress::IsIPv4() const
 		{
@@ -142,8 +142,8 @@ namespace TinyUI
 			this->OffsetHigh = 0;
 			this->Pointer = NULL;
 			this->hEvent = NULL;
-			this->Buffer.buf = NULL;
-			this->Buffer.len = 0;
+			this->Element.buf = NULL;
+			this->Element.len = 0;
 		}
 		void PER_IO_CONTEXT::Reset()
 		{
@@ -210,15 +210,15 @@ namespace TinyUI
 				return NULL;
 			return reinterpret_cast<TinyHandleSOCKET*>(val);
 		}
-		BOOL TinyHandleSOCKET::SetOption(INT opt, const CHAR* optval, INT size)
+		BOOL TinyHandleSOCKET::SetOption(INT level, INT opt, const CHAR* optval, INT size)
 		{
 			ASSERT(m_socket);
-			return setsockopt(m_socket, SOL_SOCKET, opt, optval, size) != SOCKET_ERROR;
+			return setsockopt(m_socket, level, opt, optval, size) != SOCKET_ERROR;
 		}
-		BOOL TinyHandleSOCKET::GetOption(INT opt, CHAR* optval, INT& size)
+		BOOL TinyHandleSOCKET::GetOption(INT level, INT opt, CHAR* optval, INT& size)
 		{
 			ASSERT(m_socket);
-			return getsockopt(m_socket, SOL_SOCKET, opt, optval, &size) != SOCKET_ERROR;
+			return getsockopt(m_socket, level, opt, optval, &size) != SOCKET_ERROR;
 		}
 		BOOL TinyHandleSOCKET::GetAcceptEx(SOCKET socket, LPFN_ACCEPTEX* target)
 		{
@@ -256,11 +256,36 @@ namespace TinyUI
 			m_protocolType = protocolType;
 			m_socket = WSASocket(addressFamily, socketType, protocolType, NULL, 0, WSA_FLAG_OVERLAPPED);
 			BOOL allow = TRUE;
-			if (!SetOption(SO_REUSEADDR, (const CHAR*)&allow, sizeof(allow)))
+			if (!SetOption(SOL_SOCKET, SO_REUSEADDR, (const CHAR*)&allow, sizeof(allow)))
 				return FALSE;
 			if (!Attach(m_socket))
 				return FALSE;
 			return m_server->GetIOCP()->Register(reinterpret_cast<HANDLE>(m_socket), m_socket);
+		}
+		BOOL TinySocket::KeepAlive(BOOL bAllow)
+		{
+			ASSERT(m_socket);
+			return SetOption(SOL_SOCKET, SO_KEEPALIVE, (const CHAR*)bAllow, sizeof(bAllow));
+		}
+		BOOL TinySocket::IsKeepAlive()
+		{
+			ASSERT(m_socket);
+			BOOL bAllow = FALSE;
+			INT size = 0;
+			return GetOption(SOL_SOCKET, SO_KEEPALIVE, (CHAR*)bAllow, size);
+		}
+		INT	TinySocket::Available()
+		{
+			ASSERT(m_socket);
+			INT argp = 0;
+			if (ioctlsocket(m_socket, FIONREAD, (ULONG*)&argp) == SOCKET_ERROR)
+				throw error_code(WSAGetLastError(), system_category());
+			return argp;
+		}
+		BOOL TinySocket::Blocking(BOOL bAllow)
+		{
+			ASSERT(m_socket);
+			return ioctlsocket(m_socket, FIONBIO, (ULONG*)&bAllow) != SOCKET_ERROR;
 		}
 		TinySocket::~TinySocket()
 		{
@@ -311,7 +336,7 @@ namespace TinyUI
 		_ERROR:
 			DWORD errorCode = WSAGetLastError();
 			if (!callback.IsNull())
-				callback(errorCode, 0, arg);
+				callback(errorCode, 0, &context->Address, arg);
 			SAFE_DELETE(context);
 			SAFE_DELETE(socket);
 			return FALSE;
@@ -319,6 +344,7 @@ namespace TinyUI
 		BOOL TinySocket::BeginConnect(IPAddress& address, DWORD dwPORT, CompleteCallback& callback, LPVOID arg)
 		{
 			//https://msdn.microsoft.com/en-us/library/windows/desktop/ms737606(v=vs.85).aspx
+			DWORD errorCode = 0;
 			if (!Open(m_addressFamily, m_socketType, m_protocolType))
 				goto _ERROR;
 			SOCKADDR_IN si;
@@ -350,9 +376,9 @@ namespace TinyUI
 			}
 			return TRUE;
 		_ERROR:
-			DWORD errorCode = WSAGetLastError();
+			errorCode = WSAGetLastError();
 			if (!callback.IsNull())
-				callback(errorCode, 0, arg);
+				callback(errorCode, 0, &context->Address, arg);
 			SAFE_DELETE(context);
 			Close();
 			return FALSE;
@@ -360,25 +386,27 @@ namespace TinyUI
 		BOOL TinySocket::BeginReceive(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg)
 		{
 			ASSERT(m_socket);
+			DWORD errorCode = 0;
 			if (!m_connect)
 				goto _ERROR;
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
 			context->OP = OP_RECV;
 			context->AsyncState = arg;
+			context->Reserve = reinterpret_cast<LONG_PTR>(this);
 			context->Complete = callback;
-			context->Buffer.buf = data;
-			context->Buffer.len = dwSize;
+			context->Element.buf = data;
+			context->Element.len = dwSize;
 			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
 			DWORD numberOfBytesRecvd = 0;
-			if (WSARecv(m_socket, &context->Buffer, 1, &numberOfBytesRecvd, &dwFlags, ps, NULL) == SOCKET_ERROR &&
+			if (WSARecv(m_socket, &context->Element, 1, &numberOfBytesRecvd, &dwFlags, ps, NULL) == SOCKET_ERROR &&
 				ERROR_IO_PENDING != WSAGetLastError())
 				goto _ERROR;
 			return TRUE;
 		_ERROR:
-			DWORD errorCode = WSAGetLastError();
+			errorCode = WSAGetLastError();
 			if (!callback.IsNull())
-				callback(errorCode, 0, arg);
+				callback(errorCode, 0, &context->Address, arg);
 			SAFE_DELETE(context);
 			Close();
 			return FALSE;
@@ -386,24 +414,26 @@ namespace TinyUI
 		BOOL TinySocket::BeginSend(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg)
 		{
 			ASSERT(m_socket);
+			DWORD errorCode = 0;
 			if (!m_connect)
 				goto _ERROR;
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
 			context->OP = OP_SEND;
 			context->AsyncState = arg;
+			context->Reserve = reinterpret_cast<LONG_PTR>(this);
 			context->Complete = callback;
-			context->Buffer.buf = data;
-			context->Buffer.len = dwSize;
+			context->Element.buf = data;
+			context->Element.len = dwSize;
 			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
 			DWORD numberOfBytesRecvd = 0;
-			if (WSASend(m_socket, &context->Buffer, 1, &numberOfBytesRecvd, dwFlags, ps, NULL) == SOCKET_ERROR && ERROR_IO_PENDING != WSAGetLastError())
+			if (WSASend(m_socket, &context->Element, 1, &numberOfBytesRecvd, dwFlags, ps, NULL) == SOCKET_ERROR && ERROR_IO_PENDING != WSAGetLastError())
 				goto _ERROR;
 			return TRUE;
 		_ERROR:
-			DWORD errorCode = WSAGetLastError();
+			errorCode = WSAGetLastError();
 			if (!callback.IsNull())
-				callback(errorCode, 0, arg);
+				callback(errorCode, 0, &context->Address, arg);
 			SAFE_DELETE(context);
 			Close();
 			return FALSE;
@@ -411,68 +441,71 @@ namespace TinyUI
 		BOOL TinySocket::BeginSendTo(CHAR* data, DWORD dwSize, DWORD dwFlags, const IPAddress& address, DWORD dwPORT, CompleteCallback& callback, LPVOID arg)
 		{
 			ASSERT(m_socket);
+			DWORD errorCode = 0;
 			if (!m_connect)
 				goto _ERROR;
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
 			context->OP = OP_SENDTO;
 			context->AsyncState = arg;
+			context->Reserve = reinterpret_cast<LONG_PTR>(this);
 			context->Complete = callback;
-			context->Buffer.buf = data;
-			context->Buffer.len = dwSize;
+			context->Element.buf = data;
+			context->Element.len = dwSize;
+			ZeroMemory(&context->Address, sizeof(context->Address));
+			context->Address.sin_family = m_addressFamily;
+			context->Address.sin_port = htons(static_cast<USHORT>(dwPORT));
+			memcpy(&context->Address.sin_addr, address.Address().data(), m_addressFamily == AF_INET ? IPAddress::IPv4AddressSize : IPAddress::IPv6AddressSize);
 			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
-			DWORD numberOfBytesRecvd = 0;
-			SOCKADDR_IN si;
-			ZeroMemory(&si, sizeof(si));
-			si.sin_family = m_addressFamily;
-			si.sin_port = htons(static_cast<USHORT>(dwPORT));
-			memcpy(&si.sin_addr, address.Address().data(), m_addressFamily == AF_INET ? IPAddress::IPv4AddressSize : IPAddress::IPv6AddressSize);
-			if (WSASendTo(m_socket, &context->Buffer, 1, &numberOfBytesRecvd, dwFlags, (SOCKADDR*)&si, sizeof(si), ps, NULL) == SOCKET_ERROR &&
+			DWORD dwBytes = 0;
+			if (WSASendTo(m_socket, &context->Element, 1, &dwBytes, dwFlags, (SOCKADDR*)&context->Address, sizeof(context->Address), ps, NULL) == SOCKET_ERROR &&
 				ERROR_IO_PENDING != WSAGetLastError())
 				goto _ERROR;
 			return TRUE;
 		_ERROR:
-			DWORD errorCode = WSAGetLastError();
+			errorCode = WSAGetLastError();
 			if (!callback.IsNull())
-				callback(errorCode, 0, arg);
+				callback(errorCode, 0, &context->Address, arg);
 			SAFE_DELETE(context);
 			Close();
 			return FALSE;
 		}
-		BOOL TinySocket::BeginReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, const IPAddress& address, DWORD dwPORT, CompleteCallback& callback, LPVOID arg)
+		BOOL TinySocket::BeginReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg)
 		{
 			ASSERT(m_socket);
+			DWORD errorCode = 0;
 			if (!m_connect)
 				goto _ERROR;
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
 			context->OP = OP_RECVFROM;
 			context->AsyncState = arg;
+			context->Reserve = reinterpret_cast<LONG_PTR>(this);
 			context->Complete = callback;
-			context->Buffer.buf = data;
-			context->Buffer.len = dwSize;
+			context->Element.buf = data;
+			context->Element.len = dwSize;
+			ZeroMemory(&context->Address, sizeof(context->Address));
+			context->Address.sin_family = m_addressFamily;
+			context->Address.sin_port = 0;
+			context->Address.sin_addr.s_addr = htonl(INADDR_ANY);
 			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
-			DWORD numberOfBytesRecvd = 0;
-			SOCKADDR_IN si;
-			ZeroMemory(&si, sizeof(si));
-			si.sin_family = m_addressFamily;
-			si.sin_port = htons(static_cast<USHORT>(dwPORT));
-			memcpy(&si.sin_addr, address.Address().data(), m_addressFamily == AF_INET ? IPAddress::IPv4AddressSize : IPAddress::IPv6AddressSize);
+			DWORD dwBytes = 0;
 			INT size = 0;
-			if (WSARecvFrom(m_socket, &context->Buffer, 1, &numberOfBytesRecvd, &dwFlags, (SOCKADDR*)&si, &size, ps, NULL) == SOCKET_ERROR &&
+			if (WSARecvFrom(m_socket, &context->Element, 1, &dwBytes, &dwFlags, (SOCKADDR*)&context->Address, &size, ps, NULL) == SOCKET_ERROR &&
 				ERROR_IO_PENDING != WSAGetLastError())
 				goto _ERROR;
 			return TRUE;
 		_ERROR:
-			DWORD errorCode = WSAGetLastError();
+			errorCode = WSAGetLastError();
 			if (!callback.IsNull())
-				callback(errorCode, 0, arg);
+				callback(errorCode, 0, &context->Address, arg);
 			SAFE_DELETE(context);
 			Close();
 			return FALSE;
 		}
 		BOOL TinySocket::BeginDisconnect(CompleteCallback& callback, LPVOID arg)
 		{
+			DWORD errorCode = 0;
 			if (!m_disconnectex)
 			{
 				if (!TinySocket::GetDisconnectEx(m_socket, &m_disconnectex))
@@ -482,6 +515,7 @@ namespace TinyUI
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
 			context->OP = OP_DISCONNECT;
 			context->AsyncState = arg;
+			context->Reserve = reinterpret_cast<LONG_PTR>(this);
 			context->Complete = callback;
 			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
 			if (!m_disconnectex(m_socket, ps, TF_REUSE_SOCKET, 0) &&
@@ -490,9 +524,9 @@ namespace TinyUI
 				goto _ERROR;
 			}
 		_ERROR:
-			DWORD errorCode = WSAGetLastError();
+			errorCode = WSAGetLastError();
 			if (!callback.IsNull())
-				callback(errorCode, 0, arg);
+				callback(errorCode, 0, &context->Address, arg);
 			SAFE_DELETE(context);
 			Close();
 			return FALSE;
