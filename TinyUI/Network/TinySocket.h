@@ -49,8 +49,10 @@ namespace TinyUI
 			std::string ToString() const;
 			DWORD Size() const;
 			const std::vector<BYTE>& Address() const;
+			static IPAddress IPv4Any();
+			static IPAddress IPv6Any();
 		private:
-			std::vector<uint8_t> m_address;
+			std::vector<BYTE> m_address;
 		};
 		using IPAddressList = std::vector<IPAddress>;
 		enum AddressFamily
@@ -71,42 +73,69 @@ namespace TinyUI
 			DWORD		OP;
 			DWORD		Bytes;
 			ULONG_PTR	Key;
+			WSABUF		Buffer;
 			CompleteCallback Complete;
 		};
 		/// <summary>
-		/// 套接字基类
+		/// 套接字句柄
 		/// </summary>
-		class TinySocket
+		class TinyHandleSOCKET
 		{
-			friend class TinyTCPServer;
-			DISALLOW_COPY_AND_ASSIGN(TinySocket)
 		public:
-			TinySocket();
-			virtual ~TinySocket();
+			TinyHandleSOCKET();
+			~TinyHandleSOCKET();
+		public:
 			operator SOCKET() const;
 			SOCKET Handle() const;
-			BOOL operator == (const TinySocket& obj) const;
-			BOOL operator != (const TinySocket& obj) const;
+			BOOL operator == (const TinyHandleSOCKET& obj) const;
+			BOOL operator != (const TinyHandleSOCKET& obj) const;
 			BOOL Attach(SOCKET socket);
 			SOCKET Detach();
-			TinySocket* Lookup(SOCKET socket);
+			TinyHandleSOCKET* Lookup(SOCKET socket);
 		public:
-			/*BOOL	BeginConnect(IPAddress& address, DWORD dwPORT, CompleteCallback& callback);
-			BOOL	BeginDisconnect(CompleteCallback& callback);
-			BOOL	BeginSend(BYTE* data, INT offset, INT size);
-			BOOL	BeginReceive(BYTE* data, INT offset, INT size, CompleteCallback& callback);*/
-		public:
-			virtual void Close();
-			virtual BOOL Shutdown(INT how);
+			BOOL SetOption(INT opt, const CHAR* optval, INT size);
+			BOOL GetOption(INT opt, CHAR* optval, INT& size);
 		public:
 			static BOOL GetAcceptEx(SOCKET socket, LPFN_ACCEPTEX* target);
 			static BOOL GetConnectEx(SOCKET socket, LPFN_CONNECTEX* target);
 			static BOOL GetAcceptExSockaddrs(SOCKET socket, LPFN_GETACCEPTEXSOCKADDRS* target);
 			static BOOL GetDisconnectEx(SOCKET socket, LPFN_DISCONNECTEX* target);
 		protected:
-			SOCKET				m_socket;
-			PER_IO_CONTEXT		m_context;
+			SOCKET	m_socket;
 			static  TinyPtrMap	m_socketMap;
+		};
+		class TinyIOServer;
+		/// <summary>
+		/// 套接字基类
+		/// </summary>
+		class TinySocket : public TinyHandleSOCKET
+		{
+			friend class TinyIOServer;
+			friend class TinyIOTask;
+			DISALLOW_COPY_AND_ASSIGN(TinySocket)
+		public:
+			explicit TinySocket(TinyIOServer* ioserver);
+			virtual ~TinySocket();
+			BOOL	IsConnect() const;
+			BOOL	Open(INT addressFamily = AF_INET, INT socketType = SOCK_STREAM, INT protocolType = IPPROTO_TCP);
+		public:
+			BOOL Bind(const IPAddress& address, DWORD dwPORT);
+			BOOL Listen(DWORD backlog = SOMAXCONN);
+			BOOL BeginAccept(CompleteCallback& callback);
+			BOOL BeginConnect(IPAddress& address, DWORD dwPORT, CompleteCallback& callback);
+			BOOL BeginDisconnect(CompleteCallback& callback);
+			BOOL BeginReceive(BYTE* data, INT size, CompleteCallback& callback);
+		public:
+			virtual void Close();
+			virtual BOOL Shutdown(INT how);
+		public:
+		protected:
+			TinyIOServer*	m_server;
+			INT				m_addressFamily;
+			INT				m_socketType;
+			INT				m_protocolType;
+			BOOL			m_connect;
+			PER_IO_CONTEXT	m_context;
 		};
 	}
 }

@@ -1,7 +1,7 @@
 #include "../stdafx.h"
 #include "../Common/TinyUtility.h"
 #include "TinyIOServer.h"
-#include "TinyTCPServer.h"
+#include "TinySocket.h"
 #include <process.h>
 
 namespace TinyUI
@@ -43,11 +43,14 @@ namespace TinyUI
 				DWORD dwNumberOfBytesTransferred = 0;
 				LPOVERLAPPED lpOP = NULL;
 				if (!GetQueuedCompletionStatus(m_pIOCP->Handle(), &dwNumberOfBytesTransferred, &completionKey, &lpOP, INFINITE))
+				{
+					//DWORD dwError = WSAGetLastError();
 					continue;
+				}
 				if (lpOP == NULL)
 					break;
 				PER_IO_CONTEXT* context = static_cast<PER_IO_CONTEXT*>(lpOP);
-				if (dwNumberOfBytesTransferred == 0 && context->OP >= OP_RECV)
+				if (dwNumberOfBytesTransferred == 0 && context->OP > OP_ACCEPT && context->OP < OP_CONNECT)
 				{
 					SAFE_DELETE(context);
 					break;
@@ -84,9 +87,58 @@ namespace TinyUI
 
 				}
 				break;
+				case OP_RECVFROM:
+				{
+
+				}
+				break;
 				case OP_SEND:
 				{
 
+				}
+				break;
+				case OP_SENDTO:
+				{
+
+				}
+				break;
+				case OP_CONNECT:
+				{
+					TinySocket* scoekt = reinterpret_cast<TinySocket*>(context->Key);
+					if (scoekt)
+					{
+						DWORD dwError = 0;
+						if (setsockopt(scoekt->Handle(), SOL_SOCKET, SO_UPDATE_CONNECT_CONTEXT, NULL, 0) == SOCKET_ERROR)
+						{
+							dwError = WSAGetLastError();
+						}
+						else
+						{
+							if (!m_pIOCP->Register((HANDLE)scoekt->Handle(), 0))
+							{
+								dwError = WSAGetLastError();
+							}
+						}
+						scoekt->m_connect = TRUE;
+						if (!context->Complete.IsNull())
+						{
+							context->Complete(dwError, dwNumberOfBytesTransferred, context->Key);
+						}
+					}
+				}
+				break;
+				case OP_DISCONNECT:
+				{
+					TinySocket* scoekt = reinterpret_cast<TinySocket*>(context->Key);
+					if (scoekt)
+					{
+						DWORD dwError = 0;
+						scoekt->m_connect = FALSE;
+						if (!context->Complete.IsNull())
+						{
+							context->Complete(dwError, dwNumberOfBytesTransferred, context->Key);
+						}
+					}
 				}
 				break;
 				}

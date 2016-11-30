@@ -50,7 +50,7 @@ namespace TinyUI
 	template <typename InvokerStorage, typename R, typename... Args>
 	struct Invoker < InvokerStorage, R(*)(Args...) >
 	{
-		typedef R(*DoInvokeType)(InvokerStorageBase*);
+		typedef R(*DoInvokeType)(InvokerStorageBase*, Args...);
 
 		static R DoInvoke(InvokerStorageBase* base, Args... args)
 		{
@@ -194,10 +194,7 @@ namespace TinyUI
 		Callback(const Caller<InvokerStorage>& caller)
 			: CallbackBase(reinterpret_cast<InvokeFunctionBase>(&InvokerStorage::InvokerType::DoInvoke), caller.m_storage.Ptr())
 		{
-			auto s = typeid(InvokeFunction).name();
-			auto sq = typeid(typename InvokerStorage::InvokerType::DoInvokeType).name();
-			int a = 0;
-			//COMPILE_ASSERT((IsSameType<InvokeFunction, typename InvokerStorage::InvokerType::DoInvokeType>::Result), callback_type_not_match);
+			COMPILE_ASSERT((IsSameType<InvokeFunction, typename InvokerStorage::InvokerType::DoInvokeType>::Result), callback_type_not_match);
 		}
 		Callback(const Callback& callback)
 			: CallbackBase(callback)

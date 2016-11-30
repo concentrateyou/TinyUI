@@ -4,11 +4,11 @@
 #include "stdafx.h"
 #include "TinyApp.h"
 #include "MainFrame.h"
-#include "Network/TinyConnector.h"
 #include "Windowless/TinyVisualHWND.h"
 #include "Windowless/TinyVisualRichText.h"
 #include "Render/TinyDDraw.h"
-#include "Network/TinyTCPServer.h"
+#include "Network/TinyIOServer.h"
+#include "Network/TinySocket.h"
 
 BOOL LoadSeDebugPrivilege()
 {
@@ -46,9 +46,7 @@ void OnAccept(DWORD, DWORD, ULONG_PTR)
 
 }
 
-
-
-void Test(int a, int b)
+void OnConnect(DWORD, DWORD, ULONG_PTR)
 {
 
 }
@@ -70,16 +68,18 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
-	Callback<void(int, int)> abc = BindCallback(&Test);
 
-	//TinyUI::Network::CompleteCallback cb = BindCallback(&OnAccept);
-	/*SYSTEM_INFO si;
+	SYSTEM_INFO si;
 	GetSystemInfo(&si);
 	TinyUI::Network::TinyIOServer ioserver(1);
 	ioserver.Run();
 
-	TinyUI::Network::TinyTCPServer server(&ioserver);
-	server.Initialize(4001);
+	TinyUI::Network::TinySocket socket(&ioserver);
+	TinyUI::Network::CompleteCallback cb = BindCallback(&OnConnect);
+	
+	//server.BeginConnect(TinyUI::Network::IPAddress("10.1.32.230"), 5500, cb);
+	/*BOOL bRes = server.Bind(TinyUI::Network::IPAddress::IPv4Any(), 5500);
+	bRes = server.Listen();
 	TinyUI::Network::CompleteCallback cb = BindCallback(&OnAccept);
 	server.BeginAccept(cb);*/
 
@@ -96,7 +96,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->RemoveMessageLoop();
 	TinyApplication::GetInstance()->Uninitialize();
 
-	//ioserver.Close();
+	ioserver.Close();
 
 	OleUninitialize();
 	MFShutdown();

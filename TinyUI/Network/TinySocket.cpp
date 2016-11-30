@@ -1,6 +1,6 @@
 #include "../stdafx.h"
 #include "TinySocket.h"
-#include <process.h>
+#include "TinyIOServer.h"
 
 namespace TinyUI
 {
@@ -125,6 +125,14 @@ namespace TinyUI
 		{
 			return m_address;
 		}
+		IPAddress IPAddress::IPv4Any()
+		{
+			return IPAddress(0, 0, 0, 0);
+		}
+		IPAddress IPAddress::IPv6Any()
+		{
+			return IPAddress(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		}
 		//////////////////////////////////////////////////////////////////////////
 		PER_IO_CONTEXT::PER_IO_CONTEXT()
 		{
@@ -134,6 +142,8 @@ namespace TinyUI
 			this->OffsetHigh = 0;
 			this->Pointer = NULL;
 			this->hEvent = NULL;
+			this->Buffer.buf = NULL;
+			this->Buffer.len = 0;
 		}
 		void PER_IO_CONTEXT::Reset()
 		{
@@ -145,66 +155,219 @@ namespace TinyUI
 			this->hEvent = NULL;
 		}
 		//////////////////////////////////////////////////////////////////////////
-		TinyPtrMap TinySocket::m_socketMap;
+		TinyPtrMap TinyHandleSOCKET::m_socketMap;
 
-		TinySocket::TinySocket()
+		TinyHandleSOCKET::TinyHandleSOCKET()
+			:m_socket(INVALID_SOCKET)
 		{
 
 		}
-		TinySocket::~TinySocket()
+		TinyHandleSOCKET::~TinyHandleSOCKET()
 		{
-			Close();
+
 		}
-		TinySocket::operator SOCKET() const
+		TinyHandleSOCKET::operator SOCKET() const
 		{
 			return m_socket;
 		}
-		SOCKET TinySocket::Handle() const
+		SOCKET TinyHandleSOCKET::Handle() const
 		{
 			return m_socket;
 		}
-		BOOL TinySocket::operator == (const TinySocket& obj) const
+		BOOL TinyHandleSOCKET::operator == (const TinyHandleSOCKET& obj) const
 		{
 			return m_socket == obj.m_socket;
 		}
-		BOOL TinySocket::operator != (const TinySocket& obj) const
+		BOOL TinyHandleSOCKET::operator != (const TinyHandleSOCKET& obj) const
 		{
 			return m_socket != obj.m_socket;
 		}
-		BOOL TinySocket::Attach(SOCKET socket)
+		BOOL TinyHandleSOCKET::Attach(SOCKET socket)
 		{
 			if (socket == INVALID_SOCKET)
 				return FALSE;
 			m_socket = socket;
-			TinyPtrMap& map = TinySocket::m_socketMap;
+			TinyPtrMap& map = TinyHandleSOCKET::m_socketMap;
 			map.Add((UINT_PTR)socket, (UINT_PTR)this);
 			return TRUE;
 		}
-		SOCKET TinySocket::Detach()
+		SOCKET TinyHandleSOCKET::Detach()
 		{
 			SOCKET socket = m_socket;
 			if (socket != INVALID_SOCKET)
 			{
-				TinyPtrMap& map = TinySocket::m_socketMap;
+				TinyPtrMap& map = TinyHandleSOCKET::m_socketMap;
 				map.Remove((UINT_PTR)socket);
 			}
 			m_socket = NULL;
 			return socket;
 		}
-		TinySocket* TinySocket::Lookup(SOCKET socket)
+		TinyHandleSOCKET* TinyHandleSOCKET::Lookup(SOCKET socket)
 		{
-			TinyPtrMap& map = TinySocket::m_socketMap;
+			TinyPtrMap& map = TinyHandleSOCKET::m_socketMap;
 			UINT_PTR val = 0;
 			if (!map.Lookup((UINT_PTR)socket, val))
 				return NULL;
-			return reinterpret_cast<TinySocket*>(val);
+			return reinterpret_cast<TinyHandleSOCKET*>(val);
+		}
+		BOOL TinyHandleSOCKET::SetOption(INT opt, const CHAR* optval, INT size)
+		{
+			ASSERT(m_socket);
+			return setsockopt(m_socket, SOL_SOCKET, opt, optval, size) != SOCKET_ERROR;
+		}
+		BOOL TinyHandleSOCKET::GetOption(INT opt, CHAR* optval, INT& size)
+		{
+			ASSERT(m_socket);
+			return getsockopt(m_socket, SOL_SOCKET, opt, optval, &size) != SOCKET_ERROR;
+		}
+		BOOL TinyHandleSOCKET::GetAcceptEx(SOCKET socket, LPFN_ACCEPTEX* target)
+		{
+			return GetExtensionPtr(socket, WSAID_ACCEPTEX, (void**)target);
+		}
+		BOOL TinyHandleSOCKET::GetConnectEx(SOCKET socket, LPFN_CONNECTEX* target)
+		{
+			return GetExtensionPtr(socket, WSAID_CONNECTEX, (void**)target);
+		}
+		BOOL TinyHandleSOCKET::GetAcceptExSockaddrs(SOCKET socket, LPFN_GETACCEPTEXSOCKADDRS* target)
+		{
+			return GetExtensionPtr(socket, WSAID_GETACCEPTEXSOCKADDRS, (void**)target);
+		}
+		BOOL TinyHandleSOCKET::GetDisconnectEx(SOCKET socket, LPFN_DISCONNECTEX* target)
+		{
+			return GetExtensionPtr(socket, WSAID_DISCONNECTEX, (void**)target);
+		}
+		//////////////////////////////////////////////////////////////////////////
+		TinySocket::TinySocket(TinyIOServer* ioserver)
+			:m_server(ioserver),
+			m_addressFamily(AF_INET),
+			m_socketType(SOCK_STREAM),
+			m_protocolType(IPPROTO_TCP)
+		{
+
+		}
+		BOOL TinySocket::Open(INT addressFamily /* = AF_INET */, INT socketType /* = SOCK_STREAM */, INT protocolType /* = IPPROTO_TCP */)
+		{
+			ASSERT(m_server);
+			m_addressFamily = addressFamily;
+			m_socketType = socketType;
+			m_protocolType = protocolType;
+			m_socket = WSASocket(addressFamily, socketType, protocolType, NULL, 0, WSA_FLAG_OVERLAPPED);
+			BOOL allow = TRUE;
+			if (!SetOption(SO_REUSEADDR, (const CHAR*)&allow, sizeof(allow)))
+				return FALSE;
+			if (!Attach(m_socket))
+				return FALSE;
+			return m_server->GetIOCP()->Register(reinterpret_cast<HANDLE>(m_socket), m_socket);
+		}
+		TinySocket::~TinySocket()
+		{
+			Close();
+		}
+		BOOL TinySocket::Bind(const IPAddress& address, DWORD dwPORT)
+		{
+			ASSERT(m_socket);
+			SOCKADDR_IN si;
+			ZeroMemory(&si, sizeof(si));
+			si.sin_family = m_addressFamily;
+			si.sin_port = htons(static_cast<USHORT>(dwPORT));
+			memcpy(&si.sin_addr, address.Address().data(), m_addressFamily == AF_INET ? IPAddress::IPv4AddressSize : IPAddress::IPv6AddressSize);
+			return bind(m_socket, (SOCKADDR*)&si, sizeof(si)) != SOCKET_ERROR;
+		}
+		BOOL TinySocket::Listen(DWORD backlog)
+		{
+			ASSERT(m_socket);
+			return listen(m_socket, SOMAXCONN) != SOCKET_ERROR;
+		}
+		BOOL TinySocket::BeginAccept(CompleteCallback& callback)
+		{
+			ASSERT(m_server);
+			TinySocket* socket = new TinySocket(m_server);
+			if (socket && !socket->Open(m_addressFamily, m_socketType, m_protocolType))
+				goto _ERROR;
+			LPFN_ACCEPTEX acceptex = NULL;
+			if (!TinySocket::GetAcceptEx(m_socket, &acceptex))
+				goto _ERROR;
+			ZeroMemory(&socket->m_context, sizeof(PER_IO_CONTEXT));
+			socket->m_context.OP = OP_ACCEPT;
+			socket->m_context.Key = reinterpret_cast<LONG_PTR>(socket);
+			socket->m_context.Complete = std::move(callback);
+			DWORD dwBytes = 0;
+			DWORD dwAddressSize = sizeof(SOCKADDR_IN) + 16;
+			CHAR data[(sizeof(SOCKADDR_IN) + 16) * 2];
+			ZeroMemory(data, (sizeof(SOCKADDR_IN) + 16) * 2);
+			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(&socket->m_context);
+			if (!acceptex(m_socket, socket->Handle(), data, 0, dwAddressSize, dwAddressSize, &dwBytes, ps) &&
+				ERROR_IO_PENDING != WSAGetLastError())
+			{
+				goto _ERROR;
+			}
+			return TRUE;
+		_ERROR:
+			SAFE_DELETE(socket);
+			return FALSE;
+		}
+		BOOL TinySocket::BeginConnect(IPAddress& address, DWORD dwPORT, CompleteCallback& callback)
+		{
+			//https://msdn.microsoft.com/en-us/library/windows/desktop/ms737606(v=vs.85).aspx
+			if (!Open(m_addressFamily, m_socketType, m_protocolType))
+				goto _ERROR;
+			SOCKADDR_IN si;
+			ZeroMemory(&si, sizeof(si));
+			si.sin_family = m_addressFamily;
+			si.sin_port = 0;
+			si.sin_addr.s_addr = htonl(INADDR_ANY);
+			if (bind(m_socket, (SOCKADDR*)&si, sizeof(si)) == SOCKET_ERROR)
+				goto _ERROR;
+			ZeroMemory(&m_context, sizeof(m_context));
+			m_context.OP = OP_CONNECT;
+			m_context.Key = reinterpret_cast<LONG_PTR>(this);
+			m_context.Complete = std::move(callback);
+			ZeroMemory(&si, sizeof(si));
+			si.sin_family = AF_INET;
+			si.sin_port = htons(static_cast<USHORT>(dwPORT));
+			memcpy(&si.sin_addr, address.Address().data(), m_addressFamily == AF_INET ? IPAddress::IPv4AddressSize : IPAddress::IPv6AddressSize);
+			LPFN_CONNECTEX connectex = NULL;
+			if (!TinySocket::GetConnectEx(m_socket, &connectex))
+				goto _ERROR;
+			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(&m_context);
+			if (!connectex(m_socket, (SOCKADDR*)&si, sizeof(si), NULL, 0, NULL, ps) &&
+				ERROR_IO_PENDING != WSAGetLastError())
+			{
+				goto _ERROR;
+			}
+			return TRUE;
+		_ERROR:
+			Close();
+			return FALSE;
+		}
+		BOOL TinySocket::BeginReceive(BYTE* data, INT size, CompleteCallback& callback)
+		{
+			ASSERT(m_socket);
+			if (!m_connect)
+				return FALSE;
+			return TRUE;
+		}
+		BOOL TinySocket::BeginDisconnect(CompleteCallback& callback)
+		{
+			LPFN_DISCONNECTEX disconnectex = NULL;
+			if (!TinySocket::GetDisconnectEx(m_socket, &disconnectex))
+				goto _ERROR;
+
+		_ERROR:
+			Close();
+			return FALSE;
+		}
+		BOOL TinySocket::IsConnect() const
+		{
+			return m_connect;
 		}
 		void TinySocket::Close()
 		{
-			if (m_socket != INVALID_SOCKET)
+			SOCKET socket = Detach();
+			if (socket != INVALID_SOCKET)
 			{
-				closesocket(m_socket);
-				m_socket = NULL;
+				closesocket(socket);
+				socket = NULL;
 			}
 		}
 		BOOL TinySocket::Shutdown(INT how)
@@ -214,23 +377,6 @@ namespace TinyUI
 				return shutdown(m_socket, how) != SOCKET_ERROR;
 			}
 			return FALSE;
-		}
-
-		BOOL TinySocket::GetAcceptEx(SOCKET socket, LPFN_ACCEPTEX* target)
-		{
-			return GetExtensionPtr(socket, WSAID_ACCEPTEX, (void**)target);
-		}
-		BOOL TinySocket::GetConnectEx(SOCKET socket, LPFN_CONNECTEX* target)
-		{
-			return GetExtensionPtr(socket, WSAID_CONNECTEX, (void**)target);
-		}
-		BOOL TinySocket::GetAcceptExSockaddrs(SOCKET socket, LPFN_GETACCEPTEXSOCKADDRS* target)
-		{
-			return GetExtensionPtr(socket, WSAID_GETACCEPTEXSOCKADDRS, (void**)target);
-		}
-		BOOL TinySocket::GetDisconnectEx(SOCKET socket, LPFN_DISCONNECTEX* target)
-		{
-			return GetExtensionPtr(socket, WSAID_DISCONNECTEX, (void**)target);
 		}
 	}
 }
