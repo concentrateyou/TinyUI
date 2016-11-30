@@ -281,7 +281,7 @@ namespace TinyUI
 			ASSERT(m_socket);
 			return listen(m_socket, SOMAXCONN) != SOCKET_ERROR;
 		}
-		BOOL TinySocket::BeginAccept(CompleteCallback& callback)
+		BOOL TinySocket::BeginAccept(CompleteCallback& callback, LPVOID arg)
 		{
 			ASSERT(m_server);
 			TinySocket* socket = new TinySocket(m_server);
@@ -295,7 +295,7 @@ namespace TinyUI
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
 			context->OP = OP_ACCEPT;
-			context->AsyncState = reinterpret_cast<LPVOID>(socket);
+			context->AsyncState = arg;
 			context->Complete = std::move(callback);
 			DWORD dwBytes = 0;
 			DWORD dwAddressSize = sizeof(SOCKADDR_IN) + 16;
@@ -309,15 +309,14 @@ namespace TinyUI
 			}
 			return TRUE;
 		_ERROR:
+			DWORD errorCode = WSAGetLastError();
 			if (!callback.IsNull())
-			{
-				callback(WSAGetLastError(), 0, reinterpret_cast<LPVOID>(this));
-			}
+				callback(errorCode, 0, arg);
 			SAFE_DELETE(context);
 			SAFE_DELETE(socket);
 			return FALSE;
 		}
-		BOOL TinySocket::BeginConnect(IPAddress& address, DWORD dwPORT, CompleteCallback& callback)
+		BOOL TinySocket::BeginConnect(IPAddress& address, DWORD dwPORT, CompleteCallback& callback, LPVOID arg)
 		{
 			//https://msdn.microsoft.com/en-us/library/windows/desktop/ms737606(v=vs.85).aspx
 			if (!Open(m_addressFamily, m_socketType, m_protocolType))
@@ -332,7 +331,7 @@ namespace TinyUI
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
 			context->OP = OP_CONNECT;
-			context->AsyncState = reinterpret_cast<LPVOID>(this);
+			context->AsyncState = arg;
 			context->Complete = std::move(callback);
 			ZeroMemory(&si, sizeof(si));
 			si.sin_family = AF_INET;
@@ -351,15 +350,14 @@ namespace TinyUI
 			}
 			return TRUE;
 		_ERROR:
+			DWORD errorCode = WSAGetLastError();
 			if (!callback.IsNull())
-			{
-				callback(WSAGetLastError(), 0, reinterpret_cast<LPVOID>(this));
-			}
+				callback(errorCode, 0, arg);
 			SAFE_DELETE(context);
 			Close();
 			return FALSE;
 		}
-		BOOL TinySocket::BeginReceive(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback)
+		BOOL TinySocket::BeginReceive(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg)
 		{
 			ASSERT(m_socket);
 			if (!m_connect)
@@ -367,7 +365,7 @@ namespace TinyUI
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
 			context->OP = OP_RECV;
-			context->AsyncState = reinterpret_cast<LPVOID>(this);
+			context->AsyncState = arg;
 			context->Complete = callback;
 			context->Buffer.buf = data;
 			context->Buffer.len = dwSize;
@@ -378,15 +376,14 @@ namespace TinyUI
 				goto _ERROR;
 			return TRUE;
 		_ERROR:
+			DWORD errorCode = WSAGetLastError();
 			if (!callback.IsNull())
-			{
-				callback(WSAGetLastError(), 0, reinterpret_cast<LPVOID>(this));
-			}
+				callback(errorCode, 0, arg);
 			SAFE_DELETE(context);
 			Close();
 			return FALSE;
 		}
-		BOOL TinySocket::BeginDisconnect(CompleteCallback& callback)
+		BOOL TinySocket::BeginDisconnect(CompleteCallback& callback, LPVOID arg)
 		{
 			if (!m_disconnectex)
 			{
@@ -396,7 +393,7 @@ namespace TinyUI
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
 			context->OP = OP_DISCONNECT;
-			context->AsyncState = reinterpret_cast<LPVOID>(this);
+			context->AsyncState = arg;
 			context->Complete = callback;
 			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
 			if (!m_disconnectex(m_socket, ps, TF_REUSE_SOCKET, 0) &&
@@ -405,10 +402,9 @@ namespace TinyUI
 				goto _ERROR;
 			}
 		_ERROR:
+			DWORD errorCode = WSAGetLastError();
 			if (!callback.IsNull())
-			{
-				callback(WSAGetLastError(), 0, reinterpret_cast<LPVOID>(this));
-			}
+				callback(errorCode, 0, arg);
 			SAFE_DELETE(context);
 			Close();
 			return FALSE;

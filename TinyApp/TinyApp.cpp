@@ -41,26 +41,26 @@ BOOL LoadSeDebugPrivilege()
 	return TRUE;
 }
 
-CHAR buffer[10];
-string val;
-
-void OnRecv(DWORD dwError, DWORD dwBytes, LPVOID key)
-{
-	string str;
-	str.resize(dwBytes + 1);
-	memcpy(&str[0], buffer, dwBytes);
-	val += str;
-	TinyUI::Network::TinySocket* socket = reinterpret_cast<TinyUI::Network::TinySocket*>(key);
-	TinyUI::Network::CompleteCallback cb = BindCallback(&OnRecv);
-	socket->BeginReceive(buffer, 10, 0, cb);
-}
-
-void OnConnect(DWORD dwError, DWORD dwBytes, LPVOID key)
-{
-	TinyUI::Network::TinySocket* socket = reinterpret_cast<TinyUI::Network::TinySocket*>(key);
-	TinyUI::Network::CompleteCallback cb = BindCallback(&OnRecv);
-	socket->BeginReceive(buffer, 10, 0, cb);
-}
+//CHAR buffer[10];
+//string val;
+//
+//void OnRecv(DWORD errorCode, DWORD dwBytes, LPVOID key)
+//{
+//	string str;
+//	str.resize(dwBytes);
+//	memcpy(&str[0], buffer, dwBytes);
+//	val += str;
+//	TinyUI::Network::TinySocket* socket = reinterpret_cast<TinyUI::Network::TinySocket*>(key);
+//	TinyUI::Network::CompleteCallback cb = BindCallback(&OnRecv);
+//	socket->BeginReceive(buffer, 10, 0, cb, key);
+//}
+//
+//void OnConnect(DWORD errorCode, DWORD dwBytes, LPVOID key)
+//{
+//	TinyUI::Network::TinySocket* socket = reinterpret_cast<TinyUI::Network::TinySocket*>(key);
+//	TinyUI::Network::CompleteCallback cb = BindCallback(&OnRecv);
+//	socket->BeginReceive(buffer, 10, 0, cb, key);
+//}
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -86,8 +86,9 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	ioserver.Run();
 
 	TinyUI::Network::TinySocket socket(&ioserver);
-	TinyUI::Network::CompleteCallback cb = BindCallback(&OnConnect);
-	socket.BeginConnect(TinyUI::Network::IPAddress("10.1.32.230"), 5500, cb);
+
+	//TinyUI::Network::CompleteCallback cb = BindCallback(&OnConnect);
+	//socket.BeginConnect(TinyUI::Network::IPAddress("10.1.32.230"), 5500, cb, reinterpret_cast<LPVOID>(&socket));
 	//BOOL bRes = server.Bind(TinyUI::Network::IPAddress::IPv4Any(), 5500);
 	//bRes = server.Listen();
 	//TinyUI::Network::CompleteCallback cb = BindCallback(&OnAccept);

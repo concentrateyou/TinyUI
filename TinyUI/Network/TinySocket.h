@@ -121,10 +121,10 @@ namespace TinyUI
 		public:
 			BOOL Bind(const IPAddress& address, DWORD dwPORT);
 			BOOL Listen(DWORD backlog = SOMAXCONN);
-			BOOL BeginAccept(CompleteCallback& callback);
-			BOOL BeginConnect(IPAddress& address, DWORD dwPORT, CompleteCallback& callback);
-			BOOL BeginDisconnect(CompleteCallback& callback);
-			BOOL BeginReceive(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback);
+			BOOL BeginAccept(CompleteCallback& callback, LPVOID arg);
+			BOOL BeginConnect(IPAddress& address, DWORD dwPORT, CompleteCallback& callback, LPVOID arg);
+			BOOL BeginReceive(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg);
+			BOOL BeginDisconnect(CompleteCallback& callback, LPVOID arg);
 		public:
 			virtual void Close();
 			virtual BOOL Shutdown(INT how);
