@@ -43,13 +43,10 @@ namespace TinyUI
 				DWORD dwNumberOfBytesTransferred = 0;
 				LPOVERLAPPED lpOP = NULL;
 				if (!GetQueuedCompletionStatus(m_pIOCP->Handle(), &dwNumberOfBytesTransferred, &completionKey, &lpOP, INFINITE))
-				{
-					//DWORD dwError = WSAGetLastError();
 					continue;
-				}
-				if (lpOP == NULL)
-					break;
 				PER_IO_CONTEXT* context = static_cast<PER_IO_CONTEXT*>(lpOP);
+				if (context == NULL)
+					break;
 				if (dwNumberOfBytesTransferred == 0 && context->OP > OP_ACCEPT && context->OP < OP_CONNECT)
 				{
 					SAFE_DELETE(context);
@@ -60,31 +57,38 @@ namespace TinyUI
 				case OP_ACCEPT:
 				{
 					SOCKET listen = static_cast<SOCKET>(completionKey);
-					TinySocket* scoekt = reinterpret_cast<TinySocket*>(context->Key);
-					if (scoekt)
+					TinySocket* socket = reinterpret_cast<TinySocket*>(context->AsyncState);
+					if (socket)
 					{
 						DWORD dwError = 0;
-						if (setsockopt(scoekt->Handle(), SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, (CHAR*)&listen, sizeof(listen)) == SOCKET_ERROR)
+						if (setsockopt(socket->Handle(), SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, (CHAR*)&listen, sizeof(listen)) == SOCKET_ERROR)
 						{
 							dwError = WSAGetLastError();
 						}
 						else
 						{
-							if (!m_pIOCP->Register((HANDLE)scoekt->Handle(), 0))
+							if (!m_pIOCP->Register((HANDLE)socket->Handle(), 0))
 							{
 								dwError = WSAGetLastError();
 							}
 						}
 						if (!context->Complete.IsNull())
 						{
-							context->Complete(dwError, dwNumberOfBytesTransferred, context->Key);
+							context->Complete(dwError, dwNumberOfBytesTransferred, context->AsyncState);
 						}
 					}
 				}
 				break;
 				case OP_RECV:
 				{
-
+					TinySocket* socket = reinterpret_cast<TinySocket*>(context->AsyncState);
+					if (socket)
+					{
+						if (!context->Complete.IsNull())
+						{
+							context->Complete(0, dwNumberOfBytesTransferred, context->AsyncState);
+						}
+					}
 				}
 				break;
 				case OP_RECVFROM:
@@ -104,44 +108,45 @@ namespace TinyUI
 				break;
 				case OP_CONNECT:
 				{
-					TinySocket* scoekt = reinterpret_cast<TinySocket*>(context->Key);
-					if (scoekt)
+					TinySocket* socket = reinterpret_cast<TinySocket*>(context->AsyncState);
+					if (socket)
 					{
 						DWORD dwError = 0;
-						if (setsockopt(scoekt->Handle(), SOL_SOCKET, SO_UPDATE_CONNECT_CONTEXT, NULL, 0) == SOCKET_ERROR)
+						if (setsockopt(socket->Handle(), SOL_SOCKET, SO_UPDATE_CONNECT_CONTEXT, NULL, 0) == SOCKET_ERROR)
 						{
 							dwError = WSAGetLastError();
 						}
 						else
 						{
-							if (!m_pIOCP->Register((HANDLE)scoekt->Handle(), 0))
+							if (!m_pIOCP->Register((HANDLE)socket->Handle(), 0))
 							{
 								dwError = WSAGetLastError();
 							}
 						}
-						scoekt->m_connect = TRUE;
+						socket->m_connect = TRUE;
 						if (!context->Complete.IsNull())
 						{
-							context->Complete(dwError, dwNumberOfBytesTransferred, context->Key);
+							context->Complete(dwError, dwNumberOfBytesTransferred, context->AsyncState);
 						}
 					}
 				}
 				break;
 				case OP_DISCONNECT:
 				{
-					TinySocket* scoekt = reinterpret_cast<TinySocket*>(context->Key);
+					TinySocket* scoekt = reinterpret_cast<TinySocket*>(context->AsyncState);
 					if (scoekt)
 					{
 						DWORD dwError = 0;
 						scoekt->m_connect = FALSE;
 						if (!context->Complete.IsNull())
 						{
-							context->Complete(dwError, dwNumberOfBytesTransferred, context->Key);
+							context->Complete(dwError, dwNumberOfBytesTransferred, context->AsyncState);
 						}
 					}
 				}
 				break;
 				}
+				SAFE_DELETE(context);
 			}
 		}
 		//////////////////////////////////////////////////////////////////////////

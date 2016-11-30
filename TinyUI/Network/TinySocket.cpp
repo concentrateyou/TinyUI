@@ -241,7 +241,10 @@ namespace TinyUI
 			:m_server(ioserver),
 			m_addressFamily(AF_INET),
 			m_socketType(SOCK_STREAM),
-			m_protocolType(IPPROTO_TCP)
+			m_protocolType(IPPROTO_TCP),
+			m_disconnectex(NULL),
+			m_acceptex(NULL),
+			m_connectex(NULL)
 		{
 
 		}
@@ -284,25 +287,33 @@ namespace TinyUI
 			TinySocket* socket = new TinySocket(m_server);
 			if (socket && !socket->Open(m_addressFamily, m_socketType, m_protocolType))
 				goto _ERROR;
-			LPFN_ACCEPTEX acceptex = NULL;
-			if (!TinySocket::GetAcceptEx(m_socket, &acceptex))
-				goto _ERROR;
-			ZeroMemory(&socket->m_context, sizeof(PER_IO_CONTEXT));
-			socket->m_context.OP = OP_ACCEPT;
-			socket->m_context.Key = reinterpret_cast<LONG_PTR>(socket);
-			socket->m_context.Complete = std::move(callback);
+			if (!m_acceptex)
+			{
+				if (!TinySocket::GetAcceptEx(m_socket, &m_acceptex))
+					goto _ERROR;
+			}
+			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
+			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
+			context->OP = OP_ACCEPT;
+			context->AsyncState = reinterpret_cast<LPVOID>(socket);
+			context->Complete = std::move(callback);
 			DWORD dwBytes = 0;
 			DWORD dwAddressSize = sizeof(SOCKADDR_IN) + 16;
 			CHAR data[(sizeof(SOCKADDR_IN) + 16) * 2];
 			ZeroMemory(data, (sizeof(SOCKADDR_IN) + 16) * 2);
-			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(&socket->m_context);
-			if (!acceptex(m_socket, socket->Handle(), data, 0, dwAddressSize, dwAddressSize, &dwBytes, ps) &&
+			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
+			if (!m_acceptex(m_socket, socket->Handle(), data, 0, dwAddressSize, dwAddressSize, &dwBytes, ps) &&
 				ERROR_IO_PENDING != WSAGetLastError())
 			{
 				goto _ERROR;
 			}
 			return TRUE;
 		_ERROR:
+			if (!callback.IsNull())
+			{
+				callback(WSAGetLastError(), 0, reinterpret_cast<LPVOID>(this));
+			}
+			SAFE_DELETE(context);
 			SAFE_DELETE(socket);
 			return FALSE;
 		}
@@ -318,42 +329,87 @@ namespace TinyUI
 			si.sin_addr.s_addr = htonl(INADDR_ANY);
 			if (bind(m_socket, (SOCKADDR*)&si, sizeof(si)) == SOCKET_ERROR)
 				goto _ERROR;
-			ZeroMemory(&m_context, sizeof(m_context));
-			m_context.OP = OP_CONNECT;
-			m_context.Key = reinterpret_cast<LONG_PTR>(this);
-			m_context.Complete = std::move(callback);
+			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
+			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
+			context->OP = OP_CONNECT;
+			context->AsyncState = reinterpret_cast<LPVOID>(this);
+			context->Complete = std::move(callback);
 			ZeroMemory(&si, sizeof(si));
 			si.sin_family = AF_INET;
 			si.sin_port = htons(static_cast<USHORT>(dwPORT));
 			memcpy(&si.sin_addr, address.Address().data(), m_addressFamily == AF_INET ? IPAddress::IPv4AddressSize : IPAddress::IPv6AddressSize);
-			LPFN_CONNECTEX connectex = NULL;
-			if (!TinySocket::GetConnectEx(m_socket, &connectex))
-				goto _ERROR;
-			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(&m_context);
-			if (!connectex(m_socket, (SOCKADDR*)&si, sizeof(si), NULL, 0, NULL, ps) &&
+			if (!m_connectex)
+			{
+				if (!TinySocket::GetConnectEx(m_socket, &m_connectex))
+					goto _ERROR;
+			}
+			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
+			if (!m_connectex(m_socket, (SOCKADDR*)&si, sizeof(si), NULL, 0, NULL, ps) &&
 				ERROR_IO_PENDING != WSAGetLastError())
 			{
 				goto _ERROR;
 			}
 			return TRUE;
 		_ERROR:
+			if (!callback.IsNull())
+			{
+				callback(WSAGetLastError(), 0, reinterpret_cast<LPVOID>(this));
+			}
+			SAFE_DELETE(context);
 			Close();
 			return FALSE;
 		}
-		BOOL TinySocket::BeginReceive(BYTE* data, INT size, CompleteCallback& callback)
+		BOOL TinySocket::BeginReceive(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback)
 		{
 			ASSERT(m_socket);
 			if (!m_connect)
-				return FALSE;
+				goto _ERROR;
+			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
+			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
+			context->OP = OP_RECV;
+			context->AsyncState = reinterpret_cast<LPVOID>(this);
+			context->Complete = callback;
+			context->Buffer.buf = data;
+			context->Buffer.len = dwSize;
+			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
+			DWORD numberOfBytesRecvd = 0;
+			if (WSARecv(m_socket, &context->Buffer, 1, &numberOfBytesRecvd, &dwFlags, ps, NULL) == SOCKET_ERROR &&
+				ERROR_IO_PENDING != WSAGetLastError())
+				goto _ERROR;
 			return TRUE;
+		_ERROR:
+			if (!callback.IsNull())
+			{
+				callback(WSAGetLastError(), 0, reinterpret_cast<LPVOID>(this));
+			}
+			SAFE_DELETE(context);
+			Close();
+			return FALSE;
 		}
 		BOOL TinySocket::BeginDisconnect(CompleteCallback& callback)
 		{
-			LPFN_DISCONNECTEX disconnectex = NULL;
-			if (!TinySocket::GetDisconnectEx(m_socket, &disconnectex))
+			if (!m_disconnectex)
+			{
+				if (!TinySocket::GetDisconnectEx(m_socket, &m_disconnectex))
+					goto _ERROR;
+			}
+			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
+			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
+			context->OP = OP_DISCONNECT;
+			context->AsyncState = reinterpret_cast<LPVOID>(this);
+			context->Complete = callback;
+			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
+			if (!m_disconnectex(m_socket, ps, TF_REUSE_SOCKET, 0) &&
+				ERROR_IO_PENDING != WSAGetLastError())
+			{
 				goto _ERROR;
-
+			}
 		_ERROR:
+			if (!callback.IsNull())
+			{
+				callback(WSAGetLastError(), 0, reinterpret_cast<LPVOID>(this));
+			}
+			SAFE_DELETE(context);
 			Close();
 			return FALSE;
 		}
@@ -368,6 +424,9 @@ namespace TinyUI
 			{
 				closesocket(socket);
 				socket = NULL;
+				m_disconnectex = NULL;
+				m_acceptex = NULL;
+				m_connectex = NULL;
 			}
 		}
 		BOOL TinySocket::Shutdown(INT how)

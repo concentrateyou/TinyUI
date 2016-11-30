@@ -63,18 +63,18 @@ namespace TinyUI
 			ADDRESS_FAMILY_LAST = ADDRESS_FAMILY_IPV6
 		};
 		class TinySocket;
-		using CompleteCallback = Callback<void(DWORD, DWORD, ULONG_PTR)>;
+		using CompleteCallback = Callback<void(DWORD, DWORD, LPVOID)>;
 		class NO_VTABLE PER_IO_CONTEXT : public OVERLAPPED
 		{
 		public:
 			PER_IO_CONTEXT();
 			void Reset();
 		public:
-			DWORD		OP;
-			DWORD		Bytes;
-			ULONG_PTR	Key;
-			WSABUF		Buffer;
-			CompleteCallback Complete;
+			DWORD				OP;
+			DWORD				Bytes;
+			LPVOID				AsyncState;
+			WSABUF				Buffer;
+			CompleteCallback	Complete;
 		};
 		/// <summary>
 		/// Ì×½Ó×Ö¾ä±ú
@@ -124,18 +124,21 @@ namespace TinyUI
 			BOOL BeginAccept(CompleteCallback& callback);
 			BOOL BeginConnect(IPAddress& address, DWORD dwPORT, CompleteCallback& callback);
 			BOOL BeginDisconnect(CompleteCallback& callback);
-			BOOL BeginReceive(BYTE* data, INT size, CompleteCallback& callback);
+			BOOL BeginReceive(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback);
 		public:
 			virtual void Close();
 			virtual BOOL Shutdown(INT how);
 		public:
 		protected:
-			TinyIOServer*	m_server;
-			INT				m_addressFamily;
-			INT				m_socketType;
-			INT				m_protocolType;
-			BOOL			m_connect;
-			PER_IO_CONTEXT	m_context;
+			TinyIOServer*		m_server;
+			INT					m_addressFamily;
+			INT					m_socketType;
+			INT					m_protocolType;
+			BOOL				m_connect;
+			PER_IO_CONTEXT		m_context;
+			LPFN_DISCONNECTEX	m_disconnectex;
+			LPFN_CONNECTEX		m_connectex;
+			LPFN_ACCEPTEX		m_acceptex;
 		};
 	}
 }

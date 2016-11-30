@@ -41,14 +41,25 @@ BOOL LoadSeDebugPrivilege()
 	return TRUE;
 }
 
-void OnAccept(DWORD, DWORD, ULONG_PTR)
-{
+CHAR buffer[10];
+string val;
 
+void OnRecv(DWORD dwError, DWORD dwBytes, LPVOID key)
+{
+	string str;
+	str.resize(dwBytes + 1);
+	memcpy(&str[0], buffer, dwBytes);
+	val += str;
+	TinyUI::Network::TinySocket* socket = reinterpret_cast<TinyUI::Network::TinySocket*>(key);
+	TinyUI::Network::CompleteCallback cb = BindCallback(&OnRecv);
+	socket->BeginReceive(buffer, 10, 0, cb);
 }
 
-void OnConnect(DWORD, DWORD, ULONG_PTR)
+void OnConnect(DWORD dwError, DWORD dwBytes, LPVOID key)
 {
-
+	TinyUI::Network::TinySocket* socket = reinterpret_cast<TinyUI::Network::TinySocket*>(key);
+	TinyUI::Network::CompleteCallback cb = BindCallback(&OnRecv);
+	socket->BeginReceive(buffer, 10, 0, cb);
 }
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
@@ -76,12 +87,11 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	TinyUI::Network::TinySocket socket(&ioserver);
 	TinyUI::Network::CompleteCallback cb = BindCallback(&OnConnect);
-	
-	//server.BeginConnect(TinyUI::Network::IPAddress("10.1.32.230"), 5500, cb);
-	/*BOOL bRes = server.Bind(TinyUI::Network::IPAddress::IPv4Any(), 5500);
-	bRes = server.Listen();
-	TinyUI::Network::CompleteCallback cb = BindCallback(&OnAccept);
-	server.BeginAccept(cb);*/
+	socket.BeginConnect(TinyUI::Network::IPAddress("10.1.32.230"), 5500, cb);
+	//BOOL bRes = server.Bind(TinyUI::Network::IPAddress::IPv4Any(), 5500);
+	//bRes = server.Listen();
+	//TinyUI::Network::CompleteCallback cb = BindCallback(&OnAccept);
+	//server.BeginAccept(cb);
 
 
 	::DefWindowProc(NULL, 0, 0, 0L);

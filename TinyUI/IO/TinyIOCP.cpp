@@ -61,7 +61,7 @@ namespace TinyUI
 				m_hFileHandle = hFileHandle;
 				return ::CreateIoCompletionPort(hFileHandle, m_hIOCP, completionKey, 0) != NULL;
 			}
-			return FALSE;
+			return TRUE;
 		}
 		HANDLE	TinyIOCP::GetFileHandle() const
 		{
