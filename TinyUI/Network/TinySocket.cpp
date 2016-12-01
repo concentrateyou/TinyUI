@@ -165,6 +165,7 @@ namespace TinyUI
 		BOOL TinySocket::BeginAccept(CompleteCallback& callback, LPVOID arg)
 		{
 			ASSERT(m_server);
+			DWORD errorCode = ERROR_SUCCESS;
 			TinyAutoLock lock(m_lock);
 			TinySocket* socket = new TinySocket(m_server);
 			if (!socket || !socket->Open(m_addressFamily, m_socketType, m_protocolType))
@@ -193,7 +194,7 @@ namespace TinyUI
 			}
 			return TRUE;
 		_ERROR:
-			DWORD errorCode = WSAGetLastError();
+			errorCode = WSAGetLastError();
 			if (!callback.IsNull())
 			{
 				callback(errorCode, context->Result);
@@ -212,7 +213,7 @@ namespace TinyUI
 		{
 			TinyAutoLock lock(m_lock);
 			//https://msdn.microsoft.com/en-us/library/windows/desktop/ms737606(v=vs.85).aspx
-			DWORD errorCode = 0;
+			DWORD errorCode = ERROR_SUCCESS;
 			if (!Open(m_addressFamily, m_socketType, m_protocolType))
 				goto _ERROR;
 			SOCKADDR_IN si;
@@ -263,7 +264,7 @@ namespace TinyUI
 		{
 			ASSERT(m_socket);
 			TinyAutoLock lock(m_lock);
-			DWORD errorCode = 0;
+			DWORD errorCode = ERROR_SUCCESS;
 			if (!m_connect)
 				goto _ERROR;
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
@@ -301,7 +302,7 @@ namespace TinyUI
 		{
 			ASSERT(m_socket);
 			TinyAutoLock lock(m_lock);
-			DWORD errorCode = 0;
+			DWORD errorCode = ERROR_SUCCESS;
 			if (!m_connect)
 				goto _ERROR;
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
@@ -338,7 +339,7 @@ namespace TinyUI
 		{
 			ASSERT(m_socket);
 			TinyAutoLock lock(m_lock);
-			DWORD errorCode = 0;
+			DWORD errorCode = ERROR_SUCCESS;
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
 			context->OP = OP_SENDTO;
@@ -378,7 +379,7 @@ namespace TinyUI
 		{
 			ASSERT(m_socket);
 			TinyAutoLock lock(m_lock);
-			DWORD errorCode = 0;
+			DWORD errorCode = ERROR_SUCCESS;
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
 			context->OP = OP_RECVFROM;
@@ -419,7 +420,7 @@ namespace TinyUI
 		BOOL TinySocket::BeginDisconnect(CompleteCallback& callback, LPVOID arg)
 		{
 			TinyAutoLock lock(m_lock);
-			DWORD errorCode = 0;
+			DWORD errorCode = ERROR_SUCCESS;
 			if (!m_disconnectex)
 			{
 				if (!TinySocket::GetDisconnectEx(m_socket, &m_disconnectex))

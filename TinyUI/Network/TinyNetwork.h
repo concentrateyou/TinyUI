@@ -13,7 +13,8 @@ namespace TinyUI
 {
 	namespace Network
 	{
-		BOOL GetExtensionPtr(SOCKET socket, GUID guid, void** target);
+		BOOL  GetExtensionPtr(SOCKET socket, GUID guid, void** target);
+		DWORD GetErrorCode(SOCKET socket, LPOVERLAPPED ps);
 		/// <summary>
 		/// IPµÿ÷∑
 		/// </summary>
@@ -78,7 +79,7 @@ namespace TinyUI
 			virtual ~AsyncResult();
 		public:
 			LPVOID	AsyncState;
-			HANDLE	AsyncHandle;//‘§¡Ù
+			HANDLE	AsyncHandle;
 		};
 		using CompleteCallback = Callback<void(DWORD, AsyncResult*)>;
 		/// <summary>

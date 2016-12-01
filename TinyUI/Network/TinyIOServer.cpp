@@ -20,6 +20,9 @@ namespace TinyUI
 		BOOL TinyIOTask::Close(DWORD dwMs)
 		{
 			ASSERT(m_pIOCP);
+			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
+			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
+			context->OP = OP_QUIT;
 			PostQueuedCompletionStatus(m_pIOCP->Handle(), 0, 0, NULL);
 			m_close.SetEvent();
 			return TinyTaskBase::Close(dwMs);
@@ -45,16 +48,25 @@ namespace TinyUI
 				LPOVERLAPPED lpOP = NULL;
 				if (!GetQueuedCompletionStatus(m_pIOCP->Handle(), &dwNumberOfBytesTransferred, &completionKey, &lpOP, INFINITE))
 				{
+					TinyScopedPtr<PER_IO_CONTEXT> context(static_cast<PER_IO_CONTEXT*>(lpOP));
+					if (context != NULL)
+					{
+						TinySocket* s = reinterpret_cast<TinySocket*>(context->Reserve);
+						errorCode = GetErrorCode(s->Handle(), lpOP);
+						if (!context->Complete.IsNull())
+						{
+							context->Complete(errorCode, context->Result);
+						}
+					}
 					continue;
 				}
-				PER_IO_CONTEXT* context = static_cast<PER_IO_CONTEXT*>(lpOP);
-				if (context == NULL)
+				TinyScopedPtr<PER_IO_CONTEXT> context(static_cast<PER_IO_CONTEXT*>(lpOP));
+				if (!context || context->OP == OP_QUIT)
 				{
 					break;
 				}
 				if (dwNumberOfBytesTransferred == 0 && context->OP > OP_ACCEPT && context->OP < OP_CONNECT)
 				{
-					SAFE_DELETE(context);
 					break;
 				}
 				switch (context->OP)
@@ -168,7 +180,6 @@ namespace TinyUI
 				}
 				break;
 				}
-				SAFE_DELETE(context);
 			}
 		}
 		//////////////////////////////////////////////////////////////////////////

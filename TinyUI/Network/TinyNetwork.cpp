@@ -24,7 +24,15 @@ namespace TinyUI
 			}
 			return TRUE;
 		}
-
+		DWORD GetErrorCode(SOCKET socket, LPOVERLAPPED ps)
+		{
+			ASSERT(socket);
+			DWORD dwBytes = 0;
+			DWORD dwFlag = 0;
+			if (WSAGetOverlappedResult(socket, ps, &dwBytes, FALSE, &dwFlag))
+				return ERROR_SUCCESS;
+			return WSAGetLastError();
+		}
 		//////////////////////////////////////////////////////////////////////////
 
 		IPAddress::IPAddress()

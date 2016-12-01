@@ -15,6 +15,7 @@ namespace TinyUI
 #define OP_SENDTO		0x05
 #define OP_CONNECT		0x06
 #define OP_DISCONNECT	0x07
+#define OP_QUIT			0x07
 
 #define MAX_BUFFER_SIZE   4096
 
@@ -27,7 +28,7 @@ namespace TinyUI
 			BOOL Close(DWORD dwMs = INFINITE) OVERRIDE;
 			BOOL Submit();
 		private:
-			void OnMessagePump();
+			void	OnMessagePump();
 		private:
 			IO::TinyIOCP*	m_pIOCP;
 			TinyUI::Closure	m_closure;
