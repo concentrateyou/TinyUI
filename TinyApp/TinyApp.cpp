@@ -73,6 +73,8 @@ void OnReceive(DWORD errorCode, TinyUI::Network::AsyncResult* result)
 	string str;
 	str.resize(size + 1);
 	memcpy(&str[0], buffer, size);
+	client->Close();
+	SAFE_DELETE(client);
 }
 
 void OnAccept(DWORD errorCode, TinyUI::Network::AsyncResult* result)
@@ -109,7 +111,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	SYSTEM_INFO si;
 	GetSystemInfo(&si);
-	TinyUI::Network::TinyIOServer ioserver(1);
+	TinyUI::Network::TinyIOServer ioserver(3);
 	ioserver.Run();
 
 	DWORD dwCode = 0;

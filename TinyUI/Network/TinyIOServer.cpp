@@ -44,10 +44,14 @@ namespace TinyUI
 				DWORD dwNumberOfBytesTransferred = 0;
 				LPOVERLAPPED lpOP = NULL;
 				if (!GetQueuedCompletionStatus(m_pIOCP->Handle(), &dwNumberOfBytesTransferred, &completionKey, &lpOP, INFINITE))
+				{
 					continue;
+				}
 				PER_IO_CONTEXT* context = static_cast<PER_IO_CONTEXT*>(lpOP);
 				if (context == NULL)
+				{
 					break;
+				}
 				if (dwNumberOfBytesTransferred == 0 && context->OP > OP_ACCEPT && context->OP < OP_CONNECT)
 				{
 					SAFE_DELETE(context);

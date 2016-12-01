@@ -36,7 +36,7 @@ namespace TinyUI
 		};
 		class TinyIOServer;
 		/// <summary>
-		/// Ì×½Ó×Ö»ùÀà
+		/// Socket(IOCP¿ò¼Ü)
 		/// </summary>
 		class TinySocket : public TinyHandleSOCKET
 		{
@@ -65,38 +65,30 @@ namespace TinyUI
 			virtual ~TinySocket();
 			BOOL	IsConnect() const;
 			BOOL	Open(INT addressFamily = AF_INET, INT socketType = SOCK_STREAM, INT protocolType = IPPROTO_TCP);
-			BOOL	KeepAlive(BOOL bAllow);
+			BOOL	KeepAlive(BOOL bAllow, INT ms);
 			BOOL	IsKeepAlive();
 			INT		Available();
 			BOOL	Blocking(BOOL bAllow);
 		public:
 			BOOL Bind(const IPAddress& address, USHORT sPORT);
 			BOOL Listen(DWORD backlog = SOMAXCONN);
-
 			BOOL BeginAccept(CompleteCallback& callback, LPVOID arg);
 			TinySocket* EndAccept(AsyncResult* result);
-
 			BOOL BeginConnect(IPAddress& address, USHORT sPORT, CompleteCallback& callback, LPVOID arg);
 			void EndConnect(AsyncResult* result);
-
 			BOOL BeginSend(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg);
 			INT  EndSend(AsyncResult* result);
-
 			BOOL BeginReceive(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg);
 			INT  EndReceive(AsyncResult* result);
-
 			BOOL BeginSendTo(CHAR* data, DWORD dwSize, DWORD dwFlags, const IPAddress& address, DWORD dwPORT, CompleteCallback& callback, LPVOID arg);
 			INT  EndSendTo(AsyncResult* result);
-
 			BOOL BeginReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg);
 			INT  EndReceiveFrom(AsyncResult* result, SOCKADDR_IN& si);
-
 			BOOL BeginDisconnect(CompleteCallback& callback, LPVOID arg);
 			void EndDisconnect(AsyncResult* result);
 		public:
 			virtual void Close();
-			virtual BOOL Shutdown(INT how);
-		public:
+			virtual BOOL Shutdown(INT how = SD_BOTH);
 		protected:
 			TinyIOServer*		m_server;
 			INT					m_addressFamily;

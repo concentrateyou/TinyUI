@@ -114,10 +114,14 @@ namespace TinyUI
 				return FALSE;
 			return m_server->GetIOCP()->Register(reinterpret_cast<HANDLE>(m_socket), m_socket);
 		}
-		BOOL TinySocket::KeepAlive(BOOL bAllow)
+		BOOL TinySocket::KeepAlive(BOOL bAllow, INT ms)
 		{
 			ASSERT(m_socket);
-			return SetOption(SOL_SOCKET, SO_KEEPALIVE, (const CHAR*)bAllow, sizeof(bAllow));
+			if (SetOption(SOL_SOCKET, SO_KEEPALIVE, (const CHAR*)bAllow, sizeof(bAllow)))
+			{
+				return TRUE;
+			}
+			return FALSE;
 		}
 		BOOL TinySocket::IsKeepAlive()
 		{
@@ -158,10 +162,10 @@ namespace TinyUI
 			ASSERT(m_socket);
 			return listen(m_socket, SOMAXCONN) != SOCKET_ERROR;
 		}
-
 		BOOL TinySocket::BeginAccept(CompleteCallback& callback, LPVOID arg)
 		{
 			ASSERT(m_server);
+			TinyAutoLock lock(m_lock);
 			TinySocket* socket = new TinySocket(m_server);
 			if (!socket || !socket->Open(m_addressFamily, m_socketType, m_protocolType))
 				goto _ERROR;
@@ -198,16 +202,15 @@ namespace TinyUI
 			SAFE_DELETE(socket);
 			return FALSE;
 		}
-
 		TinySocket* TinySocket::EndAccept(AsyncResult* result)
 		{
 			AcceptAsyncResult* s = static_cast<AcceptAsyncResult*>(result);
 			ASSERT(s);
 			return s->AcceptSocket;
 		}
-
 		BOOL TinySocket::BeginConnect(IPAddress& address, USHORT sPORT, CompleteCallback& callback, LPVOID arg)
 		{
+			TinyAutoLock lock(m_lock);
 			//https://msdn.microsoft.com/en-us/library/windows/desktop/ms737606(v=vs.85).aspx
 			DWORD errorCode = 0;
 			if (!Open(m_addressFamily, m_socketType, m_protocolType))
@@ -252,15 +255,14 @@ namespace TinyUI
 			Close();
 			return FALSE;
 		}
-
 		void TinySocket::EndConnect(AsyncResult* result)
 		{
 
 		}
-
 		BOOL TinySocket::BeginReceive(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg)
 		{
 			ASSERT(m_socket);
+			TinyAutoLock lock(m_lock);
 			DWORD errorCode = 0;
 			if (!m_connect)
 				goto _ERROR;
@@ -298,6 +300,7 @@ namespace TinyUI
 		BOOL TinySocket::BeginSend(CHAR* data, DWORD dwSize, DWORD dwFlag, CompleteCallback& callback, LPVOID arg)
 		{
 			ASSERT(m_socket);
+			TinyAutoLock lock(m_lock);
 			DWORD errorCode = 0;
 			if (!m_connect)
 				goto _ERROR;
@@ -334,6 +337,7 @@ namespace TinyUI
 		BOOL TinySocket::BeginSendTo(CHAR* data, DWORD dwSize, DWORD dwFlags, const IPAddress& address, DWORD dwPORT, CompleteCallback& callback, LPVOID arg)
 		{
 			ASSERT(m_socket);
+			TinyAutoLock lock(m_lock);
 			DWORD errorCode = 0;
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
@@ -373,6 +377,7 @@ namespace TinyUI
 		BOOL TinySocket::BeginReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg)
 		{
 			ASSERT(m_socket);
+			TinyAutoLock lock(m_lock);
 			DWORD errorCode = 0;
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
@@ -411,9 +416,9 @@ namespace TinyUI
 			memcpy(&si, &s->Address, sizeof(DatagramAsyncResult));
 			return s->BytesTransferred;
 		}
-
 		BOOL TinySocket::BeginDisconnect(CompleteCallback& callback, LPVOID arg)
 		{
+			TinyAutoLock lock(m_lock);
 			DWORD errorCode = 0;
 			if (!m_disconnectex)
 			{
@@ -445,9 +450,8 @@ namespace TinyUI
 		}
 		void TinySocket::EndDisconnect(AsyncResult* result)
 		{
-			//TODO
-		}
 
+		}
 		BOOL TinySocket::IsConnect() const
 		{
 			return m_connect;
