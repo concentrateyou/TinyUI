@@ -50,7 +50,7 @@ namespace TinyUI
 	};
 	string GetDefaultLogFile();
 	/// <summary>
-	/// 日志类
+	/// 异常日志类
 	/// </summary>
 	class LogException
 	{
@@ -67,6 +67,31 @@ namespace TinyUI
 		size_t				m_messageOffset;
 		HANDLE				m_hFile;
 		const INT			m_line;
+	};
+	typedef INT LogSeverity;
+	const LogSeverity LOG_VERBOSE = -1;
+	const LogSeverity LOG_INFO = 0;
+	const LogSeverity LOG_WARNING = 1;
+	const LogSeverity LOG_ERROR = 2;
+	const LogSeverity LOG_FATAL = 3;
+	const LogSeverity LOG_NUM_SEVERITIES = 4;
+	/// <summary>
+	/// 日志类
+	/// </summary>
+	class LogMessage
+	{
+		DISALLOW_COPY_AND_ASSIGN(LogMessage)
+	public:
+		LogMessage(LPCSTR pzFile, INT line, LogSeverity severity);
+		~LogMessage();
+		std::ostream& stream() { return m_stream; }
+	private:
+		void Initialize(LPCSTR pzFile, INT line);
+	private:
+		LogSeverity			m_severity;
+		std::ostringstream	m_stream;
+		string				m_szFile;
+		INT					m_line;
 	};
 }
 

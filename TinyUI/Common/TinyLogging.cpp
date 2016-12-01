@@ -286,6 +286,58 @@ namespace TinyUI
 			CloseHandle(m_hFile);
 		}
 	}
+	//////////////////////////////////////////////////////////////////////////
+	const char* const LogSeverityNames[LOG_NUM_SEVERITIES] =
+	{
+		"INFO", "WARNING", "ERROR", "FATAL" };
+
+	const char* LogSeverityName(int severity)
+	{
+		if (severity >= 0 && severity < LOG_NUM_SEVERITIES)
+			return LogSeverityNames[severity];
+		return "UNKNOWN";
+	}
+
+	LogMessage::LogMessage(LPCSTR pzFile, INT line, LogSeverity severity)
+		:m_severity(severity),
+		m_line(line),
+		m_szFile(pzFile)
+	{
+		Initialize(pzFile, line);
+	}
+	void LogMessage::Initialize(LPCSTR pzFile, INT line)
+	{
+		string szFile(pzFile);
+		size_t pos = szFile.find_last_of("\\/");
+		if (pos != string::npos)
+		{
+			szFile.substr(0, pos + 1);
+		}
+		m_stream << '[';
+		m_stream << GetCurrentProcessId() << ':';
+		m_stream << GetCurrentThreadId() << ':';
+		time_t t = time(nullptr);
+		struct tm local_time = { 0 };
+		localtime_s(&local_time, &t);
+		struct tm* tm_time = &local_time;
+		m_stream << std::setfill('0')
+			<< std::setw(2) << 1 + tm_time->tm_mon
+			<< std::setw(2) << tm_time->tm_mday
+			<< '/'
+			<< std::setw(2) << tm_time->tm_hour
+			<< std::setw(2) << tm_time->tm_min
+			<< std::setw(2) << tm_time->tm_sec
+			<< ':';
+		if (m_severity >= 0)
+		{
+			m_stream << LogSeverityName(m_severity);
+		}
+		m_stream << ":" << szFile << "(" << line << ")] ";
+	}
+	LogMessage::~LogMessage()
+	{
+
+	}
 }
 
 
