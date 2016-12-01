@@ -74,7 +74,10 @@ namespace TinyUI
 						}
 						if (!context->Complete.IsNull())
 						{
-							context->Complete(errorCode, dwNumberOfBytesTransferred, &context->Address, context->AsyncState);
+							TinySocket::AcceptAsyncResult* result = static_cast<TinySocket::AcceptAsyncResult*>(context->Result.Ptr());
+							result->AcceptSocket = s;
+							result->AcceptSocket->m_connect = errorCode == 0;
+							context->Complete(errorCode, context->Result);
 						}
 					}
 				}
@@ -84,7 +87,9 @@ namespace TinyUI
 					TinySocket* s = reinterpret_cast<TinySocket*>(context->Reserve);
 					if (s != NULL && !context->Complete.IsNull())
 					{
-						context->Complete(errorCode, dwNumberOfBytesTransferred, &context->Address, context->AsyncState);
+						TinySocket::StreamAsyncResult* result = static_cast<TinySocket::StreamAsyncResult*>(context->Result.Ptr());
+						result->BytesTransferred = dwNumberOfBytesTransferred;
+						context->Complete(errorCode, context->Result);
 					}
 				}
 				break;
@@ -93,7 +98,9 @@ namespace TinyUI
 					TinySocket* s = reinterpret_cast<TinySocket*>(context->Reserve);
 					if (s != NULL && !context->Complete.IsNull())
 					{
-						context->Complete(errorCode, dwNumberOfBytesTransferred, &context->Address, context->AsyncState);
+						TinySocket::DatagramAsyncResult* result = static_cast<TinySocket::DatagramAsyncResult*>(context->Result.Ptr());
+						result->BytesTransferred = dwNumberOfBytesTransferred;
+						context->Complete(errorCode, context->Result);
 					}
 				}
 				break;
@@ -102,7 +109,9 @@ namespace TinyUI
 					TinySocket* s = reinterpret_cast<TinySocket*>(context->Reserve);
 					if (s != NULL && !context->Complete.IsNull())
 					{
-						context->Complete(errorCode, dwNumberOfBytesTransferred, &context->Address, context->AsyncState);
+						TinySocket::StreamAsyncResult* result = static_cast<TinySocket::StreamAsyncResult*>(context->Result.Ptr());
+						result->BytesTransferred = dwNumberOfBytesTransferred;
+						context->Complete(errorCode, context->Result);
 					}
 				}
 				break;
@@ -111,7 +120,9 @@ namespace TinyUI
 					TinySocket* s = reinterpret_cast<TinySocket*>(context->Reserve);
 					if (s != NULL && !context->Complete.IsNull())
 					{
-						context->Complete(errorCode, dwNumberOfBytesTransferred, &context->Address, context->AsyncState);
+						TinySocket::DatagramAsyncResult* result = static_cast<TinySocket::DatagramAsyncResult*>(context->Result.Ptr());
+						result->BytesTransferred = dwNumberOfBytesTransferred;
+						context->Complete(errorCode, context->Result);
 					}
 				}
 				break;
@@ -134,7 +145,7 @@ namespace TinyUI
 						s->m_connect = TRUE;
 						if (!context->Complete.IsNull())
 						{
-							context->Complete(errorCode, dwNumberOfBytesTransferred, &context->Address, context->AsyncState);
+							context->Complete(errorCode, context->Result);
 						}
 					}
 				}
@@ -147,7 +158,7 @@ namespace TinyUI
 						s->m_connect = FALSE;
 						if (!context->Complete.IsNull())
 						{
-							context->Complete(errorCode, dwNumberOfBytesTransferred, &context->Address, context->AsyncState);
+							context->Complete(errorCode, context->Result);
 						}
 					}
 				}

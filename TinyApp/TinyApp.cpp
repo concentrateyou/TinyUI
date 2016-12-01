@@ -62,19 +62,32 @@ BOOL LoadSeDebugPrivilege()
 //	socket->BeginReceive(buffer, 10, 0, cb, key);
 //}
 
-void OnReceiveFrom(DWORD errorCode, DWORD dwBytes, SOCKADDR_IN* address, LPVOID key)
-{
-	TinyUI::Network::TinySocket* socket = reinterpret_cast<TinyUI::Network::TinySocket*>(key);
-
-}
-
-void OnSendTo(DWORD errorCode, DWORD dwBytes, SOCKADDR_IN* address, LPVOID key)
-{
-	TinyUI::Network::TinySocket* socket = reinterpret_cast<TinyUI::Network::TinySocket*>(key);
-
-}
-
 CHAR buffer[1024];
+
+void OnReceive(DWORD errorCode, TinyUI::Network::AsyncResult* result)
+{
+	if (errorCode != 0)
+		return;
+	TinyUI::Network::TinySocket* client = reinterpret_cast<TinyUI::Network::TinySocket*>(result->AsyncState);
+	INT size = client->EndReceive(result);
+	string str;
+	str.resize(size + 1);
+	memcpy(&str[0], buffer, size);
+}
+
+void OnAccept(DWORD errorCode, TinyUI::Network::AsyncResult* result)
+{
+	if (errorCode != 0)
+		return;
+	TinyUI::Network::TinySocket* listen = reinterpret_cast<TinyUI::Network::TinySocket*>(result->AsyncState);
+	TinyUI::Network::TinySocket* client = listen->EndAccept(result);
+	TinyUI::Network::CompleteCallback cb = BindCallback(&OnReceive);
+	BOOL bRes = client->BeginReceive(buffer, 1024, 0, cb, client);
+	if (!bRes)
+	{
+		TRACE("BeginReceive-ERROR:%d\n",WSAGetLastError());
+	}
+}
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -99,13 +112,35 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyUI::Network::TinyIOServer ioserver(1);
 	ioserver.Run();
 
+	DWORD dwCode = 0;
 	//UDP
 	TinyUI::Network::TinySocket socket(&ioserver);
-	BOOL bRes = socket.Open(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	string str = "UDP client test";
-	memcpy(buffer, str.c_str(), str.length());
-	TinyUI::Network::CompleteCallback cb = BindCallback(&OnSendTo);
-	socket.BeginSendTo(buffer, str.length(), 0, TinyUI::Network::IPAddress("10.1.32.230"), 5500, cb, &socket);
+	BOOL bRes = socket.Open();
+	if (!bRes)
+	{
+		dwCode = WSAGetLastError();
+	}
+	bRes = socket.Bind(TinyUI::Network::IPAddress::IPv4Any(), 5500);
+	if (!bRes)
+	{
+		dwCode = WSAGetLastError();
+	}
+	bRes = socket.Listen();
+	if (!bRes)
+	{
+		dwCode = WSAGetLastError();
+	}
+	TinyUI::Network::CompleteCallback cb = BindCallback(&OnAccept);
+	bRes = socket.BeginAccept(cb, &socket);
+	if (!bRes)
+	{
+		dwCode = WSAGetLastError();
+	}
+	//BOOL bRes = socket.Open(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	//string str = "UDP client test";
+	//memcpy(buffer, str.c_str(), str.length());
+	//TinyUI::Network::CompleteCallback cb = BindCallback(&OnSendTo);
+	//socket.BeginSendTo(buffer, str.length(), 0, TinyUI::Network::IPAddress("10.1.32.230"), 5500, cb, &socket);
 	/*bRes = socket.Bind(TinyUI::Network::IPAddress::IPv4Any(), 8848);
 	TinyUI::Network::CompleteCallback cb = BindCallback(&OnReceiveFrom);
 	socket.BeginReceiveFrom(buffer, 1024, 0, cb, &socket);*/

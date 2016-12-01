@@ -5,82 +5,7 @@ namespace TinyUI
 {
 	namespace Network
 	{
-		class IPAddress
-		{
-		public:
-			enum : size_t { IPv4AddressSize = 4, IPv6AddressSize = 16 };
-		public:
-			IPAddress();
-			explicit IPAddress(const vector<BYTE>& address);
-			explicit IPAddress(const string& ip);
-			IPAddress(IPAddress&& other);
-			IPAddress(const IPAddress& other);
-			template <INT N>
-			IPAddress(const BYTE(&address)[N])
-				: IPAddress(address, N)
-			{}
-			IPAddress(const BYTE* address, DWORD size);
-			IPAddress(BYTE b0, BYTE b1, BYTE b2, BYTE b3);
-			IPAddress(BYTE b0,
-				BYTE b1,
-				BYTE b2,
-				BYTE b3,
-				BYTE b4,
-				BYTE b5,
-				BYTE b6,
-				BYTE b7,
-				BYTE b8,
-				BYTE b9,
-				BYTE b10,
-				BYTE b11,
-				BYTE b12,
-				BYTE b13,
-				BYTE b14,
-				BYTE b15);
-			~IPAddress();
-			BOOL operator==(const IPAddress& other) const;
-			BOOL operator!=(const IPAddress& other) const;
-			BOOL operator<(const IPAddress& other) const;
-			BOOL IsIPv4() const;
-			BOOL IsIPv6() const;
-			BOOL IsValid() const;
-			BOOL IsZero() const;
-			BOOL IsEmpty() const;
-			std::string ToString() const;
-			DWORD Size() const;
-			const std::vector<BYTE>& Address() const;
-			static IPAddress IPv4Any();
-			static IPAddress IPv6Any();
-		private:
-			std::vector<BYTE> m_address;
-		};
-		using IPAddressList = std::vector<IPAddress>;
-		enum AddressFamily
-		{
-			ADDRESS_FAMILY_UNSPECIFIED,
-			ADDRESS_FAMILY_IPV4,
-			ADDRESS_FAMILY_IPV6,
-			ADDRESS_FAMILY_LAST = ADDRESS_FAMILY_IPV6
-		};
 		class TinySocket;
-		using CompleteCallback = Callback<void(DWORD, DWORD, SOCKADDR_IN*, LPVOID)>;
-		/// <summary>
-		/// OVERLAPPED拓展结构
-		/// </summary>
-		class NO_VTABLE PER_IO_CONTEXT : public OVERLAPPED
-		{
-		public:
-			PER_IO_CONTEXT();
-			void Reset();
-		public:
-			DWORD				OP;
-			DWORD				Bytes;
-			LPVOID				AsyncState;
-			LONG_PTR			Reserve;//保留的
-			WSABUF				Element;
-			SOCKADDR_IN			Address;
-			CompleteCallback	Complete;
-		};
 		/// <summary>
 		/// 套接字句柄
 		/// </summary>
@@ -118,6 +43,23 @@ namespace TinyUI
 			friend class TinyIOServer;
 			friend class TinyIOTask;
 			DISALLOW_COPY_AND_ASSIGN(TinySocket)
+		private:
+			class AcceptAsyncResult : public AsyncResult
+			{
+			public:
+				TinySocket*	AcceptSocket;
+			};
+			class StreamAsyncResult : public AsyncResult
+			{
+			public:
+				WSABUF	Array;
+				DWORD	BytesTransferred;
+			};
+			class DatagramAsyncResult : public StreamAsyncResult
+			{
+			public:
+				SOCKADDR_IN	Address;
+			};
 		public:
 			explicit TinySocket(TinyIOServer* ioserver);
 			virtual ~TinySocket();
@@ -128,15 +70,29 @@ namespace TinyUI
 			INT		Available();
 			BOOL	Blocking(BOOL bAllow);
 		public:
-			BOOL Bind(const IPAddress& address, DWORD dwPORT);
+			BOOL Bind(const IPAddress& address, USHORT sPORT);
 			BOOL Listen(DWORD backlog = SOMAXCONN);
+
 			BOOL BeginAccept(CompleteCallback& callback, LPVOID arg);
-			BOOL BeginConnect(IPAddress& address, DWORD dwPORT, CompleteCallback& callback, LPVOID arg);
+			TinySocket* EndAccept(AsyncResult* result);
+
+			BOOL BeginConnect(IPAddress& address, USHORT sPORT, CompleteCallback& callback, LPVOID arg);
+			void EndConnect(AsyncResult* result);
+
 			BOOL BeginSend(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg);
+			INT  EndSend(AsyncResult* result);
+
 			BOOL BeginReceive(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg);
+			INT  EndReceive(AsyncResult* result);
+
 			BOOL BeginSendTo(CHAR* data, DWORD dwSize, DWORD dwFlags, const IPAddress& address, DWORD dwPORT, CompleteCallback& callback, LPVOID arg);
+			INT  EndSendTo(AsyncResult* result);
+
 			BOOL BeginReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg);
+			INT  EndReceiveFrom(AsyncResult* result, SOCKADDR_IN& si);
+
 			BOOL BeginDisconnect(CompleteCallback& callback, LPVOID arg);
+			void EndDisconnect(AsyncResult* result);
 		public:
 			virtual void Close();
 			virtual BOOL Shutdown(INT how);
@@ -150,6 +106,7 @@ namespace TinyUI
 			LPFN_DISCONNECTEX	m_disconnectex;
 			LPFN_CONNECTEX		m_connectex;
 			LPFN_ACCEPTEX		m_acceptex;
+			TinyLock			m_lock;
 		};
 	}
 }
