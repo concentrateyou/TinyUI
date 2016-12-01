@@ -473,7 +473,13 @@ namespace TinyUI
 		{
 			if (m_socket != INVALID_SOCKET)
 			{
-				return shutdown(m_socket, how) != SOCKET_ERROR;
+				if (shutdown(m_socket, how) != SOCKET_ERROR)
+				{
+					m_disconnectex = NULL;
+					m_acceptex = NULL;
+					m_connectex = NULL;
+					return TRUE;
+				}
 			}
 			return FALSE;
 		}
