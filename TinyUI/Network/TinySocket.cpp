@@ -64,12 +64,12 @@ namespace TinyUI
 		BOOL TinyHandleSOCKET::SetOption(INT level, INT opt, const CHAR* optval, INT size)
 		{
 			ASSERT(m_socket);
-			return setsockopt(m_socket, level, opt, optval, size) != SOCKET_ERROR;
+			return setsockopt(m_socket, level, opt, optval, size) == S_OK;
 		}
 		BOOL TinyHandleSOCKET::GetOption(INT level, INT opt, CHAR* optval, INT& size)
 		{
 			ASSERT(m_socket);
-			return getsockopt(m_socket, level, opt, optval, &size) != SOCKET_ERROR;
+			return getsockopt(m_socket, level, opt, optval, &size) == S_OK;
 		}
 		BOOL TinyHandleSOCKET::GetAcceptEx(SOCKET socket, LPFN_ACCEPTEX* target)
 		{
@@ -134,14 +134,19 @@ namespace TinyUI
 		{
 			ASSERT(m_socket);
 			INT argp = 0;
-			if (ioctlsocket(m_socket, FIONREAD, (ULONG*)&argp) == SOCKET_ERROR)
+			if (ioctlsocket(m_socket, FIONREAD, (ULONG*)&argp) != S_OK)
 				throw error_code(WSAGetLastError(), system_category());
 			return argp;
 		}
 		BOOL TinySocket::Blocking(BOOL bAllow)
 		{
 			ASSERT(m_socket);
-			return ioctlsocket(m_socket, FIONBIO, (ULONG*)&bAllow) != SOCKET_ERROR;
+			return ioctlsocket(m_socket, FIONBIO, (ULONG*)&bAllow) != 0;
+		}
+		BOOL TinySocket::Duplicate(DWORD processID, WSAPROTOCOL_INFO& s)
+		{
+			ASSERT(m_socket);
+			return WSADuplicateSocket(m_socket, processID, &s) != S_OK;
 		}
 		TinySocket::~TinySocket()
 		{
@@ -155,12 +160,12 @@ namespace TinyUI
 			si.sin_family = m_addressFamily;
 			si.sin_port = htons(sPORT);
 			memcpy(&si.sin_addr, address.Address().data(), m_addressFamily == AF_INET ? IPAddress::IPv4AddressSize : IPAddress::IPv6AddressSize);
-			return bind(m_socket, (SOCKADDR*)&si, sizeof(si)) != SOCKET_ERROR;
+			return bind(m_socket, (SOCKADDR*)&si, sizeof(si)) == S_OK;
 		}
 		BOOL TinySocket::Listen(DWORD backlog)
 		{
 			ASSERT(m_socket);
-			return listen(m_socket, SOMAXCONN) != SOCKET_ERROR;
+			return listen(m_socket, SOMAXCONN) == S_OK;
 		}
 		BOOL TinySocket::BeginAccept(CompleteCallback& callback, LPVOID arg)
 		{
@@ -221,7 +226,7 @@ namespace TinyUI
 			si.sin_family = m_addressFamily;
 			si.sin_port = 0;
 			si.sin_addr.s_addr = htonl(INADDR_ANY);
-			if (bind(m_socket, (SOCKADDR*)&si, sizeof(si)) == SOCKET_ERROR)
+			if (bind(m_socket, (SOCKADDR*)&si, sizeof(si)) != S_OK)
 				goto _ERROR;
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
@@ -279,7 +284,7 @@ namespace TinyUI
 			result->Array.len = dwSize;
 			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
 			DWORD numberOfBytesRecvd = 0;
-			if (WSARecv(m_socket, &result->Array, 1, &numberOfBytesRecvd, &dwFlags, ps, NULL) == SOCKET_ERROR &&
+			if (WSARecv(m_socket, &result->Array, 1, &numberOfBytesRecvd, &dwFlags, ps, NULL) != S_OK &&
 				ERROR_IO_PENDING != WSAGetLastError())
 				goto _ERROR;
 			return TRUE;
@@ -317,8 +322,11 @@ namespace TinyUI
 			result->Array.len = dwSize;
 			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
 			DWORD numberOfBytesRecvd = 0;
-			if (WSASend(m_socket, &result->Array, 1, &numberOfBytesRecvd, dwFlag, ps, NULL) == SOCKET_ERROR && ERROR_IO_PENDING != WSAGetLastError())
+			if (WSASend(m_socket, &result->Array, 1, &numberOfBytesRecvd, dwFlag, ps, NULL) != S_OK &&
+				ERROR_IO_PENDING != WSAGetLastError())
+			{
 				goto _ERROR;
+			}
 			return TRUE;
 		_ERROR:
 			errorCode = WSAGetLastError();
@@ -356,9 +364,11 @@ namespace TinyUI
 			memcpy(&result->Address.sin_addr, address.Address().data(), m_addressFamily == AF_INET ? IPAddress::IPv4AddressSize : IPAddress::IPv6AddressSize);
 			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
 			DWORD dwBytes = 0;
-			if (WSASendTo(m_socket, &result->Array, 1, &dwBytes, dwFlags, (SOCKADDR*)&result->Address, sizeof(result->Address), ps, NULL) == SOCKET_ERROR &&
+			if (WSASendTo(m_socket, &result->Array, 1, &dwBytes, dwFlags, (SOCKADDR*)&result->Address, sizeof(result->Address), ps, NULL) != S_OK &&
 				ERROR_IO_PENDING != WSAGetLastError())
+			{
 				goto _ERROR;
+			}
 			return TRUE;
 		_ERROR:
 			errorCode = WSAGetLastError();
@@ -396,9 +406,11 @@ namespace TinyUI
 			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
 			DWORD dwBytes = 0;
 			INT size = sizeof(SOCKADDR_IN);
-			if (WSARecvFrom(m_socket, &result->Array, 1, &dwBytes, &dwFlags, (SOCKADDR*)&result->Address, &size, ps, NULL) == SOCKET_ERROR &&
+			if (WSARecvFrom(m_socket, &result->Array, 1, &dwBytes, &dwFlags, (SOCKADDR*)&result->Address, &size, ps, NULL) != S_OK &&
 				ERROR_IO_PENDING != WSAGetLastError())
+			{
 				goto _ERROR;
+			}
 			return TRUE;
 		_ERROR:
 			errorCode = WSAGetLastError();
@@ -473,7 +485,7 @@ namespace TinyUI
 		{
 			if (m_socket != INVALID_SOCKET)
 			{
-				if (shutdown(m_socket, how) != SOCKET_ERROR)
+				if (shutdown(m_socket, how) == S_OK)
 				{
 					m_disconnectex = NULL;
 					m_acceptex = NULL;

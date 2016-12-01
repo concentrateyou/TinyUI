@@ -17,7 +17,7 @@ namespace TinyUI
 				sizeof(*target),
 				&dwBytes,
 				NULL,
-				NULL) == SOCKET_ERROR)
+				NULL) != S_OK)
 			{
 				*target = NULL;
 				return FALSE;

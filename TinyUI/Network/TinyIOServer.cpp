@@ -77,7 +77,7 @@ namespace TinyUI
 					TinySocket* s = reinterpret_cast<TinySocket*>(context->Reserve);
 					if (s != NULL)
 					{
-						if (setsockopt(s->Handle(), SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, (CHAR*)&listen, sizeof(listen)) == SOCKET_ERROR)
+						if (setsockopt(s->Handle(), SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, (CHAR*)&listen, sizeof(listen)) != ERROR_SUCCESS)
 						{
 							errorCode = WSAGetLastError();
 						}
@@ -147,7 +147,7 @@ namespace TinyUI
 					TinySocket* s = reinterpret_cast<TinySocket*>(context->Reserve);
 					if (s != NULL)
 					{
-						if (setsockopt(s->Handle(), SOL_SOCKET, SO_UPDATE_CONNECT_CONTEXT, NULL, 0) == SOCKET_ERROR)
+						if (setsockopt(s->Handle(), SOL_SOCKET, SO_UPDATE_CONNECT_CONTEXT, NULL, 0) != ERROR_SUCCESS)
 						{
 							errorCode = WSAGetLastError();
 						}

@@ -69,6 +69,7 @@ namespace TinyUI
 			BOOL	IsKeepAlive();
 			INT		Available();
 			BOOL	Blocking(BOOL bAllow);
+			BOOL	Duplicate(DWORD processID, WSAPROTOCOL_INFO& s);
 		public:
 			BOOL Bind(const IPAddress& address, USHORT sPORT);
 			BOOL Listen(DWORD backlog = SOMAXCONN);
