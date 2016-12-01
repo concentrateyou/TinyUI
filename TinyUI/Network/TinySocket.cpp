@@ -136,14 +136,7 @@ namespace TinyUI
 		//////////////////////////////////////////////////////////////////////////
 		PER_IO_CONTEXT::PER_IO_CONTEXT()
 		{
-			this->Internal = 0;
-			this->InternalHigh = 0;
-			this->Offset = 0;
-			this->OffsetHigh = 0;
-			this->Pointer = NULL;
-			this->hEvent = NULL;
-			this->Element.buf = NULL;
-			this->Element.len = 0;
+			Reset();
 		}
 		void PER_IO_CONTEXT::Reset()
 		{
@@ -153,6 +146,9 @@ namespace TinyUI
 			this->OffsetHigh = 0;
 			this->Pointer = NULL;
 			this->hEvent = NULL;
+			this->Element.buf = NULL;
+			this->Element.len = 0;
+			ZeroMemory(&this->Address, sizeof(SOCKADDR_IN));
 		}
 		//////////////////////////////////////////////////////////////////////////
 		TinyPtrMap TinyHandleSOCKET::m_socketMap;
@@ -242,6 +238,7 @@ namespace TinyUI
 			m_addressFamily(AF_INET),
 			m_socketType(SOCK_STREAM),
 			m_protocolType(IPPROTO_TCP),
+			m_connect(FALSE),
 			m_disconnectex(NULL),
 			m_acceptex(NULL),
 			m_connectex(NULL)
@@ -442,8 +439,6 @@ namespace TinyUI
 		{
 			ASSERT(m_socket);
 			DWORD errorCode = 0;
-			if (!m_connect)
-				goto _ERROR;
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
 			context->OP = OP_SENDTO;
@@ -474,8 +469,6 @@ namespace TinyUI
 		{
 			ASSERT(m_socket);
 			DWORD errorCode = 0;
-			if (!m_connect)
-				goto _ERROR;
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
 			context->OP = OP_RECVFROM;
@@ -484,13 +477,13 @@ namespace TinyUI
 			context->Complete = callback;
 			context->Element.buf = data;
 			context->Element.len = dwSize;
-			ZeroMemory(&context->Address, sizeof(context->Address));
+			ZeroMemory(&context->Address, sizeof(SOCKADDR_IN));
 			context->Address.sin_family = m_addressFamily;
 			context->Address.sin_port = 0;
 			context->Address.sin_addr.s_addr = htonl(INADDR_ANY);
 			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
 			DWORD dwBytes = 0;
-			INT size = 0;
+			INT size = sizeof(SOCKADDR_IN);
 			if (WSARecvFrom(m_socket, &context->Element, 1, &dwBytes, &dwFlags, (SOCKADDR*)&context->Address, &size, ps, NULL) == SOCKET_ERROR &&
 				ERROR_IO_PENDING != WSAGetLastError())
 				goto _ERROR;
