@@ -74,6 +74,8 @@ namespace TinyUI
 		public:
 			BOOL Bind(const IPAddress& address, USHORT sPORT);
 			BOOL Listen(DWORD backlog = SOMAXCONN);
+			TinySocket* Accept();
+			//////////////////////////////////////////////////////////////////////////
 			BOOL BeginAccept(CompleteCallback& callback, LPVOID arg);
 			TinySocket* EndAccept(AsyncResult* result);
 			BOOL BeginConnect(IPAddress& address, USHORT sPORT, CompleteCallback& callback, LPVOID arg);

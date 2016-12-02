@@ -103,11 +103,11 @@ namespace TinyUI
 
 		BOOL TinySocket::Open(INT addressFamily, INT socketType, INT protocolType)
 		{
+			m_addressFamily = addressFamily;
+			m_socketType = socketType;
+			m_protocolType = protocolType;
 			if (m_ioserver != NULL)
 			{
-				m_addressFamily = addressFamily;
-				m_socketType = socketType;
-				m_protocolType = protocolType;
 				m_socket = WSASocket(addressFamily, socketType, protocolType, NULL, 0, WSA_FLAG_OVERLAPPED);
 				BOOL allow = TRUE;
 				if (!SetOption(SOL_SOCKET, SO_REUSEADDR, (const CHAR*)&allow, sizeof(allow)))
@@ -118,7 +118,12 @@ namespace TinyUI
 			}
 			else
 			{
-
+				m_socket = WSASocket(addressFamily, socketType, protocolType, NULL, 0, 0);
+				BOOL allow = TRUE;
+				if (!SetOption(SOL_SOCKET, SO_REUSEADDR, (const CHAR*)&allow, sizeof(allow)))
+					return FALSE;
+				if (!Attach(m_socket))
+					return FALSE;
 			}
 			return TRUE;
 		}
@@ -175,6 +180,12 @@ namespace TinyUI
 			ASSERT(m_socket);
 			return listen(m_socket, SOMAXCONN) == S_OK;
 		}
+		TinySocket* TinySocket::Accept()
+		{
+			ASSERT(m_socket);
+			return NULL;
+		}
+		//////////////////////////////////////////////////////////////////////////
 		BOOL TinySocket::BeginAccept(CompleteCallback& callback, LPVOID arg)
 		{
 			ASSERT(m_ioserver);
