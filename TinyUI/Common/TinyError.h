@@ -1,5 +1,5 @@
 #pragma once
-#include "../Common//TinyCollection.h"
+#include "../Common/TinyCollection.h"
 
 namespace TinyUI
 {

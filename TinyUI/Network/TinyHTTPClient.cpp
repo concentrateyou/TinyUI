@@ -5,7 +5,9 @@ namespace TinyUI
 {
 	namespace Network
 	{
-		TinyHTTPClient::TinyHTTPClient()
+		TinyHTTPClient::TinyHTTPClient(const string& strURL, USHORT sPORT)
+			:m_strURL(std::move(strURL)),
+			m_sPORT(sPORT)
 		{
 
 		}

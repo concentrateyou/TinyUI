@@ -16,6 +16,8 @@ namespace TinyUI
 		public:
 			operator SOCKET() const;
 			SOCKET Handle() const;
+			TinyHandleSOCKET(TinyHandleSOCKET& socket);
+			TinyHandleSOCKET(TinyHandleSOCKET&& socket);
 			BOOL operator == (const TinyHandleSOCKET& obj) const;
 			BOOL operator != (const TinyHandleSOCKET& obj) const;
 			BOOL Attach(SOCKET socket);
@@ -42,7 +44,7 @@ namespace TinyUI
 			friend class TinyIOServer;
 			friend class TinyIOTask;
 			DISALLOW_COPY_AND_ASSIGN(TinySocket)
-		private:
+		protected:
 			class AcceptAsyncResult : public AsyncResult
 			{
 			public:
@@ -60,15 +62,15 @@ namespace TinyUI
 				SOCKADDR_IN	Address;
 			};
 		public:
-			explicit TinySocket(TinyIOServer* ioserver);
+			TinySocket(TinyIOServer* ioserver = NULL);
 			virtual ~TinySocket();
-			BOOL	IsConnect() const;
-			BOOL	Open(INT addressFamily = AF_INET, INT socketType = SOCK_STREAM, INT protocolType = IPPROTO_TCP);
-			BOOL	KeepAlive(BOOL bAllow, INT ms);
-			BOOL	IsKeepAlive();
-			INT		Available();
-			BOOL	Blocking(BOOL bAllow);
-			BOOL	Duplicate(DWORD processID, WSAPROTOCOL_INFO& s);
+			BOOL IsConnect() const;
+			BOOL Open(INT addressFamily = AF_INET, INT socketType = SOCK_STREAM, INT protocolType = IPPROTO_TCP);
+			BOOL KeepAlive(BOOL bAllow, INT ms);
+			BOOL IsKeepAlive();
+			BOOL Blocking(BOOL bAllow);
+			BOOL Duplicate(DWORD processID, WSAPROTOCOL_INFO& s);
+			INT	 Available();
 		public:
 			BOOL Bind(const IPAddress& address, USHORT sPORT);
 			BOOL Listen(DWORD backlog = SOMAXCONN);
@@ -90,14 +92,14 @@ namespace TinyUI
 			virtual void Close();
 			virtual BOOL Shutdown(INT how = SD_BOTH);
 		protected:
-			TinyIOServer*		m_server;
+			TinyIOServer*		m_ioserver;
+			LPFN_DISCONNECTEX	m_disconnectex;
+			LPFN_CONNECTEX		m_connectex;
+			LPFN_ACCEPTEX		m_acceptex;
 			INT					m_addressFamily;
 			INT					m_socketType;
 			INT					m_protocolType;
 			BOOL				m_connect;
-			LPFN_DISCONNECTEX	m_disconnectex;
-			LPFN_CONNECTEX		m_connectex;
-			LPFN_ACCEPTEX		m_acceptex;
 			TinyLock			m_lock;
 		};
 	}

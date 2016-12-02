@@ -89,7 +89,7 @@ namespace TinyUI
 		}
 		//////////////////////////////////////////////////////////////////////////
 		TinySocket::TinySocket(TinyIOServer* ioserver)
-			:m_server(ioserver),
+			: m_ioserver(ioserver),
 			m_addressFamily(AF_INET),
 			m_socketType(SOCK_STREAM),
 			m_protocolType(IPPROTO_TCP),
@@ -100,19 +100,27 @@ namespace TinyUI
 		{
 
 		}
-		BOOL TinySocket::Open(INT addressFamily /* = AF_INET */, INT socketType /* = SOCK_STREAM */, INT protocolType /* = IPPROTO_TCP */)
+
+		BOOL TinySocket::Open(INT addressFamily, INT socketType, INT protocolType)
 		{
-			ASSERT(m_server);
-			m_addressFamily = addressFamily;
-			m_socketType = socketType;
-			m_protocolType = protocolType;
-			m_socket = WSASocket(addressFamily, socketType, protocolType, NULL, 0, WSA_FLAG_OVERLAPPED);
-			BOOL allow = TRUE;
-			if (!SetOption(SOL_SOCKET, SO_REUSEADDR, (const CHAR*)&allow, sizeof(allow)))
-				return FALSE;
-			if (!Attach(m_socket))
-				return FALSE;
-			return m_server->GetIOCP()->Register(reinterpret_cast<HANDLE>(m_socket), m_socket);
+			if (m_ioserver != NULL)
+			{
+				m_addressFamily = addressFamily;
+				m_socketType = socketType;
+				m_protocolType = protocolType;
+				m_socket = WSASocket(addressFamily, socketType, protocolType, NULL, 0, WSA_FLAG_OVERLAPPED);
+				BOOL allow = TRUE;
+				if (!SetOption(SOL_SOCKET, SO_REUSEADDR, (const CHAR*)&allow, sizeof(allow)))
+					return FALSE;
+				if (!Attach(m_socket))
+					return FALSE;
+				return m_ioserver->GetIOCP()->Register(reinterpret_cast<HANDLE>(m_socket), m_socket);
+			}
+			else
+			{
+
+			}
+			return TRUE;
 		}
 		BOOL TinySocket::KeepAlive(BOOL bAllow, INT ms)
 		{
@@ -169,10 +177,10 @@ namespace TinyUI
 		}
 		BOOL TinySocket::BeginAccept(CompleteCallback& callback, LPVOID arg)
 		{
-			ASSERT(m_server);
+			ASSERT(m_ioserver);
 			DWORD errorCode = ERROR_SUCCESS;
 			TinyAutoLock lock(m_lock);
-			TinySocket* socket = new TinySocket(m_server);
+			TinySocket* socket = new TinySocket(m_ioserver);
 			if (!socket || !socket->Open(m_addressFamily, m_socketType, m_protocolType))
 				goto _ERROR;
 			if (!m_acceptex)
@@ -495,5 +503,5 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-}
+	}
 }

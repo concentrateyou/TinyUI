@@ -92,6 +92,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ChatFrame.h" />
     <ClInclude Include="RenderTask.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -100,6 +101,7 @@
     <ClInclude Include="MainFrame.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ChatFrame.cpp" />
     <ClCompile Include="RenderTask.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

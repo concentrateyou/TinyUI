@@ -1,5 +1,5 @@
 #pragma once
-#include "../Common//TinyCollection.h"
+#include "../Common/TinyCollection.h"
 #include <algorithm>
 #include <typeinfo>
 using namespace std;

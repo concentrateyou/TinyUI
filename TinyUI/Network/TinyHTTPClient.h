@@ -1,7 +1,5 @@
 #pragma once
-#include "TinyNetwork.h"
-#include <winhttp.h>
-#pragma comment(lib,"Winhttp.lib")
+#include "TinySocket.h"
 
 namespace TinyUI
 {
@@ -11,8 +9,12 @@ namespace TinyUI
 		{
 			DISALLOW_COPY_AND_ASSIGN(TinyHTTPClient)
 		public:
-			TinyHTTPClient();
+			TinyHTTPClient(const string& strURL, USHORT sPORT);
 			virtual ~TinyHTTPClient();
+		protected:
+			
+			string		m_strURL;
+			USHORT		m_sPORT;
 		};
 	}
 }
