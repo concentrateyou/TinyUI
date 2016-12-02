@@ -6,7 +6,7 @@ namespace TinyUI
 {
 	namespace Network
 	{
-		
+		TinyPointerMap TinyHandleSOCKET::m_socketMap;
 
 		TinyHandleSOCKET::TinyHandleSOCKET()
 			:m_socket(INVALID_SOCKET)
@@ -495,5 +495,5 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-	}
+}
 }

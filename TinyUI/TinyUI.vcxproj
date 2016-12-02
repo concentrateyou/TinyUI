@@ -159,7 +159,6 @@
     <ClInclude Include="Media\TinyMFResampler.h" />
     <ClInclude Include="Media\TinyWASAPIAudioCapture.h" />
     <ClInclude Include="Media\TinyWave.h" />
-    <ClInclude Include="Network\TinyHandleSOCKET.h" />
     <ClInclude Include="Network\TinyHTTPClient.h" />
     <ClInclude Include="Network\TinyHTTPRequest.h" />
     <ClInclude Include="Network\TinyHTTPResponse.h" />
@@ -267,7 +266,6 @@
     <ClCompile Include="Media\TinyMFResampler.cpp" />
     <ClCompile Include="Media\TinyWASAPIAudioCapture.cpp" />
     <ClCompile Include="Media\TinyWave.cpp" />
-    <ClCompile Include="Network\TinyHandleSOCKET.cpp" />
     <ClCompile Include="Network\TinyHTTPClient.cpp" />
     <ClCompile Include="Network\TinyHTTPRequest.cpp" />
     <ClCompile Include="Network\TinyHTTPResponse.cpp" />

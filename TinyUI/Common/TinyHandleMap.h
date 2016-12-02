@@ -75,7 +75,6 @@ namespace TinyUI
 	{
 		return m_handleMap.GetSize();
 	}
-
 	/// <summary>
 	/// 窗口句柄类
 	/// </summary>
@@ -94,75 +93,6 @@ namespace TinyUI
 	public:
 		HWND m_hWND;
 	};
-
-	template<typename T, typename Traits>
-	class TinyGenericHandle
-	{
-	public:
-		TinyGenericHandle();
-		~TinyGenericHandle();
-		operator T() const;
-		T Handle() const;
-		BOOL operator==(const TinyGenericHandle& obj) const;
-		BOOL operator!=(const TinyGenericHandle& obj) const;
-		BOOL Attach(T myT);
-		T Detach();
-		static TinyGenericHandle* Lookup(T myT);
-	public:
-		T m_myT;
-	};
-	template<typename T, typename Traits>
-	TinyGenericHandle<T, Traits>::TinyGenericHandle()
-		:m_myT(NULL)
-	{
-
-	}
-	template<typename T, typename Traits>
-	TinyGenericHandle<T, Traits>::operator T() const
-	{
-		return m_myT == NULL ? NULL : m_myT;
-	}
-	template<typename T, typename Traits>
-	T TinyGenericHandle<T, Traits>::Handle() const
-	{
-		return m_myT == NULL ? NULL : m_myT;
-	}
-	template<typename T, typename Traits>
-	BOOL TinyGenericHandle<T, Traits>::operator == (const TinyGenericHandle<T, Traits>& obj) const
-	{
-		return obj.m_myT == m_myT;
-	}
-	template<typename T, typename Traits>
-	BOOL TinyGenericHandle<T, Traits>::operator != (const TinyGenericHandle<T, Traits>& obj) const
-	{
-		return obj.m_myT != m_myT;
-	}
-	template<typename T, typename Traits>
-	BOOL TinyGenericHandle<T, Traits>::Attach(T myT)
-	{
-		if (myT == NULL)
-		{
-			return FALSE;
-		}
-		m_myT = myT;
-		return Traits::Attach(this);
-	}
-	template<typename T, typename Traits>
-	T TinyGenericHandle<T, Traits>::Detach()
-	{
-		T myT = m_myT;
-		if (myT != NULL)
-		{
-			Traits::Detach(myT);
-		}
-		m_myT = NULL;
-		return myT;
-	}
-	template<typename T, typename Traits>
-	typename TinyGenericHandle<T, Traits>* TinyGenericHandle<T, Traits>::Lookup(T myT)
-	{
-		return Traits::Lookup(myT);
-	}
 	/// <summary>
 	/// 菜单句柄类
 	/// </summary>

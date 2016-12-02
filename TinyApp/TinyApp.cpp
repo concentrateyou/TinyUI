@@ -9,6 +9,7 @@
 #include "Render/TinyDDraw.h"
 #include "Network/TinyIOServer.h"
 #include "Network/TinySocket.h"
+#include "Network/TinyHTTPClient.h"
 
 BOOL LoadSeDebugPrivilege()
 {
@@ -109,13 +110,14 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadSeDebugPrivilege();
 
 
-	SYSTEM_INFO si;
+
+	/*SYSTEM_INFO si;
 	GetSystemInfo(&si);
 	TinyUI::Network::TinyIOServer ioserver(3);
 	ioserver.Run();
 
 	DWORD dwCode = 0;
-	//UDP
+	UDP
 	TinyUI::Network::TinySocket socket(&ioserver);
 	BOOL bRes = socket.Open();
 	if (!bRes)
@@ -137,7 +139,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	if (!bRes)
 	{
 		dwCode = WSAGetLastError();
-	}
+	}*/
 	//BOOL bRes = socket.Open(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	//string str = "UDP client test";
 	//memcpy(buffer, str.c_str(), str.length());
@@ -166,7 +168,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->RemoveMessageLoop();
 	TinyApplication::GetInstance()->Uninitialize();
 
-	ioserver.Close();
+	//ioserver.Close();
 
 	OleUninitialize();
 	MFShutdown();
