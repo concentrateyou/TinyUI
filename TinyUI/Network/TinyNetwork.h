@@ -68,7 +68,6 @@ namespace TinyUI
 			std::vector<BYTE> m_address;
 		};
 		using IPAddressList = std::vector<IPAddress>;
-
 		/// <summary>
 		/// Òì²½Ä£ÐÍ
 		/// </summary>

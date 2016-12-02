@@ -33,7 +33,7 @@ namespace TinyUI
 			static BOOL ParseURL(LPCSTR lpszUrl, DWORD& dwServiceType, TinyString& strServer, TinyString& strObject, INTERNET_PORT& nPort, TinyString& strUsername, TinyString& strPassword);
 		protected:
 			HINTERNET			m_hNET;
-			static  TinyPtrMap	m_sessionMap;
+			static  TinyPointerMap	m_sessionMap;
 		};
 		//////////////////////////////////////////////////////////////////////////
 		class TinyInternetSession : public TinyInternet

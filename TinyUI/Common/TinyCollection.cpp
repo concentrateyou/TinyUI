@@ -25,7 +25,7 @@ namespace TinyUI
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	TinyPtrMap::TinyPtrMap()
+	TinyPointerMap::TinyPointerMap()
 		:m_dwBlockSize(10),
 		m_dwHashSize(17),
 		m_dwCount(0),
@@ -35,26 +35,26 @@ namespace TinyUI
 	{
 
 	}
-	TinyPtrMap::~TinyPtrMap()
+	TinyPointerMap::~TinyPointerMap()
 	{
 		RemoveAll();
 	}
-	DWORD TinyPtrMap::GetSize() const
+	DWORD TinyPointerMap::GetSize() const
 	{
 		return m_dwCount;
 	}
-	BOOL TinyPtrMap::IsEmpty() const
+	BOOL TinyPointerMap::IsEmpty() const
 	{
 		return m_dwCount == 0;
 	}
-	void TinyPtrMap::Initialize(DWORD dwHashSize)
+	void TinyPointerMap::Initialize(DWORD dwHashSize)
 	{
 		SAFE_DELETE_ARRAY(m_ppHashTable);
 		m_ppHashTable = new TinyNode*[dwHashSize];
 		memset(m_ppHashTable, 0, sizeof(TinyNode*) * dwHashSize);
 		m_dwHashSize = dwHashSize;
 	}
-	TinyPtrMap::TinyNode* TinyPtrMap::New(UINT_PTR key, UINT_PTR value)
+	TinyPointerMap::TinyNode* TinyPointerMap::New(UINT_PTR key, UINT_PTR value)
 	{
 		if (m_pFreeList == NULL)
 		{
@@ -77,13 +77,13 @@ namespace TinyUI
 		m_dwCount++;
 		return pNew;
 	}
-	void TinyPtrMap::Delete(TinyNode* ps)
+	void TinyPointerMap::Delete(TinyNode* ps)
 	{
 		ps->m_pNext = m_pFreeList;
 		m_pFreeList = ps;
 		m_dwCount--;
 	}
-	BOOL TinyPtrMap::Add(UINT_PTR key, UINT_PTR value)
+	BOOL TinyPointerMap::Add(UINT_PTR key, UINT_PTR value)
 	{
 		UINT index = 0;
 		UINT hash = 0;
@@ -103,7 +103,7 @@ namespace TinyUI
 		}
 		return FALSE;
 	}
-	BOOL TinyPtrMap::Remove(UINT_PTR key)
+	BOOL TinyPointerMap::Remove(UINT_PTR key)
 	{
 		if (!m_ppHashTable)
 			return FALSE;
@@ -123,7 +123,7 @@ namespace TinyUI
 		}
 		return FALSE;
 	}
-	void TinyPtrMap::RemoveAll()
+	void TinyPointerMap::RemoveAll()
 	{
 		SAFE_DELETE_ARRAY(m_ppHashTable);
 		m_dwCount = 0;
@@ -131,7 +131,7 @@ namespace TinyUI
 		m_pBlocks->Destory();
 		m_pBlocks = NULL;
 	}
-	BOOL TinyPtrMap::Lookup(UINT_PTR key, UINT_PTR& value) const
+	BOOL TinyPointerMap::Lookup(UINT_PTR key, UINT_PTR& value) const
 	{
 		UINT index = 0;
 		UINT hash = 0;
@@ -141,7 +141,7 @@ namespace TinyUI
 		value = ps->m_value;
 		return TRUE;
 	}
-	TinyPtrMap::TinyNode* TinyPtrMap::Lookup(UINT_PTR key, UINT& index, UINT_PTR& hash) const
+	TinyPointerMap::TinyNode* TinyPointerMap::Lookup(UINT_PTR key, UINT& index, UINT_PTR& hash) const
 	{
 		hash = TinyHashKey<UINT_PTR>(key);
 		index = hash % m_dwHashSize;
@@ -156,7 +156,7 @@ namespace TinyUI
 		}
 		return NULL;
 	}
-	UINT_PTR& TinyPtrMap::operator[](UINT_PTR key)
+	UINT_PTR& TinyPointerMap::operator[](UINT_PTR key)
 	{
 		UINT index = 0;
 		UINT hash = 0;
@@ -174,7 +174,7 @@ namespace TinyUI
 		}
 		return ps->m_value;
 	}
-	void TinyPtrMap::SetAt(UINT_PTR key, UINT_PTR value)
+	void TinyPointerMap::SetAt(UINT_PTR key, UINT_PTR value)
 	{
 		(*this)[key] = value;
 	}

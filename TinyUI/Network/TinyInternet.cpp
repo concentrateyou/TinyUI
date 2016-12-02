@@ -8,7 +8,7 @@ namespace TinyUI
 	{
 		extern SELECTANY const TCHAR URLhttp[] = _T("http://");
 
-		TinyPtrMap TinyInternet::m_sessionMap;
+		TinyPointerMap TinyInternet::m_sessionMap;
 
 		TinyInternet::TinyInternet()
 			:m_hNET(NULL)
@@ -40,7 +40,7 @@ namespace TinyUI
 			if (hNET == NULL)
 				return FALSE;
 			m_hNET = hNET;
-			TinyPtrMap& map = TinyInternet::m_sessionMap;
+			TinyPointerMap& map = TinyInternet::m_sessionMap;
 			map.Add((UINT_PTR)m_hNET, (UINT_PTR)this);
 			return TRUE;
 		}
@@ -49,7 +49,7 @@ namespace TinyUI
 			HINTERNET hNET = m_hNET;
 			if (hNET != NULL)
 			{
-				TinyPtrMap& map = TinyInternet::m_sessionMap;
+				TinyPointerMap& map = TinyInternet::m_sessionMap;
 				map.Remove((UINT_PTR)hNET);
 			}
 			m_hNET = NULL;
@@ -57,7 +57,7 @@ namespace TinyUI
 		}
 		TinyInternet* TinyInternet::Lookup(HINTERNET hNET)
 		{
-			TinyPtrMap& map = TinyInternet::m_sessionMap;
+			TinyPointerMap& map = TinyInternet::m_sessionMap;
 			UINT_PTR val = 0;
 			if (!map.Lookup((UINT_PTR)hNET, val))
 				return NULL;

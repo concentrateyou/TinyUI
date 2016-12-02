@@ -6,7 +6,7 @@ namespace TinyUI
 {
 	namespace Network
 	{
-		TinyPtrMap TinyHandleSOCKET::m_socketMap;
+		
 
 		TinyHandleSOCKET::TinyHandleSOCKET()
 			:m_socket(INVALID_SOCKET)
@@ -38,7 +38,7 @@ namespace TinyUI
 			if (socket == INVALID_SOCKET)
 				return FALSE;
 			m_socket = socket;
-			TinyPtrMap& map = TinyHandleSOCKET::m_socketMap;
+			TinyPointerMap& map = TinyHandleSOCKET::m_socketMap;
 			map.Add((UINT_PTR)socket, (UINT_PTR)this);
 			return TRUE;
 		}
@@ -47,7 +47,7 @@ namespace TinyUI
 			SOCKET socket = m_socket;
 			if (socket != INVALID_SOCKET)
 			{
-				TinyPtrMap& map = TinyHandleSOCKET::m_socketMap;
+				TinyPointerMap& map = TinyHandleSOCKET::m_socketMap;
 				map.Remove((UINT_PTR)socket);
 			}
 			m_socket = NULL;
@@ -55,7 +55,7 @@ namespace TinyUI
 		}
 		TinyHandleSOCKET* TinyHandleSOCKET::Lookup(SOCKET socket)
 		{
-			TinyPtrMap& map = TinyHandleSOCKET::m_socketMap;
+			TinyPointerMap& map = TinyHandleSOCKET::m_socketMap;
 			UINT_PTR val = 0;
 			if (!map.Lookup((UINT_PTR)socket, val))
 				return NULL;

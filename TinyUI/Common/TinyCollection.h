@@ -1507,9 +1507,9 @@ namespace TinyUI
 	/// <summary>
 	/// ÷∏’ÎMap
 	/// </summary>
-	class TinyPtrMap
+	class TinyPointerMap
 	{
-		DISALLOW_COPY_AND_ASSIGN(TinyPtrMap)
+		DISALLOW_COPY_AND_ASSIGN(TinyPointerMap)
 	protected:
 		class TinyNode : public __ITERATOR
 		{
@@ -1525,8 +1525,8 @@ namespace TinyUI
 			UINT_PTR	m_value;
 		};
 	public:
-		TinyPtrMap();
-		~TinyPtrMap();
+		TinyPointerMap();
+		~TinyPointerMap();
 		DWORD		GetSize() const;
 		BOOL		IsEmpty() const;
 		BOOL		Add(UINT_PTR key, UINT_PTR value);
