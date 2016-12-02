@@ -16,8 +16,6 @@ namespace TinyUI
 		public:
 			operator SOCKET() const;
 			SOCKET Handle() const;
-			TinyHandleSOCKET(TinyHandleSOCKET& socket);
-			TinyHandleSOCKET(TinyHandleSOCKET&& socket);
 			BOOL operator == (const TinyHandleSOCKET& obj) const;
 			BOOL operator != (const TinyHandleSOCKET& obj) const;
 			BOOL Attach(SOCKET socket);
@@ -72,9 +70,14 @@ namespace TinyUI
 			BOOL Duplicate(DWORD processID, WSAPROTOCOL_INFO& s);
 			INT	 Available();
 		public:
-			BOOL Bind(const IPAddress& address, USHORT sPORT);
+			BOOL Bind(const IPAddress& address, DWORD dwPORT);
 			BOOL Listen(DWORD backlog = SOMAXCONN);
 			TinySocket* Accept();
+			BOOL Connect(const IPAddress& address, DWORD dwPORT);
+			INT  Receive(CHAR* data, DWORD dwSize, DWORD dwFlag);
+			INT	 Send(CHAR* data, DWORD dwSize, DWORD dwFlag);
+			INT	 ReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, SOCKADDR_IN& si);
+			INT	 SendTo(CHAR* data, DWORD dwSize, DWORD dwFlag, SOCKADDR_IN& si);
 			//////////////////////////////////////////////////////////////////////////
 			BOOL BeginAccept(CompleteCallback& callback, LPVOID arg);
 			TinySocket* EndAccept(AsyncResult* result);
@@ -84,7 +87,7 @@ namespace TinyUI
 			INT  EndSend(AsyncResult* result);
 			BOOL BeginReceive(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg);
 			INT  EndReceive(AsyncResult* result);
-			BOOL BeginSendTo(CHAR* data, DWORD dwSize, DWORD dwFlags, const IPAddress& address, DWORD dwPORT, CompleteCallback& callback, LPVOID arg);
+			BOOL BeginSendTo(CHAR* data, DWORD dwSize, DWORD dwFlags, SOCKADDR_IN& si, CompleteCallback& callback, LPVOID arg);
 			INT  EndSendTo(AsyncResult* result);
 			BOOL BeginReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg);
 			INT  EndReceiveFrom(AsyncResult* result, SOCKADDR_IN& si);

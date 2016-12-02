@@ -100,7 +100,6 @@ namespace TinyUI
 		{
 
 		}
-
 		BOOL TinySocket::Open(INT addressFamily, INT socketType, INT protocolType)
 		{
 			m_addressFamily = addressFamily;
@@ -165,13 +164,13 @@ namespace TinyUI
 		{
 			Close();
 		}
-		BOOL TinySocket::Bind(const IPAddress& address, USHORT sPORT)
+		BOOL TinySocket::Bind(const IPAddress& address, DWORD dwPORT)
 		{
 			ASSERT(m_socket);
 			SOCKADDR_IN si;
 			ZeroMemory(&si, sizeof(si));
 			si.sin_family = m_addressFamily;
-			si.sin_port = htons(sPORT);
+			si.sin_port = htons(static_cast<USHORT>(dwPORT));
 			memcpy(&si.sin_addr, address.Address().data(), m_addressFamily == AF_INET ? IPAddress::IPv4AddressSize : IPAddress::IPv6AddressSize);
 			return bind(m_socket, (SOCKADDR*)&si, sizeof(si)) == S_OK;
 		}
@@ -183,7 +182,53 @@ namespace TinyUI
 		TinySocket* TinySocket::Accept()
 		{
 			ASSERT(m_socket);
+			SOCKADDR_IN sa = { 0 };
+			INT size = sizeof(SOCKADDR_IN);
+			SOCKET s = accept(m_socket, (SOCKADDR*)&sa, &size);
+			if (s != INVALID_SOCKET)
+			{
+				TinySocket* socket = new TinySocket();
+				if (!socket || !socket->Attach(s))
+					return NULL;
+				socket->m_addressFamily = this->m_addressFamily;
+				socket->m_protocolType = this->m_protocolType;
+				socket->m_socketType = this->m_socketType;
+				socket->m_connect = TRUE;
+				return socket;
+			}
 			return NULL;
+		}
+		BOOL TinySocket::Connect(const IPAddress& address, DWORD dwPORT)
+		{
+			ASSERT(m_socket);
+			SOCKADDR_IN si;
+			ZeroMemory(&si, sizeof(si));
+			si.sin_family = m_addressFamily;
+			si.sin_port = htons(static_cast<USHORT>(dwPORT));
+			memcpy(&si.sin_addr, address.Address().data(), m_addressFamily == AF_INET ? IPAddress::IPv4AddressSize : IPAddress::IPv6AddressSize);
+			m_connect = connect(m_socket, (SOCKADDR*)&si, sizeof(si)) == S_OK;
+			return m_connect;
+		}
+		INT  TinySocket::Receive(CHAR* data, DWORD dwSize, DWORD dwFlag)
+		{
+			ASSERT(m_socket);
+			return recv(m_socket, data, dwSize, dwFlag);
+		}
+		INT	 TinySocket::Send(CHAR* data, DWORD dwSize, DWORD dwFlag)
+		{
+			ASSERT(m_socket);
+			return send(m_socket, data, dwSize, dwFlag);
+		}
+		INT	TinySocket::ReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, SOCKADDR_IN& si)
+		{
+			ASSERT(m_socket);
+			INT size = sizeof(SOCKADDR_IN);
+			return recvfrom(m_socket, data, dwSize, dwFlags, (SOCKADDR*)&si, &size);
+		}
+		INT	 TinySocket::SendTo(CHAR* data, DWORD dwSize, DWORD dwFlag, SOCKADDR_IN& si)
+		{
+			ASSERT(m_socket);
+			return sendto(m_socket, data, dwSize, dwFlag, (SOCKADDR*)&si, sizeof(si));
 		}
 		//////////////////////////////////////////////////////////////////////////
 		BOOL TinySocket::BeginAccept(CompleteCallback& callback, LPVOID arg)
@@ -362,7 +407,7 @@ namespace TinyUI
 			StreamAsyncResult* s = static_cast<StreamAsyncResult*>(result);
 			return s->BytesTransferred;
 		}
-		BOOL TinySocket::BeginSendTo(CHAR* data, DWORD dwSize, DWORD dwFlags, const IPAddress& address, DWORD dwPORT, CompleteCallback& callback, LPVOID arg)
+		BOOL TinySocket::BeginSendTo(CHAR* data, DWORD dwSize, DWORD dwFlags, SOCKADDR_IN& si, CompleteCallback& callback, LPVOID arg)
 		{
 			ASSERT(m_socket);
 			TinyAutoLock lock(m_lock);
@@ -377,10 +422,7 @@ namespace TinyUI
 			result->AsyncState = arg;
 			result->Array.buf = data;
 			result->Array.len = dwSize;
-			ZeroMemory(&result->Address, sizeof(result->Address));
-			result->Address.sin_family = m_addressFamily;
-			result->Address.sin_port = htons(static_cast<USHORT>(dwPORT));
-			memcpy(&result->Address.sin_addr, address.Address().data(), m_addressFamily == AF_INET ? IPAddress::IPv4AddressSize : IPAddress::IPv6AddressSize);
+			result->Address = si;
 			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
 			DWORD dwBytes = 0;
 			if (WSASendTo(m_socket, &result->Array, 1, &dwBytes, dwFlags, (SOCKADDR*)&result->Address, sizeof(result->Address), ps, NULL) != S_OK &&
