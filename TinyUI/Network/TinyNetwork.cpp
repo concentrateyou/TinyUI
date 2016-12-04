@@ -1,6 +1,5 @@
 #include "../stdafx.h"
 #include "TinyNetwork.h"
-#include <process.h>
 
 namespace TinyUI
 {

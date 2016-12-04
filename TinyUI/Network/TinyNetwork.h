@@ -6,8 +6,10 @@
 #include "../IO/TinyTaskBase.h"
 #include <WinSock2.h>
 #include <mswsock.h>
+#include <Websocket.h>
 #pragma comment(lib,"Mswsock.lib")
 #pragma comment(lib,"Ws2_32.lib")
+#pragma comment(lib,"Websocket.lib")
 
 namespace TinyUI
 {

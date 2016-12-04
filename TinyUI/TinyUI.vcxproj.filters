@@ -393,7 +393,7 @@
     <ClInclude Include="Network\TinyHTTPSession.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
-    <ClInclude Include="Network\TinyWebSocket.h">
+    <ClInclude Include="Network\TinyWebSocketClient.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
   </ItemGroup>
@@ -722,7 +722,7 @@
     <ClCompile Include="Network\TinyHTTPSession.cpp">
       <Filter>源文件\Network</Filter>
     </ClCompile>
-    <ClCompile Include="Network\TinyWebSocket.cpp">
+    <ClCompile Include="Network\TinyWebSocketClient.cpp">
       <Filter>源文件\Network</Filter>
     </ClCompile>
   </ItemGroup>
