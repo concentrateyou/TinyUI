@@ -7,7 +7,6 @@ namespace TinyUI
 	namespace Network
 	{
 		TinyPointerMap TinyHandleSOCKET::m_socketMap;
-
 		TinyHandleSOCKET::TinyHandleSOCKET()
 			:m_socket(INVALID_SOCKET)
 		{
@@ -105,7 +104,7 @@ namespace TinyUI
 			m_addressFamily = addressFamily;
 			m_socketType = socketType;
 			m_protocolType = protocolType;
-			if (m_ioserver != NULL)
+			if (m_ioserver)
 			{
 				m_socket = WSASocket(addressFamily, socketType, protocolType, NULL, 0, WSA_FLAG_OVERLAPPED);
 				BOOL allow = TRUE;
@@ -233,9 +232,8 @@ namespace TinyUI
 		//////////////////////////////////////////////////////////////////////////
 		BOOL TinySocket::BeginAccept(CompleteCallback& callback, LPVOID arg)
 		{
-			ASSERT(m_ioserver);
 			DWORD errorCode = ERROR_SUCCESS;
-			TinyAutoLock lock(m_lock);
+			TinyAutoLock lock(m_synclock);
 			TinySocket* socket = new TinySocket(m_ioserver);
 			if (!socket || !socket->Open(m_addressFamily, m_socketType, m_protocolType))
 				goto _ERROR;
@@ -280,8 +278,8 @@ namespace TinyUI
 		}
 		BOOL TinySocket::BeginConnect(IPAddress& address, USHORT sPORT, CompleteCallback& callback, LPVOID arg)
 		{
-			TinyAutoLock lock(m_lock);
 			//https://msdn.microsoft.com/en-us/library/windows/desktop/ms737606(v=vs.85).aspx
+			TinyAutoLock lock(m_synclock);
 			DWORD errorCode = ERROR_SUCCESS;
 			if (!Open(m_addressFamily, m_socketType, m_protocolType))
 				goto _ERROR;
@@ -332,7 +330,7 @@ namespace TinyUI
 		BOOL TinySocket::BeginReceive(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg)
 		{
 			ASSERT(m_socket);
-			TinyAutoLock lock(m_lock);
+			TinyAutoLock lock(m_synclock);
 			DWORD errorCode = ERROR_SUCCESS;
 			if (!m_connect)
 				goto _ERROR;
@@ -370,7 +368,7 @@ namespace TinyUI
 		BOOL TinySocket::BeginSend(CHAR* data, DWORD dwSize, DWORD dwFlag, CompleteCallback& callback, LPVOID arg)
 		{
 			ASSERT(m_socket);
-			TinyAutoLock lock(m_lock);
+			TinyAutoLock lock(m_synclock);
 			DWORD errorCode = ERROR_SUCCESS;
 			if (!m_connect)
 				goto _ERROR;
@@ -410,7 +408,7 @@ namespace TinyUI
 		BOOL TinySocket::BeginSendTo(CHAR* data, DWORD dwSize, DWORD dwFlags, SOCKADDR_IN& si, CompleteCallback& callback, LPVOID arg)
 		{
 			ASSERT(m_socket);
-			TinyAutoLock lock(m_lock);
+			TinyAutoLock lock(m_synclock);
 			DWORD errorCode = ERROR_SUCCESS;
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
@@ -449,7 +447,7 @@ namespace TinyUI
 		BOOL TinySocket::BeginReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg)
 		{
 			ASSERT(m_socket);
-			TinyAutoLock lock(m_lock);
+			TinyAutoLock lock(m_synclock);
 			DWORD errorCode = ERROR_SUCCESS;
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
@@ -492,7 +490,7 @@ namespace TinyUI
 		}
 		BOOL TinySocket::BeginDisconnect(CompleteCallback& callback, LPVOID arg)
 		{
-			TinyAutoLock lock(m_lock);
+			TinyAutoLock lock(m_synclock);
 			DWORD errorCode = ERROR_SUCCESS;
 			if (!m_disconnectex)
 			{

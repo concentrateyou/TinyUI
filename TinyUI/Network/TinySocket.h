@@ -10,6 +10,7 @@ namespace TinyUI
 		/// </summary>
 		class TinyHandleSOCKET
 		{
+			DISALLOW_COPY_AND_ASSIGN(TinyHandleSOCKET)
 		public:
 			TinyHandleSOCKET();
 			~TinyHandleSOCKET();
@@ -104,8 +105,9 @@ namespace TinyUI
 			INT					m_addressFamily;
 			INT					m_socketType;
 			INT					m_protocolType;
+			DWORD				m_dwMode;
 			BOOL				m_connect;
-			TinyLock			m_lock;
+			TinyLock			m_synclock;
 		};
 	}
 }

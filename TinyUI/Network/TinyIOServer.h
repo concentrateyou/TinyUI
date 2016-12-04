@@ -30,13 +30,10 @@ namespace TinyUI
 		private:
 			void	OnMessagePump();
 		private:
+			TinyEvent		m_close;
 			IO::TinyIOCP*	m_pIOCP;
 			TinyUI::Closure	m_closure;
-			TinyEvent		m_close;
-			WSABUF			m_recv;
-			WSABUF			m_send;
 		};
-
 		class TinyScopedIOTasks
 		{
 			DISALLOW_COPY_AND_ASSIGN(TinyScopedIOTasks)
@@ -51,7 +48,6 @@ namespace TinyUI
 			DWORD			m_dwCount;
 			IO::TinyIOCP*	m_pIOCP;
 		};
-
 		class TinyIOServer
 		{
 			DISALLOW_COPY_AND_ASSIGN(TinyIOServer)
