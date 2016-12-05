@@ -152,6 +152,7 @@
     <ClInclude Include="IO\TinyRingQueue.h" />
     <ClInclude Include="IO\TinySharedMemory.h" />
     <ClInclude Include="IO\TinyTaskBase.h" />
+    <ClInclude Include="IO\TinyTaskPool.h" />
     <ClInclude Include="IO\TinyWin32TaskPool.h" />
     <ClInclude Include="Media\TinyAudioAEC.h" />
     <ClInclude Include="Media\TinyAudioMixer.h" />
@@ -264,6 +265,7 @@
     <ClCompile Include="IO\TinyRingQueue.cpp" />
     <ClCompile Include="IO\TinySharedMemory.cpp" />
     <ClCompile Include="IO\TinyTaskBase.cpp" />
+    <ClCompile Include="IO\TinyTaskPool.cpp" />
     <ClCompile Include="IO\TinyWin32TaskPool.cpp" />
     <ClCompile Include="Media\TinyAudioAEC.cpp" />
     <ClCompile Include="Media\TinyAudioMixer.cpp" />
