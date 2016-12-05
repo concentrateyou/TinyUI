@@ -9,12 +9,14 @@ namespace TinyUI
 		{
 			DISALLOW_COPY_AND_ASSIGN(TinyHTTPClient)
 		public:
-			TinyHTTPClient(const string& strURL, USHORT sPORT);
+			TinyHTTPClient(TinyIOServer* ioserver);
 			virtual ~TinyHTTPClient();
+			BOOL Connect(const IPEndPoint& endpoint);
+		private:
+			void ConnectCallback(DWORD dwError, AsyncResult* result);
 		protected:
-			
-			string		m_strURL;
-			USHORT		m_sPORT;
+			TinySocket			m_socket;
+			CompleteCallback	m_connectCB;
 		};
 	}
 }

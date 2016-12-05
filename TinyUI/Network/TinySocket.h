@@ -58,11 +58,18 @@ namespace TinyUI
 			class DatagramAsyncResult : public StreamAsyncResult
 			{
 			public:
-				SOCKADDR_IN	Address;
+				SOCKADDR	Address;
+				INT			Size;
+			};
+			class ErrorAsyncResult : public StreamAsyncResult
+			{
+			public:
+				DWORD	ErrorCode;
 			};
 		public:
 			TinySocket(TinyIOServer* ioserver = NULL);
 			virtual ~TinySocket();
+			TinyIOServer* GetIOServer() const;
 			BOOL IsConnect() const;
 			BOOL Open(INT addressFamily = AF_INET, INT socketType = SOCK_STREAM, INT protocolType = IPPROTO_TCP);
 			BOOL KeepAlive(BOOL bAllow, INT ms);
@@ -71,27 +78,28 @@ namespace TinyUI
 			BOOL Duplicate(DWORD processID, WSAPROTOCOL_INFO& s);
 			INT	 Available();
 		public:
-			BOOL Bind(const IPAddress& address, DWORD dwPORT);
+			BOOL Bind(const IPEndPoint& endpoint);
 			BOOL Listen(DWORD backlog = SOMAXCONN);
 			TinySocket* Accept();
-			BOOL Connect(const IPAddress& address, DWORD dwPORT);
+			BOOL Connect(const IPEndPoint& endpoint);
 			INT  Receive(CHAR* data, DWORD dwSize, DWORD dwFlag);
 			INT	 Send(CHAR* data, DWORD dwSize, DWORD dwFlag);
-			INT	 ReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, SOCKADDR_IN& si);
-			INT	 SendTo(CHAR* data, DWORD dwSize, DWORD dwFlag, SOCKADDR_IN& si);
+			INT	 ReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, IPEndPoint& endpoint);
+			INT	 SendTo(CHAR* data, DWORD dwSize, DWORD dwFlag, IPEndPoint& endpoint);
+			BOOL Post(CompleteCallback& callback, AsyncResult* result, LPVOID arg);
 			//////////////////////////////////////////////////////////////////////////
 			BOOL BeginAccept(CompleteCallback& callback, LPVOID arg);
 			TinySocket* EndAccept(AsyncResult* result);
-			BOOL BeginConnect(IPAddress& address, USHORT sPORT, CompleteCallback& callback, LPVOID arg);
+			BOOL BeginConnect(const IPEndPoint& endpoint, CompleteCallback& callback, LPVOID arg);
 			void EndConnect(AsyncResult* result);
 			BOOL BeginSend(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg);
 			INT  EndSend(AsyncResult* result);
 			BOOL BeginReceive(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg);
 			INT  EndReceive(AsyncResult* result);
-			BOOL BeginSendTo(CHAR* data, DWORD dwSize, DWORD dwFlags, SOCKADDR_IN& si, CompleteCallback& callback, LPVOID arg);
+			BOOL BeginSendTo(CHAR* data, DWORD dwSize, DWORD dwFlags, IPEndPoint& endpoint, CompleteCallback& callback, LPVOID arg);
 			INT  EndSendTo(AsyncResult* result);
 			BOOL BeginReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg);
-			INT  EndReceiveFrom(AsyncResult* result, SOCKADDR_IN& si);
+			INT  EndReceiveFrom(AsyncResult* result, IPEndPoint& endpoint);
 			BOOL BeginDisconnect(CompleteCallback& callback, LPVOID arg);
 			void EndDisconnect(AsyncResult* result);
 		public:

@@ -168,6 +168,7 @@
     <ClInclude Include="Network\TinyNetwork.h" />
     <ClInclude Include="Network\TinySocket.h" />
     <ClInclude Include="Network\TinyIOServer.h" />
+    <ClInclude Include="Network\TinyURL.h" />
     <ClInclude Include="Network\TinyWebSocketClient.h" />
     <ClInclude Include="Render\TinyDDraw.h" />
     <ClInclude Include="Render\TinyGDI.h" />
@@ -278,6 +279,7 @@
     <ClCompile Include="Network\TinyIOServer.cpp" />
     <ClCompile Include="Network\TinyNetwork.cpp" />
     <ClCompile Include="Network\TinySocket.cpp" />
+    <ClCompile Include="Network\TinyURL.cpp" />
     <ClCompile Include="Network\TinyWebSocketClient.cpp" />
     <ClCompile Include="Render\stb_image.c" />
     <ClCompile Include="Render\TinyDDraw.cpp" />

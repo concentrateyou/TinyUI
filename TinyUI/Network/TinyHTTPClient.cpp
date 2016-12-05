@@ -5,13 +5,22 @@ namespace TinyUI
 {
 	namespace Network
 	{
-		TinyHTTPClient::TinyHTTPClient(const string& strURL, USHORT sPORT)
-			:m_strURL(std::move(strURL)),
-			m_sPORT(sPORT)
+		TinyHTTPClient::TinyHTTPClient(TinyIOServer* ioserver)
+			:m_socket(ioserver)
 		{
 
 		}
 		TinyHTTPClient::~TinyHTTPClient()
+		{
+
+		}
+		BOOL TinyHTTPClient::Connect(const IPEndPoint& endpoint)
+		{
+			if (!m_socket.Open())
+				return FALSE;
+			return TRUE;
+		}
+		void TinyHTTPClient::ConnectCallback(DWORD dwError, AsyncResult* result)
 		{
 
 		}

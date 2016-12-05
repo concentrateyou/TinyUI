@@ -163,15 +163,20 @@ namespace TinyUI
 		{
 			Close();
 		}
-		BOOL TinySocket::Bind(const IPAddress& address, DWORD dwPORT)
+		TinyIOServer* TinySocket::GetIOServer() const
+		{
+			return m_ioserver;
+		}
+		BOOL TinySocket::Bind(const IPEndPoint& endpoint)
 		{
 			ASSERT(m_socket);
-			SOCKADDR_IN si;
-			ZeroMemory(&si, sizeof(si));
-			si.sin_family = m_addressFamily;
-			si.sin_port = htons(static_cast<USHORT>(dwPORT));
-			memcpy(&si.sin_addr, address.Address().data(), m_addressFamily == AF_INET ? IPAddress::IPv4AddressSize : IPAddress::IPv6AddressSize);
-			return bind(m_socket, (SOCKADDR*)&si, sizeof(si)) == S_OK;
+			SOCKADDR s = { 0 };
+			size_t size = 0;
+			if (endpoint.ToSOCKADDR(&s, &size))
+			{
+				return bind(m_socket, &s, size) == S_OK;
+			}
+			return FALSE;
 		}
 		BOOL TinySocket::Listen(DWORD backlog)
 		{
@@ -197,16 +202,17 @@ namespace TinyUI
 			}
 			return NULL;
 		}
-		BOOL TinySocket::Connect(const IPAddress& address, DWORD dwPORT)
+		BOOL TinySocket::Connect(const IPEndPoint& endpoint)
 		{
 			ASSERT(m_socket);
-			SOCKADDR_IN si;
-			ZeroMemory(&si, sizeof(si));
-			si.sin_family = m_addressFamily;
-			si.sin_port = htons(static_cast<USHORT>(dwPORT));
-			memcpy(&si.sin_addr, address.Address().data(), m_addressFamily == AF_INET ? IPAddress::IPv4AddressSize : IPAddress::IPv6AddressSize);
-			m_connect = connect(m_socket, (SOCKADDR*)&si, sizeof(si)) == S_OK;
-			return m_connect;
+			SOCKADDR si = { 0 };
+			size_t size = 0;
+			if (endpoint.ToSOCKADDR(&si, &size))
+			{
+				m_connect = connect(m_socket, &si, size) == S_OK;
+				return m_connect;
+			}
+			return FALSE;
 		}
 		INT  TinySocket::Receive(CHAR* data, DWORD dwSize, DWORD dwFlag)
 		{
@@ -218,16 +224,36 @@ namespace TinyUI
 			ASSERT(m_socket);
 			return send(m_socket, data, dwSize, dwFlag);
 		}
-		INT	TinySocket::ReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, SOCKADDR_IN& si)
+		INT	TinySocket::ReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, IPEndPoint& endpoint)
 		{
 			ASSERT(m_socket);
-			INT size = sizeof(SOCKADDR_IN);
-			return recvfrom(m_socket, data, dwSize, dwFlags, (SOCKADDR*)&si, &size);
+			SOCKADDR si = { 0 };
+			INT size = 0;
+			INT iRes = recvfrom(m_socket, data, dwSize, dwFlags, (SOCKADDR*)&si, &size);
+			endpoint.FromSOCKADDR(&si, size);
+			return iRes;
 		}
-		INT	 TinySocket::SendTo(CHAR* data, DWORD dwSize, DWORD dwFlag, SOCKADDR_IN& si)
+		INT	 TinySocket::SendTo(CHAR* data, DWORD dwSize, DWORD dwFlag, IPEndPoint& endpoint)
 		{
 			ASSERT(m_socket);
-			return sendto(m_socket, data, dwSize, dwFlag, (SOCKADDR*)&si, sizeof(si));
+			SOCKADDR si = { 0 };
+			INT size = 0;
+			INT iRes = sendto(m_socket, data, dwSize, dwFlag, (SOCKADDR*)&si, sizeof(si));
+			endpoint.FromSOCKADDR(&si, size);
+			return iRes;
+		}
+		BOOL TinySocket::Post(CompleteCallback& callback, AsyncResult* result, LPVOID arg)
+		{
+			ASSERT(m_ioserver);
+			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
+			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
+			context->OP = OP_CONNECT;
+			context->Reserve = reinterpret_cast<LONG_PTR>(this);
+			context->Result = result;
+			context->Result->AsyncState = arg;
+			context->Complete = std::move(callback);
+			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
+			return PostQueuedCompletionStatus(m_ioserver->GetIOCP(), 0, 0, ps);
 		}
 		//////////////////////////////////////////////////////////////////////////
 		BOOL TinySocket::BeginAccept(CompleteCallback& callback, LPVOID arg)
@@ -276,19 +302,14 @@ namespace TinyUI
 			ASSERT(s);
 			return s->AcceptSocket;
 		}
-		BOOL TinySocket::BeginConnect(IPAddress& address, USHORT sPORT, CompleteCallback& callback, LPVOID arg)
+		BOOL TinySocket::BeginConnect(const IPEndPoint& endpoint, CompleteCallback& callback, LPVOID arg)
 		{
 			//https://msdn.microsoft.com/en-us/library/windows/desktop/ms737606(v=vs.85).aspx
 			TinyAutoLock lock(m_synclock);
 			DWORD errorCode = ERROR_SUCCESS;
-			if (!Open(m_addressFamily, m_socketType, m_protocolType))
-				goto _ERROR;
-			SOCKADDR_IN si;
-			ZeroMemory(&si, sizeof(si));
-			si.sin_family = m_addressFamily;
-			si.sin_port = 0;
-			si.sin_addr.s_addr = htonl(INADDR_ANY);
-			if (bind(m_socket, (SOCKADDR*)&si, sizeof(si)) != S_OK)
+			SOCKADDR s = { 0 };
+			s.sa_family = m_addressFamily;
+			if (bind(m_socket, (SOCKADDR*)&s, m_addressFamily == AF_INET ? IPAddress::IPv4AddressSize : IPAddress::IPv6AddressSize) != S_OK)
 				goto _ERROR;
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
@@ -297,17 +318,19 @@ namespace TinyUI
 			context->Result = new AsyncResult();
 			context->Result->AsyncState = arg;
 			context->Complete = std::move(callback);
-			ZeroMemory(&si, sizeof(si));
-			si.sin_family = AF_INET;
-			si.sin_port = htons(sPORT);
-			memcpy(&si.sin_addr, address.Address().data(), m_addressFamily == AF_INET ? IPAddress::IPv4AddressSize : IPAddress::IPv6AddressSize);
+			size_t size = 0;
+			if (!endpoint.ToSOCKADDR(&s, &size))
+			{
+				WSASetLastError(ERROR_INVALID_ADDRESS);
+				goto _ERROR;
+			}
 			if (!m_connectex)
 			{
 				if (!TinySocket::GetConnectEx(m_socket, &m_connectex))
 					goto _ERROR;
 			}
 			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
-			if (!m_connectex(m_socket, (SOCKADDR*)&si, sizeof(si), NULL, 0, NULL, ps) &&
+			if (!m_connectex(m_socket, &s, size, NULL, 0, NULL, ps) &&
 				ERROR_IO_PENDING != WSAGetLastError())
 			{
 				goto _ERROR;
@@ -405,11 +428,18 @@ namespace TinyUI
 			StreamAsyncResult* s = static_cast<StreamAsyncResult*>(result);
 			return s->BytesTransferred;
 		}
-		BOOL TinySocket::BeginSendTo(CHAR* data, DWORD dwSize, DWORD dwFlags, SOCKADDR_IN& si, CompleteCallback& callback, LPVOID arg)
+		BOOL TinySocket::BeginSendTo(CHAR* data, DWORD dwSize, DWORD dwFlags, IPEndPoint& endpoint, CompleteCallback& callback, LPVOID arg)
 		{
 			ASSERT(m_socket);
 			TinyAutoLock lock(m_synclock);
 			DWORD errorCode = ERROR_SUCCESS;
+			SOCKADDR s = { 0 };
+			size_t size = 0;
+			if (!endpoint.ToSOCKADDR(&s, &size))
+			{
+				WSASetLastError(ERROR_INVALID_ADDRESS);
+				goto _ERROR;
+			}
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
 			context->OP = OP_SENDTO;
@@ -420,10 +450,11 @@ namespace TinyUI
 			result->AsyncState = arg;
 			result->Array.buf = data;
 			result->Array.len = dwSize;
-			result->Address = si;
+			result->Address = s;
+			result->Size = size;
 			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
 			DWORD dwBytes = 0;
-			if (WSASendTo(m_socket, &result->Array, 1, &dwBytes, dwFlags, (SOCKADDR*)&result->Address, sizeof(result->Address), ps, NULL) != S_OK &&
+			if (WSASendTo(m_socket, &result->Array, 1, &dwBytes, dwFlags, &result->Address, size, ps, NULL) != S_OK &&
 				ERROR_IO_PENDING != WSAGetLastError())
 			{
 				goto _ERROR;
@@ -458,13 +489,11 @@ namespace TinyUI
 			context->Result = result;
 			result->Array.buf = data;
 			result->Array.len = dwSize;
-			ZeroMemory(&result->Address, sizeof(SOCKADDR_IN));
-			result->Address.sin_family = m_addressFamily;
-			result->Address.sin_port = 0;
-			result->Address.sin_addr.s_addr = htonl(INADDR_ANY);
+			ZeroMemory(&result->Address, sizeof(SOCKADDR));
+			result->Address.sa_family = m_addressFamily;
 			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
 			DWORD dwBytes = 0;
-			INT size = sizeof(SOCKADDR_IN);
+			INT size = m_addressFamily == AF_INET ? IPAddress::IPv4AddressSize : IPAddress::IPv6AddressSize;
 			if (WSARecvFrom(m_socket, &result->Array, 1, &dwBytes, &dwFlags, (SOCKADDR*)&result->Address, &size, ps, NULL) != S_OK &&
 				ERROR_IO_PENDING != WSAGetLastError())
 			{
@@ -481,11 +510,11 @@ namespace TinyUI
 			Close();
 			return FALSE;
 		}
-		INT  TinySocket::EndReceiveFrom(AsyncResult* result, SOCKADDR_IN& si)
+		INT  TinySocket::EndReceiveFrom(AsyncResult* result, IPEndPoint& endpoint)
 		{
 			DatagramAsyncResult* s = static_cast<DatagramAsyncResult*>(result);
 			ASSERT(s);
-			memcpy(&si, &s->Address, sizeof(DatagramAsyncResult));
+			endpoint.FromSOCKADDR(&s->Address, s->Size);
 			return s->BytesTransferred;
 		}
 		BOOL TinySocket::BeginDisconnect(CompleteCallback& callback, LPVOID arg)

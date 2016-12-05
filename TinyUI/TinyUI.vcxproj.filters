@@ -396,6 +396,9 @@
     <ClInclude Include="Network\TinyWebSocketClient.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
+    <ClInclude Include="Network\TinyURL.h">
+      <Filter>头文件\Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -723,6 +726,9 @@
       <Filter>源文件\Network</Filter>
     </ClCompile>
     <ClCompile Include="Network\TinyWebSocketClient.cpp">
+      <Filter>源文件\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\TinyURL.cpp">
       <Filter>源文件\Network</Filter>
     </ClCompile>
   </ItemGroup>

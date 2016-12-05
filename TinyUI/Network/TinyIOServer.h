@@ -15,7 +15,8 @@ namespace TinyUI
 #define OP_SENDTO		0x05
 #define OP_CONNECT		0x06
 #define OP_DISCONNECT	0x07
-#define OP_QUIT			0x07
+#define OP_ERROR		0x08
+#define OP_QUIT			0x09
 
 #define MAX_BUFFER_SIZE   4096
 

@@ -6,6 +6,7 @@
 #include "../IO/TinyTaskBase.h"
 #include <WinSock2.h>
 #include <mswsock.h>
+#include <Ws2ipdef.h>
 #include <Websocket.h>
 #pragma comment(lib,"Mswsock.lib")
 #pragma comment(lib,"Ws2_32.lib")
@@ -17,6 +18,7 @@ namespace TinyUI
 	{
 		BOOL  GetExtensionPtr(SOCKET socket, GUID guid, void** target);
 		DWORD GetErrorCode(SOCKET socket, LPOVERLAPPED ps);
+		BOOL GetIPAddressFromSOCKADDR(const SOCKADDR* address, INT addresssize, const BYTE** addressdata, size_t* datasize, USHORT* port);;
 		/// <summary>
 		/// IP地址
 		/// </summary>
@@ -30,6 +32,7 @@ namespace TinyUI
 			explicit IPAddress(const string& ip);
 			IPAddress(IPAddress&& other);
 			IPAddress(const IPAddress& other);
+			IPAddress& operator =(const IPAddress& other);
 			template <INT N>
 			IPAddress(const BYTE(&address)[N])
 				: IPAddress(address, N)
@@ -61,15 +64,38 @@ namespace TinyUI
 			BOOL IsValid() const;
 			BOOL IsZero() const;
 			BOOL IsEmpty() const;
+			INT	AddressFamily() const;
 			std::string ToString() const;
-			DWORD Size() const;
-			const std::vector<BYTE>& Address() const;
+			size_t size() const;
+			const std::vector<BYTE>& address() const;
 			static IPAddress IPv4Any();
 			static IPAddress IPv6Any();
 		private:
 			std::vector<BYTE> m_address;
 		};
 		using IPAddressList = std::vector<IPAddress>;
+		/// <summary>
+		/// 网络终结点
+		/// </summary>
+		class  IPEndPoint
+		{
+		public:
+			IPEndPoint();
+			~IPEndPoint();
+			IPEndPoint(const IPAddress& address, USHORT port);
+			IPEndPoint(const IPEndPoint& endpoint);
+			const IPAddress& address() const;
+			INT	AddressFamily() const;
+			USHORT port() const;
+			BOOL ToSOCKADDR(SOCKADDR* address, size_t* size) const;
+			BOOL FromSOCKADDR(const  SOCKADDR* address, size_t size);
+			std::string ToString() const;
+			BOOL operator<(const IPEndPoint& other) const;
+			BOOL operator==(const IPEndPoint& other) const;
+		private:
+			IPAddress	m_address;
+			USHORT		m_port;
+		};
 		/// <summary>
 		/// 异步模型
 		/// </summary>
