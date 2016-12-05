@@ -88,19 +88,19 @@ namespace TinyUI
 			INT	 SendTo(CHAR* data, DWORD dwSize, DWORD dwFlag, IPEndPoint& endpoint);
 			BOOL Post(CompleteCallback& callback, AsyncResult* result, LPVOID arg);
 			//////////////////////////////////////////////////////////////////////////
-			BOOL BeginAccept(CompleteCallback& callback, LPVOID arg);
+			BOOL BeginAccept(CompleteCallback&& callback, LPVOID arg);
 			TinySocket* EndAccept(AsyncResult* result);
-			BOOL BeginConnect(const IPEndPoint& endpoint, CompleteCallback& callback, LPVOID arg);
+			BOOL BeginConnect(const IPEndPoint& endpoint, CompleteCallback&& callback, LPVOID arg);
 			void EndConnect(AsyncResult* result);
-			BOOL BeginSend(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg);
+			BOOL BeginSend(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback&&callback, LPVOID arg);
 			INT  EndSend(AsyncResult* result);
-			BOOL BeginReceive(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg);
+			BOOL BeginReceive(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback&& callback, LPVOID arg);
 			INT  EndReceive(AsyncResult* result);
-			BOOL BeginSendTo(CHAR* data, DWORD dwSize, DWORD dwFlags, IPEndPoint& endpoint, CompleteCallback& callback, LPVOID arg);
+			BOOL BeginSendTo(CHAR* data, DWORD dwSize, DWORD dwFlags, IPEndPoint& endpoint, CompleteCallback&& callback, LPVOID arg);
 			INT  EndSendTo(AsyncResult* result);
-			BOOL BeginReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg);
+			BOOL BeginReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback&& callback, LPVOID arg);
 			INT  EndReceiveFrom(AsyncResult* result, IPEndPoint& endpoint);
-			BOOL BeginDisconnect(CompleteCallback& callback, LPVOID arg);
+			BOOL BeginDisconnect(CompleteCallback&& callback, LPVOID arg);
 			void EndDisconnect(AsyncResult* result);
 		public:
 			virtual void Close();

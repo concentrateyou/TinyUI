@@ -256,8 +256,9 @@ namespace TinyUI
 			return PostQueuedCompletionStatus(m_ioserver->GetIOCP(), 0, 0, ps);
 		}
 		//////////////////////////////////////////////////////////////////////////
-		BOOL TinySocket::BeginAccept(CompleteCallback& callback, LPVOID arg)
+		BOOL TinySocket::BeginAccept(CompleteCallback&& callback, LPVOID arg)
 		{
+			ASSERT(m_ioserver);
 			DWORD errorCode = ERROR_SUCCESS;
 			TinyAutoLock lock(m_synclock);
 			TinySocket* socket = new TinySocket(m_ioserver);
@@ -302,9 +303,10 @@ namespace TinyUI
 			ASSERT(s);
 			return s->AcceptSocket;
 		}
-		BOOL TinySocket::BeginConnect(const IPEndPoint& endpoint, CompleteCallback& callback, LPVOID arg)
+		BOOL TinySocket::BeginConnect(const IPEndPoint& endpoint, CompleteCallback&& callback, LPVOID arg)
 		{
 			//https://msdn.microsoft.com/en-us/library/windows/desktop/ms737606(v=vs.85).aspx
+			ASSERT(m_ioserver);
 			TinyAutoLock lock(m_synclock);
 			DWORD errorCode = ERROR_SUCCESS;
 			SOCKADDR s = { 0 };
@@ -350,9 +352,9 @@ namespace TinyUI
 		{
 
 		}
-		BOOL TinySocket::BeginReceive(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg)
+		BOOL TinySocket::BeginReceive(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback&& callback, LPVOID arg)
 		{
-			ASSERT(m_socket);
+			ASSERT(m_socket || m_ioserver);
 			TinyAutoLock lock(m_synclock);
 			DWORD errorCode = ERROR_SUCCESS;
 			if (!m_connect)
@@ -388,9 +390,9 @@ namespace TinyUI
 			StreamAsyncResult* s = static_cast<StreamAsyncResult*>(result);
 			return s->BytesTransferred;
 		}
-		BOOL TinySocket::BeginSend(CHAR* data, DWORD dwSize, DWORD dwFlag, CompleteCallback& callback, LPVOID arg)
+		BOOL TinySocket::BeginSend(CHAR* data, DWORD dwSize, DWORD dwFlag, CompleteCallback&& callback, LPVOID arg)
 		{
-			ASSERT(m_socket);
+			ASSERT(m_socket || m_ioserver);
 			TinyAutoLock lock(m_synclock);
 			DWORD errorCode = ERROR_SUCCESS;
 			if (!m_connect)
@@ -428,9 +430,9 @@ namespace TinyUI
 			StreamAsyncResult* s = static_cast<StreamAsyncResult*>(result);
 			return s->BytesTransferred;
 		}
-		BOOL TinySocket::BeginSendTo(CHAR* data, DWORD dwSize, DWORD dwFlags, IPEndPoint& endpoint, CompleteCallback& callback, LPVOID arg)
+		BOOL TinySocket::BeginSendTo(CHAR* data, DWORD dwSize, DWORD dwFlags, IPEndPoint& endpoint, CompleteCallback&& callback, LPVOID arg)
 		{
-			ASSERT(m_socket);
+			ASSERT(m_socket || m_ioserver);
 			TinyAutoLock lock(m_synclock);
 			DWORD errorCode = ERROR_SUCCESS;
 			SOCKADDR s = { 0 };
@@ -475,9 +477,9 @@ namespace TinyUI
 			DatagramAsyncResult* s = static_cast<DatagramAsyncResult*>(result);
 			return s->BytesTransferred;
 		}
-		BOOL TinySocket::BeginReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback& callback, LPVOID arg)
+		BOOL TinySocket::BeginReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback&& callback, LPVOID arg)
 		{
-			ASSERT(m_socket);
+			ASSERT(m_socket || m_ioserver);
 			TinyAutoLock lock(m_synclock);
 			DWORD errorCode = ERROR_SUCCESS;
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
@@ -517,8 +519,9 @@ namespace TinyUI
 			endpoint.FromSOCKADDR(&s->Address, s->Size);
 			return s->BytesTransferred;
 		}
-		BOOL TinySocket::BeginDisconnect(CompleteCallback& callback, LPVOID arg)
+		BOOL TinySocket::BeginDisconnect(CompleteCallback&& callback, LPVOID arg)
 		{
+			ASSERT(m_socket || m_ioserver);
 			TinyAutoLock lock(m_synclock);
 			DWORD errorCode = ERROR_SUCCESS;
 			if (!m_disconnectex)

@@ -12,6 +12,8 @@
 #include "Network/TinySocket.h"
 #include "Network/TinyHTTPClient.h"
 
+#include <functional>
+
 BOOL LoadSeDebugPrivilege()
 {
 	DWORD   err;
@@ -90,6 +92,11 @@ BOOL LoadSeDebugPrivilege()
 //		TRACE("BeginReceive-ERROR:%d\n",WSAGetLastError());
 //	}
 //}
+
+void OnAccept(DWORD errorCode, TinyUI::Network::AsyncResult* result)
+{
+
+}
 
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
