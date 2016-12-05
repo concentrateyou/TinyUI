@@ -32,8 +32,7 @@ BOOL PublishTask::Connect()
 BOOL PublishTask::Submit()
 {
 	m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
-	Closure s = BindCallback(&PublishTask::OnMessagePump, this);
-	return TinyTaskBase::Submit(s);
+	return TinyTaskBase::Submit(std::forward<Closure>(BindCallback(&PublishTask::OnMessagePump, this)));
 }
 BOOL PublishTask::Close(DWORD dwMS)
 {
@@ -82,7 +81,7 @@ void PublishTask::Publish(Sample& sample)
 			wfx.nSamplesPerSec = 48000;
 			wfx.nAvgBytesPerSec = wfx.nSamplesPerSec * wfx.nBlockAlign;
 			VideoCaptureParam* param = m_videoTask->GetParam();
-			m_client.SendMetadata(800, 600, param->GetRate(), 1000, wfx, 128);
+			m_client.SendMetadata(800, 600, static_cast<INT>(param->GetRate()), 1000, wfx, 128);
 		}
 		switch (sample.mediaTag.dwFlag)
 		{

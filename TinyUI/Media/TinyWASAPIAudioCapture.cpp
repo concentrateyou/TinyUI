@@ -132,8 +132,7 @@ namespace TinyUI
 			ASSERT(m_audioClient);
 			m_audioStop.ResetEvent();
 			m_task.Close(INFINITE);
-			Closure s = BindCallback(&TinyWASAPIAudioCapture::OnMessagePump, this);
-			if (!m_task.Submit(s))
+			if (!m_task.Submit(BindCallback(&TinyWASAPIAudioCapture::OnMessagePump, this)))
 				return FALSE;
 			HRESULT hRes = m_audioClient->Start();
 			if (FAILED(hRes))

@@ -24,7 +24,7 @@ namespace TinyUI
 			}
 		}
 
-		BOOL TinyTaskBase::Submit(Closure& callback)
+		BOOL TinyTaskBase::Submit(Closure&& callback)
 		{
 			m_callback = callback;
 			m_hTask = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)TinyTaskBase::Callback, (LPVOID)this, 0, &m_dwTaskID);

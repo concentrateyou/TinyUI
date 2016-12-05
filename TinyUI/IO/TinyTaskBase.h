@@ -21,7 +21,7 @@ namespace TinyUI
 			TinyTaskBase();
 			virtual ~TinyTaskBase();
 			BOOL	IsValid() const;
-			virtual BOOL Submit(Closure& callback);
+			virtual BOOL Submit(Closure&& callback);
 			virtual BOOL Close(DWORD dwMs);
 			DWORD	GetCurrentTime() const;
 		private:

@@ -86,7 +86,7 @@ namespace TinyUI
 			INT	 Send(CHAR* data, DWORD dwSize, DWORD dwFlag);
 			INT	 ReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, IPEndPoint& endpoint);
 			INT	 SendTo(CHAR* data, DWORD dwSize, DWORD dwFlag, IPEndPoint& endpoint);
-			BOOL Post(CompleteCallback& callback, AsyncResult* result, LPVOID arg);
+			BOOL Post(CompleteCallback&& callback, AsyncResult* result, LPVOID arg);
 			//////////////////////////////////////////////////////////////////////////
 			BOOL BeginAccept(CompleteCallback&& callback, LPVOID arg);
 			TinySocket* EndAccept(AsyncResult* result);

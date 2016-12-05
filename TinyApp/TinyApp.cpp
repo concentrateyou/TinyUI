@@ -12,8 +12,6 @@
 #include "Network/TinySocket.h"
 #include "Network/TinyHTTPClient.h"
 
-#include <functional>
-
 BOOL LoadSeDebugPrivilege()
 {
 	DWORD   err;
@@ -115,6 +113,13 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	HRESULT hRes = OleInitialize(NULL);
 
 	LoadSeDebugPrivilege();
+
+	TinyUI::Network::TinyIOServer ioserver(1);
+	ioserver.Run();
+
+	/*TinyUI::Network::TinySocket socket(&ioserver);
+	socket.Open();
+	socket.BeginAccept(BindCallback(&OnAccept), NULL);*/
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));

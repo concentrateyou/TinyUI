@@ -7,7 +7,7 @@ RenderTask::RenderTask(HWND hWND, DShow::VideoCapture* pVideo, const DShow::Vide
 	m_pVideo(pVideo),
 	m_videoParam(videoParam)
 {
-	
+
 }
 
 
@@ -18,8 +18,7 @@ RenderTask::~RenderTask()
 BOOL RenderTask::Submit()
 {
 	m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
-	Closure s = BindCallback(&RenderTask::OnMessagePump, this);
-	return TinyTaskBase::Submit(s);
+	return TinyTaskBase::Submit(BindCallback(&RenderTask::OnMessagePump, this));
 }
 BOOL RenderTask::Close(DWORD dwMS)
 {

@@ -30,8 +30,7 @@ namespace TinyUI
 		BOOL TinyIOTask::Submit()
 		{
 			m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
-			Closure s = BindCallback(&TinyIOTask::OnMessagePump, this);
-			return TinyTaskBase::Submit(s);
+			return TinyTaskBase::Submit(std::forward<Closure>(BindCallback(&TinyIOTask::OnMessagePump, this)));
 		}
 		void TinyIOTask::OnMessagePump()
 		{
