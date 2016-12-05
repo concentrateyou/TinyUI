@@ -399,6 +399,9 @@
     <ClInclude Include="Network\TinyURL.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
+    <ClInclude Include="IO\TinyCircleBuffer.h">
+      <Filter>头文件\IO</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -730,6 +733,9 @@
     </ClCompile>
     <ClCompile Include="Network\TinyURL.cpp">
       <Filter>源文件\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\TinyCircleBuffer.cpp">
+      <Filter>源文件\IO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

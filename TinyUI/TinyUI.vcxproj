@@ -146,6 +146,7 @@
     <ClInclude Include="Database\TinyDatabase.h" />
     <ClInclude Include="Database\TinyMySQL.h" />
     <ClInclude Include="Database\TinySqlite.h" />
+    <ClInclude Include="IO\TinyCircleBuffer.h" />
     <ClInclude Include="IO\TinyIO.h" />
     <ClInclude Include="IO\TinyIOCP.h" />
     <ClInclude Include="IO\TinyRingQueue.h" />
@@ -257,6 +258,7 @@
     <ClCompile Include="Database\TinyDatabase.cpp" />
     <ClCompile Include="Database\TinyMySQL.cpp" />
     <ClCompile Include="Database\TinySqlite.cpp" />
+    <ClCompile Include="IO\TinyCircleBuffer.cpp" />
     <ClCompile Include="IO\TinyIO.cpp" />
     <ClCompile Include="IO\TinyIOCP.cpp" />
     <ClCompile Include="IO\TinyRingQueue.cpp" />
