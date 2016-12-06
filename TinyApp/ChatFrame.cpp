@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "ChatFrame.h"
 
-
 ChatFrame::ChatFrame()
 {
 }

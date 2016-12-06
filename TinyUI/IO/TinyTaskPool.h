@@ -5,15 +5,12 @@ namespace TinyUI
 {
 	namespace IO
 	{
-		class TaskRunner
+		/// <summary>
+		/// 任务项
+		/// </summary>
+		class TaskItem
 		{
-		public:
-			TaskRunner();
-			virtual ~TaskRunner();
-			BOOL PostTask(const Closure& task);
-			BOOL PostTask(const Closure& task, const Closure& reply);
-			virtual bool PostDelayedTask(const Closure& task, DWORD dwMS) = 0;
-			virtual bool PostDelayedTask(const Closure& task, DWORD dwMS, const Closure& reply) = 0;
+
 		};
 		/// <summary>
 		/// 任务池

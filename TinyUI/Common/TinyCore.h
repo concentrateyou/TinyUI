@@ -165,6 +165,25 @@ namespace TinyUI
 		volatile LONG* m_lock;
 	};
 	/// <summary>
+	/// 条件变量
+	/// </summary>
+	class TinyConditionVariable : public TinyObject
+	{
+		DECLARE_DYNAMIC(TinyConditionVariable)
+		DISALLOW_COPY_AND_ASSIGN(TinyConditionVariable)
+	public:
+		TinyConditionVariable(CRITICAL_SECTION& cs);
+		TinyConditionVariable(SRWLOCK& lock);
+		~TinyConditionVariable();
+		BOOL Lock(DWORD dwMS = INFINITE);
+		void Unlock(BOOL bAll);
+	private:
+		CONDITION_VARIABLE	m_cv;
+		CRITICAL_SECTION	m_cs;
+		SRWLOCK				m_lock;
+		BOOL				m_allowSRW;
+	};
+	/// <summary>
 	/// Library封装 
 	/// </summary>
 	class TinyScopedLibrary

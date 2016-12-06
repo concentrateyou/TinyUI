@@ -294,8 +294,47 @@ namespace TinyUI
 		return ::ReleaseSemaphore(m_hSemaphore, lCount, lprevCount);
 	}
 	//////////////////////////////////////////////////////////////////////////
+	TinyConditionVariable::TinyConditionVariable(CRITICAL_SECTION& cs)
+		:m_cs(cs),
+		m_allowSRW(FALSE)
+	{
+		InitializeConditionVariable(&m_cv);
+	}
+	TinyConditionVariable::TinyConditionVariable(SRWLOCK& lock)
+		: m_lock(lock),
+		m_allowSRW(TRUE)
+	{
+		InitializeConditionVariable(&m_cv);
+	}
+	TinyConditionVariable::~TinyConditionVariable()
+	{
+
+	}
+	BOOL TinyConditionVariable::Lock(DWORD dwMS)
+	{
+		if (m_allowSRW)
+		{
+			return SleepConditionVariableSRW(&m_cv, &m_lock, dwMS, 0);
+		}
+		else
+		{
+			return SleepConditionVariableCS(&m_cv, &m_cs, dwMS);
+		}
+	}
+	void TinyConditionVariable::Unlock(BOOL bAll)
+	{
+		if (bAll)
+		{
+			WakeAllConditionVariable(&m_cv);
+		}
+		else
+		{
+			WakeConditionVariable(&m_cv);
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
 	TinyScopedLibrary::TinyScopedLibrary()
-		:m_hInstance(NULL)
+		: m_hInstance(NULL)
 	{
 
 	}
