@@ -23,14 +23,12 @@ namespace TinyUI
 			BOOL	IsValid() const;
 			virtual BOOL Submit(Closure&& callback);
 			virtual BOOL Close(DWORD dwMs);
-			DWORD	GetCurrentTime() const;
 		private:
 			static DWORD WINAPI Callback(LPVOID ps);
 		protected:
 			DWORD		m_dwTaskID;
 			HANDLE		m_hTask;
 			Closure		m_callback;
-			static DWORD m_dwTime;
 		};
 	};
 }

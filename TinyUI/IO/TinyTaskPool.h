@@ -1,28 +1,29 @@
 #pragma once
 #include "TinyTaskBase.h"
+#include "TinyThread.h"
+#include <map>
+#include <concurrent_queue.h>
 
 namespace TinyUI
 {
 	namespace IO
 	{
 		/// <summary>
-		/// 任务项
-		/// </summary>
-		class TaskItem
-		{
-
-		};
-		/// <summary>
 		/// 任务池
 		/// </summary>
-		class TinyTaskPool
+		class TinyTaskPool : public TaskRunner
 		{
 		public:
-			TinyTaskPool(DWORD dwSize);
+			TinyTaskPool(DWORD dwConcurrent);
+			virtual ~TinyTaskPool();
 		public:
-
+			void PostTask(TaskItem* item) OVERRIDE;
 		private:
-			DWORD m_dwSize;
+			void MessagePump();
+		private:
+			DWORD m_dwConcurrent;
+			concurrency::concurrent_queue<TaskItem*> m_taskItems;
+			TinyScopedArray<TinyTaskBase> m_tasks;
 		};
 	};
 }

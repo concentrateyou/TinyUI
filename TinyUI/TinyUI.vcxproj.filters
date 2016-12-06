@@ -405,6 +405,9 @@
     <ClInclude Include="IO\TinyTaskPool.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
+    <ClInclude Include="IO\TinyThread.h">
+      <Filter>头文件\IO</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -741,6 +744,9 @@
       <Filter>源文件\IO</Filter>
     </ClCompile>
     <ClCompile Include="IO\TinyTaskPool.cpp">
+      <Filter>源文件\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\TinyThread.cpp">
       <Filter>源文件\IO</Filter>
     </ClCompile>
   </ItemGroup>

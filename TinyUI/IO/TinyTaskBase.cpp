@@ -8,8 +8,6 @@ namespace TinyUI
 {
 	namespace IO
 	{
-		DWORD TinyTaskBase::m_dwTime = timeGetTime();
-
 		TinyTaskBase::TinyTaskBase()
 			:m_hTask(NULL)
 		{
@@ -50,7 +48,8 @@ namespace TinyUI
 			if (m_hTask)
 			{
 				DWORD code = 0;
-				return GetExitCodeThread(m_hTask, &code) && code == STILL_ACTIVE;
+				GetExitCodeThread(m_hTask, &code);
+				return code == STILL_ACTIVE;
 			}
 			return FALSE;
 		}
@@ -70,10 +69,6 @@ namespace TinyUI
 				throw(e);
 			}
 			return FALSE;
-		}
-		DWORD TinyTaskBase::GetCurrentTime() const
-		{
-			return timeGetTime() - TinyTaskBase::m_dwTime;
 		}
 	}
 }
