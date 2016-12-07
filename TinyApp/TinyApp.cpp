@@ -44,49 +44,6 @@ BOOL LoadSeDebugPrivilege()
 	return TRUE;
 }
 
-//class A
-//{
-//public:
-//	A(const char *pstr) {
-//		TRACE("constructor\n");
-//		m_data = (pstr != 0 ? strcpy(new char[strlen(pstr) + 1], pstr) : 0);
-//	}
-//	A(const A &a) {
-//		TRACE("copy constructor\n");
-//		m_data = (a.m_data != 0 ? strcpy(new char[strlen(a.m_data) + 1], a.m_data) : 0);
-//	}
-//	A &operator =(const A &a) {
-//		TRACE("copy assigment\n");
-//		if (this != &a) {
-//			delete[] m_data;
-//			m_data = (a.m_data != 0 ? strcpy(new char[strlen(a.m_data) + 1], a.m_data) : 0);
-//		}
-//		return *this;
-//	}
-//	A(A &&a) : m_data(a.m_data) {
-//		TRACE("move constructor\n");
-//		a.m_data = 0;
-//	}
-//	A & operator = (A &&a) {
-//		TRACE("move assigment\n");
-//		if (this != &a) {
-//			m_data = a.m_data;
-//			a.m_data = 0;
-//		}
-//		return *this;
-//	}
-//	~A() { TRACE("destructor\n"); delete[] m_data; }
-//private:
-//	char * m_data;
-//};
-//
-//void swap(A &a, A &b)
-//{
-//	A tmp(move(a));
-//	a = move(b);
-//	b = move(tmp);
-//}
-
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,

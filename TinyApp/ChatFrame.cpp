@@ -49,6 +49,9 @@ HICON ChatFrame::RetrieveIcon()
 LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
+	//AnimateWindow(m_hWND, 1000, AW_ACTIVATE | AW_BLEND);
+	//InvalidateRect(m_hWND, NULL, TRUE);
+	//UpdateWindow();
 	return FALSE;
 }
 

@@ -224,10 +224,10 @@ namespace TinyUI
 		{
 			m_iocp = new IO::TinyIOCP(dwConcurrency);
 			if (!m_iocp)
-				throw exception("new TinyIOCP Fail");
+				throw exception("Create TinyIOCP Fail");
 			m_tasks.Reset(new TinyScopedIOTasks(dwConcurrency, m_iocp));
 			if (!m_tasks)
-				throw exception("new TinyScopedIOTasks Fail");
+				throw exception("Create TinyScopedIOTasks Fail");
 		}
 		TinyIOServer::~TinyIOServer()
 		{
