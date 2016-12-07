@@ -61,6 +61,7 @@ namespace TinyUI
 #ifndef SELECTANY
 #define	SELECTANY	__declspec(selectany)
 #endif 
+
 #ifndef ASSERT
 #define ASSERT(expr) _ASSERTE(expr)
 #endif 

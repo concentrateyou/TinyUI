@@ -204,7 +204,7 @@ namespace TinyUI
 		Callback(const Callback& callback)
 			: CallbackBase(callback)
 		{
-			TRACE("Callback拷贝构造:new-%d,old-%d\n", this, &other);
+			TRACE("Callback拷贝构造:new-%d,old-%d\n", this, &callback);
 		}
 		Callback(Callback&& other)
 			: CallbackBase(std::move(other))

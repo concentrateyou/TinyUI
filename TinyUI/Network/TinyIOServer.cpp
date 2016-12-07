@@ -178,11 +178,6 @@ namespace TinyUI
 					}
 				}
 				break;
-				case OP_ERROR:
-				{
-
-				}
-				break;
 				}
 			}
 		}

@@ -11,24 +11,30 @@ namespace TinyUI
 {
 	namespace IO
 	{
-		/// <summary>
-		/// ÈÎÎñÏî
-		/// </summary>
 		class TaskItem
 		{
+			friend class TinyTaskPool;
 		public:
-			TaskItem();
+			enum
+			{
+				TASK_UNKNOW,
+				TASK_DELAY,
+				TASK_SCHEDULE,
+				TASK_QUIT
+			};
+		public:
+			TaskItem(DWORD dwTaskType = TASK_UNKNOW);
 			virtual ~TaskItem();
 		public:
-			virtual void Invoke() = 0;
+			virtual void OnInvoke() = 0;
 			virtual void OnComplete() = 0;
+			virtual void OnDestory() = 0;
 		public:
-			DWORD  GetDelay() const;
-			void   SetDelay(DWORD dwDelay = 0);
-			string GetName() const;
-			void   SetName(const string& name);
-		private:
-			DWORD	m_dwDelay;
+			DWORD	GetTaskType() const;
+			string	GetName() const;
+			void	SetName(const string& name);
+		protected:
+			DWORD 	m_dwTaskType;
 			string	m_name;
 		};
 		/// <summary>

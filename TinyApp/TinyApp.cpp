@@ -12,6 +12,7 @@
 #include "Network/TinySocket.h"
 #include "Network/TinyHTTPClient.h"
 
+
 BOOL LoadSeDebugPrivilege()
 {
 	DWORD   err;
@@ -43,59 +44,48 @@ BOOL LoadSeDebugPrivilege()
 	return TRUE;
 }
 
-//CHAR buffer[10];
-//string val;
-//
-//void OnRecv(DWORD errorCode, DWORD dwBytes, LPVOID key)
+//class A
 //{
-//	string str;
-//	str.resize(dwBytes);
-//	memcpy(&str[0], buffer, dwBytes);
-//	val += str;
-//	TinyUI::Network::TinySocket* socket = reinterpret_cast<TinyUI::Network::TinySocket*>(key);
-//	TinyUI::Network::CompleteCallback cb = BindCallback(&OnRecv);
-//	socket->BeginReceive(buffer, 10, 0, cb, key);
-//}
-//
-//void OnConnect(DWORD errorCode, DWORD dwBytes, LPVOID key)
-//{
-//	TinyUI::Network::TinySocket* socket = reinterpret_cast<TinyUI::Network::TinySocket*>(key);
-//	TinyUI::Network::CompleteCallback cb = BindCallback(&OnRecv);
-//	socket->BeginReceive(buffer, 10, 0, cb, key);
-//}
-//CHAR buffer[1024];
-//
-//void OnReceive(DWORD errorCode, TinyUI::Network::AsyncResult* result)
-//{
-//	if (errorCode != 0)
-//		return;
-//	TinyUI::Network::TinySocket* client = reinterpret_cast<TinyUI::Network::TinySocket*>(result->AsyncState);
-//	INT size = client->EndReceive(result);
-//	string str;
-//	str.resize(size + 1);
-//	memcpy(&str[0], buffer, size);
-//	client->Close();
-//	SAFE_DELETE(client);
-//}
-//void OnAccept(DWORD errorCode, TinyUI::Network::AsyncResult* result)
-//{
-//	if (errorCode != 0)
-//		return;
-//	TinyUI::Network::TinySocket* listen = reinterpret_cast<TinyUI::Network::TinySocket*>(result->AsyncState);
-//	TinyUI::Network::TinySocket* client = listen->EndAccept(result);
-//	TinyUI::Network::CompleteCallback cb = BindCallback(&OnReceive);
-//	BOOL bRes = client->BeginReceive(buffer, 1024, 0, cb, client);
-//	if (!bRes)
-//	{
-//		TRACE("BeginReceive-ERROR:%d\n",WSAGetLastError());
+//public:
+//	A(const char *pstr) {
+//		TRACE("constructor\n");
+//		m_data = (pstr != 0 ? strcpy(new char[strlen(pstr) + 1], pstr) : 0);
 //	}
+//	A(const A &a) {
+//		TRACE("copy constructor\n");
+//		m_data = (a.m_data != 0 ? strcpy(new char[strlen(a.m_data) + 1], a.m_data) : 0);
+//	}
+//	A &operator =(const A &a) {
+//		TRACE("copy assigment\n");
+//		if (this != &a) {
+//			delete[] m_data;
+//			m_data = (a.m_data != 0 ? strcpy(new char[strlen(a.m_data) + 1], a.m_data) : 0);
+//		}
+//		return *this;
+//	}
+//	A(A &&a) : m_data(a.m_data) {
+//		TRACE("move constructor\n");
+//		a.m_data = 0;
+//	}
+//	A & operator = (A &&a) {
+//		TRACE("move assigment\n");
+//		if (this != &a) {
+//			m_data = a.m_data;
+//			a.m_data = 0;
+//		}
+//		return *this;
+//	}
+//	~A() { TRACE("destructor\n"); delete[] m_data; }
+//private:
+//	char * m_data;
+//};
+//
+//void swap(A &a, A &b)
+//{
+//	A tmp(move(a));
+//	a = move(b);
+//	b = move(tmp);
 //}
-
-void OnAccept(DWORD errorCode, TinyUI::Network::AsyncResult* result)
-{
-
-}
-
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -113,13 +103,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	HRESULT hRes = OleInitialize(NULL);
 
 	LoadSeDebugPrivilege();
-
-	TinyUI::Network::TinyIOServer ioserver(1);
-	ioserver.Run();
-
-	/*TinyUI::Network::TinySocket socket(&ioserver);
-	socket.Open();
-	socket.BeginAccept(BindCallback(&OnAccept), NULL);*/
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));

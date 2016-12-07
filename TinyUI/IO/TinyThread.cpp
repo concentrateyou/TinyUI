@@ -6,8 +6,8 @@ namespace TinyUI
 {
 	namespace IO
 	{
-		TaskItem::TaskItem()
-			:m_dwDelay(0)
+		TaskItem::TaskItem(DWORD dwTaskType)
+			:m_dwTaskType(dwTaskType)
 		{
 
 		}
@@ -15,13 +15,9 @@ namespace TinyUI
 		{
 
 		}
-		DWORD TaskItem::GetDelay() const
+		DWORD TaskItem::GetTaskType() const
 		{
-			return m_dwDelay;
-		}
-		void TaskItem::SetDelay(DWORD dwDelay)
-		{
-			m_dwDelay = dwDelay;
+			return m_dwTaskType;
 		}
 		string TaskItem::GetName() const
 		{
@@ -44,9 +40,10 @@ namespace TinyUI
 		TinyTLS::TinyTLS()
 			:m_dwTlsIndex(0)
 		{
-			m_dwTlsIndex = TlsAlloc();
-			if (m_dwTlsIndex == TLS_OUT_OF_INDEXES)
+			if ((m_dwTlsIndex = TlsAlloc()) == TLS_OUT_OF_INDEXES)
+			{
 				throw system_error(GetLastError(), system_category());
+			}
 		}
 		void TinyTLS::SetValue(LPVOID ps)
 		{
