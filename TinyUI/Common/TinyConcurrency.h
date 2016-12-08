@@ -5,17 +5,6 @@
 
 namespace TinyUI
 {
-	template<class _Ty>
-	class AssociateState;
-
-	template<class _Ty>
-	class AssociateState
-	{
-		typedef _Ty SelfType;
-	private:
-		_Ty		m_result;
-	};
-
 	template<class _Ty >
 	class TinyFuture
 	{

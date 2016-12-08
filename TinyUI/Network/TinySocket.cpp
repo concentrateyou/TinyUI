@@ -259,6 +259,7 @@ namespace TinyUI
 		BOOL TinySocket::BeginAccept(CompleteCallback&& callback, LPVOID arg)
 		{
 			ASSERT(m_ioserver);
+			TinyScopedArray<CHAR> data;
 			DWORD errorCode = ERROR_SUCCESS;
 			TinyAutoLock lock(m_synclock);
 			TinySocket* socket = new TinySocket(m_ioserver);
@@ -277,9 +278,9 @@ namespace TinyUI
 			context->Result->AsyncState = arg;
 			context->Complete = std::forward<CompleteCallback>(callback);
 			DWORD dwBytes = 0;
-			DWORD dwAddressSize = sizeof(SOCKADDR_IN) + 16;
-			CHAR data[(sizeof(SOCKADDR_IN) + 16) * 2];
-			ZeroMemory(data, (sizeof(SOCKADDR_IN) + 16) * 2);
+			DWORD dwAddressSize = m_addressFamily == AF_INET ? sizeof(SOCKADDR_IN) + 16 : sizeof(SOCKADDR_IN6) + 16;
+			data.Reset(new CHAR[dwAddressSize * 2]);
+			ZeroMemory(data, dwAddressSize * 2);
 			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
 			if (!m_acceptex(m_socket, socket->Handle(), data, 0, dwAddressSize, dwAddressSize, &dwBytes, ps) &&
 				ERROR_IO_PENDING != WSAGetLastError())

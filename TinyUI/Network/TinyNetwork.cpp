@@ -263,8 +263,6 @@ namespace TinyUI
 			{
 			case IPAddress::IPv4AddressSize:
 			{
-				if (*size < SOCKADDR_IN_SIZE)
-					return FALSE;
 				*size = SOCKADDR_IN_SIZE;
 				SOCKADDR_IN* addr = reinterpret_cast<SOCKADDR_IN*>(address);
 				memset(addr, 0, sizeof(struct sockaddr_in));
@@ -275,8 +273,6 @@ namespace TinyUI
 			}
 			case IPAddress::IPv6AddressSize:
 			{
-				if (*size < SOCKADDR_IN6_SIZE)
-					return FALSE;
 				*size = SOCKADDR_IN6_SIZE;
 				SOCKADDR_IN6* addr6 = reinterpret_cast<SOCKADDR_IN6*>(address);
 				memset(addr6, 0, SOCKADDR_IN6_SIZE);

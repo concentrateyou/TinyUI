@@ -44,6 +44,44 @@ BOOL LoadSeDebugPrivilege()
 	return TRUE;
 }
 
+//CHAR buffer[1024];
+//
+//void OnReceive(DWORD dwError, TinyUI::Network::AsyncResult* is)
+//{
+//	if (dwError == 0)
+//	{
+//		TinyUI::Network::TinySocket* socket = reinterpret_cast<TinyUI::Network::TinySocket*>(is->AsyncState);
+//		INT size = socket->EndReceive(is);
+//		TinyString str(size + 1);
+//		memcpy(str.STR(), buffer, size);
+//		str[size] = '\0';
+//		TRACE("OnReceive:%s\n", str.STR());
+//		socket->BeginReceive(buffer, 1024, 0, BindCallback(&OnReceive), socket);
+//
+//	}
+//	else
+//	{
+//		TRACE("OnReceive-dwError:%d\n", dwError);
+//	}
+//
+//}
+//
+//void OnAccept(DWORD dwError, TinyUI::Network::AsyncResult* is)
+//{
+//	if (dwError == 0)
+//	{
+//		TRACE("OnAccept-³É¹¦\n");
+//		TinyUI::Network::TinySocket* socket = reinterpret_cast<TinyUI::Network::TinySocket*>(is->AsyncState);
+//		TinyUI::Network::TinySocket* client = socket->EndAccept(is);
+//		client->BeginReceive(buffer, 1024, 0, BindCallback(&OnReceive), client);
+//	}
+//	else
+//	{
+//		TRACE("OnAccept-dwError:%d\n", dwError);
+//	}
+//}
+
+
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -61,6 +99,15 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
+	//TinyUI::Network::TinyIOServer	ioserver(1);
+	//ioserver.Run();
+
+	//TinyUI::Network::TinySocket	socket(&ioserver);
+	//socket.Open();
+	//socket.Bind(TinyUI::Network::IPEndPoint(TinyUI::Network::IPAddress::IPv4Any(), 5500));
+	//socket.Listen();
+	//socket.BeginAccept(BindCallback(&OnAccept), &socket);
+
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
@@ -72,6 +119,8 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	INT loopRes = theLoop.MessageLoop();
 	TinyApplication::GetInstance()->RemoveMessageLoop();
 	TinyApplication::GetInstance()->Uninitialize();
+
+	ioserver.Close();
 
 	OleUninitialize();
 	MFShutdown();
