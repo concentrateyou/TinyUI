@@ -15,11 +15,17 @@ namespace TinyUI
 		TinyFuture& operator=(TinyFuture&& _Right);
 		~TinyFuture();
 	};
-
 	template<class _Ty >
 	class TinyPromise
 	{
 		DISALLOW_COPY_AND_ASSIGN(TinyPromise)
+	};
+	/// <summary>
+	/// 线程安全队列
+	/// </summary>
+	class TinyConcurrencyQueue
+	{
+
 	};
 }
 

@@ -399,9 +399,6 @@
     <ClInclude Include="Network\TinyURL.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
-    <ClInclude Include="IO\TinyCircleBuffer.h">
-      <Filter>头文件\IO</Filter>
-    </ClInclude>
     <ClInclude Include="IO\TinyTaskPool.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
@@ -742,9 +739,6 @@
     </ClCompile>
     <ClCompile Include="Network\TinyURL.cpp">
       <Filter>源文件\Network</Filter>
-    </ClCompile>
-    <ClCompile Include="IO\TinyCircleBuffer.cpp">
-      <Filter>源文件\IO</Filter>
     </ClCompile>
     <ClCompile Include="IO\TinyTaskPool.cpp">
       <Filter>源文件\IO</Filter>
