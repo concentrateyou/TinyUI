@@ -31,6 +31,8 @@ namespace TinyUI
 		};
 		/// <summary>
 		/// 捕获声卡音频
+		/// (eRender:音频播放设备,eCapture:音频采集设备)
+		/// (eConsole:与计算机交互,eCommunications:与他人的声音交流,eMultimedia:播放或者录制电影)
 		/// </summary>
 		class TinyWASAPIAudioCapture : public AudioObserver
 		{
@@ -54,18 +56,18 @@ namespace TinyUI
 		private:
 			void			OnMessagePump();
 		private:
-			DWORD										m_dwChannelMask;
-			DWORD										m_dwFlag;
-			UINT32										m_count;
-			TinyEvent									m_sampleReady;
-			TinyEvent									m_audioStop;
-			IO::TinyTaskBase							m_task;
-			TinyScopedArray<BYTE>						m_waveFMT;
-			TinyComPtr<IAudioClient>					m_audioClient;
-			TinyComPtr<IAudioClient>					m_audioClientLB;
-			TinyComPtr<IAudioCaptureClient>				m_audioCapture;
-			TinyComPtr<ISimpleAudioVolume>				m_audioVolume;
-			Callback<void(BYTE*, LONG, LPVOID)>	m_callback;
+			DWORD									m_dwChannelMask;
+			DWORD									m_dwFlag;
+			UINT32									m_count;
+			TinyEvent								m_sampleReady;
+			TinyEvent								m_audioStop;
+			IO::TinyTaskBase						m_task;
+			TinyScopedArray<BYTE>					m_waveFMT;
+			TinyComPtr<IAudioClient>				m_audioClient;
+			TinyComPtr<IAudioClient>				m_audioClientLB;
+			TinyComPtr<IAudioCaptureClient>			m_audioCapture;
+			TinyComPtr<ISimpleAudioVolume>			m_audioVolume;
+			Callback<void(BYTE*, LONG, LPVOID)>		m_callback;
 		};
 	}
 }

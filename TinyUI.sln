@@ -25,6 +25,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Encode", "Encode\Encode.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenGL", "OpenGL\OpenGL.vcxproj", "{213AEAE7-6D11-4144-928A-1A930CF519B7}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AudioToolkit", "AudioToolkit\AudioToolkit.vcxproj", "{D2AF05B6-B05F-4531-AF69-45DF82D29C96}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_MBCS|Win32 = Debug_MBCS|Win32
@@ -222,6 +224,26 @@ Global
 		{213AEAE7-6D11-4144-928A-1A930CF519B7}.Release|Win32.Build.0 = Release|Win32
 		{213AEAE7-6D11-4144-928A-1A930CF519B7}.Release|x64.ActiveCfg = Release|x64
 		{213AEAE7-6D11-4144-928A-1A930CF519B7}.Release|x64.Build.0 = Release|x64
+		{D2AF05B6-B05F-4531-AF69-45DF82D29C96}.Debug_MBCS|Win32.ActiveCfg = Debug|Win32
+		{D2AF05B6-B05F-4531-AF69-45DF82D29C96}.Debug_MBCS|Win32.Build.0 = Debug|Win32
+		{D2AF05B6-B05F-4531-AF69-45DF82D29C96}.Debug_MBCS|x64.ActiveCfg = Debug|x64
+		{D2AF05B6-B05F-4531-AF69-45DF82D29C96}.Debug_MBCS|x64.Build.0 = Debug|x64
+		{D2AF05B6-B05F-4531-AF69-45DF82D29C96}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D2AF05B6-B05F-4531-AF69-45DF82D29C96}.Debug|Win32.Build.0 = Debug|Win32
+		{D2AF05B6-B05F-4531-AF69-45DF82D29C96}.Debug|x64.ActiveCfg = Debug|x64
+		{D2AF05B6-B05F-4531-AF69-45DF82D29C96}.Debug|x64.Build.0 = Debug|x64
+		{D2AF05B6-B05F-4531-AF69-45DF82D29C96}.Release_MBCS|Win32.ActiveCfg = Release|Win32
+		{D2AF05B6-B05F-4531-AF69-45DF82D29C96}.Release_MBCS|Win32.Build.0 = Release|Win32
+		{D2AF05B6-B05F-4531-AF69-45DF82D29C96}.Release_MBCS|x64.ActiveCfg = Release|x64
+		{D2AF05B6-B05F-4531-AF69-45DF82D29C96}.Release_MBCS|x64.Build.0 = Release|x64
+		{D2AF05B6-B05F-4531-AF69-45DF82D29C96}.Release_MT|Win32.ActiveCfg = Release|Win32
+		{D2AF05B6-B05F-4531-AF69-45DF82D29C96}.Release_MT|Win32.Build.0 = Release|Win32
+		{D2AF05B6-B05F-4531-AF69-45DF82D29C96}.Release_MT|x64.ActiveCfg = Release|x64
+		{D2AF05B6-B05F-4531-AF69-45DF82D29C96}.Release_MT|x64.Build.0 = Release|x64
+		{D2AF05B6-B05F-4531-AF69-45DF82D29C96}.Release|Win32.ActiveCfg = Release|Win32
+		{D2AF05B6-B05F-4531-AF69-45DF82D29C96}.Release|Win32.Build.0 = Release|Win32
+		{D2AF05B6-B05F-4531-AF69-45DF82D29C96}.Release|x64.ActiveCfg = Release|x64
+		{D2AF05B6-B05F-4531-AF69-45DF82D29C96}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

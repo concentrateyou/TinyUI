@@ -7,6 +7,9 @@ namespace TinyUI
 {
 	namespace Media
 	{
+		/// <summary>
+		/// »ØÉùÏû³ý()
+		/// </summary>
 		class TinyAudioAEC
 		{
 			DISALLOW_COPY_AND_ASSIGN(TinyAudioAEC)
