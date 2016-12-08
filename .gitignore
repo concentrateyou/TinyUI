@@ -27,3 +27,4 @@
 *.suo
 /WebRTCNS/Debug/WebRTCNS.tlog
 /WebRTCNS/Debug
+/OpenGL/Debug
