@@ -29,20 +29,12 @@ namespace TinyUI
 		}
 		//////////////////////////////////////////////////////////////////////////
 		TinyWASAPIAudio::TinyWASAPIAudio()
-			:m_dwStreamFlag(AUDCLNT_STREAMFLAGS_LOOPBACK | AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST),
-			m_shareMode(AUDCLNT_SHAREMODE_SHARED)
 		{
 
 		}
 		TinyWASAPIAudio::~TinyWASAPIAudio()
 		{
 
-		}
-		void TinyWASAPIAudio::Initialize(DWORD dwFlag, AUDCLNT_SHAREMODE shareMode, Callback<void(BYTE*, LONG, LPVOID)>&& callback)
-		{
-			m_dwStreamFlag = dwFlag;
-			m_shareMode = shareMode;
-			m_callback = std::move(callback);
 		}
 		BOOL TinyWASAPIAudio::GetDevices(vector<Name>& names)
 		{
@@ -110,9 +102,9 @@ namespace TinyUI
 			WAVEFORMATEX sFMT = { 0 };
 			sFMT.wFormatTag = WAVE_FORMAT_PCM;
 			sFMT.cbSize = 0;
-			const UINT frequencys[6] = { 48000, 44100, 16000, 96000, 32000, 8000 };
+			const UINT frequencys[7] = { 192000, 96000, 48000, 44100, 32000, 16000, 8000 };
 			const UINT channels[2] = { 2,1 };
-			const UINT bits[2] = { 16,8 };
+			const UINT bits[2] = { 16, 8 };
 			for (UINT frequency = 0; frequency < ARRAYSIZE(frequencys); frequency++)
 			{
 				for (UINT channel = 0; channel < ARRAYSIZE(channels); channel++)

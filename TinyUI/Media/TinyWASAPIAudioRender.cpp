@@ -7,6 +7,8 @@ namespace TinyUI
 	namespace Media
 	{
 		TinyWASAPIAudioRender::TinyWASAPIAudioRender()
+			:m_dwStreamFlag(DEFAULT_AUDCLNT_STREAMFLAGS),
+			m_shareMode(AUDCLNT_SHAREMODE_SHARED)
 		{
 			m_sampleReady.CreateEvent(FALSE, FALSE, NULL, NULL);
 			m_audioStop.CreateEvent(FALSE, FALSE, NULL, NULL);
@@ -15,7 +17,12 @@ namespace TinyUI
 		{
 			Close();
 		}
-
+		void TinyWASAPIAudioRender::Initialize(Callback<void(BYTE*, LONG, LPVOID)>&& callback, DWORD dwStreamFlag, AUDCLNT_SHAREMODE shareMode)
+		{
+			m_dwStreamFlag = dwStreamFlag;
+			m_shareMode = shareMode;
+			m_callback = std::move(callback);
+		}
 		BOOL TinyWASAPIAudioRender::Open(const Name& name, WAVEFORMATEX* pFMT)
 		{
 			TinyComPtr<IMMDeviceEnumerator> enumerator;
@@ -69,8 +76,13 @@ namespace TinyUI
 			hRes = m_audioClient->GetBufferSize(&m_count);
 			if (FAILED(hRes))
 				return hRes;
+			REFERENCE_TIME latency = 0;
+			hRes = m_audioClient->GetStreamLatency(&latency);
+			if (FAILED(hRes))
+				return hRes;
 			REFERENCE_TIME defaultPeriod = 0;
-			hRes = m_audioClient->GetDevicePeriod(&defaultPeriod, NULL);
+			REFERENCE_TIME minimumDevicePeriod = 0;
+			hRes = m_audioClient->GetDevicePeriod(&defaultPeriod, &minimumDevicePeriod);
 			if (FAILED(hRes))
 				return hRes;
 			if (m_dwStreamFlag & AUDCLNT_STREAMFLAGS_LOOPBACK)

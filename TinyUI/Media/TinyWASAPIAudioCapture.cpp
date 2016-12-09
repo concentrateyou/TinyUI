@@ -7,6 +7,7 @@ namespace TinyUI
 	namespace Media
 	{
 		TinyWASAPIAudioCapture::TinyWASAPIAudioCapture()
+			:m_dwStreamFlag(AUDCLNT_STREAMFLAGS_LOOPBACK | AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST)
 		{
 			m_sampleReady.CreateEvent(FALSE, FALSE, NULL, NULL);
 			m_audioStop.CreateEvent(FALSE, FALSE, NULL, NULL);
@@ -15,6 +16,11 @@ namespace TinyUI
 		TinyWASAPIAudioCapture::~TinyWASAPIAudioCapture()
 		{
 			Close();
+		}
+		void TinyWASAPIAudioCapture::Initialize(Callback<void(BYTE*, LONG, LPVOID)>&& callback, DWORD dwStreamFlag)
+		{
+			m_dwStreamFlag = dwStreamFlag;
+			m_callback = std::move(callback);
 		}
 		BOOL TinyWASAPIAudioCapture::Open(const Name& name, WAVEFORMATEX* pFMT)
 		{

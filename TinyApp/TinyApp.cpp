@@ -73,7 +73,8 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	vector<Media::TinyWASAPIAudioCapture::Name> names;
 	TinyUI::Media::TinyWASAPIAudioCapture::GetDevices(names);
 	vector<WAVEFORMATEX> s;
-	TinyUI::Media::TinyWASAPIAudioCapture::GetDeviceFormats(names[1], AUDCLNT_SHAREMODE_EXCLUSIVE, s);
+	TinyUI::Media::TinyWASAPIAudioCapture::GetDeviceFormats(names[0], AUDCLNT_SHAREMODE_SHARED, s);
+
 	//TinyUI::Media::TinyWASAPIAudioCapture capture;
 	//capture.Initialize(BindCallback(&CaptureCB));
 	//capture.Open(names[0]);

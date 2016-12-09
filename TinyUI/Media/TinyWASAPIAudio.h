@@ -24,14 +24,9 @@ namespace TinyUI
 		public:
 			TinyWASAPIAudio();
 			virtual ~TinyWASAPIAudio();
-			virtual	void Initialize(DWORD dwFlag, AUDCLNT_SHAREMODE shareMode, Callback<void(BYTE*, LONG, LPVOID)>&& callback);
 		public:
 			static BOOL GetDevices(vector<Name>& names);
 			static BOOL GetDeviceFormats(const Name& name, AUDCLNT_SHAREMODE shareMode, vector<WAVEFORMATEX>& s);
-		protected:
-			AUDCLNT_SHAREMODE					m_shareMode;
-			DWORD								m_dwStreamFlag;
-			Callback<void(BYTE*, LONG, LPVOID)>	m_callback;
 		};
 	}
 }
