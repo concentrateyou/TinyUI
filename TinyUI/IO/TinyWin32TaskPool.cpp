@@ -74,11 +74,11 @@ namespace TinyUI
 		{
 
 		}
-		BOOL TinyWin32Task::Submit(Closure& callback)
+		BOOL TinyWin32Task::Submit(Closure&& callback)
 		{
 			if (m_pWorks)
 			{
-				m_callback = callback;
+				m_callback = std::move(callback);
 				m_work = m_pWorks->SubmitTask(this, TinyWin32Task::WorkCallback);
 				return m_work != NULL;
 			}

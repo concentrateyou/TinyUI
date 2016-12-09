@@ -60,12 +60,12 @@ FFmpegResampler::~FFmpegResampler()
 {
 
 }
-BOOL FFmpegResampler::Open(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO, Callback<void(BYTE*, LONG, LPVOID)>& callback)
+BOOL FFmpegResampler::Open(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO, Callback<void(BYTE*, LONG, LPVOID)>&& callback)
 {
 	ASSERT(pFMTI && pFMTO);
 	m_waveFMTI = *pFMTI;
 	m_waveFMTO = *pFMTO;
-	m_callback = callback;
+	m_callback = std::move(callback);
 	m_output_layout = ConvertChannelLayoutToFFmpeg(pFMTO);
 	m_input_layout = ConvertChannelLayoutToFFmpeg(pFMTI);
 	m_input_format = ConvertAudioFormat(pFMTI);

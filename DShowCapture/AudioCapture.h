@@ -28,7 +28,7 @@ namespace DShow
 		AudioCapture();
 		virtual ~AudioCapture();
 		BOOL	Initialize(const Name& name);
-		BOOL	Initialize(const Name& name, Callback<void(BYTE*, LONG, FLOAT, LPVOID)>& callback);
+		BOOL	Initialize(const Name& name, Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& callback);
 		void	Uninitialize();
 		BOOL	Start();
 		BOOL	Stop();

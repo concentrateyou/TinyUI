@@ -12,19 +12,19 @@ namespace TinyUI
 	{
 #define MILLISECONDS_TO_VISUALIZE 20
 		/// <summary>
-		/// 捕获声卡音频
+		/// 播放音频
 		/// (eRender:音频播放设备,eCapture:音频采集设备)
 		/// (eConsole:与计算机交互,eCommunications:与他人的声音交流,eMultimedia:播放或者录制电影)
 		/// </summary>
-		class TinyWASAPIAudioCapture : public TinyWASAPIAudio, public AudioObserver
+		class TinyWASAPIAudioRender : public TinyWASAPIAudio, public AudioObserver
 		{
-			DISALLOW_COPY_AND_ASSIGN(TinyWASAPIAudioCapture)
+			DISALLOW_COPY_AND_ASSIGN(TinyWASAPIAudioRender)
 		public:
-			TinyWASAPIAudioCapture();
-			virtual ~TinyWASAPIAudioCapture();
+			TinyWASAPIAudioRender();
+			virtual ~TinyWASAPIAudioRender();
 			virtual void OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter) OVERRIDE;
 		public:
-			virtual BOOL	Open(const Name& name, WAVEFORMATEX* pFMT);
+			virtual BOOL	Open(const Name& name, WAVEFORMATEX* pFMT = NULL);
 			virtual BOOL	Start();
 			virtual BOOL	Stop();
 			virtual BOOL	Reset();
@@ -47,7 +47,7 @@ namespace TinyUI
 			TinyScopedArray<BYTE>				m_waveFMT;
 			TinyComPtr<IAudioClient>			m_audioClient;
 			TinyComPtr<IAudioClient>			m_audioClientLB;
-			TinyComPtr<IAudioCaptureClient>		m_audioCapture;
+			TinyComPtr<IAudioRenderClient>		m_audioRender;
 			TinyComPtr<ISimpleAudioVolume>		m_audioVolume;
 		};
 	}

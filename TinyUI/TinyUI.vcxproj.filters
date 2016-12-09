@@ -408,6 +408,12 @@
     <ClInclude Include="Common\TinyConcurrency.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
+    <ClInclude Include="Media\TinyWASAPIAudioRender.h">
+      <Filter>头文件\Media</Filter>
+    </ClInclude>
+    <ClInclude Include="Media\TinyWASAPIAudio.h">
+      <Filter>头文件\Media</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -748,6 +754,12 @@
     </ClCompile>
     <ClCompile Include="Common\TinyConcurrency.cpp">
       <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\TinyWASAPIAudioRender.cpp">
+      <Filter>源文件\Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\TinyWASAPIAudio.cpp">
+      <Filter>源文件\Media</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

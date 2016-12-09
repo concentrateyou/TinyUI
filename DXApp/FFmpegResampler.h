@@ -24,7 +24,7 @@ class FFmpegResampler
 public:
 	FFmpegResampler();
 	~FFmpegResampler();
-	BOOL Open(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO, Callback<void(BYTE*, LONG, LPVOID)>& callback);
+	BOOL Open(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO, Callback<void(BYTE*, LONG, LPVOID)>&& callback);
 	BOOL Resample(BYTE* bits, LONG count);
 	BOOL Close();
 public:

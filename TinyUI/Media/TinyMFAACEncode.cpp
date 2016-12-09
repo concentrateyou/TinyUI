@@ -14,9 +14,9 @@ namespace TinyUI
 		{
 
 		}
-		BOOL TinyMFAACEncode::Initialize(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO, Callback<void(BYTE*, LONG, LONGLONG, LPVOID)>& callback)
+		BOOL TinyMFAACEncode::Initialize(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO, Callback<void(BYTE*, LONG, LONGLONG, LPVOID)>&& callback)
 		{
-			m_callback = callback;
+			m_callback = std::move(callback);
 			m_waveFMTI = *pFMTI;
 			m_waveFMTO = *pFMTO;
 			TinyComPtr<IUnknown> unknow;

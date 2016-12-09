@@ -264,7 +264,7 @@ LRESULT CMainFrame::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHa
 	m_audioOutput1.EVENT_SelectChange -= m_onAudioOutputChange1;
 	m_audioOutput2.EVENT_SelectChange -= m_onAudioOutputChange2;
 
-	m_capture.Close();
+	//m_capture.Close();
 
 	return FALSE;
 }
@@ -320,11 +320,10 @@ void CMainFrame::OnAudioInputSelectChange2(INT index)
 {
 	const DShow::AudioCaptureParam& param = m_audioInputParams[index];
 	m_audioInput.Uninitialize();
-	m_audioInputCB = BindCallback(&CMainFrame::OnAudioInput, this);
-	m_audioInput.Initialize(m_audioInputNames[m_audioInput1.GetCurSel()], m_audioInputCB);
+	m_audioInput.Initialize(m_audioInputNames[m_audioInput1.GetCurSel()], BindCallback(&CMainFrame::OnAudioInput, this));
 	m_audioInput.Allocate(param);
 
-	m_waveFile.Create("D:\\123.wav", &param.GetFormat());
+	//m_waveFile.Create("D:\\123.wav", &param.GetFormat());
 }
 
 void CMainFrame::OnAudioInput(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)
@@ -346,8 +345,7 @@ void CMainFrame::OnAudioOutputSelectChange2(INT index)
 {
 	const DShow::AudioCaptureParam& param = m_audioOutputParams[index];
 	m_audioOutput.Uninitialize();
-	m_audioOutputCB = BindCallback(&CMainFrame::OnAudioOutput, this);
-	m_audioOutput.Initialize(m_audioOutputNames[m_audioOutput1.GetCurSel()], m_audioOutputCB);
+	m_audioOutput.Initialize(m_audioOutputNames[m_audioOutput1.GetCurSel()], BindCallback(&CMainFrame::OnAudioOutput, this));
 	m_audioOutput.Allocate(param);
 }
 void CMainFrame::OnAudioOutputStart(void*, INT)

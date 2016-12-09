@@ -4,7 +4,6 @@
 #include "Control/TinyComboBox.h"
 #include "Control/TinyButton.h"
 #include "Control/TinyLabel.h"
-#include "Media/TinyWASAPIAudioCapture.h"
 #include "VideoCapture.h"
 #include "AudioCapture.h"
 #include "AudioCapture.h"
@@ -50,7 +49,7 @@ public:
 	void OnAudioOutput(BYTE* bits, LONG size, FLOAT ts, LPVOID ps);
 
 private:
-	Media::TinyWASAPIAudioCapture	m_capture;
+	//Media::TinyRenderAudioCapture	m_capture;
 
 	TinyLabel			m_control;
 	DShow::VideoCapture m_videoDevice;
@@ -74,7 +73,6 @@ private:
 	TinyScopedPtr<Delegate<void(INT)>> m_onAudioInputChange2;
 	TinyScopedPtr<Delegate<void(void*, INT)>> m_onAudioInputStart;
 	TinyScopedPtr<Delegate<void(void*, INT)>> m_onAudioInputStop;
-	TinyUI::Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_audioInputCB;
 	TinyComboBox		m_audioInput1;
 	TinyComboBox		m_audioInput2;
 	TinyButton			m_audioInputStart;
@@ -88,7 +86,7 @@ private:
 	TinyScopedPtr<Delegate<void(INT)>> m_onAudioOutputChange2;
 	TinyScopedPtr<Delegate<void(void*, INT)>> m_onAudioOutputStart;
 	TinyScopedPtr<Delegate<void(void*, INT)>> m_onAudioOutputStop;
-	TinyUI::Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_audioOutputCB;
+
 	TinyComboBox		m_audioOutput1;
 	TinyComboBox		m_audioOutput2;
 	TinyButton			m_audioOutputStart;

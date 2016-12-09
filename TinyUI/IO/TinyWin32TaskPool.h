@@ -41,7 +41,7 @@ namespace TinyUI
 		public:
 			explicit TinyWin32Task(TinyWin32TaskPool* pWorks);
 			virtual ~TinyWin32Task();
-			BOOL Submit(Closure& callback);
+			BOOL Submit(Closure&& callback);
 			BOOL Close();
 		private:
 			static void NTAPI WorkCallback(PTP_CALLBACK_INSTANCE Instance, PVOID  Context, PTP_WORK  Work);

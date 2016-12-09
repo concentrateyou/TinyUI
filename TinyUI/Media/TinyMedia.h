@@ -19,6 +19,8 @@
 #include <mfreadwrite.h>
 #include <mmdeviceapi.h>
 #include <Wmcodecdsp.h>
+#include <functiondiscoverykeys.h>
+
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "strmiids.lib")
 #pragma comment(lib, "avrt.lib")
@@ -88,16 +90,30 @@ namespace TinyUI
 			}
 			return (ChannelLayout)pFMT->nChannels;
 		}
-
+		class TinyScopedAvrt
+		{
+			DISALLOW_COPY_AND_ASSIGN(TinyScopedAvrt)
+		public:
+			TinyScopedAvrt(LPCSTR pzTaskName);
+			~TinyScopedAvrt();
+			operator HANDLE() const;
+			BOOL SetPriority(AVRT_PRIORITY priority = AVRT_PRIORITY_CRITICAL);
+		private:
+			HANDLE	m_hMM;
+			DWORD	m_dwTaskIndex;
+		};
+		//////////////////////////////////////////////////////////////////////////
 		class AudioObserver : public TinyLock
 		{
 			DECLARE_DYNAMIC(AudioObserver)
 			DISALLOW_COPY_AND_ASSIGN(AudioObserver)
 		public:
 			AudioObserver();
+		public:
 			virtual void OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter) = 0;
 		protected:
 			virtual ~AudioObserver();
+			
 		};
 	};
 }

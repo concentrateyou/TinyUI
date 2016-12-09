@@ -13,7 +13,7 @@ namespace TinyUI
 			TinyMFAACEncode(DWORD dwRate = 128);
 			~TinyMFAACEncode();
 		public:
-			BOOL Initialize(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO, Callback<void(BYTE*, LONG, LONGLONG, LPVOID)>& callback);
+			BOOL Initialize(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO, Callback<void(BYTE*, LONG, LONGLONG, LPVOID)>&& callback);
 			virtual void OnDataAvailable(BYTE* bits, LONG size, LONGLONG ts, LPVOID lpParameter);
 		public:
 			BOOL Open();

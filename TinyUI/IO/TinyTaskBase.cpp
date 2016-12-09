@@ -24,7 +24,7 @@ namespace TinyUI
 
 		BOOL TinyTaskBase::Submit(Closure&& callback)
 		{
-			m_callback = callback;
+			m_callback = std::move(callback);
 			m_hTask = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)TinyTaskBase::Callback, (LPVOID)this, 0, &m_dwTaskID);
 			return m_hTask != NULL;
 		}

@@ -31,6 +31,5 @@ private:
 	AudioCapture		m_capture;
 	AudioCapture::Name	m_name;
 	AudioCaptureParam		m_audioParam;
-	TinyUI::Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_audioCB;
 };
 

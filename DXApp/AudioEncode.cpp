@@ -30,8 +30,7 @@ BOOL AudioEncode::Initialize(const AudioCapture::Name& name, const AudioCaptureP
 {
 	m_name = name;
 	m_audioParam = param;
-	m_audioCB = BindCallback(&AudioEncode::OnAudio, this);
-	BOOL bRes = m_capture.Initialize(m_name, m_audioCB);
+	BOOL bRes = m_capture.Initialize(m_name, BindCallback(&AudioEncode::OnAudio, this));
 	if (!bRes)
 		return FALSE;
 	bRes = m_capture.Allocate(param);

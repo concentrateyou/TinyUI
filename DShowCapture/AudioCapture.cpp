@@ -87,7 +87,7 @@ namespace DShow
 			return FALSE;
 		return TRUE;
 	}
-	BOOL AudioCapture::Initialize(const Name& name, Callback<void(BYTE*, LONG, FLOAT, LPVOID)>& callback)
+	BOOL AudioCapture::Initialize(const Name& name, Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& callback)
 	{
 		if (Initialize(name))
 		{

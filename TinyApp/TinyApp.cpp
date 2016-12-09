@@ -8,10 +8,10 @@
 #include "Windowless/TinyVisualHWND.h"
 #include "Windowless/TinyVisualRichText.h"
 #include "Render/TinyDDraw.h"
+#include "Media/TinyWASAPIAudioCapture.h"
 #include "Network/TinyIOServer.h"
 #include "Network/TinySocket.h"
 #include "Network/TinyHTTPClient.h"
-
 
 BOOL LoadSeDebugPrivilege()
 {
@@ -44,43 +44,13 @@ BOOL LoadSeDebugPrivilege()
 	return TRUE;
 }
 
-//CHAR buffer[1024];
-//
-//void OnReceive(DWORD dwError, TinyUI::Network::AsyncResult* is)
-//{
-//	if (dwError == 0)
-//	{
-//		TinyUI::Network::TinySocket* socket = reinterpret_cast<TinyUI::Network::TinySocket*>(is->AsyncState);
-//		INT size = socket->EndReceive(is);
-//		TinyString str(size + 1);
-//		memcpy(str.STR(), buffer, size);
-//		str[size] = '\0';
-//		TRACE("OnReceive:%s\n", str.STR());
-//		socket->BeginReceive(buffer, 1024, 0, BindCallback(&OnReceive), socket);
-//
-//	}
-//	else
-//	{
-//		TRACE("OnReceive-dwError:%d\n", dwError);
-//	}
-//
-//}
-//
-//void OnAccept(DWORD dwError, TinyUI::Network::AsyncResult* is)
-//{
-//	if (dwError == 0)
-//	{
-//		TRACE("OnAccept-³É¹¦\n");
-//		TinyUI::Network::TinySocket* socket = reinterpret_cast<TinyUI::Network::TinySocket*>(is->AsyncState);
-//		TinyUI::Network::TinySocket* client = socket->EndAccept(is);
-//		client->BeginReceive(buffer, 1024, 0, BindCallback(&OnReceive), client);
-//	}
-//	else
-//	{
-//		TRACE("OnAccept-dwError:%d\n", dwError);
-//	}
-//}
+TinyUI::Media::TinyWaveFile waveFile;
+WAVEFORMATEX* waveFormat;
 
+void CaptureCB(BYTE* bits, LONG size, LPVOID ps)
+{
+	//waveFile.Write(bits, size * waveFormat->nBlockAlign);
+}
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -99,20 +69,26 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
-	//TinyUI::Network::TinyIOServer	ioserver(1);
-	//ioserver.Run();
 
-	//TinyUI::Network::TinySocket	socket(&ioserver);
-	//socket.Open();
-	//socket.Bind(TinyUI::Network::IPEndPoint(TinyUI::Network::IPAddress::IPv4Any(), 5500));
-	//socket.Listen();
-	//socket.BeginAccept(BindCallback(&OnAccept), &socket);
+	vector<Media::TinyWASAPIAudioCapture::Name> names;
+	TinyUI::Media::TinyWASAPIAudioCapture::GetDevices(names);
+	vector<WAVEFORMATEX> s;
+	TinyUI::Media::TinyWASAPIAudioCapture::GetDeviceFormats(names[1], AUDCLNT_SHAREMODE_EXCLUSIVE, s);
+	//TinyUI::Media::TinyWASAPIAudioCapture capture;
+	//capture.Initialize(BindCallback(&CaptureCB));
+	//capture.Open(names[0]);
+	//waveFormat = capture.GetInputFormat();
+	////waveFile.Create("D:\\123.wav", waveFormat);
+	//capture.Start();
+
+
+
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	ChatFrame uiImpl;
+	CMainFrame uiImpl;
 	uiImpl.Create(NULL, 50, 50, 800, 600);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();
@@ -120,7 +96,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->RemoveMessageLoop();
 	TinyApplication::GetInstance()->Uninitialize();
 
-	ioserver.Close();
+	//capture.Close();
 
 	OleUninitialize();
 	MFShutdown();

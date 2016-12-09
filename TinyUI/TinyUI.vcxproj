@@ -157,11 +157,13 @@
     <ClInclude Include="IO\TinyWin32TaskPool.h" />
     <ClInclude Include="Media\TinyAudioAEC.h" />
     <ClInclude Include="Media\TinyAudioMixer.h" />
+    <ClInclude Include="Media\TinyWASAPIAudio.h" />
     <ClInclude Include="Media\TinyMedia.h" />
     <ClInclude Include="Media\TinyMFAACEncode.h" />
     <ClInclude Include="Media\TinyMFH264Encode.h" />
     <ClInclude Include="Media\TinyMFResampler.h" />
     <ClInclude Include="Media\TinyWASAPIAudioCapture.h" />
+    <ClInclude Include="Media\TinyWASAPIAudioRender.h" />
     <ClInclude Include="Media\TinyWave.h" />
     <ClInclude Include="Network\TinyHTTPClient.h" />
     <ClInclude Include="Network\TinyHTTPRequest.h" />
@@ -271,11 +273,13 @@
     <ClCompile Include="IO\TinyWin32TaskPool.cpp" />
     <ClCompile Include="Media\TinyAudioAEC.cpp" />
     <ClCompile Include="Media\TinyAudioMixer.cpp" />
+    <ClCompile Include="Media\TinyWASAPIAudio.cpp" />
     <ClCompile Include="Media\TinyMedia.cpp" />
     <ClCompile Include="Media\TinyMFAACEncode.cpp" />
     <ClCompile Include="Media\TinyMFH264Encode.cpp" />
     <ClCompile Include="Media\TinyMFResampler.cpp" />
     <ClCompile Include="Media\TinyWASAPIAudioCapture.cpp" />
+    <ClCompile Include="Media\TinyWASAPIAudioRender.cpp" />
     <ClCompile Include="Media\TinyWave.cpp" />
     <ClCompile Include="Network\TinyHTTPClient.cpp" />
     <ClCompile Include="Network\TinyHTTPRequest.cpp" />
