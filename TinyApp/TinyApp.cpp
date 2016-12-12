@@ -9,6 +9,7 @@
 #include "Windowless/TinyVisualRichText.h"
 #include "Render/TinyDDraw.h"
 #include "Media/TinyWASAPIAudioCapture.h"
+#include "Media/TinyWASAPIAudioRender.h"
 #include "Network/TinyIOServer.h"
 #include "Network/TinySocket.h"
 #include "Network/TinyHTTPClient.h"
@@ -69,12 +70,21 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
+	TinyUI::Media::TinyWaveFile waveFile;
+	waveFile.Open("D:\\1.wav");
 
-	vector<Media::TinyWASAPIAudioCapture::Name> names;
-	TinyUI::Media::TinyWASAPIAudioCapture::GetDevices(names);
-	vector<WAVEFORMATEX> s;
-	TinyUI::Media::TinyWASAPIAudioCapture::GetDeviceFormats(names[0], AUDCLNT_SHAREMODE_SHARED, s);
+	vector<Media::TinyWASAPIAudioRender::Name> names;
+	TinyUI::Media::TinyWASAPIAudioRender::GetDevices(eRender, names);
+	vector<WAVEFORMATPCMEX> s;
+	TinyUI::Media::TinyWASAPIAudioRender::GetDeviceFormats(names[0], AUDCLNT_SHAREMODE_EXCLUSIVE,s);
+	BOOL bRes = TinyUI::Media::TinyWASAPIAudioRender::IsFormatValid(names[0], AUDCLNT_SHAREMODE_EXCLUSIVE, &waveFile.GetFormat());
 
+	TinyUI::Media::TinyWASAPIAudioRender render;
+	render.Initialize(DEFAULT_RENDER_AUDCLNT_STREAMFLAGS, AUDCLNT_SHAREMODE_EXCLUSIVE);
+	bRes = render.Open(names[0], &waveFile.GetFormat());
+	/*TinyUI::Media::TinyWASAPIAudioRender render;
+	render.Initialize();
+	render.Open(names[0], &s[0]);*/
 	//TinyUI::Media::TinyWASAPIAudioCapture capture;
 	//capture.Initialize(BindCallback(&CaptureCB));
 	//capture.Open(names[0]);

@@ -27,11 +27,12 @@
 #pragma comment(lib, "Mfplat.lib")
 #pragma comment(lib, "Mfuuid.lib")
 #pragma comment(lib, "mf.lib")
+#pragma comment(lib, "avrt.lib")
 #pragma comment(lib, "mfplat.lib")
 #pragma comment(lib, "mfplay.lib")
 #pragma comment(lib, "mfreadwrite.lib")
 #pragma comment(lib, "mfuuid.lib")
-#pragma comment(lib, "wmcodecdspuuid")
+#pragma comment(lib, "wmcodecdspuuid.lib")
 
 namespace TinyUI
 {
@@ -44,7 +45,8 @@ namespace TinyUI
 #define KSAUDIO_SPEAKER_2POINT1 (KSAUDIO_SPEAKER_STEREO|SPEAKER_LOW_FREQUENCY)
 #define MILLISECONDS_TO_VISUALIZE 20
 
-#define DEFAULT_AUDCLNT_STREAMFLAGS (AUDCLNT_STREAMFLAGS_LOOPBACK | AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST)
+#define DEFAULT_RENDER_AUDCLNT_STREAMFLAGS  (AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST)
+#define DEFAULT_CAPTURE_AUDCLNT_STREAMFLAGS (AUDCLNT_STREAMFLAGS_LOOPBACK | AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST)
 
 		enum ChannelLayout
 		{
@@ -116,7 +118,6 @@ namespace TinyUI
 			virtual void OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter) = 0;
 		protected:
 			virtual ~AudioObserver();
-
 		};
 	};
 }
