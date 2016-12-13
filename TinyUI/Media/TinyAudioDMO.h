@@ -10,12 +10,12 @@ namespace TinyUI
 		/// <summary>
 		/// »ØÉùÏû³ý()
 		/// </summary>
-		class TinyAudioAEC
+		class TinyAudioDMO
 		{
-			DISALLOW_COPY_AND_ASSIGN(TinyAudioAEC)
+			DISALLOW_COPY_AND_ASSIGN(TinyAudioDMO)
 		public:
-			TinyAudioAEC();
-			~TinyAudioAEC();
+			TinyAudioDMO();
+			~TinyAudioDMO();
 		public:
 			BOOL Initialize(const WAVEFORMATEX* pFMT);
 			BOOL Open();

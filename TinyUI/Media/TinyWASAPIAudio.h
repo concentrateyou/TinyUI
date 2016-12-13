@@ -22,7 +22,7 @@ namespace TinyUI
 			ULONG STDMETHODCALLTYPE AddRef(void) OVERRIDE;
 			ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
 		};
-		//////////////////////////////////////////////////////////////////////////
+
 		class TinyWASAPIAudio
 		{
 			DISALLOW_COPY_AND_ASSIGN(TinyWASAPIAudio)

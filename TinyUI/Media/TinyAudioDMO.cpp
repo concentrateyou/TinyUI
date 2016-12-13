@@ -1,19 +1,19 @@
 #include "../stdafx.h"
-#include "TinyAudioAEC.h"
+#include "TinyAudioDMO.h"
 
 namespace TinyUI
 {
 	namespace Media
 	{
-		TinyAudioAEC::TinyAudioAEC()
+		TinyAudioDMO::TinyAudioDMO()
 		{
 
 		}
-		TinyAudioAEC::~TinyAudioAEC()
+		TinyAudioDMO::~TinyAudioDMO()
 		{
 
 		}
-		BOOL TinyAudioAEC::Initialize(const WAVEFORMATEX* pFMT)
+		BOOL TinyAudioDMO::Initialize(const WAVEFORMATEX* pFMT)
 		{
 			TinyComPtr<IUnknown> unknow;
 			HRESULT hRes = unknow.CoCreateInstance(CLSID_CWMAudioAEC, NULL, CLSCTX_INPROC_SERVER);
@@ -38,15 +38,15 @@ namespace TinyUI
 				return FALSE;
 			return TRUE;
 		}
-		BOOL TinyAudioAEC::Open()
+		BOOL TinyAudioDMO::Open()
 		{
 			return TRUE;
 		}
-		BOOL TinyAudioAEC::Close()
+		BOOL TinyAudioDMO::Close()
 		{
 			return TRUE;
 		}
-		BOOL TinyAudioAEC::SetVtI4Property(IPropertyStore* ptrPS, REFPROPERTYKEY key, LONG value)
+		BOOL TinyAudioDMO::SetVtI4Property(IPropertyStore* ptrPS, REFPROPERTYKEY key, LONG value)
 		{
 			PROPVARIANT pv;
 			PropVariantInit(&pv);
@@ -60,7 +60,7 @@ namespace TinyUI
 			}
 			return TRUE;
 		}
-		BOOL TinyAudioAEC::SetBoolProperty(IPropertyStore* ptrPS, REFPROPERTYKEY key, VARIANT_BOOL value)
+		BOOL TinyAudioDMO::SetBoolProperty(IPropertyStore* ptrPS, REFPROPERTYKEY key, VARIANT_BOOL value)
 		{
 			PROPVARIANT pv;
 			PropVariantInit(&pv);
