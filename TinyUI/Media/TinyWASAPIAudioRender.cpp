@@ -8,7 +8,9 @@ namespace TinyUI
 	{
 		TinyWASAPIAudioRender::TinyWASAPIAudioRender()
 			:m_dwStreamFlag(DEFAULT_RENDER_AUDCLNT_STREAMFLAGS),
-			m_shareMode(AUDCLNT_SHAREMODE_SHARED)
+			m_shareMode(AUDCLNT_SHAREMODE_EXCLUSIVE),
+			m_hnsPeriod(0),
+			m_bPlaying(FALSE)
 		{
 			m_sampleReady.CreateEvent(FALSE, FALSE, NULL, NULL);
 			m_audioStop.CreateEvent(FALSE, FALSE, NULL, NULL);
@@ -17,38 +19,38 @@ namespace TinyUI
 		{
 			Close();
 		}
-		void TinyWASAPIAudioRender::Initialize(DWORD dwStreamFlag, AUDCLNT_SHAREMODE shareMode)
+		void TinyWASAPIAudioRender::Initialize(Callback<void(BYTE*, LONG, LPVOID)>&& callback, DWORD dwStreamFlag, AUDCLNT_SHAREMODE shareMode)
 		{
 			m_dwStreamFlag = dwStreamFlag;
 			m_shareMode = shareMode;
-			//m_callback = std::move(callback);
+			m_callback = std::move(callback);
 		}
 		BOOL TinyWASAPIAudioRender::Open(const Name& name, WAVEFORMATEX* pFMT)
 		{
 			TinyComPtr<IMMDeviceEnumerator> enumerator;
 			HRESULT hRes = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			TinyComPtr<IMMDevice> mmDevice;
 			wstring ws = StringToWString(name.id());
 			hRes = enumerator->GetDevice(ws.c_str(), &mmDevice);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			return OpenClient(mmDevice, pFMT);
 		}
 		BOOL TinyWASAPIAudioRender::OpenClient(TinyComPtr<IMMDevice>& mmDevice, WAVEFORMATEX* pFMT)
 		{
 			ASSERT(mmDevice);
-			BOOL	bFlag = (pFMT == NULL);
 			HRESULT hRes = S_OK;
+			BOOL bFlag = (pFMT == NULL);
 			DWORD state = DEVICE_STATE_DISABLED;
 			hRes = mmDevice->GetState(&state);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			if (!(state & DEVICE_STATE_ACTIVE))
 				return FALSE;
 			hRes = mmDevice->Activate(__uuidof(IAudioClient), CLSCTX_INPROC_SERVER, NULL, (void**)&m_audioClient);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			if (pFMT == NULL)
 			{
@@ -56,27 +58,46 @@ namespace TinyUI
 				if (hRes != S_OK)
 					goto MMERROR;
 			}
+			REFERENCE_TIME defaultPeriod = 0;
+			REFERENCE_TIME minimumDevicePeriod = 0;
+			hRes = m_audioClient->GetDevicePeriod(&defaultPeriod, &minimumDevicePeriod);
+			if (hRes != S_OK)
+				goto MMERROR;
+			m_hnsPeriod = defaultPeriod;
 			switch (m_shareMode)
 			{
 			case AUDCLNT_SHAREMODE_SHARED:
 			{
-				hRes = m_audioClient->Initialize(m_shareMode, m_dwStreamFlag, MILLISECONDS_TO_VISUALIZE * MFTIMES_PER_MS, 0, pFMT, NULL);
+				m_hnsPeriod = MILLISECONDS_TO_VISUALIZE * MFTIMES_PER_MS;
+				hRes = m_audioClient->Initialize(m_shareMode, m_dwStreamFlag, m_hnsPeriod, 0, pFMT, NULL);
 				if (hRes != S_OK)
 					goto MMERROR;
 			}
 			break;
 			case AUDCLNT_SHAREMODE_EXCLUSIVE:
 			{
-				REFERENCE_TIME s = MILLISECONDS_TO_VISUALIZE * MFTIMES_PER_MS / 2;
 				if (m_dwStreamFlag & AUDCLNT_STREAMFLAGS_EVENTCALLBACK)
 				{
-					hRes = m_audioClient->Initialize(m_shareMode, m_dwStreamFlag, s, s, pFMT, NULL);
+					hRes = m_audioClient->Initialize(m_shareMode, m_dwStreamFlag, m_hnsPeriod, m_hnsPeriod, pFMT, NULL);
 					if (hRes != S_OK)
-						goto MMERROR;
+					{
+						if (hRes != AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED)
+						{
+							goto MMERROR;
+						}
+						hRes = m_audioClient->GetBufferSize(&m_count);
+						if (hRes != S_OK)
+							goto MMERROR;
+						m_hnsPeriod = ((REFERENCE_TIME)(MFTIMES_PER_SEC * m_count / pFMT->nSamplesPerSec + 0.5));
+						hRes = m_audioClient->Initialize(m_shareMode, m_dwStreamFlag, m_hnsPeriod, m_hnsPeriod, pFMT, NULL);
+						if (hRes != S_OK)
+							goto MMERROR;
+					}
+
 				}
 				else
 				{
-					hRes = m_audioClient->Initialize(m_shareMode, m_dwStreamFlag, s, s, pFMT, NULL);
+					hRes = m_audioClient->Initialize(m_shareMode, m_dwStreamFlag, m_hnsPeriod, 0, pFMT, NULL);
 					if (hRes != S_OK)
 						goto MMERROR;
 				}
@@ -84,20 +105,14 @@ namespace TinyUI
 			break;
 			}
 			m_waveFMT.Reset(new BYTE[sizeof(WAVEFORMATEX) + pFMT->cbSize]);
-			memcpy(m_waveFMT, (BYTE*)pFMT, sizeof(WAVEFORMATEX) + pFMT->cbSize);
-			//Ò»°ã¶¼ÊÇ960
+			::memcpy(m_waveFMT, (BYTE*)pFMT, sizeof(WAVEFORMATEX) + pFMT->cbSize);
 			hRes = m_audioClient->GetBufferSize(&m_count);
-			if (FAILED(hRes))
-				return hRes;
+			if (hRes != S_OK)
+				goto MMERROR;
 			REFERENCE_TIME latency = 0;
 			hRes = m_audioClient->GetStreamLatency(&latency);
-			if (FAILED(hRes))
-				return hRes;
-			REFERENCE_TIME defaultPeriod = 0;
-			REFERENCE_TIME minimumDevicePeriod = 0;
-			hRes = m_audioClient->GetDevicePeriod(&defaultPeriod, &minimumDevicePeriod);
-			if (FAILED(hRes))
-				return hRes;
+			if (hRes != S_OK)
+				goto MMERROR;
 			if (m_dwStreamFlag & AUDCLNT_STREAMFLAGS_EVENTCALLBACK)
 			{
 				hRes = m_audioClient->SetEventHandle(m_sampleReady);
@@ -127,24 +142,33 @@ namespace TinyUI
 			m_task.Close(INFINITE);
 			if (!m_task.Submit(BindCallback(&TinyWASAPIAudioRender::OnMessagePump, this)))
 				return FALSE;
-			HRESULT hRes = m_audioClient->Start();
-			if (FAILED(hRes))
-				return FALSE;
-			if (m_shareMode == AUDCLNT_SHAREMODE_SHARED)
+			HRESULT hRes = S_OK;
+			switch (m_shareMode)
+			{
+			case AUDCLNT_SHAREMODE_SHARED:
 			{
 				UINT32 padding = 0;
 				hRes = m_audioClient->GetCurrentPadding(&padding);
 				if (hRes != S_OK)
 					return FALSE;
-				BYTE* bits = NULL;
 				UINT32 size = m_count - padding;
-				hRes = m_audioRender->GetBuffer(size, &bits);
-				if (hRes != S_OK)
-					return FALSE;
-				hRes = m_audioRender->ReleaseBuffer(size, AUDCLNT_BUFFERFLAGS_SILENT);
-				if (hRes != S_OK)
-					return FALSE;
+				if (size > 0)
+				{
+					BYTE* data = NULL;
+					hRes = m_audioRender->GetBuffer(size, &data);
+					if (hRes != S_OK)
+						return FALSE;
+					hRes = m_audioRender->ReleaseBuffer(size, AUDCLNT_BUFFERFLAGS_SILENT);
+					if (hRes != S_OK)
+						return FALSE;
+				}
 			}
+			break;
+			}
+			hRes = m_audioClient->Start();
+			if (hRes != S_OK)
+				return FALSE;
+			m_bPlaying = TRUE;
 			return TRUE;
 		}
 
@@ -161,6 +185,7 @@ namespace TinyUI
 			hRes = m_audioClient->Reset();
 			if (hRes != S_OK)
 				return FALSE;
+			m_bPlaying = FALSE;
 			return TRUE;
 		}
 
@@ -170,7 +195,7 @@ namespace TinyUI
 				return FALSE;
 			HRESULT hRes = S_OK;
 			hRes = m_audioClient->Reset();
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			return TRUE;
 		}
@@ -209,6 +234,12 @@ namespace TinyUI
 				return FALSE;
 			return m_audioClient->GetStreamLatency(&latency) == S_OK;
 		}
+
+		BOOL TinyWASAPIAudioRender::IsPlaying() const
+		{
+			return m_bPlaying;
+		}
+
 		WAVEFORMATEX* TinyWASAPIAudioRender::GetInputFormat() const
 		{
 			if (m_waveFMT)
@@ -219,33 +250,78 @@ namespace TinyUI
 		}
 		BOOL TinyWASAPIAudioRender::Close()
 		{
-			if (Stop())
+			if (m_bPlaying && !Stop())
 			{
 				m_audioVolume.Release();
 				m_audioRender.Release();
 				m_audioClient.Release();
-				return TRUE;
+				return FALSE;
 			}
-			return FALSE;
+			m_audioVolume.Release();
+			m_audioRender.Release();
+			m_audioClient.Release();
+			return TRUE;
 		}
 
-		BOOL TinyWASAPIAudioRender::Render()
+		BOOL TinyWASAPIAudioRender::Render(WAVEFORMATEX* pFMT)
 		{
+			ASSERT(m_audioClient);
+			BYTE* data = NULL;
+			UINT32 padding = 0;
+			UINT32 available = 0;
 			HRESULT hRes = S_OK;
-			BYTE*	bits = NULL;
-			LONG	size = 0;
-			UINT32	available = 0;
-			if (m_shareMode == AUDCLNT_SHAREMODE_SHARED)
+			switch (m_shareMode)
 			{
-				UINT32	padding = 0;
+			case AUDCLNT_SHAREMODE_EXCLUSIVE:
+			{
+				if (m_dwStreamFlag & AUDCLNT_STREAMFLAGS_EVENTCALLBACK)
+				{
+					UINT32 available = m_count;
+					hRes = m_audioRender->GetBuffer(available, &data);
+					if (hRes != S_OK)
+						return FALSE;
+					m_callback(data, available * pFMT->nBlockAlign, this);
+					hRes = m_audioRender->ReleaseBuffer(m_count, 0);
+					if (hRes != S_OK)
+						return FALSE;
+				}
+				else
+				{
+					hRes = m_audioClient->GetCurrentPadding(&padding);
+					if (hRes != S_OK)
+						return FALSE;
+					available = m_count - padding;
+					if (available > 0)
+					{
+						hRes = m_audioRender->GetBuffer(available, &data);
+						if (hRes != S_OK)
+							return FALSE;
+						m_callback(data, available * pFMT->nBlockAlign, this);
+						hRes = m_audioRender->ReleaseBuffer(available, 0);
+						if (hRes != S_OK)
+							return FALSE;
+					}
+				}
+			}
+			break;
+			case AUDCLNT_SHAREMODE_SHARED:
+			{
 				hRes = m_audioClient->GetCurrentPadding(&padding);
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 				available = m_count - padding;
+				if (available > 0)
+				{
+					hRes = m_audioRender->GetBuffer(available, &data);
+					if (hRes != S_OK)
+						return FALSE;
+					m_callback(data, available * pFMT->nBlockAlign, this);
+					hRes = m_audioRender->ReleaseBuffer(available, 0);
+					if (hRes != S_OK)
+						return FALSE;
+				}
 			}
-			else
-			{
-				available = m_count;
+			break;
 			}
 			return TRUE;
 		}
@@ -255,27 +331,28 @@ namespace TinyUI
 			WAVEFORMATEX* pFMT = GetInputFormat();
 			TinyScopedAvrt avrt("Pro Audio");
 			avrt.SetPriority();
-			BOOL	bBreak = FALSE;
 			HRESULT hRes = S_OK;
-			HANDLE	waits[2] = { m_audioStop ,m_sampleReady };
-			UINT32	currentCaptureIndex = 0;
-			while (!bBreak)
+			HANDLE waits[2] = { m_audioStop ,m_sampleReady };
+			UINT32 currentCaptureIndex = 0;
+			BOOL bFlag = TRUE;
+			while (bFlag)
 			{
-				DWORD dwMS = m_dwStreamFlag & AUDCLNT_STREAMFLAGS_EVENTCALLBACK ? INFINITE : 10;
+				DWORD dwMS = m_dwStreamFlag & AUDCLNT_STREAMFLAGS_EVENTCALLBACK ? INFINITE : static_cast<DWORD>(m_hnsPeriod / MFTIMES_PER_MS / 2);
 				DWORD dwRes = WaitForMultipleObjects(2, waits, FALSE, dwMS);
 				switch (dwRes)
 				{
 				case WAIT_OBJECT_0 + 0:
 				case WAIT_FAILED:
 				case WAIT_ABANDONED:
-					bBreak = TRUE;
+					bFlag = FALSE;
 					break;
 				case WAIT_TIMEOUT:
 				case WAIT_OBJECT_0 + 1:
-					bBreak = Render();
+					bFlag = Render(pFMT);
 					break;
 				}
 			}
+
 		}
 	}
 }

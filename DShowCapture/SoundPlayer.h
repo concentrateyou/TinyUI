@@ -30,7 +30,7 @@ namespace DShow
 		TinyComPtr<IDirectSoundBuffer>	m_primaryDSB;
 		TinyComPtr<IDirectSoundBuffer8>	m_secondaryDSB;
 		DWORD							m_dwOffset;
-		WAVEFORMATEX					m_waveFMT;
+		WAVEFORMATEX*					m_waveFMT;
 	};
 }
 

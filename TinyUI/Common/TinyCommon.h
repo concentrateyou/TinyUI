@@ -104,7 +104,7 @@ namespace TinyUI
 #define SAFE_FREE(p)  { if (p) { free(p); (p)=NULL; } }
 #endif
 #ifndef SAFE_LOCAL_DELETE
-#define SAFE_LOCAL_DELETE(p)  { if (p) { LocalFree(p); (p)=NULL; } }
+#define SAFE_LOCAL_FREE(p)  { if (p) { LocalFree(p); (p)=NULL; } }
 #endif 
 #ifndef TINY_EXPORT
 #define TINY_EXPORT __declspec(dllexport)

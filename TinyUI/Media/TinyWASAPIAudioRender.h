@@ -23,7 +23,7 @@ namespace TinyUI
 			TinyWASAPIAudioRender();
 			virtual ~TinyWASAPIAudioRender();
 		public:
-			virtual	void	Initialize( DWORD dwStreamFlag = DEFAULT_RENDER_AUDCLNT_STREAMFLAGS, AUDCLNT_SHAREMODE shareMode = AUDCLNT_SHAREMODE_SHARED);
+			virtual	void	Initialize(Callback<void(BYTE*, LONG, LPVOID)>&& callback, DWORD dwStreamFlag = DEFAULT_RENDER_AUDCLNT_STREAMFLAGS, AUDCLNT_SHAREMODE shareMode = AUDCLNT_SHAREMODE_SHARED);
 			virtual BOOL	Open(const Name& name, WAVEFORMATEX* pFMT = NULL);
 			virtual BOOL	Start();
 			virtual BOOL	Stop();
@@ -35,14 +35,17 @@ namespace TinyUI
 			virtual BOOL	GetMute(BOOL* bMute);
 			WAVEFORMATEX*	GetInputFormat() const;
 			BOOL			GetStreamLatency(REFERENCE_TIME& latency);
+			BOOL			IsPlaying() const;
 		private:
-			BOOL			Render();
+			BOOL			Render(WAVEFORMATEX* pFMT);
 			void			OnMessagePump();
 			BOOL			OpenClient(TinyComPtr<IMMDevice>& mmDevice, WAVEFORMATEX* pFMT);
 		private:
+			BOOL									m_bPlaying;
 			DWORD									m_dwStreamFlag;
 			DWORD									m_dwChannelMask;
 			UINT32									m_count;
+			REFERENCE_TIME							m_hnsPeriod;
 			AUDCLNT_SHAREMODE						m_shareMode;
 			TinyEvent								m_sampleReady;
 			TinyEvent								m_audioStop;
@@ -51,7 +54,7 @@ namespace TinyUI
 			TinyComPtr<IAudioClient>				m_audioClient;
 			TinyComPtr<IAudioRenderClient>			m_audioRender;
 			TinyComPtr<ISimpleAudioVolume>			m_audioVolume;
-			Callback<void(BYTE*&, LONG&, LPVOID)>	m_callback;
+			Callback<void(BYTE*, LONG, LPVOID)>		m_callback;
 		};
 	}
 }

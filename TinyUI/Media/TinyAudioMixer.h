@@ -12,7 +12,7 @@ namespace TinyUI
 		class TinyAudioMixer : public AudioObserver
 		{
 		public:
-			void OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter) OVERRIDE;
+			void OnDataReceive(BYTE* bits, LONG size, LPVOID lpParameter) OVERRIDE;
 
 		};
 	};

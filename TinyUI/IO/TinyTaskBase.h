@@ -20,7 +20,9 @@ namespace TinyUI
 		public:
 			TinyTaskBase();
 			virtual ~TinyTaskBase();
+			HANDLE	Handle() const;
 			BOOL	IsValid() const;
+			BOOL	SetPriority(DWORD dwPriority);
 			virtual BOOL Submit(Closure&& callback);
 			virtual BOOL Close(DWORD dwMs);
 		private:

@@ -22,7 +22,7 @@ namespace TinyUI
 		public:
 			TinyWASAPIAudioCapture();
 			virtual ~TinyWASAPIAudioCapture();
-			virtual void OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter) OVERRIDE;
+			virtual void OnDataReceive(BYTE* bits, LONG size, LPVOID lpParameter) OVERRIDE;
 		public:
 			virtual	void	Initialize(Callback<void(BYTE*, LONG, LPVOID)>&& callback, DWORD dwStreamFlag = DEFAULT_CAPTURE_AUDCLNT_STREAMFLAGS);
 			virtual BOOL	Open(const Name& name, WAVEFORMATEX* pFMT);
@@ -36,10 +36,12 @@ namespace TinyUI
 			virtual BOOL	GetMute(BOOL* bMute);
 			WAVEFORMATEX*	GetInputFormat() const;
 			BOOL			GetStreamLatency(REFERENCE_TIME& latency);
+			BOOL			IsCapturing() const;
 		private:
 			void			OnMessagePump();
 			BOOL			OpenClient(TinyComPtr<IMMDevice>& mmDevice, WAVEFORMATEX* pFMT);
 		private:
+			BOOL								m_bCapturing;
 			DWORD								m_dwStreamFlag;
 			DWORD								m_dwChannelMask;
 			UINT32								m_count;

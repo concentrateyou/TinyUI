@@ -15,13 +15,24 @@ namespace TinyUI
 
 		TinyTaskBase::~TinyTaskBase()
 		{
-			if (m_hTask)
+			if (m_hTask != NULL)
 			{
 				CloseHandle(m_hTask);
 				m_hTask = NULL;
 			}
 		}
-
+		HANDLE	TinyTaskBase::Handle() const
+		{
+			return m_hTask;
+		}
+		BOOL TinyTaskBase::SetPriority(DWORD dwPriority)
+		{
+			if (m_hTask != NULL)
+			{
+				return SetThreadPriority(m_hTask, dwPriority);
+			}
+			return FALSE;
+		}
 		BOOL TinyTaskBase::Submit(Closure&& callback)
 		{
 			m_callback = std::move(callback);
@@ -45,7 +56,7 @@ namespace TinyUI
 
 		BOOL TinyTaskBase::IsValid() const
 		{
-			if (m_hTask)
+			if (m_hTask != NULL)
 			{
 				DWORD code = 0;
 				GetExitCodeThread(m_hTask, &code);

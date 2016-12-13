@@ -50,8 +50,15 @@ WAVEFORMATEX* waveFormat;
 
 void CaptureCB(BYTE* bits, LONG size, LPVOID ps)
 {
-	//waveFile.Write(bits, size * waveFormat->nBlockAlign);
+	waveFile.Write(bits, size * waveFormat->nBlockAlign);
 }
+
+void ReadCB(BYTE* bits, LONG size, LPVOID ps)
+{
+	LONG numberOfBytesRead = 0;
+	waveFile.Read(bits, size, &numberOfBytesRead);
+}
+
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -70,30 +77,31 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
-	TinyUI::Media::TinyWaveFile waveFile;
-	waveFile.Open("D:\\1.wav");
+	//waveFile.Open("D:\\1234.wav");
+	//vector<Media::TinyWASAPIAudioRender::Name> names;
+	//TinyUI::Media::TinyWASAPIAudioRender::GetDevices(eRender, names);
+	//TinyUI::Media::TinyWASAPIAudioRender render;
+	//render.Initialize(BindCallback(&ReadCB), AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST, AUDCLNT_SHAREMODE_SHARED);
+	//BOOL bRes = render.Open(names[0], waveFile.GetFormat());
+	//bRes = render.Start();
 
-	vector<Media::TinyWASAPIAudioRender::Name> names;
+	/*vector<Media::TinyWASAPIAudioRender::Name> names;
 	TinyUI::Media::TinyWASAPIAudioRender::GetDevices(eRender, names);
-	vector<WAVEFORMATPCMEX> s;
-	TinyUI::Media::TinyWASAPIAudioRender::GetDeviceFormats(names[0], AUDCLNT_SHAREMODE_EXCLUSIVE,s);
-	BOOL bRes = TinyUI::Media::TinyWASAPIAudioRender::IsFormatValid(names[0], AUDCLNT_SHAREMODE_EXCLUSIVE, &waveFile.GetFormat());
+	TinyUI::Media::TinyWASAPIAudioCapture capture;
+	capture.Initialize(BindCallback(&CaptureCB), AUDCLNT_STREAMFLAGS_LOOPBACK | AUDCLNT_STREAMFLAGS_NOPERSIST);
+	BOOL bRes = capture.Open(names[0], NULL);
+	waveFormat = capture.GetInputFormat();
+	waveFile.Create("D:\\1234.wav", waveFormat);
+	bRes = capture.Start();*/
 
-	TinyUI::Media::TinyWASAPIAudioRender render;
-	render.Initialize(DEFAULT_RENDER_AUDCLNT_STREAMFLAGS, AUDCLNT_SHAREMODE_EXCLUSIVE);
-	bRes = render.Open(names[0], &waveFile.GetFormat());
-	/*TinyUI::Media::TinyWASAPIAudioRender render;
-	render.Initialize();
-	render.Open(names[0], &s[0]);*/
-	//TinyUI::Media::TinyWASAPIAudioCapture capture;
-	//capture.Initialize(BindCallback(&CaptureCB));
-	//capture.Open(names[0]);
-	//waveFormat = capture.GetInputFormat();
-	////waveFile.Create("D:\\123.wav", waveFormat);
-	//capture.Start();
-
-
-
+	/*vector<Media::TinyWASAPIAudioCapture::Name> names;
+	TinyUI::Media::TinyWASAPIAudioCapture::GetDevices(eCapture, names);
+	TinyUI::Media::TinyWASAPIAudioCapture capture;
+	capture.Initialize(BindCallback(&CaptureCB), AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST);
+	BOOL bRes = capture.Open(names[0], NULL);
+	waveFormat = capture.GetInputFormat();
+	waveFile.Create("D:\\12345.wav", waveFormat);
+	bRes = capture.Start();*/
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
@@ -108,6 +116,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->Uninitialize();
 
 	//capture.Close();
+	//render.Close();
 
 	OleUninitialize();
 	MFShutdown();

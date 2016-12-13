@@ -7,7 +7,8 @@ namespace TinyUI
 	namespace Media
 	{
 		TinyWASAPIAudioCapture::TinyWASAPIAudioCapture()
-			:m_dwStreamFlag(AUDCLNT_STREAMFLAGS_LOOPBACK | AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST)
+			:m_dwStreamFlag(AUDCLNT_STREAMFLAGS_LOOPBACK | AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST),
+			m_bCapturing(FALSE)
 		{
 			m_sampleReady.CreateEvent(FALSE, FALSE, NULL, NULL);
 			m_audioStop.CreateEvent(FALSE, FALSE, NULL, NULL);
@@ -26,28 +27,28 @@ namespace TinyUI
 		{
 			TinyComPtr<IMMDeviceEnumerator> enumerator;
 			HRESULT hRes = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			TinyComPtr<IMMDevice> mmDevice;
 			wstring ws = StringToWString(name.id());
 			hRes = enumerator->GetDevice(ws.c_str(), &mmDevice);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			return OpenClient(mmDevice, pFMT);
 		}
 		BOOL TinyWASAPIAudioCapture::OpenClient(TinyComPtr<IMMDevice>& mmDevice, WAVEFORMATEX* pFMT)
 		{
 			ASSERT(mmDevice);
-			BOOL	bFlag = (pFMT == NULL);
 			HRESULT hRes = S_OK;
+			BOOL bFlag = (pFMT == NULL);
 			DWORD state = DEVICE_STATE_DISABLED;
 			hRes = mmDevice->GetState(&state);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				goto MMERROR;
 			if (!(state & DEVICE_STATE_ACTIVE))
 				return FALSE;
 			hRes = mmDevice->Activate(__uuidof(IAudioClient), CLSCTX_INPROC_SERVER, NULL, (void**)&m_audioClient);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				goto MMERROR;
 			if (pFMT == NULL)
 			{
@@ -55,9 +56,12 @@ namespace TinyUI
 				if (hRes != S_OK)
 					goto MMERROR;
 			}
-			hRes = m_audioClient->GetMixFormat(&pFMT);
+			REFERENCE_TIME defaultPeriod = 0;
+			REFERENCE_TIME minimumDevicePeriod = 0;
+			hRes = m_audioClient->GetDevicePeriod(&defaultPeriod, &minimumDevicePeriod);
 			if (hRes != S_OK)
 				goto MMERROR;
+			//AUDCLNT_E_UNSUPPORTED_FORMAT
 			hRes = m_audioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, m_dwStreamFlag, MILLISECONDS_TO_VISUALIZE * MFTIMES_PER_MS, 0, pFMT, NULL);
 			if (hRes != S_OK)
 				goto MMERROR;
@@ -65,12 +69,7 @@ namespace TinyUI
 			memcpy(m_waveFMT, (BYTE*)pFMT, sizeof(WAVEFORMATEX) + pFMT->cbSize);
 			//Ò»°ã¶¼ÊÇ960
 			hRes = m_audioClient->GetBufferSize(&m_count);
-			if (FAILED(hRes))
-				goto MMERROR;
-			REFERENCE_TIME defaultPeriod = 0;
-			REFERENCE_TIME minimumDevicePeriod = 0;
-			hRes = m_audioClient->GetDevicePeriod(&defaultPeriod, &minimumDevicePeriod);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				goto MMERROR;
 			if (m_dwStreamFlag & AUDCLNT_STREAMFLAGS_LOOPBACK)
 			{
@@ -102,9 +101,6 @@ namespace TinyUI
 			hRes = m_audioClient->GetService(__uuidof(IAudioSessionControl), (void**)&m_audioSession);
 			if (hRes != S_OK)
 				goto MMERROR;
-			hRes = m_audioSession->RegisterAudioSessionNotification(this);
-			if (hRes != S_OK)
-				goto MMERROR;
 			return TRUE;
 		MMERROR:
 			if (pFMT && bFlag)
@@ -124,7 +120,7 @@ namespace TinyUI
 			if (m_audioClient)
 			{
 				hRes = m_audioClient->Start();
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 			}
 			if (m_audioClientLB)
@@ -133,6 +129,7 @@ namespace TinyUI
 				if (hRes != S_OK)
 					return FALSE;
 			}
+			m_bCapturing = TRUE;
 			return TRUE;
 		}
 
@@ -165,6 +162,7 @@ namespace TinyUI
 				if (hRes != S_OK)
 					return FALSE;
 			}
+			m_bCapturing = FALSE;
 			return TRUE;
 		}
 
@@ -173,7 +171,7 @@ namespace TinyUI
 			if (m_audioClient)
 			{
 				HRESULT hRes = m_audioClient->Reset();
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 			}
 			return TRUE;
@@ -213,6 +211,10 @@ namespace TinyUI
 				return FALSE;
 			return m_audioClient->GetStreamLatency(&latency) == S_OK;
 		}
+		BOOL TinyWASAPIAudioCapture::IsCapturing() const
+		{
+			return m_bCapturing;
+		}
 		WAVEFORMATEX* TinyWASAPIAudioCapture::GetInputFormat() const
 		{
 			if (m_waveFMT)
@@ -223,20 +225,19 @@ namespace TinyUI
 		}
 		BOOL TinyWASAPIAudioCapture::Close()
 		{
-			if (m_audioSession)
-			{
-				if (FAILED(m_audioSession->UnregisterAudioSessionNotification(this)))
-					return FALSE;
-			}
-			if (Stop())
+			if (m_bCapturing && Stop())
 			{
 				m_audioVolume.Release();
 				m_audioCapture.Release();
 				m_audioClient.Release();
 				m_audioClientLB.Release();
-				return TRUE;
+				return FALSE;
 			}
-			return FALSE;
+			m_audioVolume.Release();
+			m_audioCapture.Release();
+			m_audioClient.Release();
+			m_audioClientLB.Release();
+			return TRUE;
 		}
 		void TinyWASAPIAudioCapture::OnMessagePump()
 		{
@@ -244,8 +245,8 @@ namespace TinyUI
 			TinyScopedAvrt avrt("Pro Audio");
 			avrt.SetPriority();
 			HANDLE waits[2] = { m_audioStop ,m_sampleReady };
-			BOOL bBreak = FALSE;
-			while (!bBreak)
+			BOOL bFlag = TRUE;
+			while (bFlag)
 			{
 				DWORD dwMS = m_dwStreamFlag & AUDCLNT_STREAMFLAGS_EVENTCALLBACK ? INFINITE : MILLISECONDS_TO_VISUALIZE / 2;
 				DWORD dwRes = WaitForMultipleObjects(2, waits, FALSE, dwMS);
@@ -254,7 +255,7 @@ namespace TinyUI
 				case WAIT_OBJECT_0 + 0:
 				case WAIT_FAILED:
 				case WAIT_ABANDONED:
-					bBreak = TRUE;
+					bFlag = FALSE;
 					break;
 				case WAIT_TIMEOUT:
 				case WAIT_OBJECT_0 + 1:
@@ -268,7 +269,7 @@ namespace TinyUI
 						{
 							bits = NULL;
 						}
-						OnDataAvailable(bits, count, this);
+						OnDataReceive(bits, count, this);
 						m_audioCapture->ReleaseBuffer(count);
 					}
 				}
@@ -277,7 +278,7 @@ namespace TinyUI
 			}
 		}
 
-		void TinyWASAPIAudioCapture::OnDataAvailable(BYTE* bits, LONG count, LPVOID lpParameter)
+		void TinyWASAPIAudioCapture::OnDataReceive(BYTE* bits, LONG count, LPVOID lpParameter)
 		{
 			if (!m_callback.IsNull())
 			{

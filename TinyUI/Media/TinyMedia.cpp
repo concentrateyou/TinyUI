@@ -37,5 +37,50 @@ namespace TinyUI
 		{
 
 		}
+		//////////////////////////////////////////////////////////////////////////
+		HRESULT STDMETHODCALLTYPE AudioDeviceListener::OnDeviceStateChanged(_In_ LPCWSTR pwstrDeviceId, _In_ DWORD dwNewState)
+		{
+			return S_OK;
+		}
+		HRESULT STDMETHODCALLTYPE AudioDeviceListener::OnDeviceAdded(_In_ LPCWSTR pwstrDeviceId)
+		{
+			return S_OK;
+		}
+		HRESULT STDMETHODCALLTYPE AudioDeviceListener::OnDeviceRemoved(_In_ LPCWSTR pwstrDeviceId)
+		{
+			return S_OK;
+		}
+		HRESULT STDMETHODCALLTYPE AudioDeviceListener::OnDefaultDeviceChanged(_In_ EDataFlow flow, _In_ ERole role, _In_ LPCWSTR pwstrDefaultDeviceId)
+		{
+			return S_OK;
+		}
+		HRESULT STDMETHODCALLTYPE AudioDeviceListener::OnPropertyValueChanged(_In_ LPCWSTR pwstrDeviceId, _In_ const PROPERTYKEY key)
+		{
+			return S_OK;
+		}
+		HRESULT STDMETHODCALLTYPE AudioDeviceListener::QueryInterface(REFIID riid, void **ppvObject)
+		{
+			if (IsEqualIID(riid, __uuidof(IMMNotificationClient)) || IsEqualIID(riid, IID_IUnknown))
+			{
+				*ppvObject = static_cast<IMMNotificationClient*>(this);
+			}
+			else
+			{
+				*ppvObject = NULL;
+				return E_NOINTERFACE;
+			}
+			AddRef();
+			return NOERROR;
+		}
+		ULONG STDMETHODCALLTYPE AudioDeviceListener::AddRef(void)
+		{
+			TinyReference < AudioDeviceListener >::AddRef();
+			return TinyReference < AudioDeviceListener >::GetReference();
+		}
+		ULONG STDMETHODCALLTYPE AudioDeviceListener::Release(void)
+		{
+			TinyReference < AudioDeviceListener >::Release();
+			return TinyReference < AudioDeviceListener >::GetReference();
+		}
 	};
 }

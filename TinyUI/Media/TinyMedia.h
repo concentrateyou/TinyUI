@@ -115,9 +115,22 @@ namespace TinyUI
 		public:
 			AudioObserver();
 		public:
-			virtual void OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter) = 0;
+			virtual void OnDataReceive(BYTE* bits, LONG size, LPVOID lpParameter) = 0;
 		protected:
 			virtual ~AudioObserver();
+		};
+		//////////////////////////////////////////////////////////////////////////
+		class AudioDeviceListener : public TinyReference<AudioDeviceListener>, public IMMNotificationClient
+		{
+		public:
+			HRESULT STDMETHODCALLTYPE OnDeviceStateChanged(_In_ LPCWSTR pwstrDeviceId, _In_ DWORD dwNewState) OVERRIDE;
+			HRESULT STDMETHODCALLTYPE OnDeviceAdded(_In_ LPCWSTR pwstrDeviceId) OVERRIDE;
+			HRESULT STDMETHODCALLTYPE OnDeviceRemoved(_In_ LPCWSTR pwstrDeviceId);
+			HRESULT STDMETHODCALLTYPE OnDefaultDeviceChanged(_In_ EDataFlow flow, _In_ ERole role, _In_ LPCWSTR pwstrDefaultDeviceId) OVERRIDE;
+			HRESULT STDMETHODCALLTYPE OnPropertyValueChanged(_In_ LPCWSTR pwstrDeviceId, _In_ const PROPERTYKEY key) OVERRIDE;
+			HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject) OVERRIDE;
+			ULONG STDMETHODCALLTYPE AddRef(void) OVERRIDE;
+			ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
 		};
 	};
 }

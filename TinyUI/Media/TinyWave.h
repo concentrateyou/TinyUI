@@ -30,7 +30,7 @@ namespace TinyUI
 		class TinyWaveFile
 		{
 		private:
-			WAVEFORMATEX	m_waveEx;
+			TinyScopedArray<BYTE> m_waveEx;
 			DWORD			m_dwSize;//数据大小
 			DWORD			m_dwLSize;//剩余数据大小
 			DWORD			m_dwDataOffset;//波形数据的偏移量
@@ -43,7 +43,7 @@ namespace TinyUI
 		public:
 			TinyWaveFile();
 			~TinyWaveFile();
-			BOOL Create(LPTSTR pzFile,const WAVEFORMATEX* pWaveEx);
+			BOOL Create(LPTSTR pzFile, const WAVEFORMATEX* pWaveEx);
 			BOOL Open(LPTSTR pzFile);
 			BOOL Open(LPVOID pStream, LONG bufferSize);
 			BOOL Read(BYTE* lpBuffer, LONG nNumberOfBytesToRead, LPLONG lpNumberOfBytesRead);
@@ -51,7 +51,7 @@ namespace TinyUI
 			BOOL Seek(LONG lOffset, INT iOrigin);
 			BOOL ResetFile();
 			void Close();
-			WAVEFORMATEX GetFormat();
+			WAVEFORMATEX* GetFormat();
 			DWORD GetDataSize();
 			DWORD GetDataOffset();
 		};

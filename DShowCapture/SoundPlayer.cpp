@@ -26,7 +26,7 @@ namespace DShow
 	}
 	BOOL SoundPlayer::Initialize(HWND hWND, WAVEFORMATEX* pFMT)
 	{
-		m_waveFMT = *pFMT;
+		m_waveFMT = pFMT;
 		HRESULT hRes = S_OK;
 		hRes = DirectSoundCreate8(NULL, &m_sound, NULL);
 		if (FAILED(hRes))

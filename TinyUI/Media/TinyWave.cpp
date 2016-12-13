@@ -401,8 +401,8 @@ namespace TinyUI
 		{
 			m_waveFile.Close();
 			if (!m_waveFile.Open(pStream, bufferSize)) return FALSE;
-			WAVEFORMATEX waveEx = m_waveFile.GetFormat();
-			if (m_waveOut.Open(&waveEx, (DWORD_PTR)&m_waveOut) != MMSYSERR_NOERROR)
+			WAVEFORMATEX* waveEx = m_waveFile.GetFormat();
+			if (m_waveOut.Open(waveEx, (DWORD_PTR)&m_waveOut) != MMSYSERR_NOERROR)
 				return FALSE;
 			for (m_dwBlocks = 0; m_dwBlocks < MAX_AUDIO_BUFFERS; m_dwBlocks++)
 			{
@@ -434,8 +434,8 @@ namespace TinyUI
 		{
 			m_waveFile.Close();
 			if (!m_waveFile.Open(szFilename)) return FALSE;
-			WAVEFORMATEX waveEx = m_waveFile.GetFormat();
-			if (m_waveOut.Open(&waveEx, (DWORD_PTR)&m_waveOut) != MMSYSERR_NOERROR)
+			WAVEFORMATEX* waveEx = m_waveFile.GetFormat();
+			if (m_waveOut.Open(waveEx, (DWORD_PTR)&m_waveOut) != MMSYSERR_NOERROR)
 				return FALSE;
 			for (m_dwBlocks = 0; m_dwBlocks < MAX_AUDIO_BUFFERS; m_dwBlocks++)
 			{
@@ -600,7 +600,6 @@ namespace TinyUI
 			:m_hmmio(NULL),
 			m_reading(0)
 		{
-			ZeroMemory(&m_waveEx, sizeof(m_waveEx));
 			ZeroMemory(&m_mmckRIFF, sizeof(m_mmckRIFF));
 			ZeroMemory(&m_mmckFMT, sizeof(m_mmckFMT));
 			ZeroMemory(&m_mmckFACT, sizeof(m_mmckFACT));
@@ -614,7 +613,16 @@ namespace TinyUI
 		{
 			if (!pzFile)
 				return FALSE;
-			m_waveEx = *pWaveEx;
+			if (pWaveEx->wFormatTag == WAVE_FORMAT_PCM)
+			{
+				m_waveEx.Reset(new BYTE[sizeof(WAVEFORMATEX)]);
+				memcpy((void*)m_waveEx, (void*)pWaveEx, sizeof(WAVEFORMATEX));
+			}
+			else
+			{
+				m_waveEx.Reset(new BYTE[sizeof(WAVEFORMATEX) + pWaveEx->cbSize]);
+				memcpy((void*)m_waveEx, (void*)pWaveEx, sizeof(WAVEFORMATEX) + pWaveEx->cbSize);
+			}
 			if (m_hmmio != NULL)
 			{
 				mmioClose(m_hmmio, 0);
@@ -657,6 +665,7 @@ namespace TinyUI
 			return TRUE;
 		MMIO_ERROR:
 			mmioClose(m_hmmio, 0);
+			m_hmmio = NULL;
 			return FALSE;
 		}
 		BOOL TinyWaveFile::Write(BYTE* lpBuffer, LONG nNumberOfBytesToRead)
@@ -693,9 +702,11 @@ namespace TinyUI
 			if (mmck.cksize < sizeof(WAVEFORMAT))
 				goto MMIO_ERROR;
 			wFormatSize = (WORD)mmck.cksize;
-			if ((DWORD)mmioRead(m_hmmio, (HPSTR)&m_waveEx, mmck.cksize) != mmck.cksize)//读取WAVEFORMAT
+			m_waveEx.Reset(new BYTE[wFormatSize]);
+			if ((DWORD)mmioRead(m_hmmio, (HPSTR)m_waveEx.Ptr(), mmck.cksize) != mmck.cksize)//读取WAVEFORMAT
 				goto MMIO_ERROR;
-			if (m_waveEx.wFormatTag == WAVE_FORMAT_PCM)//PCM格式
+			WAVEFORMATEX* waveEx = reinterpret_cast<WAVEFORMATEX*>(m_waveEx.Ptr());
+			if (waveEx->wFormatTag == WAVE_FORMAT_PCM)//PCM格式
 			{
 				if (wFormatSize < sizeof(PCMWAVEFORMAT))
 					goto MMIO_ERROR;
@@ -703,20 +714,8 @@ namespace TinyUI
 			else
 			{
 				if ((wFormatSize < sizeof(WAVEFORMATEX)) ||
-					(wFormatSize < sizeof(WAVEFORMATEX) + m_waveEx.cbSize))
+					(wFormatSize < sizeof(WAVEFORMATEX) + waveEx->cbSize))
 					goto MMIO_ERROR;
-				if (m_waveEx.cbSize != 0)
-				{
-					LPBYTE extraBytes = (LPBYTE)LocalAlloc(LPTR, m_waveEx.cbSize);
-					if (extraBytes != NULL)
-					{
-						if (mmioRead(m_hmmio, (HPSTR)extraBytes, m_waveEx.cbSize) != m_waveEx.cbSize)
-						{
-							SAFE_LOCAL_DELETE(extraBytes);
-							goto MMIO_ERROR;
-						}
-					}
-				}
 			}
 			mmRes = mmioAscend(m_hmmio, &mmck, 0);
 			if (mmRes != MMSYSERR_NOERROR)
@@ -732,6 +731,7 @@ namespace TinyUI
 			return TRUE;
 		MMIO_ERROR:
 			mmioClose(m_hmmio, 0);
+			m_hmmio = NULL;
 			return FALSE;
 		}
 		BOOL TinyWaveFile::Open(LPVOID pStream, LONG bufferSize)
@@ -743,6 +743,7 @@ namespace TinyUI
 				mmioClose(m_hmmio, 0);
 				m_hmmio = NULL;
 			}
+			WAVEFORMATEX waveEx = { 0 };
 			//内存流
 			MMIOINFO mmioInfo;
 			ZeroMemory(&mmioInfo, sizeof(MMIOINFO));
@@ -769,23 +770,28 @@ namespace TinyUI
 			wFormatSize = (WORD)mmck.cksize;
 			if ((DWORD)mmioRead(m_hmmio, (HPSTR)&m_waveEx, mmck.cksize) != mmck.cksize)//读取WAVEFORMAT
 				goto MMIO_ERROR;
-			if (m_waveEx.wFormatTag == WAVE_FORMAT_PCM)//PCM格式
+			if (waveEx.wFormatTag == WAVE_FORMAT_PCM)//PCM格式
 			{
 				if (wFormatSize < sizeof(PCMWAVEFORMAT))
 					goto MMIO_ERROR;
+				m_waveEx.Reset(new BYTE[sizeof(WAVEFORMATEX)]);
+				memcpy(m_waveEx, &waveEx, sizeof(WAVEFORMATEX));
 			}
 			else
 			{
-				if ((wFormatSize < sizeof(WAVEFORMATEX)) || (wFormatSize < sizeof(WAVEFORMATEX) + m_waveEx.cbSize))
+				if ((wFormatSize < sizeof(WAVEFORMATEX)) || (wFormatSize < sizeof(WAVEFORMATEX) + waveEx.cbSize))
 					goto MMIO_ERROR;
-				if (m_waveEx.cbSize != 0)
+				if (waveEx.cbSize != 0)
 				{
-					LPBYTE extraBytes = (LPBYTE)LocalAlloc(LPTR, m_waveEx.cbSize);
+					LPBYTE extraBytes = (LPBYTE)LocalAlloc(LPTR, waveEx.cbSize);
 					if (extraBytes != NULL)
 					{
-						if (mmioRead(m_hmmio, (HPSTR)extraBytes, m_waveEx.cbSize) != m_waveEx.cbSize)
+						if (mmioRead(m_hmmio, (HPSTR)extraBytes, waveEx.cbSize) != waveEx.cbSize)
 						{
-							SAFE_LOCAL_DELETE(extraBytes);
+							m_waveEx.Reset(new BYTE[sizeof(WAVEFORMATEX) + waveEx.cbSize]);
+							memcpy(m_waveEx, &waveEx, sizeof(WAVEFORMATEX));
+							memcpy(m_waveEx + sizeof(WAVEFORMATEX), (BYTE*)&waveEx + sizeof(WAVEFORMATEX), waveEx.cbSize);
+							SAFE_LOCAL_FREE(extraBytes);
 							goto MMIO_ERROR;
 						}
 					}
@@ -805,6 +811,7 @@ namespace TinyUI
 			return TRUE;
 		MMIO_ERROR:
 			mmioClose(m_hmmio, 0);
+			m_hmmio = NULL;
 			return FALSE;
 		}
 		void TinyWaveFile::Close()
@@ -859,9 +866,9 @@ namespace TinyUI
 				return FALSE;
 			return TRUE;
 		}
-		WAVEFORMATEX TinyWaveFile::GetFormat()
+		WAVEFORMATEX* TinyWaveFile::GetFormat()
 		{
-			return m_waveEx;
+			return reinterpret_cast<WAVEFORMATEX*>(m_waveEx.Ptr());
 		}
 		DWORD TinyWaveFile::GetDataSize()
 		{

@@ -21,25 +21,25 @@ namespace TinyUI
 			m_waveFMTO = *pFMTO;
 			TinyComPtr<IUnknown> unknow;
 			HRESULT hRes = unknow.CoCreateInstance(CLSID_AACMFTEncoder, NULL, CLSCTX_INPROC_SERVER);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = unknow->QueryInterface(IID_PPV_ARGS(&m_transform));
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = MFCreateMediaType(&m_inputType);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = MFCreateMediaType(&m_outputType);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_outputType->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, (m_dwRate * 1000) / 8);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_transform->SetInputType(0, m_inputType, 0);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_transform->SetOutputType(0, m_outputType, 0);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			return TRUE;
 		}
@@ -53,20 +53,20 @@ namespace TinyUI
 		BOOL TinyMFAACEncode::Open()
 		{
 			HRESULT hRes = m_transform->ProcessMessage(MFT_MESSAGE_NOTIFY_BEGIN_STREAMING, NULL);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_transform->ProcessMessage(MFT_MESSAGE_NOTIFY_START_OF_STREAM, NULL);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			return TRUE;
 		}
 		BOOL TinyMFAACEncode::Close()
 		{
 			HRESULT hRes = m_transform->ProcessMessage(MFT_MESSAGE_NOTIFY_END_STREAMING, NULL);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_transform->ProcessMessage(MFT_MESSAGE_NOTIFY_END_OF_STREAM, NULL);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			return TRUE;
 		}
@@ -76,7 +76,7 @@ namespace TinyUI
 			if (!CreateInputSample(bits, size, ts))
 				return FALSE;
 			hRes = m_transform->ProcessInput(0, m_inputSample, 0);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 			{
 				if (hRes == MF_E_NOTACCEPTING)
 				{
@@ -92,7 +92,7 @@ namespace TinyUI
 			}
 			MFT_OUTPUT_STREAM_INFO info = { 0 };
 			hRes = m_transform->GetOutputStreamInfo(0, &info);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			return GetOutputSample(info.cbSize);
 		}
@@ -103,48 +103,48 @@ namespace TinyUI
 			if (!m_inputSample)
 			{
 				hRes = MFCreateSample(&m_inputSample);
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 				hRes = MFCreateMemoryBuffer(size, &buffer);
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 			}
 			hRes = m_inputSample->GetBufferByIndex(0, &buffer);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			DWORD dwMax = 0;
 			hRes = buffer->GetMaxLength(&dwMax);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			if (dwMax < size)
 			{
 				hRes = m_inputSample->RemoveAllBuffers();
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 				hRes = MFCreateMemoryBuffer(size, &buffer);
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 				hRes = m_inputSample->AddBuffer(buffer);
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 			}
 			BYTE* ps = NULL;
 			hRes = buffer->Lock(&ps, NULL, NULL);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			memcpy(ps, bits, size);
 			hRes = buffer->Unlock();
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = buffer->SetCurrentLength(size);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_inputSample->SetSampleTime(ts);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			LONGLONG hnsSampleDuration = (LONGLONG)(((FLOAT)m_waveFMTI.nSamplesPerSec / m_waveFMTI.nChannels / (size / m_waveFMTI.nBlockAlign)) * 10000);
 			hRes = m_inputSample->SetSampleDuration(hnsSampleDuration);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			return TRUE;
 		}
@@ -155,32 +155,32 @@ namespace TinyUI
 			if (!m_outputSample)
 			{
 				hRes = MFCreateSample(&m_outputSample);
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 				hRes = MFCreateMemoryBuffer(dwSize, &buffer);
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 				hRes = m_outputSample->AddBuffer(buffer);
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 			}
 			hRes = m_outputSample->GetBufferByIndex(0, &buffer);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			DWORD dwMax = 0;
 			hRes = buffer->GetMaxLength(&dwMax);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			if (dwMax < dwSize)
 			{
 				hRes = m_outputSample->RemoveAllBuffers();
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 				hRes = MFCreateMemoryBuffer(dwSize, &buffer);
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 				hRes = m_outputSample->AddBuffer(buffer);
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 			}
 			return TRUE;
