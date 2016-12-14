@@ -176,7 +176,22 @@ namespace TinyUI
 			}
 			return TRUE;
 		}
-
+		BOOL TinyWASAPIAudioCapture::Close()
+		{
+			if (m_bCapturing && !Stop())
+			{
+				m_audioVolume.Release();
+				m_audioCapture.Release();
+				m_audioClient.Release();
+				m_audioClientLB.Release();
+				return FALSE;
+			}
+			m_audioVolume.Release();
+			m_audioCapture.Release();
+			m_audioClient.Release();
+			m_audioClientLB.Release();
+			return TRUE;
+		}
 		BOOL TinyWASAPIAudioCapture::SetVolume(FLOAT volume)
 		{
 			if (!m_audioVolume)
@@ -215,7 +230,7 @@ namespace TinyUI
 		{
 			return m_bCapturing;
 		}
-		WAVEFORMATEX* TinyWASAPIAudioCapture::GetInputFormat() const
+		WAVEFORMATEX* TinyWASAPIAudioCapture::GetFormat() const
 		{
 			if (m_waveFMT)
 			{
@@ -223,25 +238,9 @@ namespace TinyUI
 			}
 			return NULL;
 		}
-		BOOL TinyWASAPIAudioCapture::Close()
-		{
-			if (m_bCapturing && Stop())
-			{
-				m_audioVolume.Release();
-				m_audioCapture.Release();
-				m_audioClient.Release();
-				m_audioClientLB.Release();
-				return FALSE;
-			}
-			m_audioVolume.Release();
-			m_audioCapture.Release();
-			m_audioClient.Release();
-			m_audioClientLB.Release();
-			return TRUE;
-		}
 		void TinyWASAPIAudioCapture::OnMessagePump()
 		{
-			WAVEFORMATEX* pFMT = GetInputFormat();
+			WAVEFORMATEX* pFMT = GetFormat();
 			TinyScopedAvrt avrt("Pro Audio");
 			avrt.SetPriority();
 			HANDLE waits[2] = { m_audioStop ,m_sampleReady };

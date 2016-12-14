@@ -132,5 +132,23 @@ namespace TinyUI
 			ULONG STDMETHODCALLTYPE AddRef(void) OVERRIDE;
 			ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
 		};
+		//////////////////////////////////////////////////////////////////////////
+		class MediaBuffer : public TinyReference<MediaBuffer>, public IMediaBuffer
+		{
+		public:
+			MediaBuffer(DWORD dwMaxSize);
+			~MediaBuffer();
+		public:
+			HRESULT STDMETHODCALLTYPE SetLength(DWORD cbLength) OVERRIDE;
+			HRESULT STDMETHODCALLTYPE GetMaxLength(_Out_ DWORD *pcbMaxLength) OVERRIDE;
+			HRESULT STDMETHODCALLTYPE GetBufferAndLength(_Outptr_opt_result_bytebuffer_(*pcbLength) BYTE **ppBuffer, _Out_opt_ DWORD *pcbLength) OVERRIDE;
+			HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject) OVERRIDE;
+			ULONG STDMETHODCALLTYPE AddRef(void) OVERRIDE;
+			ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
+		protected:
+			TinyScopedArray<BYTE> m_data;
+			DWORD	m_dwSize;
+			DWORD	m_dwMaxSize;
+		};
 	};
 }

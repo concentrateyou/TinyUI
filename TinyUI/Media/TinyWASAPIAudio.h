@@ -22,7 +22,6 @@ namespace TinyUI
 			ULONG STDMETHODCALLTYPE AddRef(void) OVERRIDE;
 			ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
 		};
-
 		class TinyWASAPIAudio
 		{
 			DISALLOW_COPY_AND_ASSIGN(TinyWASAPIAudio)
@@ -43,7 +42,10 @@ namespace TinyUI
 			TinyWASAPIAudio();
 			virtual ~TinyWASAPIAudio();
 		public:
+			static BOOL IsMicrophoneArray(const Name& name, BOOL& IsMA);
 			static BOOL GetDevices(EDataFlow dataFlow, vector<Name>& names);
+			static INT  GetDeviceIndex(EDataFlow dataFlow,const Name& name);
+			static BOOL GetJackSubtype(IMMDevice* mmDevice, GUID& subType);
 			static BOOL IsFormatValid(const Name& name, AUDCLNT_SHAREMODE shareMode, WAVEFORMATEX* pFMT);
 		};
 	}

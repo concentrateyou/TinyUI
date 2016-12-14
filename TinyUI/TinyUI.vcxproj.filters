@@ -360,9 +360,6 @@
     <ClInclude Include="Media\TinyMFAACEncode.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
-    <ClInclude Include="Media\TinyAudioMixer.h">
-      <Filter>头文件\Media</Filter>
-    </ClInclude>
     <ClInclude Include="Database\TinyMySQL.h">
       <Filter>头文件\Database</Filter>
     </ClInclude>
@@ -411,7 +408,10 @@
     <ClInclude Include="Media\TinyWASAPIAudio.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
-    <ClInclude Include="Media\TinyAudioDMO.h">
+    <ClInclude Include="Media\TinyAudioDSPCapture.h">
+      <Filter>头文件\Media</Filter>
+    </ClInclude>
+    <ClInclude Include="Media\TinyAudioDMOFilter.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
   </ItemGroup>
@@ -707,9 +707,6 @@
     <ClCompile Include="Media\TinyMFH264Encode.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
-    <ClCompile Include="Media\TinyAudioMixer.cpp">
-      <Filter>源文件\Media</Filter>
-    </ClCompile>
     <ClCompile Include="Database\TinyMySQL.cpp">
       <Filter>源文件\Database</Filter>
     </ClCompile>
@@ -758,7 +755,10 @@
     <ClCompile Include="Media\TinyWASAPIAudio.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
-    <ClCompile Include="Media\TinyAudioDMO.cpp">
+    <ClCompile Include="Media\TinyAudioDSPCapture.cpp">
+      <Filter>源文件\Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\TinyAudioDMOFilter.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
   </ItemGroup>

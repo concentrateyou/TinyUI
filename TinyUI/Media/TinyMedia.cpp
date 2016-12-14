@@ -82,5 +82,75 @@ namespace TinyUI
 			TinyReference < AudioDeviceListener >::Release();
 			return TinyReference < AudioDeviceListener >::GetReference();
 		}
+		//////////////////////////////////////////////////////////////////////////
+		MediaBuffer::MediaBuffer(DWORD dwMaxSize)
+			:m_dwMaxSize(dwMaxSize),
+			m_dwSize(0)
+		{
+			m_data.Reset(new BYTE[dwMaxSize]);
+			memset(m_data, 0, dwMaxSize);
+		}
+		MediaBuffer::~MediaBuffer()
+		{
+
+		}
+		HRESULT STDMETHODCALLTYPE MediaBuffer::SetLength(DWORD cbLength)
+		{
+			if (cbLength > m_dwMaxSize)
+			{
+				return E_INVALIDARG;
+			}
+			m_dwMaxSize = cbLength;
+			return S_OK;
+		}
+
+		HRESULT STDMETHODCALLTYPE MediaBuffer::GetMaxLength(_Out_ DWORD *pcbMaxLength)
+		{
+			if (!pcbMaxLength)
+			{
+				return E_POINTER;
+			}
+			*pcbMaxLength = m_dwMaxSize;
+			return S_OK;
+		}
+
+		HRESULT STDMETHODCALLTYPE MediaBuffer::GetBufferAndLength(_Outptr_opt_result_bytebuffer_(*pcbLength) BYTE **ppBuffer, _Out_opt_ DWORD *pcbLength)
+		{
+			if (!ppBuffer || !pcbLength)
+			{
+				return E_POINTER;
+			}
+			*ppBuffer = m_data;
+			*pcbLength = m_dwSize;
+			return S_OK;
+		}
+
+		HRESULT STDMETHODCALLTYPE MediaBuffer::QueryInterface(REFIID riid, void **ppvObject)
+		{
+			if (IsEqualIID(riid, __uuidof(IMediaBuffer)) || IsEqualIID(riid, IID_IUnknown))
+			{
+				*ppvObject = static_cast<IMediaBuffer*>(this);
+			}
+			else
+			{
+				*ppvObject = NULL;
+				return E_NOINTERFACE;
+			}
+			AddRef();
+			return NOERROR;
+		}
+
+		ULONG STDMETHODCALLTYPE MediaBuffer::AddRef(void)
+		{
+			TinyReference < MediaBuffer >::AddRef();
+			return TinyReference < MediaBuffer >::GetReference();
+		}
+
+		ULONG STDMETHODCALLTYPE MediaBuffer::Release(void)
+		{
+			TinyReference < MediaBuffer >::Release();
+			return TinyReference < MediaBuffer >::GetReference();
+		}
+
 	};
 }

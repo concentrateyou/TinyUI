@@ -1,5 +1,6 @@
 #include "../stdafx.h"
 #include "TinyWASAPIAudio.h"
+#include <Devicetopology.h>
 
 namespace TinyUI
 {
@@ -97,6 +98,49 @@ namespace TinyUI
 		{
 
 		}
+		BOOL TinyWASAPIAudio::IsMicrophoneArray(const Name& name, BOOL& IsMA)
+		{
+			TinyComPtr<IMMDeviceEnumerator>	enumerator;
+			HRESULT hRes = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER);
+			if (hRes != S_OK)
+				return FALSE;
+			wstring id = StringToWString(name.id());
+			TinyComPtr<IMMDevice> mmDevice;
+			hRes = enumerator->GetDevice(id.c_str(), &mmDevice);
+			if (hRes != S_OK)
+				return FALSE;
+			GUID subType = { 0 };
+			if (!GetJackSubtype(mmDevice, subType))
+				return FALSE;
+			IsMA = (subType == KSNODETYPE_MICROPHONE_ARRAY) ? TRUE : FALSE;
+			return TRUE;
+		}
+		BOOL TinyWASAPIAudio::GetJackSubtype(IMMDevice* mmDevice, GUID& subType)
+		{
+			HRESULT hRes = S_OK;
+			if (mmDevice == NULL)
+				return FALSE;
+			TinyComPtr<IDeviceTopology> spEndpointTopology;
+			TinyComPtr<IConnector>      spPlug;
+			TinyComPtr<IConnector>      spJack;
+			TinyComPtr<IPart>			spJackAsPart;
+			hRes = mmDevice->Activate(__uuidof(IDeviceTopology), CLSCTX_INPROC_SERVER, NULL, (void**)&spEndpointTopology);
+			if (hRes != S_OK)
+				return FALSE;
+			hRes = spEndpointTopology->GetConnector(0, &spPlug);
+			if (hRes != S_OK)
+				return FALSE;
+			hRes = spPlug->GetConnectedTo(&spJack);
+			if (hRes != S_OK)
+				return FALSE;
+			hRes = spJack->QueryInterface(__uuidof(IPart), (void**)&spJackAsPart);
+			if (hRes != S_OK)
+				return FALSE;
+			hRes = spJackAsPart->GetSubType(&subType);
+			if (hRes != S_OK)
+				return FALSE;
+			return TRUE;
+		}
 		BOOL TinyWASAPIAudio::GetDevices(EDataFlow dataFlow, vector<Name>& names)
 		{
 			TinyComPtr<IMMDeviceEnumerator>	enumerator;
@@ -143,6 +187,42 @@ namespace TinyUI
 				}
 			}
 			return TRUE;
+		}
+		INT TinyWASAPIAudio::GetDeviceIndex(EDataFlow dataFlow,const Name& name)
+		{
+			TinyComPtr<IMMDeviceEnumerator>	enumerator;
+			HRESULT hRes = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER);
+			if (hRes != S_OK)
+				return -1;
+			TinyComPtr<IMMDeviceCollection> collection;
+			hRes = enumerator->EnumAudioEndpoints(dataFlow, DEVICE_STATE_ACTIVE, &collection);
+			if (hRes != S_OK)
+				return 1;
+			UINT count = 0;
+			hRes = collection->GetCount(&count);
+			if (hRes != S_OK)
+				return 1;
+			for (UINT i = 0;i < count;i++)
+			{
+				TinyComPtr<IMMDevice> device;
+				hRes = collection->Item(i, &device);
+				if (hRes != S_OK)
+					continue;
+				string id;
+				LPWSTR pwszVal = NULL;
+				hRes = device->GetId(&pwszVal);
+				if (SUCCEEDED(hRes) && pwszVal != NULL)
+				{
+					id = WStringToString(pwszVal);
+					CoTaskMemFree(pwszVal);
+					pwszVal = NULL;
+					if (id == name.id())
+					{
+						return i;
+					}
+				}
+			}
+			return -1;
 		}
 		BOOL TinyWASAPIAudio::IsFormatValid(const Name& name, AUDCLNT_SHAREMODE shareMode, WAVEFORMATEX* pFMT)
 		{

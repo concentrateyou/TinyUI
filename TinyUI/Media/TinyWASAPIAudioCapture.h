@@ -34,7 +34,7 @@ namespace TinyUI
 			virtual BOOL	GetVolume(FLOAT* volume);
 			virtual BOOL	SetMute(BOOL bMute);
 			virtual BOOL	GetMute(BOOL* bMute);
-			WAVEFORMATEX*	GetInputFormat() const;
+			WAVEFORMATEX*	GetFormat() const;
 			BOOL			GetStreamLatency(REFERENCE_TIME& latency);
 			BOOL			IsCapturing() const;
 		private:
