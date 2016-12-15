@@ -24,6 +24,7 @@ namespace TinyUI
 			virtual ~TinyWASAPIAudioCapture();
 			virtual void OnDataReceive(BYTE* bits, LONG size, LPVOID lpParameter) OVERRIDE;
 		public:
+			virtual	void	Initialize(DWORD dwStreamFlag = DEFAULT_CAPTURE_AUDCLNT_STREAMFLAGS);
 			virtual	void	Initialize(Callback<void(BYTE*, LONG, LPVOID)>&& callback, DWORD dwStreamFlag = DEFAULT_CAPTURE_AUDCLNT_STREAMFLAGS);
 			virtual BOOL	Open(const Name& name, WAVEFORMATEX* pFMT);
 			virtual BOOL	Start();

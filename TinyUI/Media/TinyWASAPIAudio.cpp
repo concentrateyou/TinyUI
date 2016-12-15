@@ -68,12 +68,14 @@ namespace TinyUI
 		}
 		//////////////////////////////////////////////////////////////////////////
 		TinyWASAPIAudio::Name::Name()
+			:m_type(GUID_NULL)
 		{
 
 		}
-		TinyWASAPIAudio::Name::Name(string&& id, string&& name)
+		TinyWASAPIAudio::Name::Name(string&& id, string&& name, GUID& type)
 			: m_name(std::move(name)),
-			m_id(std::move(id))
+			m_id(std::move(id)),
+			m_type(type)
 		{
 
 		}
@@ -88,6 +90,10 @@ namespace TinyUI
 		const string& TinyWASAPIAudio::Name::id() const
 		{
 			return m_id;
+		}
+		const GUID& TinyWASAPIAudio::Name::type() const
+		{
+			return m_type;
 		}
 		//////////////////////////////////////////////////////////////////////////
 		TinyWASAPIAudio::TinyWASAPIAudio()
@@ -181,14 +187,18 @@ namespace TinyUI
 					if (SUCCEEDED(hRes) && varName.pwszVal != NULL)
 					{
 						name = WStringToString(varName.pwszVal);
-						names.push_back(Name(std::move(id), std::move(name)));
 						PropVariantClear(&varName);
+						GUID type;
+						if (GetJackSubtype(device, type))
+						{
+							names.push_back(Name(std::move(id), std::move(name), type));
+						}
 					}
 				}
 			}
 			return TRUE;
 		}
-		INT TinyWASAPIAudio::GetDeviceIndex(EDataFlow dataFlow,const Name& name)
+		INT TinyWASAPIAudio::GetDeviceIndex(EDataFlow dataFlow, const Name& name)
 		{
 			TinyComPtr<IMMDeviceEnumerator>	enumerator;
 			HRESULT hRes = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER);

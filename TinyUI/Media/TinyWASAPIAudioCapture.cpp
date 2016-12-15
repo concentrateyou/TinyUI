@@ -18,6 +18,10 @@ namespace TinyUI
 		{
 			Close();
 		}
+		void TinyWASAPIAudioCapture::Initialize(DWORD dwStreamFlag)
+		{
+			m_dwStreamFlag = dwStreamFlag;
+		}
 		void TinyWASAPIAudioCapture::Initialize(Callback<void(BYTE*, LONG, LPVOID)>&& callback, DWORD dwStreamFlag)
 		{
 			m_dwStreamFlag = dwStreamFlag;

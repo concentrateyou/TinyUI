@@ -133,6 +133,9 @@ namespace TinyUI
 			ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
 		};
 		//////////////////////////////////////////////////////////////////////////
+		/// <summary>
+		/// https://msdn.microsoft.com/en-us/library/dd376684(v=vs.85).aspx
+		/// </summary>
 		class MediaBuffer : public TinyReference<MediaBuffer>, public IMediaBuffer
 		{
 		public:

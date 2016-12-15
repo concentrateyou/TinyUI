@@ -51,7 +51,7 @@ WAVEFORMATEX* waveFormat;
 
 void CaptureCB(BYTE* bits, LONG size, LPVOID ps)
 {
-	waveFile.Write(bits, size * waveFormat->nBlockAlign);
+	waveFile.Write(bits, size);
 }
 
 void ReadCB(BYTE* bits, LONG size, LPVOID ps)
@@ -102,16 +102,19 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	//capture.Initialize(BindCallback(&CaptureCB), AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST);
 	//BOOL bRes = capture.Open(names[0], NULL);
 	//bRes = capture.Start();
-	TinyAudioDSPCapture capture;
-	vector<Media::TinyWASAPIAudioRender::Name> names1;
-	TinyUI::Media::TinyWASAPIAudioRender::GetDevices(eRender, names1);
-	vector<Media::TinyWASAPIAudioRender::Name> names2;
-	TinyUI::Media::TinyWASAPIAudioRender::GetDevices(eCapture, names2);
+
+	/*TinyAudioDSPCapture capture;
+	vector<Media::TinyAudioDSPCapture::Name> names1;
+	TinyUI::Media::TinyAudioDSPCapture::GetDevices(eRender, names1);
+	vector<Media::TinyAudioDSPCapture::Name> names2;
+	TinyUI::Media::TinyAudioDSPCapture::GetDevices(eCapture, names2);
 	capture.Initialize(BindCallback(&CaptureCB));
+	capture.EnableAGC(TRUE);
+	capture.EnableNS(TRUE);
 	WAVEFORMATEX sFMT = { WAVE_FORMAT_PCM, 1, 16000, 32000, 2, 16, 0 };
 	waveFile.Create("D:\\BBB.wav", &sFMT);
 	BOOL bRes = capture.Open(names1[0], names2[0], &sFMT);
-	bRes = capture.Start();
+	bRes = capture.Start();*/
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
@@ -127,7 +130,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	//capture.Close();
 	//render.Close();
-	capture.Close();
+	//capture.Close();
 
 	OleUninitialize();
 	MFShutdown();

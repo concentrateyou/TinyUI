@@ -30,13 +30,15 @@ namespace TinyUI
 			{
 			public:
 				Name();
-				Name(string&& id, string&& name);
+				Name(string&& id, string&& name,GUID& type);
 				~Name();
 				const string& name() const;
 				const string& id() const;
+				const GUID& type() const;
 			private:
 				string		m_name;
 				string		m_id;
+				GUID		m_type;
 			};
 		public:
 			TinyWASAPIAudio();

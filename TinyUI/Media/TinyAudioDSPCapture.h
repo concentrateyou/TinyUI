@@ -19,6 +19,7 @@ namespace TinyUI
 			virtual ~TinyAudioDSPCapture();
 			void OnDataReceive(BYTE* bits, LONG size, LPVOID lpParameter) OVERRIDE;
 		public:
+			virtual	void Initialize();
 			virtual	void Initialize(Callback<void(BYTE*, LONG, LPVOID)>&& callback);
 			virtual BOOL Open(const Name& speakName, const Name& captureName, WAVEFORMATEX* pFMT);
 			virtual BOOL Start();
@@ -32,13 +33,14 @@ namespace TinyUI
 		private:
 			void OnMessagePump();
 			BOOL SetVTI4Property(IPropertyStore* ptrPS, REFPROPERTYKEY key, LONG value);
-			BOOL SetBoolProperty(IPropertyStore* ptrPS, REFPROPERTYKEY key, VARIANT_BOOL value);
+			BOOL SetBOOLProperty(IPropertyStore* ptrPS, REFPROPERTYKEY key, VARIANT_BOOL value);
 		private:
 			BOOL						m_bEnableAGC;
 			BOOL						m_bEnableNS;
 			BOOL						m_bCapturing;
 			WAVEFORMATEX*				m_pFMT;
 			DMO_MEDIA_TYPE				m_mediaType;
+			DMO_OUTPUT_DATA_BUFFER		m_dmoBuffer;
 			TinyEvent					m_audioStop;
 			IO::TinyTaskBase			m_task;
 			TinyComPtr<IMediaObject>	m_dmo;

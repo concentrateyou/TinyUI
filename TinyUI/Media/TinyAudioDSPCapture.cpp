@@ -20,9 +20,15 @@ namespace TinyUI
 
 		void TinyAudioDSPCapture::OnDataReceive(BYTE* bits, LONG size, LPVOID lpParameter)
 		{
+			if (!m_callback.IsNull())
+			{
+				m_callback(bits, size, lpParameter);
+			}
+		}
+		void TinyAudioDSPCapture::Initialize()
+		{
 
 		}
-
 		void TinyAudioDSPCapture::Initialize(Callback<void(BYTE*, LONG, LPVOID)>&& callback)
 		{
 			m_callback = std::move(callback);
@@ -39,13 +45,11 @@ namespace TinyUI
 			hRes = m_dmo->QueryInterface(IID_IPropertyStore, reinterpret_cast<void**>(&propertyStore));
 			if (FAILED(hRes))
 				return FALSE;
-			if (!SetBoolProperty(propertyStore, MFPKEY_WMAAECMA_DMO_SOURCE_MODE, VARIANT_TRUE))
+			if (!SetVTI4Property(propertyStore, MFPKEY_WMAAECMA_SYSTEM_MODE, SINGLE_CHANNEL_NSAGC))
 				return FALSE;
-			if (!SetVTI4Property(propertyStore, MFPKEY_WMAAECMA_SYSTEM_MODE, SINGLE_CHANNEL_AEC))
+			if (!SetBOOLProperty(propertyStore, MFPKEY_WMAAECMA_FEATURE_MODE, VARIANT_TRUE))
 				return FALSE;
-			if (!SetBoolProperty(propertyStore, MFPKEY_WMAAECMA_FEATURE_MODE, VARIANT_TRUE))
-				return FALSE;
-			if (!SetBoolProperty(propertyStore, MFPKEY_WMAAECMA_MIC_GAIN_BOUNDER, m_bEnableAGC ? VARIANT_TRUE : VARIANT_FALSE))
+			if (!SetBOOLProperty(propertyStore, MFPKEY_WMAAECMA_FEATR_AGC, m_bEnableAGC ? VARIANT_TRUE : VARIANT_FALSE))
 				return FALSE;
 			if (!SetVTI4Property(propertyStore, MFPKEY_WMAAECMA_FEATR_NS, m_bEnableNS ? 1 : 0))
 				return FALSE;
@@ -132,8 +136,8 @@ namespace TinyUI
 			WAVEFORMATEX* pFMT = GetFormat();
 			TinyScopedAvrt avrt("Pro Audio");
 			avrt.SetPriority();
-			DMO_OUTPUT_DATA_BUFFER	dmoBuffer = { 0 };
-			TinyScopedReferencePtr<MediaBuffer>	m_mediaBuffer(new MediaBuffer(pFMT->nSamplesPerSec * pFMT->nBlockAlign));
+			TinyScopedReferencePtr<MediaBuffer> mediaBuffer(new MediaBuffer(pFMT->nSamplesPerSec * pFMT->nBlockAlign));
+			m_dmoBuffer.pBuffer = mediaBuffer;
 			HRESULT hRes = S_OK;
 			BOOL bFlag = TRUE;
 			while (bFlag)
@@ -151,30 +155,20 @@ namespace TinyUI
 				DWORD dwStatus = 0;
 				do
 				{
-					dmoBuffer.pBuffer = m_mediaBuffer;
-					dmoBuffer.pBuffer->AddRef();
-					hRes = m_dmo->ProcessOutput(0, 1, &dmoBuffer, &dwStatus);
-					dmoBuffer.pBuffer->Release();
+					m_dmoBuffer.dwStatus = 0;
+					hRes = m_dmo->ProcessOutput(0, 1, &m_dmoBuffer, &dwStatus);
+					dwStatus = m_dmoBuffer.dwStatus;
+					DWORD cbProduced = 0;
 					if (FAILED(hRes))
 					{
 						bFlag = FALSE;
 						break;
 					}
-					dwStatus = dmoBuffer.dwStatus;
-					BYTE* data = NULL;
-					DWORD size = 0;
-					hRes = m_mediaBuffer->GetBufferAndLength(&data, &size);
-					if (FAILED(hRes))
-					{
-						bFlag = FALSE;
-						break;
-					}
-					if (size > 0 && !m_callback.IsNull())
-					{
-						m_callback(data, size, this);
-					}
+					BYTE* data;
+					mediaBuffer->GetBufferAndLength(&data, &cbProduced);
+					OnDataReceive(data, cbProduced, this);
+					mediaBuffer->SetLength(0);
 				} while (DMO_OUTPUT_DATA_BUFFERF_INCOMPLETE & dwStatus);
-				TRACE("Finish ProcessOutput\n");
 			}
 		}
 		BOOL TinyAudioDSPCapture::SetVTI4Property(IPropertyStore* ptrPS, REFPROPERTYKEY key, LONG value)
@@ -187,7 +181,7 @@ namespace TinyUI
 			PropVariantClear(&pv);
 			return hRes == S_OK;
 		}
-		BOOL TinyAudioDSPCapture::SetBoolProperty(IPropertyStore* ptrPS, REFPROPERTYKEY key, VARIANT_BOOL value)
+		BOOL TinyAudioDSPCapture::SetBOOLProperty(IPropertyStore* ptrPS, REFPROPERTYKEY key, VARIANT_BOOL value)
 		{
 			PROPVARIANT pv;
 			PropVariantInit(&pv);

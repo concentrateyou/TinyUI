@@ -100,7 +100,7 @@ namespace TinyUI
 			{
 				return E_INVALIDARG;
 			}
-			m_dwMaxSize = cbLength;
+			m_dwSize = cbLength;
 			return S_OK;
 		}
 
@@ -116,12 +116,18 @@ namespace TinyUI
 
 		HRESULT STDMETHODCALLTYPE MediaBuffer::GetBufferAndLength(_Outptr_opt_result_bytebuffer_(*pcbLength) BYTE **ppBuffer, _Out_opt_ DWORD *pcbLength)
 		{
-			if (!ppBuffer || !pcbLength)
+			if (!ppBuffer && !pcbLength)
 			{
 				return E_POINTER;
 			}
-			*ppBuffer = m_data;
-			*pcbLength = m_dwSize;
+			if (ppBuffer)
+			{
+				*ppBuffer = m_data;
+			}
+			if (pcbLength)
+			{
+				*pcbLength = m_dwSize;
+			}
 			return S_OK;
 		}
 
