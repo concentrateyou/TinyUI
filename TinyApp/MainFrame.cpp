@@ -323,7 +323,7 @@ void CMainFrame::OnAudioInputSelectChange2(INT index)
 	m_audioInput.Initialize(m_audioInputNames[m_audioInput1.GetCurSel()], BindCallback(&CMainFrame::OnAudioInput, this));
 	m_audioInput.Allocate(param);
 
-	//m_waveFile.Create("D:\\123.wav", &param.GetFormat());
+	m_waveFile.Create("D:\\ABCDEF.wav", &param.GetFormat());
 }
 
 void CMainFrame::OnAudioInput(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)

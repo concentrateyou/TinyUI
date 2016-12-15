@@ -10,6 +10,12 @@ namespace TinyUI
 	{
 		/// <summary>
 		/// DSP的音频捕获(只支持麦克风阵列)
+		/// SOURCE模式
+		/// 目前支持一下输出格式
+		/// 16000 1 16 WAVE_FORMAT_PCM
+		/// 8000  1 16 WAVE_FORMAT_PCM
+		/// 11025 1 16 WAVE_FORMAT_PCM
+		/// 22050 1 16 WAVE_FORMAT_PCM
 		/// </summary>
 		class TinyAudioDSPCapture : public TinyWASAPIAudio, public AudioObserver
 		{
@@ -30,6 +36,7 @@ namespace TinyUI
 		public:
 			void EnableAGC(BOOL bAllow);
 			void EnableNS(BOOL bAllow);
+			void SetVADMode(AEC_VAD_MODE mode);//不支持Kinect audio
 		private:
 			void OnMessagePump();
 			BOOL SetVTI4Property(IPropertyStore* ptrPS, REFPROPERTYKEY key, LONG value);
@@ -38,6 +45,7 @@ namespace TinyUI
 			BOOL						m_bEnableAGC;
 			BOOL						m_bEnableNS;
 			BOOL						m_bCapturing;
+			AEC_VAD_MODE				m_vadMode;
 			WAVEFORMATEX*				m_pFMT;
 			DMO_MEDIA_TYPE				m_mediaType;
 			DMO_OUTPUT_DATA_BUFFER		m_dmoBuffer;

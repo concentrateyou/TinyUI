@@ -9,6 +9,7 @@ namespace TinyUI
 			:m_bCapturing(FALSE),
 			m_bEnableAGC(FALSE),
 			m_bEnableNS(FALSE),
+			m_vadMode(AEC_VAD_DISABLED),
 			m_pFMT(NULL)
 		{
 			m_audioStop.CreateEvent(FALSE, FALSE, NULL, NULL);
@@ -45,13 +46,20 @@ namespace TinyUI
 			hRes = m_dmo->QueryInterface(IID_IPropertyStore, reinterpret_cast<void**>(&propertyStore));
 			if (FAILED(hRes))
 				return FALSE;
-			if (!SetVTI4Property(propertyStore, MFPKEY_WMAAECMA_SYSTEM_MODE, SINGLE_CHANNEL_NSAGC))
+			AEC_SYSTEM_MODE mode = SINGLE_CHANNEL_AEC;
+			if (captureName.type() == KSNODETYPE_MICROPHONE_ARRAY)
+			{
+				mode = OPTIBEAM_ARRAY_AND_AEC;
+			}
+			if (!SetVTI4Property(propertyStore, MFPKEY_WMAAECMA_SYSTEM_MODE, mode))
 				return FALSE;
 			if (!SetBOOLProperty(propertyStore, MFPKEY_WMAAECMA_FEATURE_MODE, VARIANT_TRUE))
 				return FALSE;
 			if (!SetBOOLProperty(propertyStore, MFPKEY_WMAAECMA_FEATR_AGC, m_bEnableAGC ? VARIANT_TRUE : VARIANT_FALSE))
 				return FALSE;
 			if (!SetVTI4Property(propertyStore, MFPKEY_WMAAECMA_FEATR_NS, m_bEnableNS ? 1 : 0))
+				return FALSE;
+			if (!SetVTI4Property(propertyStore, MFPKEY_WMAAECMA_FEATR_VAD, m_vadMode))
 				return FALSE;
 			UINT index1 = GetDeviceIndex(eRender, speakName);
 			UINT index2 = GetDeviceIndex(eCapture, captureName);
@@ -127,6 +135,11 @@ namespace TinyUI
 		{
 			m_bEnableNS = bAllow;
 		}
+		void TinyAudioDSPCapture::SetVADMode(AEC_VAD_MODE mode)
+		{
+			m_vadMode = mode;
+
+		}
 		WAVEFORMATEX* TinyAudioDSPCapture::GetFormat() const
 		{
 			return m_pFMT;
@@ -178,6 +191,7 @@ namespace TinyUI
 			pv.vt = VT_I4;
 			pv.lVal = value;
 			HRESULT hRes = ptrPS->SetValue(key, pv);
+			hRes = ptrPS->GetValue(key, &pv);
 			PropVariantClear(&pv);
 			return hRes == S_OK;
 		}
@@ -188,6 +202,7 @@ namespace TinyUI
 			pv.vt = VT_BOOL;
 			pv.boolVal = value;
 			HRESULT hRes = ptrPS->SetValue(key, pv);
+			hRes = ptrPS->GetValue(key, &pv);
 			PropVariantClear(&pv);
 			return hRes == S_OK;
 		}

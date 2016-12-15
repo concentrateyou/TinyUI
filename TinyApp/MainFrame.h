@@ -4,6 +4,7 @@
 #include "Control/TinyComboBox.h"
 #include "Control/TinyButton.h"
 #include "Control/TinyLabel.h"
+#include "Control/TinyRichTextBox.h"
 #include "VideoCapture.h"
 #include "AudioCapture.h"
 #include "AudioCapture.h"
@@ -49,7 +50,6 @@ public:
 	void OnAudioOutput(BYTE* bits, LONG size, FLOAT ts, LPVOID ps);
 
 private:
-	//Media::TinyRenderAudioCapture	m_capture;
 
 	TinyLabel			m_control;
 	DShow::VideoCapture m_videoDevice;
@@ -77,7 +77,6 @@ private:
 	TinyComboBox		m_audioInput2;
 	TinyButton			m_audioInputStart;
 	TinyButton			m_audioInputStop;
-
 
 	DShow::AudioCapture m_audioOutput;
 	vector<DShow::AudioCapture::Name> m_audioOutputNames;

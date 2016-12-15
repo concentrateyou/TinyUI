@@ -4,6 +4,14 @@
 #include "Control/TinyComboBox.h"
 #include "Control/TinyButton.h"
 #include "Control/TinyLabel.h"
+#include "Control/TinyButton.h"
+#include "Control/TinyLabel.h"
+#include "Control/TinyRichTextBox.h"
+
+#include <sapi.h>
+#include <sphelper.h>
+#pragma comment(lib,"sapi.lib")
+
 using namespace TinyUI;
 
 class ChatFrame : public TinyControl
@@ -25,5 +33,13 @@ public:
 	LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+public:
+	void OnSpeek(void*, INT);
+private:
+	TinyRichTextBox		m_textbox;
+	TinyButton			m_speek;
+	TinyScopedPtr<Delegate<void(void*, INT)>> m_onSpeek;
+
+	TinyComPtr<ISpVoice> m_spVoice;
 };
 

@@ -408,10 +408,10 @@
     <ClInclude Include="Media\TinyWASAPIAudio.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
-    <ClInclude Include="Media\TinyAudioDSPCapture.h">
+    <ClInclude Include="Media\TinyAudioDMOFilter.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
-    <ClInclude Include="Media\TinyAudioDMOFilter.h">
+    <ClInclude Include="Media\TinyAudioDSPCapture.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
   </ItemGroup>
@@ -755,10 +755,10 @@
     <ClCompile Include="Media\TinyWASAPIAudio.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
-    <ClCompile Include="Media\TinyAudioDSPCapture.cpp">
+    <ClCompile Include="Media\TinyAudioDMOFilter.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
-    <ClCompile Include="Media\TinyAudioDMOFilter.cpp">
+    <ClCompile Include="Media\TinyAudioDSPCapture.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
   </ItemGroup>

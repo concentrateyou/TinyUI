@@ -116,21 +116,21 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	BOOL bRes = capture.Open(names1[0], names2[0], &sFMT);
 	bRes = capture.Start();*/
 
+	//capture.Close();
+	//render.Close();
+	//capture.Close();
+
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	CMainFrame uiImpl;
+	ChatFrame uiImpl;
 	uiImpl.Create(NULL, 50, 50, 800, 600);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();
 	INT loopRes = theLoop.MessageLoop();
 	TinyApplication::GetInstance()->RemoveMessageLoop();
 	TinyApplication::GetInstance()->Uninitialize();
-
-	//capture.Close();
-	//render.Close();
-	//capture.Close();
 
 	OleUninitialize();
 	MFShutdown();

@@ -49,16 +49,23 @@ HICON ChatFrame::RetrieveIcon()
 LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	//AnimateWindow(m_hWND, 1000, AW_ACTIVATE | AW_BLEND);
-	//InvalidateRect(m_hWND, NULL, TRUE);
-	//UpdateWindow();
+
+	m_textbox.Create(m_hWND, 20, 20, 400, 300);
+	m_speek.Create(m_hWND, 20, 330, 100, 23);
+	m_speek.SetText("Speek");
+
+	m_onSpeek.Reset(new Delegate<void(void*, INT)>(this, &ChatFrame::OnSpeek));
+	m_speek.EVENT_Click += m_onSpeek;
+
+	HRESULT hr = CoCreateInstance(CLSID_SpVoice, NULL, CLSCTX_ALL,__uuidof(ISpVoice), (void**)&m_spVoice);
+
 	return FALSE;
 }
 
 LRESULT ChatFrame::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-
+	m_speek.EVENT_Click -= m_onSpeek;
 	return FALSE;
 }
 
@@ -72,5 +79,19 @@ LRESULT ChatFrame::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& b
 {
 	bHandled = FALSE;
 	return FALSE;
+}
+
+void ChatFrame::OnSpeek(void*, INT)
+{
+	ASSERT(m_spVoice);
+
+	TinyString str;
+	INT s = ::GetWindowTextLength(m_textbox.Handle());
+	str.Resize(s + 1);
+	::GetWindowText(m_textbox.Handle(), str.STR(), s + 1);
+	string str1 = str.STR();
+	wstring wstr = StringToWString(str1);
+	HRESULT hRes = m_spVoice->Speak(&wstr[0], SPF_DEFAULT, NULL);
+	INT a = 0;
 }
 
