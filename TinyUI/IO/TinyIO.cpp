@@ -400,7 +400,7 @@ namespace TinyUI
 		}
 		TinyStdioFile::TinyStdioFile(LPCTSTR lpszFileName, CHAR mode)
 		{
-			m_hFile = fopen(lpszFileName, &mode);
+			fopen_s(&m_hFile, lpszFileName, &mode);
 		}
 		TinyStdioFile::~TinyStdioFile()
 		{
