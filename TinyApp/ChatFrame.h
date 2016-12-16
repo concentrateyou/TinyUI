@@ -33,9 +33,13 @@ public:
 	LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+
+	virtual LRESULT OnTimer(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) override;
+
 public:
 	void OnSpeek(void*, INT);
 private:
+	INT					m_index;
 	TinyRichTextBox		m_textbox;
 	TinyButton			m_speek;
 	TinyImage			m_image;

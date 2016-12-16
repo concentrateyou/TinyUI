@@ -51,7 +51,10 @@ LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHand
 	bHandled = FALSE;
 
 
-	BOOL bRes = m_image.Load("D:\\1.gif");
+	BOOL bRes = m_image.Load("D:\\1.jpg");
+
+	//SetTimer(m_hWND, 0, 10, NULL);
+
 	/*m_textbox.Create(m_hWND, 20, 20, 400, 300);
 	m_speek.Create(m_hWND, 20, 330, 100, 23);
 	m_speek.SetText("Speek");
@@ -78,6 +81,19 @@ LRESULT ChatFrame::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	HDC hDC = BeginPaint(m_hWND, &s);
 	m_canvas.InitializeDC(hDC);
 	m_canvas.DrawImage(m_image, 10, 10, m_image.GetSize().cx, m_image.GetSize().cy);
+	/*HBITMAP hMenBmp = NULL;
+	HDC hMenDC = NULL;
+	RECT rect = m_image.GetRectangle();
+	BLENDFUNCTION pixelblend = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
+	hMenDC = CreateCompatibleDC(hDC);
+	hMenBmp = CreateCompatibleBitmap(hDC, TO_CX(rect), TO_CY(rect));
+	HBITMAP hBmp = m_image.GetFrame(m_index);
+	HBITMAP hOldBmp = (HBITMAP)SelectObject(hMenDC, hBmp);
+	AlphaBlend(hDC, rect.left, rect.top, TO_CX(rect), TO_CY(rect), hMenDC, 0, 0, m_image.GetSize().cx, m_image.GetSize().cy, pixelblend);
+	SelectObject(hMenDC, hOldBmp);
+	SAFE_DELETE_OBJECT(hMenBmp);
+	SAFE_DELETE_OBJECT(hMenDC);*/
+
 	EndPaint(m_hWND, &s);
 	return FALSE;
 }
@@ -85,6 +101,16 @@ LRESULT ChatFrame::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 LRESULT ChatFrame::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
+	return FALSE;
+}
+
+LRESULT ChatFrame::OnTimer(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	/*if (m_index++ > m_image.GetFrameCount())
+	{
+		m_index = 0;
+	}
+	::RedrawWindow(m_hWND, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);*/
 	return FALSE;
 }
 
