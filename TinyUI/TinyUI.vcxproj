@@ -156,7 +156,7 @@
     <ClInclude Include="IO\TinyThread.h" />
     <ClInclude Include="IO\TinyWin32TaskPool.h" />
     <ClInclude Include="Media\TinyAudioDSPCapture.h" />
-    <ClInclude Include="Media\TinyAudioDMOFilter.h" />
+    <ClInclude Include="Media\TinyAudioMixer.h" />
     <ClInclude Include="Media\TinyWASAPIAudio.h" />
     <ClInclude Include="Media\TinyMedia.h" />
     <ClInclude Include="Media\TinyMFAACEncode.h" />
@@ -272,7 +272,7 @@
     <ClCompile Include="IO\TinyThread.cpp" />
     <ClCompile Include="IO\TinyWin32TaskPool.cpp" />
     <ClCompile Include="Media\TinyAudioDSPCapture.cpp" />
-    <ClCompile Include="Media\TinyAudioDMOFilter.cpp" />
+    <ClCompile Include="Media\TinyAudioMixer.cpp" />
     <ClCompile Include="Media\TinyWASAPIAudio.cpp" />
     <ClCompile Include="Media\TinyMedia.cpp" />
     <ClCompile Include="Media\TinyMFAACEncode.cpp" />

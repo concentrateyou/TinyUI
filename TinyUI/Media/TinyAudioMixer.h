@@ -6,7 +6,10 @@ namespace TinyUI
 {
 	namespace Media
 	{
-		class TinyAudioDMOFilter : public AudioObserver
+		/// <summary>
+		/// “Ù∆µªÏ“Ù∆˜
+		/// </summary>
+		class TinyAudioMixer : public AudioObserver
 		{
 		public:
 			void OnDataReceive(BYTE* bits, LONG size, LPVOID lpParameter) OVERRIDE;
