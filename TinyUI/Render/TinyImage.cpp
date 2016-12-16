@@ -5,15 +5,16 @@ namespace TinyUI
 {
 	extern "C"
 	{
-		extern unsigned char	*stbi_load_from_memory_ex(unsigned char const *buffer, int len, int *x, int *y, int *comp, int req_comp, size_t* count);
-		extern unsigned char	*stbi_load_from_file_ex(FILE *f, int *x, int *y, int *comp, int req_comp, size_t* count);
-		extern void				stbi_image_free(void *retval_from_stbi_load);
+		extern unsigned char *stbi_load_ex(char const *filename, int *x, int *y, int *channels_in_file, int desired_channels, size_t* count);
+		extern unsigned char *stbi_load_from_memory_ex(unsigned char const *buffer, int len, int *x, int *y, int *channels_in_file, int desired_channels, size_t* count);
+		extern unsigned char *stbi_load_from_file_ex(FILE *f, int *x, int *y, int *channels_in_file, int desired_channels, size_t* count);
+		extern void	stbi_image_free(void *retval_from_stbi_load);
 	};
 
 	TinyImage::TinyImage()
 		:m_cx(0),
 		m_cy(0),
-		m_count(0),
+		m_count(1),
 		m_hBitmap(NULL)
 	{
 
@@ -120,10 +121,10 @@ namespace TinyUI
 		}
 		stbi_image_free(pData);
 		m_hBitmap = m_images.GetSize() == 0 ? NULL : m_images[0];
-		return m_images.GetSize() == m_count ? S_OK : S_FALSE;
+		return m_images.GetSize() == m_count ? TRUE : FALSE;
 	error:
 		stbi_image_free(pData);
-		return S_FALSE;
+		return FALSE;
 	}
 	BOOL TinyImage::Load(BYTE* ps, DWORD size)
 	{
@@ -211,10 +212,10 @@ namespace TinyUI
 		}
 		stbi_image_free(pData);
 		m_hBitmap = m_images.GetSize() == 0 ? NULL : m_images[0];
-		return m_images.GetSize() == m_count ? S_OK : S_FALSE;
+		return m_images.GetSize() == m_count ? TRUE : FALSE;
 	error:
 		stbi_image_free(pData);
-		return S_FALSE;
+		return FALSE;
 	}
 	TinySize TinyImage::GetSize()
 	{

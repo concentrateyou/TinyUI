@@ -50,14 +50,16 @@ LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHand
 {
 	bHandled = FALSE;
 
-	m_textbox.Create(m_hWND, 20, 20, 400, 300);
+
+	BOOL bRes = m_image.Load("D:\\1.gif");
+	/*m_textbox.Create(m_hWND, 20, 20, 400, 300);
 	m_speek.Create(m_hWND, 20, 330, 100, 23);
 	m_speek.SetText("Speek");
 
 	m_onSpeek.Reset(new Delegate<void(void*, INT)>(this, &ChatFrame::OnSpeek));
 	m_speek.EVENT_Click += m_onSpeek;
 
-	HRESULT hr = CoCreateInstance(CLSID_SpVoice, NULL, CLSCTX_ALL,__uuidof(ISpVoice), (void**)&m_spVoice);
+	HRESULT hr = CoCreateInstance(CLSID_SpVoice, NULL, CLSCTX_ALL,__uuidof(ISpVoice), (void**)&m_spVoice);*/
 
 	return FALSE;
 }
@@ -65,13 +67,18 @@ LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHand
 LRESULT ChatFrame::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	m_speek.EVENT_Click -= m_onSpeek;
+	//m_speek.EVENT_Click -= m_onSpeek;
 	return FALSE;
 }
 
 LRESULT ChatFrame::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
+	PAINTSTRUCT s = { 0 };
+	HDC hDC = BeginPaint(m_hWND, &s);
+	m_canvas.InitializeDC(hDC);
+	m_canvas.DrawImage(m_image, 10, 10, m_image.GetSize().cx, m_image.GetSize().cy);
+	EndPaint(m_hWND, &s);
 	return FALSE;
 }
 
@@ -83,15 +90,15 @@ LRESULT ChatFrame::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& b
 
 void ChatFrame::OnSpeek(void*, INT)
 {
-	ASSERT(m_spVoice);
+	//ASSERT(m_spVoice);
 
-	TinyString str;
+	/*TinyString str;
 	INT s = ::GetWindowTextLength(m_textbox.Handle());
 	str.Resize(s + 1);
 	::GetWindowText(m_textbox.Handle(), str.STR(), s + 1);
 	string str1 = str.STR();
 	wstring wstr = StringToWString(str1);
 	HRESULT hRes = m_spVoice->Speak(&wstr[0], SPF_DEFAULT, NULL);
-	INT a = 0;
+	INT a = 0;*/
 }
 

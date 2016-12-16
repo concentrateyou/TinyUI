@@ -38,8 +38,9 @@ public:
 private:
 	TinyRichTextBox		m_textbox;
 	TinyButton			m_speek;
+	TinyImage			m_image;
+	TinyCanvas			m_canvas;
 	TinyScopedPtr<Delegate<void(void*, INT)>> m_onSpeek;
-
 	TinyComPtr<ISpVoice> m_spVoice;
 };
 
