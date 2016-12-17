@@ -280,7 +280,7 @@ namespace TinyUI
 					hRes = m_audioRender->GetBuffer(available, &data);
 					if (hRes != S_OK)
 						return FALSE;
-					m_callback(data, available * pFMT->nBlockAlign, this);
+					OnDataAvailable(data, available * pFMT->nBlockAlign, this);
 					hRes = m_audioRender->ReleaseBuffer(m_count, 0);
 					if (hRes != S_OK)
 						return FALSE;
@@ -296,7 +296,7 @@ namespace TinyUI
 						hRes = m_audioRender->GetBuffer(available, &data);
 						if (hRes != S_OK)
 							return FALSE;
-						m_callback(data, available * pFMT->nBlockAlign, this);
+						OnDataAvailable(data, available * pFMT->nBlockAlign, this);
 						hRes = m_audioRender->ReleaseBuffer(available, 0);
 						if (hRes != S_OK)
 							return FALSE;
@@ -315,7 +315,7 @@ namespace TinyUI
 					hRes = m_audioRender->GetBuffer(available, &data);
 					if (hRes != S_OK)
 						return FALSE;
-					m_callback(data, available * pFMT->nBlockAlign, this);
+					OnDataAvailable(data, available * pFMT->nBlockAlign, this);
 					hRes = m_audioRender->ReleaseBuffer(available, 0);
 					if (hRes != S_OK)
 						return FALSE;
@@ -352,7 +352,14 @@ namespace TinyUI
 					break;
 				}
 			}
+		}
 
+		void TinyWASAPIAudioRender::OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
+		{
+			if (!m_callback.IsNull())
+			{
+				m_callback(bits, size, lpParameter);
+			}
 		}
 	}
 }

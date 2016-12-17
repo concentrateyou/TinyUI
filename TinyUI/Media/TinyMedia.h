@@ -115,7 +115,7 @@ namespace TinyUI
 		public:
 			AudioObserver();
 		public:
-			virtual void OnDataReceive(BYTE* bits, LONG size, LPVOID lpParameter) = 0;
+			virtual void OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter) = 0;
 		protected:
 			virtual ~AudioObserver();
 		};

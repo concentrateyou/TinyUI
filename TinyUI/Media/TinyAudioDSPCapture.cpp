@@ -19,7 +19,7 @@ namespace TinyUI
 
 		}
 
-		void TinyAudioDSPCapture::OnDataReceive(BYTE* bits, LONG size, LPVOID lpParameter)
+		void TinyAudioDSPCapture::OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
 		{
 			if (!m_callback.IsNull())
 			{
@@ -152,17 +152,20 @@ namespace TinyUI
 			TinyScopedReferencePtr<MediaBuffer> mediaBuffer(new MediaBuffer(pFMT->nSamplesPerSec * pFMT->nBlockAlign));
 			m_dmoBuffer.pBuffer = mediaBuffer;
 			HRESULT hRes = S_OK;
-			BOOL bFlag = TRUE;
-			while (bFlag)
+			BOOL bCapturing = TRUE;
+			while (bCapturing)
 			{
 				switch (WaitForSingleObject(m_audioStop, 5))
 				{
 				case WAIT_FAILED:
 				case WAIT_ABANDONED:
 				case WAIT_OBJECT_0:
-					bFlag = FALSE;
+					bCapturing = FALSE;
 					break;
 				case WAIT_TIMEOUT:
+					break;
+				default:
+					bCapturing = FALSE;
 					break;
 				}
 				DWORD dwStatus = 0;
@@ -174,12 +177,12 @@ namespace TinyUI
 					DWORD cbProduced = 0;
 					if (FAILED(hRes))
 					{
-						bFlag = FALSE;
+						bCapturing = FALSE;
 						break;
 					}
 					BYTE* data;
 					mediaBuffer->GetBufferAndLength(&data, &cbProduced);
-					OnDataReceive(data, cbProduced, this);
+					OnDataAvailable(data, cbProduced, this);
 					mediaBuffer->SetLength(0);
 				} while (DMO_OUTPUT_DATA_BUFFERF_INCOMPLETE & dwStatus);
 			}

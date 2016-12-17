@@ -5,9 +5,9 @@ namespace TinyUI
 {
 	extern "C"
 	{
-		extern unsigned char *stbi_load_ex(char const *filename, int *x, int *y, int *channels_in_file, int desired_channels, size_t* count);
-		extern unsigned char *stbi_load_from_memory_ex(unsigned char const *buffer, int len, int *x, int *y, int *channels_in_file, int desired_channels, size_t* count);
-		extern unsigned char *stbi_load_from_file_ex(FILE *f, int *x, int *y, int *channels_in_file, int desired_channels, size_t* count);
+		extern unsigned char *stbi_load_ex(char const *filename, int *x, int *y, int *channels_in_file, int desired_channels, int* count);
+		extern unsigned char *stbi_load_from_memory_ex(unsigned char const *buffer, int len, int *x, int *y, int *channels_in_file, int desired_channels, int* count);
+		extern unsigned char *stbi_load_from_file_ex(FILE *f, int *x, int *y, int *channels_in_file, int desired_channels, int* count);
 		extern void	stbi_image_free(void *retval_from_stbi_load);
 	};
 
@@ -81,7 +81,7 @@ namespace TinyUI
 		else
 		{
 			BYTE* p = pData + m_count * 4 * m_cx * m_cy;
-			for (size_t i = 0; i < m_count; i++)
+			for (INT i = 0; i < m_count; i++)
 			{
 				BYTE* ps = pData + i * 4 * m_cx * m_cy;
 				BITMAPINFO bmi;
@@ -172,7 +172,7 @@ namespace TinyUI
 		else
 		{
 			BYTE* seek = pData + m_count * 4 * m_cx * m_cy;
-			for (size_t i = 0; i < m_count; i++)
+			for (INT i = 0; i < m_count; i++)
 			{
 				BITMAPINFO bmi;
 				memset(&bmi, 0, sizeof(BITMAPINFO));

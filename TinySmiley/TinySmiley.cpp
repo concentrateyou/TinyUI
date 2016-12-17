@@ -11,12 +11,15 @@ extern const char SmileyGUID[] = "{B6AD5231-C3EA-4261-A9B6-C57CC720B4C6}";
 
 extern LONG		g_cLocks;
 extern HMODULE	g_hModule;
+
 extern "C"
 {
-	extern unsigned char	*stbi_load_from_memory_ex(unsigned char const *buffer, int len, int *x, int *y, int *comp, int req_comp, size_t* count);
-	extern unsigned char	*stbi_load_from_file_ex(FILE *f, int *x, int *y, int *comp, int req_comp, size_t* count);
-	extern void				stbi_image_free(void *retval_from_stbi_load);
+	extern unsigned char *stbi_load_ex(char const *filename, int *x, int *y, int *channels_in_file, int desired_channels, int* count);
+	extern unsigned char *stbi_load_from_memory_ex(unsigned char const *buffer, int len, int *x, int *y, int *channels_in_file, int desired_channels, int* count);
+	extern unsigned char *stbi_load_from_file_ex(FILE *f, int *x, int *y, int *channels_in_file, int desired_channels, int* count);
+	extern void	stbi_image_free(void *retval_from_stbi_load);
 };
+
 namespace Smiley
 {
 	TinySmiley::TinySmiley()
@@ -97,7 +100,7 @@ namespace Smiley
 		else
 		{
 			BYTE* seek = pData + m_count * 4 * m_cx * m_cy;
-			for (size_t i = 0; i < m_count; i++)
+			for (INT i = 0; i < m_count; i++)
 			{
 				BITMAPINFO bmi;
 				memset(&bmi, 0, sizeof(BITMAPINFO));
@@ -193,7 +196,7 @@ namespace Smiley
 		else
 		{
 			BYTE* p = pData + m_count * 4 * m_cx * m_cy;
-			for (size_t i = 0; i < m_count; i++)
+			for (INT i = 0; i < m_count; i++)
 			{
 				BYTE* ps = pData + i * 4 * m_cx * m_cy;
 				BITMAPINFO bmi;

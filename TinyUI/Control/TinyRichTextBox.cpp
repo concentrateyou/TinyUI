@@ -47,7 +47,12 @@ namespace TinyUI
 		}
 		return FALSE;
 	}
-
+	BOOL TinyRichTextBox::GetText(TinyString& str) const
+	{
+		INT size = ::GetWindowTextLength(m_hWND) + 1;
+		str.Resize(size);
+		return ::GetWindowText(m_hWND, str.STR(), size);
+	}
 	BOOL TinyRichTextBox::CanUndo() const
 	{
 		ASSERT(::IsWindow(m_hWND));
@@ -393,7 +398,7 @@ namespace TinyUI
 	INT TinyRichTextBox::GetLine(INT nIndex, _Out_cap_post_count_(nMaxLength, return) LPTSTR lpszBuffer, INT nMaxLength) const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		ASSERT(sizeof(nMaxLength) <= nMaxLength*sizeof(TCHAR) && nMaxLength > 0);
+		ASSERT(sizeof(nMaxLength) <= nMaxLength * sizeof(TCHAR) && nMaxLength > 0);
 		*(LPINT)lpszBuffer = nMaxLength;
 		return (INT)::SendMessage(m_hWND, EM_GETLINE, nIndex, (LPARAM)lpszBuffer);
 	}
@@ -439,13 +444,13 @@ namespace TinyUI
 #else
 			textLenEx.codepage = CP_ACP;
 #endif
-		}
+	}
 		else
 			textLenEx.codepage = nCodePage;
 
 		return (LONG) ::SendMessage(m_hWND, EM_GETTEXTLENGTHEX,
 			(WPARAM)&textLenEx, 0);
-	}
+}
 
 	INT TinyRichTextBox::GetTextRange(INT nFirst, INT nLast, TinyString& refString) const
 	{

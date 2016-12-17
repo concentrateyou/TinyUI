@@ -14,6 +14,7 @@
 #include "Network/TinyIOServer.h"
 #include "Network/TinySocket.h"
 #include "Network/TinyHTTPClient.h"
+#include "Media/TinyWave.h"
 
 BOOL LoadSeDebugPrivilege()
 {

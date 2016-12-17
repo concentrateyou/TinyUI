@@ -16,12 +16,13 @@ namespace TinyUI
 		/// (eRender:音频播放设备,eCapture:音频采集设备)
 		/// (eConsole:与计算机交互,eCommunications:与他人的声音交流,eMultimedia:播放或者录制电影)
 		/// </summary>
-		class TinyWASAPIAudioRender : public TinyWASAPIAudio
+		class TinyWASAPIAudioRender : public TinyWASAPIAudio, public AudioObserver
 		{
 			DISALLOW_COPY_AND_ASSIGN(TinyWASAPIAudioRender)
 		public:
 			TinyWASAPIAudioRender();
 			virtual ~TinyWASAPIAudioRender();
+			void OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter) OVERRIDE;
 		public:
 			virtual	void	Initialize(Callback<void(BYTE*, LONG, LPVOID)>&& callback, DWORD dwStreamFlag = DEFAULT_RENDER_AUDCLNT_STREAMFLAGS, AUDCLNT_SHAREMODE shareMode = AUDCLNT_SHAREMODE_SHARED);
 			virtual BOOL	Open(const Name& name, WAVEFORMATEX* pFMT = NULL);

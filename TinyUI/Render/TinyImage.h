@@ -29,12 +29,12 @@ namespace TinyUI
 		TinySize		GetSize();
 		TinyRectangle	GetRectangle();
 	protected:
-		TinyArray<HBITMAP>   m_images;
-		TinyArray<UINT>		 m_delays;//延时
-		HBITMAP				 m_hBitmap;
-		size_t				 m_count;//帧个数
-		INT					 m_cx;
-		INT					 m_cy;
+		TinyArray<HBITMAP>  m_images;
+		TinyArray<UINT>		m_delays;//延时
+		HBITMAP				m_hBitmap;
+		INT					m_count;//帧个数
+		INT					m_cx;
+		INT					m_cy;
 	};
 }
 

@@ -65,7 +65,7 @@ namespace Smiley
 		LONG    m_cRef;
 		INT		m_cx;
 		INT		m_cy;
-		size_t	m_count;//Ö¡Êý
+		INT		m_count;//Ö¡Êý
 	};
 	//////////////////////////////////////////////////////////////////////////
 	/// <summary>

@@ -5,7 +5,7 @@ namespace TinyUI
 {
 	namespace Media
 	{
-		void TinyAudioMixer::OnDataReceive(BYTE* bits, LONG size, LPVOID lpParameter)
+		void TinyAudioMixer::OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
 		{
 
 		}

@@ -100,7 +100,6 @@
     <ClInclude Include="PinEnumerator.h" />
     <ClInclude Include="ReferenceTime.h" />
     <ClInclude Include="ScopedMediaType.h" />
-    <ClInclude Include="SoundPlayer.h" />
     <ClInclude Include="StreamSource.h" />
     <ClInclude Include="SourceStream.h" />
     <ClInclude Include="VideoSinkFilter.h" />
@@ -125,7 +124,6 @@
     <ClCompile Include="PinEnumerator.cpp" />
     <ClCompile Include="ReferenceTime.cpp" />
     <ClCompile Include="ScopedMediaType.cpp" />
-    <ClCompile Include="SoundPlayer.cpp" />
     <ClCompile Include="StreamSource.cpp" />
     <ClCompile Include="SourceStream.cpp" />
     <ClCompile Include="VideoSinkFilter.cpp" />

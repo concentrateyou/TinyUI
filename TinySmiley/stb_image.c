@@ -428,14 +428,14 @@ extern "C" {
 
 	STBIDEF stbi_uc *stbi_load(char              const *filename, int *x, int *y, int *channels_in_file, int desired_channels);
 	STBIDEF stbi_uc *stbi_load_from_memory(stbi_uc           const *buffer, int len, int *x, int *y, int *channels_in_file, int desired_channels);
-	STBIDEF stbi_uc *stbi_load_ex(char              const *filename, int *x, int *y, int *channels_in_file, int desired_channels, size_t* count);
-	STBIDEF stbi_uc *stbi_load_from_memory_ex(stbi_uc           const *buffer, int len, int *x, int *y, int *channels_in_file, int desired_channels, size_t* count);
+	STBIDEF stbi_uc *stbi_load_ex(char              const *filename, int *x, int *y, int *channels_in_file, int desired_channels, int* count);
+	STBIDEF stbi_uc *stbi_load_from_memory_ex(stbi_uc           const *buffer, int len, int *x, int *y, int *channels_in_file, int desired_channels, int* count);
 
 	STBIDEF stbi_uc *stbi_load_from_callbacks(stbi_io_callbacks const *clbk, void *user, int *x, int *y, int *channels_in_file, int desired_channels);
 
 #ifndef STBI_NO_STDIO
 	STBIDEF stbi_uc *stbi_load_from_file(FILE *f, int *x, int *y, int *channels_in_file, int desired_channels);
-	STBIDEF stbi_uc *stbi_load_from_file_ex(FILE *f, int *x, int *y, int *channels_in_file, int desired_channels, size_t* count);
+	STBIDEF stbi_uc *stbi_load_from_file_ex(FILE *f, int *x, int *y, int *channels_in_file, int desired_channels, int* count);
 	// for stbi_load_from_file, file pointer is left pointing immediately after image
 #endif
 
@@ -898,7 +898,7 @@ static int      stbi__pic_info(stbi__context *s, int *x, int *y, int *comp);
 #ifndef STBI_NO_GIF
 static int      stbi__gif_test(stbi__context *s);
 static void    *stbi__gif_load(stbi__context *s, int *x, int *y, int *comp, int req_comp, stbi__result_info *ri);
-static void    *stbi__gif_load_ex(stbi__context *s, int *x, int *y, int *comp, int req_comp, stbi__result_info *ri, size_t* count);
+static void    *stbi__gif_load_ex(stbi__context *s, int *x, int *y, int *comp, int req_comp, stbi__result_info *ri, int* count);
 static int      stbi__gif_info(stbi__context *s, int *x, int *y, int *comp);
 #endif
 
@@ -1078,7 +1078,7 @@ static void *stbi__load_main(stbi__context *s, int *x, int *y, int *comp, int re
 	return stbi__errpuc("unknown image type", "Image not of any known type, or corrupt");
 }
 
-static void *stbi__load_main_ex(stbi__context *s, int *x, int *y, int *comp, int req_comp, stbi__result_info *ri, int bpc, size_t* count)
+static void *stbi__load_main_ex(stbi__context *s, int *x, int *y, int *comp, int req_comp, stbi__result_info *ri, int bpc, int* count)
 {
 	memset(ri, 0, sizeof(*ri)); // make sure it's initialized if we add new fields
 	ri->bits_per_channel = 8; // default is 8 so most paths don't have to be changed
@@ -1274,7 +1274,7 @@ static stbi__uint16 *stbi__load_and_postprocess_16bit(stbi__context *s, int *x, 
 	return (stbi__uint16 *)result;
 }
 
-static unsigned char *stbi__load_and_postprocess_8bit_ex(stbi__context *s, int *x, int *y, int *comp, int req_comp, size_t* count)
+static unsigned char *stbi__load_and_postprocess_8bit_ex(stbi__context *s, int *x, int *y, int *comp, int req_comp, int* count)
 {
 	stbi__result_info ri;
 	void *result = stbi__load_main_ex(s, x, y, comp, req_comp, &ri, 8, count);
@@ -1282,7 +1282,7 @@ static unsigned char *stbi__load_and_postprocess_8bit_ex(stbi__context *s, int *
 		return NULL;
 
 	//只处理单帧的
-	if (count <= 1)
+	if (*count <= 1)
 	{
 		if (ri.bits_per_channel != 8)
 		{
@@ -1319,7 +1319,7 @@ static unsigned char *stbi__load_and_postprocess_8bit_ex(stbi__context *s, int *
 	return (unsigned char *)result;
 }
 
-static stbi__uint16 *stbi__load_and_postprocess_16bit_ex(stbi__context *s, int *x, int *y, int *comp, int req_comp, size_t* count)
+static stbi__uint16 *stbi__load_and_postprocess_16bit_ex(stbi__context *s, int *x, int *y, int *comp, int req_comp, int* count)
 {
 	stbi__result_info ri;
 	void *result = stbi__load_main_ex(s, x, y, comp, req_comp, &ri, 16, count);
@@ -1327,7 +1327,7 @@ static stbi__uint16 *stbi__load_and_postprocess_16bit_ex(stbi__context *s, int *
 	if (result == NULL)
 		return NULL;
 
-	if (count <= 1)
+	if (*count <= 1)
 	{
 		if (ri.bits_per_channel != 16)
 		{
@@ -1416,7 +1416,7 @@ STBIDEF stbi_uc *stbi_load(char const *filename, int *x, int *y, int *comp, int 
 	return result;
 }
 
-STBIDEF stbi_uc *stbi_load_ex(char const *filename, int *x, int *y, int *comp, int req_comp, size_t* count)
+STBIDEF stbi_uc *stbi_load_ex(char const *filename, int *x, int *y, int *comp, int req_comp, int* count)
 {
 	FILE *f = stbi__fopen(filename, "rb");
 	unsigned char *result;
@@ -1439,7 +1439,7 @@ STBIDEF stbi_uc *stbi_load_from_file(FILE *f, int *x, int *y, int *comp, int req
 	return result;
 }
 
-STBIDEF stbi_uc *stbi_load_from_file_ex(FILE *f, int *x, int *y, int *comp, int req_comp, size_t* count)
+STBIDEF stbi_uc *stbi_load_from_file_ex(FILE *f, int *x, int *y, int *comp, int req_comp, int* count)
 {
 	unsigned char *result;
 	stbi__context s;
@@ -1487,7 +1487,7 @@ STBIDEF stbi_uc *stbi_load_from_memory(stbi_uc const *buffer, int len, int *x, i
 	return stbi__load_and_postprocess_8bit(&s, x, y, comp, req_comp);
 }
 
-STBIDEF stbi_uc *stbi_load_from_memory_ex(stbi_uc const *buffer, int len, int *x, int *y, int *comp, int req_comp, size_t* count)
+STBIDEF stbi_uc *stbi_load_from_memory_ex(stbi_uc const *buffer, int len, int *x, int *y, int *comp, int req_comp, int* count)
 {
 	stbi__context s;
 	stbi__start_mem(&s, buffer, len);
@@ -6694,7 +6694,7 @@ static void stbi_safe_free(void* p)
 }
 
 
-static void    *stbi__gif_load_ex(stbi__context *s, int *x, int *y, int *comp, int req_comp, stbi__result_info *ri, size_t* count)
+static void    *stbi__gif_load_ex(stbi__context *s, int *x, int *y, int *comp, int req_comp, stbi__result_info *ri, int* count)
 {
 	stbi_uc *data = NULL;
 	stbi_uc *u = NULL;
@@ -6714,43 +6714,45 @@ static void    *stbi__gif_load_ex(stbi__context *s, int *x, int *y, int *comp, i
 				{
 					u = stbi__convert_format(u, 4, req_comp, g->w, g->h);
 				}
+
+				if (u)
+				{
+					(*count)++;
+					int size = 4 * g->w * g->h;
+					if (!data)
+					{
+						delay = (stbi__uint32*)malloc(sizeof(stbi__uint32));
+						if (!delay) goto error;
+						data = (stbi_uc*)malloc(size);
+						if (!data) goto error;
+					}
+					else
+					{
+						stbi__uint32* p32 = NULL;
+						p32 = (stbi__uint32*)realloc(delay, *count * sizeof(stbi__uint32));
+						if (!p32) goto error;
+						delay = p32;
+
+						stbi_uc* p8 = NULL;
+						p8 = (stbi_uc*)realloc(data, *count * size);
+						if (!p8) goto error;
+						data = p8;
+					}
+					memcpy(data + size * (*count - 1), u, size);
+					memcpy(delay + (*count - 1), &g->delay, sizeof(stbi__uint32));
+				}
 			}
 			else if (g->out)
 			{
 				stbi_safe_free(g->out);
 			}
 		}
-		if (u)
-		{
-			(*count)++;
-			int size = 4 * g->w * g->h;
-			if (!data)
-			{
-				delay = (stbi__uint32*)malloc(sizeof(stbi__uint32));
-				if (!delay) goto error;
-				data = (stbi_uc*)malloc(size);
-				if (!data) goto error;
-			}
-			else
-			{
-				stbi__uint32* p32 = NULL;
-				p32 = (stbi__uint32*)realloc(delay, *count * sizeof(stbi__uint32));
-				if (!p32) goto error;
-				delay = p32;
-				stbi_uc* p8 = NULL;
-				p8 = (stbi_uc*)realloc(data, *count * size);
-				if (!p8) goto error;
-				data = p8;
-			}
-			memcpy(data + size * (*count - 1), u, size);
-			memcpy(delay + (*count - 1), &g->delay, sizeof(stbi__uint32));
-		}
 	} while (u != (stbi_uc *)s);
 
 	if (*count > 1)
 	{
 		stbi_uc* u8 = NULL;
-		u8 = (stbi_uc*)realloc(data, 4 * g->w * g->h * (*count) + sizeof(stbi__uint32)* (*count + 1));
+		u8 = (stbi_uc*)realloc(data, 4 * g->w * g->h * (*count) + sizeof(stbi__uint32) * (*count + 1));
 		if (!u8) goto error;
 		p = data + 4 * g->w * g->h * (*count);
 		memcpy(p, (stbi_uc*)delay, sizeof(stbi__uint32)* (*count));

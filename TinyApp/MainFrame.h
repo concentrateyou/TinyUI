@@ -8,8 +8,8 @@
 #include "VideoCapture.h"
 #include "AudioCapture.h"
 #include "AudioCapture.h"
-#include "SoundPlayer.h"
 #include "RenderTask.h"
+#include "Media/TinyWave.h"
 using namespace TinyUI;
 
 class CMainFrame : public TinyControl

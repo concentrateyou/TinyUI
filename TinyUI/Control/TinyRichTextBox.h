@@ -17,6 +17,7 @@ namespace TinyUI
 		BOOL PreCreateWindow(CREATESTRUCT& cs);
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 	public:
+		BOOL GetText(TinyString& str) const;
 		BOOL CanUndo() const;
 		BOOL CanRedo() const;
 		UNDONAMEID GetUndoName() const;

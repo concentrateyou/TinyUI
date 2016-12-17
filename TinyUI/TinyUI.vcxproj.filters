@@ -414,6 +414,9 @@
     <ClInclude Include="Media\TinyAudioMixer.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
+    <ClInclude Include="Media\TinySoundPlayer.h">
+      <Filter>头文件\Media</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -759,6 +762,9 @@
       <Filter>源文件\Media</Filter>
     </ClCompile>
     <ClCompile Include="Media\TinyAudioMixer.cpp">
+      <Filter>源文件\Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\TinySoundPlayer.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
   </ItemGroup>

@@ -105,6 +105,9 @@ namespace TinyUI
 			hRes = m_audioClient->GetService(__uuidof(IAudioSessionControl), (void**)&m_audioSession);
 			if (hRes != S_OK)
 				goto MMERROR;
+			hRes = m_audioClient->GetService(__uuidof(IAudioClock), (void**)&m_audioClock);
+			if (hRes != S_OK)
+				goto MMERROR;
 			return TRUE;
 		MMERROR:
 			if (pFMT && bFlag)
@@ -186,12 +189,14 @@ namespace TinyUI
 			{
 				m_audioVolume.Release();
 				m_audioCapture.Release();
+				m_audioClock.Release();
 				m_audioClient.Release();
 				m_audioClientLB.Release();
 				return FALSE;
 			}
 			m_audioVolume.Release();
 			m_audioCapture.Release();
+			m_audioClock.Release();
 			m_audioClient.Release();
 			m_audioClientLB.Release();
 			return TRUE;
@@ -244,12 +249,14 @@ namespace TinyUI
 		}
 		void TinyWASAPIAudioCapture::OnMessagePump()
 		{
+			ASSERT(m_audioClient);
 			WAVEFORMATEX* pFMT = GetFormat();
 			TinyScopedAvrt avrt("Pro Audio");
 			avrt.SetPriority();
+			HRESULT hRes = S_OK;
 			HANDLE waits[2] = { m_audioStop ,m_sampleReady };
-			BOOL bFlag = TRUE;
-			while (bFlag)
+			BOOL bCapturing = TRUE;
+			while (bCapturing)
 			{
 				DWORD dwMS = m_dwStreamFlag & AUDCLNT_STREAMFLAGS_EVENTCALLBACK ? INFINITE : MILLISECONDS_TO_VISUALIZE / 2;
 				DWORD dwRes = WaitForMultipleObjects(2, waits, FALSE, dwMS);
@@ -258,7 +265,7 @@ namespace TinyUI
 				case WAIT_OBJECT_0 + 0:
 				case WAIT_FAILED:
 				case WAIT_ABANDONED:
-					bFlag = FALSE;
+					bCapturing = FALSE;
 					break;
 				case WAIT_TIMEOUT:
 				case WAIT_OBJECT_0 + 1:
@@ -266,22 +273,28 @@ namespace TinyUI
 					DWORD	dwFlags = 0;
 					UINT32	count = 0;
 					BYTE*	bits = NULL;
-					if (SUCCEEDED(m_audioCapture->GetBuffer(&bits, &count, &dwFlags, NULL, NULL)))
-					{
-						if (dwFlags & AUDCLNT_BUFFERFLAGS_SILENT)
-						{
-							bits = NULL;
-						}
-						OnDataReceive(bits, count, this);
-						m_audioCapture->ReleaseBuffer(count);
-					}
+					UINT64  pu64Pos = 0;
+					UINT64	pu64QPCPos = 0;
+					hRes = m_audioCapture->GetBuffer(&bits, &count, &dwFlags, &pu64Pos, &pu64QPCPos);
+					if (FAILED(hRes))
+						continue;
+					hRes = m_audioClock->GetPosition(&pu64Pos, &pu64QPCPos);
+					if (FAILED(hRes))
+						continue;
+					if (dwFlags & AUDCLNT_BUFFERFLAGS_SILENT)
+						bits = NULL;
+					OnDataAvailable(bits, count, this);
+					m_audioCapture->ReleaseBuffer(count);
 				}
 				break;
+				default:
+					bCapturing = FALSE;
+					break;
 				}
 			}
 		}
 
-		void TinyWASAPIAudioCapture::OnDataReceive(BYTE* bits, LONG count, LPVOID lpParameter)
+		void TinyWASAPIAudioCapture::OnDataAvailable(BYTE* bits, LONG count, LPVOID lpParameter)
 		{
 			if (!m_callback.IsNull())
 			{

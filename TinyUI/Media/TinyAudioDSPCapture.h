@@ -23,7 +23,7 @@ namespace TinyUI
 		public:
 			TinyAudioDSPCapture();
 			virtual ~TinyAudioDSPCapture();
-			void OnDataReceive(BYTE* bits, LONG size, LPVOID lpParameter) OVERRIDE;
+			void OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter) OVERRIDE;
 		public:
 			virtual	void Initialize();
 			virtual	void Initialize(Callback<void(BYTE*, LONG, LPVOID)>&& callback);

@@ -22,7 +22,7 @@ namespace TinyUI
 		public:
 			TinyWASAPIAudioCapture();
 			virtual ~TinyWASAPIAudioCapture();
-			virtual void OnDataReceive(BYTE* bits, LONG size, LPVOID lpParameter) OVERRIDE;
+			void OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter) OVERRIDE;
 		public:
 			virtual	void	Initialize(DWORD dwStreamFlag = DEFAULT_CAPTURE_AUDCLNT_STREAMFLAGS);
 			virtual	void	Initialize(Callback<void(BYTE*, LONG, LPVOID)>&& callback, DWORD dwStreamFlag = DEFAULT_CAPTURE_AUDCLNT_STREAMFLAGS);
@@ -52,6 +52,7 @@ namespace TinyUI
 			TinyScopedArray<BYTE>				m_waveFMT;
 			TinyComPtr<IAudioClient>			m_audioClient;
 			TinyComPtr<IAudioClient>			m_audioClientLB;
+			TinyComPtr<IAudioClock>				m_audioClock;
 			TinyComPtr<IAudioCaptureClient>		m_audioCapture;
 			TinyComPtr<IAudioSessionControl>	m_audioSession;
 			TinyComPtr<ISimpleAudioVolume>		m_audioVolume;
