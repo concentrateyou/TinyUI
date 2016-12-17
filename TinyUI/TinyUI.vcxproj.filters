@@ -192,16 +192,10 @@
     <ClInclude Include="Control\TinyRichTextBox.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
-    <ClInclude Include="Control\TinyScrollBar.h">
-      <Filter>头文件\Control</Filter>
-    </ClInclude>
     <ClInclude Include="Control\TinyTabControl.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
     <ClInclude Include="Control\TinyTextBox.h">
-      <Filter>头文件\Control</Filter>
-    </ClInclude>
-    <ClInclude Include="Control\TinyTrackBar.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
     <ClInclude Include="Control\TinyTreeView.h">
@@ -417,6 +411,15 @@
     <ClInclude Include="Media\TinySoundPlayer.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
+    <ClInclude Include="Control\TinyScrollBar.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="Control\TinyToolBar.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="Control\TinyTrackBar.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -521,16 +524,10 @@
     <ClCompile Include="Control\TinyRichTextBox.cpp">
       <Filter>源文件\Control</Filter>
     </ClCompile>
-    <ClCompile Include="Control\TinyScrollBar.cpp">
-      <Filter>源文件\Control</Filter>
-    </ClCompile>
     <ClCompile Include="Control\TinyTabControl.cpp">
       <Filter>源文件\Control</Filter>
     </ClCompile>
     <ClCompile Include="Control\TinyTextBox.cpp">
-      <Filter>源文件\Control</Filter>
-    </ClCompile>
-    <ClCompile Include="Control\TinyTrackBar.cpp">
       <Filter>源文件\Control</Filter>
     </ClCompile>
     <ClCompile Include="Control\TinyTreeView.cpp">
@@ -766,6 +763,15 @@
     </ClCompile>
     <ClCompile Include="Media\TinySoundPlayer.cpp">
       <Filter>源文件\Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Control\TinyScrollBar.cpp">
+      <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="Control\TinyToolBar.cpp">
+      <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="Control\TinyTrackBar.cpp">
+      <Filter>源文件\Control</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

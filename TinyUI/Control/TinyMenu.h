@@ -55,5 +55,14 @@ namespace TinyUI
 		virtual void OnClick(void*, INT menuID);
 		Event<void(void*, INT)> EVENT_Click;
 	};
+	/// <summary>
+	/// ²Ëµ¥¿Ø¼þ×Ô»æ
+	/// </summary>
+	class TinuMenuControl
+	{
+	public:
+		TinuMenuControl();
+		virtual ~TinuMenuControl();
+	};
 }
 

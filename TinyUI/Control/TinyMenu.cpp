@@ -179,5 +179,10 @@ namespace TinyUI
 	{
 		EVENT_Click(ps, menuID);
 	}
+	//////////////////////////////////////////////////////////////////////////
+	TinuMenuControl::TinuMenuControl()
+	{
+
+	}
 }
 

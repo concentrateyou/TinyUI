@@ -24,7 +24,7 @@ namespace TinyUI
 		TinyControl();
 		virtual ~TinyControl();
 	private:
-		static HHOOK m_pHook;
+		static HHOOK m_hhk;
 		static LRESULT CALLBACK CbtFilterHook(INT code, WPARAM wParam, LPARAM lParam);
 	public:
 		LPCSTR	RetrieveClassName() OVERRIDE;
@@ -40,7 +40,10 @@ namespace TinyUI
 		BOOL	GetClientRect(LPRECT lprect);
 		DWORD	GetStyle() const;
 		DWORD	GetExStyle() const;
+		BOOL	ModifyStyle(DWORD dwRemove, DWORD dwAdd, UINT nFlags = 0) throw();
+		BOOL	ModifyStyleEx(DWORD dwRemove, DWORD dwAdd, UINT nFlags = 0) throw();
 		void	CenterWindow(HWND parent, SIZE pref) throw();
+		BOOL	Invalidate();
 		//////////////////////////////////////////////////////////////////////////
 	public:
 		BEGIN_MSG_MAP(TinyControl, TinyWindow)
@@ -145,7 +148,7 @@ namespace TinyUI
 		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_Create;
 		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_Destory;
 	};
-	SELECTANY HHOOK TinyControl::m_pHook = NULL;
+	SELECTANY HHOOK TinyControl::m_hhk = NULL;
 }
 
 

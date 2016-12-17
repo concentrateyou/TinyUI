@@ -36,8 +36,9 @@ namespace TinyUI
 		HWND			m_hWND;//窗口句柄
 		TinyLoopThunk	m_thunk;// Thunk类
 		WNDPROC			m_hPrimaryProc;//原始的PROC
-	private:
+	protected:
 		LRESULT DefWindowProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
+	private:
 		static LRESULT CALLBACK BeginLoop(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 		static LRESULT CALLBACK EndLoop(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 		LPCSTR RetrieveClass(LPCTSTR lpszClass);

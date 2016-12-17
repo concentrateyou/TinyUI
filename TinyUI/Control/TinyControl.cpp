@@ -12,30 +12,31 @@ namespace TinyUI
 	}
 	LRESULT CALLBACK TinyControl::CbtFilterHook(INT code, WPARAM wParam, LPARAM lParam)
 	{
-		if (code != HCBT_CREATEWND)
-			return CallNextHookEx(m_pHook, code, wParam, lParam);
-		ASSERT(lParam != NULL);
-		LPCREATESTRUCT lpcs = ((LPCBT_CREATEWND)lParam)->lpcs;
-		ASSERT(lpcs != NULL);
-		TinyControl *_this = NULL;
-		_this = (TinyControl*)(lpcs->lpCreateParams);
-		if (_this != NULL)
+		if (code == HCBT_CREATEWND)
 		{
-			_this->SubclassWindow((HWND)wParam);
+			ASSERT(lParam != NULL);
+			LPCREATESTRUCT lpcs = ((LPCBT_CREATEWND)lParam)->lpcs;
+			ASSERT(lpcs != NULL);
+			TinyControl *_this = NULL;
+			_this = (TinyControl*)(lpcs->lpCreateParams);
+			if (_this != NULL)
+			{
+				_this->SubclassWindow((HWND)wParam);
+			}
 		}
-		return CallNextHookEx(m_pHook, code, wParam, lParam);
+		return CallNextHookEx(m_hhk, code, wParam, lParam);
 	};
 	BOOL TinyControl::Create(HWND hParent, INT x, INT y, INT cx, INT cy, BOOL bHook)
 	{
 		BOOL bRes = FALSE;
 		if (bHook)
 		{
-			m_pHook = SetWindowsHookEx(WH_CBT, CbtFilterHook, TinyApplication::GetInstance()->Handle(), GetCurrentThreadId());
-			if (m_pHook != NULL && TinyWindow::Create(hParent, x, y, cx, cy))
+			m_hhk = SetWindowsHookEx(WH_CBT, CbtFilterHook, TinyApplication::GetInstance()->Handle(), GetCurrentThreadId());
+			if (m_hhk != NULL && TinyWindow::Create(hParent, x, y, cx, cy))
 			{
 				::SendMessage(m_hWND, WM_SETFONT, (WPARAM)(HFONT)GetStockObject(DEFAULT_GUI_FONT), MAKELPARAM(TRUE, 0));
-				UnhookWindowsHookEx(m_pHook);
-				m_pHook = NULL;
+				UnhookWindowsHookEx(m_hhk);
+				m_hhk = NULL;
 				return TRUE;
 			}
 			return FALSE;
@@ -337,6 +338,10 @@ namespace TinyUI
 		ASSERT(m_hWND != NULL);
 		return ::UpdateWindow(m_hWND);
 	}
+	BOOL TinyControl::Invalidate()
+	{
+		return InvalidateRect(m_hWND, NULL, TRUE);
+	}
 	void TinyControl::CenterWindow(HWND parent, SIZE size) throw()
 	{
 		RECT windowBounds;
@@ -399,5 +404,35 @@ namespace TinyUI
 	{
 		ASSERT(::IsWindow(m_hWND));
 		return (DWORD)::GetClientRect(m_hWND, lprect);
+	}
+
+	BOOL TinyControl::ModifyStyle(DWORD dwRemove, DWORD dwAdd, UINT nFlags) throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		DWORD dwStyle = ::GetWindowLong(m_hWND, GWL_STYLE);
+		DWORD dwNewStyle = (dwStyle & ~dwRemove) | dwAdd;
+		if (dwStyle == dwNewStyle)
+			return FALSE;
+		::SetWindowLong(m_hWND, GWL_STYLE, dwNewStyle);
+		if (nFlags != 0)
+		{
+			::SetWindowPos(m_hWND, NULL, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | nFlags);
+		}
+		return TRUE;
+	}
+
+	BOOL TinyControl::ModifyStyleEx(DWORD dwRemove, DWORD dwAdd, UINT nFlags) throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		DWORD dwStyle = ::GetWindowLong(m_hWND, GWL_EXSTYLE);
+		DWORD dwNewStyle = (dwStyle & ~dwRemove) | dwAdd;
+		if (dwStyle == dwNewStyle)
+			return FALSE;
+		::SetWindowLong(m_hWND, GWL_EXSTYLE, dwNewStyle);
+		if (nFlags != 0)
+		{
+			::SetWindowPos(m_hWND, NULL, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | nFlags);
+		}
+		return TRUE;
 	}
 }
