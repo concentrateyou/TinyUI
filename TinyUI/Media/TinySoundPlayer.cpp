@@ -26,7 +26,7 @@ namespace TinyUI
 			DSBUFFERDESC dbdesc;
 			ZeroMemory(&dbdesc, sizeof(dbdesc));
 			dbdesc.dwSize = sizeof(dbdesc);
-			dbdesc.dwFlags = DSBCAPS_PRIMARYBUFFER | DSBCAPS_CTRLVOLUME;
+			dbdesc.dwFlags = DSBCAPS_PRIMARYBUFFER | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLFREQUENCY;
 			hRes = m_sound->CreateSoundBuffer(&dbdesc, &m_primaryDSB, NULL);
 			if (FAILED(hRes))
 				return FALSE;
@@ -54,6 +54,36 @@ namespace TinyUI
 			caps.dwSize = sizeof(DSCAPS);
 			return m_sound->GetCaps(&caps) == S_OK;
 		}
+		BOOL TinySoundPlayer::SetVolume(LONG volume)
+		{
+			ASSERT(m_secondaryDSB);
+			return m_secondaryDSB->SetVolume(volume) == S_OK;
+		}
+		BOOL TinySoundPlayer::GetVolume(LONG& volume)
+		{
+			ASSERT(m_secondaryDSB);
+			return m_secondaryDSB->GetVolume(&volume) == S_OK;
+		}
+		BOOL TinySoundPlayer::SetFrequency(DWORD dwFrequency)
+		{
+			ASSERT(m_secondaryDSB);
+			return m_secondaryDSB->SetFrequency(dwFrequency) == S_OK;
+		}
+		BOOL TinySoundPlayer::GetFrequency(DWORD& dwFrequency)
+		{
+			ASSERT(m_secondaryDSB);
+			return m_secondaryDSB->GetFrequency(&dwFrequency) == S_OK;
+		}
+		BOOL TinySoundPlayer::SetPlan(LONG plan)
+		{
+			ASSERT(m_secondaryDSB);
+			return m_secondaryDSB->SetPan(plan) == S_OK;
+		}
+		BOOL TinySoundPlayer::GetPlan(LONG& plan)
+		{
+			ASSERT(m_secondaryDSB);
+			return m_secondaryDSB->GetPan(&plan) == S_OK;
+		}
 		BOOL TinySoundPlayer::Play(BYTE* bits, INT size)
 		{
 			ASSERT(m_secondaryDSB);
@@ -80,6 +110,7 @@ namespace TinyUI
 			hRes = m_secondaryDSB->Play(0, 0, 0);
 			if (FAILED(hRes))
 				return FALSE;
+
 			return TRUE;
 		}
 		BOOL TinySoundPlayer::Stop()

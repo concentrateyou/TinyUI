@@ -292,6 +292,7 @@ namespace TinyUI
 					break;
 				}
 			}
+			this->Stop();
 		}
 
 		void TinyWASAPIAudioCapture::OnDataAvailable(BYTE* bits, LONG count, LPVOID lpParameter)

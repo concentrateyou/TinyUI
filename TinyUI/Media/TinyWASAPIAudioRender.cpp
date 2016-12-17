@@ -333,9 +333,8 @@ namespace TinyUI
 			avrt.SetPriority();
 			HRESULT hRes = S_OK;
 			HANDLE waits[2] = { m_audioStop ,m_sampleReady };
-			UINT32 currentCaptureIndex = 0;
-			BOOL bFlag = TRUE;
-			while (bFlag)
+			BOOL bRendering = TRUE;
+			while (bRendering)
 			{
 				DWORD dwMS = m_dwStreamFlag & AUDCLNT_STREAMFLAGS_EVENTCALLBACK ? INFINITE : static_cast<DWORD>(m_hnsPeriod / MFTIMES_PER_MS / 2);
 				DWORD dwRes = WaitForMultipleObjects(2, waits, FALSE, dwMS);
@@ -344,14 +343,15 @@ namespace TinyUI
 				case WAIT_OBJECT_0 + 0:
 				case WAIT_FAILED:
 				case WAIT_ABANDONED:
-					bFlag = FALSE;
+					bRendering = FALSE;
 					break;
 				case WAIT_TIMEOUT:
 				case WAIT_OBJECT_0 + 1:
-					bFlag = Render(pFMT);
+					bRendering = Render(pFMT);
 					break;
 				}
 			}
+			this->Stop();
 		}
 
 		void TinyWASAPIAudioRender::OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)

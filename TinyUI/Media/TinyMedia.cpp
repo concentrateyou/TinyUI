@@ -103,7 +103,6 @@ namespace TinyUI
 			m_dwSize = cbLength;
 			return S_OK;
 		}
-
 		HRESULT STDMETHODCALLTYPE MediaBuffer::GetMaxLength(_Out_ DWORD *pcbMaxLength)
 		{
 			if (!pcbMaxLength)
@@ -113,7 +112,6 @@ namespace TinyUI
 			*pcbMaxLength = m_dwMaxSize;
 			return S_OK;
 		}
-
 		HRESULT STDMETHODCALLTYPE MediaBuffer::GetBufferAndLength(_Outptr_opt_result_bytebuffer_(*pcbLength) BYTE **ppBuffer, _Out_opt_ DWORD *pcbLength)
 		{
 			if (!ppBuffer && !pcbLength)
@@ -130,7 +128,6 @@ namespace TinyUI
 			}
 			return S_OK;
 		}
-
 		HRESULT STDMETHODCALLTYPE MediaBuffer::QueryInterface(REFIID riid, void **ppvObject)
 		{
 			if (IsEqualIID(riid, __uuidof(IMediaBuffer)) || IsEqualIID(riid, IID_IUnknown))
@@ -145,18 +142,25 @@ namespace TinyUI
 			AddRef();
 			return NOERROR;
 		}
-
 		ULONG STDMETHODCALLTYPE MediaBuffer::AddRef(void)
 		{
 			TinyReference < MediaBuffer >::AddRef();
 			return TinyReference < MediaBuffer >::GetReference();
 		}
-
 		ULONG STDMETHODCALLTYPE MediaBuffer::Release(void)
 		{
 			TinyReference < MediaBuffer >::Release();
 			return TinyReference < MediaBuffer >::GetReference();
 		}
+		//////////////////////////////////////////////////////////////////////////
+		void AudioOperations::StereoToMono(const BYTE* src, DWORD dwSamples, BYTE* dst)
+		{
+			DWORD count = dwSamples / 2;
 
+			for (DWORD i = 0; i < count; i++)
+			{
+				
+			}
+		}
 	};
 }

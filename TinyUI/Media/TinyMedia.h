@@ -38,16 +38,13 @@ namespace TinyUI
 {
 	namespace Media
 	{
-		const REFERENCE_TIME MFTIMES_PER_SEC = 10000000;
-		const REFERENCE_TIME MFTIMES_PER_MS = 10000;
-
 #define KSAUDIO_SPEAKER_4POINT1 (KSAUDIO_SPEAKER_QUAD|SPEAKER_LOW_FREQUENCY)
 #define KSAUDIO_SPEAKER_2POINT1 (KSAUDIO_SPEAKER_STEREO|SPEAKER_LOW_FREQUENCY)
 #define MILLISECONDS_TO_VISUALIZE 20
-
 #define DEFAULT_RENDER_AUDCLNT_STREAMFLAGS  (AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST)
 #define DEFAULT_CAPTURE_AUDCLNT_STREAMFLAGS (AUDCLNT_STREAMFLAGS_LOOPBACK | AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST)
-
+		const REFERENCE_TIME MFTIMES_PER_SEC = 10000000;
+		const REFERENCE_TIME MFTIMES_PER_MS = 10000;
 		enum ChannelLayout
 		{
 			CHANNEL_UNKNOWN,
@@ -62,7 +59,6 @@ namespace TinyUI
 			CHANNEL_7POINT1_SURROUND,
 			CHANNEL_SURROUND,
 		};
-
 		enum AudioFormat
 		{
 			AUDIO_FORMAT_UNKNOWN,
@@ -133,9 +129,7 @@ namespace TinyUI
 			ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
 		};
 		//////////////////////////////////////////////////////////////////////////
-		/// <summary>
-		/// https://msdn.microsoft.com/en-us/library/dd376684(v=vs.85).aspx
-		/// </summary>
+		//https://msdn.microsoft.com/en-us/library/dd376684(v=vs.85).aspx
 		class MediaBuffer : public TinyReference<MediaBuffer>, public IMediaBuffer
 		{
 		public:
@@ -152,6 +146,12 @@ namespace TinyUI
 			TinyScopedArray<BYTE> m_data;
 			DWORD	m_dwSize;
 			DWORD	m_dwMaxSize;
+		};
+		//////////////////////////////////////////////////////////////////////////
+		class AudioOperations
+		{
+		public:
+			static void StereoToMono(const BYTE* src, DWORD dwSamples, BYTE* dst);
 		};
 	};
 }

@@ -13,7 +13,6 @@ namespace TinyUI
 		{
 		public:
 			void OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter) OVERRIDE;
-
 		};
 	};
 }

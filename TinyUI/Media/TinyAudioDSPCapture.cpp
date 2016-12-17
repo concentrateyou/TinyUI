@@ -186,6 +186,7 @@ namespace TinyUI
 					mediaBuffer->SetLength(0);
 				} while (DMO_OUTPUT_DATA_BUFFERF_INCOMPLETE & dwStatus);
 			}
+			this->Stop();
 		}
 		BOOL TinyAudioDSPCapture::SetVTI4Property(IPropertyStore* ptrPS, REFPROPERTYKEY key, LONG value)
 		{

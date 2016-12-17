@@ -21,6 +21,12 @@ namespace TinyUI
 			BOOL	Initialize(HWND hWND, WAVEFORMATEX* wfx);
 			BOOL	Play(BYTE* bits, INT size);
 			BOOL	GetCaps(DSCAPS& caps);
+			BOOL	SetVolume(LONG volume);
+			BOOL	GetVolume(LONG& volume);
+			BOOL	SetFrequency(DWORD dwFrequency);
+			BOOL	GetFrequency(DWORD& dwFrequency);
+			BOOL	SetPlan(LONG plan);
+			BOOL	GetPlan(LONG& plan);
 			BOOL	Stop();
 			BOOL	Close();
 		private:
