@@ -1,4 +1,5 @@
 #include "../stdafx.h"
+#include "TinyVisualScrollbar.h"
 #include "TinyVisualDocument.h"
 #include "TinyVisualHLayout.h"
 
@@ -7,7 +8,8 @@ namespace TinyUI
 	namespace Windowless
 	{
 		TinyVisualHLayout::TinyVisualHLayout(TinyVisual* spvisParent, TinyVisualDocument* vtree)
-			:TinyVisual(spvisParent, vtree)
+			:TinyVisual(spvisParent, vtree),
+			m_bAuto(FALSE)
 		{
 
 		}
@@ -18,6 +20,10 @@ namespace TinyUI
 		TinyString TinyVisualHLayout::RetrieveTag() const
 		{
 			return TinyVisualTag::HORIZONTALLAYOUT;
+		}
+		void TinyVisualHLayout::AutoScroll(BOOL bAuto)
+		{
+			m_bAuto = bAuto;
 		}
 		HRESULT	TinyVisualHLayout::OnCreate()
 		{

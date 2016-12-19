@@ -327,6 +327,11 @@ namespace TinyUI
 		bHandled = FALSE;
 		return FALSE;
 	}
+	LRESULT TinyControl::OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		return FALSE;
+	}
 	BOOL TinyControl::ShowWindow(INT nCmdShow) throw()
 	{
 		ASSERT(::IsWindow(m_hWND));

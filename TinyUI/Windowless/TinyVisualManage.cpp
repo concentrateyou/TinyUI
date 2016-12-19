@@ -40,12 +40,8 @@ namespace TinyUI
 				{
 					TinyMap<TinyString, TinyString> map;
 					GetAttributeMap(pXML, map);
-					TinySize size;
-					if (map.Contain(TinyVisualProperty::SIZE))
-						size = GetSize(map.GetValue(TinyVisualProperty::SIZE));
-					TinyPoint pos;
-					if (map.Contain(TinyVisualProperty::POSITION))
-						pos = GetPosition(map.GetValue(TinyVisualProperty::POSITION));
+					TinyPoint pos = GetPosition(map.GetValue(TinyVisualProperty::POSITION));
+					TinySize size = GetSize(map.GetValue(TinyVisualProperty::SIZE));
 					spvis = document->Create<TinyVisualWindow>(0, 0, size.cx, size.cy, NULL);
 					document->m_spvisWindow = spvis;
 					BuildProperty(map, spvis);
@@ -75,12 +71,8 @@ namespace TinyUI
 				{
 					TinyMap<TinyString, TinyString> map;
 					GetAttributeMap(static_cast<const TiXmlElement*>(pXMLChildNode), map);
-					TinyPoint pos;
-					if (map.Contain(TinyVisualProperty::POSITION))
-						pos = GetPosition(map.GetValue(TinyVisualProperty::POSITION));
-					TinySize size;
-					if (map.Contain(TinyVisualProperty::SIZE))
-						size = GetSize(map.GetValue(TinyVisualProperty::SIZE));
+					TinyPoint pos = GetPosition(map.GetValue(TinyVisualProperty::POSITION));
+					TinySize size = GetSize(map.GetValue(TinyVisualProperty::SIZE));
 					spvis = document->Create<TinyVisualHLayout>(pos.x, pos.y, size.cx, size.cy, spvisParent);
 					BuildProperty(map, spvis);
 					document->LinkVisual(spvis, PVISUAL_BOTTOM, &spvisParent->m_spvisChild);
@@ -92,12 +84,8 @@ namespace TinyUI
 				{
 					TinyMap<TinyString, TinyString> map;
 					GetAttributeMap(static_cast<const TiXmlElement*>(pXMLChildNode), map);
-					TinyPoint pos;
-					if (map.Contain(TinyVisualProperty::POSITION))
-						pos = GetPosition(map.GetValue(TinyVisualProperty::POSITION));
-					TinySize size;
-					if (map.Contain(TinyVisualProperty::SIZE))
-						size = GetSize(map.GetValue(TinyVisualProperty::SIZE));
+					TinyPoint pos = GetPosition(map.GetValue(TinyVisualProperty::POSITION));
+					TinySize size = GetSize(map.GetValue(TinyVisualProperty::SIZE));
 					spvis = document->Create<TinyVisualVLayout>(pos.x, pos.y, size.cx, size.cy, spvisParent);
 					BuildProperty(map, spvis);
 					document->LinkVisual(spvis, PVISUAL_BOTTOM, &spvisParent->m_spvisChild);
@@ -109,12 +97,8 @@ namespace TinyUI
 				{
 					TinyMap<TinyString, TinyString> map;
 					GetAttributeMap(static_cast<const TiXmlElement*>(pXMLChildNode), map);
-					TinyPoint pos;
-					if (map.Contain(TinyVisualProperty::POSITION))
-						pos = GetPosition(map.GetValue(TinyVisualProperty::POSITION));
-					TinySize size;
-					if (map.Contain(TinyVisualProperty::SIZE))
-						size = GetSize(map.GetValue(TinyVisualProperty::SIZE));
+					TinyPoint pos = GetPosition(map.GetValue(TinyVisualProperty::POSITION));
+					TinySize size = GetSize(map.GetValue(TinyVisualProperty::SIZE));
 					spvis = document->Create<TinyVisualButton>(pos.x, pos.y, size.cx, size.cy, spvisParent);
 					BuildProperty(map, spvis);
 					document->LinkVisual(spvis, PVISUAL_BOTTOM, &spvisParent->m_spvisChild);

@@ -1,11 +1,11 @@
 #pragma once
 #include "TinyVisual.h"
-#include "TinyVisualScrollbar.h"
 
 namespace TinyUI
 {
 	namespace Windowless
 	{
+		class TinyVisualHScrollBar;
 		/// <summary>
 		/// 水平布局
 		/// </summary>
@@ -19,6 +19,8 @@ namespace TinyUI
 		public:
 			virtual ~TinyVisualHLayout();
 			TinyString RetrieveTag() const OVERRIDE;
+		public:
+			void AutoScroll(BOOL bEnable);
 		protected:
 			BOOL	OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT	OnMouseEnter() OVERRIDE;
@@ -29,6 +31,8 @@ namespace TinyUI
 		private:
 			void AdjustLayout(TinyVisual* spvis, INT dx, INT dy);
 		private:
+			BOOL					m_bAuto;
+			DWORD					m_dwAlign;
 			TinyVisualHScrollBar*	m_scrollbar;
 			TinyScopedPtr<Delegate<void(BOOL, INT, INT, INT)>> m_onPosChange;
 		};

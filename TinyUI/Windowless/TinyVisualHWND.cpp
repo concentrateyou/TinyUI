@@ -24,7 +24,7 @@ namespace TinyUI
 			if (TinyControl::Create(hParent, 0, 0, 0, 0, FALSE))
 			{
 				return Initialize();
-			 }
+			}
 			return FALSE;
 		}
 		DWORD TinyVisualHWND::RetrieveStyle()
@@ -48,10 +48,10 @@ namespace TinyUI
 			return NULL;
 		}
 
-		BOOL TinyVisualHWND::SetConfig(const TinyString& config)
+		BOOL TinyVisualHWND::SetResource(const TinyString& resource)
 		{
-			m_config = config;
-			return m_builder.LoadFile(m_config.CSTR());
+			m_resource = resource;
+			return m_builder.LoadFile(m_resource.CSTR());
 		}
 
 		BOOL TinyVisualHWND::Initialize()
@@ -310,6 +310,29 @@ namespace TinyUI
 			if (m_document->GetParent(NULL) == m_document->GetVisualByPos(pos.x, pos.y))
 				return HTCAPTION;
 			return HTCLIENT;
+		}
+		LRESULT TinyVisualHWND::OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			ASSERT(m_document);
+			bHandled = TRUE;
+			MINMAXINFO* ps = (MINMAXINFO*)lParam;
+			TinyVisual* spvis = m_document->GetParent(NULL);
+			ASSERT(spvis);
+			TinySize minSize = spvis->GetMinimumSize();
+			if (!minSize.IsEmpty())
+			{
+				ps->ptMinTrackSize.x = minSize.cx;
+				ps->ptMinTrackSize.y = minSize.cy;
+			}
+			TinySize maxSize = spvis->GetMaximumSize();
+			if (!maxSize.IsEmpty())
+			{
+				ps->ptMaxTrackSize.x = maxSize.cx;
+				ps->ptMaxTrackSize.y = maxSize.cy;
+			}
+			ps->ptMaxPosition.x = 0;
+			ps->ptMaxPosition.y = 0;
+			return TRUE;
 		}
 	}
 }

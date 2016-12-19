@@ -22,7 +22,7 @@ namespace TinyUI
 			LPCSTR RetrieveTitle() OVERRIDE;
 			HICON RetrieveIcon() OVERRIDE;
 		public:
-			BOOL SetConfig(const TinyString& config);
+			BOOL SetResource(const TinyString& resource);
 		public:
 			//ÏûÏ¢
 			BOOL ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult) OVERRIDE;
@@ -51,6 +51,8 @@ namespace TinyUI
 			//NC
 			LRESULT OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+			//Other
+			LRESULT OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		public:
 			BOOL AddFilter(TinyVisualFilter* ps);
 			BOOL RemoveFilter(TinyVisualFilter* ps);
@@ -64,7 +66,7 @@ namespace TinyUI
 			TinyScopedPtr<TinyVisualCacheDC>	m_cacheDC;
 			TinyVisualFilters					m_mFilters;
 			TinyVisualBuilder					m_builder;
-			TinyString							m_config;
+			TinyString							m_resource;
 		};
 	}
 }

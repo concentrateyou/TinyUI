@@ -1940,7 +1940,9 @@ namespace TinyUI
 	/* POINT															    */
 	/************************************************************************/
 	TinyPoint::TinyPoint() throw()
-	{  }
+	{
+		x = y = 0;
+	}
 	TinyPoint::TinyPoint(INT initX, INT initY) throw()
 	{
 		x = initX; y = initY;

@@ -180,6 +180,7 @@ namespace TinyUI
 		GetButton(nIndex, &button);
 		button.iString = nString - STRING_REFRESH_OFFSET;
 		SetButton(nIndex, &button);
+		return TRUE;
 	}
 	TinyString TinyToolBar::GetButtonText(INT nIndex) const
 	{

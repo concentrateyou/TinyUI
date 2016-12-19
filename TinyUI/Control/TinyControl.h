@@ -94,6 +94,7 @@ namespace TinyUI
 			MESSAGE_HANDLER(WM_CHAR, OnChar)
 			MESSAGE_HANDLER(WM_SETFOCUS, OnSetFocus)
 			MESSAGE_HANDLER(WM_KILLFOCUS, OnKillFocus)
+			MESSAGE_HANDLER(WM_GETMINMAXINFO, OnGetMinMaxInfo)
 		END_MSG_MAP()
 		virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -144,6 +145,7 @@ namespace TinyUI
 		virtual LRESULT OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnSetFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	public:
 		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_Create;
 		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_Destory;

@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <window name="demo" text="demo" position="100,100" size="500,500" maxsize="500,500" minsize="500,500" image-normal="D:\image.jpg">
-  <horizontallayout name="caption" size="60,30" position="0,0" maxsize="60,30" minsize="60,30">
+  <stackpanel name="caption" size="60,30" maxsize="60,30" minsize="60,30" orientation="horizontal" horizontal-alignment="left" vertical-alignment="top" >
     <button name="min" tooltip="Min" position="0,0" size="30,30" maxsize="30,30" minsize="30,30"
           image-normal="D:\Develop\TinyUI\Resource\sysbutton\btn_mini_normal.png"
           image-highlight="D:\Develop\TinyUI\Resource\sysbutton\btn_mini_highlight.png"
-          image-down="D:\Develop\TinyUI\Resource\sysbutton\btn_mini_down.png"></button>
+          image-down="D:\Develop\TinyUI\Resource\sysbutton\btn_mini_down.png">
+    </button>
     <button name="close" tooltip="Close" position="30,0" size="30,30" maxsize="30,30" minsize="30,30"
          image-normal="D:\Develop\TinyUI\Resource\sysbutton\btn_close_normal.png"
          image-highlight="D:\\Develop\TinyUI\Resource\sysbutton\btn_close_highlight.png"
-         image-down="D:\Develop\TinyUI\Resource\sysbutton\btn_close_down.png"></button>
-  </horizontallayout>
+         image-down="D:\Develop\TinyUI\Resource\sysbutton\btn_close_down.png">
+    </button>
+  </stackpanel>
 </window>

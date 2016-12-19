@@ -3,7 +3,6 @@
 #include "../Common/TinyEvent.h"
 #include "../Render/TinyCanvas.h"
 #include "../XML//tinyxml.h"
-#include "TinyVisualLayout.h"
 #include "TinyVisualEvent.h"
 #include "TinyVisualUtility.h"
 
@@ -18,6 +17,25 @@ namespace TinyUI
 			DOWN = 2,
 			PUSH = 3,
 		};
+		enum Orientation
+		{
+			Horizontal,
+			Vertical
+		};
+		/*enum VerticalAlignment
+		{
+			Bottom,
+			Center,
+			Stretch,
+			Top
+		};
+		enum HorizontalAlignment
+		{
+			Center,
+			Left,
+			Right,
+			Stretch
+		};*/
 		/// <summary>
 		/// 可视化元素基类
 		/// </summary>
