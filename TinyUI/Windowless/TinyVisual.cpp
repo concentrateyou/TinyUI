@@ -14,7 +14,8 @@ namespace TinyUI
 			m_hrgnClip(NULL),
 			m_document(document),
 			m_visible(TRUE),
-			m_enable(TRUE)
+			m_enable(TRUE),
+			m_dwCount(0)
 		{
 
 		}
@@ -188,6 +189,10 @@ namespace TinyUI
 			ASSERT(m_document);
 			TinyRectangle s = GetWindowRect();
 			return m_document->Invalidate(&s);
+		}
+		BOOL TinyVisual::Contain(const TinyString& szKey)
+		{
+			return m_map.Contain(szKey);
 		}
 		void TinyVisual::OnPosChange(const TinyPoint&oldPos, const TinyPoint&newPos)
 		{

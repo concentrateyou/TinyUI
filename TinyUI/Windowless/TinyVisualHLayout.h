@@ -19,9 +19,11 @@ namespace TinyUI
 		public:
 			virtual ~TinyVisualHLayout();
 			TinyString RetrieveTag() const OVERRIDE;
+			void Resize() OVERRIDE;
 		public:
-			void AutoScroll(BOOL bEnable);
-			void SetAlignment(HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment);
+			void AutoScroll(BOOL bAuto);
+			void SetHorizontalAlignment(HorizontalAlignment horizontalAlignment);
+			void SetVerticalAlignment(VerticalAlignment verticalAlignment);
 		protected:
 			BOOL	OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT	OnMouseEnter() OVERRIDE;

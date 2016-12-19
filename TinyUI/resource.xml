@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<window name="demo" text="demo" position="100,100" size="500,500" maxsize="500,500" minsize="500,500" image-normal="D:\image.jpg">
+<window name="demo" text="demo" position="100,100" size="1000,665" maxsize="1000,665" minsize="1000,665" image-normal="D:\image.jpg">
   <horizontallayout name="caption" size="60,30" maxsize="60,30" minsize="60,30" horizontal-alignment="left" vertical-alignment="top">
     <button name="sysmin" tooltip="Min"
           image-normal="D:\Develop\TinyUI\Resource\sysbutton\btn_mini_normal.png"

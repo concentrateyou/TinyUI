@@ -21,14 +21,32 @@ namespace TinyUI
 		{
 			return TinyVisualTag::HORIZONTALLAYOUT;
 		}
+
+		void TinyVisualHLayout::Resize()
+		{
+			TinyVisual* spvis = m_document->GetVisual(this, CMD_CHILD);
+			spvis = m_document->GetVisual(spvis, CMD_LAST);
+			while (spvis)
+			{
+				if (spvis->Contain(TinyVisualProperty::SIZE))
+				{
+
+				}
+				spvis = m_document->GetVisual(spvis, CMD_PREV);
+			}
+		}
+
 		void TinyVisualHLayout::AutoScroll(BOOL bAuto)
 		{
 			m_bAuto = bAuto;
 		}
-		void TinyVisualHLayout::SetAlignment(HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment)
+		void TinyVisualHLayout::SetHorizontalAlignment(HorizontalAlignment horizontalAlignment)
+		{
+			m_horizontalAlignment = horizontalAlignment;
+		}
+		void TinyVisualHLayout::SetVerticalAlignment(VerticalAlignment verticalAlignment)
 		{
 			m_verticalAlignment = verticalAlignment;
-			m_horizontalAlignment = horizontalAlignment;
 		}
 		HRESULT	TinyVisualHLayout::OnCreate()
 		{

@@ -75,6 +75,7 @@ namespace TinyUI
 			BOOL				SetStyleImage(StyleImage type, LPCSTR pzFile);
 			BOOL				SetStyleImage(StyleImage type, BYTE*	ps, DWORD dwSize);
 			BOOL				Invalidate();
+			BOOL				Contain(const TinyString& szKey);
 		public:
 			TinyVisualDocument*	GetDocument();
 			virtual	HRESULT		SendMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes);
@@ -138,6 +139,8 @@ namespace TinyUI
 			HRGN				m_hrgnClip;
 			BOOL				m_visible;
 			BOOL				m_enable;
+			DWORD				m_dwCount;//还是节点个数
+			TinyMap<TinyString, TinyString>	m_map;
 		};
 	}
 }

@@ -7,6 +7,16 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
+		class TinyVisualConst
+		{
+		public:
+			static const TinyString LEFT;
+			static const TinyString TOP;
+			static const TinyString RIGHT;
+			static const TinyString BOTTOM;
+			static const TinyString CENTER;
+			static const TinyString STRETCH;
+		};
 		/// <summary>
 		/// 元素属性常量
 		/// </summary>
@@ -29,6 +39,8 @@ namespace TinyUI
 			static const TinyString FONTSIZE;
 			static const TinyString FONTCOLOR;
 			static const TinyString FONTSTYLE;
+			static const TinyString HORIZONTALALIGNMENT;
+			static const TinyString VERTICALALIGNMENT;
 		};
 		/// <summary>
 		/// Tag常量

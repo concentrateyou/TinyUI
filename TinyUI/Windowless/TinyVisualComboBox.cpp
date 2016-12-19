@@ -40,10 +40,10 @@ namespace TinyUI
 		HRESULT	TinyVisualComboBox::OnCreate()
 		{
 			TinySize size = this->GetSize();
-			SetStyleImage(DOWN, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\combobox\\combobox_down.png");
-			SetStyleImage(NORMAL, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\combobox\\combobox_normal.png");
-			SetStyleImage(HIGHLIGHT, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\combobox\\combobox_hover.png");
-			SetStyleImage(PUSH, "D:\\Develop\\GitHub\\TinyUI\\Debug\\Resource\\combobox\\combobox_push.png");
+			SetStyleImage(DOWN, "D:\\Develop\\TinyUI\\Resource\\combobox\\combobox_down.png");
+			SetStyleImage(NORMAL, "D:\\Develop\\TinyUI\\Resource\\combobox\\combobox_normal.png");
+			SetStyleImage(HIGHLIGHT, "D:\\Develop\\TinyUI\\Resource\\combobox\\combobox_hover.png");
+			SetStyleImage(PUSH, "D:\\Develop\\TinyUI\\Resource\\combobox\\combobox_push.png");
 			return TinyVisual::OnCreate();
 		}
 		HRESULT TinyVisualComboBox::OnDestory()

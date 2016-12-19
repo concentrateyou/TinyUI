@@ -5,6 +5,13 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
+		const TinyString TinyVisualConst::LEFT = "left";
+		const TinyString TinyVisualConst::TOP = "top";
+		const TinyString TinyVisualConst::RIGHT = "right";
+		const TinyString TinyVisualConst::BOTTOM = "bottom";
+		const TinyString TinyVisualConst::CENTER = "center";
+		const TinyString TinyVisualConst::STRETCH = "stretch";
+		//////////////////////////////////////////////////////////////////////////
 		const TinyString TinyVisualProperty::NAME = TEXT("name");
 		const TinyString TinyVisualProperty::TEXT = TEXT("text");
 		const TinyString TinyVisualProperty::TOOLTIP = TEXT("tooltip");
@@ -17,6 +24,8 @@ namespace TinyUI
 		const TinyString TinyVisualProperty::IMAGENORMAL = TEXT("image-normal");
 		const TinyString TinyVisualProperty::IMAGEHIGHLIGHT = TEXT("image-highlight");
 		const TinyString TinyVisualProperty::IMAGEDOWN = TEXT("image-down");
+		const TinyString TinyVisualProperty::HORIZONTALALIGNMENT = TEXT("horizontal-alignment");
+		const TinyString TinyVisualProperty::VERTICALALIGNMENT = TEXT("vertical-alignment");
 		//////////////////////////////////////////////////////////////////////////
 		const TinyString TinyVisualTag::WINDOW = TEXT("window");
 		const TinyString TinyVisualTag::CAPTION = TEXT("caption");

@@ -110,11 +110,16 @@ namespace TinyUI
 			bHandled = FALSE;
 			m_size.cx = LOWORD(lParam);
 			m_size.cy = HIWORD(lParam);
-			TinyVisual* spvis = m_document->GetParent(NULL);
-			if (spvis)
-				spvis->SetSize(m_size);
-			m_cacheDC->SetSize(m_size.cx, m_size.cy);
-			::RedrawWindow(m_hWND, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+			if (m_document && m_cacheDC)
+			{
+				TinyVisual* spvis = m_document->GetParent(NULL);
+				if (spvis)
+				{
+					spvis->SetSize(m_size);
+				}
+				m_cacheDC->SetSize(m_size.cx, m_size.cy);
+				::RedrawWindow(m_hWND, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+			}
 			return FALSE;
 		}
 		LRESULT TinyVisualHWND::OnMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
