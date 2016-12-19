@@ -2,7 +2,7 @@
 #include "TinyVisualHWND.h"
 #include "../Render/TinyTransform.h"
 #include "../Render/TinyCanvas.h"
-#include "TinyVisualList.h"
+#include "TinyVisualVLayout.h"
 
 namespace TinyUI
 {
@@ -19,9 +19,13 @@ namespace TinyUI
 		{
 
 		}
-		BOOL TinyVisualHWND::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
+		BOOL TinyVisualHWND::Create(HWND hParent)
 		{
-			return TinyControl::Create(hParent, x, y, cx, cy, FALSE);
+			if (TinyControl::Create(hParent, 0, 0, 0, 0, FALSE))
+			{
+				return Initialize();
+			 }
+			return FALSE;
 		}
 		DWORD TinyVisualHWND::RetrieveStyle()
 		{
@@ -43,11 +47,22 @@ namespace TinyUI
 		{
 			return NULL;
 		}
+
+		BOOL TinyVisualHWND::SetConfig(const TinyString& config)
+		{
+			m_config = config;
+			return m_builder.LoadFile(m_config.CSTR());
+		}
+
 		BOOL TinyVisualHWND::Initialize()
 		{
 			m_document.Reset(new TinyVisualDocument(this));
-			m_cacheDC.Reset(new TinyVisualCacheDC(m_hWND));
-			return m_document->Initialize();
+			if (m_document->Initialize(&m_builder))
+			{
+				m_cacheDC.Reset(new TinyVisualCacheDC(m_hWND));
+				return TRUE;
+			}
+			return FALSE;
 		}
 		void TinyVisualHWND::Uninitialize()
 		{
@@ -119,7 +134,6 @@ namespace TinyUI
 		LRESULT TinyVisualHWND::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
-			Initialize();
 			return FALSE;
 		}
 		LRESULT TinyVisualHWND::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -282,7 +296,7 @@ namespace TinyUI
 				return HTLEFT;
 			if (pos.x >= rectangle.left && pos.x <= (rectangle.left + cx) && pos.y >= (rectangle.bottom - cy) && pos.y <= rectangle.bottom)
 				return HTBOTTOMLEFT;
-			if (pos.x >(rectangle.left + cx) && pos.x < (rectangle.right - cx) && pos.y >= rectangle.top && pos.y <= (rectangle.top + cy))
+			if (pos.x > (rectangle.left + cx) && pos.x < (rectangle.right - cx) && pos.y >= rectangle.top && pos.y <= (rectangle.top + cy))
 				return HTTOP;
 			if (pos.x >= (rectangle.right - cx) && pos.x <= rectangle.right && pos.y >= rectangle.top && pos.y <= (rectangle.top + cy))
 				return HTTOPRIGHT;
@@ -290,7 +304,7 @@ namespace TinyUI
 				return HTRIGHT;
 			if (pos.x >= (rectangle.right - cx) && pos.x <= rectangle.right && pos.y >= (rectangle.bottom - cy) && pos.y <= rectangle.bottom)
 				return HTBOTTOMRIGHT;
-			if (pos.x >(rectangle.left + cx) && pos.x < (rectangle.right - cx) && pos.y >= (rectangle.bottom - cy) && pos.y <= rectangle.bottom)
+			if (pos.x > (rectangle.left + cx) && pos.x < (rectangle.right - cx) && pos.y >= (rectangle.bottom - cy) && pos.y <= rectangle.bottom)
 				return HTBOTTOM;
 			ScreenToClient(m_hWND, &pos);
 			if (m_document->GetParent(NULL) == m_document->GetVisualByPos(pos.x, pos.y))

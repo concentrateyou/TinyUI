@@ -15,12 +15,14 @@ namespace TinyUI
 		public:
 			TinyVisualHWND();
 			virtual ~TinyVisualHWND();
-			BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
+			BOOL Create(HWND hParent);
 			DWORD RetrieveStyle() OVERRIDE;
 			DWORD RetrieveExStyle() OVERRIDE;
 			LPCSTR RetrieveClassName() OVERRIDE;
 			LPCSTR RetrieveTitle() OVERRIDE;
 			HICON RetrieveIcon() OVERRIDE;
+		public:
+			BOOL SetConfig(const TinyString& config);
 		public:
 			//ÏûÏ¢
 			BOOL ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult) OVERRIDE;
@@ -61,6 +63,8 @@ namespace TinyUI
 			TinyScopedPtr<TinyVisualDocument>	m_document;
 			TinyScopedPtr<TinyVisualCacheDC>	m_cacheDC;
 			TinyVisualFilters					m_mFilters;
+			TinyVisualBuilder					m_builder;
+			TinyString							m_config;
 		};
 	}
 }

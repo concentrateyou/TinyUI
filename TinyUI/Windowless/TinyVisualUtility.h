@@ -1,7 +1,6 @@
 #pragma once
 #include "../Control/TinyControl.h"
 #include "../Render/TinyImage.h"
-#include "TinyVisual.h"
 
 namespace TinyUI
 {
@@ -15,6 +14,7 @@ namespace TinyUI
 		LONG HimetricYtoDY(LONG yHimetric, LONG yPerInch);
 		LONG DXtoHimetricX(LONG dx, LONG xPerInch);
 		LONG DYtoHimetricY(LONG dy, LONG yPerInch);
+		class TinyVisual;
 		/// <summary>
 		/// 裁剪的DC在当前元素最小的矩形上绘制
 		/// </summary>

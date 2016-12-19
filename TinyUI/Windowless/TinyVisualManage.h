@@ -15,19 +15,20 @@ namespace TinyUI
 		/// <summary>
 		/// 可视化元素管理
 		/// </summary>
-		class TinyVisualParse : public TinyObject
+		class TinyVisualBuilder : public TinyObject
 		{
-			DECLARE_DYNAMIC(TinyVisualParse)
+			DECLARE_DYNAMIC(TinyVisualBuilder)
 		public:
-			TinyVisualParse();
-			~TinyVisualParse();
+			TinyVisualBuilder();
+			~TinyVisualBuilder();
 			BOOL LoadFile(LPCSTR pzFile);
-			BOOL BuildVisualTree(TinyVisualDocument* ps);
+			BOOL BuildDocument(TinyVisualDocument* ps);
 			static void CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualDocument* ps);
 		private:
 			static void BuildProperty(TinyMap<TinyString, TinyString> &map, TinyVisual* spvis);
 			static BOOL GetAttributeMap(const TiXmlElement* pXMLNode, TinyMap<TinyString, TinyString>& map);
-			static TinySize	GetSize(const TinyString* ps);
+			static TinySize	 GetSize(const TinyString* ps);
+			static TinyPoint GetPosition(const TinyString* ps);
 			static BOOL	GetBool(const TinyString* str);
 		private:
 			TiXmlDocument	m_doc;

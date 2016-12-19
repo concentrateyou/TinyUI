@@ -267,9 +267,6 @@
     <ClInclude Include="Common\TinyHook.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
-    <ClInclude Include="Windowless\TinyVisualCaption.h">
-      <Filter>头文件\Windowless</Filter>
-    </ClInclude>
     <ClInclude Include="Common\TinyTuple.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
@@ -319,9 +316,6 @@
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
     <ClInclude Include="Windowless\TinyTextHost.h">
-      <Filter>头文件\Windowless</Filter>
-    </ClInclude>
-    <ClInclude Include="Windowless\TinyVisualList.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
     <ClInclude Include="Control\TinyComboBox.h">
@@ -418,6 +412,12 @@
       <Filter>头文件\Control</Filter>
     </ClInclude>
     <ClInclude Include="Windowless\TinyVisualScrollBar.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualHLayout.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualVLayout.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
   </ItemGroup>
@@ -617,9 +617,6 @@
     <ClCompile Include="Common\TinyHook.cpp">
       <Filter>源文件\Common</Filter>
     </ClCompile>
-    <ClCompile Include="Windowless\TinyVisualCaption.cpp">
-      <Filter>源文件\Windowless</Filter>
-    </ClCompile>
     <ClCompile Include="Common\TinyTuple.cpp">
       <Filter>源文件\Common</Filter>
     </ClCompile>
@@ -672,9 +669,6 @@
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
     <ClCompile Include="Windowless\TinyTextHost.cpp">
-      <Filter>源文件\Windowless</Filter>
-    </ClCompile>
-    <ClCompile Include="Windowless\TinyVisualList.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
     <ClCompile Include="Control\TinyComboBox.cpp">
@@ -771,6 +765,12 @@
       <Filter>源文件\Control</Filter>
     </ClCompile>
     <ClCompile Include="Windowless\TinyVisualScrollBar.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualHLayout.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualVLayout.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>

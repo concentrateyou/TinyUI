@@ -7,6 +7,7 @@ namespace TinyUI
 	{
 		class TinyVisualWindow : public TinyVisual
 		{
+			friend class TinyVisualBuilder;
 			friend class TinyVisualDocument;
 			DECLARE_DYNAMIC(TinyVisualWindow)
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualWindow)

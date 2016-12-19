@@ -20,18 +20,18 @@ namespace TinyUI
 		class TinyVisual;
 		class TinyVisualHWND;
 		/// <summary>
-		/// 可视化树
+		/// 可视化文档
 		/// </summary>
 		class TinyVisualDocument
 		{
-			friend class TinyVisualParse;
+			friend class TinyVisualBuilder;
 			friend class TinyVisualFactory;
 			friend class TinyVisualHWND;
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualDocument)
 		public:
 			TinyVisualDocument(TinyVisualHWND* pv);
 			~TinyVisualDocument();
-			virtual BOOL	Initialize();
+			virtual BOOL	Initialize(TinyVisualBuilder* builder);
 			virtual void	Uninitialize();
 		public:
 			template<typename T>
@@ -112,7 +112,7 @@ namespace TinyUI
 			TinyVisual*							m_spvisActive;
 			TinyVisual*							m_spvisLastMouse;//当前鼠标所在的元素
 			TinyVisualHWND*						m_pWindow;
-			TinyScopedPtr<TinyVisualParse>		m_parse;
+			TinyScopedPtr<TinyVisualBuilder>		m_parse;
 			TinyScopedPtr<TinyVisualFactory>	m_fs;
 		public:
 #ifdef _DEBUG
@@ -124,7 +124,6 @@ namespace TinyUI
 		T*	 TinyVisualDocument::Create(INT x, INT y, INT cx, INT cy, TinyVisual* spvisParent)
 		{
 			ASSERT(m_fs);
-			//T必须要继承自TinyVisual
 			COMPILE_ASSERT((std::is_convertible<T*, TinyVisual*>::value), T_must_convertible_to_TinyVisual);
 			return m_fs->Create<T>(x, y, cx, cy, spvisParent);
 		}
@@ -132,11 +131,22 @@ namespace TinyUI
 		T* TinyVisualDocument::TinyVisualFactory::Create(INT x, INT y, INT cx, INT cy, TinyVisual* spvisParent)
 		{
 			ASSERT(m_document);
-			TinyVisual* spvis = new T(spvisParent, m_document);
-			spvis->SetPosition(TinyPoint(x, y));
-			spvis->SetSize(TinySize(cx, cy));
-			m_document->SetParent(spvis, spvisParent);
-			spvis->OnCreate();
+			TinyVisual* spvis = NULL;
+			if (spvisParent != NULL)
+			{
+				spvis = new T(spvisParent, m_document);
+				spvis->SetPosition(TinyPoint(x, y));
+				spvis->SetSize(TinySize(cx, cy));
+				m_document->SetParent(spvis, spvisParent);
+				spvis->OnCreate();
+			}
+			else
+			{
+				spvis = new T(spvisParent, m_document);
+				spvis->SetPosition(TinyPoint(x, y));
+				spvis->SetSize(TinySize(cx, cy));
+				spvis->OnCreate();
+			}
 			return static_cast<T*>(spvis);
 		}
 	};

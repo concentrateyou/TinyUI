@@ -10,6 +10,7 @@ namespace TinyUI
 		const TinyString TinyVisualProperty::TOOLTIP = TEXT("tooltip");
 		const TinyString TinyVisualProperty::MAXSIZE = TEXT("maxsize");
 		const TinyString TinyVisualProperty::MINSIZE = TEXT("minsize");
+		const TinyString TinyVisualProperty::POSITION = TEXT("position");
 		const TinyString TinyVisualProperty::SIZE = TEXT("size");
 		const TinyString TinyVisualProperty::VISIBLE = TEXT("visible");
 		const TinyString TinyVisualProperty::ENABLE = TEXT("enable");
@@ -21,7 +22,8 @@ namespace TinyUI
 		const TinyString TinyVisualTag::CAPTION = TEXT("caption");
 		const TinyString TinyVisualTag::BUTTON = TEXT("button");
 		const TinyString TinyVisualTag::LABEL = TEXT("label");
-		const TinyString TinyVisualTag::LIST = TEXT("list");
+		const TinyString TinyVisualTag::HORIZONTALLAYOUT = TEXT("horizontallayout");
+		const TinyString TinyVisualTag::VERTICALLAYOUT = TEXT("verticallayout");
 		const TinyString TinyVisualTag::LISTBOX = TEXT("listbox");
 		const TinyString TinyVisualTag::TOOLBAR = TEXT("toolbar");
 		const TinyString TinyVisualTag::TREEVIEW = TEXT("treeview");

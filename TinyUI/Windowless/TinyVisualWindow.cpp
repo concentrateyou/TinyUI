@@ -11,11 +11,7 @@ namespace TinyUI
 		TinyVisualWindow::TinyVisualWindow(TinyVisual* spvisParent, TinyVisualDocument* document)
 			:TinyVisual(spvisParent, document)
 		{
-			TinyVisualHWND* pWND = document->GetVisualHWND();
-			if (pWND)
-			{
-				pWND->GetClientRect(&m_rectangle);
-			}
+
 		}
 		TinyVisualWindow::~TinyVisualWindow()
 		{

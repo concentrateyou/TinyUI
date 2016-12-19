@@ -18,6 +18,7 @@ namespace TinyUI
 			static const TinyString TOOLTIP;
 			static const TinyString MAXSIZE;
 			static const TinyString MINSIZE;
+			static const TinyString POSITION;
 			static const TinyString SIZE;
 			static const TinyString VISIBLE;
 			static const TinyString ENABLE;
@@ -39,7 +40,8 @@ namespace TinyUI
 			static const TinyString CAPTION;
 			static const TinyString LABEL;
 			static const TinyString BUTTON;
-			static const TinyString LIST;
+			static const TinyString HORIZONTALLAYOUT;
+			static const TinyString VERTICALLAYOUT;
 			static const TinyString LISTBOX;
 			static const TinyString TOOLBAR;
 			static const TinyString TREEVIEW;

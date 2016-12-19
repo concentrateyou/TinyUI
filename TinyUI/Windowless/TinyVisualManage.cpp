@@ -6,10 +6,10 @@
 #include "TinyVisualWindow.h"
 #include "TinyVisualLabel.h"
 #include "TinyVisualButton.h"
-#include "TinyVisualList.h"
-#include "TinyVisualCaption.h"
+#include "TinyVisualVLayout.h"
+#include "TinyVisualHLayout.h"
 #include "TinyVisualButton.h"
-#include "TinyVisualScrollbar.h"
+#include "TinyVisualScrollBar.h"
 #include "TinyVisualComboBox.h"
 #include "TinyVisualRichText.h"
 
@@ -17,68 +17,112 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		TinyVisualParse::TinyVisualParse()
+		TinyVisualBuilder::TinyVisualBuilder()
 		{
 
 		}
-		TinyVisualParse::~TinyVisualParse()
+		TinyVisualBuilder::~TinyVisualBuilder()
 		{
 
 		}
-		BOOL TinyVisualParse::LoadFile(LPCSTR pzFile)
+		BOOL TinyVisualBuilder::LoadFile(LPCSTR pzFile)
 		{
 			ASSERT(pzFile);
 			return m_doc.LoadFile(pzFile);
 		}
-		BOOL TinyVisualParse::BuildVisualTree(TinyVisualDocument* pvisualTree)
+		BOOL TinyVisualBuilder::BuildDocument(TinyVisualDocument* document)
 		{
-			TinyVisual* spvis = pvisualTree->GetParent(NULL);
-			if (!spvis) return FALSE;
 			TiXmlElement *pXML = m_doc.RootElement();
-			if (pXML && !strcasecmp(pXML->Value(), TinyVisualTag::WINDOW.STR()))
+			TinyVisual* spvis = document->GetParent(NULL);
+			if (spvis == NULL)
 			{
-				TinyMap<TinyString, TinyString> map;
-				GetAttributeMap(pXML, map);
-				BuildProperty(map, spvis);
+				if (pXML && !strcasecmp(pXML->Value(), TinyVisualTag::WINDOW.STR()))
+				{
+					TinyMap<TinyString, TinyString> map;
+					GetAttributeMap(pXML, map);
+					TinySize size;
+					if (map.Contain(TinyVisualProperty::SIZE))
+						size = GetSize(map.GetValue(TinyVisualProperty::SIZE));
+					TinyPoint pos;
+					if (map.Contain(TinyVisualProperty::POSITION))
+						pos = GetPosition(map.GetValue(TinyVisualProperty::POSITION));
+					spvis = document->Create<TinyVisualWindow>(0, 0, size.cx, size.cy, NULL);
+					document->m_spvisWindow = spvis;
+					BuildProperty(map, spvis);
+					::SetWindowPos(document->GetVisualHWND()->Handle(),
+						NULL,
+						pos.x,
+						pos.y,
+						size.cx,
+						size.cy,
+						SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+				}
+				else
+				{
+					return FALSE;
+				}
 			}
-			CreateInstace(pXML, spvis, pvisualTree);
-			//pvisualTree->Dump();
+			CreateInstace(pXML, spvis, document);
 			return TRUE;
 		}
-		void TinyVisualParse::CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualDocument* pvisualTree)
+		void TinyVisualBuilder::CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualDocument* document)
 		{
-			/*TinyVisual* spvis = NULL;
+			TinyVisual* spvis = NULL;
 			for (const TiXmlNode* pXMLChildNode = pXMLNode->FirstChild(); pXMLChildNode; pXMLChildNode = pXMLChildNode->NextSibling())
 			{
-			if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT &&
-			!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::CAPTION.STR()))
-			{
-			TinyMap<TinyString, TinyString> map;
-			GetAttributeMap(static_cast<const TiXmlElement*>(pXMLChildNode), map);
-			spvis = new TinyVisualCaption(spvisParent);
-			BuildProperty(map, spvis);
-			pvisualTree->LinkVisual(spvis, PVISUAL_BOTTOM, &spvisParent->m_spvisChild);
-			CreateInstace(pXMLChildNode, spvis, pvisualTree);
-			spvis->Resize();
+				if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT &&
+					!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::HORIZONTALLAYOUT.STR()))
+				{
+					TinyMap<TinyString, TinyString> map;
+					GetAttributeMap(static_cast<const TiXmlElement*>(pXMLChildNode), map);
+					TinyPoint pos;
+					if (map.Contain(TinyVisualProperty::POSITION))
+						pos = GetPosition(map.GetValue(TinyVisualProperty::POSITION));
+					TinySize size;
+					if (map.Contain(TinyVisualProperty::SIZE))
+						size = GetSize(map.GetValue(TinyVisualProperty::SIZE));
+					spvis = document->Create<TinyVisualHLayout>(pos.x, pos.y, size.cx, size.cy, spvisParent);
+					BuildProperty(map, spvis);
+					document->LinkVisual(spvis, PVISUAL_BOTTOM, &spvisParent->m_spvisChild);
+					CreateInstace(pXMLChildNode, spvis, document);
+					spvis->Resize();
+				}
+				else if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT &&
+					!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::VERTICALLAYOUT.STR()))
+				{
+					TinyMap<TinyString, TinyString> map;
+					GetAttributeMap(static_cast<const TiXmlElement*>(pXMLChildNode), map);
+					TinyPoint pos;
+					if (map.Contain(TinyVisualProperty::POSITION))
+						pos = GetPosition(map.GetValue(TinyVisualProperty::POSITION));
+					TinySize size;
+					if (map.Contain(TinyVisualProperty::SIZE))
+						size = GetSize(map.GetValue(TinyVisualProperty::SIZE));
+					spvis = document->Create<TinyVisualVLayout>(pos.x, pos.y, size.cx, size.cy, spvisParent);
+					BuildProperty(map, spvis);
+					document->LinkVisual(spvis, PVISUAL_BOTTOM, &spvisParent->m_spvisChild);
+					CreateInstace(pXMLChildNode, spvis, document);
+					spvis->Resize();
+				}
+				else if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT &&
+					!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::BUTTON.STR()))
+				{
+					TinyMap<TinyString, TinyString> map;
+					GetAttributeMap(static_cast<const TiXmlElement*>(pXMLChildNode), map);
+					TinyPoint pos;
+					if (map.Contain(TinyVisualProperty::POSITION))
+						pos = GetPosition(map.GetValue(TinyVisualProperty::POSITION));
+					TinySize size;
+					if (map.Contain(TinyVisualProperty::SIZE))
+						size = GetSize(map.GetValue(TinyVisualProperty::SIZE));
+					spvis = document->Create<TinyVisualButton>(pos.x, pos.y, size.cx, size.cy, spvisParent);
+					BuildProperty(map, spvis);
+					document->LinkVisual(spvis, PVISUAL_BOTTOM, &spvisParent->m_spvisChild);
+				}
 			}
-			else if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT &&
-			!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::SYSBUTTON.STR()))
-			{
-			TinyMap<TinyString, TinyString> map;
-			GetAttributeMap(static_cast<const TiXmlElement*>(pXMLChildNode), map);
-			spvis = new TinyVisualSysButton(spvisParent);
-			BuildProperty(map, spvis);
-			pvisualTree->LinkVisual(spvis, PVISUAL_BOTTOM, &spvisParent->m_spvisChild);
-			}
-			}*/
 		}
-		void TinyVisualParse::BuildProperty(TinyMap<TinyString, TinyString> &map, TinyVisual* spvis)
+		void TinyVisualBuilder::BuildProperty(TinyMap<TinyString, TinyString> &map, TinyVisual* spvis)
 		{
-			if (map.Contain(TinyVisualProperty::SIZE))
-			{
-				TinySize size = GetSize(map.GetValue(TinyVisualProperty::SIZE));
-				spvis->SetSize(size);
-			}
 			if (map.Contain(TinyVisualProperty::MAXSIZE))
 			{
 				TinySize maxsize = GetSize(map.GetValue(TinyVisualProperty::MAXSIZE));
@@ -130,7 +174,7 @@ namespace TinyUI
 				spvis->SetStyleImage(DOWN, ps->STR());
 			}
 		}
-		BOOL TinyVisualParse::GetAttributeMap(const TiXmlElement* pXMLNode, TinyMap<TinyString, TinyString>& map)
+		BOOL TinyVisualBuilder::GetAttributeMap(const TiXmlElement* pXMLNode, TinyMap<TinyString, TinyString>& map)
 		{
 			if (!pXMLNode) return FALSE;
 			const TiXmlAttribute* pFA = pXMLNode->FirstAttribute();
@@ -140,9 +184,10 @@ namespace TinyUI
 				map.Add(pFA->Name(), pFA->Value());
 				pFA = pFA->Next();
 			}
+			map.Add(pLA->Name(), pLA->Value());
 			return TRUE;
 		}
-		TinySize TinyVisualParse::GetSize(const TinyString* ps)
+		TinySize TinyVisualBuilder::GetSize(const TinyString* ps)
 		{
 			if (!ps) return TinySize();
 			TinyArray<TinyString> sps;
@@ -153,7 +198,18 @@ namespace TinyUI
 			}
 			return TinySize();
 		}
-		BOOL TinyVisualParse::GetBool(const TinyString* str)
+		TinyPoint TinyVisualBuilder::GetPosition(const TinyString* ps)
+		{
+			if (!ps) return TinyPoint();
+			TinyArray<TinyString> sps;
+			ps->Split(',', sps);
+			if (sps.GetSize() == 2)
+			{
+				return (TinyPoint(atoi(sps[0].STR()), atoi(sps[1].STR())));
+			}
+			return TinyPoint();
+		}
+		BOOL TinyVisualBuilder::GetBool(const TinyString* str)
 		{
 			return str->Compare("true") == 0;
 		}

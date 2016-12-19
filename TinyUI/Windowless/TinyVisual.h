@@ -24,7 +24,7 @@ namespace TinyUI
 		class TinyVisual : public TinyObject
 		{
 			friend class TinyVisualDocument;
-			friend class TinyVisualParse;
+			friend class TinyVisualBuilder;
 			friend class TinyVisualFactory;
 			friend class TinyClipCanvas;
 			DECLARE_DYNAMIC(TinyVisual)

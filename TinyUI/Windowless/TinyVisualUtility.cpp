@@ -1,4 +1,5 @@
 #include "../stdafx.h"
+#include "TinyVisual.h"
 #include "TinyVisualUtility.h"
 #include "TinyVisualDocument.h"
 

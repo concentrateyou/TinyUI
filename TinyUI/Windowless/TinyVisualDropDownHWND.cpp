@@ -2,7 +2,7 @@
 #include "TinyVisualDropDownHWND.h"
 #include "../Render/TinyTransform.h"
 #include "../Render/TinyCanvas.h"
-#include "TinyVisualList.h"
+#include "TinyVisualVLayout.h"
 
 namespace TinyUI
 {
@@ -65,7 +65,7 @@ namespace TinyUI
 			bHandled = FALSE;
 			if (LOWORD(wParam) == WA_INACTIVE)
 			{
-				//ShowWindow(SW_HIDE);
+				ShowWindow(SW_HIDE);
 			}
 			return FALSE;
 		}

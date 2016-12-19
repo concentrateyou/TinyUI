@@ -28,14 +28,9 @@ namespace TinyUI
 			ASSERT(m_fs);
 			return m_fs->Destory(spvis);
 		}
-		BOOL TinyVisualDocument::Initialize()
+		BOOL TinyVisualDocument::Initialize(TinyVisualBuilder* builder)
 		{
-			m_spvisWindow = new TinyVisualWindow(NULL, this);
-			m_spvisWindow->SetName("Window");
-			m_spvisWindow->SetStyleImage(NORMAL, "D:\\image.png");
-			TinyVisualComboBox* ps10 = Create<TinyVisualComboBox>(50, 320, 200, 50, m_spvisWindow);
-			ps10->SetText("²âÊÔ");
-			return TRUE;
+			return builder->BuildDocument(this);
 		}
 		void TinyVisualDocument::Uninitialize()
 		{
