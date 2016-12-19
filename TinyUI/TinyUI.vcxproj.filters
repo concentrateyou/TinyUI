@@ -291,9 +291,6 @@
     <ClInclude Include="Windowless\TinyVisualButton.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
-    <ClInclude Include="Windowless\TinyVisualScrollbar.h">
-      <Filter>头文件\Windowless</Filter>
-    </ClInclude>
     <ClInclude Include="Windowless\TinyVisualDocument.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
@@ -419,6 +416,9 @@
     </ClInclude>
     <ClInclude Include="Control\TinyTrackBar.h">
       <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualScrollBar.h">
+      <Filter>头文件\Windowless</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -644,9 +644,6 @@
     <ClCompile Include="Windowless\TinyVisualButton.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
-    <ClCompile Include="Windowless\TinyVisualScrollbar.cpp">
-      <Filter>源文件\Windowless</Filter>
-    </ClCompile>
     <ClCompile Include="Windowless\TinyVisualDocument.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
@@ -772,6 +769,9 @@
     </ClCompile>
     <ClCompile Include="Control\TinyTrackBar.cpp">
       <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualScrollBar.cpp">
+      <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
