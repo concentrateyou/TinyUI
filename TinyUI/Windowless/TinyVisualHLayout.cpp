@@ -25,6 +25,11 @@ namespace TinyUI
 		{
 			m_bAuto = bAuto;
 		}
+		void TinyVisualHLayout::SetAlignment(HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment)
+		{
+			m_verticalAlignment = verticalAlignment;
+			m_horizontalAlignment = horizontalAlignment;
+		}
 		HRESULT	TinyVisualHLayout::OnCreate()
 		{
 			ASSERT(m_document);

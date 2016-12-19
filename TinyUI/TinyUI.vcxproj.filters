@@ -417,9 +417,6 @@
     <ClInclude Include="Windowless\TinyVisualPopupHWND.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
-    <ClInclude Include="Windowless\TinyStackPanel.h">
-      <Filter>头文件\Windowless</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -768,9 +765,6 @@
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
     <ClCompile Include="Windowless\TinyVisualPopupHWND.cpp">
-      <Filter>源文件\Windowless</Filter>
-    </ClCompile>
-    <ClCompile Include="Windowless\TinyStackPanel.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>

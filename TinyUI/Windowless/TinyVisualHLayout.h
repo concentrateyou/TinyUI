@@ -21,6 +21,7 @@ namespace TinyUI
 			TinyString RetrieveTag() const OVERRIDE;
 		public:
 			void AutoScroll(BOOL bEnable);
+			void SetAlignment(HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment);
 		protected:
 			BOOL	OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT	OnMouseEnter() OVERRIDE;
@@ -32,7 +33,8 @@ namespace TinyUI
 			void AdjustLayout(TinyVisual* spvis, INT dx, INT dy);
 		private:
 			BOOL					m_bAuto;
-			DWORD					m_dwAlign;
+			HorizontalAlignment		m_horizontalAlignment;
+			VerticalAlignment		m_verticalAlignment;
 			TinyVisualHScrollBar*	m_scrollbar;
 			TinyScopedPtr<Delegate<void(BOOL, INT, INT, INT)>> m_onPosChange;
 		};

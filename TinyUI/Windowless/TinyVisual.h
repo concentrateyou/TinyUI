@@ -17,25 +17,20 @@ namespace TinyUI
 			DOWN = 2,
 			PUSH = 3,
 		};
-		enum Orientation
-		{
-			Horizontal,
-			Vertical
-		};
-		/*enum VerticalAlignment
-		{
-			Bottom,
-			Center,
-			Stretch,
-			Top
-		};
 		enum HorizontalAlignment
 		{
-			Center,
-			Left,
-			Right,
-			Stretch
-		};*/
+			HORIZONTAL_CENTER,
+			HORIZONTAL_LEFT,
+			HORIZONTAL_RIGHT,
+			HORIZONTAL_STRETCH
+		};
+		enum VerticalAlignment
+		{
+			VERTICAL_CENTER,
+			VERTICAL_TOP,
+			VERTICAL_BOTTOM,
+			VERTICAL_STRETCH
+		};
 		/// <summary>
 		/// 可视化元素基类
 		/// </summary>

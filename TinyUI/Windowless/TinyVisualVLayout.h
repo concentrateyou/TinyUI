@@ -21,6 +21,7 @@ namespace TinyUI
 			TinyString RetrieveTag() const OVERRIDE;
 		public:
 			void AutoScroll(BOOL bAuto);
+			void SetAlign();
 		protected:
 			BOOL	OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT	OnMouseEnter() OVERRIDE;
