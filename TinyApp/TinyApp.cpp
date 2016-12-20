@@ -16,6 +16,8 @@
 #include "Network/TinyHTTPClient.h"
 #include "Media/TinyWave.h"
 
+#include "FLVDecode.h"
+
 BOOL LoadSeDebugPrivilege()
 {
 	DWORD   err;
@@ -78,6 +80,9 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	HRESULT hRes = OleInitialize(NULL);
 
 	LoadSeDebugPrivilege();
+
+	Decode::FLVDecode decode("D:\\sample.flv");
+	decode.Decode();
 
 	/*waveFile.Open("D:\\1234.wav");
 	vector<Media::TinyWASAPIAudioRender::Name> names;

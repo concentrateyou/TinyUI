@@ -55,7 +55,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\TinySmiley;$(BOOSTDIR);$(DXSDK_DIR)Include;..\DShowCapture;..\WebRTCNS;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\TinySmiley;$(BOOSTDIR);$(DXSDK_DIR)Include;..\DShowCapture;..\WebRTCNS;..\Decode;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
@@ -120,6 +120,9 @@
     <Image Include="TinyApp.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Decode\Decode.vcxproj">
+      <Project>{2b7dbc16-dc0d-49c6-a0b8-9f26c31aa758}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\TinyUI\TinyUI.vcxproj">
       <Project>{58903be2-bb4f-4983-b8b7-905d2db5393d}</Project>
     </ProjectReference>
