@@ -277,10 +277,10 @@ namespace TinyUI
 			if (static_cast<BOOL>(wParam))
 			{
 				NCCALCSIZE_PARAMS* ps = reinterpret_cast<NCCALCSIZE_PARAMS*>(lParam);
-				ps->rgrc[0].left = ps->lppos->x;
-				ps->rgrc[0].top = ps->lppos->y;
-				ps->rgrc[0].bottom = ps->lppos->y + ps->lppos->cy;
-				ps->rgrc[0].right = ps->lppos->x + ps->lppos->cx;
+				ps->rgrc[0].left = ps->lppos->x < 0 ? 0 : ps->lppos->x;
+				ps->rgrc[0].top = ps->lppos->y < 0 ? 0 : ps->lppos->y;
+				ps->rgrc[0].bottom = ps->rgrc[0].top + ps->lppos->cy;
+				ps->rgrc[0].right = ps->rgrc[0].left + ps->lppos->cx;
 			}
 			return TRUE;
 		}
@@ -334,6 +334,14 @@ namespace TinyUI
 			{
 				ps->ptMaxTrackSize.x = maxSize.cx;
 				ps->ptMaxTrackSize.y = maxSize.cy;
+			}
+			else
+			{
+				MONITORINFO mi = { 0 };
+				mi.cbSize = sizeof(MONITORINFO);
+				GetMonitorInfo(MonitorFromWindow(m_hWND, MONITOR_DEFAULTTONEAREST), &mi);
+				ps->ptMaxTrackSize.x = abs(mi.rcWork.right - mi.rcWork.left);
+				ps->ptMaxTrackSize.y = abs(mi.rcWork.bottom - mi.rcWork.top);
 			}
 			ps->ptMaxPosition.x = 0;
 			ps->ptMaxPosition.y = 0;

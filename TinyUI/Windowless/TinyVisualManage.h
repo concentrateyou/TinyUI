@@ -23,8 +23,8 @@ namespace TinyUI
 			~TinyVisualBuilder();
 			BOOL LoadFile(LPCSTR pzFile);
 			BOOL BuildDocument(TinyVisualDocument* ps);
-			static void CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualDocument* ps);
 		private:
+			static void CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualDocument* ps);
 			static void BuildProperty(TinyMap<TinyString, TinyString> &map, TinyVisual* spvis);
 			static BOOL GetAttributeMap(const TiXmlElement* pXMLNode, TinyMap<TinyString, TinyString>& map);
 			static TinySize	 GetSize(const TinyString* ps);

@@ -30,6 +30,17 @@ namespace TinyUI
 			{
 				if (spvis->Contain(TinyVisualProperty::SIZE))
 				{
+					if (spvis->Contain(TinyVisualProperty::MINSIZE))
+					{
+
+					}
+					if (spvis->Contain(TinyVisualProperty::MAXSIZE))
+					{
+
+					}
+				}
+				else
+				{
 
 				}
 				spvis = m_document->GetVisual(spvis, CMD_PREV);

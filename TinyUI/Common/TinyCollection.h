@@ -812,6 +812,8 @@ namespace TinyUI
 	public:
 		explicit TinyMap(DWORD dwBlockSize = 10);
 		~TinyMap();
+		TinyMap(TinyMap&& other);
+		TinyMap& operator = (TinyMap&& other);
 		ITERATOR operator[](const K& key) const;
 		DWORD GetSize() const;
 		BOOL Contain(const K& key);
@@ -867,6 +869,39 @@ namespace TinyUI
 		m_pRoot(NULL)
 	{
 
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	TinyMap<K, V, KTraits, VTraits>::TinyMap(TinyMap&& other)
+		:m_dwBlockSize(other.m_dwBlockSize),
+		m_dwCount(other.m_dwCount),
+		m_pRoot(other.m_pRoot),
+		m_pFreeList(other.m_pFreeList),
+		m_pNIL(other.m_pNIL),
+		m_pBlocks(other.m_pBlocks)
+	{
+		other.m_dwBlockSize = 0;
+		other.m_dwCount = 0;
+		other.m_pRoot = NULL;
+		other.m_pFreeList = NULL;
+		other.m_pNIL = NULL;
+		other.m_pBlocks = NULL;
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	TinyMap<K, V, KTraits, VTraits>& TinyMap<K, V, KTraits, VTraits>::operator = (TinyMap&& other)
+	{
+		m_dwBlockSize = other.m_dwBlockSize;
+		m_dwCount = other.m_dwCount;
+		m_pRoot = other.m_pRoot;
+		m_pFreeList = other.m_pFreeList;
+		m_pNIL = other.m_pNIL;
+		m_pBlocks = other.m_pBlocks;
+		other.m_dwBlockSize = 0;
+		other.m_dwCount = 0;
+		other.m_pRoot = NULL;
+		other.m_pFreeList = NULL;
+		other.m_pNIL = NULL;
+		other.m_pBlocks = NULL;
+		return *this;
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	TinyMap<K, V, KTraits, VTraits>::~TinyMap()
