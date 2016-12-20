@@ -36,7 +36,7 @@
     <ClInclude Include="Utility.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MP3Decode.h">
+    <ClInclude Include="MPEG123Decode.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -56,7 +56,7 @@
     <ClCompile Include="Utility.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MP3Decode.cpp">
+    <ClCompile Include="MPEG123Decode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

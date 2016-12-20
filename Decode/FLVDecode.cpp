@@ -23,7 +23,7 @@ namespace Decode
 	}
 	void FLVDecode::ParseAudio(BYTE* data, INT size)
 	{
-		//目前只支持MP3和AAC
+		//目前只支持MP3,AAC和PCM
 		FLV_TAG_AUDIO* audio = reinterpret_cast<FLV_TAG_AUDIO*>(data);
 		switch (audio->codeID)
 		{

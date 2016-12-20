@@ -1,6 +1,8 @@
 #pragma once
 #include <stdio.h>
 #include "Common/TinyCommon.h"
+#include "Common/TinyCallback.h"
+using namespace TinyUI;
 
 namespace Utility
 {
