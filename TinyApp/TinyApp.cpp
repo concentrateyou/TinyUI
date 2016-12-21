@@ -16,7 +16,7 @@
 #include "Network/TinyHTTPClient.h"
 #include "Media/TinyWave.h"
 
-#include "FLVDecode.h"
+#include "MPG123Decode.h"
 
 BOOL LoadSeDebugPrivilege()
 {
@@ -49,20 +49,13 @@ BOOL LoadSeDebugPrivilege()
 	return TRUE;
 }
 
-TinyUI::Media::TinyWaveFile waveFile;
-WAVEFORMATEX* waveFormat;
-
-void CaptureCB(BYTE* bits, LONG size, LPVOID ps)
+Media::TinyWaveFile waveFile;
+void OnDecode(BYTE*bits, LONG size, LPVOID ps)
 {
+	if (size == 0)
+		waveFile.Create("D:\\1234.wav", reinterpret_cast<WAVEFORMATEX*>(ps));
 	waveFile.Write(bits, size);
 }
-
-void ReadCB(BYTE* bits, LONG size, LPVOID ps)
-{
-	LONG numberOfBytesRead = 0;
-	waveFile.Read(bits, size, &numberOfBytesRead);
-}
-
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -81,50 +74,23 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
-	Decode::FLVDecode decode("D:\\sample.flv");
-	decode.Decode();
-
-	/*waveFile.Open("D:\\1234.wav");
-	vector<Media::TinyWASAPIAudioRender::Name> names;
-	TinyUI::Media::TinyWASAPIAudioRender::GetDevices(eRender, names);
-	TinyUI::Media::TinyWASAPIAudioRender render;
-	render.Initialize(BindCallback(&ReadCB), AUDCLNT_STREAMFLAGS_NOPERSIST, AUDCLNT_SHAREMODE_SHARED);
-	BOOL bRes = render.Open(names[0], waveFile.GetFormat());
-	bRes = render.Start();*/
-
-	/*vector<Media::TinyWASAPIAudioRender::Name> names;
-	TinyUI::Media::TinyWASAPIAudioRender::GetDevices(eRender, names);
-	TinyUI::Media::TinyWASAPIAudioCapture capture;
-	capture.Initialize(BindCallback(&CaptureCB), AUDCLNT_STREAMFLAGS_LOOPBACK | AUDCLNT_STREAMFLAGS_NOPERSIST);
-	BOOL bRes = capture.Open(names[0], NULL);
-	waveFormat = capture.GetInputFormat();
-	waveFile.Create("D:\\1234.wav", waveFormat);
-	bRes = capture.Start();*/
-
-	//WAVEFORMATEX wfx = { WAVE_FORMAT_PCM, 1, 16000, 32000, 2, 16, 0 };
-	//vector<Media::TinyWASAPIAudioCapture::Name> names;
-	//TinyUI::Media::TinyWASAPIAudioCapture::GetDevices(eCapture, names);
-	//TinyUI::Media::TinyWASAPIAudioCapture capture;
-	//capture.Initialize(BindCallback(&CaptureCB), AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST);
-	//BOOL bRes = capture.Open(names[0], NULL);
-	//bRes = capture.Start();
-
-	/*TinyAudioDSPCapture capture;
-	vector<Media::TinyAudioDSPCapture::Name> names1;
-	TinyUI::Media::TinyAudioDSPCapture::GetDevices(eRender, names1);
-	vector<Media::TinyAudioDSPCapture::Name> names2;
-	TinyUI::Media::TinyAudioDSPCapture::GetDevices(eCapture, names2);
-	capture.Initialize(BindCallback(&CaptureCB));
-	capture.EnableAGC(TRUE);
-	capture.EnableNS(TRUE);
-	WAVEFORMATEX sFMT = { WAVE_FORMAT_PCM, 1, 16000, 32000, 2, 16, 0 };
-	waveFile.Create("D:\\BBB.wav", &sFMT);
-	BOOL bRes = capture.Open(names1[0], names2[0], &sFMT);
-	bRes = capture.Start();*/
-
-	//capture.Close();
-	//render.Close();
-	//capture.Close();
+	Decode::MPG123Decode decode;
+	decode.Initialize(BindCallback(&OnDecode));
+	decode.Open();
+	LONGLONG totalSize = 0;
+	TinyFile sFile;
+	sFile.Open("D:\\KuGou\\ÁºÓ½ç÷ - µ¨Ð¡¹í.mp3", GENERIC_READ, FILE_SHARE_READ, NULL);
+	TinyScopedArray<BYTE> rawdata(new BYTE[16384]);
+	for (;;)
+	{
+		DWORD rawsize = sFile.Read(rawdata, 16384);
+		decode.Decode(rawdata, rawsize);
+		totalSize += rawsize;
+		if (totalSize == sFile.GetSize())
+		{
+			break;
+		}
+	}
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
