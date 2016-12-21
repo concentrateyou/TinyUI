@@ -6,12 +6,12 @@ namespace TinyUI
 {
 	namespace Media
 	{
-		class TinyMFAACEncode
+		class TinyMFTAACEncode
 		{
-			DISALLOW_COPY_AND_ASSIGN(TinyMFAACEncode)
+			DISALLOW_COPY_AND_ASSIGN(TinyMFTAACEncode)
 		public:
-			TinyMFAACEncode(DWORD dwRate = 128);
-			~TinyMFAACEncode();
+			TinyMFTAACEncode(DWORD dwRate = 128);
+			~TinyMFTAACEncode();
 		public:
 			BOOL Initialize(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO, Callback<void(BYTE*, LONG, LONGLONG, LPVOID)>&& callback);
 			virtual void OnDataAvailable(BYTE* bits, LONG size, LONGLONG ts, LPVOID lpParameter);

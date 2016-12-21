@@ -1,5 +1,5 @@
 #include "../stdafx.h"
-#include "TinyMFDolbyEncode.h"
+#include "TinyMFTDolbyDecode.h"
 
 namespace TinyUI
 {

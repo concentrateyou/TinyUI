@@ -333,12 +333,6 @@
     <ClInclude Include="Media\TinyMFResampler.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
-    <ClInclude Include="Media\TinyMFH264Encode.h">
-      <Filter>头文件\Media</Filter>
-    </ClInclude>
-    <ClInclude Include="Media\TinyMFAACEncode.h">
-      <Filter>头文件\Media</Filter>
-    </ClInclude>
     <ClInclude Include="Database\TinyMySQL.h">
       <Filter>头文件\Database</Filter>
     </ClInclude>
@@ -417,22 +411,28 @@
     <ClInclude Include="Windowless\TinyVisualPopupHWND.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
-    <ClInclude Include="Media\TinyMFAACDecode.h">
+    <ClInclude Include="Media\TinyMFTAACDecode.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
-    <ClInclude Include="Media\TinyMFDolbyDecode.h">
+    <ClInclude Include="Media\TinyMFTAACEncode.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
-    <ClInclude Include="Media\TinyMFDolbyEncode.h">
+    <ClInclude Include="Media\TinyMFTDolbyDecode.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
-    <ClInclude Include="Media\TinyMFH264Decode.h">
+    <ClInclude Include="Media\TinyMFTDolbyEncode.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
-    <ClInclude Include="Media\TinyMFMP3Encode.h">
+    <ClInclude Include="Media\TinyMFTH264Decode.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
-    <ClInclude Include="Media\TinyMFMP3Decode.h">
+    <ClInclude Include="Media\TinyMFTH264Encode.h">
+      <Filter>头文件\Media</Filter>
+    </ClInclude>
+    <ClInclude Include="Media\TinyMFTMP3Decode.h">
+      <Filter>头文件\Media</Filter>
+    </ClInclude>
+    <ClInclude Include="Media\TinyMFTMP3Encode.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
   </ItemGroup>
@@ -701,12 +701,6 @@
     <ClCompile Include="Media\TinyMFResampler.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
-    <ClCompile Include="Media\TinyMFAACEncode.cpp">
-      <Filter>源文件\Media</Filter>
-    </ClCompile>
-    <ClCompile Include="Media\TinyMFH264Encode.cpp">
-      <Filter>源文件\Media</Filter>
-    </ClCompile>
     <ClCompile Include="Database\TinyMySQL.cpp">
       <Filter>源文件\Database</Filter>
     </ClCompile>
@@ -785,22 +779,28 @@
     <ClCompile Include="Windowless\TinyVisualPopupHWND.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
-    <ClCompile Include="Media\TinyMFAACDecode.cpp">
+    <ClCompile Include="Media\TinyMFTAACDecode.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
-    <ClCompile Include="Media\TinyMFDolbyDecode.cpp">
+    <ClCompile Include="Media\TinyMFTAACEncode.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
-    <ClCompile Include="Media\TinyMFDolbyEncode.cpp">
+    <ClCompile Include="Media\TinyMFTDolbyDecode.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
-    <ClCompile Include="Media\TinyMFH264Decode.cpp">
+    <ClCompile Include="Media\TinyMFTDolbyEncode.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
-    <ClCompile Include="Media\TinyMFMP3Decode.cpp">
+    <ClCompile Include="Media\TinyMFTH264Decode.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
-    <ClCompile Include="Media\TinyMFMP3Encode.cpp">
+    <ClCompile Include="Media\TinyMFTH264Encode.cpp">
+      <Filter>源文件\Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\TinyMFTMP3Decode.cpp">
+      <Filter>源文件\Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\TinyMFTMP3Encode.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
   </ItemGroup>

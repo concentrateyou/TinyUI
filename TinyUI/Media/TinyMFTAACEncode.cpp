@@ -1,20 +1,20 @@
 #include "../stdafx.h"
-#include "TinyMFAACEncode.h"
+#include "TinyMFTAACEncode.h"
 
 namespace TinyUI
 {
 	namespace Media
 	{
-		TinyMFAACEncode::TinyMFAACEncode(DWORD dwRate)
+		TinyMFTAACEncode::TinyMFTAACEncode(DWORD dwRate)
 			:m_dwRate(dwRate)
 		{
 
 		}
-		TinyMFAACEncode::~TinyMFAACEncode()
+		TinyMFTAACEncode::~TinyMFTAACEncode()
 		{
 
 		}
-		BOOL TinyMFAACEncode::Initialize(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO, Callback<void(BYTE*, LONG, LONGLONG, LPVOID)>&& callback)
+		BOOL TinyMFTAACEncode::Initialize(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO, Callback<void(BYTE*, LONG, LONGLONG, LPVOID)>&& callback)
 		{
 			m_callback = std::move(callback);
 			m_waveFMTI = *pFMTI;
@@ -43,14 +43,14 @@ namespace TinyUI
 				return FALSE;
 			return TRUE;
 		}
-		void TinyMFAACEncode::OnDataAvailable(BYTE* bits, LONG size, LONGLONG ts, LPVOID lpParameter)
+		void TinyMFTAACEncode::OnDataAvailable(BYTE* bits, LONG size, LONGLONG ts, LPVOID lpParameter)
 		{
 			if (!m_callback.IsNull())
 			{
 				m_callback(bits, size, ts, lpParameter);
 			}
 		}
-		BOOL TinyMFAACEncode::Open()
+		BOOL TinyMFTAACEncode::Open()
 		{
 			HRESULT hRes = m_transform->ProcessMessage(MFT_MESSAGE_NOTIFY_BEGIN_STREAMING, NULL);
 			if (hRes != S_OK)
@@ -60,7 +60,7 @@ namespace TinyUI
 				return FALSE;
 			return TRUE;
 		}
-		BOOL TinyMFAACEncode::Close()
+		BOOL TinyMFTAACEncode::Close()
 		{
 			HRESULT hRes = m_transform->ProcessMessage(MFT_MESSAGE_NOTIFY_END_STREAMING, NULL);
 			if (hRes != S_OK)
@@ -70,7 +70,7 @@ namespace TinyUI
 				return FALSE;
 			return TRUE;
 		}
-		BOOL TinyMFAACEncode::Encode(BYTE* bits, LONG size, LONGLONG ts)
+		BOOL TinyMFTAACEncode::Encode(BYTE* bits, LONG size, LONGLONG ts)
 		{
 			HRESULT hRes = S_OK;
 			if (!CreateInputSample(bits, size, ts))
@@ -96,7 +96,7 @@ namespace TinyUI
 				return FALSE;
 			return GetOutputSample(info.cbSize);
 		}
-		BOOL TinyMFAACEncode::CreateInputSample(const BYTE* bits, DWORD size, LONGLONG ts)
+		BOOL TinyMFTAACEncode::CreateInputSample(const BYTE* bits, DWORD size, LONGLONG ts)
 		{
 			HRESULT hRes = S_OK;
 			TinyComPtr<IMFMediaBuffer> buffer;
@@ -148,7 +148,7 @@ namespace TinyUI
 				return FALSE;
 			return TRUE;
 		}
-		BOOL TinyMFAACEncode::CreateOutputSample(DWORD dwSize)
+		BOOL TinyMFTAACEncode::CreateOutputSample(DWORD dwSize)
 		{
 			HRESULT hRes = S_OK;
 			TinyComPtr<IMFMediaBuffer> buffer;
@@ -185,7 +185,7 @@ namespace TinyUI
 			}
 			return TRUE;
 		}
-		BOOL TinyMFAACEncode::GetOutputSample(DWORD dwSize)
+		BOOL TinyMFTAACEncode::GetOutputSample(DWORD dwSize)
 		{
 			ASSERT(m_transform);
 			HRESULT hRes = S_OK;

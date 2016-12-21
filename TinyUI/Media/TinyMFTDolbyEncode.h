@@ -6,6 +6,9 @@ namespace TinyUI
 {
 	namespace Media
 	{
-		
+		class TinyMFTDolbyEncode
+		{
+
+		};
 	};
 }

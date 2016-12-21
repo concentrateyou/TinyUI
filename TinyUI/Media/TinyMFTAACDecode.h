@@ -6,12 +6,12 @@ namespace TinyUI
 {
 	namespace Media
 	{
-		class TinyMFAACDecode
+		class TinyMFTAACDecode
 		{
-			DISALLOW_COPY_AND_ASSIGN(TinyMFAACDecode)
+			DISALLOW_COPY_AND_ASSIGN(TinyMFTAACDecode)
 		public:
-			TinyMFAACDecode(DWORD dwRate = 128);
-			~TinyMFAACDecode();
+			TinyMFTAACDecode(DWORD dwRate = 128);
+			~TinyMFTAACDecode();
 		public:
 			BOOL Initialize(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO, Callback<void(BYTE*, LONG, LONGLONG, LPVOID)>&& callback);
 			virtual void OnDataAvailable(BYTE* bits, LONG size, LONGLONG ts, LPVOID lpParameter);

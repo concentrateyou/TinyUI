@@ -6,6 +6,9 @@ namespace TinyUI
 {
 	namespace Media
 	{
-		
+		class TinyMFTH264Encode
+		{
+
+		};
 	};
 }

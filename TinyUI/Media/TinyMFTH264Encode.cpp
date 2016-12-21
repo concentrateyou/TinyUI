@@ -1,5 +1,5 @@
 #include "../stdafx.h"
-#include "TinyMFMP3Decode.h"
+#include "TinyMFTH264Encode.h"
 
 namespace TinyUI
 {
