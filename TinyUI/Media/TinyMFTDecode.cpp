@@ -1,80 +1,69 @@
 #include "../stdafx.h"
-#include "TinyMFResampler.h"
-#include <limits>
+#include "TinyMFTDecode.h"
 #include <algorithm>
+#include <limits>
 
 namespace TinyUI
 {
 	namespace Media
 	{
-		TinyMFResampler::TinyMFResampler()
+		TinyMFTDecode::TinyMFTDecode()
 		{
 
 		}
-		TinyMFResampler::~TinyMFResampler()
+		TinyMFTDecode::~TinyMFTDecode()
 		{
 			Close();
 		}
-		BOOL TinyMFResampler::CreateResampler(const WAVEFORMATEX* pInputFormat, const WAVEFORMATEX* pOutputFormat)
+		BOOL TinyMFTDecode::Create(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType)
 		{
 			HRESULT hRes = S_OK;
 			TinyComPtr<IUnknown> unknow;
-			hRes = unknow.CoCreateInstance(CLSID_CResamplerMediaObject, NULL, CLSCTX_INPROC_SERVER);
+			hRes = unknow.CoCreateInstance(clsID, NULL, CLSCTX_INPROC_SERVER);
 			if (FAILED(hRes))
 				return FALSE;
-			hRes = unknow->QueryInterface(IID_PPV_ARGS(&m_resampler));
+			hRes = unknow->QueryInterface(IID_PPV_ARGS(&m_transform));
 			if (FAILED(hRes))
 				return FALSE;
-			TinyComPtr<IMFMediaType> inputMediaType;
-			hRes = MFCreateMediaType(&inputMediaType);
+			if (inputType != NULL)
+			{
+				hRes = m_transform->SetInputType(0, inputType, 0);
+				if (FAILED(hRes))
+					return FALSE;
+			}
+			if (outputType != NULL)
+			{
+				hRes = m_transform->SetOutputType(0, outputType, 0);
+				if (FAILED(hRes))
+					return FALSE;
+			}
+			hRes = m_transform->GetInputStreamInfo(0, &m_inputStream);
 			if (FAILED(hRes))
 				return FALSE;
-			hRes = MFInitMediaTypeFromWaveFormatEx(inputMediaType, pInputFormat, sizeof(WAVEFORMATEX) + pInputFormat->cbSize);
+			hRes = m_transform->GetOutputStreamInfo(0, &m_outputStream);
 			if (FAILED(hRes))
 				return FALSE;
-			hRes = m_resampler->SetInputType(0, inputMediaType, 0);
-			if (FAILED(hRes))
-				return FALSE;
-			TinyComPtr<IMFMediaType> outputMediaType;
-			hRes = MFCreateMediaType(&outputMediaType);
-			if (FAILED(hRes))
-				return FALSE;
-			hRes = MFInitMediaTypeFromWaveFormatEx(outputMediaType, pOutputFormat, sizeof(WAVEFORMATEX) + pOutputFormat->cbSize);
-			if (FAILED(hRes))
-				return FALSE;
-			hRes = m_resampler->SetOutputType(0, outputMediaType, 0);
-			if (FAILED(hRes))
-				return FALSE;
-			TinyComPtr<IWMResamplerProps> resamplerProps;
-			hRes = unknow->QueryInterface(IID_PPV_ARGS(&resamplerProps));
-			if (FAILED(hRes))
-				return FALSE;
-			hRes = resamplerProps->SetHalfFilterLength(60);
-			if (FAILED(hRes))
-				return FALSE;
+
 			return TRUE;
 		}
-		BOOL TinyMFResampler::Open(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO, Callback<void(BYTE*, LONG, LPVOID)>& callback)
+		BOOL TinyMFTDecode::Open(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType, Callback<void(BYTE*, LONG, LPVOID)>&& callback)
 		{
-			ASSERT(pFMTI || pFMTO);
 			m_callback = std::move(callback);
-			m_waveFMTI = *pFMTI;
-			m_waveFMTO = *pFMTO;
-			if (!CreateResampler(pFMTI, pFMTO))
+			if (!Create(clsID, inputType, outputType))
 				return FALSE;
 			HRESULT hRes = S_OK;
-			hRes = m_resampler->ProcessMessage(MFT_MESSAGE_COMMAND_FLUSH, NULL);
+			hRes = m_transform->ProcessMessage(MFT_MESSAGE_COMMAND_FLUSH, NULL);
 			if (FAILED(hRes))
 				return FALSE;
-			hRes = m_resampler->ProcessMessage(MFT_MESSAGE_NOTIFY_BEGIN_STREAMING, NULL);
+			hRes = m_transform->ProcessMessage(MFT_MESSAGE_NOTIFY_BEGIN_STREAMING, NULL);
 			if (FAILED(hRes))
 				return FALSE;
-			hRes = m_resampler->ProcessMessage(MFT_MESSAGE_NOTIFY_START_OF_STREAM, NULL);
+			hRes = m_transform->ProcessMessage(MFT_MESSAGE_NOTIFY_START_OF_STREAM, NULL);
 			if (FAILED(hRes))
 				return FALSE;
 			return TRUE;
 		}
-		BOOL TinyMFResampler::CreateInputSample(const BYTE* bits, DWORD dwSize)
+		BOOL TinyMFTDecode::CreateInputSample(const BYTE* bits, DWORD dwSize)
 		{
 			HRESULT hRes = S_OK;
 			TinyComPtr<IMFMediaBuffer> buffer;
@@ -84,7 +73,7 @@ namespace TinyUI
 				if (FAILED(hRes))
 					return FALSE;
 				MFT_INPUT_STREAM_INFO s = { 0 };
-				hRes = m_resampler->GetInputStreamInfo(0, &s);
+				hRes = m_transform->GetInputStreamInfo(0, &s);
 				if (FAILED(hRes))
 					return FALSE;
 				if (s.cbAlignment > 0)
@@ -116,7 +105,7 @@ namespace TinyUI
 				if (FAILED(hRes))
 					return FALSE;
 				MFT_INPUT_STREAM_INFO s = { 0 };
-				hRes = m_resampler->GetInputStreamInfo(0, &s);
+				hRes = m_transform->GetInputStreamInfo(0, &s);
 				if (FAILED(hRes))
 					return FALSE;
 				if (s.cbAlignment > 0)
@@ -148,7 +137,7 @@ namespace TinyUI
 				return FALSE;
 			return TRUE;
 		}
-		BOOL TinyMFResampler::CreateOutputSample(DWORD dwSize)
+		BOOL TinyMFTDecode::CreateOutputSample(DWORD dwSize)
 		{
 			HRESULT hRes = S_OK;
 			TinyComPtr<IMFMediaBuffer> buffer;
@@ -158,7 +147,7 @@ namespace TinyUI
 				if (FAILED(hRes))
 					return FALSE;
 				MFT_OUTPUT_STREAM_INFO s = { 0 };
-				hRes = m_resampler->GetOutputStreamInfo(0, &s);
+				hRes = m_transform->GetOutputStreamInfo(0, &s);
 				if (FAILED(hRes))
 					return FALSE;
 				if (s.cbAlignment > 0)
@@ -190,7 +179,7 @@ namespace TinyUI
 				if (FAILED(hRes))
 					return FALSE;
 				MFT_OUTPUT_STREAM_INFO s = { 0 };
-				hRes = m_resampler->GetOutputStreamInfo(0, &s);
+				hRes = m_transform->GetOutputStreamInfo(0, &s);
 				if (FAILED(hRes))
 					return FALSE;
 				if (s.cbAlignment > 0)
@@ -211,14 +200,14 @@ namespace TinyUI
 			}
 			return TRUE;
 		}
-		BOOL TinyMFResampler::GetOutputSample(DWORD dwSize)
+		BOOL TinyMFTDecode::GetOutputSample(DWORD dwSize)
 		{
-			ASSERT(m_resampler);
+			ASSERT(m_transform);
 			TinyBufferArray<BYTE>	sampleBuffer;
 			for (;;)
 			{
 				MFT_OUTPUT_STREAM_INFO s = { 0 };
-				if (FAILED(m_resampler->GetOutputStreamInfo(0, &s)))
+				if (FAILED(m_transform->GetOutputStreamInfo(0, &s)))
 					return FALSE;
 				MFT_OUTPUT_DATA_BUFFER samples = { 0 };
 				if ((s.dwFlags & (MFT_OUTPUT_STREAM_PROVIDES_SAMPLES | MFT_OUTPUT_STREAM_CAN_PROVIDE_SAMPLES)) == 0)
@@ -228,7 +217,7 @@ namespace TinyUI
 					samples.pSample = m_outputSample;
 				}
 				DWORD dwStatus;
-				HRESULT hRes = m_resampler->ProcessOutput(0, 1, &samples, &dwStatus);
+				HRESULT hRes = m_transform->ProcessOutput(0, 1, &samples, &dwStatus);
 				if (hRes != S_OK)
 				{
 					if (hRes == MF_E_TRANSFORM_NEED_MORE_INPUT)
@@ -257,41 +246,38 @@ namespace TinyUI
 			OnDataAvailable(sampleBuffer.m_value, sampleBuffer.m_size, this);
 			return TRUE;
 		}
-		BOOL TinyMFResampler::Resample(const BYTE* bits, DWORD size)
+		BOOL TinyMFTDecode::Decode(const BYTE* bits, DWORD size)
 		{
 			if (!CreateInputSample(bits, size))
 				return FALSE;
 			DWORD dwStatus = 0;
-			HRESULT hRes = m_resampler->GetInputStatus(0, &dwStatus);
+			HRESULT hRes = m_transform->GetInputStatus(0, &dwStatus);
 			if (MFT_INPUT_STATUS_ACCEPT_DATA != dwStatus)
 			{
 				return TRUE;
 			}
-			hRes = m_resampler->ProcessInput(0, m_inputSample, 0);
+			hRes = m_transform->ProcessInput(0, m_inputSample, 0);
 			if (FAILED(hRes))
 				return FALSE;
-			DWORD dwSize = (DWORD)((LONGLONG)size * m_waveFMTO.nAvgBytesPerSec / m_waveFMTI.nAvgBytesPerSec);
-			dwSize = (dwSize + (m_waveFMTO.nBlockAlign - 1)) / m_waveFMTO.nBlockAlign * m_waveFMTO.nBlockAlign;
-			dwSize += 16 * m_waveFMTO.nBlockAlign;
-			return GetOutputSample(dwSize);
+			return GetOutputSample(m_outputStream.cbSize);
 		}
-		BOOL TinyMFResampler::Close()
+		BOOL TinyMFTDecode::Close()
 		{
-			if (!m_resampler)
+			if (!m_transform)
 				return FALSE;
-			HRESULT hRes = m_resampler->ProcessMessage(MFT_MESSAGE_NOTIFY_END_OF_STREAM, NULL);
+			HRESULT hRes = m_transform->ProcessMessage(MFT_MESSAGE_NOTIFY_END_OF_STREAM, NULL);
 			if (FAILED(hRes))
 				return FALSE;
-			hRes = m_resampler->ProcessMessage(MFT_MESSAGE_COMMAND_DRAIN, NULL);
+			hRes = m_transform->ProcessMessage(MFT_MESSAGE_COMMAND_DRAIN, NULL);
 			if (FAILED(hRes))
 				return FALSE;
-			hRes = m_resampler->ProcessMessage(MFT_MESSAGE_NOTIFY_END_STREAMING, NULL);
+			hRes = m_transform->ProcessMessage(MFT_MESSAGE_NOTIFY_END_STREAMING, NULL);
 			if (FAILED(hRes))
 				return FALSE;
-			m_resampler.Release();
+			m_transform.Release();
 			return TRUE;
 		}
-		void TinyMFResampler::OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
+		void TinyMFTDecode::OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
 		{
 			if (!m_callback.IsNull())
 			{

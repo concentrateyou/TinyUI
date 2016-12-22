@@ -20,7 +20,7 @@ namespace Decode
 		m_handle = mpg123_new(NULL, &iRes);
 		if (!m_handle)
 			return FALSE;
-		iRes = mpg123_param(m_handle, MPG123_VERBOSE, 2, 0);
+		iRes = mpg123_param(m_handle, MPG123_OUTSCALE, 2, 0);
 		if (iRes == MPG123_ERR)
 			goto _ERROR;
 		iRes = mpg123_open_feed(m_handle);

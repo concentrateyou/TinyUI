@@ -411,28 +411,13 @@
     <ClInclude Include="Windowless\TinyVisualPopupHWND.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
-    <ClInclude Include="Media\TinyMFTAACDecode.h">
+    <ClInclude Include="Media\TinyMFTDecode.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
-    <ClInclude Include="Media\TinyMFTAACEncode.h">
+    <ClInclude Include="Media\TinyMFTEncode.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
-    <ClInclude Include="Media\TinyMFTDolbyDecode.h">
-      <Filter>头文件\Media</Filter>
-    </ClInclude>
-    <ClInclude Include="Media\TinyMFTDolbyEncode.h">
-      <Filter>头文件\Media</Filter>
-    </ClInclude>
-    <ClInclude Include="Media\TinyMFTH264Decode.h">
-      <Filter>头文件\Media</Filter>
-    </ClInclude>
-    <ClInclude Include="Media\TinyMFTH264Encode.h">
-      <Filter>头文件\Media</Filter>
-    </ClInclude>
-    <ClInclude Include="Media\TinyMFTMP3Decode.h">
-      <Filter>头文件\Media</Filter>
-    </ClInclude>
-    <ClInclude Include="Media\TinyMFTMP3Encode.h">
+    <ClInclude Include="Media\TinyMFTMP3.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
   </ItemGroup>
@@ -779,28 +764,13 @@
     <ClCompile Include="Windowless\TinyVisualPopupHWND.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
-    <ClCompile Include="Media\TinyMFTAACDecode.cpp">
+    <ClCompile Include="Media\TinyMFTDecode.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
-    <ClCompile Include="Media\TinyMFTAACEncode.cpp">
+    <ClCompile Include="Media\TinyMFTEncode.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
-    <ClCompile Include="Media\TinyMFTDolbyDecode.cpp">
-      <Filter>源文件\Media</Filter>
-    </ClCompile>
-    <ClCompile Include="Media\TinyMFTDolbyEncode.cpp">
-      <Filter>源文件\Media</Filter>
-    </ClCompile>
-    <ClCompile Include="Media\TinyMFTH264Decode.cpp">
-      <Filter>源文件\Media</Filter>
-    </ClCompile>
-    <ClCompile Include="Media\TinyMFTH264Encode.cpp">
-      <Filter>源文件\Media</Filter>
-    </ClCompile>
-    <ClCompile Include="Media\TinyMFTMP3Decode.cpp">
-      <Filter>源文件\Media</Filter>
-    </ClCompile>
-    <ClCompile Include="Media\TinyMFTMP3Encode.cpp">
+    <ClCompile Include="Media\TinyMFTMP3.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
   </ItemGroup>
