@@ -27,8 +27,8 @@ namespace TinyUI
 			BOOL GetOutputSample(DWORD dwSize);
 		protected:
 			TinyComPtr<IMFTransform>	m_transform;
-			MFT_INPUT_STREAM_INFO		m_inputStream;
-			MFT_OUTPUT_STREAM_INFO		m_outputStream;
+			MFT_INPUT_STREAM_INFO		m_inputInfo;
+			MFT_OUTPUT_STREAM_INFO		m_outputInfo;
 		private:
 			TinyComPtr<IMFSample>		m_inputSample;
 			TinyComPtr<IMFSample>		m_outputSample;

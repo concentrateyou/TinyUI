@@ -29,6 +29,8 @@ namespace TinyUI
 			TinyComPtr<IMFTransform>	m_resampler;
 			TinyComPtr<IMFSample>		m_inputSample;
 			TinyComPtr<IMFSample>		m_outputSample;
+			MFT_INPUT_STREAM_INFO		m_inputInfo;
+			MFT_OUTPUT_STREAM_INFO		m_outputInfo;
 			WAVEFORMATEX				m_waveFMTI;
 			WAVEFORMATEX				m_waveFMTO;
 			Callback<void(BYTE*, LONG, LPVOID)> m_callback;

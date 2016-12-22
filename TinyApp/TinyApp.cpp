@@ -85,32 +85,17 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyScopedArray<BYTE> rawdata(new BYTE[16384]);
 
 	TinyPerformanceTimer timer;
-	timer.BeginTime();
 	Media::TinyMFTMP3 mp3;
-	MPEGLAYER3WAVEFORMAT sFMT;
-	ZeroMemory(&sFMT, sizeof(sFMT));
-	sFMT.wID = MPEGLAYER3_ID_MPEG;
-	sFMT.fdwFlags = MPEGLAYER3_FLAG_PADDING_OFF;
-	sFMT.nBlockSize = WORD(144 * (128000 / 44100));
-	sFMT.nFramesPerBlock = 1;
-	sFMT.nCodecDelay = 0;
-	sFMT.wfx.wFormatTag = WAVE_FORMAT_MPEGLAYER3;
-	sFMT.wfx.nChannels = 2;
-	sFMT.wfx.nSamplesPerSec = 44100;
-	sFMT.wfx.wBitsPerSample = 16;
-	sFMT.wfx.nBlockAlign = (sFMT.wfx.nChannels * sFMT.wfx.wBitsPerSample) / 8;
-	sFMT.wfx.nAvgBytesPerSec = sFMT.wfx.nSamplesPerSec * sFMT.wfx.nBlockAlign;
-	sFMT.wfx.cbSize = MPEGLAYER3_WFX_EXTRA_BYTES;
-	mp3.Open((WAVEFORMATEX*)&sFMT, BindCallback(&OnDecode1));
-
+	timer.BeginTime();
 	WAVEFORMATEX wfx = { 0 };
 	wfx.cbSize = 0;
 	wfx.wFormatTag = WAVE_FORMAT_PCM;
 	wfx.nChannels = 2;
 	wfx.nSamplesPerSec = 44100;
 	wfx.wBitsPerSample = 16;
-	wfx.nBlockAlign = (sFMT.wfx.nChannels * sFMT.wfx.wBitsPerSample) / 8;
-	wfx.nAvgBytesPerSec = sFMT.wfx.nSamplesPerSec * sFMT.wfx.nBlockAlign;
+	wfx.nBlockAlign = (wfx.nChannels * wfx.wBitsPerSample) / 8;
+	wfx.nAvgBytesPerSec = wfx.nSamplesPerSec * wfx.nBlockAlign;
+	mp3.Open((WAVEFORMATEX*)&wfx, BindCallback(&OnDecode1));
 	waveFile.Create("D:\\1234.wav", (WAVEFORMATEX*)&wfx);
 	LONGLONG totalSize = 0;
 	TinyFile sFile;
@@ -130,11 +115,13 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	DWORD dwMS = timer.GetMicroseconds() / 1000;
 	TRACE("TinyMFTMP3-MS:%d\n", dwMS);
 	sFile.Close();
-	timer.BeginTime();
+
+	/*timer.BeginTime();
 	Decode::MPG123Decode decode;
 	decode.Initialize(BindCallback(&OnDecode));
 	decode.Open();
-	totalSize = 0;
+	DWORD totalSize = 0;
+	TinyFile sFile;
 	sFile.Open("D:\\KuGou\\ÁºÓ½ç÷ - µ¨Ð¡¹í.mp3", GENERIC_READ, FILE_SHARE_READ, NULL);
 	for (;;)
 	{
@@ -148,8 +135,8 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	}
 	decode.Close();
 	timer.EndTime();
-	dwMS = timer.GetMicroseconds() / 1000;
-	TRACE("MPG123Decode-MS:%d\n", dwMS);
+	DWORD dwMS = timer.GetMicroseconds() / 1000;
+	TRACE("MPG123Decode-MS:%d\n", dwMS);*/
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));

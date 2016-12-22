@@ -20,7 +20,7 @@ namespace Decode
 		m_handle = mpg123_new(NULL, &iRes);
 		if (!m_handle)
 			return FALSE;
-		iRes = mpg123_param(m_handle, MPG123_OUTSCALE, 2, 0);
+		iRes = mpg123_param(m_handle, MPG123_VERBOSE, 2, 0);
 		if (iRes == MPG123_ERR)
 			goto _ERROR;
 		iRes = mpg123_open_feed(m_handle);
@@ -41,11 +41,15 @@ namespace Decode
 	{
 		if (!m_handle)
 			return FALSE;
-		INT iRes = MPG123_OK;
+		INT iRes = mpg123_feed(m_handle, rawdata, rawsize);
+		if (iRes != MPG123_OK)
+			return FALSE;
+		off_t offset = 0;
 		for (;;)
 		{
 			size_t outsize = 0;
-			iRes = mpg123_decode(m_handle, rawdata, rawsize, m_raw, MPG123_OUTBUFFER_SIZE, &outsize);
+			BYTE* outdata = NULL;
+			iRes = mpg123_decode_frame(m_handle, &offset, &outdata, &outsize);
 			if (iRes > MPG123_OK || iRes == MPG123_ERR)
 				return FALSE;
 			if (iRes == MPG123_NEED_MORE)
@@ -57,9 +61,8 @@ namespace Decode
 			{
 				if (!m_callback.IsNull())
 				{
-					m_callback(m_raw, outsize, reinterpret_cast<LPVOID>(m_waveFMT.Ptr()));
+					m_callback(outdata, outsize, reinterpret_cast<LPVOID>(m_waveFMT.Ptr()));
 				}
-				return TRUE;
 			}
 			if (iRes == MPG123_NEW_FORMAT)
 			{
@@ -89,13 +92,13 @@ namespace Decode
 					pFMT->wFormatTag = WAVE_FORMAT_PCM;
 					pFMT->nChannels = channels;
 					pFMT->nSamplesPerSec = samplesPerSec;
-					pFMT->wBitsPerSample = MPG123_SAMPLESIZE(encoding) * 8;
+					pFMT->wBitsPerSample = mpg123_encsize(encoding) * 8;
 					pFMT->nBlockAlign = pFMT->nChannels * (pFMT->wBitsPerSample / 8);
 					pFMT->nAvgBytesPerSec = pFMT->nChannels * pFMT->nSamplesPerSec * pFMT->wBitsPerSample / 8;
 				}
 				if (!m_callback.IsNull())
 				{
-					m_callback(m_raw, 0, reinterpret_cast<LPVOID>(m_waveFMT.Ptr()));
+					m_callback(NULL, 0, reinterpret_cast<LPVOID>(m_waveFMT.Ptr()));
 				}
 			}
 		}
