@@ -16,7 +16,7 @@
 #include "Network/TinyHTTPClient.h"
 #include "Media/TinyWave.h"
 
-#include "Media/TinyMFTMP3.h"
+#include "Media/TinyMFTMP3Decode.h"
 
 #include "MPG123Decode.h"
 
@@ -85,7 +85,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyScopedArray<BYTE> rawdata(new BYTE[16384]);
 
 	TinyPerformanceTimer timer;
-	Media::TinyMFTMP3 mp3;
+	Media::TinyMFTMP3Decode mp3;
 	timer.BeginTime();
 	WAVEFORMATEX wfx = { 0 };
 	wfx.cbSize = 0;
@@ -95,7 +95,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	wfx.wBitsPerSample = 16;
 	wfx.nBlockAlign = (wfx.nChannels * wfx.wBitsPerSample) / 8;
 	wfx.nAvgBytesPerSec = wfx.nSamplesPerSec * wfx.nBlockAlign;
-	mp3.Open((WAVEFORMATEX*)&wfx, BindCallback(&OnDecode1));
+	mp3.Open((WAVEFORMATEX*)&wfx, 128000, BindCallback(&OnDecode1));
 	waveFile.Create("D:\\1234.wav", (WAVEFORMATEX*)&wfx);
 	LONGLONG totalSize = 0;
 	TinyFile sFile;

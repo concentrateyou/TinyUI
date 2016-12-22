@@ -6,14 +6,14 @@ namespace TinyUI
 	namespace Media
 	{
 		/// <summary>
-		/// MP3½âÂë
+		/// AAC½âÂë
 		/// </summary>
-		class TinyMFTMP3 : public TinyMFTDecode
+		class TinyMFTAACDecode : public TinyMFTDecode
 		{
-			DISALLOW_COPY_AND_ASSIGN(TinyMFTMP3)
+			DISALLOW_COPY_AND_ASSIGN(TinyMFTAACDecode)
 		public:
-			TinyMFTMP3();
-			virtual ~TinyMFTMP3();
+			TinyMFTAACDecode();
+			virtual ~TinyMFTAACDecode();
 		public:
 			BOOL Open(const WAVEFORMATEX* pFMT, Callback<void(BYTE*, LONG, LPVOID)>&& callback);
 		protected:

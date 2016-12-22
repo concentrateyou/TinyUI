@@ -1,5 +1,5 @@
 #include "../stdafx.h"
-#include "TinyMFTMP3.h"
+#include "TinyMFTAACEncode.h"
 #include <algorithm>
 #include <limits>
 
@@ -7,14 +7,14 @@ namespace TinyUI
 {
 	namespace Media
 	{
-		TinyMFTMP3::TinyMFTMP3()
+		TinyMFTAACEncode::TinyMFTAACEncode()
 		{
 		}
-		TinyMFTMP3::~TinyMFTMP3()
+		TinyMFTAACEncode::~TinyMFTAACEncode()
 		{
 
 		}
-		BOOL TinyMFTMP3::Open(const WAVEFORMATEX* pFMT, Callback<void(BYTE*, LONG, LPVOID)>&& callback)
+		BOOL TinyMFTAACEncode::Open(const WAVEFORMATEX* pFMT, Callback<void(BYTE*, LONG, LPVOID)>&& callback)
 		{
 			HRESULT hRes = S_OK;
 			TinyComPtr<IMFMediaType> inputType;

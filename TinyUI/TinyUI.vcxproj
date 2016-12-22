@@ -156,8 +156,11 @@
     <ClInclude Include="IO\TinyTaskPool.h" />
     <ClInclude Include="IO\TinyThread.h" />
     <ClInclude Include="IO\TinyWin32TaskPool.h" />
+    <ClInclude Include="Media\TinyMFTAACDecode.h" />
+    <ClInclude Include="Media\TinyMFTAACEncode.h" />
     <ClInclude Include="Media\TinyMFTDecode.h" />
-    <ClInclude Include="Media\TinyMFTMP3.h" />
+    <ClInclude Include="Media\TinyMFTMP3Decode.h" />
+    <ClInclude Include="Media\TinyMFTMP3Encode.h" />
     <ClInclude Include="Media\TinySoundPlayer.h" />
     <ClInclude Include="Media\TinyAudioDSPCapture.h" />
     <ClInclude Include="Media\TinyAudioMixer.h" />
@@ -274,8 +277,11 @@
     <ClCompile Include="IO\TinyTaskPool.cpp" />
     <ClCompile Include="IO\TinyThread.cpp" />
     <ClCompile Include="IO\TinyWin32TaskPool.cpp" />
+    <ClCompile Include="Media\TinyMFTAACDecode.cpp" />
+    <ClCompile Include="Media\TinyMFTAACEncode.cpp" />
     <ClCompile Include="Media\TinyMFTDecode.cpp" />
-    <ClCompile Include="Media\TinyMFTMP3.cpp" />
+    <ClCompile Include="Media\TinyMFTMP3Decode.cpp" />
+    <ClCompile Include="Media\TinyMFTMP3Encode.cpp" />
     <ClCompile Include="Media\TinySoundPlayer.cpp" />
     <ClCompile Include="Media\TinyAudioDSPCapture.cpp" />
     <ClCompile Include="Media\TinyAudioMixer.cpp" />

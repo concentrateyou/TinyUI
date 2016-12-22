@@ -10,30 +10,26 @@ namespace TinyUI
 		{
 			DISALLOW_COPY_AND_ASSIGN(TinyMFTEncode)
 		public:
-			TinyMFTEncode(DWORD dwRate = 128);
-			~TinyMFTEncode();
+			TinyMFTEncode();
+			virtual ~TinyMFTEncode();
+			virtual void OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter);
 		public:
-			BOOL Initialize(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO, Callback<void(BYTE*, LONG, LONGLONG, LPVOID)>&& callback);
-			virtual void OnDataAvailable(BYTE* bits, LONG size, LONGLONG ts, LPVOID lpParameter);
-		public:
-			BOOL Open();
+			BOOL Open(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType, Callback<void(BYTE*, LONG, LPVOID)>&& callback);
+			BOOL Decode(const BYTE* bits, DWORD size);
 			BOOL Close();
-			BOOL Encode(BYTE* bits, LONG size, LONGLONG ts);
 		private:
-			BOOL CreateInputSample(const BYTE* bits, DWORD size, LONGLONG ts);
+			BOOL Create(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType);
+			BOOL CreateInputSample(const BYTE* bits, DWORD size);
 			BOOL CreateOutputSample(DWORD dwSize);
 			BOOL GetOutputSample(DWORD dwSize);
-		private:
-			UINT8						m_specificInfo[3];
-			DWORD						m_dwRate;
-			WAVEFORMATEX				m_waveFMTI;
-			WAVEFORMATEX				m_waveFMTO;
+		protected:
 			TinyComPtr<IMFTransform>	m_transform;
-			TinyComPtr<IMFMediaType>	m_inputType;
-			TinyComPtr<IMFMediaType>	m_outputType;
+			MFT_INPUT_STREAM_INFO		m_inputInfo;
+			MFT_OUTPUT_STREAM_INFO		m_outputInfo;
+		private:
 			TinyComPtr<IMFSample>		m_inputSample;
 			TinyComPtr<IMFSample>		m_outputSample;
-			Callback<void(BYTE*, LONG, LONGLONG, LPVOID)> m_callback;
+			Callback<void(BYTE*, LONG, LPVOID)> m_callback;
 		};
 	};
 }

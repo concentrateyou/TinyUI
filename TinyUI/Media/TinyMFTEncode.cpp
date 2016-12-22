@@ -1,150 +1,130 @@
 #include "../stdafx.h"
 #include "TinyMFTEncode.h"
+#include <algorithm>
+#include <limits>
 
 namespace TinyUI
 {
 	namespace Media
 	{
-		TinyMFTEncode::TinyMFTEncode(DWORD dwRate)
-			:m_dwRate(dwRate)
+		TinyMFTEncode::TinyMFTEncode()
 		{
 
 		}
 		TinyMFTEncode::~TinyMFTEncode()
 		{
-
+			Close();
 		}
-		BOOL TinyMFTEncode::Initialize(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO, Callback<void(BYTE*, LONG, LONGLONG, LPVOID)>&& callback)
-		{
-			m_callback = std::move(callback);
-			m_waveFMTI = *pFMTI;
-			m_waveFMTO = *pFMTO;
-			TinyComPtr<IUnknown> unknow;
-			HRESULT hRes = unknow.CoCreateInstance(CLSID_AACMFTEncoder, NULL, CLSCTX_INPROC_SERVER);
-			if (hRes != S_OK)
-				return FALSE;
-			hRes = unknow->QueryInterface(IID_PPV_ARGS(&m_transform));
-			if (hRes != S_OK)
-				return FALSE;
-			hRes = MFCreateMediaType(&m_inputType);
-			if (hRes != S_OK)
-				return FALSE;
-			hRes = MFCreateMediaType(&m_outputType);
-			if (hRes != S_OK)
-				return FALSE;
-			hRes = m_outputType->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, (m_dwRate * 1000) / 8);
-			if (hRes != S_OK)
-				return FALSE;
-			hRes = m_transform->SetInputType(0, m_inputType, 0);
-			if (hRes != S_OK)
-				return FALSE;
-			hRes = m_transform->SetOutputType(0, m_outputType, 0);
-			if (hRes != S_OK)
-				return FALSE;
-			return TRUE;
-		}
-		void TinyMFTEncode::OnDataAvailable(BYTE* bits, LONG size, LONGLONG ts, LPVOID lpParameter)
-		{
-			if (!m_callback.IsNull())
-			{
-				m_callback(bits, size, ts, lpParameter);
-			}
-		}
-		BOOL TinyMFTEncode::Open()
-		{
-			HRESULT hRes = m_transform->ProcessMessage(MFT_MESSAGE_NOTIFY_BEGIN_STREAMING, NULL);
-			if (hRes != S_OK)
-				return FALSE;
-			hRes = m_transform->ProcessMessage(MFT_MESSAGE_NOTIFY_START_OF_STREAM, NULL);
-			if (hRes != S_OK)
-				return FALSE;
-			return TRUE;
-		}
-		BOOL TinyMFTEncode::Close()
-		{
-			HRESULT hRes = m_transform->ProcessMessage(MFT_MESSAGE_NOTIFY_END_STREAMING, NULL);
-			if (hRes != S_OK)
-				return FALSE;
-			hRes = m_transform->ProcessMessage(MFT_MESSAGE_NOTIFY_END_OF_STREAM, NULL);
-			if (hRes != S_OK)
-				return FALSE;
-			return TRUE;
-		}
-		BOOL TinyMFTEncode::Encode(BYTE* bits, LONG size, LONGLONG ts)
+		BOOL TinyMFTEncode::Create(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType)
 		{
 			HRESULT hRes = S_OK;
-			if (!CreateInputSample(bits, size, ts))
+			TinyComPtr<IUnknown> unknow;
+			hRes = unknow.CoCreateInstance(clsID, NULL, CLSCTX_INPROC_SERVER);
+			if (FAILED(hRes))
 				return FALSE;
-			hRes = m_transform->ProcessInput(0, m_inputSample, 0);
-			if (hRes != S_OK)
+			hRes = unknow->QueryInterface(IID_PPV_ARGS(&m_transform));
+			if (FAILED(hRes))
+				return FALSE;
+			if (inputType != NULL)
 			{
-				if (hRes == MF_E_NOTACCEPTING)
-				{
-					//TODO;
-				}
-				return FALSE;
+				hRes = m_transform->SetInputType(0, inputType, 0);
+				if (FAILED(hRes))
+					return FALSE;
 			}
-			DWORD dwFlag = 0;
-			hRes = m_transform->GetOutputStatus(&dwFlag);
-			if (dwFlag != MFT_OUTPUT_STATUS_SAMPLE_READY)//需要更多地采样
+			if (outputType != NULL)
 			{
-				return FALSE;
+				hRes = m_transform->SetOutputType(0, outputType, 0);
+				if (FAILED(hRes))
+					return FALSE;
 			}
-			MFT_OUTPUT_STREAM_INFO info = { 0 };
-			hRes = m_transform->GetOutputStreamInfo(0, &info);
-			if (hRes != S_OK)
+			hRes = m_transform->GetInputStreamInfo(0, &m_inputInfo);
+			if (FAILED(hRes))
 				return FALSE;
-			return GetOutputSample(info.cbSize);
+			hRes = m_transform->GetOutputStreamInfo(0, &m_outputInfo);
+			if (FAILED(hRes))
+				return FALSE;
+			return TRUE;
 		}
-		BOOL TinyMFTEncode::CreateInputSample(const BYTE* bits, DWORD size, LONGLONG ts)
+		BOOL TinyMFTEncode::Open(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType, Callback<void(BYTE*, LONG, LPVOID)>&& callback)
+		{
+			m_callback = std::move(callback);
+			if (!Create(clsID, inputType, outputType))
+				return FALSE;
+			HRESULT hRes = S_OK;
+			hRes = m_transform->ProcessMessage(MFT_MESSAGE_COMMAND_FLUSH, NULL);
+			if (FAILED(hRes))
+				return FALSE;
+			hRes = m_transform->ProcessMessage(MFT_MESSAGE_NOTIFY_BEGIN_STREAMING, NULL);
+			if (FAILED(hRes))
+				return FALSE;
+			hRes = m_transform->ProcessMessage(MFT_MESSAGE_NOTIFY_START_OF_STREAM, NULL);
+			if (FAILED(hRes))
+				return FALSE;
+			return TRUE;
+		}
+		BOOL TinyMFTEncode::CreateInputSample(const BYTE* bits, DWORD dwSize)
 		{
 			HRESULT hRes = S_OK;
 			TinyComPtr<IMFMediaBuffer> buffer;
 			if (!m_inputSample)
 			{
 				hRes = MFCreateSample(&m_inputSample);
-				if (hRes != S_OK)
+				if (FAILED(hRes))
 					return FALSE;
-				hRes = MFCreateMemoryBuffer(size, &buffer);
-				if (hRes != S_OK)
+				if (m_inputInfo.cbAlignment > 0)
+				{
+					hRes = MFCreateAlignedMemoryBuffer(std::max<DWORD>(m_inputInfo.cbSize, dwSize), m_inputInfo.cbAlignment - 1, &buffer);
+					if (FAILED(hRes))
+						return FALSE;
+				}
+				else
+				{
+					hRes = MFCreateMemoryBuffer(std::max<DWORD>(m_inputInfo.cbSize, dwSize), &buffer);
+					if (FAILED(hRes))
+						return FALSE;
+				}
+				hRes = m_inputSample->AddBuffer(buffer);
+				if (FAILED(hRes))
 					return FALSE;
 			}
 			hRes = m_inputSample->GetBufferByIndex(0, &buffer);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			DWORD dwMax = 0;
 			hRes = buffer->GetMaxLength(&dwMax);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
-			if (dwMax < size)
+			if (dwMax < dwSize)
 			{
 				hRes = m_inputSample->RemoveAllBuffers();
-				if (hRes != S_OK)
+				if (FAILED(hRes))
 					return FALSE;
-				hRes = MFCreateMemoryBuffer(size, &buffer);
-				if (hRes != S_OK)
-					return FALSE;
+				if (m_inputInfo.cbAlignment > 0)
+				{
+					hRes = MFCreateAlignedMemoryBuffer(std::max<DWORD>(m_inputInfo.cbSize, dwSize), m_inputInfo.cbAlignment - 1, &buffer);
+					if (FAILED(hRes))
+						return FALSE;
+				}
+				else
+				{
+					hRes = MFCreateMemoryBuffer(std::max<DWORD>(m_inputInfo.cbSize, dwSize), &buffer);
+					if (FAILED(hRes))
+						return FALSE;
+				}
 				hRes = m_inputSample->AddBuffer(buffer);
-				if (hRes != S_OK)
+				if (FAILED(hRes))
 					return FALSE;
 			}
 			BYTE* ps = NULL;
 			hRes = buffer->Lock(&ps, NULL, NULL);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
-			memcpy(ps, bits, size);
+			memcpy(ps, bits, dwSize);
 			hRes = buffer->Unlock();
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
-			hRes = buffer->SetCurrentLength(size);
-			if (hRes != S_OK)
-				return FALSE;
-			hRes = m_inputSample->SetSampleTime(ts);
-			if (hRes != S_OK)
-				return FALSE;
-			LONGLONG hnsSampleDuration = (LONGLONG)(((FLOAT)m_waveFMTI.nSamplesPerSec / m_waveFMTI.nChannels / (size / m_waveFMTI.nBlockAlign)) * 10000);
-			hRes = m_inputSample->SetSampleDuration(hnsSampleDuration);
-			if (hRes != S_OK)
+			hRes = buffer->SetCurrentLength(dwSize);
+			if (FAILED(hRes))
 				return FALSE;
 			return TRUE;
 		}
@@ -155,32 +135,50 @@ namespace TinyUI
 			if (!m_outputSample)
 			{
 				hRes = MFCreateSample(&m_outputSample);
-				if (hRes != S_OK)
+				if (FAILED(hRes))
 					return FALSE;
-				hRes = MFCreateMemoryBuffer(dwSize, &buffer);
-				if (hRes != S_OK)
-					return FALSE;
+				if (m_outputInfo.cbAlignment > 0)
+				{
+					hRes = MFCreateAlignedMemoryBuffer(std::max<DWORD>(m_outputInfo.cbSize, dwSize), m_outputInfo.cbAlignment - 1, &buffer);
+					if (FAILED(hRes))
+						return FALSE;
+				}
+				else
+				{
+					hRes = MFCreateMemoryBuffer(std::max<DWORD>(m_outputInfo.cbSize, dwSize), &buffer);
+					if (FAILED(hRes))
+						return FALSE;
+				}
 				hRes = m_outputSample->AddBuffer(buffer);
-				if (hRes != S_OK)
+				if (FAILED(hRes))
 					return FALSE;
 			}
 			hRes = m_outputSample->GetBufferByIndex(0, &buffer);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			DWORD dwMax = 0;
 			hRes = buffer->GetMaxLength(&dwMax);
-			if (hRes != S_OK)
+			if (FAILED(hRes))
 				return FALSE;
 			if (dwMax < dwSize)
 			{
 				hRes = m_outputSample->RemoveAllBuffers();
-				if (hRes != S_OK)
+				if (FAILED(hRes))
 					return FALSE;
-				hRes = MFCreateMemoryBuffer(dwSize, &buffer);
-				if (hRes != S_OK)
-					return FALSE;
+				if (m_outputInfo.cbAlignment > 0)
+				{
+					hRes = MFCreateAlignedMemoryBuffer(std::max<DWORD>(m_outputInfo.cbSize, dwSize), m_outputInfo.cbAlignment - 1, &buffer);
+					if (FAILED(hRes))
+						return FALSE;
+				}
+				else
+				{
+					hRes = MFCreateMemoryBuffer(std::max<DWORD>(m_outputInfo.cbSize, dwSize), &buffer);
+					if (FAILED(hRes))
+						return FALSE;
+				}
 				hRes = m_outputSample->AddBuffer(buffer);
-				if (hRes != S_OK)
+				if (FAILED(hRes))
 					return FALSE;
 			}
 			return TRUE;
@@ -188,16 +186,17 @@ namespace TinyUI
 		BOOL TinyMFTEncode::GetOutputSample(DWORD dwSize)
 		{
 			ASSERT(m_transform);
-			HRESULT hRes = S_OK;
-			TinyBufferArray<BYTE>	sampleBuffer;
 			for (;;)
 			{
 				MFT_OUTPUT_DATA_BUFFER samples = { 0 };
-				if (!CreateOutputSample(dwSize))
-					return FALSE;
-				samples.pSample = m_outputSample;
+				if (!(m_outputInfo.dwFlags & (MFT_OUTPUT_STREAM_PROVIDES_SAMPLES | MFT_OUTPUT_STREAM_CAN_PROVIDE_SAMPLES)))
+				{
+					if (!CreateOutputSample(dwSize))
+						return FALSE;
+					samples.pSample = m_outputSample;
+				}
 				DWORD dwStatus;
-				hRes = m_transform->ProcessOutput(0, 1, &samples, &dwStatus);
+				HRESULT hRes = m_transform->ProcessOutput(0, 1, &samples, &dwStatus);
 				if (hRes != S_OK)
 				{
 					if (hRes == MF_E_TRANSFORM_NEED_MORE_INPUT)
@@ -218,17 +217,50 @@ namespace TinyUI
 				hRes = buffer->Lock(&pBuffer, NULL, NULL);
 				if (hRes != S_OK)
 					return FALSE;
-				sampleBuffer.Add(pBuffer, dwCurrentSize);
+				OnDataAvailable(pBuffer, dwCurrentSize, this);
 				hRes = buffer->Unlock();
 				if (hRes != S_OK)
 					return FALSE;
 			}
-			LONGLONG ts = 0;
-			hRes = m_outputSample->GetSampleTime(&ts);
-			if (hRes != S_OK)
-				return FALSE;
-			OnDataAvailable(sampleBuffer.m_value, sampleBuffer.m_size, ts, this);
 			return TRUE;
+		}
+		BOOL TinyMFTEncode::Decode(const BYTE* bits, DWORD size)
+		{
+			if (!CreateInputSample(bits, size))
+				return FALSE;
+			DWORD dwStatus = 0;
+			HRESULT hRes = m_transform->GetInputStatus(0, &dwStatus);
+			if (MFT_INPUT_STATUS_ACCEPT_DATA != dwStatus)
+			{
+				return TRUE;
+			}
+			hRes = m_transform->ProcessInput(0, m_inputSample, 0);
+			if (FAILED(hRes))
+				return FALSE;
+			return GetOutputSample(size * 2);
+		}
+		BOOL TinyMFTEncode::Close()
+		{
+			if (!m_transform)
+				return FALSE;
+			HRESULT hRes = m_transform->ProcessMessage(MFT_MESSAGE_NOTIFY_END_OF_STREAM, NULL);
+			if (FAILED(hRes))
+				return FALSE;
+			hRes = m_transform->ProcessMessage(MFT_MESSAGE_COMMAND_DRAIN, NULL);
+			if (FAILED(hRes))
+				return FALSE;
+			hRes = m_transform->ProcessMessage(MFT_MESSAGE_NOTIFY_END_STREAMING, NULL);
+			if (FAILED(hRes))
+				return FALSE;
+			m_transform.Release();
+			return TRUE;
+		}
+		void TinyMFTEncode::OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
+		{
+			if (!m_callback.IsNull())
+			{
+				m_callback(bits, size, lpParameter);
+			}
 		}
 	};
 }

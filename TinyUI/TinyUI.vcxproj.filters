@@ -417,7 +417,16 @@
     <ClInclude Include="Media\TinyMFTEncode.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
-    <ClInclude Include="Media\TinyMFTMP3.h">
+    <ClInclude Include="Media\TinyMFTMP3Decode.h">
+      <Filter>头文件\Media</Filter>
+    </ClInclude>
+    <ClInclude Include="Media\TinyMFTMP3Encode.h">
+      <Filter>头文件\Media</Filter>
+    </ClInclude>
+    <ClInclude Include="Media\TinyMFTAACEncode.h">
+      <Filter>头文件\Media</Filter>
+    </ClInclude>
+    <ClInclude Include="Media\TinyMFTAACDecode.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
   </ItemGroup>
@@ -770,7 +779,16 @@
     <ClCompile Include="Media\TinyMFTEncode.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
-    <ClCompile Include="Media\TinyMFTMP3.cpp">
+    <ClCompile Include="Media\TinyMFTMP3Decode.cpp">
+      <Filter>源文件\Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\TinyMFTAACDecode.cpp">
+      <Filter>源文件\Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\TinyMFTAACEncode.cpp">
+      <Filter>源文件\Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\TinyMFTMP3Encode.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
   </ItemGroup>
