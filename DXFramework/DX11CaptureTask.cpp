@@ -222,7 +222,7 @@ namespace DXFramework
 	{
 		for (;;)
 		{
-			if (m_close.Lock(0))
+			if (m_close.Lock(15))
 			{
 				EndCapture();
 				break;

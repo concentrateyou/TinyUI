@@ -87,11 +87,11 @@ namespace DShow
 			return FALSE;
 		return TRUE;
 	}
-	BOOL VideoCapture::Initialize(const Name& name, Callback<void(BYTE*, LONG, FLOAT, LPVOID)>& callback)
+	BOOL VideoCapture::Initialize(const Name& name, Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& callback)
 	{
 		if (Initialize(name))
 		{
-			m_callback = callback;
+			m_callback = std::move(callback);
 			return TRUE;
 		}
 		return FALSE;

@@ -84,7 +84,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\TinyUI;..\Release;..\ThirdParty\vld\x86;..\ThirdParty\ffmpeg\lib;..\ThirdParty\librtmp\lib;..\ThirdParty\libfaac\lib;..\ThirdParty\x264\libs\32bit</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DXFramework.lib;librtmp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DXFramework.lib;librtmp.lib;legacy_stdio_definitions.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMTD.lib;LIBCMT.lib</IgnoreSpecificDefaultLibraries>
       <AdditionalOptions>/SAFESEH:NO %(AdditionalOptions)</AdditionalOptions>
     </Link>

@@ -16,7 +16,7 @@
 #include "Network/TinyHTTPClient.h"
 #include "Media/TinyWave.h"
 
-#include "Media/TinyMFTMP3Decode.h"
+#include "Media/TinyMFMP3Decode.h"
 
 #include "MPG123Decode.h"
 
@@ -64,6 +64,7 @@ void OnDecode1(BYTE*bits, LONG size, LPVOID ps)
 	waveFile.Write(bits, size);
 }
 
+#include "MFVideoCapture.h"
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -82,39 +83,41 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
-	TinyScopedArray<BYTE> rawdata(new BYTE[16384]);
+	vector<MF::MFVideoCapture::Name> names;
+	MF::MFVideoCapture::GetDevices(names);
 
-	TinyPerformanceTimer timer;
-	Media::TinyMFTMP3Decode mp3;
-	timer.BeginTime();
-	WAVEFORMATEX wfx = { 0 };
-	wfx.cbSize = 0;
-	wfx.wFormatTag = WAVE_FORMAT_PCM;
-	wfx.nChannels = 2;
-	wfx.nSamplesPerSec = 44100;
-	wfx.wBitsPerSample = 16;
-	wfx.nBlockAlign = (wfx.nChannels * wfx.wBitsPerSample) / 8;
-	wfx.nAvgBytesPerSec = wfx.nSamplesPerSec * wfx.nBlockAlign;
-	mp3.Open((WAVEFORMATEX*)&wfx, 128000, BindCallback(&OnDecode1));
-	waveFile.Create("D:\\1234.wav", (WAVEFORMATEX*)&wfx);
-	LONGLONG totalSize = 0;
-	TinyFile sFile;
-	sFile.Open("D:\\KuGou\\ÁºÓ½ç÷ - µ¨Ð¡¹í.mp3", GENERIC_READ, FILE_SHARE_READ, NULL);
-	for (;;)
-	{
-		DWORD rawsize = sFile.Read(rawdata, 16384);
-		mp3.Decode(rawdata, rawsize);
-		totalSize += rawsize;
-		if (totalSize == sFile.GetSize())
-		{
-			break;
-		}
-	}
-	mp3.Close();
-	timer.EndTime();
-	DWORD dwMS = timer.GetMicroseconds() / 1000;
-	TRACE("TinyMFTMP3-MS:%d\n", dwMS);
-	sFile.Close();
+	//TinyScopedArray<BYTE> rawdata(new BYTE[16384]);
+	//TinyPerformanceTimer timer;
+	//Media::TinyMFTMP3Decode mp3;
+	//timer.BeginTime();
+	//WAVEFORMATEX wfx = { 0 };
+	//wfx.cbSize = 0;
+	//wfx.wFormatTag = WAVE_FORMAT_PCM;
+	//wfx.nChannels = 2;
+	//wfx.nSamplesPerSec = 44100;
+	//wfx.wBitsPerSample = 16;
+	//wfx.nBlockAlign = (wfx.nChannels * wfx.wBitsPerSample) / 8;
+	//wfx.nAvgBytesPerSec = wfx.nSamplesPerSec * wfx.nBlockAlign;
+	//mp3.Open((WAVEFORMATEX*)&wfx, 128000, BindCallback(&OnDecode1));
+	//waveFile.Create("D:\\1234.wav", (WAVEFORMATEX*)&wfx);
+	//LONGLONG totalSize = 0;
+	//TinyFile sFile;
+	//sFile.Open("D:\\KuGou\\ÁºÓ½ç÷ - µ¨Ð¡¹í.mp3", GENERIC_READ, FILE_SHARE_READ, NULL);
+	//for (;;)
+	//{
+	//	DWORD rawsize = sFile.Read(rawdata, 16384);
+	//	mp3.Decode(rawdata, rawsize);
+	//	totalSize += rawsize;
+	//	if (totalSize == sFile.GetSize())
+	//	{
+	//		break;
+	//	}
+	//}
+	//mp3.Close();
+	//timer.EndTime();
+	//DWORD dwMS = timer.GetMicroseconds() / 1000;
+	//TRACE("TinyMFTMP3-MS:%d\n", dwMS);
+	//sFile.Close();
 
 	/*timer.BeginTime();
 	Decode::MPG123Decode decode;

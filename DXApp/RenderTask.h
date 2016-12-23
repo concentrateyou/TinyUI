@@ -34,6 +34,5 @@ private:
 	TinyPerformanceTimer				m_timer;
 	TinyEvent							m_close;
 	TinyUI::Callback<void(BYTE*, LONG, FLOAT, LPVOID)> m_videoCB;
-
 };
 

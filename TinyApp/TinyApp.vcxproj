@@ -55,7 +55,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\TinySmiley;$(BOOSTDIR);$(DXSDK_DIR)Include;..\DShowCapture;..\WebRTCNS;..\Decode;..\ThirdParty\mpg123\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\TinySmiley;$(BOOSTDIR);$(DXSDK_DIR)Include;..\DShowCapture;..\Decode;..\ThirdParty\mpg123\include;..\MFCapture;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>

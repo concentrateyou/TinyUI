@@ -129,13 +129,14 @@ void PublishTask::OnMessagePump()
 {
 	for (;;)
 	{
-		if (m_close.Lock(3))
+		if (m_close.Lock(0))
 		{
 			OnClose();
 			break;
 		}
 		if (!m_samples.empty())
 		{
+			Sleep(10);
 			Sample sample;
 			if (m_samples.try_pop(sample))
 			{

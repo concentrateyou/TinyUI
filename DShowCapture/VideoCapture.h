@@ -35,7 +35,7 @@ namespace DShow
 		VideoCapture();
 		virtual ~VideoCapture();
 		BOOL	Initialize(const Name& name);
-		BOOL	Initialize(const Name& name, Callback<void(BYTE*, LONG, FLOAT, LPVOID)>& receiveCB);
+		BOOL	Initialize(const Name& name, Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& receiveCB);
 		void	Uninitialize();
 		BOOL	Start();
 		BOOL	Stop();
