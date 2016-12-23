@@ -35,6 +35,16 @@ namespace MF
 	MFVideoCapture::MFVideoCapture()
 		:m_bCapturing(FALSE)
 	{
+		MFT_REGISTER_TYPE_INFO inputFilter = { MFMediaType_Video, MFVideoFormat_MJPG };
+		MFT_REGISTER_TYPE_INFO outputFilter = { MFMediaType_Video, MFVideoFormat_ARGB32 };
+		IMFActivate** ppActivate = NULL;
+		UINT32 numDecodersMJPG = 0;
+		HRESULT hRes = MFTEnumEx(MFT_CATEGORY_VIDEO_DECODER, MFT_ENUM_FLAG_ALL, &inputFilter, &outputFilter, &ppActivate, &numDecodersMJPG);
+		INT a = 0;
+		if (FAILED(hRes))
+		{
+
+		}
 
 	}
 	MFVideoCapture::~MFVideoCapture()
@@ -238,7 +248,7 @@ namespace MF
 	}
 	BOOL MFVideoCapture::AllowTransform(VideoPixelFormat* src, VideoPixelFormat* dst)
 	{
-
+		return TRUE;
 	}
 	BOOL MFVideoCapture::GetFormat(const GUID& guid, VideoPixelFormat* format)
 	{

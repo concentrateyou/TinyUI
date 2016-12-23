@@ -88,6 +88,6 @@ void MFFrame::OnFrame(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)
 {
 	HDC hDC = GetDC(m_hWND);
 	TinyCanvas canvas(hDC);
-	canvas.DrawImage();
+	//canvas.DrawImage();
 	ReleaseDC(m_hWND,hDC);
 }

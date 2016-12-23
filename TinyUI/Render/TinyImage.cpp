@@ -236,6 +236,7 @@ namespace TinyUI
 		bmi.bmiHeader = bi;
 		BYTE* pvBits = NULL;
 		HBITMAP hBitmap = ::CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, (void**)&pvBits, NULL, 0);
+		return TRUE;
 	}
 	size_t TinyImage::GetFrameCount()
 	{
