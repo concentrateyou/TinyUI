@@ -3,7 +3,6 @@
 
 namespace MF
 {
-
 	MFVideoCapture::Name::Name()
 	{
 
@@ -32,40 +31,96 @@ namespace MF
 	{
 		return m_id;
 	}
+	//////////////////////////////////////////////////////////////////////////
+	MFVideoCapture::MFVideoCapture()
+		:m_bCapturing(FALSE)
+	{
+
+	}
+	MFVideoCapture::~MFVideoCapture()
+	{
+		Uninitialize();
+	}
 	void MFVideoCapture::OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter)
+	{
+		ASSERT(m_reader);
+		TinyAutoLock lock(*this);
+		if (m_bCapturing)
+		{
+			if (!m_receiveCB.IsNull())
+			{
+				m_receiveCB(bits, size, ts, lpParameter);
+			}
+			HRESULT hRes = m_reader->ReadSample(static_cast<DWORD>(MF_SOURCE_READER_FIRST_VIDEO_STREAM), 0, NULL, NULL, NULL, NULL);
+			if (FAILED(hRes))
+			{
+				OnError(hRes);
+			}
+		}
+	}
+	void MFVideoCapture::OnError(HRESULT hRes)
 	{
 
 	}
 	BOOL MFVideoCapture::Initialize(const Name& name)
 	{
+		if (!GetDeviceSource(name, &m_source))
+			return FALSE;
 		return TRUE;
 	}
-	BOOL MFVideoCapture::Initialize(const Name& name, Callback<void(BYTE*, LONG, FLOAT, LPVOID)>& receiveCB)
+	BOOL MFVideoCapture::Initialize(const Name& name, Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& receiveCB)
 	{
+		if (!GetDeviceSource(name, &m_source))
+			return FALSE;
+		m_receiveCB = std::move(receiveCB);
 		return TRUE;
 	}
 	void MFVideoCapture::Uninitialize()
 	{
-
+		DeAllocate();
+		m_reader.Release();
+		m_source.Release();
 	}
-	BOOL MFVideoCapture::Allocate()
+	BOOL MFVideoCapture::Allocate(const MFVideoCaptureParam& param)
 	{
+		ASSERT(m_source);
 		TinyComPtr<IMFAttributes> attributes;
 		HRESULT hRes = MFCreateAttributes(&attributes, 1);
 		if (FAILED(hRes))
 			return FALSE;
 		m_readerCB = new MFReaderCallback(this);
-		attributes->SetUnknown(MF_SOURCE_READER_ASYNC_CALLBACK, m_readerCB);
+		hRes = attributes->SetUnknown(MF_SOURCE_READER_ASYNC_CALLBACK, m_readerCB);
+		if (FAILED(hRes))
+			return FALSE;
+		hRes = MFCreateSourceReaderFromMediaSource(m_source, attributes, &m_reader);
+		if (FAILED(hRes))
+			return FALSE;
+		TinyComPtr<IMFMediaType> mdeiaType;
+		hRes = m_reader->GetNativeMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_VIDEO_STREAM), param.GetStreamIndex(), &mdeiaType);
+		if (FAILED(hRes))
+			return FALSE;
+		hRes = m_reader->SetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_VIDEO_STREAM), NULL, mdeiaType);
+		if (FAILED(hRes))
+			return FALSE;
+		hRes = m_reader->ReadSample(static_cast<DWORD>(MF_SOURCE_READER_FIRST_VIDEO_STREAM), 0, NULL, NULL, NULL, NULL);
+		if (FAILED(hRes))
+			return FALSE;
+		m_bCapturing = TRUE;
 		return TRUE;
 	}
 	void MFVideoCapture::DeAllocate()
 	{
-
+		ASSERT(m_source && m_reader);
+		m_reader->Flush(static_cast<DWORD>(MF_SOURCE_READER_ALL_STREAMS));
+		m_bCapturing = FALSE;
 	}
 	BOOL MFVideoCapture::GetDevices(vector<Name>& names)
 	{
 		TinyComPtr<IMFAttributes> attributes;
 		HRESULT hRes = MFCreateAttributes(&attributes, 1);
+		if (FAILED(hRes))
+			return FALSE;
+		hRes = attributes->SetGUID(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE, MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_GUID);
 		if (FAILED(hRes))
 			return FALSE;
 		IMFActivate** devices = NULL;
@@ -81,21 +136,24 @@ namespace MF
 			if (FAILED(val))
 			{
 				CoTaskMemFree(val);
+				SAFE_RELEASE(devices[i]);
 				continue;
 			}
 			string name = WStringToString(wstring(val, size));
 			CoTaskMemFree(val);
 			hRes = devices[i]->GetAllocatedString(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_SYMBOLIC_LINK, &val, &size);
-			CoTaskMemFree(val);
 			if (FAILED(val))
 			{
 				CoTaskMemFree(val);
+				SAFE_RELEASE(devices[i]);
 				continue;
 			}
 			string id = WStringToString(wstring(val, size));
 			CoTaskMemFree(val);
 			names.push_back(Name(std::move(name), std::move(id)));
+			SAFE_RELEASE(devices[i]);
 		}
+		CoTaskMemFree(devices);
 		return TRUE;
 	}
 	BOOL MFVideoCapture::GetDeviceParams(const MFVideoCapture::Name& device, vector<MFVideoCaptureParam>& params)
@@ -122,7 +180,7 @@ namespace MF
 		TinyComPtr<IMFMediaType> mediaType;
 		for (;;)
 		{
-			hRes = reader->GetNativeMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, dwIndex, &mediaType);
+			hRes = reader->GetNativeMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_VIDEO_STREAM), dwIndex, &mediaType);
 			if (FAILED(hRes))
 				return FALSE;
 			UINT32 cx, cy;
@@ -159,6 +217,28 @@ namespace MF
 			params.push_back(param);
 			++dwIndex;
 		}
+		return TRUE;
+	}
+	BOOL MFVideoCapture::GetDeviceSource(const MFVideoCapture::Name& device, IMFMediaSource** source)
+	{
+		TinyComPtr<IMFAttributes> attributes;
+		HRESULT hRes = MFCreateAttributes(&attributes, 2);
+		if (FAILED(hRes))
+			return FALSE;
+		hRes = attributes->SetGUID(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE, MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_GUID);
+		if (FAILED(hRes))
+			return FALSE;
+		hRes = attributes->SetString(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_SYMBOLIC_LINK, StringToWString(device.id()).c_str());
+		if (FAILED(hRes))
+			return FALSE;
+		hRes = MFCreateDeviceSource(attributes, source);
+		if (FAILED(hRes))
+			return FALSE;
+		return TRUE;
+	}
+	BOOL MFVideoCapture::AllowTransform(VideoPixelFormat* src, VideoPixelFormat* dst)
+	{
+
 	}
 	BOOL MFVideoCapture::GetFormat(const GUID& guid, VideoPixelFormat* format)
 	{

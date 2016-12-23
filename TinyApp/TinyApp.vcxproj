@@ -55,13 +55,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\TinySmiley;$(BOOSTDIR);$(DXSDK_DIR)Include;..\DShowCapture;..\Decode;..\ThirdParty\mpg123\include;..\MFCapture;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\TinySmiley;$(BOOSTDIR);$(DXSDK_DIR)Include;..\DShowCapture;..\MFCapture;..\Decode;..\ThirdParty\mpg123\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\TinyUI;..\TinySmiley;..\DShowCapture;..\ThirdParty\vld\x86;..\Debug;..\ThirdParty\mpg123\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\TinyUI;..\TinySmiley;..\DShowCapture;..\MFCapture;..\ThirdParty\vld\x86;..\Debug;..\ThirdParty\mpg123\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>dxgi.lib;dxguid.lib;d3d10_1.lib;d3dx10.lib;ddraw.lib;DShowCapture.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChatFrame.h" />
+    <ClInclude Include="MFFrame.h" />
     <ClInclude Include="RenderTask.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -103,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChatFrame.cpp" />
+    <ClCompile Include="MFFrame.cpp" />
     <ClCompile Include="RenderTask.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -122,6 +124,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Decode\Decode.vcxproj">
       <Project>{2b7dbc16-dc0d-49c6-a0b8-9f26c31aa758}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\MFCapture\MFCapture.vcxproj">
+      <Project>{a49d09ee-2163-41b4-9157-92962de7d038}</Project>
     </ProjectReference>
     <ProjectReference Include="..\TinyUI\TinyUI.vcxproj">
       <Project>{58903be2-bb4f-4983-b8b7-905d2db5393d}</Project>

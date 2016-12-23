@@ -5,6 +5,7 @@
 #include "TinyApp.h"
 #include "MainFrame.h"
 #include "ChatFrame.h"
+#include "MFFrame.h"
 #include "Windowless/TinyVisualHWND.h"
 #include "Windowless/TinyVisualRichText.h"
 #include "Render/TinyDDraw.h"
@@ -83,8 +84,10 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
-	vector<MF::MFVideoCapture::Name> names;
+	/*vector<MF::MFVideoCapture::Name> names;
 	MF::MFVideoCapture::GetDevices(names);
+	vector<MF::MFVideoCaptureParam> params;
+	MF::MFVideoCapture::GetDeviceParams(names[0], params);*/
 
 	//TinyScopedArray<BYTE> rawdata(new BYTE[16384]);
 	//TinyPerformanceTimer timer;
@@ -145,7 +148,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	CMainFrame uiImpl;
+	MFFrame uiImpl;
 	uiImpl.Create(NULL, 50, 50, 800, 600);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();

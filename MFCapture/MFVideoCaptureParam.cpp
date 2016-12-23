@@ -4,14 +4,15 @@
 namespace MF
 {
 	MFVideoCaptureParam::MFVideoCaptureParam()
-		:m_rate(0.0F), m_vpf(PIXEL_FORMAT_UNKNOWN)
+		:m_rate(0.0F), m_vpf(PIXEL_FORMAT_UNKNOWN), m_dwIndex(0)
 	{
 
 	}
-	MFVideoCaptureParam::MFVideoCaptureParam(const TinySize& size, FLOAT rate, VideoPixelFormat vpf)
+	MFVideoCaptureParam::MFVideoCaptureParam(const TinySize& size, FLOAT rate, VideoPixelFormat vpf, DWORD dwIndex)
 		: m_size(size),
 		m_rate(rate),
-		m_vpf(vpf)
+		m_vpf(vpf),
+		m_dwIndex(dwIndex)
 	{
 
 	}
@@ -99,6 +100,10 @@ namespace MF
 	{
 		m_rate = rate;
 	}
+	void MFVideoCaptureParam::SetStreamIndex(DWORD dwIndex)
+	{
+		m_dwIndex = dwIndex;
+	}
 	const TinySize& MFVideoCaptureParam::GetSize() const
 	{
 		return m_size;
@@ -106,6 +111,10 @@ namespace MF
 	const TinySize&	MFVideoCaptureParam::GetScale() const
 	{
 		return m_scale;
+	}
+	const DWORD MFVideoCaptureParam::GetStreamIndex() const
+	{
+		return m_dwIndex;
 	}
 	FLOAT MFVideoCaptureParam::GetRate() const
 	{
@@ -117,6 +126,6 @@ namespace MF
 	}
 	string MFVideoCaptureParam::ToString() const
 	{
-		return StringPrintf("%s,%d*%d,%.3f", PixelFormatToString(m_vpf).c_str(), m_size.cx, m_size.cy, m_rate);
+		return StringPrintf("%s,%d*%d,%.3f,%d", PixelFormatToString(m_vpf).c_str(), m_size.cx, m_size.cy, m_rate, m_dwIndex);
 	}
 }

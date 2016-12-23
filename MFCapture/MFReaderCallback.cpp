@@ -24,7 +24,10 @@ namespace MF
 		DWORD count = 0;
 		HRESULT hRes = pSample->GetBufferCount(&count);
 		if (FAILED(hRes))
+		{
+			m_observer->OnError(hRes);
 			return hRes;
+		}
 		for (DWORD i = 0; i < count; ++i)
 		{
 			TinyComPtr<IMFMediaBuffer> buffer;
@@ -36,11 +39,17 @@ namespace MF
 				BYTE* data = NULL;
 				hRes = buffer->Lock(&data, &dwMaxLength, &dwLength);
 				if (FAILED(hRes))
+				{
+					m_observer->OnError(hRes);
 					return hRes;
+				}
 				m_observer->OnFrameReceive(data, dwLength, timeGetTime(), this);
 				hRes = buffer->Unlock();
 				if (FAILED(hRes))
+				{
+					m_observer->OnError(hRes);
 					return hRes;
+				}
 			}
 		}
 		return S_OK;

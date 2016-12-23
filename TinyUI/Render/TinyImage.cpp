@@ -229,6 +229,14 @@ namespace TinyUI
 	{
 		return TRUE;
 	}
+	BOOL TinyImage::Fill(const BITMAPINFOHEADER& bi, BYTE* p, DWORD size)
+	{
+		BITMAPINFO bmi;
+		memset(&bmi, 0, sizeof(BITMAPINFO));
+		bmi.bmiHeader = bi;
+		BYTE* pvBits = NULL;
+		HBITMAP hBitmap = ::CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, (void**)&pvBits, NULL, 0);
+	}
 	size_t TinyImage::GetFrameCount()
 	{
 		return m_count;

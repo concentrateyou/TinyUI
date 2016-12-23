@@ -23,6 +23,7 @@ namespace TinyUI
 		BOOL			Load(LPCSTR pz);
 		BOOL			Load(BYTE* p, DWORD size);
 		BOOL			Save(LPCSTR pz);//±£´æ³ÉBMP
+		BOOL			Fill(const BITMAPINFOHEADER& bi, BYTE* p, DWORD size);//Ä¬ÈÏRGB32
 		size_t			GetFrameCount();
 		INT				GetFrameDelay(INT index);
 		HBITMAP			GetFrame(INT index);

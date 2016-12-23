@@ -23,22 +23,27 @@ namespace MF
 			string	m_id;
 		};
 	public:
-		void OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter) OVERRIDE;
-	public:
 		MFVideoCapture();
 		virtual ~MFVideoCapture();
 		BOOL	Initialize(const Name& name);
-		BOOL	Initialize(const Name& name, Callback<void(BYTE*, LONG, FLOAT, LPVOID)>& receiveCB);
+		BOOL	Initialize(const Name& name, Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& receiveCB);
 		void	Uninitialize();
 	public:
-		virtual BOOL Allocate();
+		virtual BOOL Allocate(const MFVideoCaptureParam& param);
 		virtual void DeAllocate();
+		void OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter) OVERRIDE;
+		void OnError(HRESULT hRes) OVERRIDE;
 	public:
+		static BOOL AllowTransform(VideoPixelFormat* src, VideoPixelFormat* dst);
 		static BOOL GetFormat(const GUID& guid, VideoPixelFormat* format);
-		static BOOL GetDevices(vector<Name>& names);
-		static BOOL GetDeviceParams(const MFVideoCapture::Name& device, vector<MFVideoCaptureParam>& formats);
+		static BOOL GetDevices(vector<MFVideoCapture::Name>& names);
+		static BOOL GetDeviceParams(const MFVideoCapture::Name& device, vector<MFVideoCaptureParam>& params);
+		static BOOL GetDeviceSource(const MFVideoCapture::Name& device, IMFMediaSource** source);
 	protected:
+		BOOL										m_bCapturing;
 		TinyScopedReferencePtr<MFReaderCallback>	m_readerCB;
 		TinyComPtr<IMFSourceReader>					m_reader;
+		TinyComPtr<IMFMediaSource>					m_source;
+		Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_receiveCB;
 	};
 }
