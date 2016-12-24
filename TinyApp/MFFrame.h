@@ -40,5 +40,7 @@ public:
 
 private:
 	MF::MFVideoCapture m_capture;
+	MF::MFVideoCaptureParam	m_param;
+
 };
 

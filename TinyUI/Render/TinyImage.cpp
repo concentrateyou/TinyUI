@@ -42,7 +42,7 @@ namespace TinyUI
 		fclose(pFile);
 		if (pData == NULL)
 		{
-			goto error;
+			goto _ERROR;
 		}
 		if (m_count == 1)
 		{
@@ -122,7 +122,7 @@ namespace TinyUI
 		stbi_image_free(pData);
 		m_hBitmap = m_images.GetSize() == 0 ? NULL : m_images[0];
 		return m_images.GetSize() == m_count ? TRUE : FALSE;
-	error:
+	_ERROR:
 		stbi_image_free(pData);
 		return FALSE;
 	}
@@ -133,7 +133,7 @@ namespace TinyUI
 		BYTE* pData = stbi_load_from_memory_ex(ps, size, &m_cx, &m_cy, &comp, 4, &m_count);
 		if (!pData)
 		{
-			goto error;
+			goto _ERROR;
 		}
 		if (m_count == 1)
 		{
@@ -213,7 +213,7 @@ namespace TinyUI
 		stbi_image_free(pData);
 		m_hBitmap = m_images.GetSize() == 0 ? NULL : m_images[0];
 		return m_images.GetSize() == m_count ? TRUE : FALSE;
-	error:
+	_ERROR:
 		stbi_image_free(pData);
 		return FALSE;
 	}
@@ -227,15 +227,6 @@ namespace TinyUI
 	}
 	BOOL TinyImage::Save(LPCSTR pz)
 	{
-		return TRUE;
-	}
-	BOOL TinyImage::Fill(const BITMAPINFOHEADER& bi, BYTE* p, DWORD size)
-	{
-		BITMAPINFO bmi;
-		memset(&bmi, 0, sizeof(BITMAPINFO));
-		bmi.bmiHeader = bi;
-		BYTE* pvBits = NULL;
-		HBITMAP hBitmap = ::CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, (void**)&pvBits, NULL, 0);
 		return TRUE;
 	}
 	size_t TinyImage::GetFrameCount()

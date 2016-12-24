@@ -17,42 +17,35 @@ namespace MF
 	HRESULT STDMETHODCALLTYPE MFReaderCallback::OnReadSample(_In_ HRESULT hrStatus, _In_ DWORD dwStreamIndex, _In_ DWORD dwStreamFlags, _In_ LONGLONG llTimestamp, _In_opt_ IMFSample *pSample)
 	{
 		ASSERT(m_observer);
-		if (!pSample)
+		HRESULT hRes = S_OK;
+		if (FAILED(hrStatus))
 		{
-			m_observer->OnFrameReceive(NULL, 0, 0, this);
+			hRes = hrStatus;
 		}
-		DWORD count = 0;
-		HRESULT hRes = pSample->GetBufferCount(&count);
-		if (FAILED(hRes))
+		if (SUCCEEDED(hRes))
 		{
-			m_observer->OnError(hRes);
-			return hRes;
-		}
-		for (DWORD i = 0; i < count; ++i)
-		{
-			TinyComPtr<IMFMediaBuffer> buffer;
-			pSample->GetBufferByIndex(i, &buffer);
-			if (buffer)
+			if (pSample != NULL)
 			{
+				TinyComPtr<IMFMediaBuffer> buffer;
+				hRes = pSample->GetBufferByIndex(0, &buffer);
+				if (FAILED(hRes))
+					goto MFERROR;
 				DWORD dwLength = 0;
 				DWORD dwMaxLength = 0;
 				BYTE* data = NULL;
 				hRes = buffer->Lock(&data, &dwMaxLength, &dwLength);
 				if (FAILED(hRes))
-				{
-					m_observer->OnError(hRes);
-					return hRes;
-				}
+					goto MFERROR;
 				m_observer->OnFrameReceive(data, dwLength, timeGetTime(), this);
 				hRes = buffer->Unlock();
 				if (FAILED(hRes))
-				{
-					m_observer->OnError(hRes);
-					return hRes;
-				}
+					goto MFERROR;
+				return hRes;
 			}
 		}
-		return S_OK;
+	MFERROR:
+		m_observer->OnFrameReceive(NULL, 0, timeGetTime(), this);
+		return hRes;
 	}
 
 	HRESULT STDMETHODCALLTYPE MFReaderCallback::OnFlush(_In_ DWORD dwStreamIndex)

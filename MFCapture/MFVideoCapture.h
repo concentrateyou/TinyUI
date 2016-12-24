@@ -31,10 +31,8 @@ namespace MF
 	public:
 		virtual BOOL Allocate(const MFVideoCaptureParam& param);
 		virtual void DeAllocate();
-		void OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter) OVERRIDE;
-		void OnError(HRESULT hRes) OVERRIDE;
+		void	OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter) OVERRIDE;
 	public:
-		static BOOL AllowTransform(VideoPixelFormat* src, VideoPixelFormat* dst);
 		static BOOL GetFormat(const GUID& guid, VideoPixelFormat* format);
 		static BOOL GetDevices(vector<MFVideoCapture::Name>& names);
 		static BOOL GetDeviceParams(const MFVideoCapture::Name& device, vector<MFVideoCaptureParam>& params);

@@ -35,16 +35,7 @@ namespace MF
 	MFVideoCapture::MFVideoCapture()
 		:m_bCapturing(FALSE)
 	{
-		MFT_REGISTER_TYPE_INFO inputFilter = { MFMediaType_Video, MFVideoFormat_MJPG };
-		MFT_REGISTER_TYPE_INFO outputFilter = { MFMediaType_Video, MFVideoFormat_ARGB32 };
-		IMFActivate** ppActivate = NULL;
-		UINT32 numDecodersMJPG = 0;
-		HRESULT hRes = MFTEnumEx(MFT_CATEGORY_VIDEO_DECODER, MFT_ENUM_FLAG_ALL, &inputFilter, &outputFilter, &ppActivate, &numDecodersMJPG);
-		INT a = 0;
-		if (FAILED(hRes))
-		{
 
-		}
 
 	}
 	MFVideoCapture::~MFVideoCapture()
@@ -53,7 +44,6 @@ namespace MF
 	}
 	void MFVideoCapture::OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter)
 	{
-		ASSERT(m_reader);
 		TinyAutoLock lock(*this);
 		if (m_bCapturing)
 		{
@@ -61,16 +51,11 @@ namespace MF
 			{
 				m_receiveCB(bits, size, ts, lpParameter);
 			}
-			HRESULT hRes = m_reader->ReadSample(static_cast<DWORD>(MF_SOURCE_READER_FIRST_VIDEO_STREAM), 0, NULL, NULL, NULL, NULL);
-			if (FAILED(hRes))
+			if (m_reader)
 			{
-				OnError(hRes);
+				m_reader->ReadSample(static_cast<DWORD>(MF_SOURCE_READER_FIRST_VIDEO_STREAM), 0, NULL, NULL, NULL, NULL);
 			}
 		}
-	}
-	void MFVideoCapture::OnError(HRESULT hRes)
-	{
-
 	}
 	BOOL MFVideoCapture::Initialize(const Name& name)
 	{
@@ -89,6 +74,8 @@ namespace MF
 	{
 		DeAllocate();
 		m_reader.Release();
+		if (m_source != NULL)
+			m_source->Shutdown();
 		m_source.Release();
 	}
 	BOOL MFVideoCapture::Allocate(const MFVideoCaptureParam& param)
@@ -120,8 +107,10 @@ namespace MF
 	}
 	void MFVideoCapture::DeAllocate()
 	{
-		ASSERT(m_source && m_reader);
-		m_reader->Flush(static_cast<DWORD>(MF_SOURCE_READER_ALL_STREAMS));
+		if (m_reader)
+		{
+			m_reader->Flush(static_cast<DWORD>(MF_SOURCE_READER_ALL_STREAMS));
+		}
 		m_bCapturing = FALSE;
 	}
 	BOOL MFVideoCapture::GetDevices(vector<Name>& names)
@@ -133,37 +122,37 @@ namespace MF
 		hRes = attributes->SetGUID(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE, MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_GUID);
 		if (FAILED(hRes))
 			return FALSE;
-		IMFActivate** devices = NULL;
+		IMFActivate** activates = NULL;
 		UINT32 count = 0;
-		hRes = MFEnumDeviceSources(attributes, &devices, &count);
+		hRes = MFEnumDeviceSources(attributes, &activates, &count);
 		if (FAILED(hRes))
 			return FALSE;
 		for (UINT32 i = 0; i < count; ++i)
 		{
 			WCHAR* val = NULL;
 			UINT32 size = 0;
-			hRes = devices[i]->GetAllocatedString(MF_DEVSOURCE_ATTRIBUTE_FRIENDLY_NAME, &val, &size);
+			hRes = activates[i]->GetAllocatedString(MF_DEVSOURCE_ATTRIBUTE_FRIENDLY_NAME, &val, &size);
 			if (FAILED(val))
 			{
 				CoTaskMemFree(val);
-				SAFE_RELEASE(devices[i]);
+				SAFE_RELEASE(activates[i]);
 				continue;
 			}
 			string name = WStringToString(wstring(val, size));
 			CoTaskMemFree(val);
-			hRes = devices[i]->GetAllocatedString(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_SYMBOLIC_LINK, &val, &size);
+			hRes = activates[i]->GetAllocatedString(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_SYMBOLIC_LINK, &val, &size);
 			if (FAILED(val))
 			{
 				CoTaskMemFree(val);
-				SAFE_RELEASE(devices[i]);
+				SAFE_RELEASE(activates[i]);
 				continue;
 			}
 			string id = WStringToString(wstring(val, size));
 			CoTaskMemFree(val);
 			names.push_back(Name(std::move(name), std::move(id)));
-			SAFE_RELEASE(devices[i]);
+			SAFE_RELEASE(activates[i]);
 		}
-		CoTaskMemFree(devices);
+		CoTaskMemFree(activates);
 		return TRUE;
 	}
 	BOOL MFVideoCapture::GetDeviceParams(const MFVideoCapture::Name& device, vector<MFVideoCaptureParam>& params)
@@ -175,7 +164,7 @@ namespace MF
 		hRes = attributes->SetGUID(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE, MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_GUID);
 		if (FAILED(hRes))
 			return FALSE;
-		hRes = attributes->SetString(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_SYMBOLIC_LINK, StringToWString(device.id()).c_str());
+		hRes = attributes->SetString(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_SYMBOLIC_LINK, StringToWString(device.id(), CP_UTF8).c_str());
 		if (FAILED(hRes))
 			return FALSE;
 		TinyComPtr<IMFMediaSource> source;
@@ -185,49 +174,41 @@ namespace MF
 		TinyComPtr<IMFSourceReader> reader;
 		hRes = MFCreateSourceReaderFromMediaSource(source, NULL, &reader);
 		if (FAILED(hRes))
-			return FALSE;
-		DWORD dwIndex = 0;
-		TinyComPtr<IMFMediaType> mediaType;
-		for (;;)
+			goto MFERROR;
+		for (DWORD dwIndex = 0;;dwIndex++)
 		{
+			TinyComPtr<IMFMediaType> mediaType;
 			hRes = reader->GetNativeMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_VIDEO_STREAM), dwIndex, &mediaType);
 			if (FAILED(hRes))
-				return FALSE;
+				break;
 			UINT32 cx, cy;
 			hRes = MFGetAttributeSize(mediaType, MF_MT_FRAME_SIZE, &cx, &cy);
 			if (FAILED(hRes))
-			{
-				++dwIndex;
 				continue;
-			}
 			MFVideoCaptureParam param;
 			param.SetSize(cx, cy);
 			UINT32 numerator, denominator;
 			hRes = MFGetAttributeRatio(mediaType, MF_MT_FRAME_RATE, &numerator, &denominator);
 			if (FAILED(hRes))
-			{
-				++dwIndex;
 				continue;
-			}
 			param.SetRate(denominator ? static_cast<FLOAT>(numerator) / denominator : 0.0F);
 			GUID guid;
 			hRes = mediaType->GetGUID(MF_MT_SUBTYPE, &guid);
 			if (FAILED(hRes))
-			{
-				++dwIndex;
 				continue;
-			}
 			VideoPixelFormat format;
 			if (!GetFormat(guid, &format))
-			{
-				++dwIndex;
 				continue;
-			}
 			param.SetFormat(format);
 			params.push_back(param);
-			++dwIndex;
 		}
+		if (source != NULL)
+			source->Shutdown();
 		return TRUE;
+	MFERROR:
+		if (source != NULL)
+			source->Shutdown();
+		return FALSE;
 	}
 	BOOL MFVideoCapture::GetDeviceSource(const MFVideoCapture::Name& device, IMFMediaSource** source)
 	{
@@ -238,16 +219,12 @@ namespace MF
 		hRes = attributes->SetGUID(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE, MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_GUID);
 		if (FAILED(hRes))
 			return FALSE;
-		hRes = attributes->SetString(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_SYMBOLIC_LINK, StringToWString(device.id()).c_str());
+		hRes = attributes->SetString(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_SYMBOLIC_LINK, StringToWString(device.id(), CP_UTF8).c_str());
 		if (FAILED(hRes))
 			return FALSE;
 		hRes = MFCreateDeviceSource(attributes, source);
 		if (FAILED(hRes))
 			return FALSE;
-		return TRUE;
-	}
-	BOOL MFVideoCapture::AllowTransform(VideoPixelFormat* src, VideoPixelFormat* dst)
-	{
 		return TRUE;
 	}
 	BOOL MFVideoCapture::GetFormat(const GUID& guid, VideoPixelFormat* format)

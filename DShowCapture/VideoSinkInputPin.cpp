@@ -106,7 +106,7 @@ namespace DShow
 			pvi->bmiHeader.biBitCount = 24;
 			pvi->bmiHeader.biWidth = m_param.GetSize().cx;
 			pvi->bmiHeader.biHeight = m_param.GetSize().cy;
-			pvi->bmiHeader.biSizeImage = m_param.GetSize().cx * m_param.GetSize().cy * 3;
+			pvi->bmiHeader.biSizeImage = ((((24 * m_param.GetSize().cx) + 31) / 32) * 4);
 			pMediaType->subtype = MEDIASUBTYPE_RGB24;
 			break;
 		}

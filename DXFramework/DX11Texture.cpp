@@ -64,23 +64,9 @@ namespace DXFramework
 			return FALSE;
 		D3D11_TEXTURE2D_DESC desc;
 		m_texture2D->GetDesc(&desc);
-		//RGB24->RGB32
-		INT linesize = ((((24 * desc.Width) + 31) / 32) * 4);
 		BYTE* src = const_cast<BYTE*>(pBits);
 		BYTE* dst = static_cast<BYTE*>(mapResource.pData);
-		BOOL bFlipY = TRUE;
-		for (INT row = 0; row < desc.Height; row++)
-		{
-			INT y = bFlipY ? desc.Height - 1 - row : row;
-			for (INT col = 0; col < desc.Width; col++)
-			{
-				BYTE* iDst = src + y * linesize + col * 3;
-				*dst++ = *iDst++;
-				*dst++ = *iDst++;
-				*dst++ = *iDst++;
-				*dst++ = 0;
-			}
-		}
+		memcpy(dst, src, desc.Height * desc.Width * 4);
 		dx11.GetImmediateContext()->Unmap(m_texture2D, 0);
 		return TRUE;
 	}

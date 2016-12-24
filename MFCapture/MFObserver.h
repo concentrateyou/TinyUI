@@ -12,7 +12,6 @@ namespace MF
 	public:
 		MFObserver();
 		virtual void OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter) = 0;
-		virtual void OnError(HRESULT hRes);
 	protected:
 		virtual ~MFObserver();
 	};

@@ -151,14 +151,14 @@ namespace DShow
 					hRes = streamConfig->SetFormat(mediaType.Ptr());
 					if (hRes != S_OK)
 						return FALSE;
-					//1.尝试RGB24硬件是否支持
+					//1.尝试RGB32硬件是否支持
 					VideoCaptureParam ps = param;
-					ps.SetFormat(PIXEL_FORMAT_RGB24);
+					ps.SetFormat(PIXEL_FORMAT_RGB32);
 					m_sinkFilter->SetCaptureParam(ps);
 					hRes = m_builder->Connect(m_captureO, m_sinkI);
 					if (hRes == S_OK)
 						return TRUE;
-					//2. 如果失败再尝试微软自带的Dec Filter
+					//1. 如果失败再尝试微软自带的Dec Filter
 					switch (param.GetFormat())
 					{
 					case PIXEL_FORMAT_MJPEG:
@@ -178,11 +178,11 @@ namespace DShow
 						hRes = m_builder->ConnectDirect(m_captureO, m_mjpgI, mediaType.Ptr());
 						if (hRes != S_OK)
 							return FALSE;
-						//判断MjpegDec输出是否支持RGB24
+						//1.判断MjpegDec输出是否支持RGB32
 						ScopedMediaType type;
-						if (!VideoCapture::GetMediaType(m_mjpgO, MEDIASUBTYPE_RGB24, type.Receive()))
+						if (!VideoCapture::GetMediaType(m_mjpgO, MEDIASUBTYPE_RGB32, type.Receive()))
 							return FALSE;
-						ps.SetFormat(PIXEL_FORMAT_RGB24);
+						ps.SetFormat(PIXEL_FORMAT_RGB32);
 						m_sinkFilter->SetCaptureParam(ps);
 						hRes = m_builder->ConnectDirect(m_mjpgO, m_sinkI, NULL);
 						if (hRes == S_OK)
@@ -209,11 +209,11 @@ namespace DShow
 						hRes = m_builder->ConnectDirect(m_captureO, m_avI, mediaType.Ptr());
 						if (hRes != S_OK)
 							return FALSE;
-						//判断AVIDec输出是否支持RGB24
+						//1.判断AVIDec输出是否支持RGB32
 						ScopedMediaType type;
-						if (!VideoCapture::GetMediaType(m_avO, MEDIASUBTYPE_RGB24, type.Receive()))
+						if (!VideoCapture::GetMediaType(m_avO, MEDIASUBTYPE_RGB32, type.Receive()))
 							return FALSE;
-						ps.SetFormat(PIXEL_FORMAT_RGB24);
+						ps.SetFormat(PIXEL_FORMAT_RGB32);
 						m_sinkFilter->SetCaptureParam(ps);
 						hRes = m_builder->ConnectDirect(m_avO, m_sinkI, NULL);
 						if (hRes == S_OK)

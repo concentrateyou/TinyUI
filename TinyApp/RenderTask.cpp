@@ -43,9 +43,9 @@ void RenderTask::OnMessagePump()
 			bmi.bmiHeader.biWidth = size.cx;
 			bmi.bmiHeader.biHeight = size.cy;
 			bmi.bmiHeader.biPlanes = 1;
-			bmi.bmiHeader.biBitCount = 24;
+			bmi.bmiHeader.biBitCount = 32;
 			bmi.bmiHeader.biCompression = BI_RGB;
-			bmi.bmiHeader.biSizeImage = size.cx * size.cy * 3;
+			bmi.bmiHeader.biSizeImage = size.cx * size.cy * 4;
 			BYTE* pvBits = NULL;
 			HBITMAP hBitmap = ::CreateDIBSection(wdc, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pvBits), NULL, 0);
 			memcpy(pvBits, bits, bmi.bmiHeader.biSizeImage);

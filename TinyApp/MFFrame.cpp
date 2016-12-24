@@ -1,6 +1,14 @@
 #include "stdafx.h"
 #include "MFFrame.h"
 
+//#include <mfxjpeg.h>
+//#include <mfxmvc.h>
+//#include <mfxplugin.h>
+//#include <mfxplugin++.h>
+//#include <mfxvideo.h>
+//#include <mfxvideo++.h>
+
+
 MFFrame::MFFrame()
 {
 }
@@ -54,8 +62,9 @@ LRESULT MFFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandle
 	MF::MFVideoCapture::GetDevices(names);
 	vector<MF::MFVideoCaptureParam> params;
 	MF::MFVideoCapture::GetDeviceParams(names[0], params);
+	m_param = params[10];
 	m_capture.Initialize(names[0], BindCallback(&MFFrame::OnFrame, this));
-	m_capture.Allocate(params[10]);
+	m_capture.Allocate(m_param);
 
 	return FALSE;
 }
@@ -86,8 +95,12 @@ LRESULT MFFrame::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHa
 
 void MFFrame::OnFrame(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)
 {
+	MF::MFVideoCapture* capture = reinterpret_cast<MF::MFVideoCapture*>(ps);
+	ASSERT(capture);
 	HDC hDC = GetDC(m_hWND);
 	TinyCanvas canvas(hDC);
-	//canvas.DrawImage();
-	ReleaseDC(m_hWND,hDC);
+	TinyImage image;
+	image.Load(bits, size);
+	canvas.DrawImage(image, 0, 0, image.GetSize().cx, image.GetSize().cy);
+	ReleaseDC(m_hWND, hDC);
 }

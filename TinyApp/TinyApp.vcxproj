@@ -55,13 +55,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\TinySmiley;$(BOOSTDIR);$(DXSDK_DIR)Include;..\DShowCapture;..\MFCapture;..\Decode;..\ThirdParty\mpg123\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\TinySmiley;$(BOOSTDIR);$(DXSDK_DIR)Include;..\DShowCapture;..\MFCapture;..\Decode;..\ThirdParty\mpg123\include;$(INTELMEDIASDKROOT)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\TinyUI;..\TinySmiley;..\DShowCapture;..\MFCapture;..\ThirdParty\vld\x86;..\Debug;..\ThirdParty\mpg123\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\TinyUI;..\TinySmiley;..\DShowCapture;..\MFCapture;..\ThirdParty\vld\x86;..\Debug;..\ThirdParty\mpg123\lib;$(INTELMEDIASDKROOT)\lib\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>dxgi.lib;dxguid.lib;d3d10_1.lib;d3dx10.lib;ddraw.lib;DShowCapture.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
