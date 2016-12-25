@@ -18,10 +18,11 @@ namespace DXFramework
 		~DX11Image();
 		void SetPosition(INT cx, INT cy);
 		BOOL Create(const DX11& dx11, INT cx, INT cy, INT scaleX, INT scaleY);
-		BOOL FillImage(const DX11& dx11, const BYTE* pBits);
+		BOOL Fill(const DX11& dx11, const BYTE* pData);
+		BOOL BitBlt(const DX11& dx11, const BYTE* pData);
 		BOOL Load(const DX11& dx11, HANDLE hResource, INT scaleX, INT scaleY);
 		BOOL Load(const DX11& dx11, const CHAR* pzFile, INT scaleX, INT scaleY);
-		BOOL Load(const DX11& dx11, const BYTE* pData, DWORD dwSize, INT scaleX, INT scaleY);
+		BOOL Load(const DX11& dx11, const BYTE* data, DWORD dwSize, INT scaleX, INT scaleY);
 		BOOL Render(const DX11& dx11, INT positionX, INT positionY);
 		INT	 GetIndexCount() const;
 		DX11Texture* GetTexture();
@@ -39,6 +40,7 @@ namespace DXFramework
 		INT							m_vertexCount;
 		INT							m_indexCount;
 		DX11Texture					m_texture;
+		
 	};
 	/// <summary>
 	/// π≤œÌŒ∆¿Ì

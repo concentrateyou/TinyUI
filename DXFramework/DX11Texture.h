@@ -22,12 +22,15 @@ namespace DXFramework
 		BOOL LoadTexture(const DX11& dx11, const BYTE* data, DWORD dwSize);
 		BOOL LoadTexture(const DX11& dx11, HANDLE hResource);
 		BOOL LoadTexture(const DX11& dx11, const CHAR* pzFile);
-		TinyComPtr<IDXGISurface1> GetSurface();
+		BOOL GetDC(HDC& hDC);
+		BOOL ReleaseDC();
+		IDXGISurface1* GetSurface() const;
 		ID3D11Texture2D* GetTexture2D() const;
 		ID3D11ShaderResourceView* GetSRView() const;
 		BOOL IsValid() const;
 		TinySize GetSize();
 	private:
+		TinyComPtr<IDXGISurface1>				m_surface;
 		TinyComPtr<ID3D11Texture2D>				m_texture2D;
 		TinyComPtr<ID3D11ShaderResourceView>	m_resourceView;
 	};

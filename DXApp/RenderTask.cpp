@@ -75,8 +75,10 @@ DWORD RenderTask::Render()
 	BYTE* s = m_capture.GetPointer();
 	if (s != NULL)
 	{
-		m_image.FillImage(m_graphics.GetD3D(), s);
 		TinySize size = m_graphics.GetD3D().GetSize();
+		m_image.BitBlt(m_graphics.GetD3D(), s);
+		//m_image.FillImage(m_graphics.GetD3D(), s);
+		//TinySize size = m_graphics.GetD3D().GetSize();
 		m_graphics.DrawImage(m_image, size.cx * 2 / 3 + 1, 1);
 	}
 	if (m_captureTask != NULL)

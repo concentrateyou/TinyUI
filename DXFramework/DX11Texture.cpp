@@ -33,6 +33,7 @@ namespace DXFramework
 		textureDesc.Format = dxgi;
 		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 		textureDesc.SampleDesc.Count = 1;
+		//textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
 		textureDesc.Usage = D3D11_USAGE_DYNAMIC;
 		textureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		D3D11_SUBRESOURCE_DATA dsd;
@@ -45,6 +46,8 @@ namespace DXFramework
 			lpSRD = &dsd;
 		}
 		if (FAILED(dx11.GetD3D()->CreateTexture2D(&textureDesc, lpSRD, &m_texture2D)))
+			return FALSE;
+		if (FAILED(m_texture2D->QueryInterface(__uuidof(IDXGISurface1), (void**)&m_surface)))
 			return FALSE;
 		D3D11_SHADER_RESOURCE_VIEW_DESC resourceDesc;
 		ZeroMemory(&resourceDesc, sizeof(resourceDesc));
@@ -70,6 +73,16 @@ namespace DXFramework
 		dx11.GetImmediateContext()->Unmap(m_texture2D, 0);
 		return TRUE;
 	}
+	BOOL  DX11Texture::GetDC(HDC& hDC)
+	{
+		ASSERT(m_surface);
+		return m_surface->GetDC(FALSE, &hDC) == S_OK;
+	}
+	BOOL DX11Texture::ReleaseDC()
+	{
+		ASSERT(m_surface);
+		return m_surface->ReleaseDC(NULL) == S_OK;
+	}
 	BOOL DX11Texture::Save(const DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT format)
 	{
 		ASSERT(m_texture2D);
@@ -79,6 +92,7 @@ namespace DXFramework
 	{
 		if (!pzFile)
 			return FALSE;
+		m_surface.Release();
 		m_texture2D.Release();
 		m_resourceView.Release();
 		HRESULT hRes = S_OK;
@@ -91,12 +105,15 @@ namespace DXFramework
 		TinyComPtr<ID3D11Texture2D> texture2D;
 		if (FAILED(hRes = resource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&texture2D)))
 			return FALSE;
+		if (FAILED(hRes = m_texture2D->QueryInterface(__uuidof(IDXGISurface1), (void**)&m_surface)))
+			return FALSE;
 		return TRUE;
 	}
 	BOOL DX11Texture::LoadTexture(const DX11& dx11, HANDLE hResource)
 	{
 		if (!hResource)
 			return FALSE;
+		m_surface.Release();
 		m_texture2D.Release();
 		m_resourceView.Release();
 		HRESULT hRes = S_OK;
@@ -104,6 +121,8 @@ namespace DXFramework
 		if (FAILED(hRes = dx11.GetD3D()->OpenSharedResource(hResource, __uuidof(ID3D11Resource), (void**)&resource)))
 			return FALSE;
 		if (FAILED(hRes = resource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&m_texture2D)))
+			return FALSE;
+		if (FAILED(hRes = m_texture2D->QueryInterface(__uuidof(IDXGISurface1), (void**)&m_surface)))
 			return FALSE;
 		D3D11_TEXTURE2D_DESC desc;
 		m_texture2D->GetDesc(&desc);
@@ -120,6 +139,7 @@ namespace DXFramework
 	{
 		if (!data)
 			return FALSE;
+		m_surface.Release();
 		m_texture2D.Release();
 		m_resourceView.Release();
 		HRESULT hRes = S_OK;
@@ -131,6 +151,8 @@ namespace DXFramework
 			return FALSE;
 		if (FAILED(hRes = resource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&m_texture2D)))
 			return FALSE;
+		if (FAILED(hRes = m_texture2D->QueryInterface(__uuidof(IDXGISurface1), (void**)&m_surface)))
+			return FALSE;
 		return TRUE;
 	}
 	ID3D11Texture2D* DX11Texture::GetTexture2D() const
@@ -141,11 +163,9 @@ namespace DXFramework
 	{
 		return m_resourceView;
 	}
-	TinyComPtr<IDXGISurface1> DX11Texture::GetSurface()
+	IDXGISurface1* DX11Texture::GetSurface() const
 	{
-		TinyComPtr<IDXGISurface1> surface;
-		m_texture2D->QueryInterface(__uuidof(IDXGISurface1), (void**)&surface);
-		return surface;
+		return m_surface;
 	}
 	TinySize DX11Texture::GetSize()
 	{

@@ -28,10 +28,36 @@ namespace DXFramework
 		m_scaleY = scaleY;
 		return m_texture.CreateTexture(dx11, cx, cy, DXGI_FORMAT_B8G8R8X8_UNORM, NULL);
 	}
-	BOOL DX11Image::FillImage(const DX11& dx11, const BYTE* pBits)
+	BOOL DX11Image::Fill(const DX11& dx11, const BYTE* pData)
 	{
 		ASSERT(m_texture.IsValid());
-		return m_texture.FillTexture(dx11, pBits);
+		return m_texture.FillTexture(dx11, pData);
+	}
+	BOOL DX11Image::BitBlt(const DX11& dx11, const BYTE* pData)
+	{
+		ASSERT(m_texture.IsValid());
+		HDC hDC = NULL;
+		BOOL bRes = m_texture.GetDC(hDC);
+		if (!bRes)
+			return FALSE;
+		TinySize size = m_texture.GetSize();
+		BITMAPINFO bmi = { 0 };
+		bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+		bmi.bmiHeader.biWidth = size.cx;
+		bmi.bmiHeader.biHeight = size.cy;
+		bmi.bmiHeader.biPlanes = 1;
+		bmi.bmiHeader.biBitCount = 32;
+		bmi.bmiHeader.biCompression = BI_RGB;
+		bmi.bmiHeader.biSizeImage = size.cx * size.cy * 4;
+		BYTE* pvBits = NULL;
+		HBITMAP hBitmap = ::CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pvBits), NULL, 0);
+		memcpy(pvBits, pData, bmi.bmiHeader.biSizeImage);
+		TinyUI::TinyMemDC mdc(hDC, hBitmap);
+		::BitBlt(hDC, 0, 0, size.cx, size.cy, mdc, 0, 0, SRCCOPY);
+		bRes = m_texture.ReleaseDC();
+		if (!bRes)
+			return FALSE;
+		return TRUE;
 	}
 	BOOL DX11Image::Load(const DX11& dx11, HANDLE hResource, INT scaleX, INT scaleY)
 	{
