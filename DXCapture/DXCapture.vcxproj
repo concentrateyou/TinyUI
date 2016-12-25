@@ -90,9 +90,13 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="d3d8.h" />
+    <ClInclude Include="d3d8caps.h" />
+    <ClInclude Include="d3d8types.h" />
     <ClInclude Include="DX101Capture.h" />
     <ClInclude Include="DX10Capture.h" />
     <ClInclude Include="DX11Capture.h" />
+    <ClInclude Include="DX8Capture.h" />
     <ClInclude Include="DXCommon.h" />
     <ClInclude Include="DX9Capture.h" />
     <ClInclude Include="OpenGLCapture.h" />
@@ -103,6 +107,7 @@
     <ClCompile Include="DX101Capture.cpp" />
     <ClCompile Include="DX10Capture.cpp" />
     <ClCompile Include="DX11Capture.cpp" />
+    <ClCompile Include="DX8Capture.cpp" />
     <ClCompile Include="DXCommon.cpp" />
     <ClCompile Include="DX9Capture.cpp" />
     <ClCompile Include="OpenGLCapture.cpp" />

@@ -104,7 +104,8 @@ namespace DXCapture
 		m_bCapturing(FALSE),
 		m_bTextures(FALSE),
 		m_patchType(0),
-		m_hhk(NULL)
+		m_hhk(NULL),
+		m_hD3D9(NULL)
 	{
 
 	}
@@ -135,16 +136,16 @@ namespace DXCapture
 		if (FAILED(hRes = SHGetFolderPath(NULL, CSIDL_SYSTEM, NULL, SHGFP_TYPE_CURRENT, szD3DPath)))
 			return FALSE;
 		strcat_s(szD3DPath, MAX_PATH, TEXT("\\d3d9.dll"));
-		m_d3d9.Reset(szD3DPath);
-		if (!m_d3d9.IsValid())
+		m_hD3D9 = GetModuleHandle(szD3DPath);
+		if (m_hD3D9 == NULL)
 			return FALSE;
-		m_d3d10_1.Reset(TEXT("d3d10_1.dll"));
-		if (!m_d3d10_1.IsValid())
+		m_d3d11.Reset(TEXT("d3d11.dll"));
+		if (!m_d3d11.IsValid())
 			return FALSE;
 		m_dxgi.Reset(TEXT("dxgi.dll"));
 		if (!m_dxgi.IsValid())
 			return FALSE;
-		D3D9CREATEEXPROC d3d9CreateEx = (D3D9CREATEEXPROC)m_d3d9.GetFunctionPointer(TEXT("Direct3DCreate9Ex"));
+		D3D9CREATEEXPROC d3d9CreateEx = (D3D9CREATEEXPROC)GetProcAddress(m_hD3D9, TEXT("Direct3DCreate9Ex"));
 		if (!d3d9CreateEx)
 			return FALSE;
 		TinyComPtr<IDirect3D9Ex> d3d9Ex;
@@ -199,7 +200,7 @@ namespace DXCapture
 	}
 	BOOL DX9Capture::Render(IDirect3DDevice9 *d3d)
 	{
-		ASSERT(d3d);
+		ASSERT(d3d && m_hD3D9);
 		if (m_bCapturing && m_stop.Lock(0))
 		{
 			m_bCapturing = FALSE;
@@ -214,7 +215,7 @@ namespace DXCapture
 		{
 			if (!m_bTextures)
 			{
-				m_patchType = GetDX9PatchType(m_d3d9);
+				m_patchType = GetDX9PatchType(m_hD3D9);
 				TinyComPtr<IDirect3DSurface9> backBuffer;
 				if (SUCCEEDED(d3d->GetRenderTarget(0, &backBuffer)))
 				{
@@ -256,7 +257,8 @@ namespace DXCapture
 		m_bTextures = FALSE;
 		m_hTextureHandle = NULL;
 		m_dX9TextureSurface.Release();
-		m_d3d10.Release();
+		m_d3d11Device.Release();
+		m_d3d11Context.Release();
 		m_textureMemery.Unmap();
 		m_textureMemery.Close();
 	}
@@ -294,10 +296,20 @@ namespace DXCapture
 			}
 		}
 	}
+
+	const static D3D_FEATURE_LEVEL levels[] =
+	{
+		D3D_FEATURE_LEVEL_11_0,
+		D3D_FEATURE_LEVEL_10_1,
+		D3D_FEATURE_LEVEL_10_0,
+		D3D_FEATURE_LEVEL_9_3,
+	};
+
 	BOOL DX9Capture::DX9GPUHook(IDirect3DDevice9 *pThis)
 	{
-		PFN_D3D10_CREATE_DEVICE1 d3d10CreateDevice1 = (PFN_D3D10_CREATE_DEVICE1)m_d3d10_1.GetFunctionPointer(TEXT("D3D10CreateDevice1"));
-		if (!d3d10CreateDevice1)
+		ASSERT(m_hD3D9);
+		PFN_D3D11_CREATE_DEVICE d3d11CreateDevice = (PFN_D3D11_CREATE_DEVICE)m_d3d11.GetFunctionPointer(TEXT("D3D11CreateDevice"));
+		if (!d3d11CreateDevice)
 		{
 			return FALSE;
 		}
@@ -316,16 +328,14 @@ namespace DXCapture
 		{
 			return FALSE;
 		}
-		if (FAILED((*d3d10CreateDevice1)(adapter, D3D10_DRIVER_TYPE_HARDWARE, NULL, 0, D3D10_FEATURE_LEVEL_10_1, D3D10_1_SDK_VERSION, &m_d3d10)))
+		D3D_FEATURE_LEVEL level;
+		if (FAILED((*d3d11CreateDevice)(adapter, D3D_DRIVER_TYPE_UNKNOWN, NULL, 0, levels, sizeof(levels) / sizeof(D3D_FEATURE_LEVEL), D3D11_SDK_VERSION, &m_d3d11Device, &level, &m_d3d11Context)))
 		{
-			if (FAILED((*d3d10CreateDevice1)(adapter, D3D10_DRIVER_TYPE_HARDWARE, NULL, 0, D3D10_FEATURE_LEVEL_9_3, D3D10_1_SDK_VERSION, &m_d3d10)))
-			{
-				return FALSE;
-			}
+			return FALSE;
 		}
 		SharedCaptureDATA* sharedCapture = reinterpret_cast<SharedCaptureDATA*>(m_memery.Address());
 		ASSERT(sharedCapture);
-		D3D10_TEXTURE2D_DESC desc;
+		D3D11_TEXTURE2D_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
 		desc.Width = sharedCapture->Size.cx;
 		desc.Height = sharedCapture->Size.cy;
@@ -333,16 +343,16 @@ namespace DXCapture
 		desc.ArraySize = 1;
 		desc.Format = m_dxgiFormat;
 		desc.SampleDesc.Count = 1;
-		desc.BindFlags = D3D10_BIND_RENDER_TARGET | D3D10_BIND_SHADER_RESOURCE;
-		desc.Usage = D3D10_USAGE_DEFAULT;
-		desc.MiscFlags = D3D10_RESOURCE_MISC_SHARED;
-		TinyComPtr<ID3D10Texture2D> d3d10Texture2D;
-		if (FAILED(m_d3d10->CreateTexture2D(&desc, NULL, &d3d10Texture2D)))
+		desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		desc.Usage = D3D11_USAGE_DEFAULT;
+		desc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
+		TinyComPtr<ID3D11Texture2D> d3d11Texture2D;
+		if (FAILED(m_d3d11Device->CreateTexture2D(&desc, NULL, &d3d11Texture2D)))
 		{
 			return FALSE;
 		}
 		TinyComPtr<IDXGIResource> dxgiResource;
-		if (FAILED(d3d10Texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&dxgiResource)))
+		if (FAILED(d3d11Texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&dxgiResource)))
 		{
 			return FALSE;
 		}
@@ -350,7 +360,7 @@ namespace DXCapture
 		{
 			return FALSE;
 		}
-		LPBYTE patchAddress = (m_patchType != 0) ? GetDX9PatchAddress(m_d3d9, m_patchType) : NULL;
+		LPBYTE patchAddress = (m_patchType != 0) ? GetDX9PatchAddress(m_hD3D9, m_patchType) : NULL;
 		DWORD dwOldProtect;
 		size_t patchSize;
 		TinyScopedArray<BYTE> patchData;

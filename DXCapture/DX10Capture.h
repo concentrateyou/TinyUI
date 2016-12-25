@@ -25,6 +25,7 @@ namespace DXCapture
 		BOOL							m_bCapturing;
 		BOOL							m_bTextures;
 		HANDLE							m_hTextureHandle;
+		HMODULE							m_hD3D10;
 		TinyLock						m_lock;
 		TinyComPtr<ID3D10Resource>		m_resource;
 		TinyDetour						m_dxPresent;
@@ -33,7 +34,6 @@ namespace DXCapture
 		TinyEvent						m_stop;
 		TinyEvent						m_ready;
 		TinyEvent						m_exit;
-		TinyScopedLibrary				m_d3d10;
 		IO::TinySharedMemory			m_memery;
 		IO::TinySharedMemory			m_textureMemery;
 		HHOOK							m_hhk;

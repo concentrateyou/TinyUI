@@ -28,14 +28,6 @@ namespace DXCapture
 	}
 	BOOL DX11Capture::Initialize(HWND hWND)
 	{
-		/*m_d3d10_1.Reset(TEXT("d3d10_1.dll"));
-		if (!m_d3d10_1.IsValid())
-			return FALSE;
-
-		m_dxgi.Reset(TEXT("dxgi.dll"));
-		if (!m_dxgi.IsValid())
-			return FALSE;*/
-
 		if (!BuildEvents())
 			return FALSE;
 		if (!m_memery.Open(SHAREDCAPTURE_MEMORY) &&
@@ -48,10 +40,10 @@ namespace DXCapture
 		if (FAILED(hRes = SHGetFolderPath(NULL, CSIDL_SYSTEM, NULL, SHGFP_TYPE_CURRENT, szD3DPath)))
 			return FALSE;
 		strcat_s(szD3DPath, MAX_PATH, TEXT("\\d3d11.dll"));
-		m_d3d11.Reset(szD3DPath);
-		if (!m_d3d11.IsValid())
+		m_hD3D11 = GetModuleHandle(szD3DPath);
+		if (m_hD3D11 == NULL)
 			return FALSE;
-		D3D11CREATEPROC d3d11Create = (D3D11CREATEPROC)m_d3d11.GetFunctionPointer(TEXT("D3D11CreateDeviceAndSwapChain"));
+		D3D11CREATEPROC d3d11Create = (D3D11CREATEPROC)GetProcAddress(m_hD3D11, TEXT("D3D11CreateDeviceAndSwapChain"));
 		if (!d3d11Create)
 			return FALSE;
 		D3D_FEATURE_LEVEL levels[6] =
@@ -96,7 +88,7 @@ namespace DXCapture
 		if (!m_dxResizeBuffers.BeginDetour())
 			return FALSE;
 
-		
+
 		return TRUE;
 	}
 	BOOL DX11Capture::BuildEvents()

@@ -9,7 +9,8 @@ namespace DXCapture
 		m_bDetour(FALSE),
 		m_bCapturing(FALSE),
 		m_bTextures(FALSE),
-		m_hhk(NULL)
+		m_hhk(NULL),
+		m_hD3D101(NULL)
 	{
 	}
 
@@ -40,10 +41,10 @@ namespace DXCapture
 		if (FAILED(hRes = SHGetFolderPath(NULL, CSIDL_SYSTEM, NULL, SHGFP_TYPE_CURRENT, szD3DPath)))
 			return FALSE;
 		strcat_s(szD3DPath, MAX_PATH, TEXT("\\d3d10_1.dll"));
-		m_d3d10.Reset(szD3DPath);
-		if (!m_d3d10.IsValid())
+		m_hD3D101 = GetModuleHandle(szD3DPath);
+		if (m_hD3D101 == NULL)
 			return FALSE;
-		D3D101CREATEPROC d3d101Create = (D3D101CREATEPROC)m_d3d10.GetFunctionPointer(TEXT("D3D10CreateDeviceAndSwapChain1"));
+		D3D101CREATEPROC d3d101Create = (D3D101CREATEPROC)GetProcAddress(m_hD3D101, TEXT("D3D10CreateDeviceAndSwapChain1"));
 		if (!d3d101Create)
 			return FALSE;
 		DXGI_SWAP_CHAIN_DESC swapDesc;

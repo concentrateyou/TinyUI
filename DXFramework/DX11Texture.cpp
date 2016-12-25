@@ -55,7 +55,7 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11Texture::FillTexture(const DX11& dx11, const BYTE* pBits)
+	BOOL DX11Texture::FillTexture(const DX11& dx11, const BYTE* data)
 	{
 		ASSERT(m_texture2D);
 		D3D11_MAPPED_SUBRESOURCE  mapResource;
@@ -64,7 +64,7 @@ namespace DXFramework
 			return FALSE;
 		D3D11_TEXTURE2D_DESC desc;
 		m_texture2D->GetDesc(&desc);
-		BYTE* src = const_cast<BYTE*>(pBits);
+		BYTE* src = const_cast<BYTE*>(data);
 		BYTE* dst = static_cast<BYTE*>(mapResource.pData);
 		memcpy(dst, src, desc.Height * desc.Width * 4);
 		dx11.GetImmediateContext()->Unmap(m_texture2D, 0);
@@ -116,14 +116,14 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11Texture::LoadTexture(const DX11& dx11, const BYTE* pBits, DWORD dwSize)
+	BOOL DX11Texture::LoadTexture(const DX11& dx11, const BYTE* data, DWORD dwSize)
 	{
-		if (!pBits)
+		if (!data)
 			return FALSE;
 		m_texture2D.Release();
 		m_resourceView.Release();
 		HRESULT hRes = S_OK;
-		if (FAILED(hRes = D3DX11CreateShaderResourceViewFromMemory(dx11.GetD3D(), pBits, dwSize, NULL, NULL, &m_resourceView, NULL)))
+		if (FAILED(hRes = D3DX11CreateShaderResourceViewFromMemory(dx11.GetD3D(), data, dwSize, NULL, NULL, &m_resourceView, NULL)))
 			return FALSE;
 		TinyComPtr<ID3D11Resource> resource;
 		m_resourceView->GetResource(&resource);
