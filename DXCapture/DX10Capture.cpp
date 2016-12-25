@@ -152,7 +152,7 @@ namespace DXCapture
 			return FALSE;
 		if (m_bCapturing && m_stop.Lock(0))
 		{
-			m_bCapturing = TRUE;
+			m_bCapturing = FALSE;
 			Reset();
 			return FALSE;
 		}
@@ -180,7 +180,6 @@ namespace DXCapture
 					{
 						device->CopyResource(m_resource, backBuffer);
 					}
-
 				}
 			}
 		}

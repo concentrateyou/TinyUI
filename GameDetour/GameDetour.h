@@ -18,7 +18,7 @@ namespace GameDetour
 		BOOL Attach(HMODULE hModule);
 		void Detach();
 	private:
-		void TryCapture();
+		BOOL TryCapture();
 	private:
 		static DWORD WINAPI CaptureTask(LPVOID ps);
 	private:
@@ -28,9 +28,7 @@ namespace GameDetour
 		HWND			m_hWNDOpenGL;
 		HWND			m_hWNDD3D;
 		BOOL			m_bDX9Detour;
-		BOOL			m_bDX10Detour;
-		BOOL			m_bDX101Detour;
-		BOOL			m_bDX11Detour;
+		BOOL			m_bDXGIDetour;
 		HHOOK			m_hHook;
 	};
 }

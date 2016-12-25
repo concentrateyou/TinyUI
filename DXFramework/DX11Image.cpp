@@ -175,6 +175,8 @@ namespace DXFramework
 			return FALSE;
 		if (!m_image.Load(dx11, pTexture->TextureHandle, scaleX, scaleY))
 			return FALSE;
+		if (m_image.GetTexture())
+			m_image.GetTexture()->Save(dx11, "D:\\1.bmp", D3DX11_IFF_BMP);
 		return TRUE;
 	}
 	DX11Image& SharedTexture::GetTexture()

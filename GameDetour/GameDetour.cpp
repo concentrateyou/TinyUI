@@ -4,9 +4,8 @@
 #include "stdafx.h"
 #include "GameDetour.h"
 #include "DX9Capture.h"
-#include "DX10Capture.h"
-#include "DX101Capture.h"
-#include "DX11Capture.h"
+#include "DXGICapture.h"
+#include "OpenGLCapture.h"
 using namespace DXCapture;
 
 namespace GameDetour
@@ -17,9 +16,7 @@ namespace GameDetour
 		m_hWNDOpenGL(NULL),
 		m_hWNDD3D(NULL),
 		m_bDX9Detour(FALSE),
-		m_bDX10Detour(FALSE),
-		m_bDX101Detour(FALSE),
-		m_bDX11Detour(FALSE),
+		m_bDXGIDetour(FALSE),
 		m_hHook(NULL)
 	{
 
@@ -54,26 +51,19 @@ namespace GameDetour
 			m_hTask = NULL;
 		}
 	}
-	void GameCapture::TryCapture()
+	BOOL GameCapture::TryCapture()
 	{
 		if (!m_hWNDD3D || !m_hWNDOpenGL)
-			return;
+			return FALSE;
 		if (!m_bDX9Detour)
 		{
 			m_bDX9Detour = DX9Capture::Instance().Initialize(m_hWNDD3D);
 		}
-		if (!m_bDX10Detour)
+		if (!m_bDXGIDetour)
 		{
-			m_bDX10Detour = DX10Capture::Instance().Initialize(m_hWNDD3D);
+			m_bDXGIDetour = DXGICapture::Instance().Initialize(m_hWNDD3D);
 		}
-		if (!m_bDX101Detour)
-		{
-			m_bDX101Detour = DX101Capture::Instance().Initialize(m_hWNDD3D);
-		}
-		if (!m_bDX11Detour)
-		{
-			m_bDX11Detour = DX11Capture::Instance().Initialize(m_hWNDD3D);
-		}
+		return TRUE;
 	}
 	DWORD WINAPI GameCapture::CaptureTask(LPVOID ps)
 	{

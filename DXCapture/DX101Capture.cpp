@@ -66,7 +66,7 @@ namespace DXCapture
 		swapDesc.Flags = 0;
 		TinyComPtr<ID3D10Device1> device;
 		TinyComPtr<IDXGISwapChain> swap;
-		if (FAILED(hRes = (*d3d101Create)(NULL, D3D10_DRIVER_TYPE_NULL, NULL, 0, D3D10_FEATURE_LEVEL_10_1, D3D10_SDK_VERSION, &swapDesc, &swap, &device)))
+		if (FAILED(hRes = (*d3d101Create)(NULL, D3D10_DRIVER_TYPE_NULL, NULL, 0, D3D10_FEATURE_LEVEL_10_1, D3D10_1_SDK_VERSION, &swapDesc, &swap, &device)))
 			return FALSE;
 		ULONG *vtable = *(ULONG**)swap.Ptr();
 		if (!m_dxPresent.Initialize((FARPROC)*(vtable + (32 / 4)), (FARPROC)DXGISwapPresent))
@@ -152,7 +152,7 @@ namespace DXCapture
 			return FALSE;
 		if (m_bCapturing && m_stop.Lock(0))
 		{
-			m_bCapturing = TRUE;
+			m_bCapturing = FALSE;
 			Reset();
 			return FALSE;
 		}

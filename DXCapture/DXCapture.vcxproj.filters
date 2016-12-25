@@ -45,13 +45,7 @@
     <ClInclude Include="DX8Capture.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="d3d8.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="d3d8caps.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="d3d8types.h">
+    <ClInclude Include="DXGICapture.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -78,6 +72,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DX8Capture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DXGICapture.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
