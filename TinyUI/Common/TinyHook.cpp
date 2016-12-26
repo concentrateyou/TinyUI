@@ -157,7 +157,6 @@ namespace TinyUI
 		}
 		return bRes;
 	}
-
 	BOOL TinyIATFunction::DoInstallHook(HMODULE hmodCaller, LPCSTR pszCalleeModName, PROC pfnCurrent, PROC pfnNew)
 	{
 		if (!pfnCurrent || !pfnNew) return FALSE;
@@ -219,12 +218,10 @@ namespace TinyUI
 		}
 		return FALSE;
 	}
-
 	BOOL TinyIATFunction::InstallHook()
 	{
 		return m_bInstall = DoInstallHook(m_pzCalleeModName, m_pfnOrig, m_pfnHook);
 	}
-
 	BOOL TinyIATFunction::UninstallHook()
 	{
 		if (m_bInstall)
@@ -242,10 +239,7 @@ namespace TinyUI
 	}
 	TinyDetour::~TinyDetour()
 	{
-		if (IsValid())
-		{
-			EndDetour();
-		}
+
 	}
 	BOOL TinyDetour::Initialize(FARPROC pfnOrig, FARPROC pfnNew)
 	{
@@ -295,4 +289,5 @@ namespace TinyUI
 	{
 		return m_pfnOrig;
 	}
+	//////////////////////////////////////////////////////////////////////////
 }

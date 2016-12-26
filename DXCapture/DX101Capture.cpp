@@ -9,18 +9,12 @@ namespace DXCapture
 		m_bDetour(FALSE),
 		m_bCapturing(FALSE),
 		m_bTextures(FALSE),
-		m_hhk(NULL),
 		m_hD3D101(NULL)
 	{
 	}
 
 	DX101Capture::~DX101Capture()
 	{
-		if (m_hhk != NULL)
-		{
-			UnhookWindowsHookEx(m_hhk);
-			m_hhk = NULL;
-		}
 	}
 	DX101Capture& DX101Capture::Instance()
 	{
@@ -29,12 +23,7 @@ namespace DXCapture
 	}
 	BOOL DX101Capture::Initialize(HWND hWND)
 	{
-		if (!BuildEvents())
-			return FALSE;
-		if (!m_memery.Open(SHAREDCAPTURE_MEMORY) &&
-			!m_memery.Create(SHAREDCAPTURE_MEMORY, sizeof(SharedCaptureDATA)))
-			return FALSE;
-		if (!m_memery.Map(0, 0))
+		if (!DXGlobal::Instance().BuildEvents())
 			return FALSE;
 		HRESULT hRes = S_OK;
 		CHAR szD3DPath[MAX_PATH];
@@ -79,43 +68,15 @@ namespace DXCapture
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX101Capture::BuildEvents()
+	void DX101Capture::Reset(BOOL bRelease)
 	{
-		DWORD dwProcessID = GetCurrentProcessId();
-		if (!m_start)
-		{
-			string name = StringPrintf("%s%d", BEGIN_CAPTURE_EVENT, dwProcessID);
-			if (!m_start.CreateEvent(FALSE, FALSE, name.c_str()))
-				return FALSE;
-		}
-		if (!m_stop)
-		{
-			string name = StringPrintf("%s%d", END_CAPTURE_EVENT, dwProcessID);
-			if (!m_stop.CreateEvent(FALSE, FALSE, name.c_str()))
-				return FALSE;
-		}
-		if (!m_ready)
-		{
-			string name = StringPrintf("%s%d", CAPTURE_READY_EVENT, dwProcessID);
-			if (!m_ready.CreateEvent(FALSE, FALSE, name.c_str()))
-				return FALSE;
-		}
-		if (!m_exit)
-		{
-			string name = StringPrintf("%s%d", CAPTURE_EXIT_EVENT, dwProcessID);
-			if (!m_exit.CreateEvent(FALSE, FALSE, name.c_str()))
-				return FALSE;
-		}
-		return TRUE;
-	}
-	void DX101Capture::Reset()
-	{
-		DX101Capture::Instance().m_bDetour = FALSE;
+		m_bDetour = FALSE;
 		m_bTextures = FALSE;
 		m_hTextureHandle = NULL;
-		m_resource.Release();
-		m_textureMemery.Unmap();
-		m_textureMemery.Close();
+		if (bRelease)
+			m_resource.Release();
+		else
+			m_resource.Detach();
 	}
 	BOOL DX101Capture::Setup(IDXGISwapChain *swap)
 	{
@@ -129,34 +90,29 @@ namespace DXCapture
 		hRes = swap->GetDesc(&scd);
 		if (FAILED(hRes))
 			return FALSE;
-		SharedCaptureDATA* sharedCapture = (SharedCaptureDATA*)DX101Capture::Instance().m_memery.Address();
+		SharedCaptureDATA* sharedCapture = DXGlobal::Instance().GetSharedCaptureDATA();
+		ASSERT(sharedCapture);
 		sharedCapture->Format = (DWORD)scd.BufferDesc.Format;
 		sharedCapture->Size.cx = scd.BufferDesc.Width;
 		sharedCapture->Size.cy = scd.BufferDesc.Height;
 		sharedCapture->HwndCapture = scd.OutputWindow;
 		sharedCapture->bMultisample = scd.SampleDesc.Count > 1;
 		m_dxgiFormat = scd.BufferDesc.Format;
-		if (m_hhk != NULL)
-		{
-			UnhookWindowsHookEx(m_hhk);
-			m_hhk = NULL;
-		}
-		m_hhk = SetWindowsHookEx(WH_CBT, DX101Capture::CbtFilterHook, NULL, GetCurrentThreadId());
+		DXGlobal::Instance().Hook();
 		return TRUE;
 	}
 	BOOL DX101Capture::Render(IDXGISwapChain *swap, UINT flags)
 	{
 		HRESULT hRes = S_OK;
-		SharedCaptureDATA* sharedCapture = (SharedCaptureDATA*)DX101Capture::Instance().m_memery.Address();
-		if (!sharedCapture)
-			return FALSE;
-		if (m_bCapturing && m_stop.Lock(0))
+		SharedCaptureDATA* sharedCapture = DXGlobal::Instance().GetSharedCaptureDATA();
+		ASSERT(sharedCapture);
+		if (m_bCapturing && DXGlobal::Instance().m_stop && DXGlobal::Instance().m_stop.Lock(0))
 		{
 			m_bCapturing = FALSE;
 			Reset();
 			return FALSE;
 		}
-		if (!m_bCapturing && m_start.Lock(0))
+		if (!m_bCapturing &&DXGlobal::Instance().m_start && DXGlobal::Instance().m_start.Lock(0))
 		{
 			m_bCapturing = TRUE;
 		}
@@ -188,7 +144,8 @@ namespace DXCapture
 	BOOL DX101Capture::DX101GPUHook(ID3D10Device1 *device)
 	{
 		HRESULT hRes = S_OK;
-		SharedCaptureDATA* sharedCapture = reinterpret_cast<SharedCaptureDATA*>(m_memery.Address());
+		SharedCaptureDATA* sharedCapture = DXGlobal::Instance().GetSharedCaptureDATA();
+		ASSERT(sharedCapture);
 		D3D10_TEXTURE2D_DESC texGameDesc;
 		ZeroMemory(&texGameDesc, sizeof(texGameDesc));
 		texGameDesc.Width = sharedCapture->Size.cx;
@@ -210,21 +167,14 @@ namespace DXCapture
 			return FALSE;
 		if (FAILED(hRes = resource->GetSharedHandle(&m_hTextureHandle)))
 			return FALSE;
-		if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE))
-		{
-			if (!m_textureMemery.Create(TEXTURE_MEMORY, sizeof(SharedTextureDATA)))
-				return FALSE;
-		}
-		m_textureMemery.Unmap();
-		if (!m_textureMemery.Map(0, 0))
-			return FALSE;
-		if (SharedTextureDATA* sharedTexture = (SharedTextureDATA*)m_textureMemery.Address())
+		if (SharedTextureDATA* sharedTexture = DXGlobal::Instance().GetSharedTextureDATA())
 		{
 			sharedTexture->TextureHandle = m_hTextureHandle;
 		}
 		sharedCapture->CaptureType = CAPTURETYPE_SHAREDTEX;
 		sharedCapture->bFlip = FALSE;
-		m_ready.SetEvent();
+		if (DXGlobal::Instance().m_ready)
+			DXGlobal::Instance().m_ready.SetEvent();
 		return TRUE;
 	}
 	HRESULT STDMETHODCALLTYPE DX101Capture::DXGISwapPresent(IDXGISwapChain *pThis, UINT syncInterval, UINT flags)
@@ -254,18 +204,5 @@ namespace DXCapture
 		HRESULT hRes = pThis->ResizeBuffers(bufferCount, width, height, giFormat, flags);
 		DX101Capture::Instance().m_dxResizeBuffers.BeginDetour();
 		return hRes;
-	}
-	LRESULT CALLBACK DX101Capture::CbtFilterHook(INT code, WPARAM wParam, LPARAM lParam)
-	{
-		ASSERT(DX101Capture::Instance().m_hhk);
-		if (code != HCBT_DESTROYWND)
-			return CallNextHookEx(DX101Capture::Instance().m_hhk, code, wParam, lParam);
-		SharedCaptureDATA* sharedCapture = (SharedCaptureDATA*)DX101Capture::Instance().m_memery.Address();
-		if (sharedCapture->HwndCapture == reinterpret_cast<HWND>(wParam))
-		{
-			DX101Capture::Instance().Reset();
-			DX101Capture::Instance().m_exit.SetEvent();
-		}
-		return CallNextHookEx(DX101Capture::Instance().m_hhk, code, wParam, lParam);
 	}
 }

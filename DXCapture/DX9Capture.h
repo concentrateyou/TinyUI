@@ -16,14 +16,11 @@ namespace DXCapture
 		~DX9Capture();
 		BOOL Initialize(HWND hWND);
 		BOOL Render(IDirect3DDevice9 *device);
-		void Reset();
+		void Reset(BOOL bRelease = TRUE);
 		void Setup(IDirect3DDevice9 *pThis);
 		BOOL DX9GPUHook(IDirect3DDevice9 *device);
 		static DX9Capture& Instance();
 	private:
-		BOOL BuildEvents();
-	private:
-		static LRESULT CALLBACK CbtFilterHook(INT code, WPARAM wParam, LPARAM lParam);
 		static HRESULT STDMETHODCALLTYPE DX9EndScene(IDirect3DDevice9 *pThis);
 		static HRESULT STDMETHODCALLTYPE DX9Present(IDirect3DDevice9 *pThis, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion);
 		static HRESULT STDMETHODCALLTYPE DX9PresentEx(IDirect3DDevice9Ex *pThis, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion, DWORD dwFlags);
@@ -42,21 +39,15 @@ namespace DXCapture
 		TinyLock						m_lock;
 		TinyComPtr<ID3D10Device1>		m_d3d10;
 		TinyComPtr<IDirect3DSurface9>	m_dX9TextureSurface;
+		TinyDetour						m_dX9Release;
 		TinyDetour						m_dX9EndScene;
 		TinyDetour						m_dX9Reset;
 		TinyDetour						m_dX9ResetEx;
 		TinyDetour						m_dX9Present;
 		TinyDetour						m_dX9PresentEx;
 		TinyDetour						m_dX9SwapPresent;
-		TinyEvent						m_start;
-		TinyEvent						m_stop;
-		TinyEvent						m_ready;
-		TinyEvent						m_exit;
 		TinyScopedLibrary				m_d3d10_1;
 		TinyScopedLibrary				m_dxgi;
-		IO::TinySharedMemory			m_memery;
-		IO::TinySharedMemory			m_textureMemery;
-		HHOOK							m_hhk;
 	};
 }
 

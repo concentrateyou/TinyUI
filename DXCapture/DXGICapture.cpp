@@ -7,6 +7,9 @@
 namespace DXCapture
 {
 	DXGICapture::DXGICapture()
+		:m_bDX10(FALSE),
+		m_bDX101(FALSE),
+		m_bDX11(FALSE)
 	{
 
 	}
@@ -16,13 +19,31 @@ namespace DXCapture
 	}
 	BOOL DXGICapture::Initialize(HWND hWND)
 	{
-		if (DX10Capture::Instance().Initialize(hWND))
+		m_bDX10 = DX10Capture::Instance().Initialize(hWND);
+		if (m_bDX10)
 			return TRUE;
-		if (DX101Capture::Instance().Initialize(hWND))
+		m_bDX101 = DX101Capture::Instance().Initialize(hWND);
+		if (m_bDX101)
 			return TRUE;
-		if (DX11Capture::Instance().Initialize(hWND))
+		m_bDX11 = DX11Capture::Instance().Initialize(hWND);
+		if (m_bDX11)
 			return TRUE;
 		return FALSE;
+	}
+	void DXGICapture::Reset(BOOL bRelease)
+	{
+		if (m_bDX10)
+		{
+			DX10Capture::Instance().Reset(bRelease);
+		}
+		if (m_bDX101)
+		{
+			DX101Capture::Instance().Reset(bRelease);
+		}
+		if (m_bDX11)
+		{
+			DX11Capture::Instance().Reset(bRelease);
+		}
 	}
 	DXGICapture& DXGICapture::Instance()
 	{

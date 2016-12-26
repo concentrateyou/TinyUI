@@ -12,12 +12,9 @@ namespace GameDetour
 {
 	GameCapture::GameCapture()
 		:m_hTask(NULL),
-		m_hWND(NULL),
-		m_hWNDOpenGL(NULL),
 		m_hWNDD3D(NULL),
 		m_bDX9Detour(FALSE),
-		m_bDXGIDetour(FALSE),
-		m_hHook(NULL)
+		m_bDXGIDetour(FALSE)
 	{
 
 	}
@@ -33,73 +30,50 @@ namespace GameDetour
 	}
 	void GameCapture::Detach()
 	{
+		m_bDX9Detour = m_bDXGIDetour = FALSE;
 		if (m_hTask != NULL)
 		{
-			if (m_hWNDOpenGL != NULL)
-			{
-				::DestroyWindow(m_hWNDOpenGL);
-				m_hWNDOpenGL = NULL;
-			}
 			if (m_hWNDD3D != NULL)
 			{
 				::DestroyWindow(m_hWNDD3D);
 				m_hWNDD3D = NULL;
 			}
 			PostQuitMessage(0);
-			WaitForSingleObject(m_hTask, 300);
+			WaitForSingleObject(m_hTask, INFINITE);
 			CloseHandle(m_hTask);
 			m_hTask = NULL;
 		}
 	}
 	BOOL GameCapture::TryCapture()
 	{
-		if (!m_hWNDD3D || !m_hWNDOpenGL)
+		if (!m_hWNDD3D)
+		{
 			return FALSE;
+		}
 		if (!m_bDX9Detour)
 		{
 			m_bDX9Detour = DX9Capture::Instance().Initialize(m_hWNDD3D);
-			if (m_bDX9Detour)
-				return TRUE;
 		}
-		if (!m_bDXGIDetour)
-		{
-			m_bDXGIDetour = DXGICapture::Instance().Initialize(m_hWNDD3D);
-			if (m_bDXGIDetour)
-				return TRUE;
-		}
-		return FALSE;
+		return m_bDX9Detour;
+		/*	if (!m_bDXGIDetour)
+			{
+				m_bDXGIDetour = DXGICapture::Instance().Initialize(m_hWNDD3D);
+			}
+			return m_bDX9Detour || m_bDXGIDetour;*/
 	}
 	DWORD WINAPI GameCapture::CaptureTask(LPVOID ps)
 	{
 		GameCapture* _this = reinterpret_cast<GameCapture*>(ps);
-		_this->m_hWND = FindWindow(IQIYI_WINDOW_CLASS, NULL);
 		WNDCLASS wc;
 		ZeroMemory(&wc, sizeof(wc));
 		wc.style = CS_OWNDC;
 		wc.hInstance = _this->m_hInstance;
 		wc.lpfnWndProc = (WNDPROC)DefWindowProc;
-		wc.lpszClassName = OPENGL_WINDOWCLASS;
-		if (RegisterClass(&wc))
-		{
-			_this->m_hWNDOpenGL = CreateWindowEx(0,
-				OPENGL_WINDOWCLASS,
-				TEXT("Open GL Capture Window"),
-				WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS,
-				0, 0,
-				1, 1,
-				NULL,
-				NULL,
-				_this->m_hInstance,
-				NULL
-			);
-			if (!_this->m_hWNDOpenGL)
-				return FALSE;
-		}
 		wc.lpszClassName = D3D_WINDOWCLASS;
 		if (RegisterClass(&wc))
 		{
 			_this->m_hWNDD3D = CreateWindowEx(0,
-				OPENGL_WINDOWCLASS,
+				D3D_WINDOWCLASS,
 				TEXT("D3D Caption Window"),
 				WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS,
 				0, 0,

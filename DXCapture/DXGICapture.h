@@ -13,7 +13,12 @@ namespace DXCapture
 		DXGICapture();
 		~DXGICapture();
 		BOOL Initialize(HWND hWND);
+		void Reset(BOOL bRelease = TRUE);
 		static DXGICapture& Instance();
+	private:
+		BOOL m_bDX10;
+		BOOL m_bDX101;
+		BOOL m_bDX11;
 	};
 }
 

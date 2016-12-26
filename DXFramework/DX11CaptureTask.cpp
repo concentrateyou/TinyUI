@@ -110,12 +110,21 @@ namespace DXFramework
 		ASSERT(m_pDX11);
 		BOOL bRes = S_OK;
 		if (!BuildEvents())
+		{
+			TRACE("BeginCapture BuildEvents-FAIL\n");
 			return FALSE;
+		}
 		SharedCaptureDATA* pDATA = GetSharedCapture();
 		if (!pDATA)
+		{
+			TRACE("BeginCapture GetSharedCapture-FAIL\n");
 			return FALSE;
+		}
 		if (!m_texture.Initialize(*m_pDX11, m_cx, m_cy))
+		{
+			TRACE("BeginCapture m_texture.Initialize-FAIL\n");
 			return FALSE;
+		}
 		return TRUE;
 	}
 	BOOL DX11CaptureTask::EndCapture()
@@ -150,6 +159,7 @@ namespace DXFramework
 			m_targetWND.dwThreadID = GetWindowThreadProcessId(hWND, &m_targetWND.dwProcessID);
 			if (!m_targetWND.dwThreadID || !m_targetWND.dwProcessID)
 			{
+				TRACE("!m_targetWND.dwThreadID || !m_targetWND.dwProcessID\n");
 				m_bCapturing = FALSE;
 				goto _ERROR;
 			}
@@ -161,24 +171,33 @@ namespace DXFramework
 		}
 		if (!BuildEvents())
 		{
+			TRACE("BuildEvents == FALSE\n");
 			goto _ERROR;
 		}
 		hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, m_targetWND.dwProcessID);
 		if (!hProcess)
 		{
+			TRACE("hProcess == NULL\n");
 			goto _ERROR;
 		}
+		TRACE("Begin InjectLibrary\n");
 		if (!InjectLibrary(hProcess, dllName.STR()))
 		{
+			TRACE("InjectLibrary - FALSE\n");
 			goto _ERROR;
 		}
 		if (!DuplicateHandle(GetCurrentProcess(), hProcess, GetCurrentProcess(), &m_targetWND.hProcess, 0, FALSE, DUPLICATE_SAME_ACCESS))
 		{
+			TRACE("DuplicateHandle - FALSE\n");
 			goto _ERROR;
 		}
 		m_captureStart.SetEvent();
-		Sleep(1500);
+		Sleep(300);
 		m_bCapturing = BeginCapture();
+		if (m_bCapturing)
+		{
+			TRACE("AttemptCapture - m_bCapturing = TRUE\n");
+		}
 	_ERROR:
 		if (hProcess)
 		{
@@ -191,14 +210,17 @@ namespace DXFramework
 	{
 		if (m_captureExit && m_captureExit.Lock(0))
 		{
+			TRACE("Tick - EndCapture\n");
 			EndCapture();
 		}
 		if (m_bCapturing && !m_captureReady && m_targetWND.dwProcessID)
 		{
+			TRACE("Tick - BuildEvents\n");
 			BuildEvents();
 		}
 		if (m_captureReady && m_captureReady.Lock(0))
 		{
+			TRACE("Tick - BeginCapture\n");
 			BeginCapture();
 		}
 		if (!m_bCapturing)
@@ -212,10 +234,12 @@ namespace DXFramework
 		{
 			if (!IsWindow(m_targetWND.hWND))
 			{
+				TRACE("!IsWindow(m_targetWND.hWND)\n");
 				EndCapture();
 			}
 			if (m_targetWND.hProcess && WaitForSingleObject(m_targetWND.hProcess, 0) == WAIT_OBJECT_0)
 			{
+				TRACE("m_targetWND.hProcess && WaitForSingleObject(m_targetWND.hProcess, 0) == WAIT_OBJECT_0\n");
 				EndCapture();
 			}
 		}

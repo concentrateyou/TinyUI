@@ -22,14 +22,11 @@ namespace GameDetour
 	private:
 		static DWORD WINAPI CaptureTask(LPVOID ps);
 	private:
-		HANDLE			m_hTask;
-		HINSTANCE		m_hInstance;
-		HWND			m_hWND;
-		HWND			m_hWNDOpenGL;
-		HWND			m_hWNDD3D;
-		BOOL			m_bDX9Detour;
-		BOOL			m_bDXGIDetour;
-		HHOOK			m_hHook;
+		HANDLE					m_hTask;
+		HINSTANCE				m_hInstance;
+		HWND					m_hWNDD3D;
+		BOOL					m_bDX9Detour;
+		BOOL					m_bDXGIDetour;
 	};
 }
 

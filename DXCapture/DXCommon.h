@@ -47,4 +47,28 @@ namespace DXCapture
 		HANDLE      TextureHandle;
 	}SharedTextureDATA;
 #pragma pack(pop)
+
+	class DXGlobal
+	{
+	public:
+		DXGlobal();
+		~DXGlobal();
+		SharedCaptureDATA* GetSharedCaptureDATA();
+		SharedTextureDATA* GetSharedTextureDATA();
+		BOOL BuildEvents();
+		BOOL Hook();
+		void Unhook();
+		void Release();
+		static DXGlobal& Instance();
+	public:
+		static LRESULT CALLBACK CbtFilterHook(INT code, WPARAM wParam, LPARAM lParam);
+	public:
+		HHOOK					m_hhk;
+		TinyEvent				m_start;
+		TinyEvent				m_stop;
+		TinyEvent				m_ready;
+		TinyEvent				m_exit;
+		IO::TinySharedMemory	m_memery;
+		IO::TinySharedMemory	m_textureMemery;
+	};
 }
