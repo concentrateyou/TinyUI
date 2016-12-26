@@ -20,7 +20,7 @@ namespace DXFramework
 	DX11Texture::~DX11Texture()
 	{
 	}
-	BOOL DX11Texture::CreateTexture(const DX11& dx11, INT cx, INT cy, DXGI_FORMAT dxgi, void *lpData)
+	BOOL DX11Texture::CreateTexture(const DX11& dx11, INT cx, INT cy, void *lpData)
 	{
 		m_texture2D.Release();
 		m_resourceView.Release();
@@ -30,31 +30,36 @@ namespace DXFramework
 		textureDesc.Height = cy;
 		textureDesc.MipLevels = 1;
 		textureDesc.ArraySize = 1;
-		textureDesc.Format = dxgi;
-		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 		textureDesc.SampleDesc.Count = 1;
-		//textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
-		textureDesc.Usage = D3D11_USAGE_DYNAMIC;
-		textureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		textureDesc.SampleDesc.Quality = 0;
+		textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
+		textureDesc.Usage = D3D11_USAGE_DEFAULT;
 		D3D11_SUBRESOURCE_DATA dsd;
 		D3D11_SUBRESOURCE_DATA *lpSRD = NULL;
 		if (lpData)
 		{
 			dsd.pSysMem = lpData;
-			dsd.SysMemPitch = cx * GetBits(dxgi);
+			dsd.SysMemPitch = cx * 4;
 			dsd.SysMemSlicePitch = 0;
 			lpSRD = &dsd;
 		}
-		if (FAILED(dx11.GetD3D()->CreateTexture2D(&textureDesc, lpSRD, &m_texture2D)))
+		HRESULT hRes = dx11.GetD3D()->CreateTexture2D(&textureDesc, lpSRD, &m_texture2D);
+		if (FAILED(hRes))
 			return FALSE;
-		if (FAILED(m_texture2D->QueryInterface(__uuidof(IDXGISurface1), (void**)&m_surface)))
+		D3D11_TEXTURE2D_DESC desc;
+		m_texture2D->GetDesc(&desc);
+		D3D11_SHADER_RESOURCE_VIEW_DESC dsrvd;
+		::ZeroMemory(&dsrvd, sizeof(dsrvd));
+		dsrvd.Format = desc.Format;
+		dsrvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		dsrvd.Texture2D.MipLevels = 1;
+		hRes = dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &dsrvd, &m_resourceView);
+		if (FAILED(hRes))
 			return FALSE;
-		D3D11_SHADER_RESOURCE_VIEW_DESC resourceDesc;
-		ZeroMemory(&resourceDesc, sizeof(resourceDesc));
-		resourceDesc.Format = dxgi;
-		resourceDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-		resourceDesc.Texture2D.MipLevels = 1;
-		if (FAILED(dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &resourceDesc, &m_resourceView)))
+		hRes = m_texture2D->QueryInterface(__uuidof(IDXGISurface1), (void**)&m_surface);
+		if (FAILED(hRes))
 			return FALSE;
 		return TRUE;
 	}

@@ -40,8 +40,7 @@ namespace DXCapture
 		HANDLE							m_hTextureHandle;
 		HMODULE							m_hD3D9;
 		TinyLock						m_lock;
-		TinyComPtr<ID3D11Device>		m_d3d11Device;
-		TinyComPtr<ID3D11DeviceContext>	m_d3d11Context;
+		TinyComPtr<ID3D10Device1>		m_d3d10;
 		TinyComPtr<IDirect3DSurface9>	m_dX9TextureSurface;
 		TinyDetour						m_dX9EndScene;
 		TinyDetour						m_dX9Reset;
@@ -53,7 +52,7 @@ namespace DXCapture
 		TinyEvent						m_stop;
 		TinyEvent						m_ready;
 		TinyEvent						m_exit;
-		TinyScopedLibrary				m_d3d11;
+		TinyScopedLibrary				m_d3d10_1;
 		TinyScopedLibrary				m_dxgi;
 		IO::TinySharedMemory			m_memery;
 		IO::TinySharedMemory			m_textureMemery;

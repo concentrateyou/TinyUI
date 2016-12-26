@@ -35,7 +35,7 @@ namespace DXFramework
 		swapDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 		swapDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 		swapDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-		swapDesc.Flags = 0;
+		swapDesc.Flags = DXGI_SWAP_CHAIN_FLAG_GDI_COMPATIBLE | DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 		HRESULT hRes = S_OK;
 		D3D_FEATURE_LEVEL level = D3D_FEATURE_LEVEL_11_0;
 		hRes = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, &level, 1, D3D11_SDK_VERSION, &swapDesc, &m_swap, &m_d3d, NULL, &m_immediateContext);

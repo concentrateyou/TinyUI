@@ -104,18 +104,15 @@ namespace DXCapture
 		m_bCapturing(FALSE),
 		m_bTextures(FALSE),
 		m_patchType(0),
-		m_hhk(NULL),
-		m_hD3D9(NULL)
+		m_hD3D9(NULL),
+		m_hhk(NULL)
 	{
 
 	}
 	DX9Capture::~DX9Capture()
 	{
 		if (m_hhk != NULL)
-		{
 			UnhookWindowsHookEx(m_hhk);
-			m_hhk = NULL;
-		}
 	}
 	DX9Capture& DX9Capture::Instance()
 	{
@@ -139,8 +136,8 @@ namespace DXCapture
 		m_hD3D9 = GetModuleHandle(szD3DPath);
 		if (m_hD3D9 == NULL)
 			return FALSE;
-		m_d3d11.Reset(TEXT("d3d11.dll"));
-		if (!m_d3d11.IsValid())
+		m_d3d10_1.Reset(TEXT("d3d10_1.dll"));
+		if (!m_d3d10_1.IsValid())
 			return FALSE;
 		m_dxgi.Reset(TEXT("dxgi.dll"));
 		if (!m_dxgi.IsValid())
@@ -148,8 +145,8 @@ namespace DXCapture
 		D3D9CREATEEXPROC d3d9CreateEx = (D3D9CREATEEXPROC)GetProcAddress(m_hD3D9, TEXT("Direct3DCreate9Ex"));
 		if (!d3d9CreateEx)
 			return FALSE;
-		TinyComPtr<IDirect3D9Ex> d3d9Ex;
-		if (FAILED(hRes = (*d3d9CreateEx)(D3D_SDK_VERSION, &d3d9Ex)))
+		TinyComPtr<IDirect3D9Ex> d3d9ex;
+		if (FAILED(hRes = (*d3d9CreateEx)(D3D_SDK_VERSION, &d3d9ex)))
 			return FALSE;
 		D3DPRESENT_PARAMETERS pp;
 		::ZeroMemory(&pp, sizeof(pp));
@@ -160,7 +157,7 @@ namespace DXCapture
 		pp.hDeviceWindow = hWND;
 		pp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 		TinyComPtr<IDirect3DDevice9Ex>	d3dDevice;
-		if (FAILED(hRes = d3d9Ex->CreateDeviceEx(D3DADAPTER_DEFAULT, D3DDEVTYPE_NULLREF, hWND, D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_NOWINDOWCHANGES, &pp, NULL, &d3dDevice)))
+		if (FAILED(hRes = d3d9ex->CreateDeviceEx(D3DADAPTER_DEFAULT, D3DDEVTYPE_NULLREF, hWND, D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_NOWINDOWCHANGES, &pp, NULL, &d3dDevice)))
 			return FALSE;
 		ULONG *vtable = *(ULONG**)d3dDevice.Ptr();
 		if (m_dX9EndScene.Initialize((FARPROC)*(vtable + 42), (FARPROC)DX9EndScene))
@@ -257,8 +254,7 @@ namespace DXCapture
 		m_bTextures = FALSE;
 		m_hTextureHandle = NULL;
 		m_dX9TextureSurface.Release();
-		m_d3d11Device.Release();
-		m_d3d11Context.Release();
+		m_d3d10.Release();
 		m_textureMemery.Unmap();
 		m_textureMemery.Close();
 	}
@@ -278,10 +274,7 @@ namespace DXCapture
 				sharedCapture->Size.cy = pp.BackBufferHeight;
 				sharedCapture->HwndCapture = pp.hDeviceWindow;
 				if (m_hhk != NULL)
-				{
 					UnhookWindowsHookEx(m_hhk);
-					m_hhk = NULL;
-				}
 				m_hhk = SetWindowsHookEx(WH_CBT, DX9Capture::CbtFilterHook, NULL, GetCurrentThreadId());
 				DX9Capture::Instance().m_dX9PresentEx.Initialize(GetVTable(pThis, (484 / 4)), (FARPROC)DX9PresentEx);
 				DX9Capture::Instance().m_dX9PresentEx.BeginDetour();
@@ -296,20 +289,11 @@ namespace DXCapture
 			}
 		}
 	}
-
-	const static D3D_FEATURE_LEVEL levels[] =
-	{
-		D3D_FEATURE_LEVEL_11_0,
-		D3D_FEATURE_LEVEL_10_1,
-		D3D_FEATURE_LEVEL_10_0,
-		D3D_FEATURE_LEVEL_9_3,
-	};
-
 	BOOL DX9Capture::DX9GPUHook(IDirect3DDevice9 *pThis)
 	{
 		ASSERT(m_hD3D9);
-		PFN_D3D11_CREATE_DEVICE d3d11CreateDevice = (PFN_D3D11_CREATE_DEVICE)m_d3d11.GetFunctionPointer(TEXT("D3D11CreateDevice"));
-		if (!d3d11CreateDevice)
+		PFN_D3D10_CREATE_DEVICE1 d3d10CreateDevice1 = (PFN_D3D10_CREATE_DEVICE1)m_d3d10_1.GetFunctionPointer(TEXT("D3D10CreateDevice1"));
+		if (!d3d10CreateDevice1)
 		{
 			return FALSE;
 		}
@@ -328,14 +312,16 @@ namespace DXCapture
 		{
 			return FALSE;
 		}
-		D3D_FEATURE_LEVEL level;
-		if (FAILED((*d3d11CreateDevice)(adapter, D3D_DRIVER_TYPE_UNKNOWN, NULL, 0, levels, sizeof(levels) / sizeof(D3D_FEATURE_LEVEL), D3D11_SDK_VERSION, &m_d3d11Device, &level, &m_d3d11Context)))
+		if (FAILED((*d3d10CreateDevice1)(adapter, D3D10_DRIVER_TYPE_HARDWARE, NULL, 0, D3D10_FEATURE_LEVEL_10_1, D3D10_1_SDK_VERSION, &m_d3d10)))
 		{
-			return FALSE;
+			if (FAILED((*d3d10CreateDevice1)(adapter, D3D10_DRIVER_TYPE_HARDWARE, NULL, 0, D3D10_FEATURE_LEVEL_9_3, D3D10_1_SDK_VERSION, &m_d3d10)))
+			{
+				return FALSE;
+			}
 		}
 		SharedCaptureDATA* sharedCapture = reinterpret_cast<SharedCaptureDATA*>(m_memery.Address());
 		ASSERT(sharedCapture);
-		D3D11_TEXTURE2D_DESC desc;
+		D3D10_TEXTURE2D_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
 		desc.Width = sharedCapture->Size.cx;
 		desc.Height = sharedCapture->Size.cy;
@@ -343,16 +329,16 @@ namespace DXCapture
 		desc.ArraySize = 1;
 		desc.Format = m_dxgiFormat;
 		desc.SampleDesc.Count = 1;
-		desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-		desc.Usage = D3D11_USAGE_DEFAULT;
-		desc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
-		TinyComPtr<ID3D11Texture2D> d3d11Texture2D;
-		if (FAILED(m_d3d11Device->CreateTexture2D(&desc, NULL, &d3d11Texture2D)))
+		desc.BindFlags = D3D10_BIND_RENDER_TARGET | D3D10_BIND_SHADER_RESOURCE;
+		desc.Usage = D3D10_USAGE_DEFAULT;
+		desc.MiscFlags = D3D10_RESOURCE_MISC_SHARED;
+		TinyComPtr<ID3D10Texture2D> d3d10Texture2D;
+		if (FAILED(m_d3d10->CreateTexture2D(&desc, NULL, &d3d10Texture2D)))
 		{
 			return FALSE;
 		}
 		TinyComPtr<IDXGIResource> dxgiResource;
-		if (FAILED(d3d11Texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&dxgiResource)))
+		if (FAILED(d3d10Texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&dxgiResource)))
 		{
 			return FALSE;
 		}
@@ -466,7 +452,6 @@ namespace DXCapture
 	}
 	LRESULT CALLBACK DX9Capture::CbtFilterHook(INT code, WPARAM wParam, LPARAM lParam)
 	{
-		ASSERT(DX9Capture::Instance().m_hhk);
 		if (code != HCBT_DESTROYWND)
 			return CallNextHookEx(DX9Capture::Instance().m_hhk, code, wParam, lParam);
 		SharedCaptureDATA* sharedCapture = (SharedCaptureDATA*)DX9Capture::Instance().m_memery.Address();
@@ -477,4 +462,70 @@ namespace DXCapture
 		}
 		return CallNextHookEx(DX9Capture::Instance().m_hhk, code, wParam, lParam);
 	}
+	/*BOOL DX9Capture::SaveBitmap(LPCSTR pzFile)
+	{
+	if (SharedTextureDATA* sharedTexture = (SharedTextureDATA*)m_textureMemery.Address())
+	{
+	if (sharedTexture->TextureHandle)
+	{
+	TinyComPtr<ID3D10Resource> resource;
+	HRESULT hRes = m_d3d10->OpenSharedResource(sharedTexture->TextureHandle, __uuidof(ID3D10Resource), (void**)&resource);
+	if (FAILED(hRes))
+	return FALSE;
+	TinyComPtr<ID3D10Texture2D> texture2D;
+	if (FAILED(hRes = resource->QueryInterface(__uuidof(ID3D10Texture2D), (void**)&texture2D)))
+	return FALSE;
+	D3D10_TEXTURE2D_DESC desc;
+	texture2D->GetDesc(&desc);
+
+	D3D10_TEXTURE2D_DESC desc1 = { 0 };
+	ZeroMemory(&desc1, sizeof(D3D10_TEXTURE2D_DESC));
+	desc1.Width = desc.Width;
+	desc1.Height = desc.Height;
+	desc1.MipLevels = 1;
+	desc1.ArraySize = 1;
+	desc1.Format = desc.Format;
+	desc1.MiscFlags = 0;
+	desc1.SampleDesc.Count = 1;
+	desc1.SampleDesc.Quality = 0;
+	desc1.Usage = D3D10_USAGE_STAGING;
+	desc1.CPUAccessFlags = D3D10_CPU_ACCESS_READ;
+
+	TinyComPtr<ID3D10Texture2D> d3d10Texture2D;
+	hRes = m_d3d10->CreateTexture2D(&desc1, NULL, &d3d10Texture2D);
+	if (FAILED(hRes))
+	{
+	return FALSE;
+	}
+	m_d3d10->CopyResource(d3d10Texture2D, resource);
+
+	D3D10_MAPPED_TEXTURE2D  mapTexture2D;
+	hRes = d3d10Texture2D->Map(0, D3D10_MAP_READ, 0, &mapTexture2D);
+	if (FAILED(hRes))
+	return FALSE;
+	INT linesize = ((((24 * desc.Width) + 31) / 32) * 4);
+	DWORD dwSize = desc.Width*desc.Height * 4;
+	BITMAPINFOHEADER bi = { 0 };
+	bi.biBitCount = 32;
+	bi.biCompression = BI_RGB;
+	bi.biWidth = desc.Width;
+	bi.biHeight = desc.Height;
+	bi.biPlanes = 1;
+	bi.biSize = sizeof(BITMAPINFOHEADER);
+	BITMAPFILEHEADER  bmfHeader = { 0 };
+	DWORD dwSizeofDIB = dwSize + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+	bmfHeader.bfOffBits = (DWORD)sizeof(BITMAPFILEHEADER) + (DWORD)sizeof(BITMAPINFOHEADER);
+	bmfHeader.bfSize = dwSizeofDIB;
+	bmfHeader.bfType = 0x4D42;
+	HANDLE hFile = CreateFile(pzFile, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	DWORD dwBytesWritten = 0;
+	WriteFile(hFile, (LPSTR)&bmfHeader, sizeof(BITMAPFILEHEADER), &dwBytesWritten, NULL);
+	WriteFile(hFile, (LPSTR)&bi, sizeof(BITMAPINFOHEADER), &dwBytesWritten, NULL);
+	WriteFile(hFile, (LPSTR)mapTexture2D.pData, dwSize, &dwBytesWritten, NULL);
+	CloseHandle(hFile);
+	texture2D->Unmap(0);
+	}
+	}
+	return TRUE;
+	}*/
 }

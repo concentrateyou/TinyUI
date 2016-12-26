@@ -58,12 +58,16 @@ namespace GameDetour
 		if (!m_bDX9Detour)
 		{
 			m_bDX9Detour = DX9Capture::Instance().Initialize(m_hWNDD3D);
+			if (m_bDX9Detour)
+				return TRUE;
 		}
 		if (!m_bDXGIDetour)
 		{
 			m_bDXGIDetour = DXGICapture::Instance().Initialize(m_hWNDD3D);
+			if (m_bDXGIDetour)
+				return TRUE;
 		}
-		return TRUE;
+		return FALSE;
 	}
 	DWORD WINAPI GameCapture::CaptureTask(LPVOID ps)
 	{

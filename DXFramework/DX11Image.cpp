@@ -26,12 +26,7 @@ namespace DXFramework
 			return FALSE;
 		m_scaleX = scaleX;
 		m_scaleY = scaleY;
-		return m_texture.CreateTexture(dx11, cx, cy, DXGI_FORMAT_B8G8R8X8_UNORM, NULL);
-	}
-	BOOL DX11Image::Fill(const DX11& dx11, const BYTE* pData)
-	{
-		ASSERT(m_texture.IsValid());
-		return m_texture.FillTexture(dx11, pData);
+		return m_texture.CreateTexture(dx11, cx, cy, NULL);
 	}
 	BOOL DX11Image::BitBlt(const DX11& dx11, const BYTE* pData)
 	{
@@ -54,6 +49,7 @@ namespace DXFramework
 		memcpy(pvBits, pData, bmi.bmiHeader.biSizeImage);
 		TinyUI::TinyMemDC mdc(hDC, hBitmap);
 		::BitBlt(hDC, 0, 0, size.cx, size.cy, mdc, 0, 0, SRCCOPY);
+		SAFE_DELETE_OBJECT(hBitmap);
 		bRes = m_texture.ReleaseDC();
 		if (!bRes)
 			return FALSE;
