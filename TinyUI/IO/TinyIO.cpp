@@ -14,14 +14,14 @@ namespace TinyUI
 		TinyFile::TinyFile()
 		{
 			this->m_hFile = NULL;
-			this->m_pzFileName = NULL;
+			memset(m_pzFileName, 0, sizeof(TCHAR)*MAX_PATH);
 			memset(m_pzPath, 0, sizeof(TCHAR)*MAX_PATH);
 			memset(m_pzFileTitle, 0, sizeof(TCHAR)*MAX_PATH);
 		}
 		TinyFile::TinyFile(HANDLE hFile)
 		{
 			this->m_hFile = hFile;
-			this->m_pzFileName = NULL;
+			memset(m_pzFileName, 0, sizeof(TCHAR)*MAX_PATH);
 			memset(m_pzPath, 0, sizeof(TCHAR)*MAX_PATH);
 			memset(m_pzFileTitle, 0, sizeof(TCHAR)*MAX_PATH);
 		}
@@ -36,7 +36,7 @@ namespace TinyUI
 		BOOL TinyFile::Create(LPCTSTR lpszFileName, DWORD dwFlagsAndAttributes)
 		{
 			m_hFile = INVALID_HANDLE_VALUE;
-			m_pzFileName = lpszFileName;
+			strcpy_s(m_pzFileName, MAX_PATH, lpszFileName);
 			dwFlagsAndAttributes |= FILE_ATTRIBUTE_NORMAL;
 			HANDLE hFile = CreateFile(lpszFileName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, dwFlagsAndAttributes, NULL);
 			if (hFile && hFile != INVALID_HANDLE_VALUE)
@@ -49,9 +49,9 @@ namespace TinyUI
 		BOOL TinyFile::Open(LPCTSTR lpszFileName, DWORD dwDesiredAccess, DWORD dwShareMode, DWORD dwFlagsAndAttributes)
 		{
 			m_hFile = INVALID_HANDLE_VALUE;
-			m_pzFileName = lpszFileName;
+			strcpy_s(m_pzFileName, MAX_PATH, lpszFileName);
 			dwFlagsAndAttributes |= FILE_ATTRIBUTE_NORMAL;
-			HANDLE hFile = CreateFile(lpszFileName, dwDesiredAccess, dwShareMode, NULL, OPEN_EXISTING, dwFlagsAndAttributes, NULL);
+			HANDLE hFile = CreateFile(lpszFileName, dwDesiredAccess, dwShareMode, NULL, OPEN_ALWAYS, dwFlagsAndAttributes, NULL);
 			if (hFile && hFile != INVALID_HANDLE_VALUE)
 			{
 				m_hFile = hFile;
@@ -188,7 +188,6 @@ namespace TinyUI
 			if (hRes)
 			{
 				m_hFile = INVALID_HANDLE_VALUE;
-				m_pzFileName = NULL;
 			}
 			return hRes;
 		}

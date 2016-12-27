@@ -1,5 +1,6 @@
 #include "../stdafx.h"
 #include "TinyLogging.h"
+#include "../IO/TinyIO.h"
 #include <algorithm>
 #include <cstring>
 #include <ctime>
@@ -9,6 +10,65 @@
 
 namespace TinyUI
 {
+	IO::TinyFile g_logFile;
+	string g_log;
+
+	string GetDefaultLogFile()
+	{
+		CHAR module[MAX_PATH];
+		GetModuleFileName(NULL, module, MAX_PATH);
+		string log(module);
+		string::size_type backslash = log.rfind('\\', log.size());
+		if (backslash != string::npos)
+		{
+			log.erase(backslash + 1);
+		}
+		log += TEXT("debug.log");
+		return log;
+	}
+	wstring GetDefaultLogFileW()
+	{
+		WCHAR module[MAX_PATH];
+		GetModuleFileNameW(NULL, module, MAX_PATH);
+		wstring log(module);
+		wstring::size_type backslash = log.rfind('\\', log.size());
+		if (backslash != wstring::npos)
+		{
+			log.erase(backslash + 1);
+		}
+		log += TEXT(L"debug.log");
+		return log;
+	}
+	BOOL InitializeLogFile(LPCSTR pzFile)
+	{
+		if (g_logFile.Handle() != NULL)
+			return TRUE;
+		g_log = (pzFile == NULL ? GetDefaultLogFile() : pzFile);
+		if (!g_logFile.Open(g_log.c_str(), FILE_APPEND_DATA, FILE_SHARE_READ | FILE_SHARE_WRITE, FILE_ATTRIBUTE_NORMAL))
+		{
+			CHAR directory[MAX_PATH];
+			directory[0] = 0;
+			DWORD s = ::GetCurrentDirectory(arraysize(directory), directory);
+			if (s == 0 || s > arraysize(directory))
+				return FALSE;
+			g_log = directory;
+			if (g_log.back() != TEXT('\\'))
+				g_log += TEXT("\\");
+			g_log += TEXT("debug.log");
+			if (!g_logFile.Open(g_log.c_str(), FILE_APPEND_DATA, FILE_SHARE_READ | FILE_SHARE_WRITE, FILE_ATTRIBUTE_NORMAL))
+				return FALSE;
+		}
+		return TRUE;
+	}
+	BOOL CloseLogFile()
+	{
+		return g_logFile.Close();
+	}
+	void SetLogFile(LPCSTR pzFile)
+	{
+		g_log = pzFile;
+	}
+	//////////////////////////////////////////////////////////////////////////
 	SymbolContext::SymbolContext() : m_error(ERROR_SUCCESS)
 	{
 		SymSetOptions(SYMOPT_DEFERRED_LOADS |
@@ -172,24 +232,6 @@ namespace TinyUI
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	string GetDefaultLogFile()
-	{
-		CHAR moduleName[MAX_PATH];
-		GetModuleFileName(NULL, moduleName, MAX_PATH);
-		string name = moduleName;
-		size_t last_backslash = name.rfind('\\', name.size());
-		if (last_backslash != string::npos)
-		{
-			name.erase(last_backslash + 1);
-		}
-#if _DEBUG
-		name += TEXT("debug.log");
-#else
-		name += TEXT("debug.dmp");
-#endif
-		return name;
-	}
-
 	LogException::LogException(LPCSTR pFile, INT line)
 		:m_pFileName(pFile),
 		m_line(line),
@@ -197,7 +239,6 @@ namespace TinyUI
 	{
 		Initialize(pFile, line);
 	}
-
 	BOOL LogException::Initialize(LPCSTR pFileName, INT line)
 	{
 		std::string name(pFileName);
@@ -276,7 +317,6 @@ namespace TinyUI
 		MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), m_hFile, mdt, &mei, NULL, NULL);
 #endif
 	}
-
 	LogException::~LogException()
 	{
 		if (m_hFile &&
@@ -287,23 +327,25 @@ namespace TinyUI
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	const char* const LogSeverityNames[LOG_NUM_SEVERITIES] =
+	const CHAR* const LogSeverityNames[LOG_NUM_SEVERITIES] =
 	{
 		"INFO", "WARNING", "ERROR", "FATAL" };
 
-	const char* LogSeverityName(int severity)
+	const CHAR* LogSeverityName(INT severity)
 	{
 		if (severity >= 0 && severity < LOG_NUM_SEVERITIES)
 			return LogSeverityNames[severity];
 		return "UNKNOWN";
 	}
-
 	LogMessage::LogMessage(LPCSTR pzFile, INT line, LogSeverity severity)
 		:m_severity(severity),
-		m_line(line),
-		m_szFile(pzFile)
+		m_line(line)
 	{
 		Initialize(pzFile, line);
+	}
+	ostream& LogMessage::stream()
+	{
+		return m_stream;
 	}
 	void LogMessage::Initialize(LPCSTR pzFile, INT line)
 	{
@@ -316,7 +358,7 @@ namespace TinyUI
 		m_stream << '[';
 		m_stream << GetCurrentProcessId() << ':';
 		m_stream << GetCurrentThreadId() << ':';
-		time_t t = time(nullptr);
+		time_t t = time(NULL);
 		struct tm local_time = { 0 };
 		localtime_s(&local_time, &t);
 		struct tm* tm_time = &local_time;
@@ -336,8 +378,15 @@ namespace TinyUI
 	}
 	LogMessage::~LogMessage()
 	{
-
+		m_stream << std::endl;
+		string newline(m_stream.str());
+		if (InitializeLogFile(NULL))
+		{
+			g_logFile.Write(static_cast<const void*>(newline.c_str()), static_cast<DWORD>(newline.length()));
+			g_logFile.Flush();
+		}
 	}
+	//////////////////////////////////////////////////////////////////////////
 }
 
 

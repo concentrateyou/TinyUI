@@ -2,6 +2,7 @@
 //
 
 #include "stdafx.h"
+#include <iostream>
 #include "DXApp.h"
 #include "DXApplication.h"
 using namespace DXFramework;

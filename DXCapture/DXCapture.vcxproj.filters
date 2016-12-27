@@ -36,13 +36,13 @@
     <ClInclude Include="DX11Capture.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGLCapture.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="DX101Capture.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DX8Capture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DXGICapture.h">
@@ -65,13 +65,13 @@
     <ClCompile Include="DX11Capture.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="OpenGLCapture.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="DX101Capture.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DX8Capture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DXGICapture.cpp">

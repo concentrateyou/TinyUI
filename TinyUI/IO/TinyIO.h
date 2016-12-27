@@ -72,7 +72,7 @@ namespace TinyUI
 			static BOOL GetFileNameFromHandle(HANDLE hFile, LPTSTR pszFileName);//获得文件的绝对路径
 		protected:
 			HANDLE	m_hFile;
-			LPCTSTR m_pzFileName;
+			TCHAR	m_pzFileName[MAX_PATH];
 			TCHAR	m_pzFileTitle[MAX_PATH];
 			TCHAR	m_pzPath[MAX_PATH];
 		};

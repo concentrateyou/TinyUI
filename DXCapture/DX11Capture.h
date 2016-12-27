@@ -1,22 +1,21 @@
 #pragma once
-#include "DXCommon.h"
+#include "DX.h"
 
 namespace DXCapture
 {
+	HRESULT STDMETHODCALLTYPE DX11_DXGISwapPresent(IDXGISwapChain *swap, UINT syncInterval, UINT flags);
+	HRESULT STDMETHODCALLTYPE DX11_DXGISwapResizeBuffers(IDXGISwapChain *swap, UINT bufferCount, UINT width, UINT height, DXGI_FORMAT giFormat, UINT flags);
+
 	class DX11Capture
 	{
 	public:
-		DX11Capture();
+		DX11Capture(DX& dx);
 		~DX11Capture();
 		BOOL Initialize(HWND hWND);
 		void Reset(BOOL bRelease = TRUE);
 		BOOL Setup(IDXGISwapChain *swap);
 		BOOL Render(IDXGISwapChain *pThis, UINT flags);
 		BOOL DX11GPUHook(ID3D11Device *pThis);
-		static DX11Capture& Instance();
-	private:
-		static HRESULT STDMETHODCALLTYPE DXGISwapPresent(IDXGISwapChain *swap, UINT syncInterval, UINT flags);
-		static HRESULT STDMETHODCALLTYPE DXGISwapResizeBuffers(IDXGISwapChain *swap, UINT bufferCount, UINT width, UINT height, DXGI_FORMAT giFormat, UINT flags);
 	public:
 		DXGI_FORMAT						m_dxgiFormat;
 		BOOL							m_bDetour;
@@ -28,6 +27,8 @@ namespace DXCapture
 		TinyComPtr<ID3D11Resource>		m_resource;
 		TinyDetour						m_dxPresent;
 		TinyDetour						m_dxResizeBuffers;
+		DX&								m_dx;
 	};
+	SELECTANY extern DX11Capture g_dx11(g_dx);
 }
 

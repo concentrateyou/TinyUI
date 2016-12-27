@@ -3,12 +3,44 @@
 
 namespace DXCapture
 {
-	DX11Capture::DX11Capture()
+	HRESULT STDMETHODCALLTYPE DX11_DXGISwapPresent(IDXGISwapChain *pThis, UINT syncInterval, UINT flags)
+	{
+		g_dx11.m_dxPresent.EndDetour();
+		{
+			TinyAutoLock lock(g_dx11.m_lock);
+			if (!g_dx11.m_bDetour)
+			{
+				g_dx11.m_bDetour = TRUE;
+				g_dx11.Setup(pThis);
+			}
+			if ((flags & DXGI_PRESENT_TEST) == 0)
+			{
+				g_dx11.Render(pThis, flags);
+			}
+		}
+		HRESULT hRes = pThis->Present(syncInterval, flags);
+		g_dx11.m_dxPresent.BeginDetour();
+		return hRes;
+	}
+	HRESULT STDMETHODCALLTYPE DX11_DXGISwapResizeBuffers(IDXGISwapChain *pThis, UINT bufferCount, UINT width, UINT height, DXGI_FORMAT giFormat, UINT flags)
+	{
+		g_dx11.m_dxResizeBuffers.EndDetour();
+		{
+			TinyAutoLock lock(g_dx11.m_lock);
+			g_dx11.Reset();
+		}
+		HRESULT hRes = pThis->ResizeBuffers(bufferCount, width, height, giFormat, flags);
+		g_dx11.m_dxResizeBuffers.BeginDetour();
+		return hRes;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	DX11Capture::DX11Capture(DX& dx)
 		:m_dxgiFormat(DXGI_FORMAT_UNKNOWN),
 		m_hTextureHandle(NULL),
 		m_bDetour(FALSE),
 		m_bCapturing(FALSE),
-		m_bTextures(FALSE)
+		m_bTextures(FALSE),
+		m_dx(dx)
 	{
 	}
 
@@ -16,15 +48,8 @@ namespace DXCapture
 	{
 
 	}
-	DX11Capture& DX11Capture::Instance()
-	{
-		static DX11Capture instance;
-		return instance;
-	}
 	BOOL DX11Capture::Initialize(HWND hWND)
 	{
-		if (!DXGlobal::Instance().BuildEvents())
-			return FALSE;
 		HRESULT hRes = S_OK;
 		CHAR szD3DPath[MAX_PATH];
 		if (FAILED(hRes = SHGetFolderPath(NULL, CSIDL_SYSTEM, NULL, SHGFP_TYPE_CURRENT, szD3DPath)))
@@ -69,11 +94,11 @@ namespace DXCapture
 		if (FAILED(hRes = (*d3d11Create)(NULL, D3D_DRIVER_TYPE_NULL, NULL, 0, levels, 6, D3D11_SDK_VERSION, &swapDesc, &swap, &device, &level, &immediateContext)))
 			return FALSE;
 		ULONG *vtable = *(ULONG**)swap.Ptr();
-		if (!m_dxPresent.Initialize((FARPROC)*(vtable + (32 / 4)), (FARPROC)DXGISwapPresent))
+		if (!m_dxPresent.Initialize((FARPROC)*(vtable + (32 / 4)), (FARPROC)DX11_DXGISwapPresent))
 			return FALSE;
 		if (!m_dxPresent.BeginDetour())
 			return FALSE;
-		if (!m_dxResizeBuffers.Initialize((FARPROC)*(vtable + (52 / 4)), (FARPROC)DXGISwapResizeBuffers))
+		if (!m_dxResizeBuffers.Initialize((FARPROC)*(vtable + (52 / 4)), (FARPROC)DX11_DXGISwapResizeBuffers))
 			return FALSE;
 		if (!m_dxResizeBuffers.BeginDetour())
 			return FALSE;
@@ -101,7 +126,7 @@ namespace DXCapture
 		hRes = swap->GetDesc(&scd);
 		if (FAILED(hRes))
 			return FALSE;
-		SharedCaptureDATA* sharedCapture = DXGlobal::Instance().GetSharedCaptureDATA();
+		SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();
 		ASSERT(sharedCapture);
 		sharedCapture->Format = (DWORD)scd.BufferDesc.Format;
 		sharedCapture->Size.cx = scd.BufferDesc.Width;
@@ -109,21 +134,21 @@ namespace DXCapture
 		sharedCapture->HwndCapture = scd.OutputWindow;
 		sharedCapture->bMultisample = scd.SampleDesc.Count > 1;
 		m_dxgiFormat = scd.BufferDesc.Format;
-		DXGlobal::Instance().Hook();
+		m_dx.SetWindowsHook();
 		return TRUE;
 	}
 	BOOL DX11Capture::Render(IDXGISwapChain *swap, UINT flags)
 	{
 		HRESULT hRes = S_OK;
-		SharedCaptureDATA* sharedCapture = DXGlobal::Instance().GetSharedCaptureDATA();
+		SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();
 		ASSERT(sharedCapture);
-		if (m_bCapturing && DXGlobal::Instance().m_stop && DXGlobal::Instance().m_stop.Lock(0))
+		if (m_bCapturing && m_dx.m_stop.Lock(0))
 		{
 			m_bCapturing = FALSE;
 			Reset();
 			return FALSE;
 		}
-		if (!m_bCapturing && DXGlobal::Instance().m_start && DXGlobal::Instance().m_start.Lock(0))
+		if (!m_bCapturing && m_dx.m_start.Lock(0))
 		{
 			m_bCapturing = TRUE;
 		}
@@ -158,7 +183,7 @@ namespace DXCapture
 	BOOL DX11Capture::DX11GPUHook(ID3D11Device *device)
 	{
 		HRESULT hRes = S_OK;
-		SharedCaptureDATA* sharedCapture = DXGlobal::Instance().GetSharedCaptureDATA();
+		SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();
 		ASSERT(sharedCapture);
 		D3D11_TEXTURE2D_DESC texGameDesc;
 		ZeroMemory(&texGameDesc, sizeof(texGameDesc));
@@ -181,42 +206,11 @@ namespace DXCapture
 			return FALSE;
 		if (FAILED(hRes = resource->GetSharedHandle(&m_hTextureHandle)))
 			return FALSE;
-		if (SharedTextureDATA* sharedTexture = DXGlobal::Instance().GetSharedTextureDATA())
-		{
-			sharedTexture->TextureHandle = m_hTextureHandle;
-		}
+		SharedTextureDATA* sharedTexture = m_dx.GetSharedTextureDATA();
+		sharedTexture->TextureHandle = m_hTextureHandle;
 		sharedCapture->CaptureType = CAPTURETYPE_SHAREDTEX;
 		sharedCapture->bFlip = FALSE;
-		if (DXGlobal::Instance().m_ready)
-			DXGlobal::Instance().m_ready.SetEvent();
+		m_dx.m_ready.SetEvent();
 		return TRUE;
-	}
-	HRESULT STDMETHODCALLTYPE DX11Capture::DXGISwapPresent(IDXGISwapChain *pThis, UINT syncInterval, UINT flags)
-	{
-		DX11Capture::Instance().m_dxPresent.EndDetour();
-		DX11Capture::Instance().m_lock.Lock();
-		if (!DX11Capture::Instance().m_bDetour)
-		{
-			DX11Capture::Instance().m_bDetour = TRUE;
-			DX11Capture::Instance().Setup(pThis);
-		}
-		if ((flags & DXGI_PRESENT_TEST) == 0)
-		{
-			DX11Capture::Instance().Render(pThis, flags);
-		}
-		DX11Capture::Instance().m_lock.Unlock();
-		HRESULT hRes = pThis->Present(syncInterval, flags);
-		DX11Capture::Instance().m_dxPresent.BeginDetour();
-		return hRes;
-	}
-	HRESULT STDMETHODCALLTYPE DX11Capture::DXGISwapResizeBuffers(IDXGISwapChain *pThis, UINT bufferCount, UINT width, UINT height, DXGI_FORMAT giFormat, UINT flags)
-	{
-		DX11Capture::Instance().m_dxResizeBuffers.EndDetour();
-		DX11Capture::Instance().m_lock.Lock();
-		DX11Capture::Instance().Reset();
-		DX11Capture::Instance().m_lock.Unlock();
-		HRESULT hRes = pThis->ResizeBuffers(bufferCount, width, height, giFormat, flags);
-		DX11Capture::Instance().m_dxResizeBuffers.BeginDetour();
-		return hRes;
 	}
 }

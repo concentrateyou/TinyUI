@@ -1,5 +1,7 @@
 #pragma once
 #include "Common.h"
+#include "IO/TinyTaskBase.h"
+using namespace TinyUI;
 
 namespace GameDetour
 {
@@ -18,15 +20,15 @@ namespace GameDetour
 		BOOL Attach(HMODULE hModule);
 		void Detach();
 	private:
-		BOOL TryCapture();
+		BOOL BeginCapture();
+		void EndCapture();
+		void OnMessagePump();
 	private:
-		static DWORD WINAPI CaptureTask(LPVOID ps);
-	private:
-		HANDLE					m_hTask;
-		HINSTANCE				m_hInstance;
-		HWND					m_hWNDD3D;
-		BOOL					m_bDX9Detour;
-		BOOL					m_bDXGIDetour;
+		IO::TinyTaskBase	m_task;
+		HINSTANCE			m_hInstance;
+		HWND				m_hWNDD3D;
+		BOOL				m_bDX9Detour;
+		BOOL				m_bDXGIDetour;
 	};
 }
 

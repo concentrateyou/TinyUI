@@ -6,6 +6,7 @@
 #include <iostream>
 #include <cassert>
 #include <io.h>
+#include <yvals.h>
 #pragma comment(lib, "dbghelp.lib")
 
 namespace TinyUI
@@ -48,7 +49,6 @@ namespace TinyUI
 		void* m_trace[MaxTraces];
 		size_t m_count;
 	};
-	string GetDefaultLogFile();
 	/// <summary>
 	/// 异常日志类
 	/// </summary>
@@ -83,16 +83,21 @@ namespace TinyUI
 		DISALLOW_COPY_AND_ASSIGN(LogMessage)
 	public:
 		LogMessage(LPCSTR pzFile, INT line, LogSeverity severity);
-		~LogMessage();
-		std::ostream& stream() { return m_stream; }
+		virtual ~LogMessage();
+	public:
+		ostream& stream();
 	private:
 		void Initialize(LPCSTR pzFile, INT line);
 	private:
 		LogSeverity			m_severity;
-		std::ostringstream	m_stream;
-		string				m_szFile;
+		ostringstream		m_stream;
 		INT					m_line;
 	};
+
+	void SetLogFile(LPCSTR pzFile);
+
+#define LOG(severity) \
+	 LogMessage(__FILE__, __LINE__, LOG_##severity).stream()
 }
 
 
