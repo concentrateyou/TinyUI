@@ -1546,7 +1546,7 @@ namespace TinyUI
 	BOOL TinyBitmap::CreateDiscardableBitmap(HDC hDC, INT nWidth, INT nHeight)
 	{
 		ASSERT(hDC != NULL);
-		return Attach(::CreateCompatibleBitmap(hDC, nWidth, nHeight));
+		return Attach(::CreateDiscardableBitmap(hDC, nWidth, nHeight));
 	}
 	INT	TinyBitmap::GetBitmap(BITMAP* pBitMap)
 	{
