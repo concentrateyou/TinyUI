@@ -1,4 +1,5 @@
 #pragma once
+#include <d3d9.h>
 #include <D3D10_1.h>
 #include <D3DX10.h>
 #include <d3d11.h>
@@ -48,4 +49,6 @@ namespace DXCapture
 		HANDLE      TextureHandle;
 	}SharedTextureDATA;
 #pragma pack(pop)
+
+	DXGI_FORMAT GetDXGIFormat(D3DFORMAT format);
 }

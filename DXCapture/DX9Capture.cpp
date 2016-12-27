@@ -60,19 +60,6 @@ namespace DXCapture
 		}
 		return FALSE;
 	}
-	DXGI_FORMAT GetDXGIFormat(D3DFORMAT format)
-	{
-		switch (format)
-		{
-		case D3DFMT_A2B10G10R10:    return DXGI_FORMAT_R10G10B10A2_UNORM;
-		case D3DFMT_A8R8G8B8:       return DXGI_FORMAT_B8G8R8A8_UNORM;
-		case D3DFMT_X8R8G8B8:       return DXGI_FORMAT_B8G8R8X8_UNORM;
-		case D3DFMT_A1R5G5B5:       return DXGI_FORMAT_B5G5R5A1_UNORM;
-		case D3DFMT_R5G6B5:         return DXGI_FORMAT_B5G6R5_UNORM;
-		}
-
-		return DXGI_FORMAT_UNKNOWN;
-	}
 	INT GetDX9PatchType(HMODULE hModule)
 	{
 		LPBYTE lpBaseAddress = (LPBYTE)hModule;
@@ -118,7 +105,7 @@ namespace DXCapture
 	//////////////////////////////////////////////////////////////////////////
 	HRESULT STDMETHODCALLTYPE DX9EndScene(IDirect3DDevice9 *pThis)
 	{
-		//LOG(INFO) << "DX9EndScene OK\n";
+		LOG(INFO) << "DX9EndScene OK\n";
 		g_dx9.m_dX9EndScene.EndDetour();
 		{
 			TinyAutoLock lock(g_dx9.m_lock);
@@ -135,7 +122,7 @@ namespace DXCapture
 	}
 	HRESULT STDMETHODCALLTYPE DX9Present(IDirect3DDevice9 *pThis, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion)
 	{
-		//LOG(INFO) << "DX9Present OK\n";
+		LOG(INFO) << "DX9Present OK\n";
 		g_dx9.m_dX9Present.EndDetour();
 		{
 			TinyAutoLock lock(g_dx9.m_lock);
@@ -147,7 +134,7 @@ namespace DXCapture
 	}
 	HRESULT STDMETHODCALLTYPE DX9PresentEx(IDirect3DDevice9Ex *pThis, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion, DWORD dwFlags)
 	{
-		//LOG(INFO) << "DX9PresentEx OK\n";
+		LOG(INFO) << "DX9PresentEx OK\n";
 		g_dx9.m_dX9PresentEx.EndDetour();
 		{
 			TinyAutoLock lock(g_dx9.m_lock);
@@ -159,7 +146,7 @@ namespace DXCapture
 	}
 	HRESULT STDMETHODCALLTYPE DX9SwapPresent(IDirect3DSwapChain9 *pThis, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion, DWORD dwFlags)
 	{
-		//LOG(INFO) << "DX9SwapPresent OK\n";
+		LOG(INFO) << "DX9SwapPresent OK\n";
 		g_dx9.m_dX9SwapPresent.EndDetour();
 		{
 			TinyAutoLock lock(g_dx9.m_lock);
@@ -175,7 +162,7 @@ namespace DXCapture
 	}
 	HRESULT STDMETHODCALLTYPE DX9Reset(IDirect3DDevice9 *pThis, D3DPRESENT_PARAMETERS *params)
 	{
-		//LOG(INFO) << "DX9Reset OK\n";
+		LOG(INFO) << "DX9Reset OK\n";
 		g_dx9.m_dX9Reset.EndDetour();
 		{
 			TinyAutoLock lock(g_dx9.m_lock);
@@ -187,7 +174,7 @@ namespace DXCapture
 	}
 	HRESULT STDMETHODCALLTYPE DX9ResetEx(IDirect3DDevice9Ex *pThis, D3DPRESENT_PARAMETERS *params, D3DDISPLAYMODEEX *fullscreenData)
 	{
-		//LOG(INFO) << "DX9ResetEx OK\n";
+		LOG(INFO) << "DX9ResetEx OK\n";
 		g_dx9.m_dX9ResetEx.EndDetour();
 		{
 			TinyAutoLock lock(g_dx9.m_lock);
@@ -227,21 +214,25 @@ namespace DXCapture
 		m_hD3D9 = GetModuleHandle(szD3DPath);
 		if (m_hD3D9 == NULL)
 		{
+			LOG(INFO) << "DX9Capture::d3d9 FAIL\n";
 			return FALSE;
 		}
 		m_d3d10_1.Reset(TEXT("d3d10_1.dll"));
 		if (!m_d3d10_1.IsValid())
 		{
+			LOG(INFO) << "DX9Capture::d3d10_1 FAIL\n";
 			return FALSE;
 		}
 		m_dxgi.Reset(TEXT("dxgi.dll"));
 		if (!m_dxgi.IsValid())
 		{
+			LOG(INFO) << "DX9Capture::dxgi FAIL\n";
 			return FALSE;
 		}
 		D3D9CREATEEXPROC d3d9CreateEx = (D3D9CREATEEXPROC)GetProcAddress(m_hD3D9, TEXT("Direct3DCreate9Ex"));
 		if (!d3d9CreateEx)
 		{
+			LOG(INFO) << "DX9Capture::d3d9CreateEx FAIL\n";
 			return FALSE;
 		}
 		TinyComPtr<IDirect3D9Ex> d3d9ex;

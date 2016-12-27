@@ -1,6 +1,5 @@
 #pragma once
 #include "DX.h"
-#include <d3d9.h>
 
 namespace DXCapture
 {
