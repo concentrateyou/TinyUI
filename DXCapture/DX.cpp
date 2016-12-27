@@ -14,7 +14,7 @@ namespace DXCapture
 		if (sharedCapture->HwndCapture == reinterpret_cast<HWND>(wParam))
 		{
 			g_dx9.Reset(FALSE);
-			g_dxgi.Reset(FALSE);
+			g_dxgi.Reset(TRUE);
 			g_dx.m_exit.SetEvent();
 		}
 		return CallNextHookEx(g_dx.m_hhk, code, wParam, lParam);

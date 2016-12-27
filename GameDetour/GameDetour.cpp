@@ -39,18 +39,23 @@ namespace GameDetour
 		PostQuitMessage(0);
 		m_task.Close(INFINITE);
 	}
-	BOOL GameCapture::BeginCapture()
+	void GameCapture::BeginCapture()
 	{
-		if (!g_dx.Initialize())
-			return FALSE;
-		LOG(INFO) << "g_dx.Initialize() OK\n";
-		LOG(INFO) << "m_bDX9Detour:" << m_bDX9Detour << "\n";
-		if (!m_bDX9Detour)
+		if (g_dx.Initialize())
 		{
-			LOG(INFO) << "Begin g_dx9.Initialize\n";
-			m_bDX9Detour = g_dx9.Initialize(m_hWNDD3D);
+			LOG(INFO) << "g_dx.Initialize() OK\n";
+			LOG(INFO) << "m_bDX9Detour:" << m_bDX9Detour << "\n";
+			if (!m_bDX9Detour)
+			{
+				LOG(INFO) << "Begin g_dx9.Initialize\n";
+				m_bDX9Detour = g_dx9.Initialize(m_hWNDD3D);
+			}
+			if (!m_bDXGIDetour)
+			{
+				LOG(INFO) << "Begin g_dxgi.Initialize\n";
+				m_bDXGIDetour = g_dxgi.Initialize(m_hWNDD3D);
+			}
 		}
-		return m_bDX9Detour;
 	}
 	void GameCapture::EndCapture()
 	{

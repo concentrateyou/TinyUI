@@ -21,13 +21,23 @@ namespace DXCapture
 	{
 		m_bDX10 = m_dx10.Initialize(hWND);
 		if (m_bDX10)
+		{
+			LOG(INFO) << "m_dx10.Initialize OK\n";
 			return TRUE;
+		}
+			
 		m_bDX101 = m_dx101.Initialize(hWND);
 		if (m_bDX101)
+		{
+			LOG(INFO) << "m_dx101.Initialize OK\n";
 			return TRUE;
+		}
 		m_bDX11 = m_dx11.Initialize(hWND);
 		if (m_bDX11)
+		{
+			LOG(INFO) << "m_dx11.Initialize OK\n";
 			return TRUE;
+		}
 		return FALSE;
 	}
 	void DXGICapture::Reset(BOOL bRelease)

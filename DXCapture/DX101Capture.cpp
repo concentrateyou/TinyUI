@@ -5,6 +5,7 @@ namespace DXCapture
 {
 	HRESULT STDMETHODCALLTYPE DX101_DXGISwapPresent(IDXGISwapChain *pThis, UINT syncInterval, UINT flags)
 	{
+		//LOG(INFO) << "DX101_DXGISwapPresent OK\n";
 		g_dx101.m_dxPresent.EndDetour();
 		{
 			TinyAutoLock lock(g_dx101.m_lock);
@@ -24,6 +25,7 @@ namespace DXCapture
 	}
 	HRESULT STDMETHODCALLTYPE DX101_DXGISwapResizeBuffers(IDXGISwapChain *pThis, UINT bufferCount, UINT width, UINT height, DXGI_FORMAT giFormat, UINT flags)
 	{
+		//LOG(INFO) << "DX101_DXGISwapResizeBuffers OK\n";
 		g_dx101.m_dxResizeBuffers.EndDetour();
 		{
 			TinyAutoLock lock(g_dx101.m_lock);
@@ -90,6 +92,7 @@ namespace DXCapture
 			return FALSE;
 		if (!m_dxResizeBuffers.BeginDetour())
 			return FALSE;
+		LOG(INFO) << "DX101Capture::Initialize OK\n";
 		return TRUE;
 	}
 	void DX101Capture::Reset(BOOL bRelease)

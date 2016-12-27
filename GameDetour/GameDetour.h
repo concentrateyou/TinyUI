@@ -20,7 +20,7 @@ namespace GameDetour
 		BOOL Attach(HMODULE hModule);
 		void Detach();
 	private:
-		BOOL BeginCapture();
+		void BeginCapture();
 		void EndCapture();
 		void OnMessagePump();
 	private:

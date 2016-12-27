@@ -5,6 +5,7 @@ namespace DXCapture
 {
 	HRESULT STDMETHODCALLTYPE DX10_DXGISwapPresent(IDXGISwapChain *swap, UINT syncInterval, UINT flags)
 	{
+		//LOG(INFO) << "DX10_DXGISwapPresent OK\n";
 		g_dx10.m_dxPresent.EndDetour();
 		{
 			TinyAutoLock lock(g_dx10.m_lock);
@@ -24,6 +25,7 @@ namespace DXCapture
 	}
 	HRESULT STDMETHODCALLTYPE DX10_DXGISwapResizeBuffers(IDXGISwapChain *swap, UINT bufferCount, UINT width, UINT height, DXGI_FORMAT giFormat, UINT flags)
 	{
+		//LOG(INFO) << "DX10_DXGISwapResizeBuffers OK\n";
 		g_dx10.m_dxResizeBuffers.EndDetour();
 		{
 			TinyAutoLock lock(g_dx10.m_lock);
@@ -92,6 +94,7 @@ namespace DXCapture
 			return FALSE;
 		if (!m_dxResizeBuffers.BeginDetour())
 			return FALSE;
+		LOG(INFO) << "DX10Capture::Initialize OK\n";
 		return TRUE;
 	}
 	void DX10Capture::Reset(BOOL bRelease)
@@ -100,9 +103,13 @@ namespace DXCapture
 		m_bTextures = FALSE;
 		m_hTextureHandle = NULL;
 		if (bRelease)
+		{
 			m_resource.Release();
+		}
 		else
+		{
 			m_resource.Detach();
+		}
 	}
 	BOOL DX10Capture::Setup(IDXGISwapChain *swap)
 	{
