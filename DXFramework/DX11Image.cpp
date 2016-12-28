@@ -187,18 +187,18 @@ namespace DXFramework
 	}
 	BOOL SharedTexture::Initialize(const DX11& dx11, INT scaleX, INT scaleY)
 	{
-		m_textureMemery.Unmap();
-		if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE))
-			return FALSE;
-		if (!m_textureMemery.Map(0, sizeof(SharedTextureDATA)))
-			return FALSE;
+		if (!m_textureMemery.Address())
+		{
+			if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE))
+				return FALSE;
+			if (!m_textureMemery.Map(0, sizeof(SharedTextureDATA)))
+				return FALSE;
+		}
 		SharedTextureDATA* pTexture = reinterpret_cast<SharedTextureDATA*>(m_textureMemery.Address());
 		if (!pTexture)
 			return FALSE;
 		if (!m_image.Load(dx11, pTexture->TextureHandle, scaleX, scaleY))
 			return FALSE;
-		if (m_image.GetTexture())
-			m_image.GetTexture()->Save(dx11, "D:\\1.bmp", D3DX11_IFF_BMP);
 		return TRUE;
 	}
 	DX11Image& SharedTexture::GetTexture()

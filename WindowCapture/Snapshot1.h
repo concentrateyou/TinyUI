@@ -1,15 +1,16 @@
 #pragma once
 #include "Control/TinyControl.h"
+#include "Tracker.h"
 using namespace TinyUI;
 
 namespace WindowCapture
 {
-	class Snapshot : public TinyControl
+	class Snapshot1 : public TinyControl
 	{
-		DECLARE_DYNAMIC(Snapshot)
+		DECLARE_DYNAMIC(Snapshot1)
 	public:
-		Snapshot();
-		virtual ~Snapshot();
+		Snapshot1();
+		virtual ~Snapshot1();
 		DWORD RetrieveStyle() OVERRIDE;
 		DWORD RetrieveExStyle() OVERRIDE;
 		LPCSTR RetrieveClassName() OVERRIDE;
@@ -26,17 +27,8 @@ namespace WindowCapture
 		LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	public:
 		BOOL Create(HWND hParent);
-		BOOL Initialize();
-		void Uninitialize();
 	private:
-		HBITMAP			m_hBBitmap;
-		HBITMAP			m_hFBitmap;
-		HBITMAP			m_hOldBBitmap;
-		HBITMAP			m_hOldFBitmap;
-		HDC				m_hBDC;
-		HDC				m_hFDC;
-		TinyPoint		m_downPos;
-		TinyPoint		m_mousePos;
+		Tracker* m_tracker;
 	};
 }
 

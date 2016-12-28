@@ -97,7 +97,7 @@ namespace TinyUI
 	void SetLogFile(LPCSTR pzFile);
 
 #define LOG(severity) \
-	 LogMessage(__FILE__, __LINE__, LOG_##severity).stream()
+	LogMessage(__FILE__, __LINE__, LOG_##severity).stream()
 }
 
 

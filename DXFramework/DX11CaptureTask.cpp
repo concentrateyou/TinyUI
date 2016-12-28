@@ -155,6 +155,7 @@ namespace DXFramework
 		}
 		if (hWND)
 		{
+			TRACE("AttemptCapture hWND != NULL\n");
 			m_targetWND.hWND = hWND;
 			m_targetWND.dwThreadID = GetWindowThreadProcessId(hWND, &m_targetWND.dwProcessID);
 			if (!m_targetWND.dwThreadID || !m_targetWND.dwProcessID)
@@ -166,6 +167,7 @@ namespace DXFramework
 		}
 		else
 		{
+			TRACE("AttemptCapture hWND == NULL\n");
 			m_bCapturing = FALSE;
 			goto _ERROR;
 		}
@@ -227,8 +229,8 @@ namespace DXFramework
 		{
 			/*AttemptCapture(TEXT("ApolloRuntimeContentWindow"), TEXT("LolClient.exe"), TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));*/
 			//AttemptCapture(TEXT("Direct3DWindowClass"), TEXT("SubD11.exe"), TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));
-			//AttemptCapture(TEXT("Direct3DWindowClass"), TEXT("BasicHLSL10.exe"), TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));
-			AttemptCapture(TEXT("Warcraft III"), TEXT("War3.exe"), TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));
+			AttemptCapture(TEXT("Direct3DWindowClass"), TEXT("ParticlesGS.exe"), TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));
+			//AttemptCapture(TEXT("Warcraft III"), TEXT("War3.exe"), TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));
 		}
 		else
 		{

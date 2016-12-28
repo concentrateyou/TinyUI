@@ -105,7 +105,7 @@ namespace DXCapture
 	//////////////////////////////////////////////////////////////////////////
 	HRESULT STDMETHODCALLTYPE DX9EndScene(IDirect3DDevice9 *pThis)
 	{
-		LOG(INFO) << "DX9EndScene OK\n";
+		//LOG(INFO) << "DX9EndScene OK\n";
 		g_dx9.m_dX9EndScene.EndDetour();
 		{
 			TinyAutoLock lock(g_dx9.m_lock);
@@ -122,7 +122,7 @@ namespace DXCapture
 	}
 	HRESULT STDMETHODCALLTYPE DX9Present(IDirect3DDevice9 *pThis, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion)
 	{
-		LOG(INFO) << "DX9Present OK\n";
+		//LOG(INFO) << "DX9Present OK\n";
 		g_dx9.m_dX9Present.EndDetour();
 		{
 			TinyAutoLock lock(g_dx9.m_lock);
@@ -134,7 +134,7 @@ namespace DXCapture
 	}
 	HRESULT STDMETHODCALLTYPE DX9PresentEx(IDirect3DDevice9Ex *pThis, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion, DWORD dwFlags)
 	{
-		LOG(INFO) << "DX9PresentEx OK\n";
+		//LOG(INFO) << "DX9PresentEx OK\n";
 		g_dx9.m_dX9PresentEx.EndDetour();
 		{
 			TinyAutoLock lock(g_dx9.m_lock);
@@ -146,7 +146,7 @@ namespace DXCapture
 	}
 	HRESULT STDMETHODCALLTYPE DX9SwapPresent(IDirect3DSwapChain9 *pThis, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion, DWORD dwFlags)
 	{
-		LOG(INFO) << "DX9SwapPresent OK\n";
+		//LOG(INFO) << "DX9SwapPresent OK\n";
 		g_dx9.m_dX9SwapPresent.EndDetour();
 		{
 			TinyAutoLock lock(g_dx9.m_lock);
@@ -162,7 +162,7 @@ namespace DXCapture
 	}
 	HRESULT STDMETHODCALLTYPE DX9Reset(IDirect3DDevice9 *pThis, D3DPRESENT_PARAMETERS *params)
 	{
-		LOG(INFO) << "DX9Reset OK\n";
+		//LOG(INFO) << "DX9Reset OK\n";
 		g_dx9.m_dX9Reset.EndDetour();
 		{
 			TinyAutoLock lock(g_dx9.m_lock);
@@ -174,7 +174,7 @@ namespace DXCapture
 	}
 	HRESULT STDMETHODCALLTYPE DX9ResetEx(IDirect3DDevice9Ex *pThis, D3DPRESENT_PARAMETERS *params, D3DDISPLAYMODEEX *fullscreenData)
 	{
-		LOG(INFO) << "DX9ResetEx OK\n";
+		//LOG(INFO) << "DX9ResetEx OK\n";
 		g_dx9.m_dX9ResetEx.EndDetour();
 		{
 			TinyAutoLock lock(g_dx9.m_lock);

@@ -364,7 +364,9 @@ void CMainFrame::OnAudioOutput(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)
 
 void CMainFrame::OnVideoStart(void*, INT)
 {
-	m_videoDevice.Start();
+	m_snapshot.Create(m_hWND);
+	m_snapshot.ShowWindow(SW_SHOWNORMAL);
+	//m_videoDevice.Start();
 }
 void CMainFrame::OnVideoStop(void*, INT)
 {
