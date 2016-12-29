@@ -108,6 +108,25 @@ namespace DXFramework
 		if (FAILED(hRes))
 			return FALSE;
 		m_immediateContext->RSSetState(m_rasterizerState);
+
+		//D3D11_BLEND_DESC blendDesc;
+		//for (INT i = 0; i < 8; i++)
+		//{
+		//	blendDesc.RenderTarget[i].BlendEnable = TRUE;
+		//	blendDesc.RenderTarget[i].BlendOp = D3D11_BLEND_OP_ADD;
+		//	blendDesc.RenderTarget[i].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		//	blendDesc.RenderTarget[i].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		//	blendDesc.RenderTarget[i].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+		//	blendDesc.RenderTarget[i].SrcBlendAlpha = D3D11_BLEND_ONE;
+		//	blendDesc.RenderTarget[i].DestBlendAlpha = D3D11_BLEND_ONE;
+		//	blendDesc.RenderTarget[i].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+		//}
+		//hRes = m_d3d->CreateBlendState(&blendDesc, &m_blendState);
+		//if (FAILED(hRes))
+		//	return FALSE;
+		//FLOAT blendFactor[4] = { 1.0F, 1.0F, 1.0F, 1.0F };
+		//m_immediateContext->OMSetBlendState(m_blendState, blendFactor, 0xFFFFFFFF);
+
 		D3D11_VIEWPORT viewport;
 		viewport.Width = static_cast<FLOAT>(cx);
 		viewport.Height = static_cast<FLOAT>(cy);

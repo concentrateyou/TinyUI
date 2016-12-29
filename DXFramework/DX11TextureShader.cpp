@@ -17,10 +17,10 @@ namespace DXFramework
 		D3D11_INPUT_ELEMENT_DESC layout[2];
 		D3D11_BUFFER_DESC matrixBufferDesc;
 		D3D11_SAMPLER_DESC samplerDesc;
-		hRes = D3DX11CompileFromFile(vsFile, NULL, NULL, "TextureVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &vertexShaderBuffer, NULL, NULL);
+		hRes = D3DX11CompileFromFile(vsFile, NULL, NULL, "TextureVertexShader", "vs_5_0", D3D10_SHADER_OPTIMIZATION_LEVEL3, 0, NULL, &vertexShaderBuffer, NULL, NULL);
 		if (FAILED(hRes))
 			return FALSE;
-		hRes = D3DX11CompileFromFile(psFile, NULL, NULL, "TexturePixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &pixelShaderBuffer, NULL, NULL);
+		hRes = D3DX11CompileFromFile(psFile, NULL, NULL, "TexturePixelShader", "ps_5_0", D3D10_SHADER_OPTIMIZATION_LEVEL3, 0, NULL, &pixelShaderBuffer, NULL, NULL);
 		if (FAILED(hRes))
 			return FALSE;
 		hRes = dx11.GetD3D()->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &m_vertexShader);
@@ -36,6 +36,7 @@ namespace DXFramework
 		layout[0].AlignedByteOffset = 0;
 		layout[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 		layout[0].InstanceDataStepRate = 0;
+
 		layout[1].SemanticName = "TEXCOORD";
 		layout[1].SemanticIndex = 0;
 		layout[1].Format = DXGI_FORMAT_R32G32_FLOAT;
@@ -43,10 +44,12 @@ namespace DXFramework
 		layout[1].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
 		layout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 		layout[1].InstanceDataStepRate = 0;
+
 		ULONG size = sizeof(layout) / sizeof(layout[0]);
 		hRes = dx11.GetD3D()->CreateInputLayout(layout, size, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), &m_layout);
 		if (FAILED(hRes))
 			return FALSE;
+
 		matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 		matrixBufferDesc.ByteWidth = sizeof(MATRIXBUFFER);
 		matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -57,11 +60,11 @@ namespace DXFramework
 		if (FAILED(hRes))
 			return FALSE;
 		samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 		samplerDesc.MipLODBias = 0.0F;
-		samplerDesc.MaxAnisotropy = 1;
+		samplerDesc.MaxAnisotropy = 0;
 		samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
 		samplerDesc.BorderColor[0] = 0;
 		samplerDesc.BorderColor[1] = 0;
