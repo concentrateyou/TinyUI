@@ -67,20 +67,13 @@ namespace DXCapture
 		DXGI_SWAP_CHAIN_DESC swapDesc;
 		ZeroMemory(&swapDesc, sizeof(swapDesc));
 		swapDesc.BufferCount = 2;
+		swapDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		swapDesc.BufferDesc.Width = 1;
 		swapDesc.BufferDesc.Height = 1;
-		swapDesc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-		swapDesc.BufferDesc.RefreshRate.Numerator = 0;
-		swapDesc.BufferDesc.RefreshRate.Denominator = 1;
 		swapDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		swapDesc.OutputWindow = hWND;
 		swapDesc.SampleDesc.Count = 1;
-		swapDesc.SampleDesc.Quality = 0;
 		swapDesc.Windowed = TRUE;
-		swapDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-		swapDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-		swapDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-		swapDesc.Flags = 0;
 		TinyComPtr<ID3D10Device> device;
 		TinyComPtr<IDXGISwapChain> swap;
 		if (FAILED(hRes = (*d3d10Create)(NULL, D3D10_DRIVER_TYPE_NULL, NULL, 0, D3D10_SDK_VERSION, &swapDesc, &swap, &device)))
@@ -125,12 +118,12 @@ namespace DXCapture
 			return FALSE;
 		SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();
 		ASSERT(sharedCapture);
-		sharedCapture->Format = (DWORD)scd.BufferDesc.Format;
+		m_dxgiFormat = GetDX10PlusTextureFormat(scd.BufferDesc.Format);
+		sharedCapture->Format = (DWORD)m_dxgiFormat;
 		sharedCapture->Size.cx = scd.BufferDesc.Width;
 		sharedCapture->Size.cy = scd.BufferDesc.Height;
 		sharedCapture->HwndCapture = scd.OutputWindow;
 		sharedCapture->bMultisample = scd.SampleDesc.Count > 1;
-		m_dxgiFormat = scd.BufferDesc.Format;
 		m_dx.SetWindowsHook();
 		return TRUE;
 	}
@@ -169,6 +162,7 @@ namespace DXCapture
 					{
 						device->CopyResource(m_resource, backBuffer);
 					}
+					SaveAs(D3DX10_IFF_DDS, "D:\\123.dds");
 				}
 			}
 		}
@@ -185,7 +179,7 @@ namespace DXCapture
 		texGameDesc.Height = sharedCapture->Size.cy;
 		texGameDesc.MipLevels = 1;
 		texGameDesc.ArraySize = 1;
-		texGameDesc.Format = (DXGI_FORMAT)sharedCapture->Format;
+		texGameDesc.Format = m_dxgiFormat;
 		texGameDesc.SampleDesc.Count = 1;
 		texGameDesc.BindFlags = D3D10_BIND_RENDER_TARGET | D3D10_BIND_SHADER_RESOURCE;
 		texGameDesc.Usage = D3D10_USAGE_DEFAULT;

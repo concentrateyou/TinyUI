@@ -123,12 +123,12 @@ namespace DXCapture
 			return FALSE;
 		SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();
 		ASSERT(sharedCapture);
-		sharedCapture->Format = (DWORD)scd.BufferDesc.Format;
+		m_dxgiFormat = GetDX10PlusTextureFormat(scd.BufferDesc.Format);
+		sharedCapture->Format = m_dxgiFormat;
 		sharedCapture->Size.cx = scd.BufferDesc.Width;
 		sharedCapture->Size.cy = scd.BufferDesc.Height;
 		sharedCapture->HwndCapture = scd.OutputWindow;
 		sharedCapture->bMultisample = scd.SampleDesc.Count > 1;
-		m_dxgiFormat = scd.BufferDesc.Format;
 		m_dx.SetWindowsHook();
 		return TRUE;
 	}
@@ -183,7 +183,7 @@ namespace DXCapture
 		texGameDesc.Height = sharedCapture->Size.cy;
 		texGameDesc.MipLevels = 1;
 		texGameDesc.ArraySize = 1;
-		texGameDesc.Format = (DXGI_FORMAT)sharedCapture->Format;
+		texGameDesc.Format = m_dxgiFormat;
 		texGameDesc.SampleDesc.Count = 1;
 		texGameDesc.BindFlags = D3D10_BIND_RENDER_TARGET | D3D10_BIND_SHADER_RESOURCE;
 		texGameDesc.Usage = D3D10_USAGE_DEFAULT;
