@@ -16,11 +16,9 @@ namespace DXFramework
 	public:
 		DX11Texture();
 		~DX11Texture();
-		//Ä¬ÈÏDXGI_FORMAT_B8G8R8A8_UNORM
-		BOOL CreateTexture(const DX11& dx11, INT cx, INT cy, void *lpData);
-		BOOL FillTexture(const DX11& dx11, const BYTE* data);
+		BOOL CreateTexture(const DX11& dx11, INT cx, INT cy, const BYTE* data);
 		BOOL Save(const DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT dxgi);
-		BOOL LoadTexture(const DX11& dx11, const BYTE* data, DWORD dwSize);
+		BOOL LoadTexture(const DX11& dx11, const BYTE* pData, DWORD dwSize);
 		BOOL LoadTexture(const DX11& dx11, HANDLE hResource);
 		BOOL LoadTexture(const DX11& dx11, const CHAR* pzFile);
 		BOOL GetDC(HDC& hDC);

@@ -162,7 +162,7 @@ namespace DXCapture
 					{
 						device->CopyResource(m_resource, backBuffer);
 					}
-					SaveAs(D3DX10_IFF_DDS, "D:\\123.dds");
+					//SaveAs(D3DX10_IFF_DDS, "D:\\123.dds");
 				}
 			}
 		}

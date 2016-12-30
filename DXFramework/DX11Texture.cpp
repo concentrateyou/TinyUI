@@ -20,7 +20,7 @@ namespace DXFramework
 	DX11Texture::~DX11Texture()
 	{
 	}
-	BOOL DX11Texture::CreateTexture(const DX11& dx11, INT cx, INT cy, void *lpData)
+	BOOL DX11Texture::CreateTexture(const DX11& dx11, INT cx, INT cy, const BYTE* pData)
 	{
 		m_texture2D.Release();
 		m_resourceView.Release();
@@ -38,9 +38,9 @@ namespace DXFramework
 		textureDesc.Usage = D3D11_USAGE_DEFAULT;
 		D3D11_SUBRESOURCE_DATA dsd;
 		D3D11_SUBRESOURCE_DATA *lpSRD = NULL;
-		if (lpData)
+		if (pData)
 		{
-			dsd.pSysMem = lpData;
+			dsd.pSysMem = static_cast<void*>(const_cast<BYTE*>(pData));
 			dsd.SysMemPitch = cx * 4;
 			dsd.SysMemSlicePitch = 0;
 			lpSRD = &dsd;
@@ -125,15 +125,15 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11Texture::LoadTexture(const DX11& dx11, const BYTE* data, DWORD dwSize)
+	BOOL DX11Texture::LoadTexture(const DX11& dx11, const BYTE* pData, DWORD dwSize)
 	{
-		if (!data)
+		if (!pData)
 			return FALSE;
 		m_surface.Release();
 		m_texture2D.Release();
 		m_resourceView.Release();
 		HRESULT hRes = S_OK;
-		if (FAILED(hRes = D3DX11CreateShaderResourceViewFromMemory(dx11.GetD3D(), data, dwSize, NULL, NULL, &m_resourceView, NULL)))
+		if (FAILED(hRes = D3DX11CreateShaderResourceViewFromMemory(dx11.GetD3D(), pData, dwSize, NULL, NULL, &m_resourceView, NULL)))
 			return FALSE;
 		TinyComPtr<ID3D11Resource> resource;
 		m_resourceView->GetResource(&resource);
