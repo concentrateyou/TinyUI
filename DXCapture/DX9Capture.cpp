@@ -332,11 +332,13 @@ namespace DXCapture
 		if (bRelease)
 		{
 			m_dX9TextureSurface.Release();
+			m_resource.Release();
 			m_d3d10.Release();
 		}
 		else
 		{
 			m_dX9TextureSurface.Detach();
+			m_resource.Detach();
 			m_d3d10.Detach();
 		}
 	}
@@ -425,19 +427,19 @@ namespace DXCapture
 		desc.Usage = D3D10_USAGE_DEFAULT;
 		desc.MiscFlags = D3D10_RESOURCE_MISC_SHARED;
 		TinyComPtr<ID3D10Texture2D> d3d10Texture2D;
-		if (FAILED(m_d3d10->CreateTexture2D(&desc, NULL, &d3d10Texture2D)))
-		{
+		HRESULT hRes = m_d3d10->CreateTexture2D(&desc, NULL, &d3d10Texture2D);
+		if (FAILED(hRes))
 			return FALSE;
-		}
+		hRes = d3d10Texture2D->QueryInterface(__uuidof(ID3D10Resource), (void**)&m_resource);
+		if (FAILED(hRes))
+			return FALSE;
 		TinyComPtr<IDXGIResource> dxgiResource;
-		if (FAILED(d3d10Texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&dxgiResource)))
-		{
+		hRes = d3d10Texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&dxgiResource);
+		if (FAILED(hRes))
 			return FALSE;
-		}
-		if (FAILED(dxgiResource->GetSharedHandle(&m_hTextureHandle)))
-		{
+		hRes = dxgiResource->GetSharedHandle(&m_hTextureHandle);
+		if (FAILED(hRes))
 			return FALSE;
-		}
 		LPBYTE patchAddress = (m_patchType != 0) ? GetDX9PatchAddress(m_hD3D9, m_patchType) : NULL;
 		DWORD dwOldProtect;
 		size_t patchSize;
@@ -447,26 +449,22 @@ namespace DXCapture
 			patchSize = patch[m_patchType - 1].patchSize;
 			patchData.Reset(new BYTE[patchSize]);
 			if (!VirtualProtect(patchAddress, patchSize, PAGE_EXECUTE_READWRITE, &dwOldProtect))
-			{
 				return FALSE;
-			}
 			memcpy(patchData.Ptr(), patchAddress, patchSize);
 			memcpy(patchAddress, patch[m_patchType - 1].patchData, patchSize);
 		}
 		TinyComPtr<IDirect3DTexture9> d3d9Texture;
-		if (FAILED(pThis->CreateTexture(sharedCapture->Size.cx, sharedCapture->Size.cy, 1, D3DUSAGE_RENDERTARGET, (D3DFORMAT)m_d3dFormat, D3DPOOL_DEFAULT, &d3d9Texture, &m_hTextureHandle)))
-		{
+		hRes = pThis->CreateTexture(sharedCapture->Size.cx, sharedCapture->Size.cy, 1, D3DUSAGE_RENDERTARGET, (D3DFORMAT)m_d3dFormat, D3DPOOL_DEFAULT, &d3d9Texture, &m_hTextureHandle);
+		if (FAILED(hRes))
 			return FALSE;
-		}
 		if (patchAddress)
 		{
 			memcpy(patchAddress, patchData.Ptr(), patchSize);
 			VirtualProtect(patchAddress, patchSize, dwOldProtect, &dwOldProtect);
 		}
-		if (FAILED(d3d9Texture->GetSurfaceLevel(0, &m_dX9TextureSurface)))
-		{
+		hRes = d3d9Texture->GetSurfaceLevel(0, &m_dX9TextureSurface);
+		if (FAILED(hRes))
 			return FALSE;
-		}
 		SharedTextureDATA* sharedTexture = m_dx.GetSharedTextureDATA();
 		ASSERT(sharedTexture);
 		sharedTexture->TextureHandle = m_hTextureHandle;
@@ -475,5 +473,10 @@ namespace DXCapture
 		m_dx.m_ready.SetEvent();
 		LOG(INFO) << "DX9GPUHook ok\n";
 		return TRUE;
+	}
+	BOOL DX9Capture::SaveAs(D3DX10_IMAGE_FILE_FORMAT s, LPCSTR pzFile)
+	{
+		ASSERT(m_resource);
+		return D3DX10SaveTextureToFile(m_resource, s, pzFile);
 	}
 }

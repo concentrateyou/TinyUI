@@ -26,6 +26,8 @@ namespace DXCapture
 		void Setup(IDirect3DDevice9 *pThis);
 		BOOL DX9GPUHook(IDirect3DDevice9 *device);
 	public:
+		BOOL SaveAs(D3DX10_IMAGE_FILE_FORMAT s, LPCSTR pzFile);
+	public:
 		D3DFORMAT						m_d3dFormat;
 		DXGI_FORMAT						m_dxgiFormat;
 		INT								m_patchType;
@@ -36,6 +38,7 @@ namespace DXCapture
 		HMODULE							m_hD3D9;
 		TinyLock						m_lock;
 		TinyComPtr<ID3D10Device1>		m_d3d10;
+		TinyComPtr<ID3D10Resource>		m_resource;
 		TinyComPtr<IDirect3DSurface9>	m_dX9TextureSurface;
 		TinyDetour						m_dX9Release;
 		TinyDetour						m_dX9EndScene;

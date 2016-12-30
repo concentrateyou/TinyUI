@@ -98,5 +98,4 @@ namespace DXCapture
 			m_hhk = NULL;
 		}
 	}
-
 }

@@ -17,6 +17,8 @@ namespace DXCapture
 		BOOL Render(IDXGISwapChain *pThis, UINT flags);
 		BOOL DX11GPUHook(ID3D11Device *pThis);
 	public:
+		BOOL SaveAs(ID3D11DeviceContext* context, D3DX11_IMAGE_FILE_FORMAT s, LPCSTR pzFile);
+	public:
 		DXGI_FORMAT						m_dxgiFormat;
 		BOOL							m_bDetour;
 		BOOL							m_bCapturing;

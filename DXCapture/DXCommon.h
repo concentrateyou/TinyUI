@@ -14,6 +14,7 @@
 #include "Common/TinyLogging.h"
 using namespace TinyUI;
 #pragma comment(lib,"TinyUI.lib")
+#pragma comment(lib,"D3DX11.lib")
 
 namespace DXCapture
 {
