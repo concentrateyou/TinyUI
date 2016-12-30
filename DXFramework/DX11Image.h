@@ -7,8 +7,8 @@ namespace DXFramework
 {
 	class DX11Image
 	{
-		DISALLOW_COPY_AND_ASSIGN(DX11Image)
-			struct VERTEXTYPE
+		DISALLOW_COPY_AND_ASSIGN(DX11Image);
+		struct VERTEXTYPE
 		{
 			D3DXVECTOR3 position;
 			D3DXVECTOR2 texture;
@@ -31,6 +31,7 @@ namespace DXFramework
 		BOOL Initialize(const DX11& dx11);
 		BOOL Update(const DX11& dx11, INT positionX, int positionY);
 	private:
+		DX11Texture					m_texture;
 		TinyComPtr<ID3D11Buffer>	m_vertexBuffer;
 		TinyComPtr<ID3D11Buffer>	m_indexBuffer;
 		INT							m_scaleX;
@@ -39,8 +40,6 @@ namespace DXFramework
 		INT							m_positionY;
 		INT							m_vertexCount;
 		INT							m_indexCount;
-		DX11Texture					m_texture;
-
 	};
 	/// <summary>
 	/// π≤œÌŒ∆¿Ì

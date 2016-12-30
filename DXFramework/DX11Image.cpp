@@ -127,6 +127,12 @@ namespace DXFramework
 		m_positionX = positionX;
 		m_positionY = positionY;
 		TinySize size = dx11.GetSize();
+
+		//D3DXMATRIX matRotate;
+		//D3DXVECTOR2 vCenter((FLOAT)size.cx / 2, (FLOAT)size.cy / 2);
+		//D3DXVECTOR2 vPosition(position.x, position.y);
+		//D3DXMatrixTransformation2D(&matRotate, NULL, NULL, NULL, &vCenter, 90, &vPosition);
+
 		left = (FLOAT)((size.cx / 2) * -1) + (FLOAT)positionX;
 		right = left + (FLOAT)m_scaleX;
 		top = (FLOAT)(size.cy / 2) - (FLOAT)positionY;
