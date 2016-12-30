@@ -20,13 +20,13 @@ namespace DXFramework
 		m_positionX = x;
 		m_positionY = y;
 	}
-	BOOL DX11Image::Create(const DX11& dx11, INT cx, INT cy, INT scaleX, INT scaleY)
+	BOOL DX11Image::Create(const DX11& dx11, INT cx, INT cy, INT scaleX, INT scaleY, BYTE* pData)
 	{
 		if (!Initialize(dx11))
 			return FALSE;
 		m_scaleX = scaleX;
 		m_scaleY = scaleY;
-		return m_texture.CreateTexture(dx11, cx, cy, NULL);
+		return m_texture.CreateTexture(dx11, cx, cy, pData);
 	}
 	BOOL DX11Image::BitBlt(const DX11& dx11, const BYTE* pData)
 	{

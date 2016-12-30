@@ -8,7 +8,7 @@ namespace DXFramework
 	class DX11Image
 	{
 		DISALLOW_COPY_AND_ASSIGN(DX11Image)
-		struct VERTEXTYPE
+			struct VERTEXTYPE
 		{
 			D3DXVECTOR3 position;
 			D3DXVECTOR2 texture;
@@ -17,7 +17,7 @@ namespace DXFramework
 		DX11Image();
 		~DX11Image();
 		void SetPosition(INT cx, INT cy);
-		BOOL Create(const DX11& dx11, INT cx, INT cy, INT scaleX, INT scaleY);
+		BOOL Create(const DX11& dx11, INT cx, INT cy, INT scaleX, INT scaleY, BYTE* lpData = NULL);
 		//RGB32
 		BOOL BitBlt(const DX11& dx11, const BYTE* pData);
 		BOOL Load(const DX11& dx11, HANDLE hResource, INT scaleX, INT scaleY);
@@ -40,7 +40,7 @@ namespace DXFramework
 		INT							m_vertexCount;
 		INT							m_indexCount;
 		DX11Texture					m_texture;
-		
+
 	};
 	/// <summary>
 	/// π≤œÌŒ∆¿Ì

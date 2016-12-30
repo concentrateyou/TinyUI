@@ -37,8 +37,14 @@ namespace DXFramework
 		swapDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 		swapDesc.Flags = DXGI_SWAP_CHAIN_FLAG_GDI_COMPATIBLE | DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 		HRESULT hRes = S_OK;
-		D3D_FEATURE_LEVEL level = D3D_FEATURE_LEVEL_11_0;
-		hRes = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, &level, 1, D3D11_SDK_VERSION, &swapDesc, &m_swap, &m_d3d, NULL, &m_immediateContext);
+		D3D_FEATURE_LEVEL levels[] =
+		{
+			D3D_FEATURE_LEVEL_11_0,
+			D3D_FEATURE_LEVEL_10_1,
+			D3D_FEATURE_LEVEL_10_0,
+			D3D_FEATURE_LEVEL_9_3,
+		};
+		hRes = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_BGRA_SUPPORT, levels, sizeof(levels) / sizeof(D3D_FEATURE_LEVEL), D3D11_SDK_VERSION, &swapDesc, &m_swap, &m_d3d, NULL, &m_immediateContext);
 		if (FAILED(hRes))
 			return FALSE;
 		TinyComPtr<ID3D11Texture2D> backBuffer;
@@ -69,15 +75,15 @@ namespace DXFramework
 		depthStencilDesc.DepthEnable = TRUE;
 		depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 		depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
-		depthStencilDesc.StencilEnable = TRUE;
-		depthStencilDesc.StencilReadMask = 0xFF;
-		depthStencilDesc.StencilWriteMask = 0xFF;
+		depthStencilDesc.StencilEnable = FALSE;
+		depthStencilDesc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
+		depthStencilDesc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
 		depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+		depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 		depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 		depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 		depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+		depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 		depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 		depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 		hRes = m_d3d->CreateDepthStencilState(&depthStencilDesc, &m_depthStencilState);
@@ -92,10 +98,10 @@ namespace DXFramework
 		hRes = m_d3d->CreateDepthStencilView(m_depthStencilBuffer, &depthStencilViewDesc, &m_depthStencilView);
 		if (FAILED(hRes))
 			return FALSE;
-		m_immediateContext->OMSetRenderTargets(1, &m_renderView, m_depthStencilView);
+		m_immediateContext->OMSetRenderTargets(1, &m_renderView, NULL);
 		D3D11_RASTERIZER_DESC rasterDesc;
 		rasterDesc.AntialiasedLineEnable = FALSE;
-		rasterDesc.CullMode = D3D11_CULL_BACK;
+		rasterDesc.CullMode = D3D11_CULL_NONE;
 		rasterDesc.DepthBias = 0;
 		rasterDesc.DepthBiasClamp = 0.0F;
 		rasterDesc.DepthClipEnable = TRUE;

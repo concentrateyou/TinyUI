@@ -63,21 +63,6 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11Texture::FillTexture(const DX11& dx11, const BYTE* data)
-	{
-		ASSERT(m_texture2D);
-		D3D11_MAPPED_SUBRESOURCE  mapResource;
-		HRESULT hRes = dx11.GetImmediateContext()->Map(m_texture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapResource);
-		if (FAILED(hRes))
-			return FALSE;
-		D3D11_TEXTURE2D_DESC desc;
-		m_texture2D->GetDesc(&desc);
-		BYTE* src = const_cast<BYTE*>(data);
-		BYTE* dst = static_cast<BYTE*>(mapResource.pData);
-		memcpy(dst, src, desc.Height * desc.Width * 4);
-		dx11.GetImmediateContext()->Unmap(m_texture2D, 0);
-		return TRUE;
-	}
 	BOOL  DX11Texture::GetDC(HDC& hDC)
 	{
 		ASSERT(m_surface);
