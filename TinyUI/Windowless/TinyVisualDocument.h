@@ -40,7 +40,7 @@ namespace TinyUI
 		public:
 			HWND				Handle() const;
 			TinyVisualHWND*		GetVisualHWND() const;
-			TinyVisualCacheDC*	GetCacheDC() const;
+			TinyVisualDC*		GetVisualDC() const;
 			TinyVisual*			GetVisual(TinyVisual* spvis, UINT cmd) const;
 			TinyVisual*			SetParent(TinyVisual* spvis, TinyVisual* spvisNewParent);
 			TinyVisual*			GetParent(TinyVisual* spvis) const;
@@ -62,7 +62,9 @@ namespace TinyUI
 			TinyPoint			GetScreenPos(const TinyVisual* spvis);
 			BOOL				Invalidate(RECT* lpRect = NULL);
 			BOOL				Redraw(RECT *lprcUpdate = NULL, HRGN hrgnUpdate = NULL);
+
 		public:
+			HRESULT				OnSize(const TinySize& size);
 			HRESULT				OnMouseLeave();
 			HRESULT				OnMouseEnter();
 			HRESULT				OnMouseMove(const TinyPoint& pos, DWORD dwFlags);
@@ -88,8 +90,9 @@ namespace TinyUI
 			void				LinkVisual(TinyVisual* spvis, TinyVisual* spvisInsert, TinyVisual**pspvisFirst);
 			void				UnlinkVisual(TinyVisual* spvisUnlink, TinyVisual** pspvisFirst);
 			TinyVisual*			GetPrevVisual(TinyVisual* spvisList, TinyVisual* spvisFind) const;
-			void				Draw(TinyVisualCacheDC* ps, const RECT& rcPaint);
+			void				Draw(TinyVisualDC* ps, const RECT& rcPaint);
 			void				Draw(TinyVisual* spvis, HDC hDC, const RECT& rcPaint);
+			void				Resize(TinyVisual* spvis, const TinySize& size);
 		private:
 			class TinyVisualFactory
 			{

@@ -66,11 +66,11 @@ namespace TinyUI
 		/// <summary>
 		/// ª∫¥ÊDC
 		/// </summary>
-		class TinyVisualCacheDC : public TinyHandleHDC
+		class TinyVisualDC : public TinyHandleHDC
 		{
 		public:
-			TinyVisualCacheDC(HWND hWND);
-			~TinyVisualCacheDC();
+			TinyVisualDC(HWND hWND);
+			~TinyVisualDC();
 			void SetSize(INT cx, INT cy);
 			HDC	 GetMemDC() const;
 			BOOL Render(const RECT& s);

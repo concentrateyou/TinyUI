@@ -17,9 +17,19 @@ namespace TinyUI
 		{
 
 		}
+
+		void TinyVisualWindow::OnSizeChange(const TinySize& size)
+		{
+
+		}
+
 		TinyString TinyVisualWindow::RetrieveTag() const
 		{
 			return TinyVisualTag::WINDOW;
+		}
+		BOOL TinyVisualWindow::IsLayout() const
+		{
+			return TRUE;
 		}
 		BOOL TinyVisualWindow::OnDraw(HDC hDC, const RECT& rcPaint)
 		{

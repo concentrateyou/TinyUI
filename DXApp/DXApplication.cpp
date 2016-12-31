@@ -48,8 +48,8 @@ BOOL DXApplication::Initialize(HINSTANCE hInstance, LPTSTR  lpCmdLine, INT nCmdS
 		return FALSE;
 	if (!TinyApplication::GetInstance()->AddMessageLoop(&m_msgLoop))
 		return FALSE;
-	m_window.Reset(new DXWindow());
-	return m_window->Create(NULL, 0, 0, 0, 0);
+	m_frameUI.Reset(new DXFrameUI());
+	return m_frameUI->Create(NULL, 0, 0, 0, 0);
 }
 INT DXApplication::Run()
 {
@@ -65,7 +65,7 @@ BOOL DXApplication::Uninitialize()
 		return FALSE;
 	return TRUE;
 }
-DXWindow* DXApplication::GetDXWindow()
+DXFrameUI* DXApplication::GetFrameUI()
 {
-	return m_window.Ptr();
+	return m_frameUI.Ptr();
 }

@@ -421,7 +421,7 @@ namespace TinyUI
 		::SetWindowLong(m_hWND, GWL_STYLE, dwNewStyle);
 		if (nFlags != 0)
 		{
-			::SetWindowPos(m_hWND, NULL, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | nFlags);
+			return ::SetWindowPos(m_hWND, NULL, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | nFlags);
 		}
 		return TRUE;
 	}
@@ -436,8 +436,18 @@ namespace TinyUI
 		::SetWindowLong(m_hWND, GWL_EXSTYLE, dwNewStyle);
 		if (nFlags != 0)
 		{
-			::SetWindowPos(m_hWND, NULL, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | nFlags);
+			return ::SetWindowPos(m_hWND, NULL, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | nFlags);
 		}
 		return TRUE;
+	}
+	BOOL TinyControl::SetSize(INT cx, INT cy) throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::SetWindowPos(m_hWND, NULL, 0, 0, cx, cy, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+	}
+	BOOL TinyControl::SetPosition(INT x, INT y) throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::SetWindowPos(m_hWND, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 	}
 }

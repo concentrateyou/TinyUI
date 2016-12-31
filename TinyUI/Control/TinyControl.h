@@ -34,6 +34,8 @@ namespace TinyUI
 		DWORD	RetrieveExStyle() OVERRIDE;
 		virtual BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy, BOOL bHook = TRUE);
 	public:
+		BOOL	SetSize(INT cx, INT cy) throw();
+		BOOL	SetPosition(INT x, INT y) throw();
 		BOOL	ShowWindow(INT nCmdShow) throw();
 		BOOL	UpdateWindow() throw();
 		BOOL	GetWindowRect(LPRECT lprect);

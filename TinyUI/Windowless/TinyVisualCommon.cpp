@@ -42,7 +42,7 @@ namespace TinyUI
 		const TinyString TinyVisualTag::COMBOBOX = TEXT("combobox");
 		const TinyString TinyVisualTag::RICHTEXT = TEXT("richtext");
 		//////////////////////////////////////////////////////////////////////////
-		TinyVisualCacheDC::TinyVisualCacheDC(HWND hWND)
+		TinyVisualDC::TinyVisualDC(HWND hWND)
 			:m_hWND(hWND),
 			m_hMemDC(NULL),
 			m_hMemBitmap(NULL),
@@ -57,7 +57,7 @@ namespace TinyUI
 			GetWindowRect(m_hWND, &s);
 			SetSize(TO_CX(s), TO_CY(s));
 		}
-		TinyVisualCacheDC::~TinyVisualCacheDC()
+		TinyVisualDC::~TinyVisualDC()
 		{
 			ASSERT(m_hWND);
 			if (m_hDC != NULL)
@@ -77,7 +77,7 @@ namespace TinyUI
 				::ReleaseDC(m_hWND, hDC);
 			}
 		}
-		void TinyVisualCacheDC::SetSize(INT cx, INT cy)
+		void TinyVisualDC::SetSize(INT cx, INT cy)
 		{
 			ASSERT(m_hDC);
 			if (m_size.cx != cx || m_size.cy != cy)
@@ -100,16 +100,16 @@ namespace TinyUI
 				m_OldBitmap = (HBITMAP)::SelectObject(m_hMemDC, m_hMemBitmap);
 			}
 		}
-		HDC	 TinyVisualCacheDC::GetMemDC() const
+		HDC	 TinyVisualDC::GetMemDC() const
 		{
 			return m_hMemDC;
 		}
-		BOOL TinyVisualCacheDC::Render(const RECT& s)
+		BOOL TinyVisualDC::Render(const RECT& s)
 		{
 			if (!m_hMemDC || !m_hMemBitmap) return FALSE;
 			return ::BitBlt(m_hDC, s.left, s.top, TO_CX(s), TO_CY(s), m_hMemDC, s.left, s.top, SRCCOPY);
 		}
-		BOOL TinyVisualCacheDC::Render(const RECT& s, INT x, INT y)
+		BOOL TinyVisualDC::Render(const RECT& s, INT x, INT y)
 		{
 			if (!m_hMemDC || !m_hMemBitmap) return FALSE;
 			return ::BitBlt(m_hDC, s.left, s.top, TO_CX(s), TO_CY(s), m_hMemDC, x, y, SRCCOPY);

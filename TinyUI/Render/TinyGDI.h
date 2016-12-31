@@ -483,6 +483,7 @@ namespace TinyUI
 		TinyPoint operator-(POINT point) const throw();
 		TinyRectangle operator+(const RECT* lpRect) const throw();
 		TinyRectangle operator-(const RECT* lpRect) const throw();
+		static TinySize& Empty();
 	};
 	/// <summary>
 	/// Point¿‡
@@ -516,6 +517,8 @@ namespace TinyUI
 
 		TinyRectangle operator+(const RECT* lpRect) const throw();
 		TinyRectangle operator-(const RECT* lpRect) const throw();
+
+		static TinyPoint& Empty();
 	};
 
 	/// <summary>
@@ -592,6 +595,8 @@ namespace TinyUI
 		TinyRectangle operator&(const RECT& rect2) const throw();
 		TinyRectangle operator|(const RECT& rect2) const throw();
 		TinyRectangle MulDiv(INT nMultiplier, INT nDivisor) const throw();
+
+		static TinyRectangle& Empty();
 	};
 }
 

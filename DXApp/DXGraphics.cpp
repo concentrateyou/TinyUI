@@ -66,8 +66,7 @@ BOOL DXGraphics::EndScene()
 	m_dx11.AllowDepth(TRUE);
 	m_dx11.EndScene();
 	TinyComPtr<ID3D11Resource> backBuffer;
-	if (SUCCEEDED(m_dx11.GetSwap()->GetBuffer(0, __uuidof(ID3D11Resource), (void**)&backBuffer))
-		&& m_resource)
+	if (SUCCEEDED(m_dx11.GetSwap()->GetBuffer(0, __uuidof(ID3D11Resource), (void**)&backBuffer)) && m_resource)
 	{
 		m_dx11.GetImmediateContext()->CopyResource(m_resource, backBuffer);
 		D3D11_MAPPED_SUBRESOURCE ms = { 0 };

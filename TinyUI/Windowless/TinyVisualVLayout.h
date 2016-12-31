@@ -19,6 +19,7 @@ namespace TinyUI
 		public:
 			virtual ~TinyVisualVLayout();
 			TinyString RetrieveTag() const OVERRIDE;
+			BOOL IsLayout() const OVERRIDE;
 		public:
 			void AutoScroll(BOOL bAuto);
 			void SetHorizontalAlignment(HorizontalAlignment horizontalAlignment);

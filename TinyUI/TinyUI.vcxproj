@@ -314,6 +314,7 @@
     </ClCompile>
     <ClCompile Include="Render\TinyCanvas.cpp" />
     <ClCompile Include="Windowless\TinyTextHost.cpp" />
+    <ClCompile Include="Windowless\TinyVisualHWND.cpp" />
     <ClCompile Include="Windowless\TinyVisualRichText.cpp" />
     <ClCompile Include="Windowless\TinyVisualUtility.cpp" />
     <ClCompile Include="Windowless\TinyVisualButton.cpp" />
@@ -321,14 +322,13 @@
     <ClCompile Include="Windowless\TinyVisualCommon.cpp" />
     <ClCompile Include="Windowless\TinyVisualPopupHWND.cpp" />
     <ClCompile Include="Windowless\TinyVisualLabel.cpp" />
-    <ClCompile Include="Windowless\TinyVisualVLayout.cpp" />
     <ClCompile Include="Windowless\TinyVisualScrollBar.cpp" />
+    <ClCompile Include="Windowless\TinyVisualVLayout.cpp" />
     <ClCompile Include="Windowless\TinyVisualWindow.cpp" />
     <ClCompile Include="Windowless\TinyVisualManage.cpp" />
     <ClCompile Include="Windowless\TinyVisualHLayout.cpp" />
     <ClCompile Include="Windowless\TinyVisual.cpp" />
     <ClCompile Include="Windowless\TinyVisualEvent.cpp" />
-    <ClCompile Include="Windowless\TinyVisualHWND.cpp" />
     <ClCompile Include="Windowless\TinyVisualDocument.cpp" />
     <ClCompile Include="XML\tinystr.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>

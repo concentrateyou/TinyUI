@@ -1,10 +1,6 @@
 #pragma once
 #include "Control/TinyControl.h"
 #include "RenderTask.h"
-#include "AudioEncode.h"
-#include "VideoEncode.h"
-#include "PublishTask.h"
-
 using namespace DXFramework;
 
 class DXWindow : public TinyControl
@@ -26,10 +22,6 @@ public:
 	LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 public:
 	BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
-private:
-	TinyScopedPtr<RenderTask>		m_renderTask;
-	TinyScopedPtr<AudioEncode>		m_audioTask;
-	TinyScopedPtr<VideoEncode>		m_videoTask;
-	TinyScopedPtr<PublishTask>		m_publishTask;
+
 };
 

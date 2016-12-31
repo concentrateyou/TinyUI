@@ -7,7 +7,7 @@ namespace TinyUI
 	{
 		class TinyVisualHScrollBar;
 		/// <summary>
-		/// 水平布局
+		/// 水平布局(子控件位置属性无效)
 		/// </summary>
 		class TinyVisualHLayout : public TinyVisual
 		{
@@ -19,7 +19,8 @@ namespace TinyUI
 		public:
 			virtual ~TinyVisualHLayout();
 			TinyString RetrieveTag() const OVERRIDE;
-			void Resize() OVERRIDE;
+			BOOL IsLayout() const OVERRIDE;
+			void OnSizeChange(const TinySize&) OVERRIDE;
 		public:
 			void AutoScroll(BOOL bAuto);
 			void SetHorizontalAlignment(HorizontalAlignment horizontalAlignment);
@@ -30,15 +31,10 @@ namespace TinyUI
 			HRESULT	OnMouseLeave() OVERRIDE;
 			HRESULT	OnCreate() OVERRIDE;
 			HRESULT OnDestory() OVERRIDE;
-			virtual void OnPosChange(BOOL, INT, INT, INT);
-		private:
-			void AdjustLayout(TinyVisual* spvis, INT dx, INT dy);
 		private:
 			BOOL					m_bAuto;
 			HorizontalAlignment		m_horizontalAlignment;
 			VerticalAlignment		m_verticalAlignment;
-			TinyVisualHScrollBar*	m_scrollbar;
-			TinyScopedPtr<Delegate<void(BOOL, INT, INT, INT)>> m_onPosChange;
 		};
 	}
 }

@@ -566,9 +566,6 @@
     <ClCompile Include="Render\TinyTheme.cpp">
       <Filter>源文件\Render</Filter>
     </ClCompile>
-    <ClCompile Include="Windowless\TinyVisualHWND.cpp">
-      <Filter>源文件\Windowless</Filter>
-    </ClCompile>
     <ClCompile Include="XML\TinyXMLParse.cpp">
       <Filter>源文件\XML</Filter>
     </ClCompile>
@@ -767,9 +764,6 @@
     <ClCompile Include="Windowless\TinyVisualHLayout.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
-    <ClCompile Include="Windowless\TinyVisualVLayout.cpp">
-      <Filter>源文件\Windowless</Filter>
-    </ClCompile>
     <ClCompile Include="Windowless\TinyVisualPopupHWND.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
@@ -790,6 +784,12 @@
     </ClCompile>
     <ClCompile Include="Media\TinyMFMP3Encode.cpp">
       <Filter>源文件\Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualVLayout.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualHWND.cpp">
+      <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

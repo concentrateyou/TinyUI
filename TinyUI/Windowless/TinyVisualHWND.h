@@ -57,13 +57,13 @@ namespace TinyUI
 			BOOL AddFilter(TinyVisualFilter* ps);
 			BOOL RemoveFilter(TinyVisualFilter* ps);
 		private:
-			BOOL Initialize();
+			void Initialize();
 			void Uninitialize();
 		private:
 			BOOL								m_bMouseTracking;
 			TinySize							m_size;
 			TinyScopedPtr<TinyVisualDocument>	m_document;
-			TinyScopedPtr<TinyVisualCacheDC>	m_cacheDC;
+			TinyScopedPtr<TinyVisualDC>			m_visualDC;
 			TinyVisualFilters					m_mFilters;
 			TinyVisualBuilder					m_builder;
 			TinyString							m_resource;

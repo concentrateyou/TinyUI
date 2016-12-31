@@ -10,7 +10,7 @@ namespace TinyUI
 	{
 		TinyVisualHWND::TinyVisualHWND()
 			:m_document(NULL),
-			m_cacheDC(NULL),
+			m_visualDC(NULL),
 			m_bMouseTracking(FALSE)
 		{
 
@@ -23,7 +23,7 @@ namespace TinyUI
 		{
 			if (TinyControl::Create(hParent, 0, 0, 0, 0, FALSE))
 			{
-				return Initialize();
+				return m_document->Initialize(&m_builder);
 			}
 			return FALSE;
 		}
@@ -54,21 +54,16 @@ namespace TinyUI
 			return m_builder.LoadFile(m_resource.CSTR());
 		}
 
-		BOOL TinyVisualHWND::Initialize()
+		void TinyVisualHWND::Initialize()
 		{
+			m_visualDC.Reset(new TinyVisualDC(m_hWND));
 			m_document.Reset(new TinyVisualDocument(this));
-			if (m_document->Initialize(&m_builder))
-			{
-				m_cacheDC.Reset(new TinyVisualCacheDC(m_hWND));
-				return TRUE;
-			}
-			return FALSE;
 		}
 		void TinyVisualHWND::Uninitialize()
 		{
 			m_document->Uninitialize();
 			m_document.Reset(NULL);
-			m_cacheDC.Reset(NULL);
+			m_visualDC.Reset(NULL);
 		}
 		BOOL TinyVisualHWND::AddFilter(TinyVisualFilter* ps)
 		{
@@ -96,7 +91,7 @@ namespace TinyUI
 			bHandled = FALSE;
 			PAINTSTRUCT ps = { 0 };
 			HDC hDC = BeginPaint(m_hWND, &ps);
-			m_document->Draw(m_cacheDC, ps.rcPaint);
+			m_document->Draw(m_visualDC, ps.rcPaint);
 			EndPaint(m_hWND, &ps);
 			return FALSE;
 		}
@@ -110,16 +105,9 @@ namespace TinyUI
 			bHandled = FALSE;
 			m_size.cx = LOWORD(lParam);
 			m_size.cy = HIWORD(lParam);
-			if (m_document && m_cacheDC)
-			{
-				TinyVisual* spvis = m_document->GetParent(NULL);
-				if (spvis)
-				{
-					spvis->SetSize(m_size);
-				}
-				m_cacheDC->SetSize(m_size.cx, m_size.cy);
-				::RedrawWindow(m_hWND, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
-			}
+			m_visualDC->SetSize(m_size.cx, m_size.cy);
+			m_document->OnSize(m_size);
+			::RedrawWindow(m_hWND, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
 			return FALSE;
 		}
 		LRESULT TinyVisualHWND::OnMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -139,6 +127,7 @@ namespace TinyUI
 		LRESULT TinyVisualHWND::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
+			Initialize();
 			return FALSE;
 		}
 		LRESULT TinyVisualHWND::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

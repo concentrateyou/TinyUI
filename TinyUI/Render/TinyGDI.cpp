@@ -1863,6 +1863,11 @@ namespace TinyUI
 	/************************************************************************/
 	/* SIZE																	*/
 	/************************************************************************/
+	TinySize& TinySize::Empty()
+	{
+		static TinySize size;
+		return size;
+	}
 	TinySize::TinySize() throw()
 	{
 		cx = cy = 0;
@@ -1939,6 +1944,11 @@ namespace TinyUI
 	/************************************************************************/
 	/* POINT															    */
 	/************************************************************************/
+	TinyPoint& TinyPoint::Empty()
+	{
+		static TinyPoint pos;
+		return pos;
+	}
 	TinyPoint::TinyPoint() throw()
 	{
 		x = y = 0;
@@ -2039,6 +2049,11 @@ namespace TinyUI
 	/************************************************************************/
 	/* RECTANGLE															*/
 	/************************************************************************/
+	TinyRectangle& TinyRectangle::Empty()
+	{
+		static TinyRectangle s;
+		return s;
+	}
 	TinyRectangle::TinyRectangle() throw()
 	{
 		left = top = right = bottom = 0;

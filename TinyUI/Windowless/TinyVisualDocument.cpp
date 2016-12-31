@@ -2,7 +2,6 @@
 #include "TinyVisualHWND.h"
 #include "TinyVisualWindow.h"
 #include "TinyVisualDocument.h"
-
 #include "TinyVisualComboBox.h"
 
 namespace TinyUI
@@ -40,10 +39,10 @@ namespace TinyUI
 		{
 			return m_pWindow;
 		}
-		TinyVisualCacheDC*	TinyVisualDocument::GetCacheDC() const
+		TinyVisualDC*	TinyVisualDocument::GetVisualDC() const
 		{
 			ASSERT(m_pWindow);
-			return m_pWindow->m_cacheDC;
+			return m_pWindow->m_visualDC;
 		}
 		HWND TinyVisualDocument::Handle() const
 		{
@@ -426,7 +425,7 @@ namespace TinyUI
 			ASSERT(m_pWindow);
 			return ::RedrawWindow(m_pWindow->Handle(), lprcUpdate, hrgnUpdate, RDW_INVALIDATE | RDW_UPDATENOW);
 		}
-		void TinyVisualDocument::Draw(TinyVisualCacheDC* ps, const RECT& rcPaint)
+		void TinyVisualDocument::Draw(TinyVisualDC* ps, const RECT& rcPaint)
 		{
 			TinyRectangle clipBox;
 			::GetClipBox(ps->GetMemDC(), &clipBox);
@@ -438,7 +437,7 @@ namespace TinyUI
 		}
 		void TinyVisualDocument::Draw(TinyVisual* spvis, HDC hDC, const RECT& rcPaint)
 		{
-			ASSERT(m_pWindow && m_pWindow->m_cacheDC);
+			ASSERT(m_pWindow && m_pWindow->m_visualDC);
 			while (spvis != NULL && spvis->IsVisible())
 			{
 				if (spvis->m_spvisParent)
@@ -465,6 +464,26 @@ namespace TinyUI
 				}
 				spvis = spvis->m_spvisNext;
 			}
+		}
+		void TinyVisualDocument::Resize(TinyVisual* spvis, const TinySize& size)
+		{
+			ASSERT(spvis);
+			while (spvis != NULL && spvis->IsVisible())
+			{
+				spvis->OnSizeChange(size);
+				if (spvis->m_spvisChild)
+					Resize(spvis->m_spvisChild, size);
+				spvis = spvis->m_spvisNext;
+			}
+		}
+		HRESULT	TinyVisualDocument::OnSize(const TinySize& size)
+		{
+			if (m_spvisWindow && m_spvisWindow->GetSize() != size)
+			{
+				m_spvisWindow->SetSize(size);
+				Resize(m_spvisWindow, size);
+			}
+			return FALSE;
 		}
 		HRESULT	TinyVisualDocument::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)
 		{

@@ -45,13 +45,6 @@ namespace TinyUI
 					spvis = document->Create<TinyVisualWindow>(0, 0, size.cx, size.cy, NULL);
 					document->m_spvisWindow = spvis;
 					BuildProperty(map, spvis);
-					::SetWindowPos(document->GetVisualHWND()->Handle(),
-						NULL,
-						pos.x,
-						pos.y,
-						size.cx,
-						size.cy,
-						SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
 				}
 				else
 				{
@@ -59,6 +52,8 @@ namespace TinyUI
 				}
 			}
 			CreateInstace(pXML, spvis, document);
+			spvis = document->GetParent(NULL);
+			document->GetVisualHWND()->CenterWindow(NULL, spvis->GetSize());
 			return TRUE;
 		}
 		void TinyVisualBuilder::CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualDocument* document)
@@ -77,8 +72,10 @@ namespace TinyUI
 					spvis = document->Create<TinyVisualHLayout>(pos.x, pos.y, size.cx, size.cy, spvisParent);
 					BuildProperty(map, spvis);
 					document->LinkVisual(spvis, PVISUAL_BOTTOM, &spvisParent->m_spvisChild);
-					CreateInstace(pXMLChildNode, spvis, document);
-					spvis->Resize();
+					if (spvis->IsLayout())
+					{
+						CreateInstace(pXMLChildNode, spvis, document);
+					}
 				}
 				else if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT &&
 					!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::VERTICALLAYOUT.STR()))
@@ -91,8 +88,10 @@ namespace TinyUI
 					spvis = document->Create<TinyVisualVLayout>(pos.x, pos.y, size.cx, size.cy, spvisParent);
 					BuildProperty(map, spvis);
 					document->LinkVisual(spvis, PVISUAL_BOTTOM, &spvisParent->m_spvisChild);
-					CreateInstace(pXMLChildNode, spvis, document);
-					spvis->Resize();
+					if (spvis->IsLayout())
+					{
+						CreateInstace(pXMLChildNode, spvis, document);
+					}
 				}
 				else if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT &&
 					!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::BUTTON.STR()))
@@ -105,7 +104,10 @@ namespace TinyUI
 					spvis = document->Create<TinyVisualButton>(pos.x, pos.y, size.cx, size.cy, spvisParent);
 					BuildProperty(map, spvis);
 					document->LinkVisual(spvis, PVISUAL_BOTTOM, &spvisParent->m_spvisChild);
-					spvis->Resize();
+					if (spvis->IsLayout())
+					{
+						CreateInstace(pXMLChildNode, spvis, document);
+					}
 				}
 			}
 		}

@@ -21,6 +21,10 @@ namespace TinyUI
 		{
 			return TinyVisualTag::VERTICALLAYOUT;
 		}
+		BOOL TinyVisualVLayout::IsLayout() const
+		{
+			return TRUE;
+		}
 		void TinyVisualVLayout::AutoScroll(BOOL bAuto)
 		{
 			m_bAuto = bAuto;
