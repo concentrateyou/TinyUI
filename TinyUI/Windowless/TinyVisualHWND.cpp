@@ -119,7 +119,6 @@ namespace TinyUI
 		LRESULT TinyVisualHWND::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
-			Uninitialize();
 			PostQuitMessage(0);//退出应用程序
 			return FALSE;
 		}
@@ -133,6 +132,7 @@ namespace TinyUI
 		LRESULT TinyVisualHWND::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
+			Uninitialize();
 			return FALSE;
 		}
 		LRESULT TinyVisualHWND::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

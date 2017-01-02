@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <window name="demo" text="demo" position="100,100" size="600,600" image-normal="D:\image.jpg">
-  <horizontallayout name="caption" size="60,30" maxsize="60,30" minsize="60,30" horizontal-alignment="right" vertical-alignment="center">
+  <syscaption name ="syscaption" size="0,30">
+    <label name ="systitle" color="#FFFFFF" align="left" text="demo" size=""></label>
     <button name="sysmin" tooltip="Min" size="30,30"
-     image-normal="D:\Develop\TinyUI\Resource\sysbutton\btn_mini_normal.png"
-     image-highlight="D:\Develop\TinyUI\Resource\sysbutton\btn_mini_highlight.png"
-     image-down="D:\Develop\TinyUI\Resource\sysbutton\btn_mini_down.png">
+   image-normal="D:\Develop\TinyUI\Resource\sysbutton\btn_mini_normal.png"
+   image-highlight="D:\Develop\TinyUI\Resource\sysbutton\btn_mini_highlight.png"
+   image-down="D:\Develop\TinyUI\Resource\sysbutton\btn_mini_down.png">
     </button>
     <button name="sysclose" tooltip="Close" size="30,30"
          image-normal="D:\Develop\TinyUI\Resource\sysbutton\btn_close_normal.png"
          image-highlight="D:\Develop\TinyUI\Resource\sysbutton\btn_close_highlight.png"
          image-down="D:\Develop\TinyUI\Resource\sysbutton\btn_close_down.png">
     </button>
-  </horizontallayout>
+  </syscaption>
 </window>

@@ -61,8 +61,7 @@ namespace TinyUI
 			TinyVisual* spvis = NULL;
 			for (const TiXmlNode* pXMLChildNode = pXMLNode->FirstChild(); pXMLChildNode; pXMLChildNode = pXMLChildNode->NextSibling())
 			{
-				if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT &&
-					!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::HORIZONTALLAYOUT.STR()))
+				if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT && !strcasecmp(pXMLChildNode->Value(), TinyVisualTag::HORIZONTALLAYOUT.STR()))
 				{
 					spvisParent->m_dwCount++;
 					TinyMap<TinyString, TinyString> map;
@@ -77,8 +76,7 @@ namespace TinyUI
 						CreateInstace(pXMLChildNode, spvis, document);
 					}
 				}
-				else if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT &&
-					!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::VERTICALLAYOUT.STR()))
+				if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT && !strcasecmp(pXMLChildNode->Value(), TinyVisualTag::VERTICALLAYOUT.STR()))
 				{
 					spvisParent->m_dwCount++;
 					TinyMap<TinyString, TinyString> map;
@@ -93,8 +91,7 @@ namespace TinyUI
 						CreateInstace(pXMLChildNode, spvis, document);
 					}
 				}
-				else if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT &&
-					!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::BUTTON.STR()))
+				if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT && !strcasecmp(pXMLChildNode->Value(), TinyVisualTag::BUTTON.STR()))
 				{
 					spvisParent->m_dwCount++;
 					TinyMap<TinyString, TinyString> map;

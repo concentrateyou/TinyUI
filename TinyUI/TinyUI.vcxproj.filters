@@ -429,6 +429,9 @@
     <ClInclude Include="Media\TinyMFMP3Encode.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualTab.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -789,6 +792,9 @@
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
     <ClCompile Include="Windowless\TinyVisualHWND.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualTab.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>

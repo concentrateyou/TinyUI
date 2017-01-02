@@ -192,6 +192,7 @@
     <ClInclude Include="Render\TinyCanvas.h" />
     <ClInclude Include="Windowless\TinyTextHost.h" />
     <ClInclude Include="Windowless\TinyVisualRichText.h" />
+    <ClInclude Include="Windowless\TinyVisualTab.h" />
     <ClInclude Include="Windowless\TinyVisualUtility.h" />
     <ClInclude Include="Windowless\TinyVisualButton.h" />
     <ClInclude Include="Windowless\TinyVisualComboBox.h" />
@@ -316,6 +317,7 @@
     <ClCompile Include="Windowless\TinyTextHost.cpp" />
     <ClCompile Include="Windowless\TinyVisualHWND.cpp" />
     <ClCompile Include="Windowless\TinyVisualRichText.cpp" />
+    <ClCompile Include="Windowless\TinyVisualTab.cpp" />
     <ClCompile Include="Windowless\TinyVisualUtility.cpp" />
     <ClCompile Include="Windowless\TinyVisualButton.cpp" />
     <ClCompile Include="Windowless\TinyVisualComboBox.cpp" />
@@ -348,7 +350,9 @@
     <ResourceCompile Include="TinyUI.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="resource.xml" />
+    <Xml Include="resource.xml">
+      <SubType>Designer</SubType>
+    </Xml>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
