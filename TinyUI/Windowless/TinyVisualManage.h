@@ -10,7 +10,6 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-
 		class TinyVisualDocument;
 		/// <summary>
 		/// 可视化元素管理

@@ -92,7 +92,7 @@ BOOL DXFrameUI::CreateUI()
 	BOOL bRes = m_window.Create(m_hWND, 0, 0, TO_CX(s), TO_CY(s) * 3 / 4);
 	if (!bRes)
 		return FALSE;
-
+	return TRUE;
 }
 BOOL DXFrameUI::CreateTasks()
 {

@@ -151,6 +151,7 @@ namespace TinyUI
 	public:
 		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_Create;
 		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_Destory;
+		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_Size;
 	};
 	SELECTANY HHOOK TinyControl::m_hhk = NULL;
 }

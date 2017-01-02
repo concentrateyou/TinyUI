@@ -2159,6 +2159,12 @@ namespace TinyUI
 	{
 		::SetRect(this, left, top, left + size.cx, top + size.cy);
 	}
+	void TinyRectangle::SetPosition(POINT pos) throw()
+	{
+		INT cx = right - left;
+		INT cy = bottom - top;
+		::SetRect(this, pos.x, pos.y, pos.x + cy, pos.y + cy);
+	}
 	void TinyRectangle::SetRectEmpty() throw()
 	{
 		::SetRectEmpty(this);

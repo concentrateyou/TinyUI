@@ -49,7 +49,7 @@ namespace TinyUI
 		{
 		public:
 			static const TinyString WINDOW;
-			static const TinyString CAPTION;
+			static const TinyString SYSCAPTION;
 			static const TinyString LABEL;
 			static const TinyString TAB;
 			static const TinyString BUTTON;

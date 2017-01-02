@@ -553,6 +553,7 @@ namespace TinyUI
 		void SetRect(POINT topLeft, POINT bottomRight) throw();
 		void SetRect(POINT pos, SIZE size) throw();
 		void SetSize(SIZE size) throw();
+		void SetPosition(POINT pos) throw();
 		void SetRectEmpty() throw();
 		void CopyRect(LPCRECT lpSrcRect) throw();
 		BOOL EqualRect(LPCRECT lpRect) const throw();

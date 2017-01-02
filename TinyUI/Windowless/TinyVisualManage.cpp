@@ -6,7 +6,7 @@
 #include "TinyVisualWindow.h"
 #include "TinyVisualLabel.h"
 #include "TinyVisualButton.h"
-#include "TinyVisualVLayout.h"
+#include "TinyVisualCaption.h"
 #include "TinyVisualHLayout.h"
 #include "TinyVisualButton.h"
 #include "TinyVisualScrollBar.h"
@@ -52,55 +52,48 @@ namespace TinyUI
 				}
 			}
 			CreateInstace(pXML, spvis, document);
-			spvis = document->GetParent(NULL);
-			document->GetVisualHWND()->CenterWindow(NULL, spvis->GetSize());
-			return TRUE;
+			TinySize size = document->GetParent(NULL)->GetSize();
+			RECT windowBounds;
+			RECT centerBounds = { 0 };
+			HMONITOR monitor = MonitorFromWindow(document->GetVisualHWND()->Handle(), MONITOR_DEFAULTTONEAREST);
+			if (monitor != NULL)
+			{
+				MONITORINFO mi = { 0 };
+				mi.cbSize = sizeof(mi);
+				GetMonitorInfo(monitor, &mi);
+				centerBounds = mi.rcWork;
+			}
+			windowBounds.left = centerBounds.left + (centerBounds.right - centerBounds.left - size.cx) / 2;
+			windowBounds.right = windowBounds.left + size.cx;
+			windowBounds.top = centerBounds.top + (centerBounds.bottom - centerBounds.top - size.cy) / 2;
+			windowBounds.bottom = windowBounds.top + size.cy;
+			return SetWindowPos(document->GetVisualHWND()->Handle(), 0, windowBounds.left, windowBounds.top,
+				windowBounds.right - windowBounds.left,
+				windowBounds.bottom - windowBounds.top,
+				SWP_NOACTIVATE | SWP_NOZORDER);
 		}
 		void TinyVisualBuilder::CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualDocument* document)
 		{
+			ASSERT(document && pXMLNode);
 			TinyVisual* spvis = NULL;
 			for (const TiXmlNode* pXMLChildNode = pXMLNode->FirstChild(); pXMLChildNode; pXMLChildNode = pXMLChildNode->NextSibling())
 			{
-				if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT && !strcasecmp(pXMLChildNode->Value(), TinyVisualTag::HORIZONTALLAYOUT.STR()))
+				if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT)
 				{
 					spvisParent->m_dwCount++;
 					TinyMap<TinyString, TinyString> map;
 					GetAttributeMap(static_cast<const TiXmlElement*>(pXMLChildNode), map);
 					TinyPoint pos = GetPosition(map.GetValue(TinyVisualProperty::POSITION));
 					TinySize size = GetSize(map.GetValue(TinyVisualProperty::SIZE));
-					spvis = document->Create<TinyVisualHLayout>(pos.x, pos.y, size.cx, size.cy, spvisParent);
-					BuildProperty(map, spvis);
-					document->LinkVisual(spvis, PVISUAL_BOTTOM, &spvisParent->m_spvisChild);
-					if (spvis->IsLayout())
+					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::SYSCAPTION.STR()))
 					{
-						CreateInstace(pXMLChildNode, spvis, document);
+						spvis = document->Create<TinyVisualCaption>(pos.x, pos.y, size.cx, size.cy, spvisParent);
 					}
-				}
-				if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT && !strcasecmp(pXMLChildNode->Value(), TinyVisualTag::VERTICALLAYOUT.STR()))
-				{
-					spvisParent->m_dwCount++;
-					TinyMap<TinyString, TinyString> map;
-					GetAttributeMap(static_cast<const TiXmlElement*>(pXMLChildNode), map);
-					TinyPoint pos = GetPosition(map.GetValue(TinyVisualProperty::POSITION));
-					TinySize size = GetSize(map.GetValue(TinyVisualProperty::SIZE));
-					spvis = document->Create<TinyVisualVLayout>(pos.x, pos.y, size.cx, size.cy, spvisParent);
-					BuildProperty(map, spvis);
-					document->LinkVisual(spvis, PVISUAL_BOTTOM, &spvisParent->m_spvisChild);
-					if (spvis->IsLayout())
+					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::BUTTON.STR()))
 					{
-						CreateInstace(pXMLChildNode, spvis, document);
+						spvis = document->Create<TinyVisualButton>(pos.x, pos.y, size.cx, size.cy, spvisParent);
 					}
-				}
-				if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT && !strcasecmp(pXMLChildNode->Value(), TinyVisualTag::BUTTON.STR()))
-				{
-					spvisParent->m_dwCount++;
-					TinyMap<TinyString, TinyString> map;
-					GetAttributeMap(static_cast<const TiXmlElement*>(pXMLChildNode), map);
-					TinyPoint pos = GetPosition(map.GetValue(TinyVisualProperty::POSITION));
-					TinySize size = GetSize(map.GetValue(TinyVisualProperty::SIZE));
-					spvis = document->Create<TinyVisualButton>(pos.x, pos.y, size.cx, size.cy, spvisParent);
 					BuildProperty(map, spvis);
-					document->LinkVisual(spvis, PVISUAL_BOTTOM, &spvisParent->m_spvisChild);
 					if (spvis->IsLayout())
 					{
 						CreateInstace(pXMLChildNode, spvis, document);
@@ -160,52 +153,52 @@ namespace TinyUI
 				TinyString* ps = map.GetValue(TinyVisualProperty::IMAGEDOWN);
 				spvis->SetStyleImage(DOWN, ps->STR());
 			}
-			if (map.Contain(TinyString(TinyVisualProperty::HORIZONTALALIGNMENT)))
-			{
-				TinyString* ps = map.GetValue(TinyVisualProperty::HORIZONTALALIGNMENT);
-				HorizontalAlignment ha = HORIZONTAL_LEFT;
-				if (*ps == TinyVisualConst::LEFT)
-					ha = HORIZONTAL_LEFT;
-				if (*ps == TinyVisualConst::RIGHT)
-					ha = HORIZONTAL_RIGHT;
-				if (*ps == TinyVisualConst::CENTER)
-					ha = HORIZONTAL_CENTER;
-				if (*ps == TinyVisualConst::STRETCH)
-					ha = HORIZONTAL_STRETCH;
-				if (spvis->RetrieveTag() == TinyVisualTag::VERTICALLAYOUT)
-				{
-					TinyVisualVLayout* vis = static_cast<TinyVisualVLayout*>(spvis);
-					vis->SetHorizontalAlignment(ha);
-				}
-				if (spvis->RetrieveTag() == TinyVisualTag::HORIZONTALLAYOUT)
-				{
-					TinyVisualHLayout* vis = static_cast<TinyVisualHLayout*>(spvis);
-					vis->SetHorizontalAlignment(ha);
-				}
-			}
-			if (map.Contain(TinyString(TinyVisualProperty::VERTICALALIGNMENT)))
-			{
-				TinyString* ps = map.GetValue(TinyVisualProperty::VERTICALALIGNMENT);
-				VerticalAlignment va = VERTICAL_TOP;
-				if (*ps == TinyVisualConst::TOP)
-					va = VERTICAL_TOP;
-				if (*ps == TinyVisualConst::BOTTOM)
-					va = VERTICAL_BOTTOM;
-				if (*ps == TinyVisualConst::CENTER)
-					va = VERTICAL_CENTER;
-				if (*ps == TinyVisualConst::STRETCH)
-					va = VERTICAL_STRETCH;
-				if (spvis->RetrieveTag() == TinyVisualTag::VERTICALLAYOUT)
-				{
-					TinyVisualVLayout* vis = static_cast<TinyVisualVLayout*>(spvis);
-					vis->SetVerticalAlignment(va);
-				}
-				if (spvis->RetrieveTag() == TinyVisualTag::HORIZONTALLAYOUT)
-				{
-					TinyVisualHLayout* vis = static_cast<TinyVisualHLayout*>(spvis);
-					vis->SetVerticalAlignment(va);
-				}
-			}
+			//if (map.Contain(TinyString(TinyVisualProperty::HORIZONTALALIGNMENT)))
+			//{
+			//	TinyString* ps = map.GetValue(TinyVisualProperty::HORIZONTALALIGNMENT);
+			//	HorizontalAlignment ha = HORIZONTAL_LEFT;
+			//	if (*ps == TinyVisualConst::LEFT)
+			//		ha = HORIZONTAL_LEFT;
+			//	if (*ps == TinyVisualConst::RIGHT)
+			//		ha = HORIZONTAL_RIGHT;
+			//	if (*ps == TinyVisualConst::CENTER)
+			//		ha = HORIZONTAL_CENTER;
+			//	if (*ps == TinyVisualConst::STRETCH)
+			//		ha = HORIZONTAL_STRETCH;
+			//	if (spvis->RetrieveTag() == TinyVisualTag::VERTICALLAYOUT)
+			//	{
+			//		TinyVisualVLayout* vis = static_cast<TinyVisualVLayout*>(spvis);
+			//		vis->SetHorizontalAlignment(ha);
+			//	}
+			//	if (spvis->RetrieveTag() == TinyVisualTag::HORIZONTALLAYOUT)
+			//	{
+			//		TinyVisualHLayout* vis = static_cast<TinyVisualHLayout*>(spvis);
+			//		vis->SetHorizontalAlignment(ha);
+			//	}
+			//}
+			//if (map.Contain(TinyString(TinyVisualProperty::VERTICALALIGNMENT)))
+			//{
+			//	TinyString* ps = map.GetValue(TinyVisualProperty::VERTICALALIGNMENT);
+			//	VerticalAlignment va = VERTICAL_TOP;
+			//	if (*ps == TinyVisualConst::TOP)
+			//		va = VERTICAL_TOP;
+			//	if (*ps == TinyVisualConst::BOTTOM)
+			//		va = VERTICAL_BOTTOM;
+			//	if (*ps == TinyVisualConst::CENTER)
+			//		va = VERTICAL_CENTER;
+			//	if (*ps == TinyVisualConst::STRETCH)
+			//		va = VERTICAL_STRETCH;
+			//	if (spvis->RetrieveTag() == TinyVisualTag::VERTICALLAYOUT)
+			//	{
+			//		TinyVisualVLayout* vis = static_cast<TinyVisualVLayout*>(spvis);
+			//		vis->SetVerticalAlignment(va);
+			//	}
+			//	if (spvis->RetrieveTag() == TinyVisualTag::HORIZONTALLAYOUT)
+			//	{
+			//		TinyVisualHLayout* vis = static_cast<TinyVisualHLayout*>(spvis);
+			//		vis->SetVerticalAlignment(va);
+			//	}
+			//}
 			spvis->m_map = std::move(map);
 		}
 		BOOL TinyVisualBuilder::GetAttributeMap(const TiXmlElement* pXMLNode, TinyMap<TinyString, TinyString>& map)

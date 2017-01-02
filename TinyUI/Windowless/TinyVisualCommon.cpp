@@ -28,7 +28,7 @@ namespace TinyUI
 		const TinyString TinyVisualProperty::VERTICALALIGNMENT = TEXT("vertical-alignment");
 		//////////////////////////////////////////////////////////////////////////
 		const TinyString TinyVisualTag::WINDOW = TEXT("window");
-		const TinyString TinyVisualTag::CAPTION = TEXT("caption");
+		const TinyString TinyVisualTag::SYSCAPTION = TEXT("syscaption");
 		const TinyString TinyVisualTag::BUTTON = TEXT("button");
 		const TinyString TinyVisualTag::LABEL = TEXT("label");
 		const TinyString TinyVisualTag::TAB = TEXT("tab");

@@ -6,6 +6,13 @@ namespace TinyUI
 	namespace Windowless
 	{
 		/// <summary>
+		/// TabÒ³
+		/// </summary>
+		class TinyVisualTabPage : public TinyVisual
+		{
+
+		};
+		/// <summary>
 		/// Tab¿Ø¼þ
 		/// </summary>
 		class TinyVisualTab : public TinyVisual

@@ -79,8 +79,8 @@ namespace TinyUI
 		public:
 			TinyVisualDocument*	GetDocument();
 			virtual	HRESULT		SendMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes);
-			virtual void		OnSizeChange(const TinySize&);
-			virtual void		OnPosChange(const TinyPoint&);
+			virtual void		OnSizeChange(const TinySize&, const TinySize&);
+			virtual void		OnPosChange(const TinyPoint&, const TinyPoint&);
 		public:
 			virtual ~TinyVisual();
 			virtual TinyString	RetrieveTag() const = 0;

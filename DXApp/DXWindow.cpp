@@ -60,9 +60,3 @@ LRESULT DXWindow::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bH
 	bHandled = TRUE;
 	return FALSE;
 }
-
-LRESULT DXWindow::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-{
-	bHandled = FALSE;
-	return FALSE;
-}

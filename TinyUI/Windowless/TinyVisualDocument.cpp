@@ -50,6 +50,8 @@ namespace TinyUI
 		}
 		void TinyVisualDocument::LinkVisual(TinyVisual* spvis, TinyVisual* spvisInsert, TinyVisual**pspvisFirst)
 		{
+			if (pspvisFirst == NULL)
+				return;
 			if (*pspvisFirst == spvis)
 			{
 				return;
@@ -104,7 +106,7 @@ namespace TinyUI
 			{
 				switch (cmd)
 				{
-				case GW_CHILD:
+				case CMD_CHILD:
 					break;
 				default:
 					return NULL;
@@ -192,7 +194,7 @@ namespace TinyUI
 			TinyVisual* spvisOldParent = spvis->m_spvisParent;
 			UnlinkVisual(spvis, &spvisOldParent->m_spvisChild);
 			spvis->m_spvisParent = spvisNewParent;
-			LinkVisual(spvis, NULL, &spvisNewParent->m_spvisChild);
+			LinkVisual(spvis, PVISUAL_BOTTOM, &spvisNewParent->m_spvisChild);
 			spvis->SetVisible(TRUE);
 			return spvisOldParent;
 		}
@@ -465,23 +467,30 @@ namespace TinyUI
 				spvis = spvis->m_spvisNext;
 			}
 		}
-		void TinyVisualDocument::Resize(TinyVisual* spvis, const TinySize& size)
+		/*void TinyVisualDocument::Resize(TinyVisual* spvis, const TinySize& size)
 		{
 			ASSERT(spvis);
 			while (spvis != NULL && spvis->IsVisible())
 			{
 				spvis->OnSizeChange(size);
 				if (spvis->m_spvisChild)
+				{
 					Resize(spvis->m_spvisChild, size);
+				}
 				spvis = spvis->m_spvisNext;
 			}
-		}
+		}*/
 		HRESULT	TinyVisualDocument::OnSize(const TinySize& size)
 		{
-			if (m_spvisWindow && m_spvisWindow->GetSize() != size)
+			if (m_spvisWindow)
 			{
-				m_spvisWindow->SetSize(size);
-				Resize(m_spvisWindow, size);
+				TinySize oldsize = m_spvisWindow->GetSize();
+				if (oldsize != size)
+				{
+					m_spvisWindow->SetSize(size);
+					m_spvisWindow->OnSizeChange(oldsize, size);
+					Invalidate();
+				}
 			}
 			return FALSE;
 		}
@@ -702,6 +711,7 @@ namespace TinyUI
 			SetFocus(NULL);
 			return FALSE;
 		}
+		//////////////////////////////////////////////////////////////////////////
 		TinyVisualDocument::TinyVisualFactory::TinyVisualFactory(TinyVisualDocument* document)
 			:m_document(document)
 		{

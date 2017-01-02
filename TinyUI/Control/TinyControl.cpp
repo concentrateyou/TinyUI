@@ -189,6 +189,7 @@ namespace TinyUI
 	LRESULT TinyControl::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		EVENT_Size(uMsg, wParam, lParam, bHandled);
 		return FALSE;
 	}
 	LRESULT TinyControl::OnMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

@@ -16,7 +16,7 @@ namespace TinyUI
 		public:
 			virtual ~TinyVisualWindow();
 
-			void OnSizeChange(const TinySize&) OVERRIDE;
+			void OnSizeChange(const TinySize&, const TinySize&) OVERRIDE;
 
 		public:
 			TinyString RetrieveTag() const OVERRIDE;

@@ -18,9 +18,16 @@ namespace TinyUI
 
 		}
 
-		void TinyVisualWindow::OnSizeChange(const TinySize& size)
+		void TinyVisualWindow::OnSizeChange(const TinySize& oldsize, const TinySize& newsize)
 		{
-
+			TinyVisual* spvis = m_spvisChild;
+			while (spvis != NULL && spvis->IsVisible())
+			{
+				TinySize size = spvis->GetSize();
+				spvis->SetSize(TinySize(newsize.cx, size.cy));
+				spvis->OnSizeChange(size, spvis->GetSize());
+				spvis = m_document->GetVisual(spvis, CMD_NEXT);
+			}
 		}
 
 		TinyString TinyVisualWindow::RetrieveTag() const

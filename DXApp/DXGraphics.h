@@ -5,7 +5,7 @@
 #include "DX11TextureShader.h"
 using namespace DXFramework;
 
-class DXGraphics : public TinyLock
+class DXGraphics
 {
 public:
 	DXGraphics();

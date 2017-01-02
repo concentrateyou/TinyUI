@@ -37,6 +37,7 @@ namespace TinyUI
 			template<typename T>
 			T*		Create(INT x, INT y, INT cx, INT cy, TinyVisual* spvisParent);
 			BOOL	Destory(TinyVisual* spvis);
+
 		public:
 			HWND				Handle() const;
 			TinyVisualHWND*		GetVisualHWND() const;
@@ -62,11 +63,9 @@ namespace TinyUI
 			TinyPoint			GetScreenPos(const TinyVisual* spvis);
 			BOOL				Invalidate(RECT* lpRect = NULL);
 			BOOL				Redraw(RECT *lprcUpdate = NULL, HRGN hrgnUpdate = NULL);
-
 		public:
 			HRESULT				OnSize(const TinySize& size);
 			HRESULT				OnMouseLeave();
-			HRESULT				OnMouseEnter();
 			HRESULT				OnMouseMove(const TinyPoint& pos, DWORD dwFlags);
 			HRESULT				OnMouseWheel(const TinyPoint& pos, SHORT zDelta, DWORD dwFlags);
 			HRESULT				OnLButtonDown(const TinyPoint& pos, DWORD dwFlags);
@@ -92,7 +91,7 @@ namespace TinyUI
 			TinyVisual*			GetPrevVisual(TinyVisual* spvisList, TinyVisual* spvisFind) const;
 			void				Draw(TinyVisualDC* ps, const RECT& rcPaint);
 			void				Draw(TinyVisual* spvis, HDC hDC, const RECT& rcPaint);
-			void				Resize(TinyVisual* spvis, const TinySize& size);
+			//void				Resize(TinyVisual* spvis, const TinySize& size);
 		private:
 			class TinyVisualFactory
 			{
@@ -100,7 +99,7 @@ namespace TinyUI
 				friend class TinyVisualDocument;
 				DISALLOW_COPY_AND_ASSIGN(TinyVisualFactory)
 			private:
-				TinyVisualFactory(TinyVisualDocument* vtree);
+				TinyVisualFactory(TinyVisualDocument* document);
 			public:
 				template<typename T>
 				T*		Create(INT x, INT y, INT cx, INT cy, TinyVisual* spvisParent);
@@ -115,7 +114,7 @@ namespace TinyUI
 			TinyVisual*							m_spvisActive;
 			TinyVisual*							m_spvisLastMouse;//当前鼠标所在的元素
 			TinyVisualHWND*						m_pWindow;
-			TinyScopedPtr<TinyVisualBuilder>		m_parse;
+			TinyScopedPtr<TinyVisualBuilder>	m_parse;
 			TinyScopedPtr<TinyVisualFactory>	m_fs;
 		public:
 #ifdef _DEBUG

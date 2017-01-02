@@ -126,11 +126,7 @@ namespace TinyUI
 			TinyPoint& pos = *((TinyPoint*)&m_rectangle);
 			if (pos != newPos)
 			{
-				TinySize size = *((TinySize*)&m_rectangle + 1);
-				pos.x = newPos.x;
-				pos.y = newPos.y;
-				m_rectangle.SetSize(size);
-				OnPosChange(newPos);
+				m_rectangle.SetPosition(newPos);
 			}
 		}
 		TinySize TinyVisual::GetSize() const
@@ -143,7 +139,6 @@ namespace TinyUI
 			if (size != newsize)
 			{
 				m_rectangle.SetSize(newsize);
-				OnSizeChange(newsize);
 			}
 		}
 		TinyRectangle TinyVisual::GetRectangle() const
@@ -196,11 +191,11 @@ namespace TinyUI
 		{
 			return m_map.Contain(szKey);
 		}
-		void TinyVisual::OnPosChange(const TinyPoint& pos)
+		void TinyVisual::OnPosChange(const TinyPoint& oldpos, const TinyPoint& newpos)
 		{
 
 		}
-		void TinyVisual::OnSizeChange(const TinySize& size)
+		void TinyVisual::OnSizeChange(const TinySize& oldsize, const TinySize& newsize)
 		{
 
 		}
