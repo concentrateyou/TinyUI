@@ -1,20 +1,14 @@
 #pragma once
-#include "RenderTask.h"
-#include "AudioEncode.h"
-#include "VideoEncode.h"
-#include "PublishTask.h"
-#include "DXWindow.h"
-#include "MainUI.h"
+#include "Control/TinyControl.h"
+#include "Control/TinyButton.h"
+using namespace TinyUI;
 
-
-using namespace DXFramework;
-
-class DXFrameUI : public TinyControl
+class MainUI : public TinyControl
 {
-	DECLARE_DYNAMIC(DXFrameUI)
+	DECLARE_DYNAMIC(MainUI)
 public:
-	DXFrameUI();
-	virtual ~DXFrameUI();
+	MainUI();
+	virtual ~MainUI();
 	DWORD RetrieveStyle() OVERRIDE;
 	DWORD RetrieveExStyle() OVERRIDE;
 	LPCSTR RetrieveClassName() OVERRIDE;
@@ -22,24 +16,27 @@ public:
 	HICON RetrieveIcon() OVERRIDE;
 	LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-	LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+	LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+
 public:
 	BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 private:
-	BOOL CreateUI();
-	BOOL CreateTasks();
-	void DestoryTasks();
+	void BuildUI();
 	void Resize(INT cx, INT cy);
 private:
-	DXWindow						m_window;
-	MainUI							m_mainUI;
-	TinyScopedPtr<RenderTask>		m_renderTask;
-	TinyScopedPtr<AudioEncode>		m_audioTask;
-	TinyScopedPtr<VideoEncode>		m_videoTask;
-	TinyScopedPtr<PublishTask>		m_publishTask;
+	TinyButton m_broadcast;
+	TinyButton m_recording;
+
+	TinyButton m_game;
+	TinyButton m_screen;
+	TinyButton m_window;
+	TinyButton m_capture;
+	TinyButton m_text;
+	TinyButton m_image;
+
+
+
 };
-
-

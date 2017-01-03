@@ -49,7 +49,7 @@ BOOL DXApplication::Initialize(HINSTANCE hInstance, LPTSTR  lpCmdLine, INT nCmdS
 	if (!TinyApplication::GetInstance()->AddMessageLoop(&m_msgLoop))
 		return FALSE;
 	m_frameUI.Reset(new DXFrameUI());
-	return m_frameUI->Create(NULL, 0, 0, 0, 0);
+	return m_frameUI->Create(NULL, 0, 0, 1024, 720);
 }
 INT DXApplication::Run()
 {

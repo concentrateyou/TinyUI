@@ -37,7 +37,10 @@ HICON DXFrameUI::RetrieveIcon()
 
 void DXFrameUI::Resize(INT cx, INT cy)
 {
+	m_window.SetPosition(0, 0);
 	m_window.SetSize(cx, cy * 3 / 4);
+	m_mainUI.SetPosition(0, cy * 3 / 4);
+	m_mainUI.SetSize(cx, cy / 4);
 }
 
 LRESULT DXFrameUI::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -90,6 +93,9 @@ BOOL DXFrameUI::CreateUI()
 	RECT s = { 0 };
 	GetClientRect(&s);
 	BOOL bRes = m_window.Create(m_hWND, 0, 0, TO_CX(s), TO_CY(s) * 3 / 4);
+	if (!bRes)
+		return FALSE;
+	bRes = m_mainUI.Create(m_hWND, 10, TO_CY(s) * 3 / 4 + 15, TO_CX(s), TO_CY(s) / 4);
 	if (!bRes)
 		return FALSE;
 	return TRUE;
