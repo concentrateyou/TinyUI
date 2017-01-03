@@ -2,7 +2,6 @@
 #include "TinyVisualHWND.h"
 #include "../Render/TinyTransform.h"
 #include "../Render/TinyCanvas.h"
-#include "TinyVisualVLayout.h"
 
 namespace TinyUI
 {

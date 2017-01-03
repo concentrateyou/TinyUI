@@ -33,11 +33,12 @@ namespace TinyUI
 		const TinyString TinyVisualProperty::TEXTALIGN = TEXT("text-align");
 		const TinyString TinyVisualProperty::TEXTDECORATION = TEXT("text-decoration");
 
+		const TinyString TinyVisualProperty::ALIGNMENT = TEXT("alignment");
+
 		const TinyString TinyVisualProperty::IMAGENORMAL = TEXT("image-normal");
 		const TinyString TinyVisualProperty::IMAGEHIGHLIGHT = TEXT("image-highlight");
 		const TinyString TinyVisualProperty::IMAGEDOWN = TEXT("image-down");
-		const TinyString TinyVisualProperty::HORIZONTALALIGNMENT = TEXT("horizontal-alignment");
-		const TinyString TinyVisualProperty::VERTICALALIGNMENT = TEXT("vertical-alignment");
+
 		//////////////////////////////////////////////////////////////////////////
 		const TinyString TinyVisualTag::WINDOW = TEXT("window");
 		const TinyString TinyVisualTag::SYSCAPTION = TEXT("syscaption");
@@ -45,8 +46,8 @@ namespace TinyUI
 		const TinyString TinyVisualTag::LABEL = TEXT("label");
 		const TinyString TinyVisualTag::TAB = TEXT("tab");
 		const TinyString TinyVisualTag::STACKPANEL = TEXT("stackpanel");
-		const TinyString TinyVisualTag::HORIZONTALLAYOUT = TEXT("horizontallayout");
-		const TinyString TinyVisualTag::VERTICALLAYOUT = TEXT("verticallayout");
+		const TinyString TinyVisualTag::HBOXLAYOUT = TEXT("hboxlayout");
+		const TinyString TinyVisualTag::VBOXLAYOUT = TEXT("vboxlayout");
 		const TinyString TinyVisualTag::LISTBOX = TEXT("listbox");
 		const TinyString TinyVisualTag::TOOLBAR = TEXT("toolbar");
 		const TinyString TinyVisualTag::TREEVIEW = TEXT("treeview");
@@ -54,6 +55,7 @@ namespace TinyUI
 		const TinyString TinyVisualTag::VSCROLLBAR = TEXT("vscrollbar");
 		const TinyString TinyVisualTag::COMBOBOX = TEXT("combobox");
 		const TinyString TinyVisualTag::RICHTEXT = TEXT("richtext");
+		const TinyString TinyVisualTag::STRETCH = TEXT("stretch");
 		//////////////////////////////////////////////////////////////////////////
 		TinyVisualDC::TinyVisualDC(HWND hWND)
 			:m_hWND(hWND),

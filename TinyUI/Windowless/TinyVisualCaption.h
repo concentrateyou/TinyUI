@@ -20,7 +20,6 @@ namespace TinyUI
 			TinyString RetrieveTag() const OVERRIDE;
 			BOOL IsLayout() const OVERRIDE;
 			void OnSizeChange(const TinySize&, const TinySize&) OVERRIDE;
-
 		protected:
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT OnMouseLeave() OVERRIDE;

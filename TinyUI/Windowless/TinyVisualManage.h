@@ -25,6 +25,7 @@ namespace TinyUI
 			static TinySize	 GetSize(const TinyString& str);
 			static TinyPoint GetPosition(const TinyString& str);
 			static UINT	 GetAlign(const TinyString& str);
+			static Alignment GetAlignment(const TinyString& str);
 			static UINT	 GetFontStyle(const TinyString& str);
 			static COLORREF	 GetColor(const TinyString& str);
 			static BOOL	GetBool(const TinyString& str);

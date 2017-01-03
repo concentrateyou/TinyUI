@@ -9,21 +9,19 @@ namespace TinyUI
 		/// <summary>
 		/// ´¹Ö±²¼¾Ö
 		/// </summary>
-		class TinyVisualVLayout : public TinyVisual
+		class TinyVisualVBoxLayout : public TinyVisual
 		{
 			friend class TinyVisualDocument;
-			DECLARE_DYNAMIC(TinyVisualVLayout)
-			DISALLOW_COPY_AND_ASSIGN(TinyVisualVLayout)
+			DECLARE_DYNAMIC(TinyVisualVBoxLayout)
+			DISALLOW_COPY_AND_ASSIGN(TinyVisualVBoxLayout)
 		protected:
-			TinyVisualVLayout(TinyVisual* spvisParent, TinyVisualDocument* vtree);
+			TinyVisualVBoxLayout(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:
-			virtual ~TinyVisualVLayout();
+			virtual ~TinyVisualVBoxLayout();
 			TinyString RetrieveTag() const OVERRIDE;
 			BOOL IsLayout() const OVERRIDE;
 		public:
 			void AutoScroll(BOOL bAuto);
-			void SetHorizontalAlignment(HorizontalAlignment horizontalAlignment);
-			void SetVerticalAlignment(VerticalAlignment verticalAlignment);
 		protected:
 			BOOL	OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT	OnMouseEnter() OVERRIDE;
@@ -35,8 +33,6 @@ namespace TinyUI
 			void AdjustLayout(TinyVisual* spvis, INT dx, INT dy);
 		private:
 			BOOL					m_bAuto;
-			HorizontalAlignment		m_horizontalAlignment;
-			VerticalAlignment		m_verticalAlignment;
 			TinyVisualVScrollBar*	m_scrollbar;
 			TinyScopedPtr<Delegate<void(BOOL, INT, INT, INT)>> m_onPosChange;
 		};

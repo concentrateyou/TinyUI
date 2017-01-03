@@ -1,71 +1,63 @@
 #include "../stdafx.h"
 #include "TinyVisualScrollbar.h"
 #include "TinyVisualDocument.h"
-#include "TinyVisualVLayout.h"
+#include "TinyVisualVBoxLayout.h"
 
 namespace TinyUI
 {
 	namespace Windowless
 	{
-		TinyVisualVLayout::TinyVisualVLayout(TinyVisual* spvisParent, TinyVisualDocument* vtree)
+		TinyVisualVBoxLayout::TinyVisualVBoxLayout(TinyVisual* spvisParent, TinyVisualDocument* vtree)
 			:TinyVisual(spvisParent, vtree),
 			m_bAuto(TRUE)
 		{
 
 		}
-		TinyVisualVLayout::~TinyVisualVLayout()
+		TinyVisualVBoxLayout::~TinyVisualVBoxLayout()
 		{
 
 		}
-		TinyString TinyVisualVLayout::RetrieveTag() const
+		TinyString TinyVisualVBoxLayout::RetrieveTag() const
 		{
-			return TinyVisualTag::VERTICALLAYOUT;
+			return TinyVisualTag::VBOXLAYOUT;
 		}
-		BOOL TinyVisualVLayout::IsLayout() const
+		BOOL TinyVisualVBoxLayout::IsLayout() const
 		{
 			return TRUE;
 		}
-		void TinyVisualVLayout::AutoScroll(BOOL bAuto)
+		void TinyVisualVBoxLayout::AutoScroll(BOOL bAuto)
 		{
 			m_bAuto = bAuto;
 		}
-		void TinyVisualVLayout::SetHorizontalAlignment(HorizontalAlignment horizontalAlignment)
-		{
-			m_horizontalAlignment = horizontalAlignment;
-		}
-		void TinyVisualVLayout::SetVerticalAlignment(VerticalAlignment verticalAlignment)
-		{
-			m_verticalAlignment = verticalAlignment;
-		}
-		HRESULT	TinyVisualVLayout::OnCreate()
+		HRESULT	TinyVisualVBoxLayout::OnCreate()
 		{
 			ASSERT(m_document);
 			TinySize size = this->GetSize();
 			m_scrollbar = m_document->Create<TinyVisualVScrollBar>(size.cx - 12, 0, 12, size.cy, this);
-			m_onPosChange.Reset(new Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualVLayout::OnPosChange));
+			m_onPosChange.Reset(new Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualVBoxLayout::OnPosChange));
 			m_scrollbar->EVENT_PosChange += m_onPosChange;
 			return TinyVisual::OnCreate();
 		}
-		HRESULT TinyVisualVLayout::OnDestory()
+		HRESULT TinyVisualVBoxLayout::OnDestory()
 		{
 			m_scrollbar->EVENT_PosChange -= m_onPosChange;
 			return TinyVisual::OnDestory();
 		}
-		BOOL TinyVisualVLayout::OnDraw(HDC hDC, const RECT& rcPaint)
+		BOOL TinyVisualVBoxLayout::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
 			return TRUE;
 		}
-		HRESULT	TinyVisualVLayout::OnMouseEnter()
+		HRESULT	TinyVisualVBoxLayout::OnMouseEnter()
 		{
 			m_document->SetFocus(m_scrollbar);
 			return FALSE;
 		}
-		HRESULT	TinyVisualVLayout::OnMouseLeave()
+		HRESULT	TinyVisualVBoxLayout::OnMouseLeave()
 		{
 			m_document->SetFocus(NULL);
 			return FALSE;
 		}
-		void TinyVisualVLayout::AdjustLayout(TinyVisual* spvis, INT dx, INT dy)
+		void TinyVisualVBoxLayout::AdjustLayout(TinyVisual* spvis, INT dx, INT dy)
 		{
 			while (spvis != NULL)
 			{
@@ -76,7 +68,7 @@ namespace TinyUI
 				spvis = m_document->GetVisual(spvis, CMD_PREV);
 			}
 		}
-		void TinyVisualVLayout::OnPosChange(BOOL bVer, INT code, INT iOldPos, INT iNewPos)
+		void TinyVisualVBoxLayout::OnPosChange(BOOL bVer, INT code, INT iOldPos, INT iNewPos)
 		{
 			TinyVisual* spvis = m_document->GetVisual(this, CMD_CHILD);
 			spvis = m_document->GetVisual(spvis, CMD_LAST);

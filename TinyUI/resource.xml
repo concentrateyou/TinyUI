@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <window name="demo" text="测试" position="100,100" size="600,600" background-image="D:\image.jpg">
-  <syscaption name ="syscaption" size="600,30">
+  <syscaption name ="syscaption" position="0,0" size="600,30">
     <label name="title" position="10,5" size="150,30" text="IQiyi游戏直播伴侣" font-family="宋体" font-style="normal" text-color="255,255,255"></label>
     <button name="sysmin" tooltip="Min" position="540,0" size="30,30"
-   image-normal="D:\Develop\TinyUI\Resource\sysbutton\btn_mini_normal.png"
-   image-highlight="D:\Develop\TinyUI\Resource\sysbutton\btn_mini_highlight.png"
-   image-down="D:\Develop\TinyUI\Resource\sysbutton\btn_mini_down.png">
+                image-normal="D:\Develop\TinyUI\Resource\sysbutton\btn_mini_normal.png"
+                image-highlight="D:\Develop\TinyUI\Resource\sysbutton\btn_mini_highlight.png"
+                image-down="D:\Develop\TinyUI\Resource\sysbutton\btn_mini_down.png">
     </button>
     <button name="sysclose" tooltip="Close" position="570,0" size="30,30"
-         image-normal="D:\Develop\TinyUI\Resource\sysbutton\btn_close_normal.png"
-         image-highlight="D:\Develop\TinyUI\Resource\sysbutton\btn_close_highlight.png"
-         image-down="D:\Develop\TinyUI\Resource\sysbutton\btn_close_down.png">
+            image-normal="D:\Develop\TinyUI\Resource\sysbutton\btn_close_normal.png"
+            image-highlight="D:\Develop\TinyUI\Resource\sysbutton\btn_close_highlight.png"
+            image-down="D:\Develop\TinyUI\Resource\sysbutton\btn_close_down.png">
     </button>
   </syscaption>
+  <sysview position="0,30" size="600,400">
+    
+  </sysview>
 </window>

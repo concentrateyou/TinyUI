@@ -46,8 +46,7 @@ namespace TinyUI
 			static const TinyString IMAGENORMAL;
 			static const TinyString IMAGEHIGHLIGHT;
 			static const TinyString IMAGEDOWN;
-			static const TinyString HORIZONTALALIGNMENT;
-			static const TinyString VERTICALALIGNMENT;
+			static const TinyString ALIGNMENT;
 		};
 		/// <summary>
 		/// Tag≥£¡ø
@@ -61,8 +60,8 @@ namespace TinyUI
 			static const TinyString TAB;
 			static const TinyString BUTTON;
 			static const TinyString STACKPANEL;
-			static const TinyString HORIZONTALLAYOUT;
-			static const TinyString VERTICALLAYOUT;
+			static const TinyString HBOXLAYOUT;
+			static const TinyString VBOXLAYOUT;
 			static const TinyString LISTBOX;
 			static const TinyString TOOLBAR;
 			static const TinyString TREEVIEW;
@@ -70,6 +69,7 @@ namespace TinyUI
 			static const TinyString VSCROLLBAR;
 			static const TinyString COMBOBOX;
 			static const TinyString RICHTEXT;
+			static const TinyString STRETCH;
 		};
 		/// <summary>
 		/// ª∫¥ÊDC

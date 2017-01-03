@@ -9,22 +9,22 @@ namespace TinyUI
 		/// <summary>
 		/// 水平布局(子控件位置属性无效)
 		/// </summary>
-		class TinyVisualHLayout : public TinyVisual
+		class TinyVisualHBoxLayout : public TinyVisual
 		{
 			friend class TinyVisualDocument;
-			DECLARE_DYNAMIC(TinyVisualHLayout)
-			DISALLOW_COPY_AND_ASSIGN(TinyVisualHLayout)
+			DECLARE_DYNAMIC(TinyVisualHBoxLayout)
+			DISALLOW_COPY_AND_ASSIGN(TinyVisualHBoxLayout)
 		protected:
-			TinyVisualHLayout(TinyVisual* spvisParent, TinyVisualDocument* vtree);
+			TinyVisualHBoxLayout(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:
-			virtual ~TinyVisualHLayout();
+			virtual ~TinyVisualHBoxLayout();
 			TinyString RetrieveTag() const OVERRIDE;
 			BOOL IsLayout() const OVERRIDE;
+			HRESULT SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 			void OnSizeChange(const TinySize&, const TinySize&) OVERRIDE;
 		public:
 			void AutoScroll(BOOL bAuto);
-			void SetHorizontalAlignment(HorizontalAlignment horizontalAlignment);
-			void SetVerticalAlignment(VerticalAlignment verticalAlignment);
+			void SetAlignment(Alignment alignment);
 		protected:
 			BOOL	OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT	OnMouseEnter() OVERRIDE;
@@ -33,8 +33,7 @@ namespace TinyUI
 			HRESULT OnDestory() OVERRIDE;
 		private:
 			BOOL					m_bAuto;
-			HorizontalAlignment		m_horizontalAlignment;
-			VerticalAlignment		m_verticalAlignment;
+			Alignment				m_alignment;
 		};
 	}
 }

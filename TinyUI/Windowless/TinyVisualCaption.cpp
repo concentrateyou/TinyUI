@@ -27,16 +27,16 @@ namespace TinyUI
 		}
 		void TinyVisualCaption::OnSizeChange(const TinySize& oldsize, const TinySize& newsize)
 		{
-			TinyVisual* spvis = m_spvisChild;
+			TinyVisual::OnSizeChange(oldsize, newsize);
+			/*TinyVisual* spvis = m_spvisChild;
 			while (spvis != NULL && spvis->IsVisible())
 			{
-				TinyPoint oldpos = spvis->GetPosition();
-				TinyPoint newpos = oldpos;
-				newpos.Offset(newsize.cx - oldsize.cx, 0);
-				spvis->SetPosition(newpos);
-				spvis->OnPosChange(oldpos, newpos);
+				if (spvis->IsLayout())
+				{
+
+				}
 				spvis = m_document->GetVisual(spvis, CMD_NEXT);
-			}
+			}*/
 		}
 
 		BOOL TinyVisualCaption::OnDraw(HDC hDC, const RECT& rcPaint)

@@ -7,11 +7,12 @@
 #include "TinyVisualLabel.h"
 #include "TinyVisualButton.h"
 #include "TinyVisualCaption.h"
-#include "TinyVisualHLayout.h"
 #include "TinyVisualButton.h"
 #include "TinyVisualScrollBar.h"
 #include "TinyVisualComboBox.h"
 #include "TinyVisualRichText.h"
+#include "TinyVisualHBoxLayout.h"
+#include "TinyVisualVBoxLayout.h"
 
 namespace TinyUI
 {
@@ -81,6 +82,14 @@ namespace TinyUI
 					{
 						spvis = document->Create<TinyVisualCaption>(spvisParent);
 					}
+					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::HBOXLAYOUT.STR()))
+					{
+						spvis = document->Create<TinyVisualHBoxLayout>(spvisParent);
+					}
+					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::VBOXLAYOUT.STR()))
+					{
+						spvis = document->Create<TinyVisualVBoxLayout>(spvisParent);
+					}
 					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::LABEL.STR()))
 					{
 						spvis = document->Create<TinyVisualLabel>(spvisParent);
@@ -89,11 +98,14 @@ namespace TinyUI
 					{
 						spvis = document->Create<TinyVisualButton>(spvisParent);
 					}
-					TinyMap<TinyString, TinyString> map;
-					BuildProperty(static_cast<const TiXmlElement*>(pXMLChildNode), spvis);
-					if (spvis->IsLayout())
+					if (spvis != NULL)
 					{
-						CreateInstace(pXMLChildNode, spvis, document);
+						TinyMap<TinyString, TinyString> map;
+						BuildProperty(static_cast<const TiXmlElement*>(pXMLChildNode), spvis);
+						if (spvis->IsLayout())
+						{
+							CreateInstace(pXMLChildNode, spvis, document);
+						}
 					}
 				}
 			}
@@ -149,6 +161,20 @@ namespace TinyUI
 			if (strcasecmp(str.STR(), "center") == 0)
 				return DT_CENTER;
 			return DT_LEFT;
+		}
+		Alignment TinyVisualBuilder::GetAlignment(const TinyString& str)
+		{
+			if (strcasecmp(str.STR(), "left") == 0)
+				return Alignment::LEFT;
+			if (strcasecmp(str.STR(), "top") == 0)
+				return Alignment::TOP;
+			if (strcasecmp(str.STR(), "right") == 0)
+				return Alignment::RIGHT;
+			if (strcasecmp(str.STR(), "bottom") == 0)
+				return Alignment::BOTTOM;
+			if (strcasecmp(str.STR(), "center") == 0)
+				return Alignment::CENTER;
+			return Alignment::LEFT;
 		}
 		COLORREF TinyVisualBuilder::GetColor(const TinyString& str)
 		{
