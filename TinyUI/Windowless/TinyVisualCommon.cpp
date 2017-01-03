@@ -21,6 +21,18 @@ namespace TinyUI
 		const TinyString TinyVisualProperty::SIZE = TEXT("size");
 		const TinyString TinyVisualProperty::VISIBLE = TEXT("visible");
 		const TinyString TinyVisualProperty::ENABLE = TEXT("enable");
+
+		const TinyString TinyVisualProperty::BACKGROUNDIMAGE = TEXT("background-image");
+
+		const TinyString TinyVisualProperty::FONTFAMILY = TEXT("font-family");
+		const TinyString TinyVisualProperty::FONTSIZE = TEXT("font-size");
+		const TinyString TinyVisualProperty::FONTWEIGHT = TEXT("font-weight");
+		const TinyString TinyVisualProperty::FONTSTYLE = TEXT("font-style");
+
+		const TinyString TinyVisualProperty::TEXTCOLOR = TEXT("text-color");
+		const TinyString TinyVisualProperty::TEXTALIGN = TEXT("text-align");
+		const TinyString TinyVisualProperty::TEXTDECORATION = TEXT("text-decoration");
+
 		const TinyString TinyVisualProperty::IMAGENORMAL = TEXT("image-normal");
 		const TinyString TinyVisualProperty::IMAGEHIGHLIGHT = TEXT("image-highlight");
 		const TinyString TinyVisualProperty::IMAGEDOWN = TEXT("image-down");

@@ -21,6 +21,32 @@ namespace TinyUI
 		{
 			return TinyVisualTag::BUTTON;
 		}
+		BOOL TinyVisualButton::SetStyleImage(StyleImage type, LPCSTR pzFile)
+		{
+			return m_images[(INT)type].Load(pzFile);
+		}
+		BOOL TinyVisualButton::SetStyleImage(StyleImage type, BYTE* ps, DWORD dwSize)
+		{
+			return m_images[(INT)type].Load(ps, dwSize);
+		}
+
+		HRESULT TinyVisualButton::SetProperty(const TinyString& name, const TinyString& value)
+		{
+			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGENORMAL.STR()) == 0)
+			{
+				this->SetStyleImage(NORMAL, value.STR());
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGEHIGHLIGHT.STR()) == 0)
+			{
+				this->SetStyleImage(HIGHLIGHT, value.STR());
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGEDOWN.STR()) == 0)
+			{
+				this->SetStyleImage(DOWN, value.STR());
+			}
+			return TinyVisual::SetProperty(name, value);
+		}
+
 		BOOL TinyVisualButton::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
 			TinyImage& image = m_images[m_dwFlag];

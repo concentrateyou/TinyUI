@@ -137,6 +137,7 @@ namespace TinyUI
 		if (!res) return FALSE;
 		m_hPEN = (HPEN)GetCurrentObject(m_hDC, OBJ_PEN);
 		m_hBRUSH = (HBRUSH)GetCurrentObject(m_hDC, OBJ_BRUSH);
+		SetBkMode(hDC, TRANSPARENT);
 		return TRUE;
 	}
 	HDC TinyCanvas::Handle() const
@@ -545,15 +546,15 @@ namespace TinyUI
 		return SetWorldTransform(m_hDC, &m_matrix);
 	}
 
-	BOOL TinyCanvas::SetTextColor(COLORREF color)
+	COLORREF  TinyCanvas::SetTextColor(COLORREF color)
 	{
-		if (!m_hDC) return FALSE;
+		ASSERT(m_hDC);
 		return ::SetTextColor(m_hDC, color);
 	}
 
-	BOOL TinyCanvas::SetTextAlign(UINT align)
+	UINT TinyCanvas::SetTextAlign(UINT align)
 	{
-		if (!m_hDC) return FALSE;
+		ASSERT(m_hDC);
 		return ::SetTextAlign(m_hDC, align);
 	}
 };

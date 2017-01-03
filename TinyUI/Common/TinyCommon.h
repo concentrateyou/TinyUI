@@ -49,7 +49,7 @@ namespace TinyUI
 #ifndef NOEXCEPT
 #define NOEXCEPT	throw()
 #endif 
-	//编译器不生成虚表
+
 #ifndef NO_VTABLE
 #define NO_VTABLE	__declspec(novtable)
 #endif 
@@ -106,17 +106,13 @@ namespace TinyUI
 #ifndef SAFE_LOCAL_DELETE
 #define SAFE_LOCAL_FREE(p)  { if (p) { LocalFree(p); (p)=NULL; } }
 #endif 
-#ifndef TINY_EXPORT
-#define TINY_EXPORT __declspec(dllexport)
-#endif // TINY_EXPORT
+#ifndef EXPORT
+#define EXPORT __declspec(dllexport)
+#endif // EXPORT
 
-#ifndef TINY_IMPORT
-#define TINY_IMPORT __declspec(dllimport)
-#endif // TINY_IMPORT
-
-#ifndef TINY_NO_VTABLE
-#define TINY_NO_VTABLE __declspec(novtable)
-#endif
+#ifndef IMPORT
+#define IMPORT __declspec(dllimport)
+#endif // IMPORT
 
 #ifndef WM_REFLECT
 #define WM_REFLECT (WM_USER + 0x1C00)

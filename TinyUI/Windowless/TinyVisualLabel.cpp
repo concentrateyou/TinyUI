@@ -24,9 +24,12 @@ namespace TinyUI
 		BOOL TinyVisualLabel::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
 			TinyClipCanvas canvas(hDC, this, rcPaint);
-			canvas.SetFont((HFONT)GetStockObject(DEFAULT_GUI_FONT));
+			HFONT hOldFONT = canvas.SetFont(m_hFONT);
+			COLORREF oldColor = canvas.SetTextColor(m_textColor);
 			TinyRectangle clip = m_document->GetWindowRect(this);
-			canvas.DrawString(m_strText, clip, DT_LEFT);
+			canvas.DrawString(m_strText, clip, m_textAlign);
+			canvas.SetFont(hOldFONT);
+			canvas.SetTextColor(oldColor);
 			return TRUE;
 		}
 	}

@@ -12,7 +12,7 @@ public: \
 	/// <summary>
 	/// 对象基类,不允许拷贝和赋值
 	/// </summary>
-	class TinyObject 
+	class NO_VTABLE TinyObject
 	{
 		DISALLOW_COPY_AND_ASSIGN(TinyObject)
 	public:

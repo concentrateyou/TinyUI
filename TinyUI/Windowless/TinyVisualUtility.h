@@ -30,7 +30,7 @@ namespace TinyUI
 		/// <summary>
 		/// ÏûÏ¢¹ýÂËÆ÷
 		/// </summary>
-		class TINY_NO_VTABLE TinyVisualFilter
+		class NO_VTABLE TinyVisualFilter
 		{
 		public:
 			virtual BOOL OnFilter(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult) = 0;

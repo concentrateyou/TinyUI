@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<window name="demo" text="demo" position="100,100" size="600,600" image-normal="D:\image.jpg">
+<window name="demo" text="测试" position="100,100" size="600,600" background-image="D:\image.jpg">
   <syscaption name ="syscaption" size="600,30">
+    <label name="title" position="10,5" size="150,30" text="IQiyi游戏直播伴侣" font-family="宋体" font-style="normal" text-color="255,255,255"></label>
     <button name="sysmin" tooltip="Min" position="540,0" size="30,30"
    image-normal="D:\Develop\TinyUI\Resource\sysbutton\btn_mini_normal.png"
    image-highlight="D:\Develop\TinyUI\Resource\sysbutton\btn_mini_highlight.png"

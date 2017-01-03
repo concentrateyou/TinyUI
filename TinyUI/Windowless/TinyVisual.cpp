@@ -12,16 +12,26 @@ namespace TinyUI
 			m_spvisChild(NULL),
 			m_spvisOwner(NULL),
 			m_hrgnClip(NULL),
+			m_hFONT(NULL),
 			m_document(document),
 			m_visible(TRUE),
 			m_enable(TRUE),
+			m_textAlign(0),
+			m_textColor(RGB(255, 255, 255)),
 			m_dwCount(0)
 		{
-
+			LOGFONT lf;
+			::GetObject(reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)), sizeof(LOGFONT), &lf);
+			lf.lfCharSet = GB2312_CHARSET;
+			m_hFONT = CreateFontIndirect(&lf);
 		}
 		TinyVisual::~TinyVisual()
 		{
-
+			SAFE_DELETE_OBJECT(m_hFONT);
+		}
+		BOOL TinyVisual::IsLayout() const
+		{
+			return FALSE;
 		}
 		HWND TinyVisual::Handle() const
 		{
@@ -117,6 +127,20 @@ namespace TinyUI
 				}
 			}
 		}
+		void TinyVisual::SetTextColor(COLORREF color)
+		{
+			if (m_textColor != color)
+			{
+				m_textColor = color;
+			}
+		}
+		void TinyVisual::SetTextAlian(UINT align)
+		{
+			if (m_textAlign != align)
+			{
+				m_textAlign = align;
+			}
+		}
 		TinyPoint TinyVisual::GetPosition() const
 		{
 			return *((TinyPoint*)&m_rectangle);
@@ -164,17 +188,17 @@ namespace TinyUI
 		{
 			this->m_hrgnClip = hrgnClip;
 		}
+		void TinyVisual::SetFont(HFONT hFONT)
+		{
+			this->m_hFONT = hFONT;
+		}
 		HRGN TinyVisual::GetClip() const
 		{
 			return m_hrgnClip;
 		}
-		BOOL TinyVisual::SetStyleImage(StyleImage type, LPCSTR pzFile)
+		HFONT TinyVisual::GetFont() const
 		{
-			return m_images[(INT)type].Load(pzFile);
-		}
-		BOOL TinyVisual::SetStyleImage(StyleImage type, BYTE* ps, DWORD dwSize)
-		{
-			return m_images[(INT)type].Load(ps, dwSize);
+			return m_hFONT;
 		}
 		HRESULT	TinyVisual::SendMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes)
 		{
@@ -186,10 +210,6 @@ namespace TinyUI
 			ASSERT(m_document);
 			TinyRectangle s = GetWindowRect();
 			return m_document->Invalidate(&s);
-		}
-		BOOL TinyVisual::Contain(const TinyString& szKey)
-		{
-			return m_map.Contain(szKey);
 		}
 		void TinyVisual::OnPosChange(const TinyPoint& oldpos, const TinyPoint& newpos)
 		{
@@ -318,9 +338,114 @@ namespace TinyUI
 		{
 			return FALSE;
 		}
-		BOOL TinyVisual::IsLayout() const
+		HRESULT	TinyVisual::SetProperty(const TinyString& name, const TinyString& value)
 		{
-			return FALSE;
+			HRESULT hRes = S_OK;
+			if (strcasecmp(name.STR(), TinyVisualProperty::NAME.STR()) == 0)
+			{
+				this->SetName(value.STR());
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::TEXT.STR()) == 0)
+			{
+				this->SetText(value.STR());
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::TOOLTIP.STR()) == 0)
+			{
+				this->SetToolTip(value.STR());
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::ENABLE.STR()) == 0)
+			{
+				this->SetEnable(TinyVisualBuilder::GetBool(value));
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::VISIBLE.STR()) == 0)
+			{
+				this->SetVisible(TinyVisualBuilder::GetBool(value));
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::POSITION.STR()) == 0)
+			{
+				this->SetPosition(TinyVisualBuilder::GetPosition(value));
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::SIZE.STR()) == 0)
+			{
+				this->SetSize(TinyVisualBuilder::GetSize(value));
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::MAXSIZE.STR()) == 0)
+			{
+				TinySize maxsize = TinyVisualBuilder::GetSize(value);
+				this->SetMaximumSize(maxsize);
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::MINSIZE.STR()) == 0)
+			{
+				TinySize minsize = TinyVisualBuilder::GetSize(value);
+				this->SetMinimumSize(minsize);
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::MINSIZE.STR()) == 0)
+			{
+				TinySize minsize = TinyVisualBuilder::GetSize(value);
+				this->SetMinimumSize(minsize);
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::TEXTCOLOR.STR()) == 0)
+			{
+				this->SetTextColor(TinyVisualBuilder::GetColor(value));
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::TEXTALIGN.STR()) == 0)
+			{
+				this->SetTextAlian(TinyVisualBuilder::GetAlign(value));
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::FONTFAMILY.STR()) == 0)
+			{
+				LOGFONT lf;
+				::GetObject(m_hFONT, sizeof(LOGFONT), &lf);
+				strcpy(lf.lfFaceName, value.STR());
+				SAFE_DELETE_OBJECT(m_hFONT);
+				m_hFONT = CreateFontIndirect(&lf);
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::FONTWEIGHT.STR()) == 0)
+			{
+				LOGFONT lf;
+				::GetObject(m_hFONT, sizeof(LOGFONT), &lf);
+				lf.lfWeight = atoi(value.STR());
+				SAFE_DELETE_OBJECT(m_hFONT);
+				m_hFONT = CreateFontIndirect(&lf);
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::FONTSIZE.STR()) == 0)
+			{
+				LOGFONT lf;
+				::GetObject(m_hFONT, sizeof(LOGFONT), &lf);
+				TinySize size = TinyVisualBuilder::GetSize(value);
+				lf.lfWidth = size.cx;
+				lf.lfHeight = size.cy;
+				SAFE_DELETE_OBJECT(m_hFONT);
+				m_hFONT = CreateFontIndirect(&lf);
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::FONTSTYLE.STR()) == 0)
+			{
+				LOGFONT lf;
+				::GetObject(m_hFONT, sizeof(LOGFONT), &lf);
+				lf.lfItalic = FALSE;
+				if (strcasecmp(value.STR(), "italic") == 0)
+					lf.lfItalic = TRUE;
+				if (strcasecmp(value.STR(), "oblique") == 0)
+					lf.lfItalic = TRUE;
+				if (strcasecmp(value.STR(), "normal") == 0)
+					lf.lfItalic = FALSE;
+				SAFE_DELETE_OBJECT(m_hFONT);
+				m_hFONT = CreateFontIndirect(&lf);
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::TEXTDECORATION.STR()) == 0)
+			{
+				LOGFONT lf;
+				::GetObject(m_hFONT, sizeof(LOGFONT), &lf);
+				lf.lfUnderline = FALSE;
+				lf.lfStrikeOut = FALSE;
+				if (strcasecmp(value.STR(), "underline") == 0)
+					lf.lfUnderline = TRUE;
+				if (strcasecmp(value.STR(), "overline") == 0)
+					lf.lfStrikeOut = TRUE;
+				SAFE_DELETE_OBJECT(m_hFONT);
+				m_hFONT = CreateFontIndirect(&lf);
+			}
+			return S_OK;
 		}
 	}
 }

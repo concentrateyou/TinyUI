@@ -16,7 +16,7 @@ namespace TinyUI
 			m_pWindow(pWindow)
 		{
 			ASSERT(m_pWindow);
-			m_fs.Reset(new TinyVisualFactory(this));
+			m_vs.Reset(new TinyVisualFactory(this));
 		}
 		TinyVisualDocument::~TinyVisualDocument()
 		{
@@ -24,8 +24,8 @@ namespace TinyUI
 		}
 		BOOL TinyVisualDocument::Destory(TinyVisual* spvis)
 		{
-			ASSERT(m_fs);
-			return m_fs->Destory(spvis);
+			ASSERT(m_vs);
+			return m_vs->Destory(spvis);
 		}
 		BOOL TinyVisualDocument::Initialize(TinyVisualBuilder* builder)
 		{
@@ -467,19 +467,6 @@ namespace TinyUI
 				spvis = spvis->m_spvisNext;
 			}
 		}
-		/*void TinyVisualDocument::Resize(TinyVisual* spvis, const TinySize& size)
-		{
-			ASSERT(spvis);
-			while (spvis != NULL && spvis->IsVisible())
-			{
-				spvis->OnSizeChange(size);
-				if (spvis->m_spvisChild)
-				{
-					Resize(spvis->m_spvisChild, size);
-				}
-				spvis = spvis->m_spvisNext;
-			}
-		}*/
 		HRESULT	TinyVisualDocument::OnSize(const TinySize& size)
 		{
 			if (m_spvisWindow)

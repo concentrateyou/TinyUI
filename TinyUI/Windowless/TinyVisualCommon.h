@@ -32,13 +32,20 @@ namespace TinyUI
 			static const TinyString SIZE;
 			static const TinyString VISIBLE;
 			static const TinyString ENABLE;
+			static const TinyString BACKGROUNDIMAGE;
+
+			static const TinyString	FONTFAMILY;
+			static const TinyString	FONTSIZE;
+			static const TinyString	FONTWEIGHT;
+			static const TinyString FONTSTYLE;
+
+			static const TinyString TEXTCOLOR;
+			static const TinyString TEXTALIGN;
+			static const TinyString TEXTDECORATION;
+
 			static const TinyString IMAGENORMAL;
 			static const TinyString IMAGEHIGHLIGHT;
 			static const TinyString IMAGEDOWN;
-			static const TinyString FONTNAME;
-			static const TinyString FONTSIZE;
-			static const TinyString FONTCOLOR;
-			static const TinyString FONTSTYLE;
 			static const TinyString HORIZONTALALIGNMENT;
 			static const TinyString VERTICALALIGNMENT;
 		};

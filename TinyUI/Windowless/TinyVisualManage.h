@@ -22,13 +22,15 @@ namespace TinyUI
 			~TinyVisualBuilder();
 			BOOL LoadFile(LPCSTR pzFile);
 			BOOL BuildDocument(TinyVisualDocument* ps);
+			static TinySize	 GetSize(const TinyString& str);
+			static TinyPoint GetPosition(const TinyString& str);
+			static UINT	 GetAlign(const TinyString& str);
+			static UINT	 GetFontStyle(const TinyString& str);
+			static COLORREF	 GetColor(const TinyString& str);
+			static BOOL	GetBool(const TinyString& str);
 		private:
 			static void CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualDocument* ps);
-			static void BuildProperty(TinyMap<TinyString, TinyString> &map, TinyVisual* spvis);
-			static BOOL GetAttributeMap(const TiXmlElement* pXMLNode, TinyMap<TinyString, TinyString>& map);
-			static TinySize	 GetSize(const TinyString* ps);
-			static TinyPoint GetPosition(const TinyString* ps);
-			static BOOL	GetBool(const TinyString* str);
+			static BOOL BuildProperty(const TiXmlElement* pXMLNode, TinyVisual* spvis);
 		private:
 			TiXmlDocument	m_doc;
 		};

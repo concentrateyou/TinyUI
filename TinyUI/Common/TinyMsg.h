@@ -10,7 +10,7 @@ namespace TinyUI
 	/// <summary>
 	/// Msg对象
 	/// </summary>
-	class TINY_NO_VTABLE TinyMsg : public MSG
+	class NO_VTABLE TinyMsg : public MSG
 	{
 	public:
 		INT cbSize;
@@ -23,7 +23,7 @@ namespace TinyUI
 	/// <summary>
 	/// 消息映射
 	/// </summary>
-	class TINY_NO_VTABLE TinyMessageMap
+	class NO_VTABLE TinyMessageMap
 	{
 	public:
 		virtual BOOL ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
@@ -34,7 +34,7 @@ namespace TinyUI
 	/// <summary>
 	/// 消息筛选器
 	/// </summary>
-	class TINY_NO_VTABLE TinyMessageFilter
+	class NO_VTABLE TinyMessageFilter
 	{
 	public:
 		virtual BOOL PreTranslateMessage(MSG* pMsg) = 0;
@@ -42,7 +42,7 @@ namespace TinyUI
 	/// <summary>
 	/// 消息空闲处理
 	/// </summary>
-	class TINY_NO_VTABLE TinyIdleHandler
+	class NO_VTABLE TinyIdleHandler
 	{
 	public:
 		virtual BOOL OnIdle() = 0;

@@ -35,9 +35,10 @@ namespace TinyUI
 			virtual void	Uninitialize();
 		public:
 			template<typename T>
-			T*		Create(INT x, INT y, INT cx, INT cy, TinyVisual* spvisParent);
-			BOOL	Destory(TinyVisual* spvis);
-
+			T*	 Create(INT x, INT y, INT cx, INT cy, TinyVisual* spvisParent);
+			template<typename T>
+			T*	 Create(TinyVisual* spvisParent);
+			BOOL Destory(TinyVisual* spvis);
 		public:
 			HWND				Handle() const;
 			TinyVisualHWND*		GetVisualHWND() const;
@@ -91,7 +92,6 @@ namespace TinyUI
 			TinyVisual*			GetPrevVisual(TinyVisual* spvisList, TinyVisual* spvisFind) const;
 			void				Draw(TinyVisualDC* ps, const RECT& rcPaint);
 			void				Draw(TinyVisual* spvis, HDC hDC, const RECT& rcPaint);
-			//void				Resize(TinyVisual* spvis, const TinySize& size);
 		private:
 			class TinyVisualFactory
 			{
@@ -101,6 +101,8 @@ namespace TinyUI
 			private:
 				TinyVisualFactory(TinyVisualDocument* document);
 			public:
+				template<typename T>
+				T*		Create(TinyVisual* spvisParent);
 				template<typename T>
 				T*		Create(INT x, INT y, INT cx, INT cy, TinyVisual* spvisParent);
 				BOOL	Destory(TinyVisual* spvis);
@@ -115,7 +117,7 @@ namespace TinyUI
 			TinyVisual*							m_spvisLastMouse;//当前鼠标所在的元素
 			TinyVisualHWND*						m_pWindow;
 			TinyScopedPtr<TinyVisualBuilder>	m_parse;
-			TinyScopedPtr<TinyVisualFactory>	m_fs;
+			TinyScopedPtr<TinyVisualFactory>	m_vs;
 		public:
 #ifdef _DEBUG
 			void			Dump();
@@ -123,11 +125,36 @@ namespace TinyUI
 #endif
 		};
 		template<typename T>
+		T*	 TinyVisualDocument::Create(TinyVisual* spvisParent)
+		{
+			ASSERT(m_vs);
+			COMPILE_ASSERT((std::is_convertible<T*, TinyVisual*>::value), T_must_convertible_to_TinyVisual);
+			return m_vs->Create<T>(spvisParent);
+		}
+		template<typename T>
 		T*	 TinyVisualDocument::Create(INT x, INT y, INT cx, INT cy, TinyVisual* spvisParent)
 		{
-			ASSERT(m_fs);
+			ASSERT(m_vs);
 			COMPILE_ASSERT((std::is_convertible<T*, TinyVisual*>::value), T_must_convertible_to_TinyVisual);
-			return m_fs->Create<T>(x, y, cx, cy, spvisParent);
+			return m_vs->Create<T>(x, y, cx, cy, spvisParent);
+		}
+		template<typename T>
+		T* TinyVisualDocument::TinyVisualFactory::Create(TinyVisual* spvisParent)
+		{
+			ASSERT(m_document);
+			TinyVisual* spvis = NULL;
+			if (spvisParent != NULL)
+			{
+				spvis = new T(spvisParent, m_document);
+				m_document->SetParent(spvis, spvisParent);
+				spvis->OnCreate();
+			}
+			else
+			{
+				spvis = new T(spvisParent, m_document);
+				spvis->OnCreate();
+			}
+			return static_cast<T*>(spvis);
 		}
 		template<typename T>
 		T* TinyVisualDocument::TinyVisualFactory::Create(INT x, INT y, INT cx, INT cy, TinyVisual* spvisParent)

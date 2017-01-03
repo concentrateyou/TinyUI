@@ -28,7 +28,7 @@ namespace TinyUI
 		BOOL TinyVisualBuilder::LoadFile(LPCSTR pzFile)
 		{
 			ASSERT(pzFile);
-			return m_doc.LoadFile(pzFile);
+			return m_doc.LoadFile(pzFile, TIXML_ENCODING_UTF8);
 		}
 		BOOL TinyVisualBuilder::BuildDocument(TinyVisualDocument* document)
 		{
@@ -38,13 +38,9 @@ namespace TinyUI
 			{
 				if (pXML && !strcasecmp(pXML->Value(), TinyVisualTag::WINDOW.STR()))
 				{
-					TinyMap<TinyString, TinyString> map;
-					GetAttributeMap(pXML, map);
-					TinyPoint pos = GetPosition(map.GetValue(TinyVisualProperty::POSITION));
-					TinySize size = GetSize(map.GetValue(TinyVisualProperty::SIZE));
-					spvis = document->Create<TinyVisualWindow>(0, 0, size.cx, size.cy, NULL);
+					spvis = document->Create<TinyVisualWindow>(NULL);
+					BuildProperty(pXML, spvis);
 					document->m_spvisWindow = spvis;
-					BuildProperty(map, spvis);
 				}
 				else
 				{
@@ -81,19 +77,20 @@ namespace TinyUI
 				if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT)
 				{
 					spvisParent->m_dwCount++;
-					TinyMap<TinyString, TinyString> map;
-					GetAttributeMap(static_cast<const TiXmlElement*>(pXMLChildNode), map);
-					TinyPoint pos = GetPosition(map.GetValue(TinyVisualProperty::POSITION));
-					TinySize size = GetSize(map.GetValue(TinyVisualProperty::SIZE));
 					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::SYSCAPTION.STR()))
 					{
-						spvis = document->Create<TinyVisualCaption>(pos.x, pos.y, size.cx, size.cy, spvisParent);
+						spvis = document->Create<TinyVisualCaption>(spvisParent);
+					}
+					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::LABEL.STR()))
+					{
+						spvis = document->Create<TinyVisualLabel>(spvisParent);
 					}
 					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::BUTTON.STR()))
 					{
-						spvis = document->Create<TinyVisualButton>(pos.x, pos.y, size.cx, size.cy, spvisParent);
+						spvis = document->Create<TinyVisualButton>(spvisParent);
 					}
-					BuildProperty(map, spvis);
+					TinyMap<TinyString, TinyString> map;
+					BuildProperty(static_cast<const TiXmlElement*>(pXMLChildNode), spvis);
 					if (spvis->IsLayout())
 					{
 						CreateInstace(pXMLChildNode, spvis, document);
@@ -101,107 +98,7 @@ namespace TinyUI
 				}
 			}
 		}
-		void TinyVisualBuilder::BuildProperty(TinyMap<TinyString, TinyString> &map, TinyVisual* spvis)
-		{
-			if (map.Contain(TinyVisualProperty::MAXSIZE))
-			{
-				TinySize maxsize = GetSize(map.GetValue(TinyVisualProperty::MAXSIZE));
-				spvis->SetMaximumSize(maxsize);
-			}
-			if (map.Contain(TinyVisualProperty::MINSIZE))
-			{
-				TinySize minsize = GetSize(map.GetValue(TinyVisualProperty::MINSIZE));
-				spvis->SetMinimumSize(minsize);
-			}
-			if (map.Contain(TinyVisualProperty::NAME))
-			{
-				TinyString* ps = map.GetValue(TinyVisualProperty::NAME);
-				spvis->SetName(ps->STR());
-			}
-			if (map.Contain(TinyVisualProperty::TOOLTIP))
-			{
-				TinyString* ps = map.GetValue(TinyVisualProperty::TOOLTIP);
-				spvis->SetToolTip(ps->STR());
-			}
-			if (map.Contain(TinyString(TinyVisualProperty::TEXT)))
-			{
-				TinyString* ps = map.GetValue(TinyVisualProperty::TEXT);
-				spvis->SetText(ps->STR());
-			}
-			if (map.Contain(TinyString(TinyVisualProperty::ENABLE)))
-			{
-				TinyString* ps = map.GetValue(TinyVisualProperty::ENABLE);
-				spvis->SetEnable(GetBool(ps));
-			}
-			if (map.Contain(TinyString(TinyVisualProperty::VISIBLE)))
-			{
-				TinyString* ps = map.GetValue(TinyVisualProperty::VISIBLE);
-				spvis->SetVisible(GetBool(ps));
-			}
-			if (map.Contain(TinyString(TinyVisualProperty::IMAGENORMAL)))
-			{
-				TinyString* ps = map.GetValue(TinyVisualProperty::IMAGENORMAL);
-				spvis->SetStyleImage(NORMAL, ps->STR());
-			}
-			if (map.Contain(TinyString(TinyVisualProperty::IMAGEHIGHLIGHT)))
-			{
-				TinyString* ps = map.GetValue(TinyVisualProperty::IMAGEHIGHLIGHT);
-				spvis->SetStyleImage(HIGHLIGHT, ps->STR());
-			}
-			if (map.Contain(TinyString(TinyVisualProperty::IMAGEDOWN)))
-			{
-				TinyString* ps = map.GetValue(TinyVisualProperty::IMAGEDOWN);
-				spvis->SetStyleImage(DOWN, ps->STR());
-			}
-			//if (map.Contain(TinyString(TinyVisualProperty::HORIZONTALALIGNMENT)))
-			//{
-			//	TinyString* ps = map.GetValue(TinyVisualProperty::HORIZONTALALIGNMENT);
-			//	HorizontalAlignment ha = HORIZONTAL_LEFT;
-			//	if (*ps == TinyVisualConst::LEFT)
-			//		ha = HORIZONTAL_LEFT;
-			//	if (*ps == TinyVisualConst::RIGHT)
-			//		ha = HORIZONTAL_RIGHT;
-			//	if (*ps == TinyVisualConst::CENTER)
-			//		ha = HORIZONTAL_CENTER;
-			//	if (*ps == TinyVisualConst::STRETCH)
-			//		ha = HORIZONTAL_STRETCH;
-			//	if (spvis->RetrieveTag() == TinyVisualTag::VERTICALLAYOUT)
-			//	{
-			//		TinyVisualVLayout* vis = static_cast<TinyVisualVLayout*>(spvis);
-			//		vis->SetHorizontalAlignment(ha);
-			//	}
-			//	if (spvis->RetrieveTag() == TinyVisualTag::HORIZONTALLAYOUT)
-			//	{
-			//		TinyVisualHLayout* vis = static_cast<TinyVisualHLayout*>(spvis);
-			//		vis->SetHorizontalAlignment(ha);
-			//	}
-			//}
-			//if (map.Contain(TinyString(TinyVisualProperty::VERTICALALIGNMENT)))
-			//{
-			//	TinyString* ps = map.GetValue(TinyVisualProperty::VERTICALALIGNMENT);
-			//	VerticalAlignment va = VERTICAL_TOP;
-			//	if (*ps == TinyVisualConst::TOP)
-			//		va = VERTICAL_TOP;
-			//	if (*ps == TinyVisualConst::BOTTOM)
-			//		va = VERTICAL_BOTTOM;
-			//	if (*ps == TinyVisualConst::CENTER)
-			//		va = VERTICAL_CENTER;
-			//	if (*ps == TinyVisualConst::STRETCH)
-			//		va = VERTICAL_STRETCH;
-			//	if (spvis->RetrieveTag() == TinyVisualTag::VERTICALLAYOUT)
-			//	{
-			//		TinyVisualVLayout* vis = static_cast<TinyVisualVLayout*>(spvis);
-			//		vis->SetVerticalAlignment(va);
-			//	}
-			//	if (spvis->RetrieveTag() == TinyVisualTag::HORIZONTALLAYOUT)
-			//	{
-			//		TinyVisualHLayout* vis = static_cast<TinyVisualHLayout*>(spvis);
-			//		vis->SetVerticalAlignment(va);
-			//	}
-			//}
-			spvis->m_map = std::move(map);
-		}
-		BOOL TinyVisualBuilder::GetAttributeMap(const TiXmlElement* pXMLNode, TinyMap<TinyString, TinyString>& map)
+		BOOL TinyVisualBuilder::BuildProperty(const TiXmlElement* pXMLNode, TinyVisual* spvis)
 		{
 			if (!pXMLNode)
 				return FALSE;
@@ -209,39 +106,59 @@ namespace TinyUI
 			const TiXmlAttribute* pLA = pXMLNode->LastAttribute();
 			while (pFA != pLA)
 			{
-				map.Add(pFA->Name(), pFA->Value());
+				spvis->SetProperty(pFA->Name(), UTF8ToASCII(pFA->Value()).c_str());
 				pFA = pFA->Next();
 			}
-			map.Add(pLA->Name(), pLA->Value());
+			spvis->SetProperty(pFA->Name(), UTF8ToASCII(pFA->Value()).c_str());
 			return TRUE;
 		}
-		TinySize TinyVisualBuilder::GetSize(const TinyString* ps)
+		TinySize TinyVisualBuilder::GetSize(const TinyString& str)
 		{
-			if (!ps)
-				return TinySize();
 			TinyArray<TinyString> sps;
-			ps->Split(',', sps);
+			str.Split(',', sps);
 			if (sps.GetSize() == 2)
 			{
 				return (TinySize(atoi(sps[0].STR()), atoi(sps[1].STR())));
 			}
 			return TinySize();
 		}
-		TinyPoint TinyVisualBuilder::GetPosition(const TinyString* ps)
+		TinyPoint TinyVisualBuilder::GetPosition(const TinyString& str)
 		{
-			if (!ps)
-				return TinyPoint();
 			TinyArray<TinyString> sps;
-			ps->Split(',', sps);
+			str.Split(',', sps);
 			if (sps.GetSize() == 2)
 			{
 				return (TinyPoint(atoi(sps[0].STR()), atoi(sps[1].STR())));
 			}
 			return TinyPoint();
 		}
-		BOOL TinyVisualBuilder::GetBool(const TinyString* str)
+		BOOL TinyVisualBuilder::GetBool(const TinyString& str)
 		{
-			return str->Compare("true") == 0;
+			return str.Compare("true") == 0;
+		}
+		UINT TinyVisualBuilder::GetAlign(const TinyString& str)
+		{
+			if (strcasecmp(str.STR(), "left") == 0)
+				return DT_LEFT;
+			if (strcasecmp(str.STR(), "top") == 0)
+				return DT_TOP;
+			if (strcasecmp(str.STR(), "right") == 0)
+				return DT_RIGHT;
+			if (strcasecmp(str.STR(), "bottom") == 0)
+				return DT_BOTTOM;
+			if (strcasecmp(str.STR(), "center") == 0)
+				return DT_CENTER;
+			return DT_LEFT;
+		}
+		COLORREF TinyVisualBuilder::GetColor(const TinyString& str)
+		{
+			TinyArray<TinyString> sps;
+			str.Split(',', sps);
+			if (sps.GetSize() == 3)
+			{
+				return RGB(atoi(sps[0].STR()), atoi(sps[1].STR()), atoi(sps[2].STR()));
+			}
+			return RGB(255, 255, 255);
 		}
 	};
 }

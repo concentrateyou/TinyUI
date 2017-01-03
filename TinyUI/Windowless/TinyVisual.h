@@ -57,25 +57,13 @@ namespace TinyUI
 			TinyRectangle		GetWindowRect()const;
 			TinyRectangle		GetClientRect() const;
 			HRGN				GetClip() const;
+			HFONT				GetFont() const;
 			BOOL				IsVisible() const;
 			BOOL				IsEnable() const;
 			BOOL				IsCapture() const;
 			BOOL				IsFocus() const;
 			BOOL				IsActive() const;
-			void				SetName(LPCSTR pzName);
-			void				SetToolTip(LPCSTR pzTitle);
-			void				SetText(LPCSTR pzText);
-			void				SetPosition(const TinyPoint& pos);
-			void				SetSize(const TinySize& size);
-			void				SetMaximumSize(const TinySize& size);
-			void				SetMinimumSize(const TinySize& size);
-			void				SetClip(HRGN hrgnClip);
-			void				SetVisible(BOOL visible);
-			void				SetEnable(BOOL enable);
-			BOOL				SetStyleImage(StyleImage type, LPCSTR pzFile);
-			BOOL				SetStyleImage(StyleImage type, BYTE*	ps, DWORD dwSize);
 			BOOL				Invalidate();
-			BOOL				Contain(const TinyString& szKey);
 		public:
 			TinyVisualDocument*	GetDocument();
 			virtual	HRESULT		SendMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes);
@@ -85,6 +73,19 @@ namespace TinyUI
 			virtual ~TinyVisual();
 			virtual TinyString	RetrieveTag() const = 0;
 			virtual BOOL		IsLayout() const;
+			virtual void		SetName(LPCSTR pzName);
+			virtual void		SetToolTip(LPCSTR pzTitle);
+			virtual void		SetText(LPCSTR pzText);
+			virtual void		SetPosition(const TinyPoint& pos);
+			virtual void		SetSize(const TinySize& size);
+			virtual void		SetMaximumSize(const TinySize& size);
+			virtual void		SetMinimumSize(const TinySize& size);
+			virtual void		SetClip(HRGN hrgnClip);
+			virtual void		SetFont(HFONT hFONT);
+			virtual void		SetVisible(BOOL visible);
+			virtual void		SetEnable(BOOL enable);
+			virtual void		SetTextColor(COLORREF color);
+			virtual void		SetTextAlian(UINT align);
 		protected:
 			virtual BOOL		OnDraw(HDC hDC, const RECT& clip);
 			virtual HRESULT		OnCreate();
@@ -110,6 +111,8 @@ namespace TinyUI
 			virtual HRESULT		OnCapture(BOOL bFlag);
 			virtual HRESULT		OnActive(BOOL bFlag);
 		public:
+			virtual HRESULT		SetProperty(const TinyString& name, const TinyString& value);
+		public:
 			Event<void(EventArgs&)>			EVENT_Click;
 			Event<void(MouseEventArgs&)>	EVENT_MouseMove;
 			Event<void(MouseEventArgs&)>	EVENT_MouseWheel;
@@ -125,7 +128,6 @@ namespace TinyUI
 			Event<void(ActiveEventArgs&)>	EVENT_Active;
 		protected:
 			TinyVisualDocument*	m_document;
-			TinyImage			m_images[4];//三态图片
 			TinyVisual*			m_spvisNext;//同级下一个兄弟节点
 			TinyVisual*			m_spvisParent;//父节点
 			TinyVisual*			m_spvisChild;//第一个孩子节点
@@ -133,14 +135,16 @@ namespace TinyUI
 			TinyString			m_strName;
 			TinyString			m_strText;
 			TinyString			m_strToolTip;
-			TinyRectangle		m_rectangle;//相对于父元素区域
 			TinySize			m_maximumSize;//元素的最大像素大小
 			TinySize			m_minimumSize;//元素的最小像素大小
-			HRGN				m_hrgnClip;
+			TinyRectangle		m_rectangle;//相对于父元素区域
+			COLORREF 			m_textColor;
+			UINT				m_textAlign;
 			BOOL				m_visible;
 			BOOL				m_enable;
-			DWORD				m_dwCount;//还是节点个数
-			TinyMap<TinyString, TinyString>	m_map;
+			DWORD				m_dwCount;//还是孩子节点个数
+			HRGN				m_hrgnClip;
+			HFONT				m_hFONT;
 		};
 	}
 }

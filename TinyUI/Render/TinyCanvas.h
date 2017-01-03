@@ -83,11 +83,11 @@ namespace TinyUI
 		/// <summary>
 		/// 设置文字颜色
 		/// </summary>
-		BOOL SetTextColor(COLORREF color);
+		COLORREF  SetTextColor(COLORREF color);
 		/// <summary>
 		/// 设置文字对齐方式
 		/// </summary>
-		BOOL SetTextAlign(UINT align);
+		UINT SetTextAlign(UINT align);
 		/// <summary>
 		/// 绘制文本
 		/// </summary>

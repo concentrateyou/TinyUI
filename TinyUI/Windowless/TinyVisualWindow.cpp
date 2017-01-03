@@ -30,6 +30,20 @@ namespace TinyUI
 			}
 		}
 
+		HRESULT TinyVisualWindow::SetProperty(const TinyString& name, const TinyString& value)
+		{
+			if (strcasecmp(name.STR(), TinyVisualProperty::BACKGROUNDIMAGE.STR()) == 0)
+			{
+				m_backgroundImage.Load(value.STR());
+			}
+			return TinyVisual::SetProperty(name, value);
+		}
+
+		void TinyVisualWindow::SetPosition(const TinyPoint& pos)
+		{
+			TinyVisual::SetPosition(TinyPoint(0, 0));
+		}
+
 		TinyString TinyVisualWindow::RetrieveTag() const
 		{
 			return TinyVisualTag::WINDOW;
@@ -42,10 +56,9 @@ namespace TinyUI
 		{
 			ASSERT(m_document || m_document->GetVisualHWND());
 			TinyClipCanvas canvas(hDC, this, rcPaint);
-			TinyImage& image = m_images[NORMAL];
-			if (!image.IsEmpty())
+			if (!m_backgroundImage.IsEmpty())
 			{
-				canvas.DrawImage(image, m_rectangle, 0, 0, image.GetSize().cx, image.GetSize().cy);
+				canvas.DrawImage(m_backgroundImage, m_rectangle, 0, 0, m_backgroundImage.GetSize().cx, m_backgroundImage.GetSize().cy);
 			}
 			else
 			{
