@@ -75,6 +75,24 @@
     <ClInclude Include="MainUI.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="GameDlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaCaptureDlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoScene.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowScene.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseScene.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -126,6 +144,24 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MainUI.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GameDlg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaCaptureDlg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoScene.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowScene.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseScene.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

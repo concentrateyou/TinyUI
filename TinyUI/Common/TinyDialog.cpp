@@ -7,7 +7,6 @@ namespace TinyUI
 		m_bModal(FALSE),
 		m_iDlgResult(0),
 		m_hPrimaryProc(NULL),
-		m_hWND(NULL),
 		m_pTemplateName(NULL)
 
 	{
@@ -27,7 +26,6 @@ namespace TinyUI
 			}
 			m_iDlgResult = 0;
 			m_bModal = FALSE;
-			m_hWND = NULL;
 		}
 	}
 	void TinyDialog::PreSubclassDialog()
@@ -42,7 +40,7 @@ namespace TinyUI
 	{
 		return FALSE;
 	}
-	INT_PTR CALLBACK TinyDialog::BeginLoop(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	INT_PTR CALLBACK TinyDialog::BeginLoop(HWND hWND, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		TinyDialog *_this = NULL;
 		if (uMsg == WM_INITDIALOG)
@@ -51,20 +49,23 @@ namespace TinyUI
 			_this = (TinyDialog*)lParam;
 			if (_this != NULL)
 			{
-				_this->m_hWND = hWnd;
+				if (_this->IsModal())
+				{
+					_this->Attach(hWND);
+				}
 				_this->m_thunk.Initialize((WNDPROC)TinyDialog::EndLoop, _this);
 				DLGPROC hProc = (DLGPROC)_this->m_thunk.GetWNDPROC();
-				DLGPROC hOldProc = (DLGPROC)::SetWindowLongPtr(hWnd, DWLP_DLGPROC, (LONG_PTR)hProc);
+				DLGPROC hOldProc = (DLGPROC)::SetWindowLongPtr(hWND, DWLP_DLGPROC, (LONG_PTR)hProc);
 				if (hOldProc != BeginLoop)
 					TRACE(_T("Subclassing through a hook discarded.\n"));
-				return hProc(hWnd, uMsg, wParam, lParam);
+				return hProc(hWND, uMsg, wParam, lParam);
 			}
 		}
 		return FALSE;
 	};
-	INT_PTR CALLBACK TinyDialog::EndLoop(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	INT_PTR CALLBACK TinyDialog::EndLoop(HWND hWND, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-		TinyDialog* _this = (TinyDialog*)hWnd;
+		TinyDialog* _this = (TinyDialog*)hWND;
 		TinyMsg msg(_this->m_hWND, uMsg, wParam, lParam);
 		const TinyMsg* pOldMsg = _this->m_pCurrentMsg;
 		_this->m_pCurrentMsg = &msg;
@@ -184,16 +185,16 @@ namespace TinyUI
 		ASSERT(::IsWindow(m_hWND));
 		return ::EndDialog(Detach(), m_DlgResult);
 	}
-	BOOL TinyDialog::EndDialog(HWND hWnd, INT_PTR m_DlgResult)
+	BOOL TinyDialog::EndDialog(HWND hWND, INT_PTR m_DlgResult)
 	{
-		ASSERT(::IsWindow(hWnd));
+		ASSERT(::IsWindow(hWND));
 		return ::EndDialog(Detach(), m_DlgResult);
 	}
 	BOOL TinyDialog::IsModal() const throw()
 	{
 		return m_bModal;
 	}
-	void TinyDialog::OnFinalMessage(HWND hWnd)
+	void TinyDialog::OnFinalMessage(HWND hWND)
 	{
 
 	}

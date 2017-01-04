@@ -14,29 +14,40 @@ public:
 	LPCSTR RetrieveClassName() OVERRIDE;
 	LPCSTR RetrieveTitle() OVERRIDE;
 	HICON RetrieveIcon() OVERRIDE;
+	BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 	LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-
-public:
-	BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 private:
-	void BuildUI();
+	void CreateUI();
+	void DestoryUI();
 	void Resize(INT cx, INT cy);
+	void OnBroadcastClick(void*, INT);
+	void OnRecordClick(void*, INT);
+	void OnGameClick(void*, INT);
+	void OnScreenClick(void*, INT);
+	void OnWindowClick(void*, INT);
+	void OnCaptureClick(void*, INT);
+	void OnTextClick(void*, INT);
+	void OnImageClick(void*, INT);
 private:
 	TinyButton m_broadcast;
-	TinyButton m_recording;
-
+	TinyButton m_record;
 	TinyButton m_game;
 	TinyButton m_screen;
 	TinyButton m_window;
 	TinyButton m_capture;
 	TinyButton m_text;
 	TinyButton m_image;
-
-
-
+	TinyScopedPtr<Delegate<void(void*, INT)>> m_onBroadcastClick;
+	TinyScopedPtr<Delegate<void(void*, INT)>> m_onRecordClick;
+	TinyScopedPtr<Delegate<void(void*, INT)>> m_onGameClick;
+	TinyScopedPtr<Delegate<void(void*, INT)>> m_onScreenClick;
+	TinyScopedPtr<Delegate<void(void*, INT)>> m_onWindowClick;
+	TinyScopedPtr<Delegate<void(void*, INT)>> m_onCaptureClick;
+	TinyScopedPtr<Delegate<void(void*, INT)>> m_onTextClick;
+	TinyScopedPtr<Delegate<void(void*, INT)>> m_onImageClick;
 };

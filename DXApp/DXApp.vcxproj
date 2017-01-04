@@ -93,11 +93,15 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BaseScene.h" />
     <ClInclude Include="DXFrameUI.h" />
     <ClInclude Include="FaacEncode.h" />
     <ClInclude Include="AudioEncode.h" />
     <ClInclude Include="FFmpegResampler.h" />
+    <ClInclude Include="GameDlg.h" />
+    <ClInclude Include="GameScene.h" />
     <ClInclude Include="MainUI.h" />
+    <ClInclude Include="MediaCaptureDlg.h" />
     <ClInclude Include="PublishTask.h" />
     <ClInclude Include="RenderTask.h" />
     <ClInclude Include="DXApp.h" />
@@ -110,15 +114,21 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="VideoEncode.h" />
+    <ClInclude Include="VideoScene.h" />
+    <ClInclude Include="WindowScene.h" />
     <ClInclude Include="x264Encode.h" />
     <ClInclude Include="I420Converter.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BaseScene.cpp" />
     <ClCompile Include="DXFrameUI.cpp" />
     <ClCompile Include="FaacEncode.cpp" />
     <ClCompile Include="AudioEncode.cpp" />
     <ClCompile Include="FFmpegResampler.cpp" />
+    <ClCompile Include="GameDlg.cpp" />
+    <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="MainUI.cpp" />
+    <ClCompile Include="MediaCaptureDlg.cpp" />
     <ClCompile Include="PublishTask.cpp" />
     <ClCompile Include="RenderTask.cpp" />
     <ClCompile Include="DXApp.cpp" />
@@ -132,6 +142,8 @@
     </ClCompile>
     <ClCompile Include="Utility.cpp" />
     <ClCompile Include="VideoEncode.cpp" />
+    <ClCompile Include="VideoScene.cpp" />
+    <ClCompile Include="WindowScene.cpp" />
     <ClCompile Include="x264Encode.cpp" />
     <ClCompile Include="I420Converter.cpp" />
   </ItemGroup>

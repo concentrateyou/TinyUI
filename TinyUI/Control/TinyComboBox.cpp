@@ -244,7 +244,36 @@ namespace TinyUI
 		GetLBText(nIndex, str.STR());
 		rString = std::move(str);
 	}
+	BOOL TinyComboBox::GetComboBoxInfo(PCOMBOBOXINFO pcbi) const
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::GetComboBoxInfo(m_hWND, pcbi);
+	}
+	BOOL TinyComboBox::SetMinVisibleItems(_In_ int iMinVisible)
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ComboBox_SetMinVisible(m_hWND, iMinVisible);
+	}
 
+	INT TinyComboBox::GetMinVisible() const
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ComboBox_GetMinVisible(m_hWND);
+	}
+	BOOL TinyComboBox::SetCueBanner(_In_z_ LPCTSTR lpszText)
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ComboBox_SetCueBannerText(m_hWND, lpszText);
+	}
+	BOOL TinyComboBox::GetCueBanner(_Out_writes_z_(cchText) LPWSTR lpszText, _In_ INT cchText) const
+	{
+		ASSERT(::IsWindow(m_hWND));
+		ASSERT(lpszText != NULL);
+		if (cchText == 0 || lpszText == NULL)
+			return FALSE;
+		lpszText[0] = L'\0';
+		return ComboBox_GetCueBannerText(m_hWND, lpszText, cchText);
+	}
 	LRESULT TinyComboBox::OnCommandReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
@@ -258,6 +287,31 @@ namespace TinyUI
 	void TinyComboBox::OnSelectChange(INT index)
 	{
 		EVENT_SelectChange(index);
+	}
+
+	BOOL TinyComboBox::SubclassChildren()
+	{
+		COMBOBOXINFO info = { 0 };
+		info.cbSize = sizeof(COMBOBOXINFO);
+		GetComboBoxInfo(&info);
+		TRACE("info.hwndCombo:%d\n", info.hwndCombo);
+		TRACE("info.hwndItem:%d\n", info.hwndItem);
+		TRACE("info.hwndList:%d\n", info.hwndList);
+		TRACE("hWND:%d\n", m_hWND);
+		return TRUE;
+	}
+
+	LRESULT TinyComboBox::OnCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		if (lParam != NULL)
+		{
+			if (HIWORD(wParam) == CBN_SELCHANGE)
+			{
+				OnSelectChange(GetCurSel());
+			}
+		}
+		return TinyControl::OnCommand(uMsg, wParam, lParam, bHandled);
 	}
 }
 

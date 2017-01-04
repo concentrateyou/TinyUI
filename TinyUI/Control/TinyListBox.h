@@ -58,5 +58,7 @@ namespace TinyUI
 		INT InitStorage(INT nItems, UINT nBytes);
 		void SetAnchorIndex(INT nIndex);
 		INT GetAnchorIndex() const;
+	public:
+		LRESULT OnCommandReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	};
 }

@@ -134,14 +134,14 @@ namespace TinyUI
 	{
 		ASSERT(::IsWindow(hWND));
 		PreSubclassWindow();
-		BOOL result = m_thunk.Initialize(TinyWindow::EndLoop, this);
-		if (result == FALSE) return FALSE;
+		if (!m_thunk.Initialize(TinyWindow::EndLoop, this))
+			return FALSE;
 		WNDPROC hProc = m_thunk.GetWNDPROC();
 		WNDPROC hOldProc = (WNDPROC)::SetWindowLongPtr(hWND, GWLP_WNDPROC, (LONG_PTR)hProc);
-		if (hOldProc == NULL) return FALSE;
+		if (hOldProc == NULL)
+			return FALSE;
 		m_hPrimaryProc = hOldProc;
-		m_hWND = hWND;
-		return TRUE;
+		return Attach(hWND);
 	};
 	void TinyWindow::PreSubclassDlgItem()
 	{
@@ -152,7 +152,8 @@ namespace TinyUI
 		ASSERT(::IsWindow(hDlg));
 		PreSubclassDlgItem();
 		HWND hItem = ::GetDlgItem(hDlg, nID);
-		if (hItem == NULL) return FALSE;
+		if (hItem == NULL)
+			return FALSE;
 		return SubclassWindow(hItem);
 	}
 	HWND TinyWindow::UnsubclassWindow(BOOL bForce /* = FALSE */)
@@ -160,18 +161,17 @@ namespace TinyUI
 		ASSERT(m_hWND != NULL);
 		WNDPROC pOurProc = m_thunk.GetWNDPROC();
 		WNDPROC pActiveProc = (WNDPROC)::GetWindowLongPtr(m_hWND, GWLP_WNDPROC);
-		HWND hWnd = NULL;
+		HWND hWND = NULL;
 		if (bForce || pOurProc == pActiveProc)
 		{
 			if (!::SetWindowLongPtr(m_hWND, GWLP_WNDPROC, (LONG_PTR)m_hPrimaryProc))
 				return NULL;
 			m_hPrimaryProc = ::DefWindowProc;
-			hWnd = m_hWND;
-			m_hWND = NULL;
+			hWND = Detach();
 		}
-		return hWnd;
+		return hWND;
 	}
-	LRESULT TinyWindow::BeginLoop(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	LRESULT TinyWindow::BeginLoop(HWND hWND, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		TinyWindow *_this = NULL;
 		if (uMsg == WM_NCCREATE)
@@ -180,24 +180,24 @@ namespace TinyUI
 			_this = (TinyWindow*)((LPCREATESTRUCT)lParam)->lpCreateParams;
 			if (_this != NULL)
 			{
-				_this->m_hWND = hWnd;
+				_this->m_hWND = hWND;
 				_this->m_thunk.Initialize(TinyWindow::EndLoop, _this);
 				WNDPROC hProc = _this->m_thunk.GetWNDPROC();
-				WNDPROC hOldProc = (WNDPROC)::SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)hProc);
+				WNDPROC hOldProc = (WNDPROC)::SetWindowLongPtr(hWND, GWLP_WNDPROC, (LONG_PTR)hProc);
 				if (hOldProc != BeginLoop)
 				{
 					ASSERT(_T("HOOK子类化失败.\n"));
 				}
-				return hProc(hWnd, uMsg, wParam, lParam);
+				return hProc(hWND, uMsg, wParam, lParam);
 			}
 		}
-		return ::DefWindowProc(hWnd, uMsg, wParam, lParam);
+		return ::DefWindowProc(hWND, uMsg, wParam, lParam);
 	};
-	LRESULT TinyWindow::EndLoop(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	LRESULT TinyWindow::EndLoop(HWND hWND, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		TinyWindow* _this = NULL;
-		ASSERT(hWnd);
-		_this = (TinyWindow*)hWnd;
+		ASSERT(hWND);
+		_this = (TinyWindow*)hWND;
 		if (_this != NULL)
 		{
 			TinyMsg msg(_this->m_hWND, uMsg, wParam, lParam);
@@ -246,15 +246,11 @@ namespace TinyUI
 					_this->m_dwState |= 0x00000001;//设置状态Destryed
 				}
 			}
-			if ((_this->m_dwState & 0x00000001)
-				&& pOldMsg == NULL)
+			if ((_this->m_dwState & 0x00000001) && pOldMsg == NULL)
 			{
-				HWND hWndThis = _this->m_hWND;
-
-				_this->m_hWND = NULL;
 				_this->m_dwState &= ~0x00000001;
 				_this->m_pCurrentMsg = pOldMsg;
-				_this->OnFinalMessage(hWndThis);
+				_this->OnFinalMessage(_this->Detach());
 			}
 			else
 			{

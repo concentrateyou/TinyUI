@@ -12,6 +12,15 @@ namespace DXFramework
 		ZeroMemory(&m_targetWND, sizeof(m_targetWND));
 		m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
 	}
+	DX11CaptureTask::DX11CaptureTask(DX11* pDX11)
+		:m_bCapturing(FALSE),
+		m_pDX11(pDX11),
+		m_cx(pDX11->GetSize().cx),
+		m_cy(pDX11->GetSize().cy)
+	{
+		ZeroMemory(&m_targetWND, sizeof(m_targetWND));
+		m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
+	}
 	DX11CaptureTask::~DX11CaptureTask()
 	{
 
@@ -167,7 +176,7 @@ namespace DXFramework
 		}
 		else
 		{
-			TRACE("AttemptCapture hWND == NULL\n");
+			//TRACE("AttemptCapture hWND == NULL\n");
 			m_bCapturing = FALSE;
 			goto _ERROR;
 		}

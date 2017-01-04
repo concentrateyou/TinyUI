@@ -20,6 +20,15 @@ namespace DXFramework
 		m_positionX = x;
 		m_positionY = y;
 	}
+	TinySize DX11Image::GetScale() const
+	{
+		return TinySize(m_scaleX, m_scaleY);
+	}
+	void DX11Image::GetScale(INT scaleX, INT scaleY)
+	{
+		m_scaleX = scaleX;
+		m_scaleY = scaleY;
+	}
 	BOOL DX11Image::Create(const DX11& dx11, INT cx, INT cy, INT scaleX, INT scaleY, BYTE* pData)
 	{
 		if (!Initialize(dx11))

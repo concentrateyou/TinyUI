@@ -16,7 +16,6 @@ namespace TinyUI
 		if (InitCommonControlsEx(&initCtrls))
 		{
 			return TinyControl::Create(hParent, x, y, cx, cy);
-
 		}
 		return FALSE;
 	};

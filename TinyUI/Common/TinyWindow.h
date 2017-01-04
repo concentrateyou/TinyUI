@@ -33,7 +33,6 @@ namespace TinyUI
 		virtual BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 		virtual BOOL DestroyWindow();
 	protected:
-		HWND			m_hWND;//窗口句柄
 		TinyLoopThunk	m_thunk;// Thunk类
 		WNDPROC			m_hPrimaryProc;//原始的PROC
 	protected:

@@ -234,6 +234,13 @@ namespace TinyUI
 		ASSERT(::IsWindow(m_hWND));
 		return (INT)::SendMessage(m_hWND, LB_GETANCHORINDEX, 0, 0);
 	}
+
+	LRESULT TinyListBox::OnCommandReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		return FALSE;
+	}
+
 	LCID TinyListBox::GetLocale() const
 	{
 		ASSERT(::IsWindow(m_hWND));

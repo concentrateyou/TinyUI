@@ -14,12 +14,11 @@ namespace TinyUI
 		virtual DWORD RetrieveStyle();
 		virtual DWORD RetrieveExStyle();
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
-		//////////////////////////////////////////////////////////////////////////
-		virtual void OnSelectChange(INT index);
-		Event<void(INT)> EVENT_SelectChange;
-		//////////////////////////////////////////////////////////////////////////
+		BOOL SubclassChildren();
+	public:
+		LRESULT OnCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnCommandReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-		//////////////////////////////////////////////////////////////////////////
+	public:
 		INT GetCount() const;
 		INT GetCurSel() const;
 		INT SetCurSel(INT nSelect);
@@ -36,7 +35,7 @@ namespace TinyUI
 		INT GetMinVisible() const;
 		BOOL SetCueBanner(LPCTSTR lpszText);
 		TinyString GetCueBanner() const;
-		BOOL GetCueBanner(LPTSTR lpszText, INT cchText) const;
+		BOOL GetCueBanner(LPWSTR lpszText, INT cchText) const;
 		BOOL GetComboBoxInfo(PCOMBOBOXINFO pcbi) const;
 		DWORD GetEditSel() const;
 		BOOL LimitText(INT nMaxChars);
@@ -67,6 +66,9 @@ namespace TinyUI
 		void Copy();
 		void Cut();
 		void Paste();
+	public:
+		virtual void OnSelectChange(INT index);
+		Event<void(INT)> EVENT_SelectChange;
 	};
 }
 

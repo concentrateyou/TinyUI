@@ -18,3 +18,5 @@ typedef struct tagSample
 	LONG		size;
 	BYTE*		bits;
 }Sample;
+
+BOOL  WINAPI GetModuleList(HANDLE hProcess, TinyArray<TinyString> &moduleList);

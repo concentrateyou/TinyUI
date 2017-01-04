@@ -30,16 +30,10 @@ public:
 	BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 private:
 	BOOL CreateUI();
-	BOOL CreateTasks();
-	void DestoryTasks();
 	void Resize(INT cx, INT cy);
 private:
 	DXWindow						m_window;
 	MainUI							m_mainUI;
-	TinyScopedPtr<RenderTask>		m_renderTask;
-	TinyScopedPtr<AudioEncode>		m_audioTask;
-	TinyScopedPtr<VideoEncode>		m_videoTask;
-	TinyScopedPtr<PublishTask>		m_publishTask;
 };
 
 

@@ -7,11 +7,10 @@
 
 namespace TinyUI
 {
-	class TinyDialog : public TinyHandleHWND,public TinyObject
+	class TinyDialog : public TinyHandleHWND, public TinyObject
 	{
 		DECLARE_DYNAMIC(TinyDialog)
 	protected:
-		HWND			m_hWND;//´°¿Ú¾ä±ú
 		TinyLoopThunk	m_thunk;// ThunkÀà
 		INT_PTR			m_iDlgResult;
 		BOOL			m_bModal;
@@ -21,11 +20,11 @@ namespace TinyUI
 	protected:
 		virtual void PreSubclassDialog();
 		virtual BOOL PreTranslateMessage(MSG* pMsg);
-		virtual void OnFinalMessage(HWND hWnd);
+		virtual void OnFinalMessage(HWND hWND);
 		virtual BOOL DestroyWindow();
 	private:
-		static INT_PTR CALLBACK BeginLoop(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-		static INT_PTR CALLBACK EndLoop(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+		static INT_PTR CALLBACK BeginLoop(HWND hWND, UINT uMsg, WPARAM wParam, LPARAM lParam);
+		static INT_PTR CALLBACK EndLoop(HWND hWND, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	public:
 		TinyDialog();
 		virtual ~TinyDialog();
@@ -33,12 +32,12 @@ namespace TinyUI
 		virtual BOOL Create(HWND hParent, LPCTSTR lpTemplateName);
 		virtual INT_PTR DoModal(HWND hParent = ::GetActiveWindow(), WORD wInteger = 0);
 		virtual INT_PTR DoModal(HWND hParent = ::GetActiveWindow(), LPCTSTR lpTemplateName = NULL);
-		BOOL SubclassDialog(HWND hWnd);
+		BOOL SubclassDialog(HWND hWND);
 		LRESULT DefWindowProc();
 		BOOL MapDialogRect(LPRECT lpRect);
 		BOOL EndDialog();
 		BOOL EndDialog(INT_PTR m_DlgResult);
-		BOOL EndDialog(HWND hWnd, INT_PTR m_DlgResult);
+		BOOL EndDialog(HWND hWND, INT_PTR m_DlgResult);
 		BOOL IsModal() const throw();
 	};
 }

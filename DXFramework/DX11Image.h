@@ -17,6 +17,8 @@ namespace DXFramework
 		DX11Image();
 		virtual ~DX11Image();
 		void SetPosition(INT x, INT y);
+		void GetScale(INT scaleX, INT scaleY);
+		TinySize GetScale() const;
 		BOOL Create(const DX11& dx11, INT cx, INT cy, INT scaleX, INT scaleY, BYTE* lpData = NULL);
 		//RGB32
 		BOOL BitBlt(const DX11& dx11, const BYTE* pData);
