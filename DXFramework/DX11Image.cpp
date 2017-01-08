@@ -4,40 +4,18 @@
 namespace DXFramework
 {
 	DX11Image::DX11Image()
-		:m_scaleX(0),
-		m_scaleY(0),
-		m_positionX(-1),
-		m_positionY(-1),
-		m_vertexCount(0),
-		m_indexCount(0)
 	{
 	}
 	DX11Image::~DX11Image()
 	{
 	}
-	void DX11Image::SetPosition(INT x, INT y)
-	{
-		m_positionX = x;
-		m_positionY = y;
-	}
-	TinySize DX11Image::GetScale() const
-	{
-		return TinySize(m_scaleX, m_scaleY);
-	}
-	void DX11Image::GetScale(INT scaleX, INT scaleY)
-	{
-		m_scaleX = scaleX;
-		m_scaleY = scaleY;
-	}
-	BOOL DX11Image::Create(const DX11& dx11, INT cx, INT cy, INT scaleX, INT scaleY, BYTE* pData)
+	BOOL DX11Image::Create(const DX11& dx11, const TinySize& size, BYTE* bits)
 	{
 		if (!Initialize(dx11))
 			return FALSE;
-		m_scaleX = scaleX;
-		m_scaleY = scaleY;
-		return m_texture.CreateTexture(dx11, cx, cy, pData);
+		return m_texture.CreateTexture(dx11, size.cx, size.cy, bits);
 	}
-	BOOL DX11Image::BitBlt(const DX11& dx11, const BYTE* pData)
+	BOOL DX11Image::BitBlt(const DX11& dx11, const BYTE* bits)
 	{
 		ASSERT(m_texture.IsValid());
 		HDC hDC = NULL;
@@ -55,7 +33,7 @@ namespace DXFramework
 		bmi.bmiHeader.biSizeImage = size.cx * size.cy * 4;
 		BYTE* pvBits = NULL;
 		HBITMAP hBitmap = ::CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pvBits), NULL, 0);
-		memcpy(pvBits, pData, bmi.bmiHeader.biSizeImage);
+		memcpy(pvBits, bits, bmi.bmiHeader.biSizeImage);
 		TinyUI::TinyMemDC mdc(hDC, hBitmap);
 		::BitBlt(hDC, 0, 0, size.cx, size.cy, mdc, 0, 0, SRCCOPY);
 		SAFE_DELETE_OBJECT(hBitmap);
@@ -64,49 +42,43 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11Image::Load(const DX11& dx11, HANDLE hResource, INT scaleX, INT scaleY)
+	BOOL DX11Image::Load(const DX11& dx11, HANDLE hResource)
 	{
 		if (!Initialize(dx11))
 			return FALSE;
-		m_scaleX = scaleX;
-		m_scaleY = scaleY;
 		return m_texture.LoadTexture(dx11, hResource);
 	}
-	BOOL DX11Image::Load(const DX11& dx11, const CHAR* pzFile, INT scaleX, INT scaleY)
+	BOOL DX11Image::Load(const DX11& dx11, const CHAR* pzFile)
 	{
 		if (!Initialize(dx11))
 			return FALSE;
-		m_scaleX = scaleX;
-		m_scaleY = scaleY;
 		return m_texture.LoadTexture(dx11, pzFile);
 	}
-	BOOL DX11Image::Load(const DX11& dx11, const BYTE* pData, DWORD dwSize, INT scaleX, INT scaleY)
+	BOOL DX11Image::Load(const DX11& dx11, const BYTE* bits, DWORD dwSize)
 	{
 		if (!Initialize(dx11))
 			return FALSE;
-		m_scaleX = scaleX;
-		m_scaleY = scaleY;
-		return m_texture.LoadTexture(dx11, pData, dwSize);
+		return m_texture.LoadTexture(dx11, bits, dwSize);
 	}
 	BOOL DX11Image::Initialize(const DX11& dx11)
 	{
-		m_positionX = -1;
-		m_positionY = -1;
 		m_vertexBuffer.Release();
 		m_indexBuffer.Release();
 		D3D11_BUFFER_DESC		vertexBufferDesc;
 		D3D11_BUFFER_DESC		indexBufferDesc;
 		D3D11_SUBRESOURCE_DATA	vertexData;
 		D3D11_SUBRESOURCE_DATA	indexData;
-		m_vertexCount = 6;
-		m_indexCount = m_vertexCount;
-		TinyScopedArray<VERTEXTYPE> vertices(new VERTEXTYPE[m_vertexCount]);
-		TinyScopedArray<ULONG> indices(new ULONG[m_indexCount]);
-		ZeroMemory(vertices.Ptr(), (sizeof(VERTEXTYPE) * m_vertexCount));
-		for (INT i = 0; i < m_indexCount; i++)
+		INT vertexCount = 6;
+		INT indexCount = 6;
+		TinyScopedArray<VERTEXTYPE> vertices(new VERTEXTYPE[vertexCount]);
+		TinyScopedArray<ULONG> indices(new ULONG[indexCount]);
+		ZeroMemory(vertices.Ptr(), (sizeof(VERTEXTYPE) * vertexCount));
+		for (INT i = 0; i < indexCount; i++)
+		{
 			indices[i] = i;
+		}
 		vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-		vertexBufferDesc.ByteWidth = sizeof(VERTEXTYPE) * m_vertexCount;
+		vertexBufferDesc.ByteWidth = sizeof(VERTEXTYPE) * vertexCount;
 		vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		vertexBufferDesc.MiscFlags = 0;
@@ -115,7 +87,7 @@ namespace DXFramework
 		if (FAILED(hRes))
 			return FALSE;
 		indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		indexBufferDesc.ByteWidth = sizeof(ULONG) * m_indexCount;
+		indexBufferDesc.ByteWidth = sizeof(ULONG) * indexCount;
 		indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 		indexBufferDesc.CPUAccessFlags = 0;
 		indexBufferDesc.MiscFlags = 0;
@@ -125,23 +97,19 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11Image::Update(const DX11& dx11, INT positionX, INT positionY)
+	BOOL DX11Image::Update(const DX11& dx11)
 	{
 		FLOAT left = 0.0F;
 		FLOAT right = 0.0F;
 		FLOAT top = 0.0F;
 		FLOAT bottom = 0.0F;
-		if ((positionX == m_positionX) && (positionY == m_positionY))
-			return TRUE;
-		m_positionX = positionX;
-		m_positionY = positionY;
 		TinySize size = dx11.GetSize();
-
-		left = (FLOAT)((size.cx / 2) * -1) + (FLOAT)positionX;
-		right = left + (FLOAT)m_scaleX;
-		top = (FLOAT)(size.cy / 2) - (FLOAT)positionY;
-		bottom = top - (FLOAT)m_scaleY;
-		TinyScopedArray<VERTEXTYPE> vertices(new VERTEXTYPE[m_vertexCount]);
+		left = (FLOAT)((size.cx / 2) * -1) + (FLOAT)m_position.x;
+		right = left + (FLOAT)m_scale.cx;
+		top = (FLOAT)(size.cy / 2) - (FLOAT)m_position.y;
+		bottom = top - (FLOAT)m_scale.cy;
+		INT vertexCount = 6;
+		TinyScopedArray<VERTEXTYPE> vertices(new VERTEXTYPE[vertexCount]);
 		vertices[0].position = D3DXVECTOR3(left, top, 0.0F);
 		vertices[0].texture = D3DXVECTOR2(0.0F, 0.0F);
 		vertices[1].position = D3DXVECTOR3(right, bottom, 0.0F);
@@ -158,14 +126,21 @@ namespace DXFramework
 		HRESULT hRes = dx11.GetImmediateContext()->Map(m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		if (FAILED(hRes))
 			return FALSE;
-		memcpy(mappedResource.pData, (void*)vertices.Ptr(), sizeof(VERTEXTYPE) * m_vertexCount);
+		memcpy(mappedResource.pData, (void*)vertices.Ptr(), sizeof(VERTEXTYPE) * vertexCount);
 		dx11.GetImmediateContext()->Unmap(m_vertexBuffer, 0);
 		return TRUE;
 	}
-	INT	 DX11Image::GetIndexCount() const
+
+	BOOL DX11Image::BeginScene()
 	{
-		return m_indexCount;
+		return TRUE;
 	}
+
+	void DX11Image::EndScene()
+	{
+
+	}
+
 	DX11Texture* DX11Image::GetTexture()
 	{
 		return &m_texture;
@@ -174,10 +149,8 @@ namespace DXFramework
 	{
 		return m_texture.IsValid();
 	}
-	BOOL DX11Image::Render(const DX11& dx11, INT positionX, INT positionY)
+	BOOL DX11Image::Render(const DX11& dx11)
 	{
-		if (!this->Update(dx11, positionX, positionY))
-			return FALSE;
 		UINT stride = sizeof(VERTEXTYPE);
 		UINT offset = 0;
 		dx11.GetImmediateContext()->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
@@ -195,7 +168,7 @@ namespace DXFramework
 	{
 
 	}
-	BOOL SharedTexture::Initialize(const DX11& dx11, INT scaleX, INT scaleY)
+	BOOL SharedTexture::Initialize(const DX11& dx11, const TinySize& scale)
 	{
 		if (!m_textureMemery.Address())
 		{
@@ -207,8 +180,9 @@ namespace DXFramework
 		SharedTextureDATA* pTexture = reinterpret_cast<SharedTextureDATA*>(m_textureMemery.Address());
 		if (!pTexture)
 			return FALSE;
-		if (!m_image.Load(dx11, pTexture->TextureHandle, scaleX, scaleY))
+		if (!m_image.Load(dx11, pTexture->TextureHandle))
 			return FALSE;
+		m_image.SetScale(scale);
 		return TRUE;
 	}
 	DX11Image& SharedTexture::GetTexture()

@@ -661,7 +661,7 @@ namespace TinyUI
 	TinyOleDateTime::TinyOleDateTime(WORD wDosDate, WORD wDosTime) throw()
 	{
 		m_status = ::DosDateTimeToVariantTime(wDosDate, wDosTime, &m_dt) ?
-		valid : invalid;
+			valid : invalid;
 	}
 
 	void TinyOleDateTime::SetStatus(DateTimeStatus status) throw()
@@ -1383,6 +1383,11 @@ namespace TinyUI
 	LONGLONG TinyPerformanceTimer::GetMicroseconds()
 	{
 		LONGLONG ticks = (1000000 * m_lastTime / m_lFrequency.QuadPart);
+		return ticks;
+	}
+	LONGLONG TinyPerformanceTimer::GetMillisconds()
+	{
+		LONGLONG ticks = (1000 * m_lastTime / m_lFrequency.QuadPart);
 		return ticks;
 	}
 }

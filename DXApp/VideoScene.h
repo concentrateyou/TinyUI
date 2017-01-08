@@ -1,23 +1,27 @@
 #pragma once
-#include "BaseScene.h"
+#include "VideoCapture.h"
+#include "VideoCaptureParam.h"
+#include "AudioCapture.h"
+#include "AudioCaptureParam.h"
+#include "DX11Image.h"
+#include "DX11.h"
+using namespace DXFramework;
+using namespace DShow;
 /// <summary>
 /// …„œÒÕ∑≥°æ∞
 /// </summary>
-class VideoScene : public BaseScene
+class VideoScene : public DX11Image
 {
 public:
 	VideoScene();
 	~VideoScene();
 	BOOL Initialize(DX11& dx11, const VideoCapture::Name& name, const VideoCaptureParam& param);
 	BOOL BeginScene() OVERRIDE;
-	BOOL EndScene() OVERRIDE;
-	BOOL Render(DX11& dx11) OVERRIDE;
-	BOOL Scale(INT cx, INT cy) OVERRIDE;
-	BOOL Move(INT x, INT y) OVERRIDE;
-	DX11Image* GetImage() const;
+	void EndScene() OVERRIDE;
+	BOOL Render(const DX11& dx11) OVERRIDE;
+	LPCSTR GetClassName() OVERRIDE;
 private:
-	TinyScopedPtr<DX11Image> m_image;
-	VideoCapture	m_video;
-	DX11&			m_dx11;
+	VideoCapture		m_video;
+	VideoCaptureParam	m_param;
 };
 

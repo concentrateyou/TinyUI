@@ -22,23 +22,22 @@ BOOL GameScene::BeginScene()
 	return m_captureTask->Submit();
 }
 
-BOOL GameScene::EndScene()
+void GameScene::EndScene()
 {
-	return m_captureTask->Close(INFINITE);
+	m_captureTask->Close();
 }
 
-BOOL GameScene::Render(DXGraphics& graphics)
+BOOL GameScene::Render(const DX11& dx11)
 {
-
+	DX11Image& image = m_captureTask->GetTexture();
+	if (image.IsValid())
+	{
+		return image.Render(dx11);
+	}
+	return FALSE;
 }
 
-BOOL GameScene::Scale(INT cx, INT cy)
+LPCSTR GameScene::GetClassName()
 {
-	m_image.SetScale(cx, cy);
-	return TRUE;
-}
-BOOL GameScene::Move(INT x, INT y)
-{
-	m_image.SetPosition(x, y);
-	return TRUE;
+	return TEXT("GameScene");
 }

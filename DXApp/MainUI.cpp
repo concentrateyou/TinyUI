@@ -141,7 +141,6 @@ void MainUI::OnGameClick(void*, INT)
 	if (dlg.DoModal(m_hWND, IDD_DLG_GAME) == IDOK)
 	{
 		HWND hWND = dlg.GetGameWND();
-		INT a = 0;
 	}
 }
 void MainUI::OnScreenClick(void*, INT)

@@ -1,11 +1,11 @@
 #pragma once
-#include "DXFramework.h"
+#include "DX11Element.h"
 #include "DX11Texture.h"
 #include "DX11TextureShader.h"
 
 namespace DXFramework
 {
-	class DX11Image
+	class DX11Image : public DX11Element
 	{
 		struct VERTEXTYPE
 		{
@@ -16,32 +16,24 @@ namespace DXFramework
 	public:
 		DX11Image();
 		virtual ~DX11Image();
-		void SetPosition(INT x, INT y);
-		void GetScale(INT scaleX, INT scaleY);
-		TinySize GetScale() const;
-		BOOL Create(const DX11& dx11, INT cx, INT cy, INT scaleX, INT scaleY, BYTE* lpData = NULL);
-		//RGB32
-		BOOL BitBlt(const DX11& dx11, const BYTE* pData);
-		BOOL Load(const DX11& dx11, HANDLE hResource, INT scaleX, INT scaleY);
-		BOOL Load(const DX11& dx11, const CHAR* pzFile, INT scaleX, INT scaleY);
-		BOOL Load(const DX11& dx11, const BYTE* data, DWORD dwSize, INT scaleX, INT scaleY);
-		BOOL Render(const DX11& dx11, INT positionX, INT positionY);
-		INT	 GetIndexCount() const;
-		DX11Texture* GetTexture();
+		BOOL Create(const DX11& dx11, const TinySize& size, BYTE* bits = NULL);
+		BOOL BitBlt(const DX11& dx11, const BYTE* bits);//RGB32
+		BOOL Load(const DX11& dx11, HANDLE hResource);
+		BOOL Load(const DX11& dx11, const CHAR* pzFile);
+		BOOL Load(const DX11& dx11, const BYTE* bits, DWORD dwSize);
 		BOOL IsValid() const;
+		BOOL Update(const DX11& dx11);
+		DX11Texture* GetTexture()
+	public:
+		BOOL BeginScene() OVERRIDE;
+		void EndScene() OVERRIDE;
+		BOOL Render(const DX11& dx11) OVERRIDE;
 	private:
 		BOOL Initialize(const DX11& dx11);
-		BOOL Update(const DX11& dx11, INT positionX, int positionY);
 	private:
 		DX11Texture					m_texture;
 		TinyComPtr<ID3D11Buffer>	m_vertexBuffer;
 		TinyComPtr<ID3D11Buffer>	m_indexBuffer;
-		INT							m_scaleX;
-		INT							m_scaleY;
-		INT							m_positionX;
-		INT							m_positionY;
-		INT							m_vertexCount;
-		INT							m_indexCount;
 	};
 	/// <summary>
 	/// π≤œÌŒ∆¿Ì
@@ -51,7 +43,7 @@ namespace DXFramework
 	public:
 		SharedTexture();
 		~SharedTexture();
-		BOOL Initialize(const DX11& dx10, INT scaleX, INT scaleY);
+		BOOL Initialize(const DX11& dx10, const TinySize& scale);
 		DX11Image& GetTexture();
 	private:
 		DX11Image				m_image;

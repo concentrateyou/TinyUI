@@ -1,6 +1,8 @@
 #pragma once
 #include "Control/TinyControl.h"
 #include "Control/TinyButton.h"
+#include "VideoScene.h"
+#include "GameScene.h"
 using namespace TinyUI;
 
 class MainUI : public TinyControl

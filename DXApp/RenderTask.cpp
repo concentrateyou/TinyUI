@@ -12,45 +12,18 @@ RenderTask::~RenderTask()
 
 }
 
-BOOL RenderTask::Initialize(HWND hWND, INT cx, INT cy, DWORD dwFPS, const VideoCapture::Name& name, const VideoCaptureParam& param)
+BOOL RenderTask::Initialize(HWND hWND, INT cx, INT cy, DWORD dwFPS)
 {
 	m_dwFPS = dwFPS;
-	m_videoParam = param;
-	m_deviceName = name;
-	//初始化DX
-	BOOL bRes = m_graphics.Initialize(hWND, cx, cy);
-	if (!bRes)
+	if (!m_graphics.Initialize(hWND, cx, cy))
 		return FALSE;
-	TinySize size = m_videoParam.GetSize();
-	TinySize scale = m_videoParam.GetScale();
-	bRes = m_image.Create(m_graphics.GetD3D(), size.cx, size.cy, scale.cx, scale.cy);
-	if (!bRes)
-		return FALSE;
-	//游戏捕获
-	m_captureTask.Reset(new DX11CaptureTask(&m_graphics.GetD3D(), cx * 2 / 3, cy * 2 / 3));
-	//初始化视频捕获
-	bRes = m_capture.Initialize(m_deviceName);
-	if (!bRes)
-		return FALSE;
-	bRes = m_capture.Allocate(m_videoParam);
-	if (!bRes)
-		return FALSE;
-	return TRUE;
-}
 
-VideoCapture* RenderTask::GetCapture()
-{
-	return &m_capture;
+	return TRUE;
 }
 
 BYTE* RenderTask::GetPointer()
 {
 	return m_graphics.GetPointer();
-}
-
-VideoCaptureParam* RenderTask::GetParam()
-{
-	return &m_videoParam;
 }
 
 BOOL RenderTask::Close(DWORD dwMs)
@@ -61,33 +34,17 @@ BOOL RenderTask::Close(DWORD dwMs)
 
 BOOL RenderTask::Submit()
 {
-	ASSERT(m_captureTask);
-	m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
-	m_captureTask->Submit();
-	m_capture.Start();
-	return TinyTaskBase::Submit(std::forward<Closure>(BindCallback(&RenderTask::OnMessagePump, this)));
+	return TinyTaskBase::Submit(BindCallback(&RenderTask::OnMessagePump, this));
 }
 
 DWORD RenderTask::Render()
 {
 	m_timer.BeginTime();
 	m_graphics.BeginScene();
-	BYTE* s = m_capture.GetPointer();
-	if (s != NULL)
-	{
-		TinySize size = m_graphics.GetD3D().GetSize();
-		m_image.BitBlt(m_graphics.GetD3D(), s);
-		m_graphics.DrawImage(m_image, size.cx * 2 / 3 + 1, 1);
-	}
-	if (m_captureTask != NULL)
-	{
-		m_graphics.DrawImage(m_captureTask->GetTexture(), 1, 1);
-	}
+	//TODO
 	m_graphics.EndScene();
-	this->OnRender(m_graphics.GetPointer(), m_graphics.GetSize(), (FLOAT)m_dwFPS);
 	m_timer.EndTime();
-	DWORD dwTime = m_timer.GetMicroseconds() / 1000;
-	return dwTime;
+	return m_timer.GetMillisconds();
 }
 
 void RenderTask::OnRender(BYTE* bits, LONG size, FLOAT ts)
@@ -97,9 +54,7 @@ void RenderTask::OnRender(BYTE* bits, LONG size, FLOAT ts)
 
 void RenderTask::OnExit()
 {
-	ASSERT(m_captureTask);
-	m_capture.Uninitialize();
-	m_captureTask->Close(INFINITE);
+
 }
 void RenderTask::OnMessagePump()
 {

@@ -81,21 +81,17 @@ BOOL DXGraphics::EndScene()
 	return FALSE;
 }
 
-BOOL DXGraphics::DrawImage(DX11Image& image, INT x, INT y)
+BOOL DXGraphics::DrawImage(DX11Image& image,const TinyPoint& pos)
 {
 	if (!image.IsValid())
 		return FALSE;
-	if (image.Render(m_dx11, x, y))
+	image.SetPosition(pos);
+	if (image.Render(m_dx11))
 	{
-		m_textureShader.Render(m_dx11, image.GetIndexCount(), m_worldMatrix, m_viewMatrix, m_orthoMatrix, image.GetTexture());
+		m_textureShader.Render(m_dx11, 6, m_worldMatrix, m_viewMatrix, m_orthoMatrix, image.GetTexture());
 		return TRUE;
 	}
 	return FALSE;
-}
-
-DX11& DXGraphics::GetD3D()
-{
-	return m_dx11;
 }
 
 BYTE* DXGraphics::GetPointer()

@@ -1,6 +1,7 @@
 #pragma once
 #include "DXFramework.h"
 #include "DX11Image.h"
+#include "DXGraphics.h"
 #include "DXCamera.h"
 #include "DX11TextureShader.h"
 using namespace DXFramework;
@@ -13,10 +14,9 @@ public:
 	BOOL	Initialize(HWND hWND, INT cx, INT cy);
 	BOOL	BeginScene();
 	BOOL	EndScene();
-	DX11&	GetD3D();
 	BYTE*	GetPointer();
 	LONG	GetSize() const;
-	BOOL	DrawImage(DX11Image& image, INT x, INT y);
+	BOOL	DrawImage(DX11Image& image, const TinyPoint& pos);
 private:
 	BOOL	CreateTexture(INT cx, INT cy);
 private:

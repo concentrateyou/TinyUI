@@ -3,11 +3,10 @@
 
 namespace DXFramework
 {
-	DX11CaptureTask::DX11CaptureTask(DX11* pDX11, INT cx, INT cy)
+	DX11CaptureTask::DX11CaptureTask(DX11* pDX11, const TinySize& size)
 		:m_bCapturing(FALSE),
 		m_pDX11(pDX11),
-		m_cx(cx),
-		m_cy(cy)
+		m_size(size)
 	{
 		ZeroMemory(&m_targetWND, sizeof(m_targetWND));
 		m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
@@ -15,8 +14,7 @@ namespace DXFramework
 	DX11CaptureTask::DX11CaptureTask(DX11* pDX11)
 		:m_bCapturing(FALSE),
 		m_pDX11(pDX11),
-		m_cx(pDX11->GetSize().cx),
-		m_cy(pDX11->GetSize().cy)
+		m_size(pDX11->GetSize())
 	{
 		ZeroMemory(&m_targetWND, sizeof(m_targetWND));
 		m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
@@ -129,7 +127,7 @@ namespace DXFramework
 			TRACE("BeginCapture GetSharedCapture-FAIL\n");
 			return FALSE;
 		}
-		if (!m_texture.Initialize(*m_pDX11, m_cx, m_cy))
+		if (!m_texture.Initialize(*m_pDX11, m_size))
 		{
 			TRACE("BeginCapture m_texture.Initialize-FAIL\n");
 			return FALSE;
@@ -176,7 +174,6 @@ namespace DXFramework
 		}
 		else
 		{
-			//TRACE("AttemptCapture hWND == NULL\n");
 			m_bCapturing = FALSE;
 			goto _ERROR;
 		}

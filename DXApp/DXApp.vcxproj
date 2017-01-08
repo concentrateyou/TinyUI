@@ -93,7 +93,6 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BaseScene.h" />
     <ClInclude Include="DXFrameUI.h" />
     <ClInclude Include="FaacEncode.h" />
     <ClInclude Include="AudioEncode.h" />
@@ -120,7 +119,6 @@
     <ClInclude Include="I420Converter.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BaseScene.cpp" />
     <ClCompile Include="DXFrameUI.cpp" />
     <ClCompile Include="FaacEncode.cpp" />
     <ClCompile Include="AudioEncode.cpp" />

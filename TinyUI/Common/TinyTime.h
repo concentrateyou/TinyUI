@@ -336,6 +336,7 @@ namespace TinyUI
 	public:
 		TinyPerformanceTimer();
 		~TinyPerformanceTimer();
+		LONGLONG GetMillisconds();
 		LONGLONG GetMicroseconds();
 		void BeginTime();
 		void EndTime();

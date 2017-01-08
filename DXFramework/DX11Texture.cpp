@@ -20,7 +20,7 @@ namespace DXFramework
 	DX11Texture::~DX11Texture()
 	{
 	}
-	BOOL DX11Texture::CreateTexture(const DX11& dx11, INT cx, INT cy, const BYTE* pData)
+	BOOL DX11Texture::CreateTexture(const DX11& dx11, INT cx, INT cy, const BYTE* data)
 	{
 		m_texture2D.Release();
 		m_resourceView.Release();
@@ -38,9 +38,9 @@ namespace DXFramework
 		textureDesc.Usage = D3D11_USAGE_DEFAULT;
 		D3D11_SUBRESOURCE_DATA dsd;
 		D3D11_SUBRESOURCE_DATA *lpSRD = NULL;
-		if (pData)
+		if (data)
 		{
-			dsd.pSysMem = static_cast<void*>(const_cast<BYTE*>(pData));
+			dsd.pSysMem = static_cast<void*>(const_cast<BYTE*>(data));
 			dsd.SysMemPitch = cx * 4;
 			dsd.SysMemSlicePitch = 0;
 			lpSRD = &dsd;

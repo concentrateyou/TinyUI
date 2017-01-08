@@ -9,7 +9,7 @@ namespace DXFramework
 	class DX11CaptureTask : public TinyTaskBase
 	{
 	public:
-		DX11CaptureTask(DX11* pDX11, INT cx, INT cy);
+		DX11CaptureTask(DX11* pDX11, const TinySize& size);
 		DX11CaptureTask(DX11* pDX11);
 		virtual ~DX11CaptureTask();
 		DX11Image&				GetTexture();
@@ -26,8 +26,7 @@ namespace DXFramework
 		DWORD					BuildEvents();
 		static BOOL CALLBACK	EnumWindow(HWND hwnd, LPARAM lParam);
 	private:
-		INT						m_cx;
-		INT						m_cy;
+		TinySize				m_size;
 		BOOL					m_bCapturing;
 		DX11*					m_pDX11;
 		TinyEvent				m_captureStart;
