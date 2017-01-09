@@ -58,7 +58,7 @@ namespace TinyUI
 			{
 				DWORD dwPos = GetMessagePos();
 				POINT pt = { GET_X_LPARAM(dwPos), GET_Y_LPARAM(dwPos) };
-				ScreenToClient(m_hWND, &pt);
+				::ScreenToClient(m_hWND, &pt);
 				INT iHitTest = ScrollHitTest(pt);
 				if (iHitTest == HTSCROLL_THUMB)
 				{
@@ -319,7 +319,7 @@ namespace TinyUI
 		}
 		DWORD dwPos = GetMessagePos();
 		POINT pt = { GET_X_LPARAM(dwPos), GET_Y_LPARAM(dwPos) };
-		ScreenToClient(m_hWND, &pt);
+		::ScreenToClient(m_hWND, &pt);
 		m_si.iTrackHitTest = m_si.iLatestHitTest = ScrollHitTest(pt);
 		HDC hDC = GetDC(m_hWND);
 		TinyMemDC memdc(hDC, m_size.cx, m_size.cy);

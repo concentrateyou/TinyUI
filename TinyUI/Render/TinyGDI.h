@@ -1,5 +1,4 @@
 #pragma once
-#include <Windows.h>
 #include "../Common/TinyApplication.h"
 
 /// <summary>
@@ -52,6 +51,7 @@ namespace TinyUI
 		HBITMAP		SelectObject(TinyBitmap* pBitmap);
 		INT			SelectObject(TinyRgn* pRgn);
 		HGDIOBJ		SelectObject(HGDIOBJ hObject);
+		HGDIOBJ		SelectStockObject(INT nIndex);
 		COLORREF	GetNearestColor(COLORREF crColor) const;
 		HPALETTE	SelectPalette(TinyPalette* pPalette, BOOL bForceBackground);
 		UINT		RealizePalette();

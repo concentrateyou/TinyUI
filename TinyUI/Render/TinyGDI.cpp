@@ -59,6 +59,13 @@ namespace TinyUI
 		ASSERT(m_hDC != NULL);
 		return (hObject != NULL) ? ::SelectObject(m_hDC, hObject) : NULL;
 	}
+	HGDIOBJ	TinyDC::SelectStockObject(INT nIndex)
+	{
+		HGDIOBJ hObject = ::GetStockObject(nIndex);
+		HGDIOBJ hOldObj = NULL;
+		ASSERT(hObject != NULL);
+		return ::SelectObject(m_hDC, hObject);
+	}
 	COLORREF TinyDC::GetNearestColor(COLORREF crColor) const
 	{
 		ASSERT(m_hDC != NULL);

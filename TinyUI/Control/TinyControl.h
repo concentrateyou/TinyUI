@@ -46,6 +46,10 @@ namespace TinyUI
 		BOOL	ModifyStyleEx(DWORD dwRemove, DWORD dwAdd, UINT nFlags = 0) throw();
 		void	CenterWindow(HWND parent, SIZE pref) throw();
 		BOOL	Invalidate();
+		BOOL	ClientToScreen(LPPOINT lpPoint) const throw();
+		BOOL	ClientToScreen(LPRECT lpRect) const throw();
+		BOOL	ScreenToClient(LPPOINT lpPoint) const throw();
+		BOOL	ScreenToClient(LPRECT lpRect) const throw();
 		//////////////////////////////////////////////////////////////////////////
 	public:
 		BEGIN_MSG_MAP(TinyControl, TinyWindow)

@@ -299,7 +299,7 @@ namespace TinyUI
 				return HTBOTTOMRIGHT;
 			if (pos.x > (rectangle.left + cx) && pos.x < (rectangle.right - cx) && pos.y >= (rectangle.bottom - cy) && pos.y <= rectangle.bottom)
 				return HTBOTTOM;
-			ScreenToClient(m_hWND, &pos);
+			::ScreenToClient(m_hWND, &pos);
 			if (m_document->GetParent(NULL) == m_document->GetVisualByPos(pos.x, pos.y))
 				return HTCAPTION;
 			return HTCLIENT;

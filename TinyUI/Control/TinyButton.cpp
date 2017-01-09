@@ -217,7 +217,7 @@ namespace TinyUI
 		BUTTON_SPLITINFO buttonSplitInfo = { 0 };
 		buttonSplitInfo.mask = BCSIF_GLYPH;
 		Button_GetSplitInfo(m_hWND, &buttonSplitInfo);
-		return (TCHAR)buttonSplitInfo.himlGlyph;
+		return reinterpret_cast<TCHAR>(buttonSplitInfo.himlGlyph);
 	}
 
 	BOOL TinyButton::SetSplitGlyph(TCHAR chGlyph)
@@ -225,7 +225,7 @@ namespace TinyUI
 		ASSERT(::IsWindow(m_hWND));
 		BUTTON_SPLITINFO buttonSplitInfo = { 0 };
 		buttonSplitInfo.mask = BCSIF_GLYPH;
-		buttonSplitInfo.himlGlyph = (HIMAGELIST)chGlyph;
+		buttonSplitInfo.himlGlyph = reinterpret_cast<HIMAGELIST>(chGlyph);
 		return Button_SetSplitInfo(m_hWND, &buttonSplitInfo);
 	}
 

@@ -177,7 +177,7 @@ namespace TinyUI
 			m_bMouseTracking = FALSE;
 			DWORD dwPos = GetMessagePos();
 			POINT pt = { GET_X_LPARAM(dwPos), GET_Y_LPARAM(dwPos) };
-			ScreenToClient(m_hWND, &pt);
+			::ScreenToClient(m_hWND, &pt);
 			TinyMenuItem* pItem = GetAt(pt);
 			if (pItem != NULL)
 			{
@@ -208,8 +208,8 @@ namespace TinyUI
 					if (!m_pNext->IsPopup())
 					{
 						RECT rect = pItem->m_rectangle;
-						ClientToScreen(m_hWND, (LPPOINT)&rect);
-						ClientToScreen(m_hWND, (LPPOINT)&rect + 1);
+						::ClientToScreen(m_hWND, (LPPOINT)&rect);
+						::ClientToScreen(m_hWND, (LPPOINT)&rect + 1);
 						pt.x = rect.right;
 						pt.y = rect.top;
 						m_pNext->Popup(pt);
