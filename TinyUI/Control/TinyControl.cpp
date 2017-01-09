@@ -66,7 +66,7 @@ namespace TinyUI
 	LRESULT TinyControl::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		EVENT_Create(uMsg, wParam, lParam, bHandled);
+		EVENT_CREATE(uMsg, wParam, lParam, bHandled);
 		return FALSE;
 	}
 	LRESULT TinyControl::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -77,7 +77,7 @@ namespace TinyUI
 	LRESULT TinyControl::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		EVENT_Destory(uMsg, wParam, lParam, bHandled);
+		EVENT_DESTORY(uMsg, wParam, lParam, bHandled);
 		return FALSE;
 	}
 	LRESULT TinyControl::OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -189,7 +189,7 @@ namespace TinyUI
 	LRESULT TinyControl::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		EVENT_Size(uMsg, wParam, lParam, bHandled);
+		EVENT_SIZE(uMsg, wParam, lParam, bHandled);
 		return FALSE;
 	}
 	LRESULT TinyControl::OnMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -205,6 +205,7 @@ namespace TinyUI
 	LRESULT TinyControl::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		EVENT_MOUSEMOVE(uMsg, wParam, lParam, bHandled);
 		return FALSE;
 	}
 	LRESULT TinyControl::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -219,17 +220,19 @@ namespace TinyUI
 	}
 	LRESULT TinyControl::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
-		bHandled = FALSE;;
+		bHandled = FALSE;
+		EVENT_LBUTTONDOWN(uMsg, wParam, lParam, bHandled);
 		return FALSE;
 	}
 	LRESULT TinyControl::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
-		bHandled = FALSE;;
+		bHandled = FALSE;
+		EVENT_LBUTTONUP(uMsg, wParam, lParam, bHandled);
 		return FALSE;
 	}
 	LRESULT TinyControl::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
-		bHandled = FALSE;;
+		bHandled = FALSE;
 		return FALSE;
 	}
 	LRESULT TinyControl::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

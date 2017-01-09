@@ -36,7 +36,7 @@ BOOL VideoScene::Render(const DX11& dx11)
 	BYTE* bits = m_video.GetPointer();
 	if (bits != NULL)
 	{
-		this->BitBlt(dx11, bits);
+		this->BitBlt(dx11, bits, m_video.GetSize());
 		DX11Image::Render(dx11);
 		return TRUE;
 	}

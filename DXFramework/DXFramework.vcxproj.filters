@@ -60,6 +60,9 @@
     <ClInclude Include="DX11Shader.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="DXInput.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -102,6 +105,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DX11Shader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DXInput.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

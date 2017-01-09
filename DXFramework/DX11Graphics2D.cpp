@@ -39,6 +39,10 @@ namespace DXFramework
 		m_dx11.EndScene();
 		return TRUE;
 	}
+	BOOL DX11Graphics2D::Resize(const TinySize& size)
+	{
+		return m_dx11.ResizeView(size.cx, size.cy);
+	}
 	DX11& DX11Graphics2D::GetDX11()
 	{
 		return m_dx11;

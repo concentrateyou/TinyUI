@@ -150,9 +150,9 @@ namespace DXFramework
 		m_size.cx = cx;
 		m_size.cy = cy;
 		LPVOID val = NULL;
-		m_immediateContext->OMSetRenderTargets(0, 0, 0);
+		m_immediateContext->OMSetRenderTargets(1, (ID3D11RenderTargetView**)&val, NULL);
 		m_renderView.Release();
-		HRESULT hRes = m_swap->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+		HRESULT hRes = m_swap->ResizeBuffers(2, 0, 0, DXGI_FORMAT_B8G8R8A8_UNORM, 0);
 		if (FAILED(hRes))
 			return FALSE;
 		TinyComPtr<ID3D11Texture2D> backBuffer;

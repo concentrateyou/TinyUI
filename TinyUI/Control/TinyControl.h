@@ -149,9 +149,12 @@ namespace TinyUI
 		virtual LRESULT OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	public:
-		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_Create;
-		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_Destory;
-		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_Size;
+		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_CREATE;
+		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_DESTORY;
+		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_SIZE;
+		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_LBUTTONDOWN;
+		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_LBUTTONUP;
+		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_MOUSEMOVE;
 	};
 	SELECTANY HHOOK TinyControl::m_hhk = NULL;
 }

@@ -45,7 +45,7 @@ LRESULT MainUI::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 LRESULT MainUI::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-
+	DestoryUI();
 	return FALSE;
 }
 LRESULT MainUI::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -115,16 +115,17 @@ void MainUI::CreateUI()
 	m_onImageClick.Reset(new Delegate<void(void*, INT)>(this, &MainUI::OnImageClick));
 	m_image.EVENT_Click += m_onImageClick;
 
-	//
 	RECT s = { 0 };
 	m_pDXWND->GetClientRect(&s);
-	if (m_renderTask.Initialize(m_pDXWND->Handle(), TO_CX(s), TO_CY(s), 30))
+	if (m_renderTask.Initialize(m_pDXWND, TO_CX(s), TO_CY(s), 30))
 	{
 		m_renderTask.Submit();
 	}
 }
 void MainUI::DestoryUI()
 {
+	m_renderTask.Close();
+
 	m_broadcast.EVENT_Click -= m_onBroadcastClick;
 	m_record.EVENT_Click -= m_onRecordClick;
 	m_game.EVENT_Click -= m_onGameClick;
@@ -161,10 +162,20 @@ void MainUI::OnGameClick(void*, INT)
 			if (QueryFullProcessImageName(hProcess, 0, windowExecutable, &size))
 			{
 				CHAR* pzName = PathFindFileName(windowExecutable);
-				m_gameScene.Initialize(m_renderTask.GetGraphics()->GetDX11());
-				m_gameScene.SetConfig(className, pzName, TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));
-				if (m_renderTask.Add(&m_gameScene))
+
+				if (!m_renderTask.Contain(&m_gameScene))
 				{
+					m_gameScene.Initialize(m_renderTask.GetGraphics()->GetDX11());
+					m_gameScene.SetConfig(className, pzName, TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));
+					if (m_renderTask.Add(&m_gameScene))
+					{
+						m_gameScene.BeginScene();
+					}
+				}
+				else
+				{
+					m_gameScene.EndScene();
+					m_gameScene.Initialize(m_renderTask.GetGraphics()->GetDX11());
 					m_gameScene.BeginScene();
 				}
 			}
@@ -186,13 +197,14 @@ void MainUI::OnCaptureClick(void*, INT)
 	MediaCaptureDlg dlg;
 	if (dlg.DoModal(m_hWND, IDD_DIG_MEDIACAPTURE) == IDOK)
 	{
+		m_renderTask.Remove(&m_videoScene);
+		m_videoScene.EndScene();
 		m_videoScene.Initialize(m_renderTask.GetGraphics()->GetDX11(), *dlg.GetVideoName(), *dlg.GetVideoParam());
 		if (m_renderTask.Add(&m_videoScene))
 		{
-			m_videoScene.SetPosition(TinyPoint(0, 0));
-			m_videoScene.SetScale(TinySize(m_videoScene.GetSize().cx / 2, m_videoScene.GetSize().cy / 2));
 			m_videoScene.BeginScene();
 		}
+		m_videoScene.BeginScene();
 	}
 }
 void MainUI::OnTextClick(void*, INT)

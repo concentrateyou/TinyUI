@@ -11,20 +11,25 @@ namespace DXFramework
 	}
 	BOOL DX11Image::Create(const DX11& dx11, const TinySize& size, BYTE* bits)
 	{
-
 		if (!Initialize(dx11))
 			return FALSE;
-		if (m_texture.CreateCompatible(dx11, m_size.cx, m_size.cy, bits))
+		if (m_texture.CreateCompatible(dx11, size.cx, size.cy, bits))
 		{
-			m_size = m_texture.GetSize();
-			m_scale = m_size;
+			SetSize(m_texture.GetSize());
+			SetScale(m_size);
 			return TRUE;
 		}
 		return FALSE;
 	}
-	BOOL DX11Image::BitBlt(const DX11& dx11, const BYTE* bits)
+	BOOL DX11Image::BitBlt(const DX11& dx11, const BYTE* bits, LONG size)
 	{
 		ASSERT(m_texture.IsValid());
+
+		if (size != m_size.cx * m_size.cy * 4)
+		{
+			return FALSE;
+		}
+
 		HDC hDC = NULL;
 		BOOL bRes = m_texture.GetDC(hDC);
 		if (!bRes)
@@ -54,11 +59,10 @@ namespace DXFramework
 			return FALSE;
 		if (m_texture.Load(dx11, hResource))
 		{
-			m_size = m_texture.GetSize();
-			RECT s = { 0 };
+			SetSize(m_texture.GetSize());
+			TinyRectangle s = { 0 };
 			GetClientRect(dx11.GetHWND(), &s);
-			m_scale.cx = TO_CX(s);
-			m_scale.cy = TO_CY(s);
+			SetScale(s.Size());
 			return TRUE;
 		}
 		return FALSE;
@@ -69,8 +73,8 @@ namespace DXFramework
 			return FALSE;
 		if (m_texture.Load(dx11, pzFile))
 		{
-			m_size = m_texture.GetSize();
-			m_scale = m_size;
+			SetSize(m_texture.GetSize());
+			SetScale(m_size);
 			return TRUE;
 		}
 		return FALSE;
@@ -81,8 +85,8 @@ namespace DXFramework
 			return FALSE;
 		if (m_texture.Load(dx11, bits, dwSize))
 		{
-			m_size = m_texture.GetSize();
-			m_scale = m_size;
+			SetSize(m_texture.GetSize());
+			SetScale(m_size);
 			return TRUE;
 		}
 		return FALSE;
@@ -131,10 +135,12 @@ namespace DXFramework
 		FLOAT top = 0.0F;
 		FLOAT bottom = 0.0F;
 		TinySize size = dx11.GetSize();
-		left = (FLOAT)((size.cx / 2) * -1) + (FLOAT)m_position.x;
-		right = left + (FLOAT)m_scale.cx;
-		top = (FLOAT)(size.cy / 2) - (FLOAT)m_position.y;
-		bottom = top - (FLOAT)m_scale.cy;
+		TinyPoint position = GetPosition();
+		TinySize scale = GetScale();
+		left = (FLOAT)((size.cx / 2) * -1) + (FLOAT)position.x;
+		right = left + (FLOAT)scale.cx;
+		top = (FLOAT)(size.cy / 2) - (FLOAT)position.y;
+		bottom = top - (FLOAT)scale.cy;
 		INT vertexCount = GetIndexCount();
 		TinyScopedArray<VERTEXTYPE> vertices(new VERTEXTYPE[vertexCount]);
 		vertices[0].position = D3DXVECTOR3(left, top, 0.0F);
