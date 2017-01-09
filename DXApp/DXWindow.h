@@ -1,6 +1,7 @@
 #pragma once
 #include "Control/TinyControl.h"
 #include "RenderTask.h"
+#include "DX11Graphics2D.h"
 using namespace DXFramework;
 
 class DXWindow : public TinyControl

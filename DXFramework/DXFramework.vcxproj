@@ -97,9 +97,11 @@
     <ClInclude Include="DX11.h" />
     <ClInclude Include="DX11CaptureTask.h" />
     <ClInclude Include="DX11Font.h" />
+    <ClInclude Include="DX11Graphics2D.h" />
     <ClInclude Include="DX11Image.h" />
     <ClInclude Include="DX11Rectangle.h" />
     <ClInclude Include="DX11Element.h" />
+    <ClInclude Include="DX11Shader.h" />
     <ClInclude Include="DX11Texture.h" />
     <ClInclude Include="DX11TextureShader.h" />
     <ClInclude Include="DXCamera.h" />
@@ -110,10 +112,12 @@
   <ItemGroup>
     <ClCompile Include="DX11.cpp" />
     <ClCompile Include="DX11Font.cpp" />
+    <ClCompile Include="DX11Graphics2D.cpp" />
     <ClCompile Include="DX11Image.cpp" />
     <ClCompile Include="DX11CaptureTask.cpp" />
     <ClCompile Include="DX11Rectangle.cpp" />
     <ClCompile Include="DX11Element.cpp" />
+    <ClCompile Include="DX11Shader.cpp" />
     <ClCompile Include="DX11Texture.cpp" />
     <ClCompile Include="DX11TextureShader.cpp" />
     <ClCompile Include="DXCamera.cpp" />

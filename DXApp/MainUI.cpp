@@ -10,8 +10,9 @@ MainUI::MainUI()
 MainUI::~MainUI()
 {
 }
-BOOL MainUI::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
+BOOL MainUI::Create(HWND hParent, INT x, INT y, INT cx, INT cy, DXWindow* pDXWND)
 {
+	m_pDXWND = pDXWND;
 	return TinyControl::Create(hParent, x, y, cx, cy, FALSE);
 }
 DWORD MainUI::RetrieveStyle()
@@ -114,6 +115,13 @@ void MainUI::CreateUI()
 	m_onImageClick.Reset(new Delegate<void(void*, INT)>(this, &MainUI::OnImageClick));
 	m_image.EVENT_Click += m_onImageClick;
 
+	//
+	RECT s = { 0 };
+	m_pDXWND->GetClientRect(&s);
+	if (m_renderTask.Initialize(m_pDXWND->Handle(), TO_CX(s), TO_CY(s), 30))
+	{
+		m_renderTask.Submit();
+	}
 }
 void MainUI::DestoryUI()
 {
@@ -141,6 +149,28 @@ void MainUI::OnGameClick(void*, INT)
 	if (dlg.DoModal(m_hWND, IDD_DLG_GAME) == IDOK)
 	{
 		HWND hWND = dlg.GetGameWND();
+		CHAR className[MAX_PATH];
+		::GetClassName(hWND, className, MAX_PATH);
+		DWORD processID;
+		GetWindowThreadProcessId(hWND, &processID);
+		if (HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processID))
+		{
+
+			DWORD size = MAX_PATH;
+			CHAR windowExecutable[MAX_PATH];
+			if (QueryFullProcessImageName(hProcess, 0, windowExecutable, &size))
+			{
+				CHAR* pzName = PathFindFileName(windowExecutable);
+				m_gameScene.Initialize(m_renderTask.GetGraphics()->GetDX11());
+				m_gameScene.SetConfig(className, pzName, TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));
+				if (m_renderTask.Add(&m_gameScene))
+				{
+					m_gameScene.BeginScene();
+				}
+			}
+			CloseHandle(hProcess);
+			hProcess = NULL;
+		}
 	}
 }
 void MainUI::OnScreenClick(void*, INT)
@@ -156,7 +186,11 @@ void MainUI::OnCaptureClick(void*, INT)
 	MediaCaptureDlg dlg;
 	if (dlg.DoModal(m_hWND, IDD_DIG_MEDIACAPTURE) == IDOK)
 	{
-
+		m_videoScene.Initialize(m_renderTask.GetGraphics()->GetDX11(), *dlg.GetVideoName(), *dlg.GetVideoParam());
+		if (m_renderTask.Add(&m_videoScene))
+		{
+			m_videoScene.BeginScene();
+		}
 	}
 }
 void MainUI::OnTextClick(void*, INT)

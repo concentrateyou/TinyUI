@@ -3,6 +3,7 @@
 #include "Control/TinyButton.h"
 #include "VideoScene.h"
 #include "GameScene.h"
+#include "DXWindow.h"
 using namespace TinyUI;
 
 class MainUI : public TinyControl
@@ -16,7 +17,7 @@ public:
 	LPCSTR RetrieveClassName() OVERRIDE;
 	LPCSTR RetrieveTitle() OVERRIDE;
 	HICON RetrieveIcon() OVERRIDE;
-	BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
+	BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy, DXWindow* pDXWND);
 	LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
@@ -52,4 +53,10 @@ private:
 	TinyScopedPtr<Delegate<void(void*, INT)>> m_onCaptureClick;
 	TinyScopedPtr<Delegate<void(void*, INT)>> m_onTextClick;
 	TinyScopedPtr<Delegate<void(void*, INT)>> m_onImageClick;
+	DXWindow* m_pDXWND;
+
+	GameScene	m_gameScene;
+	VideoScene	m_videoScene;
+
+	RenderTask m_renderTask;
 };

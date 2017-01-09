@@ -11,7 +11,7 @@ namespace DXFramework
 	}
 	BOOL DX11TextureShader::Initialize(const DX11& dx11, const CHAR* vsFile, const CHAR* psFile)
 	{
-		HRESULT hRes;
+		HRESULT hRes = S_OK;
 		TinyComPtr<ID3D10Blob> vertexShaderBuffer;
 		TinyComPtr<ID3D10Blob> pixelShaderBuffer;
 		D3D11_INPUT_ELEMENT_DESC layout[2];
@@ -49,16 +49,6 @@ namespace DXFramework
 		hRes = dx11.GetD3D()->CreateInputLayout(layout, size, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), &m_layout);
 		if (FAILED(hRes))
 			return FALSE;
-
-		matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-		matrixBufferDesc.ByteWidth = sizeof(MATRIXBUFFER);
-		matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		matrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		matrixBufferDesc.MiscFlags = 0;
-		matrixBufferDesc.StructureByteStride = 0;
-		hRes = dx11.GetD3D()->CreateBuffer(&matrixBufferDesc, NULL, &m_matrixBuffer);
-		if (FAILED(hRes))
-			return FALSE;
 		samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
 		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
@@ -75,6 +65,17 @@ namespace DXFramework
 		hRes = dx11.GetD3D()->CreateSamplerState(&samplerDesc, &m_sampleState);
 		if (FAILED(hRes))
 			return FALSE;
+
+		matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+		matrixBufferDesc.ByteWidth = sizeof(MATRIXBUFFER);
+		matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		matrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		matrixBufferDesc.MiscFlags = 0;
+		matrixBufferDesc.StructureByteStride = 0;
+		hRes = dx11.GetD3D()->CreateBuffer(&matrixBufferDesc, NULL, &m_matrixBuffer);
+		if (FAILED(hRes))
+			return FALSE;
+
 		return TRUE;
 	}
 	void DX11TextureShader::Render(const DX11& dx11, INT indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, DX11Texture* texture)

@@ -21,16 +21,16 @@ x264Encode*	VideoEncode::GetEncode()
 	return &m_x264;
 }
 
-VideoCapture* VideoEncode::GetCapture()
-{
-	ASSERT(m_renderTask);
-	return m_renderTask->GetCapture();
-}
-VideoCaptureParam* VideoEncode::GetParam()
-{
-	ASSERT(m_renderTask);
-	return m_renderTask->GetParam();
-}
+//VideoCapture* VideoEncode::GetCapture()
+//{
+//	ASSERT(m_renderTask);
+//	return m_renderTask->GetCapture();
+//}
+//VideoCaptureParam* VideoEncode::GetParam()
+//{
+//	ASSERT(m_renderTask);
+//	return m_renderTask->GetParam();
+//}
 
 BOOL VideoEncode::Encode()
 {
@@ -51,8 +51,8 @@ BOOL VideoEncode::Open(const TinySize& scale, DWORD dwFPS, DWORD dwVideoRate)
 	BOOL bRes = m_x264.Open(scale.cx, scale.cy, (INT)dwFPS, (INT)dwVideoRate);
 	if (!bRes)
 		return FALSE;
-	TinySize size = m_renderTask->GetParam()->GetSize();
-	m_converter.Reset(new I420Converter(size, scale));
+	/*TinySize size = m_renderTask->GetParam()->GetSize();
+	m_converter.Reset(new I420Converter(size, scale));*/
 	return TRUE;
 }
 

@@ -28,7 +28,7 @@ BOOL VideoScene::BeginScene()
 
 void VideoScene::EndScene()
 {
-	m_video.Stop();
+	m_video.Uninitialize();
 }
 
 BOOL VideoScene::Render(const DX11& dx11)
@@ -36,7 +36,6 @@ BOOL VideoScene::Render(const DX11& dx11)
 	BYTE* bits = m_video.GetPointer();
 	if (bits != NULL)
 	{
-		TinySize size = dx11.GetSize();
 		this->BitBlt(dx11, bits);
 		DX11Image::Render(dx11);
 		return TRUE;

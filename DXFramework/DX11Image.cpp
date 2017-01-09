@@ -11,9 +11,10 @@ namespace DXFramework
 	}
 	BOOL DX11Image::Create(const DX11& dx11, const TinySize& size, BYTE* bits)
 	{
+		m_size = size;
 		if (!Initialize(dx11))
 			return FALSE;
-		return m_texture.CreateTexture(dx11, size.cx, size.cy, bits);
+		return m_texture.CreateCompatible(dx11, size.cx, size.cy, bits);
 	}
 	BOOL DX11Image::BitBlt(const DX11& dx11, const BYTE* bits)
 	{
@@ -46,19 +47,19 @@ namespace DXFramework
 	{
 		if (!Initialize(dx11))
 			return FALSE;
-		return m_texture.LoadTexture(dx11, hResource);
+		return m_texture.Load(dx11, hResource);
 	}
 	BOOL DX11Image::Load(const DX11& dx11, const CHAR* pzFile)
 	{
 		if (!Initialize(dx11))
 			return FALSE;
-		return m_texture.LoadTexture(dx11, pzFile);
+		return m_texture.Load(dx11, pzFile);
 	}
 	BOOL DX11Image::Load(const DX11& dx11, const BYTE* bits, DWORD dwSize)
 	{
 		if (!Initialize(dx11))
 			return FALSE;
-		return m_texture.LoadTexture(dx11, bits, dwSize);
+		return m_texture.Load(dx11, bits, dwSize);
 	}
 	BOOL DX11Image::Initialize(const DX11& dx11)
 	{
@@ -68,8 +69,8 @@ namespace DXFramework
 		D3D11_BUFFER_DESC		indexBufferDesc;
 		D3D11_SUBRESOURCE_DATA	vertexData;
 		D3D11_SUBRESOURCE_DATA	indexData;
-		INT vertexCount = 6;
-		INT indexCount = 6;
+		INT vertexCount = GetIndexCount();
+		INT indexCount = GetIndexCount();
 		TinyScopedArray<VERTEXTYPE> vertices(new VERTEXTYPE[vertexCount]);
 		TinyScopedArray<ULONG> indices(new ULONG[indexCount]);
 		ZeroMemory(vertices.Ptr(), (sizeof(VERTEXTYPE) * vertexCount));
@@ -108,7 +109,7 @@ namespace DXFramework
 		right = left + (FLOAT)m_scale.cx;
 		top = (FLOAT)(size.cy / 2) - (FLOAT)m_position.y;
 		bottom = top - (FLOAT)m_scale.cy;
-		INT vertexCount = 6;
+		INT vertexCount = GetIndexCount();
 		TinyScopedArray<VERTEXTYPE> vertices(new VERTEXTYPE[vertexCount]);
 		vertices[0].position = D3DXVECTOR3(left, top, 0.0F);
 		vertices[0].texture = D3DXVECTOR2(0.0F, 0.0F);
@@ -145,6 +146,15 @@ namespace DXFramework
 	{
 		return &m_texture;
 	}
+
+	LPCSTR DX11Image::GetClassName()
+	{
+		return TEXT("DX11Image");
+	}
+	ElementType	 DX11Image::GetElementType() const
+	{
+		return IMAGE;
+	}
 	BOOL DX11Image::IsValid() const
 	{
 		return m_texture.IsValid();
@@ -158,35 +168,9 @@ namespace DXFramework
 		dx11.GetImmediateContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		return TRUE;
 	}
-	//////////////////////////////////////////////////////////////////////////
-	SharedTexture::SharedTexture()
-		:m_hWND(NULL)
-	{
 
-	}
-	SharedTexture::~SharedTexture()
+	INT DX11Image::GetIndexCount() const
 	{
-
-	}
-	BOOL SharedTexture::Initialize(const DX11& dx11, const TinySize& scale)
-	{
-		if (!m_textureMemery.Address())
-		{
-			if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE))
-				return FALSE;
-			if (!m_textureMemery.Map(0, sizeof(SharedTextureDATA)))
-				return FALSE;
-		}
-		SharedTextureDATA* pTexture = reinterpret_cast<SharedTextureDATA*>(m_textureMemery.Address());
-		if (!pTexture)
-			return FALSE;
-		if (!m_image.Load(dx11, pTexture->TextureHandle))
-			return FALSE;
-		m_image.SetScale(scale);
-		return TRUE;
-	}
-	DX11Image& SharedTexture::GetTexture()
-	{
-		return m_image;
+		return 6;
 	}
 }

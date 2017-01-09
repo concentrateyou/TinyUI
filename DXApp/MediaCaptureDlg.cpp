@@ -57,11 +57,11 @@ void MediaCaptureDlg::OnRefreshClick(void*, INT)
 	GetAudioDevices();
 }
 
-DShow::AudioCapture::Name*  MediaCaptureDlg::GetAudioDevice()
+DShow::AudioCapture::Name*  MediaCaptureDlg::GetAudioName()
 {
 	return m_audioName;
 }
-DShow::VideoCapture::Name*	MediaCaptureDlg::GetVideoDevice()
+DShow::VideoCapture::Name*	MediaCaptureDlg::GetVideoName()
 {
 	return m_videoName;
 }

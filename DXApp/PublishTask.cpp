@@ -80,8 +80,8 @@ void PublishTask::Publish(Sample& sample)
 			WAVEFORMATEX wfx = m_audioTask->GetParam()->GetFormat();
 			wfx.nSamplesPerSec = 48000;
 			wfx.nAvgBytesPerSec = wfx.nSamplesPerSec * wfx.nBlockAlign;
-			VideoCaptureParam* param = m_videoTask->GetParam();
-			m_client.SendMetadata(800, 600, static_cast<INT>(param->GetRate()), 1000, wfx, 128);
+			//VideoCaptureParam* param = m_videoTask->GetParam();
+			//m_client.SendMetadata(800, 600, static_cast<INT>(param->GetRate()), 1000, wfx, 128);
 		}
 		switch (sample.mediaTag.dwFlag)
 		{

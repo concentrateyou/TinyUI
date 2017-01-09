@@ -7,6 +7,8 @@
 
 namespace TinyUI
 {
+#undef SubclassDialog
+
 	class TinyDialog : public TinyHandleHWND, public TinyObject
 	{
 		DECLARE_DYNAMIC(TinyDialog)

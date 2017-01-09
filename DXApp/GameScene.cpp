@@ -13,8 +13,13 @@ GameScene::~GameScene()
 
 BOOL GameScene::Initialize(DX11& dx11)
 {
-	m_captureTask.Reset(new DX11CaptureTask(&dx11));
+	m_captureTask.Reset(new DX11CaptureTask(&dx11, *this));
 	return m_captureTask != NULL;
+}
+
+void GameScene::SetConfig(const TinyString& className, const TinyString& exeName, const TinyString& dllName)
+{
+	m_captureTask->SetConfig(className, exeName, dllName);
 }
 
 BOOL GameScene::BeginScene()
@@ -29,12 +34,7 @@ void GameScene::EndScene()
 
 BOOL GameScene::Render(const DX11& dx11)
 {
-	DX11Image& image = m_captureTask->GetTexture();
-	if (image.IsValid())
-	{
-		return image.Render(dx11);
-	}
-	return FALSE;
+	return DX11Image::Render(dx11);
 }
 
 LPCSTR GameScene::GetClassName()

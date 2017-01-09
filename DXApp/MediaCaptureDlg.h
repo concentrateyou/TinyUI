@@ -23,6 +23,14 @@ public:
 public:
 	virtual LRESULT OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	virtual LRESULT OnCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+public:
+	DShow::AudioCapture::Name*  GetAudioName();
+	DShow::VideoCapture::Name*	GetVideoName();
+
+	DShow::AudioCaptureParam*	GetAudioParam();
+	DShow::VideoCaptureParam*	GetVideoParam();
+
 private:
 	void OnVideoSelectChange(INT);
 	void OnVideoCapSelectChange(INT);
@@ -33,12 +41,6 @@ private:
 	void GetAudioDevices();
 
 	void OnRefreshClick(void*, INT);
-
-	DShow::AudioCapture::Name*  GetAudioDevice();
-	DShow::VideoCapture::Name*	GetVideoDevice();
-
-	DShow::AudioCaptureParam*	GetAudioParam();
-	DShow::VideoCaptureParam*	GetVideoParam();
 private:
 	TinyButton	 m_button;
 	TinyComboBox m_video;

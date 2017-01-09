@@ -3,18 +3,10 @@
 
 namespace DXFramework
 {
-	DX11CaptureTask::DX11CaptureTask(DX11* pDX11, const TinySize& size)
+	DX11CaptureTask::DX11CaptureTask(DX11* pDX11, DX11Image& image)
 		:m_bCapturing(FALSE),
 		m_pDX11(pDX11),
-		m_size(size)
-	{
-		ZeroMemory(&m_targetWND, sizeof(m_targetWND));
-		m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
-	}
-	DX11CaptureTask::DX11CaptureTask(DX11* pDX11)
-		:m_bCapturing(FALSE),
-		m_pDX11(pDX11),
-		m_size(pDX11->GetSize())
+		m_image(image)
 	{
 		ZeroMemory(&m_targetWND, sizeof(m_targetWND));
 		m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
@@ -22,6 +14,12 @@ namespace DXFramework
 	DX11CaptureTask::~DX11CaptureTask()
 	{
 
+	}
+	void DX11CaptureTask::SetConfig(const TinyString& className, const TinyString& exeName, const TinyString& dllName)
+	{
+		m_className = std::move(className);
+		m_exeName = std::move(exeName);
+		m_dllName = std::move(dllName);
 	}
 	BOOL DX11CaptureTask::Submit()
 	{
@@ -68,16 +66,31 @@ namespace DXFramework
 		}
 		return TRUE;
 	}
-	SharedCaptureDATA* DX11CaptureTask::GetSharedCapture()
+	SharedCaptureDATA* DX11CaptureTask::GetSharedCaptureDATA()
 	{
-		m_memory.Unmap();
-		if (m_memory.Open(SHAREDCAPTURE_MEMORY) &&
-			m_memory.Map())
+		if (!m_memory.Address())
 		{
-			return reinterpret_cast<SharedCaptureDATA*>(m_memory.Address());
+			if (!m_memory.Open(SHAREDCAPTURE_MEMORY, FALSE))
+				return FALSE;
+			if (!m_memory.Map(0, sizeof(SharedCaptureDATA)))
+				return FALSE;
 		}
-		return NULL;
+		SharedCaptureDATA* pDATA = reinterpret_cast<SharedCaptureDATA*>(m_memory.Address());
+		return pDATA;
 	}
+	SharedTextureDATA* DX11CaptureTask::GetSharedTextureDATA()
+	{
+		if (!m_textureMemery.Address())
+		{
+			if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE))
+				return FALSE;
+			if (!m_textureMemery.Map(0, sizeof(SharedTextureDATA)))
+				return FALSE;
+		}
+		SharedTextureDATA* pDATA = reinterpret_cast<SharedTextureDATA*>(m_textureMemery.Address());
+		return pDATA;
+	}
+
 	BOOL CALLBACK DX11CaptureTask::EnumWindow(HWND hwnd, LPARAM lParam)
 	{
 		LPWNDINFO ws = reinterpret_cast<LPWNDINFO>(lParam);
@@ -121,15 +134,21 @@ namespace DXFramework
 			TRACE("BeginCapture BuildEvents-FAIL\n");
 			return FALSE;
 		}
-		SharedCaptureDATA* pDATA = GetSharedCapture();
-		if (!pDATA)
+		SharedCaptureDATA* pCaptureDATA = GetSharedCaptureDATA();
+		if (!pCaptureDATA)
 		{
-			TRACE("BeginCapture GetSharedCapture-FAIL\n");
+			TRACE("BeginCapture GetSharedCaptureDATA-FAIL\n");
 			return FALSE;
 		}
-		if (!m_texture.Initialize(*m_pDX11, m_size))
+		SharedTextureDATA* pTextureDATA = GetSharedTextureDATA();
+		if (!pTextureDATA)
 		{
-			TRACE("BeginCapture m_texture.Initialize-FAIL\n");
+			TRACE("BeginCapture GetSharedTextureDATA-FAIL\n");
+			return FALSE;
+		}
+		if (!m_image.Load(*m_pDX11, pTextureDATA->TextureHandle))
+		{
+			TRACE("BeginCapture m_image.Load-FAIL\n");
 			return FALSE;
 		}
 		return TRUE;
@@ -235,8 +254,8 @@ namespace DXFramework
 		{
 			/*AttemptCapture(TEXT("ApolloRuntimeContentWindow"), TEXT("LolClient.exe"), TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));*/
 			//AttemptCapture(TEXT("Direct3DWindowClass"), TEXT("SubD11.exe"), TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));
-			AttemptCapture(TEXT("Direct3DWindowClass"), TEXT("ParticlesGS.exe"), TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));
 			//AttemptCapture(TEXT("Warcraft III"), TEXT("War3.exe"), TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));
+			AttemptCapture(m_className, m_exeName, m_dllName);
 		}
 		else
 		{
@@ -263,10 +282,6 @@ namespace DXFramework
 			}
 			Tick();
 		}
-	}
-	DX11Image&	DX11CaptureTask::GetTexture()
-	{
-		return m_texture.GetTexture();
 	}
 	WNDINFO	DX11CaptureTask::GetWNDINFO()
 	{

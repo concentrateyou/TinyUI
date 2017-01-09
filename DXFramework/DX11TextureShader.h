@@ -2,24 +2,25 @@
 #include "DXFramework.h"
 #include "DX11.h"
 #include "DX11Texture.h"
+#include "DX11Shader.h"
 
 namespace DXFramework
 {
 	/// <summary>
 	/// ÎÆÀí×ÅÉ«Æ÷
 	/// </summary>
-	class DX11TextureShader
+	class DX11TextureShader : public DX11Shader
 	{
-		DISALLOW_COPY_AND_ASSIGN(DX11TextureShader)
 		struct MATRIXBUFFER
 		{
 			D3DXMATRIX world;
 			D3DXMATRIX view;
 			D3DXMATRIX projection;
 		};
+		DISALLOW_COPY_AND_ASSIGN(DX11TextureShader)
 	public:
 		DX11TextureShader();
-		~DX11TextureShader();
+		virtual ~DX11TextureShader();
 		BOOL Initialize(const DX11& dx11, const CHAR* vsFile, const CHAR* psFile);
 		void Render(const DX11& dx11, INT indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, DX11Texture* pTexture);
 	private:

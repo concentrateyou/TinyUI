@@ -23,32 +23,20 @@ namespace DXFramework
 		BOOL Load(const DX11& dx11, const BYTE* bits, DWORD dwSize);
 		BOOL IsValid() const;
 		BOOL Update(const DX11& dx11);
-		DX11Texture* GetTexture()
+		DX11Texture* GetTexture();
 	public:
+		ElementType	GetElementType() const;
+		LPCSTR GetClassName() OVERRIDE;
 		BOOL BeginScene() OVERRIDE;
 		void EndScene() OVERRIDE;
 		BOOL Render(const DX11& dx11) OVERRIDE;
+		INT GetIndexCount() const OVERRIDE;
 	private:
 		BOOL Initialize(const DX11& dx11);
 	private:
 		DX11Texture					m_texture;
 		TinyComPtr<ID3D11Buffer>	m_vertexBuffer;
 		TinyComPtr<ID3D11Buffer>	m_indexBuffer;
-	};
-	/// <summary>
-	/// π≤œÌŒ∆¿Ì
-	/// </summary>
-	class SharedTexture
-	{
-	public:
-		SharedTexture();
-		~SharedTexture();
-		BOOL Initialize(const DX11& dx10, const TinySize& scale);
-		DX11Image& GetTexture();
-	private:
-		DX11Image				m_image;
-		IO::TinySharedMemory	m_textureMemery;
-		HWND					m_hWND;
 	};
 }
 

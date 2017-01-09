@@ -16,19 +16,19 @@ namespace DXFramework
 	public:
 		DX11Texture();
 		~DX11Texture();
-		BOOL CreateTexture(const DX11& dx11, INT cx, INT cy, const BYTE* bits);
+		BOOL Create(const DX11& dx11, INT cx, INT cy, const BYTE* bits);
 		BOOL Save(const DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT dxgi);
-		BOOL LoadTexture(const DX11& dx11, const BYTE* bits, DWORD dwSize);
-		BOOL LoadTexture(const DX11& dx11, HANDLE hResource);
-		BOOL LoadTexture(const DX11& dx11, const CHAR* pzFile);
+		BOOL Load(const DX11& dx11, const BYTE* bits, DWORD dwSize);
+		BOOL Load(const DX11& dx11, HANDLE hResource);
+		BOOL Load(const DX11& dx11, const CHAR* pzFile);
+		BOOL CreateCompatible(const DX11& dx11, INT cx, INT cy, const BYTE* bits);
 		BOOL GetDC(HDC& hDC);
 		BOOL ReleaseDC();
-		IDXGISurface1* GetSurface() const;
 		ID3D11Texture2D* GetTexture2D() const;
 		ID3D11ShaderResourceView* GetSRView() const;
 		BOOL IsValid() const;
 		TinySize GetSize();
-	private:
+	protected:
 		TinyComPtr<IDXGISurface1>				m_surface;
 		TinyComPtr<ID3D11Texture2D>				m_texture2D;
 		TinyComPtr<ID3D11ShaderResourceView>	m_resourceView;

@@ -38,6 +38,7 @@ HICON DXWindow::RetrieveIcon()
 LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
+
 	return FALSE;
 }
 LRESULT DXWindow::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

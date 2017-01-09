@@ -48,7 +48,6 @@ LRESULT DXFrameUI::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHand
 	bHandled = FALSE;
 
 	CreateUI();
-	CreateTasks();
 
 	CenterWindow(NULL, { 1024, 720 });
 
@@ -62,8 +61,6 @@ LRESULT DXFrameUI::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 LRESULT DXFrameUI::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-
-	DestoryTasks();
 
 	PostQuitMessage(0);
 	return FALSE;
@@ -95,7 +92,7 @@ BOOL DXFrameUI::CreateUI()
 	BOOL bRes = m_window.Create(m_hWND, 0, 0, TO_CX(s), TO_CY(s) * 3 / 4);
 	if (!bRes)
 		return FALSE;
-	bRes = m_mainUI.Create(m_hWND, 10, TO_CY(s) * 3 / 4 + 15, TO_CX(s), TO_CY(s) / 4);
+	bRes = m_mainUI.Create(m_hWND, 10, TO_CY(s) * 3 / 4 + 15, TO_CX(s), TO_CY(s) / 4, &m_window);
 	if (!bRes)
 		return FALSE;
 	return TRUE;

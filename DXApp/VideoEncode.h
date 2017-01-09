@@ -19,8 +19,8 @@ public:
 	BOOL				Encode();
 	BOOL				Close();
 	x264Encode*			GetEncode();
-	VideoCapture*		GetCapture();
-	VideoCaptureParam*	GetParam();
+	//VideoCapture*		GetCapture();
+	//VideoCaptureParam*	GetParam();
 private:
 	void				OnRender(BYTE* bits, LONG size, FLOAT ts);
 private:
