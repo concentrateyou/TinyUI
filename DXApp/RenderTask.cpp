@@ -46,9 +46,6 @@ DWORD RenderTask::Render()
 		DX11Element* ps = m_scenes[i];
 		if (ps->GetElementType() == IMAGE)
 		{
-			ps->SetPosition(TinyPoint(10, 10));
-			ps->SetScale(TinySize(ps->GetSize().cx / 2, ps->GetSize().cy / 2));
-			static_cast<DX11Image*>(ps)->Update(m_graphics.GetDX11());
 			m_graphics.DrawImage(static_cast<DX11Image*>(ps));
 		}
 	}

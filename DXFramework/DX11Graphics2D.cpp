@@ -48,6 +48,8 @@ namespace DXFramework
 		ASSERT(pImage);
 		if (!pImage->IsValid())
 			return FALSE;
+		if (!pImage->Update(m_dx11))
+			return FALSE;
 		if (pImage->Render(m_dx11))
 		{
 			m_textureShader.Render(m_dx11, pImage->GetIndexCount(), m_worldMatrix, m_viewMatrix, m_orthoMatrix, pImage->GetTexture());

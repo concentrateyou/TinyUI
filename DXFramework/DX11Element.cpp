@@ -21,10 +21,6 @@ namespace DXFramework
 	{
 		m_scale = scale;
 	}
-	void DX11Element::SetSize(const TinySize& size)
-	{
-		m_size = size;
-	}
 	TinySize DX11Element::GetScale() const
 	{
 		return m_scale;

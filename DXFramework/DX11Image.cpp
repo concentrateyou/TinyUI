@@ -11,10 +11,16 @@ namespace DXFramework
 	}
 	BOOL DX11Image::Create(const DX11& dx11, const TinySize& size, BYTE* bits)
 	{
-		m_size = size;
+
 		if (!Initialize(dx11))
 			return FALSE;
-		return m_texture.CreateCompatible(dx11, size.cx, size.cy, bits);
+		if (m_texture.CreateCompatible(dx11, m_size.cx, m_size.cy, bits))
+		{
+			m_size = m_texture.GetSize();
+			m_scale = m_size;
+			return TRUE;
+		}
+		return FALSE;
 	}
 	BOOL DX11Image::BitBlt(const DX11& dx11, const BYTE* bits)
 	{
@@ -23,20 +29,19 @@ namespace DXFramework
 		BOOL bRes = m_texture.GetDC(hDC);
 		if (!bRes)
 			return FALSE;
-		TinySize size = m_texture.GetSize();
 		BITMAPINFO bmi = { 0 };
 		bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-		bmi.bmiHeader.biWidth = size.cx;
-		bmi.bmiHeader.biHeight = size.cy;
+		bmi.bmiHeader.biWidth = m_size.cx;
+		bmi.bmiHeader.biHeight = m_size.cy;
 		bmi.bmiHeader.biPlanes = 1;
 		bmi.bmiHeader.biBitCount = 32;
 		bmi.bmiHeader.biCompression = BI_RGB;
-		bmi.bmiHeader.biSizeImage = size.cx * size.cy * 4;
+		bmi.bmiHeader.biSizeImage = m_size.cx * m_size.cy * 4;
 		BYTE* pvBits = NULL;
 		HBITMAP hBitmap = ::CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pvBits), NULL, 0);
 		memcpy(pvBits, bits, bmi.bmiHeader.biSizeImage);
 		TinyUI::TinyMemDC mdc(hDC, hBitmap);
-		::BitBlt(hDC, 0, 0, size.cx, size.cy, mdc, 0, 0, SRCCOPY);
+		::BitBlt(hDC, 0, 0, m_size.cx, m_size.cy, mdc, 0, 0, SRCCOPY);
 		SAFE_DELETE_OBJECT(hBitmap);
 		bRes = m_texture.ReleaseDC();
 		if (!bRes)
@@ -47,19 +52,40 @@ namespace DXFramework
 	{
 		if (!Initialize(dx11))
 			return FALSE;
-		return m_texture.Load(dx11, hResource);
+		if (m_texture.Load(dx11, hResource))
+		{
+			m_size = m_texture.GetSize();
+			RECT s = { 0 };
+			GetClientRect(dx11.GetHWND(), &s);
+			m_scale.cx = TO_CX(s);
+			m_scale.cy = TO_CY(s);
+			return TRUE;
+		}
+		return FALSE;
 	}
 	BOOL DX11Image::Load(const DX11& dx11, const CHAR* pzFile)
 	{
 		if (!Initialize(dx11))
 			return FALSE;
-		return m_texture.Load(dx11, pzFile);
+		if (m_texture.Load(dx11, pzFile))
+		{
+			m_size = m_texture.GetSize();
+			m_scale = m_size;
+			return TRUE;
+		}
+		return FALSE;
 	}
 	BOOL DX11Image::Load(const DX11& dx11, const BYTE* bits, DWORD dwSize)
 	{
 		if (!Initialize(dx11))
 			return FALSE;
-		return m_texture.Load(dx11, bits, dwSize);
+		if (m_texture.Load(dx11, bits, dwSize))
+		{
+			m_size = m_texture.GetSize();
+			m_scale = m_size;
+			return TRUE;
+		}
+		return FALSE;
 	}
 	BOOL DX11Image::Initialize(const DX11& dx11)
 	{

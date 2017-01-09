@@ -189,6 +189,8 @@ void MainUI::OnCaptureClick(void*, INT)
 		m_videoScene.Initialize(m_renderTask.GetGraphics()->GetDX11(), *dlg.GetVideoName(), *dlg.GetVideoParam());
 		if (m_renderTask.Add(&m_videoScene))
 		{
+			m_videoScene.SetPosition(TinyPoint(0, 0));
+			m_videoScene.SetScale(TinySize(m_videoScene.GetSize().cx / 2, m_videoScene.GetSize().cy / 2));
 			m_videoScene.BeginScene();
 		}
 	}
