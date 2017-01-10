@@ -72,10 +72,12 @@ namespace TinyUI
 			g_cursors[9] = ::LoadCursor(NULL, IDC_SIZEALL);
 			bInitialized = TRUE;
 		}
-		m_handleSize = 4;
+		m_handleSize = 5;
 		m_sizeMin.cy = m_sizeMin.cx = m_handleSize * 2;
 		m_bErase = FALSE;
 		m_bFinalErase = FALSE;
+		m_pen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
+		m_brush.CreateBrush(RGB(100, 200, 255));
 	}
 	void TinyRectTracker::GetTrueRect(LPRECT lpTrueRect) const
 	{
@@ -103,23 +105,24 @@ namespace TinyUI
 	{
 		INT iSave = pDC->SaveDC();
 		pDC->SetMapMode(MM_TEXT);
+		pDC->SetBkMode(TRANSPARENT);
 		pDC->SetViewportOrg(0, 0);
 		pDC->SetWindowOrg(0, 0);
-		TinyRectangle rect = m_rectangle;
-		rect.NormalizeRect();
-		HPEN hOldPen = (HPEN)pDC->SelectStockObject(BLACK_PEN);
-		HBRUSH hOldBrush = (HBRUSH)pDC->SelectStockObject(NULL_BRUSH);
+		TinyRectangle rectangle = m_rectangle;
+		rectangle.NormalizeRect();
+		HBRUSH hOldBrush = (HBRUSH)pDC->SelectObject(GetStockObject(NULL_BRUSH));
+		HPEN hOldPen = (HPEN)pDC->SelectObject(m_pen);
 		INT oldROP = pDC->SetROP2(R2_COPYPEN);
-		rect.InflateRect(+1, +1);
-		pDC->Rectangle(rect.left, rect.top, rect.right, rect.bottom);
+		rectangle.InflateRect(1, 1);
+		pDC->Rectangle(rectangle.left, rectangle.top, rectangle.right, rectangle.bottom);
 		pDC->SetROP2(oldROP);
 		UINT mask = GetHandleMask();
 		for (INT i = 0; i < 8; ++i)
 		{
 			if (mask & (1 << i))
 			{
-				GetHandleRect((TrackerHit)i, &rect);
-				pDC->FillSolidRect(rect, RGB(0, 0, 0));
+				GetHandleRect((TrackerHit)i, &rectangle);
+				pDC->FillSolidRect(rectangle, RGB(100, 200, 255));
 			}
 		}
 		if (hOldPen != NULL)
@@ -310,7 +313,7 @@ namespace TinyUI
 	{
 		TinyRectangle rectT = m_rectangle;
 		rectT.NormalizeRect();
-		rectT.InflateRect(+1, +1);
+		rectT.InflateRect(2, 2);
 		nHandle = NormalizeHit(nHandle);
 		INT size = GetHandleSize();
 		INT nWidth = rectT.Width();
@@ -383,7 +386,7 @@ namespace TinyUI
 				*py = m_rectangle.top + abs(m_rectangle.Height()) / 2;
 		}
 	}
-	INT TinyRectTracker::GetHandleSize(LPCRECT lpRect) const
+	INT TinyRectTracker::GetHandleSize() const
 	{
 		return m_handleSize;
 	}

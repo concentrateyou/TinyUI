@@ -12,7 +12,6 @@
 #include "Media/TinyWave.h"
 
 #include "Snapshot.h"
-#include "Snapshot1.h"
 
 using namespace TinyUI;
 

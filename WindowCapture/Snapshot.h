@@ -1,10 +1,11 @@
 #pragma once
 #include "Control/TinyControl.h"
+#include "Render/TinyRectTracker.h"
 using namespace TinyUI;
 
 namespace WindowCapture
 {
-	class Snapshot : public TinyControl
+	class Snapshot : public TinyControl, public TinyRectTracker
 	{
 		DECLARE_DYNAMIC(Snapshot)
 	public:
@@ -21,9 +22,9 @@ namespace WindowCapture
 		LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-		LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-		LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+		LRESULT OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+		void OnChangedRect(const TinyRectangle& rectOld) OVERRIDE;
 	public:
 		BOOL Create(HWND hParent);
 		BOOL Initialize();
@@ -35,8 +36,6 @@ namespace WindowCapture
 		HBITMAP			m_hOldFBitmap;
 		HDC				m_hBDC;
 		HDC				m_hFDC;
-		TinyPoint		m_downPos;
-		TinyPoint		m_mousePos;
 	};
 }
 

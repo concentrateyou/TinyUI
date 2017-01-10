@@ -20,8 +20,8 @@ namespace TinyUI
 		void GetTrueRect(LPRECT lpTrueRect) const;
 		BOOL SetCursor(HWND hWND, UINT nHitTest) const;
 		INT HitTest(const TinyPoint& point) const;
-		INT GetHandleSize(LPCRECT lpRect = NULL) const;
 		BOOL Track(HWND hWND, const TinyPoint& point, BOOL bAllowInvert);
+		virtual INT GetHandleSize() const;
 		virtual void OnChangedRect(const TinyRectangle& rectOld);
 	private:
 		void Construct();
@@ -33,12 +33,14 @@ namespace TinyUI
 		UINT GetHandleMask() const;
 		BOOL TrackHandle(INT nHandle, HWND hWND, const TinyPoint& point);
 	public:
-		INT		m_handleSize;
-		BOOL	m_bErase;
-		BOOL	m_bFinalErase;
-		BOOL	m_bAllowInvert;
+		INT				m_handleSize;
+		BOOL			m_bErase;
+		BOOL			m_bFinalErase;
+		BOOL			m_bAllowInvert;
 		TinySize		m_sizeMin;
 		TinyRectangle	m_rectangle;
+		TinyPen			m_pen;
+		TinyBrush		m_brush;
 	};
 }
 

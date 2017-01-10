@@ -46,6 +46,7 @@ namespace DXFramework
 		virtual BOOL BeginScene() = 0;
 		virtual void EndScene() = 0;
 		virtual BOOL Render(const DX11& dx11) = 0;
+		INT GetHandleSize() const OVERRIDE;
 	public:
 		TinySize		m_size;//原始大小
 	};

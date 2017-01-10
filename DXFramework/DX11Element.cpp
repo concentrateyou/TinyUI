@@ -10,6 +10,12 @@ namespace DXFramework
 	{
 	}
 
+
+	INT DX11Element::GetHandleSize() const
+	{
+		return 8;
+	}
+
 	void DX11Element::SetPosition(const TinyPoint& position)
 	{
 		m_rectangle.SetPosition(position);

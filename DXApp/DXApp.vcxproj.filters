@@ -90,6 +90,9 @@
     <ClInclude Include="WindowScene.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="ImageScene.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -156,6 +159,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="WindowScene.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageScene.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

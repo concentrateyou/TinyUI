@@ -3,6 +3,7 @@
 #include "Resource.h"
 #include "GameDlg.h"
 #include "MediaCaptureDlg.h"
+#include "Control/TinyCommonDialog.h"
 
 MainUI::MainUI()
 {
@@ -204,7 +205,6 @@ void MainUI::OnCaptureClick(void*, INT)
 		{
 			m_videoScene.BeginScene();
 		}
-		m_videoScene.BeginScene();
 	}
 }
 void MainUI::OnTextClick(void*, INT)
@@ -213,7 +213,18 @@ void MainUI::OnTextClick(void*, INT)
 }
 void MainUI::OnImageClick(void*, INT)
 {
-
+	TinyString filter = "Image (*.png; *.bmp; *.jpg)|*.png;*.bmp;*.jpg||";
+	TinyFileDialog dlg(TRUE, NULL, "", OFN_HIDEREADONLY | OFN_READONLY, filter.STR());
+	if (dlg.DoModal(m_hWND) == IDOK)
+	{
+		m_renderTask.Remove(&m_imageScene);
+		m_imageScene.EndScene();
+		m_imageScene.Initialize(m_renderTask.GetGraphics()->GetDX11(), dlg.GetPathName());
+		if (m_renderTask.Add(&m_imageScene))
+		{
+			m_imageScene.BeginScene();
+		}
+	}
 }
 
 void MainUI::Resize(INT cx, INT cy)

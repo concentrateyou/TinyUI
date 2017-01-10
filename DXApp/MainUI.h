@@ -3,6 +3,7 @@
 #include "Control/TinyButton.h"
 #include "VideoScene.h"
 #include "GameScene.h"
+#include "ImageScene.h"
 #include "DXWindow.h"
 using namespace TinyUI;
 
@@ -57,6 +58,7 @@ private:
 
 	GameScene	m_gameScene;
 	VideoScene	m_videoScene;
+	ImageScene	m_imageScene;
 
 	RenderTask m_renderTask;
 };
