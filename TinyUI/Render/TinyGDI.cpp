@@ -625,6 +625,75 @@ namespace TinyUI
 		ASSERT(m_hDC != NULL);
 		return ::GetGlyphOutline(m_hDC, nChar, nFormat, lpgm, cbBuffer, lpBuffer, lpmat2);
 	}
+	void TinyDC::DrawDragRect(LPCRECT lpRect, SIZE size, LPCRECT lpRectLast, SIZE sizeLast, HBRUSH hBrush, HBRUSH hBrushLast)
+	{
+		TinyRgn rgnNew;
+		TinyRgn rgnOutside, rgnInside;
+		rgnOutside.CreateRgn(lpRect);
+		TinyRectangle rect = *lpRect;
+		rect.InflateRect(-size.cx, -size.cy);
+		rect.IntersectRect(rect, lpRect);
+		rgnInside.CreateRgn(rect);
+		rgnNew.CreateRgn(0, 0, 0, 0);
+		rgnNew.CombineRgn(&rgnOutside, &rgnInside, RGN_XOR);
+		TinyRgn rgnLast, rgnUpdate;
+		HBRUSH hBrushOld = NULL;
+		BOOL bNew = FALSE;
+		if (hBrush == NULL)
+		{
+			WORD grayPattern[8];
+			for (INT i = 0; i < 8; i++)
+			{
+				grayPattern[i] = (WORD)(0x5555 << (i & 1));
+			}
+			HBITMAP grayBitmap = CreateBitmap(8, 8, 1, 1, grayPattern);
+			if (grayBitmap != NULL)
+			{
+				hBrush = CreatePatternBrush(grayBitmap);
+				DeleteObject(grayBitmap);
+				bNew = TRUE;
+			}
+		}
+		if (hBrushLast == NULL)
+		{
+			hBrushLast = hBrush;
+		}
+		if (lpRectLast != NULL)
+		{
+			rgnLast.CreateRgn(0, 0, 0, 0);
+			rgnOutside.SetRectRgn(lpRectLast);
+			rect = *lpRectLast;
+			rect.InflateRect(-sizeLast.cx, -sizeLast.cy);
+			rect.IntersectRect(rect, lpRectLast);
+			rgnInside.SetRectRgn(rect);
+			rgnLast.CombineRgn(&rgnOutside, &rgnInside, RGN_XOR);
+			if (hBrush == hBrushLast)
+			{
+				rgnUpdate.CreateRgn(0, 0, 0, 0);
+				rgnUpdate.CombineRgn(&rgnLast, &rgnNew, RGN_XOR);
+			}
+		}
+		if (hBrush != hBrushLast&& lpRectLast != NULL)
+		{
+			SelectClipRgn(&rgnLast);
+			GetClipBox(&rect);
+			hBrushOld = (HBRUSH)SelectObject(hBrushLast);
+			PatBlt(rect.left, rect.top, rect.Width(), rect.Height(), PATINVERT);
+			SelectObject(hBrushOld);
+			hBrushOld = NULL;
+		}
+		SelectClipRgn(rgnUpdate.m_hHRGN != NULL ? &rgnUpdate : &rgnNew);
+		GetClipBox(&rect);
+		hBrushOld = (HBRUSH)SelectObject(hBrush);
+		PatBlt(rect.left, rect.top, rect.Width(), rect.Height(), PATINVERT);
+		if (hBrushOld != NULL)
+			SelectObject(hBrushOld);
+		SelectClipRgn(NULL);
+		if (bNew)
+		{
+			SAFE_DELETE_OBJECT(hBrush);
+		}
+	}
 	void TinyDC::Draw3dRect(LPCRECT lpRect,
 		COLORREF clrTopLeft, COLORREF clrBottomRight)
 	{
@@ -1026,7 +1095,7 @@ namespace TinyUI
 	INT TinyDC::SelectClipRgn(TinyRgn* pRgn)
 	{
 		ASSERT(m_hDC != NULL);
-		return  ::SelectClipRgn(m_hDC, (HRGN)pRgn->Handle());
+		return  ::SelectClipRgn(m_hDC, pRgn ? (HRGN)pRgn->Handle() : NULL);
 	}
 
 	INT TinyDC::ExcludeClipRect(INT x1, INT y1, INT x2, INT y2)

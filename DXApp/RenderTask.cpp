@@ -14,6 +14,7 @@ RenderTask::~RenderTask()
 	m_pWindow->EVENT_LBUTTONDOWN -= m_onLButtonDown;
 	m_pWindow->EVENT_LBUTTONUP -= m_onLButtonUp;
 	m_pWindow->EVENT_MOUSEMOVE -= m_onMouseMove;
+	m_pWindow->EVENT_SETCURSOR -= m_onSetCursor;
 }
 
 BOOL RenderTask::Initialize(DXWindow* pWindow, INT cx, INT cy, DWORD dwFPS)
@@ -27,10 +28,12 @@ BOOL RenderTask::Initialize(DXWindow* pWindow, INT cx, INT cy, DWORD dwFPS)
 	m_onLButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &RenderTask::OnLButtonDown));
 	m_onLButtonUp.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &RenderTask::OnLButtonUp));
 	m_onMouseMove.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &RenderTask::OnMouseMove));
+	m_onSetCursor.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &RenderTask::OnSetCursor));
 	m_pWindow->EVENT_SIZE += m_onSize;
 	m_pWindow->EVENT_LBUTTONDOWN += m_onLButtonDown;
 	m_pWindow->EVENT_LBUTTONUP += m_onLButtonUp;
 	m_pWindow->EVENT_MOUSEMOVE += m_onMouseMove;
+	m_pWindow->EVENT_SETCURSOR += m_onSetCursor;
 	return TRUE;
 }
 DX11Graphics2D*	 RenderTask::GetGraphics()
@@ -83,22 +86,67 @@ void RenderTask::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 
 void RenderTask::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-	TinyAutoLock lock(m_lock);
-	TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-	SetCapture(m_pWindow->Handle());
+	TinyPoint point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+	if (m_currentElement == NULL)
+	{
+		for (INT i = 0;i < m_scenes.GetSize();i++)
+		{
+			if (m_scenes[i]->m_rectangle.PtInRect(point))
+			{
+				m_currentElement = m_scenes[i];
+				break;
+			}
+		}
+	}
+	if (m_currentElement)
+	{
+		ASSERT(m_pWindow);
+		UINT hitHandle = m_currentElement->HitTest(point);
+		if (hitHandle < 0)
+		{
+			m_currentElement->TrackRubberBand(m_pWindow->Handle(), point, TRUE);
+			m_currentElement->m_rectangle.NormalizeRect();
+		}
+		else
+		{
+			m_currentElement->Track(m_pWindow->Handle(), point, TRUE);
+		}
+	}
 }
 
 void RenderTask::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-	TinyAutoLock lock(m_lock);
-	ReleaseCapture();
+
 }
 
 void RenderTask::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-	TinyAutoLock lock(m_lock);
-	TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 
+}
+
+void RenderTask::OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	bHandled = FALSE;
+	ASSERT(m_pWindow);
+	TinyPoint point;
+	GetCursorPos(&point);
+	::ScreenToClient(m_pWindow->Handle(), &point);
+	if (m_currentElement == NULL)
+	{
+		for (INT i = 0;i < m_scenes.GetSize();i++)
+		{
+			if (m_scenes[i]->m_rectangle.PtInRect(point))
+			{
+				m_currentElement = m_scenes[i];
+				break;
+			}
+		}
+	}
+	if (m_currentElement &&
+		m_currentElement->SetCursor(m_pWindow->Handle(), LOWORD(lParam)))
+	{
+		bHandled = TRUE;
+	}
 }
 
 BOOL RenderTask::Add(DX11Element* element)

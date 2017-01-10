@@ -284,8 +284,7 @@ namespace TinyUI
 		BOOL SetMiterLimit(float fMiterLimit);
 		INT GetPath(LPPOINT lpPoints, LPBYTE lpTypes, INT nCount) const;
 		BOOL SelectClipPath(INT nMode);
-		static TinyBrush* PASCAL GetHalftoneBrush();
-		void DrawDragRect(LPCRECT lpRect, SIZE size, LPCRECT lpRectLast, SIZE sizeLast, TinyBrush* pBrush = NULL, TinyBrush* pBrushLast = NULL);
+		void DrawDragRect(LPCRECT lpRect, SIZE size, LPCRECT lpRectLast, SIZE sizeLast, HBRUSH hBrush, HBRUSH hBrushLast);
 		void FillSolidRect(LPCRECT lpRect, COLORREF clr);
 		void FillSolidRect(INT x, INT y, INT cx, INT cy, COLORREF clr);
 		void Draw3dRect(LPCRECT lpRect, COLORREF clrTopLeft, COLORREF clrBottomRight);

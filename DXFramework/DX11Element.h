@@ -2,6 +2,8 @@
 #include "DXFramework.h"
 #include "DX11Texture.h"
 #include "DX11TextureShader.h"
+#include "Render/TinyRectTracker.h"
+using namespace TinyUI;
 
 namespace DXFramework
 {
@@ -26,7 +28,7 @@ namespace DXFramework
 	/// <summary>
 	/// DX11元素
 	/// </summary>
-	class DX11Element
+	class DX11Element : public TinyRectTracker
 	{
 	public:
 		DX11Element();
@@ -44,9 +46,8 @@ namespace DXFramework
 		virtual BOOL BeginScene() = 0;
 		virtual void EndScene() = 0;
 		virtual BOOL Render(const DX11& dx11) = 0;
-	protected:
+	public:
 		TinySize		m_size;//原始大小
-		TinyRectangle	m_rectangle;//显示大小
 	};
 }
 

@@ -83,6 +83,7 @@ namespace TinyUI
 	LRESULT TinyControl::OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		EVENT_SETCURSOR(uMsg, wParam, lParam, bHandled);
 		return FALSE;
 	}
 	LRESULT TinyControl::OnTimer(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

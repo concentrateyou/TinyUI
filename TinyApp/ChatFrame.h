@@ -8,6 +8,8 @@
 #include "Control/TinyLabel.h"
 #include "Control/TinyRichTextBox.h"
 
+#include "Render/TinyRectTracker.h"
+
 #include <sapi.h>
 #include <sphelper.h>
 #pragma comment(lib,"sapi.lib")
@@ -33,18 +35,12 @@ public:
 	LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-
-	virtual LRESULT OnTimer(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) override;
-
-public:
-	void OnSpeek(void*, INT);
+	LRESULT OnTimer(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+	LRESULT OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+	LRESULT OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+	LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+	LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 private:
-	INT					m_index;
-	TinyRichTextBox		m_textbox;
-	TinyButton			m_speek;
-	TinyImage			m_image;
-	TinyCanvas			m_canvas;
-	TinyScopedPtr<Delegate<void(void*, INT)>> m_onSpeek;
-	TinyComPtr<ISpVoice> m_spVoice;
+	TinyRectTracker m_rectTracker;
 };
 

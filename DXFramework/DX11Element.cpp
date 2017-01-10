@@ -9,13 +9,14 @@ namespace DXFramework
 	DX11Element::~DX11Element()
 	{
 	}
+
 	void DX11Element::SetPosition(const TinyPoint& position)
 	{
 		m_rectangle.SetPosition(position);
 	}
 	TinyPoint DX11Element::GetPosition() const
 	{
-		return *(TinyPoint*)&m_rectangle;
+		return m_rectangle.Position();
 	}
 	void DX11Element::SetScale(const TinySize& scale)
 	{
@@ -27,7 +28,7 @@ namespace DXFramework
 	}
 	TinySize DX11Element::GetScale() const
 	{
-		return *((TinySize*)&m_rectangle + 1);
+		return m_rectangle.Size();
 	}
 	TinySize DX11Element::GetSize() const
 	{
