@@ -86,28 +86,18 @@ void RenderTask::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 
 void RenderTask::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
+	ASSERT(m_pWindow);
+	bHandled = FALSE;
 	TinyPoint point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-	if (m_currentElement == NULL)
+	DX11Element* element = HitTestElement(point);
+	if (element != m_currentElement)
 	{
-		for (INT i = 0;i < m_scenes.GetSize();i++)
-		{
-			if (m_scenes[i]->m_rectangle.PtInRect(point))
-			{
-				m_currentElement = m_scenes[i];
-				break;
-			}
-		}
+		m_currentElement = element;
 	}
 	if (m_currentElement)
 	{
-		ASSERT(m_pWindow);
-		UINT hitHandle = m_currentElement->HitTest(point);
-		if (hitHandle < 0)
-		{
-			m_currentElement->TrackRubberBand(m_pWindow->Handle(), point, TRUE);
-			m_currentElement->m_rectangle.NormalizeRect();
-		}
-		else
+		BringToTop(element);
+		if (m_currentElement->HitTest(point) >= 0)
 		{
 			m_currentElement->Track(m_pWindow->Handle(), point, TRUE);
 		}
@@ -126,26 +116,17 @@ void RenderTask::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 
 void RenderTask::OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-	bHandled = FALSE;
 	ASSERT(m_pWindow);
+	bHandled = FALSE;
 	TinyPoint point;
 	GetCursorPos(&point);
 	::ScreenToClient(m_pWindow->Handle(), &point);
-	if (m_currentElement == NULL)
+	if (m_currentElement = HitTestElement(point))
 	{
-		for (INT i = 0;i < m_scenes.GetSize();i++)
+		if (m_currentElement->SetCursor(m_pWindow->Handle(), LOWORD(lParam)))
 		{
-			if (m_scenes[i]->m_rectangle.PtInRect(point))
-			{
-				m_currentElement = m_scenes[i];
-				break;
-			}
+			bHandled = TRUE;
 		}
-	}
-	if (m_currentElement &&
-		m_currentElement->SetCursor(m_pWindow->Handle(), LOWORD(lParam)))
-	{
-		bHandled = TRUE;
 	}
 }
 
@@ -158,6 +139,27 @@ void RenderTask::Remove(DX11Element* element)
 {
 	TinyAutoLock lock(m_lock);
 	m_scenes.Remove(element);
+}
+
+void RenderTask::BringToTop(DX11Element* element)
+{
+	TinyAutoLock lock(m_lock);
+	if (m_scenes.Lookup(element) > 0)
+	{
+		m_scenes.Remove(element);
+		m_scenes.Insert(0, element);
+	}
+}
+DX11Element* RenderTask::HitTestElement(const TinyPoint& pos)
+{
+	for (INT i = 0;i < m_scenes.GetSize();i++)
+	{
+		if (m_scenes[i]->m_rectangle.PtInRect(pos))
+		{
+			return m_scenes[i];
+		}
+	}
+	return NULL;
 }
 
 BOOL RenderTask::Contain(DX11Element* element)
