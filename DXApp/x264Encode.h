@@ -11,24 +11,27 @@ extern "C"
 #define SPS_SEP 4
 #define PPS_SEP 4
 
-class x264Encode
+namespace DXApp
 {
-public:
-	x264Encode();
-	~x264Encode();
-	BOOL	Open(INT cx, INT cy, INT fps = 50, INT rate = 1000);//rate平均码率
-	BOOL	Encode(AVFrame* pI420);
-	void	Close();
-public:
-	virtual void OnDone(BYTE*, LONG, const MediaTag&);
-	Event<void(BYTE*, LONG, const MediaTag&)> EVENT_DONE;
-private:
-	BOOL	BuildParam(INT cx, INT cy, INT fps, INT bitrate);
-private:
-	x264_t*				m_x264;
-	x264_param_t*		m_x264Param;
-	x264_picture_t*		m_x264Image;
-	DWORD				m_dwINC;
-	DWORD				m_dwPTS;
-};
+	class x264Encode
+	{
+	public:
+		x264Encode();
+		~x264Encode();
+		BOOL	Open(INT cx, INT cy, INT fps = 50, INT rate = 1000);//rate平均码率
+		BOOL	Encode(AVFrame* pI420);
+		void	Close();
+	public:
+		virtual void OnDone(BYTE*, LONG, const MediaTag&);
+		Event<void(BYTE*, LONG, const MediaTag&)> EVENT_DONE;
+	private:
+		BOOL	BuildParam(INT cx, INT cy, INT fps, INT bitrate);
+	private:
+		x264_t*				m_x264;
+		x264_param_t*		m_x264Param;
+		x264_picture_t*		m_x264Image;
+		DWORD				m_dwINC;
+		DWORD				m_dwPTS;
+	};
+}
 

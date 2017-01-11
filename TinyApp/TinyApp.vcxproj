@@ -133,9 +133,6 @@
     <ProjectReference Include="..\TinyUI\TinyUI.vcxproj">
       <Project>{58903be2-bb4f-4983-b8b7-905d2db5393d}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\WindowCapture\WindowCapture.vcxproj">
-      <Project>{15f5e608-cb04-4022-9b3f-a7c7fb5a9754}</Project>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="cursor.cur" />

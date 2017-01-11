@@ -25,6 +25,12 @@
     <Filter Include="源文件\Dialog">
       <UniqueIdentifier>{c5daaf7e-a0c5-4acd-bf66-d88aa2d363ec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\Task">
+      <UniqueIdentifier>{254e0076-8f26-4914-82c6-8c4f7bb1226d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Task">
+      <UniqueIdentifier>{eda9b022-482b-4993-989c-032b5c3069da}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -39,31 +45,13 @@
     <ClInclude Include="Resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DXApp.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DXWindow.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DXApplication.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="x264Encode.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="I420Converter.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DXGraphics.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="RTMPClient.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="PublishTask.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Utility.h">
@@ -81,13 +69,7 @@
     <ClInclude Include="FFmpegResampler.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DXFrameUI.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="MainUI.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="FindTool.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="WindowScene.h">
@@ -111,6 +93,33 @@
     <ClInclude Include="WindowDlg.h">
       <Filter>头文件\Dialog</Filter>
     </ClInclude>
+    <ClInclude Include="PublishTask.h">
+      <Filter>头文件\Task</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderTask.h">
+      <Filter>头文件\Task</Filter>
+    </ClInclude>
+    <ClInclude Include="DXApp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DXApplication.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DXFrameUI.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DXWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenScene.h">
+      <Filter>头文件\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="FindWindowTool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Snapshot.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -131,16 +140,7 @@
     <ClCompile Include="I420Converter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DXGraphics.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="RTMPClient.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderTask.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="PublishTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Utility.cpp">
@@ -164,9 +164,6 @@
     <ClCompile Include="MainUI.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="FindTool.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="ImageScene.cpp">
       <Filter>源文件\Scene</Filter>
     </ClCompile>
@@ -187,6 +184,21 @@
     </ClCompile>
     <ClCompile Include="WindowDlg.cpp">
       <Filter>源文件\Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="PublishTask.cpp">
+      <Filter>源文件\Task</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderTask.cpp">
+      <Filter>源文件\Task</Filter>
+    </ClCompile>
+    <ClCompile Include="ScreenScene.cpp">
+      <Filter>源文件\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="FindWindowTool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Snapshot.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

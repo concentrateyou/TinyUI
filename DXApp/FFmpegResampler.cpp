@@ -43,99 +43,101 @@ static inline enum AVSampleFormat ConvertAudioFormat(const WAVEFORMATEX* pFMT)
 	return AV_SAMPLE_FMT_NONE;
 }
 
-
-FFmpegResampler::FFmpegResampler()
-	:m_context(NULL),
-	m_output_size(0),
-	m_input_format(AV_SAMPLE_FMT_NONE),
-	m_output_format(AV_SAMPLE_FMT_NONE),
-	m_input_layout(0),
-	m_output_layout(0)
+namespace DXApp
 {
-	memset(m_input_buffer, 0, sizeof(uint8_t*)*MAX_AV_PLANES);
-	memset(m_output_buffer, 0, sizeof(uint8_t*)*MAX_AV_PLANES);
-}
+	FFmpegResampler::FFmpegResampler()
+		:m_context(NULL),
+		m_output_size(0),
+		m_input_format(AV_SAMPLE_FMT_NONE),
+		m_output_format(AV_SAMPLE_FMT_NONE),
+		m_input_layout(0),
+		m_output_layout(0)
+	{
+		memset(m_input_buffer, 0, sizeof(uint8_t*)*MAX_AV_PLANES);
+		memset(m_output_buffer, 0, sizeof(uint8_t*)*MAX_AV_PLANES);
+	}
 
-FFmpegResampler::~FFmpegResampler()
-{
+	FFmpegResampler::~FFmpegResampler()
+	{
 
-}
-BOOL FFmpegResampler::Open(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO, Callback<void(BYTE*, LONG, LPVOID)>&& callback)
-{
-	ASSERT(pFMTI && pFMTO);
-	m_waveFMTI = *pFMTI;
-	m_waveFMTO = *pFMTO;
-	m_callback = std::move(callback);
-	m_output_layout = ConvertChannelLayoutToFFmpeg(pFMTO);
-	m_input_layout = ConvertChannelLayoutToFFmpeg(pFMTI);
-	m_input_format = ConvertAudioFormat(pFMTI);
-	m_output_format = ConvertAudioFormat(pFMTO);
-	m_context = swr_alloc_set_opts(NULL,
-		m_output_layout,
-		m_output_format,
-		pFMTO->nSamplesPerSec,
-		m_input_layout,
-		m_input_format,
-		pFMTI->nSamplesPerSec,
-		0,
-		NULL);
-	if (!m_context)
+	}
+	BOOL FFmpegResampler::Open(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO, Callback<void(BYTE*, LONG, LPVOID)>&& callback)
+	{
+		ASSERT(pFMTI && pFMTO);
+		m_waveFMTI = *pFMTI;
+		m_waveFMTO = *pFMTO;
+		m_callback = std::move(callback);
+		m_output_layout = ConvertChannelLayoutToFFmpeg(pFMTO);
+		m_input_layout = ConvertChannelLayoutToFFmpeg(pFMTI);
+		m_input_format = ConvertAudioFormat(pFMTI);
+		m_output_format = ConvertAudioFormat(pFMTO);
+		m_context = swr_alloc_set_opts(NULL,
+			m_output_layout,
+			m_output_format,
+			pFMTO->nSamplesPerSec,
+			m_input_layout,
+			m_input_format,
+			pFMTI->nSamplesPerSec,
+			0,
+			NULL);
+		if (!m_context)
+			return FALSE;
+		return swr_init(m_context) == 0;
+	}
+	BOOL FFmpegResampler::Resample(BYTE* bits, LONG count)
+	{
+		if (!m_context)
+			return FALSE;
+		int64_t delay = swr_get_delay(m_context, m_waveFMTI.nSamplesPerSec);
+		int32_t estimated = (int)av_rescale_rnd(
+			delay + (int64_t)count,
+			(int64_t)m_waveFMTO.nSamplesPerSec,
+			(int64_t)m_waveFMTI.nSamplesPerSec,
+			AV_ROUND_UP);
+		if (estimated > m_output_size)
+		{
+			if (m_output_buffer[0])
+			{
+				av_freep(&m_output_buffer[0]);
+				m_output_buffer[0] = NULL;
+			}
+			av_samples_alloc(m_output_buffer,
+				NULL,
+				m_waveFMTO.nChannels,
+				estimated,
+				m_output_format,
+				0);
+			m_output_size = estimated;
+		}
+		m_input_buffer[0] = bits;
+		int32_t size = swr_convert(m_context,
+			m_output_buffer,
+			m_output_size,
+			(const BYTE**)m_input_buffer,
+			count);
+		if (size && m_output_buffer[0])
+		{
+			OnDataAvailable(m_output_buffer[0], size, this);
+			return TRUE;
+		}
 		return FALSE;
-	return swr_init(m_context) == 0;
-}
-BOOL FFmpegResampler::Resample(BYTE* bits, LONG count)
-{
-	if (!m_context)
-		return FALSE;
-	int64_t delay = swr_get_delay(m_context, m_waveFMTI.nSamplesPerSec);
-	int32_t estimated = (int)av_rescale_rnd(
-		delay + (int64_t)count,
-		(int64_t)m_waveFMTO.nSamplesPerSec,
-		(int64_t)m_waveFMTI.nSamplesPerSec,
-		AV_ROUND_UP);
-	if (estimated > m_output_size)
+	}
+
+	void FFmpegResampler::OnDataAvailable(BYTE* bits, LONG count, LPVOID lpParameter)
+	{
+		if (!m_callback.IsNull())
+		{
+			m_callback(bits, count, lpParameter);
+		}
+	}
+
+	BOOL FFmpegResampler::Close()
 	{
 		if (m_output_buffer[0])
 		{
 			av_freep(&m_output_buffer[0]);
 			m_output_buffer[0] = NULL;
 		}
-		av_samples_alloc(m_output_buffer,
-			NULL,
-			m_waveFMTO.nChannels,
-			estimated,
-			m_output_format,
-			0);
-		m_output_size = estimated;
-	}
-	m_input_buffer[0] = bits;
-	int32_t size = swr_convert(m_context,
-		m_output_buffer,
-		m_output_size,
-		(const BYTE**)m_input_buffer,
-		count);
-	if (size && m_output_buffer[0])
-	{
-		OnDataAvailable(m_output_buffer[0], size, this);
 		return TRUE;
 	}
-	return FALSE;
-}
-
-void FFmpegResampler::OnDataAvailable(BYTE* bits, LONG count, LPVOID lpParameter)
-{
-	if (!m_callback.IsNull())
-	{
-		m_callback(bits, count, lpParameter);
-	}
-}
-
-BOOL FFmpegResampler::Close()
-{
-	if (m_output_buffer[0])
-	{
-		av_freep(&m_output_buffer[0]);
-		m_output_buffer[0] = NULL;
-	}
-	return TRUE;
 }

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Snapshot.h"
 
-namespace WindowCapture
+namespace DXApp
 {
 	Snapshot::Snapshot()
 		:m_hBBitmap(NULL),

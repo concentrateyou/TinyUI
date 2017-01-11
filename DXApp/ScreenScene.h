@@ -5,12 +5,12 @@ using namespace DXFramework;
 
 namespace DXApp
 {
-	class WindowScene : public DX11Image
+	class ScreenScene : public DX11Image
 	{
 	public:
-		WindowScene();
-		virtual ~WindowScene();
-		BOOL Initialize(DX11& dx11, HWND hWND);
+		ScreenScene();
+		virtual ~ScreenScene();
+		BOOL Initialize(DX11& dx11, const TinyRectangle& s);
 	public:
 		LPCSTR GetClassName() OVERRIDE;
 		ElementType GetElementType() const OVERRIDE;
@@ -18,9 +18,9 @@ namespace DXApp
 		void EndScene() OVERRIDE;
 		BOOL Render(const DX11& dx11) OVERRIDE;
 	private:
-		HWND m_hWND;
+		TinyRectangle	m_screenRect;
 	};
-}
 
+}
 
 

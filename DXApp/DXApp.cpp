@@ -7,7 +7,7 @@
 #include "DXApplication.h"
 using namespace DXFramework;
 
-namespace DX
+namespace DXApp
 {
 	BOOL LoadSeDebugPrivilege()
 	{
@@ -49,8 +49,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	DX::LoadSeDebugPrivilege();
-	DXApplication app;
+	DXApp::LoadSeDebugPrivilege();
+	DXApp::DXApplication app;
 	app.Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_DXAPP));
 	return app.Run();
 }

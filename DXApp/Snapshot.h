@@ -3,7 +3,7 @@
 #include "Render/TinyRectTracker.h"
 using namespace TinyUI;
 
-namespace WindowCapture
+namespace DXApp
 {
 	class Snapshot : public TinyControl, public TinyRectTracker
 	{

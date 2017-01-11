@@ -12,21 +12,24 @@ extern "C"
 #define STREAM_CHANNEL_VIDEO     0x04  
 #define STREAM_CHANNEL_AUDIO     0x05  
 
-class RTMPClient
+namespace DXApp
 {
-public:
-	RTMPClient();
-	~RTMPClient();
-public:
-	UINT GetTime();
-	BOOL Connect(const TinyString& url);
-	BOOL SendMetadata(INT cx, INT cy, INT frameRate, INT videoRate, const WAVEFORMATEX& wfx, INT audioRate);
-	BOOL SendSPP(const vector<BYTE>& pps, const vector<BYTE>& sps, DWORD timestamp);
-	BOOL SendAAC(BYTE* bits, INT size);
-	BOOL SendVideo(BYTE* bits, INT size, DWORD timestamp);
-	BOOL SendAudio(BYTE* bits, INT size, DWORD timestamp);
-	BOOL Reconnect();
-private:
-	RTMP*		m_pRTMP;
-};
 
+	class RTMPClient
+	{
+	public:
+		RTMPClient();
+		~RTMPClient();
+	public:
+		UINT GetTime();
+		BOOL Connect(const TinyString& url);
+		BOOL SendMetadata(INT cx, INT cy, INT frameRate, INT videoRate, const WAVEFORMATEX& wfx, INT audioRate);
+		BOOL SendSPP(const vector<BYTE>& pps, const vector<BYTE>& sps, DWORD timestamp);
+		BOOL SendAAC(BYTE* bits, INT size);
+		BOOL SendVideo(BYTE* bits, INT size, DWORD timestamp);
+		BOOL SendAudio(BYTE* bits, INT size, DWORD timestamp);
+		BOOL Reconnect();
+	private:
+		RTMP*		m_pRTMP;
+	};
+}

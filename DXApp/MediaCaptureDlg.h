@@ -10,59 +10,64 @@
 
 using namespace TinyUI;
 
-class MediaCaptureDlg : public TinyDialog
+namespace DXApp
 {
-	DECLARE_DYNAMIC(MediaCaptureDlg)
-	BEGIN_MSG_MAP(MediaCaptureDlg, TinyDialog)
-		MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
-		MESSAGE_HANDLER(WM_COMMAND, OnCommand)
-	END_MSG_MAP()
-public:
-	MediaCaptureDlg();
-	~MediaCaptureDlg();
-public:
-	virtual LRESULT OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-	virtual LRESULT OnCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 
-public:
-	DShow::AudioCapture::Name*  GetAudioName();
-	DShow::VideoCapture::Name*	GetVideoName();
+	class MediaCaptureDlg : public TinyDialog
+	{
+		DECLARE_DYNAMIC(MediaCaptureDlg)
+		BEGIN_MSG_MAP(MediaCaptureDlg, TinyDialog)
+			MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
+			MESSAGE_HANDLER(WM_COMMAND, OnCommand)
+		END_MSG_MAP()
+	public:
+		MediaCaptureDlg();
+		~MediaCaptureDlg();
+	public:
+		virtual LRESULT OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 
-	DShow::AudioCaptureParam*	GetAudioParam();
-	DShow::VideoCaptureParam*	GetVideoParam();
+	public:
+		DShow::AudioCapture::Name*  GetAudioName();
+		DShow::VideoCapture::Name*	GetVideoName();
 
-private:
-	void OnVideoSelectChange(INT);
-	void OnVideoCapSelectChange(INT);
-	void OnAudioSelectChange(INT);
-	void OnAudioCapSelectChange(INT);
+		DShow::AudioCaptureParam*	GetAudioParam();
+		DShow::VideoCaptureParam*	GetVideoParam();
 
-	void GetVideoDevices();
-	void GetAudioDevices();
+	private:
+		void OnVideoSelectChange(INT);
+		void OnVideoCapSelectChange(INT);
+		void OnAudioSelectChange(INT);
+		void OnAudioCapSelectChange(INT);
 
-	void OnRefreshClick(void*, INT);
-private:
-	TinyButton	 m_button;
-	TinyComboBox m_video;
-	TinyComboBox m_videoCap;
-	TinyComboBox m_audio;
-	TinyComboBox m_audioCap;
+		void GetVideoDevices();
+		void GetAudioDevices();
 
-	TinyScopedPtr<Delegate<void(void*, INT)>> m_onRefreshClick;
+		void OnRefreshClick(void*, INT);
+	private:
+		TinyButton	 m_button;
+		TinyComboBox m_video;
+		TinyComboBox m_videoCap;
+		TinyComboBox m_audio;
+		TinyComboBox m_audioCap;
 
-	TinyScopedPtr<Delegate<void(INT)>> m_onVideoSelectChange;
-	TinyScopedPtr<Delegate<void(INT)>> m_onAudioSelectChange;
-	TinyScopedPtr<Delegate<void(INT)>> m_onVideoCapSelectChange;
-	TinyScopedPtr<Delegate<void(INT)>> m_onAudioCapSelectChange;
+		TinyScopedPtr<Delegate<void(void*, INT)>> m_onRefreshClick;
 
-	vector<DShow::AudioCapture::Name> m_audioNames;
-	vector<DShow::VideoCapture::Name> m_videoNames;
-	vector<DShow::AudioCaptureParam> m_audioParams;
-	vector<DShow::VideoCaptureParam> m_videoParams;
+		TinyScopedPtr<Delegate<void(INT)>> m_onVideoSelectChange;
+		TinyScopedPtr<Delegate<void(INT)>> m_onAudioSelectChange;
+		TinyScopedPtr<Delegate<void(INT)>> m_onVideoCapSelectChange;
+		TinyScopedPtr<Delegate<void(INT)>> m_onAudioCapSelectChange;
 
-	DShow::AudioCapture::Name* m_audioName;
-	DShow::VideoCapture::Name* m_videoName;
-	DShow::AudioCaptureParam* m_audioParam;
-	DShow::VideoCaptureParam* m_videoParam;
-};
+		vector<DShow::AudioCapture::Name> m_audioNames;
+		vector<DShow::VideoCapture::Name> m_videoNames;
+		vector<DShow::AudioCaptureParam> m_audioParams;
+		vector<DShow::VideoCaptureParam> m_videoParams;
+
+		DShow::AudioCapture::Name* m_audioName;
+		DShow::VideoCapture::Name* m_videoName;
+		DShow::AudioCaptureParam* m_audioParam;
+		DShow::VideoCaptureParam* m_videoParam;
+	};
+}
+
 
