@@ -13,6 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="源文件\Scene">
+      <UniqueIdentifier>{dd7fb5ba-dd30-41b2-a5a8-c5b13247b755}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Scene">
+      <UniqueIdentifier>{e1cd38fd-6fd4-4713-bfc9-a12e08b01304}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Dialog">
+      <UniqueIdentifier>{9b7c549a-5bc5-4c47-9788-d4571448b987}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Dialog">
+      <UniqueIdentifier>{c5daaf7e-a0c5-4acd-bf66-d88aa2d363ec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -75,29 +87,29 @@
     <ClInclude Include="MainUI.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="GameDlg.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MediaCaptureDlg.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="GameScene.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="VideoScene.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="WindowScene.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageScene.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="FindTool.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="WindowScene.h">
+      <Filter>头文件\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoScene.h">
+      <Filter>头文件\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageScene.h">
+      <Filter>头文件\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene.h">
+      <Filter>头文件\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDlg.h">
+      <Filter>头文件\Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaCaptureDlg.h">
+      <Filter>头文件\Dialog</Filter>
+    </ClInclude>
     <ClInclude Include="WindowDlg.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\Dialog</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -152,29 +164,29 @@
     <ClCompile Include="MainUI.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="GameDlg.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MediaCaptureDlg.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="GameScene.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="VideoScene.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="WindowScene.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageScene.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="FindTool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="ImageScene.cpp">
+      <Filter>源文件\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>源文件\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowScene.cpp">
+      <Filter>源文件\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoScene.cpp">
+      <Filter>源文件\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="GameDlg.cpp">
+      <Filter>源文件\Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaCaptureDlg.cpp">
+      <Filter>源文件\Dialog</Filter>
+    </ClCompile>
     <ClCompile Include="WindowDlg.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\Dialog</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
