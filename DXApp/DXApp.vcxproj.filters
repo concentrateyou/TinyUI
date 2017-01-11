@@ -114,10 +114,10 @@
     <ClInclude Include="ScreenScene.h">
       <Filter>头文件\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="FindWindowTool.h">
+    <ClInclude Include="Snapshot.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Snapshot.h">
+    <ClInclude Include="FindTool.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -194,10 +194,10 @@
     <ClCompile Include="ScreenScene.cpp">
       <Filter>源文件\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="FindWindowTool.cpp">
+    <ClCompile Include="Snapshot.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Snapshot.cpp">
+    <ClCompile Include="FindTool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

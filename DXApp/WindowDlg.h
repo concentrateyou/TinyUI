@@ -1,9 +1,10 @@
 #pragma once
+#include "Control/TinyCommonDialog.h"
 #include "Control/TinyCustomDialog.h"
 #include "Control/TinyButton.h"
 #include "Control/TinyCheckBox.h"
 #include "Control/TinyTextBox.h"
-#include "FindWindowTool.h"
+#include "FindTool.h"
 using namespace TinyUI;
 
 namespace DXApp
@@ -26,7 +27,7 @@ namespace DXApp
 		TinyTextBox		m_txtCaption;
 		TinyTextBox		m_txtClass;
 		TinyTextBox		m_txtSize;
-		FindWindowTool	m_tool;
+		FindTool		m_tool;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onCheckClick;
 		TinyScopedPtr<Delegate<void(HWND)>>			m_onWindowChange;
 	};

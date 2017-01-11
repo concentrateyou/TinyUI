@@ -26,10 +26,12 @@ namespace DXApp
 		LRESULT OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)OVERRIDE;
 		void OnChangedRect(const TinyRectangle& rectOld) OVERRIDE;
+		void OnSelected() OVERRIDE;
 	public:
 		BOOL Create(HWND hParent);
 		BOOL Initialize();
 		void Uninitialize();
+		Event<void(RECT)> EVENT_SELECTED;
 	private:
 		HBITMAP			m_hBBitmap;
 		HBITMAP			m_hFBitmap;
@@ -37,6 +39,7 @@ namespace DXApp
 		HBITMAP			m_hOldFBitmap;
 		HDC				m_hBDC;
 		HDC				m_hFDC;
+		
 	};
 }
 

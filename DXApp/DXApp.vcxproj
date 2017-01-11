@@ -97,7 +97,7 @@
     <ClInclude Include="FaacEncode.h" />
     <ClInclude Include="AudioEncode.h" />
     <ClInclude Include="FFmpegResampler.h" />
-    <ClInclude Include="FindWindowTool.h" />
+    <ClInclude Include="FindTool.h" />
     <ClInclude Include="GameDlg.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="ImageScene.h" />
@@ -127,7 +127,7 @@
     <ClCompile Include="FaacEncode.cpp" />
     <ClCompile Include="AudioEncode.cpp" />
     <ClCompile Include="FFmpegResampler.cpp" />
-    <ClCompile Include="FindWindowTool.cpp" />
+    <ClCompile Include="FindTool.cpp" />
     <ClCompile Include="GameDlg.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="ImageScene.cpp" />

@@ -5,11 +5,11 @@ using namespace TinyUI;
 
 namespace DXApp
 {
-	class FindWindowTool : public TinyLabel
+	class FindTool : public TinyLabel
 	{
 	public:
-		FindWindowTool();
-		virtual ~FindWindowTool();
+		FindTool();
+		virtual ~FindTool();
 		LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;

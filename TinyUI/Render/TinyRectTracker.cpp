@@ -1,4 +1,5 @@
 #include "TinyRectTracker.h"
+#include "../Common/TinyApplication.h"
 
 namespace TinyUI
 {
@@ -148,6 +149,10 @@ namespace TinyUI
 	{
 
 	}
+	void TinyRectTracker::OnSelected()
+	{
+
+	}
 	BOOL TinyRectTracker::TrackRubberBand(HWND hWND, const TinyPoint& point, BOOL bAllowInvert)
 	{
 		m_bAllowInvert = bAllowInvert;
@@ -210,7 +215,9 @@ namespace TinyUI
 					}
 				}
 				if (m_bFinalErase)
+				{
 					goto ExitLoop;
+				}
 				if (!rectOld.EqualRect(&m_rectangle))
 				{
 					m_bErase = FALSE;
@@ -218,7 +225,9 @@ namespace TinyUI
 				break;
 			case WM_KEYDOWN:
 				if (msg.wParam != VK_ESCAPE)
+				{
 					break;
+				}
 			case WM_RBUTTONDOWN:
 				if (bMoved)
 				{
@@ -231,7 +240,6 @@ namespace TinyUI
 				break;
 			}
 		}
-
 	ExitLoop:
 		ReleaseCapture();
 		if (!bMoved)

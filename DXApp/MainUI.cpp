@@ -4,7 +4,7 @@
 #include "GameDlg.h"
 #include "MediaCaptureDlg.h"
 #include "WindowDlg.h"
-#include "Control/TinyCommonDialog.h"
+#include "Snapshot.h"
 
 namespace DXApp
 {
@@ -190,7 +190,11 @@ namespace DXApp
 	}
 	void MainUI::OnScreenClick(void*, INT)
 	{
-
+		::ShowWindow(GetParent(m_hWND), SW_HIDE);
+		m_snapshot.Create(m_hWND);
+		m_onSelected.Reset(new Delegate<void(RECT)>(this, &MainUI::OnSelected));
+		m_snapshot.EVENT_SELECTED += m_onSelected;
+		m_snapshot.ShowWindow(SW_SHOWNORMAL);
 	}
 	void MainUI::OnWindowClick(void*, INT)
 	{
@@ -240,6 +244,20 @@ namespace DXApp
 			{
 				m_imageScene.BeginScene();
 			}
+		}
+	}
+	void MainUI::OnSelected(RECT rect)
+	{
+		::ShowWindow(GetParent(m_hWND), SW_SHOW);
+		m_snapshot.EVENT_SELECTED -= m_onSelected;
+		m_snapshot.DestroyWindow();
+		m_snapshot.m_rectangle.SetRectEmpty();
+		m_renderTask.Remove(&m_screenScene);
+		m_screenScene.EndScene();
+		m_screenScene.Initialize(m_renderTask.GetGraphics()->GetDX11(), rect);
+		if (m_renderTask.Add(&m_screenScene))
+		{
+			m_screenScene.BeginScene();
 		}
 	}
 

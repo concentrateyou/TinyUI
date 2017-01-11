@@ -1,11 +1,13 @@
 #pragma once
 #include "Control/TinyControl.h"
 #include "Control/TinyButton.h"
+#include "DXWindow.h"
 #include "VideoScene.h"
 #include "GameScene.h"
 #include "ImageScene.h"
 #include "WindowScene.h"
-#include "DXWindow.h"
+#include "ScreenScene.h"
+#include "Snapshot.h"
 using namespace TinyUI;
 
 namespace DXApp
@@ -40,6 +42,7 @@ namespace DXApp
 		void OnCaptureClick(void*, INT);
 		void OnTextClick(void*, INT);
 		void OnImageClick(void*, INT);
+		void OnSelected(RECT);
 	private:
 		TinyButton m_broadcast;
 		TinyButton m_record;
@@ -59,11 +62,14 @@ namespace DXApp
 		TinyScopedPtr<Delegate<void(void*, INT)>> m_onImageClick;
 		DXWindow* m_pDXWND;
 
+		Snapshot	m_snapshot;
+		TinyScopedPtr<Delegate<void(RECT)>> m_onSelected;
+
 		GameScene	m_gameScene;
 		VideoScene	m_videoScene;
 		ImageScene	m_imageScene;
 		WindowScene m_windowScene;
-
-		RenderTask m_renderTask;
+		ScreenScene	m_screenScene;
+		RenderTask	m_renderTask;
 	};
 }

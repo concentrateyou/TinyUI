@@ -1,10 +1,10 @@
 #include "stdafx.h"
-#include "FindWindowTool.h"
+#include "FindTool.h"
 #include "Resource.h"
 
 namespace DXApp
 {
-	FindWindowTool::FindWindowTool()
+	FindTool::FindTool()
 		:m_bDragging(FALSE),
 		m_hCursor(NULL),
 		m_hOldCursor(NULL),
@@ -14,11 +14,11 @@ namespace DXApp
 	}
 
 
-	FindWindowTool::~FindWindowTool()
+	FindTool::~FindTool()
 	{
 	}
 
-	LRESULT FindWindowTool::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT FindTool::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		TinyPoint pos(LOWORD(lParam), HIWORD(lParam));
 		if (m_bDragging && m_lastPos != pos)
@@ -37,7 +37,7 @@ namespace DXApp
 		return TinyLabel::OnMouseMove(uMsg, wParam, lParam, bHandled);
 	}
 
-	LRESULT FindWindowTool::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT FindTool::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		SetCapture(m_hWND);
 		m_lastPos.x = LOWORD(lParam);
@@ -55,7 +55,7 @@ namespace DXApp
 		return TinyLabel::OnLButtonDBClick(uMsg, wParam, lParam, bHandled);
 	}
 
-	LRESULT FindWindowTool::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT FindTool::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		ReleaseCapture();
 		SetBitmap(m_bitmapDrag1.Handle());
@@ -70,17 +70,17 @@ namespace DXApp
 		return TinyLabel::OnLButtonDBClick(uMsg, wParam, lParam, bHandled);
 	}
 
-	LRESULT FindWindowTool::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT FindTool::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		return TinyLabel::OnLButtonDBClick(uMsg, wParam, lParam, bHandled);
 	}
 
-	LRESULT FindWindowTool::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT FindTool::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		return TinyLabel::OnCreate(uMsg, wParam, lParam, bHandled);
 	}
 
-	LRESULT FindWindowTool::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT FindTool::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		if (m_hCursor)
 		{
@@ -90,7 +90,7 @@ namespace DXApp
 		return TinyLabel::OnDestory(uMsg, wParam, lParam, bHandled);
 	}
 
-	void FindWindowTool::LoadResource()
+	void FindTool::LoadResource()
 	{
 		ModifyStyle(SS_RIGHT | SS_CENTER | SS_CENTERIMAGE | SS_ICON | SS_SIMPLE | SS_LEFTNOWORDWRAP, SS_NOTIFY | SS_BITMAP);
 		m_bitmapDrag1.LoadBitmap(GetModuleHandle(NULL), IDB_BITMAP1);
@@ -99,12 +99,12 @@ namespace DXApp
 		SetBitmap(m_bitmapDrag1.Handle());
 	}
 
-	void FindWindowTool::ShowTool(BOOL bShow)
+	void FindTool::ShowTool(BOOL bShow)
 	{
 		m_bDisplay = bShow;
 	}
 
-	LRESULT FindWindowTool::OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT FindTool::OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = TRUE;
 		if (m_bDragging)
