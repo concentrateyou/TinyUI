@@ -21,7 +21,7 @@ namespace TinyUI
 	}
 	DWORD TinyLabel::RetrieveStyle()
 	{
-		return (WS_EX_LEFT | WS_EX_LTRREADING | WS_CHILD | WS_VISIBLE);
+		return (WS_EX_LEFT | WS_EX_LTRREADING | WS_CHILD | WS_VISIBLE | SS_BITMAP | SS_NOTIFY);
 	}
 	DWORD TinyLabel::RetrieveExStyle()
 	{

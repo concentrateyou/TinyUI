@@ -48,7 +48,9 @@ namespace TinyUI
 	}
 	TinyRectTracker::~TinyRectTracker()
 	{
-
+		m_bErase = FALSE;
+		m_bFinalErase = FALSE;
+		m_rectangle.SetRectEmpty();
 	}
 	void TinyRectTracker::Construct()
 	{
@@ -76,6 +78,7 @@ namespace TinyUI
 		m_sizeMin.cy = m_sizeMin.cx = m_handleSize * 2;
 		m_bErase = FALSE;
 		m_bFinalErase = FALSE;
+		m_rectangle.SetRectEmpty();
 		m_pen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
 		m_brush.CreateBrush(RGB(100, 200, 255));
 	}

@@ -118,6 +118,8 @@
     <ResourceCompile Include="TinyApp.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="begin.bmp" />
+    <Image Include="end.bmp" />
     <Image Include="small.ico" />
     <Image Include="TinyApp.ico" />
   </ItemGroup>
@@ -134,6 +136,9 @@
     <ProjectReference Include="..\WindowCapture\WindowCapture.vcxproj">
       <Project>{15f5e608-cb04-4022-9b3f-a7c7fb5a9754}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cursor.cur" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

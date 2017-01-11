@@ -164,6 +164,16 @@ namespace WindowCapture
 		Invalidate();
 	}
 
+	LRESULT Snapshot::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		if (wParam == VK_ESCAPE)
+		{
+			DestroyWindow();
+		}
+		return FALSE;
+	}
+
 	LRESULT Snapshot::OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
