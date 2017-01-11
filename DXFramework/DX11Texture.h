@@ -22,6 +22,7 @@ namespace DXFramework
 		BOOL Load(const DX11& dx11, HANDLE hResource);
 		BOOL Load(const DX11& dx11, const CHAR* pzFile);
 		BOOL CreateCompatible(const DX11& dx11, INT cx, INT cy, const BYTE* bits);
+		void Destory();
 		BOOL GetDC(HDC& hDC);
 		BOOL ReleaseDC();
 		ID3D11Texture2D* GetTexture2D() const;

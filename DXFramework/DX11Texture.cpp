@@ -192,6 +192,12 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
+	void DX11Texture::Destory()
+	{
+		m_surface.Release();
+		m_resourceView.Release();
+		m_texture2D.Release();
+	}
 	ID3D11Texture2D* DX11Texture::GetTexture2D() const
 	{
 		return m_texture2D;

@@ -116,6 +116,7 @@
     <ClInclude Include="Utility.h" />
     <ClInclude Include="VideoEncode.h" />
     <ClInclude Include="VideoScene.h" />
+    <ClInclude Include="WindowDlg.h" />
     <ClInclude Include="WindowScene.h" />
     <ClInclude Include="x264Encode.h" />
     <ClInclude Include="I420Converter.h" />
@@ -145,6 +146,7 @@
     <ClCompile Include="Utility.cpp" />
     <ClCompile Include="VideoEncode.cpp" />
     <ClCompile Include="VideoScene.cpp" />
+    <ClCompile Include="WindowDlg.cpp" />
     <ClCompile Include="WindowScene.cpp" />
     <ClCompile Include="x264Encode.cpp" />
     <ClCompile Include="I420Converter.cpp" />
@@ -153,6 +155,8 @@
     <ResourceCompile Include="DXApp.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="drag1.bmp" />
+    <Image Include="drag2.bmp" />
     <Image Include="DXApp.ico" />
     <Image Include="small.ico" />
   </ItemGroup>
@@ -166,6 +170,9 @@
     <ProjectReference Include="..\TinyUI\TinyUI.vcxproj">
       <Project>{58903be2-bb4f-4983-b8b7-905d2db5393d}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cursor1.cur" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

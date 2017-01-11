@@ -4,6 +4,7 @@
 #include "VideoScene.h"
 #include "GameScene.h"
 #include "ImageScene.h"
+#include "WindowScene.h"
 #include "DXWindow.h"
 using namespace TinyUI;
 
@@ -59,6 +60,7 @@ private:
 	GameScene	m_gameScene;
 	VideoScene	m_videoScene;
 	ImageScene	m_imageScene;
+	WindowScene m_windowScene;
 
 	RenderTask m_renderTask;
 };

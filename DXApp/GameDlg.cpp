@@ -18,10 +18,10 @@ LRESULT GameDlg::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHa
 	bHandled = FALSE;
 	m_refresh.SubclassDlgItem(IDC_BTN_REFRESH, m_hWND);
 	m_onRefreshClick.Reset(new Delegate<void(void*, INT)>(this, &GameDlg::OnRefreshClick));
-	m_refresh.EVENT_Click += m_onRefreshClick;
+	m_refresh.EVENT_CLICK += m_onRefreshClick;
 	m_game.SubclassDlgItem(IDC_COMBO_GAME, m_hWND);
 	m_onGameSelectChange.Reset(new Delegate<void(INT)>(this, &GameDlg::OnGameSelectChange));
-	m_game.EVENT_SelectChange += m_onGameSelectChange;
+	m_game.EVENT_SELECTCHANGE += m_onGameSelectChange;
 	OnRefreshClick(NULL, 0);
 	return FALSE;
 }
@@ -49,12 +49,11 @@ LRESULT GameDlg::OnCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	case IDCANCEL:
 		if (EndDialog(LOWORD(wParam)))
 		{
-			m_refresh.EVENT_Click -= m_onRefreshClick;
-			m_game.EVENT_SelectChange -= m_onGameSelectChange;
+			m_refresh.EVENT_CLICK -= m_onRefreshClick;
+			m_game.EVENT_SELECTCHANGE -= m_onGameSelectChange;
 		}
 		break;
 	}
-
 	return FALSE;
 }
 void GameDlg::Add(const TinyString& str, HWND hWND)

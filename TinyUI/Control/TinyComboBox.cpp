@@ -286,7 +286,7 @@ namespace TinyUI
 
 	void TinyComboBox::OnSelectChange(INT index)
 	{
-		EVENT_SelectChange(index);
+		EVENT_SELECTCHANGE(index);
 	}
 
 	BOOL TinyComboBox::SubclassChildren()

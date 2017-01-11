@@ -316,7 +316,7 @@ namespace TinyUI
 	{
 		TinyRectangle rectT = m_rectangle;
 		rectT.NormalizeRect();
-		rectT.InflateRect(2, 2);
+		rectT.InflateRect(1, 1);
 		nHandle = NormalizeHit(nHandle);
 		INT size = GetHandleSize();
 		INT nWidth = rectT.Width();

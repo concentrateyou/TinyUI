@@ -210,7 +210,7 @@ namespace TinyUI
 	}
 	void TinyTabControl::OnSelectChangeTab(void* sender)
 	{
-		EVENT_SelectChangeTab(this);
+		EVENT_SELECTCHANGETab(this);
 	}
 	HRESULT TinyTabControl::OnNotifyReflect(void* sender, UINT ctlID, LPARAM lParam, BOOL &bHandled)
 	{

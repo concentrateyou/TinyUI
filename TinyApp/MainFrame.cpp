@@ -170,28 +170,28 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 	m_onVideoStart.Reset(new Delegate<void(void*, INT)>(this, &CMainFrame::OnVideoStart));
 	m_onVideoStop.Reset(new Delegate<void(void*, INT)>(this, &CMainFrame::OnVideoStop));
 	m_videoStart.Create(m_hWND, 20, 50, 150, 23);
-	m_videoStart.EVENT_Click += m_onVideoStart;
+	m_videoStart.EVENT_CLICK += m_onVideoStart;
 	m_videoStart.SetText("开始视频捕获");
 	m_videoStop.Create(m_hWND, 20, 80, 150, 23);
-	m_videoStop.EVENT_Click += m_onVideoStop;
+	m_videoStop.EVENT_CLICK += m_onVideoStop;
 	m_videoStop.SetText("暂停视频捕获");
 
 	m_onAudioInputStart.Reset(new Delegate<void(void*, INT)>(this, &CMainFrame::OnAudioInputStart));
 	m_onAudioInputStop.Reset(new Delegate<void(void*, INT)>(this, &CMainFrame::OnAudioInputStop));
 	m_audioInputStart.Create(m_hWND, 400, 50, 150, 23);
-	m_audioInputStart.EVENT_Click += m_onAudioInputStart;
+	m_audioInputStart.EVENT_CLICK += m_onAudioInputStart;
 	m_audioInputStart.SetText("开始音频捕获");
 	m_audioInputStop.Create(m_hWND, 400, 80, 150, 23);
-	m_audioInputStop.EVENT_Click += m_onAudioInputStop;
+	m_audioInputStop.EVENT_CLICK += m_onAudioInputStop;
 	m_audioInputStop.SetText("暂停音频捕获");
 
 	m_onAudioOutputStart.Reset(new Delegate<void(void*, INT)>(this, &CMainFrame::OnAudioOutputStart));
 	m_onAudioOutputStop.Reset(new Delegate<void(void*, INT)>(this, &CMainFrame::OnAudioOutputStop));
 	m_audioOutputStart.Create(m_hWND, 800, 50, 150, 23);
-	m_audioOutputStart.EVENT_Click += m_onAudioOutputStart;
+	m_audioOutputStart.EVENT_CLICK += m_onAudioOutputStart;
 	m_audioOutputStart.SetText("开始音频捕获");
 	m_audioOutputStop.Create(m_hWND, 800, 80, 150, 23);
-	m_audioOutputStop.EVENT_Click += m_onAudioOutputStop;
+	m_audioOutputStop.EVENT_CLICK += m_onAudioOutputStop;
 	m_audioOutputStop.SetText("暂停音频捕获");
 
 	m_control.Create(m_hWND, 20, 120, 1024, 768);
@@ -199,10 +199,10 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 
 	m_videoDevice1.Create(m_hWND, 20, 20, 150, 23);
 	m_onVideoChange1.Reset(new Delegate<void(INT)>(this, &CMainFrame::OnVideoSelectChange1));
-	m_videoDevice1.EVENT_SelectChange += m_onVideoChange1;
+	m_videoDevice1.EVENT_SELECTCHANGE += m_onVideoChange1;
 	m_videoDevice2.Create(m_hWND, 180, 20, 150, 23);
 	m_onVideoChange2.Reset(new Delegate<void(INT)>(this, &CMainFrame::OnVideoSelectChange2));
-	m_videoDevice2.EVENT_SelectChange += m_onVideoChange2;
+	m_videoDevice2.EVENT_SELECTCHANGE += m_onVideoChange2;
 	m_videoNames.clear();
 	DShow::VideoCapture::GetDevices(m_videoNames);
 	for (UINT i = 0; i < m_videoNames.size(); i++)
@@ -212,10 +212,10 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 
 	m_audioInput1.Create(m_hWND, 400, 20, 150, 23);
 	m_onAudioInputChange1.Reset(new Delegate<void(INT)>(this, &CMainFrame::OnAudioInputSelectChange1));
-	m_audioInput1.EVENT_SelectChange += m_onAudioInputChange1;
+	m_audioInput1.EVENT_SELECTCHANGE += m_onAudioInputChange1;
 	m_audioInput2.Create(m_hWND, 600, 20, 150, 23);
 	m_onAudioInputChange2.Reset(new Delegate<void(INT)>(this, &CMainFrame::OnAudioInputSelectChange2));
-	m_audioInput2.EVENT_SelectChange += m_onAudioInputChange2;
+	m_audioInput2.EVENT_SELECTCHANGE += m_onAudioInputChange2;
 	m_audioInputNames.clear();
 	DShow::AudioCapture::GetDevices(m_audioInputNames);
 	for (UINT i = 0; i < m_audioInputNames.size(); i++)
@@ -225,10 +225,10 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 
 	m_audioOutput1.Create(m_hWND, 800, 20, 150, 23);
 	m_onAudioOutputChange1.Reset(new Delegate<void(INT)>(this, &CMainFrame::OnAudioOutputSelectChange1));
-	m_audioOutput1.EVENT_SelectChange += m_onAudioInputChange1;
+	m_audioOutput1.EVENT_SELECTCHANGE += m_onAudioInputChange1;
 	m_audioOutput2.Create(m_hWND, 1000, 20, 150, 23);
 	m_onAudioOutputChange2.Reset(new Delegate<void(INT)>(this, &CMainFrame::OnAudioOutputSelectChange2));
-	m_audioOutput2.EVENT_SelectChange += m_onAudioOutputChange2;
+	m_audioOutput2.EVENT_SELECTCHANGE += m_onAudioOutputChange2;
 	m_audioOutputNames.clear();
 	DShow::AudioCapture::GetDevices(m_audioOutputNames);
 	for (UINT i = 0; i < m_audioOutputNames.size(); i++)
@@ -249,20 +249,20 @@ LRESULT CMainFrame::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHa
 	m_videoDevice.Uninitialize();
 	m_audioInput.Uninitialize();
 
-	m_videoStart.EVENT_Click -= m_onVideoStart;
-	m_videoStop.EVENT_Click -= m_onVideoStop;
-	m_videoDevice1.EVENT_SelectChange -= m_onVideoChange1;
-	m_videoDevice2.EVENT_SelectChange -= m_onVideoChange2;
+	m_videoStart.EVENT_CLICK -= m_onVideoStart;
+	m_videoStop.EVENT_CLICK -= m_onVideoStop;
+	m_videoDevice1.EVENT_SELECTCHANGE -= m_onVideoChange1;
+	m_videoDevice2.EVENT_SELECTCHANGE -= m_onVideoChange2;
 
-	m_audioInputStart.EVENT_Click -= m_onAudioInputStart;
-	m_audioInputStop.EVENT_Click -= m_onAudioInputStop;
-	m_audioInput1.EVENT_SelectChange -= m_onAudioInputChange1;
-	m_audioInput2.EVENT_SelectChange -= m_onAudioInputChange2;
+	m_audioInputStart.EVENT_CLICK -= m_onAudioInputStart;
+	m_audioInputStop.EVENT_CLICK -= m_onAudioInputStop;
+	m_audioInput1.EVENT_SELECTCHANGE -= m_onAudioInputChange1;
+	m_audioInput2.EVENT_SELECTCHANGE -= m_onAudioInputChange2;
 
-	m_audioOutputStart.EVENT_Click -= m_onAudioOutputStart;
-	m_audioOutputStop.EVENT_Click -= m_onAudioOutputStop;
-	m_audioOutput1.EVENT_SelectChange -= m_onAudioOutputChange1;
-	m_audioOutput2.EVENT_SelectChange -= m_onAudioOutputChange2;
+	m_audioOutputStart.EVENT_CLICK -= m_onAudioOutputStart;
+	m_audioOutputStop.EVENT_CLICK -= m_onAudioOutputStop;
+	m_audioOutput1.EVENT_SELECTCHANGE -= m_onAudioOutputChange1;
+	m_audioOutput2.EVENT_SELECTCHANGE -= m_onAudioOutputChange2;
 
 	//m_capture.Close();
 

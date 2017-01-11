@@ -68,7 +68,7 @@ namespace TinyUI
 		void Paste();
 	public:
 		virtual void OnSelectChange(INT index);
-		Event<void(INT)> EVENT_SelectChange;
+		Event<void(INT)> EVENT_SELECTCHANGE;
 	};
 }
 

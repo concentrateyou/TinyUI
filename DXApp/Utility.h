@@ -19,4 +19,5 @@ typedef struct tagSample
 	BYTE*		bits;
 }Sample;
 
-BOOL  WINAPI GetModuleList(HANDLE hProcess, TinyArray<TinyString> &moduleList);
+BOOL WINAPI GetModuleList(HANDLE hProcess, TinyArray<TinyString> &moduleList);
+BOOL WINAPI InvertWindow(HWND hWND);

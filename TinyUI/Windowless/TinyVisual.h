@@ -108,7 +108,7 @@ namespace TinyUI
 		public:
 			virtual HRESULT		SetProperty(const TinyString& name, const TinyString& value);
 		public:
-			Event<void(EventArgs&)>			EVENT_Click;
+			Event<void(EventArgs&)>			EVENT_CLICK;
 			Event<void(MouseEventArgs&)>	EVENT_MouseMove;
 			Event<void(MouseEventArgs&)>	EVENT_MouseWheel;
 			Event<void(MouseEventArgs&)>	EVENT_MouseDown;

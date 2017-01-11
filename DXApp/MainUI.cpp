@@ -3,6 +3,7 @@
 #include "Resource.h"
 #include "GameDlg.h"
 #include "MediaCaptureDlg.h"
+#include "WindowDlg.h"
 #include "Control/TinyCommonDialog.h"
 
 MainUI::MainUI()
@@ -79,42 +80,42 @@ void MainUI::CreateUI()
 	m_broadcast.Create(m_hWND, 0, 0, 0, 0);
 	m_broadcast.SetText("开始直播");
 	m_onBroadcastClick.Reset(new Delegate<void(void*, INT)>(this, &MainUI::OnBroadcastClick));
-	m_broadcast.EVENT_Click += m_onBroadcastClick;
+	m_broadcast.EVENT_CLICK += m_onBroadcastClick;
 
 	m_record.Create(m_hWND, 0, 0, 0, 0);
 	m_record.SetText("开始录制");
 	m_onRecordClick.Reset(new Delegate<void(void*, INT)>(this, &MainUI::OnRecordClick));
-	m_record.EVENT_Click += m_onRecordClick;
+	m_record.EVENT_CLICK += m_onRecordClick;
 
 	m_game.Create(m_hWND, 0, 0, 0, 0);
 	m_game.SetText("游戏");
 	m_onGameClick.Reset(new Delegate<void(void*, INT)>(this, &MainUI::OnGameClick));
-	m_game.EVENT_Click += m_onGameClick;
+	m_game.EVENT_CLICK += m_onGameClick;
 
 	m_screen.Create(m_hWND, 0, 0, 0, 0);
 	m_screen.SetText("屏幕");
 	m_onScreenClick.Reset(new Delegate<void(void*, INT)>(this, &MainUI::OnScreenClick));
-	m_screen.EVENT_Click += m_onScreenClick;
+	m_screen.EVENT_CLICK += m_onScreenClick;
 
 	m_window.Create(m_hWND, 0, 0, 0, 0);
 	m_window.SetText("窗口");
 	m_onWindowClick.Reset(new Delegate<void(void*, INT)>(this, &MainUI::OnWindowClick));
-	m_window.EVENT_Click += m_onWindowClick;
+	m_window.EVENT_CLICK += m_onWindowClick;
 
 	m_capture.Create(m_hWND, 0, 0, 0, 0);
 	m_capture.SetText("采集");
 	m_onCaptureClick.Reset(new Delegate<void(void*, INT)>(this, &MainUI::OnCaptureClick));
-	m_capture.EVENT_Click += m_onCaptureClick;
+	m_capture.EVENT_CLICK += m_onCaptureClick;
 
 	m_text.Create(m_hWND, 0, 0, 0, 0);
 	m_text.SetText("文本");
 	m_onTextClick.Reset(new Delegate<void(void*, INT)>(this, &MainUI::OnTextClick));
-	m_text.EVENT_Click += m_onTextClick;
+	m_text.EVENT_CLICK += m_onTextClick;
 
 	m_image.Create(m_hWND, 0, 0, 0, 0);
 	m_image.SetText("图片");
 	m_onImageClick.Reset(new Delegate<void(void*, INT)>(this, &MainUI::OnImageClick));
-	m_image.EVENT_Click += m_onImageClick;
+	m_image.EVENT_CLICK += m_onImageClick;
 
 	RECT s = { 0 };
 	m_pDXWND->GetClientRect(&s);
@@ -127,14 +128,14 @@ void MainUI::DestoryUI()
 {
 	m_renderTask.Close();
 
-	m_broadcast.EVENT_Click -= m_onBroadcastClick;
-	m_record.EVENT_Click -= m_onRecordClick;
-	m_game.EVENT_Click -= m_onGameClick;
-	m_screen.EVENT_Click -= m_onScreenClick;
-	m_window.EVENT_Click -= m_onWindowClick;
-	m_capture.EVENT_Click -= m_onCaptureClick;
-	m_text.EVENT_Click -= m_onTextClick;
-	m_image.EVENT_Click -= m_onImageClick;
+	m_broadcast.EVENT_CLICK -= m_onBroadcastClick;
+	m_record.EVENT_CLICK -= m_onRecordClick;
+	m_game.EVENT_CLICK -= m_onGameClick;
+	m_screen.EVENT_CLICK -= m_onScreenClick;
+	m_window.EVENT_CLICK -= m_onWindowClick;
+	m_capture.EVENT_CLICK -= m_onCaptureClick;
+	m_text.EVENT_CLICK -= m_onTextClick;
+	m_image.EVENT_CLICK -= m_onImageClick;
 }
 
 void MainUI::OnBroadcastClick(void*, INT)
@@ -191,7 +192,17 @@ void MainUI::OnScreenClick(void*, INT)
 }
 void MainUI::OnWindowClick(void*, INT)
 {
-
+	WindowDlg dlg;
+	if (dlg.DoModal(m_hWND, IDD_DLG_WINDOW) == IDOK)
+	{
+		m_renderTask.Remove(&m_windowScene);
+		m_windowScene.EndScene();
+		m_windowScene.Initialize(m_renderTask.GetGraphics()->GetDX11(), dlg.GetHWND());
+		if (m_renderTask.Add(&m_windowScene))
+		{
+			m_windowScene.BeginScene();
+		}
+	}
 }
 void MainUI::OnCaptureClick(void*, INT)
 {

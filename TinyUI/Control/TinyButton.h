@@ -21,11 +21,11 @@ namespace TinyUI
 		virtual void OnDoubleClick(void*, INT ctrlID);
 		virtual void OnGotFocus(void*, INT ctrlID);
 		virtual void OnLostFocus(void*, INT ctrlID);
-		Event<void(void*, INT)> EVENT_Click;
-		Event<void(void*, INT)> EVENT_DoubleClick;
-		Event<void(void*, INT)> EVENT_Disable;
-		Event<void(void*, INT)> EVENT_GotFocus;
-		Event<void(void*, INT)> EVENT_LostFocus;
+		Event<void(void*, INT)> EVENT_CLICK;
+		Event<void(void*, INT)> EVENT_DOUBLECLICK;
+		Event<void(void*, INT)> EVENT_DISABLE;
+		Event<void(void*, INT)> EVENT_GOTFOCUS;
+		Event<void(void*, INT)> EVENT_LOSTFOCUS;
 		//////////////////////////////////////////////////////////////////////////
 		BOOL SetText(LPCSTR pzText);
 		BOOL GetText(LPSTR pzText, INT iSize);

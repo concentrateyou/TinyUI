@@ -20,15 +20,15 @@ namespace WindowCapture
 	{
 		TinyRectangle s;
 		::GetWindowRect(::GetDesktopWindow(), &s);
-		return TinyControl::Create(hParent, 0, 0, s.Width() / 2, s.Height() / 2, FALSE);
+		return TinyControl::Create(hParent, 0, 0, s.Width(), s.Height(), FALSE);
 	}
 	DWORD Snapshot::RetrieveStyle()
 	{
-		return WS_THICKFRAME | WS_MAXIMIZEBOX;
+		return WS_POPUP;
 	}
 	DWORD Snapshot::RetrieveExStyle()
 	{
-		return  (WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR);
+		return (WS_EX_TOPMOST | WS_EX_TOOLWINDOW);
 	}
 	LPCSTR Snapshot::RetrieveClassName()
 	{

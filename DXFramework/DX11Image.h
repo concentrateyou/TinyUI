@@ -18,11 +18,14 @@ namespace DXFramework
 		virtual ~DX11Image();
 		BOOL Create(const DX11& dx11, const TinySize& size, BYTE* bits = NULL);
 		BOOL BitBlt(const DX11& dx11, const BYTE* bits, LONG size);//RGB32
+		BOOL BitBlt(const DX11& dx11, HBITMAP hBitmap, const TinyRectangle& rectangle);
+		BOOL BitBlt(const DX11& dx11, HDC hSrcDC, const TinyRectangle& rectangle);
 		BOOL Load(const DX11& dx11, HANDLE hResource);
 		BOOL Load(const DX11& dx11, const CHAR* pzFile);
 		BOOL Load(const DX11& dx11, const BYTE* bits, DWORD dwSize);
 		BOOL IsValid() const;
 		BOOL Update(const DX11& dx11);
+		void Destory();
 		DX11Texture* GetTexture();
 	public:
 		ElementType	GetElementType() const;

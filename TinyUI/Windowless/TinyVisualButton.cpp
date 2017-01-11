@@ -91,7 +91,7 @@ namespace TinyUI
 			TinyRectangle s = m_document->GetWindowRect(this);
 			m_document->Redraw(&s);
 			m_document->SetCapture(NULL);
-			EVENT_Click(EventArgs());
+			EVENT_CLICK(EventArgs());
 			return TinyVisual::OnLButtonUp(pos, dwFlags);
 		}
 	}

@@ -55,6 +55,6 @@ namespace TinyUI
 		virtual void OnSelectChangeTab(void* sender);
 	private:
 		Event<void(void*, BOOL&)> EVENT_SelectChangingTab;
-		Event<void(void*)> EVENT_SelectChangeTab;
+		Event<void(void*)> EVENT_SELECTCHANGETab;
 	};
 }

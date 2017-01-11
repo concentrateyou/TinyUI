@@ -13,7 +13,7 @@ class GameDlg : public TinyDialog
 	END_MSG_MAP()
 public:
 	GameDlg();
-	~GameDlg();
+	virtual ~GameDlg();
 public:
 	virtual LRESULT OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	virtual LRESULT OnCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

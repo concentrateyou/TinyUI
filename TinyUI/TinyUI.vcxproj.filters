@@ -438,6 +438,15 @@
     <ClInclude Include="Render\TinyRectTracker.h">
       <Filter>头文件\Render</Filter>
     </ClInclude>
+    <ClInclude Include="Control\TinyCheckBox.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="Control\TinyRadioButton.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="Control\TinyCustomDialog.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -808,6 +817,15 @@
     </ClCompile>
     <ClCompile Include="Render\TinyRectTracker.cpp">
       <Filter>源文件\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Control\TinyRadioButton.cpp">
+      <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="Control\TinyCheckBox.cpp">
+      <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="Control\TinyCustomDialog.cpp">
+      <Filter>源文件\Control</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

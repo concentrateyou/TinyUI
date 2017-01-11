@@ -25,7 +25,7 @@ namespace TinyUI
 	}
 	DWORD TinyButton::RetrieveExStyle()
 	{
-		return (WS_EX_LEFT | WS_EX_LTRREADING);
+		return (WS_EX_LTRREADING);
 	}
 	LPCSTR TinyButton::RetrieveClassName()
 	{
@@ -242,23 +242,23 @@ namespace TinyUI
 	}
 	void TinyButton::OnDoubleClick(void* sender, INT ctrlID)
 	{
-		EVENT_DoubleClick(sender, ctrlID);
+		EVENT_DOUBLECLICK(sender, ctrlID);
 	}
 	void TinyButton::OnDisable(void* sender, INT ctrlID)
 	{
-		EVENT_Disable(sender, ctrlID);
+		EVENT_DISABLE(sender, ctrlID);
 	}
 	void TinyButton::OnClick(void* sender, INT ctrlID)
 	{
-		EVENT_Click(sender, ctrlID);
+		EVENT_CLICK(sender, ctrlID);
 	}
 	void TinyButton::OnGotFocus(void* sender, INT ctrlID)
 	{
-		EVENT_GotFocus(sender, ctrlID);
+		EVENT_GOTFOCUS(sender, ctrlID);
 	}
 	void TinyButton::OnLostFocus(void* sender, INT ctrlID)
 	{
-		EVENT_LostFocus(sender, ctrlID);
+		EVENT_LOSTFOCUS(sender, ctrlID);
 	}
 
 	LRESULT TinyButton::OnCommandReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

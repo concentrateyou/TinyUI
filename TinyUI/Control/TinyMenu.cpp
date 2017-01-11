@@ -177,7 +177,7 @@ namespace TinyUI
 
 	void TinyMenu::OnClick(void* ps, INT menuID)
 	{
-		EVENT_Click(ps, menuID);
+		EVENT_CLICK(ps, menuID);
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinuMenuControl::TinuMenuControl()

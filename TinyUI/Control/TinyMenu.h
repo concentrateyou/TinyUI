@@ -53,7 +53,7 @@ namespace TinyUI
 		virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
 		virtual void MeasureItem(LPMEASUREITEMSTRUCT lpMeasureItemStruct);
 		virtual void OnClick(void*, INT menuID);
-		Event<void(void*, INT)> EVENT_Click;
+		Event<void(void*, INT)> EVENT_CLICK;
 	};
 	/// <summary>
 	/// ²Ëµ¥¿Ø¼þ×Ô»æ
