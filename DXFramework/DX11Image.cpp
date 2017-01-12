@@ -52,26 +52,25 @@ namespace DXFramework
 		return TRUE;
 	}
 
-	BOOL DX11Image::BitBlt(const DX11& dx11, HBITMAP hBitmap, const TinyRectangle& rectangle)
+	BOOL DX11Image::BitBlt(const DX11& dx11, HBITMAP hBitmap, const TinyRectangle& dst, const TinyPoint& src)
 	{
 		ASSERT(m_texture.IsValid());
 		HDC hDC = NULL;
 		if (!m_texture.GetDC(hDC))
 			return FALSE;
 		TinyUI::TinyMemDC mdc(hDC, hBitmap);
-		::BitBlt(hDC, rectangle.left, rectangle.top, rectangle.Width(), rectangle.Height(), mdc, 0, 0, SRCCOPY);
+		::BitBlt(hDC, dst.left, dst.top, dst.Width(), dst.Height(), mdc, src.x, src.y, SRCCOPY);
 		if (!m_texture.ReleaseDC())
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11Image::BitBlt(const DX11& dx11, HDC hSrcDC, const TinyRectangle& srcRect)
+	BOOL DX11Image::BitBlt(const DX11& dx11, HDC hsrc, const TinyRectangle& dst, const TinyPoint& src)
 	{
 		ASSERT(m_texture.IsValid());
 		HDC hDC = NULL;
 		if (!m_texture.GetDC(hDC))
 			return FALSE;
-		TinySize size = m_texture.GetSize();
-		::BitBlt(hDC, 0, 0, size.cx, size.cy, hSrcDC, srcRect.left, srcRect.top, SRCCOPY);
+		::BitBlt(hDC, dst.left, dst.top, dst.Width(), dst.Width(), hsrc, src.x, src.y, SRCCOPY);
 		if (!m_texture.ReleaseDC())
 			return FALSE;
 		return TRUE;

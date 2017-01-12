@@ -53,10 +53,9 @@ namespace DXApp
 		{
 			TinyRectangle rectangle;
 			GetClientRect(m_hWND, &rectangle);
-			this->BitBlt(dx11, hDC, rectangle);
-			DX11Image::Render(dx11);
+			this->BitBlt(dx11, hDC, rectangle, TinyPoint(0, 0));
 			ReleaseDC(m_hWND, hDC);
-			hDC = NULL;
+			DX11Image::Render(dx11);
 			return TRUE;
 		}
 		return FALSE;

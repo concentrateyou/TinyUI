@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <dwmapi.h>
 #include "MainUI.h"
 #include "GameDlg.h"
 #include "MediaCaptureDlg.h"
@@ -6,6 +7,8 @@
 #include "TextDlg.h"
 #include "Snapshot.h"
 #include "Resource.h"
+
+#pragma comment(lib, "dwmapi.lib")
 
 namespace DXApp
 {
@@ -232,17 +235,15 @@ namespace DXApp
 	void MainUI::OnTextClick(void*, INT)
 	{
 		TextDlg dlg;
-		
-		INT_PTR i = dlg.DoModal(m_hWND, IDD_DLG_TEXT);
-		if (i == IDOK)
+		if (dlg.DoModal(m_hWND, IDD_DLG_TEXT) == IDOK)
 		{
 
 		}
 	}
 	void MainUI::OnImageClick(void*, INT)
 	{
-		TinyString filter = "Image (*.png; *.bmp; *.jpg)|*.png;*.bmp;*.jpg||";
-		TinyFileDialog dlg(TRUE, NULL, "", OFN_HIDEREADONLY | OFN_READONLY, filter.STR());
+		LPCTSTR lpszFilter = _T("Image Files(*.bmp, *.jpg, *.png)|*.bmp;*.jpg;*.png|All Files (*.*)|*.*||");
+		TinyFileDialog dlg(TRUE, NULL, "", OFN_HIDEREADONLY | OFN_READONLY | OFN_FILEMUSTEXIST, lpszFilter);
 		if (dlg.DoModal(m_hWND) == IDOK)
 		{
 			m_renderTask.Remove(&m_imageScene);
@@ -256,12 +257,14 @@ namespace DXApp
 	}
 	void MainUI::OnSelected(RECT rect)
 	{
+		TinyRectangle s = rect;
+		s.NormalizeRect();
 		m_snapshot.EVENT_SELECTED -= m_onSelected;
 		m_snapshot.DestroyWindow();
 		m_snapshot.m_rectangle.SetRectEmpty();
 		m_renderTask.Remove(&m_screenScene);
 		m_screenScene.EndScene();
-		m_screenScene.Initialize(m_renderTask.GetGraphics()->GetDX11(), rect);
+		m_screenScene.Initialize(m_renderTask.GetGraphics()->GetDX11(), s);
 		if (m_renderTask.Add(&m_screenScene))
 		{
 			m_screenScene.BeginScene();

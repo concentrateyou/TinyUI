@@ -55,6 +55,12 @@ namespace TinyUI
 	private:
 		CHOOSECOLOR m_cc;
 	};
+#define _MAX_PATH   260 
+#define _MAX_DRIVE  3   
+#define _MAX_DIR    256 
+#define _MAX_FNAME  256 
+#define _MAX_EXT    256
+
 	/// <summary>
 	/// 文件对话框
 	/// </summary>
@@ -63,8 +69,8 @@ namespace TinyUI
 		DECLARE_DYNAMIC(TinyFileDialog)
 	private:
 		BOOL m_bOpenFileDialog;
-		TCHAR m_szFileTitle[64 * 10];
-		TCHAR m_szFileName[_MAX_PATH * 10];
+		TCHAR m_szFileTitle[_MAX_FNAME];
+		TCHAR m_szFileName[_MAX_PATH];
 	public:
 		OPENFILENAME m_ofn;
 		explicit TinyFileDialog(BOOL bOpenFileDialog,
@@ -72,8 +78,7 @@ namespace TinyUI
 			LPCTSTR lpszFileName = NULL,
 			DWORD dwFlags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
 			LPCTSTR lpszFilter = NULL,
-			DWORD dwSize = 0,
-			BOOL bVistaStyle = TRUE);
+			DWORD dwSize = 0);
 		virtual ~TinyFileDialog();
 		virtual INT_PTR DoModal(HWND hParent);
 		BOOL IsReadOnly() const;
@@ -82,5 +87,7 @@ namespace TinyUI
 		TinyString GetFileName() const;
 		TinyString GetFileExt() const;
 		TinyString GetFileTitle() const;
+	private:
+		TinyString	m_strFilter;
 	};
 }

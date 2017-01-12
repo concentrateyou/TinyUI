@@ -19,7 +19,7 @@ namespace DXApp
 		if (!s.IsRectEmpty())
 		{
 			m_screenRect = s;
-			return DX11Image::Create(dx11, m_screenRect.Size(), NULL);
+			return DX11Image::Create(dx11, s.Size(), NULL);
 		}
 		return FALSE;
 	}
@@ -42,15 +42,13 @@ namespace DXApp
 	}
 	BOOL ScreenScene::Render(const DX11& dx11)
 	{
-		HWND hWND = GetDesktopWindow();
-		ASSERT(hWND);
-		HDC hDC = GetDC(hWND);
+		HDC hDC = GetDC(NULL);
 		if (hDC != NULL)
 		{
-			this->BitBlt(dx11, hDC, m_screenRect);
+			TinyRectangle s(TinyPoint(0, 0), m_screenRect.Size());
+			this->BitBlt(dx11, hDC, m_screenRect, m_screenRect.Position());
+			ReleaseDC(NULL, hDC);
 			DX11Image::Render(dx11);
-			ReleaseDC(hWND, hDC);
-			hDC = NULL;
 			return TRUE;
 		}
 		return FALSE;

@@ -18,8 +18,8 @@ namespace DXFramework
 		virtual ~DX11Image();
 		BOOL Create(const DX11& dx11, const TinySize& size, BYTE* bits = NULL);
 		BOOL BitBlt(const DX11& dx11, const BYTE* bits, LONG size);//RGB32
-		BOOL BitBlt(const DX11& dx11, HBITMAP hBitmap, const TinyRectangle& srcRect);
-		BOOL BitBlt(const DX11& dx11, HDC hSrcDC, const TinyRectangle& srcRect);
+		BOOL BitBlt(const DX11& dx11, HBITMAP hBitmap, const TinyRectangle& dst, const TinyPoint& src);
+		BOOL BitBlt(const DX11& dx11, HDC hsrc, const TinyRectangle& dst, const TinyPoint& src);
 		BOOL Load(const DX11& dx11, HANDLE hResource);
 		BOOL Load(const DX11& dx11, const CHAR* pzFile);
 		BOOL Load(const DX11& dx11, const BYTE* bits, DWORD dwSize);

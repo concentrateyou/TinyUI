@@ -304,7 +304,7 @@ namespace TinyUI
 			*ps++ = '\0';
 		m_ofn.lpstrFilter = ps;
 	}
-	TinyFileDialog::TinyFileDialog(BOOL bOpenFileDialog, LPCTSTR lpszDefExt /* = NULL */, LPCTSTR lpszFileName /* = NULL */, DWORD dwFlags /* = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT */, LPCTSTR lpszFilter /* = NULL */, DWORD dwSize /* = 0 */, BOOL bVistaStyle /* = TRUE */)
+	TinyFileDialog::TinyFileDialog(BOOL bOpenFileDialog, LPCTSTR lpszDefExt /* = NULL */, LPCTSTR lpszFileName /* = NULL */, DWORD dwFlags /* = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT */, LPCTSTR lpszFilter /* = NULL */, DWORD dwSize /* = 0 */)
 	{
 		if (dwSize == 0)
 		{
@@ -323,17 +323,21 @@ namespace TinyUI
 		m_ofn.nMaxFileTitle = _countof(m_szFileTitle);
 		m_ofn.Flags |= dwFlags | OFN_EXPLORER | OFN_ENABLEHOOK;
 		if (dwFlags & OFN_ENABLETEMPLATE)
+		{
 			m_ofn.Flags &= ~OFN_ENABLESIZING;
+		}
 		m_ofn.hInstance = TinyApplication::GetInstance()->Handle();
 		if (lpszFileName != NULL)
+		{
 			_tcsncpy_s(m_szFileName, _countof(m_szFileName), lpszFileName, _TRUNCATE);
+		}
 		if (lpszFilter != NULL)
 		{
-			TinyString str(lpszFilter);
-			LPTSTR ps = str.STR();
+			m_strFilter = lpszFilter;
+			LPTSTR ps = m_strFilter.STR();
 			while ((ps = _tcschr(ps, '|')) != NULL)
 				*ps++ = '\0';
-			m_ofn.lpstrFilter = ps;
+			m_ofn.lpstrFilter = m_strFilter.STR();
 		}
 	}
 	TinyFileDialog::~TinyFileDialog()
@@ -344,7 +348,7 @@ namespace TinyUI
 		DWORD nOffset = lstrlen(m_ofn.lpstrFile) + 1;
 		ASSERT(nOffset <= m_ofn.nMaxFile);
 		memset(m_ofn.lpstrFile + nOffset, 0, (m_ofn.nMaxFile - nOffset) * sizeof(TCHAR));
-		HWND hWndFocus = ::GetFocus();
+		HWND hFocusWND = ::GetFocus();
 		BOOL bEnableParent = FALSE;
 		m_ofn.hwndOwner = hParent;
 		if (m_ofn.hwndOwner != NULL && ::IsWindowEnabled(m_ofn.hwndOwner))
@@ -359,8 +363,8 @@ namespace TinyUI
 			nResult = ::GetSaveFileName(&m_ofn);
 		if (bEnableParent)
 			::EnableWindow(m_ofn.hwndOwner, TRUE);
-		if (::IsWindow(hWndFocus))
-			::SetFocus(hWndFocus);
+		if (::IsWindow(hFocusWND))
+			::SetFocus(hFocusWND);
 		return nResult ? nResult : IDCANCEL;
 	}
 	TinyString TinyFileDialog::GetPathName() const
