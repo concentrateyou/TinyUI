@@ -54,15 +54,8 @@ namespace TinyUI
 		virtual void MeasureItem(LPMEASUREITEMSTRUCT lpMeasureItemStruct);
 		virtual void OnClick(void*, INT menuID);
 		Event<void(void*, INT)> EVENT_CLICK;
-	};
-	/// <summary>
-	/// ²Ëµ¥¿Ø¼þ×Ô»æ
-	/// </summary>
-	class TinuMenuControl
-	{
-	public:
-		TinuMenuControl();
-		virtual ~TinuMenuControl();
+	private:
+		static TinyPointerMap m_map;
 	};
 }
 

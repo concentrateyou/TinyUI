@@ -3,6 +3,8 @@
 
 namespace TinyUI
 {
+	TinyPointerMap TinyMenu::m_map;
+
 	TinyMenu::TinyMenu(HMENU hMENU)
 	{
 		m_hMENU = hMENU;
@@ -124,11 +126,19 @@ namespace TinyUI
 	}
 	BOOL TinyMenu::LoadMenu(LPCTSTR lpszResourceName)
 	{
-		return Attach(::LoadMenu((HINSTANCE)::FindResource(TinyApplication::GetInstance()->Handle(), lpszResourceName, RT_MENU), lpszResourceName));
+		if (Attach(::LoadMenu((HINSTANCE)::FindResource(TinyApplication::GetInstance()->Handle(), lpszResourceName, RT_MENU), lpszResourceName)))
+		{
+			return TRUE;
+		}
+		return FALSE;
 	}
 	BOOL TinyMenu::LoadMenu(UINT nIDResource)
 	{
-		return Attach(::LoadMenu((HINSTANCE)::FindResource(TinyApplication::GetInstance()->Handle(), MAKEINTRESOURCE(nIDResource), RT_MENU), MAKEINTRESOURCE(nIDResource)));
+		if (Attach(::LoadMenu((HINSTANCE)::FindResource(TinyApplication::GetInstance()->Handle(), MAKEINTRESOURCE(nIDResource), RT_MENU), MAKEINTRESOURCE(nIDResource))))
+		{
+			return TRUE;
+		}
+		return FALSE;
 	}
 	BOOL TinyMenu::LoadMenuIndirect(const void* lpMenuTemplate)
 	{
@@ -160,6 +170,18 @@ namespace TinyUI
 		ASSERT(m_hMENU != NULL);
 		return ::TrackPopupMenuEx(m_hMENU, fuFlags, x, y, pWnd, lptpm);
 	}
+
+	BOOL TinyMenu::SetMenuInfo(LPCMENUINFO lpcmi)
+	{
+		ASSERT(m_hMENU != NULL);
+		return ::SetMenuInfo(m_hMENU, lpcmi);
+	}
+	BOOL TinyMenu::GetMenuInfo(LPMENUINFO lpcmi) const
+	{
+		ASSERT(m_hMENU != NULL);
+		return ::GetMenuInfo(m_hMENU, lpcmi);
+	}
+
 	BOOL TinyMenu::DestroyMenu()
 	{
 		return ::DestroyMenu(Detach());
@@ -177,12 +199,8 @@ namespace TinyUI
 
 	void TinyMenu::OnClick(void* ps, INT menuID)
 	{
+		ASSERT(ps == this);
 		EVENT_CLICK(ps, menuID);
-	}
-	//////////////////////////////////////////////////////////////////////////
-	TinuMenuControl::TinuMenuControl()
-	{
-
 	}
 }
 

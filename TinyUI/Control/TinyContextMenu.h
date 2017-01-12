@@ -8,6 +8,14 @@ namespace TinyUI
 #define MENUITEM_DEFAULT_WIDTH	    150
 #define MENUITEM_DEFAULT_HEIGHT		28
 #define MENUITEM_BREAK_HEIGHT		3
+#define STATE_BEGIN			   0x00000000L
+#define STATE_ENABLED          0x00000000L
+#define STATE_GRAYED           0x00000001L
+#define STATE_DISABLED         0x00000002L
+#define STATE_UNCHECKED        0x00000000L
+#define STATE_CHECKED          0x00000004L
+#define STATE_UNHILITE         0x00000000L
+#define STATE_HILITE           0x00000008L
 	class TinyMenuItem;
 	class TinyContextMenu;
 	/// <summary>

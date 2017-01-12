@@ -43,6 +43,9 @@ namespace DXApp
 		void OnTextClick(void*, INT);
 		void OnImageClick(void*, INT);
 		void OnSelected(RECT);
+
+		void OnDXWLButtonDown(UINT, WPARAM, LPARAM, BOOL&);
+
 	private:
 		TinyButton m_broadcast;
 		TinyButton m_record;
@@ -71,5 +74,7 @@ namespace DXApp
 		WindowScene m_windowScene;
 		ScreenScene	m_screenScene;
 		RenderTask	m_renderTask;
+
+		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onDXWLButtonDown;
 	};
 }

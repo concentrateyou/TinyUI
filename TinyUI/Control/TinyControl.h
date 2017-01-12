@@ -6,14 +6,7 @@
 
 namespace TinyUI
 {
-#define STATE_BEGIN			   0x00000000L
-#define STATE_ENABLED          0x00000000L
-#define STATE_GRAYED           0x00000001L
-#define STATE_DISABLED         0x00000002L
-#define STATE_UNCHECKED        0x00000000L
-#define STATE_CHECKED          0x00000004L
-#define STATE_UNHILITE         0x00000000L
-#define STATE_HILITE           0x00000008L
+	class TinyMenu;
 	/// <summary>
 	/// ´°¿Ú¿Ø¼þÀà
 	/// </summary>
@@ -101,6 +94,9 @@ namespace TinyUI
 			MESSAGE_HANDLER(WM_SETFOCUS, OnSetFocus)
 			MESSAGE_HANDLER(WM_KILLFOCUS, OnKillFocus)
 			MESSAGE_HANDLER(WM_GETMINMAXINFO, OnGetMinMaxInfo)
+			MESSAGE_HANDLER(WM_CONTEXTMENU, OnContextMenu)
+			MESSAGE_HANDLER(WM_INITMENUPOPUP, OnIniMenuPopup)
+			MESSAGE_HANDLER(WM_INITMENU, OnIniMenu);
 		END_MSG_MAP()
 		virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -152,6 +148,9 @@ namespace TinyUI
 		virtual LRESULT OnSetFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnContextMenu(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnIniMenuPopup(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnIniMenu(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	public:
 		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_CREATE;
 		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_DESTORY;
@@ -159,7 +158,11 @@ namespace TinyUI
 		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_LBUTTONDOWN;
 		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_LBUTTONUP;
 		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_MOUSEMOVE;
+		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_RBUTTONDOWN;
+		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_RBUTTONUP;
 		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_SETCURSOR;
+	protected:
+		TinyMenu*	m_pMenu;
 	};
 	SELECTANY HHOOK TinyControl::m_hhk = NULL;
 }

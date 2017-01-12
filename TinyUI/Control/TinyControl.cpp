@@ -1,9 +1,12 @@
 #include "../stdafx.h"
+#include "../Common/TinyApplication.h"
 #include "TinyControl.h"
+#include "TinyMenu.h"
 
 namespace TinyUI
 {
 	TinyControl::TinyControl()
+		:m_pMenu(NULL)
 	{
 
 	}
@@ -100,14 +103,13 @@ namespace TinyUI
 		}
 		else
 		{
-			bHandled = TRUE;
+			bHandled = FALSE;
 			//²Ëµ¥ClickÊÂ¼þ
-			/*INT wID = LOWORD(wParam);
-			SysMenu* menuPtr = (SysMenu*)__Module.GetMapMENUID().FromKey(wID);
-			if (menuPtr != NULL)
+			INT wID = LOWORD(wParam);
+			if (m_pMenu != NULL)
 			{
-			menuPtr->OnClick(menuPtr, wID);
-			}*/
+				m_pMenu->OnClick(m_pMenu, wID);
+			}
 			return TRUE;
 		}
 		return FALSE;
@@ -238,12 +240,14 @@ namespace TinyUI
 	}
 	LRESULT TinyControl::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
-		bHandled = FALSE;;
+		bHandled = FALSE;
+		EVENT_RBUTTONDOWN(uMsg, wParam, lParam, bHandled);
 		return FALSE;
 	}
 	LRESULT TinyControl::OnRButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		EVENT_RBUTTONUP(uMsg, wParam, lParam, bHandled);
 		return FALSE;
 	}
 	LRESULT TinyControl::OnRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -335,6 +339,31 @@ namespace TinyUI
 	LRESULT TinyControl::OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		return FALSE;
+	}
+	LRESULT TinyControl::OnContextMenu(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		return FALSE;
+	}
+	LRESULT TinyControl::OnIniMenuPopup(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		TinyHandleHMENU** pps = TinyApplication::GetInstance()->GetMapHMENU().Lookup(reinterpret_cast<HMENU>(wParam));
+		if (pps != NULL)
+		{
+			m_pMenu = static_cast<TinyMenu*>(*pps);
+		}
+		return FALSE;
+	}
+	LRESULT TinyControl::OnIniMenu(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		TinyHandleHMENU** pps = TinyApplication::GetInstance()->GetMapHMENU().Lookup(reinterpret_cast<HMENU>(wParam));
+		if (pps != NULL)
+		{
+			m_pMenu = static_cast<TinyMenu*>(*pps);
+		}
 		return FALSE;
 	}
 	BOOL TinyControl::ShowWindow(INT nCmdShow) throw()

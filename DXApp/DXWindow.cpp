@@ -36,11 +36,9 @@ namespace DXApp
 	{
 		return NULL;
 	}
-
 	LRESULT DXWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-
 		return FALSE;
 	}
 	LRESULT DXWindow::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -61,6 +59,21 @@ namespace DXApp
 	LRESULT DXWindow::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = TRUE;
+		return FALSE;
+	}
+
+	BOOL DXWindow::ShowContextMenu(const TinyPoint& pos)
+	{
+		TinyMenu menu;
+		if (menu.CreatePopupMenu())
+		{
+			menu.AppendMenu(MF_STRING, IDM_MOVEUP, TEXT("上移"));
+			menu.AppendMenu(MF_STRING, IDM_MOVEDOWN, TEXT("下移"));
+			menu.AppendMenu(MF_STRING, IDM_MOVETOP, TEXT("移至顶部"));
+			menu.AppendMenu(MF_STRING, IDM_MOVEBOTTPM, TEXT("移至底部"));
+			menu.TrackPopupMenu(TPM_LEFTBUTTON, pos.x, pos.y, m_hWND, NULL);
+			return TRUE;
+		}
 		return FALSE;
 	}
 }

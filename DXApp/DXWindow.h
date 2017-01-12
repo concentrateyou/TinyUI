@@ -1,11 +1,16 @@
 #pragma once
 #include "Control/TinyControl.h"
+#include "Control/TinyMenu.h"
 #include "RenderTask.h"
 #include "DX11Graphics2D.h"
 using namespace DXFramework;
 
 namespace DXApp
 {
+#define IDM_MOVEUP		100
+#define IDM_MOVEDOWN	101
+#define IDM_MOVETOP		102
+#define IDM_MOVEBOTTPM	103
 
 	class DXWindow : public TinyControl
 	{
@@ -25,6 +30,7 @@ namespace DXApp
 		LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	public:
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
+		BOOL ShowContextMenu(const TinyPoint& pos);
 	};
 }
 
