@@ -10,7 +10,7 @@ namespace TinyUI
 	class TinyCustomDialog : public TinyDialog
 	{
 		DECLARE_DYNAMIC(TinyCustomDialog)
-		BEGIN_MSG_MAP(GameDlg, TinyDialog)
+		BEGIN_MSG_MAP(TinyCustomDialog, TinyDialog)
 			MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
 			MESSAGE_HANDLER(WM_COMMAND, OnCommand)
 		END_MSG_MAP()

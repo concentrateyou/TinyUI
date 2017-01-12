@@ -48,7 +48,6 @@ namespace TinyUI
 	public:
 		explicit TinyColorDialog(COLORREF clrInit = 0, DWORD dwFlags = 0);
 		virtual INT_PTR DoModal(HWND hParent);
-		void SetCurrentColor(COLORREF clr);
 		COLORREF GetColor() const;
 		void SetCustomColors(COLORREF* lpCustColors);
 	protected:

@@ -261,6 +261,12 @@ namespace TinyUI
 		{
 			m_cc.Flags |= CC_RGBINIT;
 		}
+		COLORREF _array[16];
+		for (INT i = 0;i < 16; i++)
+		{
+			_array[i] = RGB(255, 255, 255);
+		}
+		m_cc.lpCustColors = _array;
 	}
 	INT_PTR TinyColorDialog::DoModal(HWND hParent)
 	{

@@ -1,10 +1,11 @@
 #include "stdafx.h"
 #include "MainUI.h"
-#include "Resource.h"
 #include "GameDlg.h"
 #include "MediaCaptureDlg.h"
 #include "WindowDlg.h"
+#include "TextDlg.h"
 #include "Snapshot.h"
+#include "Resource.h"
 
 namespace DXApp
 {
@@ -130,7 +131,7 @@ namespace DXApp
 	}
 	void MainUI::DestoryUI()
 	{
-	
+
 		m_renderTask.Close();
 
 		m_broadcast.EVENT_CLICK -= m_onBroadcastClick;
@@ -217,7 +218,7 @@ namespace DXApp
 	void MainUI::OnCaptureClick(void*, INT)
 	{
 		MediaCaptureDlg dlg;
-		if (dlg.DoModal(m_hWND, IDD_DIG_MEDIACAPTURE) == IDOK)
+		if (dlg.DoModal(m_hWND, IDD_DLG_MEDIACAPTURE) == IDOK)
 		{
 			m_renderTask.Remove(&m_videoScene);
 			m_videoScene.EndScene();
@@ -230,7 +231,13 @@ namespace DXApp
 	}
 	void MainUI::OnTextClick(void*, INT)
 	{
+		TextDlg dlg;
+		
+		INT_PTR i = dlg.DoModal(m_hWND, IDD_DLG_TEXT);
+		if (i == IDOK)
+		{
 
+		}
 	}
 	void MainUI::OnImageClick(void*, INT)
 	{

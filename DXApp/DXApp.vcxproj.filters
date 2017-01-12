@@ -120,6 +120,9 @@
     <ClInclude Include="FindTool.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="TextDlg.h">
+      <Filter>头文件\Dialog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -199,6 +202,9 @@
     </ClCompile>
     <ClCompile Include="FindTool.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TextDlg.cpp">
+      <Filter>源文件\Dialog</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

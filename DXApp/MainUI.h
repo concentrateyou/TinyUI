@@ -70,6 +70,7 @@ namespace DXApp
 		ImageScene	m_imageScene;
 		WindowScene m_windowScene;
 		ScreenScene	m_screenScene;
+
 		RenderTask	m_renderTask;
 	};
 }
