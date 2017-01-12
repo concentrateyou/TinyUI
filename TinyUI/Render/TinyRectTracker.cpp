@@ -149,10 +149,6 @@ namespace TinyUI
 	{
 
 	}
-	void TinyRectTracker::OnSelected()
-	{
-
-	}
 	BOOL TinyRectTracker::TrackRubberBand(HWND hWND, const TinyPoint& point, BOOL bAllowInvert)
 	{
 		m_bAllowInvert = bAllowInvert;
@@ -225,9 +221,7 @@ namespace TinyUI
 				break;
 			case WM_KEYDOWN:
 				if (msg.wParam != VK_ESCAPE)
-				{
 					break;
-				}
 			case WM_RBUTTONDOWN:
 				if (bMoved)
 				{

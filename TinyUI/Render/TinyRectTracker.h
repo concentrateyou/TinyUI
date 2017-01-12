@@ -23,7 +23,6 @@ namespace TinyUI
 		BOOL Track(HWND hWND, const TinyPoint& point, BOOL bAllowInvert);
 		virtual INT GetHandleSize() const;
 		virtual void OnChangedRect(const TinyRectangle& rectOld);
-		virtual void OnSelected();
 	private:
 		void Construct();
 		INT NormalizeHit(INT nHandle) const;

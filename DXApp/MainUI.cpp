@@ -190,7 +190,6 @@ namespace DXApp
 	}
 	void MainUI::OnScreenClick(void*, INT)
 	{
-		::ShowWindow(GetParent(m_hWND), SW_HIDE);
 		m_snapshot.Create(m_hWND);
 		m_onSelected.Reset(new Delegate<void(RECT)>(this, &MainUI::OnSelected));
 		m_snapshot.EVENT_SELECTED += m_onSelected;
@@ -248,7 +247,6 @@ namespace DXApp
 	}
 	void MainUI::OnSelected(RECT rect)
 	{
-		::ShowWindow(GetParent(m_hWND), SW_SHOW);
 		m_snapshot.EVENT_SELECTED -= m_onSelected;
 		m_snapshot.DestroyWindow();
 		m_snapshot.m_rectangle.SetRectEmpty();

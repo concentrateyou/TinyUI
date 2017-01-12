@@ -20,11 +20,11 @@ namespace DXApp
 	{
 		TinyRectangle s;
 		::GetWindowRect(::GetDesktopWindow(), &s);
-		return TinyControl::Create(hParent, 500, 100, s.Width() / 2, s.Height() / 2, FALSE);
+		return TinyControl::Create(hParent, 0, 0, s.Width(), s.Height(), FALSE);
 	}
 	DWORD Snapshot::RetrieveStyle()
 	{
-		return WS_THICKFRAME | WS_MAXIMIZE;
+		return WS_POPUP;
 	}
 	DWORD Snapshot::RetrieveExStyle()
 	{
@@ -164,9 +164,11 @@ namespace DXApp
 		Invalidate();
 	}
 
-	void Snapshot::OnSelected()
+	LRESULT Snapshot::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
+		bHandled = FALSE;
 		EVENT_SELECTED(m_rectangle);
+		return FALSE;
 	}
 
 	LRESULT Snapshot::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

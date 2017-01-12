@@ -67,7 +67,7 @@ namespace DXApp
 			HWND hWND = GetParent(GetParent(m_hWND));
 			::ShowWindow(hWND, SW_SHOW);
 		}
-		return TinyLabel::OnLButtonDBClick(uMsg, wParam, lParam, bHandled);
+		return TinyLabel::OnLButtonUp(uMsg, wParam, lParam, bHandled);
 	}
 
 	LRESULT FindTool::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

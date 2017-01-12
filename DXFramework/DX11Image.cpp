@@ -64,13 +64,14 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11Image::BitBlt(const DX11& dx11, HDC hSrcDC, const TinyRectangle& rectangle)
+	BOOL DX11Image::BitBlt(const DX11& dx11, HDC hSrcDC, const TinyRectangle& srcRect)
 	{
 		ASSERT(m_texture.IsValid());
 		HDC hDC = NULL;
 		if (!m_texture.GetDC(hDC))
 			return FALSE;
-		::BitBlt(hDC, rectangle.left, rectangle.top, rectangle.Width(), rectangle.Height(), hSrcDC, 0, 0, SRCCOPY);
+		TinySize size = m_texture.GetSize();
+		::BitBlt(hDC, 0, 0, size.cx, size.cy, hSrcDC, srcRect.left, srcRect.top, SRCCOPY);
 		if (!m_texture.ReleaseDC())
 			return FALSE;
 		return TRUE;
