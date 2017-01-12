@@ -197,10 +197,10 @@ namespace TinyUI
 
 	}
 
-	void TinyMenu::OnClick(void* ps, INT menuID)
+	void TinyMenu::OnClick(void* sender, INT menuID)
 	{
-		ASSERT(ps == this);
-		EVENT_CLICK(ps, menuID);
+		ASSERT(sender == this);
+		EVENT_CLICK(sender, menuID);
 	}
 }
 

@@ -6,16 +6,19 @@ namespace DXApp
 {
 
 	RenderTask::RenderTask()
-		:m_currentElement(NULL)
+		:m_lastElement(NULL)
 	{
 
 	}
 
 	RenderTask::~RenderTask()
 	{
+		m_menu.EVENT_CLICK -= m_onMenuClick;
+
 		m_pWindow->EVENT_SIZE -= m_onSize;
 		m_pWindow->EVENT_LBUTTONDOWN -= m_onLButtonDown;
 		m_pWindow->EVENT_LBUTTONUP -= m_onLButtonUp;
+		m_pWindow->EVENT_RBUTTONDOWN -= m_onRButtonDown;
 		m_pWindow->EVENT_MOUSEMOVE -= m_onMouseMove;
 		m_pWindow->EVENT_SETCURSOR -= m_onSetCursor;
 	}
@@ -30,13 +33,25 @@ namespace DXApp
 		m_onSize.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &RenderTask::OnSize));
 		m_onLButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &RenderTask::OnLButtonDown));
 		m_onLButtonUp.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &RenderTask::OnLButtonUp));
+		m_onRButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &RenderTask::OnRButtonDown));
 		m_onMouseMove.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &RenderTask::OnMouseMove));
 		m_onSetCursor.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &RenderTask::OnSetCursor));
 		m_pWindow->EVENT_SIZE += m_onSize;
 		m_pWindow->EVENT_LBUTTONDOWN += m_onLButtonDown;
 		m_pWindow->EVENT_LBUTTONUP += m_onLButtonUp;
+		m_pWindow->EVENT_RBUTTONDOWN += m_onRButtonDown;
 		m_pWindow->EVENT_MOUSEMOVE += m_onMouseMove;
 		m_pWindow->EVENT_SETCURSOR += m_onSetCursor;
+
+		m_menu.CreatePopupMenu();
+		m_menu.AppendMenu(MF_STRING, IDM_MOVEUP, TEXT("上移"));
+		m_menu.AppendMenu(MF_STRING, IDM_MOVEDOWN, TEXT("下移"));
+		m_menu.AppendMenu(MF_STRING, IDM_MOVETOP, TEXT("移至顶部"));
+		m_menu.AppendMenu(MF_STRING, IDM_MOVEBOTTPM, TEXT("移至底部"));
+		m_menu.AppendMenu(MF_STRING, IDM_REMOVE, TEXT("移除"));
+		m_onMenuClick.Reset(new Delegate<void(void*, INT)>(this, &RenderTask::OnMenuClick));
+		m_menu.EVENT_CLICK += m_onMenuClick;
+
 		return TRUE;
 	}
 	DX11Graphics2D*	 RenderTask::GetGraphics()
@@ -92,29 +107,45 @@ namespace DXApp
 		ASSERT(m_pWindow);
 		bHandled = FALSE;
 		TinyPoint point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		DX11Element* element = HitTestElement(point);
-		if (element != m_currentElement)
+		DX11Element* element = HitTest(point);
+		if (element != m_lastElement)
 		{
-			m_currentElement = element;
+			m_lastElement = element;
 		}
-		if (m_currentElement)
+		if (m_lastElement)
 		{
-			BringToTop(element);
-			if (m_currentElement->HitTest(point) >= 0)
+			if (m_lastElement->HitTest(point) >= 0)
 			{
-				m_currentElement->Track(m_pWindow->Handle(), point, TRUE);
+				m_lastElement->Track(m_pWindow->Handle(), point, TRUE);
 			}
 		}
 	}
 
 	void RenderTask::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
+		bHandled = FALSE;
+	}
 
+	void RenderTask::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		ASSERT(m_pWindow);
+		bHandled = FALSE;
+		TinyPoint point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		DX11Element* element = HitTest(point);
+		if (element != m_lastElement)
+		{
+			m_lastElement = element;
+		}
+		if (m_lastElement)
+		{
+			m_pWindow->ClientToScreen(&point);
+			m_menu.TrackPopupMenu(TPM_LEFTBUTTON, point.x, point.y, m_pWindow->Handle(), NULL);
+		}
 	}
 
 	void RenderTask::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
-
+		bHandled = FALSE;
 	}
 
 	void RenderTask::OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -124,12 +155,40 @@ namespace DXApp
 		TinyPoint point;
 		GetCursorPos(&point);
 		::ScreenToClient(m_pWindow->Handle(), &point);
-		if (m_currentElement = HitTestElement(point))
+		if (m_lastElement = HitTest(point))
 		{
-			if (m_currentElement->SetCursor(m_pWindow->Handle(), LOWORD(lParam)))
+			if (m_lastElement->SetCursor(m_pWindow->Handle(), LOWORD(lParam)))
 			{
 				bHandled = TRUE;
 			}
+		}
+	}
+
+	void RenderTask::OnMenuClick(void*, INT wID)
+	{
+		switch (wID)
+		{
+		case IDM_MOVEDOWN:
+			MoveDown(m_lastElement);
+			break;
+		case IDM_MOVEUP:
+			MoveUp(m_lastElement);
+			break;
+		case IDM_MOVETOP:
+			BringToTop(m_lastElement);
+			break;
+		case IDM_MOVEBOTTPM:
+			BringToBottom(m_lastElement);
+			break;
+		case IDM_REMOVE:
+		{
+			if (m_lastElement)
+			{
+				Remove(m_lastElement);
+				m_lastElement = NULL;
+			}
+		}
+		break;
 		}
 	}
 
@@ -147,13 +206,42 @@ namespace DXApp
 	void RenderTask::BringToTop(DX11Element* element)
 	{
 		TinyAutoLock lock(m_lock);
-		if (m_scenes.Lookup(element) > 0)
+		if (m_scenes.Lookup(element) >= 0)
 		{
 			m_scenes.Remove(element);
 			m_scenes.Insert(0, element);
 		}
 	}
-	DX11Element* RenderTask::HitTestElement(const TinyPoint& pos)
+	void RenderTask::BringToBottom(DX11Element* element)
+	{
+		TinyAutoLock lock(m_lock);
+		if (m_scenes.Lookup(element) >= 0)
+		{
+			m_scenes.Remove(element);
+			m_scenes.Add(element);
+		}
+	}
+	void RenderTask::MoveUp(DX11Element* element)
+	{
+		TinyAutoLock lock(m_lock);
+		INT index = m_scenes.Lookup(element);
+		if (index > 0)
+		{
+			m_scenes.Remove(element);
+			m_scenes.Insert(index - 1, element);
+		}
+	}
+	void RenderTask::MoveDown(DX11Element* element)
+	{
+		TinyAutoLock lock(m_lock);
+		INT index = m_scenes.Lookup(element);
+		if (index >= 0 && index < m_scenes.GetSize() - 1)
+		{
+			m_scenes.Remove(element);
+			m_scenes.Insert(index + 1, element);
+		}
+	}
+	DX11Element* RenderTask::HitTest(const TinyPoint& pos)
 	{
 		for (INT i = 0;i < m_scenes.GetSize();i++)
 		{

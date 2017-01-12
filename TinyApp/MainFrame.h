@@ -10,9 +10,6 @@
 #include "AudioCapture.h"
 #include "RenderTask.h"
 #include "Media/TinyWave.h"
-
-#include "Snapshot.h"
-
 using namespace TinyUI;
 
 class CMainFrame : public TinyControl
@@ -95,7 +92,5 @@ private:
 	TinyButton			m_audioOutputStop;
 
 	Media::TinyWaveFile		m_waveFile;
-
-	WindowCapture::Snapshot m_snapshot;
 };
 

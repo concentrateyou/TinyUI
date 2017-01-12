@@ -80,8 +80,6 @@ namespace DXApp
 	void MainUI::CreateUI()
 	{
 		ASSERT(m_pDXWND);
-		m_onDXWLButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MainUI::OnDXWLButtonDown));
-		m_pDXWND->EVENT_RBUTTONDOWN += m_onDXWLButtonDown;
 
 		m_broadcast.Create(m_hWND, 0, 0, 0, 0);
 		m_broadcast.SetText("¿ªÊ¼Ö±²¥");
@@ -132,8 +130,7 @@ namespace DXApp
 	}
 	void MainUI::DestoryUI()
 	{
-		m_pDXWND->EVENT_RBUTTONDOWN -= m_onDXWLButtonDown;
-
+	
 		m_renderTask.Close();
 
 		m_broadcast.EVENT_CLICK -= m_onBroadcastClick;
@@ -144,13 +141,6 @@ namespace DXApp
 		m_capture.EVENT_CLICK -= m_onCaptureClick;
 		m_text.EVENT_CLICK -= m_onTextClick;
 		m_image.EVENT_CLICK -= m_onImageClick;
-	}
-	void MainUI::OnDXWLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		bHandled = FALSE;
-		POINT pos = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-		m_pDXWND->ClientToScreen(&pos);
-		m_pDXWND->ShowContextMenu(pos);
 	}
 	void MainUI::OnBroadcastClick(void*, INT)
 	{
