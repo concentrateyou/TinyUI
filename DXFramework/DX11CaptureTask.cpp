@@ -23,7 +23,7 @@ namespace DXFramework
 	}
 	BOOL DX11CaptureTask::Submit()
 	{
-		return TinyTaskBase::Submit(std::forward<Closure>(BindCallback(&DX11CaptureTask::MessagePump, this)));
+		return TinyTaskBase::Submit(BindCallback(&DX11CaptureTask::MessagePump, this));
 	}
 	BOOL DX11CaptureTask::Close(DWORD dwMS)
 	{
@@ -254,9 +254,6 @@ namespace DXFramework
 		}
 		if (!m_bCapturing)
 		{
-			/*AttemptCapture(TEXT("ApolloRuntimeContentWindow"), TEXT("LolClient.exe"), TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));*/
-			//AttemptCapture(TEXT("Direct3DWindowClass"), TEXT("SubD11.exe"), TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));
-			//AttemptCapture(TEXT("Warcraft III"), TEXT("War3.exe"), TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));
 			AttemptCapture(m_className, m_exeName, m_dllName);
 		}
 		else
@@ -279,6 +276,12 @@ namespace DXFramework
 		{
 			if (m_close.Lock(15))
 			{
+				HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, m_targetWND.dwProcessID);
+				if (hProcess)
+				{
+					UninjectLibrary(hProcess, m_dllName.STR());
+					CloseHandle(hProcess);
+				}
 				EndCapture();
 				break;
 			}

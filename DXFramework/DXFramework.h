@@ -40,4 +40,5 @@ namespace DXFramework
 #define TEXTURE_MEMORY          TEXT("Local\\TextureMemory")
 
 	BOOL WINAPI InjectLibrary(HANDLE hProcess, const CHAR *pszDLL);
+	BOOL WINAPI UninjectLibrary(HANDLE hProcess, const CHAR *pszDLL);
 }

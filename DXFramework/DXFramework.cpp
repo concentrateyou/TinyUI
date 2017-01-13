@@ -9,46 +9,30 @@ namespace DXFramework
 	typedef LPVOID(WINAPI *VIRTUALALLOCEX)(HANDLE, LPVOID, SIZE_T, DWORD, DWORD);
 	typedef BOOL(WINAPI *VIRTUALFREEEX)(HANDLE, LPVOID, SIZE_T, DWORD);
 	typedef HANDLE(WINAPI *LOADLIBRARY) (DWORD, BOOL, DWORD);
+	typedef HANDLE(WINAPI *FREELIBRARY) (HMODULE);
+
 	BOOL WINAPI InjectLibrary(HANDLE hProcess, const CHAR *pszDLL)
 	{
 		if (!hProcess || !pszDLL)
 			return FALSE;
 		HMODULE hInstance = NULL;
-		HANDLE	hThread = NULL;
-		FARPROC	lpStartAddress = NULL;
-		DWORD dwSize = strlen(pszDLL);
-		dwSize = (dwSize + 1) * sizeof(CHAR);
+		HANDLE	hTask = NULL;
+		FARPROC	address = NULL;
 		WRITEPROCESSMEMORY pfnWriteProcessMemory = NULL;
 		CREATEREMOTETHREAD pfnCreateRemoteThread = NULL;
 		VIRTUALALLOCEX pfnVirtualAllocEx = NULL;
 		VIRTUALFREEEX pfnVirtualFreeEx = NULL;
-		INT obfSize = 12;
-		CHAR pWPMSTR[19], pCRTSTR[19], pVAESTR[15], pVFESTR[14], pLLSTR[13];
-		memcpy(pWPMSTR, "RvnrdPqmni|}Dmfegm", 19);
-		memcpy(pCRTSTR, "FvbgueQg`c{k]`yotp", 19);
-		memcpy(pVAESTR, "WiqvpekGeddiHt", 15);
-		memcpy(pVFESTR, "Wiqvpek@{mnOu", 14);
-		memcpy(pLLSTR, "MobfImethzr", 12);
-		pLLSTR[11] = 'A';
-		pLLSTR[12] = 0;
-		obfSize += 6;
-		for (INT i = 0; i < obfSize; i++) pWPMSTR[i] ^= i ^ 5;
-		for (INT i = 0; i < obfSize; i++) pCRTSTR[i] ^= i ^ 5;
-		obfSize -= 4;
-		for (INT i = 0; i < obfSize; i++) pVAESTR[i] ^= i ^ 1;
-		obfSize -= 1;
-		for (INT i = 0; i < obfSize; i++) pVFESTR[i] ^= i ^ 1;
-		obfSize -= 2;
-		for (INT i = 0; i < obfSize; i++) pLLSTR[i] ^= i ^ 1;
 		hInstance = GetModuleHandle(TEXT("KERNEL32"));
 		if (!hInstance)
 			return FALSE;
-		pfnWriteProcessMemory = (WRITEPROCESSMEMORY)GetProcAddress(hInstance, pWPMSTR);
-		pfnCreateRemoteThread = (CREATEREMOTETHREAD)GetProcAddress(hInstance, pCRTSTR);
-		pfnVirtualAllocEx = (VIRTUALALLOCEX)GetProcAddress(hInstance, pVAESTR);
-		pfnVirtualFreeEx = (VIRTUALFREEEX)GetProcAddress(hInstance, pVFESTR);
+		pfnWriteProcessMemory = (WRITEPROCESSMEMORY)GetProcAddress(hInstance, TEXT("WriteProcessMemory"));
+		pfnCreateRemoteThread = (CREATEREMOTETHREAD)GetProcAddress(hInstance, TEXT("CreateRemoteThread"));
+		pfnVirtualAllocEx = (VIRTUALALLOCEX)GetProcAddress(hInstance, TEXT("VirtualAllocEx"));
+		pfnVirtualFreeEx = (VIRTUALFREEEX)GetProcAddress(hInstance, TEXT("VirtualFreeEx"));
 		if (!pfnWriteProcessMemory || !pfnCreateRemoteThread || !pfnVirtualAllocEx || !pfnVirtualFreeEx)
 			return FALSE;
+		DWORD dwSize = strlen(pszDLL);
+		dwSize = (dwSize + 1) * sizeof(CHAR);
 		LPVOID pAlloc = (LPVOID)(*pfnVirtualAllocEx)(hProcess, NULL, dwSize, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
 		if (!pAlloc)
 			return FALSE;
@@ -56,31 +40,114 @@ namespace DXFramework
 		BOOL bRes = (*pfnWriteProcessMemory)(hProcess, pAlloc, (LPVOID)pszDLL, dwSize, &size);
 		if (!bRes)
 			goto error;
-		lpStartAddress = (FARPROC)GetProcAddress(hInstance, pLLSTR);
-		if (!lpStartAddress)
+		address = (FARPROC)GetProcAddress(hInstance, TEXT("LoadLibraryA"));
+		if (!address)
 		{
 			bRes = FALSE;
 			goto error;
 		}
-		hThread = (*pfnCreateRemoteThread)(hProcess, NULL, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(lpStartAddress), pAlloc, 0, 0);
-		if (!hThread)
+		hTask = (*pfnCreateRemoteThread)(hProcess, NULL, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(address), pAlloc, 0, 0);
+		if (!hTask)
 		{
 			bRes = FALSE;
 			goto error;
 		}
-		if (WaitForSingleObject(hThread, 200) == WAIT_OBJECT_0)
+		if (WaitForSingleObject(hTask, 2000) == WAIT_OBJECT_0)
 		{
 			DWORD dw;
-			GetExitCodeThread(hThread, &dw);
+			GetExitCodeThread(hTask, &dw);
 			bRes = dw != 0;
 		}
 	error:
-		if (hThread)
+		if (hTask != NULL)
 		{
-			CloseHandle(hThread);
-			hThread = NULL;
+			CloseHandle(hTask);
+			hTask = NULL;
 		}
-		if (pAlloc)
+		if (pAlloc != NULL)
+		{
+			(*pfnVirtualFreeEx)(hProcess, pAlloc, 0, MEM_RELEASE);
+			pAlloc = NULL;
+		}
+		return bRes;
+	}
+	BOOL WINAPI UninjectLibrary(HANDLE hProcess, const CHAR *pszDLL)
+	{
+		if (!hProcess || !pszDLL)
+			return FALSE;
+		HMODULE hInstance = NULL;
+		HANDLE	hTask = NULL;
+		FARPROC	address = NULL;
+		WRITEPROCESSMEMORY pfnWriteProcessMemory = NULL;
+		CREATEREMOTETHREAD pfnCreateRemoteThread = NULL;
+		VIRTUALALLOCEX pfnVirtualAllocEx = NULL;
+		VIRTUALFREEEX pfnVirtualFreeEx = NULL;
+		hInstance = GetModuleHandle(TEXT("KERNEL32"));
+		if (!hInstance)
+			return FALSE;
+		pfnWriteProcessMemory = (WRITEPROCESSMEMORY)GetProcAddress(hInstance, TEXT("WriteProcessMemory"));
+		pfnCreateRemoteThread = (CREATEREMOTETHREAD)GetProcAddress(hInstance, TEXT("CreateRemoteThread"));
+		pfnVirtualAllocEx = (VIRTUALALLOCEX)GetProcAddress(hInstance, TEXT("VirtualAllocEx"));
+		pfnVirtualFreeEx = (VIRTUALFREEEX)GetProcAddress(hInstance, TEXT("VirtualFreeEx"));
+		if (!pfnWriteProcessMemory || !pfnCreateRemoteThread || !pfnVirtualAllocEx || !pfnVirtualFreeEx)
+			return FALSE;
+		DWORD dwSize = strlen(pszDLL);
+		dwSize = (dwSize + 1) * sizeof(CHAR);
+		LPVOID pAlloc = (LPVOID)(*pfnVirtualAllocEx)(hProcess, NULL, dwSize, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+		if (!pAlloc)
+			return FALSE;
+		SIZE_T size = 0;
+		BOOL bRes = (*pfnWriteProcessMemory)(hProcess, pAlloc, (LPVOID)pszDLL, dwSize, &size);
+		if (!bRes)
+			goto error;
+		address = (FARPROC)GetProcAddress(hInstance, TEXT("GetModuleHandleA"));
+		if (!address)
+		{
+			bRes = FALSE;
+			goto error;
+		}
+		hTask = (*pfnCreateRemoteThread)(hProcess, NULL, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(address), pAlloc, 0, 0);
+		if (!hTask)
+		{
+			bRes = FALSE;
+			goto error;
+		}
+		DWORD dwHandle = 0;
+		if (WaitForSingleObject(hTask, 2000) == WAIT_OBJECT_0)
+		{
+			DWORD dw;
+			GetExitCodeThread(hTask, &dwHandle);
+			if (dwHandle == 0)
+			{
+				bRes = FALSE;
+				goto error;
+			}
+		}
+		address = (FARPROC)GetProcAddress(hInstance, TEXT("FreeLibrary"));
+		if (!address)
+		{
+			bRes = FALSE;
+			goto error;
+		}
+		hTask = (*pfnCreateRemoteThread)(hProcess, NULL, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(address), (LPVOID)dwHandle, 0, 0);
+		if (!hTask)
+		{
+			bRes = FALSE;
+			goto error;
+		}
+		if (WaitForSingleObject(hTask, 5000) == WAIT_OBJECT_0)
+		{
+			DWORD dw;
+			GetExitCodeThread(hTask, &dw);
+			bRes = dw != 0;
+		}
+	error:
+		if (hTask != NULL)
+		{
+			CloseHandle(hTask);
+			hTask = NULL;
+		}
+		if (pAlloc != NULL)
 		{
 			(*pfnVirtualFreeEx)(hProcess, pAlloc, 0, MEM_RELEASE);
 			pAlloc = NULL;

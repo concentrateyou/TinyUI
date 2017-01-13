@@ -53,6 +53,7 @@ namespace DXCapture
 			return FALSE;
 		if (!m_textureMemery.Map(0, 0))
 			return FALSE;
+		LOG(INFO) << "DX::Initialize OK\n";
 		return TRUE;
 	}
 	void DX::Uninitialize()
@@ -65,6 +66,7 @@ namespace DXCapture
 		m_memery.Close();
 		m_textureMemery.Unmap();
 		m_textureMemery.Close();
+		LOG(INFO) << "DX::Uninitialize OK\n";
 	}
 	SharedCaptureDATA* DX::GetSharedCaptureDATA()
 	{
