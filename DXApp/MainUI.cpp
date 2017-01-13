@@ -186,6 +186,7 @@ namespace DXApp
 					{
 						m_gameScene.EndScene();
 						m_gameScene.Initialize(m_renderTask.GetGraphics()->GetDX11());
+						m_gameScene.SetConfig(className, pzName, TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));
 						m_gameScene.BeginScene();
 					}
 				}

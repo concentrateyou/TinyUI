@@ -31,6 +31,7 @@ namespace DXApp
 	void GameScene::EndScene()
 	{
 		m_captureTask->Close();
+		m_captureTask.Reset(NULL);
 	}
 
 	BOOL GameScene::Render(const DX11& dx11)
