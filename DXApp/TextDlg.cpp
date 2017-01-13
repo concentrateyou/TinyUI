@@ -30,12 +30,10 @@ namespace DXApp
 	LRESULT TextDlg::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-
 		m_txtContext.SubclassDlgItem(IDC_RICHEDIT2_TEXT, m_hWND);
 		m_btnFont.SubclassDlgItem(IDC_BTN_FONT, m_hWND);
 		m_btnColor.SubclassDlgItem(IDC_BTN_COLOR, m_hWND);
 		m_txtSize.SubclassDlgItem(IDC_RICHEDIT2_TEXT, m_hWND);
-
 		return FALSE;
 	}
 

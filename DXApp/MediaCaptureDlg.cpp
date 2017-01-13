@@ -58,24 +58,13 @@ namespace DXApp
 		bHandled = FALSE;
 
 		m_button.SubclassDlgItem(IDC_BUTTON_REFRESH, m_hWND);
-
-
 		m_video.SubclassDlgItem(IDC_COMBO_VIDEO, m_hWND);
 		m_video.SubclassChildren();
-
-
 		GetVideoDevices();
-
 		m_videoCap.SubclassDlgItem(IDC_COMBO_VIDEO_CAPABILITY, m_hWND);
-
-
 		m_audio.SubclassDlgItem(IDC_COMBO_AUDIO, m_hWND);
-
 		GetAudioDevices();
-
 		m_audioCap.SubclassDlgItem(IDC_COMBO_AUDIO_CAPABILITY, m_hWND);
-
-
 		return FALSE;
 	}
 
@@ -85,7 +74,6 @@ namespace DXApp
 		m_videoCap.ResetContent();
 		m_audio.ResetContent();
 		m_video.ResetContent();
-
 		GetVideoDevices();
 		GetAudioDevices();
 	}
