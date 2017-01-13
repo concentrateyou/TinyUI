@@ -48,7 +48,7 @@ namespace GameDetour
 		{
 			::PostMessage(m_hWNDD3D, WM_CLOSE, NULL, NULL);
 		}
-		m_task.Close(INFINITE);
+		//http://stackoverflow.com/questions/35828004/waitforsingleobject-for-thread-object-does-not-work-in-dll-unload
 	}
 	void GameCapture::BeginCapture()
 	{
