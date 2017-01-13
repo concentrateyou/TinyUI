@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "ScreenScene.h"
+#include "Utility.h"
 
 namespace DXApp
 {
@@ -18,7 +19,7 @@ namespace DXApp
 		Destory();
 		if (!s.IsRectEmpty())
 		{
-			m_screenRect = s;
+			m_snapshot = s;
 			return DX11Image::Create(dx11, s.Size(), NULL);
 		}
 		return FALSE;
@@ -45,8 +46,8 @@ namespace DXApp
 		HDC hDC = GetDC(NULL);
 		if (hDC != NULL)
 		{
-			TinyRectangle s(TinyPoint(0, 0), m_screenRect.Size());
-			this->BitBlt(dx11, hDC, m_screenRect, m_screenRect.Position());
+			TinyRectangle dst(TinyPoint(0, 0), m_snapshot.Size());
+			DX11Image::BitBlt(dx11, dst, hDC, m_snapshot.Position());
 			ReleaseDC(NULL, hDC);
 			DX11Image::Render(dx11);
 			return TRUE;

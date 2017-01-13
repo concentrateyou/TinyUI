@@ -9,40 +9,21 @@ namespace DXApp
 	GameDlg::GameDlg()
 		:m_gameWND(NULL)
 	{
+		m_onRefreshClick.Reset(new Delegate<void(void*, INT)>(this, &GameDlg::OnRefreshClick));
+		m_btnRefresh.EVENT_CLICK += m_onRefreshClick;
+
+		m_onGameSelectChange.Reset(new Delegate<void(INT)>(this, &GameDlg::OnGameSelectChange));
+		m_comboGame.EVENT_SELECTCHANGE += m_onGameSelectChange;
 	}
 
 
 	GameDlg::~GameDlg()
 	{
+		m_btnRefresh.EVENT_CLICK -= m_onRefreshClick;
+		m_comboGame.EVENT_SELECTCHANGE -= m_onGameSelectChange;
 	}
 
-	LRESULT GameDlg::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		bHandled = FALSE;
-		m_refresh.SubclassDlgItem(IDC_BTN_REFRESH, m_hWND);
-		m_onRefreshClick.Reset(new Delegate<void(void*, INT)>(this, &GameDlg::OnRefreshClick));
-		m_refresh.EVENT_CLICK += m_onRefreshClick;
-		m_game.SubclassDlgItem(IDC_COMBO_GAME, m_hWND);
-		m_onGameSelectChange.Reset(new Delegate<void(INT)>(this, &GameDlg::OnGameSelectChange));
-		m_game.EVENT_SELECTCHANGE += m_onGameSelectChange;
-		OnRefreshClick(NULL, 0);
-		return FALSE;
-	}
 
-	void GameDlg::OnRefreshClick(void*, INT)
-	{
-		m_game.Clear();
-		EnumWindows(GameDlg::EnumWindow, reinterpret_cast<LPARAM>(this));
-	}
-
-	void GameDlg::OnGameSelectChange(INT index)
-	{
-		m_gameWND = reinterpret_cast<HWND>(m_game.GetItemData(index));
-	}
-	HWND GameDlg::GetGameWND() const
-	{
-		return m_gameWND;
-	}
 	LRESULT GameDlg::OnCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
@@ -52,16 +33,41 @@ namespace DXApp
 		case IDCANCEL:
 			if (EndDialog(LOWORD(wParam)))
 			{
-				m_refresh.EVENT_CLICK -= m_onRefreshClick;
-				m_game.EVENT_SELECTCHANGE -= m_onGameSelectChange;
+
 			}
 			break;
 		}
+		return TinyCustomDialog::OnCommand(uMsg, wParam, lParam, bHandled);
+	}
+
+	LRESULT GameDlg::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		m_btnRefresh.SubclassDlgItem(IDC_BTN_REFRESH, m_hWND);
+
+		m_comboGame.SubclassDlgItem(IDC_COMBO_GAME, m_hWND);
+
+		OnRefreshClick(NULL, 0);
 		return FALSE;
+	}
+
+	void GameDlg::OnRefreshClick(void*, INT)
+	{
+		m_comboGame.ResetContent();
+		EnumWindows(GameDlg::EnumWindow, reinterpret_cast<LPARAM>(this));
+	}
+
+	void GameDlg::OnGameSelectChange(INT index)
+	{
+		m_gameWND = reinterpret_cast<HWND>(m_comboGame.GetItemData(index));
+	}
+	HWND GameDlg::GetGameWND() const
+	{
+		return m_gameWND;
 	}
 	void GameDlg::Add(const TinyString& str, HWND hWND)
 	{
-		m_game.SetItemData(m_game.AddString(str.STR()), reinterpret_cast<INT_PTR>(hWND));
+		m_comboGame.SetItemData(m_comboGame.AddString(str.STR()), reinterpret_cast<INT_PTR>(hWND));
 	}
 	BOOL CALLBACK GameDlg::EnumWindow(HWND hwnd, LPARAM lParam)
 	{

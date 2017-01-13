@@ -18,7 +18,7 @@ namespace DXApp
 		void EndScene() OVERRIDE;
 		BOOL Render(const DX11& dx11) OVERRIDE;
 	private:
-		TinyRectangle	m_screenRect;
+		TinyRectangle	m_snapshot;
 	};
 
 }

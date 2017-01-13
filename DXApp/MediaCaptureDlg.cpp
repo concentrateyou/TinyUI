@@ -4,18 +4,53 @@
 
 namespace DXApp
 {
-
 	MediaCaptureDlg::MediaCaptureDlg()
 		:m_audioName(NULL),
 		m_videoName(NULL),
 		m_audioParam(NULL),
 		m_videoParam(NULL)
 	{
+		m_onRefreshClick.Reset(new Delegate<void(void*, INT)>(this, &MediaCaptureDlg::OnRefreshClick));
+		m_button.EVENT_CLICK += m_onRefreshClick;
+
+		m_onVideoSelectChange.Reset(new Delegate<void(INT)>(this, &MediaCaptureDlg::OnVideoSelectChange));
+		m_video.EVENT_SELECTCHANGE += m_onVideoSelectChange;
+
+		m_onVideoCapSelectChange.Reset(new Delegate<void(INT)>(this, &MediaCaptureDlg::OnVideoCapSelectChange));
+		m_videoCap.EVENT_SELECTCHANGE += m_onVideoCapSelectChange;
+
+		m_onAudioSelectChange.Reset(new Delegate<void(INT)>(this, &MediaCaptureDlg::OnAudioSelectChange));
+		m_audio.EVENT_SELECTCHANGE += m_onAudioSelectChange;
+
+		m_onAudioCapSelectChange.Reset(new Delegate<void(INT)>(this, &MediaCaptureDlg::OnAudioCapSelectChange));
+		m_audioCap.EVENT_SELECTCHANGE += m_onAudioCapSelectChange;
 	}
 
 
 	MediaCaptureDlg::~MediaCaptureDlg()
 	{
+		m_button.EVENT_CLICK -= m_onRefreshClick;
+		m_video.EVENT_SELECTCHANGE -= m_onVideoSelectChange;
+		m_videoCap.EVENT_SELECTCHANGE -= m_onVideoCapSelectChange;
+		m_audio.EVENT_SELECTCHANGE -= m_onAudioSelectChange;
+		m_audioCap.EVENT_SELECTCHANGE -= m_onAudioCapSelectChange;
+	}
+
+
+	LRESULT MediaCaptureDlg::OnCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		switch (LOWORD(wParam))
+		{
+		case IDOK:
+		case IDCANCEL:
+			if (EndDialog(LOWORD(wParam)))
+			{
+
+			}
+			break;
+		}
+		return TinyCustomDialog::OnCommand(uMsg, wParam, lParam, bHandled);
+
 	}
 
 	LRESULT MediaCaptureDlg::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -23,28 +58,23 @@ namespace DXApp
 		bHandled = FALSE;
 
 		m_button.SubclassDlgItem(IDC_BUTTON_REFRESH, m_hWND);
-		m_onRefreshClick.Reset(new Delegate<void(void*, INT)>(this, &MediaCaptureDlg::OnRefreshClick));
-		m_button.EVENT_CLICK += m_onRefreshClick;
+
 
 		m_video.SubclassDlgItem(IDC_COMBO_VIDEO, m_hWND);
 		m_video.SubclassChildren();
 
-		m_onVideoSelectChange.Reset(new Delegate<void(INT)>(this, &MediaCaptureDlg::OnVideoSelectChange));
-		m_video.EVENT_SELECTCHANGE += m_onVideoSelectChange;
+
 		GetVideoDevices();
 
 		m_videoCap.SubclassDlgItem(IDC_COMBO_VIDEO_CAPABILITY, m_hWND);
-		m_onVideoCapSelectChange.Reset(new Delegate<void(INT)>(this, &MediaCaptureDlg::OnVideoCapSelectChange));
-		m_videoCap.EVENT_SELECTCHANGE += m_onVideoCapSelectChange;
+
 
 		m_audio.SubclassDlgItem(IDC_COMBO_AUDIO, m_hWND);
-		m_onAudioSelectChange.Reset(new Delegate<void(INT)>(this, &MediaCaptureDlg::OnAudioSelectChange));
-		m_audio.EVENT_SELECTCHANGE += m_onAudioSelectChange;
+
 		GetAudioDevices();
 
 		m_audioCap.SubclassDlgItem(IDC_COMBO_AUDIO_CAPABILITY, m_hWND);
-		m_onAudioCapSelectChange.Reset(new Delegate<void(INT)>(this, &MediaCaptureDlg::OnAudioCapSelectChange));
-		m_audioCap.EVENT_SELECTCHANGE += m_onAudioCapSelectChange;
+
 
 		return FALSE;
 	}
@@ -138,25 +168,5 @@ namespace DXApp
 	void MediaCaptureDlg::OnAudioCapSelectChange(INT index)
 	{
 		m_audioParam = reinterpret_cast<DShow::AudioCaptureParam*>(m_audioCap.GetItemData(index));
-	}
-
-	LRESULT MediaCaptureDlg::OnCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		bHandled = FALSE;
-		switch (LOWORD(wParam))
-		{
-		case IDOK:
-		case IDCANCEL:
-			if (EndDialog(LOWORD(wParam)))
-			{
-				m_button.EVENT_CLICK -= m_onRefreshClick;
-				m_video.EVENT_SELECTCHANGE -= m_onVideoSelectChange;
-				m_videoCap.EVENT_SELECTCHANGE -= m_onVideoCapSelectChange;
-				m_audio.EVENT_SELECTCHANGE -= m_onAudioSelectChange;
-				m_audioCap.EVENT_SELECTCHANGE -= m_onAudioCapSelectChange;
-			}
-			break;
-		}
-		return FALSE;
 	}
 }

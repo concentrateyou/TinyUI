@@ -20,4 +20,5 @@ typedef struct tagSample
 }Sample;
 
 BOOL WINAPI GetModuleList(HANDLE hProcess, TinyArray<TinyString> &moduleList);
+BOOL WINAPI ScreenSave(const TinyRectangle& s);
 BOOL WINAPI InvertWindow(HWND hWND);
