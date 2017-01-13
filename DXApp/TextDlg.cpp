@@ -1,17 +1,25 @@
 #include "stdafx.h"
 #include "TextDlg.h"
-#include "Control/TinyCommonDialog.h"
 #include "Resource.h"
+#include "Utility.h"
+#include "Control/TinyCommonDialog.h"
+
 
 namespace DXApp
 {
 	TextDlg::TextDlg()
 	{
 		m_hInstance = LoadLibrary("Riched20.dll");
+		m_onFontClick.Reset(new Delegate<void(void*, INT)>(this, &TextDlg::OnFontClick));
+		m_onColorClick.Reset(new Delegate<void(void*, INT)>(this, &TextDlg::OnColorClick));
+		m_btnFont.EVENT_CLICK += m_onFontClick;
+		m_btnColor.EVENT_CLICK += m_onColorClick;
 	}
 
 	TextDlg::~TextDlg()
 	{
+		m_btnFont.EVENT_CLICK -= m_onFontClick;
+		m_btnColor.EVENT_CLICK -= m_onColorClick;
 		if (m_hInstance != NULL)
 		{
 			FreeLibrary(m_hInstance);
@@ -28,11 +36,6 @@ namespace DXApp
 		m_btnColor.SubclassDlgItem(IDC_BTN_COLOR, m_hWND);
 		m_txtSize.SubclassDlgItem(IDC_RICHEDIT2_TEXT, m_hWND);
 
-		m_onFontClick.Reset(new Delegate<void(void*, INT)>(this, &TextDlg::OnFontClick));
-		m_onColorClick.Reset(new Delegate<void(void*, INT)>(this, &TextDlg::OnColorClick));
-		m_btnFont.EVENT_CLICK += m_onFontClick;
-		m_btnColor.EVENT_CLICK += m_onColorClick;
-
 		return FALSE;
 	}
 
@@ -45,8 +48,7 @@ namespace DXApp
 		case IDCANCEL:
 			if (EndDialog(LOWORD(wParam)))
 			{
-				m_btnFont.EVENT_CLICK -= m_onFontClick;
-				m_btnColor.EVENT_CLICK -= m_onColorClick;
+
 			}
 			break;
 		}
@@ -57,11 +59,19 @@ namespace DXApp
 		TinyFontDialog dlg;
 		if (dlg.DoModal(m_hWND) == IDOK)
 		{
-			/*CHARFORMAT cf = { 0 };
-			cf.cbSize = sizeof(CHARFORMAT);
-			m_txtContext.GetDefaultCharFormat(&cf);
-			m_txtContext.SetDefaultCharFormat(&cf);
-			m_txtContext.Invalidate();*/
+			CHARFORMAT cf = { 0 };
+			dlg.GetCharFormat(cf);
+			m_txtContext.SetDefaultCharFormat(cf);
+			m_txtContext.Invalidate();
+			HDC hDC = GetDC(NULL);
+			if (hDC != NULL)
+			{
+				TinyString str;
+				m_txtContext.GetText(str);
+				wstring ws = StringToWString(str.STR());
+				Gdiplus::RectF rectF = MeasureString(hDC, ws, cf);
+				ReleaseDC(NULL, hDC);
+			}
 		}
 	}
 	void TextDlg::OnColorClick(void*, INT)
@@ -69,11 +79,12 @@ namespace DXApp
 		TinyColorDialog dlg;
 		if (dlg.DoModal(m_hWND) == IDOK)
 		{
-			/*CHARFORMAT cf = { 0 };
+			CHARFORMAT cf = { 0 };
 			cf.cbSize = sizeof(CHARFORMAT);
-			m_txtContext.GetDefaultCharFormat(&cf);
-			m_txtContext.SetDefaultCharFormat(&cf);
-			m_txtContext.Invalidate();*/
+			m_txtContext.GetDefaultCharFormat(cf);
+			cf.crTextColor = dlg.GetColor();
+			m_txtContext.SetDefaultCharFormat(cf);
+			m_txtContext.Invalidate();
 		}
 	}
 }

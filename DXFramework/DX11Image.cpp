@@ -78,6 +78,7 @@ namespace DXFramework
 
 	BOOL DX11Image::Load(const DX11& dx11, HANDLE hResource)
 	{
+		ASSERT(hResource);
 		if (!Initialize(dx11))
 			return FALSE;
 		if (m_texture.Load(dx11, hResource))

@@ -146,11 +146,13 @@ namespace DXFramework
 			TRACE("BeginCapture GetSharedTextureDATA-FAIL\n");
 			return FALSE;
 		}
-		if (!m_image.Load(*m_pDX11, pTextureDATA->TextureHandle))
+		if (!pTextureDATA->TextureHandle ||
+			!m_image.Load(*m_pDX11, pTextureDATA->TextureHandle))
 		{
 			TRACE("BeginCapture m_image.Load-FAIL\n");
 			return FALSE;
 		}
+
 		return TRUE;
 	}
 	BOOL DX11CaptureTask::EndCapture()
