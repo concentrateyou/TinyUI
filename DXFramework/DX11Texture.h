@@ -23,6 +23,7 @@ namespace DXFramework
 		BOOL Load(const DX11& dx11, const CHAR* pzFile);
 		BOOL CreateCompatible(const DX11& dx11, INT cx, INT cy, const BYTE* bits);
 		void Destory();
+		BOOL IsCompatible() const;
 		BOOL GetDC(HDC& hDC);
 		BOOL ReleaseDC();
 		ID3D11Texture2D* GetTexture2D() const;
@@ -30,6 +31,7 @@ namespace DXFramework
 		BOOL IsValid() const;
 		TinySize GetSize();
 	protected:
+		BOOL									m_bCompatible;
 		TinyComPtr<IDXGISurface1>				m_surface;
 		TinyComPtr<ID3D11Texture2D>				m_texture2D;
 		TinyComPtr<ID3D11ShaderResourceView>	m_resourceView;

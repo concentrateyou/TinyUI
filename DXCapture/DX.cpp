@@ -43,10 +43,10 @@ namespace DXCapture
 	{
 		if (!BuildEvents())
 			return FALSE;
-		if (!m_memery.Open(SHAREDCAPTURE_MEMORY) &&
-			!m_memery.Create(SHAREDCAPTURE_MEMORY, sizeof(SharedCaptureDATA)))
+		if (!m_captureMemery.Open(SHAREDCAPTURE_MEMORY) &&
+			!m_captureMemery.Create(SHAREDCAPTURE_MEMORY, sizeof(SharedCaptureDATA)))
 			return FALSE;
-		if (!m_memery.Map(0, 0))
+		if (!m_captureMemery.Map(0, 0))
 			return FALSE;
 		if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE) &&
 			!m_textureMemery.Create(TEXTURE_MEMORY, sizeof(SharedTextureDATA)))
@@ -62,15 +62,15 @@ namespace DXCapture
 		m_stop.Close();
 		m_ready.Close();
 		m_exit.Close();
-		m_memery.Unmap();
-		m_memery.Close();
+		m_captureMemery.Unmap();
+		m_captureMemery.Close();
 		m_textureMemery.Unmap();
 		m_textureMemery.Close();
 		LOG(INFO) << "DX::Uninitialize OK\n";
 	}
 	SharedCaptureDATA* DX::GetSharedCaptureDATA()
 	{
-		return reinterpret_cast<SharedCaptureDATA*>(m_memery.Address());
+		return reinterpret_cast<SharedCaptureDATA*>(m_captureMemery.Address());
 	}
 	SharedTextureDATA* DX::GetSharedTextureDATA()
 	{

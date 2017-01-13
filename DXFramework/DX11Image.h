@@ -40,6 +40,7 @@ namespace DXFramework
 		DX11Texture					m_texture;
 		TinyComPtr<ID3D11Buffer>	m_vertexBuffer;
 		TinyComPtr<ID3D11Buffer>	m_indexBuffer;
+		TinyScopedArray<VERTEXTYPE> m_vertices;
 	};
 }
 

@@ -68,14 +68,14 @@ namespace DXFramework
 	}
 	SharedCaptureDATA* DX11CaptureTask::GetSharedCaptureDATA()
 	{
-		if (!m_memory.Address())
+		if (!m_captureMemory.Address())
 		{
-			if (!m_memory.Open(SHAREDCAPTURE_MEMORY, FALSE))
+			if (!m_captureMemory.Open(SHAREDCAPTURE_MEMORY, FALSE))
 				return FALSE;
-			if (!m_memory.Map(0, sizeof(SharedCaptureDATA)))
+			if (!m_captureMemory.Map(0, sizeof(SharedCaptureDATA)))
 				return FALSE;
 		}
-		SharedCaptureDATA* pDATA = reinterpret_cast<SharedCaptureDATA*>(m_memory.Address());
+		SharedCaptureDATA* pDATA = reinterpret_cast<SharedCaptureDATA*>(m_captureMemory.Address());
 		return pDATA;
 	}
 	SharedTextureDATA* DX11CaptureTask::GetSharedTextureDATA()

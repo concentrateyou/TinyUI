@@ -150,6 +150,7 @@ namespace DXFramework
 		hRes = dx11.GetD3D()->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
 		if (FAILED(hRes))
 			return FALSE;
+		m_vertices.Reset(new VERTEXTYPE[vertexCount]);
 		return TRUE;
 	}
 	BOOL DX11Image::Update(const DX11& dx11)
@@ -166,24 +167,23 @@ namespace DXFramework
 		top = (FLOAT)(size.cy / 2) - (FLOAT)position.y;
 		bottom = top - (FLOAT)scale.cy;
 		INT vertexCount = GetIndexCount();
-		TinyScopedArray<VERTEXTYPE> vertices(new VERTEXTYPE[vertexCount]);
-		vertices[0].position = D3DXVECTOR3(left, top, 0.0F);
-		vertices[0].texture = D3DXVECTOR2(0.0F, 0.0F);
-		vertices[1].position = D3DXVECTOR3(right, bottom, 0.0F);
-		vertices[1].texture = D3DXVECTOR2(1.0F, 1.0f);
-		vertices[2].position = D3DXVECTOR3(left, bottom, 0.0F);
-		vertices[2].texture = D3DXVECTOR2(0.0F, 1.0f);
-		vertices[3].position = D3DXVECTOR3(left, top, 0.0F);
-		vertices[3].texture = D3DXVECTOR2(0.0F, 0.0F);
-		vertices[4].position = D3DXVECTOR3(right, top, 0.0F);
-		vertices[4].texture = D3DXVECTOR2(1.0F, 0.0F);
-		vertices[5].position = D3DXVECTOR3(right, bottom, 0.0F);
-		vertices[5].texture = D3DXVECTOR2(1.0F, 1.0F);
+		m_vertices[0].position = D3DXVECTOR3(left, top, 0.0F);
+		m_vertices[0].texture = D3DXVECTOR2(0.0F, 0.0F);
+		m_vertices[1].position = D3DXVECTOR3(right, bottom, 0.0F);
+		m_vertices[1].texture = D3DXVECTOR2(1.0F, 1.0f);
+		m_vertices[2].position = D3DXVECTOR3(left, bottom, 0.0F);
+		m_vertices[2].texture = D3DXVECTOR2(0.0F, 1.0f);
+		m_vertices[3].position = D3DXVECTOR3(left, top, 0.0F);
+		m_vertices[3].texture = D3DXVECTOR2(0.0F, 0.0F);
+		m_vertices[4].position = D3DXVECTOR3(right, top, 0.0F);
+		m_vertices[4].texture = D3DXVECTOR2(1.0F, 0.0F);
+		m_vertices[5].position = D3DXVECTOR3(right, bottom, 0.0F);
+		m_vertices[5].texture = D3DXVECTOR2(1.0F, 1.0F);
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
 		HRESULT hRes = dx11.GetImmediateContext()->Map(m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		if (FAILED(hRes))
 			return FALSE;
-		memcpy(mappedResource.pData, (void*)vertices.Ptr(), sizeof(VERTEXTYPE) * vertexCount);
+		memcpy(mappedResource.pData, (void*)m_vertices.Ptr(), sizeof(VERTEXTYPE) * vertexCount);
 		dx11.GetImmediateContext()->Unmap(m_vertexBuffer, 0);
 		return TRUE;
 	}

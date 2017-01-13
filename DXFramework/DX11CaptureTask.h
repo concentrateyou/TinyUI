@@ -39,7 +39,7 @@ namespace DXFramework
 		TinyString				m_exeName;
 		TinyString				m_dllName;
 		DX11Image&				m_image;
-		TinySharedMemory		m_memory;
+		TinySharedMemory		m_captureMemory;
 		TinySharedMemory		m_textureMemery;
 	};
 }

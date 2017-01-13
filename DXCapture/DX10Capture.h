@@ -3,15 +3,12 @@
 
 namespace DXCapture
 {
-	HRESULT STDMETHODCALLTYPE DX10_DXGISwapPresent(IDXGISwapChain *swap, UINT syncInterval, UINT flags);
-	HRESULT STDMETHODCALLTYPE DX10_DXGISwapResizeBuffers(IDXGISwapChain *swap, UINT bufferCount, UINT width, UINT height, DXGI_FORMAT giFormat, UINT flags);
-
 	class DX10Capture
 	{
 	public:
 		DX10Capture(DX& dx);
 		~DX10Capture();
-		BOOL Initialize(HWND hWND);
+		BOOL Initialize(HWND hWND, TinyComPtr<IDXGISwapChain>& swap);
 		void Reset(BOOL bRelease = TRUE);
 		BOOL Setup(IDXGISwapChain *swap);
 		BOOL Render(IDXGISwapChain *swap, UINT flags);
@@ -25,7 +22,6 @@ namespace DXCapture
 		BOOL							m_bTextures;
 		HANDLE							m_hTextureHandle;
 		HMODULE							m_hD3D10;
-		TinyLock						m_lock;
 		TinyComPtr<ID3D10Resource>		m_resource;
 		TinyDetour						m_dxPresent;
 		TinyDetour						m_dxResizeBuffers;

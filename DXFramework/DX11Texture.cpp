@@ -15,6 +15,7 @@ namespace DXFramework
 		}
 	}
 	DX11Texture::DX11Texture()
+		:m_bCompatible(FALSE)
 	{
 	}
 	DX11Texture::~DX11Texture()
@@ -59,21 +60,25 @@ namespace DXFramework
 		hRes = dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &dsrvd, &m_resourceView);
 		if (FAILED(hRes))
 			return FALSE;
-		hRes = m_texture2D->QueryInterface(__uuidof(IDXGISurface1), (void**)&m_surface);
-		if (FAILED(hRes))
-			return FALSE;
+		m_bCompatible = TRUE;
 		return TRUE;
 	}
 	BOOL  DX11Texture::GetDC(HDC& hDC)
 	{
-		ASSERT(m_surface);
+		if (!m_texture2D || !m_bCompatible)
+			return FALSE;
+		HRESULT hRes = m_texture2D->QueryInterface(__uuidof(IDXGISurface1), (void**)&m_surface);
+		if (FAILED(hRes))
+			return FALSE;
 		return m_surface->GetDC(FALSE, &hDC) == S_OK;
 	}
 	BOOL DX11Texture::ReleaseDC()
 	{
-		if (m_surface != NULL)
-			return m_surface->ReleaseDC(NULL) == S_OK;
-		return S_FALSE;
+		if (!m_surface || !m_bCompatible)
+			return FALSE;
+		m_surface->ReleaseDC(NULL);
+		m_surface.Release();
+		return TRUE;
 	}
 	BOOL DX11Texture::Create(const DX11& dx11, INT cx, INT cy, const BYTE* bits)
 	{
@@ -194,9 +199,14 @@ namespace DXFramework
 	}
 	void DX11Texture::Destory()
 	{
+		m_bCompatible = FALSE;
 		m_surface.Release();
 		m_resourceView.Release();
 		m_texture2D.Release();
+	}
+	BOOL DX11Texture::IsCompatible() const
+	{
+		return m_bCompatible;
 	}
 	ID3D11Texture2D* DX11Texture::GetTexture2D() const
 	{

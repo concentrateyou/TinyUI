@@ -3,39 +3,6 @@
 
 namespace DXCapture
 {
-	HRESULT STDMETHODCALLTYPE DX11_DXGISwapPresent(IDXGISwapChain *pThis, UINT syncInterval, UINT flags)
-	{
-		//LOG(INFO) << "DX11_DXGISwapPresent OK\n";
-		g_dx11.m_dxPresent.EndDetour();
-		{
-			TinyAutoLock lock(g_dx11.m_lock);
-			if (!g_dx11.m_bDetour)
-			{
-				g_dx11.m_bDetour = TRUE;
-				g_dx11.Setup(pThis);
-			}
-			if ((flags & DXGI_PRESENT_TEST) == 0)
-			{
-				g_dx11.Render(pThis, flags);
-			}
-		}
-		HRESULT hRes = pThis->Present(syncInterval, flags);
-		g_dx11.m_dxPresent.BeginDetour();
-		return hRes;
-	}
-	HRESULT STDMETHODCALLTYPE DX11_DXGISwapResizeBuffers(IDXGISwapChain *pThis, UINT bufferCount, UINT width, UINT height, DXGI_FORMAT giFormat, UINT flags)
-	{
-		//LOG(INFO) << "DX11_DXGISwapResizeBuffers OK\n";
-		g_dx11.m_dxResizeBuffers.EndDetour();
-		{
-			TinyAutoLock lock(g_dx11.m_lock);
-			g_dx11.Reset();
-		}
-		HRESULT hRes = pThis->ResizeBuffers(bufferCount, width, height, giFormat, flags);
-		g_dx11.m_dxResizeBuffers.BeginDetour();
-		return hRes;
-	}
-	//////////////////////////////////////////////////////////////////////////
 	DX11Capture::DX11Capture(DX& dx)
 		:m_dxgiFormat(DXGI_FORMAT_UNKNOWN),
 		m_hTextureHandle(NULL),
@@ -50,7 +17,7 @@ namespace DXCapture
 	{
 
 	}
-	BOOL DX11Capture::Initialize(HWND hWND)
+	BOOL DX11Capture::Initialize(HWND hWND, TinyComPtr<IDXGISwapChain>& swap)
 	{
 		HRESULT hRes = S_OK;
 		CHAR szD3DPath[MAX_PATH];
@@ -91,18 +58,8 @@ namespace DXCapture
 		swapDesc.Flags = 0;
 		TinyComPtr<ID3D11Device> device;
 		TinyComPtr<ID3D11DeviceContext>	immediateContext;
-		TinyComPtr<IDXGISwapChain> swap;
 		D3D_FEATURE_LEVEL level;
 		if (FAILED(hRes = (*d3d11Create)(NULL, D3D_DRIVER_TYPE_NULL, NULL, 0, levels, 6, D3D11_SDK_VERSION, &swapDesc, &swap, &device, &level, &immediateContext)))
-			return FALSE;
-		ULONG *vtable = *(ULONG**)swap.Ptr();
-		if (!m_dxPresent.Initialize((FARPROC)*(vtable + (32 / 4)), (FARPROC)DX11_DXGISwapPresent))
-			return FALSE;
-		if (!m_dxPresent.BeginDetour())
-			return FALSE;
-		if (!m_dxResizeBuffers.Initialize((FARPROC)*(vtable + (52 / 4)), (FARPROC)DX11_DXGISwapResizeBuffers))
-			return FALSE;
-		if (!m_dxResizeBuffers.BeginDetour())
 			return FALSE;
 		LOG(INFO) << "DX11Capture::Initialize OK\n";
 		return TRUE;

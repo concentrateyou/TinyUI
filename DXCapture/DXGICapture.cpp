@@ -3,6 +3,105 @@
 
 namespace DXCapture
 {
+	HRESULT STDMETHODCALLTYPE DX_DXGISwapPresent(IDXGISwapChain *pThis, UINT syncInterval, UINT flags)
+	{
+		TinyComPtr<IUnknown> unknow;
+		TinyComPtr<IUnknown> device;
+		HRESULT hRes = pThis->GetDevice(__uuidof(IUnknown), (void**)&unknow);
+		if (SUCCEEDED(hRes))
+		{
+			if (SUCCEEDED(unknow->QueryInterface(__uuidof(ID3D10Device), (void**)&device)))
+			{
+				g_dxgi.m_bDX10 = TRUE;
+				g_dxgi.m_dxPresent.EndDetour();
+				if (!g_dx10.m_bDetour)
+				{
+					g_dx10.m_bDetour = TRUE;
+					g_dx10.Setup(pThis);
+				}
+				if ((flags & DXGI_PRESENT_TEST) == 0)
+				{
+					g_dx10.Render(pThis, flags);
+				}
+				hRes = pThis->Present(syncInterval, flags);
+				g_dxgi.m_dxPresent.BeginDetour();
+				return hRes;
+			}
+			if (SUCCEEDED(unknow->QueryInterface(__uuidof(ID3D10Device1), (void**)&device)))
+			{
+				g_dxgi.m_bDX101 = TRUE;
+				g_dxgi.m_dxPresent.EndDetour();
+				if (!g_dx101.m_bDetour)
+				{
+					g_dx101.m_bDetour = TRUE;
+					g_dx101.Setup(pThis);
+				}
+				if ((flags & DXGI_PRESENT_TEST) == 0)
+				{
+					g_dx101.Render(pThis, flags);
+				}
+				hRes = pThis->Present(syncInterval, flags);
+				g_dxgi.m_dxPresent.BeginDetour();
+				return hRes;
+			}
+			if (SUCCEEDED(unknow->QueryInterface(__uuidof(ID3D11Device), (void**)&device)))
+			{
+				g_dxgi.m_bDX11 = TRUE;
+				g_dxgi.m_dxPresent.EndDetour();
+				if (!g_dx11.m_bDetour)
+				{
+					g_dx11.m_bDetour = TRUE;
+					g_dx11.Setup(pThis);
+				}
+				if ((flags & DXGI_PRESENT_TEST) == 0)
+				{
+					g_dx11.Render(pThis, flags);
+				}
+				hRes = pThis->Present(syncInterval, flags);
+				g_dxgi.m_dxPresent.BeginDetour();
+				return hRes;
+			}
+		}
+		return hRes;
+	}
+	HRESULT STDMETHODCALLTYPE DX_DXGISwapResizeBuffers(IDXGISwapChain *pThis, UINT bufferCount, UINT width, UINT height, DXGI_FORMAT giFormat, UINT flags)
+	{
+		TinyComPtr<IUnknown> unknow;
+		TinyComPtr<IUnknown> device;
+		HRESULT hRes = pThis->GetDevice(__uuidof(IUnknown), (void**)&unknow);
+		if (SUCCEEDED(hRes))
+		{
+			if (SUCCEEDED(unknow->QueryInterface(__uuidof(ID3D10Device), (void**)&device)))
+			{
+				g_dxgi.m_bDX10 = TRUE;
+				g_dxgi.m_dxResizeBuffers.EndDetour();
+				g_dx10.Reset();
+				hRes = pThis->ResizeBuffers(bufferCount, width, height, giFormat, flags);
+				g_dxgi.m_dxResizeBuffers.BeginDetour();
+				return hRes;
+			}
+			if (SUCCEEDED(unknow->QueryInterface(__uuidof(ID3D10Device1), (void**)&device)))
+			{
+				g_dxgi.m_bDX101 = TRUE;
+				g_dxgi.m_dxResizeBuffers.EndDetour();
+				g_dx101.Reset();
+				hRes = pThis->ResizeBuffers(bufferCount, width, height, giFormat, flags);
+				g_dxgi.m_dxResizeBuffers.BeginDetour();
+				return hRes;
+			}
+			if (SUCCEEDED(unknow->QueryInterface(__uuidof(ID3D11Device), (void**)&device)))
+			{
+				g_dxgi.m_bDX11 = TRUE;
+				g_dxgi.m_dxResizeBuffers.EndDetour();
+				g_dx11.Reset();
+				hRes = pThis->ResizeBuffers(bufferCount, width, height, giFormat, flags);
+				g_dxgi.m_dxResizeBuffers.BeginDetour();
+				return hRes;
+			}
+		}
+		return hRes;
+	}
+
 	DXGICapture::DXGICapture(DX10Capture& dx10, DX101Capture& dx101, DX11Capture& dx11)
 		:m_bDX10(FALSE),
 		m_bDX101(FALSE),
@@ -19,26 +118,33 @@ namespace DXCapture
 	}
 	BOOL DXGICapture::Initialize(HWND hWND)
 	{
-		m_bDX10 = m_dx10.Initialize(hWND);
-		if (m_bDX10)
+		TinyComPtr<IDXGISwapChain> swap;
+		if (m_dx10.Initialize(hWND, swap))
 		{
 			LOG(INFO) << "m_dx10.Initialize OK\n";
-			return TRUE;
+			goto HOOK_OK;
 		}
-			
-		m_bDX101 = m_dx101.Initialize(hWND);
-		if (m_bDX101)
+		if (m_dx101.Initialize(hWND, swap))
 		{
 			LOG(INFO) << "m_dx101.Initialize OK\n";
-			return TRUE;
+			goto HOOK_OK;
 		}
-		m_bDX11 = m_dx11.Initialize(hWND);
-		if (m_bDX11)
+		if (m_dx11.Initialize(hWND, swap))
 		{
 			LOG(INFO) << "m_dx11.Initialize OK\n";
-			return TRUE;
+			goto HOOK_OK;
 		}
-		return FALSE;
+	HOOK_OK:
+		ULONG *vtable = *(ULONG**)swap.Ptr();
+		if (!m_dxPresent.Initialize((FARPROC)*(vtable + (32 / 4)), (FARPROC)DX_DXGISwapPresent))
+			return FALSE;
+		if (!m_dxResizeBuffers.Initialize((FARPROC)*(vtable + (52 / 4)), (FARPROC)DX_DXGISwapResizeBuffers))
+			return FALSE;
+		if (!m_dxPresent.BeginDetour())
+			return FALSE;
+		if (!m_dxResizeBuffers.BeginDetour())
+			return FALSE;
+		return TRUE;
 	}
 	void DXGICapture::Reset(BOOL bRelease)
 	{

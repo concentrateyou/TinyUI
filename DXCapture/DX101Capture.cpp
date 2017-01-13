@@ -3,39 +3,6 @@
 
 namespace DXCapture
 {
-	HRESULT STDMETHODCALLTYPE DX101_DXGISwapPresent(IDXGISwapChain *pThis, UINT syncInterval, UINT flags)
-	{
-		//LOG(INFO) << "DX101_DXGISwapPresent OK\n";
-		g_dx101.m_dxPresent.EndDetour();
-		{
-			TinyAutoLock lock(g_dx101.m_lock);
-			if (!g_dx101.m_bDetour)
-			{
-				g_dx101.m_bDetour = TRUE;
-				g_dx101.Setup(pThis);
-			}
-			if ((flags & DXGI_PRESENT_TEST) == 0)
-			{
-				g_dx101.Render(pThis, flags);
-			}
-		}
-		HRESULT hRes = pThis->Present(syncInterval, flags);
-		g_dx101.m_dxPresent.BeginDetour();
-		return hRes;
-	}
-	HRESULT STDMETHODCALLTYPE DX101_DXGISwapResizeBuffers(IDXGISwapChain *pThis, UINT bufferCount, UINT width, UINT height, DXGI_FORMAT giFormat, UINT flags)
-	{
-		//LOG(INFO) << "DX101_DXGISwapResizeBuffers OK\n";
-		g_dx101.m_dxResizeBuffers.EndDetour();
-		{
-			TinyAutoLock lock(g_dx101.m_lock);
-			g_dx101.Reset();
-		}
-		HRESULT hRes = pThis->ResizeBuffers(bufferCount, width, height, giFormat, flags);
-		g_dx101.m_dxResizeBuffers.BeginDetour();
-		return hRes;
-	}
-	//////////////////////////////////////////////////////////////////////////
 	DX101Capture::DX101Capture(DX& dx)
 		:m_dxgiFormat(DXGI_FORMAT_UNKNOWN),
 		m_hTextureHandle(NULL),
@@ -49,7 +16,7 @@ namespace DXCapture
 	DX101Capture::~DX101Capture()
 	{
 	}
-	BOOL DX101Capture::Initialize(HWND hWND)
+	BOOL DX101Capture::Initialize(HWND hWND, TinyComPtr<IDXGISwapChain>& swap)
 	{
 		HRESULT hRes = S_OK;
 		CHAR szD3DPath[MAX_PATH];
@@ -80,17 +47,7 @@ namespace DXCapture
 		swapDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 		swapDesc.Flags = 0;
 		TinyComPtr<ID3D10Device1> device;
-		TinyComPtr<IDXGISwapChain> swap;
 		if (FAILED(hRes = (*d3d101Create)(NULL, D3D10_DRIVER_TYPE_NULL, NULL, 0, D3D10_FEATURE_LEVEL_10_1, D3D10_1_SDK_VERSION, &swapDesc, &swap, &device)))
-			return FALSE;
-		ULONG *vtable = *(ULONG**)swap.Ptr();
-		if (!m_dxPresent.Initialize((FARPROC)*(vtable + (32 / 4)), (FARPROC)DX101_DXGISwapPresent))
-			return FALSE;
-		if (!m_dxPresent.BeginDetour())
-			return FALSE;
-		if (!m_dxResizeBuffers.Initialize((FARPROC)*(vtable + (52 / 4)), (FARPROC)DX101_DXGISwapResizeBuffers))
-			return FALSE;
-		if (!m_dxResizeBuffers.BeginDetour())
 			return FALSE;
 		LOG(INFO) << "DX101Capture::Initialize OK\n";
 		return TRUE;
@@ -111,6 +68,7 @@ namespace DXCapture
 	}
 	BOOL DX101Capture::Setup(IDXGISwapChain *swap)
 	{
+		LOG(INFO) << "DX101Capture Setup OK\n";
 		HRESULT hRes = S_OK;
 		TinyComPtr<ID3D10Device1> device;
 		hRes = swap->GetDevice(__uuidof(ID3D10Device1), (void**)&device);
