@@ -24,8 +24,8 @@ namespace DXCapture
 		ASSERT(sharedCapture);
 		if (sharedCapture->HwndCapture == reinterpret_cast<HWND>(wParam))
 		{
-			g_dx9.Reset(FALSE);
-			g_dxgi.Reset(TRUE);
+			g_dx9.Reset();
+			g_dxgi.Release();
 			g_dx.m_exit.SetEvent();
 		}
 		return CallNextHookEx(g_dx.m_hhk, code, wParam, lParam);
@@ -53,7 +53,6 @@ namespace DXCapture
 			return FALSE;
 		if (!m_textureMemery.Map(0, 0))
 			return FALSE;
-		LOG(INFO) << "DX::Initialize OK\n";
 		return TRUE;
 	}
 	void DX::Uninitialize()
@@ -66,7 +65,6 @@ namespace DXCapture
 		m_captureMemery.Close();
 		m_textureMemery.Unmap();
 		m_textureMemery.Close();
-		LOG(INFO) << "DX::Uninitialize OK\n";
 	}
 	SharedCaptureDATA* DX::GetSharedCaptureDATA()
 	{
@@ -92,10 +90,6 @@ namespace DXCapture
 			return FALSE;
 		}
 		if (!m_exit && !m_exit.CreateEvent(FALSE, FALSE, StringPrintf("%s%d", CAPTURE_EXIT_EVENT, dwProcessID).c_str()))
-		{
-			return FALSE;
-		}
-		if (!m_wait && !m_exit.CreateEvent(FALSE, FALSE, StringPrintf("%s%d", CAPTURE_EXIT_EVENT, dwProcessID).c_str()))
 		{
 			return FALSE;
 		}

@@ -152,6 +152,7 @@ namespace DXFramework
 			(*pfnVirtualFreeEx)(hProcess, pAlloc, 0, MEM_RELEASE);
 			pAlloc = NULL;
 		}
+		TRACE("UninjectLibrary\n");
 		return bRes;
 	}
 }

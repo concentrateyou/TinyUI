@@ -6,99 +6,89 @@ namespace DXCapture
 	HRESULT STDMETHODCALLTYPE DX_DXGISwapPresent(IDXGISwapChain *pThis, UINT syncInterval, UINT flags)
 	{
 		TinyComPtr<IUnknown> unknow;
-		TinyComPtr<IUnknown> device;
-		HRESULT hRes = pThis->GetDevice(__uuidof(IUnknown), (void**)&unknow);
-		if (SUCCEEDED(hRes))
+		if (SUCCEEDED(pThis->GetDevice(__uuidof(IUnknown), (void**)&unknow)))
 		{
-			if (SUCCEEDED(unknow->QueryInterface(__uuidof(ID3D10Device), (void**)&device)))
+			do
 			{
-				g_dxgi.m_bDX10 = TRUE;
-				g_dxgi.m_dxPresent.EndDetour();
-				if (!g_dx10.m_bDetour)
+				TinyComPtr<IUnknown> device;
+				if (SUCCEEDED(unknow->QueryInterface(__uuidof(ID3D10Device), (void**)&device)))
 				{
-					g_dx10.m_bDetour = TRUE;
-					g_dx10.Setup(pThis);
+					g_dxgi.m_bDX10 = TRUE;
+					if (g_dxgi.m_currentSwap == NULL)
+					{
+						g_dxgi.m_currentSwap = g_dx10.Setup(pThis) ? pThis : NULL;
+					}
+					if ((flags & DXGI_PRESENT_TEST) == 0 && g_dxgi.m_currentSwap == pThis)
+					{
+						g_dx10.Render(pThis, flags);
+					}
+					break;
 				}
-				if ((flags & DXGI_PRESENT_TEST) == 0)
+				if (SUCCEEDED(unknow->QueryInterface(__uuidof(ID3D10Device1), (void**)&device)))
 				{
-					g_dx10.Render(pThis, flags);
+					g_dxgi.m_bDX101 = TRUE;
+					if (g_dxgi.m_currentSwap == NULL)
+					{
+						g_dxgi.m_currentSwap = g_dx101.Setup(pThis) ? pThis : NULL;
+					}
+					if ((flags & DXGI_PRESENT_TEST) == 0 && g_dxgi.m_currentSwap == pThis)
+					{
+						g_dx101.Render(pThis, flags);
+					}
+					break;
 				}
-				hRes = pThis->Present(syncInterval, flags);
-				g_dxgi.m_dxPresent.BeginDetour();
-				return hRes;
-			}
-			if (SUCCEEDED(unknow->QueryInterface(__uuidof(ID3D10Device1), (void**)&device)))
-			{
-				g_dxgi.m_bDX101 = TRUE;
-				g_dxgi.m_dxPresent.EndDetour();
-				if (!g_dx101.m_bDetour)
+				if (SUCCEEDED(unknow->QueryInterface(__uuidof(ID3D11Device), (void**)&device)))
 				{
-					g_dx101.m_bDetour = TRUE;
-					g_dx101.Setup(pThis);
+					g_dxgi.m_bDX11 = TRUE;
+					if (g_dxgi.m_currentSwap == NULL)
+					{
+						g_dxgi.m_currentSwap = g_dx11.Setup(pThis) ? pThis : NULL;
+					}
+					if ((flags & DXGI_PRESENT_TEST) == 0 && g_dxgi.m_currentSwap == pThis)
+					{
+						g_dx11.Render(pThis, flags);
+					}
+					break;
 				}
-				if ((flags & DXGI_PRESENT_TEST) == 0)
-				{
-					g_dx101.Render(pThis, flags);
-				}
-				hRes = pThis->Present(syncInterval, flags);
-				g_dxgi.m_dxPresent.BeginDetour();
-				return hRes;
-			}
-			if (SUCCEEDED(unknow->QueryInterface(__uuidof(ID3D11Device), (void**)&device)))
-			{
-				g_dxgi.m_bDX11 = TRUE;
-				g_dxgi.m_dxPresent.EndDetour();
-				if (!g_dx11.m_bDetour)
-				{
-					g_dx11.m_bDetour = TRUE;
-					g_dx11.Setup(pThis);
-				}
-				if ((flags & DXGI_PRESENT_TEST) == 0)
-				{
-					g_dx11.Render(pThis, flags);
-				}
-				hRes = pThis->Present(syncInterval, flags);
-				g_dxgi.m_dxPresent.BeginDetour();
-				return hRes;
-			}
+			} while (0);
 		}
+		g_dxgi.m_dxPresent.EndDetour();
+		HRESULT hRes = pThis->Present(syncInterval, flags);
+		g_dxgi.m_dxPresent.BeginDetour();
 		return hRes;
 	}
 	HRESULT STDMETHODCALLTYPE DX_DXGISwapResizeBuffers(IDXGISwapChain *pThis, UINT bufferCount, UINT width, UINT height, DXGI_FORMAT giFormat, UINT flags)
 	{
 		TinyComPtr<IUnknown> unknow;
-		TinyComPtr<IUnknown> device;
-		HRESULT hRes = pThis->GetDevice(__uuidof(IUnknown), (void**)&unknow);
-		if (SUCCEEDED(hRes))
+		if (SUCCEEDED(pThis->GetDevice(__uuidof(IUnknown), (void**)&unknow)))
 		{
-			if (SUCCEEDED(unknow->QueryInterface(__uuidof(ID3D10Device), (void**)&device)))
+			do
 			{
-				g_dxgi.m_bDX10 = TRUE;
-				g_dxgi.m_dxResizeBuffers.EndDetour();
-				g_dx10.Reset();
-				hRes = pThis->ResizeBuffers(bufferCount, width, height, giFormat, flags);
-				g_dxgi.m_dxResizeBuffers.BeginDetour();
-				return hRes;
-			}
-			if (SUCCEEDED(unknow->QueryInterface(__uuidof(ID3D10Device1), (void**)&device)))
-			{
-				g_dxgi.m_bDX101 = TRUE;
-				g_dxgi.m_dxResizeBuffers.EndDetour();
-				g_dx101.Reset();
-				hRes = pThis->ResizeBuffers(bufferCount, width, height, giFormat, flags);
-				g_dxgi.m_dxResizeBuffers.BeginDetour();
-				return hRes;
-			}
-			if (SUCCEEDED(unknow->QueryInterface(__uuidof(ID3D11Device), (void**)&device)))
-			{
-				g_dxgi.m_bDX11 = TRUE;
-				g_dxgi.m_dxResizeBuffers.EndDetour();
-				g_dx11.Reset();
-				hRes = pThis->ResizeBuffers(bufferCount, width, height, giFormat, flags);
-				g_dxgi.m_dxResizeBuffers.BeginDetour();
-				return hRes;
-			}
+				TinyComPtr<IUnknown> device;
+				if (SUCCEEDED(unknow->QueryInterface(__uuidof(ID3D10Device), (void**)&device)))
+				{
+					g_dxgi.m_bDX10 = TRUE;
+					g_dx10.Release();
+					break;
+				}
+				if (SUCCEEDED(unknow->QueryInterface(__uuidof(ID3D10Device1), (void**)&device)))
+				{
+					g_dxgi.m_bDX101 = TRUE;
+					g_dx101.Release();
+					break;
+				}
+				if (SUCCEEDED(unknow->QueryInterface(__uuidof(ID3D11Device), (void**)&device)))
+				{
+					g_dxgi.m_bDX11 = TRUE;
+					g_dx11.Release();
+					break;
+				}
+			} while (0);
 		}
+		g_dxgi.m_currentSwap = NULL;
+		g_dxgi.m_dxResizeBuffers.EndDetour();
+		HRESULT hRes = pThis->ResizeBuffers(bufferCount, width, height, giFormat, flags);
+		g_dxgi.m_dxResizeBuffers.BeginDetour();
 		return hRes;
 	}
 
@@ -108,7 +98,8 @@ namespace DXCapture
 		m_bDX11(FALSE),
 		m_dx10(dx10),
 		m_dx101(dx101),
-		m_dx11(dx11)
+		m_dx11(dx11),
+		m_currentSwap(NULL)
 	{
 
 	}
@@ -146,13 +137,19 @@ namespace DXCapture
 			return FALSE;
 		return TRUE;
 	}
-	void DXGICapture::Reset(BOOL bRelease)
+	void DXGICapture::Release()
 	{
 		if (m_bDX10)
-			m_dx10.Reset(bRelease);
+		{
+
+		}
 		if (m_bDX101)
-			m_dx101.Reset(bRelease);
+		{
+
+		}
 		if (m_bDX11)
-			m_dx11.Reset(bRelease);
+		{
+
+		}
 	}
 }

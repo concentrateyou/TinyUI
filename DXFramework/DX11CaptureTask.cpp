@@ -72,9 +72,9 @@ namespace DXFramework
 		if (!m_captureMemory.Address())
 		{
 			if (!m_captureMemory.Open(SHAREDCAPTURE_MEMORY, FALSE))
-				return FALSE;
+				return NULL;
 			if (!m_captureMemory.Map(0, sizeof(SharedCaptureDATA)))
-				return FALSE;
+				return NULL;
 		}
 		SharedCaptureDATA* pDATA = reinterpret_cast<SharedCaptureDATA*>(m_captureMemory.Address());
 		return pDATA;
@@ -84,9 +84,9 @@ namespace DXFramework
 		if (!m_textureMemery.Address())
 		{
 			if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE))
-				return FALSE;
+				return NULL;
 			if (!m_textureMemery.Map(0, sizeof(SharedTextureDATA)))
-				return FALSE;
+				return NULL;
 		}
 		SharedTextureDATA* pDATA = reinterpret_cast<SharedTextureDATA*>(m_textureMemery.Address());
 		return pDATA;
@@ -158,6 +158,7 @@ namespace DXFramework
 	}
 	BOOL DX11CaptureTask::EndCapture()
 	{
+		TRACE("EndCapture\n");
 		m_captureStart.Close();
 		m_captureStop.Close();
 		m_captureReady.Close();
@@ -168,6 +169,10 @@ namespace DXFramework
 			m_targetWND.hProcess = NULL;
 		}
 		ZeroMemory(&m_targetWND, sizeof(m_targetWND));
+		m_textureMemery.Unmap();;
+		m_textureMemery.Close();
+		m_captureMemory.Unmap();
+		m_captureMemory.Close();
 		m_bCapturing = FALSE;
 		return TRUE;
 	}

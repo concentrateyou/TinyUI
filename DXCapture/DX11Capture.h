@@ -9,7 +9,7 @@ namespace DXCapture
 		DX11Capture(DX& dx);
 		~DX11Capture();
 		BOOL Initialize(HWND hWND, TinyComPtr<IDXGISwapChain>& swap);
-		void Reset(BOOL bRelease = TRUE);
+		void Release();
 		BOOL Setup(IDXGISwapChain *swap);
 		BOOL Render(IDXGISwapChain *pThis, UINT flags);
 		BOOL DX11GPUHook(ID3D11Device *pThis);
@@ -17,7 +17,6 @@ namespace DXCapture
 		BOOL SaveAs(ID3D11DeviceContext* context, D3DX11_IMAGE_FILE_FORMAT s, LPCSTR pzFile);
 	public:
 		DXGI_FORMAT						m_dxgiFormat;
-		BOOL							m_bDetour;
 		BOOL							m_bCapturing;
 		BOOL							m_bTextures;
 		HANDLE							m_hTextureHandle;

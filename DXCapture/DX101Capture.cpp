@@ -6,7 +6,6 @@ namespace DXCapture
 	DX101Capture::DX101Capture(DX& dx)
 		:m_dxgiFormat(DXGI_FORMAT_UNKNOWN),
 		m_hTextureHandle(NULL),
-		m_bDetour(FALSE),
 		m_bCapturing(FALSE),
 		m_bTextures(FALSE),
 		m_hD3D101(NULL),
@@ -52,19 +51,13 @@ namespace DXCapture
 		LOG(INFO) << "DX101Capture::Initialize OK\n";
 		return TRUE;
 	}
-	void DX101Capture::Reset(BOOL bRelease)
+	void DX101Capture::Release()
 	{
-		m_bDetour = FALSE;
 		m_bTextures = FALSE;
 		m_hTextureHandle = NULL;
-		if (bRelease)
-		{
-			m_resource.Release();
-		}
-		else
-		{
-			m_resource.Detach();
-		}
+		m_resource.Release();
+		m_dx.m_textureMemery.Unmap();
+		m_dx.m_textureMemery.Close();
 	}
 	BOOL DX101Capture::Setup(IDXGISwapChain *swap)
 	{
@@ -99,7 +92,7 @@ namespace DXCapture
 		{
 			LOG(INFO) << "DX101Capture::Render m_stop OK\n";
 			m_bCapturing = FALSE;
-			Reset();
+			Release();
 			return FALSE;
 		}
 		if (!m_bCapturing && m_dx.m_start.Lock(0))

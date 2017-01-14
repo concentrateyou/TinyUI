@@ -15,7 +15,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 		g_capture.Attach(hModule);
 		break;
 	case DLL_PROCESS_DETACH:
-		g_capture.Detach();
+		g_capture.Detach(hModule);
 		break;
 	case DLL_THREAD_ATTACH:
 	case DLL_THREAD_DETACH:

@@ -18,6 +18,7 @@ namespace GameDetour
 			::DestroyWindow(hwnd);
 			break;
 		case WM_DESTROY:
+			LOG(INFO) << "WindowProcedure WM_DESTROY\n";
 			::PostQuitMessage(0);
 			break;
 		}
@@ -36,19 +37,25 @@ namespace GameDetour
 	}
 	BOOL GameCapture::Attach(HMODULE hModule)
 	{
-		LOG(INFO) << "GameCapture::Attach\n";
 		m_hInstance = hModule;
+		CHAR szName[MAX_PATH];
+		memset(szName, 0, MAX_PATH);
+		GetModuleBaseName(GetCurrentProcess(), NULL, szName, MAX_PATH);
+		LOG(INFO) << szName << " GameCapture::Attach\n";
 		return m_task.Submit(BindCallback(&GameCapture::OnMessagePump, this));
 	}
-	void GameCapture::Detach()
+	void GameCapture::Detach(HMODULE hModule)
 	{
-		LOG(INFO) << "GameCapture::Detach\n";
+		CHAR szName[MAX_PATH];
+		memset(szName, 0, MAX_PATH);
+		GetModuleBaseName(GetCurrentProcess(), NULL, szName, MAX_PATH);
+		LOG(INFO) << szName << " GameCapture::Detach\n";
 		m_bDX9Detour = m_bDXGIDetour = FALSE;
 		if (m_hWNDD3D != NULL)
 		{
 			::PostMessage(m_hWNDD3D, WM_CLOSE, NULL, NULL);
 		}
-		//http://stackoverflow.com/questions/35828004/waitforsingleobject-for-thread-object-does-not-work-in-dll-unload
+		m_task.Close(1500);
 	}
 	void GameCapture::BeginCapture()
 	{
@@ -71,6 +78,7 @@ namespace GameDetour
 	void GameCapture::EndCapture()
 	{
 		g_dx.Uninitialize();
+		LOG(INFO) << "Uninitialize OK\n";
 	}
 	void GameCapture::OnMessagePump()
 	{
@@ -105,7 +113,6 @@ namespace GameDetour
 			}
 			EndCapture();
 		}
-		LOG(INFO) << "OnMessagePump Exit-OK\n";
 	}
 }
 

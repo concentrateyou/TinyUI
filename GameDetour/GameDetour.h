@@ -18,7 +18,7 @@ namespace GameDetour
 		~GameCapture();
 	public:
 		BOOL Attach(HMODULE hModule);
-		void Detach();
+		void Detach(HMODULE hModule);
 	private:
 		void BeginCapture();
 		void EndCapture();

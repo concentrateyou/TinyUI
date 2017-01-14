@@ -22,21 +22,20 @@ namespace DXCapture
 		~DX9Capture();
 		BOOL Initialize(HWND hWND);
 		BOOL Render(IDirect3DDevice9 *device);
-		void Reset(BOOL bRelease = TRUE);
-		void Setup(IDirect3DDevice9 *pThis);
+		void Reset();
+		BOOL Setup(IDirect3DDevice9 *pThis);
 		BOOL DX9GPUHook(IDirect3DDevice9 *device);
 	public:
 		BOOL SaveAs(D3DX10_IMAGE_FILE_FORMAT s, LPCSTR pzFile);
 	public:
+		LPVOID							m_currentDevice;
 		D3DFORMAT						m_d3dFormat;
 		DXGI_FORMAT						m_dxgiFormat;
 		INT								m_patchType;
-		BOOL							m_bDetour;
 		BOOL							m_bCapturing;
 		BOOL							m_bTextures;
 		HANDLE							m_hTextureHandle;
 		HMODULE							m_hD3D9;
-		TinyLock						m_lock;
 		TinyComPtr<ID3D10Device1>		m_d3d10;
 		TinyComPtr<ID3D10Resource>		m_resource;
 		TinyComPtr<IDirect3DSurface9>	m_dX9TextureSurface;

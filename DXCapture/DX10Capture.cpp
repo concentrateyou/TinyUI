@@ -6,7 +6,6 @@ namespace DXCapture
 	DX10Capture::DX10Capture(DX& dx)
 		:m_dxgiFormat(DXGI_FORMAT_UNKNOWN),
 		m_hTextureHandle(NULL),
-		m_bDetour(FALSE),
 		m_bCapturing(FALSE),
 		m_bTextures(FALSE),
 		m_hD3D10(NULL),
@@ -47,19 +46,13 @@ namespace DXCapture
 		LOG(INFO) << "DX10Capture::Initialize OK\n";
 		return TRUE;
 	}
-	void DX10Capture::Reset(BOOL bRelease)
+	void DX10Capture::Release()
 	{
-		m_bDetour = FALSE;
 		m_bTextures = FALSE;
 		m_hTextureHandle = NULL;
-		if (bRelease)
-		{
-			m_resource.Release();
-		}
-		else
-		{
-			m_resource.Detach();
-		}
+		m_resource.Release();
+		m_dx.m_textureMemery.Unmap();
+		m_dx.m_textureMemery.Close();
 	}
 	BOOL DX10Capture::Setup(IDXGISwapChain *swap)
 	{
@@ -94,7 +87,7 @@ namespace DXCapture
 		{
 			LOG(INFO) << "DX10Capture::Render m_stop OK\n";
 			m_bCapturing = FALSE;
-			Reset();
+			Release();
 			return FALSE;
 		}
 		if (!m_bCapturing && m_dx.m_start.Lock(0))
@@ -121,7 +114,6 @@ namespace DXCapture
 					{
 						device->CopyResource(m_resource, backBuffer);
 					}
-					//SaveAs(D3DX10_IFF_DDS, "D:\\123.dds");
 				}
 			}
 		}

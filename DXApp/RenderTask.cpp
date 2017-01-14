@@ -184,8 +184,8 @@ namespace DXApp
 		{
 			if (m_lastElement)
 			{
-				m_lastElement->EndScene();
 				Remove(m_lastElement);
+				m_lastElement->EndScene();
 				m_lastElement = NULL;
 			}
 		}
