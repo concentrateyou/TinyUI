@@ -27,6 +27,7 @@ namespace DXFramework
 	}
 	BOOL DX11CaptureTask::Close(DWORD dwMS)
 	{
+		m_captureStop.SetEvent();
 		m_close.SetEvent();
 		return TinyTaskBase::Close(dwMS);
 	}
@@ -276,12 +277,6 @@ namespace DXFramework
 		{
 			if (m_close.Lock(15))
 			{
-				HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, m_targetWND.dwProcessID);
-				if (hProcess)
-				{
-					UninjectLibrary(hProcess, m_dllName.STR());
-					CloseHandle(hProcess);
-				}
 				EndCapture();
 				break;
 			}

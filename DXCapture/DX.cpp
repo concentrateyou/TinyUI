@@ -95,6 +95,10 @@ namespace DXCapture
 		{
 			return FALSE;
 		}
+		if (!m_wait && !m_exit.CreateEvent(FALSE, FALSE, StringPrintf("%s%d", CAPTURE_EXIT_EVENT, dwProcessID).c_str()))
+		{
+			return FALSE;
+		}
 		return TRUE;
 	}
 	BOOL DX::SetWindowsHook()

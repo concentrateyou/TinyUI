@@ -97,6 +97,7 @@ namespace DXCapture
 		ASSERT(sharedCapture);
 		if (m_bCapturing && m_dx.m_stop.Lock(0))
 		{
+			LOG(INFO) << "DX101Capture::Render m_stop OK\n";
 			m_bCapturing = FALSE;
 			Reset();
 			return FALSE;

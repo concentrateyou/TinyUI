@@ -24,6 +24,7 @@ namespace DXCapture
 		BOOL BuildEvents();
 	public:
 		HHOOK					m_hhk;
+		TinyEvent				m_wait;
 		TinyEvent				m_start;
 		TinyEvent				m_stop;
 		TinyEvent				m_ready;
