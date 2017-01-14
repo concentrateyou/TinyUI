@@ -126,16 +126,20 @@ namespace DXCapture
 			goto HOOK_OK;
 		}
 	HOOK_OK:
-		ULONG *vtable = *(ULONG**)swap.Ptr();
-		if (!m_dxPresent.Initialize((FARPROC)*(vtable + (32 / 4)), (FARPROC)DX_DXGISwapPresent))
-			return FALSE;
-		if (!m_dxResizeBuffers.Initialize((FARPROC)*(vtable + (52 / 4)), (FARPROC)DX_DXGISwapResizeBuffers))
-			return FALSE;
-		if (!m_dxPresent.BeginDetour())
-			return FALSE;
-		if (!m_dxResizeBuffers.BeginDetour())
-			return FALSE;
-		return TRUE;
+		if (swap != NULL)
+		{
+			ULONG *vtable = *(ULONG**)swap.Ptr();
+			if (!m_dxPresent.Initialize((FARPROC)*(vtable + (32 / 4)), (FARPROC)DX_DXGISwapPresent))
+				return FALSE;
+			if (!m_dxResizeBuffers.Initialize((FARPROC)*(vtable + (52 / 4)), (FARPROC)DX_DXGISwapResizeBuffers))
+				return FALSE;
+			if (!m_dxPresent.BeginDetour())
+				return FALSE;
+			if (!m_dxResizeBuffers.BeginDetour())
+				return FALSE;
+			return TRUE;
+		}
+		return FALSE;
 	}
 	void DXGICapture::Release()
 	{

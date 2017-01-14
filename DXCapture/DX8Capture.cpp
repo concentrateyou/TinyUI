@@ -6,45 +6,32 @@ namespace DXCapture
 
 	HRESULT STDMETHODCALLTYPE DX8EndScene(IDirect3DDevice8 *pThis)
 	{
+		g_dx8.Setup(pThis);
 		g_dx8.m_dX8EndScene.EndDetour();
-		{
-			TinyAutoLock lock(g_dx8.m_lock);
-			if (!g_dx8.m_bDetour)
-			{
-				g_dx8.m_bDetour = TRUE;
-				g_dx8.Setup(pThis);
-			}
-		}
-		HRESULT hRes = S_OK;
-		hRes = pThis->EndScene();
+		HRESULT hRes = pThis->EndScene();
 		g_dx8.m_dX8EndScene.BeginDetour();
 		return hRes;
 	}
 	HRESULT STDMETHODCALLTYPE DX8Present(IDirect3DDevice8* pThis, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion)
 	{
+		g_dx8.Render(pThis);
 		g_dx8.m_dX8Present.EndDetour();
-		{
-			TinyAutoLock lock(g_dx8.m_lock);
-			g_dx8.Render(pThis);
-		}
 		HRESULT hRes = pThis->Present(pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion);
 		g_dx8.m_dX8Present.BeginDetour();
 		return hRes;
 	}
 	HRESULT STDMETHODCALLTYPE DX8Reset(IDirect3DDevice8* pThis, D3DPRESENT_PARAMETERS* pPresentationParameters)
 	{
+		g_dx8.Reset();
 		g_dx8.m_dX8Reset.EndDetour();
-		{
-			TinyAutoLock lock(g_dx8.m_lock);
-			g_dx8.Reset();
-		}
 		HRESULT hRes = pThis->Reset(pPresentationParameters);
 		g_dx8.m_dX8Reset.BeginDetour();
 		return hRes;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	DX8Capture::DX8Capture(DX& dx)
-		:m_dx(dx)
+		:m_dx(dx),
+		m_currentDevice(NULL)
 	{
 
 	}
@@ -133,11 +120,9 @@ namespace DXCapture
 					{
 						m_d3dFormat = sd.Format;
 						m_dxgiFormat = GetDXGIFormat(sd.Format);
-						SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();
-						ASSERT(sharedCapture);
-						sharedCapture->Format = sd.Format;
-						sharedCapture->Size.cx = sd.Width;
-						sharedCapture->Size.cy = sd.Height;
+						m_captureDATA.Format = sd.Format;
+						m_captureDATA.Size.cx = sd.Width;
+						m_captureDATA.Size.cy = sd.Height;
 						m_bTextures = DX8GPUHook(d3d);
 					}
 				}
@@ -160,9 +145,14 @@ namespace DXCapture
 		}
 		return TRUE;
 	}
-	void DX8Capture::Reset(BOOL bRelease )
+	void DX8Capture::Reset(BOOL bRelease)
 	{
-
+		m_bTextures = FALSE;
+		m_hTextureHandle = NULL;
+		m_dX8TextureSurface.Release();
+		m_d3d10.Release();
+		m_dx.m_textureMemery.Unmap();
+		m_dx.m_textureMemery.Close();
 	}
 	void DX8Capture::Setup(IDirect3DDevice8 *pThis)
 	{
@@ -173,13 +163,11 @@ namespace DXCapture
 			ZeroMemory(&desc, sizeof(desc));
 			if (SUCCEEDED(backBuffer->GetDesc(&desc)))
 			{
-				SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();
-				ASSERT(sharedCapture);
-				sharedCapture->CaptureType = CAPTURETYPE_SHAREDTEX;
-				sharedCapture->Format = desc.Format;
-				sharedCapture->Size.cx = desc.Width;
-				sharedCapture->Size.cy = desc.Height;
-				sharedCapture->HwndCapture = NULL;
+				m_captureDATA.CaptureType = CAPTURETYPE_SHAREDTEX;
+				m_captureDATA.Format = desc.Format;
+				m_captureDATA.Size.cx = desc.Width;
+				m_captureDATA.Size.cy = desc.Height;
+				m_captureDATA.HwndCapture = NULL;
 				m_dx.SetWindowsHook();
 				TinyComPtr<IDirect3D8> d3d8;
 				if (SUCCEEDED(pThis->GetDirect3D(&d3d8)))
@@ -221,12 +209,10 @@ namespace DXCapture
 				return FALSE;
 			}
 		}
-		SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();
-		ASSERT(sharedCapture);
 		D3D10_TEXTURE2D_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
-		desc.Width = sharedCapture->Size.cx;
-		desc.Height = sharedCapture->Size.cy;
+		desc.Width = m_captureDATA.Size.cx;
+		desc.Height = m_captureDATA.Size.cy;
 		desc.MipLevels = 1;
 		desc.ArraySize = 1;
 		desc.Format = m_dxgiFormat;
@@ -249,7 +235,7 @@ namespace DXCapture
 			return FALSE;
 		}
 		TinyComPtr<IDirect3DTexture8> d3d8Texture;
-		if (FAILED(pThis->CreateTexture(sharedCapture->Size.cx, sharedCapture->Size.cy, 1, D3DUSAGE_RENDERTARGET, (D3DFORMAT)m_d3dFormat, D3DPOOL_DEFAULT, &d3d8Texture)))
+		if (FAILED(pThis->CreateTexture(m_captureDATA.Size.cx, m_captureDATA.Size.cy, 1, D3DUSAGE_RENDERTARGET, (D3DFORMAT)m_d3dFormat, D3DPOOL_DEFAULT, &d3d8Texture)))
 		{
 			return FALSE;
 		}
@@ -257,11 +243,12 @@ namespace DXCapture
 		{
 			return FALSE;
 		}
+		m_captureDATA.CaptureType = CAPTURETYPE_SHAREDTEX;
+		m_captureDATA.bFlip = FALSE;
+		SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();
+		memcpy(sharedCapture, &m_captureDATA, sizeof(m_captureDATA));
 		SharedTextureDATA* sharedTexture = m_dx.GetSharedTextureDATA();
-		ASSERT(sharedTexture);
 		sharedTexture->TextureHandle = m_hTextureHandle;
-		sharedCapture->CaptureType = CAPTURETYPE_SHAREDTEX;
-		sharedCapture->bFlip = FALSE;
 		m_dx.m_ready.SetEvent();
 		LOG(INFO) << "DX9GPUHook ok\n";
 		return TRUE;

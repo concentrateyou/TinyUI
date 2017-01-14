@@ -24,6 +24,8 @@ namespace DXCapture
 		void Setup(IDirect3DDevice8 *pThis);
 		BOOL DX8GPUHook(IDirect3DDevice8 *device);
 	public:
+		LPVOID							m_currentDevice;
+		SharedCaptureDATA				m_captureDATA;
 		D3DFORMAT						m_d3dFormat;
 		DXGI_FORMAT						m_dxgiFormat;
 		BOOL							m_bDetour;
@@ -34,7 +36,6 @@ namespace DXCapture
 		TinyDetour						m_dX8Present;
 		TinyDetour						m_dX8Reset;
 		HMODULE							m_hD3D8;
-		TinyLock						m_lock;
 		TinyComPtr<ID3D10Device1>		m_d3d10;
 		TinyComPtr<IDirect3DSurface8>	m_dX8TextureSurface;
 		TinyScopedLibrary				m_d3d10_1;
