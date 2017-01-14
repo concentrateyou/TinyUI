@@ -120,7 +120,6 @@ namespace DXCapture
 		{
 			g_dx9.Render(pThis);
 		}
-
 		g_dx9.m_dX9Present.EndDetour();
 		HRESULT hRes = pThis->Present(pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion);
 		g_dx9.m_dX9Present.BeginDetour();

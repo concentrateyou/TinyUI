@@ -68,10 +68,26 @@ namespace DXCapture
 	}
 	SharedCaptureDATA* DX::GetSharedCaptureDATA()
 	{
+		if (!m_captureMemery.Address())
+		{
+			if (!m_captureMemery.Open(SHAREDCAPTURE_MEMORY) &&
+				!m_captureMemery.Create(SHAREDCAPTURE_MEMORY, sizeof(SharedCaptureDATA)))
+				return NULL;
+			if (!m_captureMemery.Map(0, 0))
+				return NULL;
+		}
 		return reinterpret_cast<SharedCaptureDATA*>(m_captureMemery.Address());
 	}
 	SharedTextureDATA* DX::GetSharedTextureDATA()
 	{
+		if (!m_textureMemery.Address())
+		{
+			if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE) &&
+				!m_textureMemery.Create(TEXTURE_MEMORY, sizeof(SharedTextureDATA)))
+				return NULL;
+			if (!m_textureMemery.Map(0, 0))
+				return NULL;
+		}
 		return reinterpret_cast<SharedTextureDATA*>(m_textureMemery.Address());
 	}
 	BOOL DX::BuildEvents()

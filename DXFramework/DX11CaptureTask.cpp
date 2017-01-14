@@ -27,7 +27,6 @@ namespace DXFramework
 	}
 	BOOL DX11CaptureTask::Close(DWORD dwMS)
 	{
-		m_captureStop.SetEvent();
 		m_close.SetEvent();
 		return TinyTaskBase::Close(dwMS);
 	}
@@ -158,7 +157,6 @@ namespace DXFramework
 	}
 	BOOL DX11CaptureTask::EndCapture()
 	{
-		TRACE("EndCapture\n");
 		m_captureStart.Close();
 		m_captureStop.Close();
 		m_captureReady.Close();
@@ -282,6 +280,7 @@ namespace DXFramework
 		{
 			if (m_close.Lock(15))
 			{
+				m_captureStop.SetEvent();
 				EndCapture();
 				break;
 			}

@@ -141,15 +141,15 @@ namespace DXCapture
 	{
 		if (m_bDX10)
 		{
-
+			g_dx10.Release();
 		}
 		if (m_bDX101)
 		{
-
+			g_dx101.Release();
 		}
 		if (m_bDX11)
 		{
-
+			g_dx11.Release();
 		}
 	}
 }
