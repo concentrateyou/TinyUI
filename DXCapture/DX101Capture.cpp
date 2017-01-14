@@ -58,7 +58,6 @@ namespace DXCapture
 		m_resource.Release();
 		m_dx.m_textureMemery.Unmap();
 		m_dx.m_textureMemery.Close();
-		ZeroMemory(&m_captureDATA, sizeof(m_captureDATA));
 	}
 	BOOL DX101Capture::Setup(IDXGISwapChain *swap)
 	{
