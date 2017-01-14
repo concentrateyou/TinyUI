@@ -38,7 +38,7 @@ namespace TinyUI
 	}
 	INT RandInteger(INT min, INT max)
 	{
-		ULONGLONG range = static_cast<LONGLONG>(max)-min + 1;
+		ULONGLONG range = static_cast<LONGLONG>(max) - min + 1;
 		return static_cast<INT>(min + static_cast<LONGLONG>(RandGenerator(range)));
 	}
 	string RandomDataToGUIDString(const ULONGLONG bytes[2])
@@ -56,14 +56,14 @@ namespace TinyUI
 		GUID guid;
 		if (SUCCEEDED(CoCreateGuid(&guid)))
 		{
-			std::wstring strGUID;
-			TinyScopedArray<WCHAR> val(new WCHAR[GUIDSize]);
-			if (StringFromGUID2(guid, val.Ptr(), GUIDSize) == GUIDSize)
+			wstring val;
+			val.resize(GUIDSize);
+			if (StringFromGUID2(guid, &val[0], GUIDSize) == GUIDSize)
 			{
-				return UTF16ToUTF8(strGUID);
+				return WStringToString(val);
 			}
 		}
 		return string();
 	}
-	
+
 }

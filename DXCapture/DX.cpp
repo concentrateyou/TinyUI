@@ -57,6 +57,7 @@ namespace DXCapture
 	}
 	void DX::Uninitialize()
 	{
+		LOG(INFO) << "DX::Uninitialize\n";
 		m_start.Close();
 		m_stop.Close();
 		m_ready.Close();
@@ -93,22 +94,26 @@ namespace DXCapture
 	BOOL DX::BuildEvents()
 	{
 		DWORD dwProcessID = GetCurrentProcessId();
-		if (!m_start && !m_start.CreateEvent(FALSE, FALSE, StringPrintf("%s%d", BEGIN_CAPTURE_EVENT, dwProcessID).c_str()))
+		if (!m_start.CreateEvent(FALSE, FALSE, StringPrintf("%s%d", BEGIN_CAPTURE_EVENT, dwProcessID).c_str()))
 		{
 			return FALSE;
 		}
-		if (!m_stop && !m_stop.CreateEvent(FALSE, FALSE, StringPrintf("%s%d", END_CAPTURE_EVENT, dwProcessID).c_str()))
+		LOG(INFO) << "m_start CreateEvent:" << StringPrintf("%s%d", BEGIN_CAPTURE_EVENT, dwProcessID).c_str();
+		if (!m_stop.CreateEvent(FALSE, FALSE, StringPrintf("%s%d", END_CAPTURE_EVENT, dwProcessID).c_str()))
 		{
 			return FALSE;
 		}
-		if (!m_ready && !m_ready.CreateEvent(FALSE, FALSE, StringPrintf("%s%d", CAPTURE_READY_EVENT, dwProcessID).c_str()))
+		LOG(INFO) << "m_stop CreateEvent:" << StringPrintf("%s%d", END_CAPTURE_EVENT, dwProcessID).c_str();
+		if (!m_ready.CreateEvent(FALSE, FALSE, StringPrintf("%s%d", CAPTURE_READY_EVENT, dwProcessID).c_str()))
 		{
 			return FALSE;
 		}
-		if (!m_exit && !m_exit.CreateEvent(FALSE, FALSE, StringPrintf("%s%d", CAPTURE_EXIT_EVENT, dwProcessID).c_str()))
+		LOG(INFO) << "m_ready CreateEvent:" << StringPrintf("%s%d", CAPTURE_READY_EVENT, dwProcessID).c_str();
+		if (!m_exit.CreateEvent(FALSE, FALSE, StringPrintf("%s%d", CAPTURE_EXIT_EVENT, dwProcessID).c_str()))
 		{
 			return FALSE;
 		}
+		LOG(INFO) << "m_exit CreateEvent:" << StringPrintf("%s%d", CAPTURE_EXIT_EVENT, dwProcessID).c_str();
 		return TRUE;
 	}
 	BOOL DX::SetWindowsHook()

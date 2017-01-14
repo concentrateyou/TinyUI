@@ -38,7 +38,7 @@ namespace TinyUI
 	}
 	TinyEvent::operator HANDLE() const
 	{
-		return (HANDLE)(this == NULL ? NULL : m_hEvent);
+		return m_hEvent;
 	}
 	HANDLE TinyEvent::Handle() const
 	{
@@ -49,7 +49,7 @@ namespace TinyUI
 		m_hEvent = ::CreateEvent(lpsaAttribute, bManualReset, bInitiallyOwn, lpszNAme);
 		return m_hEvent == NULL ? FALSE : TRUE;
 	}
-	BOOL TinyEvent::CreateEventEx(LPSECURITY_ATTRIBUTES lpEventAttributes, LPCTSTR   lpName, DWORD  dwFlags, DWORD  dwDesiredAccess)
+	BOOL TinyEvent::CreateEventEx(LPSECURITY_ATTRIBUTES lpEventAttributes, LPCTSTR lpName, DWORD  dwFlags, DWORD  dwDesiredAccess)
 	{
 		m_hEvent = ::CreateEventEx(lpEventAttributes, lpName, dwFlags, dwDesiredAccess);
 		return m_hEvent == NULL ? FALSE : TRUE;

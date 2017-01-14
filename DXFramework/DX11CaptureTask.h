@@ -15,7 +15,7 @@ namespace DXFramework
 		BOOL					Submit();
 		BOOL					Close(DWORD dwMS = INFINITE) OVERRIDE;
 	private:
-		void					MessagePump();
+		void					OnMessagePump();
 		WNDINFO					GetWNDINFO();
 		SharedCaptureDATA*		GetSharedCaptureDATA();
 		SharedTextureDATA*		GetSharedTextureDATA();
@@ -23,7 +23,8 @@ namespace DXFramework
 		BOOL					BeginCapture();
 		BOOL					EndCapture();
 		BOOL					AttemptCapture(const TinyString& className, const TinyString& exeName, const TinyString& dllName);
-		DWORD					BuildEvents();
+		BOOL					CreateEvents();
+		BOOL					OpenEvents();
 		static BOOL CALLBACK	EnumWindow(HWND hwnd, LPARAM lParam);
 	private:
 		TinySize				m_size;

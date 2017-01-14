@@ -58,6 +58,7 @@ namespace DXCapture
 		m_resource.Release();
 		m_dx.m_textureMemery.Unmap();
 		m_dx.m_textureMemery.Close();
+		ZeroMemory(&m_captureDATA, sizeof(m_captureDATA));
 	}
 	BOOL DX101Capture::Setup(IDXGISwapChain *swap)
 	{
@@ -72,22 +73,18 @@ namespace DXCapture
 		hRes = swap->GetDesc(&scd);
 		if (FAILED(hRes))
 			return FALSE;
-		SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();
-		ASSERT(sharedCapture);
 		m_dxgiFormat = GetDX10PlusTextureFormat(scd.BufferDesc.Format);
-		sharedCapture->Format = m_dxgiFormat;
-		sharedCapture->Size.cx = scd.BufferDesc.Width;
-		sharedCapture->Size.cy = scd.BufferDesc.Height;
-		sharedCapture->HwndCapture = scd.OutputWindow;
-		sharedCapture->bMultisample = scd.SampleDesc.Count > 1;
+		m_captureDATA.Format = m_dxgiFormat;
+		m_captureDATA.Size.cx = scd.BufferDesc.Width;
+		m_captureDATA.Size.cy = scd.BufferDesc.Height;
+		m_captureDATA.HwndCapture = scd.OutputWindow;
+		m_captureDATA.bMultisample = scd.SampleDesc.Count > 1;
 		m_dx.SetWindowsHook();
 		return TRUE;
 	}
 	BOOL DX101Capture::Render(IDXGISwapChain *swap, UINT flags)
 	{
 		HRESULT hRes = S_OK;
-		SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();
-		ASSERT(sharedCapture);
 		if (m_bCapturing && m_dx.m_stop.Lock(0))
 		{
 			LOG(INFO) << "DX101Capture::Render m_stop OK\n";
@@ -111,7 +108,7 @@ namespace DXCapture
 				TinyComPtr<ID3D10Resource> backBuffer;
 				if (SUCCEEDED(swap->GetBuffer(0, __uuidof(ID3D10Resource), (void**)&backBuffer)))
 				{
-					if (sharedCapture->bMultisample)
+					if (m_captureDATA.bMultisample)
 					{
 						device->ResolveSubresource(m_resource, 0, backBuffer, 0, m_dxgiFormat);
 					}
@@ -127,12 +124,10 @@ namespace DXCapture
 	BOOL DX101Capture::DX101GPUHook(ID3D10Device1 *device)
 	{
 		HRESULT hRes = S_OK;
-		SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();
-		ASSERT(sharedCapture);
 		D3D10_TEXTURE2D_DESC texGameDesc;
 		ZeroMemory(&texGameDesc, sizeof(texGameDesc));
-		texGameDesc.Width = sharedCapture->Size.cx;
-		texGameDesc.Height = sharedCapture->Size.cy;
+		texGameDesc.Width = m_captureDATA.Size.cx;
+		texGameDesc.Height = m_captureDATA.Size.cy;
 		texGameDesc.MipLevels = 1;
 		texGameDesc.ArraySize = 1;
 		texGameDesc.Format = m_dxgiFormat;
@@ -150,11 +145,12 @@ namespace DXCapture
 			return FALSE;
 		if (FAILED(hRes = resource->GetSharedHandle(&m_hTextureHandle)))
 			return FALSE;
+		m_captureDATA.CaptureType = CAPTURETYPE_SHAREDTEX;
+		m_captureDATA.bFlip = FALSE;
+		SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();
+		memcpy(sharedCapture, &m_captureDATA, sizeof(m_captureDATA));
 		SharedTextureDATA* sharedTexture = m_dx.GetSharedTextureDATA();
-		ASSERT(sharedTexture);
 		sharedTexture->TextureHandle = m_hTextureHandle;
-		sharedCapture->CaptureType = CAPTURETYPE_SHAREDTEX;
-		sharedCapture->bFlip = FALSE;
 		m_dx.m_ready.SetEvent();
 		return TRUE;
 	}

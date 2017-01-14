@@ -303,11 +303,9 @@ namespace DXCapture
 					{
 						m_d3dFormat = sd.Format;
 						m_dxgiFormat = GetDXGIFormat(sd.Format);
-						SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();
-						ASSERT(sharedCapture);
-						sharedCapture->Format = sd.Format;
-						sharedCapture->Size.cx = sd.Width;
-						sharedCapture->Size.cy = sd.Height;
+						m_captureDATA.Format = sd.Format;
+						m_captureDATA.Size.cx = sd.Width;
+						m_captureDATA.Size.cy = sd.Height;
 						m_bTextures = DX9GPUHook(d3d);
 					}
 				}
@@ -348,13 +346,11 @@ namespace DXCapture
 			D3DPRESENT_PARAMETERS pp;
 			if (SUCCEEDED(swapChain->GetPresentParameters(&pp)))
 			{
-				SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();
-				ASSERT(sharedCapture);
-				sharedCapture->CaptureType = CAPTURETYPE_SHAREDTEX;
-				sharedCapture->Format = pp.BackBufferFormat;
-				sharedCapture->Size.cx = pp.BackBufferWidth;
-				sharedCapture->Size.cy = pp.BackBufferHeight;
-				sharedCapture->HwndCapture = pp.hDeviceWindow;
+				m_captureDATA.CaptureType = CAPTURETYPE_SHAREDTEX;
+				m_captureDATA.Format = pp.BackBufferFormat;
+				m_captureDATA.Size.cx = pp.BackBufferWidth;
+				m_captureDATA.Size.cy = pp.BackBufferHeight;
+				m_captureDATA.HwndCapture = pp.hDeviceWindow;
 				m_dx.SetWindowsHook();
 				TinyComPtr<IDirect3D9> d3d9;
 				if (SUCCEEDED(pThis->GetDirect3D(&d3d9)))
@@ -413,12 +409,10 @@ namespace DXCapture
 				return FALSE;
 			}
 		}
-		SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();
-		ASSERT(sharedCapture);
 		D3D10_TEXTURE2D_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
-		desc.Width = sharedCapture->Size.cx;
-		desc.Height = sharedCapture->Size.cy;
+		desc.Width = m_captureDATA.Size.cx;
+		desc.Height = m_captureDATA.Size.cy;
 		desc.MipLevels = 1;
 		desc.ArraySize = 1;
 		desc.Format = m_dxgiFormat;
@@ -454,7 +448,7 @@ namespace DXCapture
 			memcpy(patchAddress, patch[m_patchType - 1].patchData, patchSize);
 		}
 		TinyComPtr<IDirect3DTexture9> d3d9Texture;
-		hRes = pThis->CreateTexture(sharedCapture->Size.cx, sharedCapture->Size.cy, 1, D3DUSAGE_RENDERTARGET, (D3DFORMAT)m_d3dFormat, D3DPOOL_DEFAULT, &d3d9Texture, &m_hTextureHandle);
+		hRes = pThis->CreateTexture(m_captureDATA.Size.cx, m_captureDATA.Size.cy, 1, D3DUSAGE_RENDERTARGET, (D3DFORMAT)m_d3dFormat, D3DPOOL_DEFAULT, &d3d9Texture, &m_hTextureHandle);
 		if (FAILED(hRes))
 			return FALSE;
 		if (patchAddress)
@@ -465,11 +459,12 @@ namespace DXCapture
 		hRes = d3d9Texture->GetSurfaceLevel(0, &m_dX9TextureSurface);
 		if (FAILED(hRes))
 			return FALSE;
+		m_captureDATA.CaptureType = CAPTURETYPE_SHAREDTEX;
+		m_captureDATA.bFlip = FALSE;
+		SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();
+		memcpy(sharedCapture, &m_captureDATA, sizeof(m_captureDATA));
 		SharedTextureDATA* sharedTexture = m_dx.GetSharedTextureDATA();
-		ASSERT(sharedTexture);
 		sharedTexture->TextureHandle = m_hTextureHandle;
-		sharedCapture->CaptureType = CAPTURETYPE_SHAREDTEX;
-		sharedCapture->bFlip = FALSE;
 		m_dx.m_ready.SetEvent();
 		LOG(INFO) << "DX9GPUHook ok\n";
 		return TRUE;

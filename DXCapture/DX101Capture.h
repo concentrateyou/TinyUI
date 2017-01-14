@@ -16,6 +16,7 @@ namespace DXCapture
 	public:
 		BOOL SaveAs(D3DX10_IMAGE_FILE_FORMAT s, LPCSTR pzFile);
 	public:
+		SharedCaptureDATA				m_captureDATA;
 		DXGI_FORMAT						m_dxgiFormat;
 		BOOL							m_bCapturing;
 		BOOL							m_bTextures;

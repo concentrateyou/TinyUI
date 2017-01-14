@@ -1,5 +1,6 @@
 #pragma once
 #include "TinyObject.h"
+#include "TinyString.h"
 
 /// <summary>
 /// 信号量对象
@@ -44,7 +45,8 @@ namespace TinyUI
 		BOOL Unlock();
 		void Close();
 	private:
-		HANDLE  m_hEvent;
+		HANDLE		m_hEvent;
+		
 	};
 	/// <summary>
 	/// 互斥量
