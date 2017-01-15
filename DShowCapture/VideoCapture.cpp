@@ -5,7 +5,6 @@
 
 namespace DShow
 {
-	//////////////////////////////////////////////////////////////////////////
 	VideoCapture::Name::Name()
 	{
 
@@ -48,7 +47,9 @@ namespace DShow
 				m_queue.Initialize(ROUNDUP_POW_2(size * 3));
 				m_size = size;
 			}
+			this->Lock();
 			m_queue.WriteBytes(bits, size);
+			this->Unlock();
 		}
 	}
 	VideoCapture::VideoCapture()

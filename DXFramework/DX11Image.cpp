@@ -28,7 +28,7 @@ namespace DXFramework
 	BOOL DX11Image::BitBlt(const DX11& dx11, const BYTE* bits, LONG size)
 	{
 		ASSERT(m_texture.IsValid());
-		if (size != m_size.cx * m_size.cy * 4)
+		if (!bits || size != (m_size.cx * m_size.cy * 4))
 			return FALSE;
 		HDC hDC = NULL;
 		if (!m_texture.GetDC(hDC))

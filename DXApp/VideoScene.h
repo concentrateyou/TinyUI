@@ -24,6 +24,8 @@ namespace DXApp
 		BOOL Render(const DX11& dx11) OVERRIDE;
 		LPCSTR GetClassName() OVERRIDE;
 	private:
+		void OnVideoReceive(BYTE*, LONG, FLOAT, LPVOID);
+	private:
 		VideoCapture		m_video;
 		VideoCaptureParam	m_param;
 	};

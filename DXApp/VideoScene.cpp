@@ -36,19 +36,20 @@ namespace DXApp
 
 	BOOL VideoScene::Render(const DX11& dx11)
 	{
+		m_video.Lock();
 		BYTE* bits = m_video.GetPointer();
-		if (bits != NULL)
-		{
-			DX11Image::BitBlt(dx11, bits, m_video.GetSize());
-			DX11Image::Render(dx11);
-			return TRUE;
-		}
-		return FALSE;
+		DX11Image::BitBlt(dx11, bits, m_video.GetSize());
+		DX11Image::Render(dx11);
+		m_video.Unlock();
+		return bits != NULL;
 	}
 
 	LPCSTR VideoScene::GetClassName()
 	{
 		return TEXT("VideoScene");
 	}
+	void VideoScene::OnVideoReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)
+	{
 
+	}
 }
