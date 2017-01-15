@@ -27,7 +27,7 @@ namespace DXApp
 
 	}
 
-	BOOL ImageScene::Render(const DX11& dx11)
+	BOOL ImageScene::Render(DX11& dx11)
 	{
 		return DX11Image::Render(dx11);
 	}

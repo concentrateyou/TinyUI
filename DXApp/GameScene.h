@@ -18,7 +18,7 @@ namespace DXApp
 		LPCSTR GetClassName() OVERRIDE;
 		BOOL BeginScene() OVERRIDE;
 		void EndScene() OVERRIDE;
-		BOOL Render(const DX11& dx11) OVERRIDE;
+		BOOL Render(DX11& dx11) OVERRIDE;
 	private:
 		TinyScopedPtr<DX11CaptureTask>	m_captureTask;
 	};

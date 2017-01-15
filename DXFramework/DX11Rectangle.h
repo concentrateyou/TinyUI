@@ -16,7 +16,7 @@ namespace DXFramework
 	public:
 		DX11Rectangle();
 		virtual ~DX11Rectangle();
-		BOOL Create(const DX11& dx11, INT cx, INT cy);
+		BOOL Create(DX11& dx11, INT cx, INT cy);
 		void SetPosition(INT x, INT y);
 	};
 }

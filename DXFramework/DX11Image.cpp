@@ -9,7 +9,7 @@ namespace DXFramework
 	DX11Image::~DX11Image()
 	{
 	}
-	BOOL DX11Image::Create(const DX11& dx11, const TinySize& size, BYTE* bits)
+	BOOL DX11Image::Create(DX11& dx11, const TinySize& size, BYTE* bits)
 	{
 		if (!Initialize(dx11))
 			return FALSE;
@@ -25,7 +25,7 @@ namespace DXFramework
 	{
 		m_texture.Destory();
 	}
-	BOOL DX11Image::BitBlt(const DX11& dx11, const BYTE* bits, LONG size)
+	BOOL DX11Image::BitBlt(DX11& dx11, const BYTE* bits, LONG size)
 	{
 		ASSERT(m_texture.IsValid());
 		if (!bits || size != (m_size.cx * m_size.cy * 4))
@@ -52,7 +52,7 @@ namespace DXFramework
 		return TRUE;
 	}
 
-	BOOL DX11Image::BitBlt(const DX11& dx11, const TinyRectangle& dst, HBITMAP hBitmapSrc, const TinyPoint& src)
+	BOOL DX11Image::BitBlt(DX11& dx11, const TinyRectangle& dst, HBITMAP hBitmapSrc, const TinyPoint& src)
 	{
 		ASSERT(m_texture.IsValid());
 		HDC hDC = NULL;
@@ -64,7 +64,7 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11Image::BitBlt(const DX11& dx11, const TinyRectangle& dst, HDC hDCSrc, const TinyPoint& src)
+	BOOL DX11Image::BitBlt(DX11& dx11, const TinyRectangle& dst, HDC hDCSrc, const TinyPoint& src)
 	{
 		ASSERT(m_texture.IsValid());
 		HDC hDC = NULL;
@@ -76,7 +76,7 @@ namespace DXFramework
 		return TRUE;
 	}
 
-	BOOL DX11Image::Load(const DX11& dx11, HANDLE hResource)
+	BOOL DX11Image::Load(DX11& dx11, HANDLE hResource)
 	{
 		ASSERT(hResource);
 		if (!Initialize(dx11))
@@ -91,7 +91,7 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
-	BOOL DX11Image::Load(const DX11& dx11, const CHAR* pzFile)
+	BOOL DX11Image::Load(DX11& dx11, const CHAR* pzFile)
 	{
 		if (!Initialize(dx11))
 			return FALSE;
@@ -103,7 +103,7 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
-	BOOL DX11Image::Load(const DX11& dx11, const BYTE* bits, DWORD dwSize)
+	BOOL DX11Image::Load(DX11& dx11, const BYTE* bits, DWORD dwSize)
 	{
 		if (!Initialize(dx11))
 			return FALSE;
@@ -115,7 +115,7 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
-	BOOL DX11Image::Initialize(const DX11& dx11)
+	BOOL DX11Image::Initialize(DX11& dx11)
 	{
 		m_vertexBuffer.Release();
 		m_indexBuffer.Release();
@@ -153,7 +153,7 @@ namespace DXFramework
 		m_vertices.Reset(new VERTEXTYPE[vertexCount]);
 		return TRUE;
 	}
-	BOOL DX11Image::Update(const DX11& dx11)
+	BOOL DX11Image::Update(DX11& dx11)
 	{
 		FLOAT left = 0.0F;
 		FLOAT right = 0.0F;
@@ -215,7 +215,7 @@ namespace DXFramework
 	{
 		return m_texture.IsValid();
 	}
-	BOOL DX11Image::Render(const DX11& dx11)
+	BOOL DX11Image::Render(DX11& dx11)
 	{
 		UINT stride = sizeof(VERTEXTYPE);
 		UINT offset = 0;

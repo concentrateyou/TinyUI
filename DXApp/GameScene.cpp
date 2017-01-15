@@ -34,7 +34,7 @@ namespace DXApp
 		m_captureTask.Reset(NULL);
 	}
 
-	BOOL GameScene::Render(const DX11& dx11)
+	BOOL GameScene::Render(DX11& dx11)
 	{
 		return DX11Image::Render(dx11);
 	}

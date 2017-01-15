@@ -11,7 +11,7 @@ namespace DXFramework
 	DX11Rectangle::~DX11Rectangle()
 	{
 	}
-	BOOL DX11Rectangle::Create(const DX11& dx11, INT cx, INT cy)
+	BOOL DX11Rectangle::Create(DX11& dx11, INT cx, INT cy)
 	{
 		return TRUE;
 	}

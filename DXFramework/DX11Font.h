@@ -15,7 +15,7 @@ namespace DXFramework
 	public:
 		DX11Font();
 		virtual ~DX11Font();
-		BOOL Create(const DX11& dx11, HFONT hFont, const wstring& str);
+		BOOL Create(DX11& dx11, HFONT hFont, const wstring& str);
 	};
 }
 

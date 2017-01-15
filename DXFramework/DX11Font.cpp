@@ -10,7 +10,7 @@ namespace DXFramework
 	DX11Font::~DX11Font()
 	{
 	}
-	BOOL DX11Font::Create(const DX11& dx11, HFONT hFont, const wstring& str)
+	BOOL DX11Font::Create(DX11& dx11, HFONT hFont, const wstring& str)
 	{
 		if (str.size())
 			return FALSE;

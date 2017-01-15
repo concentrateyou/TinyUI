@@ -21,8 +21,8 @@ namespace DXFramework
 	public:
 		DX11TextureShader();
 		virtual ~DX11TextureShader();
-		BOOL Initialize(const DX11& dx11, const CHAR* vsFile, const CHAR* psFile);
-		void Render(const DX11& dx11, INT indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, DX11Texture* pTexture);
+		BOOL Initialize(DX11& dx11, const CHAR* vsFile, const CHAR* psFile);
+		void Render(DX11& dx11, INT indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, DX11Texture* pTexture);
 	private:
 		TinyComPtr<ID3D11VertexShader>	m_vertexShader;
 		TinyComPtr<ID3D11PixelShader>	m_pixelShader;

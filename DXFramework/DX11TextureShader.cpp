@@ -9,7 +9,7 @@ namespace DXFramework
 	DX11TextureShader::~DX11TextureShader()
 	{
 	}
-	BOOL DX11TextureShader::Initialize(const DX11& dx11, const CHAR* vsFile, const CHAR* psFile)
+	BOOL DX11TextureShader::Initialize(DX11& dx11, const CHAR* vsFile, const CHAR* psFile)
 	{
 		HRESULT hRes = S_OK;
 		TinyComPtr<ID3D10Blob> vertexShaderBuffer;
@@ -78,7 +78,7 @@ namespace DXFramework
 
 		return TRUE;
 	}
-	void DX11TextureShader::Render(const DX11& dx11, INT indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, DX11Texture* texture)
+	void DX11TextureShader::Render(DX11& dx11, INT indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, DX11Texture* texture)
 	{
 		D3DXMatrixTranspose(&worldMatrix, &worldMatrix);
 		D3DXMatrixTranspose(&viewMatrix, &viewMatrix);

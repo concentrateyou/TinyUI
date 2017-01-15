@@ -34,7 +34,7 @@ namespace DXApp
 		m_video.Uninitialize();
 	}
 
-	BOOL VideoScene::Render(const DX11& dx11)
+	BOOL VideoScene::Render(DX11& dx11)
 	{
 		m_video.Lock();
 		BYTE* bits = m_video.GetPointer();

@@ -22,7 +22,7 @@ namespace DXFramework
 	{
 	}
 
-	BOOL DX11Texture::CreateCompatible(const DX11& dx11, INT cx, INT cy, const BYTE* bits)
+	BOOL DX11Texture::CreateCompatible(DX11& dx11, INT cx, INT cy, const BYTE* bits)
 	{
 		m_texture2D.Release();
 		m_resourceView.Release();
@@ -80,7 +80,7 @@ namespace DXFramework
 		m_surface.Release();
 		return TRUE;
 	}
-	BOOL DX11Texture::Create(const DX11& dx11, INT cx, INT cy, const BYTE* bits)
+	BOOL DX11Texture::Create(DX11& dx11, INT cx, INT cy, const BYTE* bits)
 	{
 		m_texture2D.Release();
 		m_resourceView.Release();
@@ -120,12 +120,12 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11Texture::Save(const DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT format)
+	BOOL DX11Texture::Save(DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT format)
 	{
 		ASSERT(m_texture2D);
 		return D3DX11SaveTextureToFile(dx11.GetImmediateContext(), m_texture2D, format, pzFile) == S_OK;
 	}
-	BOOL DX11Texture::Load(const DX11& dx11, const CHAR* pzFile)
+	BOOL DX11Texture::Load(DX11& dx11, const CHAR* pzFile)
 	{
 		ASSERT(pzFile);
 		m_texture2D.Release();
@@ -150,7 +150,7 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11Texture::Load(const DX11& dx11, HANDLE hResource)
+	BOOL DX11Texture::Load(DX11& dx11, HANDLE hResource)
 	{
 		ASSERT(hResource);
 		m_texture2D.Release();
@@ -172,7 +172,7 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11Texture::Load(const DX11& dx11, const BYTE* bits, DWORD dwSize)
+	BOOL DX11Texture::Load(DX11& dx11, const BYTE* bits, DWORD dwSize)
 	{
 		ASSERT(bits);
 		m_texture2D.Release();

@@ -41,7 +41,7 @@ namespace DXApp
 	{
 
 	}
-	BOOL ScreenScene::Render(const DX11& dx11)
+	BOOL ScreenScene::Render(DX11& dx11)
 	{
 		HDC hDC = GetDC(NULL);
 		if (hDC != NULL)

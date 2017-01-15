@@ -16,15 +16,15 @@ namespace DXFramework
 	public:
 		DX11Image();
 		virtual ~DX11Image();
-		BOOL Create(const DX11& dx11, const TinySize& size, BYTE* bits = NULL);
-		BOOL BitBlt(const DX11& dx11, const BYTE* bits, LONG size);//RGB32
-		BOOL BitBlt(const DX11& dx11, const TinyRectangle& dst, HBITMAP hBitmapSrc, const TinyPoint& src);
-		BOOL BitBlt(const DX11& dx11, const TinyRectangle& dst, HDC hDCSrc, const TinyPoint& src);
-		BOOL Load(const DX11& dx11, HANDLE hResource);
-		BOOL Load(const DX11& dx11, const CHAR* pzFile);
-		BOOL Load(const DX11& dx11, const BYTE* bits, DWORD dwSize);
+		BOOL Create(DX11& dx11, const TinySize& size, BYTE* bits = NULL);
+		BOOL BitBlt(DX11& dx11, const BYTE* bits, LONG size);//RGB32
+		BOOL BitBlt(DX11& dx11, const TinyRectangle& dst, HBITMAP hBitmapSrc, const TinyPoint& src);
+		BOOL BitBlt(DX11& dx11, const TinyRectangle& dst, HDC hDCSrc, const TinyPoint& src);
+		BOOL Load(DX11& dx11, HANDLE hResource);
+		BOOL Load(DX11& dx11, const CHAR* pzFile);
+		BOOL Load(DX11& dx11, const BYTE* bits, DWORD dwSize);
 		BOOL IsValid() const;
-		BOOL Update(const DX11& dx11);
+		BOOL Update(DX11& dx11);
 		void Destory();
 		DX11Texture* GetTexture();
 	public:
@@ -32,10 +32,10 @@ namespace DXFramework
 		LPCSTR GetClassName() OVERRIDE;
 		BOOL BeginScene() OVERRIDE;
 		void EndScene() OVERRIDE;
-		BOOL Render(const DX11& dx11) OVERRIDE;
+		BOOL Render(DX11& dx11) OVERRIDE;
 		INT GetIndexCount() const OVERRIDE;
 	private:
-		BOOL Initialize(const DX11& dx11);
+		BOOL Initialize(DX11& dx11);
 	private:
 		DX11Texture					m_texture;
 		TinyComPtr<ID3D11Buffer>	m_vertexBuffer;

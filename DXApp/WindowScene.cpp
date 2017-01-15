@@ -46,7 +46,7 @@ namespace DXApp
 
 	}
 
-	BOOL WindowScene::Render(const DX11& dx11)
+	BOOL WindowScene::Render(DX11& dx11)
 	{
 		HDC hDC = GetDC(m_hWND);
 		if (hDC != NULL)

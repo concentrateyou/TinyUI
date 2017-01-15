@@ -16,7 +16,7 @@ namespace DXApp
 		ElementType GetElementType() const OVERRIDE;
 		BOOL BeginScene() OVERRIDE;
 		void EndScene() OVERRIDE;
-		BOOL Render(const DX11& dx11) OVERRIDE;
+		BOOL Render(DX11& dx11) OVERRIDE;
 	private:
 		HWND m_hWND;
 	};
