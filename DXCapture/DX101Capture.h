@@ -1,6 +1,7 @@
 #pragma once
 #include "DX.h"
 
+
 namespace DXCapture
 {
 	class DX101Capture

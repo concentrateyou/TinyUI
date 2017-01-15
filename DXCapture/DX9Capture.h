@@ -1,5 +1,6 @@
 #pragma once
 #include "DX.h"
+#include <d3d9.h>
 
 namespace DXCapture
 {
@@ -12,6 +13,8 @@ namespace DXCapture
 	HRESULT STDMETHODCALLTYPE DX9SwapPresent(IDirect3DSwapChain9 *swap, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion, DWORD dwFlags);
 	HRESULT STDMETHODCALLTYPE DX9Reset(IDirect3DDevice9 *pThis, D3DPRESENT_PARAMETERS *params);
 	HRESULT STDMETHODCALLTYPE DX9ResetEx(IDirect3DDevice9Ex *pThis, D3DPRESENT_PARAMETERS *params, D3DDISPLAYMODEEX *fullscreenData);
+
+	DXGI_FORMAT GetDXGIFormat(D3DFORMAT format);
 	/// <summary>
 	/// XX9纹理数据捕获
 	/// </summary>
@@ -29,7 +32,7 @@ namespace DXCapture
 		BOOL SaveAs(D3DX10_IMAGE_FILE_FORMAT s, LPCSTR pzFile);
 	public:
 		SharedCaptureDATA				m_captureDATA;
-		LPVOID							m_currentDevice;
+		LPVOID							m_pThis;
 		D3DFORMAT						m_d3dFormat;
 		DXGI_FORMAT						m_dxgiFormat;
 		INT								m_patchType;

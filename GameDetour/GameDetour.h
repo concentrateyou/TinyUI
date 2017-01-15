@@ -27,6 +27,7 @@ namespace GameDetour
 		IO::TinyTaskBase	m_task;
 		HINSTANCE			m_hInstance;
 		HWND				m_hWNDD3D;
+		BOOL				m_bDX8Detour;
 		BOOL				m_bDX9Detour;
 		BOOL				m_bDXGIDetour;
 	};

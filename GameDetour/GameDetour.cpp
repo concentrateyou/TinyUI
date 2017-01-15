@@ -3,8 +3,9 @@
 
 #include "stdafx.h"
 #include "GameDetour.h"
-#include "DX9Capture.h"
 #include "DXGICapture.h"
+#include "DX9Capture.h"
+//#include "DX8Capture.h"
 #include "OpenGLCapture.h"
 using namespace DXCapture;
 
@@ -26,6 +27,7 @@ namespace GameDetour
 	}
 	GameCapture::GameCapture()
 		:m_hWNDD3D(NULL),
+		m_bDX8Detour(FALSE),
 		m_bDX9Detour(FALSE),
 		m_bDXGIDetour(FALSE)
 	{
@@ -62,17 +64,22 @@ namespace GameDetour
 		if (g_dx.Initialize())
 		{
 			LOG(INFO) << "g_dx.Initialize() OK\n";
+			if (!m_bDX8Detour)
+			{
+				LOG(INFO) << "Begin g_dx8.Initialize\n";
+				//m_bDX8Detour = g_dx8.Initialize(m_hWNDD3D);
+			}
 			/*LOG(INFO) << "m_bDX9Detour:" << m_bDX9Detour << "\n";
 			if (!m_bDX9Detour)
 			{
 				LOG(INFO) << "Begin g_dx9.Initialize\n";
 				m_bDX9Detour = g_dx9.Initialize(m_hWNDD3D);
 			}*/
-			if (!m_bDXGIDetour)
+			/*if (!m_bDXGIDetour)
 			{
 				LOG(INFO) << "Begin g_dxgi.Initialize\n";
 				m_bDXGIDetour = g_dxgi.Initialize(m_hWNDD3D);
-			}
+			}*/
 		}
 	}
 	void GameCapture::EndCapture()

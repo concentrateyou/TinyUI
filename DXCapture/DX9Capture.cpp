@@ -101,13 +101,26 @@ namespace DXCapture
 		}
 		return TRUE;
 	}
+	DXGI_FORMAT GetDXGIFormat(D3DFORMAT format)
+	{
+		switch (format)
+		{
+		case D3DFMT_A2B10G10R10:    return DXGI_FORMAT_R10G10B10A2_UNORM;
+		case D3DFMT_A8R8G8B8:       return DXGI_FORMAT_B8G8R8A8_UNORM;
+		case D3DFMT_X8R8G8B8:       return DXGI_FORMAT_B8G8R8X8_UNORM;
+		case D3DFMT_A1R5G5B5:       return DXGI_FORMAT_B5G5R5A1_UNORM;
+		case D3DFMT_R5G6B5:         return DXGI_FORMAT_B5G6R5_UNORM;
+		}
+
+		return DXGI_FORMAT_UNKNOWN;
+	}
 #define MAX_FUNC_SCAN_BYTES 200
 	//////////////////////////////////////////////////////////////////////////
 	HRESULT STDMETHODCALLTYPE DX9EndScene(IDirect3DDevice9 *pThis)
 	{
-		if (g_dx9.m_currentDevice == NULL)
+		if (g_dx9.m_pThis == NULL)
 		{
-			g_dx9.m_currentDevice = g_dx9.Setup(pThis) ? pThis : NULL;
+			g_dx9.m_pThis = g_dx9.Setup(pThis) ? pThis : NULL;
 		}
 		g_dx9.m_dX9EndScene.EndDetour();
 		HRESULT hRes = pThis->EndScene();
@@ -116,7 +129,7 @@ namespace DXCapture
 	}
 	HRESULT STDMETHODCALLTYPE DX9Present(IDirect3DDevice9 *pThis, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion)
 	{
-		if (g_dx9.m_currentDevice == pThis)
+		if (g_dx9.m_pThis == pThis)
 		{
 			g_dx9.Render(pThis);
 		}
@@ -127,7 +140,7 @@ namespace DXCapture
 	}
 	HRESULT STDMETHODCALLTYPE DX9PresentEx(IDirect3DDevice9Ex *pThis, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion, DWORD dwFlags)
 	{
-		if (g_dx9.m_currentDevice == pThis)
+		if (g_dx9.m_pThis == pThis)
 		{
 			g_dx9.Render(pThis);
 		}
@@ -141,11 +154,11 @@ namespace DXCapture
 		TinyComPtr<IDirect3DDevice9> device = NULL;
 		if (SUCCEEDED(pThis->GetDevice(&device)))
 		{
-			if (g_dx9.m_currentDevice == NULL)
+			if (g_dx9.m_pThis == NULL)
 			{
-				g_dx9.m_currentDevice = device;
+				g_dx9.m_pThis = device;
 			}
-			if (g_dx9.m_currentDevice == device)
+			if (g_dx9.m_pThis == device)
 			{
 				g_dx9.Render(device);
 			}
@@ -158,11 +171,11 @@ namespace DXCapture
 	HRESULT STDMETHODCALLTYPE DX9Reset(IDirect3DDevice9 *pThis, D3DPRESENT_PARAMETERS *params)
 	{
 		g_dx9.Reset();
-		if (g_dx9.m_currentDevice == NULL)
+		if (g_dx9.m_pThis == NULL)
 		{
-			g_dx9.m_currentDevice = pThis;
+			g_dx9.m_pThis = pThis;
 		}
-		if (g_dx9.m_currentDevice == pThis)
+		if (g_dx9.m_pThis == pThis)
 		{
 			g_dx9.Setup(pThis);
 		}
@@ -174,11 +187,11 @@ namespace DXCapture
 	HRESULT STDMETHODCALLTYPE DX9ResetEx(IDirect3DDevice9Ex *pThis, D3DPRESENT_PARAMETERS *params, D3DDISPLAYMODEEX *fullscreenData)
 	{
 		g_dx9.Reset();
-		if (g_dx9.m_currentDevice == NULL)
+		if (g_dx9.m_pThis == NULL)
 		{
-			g_dx9.m_currentDevice = pThis;
+			g_dx9.m_pThis = pThis;
 		}
-		if (g_dx9.m_currentDevice == pThis)
+		if (g_dx9.m_pThis == pThis)
 		{
 			g_dx9.Setup(pThis);
 		}
@@ -194,7 +207,7 @@ namespace DXCapture
 		:m_d3dFormat(D3DFMT_UNKNOWN),
 		m_dxgiFormat(DXGI_FORMAT_UNKNOWN),
 		m_hTextureHandle(NULL),
-		m_currentDevice(NULL),
+		m_pThis(NULL),
 		m_bCapturing(FALSE),
 		m_bTextures(FALSE),
 		m_patchType(0),
