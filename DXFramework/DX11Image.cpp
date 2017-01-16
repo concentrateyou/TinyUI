@@ -30,6 +30,8 @@ namespace DXFramework
 	{
 		m_lastPos.x = m_lastPos.y = -1;
 		m_lastScale.cx = m_lastScale.cy = -1;
+		m_vertexBuffer.Release();
+		m_indexBuffer.Release();
 		m_texture.Destory();
 	}
 	BOOL DX11Image::BitBlt(DX11& dx11, const BYTE* bits, LONG size)
@@ -37,25 +39,25 @@ namespace DXFramework
 		if (!bits || !m_texture.IsValid() || size != (m_size.cx * m_size.cy * 4))
 			return FALSE;
 		HDC hDC = NULL;
-		if (!m_texture.GetDC(hDC))
-			return FALSE;
-		BITMAPINFO bmi = { 0 };
-		bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-		bmi.bmiHeader.biWidth = m_size.cx;
-		bmi.bmiHeader.biHeight = m_size.cy;
-		bmi.bmiHeader.biPlanes = 1;
-		bmi.bmiHeader.biBitCount = 32;
-		bmi.bmiHeader.biCompression = BI_RGB;
-		bmi.bmiHeader.biSizeImage = m_size.cx * m_size.cy * 4;
-		BYTE* pvBits = NULL;
-		HBITMAP hBitmap = ::CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pvBits), NULL, 0);
-		memcpy(pvBits, bits, bmi.bmiHeader.biSizeImage);
-		TinyUI::TinyMemDC mdc(hDC, hBitmap);
-		::BitBlt(hDC, 0, 0, m_size.cx, m_size.cy, mdc, 0, 0, SRCCOPY);
-		SAFE_DELETE_OBJECT(hBitmap);
-		if (!m_texture.ReleaseDC())
-			return FALSE;
-		return TRUE;
+		if (m_texture.GetDC(hDC))
+		{
+			BITMAPINFO bmi = { 0 };
+			bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+			bmi.bmiHeader.biWidth = m_size.cx;
+			bmi.bmiHeader.biHeight = m_size.cy;
+			bmi.bmiHeader.biPlanes = 1;
+			bmi.bmiHeader.biBitCount = 32;
+			bmi.bmiHeader.biCompression = BI_RGB;
+			bmi.bmiHeader.biSizeImage = m_size.cx * m_size.cy * 4;
+			BYTE* pvBits = NULL;
+			HBITMAP hBitmap = ::CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pvBits), NULL, 0);
+			memcpy(pvBits, bits, bmi.bmiHeader.biSizeImage);
+			TinyUI::TinyMemDC mdc(hDC, hBitmap);
+			::BitBlt(hDC, 0, 0, m_size.cx, m_size.cy, mdc, 0, 0, SRCCOPY);
+			SAFE_DELETE_OBJECT(hBitmap);
+			return m_texture.ReleaseDC();
+		}
+		return FALSE;
 	}
 
 	BOOL DX11Image::BitBlt(DX11& dx11, const TinyRectangle& dst, HBITMAP hBitmapSrc, const TinyPoint& src)
@@ -63,25 +65,25 @@ namespace DXFramework
 		if (!m_texture.IsValid())
 			return FALSE;
 		HDC hDC = NULL;
-		if (!m_texture.GetDC(hDC))
-			return FALSE;
-		TinyUI::TinyMemDC mdc(hDC, hBitmapSrc);
-		::BitBlt(hDC, dst.left, dst.top, dst.Width(), dst.Height(), mdc, src.x, src.y, SRCCOPY);
-		if (!m_texture.ReleaseDC())
-			return FALSE;
-		return TRUE;
+		if (m_texture.GetDC(hDC))
+		{
+			TinyUI::TinyMemDC mdc(hDC, hBitmapSrc);
+			::BitBlt(hDC, dst.left, dst.top, dst.Width(), dst.Height(), mdc, src.x, src.y, SRCCOPY);
+			return m_texture.ReleaseDC();
+		}
+		return FALSE;
 	}
 	BOOL DX11Image::BitBlt(DX11& dx11, const TinyRectangle& dst, HDC hDCSrc, const TinyPoint& src)
 	{
 		if (!m_texture.IsValid())
 			return FALSE;
 		HDC hDC = NULL;
-		if (!m_texture.GetDC(hDC))
-			return FALSE;
-		::BitBlt(hDC, dst.left, dst.top, dst.Width(), dst.Height(), hDCSrc, src.x, src.y, SRCCOPY);
-		if (!m_texture.ReleaseDC())
-			return FALSE;
-		return TRUE;
+		if (m_texture.GetDC(hDC))
+		{
+			::BitBlt(hDC, dst.left, dst.top, dst.Width(), dst.Height(), hDCSrc, src.x, src.y, SRCCOPY);
+			return m_texture.ReleaseDC();
+		}
+		return FALSE;
 	}
 
 	BOOL DX11Image::Load(DX11& dx11, HANDLE hResource)
@@ -131,8 +133,6 @@ namespace DXFramework
 	}
 	BOOL DX11Image::Initialize(DX11& dx11)
 	{
-		m_vertexBuffer.Release();
-		m_indexBuffer.Release();
 		D3D11_BUFFER_DESC		vertexBufferDesc;
 		D3D11_BUFFER_DESC		indexBufferDesc;
 		D3D11_SUBRESOURCE_DATA	vertexData;
