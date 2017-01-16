@@ -41,6 +41,13 @@ namespace DXFramework
 		hRes = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_BGRA_SUPPORT | D3D11_CREATE_DEVICE_DEBUG, &level, 1, D3D11_SDK_VERSION, &swapDesc, &m_swap, &m_d3d, NULL, &m_immediateContext);
 		if (FAILED(hRes))
 			return FALSE;
+		TinyComPtr<ID3D11Debug> debug;
+		hRes = m_d3d->QueryInterface(__uuidof(ID3D11Debug), (void**)&debug);
+		if (FAILED(hRes))
+			return FALSE;
+		hRes = debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+		if (FAILED(hRes))
+			return FALSE;
 		TinyComPtr<ID3D11Texture2D> backBuffer;
 		hRes = m_swap->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backBuffer);
 		if (FAILED(hRes))
@@ -108,7 +115,6 @@ namespace DXFramework
 		if (FAILED(hRes))
 			return FALSE;
 		m_immediateContext->RSSetState(m_rasterizerState);
-
 		D3D11_VIEWPORT viewport;
 		viewport.Width = static_cast<FLOAT>(cx);
 		viewport.Height = static_cast<FLOAT>(cy);

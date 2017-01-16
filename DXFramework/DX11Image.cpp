@@ -5,6 +5,8 @@ namespace DXFramework
 {
 	DX11Image::DX11Image()
 	{
+		m_lastPos.x = m_lastPos.y = -1;
+		m_lastScale.cx = m_lastScale.cy = -1;
 	}
 	DX11Image::~DX11Image()
 	{
@@ -155,16 +157,20 @@ namespace DXFramework
 	}
 	BOOL DX11Image::Update(DX11& dx11)
 	{
+		TinySize scale = GetScale();
+		TinyPoint pos = GetPosition();
+		if (pos == m_lastPos && scale == m_lastScale)
+			return TRUE;
+		m_lastPos = pos;
+		m_lastScale = scale;
 		FLOAT left = 0.0F;
 		FLOAT right = 0.0F;
 		FLOAT top = 0.0F;
 		FLOAT bottom = 0.0F;
 		TinySize size = dx11.GetSize();
-		TinyPoint position = GetPosition();
-		TinySize scale = GetScale();
-		left = (FLOAT)((size.cx / 2) * -1) + (FLOAT)position.x;
+		left = (FLOAT)((size.cx / 2) * -1) + (FLOAT)pos.x;
 		right = left + (FLOAT)scale.cx;
-		top = (FLOAT)(size.cy / 2) - (FLOAT)position.y;
+		top = (FLOAT)(size.cy / 2) - (FLOAT)pos.y;
 		bottom = top - (FLOAT)scale.cy;
 		INT vertexCount = GetIndexCount();
 		m_vertices[0].position = D3DXVECTOR3(left, top, 0.0F);

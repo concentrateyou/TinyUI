@@ -37,6 +37,8 @@ namespace DXFramework
 	private:
 		BOOL Initialize(DX11& dx11);
 	private:
+		TinyPoint					m_lastPos;
+		TinySize					m_lastScale;
 		DX11Texture					m_texture;
 		TinyComPtr<ID3D11Buffer>	m_vertexBuffer;
 		TinyComPtr<ID3D11Buffer>	m_indexBuffer;

@@ -139,15 +139,6 @@ namespace DXFramework
 			return FALSE;
 		if (FAILED(hRes = resource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&m_texture2D)))
 			return FALSE;
-		D3D11_TEXTURE2D_DESC desc;
-		m_texture2D->GetDesc(&desc);
-		D3D11_SHADER_RESOURCE_VIEW_DESC dsrvd;
-		::ZeroMemory(&dsrvd, sizeof(dsrvd));
-		dsrvd.Format = desc.Format;
-		dsrvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-		dsrvd.Texture2D.MipLevels = 1;
-		if (FAILED(hRes = dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &dsrvd, &m_resourceView)))
-			return FALSE;
 		return TRUE;
 	}
 	BOOL DX11Texture::Load(DX11& dx11, HANDLE hResource)
@@ -185,15 +176,6 @@ namespace DXFramework
 		if (!resource)
 			return FALSE;
 		if (FAILED(hRes = resource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&m_texture2D)))
-			return FALSE;
-		D3D11_TEXTURE2D_DESC desc;
-		m_texture2D->GetDesc(&desc);
-		D3D11_SHADER_RESOURCE_VIEW_DESC dsrvd;
-		::ZeroMemory(&dsrvd, sizeof(dsrvd));
-		dsrvd.Format = desc.Format;
-		dsrvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-		dsrvd.Texture2D.MipLevels = 1;
-		if (FAILED(hRes = dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &dsrvd, &m_resourceView)))
 			return FALSE;
 		return TRUE;
 	}
