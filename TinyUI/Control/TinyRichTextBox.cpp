@@ -32,7 +32,7 @@ namespace TinyUI
 	}
 	DWORD TinyRichTextBox::RetrieveStyle()
 	{
-		return (ES_MULTILINE | WS_VISIBLE | WS_CHILD | WS_TABSTOP | ES_AUTOVSCROLL | ES_AUTOHSCROLL | WS_VSCROLL);
+		return (ES_MULTILINE | WS_VISIBLE | WS_CHILD | WS_TABSTOP | WS_VSCROLL | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_MULTILINE);
 	}
 	DWORD TinyRichTextBox::RetrieveExStyle()
 	{
@@ -444,13 +444,13 @@ namespace TinyUI
 #else
 			textLenEx.codepage = CP_ACP;
 #endif
-	}
+		}
 		else
 			textLenEx.codepage = nCodePage;
 
 		return (LONG) ::SendMessage(m_hWND, EM_GETTEXTLENGTHEX,
 			(WPARAM)&textLenEx, 0);
-}
+	}
 
 	INT TinyRichTextBox::GetTextRange(INT nFirst, INT nLast, TinyString& refString) const
 	{

@@ -7,6 +7,7 @@
 #include "ImageScene.h"
 #include "WindowScene.h"
 #include "ScreenScene.h"
+#include "TextScene.h"
 #include "Snapshot.h"
 using namespace TinyUI;
 
@@ -65,6 +66,7 @@ namespace DXApp
 		Snapshot	m_snapshot;
 		TinyScopedPtr<Delegate<void(RECT)>> m_onSelected;
 
+		TextScene	m_textScene;
 		GameScene	m_gameScene;
 		VideoScene	m_videoScene;
 		ImageScene	m_imageScene;

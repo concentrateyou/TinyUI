@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "DX11Image.h"
+#pragma comment(lib,"gdiplus.lib")
 
 namespace DXFramework
 {

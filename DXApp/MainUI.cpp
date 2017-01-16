@@ -238,6 +238,13 @@ namespace DXApp
 		TextDlg dlg;
 		if (dlg.DoModal(m_hWND, IDD_DLG_TEXT) == IDOK)
 		{
+			m_renderTask.Remove(&m_textScene);
+			m_textScene.EndScene();
+			m_textScene.Initialize(m_renderTask.GetGraphics()->GetDX11(), dlg.GetText(), dlg.GetFormat(), dlg.GetBkColor());
+			if (m_renderTask.Add(&m_textScene))
+			{
+				m_textScene.BeginScene();
+			}
 
 		}
 	}

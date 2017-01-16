@@ -123,6 +123,9 @@
     <ClInclude Include="TextDlg.h">
       <Filter>头文件\Dialog</Filter>
     </ClInclude>
+    <ClInclude Include="TextScene.h">
+      <Filter>头文件\Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -205,6 +208,9 @@
     </ClCompile>
     <ClCompile Include="TextDlg.cpp">
       <Filter>源文件\Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="TextScene.cpp">
+      <Filter>源文件\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

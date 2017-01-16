@@ -3,9 +3,13 @@
 #include "DX11Texture.h"
 #include "DX11TextureShader.h"
 #include "DX11Image.h"
+#include <Richedit.h>
 
 namespace DXFramework
 {
+	void CHARFORMAT2LOGFONT(const CHARFORMAT& cf, LOGFONT& lf, COLORREF& color);
+	void LOGFONT2CHARFORMAT(const LOGFONT& lf, CHARFORMAT& cf, const COLORREF& color);
+	Gdiplus::RectF WINAPI MeasureString(HDC hDC, const wstring& str, const CHARFORMAT& cf);
 	/// <summary>
 	/// DX11×ÖÌå
 	/// </summary>
@@ -15,7 +19,10 @@ namespace DXFramework
 	public:
 		DX11Font();
 		virtual ~DX11Font();
-		BOOL Create(DX11& dx11, HFONT hFont, const wstring& str);
+		BOOL Create(DX11& dx11, const wstring& str, const CHARFORMAT& cf, const COLORREF& bkColor);
+		BOOL DrawString(DX11& dx11, const TinyString& str, const Gdiplus::Font* font, const PointF& pos, const StringFormat* format, const Brush* brush);
+	private:
+		COLORREF m_bkColor;
 	};
 }
 

@@ -24,4 +24,3 @@ typedef struct tagSample
 BOOL WINAPI GetModuleList(HANDLE hProcess, TinyArray<TinyString> &moduleList);
 BOOL WINAPI ScreenSave(const TinyRectangle& s);
 BOOL WINAPI InvertWindow(HWND hWND);
-Gdiplus::RectF WINAPI MeasureString(HDC hDC, const wstring& str, const CHARFORMAT& cf);

@@ -2,6 +2,8 @@
 #include "DX11Element.h"
 #include "DX11Texture.h"
 #include "DX11TextureShader.h"
+#include "Render/TinyGDI.h"
+using namespace TinyUI;
 
 namespace DXFramework
 {
@@ -36,7 +38,7 @@ namespace DXFramework
 		INT GetIndexCount() const OVERRIDE;
 	private:
 		BOOL Initialize(DX11& dx11);
-	private:
+	protected:
 		TinyPoint					m_lastPos;
 		TinySize					m_lastScale;
 		DX11Texture					m_texture;
