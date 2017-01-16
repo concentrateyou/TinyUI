@@ -11,9 +11,11 @@ namespace DXFramework
 	}
 	DX11Image::~DX11Image()
 	{
+
 	}
 	BOOL DX11Image::Create(DX11& dx11, const TinySize& size, BYTE* bits)
 	{
+		Destory();
 		if (!Initialize(dx11))
 			return FALSE;
 		if (m_texture.CreateCompatible(dx11, size.cx, size.cy, bits))
@@ -26,12 +28,13 @@ namespace DXFramework
 	}
 	void DX11Image::Destory()
 	{
+		m_lastPos.x = m_lastPos.y = -1;
+		m_lastScale.cx = m_lastScale.cy = -1;
 		m_texture.Destory();
 	}
 	BOOL DX11Image::BitBlt(DX11& dx11, const BYTE* bits, LONG size)
 	{
-		ASSERT(m_texture.IsValid());
-		if (!bits || size != (m_size.cx * m_size.cy * 4))
+		if (!bits || !m_texture.IsValid() || size != (m_size.cx * m_size.cy * 4))
 			return FALSE;
 		HDC hDC = NULL;
 		if (!m_texture.GetDC(hDC))
@@ -57,7 +60,8 @@ namespace DXFramework
 
 	BOOL DX11Image::BitBlt(DX11& dx11, const TinyRectangle& dst, HBITMAP hBitmapSrc, const TinyPoint& src)
 	{
-		ASSERT(m_texture.IsValid());
+		if (!m_texture.IsValid())
+			return FALSE;
 		HDC hDC = NULL;
 		if (!m_texture.GetDC(hDC))
 			return FALSE;
@@ -69,7 +73,8 @@ namespace DXFramework
 	}
 	BOOL DX11Image::BitBlt(DX11& dx11, const TinyRectangle& dst, HDC hDCSrc, const TinyPoint& src)
 	{
-		ASSERT(m_texture.IsValid());
+		if (!m_texture.IsValid())
+			return FALSE;
 		HDC hDC = NULL;
 		if (!m_texture.GetDC(hDC))
 			return FALSE;
@@ -81,7 +86,9 @@ namespace DXFramework
 
 	BOOL DX11Image::Load(DX11& dx11, HANDLE hResource)
 	{
-		ASSERT(hResource);
+		if (!hResource)
+			return FALSE;
+		Destory();
 		if (!Initialize(dx11))
 			return FALSE;
 		if (m_texture.Load(dx11, hResource))
@@ -96,6 +103,9 @@ namespace DXFramework
 	}
 	BOOL DX11Image::Load(DX11& dx11, const CHAR* pzFile)
 	{
+		if (!pzFile)
+			return FALSE;
+		Destory();
 		if (!Initialize(dx11))
 			return FALSE;
 		if (m_texture.Load(dx11, pzFile))
@@ -108,6 +118,7 @@ namespace DXFramework
 	}
 	BOOL DX11Image::Load(DX11& dx11, const BYTE* bits, DWORD dwSize)
 	{
+		Destory();
 		if (!Initialize(dx11))
 			return FALSE;
 		if (m_texture.Load(dx11, bits, dwSize))
@@ -161,7 +172,9 @@ namespace DXFramework
 		TinySize scale = GetScale();
 		TinyPoint pos = GetPosition();
 		if (pos == m_lastPos && scale == m_lastScale)
+		{
 			return TRUE;
+		}
 		m_lastPos = pos;
 		m_lastScale = scale;
 		FLOAT left = 0.0F;
