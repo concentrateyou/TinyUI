@@ -25,6 +25,8 @@ namespace TinyUI
 		virtual void OnFinalMessage(HWND hWND);
 		virtual BOOL DestroyWindow();
 	private:
+		static HHOOK m_hMsgHook;
+		static LRESULT CALLBACK MessageHook(INT code, WPARAM wParam, LPARAM lParam);
 		static INT_PTR CALLBACK BeginLoop(HWND hWND, UINT uMsg, WPARAM wParam, LPARAM lParam);
 		static INT_PTR CALLBACK EndLoop(HWND hWND, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	public:
@@ -42,6 +44,7 @@ namespace TinyUI
 		BOOL EndDialog(HWND hWND, INT_PTR m_DlgResult);
 		BOOL IsModal() const throw();
 	};
+	SELECTANY HHOOK TinyDialog::m_hMsgHook = NULL;
 }
 
 

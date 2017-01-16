@@ -40,6 +40,15 @@ namespace TinyUI
 	{
 		return FALSE;
 	}
+	LRESULT CALLBACK TinyDialog::MessageHook(INT code, WPARAM wParam, LPARAM lParam)
+	{
+		LPMSG pMsg = (LPMSG)lParam;
+		TinyHandleHWND** pHWND = TinyApplication::GetInstance()->GetMapHWND().Lookup(pMsg->hwnd);
+		if (pHWND != NULL)
+		{
+			
+		}
+	}
 	INT_PTR CALLBACK TinyDialog::BeginLoop(HWND hWND, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		TinyDialog *_this = NULL;
@@ -167,8 +176,9 @@ namespace TinyUI
 			return -1;
 		}
 		m_bModal = TRUE;
+		//m_hMsgHook = ::SetWindowsHookEx(WH_GETMESSAGE, TinyDialog::MessageHook, TinyApplication::GetInstance()->Handle(), GetCurrentThreadId());
+		//ASSERT(m_hMsgHook != NULL);
 		m_iDlgResult = ::DialogBoxParam(TinyApplication::GetInstance()->Handle(), lpTemplateName, hParent, BeginLoop, (LPARAM)this);
-
 		return m_iDlgResult;
 	}
 	BOOL TinyDialog::MapDialogRect(LPRECT lpRect)

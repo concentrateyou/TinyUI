@@ -133,10 +133,10 @@ namespace DXFramework
 	}
 	BOOL DX11Image::Initialize(DX11& dx11)
 	{
-		D3D11_BUFFER_DESC		vertexBufferDesc;
-		D3D11_BUFFER_DESC		indexBufferDesc;
-		D3D11_SUBRESOURCE_DATA	vertexData;
-		D3D11_SUBRESOURCE_DATA	indexData;
+		D3D11_BUFFER_DESC	vertexBufferDesc = { 0 };
+		D3D11_BUFFER_DESC	indexBufferDesc = { 0 };
+		D3D11_SUBRESOURCE_DATA	vertexData = { 0 };
+		D3D11_SUBRESOURCE_DATA	indexData = { 0 };
 		INT vertexCount = GetIndexCount();
 		INT indexCount = GetIndexCount();
 		TinyScopedArray<VERTEXTYPE> vertices(new VERTEXTYPE[vertexCount]);
@@ -151,7 +151,10 @@ namespace DXFramework
 		vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		vertexBufferDesc.MiscFlags = 0;
+		vertexBufferDesc.StructureByteStride = 0;
 		vertexData.pSysMem = vertices.Ptr();
+		vertexData.SysMemPitch = 0;
+		vertexData.SysMemSlicePitch = 0;
 		HRESULT hRes = dx11.GetD3D()->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
 		if (FAILED(hRes))
 			return FALSE;
@@ -161,6 +164,8 @@ namespace DXFramework
 		indexBufferDesc.CPUAccessFlags = 0;
 		indexBufferDesc.MiscFlags = 0;
 		indexData.pSysMem = indices.Ptr();
+		indexData.SysMemPitch = 0;
+		indexData.SysMemSlicePitch = 0;
 		hRes = dx11.GetD3D()->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
 		if (FAILED(hRes))
 			return FALSE;
