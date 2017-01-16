@@ -35,6 +35,7 @@ namespace DXApp
 		m_btnFont.SubclassDlgItem(IDC_BTN_FONT, m_hWND);
 		m_btnColor.SubclassDlgItem(IDC_BTN_COLOR, m_hWND);
 		m_txtSize.SubclassDlgItem(IDC_EDIT_SIZE, m_hWND);
+		::SetFocus(m_hWND);
 		return FALSE;
 	}
 

@@ -168,6 +168,7 @@ namespace TinyUI
 		}
 		m_bModal = TRUE;
 		m_iDlgResult = ::DialogBoxParam(TinyApplication::GetInstance()->Handle(), lpTemplateName, hParent, BeginLoop, (LPARAM)this);
+
 		return m_iDlgResult;
 	}
 	BOOL TinyDialog::MapDialogRect(LPRECT lpRect)
