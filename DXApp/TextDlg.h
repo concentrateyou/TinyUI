@@ -18,6 +18,7 @@ namespace DXApp
 		virtual ~TextDlg();
 		LRESULT OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+	public:
 		CHARFORMAT		GetFormat() const;
 		TinyString		GetText() const;
 		COLORREF		GetBkColor() const;
@@ -36,6 +37,9 @@ namespace DXApp
 		HINSTANCE		m_hInstance;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onFontClick;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onColorClick;
+
+
+
 	};
 }
 

@@ -4,7 +4,6 @@
 
 namespace DXApp
 {
-
 	RenderTask::RenderTask()
 		:m_lastElement(NULL)
 	{
@@ -98,8 +97,12 @@ namespace DXApp
 	{
 		INT cx = LOWORD(lParam);
 		INT cy = HIWORD(lParam);
-		TinyAutoLock lock(m_lock);
-		m_graphics.Resize(TinySize(cx, cy));
+		if (cx > 0 && cy > 0)
+		{
+			m_graphics.Lock();
+			m_graphics.Resize(TinySize(cx, cy));
+			m_graphics.Unlock();
+		}
 	}
 
 	void RenderTask::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

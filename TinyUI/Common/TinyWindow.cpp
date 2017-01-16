@@ -203,28 +203,26 @@ namespace TinyUI
 			TinyMsg msg(_this->m_hWND, uMsg, wParam, lParam);
 			const TinyMsg* pOldMsg = _this->m_pCurrentMsg;
 			_this->m_pCurrentMsg = &msg;
-
-			//Ìí¼ÓºÍÒÆ³ýÉ¸Ñ¡Æ÷
-			switch (msg.message)
-			{
-			case WM_CREATE:
-			{
-				TinyMessageLoop* pLoop = TinyApplication::GetInstance()->GetMessageLoop();
-				ASSERT(pLoop != NULL);
-				pLoop->AddMessageFilter(_this);
-			}
-			break;
-			case WM_DESTROY:
-			{
-				TinyMessageLoop* pLoop = TinyApplication::GetInstance()->GetMessageLoop();
-				ASSERT(pLoop != NULL);
-				pLoop->RemoveMessageFilter(_this);
-			}
-			break;
-			default:
-				break;
-			}
-
+			////Ìí¼ÓºÍÒÆ³ýÉ¸Ñ¡Æ÷
+			//switch (msg.message)
+			//{
+			//case WM_CREATE:
+			//{
+			//	TinyMessageLoop* pLoop = TinyApplication::GetInstance()->GetMessageLoop();
+			//	ASSERT(pLoop != NULL);
+			//	pLoop->AddMessageFilter(_this);
+			//}
+			//break;
+			//case WM_DESTROY:
+			//{
+			//	TinyMessageLoop* pLoop = TinyApplication::GetInstance()->GetMessageLoop();
+			//	ASSERT(pLoop != NULL);
+			//	pLoop->RemoveMessageFilter(_this);
+			//}
+			//break;
+			//default:
+			//	break;
+			//}
 			LRESULT lRes = 0;
 			BOOL bRet = _this->ProcessWindowMessage(_this->m_hWND, uMsg, wParam, lParam, lRes);
 			ASSERT(_this->m_pCurrentMsg == &msg);

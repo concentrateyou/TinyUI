@@ -85,6 +85,7 @@ namespace DXApp
 			m_txtContext.Invalidate();
 		}
 	}
+
 	CHARFORMAT	TextDlg::GetFormat() const
 	{
 		return m_cf;

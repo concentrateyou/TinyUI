@@ -23,18 +23,16 @@ namespace TinyUI
 		{
 			return ::SendMessage((HWND)lParam, (WM_COMMANDREFLECT), wParam, lParam);
 		}
-		else
-		{
-			bHandled = TRUE;
-			//²Ëµ¥ClickÊÂ¼þ
-			/*INT wID = LOWORD(wParam);
-			SysMenu* menuPtr = (SysMenu*)__Module.GetMapMENUID().FromKey(wID);
-			if (menuPtr != NULL)
-			{
-			menuPtr->OnClick(menuPtr, wID);
-			}*/
-			return TRUE;
-		}
+		return FALSE;
+	}
+	LRESULT TinyCustomDialog::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		return FALSE;
+	}
+	LRESULT TinyCustomDialog::OnKeyUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
 		return FALSE;
 	}
 }
