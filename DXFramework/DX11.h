@@ -22,7 +22,10 @@ namespace DXFramework
 		D3DXMATRIX				GetWorldMatrix();
 		D3DXMATRIX				GetOrthoMatrix();
 		TinySize				GetSize() const;
+		void					Lock();
+		void					Unlock();
 	private:
+		TinyLock							m_lock;
 		TinyComPtr<IDXGISwapChain>			m_swap;
 		TinyComPtr<ID3D11RenderTargetView>	m_renderView;
 		TinyComPtr<ID3D11DepthStencilView>	m_depthStencilView;

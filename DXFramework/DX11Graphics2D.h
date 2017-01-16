@@ -20,6 +20,8 @@ namespace DXFramework
 		BOOL    Resize(const TinySize& size);
 		DX11&	GetDX11();
 		BOOL	DrawImage(DX11Image* pImage);
+		void	Lock();
+		void	Unlock();
 	private:
 		DX11					m_dx11;
 		DXCamera				m_camera;

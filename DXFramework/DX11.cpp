@@ -257,4 +257,12 @@ namespace DXFramework
 	{
 		return m_orthoMatrix;
 	}
+	void DX11::Lock()
+	{
+		m_lock.Lock();
+	}
+	void DX11::Unlock()
+	{
+		m_lock.Unlock();
+	}
 }

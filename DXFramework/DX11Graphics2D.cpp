@@ -61,4 +61,12 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
+	void DX11Graphics2D::Lock()
+	{
+		m_dx11.Lock();
+	}
+	void DX11Graphics2D::Unlock()
+	{
+		m_dx11.Unlock();
+	}
 }
