@@ -23,8 +23,8 @@ namespace DXApp
 	private:
 		TinyString		m_text;
 		COLORREF		m_bkColor;
+		COLORREF		m_textColor;
 		CHARFORMAT		m_cf;
-		TinyScopedPtr<Gdiplus::Font> m_font;
 	};
 }
 

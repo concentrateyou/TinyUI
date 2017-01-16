@@ -64,17 +64,12 @@ namespace DXApp
 			dlg.GetCharFormat(m_cf);
 			m_txtContext.SetDefaultCharFormat(m_cf);
 			m_txtContext.Invalidate();
-			HDC hDC = GetDC(NULL);
-			if (hDC != NULL)
-			{
-				TinyString str;
-				m_txtContext.GetText(str);
-				wstring ws = StringToWString(str.STR());
-				Gdiplus::RectF rectF = MeasureString(hDC, ws, m_cf);
-				rectF.GetSize(&m_sizeF);
-				m_txtSize.SetText(StringPrintf("%f,%f", m_sizeF.Width, m_sizeF.Height).c_str());
-				ReleaseDC(NULL, hDC);
-			}
+			TinyString str;
+			m_txtContext.GetText(str);
+			wstring ws = StringToWString(str.STR());
+			Gdiplus::RectF rectF = MeasureString(ws, m_cf);
+			rectF.GetSize(&m_sizeF);
+			m_txtSize.SetText(StringPrintf("%f,%f", m_sizeF.Width, m_sizeF.Height).c_str());
 		}
 	}
 	void TextDlg::OnColorClick(void*, INT)
