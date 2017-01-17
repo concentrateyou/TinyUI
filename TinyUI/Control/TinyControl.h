@@ -43,6 +43,7 @@ namespace TinyUI
 		BOOL	ClientToScreen(LPRECT lpRect) const throw();
 		BOOL	ScreenToClient(LPPOINT lpPoint) const throw();
 		BOOL	ScreenToClient(LPRECT lpRect) const throw();
+		void	SetDefaultFont();
 		//////////////////////////////////////////////////////////////////////////
 	public:
 		BEGIN_MSG_MAP(TinyControl, TinyWindow)

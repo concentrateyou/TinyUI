@@ -1,6 +1,8 @@
 #pragma once
 #include "Control/TinyControl.h"
 #include "Control/TinyButton.h"
+#include "Control/TinyTrackBar.h"
+#include "Control/TinyLabel.h"
 #include "DXWindow.h"
 #include "VideoScene.h"
 #include "GameScene.h"
@@ -43,8 +45,8 @@ namespace DXApp
 		void OnCaptureClick(void*, INT);
 		void OnTextClick(void*, INT);
 		void OnImageClick(void*, INT);
+		void OnAudioClick(void*, INT);
 		void OnSelected(RECT);
-
 		void OnContextChange(void*);
 	private:
 		TinyButton m_broadcast;
@@ -55,6 +57,11 @@ namespace DXApp
 		TinyButton m_capture;
 		TinyButton m_text;
 		TinyButton m_image;
+		TinyButton m_audio;
+		TinyLabel	m_lblSpeaker;
+		TinyLabel	m_lblMicrophone;
+		TinyTrackBar m_speaker;
+		TinyTrackBar m_microphone;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onBroadcastClick;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onRecordClick;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onGameClick;
@@ -63,7 +70,7 @@ namespace DXApp
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onCaptureClick;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onTextClick;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onImageClick;
-
+		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onAudioClick;
 		TinyScopedPtr<Delegate<void(void*)>>		m_onTextChange;
 
 		DXWindow* m_pDXWND;

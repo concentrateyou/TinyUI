@@ -34,8 +34,10 @@ namespace DShow
 		BOOL	Stop();
 		BOOL	Pause();
 		BOOL	GetState(FILTER_STATE& state);
-		void	SetVolume(INT volume);
-		INT		GetVolume() const;
+		void	SetVolume(LONG volume);
+		LONG	GetVolume();
+		void	SetBalance(LONG balance);
+		LONG	GetBalance();
 		BYTE*	GetPointer();
 		LONG	GetSize();
 		virtual BOOL Allocate(const AudioCaptureParam& param);
@@ -54,6 +56,7 @@ namespace DShow
 		TinyComPtr<IBaseFilter>						m_captureFilter;
 		TinyComPtr<IGraphBuilder>					m_builder;
 		TinyComPtr<IMediaControl>					m_control;
+		TinyComPtr<IBasicAudio>						m_baseAudio;
 		TinyComPtr<IPin>							m_captureO;
 		TinyComPtr<IPin>							m_sinkI;
 		TinyScopedReferencePtr<AudioSinkFilter>		m_sinkFilter;

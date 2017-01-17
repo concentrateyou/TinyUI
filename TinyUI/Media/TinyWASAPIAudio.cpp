@@ -72,9 +72,16 @@ namespace TinyUI
 		{
 
 		}
-		TinyWASAPIAudio::Name::Name(string&& id, string&& name, GUID& type)
+		TinyWASAPIAudio::Name::Name(string&& id, string&& name, const GUID& type)
 			: m_name(std::move(name)),
 			m_id(std::move(id)),
+			m_type(type)
+		{
+
+		}
+		TinyWASAPIAudio::Name::Name(const string& id, const string& name, const GUID& type)
+			: m_name(name),
+			m_id(id),
 			m_type(type)
 		{
 

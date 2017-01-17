@@ -8,7 +8,6 @@ using namespace DShow;
 
 namespace DXApp
 {
-
 	class PublishTask : public TinyTaskBase
 	{
 	public:

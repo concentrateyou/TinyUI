@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include <dwmapi.h>
+#include <string>
 #include "MainUI.h"
 #include "GameDlg.h"
 #include "MediaCaptureDlg.h"
@@ -7,6 +8,9 @@
 #include "TextDlg.h"
 #include "Snapshot.h"
 #include "Resource.h"
+#include "Media/TinyWASAPIAudio.h"
+using namespace TinyUI::Media;
+using namespace std;
 
 #pragma comment(lib, "dwmapi.lib")
 
@@ -125,6 +129,19 @@ namespace DXApp
 		m_onImageClick.Reset(new Delegate<void(void*, INT)>(this, &MainUI::OnImageClick));
 		m_image.EVENT_CLICK += m_onImageClick;
 
+		m_lblSpeaker.Create(m_hWND, 0, 0, 100, 30);
+		m_lblSpeaker.ModifyStyle(SS_BITMAP, SS_LEFT);
+		m_lblSpeaker.SetText("ÑïÉùÆ÷:");
+		m_lblSpeaker.SetDefaultFont();
+
+		m_lblMicrophone.Create(m_hWND, 0, 0, 100, 30);
+		m_lblMicrophone.ModifyStyle(SS_BITMAP, SS_LEFT);
+		m_lblMicrophone.SetText("Âó¿Ë·ç:");
+		m_lblMicrophone.SetDefaultFont();
+
+		m_speaker.Create(m_hWND, 0, 0, 0, 0);
+		m_microphone.Create(m_hWND, 0, 0, 0, 0);
+
 		RECT s = { 0 };
 		m_pDXWND->GetClientRect(&s);
 		if (m_renderTask.Initialize(m_pDXWND, TO_CX(s), TO_CY(s), 30))
@@ -223,6 +240,26 @@ namespace DXApp
 		MediaCaptureDlg dlg;
 		if (dlg.DoModal(m_hWND, IDD_DLG_MEDIACAPTURE) == IDOK)
 		{
+			if (dlg.GetAudioName() != NULL)
+			{
+				DShow::AudioCapture::Name name = *dlg.GetAudioName();
+				DShow::AudioCapture capture;
+				capture.Initialize(name);
+				TinyWASAPIAudio::Name wasName(name.id(), name.name(), GUID_NULL);
+				BOOL bFlag = FALSE;
+				TinyWASAPIAudio::IsMicrophoneArray(wasName, bFlag);
+				if (bFlag)
+				{
+					LONG volume = capture.GetVolume();
+					m_microphone.SetRange(0, volume);
+				}
+				else
+				{
+					LONG volume = capture.GetVolume();
+					m_speaker.SetRange(0, volume);
+				}
+			}
+
 			m_renderTask.Remove(&m_videoScene);
 			m_videoScene.EndScene();
 			m_videoScene.Initialize(m_renderTask.GetGraphics()->GetDX11(), *dlg.GetVideoName(), *dlg.GetVideoParam());
@@ -263,6 +300,10 @@ namespace DXApp
 				m_imageScene.BeginScene();
 			}
 		}
+	}
+	void MainUI::OnAudioClick(void*, INT)
+	{
+
 	}
 	void MainUI::OnSelected(RECT rect)
 	{
@@ -314,5 +355,17 @@ namespace DXApp
 
 		m_image.SetPosition(offsetX + 100 * 5, offsetY + 50);
 		m_image.SetSize(100, 30);
+
+		m_lblSpeaker.SetPosition(offsetX + 100 * 6, offsetY + 15);
+		m_lblSpeaker.SetSize(100, 30);
+
+		m_lblMicrophone.SetPosition(offsetX + 100 * 8, offsetY + 15);
+		m_lblMicrophone.SetSize(100, 30);
+
+		m_speaker.SetPosition(offsetX + 100 * 6, offsetY + 50);
+		m_speaker.SetSize(200, 30);
+
+		m_microphone.SetPosition(offsetX + 100 * 8, offsetY + 50);
+		m_microphone.SetSize(200, 30);
 	}
 }

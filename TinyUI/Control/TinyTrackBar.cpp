@@ -54,14 +54,14 @@ namespace TinyUI
 		case TB_BOTTOM:
 		case TB_ENDTRACK:
 		{
-							INT newPos = GetPos();
-							if (currentPos != newPos)
-							{
-								EVENT_PosChanging(this, newPos);
-								currentPos = newPos;
-							}
+			INT newPos = GetPos();
+			if (currentPos != newPos)
+			{
+				EVENT_PosChanging(this, newPos);
+				currentPos = newPos;
+			}
 		}
-			break;
+		break;
 		}
 		return FALSE;
 	}

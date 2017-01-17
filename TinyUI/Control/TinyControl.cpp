@@ -511,4 +511,8 @@ namespace TinyUI
 			return FALSE;
 		return ::ScreenToClient(m_hWND, ((LPPOINT)lpRect) + 1);
 	}
+	void TinyControl::SetDefaultFont()
+	{
+		::SendMessage(m_hWND, WM_SETFONT, (WPARAM)(HFONT)GetStockObject(DEFAULT_GUI_FONT), MAKELPARAM(TRUE, 0));
+	}
 }

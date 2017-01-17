@@ -57,7 +57,9 @@ namespace DShow
 				m_queue.Initialize(ROUNDUP_POW_2(size * 3));
 				m_size = size;
 			}
+			this->Lock();
 			m_queue.WriteBytes(bits, size);
+			this->Unlock();
 		}
 	}
 	BOOL AudioCapture::Initialize(const Name& name)
@@ -69,6 +71,9 @@ namespace DShow
 		if (FAILED(hRes))
 			return FALSE;
 		if (!GetDeviceFilter(name, &m_captureFilter))
+			return FALSE;
+		hRes = m_captureFilter->QueryInterface(&m_baseAudio);
+		if (FAILED(hRes))
 			return FALSE;
 		m_captureO = GetPin(m_captureFilter, PINDIR_OUTPUT, PIN_CATEGORY_CAPTURE);
 		if (!m_captureO)
@@ -107,19 +112,36 @@ namespace DShow
 			m_builder->RemoveFilter(m_captureFilter);
 		}
 		m_captureO.Release();
+		m_baseAudio.Release();
 		m_captureFilter.Release();
 		m_sinkI.Release();
 		m_control.Release();
 		m_builder.Release();
 		m_sinkFilter = NULL;
 	}
-	void AudioCapture::SetVolume(INT volume)
+	void AudioCapture::SetVolume(LONG volume)
 	{
-
+		ASSERT(m_baseAudio);
+		m_baseAudio->put_Volume(volume);
 	}
-	INT AudioCapture::GetVolume() const
+	LONG AudioCapture::GetVolume()
 	{
-		return 0;
+		ASSERT(m_baseAudio);
+		LONG volume = 0;
+		m_baseAudio->get_Volume(&volume);
+		return volume;
+	}
+	void AudioCapture::SetBalance(LONG balance)
+	{
+		ASSERT(m_baseAudio);
+		m_baseAudio->put_Balance(balance);
+	}
+	LONG AudioCapture::GetBalance()
+	{
+		ASSERT(m_baseAudio);
+		LONG balance = 0;
+		m_baseAudio->get_Balance(&balance);
+		return balance;
 	}
 	BOOL AudioCapture::Start()
 	{

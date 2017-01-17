@@ -40,8 +40,7 @@ namespace DXApp
 		HINSTANCE		m_hInstance;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onFontClick;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onColorClick;
-
-		TinyScopedPtr<Delegate<void(void*)>>			m_onContextChange;
+		TinyScopedPtr<Delegate<void(void*)>>		m_onContextChange;
 	};
 }
 

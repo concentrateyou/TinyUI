@@ -30,7 +30,8 @@ namespace TinyUI
 			{
 			public:
 				Name();
-				Name(string&& id, string&& name,GUID& type);
+				Name(const string& id, const string& name, const GUID& type);
+				Name(string&& id, string&& name, const GUID& type);
 				~Name();
 				const string& name() const;
 				const string& id() const;
@@ -46,7 +47,7 @@ namespace TinyUI
 		public:
 			static BOOL IsMicrophoneArray(const Name& name, BOOL& IsMA);
 			static BOOL GetDevices(EDataFlow dataFlow, vector<Name>& names);
-			static INT  GetDeviceIndex(EDataFlow dataFlow,const Name& name);
+			static INT  GetDeviceIndex(EDataFlow dataFlow, const Name& name);
 			static BOOL GetJackSubtype(IMMDevice* mmDevice, GUID& subType);
 			static BOOL IsFormatValid(const Name& name, AUDCLNT_SHAREMODE shareMode, WAVEFORMATEX* pFMT);
 		};

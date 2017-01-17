@@ -16,11 +16,9 @@ namespace DXApp
 	public:
 		MediaCaptureDlg();
 		virtual	~MediaCaptureDlg();
-
-		virtual LRESULT OnCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) override;
-
 	public:
 		LRESULT OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+		LRESULT OnCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	public:
 		DShow::AudioCapture::Name*  GetAudioName();
 		DShow::VideoCapture::Name*	GetVideoName();
