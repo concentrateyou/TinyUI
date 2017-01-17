@@ -22,9 +22,12 @@ namespace DXApp
 		CHARFORMAT		GetFormat() const;
 		TinyString		GetText() const;
 		COLORREF		GetBkColor() const;
+	public:
+		Event<void(void*)> EVENT_CONTEXTCHANGE;
 	private:
 		void OnFontClick(void*, INT);
 		void OnColorClick(void*, INT);
+		void OnContextChange(void*);
 	protected:
 		TinyString		m_text;
 		CHARFORMAT		m_cf;
@@ -38,8 +41,7 @@ namespace DXApp
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onFontClick;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onColorClick;
 
-
-
+		TinyScopedPtr<Delegate<void(void*)>>			m_onContextChange;
 	};
 }
 

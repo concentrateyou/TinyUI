@@ -14,6 +14,7 @@ namespace DXApp
 		TextScene();
 		virtual ~TextScene();
 		BOOL Initialize(DX11& dx11, const TinyString& text, const CHARFORMAT& cf, const COLORREF& bkColor);
+		static VOID CALLBACK TimerProc(HWND  hwnd, UINT  uMsg, UINT_PTR idEvent, DWORD dwTime);
 	public:
 		LPCSTR GetClassName() OVERRIDE;
 		ElementType GetElementType() const OVERRIDE;
@@ -26,6 +27,9 @@ namespace DXApp
 		COLORREF		m_textColor;
 		CHARFORMAT		m_cf;
 	};
+	SELECTANY extern UINT_PTR m_timerID = 0;
+	SELECTANY extern INT m_displaySize = 0;
+	SELECTANY extern INT m_maxSize = 0;
 }
 
 

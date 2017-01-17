@@ -27,8 +27,9 @@ namespace DXFramework
 		BOOL Load(DX11& dx11, const BYTE* bits, DWORD dwSize);
 		BOOL IsValid() const;
 		BOOL Update(DX11& dx11);
-		void Destory();
 		DX11Texture* GetTexture();
+	public:
+		virtual void Destory();
 	public:
 		ElementType	GetElementType() const;
 		LPCSTR GetClassName() OVERRIDE;

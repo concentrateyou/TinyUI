@@ -16,11 +16,11 @@ namespace DXApp
 	BOOL WindowScene::Initialize(DX11& dx11, HWND hWND)
 	{
 		m_hWND = hWND;
-		Destory();
 		TinyRectangle rectangle;
 		GetClientRect(m_hWND, &rectangle);
 		if (!rectangle.IsRectEmpty())
 		{
+			Destory();
 			return DX11Image::Create(dx11, rectangle.Size(), NULL);
 		}
 		return FALSE;

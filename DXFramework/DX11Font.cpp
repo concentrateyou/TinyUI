@@ -43,6 +43,8 @@ namespace DXFramework
 		Gdiplus::Graphics graphics(hDC);
 		Gdiplus::RectF boundingBox;
 		graphics.SetTextRenderingHint(Gdiplus::TextRenderingHintAntiAlias);
+		graphics.SetCompositingMode(Gdiplus::CompositingModeSourceOver);
+		graphics.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
 		Gdiplus::StringFormat format(Gdiplus::StringFormat::GenericTypographic());
 		format.SetFormatFlags(Gdiplus::StringFormatFlagsNoFitBlackBox | Gdiplus::StringFormatFlagsMeasureTrailingSpaces);
 		format.SetTrimming(Gdiplus::StringTrimmingWord);
@@ -61,6 +63,8 @@ namespace DXFramework
 		Gdiplus::Graphics graphics(hDC);
 		Gdiplus::RectF boundingBox;
 		graphics.SetTextRenderingHint(Gdiplus::TextRenderingHintAntiAlias);
+		graphics.SetCompositingMode(Gdiplus::CompositingModeSourceOver);
+		graphics.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
 		Gdiplus::StringFormat format(Gdiplus::StringFormat::GenericTypographic());
 		format.SetFormatFlags(Gdiplus::StringFormatFlagsNoFitBlackBox | Gdiplus::StringFormatFlagsMeasureTrailingSpaces);
 		format.SetTrimming(Gdiplus::StringTrimmingWord);
@@ -91,11 +95,40 @@ namespace DXFramework
 			Gdiplus::RectF rectF = MeasureString(str, cf);
 			ReleaseDC(NULL, hDC);
 			rectF.GetSize(&sizeF);
-			return DX11Image::Create(dx11, TinySize((INT)(sizeF.Width + 1), (INT)(sizeF.Height)), NULL);
+			sizeF.Width += 1;
+			sizeF.Height += 1;
+			TinyRectangle s = { 0 };
+			GetClientRect(dx11.GetHWND(), &s);
+			if (sizeF.Width > s.Width())
+			{
+				sizeF.Width = s.Width();
+			}
+			if (sizeF.Height > s.Height())
+			{
+				sizeF.Height = s.Height();
+			}
+			return DX11Image::Create(dx11, TinySize((INT)sizeF.Width, (INT)sizeF.Height), NULL);
 		}
 		return FALSE;
 	}
-	BOOL DX11Font::DrawString(DX11& dx11, const TinyString& str, const PointF& pos, const StringFormat* format)
+	BOOL DX11Font::Clear()
+	{
+		HDC hDC = NULL;
+		if (!m_texture.GetDC(hDC))
+			return FALSE;
+		Graphics g(hDC);
+		g.SetTextRenderingHint(Gdiplus::TextRenderingHintAntiAlias);
+		g.SetCompositingMode(Gdiplus::CompositingModeSourceOver);
+		g.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
+		Color color;
+		color.SetFromCOLORREF(m_bkColor);
+		g.Clear(color);
+		g.ReleaseHDC(hDC);
+		if (!m_texture.ReleaseDC())
+			return FALSE;
+		return TRUE;
+	}
+	BOOL DX11Font::DrawString(DX11& dx11, const TinyString& str, const RectF& rectF, const StringFormat* format)
 	{
 		ASSERT(m_texture.IsValid());
 		HDC hDC = NULL;
@@ -103,14 +136,17 @@ namespace DXFramework
 			return FALSE;
 		Graphics g(hDC);
 		g.SetTextRenderingHint(Gdiplus::TextRenderingHintAntiAlias);
+		g.SetCompositingMode(Gdiplus::CompositingModeSourceOver);
+		g.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
+		g.SetClip(RectF(0, 0, m_size.cx, m_size.cy));
 		wstring ws = StringToWString(str.STR());
 		LOGFONT lf;
 		CHARFORMAT2LOGFONT(m_cf, lf, m_textColor);
 		Color color;
 		color.SetFromCOLORREF(m_textColor);
-		SolidBrush brush(color);
+		SolidBrush textBrush(color);
 		Gdiplus::Font font(hDC, &lf);
-		g.DrawString(ws.c_str(), -1, &font, pos, format, &brush);
+		g.DrawString(ws.c_str(), -1, &font, rectF, format, &textBrush);
 		g.ReleaseHDC(hDC);
 		if (!m_texture.ReleaseDC())
 			return FALSE;

@@ -16,6 +16,15 @@ namespace TinyUI
 		DWORD RetrieveExStyle() OVERRIDE;
 		BOOL PreCreateWindow(CREATESTRUCT& cs);
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
+
+		
+	public:
+		LRESULT OnCommandReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+		LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+	public:
+		virtual void OnTextChange();
+	public:
+		Event<void(void*)> EVENT_TEXTCHANGE;
 	public:
 		BOOL GetText(TinyString& str) const;
 		BOOL CanUndo() const;

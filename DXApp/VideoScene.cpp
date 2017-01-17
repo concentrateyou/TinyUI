@@ -21,6 +21,7 @@ namespace DXApp
 			return FALSE;
 		if (!m_video.Allocate(param))
 			return FALSE;
+		Destory();
 		return DX11Image::Create(dx11, param.GetSize(), NULL);
 	}
 

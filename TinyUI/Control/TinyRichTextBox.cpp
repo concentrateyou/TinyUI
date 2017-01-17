@@ -32,7 +32,7 @@ namespace TinyUI
 	}
 	DWORD TinyRichTextBox::RetrieveStyle()
 	{
-		return (ES_MULTILINE | WS_VISIBLE | WS_CHILD | WS_TABSTOP | WS_VSCROLL | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_MULTILINE);
+		return (WS_VISIBLE | WS_CHILD | WS_TABSTOP | WS_VSCROLL | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_MULTILINE | ES_WANTRETURN);
 	}
 	DWORD TinyRichTextBox::RetrieveExStyle()
 	{
@@ -43,9 +43,57 @@ namespace TinyUI
 		INITCOMMONCONTROLSEX initCtrls = { sizeof(INITCOMMONCONTROLSEX), ICC_STANDARD_CLASSES };
 		if (InitCommonControlsEx(&initCtrls))
 		{
-			return TinyControl::Create(hParent, x, y, cx, cy);
+			if (TinyControl::Create(hParent, x, y, cx, cy))
+			{
+				::SendMessage(m_hWND, EM_SETEVENTMASK,
+					0,
+					ENM_PROTECTED | ENM_SELCHANGE |
+					ENM_DROPFILES | ENM_REQUESTRESIZE |
+					ENM_IMECHANGE | ENM_CHANGE |
+					ENM_UPDATE | ENM_SCROLL |
+					ENM_KEYEVENTS | ENM_MOUSEEVENTS |
+					ENM_SCROLLEVENTS | ENM_LINK);
+				return TRUE;
+			}
 		}
 		return FALSE;
+	}
+
+	LRESULT TinyRichTextBox::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		::SendMessage(m_hWND, EM_SETEVENTMASK,
+			0,
+			ENM_PROTECTED | ENM_SELCHANGE |
+			ENM_DROPFILES | ENM_REQUESTRESIZE |
+			ENM_IMECHANGE | ENM_CHANGE |
+			ENM_UPDATE | ENM_SCROLL |
+			ENM_KEYEVENTS | ENM_MOUSEEVENTS |
+			ENM_SCROLLEVENTS | ENM_LINK);
+		return FALSE;
+	}
+
+	LRESULT TinyRichTextBox::OnCommandReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		switch (HIWORD(wParam))
+		{
+		case EN_CHANGE:
+		{
+			OnTextChange();
+		}
+		break;
+		case EN_UPDATE:
+		{
+			//TOFO
+		}
+		break;
+		}
+		return FALSE;
+	}
+	void TinyRichTextBox::OnTextChange()
+	{
+		EVENT_TEXTCHANGE((void*)this);
 	}
 	BOOL TinyRichTextBox::GetText(TinyString& str) const
 	{

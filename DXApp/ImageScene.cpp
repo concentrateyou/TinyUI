@@ -14,6 +14,7 @@ namespace DXApp
 
 	BOOL ImageScene::Initialize(DX11& dx11, const TinyString& imageFile)
 	{
+		Destory();
 		return Load(dx11, imageFile.STR());
 	}
 

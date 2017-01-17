@@ -155,14 +155,14 @@ namespace DXFramework
 			return FALSE;
 		}
 		SharedTextureDATA* pTextureDATA = GetSharedTextureDATA();
-		if (!pTextureDATA)
+		if (!pTextureDATA || !pTextureDATA->TextureHandle)
 		{
 			TRACE("BeginCapture GetSharedTextureDATA-FAIL\n");
 			return FALSE;
 		}
 		m_pDX11->Lock();
-		if (!pTextureDATA->TextureHandle ||
-			!m_image.Load(*m_pDX11, pTextureDATA->TextureHandle))
+		m_image.Destory();
+		if (!m_image.Load(*m_pDX11, pTextureDATA->TextureHandle))
 		{
 			m_pDX11->Unlock();
 			TRACE("BeginCapture m_image.Load-FAIL\n");

@@ -8,7 +8,6 @@ namespace TinyUI
 		m_iDlgResult(0),
 		m_hPrimaryProc(NULL),
 		m_pTemplateName(NULL)
-
 	{
 
 	}
@@ -40,14 +39,39 @@ namespace TinyUI
 	{
 		return FALSE;
 	}
-	LRESULT CALLBACK TinyDialog::MessageHook(INT code, WPARAM wParam, LPARAM lParam)
+	/*LRESULT CALLBACK TinyDialog::GetMsgProc(INT code, WPARAM wParam, LPARAM lParam)
 	{
 		LPMSG pMsg = (LPMSG)lParam;
 		TinyHandleHWND** pHWND = TinyApplication::GetInstance()->GetMapHWND().Lookup(pMsg->hwnd);
 		if (pHWND != NULL)
 		{
-			
+
 		}
+	}*/
+	DWORD TinyDialog::GetDefID() const
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return DWORD(::SendMessage(m_hWND, DM_GETDEFID, 0, 0));
+	}
+	void TinyDialog::SetDefID(UINT nID)
+	{
+		ASSERT(::IsWindow(m_hWND));
+		::SendMessage(m_hWND, DM_SETDEFID, nID, 0);
+	}
+	void TinyDialog::NextDlgCtrl() const
+	{
+		ASSERT(::IsWindow(m_hWND));
+		::SendMessage(m_hWND, WM_NEXTDLGCTL, 0, 0);
+	}
+	void TinyDialog::PrevDlgCtrl() const
+	{
+		ASSERT(::IsWindow(m_hWND));
+		::SendMessage(m_hWND, WM_NEXTDLGCTL, 1, 0);
+	}
+	void TinyDialog::GotoDlgCtrl(HWND hWND)
+	{
+		ASSERT(::IsWindow(m_hWND));
+		::SendMessage(m_hWND, WM_NEXTDLGCTL, (WPARAM)hWND, 1L);
 	}
 	INT_PTR CALLBACK TinyDialog::BeginLoop(HWND hWND, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
@@ -67,6 +91,7 @@ namespace TinyUI
 				DLGPROC hOldProc = (DLGPROC)::SetWindowLongPtr(hWND, DWLP_DLGPROC, (LONG_PTR)hProc);
 				if (hOldProc != BeginLoop)
 					TRACE(_T("Subclassing through a hook discarded.\n"));
+				DBG_UNREFERENCED_LOCAL_VARIABLE(hOldProc);
 				return hProc(hWND, uMsg, wParam, lParam);
 			}
 		}
@@ -116,10 +141,10 @@ namespace TinyUI
 		}
 		if ((_this->m_dwState & 0x00000001) && _this->m_pCurrentMsg == NULL)
 		{
-			HWND hWndThis = _this->m_hWND;
+			HWND hWNDThis = _this->m_hWND;
 			_this->m_hWND = NULL;
 			_this->m_dwState &= ~0x00000001;
-			_this->OnFinalMessage(hWndThis);
+			_this->OnFinalMessage(hWNDThis);
 		}
 		return (INT_PTR)bRet;
 	}
@@ -176,11 +201,75 @@ namespace TinyUI
 			return -1;
 		}
 		m_bModal = TRUE;
-		//m_hMsgHook = ::SetWindowsHookEx(WH_GETMESSAGE, TinyDialog::MessageHook, TinyApplication::GetInstance()->Handle(), GetCurrentThreadId());
+		//m_hMsgHook = ::SetWindowsHookEx(WH_GETMESSAGE, TinyDialog::GetMsgProc, TinyApplication::GetInstance()->Handle(), GetCurrentThreadId());
 		//ASSERT(m_hMsgHook != NULL);
 		m_iDlgResult = ::DialogBoxParam(TinyApplication::GetInstance()->Handle(), lpTemplateName, hParent, BeginLoop, (LPARAM)this);
 		return m_iDlgResult;
 	}
+	//HRESULT TinyDialog::ModalLoop(DWORD dwFlags)
+	//{
+	//	BOOL bIdle = TRUE;
+	//	LONG lIdleCount = 0;
+	//	BOOL bShowIdle = (dwFlags & MLF_SHOWONIDLE) && !(GetStyle() & WS_VISIBLE);
+	//	HWND hParent = ::GetParent(m_hWND);
+	//	MSG msg;
+	//	for (;;)
+	//	{
+	//		ASSERT((m_nFlags & WF_CONTINUEMODAL) != 0);
+	//		while (bIdle && !::PeekMessage(&msg, NULL, NULL, NULL, PM_NOREMOVE))
+	//		{
+	//			ASSERT((m_nFlags & WF_CONTINUEMODAL) != 0);
+	//			if (bShowIdle)
+	//			{
+	//				ShowWindow(SW_SHOWNORMAL);
+	//				UpdateWindow();
+	//				bShowIdle = FALSE;
+	//			}
+	//			if (!(dwFlags & MLF_NOIDLEMSG) && hParent != NULL && lIdleCount == 0)
+	//			{
+	//				::SendMessage(hParent, WM_ENTERIDLE, MSGF_DIALOGBOX, (LPARAM)m_hWND);
+	//			}
+	//			if ((dwFlags & MLF_NOKICKIDLE) || !SendMessage(WM_KICKIDLE, MSGF_DIALOGBOX, lIdleCount++))
+	//			{
+	//				bIdle = FALSE;
+	//			}
+	//		}
+	//		do
+	//		{
+	//			ASSERT((m_nFlags & WF_CONTINUEMODAL) != 0);
+	//			if (!::GetMessage(&msg, NULL, NULL, NULL))
+	//			{
+	//				if (msg.message != WM_KICKIDLE && !PreTranslateMessage(&msg))
+	//				{
+	//					::TranslateMessage(&msg);
+	//					::DispatchMessage(&msg);
+	//				}
+	//				return FALSE;
+	//			}
+	//			else
+	//			{
+	//				::PostQuitMessage(0);
+	//				return -1;
+	//			}
+	//			if (bShowIdle && (msg->message == 0x118 || msg->message == WM_SYSKEYDOWN))
+	//			{
+	//				ShowWindow(SW_SHOWNORMAL);
+	//				UpdateWindow();
+	//				bShowIdle = FALSE;
+	//			}
+	//			if ((m_nFlags & WF_CONTINUEMODAL) == 0)
+	//				goto END;
+	//			if (AfxIsIdleMessage(pMsg))
+	//			{
+	//				bIdle = TRUE;
+	//				lIdleCount = 0;
+	//			}
+	//		} while (::PeekMessage(pMsg, NULL, NULL, NULL, PM_NOREMOVE));
+	//	}
+	//END:
+	//	m_nFlags &= ~(WF_MODALLOOP | WF_CONTINUEMODAL);
+	//	return m_nModalResult;
+	//}
 	BOOL TinyDialog::MapDialogRect(LPRECT lpRect)
 	{
 		ASSERT(::IsWindow(m_hWND));

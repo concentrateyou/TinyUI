@@ -44,6 +44,8 @@ namespace DXApp
 		void OnTextClick(void*, INT);
 		void OnImageClick(void*, INT);
 		void OnSelected(RECT);
+
+		void OnContextChange(void*);
 	private:
 		TinyButton m_broadcast;
 		TinyButton m_record;
@@ -53,14 +55,17 @@ namespace DXApp
 		TinyButton m_capture;
 		TinyButton m_text;
 		TinyButton m_image;
-		TinyScopedPtr<Delegate<void(void*, INT)>> m_onBroadcastClick;
-		TinyScopedPtr<Delegate<void(void*, INT)>> m_onRecordClick;
-		TinyScopedPtr<Delegate<void(void*, INT)>> m_onGameClick;
-		TinyScopedPtr<Delegate<void(void*, INT)>> m_onScreenClick;
-		TinyScopedPtr<Delegate<void(void*, INT)>> m_onWindowClick;
-		TinyScopedPtr<Delegate<void(void*, INT)>> m_onCaptureClick;
-		TinyScopedPtr<Delegate<void(void*, INT)>> m_onTextClick;
-		TinyScopedPtr<Delegate<void(void*, INT)>> m_onImageClick;
+		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onBroadcastClick;
+		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onRecordClick;
+		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onGameClick;
+		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onScreenClick;
+		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onWindowClick;
+		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onCaptureClick;
+		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onTextClick;
+		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onImageClick;
+
+		TinyScopedPtr<Delegate<void(void*)>>		m_onTextChange;
+
 		DXWindow* m_pDXWND;
 
 		Snapshot	m_snapshot;

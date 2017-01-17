@@ -134,9 +134,7 @@ namespace DXApp
 	}
 	void MainUI::DestoryUI()
 	{
-
 		m_renderTask.Close();
-
 		m_broadcast.EVENT_CLICK -= m_onBroadcastClick;
 		m_record.EVENT_CLICK -= m_onRecordClick;
 		m_game.EVENT_CLICK -= m_onGameClick;
@@ -202,6 +200,7 @@ namespace DXApp
 		m_snapshot.EVENT_SELECTED += m_onSelected;
 		m_snapshot.ShowWindow(SW_SHOWNORMAL);
 	}
+
 	void MainUI::OnWindowClick(void*, INT)
 	{
 		WindowDlg dlg;
@@ -235,7 +234,9 @@ namespace DXApp
 	}
 	void MainUI::OnTextClick(void*, INT)
 	{
+		m_onTextChange.Reset(new Delegate<void(void*)>(this, &MainUI::OnContextChange));
 		TextDlg dlg;
+		dlg.EVENT_CONTEXTCHANGE += m_onTextChange;
 		if (dlg.DoModal(m_hWND, IDD_DLG_TEXT) == IDOK)
 		{
 			m_renderTask.Remove(&m_textScene);
@@ -245,8 +246,8 @@ namespace DXApp
 			{
 				m_textScene.BeginScene();
 			}
-
 		}
+		dlg.EVENT_CONTEXTCHANGE -= m_onTextChange;
 	}
 	void MainUI::OnImageClick(void*, INT)
 	{
@@ -278,7 +279,15 @@ namespace DXApp
 			m_screenScene.BeginScene();
 		}
 	}
+	void MainUI::OnContextChange(void* sender)
+	{
+		TextDlg* dlg = reinterpret_cast<TextDlg*>(sender);
+		if (dlg != NULL)
+		{
 
+
+		}
+	}
 	void MainUI::Resize(INT cx, INT cy)
 	{
 		INT offsetX = 15;

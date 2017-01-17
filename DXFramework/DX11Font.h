@@ -21,7 +21,8 @@ namespace DXFramework
 		DX11Font();
 		virtual ~DX11Font();
 		BOOL Create(DX11& dx11, const wstring& str, const CHARFORMAT& cf, const COLORREF& bkColor);
-		BOOL DrawString(DX11& dx11, const TinyString& str, const PointF& pos, const StringFormat* format);
+		BOOL Clear();
+		BOOL DrawString(DX11& dx11, const TinyString& str, const RectF& rectF, const StringFormat* format);
 	private:
 		CHARFORMAT	m_cf;
 		COLORREF	m_textColor;

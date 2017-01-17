@@ -14,12 +14,16 @@ namespace DXApp
 		m_onColorClick.Reset(new Delegate<void(void*, INT)>(this, &TextDlg::OnColorClick));
 		m_btnFont.EVENT_CLICK += m_onFontClick;
 		m_btnColor.EVENT_CLICK += m_onColorClick;
+
+		m_onContextChange.Reset(new Delegate<void(void*)>(this, &TextDlg::OnContextChange));
+		m_txtContext.EVENT_TEXTCHANGE += m_onContextChange;
 	}
 
 	TextDlg::~TextDlg()
 	{
 		m_btnFont.EVENT_CLICK -= m_onFontClick;
 		m_btnColor.EVENT_CLICK -= m_onColorClick;
+		m_txtContext.EVENT_TEXTCHANGE -= m_onContextChange;
 		if (m_hInstance != NULL)
 		{
 			FreeLibrary(m_hInstance);
@@ -31,11 +35,15 @@ namespace DXApp
 	{
 		bHandled = FALSE;
 		m_txtContext.SubclassDlgItem(IDC_RICHEDIT2_TEXT, m_hWND);
-		m_txtContext.ModifyStyle(0, ES_MULTILINE);
+		m_txtContext.SetEventMask(ENM_PROTECTED | ENM_SELCHANGE |
+			ENM_DROPFILES | ENM_REQUESTRESIZE |
+			ENM_IMECHANGE | ENM_CHANGE |
+			ENM_UPDATE | ENM_SCROLL |
+			ENM_KEYEVENTS | ENM_MOUSEEVENTS |
+			ENM_SCROLLEVENTS | ENM_LINK);
+		m_txtSize.SubclassDlgItem(IDC_EDIT_SIZE, m_hWND);
 		m_btnFont.SubclassDlgItem(IDC_BTN_FONT, m_hWND);
 		m_btnColor.SubclassDlgItem(IDC_BTN_COLOR, m_hWND);
-		m_txtSize.SubclassDlgItem(IDC_EDIT_SIZE, m_hWND);
-		::SetFocus(m_hWND);
 		return FALSE;
 	}
 
@@ -86,7 +94,10 @@ namespace DXApp
 			m_txtContext.Invalidate();
 		}
 	}
-
+	void TextDlg::OnContextChange(void* sender)
+	{
+		EVENT_CONTEXTCHANGE(sender);
+	}
 	CHARFORMAT	TextDlg::GetFormat() const
 	{
 		return m_cf;

@@ -19,16 +19,18 @@ namespace TinyUI
 		DLGPROC			m_hPrimaryProc;//原始对话框过程
 		WORD			m_wInteger;
 		LPCTSTR			m_pTemplateName;
+		//UINT			m_nFlags;
 	protected:
 		virtual void PreSubclassDialog();
 		virtual BOOL PreTranslateMessage(MSG* pMsg);
 		virtual void OnFinalMessage(HWND hWND);
 		virtual BOOL DestroyWindow();
 	private:
-		static HHOOK m_hMsgHook;
-		static LRESULT CALLBACK MessageHook(INT code, WPARAM wParam, LPARAM lParam);
+		//static HHOOK m_hMsgHook;
+		//static LRESULT CALLBACK MessageHook(INT code, WPARAM wParam, LPARAM lParam);
 		static INT_PTR CALLBACK BeginLoop(HWND hWND, UINT uMsg, WPARAM wParam, LPARAM lParam);
 		static INT_PTR CALLBACK EndLoop(HWND hWND, UINT uMsg, WPARAM wParam, LPARAM lParam);
+		//HRESULT ModalLoop(DWORD dwFlags);
 	public:
 		TinyDialog();
 		virtual ~TinyDialog();
@@ -43,8 +45,13 @@ namespace TinyUI
 		BOOL EndDialog(INT_PTR m_DlgResult);
 		BOOL EndDialog(HWND hWND, INT_PTR m_DlgResult);
 		BOOL IsModal() const throw();
+		DWORD GetDefID() const;
+		void SetDefID(UINT nID);
+		void NextDlgCtrl() const;
+		void PrevDlgCtrl() const;
+		void GotoDlgCtrl(HWND hWND);
 	};
-	SELECTANY HHOOK TinyDialog::m_hMsgHook = NULL;
+	//SELECTANY HHOOK TinyDialog::m_hMsgHook = NULL;
 }
 
 
