@@ -181,13 +181,11 @@ namespace DXApp
 			GetWindowThreadProcessId(hWND, &processID);
 			if (HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processID))
 			{
-
 				DWORD size = MAX_PATH;
 				CHAR windowExecutable[MAX_PATH];
 				if (QueryFullProcessImageName(hProcess, 0, windowExecutable, &size))
 				{
 					CHAR* pzName = PathFindFileName(windowExecutable);
-
 					if (!m_renderTask.Contain(&m_gameScene))
 					{
 						m_gameScene.Initialize(m_renderTask.GetGraphics()->GetDX11());
@@ -245,23 +243,17 @@ namespace DXApp
 				DShow::AudioCapture::Name name = *dlg.GetAudioName();
 				DShow::AudioCapture capture;
 				capture.Initialize(name);
-				TinyWASAPIAudio::Name wasName(name.id(), name.name(), GUID_NULL);
-				BOOL bFlag = FALSE;
-				TinyWASAPIAudio::IsMicrophoneArray(wasName, bFlag);
-				m_mixer.Close();
-				if (bFlag)
+				LONG volume = 0;
+				capture.GetVolume(volume);
+				BOOL bIsMA = FALSE;
+				TinyWASAPIAudio::IsMicrophoneArray(name.name(), bIsMA);
+				if (bIsMA)
 				{
-					m_mixer.Initialize();
-					DWORD volume = 0;
-					m_mixer.GetVolume(volume);
-					m_mixer.SetVolume(20);
+					m_microphone.SetPos(volume);
 				}
 				else
 				{
-					m_mixer.Initialize(MIXERLINE_COMPONENTTYPE_DST_SPEAKERS, MIXERLINE_COMPONENTTYPE_SRC_WAVEOUT);
-					DWORD volume = 0;
-					m_mixer.GetVolume(volume);
-					m_mixer.SetVolume(20);
+					m_speaker.SetPos(volume);
 				}
 			}
 			if (dlg.GetVideoName() != NULL && dlg.GetVideoParam() != NULL)
@@ -371,8 +363,10 @@ namespace DXApp
 
 		m_speaker.SetPosition(offsetX + 100 * 6, offsetY + 50);
 		m_speaker.SetSize(200, 30);
+		m_speaker.SetRange(0, 100);
 
 		m_microphone.SetPosition(offsetX + 100 * 8, offsetY + 50);
 		m_microphone.SetSize(200, 30);
+		m_microphone.SetRange(0, 100);
 	}
 }

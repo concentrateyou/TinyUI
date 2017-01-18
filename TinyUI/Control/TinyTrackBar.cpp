@@ -21,7 +21,7 @@ namespace TinyUI
 	}
 	DWORD TinyTrackBar::RetrieveStyle()
 	{
-		return (WS_CHILDWINDOW | WS_VISIBLE | WS_EX_LEFT | TBS_HORZ | TBS_NOTICKS);
+		return (WS_CHILDWINDOW | WS_VISIBLE | WS_EX_LEFT | TBS_HORZ | TBS_NOTICKS | TBS_TOOLTIPS);
 	}
 	DWORD TinyTrackBar::RetrieveExStyle()
 	{

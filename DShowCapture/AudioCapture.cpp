@@ -72,6 +72,9 @@ namespace DShow
 			return FALSE;
 		if (!GetDeviceFilter(name, &m_captureFilter))
 			return FALSE;
+		hRes = m_captureFilter->QueryInterface(&m_mixer);
+		if (FAILED(hRes))
+			return FALSE;
 		m_captureO = GetPin(m_captureFilter, PINDIR_OUTPUT, PIN_CATEGORY_CAPTURE);
 		if (!m_captureO)
 			return FALSE;
@@ -109,6 +112,7 @@ namespace DShow
 			m_builder->RemoveFilter(m_captureFilter);
 		}
 		m_captureO.Release();
+		m_mixer.Release();
 		m_captureFilter.Release();
 		m_sinkI.Release();
 		m_control.Release();
@@ -117,11 +121,17 @@ namespace DShow
 	}
 	BOOL AudioCapture::SetVolume(LONG volume)
 	{
-		return FALSE;
+		ASSERT(m_mixer);
+		DOUBLE dVolume = ((DOUBLE)volume / 100);
+		return m_mixer->put_MixLevel(dVolume) == S_OK;
 	}
 	BOOL AudioCapture::GetVolume(LONG& volume)
 	{
-		return FALSE;
+		ASSERT(m_mixer);
+		DOUBLE dVolume = 0.0;
+		HRESULT hRes = m_mixer->get_MixLevel(&dVolume);
+		volume = static_cast<LONG>((dVolume * 100));
+		return hRes == S_OK;
 	}
 	BOOL AudioCapture::Start()
 	{
@@ -278,6 +288,7 @@ namespace DShow
 				moniker.Release();
 				continue;
 			}
+			string friendlyName;
 			ScopedVariant variant;
 			hRes = propertyBag->Read(L"Description", &variant, 0);
 			if (FAILED(hRes))
@@ -287,18 +298,18 @@ namespace DShow
 			if (SUCCEEDED(hRes) && variant->vt == VT_BSTR)
 			{
 				string id;
-				string name(WStringToString(V_BSTR(&variant)));
+				friendlyName = std::move(WStringToString(V_BSTR(&variant)));
 				variant.Reset();
 				hRes = propertyBag->Read(L"DevicePath", &variant, 0);
 				if (FAILED(hRes) || variant->vt != VT_BSTR)
 				{
-					id = name;
+					id = friendlyName;
 				}
 				else
 				{
 					id = WStringToString(V_BSTR(&variant));
 				}
-				names.push_back(std::move(Name(std::move(name), std::move(id))));
+				names.push_back(std::move(Name(std::move(friendlyName), std::move(id))));
 			}
 			moniker.Release();
 		}

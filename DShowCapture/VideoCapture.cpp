@@ -325,21 +325,22 @@ namespace DShow
 			{
 				hRes = propertyBag->Read(L"FriendlyName", &variant, 0);
 			}
+			string friendlyName;
 			if (SUCCEEDED(hRes) && variant->vt == VT_BSTR)
 			{
 				string id;
-				string name(WStringToString(V_BSTR(&variant)));
+				friendlyName = std::move(WStringToString(V_BSTR(&variant)));
 				variant.Reset();
 				hRes = propertyBag->Read(L"DevicePath", &variant, 0);
 				if (FAILED(hRes) || variant->vt != VT_BSTR)
 				{
-					id = name;
+					id = friendlyName;
 				}
 				else
 				{
 					id = WStringToString(V_BSTR(&variant));
 				}
-				names.push_back(std::move(Name(std::move(name), std::move(id))));
+				names.push_back(std::move(Name(std::move(friendlyName), std::move(id))));
 			}
 			moniker.Release();
 		}

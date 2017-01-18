@@ -57,6 +57,7 @@ namespace DShow
 		TinyComPtr<IMediaControl>					m_control;
 		TinyComPtr<IPin>							m_captureO;
 		TinyComPtr<IPin>							m_sinkI;
+		TinyComPtr<IAMAudioInputMixer>				m_mixer;
 		TinyScopedReferencePtr<AudioSinkFilter>		m_sinkFilter;
 		Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_callback;
 	};

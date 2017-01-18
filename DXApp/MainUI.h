@@ -86,7 +86,5 @@ namespace DXApp
 		ScreenScene	m_screenScene;
 
 		RenderTask	m_renderTask;
-
-		Mixer		m_mixer;
 	};
 }

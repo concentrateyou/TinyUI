@@ -53,6 +53,7 @@ namespace TinyUI
 		INT GetThumbLength() const;
 		void ClearSel(BOOL bRedraw = FALSE);
 		void ClearTics(BOOL bRedraw = FALSE);
+	
 	};
 }
 
