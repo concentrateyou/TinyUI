@@ -3,6 +3,7 @@
 #include "FilterObserver.h"
 #include "AudioCaptureParam.h"
 #include "AudioSinkFilter.h"
+#include "Mixer.h"
 
 namespace DShow
 {
@@ -34,10 +35,8 @@ namespace DShow
 		BOOL	Stop();
 		BOOL	Pause();
 		BOOL	GetState(FILTER_STATE& state);
-		void	SetVolume(LONG volume);
-		LONG	GetVolume();
-		void	SetBalance(LONG balance);
-		LONG	GetBalance();
+		BOOL	SetVolume(LONG volume);
+		BOOL	GetVolume(LONG& volume);
 		BYTE*	GetPointer();
 		LONG	GetSize();
 		virtual BOOL Allocate(const AudioCaptureParam& param);
@@ -56,9 +55,10 @@ namespace DShow
 		TinyComPtr<IBaseFilter>						m_captureFilter;
 		TinyComPtr<IGraphBuilder>					m_builder;
 		TinyComPtr<IMediaControl>					m_control;
-		TinyComPtr<IBasicAudio>						m_baseAudio;
 		TinyComPtr<IPin>							m_captureO;
+		TinyComPtr<IPin>							m_captureI;
 		TinyComPtr<IPin>							m_sinkI;
+		TinyComPtr<IAMAudioInputMixer>				m_inputMixer;
 		TinyScopedReferencePtr<AudioSinkFilter>		m_sinkFilter;
 		Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_callback;
 	};

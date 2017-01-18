@@ -141,6 +141,10 @@ LRESULT CMainFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 {
 	bHandled = FALSE;
 
+	/*DShow::Mixer mixer;
+	BOOL bRes = mixer.Initialize(MIXERLINE_COMPONENTTYPE_DST_WAVEIN, MIXERLINE_COMPONENTTYPE_SRC_MICROPHONE);
+	mixer.SetMute(FALSE);*/
+	//BOOL v = mixer.GetMute(MIXERLINE_COMPONENTTYPE_DST_WAVEIN);
 	//DWORD dwServiceType;
 	//TinyString strServer;
 	//TinyString strObject;

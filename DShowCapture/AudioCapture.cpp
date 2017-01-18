@@ -72,12 +72,16 @@ namespace DShow
 			return FALSE;
 		if (!GetDeviceFilter(name, &m_captureFilter))
 			return FALSE;
-		hRes = m_captureFilter->QueryInterface(&m_baseAudio);
-		if (FAILED(hRes))
-			return FALSE;
 		m_captureO = GetPin(m_captureFilter, PINDIR_OUTPUT, PIN_CATEGORY_CAPTURE);
 		if (!m_captureO)
 			return FALSE;
+		m_captureI = GetPin(m_captureFilter, PINDIR_INPUT, GUID_NULL);
+		if (!m_captureI)
+			return FALSE;
+		hRes = m_captureI->QueryInterface(&m_inputMixer);
+		if (FAILED(hRes))
+			return FALSE;
+		m_inputMixer->put_Enable(TRUE);
 		hRes = m_builder->AddFilter(m_captureFilter, NULL);
 		if (FAILED(hRes))
 			return FALSE;
@@ -112,36 +116,30 @@ namespace DShow
 			m_builder->RemoveFilter(m_captureFilter);
 		}
 		m_captureO.Release();
-		m_baseAudio.Release();
+		m_inputMixer.Release();
+		m_captureI.Release();
 		m_captureFilter.Release();
 		m_sinkI.Release();
 		m_control.Release();
 		m_builder.Release();
 		m_sinkFilter = NULL;
 	}
-	void AudioCapture::SetVolume(LONG volume)
+	BOOL AudioCapture::SetVolume(LONG volume)
 	{
-		ASSERT(m_baseAudio);
-		m_baseAudio->put_Volume(volume);
+		ASSERT(m_inputMixer);
+		DOUBLE level = (DOUBLE)volume / 0xFFFF;
+		return m_inputMixer->put_MixLevel(level) == S_OK;
 	}
-	LONG AudioCapture::GetVolume()
+	BOOL AudioCapture::GetVolume(LONG& volume)
 	{
-		ASSERT(m_baseAudio);
-		LONG volume = 0;
-		m_baseAudio->get_Volume(&volume);
-		return volume;
-	}
-	void AudioCapture::SetBalance(LONG balance)
-	{
-		ASSERT(m_baseAudio);
-		m_baseAudio->put_Balance(balance);
-	}
-	LONG AudioCapture::GetBalance()
-	{
-		ASSERT(m_baseAudio);
-		LONG balance = 0;
-		m_baseAudio->get_Balance(&balance);
-		return balance;
+		ASSERT(m_inputMixer);
+		DOUBLE level = 0;
+		if (m_inputMixer->get_MixLevel(&level) == S_OK)
+		{
+			volume = 0xFFFF * level;
+			return TRUE;
+		}
+		return FALSE;
 	}
 	BOOL AudioCapture::Start()
 	{
