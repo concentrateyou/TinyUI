@@ -48,9 +48,6 @@
     <ClInclude Include="DX11Font.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DX11Rectangle.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="DX11Element.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -93,9 +90,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DX11Font.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11Rectangle.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DX11Element.cpp">
