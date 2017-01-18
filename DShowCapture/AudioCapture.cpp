@@ -75,13 +75,6 @@ namespace DShow
 		m_captureO = GetPin(m_captureFilter, PINDIR_OUTPUT, PIN_CATEGORY_CAPTURE);
 		if (!m_captureO)
 			return FALSE;
-		m_captureI = GetPin(m_captureFilter, PINDIR_INPUT, GUID_NULL);
-		if (!m_captureI)
-			return FALSE;
-		hRes = m_captureI->QueryInterface(&m_inputMixer);
-		if (FAILED(hRes))
-			return FALSE;
-		m_inputMixer->put_Enable(TRUE);
 		hRes = m_builder->AddFilter(m_captureFilter, NULL);
 		if (FAILED(hRes))
 			return FALSE;
@@ -116,8 +109,6 @@ namespace DShow
 			m_builder->RemoveFilter(m_captureFilter);
 		}
 		m_captureO.Release();
-		m_inputMixer.Release();
-		m_captureI.Release();
 		m_captureFilter.Release();
 		m_sinkI.Release();
 		m_control.Release();
@@ -126,19 +117,10 @@ namespace DShow
 	}
 	BOOL AudioCapture::SetVolume(LONG volume)
 	{
-		ASSERT(m_inputMixer);
-		DOUBLE level = (DOUBLE)volume / 0xFFFF;
-		return m_inputMixer->put_MixLevel(level) == S_OK;
+		return FALSE;
 	}
 	BOOL AudioCapture::GetVolume(LONG& volume)
 	{
-		ASSERT(m_inputMixer);
-		DOUBLE level = 0;
-		if (m_inputMixer->get_MixLevel(&level) == S_OK)
-		{
-			volume = 0xFFFF * level;
-			return TRUE;
-		}
 		return FALSE;
 	}
 	BOOL AudioCapture::Start()
@@ -304,9 +286,8 @@ namespace DShow
 			}
 			if (SUCCEEDED(hRes) && variant->vt == VT_BSTR)
 			{
-				const WCHAR* str = V_BSTR(&variant);
 				string id;
-				string name(WStringToString(str));
+				string name(WStringToString(V_BSTR(&variant)));
 				variant.Reset();
 				hRes = propertyBag->Read(L"DevicePath", &variant, 0);
 				if (FAILED(hRes) || variant->vt != VT_BSTR)

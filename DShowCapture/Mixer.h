@@ -9,7 +9,7 @@ namespace DShow
 	public:
 		Mixer();
 		~Mixer();
-		BOOL Initialize(DWORD dstType, DWORD srcType);
+		BOOL Initialize(DWORD dstType = MIXERLINE_COMPONENTTYPE_DST_WAVEIN, DWORD srcType = MIXERLINE_COMPONENTTYPE_SRC_MICROPHONE);
 		BOOL Close();
 		BOOL SetMute(BOOL bMute);
 		BOOL GetMute(BOOL& bMute);
@@ -18,6 +18,8 @@ namespace DShow
 	private:
 		HMIXER			m_hMixer;
 		MIXERLINE		m_ml;
+		MIXERCONTROL	m_mclMute;
+		MIXERCONTROL	m_mclVolume;
 	};
 }
 

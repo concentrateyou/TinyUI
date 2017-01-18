@@ -248,17 +248,20 @@ namespace DXApp
 				TinyWASAPIAudio::Name wasName(name.id(), name.name(), GUID_NULL);
 				BOOL bFlag = FALSE;
 				TinyWASAPIAudio::IsMicrophoneArray(wasName, bFlag);
+				m_mixer.Close();
 				if (bFlag)
 				{
-					LONG volume = 0;
-					capture.GetVolume(volume);
-					m_microphone.SetRange(0, volume);
+					m_mixer.Initialize();
+					DWORD volume = 0;
+					m_mixer.GetVolume(volume);
+					m_mixer.SetVolume(20);
 				}
 				else
 				{
-					LONG volume = 0;
-					capture.GetVolume(volume);
-					m_speaker.SetRange(0, volume);
+					m_mixer.Initialize(MIXERLINE_COMPONENTTYPE_DST_SPEAKERS, MIXERLINE_COMPONENTTYPE_SRC_WAVEOUT);
+					DWORD volume = 0;
+					m_mixer.GetVolume(volume);
+					m_mixer.SetVolume(20);
 				}
 			}
 			if (dlg.GetVideoName() != NULL && dlg.GetVideoParam() != NULL)

@@ -327,9 +327,8 @@ namespace DShow
 			}
 			if (SUCCEEDED(hRes) && variant->vt == VT_BSTR)
 			{
-				const WCHAR* str = V_BSTR(&variant);
 				string id;
-				string name(WStringToString(str));
+				string name(WStringToString(V_BSTR(&variant)));
 				variant.Reset();
 				hRes = propertyBag->Read(L"DevicePath", &variant, 0);
 				if (FAILED(hRes) || variant->vt != VT_BSTR)
