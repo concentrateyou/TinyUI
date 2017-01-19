@@ -85,8 +85,8 @@ namespace TinyUI
 			MESSAGE_HANDLER(WM_COMMAND, OnCommand)
 			MESSAGE_HANDLER(WM_NOTIFY, OnNotify)
 			MESSAGE_HANDLER(WM_COMMANDREFLECT, OnCommandReflect)
-			MESSAGE_HANDLER(WM_DRAWITEMREFLECT, OnDrawItemReflect)
 			MESSAGE_HANDLER(WM_NOTIFYREFLECT, OnNotifyReflect)
+			MESSAGE_HANDLER(WM_DRAWITEMREFLECT, OnDrawItemReflect)
 			MESSAGE_HANDLER(WM_MEASUREITEMREFLECT, OnMeasureItemReflect)
 			MESSAGE_HANDLER(WM_DELETEITEMREFLECT, OnDeleteItemReflect)
 			MESSAGE_HANDLER(WM_KEYDOWN, OnKeyDown)
@@ -137,8 +137,8 @@ namespace TinyUI
 		virtual LRESULT OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnCommandReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnNotify(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnNotifyReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnNotify(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnDeleteItemReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnDrawItemReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnMeasureItem(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

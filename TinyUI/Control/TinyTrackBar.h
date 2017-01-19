@@ -5,8 +5,6 @@ namespace TinyUI
 {
 	class TinyTrackBar :public TinyControl
 	{
-	private:
-		INT currentPos;
 	public:
 		TinyTrackBar();
 		virtual ~TinyTrackBar();
@@ -15,13 +13,7 @@ namespace TinyUI
 		virtual DWORD RetrieveStyle();
 		virtual DWORD RetrieveExStyle();
 		virtual BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
-		BEGIN_MSG_MAP(TinyTrackBar, TinyControl)
-			MESSAGE_HANDLER(WM_NOTIFY + WM_REFLECT, WmNotifyReflect)
-			MESSAGE_HANDLER(WM_HSCROLL + WM_REFLECT, WmHScrollReflect)
-		END_MSG_MAP()
-		virtual LRESULT WmNotifyReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT WmHScrollReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		Event<void(void*, INT)> EVENT_POSCHANGING;
+	public:
 		INT GetLineSize() const;
 		INT SetLineSize(INT nSize);
 		INT GetPageSize() const;
@@ -45,7 +37,7 @@ namespace TinyUI
 		BOOL SetTic(INT nTic);
 		void SetTicFreq(INT nFreq);
 		HWND GetBuddy(BOOL fLocation = TRUE) const;
-		HWND SetBuddy(HWND pWndBuddy,  BOOL fLocation = TRUE);
+		HWND SetBuddy(HWND pWndBuddy, BOOL fLocation = TRUE);
 		HWND GetToolTips() const;
 		void SetToolTips(HWND pWndTip);
 		INT SetTipSide(INT nLocation);
@@ -53,7 +45,11 @@ namespace TinyUI
 		INT GetThumbLength() const;
 		void ClearSel(BOOL bRedraw = FALSE);
 		void ClearTics(BOOL bRedraw = FALSE);
-	
+	public:
+		LRESULT OnNotifyReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+		Event<void(void*, INT)> EVENT_POSCHANGING;
+	private:
+		INT m_currentPos;
 	};
 }
 

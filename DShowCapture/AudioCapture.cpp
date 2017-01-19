@@ -121,13 +121,15 @@ namespace DShow
 	}
 	BOOL AudioCapture::SetVolume(LONG volume)
 	{
-		ASSERT(m_mixer);
+		if (!m_mixer)
+			return FALSE;
 		DOUBLE dVolume = ((DOUBLE)volume / 100);
 		return m_mixer->put_MixLevel(dVolume) == S_OK;
 	}
 	BOOL AudioCapture::GetVolume(LONG& volume)
 	{
-		ASSERT(m_mixer);
+		if (!m_mixer)
+			return FALSE;
 		DOUBLE dVolume = 0.0;
 		HRESULT hRes = m_mixer->get_MixLevel(&dVolume);
 		volume = static_cast<LONG>((dVolume * 100));

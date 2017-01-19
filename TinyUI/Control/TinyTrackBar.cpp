@@ -4,8 +4,9 @@
 namespace TinyUI
 {
 	TinyTrackBar::TinyTrackBar()
+		:m_currentPos(0)
 	{
-		currentPos = 0;
+
 	}
 	TinyTrackBar::~TinyTrackBar()
 	{
@@ -36,13 +37,9 @@ namespace TinyUI
 		}
 		return FALSE;
 	}
-	LRESULT TinyTrackBar::WmNotifyReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT TinyTrackBar::OnNotifyReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		return FALSE;
-	}
-	LRESULT TinyTrackBar::WmHScrollReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
 		switch (LOWORD(wParam))
 		{
 		case TB_LINEUP:
@@ -55,10 +52,10 @@ namespace TinyUI
 		case TB_ENDTRACK:
 		{
 			INT newPos = GetPos();
-			if (currentPos != newPos)
+			if (m_currentPos != newPos)
 			{
 				EVENT_POSCHANGING(this, newPos);
-				currentPos = newPos;
+				m_currentPos = newPos;
 			}
 		}
 		break;
@@ -85,6 +82,12 @@ namespace TinyUI
 		ASSERT(::IsWindow(m_hWND));
 		return (INT) ::SendMessage(m_hWND, TBM_SETPAGESIZE, 0, nSize);
 	}
+	void TinyTrackBar::GetRange(INT& nMin, INT& nMax) const
+	{
+		ASSERT(::IsWindow(m_hWND));
+		nMin = GetRangeMin();
+		nMax = GetRangeMax();
+	}
 	INT TinyTrackBar::GetRangeMax() const
 	{
 		ASSERT(::IsWindow(m_hWND));
@@ -109,6 +112,19 @@ namespace TinyUI
 	{
 		ASSERT(::IsWindow(m_hWND));
 		::SendMessage(m_hWND, TBM_SETRANGEMAX, bRedraw, nMax);
+	}
+	void TinyTrackBar::GetSelection(INT& nMin, INT& nMax) const
+	{
+		ASSERT(::IsWindow(m_hWND));
+		nMin = INT(::SendMessage(m_hWND, TBM_GETSELSTART, 0, 0L));
+		nMax = INT(::SendMessage(m_hWND, TBM_GETSELEND, 0, 0L));
+	}
+
+	void TinyTrackBar::SetSelection(INT nMin, INT nMax)
+	{
+		ASSERT(::IsWindow(m_hWND));
+		::SendMessage(m_hWND, TBM_SETSELSTART, 0, (LPARAM)nMin);
+		::SendMessage(m_hWND, TBM_SETSELEND, 0, (LPARAM)nMax);
 	}
 	void TinyTrackBar::ClearSel(BOOL bRedraw)
 	{
