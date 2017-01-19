@@ -99,7 +99,7 @@ namespace DShow
 	}
 	void VideoCapture::Uninitialize()
 	{
-		DeAllocate();
+		Deallocate();
 		if (m_control)
 			m_control->Pause();
 		if (m_builder)
@@ -227,7 +227,7 @@ namespace DShow
 		}
 		return FALSE;
 	}
-	void VideoCapture::DeAllocate()
+	void VideoCapture::Deallocate()
 	{
 		if (m_builder)
 		{

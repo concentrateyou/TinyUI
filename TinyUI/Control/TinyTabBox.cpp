@@ -3,11 +3,13 @@
 
 namespace TinyUI
 {
+	IMPLEMENT_DYNAMIC(TinyTabItem, TinyObject);
 	void TinyTabItem::Render(TinyMemDC& dc)
 	{
 
 	}
 	//////////////////////////////////////////////////////////////////////////
+	IMPLEMENT_DYNAMIC(TinyTabBox, TinyControl);
 	TinyTabBox::TinyTabBox()
 	{
 

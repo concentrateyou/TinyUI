@@ -10,6 +10,7 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
+		IMPLEMENT_DYNAMIC(TinyVisualRichText, TinyVisual);
 		TinyVisualRichText::TinyVisualRichText(TinyVisual* spvisParent, TinyVisualDocument* vtree)
 			:TinyVisual(spvisParent, vtree),
 			m_hscroll(NULL),

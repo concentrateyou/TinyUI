@@ -3,6 +3,7 @@
 
 namespace TinyUI
 {
+	IMPLEMENT_DYNAMIC(TinyTrackBar, TinyControl);
 	TinyTrackBar::TinyTrackBar()
 		:m_currentPos(0)
 	{

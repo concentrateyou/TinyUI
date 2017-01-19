@@ -3,6 +3,7 @@
 
 namespace DXApp
 {
+	IMPLEMENT_DYNAMIC(ImageScene, DX11Image);
 	ImageScene::ImageScene()
 	{
 	}
@@ -18,12 +19,12 @@ namespace DXApp
 		return Load(dx11, imageFile.STR());
 	}
 
-	BOOL ImageScene::BeginScene()
+	BOOL ImageScene::Allocate(DX11& dx11)
 	{
 		return TRUE;
 	}
 
-	void ImageScene::EndScene()
+	void ImageScene::Deallocate(DX11& dx11)
 	{
 
 	}
@@ -31,11 +32,6 @@ namespace DXApp
 	BOOL ImageScene::Render(DX11& dx11)
 	{
 		return DX11Image::Render(dx11);
-	}
-
-	LPCSTR ImageScene::GetClassName()
-	{
-		return TEXT("ImageScene");
 	}
 }
 

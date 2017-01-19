@@ -3,6 +3,7 @@
 
 namespace TinyUI
 {
+	IMPLEMENT_DYNAMIC(TinyDialog, TinyHandleHWND);
 	TinyDialog::TinyDialog() :
 		m_bModal(FALSE),
 		m_iDlgResult(0),

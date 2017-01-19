@@ -4,7 +4,7 @@
 
 namespace TinyUI
 {
-	class TinyImageList : public TinyHandleHIMAGELIST, public TinyObject
+	class TinyImageList : public TinyHandleHIMAGELIST
 	{
 		DECLARE_DYNAMIC(TinyImageList)
 	public:

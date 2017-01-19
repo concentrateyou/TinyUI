@@ -72,7 +72,7 @@ namespace MF
 	}
 	void MFVideoCapture::Uninitialize()
 	{
-		DeAllocate();
+		Deallocate();
 		m_reader.Release();
 		if (m_source != NULL)
 			m_source->Shutdown();
@@ -105,7 +105,7 @@ namespace MF
 		m_bCapturing = TRUE;
 		return TRUE;
 	}
-	void MFVideoCapture::DeAllocate()
+	void MFVideoCapture::Deallocate()
 	{
 		if (m_reader)
 		{

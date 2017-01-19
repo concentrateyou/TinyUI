@@ -9,7 +9,7 @@ namespace TinyUI
 {
 #undef SubclassDialog
 
-	class TinyDialog : public TinyHandleHWND, public TinyObject
+	class TinyDialog : public TinyHandleHWND
 	{
 		DECLARE_DYNAMIC(TinyDialog)
 	protected:

@@ -16,7 +16,7 @@ namespace DXFramework
 	/// </summary>
 	class DX11Font : public DX11Image
 	{
-		DISALLOW_COPY_AND_ASSIGN(DX11Font)
+		DECLARE_DYNAMIC(DX11Font)
 	public:
 		DX11Font();
 		virtual ~DX11Font();

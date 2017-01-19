@@ -8,6 +8,7 @@ namespace TinyUI
 	/// </summary>
 	class TinyTabControl : public TinyControl
 	{
+		DECLARE_DYNAMIC(TinyTabControl)
 	public:
 		TinyTabControl();
 		virtual ~TinyTabControl();

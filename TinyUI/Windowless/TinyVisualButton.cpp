@@ -7,6 +7,7 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
+		IMPLEMENT_DYNAMIC(TinyVisualButton, TinyVisual);
 		TinyVisualButton::TinyVisualButton(TinyVisual* spvisParent, TinyVisualDocument* vtree)
 			:TinyVisual(spvisParent, vtree),
 			m_dwFlag(NORMAL)

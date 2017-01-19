@@ -3,17 +3,13 @@
 
 namespace DXFramework
 {
+	IMPLEMENT_DYNAMIC(DX11Element, TinyObject);
+
 	DX11Element::DX11Element()
 	{
 	}
 	DX11Element::~DX11Element()
 	{
-	}
-
-
-	INT DX11Element::GetHandleSize() const
-	{
-		return 8;
 	}
 
 	void DX11Element::SetPosition(const TinyPoint& position)

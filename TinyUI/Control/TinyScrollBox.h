@@ -44,6 +44,7 @@ namespace TinyUI
 	/// </summary>
 	class TinyScrollBox : public TinyControl
 	{
+		DECLARE_DYNAMIC(TinyScrollBox)
 	public:
 		TinyScrollBox();
 		~TinyScrollBox();

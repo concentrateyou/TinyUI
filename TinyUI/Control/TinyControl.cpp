@@ -5,6 +5,8 @@
 
 namespace TinyUI
 {
+	IMPLEMENT_DYNAMIC(TinyControl, TinyWindow)
+
 	TinyControl::TinyControl()
 		:m_pMenu(NULL)
 	{

@@ -103,7 +103,7 @@ namespace DShow
 	}
 	void AudioCapture::Uninitialize()
 	{
-		DeAllocate();
+		Deallocate();
 		if (m_control)
 			m_control->Pause();
 		if (m_builder)
@@ -218,7 +218,7 @@ namespace DShow
 		}
 		return FALSE;
 	}
-	void AudioCapture::DeAllocate()
+	void AudioCapture::Deallocate()
 	{
 		if (m_builder)
 		{

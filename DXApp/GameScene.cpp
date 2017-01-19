@@ -3,6 +3,7 @@
 
 namespace DXApp
 {
+	IMPLEMENT_DYNAMIC(GameScene, DX11Image);
 	GameScene::GameScene()
 	{
 	}
@@ -23,12 +24,12 @@ namespace DXApp
 		m_captureTask->SetConfig(className, exeName, dllName);
 	}
 
-	BOOL GameScene::BeginScene()
+	BOOL GameScene::Allocate(DX11& dx11)
 	{
 		return m_captureTask->Submit();
 	}
 
-	void GameScene::EndScene()
+	void GameScene::Deallocate(DX11& dx11)
 	{
 		m_captureTask->Close();
 		m_captureTask.Reset(NULL);
@@ -37,10 +38,5 @@ namespace DXApp
 	BOOL GameScene::Render(DX11& dx11)
 	{
 		return DX11Image::Render(dx11);
-	}
-
-	LPCSTR GameScene::GetClassName()
-	{
-		return TEXT("GameScene");
 	}
 }

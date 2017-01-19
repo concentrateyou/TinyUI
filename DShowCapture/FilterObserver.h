@@ -10,7 +10,6 @@ namespace DShow
 	class FilterObserver : public TinyLock
 	{
 		friend class InputPinBase;
-		DECLARE_DYNAMIC(FilterObserver)
 		DISALLOW_COPY_AND_ASSIGN(FilterObserver)
 	public:
 		FilterObserver();

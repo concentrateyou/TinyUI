@@ -4,6 +4,8 @@
 
 namespace TinyUI
 {
+	IMPLEMENT_DYNAMIC(TinyWindow, TinyHandleHWND);
+
 	TinyWindow::TinyWindow()
 		:m_hPrimaryProc(::DefWindowProc)
 	{

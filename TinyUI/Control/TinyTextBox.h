@@ -5,6 +5,7 @@ namespace TinyUI
 {
 	class TinyTextBox : public TinyControl
 	{
+		DECLARE_DYNAMIC(TinyTextBox)
 	public:
 		TinyTextBox();
 		virtual ~TinyTextBox();

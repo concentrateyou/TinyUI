@@ -6,7 +6,7 @@
 
 namespace DXApp
 {
-
+	IMPLEMENT_DYNAMIC(DXFrameUI, TinyControl);
 	DXFrameUI::DXFrameUI()
 	{
 	}

@@ -4,9 +4,9 @@
 #include "Utility.h"
 #include "Control/TinyCommonDialog.h"
 
-
 namespace DXApp
 {
+	IMPLEMENT_DYNAMIC(TextDlg, TinyCustomDialog);
 	TextDlg::TextDlg()
 	{
 		m_hInstance = LoadLibrary("Riched20.dll");

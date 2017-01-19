@@ -4,6 +4,7 @@
 
 namespace DXApp
 {
+	IMPLEMENT_DYNAMIC(MediaCaptureDlg, TinyCustomDialog);
 	MediaCaptureDlg::MediaCaptureDlg()
 		:m_audioName(NULL),
 		m_videoName(NULL),

@@ -7,15 +7,15 @@ namespace DXApp
 {
 	class ScreenScene : public DX11Image
 	{
+		DECLARE_DYNAMIC(ScreenScene)
 	public:
 		ScreenScene();
 		virtual ~ScreenScene();
 		BOOL Initialize(DX11& dx11, const TinyRectangle& s);
 	public:
-		LPCSTR GetClassName() OVERRIDE;
-		BOOL BeginScene() OVERRIDE;
-		void EndScene() OVERRIDE;
+		BOOL Allocate(DX11& dx11) OVERRIDE;
 		BOOL Render(DX11& dx11) OVERRIDE;
+		void Deallocate(DX11& dx11) OVERRIDE;
 	private:
 		TinyRectangle	m_snapshot;
 	};

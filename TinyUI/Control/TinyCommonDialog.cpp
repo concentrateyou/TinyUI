@@ -25,6 +25,7 @@ namespace TinyUI
 	/************************************************************************/
 	/* TinyFontDialog                                                        */
 	/************************************************************************/
+	IMPLEMENT_DYNAMIC(TinyFontDialog, TinyDialog);
 	TinyFontDialog::TinyFontDialog(const CHARFORMAT& charformat, DWORD dwFlags /* = CF_SCREENFONTS */, HDC hDCPrinter /* = NULL */, HWND pParentWnd /* = NULL */)
 	{
 		memset(&m_cf, 0, sizeof(m_cf));
@@ -251,6 +252,7 @@ namespace TinyUI
 	/************************************************************************/
 	/* TinyColorDialog                                                      */
 	/************************************************************************/
+	IMPLEMENT_DYNAMIC(TinyColorDialog, TinyDialog);
 	TinyColorDialog::TinyColorDialog(COLORREF clrInit, DWORD dwFlags)
 	{
 		memset(&m_cc, 0, sizeof(m_cc));
@@ -292,6 +294,7 @@ namespace TinyUI
 	/************************************************************************/
 	/* TinyFileDialog                                                        */
 	/************************************************************************/
+	IMPLEMENT_DYNAMIC(TinyFileDialog, TinyDialog);
 	BOOL TinyFileDialog::IsReadOnly() const
 	{
 		return m_ofn.Flags & OFN_READONLY ? TRUE : FALSE;

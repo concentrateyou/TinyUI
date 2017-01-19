@@ -5,6 +5,7 @@
 namespace TinyUI
 {
 	UINT WM_CHANGE_CURRENT_FOLDER = ::RegisterWindowMessage(_T("WM_CHANGE_CURRENT_FOLDER"));
+	IMPLEMENT_DYNAMIC(TinyFileView, TinyListView);
 	TinyFileView::TinyFileView()
 		:m_psfCurrent(NULL),
 		m_currentAbsPIDL(NULL),

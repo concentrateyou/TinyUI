@@ -7,6 +7,7 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
+		IMPLEMENT_DYNAMIC(TinyVisualTab, TinyVisual);
 		TinyVisualTab::TinyVisualTab(TinyVisual* spvisParent, TinyVisualDocument* vtree)
 			:TinyVisual(spvisParent, vtree)
 		{

@@ -7,6 +7,7 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
+		IMPLEMENT_DYNAMIC(TinyVisualPopupHWND, TinyVisualHWND);
 		TinyVisualPopupHWND::TinyVisualPopupHWND()
 		{
 

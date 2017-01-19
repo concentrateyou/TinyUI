@@ -6,6 +6,7 @@
 
 namespace DXApp
 {
+	IMPLEMENT_DYNAMIC(DXWindow, TinyControl);
 	DXWindow::DXWindow()
 	{
 	}

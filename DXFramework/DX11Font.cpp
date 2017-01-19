@@ -74,6 +74,7 @@ namespace DXFramework
 		return boundingBox;
 	}
 	//////////////////////////////////////////////////////////////////////////
+	IMPLEMENT_DYNAMIC(DX11Font, DX11Image);
 	DX11Font::DX11Font()
 	{
 	}

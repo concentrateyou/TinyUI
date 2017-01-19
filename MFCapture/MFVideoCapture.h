@@ -30,7 +30,7 @@ namespace MF
 		void	Uninitialize();
 	public:
 		virtual BOOL Allocate(const MFVideoCaptureParam& param);
-		virtual void DeAllocate();
+		virtual void Deallocate();
 		void	OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter) OVERRIDE;
 	public:
 		static BOOL GetFormat(const GUID& guid, VideoPixelFormat* format);

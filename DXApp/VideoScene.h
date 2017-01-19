@@ -15,14 +15,14 @@ namespace DXApp
 	/// </summary>
 	class VideoScene : public DX11Image
 	{
+		DECLARE_DYNAMIC(VideoScene)
 	public:
 		VideoScene();
 		~VideoScene();
 		BOOL Initialize(DX11& dx11, const VideoCapture::Name& name, const VideoCaptureParam& param);
-		BOOL BeginScene() OVERRIDE;
-		void EndScene() OVERRIDE;
+		BOOL Allocate(DX11& dx11) OVERRIDE;
+		void Deallocate(DX11& dx11) OVERRIDE;
 		BOOL Render(DX11& dx11) OVERRIDE;
-		LPCSTR GetClassName() OVERRIDE;
 	private:
 		void OnVideoReceive(BYTE*, LONG, FLOAT, LPVOID);
 	private:

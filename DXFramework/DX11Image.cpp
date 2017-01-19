@@ -4,6 +4,7 @@
 
 namespace DXFramework
 {
+	IMPLEMENT_DYNAMIC(DX11Image, DX11Element);
 	DX11Image::DX11Image()
 	{
 		m_lastPos.x = m_lastPos.y = -1;
@@ -209,12 +210,12 @@ namespace DXFramework
 		return TRUE;
 	}
 
-	BOOL DX11Image::BeginScene()
+	BOOL DX11Image::Allocate(DX11& dx11)
 	{
 		return TRUE;
 	}
 
-	void DX11Image::EndScene()
+	void DX11Image::Deallocate(DX11& dx11)
 	{
 
 	}
@@ -222,11 +223,6 @@ namespace DXFramework
 	DX11Texture* DX11Image::GetTexture()
 	{
 		return &m_texture;
-	}
-
-	LPCSTR DX11Image::GetClassName()
-	{
-		return TEXT("DX11Image");
 	}
 	BOOL DX11Image::IsEmpty() const
 	{

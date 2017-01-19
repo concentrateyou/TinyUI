@@ -8,7 +8,7 @@ namespace TinyUI
 	/// <summary>
 	/// ∆’Õ®¥∞ø⁄¿‡
 	/// </summary>
-	class TinyWindow : public TinyHandleHWND, public TinyObject
+	class TinyWindow : public TinyHandleHWND
 	{
 		DECLARE_DYNAMIC(TinyWindow)
 	public:

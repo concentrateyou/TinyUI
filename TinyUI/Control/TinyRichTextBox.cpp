@@ -4,6 +4,7 @@
 
 namespace TinyUI
 {
+	IMPLEMENT_DYNAMIC(TinyRichTextBox, TinyControl);
 	TinyRichTextBox::TinyRichTextBox()
 		:m_hInstance(NULL)
 	{

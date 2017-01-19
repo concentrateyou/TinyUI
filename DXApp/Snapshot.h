@@ -7,7 +7,6 @@ namespace DXApp
 {
 	class Snapshot : public TinyControl, public TinyRectTracker
 	{
-		DECLARE_DYNAMIC(Snapshot)
 	public:
 		Snapshot();
 		virtual ~Snapshot();

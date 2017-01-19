@@ -333,6 +333,7 @@ namespace TinyUI
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
+
 	TinyScopedLibrary::TinyScopedLibrary()
 		: m_hInstance(NULL)
 	{

@@ -7,6 +7,7 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
+		IMPLEMENT_DYNAMIC(TinyVisualHScrollBar, TinyVisual);
 		TinyVisualHScrollBar::TinyVisualHScrollBar(TinyVisual* spvisParent, TinyVisualDocument* vtree)
 			:TinyVisual(spvisParent, vtree)
 		{

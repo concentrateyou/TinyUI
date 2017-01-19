@@ -3,6 +3,7 @@
 
 namespace TinyUI
 {
+	IMPLEMENT_DYNAMIC(TinyComboBox, TinyControl)
 	TinyComboBox::TinyComboBox()
 	{
 	};

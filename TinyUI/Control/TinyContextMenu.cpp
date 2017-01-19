@@ -3,6 +3,7 @@
 
 namespace TinyUI
 {
+	IMPLEMENT_DYNAMIC(TinyMenuItem, TinyObject);
 	TinyMenuItem::TinyMenuItem(BOOL bBreak)
 		:m_fState(0),
 		m_bBreak(bBreak),

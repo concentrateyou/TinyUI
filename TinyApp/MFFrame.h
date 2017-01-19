@@ -18,7 +18,6 @@ using namespace TinyUI;
 
 class MFFrame : public TinyControl
 {
-	DECLARE_DYNAMIC(MFFrame)
 public:
 	MFFrame();
 	virtual ~MFFrame();

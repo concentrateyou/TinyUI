@@ -3,6 +3,7 @@
 
 namespace TinyUI
 {
+	IMPLEMENT_DYNAMIC(TinyImageList, TinyHandleHIMAGELIST);
 	TinyImageList::TinyImageList()
 	{
 

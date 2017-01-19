@@ -3,6 +3,7 @@
 
 namespace TinyUI
 {
+	IMPLEMENT_DYNAMIC(TinyTreeView, TinyControl);
 	TinyTreeView::TinyTreeView()
 		:m_hCursor(NULL)
 	{

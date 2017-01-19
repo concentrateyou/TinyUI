@@ -40,7 +40,7 @@ namespace DShow
 		BYTE*	GetPointer();
 		LONG	GetSize();
 		virtual BOOL Allocate(const AudioCaptureParam& param);
-		virtual void DeAllocate();
+		virtual void Deallocate();
 	public:
 		static BOOL GetDevices(vector<Name>& names);
 		static BOOL GetDeviceParams(const AudioCapture::Name& device, vector<AudioCaptureParam>& formats);

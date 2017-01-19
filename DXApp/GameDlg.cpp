@@ -5,7 +5,7 @@
 
 namespace DXApp
 {
-
+	IMPLEMENT_DYNAMIC(GameDlg, TinyCustomDialog);
 	GameDlg::GameDlg()
 		:m_gameWND(NULL)
 	{

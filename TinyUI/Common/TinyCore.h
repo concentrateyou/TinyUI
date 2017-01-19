@@ -10,9 +10,8 @@ namespace TinyUI
 	/// <summary>
 	/// 临界区
 	/// </summary>
-	class TinyCriticalSection : public TinyObject
+	class TinyCriticalSection
 	{
-		DECLARE_DYNAMIC(TinyCriticalSection)
 		DISALLOW_COPY_AND_ASSIGN(TinyCriticalSection)
 	public:
 		TinyCriticalSection() throw();
@@ -26,9 +25,8 @@ namespace TinyUI
 	/// <summary>
 	/// 事件
 	/// </summary>
-	class TinyEvent : public TinyObject
+	class TinyEvent
 	{
-		DECLARE_DYNAMIC(TinyEvent)
 		DISALLOW_COPY_AND_ASSIGN(TinyEvent)
 	public:
 		TinyEvent();
@@ -46,14 +44,13 @@ namespace TinyUI
 		void Close();
 	private:
 		HANDLE		m_hEvent;
-		
+
 	};
 	/// <summary>
 	/// 互斥量
 	/// </summary>
-	class TinyMutex : public TinyObject
+	class TinyMutex
 	{
-		DECLARE_DYNAMIC(TinyMutex)
 		DISALLOW_COPY_AND_ASSIGN(TinyMutex)
 	public:
 		TinyMutex();
@@ -70,9 +67,8 @@ namespace TinyUI
 	/// <summary>
 	/// 平台锁
 	/// </summary>
-	class TinyLock : public TinyObject
+	class TinyLock
 	{
-		DECLARE_DYNAMIC(TinyLock)
 		DISALLOW_COPY_AND_ASSIGN(TinyLock)
 	public:
 		TinyLock();
@@ -85,9 +81,8 @@ namespace TinyUI
 	/// <summary>
 	/// 自动锁
 	/// </summary>
-	class TinyAutoLock : public TinyObject
+	class TinyAutoLock
 	{
-		DECLARE_DYNAMIC(TinyAutoLock)
 		DISALLOW_COPY_AND_ASSIGN(TinyAutoLock)
 	public:
 		explicit TinyAutoLock(TinyLock& lock);
@@ -100,7 +95,6 @@ namespace TinyUI
 	/// </summary>
 	class TinySpinLock : public TinyObject
 	{
-		DECLARE_DYNAMIC(TinySpinLock)
 		DISALLOW_COPY_AND_ASSIGN(TinySpinLock)
 	public:
 		TinySpinLock();
@@ -118,7 +112,6 @@ namespace TinyUI
 	/// </summary>
 	class TinySRWLock : public TinyObject
 	{
-		DECLARE_DYNAMIC(TinySRWLock)
 		DISALLOW_COPY_AND_ASSIGN(TinySRWLock)
 	public:
 		TinySRWLock();
@@ -133,7 +126,6 @@ namespace TinyUI
 	/// </summary>
 	class TinySemaphore : public TinyObject
 	{
-		DECLARE_DYNAMIC(TinySemaphore)
 		DISALLOW_COPY_AND_ASSIGN(TinySemaphore)
 	public:
 		TinySemaphore();
@@ -153,7 +145,6 @@ namespace TinyUI
 	/// </summary>
 	class TinyPerformanceLock : public TinyObject
 	{
-		DECLARE_DYNAMIC(TinyPerformanceLock)
 		DISALLOW_COPY_AND_ASSIGN(TinyPerformanceLock)
 	public:
 		TinyPerformanceLock();
@@ -170,7 +161,6 @@ namespace TinyUI
 	/// </summary>
 	class TinyConditionVariable : public TinyObject
 	{
-		DECLARE_DYNAMIC(TinyConditionVariable)
 		DISALLOW_COPY_AND_ASSIGN(TinyConditionVariable)
 	public:
 		TinyConditionVariable(CRITICAL_SECTION& cs);

@@ -10,16 +10,16 @@ namespace DXApp
 {
 	class TextScene : public DX11Font
 	{
+		DECLARE_DYNAMIC(TextScene)
 	public:
 		TextScene();
 		virtual ~TextScene();
 		BOOL Initialize(DX11& dx11, const TinyString& text, const CHARFORMAT& cf, const COLORREF& bkColor);
 		static VOID CALLBACK TimerProc(HWND  hwnd, UINT  uMsg, UINT_PTR idEvent, DWORD dwTime);
 	public:
-		LPCSTR GetClassName() OVERRIDE;
-		BOOL BeginScene() OVERRIDE;
-		void EndScene() OVERRIDE;
+		BOOL Allocate(DX11& dx11) OVERRIDE;
 		BOOL Render(DX11& dx11) OVERRIDE;
+		void Deallocate(DX11& dx11) OVERRIDE;
 	private:
 		TinyString		m_text;
 		COLORREF		m_bkColor;

@@ -4,7 +4,7 @@
 
 namespace DXApp
 {
-
+	IMPLEMENT_DYNAMIC(VideoScene, DX11Image);
 	VideoScene::VideoScene()
 	{
 	}
@@ -25,12 +25,12 @@ namespace DXApp
 		return DX11Image::Create(dx11, param.GetSize(), NULL);
 	}
 
-	BOOL VideoScene::BeginScene()
+	BOOL VideoScene::Allocate(DX11& dx11)
 	{
 		return m_video.Start();
 	}
 
-	void VideoScene::EndScene()
+	void VideoScene::Deallocate(DX11& dx11)
 	{
 		m_video.Uninitialize();
 	}
@@ -45,10 +45,6 @@ namespace DXApp
 		return bits != NULL;
 	}
 
-	LPCSTR VideoScene::GetClassName()
-	{
-		return TEXT("VideoScene");
-	}
 	void VideoScene::OnVideoReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)
 	{
 

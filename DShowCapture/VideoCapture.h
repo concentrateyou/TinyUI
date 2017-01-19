@@ -46,7 +46,7 @@ namespace DShow
 		LONG	GetSize();
 	public:
 		virtual BOOL Allocate(const VideoCaptureParam& param);
-		virtual void DeAllocate();
+		virtual void Deallocate();
 	public:
 		static BOOL GetDevices(vector<Name>& names);
 		static BOOL GetDeviceParams(const VideoCapture::Name& device, vector<VideoCaptureParam>& formats);

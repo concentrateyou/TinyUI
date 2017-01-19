@@ -3,6 +3,7 @@
 
 namespace DXApp
 {
+	IMPLEMENT_DYNAMIC(WindowScene, DX11Image);
 	WindowScene::WindowScene()
 		:m_hWND(NULL)
 	{
@@ -26,17 +27,12 @@ namespace DXApp
 		return FALSE;
 	}
 
-	LPCSTR WindowScene::GetClassName()
-	{
-		return TEXT("WindowScene");
-	}
-
-	BOOL WindowScene::BeginScene()
+	BOOL WindowScene::Allocate(DX11& dx11)
 	{
 		return TRUE;
 	}
 
-	void WindowScene::EndScene()
+	void WindowScene::Deallocate(DX11& dx11)
 	{
 
 	}

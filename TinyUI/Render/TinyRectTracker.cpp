@@ -75,7 +75,7 @@ namespace TinyUI
 			g_cursors[9] = ::LoadCursor(NULL, IDC_SIZEALL);
 			bInitialized = TRUE;
 		}
-		m_handleSize = 5;
+		m_handleSize = 8;
 		m_sizeMin.cy = m_sizeMin.cx = m_handleSize * 2;
 		m_bErase = FALSE;
 		m_bFinalErase = FALSE;

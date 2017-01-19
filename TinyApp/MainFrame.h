@@ -14,7 +14,6 @@ using namespace TinyUI;
 
 class CMainFrame : public TinyControl
 {
-	DECLARE_DYNAMIC(CMainFrame)
 public:
 	CMainFrame();
 	virtual ~CMainFrame();

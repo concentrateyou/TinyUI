@@ -3,6 +3,7 @@
 
 namespace TinyUI
 {
+	IMPLEMENT_DYNAMIC(TinyFolderView, TinyTreeView);
 	TinyFolderView::TinyFolderView()
 		:m_dwFlags(SHCONTF_FOLDERS)
 	{

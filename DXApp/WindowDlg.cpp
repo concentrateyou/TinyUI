@@ -6,7 +6,7 @@ using namespace std;
 
 namespace DXApp
 {
-
+	IMPLEMENT_DYNAMIC(WindowDlg, TinyCustomDialog);
 	WindowDlg::WindowDlg()
 		:m_lastHWND(NULL)
 	{

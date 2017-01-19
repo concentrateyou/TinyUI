@@ -6,14 +6,15 @@ namespace DXApp
 {
 	class ImageScene : public DX11Image
 	{
+		DECLARE_DYNAMIC(ImageScene)
 	public:
 		ImageScene();
 		~ImageScene();
 		BOOL Initialize(DX11& dx11, const TinyString& imageFile);
-		LPCSTR GetClassName() OVERRIDE;
-		BOOL BeginScene() OVERRIDE;
-		void EndScene() OVERRIDE;
+	public:
+		BOOL Allocate(DX11& dx11) OVERRIDE;
 		BOOL Render(DX11& dx11) OVERRIDE;
+		void Deallocate(DX11& dx11) OVERRIDE;
 	private:
 		TinyString	m_imageFile;
 	};

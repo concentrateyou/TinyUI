@@ -3,6 +3,7 @@
 
 namespace TinyUI
 {
+	IMPLEMENT_DYNAMIC(TinyIPAddress, TinyControl);
 	TinyIPAddress::TinyIPAddress()
 	{
 

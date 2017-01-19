@@ -18,7 +18,6 @@ using namespace TinyUI;
 
 class ChatFrame : public TinyControl
 {
-	DECLARE_DYNAMIC(ChatFrame)
 public:
 	ChatFrame();
 	virtual ~ChatFrame();

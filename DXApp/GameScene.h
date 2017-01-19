@@ -10,15 +10,16 @@ namespace DXApp
 	/// </summary>
 	class GameScene : public DX11Image
 	{
+		DECLARE_DYNAMIC(GameScene)
 	public:
 		GameScene();
 		~GameScene();
 		BOOL Initialize(DX11& dx11);
 		void SetConfig(const TinyString& className, const TinyString& exeName, const TinyString& dllName);
-		LPCSTR GetClassName() OVERRIDE;
-		BOOL BeginScene() OVERRIDE;
-		void EndScene() OVERRIDE;
+	public:
+		BOOL Allocate(DX11& dx11) OVERRIDE;
 		BOOL Render(DX11& dx11) OVERRIDE;
+		void Deallocate(DX11& dx11) OVERRIDE;
 	private:
 		TinyScopedPtr<DX11CaptureTask>	m_captureTask;
 	};

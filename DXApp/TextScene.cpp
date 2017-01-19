@@ -3,6 +3,7 @@
 
 namespace DXApp
 {
+	IMPLEMENT_DYNAMIC(TextScene, DX11Font);
 	TextScene::TextScene()
 		:m_bkColor(RGB(255, 255, 255))
 	{
@@ -45,17 +46,12 @@ namespace DXApp
 		}
 	}
 
-	LPCSTR TextScene::GetClassName()
-	{
-		return TEXT("TextScene");
-	}
-
-	BOOL TextScene::BeginScene()
+	BOOL TextScene::Allocate(DX11& dx11)
 	{
 		return TRUE;
 	}
 
-	void TextScene::EndScene()
+	void TextScene::Deallocate(DX11& dx11)
 	{
 		KillTimer(NULL, m_timerID);
 		m_displaySize = m_maxSize;

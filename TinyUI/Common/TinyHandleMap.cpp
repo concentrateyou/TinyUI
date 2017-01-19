@@ -4,6 +4,8 @@
 
 namespace TinyUI
 {
+	IMPLEMENT_DYNAMIC(TinyHandleHWND, TinyObject);
+
 	TinyHandleHWND::TinyHandleHWND()
 		:m_hWND(NULL)
 	{
@@ -58,6 +60,7 @@ namespace TinyUI
 		return *map.Lookup(hWND);
 	}
 	//////////////////////////////////////////////////////////////////////////
+	IMPLEMENT_DYNAMIC(TinyHandleHMENU, TinyObject);
 	TinyHandleHMENU::TinyHandleHMENU()
 		:m_hMENU(NULL)
 	{
@@ -112,6 +115,7 @@ namespace TinyUI
 		return *map.Lookup(hMENU);
 	}
 	//////////////////////////////////////////////////////////////////////////
+	IMPLEMENT_DYNAMIC(TinyHandleHDC, TinyObject);
 	TinyHandleHDC::TinyHandleHDC()
 		:m_hDC(NULL)
 	{
@@ -166,6 +170,7 @@ namespace TinyUI
 		return *map.Lookup(hDC);
 	}
 	//////////////////////////////////////////////////////////////////////////
+	IMPLEMENT_DYNAMIC(TinyHandleHBITMAP, TinyObject)
 	TinyHandleHBITMAP::TinyHandleHBITMAP()
 		:m_hBITMAP(NULL)
 	{
@@ -220,6 +225,7 @@ namespace TinyUI
 		return *map.Lookup(hBITMAP);
 	}
 	//////////////////////////////////////////////////////////////////////////
+	IMPLEMENT_DYNAMIC(TinyHandleHFONT, TinyObject);
 	TinyHandleHFONT::TinyHandleHFONT()
 		:m_hFONT(NULL)
 	{
@@ -274,6 +280,7 @@ namespace TinyUI
 		return *map.Lookup(hFONT);
 	}
 	//////////////////////////////////////////////////////////////////////////
+	IMPLEMENT_DYNAMIC(TinyHandleHPEN, TinyObject);
 	TinyHandleHPEN::TinyHandleHPEN()
 		:m_hPEN(NULL)
 	{
@@ -325,6 +332,7 @@ namespace TinyUI
 		return *map.Lookup(hPEN);
 	}
 	//////////////////////////////////////////////////////////////////////////
+	IMPLEMENT_DYNAMIC(TinyHandleHBRUSH, TinyObject);
 	TinyHandleHBRUSH::TinyHandleHBRUSH()
 		:m_hBRUSH(NULL)
 	{
@@ -376,6 +384,7 @@ namespace TinyUI
 		return *map.Lookup(hBRUSH);
 	}
 	//////////////////////////////////////////////////////////////////////////
+	IMPLEMENT_DYNAMIC(TinyHandleHPALETTE, TinyObject);
 	TinyHandleHPALETTE::TinyHandleHPALETTE()
 		:m_hPALETTE(NULL)
 	{
@@ -427,6 +436,7 @@ namespace TinyUI
 		return *map.Lookup(hPALETTE);
 	}
 	//////////////////////////////////////////////////////////////////////////
+	IMPLEMENT_DYNAMIC(TinyHandleHRGN, TinyObject);
 	TinyHandleHRGN::TinyHandleHRGN()
 		:m_hHRGN(NULL)
 	{
@@ -478,6 +488,7 @@ namespace TinyUI
 		return *map.Lookup(hRGN);
 	}
 	//////////////////////////////////////////////////////////////////////////
+	IMPLEMENT_DYNAMIC(TinyHandleHIMAGELIST, TinyObject);
 	TinyHandleHIMAGELIST::TinyHandleHIMAGELIST()
 		:m_hIMAGELIST(NULL)
 	{

@@ -5,6 +5,7 @@ namespace TinyUI
 {
 	TinyPointerMap TinyMenu::m_map;
 
+	IMPLEMENT_DYNAMIC(TinyMenu, TinyHandleHMENU);
 	TinyMenu::TinyMenu(HMENU hMENU)
 	{
 		m_hMENU = hMENU;

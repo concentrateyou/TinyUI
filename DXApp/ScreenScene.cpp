@@ -4,7 +4,7 @@
 
 namespace DXApp
 {
-
+	IMPLEMENT_DYNAMIC(ScreenScene, DX11Image);
 	ScreenScene::ScreenScene()
 	{
 	}
@@ -25,16 +25,11 @@ namespace DXApp
 		return FALSE;
 	}
 
-	LPCSTR ScreenScene::GetClassName()
-	{
-		return TEXT("ScreenScene");
-	}
-
-	BOOL ScreenScene::BeginScene()
+	BOOL ScreenScene::Allocate(DX11& dx11)
 	{
 		return TRUE;
 	}
-	void ScreenScene::EndScene()
+	void ScreenScene::Deallocate(DX11& dx11)
 	{
 
 	}

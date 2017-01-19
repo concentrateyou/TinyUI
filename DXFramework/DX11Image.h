@@ -14,6 +14,7 @@ namespace DXFramework
 			D3DXVECTOR3 position;
 			D3DXVECTOR2 texture;
 		};
+		DECLARE_DYNAMIC(DX11Image)
 		DISALLOW_COPY_AND_ASSIGN(DX11Image)
 	public:
 		DX11Image();
@@ -29,13 +30,12 @@ namespace DXFramework
 		BOOL Update(DX11& dx11);
 		DX11Texture* GetTexture();
 	public:
+		virtual INT	GetIndexCount() const;
 		virtual void Destory();
 	public:
-		LPCSTR GetClassName() OVERRIDE;
-		BOOL BeginScene() OVERRIDE;
-		void EndScene() OVERRIDE;
+		BOOL Allocate(DX11& dx11) OVERRIDE;
 		BOOL Render(DX11& dx11) OVERRIDE;
-		INT GetIndexCount() const OVERRIDE;
+		void Deallocate(DX11& dx11) OVERRIDE;
 	private:
 		BOOL Initialize(DX11& dx11);
 	protected:

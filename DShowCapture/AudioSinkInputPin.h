@@ -7,7 +7,7 @@ namespace DShow
 {
 	class AudioSinkInputPin : public InputPinBase
 	{
-		DISALLOW_IMPLICIT_CONSTRUCTORS(AudioSinkInputPin);
+		DISALLOW_IMPLICIT_CONSTRUCTORS(AudioSinkInputPin)
 	public:
 		AudioSinkInputPin(FilterBase* pFilter, FilterObserver* observer);
 		virtual ~AudioSinkInputPin();

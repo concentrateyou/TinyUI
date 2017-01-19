@@ -8,9 +8,10 @@ namespace TinyUI
 {
 	namespace IO
 	{
+		IMPLEMENT_DYNAMIC(TinyIO, TinyObject);
 
 		const HANDLE TinyFile::hFileNull = INVALID_HANDLE_VALUE;
-
+		IMPLEMENT_DYNAMIC(TinyFile, TinyIO);
 		TinyFile::TinyFile()
 		{
 			this->m_hFile = NULL;
@@ -392,6 +393,7 @@ namespace TinyUI
 			return(bSuccess);
 		}
 		//////////////////////////////////////////////////////////////////////////
+		IMPLEMENT_DYNAMIC(TinyStdioFile, TinyIO);
 		TinyStdioFile::TinyStdioFile(FILE* pOpenStream)
 			:m_hFile(pOpenStream)
 		{
@@ -644,6 +646,7 @@ namespace TinyUI
 			return E_NOTIMPL;
 		}
 		//////////////////////////////////////////////////////////////////////////
+		IMPLEMENT_DYNAMIC(TinyMemoryFile, TinyIO);
 		TinyMemoryFile::TinyMemoryFile(BYTE* pBuffer, LONGLONG dwBufferSize)
 			:m_pBuffer(pBuffer),
 			m_dwBufferSize(dwBufferSize),

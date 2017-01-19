@@ -3,6 +3,7 @@
 
 namespace TinyUI
 {
+	IMPLEMENT_DYNAMIC(TinyScrollBox, TinyControl);
 	TinyScrollBox::TinyScrollBox()
 		:m_bTracking(FALSE),
 		m_bMouseTracking(FALSE)

@@ -6,7 +6,7 @@ namespace TinyUI
 	/// <summary>
 	/// ²Ëµ¥
 	/// </summary>
-	class TinyMenu : public TinyHandleHMENU, public TinyObject
+	class TinyMenu : public TinyHandleHMENU
 	{
 		DECLARE_DYNAMIC(TinyMenu)
 	public:

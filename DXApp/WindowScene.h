@@ -9,15 +9,15 @@ namespace DXApp
 {
 	class WindowScene : public DX11Image
 	{
+		DECLARE_DYNAMIC(WindowScene)
 	public:
 		WindowScene();
 		virtual ~WindowScene();
 		BOOL Initialize(DX11& dx11, HWND hWND);
 	public:
-		LPCSTR GetClassName() OVERRIDE;
-		BOOL BeginScene() OVERRIDE;
-		void EndScene() OVERRIDE;
+		BOOL Allocate(DX11& dx11) OVERRIDE;
 		BOOL Render(DX11& dx11) OVERRIDE;
+		void Deallocate(DX11& dx11) OVERRIDE;
 	private:
 		HWND m_hWND;
 	};

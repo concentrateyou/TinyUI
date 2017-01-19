@@ -5,6 +5,7 @@ namespace TinyUI
 {
 	class TinyTrackBar :public TinyControl
 	{
+		DECLARE_DYNAMIC(TinyTrackBar)
 	public:
 		TinyTrackBar();
 		virtual ~TinyTrackBar();

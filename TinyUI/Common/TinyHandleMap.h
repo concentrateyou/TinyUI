@@ -78,11 +78,12 @@ namespace TinyUI
 	/// <summary>
 	/// ´°¿Ú¾ä±úÀà
 	/// </summary>
-	class TinyHandleHWND :public TinyWindowMsg, public TinyMessageFilter
+	class TinyHandleHWND :public TinyWindowMsg, public TinyMessageFilter, public TinyObject
 	{
+		DECLARE_DYNAMIC(TinyHandleHWND)
 	public:
 		TinyHandleHWND();
-		~TinyHandleHWND();
+		virtual ~TinyHandleHWND();
 		operator HWND() const;
 		HWND Handle() const;
 		BOOL operator==(const TinyHandleHWND& obj) const;
@@ -96,11 +97,12 @@ namespace TinyUI
 	/// <summary>
 	/// ²Ëµ¥¾ä±úÀà
 	/// </summary>
-	class TinyHandleHMENU
+	class TinyHandleHMENU : public TinyObject
 	{
+		DECLARE_DYNAMIC(TinyHandleHMENU)
 	public:
 		TinyHandleHMENU();
-		~TinyHandleHMENU();
+		virtual ~TinyHandleHMENU();
 		operator HMENU() const;
 		HMENU Handle() const;
 		BOOL operator==(const TinyHandleHMENU& obj) const;
@@ -114,11 +116,12 @@ namespace TinyUI
 	/// <summary>
 	/// DC¾ä±úÀà
 	/// </summary>
-	class TinyHandleHDC
+	class TinyHandleHDC : public TinyObject
 	{
+		DECLARE_DYNAMIC(TinyHandleHDC)
 	public:
 		TinyHandleHDC();
-		~TinyHandleHDC();
+		virtual ~TinyHandleHDC();
 		operator HDC() const;
 		HDC Handle() const;
 		BOOL operator==(const TinyHandleHDC& obj) const;
@@ -132,11 +135,12 @@ namespace TinyUI
 	/// <summary>
 	/// BITMAP¾ä±úÀà
 	/// </summary>
-	class TinyHandleHBITMAP
+	class TinyHandleHBITMAP : public TinyObject
 	{
+		DECLARE_DYNAMIC(TinyHandleHBITMAP)
 	public:
 		TinyHandleHBITMAP();
-		~TinyHandleHBITMAP();
+		virtual ~TinyHandleHBITMAP();
 		operator HBITMAP() const;
 		HBITMAP Handle() const;
 		BOOL operator==(const TinyHandleHBITMAP& obj) const;
@@ -150,11 +154,12 @@ namespace TinyUI
 	/// <summary>
 	/// FONT¾ä±úÀà
 	/// </summary>
-	class TinyHandleHFONT
+	class TinyHandleHFONT : public TinyObject
 	{
+		DECLARE_DYNAMIC(TinyHandleHFONT)
 	public:
 		TinyHandleHFONT();
-		~TinyHandleHFONT();
+		virtual ~TinyHandleHFONT();
 		operator HFONT() const;
 		HFONT Handle() const;
 		BOOL operator==(const TinyHandleHFONT& obj) const;
@@ -168,11 +173,12 @@ namespace TinyUI
 	/// <summary>
 	/// PEN¾ä±úÀà
 	/// </summary>
-	class TinyHandleHPEN
+	class TinyHandleHPEN : public TinyObject
 	{
+		DECLARE_DYNAMIC(TinyHandleHPEN)
 	public:
 		TinyHandleHPEN();
-		~TinyHandleHPEN();
+		virtual ~TinyHandleHPEN();
 		operator HPEN() const;
 		HPEN Handle() const;
 		BOOL operator==(const TinyHandleHPEN& obj) const;
@@ -186,11 +192,12 @@ namespace TinyUI
 	/// <summary>
 	/// BRUSH¾ä±úÀà
 	/// </summary>
-	class TinyHandleHBRUSH
+	class TinyHandleHBRUSH : public TinyObject
 	{
+		DECLARE_DYNAMIC(TinyHandleHBRUSH)
 	public:
 		TinyHandleHBRUSH();
-		~TinyHandleHBRUSH();
+		virtual ~TinyHandleHBRUSH();
 		operator HBRUSH() const;
 		HBRUSH Handle() const;
 		BOOL operator==(const TinyHandleHBRUSH& obj) const;
@@ -204,11 +211,12 @@ namespace TinyUI
 	/// <summary>
 	/// PALETTE¾ä±úÀà
 	/// </summary>
-	class TinyHandleHPALETTE
+	class TinyHandleHPALETTE : public TinyObject
 	{
+		DECLARE_DYNAMIC(TinyHandleHPALETTE)
 	public:
 		TinyHandleHPALETTE();
-		~TinyHandleHPALETTE();
+		virtual ~TinyHandleHPALETTE();
 		operator HPALETTE() const;
 		HPALETTE Handle() const;
 		BOOL operator==(const TinyHandleHPALETTE& obj) const;
@@ -222,11 +230,12 @@ namespace TinyUI
 	/// <summary>
 	/// RGN¾ä±úÀà
 	/// </summary>
-	class TinyHandleHRGN
+	class TinyHandleHRGN : public TinyObject
 	{
+		DECLARE_DYNAMIC(TinyHandleHRGN)
 	public:
 		TinyHandleHRGN();
-		~TinyHandleHRGN();
+		virtual ~TinyHandleHRGN();
 		operator HRGN() const;
 		HRGN Handle() const;
 		BOOL operator==(const TinyHandleHRGN& obj) const;
@@ -240,11 +249,12 @@ namespace TinyUI
 	/// <summary>
 	/// IMAGELIST¾ä±úÀà
 	/// </summary>
-	class TinyHandleHIMAGELIST
+	class TinyHandleHIMAGELIST : public TinyObject
 	{
+		DECLARE_DYNAMIC(TinyHandleHIMAGELIST)
 	public:
 		TinyHandleHIMAGELIST();
-		~TinyHandleHIMAGELIST();
+		virtual ~TinyHandleHIMAGELIST();
 		operator HIMAGELIST() const;
 		HIMAGELIST Handle() const;
 		BOOL operator==(const TinyHandleHIMAGELIST& obj) const;

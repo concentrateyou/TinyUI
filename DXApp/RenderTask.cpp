@@ -185,7 +185,7 @@ namespace DXApp
 			if (m_lastElement)
 			{
 				Remove(m_lastElement);
-				m_lastElement->EndScene();
+				m_lastElement->Deallocate(m_graphics.GetDX11());
 				m_lastElement = NULL;
 			}
 		}
@@ -280,7 +280,7 @@ namespace DXApp
 			{
 				for (INT i = 0;i < m_scenes.GetSize();i++)
 				{
-					m_scenes[i]->EndScene();
+					m_scenes[i]->Deallocate(m_graphics.GetDX11());
 				}
 				break;
 			}

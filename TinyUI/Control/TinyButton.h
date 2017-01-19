@@ -55,7 +55,7 @@ namespace TinyUI
 		BOOL SetSplitStyle(UINT nStyle);
 		BOOL GetSplitSize(LPSIZE pSize) const;
 		BOOL SetSplitSize(LPSIZE pSize);
-		TCHAR GetSplitGlyph() const;
+		HIMAGELIST GetSplitGlyph() const;
 		BOOL SetSplitGlyph(TCHAR chGlyph);
 		BOOL SetDropDownState(BOOL fDropDown);
 		HICON SetShield(BOOL fElevationRequired);

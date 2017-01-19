@@ -7,7 +7,6 @@ namespace MF
 {
 	class MFObserver : public TinyLock
 	{
-		DECLARE_DYNAMIC(MFObserver)
 		DISALLOW_COPY_AND_ASSIGN(MFObserver)
 	public:
 		MFObserver();

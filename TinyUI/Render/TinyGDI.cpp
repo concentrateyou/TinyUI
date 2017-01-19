@@ -4,6 +4,7 @@
 namespace TinyUI
 {
 #pragma region  TinyDC
+	IMPLEMENT_DYNAMIC(TinyDC, TinyHandleHDC);
 	BOOL TinyDC::CreateDC(LPCTSTR lpszDriverName, LPCTSTR lpszDeviceName, LPCTSTR lpszOutput, const void* lpInitData)
 	{
 		HDC hDC = ::CreateDC(lpszDriverName, lpszDeviceName, lpszOutput, (const DEVMODE*)lpInitData);
@@ -1260,6 +1261,7 @@ namespace TinyUI
 	}
 #pragma endregion
 #pragma region TinyMemDC
+	IMPLEMENT_DYNAMIC(TinyMemDC, TinyDC);
 	TinyMemDC::TinyMemDC(HDC hDC, INT cx, INT cy)
 		:m_hDestDC(hDC), m_hOldBitmap(NULL)
 	{
@@ -1505,6 +1507,7 @@ namespace TinyUI
 	}
 #pragma endregion
 #pragma region  TinyWindowDC
+	IMPLEMENT_DYNAMIC(TinyWindowDC, TinyDC);
 	TinyWindowDC::TinyWindowDC(HWND hWND)
 		:m_hWND(hWND)
 	{
@@ -1526,6 +1529,7 @@ namespace TinyUI
 	/************************************************************************/
 	/* PEN                                                                  */
 	/************************************************************************/
+	IMPLEMENT_DYNAMIC(TinyPen, TinyHandleHPEN);
 	TinyPen::TinyPen()
 	{
 
@@ -1559,6 +1563,7 @@ namespace TinyUI
 	/************************************************************************/
 	/* BRUSH                                                                */
 	/************************************************************************/
+	IMPLEMENT_DYNAMIC(TinyBrush, TinyHandleHBRUSH);
 	TinyBrush::TinyBrush()
 	{
 
@@ -1598,6 +1603,7 @@ namespace TinyUI
 	/************************************************************************/
 	/* BITMAP                                                                */
 	/************************************************************************/
+	IMPLEMENT_DYNAMIC(TinyBitmap, TinyHandleHBITMAP);
 	TinyBitmap::TinyBitmap()
 	{
 
@@ -1729,6 +1735,7 @@ namespace TinyUI
 	/************************************************************************/
 	/* PALETTE                                                              */
 	/************************************************************************/
+	IMPLEMENT_DYNAMIC(TinyPalette, TinyHandleHPALETTE);
 	TinyPalette::TinyPalette()
 	{
 
@@ -1781,6 +1788,7 @@ namespace TinyUI
 	/************************************************************************/
 	/* RGN																	*/
 	/************************************************************************/
+	IMPLEMENT_DYNAMIC(TinyRgn, TinyHandleHRGN);
 	TinyRgn::TinyRgn()
 	{
 
@@ -1877,6 +1885,7 @@ namespace TinyUI
 	/************************************************************************/
 	/* FONT																	*/
 	/************************************************************************/
+	IMPLEMENT_DYNAMIC(TinyFont, TinyHandleHFONT);
 	TinyFont::TinyFont()
 	{
 

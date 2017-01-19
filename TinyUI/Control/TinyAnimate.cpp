@@ -3,6 +3,7 @@
 
 namespace TinyUI
 {
+	IMPLEMENT_DYNAMIC(TinyAnimate, TinyControl);
 	TinyAnimate::TinyAnimate()
 	{
 
