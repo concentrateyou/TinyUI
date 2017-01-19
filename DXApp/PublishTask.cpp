@@ -21,10 +21,10 @@ namespace DXApp
 
 	}
 
-	BOOL PublishTask::Connect()
+	BOOL PublishTask::Connect(const TinyString& url)
 	{
 		ASSERT(m_audioTask || m_videoTask);
-		BOOL bRes = m_client.Connect("rtmp://10.121.86.127/live/test");
+		BOOL bRes = m_client.Connect(url);
 		if (!bRes)
 			return FALSE;
 		return TRUE;
@@ -33,7 +33,7 @@ namespace DXApp
 	BOOL PublishTask::Submit()
 	{
 		m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
-		return TinyTaskBase::Submit(std::forward<Closure>(BindCallback(&PublishTask::OnMessagePump, this)));
+		return TinyTaskBase::Submit(BindCallback(&PublishTask::OnMessagePump, this));
 	}
 	BOOL PublishTask::Close(DWORD dwMS)
 	{

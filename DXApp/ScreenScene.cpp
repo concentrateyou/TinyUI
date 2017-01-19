@@ -29,10 +29,7 @@ namespace DXApp
 	{
 		return TEXT("ScreenScene");
 	}
-	ElementType ScreenScene::GetElementType() const
-	{
-		return IMAGE;
-	}
+
 	BOOL ScreenScene::BeginScene()
 	{
 		return TRUE;

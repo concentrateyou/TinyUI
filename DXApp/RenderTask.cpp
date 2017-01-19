@@ -78,10 +78,7 @@ namespace DXApp
 		for (INT i = 0;i < m_scenes.GetSize();i++)
 		{
 			DX11Element* ps = m_scenes[i];
-			if (ps->GetElementType() == IMAGE)
-			{
-				m_graphics.DrawImage(static_cast<DX11Image*>(ps));
-			}
+			m_graphics.DrawImage(static_cast<DX11Image*>(ps));
 		}
 		m_graphics.EndScene();
 		m_timer.EndTime();

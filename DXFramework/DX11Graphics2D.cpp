@@ -50,7 +50,7 @@ namespace DXFramework
 	BOOL DX11Graphics2D::DrawImage(DX11Image* pImage)
 	{
 		ASSERT(pImage);
-		if (!pImage->IsValid())
+		if (!pImage->IsEmpty())
 			return FALSE;
 		if (!pImage->Update(m_dx11))
 			return FALSE;

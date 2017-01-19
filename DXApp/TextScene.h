@@ -17,7 +17,6 @@ namespace DXApp
 		static VOID CALLBACK TimerProc(HWND  hwnd, UINT  uMsg, UINT_PTR idEvent, DWORD dwTime);
 	public:
 		LPCSTR GetClassName() OVERRIDE;
-		ElementType GetElementType() const OVERRIDE;
 		BOOL BeginScene() OVERRIDE;
 		void EndScene() OVERRIDE;
 		BOOL Render(DX11& dx11) OVERRIDE;

@@ -35,7 +35,7 @@ namespace DXFramework
 	}
 	BOOL DX11Image::BitBlt(DX11& dx11, const BYTE* bits, LONG size)
 	{
-		if (!bits || !m_texture.IsValid() || size != (m_size.cx * m_size.cy * 4))
+		if (!bits || !m_texture.IsEmpty() || size != (m_size.cx * m_size.cy * 4))
 			return FALSE;
 		HDC hDC = NULL;
 		if (m_texture.GetDC(hDC))
@@ -61,7 +61,7 @@ namespace DXFramework
 
 	BOOL DX11Image::BitBlt(DX11& dx11, const TinyRectangle& dst, HBITMAP hBitmapSrc, const TinyPoint& src)
 	{
-		if (!m_texture.IsValid())
+		if (!m_texture.IsEmpty())
 			return FALSE;
 		HDC hDC = NULL;
 		if (m_texture.GetDC(hDC))
@@ -74,7 +74,7 @@ namespace DXFramework
 	}
 	BOOL DX11Image::BitBlt(DX11& dx11, const TinyRectangle& dst, HDC hDCSrc, const TinyPoint& src)
 	{
-		if (!m_texture.IsValid())
+		if (!m_texture.IsEmpty())
 			return FALSE;
 		HDC hDC = NULL;
 		if (m_texture.GetDC(hDC))
@@ -228,13 +228,9 @@ namespace DXFramework
 	{
 		return TEXT("DX11Image");
 	}
-	ElementType	 DX11Image::GetElementType() const
+	BOOL DX11Image::IsEmpty() const
 	{
-		return IMAGE;
-	}
-	BOOL DX11Image::IsValid() const
-	{
-		return m_texture.IsValid();
+		return m_texture.IsEmpty();
 	}
 	BOOL DX11Image::Render(DX11& dx11)
 	{

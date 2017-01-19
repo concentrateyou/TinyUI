@@ -28,7 +28,7 @@ namespace DXFramework
 		BOOL ReleaseDC();
 		ID3D11Texture2D* GetTexture2D() const;
 		ID3D11ShaderResourceView* GetSRView() const;
-		BOOL IsValid() const;
+		BOOL IsEmpty() const;
 		TinySize GetSize();
 	protected:
 		BOOL									m_bCompatible;

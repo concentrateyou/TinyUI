@@ -139,6 +139,13 @@ namespace DXApp
 		m_lblMicrophone.SetText("麦克风:");
 		m_lblMicrophone.SetDefaultFont();
 
+		m_lbl.Create(m_hWND, 0, 0, 100, 25);
+		m_lbl.ModifyStyle(SS_BITMAP, SS_LEFT);
+		m_lbl.SetText("设置RTMP地址:");
+		m_lbl.SetDefaultFont();
+		m_txtRtmpURL.Create(m_hWND, 0, 0, 300, 21);
+		m_txtRtmpURL.SetText("rtmp://......");
+
 		m_speaker.Create(m_hWND, 0, 0, 0, 0);
 		m_microphone.Create(m_hWND, 0, 0, 0, 0);
 		m_onMicrophoneVolumeChange.Reset(new Delegate<void(void*, INT)>(this, &MainUI::OnMicrophoneVolumeChange));
@@ -369,5 +376,7 @@ namespace DXApp
 		m_microphone.SetSize(200, 30);
 		m_microphone.SetRange(0, 100);
 
+		m_lbl.SetPosition(offsetX + 100 * 0, offsetY + 103);
+		m_txtRtmpURL.SetPosition(offsetX + 100 * 1, offsetY + 100);
 	}
 }

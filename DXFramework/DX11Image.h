@@ -25,13 +25,12 @@ namespace DXFramework
 		BOOL Load(DX11& dx11, HANDLE hResource);
 		BOOL Load(DX11& dx11, const CHAR* pzFile);
 		BOOL Load(DX11& dx11, const BYTE* bits, DWORD dwSize);
-		BOOL IsValid() const;
+		BOOL IsEmpty() const;
 		BOOL Update(DX11& dx11);
 		DX11Texture* GetTexture();
 	public:
 		virtual void Destory();
 	public:
-		ElementType	GetElementType() const;
 		LPCSTR GetClassName() OVERRIDE;
 		BOOL BeginScene() OVERRIDE;
 		void EndScene() OVERRIDE;

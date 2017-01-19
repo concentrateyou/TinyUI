@@ -7,11 +7,6 @@ using namespace TinyUI;
 
 namespace DXFramework
 {
-	enum ElementType
-	{
-		IMAGE,
-		FONT
-	};
 	enum TrackerHit
 	{
 		hitNothing = -1,
@@ -42,7 +37,6 @@ namespace DXFramework
 		void SetSize(const TinySize& size);
 		virtual INT	GetIndexCount() const = 0;
 		virtual LPCSTR GetClassName() = 0;
-		virtual ElementType	 GetElementType() const = 0;
 		virtual BOOL BeginScene() = 0;
 		virtual void EndScene() = 0;
 		virtual BOOL Render(DX11& dx11) = 0;

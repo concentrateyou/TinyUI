@@ -50,11 +50,6 @@ namespace DXApp
 		return TEXT("TextScene");
 	}
 
-	DXFramework::ElementType TextScene::GetElementType() const
-	{
-		return IMAGE;
-	}
-
 	BOOL TextScene::BeginScene()
 	{
 		return TRUE;

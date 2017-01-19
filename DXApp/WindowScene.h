@@ -15,7 +15,6 @@ namespace DXApp
 		BOOL Initialize(DX11& dx11, HWND hWND);
 	public:
 		LPCSTR GetClassName() OVERRIDE;
-		ElementType GetElementType() const OVERRIDE;
 		BOOL BeginScene() OVERRIDE;
 		void EndScene() OVERRIDE;
 		BOOL Render(DX11& dx11) OVERRIDE;

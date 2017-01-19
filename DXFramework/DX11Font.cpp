@@ -130,7 +130,7 @@ namespace DXFramework
 	}
 	BOOL DX11Font::DrawString(DX11& dx11, const TinyString& str, const RectF& rectF, const StringFormat* format)
 	{
-		ASSERT(m_texture.IsValid());
+		ASSERT(m_texture.IsEmpty());
 		HDC hDC = NULL;
 		if (!m_texture.GetDC(hDC))
 			return FALSE;

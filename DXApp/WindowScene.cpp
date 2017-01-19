@@ -31,11 +31,6 @@ namespace DXApp
 		return TEXT("WindowScene");
 	}
 
-	DXFramework::ElementType WindowScene::GetElementType() const
-	{
-		return IMAGE;
-	}
-
 	BOOL WindowScene::BeginScene()
 	{
 		return TRUE;

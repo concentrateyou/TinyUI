@@ -3,6 +3,7 @@
 #include "Control/TinyButton.h"
 #include "Control/TinyTrackBar.h"
 #include "Control/TinyLabel.h"
+#include "Control/TinyTextBox.h"
 #include "DXWindow.h"
 #include "VideoScene.h"
 #include "GameScene.h"
@@ -61,6 +62,8 @@ namespace DXApp
 		TinyButton m_audio;
 		TinyLabel	m_lblSpeaker;
 		TinyLabel	m_lblMicrophone;
+		TinyLabel	m_lbl;
+		TinyTextBox	m_txtRtmpURL;
 		TinyTrackBar m_speaker;
 		TinyTrackBar m_microphone;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onBroadcastClick;
@@ -87,7 +90,7 @@ namespace DXApp
 		ScreenScene	m_screenScene;
 
 		DShow::AudioCapture m_audioCapture;
-		TinyScopedPtr<Delegate<void(void*,INT)>> m_onMicrophoneVolumeChange;
+		TinyScopedPtr<Delegate<void(void*, INT)>> m_onMicrophoneVolumeChange;
 
 		RenderTask	m_renderTask;
 	};

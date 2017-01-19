@@ -13,7 +13,7 @@ namespace DXApp
 	public:
 		PublishTask(AudioEncode* audioTask, VideoEncode* videoTask);
 		~PublishTask();
-		BOOL	Connect();
+		BOOL	Connect(const TinyString& url = "rtmp://10.121.86.127/live/test");
 		BOOL	Submit();
 		BOOL	Close(DWORD dwMS) OVERRIDE;
 	private:
@@ -34,6 +34,5 @@ namespace DXApp
 		TinyScopedPtr<Delegate<void(BYTE*, LONG, const MediaTag&)>>	m_videoDone;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG, const MediaTag&)>>	m_audioDone;
 	};
-
 }
 

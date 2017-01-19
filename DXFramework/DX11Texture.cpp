@@ -205,7 +205,7 @@ namespace DXFramework
 		m_texture2D->GetDesc(&desc);
 		return TinySize(desc.Width, desc.Height);
 	}
-	BOOL DX11Texture::IsValid() const
+	BOOL DX11Texture::IsEmpty() const
 	{
 		return m_texture2D != NULL;
 	}
