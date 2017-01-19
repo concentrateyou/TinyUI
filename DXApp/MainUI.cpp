@@ -141,6 +141,8 @@ namespace DXApp
 
 		m_speaker.Create(m_hWND, 0, 0, 0, 0);
 		m_microphone.Create(m_hWND, 0, 0, 0, 0);
+		m_onMicrophoneVolumeChange.Reset(new Delegate<void(void*, INT)>(this, &MainUI::OnMicrophoneVolumeChange));
+		m_microphone.EVENT_POSCHANGING += m_onMicrophoneVolumeChange;
 
 		RECT s = { 0 };
 		m_pDXWND->GetClientRect(&s);
@@ -160,6 +162,7 @@ namespace DXApp
 		m_capture.EVENT_CLICK -= m_onCaptureClick;
 		m_text.EVENT_CLICK -= m_onTextClick;
 		m_image.EVENT_CLICK -= m_onImageClick;
+		m_microphone.EVENT_POSCHANGING -= m_onMicrophoneVolumeChange;
 	}
 	void MainUI::OnBroadcastClick(void*, INT)
 	{
@@ -238,23 +241,16 @@ namespace DXApp
 		MediaCaptureDlg dlg;
 		if (dlg.DoModal(m_hWND, IDD_DLG_MEDIACAPTURE) == IDOK)
 		{
+
 			if (dlg.GetAudioName() != NULL)
 			{
 				DShow::AudioCapture::Name name = *dlg.GetAudioName();
-				DShow::AudioCapture capture;
-				capture.Initialize(name);
+				m_audioCapture.Uninitialize();
+				m_audioCapture.Initialize(name);
 				LONG volume = 0;
-				capture.GetVolume(volume);
-				BOOL bIsMA = FALSE;
-				TinyWASAPIAudio::IsMicrophoneArray(name.name(), bIsMA);
-				if (bIsMA)
-				{
-					m_microphone.SetPos(volume);
-				}
-				else
-				{
-					m_speaker.SetPos(volume);
-				}
+				m_audioCapture.GetVolume(volume);
+				m_microphone.SetPos(volume);
+
 			}
 			if (dlg.GetVideoName() != NULL && dlg.GetVideoParam() != NULL)
 			{
@@ -328,6 +324,10 @@ namespace DXApp
 
 		}
 	}
+	void MainUI::OnMicrophoneVolumeChange(void*, INT pos)
+	{
+		m_audioCapture.SetVolume(pos);
+	}
 	void MainUI::Resize(INT cx, INT cy)
 	{
 		INT offsetX = 15;
@@ -368,5 +368,6 @@ namespace DXApp
 		m_microphone.SetPosition(offsetX + 100 * 8, offsetY + 50);
 		m_microphone.SetSize(200, 30);
 		m_microphone.SetRange(0, 100);
+
 	}
 }

@@ -51,6 +51,7 @@ namespace DShow
 				hRes = mixerGetLineInfo((HMIXEROBJ)m_hMixer, &ml, MIXER_OBJECTF_HMIXER | MIXER_GETLINEINFOF_SOURCE);
 				if (hRes != MMSYSERR_NOERROR)
 					return FALSE;
+				INT  ai = ml.dwComponentType - MIXERLINE_COMPONENTTYPE_SRC_FIRST;
 				if (ml.dwComponentType == srcType)
 				{
 					memcpy(&m_ml, &ml, sizeof(MIXERLINE));

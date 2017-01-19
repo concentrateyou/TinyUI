@@ -21,7 +21,7 @@ namespace TinyUI
 		END_MSG_MAP()
 		virtual LRESULT WmNotifyReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT WmHScrollReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		Event<void(void*, INT)> EVENT_PosChanging;
+		Event<void(void*, INT)> EVENT_POSCHANGING;
 		INT GetLineSize() const;
 		INT SetLineSize(INT nSize);
 		INT GetPageSize() const;

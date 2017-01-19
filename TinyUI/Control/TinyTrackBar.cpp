@@ -57,7 +57,7 @@ namespace TinyUI
 			INT newPos = GetPos();
 			if (currentPos != newPos)
 			{
-				EVENT_PosChanging(this, newPos);
+				EVENT_POSCHANGING(this, newPos);
 				currentPos = newPos;
 			}
 		}

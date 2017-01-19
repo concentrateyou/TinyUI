@@ -116,3 +116,90 @@ void WINAPI SaveBitmap(const BITMAPINFOHEADER& bi, const BYTE* pBits, DWORD dwSi
 	WriteFile(hFile, (LPSTR)pBits, dwSize, &dwBytesWritten, NULL);
 	CloseHandle(hFile);
 }
+BOOL WINAPI SupportsPropertyPage(IBaseFilter *pFilter)
+{
+	if (!pFilter)
+		return FALSE;
+	HRESULT hRes = S_OK;
+	TinyComPtr<ISpecifyPropertyPages> specify;
+	hRes = pFilter->QueryInterface(IID_ISpecifyPropertyPages, (void **)&specify);
+	return SUCCEEDED(hRes);
+}
+HRESULT WINAPI ShowFilterPropertyPage(IBaseFilter *pFilter, HWND hwndParent)
+{
+	if (!pFilter)
+		return E_NOINTERFACE;
+	HRESULT hRes = S_OK;
+	TinyComPtr<ISpecifyPropertyPages> specify;
+	hRes = pFilter->QueryInterface(IID_ISpecifyPropertyPages, (void **)&specify);
+	if (SUCCEEDED(hRes))
+	{
+		do
+		{
+			FILTER_INFO FilterInfo;
+			hRes = pFilter->QueryFilterInfo(&FilterInfo);
+			if (FAILED(hRes))
+				break;
+			CAUUID caGUID;
+			hRes = specify->GetPages(&caGUID);
+			if (FAILED(hRes))
+				break;
+			OleCreatePropertyFrame(
+				hwndParent,
+				0,
+				0,
+				FilterInfo.achName,
+				1,
+				(IUnknown **)&pFilter,
+				caGUID.cElems,
+				caGUID.pElems,
+				0,
+				0,
+				NULL
+			);
+			CoTaskMemFree(caGUID.pElems);
+			FilterInfo.pGraph->Release();
+
+		} while (0);
+	}
+	pFilter->Release();
+	return hRes;
+}
+HBITMAP WINAPI CopyScreenToBitmap(LPRECT lpRect, BYTE *pData, BITMAPINFO *pHeader)
+{
+	HDC         hScrDC, hMemDC;
+	HBITMAP     hBitmap, hOldBitmap;
+	int         nX, nY, nX2, nY2;
+	int         nWidth, nHeight;
+	int         xScrn, yScrn;
+	if (IsRectEmpty(lpRect))
+		return NULL;
+	hScrDC = CreateDC(TEXT("DISPLAY"), NULL, NULL, NULL);
+	hMemDC = CreateCompatibleDC(hScrDC);
+	nX = lpRect->left;
+	nY = lpRect->top;
+	nX2 = lpRect->right;
+	nY2 = lpRect->bottom;
+	xScrn = GetDeviceCaps(hScrDC, HORZRES);
+	yScrn = GetDeviceCaps(hScrDC, VERTRES);
+	if (nX < 0)
+		nX = 0;
+	if (nY < 0)
+		nY = 0;
+	if (nX2 > xScrn)
+		nX2 = xScrn;
+	if (nY2 > yScrn)
+		nY2 = yScrn;
+
+	nWidth = nX2 - nX;
+	nHeight = nY2 - nY;
+
+	hBitmap = CreateCompatibleBitmap(hScrDC, nWidth, nHeight);
+	hOldBitmap = (HBITMAP)SelectObject(hMemDC, hBitmap);
+	BitBlt(hMemDC, 0, 0, nWidth, nHeight, hScrDC, nX, nY, SRCCOPY);
+	hBitmap = (HBITMAP)SelectObject(hMemDC, hOldBitmap);
+	GetDIBits(hScrDC, hBitmap, 0, nHeight, pData, pHeader, DIB_RGB_COLORS);
+	DeleteDC(hScrDC);
+	DeleteDC(hMemDC);
+	return hBitmap;
+}

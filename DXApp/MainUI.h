@@ -48,6 +48,7 @@ namespace DXApp
 		void OnAudioClick(void*, INT);
 		void OnSelected(RECT);
 		void OnContextChange(void*);
+		void OnMicrophoneVolumeChange(void*, INT);
 	private:
 		TinyButton m_broadcast;
 		TinyButton m_record;
@@ -84,6 +85,9 @@ namespace DXApp
 		ImageScene	m_imageScene;
 		WindowScene m_windowScene;
 		ScreenScene	m_screenScene;
+
+		DShow::AudioCapture m_audioCapture;
+		TinyScopedPtr<Delegate<void(void*,INT)>> m_onMicrophoneVolumeChange;
 
 		RenderTask	m_renderTask;
 	};
