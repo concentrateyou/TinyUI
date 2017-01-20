@@ -20,6 +20,7 @@ namespace DXApp
 		VideoScene();
 		~VideoScene();
 		BOOL Initialize(DX11& dx11, const VideoCapture::Name& name, const VideoCaptureParam& param);
+	public:
 		BOOL Process(DX11& dx11) OVERRIDE;
 		void Clear(DX11& dx11) OVERRIDE;
 		BOOL Render(DX11& dx11) OVERRIDE;
