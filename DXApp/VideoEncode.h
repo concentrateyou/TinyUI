@@ -21,17 +21,14 @@ namespace DXApp
 		BOOL				Encode();
 		BOOL				Close();
 		x264Encode*			GetEncode();
-		//VideoCapture*		GetCapture();
-		//VideoCaptureParam*	GetParam();
-	private:
-		void				OnRender(BYTE* bits, LONG size, FLOAT ts);
+		TinySize			GetSize() const;
+		DWORD				GetFPS() const;
 	private:
 		DWORD							m_dwFPS;
 		DWORD							m_dwVideoRate;
 		RenderTask*						m_renderTask;
 		x264Encode						m_x264;
 		TinyScopedPtr<I420Converter>	m_converter;
-		TinyScopedPtr<Delegate<void(BYTE*, LONG, FLOAT)>>	m_render;
 	};
 }
 

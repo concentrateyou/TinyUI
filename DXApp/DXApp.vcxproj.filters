@@ -31,6 +31,12 @@
     <Filter Include="源文件\Task">
       <UniqueIdentifier>{eda9b022-482b-4993-989c-032b5c3069da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\Encode">
+      <UniqueIdentifier>{a17f4fd8-1aa4-4f78-aafd-9d0ec12e9d20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Encode">
+      <UniqueIdentifier>{54097a1d-03fd-4d0c-85c7-3a08cac76137}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -45,9 +51,6 @@
     <ClInclude Include="Resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="x264Encode.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="I420Converter.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -55,15 +58,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Utility.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="FaacEncode.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="AudioEncode.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="VideoEncode.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="FFmpegResampler.h">
@@ -126,6 +120,18 @@
     <ClInclude Include="TextScene.h">
       <Filter>头文件\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="VideoEncode.h">
+      <Filter>头文件\Encode</Filter>
+    </ClInclude>
+    <ClInclude Include="x264Encode.h">
+      <Filter>头文件\Encode</Filter>
+    </ClInclude>
+    <ClInclude Include="FaacEncode.h">
+      <Filter>头文件\Encode</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioEncode.h">
+      <Filter>头文件\Encode</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -140,9 +146,6 @@
     <ClCompile Include="DXApplication.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="x264Encode.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="I420Converter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -150,15 +153,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Utility.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="FaacEncode.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="AudioEncode.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="VideoEncode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="FFmpegResampler.cpp">
@@ -211,6 +205,18 @@
     </ClCompile>
     <ClCompile Include="TextScene.cpp">
       <Filter>源文件\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioEncode.cpp">
+      <Filter>源文件\Encode</Filter>
+    </ClCompile>
+    <ClCompile Include="FaacEncode.cpp">
+      <Filter>源文件\Encode</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoEncode.cpp">
+      <Filter>源文件\Encode</Filter>
+    </ClCompile>
+    <ClCompile Include="x264Encode.cpp">
+      <Filter>源文件\Encode</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

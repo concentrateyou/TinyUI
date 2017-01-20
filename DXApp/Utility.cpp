@@ -1,6 +1,15 @@
 #include "stdafx.h"
 #include "Utility.h"
 
+GraphicsObserver::GraphicsObserver()
+{
+
+}
+GraphicsObserver::~GraphicsObserver()
+{
+
+}
+
 BOOL WINAPI GetModuleList(HANDLE hProcess, TinyArray<TinyString> &moduleList)
 {
 	HMODULE hModules[1024];

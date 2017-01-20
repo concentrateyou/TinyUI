@@ -53,9 +53,9 @@ namespace DXApp
 
 		return TRUE;
 	}
-	DX11Graphics2D*	 RenderTask::GetGraphics()
+	DX11Graphics2D&	 RenderTask::GetGraphics()
 	{
-		return &m_graphics;
+		return m_graphics;
 	}
 
 	BOOL RenderTask::Close(DWORD dwMs)
@@ -74,7 +74,6 @@ namespace DXApp
 	{
 		m_timer.BeginTime();
 		m_graphics.BeginScene();
-
 		for (INT i = 0;i < m_scenes.GetSize();i++)
 		{
 			DX11Element* ps = m_scenes[i];
@@ -86,11 +85,6 @@ namespace DXApp
 		m_graphics.EndScene();
 		m_timer.EndTime();
 		return m_timer.GetMillisconds();
-	}
-
-	void RenderTask::OnRender(BYTE* bits, LONG size, FLOAT ts)
-	{
-		EVENT_RENDER(bits, size, ts);
 	}
 
 	void RenderTask::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -264,6 +258,10 @@ namespace DXApp
 		return NULL;
 	}
 
+	void RenderTask::OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
+	{
+	}
+
 	BOOL RenderTask::Contain(DX11Element* element)
 	{
 		m_graphics.Lock();
@@ -271,7 +269,6 @@ namespace DXApp
 		m_graphics.Unlock();
 		return bRes;
 	}
-
 	void RenderTask::OnMessagePump()
 	{
 		DWORD dwTime = 0;

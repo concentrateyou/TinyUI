@@ -3,6 +3,7 @@
 #include "DX11Graphics2D.h"
 #include "DX11CaptureTask.h"
 #include "VideoCapture.h"
+#include "Utility.h"
 #include "Control/TinyMenu.h"
 using namespace DXFramework;
 using namespace TinyUI;
@@ -13,17 +14,15 @@ namespace DXApp
 {
 	class DXWindow;
 
-	class RenderTask : public TinyTaskBase
+	class RenderTask : public TinyTaskBase, public GraphicsObserver
 	{
 	public:
 		RenderTask();
 		virtual	~RenderTask();
-		DX11Graphics2D*	GetGraphics();
+		DX11Graphics2D&	GetGraphics();
 		BOOL			Initialize(DXWindow* pWindow, INT cx, INT cy, DWORD dwFPS);
 		DWORD			Render();
 		BOOL			Submit();
-		BOOL			Close(DWORD dwMs = INFINITE) OVERRIDE;
-		virtual void	OnRender(BYTE* bits, LONG size, FLOAT ts);
 		BOOL			Contain(DX11Element* element);
 		BOOL			Add(DX11Element* element);
 		void			Remove(DX11Element* element);
@@ -32,6 +31,9 @@ namespace DXApp
 		void			MoveUp(DX11Element* element);
 		void			MoveDown(DX11Element* element);
 		DX11Element*	HitTest(const TinyPoint& pos);
+	public:
+		void			OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter) OVERRIDE;
+		BOOL			Close(DWORD dwMs = INFINITE) OVERRIDE;
 	private:
 		void			OnMessagePump();
 		void			OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -41,8 +43,6 @@ namespace DXApp
 		void			OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void			OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void			OnMenuClick(void*, INT wID);
-	public:
-		Event<void(BYTE*, LONG, FLOAT)> EVENT_RENDER;
 	private:
 		TinyMenu					m_menu;
 		DXWindow*					m_pWindow;
@@ -51,7 +51,6 @@ namespace DXApp
 		TinyEvent					m_close;
 		TinyPerformanceTimer		m_timer;
 		TinyArray<DX11Element*>		m_scenes;
-		TinyLock					m_lock;
 		DX11Element*				m_lastElement;
 	private:
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onSize;

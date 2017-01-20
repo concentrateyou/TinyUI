@@ -23,7 +23,7 @@ namespace DXApp
 		BOOL				Close();
 		BOOL				Encode();
 		FaacEncode*			GetEncode();
-		AudioCapture*	GetCapture();
+		AudioCapture*		GetCapture();
 		AudioCaptureParam*	GetParam();
 	private:
 		void				OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps);
@@ -31,8 +31,8 @@ namespace DXApp
 		DWORD					m_dwOffset;
 		DWORD					m_dwINC;
 		FaacEncode				m_aac;
-		AudioCapture		m_capture;
-		AudioCapture::Name	m_name;
+		AudioCapture			m_capture;
+		AudioCapture::Name		m_name;
 		AudioCaptureParam		m_audioParam;
 	};
 }

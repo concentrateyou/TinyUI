@@ -30,10 +30,10 @@ namespace DXApp
 		SAFE_FREE(buffer);
 		return TRUE;
 	}
-	BOOL FaacEncode::Open(const WAVEFORMATEX& waveFMT, INT audioRate, BOOL bAllowF)
+	BOOL FaacEncode::Open(const WAVEFORMATEX& waveFMT, INT audioRate, BOOL bAllowFloat)
 	{
 		Close();
-		m_bAllowF = bAllowF;
+		m_bAllowFloat = bAllowFloat;
 		m_waveFMT = waveFMT;
 		m_aac = faacEncOpen(waveFMT.nSamplesPerSec, waveFMT.nChannels, &m_inputSamples, &m_maxOutputBytes);
 		if (!m_aac)
@@ -41,7 +41,7 @@ namespace DXApp
 		//AAC固定1024
 		m_dwPTS = AAC_TIMEBASE * AAC_TIMEDEN / waveFMT.nSamplesPerSec;//播放一帧时间
 		m_config = faacEncGetCurrentConfiguration(m_aac);
-		if (m_bAllowF)
+		if (m_bAllowFloat)
 		{
 			m_config->inputFormat = FAAC_INPUT_FLOAT;
 		}
@@ -74,7 +74,6 @@ namespace DXApp
 		if (!iRes)
 			return FALSE;
 		m_bits.Reset(new BYTE[m_maxOutputBytes]);
-		m_aacFile.Create("D:\\1234.aac");
 		return TRUE;
 	}
 	BOOL FaacEncode::Encode(BYTE* bits, LONG size, DWORD& dwINC)
@@ -98,7 +97,6 @@ namespace DXApp
 	}
 	void FaacEncode::Close()
 	{
-		m_aacFile.Close();
 		if (m_aac)
 		{
 			faacEncClose(m_aac);
@@ -107,7 +105,6 @@ namespace DXApp
 	}
 	void FaacEncode::OnDone(BYTE* bits, LONG size, const MediaTag& tag)
 	{
-		m_aacFile.Write(bits, size);
 		EVENT_DONE(bits, size, tag);
 	}
 }

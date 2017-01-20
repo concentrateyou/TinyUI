@@ -44,9 +44,4 @@ namespace DXApp
 		m_video.Unlock();
 		return bits != NULL;
 	}
-
-	void VideoScene::OnVideoReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)
-	{
-
-	}
 }

@@ -4,15 +4,15 @@
 namespace DXApp
 {
 	PublishTask::PublishTask(AudioEncode* audioTask, VideoEncode* videoTask)
-		:m_audioTask(audioTask),
-		m_videoTask(videoTask),
+		:m_audioEncode(audioTask),
+		m_videoEncode(videoTask),
 		m_baseTime(timeGetTime())
 	{
-		ASSERT(m_audioTask || m_videoTask);
+		ASSERT(m_audioEncode || m_videoEncode);
 		m_videoDone.Reset(new Delegate<void(BYTE*, LONG, const MediaTag&)>(this, &PublishTask::OnVideoDone));
-		m_videoTask->GetEncode()->EVENT_DONE += m_videoDone;
+		m_videoEncode->GetEncode()->EVENT_DONE += m_videoDone;
 		m_audioDone.Reset(new Delegate<void(BYTE*, LONG, const MediaTag&)>(this, &PublishTask::OnAudioDone));
-		m_audioTask->GetEncode()->EVENT_DONE += m_audioDone;
+		m_audioEncode->GetEncode()->EVENT_DONE += m_audioDone;
 	}
 
 
@@ -23,9 +23,8 @@ namespace DXApp
 
 	BOOL PublishTask::Connect(const TinyString& url)
 	{
-		ASSERT(m_audioTask || m_videoTask);
-		BOOL bRes = m_client.Connect(url);
-		if (!bRes)
+		ASSERT(m_audioEncode || m_videoEncode);
+		if (!m_client.Connect(url))
 			return FALSE;
 		return TRUE;
 	}
@@ -43,9 +42,9 @@ namespace DXApp
 
 	void PublishTask::OnClose()
 	{
-		ASSERT(m_audioTask || m_videoTask);
-		m_videoTask->GetEncode()->EVENT_DONE -= m_videoDone;
-		m_audioTask->GetEncode()->EVENT_DONE -= m_audioDone;
+		ASSERT(m_audioEncode || m_videoEncode);
+		m_videoEncode->GetEncode()->EVENT_DONE -= m_videoDone;
+		m_audioEncode->GetEncode()->EVENT_DONE -= m_audioDone;
 	}
 
 	void PublishTask::OnVideoDone(BYTE* bits, LONG size, const MediaTag& tag)
@@ -78,11 +77,11 @@ namespace DXApp
 		{
 			if (sample.mediaTag.dwINC == 1)
 			{
-				WAVEFORMATEX wfx = m_audioTask->GetParam()->GetFormat();
+				WAVEFORMATEX wfx = m_audioEncode->GetParam()->GetFormat();
 				wfx.nSamplesPerSec = 48000;
 				wfx.nAvgBytesPerSec = wfx.nSamplesPerSec * wfx.nBlockAlign;
-				//VideoCaptureParam* param = m_videoTask->GetParam();
-				//m_client.SendMetadata(800, 600, static_cast<INT>(param->GetRate()), 1000, wfx, 128);
+				TinySize size = m_videoEncode->GetSize();
+				m_client.SendMetadata(size.cx, size.cy, static_cast<INT>(m_videoEncode->GetFPS()), 1000, wfx, 128);
 			}
 			switch (sample.mediaTag.dwFlag)
 			{
@@ -116,7 +115,7 @@ namespace DXApp
 			if (sample.mediaTag.dwINC == 1)
 			{
 				vector<BYTE> info;
-				m_audioTask->GetEncode()->GetSpecificInfo(info);
+				m_audioEncode->GetEncode()->GetSpecificInfo(info);
 				m_client.SendAAC(&info[0], info.size());
 			}
 			m_client.SendAudio(sample.bits, sample.size, sample.mediaTag.dwTime);

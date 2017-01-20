@@ -41,7 +41,7 @@ namespace DXFramework
 		virtual BOOL Render(DX11& dx11) = 0;
 		virtual void Clear(DX11& dx11) = 0;
 	public:
-		TinySize m_size;//原始大小
+		TinySize m_size;
 	};
 }
 

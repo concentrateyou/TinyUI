@@ -29,14 +29,13 @@ namespace DXApp
 	private:
 		faacEncHandle			m_aac;
 		faacEncConfigurationPtr	m_config;
-		BOOL					m_bAllowF;
+		BOOL					m_bAllowFloat;
 		DWORD					m_inputSamples;
 		DWORD					m_maxOutputBytes;
 		DWORD					m_dwINC;
 		DWORD					m_dwPTS;
 		TinyScopedArray<BYTE>	m_bits;
 		WAVEFORMATEX			m_waveFMT;
-		IO::TinyFile			m_aacFile;
 	};
 
 }

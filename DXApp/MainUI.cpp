@@ -199,19 +199,19 @@ namespace DXApp
 					CHAR* pzName = PathFindFileName(windowExecutable);
 					if (!m_renderTask.Contain(&m_gameScene))
 					{
-						m_gameScene.Initialize(m_renderTask.GetGraphics()->GetDX11());
+						m_gameScene.Initialize(m_renderTask.GetGraphics().GetDX11());
 						m_gameScene.SetConfig(className, pzName, TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));
 						if (m_renderTask.Add(&m_gameScene))
 						{
-							m_gameScene.Process(m_renderTask.GetGraphics()->GetDX11());
+							m_gameScene.Process(m_renderTask.GetGraphics().GetDX11());
 						}
 					}
 					else
 					{
-						m_gameScene.Clear(m_renderTask.GetGraphics()->GetDX11());
-						m_gameScene.Initialize(m_renderTask.GetGraphics()->GetDX11());
+						m_gameScene.Clear(m_renderTask.GetGraphics().GetDX11());
+						m_gameScene.Initialize(m_renderTask.GetGraphics().GetDX11());
 						m_gameScene.SetConfig(className, pzName, TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));
-						m_gameScene.Process(m_renderTask.GetGraphics()->GetDX11());
+						m_gameScene.Process(m_renderTask.GetGraphics().GetDX11());
 					}
 				}
 				CloseHandle(hProcess);
@@ -235,11 +235,11 @@ namespace DXApp
 			if (IsWindow(dlg.GetHWND()))
 			{
 				m_renderTask.Remove(&m_windowScene);
-				m_windowScene.Clear(m_renderTask.GetGraphics()->GetDX11());
-				m_windowScene.Initialize(m_renderTask.GetGraphics()->GetDX11(), dlg.GetHWND());
+				m_windowScene.Clear(m_renderTask.GetGraphics().GetDX11());
+				m_windowScene.Initialize(m_renderTask.GetGraphics().GetDX11(), dlg.GetHWND());
 				if (m_renderTask.Add(&m_windowScene))
 				{
-					m_windowScene.Process(m_renderTask.GetGraphics()->GetDX11());
+					m_windowScene.Process(m_renderTask.GetGraphics().GetDX11());
 				}
 			}
 		}
@@ -263,11 +263,11 @@ namespace DXApp
 			if (dlg.GetVideoName() != NULL && dlg.GetVideoParam() != NULL)
 			{
 				m_renderTask.Remove(&m_videoScene);
-				m_videoScene.Clear(m_renderTask.GetGraphics()->GetDX11());
-				m_videoScene.Initialize(m_renderTask.GetGraphics()->GetDX11(), *dlg.GetVideoName(), *dlg.GetVideoParam());
+				m_videoScene.Clear(m_renderTask.GetGraphics().GetDX11());
+				m_videoScene.Initialize(m_renderTask.GetGraphics().GetDX11(), *dlg.GetVideoName(), *dlg.GetVideoParam());
 				if (m_renderTask.Add(&m_videoScene))
 				{
-					m_videoScene.Process(m_renderTask.GetGraphics()->GetDX11());
+					m_videoScene.Process(m_renderTask.GetGraphics().GetDX11());
 				}
 			}
 		}
@@ -280,11 +280,11 @@ namespace DXApp
 		if (dlg.DoModal(m_hWND, IDD_DLG_TEXT) == IDOK)
 		{
 			m_renderTask.Remove(&m_textScene);
-			m_textScene.Clear(m_renderTask.GetGraphics()->GetDX11());
-			m_textScene.Initialize(m_renderTask.GetGraphics()->GetDX11(), dlg.GetText(), dlg.GetFormat(), dlg.GetBkColor());
+			m_textScene.Clear(m_renderTask.GetGraphics().GetDX11());
+			m_textScene.Initialize(m_renderTask.GetGraphics().GetDX11(), dlg.GetText(), dlg.GetFormat(), dlg.GetBkColor());
 			if (m_renderTask.Add(&m_textScene))
 			{
-				m_textScene.Process(m_renderTask.GetGraphics()->GetDX11());
+				m_textScene.Process(m_renderTask.GetGraphics().GetDX11());
 			}
 		}
 		dlg.EVENT_CONTEXTCHANGE -= m_onTextChange;
@@ -296,11 +296,11 @@ namespace DXApp
 		if (dlg.DoModal(m_hWND) == IDOK)
 		{
 			m_renderTask.Remove(&m_imageScene);
-			m_imageScene.Clear(m_renderTask.GetGraphics()->GetDX11());
-			m_imageScene.Initialize(m_renderTask.GetGraphics()->GetDX11(), dlg.GetPathName());
+			m_imageScene.Clear(m_renderTask.GetGraphics().GetDX11());
+			m_imageScene.Initialize(m_renderTask.GetGraphics().GetDX11(), dlg.GetPathName());
 			if (m_renderTask.Add(&m_imageScene))
 			{
-				m_imageScene.Process(m_renderTask.GetGraphics()->GetDX11());
+				m_imageScene.Process(m_renderTask.GetGraphics().GetDX11());
 			}
 		}
 	}
@@ -316,11 +316,11 @@ namespace DXApp
 		m_snapshot.DestroyWindow();
 		m_snapshot.m_rectangle.SetRectEmpty();
 		m_renderTask.Remove(&m_screenScene);
-		m_screenScene.Clear(m_renderTask.GetGraphics()->GetDX11());
-		m_screenScene.Initialize(m_renderTask.GetGraphics()->GetDX11(), s);
+		m_screenScene.Clear(m_renderTask.GetGraphics().GetDX11());
+		m_screenScene.Initialize(m_renderTask.GetGraphics().GetDX11(), s);
 		if (m_renderTask.Add(&m_screenScene))
 		{
-			m_screenScene.Process(m_renderTask.GetGraphics()->GetDX11());
+			m_screenScene.Process(m_renderTask.GetGraphics().GetDX11());
 		}
 	}
 	void MainUI::OnContextChange(void* sender)

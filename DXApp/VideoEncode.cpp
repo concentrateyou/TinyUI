@@ -7,9 +7,6 @@ namespace DXApp
 	VideoEncode::VideoEncode(RenderTask* renderTask)
 		:m_renderTask(renderTask)
 	{
-		ASSERT(m_renderTask);
-		m_render.Reset(new Delegate<void(BYTE*, LONG, FLOAT)>(this, &VideoEncode::OnRender));
-		m_renderTask->EVENT_RENDER += m_render;
 	}
 
 	VideoEncode::~VideoEncode()
@@ -21,21 +18,27 @@ namespace DXApp
 	{
 		return &m_x264;
 	}
-
-	//VideoCapture* VideoEncode::GetCapture()
-	//{
-	//	ASSERT(m_renderTask);
-	//	return m_renderTask->GetCapture();
-	//}
-	//VideoCaptureParam* VideoEncode::GetParam()
-	//{
-	//	ASSERT(m_renderTask);
-	//	return m_renderTask->GetParam();
-	//}
-
+	TinySize VideoEncode::GetSize() const
+	{
+		return	m_renderTask->GetGraphics().GetSize();
+	}
+	DWORD VideoEncode::GetFPS() const
+	{
+		return m_dwFPS;
+	}
 	BOOL VideoEncode::Encode()
 	{
-		return TRUE;
+		ASSERT(m_renderTask);
+		BYTE* bits = NULL;
+		DWORD dwSize = 0;
+		if (m_renderTask->GetGraphics().GetPointer(bits, dwSize))
+		{
+			if (m_converter->BRGAToI420(bits))
+			{
+				return m_x264.Encode(m_converter->GetI420());
+			}
+		}
+		return FALSE;
 	}
 
 	BOOL VideoEncode::Close()
@@ -49,20 +52,10 @@ namespace DXApp
 		ASSERT(m_renderTask);
 		m_dwFPS = dwFPS;
 		m_dwVideoRate = dwVideoRate;
-		BOOL bRes = m_x264.Open(scale.cx, scale.cy, (INT)dwFPS, (INT)dwVideoRate);
-		if (!bRes)
+		if (!m_x264.Open(scale.cx, scale.cy, (INT)dwFPS, (INT)dwVideoRate))
 			return FALSE;
-		/*TinySize size = m_renderTask->GetParam()->GetSize();
-		m_converter.Reset(new I420Converter(size, scale));*/
+		m_converter.Reset(new I420Converter(GetSize(), scale));
 		return TRUE;
-	}
-
-	void VideoEncode::OnRender(BYTE* bits, LONG size, FLOAT ts)
-	{
-		if (m_converter->BRGAToI420(bits))
-		{
-			m_x264.Encode(m_converter->GetI420());
-		}
 	}
 }
 

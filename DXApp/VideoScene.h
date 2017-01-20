@@ -25,8 +25,6 @@ namespace DXApp
 		void Clear(DX11& dx11) OVERRIDE;
 		BOOL Render(DX11& dx11) OVERRIDE;
 	private:
-		void OnVideoReceive(BYTE*, LONG, FLOAT, LPVOID);
-	private:
 		VideoCapture		m_video;
 		VideoCaptureParam	m_param;
 	};

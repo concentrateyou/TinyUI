@@ -25,8 +25,8 @@ namespace DXApp
 	private:
 		DWORD				m_baseTime;
 		RTMPClient			m_client;
-		VideoEncode*		m_videoTask;
-		AudioEncode*		m_audioTask;
+		VideoEncode*		m_videoEncode;
+		AudioEncode*		m_audioEncode;
 		TinyEvent			m_close;
 		vector<BYTE>		m_latestPPS;
 		vector<BYTE>		m_latestSPS;
