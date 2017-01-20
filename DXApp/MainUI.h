@@ -4,6 +4,7 @@
 #include "Control/TinyTrackBar.h"
 #include "Control/TinyLabel.h"
 #include "Control/TinyTextBox.h"
+#include "Control/TinyComboBox.h"
 #include "DXWindow.h"
 #include "VideoScene.h"
 #include "GameScene.h"
@@ -12,6 +13,9 @@
 #include "ScreenScene.h"
 #include "TextScene.h"
 #include "Snapshot.h"
+#include "VideoEncode.h"
+#include "AudioEncode.h"
+#include "PublishTask.h"
 using namespace TinyUI;
 
 namespace DXApp
@@ -62,10 +66,12 @@ namespace DXApp
 		TinyButton m_audio;
 		TinyLabel	m_lblSpeaker;
 		TinyLabel	m_lblMicrophone;
-		TinyLabel	m_lbl;
+		TinyLabel	m_lbl1;
 		TinyTextBox	m_txtRtmpURL;
 		TinyTrackBar m_speaker;
 		TinyTrackBar m_microphone;
+		TinyLabel	m_lbl2;
+		TinyComboBox m_resolution;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onBroadcastClick;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onRecordClick;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onGameClick;
@@ -89,9 +95,15 @@ namespace DXApp
 		WindowScene m_windowScene;
 		ScreenScene	m_screenScene;
 
-		DShow::AudioCapture m_audioCapture;
 		TinyScopedPtr<Delegate<void(void*, INT)>> m_onMicrophoneVolumeChange;
 
+		TinyScopedPtr<VideoEncode> m_videoEncode;
+
+		DShow::AudioCapture::Name	m_audioName;
+		DShow::AudioCaptureParam	m_audioParam;
+		TinyScopedPtr<AudioEncode>  m_audioEncode;
+
 		RenderTask	m_renderTask;
+		TinyScopedPtr<PublishTask> m_publishTask;
 	};
 }

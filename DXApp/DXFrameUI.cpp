@@ -52,7 +52,7 @@ namespace DXApp
 
 		CreateUI();
 
-		CenterWindow(NULL, { 1024, 720 });
+		CenterWindow(NULL, { 1440, 810 });
 
 		return FALSE;
 	}

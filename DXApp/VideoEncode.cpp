@@ -7,6 +7,7 @@ namespace DXApp
 	VideoEncode::VideoEncode(RenderTask* renderTask)
 		:m_renderTask(renderTask)
 	{
+		m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
 	}
 
 	VideoEncode::~VideoEncode()
@@ -14,9 +15,9 @@ namespace DXApp
 
 	}
 
-	x264Encode*	VideoEncode::GetEncode()
+	x264Encode&	VideoEncode::GetEncode()
 	{
-		return &m_x264;
+		return m_x264;
 	}
 	TinySize VideoEncode::GetSize() const
 	{
@@ -26,28 +27,33 @@ namespace DXApp
 	{
 		return m_dwFPS;
 	}
-	BOOL VideoEncode::Encode()
+	DWORD VideoEncode::Encode()
 	{
 		ASSERT(m_renderTask);
-		BYTE* bits = NULL;
+		m_timer.BeginTime();
 		DWORD dwSize = 0;
-		if (m_renderTask->GetGraphics().GetPointer(bits, dwSize))
+		BYTE* bits = m_renderTask->GetGraphics().GetPointer(dwSize);
+		if (m_converter->BRGAToI420(bits))
 		{
-			if (m_converter->BRGAToI420(bits))
-			{
-				return m_x264.Encode(m_converter->GetI420());
-			}
+			m_x264.Encode(m_converter->GetI420());
 		}
-		return FALSE;
+		m_timer.EndTime();
+		return m_timer.GetMillisconds();
 	}
-
-	BOOL VideoEncode::Close()
+	BOOL VideoEncode::Submit()
 	{
-		m_x264.Close();
-		return TRUE;
+		return TinyTaskBase::Submit(BindCallback(&VideoEncode::OnMessagePump, this));
 	}
 
-	BOOL VideoEncode::Open(const TinySize& scale, DWORD dwFPS, DWORD dwVideoRate)
+	BOOL VideoEncode::Close(DWORD dwMs)
+	{
+		m_close.SetEvent();
+		BOOL bRes = TinyTaskBase::Close(dwMs);
+		m_x264.Close();
+		return bRes;
+	}
+
+	BOOL VideoEncode::Initialize(const TinySize& scale, DWORD dwFPS, DWORD dwVideoRate)
 	{
 		ASSERT(m_renderTask);
 		m_dwFPS = dwFPS;
@@ -56,6 +62,22 @@ namespace DXApp
 			return FALSE;
 		m_converter.Reset(new I420Converter(GetSize(), scale));
 		return TRUE;
+	}
+
+	void VideoEncode::OnMessagePump()
+	{
+		DWORD dwTime = 0;
+		for (;;)
+		{
+			DWORD s = 1000 / m_dwFPS;
+			s = dwTime > s ? 0 : s - dwTime;
+			if (m_close.Lock(s))
+			{
+
+				break;
+			}
+			dwTime = this->Encode();
+		}
 	}
 }
 

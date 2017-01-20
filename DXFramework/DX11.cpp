@@ -141,6 +141,22 @@ namespace DXFramework
 		hRes = m_d3d->CreateDepthStencilState(&disableDepthStencilDesc, &m_disableDepthState);
 		if (FAILED(hRes))
 			return FALSE;
+
+		D3D11_TEXTURE2D_DESC desc;
+		ZeroMemory(&desc, sizeof(desc));
+		desc.Width = m_size.cx;
+		desc.Height = m_size.cy;
+		desc.MipLevels = 1;
+		desc.ArraySize = 1;
+		desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		desc.SampleDesc.Count = 1;
+		desc.SampleDesc.Quality = 0;
+		desc.Usage = D3D11_USAGE_STAGING;
+		desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+		desc.MiscFlags = 0;
+		desc.BindFlags = 0;
+		if (FAILED(m_d3d->CreateTexture2D(&desc, NULL, &m_renderTexture)))
+			return FALSE;
 		return TRUE;
 	}
 	BOOL DX11::ResizeView(INT cx, INT cy)
@@ -203,6 +219,23 @@ namespace DXFramework
 		D3DXMatrixPerspectiveFovLH(&m_projectionMatrix, fov, aspect, 1000.0F, 0.1F);
 		D3DXMatrixIdentity(&m_worldMatrix);
 		D3DXMatrixOrthoLH(&m_orthoMatrix, (FLOAT)m_size.cx, (FLOAT)m_size.cy, 1000.0F, 0.1F);
+
+		m_renderTexture.Release();
+		D3D11_TEXTURE2D_DESC desc;
+		ZeroMemory(&desc, sizeof(desc));
+		desc.Width = m_size.cx;
+		desc.Height = m_size.cy;
+		desc.MipLevels = 1;
+		desc.ArraySize = 1;
+		desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		desc.SampleDesc.Count = 1;
+		desc.SampleDesc.Quality = 0;
+		desc.Usage = D3D11_USAGE_STAGING;
+		desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+		desc.MiscFlags = 0;
+		desc.BindFlags = 0;
+		if (FAILED(m_d3d->CreateTexture2D(&desc, NULL, &m_renderTexture)))
+			return FALSE;
 		return TRUE;
 	}
 	void DX11::BeginScene()
@@ -236,6 +269,10 @@ namespace DXFramework
 	IDXGISwapChain*	DX11::GetSwap() const
 	{
 		return m_swap;
+	}
+	ID3D11Texture2D* DX11::GetTexture2D() const
+	{
+		return m_renderTexture;
 	}
 	HWND DX11::GetHWND() const
 	{

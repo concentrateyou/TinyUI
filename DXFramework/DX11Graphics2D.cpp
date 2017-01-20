@@ -21,25 +21,6 @@ namespace DXFramework
 			TEXT("D:\\Develop\\TinyUI\\DXFramework\\texture.ps")))
 			return FALSE;
 		m_camera.SetPosition(0.0F, 0.0F, -10.0F);
-		m_resource.Release();
-		D3D11_TEXTURE2D_DESC desc;
-		ZeroMemory(&desc, sizeof(desc));
-		desc.Width = size.cx;
-		desc.Height = size.cy;
-		desc.MipLevels = 1;
-		desc.ArraySize = 1;
-		desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-		desc.SampleDesc.Count = 1;
-		desc.SampleDesc.Quality = 0;
-		desc.Usage = D3D11_USAGE_STAGING;
-		desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-		desc.MiscFlags = 0;
-		desc.BindFlags = 0;
-		TinyComPtr<ID3D11Texture2D>	texture;
-		if (FAILED(m_dx11.GetD3D()->CreateTexture2D(&desc, NULL, &texture)))
-			return FALSE;
-		if (FAILED(texture->QueryInterface(__uuidof(ID3D11Resource), (void**)&m_resource)))
-			return FALSE;
 		return TRUE;
 	}
 
@@ -89,15 +70,16 @@ namespace DXFramework
 	{
 		m_dx11.Unlock();
 	}
-	BOOL DX11Graphics2D::GetPointer(BYTE* bits, DWORD& dwSize)
+	BYTE* DX11Graphics2D::GetPointer(DWORD& dwSize)
 	{
 		m_dx11.Lock();
 		TinyComPtr<ID3D11Resource> backBuffer;
 		if (SUCCEEDED(m_dx11.GetSwap()->GetBuffer(0, __uuidof(ID3D11Resource), (void**)&backBuffer)))
 		{
-			m_dx11.GetImmediateContext()->CopyResource(m_resource, backBuffer);
+			ID3D11Texture2D* texture2D = m_dx11.GetTexture2D();
+			m_dx11.GetImmediateContext()->CopyResource(texture2D, backBuffer);
 			D3D11_MAPPED_SUBRESOURCE ms = { 0 };
-			if (SUCCEEDED(m_dx11.GetImmediateContext()->Map(m_resource, 0, D3D11_MAP_READ, 0, &ms)))
+			if (SUCCEEDED(m_dx11.GetImmediateContext()->Map(texture2D, 0, D3D11_MAP_READ, 0, &ms)))
 			{
 				dwSize = ms.RowPitch * m_dx11.GetSize().cy;
 				if (m_dwSize != dwSize)
@@ -106,13 +88,13 @@ namespace DXFramework
 					m_bits.Reset(new BYTE[dwSize]);
 				}
 				memcpy(m_bits, static_cast<BYTE*>(ms.pData), dwSize);
-				m_dx11.GetImmediateContext()->Unmap(m_resource, 0);
+				m_dx11.GetImmediateContext()->Unmap(texture2D, 0);
 				m_dx11.Unlock();
-				return TRUE;
+				return m_bits;
 			}
 		}
 		m_dx11.Unlock();
-		return FALSE;
+		return NULL;
 	}
 	TinySize DX11Graphics2D::GetSize() const
 	{

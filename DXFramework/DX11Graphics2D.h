@@ -22,7 +22,7 @@ namespace DXFramework
 		BOOL	 DrawImage(DX11Image* pImage);
 		void	 Lock();
 		void	 Unlock();
-		BOOL	GetPointer(BYTE* bits, DWORD& dwSize);
+		BYTE*	 GetPointer(DWORD& dwSize);
 		TinySize GetSize() const;
 	private:
 		DWORD						m_dwSize;
@@ -34,7 +34,6 @@ namespace DXFramework
 		D3DXMATRIX					m_projectionMatrix;
 		D3DXMATRIX					m_orthoMatrix;
 		DX11TextureShader			m_textureShader;
-		TinyComPtr<ID3D11Resource>	m_resource;
 	};
 }
 

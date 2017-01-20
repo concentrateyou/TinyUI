@@ -140,12 +140,21 @@ namespace DXApp
 		m_lblMicrophone.SetText("麦克风:");
 		m_lblMicrophone.SetDefaultFont();
 
-		m_lbl.Create(m_hWND, 0, 0, 100, 25);
-		m_lbl.ModifyStyle(SS_BITMAP, SS_LEFT);
-		m_lbl.SetText("设置RTMP地址:");
-		m_lbl.SetDefaultFont();
+		m_lbl1.Create(m_hWND, 0, 0, 100, 25);
+		m_lbl1.ModifyStyle(SS_BITMAP, SS_LEFT);
+		m_lbl1.SetText("设置RTMP地址:");
+		m_lbl1.SetDefaultFont();
 		m_txtRtmpURL.Create(m_hWND, 0, 0, 300, 21);
-		m_txtRtmpURL.SetText("rtmp://......");
+		m_txtRtmpURL.SetText("rtmp://10.121.86.127/live/test");
+
+		m_lbl2.Create(m_hWND, 0, 0, 100, 25);
+		m_lbl2.ModifyStyle(SS_BITMAP, SS_LEFT);
+		m_lbl2.SetText("设置推流分辨率:");
+		m_lbl2.SetDefaultFont();
+		m_resolution.Create(m_hWND, 0, 0, 200, 21);
+		m_resolution.AddString("880*480");
+		m_resolution.AddString("1320*720");
+		m_resolution.AddString("1920*1080");
 
 		m_speaker.Create(m_hWND, 0, 0, 0, 0);
 		m_microphone.Create(m_hWND, 0, 0, 0, 0);
@@ -162,6 +171,10 @@ namespace DXApp
 	void MainUI::DestoryUI()
 	{
 		m_renderTask.Close();
+
+		m_videoEncode->Close();
+		m_audioEncode->Close();
+
 		m_broadcast.EVENT_CLICK -= m_onBroadcastClick;
 		m_record.EVENT_CLICK -= m_onRecordClick;
 		m_game.EVENT_CLICK -= m_onGameClick;
@@ -174,7 +187,46 @@ namespace DXApp
 	}
 	void MainUI::OnBroadcastClick(void*, INT)
 	{
+		INT index = m_resolution.GetCurSel();
+		TinySize scale;
+		switch (index)
+		{
+		case 0:
+			scale.SetSize(880, 480);
+			break;
+		case 1:
+			scale.SetSize(1320, 720);
+			break;
+		case 2:
+			scale.SetSize(1920, 1080);
+			break;
+		}
+		if (m_videoEncode)
+		{
+			m_videoEncode->Close();
+		}
+		m_videoEncode.Reset(new VideoEncode(&m_renderTask));
+		m_videoEncode->Initialize(scale, 30, 1000);
 
+		if (m_audioEncode)
+		{
+			m_audioEncode->Close();
+		}
+		m_audioEncode.Reset(new AudioEncode(m_audioName, m_audioParam));
+		m_audioEncode->Open(128);
+
+		if (m_publishTask)
+		{
+			m_publishTask->Close(INFINITE);
+		}
+		m_publishTask.Reset(new PublishTask(m_audioEncode, m_videoEncode));
+		TinyString rtmpURL;
+		rtmpURL.Resize(256);
+		m_txtRtmpURL.GetText(rtmpURL.STR(), 256);
+		m_publishTask->Connect(rtmpURL);
+		m_publishTask->Submit();
+		m_videoEncode->Submit();
+		m_audioEncode->Submit();
 	}
 	void MainUI::OnRecordClick(void*, INT)
 	{
@@ -226,7 +278,6 @@ namespace DXApp
 		m_snapshot.EVENT_SELECTED += m_onSelected;
 		m_snapshot.ShowWindow(SW_SHOWNORMAL);
 	}
-
 	void MainUI::OnWindowClick(void*, INT)
 	{
 		WindowDlg dlg;
@@ -249,16 +300,10 @@ namespace DXApp
 		MediaCaptureDlg dlg;
 		if (dlg.DoModal(m_hWND, IDD_DLG_MEDIACAPTURE) == IDOK)
 		{
-
 			if (dlg.GetAudioName() != NULL)
 			{
-				DShow::AudioCapture::Name name = *dlg.GetAudioName();
-				m_audioCapture.Uninitialize();
-				m_audioCapture.Initialize(name);
-				LONG volume = 0;
-				m_audioCapture.GetVolume(volume);
-				m_microphone.SetPos(volume);
-
+				m_audioName = *dlg.GetAudioName();
+				m_audioParam = *dlg.GetAudioParam();
 			}
 			if (dlg.GetVideoName() != NULL && dlg.GetVideoParam() != NULL)
 			{
@@ -334,7 +379,10 @@ namespace DXApp
 	}
 	void MainUI::OnMicrophoneVolumeChange(void*, INT pos)
 	{
-		m_audioCapture.SetVolume(pos);
+		if (m_audioEncode)
+		{
+			m_audioEncode->GetCapture().SetVolume(pos);
+		}
 	}
 	void MainUI::Resize(INT cx, INT cy)
 	{
@@ -377,7 +425,10 @@ namespace DXApp
 		m_microphone.SetSize(200, 30);
 		m_microphone.SetRange(0, 100);
 
-		m_lbl.SetPosition(offsetX + 100 * 0, offsetY + 103);
+		m_lbl1.SetPosition(offsetX + 100 * 0, offsetY + 103);
 		m_txtRtmpURL.SetPosition(offsetX + 100 * 1, offsetY + 100);
+
+		m_lbl2.SetPosition(offsetX + 100 * 4 + 20, offsetY + 103);
+		m_resolution.SetPosition(offsetX + 100 * 5 + 20, offsetY + 100);
 	}
 }

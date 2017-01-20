@@ -16,15 +16,14 @@ namespace DXApp
 	class AudioEncode
 	{
 	public:
-		AudioEncode();
+		AudioEncode(const AudioCapture::Name& name, const AudioCaptureParam& param);
 		virtual ~AudioEncode();
-		BOOL				Initialize(const AudioCapture::Name& name, const AudioCaptureParam& param);
 		BOOL				Open(DWORD dwAudioRate);
 		BOOL				Close();
-		BOOL				Encode();
-		FaacEncode*			GetEncode();
-		AudioCapture*		GetCapture();
-		AudioCaptureParam*	GetParam();
+		BOOL				Submit();
+		FaacEncode&			GetEncode();
+		AudioCapture&		GetCapture();
+		AudioCaptureParam&	GetParam();
 	private:
 		void				OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID ps);
 	private:

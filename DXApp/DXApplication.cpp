@@ -51,7 +51,7 @@ namespace DXApp
 		if (!TinyApplication::GetInstance()->AddMessageLoop(&m_msgLoop))
 			return FALSE;
 		m_frameUI.Reset(new DXFrameUI());
-		return m_frameUI->Create(NULL, 0, 0, 1024, 720);
+		return m_frameUI->Create(NULL, 0, 0, 1440, 810);
 	}
 	INT DXApplication::Run()
 	{

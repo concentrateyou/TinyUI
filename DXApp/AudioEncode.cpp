@@ -3,8 +3,10 @@
 
 namespace DXApp
 {
-	AudioEncode::AudioEncode()
-		:m_dwOffset(0)
+	AudioEncode::AudioEncode(const AudioCapture::Name& name, const AudioCaptureParam& param)
+		:m_dwOffset(0),
+		m_name(name),
+		m_audioParam(param)
 	{
 
 	}
@@ -13,45 +15,38 @@ namespace DXApp
 	{
 	}
 
-	FaacEncode*	AudioEncode::GetEncode()
+	FaacEncode&	AudioEncode::GetEncode()
 	{
-		return &m_aac;
+		return m_aac;
 	}
 
-	AudioCapture* AudioEncode::GetCapture()
+	AudioCapture& AudioEncode::GetCapture()
 	{
-		return &m_capture;
+		return m_capture;
 	}
 
-	AudioCaptureParam*	AudioEncode::GetParam()
+	AudioCaptureParam&	AudioEncode::GetParam()
 	{
-		return &m_audioParam;
-	}
-
-	BOOL AudioEncode::Initialize(const AudioCapture::Name& name, const AudioCaptureParam& param)
-	{
-		m_name = name;
-		m_audioParam = param;
-		BOOL bRes = m_capture.Initialize(m_name, BindCallback(&AudioEncode::OnAudio, this));
-		if (!bRes)
-			return FALSE;
-		bRes = m_capture.Allocate(param);
-		if (!bRes)
-			return FALSE;
-		return TRUE;
+		return m_audioParam;
 	}
 
 	BOOL AudioEncode::Open(DWORD dwAudioRate)
 	{
 		WAVEFORMATEX s = m_audioParam.GetFormat();
-		BOOL bRes = m_aac.Open(s, (DWORD)dwAudioRate);
+		BOOL bRes = m_capture.Initialize(m_name, BindCallback(&AudioEncode::OnAudio, this));
+		if (!bRes)
+			return FALSE;
+		bRes = m_aac.Open(s, (DWORD)dwAudioRate);
 		if (!bRes)
 			return FALSE;
 		return TRUE;
 	}
 
-	BOOL AudioEncode::Encode()
+	BOOL AudioEncode::Submit()
 	{
+		BOOL bRes = m_capture.Allocate(m_audioParam);
+		if (!bRes)
+			return FALSE;
 		return m_capture.Start();
 	}
 

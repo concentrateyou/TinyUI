@@ -12,18 +12,23 @@ namespace DXApp
 {
 	class RenderTask;
 
-	class VideoEncode
+	class VideoEncode : public TinyTaskBase
 	{
 	public:
 		VideoEncode(RenderTask* renderTask);
 		virtual ~VideoEncode();
-		BOOL				Open(const TinySize& scale, DWORD dwFPS, DWORD dwVideoRate);
-		BOOL				Encode();
-		BOOL				Close();
-		x264Encode*			GetEncode();
+		BOOL				Initialize(const TinySize& scale, DWORD dwFPS, DWORD dwVideoRate);
+		BOOL				Submit();
+		BOOL				Close(DWORD dwMS = INFINITE) OVERRIDE;
+		x264Encode&			GetEncode();
 		TinySize			GetSize() const;
 		DWORD				GetFPS() const;
 	private:
+		DWORD				Encode();
+		void				OnMessagePump();
+	private:
+		TinyPerformanceTimer			m_timer;
+		TinyEvent						m_close;
 		DWORD							m_dwFPS;
 		DWORD							m_dwVideoRate;
 		RenderTask*						m_renderTask;

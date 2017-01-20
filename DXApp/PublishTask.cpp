@@ -10,9 +10,9 @@ namespace DXApp
 	{
 		ASSERT(m_audioEncode || m_videoEncode);
 		m_videoDone.Reset(new Delegate<void(BYTE*, LONG, const MediaTag&)>(this, &PublishTask::OnVideoDone));
-		m_videoEncode->GetEncode()->EVENT_DONE += m_videoDone;
+		m_videoEncode->GetEncode().EVENT_DONE += m_videoDone;
 		m_audioDone.Reset(new Delegate<void(BYTE*, LONG, const MediaTag&)>(this, &PublishTask::OnAudioDone));
-		m_audioEncode->GetEncode()->EVENT_DONE += m_audioDone;
+		m_audioEncode->GetEncode().EVENT_DONE += m_audioDone;
 	}
 
 
@@ -32,6 +32,7 @@ namespace DXApp
 	BOOL PublishTask::Submit()
 	{
 		m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
+
 		return TinyTaskBase::Submit(BindCallback(&PublishTask::OnMessagePump, this));
 	}
 	BOOL PublishTask::Close(DWORD dwMS)
@@ -43,8 +44,8 @@ namespace DXApp
 	void PublishTask::OnClose()
 	{
 		ASSERT(m_audioEncode || m_videoEncode);
-		m_videoEncode->GetEncode()->EVENT_DONE -= m_videoDone;
-		m_audioEncode->GetEncode()->EVENT_DONE -= m_audioDone;
+		m_videoEncode->GetEncode().EVENT_DONE -= m_videoDone;
+		m_audioEncode->GetEncode().EVENT_DONE -= m_audioDone;
 	}
 
 	void PublishTask::OnVideoDone(BYTE* bits, LONG size, const MediaTag& tag)
@@ -77,7 +78,7 @@ namespace DXApp
 		{
 			if (sample.mediaTag.dwINC == 1)
 			{
-				WAVEFORMATEX wfx = m_audioEncode->GetParam()->GetFormat();
+				WAVEFORMATEX wfx = m_audioEncode->GetParam().GetFormat();
 				wfx.nSamplesPerSec = 48000;
 				wfx.nAvgBytesPerSec = wfx.nSamplesPerSec * wfx.nBlockAlign;
 				TinySize size = m_videoEncode->GetSize();
@@ -115,7 +116,7 @@ namespace DXApp
 			if (sample.mediaTag.dwINC == 1)
 			{
 				vector<BYTE> info;
-				m_audioEncode->GetEncode()->GetSpecificInfo(info);
+				m_audioEncode->GetEncode().GetSpecificInfo(info);
 				m_client.SendAAC(&info[0], info.size());
 			}
 			m_client.SendAudio(sample.bits, sample.size, sample.mediaTag.dwTime);
