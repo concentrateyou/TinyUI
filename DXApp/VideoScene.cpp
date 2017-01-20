@@ -25,12 +25,12 @@ namespace DXApp
 		return DX11Image::Create(dx11, param.GetSize(), NULL);
 	}
 
-	BOOL VideoScene::Allocate(DX11& dx11)
+	BOOL VideoScene::Process(DX11& dx11)
 	{
 		return m_video.Start();
 	}
 
-	void VideoScene::Deallocate(DX11& dx11)
+	void VideoScene::Clear(DX11& dx11)
 	{
 		m_video.Uninitialize();
 	}

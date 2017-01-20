@@ -210,12 +210,12 @@ namespace DXFramework
 		return TRUE;
 	}
 
-	BOOL DX11Image::Allocate(DX11& dx11)
+	BOOL DX11Image::Process(DX11& dx11)
 	{
 		return TRUE;
 	}
 
-	void DX11Image::Deallocate(DX11& dx11)
+	void DX11Image::Clear(DX11& dx11)
 	{
 
 	}

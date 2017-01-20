@@ -3,9 +3,7 @@
 
 namespace TinyUI
 {
-	TinyRuntimeClass* TinyRuntimeClass::pFirstClass = NULL;
-	TinyRuntimeClass TinyObject::classTinyObject = { "TinyObject", sizeof(TinyObject),NULL, NULL };
-	static CLASSINIT _init_TinyObject(RUNTIME_CLASS(TinyObject));
+	const TinyRuntimeClass TinyObject::classTinyObject = { "TinyObject", sizeof(TinyObject), NULL, NULL };
 
 	TinyObject::TinyObject()
 	{

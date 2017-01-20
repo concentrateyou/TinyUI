@@ -24,12 +24,12 @@ namespace DXApp
 		m_captureTask->SetConfig(className, exeName, dllName);
 	}
 
-	BOOL GameScene::Allocate(DX11& dx11)
+	BOOL GameScene::Process(DX11& dx11)
 	{
 		return m_captureTask->Submit();
 	}
 
-	void GameScene::Deallocate(DX11& dx11)
+	void GameScene::Clear(DX11& dx11)
 	{
 		m_captureTask->Close();
 		m_captureTask.Reset(NULL);

@@ -25,11 +25,11 @@ namespace DXApp
 		return FALSE;
 	}
 
-	BOOL ScreenScene::Allocate(DX11& dx11)
+	BOOL ScreenScene::Process(DX11& dx11)
 	{
 		return TRUE;
 	}
-	void ScreenScene::Deallocate(DX11& dx11)
+	void ScreenScene::Clear(DX11& dx11)
 	{
 
 	}

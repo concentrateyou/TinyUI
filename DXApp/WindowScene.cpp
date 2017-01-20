@@ -27,12 +27,12 @@ namespace DXApp
 		return FALSE;
 	}
 
-	BOOL WindowScene::Allocate(DX11& dx11)
+	BOOL WindowScene::Process(DX11& dx11)
 	{
 		return TRUE;
 	}
 
-	void WindowScene::Deallocate(DX11& dx11)
+	void WindowScene::Clear(DX11& dx11)
 	{
 
 	}

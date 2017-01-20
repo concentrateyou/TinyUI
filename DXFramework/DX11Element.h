@@ -37,9 +37,9 @@ namespace DXFramework
 		void SetScale(const TinySize& size);
 		void SetSize(const TinySize& size);
 	public:
-		virtual BOOL Allocate(DX11& dx11) = 0;
+		virtual BOOL Process(DX11& dx11) = 0;
 		virtual BOOL Render(DX11& dx11) = 0;
-		virtual void Deallocate(DX11& dx11) = 0;
+		virtual void Clear(DX11& dx11) = 0;
 	public:
 		TinySize m_size;//原始大小
 	};

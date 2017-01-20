@@ -46,12 +46,12 @@ namespace DXApp
 		}
 	}
 
-	BOOL TextScene::Allocate(DX11& dx11)
+	BOOL TextScene::Process(DX11& dx11)
 	{
 		return TRUE;
 	}
 
-	void TextScene::Deallocate(DX11& dx11)
+	void TextScene::Clear(DX11& dx11)
 	{
 		KillTimer(NULL, m_timerID);
 		m_displaySize = m_maxSize;

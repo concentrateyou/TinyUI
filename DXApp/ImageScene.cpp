@@ -19,12 +19,12 @@ namespace DXApp
 		return Load(dx11, imageFile.STR());
 	}
 
-	BOOL ImageScene::Allocate(DX11& dx11)
+	BOOL ImageScene::Process(DX11& dx11)
 	{
 		return TRUE;
 	}
 
-	void ImageScene::Deallocate(DX11& dx11)
+	void ImageScene::Clear(DX11& dx11)
 	{
 
 	}
