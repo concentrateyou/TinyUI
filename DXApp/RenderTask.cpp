@@ -27,6 +27,12 @@ namespace DXApp
 		ASSERT(pWindow);
 		if (!m_graphics.Initialize(pWindow->Handle(), TinySize(cx, cy)))
 			return FALSE;
+
+		for (INT i = 0;i < 8;i++)
+		{
+			m_handles[i].Create(m_graphics.GetDX11());
+		}
+
 		m_pWindow = pWindow;
 		m_dwFPS = dwFPS;
 		m_onSize.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &RenderTask::OnSize));
@@ -79,7 +85,21 @@ namespace DXApp
 			DX11Element* ps = m_scenes[i];
 			if (ps->IsKindof(RUNTIME_CLASS(DX11Image)))
 			{
-				m_graphics.DrawImage(static_cast<DX11Image*>(ps));
+				DX11Image* pImage = static_cast<DX11Image*>(ps);
+				if (ps == m_lastElement)
+				{
+					UINT mask = pImage->GetHandleMask();
+					for (INT i = 0; i < 8; ++i)
+					{
+						if (mask & (1 << i))
+						{
+							TinyRectangle rectangle;
+							pImage->GetHandleRect((TrackerHit)i, &rectangle);
+							m_graphics.DrawRectangle(&m_handles[i], rectangle);
+						}
+					}
+				}
+				m_graphics.DrawImage(pImage);
 			}
 		}
 		m_graphics.EndScene();
@@ -113,7 +133,7 @@ namespace DXApp
 		{
 			if (m_lastElement->HitTest(point) >= 0)
 			{
-				m_lastElement->Track(m_pWindow->Handle(), point, TRUE);
+				m_lastElement->Track(m_pWindow->Handle(), point, FALSE);
 			}
 		}
 	}
@@ -278,6 +298,10 @@ namespace DXApp
 			s = dwTime > s ? 0 : s - dwTime;
 			if (m_close.Lock(s))
 			{
+				for (INT i = 0; i < 8; ++i)
+				{
+					m_handles[i].Destory();
+				}
 				for (INT i = 0;i < m_scenes.GetSize();i++)
 				{
 					m_scenes[i]->Clear(m_graphics.GetDX11());

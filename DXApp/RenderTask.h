@@ -52,6 +52,8 @@ namespace DXApp
 		TinyPerformanceTimer		m_timer;
 		TinyArray<DX11Element*>		m_scenes;
 		DX11Element*				m_lastElement;
+
+		DX11Rectangle				m_handles[8];
 	private:
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onSize;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonDown;

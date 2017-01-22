@@ -23,6 +23,7 @@ namespace TinyUI
 		BOOL Track(HWND hWND, const TinyPoint& point, BOOL bAllowInvert);
 		virtual INT GetHandleSize() const;
 		virtual void OnChangedRect(const TinyRectangle& rectOld);
+		UINT GetHandleMask() const;
 		void GetHandleRect(INT nHandle, TinyRectangle* pHandleRect) const;
 	protected:
 		void Construct();
@@ -30,7 +31,6 @@ namespace TinyUI
 		INT HitTestHandles(const TinyPoint& point) const;
 		void AdjustRect(INT nHandle, LPRECT);
 		void GetModifyPointers(INT nHandle, INT**ppx, INT**ppy, INT* px, INT*py);
-		UINT GetHandleMask() const;
 		BOOL TrackHandle(INT nHandle, HWND hWND, const TinyPoint& point);
 	public:
 		INT				m_handleSize;
