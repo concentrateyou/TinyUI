@@ -15,12 +15,14 @@ namespace DXFramework
 	public:
 		DX11Rectangle();
 		virtual ~DX11Rectangle();
-		BOOL Create(DX11& dx11, const TinySize& size);
-		BOOL SetPosition(DX11& dx11, const TinyPoint& pos);
-		virtual INT	GetIndexCount() const;
+		BOOL Create(DX11& dx11);
+		BOOL SetRectangle(DX11& dx11, const TinyRectangle& rectangle);
 		BOOL Render(DX11& dx11);
+	public:
+		virtual INT	GetIndexCount() const;
+		virtual void Destory();
 	private:
-		BOOL DX11Rectangle::Initialize(DX11& dx11);
+		BOOL Initialize(DX11& dx11);
 	protected:
 		TinyRectangle				m_rectangle;
 		TinyComPtr<ID3D11Buffer>	m_vertexBuffer;

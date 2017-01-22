@@ -15,11 +15,10 @@ namespace DXFramework
 	{
 		return 6;
 	}
-	BOOL DX11Rectangle::Create(DX11& dx11, const TinySize& size)
+	BOOL DX11Rectangle::Create(DX11& dx11)
 	{
 		if (!Initialize(dx11))
 			return FALSE;
-		m_rectangle.SetSize(size);
 		return TRUE;
 	}
 	BOOL DX11Rectangle::Initialize(DX11& dx11)
@@ -72,10 +71,11 @@ namespace DXFramework
 		dx11.GetImmediateContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		return TRUE;
 	}
-	BOOL DX11Rectangle::SetPosition(DX11& dx11, const TinyPoint& pos)
+	BOOL DX11Rectangle::SetRectangle(DX11& dx11, const TinyRectangle& rectangle)
 	{
-		m_rectangle.SetPosition(pos);
+		m_rectangle = rectangle;
 		TinySize scale = m_rectangle.Size();
+		TinyPoint pos = m_rectangle.Position();
 		FLOAT left = 0.0F;
 		FLOAT right = 0.0F;
 		FLOAT top = 0.0F;
@@ -105,5 +105,10 @@ namespace DXFramework
 		memcpy(mappedResource.pData, (void*)m_vertices.Ptr(), sizeof(VERTEXTYPE) * vertexCount);
 		dx11.GetImmediateContext()->Unmap(m_vertexBuffer, 0);
 		return TRUE;
+	}
+	void DX11Rectangle::Destory()
+	{
+		m_vertexBuffer.Release();
+		m_indexBuffer.Release();
 	}
 }

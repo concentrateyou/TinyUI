@@ -66,10 +66,10 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
-	BOOL DX11Graphics2D::DrawRectangle(DX11Rectangle* ps,const TinyPoint& pos)
+	BOOL DX11Graphics2D::DrawRectangle(DX11Rectangle* ps,const TinyRectangle& rectangle)
 	{
 		ASSERT(ps);
-		if (!ps->SetPosition(m_dx11, pos))
+		if (!ps->SetRectangle(m_dx11, rectangle))
 			return FALSE;
 		if (ps->Render(m_dx11))
 		{
