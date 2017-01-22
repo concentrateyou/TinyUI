@@ -7,7 +7,7 @@ namespace TinyUI
 {
 	IMPLEMENT_DYNAMIC(TinyControl, TinyWindow)
 
-	TinyControl::TinyControl()
+		TinyControl::TinyControl()
 		:m_pMenu(NULL)
 	{
 
@@ -216,6 +216,7 @@ namespace TinyUI
 	LRESULT TinyControl::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		EVENT_MOUSELEAVE(uMsg, wParam, lParam, bHandled);
 		return FALSE;
 	}
 	LRESULT TinyControl::OnMouseWheel(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

@@ -5,7 +5,8 @@
 namespace DXApp
 {
 	RenderTask::RenderTask()
-		:m_lastElement(NULL)
+		:m_lastElement(NULL),
+		m_bMouseTracking(NULL)
 	{
 
 	}
@@ -19,6 +20,7 @@ namespace DXApp
 		m_pWindow->EVENT_LBUTTONUP -= m_onLButtonUp;
 		m_pWindow->EVENT_RBUTTONDOWN -= m_onRButtonDown;
 		m_pWindow->EVENT_MOUSEMOVE -= m_onMouseMove;
+		m_pWindow->EVENT_MOUSELEAVE -= m_onMouseLeave;
 		m_pWindow->EVENT_SETCURSOR -= m_onSetCursor;
 	}
 
@@ -40,12 +42,14 @@ namespace DXApp
 		m_onLButtonUp.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &RenderTask::OnLButtonUp));
 		m_onRButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &RenderTask::OnRButtonDown));
 		m_onMouseMove.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &RenderTask::OnMouseMove));
+		m_onMouseLeave.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &RenderTask::OnMouseLeave));
 		m_onSetCursor.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &RenderTask::OnSetCursor));
 		m_pWindow->EVENT_SIZE += m_onSize;
 		m_pWindow->EVENT_LBUTTONDOWN += m_onLButtonDown;
 		m_pWindow->EVENT_LBUTTONUP += m_onLButtonUp;
 		m_pWindow->EVENT_RBUTTONDOWN += m_onRButtonDown;
 		m_pWindow->EVENT_MOUSEMOVE += m_onMouseMove;
+		m_pWindow->EVENT_MOUSELEAVE += m_onMouseLeave;
 		m_pWindow->EVENT_SETCURSOR += m_onSetCursor;
 
 		m_menu.CreatePopupMenu();
@@ -163,6 +167,23 @@ namespace DXApp
 	void RenderTask::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		if (!m_bMouseTracking)
+		{
+			TRACKMOUSEEVENT tme;
+			tme.cbSize = sizeof(tme);
+			tme.hwndTrack = m_pWindow->Handle();
+			tme.dwFlags = TME_LEAVE;
+			tme.dwHoverTime = 10;
+			m_bMouseTracking = _TrackMouseEvent(&tme);
+		}
+	}
+
+	void RenderTask::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		if (m_bMouseTracking)
+			m_bMouseTracking = FALSE;
+		m_lastElement = NULL;
 	}
 
 	void RenderTask::OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
