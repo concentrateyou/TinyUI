@@ -400,6 +400,7 @@ namespace TinyUI
 			return m_si.iPage;
 		}
 		//////////////////////////////////////////////////////////////////////////
+		IMPLEMENT_DYNAMIC(TinyVisualVScrollBar, TinyVisual);
 		TinyVisualVScrollBar::TinyVisualVScrollBar(TinyVisual* spvisParent, TinyVisualDocument* vtree)
 			:TinyVisual(spvisParent, vtree)
 		{

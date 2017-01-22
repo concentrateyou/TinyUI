@@ -969,6 +969,18 @@ private:\
 		HRESULT CoCreateInstance(REFCLSID rclsid, LPUNKNOWN pUnkOuter = NULL, DWORD dwClsContext = CLSCTX_ALL);
 		HRESULT CoCreateInstance(LPCOLESTR szProgID, LPUNKNOWN pUnkOuter = NULL, DWORD dwClsContext = CLSCTX_ALL);
 		HRESULT QueryInterface(T** myPP) const throw();
+		template<class U>
+		HRESULT QueryInterface(U** myPP) const throw()
+		{
+			ASSERT(m_myP != NULL);
+			return m_myP->QueryInterface(__uuidof(U), (void**)myPP);
+		}
+		template<class U>
+		HRESULT QueryInterface(TinyComPtr<U>& myPP) const throw()
+		{
+			ASSERT(m_myP != NULL);
+			return m_myP->QueryInterface(__uuidof(U), (void**)&myPP);
+		}
 	private:
 		static IUnknown* ComPtrAssign(IUnknown** pp, IUnknown* lp);
 	};

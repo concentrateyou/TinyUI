@@ -190,7 +190,7 @@ namespace DXApp
 		INT index = m_resolution.GetCurSel();
 		TinySize scale;
 		switch (index)
-		{
+		{ 
 		case 0:
 			scale.SetSize(880, 480);
 			break;

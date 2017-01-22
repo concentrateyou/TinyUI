@@ -2,14 +2,13 @@
 #include "DXFramework.h"
 #include "DX11.h"
 #include "DX11Texture.h"
-#include "DX11Shader.h"
 
 namespace DXFramework
 {
 	/// <summary>
 	/// ÎÆÀí×ÅÉ«Æ÷
 	/// </summary>
-	class DX11TextureShader : public DX11Shader
+	class DX11TextureShader
 	{
 		struct MATRIXBUFFER
 		{

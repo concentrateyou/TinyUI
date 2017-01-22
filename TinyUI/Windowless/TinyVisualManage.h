@@ -14,9 +14,8 @@ namespace TinyUI
 		/// <summary>
 		/// 可视化元素管理
 		/// </summary>
-		class TinyVisualBuilder : public TinyObject
+		class TinyVisualBuilder 
 		{
-			DECLARE_DYNAMIC(TinyVisualBuilder)
 		public:
 			TinyVisualBuilder();
 			~TinyVisualBuilder();

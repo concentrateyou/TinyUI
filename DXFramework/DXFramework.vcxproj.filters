@@ -54,10 +54,10 @@
     <ClInclude Include="DX11Graphics2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DX11Shader.h">
+    <ClInclude Include="DXInput.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DXInput.h">
+    <ClInclude Include="WICTextureLoader.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -98,10 +98,10 @@
     <ClCompile Include="DX11Graphics2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DX11Shader.cpp">
+    <ClCompile Include="DXInput.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DXInput.cpp">
+    <ClCompile Include="WICTextureLoader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
