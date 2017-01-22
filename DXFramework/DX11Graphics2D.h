@@ -2,7 +2,8 @@
 #include "DXFramework.h"
 #include "DX11Image.h"
 #include "DXCamera.h"
-#include "DX11TextureShader.h"
+#include "DX11ColorShader.h"
+#include "DX11Rectangle.h"
 
 namespace DXFramework
 {
@@ -19,21 +20,23 @@ namespace DXFramework
 		BOOL	 EndScene();
 		BOOL     Resize(const TinySize& size);
 		DX11&	 GetDX11();
-		BOOL	 DrawImage(DX11Image* pImage);
+		BOOL	 DrawImage(DX11Image* ps);
+		BOOL	 DrawRectangle(DX11Rectangle* ps, const TinyPoint& pos);
 		void	 Lock();
 		void	 Unlock();
 		BYTE*	 GetPointer(DWORD& dwSize);
 		TinySize GetSize() const;
 	private:
-		DWORD						m_dwSize;
-		TinyScopedPtr<BYTE>			m_bits;
-		DX11						m_dx11;
-		DXCamera					m_camera;
-		D3DXMATRIX					m_viewMatrix;
-		D3DXMATRIX					m_worldMatrix;
-		D3DXMATRIX					m_projectionMatrix;
-		D3DXMATRIX					m_orthoMatrix;
-		DX11TextureShader			m_textureShader;
+		DWORD					m_dwSize;
+		TinyScopedPtr<BYTE>		m_bits;
+		DX11					m_dx11;
+		DXCamera				m_camera;
+		D3DXMATRIX				m_viewMatrix;
+		D3DXMATRIX				m_worldMatrix;
+		D3DXMATRIX				m_projectionMatrix;
+		D3DXMATRIX				m_orthoMatrix;
+		DX11TextureShader		m_textureShader;
+		DX11ColorShader			m_colorShader;
 	};
 }
 

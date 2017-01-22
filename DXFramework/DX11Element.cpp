@@ -36,4 +36,12 @@ namespace DXFramework
 	{
 		return m_size;
 	}
+	void DX11Element::SetName(const TinyString& name)
+	{
+		m_name = std::move(name);
+	}
+	TinyString DX11Element::GetName() const
+	{
+		return m_name;
+	}
 }

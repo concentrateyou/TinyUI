@@ -1,6 +1,6 @@
 #pragma once
 #include "DXFramework.h"
-#include "DX11Texture.h"
+#include "DX11Texture2D.h"
 #include "DX11Image.h"
 using namespace TinyUI::IO;
 

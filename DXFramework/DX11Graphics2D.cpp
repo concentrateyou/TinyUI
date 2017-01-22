@@ -20,6 +20,10 @@ namespace DXFramework
 			TEXT("D:\\Develop\\TinyUI\\DXFramework\\texture.vs"),
 			TEXT("D:\\Develop\\TinyUI\\DXFramework\\texture.ps")))
 			return FALSE;
+		if (!m_colorShader.Initialize(m_dx11,
+			TEXT("D:\\Develop\\TinyUI\\DXFramework\\color.vs"),
+			TEXT("D:\\Develop\\TinyUI\\DXFramework\\color.ps")))
+			return FALSE;
 		m_camera.SetPosition(0.0F, 0.0F, -10.0F);
 		return TRUE;
 	}
@@ -48,16 +52,28 @@ namespace DXFramework
 	{
 		return m_dx11;
 	}
-	BOOL DX11Graphics2D::DrawImage(DX11Image* pImage)
+	BOOL DX11Graphics2D::DrawImage(DX11Image* ps)
 	{
-		ASSERT(pImage);
-		if (!pImage->IsEmpty())
+		ASSERT(ps);
+		if (!ps->IsEmpty())
 			return FALSE;
-		if (!pImage->Update(m_dx11))
+		if (!ps->Update(m_dx11))
 			return FALSE;
-		if (pImage->Render(m_dx11))
+		if (ps->Render(m_dx11))
 		{
-			m_textureShader.Render(m_dx11, pImage->GetIndexCount(), m_worldMatrix, m_viewMatrix, m_orthoMatrix, pImage->GetTexture());
+			m_textureShader.Render(m_dx11, ps->GetIndexCount(), m_worldMatrix, m_viewMatrix, m_orthoMatrix, ps->GetTexture());
+			return TRUE;
+		}
+		return FALSE;
+	}
+	BOOL DX11Graphics2D::DrawRectangle(DX11Rectangle* ps,const TinyPoint& pos)
+	{
+		ASSERT(ps);
+		if (!ps->SetPosition(m_dx11, pos))
+			return FALSE;
+		if (ps->Render(m_dx11))
+		{
+			m_colorShader.Render(m_dx11, ps->GetIndexCount(), m_worldMatrix, m_viewMatrix, m_orthoMatrix);
 			return TRUE;
 		}
 		return FALSE;

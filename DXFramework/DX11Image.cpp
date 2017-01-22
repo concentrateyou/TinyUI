@@ -220,7 +220,7 @@ namespace DXFramework
 
 	}
 
-	DX11Texture* DX11Image::GetTexture()
+	DX11Texture2D* DX11Image::GetTexture()
 	{
 		return &m_texture;
 	}

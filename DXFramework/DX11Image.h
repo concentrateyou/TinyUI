@@ -1,6 +1,6 @@
 #pragma once
 #include "DX11Element.h"
-#include "DX11Texture.h"
+#include "DX11Texture2D.h"
 #include "DX11TextureShader.h"
 #include "Render/TinyGDI.h"
 using namespace TinyUI;
@@ -28,7 +28,7 @@ namespace DXFramework
 		BOOL Load(DX11& dx11, const BYTE* bits, DWORD dwSize);
 		BOOL IsEmpty() const;
 		BOOL Update(DX11& dx11);
-		DX11Texture* GetTexture();
+		DX11Texture2D* GetTexture();
 	public:
 		virtual INT	GetIndexCount() const;
 		virtual void Destory();
@@ -41,7 +41,7 @@ namespace DXFramework
 	protected:
 		TinyPoint					m_lastPos;
 		TinySize					m_lastScale;
-		DX11Texture					m_texture;
+		DX11Texture2D				m_texture;
 		TinyComPtr<ID3D11Buffer>	m_vertexBuffer;
 		TinyComPtr<ID3D11Buffer>	m_indexBuffer;
 		TinyScopedArray<VERTEXTYPE> m_vertices;

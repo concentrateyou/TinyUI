@@ -75,10 +75,9 @@ namespace DXFramework
 		hRes = dx11.GetD3D()->CreateBuffer(&matrixBufferDesc, NULL, &m_matrixBuffer);
 		if (FAILED(hRes))
 			return FALSE;
-
 		return TRUE;
 	}
-	void DX11TextureShader::Render(DX11& dx11, INT indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, DX11Texture* texture)
+	void DX11TextureShader::Render(DX11& dx11, INT indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, DX11Texture2D* texture)
 	{
 		D3DXMatrixTranspose(&worldMatrix, &worldMatrix);
 		D3DXMatrixTranspose(&viewMatrix, &viewMatrix);

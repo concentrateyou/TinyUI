@@ -96,11 +96,13 @@
   <ItemGroup>
     <ClInclude Include="DX11.h" />
     <ClInclude Include="DX11CaptureTask.h" />
+    <ClInclude Include="DX11ColorShader.h" />
     <ClInclude Include="DX11Font.h" />
     <ClInclude Include="DX11Graphics2D.h" />
     <ClInclude Include="DX11Image.h" />
     <ClInclude Include="DX11Element.h" />
-    <ClInclude Include="DX11Texture.h" />
+    <ClInclude Include="DX11Rectangle.h" />
+    <ClInclude Include="DX11Texture2D.h" />
     <ClInclude Include="DX11TextureShader.h" />
     <ClInclude Include="DXCamera.h" />
     <ClInclude Include="DXFramework.h" />
@@ -111,12 +113,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX11.cpp" />
+    <ClCompile Include="DX11ColorShader.cpp" />
     <ClCompile Include="DX11Font.cpp" />
     <ClCompile Include="DX11Graphics2D.cpp" />
     <ClCompile Include="DX11Image.cpp" />
     <ClCompile Include="DX11CaptureTask.cpp" />
     <ClCompile Include="DX11Element.cpp" />
-    <ClCompile Include="DX11Texture.cpp" />
+    <ClCompile Include="DX11Rectangle.cpp" />
+    <ClCompile Include="DX11Texture2D.cpp" />
     <ClCompile Include="DX11TextureShader.cpp" />
     <ClCompile Include="DXCamera.cpp" />
     <ClCompile Include="DXFramework.cpp" />
@@ -136,6 +140,8 @@
     <ClCompile Include="WICTextureLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="color.ps" />
+    <None Include="color.vs" />
     <None Include="texture.ps" />
     <None Include="texture.vs" />
   </ItemGroup>
