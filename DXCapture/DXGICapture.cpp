@@ -5,6 +5,7 @@ namespace DXCapture
 {
 	HRESULT STDMETHODCALLTYPE DX_DXGISwapPresent(IDXGISwapChain *pThis, UINT syncInterval, UINT flags)
 	{
+		g_dxgi.m_dxPresent.EndDetour();
 		TinyComPtr<IUnknown> unknow;
 		if (SUCCEEDED(pThis->GetDevice(__uuidof(IUnknown), (void**)&unknow)))
 		{
@@ -52,13 +53,13 @@ namespace DXCapture
 				}
 			} while (0);
 		}
-		g_dxgi.m_dxPresent.EndDetour();
 		HRESULT hRes = pThis->Present(syncInterval, flags);
 		g_dxgi.m_dxPresent.BeginDetour();
 		return hRes;
 	}
 	HRESULT STDMETHODCALLTYPE DX_DXGISwapResizeBuffers(IDXGISwapChain *pThis, UINT bufferCount, UINT width, UINT height, DXGI_FORMAT giFormat, UINT flags)
 	{
+		g_dxgi.m_dxResizeBuffers.EndDetour();
 		TinyComPtr<IUnknown> unknow;
 		if (SUCCEEDED(pThis->GetDevice(__uuidof(IUnknown), (void**)&unknow)))
 		{
@@ -86,7 +87,6 @@ namespace DXCapture
 			} while (0);
 		}
 		g_dxgi.m_currentSwap = NULL;
-		g_dxgi.m_dxResizeBuffers.EndDetour();
 		HRESULT hRes = pThis->ResizeBuffers(bufferCount, width, height, giFormat, flags);
 		g_dxgi.m_dxResizeBuffers.BeginDetour();
 		return hRes;

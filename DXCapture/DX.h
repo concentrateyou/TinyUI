@@ -18,7 +18,6 @@ namespace DXCapture
 		void Uninitialize();
 		BOOL SetWindowsHook();
 		void UnhookWindowsHook();
-		void Reset();
 		SharedCaptureDATA* GetSharedCaptureDATA();
 		SharedTextureDATA* GetSharedTextureDATA();
 	private:
