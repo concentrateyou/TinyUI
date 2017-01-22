@@ -118,39 +118,40 @@ namespace DXCapture
 	//////////////////////////////////////////////////////////////////////////
 	HRESULT STDMETHODCALLTYPE DX9EndScene(IDirect3DDevice9 *pThis)
 	{
+		g_dx9.m_dX9EndScene.EndDetour();
 		if (g_dx9.m_pThis == NULL)
 		{
 			g_dx9.m_pThis = g_dx9.Setup(pThis) ? pThis : NULL;
 		}
-		g_dx9.m_dX9EndScene.EndDetour();
 		HRESULT hRes = pThis->EndScene();
 		g_dx9.m_dX9EndScene.BeginDetour();
 		return hRes;
 	}
 	HRESULT STDMETHODCALLTYPE DX9Present(IDirect3DDevice9 *pThis, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion)
 	{
+		g_dx9.m_dX9Present.EndDetour();
 		if (g_dx9.m_pThis == pThis)
 		{
 			g_dx9.Render(pThis);
 		}
-		g_dx9.m_dX9Present.EndDetour();
 		HRESULT hRes = pThis->Present(pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion);
 		g_dx9.m_dX9Present.BeginDetour();
 		return hRes;
 	}
 	HRESULT STDMETHODCALLTYPE DX9PresentEx(IDirect3DDevice9Ex *pThis, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion, DWORD dwFlags)
 	{
+		g_dx9.m_dX9PresentEx.EndDetour();
 		if (g_dx9.m_pThis == pThis)
 		{
 			g_dx9.Render(pThis);
 		}
-		g_dx9.m_dX9PresentEx.EndDetour();
 		HRESULT hRes = pThis->PresentEx(pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion, dwFlags);
 		g_dx9.m_dX9PresentEx.BeginDetour();
 		return hRes;
 	}
 	HRESULT STDMETHODCALLTYPE DX9SwapPresent(IDirect3DSwapChain9 *pThis, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion, DWORD dwFlags)
 	{
+		g_dx9.m_dX9SwapPresent.EndDetour();
 		TinyComPtr<IDirect3DDevice9> device = NULL;
 		if (SUCCEEDED(pThis->GetDevice(&device)))
 		{
@@ -163,42 +164,39 @@ namespace DXCapture
 				g_dx9.Render(device);
 			}
 		}
-		g_dx9.m_dX9SwapPresent.EndDetour();
 		HRESULT hRes = pThis->Present(pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion, dwFlags);
 		g_dx9.m_dX9SwapPresent.BeginDetour();
 		return hRes;
 	}
 	HRESULT STDMETHODCALLTYPE DX9Reset(IDirect3DDevice9 *pThis, D3DPRESENT_PARAMETERS *params)
 	{
+		g_dx9.m_dX9Reset.EndDetour();
 		g_dx9.Reset();
+		HRESULT hRes = pThis->Reset(params);
 		if (g_dx9.m_pThis == NULL)
 		{
 			g_dx9.m_pThis = pThis;
 		}
 		if (g_dx9.m_pThis == pThis)
 		{
-			g_dx9.Setup(pThis);
+			BOOL bRes = g_dx9.Setup(pThis);
 		}
-		g_dx9.m_dX9Reset.EndDetour();
-		HRESULT hRes = pThis->Reset(params);
 		g_dx9.m_dX9Reset.BeginDetour();
 		return hRes;
 	}
 	HRESULT STDMETHODCALLTYPE DX9ResetEx(IDirect3DDevice9Ex *pThis, D3DPRESENT_PARAMETERS *params, D3DDISPLAYMODEEX *fullscreenData)
 	{
+		g_dx9.m_dX9ResetEx.EndDetour();
 		g_dx9.Reset();
+		HRESULT hRes = pThis->ResetEx(params, fullscreenData);
 		if (g_dx9.m_pThis == NULL)
 		{
 			g_dx9.m_pThis = pThis;
 		}
 		if (g_dx9.m_pThis == pThis)
 		{
-			g_dx9.Setup(pThis);
+			BOOL bRes = g_dx9.Setup(pThis);
 		}
-		g_dx9.m_dX9ResetEx.EndDetour();
-		g_dx9.m_dX9Reset.EndDetour();
-		HRESULT hRes = pThis->ResetEx(params, fullscreenData);
-		g_dx9.m_dX9Reset.BeginDetour();
 		g_dx9.m_dX9ResetEx.BeginDetour();
 		return hRes;
 	}
@@ -343,10 +341,10 @@ namespace DXCapture
 	}
 	void DX9Capture::Reset()
 	{
+		LOG(INFO) << "Reset\n";
 		m_bTextures = FALSE;
 		m_hTextureHandle = NULL;
 		m_dX9TextureSurface.Release();
-		m_resource.Release();
 		m_d3d10.Release();
 		m_dx.m_textureMemery.Unmap();
 		m_dx.m_textureMemery.Close();
