@@ -345,6 +345,7 @@ namespace DXCapture
 		m_bTextures = FALSE;
 		m_hTextureHandle = NULL;
 		m_dX9TextureSurface.Release();
+		m_resource.Release();
 		m_d3d10.Release();
 		m_dx.m_textureMemery.Unmap();
 		m_dx.m_textureMemery.Close();
