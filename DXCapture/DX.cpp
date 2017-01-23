@@ -43,6 +43,14 @@ namespace DXCapture
 	{
 		if (!BuildEvents())
 			return FALSE;
+		if (!m_mute1.Open(MUTEX_ALL_ACCESS, FALSE, TEXTURE_MUTEX1)
+			&& !m_mute1.Create(FALSE, TEXTURE_MUTEX1, NULL))
+			return FALSE;
+		LOG(INFO) << "TEXTURE_MUTEX1 Open OK\n";
+		if (!m_mute2.Open(MUTEX_ALL_ACCESS, FALSE, TEXTURE_MUTEX2)
+			&& !m_mute2.Create(FALSE, TEXTURE_MUTEX2, NULL))
+			return FALSE;
+		LOG(INFO) << "TEXTURE_MUTEX2 Open OK\n";
 		if (!m_captureMemery.Open(SHAREDCAPTURE_MEMORY) &&
 			!m_captureMemery.Create(SHAREDCAPTURE_MEMORY, sizeof(SharedCaptureDATA)))
 			return FALSE;
@@ -53,11 +61,14 @@ namespace DXCapture
 			return FALSE;
 		if (!m_textureMemery.Map(0, 0))
 			return FALSE;
+
 		return TRUE;
 	}
 	void DX::Uninitialize()
 	{
 		LOG(INFO) << "DX::Uninitialize\n";
+		m_mute1.Close();
+		m_mute2.Close();
 		m_start.Close();
 		m_stop.Close();
 		m_ready.Close();
@@ -79,12 +90,12 @@ namespace DXCapture
 		}
 		return reinterpret_cast<SharedCaptureDATA*>(m_captureMemery.Address());
 	}
-	SharedTextureDATA* DX::GetSharedTextureDATA()
+	SharedTextureDATA* DX::GetSharedTextureDATA(DWORD dwSize)
 	{
 		if (!m_textureMemery.Address())
 		{
 			if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE) &&
-				!m_textureMemery.Create(TEXTURE_MEMORY, sizeof(SharedTextureDATA)))
+				!m_textureMemery.Create(TEXTURE_MEMORY, dwSize))
 				return NULL;
 			if (!m_textureMemery.Map(0, 0))
 				return NULL;

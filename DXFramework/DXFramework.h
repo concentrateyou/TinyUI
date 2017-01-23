@@ -45,6 +45,8 @@ namespace DXFramework
 #define CAPTURE_EXIT_EVENT      TEXT("CaptureExit")
 #define SHAREDCAPTURE_MEMORY	TEXT("Local\\SharedCaptureMemory")
 #define TEXTURE_MEMORY          TEXT("Local\\TextureMemory")
+#define TEXTURE_MUTEX1          TEXT("TextureMutex1")
+#define TEXTURE_MUTEX2          TEXT("TextureMutex2")
 
 	BOOL WINAPI InjectLibrary(HANDLE hProcess, const CHAR *pszDLL);
 	BOOL WINAPI UninjectLibrary(HANDLE hProcess, const CHAR *pszDLL);

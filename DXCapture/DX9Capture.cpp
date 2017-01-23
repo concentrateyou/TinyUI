@@ -119,9 +119,9 @@ namespace DXCapture
 	HRESULT STDMETHODCALLTYPE DX9EndScene(IDirect3DDevice9 *device)
 	{
 		g_dx9.m_dX9EndScene.EndDetour();
-		if (g_dx9.m_currentDevice == NULL)
+		if (g_dx9.m_currentPointer == NULL)
 		{
-			g_dx9.m_currentDevice = g_dx9.Setup(device) ? device : NULL;
+			g_dx9.m_currentPointer = g_dx9.Setup(device) ? device : NULL;
 		}
 		HRESULT hRes = device->EndScene();
 		g_dx9.m_dX9EndScene.BeginDetour();
@@ -130,7 +130,7 @@ namespace DXCapture
 	HRESULT STDMETHODCALLTYPE DX9Present(IDirect3DDevice9 *device, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion)
 	{
 		g_dx9.m_dX9Present.EndDetour();
-		if (g_dx9.m_currentDevice == device)
+		if (g_dx9.m_currentPointer == device)
 		{
 			g_dx9.Render(device);
 		}
@@ -141,7 +141,7 @@ namespace DXCapture
 	HRESULT STDMETHODCALLTYPE DX9PresentEx(IDirect3DDevice9Ex *device, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion, DWORD dwFlags)
 	{
 		g_dx9.m_dX9PresentEx.EndDetour();
-		if (g_dx9.m_currentDevice == device)
+		if (g_dx9.m_currentPointer == device)
 		{
 			g_dx9.Render(device);
 		}
@@ -155,7 +155,7 @@ namespace DXCapture
 		TinyComPtr<IDirect3DDevice9> device = NULL;
 		if (SUCCEEDED(swap->GetDevice(&device)))
 		{
-			if (g_dx9.m_currentDevice == device)
+			if (g_dx9.m_currentPointer == device)
 			{
 				g_dx9.Render(device);
 			}
@@ -167,7 +167,7 @@ namespace DXCapture
 	HRESULT STDMETHODCALLTYPE DX9Reset(IDirect3DDevice9 *device, D3DPRESENT_PARAMETERS *params)
 	{
 		g_dx9.m_dX9Reset.EndDetour();
-		if (g_dx9.m_currentDevice == device)
+		if (g_dx9.m_currentPointer == device)
 		{
 			g_dx9.Reset();
 		}
@@ -179,7 +179,7 @@ namespace DXCapture
 	HRESULT STDMETHODCALLTYPE DX9ResetEx(IDirect3DDevice9Ex *device, D3DPRESENT_PARAMETERS *params, D3DDISPLAYMODEEX *fullscreenData)
 	{
 		g_dx9.m_dX9ResetEx.EndDetour();
-		if (g_dx9.m_currentDevice == device)
+		if (g_dx9.m_currentPointer == device)
 		{
 			g_dx9.Reset();
 		}
@@ -192,7 +192,7 @@ namespace DXCapture
 		:m_d3dFormat(D3DFMT_UNKNOWN),
 		m_dxgiFormat(DXGI_FORMAT_UNKNOWN),
 		m_hTextureHandle(NULL),
-		m_currentDevice(NULL),
+		m_currentPointer(NULL),
 		m_bCapturing(FALSE),
 		m_bTextures(FALSE),
 		m_patchType(0),
@@ -318,7 +318,7 @@ namespace DXCapture
 						return FALSE;
 					}
 				}
-				if (!backBuffer || FAILED(d3d->StretchRect(backBuffer, NULL, m_dX9TextureSurface, NULL, D3DTEXF_NONE)))
+				if (!backBuffer || FAILED(d3d->StretchRect(backBuffer, NULL, m_surface, NULL, D3DTEXF_NONE)))
 				{
 					return FALSE;
 				}
@@ -331,7 +331,7 @@ namespace DXCapture
 		LOG(INFO) << "Reset\n";
 		m_bTextures = FALSE;
 		m_hTextureHandle = NULL;
-		m_dX9TextureSurface.Release();
+		m_surface.Release();
 		m_resource.Release();
 		m_d3d10.Release();
 		m_dx.m_textureMemery.Unmap();
@@ -455,7 +455,7 @@ namespace DXCapture
 			memcpy(patchAddress, patchData.Ptr(), patchSize);
 			VirtualProtect(patchAddress, patchSize, dwOldProtect, &dwOldProtect);
 		}
-		hRes = d3d9Texture->GetSurfaceLevel(0, &m_dX9TextureSurface);
+		hRes = d3d9Texture->GetSurfaceLevel(0, &m_surface);
 		if (FAILED(hRes))
 			return FALSE;
 		m_captureDATA.CaptureType = CAPTURETYPE_SHAREDTEX;

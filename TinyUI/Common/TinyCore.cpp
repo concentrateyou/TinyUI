@@ -106,7 +106,7 @@ namespace TinyUI
 	}
 	TinyMutex::~TinyMutex()
 	{
-
+		Close();
 	}
 	BOOL TinyMutex::Create(BOOL bInitiallyOwn, LPCTSTR lpszName, LPSECURITY_ATTRIBUTES lpsaAttribute)
 	{
@@ -139,6 +139,14 @@ namespace TinyUI
 	{
 		ASSERT(m_hMutex != NULL);
 		return ::ReleaseMutex(m_hMutex);
+	}
+	void TinyMutex::Close()
+	{
+		if (m_hMutex != NULL)
+		{
+			CloseHandle(m_hMutex);
+			m_hMutex = NULL;
+		}
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinyLock::TinyLock()

@@ -4,8 +4,8 @@
 #include "stdafx.h"
 #include "GameDetour.h"
 #include "DXGICapture.h"
-#include "DX9Capture.h"
-//#include "DX8Capture.h"
+//#include "DX9Capture.h"
+#include "DX8Capture.h"
 #include "OpenGLCapture.h"
 using namespace DXCapture;
 
@@ -64,11 +64,16 @@ namespace GameDetour
 		if (g_dx.Initialize())
 		{
 			LOG(INFO) << "g_dx.Initialize() OK\n";
-			if (!m_bDX9Detour)
+			/*if (!m_bDX8Detour)
+			{
+				LOG(INFO) << "Begin g_dx8.Initialize\n";
+				m_bDX8Detour = g_dx8.Initialize(m_hWNDD3D);
+			}*/
+			/*if (!m_bDX9Detour)
 			{
 				LOG(INFO) << "Begin g_dx9.Initialize\n";
 				m_bDX9Detour = g_dx9.Initialize(m_hWNDD3D);
-			}
+			}*/
 			if (!m_bDXGIDetour)
 			{
 				LOG(INFO) << "Begin g_dxgi.Initialize\n";

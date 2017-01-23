@@ -61,6 +61,7 @@ namespace TinyUI
 		HANDLE Handle() const;
 		BOOL Lock(DWORD dwTimeout = INFINITE);
 		BOOL Unlock();
+		void Close();
 	private:
 		HANDLE  m_hMutex;
 	};

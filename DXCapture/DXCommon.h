@@ -9,6 +9,7 @@
 #include "Common/TinyHook.h"
 #include "Common/TinyTime.h"
 #include "Common/TinyString.h"
+#include "IO/TinyTaskBase.h"
 #include "IO/TinySharedMemory.h"
 #include "Common/TinyLogging.h"
 using namespace TinyUI;
@@ -24,6 +25,8 @@ namespace DXCapture
 #define END_CAPTURE_EVENT       TEXT("EndCapture")
 #define CAPTURE_READY_EVENT     TEXT("CaptureReady")
 #define CAPTURE_EXIT_EVENT		TEXT("CaptureExit")
+#define TEXTURE_MUTEX1          TEXT("TextureMutex1")
+#define TEXTURE_MUTEX2          TEXT("TextureMutex2")
 #define CAPTURETYPE_MEMORY      1
 #define CAPTURETYPE_SHAREDTEX   2
 
@@ -31,6 +34,8 @@ namespace DXCapture
 	typedef HRESULT(WINAPI *D3D101CREATEPROC)(IDXGIAdapter*, D3D10_DRIVER_TYPE, HMODULE, UINT, D3D10_FEATURE_LEVEL1, UINT, DXGI_SWAP_CHAIN_DESC*, IDXGISwapChain**, ID3D10Device1**);
 	typedef HRESULT(WINAPI*D3D11CREATEPROC)(IDXGIAdapter*, D3D_DRIVER_TYPE, HMODULE, UINT, D3D_FEATURE_LEVEL*, UINT, UINT, DXGI_SWAP_CHAIN_DESC*, IDXGISwapChain**, ID3D11Device**, D3D_FEATURE_LEVEL*, ID3D11DeviceContext**);
 
+
+#pragma pack(push, 8)
 	typedef struct tagSharedCaptureDATA
 	{
 		UINT		CaptureType;
@@ -42,11 +47,14 @@ namespace DXCapture
 		DWORD		MapSize;
 		HWND		HwndCapture;
 	}SharedCaptureDATA;
-#pragma pack(push, 8)
+
 	typedef struct tagSharedTextureDATA
 	{
 		LONGLONG    FrameTime;
 		HANDLE      TextureHandle;
+		DWORD       Texture1Offset;
+		DWORD		Texture2Offset;
+		DWORD		CurrentIndex;
 	}SharedTextureDATA;
 #pragma pack(pop)
 }

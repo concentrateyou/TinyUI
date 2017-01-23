@@ -19,11 +19,13 @@ namespace DXCapture
 		BOOL SetWindowsHook();
 		void UnhookWindowsHook();
 		SharedCaptureDATA* GetSharedCaptureDATA();
-		SharedTextureDATA* GetSharedTextureDATA();
+		SharedTextureDATA* GetSharedTextureDATA(DWORD dwSize = sizeof(SharedTextureDATA));
 	private:
 		BOOL BuildEvents();
 	public:
 		HHOOK					m_hhk;
+		TinyMutex				m_mute1;
+		TinyMutex				m_mute2;
 		TinyEvent				m_start;
 		TinyEvent				m_stop;
 		TinyEvent				m_ready;

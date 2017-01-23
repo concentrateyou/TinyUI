@@ -32,7 +32,7 @@ namespace DXCapture
 		BOOL SaveAs(D3DX10_IMAGE_FILE_FORMAT s, LPCSTR pzFile);
 	public:
 		SharedCaptureDATA				m_captureDATA;
-		LPVOID							m_currentDevice;
+		LPVOID							m_currentPointer;
 		D3DFORMAT						m_d3dFormat;
 		DXGI_FORMAT						m_dxgiFormat;
 		INT								m_patchType;
@@ -42,7 +42,7 @@ namespace DXCapture
 		HMODULE							m_hD3D9;
 		TinyComPtr<ID3D10Device1>		m_d3d10;
 		TinyComPtr<ID3D10Resource>		m_resource;
-		TinyComPtr<IDirect3DSurface9>	m_dX9TextureSurface;
+		TinyComPtr<IDirect3DSurface9>	m_surface;
 		TinyDetour						m_dX9Release;
 		TinyDetour						m_dX9EndScene;
 		TinyDetour						m_dX9Reset;
