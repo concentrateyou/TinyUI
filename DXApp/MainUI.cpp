@@ -171,9 +171,10 @@ namespace DXApp
 	void MainUI::DestoryUI()
 	{
 		m_renderTask.Close();
-
-		m_videoEncode->Close();
-		m_audioEncode->Close();
+		if (m_videoEncode)
+			m_videoEncode->Close();
+		if (m_audioEncode)
+			m_audioEncode->Close();
 
 		m_broadcast.EVENT_CLICK -= m_onBroadcastClick;
 		m_record.EVENT_CLICK -= m_onRecordClick;
@@ -190,7 +191,7 @@ namespace DXApp
 		INT index = m_resolution.GetCurSel();
 		TinySize scale;
 		switch (index)
-		{ 
+		{
 		case 0:
 			scale.SetSize(880, 480);
 			break;

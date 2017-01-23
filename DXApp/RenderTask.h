@@ -41,9 +41,11 @@ namespace DXApp
 		void			OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void			OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void			OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		void			OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void			OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void			OnMenuClick(void*, INT wID);
 	private:
+		BOOL						m_bMouseTracking;
 		TinyMenu					m_menu;
 		DXWindow*					m_pWindow;
 		DWORD						m_dwFPS;
@@ -52,7 +54,6 @@ namespace DXApp
 		TinyPerformanceTimer		m_timer;
 		TinyArray<DX11Element*>		m_scenes;
 		DX11Element*				m_lastElement;
-
 		DX11Rectangle				m_handles[8];
 	private:
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onSize;
@@ -60,6 +61,7 @@ namespace DXApp
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonUp;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onRButtonDown;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onMouseMove;
+		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onMouseLeave;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onSetCursor;
 		TinyScopedPtr<Delegate<void(void*, INT)>>				   m_onMenuClick;
 	};

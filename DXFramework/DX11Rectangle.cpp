@@ -87,17 +87,17 @@ namespace DXFramework
 		bottom = top - (FLOAT)scale.cy;
 		INT vertexCount = GetIndexCount();
 		m_vertices[0].position = D3DXVECTOR3(left, top, 0.0F);
-		m_vertices[0].color = D3DXVECTOR4(1.0f, 0.0f, 0.0f, 1.0f);
+		m_vertices[0].color =  D3DXVECTOR4(1.0f, 0.415f, 0.0f, 1.0f);
 		m_vertices[1].position = D3DXVECTOR3(right, bottom, 0.0F);
-		m_vertices[1].color = D3DXVECTOR4(1.0f, 0.0f, 0.0f, 1.0f);
+		m_vertices[1].color = D3DXVECTOR4(1.0f, 0.415f, 0.0f, 1.0f);
 		m_vertices[2].position = D3DXVECTOR3(left, bottom, 0.0F);
-		m_vertices[2].color = D3DXVECTOR4(1.0f, 0.0f, 0.0f, 1.0f);
+		m_vertices[2].color = D3DXVECTOR4(1.0f, 0.415f, 0.0f, 1.0f);
 		m_vertices[3].position = D3DXVECTOR3(left, top, 0.0F);
-		m_vertices[3].color = D3DXVECTOR4(1.0f, 0.0f, 0.0f, 1.0f);
+		m_vertices[3].color = D3DXVECTOR4(1.0f, 0.415f, 0.0f, 1.0f);
 		m_vertices[4].position = D3DXVECTOR3(right, top, 0.0F);
-		m_vertices[4].color = D3DXVECTOR4(1.0f, 0.0f, 0.0f, 1.0f);
+		m_vertices[4].color = D3DXVECTOR4(1.0f, 0.415f, 0.0f, 1.0f);
 		m_vertices[5].position = D3DXVECTOR3(right, bottom, 0.0F);
-		m_vertices[5].color = D3DXVECTOR4(1.0f, 0.0f, 0.0f, 1.0f);
+		m_vertices[5].color = D3DXVECTOR4(1.0f, 0.415f, 0.0f, 1.0f);
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
 		HRESULT hRes = dx11.GetImmediateContext()->Map(m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		if (FAILED(hRes))
