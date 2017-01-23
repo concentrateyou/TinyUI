@@ -1,5 +1,6 @@
 #include "../stdafx.h"
 #include "TinyCore.h"
+#include "TinyLogging.h"
 
 namespace TinyUI
 {
@@ -47,6 +48,7 @@ namespace TinyUI
 	BOOL TinyEvent::CreateEvent(BOOL bInitiallyOwn, BOOL bManualReset, LPCTSTR lpszNAme, LPSECURITY_ATTRIBUTES lpsaAttribute)
 	{
 		m_hEvent = ::CreateEvent(lpsaAttribute, bManualReset, bInitiallyOwn, lpszNAme);
+		//LOG(INFO) << "TinyEvent-CreateEvent:" << m_hEvent << "\n";
 		return m_hEvent == NULL ? FALSE : TRUE;
 	}
 	BOOL TinyEvent::CreateEventEx(LPSECURITY_ATTRIBUTES lpEventAttributes, LPCTSTR lpName, DWORD  dwFlags, DWORD  dwDesiredAccess)
@@ -77,6 +79,7 @@ namespace TinyUI
 	BOOL TinyEvent::Lock(DWORD dwTimeout)
 	{
 		ASSERT(m_hEvent != NULL);
+		//LOG(INFO) << "TinyEvent-Lock:" << m_hEvent << "\n";
 		DWORD dwRet = ::WaitForSingleObject(m_hEvent, dwTimeout);
 		if (dwRet == WAIT_OBJECT_0 || dwRet == WAIT_ABANDONED)
 			return TRUE;

@@ -32,7 +32,7 @@ namespace DXCapture
 		BOOL SaveAs(D3DX10_IMAGE_FILE_FORMAT s, LPCSTR pzFile);
 	public:
 		SharedCaptureDATA				m_captureDATA;
-		LPVOID							m_pThis;
+		LPVOID							m_currentDevice;
 		D3DFORMAT						m_d3dFormat;
 		DXGI_FORMAT						m_dxgiFormat;
 		INT								m_patchType;
