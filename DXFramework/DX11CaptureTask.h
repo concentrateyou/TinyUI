@@ -14,11 +14,11 @@ namespace DXFramework
 		void					SetConfig(const TinyString& className, const TinyString& exeName, const TinyString& dllName);
 		BOOL					Submit();
 		BOOL					Close(DWORD dwMS = INFINITE) OVERRIDE;
+		SharedCaptureDATA*		GetSharedCaptureDATA();
+		SharedTextureDATA*		GetSharedTextureDATA(DWORD dwSize);
 	private:
 		void					OnMessagePump();
 		WNDINFO					GetWNDINFO();
-		SharedCaptureDATA*		GetSharedCaptureDATA();
-		SharedTextureDATA*		GetSharedTextureDATA(DWORD dwSize);
 		void					Tick();
 		BOOL					BeginCapture();
 		BOOL					EndCapture();
@@ -30,10 +30,10 @@ namespace DXFramework
 		TinySize				m_size;
 		BOOL					m_bCapturing;
 		DX11*					m_pDX11;
-		TinyEvent				m_captureStart;
-		TinyEvent				m_captureStop;
-		TinyEvent				m_captureReady;
-		TinyEvent				m_captureExit;
+		TinyEvent				m_start;
+		TinyEvent				m_stop;
+		TinyEvent				m_ready;
+		TinyEvent				m_exit;
 		TinyEvent				m_close;
 		WNDINFO					m_targetWND;
 		TinyString				m_className;

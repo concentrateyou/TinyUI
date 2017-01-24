@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "DX11Image.h"
+#include <algorithm>
+#include <limits>
 #pragma comment(lib,"gdiplus.lib")
 
 namespace DXFramework
@@ -14,7 +16,19 @@ namespace DXFramework
 	{
 
 	}
-	BOOL DX11Image::Create(DX11& dx11, const TinySize& size, BYTE* bits)
+	BOOL DX11Image::Create(DX11& dx11, const TinySize& size, BYTE* bits, BOOL bReadonly)
+	{
+		if (!Initialize(dx11))
+			return FALSE;
+		if (m_texture.Create(dx11, size.cx, size.cy, bits, bReadonly))
+		{
+			SetSize(m_texture.GetSize());
+			SetScale(m_size);
+			return TRUE;
+		}
+		return FALSE;
+	}
+	BOOL DX11Image::CreateCompatible(DX11& dx11, const TinySize& size, BYTE* bits)
 	{
 		if (!Initialize(dx11))
 			return FALSE;
@@ -85,7 +99,47 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
-
+	BOOL DX11Image::Copy(DX11& dx11, const BYTE* bits, UINT pitch)
+	{
+		if (!m_texture.IsEmpty())
+			return FALSE;
+		BYTE* lpData = NULL;
+		UINT iPitch = 0;
+		if (m_texture.Map(dx11, lpData, iPitch))
+		{
+			if (iPitch == pitch)
+			{
+				memcpy(lpData, bits, pitch * m_size.cy);
+			}
+			else
+			{
+				UINT bestPitch = std::min<UINT>(pitch, iPitch);
+				for (UINT y = 0; y < m_size.cy; y++)
+				{
+					LPBYTE src = ((LPBYTE)bits) + (pitch*y);
+					LPBYTE dst = ((LPBYTE)lpData) + (iPitch*y);
+					memcpy(dst, src, bestPitch);
+				}
+			}
+			m_texture.Unmap(dx11);
+			return FALSE;
+		}
+		return FALSE;
+	}
+	BOOL DX11Image::Copy(DX11& dx11, const BYTE* bits, LONG size)
+	{
+		if (!m_texture.IsEmpty())
+			return FALSE;
+		BYTE* lpData = NULL;
+		UINT pitch = 0;
+		if (m_texture.Map(dx11, lpData, pitch))
+		{
+			memcpy(lpData, bits, size);
+			m_texture.Unmap(dx11);
+			return FALSE;
+		}
+		return FALSE;
+	}
 	BOOL DX11Image::Load(DX11& dx11, HANDLE hResource)
 	{
 		if (!hResource)

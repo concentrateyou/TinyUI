@@ -329,7 +329,7 @@ namespace DXCapture
 				case D3DFMT_X1R5G5B5:
 				case D3DFMT_R3G3B2:
 				{
-					m_captureDATA.CaptureType = CAPTURETYPE_MEMORY;
+					m_captureDATA.CaptureType = CAPTURETYPE_MEMORYTEXTURE;
 					m_captureDATA.Format = desc.Format;
 					m_captureDATA.Size.cx = desc.Width;
 					m_captureDATA.Size.cy = desc.Height;
@@ -356,7 +356,7 @@ namespace DXCapture
 	}
 	BOOL DX8Capture::DX8CPUHook(IDirect3DDevice8 *device)
 	{
-		m_captureDATA.CaptureType = CAPTURETYPE_MEMORY;
+		m_captureDATA.CaptureType = CAPTURETYPE_MEMORYTEXTURE;
 		m_captureDATA.bFlip = FALSE;
 		SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();
 		memcpy(sharedCapture, &m_captureDATA, sizeof(m_captureDATA));

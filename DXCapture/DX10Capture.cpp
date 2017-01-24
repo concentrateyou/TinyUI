@@ -139,7 +139,7 @@ namespace DXCapture
 			return FALSE;
 		if (FAILED(hRes = resource->GetSharedHandle(&m_hTextureHandle)))
 			return FALSE;
-		m_captureDATA.CaptureType = CAPTURETYPE_SHAREDTEX;
+		m_captureDATA.CaptureType = CAPTURETYPE_SHAREDTEXTURE;
 		m_captureDATA.bFlip = FALSE;
 		m_captureDATA.MapSize = sizeof(SharedTextureDATA);
 		SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();

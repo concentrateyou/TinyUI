@@ -80,7 +80,23 @@ namespace DXFramework
 		m_surface.Release();
 		return TRUE;
 	}
-	BOOL DX11Texture2D::Create(DX11& dx11, INT cx, INT cy, const BYTE* bits)
+	BOOL DX11Texture2D::Map(DX11& dx11, BYTE *&lpData, UINT &pitch)
+	{
+		HRESULT hRes = S_OK;
+		D3D11_MAPPED_SUBRESOURCE ms = { 0 };
+		if (SUCCEEDED(dx11.GetImmediateContext()->Map(m_texture2D, 0, D3D11_MAP_READ, 0, &ms)))
+		{
+			lpData = (BYTE*)ms.pData;
+			pitch = ms.RowPitch;
+			return TRUE;
+		}
+		return FALSE;
+	}
+	void DX11Texture2D::Unmap(DX11& dx11)
+	{
+		dx11.GetImmediateContext()->Unmap(m_texture2D, 0);
+	}
+	BOOL DX11Texture2D::Create(DX11& dx11, INT cx, INT cy, const BYTE* bits, BOOL bReadoly)
 	{
 		m_texture2D.Release();
 		m_resourceView.Release();
@@ -95,7 +111,8 @@ namespace DXFramework
 		textureDesc.SampleDesc.Quality = 0;
 		textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 		textureDesc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
-		textureDesc.Usage = D3D11_USAGE_DEFAULT;
+		textureDesc.CPUAccessFlags = bReadoly ? 0 : D3D11_CPU_ACCESS_WRITE;
+		textureDesc.Usage = bReadoly ? D3D11_USAGE_DEFAULT : D3D11_USAGE_DYNAMIC;
 		D3D11_SUBRESOURCE_DATA dsd;
 		D3D11_SUBRESOURCE_DATA *lpSRD = NULL;
 		if (bits)

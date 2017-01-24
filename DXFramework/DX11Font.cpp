@@ -82,7 +82,7 @@ namespace DXFramework
 	DX11Font::~DX11Font()
 	{
 	}
-	BOOL DX11Font::Create(DX11& dx11, const wstring& str, const CHARFORMAT& cf, const COLORREF& bkColor)
+	BOOL DX11Font::CreateCompatible(DX11& dx11, const wstring& str, const CHARFORMAT& cf, const COLORREF& bkColor)
 	{
 		if (str.empty())
 			return FALSE;
@@ -108,7 +108,7 @@ namespace DXFramework
 			{
 				sizeF.Height = s.Height();
 			}
-			return DX11Image::Create(dx11, TinySize((INT)sizeF.Width, (INT)sizeF.Height), NULL);
+			return DX11Image::CreateCompatible(dx11, TinySize((INT)sizeF.Width, (INT)sizeF.Height), NULL);
 		}
 		return FALSE;
 	}

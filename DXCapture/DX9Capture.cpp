@@ -345,7 +345,7 @@ namespace DXCapture
 			D3DPRESENT_PARAMETERS pp;
 			if (SUCCEEDED(swapChain->GetPresentParameters(&pp)))
 			{
-				m_captureDATA.CaptureType = CAPTURETYPE_SHAREDTEX;
+				m_captureDATA.CaptureType = CAPTURETYPE_SHAREDTEXTURE;
 				m_captureDATA.Format = pp.BackBufferFormat;
 				m_captureDATA.Size.cx = pp.BackBufferWidth;
 				m_captureDATA.Size.cy = pp.BackBufferHeight;
@@ -458,7 +458,7 @@ namespace DXCapture
 		hRes = d3d9Texture->GetSurfaceLevel(0, &m_surface);
 		if (FAILED(hRes))
 			return FALSE;
-		m_captureDATA.CaptureType = CAPTURETYPE_SHAREDTEX;
+		m_captureDATA.CaptureType = CAPTURETYPE_SHAREDTEXTURE;
 		m_captureDATA.bFlip = FALSE;
 		m_captureDATA.MapSize = sizeof(SharedTextureDATA);
 		SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();

@@ -46,11 +46,9 @@ namespace DXCapture
 		if (!m_mute1.Open(MUTEX_ALL_ACCESS, FALSE, TEXTURE_MUTEX1)
 			&& !m_mute1.Create(FALSE, TEXTURE_MUTEX1, NULL))
 			return FALSE;
-		LOG(INFO) << "TEXTURE_MUTEX1 Open OK\n";
 		if (!m_mute2.Open(MUTEX_ALL_ACCESS, FALSE, TEXTURE_MUTEX2)
 			&& !m_mute2.Create(FALSE, TEXTURE_MUTEX2, NULL))
 			return FALSE;
-		LOG(INFO) << "TEXTURE_MUTEX2 Open OK\n";
 		if (!m_captureMemery.Open(SHAREDCAPTURE_MEMORY) &&
 			!m_captureMemery.Create(SHAREDCAPTURE_MEMORY, sizeof(SharedCaptureDATA)))
 			return FALSE;

@@ -22,6 +22,9 @@ namespace DXApp
 		void Clear(DX11& dx11) OVERRIDE;
 	private:
 		TinyScopedPtr<DX11CaptureTask>	m_captureTask;
+		TinyMutex						m_mute1;
+		TinyMutex						m_mute2;
+		BYTE*							m_textures[2];
 	};
 
 }
