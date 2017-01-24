@@ -130,9 +130,8 @@ namespace DXCapture
 	}
 	//////////////////////////////////////////////////////////////////////////
 	DX8Surface::DX8Surface()
-		:m_locked(FALSE)
 	{
-		ZeroMemory(&m_lockRect, sizeof(m_lockRect));
+		ZeroMemory(&m_lockedRect, sizeof(m_lockedRect));
 	}
 	DX8Surface::~DX8Surface()
 	{
@@ -147,31 +146,34 @@ namespace DXCapture
 	{
 		m_surface.Release();
 	}
-	BOOL DX8Surface::Lock()
+	BOOL DX8Surface::LockRect()
 	{
-		if (SUCCEEDED(m_surface->LockRect(&m_lockRect, NULL, D3DLOCK_READONLY)))
+		if (SUCCEEDED(m_surface->LockRect(&m_lockedRect, NULL, D3DLOCK_READONLY)))
 		{
-			m_locked = TRUE;
 			return TRUE;
 		}
 		return FALSE;
 	}
-	BOOL DX8Surface::Unlock()
+	BOOL DX8Surface::UnlockRect()
 	{
 		if (SUCCEEDED(m_surface->UnlockRect()))
 		{
-			m_locked = FALSE;
+			ZeroMemory(&m_lockedRect, sizeof(m_lockedRect));
 			return TRUE;
 		}
 		return FALSE;
 	}
 	BYTE* DX8Surface::GetPointer()
 	{
-		return reinterpret_cast<BYTE*>(m_lockRect.pBits);
+		return reinterpret_cast<BYTE*>(m_lockedRect.pBits);
 	}
-	BOOL DX8Surface::IsLocked()
+	INT DX8Surface::GetPitch()
 	{
-		return m_locked;
+		return m_lockedRect.Pitch;
+	}
+	TinyLock& DX8Surface::GetLock()
+	{
+		return m_lock;
 	}
 	DX8Surface::operator IDirect3DSurface8*() const
 	{
@@ -181,7 +183,8 @@ namespace DXCapture
 	DX8Capture::DX8Capture(DX& dx)
 		:m_dx(dx),
 		m_currentPointer(NULL),
-		m_dwCurrent(-1)
+		m_dwCurrent(-1),
+		m_dwCapture(0)
 	{
 		m_textures[0] = m_textures[1] = NULL;
 	}
@@ -273,15 +276,23 @@ namespace DXCapture
 					return FALSE;
 				for (INT i = 0; i < NUMBER_OF_BUFFER; i++)
 				{
-					if (!m_surfaces[i].IsLocked())
+					if (!m_surfaces[i].GetPointer() == NULL)
 					{
 						if (FAILED(d3d->CopyRects(backBuffer, NULL, 0, m_surfaces[i], NULL)))
 							return FALSE;
-						if (!m_surfaces[i].Lock())
+						if (!m_surfaces[i].LockRect())
 							return FALSE;
+						m_dwCurrent = i;
 						m_copy.SetEvent();
 					}
 				}
+				DWORD dwCapture = (m_dwCapture == NUMBER_OF_BUFFER - 1) ? 0 : (m_dwCapture + 1);
+				if (m_surfaces[dwCapture].GetPointer() != NULL)
+				{
+					TinyAutoLock lock(m_surfaces[dwCapture].GetLock());
+					m_surfaces[dwCapture].UnlockRect();
+				}
+				m_dwCapture = dwCapture;
 			}
 		}
 		return TRUE;
@@ -392,7 +403,25 @@ namespace DXCapture
 			}
 			if (m_copy.Lock(INFINITE))
 			{
-
+				DWORD dwCurrent = m_dwCurrent;
+				if (dwCurrent < NUMBER_OF_BUFFER && m_surfaces[dwCurrent].GetPointer() != NULL)
+				{
+					TinyAutoLock lock(m_surfaces[dwCurrent].GetLock());
+					if (m_dx.m_mute1.Lock(0))
+					{
+						ConvertPixelFormat(m_surfaces[dwCurrent].GetPointer(), m_surfaces[dwCurrent].GetPitch(), (D3DFORMAT)m_captureDATA.Format, m_captureDATA.Size.cx, m_captureDATA.Size.cy, m_textures[0]);
+						m_dx.m_mute1.Unlock();
+						SharedTextureDATA* sharedTexture = m_dx.GetSharedTextureDATA(m_captureDATA.MapSize);
+						sharedTexture->CurrentIndex = 0;
+					}
+					if (m_dx.m_mute2.Lock(0))
+					{
+						ConvertPixelFormat(m_surfaces[dwCurrent].GetPointer(), m_surfaces[dwCurrent].GetPitch(), (D3DFORMAT)m_captureDATA.Format, m_captureDATA.Size.cx, m_captureDATA.Size.cy, m_textures[1]);
+						m_dx.m_mute2.Unlock();
+						SharedTextureDATA* sharedTexture = m_dx.GetSharedTextureDATA(m_captureDATA.MapSize);
+						sharedTexture->CurrentIndex = 1;
+					}
+				}
 			}
 		}
 

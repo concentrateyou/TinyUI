@@ -8,7 +8,7 @@ namespace DXCapture
 	HRESULT STDMETHODCALLTYPE DX8EndScene(IDirect3DDevice8 *device);
 	HRESULT STDMETHODCALLTYPE DX8Present(IDirect3DDevice8* device, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion);
 	HRESULT STDMETHODCALLTYPE DX8Reset(IDirect3DDevice8* device, D3DPRESENT_PARAMETERS* pPresentationParameters);
-	BOOL ConvertPixelFormat(LPBYTE in, DWORD inPitch, D3DFORMAT inFormat, DWORD outWidth, DWORD outHeight, LPBYTE out);
+	BOOL ConvertPixelFormat(LPBYTE src, DWORD srcPitch, D3DFORMAT srcFormat, DWORD dstCX, DWORD dstCY, LPBYTE dst);
 #define NUMBER_OF_BUFFER 3
 
 	class DX8Surface
@@ -20,16 +20,15 @@ namespace DXCapture
 	public:
 		BOOL	Create(IDirect3DDevice8 *d3d, SharedCaptureDATA* pDATA);
 		void	Destory();
-		BOOL	IsLocked();
-		BOOL	Lock();
-		BOOL	Unlock();
+		BOOL	LockRect();
+		BOOL	UnlockRect();
 		BYTE*	GetPointer();
+		INT		GetPitch();
+		TinyLock&	GetLock();
 	public:
-		BOOL							m_locked;
-		D3DLOCKED_RECT					m_lockRect;
+		D3DLOCKED_RECT					m_lockedRect;
 		TinyLock						m_lock;
 		TinyComPtr<IDirect3DSurface8>	m_surface;
-		BOOL							m_processing;
 	};
 
 	/// <summary>
@@ -48,6 +47,7 @@ namespace DXCapture
 	private:
 		void OnMessagePump();
 	public:
+		DWORD							m_dwCapture;
 		DWORD							m_dwCurrent;
 		IO::TinyTaskBase				m_captureTask;
 		LPBYTE							m_textures[2];

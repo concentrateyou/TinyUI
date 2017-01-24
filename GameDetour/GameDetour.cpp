@@ -64,11 +64,11 @@ namespace GameDetour
 		if (g_dx.Initialize())
 		{
 			LOG(INFO) << "g_dx.Initialize() OK\n";
-			/*if (!m_bDX8Detour)
+			if (!m_bDX8Detour)
 			{
 				LOG(INFO) << "Begin g_dx8.Initialize\n";
 				m_bDX8Detour = g_dx8.Initialize(m_hWNDD3D);
-			}*/
+			}
 			/*if (!m_bDX9Detour)
 			{
 				LOG(INFO) << "Begin g_dx9.Initialize\n";
