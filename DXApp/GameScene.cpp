@@ -54,18 +54,17 @@ namespace DXApp
 				{
 					if (m_mute1.Lock(0))
 					{
-						m_mute1.Unlock();
 						DX11Image::Copy(dx11, m_textures[dwCurrentIndex], pCaptureDATA->Pitch);
+						m_mute1.Unlock();
 						break;
 					}
 					if (m_mute2.Lock(0))
 					{
-						m_mute2.Unlock();
 						DX11Image::Copy(dx11, m_textures[dwCurrentIndex], pCaptureDATA->Pitch);
+						m_mute2.Unlock();
 						break;
 					}
 				} while (0);
-
 			}
 		}
 		return DX11Image::Render(dx11);

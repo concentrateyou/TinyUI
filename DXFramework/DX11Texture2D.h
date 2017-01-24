@@ -39,7 +39,7 @@ namespace DXFramework
 		TinyComPtr<ID3D11ShaderResourceView>	m_resourceView;
 	};
 
-#define CAPTURETYPE_MEMORYTEXTURE      1
+#define CAPTURETYPE_MEMORYTEXTURE   1
 #define CAPTURETYPE_SHAREDTEXTURE   2
 
 #pragma pack(push, 8)
@@ -49,6 +49,7 @@ namespace DXFramework
 		DWORD		Format;
 		SIZE		Size;
 		BOOL		bFlip;
+		BOOL		bMultisample;
 		UINT		Pitch;
 		DWORD		MapSize;
 		HWND		HwndCapture;

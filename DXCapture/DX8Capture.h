@@ -16,7 +16,6 @@ namespace DXCapture
 	public:
 		DX8Surface();
 		~DX8Surface();
-		operator IDirect3DSurface8*() const;
 	public:
 		BOOL	Create(IDirect3DDevice8 *d3d, SharedCaptureDATA* pDATA);
 		void	Destory();
@@ -25,7 +24,8 @@ namespace DXCapture
 		BYTE*	GetPointer();
 		INT		GetPitch();
 		TinyLock&	GetLock();
-	public:
+		IDirect3DSurface8*	GetSurface();
+	private:
 		D3DLOCKED_RECT					m_lockedRect;
 		TinyLock						m_lock;
 		TinyComPtr<IDirect3DSurface8>	m_surface;
@@ -47,7 +47,7 @@ namespace DXCapture
 	private:
 		void OnMessagePump();
 	public:
-		DWORD							m_dwCapture;
+		DWORD							m_dwCurrentCapture;
 		DWORD							m_dwCurrent;
 		IO::TinyTaskBase				m_captureTask;
 		LPBYTE							m_textures[2];

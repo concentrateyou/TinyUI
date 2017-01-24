@@ -139,8 +139,7 @@ namespace DXCapture
 	}
 	BOOL DX8Surface::Create(IDirect3DDevice8 *d3d, SharedCaptureDATA* pDATA)
 	{
-		HRESULT hRes = d3d->CreateImageSurface(pDATA->Size.cx, pDATA->Size.cy, (D3DFORMAT)pDATA->Format, &m_surface);
-		return hRes == S_OK;
+		return SUCCEEDED(d3d->CreateImageSurface(pDATA->Size.cx, pDATA->Size.cy, (D3DFORMAT)pDATA->Format, &m_surface));
 	}
 	void DX8Surface::Destory()
 	{
@@ -175,7 +174,7 @@ namespace DXCapture
 	{
 		return m_lock;
 	}
-	DX8Surface::operator IDirect3DSurface8*() const
+	IDirect3DSurface8*	DX8Surface::GetSurface()
 	{
 		return m_surface;
 	}
@@ -184,7 +183,7 @@ namespace DXCapture
 		:m_dx(dx),
 		m_currentPointer(NULL),
 		m_dwCurrent(-1),
-		m_dwCapture(0)
+		m_dwCurrentCapture(0)
 	{
 		m_textures[0] = m_textures[1] = NULL;
 	}
@@ -276,9 +275,9 @@ namespace DXCapture
 					return FALSE;
 				for (INT i = 0; i < NUMBER_OF_BUFFER; i++)
 				{
-					if (!m_surfaces[i].GetPointer() == NULL)
+					if (m_surfaces[i].GetPointer() == NULL)
 					{
-						if (FAILED(d3d->CopyRects(backBuffer, NULL, 0, m_surfaces[i], NULL)))
+						if (FAILED(d3d->CopyRects(backBuffer, NULL, 0, m_surfaces[i].GetSurface(), NULL)))
 							return FALSE;
 						if (!m_surfaces[i].LockRect())
 							return FALSE;
@@ -286,13 +285,13 @@ namespace DXCapture
 						m_copy.SetEvent();
 					}
 				}
-				DWORD dwCapture = (m_dwCapture == NUMBER_OF_BUFFER - 1) ? 0 : (m_dwCapture + 1);
-				if (m_surfaces[dwCapture].GetPointer() != NULL)
+				DWORD dwNextCapture = (m_dwCurrentCapture == NUMBER_OF_BUFFER - 1) ? 0 : (m_dwCurrentCapture + 1);
+				if (m_surfaces[dwNextCapture].GetPointer() != NULL)
 				{
-					TinyAutoLock lock(m_surfaces[dwCapture].GetLock());
-					m_surfaces[dwCapture].UnlockRect();
+					TinyAutoLock lock(m_surfaces[dwNextCapture].GetLock());
+					m_surfaces[dwNextCapture].UnlockRect();
 				}
-				m_dwCapture = dwCapture;
+				m_dwCurrentCapture = dwNextCapture;
 			}
 		}
 		return TRUE;
@@ -403,20 +402,20 @@ namespace DXCapture
 			}
 			if (m_copy.Lock(INFINITE))
 			{
-				DWORD dwCurrent = m_dwCurrent;
-				if (dwCurrent < NUMBER_OF_BUFFER && m_surfaces[dwCurrent].GetPointer() != NULL)
+				DWORD dwNext = m_dwCurrent;
+				if (dwNext < NUMBER_OF_BUFFER && m_surfaces[dwNext].GetPointer() != NULL)
 				{
-					TinyAutoLock lock(m_surfaces[dwCurrent].GetLock());
+					TinyAutoLock lock(m_surfaces[dwNext].GetLock());
 					if (m_dx.m_mute1.Lock(0))
 					{
-						ConvertPixelFormat(m_surfaces[dwCurrent].GetPointer(), m_surfaces[dwCurrent].GetPitch(), (D3DFORMAT)m_captureDATA.Format, m_captureDATA.Size.cx, m_captureDATA.Size.cy, m_textures[0]);
+						ConvertPixelFormat(m_surfaces[dwNext].GetPointer(), m_surfaces[dwNext].GetPitch(), (D3DFORMAT)m_captureDATA.Format, m_captureDATA.Size.cx, m_captureDATA.Size.cy, m_textures[0]);
 						m_dx.m_mute1.Unlock();
 						SharedTextureDATA* sharedTexture = m_dx.GetSharedTextureDATA(m_captureDATA.MapSize);
 						sharedTexture->CurrentIndex = 0;
 					}
 					if (m_dx.m_mute2.Lock(0))
 					{
-						ConvertPixelFormat(m_surfaces[dwCurrent].GetPointer(), m_surfaces[dwCurrent].GetPitch(), (D3DFORMAT)m_captureDATA.Format, m_captureDATA.Size.cx, m_captureDATA.Size.cy, m_textures[1]);
+						ConvertPixelFormat(m_surfaces[dwNext].GetPointer(), m_surfaces[dwNext].GetPitch(), (D3DFORMAT)m_captureDATA.Format, m_captureDATA.Size.cx, m_captureDATA.Size.cy, m_textures[1]);
 						m_dx.m_mute2.Unlock();
 						SharedTextureDATA* sharedTexture = m_dx.GetSharedTextureDATA(m_captureDATA.MapSize);
 						sharedTexture->CurrentIndex = 1;
