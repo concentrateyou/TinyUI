@@ -18,7 +18,7 @@ namespace DXFramework
 		void					OnMessagePump();
 		WNDINFO					GetWNDINFO();
 		SharedCaptureDATA*		GetSharedCaptureDATA();
-		SharedTextureDATA*		GetSharedTextureDATA();
+		SharedTextureDATA*		GetSharedTextureDATA(DWORD dwSize);
 		void					Tick();
 		BOOL					BeginCapture();
 		BOOL					EndCapture();

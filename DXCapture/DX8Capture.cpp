@@ -361,8 +361,8 @@ namespace DXCapture
 		m_close.CreateEvent();
 		UINT size1 = (sizeof(SharedTextureDATA) + 15) & 0xFFFFFFF0;
 		UINT size2 = (m_captureDATA.Pitch * m_captureDATA.Size.cy + 15) & 0xFFFFFFF0;
-		UINT totalSize = size1 + size2 * 2;
-		SharedTextureDATA* sharedTexture = m_dx.GetSharedTextureDATA(totalSize);
+		m_captureDATA.MapSize = size1 + size2 * 2;
+		SharedTextureDATA* sharedTexture = m_dx.GetSharedTextureDATA(m_captureDATA.MapSize);
 		sharedTexture->Texture1Offset = size1;
 		sharedTexture->Texture2Offset = size1 + size2;
 		sharedTexture->FrameTime = 0;
@@ -392,7 +392,7 @@ namespace DXCapture
 			}
 			if (m_copy.Lock(INFINITE))
 			{
-				
+
 			}
 		}
 

@@ -90,13 +90,13 @@ namespace DXFramework
 		SharedCaptureDATA* pDATA = reinterpret_cast<SharedCaptureDATA*>(m_captureMemory.Address());
 		return pDATA;
 	}
-	SharedTextureDATA* DX11CaptureTask::GetSharedTextureDATA()
+	SharedTextureDATA* DX11CaptureTask::GetSharedTextureDATA(DWORD dwSize)
 	{
 		if (!m_textureMemery.Address())
 		{
 			if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE))
 				return NULL;
-			if (!m_textureMemery.Map(0, sizeof(SharedTextureDATA)))
+			if (!m_textureMemery.Map(0, dwSize))
 				return NULL;
 		}
 		SharedTextureDATA* pDATA = reinterpret_cast<SharedTextureDATA*>(m_textureMemery.Address());
@@ -154,21 +154,37 @@ namespace DXFramework
 			TRACE("BeginCapture GetSharedCaptureDATA-FAIL\n");
 			return FALSE;
 		}
-		SharedTextureDATA* pTextureDATA = GetSharedTextureDATA();
-		if (!pTextureDATA || !pTextureDATA->TextureHandle)
+		SharedTextureDATA* pTextureDATA = GetSharedTextureDATA(pCaptureDATA->MapSize);
+		if (!pTextureDATA)
 		{
 			TRACE("BeginCapture GetSharedTextureDATA-FAIL\n");
 			return FALSE;
 		}
-		m_pDX11->Lock();
-		m_image.Destory();
-		if (!m_image.Load(*m_pDX11, pTextureDATA->TextureHandle))
+		do
 		{
-			m_pDX11->Unlock();
-			TRACE("BeginCapture m_image.Load-FAIL\n");
-			return FALSE;
-		}
-		m_pDX11->Unlock();
+			if (pCaptureDATA->CaptureType == CAPTURETYPE_SHAREDTEX)
+			{
+				if (!pTextureDATA->TextureHandle)
+				{
+					TRACE("BeginCapture GetSharedTextureDATA-TextureHandle==NULL-FAIL\n");
+					return FALSE;
+				}
+				TinyAutoLock lock(*m_pDX11);
+				m_image.Destory();
+				if (!m_image.Load(*m_pDX11, pTextureDATA->TextureHandle))
+				{
+					TRACE("BeginCapture m_image.Load-FAIL\n");
+					return FALSE;
+				}
+				break;
+			}
+			if (pCaptureDATA->CaptureType == CAPTURETYPE_MEMORY)
+			{
+				TinyAutoLock lock(*m_pDX11);
+				m_image.Destory();
+				break;
+			}
+		} while (0);
 		return TRUE;
 	}
 	BOOL DX11CaptureTask::EndCapture()

@@ -460,6 +460,7 @@ namespace DXCapture
 			return FALSE;
 		m_captureDATA.CaptureType = CAPTURETYPE_SHAREDTEX;
 		m_captureDATA.bFlip = FALSE;
+		m_captureDATA.MapSize = sizeof(SharedTextureDATA);
 		SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();
 		memcpy(sharedCapture, &m_captureDATA, sizeof(m_captureDATA));
 		SharedTextureDATA* sharedTexture = m_dx.GetSharedTextureDATA();

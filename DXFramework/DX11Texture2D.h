@@ -37,6 +37,8 @@ namespace DXFramework
 		TinyComPtr<ID3D11ShaderResourceView>	m_resourceView;
 	};
 
+#define CAPTURETYPE_MEMORY      1
+#define CAPTURETYPE_SHAREDTEX   2
 
 #pragma pack(push, 8)
 	typedef struct tagSharedCaptureDATA
