@@ -37,9 +37,15 @@ namespace DXFramework
 		swapDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 		swapDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 		HRESULT hRes = S_OK;
-		D3D_FEATURE_LEVEL level = D3D_FEATURE_LEVEL_11_0;
+		D3D_FEATURE_LEVEL levels[] =
+		{
+			D3D_FEATURE_LEVEL_10_0,
+			D3D_FEATURE_LEVEL_10_1,
+			D3D_FEATURE_LEVEL_11_0
+		};
 		DWORD dwFlag = D3D11_CREATE_DEVICE_BGRA_SUPPORT | D3D11_CREATE_DEVICE_DEBUG;
-		hRes = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, dwFlag, &level, 1, D3D11_SDK_VERSION, &swapDesc, &m_swap, &m_d3d, NULL, &m_immediateContext);
+		D3D_FEATURE_LEVEL level;
+		hRes = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, dwFlag, levels, sizeof(levels) / sizeof(D3D_FEATURE_LEVEL), D3D11_SDK_VERSION, &swapDesc, &m_swap, &m_d3d, &level, &m_immediateContext);
 		if (FAILED(hRes))
 			return FALSE;
 		TinyComPtr<ID3D11Texture2D> backBuffer;
@@ -141,7 +147,6 @@ namespace DXFramework
 		hRes = m_d3d->CreateDepthStencilState(&disableDepthStencilDesc, &m_disableDepthState);
 		if (FAILED(hRes))
 			return FALSE;
-
 		D3D11_TEXTURE2D_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
 		desc.Width = m_size.cx;
@@ -155,7 +160,8 @@ namespace DXFramework
 		desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
 		desc.MiscFlags = 0;
 		desc.BindFlags = 0;
-		if (FAILED(m_d3d->CreateTexture2D(&desc, NULL, &m_renderTexture)))
+		hRes = m_d3d->CreateTexture2D(&desc, NULL, &m_renderTexture);
+		if (FAILED(hRes))
 			return FALSE;
 		return TRUE;
 	}
@@ -234,7 +240,8 @@ namespace DXFramework
 		desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
 		desc.MiscFlags = 0;
 		desc.BindFlags = 0;
-		if (FAILED(m_d3d->CreateTexture2D(&desc, NULL, &m_renderTexture)))
+		hRes = m_d3d->CreateTexture2D(&desc, NULL, &m_renderTexture);
+		if (FAILED(hRes))
 			return FALSE;
 		return TRUE;
 	}

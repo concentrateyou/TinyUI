@@ -52,7 +52,12 @@ namespace DXApp
 
 		CreateUI();
 
-		CenterWindow(NULL, { 1440, 810 });
+		RECT rect;
+		SystemParametersInfo(SPI_GETWORKAREA, 0, &rect, 0);
+		INT cx = TO_CX(rect) * 4 / 5;
+		INT cy = TO_CY(rect) * 4 / 5;
+
+		CenterWindow(NULL, { cx, cy });
 
 		return FALSE;
 	}

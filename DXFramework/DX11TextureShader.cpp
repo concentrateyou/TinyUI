@@ -15,12 +15,12 @@ namespace DXFramework
 		TinyComPtr<ID3D10Blob> vertexShaderBuffer;
 		TinyComPtr<ID3D10Blob> pixelShaderBuffer;
 		D3D11_INPUT_ELEMENT_DESC layout[2];
-		D3D11_BUFFER_DESC matrixBufferDesc;
+		D3D11_BUFFER_DESC matrixBufferDesc = { 0 };
 		D3D11_SAMPLER_DESC samplerDesc;
-		hRes = D3DX11CompileFromFile(vsFile, NULL, NULL, "TextureVertexShader", "vs_5_0", D3D10_SHADER_OPTIMIZATION_LEVEL3, 0, NULL, &vertexShaderBuffer, NULL, NULL);
+		hRes = D3DX11CompileFromFile(vsFile, NULL, NULL, "TextureVertexShader", "vs_4_0", D3D10_SHADER_OPTIMIZATION_LEVEL3, 0, NULL, &vertexShaderBuffer, NULL, NULL);
 		if (FAILED(hRes))
 			return FALSE;
-		hRes = D3DX11CompileFromFile(psFile, NULL, NULL, "TexturePixelShader", "ps_5_0", D3D10_SHADER_OPTIMIZATION_LEVEL3, 0, NULL, &pixelShaderBuffer, NULL, NULL);
+		hRes = D3DX11CompileFromFile(psFile, NULL, NULL, "TexturePixelShader", "ps_4_0", D3D10_SHADER_OPTIMIZATION_LEVEL3, 0, NULL, &pixelShaderBuffer, NULL, NULL);
 		if (FAILED(hRes))
 			return FALSE;
 		hRes = dx11.GetD3D()->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &m_vertexShader);
