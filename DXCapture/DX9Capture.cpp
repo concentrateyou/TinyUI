@@ -101,7 +101,7 @@ namespace DXCapture
 		}
 		return TRUE;
 	}
-	DXGI_FORMAT GetDXGIFormat(D3DFORMAT format)
+	DXGI_FORMAT GetDXGIFormat9(D3DFORMAT format)
 	{
 		switch (format)
 		{
@@ -300,7 +300,7 @@ namespace DXCapture
 					if (SUCCEEDED(backBuffer->GetDesc(&sd)))
 					{
 						m_d3dFormat = sd.Format;
-						m_dxgiFormat = GetDXGIFormat(sd.Format);
+						m_dxgiFormat = GetDXGIFormat9(sd.Format);
 						m_captureDATA.Format = sd.Format;
 						m_captureDATA.Size.cx = sd.Width;
 						m_captureDATA.Size.cy = sd.Height;
