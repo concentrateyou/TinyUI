@@ -245,7 +245,7 @@ namespace DXFramework
 		ASSERT(m_immediateContext);
 		FLOAT color[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
 		m_immediateContext->ClearRenderTargetView(m_renderView, color);
-		m_immediateContext->ClearDepthStencilView(m_depthStencilView, D3D10_CLEAR_DEPTH, 1.0F, 0);
+		m_immediateContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0F, 0);
 	}
 	void DX11::EndScene()
 	{

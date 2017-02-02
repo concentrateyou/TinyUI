@@ -71,13 +71,13 @@ namespace DXFramework
 	}
 	BOOL  DX11Texture2D::GetDC(HDC& hDC)
 	{
-		if (!m_texture2D || !m_bCompatible || !m_surface)
+		if (!m_bCompatible || !m_surface)
 			return FALSE;
 		return m_surface->GetDC(FALSE, &hDC) == S_OK;
 	}
 	BOOL DX11Texture2D::ReleaseDC()
 	{
-		if (!m_surface || !m_bCompatible || !m_surface)
+		if (!m_bCompatible || !m_surface)
 			return FALSE;
 		m_surface->ReleaseDC(NULL);
 		return TRUE;
