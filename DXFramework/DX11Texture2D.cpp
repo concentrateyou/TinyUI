@@ -50,6 +50,9 @@ namespace DXFramework
 		HRESULT hRes = dx11.GetD3D()->CreateTexture2D(&textureDesc, lpSRD, &m_texture2D);
 		if (FAILED(hRes))
 			return FALSE;
+		hRes = m_texture2D->QueryInterface(__uuidof(IDXGISurface1), (void**)&m_surface);
+		if (FAILED(hRes))
+			return FALSE;
 		D3D11_TEXTURE2D_DESC desc;
 		m_texture2D->GetDesc(&desc);
 		D3D11_SHADER_RESOURCE_VIEW_DESC dsrvd;
@@ -60,24 +63,23 @@ namespace DXFramework
 		hRes = dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &dsrvd, &m_resourceView);
 		if (FAILED(hRes))
 			return FALSE;
+		hRes = dx11.GetD3D()->CreateRenderTargetView(m_texture2D, NULL, &m_renderTarget);
+		if (FAILED(hRes))
+			return FALSE;
 		m_bCompatible = TRUE;
 		return TRUE;
 	}
 	BOOL  DX11Texture2D::GetDC(HDC& hDC)
 	{
-		if (!m_texture2D || !m_bCompatible)
-			return FALSE;
-		HRESULT hRes = m_texture2D->QueryInterface(__uuidof(IDXGISurface1), (void**)&m_surface);
-		if (FAILED(hRes))
+		if (!m_texture2D || !m_bCompatible || !m_surface)
 			return FALSE;
 		return m_surface->GetDC(FALSE, &hDC) == S_OK;
 	}
 	BOOL DX11Texture2D::ReleaseDC()
 	{
-		if (!m_surface || !m_bCompatible)
+		if (!m_surface || !m_bCompatible || !m_surface)
 			return FALSE;
 		m_surface->ReleaseDC(NULL);
-		m_surface.Release();
 		return TRUE;
 	}
 	BOOL DX11Texture2D::Map(DX11& dx11, BYTE *&lpData, UINT &pitch)

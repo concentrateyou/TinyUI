@@ -39,12 +39,13 @@ namespace DXFramework
 		HRESULT hRes = S_OK;
 		D3D_FEATURE_LEVEL levels[] =
 		{
-			D3D_FEATURE_LEVEL_10_0,
+			D3D_FEATURE_LEVEL_11_0,
 			D3D_FEATURE_LEVEL_10_1,
-			D3D_FEATURE_LEVEL_11_0
+			D3D_FEATURE_LEVEL_10_0,
+			D3D_FEATURE_LEVEL_9_3
 		};
 		DWORD dwFlag = D3D11_CREATE_DEVICE_BGRA_SUPPORT | D3D11_CREATE_DEVICE_DEBUG;
-		D3D_FEATURE_LEVEL level;
+		D3D_FEATURE_LEVEL level = D3D_FEATURE_LEVEL_9_3;
 		hRes = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, dwFlag, levels, sizeof(levels) / sizeof(D3D_FEATURE_LEVEL), D3D11_SDK_VERSION, &swapDesc, &m_swap, &m_d3d, &level, &m_immediateContext);
 		if (FAILED(hRes))
 			return FALSE;
@@ -101,21 +102,15 @@ namespace DXFramework
 			return FALSE;
 		m_immediateContext->OMSetRenderTargets(1, &m_renderView, m_depthStencilView);
 		D3D11_RASTERIZER_DESC rasterDesc;
-		rasterDesc.AntialiasedLineEnable = FALSE;
+		ZeroMemory(&rasterDesc, sizeof(rasterDesc));
 		rasterDesc.CullMode = D3D11_CULL_BACK;
-		rasterDesc.DepthBias = 0;
-		rasterDesc.DepthBiasClamp = 0.0F;
 		rasterDesc.DepthClipEnable = TRUE;
 		rasterDesc.FillMode = D3D11_FILL_SOLID;
-		rasterDesc.FrontCounterClockwise = FALSE;
-		rasterDesc.MultisampleEnable = FALSE;
-		rasterDesc.ScissorEnable = FALSE;
-		rasterDesc.SlopeScaledDepthBias = 0.0F;
 		hRes = m_d3d->CreateRasterizerState(&rasterDesc, &m_rasterizerState);
 		if (FAILED(hRes))
 			return FALSE;
 		m_immediateContext->RSSetState(m_rasterizerState);
-		D3D11_VIEWPORT viewport;
+		D3D11_VIEWPORT viewport = { 0 };
 		viewport.Width = static_cast<FLOAT>(cx);
 		viewport.Height = static_cast<FLOAT>(cy);
 		viewport.MinDepth = 0.0F;
@@ -134,14 +129,14 @@ namespace DXFramework
 		disableDepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 		disableDepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
 		disableDepthStencilDesc.StencilEnable = TRUE;
-		disableDepthStencilDesc.StencilReadMask = 0xFF;
-		disableDepthStencilDesc.StencilWriteMask = 0xFF;
+		disableDepthStencilDesc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
+		disableDepthStencilDesc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
 		disableDepthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		disableDepthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+		disableDepthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 		disableDepthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 		disableDepthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 		disableDepthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		disableDepthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+		disableDepthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 		disableDepthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 		disableDepthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 		hRes = m_d3d->CreateDepthStencilState(&disableDepthStencilDesc, &m_disableDepthState);
