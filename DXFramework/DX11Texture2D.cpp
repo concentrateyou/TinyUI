@@ -22,7 +22,7 @@ namespace DXFramework
 	{
 	}
 
-	BOOL DX11Texture2D::CreateCompatible(DX11& dx11, INT cx, INT cy, const BYTE* bits)
+	BOOL DX11Texture2D::CreateCompatible(DX11& dx11, INT cx, INT cy)
 	{
 		m_texture2D.Release();
 		m_resourceView.Release();
@@ -38,19 +38,7 @@ namespace DXFramework
 		textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 		textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
 		textureDesc.Usage = D3D11_USAGE_DEFAULT;
-		D3D11_SUBRESOURCE_DATA dsd;
-		D3D11_SUBRESOURCE_DATA *lpSRD = NULL;
-		if (bits)
-		{
-			dsd.pSysMem = static_cast<void*>(const_cast<BYTE*>(bits));
-			dsd.SysMemPitch = cx * 4;
-			dsd.SysMemSlicePitch = 0;
-			lpSRD = &dsd;
-		}
-		HRESULT hRes = dx11.GetD3D()->CreateTexture2D(&textureDesc, lpSRD, &m_texture2D);
-		if (FAILED(hRes))
-			return FALSE;
-		hRes = m_texture2D->QueryInterface(__uuidof(IDXGISurface1), (void**)&m_surface);
+		HRESULT hRes = dx11.GetD3D()->CreateTexture2D(&textureDesc, NULL, &m_texture2D);
 		if (FAILED(hRes))
 			return FALSE;
 		D3D11_TEXTURE2D_DESC desc;
@@ -63,23 +51,25 @@ namespace DXFramework
 		hRes = dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &dsrvd, &m_resourceView);
 		if (FAILED(hRes))
 			return FALSE;
-		hRes = dx11.GetD3D()->CreateRenderTargetView(m_texture2D, NULL, &m_renderTarget);
-		if (FAILED(hRes))
-			return FALSE;
 		m_bCompatible = TRUE;
 		return TRUE;
 	}
 	BOOL  DX11Texture2D::GetDC(HDC& hDC)
 	{
-		if (!m_bCompatible || !m_surface)
+		if (!m_bCompatible || !m_texture2D)
 			return FALSE;
-		return m_surface->GetDC(FALSE, &hDC) == S_OK;
+		m_surface.Release();
+		HRESULT hRes = m_texture2D->QueryInterface(__uuidof(IDXGISurface1), (void**)&m_surface);
+		if (FAILED(hRes))
+			return FALSE;
+		return m_surface->GetDC(TRUE, &hDC) == S_OK;
 	}
 	BOOL DX11Texture2D::ReleaseDC()
 	{
 		if (!m_bCompatible || !m_surface)
 			return FALSE;
 		m_surface->ReleaseDC(NULL);
+		m_surface.Release();
 		return TRUE;
 	}
 	BOOL DX11Texture2D::Map(DX11& dx11, BYTE *&lpData, UINT &pitch)

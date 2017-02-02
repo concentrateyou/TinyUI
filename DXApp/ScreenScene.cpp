@@ -20,7 +20,7 @@ namespace DXApp
 		if (!s.IsRectEmpty())
 		{
 			m_snapshot = s;
-			return DX11Image::CreateCompatible(dx11, s.Size(), NULL);
+			return DX11Image::CreateCompatible(dx11, m_snapshot.Size());
 		}
 		return FALSE;
 	}

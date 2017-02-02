@@ -108,7 +108,7 @@ namespace DXFramework
 			{
 				sizeF.Height = static_cast<Gdiplus::REAL>(s.Height());
 			}
-			return DX11Image::CreateCompatible(dx11, TinySize((INT)sizeF.Width, (INT)sizeF.Height), NULL);
+			return DX11Image::CreateCompatible(dx11, TinySize((INT)sizeF.Width, (INT)sizeF.Height));
 		}
 		return FALSE;
 	}

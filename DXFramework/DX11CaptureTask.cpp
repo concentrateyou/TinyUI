@@ -182,7 +182,7 @@ namespace DXFramework
 			{
 				TinyAutoLock lock(*m_pDX11);
 				m_image.Destory();
-				if (!m_image.CreateCompatible(*m_pDX11, pCaptureDATA->Size, NULL))
+				if (!m_image.CreateCompatible(*m_pDX11, pCaptureDATA->Size))
 				{
 					TRACE("BeginCapture m_image.Create-FAIL\n");
 					return FALSE;

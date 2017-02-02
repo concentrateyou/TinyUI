@@ -28,11 +28,11 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
-	BOOL DX11Image::CreateCompatible(DX11& dx11, const TinySize& size, BYTE* bits)
+	BOOL DX11Image::CreateCompatible(DX11& dx11, const TinySize& size)
 	{
 		if (!Initialize(dx11))
 			return FALSE;
-		if (m_texture.CreateCompatible(dx11, size.cx, size.cy, bits))
+		if (m_texture.CreateCompatible(dx11, size.cx, size.cy))
 		{
 			SetSize(m_texture.GetSize());
 			SetScale(m_size);

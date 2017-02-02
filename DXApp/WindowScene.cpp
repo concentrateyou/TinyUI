@@ -22,7 +22,7 @@ namespace DXApp
 		if (!rectangle.IsRectEmpty())
 		{
 			Destory();
-			return DX11Image::CreateCompatible(dx11, rectangle.Size(), NULL);
+			return DX11Image::CreateCompatible(dx11, rectangle.Size());
 		}
 		return FALSE;
 	}

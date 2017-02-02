@@ -17,7 +17,7 @@ namespace DXFramework
 		DX11Texture2D();
 		virtual ~DX11Texture2D();
 		BOOL Create(DX11& dx11, INT cx, INT cy, const BYTE* bits, BOOL bReadoly);
-		BOOL CreateCompatible(DX11& dx11, INT cx, INT cy, const BYTE* bits);
+		BOOL CreateCompatible(DX11& dx11, INT cx, INT cy);
 		BOOL Save(DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT dxgi);
 		BOOL Load(DX11& dx11, const BYTE* bits, DWORD dwSize);
 		BOOL Load(DX11& dx11, HANDLE hResource);
@@ -33,7 +33,6 @@ namespace DXFramework
 		BOOL IsEmpty() const;
 		TinySize GetSize();
 	protected:
-		TinyComPtr<ID3D11RenderTargetView>		m_renderTarget;
 		BOOL									m_bCompatible;
 		TinyComPtr<IDXGISurface1>				m_surface;
 		TinyComPtr<ID3D11Texture2D>				m_texture2D;

@@ -20,7 +20,7 @@ namespace DXFramework
 		DX11Image();
 		virtual ~DX11Image();
 		BOOL Create(DX11& dx11, const TinySize& size, BYTE* bits = NULL, BOOL bReadonly = TRUE);
-		BOOL CreateCompatible(DX11& dx11, const TinySize& size, BYTE* bits = NULL);
+		BOOL CreateCompatible(DX11& dx11, const TinySize& size);
 		BOOL BitBlt(DX11& dx11, const BYTE* bits, LONG size);//RGB32
 		BOOL BitBlt(DX11& dx11, const TinyRectangle& dst, HBITMAP hBitmapSrc, const TinyPoint& src);
 		BOOL BitBlt(DX11& dx11, const TinyRectangle& dst, HDC hDCSrc, const TinyPoint& src);

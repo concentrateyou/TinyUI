@@ -103,9 +103,10 @@ namespace DXFramework
 		m_immediateContext->OMSetRenderTargets(1, &m_renderView, m_depthStencilView);
 		D3D11_RASTERIZER_DESC rasterDesc;
 		ZeroMemory(&rasterDesc, sizeof(rasterDesc));
-		rasterDesc.CullMode = D3D11_CULL_BACK;
+		rasterDesc.FrontCounterClockwise = FALSE;
 		rasterDesc.DepthClipEnable = TRUE;
 		rasterDesc.FillMode = D3D11_FILL_SOLID;
+		rasterDesc.CullMode = D3D11_CULL_BACK;
 		hRes = m_d3d->CreateRasterizerState(&rasterDesc, &m_rasterizerState);
 		if (FAILED(hRes))
 			return FALSE;
@@ -162,7 +163,7 @@ namespace DXFramework
 	}
 	BOOL DX11::ResizeView(INT cx, INT cy)
 	{
-		if (!m_immediateContext)
+		if (!m_immediateContext || !m_swap || !m_d3d)
 			return FALSE;
 		m_size.cx = cx;
 		m_size.cy = cy;
@@ -242,16 +243,27 @@ namespace DXFramework
 	}
 	void DX11::BeginScene()
 	{
-		ASSERT(m_immediateContext);
-		FLOAT color[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
-		m_immediateContext->ClearRenderTargetView(m_renderView, color);
-		m_immediateContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0F, 0);
+		if (m_immediateContext)
+		{
+			if (m_renderView)
+			{
+				FLOAT color[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
+				m_immediateContext->ClearRenderTargetView(m_renderView, color);
+			}
+			if (m_depthStencilView)
+			{
+				m_immediateContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0F, 0);
+			}
+		}
+
 	}
 	void DX11::EndScene()
 	{
-		ASSERT(m_swap && m_immediateContext);
-		m_swap->Present(0, 0);
-		m_immediateContext->Flush();
+		if (m_immediateContext && m_swap)
+		{
+			m_swap->Present(0, 0);
+			m_immediateContext->Flush();
+		}
 	}
 	void DX11::AllowDepth(BOOL allow)
 	{
