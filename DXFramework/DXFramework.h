@@ -50,6 +50,4 @@ namespace DXFramework
 
 	BOOL WINAPI InjectLibrary(HANDLE hProcess, const CHAR *pszDLL);
 	BOOL WINAPI UninjectLibrary(HANDLE hProcess, const CHAR *pszDLL);
-
-	DXGI_FORMAT WINAPI MakeSRGB(DXGI_FORMAT fmt);
 }

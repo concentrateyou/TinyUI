@@ -102,11 +102,11 @@ namespace DXFramework
 			GetClientRect(dx11.GetHWND(), &s);
 			if (sizeF.Width > s.Width())
 			{
-				sizeF.Width = s.Width();
+				sizeF.Width = static_cast<Gdiplus::REAL>(s.Width());
 			}
 			if (sizeF.Height > s.Height())
 			{
-				sizeF.Height = s.Height();
+				sizeF.Height = static_cast<Gdiplus::REAL>(s.Height());
 			}
 			return DX11Image::CreateCompatible(dx11, TinySize((INT)sizeF.Width, (INT)sizeF.Height), NULL);
 		}
@@ -139,7 +139,7 @@ namespace DXFramework
 		g.SetTextRenderingHint(Gdiplus::TextRenderingHintAntiAlias);
 		g.SetCompositingMode(Gdiplus::CompositingModeSourceOver);
 		g.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
-		g.SetClip(RectF(0, 0, m_size.cx, m_size.cy));
+		g.SetClip(RectF(0.0F, 0.0F, static_cast<Gdiplus::REAL>(m_size.cx), static_cast<Gdiplus::REAL>(m_size.cy)));
 		wstring ws = StringToWString(str.STR());
 		LOGFONT lf;
 		CHARFORMAT2LOGFONT(m_cf, lf, m_textColor);

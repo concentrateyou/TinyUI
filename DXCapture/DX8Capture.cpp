@@ -190,7 +190,7 @@ namespace DXCapture
 			{
 				m_d3dFormat = desc.Format;
 				m_dxgiFormat = GetDXGIFormat8(desc.Format);
-				m_captureDATA.CaptureType = CAPTURETYPE_MEMORYTEXTURE;
+				m_captureDATA.CaptureType = CAPTURETYPE_MEMORY;
 				m_captureDATA.Format = desc.Format;
 				m_captureDATA.Size.cx = desc.Width;
 				m_captureDATA.Size.cy = desc.Height;
@@ -212,7 +212,7 @@ namespace DXCapture
 	}
 	BOOL DX8Capture::DX8CPUHook(IDirect3DDevice8 *device)
 	{
-		m_captureDATA.CaptureType = CAPTURETYPE_MEMORYTEXTURE;
+		m_captureDATA.CaptureType = CAPTURETYPE_MEMORY;
 		m_captureDATA.bFlip = FALSE;
 		SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();
 		memcpy(sharedCapture, &m_captureDATA, sizeof(m_captureDATA));
