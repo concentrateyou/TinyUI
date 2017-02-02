@@ -18,6 +18,7 @@ namespace DXFramework
 		:m_bCompatible(FALSE)
 	{
 	}
+
 	DX11Texture2D::~DX11Texture2D()
 	{
 	}
@@ -88,6 +89,26 @@ namespace DXFramework
 	{
 		dx11.GetImmediateContext()->Unmap(m_texture2D, 0);
 	}
+	BOOL DX11Texture2D::Create(DX11& dx11, ID3D11Texture2D* texture2D)
+	{
+		if (!texture2D)
+			return FALSE;
+		D3D11_TEXTURE2D_DESC desc;
+		texture2D->GetDesc(&desc);
+		m_bCompatible = desc.MiscFlags & D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
+		HRESULT hRes = dx11.GetD3D()->CreateTexture2D(&desc, NULL, &m_texture2D);
+		if (FAILED(hRes))
+			return FALSE;
+		D3D11_SHADER_RESOURCE_VIEW_DESC dsrvd;
+		::ZeroMemory(&dsrvd, sizeof(dsrvd));
+		dsrvd.Format = desc.Format;
+		dsrvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		dsrvd.Texture2D.MipLevels = 1;
+		hRes = dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &dsrvd, &m_resourceView);
+		if (FAILED(hRes))
+			return FALSE;
+		return TRUE;
+	}
 	BOOL DX11Texture2D::Create(DX11& dx11, INT cx, INT cy, const BYTE* bits, BOOL bReadoly)
 	{
 		m_texture2D.Release();
@@ -133,6 +154,13 @@ namespace DXFramework
 	{
 		ASSERT(m_texture2D);
 		return D3DX11SaveTextureToFile(dx11.GetImmediateContext(), m_texture2D, format, pzFile) == S_OK;
+	}
+	BOOL DX11Texture2D::Copy(DX11& dx11, ID3D11Texture2D* texture2D)
+	{
+		if (!m_texture2D || !texture2D)
+			return FALSE;
+		dx11.GetImmediateContext()->CopyResource(m_texture2D, texture2D);
+		return TRUE;
 	}
 	BOOL DX11Texture2D::Load(DX11& dx11, const CHAR* pzFile)
 	{

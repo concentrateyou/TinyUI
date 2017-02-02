@@ -16,6 +16,18 @@ namespace DXFramework
 	{
 
 	}
+	BOOL DX11Image::Create(DX11& dx11, ID3D11Texture2D* texture2D)
+	{
+		if (!Initialize(dx11))
+			return FALSE;
+		if (m_texture.Create(dx11, texture2D))
+		{
+			SetSize(m_texture.GetSize());
+			SetScale(m_size);
+			return TRUE;
+		}
+		return FALSE;
+	}
 	BOOL DX11Image::Create(DX11& dx11, const TinySize& size, BYTE* bits, BOOL bReadonly)
 	{
 		if (!Initialize(dx11))
@@ -98,6 +110,10 @@ namespace DXFramework
 			return m_texture.ReleaseDC();
 		}
 		return FALSE;
+	}
+	BOOL DX11Image::Copy(DX11& dx11, ID3D11Texture2D* texture2D)
+	{
+		return m_texture.Copy(dx11, texture2D);
 	}
 	BOOL DX11Image::Copy(DX11& dx11, const BYTE* bits, UINT pitch)
 	{

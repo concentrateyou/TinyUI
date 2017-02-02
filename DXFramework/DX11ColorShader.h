@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 #include "DXFramework.h"
 #include "DX11.h"
 
