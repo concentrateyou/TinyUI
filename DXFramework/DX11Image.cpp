@@ -115,32 +115,13 @@ namespace DXFramework
 	{
 		return m_texture.Copy(dx11, texture2D);
 	}
-	BOOL DX11Image::Copy(DX11& dx11, const BYTE* bits, UINT pitch)
+	BOOL DX11Image::Map(DX11& dx11, BYTE *&lpData, UINT &pitch)
 	{
-		if (!m_texture.IsEmpty())
-			return FALSE;
-		BYTE* lpData = NULL;
-		UINT iPitch = 0;
-		if (m_texture.Map(dx11, lpData, iPitch))
-		{
-			if (iPitch == pitch)
-			{
-				memcpy(lpData, bits, pitch * m_size.cy);
-			}
-			else
-			{
-				UINT bestPitch = std::min<UINT>(pitch, iPitch);
-				for (UINT y = 0; y < m_size.cy; y++)
-				{
-					LPBYTE src = ((LPBYTE)bits) + (pitch*y);
-					LPBYTE dst = ((LPBYTE)lpData) + (iPitch*y);
-					memcpy(dst, src, bestPitch);
-				}
-			}
-			m_texture.Unmap(dx11);
-			return FALSE;
-		}
-		return FALSE;
+		return m_texture.Map(dx11, lpData, pitch);
+	}
+	void DX11Image::Unmap(DX11& dx11)
+	{
+		m_texture.Unmap(dx11);
 	}
 	BOOL DX11Image::Copy(DX11& dx11, const BYTE* bits, LONG size)
 	{

@@ -5,16 +5,6 @@
 namespace DXCapture
 {
 #define NUM_BUFFERS 3
-
-	typedef IDirect3D8* (WINAPI*D3D8CREATEPROC)(UINT);
-	HRESULT STDMETHODCALLTYPE DX8EndScene(IDirect3DDevice8 *device);
-	HRESULT STDMETHODCALLTYPE DX8Present(IDirect3DDevice8* device, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion);
-	HRESULT STDMETHODCALLTYPE DX8Reset(IDirect3DDevice8* device, D3DPRESENT_PARAMETERS* pPresentationParameters);
-	typedef struct tagCaptureSurface8
-	{
-		TinyComPtr<IDirect3DSurface8>	surface;
-		BOOL							copying;
-	}CaptureSurface8;
 	/// <summary>
 	/// XX8纹理数据捕获
 	/// </summary>
@@ -38,19 +28,22 @@ namespace DXCapture
 		D3DFORMAT						m_d3dFormat;
 		DXGI_FORMAT						m_dxgiFormat;
 		IO::TinyTaskBase				m_captureTask;
+
 		LPBYTE							m_textures[2];
-		CaptureSurface8					m_surfaces[NUM_BUFFERS];
-		TinyLock						m_locks[NUM_BUFFERS];
+		IDirect3DSurface8*				m_surfaces[NUM_BUFFERS];
+		BOOL							m_copyings[NUM_BUFFERS];
+		TinyLock						m_mutexs[NUM_BUFFERS];
 		TinyLock						m_lock;
 		void *volatile					m_currentBits;
 		DWORD							m_dwPitch;
 		DWORD							m_dwCurrentTexture;
-		DWORD							m_dwCapture;
+		DWORD							m_dwCurrentCapture;
 		TinyEvent						m_copy;
 		TinyEvent						m_close;
 		TinyDetour						m_dX8EndScene;
 		TinyDetour						m_dX8Present;
 		TinyDetour						m_dX8Reset;
+		TinyDetour						m_dX8Release;
 		HMODULE							m_hD3D8;
 		DX&								m_dx;
 	};

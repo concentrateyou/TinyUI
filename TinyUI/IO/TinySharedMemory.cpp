@@ -31,7 +31,7 @@ namespace TinyUI
 			MEMORY_BASIC_INFORMATION info;
 			if (!::VirtualQuery(address, &info, sizeof(info)))
 				return 0;
-			return info.RegionSize - (static_cast<char*>(address)-static_cast<char*>(info.AllocationBase));
+			return info.RegionSize - (static_cast<char*>(address) - static_cast<char*>(info.AllocationBase));
 		}
 		TinySharedMemory::TinySharedMemory()
 			:m_hFileMap(NULL),
@@ -52,6 +52,7 @@ namespace TinyUI
 		BOOL TinySharedMemory::Create(const TinyString& name, DWORD dwSize)
 		{
 			m_hFileMap = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, dwSize, name.STR());
+			m_dwSize = dwSize;
 			return m_hFileMap != NULL;
 		}
 		BOOL TinySharedMemory::Delete()
@@ -86,7 +87,7 @@ namespace TinyUI
 			m_pMemory = MapViewOfFile(m_hFileMap, m_bReadonly ? FILE_MAP_READ : FILE_MAP_READ | FILE_MAP_WRITE, static_cast<ULONGLONG>(offset) >> 32, static_cast<DWORD>(offset), dwBytes);
 			if (!m_pMemory)
 				return FALSE;
-			m_dwMapSize = GetMemorySectionSize(m_pMemory);
+			m_dwMapSize = dwBytes;
 			return TRUE;
 		}
 		BOOL TinySharedMemory::Unmap()
@@ -106,6 +107,14 @@ namespace TinyUI
 		BOOL TinySharedMemory::IsValid() const
 		{
 			return m_hFileMap != NULL;
+		}
+		DWORD TinySharedMemory::GetMapSize() const
+		{
+			return m_dwMapSize;
+		}
+		DWORD TinySharedMemory::GetSize() const
+		{
+			return m_dwSize;
 		}
 	}
 }

@@ -29,10 +29,13 @@ namespace TinyUI
 			BOOL	Unmap();
 			void*	Address() const;
 			BOOL	IsValid() const;
+			DWORD	GetMapSize() const;
+			DWORD	GetSize() const;
 		private:
 			BOOL        m_bReadonly;
 			HANDLE		m_hFileMap;
 			void*       m_pMemory;
+			DWORD		m_dwSize;
 			DWORD		m_dwMapSize;
 		};
 	};

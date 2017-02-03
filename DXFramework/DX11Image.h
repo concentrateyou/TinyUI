@@ -27,7 +27,8 @@ namespace DXFramework
 		BOOL BitBlt(DX11& dx11, const TinyRectangle& dst, HDC hDCSrc, const TinyPoint& src);
 		BOOL Copy(DX11& dx11, ID3D11Texture2D* texture2D);
 		BOOL Copy(DX11& dx11, const BYTE* bits, LONG size);
-		BOOL Copy(DX11& dx11, const BYTE* bits, UINT pitch);
+		BOOL Map(DX11& dx11, BYTE *&lpData, UINT &pitch);
+		void Unmap(DX11& dx11);
 		BOOL Load(DX11& dx11, HANDLE hResource);
 		BOOL Load(DX11& dx11, const CHAR* pzFile);
 		BOOL Load(DX11& dx11, const BYTE* bits, DWORD dwSize);

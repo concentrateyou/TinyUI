@@ -84,6 +84,11 @@ namespace DXCapture
 	}
 	SharedTextureDATA* DX::GetSharedTextureDATA(DWORD dwSize)
 	{
+		if (m_textureMemery.GetSize() != dwSize)
+		{
+			m_textureMemery.Unmap();
+			m_textureMemery.Close();
+		}
 		if (!m_textureMemery.Address())
 		{
 			if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE) &&
@@ -96,6 +101,11 @@ namespace DXCapture
 	}
 	BYTE* DX::GetSharedTexture(DWORD dwSize)
 	{
+		if (m_textureMemery.GetSize() != dwSize)
+		{
+			m_textureMemery.Unmap();
+			m_textureMemery.Close();
+		}
 		if (!m_textureMemery.Address())
 		{
 			if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE) &&

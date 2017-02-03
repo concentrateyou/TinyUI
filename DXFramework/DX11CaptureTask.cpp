@@ -92,6 +92,11 @@ namespace DXFramework
 	}
 	SharedTextureDATA* DX11CaptureTask::GetSharedTextureDATA(DWORD dwSize)
 	{
+		if (m_textureMemery.GetSize() != dwSize)
+		{
+			m_textureMemery.Unmap();
+			m_textureMemery.Close();
+		}
 		if (!m_textureMemery.Address())
 		{
 			if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE))
@@ -103,6 +108,11 @@ namespace DXFramework
 	}
 	BYTE*	DX11CaptureTask::GetSharedTexture(DWORD dwSize)
 	{
+		if (m_textureMemery.GetSize() != dwSize)
+		{
+			m_textureMemery.Unmap();
+			m_textureMemery.Close();
+		}
 		if (!m_textureMemery.Address())
 		{
 			if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE))

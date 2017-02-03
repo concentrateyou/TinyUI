@@ -57,14 +57,36 @@ namespace DXApp
 						DWORD dwNextMutex = (dwCurrentMutex == 1) ? 0 : 1;
 						if (m_mutes[dwCurrentMutex].Lock(0))
 						{
-							DX11Image::Copy(dx11, m_textures[dwCurrentMutex], pCaptureDATA->Pitch);
+							/*BYTE *lpData;
+							UINT iPitch;
+							if (Map(lpData, iPitch))
+							{
+								if (pCaptureDATA->Pitch == iPitch)
+									memcpy(lpData, m_textures[dwCurrentMutex], pitch*height);
+								else
+								{
+									UINT bestPitch = MIN(pitch, iPitch);
+									LPBYTE input = textureBuffers[curTexture];
+									for (UINT y = 0; y < height; y++)
+									{
+										LPBYTE curInput = ((LPBYTE)input) + (pitch*y);
+										LPBYTE curOutput = ((LPBYTE)lpData) + (iPitch*y);
+
+										memcpy(curOutput, curInput, bestPitch);
+									}
+								}
+
+								texture->Unmap();
+							}*/
+							//DX11Image::Copy(dx11, m_textures[dwCurrentMutex], pCaptureDATA->Pitch);
 							m_mutes[dwCurrentMutex].Unlock();
 							break;
 						}
 						if (m_mutes[dwNextMutex].Lock(0))
 						{
-							DX11Image::Copy(dx11, m_textures[dwNextMutex], pCaptureDATA->Pitch);
+							//DX11Image::Copy(dx11, m_textures[dwNextMutex], pCaptureDATA->Pitch);
 							m_mutes[dwCurrentMutex].Unlock();
+							//curTexture = nextTexture;
 							break;
 						}
 					} while (0);
