@@ -257,11 +257,11 @@ namespace DXCapture
 						if (FAILED(hRes))
 							return FALSE;
 						m_surfaces[i].copying = TRUE;
-						m_dataLock.Lock();
+						m_lock.Lock();
 						m_currentBits = lr.pBits;
 						m_dwPitch = lr.Pitch;
 						m_dwCurrentTexture = i;
-						m_dataLock.Unlock();
+						m_lock.Unlock();
 						m_copy.SetEvent();
 					}
 				}
@@ -395,10 +395,11 @@ namespace DXCapture
 
 			DWORD dwNextMutex = dwCurrentMutex == 0 ? 1 : 0;
 
-			m_dataLock.Lock();
+			m_lock.Lock();
 			dwCurrentTexture = m_dwCurrentTexture;
 			currentBits = m_currentBits;
-			m_dataLock.Unlock();
+			m_lock.Unlock();
+
 			if (dwCurrentTexture < NUM_BUFFERS && currentBits != NULL)
 			{
 				TinyAutoLock lock(m_locks[dwCurrentTexture]);

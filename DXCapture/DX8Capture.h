@@ -41,7 +41,7 @@ namespace DXCapture
 		LPBYTE							m_textures[2];
 		CaptureSurface8					m_surfaces[NUM_BUFFERS];
 		TinyLock						m_locks[NUM_BUFFERS];
-		TinyLock						m_dataLock;
+		TinyLock						m_lock;
 		void *volatile					m_currentBits;
 		DWORD							m_dwPitch;
 		DWORD							m_dwCurrentTexture;

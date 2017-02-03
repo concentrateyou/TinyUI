@@ -64,7 +64,6 @@ namespace DXApp
 						if (m_mutes[dwNextMutex].Lock(0))
 						{
 							DX11Image::Copy(dx11, m_textures[dwNextMutex], pCaptureDATA->Pitch);
-							dwCurrentMutex = dwNextMutex;
 							m_mutes[dwCurrentMutex].Unlock();
 							break;
 						}
