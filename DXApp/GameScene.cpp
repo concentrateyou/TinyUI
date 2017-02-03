@@ -6,8 +6,8 @@ namespace DXApp
 	IMPLEMENT_DYNAMIC(GameScene, DX11Image);
 	GameScene::GameScene()
 	{
-		m_mute1.Create(FALSE, TEXTURE_MUTEX1, NULL);
-		m_mute2.Create(FALSE, TEXTURE_MUTEX2, NULL);
+		m_mutes[0].Create(FALSE, TEXTURE_MUTEX1, NULL);
+		m_mutes[1].Create(FALSE, TEXTURE_MUTEX2, NULL);
 	}
 
 
@@ -46,6 +46,7 @@ namespace DXApp
 			SharedTextureDATA* pTextureDATA = m_captureTask->GetSharedTextureDATA(pCaptureDATA->MapSize);
 			if (pTextureDATA)
 			{
+				DWORD dwCurrentMutex = pTextureDATA->CurrentMutex;
 				BYTE* pBits = m_captureTask->GetSharedTexture(pCaptureDATA->MapSize);
 				m_textures[0] = pBits + pTextureDATA->Texture1Offset;
 				m_textures[1] = pBits + pTextureDATA->Texture2Offset;
@@ -53,16 +54,18 @@ namespace DXApp
 				{
 					do
 					{
-						if (m_mute1.Lock(0))
+						DWORD dwNextMutex = (dwCurrentMutex == 1) ? 0 : 1;
+						if (m_mutes[dwCurrentMutex].Lock(0))
 						{
-							DX11Image::Copy(dx11, m_textures[0], pCaptureDATA->Pitch);
-							m_mute1.Unlock();
+							DX11Image::Copy(dx11, m_textures[dwCurrentMutex], pCaptureDATA->Pitch);
+							m_mutes[dwCurrentMutex].Unlock();
 							break;
 						}
-						if (m_mute2.Lock(0))
+						if (m_mutes[dwNextMutex].Lock(0))
 						{
-							DX11Image::Copy(dx11, m_textures[1], pCaptureDATA->Pitch);
-							m_mute2.Unlock();
+							DX11Image::Copy(dx11, m_textures[dwNextMutex], pCaptureDATA->Pitch);
+							dwCurrentMutex = dwNextMutex;
+							m_mutes[dwCurrentMutex].Unlock();
 							break;
 						}
 					} while (0);

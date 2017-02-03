@@ -5,26 +5,26 @@ namespace DXCapture
 {
 	void ConvertPixelFormat(LPBYTE in, DWORD inPitch, D3DFORMAT inFormat, DWORD outWidth, DWORD outHeight, LPBYTE out)
 	{
-		bool x8r8g8b8 = false;
-		bool x1r5g5b5 = false;
-		bool r5g6b5 = false;
-		bool r3g3b2 = false;
+		BOOL x8r8g8b8 = FALSE;
+		BOOL x1r5g5b5 = FALSE;
+		BOOL r5g6b5 = FALSE;
+		BOOL r3g3b2 = FALSE;
 
 		switch (inFormat)
 		{
 		case D3DFMT_X8R8G8B8:
 		case D3DFMT_A8R8G8B8:
-			x8r8g8b8 = true;
+			x8r8g8b8 = TRUE;
 			break;
 		case D3DFMT_R5G6B5:
-			r5g6b5 = true;
+			r5g6b5 = TRUE;
 			break;
 		case D3DFMT_A1R5G5B5:
 		case D3DFMT_X1R5G5B5:
-			x1r5g5b5 = true;
+			x1r5g5b5 = TRUE;
 			break;
 		case D3DFMT_R3G3B2:
-			r3g3b2 = true;
+			r3g3b2 = TRUE;
 			break;
 		default:
 			return;
@@ -34,7 +34,7 @@ namespace DXCapture
 			LPBYTE src = in;
 			LPBYTE dst = out;
 			DWORD size = 4 * outWidth;
-			for (unsigned int i = 0; i < outHeight; i++)
+			for (DWORD i = 0; i < outHeight; i++)
 			{
 				memcpy(dst, src, size);
 				src += inPitch;
@@ -93,6 +93,7 @@ namespace DXCapture
 			}
 		}
 	}
+	//////////////////////////////////////////////////////////////////////////
 	HRESULT STDMETHODCALLTYPE DX8EndScene(IDirect3DDevice8 *device)
 	{
 		g_dx8.m_dX8EndScene.EndDetour();
@@ -144,7 +145,7 @@ namespace DXCapture
 		m_currentPointer(NULL),
 		m_currentBits(NULL),
 		m_dwCurrentTexture(0),
-		m_dwCurrentCapture(0)
+		m_dwCapture(0)
 	{
 		m_textures[0] = m_textures[1] = NULL;
 		m_copy.CreateEvent();
@@ -256,21 +257,22 @@ namespace DXCapture
 						if (FAILED(hRes))
 							return FALSE;
 						m_surfaces[i].copying = TRUE;
+						m_dataLock.Lock();
 						m_currentBits = lr.pBits;
 						m_dwPitch = lr.Pitch;
 						m_dwCurrentTexture = i;
+						m_dataLock.Unlock();
 						m_copy.SetEvent();
 					}
 				}
-				DWORD dwNextCapture = (m_dwCurrentCapture == NUM_BUFFERS - 1) ? 0 : (m_dwCurrentCapture + 1);
+				DWORD dwNextCapture = (m_dwCapture == NUM_BUFFERS - 1) ? 0 : (m_dwCapture + 1);
 				if (m_surfaces[dwNextCapture].copying)
 				{
-					m_surfaces[dwNextCapture].lock.Lock();
+					TinyAutoLock lock(m_locks[dwNextCapture]);
 					m_surfaces[dwNextCapture].surface->UnlockRect();
 					m_surfaces[dwNextCapture].copying = FALSE;
-					m_surfaces[dwNextCapture].lock.Unlock();
 				}
-				m_dwCurrentCapture = dwNextCapture;
+				m_dwCapture = dwNextCapture;
 			}
 		}
 		return TRUE;
@@ -371,7 +373,6 @@ namespace DXCapture
 		m_textures[0] = ps + sharedTexture->Texture1Offset;
 		m_textures[1] = ps + sharedTexture->Texture2Offset;
 		m_captureTask.Submit(BindCallback(&DX8Capture::OnMessagePump, this));
-		m_copy.SetEvent();
 		m_dx.m_ready.SetEvent();
 		return TRUE;
 	}
@@ -381,6 +382,7 @@ namespace DXCapture
 		HANDLE events[] = { NULL,NULL };
 		DuplicateHandle(GetCurrentProcess(), m_copy, GetCurrentProcess(), &events[0], 0, FALSE, DUPLICATE_SAME_ACCESS);
 		DuplicateHandle(GetCurrentProcess(), m_close, GetCurrentProcess(), &events[1], 0, FALSE, DUPLICATE_SAME_ACCESS);
+		DWORD dwCurrentMutex = 0;
 		for (;;)
 		{
 			DWORD dwCurrentTexture = 0;
@@ -390,28 +392,37 @@ namespace DXCapture
 			{
 				break;
 			}
+
+			DWORD dwNextMutex = dwCurrentMutex == 0 ? 1 : 0;
+
+			m_dataLock.Lock();
 			dwCurrentTexture = m_dwCurrentTexture;
 			currentBits = m_currentBits;
+			m_dataLock.Unlock();
 			if (dwCurrentTexture < NUM_BUFFERS && currentBits != NULL)
 			{
-				TinyAutoLock lock(m_surfaces[dwCurrentTexture].lock);
+				TinyAutoLock lock(m_locks[dwCurrentTexture]);
 				do
 				{
-					if (m_dx.m_mute1.Lock(0))
+					if (m_dx.m_mutes[dwCurrentMutex].Lock(0))
 					{
-						ConvertPixelFormat((LPBYTE)currentBits, m_dwPitch, m_d3dFormat, m_captureDATA.Size.cx, m_captureDATA.Size.cy, m_textures[0]);
+						ConvertPixelFormat((LPBYTE)currentBits, m_dwPitch, m_d3dFormat, m_captureDATA.Size.cx, m_captureDATA.Size.cy, m_textures[dwCurrentMutex]);
 						SharedTextureDATA* sharedTexture = m_dx.GetSharedTextureDATA(m_captureDATA.MapSize);
-						m_dx.m_mute1.Unlock();
+						sharedTexture->CurrentMutex = dwCurrentMutex;
+						m_dx.m_mutes[dwCurrentMutex].Unlock();
 						break;
 					}
-					if (m_dx.m_mute2.Lock(0))
+					if (m_dx.m_mutes[dwNextMutex].Lock(0))
 					{
-						ConvertPixelFormat((LPBYTE)currentBits, m_dwPitch, m_d3dFormat, m_captureDATA.Size.cx, m_captureDATA.Size.cy, m_textures[1]);
-						m_dx.m_mute2.Unlock();
+						ConvertPixelFormat((LPBYTE)currentBits, m_dwPitch, m_d3dFormat, m_captureDATA.Size.cx, m_captureDATA.Size.cy, m_textures[dwNextMutex]);
+						SharedTextureDATA* sharedTexture = m_dx.GetSharedTextureDATA(m_captureDATA.MapSize);
+						sharedTexture->CurrentMutex = dwNextMutex;
+						m_dx.m_mutes[dwNextMutex].Unlock();
 						break;
 					}
 				} while (0);
 			}
+			dwCurrentMutex = dwNextMutex;
 		}
 		for (INT i = 0; i < 2; i++)
 		{

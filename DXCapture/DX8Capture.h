@@ -13,7 +13,6 @@ namespace DXCapture
 	typedef struct tagCaptureSurface8
 	{
 		TinyComPtr<IDirect3DSurface8>	surface;
-		TinyLock						lock;
 		BOOL							copying;
 	}CaptureSurface8;
 	/// <summary>
@@ -39,13 +38,14 @@ namespace DXCapture
 		D3DFORMAT						m_d3dFormat;
 		DXGI_FORMAT						m_dxgiFormat;
 		IO::TinyTaskBase				m_captureTask;
-
 		LPBYTE							m_textures[2];
 		CaptureSurface8					m_surfaces[NUM_BUFFERS];
+		TinyLock						m_locks[NUM_BUFFERS];
+		TinyLock						m_dataLock;
 		void *volatile					m_currentBits;
 		DWORD							m_dwPitch;
 		DWORD							m_dwCurrentTexture;
-		DWORD							m_dwCurrentCapture;
+		DWORD							m_dwCapture;
 		TinyEvent						m_copy;
 		TinyEvent						m_close;
 		TinyDetour						m_dX8EndScene;

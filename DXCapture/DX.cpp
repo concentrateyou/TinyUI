@@ -43,11 +43,11 @@ namespace DXCapture
 	{
 		if (!BuildEvents())
 			return FALSE;
-		if (!m_mute1.Open(MUTEX_ALL_ACCESS, FALSE, TEXTURE_MUTEX1)
-			&& !m_mute1.Create(FALSE, TEXTURE_MUTEX1, NULL))
+		if (!m_mutes[0].Open(MUTEX_ALL_ACCESS, FALSE, TEXTURE_MUTEX1)
+			&& !m_mutes[0].Create(FALSE, TEXTURE_MUTEX1, NULL))
 			return FALSE;
-		if (!m_mute2.Open(MUTEX_ALL_ACCESS, FALSE, TEXTURE_MUTEX2)
-			&& !m_mute2.Create(FALSE, TEXTURE_MUTEX2, NULL))
+		if (!m_mutes[1].Open(MUTEX_ALL_ACCESS, FALSE, TEXTURE_MUTEX2)
+			&& !m_mutes[1].Create(FALSE, TEXTURE_MUTEX2, NULL))
 			return FALSE;
 		if (!m_captureMemery.Open(SHAREDCAPTURE_MEMORY) &&
 			!m_captureMemery.Create(SHAREDCAPTURE_MEMORY, sizeof(SharedCaptureDATA)))
@@ -59,8 +59,8 @@ namespace DXCapture
 	void DX::Uninitialize()
 	{
 		LOG(INFO) << "DX::Uninitialize\n";
-		m_mute1.Close();
-		m_mute2.Close();
+		m_mutes[0].Close();
+		m_mutes[1].Close();
 		m_start.Close();
 		m_stop.Close();
 		m_ready.Close();
