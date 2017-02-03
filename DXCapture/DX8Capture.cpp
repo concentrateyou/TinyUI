@@ -252,14 +252,14 @@ namespace DXCapture
 						hRes = d3d->CopyRects(backBuffer, NULL, 0, m_surfaces[i].surface, NULL);
 						if (FAILED(hRes))
 							return FALSE;
-						D3DLOCKED_RECT lr;
-						hRes = m_surfaces[i].surface->LockRect(&lr, NULL, D3DLOCK_READONLY);
+						D3DLOCKED_RECT s;
+						hRes = m_surfaces[i].surface->LockRect(&s, NULL, D3DLOCK_READONLY);
 						if (FAILED(hRes))
 							return FALSE;
 						m_surfaces[i].copying = TRUE;
 						m_lock.Lock();
-						m_currentBits = lr.pBits;
-						m_dwPitch = lr.Pitch;
+						m_currentBits = s.pBits;
+						m_dwPitch = s.Pitch;
 						m_dwCurrentTexture = i;
 						m_lock.Unlock();
 						m_copy.SetEvent();
