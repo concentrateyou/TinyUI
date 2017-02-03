@@ -1,6 +1,5 @@
 #pragma once
 #include "DX11Image.h"
-#include <dxgi1_2.h>
 
 namespace DXFramework
 {
@@ -14,7 +13,7 @@ namespace DXFramework
 		BOOL AcquireNextFrame(DX11& dx11,UINT timeout);
 	private:
 		DX11Image							m_image;
-		TinyComPtr<IDXGIOutputDuplication>	m_duplication;
+		//TinyComPtr<IDXGIOutputDuplication>	m_duplication;
 	};
 }
 

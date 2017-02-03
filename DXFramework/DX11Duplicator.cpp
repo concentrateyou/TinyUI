@@ -35,7 +35,7 @@ namespace DXFramework
 	}
 	BOOL DX11Duplicator::Initialize(DX11& dx11, UINT index)
 	{
-		HRESULT hRes = S_OK;
+		/*HRESULT hRes = S_OK;
 		TinyComPtr<IDXGIDevice> dxgi;
 		hRes = dx11.GetD3D()->QueryInterface(__uuidof(IDXGIDevice), (void**)&dxgi);
 		if (FAILED(hRes))
@@ -56,12 +56,12 @@ namespace DXFramework
 		if (FAILED(hRes))
 			return FALSE;
 		DXGI_OUTDUPL_DESC desc = { 0 };
-		m_duplication->GetDesc(&desc);
+		m_duplication->GetDesc(&desc);*/
 		return TRUE;
 	}
 	BOOL DX11Duplicator::AcquireNextFrame(DX11& dx11, UINT timeout)
 	{
-		if (!m_duplication)
+		/*if (!m_duplication)
 			return FALSE;
 		DXGI_OUTDUPL_FRAME_INFO s;
 		TinyComPtr<IDXGIResource> resource;
@@ -76,7 +76,7 @@ namespace DXFramework
 			return FALSE;
 		hRes = m_duplication->ReleaseFrame();
 		if (FAILED(hRes))
-			return FALSE;
+			return FALSE;*/
 		return TRUE;
 	}
 }
