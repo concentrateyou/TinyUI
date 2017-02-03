@@ -44,27 +44,29 @@ namespace DXApp
 		if (pCaptureDATA && pCaptureDATA->CaptureType == CAPTURETYPE_MEMORYTEXTURE)
 		{
 			SharedTextureDATA* pTextureDATA = m_captureTask->GetSharedTextureDATA(pCaptureDATA->MapSize);
-			m_textures[0] = reinterpret_cast<LPBYTE>(pTextureDATA) + pTextureDATA->Texture1Offset;
-			m_textures[1] = reinterpret_cast<LPBYTE>(pTextureDATA) + pTextureDATA->Texture2Offset;
-			DWORD dwCurrentIndex = pTextureDATA->CurrentIndex;
-			if (pTextureDATA && dwCurrentIndex < 2)
+			if (pTextureDATA)
 			{
-				DWORD dwNextIndex = (dwCurrentIndex == 1) ? 0 : 1;
-				do
+				BYTE* pBits = m_captureTask->GetSharedTexture(pCaptureDATA->MapSize);
+				m_textures[0] = pBits + pTextureDATA->Texture1Offset;
+				m_textures[1] = pBits + pTextureDATA->Texture2Offset;
+				if (pTextureDATA)
 				{
-					if (m_mute1.Lock(0))
+					do
 					{
-						DX11Image::Copy(dx11, m_textures[dwCurrentIndex], pCaptureDATA->Pitch);
-						m_mute1.Unlock();
-						break;
-					}
-					if (m_mute2.Lock(0))
-					{
-						DX11Image::Copy(dx11, m_textures[dwCurrentIndex], pCaptureDATA->Pitch);
-						m_mute2.Unlock();
-						break;
-					}
-				} while (0);
+						if (m_mute1.Lock(0))
+						{
+							DX11Image::Copy(dx11, m_textures[0], pCaptureDATA->Pitch);
+							m_mute1.Unlock();
+							break;
+						}
+						if (m_mute2.Lock(0))
+						{
+							DX11Image::Copy(dx11, m_textures[1], pCaptureDATA->Pitch);
+							m_mute2.Unlock();
+							break;
+						}
+					} while (0);
+				}
 			}
 		}
 		return DX11Image::Render(dx11);

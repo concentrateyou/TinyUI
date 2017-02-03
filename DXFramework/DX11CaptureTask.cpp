@@ -99,10 +99,19 @@ namespace DXFramework
 			if (!m_textureMemery.Map(0, dwSize))
 				return NULL;
 		}
-		SharedTextureDATA* pDATA = reinterpret_cast<SharedTextureDATA*>(m_textureMemery.Address());
-		return pDATA;
+		return reinterpret_cast<SharedTextureDATA*>(m_textureMemery.Address());
 	}
-
+	BYTE*	DX11CaptureTask::GetSharedTexture(DWORD dwSize)
+	{
+		if (!m_textureMemery.Address())
+		{
+			if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE))
+				return NULL;
+			if (!m_textureMemery.Map(0, dwSize))
+				return NULL;
+		}
+		return reinterpret_cast<LPBYTE>(m_textureMemery.Address());
+	}
 	BOOL CALLBACK DX11CaptureTask::EnumWindow(HWND hwnd, LPARAM lParam)
 	{
 		LPWNDINFO ws = reinterpret_cast<LPWNDINFO>(lParam);
@@ -182,7 +191,7 @@ namespace DXFramework
 			{
 				TinyAutoLock lock(*m_pDX11);
 				m_image.Destory();
-				if (!m_image.CreateCompatible(*m_pDX11, pCaptureDATA->Size))
+				if (!m_image.Create(*m_pDX11, pCaptureDATA->Size, NULL, FALSE))
 				{
 					TRACE("BeginCapture m_image.Create-FAIL\n");
 					return FALSE;

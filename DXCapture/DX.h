@@ -20,6 +20,7 @@ namespace DXCapture
 		void UnhookWindowsHook();
 		SharedCaptureDATA* GetSharedCaptureDATA();
 		SharedTextureDATA* GetSharedTextureDATA(DWORD dwSize = sizeof(SharedTextureDATA));
+		BYTE* GetSharedTexture(DWORD dwSize = sizeof(SharedTextureDATA));
 	private:
 		BOOL BuildEvents();
 	public:

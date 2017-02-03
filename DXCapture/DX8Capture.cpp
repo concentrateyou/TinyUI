@@ -3,7 +3,96 @@
 
 namespace DXCapture
 {
+	void ConvertPixelFormat(LPBYTE in, DWORD inPitch, D3DFORMAT inFormat, DWORD outWidth, DWORD outHeight, LPBYTE out)
+	{
+		bool x8r8g8b8 = false;
+		bool x1r5g5b5 = false;
+		bool r5g6b5 = false;
+		bool r3g3b2 = false;
 
+		switch (inFormat)
+		{
+		case D3DFMT_X8R8G8B8:
+		case D3DFMT_A8R8G8B8:
+			x8r8g8b8 = true;
+			break;
+		case D3DFMT_R5G6B5:
+			r5g6b5 = true;
+			break;
+		case D3DFMT_A1R5G5B5:
+		case D3DFMT_X1R5G5B5:
+			x1r5g5b5 = true;
+			break;
+		case D3DFMT_R3G3B2:
+			r3g3b2 = true;
+			break;
+		default:
+			return;
+		}
+		if (x8r8g8b8)
+		{
+			LPBYTE src = in;
+			LPBYTE dst = out;
+			DWORD size = 4 * outWidth;
+			for (unsigned int i = 0; i < outHeight; i++)
+			{
+				memcpy(dst, src, size);
+				src += inPitch;
+				dst += size;
+			}
+		}
+		else if (r5g6b5)
+		{
+			LPDWORD dst = (LPDWORD)out;
+			LPWORD src_row_begin = (LPWORD)in;
+			for (DWORD j = 0; j < outHeight; j++)
+			{
+				LPWORD src = src_row_begin;
+				for (DWORD i = 0; i < outWidth; i++)
+				{
+					WORD pxl = *src;
+					*dst = 0xFF000000 + ((0xF800 & pxl) << 8) + ((0x07E0 & pxl) << 5) + ((0x001F & pxl) << 3);
+					src++;
+					dst++;
+				}
+				src_row_begin += inPitch;
+			}
+		}
+		else if (x1r5g5b5)
+		{
+			LPDWORD dst = (LPDWORD)out;
+			LPWORD src_row_begin = (LPWORD)in;
+			for (DWORD j = 0; j < outHeight; j++)
+			{
+				LPWORD src = src_row_begin;
+				for (DWORD i = 0; i < outWidth; i++)
+				{
+					WORD pxl = *src;
+					*dst = 0xFF000000 + ((0x7C00 & pxl) << 9) + ((0x03E0 & pxl) << 6) + ((0x001F & pxl) << 3);
+					src++;
+					dst++;
+				}
+				src_row_begin += inPitch;
+			}
+		}
+		else if (r3g3b2)
+		{
+			LPDWORD dst = (LPDWORD)out;
+			LPBYTE src_row_begin = (LPBYTE)in;
+			for (DWORD j = 0; j < outHeight; j++)
+			{
+				LPBYTE src = src_row_begin;
+				for (DWORD i = 0; i < outWidth; i++)
+				{
+					BYTE pxl = *src;
+					*dst = 0xFF000000 + ((0xE0 & pxl) << 16) + ((0x1C & pxl) << 11) + ((0x03 & pxl) << 6);
+					src++;
+					dst++;
+				}
+				src_row_begin += inPitch;
+			}
+		}
+	}
 	HRESULT STDMETHODCALLTYPE DX8EndScene(IDirect3DDevice8 *device)
 	{
 		g_dx8.m_dX8EndScene.EndDetour();
@@ -54,11 +143,16 @@ namespace DXCapture
 		:m_dx(dx),
 		m_currentPointer(NULL),
 		m_currentBits(NULL),
-		m_currentTexture(0)
+		m_dwCurrentTexture(0),
+		m_dwCurrentCapture(0)
 	{
 		m_textures[0] = m_textures[1] = NULL;
 		m_copy.CreateEvent();
 		m_close.CreateEvent();
+		for (INT i = 0; i < NUM_BUFFERS; i++)
+		{
+			m_surfaces[i].copying = FALSE;
+		}
 	}
 	DX8Capture::~DX8Capture()
 	{
@@ -145,16 +239,38 @@ namespace DXCapture
 			}
 			if (m_bTextures)
 			{
-				UINT current = m_currentTexture;
-				UINT next = (current == NUM_BUFFERS - 1) ? 0 : current + 1;
-				BOOL bFlag = m_locks[next];
-				if (bFlag)
+				HRESULT hRes = S_OK;
+				TinyComPtr<IDirect3DSurface8> backBuffer;
+				hRes = d3d->GetRenderTarget(&backBuffer);
+				if (FAILED(hRes))
+					return FALSE;
+				for (INT i = 0; i < NUM_BUFFERS; i++)
 				{
-					m_mutexs[next].Lock();
-					m_surfaces[current]->UnlockRect();
-					m_locks[next] = FALSE;
+					if (!m_surfaces[i].copying)
+					{
+						hRes = d3d->CopyRects(backBuffer, NULL, 0, m_surfaces[i].surface, NULL);
+						if (FAILED(hRes))
+							return FALSE;
+						D3DLOCKED_RECT lr;
+						hRes = m_surfaces[i].surface->LockRect(&lr, NULL, D3DLOCK_READONLY);
+						if (FAILED(hRes))
+							return FALSE;
+						m_surfaces[i].copying = TRUE;
+						m_currentBits = lr.pBits;
+						m_dwPitch = lr.Pitch;
+						m_dwCurrentTexture = i;
+						m_copy.SetEvent();
+					}
 				}
-
+				DWORD dwNextCapture = (m_dwCurrentCapture == NUM_BUFFERS - 1) ? 0 : (m_dwCurrentCapture + 1);
+				if (m_surfaces[dwNextCapture].copying)
+				{
+					m_surfaces[dwNextCapture].lock.Lock();
+					m_surfaces[dwNextCapture].surface->UnlockRect();
+					m_surfaces[dwNextCapture].copying = FALSE;
+					m_surfaces[dwNextCapture].lock.Unlock();
+				}
+				m_dwCurrentCapture = dwNextCapture;
 			}
 		}
 		return TRUE;
@@ -167,9 +283,11 @@ namespace DXCapture
 		m_captureTask.Close(INFINITE);
 		for (INT i = 0; i < NUM_BUFFERS; i++)
 		{
-			if (m_surfaces[i])
-				m_surfaces[i]->UnlockRect();
-			m_surfaces[i].Release();
+			if (m_surfaces[i].surface)
+			{
+				m_surfaces[i].surface->UnlockRect();
+				m_surfaces[i].surface.Release();
+			}
 		}
 		m_dx.m_textureMemery.Unmap();
 		m_dx.m_textureMemery.Close();
@@ -188,24 +306,36 @@ namespace DXCapture
 			ZeroMemory(&desc, sizeof(desc));
 			if (SUCCEEDED(backBuffer->GetDesc(&desc)))
 			{
-				m_d3dFormat = desc.Format;
-				m_dxgiFormat = GetDXGIFormat8(desc.Format);
-				m_captureDATA.CaptureType = CAPTURETYPE_MEMORYTEXTURE;
-				m_captureDATA.Format = desc.Format;
-				m_captureDATA.Size.cx = desc.Width;
-				m_captureDATA.Size.cy = desc.Height;
-				m_captureDATA.Pitch = 4 * desc.Height;
-				m_dx.SetWindowsHook();
-				TinyComPtr<IDirect3D8> d3d8;
-				if (SUCCEEDED(device->GetDirect3D(&d3d8)))
+				switch (desc.Format)
 				{
-					m_dX8Present.Initialize(GetVTable(device, 15), (FARPROC)DX8Present);
-					m_dX8Reset.Initialize(GetVTable(device, 14), (FARPROC)DX8Reset);
-					m_dX8Present.BeginDetour();
-					m_dX8Reset.BeginDetour();
-					return TRUE;
+				case D3DFMT_A8R8G8B8:
+				case D3DFMT_X8R8G8B8:
+				case D3DFMT_R5G6B5:
+				case D3DFMT_A1R5G5B5:
+				case D3DFMT_X1R5G5B5:
+				case D3DFMT_R3G3B2:
+				{
+					m_d3dFormat = desc.Format;
+					m_dxgiFormat = GetDXGIFormat8(desc.Format);
+					m_captureDATA.CaptureType = CAPTURETYPE_MEMORYTEXTURE;
+					m_captureDATA.Format = desc.Format;
+					m_captureDATA.Size.cx = desc.Width;
+					m_captureDATA.Size.cy = desc.Height;
+					m_captureDATA.Pitch = 4 * desc.Width;
+					m_dx.SetWindowsHook();
+					TinyComPtr<IDirect3D8> d3d8;
+					if (SUCCEEDED(device->GetDirect3D(&d3d8)))
+					{
+						m_dX8Present.Initialize(GetVTable(device, 15), (FARPROC)DX8Present);
+						m_dX8Reset.Initialize(GetVTable(device, 14), (FARPROC)DX8Reset);
+						m_dX8Present.BeginDetour();
+						m_dX8Reset.BeginDetour();
+						return TRUE;
+					}
+					return FALSE;
 				}
-				return FALSE;
+				break;
+				}
 			}
 		}
 		return FALSE;
@@ -216,22 +346,19 @@ namespace DXCapture
 		m_captureDATA.bFlip = FALSE;
 		SharedCaptureDATA* sharedCapture = m_dx.GetSharedCaptureDATA();
 		memcpy(sharedCapture, &m_captureDATA, sizeof(m_captureDATA));
-
 		HRESULT hRes = S_OK;
 		for (INT i = 0; i < NUM_BUFFERS; i++)
 		{
-			hRes = device->CreateImageSurface(m_captureDATA.Size.cx, m_captureDATA.Size.cy, (D3DFORMAT)m_captureDATA.Format, &m_surfaces[i]);
+			hRes = device->CreateImageSurface(m_captureDATA.Size.cx, m_captureDATA.Size.cy, (D3DFORMAT)m_captureDATA.Format, &m_surfaces[i].surface);
 			if (FAILED(hRes))
 				return FALSE;
 		}
-
 		D3DLOCKED_RECT rect;
-		hRes = m_surfaces[0]->LockRect(&rect, NULL, D3DLOCK_READONLY);
+		hRes = m_surfaces[0].surface->LockRect(&rect, NULL, D3DLOCK_READONLY);
 		if (FAILED(hRes))
 			return FALSE;
-		m_captureDATA.Pitch = rect.Pitch;
-		m_surfaces[0]->UnlockRect();
-
+		m_dwPitch = rect.Pitch;
+		m_surfaces[0].surface->UnlockRect();
 		UINT size1 = (sizeof(SharedTextureDATA) + 15) & 0xFFFFFFF0;
 		UINT size2 = (m_captureDATA.Pitch * m_captureDATA.Size.cy + 15) & 0xFFFFFFF0;
 		m_captureDATA.MapSize = size1 + size2 * 2;
@@ -240,9 +367,11 @@ namespace DXCapture
 		sharedTexture->Texture2Offset = size1 + size2;
 		sharedTexture->FrameTime = 0;
 		sharedTexture->TextureHandle = NULL;
-		m_textures[0] = reinterpret_cast<LPBYTE>(sharedTexture) + size1;
-		m_textures[1] = reinterpret_cast<LPBYTE>(sharedTexture) + size1 + size2;
+		BYTE* ps = m_dx.GetSharedTexture(m_captureDATA.MapSize);
+		m_textures[0] = ps + sharedTexture->Texture1Offset;
+		m_textures[1] = ps + sharedTexture->Texture2Offset;
 		m_captureTask.Submit(BindCallback(&DX8Capture::OnMessagePump, this));
+		m_copy.SetEvent();
 		m_dx.m_ready.SetEvent();
 		return TRUE;
 	}
@@ -254,32 +383,34 @@ namespace DXCapture
 		DuplicateHandle(GetCurrentProcess(), m_close, GetCurrentProcess(), &events[1], 0, FALSE, DUPLICATE_SAME_ACCESS);
 		for (;;)
 		{
-			UINT currentTexture = 0;
+			DWORD dwCurrentTexture = 0;
 			void *currentBits = NULL;
 			hRes = WaitForMultipleObjects(2, events, FALSE, INFINITE);
 			if (hRes != WAIT_OBJECT_0)
 			{
 				break;
 			}
-			currentTexture = m_currentTexture;
+			dwCurrentTexture = m_dwCurrentTexture;
 			currentBits = m_currentBits;
-			if (currentTexture < NUM_BUFFERS && currentBits != NULL)
+			if (dwCurrentTexture < NUM_BUFFERS && currentBits != NULL)
 			{
-				m_mutexs[currentTexture].Lock();
+				TinyAutoLock lock(m_surfaces[dwCurrentTexture].lock);
 				do
 				{
 					if (m_dx.m_mute1.Lock(0))
 					{
-						memcpy(m_textures[0], currentBits, m_captureDATA.Pitch * m_captureDATA.Size.cy);
+						ConvertPixelFormat((LPBYTE)currentBits, m_dwPitch, m_d3dFormat, m_captureDATA.Size.cx, m_captureDATA.Size.cy, m_textures[0]);
+						SharedTextureDATA* sharedTexture = m_dx.GetSharedTextureDATA(m_captureDATA.MapSize);
+						m_dx.m_mute1.Unlock();
 						break;
 					}
 					if (m_dx.m_mute2.Lock(0))
 					{
-						memcpy(m_textures[1], currentBits, m_captureDATA.Pitch * m_captureDATA.Size.cy);
+						ConvertPixelFormat((LPBYTE)currentBits, m_dwPitch, m_d3dFormat, m_captureDATA.Size.cx, m_captureDATA.Size.cy, m_textures[1]);
+						m_dx.m_mute2.Unlock();
 						break;
 					}
 				} while (0);
-				m_mutexs[currentTexture].Unlock();
 			}
 		}
 		for (INT i = 0; i < 2; i++)

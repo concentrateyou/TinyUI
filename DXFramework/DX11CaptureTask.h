@@ -16,6 +16,7 @@ namespace DXFramework
 		BOOL					Close(DWORD dwMS = INFINITE) OVERRIDE;
 		SharedCaptureDATA*		GetSharedCaptureDATA();
 		SharedTextureDATA*		GetSharedTextureDATA(DWORD dwSize);
+		BYTE*					GetSharedTexture(DWORD dwSize);
 	private:
 		void					OnMessagePump();
 		WNDINFO					GetWNDINFO();

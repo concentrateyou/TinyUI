@@ -77,7 +77,7 @@ namespace DXFramework
 	{
 		HRESULT hRes = S_OK;
 		D3D11_MAPPED_SUBRESOURCE ms = { 0 };
-		if (SUCCEEDED(dx11.GetImmediateContext()->Map(m_texture2D, 0, D3D11_MAP_READ, 0, &ms)))
+		if (SUCCEEDED(dx11.GetImmediateContext()->Map(m_texture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &ms)))
 		{
 			lpData = (BYTE*)ms.pData;
 			pitch = ms.RowPitch;
@@ -122,8 +122,7 @@ namespace DXFramework
 		textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 		textureDesc.SampleDesc.Count = 1;
 		textureDesc.SampleDesc.Quality = 0;
-		textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-		textureDesc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
+		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 		textureDesc.CPUAccessFlags = bReadoly ? 0 : D3D11_CPU_ACCESS_WRITE;
 		textureDesc.Usage = bReadoly ? D3D11_USAGE_DEFAULT : D3D11_USAGE_DYNAMIC;
 		D3D11_SUBRESOURCE_DATA dsd;

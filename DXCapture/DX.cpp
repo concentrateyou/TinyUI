@@ -54,12 +54,6 @@ namespace DXCapture
 			return FALSE;
 		if (!m_captureMemery.Map(0, 0))
 			return FALSE;
-		if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE) &&
-			!m_textureMemery.Create(TEXTURE_MEMORY, sizeof(SharedTextureDATA)))
-			return FALSE;
-		if (!m_textureMemery.Map(0, 0))
-			return FALSE;
-
 		return TRUE;
 	}
 	void DX::Uninitialize()
@@ -95,10 +89,22 @@ namespace DXCapture
 			if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE) &&
 				!m_textureMemery.Create(TEXTURE_MEMORY, dwSize))
 				return NULL;
-			if (!m_textureMemery.Map(0, 0))
+			if (!m_textureMemery.Map(0, dwSize))
 				return NULL;
 		}
 		return reinterpret_cast<SharedTextureDATA*>(m_textureMemery.Address());
+	}
+	BYTE* DX::GetSharedTexture(DWORD dwSize)
+	{
+		if (!m_textureMemery.Address())
+		{
+			if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE) &&
+				!m_textureMemery.Create(TEXTURE_MEMORY, dwSize))
+				return NULL;
+			if (!m_textureMemery.Map(0, dwSize))
+				return NULL;
+		}
+		return reinterpret_cast<BYTE*>(m_textureMemery.Address());
 	}
 	BOOL DX::BuildEvents()
 	{
