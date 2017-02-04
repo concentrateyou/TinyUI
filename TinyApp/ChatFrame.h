@@ -7,7 +7,6 @@
 #include "Control/TinyButton.h"
 #include "Control/TinyLabel.h"
 #include "Control/TinyRichTextBox.h"
-
 #include "Render/TinyRectTracker.h"
 
 #include <sapi.h>

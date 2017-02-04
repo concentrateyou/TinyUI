@@ -52,20 +52,21 @@ BOOL LoadSeDebugPrivilege()
 	return TRUE;
 }
 
-Media::TinyWaveFile waveFile;
-void OnDecode(BYTE*bits, LONG size, LPVOID ps)
-{
-	if (size == 0)
-		waveFile.Create("D:\\12345.wav", reinterpret_cast<WAVEFORMATEX*>(ps));
-	waveFile.Write(bits, size);
-}
-
-void OnDecode1(BYTE*bits, LONG size, LPVOID ps)
-{
-	waveFile.Write(bits, size);
-}
+//Media::TinyWaveFile waveFile;
+//void OnDecode(BYTE*bits, LONG size, LPVOID ps)
+//{
+//	if (size == 0)
+//		waveFile.Create("D:\\12345.wav", reinterpret_cast<WAVEFORMATEX*>(ps));
+//	waveFile.Write(bits, size);
+//}
+//
+//void OnDecode1(BYTE*bits, LONG size, LPVOID ps)
+//{
+//	waveFile.Write(bits, size);
+//}
 
 #include "MFVideoCapture.h"
+
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -84,6 +85,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
+	
 	/*vector<MF::MFVideoCapture::Name> names;
 	MF::MFVideoCapture::GetDevices(names);
 	vector<MF::MFVideoCaptureParam> params;
