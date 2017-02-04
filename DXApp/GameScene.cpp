@@ -46,7 +46,7 @@ namespace DXApp
 			SharedTextureDATA* pTextureDATA = m_captureTask->GetSharedTextureDATA(pCaptureDATA->MapSize);
 			if (pTextureDATA)
 			{
-				DWORD dwCurrentMutex = pTextureDATA->CurrentMutex;
+				DWORD dwCurrentID = pTextureDATA->CurrentID;
 				BYTE* pBits = m_captureTask->GetSharedTexture(pCaptureDATA->MapSize);
 				m_textures[0] = pBits + pTextureDATA->Texture1Offset;
 				m_textures[1] = pBits + pTextureDATA->Texture2Offset;
@@ -54,39 +54,53 @@ namespace DXApp
 				{
 					do
 					{
-						DWORD dwNextMutex = (dwCurrentMutex == 1) ? 0 : 1;
-						if (m_mutes[dwCurrentMutex].Lock(0))
+						DWORD dwNextID = (dwCurrentID == 1) ? 0 : 1;
+						if (m_mutes[dwCurrentID].Lock(0))
 						{
-							/*BYTE *lpData;
+							BYTE *lpData;
 							UINT iPitch;
-							if (Map(lpData, iPitch))
+							if (Map(dx11, lpData, iPitch))
 							{
 								if (pCaptureDATA->Pitch == iPitch)
-									memcpy(lpData, m_textures[dwCurrentMutex], pitch*height);
+									memcpy(lpData, m_textures[dwCurrentID], pCaptureDATA->Pitch * m_size.cy);
 								else
 								{
-									UINT bestPitch = MIN(pitch, iPitch);
-									LPBYTE input = textureBuffers[curTexture];
-									for (UINT y = 0; y < height; y++)
+									UINT bestPitch = std::min<UINT>(pCaptureDATA->Pitch, iPitch);
+									LPBYTE input = m_textures[dwCurrentID];
+									for (INT y = 0; y < m_size.cy; y++)
 									{
-										LPBYTE curInput = ((LPBYTE)input) + (pitch*y);
+										LPBYTE curInput = ((LPBYTE)input) + (pCaptureDATA->Pitch*y);
 										LPBYTE curOutput = ((LPBYTE)lpData) + (iPitch*y);
-
 										memcpy(curOutput, curInput, bestPitch);
 									}
 								}
-
-								texture->Unmap();
-							}*/
-							//DX11Image::Copy(dx11, m_textures[dwCurrentMutex], pCaptureDATA->Pitch);
-							m_mutes[dwCurrentMutex].Unlock();
+								Unmap(dx11);
+							}
+							m_mutes[dwCurrentID].Unlock();
 							break;
 						}
-						if (m_mutes[dwNextMutex].Lock(0))
+						if (m_mutes[dwNextID].Lock(0))
 						{
-							//DX11Image::Copy(dx11, m_textures[dwNextMutex], pCaptureDATA->Pitch);
-							m_mutes[dwCurrentMutex].Unlock();
-							//curTexture = nextTexture;
+							BYTE *lpData;
+							UINT iPitch;
+							if (Map(dx11, lpData, iPitch))
+							{
+								if (pCaptureDATA->Pitch == iPitch)
+									memcpy(lpData, m_textures[dwNextID], pCaptureDATA->Pitch * m_size.cy);
+								else
+								{
+									UINT bestPitch = std::min<UINT>(pCaptureDATA->Pitch, iPitch);
+									LPBYTE input = m_textures[dwNextID];
+									for (INT y = 0; y < m_size.cy; y++)
+									{
+										LPBYTE curInput = ((LPBYTE)input) + (pCaptureDATA->Pitch * y);
+										LPBYTE curOutput = ((LPBYTE)lpData) + (iPitch*y);
+										memcpy(curOutput, curInput, bestPitch);
+									}
+								}
+								Unmap(dx11);
+							}
+							m_mutes[dwNextID].Unlock();
 							break;
 						}
 					} while (0);

@@ -66,7 +66,7 @@ namespace DXFramework
 		HANDLE      TextureHandle;
 		DWORD       Texture1Offset;
 		DWORD		Texture2Offset;
-		DWORD		CurrentMutex;
+		DWORD		CurrentID;
 	}SharedTextureDATA;
 #pragma pack(pop)
 }

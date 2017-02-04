@@ -6,12 +6,14 @@
 #include <DXGI.h>
 #include <string>
 #include "Common/TinyCore.h"
+#include "Common/TinyLogging.h"
 #include "Common/TinyHook.h"
 #include "Common/TinyTime.h"
 #include "Common/TinyString.h"
+#include "Render/TinyGDI.h"
 #include "IO/TinyTaskBase.h"
 #include "IO/TinySharedMemory.h"
-#include "Common/TinyLogging.h"
+
 using namespace TinyUI;
 #pragma comment(lib,"TinyUI.lib")
 #pragma comment(lib,"D3DX11.lib")
@@ -54,7 +56,7 @@ namespace DXCapture
 		HANDLE      TextureHandle;
 		DWORD       Texture1Offset;
 		DWORD		Texture2Offset;
-		DWORD		CurrentMutex;
+		DWORD		CurrentID;
 	}SharedTextureDATA;
 #pragma pack(pop)
 }
