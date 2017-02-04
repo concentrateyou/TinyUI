@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "DX.h"
+#include "DX8Capture.h"
 #include "DX9Capture.h"
 #include "DXGICapture.h"
 
