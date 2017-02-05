@@ -27,6 +27,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AudioToolkit", "AudioToolki
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MFCapture", "MFCapture\MFCapture.vcxproj", "{A49D09EE-2163-41B4-9157-92962DE7D038}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IntelQSV", "IntelQSV\IntelQSV.vcxproj", "{69A86D23-7246-46A0-B9B3-06A1795D2CEA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_MBCS|Win32 = Debug_MBCS|Win32
@@ -244,6 +246,26 @@ Global
 		{A49D09EE-2163-41B4-9157-92962DE7D038}.Release|Win32.Build.0 = Release|Win32
 		{A49D09EE-2163-41B4-9157-92962DE7D038}.Release|x64.ActiveCfg = Release|x64
 		{A49D09EE-2163-41B4-9157-92962DE7D038}.Release|x64.Build.0 = Release|x64
+		{69A86D23-7246-46A0-B9B3-06A1795D2CEA}.Debug_MBCS|Win32.ActiveCfg = Debug|Win32
+		{69A86D23-7246-46A0-B9B3-06A1795D2CEA}.Debug_MBCS|Win32.Build.0 = Debug|Win32
+		{69A86D23-7246-46A0-B9B3-06A1795D2CEA}.Debug_MBCS|x64.ActiveCfg = Debug|x64
+		{69A86D23-7246-46A0-B9B3-06A1795D2CEA}.Debug_MBCS|x64.Build.0 = Debug|x64
+		{69A86D23-7246-46A0-B9B3-06A1795D2CEA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{69A86D23-7246-46A0-B9B3-06A1795D2CEA}.Debug|Win32.Build.0 = Debug|Win32
+		{69A86D23-7246-46A0-B9B3-06A1795D2CEA}.Debug|x64.ActiveCfg = Debug|x64
+		{69A86D23-7246-46A0-B9B3-06A1795D2CEA}.Debug|x64.Build.0 = Debug|x64
+		{69A86D23-7246-46A0-B9B3-06A1795D2CEA}.Release_MBCS|Win32.ActiveCfg = Release|Win32
+		{69A86D23-7246-46A0-B9B3-06A1795D2CEA}.Release_MBCS|Win32.Build.0 = Release|Win32
+		{69A86D23-7246-46A0-B9B3-06A1795D2CEA}.Release_MBCS|x64.ActiveCfg = Release|x64
+		{69A86D23-7246-46A0-B9B3-06A1795D2CEA}.Release_MBCS|x64.Build.0 = Release|x64
+		{69A86D23-7246-46A0-B9B3-06A1795D2CEA}.Release_MT|Win32.ActiveCfg = Release|Win32
+		{69A86D23-7246-46A0-B9B3-06A1795D2CEA}.Release_MT|Win32.Build.0 = Release|Win32
+		{69A86D23-7246-46A0-B9B3-06A1795D2CEA}.Release_MT|x64.ActiveCfg = Release|x64
+		{69A86D23-7246-46A0-B9B3-06A1795D2CEA}.Release_MT|x64.Build.0 = Release|x64
+		{69A86D23-7246-46A0-B9B3-06A1795D2CEA}.Release|Win32.ActiveCfg = Release|Win32
+		{69A86D23-7246-46A0-B9B3-06A1795D2CEA}.Release|Win32.Build.0 = Release|Win32
+		{69A86D23-7246-46A0-B9B3-06A1795D2CEA}.Release|x64.ActiveCfg = Release|x64
+		{69A86D23-7246-46A0-B9B3-06A1795D2CEA}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
