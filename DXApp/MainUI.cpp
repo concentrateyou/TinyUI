@@ -250,10 +250,16 @@ namespace DXApp
 				if (QueryFullProcessImageName(hProcess, 0, windowExecutable, &size))
 				{
 					CHAR* pzName = PathFindFileName(windowExecutable);
+					string str;
+					str.resize(MAX_PATH);
+					GetModuleFileName(NULL, &str[0], MAX_PATH);
+					str = str.substr(0, str.find_last_of("\\", string::npos, 1));
+					str += "\\GameDetour.dll";
+					ASSERT(PathFileExists(str.c_str()));
 					if (!m_renderTask.Contain(&m_gameScene))
 					{
 						m_gameScene.Initialize(m_renderTask.GetGraphics().GetDX11());
-						m_gameScene.SetConfig(className, pzName, TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));
+						m_gameScene.SetConfig(className, pzName, str.c_str());
 						if (m_renderTask.Add(&m_gameScene))
 						{
 							m_gameScene.Process(m_renderTask.GetGraphics().GetDX11());
@@ -263,7 +269,7 @@ namespace DXApp
 					{
 						m_gameScene.Clear(m_renderTask.GetGraphics().GetDX11());
 						m_gameScene.Initialize(m_renderTask.GetGraphics().GetDX11());
-						m_gameScene.SetConfig(className, pzName, TEXT("D:\\Develop\\TinyUI\\Debug\\GameDetour.dll"));
+						m_gameScene.SetConfig(className, pzName, str.c_str());
 						m_gameScene.Process(m_renderTask.GetGraphics().GetDX11());
 					}
 				}
