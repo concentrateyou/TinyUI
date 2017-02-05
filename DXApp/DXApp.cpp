@@ -41,17 +41,50 @@ namespace DXApp
 	}
 }
 
-int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
+BOOL DwmIsCompositionEnabled(BOOL& bAllow)
+{
+	TinyScopedLibrary library("dwmapi.dll");
+	if (!library.IsValid())
+		return FALSE;
+	static HRESULT(WINAPI *DwmIsCompositionEnabled)(BOOL*) = NULL;
+	DwmIsCompositionEnabled = reinterpret_cast<decltype(DwmIsCompositionEnabled)>(library.GetFunctionPointer("DwmIsCompositionEnabled"));
+	if (!DwmIsCompositionEnabled)
+		return FALSE;
+	if (SUCCEEDED(DwmIsCompositionEnabled(&bAllow)))
+		return TRUE;
+	return FALSE;
+}
+
+BOOL DwmEnableComposition(BOOL bEnable)
+{
+	TinyScopedLibrary library("dwmapi.dll");
+	if (!library.IsValid())
+		return FALSE;
+	static HRESULT(WINAPI *DwmEnableComposition)(UINT) = NULL;
+	DwmEnableComposition = reinterpret_cast<decltype(DwmEnableComposition)>(library.GetFunctionPointer("DwmEnableComposition"));
+	if (!DwmEnableComposition)
+		return FALSE;
+	if (SUCCEEDED(DwmEnableComposition(bEnable)))
+		return TRUE;
+	return FALSE;
+}
+
+INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPTSTR    lpCmdLine,
-	_In_ int       nCmdShow)
+	_In_ INT       nCmdShow)
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
 	DXApp::LoadSeDebugPrivilege();
+	BOOL bComposition = FALSE;
+	DwmIsCompositionEnabled(bComposition);
+	DwmEnableComposition(FALSE);
 	DXApp::DXApplication app;
 	app.Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_DXAPP));
-	return app.Run();
+	INT iRes = app.Run();
+	DwmEnableComposition(bComposition);
+	return iRes;
 }
 

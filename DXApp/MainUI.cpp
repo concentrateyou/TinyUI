@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include <dwmapi.h>
 #include <string>
 #include "MainUI.h"
 #include "GameDlg.h"
@@ -11,8 +10,6 @@
 #include "Media/TinyWASAPIAudio.h"
 using namespace TinyUI::Media;
 using namespace std;
-
-#pragma comment(lib, "dwmapi.lib")
 
 namespace DXApp
 {
