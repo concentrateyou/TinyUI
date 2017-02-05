@@ -4,6 +4,12 @@
 
 namespace TinyUI
 {
+
+#define ALIGN16(SZ)                         ((SZ + 15) & (~15))
+#define ALIGN32(SZ)                         ((SZ + 31) & (~31))
+#define ALIGN64(SZ)                         ((SZ + 63) & (~63)) 
+#define ALIGN128(SZ)                        ((SZ + 127) & (~127))
+
 	namespace IO
 	{
 #define SIZEINCR    0x1000

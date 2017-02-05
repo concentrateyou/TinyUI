@@ -418,11 +418,15 @@ namespace DShow
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::BeginFlush(void)
 	{
+		TinyAutoLock lock(*m_pLock);
+		ASSERT(!m_bFlushing);
 		m_bFlushing = TRUE;
 		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE PinBase::EndFlush(void)
 	{
+		TinyAutoLock lock(*m_pLock);
+		ASSERT(m_bFlushing);
 		m_bFlushing = FALSE;
 		return NOERROR;
 	}

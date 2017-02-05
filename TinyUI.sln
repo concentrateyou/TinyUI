@@ -27,8 +27,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AudioToolkit", "AudioToolki
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MFCapture", "MFCapture\MFCapture.vcxproj", "{A49D09EE-2163-41B4-9157-92962DE7D038}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IntelQSV", "IntelQSV\IntelQSV.vcxproj", "{AE614B32-D75C-440F-8217-B6B2E072FCA0}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_MBCS|Win32 = Debug_MBCS|Win32
@@ -246,26 +244,6 @@ Global
 		{A49D09EE-2163-41B4-9157-92962DE7D038}.Release|Win32.Build.0 = Release|Win32
 		{A49D09EE-2163-41B4-9157-92962DE7D038}.Release|x64.ActiveCfg = Release|x64
 		{A49D09EE-2163-41B4-9157-92962DE7D038}.Release|x64.Build.0 = Release|x64
-		{AE614B32-D75C-440F-8217-B6B2E072FCA0}.Debug_MBCS|Win32.ActiveCfg = Debug|Win32
-		{AE614B32-D75C-440F-8217-B6B2E072FCA0}.Debug_MBCS|Win32.Build.0 = Debug|Win32
-		{AE614B32-D75C-440F-8217-B6B2E072FCA0}.Debug_MBCS|x64.ActiveCfg = Debug|x64
-		{AE614B32-D75C-440F-8217-B6B2E072FCA0}.Debug_MBCS|x64.Build.0 = Debug|x64
-		{AE614B32-D75C-440F-8217-B6B2E072FCA0}.Debug|Win32.ActiveCfg = Debug|Win32
-		{AE614B32-D75C-440F-8217-B6B2E072FCA0}.Debug|Win32.Build.0 = Debug|Win32
-		{AE614B32-D75C-440F-8217-B6B2E072FCA0}.Debug|x64.ActiveCfg = Debug|x64
-		{AE614B32-D75C-440F-8217-B6B2E072FCA0}.Debug|x64.Build.0 = Debug|x64
-		{AE614B32-D75C-440F-8217-B6B2E072FCA0}.Release_MBCS|Win32.ActiveCfg = Release|Win32
-		{AE614B32-D75C-440F-8217-B6B2E072FCA0}.Release_MBCS|Win32.Build.0 = Release|Win32
-		{AE614B32-D75C-440F-8217-B6B2E072FCA0}.Release_MBCS|x64.ActiveCfg = Release|x64
-		{AE614B32-D75C-440F-8217-B6B2E072FCA0}.Release_MBCS|x64.Build.0 = Release|x64
-		{AE614B32-D75C-440F-8217-B6B2E072FCA0}.Release_MT|Win32.ActiveCfg = Release|Win32
-		{AE614B32-D75C-440F-8217-B6B2E072FCA0}.Release_MT|Win32.Build.0 = Release|Win32
-		{AE614B32-D75C-440F-8217-B6B2E072FCA0}.Release_MT|x64.ActiveCfg = Release|x64
-		{AE614B32-D75C-440F-8217-B6B2E072FCA0}.Release_MT|x64.Build.0 = Release|x64
-		{AE614B32-D75C-440F-8217-B6B2E072FCA0}.Release|Win32.ActiveCfg = Release|Win32
-		{AE614B32-D75C-440F-8217-B6B2E072FCA0}.Release|Win32.Build.0 = Release|Win32
-		{AE614B32-D75C-440F-8217-B6B2E072FCA0}.Release|x64.ActiveCfg = Release|x64
-		{AE614B32-D75C-440F-8217-B6B2E072FCA0}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
