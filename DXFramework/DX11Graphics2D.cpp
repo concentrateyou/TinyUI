@@ -16,13 +16,17 @@ namespace DXFramework
 	{
 		if (!m_dx11.Initialize(hWND, 0, 0, size.cx, size.cy))
 			return FALSE;
-		if (!m_textureShader.Initialize(m_dx11,
-			TEXT("D:\\Develop\\TinyUI\\DXFramework\\texture.vs"),
-			TEXT("D:\\Develop\\TinyUI\\DXFramework\\texture.ps")))
+		string str;
+		str.resize(MAX_PATH);
+		GetModuleFileName(NULL, &str[0], MAX_PATH);
+		str = str.substr(0, str.find_last_of("\\", string::npos, 1));
+		string vs = str + "\\texture.vs";
+		string ps = str + "\\texture.ps";
+		if (!m_textureShader.Initialize(m_dx11, vs.c_str(), ps.c_str()))
 			return FALSE;
-		if (!m_colorShader.Initialize(m_dx11,
-			TEXT("D:\\Develop\\TinyUI\\DXFramework\\color.vs"),
-			TEXT("D:\\Develop\\TinyUI\\DXFramework\\color.ps")))
+		vs = str + "\\color.vs";
+		ps = str + "\\color.ps";
+		if (!m_colorShader.Initialize(m_dx11, vs.c_str(), ps.c_str()))
 			return FALSE;
 		m_camera.SetPosition(0.0F, 0.0F, -10.0F);
 		return TRUE;
@@ -66,7 +70,7 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
-	BOOL DX11Graphics2D::DrawRectangle(DX11Rectangle* ps,const TinyRectangle& rectangle)
+	BOOL DX11Graphics2D::DrawRectangle(DX11Rectangle* ps, const TinyRectangle& rectangle)
 	{
 		ASSERT(ps);
 		if (!ps->SetRectangle(m_dx11, rectangle))
