@@ -28,29 +28,22 @@ namespace Decode
 		switch (audio->codeID)
 		{
 		case FLV_CODECID_PCM:
-			ParsePCM(data + 1, size - 1);
-			break;
-		case FLV_CODECID_ADPCM:
-			break;
-		case FLV_CODECID_MP3:
-			ParseMP3(data + 1, size - 1);
-			break;
-		case FLV_CODECID_PCM_LE:
-			break;
-		case FLV_CODECID_NELLYMOSER_16KHZ_MONO:
-			break;
-		case FLV_CODECID_NELLYMOSER_8KHZ_MONO:
-			break;
-		case FLV_CODECID_NELLYMOSER:
-			break;
-		case FLV_CODECID_PCM_ALAW:
-			break;
-		case FLV_CODECID_PCM_MULAW:
+			ParsePCM(audio, data + 1, size - 1);
 			break;
 		case FLV_CODECID_AAC:
-			ParseAAC(data + 1, size - 1);
+			ParseAAC(audio, data + 1, size - 1);
+			break;
+		case FLV_CODECID_MP3:
+			ParseMP3(audio, data + 1, size - 1);
 			break;
 		case FLV_CODECID_SPEEX:
+		case FLV_CODECID_ADPCM:
+		case FLV_CODECID_PCM_LE:
+		case FLV_CODECID_NELLYMOSER_16KHZ_MONO:
+		case FLV_CODECID_NELLYMOSER_8KHZ_MONO:
+		case FLV_CODECID_NELLYMOSER:
+		case FLV_CODECID_PCM_ALAW:
+		case FLV_CODECID_PCM_MULAW:
 			break;
 		default:
 			break;
@@ -58,18 +51,18 @@ namespace Decode
 	}
 	void FLVDecode::ParseScript(BYTE* data, INT size)
 	{
-
+		//TODO
 	}
 
-	void FLVDecode::ParseAAC(BYTE* data, INT size)
+	void FLVDecode::ParseAAC(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
 	{
 
 	}
-	void FLVDecode::ParseMP3(BYTE* data, INT size)
+	void FLVDecode::ParseMP3(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
 	{
 
 	}
-	void FLVDecode::ParsePCM(BYTE* data, INT size)
+	void FLVDecode::ParsePCM(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
 	{
 
 	}

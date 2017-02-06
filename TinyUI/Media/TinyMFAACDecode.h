@@ -16,8 +16,6 @@ namespace TinyUI
 			virtual ~TinyMFAACDecode();
 		public:
 			BOOL Open(const WAVEFORMATEX* pFMT, Callback<void(BYTE*, LONG, LPVOID)>&& callback);
-		protected:
-
 		};
 	};
 }

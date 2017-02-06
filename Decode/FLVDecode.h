@@ -35,7 +35,15 @@ namespace Decode
 		BYTE codeID : 4;
 	}FLV_TAG_AUDIO;
 
-	enum FLV_CODECID
+	enum FLV_SAMPLERATE
+	{
+		FLV_SAMPLERATE_SPECIAL = 0,
+		FLV_SAMPLERATE_11025HZ = 1,
+		FLV_SAMPLERATE_22050HZ = 2,
+		FLV_SAMPLERATE_44100HZ = 3
+	};
+
+	enum FLV_AUDIO_CODECID
 	{
 		FLV_CODECID_PCM = 0,
 		FLV_CODECID_ADPCM = 1,
@@ -50,6 +58,16 @@ namespace Decode
 		FLV_CODECID_SPEEX = 11
 	};
 
+	enum FLV_VIDEO_CODECID
+	{
+		FLV_CODECID_H263 = 2,
+		FLV_CODECID_SCREEN = 3,
+		FLV_CODECID_VP6 = 4,
+		FLV_CODECID_VP6A = 5,
+		FLV_CODECID_SCREEN2 = 6,
+		FLV_CODECID_H264 = 7,
+	};
+
 	class FLVDecode
 	{
 	public:
@@ -60,9 +78,9 @@ namespace Decode
 		void ParseVideo(BYTE* data, INT size);
 		void ParseAudio(BYTE* data, INT size);
 		void ParseScript(BYTE* data, INT size);
-		void ParseAAC(BYTE* data, INT size);
-		void ParseMP3(BYTE* data, INT size);
-		void ParsePCM(BYTE* data, INT size);
+		void ParseAAC(FLV_TAG_AUDIO* audio, BYTE* data, INT size);
+		void ParseMP3(FLV_TAG_AUDIO* audio, BYTE* data, INT size);
+		void ParsePCM(FLV_TAG_AUDIO* audio, BYTE* data, INT size);
 	private:
 		FLV_HEADER	m_header;
 		FILE*		m_hFile;

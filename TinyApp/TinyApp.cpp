@@ -20,6 +20,7 @@
 #include "Media/TinyMFMP3Decode.h"
 
 #include "MPG123Decode.h"
+#include "FLVDecode.h"
 
 BOOL LoadSeDebugPrivilege()
 {
@@ -85,6 +86,8 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
+	Decode::FLVDecode decode("D:\\1474360090.flv");
+	decode.Decode();
 	
 	/*vector<MF::MFVideoCapture::Name> names;
 	MF::MFVideoCapture::GetDevices(names);
