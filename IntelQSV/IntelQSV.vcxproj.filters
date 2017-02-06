@@ -33,6 +33,15 @@
     <ClInclude Include="common\common_utils.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="common\common_directx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="QSVEncode.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="common\bits\linux_defs.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -45,6 +54,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="common\common_utils_windows.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="common\common_directx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="QSVEncode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
