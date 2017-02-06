@@ -229,6 +229,7 @@ namespace DXFramework
 		m_captureMemory.Unmap();
 		m_captureMemory.Close();
 		m_bCapturing = FALSE;
+		m_image.Destory();
 		return TRUE;
 	}
 	BOOL DX11CaptureTask::AttemptCapture(const TinyString& className, const TinyString& exeName, const TinyString& dllName)

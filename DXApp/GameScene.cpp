@@ -59,7 +59,7 @@ namespace DXApp
 						{
 							BYTE *lpData;
 							UINT iPitch;
-							if (Map(dx11, lpData, iPitch))
+							if (this->Map(dx11, lpData, iPitch))
 							{
 								if (pCaptureDATA->Pitch == iPitch)
 									memcpy(lpData, m_textures[dwCurrentID], pCaptureDATA->Pitch * m_size.cy);
@@ -74,7 +74,7 @@ namespace DXApp
 										memcpy(curOutput, curInput, bestPitch);
 									}
 								}
-								Unmap(dx11);
+								this->Unmap(dx11);
 							}
 							m_mutes[dwCurrentID].Unlock();
 							break;
@@ -83,7 +83,7 @@ namespace DXApp
 						{
 							BYTE *lpData;
 							UINT iPitch;
-							if (Map(dx11, lpData, iPitch))
+							if (this->Map(dx11, lpData, iPitch))
 							{
 								if (pCaptureDATA->Pitch == iPitch)
 									memcpy(lpData, m_textures[dwNextID], pCaptureDATA->Pitch * m_size.cy);
@@ -98,7 +98,7 @@ namespace DXApp
 										memcpy(curOutput, curInput, bestPitch);
 									}
 								}
-								Unmap(dx11);
+								this->Unmap(dx11);
 							}
 							m_mutes[dwNextID].Unlock();
 							break;
