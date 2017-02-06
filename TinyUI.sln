@@ -27,6 +27,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AudioToolkit", "AudioToolki
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MFCapture", "MFCapture\MFCapture.vcxproj", "{A49D09EE-2163-41B4-9157-92962DE7D038}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IntelQSV", "IntelQSV\IntelQSV.vcxproj", "{681511E3-1B32-43C5-89F4-18A20C1590C9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_MBCS|Win32 = Debug_MBCS|Win32
@@ -244,6 +246,26 @@ Global
 		{A49D09EE-2163-41B4-9157-92962DE7D038}.Release|Win32.Build.0 = Release|Win32
 		{A49D09EE-2163-41B4-9157-92962DE7D038}.Release|x64.ActiveCfg = Release|x64
 		{A49D09EE-2163-41B4-9157-92962DE7D038}.Release|x64.Build.0 = Release|x64
+		{681511E3-1B32-43C5-89F4-18A20C1590C9}.Debug_MBCS|Win32.ActiveCfg = Debug|Win32
+		{681511E3-1B32-43C5-89F4-18A20C1590C9}.Debug_MBCS|Win32.Build.0 = Debug|Win32
+		{681511E3-1B32-43C5-89F4-18A20C1590C9}.Debug_MBCS|x64.ActiveCfg = Debug|x64
+		{681511E3-1B32-43C5-89F4-18A20C1590C9}.Debug_MBCS|x64.Build.0 = Debug|x64
+		{681511E3-1B32-43C5-89F4-18A20C1590C9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{681511E3-1B32-43C5-89F4-18A20C1590C9}.Debug|Win32.Build.0 = Debug|Win32
+		{681511E3-1B32-43C5-89F4-18A20C1590C9}.Debug|x64.ActiveCfg = Debug|x64
+		{681511E3-1B32-43C5-89F4-18A20C1590C9}.Debug|x64.Build.0 = Debug|x64
+		{681511E3-1B32-43C5-89F4-18A20C1590C9}.Release_MBCS|Win32.ActiveCfg = Release|Win32
+		{681511E3-1B32-43C5-89F4-18A20C1590C9}.Release_MBCS|Win32.Build.0 = Release|Win32
+		{681511E3-1B32-43C5-89F4-18A20C1590C9}.Release_MBCS|x64.ActiveCfg = Release|x64
+		{681511E3-1B32-43C5-89F4-18A20C1590C9}.Release_MBCS|x64.Build.0 = Release|x64
+		{681511E3-1B32-43C5-89F4-18A20C1590C9}.Release_MT|Win32.ActiveCfg = Release|Win32
+		{681511E3-1B32-43C5-89F4-18A20C1590C9}.Release_MT|Win32.Build.0 = Release|Win32
+		{681511E3-1B32-43C5-89F4-18A20C1590C9}.Release_MT|x64.ActiveCfg = Release|x64
+		{681511E3-1B32-43C5-89F4-18A20C1590C9}.Release_MT|x64.Build.0 = Release|x64
+		{681511E3-1B32-43C5-89F4-18A20C1590C9}.Release|Win32.ActiveCfg = Release|Win32
+		{681511E3-1B32-43C5-89F4-18A20C1590C9}.Release|Win32.Build.0 = Release|Win32
+		{681511E3-1B32-43C5-89F4-18A20C1590C9}.Release|x64.ActiveCfg = Release|x64
+		{681511E3-1B32-43C5-89F4-18A20C1590C9}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
