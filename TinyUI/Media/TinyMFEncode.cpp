@@ -224,7 +224,7 @@ namespace TinyUI
 			}
 			return TRUE;
 		}
-		BOOL TinyMFEncode::Decode(const BYTE* bits, DWORD size)
+		BOOL TinyMFEncode::Encode(const BYTE* bits, DWORD size)
 		{
 			if (!CreateInputSample(bits, size))
 				return FALSE;

@@ -2,6 +2,8 @@
 #pragma once
 #include "TinyMedia.h"
 #include "TinyWave.h"
+#include "TinyMFMP3Encode.h"
+#include "TinyMFMP3Decode.h"
 
 namespace TinyUI
 {
@@ -21,6 +23,8 @@ namespace TinyUI
 			BOOL Open(LPTSTR pzFile);
 			BOOL Read(BYTE* lpBuffer, LONG nNumberOfBytesToRead, LPLONG lpNumberOfBytesRead, LONGLONG& timestamp);
 			BOOL Write(BYTE* lpBuffer, LONG nNumberOfBytesToRead);
+			BOOL ResetFile();
+			BOOL Close();
 		private:
 			DWORD						m_dwMaxOutputBytes;
 			LONG						m_bitRate;

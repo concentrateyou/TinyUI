@@ -15,7 +15,7 @@ namespace TinyUI
 			virtual void OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter);
 		public:
 			BOOL Open(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType, Callback<void(BYTE*, LONG, LPVOID)>&& callback);
-			BOOL Decode(const BYTE* bits, DWORD size);
+			BOOL Encode(const BYTE* bits, DWORD size);
 			BOOL Close();
 		private:
 			BOOL Create(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType);

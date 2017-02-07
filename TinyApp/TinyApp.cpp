@@ -66,14 +66,20 @@ BOOL LoadSeDebugPrivilege()
 //	waveFile.Write(bits, size);
 //}
 
+
+void OnEncodeMP3(BYTE*bits, LONG size, LPVOID ps)
+{
+
+}
+
 #include "MFVideoCapture.h"
 
-//Media::TinyWaveFile waveFile;
-//
-//void OnDecodeMP3(BYTE*bits, LONG size, LPVOID ps)
-//{
-//	waveFile.Write(bits, size);
-//}
+Media::TinyMP3File mp3File;
+
+void OnDecodeMP3(BYTE*bits, LONG size, LPVOID ps)
+{
+	mp3File.Write(bits, size);
+}
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -174,6 +180,22 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 			break;
 		bRes = decode.Decode(bits, nNumberOfBytesRead);
 	}*/
+
+	Media::TinyWaveFile waveFile;
+	BOOL bRes = waveFile.Open("D:\\赵雷-三十岁的女人.wav");
+	Media::TinyMFMP3Encode encode;
+	WAVEFORMATEX sFMT = *waveFile.GetFormat();
+	bRes = encode.Open(&sFMT, BindCallback(&OnEncodeMP3));
+	BYTE bits[1024 * 8];
+	LONG nNumberOfBytesRead;
+	for (;;)
+	{
+		bRes = waveFile.Read(bits, 1024 * 8, &nNumberOfBytesRead);
+		if (!bRes)
+			break;
+		bRes = encode.Encode(bits, nNumberOfBytesRead);
+	}
+
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));

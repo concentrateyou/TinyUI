@@ -71,10 +71,12 @@ namespace TinyUI
 			if (FAILED(hRes))
 				return FALSE;
 			m_duration = val.ulVal;//(val.ulVal / 10000000L);
+			PropVariantClear(&val);
 			hRes = m_reader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_TOTAL_FILE_SIZE, &val);
 			if (FAILED(hRes))
 				return FALSE;
 			m_size = val.ulVal;
+			PropVariantClear(&val);
 			hRes = m_reader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_AUDIO_ENCODING_BITRATE, &val);
 			if (FAILED(hRes))
 				return FALSE;
@@ -156,6 +158,25 @@ namespace TinyUI
 		BOOL TinyMP3File::Write(BYTE* lpBuffer, LONG nNumberOfBytesToRead)
 		{
 			ASSERT(m_writer);
+			return TRUE;
+		}
+		BOOL TinyMP3File::ResetFile()
+		{
+			PROPVARIANT val;
+			HRESULT	hRes = m_reader->SetCurrentPosition(GUID_NULL, val);
+			if (FAILED(hRes))
+				return FALSE;
+			hRes = InitPropVariantFromInt64(0, &val);
+			if (FAILED(hRes))
+				return FALSE;
+			PropVariantClear(&val);
+			return TRUE;
+		}
+		BOOL TinyMP3File::Close()
+		{
+			if (m_reader)
+				m_reader->Flush(MF_SOURCE_READER_FIRST_AUDIO_STREAM);
+			m_reader.Release();
 			return TRUE;
 		}
 	}
