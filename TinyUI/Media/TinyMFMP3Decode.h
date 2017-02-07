@@ -15,7 +15,7 @@ namespace TinyUI
 			TinyMFMP3Decode();
 			virtual ~TinyMFMP3Decode();
 		public:
-			BOOL Open(const WAVEFORMATEX* pFMT, DWORD dwSampleRate, Callback<void(BYTE*, LONG, LPVOID)>&& callback);
+			BOOL Open(const WAVEFORMATEX* pFMT, DWORD dwBitRate, Callback<void(BYTE*, LONG, LPVOID)>&& callback);
 		};
 	};
 }

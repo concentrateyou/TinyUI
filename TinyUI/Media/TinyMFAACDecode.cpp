@@ -61,12 +61,12 @@ namespace TinyUI
 			hRes = inputType->SetUINT32(MF_MT_AAC_PAYLOAD_TYPE, 0x01);//ADTS
 			if (FAILED(hRes))
 				return FALSE;
-			hRes = inputType->SetUINT32(MF_MT_AAC_AUDIO_PROFILE_LEVEL_INDICATION, 0xFE);
+			hRes = inputType->SetUINT32(MF_MT_AAC_AUDIO_PROFILE_LEVEL_INDICATION, 0x29);
 			if (FAILED(hRes))
 				return FALSE;
 			BYTE heaac[MF_MT_USER_DATA_SIZE] = { 0 };
 			heaac[0] = 1;
-			heaac[1] = 0xFE;
+			heaac[1] = 0x29;
 			UINT AUDIO_OBJECT_AAC_LC = 2;
 			UINT SAMPLE_FREQUENCY_IDX = GetSRIndex(pFMT->nSamplesPerSec);
 			UINT audioSpecificConfig = (AUDIO_OBJECT_AAC_LC << 11) | (SAMPLE_FREQUENCY_IDX << 7) | (pFMT->nChannels << 3);

@@ -14,7 +14,7 @@ namespace TinyUI
 		{
 
 		}
-		BOOL TinyMFMP3Decode::Open(const WAVEFORMATEX* pFMT, DWORD dwSampleRate, Callback<void(BYTE*, LONG, LPVOID)>&& callback)
+		BOOL TinyMFMP3Decode::Open(const WAVEFORMATEX* pFMT, DWORD dwBitRate, Callback<void(BYTE*, LONG, LPVOID)>&& callback)
 		{
 			HRESULT hRes = S_OK;
 			TinyComPtr<IMFMediaType> inputType;
@@ -25,7 +25,7 @@ namespace TinyUI
 			ZeroMemory(&sFMT, sizeof(sFMT));
 			sFMT.wID = MPEGLAYER3_ID_MPEG;
 			sFMT.fdwFlags = MPEGLAYER3_FLAG_PADDING_OFF;
-			sFMT.nBlockSize = WORD(144 * dwSampleRate / pFMT->nSamplesPerSec);
+			sFMT.nBlockSize = WORD(144 * pFMT->nSamplesPerSec / pFMT->nSamplesPerSec);
 			sFMT.nFramesPerBlock = 1;
 			sFMT.nCodecDelay = 0;
 			sFMT.wfx.wFormatTag = WAVE_FORMAT_MPEGLAYER3;
