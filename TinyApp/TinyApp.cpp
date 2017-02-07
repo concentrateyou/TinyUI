@@ -68,7 +68,6 @@ BOOL LoadSeDebugPrivilege()
 
 #include "MFVideoCapture.h"
 
-
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -86,8 +85,8 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
-	Decode::FLVDecode decode("D:\\1474360090.flv");
-	decode.Decode();
+	//Decode::FLVDecode decode("D:\\1474360090.flv");
+	//decode.Decode();
 	
 	/*vector<MF::MFVideoCapture::Name> names;
 	MF::MFVideoCapture::GetDevices(names);

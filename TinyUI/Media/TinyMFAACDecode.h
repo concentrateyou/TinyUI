@@ -18,9 +18,13 @@ namespace TinyUI
 			BYTE dependsOnCoreCoder : 1;
 			BYTE extensionFlag : 1;
 		}GASpecificConfig;
+
+#define MF_MT_USER_DATA_SIZE 14
+
 		/// <summary>
 		/// AAC½âÂë
 		/// https://msdn.microsoft.com/en-us/library/windows/desktop/dd742784(v=vs.85).aspx
+		/// https://wiki.multimedia.cx/index.php?title=MPEG-4_Audio#Audio_Specific_Config
 		/// </summary>
 		class TinyMFAACDecode : public TinyMFDecode
 		{
