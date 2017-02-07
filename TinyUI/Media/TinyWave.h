@@ -51,9 +51,9 @@ namespace TinyUI
 			BOOL Seek(LONG lOffset, INT iOrigin);
 			BOOL ResetFile();
 			void Close();
-			WAVEFORMATEX* GetFormat();
-			DWORD GetDataSize();
-			DWORD GetDataOffset();
+			WAVEFORMATEX* GetFormat() const;
+			DWORD GetSize() const;
+			DWORD GetDataOffset() const;
 		};
 		/// <summary>
 		/// Wave ‰»Î¿‡

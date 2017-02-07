@@ -447,6 +447,9 @@
     <ClInclude Include="Control\TinyCustomDialog.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
+    <ClInclude Include="Media\TinyMP3File.h">
+      <Filter>头文件\Media</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -826,6 +829,9 @@
     </ClCompile>
     <ClCompile Include="Control\TinyCustomDialog.cpp">
       <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\TinyMP3File.cpp">
+      <Filter>源文件\Media</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

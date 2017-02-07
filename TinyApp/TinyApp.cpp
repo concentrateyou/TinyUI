@@ -20,7 +20,7 @@
 #include "Media/TinyMFMP3Decode.h"
 
 #include "MPG123Decode.h"
-#include "FLVDecode.h"
+#include "Media/TinyMP3File.h"
 
 BOOL LoadSeDebugPrivilege()
 {
@@ -60,7 +60,7 @@ BOOL LoadSeDebugPrivilege()
 //		waveFile.Create("D:\\12345.wav", reinterpret_cast<WAVEFORMATEX*>(ps));
 //	waveFile.Write(bits, size);
 //}
-//
+
 //void OnDecode1(BYTE*bits, LONG size, LPVOID ps)
 //{
 //	waveFile.Write(bits, size);
@@ -87,7 +87,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	//Decode::FLVDecode decode("D:\\1474360090.flv");
 	//decode.Decode();
-	
+
 	/*vector<MF::MFVideoCapture::Name> names;
 	MF::MFVideoCapture::GetDevices(names);
 	vector<MF::MFVideoCaptureParam> params;
@@ -147,6 +147,13 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	timer.EndTime();
 	DWORD dwMS = timer.GetMicroseconds() / 1000;
 	TRACE("MPG123Decode-MS:%d\n", dwMS);*/
+
+	Media::TinyMP3File	mp3File;
+	mp3File.Open("D:\\Íõ·Æ - ´Ò´ÒÄÇÄê.mp3");
+	BYTE data[16000];
+	LONG nNumberOfBytesToRead = mp3File.GetFormat()->nAvgBytesPerSec;
+	LONG nNumberOfBytesRead = 0;
+	mp3File.Read(data, nNumberOfBytesToRead, &nNumberOfBytesRead);
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));

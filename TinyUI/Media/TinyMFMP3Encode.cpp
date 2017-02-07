@@ -55,7 +55,7 @@ namespace TinyUI
 			hRes = outputType->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_MP3);
 			if (FAILED(hRes))
 				return FALSE;
-			hRes = outputType->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, pFMT->nAvgBytesPerSec);
+			hRes = outputType->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, pFMT->nAvgBytesPerSec);// 128000/8=16000
 			if (FAILED(hRes))
 				return FALSE;
 			hRes = outputType->SetUINT32(MF_MT_AUDIO_NUM_CHANNELS, pFMT->nChannels);

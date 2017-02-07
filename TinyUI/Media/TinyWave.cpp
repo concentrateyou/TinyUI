@@ -492,7 +492,7 @@ namespace TinyUI
 		}
 		DWORD TinyWavePlayer::GetDataSize()
 		{
-			return m_waveFile.GetDataSize();
+			return m_waveFile.GetSize();
 		}
 		void TinyWavePlayer::PlayData()
 		{
@@ -531,7 +531,7 @@ namespace TinyUI
 			{
 				m_bPlaying = TRUE;
 				m_dwBlockOut = m_dwBlockNext = 0;
-				m_dwSizeL = m_waveFile.GetDataSize();
+				m_dwSizeL = m_waveFile.GetSize();
 				PlayData();//²¥·ÅÊý¾Ý
 				if (m_waveOut.Restart() != MMSYSERR_NOERROR)
 					return FALSE;
@@ -866,15 +866,15 @@ namespace TinyUI
 				return FALSE;
 			return TRUE;
 		}
-		WAVEFORMATEX* TinyWaveFile::GetFormat()
+		WAVEFORMATEX* TinyWaveFile::GetFormat() const
 		{
 			return reinterpret_cast<WAVEFORMATEX*>(m_waveEx.Ptr());
 		}
-		DWORD TinyWaveFile::GetDataSize()
+		DWORD TinyWaveFile::GetSize() const
 		{
 			return m_dwSize;
 		}
-		DWORD TinyWaveFile::GetDataOffset()
+		DWORD TinyWaveFile::GetDataOffset() const
 		{
 			return m_dwDataOffset;
 		}
