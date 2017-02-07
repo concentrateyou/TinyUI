@@ -68,6 +68,13 @@ BOOL LoadSeDebugPrivilege()
 
 #include "MFVideoCapture.h"
 
+//Media::TinyWaveFile waveFile;
+//
+//void OnDecodeMP3(BYTE*bits, LONG size, LPVOID ps)
+//{
+//	waveFile.Write(bits, size);
+//}
+
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -84,9 +91,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	HRESULT hRes = OleInitialize(NULL);
 
 	LoadSeDebugPrivilege();
-
-	//Decode::FLVDecode decode("D:\\1474360090.flv");
-	//decode.Decode();
 
 	/*vector<MF::MFVideoCapture::Name> names;
 	MF::MFVideoCapture::GetDevices(names);
@@ -148,12 +152,28 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	DWORD dwMS = timer.GetMicroseconds() / 1000;
 	TRACE("MPG123Decode-MS:%d\n", dwMS);*/
 
+	/*BOOL bRes = FALSE;
 	Media::TinyMP3File	mp3File;
-	mp3File.Open("D:\\王菲 - 匆匆那年.mp3");
-	BYTE data[16000];
-	LONG nNumberOfBytesToRead = mp3File.GetFormat()->nAvgBytesPerSec;
+	bRes = mp3File.Open("D:\\Program Files (x86)\\kuwo\\kuwomusic\\song\\赵雷-三十岁的女人.mp3");
+	WAVEFORMATEX sMFT = mp3File.GetFormat()->wfx;
+	sMFT.wFormatTag = WAVE_FORMAT_PCM;
+	sMFT.wBitsPerSample = 16;
+	sMFT.nBlockAlign = (sMFT.nChannels * sMFT.wBitsPerSample) / 8;
+	sMFT.nAvgBytesPerSec = sMFT.nSamplesPerSec * sMFT.nBlockAlign;
+	sMFT.cbSize = 0;
+	bRes = waveFile.Create("D:\\123,wav", &sMFT);
+	Media::TinyMFMP3Decode decode;
+	bRes = decode.Open(mp3File.GetFormat(), BindCallback(&OnDecodeMP3));
 	LONG nNumberOfBytesRead = 0;
-	mp3File.Read(data, nNumberOfBytesToRead, &nNumberOfBytesRead);
+	LONGLONG timestamp = 0;
+	TinyScopedArray<BYTE> bits(new BYTE[mp3File.GetMaxOutputBytes()]);
+	for (;;)
+	{
+		bRes = mp3File.Read(bits, mp3File.GetMaxOutputBytes(), &nNumberOfBytesRead, timestamp);
+		if (!bRes)
+			break;
+		bRes = decode.Decode(bits, nNumberOfBytesRead);
+	}*/
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));

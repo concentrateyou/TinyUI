@@ -12,14 +12,18 @@ namespace TinyUI
 		public:
 			TinyMP3File();
 			~TinyMP3File();
-			WAVEFORMATEX* GetFormat();
+			MPEGLAYER3WAVEFORMAT* GetFormat();
 			LONG GetSize() const;
 			LONG GetDuration() const;
+			LONG GetBitRate() const;
+			DWORD GetMaxOutputBytes() const;
 			BOOL Create(LPTSTR pzFile, const WAVEFORMATEX* pWaveEx);
 			BOOL Open(LPTSTR pzFile);
-			BOOL Read(BYTE* lpBuffer, LONG nNumberOfBytesToRead, LPLONG lpNumberOfBytesRead);
+			BOOL Read(BYTE* lpBuffer, LONG nNumberOfBytesToRead, LPLONG lpNumberOfBytesRead, LONGLONG& timestamp);
 			BOOL Write(BYTE* lpBuffer, LONG nNumberOfBytesToRead);
 		private:
+			DWORD						m_dwMaxOutputBytes;
+			LONG						m_bitRate;
 			LONG						m_size;
 			LONG						m_duration;
 			MPEGLAYER3WAVEFORMAT		m_sFMT;

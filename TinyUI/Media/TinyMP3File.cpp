@@ -1,4 +1,5 @@
 #include "TinyMP3File.h"
+#include <propvarutil.h>
 
 namespace TinyUI
 {
@@ -6,7 +7,9 @@ namespace TinyUI
 	{
 		TinyMP3File::TinyMP3File()
 			:m_size(0),
-			m_duration(0)
+			m_duration(0),
+			m_bitRate(0),
+			m_dwMaxOutputBytes(0)
 		{
 			ZeroMemory(&m_sFMT, sizeof(m_sFMT));
 		}
@@ -14,9 +17,9 @@ namespace TinyUI
 		TinyMP3File::~TinyMP3File()
 		{
 		}
-		WAVEFORMATEX* TinyMP3File::GetFormat()
+		MPEGLAYER3WAVEFORMAT* TinyMP3File::GetFormat()
 		{
-			return reinterpret_cast<WAVEFORMATEX*>(&m_sFMT);
+			return &m_sFMT;
 		}
 		LONG TinyMP3File::GetSize() const
 		{
@@ -25,6 +28,14 @@ namespace TinyUI
 		LONG TinyMP3File::GetDuration() const
 		{
 			return m_duration;
+		}
+		LONG TinyMP3File::GetBitRate() const
+		{
+			return m_bitRate;
+		}
+		DWORD TinyMP3File::GetMaxOutputBytes() const
+		{
+			return m_dwMaxOutputBytes;
 		}
 		BOOL TinyMP3File::Open(LPTSTR pzFile)
 		{
@@ -60,12 +71,40 @@ namespace TinyUI
 			if (FAILED(hRes))
 				return FALSE;
 			m_duration = val.ulVal;//(val.ulVal / 10000000L);
-			PropVariantClear(&val);
 			hRes = m_reader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_TOTAL_FILE_SIZE, &val);
 			if (FAILED(hRes))
 				return FALSE;
 			m_size = val.ulVal;
+			hRes = m_reader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_AUDIO_ENCODING_BITRATE, &val);
+			if (FAILED(hRes))
+				return FALSE;
+			m_bitRate = val.ulVal;
 			PropVariantClear(&val);
+			LONGLONG timestamp = 0;
+			DWORD dwStreamIndex = 0;
+			DWORD dwFlags;
+			TinyComPtr<IMFSample> sample;
+			hRes = m_reader->ReadSample(MF_SOURCE_READER_FIRST_AUDIO_STREAM, 0, &dwStreamIndex, &dwFlags, &timestamp, &sample);
+			if (FAILED(hRes))
+				return FALSE;
+			TinyComPtr<IMFMediaBuffer> mediaBuffer;
+			hRes = sample->ConvertToContiguousBuffer(&mediaBuffer);
+			if (FAILED(hRes))
+				return FALSE;
+			BYTE* pBits = NULL;
+			hRes = mediaBuffer->Lock(&pBits, &m_dwMaxOutputBytes, NULL);
+			if (FAILED(hRes))
+				return FALSE;
+			hRes = mediaBuffer->Unlock();
+			if (FAILED(hRes))
+				return FALSE;
+			hRes = InitPropVariantFromInt64(0, &val);
+			if (FAILED(hRes))
+				return FALSE;
+			PropVariantClear(&val);
+			hRes = m_reader->SetCurrentPosition(GUID_NULL, val);
+			if (FAILED(hRes))
+				return FALSE;
 			return TRUE;
 		}
 		BOOL TinyMP3File::Create(LPTSTR pzFile, const WAVEFORMATEX* pWaveEx)
@@ -86,40 +125,32 @@ namespace TinyUI
 
 			return TRUE;
 		}
-		BOOL TinyMP3File::Read(BYTE* lpBuffer, LONG nNumberOfBytesToRead, LPLONG lpNumberOfBytesRead)
+		BOOL TinyMP3File::Read(BYTE* lpBuffer, LONG nNumberOfBytesToRead, LPLONG lpNumberOfBytesRead, LONGLONG& timestamp)
 		{
 			ASSERT(m_reader);
+			LONG offset = 0;
 			DWORD dwStreamIndex = 0;
 			DWORD dwFlags;
-			LONGLONG timestamp = 0;
 			TinyComPtr<IMFSample> sample;
 			HRESULT hRes = m_reader->ReadSample(MF_SOURCE_READER_FIRST_AUDIO_STREAM, 0, &dwStreamIndex, &dwFlags, &timestamp, &sample);
 			if (FAILED(hRes))
 				return FALSE;
 			if (dwFlags & MF_SOURCE_READERF_ENDOFSTREAM)
 				return FALSE;
-			LONG offset = 0;
-			DWORD dwMaxLength = 0;
-			while (offset < nNumberOfBytesToRead)
-			{
-				TinyComPtr<IMFMediaBuffer> mediaBuffer;
-				hRes = sample->ConvertToContiguousBuffer(&mediaBuffer);
-				if (FAILED(hRes))
-					return FALSE;
-				DWORD dwCurrentLength = 0;
-				BYTE* pBits = NULL;
-				hRes = mediaBuffer->Lock(&pBits, &dwMaxLength, &dwCurrentLength);
-				if (FAILED(hRes))
-					return FALSE;
-				memcpy(lpBuffer + offset, pBits, dwCurrentLength);
-				offset += dwCurrentLength;
-				hRes = mediaBuffer->Unlock();
-				if (FAILED(hRes))
-					return FALSE;
-				if ((offset + dwCurrentLength) >= nNumberOfBytesToRead)
-					break;
-			}
-			*lpNumberOfBytesRead = offset;
+			TinyComPtr<IMFMediaBuffer> mediaBuffer;
+			hRes = sample->ConvertToContiguousBuffer(&mediaBuffer);
+			if (FAILED(hRes))
+				return FALSE;
+			BYTE* pBits = NULL;
+			DWORD dwCurrentLength = 0;
+			hRes = mediaBuffer->Lock(&pBits, NULL, &dwCurrentLength);
+			if (FAILED(hRes))
+				return FALSE;
+			memcpy(lpBuffer, pBits, dwCurrentLength);
+			hRes = mediaBuffer->Unlock();
+			if (FAILED(hRes))
+				return FALSE;
+			*lpNumberOfBytesRead = dwCurrentLength;
 			return TRUE;
 		}
 		BOOL TinyMP3File::Write(BYTE* lpBuffer, LONG nNumberOfBytesToRead)
