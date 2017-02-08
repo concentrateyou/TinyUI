@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "Common/TinyCommon.h"
 #include "Common/TinyCallback.h"
+#include "Common/TinyEvent.h"
 using namespace TinyUI;
 
 namespace Utility

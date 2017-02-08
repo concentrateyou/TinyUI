@@ -135,6 +135,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AACDecode.h" />
     <ClInclude Include="AC3Decode.h" />
     <ClInclude Include="MPG123Decode.h" />
     <ClInclude Include="Utility.h" />
@@ -144,6 +145,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AACDecode.cpp" />
     <ClCompile Include="AC3Decode.cpp" />
     <ClCompile Include="MPG123Decode.cpp" />
     <ClCompile Include="Utility.cpp" />

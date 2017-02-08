@@ -67,7 +67,7 @@ namespace DXApp
 		m_config->useLfe = 0;
 		m_config->bandWidth = 0;
 		m_config->allowMidside = 0;
-		m_config->outputFormat = 1;
+		m_config->outputFormat = 1;//ADTS
 		m_config->shortctl = SHORTCTL_NORMAL;
 		m_config->bitRate = audioRate * 1000 / waveFMT.nChannels;//╠хльн╩
 		INT iRes = faacEncSetConfiguration(m_aac, m_config);

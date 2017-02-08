@@ -177,7 +177,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	}
 	decode.Close();*/
 
-
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
