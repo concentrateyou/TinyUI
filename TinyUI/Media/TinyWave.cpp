@@ -710,6 +710,7 @@ namespace TinyUI
 			{
 				if (wFormatSize < sizeof(PCMWAVEFORMAT))
 					goto MMIO_ERROR;
+				waveEx->cbSize = 0;
 			}
 			else
 			{

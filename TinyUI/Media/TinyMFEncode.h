@@ -6,6 +6,9 @@ namespace TinyUI
 {
 	namespace Media
 	{
+		/// <summary>
+		/// Win7以上版本支持
+		/// </summary>
 		class TinyMFEncode
 		{
 			DISALLOW_COPY_AND_ASSIGN(TinyMFEncode)
