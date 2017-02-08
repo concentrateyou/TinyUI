@@ -66,12 +66,12 @@ BOOL LoadSeDebugPrivilege()
 //	waveFile.Write(bits, size);
 //}
 
-Media::TinyWaveFile waveFile;
-
-void OnDecodeMP3(BYTE*bits, LONG size, LPVOID ps)
-{
-	waveFile.Write(bits, size);
-}
+//Media::TinyWaveFile waveFile;
+//
+//void OnDecodeMP3(BYTE*bits, LONG size, LPVOID ps)
+//{
+//	waveFile.Write(bits, size);
+//}
 
 #include "MFVideoCapture.h"
 
@@ -153,7 +153,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	DWORD dwMS = timer.GetMicroseconds() / 1000;
 	TRACE("MPG123Decode-MS:%d\n", dwMS);*/
 
-	BOOL bRes = FALSE;
+	/*BOOL bRes = FALSE;
 	Media::TinyMP3File	mp3File;
 	bRes = mp3File.Open("D:\\Íõ·Æ - ´Ò´ÒÄÇÄê.mp3");
 	WAVEFORMATEX sMFT = mp3File.GetFormat()->wfx;
@@ -175,7 +175,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 			break;
 		bRes = decode.Decode(bits, nNumberOfBytesRead);
 	}
-	decode.Close();
+	decode.Close();*/
 
 
 	::DefWindowProc(NULL, 0, 0, 0L);

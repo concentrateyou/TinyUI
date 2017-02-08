@@ -25,22 +25,22 @@ namespace TinyUI
 			hRes = unknow->QueryInterface(IID_PPV_ARGS(&m_transform));
 			if (FAILED(hRes))
 				return FALSE;
-			if (inputType != NULL)
-			{
-				hRes = m_transform->SetInputType(0, inputType, 0);
-				if (FAILED(hRes))
-					return FALSE;
-			}
 			if (outputType != NULL)
 			{
 				hRes = m_transform->SetOutputType(0, outputType, 0);
 				if (FAILED(hRes))
 					return FALSE;
 			}
-			hRes = m_transform->GetInputStreamInfo(0, &m_inputInfo);
+			if (inputType != NULL)
+			{
+				hRes = m_transform->SetInputType(0, inputType, 0);
+				if (FAILED(hRes))
+					return FALSE;
+			}
+			hRes = m_transform->GetOutputStreamInfo(0, &m_outputInfo);
 			if (FAILED(hRes))
 				return FALSE;
-			hRes = m_transform->GetOutputStreamInfo(0, &m_outputInfo);
+			hRes = m_transform->GetInputStreamInfo(0, &m_inputInfo);
 			if (FAILED(hRes))
 				return FALSE;
 			return TRUE;
