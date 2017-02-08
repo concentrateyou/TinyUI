@@ -1,5 +1,6 @@
 #pragma once
 #include "Utility.h"
+#include "AACDecode.h"
 using namespace TinyUI;
 
 namespace Decode
@@ -68,11 +69,11 @@ namespace Decode
 		FLV_CODECID_H264 = 7,
 	};
 
-	class FLVDecode
+	class FLVFile
 	{
 	public:
-		FLVDecode(LPCSTR pzFile);
-		~FLVDecode();
+		FLVFile(LPCSTR pzFile);
+		~FLVFile();
 		BOOL Decode();
 	private:
 		void ParseVideo(BYTE* data, INT size);
@@ -86,6 +87,9 @@ namespace Decode
 		FILE*		m_hFile;
 		BOOL		m_bAudio;
 		BOOL		m_bVideo;
+		TinyScopedPtr<AACDecode> m_aac;
+		Event<void(BYTE*, LONG, LPVOID)> EVENT_AUDIO;
+		Event<void(BYTE*, LONG, LPVOID)> EVENT_VIDEO;
 	};
 }
 

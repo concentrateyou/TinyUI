@@ -139,7 +139,7 @@
     <ClInclude Include="AC3Decode.h" />
     <ClInclude Include="MPG123Decode.h" />
     <ClInclude Include="Utility.h" />
-    <ClInclude Include="FLVDecode.h" />
+    <ClInclude Include="FLVFile.h" />
     <ClInclude Include="TSDecode.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -149,7 +149,7 @@
     <ClCompile Include="AC3Decode.cpp" />
     <ClCompile Include="MPG123Decode.cpp" />
     <ClCompile Include="Utility.cpp" />
-    <ClCompile Include="FLVDecode.cpp" />
+    <ClCompile Include="FLVFile.cpp" />
     <ClCompile Include="TSDecode.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

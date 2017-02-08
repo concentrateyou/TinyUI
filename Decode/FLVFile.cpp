@@ -1,14 +1,20 @@
 #include "stdafx.h"
-#include "FLVDecode.h"
+#include "FLVFile.h"
 
 namespace Decode
 {
-	FLVDecode::FLVDecode(LPCSTR pzFile)
+	const INT SampleRates[16] =
+	{
+		96000, 88200, 64000, 48000, 44100, 32000,
+		24000, 22050, 16000, 12000, 11025, 8000, 7350
+	};
+	//////////////////////////////////////////////////////////////////////////
+	FLVFile::FLVFile(LPCSTR pzFile)
 		:m_hFile(NULL)
 	{
 		fopen_s(&m_hFile, pzFile, "rb");
 	}
-	FLVDecode::~FLVDecode()
+	FLVFile::~FLVFile()
 	{
 		if (m_hFile != NULL)
 		{
@@ -16,12 +22,12 @@ namespace Decode
 			m_hFile = NULL;
 		}
 	}
-	void FLVDecode::ParseVideo(BYTE* data, INT size)
+	void FLVFile::ParseVideo(BYTE* data, INT size)
 	{
 		FLV_TAG_VIDEO* video = reinterpret_cast<FLV_TAG_VIDEO*>(data);
 
 	}
-	void FLVDecode::ParseAudio(BYTE* data, INT size)
+	void FLVFile::ParseAudio(BYTE* data, INT size)
 	{
 		//目前只支持MP3,AAC和PCM
 		FLV_TAG_AUDIO* audio = reinterpret_cast<FLV_TAG_AUDIO*>(data);
@@ -49,25 +55,69 @@ namespace Decode
 			break;
 		}
 	}
-	void FLVDecode::ParseScript(BYTE* data, INT size)
-	{
-		//TODO
-	}
-
-	void FLVDecode::ParseAAC(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
-	{
-
-	}
-	void FLVDecode::ParseMP3(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
-	{
-
-	}
-	void FLVDecode::ParsePCM(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
+	void FLVFile::ParseScript(BYTE* data, INT size)
 	{
 
 	}
 
-	BOOL FLVDecode::Decode()
+	void FLVFile::ParseAAC(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
+	{
+		BYTE* bits = data;
+		BYTE aacPacketType = *bits++;
+		if (m_aac == NULL)
+		{
+			m_aac.Reset(new AACDecode());
+			DWORD dwSamplesPerSec = 44100;
+			switch (audio->samplesPerSec)
+			{
+			case 0:
+				dwSamplesPerSec = 5500;
+				break;
+			case 1:
+				dwSamplesPerSec = 11000;
+				break;
+			case 2:
+				dwSamplesPerSec = 22000;
+				break;
+			case 3:
+				dwSamplesPerSec = 44100;
+				break;
+			}
+			DWORD dwBitsPerSample = 16;
+			switch (audio->bitsPerSample)
+			{
+			case 0:
+				dwBitsPerSample = 8;
+				break;
+			case 1:
+				dwBitsPerSample = 16;
+				break;
+			}
+			m_aac->Open(dwBitsPerSample, dwSamplesPerSec);
+		}
+		if (aacPacketType == 0)
+		{
+			BYTE audioObjectType = ((*bits & 0xF8) >> 3) - 1;
+			BYTE samplingFrequencyIndex = ((*bits & 0x07) << 1) | (*(bits + 1) >> 7);
+			BYTE channelConfiguration = (*(bits + 1) >> 3) & 0x0F;
+		}
+		if (aacPacketType == 1)
+		{
+			DWORD dwINC = 0;
+			m_aac->Decode(bits, size, dwINC);
+		}
+
+	}
+	void FLVFile::ParseMP3(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
+	{
+		EVENT_AUDIO(data, size, audio);
+	}
+	void FLVFile::ParsePCM(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
+	{
+		EVENT_AUDIO(data, size, audio);
+	}
+
+	BOOL FLVFile::Decode()
 	{
 		ASSERT(sizeof(FLV_HEADER) != fread(&m_header, sizeof(FLV_HEADER), 1, m_hFile));
 		if (strncmp("FLV", (CHAR*)m_header.signature, 3) != 0)
