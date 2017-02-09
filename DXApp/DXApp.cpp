@@ -59,9 +59,9 @@ INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	DwmEnableComposition(FALSE);
 	DXApp::DXApplication app;
 	app.Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_DXAPP));
-
 	INT iRes = app.Run();
-	DwmEnableComposition(TRUE);
+
+	DwmEnableComposition(bComposition);
 	return iRes;
 }
 
