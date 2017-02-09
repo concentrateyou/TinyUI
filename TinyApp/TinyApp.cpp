@@ -76,6 +76,20 @@ BOOL LoadSeDebugPrivilege()
 
 #include "MFVideoCapture.h"
 
+Media::TinyWaveFile waveFile;
+
+void OnAudioDone(BYTE* bits, LONG size, LPVOID ps)
+{
+	if (bits == NULL)
+	{
+		WAVEFORMATEX s = *reinterpret_cast<WAVEFORMATEX*>(ps);
+		waveFile.Create("D:\\12345.wav", &s);
+	}
+	else
+	{
+		waveFile.Write(bits, size);
+	}
+}
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -94,8 +108,15 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
-	Decode::FLVFile flv("D:\\test.flv");
+	TinyScopedPtr<Delegate<void(BYTE*, LONG, LPVOID)>>	m_audioDone;
+	m_audioDone.Reset(new Delegate<void(BYTE*, LONG, LPVOID)>(&OnAudioDone));
+
+	Decode::FLVFile flv;
+	flv.EVENT_AUDIO += m_audioDone;
+	flv.Open("D:\\test.flv");
 	flv.Decode();
+	flv.EVENT_AUDIO -= m_audioDone;
+	flv.Close();
 	/*vector<MF::MFVideoCapture::Name> names;
 	MF::MFVideoCapture::GetDevices(names);
 	vector<MF::MFVideoCaptureParam> params;

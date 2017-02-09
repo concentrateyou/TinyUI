@@ -1,6 +1,11 @@
 #pragma once
 #include "Utility.h"
 #include "AACDecode.h"
+#include "MPG123Decode.h"
+#include "H264Decode.h"
+#include <vector>
+
+using namespace std;
 using namespace TinyUI;
 
 namespace Decode
@@ -67,29 +72,83 @@ namespace Decode
 		FLV_CODECID_VP6A = 5,
 		FLV_CODECID_SCREEN2 = 6,
 		FLV_CODECID_H264 = 7,
+		FLV_CODECID_REALH263 = 8,
+		FLV_CODECID_MPEG4 = 9
 	};
 
+	enum FLV_VIDEO_FRAME_TYPE
+	{
+		FLV_FRAME_KEY = 1,
+		FLV_FRAME_INTER = 2,
+		FLV_FRAME_DISP_INTER = 3,
+		FLV_FRAME_GENERATED_KEY = 4,
+		FLV_FRAME_VIDEO_INFO_CMD = 5
+	};
+
+	typedef struct tagAVCDecoderConfigurationRecord
+	{
+		BYTE ConfigurationVersion;
+		BYTE AVCProfileIndication;
+		BYTE ProfileCompatibility;
+		BYTE AVCLevelIndication;
+		BYTE LengthSizeMinusOne;
+	}AVCDecoderConfigurationRecord;
+
+	typedef struct tagMetaData
+	{
+		DOUBLE duration;
+		DOUBLE width;
+		DOUBLE height;
+		DOUBLE videodatarate;
+		DOUBLE framerate;
+		DOUBLE videocodecid;
+		DOUBLE audiosamplerate;
+		DOUBLE audiosamplesize;
+		BOOL stereo;
+		DOUBLE audiocodecid;
+		DOUBLE filesize;
+	}MetaData;
+	/// <summary>
+	/// FLV大端数据
+	/// 目前音频支持支AAC,MP3和PCM
+	/// </summary>
 	class FLVFile
 	{
 	public:
-		FLVFile(LPCSTR pzFile);
+		FLVFile();
 		~FLVFile();
+		BOOL Open(LPCSTR pzFile);
 		BOOL Decode();
-	private:
-		void ParseVideo(BYTE* data, INT size);
-		void ParseAudio(BYTE* data, INT size);
-		void ParseScript(BYTE* data, INT size);
-		void ParseAAC(FLV_TAG_AUDIO* audio, BYTE* data, INT size);
-		void ParseMP3(FLV_TAG_AUDIO* audio, BYTE* data, INT size);
-		void ParsePCM(FLV_TAG_AUDIO* audio, BYTE* data, INT size);
-	private:
-		FLV_HEADER	m_header;
-		FILE*		m_hFile;
-		BOOL		m_bAudio;
-		BOOL		m_bVideo;
-		TinyScopedPtr<AACDecode> m_aac;
+		BOOL Close();
+	public:
 		Event<void(BYTE*, LONG, LPVOID)> EVENT_AUDIO;
 		Event<void(BYTE*, LONG, LPVOID)> EVENT_VIDEO;
+	private:
+		BOOL ParseVideo(BYTE* data, INT size);
+		BOOL ParseAudio(BYTE* data, INT size);
+		BOOL ParseScript(BYTE* data, INT size);
+		BOOL ParseAAC(FLV_TAG_AUDIO* audio, BYTE* data, INT size);
+		BOOL ParseMP3(FLV_TAG_AUDIO* audio, BYTE* data, INT size);
+		BOOL ParsePCM(FLV_TAG_AUDIO* audio, BYTE* data, INT size);
+		BOOL ParseH264(FLV_TAG_VIDEO* video, BYTE* data, INT size);
+		BOOL ParseNALU(FLV_TAG_VIDEO* video, BYTE* data, INT size);
+		void OnAudioDone(BYTE*, INT, LPVOID);
+		void OnVideoDone(BYTE*, INT, LPVOID);
+		using SPS = vector<BYTE>;
+		using PPS = vector<BYTE>;
+	private:
+		BOOL							m_bAudio;
+		BOOL							m_bVideo;
+		FILE*							m_hFile;
+		FLV_HEADER						m_header;
+		vector<SPS>						m_pps;
+		vector<PPS>						m_sps;
+		TinyScopedPtr<AACDecode>		m_aac;
+		TinyScopedPtr<H264Decode>		m_h264;
+		TinyScopedPtr<MPG123Decode>		m_mpg123;
+		AVCDecoderConfigurationRecord	m_avcConfig;
+		TinyScopedPtr<Delegate<void(BYTE*, LONG, LPVOID)>>	m_audioDone;
+		TinyScopedPtr<Delegate<void(BYTE*, LONG, LPVOID)>>	m_videoDone;
 	};
 }
 

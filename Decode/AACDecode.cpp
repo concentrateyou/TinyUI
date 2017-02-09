@@ -8,20 +8,36 @@ namespace Decode
 		m_dwINC(0)
 	{
 	}
-
 	AACDecode::~AACDecode()
 	{
+		Close();
 	}
-
-	BOOL AACDecode::Open(WORD wBitsPerSample, WORD wSampleRate)
+	BOOL AACDecode::Open(BYTE* adts, LONG size, WORD wBitsPerSample)
 	{
-		m_handle = faacDecOpen();
+		ZeroMemory(&m_sMFT, sizeof(m_sMFT));
+		m_handle = NeAACDecOpen();
 		if (!m_handle)
 			return FALSE;
-		faacDecConfiguration* config = faacDecGetCurrentConfiguration(m_handle);
+		ULONG sampleRate = 0;
+		BYTE channel = 0;
+		if (NeAACDecInit2(m_handle, adts, size - 1, &sampleRate, &channel))
+			return FALSE;
+		m_sMFT.nSamplesPerSec = sampleRate;
+		m_sMFT.nChannels = channel;
+		m_sMFT.wBitsPerSample = wBitsPerSample;
+		m_sMFT.nBlockAlign = wBitsPerSample *channel / 8;
+		m_sMFT.nAvgBytesPerSec = m_sMFT.nSamplesPerSec * m_sMFT.nBlockAlign;
+		m_sMFT.wFormatTag = WAVE_FORMAT_PCM;
+		return TRUE;
+	}
+	BOOL AACDecode::Open(WORD wBitsPerSample, WORD wSampleRate)
+	{
+		m_handle = NeAACDecOpen();
+		if (!m_handle)
+			return FALSE;
+		NeAACDecConfiguration* config = NeAACDecGetCurrentConfiguration(m_handle);
 		if (!config)
 			return FALSE;
-
 		config->outputFormat = FAAD_FMT_FLOAT;
 		switch (wBitsPerSample)
 		{
@@ -38,40 +54,37 @@ namespace Decode
 		config->defSampleRate = wSampleRate;
 		config->defObjectType = LOW;
 		config->downMatrix = 1;
-		config->useOldADTSFormat = 0;//defined 56 bit ADTS header (value: 0) or the 58 bit ADTS header (value: 1) 
-		if (!faacDecSetConfiguration(m_handle, config))
+		config->useOldADTSFormat = 0;
+		if (NeAACDecSetConfiguration(m_handle, config))
 			return FALSE;
 		return TRUE;
 	}
-	BOOL AACDecode::Decode(BYTE* bits, LONG size, DWORD& dwINC)
+	WAVEFORMATEX AACDecode::GetFormat() const
+	{
+		return m_sMFT;
+	}
+	BOOL AACDecode::Decode(BYTE* bits, LONG size)
 	{
 		ASSERT(m_handle);
-		BYTE* pPCM = reinterpret_cast<BYTE*>(NeAACDecDecode(m_handle, &m_frame, bits, size));
-		if (m_frame.error > 0 || !pPCM || m_frame.samples <= 0)
+		BYTE* data = reinterpret_cast<BYTE*>(NeAACDecDecode(m_handle, &m_frame, bits, size));
+		if (m_frame.error > 0 || !data || m_frame.samples <= 0)
 			return FALSE;
 		LONG o = m_frame.samples * m_frame.channels;
-		MediaTag tag;
-		tag.dwPTS = 0;
-		tag.dwDTS = 0;
-		tag.dwType = 1;
-		tag.dwTime = timeGetTime();
-		tag.dwFlag = 0;
-		tag.dwINC = ++m_dwINC;
-		OnDone(pPCM, o, tag);
+		OnDone(data, o, NULL);
 		return TRUE;
 	}
 	BOOL AACDecode::Close()
 	{
 		if (m_handle != NULL)
 		{
-			faacDecClose(m_handle);
+			NeAACDecClose(m_handle);
 			m_handle = NULL;
 		}
 		return TRUE;
 	}
-	void AACDecode::OnDone(BYTE* bits, LONG size, const MediaTag& tag)
+	void AACDecode::OnDone(BYTE* bits, LONG size, LPVOID ps)
 	{
-		EVENT_DONE(bits, size, tag);
+		EVENT_DONE(bits, size, ps);
 	}
 }
 

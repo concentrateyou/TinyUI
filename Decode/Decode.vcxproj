@@ -77,14 +77,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\ThirdParty\mpg123\include;..\ThirdParty\libfaad\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\ThirdParty\mpg123\include;..\ThirdParty\libfaad\include;..\ThirdParty\ffmpeg\include;..\ThirdParty\librtmp\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>..\TinyUI;..\Debug;..\ThirdParty\mpg123\lib;..\ThirdParty\libfaad\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libfaad.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\TinyUI;..\Debug;..\ThirdParty\mpg123\lib;..\ThirdParty\libfaad\lib;..\ThirdParty\ffmpeg\lib;..\ThirdParty\librtmp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libfaad.lib;librtmp.lib;</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -137,6 +137,7 @@
   <ItemGroup>
     <ClInclude Include="AACDecode.h" />
     <ClInclude Include="AC3Decode.h" />
+    <ClInclude Include="H264Decode.h" />
     <ClInclude Include="MPG123Decode.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="FLVFile.h" />
@@ -147,6 +148,7 @@
   <ItemGroup>
     <ClCompile Include="AACDecode.cpp" />
     <ClCompile Include="AC3Decode.cpp" />
+    <ClCompile Include="H264Decode.cpp" />
     <ClCompile Include="MPG123Decode.cpp" />
     <ClCompile Include="Utility.cpp" />
     <ClCompile Include="FLVFile.cpp" />

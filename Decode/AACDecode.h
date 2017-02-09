@@ -9,31 +9,23 @@ namespace Decode
 #define LOW  2
 #define SSR  3
 #define LTP  4
-	typedef struct tagMediaTag
-	{
-		DWORD	dwType;
-		DWORD	dwFlag;
-		DWORD	dwINC;
-		DWORD	dwTime;
-		DWORD	dwPTS;
-		DWORD	dwDTS;
-	}MediaTag;
-
 	class AACDecode
 	{
 	public:
 		AACDecode();
 		virtual ~AACDecode();
-		BOOL Open(WORD wBitsPerSample = 16, WORD wSampleRate = 44100);
-		BOOL Decode(BYTE* bits, LONG size, DWORD& dwINC);
+		BOOL Open(WORD wBitsPerSample, WORD wSampleRate);
+		BOOL Open(BYTE* adts, LONG size, WORD wBitsPerSample);
+		BOOL Decode(BYTE* bits, LONG size);
 		BOOL Close();
+		WAVEFORMATEX GetFormat() const;
 	public:
-		virtual void OnDone(BYTE*, LONG, const MediaTag&);
-		Event<void(BYTE*, LONG, const MediaTag&)> EVENT_DONE;
+		virtual void OnDone(BYTE*, LONG, LPVOID);
+		Event<void(BYTE*, LONG, LPVOID)> EVENT_DONE;
 	private:
-		DWORD					m_dwINC;
+		WAVEFORMATEX			m_sMFT;
 		NeAACDecHandle			m_handle;
-		NeAACDecConfiguration	m_config;
+		DWORD					m_dwINC;
 		NeAACDecFrameInfo		m_frame;
 	};
 }
