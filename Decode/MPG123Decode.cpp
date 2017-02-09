@@ -33,10 +33,6 @@ namespace Decode
 		m_handle = NULL;
 		return FALSE;
 	}
-	void MPG123Decode::Initialize(Callback<void(BYTE*, LONG, LPVOID)>&& callback)
-	{
-		m_callback = std::move(callback);
-	}
 	BOOL MPG123Decode::Decode(BYTE* rawdata, LONG rawsize)
 	{
 		if (!m_handle)
@@ -59,10 +55,7 @@ namespace Decode
 			if (iRes == MPG123_OK ||
 				iRes == MPG123_DONE)
 			{
-				if (!m_callback.IsNull())
-				{
-					m_callback(outdata, outsize, reinterpret_cast<LPVOID>(m_waveFMT.Ptr()));
-				}
+				OnDone(outdata, outsize, reinterpret_cast<LPVOID>(m_waveFMT.Ptr()));
 			}
 			if (iRes == MPG123_NEW_FORMAT)
 			{
@@ -96,10 +89,7 @@ namespace Decode
 					pFMT->nBlockAlign = pFMT->nChannels * (pFMT->wBitsPerSample / 8);
 					pFMT->nAvgBytesPerSec = pFMT->nChannels * pFMT->nSamplesPerSec * pFMT->wBitsPerSample / 8;
 				}
-				if (!m_callback.IsNull())
-				{
-					m_callback(NULL, 0, reinterpret_cast<LPVOID>(m_waveFMT.Ptr()));
-				}
+				OnDone(NULL, 0, reinterpret_cast<LPVOID>(m_waveFMT.Ptr()));
 			}
 		}
 	}
@@ -141,5 +131,9 @@ namespace Decode
 	WAVEFORMATEX* MPG123Decode::GetFormat()
 	{
 		return reinterpret_cast<WAVEFORMATEX*>(&m_waveFMT);
+	}
+	void MPG123Decode::OnDone(BYTE* bits, LONG size, LPVOID ps)
+	{
+		EVENT_DONE(bits, size, ps);
 	}
 }

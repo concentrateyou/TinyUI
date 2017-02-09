@@ -20,7 +20,7 @@ namespace Decode
 			return FALSE;
 		ULONG sampleRate = 0;
 		BYTE channel = 0;
-		if (NeAACDecInit2(m_handle, adts, size - 1, &sampleRate, &channel))
+		if (NeAACDecInit2(m_handle, adts, size - 1, &sampleRate, &channel) != 0)
 			return FALSE;
 		m_sMFT.nSamplesPerSec = sampleRate;
 		m_sMFT.nChannels = channel;
@@ -55,7 +55,7 @@ namespace Decode
 		config->defObjectType = LOW;
 		config->downMatrix = 1;
 		config->useOldADTSFormat = 0;
-		if (NeAACDecSetConfiguration(m_handle, config))
+		if (NeAACDecSetConfiguration(m_handle, config) != 0)
 			return FALSE;
 		return TRUE;
 	}

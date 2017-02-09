@@ -16,18 +16,19 @@ namespace Decode
 	public:
 		MPG123Decode();
 		virtual ~MPG123Decode();
-		void Initialize(Callback<void(BYTE*, LONG, LPVOID)>&& callback);
 	public:
 		BOOL Open();
 		BOOL Decode(BYTE* rawdata, LONG rawsize);
 		BOOL Close();
 		BOOL SetFormat(WAVEFORMATEX& sFMT);
 		WAVEFORMATEX* GetFormat();
+	public:
+		virtual void OnDone(BYTE*, LONG, LPVOID);
+		Event<void(BYTE*, LONG, LPVOID)> EVENT_DONE;
 	private:
 		BYTE				  m_raw[MPG123_OUTBUFFER_SIZE];
 		TinyScopedArray<BYTE> m_waveFMT;
 		mpg123_handle*		  m_handle;
-		Callback<void(BYTE*, LONG, LPVOID)> m_callback;
 	};
 }
 

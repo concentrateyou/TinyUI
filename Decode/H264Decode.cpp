@@ -33,11 +33,8 @@ namespace Decode
 			goto _ERROR;
 		return TRUE;
 	_ERROR:
-		if (m_context)
-		{
-			avcodec_close(m_context);
-			m_context = NULL;
-		}
+		avcodec_close(m_context);
+		m_context = NULL;
 		return FALSE;
 	}
 	BOOL H264Decode::Decode(BYTE* bits, LONG size)
