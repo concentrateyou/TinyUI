@@ -5,6 +5,8 @@
 #include <iostream>
 #include "DXApp.h"
 #include "DXApplication.h"
+#include <dwmapi.h>
+#pragma comment(lib,"Dwmapi.lib")
 using namespace DXFramework;
 
 namespace DXApp
@@ -41,34 +43,6 @@ namespace DXApp
 	}
 }
 
-BOOL DwmIsCompositionEnabled(BOOL& bAllow)
-{
-	TinyScopedLibrary library("dwmapi.dll");
-	if (!library.IsValid())
-		return FALSE;
-	static HRESULT(WINAPI *DwmIsCompositionEnabled)(BOOL*) = NULL;
-	DwmIsCompositionEnabled = reinterpret_cast<decltype(DwmIsCompositionEnabled)>(library.GetFunctionPointer("DwmIsCompositionEnabled"));
-	if (!DwmIsCompositionEnabled)
-		return FALSE;
-	if (SUCCEEDED(DwmIsCompositionEnabled(&bAllow)))
-		return TRUE;
-	return FALSE;
-}
-
-BOOL DwmEnableComposition(BOOL bEnable)
-{
-	TinyScopedLibrary library("dwmapi.dll");
-	if (!library.IsValid())
-		return FALSE;
-	static HRESULT(WINAPI *DwmEnableComposition)(UINT) = NULL;
-	DwmEnableComposition = reinterpret_cast<decltype(DwmEnableComposition)>(library.GetFunctionPointer("DwmEnableComposition"));
-	if (!DwmEnableComposition)
-		return FALSE;
-	if (SUCCEEDED(DwmEnableComposition(bEnable)))
-		return TRUE;
-	return FALSE;
-}
-
 INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPTSTR    lpCmdLine,
@@ -78,13 +52,16 @@ INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
 	DXApp::LoadSeDebugPrivilege();
+
 	BOOL bComposition = FALSE;
-	DwmIsCompositionEnabled(bComposition);
+	DwmIsCompositionEnabled(&bComposition);
+
 	DwmEnableComposition(FALSE);
 	DXApp::DXApplication app;
 	app.Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_DXAPP));
+
 	INT iRes = app.Run();
-	DwmEnableComposition(bComposition);
+	DwmEnableComposition(TRUE);
 	return iRes;
 }
 

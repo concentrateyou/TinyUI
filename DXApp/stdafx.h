@@ -21,4 +21,5 @@ using namespace std;
 
 extern "C" { FILE __iob_func[3] = { *stdin,*stdout,*stderr }; }
 
+#define NTDDI_VERSION  NTDDI_WIN7
 // TODO:  在此处引用程序需要的其他头文件
