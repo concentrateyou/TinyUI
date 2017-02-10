@@ -6,6 +6,7 @@
 #include <D3DX10math.h>
 #include <D3DX11tex.h>
 #include <DXGI.h>
+#include <dwmapi.h>
 #include <TlHelp32.h>
 #include <string>
 #include "Common/TinyCommon.h"
@@ -17,6 +18,7 @@
 #include "IO/TinySharedMemory.h"
 #include "IO/TinyTaskBase.h"
 #include "IO/TinyRingQueue.h"
+#pragma comment(lib,"Dwmapi.lib")
 using namespace TinyUI;
 using namespace std;
 
@@ -38,6 +40,15 @@ namespace DXFramework
 		D3DXMATRIX view;
 		D3DXMATRIX projection;
 	};
+
+	typedef BOOL(WINAPI *DwmGetDxSharedSurface)(
+		HWND hwnd,
+		HANDLE* phSurface,
+		LUID* pAdapterLuid,
+		ULONG* pFmtWindow,
+		ULONG* pPresentFlags,
+		ULONGLONG* pWin32kUpdateId);
+
 
 #define BEGIN_CAPTURE_EVENT		TEXT("BeginCapture")
 #define END_CAPTURE_EVENT       TEXT("EndCapture")
