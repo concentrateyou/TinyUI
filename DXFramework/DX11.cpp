@@ -35,7 +35,7 @@ namespace DXFramework
 		swapDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 		swapDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 		swapDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-		swapDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+		swapDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH | DXGI_SWAP_CHAIN_FLAG_GDI_COMPATIBLE;
 		HRESULT hRes = S_OK;
 		D3D_FEATURE_LEVEL levels[] =
 		{
@@ -100,7 +100,6 @@ namespace DXFramework
 		hRes = m_d3d->CreateDepthStencilView(m_depthStencilBuffer, &depthStencilViewDesc, &m_depthStencilView);
 		if (FAILED(hRes))
 			return FALSE;
-		m_immediateContext->OMSetRenderTargets(1, &m_renderView, m_depthStencilView);
 		D3D11_RASTERIZER_DESC rasterDesc;
 		ZeroMemory(&rasterDesc, sizeof(rasterDesc));
 		rasterDesc.FrontCounterClockwise = FALSE;
@@ -221,7 +220,6 @@ namespace DXFramework
 		D3DXMatrixPerspectiveFovLH(&m_projectionMatrix, fov, aspect, 1000.0F, 0.1F);
 		D3DXMatrixIdentity(&m_worldMatrix);
 		D3DXMatrixOrthoLH(&m_orthoMatrix, (FLOAT)m_size.cx, (FLOAT)m_size.cy, 1000.0F, 0.1F);
-
 		m_renderTexture.Release();
 		D3D11_TEXTURE2D_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
@@ -255,7 +253,6 @@ namespace DXFramework
 				m_immediateContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0F, 0);
 			}
 		}
-
 	}
 	void DX11::EndScene()
 	{
@@ -287,6 +284,10 @@ namespace DXFramework
 	ID3D11Texture2D* DX11::GetTexture2D() const
 	{
 		return m_renderTexture;
+	}
+	ID3D11DepthStencilView* DX11::GetDSView() const
+	{
+		return m_depthStencilView;
 	}
 	HWND DX11::GetHWND() const
 	{

@@ -18,6 +18,7 @@ namespace DXFramework
 		ID3D11DeviceContext*	GetImmediateContext() const;
 		IDXGISwapChain*			GetSwap() const;
 		ID3D11Texture2D*		GetTexture2D() const;
+		ID3D11DepthStencilView* GetDSView() const;
 		HWND					GetHWND() const;
 		D3DXMATRIX				GetProjectionMatrix();
 		D3DXMATRIX				GetWorldMatrix();

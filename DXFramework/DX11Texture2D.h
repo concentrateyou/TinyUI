@@ -24,7 +24,7 @@ namespace DXFramework
 		BOOL Load(DX11& dx11, const BYTE* bits, DWORD dwSize);
 		BOOL Load(DX11& dx11, HANDLE hResource);
 		BOOL Load(DX11& dx11, const CHAR* pzFile);
-		BOOL Copy(DX11& dx11,ID3D11Texture2D* texture2D);
+		BOOL Copy(DX11& dx11, ID3D11Texture2D* texture2D);
 		void Destory();
 		BOOL IsCompatible() const;
 		BOOL GetDC(HDC& hDC);
@@ -33,6 +33,7 @@ namespace DXFramework
 		void Unmap(DX11& dx11);
 		ID3D11Texture2D* GetTexture2D() const;
 		ID3D11ShaderResourceView* GetSRView() const;
+		ID3D11RenderTargetView*	  GetRTView() const;
 		BOOL IsEmpty() const;
 		TinySize GetSize();
 	protected:
@@ -40,6 +41,7 @@ namespace DXFramework
 		TinyComPtr<IDXGISurface1>				m_surface;
 		TinyComPtr<ID3D11Texture2D>				m_texture2D;
 		TinyComPtr<ID3D11ShaderResourceView>	m_resourceView;
+		TinyComPtr<ID3D11RenderTargetView>		m_renderView;
 	};
 
 #define CAPTURETYPE_MEMORYTEXTURE   1

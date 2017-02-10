@@ -44,6 +44,14 @@ namespace DXFramework
 			return FALSE;
 		D3D11_TEXTURE2D_DESC desc;
 		m_texture2D->GetDesc(&desc);
+
+		D3D11_RENDER_TARGET_VIEW_DESC drtvd;
+		::ZeroMemory(&drtvd, sizeof(drtvd));
+		drtvd.Format = desc.Format;
+		drtvd.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+		hRes = dx11.GetD3D()->CreateRenderTargetView(m_texture2D, &drtvd, &m_renderView);
+		if (FAILED(hRes))
+			return FALSE;
 		D3D11_SHADER_RESOURCE_VIEW_DESC dsrvd;
 		::ZeroMemory(&dsrvd, sizeof(dsrvd));
 		dsrvd.Format = desc.Format;
@@ -63,7 +71,7 @@ namespace DXFramework
 		HRESULT hRes = m_texture2D->QueryInterface(__uuidof(IDXGISurface1), (void**)&m_surface);
 		if (FAILED(hRes))
 			return FALSE;
-		return m_surface->GetDC(TRUE, &hDC) == S_OK;
+		return m_surface->GetDC(FALSE, &hDC) == S_OK;
 	}
 	BOOL DX11Texture2D::ReleaseDC()
 	{
@@ -233,6 +241,10 @@ namespace DXFramework
 	ID3D11ShaderResourceView* DX11Texture2D::GetSRView() const
 	{
 		return m_resourceView;
+	}
+	ID3D11RenderTargetView*	 DX11Texture2D::GetRTView() const
+	{
+		return m_renderView;
 	}
 	TinySize DX11Texture2D::GetSize()
 	{

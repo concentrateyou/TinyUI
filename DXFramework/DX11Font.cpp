@@ -112,7 +112,7 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
-	BOOL DX11Font::Clear()
+	BOOL DX11Font::ClearContext()
 	{
 		HDC hDC = NULL;
 		if (!m_texture.GetDC(hDC))

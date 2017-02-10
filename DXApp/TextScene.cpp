@@ -62,7 +62,7 @@ namespace DXApp
 		Gdiplus::StringFormat format(Gdiplus::StringFormat::GenericTypographic());
 		format.SetFormatFlags(Gdiplus::StringFormatFlagsNoFitBlackBox | Gdiplus::StringFormatFlagsMeasureTrailingSpaces);
 		format.SetTrimming(Gdiplus::StringTrimmingWord);
-		DX11Font::Clear();
+		DX11Font::ClearContext();
 		Gdiplus::RectF rectF;
 		rectF.X = static_cast<Gdiplus::REAL>(m_displaySize);
 		rectF.Y = 0.0;
