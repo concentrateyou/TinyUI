@@ -35,12 +35,12 @@ namespace DXApp
 	}
 	BOOL ScreenScene::Render(DX11& dx11)
 	{
-		HDC hDC = GetDC(NULL);
+		HDC hDC = ::GetDC(NULL);
 		if (hDC != NULL)
 		{
 			TinyRectangle dst(TinyPoint(0, 0), m_snapshot.Size());
 			DX11Image::BitBlt(dx11, dst, hDC, m_snapshot.Position());
-			ReleaseDC(NULL, hDC);
+			::ReleaseDC(NULL, hDC);
 			DX11Image::Render(dx11);
 			return TRUE;
 		}

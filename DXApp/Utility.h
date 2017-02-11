@@ -34,4 +34,5 @@ protected:
 
 BOOL WINAPI GetModuleList(HANDLE hProcess, TinyArray<TinyString> &moduleList);
 BOOL WINAPI ScreenSave(const TinyRectangle& s);
+BOOL WINAPI WindowSave(HWND hWND);
 BOOL WINAPI InvertWindow(HWND hWND);

@@ -89,12 +89,12 @@ namespace DXFramework
 		m_bkColor = bkColor;
 		m_textColor = cf.crTextColor;
 		m_cf = cf;
-		HDC hDC = GetDC(NULL);
+		HDC hDC = ::GetDC(NULL);
 		if (hDC != NULL)
 		{
 			Gdiplus::SizeF sizeF;
 			Gdiplus::RectF rectF = MeasureString(str, cf);
-			ReleaseDC(NULL, hDC);
+			::ReleaseDC(NULL, hDC);
 			rectF.GetSize(&sizeF);
 			sizeF.Width += 1;
 			sizeF.Height += 1;
@@ -115,7 +115,7 @@ namespace DXFramework
 	BOOL DX11Font::ClearContext()
 	{
 		HDC hDC = NULL;
-		if (!m_texture.GetDC(hDC))
+		if (!m_texture.GetDC(FALSE, hDC))
 			return FALSE;
 		Graphics g(hDC);
 		g.SetTextRenderingHint(Gdiplus::TextRenderingHintAntiAlias);
@@ -133,7 +133,7 @@ namespace DXFramework
 	{
 		ASSERT(m_texture.IsEmpty());
 		HDC hDC = NULL;
-		if (!m_texture.GetDC(hDC))
+		if (!m_texture.GetDC(FALSE, hDC))
 			return FALSE;
 		Graphics g(hDC);
 		g.SetTextRenderingHint(Gdiplus::TextRenderingHintAntiAlias);

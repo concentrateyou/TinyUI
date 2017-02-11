@@ -65,7 +65,7 @@ namespace DXFramework
 		if (!bits || !m_texture.IsEmpty() || size != (m_size.cx * m_size.cy * 4))
 			return FALSE;
 		HDC hDC = NULL;
-		if (m_texture.GetDC(hDC))
+		if (m_texture.GetDC(TRUE, hDC))
 		{
 			BITMAPINFO bmi = { 0 };
 			bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
@@ -91,7 +91,7 @@ namespace DXFramework
 		if (!m_texture.IsEmpty())
 			return FALSE;
 		HDC hDC = NULL;
-		if (m_texture.GetDC(hDC))
+		if (m_texture.GetDC(FALSE, hDC))
 		{
 			TinyUI::TinyMemDC mdc(hDC, hBitmapSrc);
 			::BitBlt(hDC, dst.left, dst.top, dst.Width(), dst.Height(), mdc, src.x, src.y, SRCCOPY);
@@ -104,7 +104,7 @@ namespace DXFramework
 		if (!m_texture.IsEmpty())
 			return FALSE;
 		HDC hDC = NULL;
-		if (m_texture.GetDC(hDC))
+		if (m_texture.GetDC(FALSE,hDC))
 		{
 			::BitBlt(hDC, dst.left, dst.top, dst.Width(), dst.Height(), hDCSrc, src.x, src.y, SRCCOPY);
 			return m_texture.ReleaseDC();
@@ -136,6 +136,14 @@ namespace DXFramework
 			return FALSE;
 		}
 		return FALSE;
+	}
+	BOOL DX11Image::GetDC(BOOL discard, HDC& hDC)
+	{
+		return m_texture.GetDC(discard, hDC);
+	}
+	BOOL DX11Image::ReleaseDC()
+	{
+		return m_texture.ReleaseDC();
 	}
 	BOOL DX11Image::Load(DX11& dx11, HANDLE hResource)
 	{

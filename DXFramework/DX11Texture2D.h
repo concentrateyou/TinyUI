@@ -27,7 +27,7 @@ namespace DXFramework
 		BOOL Copy(DX11& dx11, ID3D11Texture2D* texture2D);
 		void Destory();
 		BOOL IsCompatible() const;
-		BOOL GetDC(HDC& hDC);
+		BOOL GetDC(BOOL discard, HDC& hDC);
 		BOOL ReleaseDC();
 		BOOL Map(DX11& dx11, BYTE *&lpData, UINT &pitch);
 		void Unmap(DX11& dx11);

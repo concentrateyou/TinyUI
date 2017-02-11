@@ -63,7 +63,7 @@ namespace DXFramework
 		m_bCompatible = TRUE;
 		return TRUE;
 	}
-	BOOL  DX11Texture2D::GetDC(HDC& hDC)
+	BOOL  DX11Texture2D::GetDC(BOOL discard, HDC& hDC)
 	{
 		if (!m_bCompatible || !m_texture2D)
 			return FALSE;
@@ -71,7 +71,7 @@ namespace DXFramework
 		HRESULT hRes = m_texture2D->QueryInterface(__uuidof(IDXGISurface1), (void**)&m_surface);
 		if (FAILED(hRes))
 			return FALSE;
-		hRes = m_surface->GetDC(TRUE, &hDC);
+		hRes = m_surface->GetDC(discard, &hDC);
 		if (FAILED(hRes))
 			return FALSE;
 		return TRUE;

@@ -128,6 +128,21 @@ leave:
 	return bResult;
 
 }
+BOOL WINAPI WindowSave(HWND hWND)
+{
+	HDC hDC = GetDC(hWND);
+	HDC hMemDC = CreateCompatibleDC(hDC);
+	TinyRectangle s;
+	GetClientRect(hWND, &s);
+	HBITMAP hBitmap = CreateCompatibleBitmap(hDC, s.Size().cx, s.Size().cy);
+	SelectObject(hMemDC, hBitmap);
+	BitBlt(hMemDC, 0, 0, s.Size().cx, s.Size().cy, hDC, s.Position().x, s.Position().y, SRCCOPY);
+	SaveBitmapToFile(hBitmap, "D:\\1234.bmp");
+	SAFE_DELETE_OBJECT(hBitmap);
+	DeleteDC(hMemDC);
+	ReleaseDC(hWND, hDC);
+	return TRUE;
+}
 BOOL WINAPI ScreenSave(const TinyRectangle& s)
 {
 	HDC hDC = GetDC(NULL);
