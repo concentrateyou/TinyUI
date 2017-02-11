@@ -29,7 +29,7 @@ namespace DXApp
 				BITMAPINFO bmi = { 0 };
 				bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 				bmi.bmiHeader.biWidth = m_size.cx;
-				bmi.bmiHeader.biHeight = m_size.cy;
+				bmi.bmiHeader.biHeight = -m_size.cy;
 				bmi.bmiHeader.biPlanes = 1;
 				bmi.bmiHeader.biBitCount = 32;
 				bmi.bmiHeader.biCompression = BI_RGB;
