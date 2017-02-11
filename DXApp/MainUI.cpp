@@ -97,6 +97,11 @@ namespace DXApp
 		m_onRecordClick.Reset(new Delegate<void(void*, INT)>(this, &MainUI::OnRecordClick));
 		m_record.EVENT_CLICK += m_onRecordClick;
 
+		m_allowAero.Create(m_hWND, 0, 0, 0, 0);
+		m_allowAero.SetText("Ω˚”√Aero");
+		m_onCheckAeroClick.Reset(new Delegate<void(void*, INT)>(this, &MainUI::OnAeroClick));
+		m_allowAero.EVENT_CLICK += m_onCheckAeroClick;
+
 		m_game.Create(m_hWND, 0, 0, 0, 0);
 		m_game.SetText("”Œœ∑");
 		m_onGameClick.Reset(new Delegate<void(void*, INT)>(this, &MainUI::OnGameClick));
@@ -175,6 +180,7 @@ namespace DXApp
 
 		m_broadcast.EVENT_CLICK -= m_onBroadcastClick;
 		m_record.EVENT_CLICK -= m_onRecordClick;
+		m_allowAero.EVENT_CLICK -= m_onCheckAeroClick;
 		m_game.EVENT_CLICK -= m_onGameClick;
 		m_screen.EVENT_CLICK -= m_onScreenClick;
 		m_window.EVENT_CLICK -= m_onWindowClick;
@@ -229,6 +235,12 @@ namespace DXApp
 	void MainUI::OnRecordClick(void*, INT)
 	{
 
+	}
+	void MainUI::OnAeroClick(void*, INT)
+	{
+		BOOL bComposition = FALSE;
+		DwmIsCompositionEnabled(&bComposition);
+		DwmEnableComposition(!bComposition);
 	}
 	void MainUI::OnGameClick(void*, INT)
 	{
@@ -396,6 +408,9 @@ namespace DXApp
 		m_broadcast.SetSize(100, 30);
 		m_record.SetPosition(offsetX + 100, offsetY);
 		m_record.SetSize(100, 30);
+
+		m_allowAero.SetPosition(offsetX + 250, offsetY);
+		m_allowAero.SetSize(100, 30);
 
 		m_game.SetPosition(offsetX + 100 * 0, offsetY + 50);
 		m_game.SetSize(100, 30);

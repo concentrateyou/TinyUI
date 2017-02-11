@@ -4,6 +4,7 @@
 #include "Control/TinyTrackBar.h"
 #include "Control/TinyLabel.h"
 #include "Control/TinyTextBox.h"
+#include "Control/TinyCheckBox.h"
 #include "Control/TinyComboBox.h"
 #include "DXWindow.h"
 #include "VideoScene.h"
@@ -44,6 +45,7 @@ namespace DXApp
 		void Resize(INT cx, INT cy);
 		void OnBroadcastClick(void*, INT);
 		void OnRecordClick(void*, INT);
+		void OnAeroClick(void*, INT);
 		void OnGameClick(void*, INT);
 		void OnScreenClick(void*, INT);
 		void OnWindowClick(void*, INT);
@@ -57,6 +59,7 @@ namespace DXApp
 	private:
 		TinyButton m_broadcast;
 		TinyButton m_record;
+		TinyButton m_allowAero;
 		TinyButton m_game;
 		TinyButton m_screen;
 		TinyButton m_window;
@@ -72,6 +75,7 @@ namespace DXApp
 		TinyTrackBar m_microphone;
 		TinyLabel	m_lbl2;
 		TinyComboBox m_resolution;
+		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onCheckAeroClick;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onBroadcastClick;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onRecordClick;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onGameClick;

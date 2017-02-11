@@ -53,15 +53,10 @@ INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 	DXApp::LoadSeDebugPrivilege();
 
-	BOOL bComposition = FALSE;
-	DwmIsCompositionEnabled(&bComposition);
-
-	DwmEnableComposition(FALSE);
 	DXApp::DXApplication app;
 	app.Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_DXAPP));
 	INT iRes = app.Run();
 
-	DwmEnableComposition(bComposition);
 	return iRes;
 }
 

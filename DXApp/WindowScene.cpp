@@ -19,11 +19,14 @@ namespace DXApp
 	{
 		m_hWND = hWND;
 
-		BOOL bEnable = FALSE;
-		if (FAILED(DwmIsCompositionEnabled(&bEnable)))
-			return FALSE;
-
-		if (bEnable)
+		TinyRectangle rectangle;
+		GetClientRect(m_hWND, &rectangle);
+		if (!rectangle.IsRectEmpty())
+		{
+			Destory();
+			return DX11Image::CreateCompatible(dx11, rectangle.Size());
+		}
+		/*if (bEnable)
 		{
 			Destory();
 			TinyScopedLibrary user32("user32.dll");
@@ -50,7 +53,7 @@ namespace DXApp
 				Destory();
 				return DX11Image::CreateCompatible(dx11, rectangle.Size());
 			}
-		}
+		}*/
 		return FALSE;
 	}
 
@@ -69,11 +72,20 @@ namespace DXApp
 		HDC hDC = ::GetDC(m_hWND);
 		if (hDC != NULL)
 		{
+			BOOL bEnable = FALSE;
+			DwmIsCompositionEnabled(&bEnable);
 			TinyRectangle rectangle;
 			GetClientRect(m_hWND, &rectangle);
-			TinyMemDC dc(hDC, TO_CX(rectangle), TO_CY(rectangle));
-			PrintWindow(m_hWND, dc, PW_CLIENTONLY);
-			DX11Image::BitBlt(dx11, rectangle, dc, TinyPoint(0, 0));
+			if (bEnable)
+			{
+				DX11Image::BitBlt(dx11, rectangle, hDC, TinyPoint(0, 0));
+			}
+			else
+			{
+				TinyMemDC dc(hDC, TO_CX(rectangle), TO_CY(rectangle));
+				PrintWindow(m_hWND, dc, PW_CLIENTONLY);
+				DX11Image::BitBlt(dx11, rectangle, dc, TinyPoint(0, 0));
+			}
 			::ReleaseDC(m_hWND, hDC);
 			DX11Image::Render(dx11);
 			return TRUE;
