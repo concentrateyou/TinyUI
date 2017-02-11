@@ -8,7 +8,7 @@ namespace DXApp
 {
 	IMPLEMENT_DYNAMIC(WindowDlg, TinyCustomDialog);
 	WindowDlg::WindowDlg()
-		:m_lastHWND(NULL)
+		:m_lastHWND(GetDesktopWindow())
 	{
 	}
 
