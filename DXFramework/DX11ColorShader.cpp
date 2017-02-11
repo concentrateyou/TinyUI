@@ -91,13 +91,12 @@ namespace DXFramework
 			dataPtr->view = viewMatrix;
 			dataPtr->projection = projectionMatrix;
 			dx11.GetImmediateContext()->Unmap(m_matrixBuffer, 0);
-			dx11.GetImmediateContext()->IASetInputLayout(m_layout);
-			dx11.GetImmediateContext()->VSSetShader(m_vertexShader, NULL, 0);
-			dx11.GetImmediateContext()->PSSetShader(m_pixelShader, NULL, 0);
-			dx11.GetImmediateContext()->PSSetSamplers(0, 1, &m_sampleState);
-			dx11.GetImmediateContext()->DrawIndexed(indexCount, 0, 0);
-
 		}
+		dx11.GetImmediateContext()->VSSetShader(m_vertexShader, NULL, 0);
+		dx11.GetImmediateContext()->PSSetShader(m_pixelShader, NULL, 0);
+		dx11.GetImmediateContext()->PSSetSamplers(0, 1, &m_sampleState);
+		dx11.GetImmediateContext()->IASetInputLayout(m_layout);
+		dx11.GetImmediateContext()->DrawIndexed(indexCount, 0, 0);
 	}
 }
 

@@ -71,15 +71,18 @@ namespace DXFramework
 		HRESULT hRes = m_texture2D->QueryInterface(__uuidof(IDXGISurface1), (void**)&m_surface);
 		if (FAILED(hRes))
 			return FALSE;
-		return m_surface->GetDC(FALSE, &hDC) == S_OK;
+		hRes = m_surface->GetDC(TRUE, &hDC);
+		if (FAILED(hRes))
+			return FALSE;
+		return TRUE;
 	}
 	BOOL DX11Texture2D::ReleaseDC()
 	{
 		if (!m_bCompatible || !m_surface)
 			return FALSE;
-		m_surface->ReleaseDC(NULL);
+		HRESULT hRes = m_surface->ReleaseDC(NULL);
 		m_surface.Release();
-		return TRUE;
+		return SUCCEEDED(hRes);
 	}
 	BOOL DX11Texture2D::Map(DX11& dx11, BYTE *&lpData, UINT &pitch)
 	{

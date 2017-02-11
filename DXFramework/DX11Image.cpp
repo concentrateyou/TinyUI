@@ -281,11 +281,6 @@ namespace DXFramework
 	}
 	BOOL DX11Image::Render(DX11& dx11)
 	{
-		if (!m_texture.IsEmpty())
-		{
-			//dx11.GetImmediateContext()->OMSetRenderTargets(1, )
-		}
-
 		UINT stride = sizeof(VERTEXTYPE);
 		UINT offset = 0;
 		dx11.GetImmediateContext()->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
