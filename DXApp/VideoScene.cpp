@@ -39,7 +39,7 @@ namespace DXApp
 	{
 		m_video.Lock();
 		BYTE* bits = m_video.GetPointer();
-		DX11Image::BitBlt(dx11, bits, m_video.GetSize());
+		DX11Image::BitBlt(dx11, bits, m_video.GetSize(), m_size.cx * 4);
 		DX11Image::Render(dx11);
 		m_video.Unlock();
 		return bits != NULL;

@@ -1297,6 +1297,7 @@ namespace TinyUI
 			m_hOldBitmap = (HBITMAP)::SelectObject(dc, m_bitmap);
 		}
 	}
+
 	SIZE TinyMemDC::GetSize() const
 	{
 		return m_size;

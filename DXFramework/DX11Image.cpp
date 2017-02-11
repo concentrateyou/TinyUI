@@ -60,13 +60,14 @@ namespace DXFramework
 		m_indexBuffer.Release();
 		m_texture.Destory();
 	}
-	BOOL DX11Image::BitBlt(DX11& dx11, const BYTE* bits, LONG size)
+	BOOL DX11Image::BitBlt(DX11& dx11, const BYTE* bits, LONG size, LONG linesize)
 	{
 		if (!bits || !m_texture.IsEmpty() || size != (m_size.cx * m_size.cy * 4))
 			return FALSE;
 		HDC hDC = NULL;
-		if (m_texture.GetDC(TRUE, hDC))
+		if (m_texture.GetDC(FALSE, hDC))
 		{
+			LONG _linesize = m_size.cx * 4;
 			BITMAPINFO bmi = { 0 };
 			bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 			bmi.bmiHeader.biWidth = m_size.cx;
@@ -74,10 +75,21 @@ namespace DXFramework
 			bmi.bmiHeader.biPlanes = 1;
 			bmi.bmiHeader.biBitCount = 32;
 			bmi.bmiHeader.biCompression = BI_RGB;
-			bmi.bmiHeader.biSizeImage = m_size.cx * m_size.cy * 4;
-			BYTE* pvBits = NULL;
-			HBITMAP hBitmap = ::CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pvBits), NULL, 0);
-			memcpy(pvBits, bits, bmi.bmiHeader.biSizeImage);
+			bmi.bmiHeader.biSizeImage = _linesize * m_size.cy;
+			BYTE* pBits = NULL;
+			HBITMAP hBitmap = ::CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pBits), NULL, 0);
+			INT rowcopy = (_linesize < linesize) ? _linesize : linesize;
+			if (linesize == rowcopy)
+			{
+				memcpy(pBits, bits, rowcopy * m_size.cy);
+			}
+			else
+			{
+				for (INT y = 0; y < m_size.cy; y++)
+				{
+					memcpy(pBits + (UINT)y * _linesize, bits + (UINT)y * linesize, rowcopy);
+				}
+			}
 			TinyUI::TinyMemDC mdc(hDC, hBitmap);
 			::BitBlt(hDC, 0, 0, m_size.cx, m_size.cy, mdc, 0, 0, SRCCOPY);
 			SAFE_DELETE_OBJECT(hBitmap);
@@ -104,7 +116,7 @@ namespace DXFramework
 		if (!m_texture.IsEmpty())
 			return FALSE;
 		HDC hDC = NULL;
-		if (m_texture.GetDC(FALSE,hDC))
+		if (m_texture.GetDC(FALSE, hDC))
 		{
 			::BitBlt(hDC, dst.left, dst.top, dst.Width(), dst.Height(), hDCSrc, src.x, src.y, SRCCOPY);
 			return m_texture.ReleaseDC();
@@ -123,17 +135,29 @@ namespace DXFramework
 	{
 		m_texture.Unmap(dx11);
 	}
-	BOOL DX11Image::Copy(DX11& dx11, const BYTE* bits, LONG size)
+	BOOL DX11Image::Copy(DX11& dx11, const BYTE* bits, LONG size, LONG stride)
 	{
 		if (!m_texture.IsEmpty())
 			return FALSE;
-		BYTE* lpData = NULL;
-		UINT pitch = 0;
-		if (m_texture.Map(dx11, lpData, pitch))
+		BYTE* bitso = NULL;
+		UINT linesize = 0;
+		INT rowcopy = (stride < linesize) ? stride : linesize;
+		if (m_texture.Map(dx11, bitso, linesize))
 		{
-			memcpy(lpData, bits, size);
+			INT rowcopy = (stride < linesize) ? stride : linesize;
+			if (linesize == rowcopy)
+			{
+				memcpy(bitso, bits, linesize * m_size.cy);
+			}
+			else
+			{
+				for (INT y = 0; y < m_size.cy; y++)
+				{
+					memcpy(bitso + (UINT)y * linesize, bits + (UINT)y * stride, rowcopy);
+				}
+			}
 			m_texture.Unmap(dx11);
-			return FALSE;
+			return TRUE;
 		}
 		return FALSE;
 	}

@@ -35,4 +35,6 @@ protected:
 BOOL WINAPI GetModuleList(HANDLE hProcess, TinyArray<TinyString> &moduleList);
 BOOL WINAPI ScreenSave(const TinyRectangle& s);
 BOOL WINAPI WindowSave(HWND hWND);
+void WINAPI SaveBitmapToFile(const  BITMAPINFOHEADER& bi, const BYTE* pBits, DWORD dwSize);
+BOOL WINAPI SaveBitmapToFile(HBITMAP hBitmap, LPCTSTR lpFileName);
 BOOL WINAPI InvertWindow(HWND hWND);

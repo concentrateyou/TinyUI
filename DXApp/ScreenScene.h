@@ -1,6 +1,9 @@
 #pragma once
+#include "Common/TinyCommon.h"
 #include "DX11Image.h"
 #include "DX11.h"
+#include "Utility.h"
+using namespace TinyUI;
 using namespace DXFramework;
 
 namespace DXApp
@@ -17,7 +20,10 @@ namespace DXApp
 		BOOL Render(DX11& dx11) OVERRIDE;
 		void Clear(DX11& dx11) OVERRIDE;
 	private:
+		BYTE*			m_bits;
+		HBITMAP			m_hBitmap;
 		TinyRectangle	m_snapshot;
+		TinyScopedPtr<TinyMemDC> m_memDC;
 	};
 
 }

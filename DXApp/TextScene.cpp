@@ -77,7 +77,6 @@ namespace DXApp
 			rectF.Height = static_cast<Gdiplus::REAL>(m_size.cy);
 			DX11Font::DrawString(dx11, m_text, rectF, &format);
 		}
-		DX11Image::Render(dx11);
-		return TRUE;
+		return DX11Image::Render(dx11);
 	}
 }
