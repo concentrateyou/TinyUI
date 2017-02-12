@@ -97,6 +97,7 @@
     <ClInclude Include="DX11.h" />
     <ClInclude Include="DX11CaptureTask.h" />
     <ClInclude Include="DX11ColorShader.h" />
+    <ClInclude Include="DX11Duplicator.h" />
     <ClInclude Include="DX11DWMImage.h" />
     <ClInclude Include="DX11Font.h" />
     <ClInclude Include="DX11Graphics2D.h" />
@@ -115,6 +116,7 @@
   <ItemGroup>
     <ClCompile Include="DX11.cpp" />
     <ClCompile Include="DX11ColorShader.cpp" />
+    <ClCompile Include="DX11Duplicator.cpp" />
     <ClCompile Include="DX11DWMImage.cpp" />
     <ClCompile Include="DX11Font.cpp" />
     <ClCompile Include="DX11Graphics2D.cpp" />
