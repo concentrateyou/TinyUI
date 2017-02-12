@@ -115,7 +115,6 @@ namespace DXFramework
 		DWORD dwHandle = 0;
 		if (WaitForSingleObject(hTask, 2000) == WAIT_OBJECT_0)
 		{
-			DWORD dw;
 			GetExitCodeThread(hTask, &dwHandle);
 			if (dwHandle == 0)
 			{

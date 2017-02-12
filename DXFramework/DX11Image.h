@@ -11,8 +11,8 @@ namespace DXFramework
 	{
 		struct VERTEXTYPE
 		{
-			D3DXVECTOR3 position;
-			D3DXVECTOR2 texture;
+			XMFLOAT3 position;
+			XMFLOAT2 texture;
 		};
 		DECLARE_DYNAMIC(DX11Image)
 		DISALLOW_COPY_AND_ASSIGN(DX11Image)

@@ -9,8 +9,8 @@ namespace DXFramework
 	{
 		struct VERTEXTYPE
 		{
-			D3DXVECTOR3 position;
-			D3DXVECTOR4 color;
+			XMFLOAT3 position;
+			XMFLOAT4 color;
 		};
 	public:
 		DX11Rectangle();

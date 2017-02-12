@@ -160,11 +160,16 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11Texture2D::Save(DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT format)
+	/*BOOL DX11Texture2D::Save(DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT format)
 	{
 		ASSERT(m_texture2D);
-		return D3DX11SaveTextureToFile(dx11.GetImmediateContext(), m_texture2D, format, pzFile) == S_OK;
-	}
+		HRESULT hRes = D3DX11SaveTextureToFile(dx11.GetImmediateContext(), m_texture2D, format, pzFile);
+		if (SUCCEEDED(hRes))
+		{
+			return TRUE;
+		}
+		return FALSE;
+	}*/
 	BOOL DX11Texture2D::Copy(DX11& dx11, ID3D11Texture2D* texture2D)
 	{
 		if (!m_texture2D || !texture2D)
@@ -178,11 +183,10 @@ namespace DXFramework
 		m_texture2D.Release();
 		m_resourceView.Release();
 		HRESULT hRes = S_OK;
-		if (FAILED(hRes = D3DX11CreateShaderResourceViewFromFile(dx11.GetD3D(), pzFile, NULL, NULL, &m_resourceView, NULL)))
-			return FALSE;
+		wstring wpzFile = StringToWString(pzFile);
 		TinyComPtr<ID3D11Resource> resource;
-		m_resourceView->GetResource(&resource);
-		if (!resource)
+		hRes = CreateWICTextureFromFile(dx11.GetD3D(), wpzFile.c_str(), &resource, &m_resourceView);
+		if (FAILED(hRes))
 			return FALSE;
 		if (FAILED(hRes = resource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&m_texture2D)))
 			return FALSE;
@@ -217,11 +221,8 @@ namespace DXFramework
 		m_texture2D.Release();
 		m_resourceView.Release();
 		HRESULT hRes = S_OK;
-		if (FAILED(hRes = D3DX11CreateShaderResourceViewFromMemory(dx11.GetD3D(), bits, dwSize, NULL, NULL, &m_resourceView, NULL)))
-			return FALSE;
 		TinyComPtr<ID3D11Resource> resource;
-		m_resourceView->GetResource(&resource);
-		if (!resource)
+		if (!CreateWICTextureFromMemory(dx11.GetD3D(), bits, dwSize, &resource, &m_resourceView))
 			return FALSE;
 		if (FAILED(hRes = resource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&m_texture2D)))
 			return FALSE;

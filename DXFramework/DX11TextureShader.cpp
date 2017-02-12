@@ -17,10 +17,12 @@ namespace DXFramework
 		D3D11_INPUT_ELEMENT_DESC layout[2];
 		D3D11_BUFFER_DESC matrixBufferDesc = { 0 };
 		D3D11_SAMPLER_DESC samplerDesc;
-		hRes = D3DX11CompileFromFile(vsFile, NULL, NULL, "TextureVertexShader", "vs_4_0", D3D10_SHADER_OPTIMIZATION_LEVEL3, 0, NULL, &vertexShaderBuffer, NULL, NULL);
+		wstring wvsFile = StringToWString(vsFile);
+		hRes = D3DCompileFromFile(wvsFile.c_str(), NULL, NULL, "TextureVertexShader", "vs_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &vertexShaderBuffer, NULL);
 		if (FAILED(hRes))
 			return FALSE;
-		hRes = D3DX11CompileFromFile(psFile, NULL, NULL, "TexturePixelShader", "ps_4_0", D3D10_SHADER_OPTIMIZATION_LEVEL3, 0, NULL, &pixelShaderBuffer, NULL, NULL);
+		wstring wpsFile = StringToWString(psFile);
+		hRes = D3DCompileFromFile(wpsFile.c_str(), NULL, NULL, "TexturePixelShader", "ps_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &pixelShaderBuffer, NULL);
 		if (FAILED(hRes))
 			return FALSE;
 		hRes = dx11.GetD3D()->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &m_vertexShader);
@@ -77,18 +79,18 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	void DX11TextureShader::Render(DX11& dx11, INT indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, DX11Texture2D* texture)
+	void DX11TextureShader::Render(DX11& dx11, INT indexCount, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, DX11Texture2D* texture)
 	{
-		D3DXMatrixTranspose(&worldMatrix, &worldMatrix);
-		D3DXMatrixTranspose(&viewMatrix, &viewMatrix);
-		D3DXMatrixTranspose(&projectionMatrix, &projectionMatrix);
+		XMMATRIX worldMatrix1 = XMMatrixTranspose(worldMatrix);
+		XMMATRIX viewMatrix1 = XMMatrixTranspose(viewMatrix);
+		XMMATRIX projectionMatrix1 = XMMatrixTranspose(projectionMatrix);
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
 		if (SUCCEEDED(dx11.GetImmediateContext()->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource)))
 		{
 			MATRIXBUFFER* dataPtr = (MATRIXBUFFER*)mappedResource.pData;
-			dataPtr->world = worldMatrix;
-			dataPtr->view = viewMatrix;
-			dataPtr->projection = projectionMatrix;
+			dataPtr->world = worldMatrix1;
+			dataPtr->view = viewMatrix1;
+			dataPtr->projection = projectionMatrix1;
 			dx11.GetImmediateContext()->Unmap(m_matrixBuffer, 0);
 		}
 		dx11.GetImmediateContext()->VSSetConstantBuffers(0, 1, &m_matrixBuffer);

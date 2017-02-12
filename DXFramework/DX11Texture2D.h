@@ -1,6 +1,7 @@
 #pragma once
 #include "DXFramework.h"
 #include "DX11.h"
+#include "WICTextureLoader.h"
 
 namespace DXFramework
 {
@@ -20,7 +21,7 @@ namespace DXFramework
 		BOOL Create(DX11& dx11, ID3D11Texture2D* texture2D);
 		BOOL Create(DX11& dx11, INT cx, INT cy, const BYTE* bits, BOOL bReadoly);
 		BOOL CreateCompatible(DX11& dx11, INT cx, INT cy);
-		BOOL Save(DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT dxgi);
+		//BOOL Save(DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT dxgi);
 		BOOL Load(DX11& dx11, const BYTE* bits, DWORD dwSize);
 		BOOL Load(DX11& dx11, HANDLE hResource);
 		BOOL Load(DX11& dx11, const CHAR* pzFile);

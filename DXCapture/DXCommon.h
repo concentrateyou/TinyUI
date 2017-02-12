@@ -1,8 +1,6 @@
 #pragma once
-#include <D3D10_1.h>
-#include <D3DX10.h>
+#include <d3d10_1.h>
 #include <d3d11.h>
-#include <D3DX11tex.h>
 #include <DXGI.h>
 #include <string>
 #include "Common/TinyCore.h"
@@ -16,7 +14,6 @@
 
 using namespace TinyUI;
 #pragma comment(lib,"TinyUI.lib")
-#pragma comment(lib,"D3DX11.lib")
 
 namespace DXCapture
 {

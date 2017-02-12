@@ -3,8 +3,8 @@
 #include <d3dcommon.h>
 #include <d3d11.h>
 #include <DXGIFormat.h>
-#include <D3DX10math.h>
-#include <D3DX11tex.h>
+#include <DirectXMath.h>
+#include <d3dcompiler.h>
 #include <DXGI.h>
 #include <dwmapi.h>
 #include <TlHelp32.h>
@@ -19,6 +19,7 @@
 #include "IO/TinyTaskBase.h"
 #include "IO/TinyRingQueue.h"
 #pragma comment(lib,"Dwmapi.lib")
+using namespace DirectX;
 using namespace TinyUI;
 using namespace std;
 
@@ -36,9 +37,9 @@ namespace DXFramework
 
 	struct MATRIXBUFFER
 	{
-		D3DXMATRIX world;
-		D3DXMATRIX view;
-		D3DXMATRIX projection;
+		XMMATRIX world;
+		XMMATRIX view;
+		XMMATRIX projection;
 	};
 
 	typedef BOOL(WINAPI *DwmGetDxSharedSurface)(
@@ -58,7 +59,8 @@ namespace DXFramework
 #define TEXTURE_MEMORY          TEXT("Local\\TextureMemory")
 #define TEXTURE_MUTEX1          TEXT("TextureMutex1")
 #define TEXTURE_MUTEX2          TEXT("TextureMutex2")
-
+#define D3DX_PI    (3.14159265358979323846)
+#define D3DX_1BYPI ( 1.0 / D3DX_PI )
 	BOOL WINAPI InjectLibrary(HANDLE hProcess, const CHAR *pszDLL);
 	BOOL WINAPI UninjectLibrary(HANDLE hProcess, const CHAR *pszDLL);
 }

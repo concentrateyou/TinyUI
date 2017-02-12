@@ -339,7 +339,7 @@ namespace DXFramework
 						if (SUCCEEDED(metareader->GetMetadataByName(L"/sRGB/RenderingIntent", &value)) && value.vt == VT_UI1)
 						{
 							sRGB = true;
-						}  
+						}
 					}
 					else if (SUCCEEDED(metareader->GetMetadataByName(L"System.Image.ColorSpace", &value)) && value.vt == VT_UI2 && value.uiVal == 1)
 					{
@@ -669,7 +669,7 @@ namespace DXFramework
 		size_t maxsize)
 	{
 		return CreateWICTextureFromFileEx(d3dDevice, fileName, maxsize,
-			D3D11_USAGE_DEFAULT, D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE, 0, D3D11_RESOURCE_MISC_GDI_COMPATIBLE, WIC_LOADER_DEFAULT,
+			D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, WIC_LOADER_DEFAULT,
 			texture, textureView);
 	}
 

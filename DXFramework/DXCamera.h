@@ -10,10 +10,10 @@ namespace DXFramework
 		~DXCamera();
 		void SetPosition(FLOAT, FLOAT, FLOAT);
 		void SetRotation(FLOAT, FLOAT, FLOAT);
-		D3DXVECTOR3 GetPosition();
-		D3DXVECTOR3 GetRotation();
+		XMFLOAT3 GetPosition();
+		XMFLOAT3 GetRotation();
 		void UpdatePosition();
-		D3DXMATRIX GetViewMatrix();
+		XMMATRIX GetViewMatrix();
 	private:
 		FLOAT m_positionX;
 		FLOAT m_positionY;
@@ -21,6 +21,6 @@ namespace DXFramework
 		FLOAT m_rotationX;
 		FLOAT m_rotationY;
 		FLOAT m_rotationZ;
-		D3DXMATRIX m_viewMatrix;
+		XMMATRIX m_viewMatrix;
 	};
 }

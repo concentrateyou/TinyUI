@@ -27,42 +27,48 @@ namespace DXFramework
 		m_rotationY = y;
 		m_rotationZ = z;
 	}
-	D3DXVECTOR3 DXCamera::GetPosition()
+	XMFLOAT3 DXCamera::GetPosition()
 	{
-		return D3DXVECTOR3(m_positionX, m_positionY, m_positionZ);
+		return XMFLOAT3(m_positionX, m_positionY, m_positionZ);
 	}
-	D3DXVECTOR3 DXCamera::GetRotation()
+	XMFLOAT3 DXCamera::GetRotation()
 	{
-		return D3DXVECTOR3(m_rotationX, m_rotationY, m_rotationZ);
+		return XMFLOAT3(m_rotationX, m_rotationY, m_rotationZ);
 	}
 	void DXCamera::UpdatePosition()
 	{
-		D3DXVECTOR3 up;
-		D3DXVECTOR3 position;
-		D3DXVECTOR3 lookAt;
+		XMFLOAT3 up;
+		XMFLOAT3 position;
+		XMFLOAT3 lookAt;
 		FLOAT yaw;
 		FLOAT pitch;
 		FLOAT roll;
-		D3DXMATRIX rotationMatrix;
+		XMVECTOR upVector;
+		XMVECTOR positionVector;
+		XMVECTOR lookAtVector;
+		XMMATRIX rotationMatrix;
 		up.x = 0.0F;
 		up.y = 1.0F;
 		up.z = 0.0F;
+		upVector = XMLoadFloat3(&up);
 		position.x = m_positionX;
 		position.y = m_positionY;
 		position.z = m_positionZ;
+		positionVector = XMLoadFloat3(&position);
 		lookAt.x = 0.0F;
 		lookAt.y = 0.0F;
 		lookAt.z = 1.0F;
+		lookAtVector = XMLoadFloat3(&lookAt);
 		pitch = m_rotationX * 0.0174532925F;
 		yaw = m_rotationY * 0.0174532925F;
 		roll = m_rotationZ * 0.0174532925F;
-		D3DXMatrixRotationYawPitchRoll(&rotationMatrix, yaw, pitch, roll);
-		D3DXVec3TransformCoord(&lookAt, &lookAt, &rotationMatrix);
-		D3DXVec3TransformCoord(&up, &up, &rotationMatrix);
-		lookAt = position + lookAt;
-		D3DXMatrixLookAtLH(&m_viewMatrix, &position, &lookAt, &up);
+		rotationMatrix = XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
+		lookAtVector = XMVector3TransformCoord(lookAtVector, rotationMatrix);
+		upVector = XMVector3TransformCoord(upVector, rotationMatrix);
+		lookAtVector = XMVectorAdd(positionVector, lookAtVector);
+		m_viewMatrix = XMMatrixLookAtLH(positionVector, lookAtVector, upVector);
 	}
-	D3DXMATRIX DXCamera::GetViewMatrix()
+	XMMATRIX DXCamera::GetViewMatrix()
 	{
 		return m_viewMatrix;
 	}

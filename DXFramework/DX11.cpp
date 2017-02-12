@@ -120,9 +120,9 @@ namespace DXFramework
 		m_immediateContext->RSSetViewports(1, &viewport);
 		FLOAT fov = (FLOAT)D3DX_PI / 4.0F;
 		FLOAT aspect = (FLOAT)cx / (FLOAT)cy;
-		D3DXMatrixPerspectiveFovLH(&m_projectionMatrix, fov, aspect, 1000.0F, 0.1F);
-		D3DXMatrixIdentity(&m_worldMatrix);
-		D3DXMatrixOrthoLH(&m_orthoMatrix, (FLOAT)cx, (FLOAT)cy, 1000.0F, 0.1F);
+		m_projectionMatrix = XMMatrixPerspectiveFovLH(fov, aspect, 1000.0F, 0.1F);
+		m_worldMatrix = XMMatrixIdentity();
+		m_orthoMatrix = XMMatrixOrthographicLH((FLOAT)cx, (FLOAT)cy, 1000.0F, 0.1F);
 		D3D11_DEPTH_STENCIL_DESC disableDepthStencilDesc;
 		ZeroMemory(&disableDepthStencilDesc, sizeof(disableDepthStencilDesc));
 		disableDepthStencilDesc.DepthEnable = FALSE;
@@ -217,9 +217,9 @@ namespace DXFramework
 		m_immediateContext->RSSetViewports(1, &viewport);
 		FLOAT fov = (FLOAT)D3DX_PI / 4.0F;
 		FLOAT aspect = (FLOAT)m_size.cx / (FLOAT)m_size.cy;
-		D3DXMatrixPerspectiveFovLH(&m_projectionMatrix, fov, aspect, 1000.0F, 0.1F);
-		D3DXMatrixIdentity(&m_worldMatrix);
-		D3DXMatrixOrthoLH(&m_orthoMatrix, (FLOAT)m_size.cx, (FLOAT)m_size.cy, 1000.0F, 0.1F);
+		m_projectionMatrix = XMMatrixPerspectiveFovLH(fov, aspect, 1000.0F, 0.1F);
+		m_worldMatrix = XMMatrixIdentity();
+		m_orthoMatrix = XMMatrixOrthographicLH((FLOAT)cx, (FLOAT)cy, 1000.0F, 0.1F);
 		m_renderTexture.Release();
 		D3D11_TEXTURE2D_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
@@ -297,15 +297,15 @@ namespace DXFramework
 	{
 		return m_size;
 	}
-	D3DXMATRIX DX11::GetProjectionMatrix()
+	XMMATRIX DX11::GetProjectionMatrix()
 	{
 		return m_projectionMatrix;
 	}
-	D3DXMATRIX DX11::GetWorldMatrix()
+	XMMATRIX DX11::GetWorldMatrix()
 	{
 		return m_worldMatrix;
 	}
-	D3DXMATRIX DX11::GetOrthoMatrix()
+	XMMATRIX DX11::GetOrthoMatrix()
 	{
 		return m_orthoMatrix;
 	}

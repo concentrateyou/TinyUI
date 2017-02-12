@@ -20,9 +20,9 @@ namespace DXFramework
 		ID3D11Texture2D*		GetTexture2D() const;
 		ID3D11DepthStencilView* GetDSView() const;
 		HWND					GetHWND() const;
-		D3DXMATRIX				GetProjectionMatrix();
-		D3DXMATRIX				GetWorldMatrix();
-		D3DXMATRIX				GetOrthoMatrix();
+		XMMATRIX				GetProjectionMatrix();
+		XMMATRIX				GetWorldMatrix();
+		XMMATRIX				GetOrthoMatrix();
 		TinySize				GetSize() const;
 	private:
 		TinyComPtr<IDXGISwapChain>			m_swap;
@@ -38,9 +38,9 @@ namespace DXFramework
 		HWND								m_hWND;
 		TinyPoint							m_pos;
 		TinySize							m_size;
-		D3DXMATRIX							m_projectionMatrix;
-		D3DXMATRIX							m_worldMatrix;
-		D3DXMATRIX							m_orthoMatrix;
+		XMMATRIX							m_projectionMatrix;
+		XMMATRIX							m_worldMatrix;
+		XMMATRIX							m_orthoMatrix;
 	};
 }
 

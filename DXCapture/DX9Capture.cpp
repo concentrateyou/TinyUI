@@ -469,9 +469,9 @@ namespace DXCapture
 		LOG(INFO) << "DX9GPUHook ok\n";
 		return TRUE;
 	}
-	BOOL DX9Capture::SaveAs(D3DX10_IMAGE_FILE_FORMAT s, LPCSTR pzFile)
+	/*BOOL DX9Capture::SaveAs(D3DX10_IMAGE_FILE_FORMAT s, LPCSTR pzFile)
 	{
 		ASSERT(m_resource);
 		return D3DX10SaveTextureToFile(m_resource, s, pzFile);
-	}
+	}*/
 }

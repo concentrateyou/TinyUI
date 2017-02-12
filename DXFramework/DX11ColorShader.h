@@ -11,7 +11,7 @@ namespace DXFramework
 		DX11ColorShader();
 		virtual ~DX11ColorShader();
 		BOOL Initialize(DX11& dx11, const CHAR* vsFile, const CHAR* psFile);
-		void Render(DX11& dx11, INT indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix);
+		void Render(DX11& dx11, INT indexCount,const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix);
 	protected:
 		TinyComPtr<ID3D11VertexShader>	m_vertexShader;
 		TinyComPtr<ID3D11PixelShader>	m_pixelShader;
