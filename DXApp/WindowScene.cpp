@@ -71,19 +71,6 @@ namespace DXApp
 	BOOL WindowScene::Render(DX11& dx11)
 	{
 		HRESULT hRes = S_OK;
-
-		/*TinyComPtr<IDXGISurface1> resource;
-		dx11.GetD3D()->OpenSharedResource(m_handle, __uuidof(IDXGISurface1), (LPVOID*)&resource);
-
-		HDC hDC = NULL;
-		hRes = resource->GetDC(FALSE, &hDC);
-
-		DXGI_SURFACE_DESC desc2;
-		resource->GetDesc(&desc2);
-		m_pDwmpDxUpdateWindowSharedSurface(m_hWND, 0, 0, 0, 0, 0);
-		::BitBlt(destDC, 0, 0, 100, 100, hdc, 0, 0, SRCCOPY | CAPTUREBLT);
-		resource->ReleaseDC(NULL);*/
-
 		HDC hDC = ::GetDC(m_hWND);
 		if (hDC != NULL)
 		{
@@ -99,7 +86,7 @@ namespace DXApp
 			{
 				TinyMemDC dc(hDC, TO_CX(rectangle), TO_CY(rectangle));
 				PrintWindow(m_hWND, dc, PW_CLIENTONLY);
-				DX11Image::BitBlt(dx11, rectangle, dc, TinyPoint(0, 0));
+				DX11Image::BitBlt(dx11, rectangle, hDC, TinyPoint(0, 0));
 			}
 			::ReleaseDC(m_hWND, hDC);
 			DX11Image::Render(dx11);

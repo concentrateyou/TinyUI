@@ -65,7 +65,7 @@ namespace DXFramework
 		if (!bits || !m_texture.IsEmpty() || size != (m_size.cx * m_size.cy * 4))
 			return FALSE;
 		HDC hDC = NULL;
-		if (m_texture.GetDC(TRUE, hDC))
+		if (!m_texture.GetDC(FALSE, hDC))
 			return FALSE;
 		LONG _linesize = m_size.cx * 4;
 		BITMAPINFO bmi = { 0 };

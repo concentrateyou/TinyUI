@@ -14,11 +14,6 @@ namespace TinyUI
 {
 	namespace IO
 	{
-		/// <summary>
-		/// 高效的无锁循环缓冲(Linux FIFO)
-		/// 大小必须是2的整数幂
-		/// 适用单个消费者和生产者(线程安全)
-		/// </summary>
 		class TinyRingQueue
 		{
 			typedef struct tagFIFO
@@ -29,14 +24,18 @@ namespace TinyUI
 				UINT	offsetO;
 			}FIFO;
 		public:
-			TinyRingQueue();
+			TinyRingQueue(TinyLock& lock);
 			~TinyRingQueue();
 			BOOL	Initialize(UINT size);
 			UINT	GetSize();
+			void	Reset();
+			UINT	Read(BYTE *data, UINT size);
+			UINT	Write(BYTE *data, UINT size);
+		private:
 			UINT	ReadBytes(BYTE *data, UINT size);
 			UINT	WriteBytes(BYTE *data, UINT size);
-			void	Reset();
 		protected:
+			TinyLock&				m_lock;
 			TinyScopedArray<BYTE>	m_data;
 			FIFO					m_io;
 		};
