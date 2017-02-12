@@ -201,6 +201,7 @@ namespace DXFramework
 			return FALSE;
 		D3D11_TEXTURE2D_DESC desc;
 		m_texture2D->GetDesc(&desc);
+		m_bCompatible = desc.MiscFlags & D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
 		D3D11_SHADER_RESOURCE_VIEW_DESC dsrvd;
 		::ZeroMemory(&dsrvd, sizeof(dsrvd));
 		dsrvd.Format = desc.Format;
@@ -224,6 +225,9 @@ namespace DXFramework
 			return FALSE;
 		if (FAILED(hRes = resource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&m_texture2D)))
 			return FALSE;
+		D3D11_TEXTURE2D_DESC desc;
+		m_texture2D->GetDesc(&desc);
+		m_bCompatible = desc.MiscFlags & D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
 		return TRUE;
 	}
 	void DX11Texture2D::Destory()

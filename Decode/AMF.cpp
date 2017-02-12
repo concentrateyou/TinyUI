@@ -3,12 +3,6 @@
 
 namespace Decode
 {
-	AMF::AMF()
-	{
-	}
 
-	AMF::~AMF()
-	{
-	}
 }
 

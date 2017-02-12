@@ -369,6 +369,18 @@ namespace TinyUI
 		}
 		return FALSE;
 	}
+	LRESULT TinyControl::OnWindowPosChanging(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		EVENT_POSCHANGING(uMsg, wParam, lParam, bHandled);
+		return FALSE;
+	}
+	LRESULT TinyControl::OnWindowPosChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		EVENT_POSCHANGED(uMsg, wParam, lParam, bHandled);
+		return FALSE;
+	}
 	BOOL TinyControl::ShowWindow(INT nCmdShow) throw()
 	{
 		ASSERT(::IsWindow(m_hWND));
