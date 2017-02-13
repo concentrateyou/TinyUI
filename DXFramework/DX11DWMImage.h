@@ -13,6 +13,8 @@ namespace DXFramework
 		ULONG* pPresentFlags,
 		ULONGLONG* pWin32kUpdateId);
 
+
+
 	class DX11DWMImage : public DX11Image
 	{
 		DECLARE_DYNAMIC(DX11DWMImage)
