@@ -3,6 +3,7 @@
 extern "C"
 {
 #include "libavutil/avutil.h"
+#include "libavutil/mem.h"
 #include "libavutil/imgutils.h"
 #include "libavformat/avformat.h"
 #include "libavdevice/avdevice.h"
@@ -24,22 +25,22 @@ namespace Decode
 	public:
 		H264Decode();
 		virtual ~H264Decode();
-		BOOL Open(const TinySize& src, const TinySize& dst);
+		BOOL Open(const TinySize& src, const TinySize& dst, BYTE* avc1, LONG size);
 		BOOL Decode(BYTE* bits, LONG size);
 		BOOL Close();
 	public:
 		virtual void OnDone(BYTE*, LONG, LPVOID);
 		Event<void(BYTE*, LONG, LPVOID)> EVENT_DONE;
 	private:
-		TinySize		m_srcSize;
-		TinySize		m_dstSize;
+		INT				m_outsize;
+		TinySize		m_srcsize;
+		TinySize		m_dstsize;
+		SwsContext*		m_sws;
 		AVPacket		m_packet;
 		AVFrame*		m_i420;
 		AVFrame*		m_rgb24;
-		TinyScopedArray<BYTE>	m_bits;
-		INT				m_outsize;
 		AVCodecContext* m_context;
-		SwsContext*		m_sws;
+		TinyScopedArray<BYTE>	m_bits;
 	};
 }
 

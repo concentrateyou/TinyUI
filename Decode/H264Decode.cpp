@@ -16,11 +16,11 @@ namespace Decode
 	H264Decode::~H264Decode()
 	{
 	}
-	BOOL H264Decode::Open(const TinySize& src, const TinySize& dst)
+	BOOL H264Decode::Open(const TinySize& src, const TinySize& dst, BYTE* avc1, LONG size)
 	{
-		m_srcSize = src;
-		m_dstSize = dst;
-		m_outsize = av_image_get_buffer_size(AV_PIX_FMT_RGB24, m_dstSize.cx, m_dstSize.cy, 1);
+		m_srcsize = src;
+		m_dstsize = dst;
+		m_outsize = av_image_get_buffer_size(AV_PIX_FMT_RGB24, m_dstsize.cx, m_dstsize.cy, 1);
 		m_bits.Reset(new BYTE[m_outsize]);
 		m_sws = sws_getContext(src.cx, src.cy, AV_PIX_FMT_YUV420P, dst.cx, dst.cy, AV_PIX_FMT_RGB24, 0, NULL, NULL, NULL);
 		if (!m_sws)
@@ -34,8 +34,9 @@ namespace Decode
 		m_context = avcodec_alloc_context3(codec);
 		if (!m_context)
 			goto _ERROR;
-		if (codec->capabilities & CODEC_CAP_TRUNCATED)
-			m_context->flags |= CODEC_FLAG_TRUNCATED;
+		m_context->extradata_size = size;
+		m_context->extradata = reinterpret_cast<BYTE*>(av_malloc(m_context->extradata_size));
+		memcpy(m_context->extradata, avc1, m_context->extradata_size);
 		if (avcodec_open2(m_context, codec, NULL) < 0)
 			goto _ERROR;
 		m_i420 = av_frame_alloc();
@@ -51,22 +52,37 @@ namespace Decode
 	{
 		if (!m_context)
 			return FALSE;
-		m_packet.size = size;
 		m_packet.data = bits;
+		m_packet.size = size;
+		INT iRes = 0;
 		for (;;)
 		{
 			if (m_packet.size > 0)
 			{
-				if (avcodec_send_packet(m_context, &m_packet) != 0)
-					return FALSE;
-				if (avcodec_receive_frame(m_context, m_i420) != 0)
-					return FALSE;
-				av_image_fill_arrays(m_rgb24->data, m_rgb24->linesize, m_bits.Ptr(), AV_PIX_FMT_RGB24, m_dstSize.cx, m_dstSize.cy, 1);
-				sws_scale(m_sws, m_i420->data, m_i420->linesize, 0, m_srcSize.cy, m_rgb24->data, m_rgb24->linesize);
+				iRes = avcodec_send_packet(m_context, &m_packet);
+				if (iRes == AVERROR(EAGAIN))
+				{
+					INT a = 0;
+				}
+				if (iRes == AVERROR_EOF)
+				{
+					INT a = 0;
+				}
+				if (iRes == AVERROR(EINVAL))
+				{
+					INT a = 0;
+				}
+				if (iRes == AVERROR(ENOMEM))
+				{
+					INT a = 0;
+				}
+				iRes = avcodec_receive_frame(m_context, m_i420);
+				/*av_image_fill_arrays(m_rgb24->data, m_rgb24->linesize, m_bits.Ptr(), AV_PIX_FMT_RGB24, m_dstsize.cx, m_dstsize.cy, 1);
+				sws_scale(m_sws, m_i420->data, m_i420->linesize, 0, m_srcsize.cy, m_rgb24->data, m_rgb24->linesize);
 				BITMAPINFOHEADER bi;
 				bi.biSize = sizeof(BITMAPINFOHEADER);
-				bi.biWidth = m_dstSize.cx;
-				bi.biHeight = m_dstSize.cy;
+				bi.biWidth = m_dstsize.cx;
+				bi.biHeight = m_dstsize.cy;
 				bi.biPlanes = 1;
 				bi.biBitCount = 24;
 				bi.biCompression = BI_RGB;
@@ -75,7 +91,7 @@ namespace Decode
 				bi.biYPelsPerMeter = 0;
 				bi.biClrUsed = 0;
 				bi.biClrImportant = 0;
-				Utility::SaveBitmap(bi, m_bits, m_outsize);
+				Utility::SaveBitmap(bi, m_bits, m_outsize);*/
 			}
 		}
 		return TRUE;
@@ -84,6 +100,11 @@ namespace Decode
 	{
 		if (m_context)
 		{
+			if (m_context->extradata)
+			{
+				av_free(m_context->extradata);
+				m_context->extradata = NULL;
+			}
 			avcodec_close(m_context);
 			avcodec_free_context(&m_context);
 			m_context = NULL;

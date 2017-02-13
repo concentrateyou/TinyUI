@@ -120,6 +120,7 @@ namespace Decode
 		DOUBLE	lastkeyframetimestamp;
 		DOUBLE	lastkeyframelocation;
 	}FLV_SCRIPTDATA;
+
 	/// <summary>
 	/// FLV大端数据
 	/// 目前音频支持支AAC,MP3和PCM,视频H.264

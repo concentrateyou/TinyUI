@@ -150,18 +150,18 @@ namespace Decode
 	{
 		BYTE* bits = data;
 		BYTE aacPacketType = *bits++;
+		size -= 1;
 		INT dwCompositionTime = 0;
 		memcpy(reinterpret_cast<BYTE*>(&dwCompositionTime), bits, 3);
 		bits += 3;
-		if (m_h264 == NULL)
-		{
-			m_h264.Reset(new H264Decode());
-			TinySize videoSize(static_cast<LONG>(m_script.width), static_cast<LONG>(m_script.height));
-			m_h264->Open(videoSize, videoSize);
-			m_h264->EVENT_DONE += m_videoDone;
-		}
+		size -= 3;
 		if (aacPacketType == 0)
 		{
+			m_h264.Reset(new H264Decode());
+			m_h264->EVENT_DONE += m_videoDone;
+			TinySize videoSize(static_cast<LONG>(m_script.width), static_cast<LONG>(m_script.height));
+			m_h264->Open(videoSize, videoSize, bits, size);
+
 			m_avcconfig.ConfigurationVersion = *bits++;
 			m_avcconfig.AVCProfileIndication = *bits++;
 			m_avcconfig.ProfileCompatibility = *bits++;
@@ -200,48 +200,57 @@ namespace Decode
 	}
 	BOOL FLVFile::ParseNALU(FLV_TAG_VIDEO* video, BYTE* data, INT size)
 	{
+		BYTE* bits = data;
 		INT offset = 0;
-		INT bitsize = 0;
+		INT sizeofNALU = 0;
 		for (;;)
 		{
-			if (offset > size)
+			if (offset >= size)
 				break;
 			switch (m_avcconfig.LengthSizeMinusOne)
 			{
 			case 4:
 			{
-				bitsize = Utility::ToINT32(data + offset);
+				sizeofNALU = Utility::ToINT32(bits);
+				bits += 4;
 				offset += 4;
-				TinyScopedArray<BYTE> bits(new BYTE[bitsize]);
-				memcpy(bits, data, bitsize);
-				offset += bitsize;
+				ASSERT(m_h264);
+				m_h264->Decode(bits, sizeofNALU);
+				bits += sizeofNALU;
+				offset += sizeofNALU;
 			}
 			break;
 			case 3:
 			{
-				bitsize = Utility::ToINT24(data + offset);
+				sizeofNALU = Utility::ToINT24(bits);
+				bits += 3;
 				offset += 3;
-				TinyScopedArray<BYTE> bits(new BYTE[bitsize]);
-				memcpy(bits, data, bitsize);
-				offset += bitsize;
+				ASSERT(m_h264);
+				m_h264->Decode(bits, sizeofNALU);
+				bits += sizeofNALU;
+				offset += sizeofNALU;
 			}
 			break;
 			case 2:
 			{
-				bitsize = Utility::ToINT16(data + offset);
-				data += 2;
-				TinyScopedArray<BYTE> bits(new BYTE[bitsize]);
-				memcpy(bits, data, bitsize);
-				offset += bitsize;
+				sizeofNALU = Utility::ToINT16(data + offset);
+				bits += 2;
+				offset += 2;
+				ASSERT(m_h264);
+				m_h264->Decode(bits, sizeofNALU);
+				bits += sizeofNALU;
+				offset += sizeofNALU;
 			}
 			break;
-			default:
+			case 1:
 			{
-				bitsize = Utility::ToINT8(data + offset);
-				data += 1;
-				TinyScopedArray<BYTE> bits(new BYTE[bitsize]);
-				memcpy(bits, data, bitsize);
-				offset += bitsize;
+				sizeofNALU = Utility::ToINT8(data + offset);
+				bits += 1;
+				offset += 1;
+				ASSERT(m_h264);
+				m_h264->Decode(bits, sizeofNALU);
+				bits += sizeofNALU;
+				offset += sizeofNALU;
 			}
 			break;
 			}
@@ -252,15 +261,12 @@ namespace Decode
 	{
 		ASSERT(size >= 2);
 		BYTE* bits = data;
-		size -= 1;
 		BYTE aacPacketType = *bits++;
-		if (m_aac == NULL)
+		size -= 1;
+		if (aacPacketType == 0)
 		{
 			m_aac.Reset(new AACDecode());
 			m_aac->EVENT_DONE += m_audioDone;
-		}
-		if (aacPacketType == 0)
-		{
 			ULONG sampleRate = 0;
 			BYTE channel = 0;
 			if (m_aac->Open(bits, size - 1, audio->bitsPerSample == 0 ? 8 : 16))
