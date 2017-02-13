@@ -1078,7 +1078,7 @@ private:\
 	{
 		if (*this != lp)
 		{
-			return static_cast<T*>(ComPtrAssign((IUnknown**)&m_myP, lp.p));
+			return static_cast<T*>(ComPtrAssign((IUnknown**)&m_myP, lp.m_myP));
 		}
 		return *this;
 	}

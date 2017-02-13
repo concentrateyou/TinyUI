@@ -10,7 +10,6 @@ namespace DXFramework
 	typedef BOOL(WINAPI *VIRTUALFREEEX)(HANDLE, LPVOID, SIZE_T, DWORD);
 	typedef HANDLE(WINAPI *LOADLIBRARY) (DWORD, BOOL, DWORD);
 	typedef HANDLE(WINAPI *FREELIBRARY) (HMODULE);
-
 	BOOL WINAPI InjectLibrary(HANDLE hProcess, const CHAR *pszDLL)
 	{
 		if (!hProcess || !pszDLL)

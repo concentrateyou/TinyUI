@@ -50,7 +50,6 @@ namespace DXFramework
 		ULONG* pPresentFlags,
 		ULONGLONG* pWin32kUpdateId);
 
-
 #define BEGIN_CAPTURE_EVENT		TEXT("BeginCapture")
 #define END_CAPTURE_EVENT       TEXT("EndCapture")
 #define CAPTURE_READY_EVENT     TEXT("CaptureReady")

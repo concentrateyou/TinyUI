@@ -54,9 +54,6 @@
     <ClInclude Include="DXInput.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="WICTextureLoader.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="DX11ColorShader.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -70,6 +67,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DX11Duplicator.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="WICTexture.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -110,9 +110,6 @@
     <ClCompile Include="DXInput.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="WICTextureLoader.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="DX11ColorShader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -126,6 +123,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DX11Duplicator.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="WICTexture.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

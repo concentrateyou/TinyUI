@@ -1,7 +1,7 @@
 #pragma once
 #include "DXFramework.h"
 #include "DX11.h"
-#include "WICTextureLoader.h"
+#include "WICTexture.h"
 
 namespace DXFramework
 {
