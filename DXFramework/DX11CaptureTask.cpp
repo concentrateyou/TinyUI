@@ -78,6 +78,13 @@ namespace DXFramework
 		}
 		return TRUE;
 	}
+	void DX11CaptureTask::CloseEvents()
+	{
+		m_start.Close();
+		m_stop.Close();
+		m_ready.Close();
+		m_exit.Close();
+	}
 	SharedCaptureDATA* DX11CaptureTask::GetSharedCaptureDATA()
 	{
 		if (!m_captureMemory.Address())
@@ -273,17 +280,20 @@ namespace DXFramework
 		if (!hProcess)
 		{
 			TRACE("hProcess == NULL\n");
+			CloseEvents();
 			goto _ERROR;
 		}
 		TRACE("Begin InjectLibrary\n");
 		if (!InjectLibrary(hProcess, dllName.STR()))
 		{
 			TRACE("InjectLibrary - FALSE\n");
+			CloseEvents();
 			goto _ERROR;
 		}
 		if (!DuplicateHandle(GetCurrentProcess(), hProcess, GetCurrentProcess(), &m_targetWND.hProcess, 0, FALSE, DUPLICATE_SAME_ACCESS))
 		{
 			TRACE("DuplicateHandle - FALSE\n");
+			CloseEvents();
 			goto _ERROR;
 		}
 		m_start.SetEvent();

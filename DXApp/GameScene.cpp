@@ -33,7 +33,10 @@ namespace DXApp
 
 	void GameScene::Clear(DX11& dx11)
 	{
-		m_captureTask->Close();
+		if (m_captureTask)
+		{
+			m_captureTask->Close();
+		}
 		m_captureTask.Reset(NULL);
 	}
 

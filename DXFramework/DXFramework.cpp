@@ -153,4 +153,34 @@ namespace DXFramework
 		TRACE("UninjectLibrary\n");
 		return bRes;
 	}
+	BOOL WINAPI ProcessExists(const TinyString& exeName, PROCESSINFO& ps)
+	{
+		DWORD processes[1024];
+		DWORD cbNeeded = 0;
+		if (!EnumProcesses(processes, sizeof(processes), &cbNeeded))
+			return FALSE;
+		DWORD dwCount = cbNeeded / sizeof(DWORD);
+		for (UINT i = 0;i < dwCount;i++)
+		{
+			ps.dwProcessID = processes[i];
+			HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, ps.dwProcessID);
+			DWORD size = MAX_PATH;
+			CHAR windowExecutable[MAX_PATH];
+			if (QueryFullProcessImageName(hProcess, 0, windowExecutable, &size))
+			{
+				CHAR* pzName = PathFindFileName(windowExecutable);
+				if (strncasecmp(pzName, exeName.STR(), strlen(pzName)) == 0)
+				{
+					CloseHandle(hProcess);
+					return TRUE;
+				}
+				CloseHandle(hProcess);
+				hProcess = NULL;
+				return TRUE;
+			}
+			CloseHandle(hProcess);
+			hProcess = NULL;
+		}
+		return FALSE;
+	}
 }

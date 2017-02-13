@@ -26,6 +26,7 @@ namespace DXFramework
 		BOOL					AttemptCapture(const TinyString& className, const TinyString& exeName, const TinyString& dllName);
 		BOOL					CreateEvents();
 		BOOL					OpenEvents();
+		void					CloseEvents();
 		static BOOL CALLBACK	EnumWindow(HWND hwnd, LPARAM lParam);
 	private:
 		TinySize				m_size;

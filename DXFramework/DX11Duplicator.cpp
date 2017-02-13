@@ -57,26 +57,53 @@ namespace DXFramework
 			return FALSE;
 		DXGI_OUTDUPL_DESC desc = { 0 };
 		m_duplication->GetDesc(&desc);
+		D3D11_TEXTURE2D_DESC textureDesc;
+		ZeroMemory(&textureDesc, sizeof(textureDesc));
+		textureDesc.Width = desc.ModeDesc.Width;
+		textureDesc.Height = desc.ModeDesc.Height;
+		textureDesc.MipLevels = 1;
+		textureDesc.ArraySize = 1;
+		textureDesc.Format = desc.ModeDesc.Format;
+		textureDesc.SampleDesc.Count = 1;
+		textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		textureDesc.Usage = D3D11_USAGE_DEFAULT;
+		textureDesc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
+		TinyComPtr<ID3D11Texture2D> dx11Texture2D;
+		if (FAILED(hRes = dx11.GetD3D()->CreateTexture2D(&textureDesc, NULL, &dx11Texture2D)))
+			return FALSE;
+		if (FAILED(hRes = dx11Texture2D->QueryInterface(__uuidof(ID3D11Resource), (void**)&m_resource)))
+			return FALSE;
+		TinyComPtr<IDXGIResource> resource;
+		if (FAILED(hRes = dx11Texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&resource)))
+			return FALSE;
+		if (FAILED(hRes = resource->GetSharedHandle(&m_handle)))
+			return FALSE;
 		return TRUE;
 	}
 	BOOL DX11Duplicator::AcquireNextFrame(DX11& dx11, UINT timeout)
 	{
 		if (!m_duplication)
 			return FALSE;
+		m_duplication->ReleaseFrame();
 		DXGI_OUTDUPL_FRAME_INFO s;
 		TinyComPtr<IDXGIResource> resource;
 		HRESULT hRes = m_duplication->AcquireNextFrame(timeout, &s, &resource);
 		if (FAILED(hRes))
 			return FALSE;
+		if (s.LastPresentTime.QuadPart <= 0)
+			return FALSE;
 		TinyComPtr<ID3D11Texture2D> texture2D;
 		hRes = resource->QueryInterface(&texture2D);
 		if (FAILED(hRes))
 			return FALSE;
-		if (!m_image.Copy(dx11, texture2D))
-			return FALSE;
+		dx11.GetImmediateContext()->CopyResource(m_resource, texture2D.Ptr());
 		hRes = m_duplication->ReleaseFrame();
 		if (FAILED(hRes))
 			return FALSE;
 		return TRUE;
+	}
+	HANDLE	DX11Duplicator::GetSharedHandle() const
+	{
+		return m_handle;
 	}
 }
