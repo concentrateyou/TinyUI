@@ -24,16 +24,20 @@ namespace Decode
 	public:
 		H264Decode();
 		virtual ~H264Decode();
-		BOOL Open();
+		BOOL Open(const TinySize& src, const TinySize& dst);
 		BOOL Decode(BYTE* bits, LONG size);
 		BOOL Close();
 	public:
 		virtual void OnDone(BYTE*, LONG, LPVOID);
 		Event<void(BYTE*, LONG, LPVOID)> EVENT_DONE;
 	private:
+		TinySize		m_srcSize;
+		TinySize		m_dstSize;
 		AVPacket		m_packet;
-		AVFrame*		m_av;
+		AVFrame*		m_i420;
 		AVFrame*		m_rgb24;
+		TinyScopedArray<BYTE>	m_bits;
+		INT				m_outsize;
 		AVCodecContext* m_context;
 		SwsContext*		m_sws;
 	};

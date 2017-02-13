@@ -94,20 +94,32 @@ namespace Decode
 		BYTE LengthSizeMinusOne;
 	}AVCDecoderConfigurationRecord;
 
-	typedef struct tagMetaData
+	typedef struct tagFLV_SCRIPTDATA
 	{
-		DOUBLE duration;
-		DOUBLE width;
-		DOUBLE height;
-		DOUBLE videodatarate;
-		DOUBLE framerate;
-		DOUBLE videocodecid;
-		DOUBLE audiosamplerate;
-		DOUBLE audiosamplesize;
-		BOOL stereo;
-		DOUBLE audiocodecid;
-		DOUBLE filesize;
-	}MetaData;
+		BOOL	hasAudio;
+		BOOL	hasVideo;
+		BOOL	hasMetadata;
+		BOOL	hasKeyframes;
+		BOOL	canSeekToEnd;
+		BOOL	stereo;
+		DOUBLE	duration;
+		DOUBLE	filesize;
+		DOUBLE	datasize;
+		DOUBLE	audiosize;
+		DOUBLE	videosize;
+		DOUBLE	videocodecid;
+		DOUBLE	audiocodecid;
+		DOUBLE	audiodatarate;
+		DOUBLE	audiosamplesize;
+		DOUBLE	audiosamplerate;
+		DOUBLE	videodatarate;
+		DOUBLE	framerate;
+		DOUBLE	width;
+		DOUBLE	height;
+		DOUBLE	lasttimestamp;
+		DOUBLE	lastkeyframetimestamp;
+		DOUBLE	lastkeyframelocation;
+	}FLV_SCRIPTDATA;
 	/// <summary>
 	/// FLV大端数据
 	/// 目前音频支持支AAC,MP3和PCM,视频H.264
@@ -146,7 +158,8 @@ namespace Decode
 		TinyScopedPtr<AACDecode>		m_aac;
 		TinyScopedPtr<H264Decode>		m_h264;
 		TinyScopedPtr<MPG123Decode>		m_mpg123;
-		AVCDecoderConfigurationRecord	m_avcConfig;
+		FLV_SCRIPTDATA					m_script;
+		AVCDecoderConfigurationRecord	m_avcconfig;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG, LPVOID)>>	m_audioDone;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG, LPVOID)>>	m_videoDone;
 	};

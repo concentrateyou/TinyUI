@@ -94,10 +94,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>..\TinyUI;..\ThirdParty\librtmp\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>..\ThirdParty\librtmp\lib;..\Debug</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -137,7 +141,6 @@
   <ItemGroup>
     <ClInclude Include="AACDecode.h" />
     <ClInclude Include="AC3Decode.h" />
-    <ClInclude Include="AMF.h" />
     <ClInclude Include="H264Decode.h" />
     <ClInclude Include="MPG123Decode.h" />
     <ClInclude Include="Utility.h" />
@@ -149,7 +152,6 @@
   <ItemGroup>
     <ClCompile Include="AACDecode.cpp" />
     <ClCompile Include="AC3Decode.cpp" />
-    <ClCompile Include="AMF.cpp" />
     <ClCompile Include="H264Decode.cpp" />
     <ClCompile Include="MPG123Decode.cpp" />
     <ClCompile Include="Utility.cpp" />

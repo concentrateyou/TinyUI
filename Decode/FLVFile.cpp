@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "FLVFile.h"
+#include "amf.h"
 
 namespace Decode
 {
@@ -7,6 +8,8 @@ namespace Decode
 		:m_hFile(NULL)
 	{
 		m_audioDone.Reset(new Delegate<void(BYTE*, LONG, LPVOID)>(this, &FLVFile::OnAudioDone));
+		m_videoDone.Reset(new Delegate<void(BYTE*, LONG, LPVOID)>(this, &FLVFile::OnVideoDone));
+		ZeroMemory(&m_script, sizeof(m_script));
 	}
 	FLVFile::~FLVFile()
 	{
@@ -32,7 +35,14 @@ namespace Decode
 		if (m_aac != NULL)
 		{
 			m_aac->EVENT_DONE -= m_audioDone;
-			m_audioDone.Reset(NULL);
+			m_aac->Close();
+			m_aac.Reset(NULL);
+		}
+		if (m_h264 != NULL)
+		{
+			m_h264->EVENT_DONE -= m_videoDone;
+			m_h264->Close();
+			m_h264.Reset(NULL);
 		}
 		return TRUE;
 	}
@@ -86,6 +96,53 @@ namespace Decode
 	}
 	BOOL FLVFile::ParseScript(BYTE* data, INT size)
 	{
+		AMFObject metaObj;
+		if (AMF_Decode(&metaObj, reinterpret_cast<CHAR*>(data), size, FALSE) > 0)
+		{
+			for (INT i = 0; i < metaObj.o_num; i++)
+			{
+				string val;
+				AMFObjectProperty* prop = &metaObj.o_props[i];
+				if (prop->p_type == AMF_OBJECT || prop->p_type == AMF_ECMA_ARRAY)
+				{
+					for (INT j = 0; j < prop->p_vu.p_object.o_num; j++)
+					{
+						AMFObjectProperty * objProp = &prop->p_vu.p_object.o_props[j];
+						if (objProp->p_name.av_len > 0)
+						{
+							val.resize(objProp->p_name.av_len);
+							val = objProp->p_name.av_val;
+							if ("videodatarate" == val)
+							{
+								ASSERT(objProp->p_type == AMF_NUMBER);
+								m_script.videodatarate = objProp->p_vu.p_number;
+							}
+							if ("width" == val)
+							{
+								ASSERT(objProp->p_type == AMF_NUMBER);
+								m_script.width = objProp->p_vu.p_number;
+							}
+							if ("height" == val)
+							{
+								ASSERT(objProp->p_type == AMF_NUMBER);
+								m_script.height = objProp->p_vu.p_number;
+							}
+							if ("framerate" == val)
+							{
+								ASSERT(objProp->p_type == AMF_NUMBER);
+								m_script.framerate = objProp->p_vu.p_number;
+							}
+							if ("audiodatarate" == val)
+							{
+								ASSERT(objProp->p_type == AMF_NUMBER);
+								m_script.audiodatarate = objProp->p_vu.p_number;
+							}
+						}
+					}
+				}
+			}
+			AMF_Reset(&metaObj);
+		}
 
 		return TRUE;
 	}
@@ -99,15 +156,17 @@ namespace Decode
 		if (m_h264 == NULL)
 		{
 			m_h264.Reset(new H264Decode());
+			TinySize videoSize(static_cast<LONG>(m_script.width), static_cast<LONG>(m_script.height));
+			m_h264->Open(videoSize, videoSize);
 			m_h264->EVENT_DONE += m_videoDone;
 		}
 		if (aacPacketType == 0)
 		{
-			m_avcConfig.ConfigurationVersion = *bits++;
-			m_avcConfig.AVCProfileIndication = *bits++;
-			m_avcConfig.ProfileCompatibility = *bits++;
-			m_avcConfig.AVCLevelIndication = *bits++;
-			m_avcConfig.LengthSizeMinusOne = *bits++ & 0x03 + 1;//一般是4
+			m_avcconfig.ConfigurationVersion = *bits++;
+			m_avcconfig.AVCProfileIndication = *bits++;
+			m_avcconfig.ProfileCompatibility = *bits++;
+			m_avcconfig.AVCLevelIndication = *bits++;
+			m_avcconfig.LengthSizeMinusOne = *bits++ & 0x03 + 1;//一般是4
 			BYTE numOfSequenceParameterSets = *bits++ & 0x1F;//一般是1
 			m_sps.resize(numOfSequenceParameterSets);
 			for (INT i = 0; i < numOfSequenceParameterSets; i++)
@@ -131,7 +190,7 @@ namespace Decode
 		}
 		if (aacPacketType == 1)
 		{
-			return ParseNALU(video, data, size);
+			return ParseNALU(video, bits, size);
 		}
 		if (aacPacketType == 2)
 		{
@@ -141,28 +200,48 @@ namespace Decode
 	}
 	BOOL FLVFile::ParseNALU(FLV_TAG_VIDEO* video, BYTE* data, INT size)
 	{
+		INT offset = 0;
+		INT bitsize = 0;
 		for (;;)
 		{
-			switch (m_avcConfig.LengthSizeMinusOne)
+			if (offset > size)
+				break;
+			switch (m_avcconfig.LengthSizeMinusOne)
 			{
 			case 4:
 			{
-
+				bitsize = Utility::ToINT32(data + offset);
+				offset += 4;
+				TinyScopedArray<BYTE> bits(new BYTE[bitsize]);
+				memcpy(bits, data, bitsize);
+				offset += bitsize;
 			}
 			break;
 			case 3:
 			{
-
+				bitsize = Utility::ToINT24(data + offset);
+				offset += 3;
+				TinyScopedArray<BYTE> bits(new BYTE[bitsize]);
+				memcpy(bits, data, bitsize);
+				offset += bitsize;
 			}
 			break;
 			case 2:
 			{
-
+				bitsize = Utility::ToINT16(data + offset);
+				data += 2;
+				TinyScopedArray<BYTE> bits(new BYTE[bitsize]);
+				memcpy(bits, data, bitsize);
+				offset += bitsize;
 			}
 			break;
 			default:
 			{
-
+				bitsize = Utility::ToINT8(data + offset);
+				data += 1;
+				TinyScopedArray<BYTE> bits(new BYTE[bitsize]);
+				memcpy(bits, data, bitsize);
+				offset += bitsize;
 			}
 			break;
 			}

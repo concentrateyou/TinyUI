@@ -91,6 +91,11 @@ void OnAudioDone(BYTE* bits, LONG size, LPVOID ps)
 	}
 }
 
+void OnVideoDone(BYTE* bits, LONG size, LPVOID ps)
+{
+
+}
+
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -110,12 +115,16 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	TinyScopedPtr<Delegate<void(BYTE*, LONG, LPVOID)>>	m_audioDone;
 	m_audioDone.Reset(new Delegate<void(BYTE*, LONG, LPVOID)>(&OnAudioDone));
+	TinyScopedPtr<Delegate<void(BYTE*, LONG, LPVOID)>>	m_videoDone;
+	m_videoDone.Reset(new Delegate<void(BYTE*, LONG, LPVOID)>(&OnVideoDone));
 
 	Decode::FLVFile flv;
 	flv.EVENT_AUDIO += m_audioDone;
+	flv.EVENT_VIDEO += m_videoDone;
 	flv.Open("D:\\test.flv");
 	flv.Decode();
 	flv.EVENT_AUDIO -= m_audioDone;
+	flv.EVENT_VIDEO -= m_videoDone;
 	flv.Close();
 	/*vector<MF::MFVideoCapture::Name> names;
 	MF::MFVideoCapture::GetDevices(names);

@@ -45,9 +45,6 @@
     <ClInclude Include="H264Decode.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="AMF.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -72,9 +69,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="H264Decode.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="AMF.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
