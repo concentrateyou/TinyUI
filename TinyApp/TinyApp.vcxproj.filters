@@ -48,6 +48,12 @@
     <ClInclude Include="FLVFrame.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="FLVTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FLVAudioTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -72,6 +78,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="FLVFrame.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FLVTask.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FLVAudioTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

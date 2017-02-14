@@ -94,7 +94,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChatFrame.h" />
+    <ClInclude Include="FLVAudioTask.h" />
     <ClInclude Include="FLVFrame.h" />
+    <ClInclude Include="FLVTask.h" />
     <ClInclude Include="MFFrame.h" />
     <ClInclude Include="RenderTask.h" />
     <ClInclude Include="Resource.h" />
@@ -106,7 +108,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChatFrame.cpp" />
+    <ClCompile Include="FLVAudioTask.cpp" />
     <ClCompile Include="FLVFrame.cpp" />
+    <ClCompile Include="FLVTask.cpp" />
     <ClCompile Include="MFFrame.cpp" />
     <ClCompile Include="RenderTask.cpp" />
     <ClCompile Include="stdafx.cpp">

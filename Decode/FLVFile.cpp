@@ -360,12 +360,12 @@ namespace Decode
 
 	void FLVFile::OnAudioDone(BYTE* data, INT size, LPVOID ps)
 	{
-		FLV_PARAM param = { ps,m_timestamps[0] };
+		FLV_PARAM param = { ps,m_timestamps[0],{0,0} };
 		EVENT_AUDIO(data, size, param);
 	}
 	void FLVFile::OnVideoDone(BYTE* data, INT size, LPVOID ps)
 	{
-		FLV_PARAM param = { ps,m_timestamps[1] };
+		FLV_PARAM param = { ps,m_timestamps[1],{ static_cast<LONG>(m_script.width), static_cast<LONG>(m_script.height) } };
 		EVENT_VIDEO(data, size, param);
 	}
 }

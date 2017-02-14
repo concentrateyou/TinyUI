@@ -112,7 +112,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
-	
+
 	/*vector<MF::MFVideoCapture::Name> names;
 	MF::MFVideoCapture::GetDevices(names);
 	vector<MF::MFVideoCaptureParam> params;
@@ -202,7 +202,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
 	FLVFrame uiImpl;
-	uiImpl.Create(NULL, 50, 50, 800, 600);
+	uiImpl.Create(NULL, 50, 50, 800, 800);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();
 	INT loopRes = theLoop.MessageLoop();

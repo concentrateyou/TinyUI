@@ -125,6 +125,7 @@ namespace Decode
 	{
 		LPVOID		param;
 		LONGLONG	timestamp;
+		SIZE		videosize;
 	}FLV_PARAM;
 
 	static const UINT32 H264StartCode = 0x01000000;

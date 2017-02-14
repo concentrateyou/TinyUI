@@ -74,19 +74,7 @@ namespace Decode
 		if (iRes != 0)
 			return FALSE;
 		sws_scale(m_sws, m_yuv420->data, m_yuv420->linesize, 0, m_size.cy, m_bgr24->data, m_bgr24->linesize);
-		BITMAPINFOHEADER bih;
-		bih.biSize = sizeof(BITMAPINFOHEADER);
-		bih.biWidth = m_scale.cx;
-		bih.biHeight = -m_scale.cy;
-		bih.biPlanes = 1;
-		bih.biBitCount = 24;
-		bih.biCompression = BI_RGB;
-		bih.biSizeImage = 0;
-		bih.biXPelsPerMeter = 0;
-		bih.biYPelsPerMeter = 0;
-		bih.biClrUsed = 0;
-		bih.biClrImportant = 0;
-		Utility::SaveBitmap(bih, m_bits, m_bgr24->linesize[0] * m_scale.cy);
+		OnDone(m_bgr24->data[0], m_bgr24->linesize[0] * m_scale.cy, this);
 		return TRUE;
 	}
 	BOOL H264Decode::Close()

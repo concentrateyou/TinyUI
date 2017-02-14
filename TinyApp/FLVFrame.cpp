@@ -50,21 +50,14 @@ HICON FLVFrame::RetrieveIcon()
 LRESULT FLVFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	m_audioDone.Reset(new Delegate<void(BYTE*, LONG, FLV_PARAM&)>(this, &FLVFrame::OnAudioDone));
-	m_videoDone.Reset(new Delegate<void(BYTE*, LONG, FLV_PARAM&)>(this, &FLVFrame::OnVideoDone));
-	m_flv.EVENT_AUDIO += m_audioDone;
-	m_flv.EVENT_VIDEO += m_videoDone;
-	m_flv.Open("D:\\test.flv");
-	m_flv.Parse();
+	m_task.Reset(new FLVTask(m_hWND));
+	m_task->Submit();
 	return FALSE;
 }
 
 LRESULT FLVFrame::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	m_flv.EVENT_AUDIO -= m_audioDone;
-	m_flv.EVENT_VIDEO -= m_videoDone;
-	m_flv.Close();
 	return FALSE;
 }
 
@@ -82,23 +75,4 @@ LRESULT FLVFrame::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bH
 {
 	bHandled = FALSE;
 	return FALSE;
-}
-
-void FLVFrame::OnAudioDone(BYTE* bits, LONG size, FLV_PARAM& val)
-{
-	if (bits == NULL)
-	{
-		WAVEFORMATEX s = *reinterpret_cast<WAVEFORMATEX*>(val.param);
-		m_player.Initialize(m_hWND, &s);
-	}
-	else
-	{
-		TRACE("audio:%d\n", val.timestamp);
-		m_player.Play(bits, size);
-	}
-}
-
-void FLVFrame::OnVideoDone(BYTE* bits, LONG size, FLV_PARAM& val)
-{
-	TRACE("video:%d\n", val.timestamp);
 }
