@@ -91,9 +91,11 @@ void OnAudioDone(BYTE* bits, LONG size, LPVOID ps)
 	}
 }
 
+
+
 void OnVideoDone(BYTE* bits, LONG size, LPVOID ps)
 {
-
+	
 }
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
@@ -122,7 +124,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	flv.EVENT_AUDIO += m_audioDone;
 	flv.EVENT_VIDEO += m_videoDone;
 	flv.Open("D:\\test.flv");
-	flv.Decode();
+	flv.Parse();
 	flv.EVENT_AUDIO -= m_audioDone;
 	flv.EVENT_VIDEO -= m_videoDone;
 	flv.Close();

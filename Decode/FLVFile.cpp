@@ -155,38 +155,44 @@ namespace Decode
 		memcpy(reinterpret_cast<BYTE*>(&dwCompositionTime), bits, 3);
 		bits += 3;
 		size -= 3;
-		if (aacPacketType == 0)
+		if (m_h264 == NULL)
 		{
 			m_h264.Reset(new H264Decode());
-			m_h264->EVENT_DONE += m_videoDone;
 			TinySize videoSize(static_cast<LONG>(m_script.width), static_cast<LONG>(m_script.height));
-			m_h264->Open(videoSize, videoSize, bits, size);
-
+			if (m_h264->Initialize(videoSize, videoSize))
+			{
+				m_h264->EVENT_DONE += m_videoDone;
+			}
+		}
+		if (aacPacketType == 0)
+		{
+			TinyBufferArray<BYTE> buffer;
 			m_avcconfig.ConfigurationVersion = *bits++;
 			m_avcconfig.AVCProfileIndication = *bits++;
 			m_avcconfig.ProfileCompatibility = *bits++;
 			m_avcconfig.AVCLevelIndication = *bits++;
 			m_avcconfig.LengthSizeMinusOne = *bits++ & 0x03 + 1;//一般是4
 			BYTE numOfSequenceParameterSets = *bits++ & 0x1F;//一般是1
-			m_sps.resize(numOfSequenceParameterSets);
 			for (INT i = 0; i < numOfSequenceParameterSets; i++)
 			{
+				BYTE* val = reinterpret_cast<BYTE*>(const_cast<UINT32*>(&H264StartCode));
+				buffer.Add(val, 4);
 				USHORT s = *bits++ << 8;
 				s |= *bits++;
-				m_sps[i].resize(s);
-				memcpy(&m_sps[i][i], bits, s);
+				buffer.Add(bits, s);
 				bits += s;
 			}
 			BYTE numOfPictureParameterSets = *bits++;
-			m_pps.resize(numOfPictureParameterSets);
 			for (INT i = 0; i < numOfPictureParameterSets; i++)
 			{
+				buffer.Add(reinterpret_cast<BYTE*>(const_cast<UINT32*>(&H264StartCode)), 4);
 				USHORT s = *bits++ << 8;
 				s |= *bits++;
-				m_pps[i].resize(s);
-				memcpy(&m_pps[i][i], bits, s);
+				buffer.Add(bits, s);
 				bits += s;
 			}
+			if (!m_h264->Open(buffer.GetPointer(), buffer.GetSize()))
+				return FALSE;
 		}
 		if (aacPacketType == 1)
 		{
@@ -215,7 +221,10 @@ namespace Decode
 				bits += 4;
 				offset += 4;
 				ASSERT(m_h264);
-				m_h264->Decode(bits, sizeofNALU);
+				TinyScopedPtr<BYTE> val(new BYTE[sizeofNALU + 4]);
+				memcpy(val, &H264StartCode, 4);
+				memcpy(val + 4, bits, sizeofNALU);
+				m_h264->Decode(val, sizeofNALU + 4);
 				bits += sizeofNALU;
 				offset += sizeofNALU;
 			}
@@ -226,7 +235,10 @@ namespace Decode
 				bits += 3;
 				offset += 3;
 				ASSERT(m_h264);
-				m_h264->Decode(bits, sizeofNALU);
+				TinyScopedPtr<BYTE> val(new BYTE[sizeofNALU + 4]);
+				memcpy(val, &H264StartCode, 4);
+				memcpy(val + 4, bits, sizeofNALU);
+				m_h264->Decode(val, sizeofNALU + 4);
 				bits += sizeofNALU;
 				offset += sizeofNALU;
 			}
@@ -237,7 +249,10 @@ namespace Decode
 				bits += 2;
 				offset += 2;
 				ASSERT(m_h264);
-				m_h264->Decode(bits, sizeofNALU);
+				TinyScopedPtr<BYTE> val(new BYTE[sizeofNALU + 4]);
+				memcpy(val, &H264StartCode, 4);
+				memcpy(val + 4, bits, sizeofNALU);
+				m_h264->Decode(val, sizeofNALU + 4);
 				bits += sizeofNALU;
 				offset += sizeofNALU;
 			}
@@ -248,7 +263,10 @@ namespace Decode
 				bits += 1;
 				offset += 1;
 				ASSERT(m_h264);
-				m_h264->Decode(bits, sizeofNALU);
+				TinyScopedPtr<BYTE> val(new BYTE[sizeofNALU + 4]);
+				memcpy(val, &H264StartCode, 4);
+				memcpy(val + 4, bits, sizeofNALU);
+				m_h264->Decode(val, sizeofNALU + 4);
 				bits += sizeofNALU;
 				offset += sizeofNALU;
 			}
@@ -294,7 +312,7 @@ namespace Decode
 		return TRUE;
 	}
 
-	BOOL FLVFile::Decode()
+	BOOL FLVFile::Parse()
 	{
 		ASSERT(sizeof(FLV_HEADER) != fread(&m_header, sizeof(FLV_HEADER), 1, m_hFile));
 		if (strncmp("FLV", (CHAR*)m_header.signature, 3) != 0)

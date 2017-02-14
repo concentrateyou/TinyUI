@@ -21,7 +21,7 @@ namespace Decode
 		ULONG sampleRate = 0;
 		BYTE channel = 0;
 		if (NeAACDecInit2(m_handle, adts, size - 1, &sampleRate, &channel) != 0)
-			return FALSE;
+			goto AAC_ERROR;
 		m_sMFT.nSamplesPerSec = sampleRate;
 		m_sMFT.nChannels = channel;
 		m_sMFT.wBitsPerSample = wBitsPerSample;
@@ -29,12 +29,16 @@ namespace Decode
 		m_sMFT.nAvgBytesPerSec = m_sMFT.nSamplesPerSec * m_sMFT.nBlockAlign;
 		m_sMFT.wFormatTag = WAVE_FORMAT_PCM;
 		return TRUE;
+	AAC_ERROR:
+		NeAACDecClose(m_handle);
+		m_handle = NULL;
+		return FALSE;
 	}
 	BOOL AACDecode::Open(WORD wBitsPerSample, WORD wSampleRate)
 	{
 		m_handle = NeAACDecOpen();
 		if (!m_handle)
-			return FALSE;
+			goto AAC_ERROR;
 		NeAACDecConfiguration* config = NeAACDecGetCurrentConfiguration(m_handle);
 		if (!config)
 			return FALSE;
@@ -56,8 +60,12 @@ namespace Decode
 		config->downMatrix = 1;
 		config->useOldADTSFormat = 0;
 		if (NeAACDecSetConfiguration(m_handle, config) != 0)
-			return FALSE;
+			goto AAC_ERROR;
 		return TRUE;
+	AAC_ERROR:
+		NeAACDecClose(m_handle);
+		m_handle = NULL;
+		return FALSE;
 	}
 	WAVEFORMATEX AACDecode::GetFormat() const
 	{

@@ -121,6 +121,7 @@ namespace Decode
 		DOUBLE	lastkeyframelocation;
 	}FLV_SCRIPTDATA;
 
+	static const UINT32 H264StartCode = 0x01000000;
 	/// <summary>
 	/// FLV大端数据
 	/// 目前音频支持支AAC,MP3和PCM,视频H.264
@@ -131,7 +132,7 @@ namespace Decode
 		FLVFile();
 		~FLVFile();
 		BOOL Open(LPCSTR pzFile);
-		BOOL Decode();
+		BOOL Parse();
 		BOOL Close();
 	public:
 		Event<void(BYTE*, LONG, LPVOID)> EVENT_AUDIO;
@@ -154,8 +155,6 @@ namespace Decode
 		BOOL							m_bVideo;
 		FILE*							m_hFile;
 		FLV_HEADER						m_header;
-		vector<SPS>						m_pps;
-		vector<PPS>						m_sps;
 		TinyScopedPtr<AACDecode>		m_aac;
 		TinyScopedPtr<H264Decode>		m_h264;
 		TinyScopedPtr<MPG123Decode>		m_mpg123;
