@@ -6,6 +6,7 @@
 #include "MainFrame.h"
 #include "ChatFrame.h"
 #include "MFFrame.h"
+#include "FLVFrame.h"
 #include "Windowless/TinyVisualHWND.h"
 #include "Windowless/TinyVisualRichText.h"
 #include "Render/TinyDDraw.h"
@@ -21,7 +22,6 @@
 
 #include "MPG123Decode.h"
 #include "Media/TinyMP3File.h"
-#include "FLVFile.h"
 
 BOOL LoadSeDebugPrivilege()
 {
@@ -78,25 +78,22 @@ BOOL LoadSeDebugPrivilege()
 
 Media::TinyWaveFile waveFile;
 
-void OnAudioDone(BYTE* bits, LONG size, LPVOID ps)
-{
-	if (bits == NULL)
-	{
-		WAVEFORMATEX s = *reinterpret_cast<WAVEFORMATEX*>(ps);
-		waveFile.Create("D:\\12345.wav", &s);
-	}
-	else
-	{
-		waveFile.Write(bits, size);
-	}
-}
+//void OnAudioDone(BYTE* bits, LONG size, LPVOID ps)
+//{
+//	if (bits == NULL)
+//	{
+//		WAVEFORMATEX s = *reinterpret_cast<WAVEFORMATEX*>(ps);
+//		waveFile.Create("D:\\12345.wav", &s);
+//	}
+//	else
+//	{
+//		waveFile.Write(bits, size);
+//	}
+//}
 
 
 
-void OnVideoDone(BYTE* bits, LONG size, LPVOID ps)
-{
-	
-}
+
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -115,19 +112,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
-	TinyScopedPtr<Delegate<void(BYTE*, LONG, LPVOID)>>	m_audioDone;
-	m_audioDone.Reset(new Delegate<void(BYTE*, LONG, LPVOID)>(&OnAudioDone));
-	TinyScopedPtr<Delegate<void(BYTE*, LONG, LPVOID)>>	m_videoDone;
-	m_videoDone.Reset(new Delegate<void(BYTE*, LONG, LPVOID)>(&OnVideoDone));
-
-	Decode::FLVFile flv;
-	flv.EVENT_AUDIO += m_audioDone;
-	flv.EVENT_VIDEO += m_videoDone;
-	flv.Open("D:\\test.flv");
-	flv.Parse();
-	flv.EVENT_AUDIO -= m_audioDone;
-	flv.EVENT_VIDEO -= m_videoDone;
-	flv.Close();
+	
 	/*vector<MF::MFVideoCapture::Name> names;
 	MF::MFVideoCapture::GetDevices(names);
 	vector<MF::MFVideoCaptureParam> params;
@@ -216,7 +201,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	CMainFrame uiImpl;
+	FLVFrame uiImpl;
 	uiImpl.Create(NULL, 50, 50, 800, 600);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();

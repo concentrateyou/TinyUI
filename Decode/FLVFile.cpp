@@ -290,7 +290,7 @@ namespace Decode
 			if (m_aac->Open(bits, size - 1, audio->bitsPerSample == 0 ? 8 : 16))
 			{
 				WAVEFORMATEX sFMT = m_aac->GetFormat();
-				EVENT_AUDIO(NULL, 0, &sFMT);
+				OnAudioDone(NULL, 0, &sFMT);
 				return TRUE;
 			}
 			return FALSE;
@@ -303,12 +303,12 @@ namespace Decode
 	}
 	BOOL FLVFile::ParseMP3(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
 	{
-		EVENT_AUDIO(data, size, audio);
+		OnAudioDone(data, size, audio);
 		return TRUE;
 	}
 	BOOL FLVFile::ParsePCM(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
 	{
-		EVENT_AUDIO(data, size, audio);
+		OnAudioDone(data, size, audio);
 		return TRUE;
 	}
 
@@ -340,9 +340,11 @@ namespace Decode
 				switch (tag.type)
 				{
 				case 0x08:
+					m_timestamps[0] = static_cast<LONGLONG>(static_cast<UINT32>(Utility::ToINT24(tag.timestamp) | (tag.timestampex << 24)));
 					ParseAudio(data, size);
 					break;
 				case 0x09:
+					m_timestamps[1] = static_cast<LONGLONG>(static_cast<UINT32>(Utility::ToINT24(tag.timestamp) | (tag.timestampex << 24)));
 					ParseVideo(data, size);
 					break;
 				case 0x12:
@@ -358,11 +360,13 @@ namespace Decode
 
 	void FLVFile::OnAudioDone(BYTE* data, INT size, LPVOID ps)
 	{
-		EVENT_AUDIO(data, size, ps);
+		FLV_PARAM param = { ps,m_timestamps[0] };
+		EVENT_AUDIO(data, size, param);
 	}
 	void FLVFile::OnVideoDone(BYTE* data, INT size, LPVOID ps)
 	{
-		EVENT_VIDEO(data, size, ps);
+		FLV_PARAM param = { ps,m_timestamps[1] };
+		EVENT_VIDEO(data, size, param);
 	}
 }
 

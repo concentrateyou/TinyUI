@@ -121,6 +121,12 @@ namespace Decode
 		DOUBLE	lastkeyframelocation;
 	}FLV_SCRIPTDATA;
 
+	typedef struct tagFLV_PARAM
+	{
+		LPVOID		param;
+		LONGLONG	timestamp;
+	}FLV_PARAM;
+
 	static const UINT32 H264StartCode = 0x01000000;
 	/// <summary>
 	/// FLV´ó¶ËÊý¾Ý
@@ -135,8 +141,8 @@ namespace Decode
 		BOOL Parse();
 		BOOL Close();
 	public:
-		Event<void(BYTE*, LONG, LPVOID)> EVENT_AUDIO;
-		Event<void(BYTE*, LONG, LPVOID)> EVENT_VIDEO;
+		Event<void(BYTE*, LONG, FLV_PARAM&)> EVENT_AUDIO;
+		Event<void(BYTE*, LONG, FLV_PARAM&)> EVENT_VIDEO;
 	private:
 		BOOL ParseVideo(BYTE* data, INT size);
 		BOOL ParseAudio(BYTE* data, INT size);
@@ -148,12 +154,11 @@ namespace Decode
 		BOOL ParseNALU(FLV_TAG_VIDEO* video, BYTE* data, INT size);
 		void OnAudioDone(BYTE*, INT, LPVOID);
 		void OnVideoDone(BYTE*, INT, LPVOID);
-		using SPS = vector<BYTE>;
-		using PPS = vector<BYTE>;
 	private:
 		BOOL							m_bAudio;
 		BOOL							m_bVideo;
 		FILE*							m_hFile;
+		LONGLONG						m_timestamps[2];
 		FLV_HEADER						m_header;
 		TinyScopedPtr<AACDecode>		m_aac;
 		TinyScopedPtr<H264Decode>		m_h264;

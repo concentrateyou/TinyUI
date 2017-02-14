@@ -27,6 +27,7 @@ namespace TinyUI
 			ZeroMemory(&dbdesc, sizeof(dbdesc));
 			dbdesc.dwSize = sizeof(dbdesc);
 			dbdesc.dwFlags = DSBCAPS_PRIMARYBUFFER | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLFREQUENCY;
+			dbdesc.guid3DAlgorithm = DS3DALG_DEFAULT;
 			hRes = m_sound->CreateSoundBuffer(&dbdesc, &m_primaryDSB, NULL);
 			if (FAILED(hRes))
 				return FALSE;
