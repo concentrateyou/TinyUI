@@ -7,29 +7,6 @@
 #include "Network/TinyHTTPClient.h"
 using namespace FLVPlayer;
 
-class ClassC
-{
-
-};
-
-class ClassB
-{
-
-};
-
-class ClassA
-{
-public:
-	template<typename T>
-	std::vector<T>  read(ClassC const & info);
-};
-
-template<typename T>
-std::vector<T>  ClassA::read(ClassC const & info)
-{
-	return std::vector<T>();
-}
-
 BOOL LoadSeDebugPrivilege()
 {
 	DWORD   err;
@@ -69,10 +46,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
-
-	ClassC c;
-	ClassA a;
-	std::vector<ClassB> ccc = a.read<ClassB>(c);
 
 	HRESULT hRes = OleInitialize(NULL);
 
