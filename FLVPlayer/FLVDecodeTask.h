@@ -22,16 +22,17 @@ namespace FLVPlayer
 		void	OnH264(BYTE* bits, LONG size, LPVOID ps);
 		void	OnAAC(BYTE* bits, LONG size, LPVOID ps);
 	private:
-		FLVParse m_parse;
+		
 		TinyScopedPtr<Delegate<void(FLV_SCRIPTDATA*)>>			m_onScript;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG, FLV_PACKET*)>>	m_onAudio;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG, FLV_PACKET*)>>	m_onVideo;
 	private:
+		DWORD						m_rate;
+		TinySize					m_size;
+		FLVParse					m_parse;
 		WAVEFORMATEX				m_waveFMT;
 		TinyScopedPtr<H264Decode>	m_h264;
 		TinyScopedPtr<AACDecode>	m_aac;
-		TinySize					m_size;
-		DWORD						m_framerate;
 	};
 }
 

@@ -40,7 +40,7 @@ namespace FLVPlayer
 	{
 		m_size.cx = static_cast<LONG>(val->width);
 		m_size.cy = static_cast<LONG>(val->height);
-		m_framerate = static_cast<DWORD>(val->framerate);
+		m_rate = static_cast<DWORD>(val->framerate);
 	}
 	void FLVDecodeTask::OnAudio(BYTE* bits, LONG size, FLV_PACKET* packet)
 	{
