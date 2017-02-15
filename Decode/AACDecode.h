@@ -14,19 +14,18 @@ namespace Decode
 	public:
 		AACDecode();
 		virtual ~AACDecode();
+		BOOL Initialize(Callback<void(BYTE*, LONG, LPVOID)>&& callback);
 		BOOL Open(WORD wBitsPerSample, WORD wSampleRate);
 		BOOL Open(BYTE* adts, LONG size, WORD wBitsPerSample);
 		BOOL Decode(BYTE* bits, LONG size);
 		BOOL Close();
 		WAVEFORMATEX GetFormat() const;
-	public:
-		virtual void OnDone(BYTE*, LONG, LPVOID);
-		Event<void(BYTE*, LONG, LPVOID)> EVENT_DONE;
 	private:
+		DWORD					m_dwINC;
 		WAVEFORMATEX			m_sMFT;
 		NeAACDecHandle			m_handle;
-		DWORD					m_dwINC;
 		NeAACDecFrameInfo		m_frame;
+		Callback<void(BYTE*, LONG, LPVOID)> m_callback;
 	};
 }
 

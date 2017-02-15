@@ -7,11 +7,10 @@ namespace Decode
 	FLVParse::FLVParse()
 		:m_hFile(NULL),
 		m_lengthSizeMinusOne(4),
-		m_bStop(FALSE),
 		m_bAudio(FALSE),
 		m_bVideo(FALSE)
 	{
-		m_stop.CreateEvent();
+
 	}
 	FLVParse::~FLVParse()
 	{
@@ -23,25 +22,20 @@ namespace Decode
 	}
 	BOOL FLVParse::Open(LPCSTR pzFile)
 	{
+		Close();
 		m_bStop = FALSE;
-		if (m_hFile != NULL)
-		{
-			fclose(m_hFile);
-			m_hFile = NULL;
-		}
 		fopen_s(&m_hFile, pzFile, "rb");
 		return m_hFile != NULL;
 	}
 	BOOL FLVParse::Close()
 	{
 		m_bStop = TRUE;
-		BOOL bRes = m_stop.Lock(1500);
 		if (m_hFile != NULL)
 		{
 			fclose(m_hFile);
 			m_hFile = NULL;
 		}
-		return bRes;
+		return TRUE;
 	}
 	BOOL FLVParse::ParseVideo(BYTE* data, INT size)
 	{
@@ -98,7 +92,7 @@ namespace Decode
 		AMFObject metaObj;
 		if (AMF_Decode(&metaObj, reinterpret_cast<CHAR*>(data), size, FALSE) > 0)
 		{
-			FLV_SCRIPTDATA	script;
+			FLV_SCRIPTDATA	script = { 0 };
 			for (INT i = 0; i < metaObj.o_num; i++)
 			{
 				string val;
@@ -112,11 +106,6 @@ namespace Decode
 						{
 							val.resize(objProp->p_name.av_len);
 							val = objProp->p_name.av_val;
-							if ("videodatarate" == val)
-							{
-								ASSERT(objProp->p_type == AMF_NUMBER);
-								script.videodatarate = objProp->p_vu.p_number;
-							}
 							if ("width" == val)
 							{
 								ASSERT(objProp->p_type == AMF_NUMBER);
@@ -132,10 +121,55 @@ namespace Decode
 								ASSERT(objProp->p_type == AMF_NUMBER);
 								script.framerate = objProp->p_vu.p_number;
 							}
+							if ("filesize" == val)
+							{
+								ASSERT(objProp->p_type == AMF_NUMBER);
+								script.filesize = objProp->p_vu.p_number;
+							}
+							if ("datasize" == val)
+							{
+								ASSERT(objProp->p_type == AMF_NUMBER);
+								script.datasize = objProp->p_vu.p_number;
+							}
+							if ("audiosize" == val)
+							{
+								ASSERT(objProp->p_type == AMF_NUMBER);
+								script.audiosize = objProp->p_vu.p_number;
+							}
+							if ("videosize" == val)
+							{
+								ASSERT(objProp->p_type == AMF_NUMBER);
+								script.videosize = objProp->p_vu.p_number;
+							}
+							if ("videocodecid" == val)
+							{
+								ASSERT(objProp->p_type == AMF_NUMBER);
+								script.videocodecid = objProp->p_vu.p_number;
+							}
+							if ("videodatarate" == val)
+							{
+								ASSERT(objProp->p_type == AMF_NUMBER);
+								script.videodatarate = objProp->p_vu.p_number;
+							}
+							if ("audiocodecid" == val)
+							{
+								ASSERT(objProp->p_type == AMF_NUMBER);
+								script.audiocodecid = objProp->p_vu.p_number;
+							}
 							if ("audiodatarate" == val)
 							{
 								ASSERT(objProp->p_type == AMF_NUMBER);
 								script.audiodatarate = objProp->p_vu.p_number;
+							}
+							if ("audiosamplesize" == val)
+							{
+								ASSERT(objProp->p_type == AMF_NUMBER);
+								script.audiosamplesize = objProp->p_vu.p_number;
+							}
+							if ("audiosamplerate" == val)
+							{
+								ASSERT(objProp->p_type == AMF_NUMBER);
+								script.audiosamplerate = objProp->p_vu.p_number;
 							}
 						}
 					}
@@ -364,7 +398,6 @@ namespace Decode
 				}
 			}
 		}
-		m_stop.SetEvent();
 		return TRUE;
 	}
 }

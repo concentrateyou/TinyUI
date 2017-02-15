@@ -176,7 +176,6 @@ namespace Decode
 		BYTE							m_lengthSizeMinusOne;
 		FILE*							m_hFile;
 		LONGLONG						m_timestamps[2];
-		TinyEvent						m_stop;
 	};
 }
 

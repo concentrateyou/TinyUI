@@ -25,23 +25,21 @@ namespace Decode
 	public:
 		H264Decode();
 		virtual ~H264Decode();
-		BOOL Initialize(const TinySize& size, const TinySize& scale);
+		BOOL Initialize(const TinySize& src, const TinySize& dst, Callback<void(BYTE*, LONG, LPVOID)>&& callback);
 		BOOL Open(BYTE* metadata, LONG size);
 		BOOL Decode(BYTE* bits, LONG size);
 		BOOL Close();
-	public:
-		virtual void OnDone(BYTE*, LONG, LPVOID);
-		Event<void(BYTE*, LONG, LPVOID)> EVENT_DONE;
 	private:
-		TinySize		m_size;
-		TinySize		m_scale;
+		TinySize		m_src;
+		TinySize		m_dst;
 		AVPacket		m_packet;
-		AVFrame*		m_yuv420;
-		AVFrame*		m_bgr24;
+		AVFrame*		m_pYUV420;
+		AVFrame*		m_pBGR24;
 		AVCodec*		m_codec;
-		AVCodecContext* m_context;
 		SwsContext*		m_sws;
+		AVCodecContext* m_context;
 		TinyScopedArray<BYTE>	m_bits;
+		Callback<void(BYTE*, LONG, LPVOID)> m_callback;
 	};
 }
 

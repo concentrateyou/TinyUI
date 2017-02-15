@@ -51,13 +51,15 @@ namespace FLVPlayer
 	LRESULT FLVFrameUI::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-
+		m_task.Reset(new FLVDecodeTask());
+		m_task->Submit();
 		return FALSE;
 	}
 
 	LRESULT FLVFrameUI::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		m_task->Close(INFINITE);
 		return FALSE;
 	}
 

@@ -12,6 +12,11 @@ namespace Decode
 	{
 		Close();
 	}
+	BOOL AACDecode::Initialize(Callback<void(BYTE*, LONG, LPVOID)>&& callback)
+	{
+		m_callback = std::move(callback);
+		return TRUE;
+	}
 	BOOL AACDecode::Open(BYTE* adts, LONG size, WORD wBitsPerSample)
 	{
 		ZeroMemory(&m_sMFT, sizeof(m_sMFT));
@@ -78,7 +83,10 @@ namespace Decode
 		if (m_frame.error > 0 || !data || m_frame.samples <= 0)
 			return FALSE;
 		LONG o = m_frame.samples * m_frame.channels;
-		OnDone(data, o, NULL);
+		if (!m_callback.IsNull())
+		{
+			m_callback(data, o, NULL);
+		}
 		return TRUE;
 	}
 	BOOL AACDecode::Close()
@@ -89,10 +97,6 @@ namespace Decode
 			m_handle = NULL;
 		}
 		return TRUE;
-	}
-	void AACDecode::OnDone(BYTE* bits, LONG size, LPVOID ps)
-	{
-		EVENT_DONE(bits, size, ps);
 	}
 }
 
