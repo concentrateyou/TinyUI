@@ -29,6 +29,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IntelQSV", "IntelQSV\IntelQ
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DWMCapture", "DWMCapture\DWMCapture.vcxproj", "{9CAE3CEF-F20E-40F7-A784-0F596BE22933}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FLVPlayer", "FLVPlayer\FLVPlayer.vcxproj", "{6D24C3C6-ADB7-4616-91B4-677B12AF2811}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_MBCS|Win32 = Debug_MBCS|Win32
@@ -266,6 +268,26 @@ Global
 		{9CAE3CEF-F20E-40F7-A784-0F596BE22933}.Release|Win32.Build.0 = Release|Win32
 		{9CAE3CEF-F20E-40F7-A784-0F596BE22933}.Release|x64.ActiveCfg = Release|x64
 		{9CAE3CEF-F20E-40F7-A784-0F596BE22933}.Release|x64.Build.0 = Release|x64
+		{6D24C3C6-ADB7-4616-91B4-677B12AF2811}.Debug_MBCS|Win32.ActiveCfg = Debug|Win32
+		{6D24C3C6-ADB7-4616-91B4-677B12AF2811}.Debug_MBCS|Win32.Build.0 = Debug|Win32
+		{6D24C3C6-ADB7-4616-91B4-677B12AF2811}.Debug_MBCS|x64.ActiveCfg = Debug|x64
+		{6D24C3C6-ADB7-4616-91B4-677B12AF2811}.Debug_MBCS|x64.Build.0 = Debug|x64
+		{6D24C3C6-ADB7-4616-91B4-677B12AF2811}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6D24C3C6-ADB7-4616-91B4-677B12AF2811}.Debug|Win32.Build.0 = Debug|Win32
+		{6D24C3C6-ADB7-4616-91B4-677B12AF2811}.Debug|x64.ActiveCfg = Debug|x64
+		{6D24C3C6-ADB7-4616-91B4-677B12AF2811}.Debug|x64.Build.0 = Debug|x64
+		{6D24C3C6-ADB7-4616-91B4-677B12AF2811}.Release_MBCS|Win32.ActiveCfg = Release|Win32
+		{6D24C3C6-ADB7-4616-91B4-677B12AF2811}.Release_MBCS|Win32.Build.0 = Release|Win32
+		{6D24C3C6-ADB7-4616-91B4-677B12AF2811}.Release_MBCS|x64.ActiveCfg = Release|x64
+		{6D24C3C6-ADB7-4616-91B4-677B12AF2811}.Release_MBCS|x64.Build.0 = Release|x64
+		{6D24C3C6-ADB7-4616-91B4-677B12AF2811}.Release_MT|Win32.ActiveCfg = Release|Win32
+		{6D24C3C6-ADB7-4616-91B4-677B12AF2811}.Release_MT|Win32.Build.0 = Release|Win32
+		{6D24C3C6-ADB7-4616-91B4-677B12AF2811}.Release_MT|x64.ActiveCfg = Release|x64
+		{6D24C3C6-ADB7-4616-91B4-677B12AF2811}.Release_MT|x64.Build.0 = Release|x64
+		{6D24C3C6-ADB7-4616-91B4-677B12AF2811}.Release|Win32.ActiveCfg = Release|Win32
+		{6D24C3C6-ADB7-4616-91B4-677B12AF2811}.Release|Win32.Build.0 = Release|Win32
+		{6D24C3C6-ADB7-4616-91B4-677B12AF2811}.Release|x64.ActiveCfg = Release|x64
+		{6D24C3C6-ADB7-4616-91B4-677B12AF2811}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

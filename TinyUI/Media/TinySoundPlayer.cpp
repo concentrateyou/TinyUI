@@ -14,7 +14,7 @@ namespace TinyUI
 		}
 		BOOL TinySoundPlayer::Initialize(HWND hWND, WAVEFORMATEX* pFMT)
 		{
-			m_waveFMT = pFMT;
+			m_waveFMT = *pFMT;
 			HRESULT hRes = S_OK;
 			hRes = DirectSoundCreate8(NULL, &m_sound, NULL);
 			if (FAILED(hRes))
@@ -46,6 +46,10 @@ namespace TinyUI
 			if (FAILED(hRes))
 				return FALSE;
 			return TRUE;
+		}
+		WAVEFORMATEX* TinySoundPlayer::GetFormat() 
+		{
+			return &m_waveFMT;
 		}
 		BOOL TinySoundPlayer::GetCaps(DSCAPS& caps)
 		{

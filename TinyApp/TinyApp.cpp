@@ -6,7 +6,6 @@
 #include "MainFrame.h"
 #include "ChatFrame.h"
 #include "MFFrame.h"
-#include "FLVFrame.h"
 #include "Windowless/TinyVisualHWND.h"
 #include "Windowless/TinyVisualRichText.h"
 #include "Render/TinyDDraw.h"
@@ -201,7 +200,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	FLVFrame uiImpl;
+	CMainFrame uiImpl;
 	uiImpl.Create(NULL, 50, 50, 800, 800);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();

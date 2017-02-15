@@ -76,7 +76,7 @@ namespace Decode
 		FLV_CODECID_MPEG4 = 9
 	};
 
-	enum FLV_VIDEO_FRAME_TYPE
+	enum FLV_FRAME_TYPE
 	{
 		FLV_FRAME_KEY = 1,
 		FLV_FRAME_INTER = 2,
@@ -85,14 +85,13 @@ namespace Decode
 		FLV_FRAME_VIDEO_INFO_CMD = 5
 	};
 
-	typedef struct tagAVCDecoderConfigurationRecord
+	enum FLV_PACKET_TYPE
 	{
-		BYTE ConfigurationVersion;
-		BYTE AVCProfileIndication;
-		BYTE ProfileCompatibility;
-		BYTE AVCLevelIndication;
-		BYTE LengthSizeMinusOne;
-	}AVCDecoderConfigurationRecord;
+		FLV_AVCDecoderConfigurationRecord = 0,
+		FLV_NALU = 1,
+		FLV_AudioSpecificConfig = 2,
+		FLV_AACRaw = 3
+	};
 
 	typedef struct tagFLV_SCRIPTDATA
 	{
@@ -121,29 +120,45 @@ namespace Decode
 		DOUBLE	lastkeyframelocation;
 	}FLV_SCRIPTDATA;
 
-	typedef struct tagFLV_PARAM
+	typedef struct tagAVCDecoderConfigurationRecord
 	{
-		LPVOID		param;
+		BYTE	ConfigurationVersion;
+		BYTE	AVCProfileIndication;
+		BYTE	ProfileCompatibility;
+		BYTE	AVCLevelIndication;
+		BYTE	LengthSizeMinusOne;
+		BYTE	NumOfSequenceParameterSets;
+		BYTE	NumOfPictureParameterSets;
+	}AVCDecoderConfigurationRecord;
+
+	typedef struct tagFLV_PACKET
+	{
 		LONGLONG	timestamp;
-		SIZE		videosize;
-	}FLV_PARAM;
+		BYTE		codeID;//帧类型 h264,aac
+		BYTE		codeType;//帧类型 
+		BYTE		packetType;//包类型
+		BYTE		channel;
+		BYTE		bitsPerSample;
+		BYTE		samplesPerSec;
+	}FLV_PACKET;
 
 	static const UINT32 H264StartCode = 0x01000000;
 	/// <summary>
 	/// FLV大端数据
 	/// 目前音频支持支AAC,MP3和PCM,视频H.264
 	/// </summary>
-	class FLVFile
+	class FLVParse
 	{
 	public:
-		FLVFile();
-		~FLVFile();
+		FLVParse();
+		~FLVParse();
 		BOOL Open(LPCSTR pzFile);
 		BOOL Parse();
 		BOOL Close();
 	public:
-		Event<void(BYTE*, LONG, FLV_PARAM&)> EVENT_AUDIO;
-		Event<void(BYTE*, LONG, FLV_PARAM&)> EVENT_VIDEO;
+		Event<void(BYTE*, LONG, FLV_PACKET*)> EVENT_AUDIO;
+		Event<void(BYTE*, LONG, FLV_PACKET*)> EVENT_VIDEO;
+		Event<void(FLV_SCRIPTDATA*)> EVENT_SCRIPT;
 	private:
 		BOOL ParseVideo(BYTE* data, INT size);
 		BOOL ParseAudio(BYTE* data, INT size);
@@ -152,22 +167,16 @@ namespace Decode
 		BOOL ParseMP3(FLV_TAG_AUDIO* audio, BYTE* data, INT size);
 		BOOL ParsePCM(FLV_TAG_AUDIO* audio, BYTE* data, INT size);
 		BOOL ParseH264(FLV_TAG_VIDEO* video, BYTE* data, INT size);
+		BOOL ParseMPEG4(FLV_TAG_VIDEO* video, BYTE* data, INT size);
 		BOOL ParseNALU(FLV_TAG_VIDEO* video, BYTE* data, INT size);
-		void OnAudioDone(BYTE*, INT, LPVOID);
-		void OnVideoDone(BYTE*, INT, LPVOID);
 	private:
+		BOOL							m_bStop;
 		BOOL							m_bAudio;
 		BOOL							m_bVideo;
+		BYTE							m_lengthSizeMinusOne;
 		FILE*							m_hFile;
 		LONGLONG						m_timestamps[2];
-		FLV_HEADER						m_header;
-		TinyScopedPtr<AACDecode>		m_aac;
-		TinyScopedPtr<H264Decode>		m_h264;
-		TinyScopedPtr<MPG123Decode>		m_mpg123;
-		FLV_SCRIPTDATA					m_script;
-		AVCDecoderConfigurationRecord	m_avcconfig;
-		TinyScopedPtr<Delegate<void(BYTE*, LONG, LPVOID)>>	m_audioDone;
-		TinyScopedPtr<Delegate<void(BYTE*, LONG, LPVOID)>>	m_videoDone;
+		TinyEvent						m_stop;
 	};
 }
 

@@ -29,13 +29,14 @@ namespace TinyUI
 			BOOL	GetPlan(LONG& plan);
 			BOOL	Stop();
 			BOOL	Close();
+			WAVEFORMATEX* GetFormat();
 		private:
 			TinyComPtr<IDirectSound8>		m_sound;
 			TinyComPtr<IDirectSoundBuffer>	m_primaryDSB;
 			TinyComPtr<IDirectSoundBuffer8>	m_secondaryDSB;
 			DSBPOSITIONNOTIFY				m_notifys[AUDIO_BUFFERS];
 			HANDLE							m_events[AUDIO_BUFFERS];
-			WAVEFORMATEX*					m_waveFMT;
+			WAVEFORMATEX					m_waveFMT;
 		};
 	}
 }

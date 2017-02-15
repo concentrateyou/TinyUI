@@ -24,25 +24,16 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="AC3Decode.h">
+    <ClInclude Include="Resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="TSDecode.h">
+    <ClInclude Include="FLVPlayer.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Utility.h">
+    <ClInclude Include="FLVFrameUI.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MPG123Decode.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="AACDecode.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="H264Decode.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="FLVParse.h">
+    <ClInclude Include="FLVDecodeTask.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -50,26 +41,27 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="AC3Decode.cpp">
+    <ClCompile Include="FLVPlayer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="TSDecode.cpp">
+    <ClCompile Include="FLVFrameUI.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Utility.cpp">
+    <ClCompile Include="FLVDecodeTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MPG123Decode.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="AACDecode.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="H264Decode.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="FLVParse.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="FLVPlayer.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="small.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="FLVPlayer.ico">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>

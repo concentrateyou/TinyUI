@@ -1,17 +1,19 @@
 #include "stdafx.h"
-#include "FLVFile.h"
+#include "FLVParse.h"
 #include "amf.h"
 
 namespace Decode
 {
-	FLVFile::FLVFile()
-		:m_hFile(NULL)
+	FLVParse::FLVParse()
+		:m_hFile(NULL),
+		m_lengthSizeMinusOne(4),
+		m_bStop(FALSE),
+		m_bAudio(FALSE),
+		m_bVideo(FALSE)
 	{
-		m_audioDone.Reset(new Delegate<void(BYTE*, LONG, LPVOID)>(this, &FLVFile::OnAudioDone));
-		m_videoDone.Reset(new Delegate<void(BYTE*, LONG, LPVOID)>(this, &FLVFile::OnVideoDone));
-		ZeroMemory(&m_script, sizeof(m_script));
+		m_stop.CreateEvent();
 	}
-	FLVFile::~FLVFile()
+	FLVParse::~FLVParse()
 	{
 		if (m_hFile != NULL)
 		{
@@ -19,34 +21,29 @@ namespace Decode
 			m_hFile = NULL;
 		}
 	}
-	BOOL FLVFile::Open(LPCSTR pzFile)
+	BOOL FLVParse::Open(LPCSTR pzFile)
 	{
-		Close();
+		m_bStop = FALSE;
+		if (m_hFile != NULL)
+		{
+			fclose(m_hFile);
+			m_hFile = NULL;
+		}
 		fopen_s(&m_hFile, pzFile, "rb");
-		return TRUE;
+		return m_hFile != NULL;
 	}
-	BOOL FLVFile::Close()
+	BOOL FLVParse::Close()
 	{
+		m_bStop = TRUE;
+		BOOL bRes = m_stop.Lock(1500);
 		if (m_hFile != NULL)
 		{
 			fclose(m_hFile);
 			m_hFile = NULL;
 		}
-		if (m_aac != NULL)
-		{
-			m_aac->EVENT_DONE -= m_audioDone;
-			m_aac->Close();
-			m_aac.Reset(NULL);
-		}
-		if (m_h264 != NULL)
-		{
-			m_h264->EVENT_DONE -= m_videoDone;
-			m_h264->Close();
-			m_h264.Reset(NULL);
-		}
-		return TRUE;
+		return bRes;
 	}
-	BOOL FLVFile::ParseVideo(BYTE* data, INT size)
+	BOOL FLVParse::ParseVideo(BYTE* data, INT size)
 	{
 		BOOL bRes = FALSE;
 		FLV_TAG_VIDEO* video = reinterpret_cast<FLV_TAG_VIDEO*>(data);
@@ -55,18 +52,20 @@ namespace Decode
 		case FLV_CODECID_H264:
 			bRes = ParseH264(video, data + 1, size - 1);
 			break;
+		case FLV_CODECID_MPEG4:
+			bRes = ParseMPEG4(video, data + 1, size - 1);
+			break;
 		case FLV_CODECID_H263:
 		case FLV_CODECID_SCREEN:
 		case FLV_CODECID_VP6:
 		case FLV_CODECID_VP6A:
 		case FLV_CODECID_SCREEN2:
 		case FLV_CODECID_REALH263:
-		case FLV_CODECID_MPEG4:
 			break;
 		}
 		return TRUE;
 	}
-	BOOL FLVFile::ParseAudio(BYTE* data, INT size)
+	BOOL FLVParse::ParseAudio(BYTE* data, INT size)
 	{
 		BOOL bRes = FALSE;
 		//目前只支持MP3,AAC和PCM
@@ -94,11 +93,12 @@ namespace Decode
 		}
 		return bRes;
 	}
-	BOOL FLVFile::ParseScript(BYTE* data, INT size)
+	BOOL FLVParse::ParseScript(BYTE* data, INT size)
 	{
 		AMFObject metaObj;
 		if (AMF_Decode(&metaObj, reinterpret_cast<CHAR*>(data), size, FALSE) > 0)
 		{
+			FLV_SCRIPTDATA	script;
 			for (INT i = 0; i < metaObj.o_num; i++)
 			{
 				string val;
@@ -115,38 +115,42 @@ namespace Decode
 							if ("videodatarate" == val)
 							{
 								ASSERT(objProp->p_type == AMF_NUMBER);
-								m_script.videodatarate = objProp->p_vu.p_number;
+								script.videodatarate = objProp->p_vu.p_number;
 							}
 							if ("width" == val)
 							{
 								ASSERT(objProp->p_type == AMF_NUMBER);
-								m_script.width = objProp->p_vu.p_number;
+								script.width = objProp->p_vu.p_number;
 							}
 							if ("height" == val)
 							{
 								ASSERT(objProp->p_type == AMF_NUMBER);
-								m_script.height = objProp->p_vu.p_number;
+								script.height = objProp->p_vu.p_number;
 							}
 							if ("framerate" == val)
 							{
 								ASSERT(objProp->p_type == AMF_NUMBER);
-								m_script.framerate = objProp->p_vu.p_number;
+								script.framerate = objProp->p_vu.p_number;
 							}
 							if ("audiodatarate" == val)
 							{
 								ASSERT(objProp->p_type == AMF_NUMBER);
-								m_script.audiodatarate = objProp->p_vu.p_number;
+								script.audiodatarate = objProp->p_vu.p_number;
 							}
 						}
 					}
 				}
 			}
 			AMF_Reset(&metaObj);
+			EVENT_SCRIPT(&script);
 		}
-
 		return TRUE;
 	}
-	BOOL FLVFile::ParseH264(FLV_TAG_VIDEO* video, BYTE* data, INT size)
+	BOOL FLVParse::ParseMPEG4(FLV_TAG_VIDEO* video, BYTE* data, INT size)
+	{
+		return TRUE;
+	}
+	BOOL FLVParse::ParseH264(FLV_TAG_VIDEO* video, BYTE* data, INT size)
 	{
 		BYTE* bits = data;
 		BYTE aacPacketType = *bits++;
@@ -155,25 +159,18 @@ namespace Decode
 		memcpy(reinterpret_cast<BYTE*>(&dwCompositionTime), bits, 3);
 		bits += 3;
 		size -= 3;
-		if (m_h264 == NULL)
-		{
-			m_h264.Reset(new H264Decode());
-			TinySize videoSize(static_cast<LONG>(m_script.width), static_cast<LONG>(m_script.height));
-			if (m_h264->Initialize(videoSize, videoSize))
-			{
-				m_h264->EVENT_DONE += m_videoDone;
-			}
-		}
 		if (aacPacketType == 0)
 		{
 			TinyBufferArray<BYTE> buffer;
-			m_avcconfig.ConfigurationVersion = *bits++;
-			m_avcconfig.AVCProfileIndication = *bits++;
-			m_avcconfig.ProfileCompatibility = *bits++;
-			m_avcconfig.AVCLevelIndication = *bits++;
-			m_avcconfig.LengthSizeMinusOne = *bits++ & 0x03 + 1;//一般是4
-			BYTE numOfSequenceParameterSets = *bits++ & 0x1F;//一般是1
-			for (INT i = 0; i < numOfSequenceParameterSets; i++)
+			AVCDecoderConfigurationRecord avcconfig;
+			avcconfig.ConfigurationVersion = *bits++;
+			avcconfig.AVCProfileIndication = *bits++;
+			avcconfig.ProfileCompatibility = *bits++;
+			avcconfig.AVCLevelIndication = *bits++;
+			avcconfig.LengthSizeMinusOne = *bits++ & 0x03 + 1;//一般是4
+			avcconfig.NumOfSequenceParameterSets = *bits++ & 0x1F;//一般是1
+			m_lengthSizeMinusOne = avcconfig.LengthSizeMinusOne;
+			for (INT i = 0; i < avcconfig.NumOfSequenceParameterSets; i++)
 			{
 				BYTE* val = reinterpret_cast<BYTE*>(const_cast<UINT32*>(&H264StartCode));
 				buffer.Add(val, 4);
@@ -182,8 +179,8 @@ namespace Decode
 				buffer.Add(bits, s);
 				bits += s;
 			}
-			BYTE numOfPictureParameterSets = *bits++;
-			for (INT i = 0; i < numOfPictureParameterSets; i++)
+			avcconfig.NumOfPictureParameterSets = *bits++;
+			for (INT i = 0; i < avcconfig.NumOfPictureParameterSets; i++)
 			{
 				buffer.Add(reinterpret_cast<BYTE*>(const_cast<UINT32*>(&H264StartCode)), 4);
 				USHORT s = *bits++ << 8;
@@ -191,40 +188,44 @@ namespace Decode
 				buffer.Add(bits, s);
 				bits += s;
 			}
-			if (!m_h264->Open(buffer.GetPointer(), buffer.GetSize()))
-				return FALSE;
+			FLV_PACKET packet;
+			packet.timestamp = m_timestamps[1];
+			packet.codeID = video->codeID;
+			packet.codeType = video->codeType;
+			packet.packetType = FLV_AVCDecoderConfigurationRecord;
+			EVENT_VIDEO(buffer.GetPointer(), buffer.GetSize(), &packet);
 		}
 		if (aacPacketType == 1)
 		{
 			return ParseNALU(video, bits, size);
 		}
-		if (aacPacketType == 2)
-		{
-			//TODO
-		}
 		return TRUE;
 	}
-	BOOL FLVFile::ParseNALU(FLV_TAG_VIDEO* video, BYTE* data, INT size)
+	BOOL FLVParse::ParseNALU(FLV_TAG_VIDEO* video, BYTE* data, INT size)
 	{
 		BYTE* bits = data;
 		INT offset = 0;
 		INT sizeofNALU = 0;
+		FLV_PACKET packet = { 0 };
 		for (;;)
 		{
-			if (offset >= size)
+			if (offset >= size || m_bStop)
 				break;
-			switch (m_avcconfig.LengthSizeMinusOne)
+			switch (m_lengthSizeMinusOne)
 			{
 			case 4:
 			{
 				sizeofNALU = Utility::ToINT32(bits);
 				bits += 4;
 				offset += 4;
-				ASSERT(m_h264);
 				TinyScopedPtr<BYTE> val(new BYTE[sizeofNALU + 4]);
 				memcpy(val, &H264StartCode, 4);
 				memcpy(val + 4, bits, sizeofNALU);
-				m_h264->Decode(val, sizeofNALU + 4);
+				packet.codeID = video->codeID;
+				packet.codeType = video->codeType;
+				packet.packetType = FLV_NALU;
+				packet.timestamp = m_timestamps[1];
+				EVENT_VIDEO(val, sizeofNALU + 4, &packet);
 				bits += sizeofNALU;
 				offset += sizeofNALU;
 			}
@@ -234,11 +235,14 @@ namespace Decode
 				sizeofNALU = Utility::ToINT24(bits);
 				bits += 3;
 				offset += 3;
-				ASSERT(m_h264);
 				TinyScopedPtr<BYTE> val(new BYTE[sizeofNALU + 4]);
 				memcpy(val, &H264StartCode, 4);
 				memcpy(val + 4, bits, sizeofNALU);
-				m_h264->Decode(val, sizeofNALU + 4);
+				packet.codeID = video->codeID;
+				packet.codeType = video->codeType;
+				packet.packetType = FLV_NALU;
+				packet.timestamp = m_timestamps[1];
+				EVENT_VIDEO(val, sizeofNALU + 4, &packet);
 				bits += sizeofNALU;
 				offset += sizeofNALU;
 			}
@@ -248,11 +252,14 @@ namespace Decode
 				sizeofNALU = Utility::ToINT16(data + offset);
 				bits += 2;
 				offset += 2;
-				ASSERT(m_h264);
 				TinyScopedPtr<BYTE> val(new BYTE[sizeofNALU + 4]);
 				memcpy(val, &H264StartCode, 4);
 				memcpy(val + 4, bits, sizeofNALU);
-				m_h264->Decode(val, sizeofNALU + 4);
+				packet.codeID = video->codeID;
+				packet.codeType = video->codeType;
+				packet.packetType = FLV_NALU;
+				packet.timestamp = m_timestamps[1];
+				EVENT_VIDEO(val, sizeofNALU + 4, &packet);
 				bits += sizeofNALU;
 				offset += sizeofNALU;
 			}
@@ -262,11 +269,14 @@ namespace Decode
 				sizeofNALU = Utility::ToINT8(data + offset);
 				bits += 1;
 				offset += 1;
-				ASSERT(m_h264);
 				TinyScopedPtr<BYTE> val(new BYTE[sizeofNALU + 4]);
 				memcpy(val, &H264StartCode, 4);
 				memcpy(val + 4, bits, sizeofNALU);
-				m_h264->Decode(val, sizeofNALU + 4);
+				packet.codeID = video->codeID;
+				packet.codeType = video->codeType;
+				packet.packetType = FLV_NALU;
+				packet.timestamp = m_timestamps[1];
+				EVENT_VIDEO(val, sizeofNALU + 4, &packet);
 				bits += sizeofNALU;
 				offset += sizeofNALU;
 			}
@@ -275,51 +285,50 @@ namespace Decode
 		}
 		return TRUE;
 	}
-	BOOL FLVFile::ParseAAC(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
+	BOOL FLVParse::ParseAAC(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
 	{
 		ASSERT(size >= 2);
 		BYTE* bits = data;
 		BYTE aacPacketType = *bits++;
 		size -= 1;
+		FLV_PACKET packet = { 0 };
 		if (aacPacketType == 0)
 		{
-			m_aac.Reset(new AACDecode());
-			m_aac->EVENT_DONE += m_audioDone;
-			ULONG sampleRate = 0;
-			BYTE channel = 0;
-			if (m_aac->Open(bits, size - 1, audio->bitsPerSample == 0 ? 8 : 16))
-			{
-				WAVEFORMATEX sFMT = m_aac->GetFormat();
-				OnAudioDone(NULL, 0, &sFMT);
-				return TRUE;
-			}
-			return FALSE;
+			packet.timestamp = m_timestamps[0];
+			packet.bitsPerSample = audio->bitsPerSample;
+			packet.channel = audio->channel;
+			packet.codeID = FLV_CODECID_AAC;
+			packet.packetType = FLV_AudioSpecificConfig;
+			EVENT_AUDIO(bits, size, &packet);
 		}
 		if (aacPacketType == 1)
 		{
-			return m_aac->Decode(bits, size);
+			packet.timestamp = m_timestamps[0];
+			packet.bitsPerSample = audio->bitsPerSample;
+			packet.channel = audio->channel;
+			packet.codeID = FLV_CODECID_AAC;
+			packet.packetType = FLV_AACRaw;
+			EVENT_AUDIO(bits, size, &packet);
 		}
 		return TRUE;
 	}
-	BOOL FLVFile::ParseMP3(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
+	BOOL FLVParse::ParseMP3(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
 	{
-		OnAudioDone(data, size, audio);
 		return TRUE;
 	}
-	BOOL FLVFile::ParsePCM(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
+	BOOL FLVParse::ParsePCM(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
 	{
-		OnAudioDone(data, size, audio);
 		return TRUE;
 	}
-
-	BOOL FLVFile::Parse()
+	BOOL FLVParse::Parse()
 	{
-		ASSERT(sizeof(FLV_HEADER) != fread(&m_header, sizeof(FLV_HEADER), 1, m_hFile));
-		if (strncmp("FLV", (CHAR*)m_header.signature, 3) != 0)
+		FLV_HEADER header = { 0 };
+		ASSERT(sizeof(FLV_HEADER) != fread(&header, sizeof(FLV_HEADER), 1, m_hFile));
+		if (strncmp("FLV", (CHAR*)header.signature, 3) != 0)
 			return FALSE;
-		m_bAudio = (m_header.streamType & 0x04) != 0;
-		m_bVideo = (m_header.streamType & 0x01) != 0;
-		INT offset = Utility::ToINT32(m_header.offset);
+		m_bAudio = (header.streamType & 0x04) != 0;
+		m_bVideo = (header.streamType & 0x01) != 0;
+		INT offset = Utility::ToINT32(header.offset);
 		fseek(m_hFile, offset, SEEK_SET);
 		size_t size = 0;
 		for (;;)
@@ -355,18 +364,8 @@ namespace Decode
 				}
 			}
 		}
+		m_stop.SetEvent();
 		return TRUE;
-	}
-
-	void FLVFile::OnAudioDone(BYTE* data, INT size, LPVOID ps)
-	{
-		FLV_PARAM param = { ps,m_timestamps[0],{0,0} };
-		EVENT_AUDIO(data, size, param);
-	}
-	void FLVFile::OnVideoDone(BYTE* data, INT size, LPVOID ps)
-	{
-		FLV_PARAM param = { ps,m_timestamps[1],{ static_cast<LONG>(m_script.width), static_cast<LONG>(m_script.height) } };
-		EVENT_VIDEO(data, size, param);
 	}
 }
 
