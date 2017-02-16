@@ -8,8 +8,9 @@ namespace FLVPlayer
 		:m_pTask(pTask),
 		m_hWND(hWND),
 		m_hBitmap(NULL),
-		m_currentPTS(0),
-		m_currentDTS(0)
+		m_framePTS(0),
+		m_frameDTS(0),
+		m_currentPTS(0)
 	{
 		m_h264.Reset(new H264Decode());
 	}
@@ -45,56 +46,37 @@ namespace FLVPlayer
 			TinyAutoLock lock(m_pTask->m_videoLock);
 			if (!m_pTask->m_videoQueue.empty())
 			{
-				AVPacket packet = m_pTask->m_videoQueue.front();
-				//TRACE("OnMessagePump:%d\n", packet.pts);
-				INT offsetPTS = 0;
-				if (m_currentPTS != packet.pts)
-				{
-					offsetPTS = packet.pts - m_currentPTS;
-					m_currentPTS = packet.pts;
-				}
-				INT offsetDTS = 0;
-				if (m_currentDTS != packet.dts)
-				{
-					offsetDTS = packet.dts - m_currentDTS;
-					m_currentDTS = packet.dts;
-				}
 				m_timer.BeginTime();
-				m_h264->Decode(packet.bits, packet.size);
-				m_pTask->m_videoQueue.pop();
-				SAFE_DELETE_ARRAY(packet.bits);
-				if (m_pTask->m_videoQueue.size() <= 10)
+				AVPacket packet = m_pTask->m_videoQueue.front();
+				m_h264->Decode(packet.bits, packet.size, packet.dts, packet.pts);
+				if (m_pTask->m_videoQueue.size() <= 5)
 				{
 					m_pTask->m_wait.SetEvent();
 				}
+				m_pTask->m_videoQueue.pop();
+				SAFE_DELETE_ARRAY(packet.bits);
 				m_timer.EndTime();
 				DWORD dwVal = m_timer.GetMillisconds();
-				if (dwVal < offsetPTS)
+				if (m_currentPTS != m_framePTS)
 				{
-					
-					//m_wait.Lock(offsetPTS);
-				}
-				HDC hDC = GetDC(m_hWND);
-				if (hDC != NULL)
-				{
-					if (m_hBitmap)
-					{
-						TinyMemDC dc(hDC, m_hBitmap);
-						TinyRectangle src = { 0,0,m_dst.cx,m_dst.cy };
-						dc.Render(src, src, FALSE);
-					}
-					ReleaseDC(m_hWND, hDC);
+					LONG s = m_framePTS - m_currentPTS - dwVal - 1;
+					TRACE("Val:%d\n", s);
+					m_wait.Lock(s);
+					m_currentPTS = m_framePTS;
 				}
 			}
 		}
 	}
 	void FLVVideoTask::OnH264(BYTE* bits, LONG size, LPVOID ps)
 	{
+		AVFrame* avFrame = reinterpret_cast<AVFrame*>(ps);
+		m_framePTS = avFrame->pkt_pts;
+		m_frameDTS = avFrame->pkt_dts;
 		SAFE_DELETE_OBJECT(m_hBitmap);
 		if (size == m_dst.cx * m_dst.cy * 3)
 		{
 			HDC hDC = GetDC(m_hWND);
-			if (hDC)
+			if (hDC != NULL)
 			{
 				BITMAPINFO bmi = { 0 };
 				bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
@@ -109,10 +91,12 @@ namespace FLVPlayer
 				if (m_hBitmap)
 				{
 					memcpy(pvBits, bits, size);
+					TinyMemDC dc(hDC, m_hBitmap);
+					TinyRectangle src = { 0,0,m_dst.cx,m_dst.cy };
+					dc.Render(src, src, FALSE);
 				}
 				ReleaseDC(m_hWND, hDC);
 			}
-
 		}
 	}
 }

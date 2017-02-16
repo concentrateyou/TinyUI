@@ -61,20 +61,26 @@ namespace Decode
 		Close();
 		return FALSE;
 	}
-	BOOL H264Decode::Decode(BYTE* bits, LONG size)
+	BOOL H264Decode::Decode(BYTE* data, LONG size, LONG dts, LONG pts)
 	{
 		if (!m_context)
 			return FALSE;
-		m_packet.data = bits;
+		m_packet.dts = dts;
+		m_packet.pts = pts;
+		m_packet.data = data;
 		m_packet.size = size;
 		if (avcodec_send_packet(m_context, &m_packet) != 0)
 			return FALSE;
-		if (avcodec_receive_frame(m_context, m_pYUV420) != 0)
+		INT iRes = avcodec_receive_frame(m_context, m_pYUV420);
+		if (iRes != 0 && iRes != AVERROR(EAGAIN))
 			return FALSE;
-		sws_scale(m_sws, m_pYUV420->data, m_pYUV420->linesize, 0, m_src.cy, m_pBGR24->data, m_pBGR24->linesize);
-		if (!m_callback.IsNull())
+		if (iRes != AVERROR(EAGAIN))
 		{
-			m_callback(m_pBGR24->data[0], m_pBGR24->linesize[0] * m_dst.cy, this);
+			sws_scale(m_sws, m_pYUV420->data, m_pYUV420->linesize, 0, m_src.cy, m_pBGR24->data, m_pBGR24->linesize);
+			if (!m_callback.IsNull())
+			{
+				m_callback(m_pBGR24->data[0], m_pBGR24->linesize[0] * m_dst.cy, reinterpret_cast<LPVOID>(m_pYUV420));
+			}
 		}
 		return TRUE;
 	}

@@ -14,7 +14,7 @@ namespace FLVPlayer
 	class FLVVideoTask : public TinyTaskBase
 	{
 	public:
-		FLVVideoTask(FLVDecodeTask* pTask,HWND hWND);
+		FLVVideoTask(FLVDecodeTask* pTask, HWND hWND);
 		~FLVVideoTask();
 		BOOL	Submit(const TinySize& src, const TinySize& dst, BYTE* bits, LONG size);
 		BOOL	Close(DWORD dwMs) OVERRIDE;
@@ -23,7 +23,8 @@ namespace FLVPlayer
 		void	OnH264(BYTE* bits, LONG size, LPVOID ps);
 	private:
 		INT							m_currentPTS;
-		INT							m_currentDTS;
+		INT							m_framePTS;
+		INT							m_frameDTS;
 		TinySize					m_dst;
 		HWND						m_hWND;
 		HBITMAP						m_hBitmap;

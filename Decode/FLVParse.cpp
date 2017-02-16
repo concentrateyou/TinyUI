@@ -197,7 +197,6 @@ namespace Decode
 		BYTE aacPacketType = *bits++;
 		size -= 1;
 		INT cts = (Utility::ToINT24(bits) + 0xFF800000) ^ 0xFF800000;
-		TRACE("cts:%d,dts:%d\n", cts, m_dts);
 		bits += 3;
 		size -= 3;
 		if (aacPacketType == 0)

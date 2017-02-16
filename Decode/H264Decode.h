@@ -27,7 +27,7 @@ namespace Decode
 		virtual ~H264Decode();
 		BOOL Initialize(const TinySize& src, const TinySize& dst, Callback<void(BYTE*, LONG, LPVOID)>&& callback);
 		BOOL Open(BYTE* metadata, LONG size);
-		BOOL Decode(BYTE* bits, LONG size);
+		BOOL Decode(BYTE* data, LONG size, LONG dts, LONG pts);
 		BOOL Close();
 	private:
 		TinySize		m_src;
