@@ -10,6 +10,11 @@ using namespace TinyUI;
 
 namespace Decode
 {
+#define TYPE_ONTEXTDATA 1
+#define TYPE_ONCAPTION 2
+#define TYPE_ONCAPTIONINFO 3
+#define TYPE_UNKNOWN 9
+
 	typedef struct tagFLV_HEADER
 	{
 		BYTE signature[3];
@@ -93,6 +98,23 @@ namespace Decode
 		FLV_AACRaw = 3
 	};
 
+	enum AMFDataType
+	{
+		AMF_DATA_TYPE_NUMBER = 0x00,
+		AMF_DATA_TYPE_BOOL = 0x01,
+		AMF_DATA_TYPE_STRING = 0x02,
+		AMF_DATA_TYPE_OBJECT = 0x03,
+		AMF_DATA_TYPE_NULL = 0x05,
+		AMF_DATA_TYPE_UNDEFINED = 0x06,
+		AMF_DATA_TYPE_REFERENCE = 0x07,
+		AMF_DATA_TYPE_MIXEDARRAY = 0x08,
+		AMF_DATA_TYPE_OBJECT_END = 0x09,
+		AMF_DATA_TYPE_ARRAY = 0x0a,
+		AMF_DATA_TYPE_DATE = 0x0b,
+		AMF_DATA_TYPE_LONG_STRING = 0x0c,
+		AMF_DATA_TYPE_UNSUPPORTED = 0x0d,
+	};
+
 	typedef struct tagFLV_SCRIPTDATA
 	{
 		BOOL	hasAudio;
@@ -133,7 +155,8 @@ namespace Decode
 
 	typedef struct tagFLV_PACKET
 	{
-		LONGLONG	timestamp;
+		INT			dts;
+		INT			pts;
 		BYTE		codeID;//帧类型 h264,aac
 		BYTE		codeType;//帧类型 
 		BYTE		packetType;//包类型
@@ -168,14 +191,15 @@ namespace Decode
 		BOOL ParsePCM(FLV_TAG_AUDIO* audio, BYTE* data, INT size);
 		BOOL ParseH264(FLV_TAG_VIDEO* video, BYTE* data, INT size);
 		BOOL ParseMPEG4(FLV_TAG_VIDEO* video, BYTE* data, INT size);
-		BOOL ParseNALU(FLV_TAG_VIDEO* video, BYTE* data, INT size);
+		BOOL ParseNALU(FLV_TAG_VIDEO* video, INT* cts, BYTE* data, INT size);
 	private:
 		BOOL							m_bStop;
 		BOOL							m_bAudio;
 		BOOL							m_bVideo;
 		BYTE							m_lengthSizeMinusOne;
 		FILE*							m_hFile;
-		LONGLONG						m_timestamps[2];
+		INT								m_dts;
+		LONG							m_index;
 	};
 }
 

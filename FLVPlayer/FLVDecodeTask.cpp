@@ -5,6 +5,9 @@ namespace FLVPlayer
 {
 	FLVDecodeTask::FLVDecodeTask()
 	{
+		m_audioTask.Reset(new FLVAudioTask());
+		m_videoTask.Reset(new FLVVideoTask());
+
 		m_onScript.Reset(new Delegate<void(FLV_SCRIPTDATA*)>(this, &FLVDecodeTask::OnScript));
 		m_onAudio.Reset(new Delegate<void(BYTE*, LONG, FLV_PACKET*)>(this, &FLVDecodeTask::OnAudio));
 		m_onVideo.Reset(new Delegate<void(BYTE*, LONG, FLV_PACKET*)>(this, &FLVDecodeTask::OnVideo));
@@ -21,10 +24,12 @@ namespace FLVPlayer
 	}
 	BOOL FLVDecodeTask::Submit()
 	{
+		m_wait.CreateEvent();
 		return TinyTaskBase::Submit(BindCallback(&FLVDecodeTask::OnMessagePump, this));
 	}
 	BOOL FLVDecodeTask::Close(DWORD dwMs)
 	{
+		m_wait.SetEvent();
 		m_parse.Close();
 		Sleep(800);
 		return TRUE;
@@ -48,17 +53,16 @@ namespace FLVPlayer
 		{
 			if (packet->packetType == FLV_AudioSpecificConfig)
 			{
-				m_aac.Reset(new AACDecode());
-				m_aac->Initialize(BindCallback(&FLVDecodeTask::OnAAC, this));
-				if (!m_aac->Open(bits, size, packet->bitsPerSample))
+				if (!m_audioTask->Submit(bits, size, packet->bitsPerSample))
 				{
 					m_parse.Close();
 				}
 			}
 			if (packet->packetType == FLV_AACRaw)
 			{
-				ASSERT(m_aac);
-				m_aac->Decode(bits, size);
+				m_lock.Lock();
+				//m_packets.push();
+				m_lock.Unlock();
 			}
 		}
 
@@ -69,34 +73,21 @@ namespace FLVPlayer
 		{
 			if (packet->packetType == FLV_AVCDecoderConfigurationRecord)
 			{
-				ASSERT(!m_size.IsEmpty());
-				m_h264.Reset(new H264Decode());
-				m_h264->Initialize(m_size, m_size, BindCallback(&FLVDecodeTask::OnH264, this));
-				if (!m_h264->Open(bits, size))
+				if (!m_videoTask->Submit(m_size, m_size, bits, size))
 				{
 					m_parse.Close();
 				}
 			}
 			if (packet->packetType == FLV_NALU)
 			{
-				ASSERT(m_h264);
-				m_h264->Decode(bits, size);
+				m_lock.Lock();
+				AVPacket av;
+				av.type = 1;
+				av.dts = packet->dts;
+				av.pts = packet->pts;
+				//m_packets.push(av);
+				m_lock.Unlock();
 			}
-		}
-	}
-	void FLVDecodeTask::OnH264(BYTE* bits, LONG size, LPVOID ps)
-	{
-
-	}
-	void FLVDecodeTask::OnAAC(BYTE* bits, LONG size, LPVOID ps)
-	{
-		if (bits == NULL && size == 0)
-		{
-			m_waveFMT = *reinterpret_cast<WAVEFORMATEX*>(ps);
-		}
-		else
-		{
-
 		}
 	}
 }

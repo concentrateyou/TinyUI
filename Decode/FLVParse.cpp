@@ -8,7 +8,9 @@ namespace Decode
 		:m_hFile(NULL),
 		m_lengthSizeMinusOne(4),
 		m_bAudio(FALSE),
-		m_bVideo(FALSE)
+		m_bVideo(FALSE),
+		m_dts(0),
+		m_index(0)
 	{
 
 	}
@@ -116,6 +118,11 @@ namespace Decode
 								ASSERT(objProp->p_type == AMF_NUMBER);
 								script.height = objProp->p_vu.p_number;
 							}
+							if ("duration" == val)
+							{
+								ASSERT(objProp->p_type == AMF_NUMBER);
+								script.duration = objProp->p_vu.p_number * 1000000;
+							}
 							if ("framerate" == val)
 							{
 								ASSERT(objProp->p_type == AMF_NUMBER);
@@ -189,8 +196,7 @@ namespace Decode
 		BYTE* bits = data;
 		BYTE aacPacketType = *bits++;
 		size -= 1;
-		INT dwCompositionTime = 0;
-		memcpy(reinterpret_cast<BYTE*>(&dwCompositionTime), bits, 3);
+		INT cts = (Utility::ToINT24(bits) + 0xFF800000) ^ 0xFF800000;
 		bits += 3;
 		size -= 3;
 		if (aacPacketType == 0)
@@ -223,7 +229,8 @@ namespace Decode
 				bits += s;
 			}
 			FLV_PACKET packet;
-			packet.timestamp = m_timestamps[1];
+			packet.dts = m_dts;
+			packet.pts = m_dts + cts;
 			packet.codeID = video->codeID;
 			packet.codeType = video->codeType;
 			packet.packetType = FLV_AVCDecoderConfigurationRecord;
@@ -231,11 +238,11 @@ namespace Decode
 		}
 		if (aacPacketType == 1)
 		{
-			return ParseNALU(video, bits, size);
+			return ParseNALU(video, &cts, bits, size);
 		}
 		return TRUE;
 	}
-	BOOL FLVParse::ParseNALU(FLV_TAG_VIDEO* video, BYTE* data, INT size)
+	BOOL FLVParse::ParseNALU(FLV_TAG_VIDEO* video, INT* cts, BYTE* data, INT size)
 	{
 		BYTE* bits = data;
 		INT offset = 0;
@@ -258,7 +265,8 @@ namespace Decode
 				packet.codeID = video->codeID;
 				packet.codeType = video->codeType;
 				packet.packetType = FLV_NALU;
-				packet.timestamp = m_timestamps[1];
+				packet.dts = m_dts;
+				packet.pts = m_dts + *cts;
 				EVENT_VIDEO(val, sizeofNALU + 4, &packet);
 				bits += sizeofNALU;
 				offset += sizeofNALU;
@@ -275,7 +283,8 @@ namespace Decode
 				packet.codeID = video->codeID;
 				packet.codeType = video->codeType;
 				packet.packetType = FLV_NALU;
-				packet.timestamp = m_timestamps[1];
+				packet.dts = m_dts;
+				packet.pts = m_dts + *cts;
 				EVENT_VIDEO(val, sizeofNALU + 4, &packet);
 				bits += sizeofNALU;
 				offset += sizeofNALU;
@@ -292,7 +301,8 @@ namespace Decode
 				packet.codeID = video->codeID;
 				packet.codeType = video->codeType;
 				packet.packetType = FLV_NALU;
-				packet.timestamp = m_timestamps[1];
+				packet.dts = m_dts;
+				packet.pts = m_dts + *cts;
 				EVENT_VIDEO(val, sizeofNALU + 4, &packet);
 				bits += sizeofNALU;
 				offset += sizeofNALU;
@@ -309,7 +319,8 @@ namespace Decode
 				packet.codeID = video->codeID;
 				packet.codeType = video->codeType;
 				packet.packetType = FLV_NALU;
-				packet.timestamp = m_timestamps[1];
+				packet.dts = m_dts;
+				packet.pts = m_dts + *cts;
 				EVENT_VIDEO(val, sizeofNALU + 4, &packet);
 				bits += sizeofNALU;
 				offset += sizeofNALU;
@@ -328,7 +339,8 @@ namespace Decode
 		FLV_PACKET packet = { 0 };
 		if (aacPacketType == 0)
 		{
-			packet.timestamp = m_timestamps[0];
+			packet.dts = m_dts;
+			packet.pts = m_dts;
 			packet.bitsPerSample = audio->bitsPerSample;
 			packet.channel = audio->channel;
 			packet.codeID = FLV_CODECID_AAC;
@@ -337,7 +349,8 @@ namespace Decode
 		}
 		if (aacPacketType == 1)
 		{
-			packet.timestamp = m_timestamps[0];
+			packet.dts = m_dts;
+			packet.pts = m_dts;
 			packet.bitsPerSample = audio->bitsPerSample;
 			packet.channel = audio->channel;
 			packet.codeID = FLV_CODECID_AAC;
@@ -383,11 +396,11 @@ namespace Decode
 				switch (tag.type)
 				{
 				case 0x08:
-					m_timestamps[0] = static_cast<LONGLONG>(static_cast<UINT32>(Utility::ToINT24(tag.timestamp) | (tag.timestampex << 24)));
+					m_dts = static_cast<LONGLONG>(static_cast<UINT32>(Utility::ToINT24(tag.timestamp) | (tag.timestampex << 24)));
 					ParseAudio(data, size);
 					break;
 				case 0x09:
-					m_timestamps[1] = static_cast<LONGLONG>(static_cast<UINT32>(Utility::ToINT24(tag.timestamp) | (tag.timestampex << 24)));
+					m_dts = static_cast<LONGLONG>(static_cast<UINT32>(Utility::ToINT24(tag.timestamp) | (tag.timestampex << 24)));
 					ParseVideo(data, size);
 					break;
 				case 0x12:

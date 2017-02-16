@@ -8,18 +8,13 @@ namespace FLVPlayer
 	typedef struct tagAVPacket
 	{
 		BYTE*	bits;
-		LONG	size;
-		LONG	pts;
-		LONG	dts;
-		LONG	index;
-		LONG	duration;
+		INT		size;
+		INT		type;
+		INT		pts;
+		INT		dts;
+		INT		index;
+		INT		duration;
 	}AVPacket;
-
-	class AVPacketQueue
-	{
-	private:
-		concurrency::concurrent_queue<AVPacket>	m_packets;
-	};
 
 }
 

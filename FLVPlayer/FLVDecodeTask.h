@@ -1,6 +1,10 @@
 #pragma once
 #include "FLVParse.h"
+#include "FLVPlayer.h"
 #include "IO/TinyTaskBase.h"
+#include "FLVAudioTask.h"
+#include "FLVVideoTask.h"
+#include <deque>
 using namespace Decode;
 using namespace TinyUI;
 using namespace TinyUI::IO;
@@ -19,10 +23,7 @@ namespace FLVPlayer
 		void	OnScript(FLV_SCRIPTDATA* val);
 		void	OnAudio(BYTE* bits, LONG size, FLV_PACKET* packet);
 		void	OnVideo(BYTE* bits, LONG size, FLV_PACKET* packet);
-		void	OnH264(BYTE* bits, LONG size, LPVOID ps);
-		void	OnAAC(BYTE* bits, LONG size, LPVOID ps);
 	private:
-		
 		TinyScopedPtr<Delegate<void(FLV_SCRIPTDATA*)>>			m_onScript;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG, FLV_PACKET*)>>	m_onAudio;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG, FLV_PACKET*)>>	m_onVideo;
@@ -30,9 +31,11 @@ namespace FLVPlayer
 		DWORD						m_rate;
 		TinySize					m_size;
 		FLVParse					m_parse;
-		WAVEFORMATEX				m_waveFMT;
-		TinyScopedPtr<H264Decode>	m_h264;
-		TinyScopedPtr<AACDecode>	m_aac;
+		TinyEvent					m_wait;
+		TinyLock					m_lock;
+		std::deque<AVPacket>		m_packets;
+		TinyScopedPtr<FLVAudioTask>	m_audioTask;
+		TinyScopedPtr<FLVVideoTask>	m_videoTask;
 	};
 }
 
