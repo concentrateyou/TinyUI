@@ -79,13 +79,13 @@ namespace Decode
 	BOOL AACDecode::Decode(BYTE* bits, LONG size)
 	{
 		ASSERT(m_handle);
-		BYTE* data = reinterpret_cast<BYTE*>(NeAACDecDecode(m_handle, &m_frame, bits, size));
-		if (m_frame.error > 0 || !data || m_frame.samples <= 0)
+		BYTE* decodebits = reinterpret_cast<BYTE*>(NeAACDecDecode(m_handle, &m_frame, bits, size));
+		if (m_frame.error > 0 || !decodebits || m_frame.samples <= 0)
 			return FALSE;
-		LONG o = m_frame.samples * m_frame.channels;
+		LONG sizeo = m_frame.samples * m_frame.channels;
 		if (!m_callback.IsNull())
 		{
-			m_callback(data, o, NULL);
+			m_callback(decodebits, sizeo, NULL);
 		}
 		return TRUE;
 	}

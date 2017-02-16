@@ -8,8 +8,8 @@ namespace FLVPlayer
 	typedef struct tagAVPacket
 	{
 		BYTE*	bits;
+		BYTE	type;
 		INT		size;
-		INT		type;
 		INT		pts;
 		INT		dts;
 		INT		index;

@@ -1,9 +1,11 @@
 #include "stdafx.h"
 #include "FLVAudioTask.h"
+#include "FLVDecodeTask.h"
 
 namespace FLVPlayer
 {
-	FLVAudioTask::FLVAudioTask()
+	FLVAudioTask::FLVAudioTask(FLVDecodeTask* pTask)
+		:m_pTask(pTask)
 	{
 		m_aac.Reset(new AACDecode());
 	}

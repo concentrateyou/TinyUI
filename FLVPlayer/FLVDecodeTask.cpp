@@ -3,10 +3,11 @@
 
 namespace FLVPlayer
 {
-	FLVDecodeTask::FLVDecodeTask()
+	FLVDecodeTask::FLVDecodeTask(HWND hWND)
+		:m_index(0)
 	{
-		m_audioTask.Reset(new FLVAudioTask());
-		m_videoTask.Reset(new FLVVideoTask());
+		m_audioTask.Reset(new FLVAudioTask(this));
+		m_videoTask.Reset(new FLVVideoTask(this, hWND));
 
 		m_onScript.Reset(new Delegate<void(FLV_SCRIPTDATA*)>(this, &FLVDecodeTask::OnScript));
 		m_onAudio.Reset(new Delegate<void(BYTE*, LONG, FLV_PACKET*)>(this, &FLVDecodeTask::OnAudio));
@@ -60,9 +61,26 @@ namespace FLVPlayer
 			}
 			if (packet->packetType == FLV_AACRaw)
 			{
-				m_lock.Lock();
-				//m_packets.push();
-				m_lock.Unlock();
+				/*BOOL block = TRUE;
+				{
+					TinyAutoLock lock(m_audioLock);
+					if (m_audioQueue.size() <= 25)
+					{
+						AVPacket av;
+						av.bits = new BYTE[size];
+						memcpy(av.bits, bits, size);
+						av.size = size;
+						av.dts = packet->dts;
+						av.pts = packet->pts;
+						av.index = ++m_index;
+						m_audioQueue.push(av);
+						block = FALSE;
+					}
+				}
+				if (block)
+				{
+					m_wait.Lock(INFINITE);
+				}*/
 			}
 		}
 
@@ -80,13 +98,26 @@ namespace FLVPlayer
 			}
 			if (packet->packetType == FLV_NALU)
 			{
-				m_lock.Lock();
-				AVPacket av;
-				av.type = 1;
-				av.dts = packet->dts;
-				av.pts = packet->pts;
-				//m_packets.push(av);
-				m_lock.Unlock();
+				BOOL block = TRUE;
+				{
+					TinyAutoLock lock(m_videoLock);
+					if (m_videoQueue.size() <= 25)
+					{
+						AVPacket av;
+						av.bits = new BYTE[size];
+						memcpy(av.bits, bits, size);
+						av.size = size;
+						av.dts = packet->dts;
+						av.pts = packet->pts;
+						av.index = ++m_index;
+						m_videoQueue.push(av);
+						block = FALSE;
+					}
+				}
+				if (block)
+				{
+					m_wait.Lock(INFINITE);
+				}
 			}
 		}
 	}

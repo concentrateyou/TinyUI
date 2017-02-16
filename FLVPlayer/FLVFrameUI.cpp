@@ -51,7 +51,7 @@ namespace FLVPlayer
 	LRESULT FLVFrameUI::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		m_task.Reset(new FLVDecodeTask());
+		m_task.Reset(new FLVDecodeTask(m_hWND));
 		m_task->Submit();
 		return FALSE;
 	}

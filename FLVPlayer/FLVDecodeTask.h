@@ -4,7 +4,7 @@
 #include "IO/TinyTaskBase.h"
 #include "FLVAudioTask.h"
 #include "FLVVideoTask.h"
-#include <deque>
+#include <queue>
 using namespace Decode;
 using namespace TinyUI;
 using namespace TinyUI::IO;
@@ -14,7 +14,7 @@ namespace FLVPlayer
 	class FLVDecodeTask : public TinyTaskBase
 	{
 	public:
-		FLVDecodeTask();
+		FLVDecodeTask(HWND hWND);
 		~FLVDecodeTask();
 		BOOL	Submit();
 		BOOL	Close(DWORD dwMs) OVERRIDE;
@@ -23,6 +23,12 @@ namespace FLVPlayer
 		void	OnScript(FLV_SCRIPTDATA* val);
 		void	OnAudio(BYTE* bits, LONG size, FLV_PACKET* packet);
 		void	OnVideo(BYTE* bits, LONG size, FLV_PACKET* packet);
+	public:
+		TinyEvent					m_wait;
+		TinyLock					m_audioLock;
+		TinyLock					m_videoLock;
+		std::queue<AVPacket>		m_audioQueue;
+		std::queue<AVPacket>		m_videoQueue;
 	private:
 		TinyScopedPtr<Delegate<void(FLV_SCRIPTDATA*)>>			m_onScript;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG, FLV_PACKET*)>>	m_onAudio;
@@ -31,11 +37,9 @@ namespace FLVPlayer
 		DWORD						m_rate;
 		TinySize					m_size;
 		FLVParse					m_parse;
-		TinyEvent					m_wait;
-		TinyLock					m_lock;
-		std::deque<AVPacket>		m_packets;
 		TinyScopedPtr<FLVAudioTask>	m_audioTask;
 		TinyScopedPtr<FLVVideoTask>	m_videoTask;
+		INT							m_index;
 	};
 }
 
