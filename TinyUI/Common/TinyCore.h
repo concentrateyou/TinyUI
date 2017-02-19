@@ -10,17 +10,17 @@ namespace TinyUI
 	/// <summary>
 	/// 临界区
 	/// </summary>
-	class TinyCriticalSection
+	class TinyLock
 	{
-		DISALLOW_COPY_AND_ASSIGN(TinyCriticalSection)
+		DISALLOW_COPY_AND_ASSIGN(TinyLock)
 	public:
-		TinyCriticalSection() throw();
-		virtual ~TinyCriticalSection();
-		BOOL Initialize() throw();
+		TinyLock() throw();
+		virtual ~TinyLock();
+		operator CRITICAL_SECTION& ();
 		BOOL Lock() throw();
 		void Unlock() throw();
 	private:
-		CRITICAL_SECTION section;
+		CRITICAL_SECTION m_s;
 	};
 	/// <summary>
 	/// 事件
@@ -66,20 +66,6 @@ namespace TinyUI
 		HANDLE  m_hMutex;
 	};
 	/// <summary>
-	/// 平台锁
-	/// </summary>
-	class TinyLock
-	{
-		DISALLOW_COPY_AND_ASSIGN(TinyLock)
-	public:
-		TinyLock();
-		virtual ~TinyLock();
-		BOOL Lock();
-		void Unlock();
-	private:
-		TinyCriticalSection m_s;
-	};
-	/// <summary>
 	/// 自动锁
 	/// </summary>
 	class TinyAutoLock
@@ -106,7 +92,7 @@ namespace TinyUI
 		BOOL TryLock();
 		void Unlock();
 	private:
-		CRITICAL_SECTION section;
+		CRITICAL_SECTION m_s;
 	};
 	/// <summary>
 	/// 读写锁
@@ -117,6 +103,7 @@ namespace TinyUI
 	public:
 		TinySRWLock();
 		virtual ~TinySRWLock();
+		operator SRWLOCK&();
 		void Lock(BOOL write);
 		void Unlock(BOOL write);
 	private:

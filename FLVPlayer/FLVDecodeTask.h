@@ -23,23 +23,18 @@ namespace FLVPlayer
 		void	OnScript(FLV_SCRIPTDATA* val);
 		void	OnAudio(BYTE* bits, LONG size, FLV_PACKET* packet);
 		void	OnVideo(BYTE* bits, LONG size, FLV_PACKET* packet);
-	public:
-		TinyEvent					m_wait;
-		TinyLock					m_audioLock;
-		TinyLock					m_videoLock;
-		std::queue<AVPacket>		m_audioQueue;
-		std::queue<AVPacket>		m_videoQueue;
 	private:
 		TinyScopedPtr<Delegate<void(FLV_SCRIPTDATA*)>>			m_onScript;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG, FLV_PACKET*)>>	m_onAudio;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG, FLV_PACKET*)>>	m_onVideo;
 	private:
 		DWORD						m_rate;
+		TinyLock					m_videoLock;
+		TinyLock					m_audioLock;
 		TinySize					m_size;
 		FLVParse					m_parse;
 		TinyScopedPtr<FLVAudioTask>	m_audioTask;
 		TinyScopedPtr<FLVVideoTask>	m_videoTask;
-		INT							m_index;
 	};
 }
 

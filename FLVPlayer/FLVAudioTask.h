@@ -1,10 +1,14 @@
 #pragma once
+#include "Media/TinySoundPlayer.h"
 #include "FLVParse.h"
 #include "FLVPlayer.h"
+#include "Common/TinyTime.h"
 #include "IO/TinyTaskBase.h"
+#include <queue>
 using namespace Decode;
 using namespace TinyUI;
 using namespace TinyUI::IO;
+using namespace TinyUI::Media;
 
 namespace FLVPlayer
 {
@@ -14,18 +18,27 @@ namespace FLVPlayer
 	class FLVAudioTask : public TinyTaskBase
 	{
 	public:
-		FLVAudioTask(FLVDecodeTask* pTask);
+		FLVAudioTask(FLVDecodeTask* pTask, TinyLock& lock, HWND hWND);
 		virtual ~FLVAudioTask();
 		BOOL	Submit(BYTE* bits, LONG size, WORD wBitsPerSample);
 		BOOL	Close(DWORD dwMs) OVERRIDE;
+		void	Push(const SampleTag& tag);
 	private:
 		void	OnMessagePump();
-		void	OnAAC(BYTE* bits, LONG size, LPVOID ps);
+		BOOL	OnProcessTag(LONG& pts);
+		void	OnRender(BYTE* bits, LONG size);
 	private:
-		FLVDecodeTask*				m_pTask;
-		WAVEFORMATEX				m_waveFMT;
+		LONG						m_currentPTS;
+		HWND						m_hWND;
 		TinyEvent					m_close;
+		TinyEvent					m_wait;
+		TinyLock&					m_lock;
+		FLVDecodeTask*				m_pTask;
+		TinyPerformanceTimer		m_timer;
+		std::queue<SampleTag>		m_queue;
 		TinyScopedPtr<AACDecode>	m_aac;
+		TinySoundPlayer				m_player;
+		TinyBufferArray<BYTE>		m_audios;
 	};
 
 }

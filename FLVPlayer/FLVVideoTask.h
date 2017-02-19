@@ -3,6 +3,7 @@
 #include "FLVPlayer.h"
 #include "Common/TinyTime.h"
 #include "IO/TinyTaskBase.h"
+#include <queue>
 using namespace Decode;
 using namespace TinyUI;
 using namespace TinyUI::IO;
@@ -14,21 +15,22 @@ namespace FLVPlayer
 	class FLVVideoTask : public TinyTaskBase
 	{
 	public:
-		FLVVideoTask(FLVDecodeTask* pTask, HWND hWND);
+		FLVVideoTask(FLVDecodeTask* pTask, TinyLock& lock, HWND hWND);
 		~FLVVideoTask();
-		BOOL	Submit(const TinySize& src, const TinySize& dst, BYTE* bits, LONG size);
+		BOOL	Submit(const TinySize& srcsize, const TinySize& dstsize, BYTE* bits, LONG size);
 		BOOL	Close(DWORD dwMs) OVERRIDE;
+		void	Push(const SampleTag& packet);
 	private:
 		void	OnMessagePump();
-		void	OnH264(BYTE* bits, LONG size, LPVOID ps);
+		BOOL	OnProcessTag(LONG& pts);
+		void	OnRender(BYTE* bits, LONG size);
 	private:
-		INT							m_currentPTS;
-		INT							m_framePTS;
-		INT							m_frameDTS;
-		TinySize					m_dst;
-		HWND						m_hWND;
-		HBITMAP						m_hBitmap;
+		LONG						m_currentPTS;
+		TinyLock&					m_lock;
 		TinyEvent					m_wait;
+		TinySize					m_dstsize;
+		HWND						m_hWND;
+		std::queue<SampleTag>		m_queue;
 		TinyEvent					m_close;
 		FLVDecodeTask*				m_pTask;
 		TinyPerformanceTimer		m_timer;

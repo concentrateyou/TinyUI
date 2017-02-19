@@ -17,9 +17,8 @@ namespace Decode
 	{
 		Close();
 	}
-	BOOL H264Decode::Initialize(const TinySize& src, const TinySize& dst, Callback<void(BYTE*, LONG, LPVOID)>&& callback)
+	BOOL H264Decode::Initialize(const TinySize& srcsize, const TinySize& dstsize)
 	{
-		m_callback = std::move(callback);
 		avcodec_register_all();
 		av_init_packet(&m_packet);
 		m_codec = avcodec_find_decoder(AV_CODEC_ID_H264);
@@ -34,15 +33,15 @@ namespace Decode
 		m_pBGR24 = av_frame_alloc();
 		if (!m_pBGR24)
 			goto H264_ERROR;
-		m_src = src;
-		m_dst = dst;
-		m_sws = sws_getContext(src.cx, src.cy, AV_PIX_FMT_YUV420P, dst.cx, dst.cy, AV_PIX_FMT_BGR24, 0, NULL, NULL, NULL);
+		m_srcsize = srcsize;
+		m_dstsize = dstsize;
+		m_sws = sws_getContext(srcsize.cx, srcsize.cy, AV_PIX_FMT_YUV420P, dstsize.cx, dstsize.cy, AV_PIX_FMT_BGR24, 0, NULL, NULL, NULL);
 		if (!m_sws)
 			goto H264_ERROR;
-		INT buffersize = av_image_get_buffer_size(AV_PIX_FMT_BGR24, m_dst.cx, m_dst.cy, 1);
-		m_bits.Reset(new BYTE[buffersize]);
-		ZeroMemory(m_bits, buffersize);
-		return buffersize == av_image_fill_arrays(m_pBGR24->data, m_pBGR24->linesize, m_bits.Ptr(), AV_PIX_FMT_BGR24, m_dst.cx, m_dst.cy, 1);
+		INT size = av_image_get_buffer_size(AV_PIX_FMT_BGR24, m_dstsize.cx, m_dstsize.cy, 1);
+		m_bits.Reset(new BYTE[size]);
+		ZeroMemory(m_bits, size);
+		return size == av_image_fill_arrays(m_pBGR24->data, m_pBGR24->linesize, m_bits.Ptr(), AV_PIX_FMT_BGR24, m_dstsize.cx, m_dstsize.cy, 1);
 	H264_ERROR:
 		Close();
 		return FALSE;
@@ -61,27 +60,26 @@ namespace Decode
 		Close();
 		return FALSE;
 	}
-	BOOL H264Decode::Decode(BYTE* data, LONG size, LONG dts, LONG pts)
+	BOOL H264Decode::Decode(BYTE* bi, LONG si, SampleTag& tag, BYTE*& bo, LONG& so)
 	{
 		if (!m_context)
 			return FALSE;
-		m_packet.dts = dts;
-		m_packet.pts = pts;
-		m_packet.data = data;
-		m_packet.size = size;
-		if (avcodec_send_packet(m_context, &m_packet) != 0)
+		so = 0;
+		bo = NULL;
+		m_packet.dts = tag.dts;
+		m_packet.pts = tag.pts;
+		m_packet.data = bi;
+		m_packet.size = si;
+		INT iRes = avcodec_send_packet(m_context, &m_packet);
+		if (iRes != 0)
 			return FALSE;
-		INT iRes = avcodec_receive_frame(m_context, m_pYUV420);
-		if (iRes != 0 && iRes != AVERROR(EAGAIN))
+		iRes = avcodec_receive_frame(m_context, m_pYUV420);
+		if (iRes != 0)
 			return FALSE;
-		if (iRes != AVERROR(EAGAIN))
-		{
-			sws_scale(m_sws, m_pYUV420->data, m_pYUV420->linesize, 0, m_src.cy, m_pBGR24->data, m_pBGR24->linesize);
-			if (!m_callback.IsNull())
-			{
-				m_callback(m_pBGR24->data[0], m_pBGR24->linesize[0] * m_dst.cy, reinterpret_cast<LPVOID>(m_pYUV420));
-			}
-		}
+		INT cy = sws_scale(m_sws, m_pYUV420->data, m_pYUV420->linesize, 0, m_srcsize.cy, m_pBGR24->data, m_pBGR24->linesize);
+		ASSERT(cy == m_dstsize.cy);
+		bo = m_pBGR24->data[0];
+		so = m_pBGR24->linesize[0] * cy;
 		return TRUE;
 	}
 	BOOL H264Decode::Close()
@@ -114,5 +112,13 @@ namespace Decode
 			m_pBGR24 = NULL;
 		}
 		return TRUE;
+	}
+	AVFrame* H264Decode::GetYUV420() const
+	{
+		return m_pYUV420;
+	}
+	AVFrame* H264Decode::GetBGR24() const
+	{
+		return m_pBGR24;
 	}
 }

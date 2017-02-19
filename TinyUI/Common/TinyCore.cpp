@@ -5,27 +5,27 @@
 namespace TinyUI
 {
 	/////////////////////////////////////////////////////////////////////////
-	TinyCriticalSection::TinyCriticalSection() throw()
+	TinyLock::TinyLock() throw()
 	{
-		ZeroMemory(&section, sizeof(section));
-
+		ZeroMemory(&m_s, sizeof(m_s));
+		InitializeCriticalSection(&m_s);
 	}
-	TinyCriticalSection::~TinyCriticalSection()
+	TinyLock::~TinyLock()
 	{
-		::DeleteCriticalSection(&section);
+		::DeleteCriticalSection(&m_s);
 	}
-	BOOL TinyCriticalSection::Initialize() throw()
+	BOOL TinyLock::Lock() throw()
 	{
-		return ::InitializeCriticalSectionEx(&section, 0, 0);
-	}
-	BOOL TinyCriticalSection::Lock() throw()
-	{
-		::EnterCriticalSection(&section);
+		::EnterCriticalSection(&m_s);
 		return TRUE;
 	}
-	void TinyCriticalSection::Unlock() throw()
+	void TinyLock::Unlock() throw()
 	{
-		::LeaveCriticalSection(&section);
+		::LeaveCriticalSection(&m_s);
+	}
+	TinyLock::operator CRITICAL_SECTION& ()
+	{
+		return m_s;
 	}
 	/////////////////////////////////////////////////////////////////////////
 	TinyEvent::TinyEvent()
@@ -149,22 +149,6 @@ namespace TinyUI
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	TinyLock::TinyLock()
-	{
-		m_s.Initialize();
-	}
-	TinyLock::~TinyLock()
-	{
-	}
-	BOOL TinyLock::Lock()
-	{
-		return m_s.Lock();
-	}
-	void TinyLock::Unlock()
-	{
-		m_s.Unlock();
-	}
-	//////////////////////////////////////////////////////////////////////////
 	TinyAutoLock::TinyAutoLock(TinyLock& lock) : m_lock(lock)
 	{
 		m_lock.Lock();
@@ -176,7 +160,7 @@ namespace TinyUI
 	//////////////////////////////////////////////////////////////////////////
 	TinySpinLock::TinySpinLock()
 	{
-		ZeroMemory(&section, sizeof(section));
+		ZeroMemory(&m_s, sizeof(m_s));
 	}
 	TinySpinLock::~TinySpinLock()
 	{
@@ -184,23 +168,23 @@ namespace TinyUI
 	}
 	BOOL TinySpinLock::Initialize(DWORD dwSpinCount) throw()
 	{
-		return InitializeCriticalSectionAndSpinCount(&section, dwSpinCount);
+		return InitializeCriticalSectionAndSpinCount(&m_s, dwSpinCount);
 	}
 	void TinySpinLock::Uninitialize()throw()
 	{
-		DeleteCriticalSection(&section);
+		DeleteCriticalSection(&m_s);
 	}
 	void TinySpinLock::Lock()
 	{
-		EnterCriticalSection(&section);
+		EnterCriticalSection(&m_s);
 	}
 	BOOL TinySpinLock::TryLock()
 	{
-		return TryEnterCriticalSection(&section);
+		return TryEnterCriticalSection(&m_s);
 	}
 	void TinySpinLock::Unlock()
 	{
-		LeaveCriticalSection(&section);
+		LeaveCriticalSection(&m_s);
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinySRWLock::TinySRWLock()
@@ -210,6 +194,10 @@ namespace TinyUI
 	TinySRWLock::~TinySRWLock()
 	{
 
+	}
+	TinySRWLock::operator SRWLOCK&()
+	{
+		return m_SRW;
 	}
 	void TinySRWLock::Lock(BOOL write)
 	{

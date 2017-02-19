@@ -13,4 +13,13 @@ namespace Utility
 	INT ToINT16(BYTE val[2]);
 	INT ToINT8(BYTE val[1]);
 	void WINAPI SaveBitmap(const  BITMAPINFOHEADER& bi, const BYTE* pBits, DWORD dwSize);
+
+	typedef struct tagSampleTag
+	{
+		LONG		dts;
+		LONG		pts;
+		BYTE		type;
+		BYTE*		bits;
+		LONG		size;
+	}SampleTag;
 }

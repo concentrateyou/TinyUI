@@ -14,10 +14,9 @@ namespace Decode
 	public:
 		AACDecode();
 		virtual ~AACDecode();
-		BOOL Initialize(Callback<void(BYTE*, LONG, LPVOID)>&& callback);
 		BOOL Open(WORD wBitsPerSample, WORD wSampleRate);
 		BOOL Open(BYTE* adts, LONG size, WORD wBitsPerSample);
-		BOOL Decode(BYTE* bits, LONG size);
+		BOOL Decode(BYTE* bi, LONG si, BYTE*& bo, LONG& so);
 		BOOL Close();
 		WAVEFORMATEX GetFormat() const;
 	private:
@@ -25,7 +24,6 @@ namespace Decode
 		WAVEFORMATEX			m_sMFT;
 		NeAACDecHandle			m_handle;
 		NeAACDecFrameInfo		m_frame;
-		Callback<void(BYTE*, LONG, LPVOID)> m_callback;
 	};
 }
 

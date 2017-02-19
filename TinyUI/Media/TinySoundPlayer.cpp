@@ -12,8 +12,10 @@ namespace TinyUI
 		TinySoundPlayer::~TinySoundPlayer()
 		{
 		}
-		BOOL TinySoundPlayer::Initialize(HWND hWND, WAVEFORMATEX* pFMT)
+		BOOL TinySoundPlayer::Initialize(HWND hWND, WAVEFORMATEX* pFMT, DWORD dwSize, DWORD dwCount)
 		{
+			m_dwCount = dwCount;
+			m_dwSize = dwSize == 0 ? pFMT->nAvgBytesPerSec : dwSize;
 			m_waveFMT = *pFMT;
 			HRESULT hRes = S_OK;
 			hRes = DirectSoundCreate8(NULL, &m_sound, NULL);
@@ -28,26 +30,39 @@ namespace TinyUI
 			dbdesc.dwFlags = DSBCAPS_PRIMARYBUFFER;
 			hRes = m_sound->CreateSoundBuffer(&dbdesc, &m_primaryDSB, NULL);
 			if (FAILED(hRes))
-				return FALSE;
+				goto DS_ERROR;
 			hRes = m_primaryDSB->SetFormat(pFMT);
 			if (FAILED(hRes))
-				return FALSE;
-			//…Ë÷√æ≤Ã¨ª∫≥Â«¯
-			ZeroMemory(&dbdesc, sizeof(dbdesc));
-			dbdesc.dwSize = sizeof(dbdesc);
-			dbdesc.dwFlags = DSBCAPS_STATIC | DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_STICKYFOCUS | DSBCAPS_GLOBALFOCUS;
-			dbdesc.dwBufferBytes = 3 * pFMT->nAvgBytesPerSec;//3√Î
-			dbdesc.lpwfxFormat = pFMT;
-			TinyComPtr<IDirectSoundBuffer> dsb;
-			hRes = m_sound->CreateSoundBuffer(&dbdesc, &dsb, NULL);
-			if (FAILED(hRes))
-				return FALSE;
-			hRes = dsb->QueryInterface(IID_IDirectSoundBuffer8, (void**)&m_secondaryDSB);
-			if (FAILED(hRes))
-				return FALSE;
+				goto DS_ERROR;
+			//…Ë÷√∏®÷˙ª∫≥Â«¯
+			m_secondarys = new LPDIRECTSOUNDBUFFER8[dwCount];
+			if (!m_secondarys)
+				goto DS_ERROR;
+			for (DWORD i = 0;i < dwCount;i++)
+			{
+				ZeroMemory(&dbdesc, sizeof(dbdesc));
+				dbdesc.dwSize = sizeof(dbdesc);
+				dbdesc.dwFlags = DSBCAPS_STATIC | DSBCAPS_GLOBALFOCUS;
+				dbdesc.dwBufferBytes = m_dwSize;
+				dbdesc.lpwfxFormat = pFMT;
+				TinyComPtr<IDirectSoundBuffer> dsb;
+				hRes = m_sound->CreateSoundBuffer(&dbdesc, &dsb, NULL);
+				if (FAILED(hRes))
+					goto DS_ERROR;
+				hRes = dsb->QueryInterface(IID_IDirectSoundBuffer8, (void**)&m_secondarys[i]);
+				if (FAILED(hRes))
+					goto DS_ERROR;
+				hRes = Restore(m_secondarys[i], NULL);
+				if (FAILED(hRes))
+					goto DS_ERROR;
+			}
 			return TRUE;
+		DS_ERROR:
+			m_sound.Release();
+			m_primaryDSB.Release();
+			return FALSE;
 		}
-		WAVEFORMATEX* TinySoundPlayer::GetFormat() 
+		WAVEFORMATEX* TinySoundPlayer::GetFormat()
 		{
 			return &m_waveFMT;
 		}
@@ -57,94 +72,124 @@ namespace TinyUI
 			caps.dwSize = sizeof(DSCAPS);
 			return m_sound->GetCaps(&caps) == S_OK;
 		}
-		BOOL TinySoundPlayer::SetVolume(LONG volume)
-		{
-			ASSERT(m_secondaryDSB);
-			return m_secondaryDSB->SetVolume(volume) == S_OK;
-		}
-		BOOL TinySoundPlayer::GetVolume(LONG& volume)
-		{
-			ASSERT(m_secondaryDSB);
-			return m_secondaryDSB->GetVolume(&volume) == S_OK;
-		}
-		BOOL TinySoundPlayer::SetFrequency(DWORD dwFrequency)
-		{
-			ASSERT(m_secondaryDSB);
-			return m_secondaryDSB->SetFrequency(dwFrequency) == S_OK;
-		}
-		BOOL TinySoundPlayer::GetFrequency(DWORD& dwFrequency)
-		{
-			ASSERT(m_secondaryDSB);
-			return m_secondaryDSB->GetFrequency(&dwFrequency) == S_OK;
-		}
-		BOOL TinySoundPlayer::SetPlan(LONG plan)
-		{
-			ASSERT(m_secondaryDSB);
-			return m_secondaryDSB->SetPan(plan) == S_OK;
-		}
-		BOOL TinySoundPlayer::GetPlan(LONG& plan)
-		{
-			ASSERT(m_secondaryDSB);
-			return m_secondaryDSB->GetPan(&plan) == S_OK;
-		}
 		BOOL TinySoundPlayer::Play(BYTE* bits, INT size)
 		{
-			ASSERT(m_secondaryDSB);
+			if (m_secondarys == NULL)
+				return FALSE;
+			LPDIRECTSOUNDBUFFER8 pDSB = GetFree();
+			if (pDSB == NULL)
+				return FALSE;
 			HRESULT hRes = S_OK;
 			LPVOID	ppvAudioPtr = NULL;
 			DWORD	dwAudioBytes = 0;
-			hRes = m_secondaryDSB->Lock(0, 0, &ppvAudioPtr, &dwAudioBytes, NULL, 0, DSBLOCK_ENTIREBUFFER);
+			hRes = pDSB->Lock(0, 0, &ppvAudioPtr, &dwAudioBytes, NULL, 0, DSBLOCK_ENTIREBUFFER);
 			if (FAILED(hRes))
 			{
 				if (hRes != DSERR_BUFFERLOST)
 					return FALSE;
-				hRes = m_secondaryDSB->Restore();
+				hRes = pDSB->Restore();
 				if (FAILED(hRes))
 					return FALSE;
-				hRes = m_secondaryDSB->Lock(0, 0, &ppvAudioPtr, &dwAudioBytes, NULL, 0, DSBLOCK_ENTIREBUFFER);
+				hRes = pDSB->Lock(0, 0, &ppvAudioPtr, &dwAudioBytes, NULL, 0, DSBLOCK_ENTIREBUFFER);
 				if (FAILED(hRes))
 					return FALSE;
 			}
 			memcpy(ppvAudioPtr, bits, size);
-			m_secondaryDSB->Unlock(ppvAudioPtr, dwAudioBytes, NULL, 0);
-			hRes = m_secondaryDSB->SetCurrentPosition(0);
+			pDSB->Unlock(ppvAudioPtr, dwAudioBytes, NULL, 0);
+			hRes = pDSB->SetCurrentPosition(0);
 			if (FAILED(hRes))
 				return FALSE;
-			hRes = m_secondaryDSB->Play(0, 0, 0);
+			hRes = pDSB->Play(0, 0, 0);
 			if (FAILED(hRes))
 				return FALSE;
-
 			return TRUE;
+		}
+		BOOL TinySoundPlayer::IsPlaying()
+		{
+			if (m_secondarys == NULL)
+				return FALSE;
+			BOOL bIsPlaying = FALSE;
+			for (DWORD i = 0; i < m_dwCount; i++)
+			{
+				if (m_secondarys[i])
+				{
+					DWORD dwStatus = 0;
+					m_secondarys[i]->GetStatus(&dwStatus);
+					bIsPlaying |= ((dwStatus & DSBSTATUS_PLAYING) != 0);
+				}
+			}
+			return bIsPlaying;
+		}
+		BOOL TinySoundPlayer::Reset()
+		{
+			if (m_secondarys == NULL)
+				return FALSE;
+			HRESULT hRes = 0;
+			for (DWORD i = 0; i < m_dwCount; i++)
+				hRes |= m_secondarys[i]->SetCurrentPosition(0);
+			return hRes;
 		}
 		BOOL TinySoundPlayer::Stop()
 		{
-			ASSERT(m_secondaryDSB);
 			HRESULT hRes = S_OK;
-			hRes = m_secondaryDSB->Restore();
-			if (FAILED(hRes))
-				return FALSE;
-			return m_secondaryDSB->Stop() == S_OK;
+			for (DWORD i = 0;i < m_dwCount;i++)
+				hRes |= m_secondarys[i]->Stop();
+			return hRes == S_OK;
 		}
-		BOOL TinySoundPlayer::Close()
+		void TinySoundPlayer::Close()
 		{
-			HRESULT hRes = S_OK;
-			if (!m_secondaryDSB || !m_primaryDSB)
-				return hRes;
-			hRes = m_secondaryDSB->Restore();
-			if (FAILED(hRes))
-				return FALSE;
-			hRes = m_secondaryDSB->Stop();
-			if (FAILED(hRes))
-				return FALSE;
-			hRes = m_primaryDSB->Restore();
-			if (FAILED(hRes))
-				return FALSE;
-			hRes = m_primaryDSB->Stop();
-			if (FAILED(hRes))
-				return FALSE;
-			m_secondaryDSB.Release();
 			m_primaryDSB.Release();
-			return TRUE;
+			for (DWORD i = 0;i < m_dwCount;i++)
+			{
+				m_secondarys[i]->Release();
+			}
+			SAFE_DELETE_ARRAY(m_secondarys);
+		}
+		LPDIRECTSOUNDBUFFER8 TinySoundPlayer::GetFree()
+		{
+			if (m_secondarys == NULL)
+				return FALSE;
+			DWORD i = 0;
+			for (i = 0; i < m_dwCount; i++)
+			{
+				if (m_secondarys[i])
+				{
+					DWORD dwStatus = 0;
+					m_secondarys[i]->GetStatus(&dwStatus);
+					if ((dwStatus & DSBSTATUS_PLAYING) == 0)
+						break;
+				}
+			}
+			if (i != m_dwCount)
+				return m_secondarys[i];
+			else
+				return m_secondarys[rand() % m_dwCount];
+		}
+		HRESULT TinySoundPlayer::Restore(LPDIRECTSOUNDBUFFER8 pDSB, BOOL* lost)
+		{
+			HRESULT hRes;
+			if (pDSB == NULL)
+				return CO_E_NOTINITIALIZED;
+			if (lost)
+				*lost = FALSE;
+			DWORD dwStatus;
+			if (FAILED(hRes = pDSB->GetStatus(&dwStatus)))
+				return hRes;
+			if (dwStatus & DSBSTATUS_BUFFERLOST)
+			{
+				do
+				{
+					hRes = pDSB->Restore();
+					if (hRes == DSERR_BUFFERLOST)
+					{
+						Sleep(10);
+					}
+				} while ((hRes = pDSB->Restore()) == DSERR_BUFFERLOST);
+				if (lost != NULL)
+					*lost = TRUE;
+				return S_OK;
+			}
+			return S_FALSE;
 		}
 	}
 }

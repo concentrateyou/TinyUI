@@ -4,10 +4,9 @@
 namespace FLVPlayer
 {
 	FLVDecodeTask::FLVDecodeTask(HWND hWND)
-		:m_index(0)
 	{
-		m_audioTask.Reset(new FLVAudioTask(this));
-		m_videoTask.Reset(new FLVVideoTask(this, hWND));
+		m_audioTask.Reset(new FLVAudioTask(this, m_audioLock, hWND));
+		m_videoTask.Reset(new FLVVideoTask(this, m_videoLock, hWND));
 
 		m_onScript.Reset(new Delegate<void(FLV_SCRIPTDATA*)>(this, &FLVDecodeTask::OnScript));
 		m_onAudio.Reset(new Delegate<void(BYTE*, LONG, FLV_PACKET*)>(this, &FLVDecodeTask::OnAudio));
@@ -25,12 +24,10 @@ namespace FLVPlayer
 	}
 	BOOL FLVDecodeTask::Submit()
 	{
-		m_wait.CreateEvent();
 		return TinyTaskBase::Submit(BindCallback(&FLVDecodeTask::OnMessagePump, this));
 	}
 	BOOL FLVDecodeTask::Close(DWORD dwMs)
 	{
-		m_wait.SetEvent();
 		m_parse.Close();
 		Sleep(800);
 		return TRUE;
@@ -54,33 +51,20 @@ namespace FLVPlayer
 		{
 			if (packet->packetType == FLV_AudioSpecificConfig)
 			{
-				if (!m_audioTask->Submit(bits, size, packet->bitsPerSample))
+				if (!m_audioTask->Submit(bits, size, packet->bitsPerSample == 0 ? 8 : 16))
 				{
 					m_parse.Close();
 				}
 			}
 			if (packet->packetType == FLV_AACRaw)
 			{
-				/*BOOL block = TRUE;
-				{
-					TinyAutoLock lock(m_audioLock);
-					if (m_audioQueue.size() <= 25)
-					{
-						AVPacket av;
-						av.bits = new BYTE[size];
-						memcpy(av.bits, bits, size);
-						av.size = size;
-						av.dts = packet->dts;
-						av.pts = packet->pts;
-						av.index = ++m_index;
-						m_audioQueue.push(av);
-						block = FALSE;
-					}
-				}
-				if (block)
-				{
-					m_wait.Lock(INFINITE);
-				}*/
+				SampleTag av = { 0 };
+				av.bits = new BYTE[size];
+				memcpy(av.bits, bits, size);
+				av.size = size;
+				av.dts = packet->dts;
+				av.pts = packet->pts;
+				m_audioTask->Push(av);
 			}
 		}
 
@@ -98,26 +82,13 @@ namespace FLVPlayer
 			}
 			if (packet->packetType == FLV_NALU)
 			{
-				BOOL block = TRUE;
-				{
-					TinyAutoLock lock(m_videoLock);
-					if (m_videoQueue.size() <= 25)
-					{
-						AVPacket av;
-						av.bits = new BYTE[size];
-						memcpy(av.bits, bits, size);
-						av.size = size;
-						av.dts = packet->dts;
-						av.pts = packet->pts;
-						av.index = ++m_index;
-						m_videoQueue.push(av);
-						block = FALSE;
-					}
-				}
-				if (block)
-				{
-					m_wait.Lock(INFINITE);
-				}
+				SampleTag av = { 0 };
+				av.bits = new BYTE[size];
+				memcpy(av.bits, bits, size);
+				av.size = size;
+				av.dts = packet->dts;
+				av.pts = packet->pts;
+				m_videoTask->Push(av);
 			}
 		}
 	}
