@@ -51,6 +51,39 @@ namespace FLVPlayer
 	LRESULT FLVFrameUI::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		/*TinySoundPlayer player;
+		TinyWaveFile waveFile;
+		waveFile.Open("D:\\123.wav");
+		player.Initialize(m_hWND, waveFile.GetFormat(), 192000 * 2);
+		TinyEvent m_event[2];
+		m_event[0].CreateEvent();
+		m_event[1].CreateEvent();
+		DSBPOSITIONNOTIFY vals[2];
+		vals[0].dwOffset = 192000 * 1 - 1;
+		vals[0].hEventNotify = m_event[0];
+		vals[1].dwOffset = 192000 * 2 - 1;
+		vals[1].hEventNotify = m_event[1];
+		if (player.SetNotifys(2, vals))
+		{
+			player.Play();
+		}
+		HANDLE handles[2] = { m_event[0],m_event[1] };
+		BYTE bits[192000];
+		do 
+		{
+			HRESULT hRes = WaitForMultipleObjects(2, handles, FALSE, INFINITE);
+			if (hRes >= WAIT_OBJECT_0 && hRes <= (WAIT_OBJECT_0 + 1))
+			{
+				LONG size = 0;
+				if (waveFile.Read(bits, 192000, &size))
+				{
+					player.Fill(bits, size);
+				}
+			}
+		} while (1);
+		waveFile.Close();
+		player.Close();*/
+
 		m_task.Reset(new FLVDecodeTask(m_hWND));
 		m_task->Submit();
 		return FALSE;

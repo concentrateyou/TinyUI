@@ -23,7 +23,20 @@ namespace FLVPlayer
 		ASSERT(m_aac);
 		if (m_aac->Open(bits, size, wBitsPerSample))
 		{
-			m_player.Initialize(m_hWND, &m_aac->GetFormat());
+			if (m_player.Initialize(m_hWND, &m_aac->GetFormat(), 8192 * 2))
+			{
+				m_event[0].CreateEvent();
+				m_event[1].CreateEvent();
+				DSBPOSITIONNOTIFY vals[2];
+				vals[0].dwOffset = 8192 * 1 - 1;
+				vals[0].hEventNotify = m_event[0];
+				vals[1].dwOffset = 8192 * 2 - 1;
+				vals[1].hEventNotify = m_event[1];
+				if (m_player.SetNotifys(2, vals))
+				{
+					m_player.Play();
+				}
+			}
 			m_close.CreateEvent();
 			return TinyTaskBase::Submit(BindCallback(&FLVAudioTask::OnMessagePump, this));
 		}
@@ -40,7 +53,7 @@ namespace FLVPlayer
 	void FLVAudioTask::Push(const SampleTag& tag)
 	{
 		m_lock.Lock();
-		if (m_queue.size() >= 8)
+		if (m_queue.size() >= 20)
 		{
 			m_lock.Unlock();
 			m_wait.Lock(INFINITE);
@@ -52,18 +65,13 @@ namespace FLVPlayer
 	{
 		for (;;)
 		{
-			if (m_close.Lock(15))
-				break;
-			LONG pts = 0;
-			if (OnProcessTag(pts))
+			Sleep(15);
+			HANDLE handles[2] = { m_event[0],m_event[1] };
+			HRESULT hRes = WaitForMultipleObjects(2, handles, FALSE, INFINITE);
+			if (hRes >= WAIT_OBJECT_0 && hRes <= (WAIT_OBJECT_0 + 1))
 			{
-				LONG offset = 0;
-				if (m_currentPTS != pts)
-				{
-					offset = pts - m_currentPTS - 20;
-					m_currentPTS = pts;
-					Sleep(offset < 0 ? 0 : offset);
-				}
+				LONG pts = 0;
+				OnProcessTag(pts);
 			}
 		}
 	}
@@ -72,7 +80,6 @@ namespace FLVPlayer
 		TinyAutoLock lock(m_lock);
 		if (m_queue.empty())
 			return FALSE;
-		m_timer.BeginTime();
 		SampleTag tag = m_queue.front();
 		m_queue.pop();
 		if (m_queue.size() <= 3)
@@ -85,19 +92,17 @@ namespace FLVPlayer
 		{
 			this->OnRender(bo, so);
 		}
+		else
+		{
+			BYTE data[8192];
+			ZeroMemory(data, 8192);
+			this->OnRender(data, 8192);
+		}
 		SAFE_DELETE_ARRAY(tag.bits);
-		m_timer.EndTime();
-		pts = tag.pts - m_timer.GetMillisconds();
 		return TRUE;
 	}
 	void FLVAudioTask::OnRender(BYTE* bits, LONG size)
 	{
-		m_audios.Add(bits, size);
-		DWORD dwAVG = size * 20;
-		if (m_audios.GetSize() >= dwAVG)
-		{
-			m_player.Play(m_audios.GetPointer(), m_audios.GetSize());
-			m_audios.Remove(0, m_audios.GetSize());
-		}
+		m_player.Fill(bits, size);
 	}
 }

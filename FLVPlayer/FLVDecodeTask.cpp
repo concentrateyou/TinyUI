@@ -58,13 +58,16 @@ namespace FLVPlayer
 			}
 			if (packet->packetType == FLV_AACRaw)
 			{
-				SampleTag av = { 0 };
-				av.bits = new BYTE[size];
-				memcpy(av.bits, bits, size);
-				av.size = size;
-				av.dts = packet->dts;
-				av.pts = packet->pts;
-				m_audioTask->Push(av);
+				if (m_audioTask)
+				{
+					SampleTag av = { 0 };
+					av.bits = new BYTE[size];
+					memcpy(av.bits, bits, size);
+					av.size = size;
+					av.dts = packet->dts;
+					av.pts = packet->pts;
+					m_audioTask->Push(av);
+				}
 			}
 		}
 
@@ -82,13 +85,16 @@ namespace FLVPlayer
 			}
 			if (packet->packetType == FLV_NALU)
 			{
-				SampleTag av = { 0 };
-				av.bits = new BYTE[size];
-				memcpy(av.bits, bits, size);
-				av.size = size;
-				av.dts = packet->dts;
-				av.pts = packet->pts;
-				m_videoTask->Push(av);
+				if (m_videoTask)
+				{
+					SampleTag av = { 0 };
+					av.bits = new BYTE[size];
+					memcpy(av.bits, bits, size);
+					av.size = size;
+					av.dts = packet->dts;
+					av.pts = packet->pts;
+					m_videoTask->Push(av);
+				}
 			}
 		}
 	}

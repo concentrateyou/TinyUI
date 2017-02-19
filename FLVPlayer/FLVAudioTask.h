@@ -37,8 +37,9 @@ namespace FLVPlayer
 		TinyPerformanceTimer		m_timer;
 		std::queue<SampleTag>		m_queue;
 		TinyScopedPtr<AACDecode>	m_aac;
-		TinySoundPlayer				m_player;
 		TinyBufferArray<BYTE>		m_audios;
+		TinySoundPlayer				m_player;
+		TinyEvent					m_event[2];
 	};
 
 }

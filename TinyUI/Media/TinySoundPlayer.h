@@ -10,31 +10,32 @@ namespace TinyUI
 {
 	namespace Media
 	{
-#define AUDIO_BUFFERS (MAX_AUDIO_BUFFERS / 2)
 		class TinySoundPlayer
 		{
 		public:
 			TinySoundPlayer();
 			virtual ~TinySoundPlayer();
 		public:
-			BOOL	Initialize(HWND hWND, WAVEFORMATEX* pFMT, DWORD dwSize = 0, DWORD dwCount = AUDIO_BUFFERS);
-			BOOL	Play(BYTE* bits, INT size);
+			BOOL	Initialize(HWND hWND, WAVEFORMATEX* pFMT,DWORD dwSize);
+			BOOL	SetNotifys(DWORD dwSize, LPCDSBPOSITIONNOTIFY pNotify);
+			BOOL	Play();
+			BOOL	Fill(BYTE* bits, INT size);
 			BOOL	GetCaps(DSCAPS& caps);
-			BOOL    IsPlaying();
+			BOOL	SetVolume(LONG volume);
+			BOOL	GetVolume(LONG& volume);
+			BOOL	SetFrequency(DWORD dwFrequency);
+			BOOL	GetFrequency(DWORD& dwFrequency);
+			BOOL	SetPlan(LONG plan);
+			BOOL	GetPlan(LONG& plan);
 			BOOL	Stop();
-			BOOL	Reset();
-			void	Close();
-			WAVEFORMATEX* GetFormat();
-		private:
-			HRESULT Restore(LPDIRECTSOUNDBUFFER8 pDSB, BOOL* lost);
-			LPDIRECTSOUNDBUFFER8 GetFree();
+			BOOL	Close();
 		private:
 			TinyComPtr<IDirectSound8>		m_sound;
 			TinyComPtr<IDirectSoundBuffer>	m_primaryDSB;
-			LPDIRECTSOUNDBUFFER8*			m_secondarys;
-			DWORD							m_dwSize;//缓冲大小
-			DWORD							m_dwCount;//缓冲个数
-			WAVEFORMATEX					m_waveFMT;
+			TinyComPtr<IDirectSoundBuffer8>	m_secondaryDSB;
+			WAVEFORMATEX*					m_waveFMT;
+			DWORD							m_dwSize;
+			DWORD							m_dwOffset;
 		};
 	}
 }
