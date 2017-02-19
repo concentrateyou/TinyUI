@@ -31,7 +31,6 @@ namespace FLVPlayer
 		LONG						m_currentPTS;
 		HWND						m_hWND;
 		TinyEvent					m_close;
-		TinyEvent					m_wait;
 		TinyLock&					m_lock;
 		FLVDecodeTask*				m_pTask;
 		TinyPerformanceTimer		m_timer;

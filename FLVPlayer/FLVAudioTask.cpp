@@ -11,7 +11,6 @@ namespace FLVPlayer
 		m_currentPTS(0)
 	{
 		m_aac.Reset(new AACDecode());
-		m_wait.CreateEvent();
 	}
 
 
@@ -53,11 +52,6 @@ namespace FLVPlayer
 	void FLVAudioTask::Push(const SampleTag& tag)
 	{
 		m_lock.Lock();
-		if (m_queue.size() >= 20)
-		{
-			m_lock.Unlock();
-			m_wait.Lock(INFINITE);
-		}
 		m_queue.push(tag);
 		m_lock.Unlock();
 	}
@@ -65,7 +59,6 @@ namespace FLVPlayer
 	{
 		for (;;)
 		{
-			Sleep(15);
 			HANDLE handles[2] = { m_event[0],m_event[1] };
 			HRESULT hRes = WaitForMultipleObjects(2, handles, FALSE, INFINITE);
 			if (hRes >= WAIT_OBJECT_0 && hRes <= (WAIT_OBJECT_0 + 1))
@@ -82,10 +75,6 @@ namespace FLVPlayer
 			return FALSE;
 		SampleTag tag = m_queue.front();
 		m_queue.pop();
-		if (m_queue.size() <= 3)
-		{
-			m_wait.SetEvent();
-		}
 		BYTE* bo = NULL;
 		LONG  so = 0;
 		if (m_aac->Decode(tag.bits, tag.size, bo, so))

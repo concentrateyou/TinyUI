@@ -11,7 +11,6 @@ namespace FLVPlayer
 		m_currentPTS(0)
 	{
 		m_h264.Reset(new H264Decode());
-		m_wait.CreateEvent();
 	}
 
 	FLVVideoTask::~FLVVideoTask()
@@ -37,11 +36,6 @@ namespace FLVPlayer
 	void FLVVideoTask::Push(const SampleTag& tag)
 	{
 		m_lock.Lock();
-		if (m_queue.size() >= 8)
-		{
-			m_lock.Unlock();
-			m_wait.Lock(INFINITE);
-		}
 		m_queue.push(tag);
 		m_lock.Unlock();
 	}
@@ -49,7 +43,7 @@ namespace FLVPlayer
 	{
 		for (;;)
 		{
-			if (m_close.Lock(15))
+			if (m_close.Lock(0))
 				break;
 			LONG pts = 0;
 			if (OnProcessTag(pts))
@@ -57,8 +51,9 @@ namespace FLVPlayer
 				LONG offset = 0;
 				if (m_currentPTS != pts)
 				{
-					offset = pts - m_currentPTS - 15;
+					offset = pts - m_currentPTS - 6;
 					m_currentPTS = pts;
+					TRACE("video-offset:%d\n", offset);
 					Sleep(offset < 0 ? 0 : offset);
 				}
 			}
@@ -72,10 +67,6 @@ namespace FLVPlayer
 		m_timer.BeginTime();
 		SampleTag tag = m_queue.front();
 		m_queue.pop();
-		if (m_queue.size() <= 3)
-		{
-			m_wait.SetEvent();
-		}
 		BYTE* bo = NULL;
 		LONG  so = 0;
 		if (m_h264->Decode(tag.bits, tag.size, tag, bo, so))

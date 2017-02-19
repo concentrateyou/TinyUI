@@ -27,7 +27,6 @@ namespace FLVPlayer
 	private:
 		LONG						m_currentPTS;
 		TinyLock&					m_lock;
-		TinyEvent					m_wait;
 		TinySize					m_dstsize;
 		HWND						m_hWND;
 		std::queue<SampleTag>		m_queue;
