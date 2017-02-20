@@ -11,8 +11,8 @@ namespace DXFramework
 		~DX11();
 		BOOL Initialize(HWND hWND, INT x, INT y, INT cx, INT cy);
 		BOOL ResizeView(INT cx = 0, INT cy = 0);
-		void BeginScene();
-		void EndScene();
+		void BeginDraw();
+		void EndDraw();
 		void AllowDepth(BOOL allow);
 		ID3D11Device*			GetD3D() const;
 		ID3D11DeviceContext*	GetImmediateContext() const;

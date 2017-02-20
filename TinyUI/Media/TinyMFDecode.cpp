@@ -188,6 +188,13 @@ namespace TinyUI
 			ASSERT(m_transform);
 			for (;;)
 			{
+				DWORD dwFlags = 0;
+				HRESULT hRes = m_transform->GetOutputStatus(&dwFlags);
+				if (FAILED(hRes))
+					return FALSE;
+				if (dwFlags != MFT_OUTPUT_STATUS_SAMPLE_READY)
+					break;
+
 				MFT_OUTPUT_DATA_BUFFER samples = { 0 };
 				if (!(m_outputInfo.dwFlags & (MFT_OUTPUT_STREAM_PROVIDES_SAMPLES | MFT_OUTPUT_STREAM_CAN_PROVIDE_SAMPLES)))
 				{
@@ -199,11 +206,9 @@ namespace TinyUI
 				HRESULT hRes = m_transform->ProcessOutput(0, 1, &samples, &dwStatus);
 				if (hRes != S_OK)
 				{
-					if (hRes == MF_E_TRANSFORM_NEED_MORE_INPUT)
-					{
-						break;
-					}
-					return FALSE;
+					if (hRes != MF_E_TRANSFORM_NEED_MORE_INPUT)
+						return FALSE;
+					break;
 				}
 				TinyComPtr<IMFMediaBuffer> buffer;
 				hRes = samples.pSample->ConvertToContiguousBuffer(&buffer);
@@ -231,9 +236,7 @@ namespace TinyUI
 			DWORD dwStatus = 0;
 			HRESULT hRes = m_transform->GetInputStatus(0, &dwStatus);
 			if (MFT_INPUT_STATUS_ACCEPT_DATA != dwStatus)
-			{
 				return TRUE;
-			}
 			hRes = m_transform->ProcessInput(0, m_inputSample, 0);
 			if (FAILED(hRes))
 				return FALSE;

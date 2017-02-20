@@ -107,6 +107,7 @@
     <ClInclude Include="DX11Rectangle.h" />
     <ClInclude Include="DX11Texture2D.h" />
     <ClInclude Include="DX11TextureShader.h" />
+    <ClInclude Include="DX2D.h" />
     <ClInclude Include="DXCamera.h" />
     <ClInclude Include="DXFramework.h" />
     <ClInclude Include="DXInput.h" />
@@ -129,6 +130,7 @@
     <ClCompile Include="DX11Rectangle.cpp" />
     <ClCompile Include="DX11Texture2D.cpp" />
     <ClCompile Include="DX11TextureShader.cpp" />
+    <ClCompile Include="DX2D.cpp" />
     <ClCompile Include="DXCamera.cpp" />
     <ClCompile Include="DXFramework.cpp" />
     <ClCompile Include="dllmain.cpp">

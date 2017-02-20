@@ -14,15 +14,31 @@ namespace TinyUI
 		{
 
 		}
+
+		void TinyMFAACEncode::InitializeASC(const WAVEFORMATEX* pFMT)
+		{
+			UINT16 *asc16 = (UINT16 *)m_asc;
+			UINT16 profile = 2;
+#define SWAPU16(x) (x>>8) | (x<<8)
+			*asc16 = profile << 11;
+			*asc16 |= (pFMT->nSamplesPerSec == 48000 ? 3 : 4) << 7;
+			*asc16 |= pFMT->nChannels << 3;
+			*asc16 = SWAPU16(*asc16);
+			asc16[2] = 0;
+#undef SWAPU16
+		}
+
 		BOOL TinyMFAACEncode::Open(const WAVEFORMATEX* pFMT, Callback<void(BYTE*, LONG, LPVOID)>&& callback)
 		{
 			HRESULT hRes = S_OK;
-			if (pFMT->wBitsPerSample != 16 ||
-				pFMT->nSamplesPerSec != 44100 ||
-				pFMT->nSamplesPerSec != 48000)
-			{
+			if (!IsValid(VALID_BITRATES, pFMT->nAvgBytesPerSec))
 				return FALSE;
-			}
+			if (!IsValid(VALID_BITS_PER_SAMPLE, pFMT->wBitsPerSample))
+				return FALSE;
+			if (!IsValid(VALID_CHANNELS, pFMT->nChannels))
+				return FALSE;
+			if (!IsValid(VALID_SAMPLERATES, pFMT->nSamplesPerSec))
+				return FALSE;
 			TinyComPtr<IMFMediaType> inputType;
 			hRes = MFCreateMediaType(&inputType);
 			if (FAILED(hRes))
@@ -71,6 +87,7 @@ namespace TinyUI
 			hRes = outputType->SetUINT32(MF_MT_AAC_AUDIO_PROFILE_LEVEL_INDICATION, 0x29);
 			if (FAILED(hRes))
 				return FALSE;
+			InitializeASC(pFMT);
 			return TinyMFEncode::Open(CLSID_AACMFTEncoder, inputType, outputType, std::move(callback));
 		}
 	};

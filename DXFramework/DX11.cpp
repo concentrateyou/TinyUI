@@ -44,7 +44,10 @@ namespace DXFramework
 			D3D_FEATURE_LEVEL_10_0,
 			D3D_FEATURE_LEVEL_9_3
 		};
-		DWORD dwFlag = D3D11_CREATE_DEVICE_BGRA_SUPPORT | D3D11_CREATE_DEVICE_DEBUG;
+		DWORD dwFlag = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+#ifdef _DEBUG
+		dwFlag |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
 		D3D_FEATURE_LEVEL level = D3D_FEATURE_LEVEL_9_3;
 		hRes = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, dwFlag, levels, sizeof(levels) / sizeof(D3D_FEATURE_LEVEL), D3D11_SDK_VERSION, &swapDesc, &m_swap, &m_d3d, &level, &m_immediateContext);
 		if (FAILED(hRes))
@@ -239,7 +242,7 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	void DX11::BeginScene()
+	void DX11::BeginDraw()
 	{
 		if (m_immediateContext)
 		{
@@ -254,7 +257,7 @@ namespace DXFramework
 			}
 		}
 	}
-	void DX11::EndScene()
+	void DX11::EndDraw()
 	{
 		if (m_immediateContext && m_swap)
 		{

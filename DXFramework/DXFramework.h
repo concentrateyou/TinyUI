@@ -9,6 +9,7 @@
 #include <dwmapi.h>
 #include <TlHelp32.h>
 #include <string>
+#include <d2d1_1.h>
 #include "Common/TinyCommon.h"
 #include "Common/TinyUtility.h"
 #include "Common/TinyTime.h"
