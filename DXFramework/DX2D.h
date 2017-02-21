@@ -14,12 +14,15 @@ namespace DXFramework
 	public:
 		DX2D();
 		~DX2D();
-		BOOL Initialize(HWND hWND, INT x, INT y, INT cx, INT cy);
+		BOOL Initialize(HWND hWND, INT cx, INT cy);
+		BOOL BeginDraw();
+		BOOL EndDraw();
+		BOOL Resize();
+		ID2D1DeviceContext* GetContext() const;
 	private:
 		HWND							m_hWND;
-		TinyPoint						m_pos;
 		TinySize						m_size;
-		TinyComPtr<ID2D1DeviceContext>	m_target;
+		TinyComPtr<ID2D1DeviceContext>	m_context;
 		TinyComPtr<IDXGISwapChain1>		m_swap;
 		TinyComPtr<ID2D1Factory1>		m_factory;
 		TinyComPtr<ID3D11Device>		m_d3d;

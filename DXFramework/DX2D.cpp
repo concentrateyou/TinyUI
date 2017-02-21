@@ -10,11 +10,9 @@ namespace DXFramework
 	DX2D::~DX2D()
 	{
 	}
-	BOOL DX2D::Initialize(HWND hWND, INT x, INT y, INT cx, INT cy)
+	BOOL DX2D::Initialize(HWND hWND, INT cx, INT cy)
 	{
 		m_hWND = hWND;
-		m_pos.x = x;
-		m_pos.y = y;
 		m_size.cx = cx;
 		m_size.cy = cy;
 		DWORD dwFlag = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
@@ -56,12 +54,20 @@ namespace DXFramework
 		hRes = adapter->GetParent(__uuidof(factory), reinterpret_cast<void **>(&factory));
 		if (FAILED(hRes))
 			return FALSE;
+		DXGI_SWAP_CHAIN_FULLSCREEN_DESC desc = { 0 };
+		desc.RefreshRate.Numerator = 60;
+		desc.RefreshRate.Denominator = 1;
+		desc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+		desc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+		desc.Windowed = FALSE;
 		DXGI_SWAP_CHAIN_DESC1 props = {};
 		props.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-		props.SampleDesc.Count = 1;
+		props.SampleDesc.Count = 2;
 		props.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		props.BufferCount = 2;
-		hRes = factory->CreateSwapChainForHwnd(m_d3d, hWND, &props, NULL, NULL, &m_swap);
+		props.Width = m_size.cx;
+		props.Height = m_size.cy;
+		hRes = factory->CreateSwapChainForHwnd(m_d3d, hWND, &props, &desc, NULL, &m_swap);
 		if (FAILED(hRes))
 			return FALSE;
 		hRes = D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, __uuidof(ID2D1Factory1), reinterpret_cast<void**>(&m_factory));
@@ -71,7 +77,7 @@ namespace DXFramework
 		hRes = m_factory->CreateDevice(dxgi, &d2d1device);
 		if (FAILED(hRes))
 			return FALSE;
-		hRes = d2d1device->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_ENABLE_MULTITHREADED_OPTIMIZATIONS, &m_target);
+		hRes = d2d1device->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_ENABLE_MULTITHREADED_OPTIMIZATIONS, &m_context);
 		if (FAILED(hRes))
 			return FALSE;
 		TinyComPtr<IDXGISurface> surface;
@@ -80,14 +86,52 @@ namespace DXFramework
 			return FALSE;
 		D2D1_BITMAP_PROPERTIES1 props = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE));
 		TinyComPtr<ID2D1Bitmap1> bitmap;
-		hRes = m_target->CreateBitmapFromDxgiSurface(surface, (const D2D1_BITMAP_PROPERTIES1*)&props, &bitmap);
+		hRes = m_context->CreateBitmapFromDxgiSurface(surface, (const D2D1_BITMAP_PROPERTIES1*)&props, &bitmap);
 		if (FAILED(hRes))
 			return FALSE;
-		m_target->SetTarget(bitmap);
+		m_context->SetTarget(bitmap);
 		FLOAT dpiX, dpiY;
 		m_factory->GetDesktopDpi(&dpiX, &dpiY);
-		m_target->SetDpi(dpiX, dpiY);
+		m_context->SetDpi(dpiX, dpiY);
 		return TRUE;
+	}
+	BOOL DX2D::BeginDraw()
+	{
+		ASSERT(m_context);
+		m_context->BeginDraw();
+		return TRUE;
+	}
+	BOOL DX2D::EndDraw()
+	{
+		ASSERT(m_context);
+		m_context->EndDraw();
+		return SUCCEEDED(m_swap->Present(0, 0));
+	}
+	BOOL DX2D::Resize()
+	{
+		ASSERT(m_context);
+		m_context->SetTarget(NULL);
+		HRESULT hRes = m_swap->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+		if (FAILED(hRes))
+			return FALSE;
+		TinyComPtr<IDXGISurface> surface;
+		hRes = m_swap->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(&surface));
+		if (FAILED(hRes))
+			return FALSE;
+		D2D1_BITMAP_PROPERTIES1 props = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE));
+		TinyComPtr<ID2D1Bitmap1> bitmap;
+		hRes = m_context->CreateBitmapFromDxgiSurface(surface, (const D2D1_BITMAP_PROPERTIES1*)&props, &bitmap);
+		if (FAILED(hRes))
+			return FALSE;
+		m_context->SetTarget(bitmap);
+		FLOAT dpiX, dpiY;
+		m_factory->GetDesktopDpi(&dpiX, &dpiY);
+		m_context->SetDpi(dpiX, dpiY);
+		return TRUE;
+	}
+	ID2D1DeviceContext* DX2D::GetContext() const
+	{
+		return m_context;
 	}
 }
 

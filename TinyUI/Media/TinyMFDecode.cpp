@@ -194,7 +194,6 @@ namespace TinyUI
 					return FALSE;
 				if (dwFlags != MFT_OUTPUT_STATUS_SAMPLE_READY)
 					break;
-
 				MFT_OUTPUT_DATA_BUFFER samples = { 0 };
 				if (!(m_outputInfo.dwFlags & (MFT_OUTPUT_STREAM_PROVIDES_SAMPLES | MFT_OUTPUT_STREAM_CAN_PROVIDE_SAMPLES)))
 				{
@@ -203,7 +202,7 @@ namespace TinyUI
 					samples.pSample = m_outputSample;
 				}
 				DWORD dwStatus;
-				HRESULT hRes = m_transform->ProcessOutput(0, 1, &samples, &dwStatus);
+				hRes = m_transform->ProcessOutput(0, 1, &samples, &dwStatus);
 				if (hRes != S_OK)
 				{
 					if (hRes != MF_E_TRANSFORM_NEED_MORE_INPUT)
