@@ -83,7 +83,7 @@ namespace DXApp
 	DWORD RenderTask::Render()
 	{
 		m_timer.BeginTime();
-		m_graphics.BeginScene();
+		m_graphics.BeginDraw();
 		for (INT i = 0;i < m_scenes.GetSize();i++)
 		{
 			DX11Element* ps = m_scenes[i];
@@ -106,7 +106,7 @@ namespace DXApp
 				m_graphics.DrawImage(pImage);
 			}
 		}
-		m_graphics.EndScene();
+		m_graphics.EndDraw();
 		m_timer.EndTime();
 		return m_timer.GetMillisconds();
 	}

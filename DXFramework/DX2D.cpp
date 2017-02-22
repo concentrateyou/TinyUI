@@ -60,14 +60,14 @@ namespace DXFramework
 		desc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 		desc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 		desc.Windowed = FALSE;
-		DXGI_SWAP_CHAIN_DESC1 props = {};
-		props.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-		props.SampleDesc.Count = 2;
-		props.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		props.BufferCount = 2;
-		props.Width = m_size.cx;
-		props.Height = m_size.cy;
-		hRes = factory->CreateSwapChainForHwnd(m_d3d, hWND, &props, &desc, NULL, &m_swap);
+		DXGI_SWAP_CHAIN_DESC1 dest1 = {};
+		dest1.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		dest1.SampleDesc.Count = 2;
+		dest1.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		dest1.BufferCount = 2;
+		dest1.Width = m_size.cx;
+		dest1.Height = m_size.cy;
+		hRes = factory->CreateSwapChainForHwnd(m_d3d, hWND, &dest1, &desc, NULL, &m_swap);
 		if (FAILED(hRes))
 			return FALSE;
 		hRes = D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, __uuidof(ID2D1Factory1), reinterpret_cast<void**>(&m_factory));
@@ -84,9 +84,9 @@ namespace DXFramework
 		hRes = m_swap->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(&surface));
 		if (FAILED(hRes))
 			return FALSE;
-		D2D1_BITMAP_PROPERTIES1 props = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE));
+		D2D1_BITMAP_PROPERTIES1 props1 = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE));
 		TinyComPtr<ID2D1Bitmap1> bitmap;
-		hRes = m_context->CreateBitmapFromDxgiSurface(surface, (const D2D1_BITMAP_PROPERTIES1*)&props, &bitmap);
+		hRes = m_context->CreateBitmapFromDxgiSurface(surface, (const D2D1_BITMAP_PROPERTIES1*)&props1, &bitmap);
 		if (FAILED(hRes))
 			return FALSE;
 		m_context->SetTarget(bitmap);
