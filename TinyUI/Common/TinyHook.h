@@ -61,22 +61,6 @@ namespace TinyUI
 	};
 	SELECTANY PVOID TinyIATFunction::m_pMaximumApplicationAddress = NULL;
 
-	static const BYTE jumps[] =
-	{
-		0x50,                                              //push rax
-		0x48,0xB8,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90, //mov rax,target_addr
-		0x50,                                              //push rax
-		0x48,0x8B,0x44,0x24,0x08,                          //mov rax,qword ptr ss:[rsp+8]
-		0xC2,0x08,0x00                                     //ret 8
-	};
-
-	/// <summary>
-	/// ÄÚÁªHook
-	/// </summary>
-	class TinyInlineHook
-	{
-
-	};
 #define JMP_64_SIZE            14
 #define JMP_32_SIZE            5
 	/// <summary>
@@ -93,8 +77,8 @@ namespace TinyUI
 		BOOL	IsValid() const;
 		FARPROC GetOrig() const;
 	protected:
-		FARPROC	m_pfnOrig;
-		FARPROC	m_pfnNew;
+		FARPROC	m_pOrig;
+		FARPROC	m_pTarget;
 		DWORD	m_dwOrigProtect;
 		BYTE	m_data[5];
 		BOOL	m_bDetour;

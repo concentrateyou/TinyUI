@@ -241,33 +241,36 @@ namespace TinyUI
 	{
 
 	}
-	BOOL TinyDetour::Initialize(FARPROC pfnOrig, FARPROC pfnNew)
+	BOOL TinyDetour::Initialize(FARPROC pOrig, FARPROC pTarget)
 	{
-		if (!pfnOrig || !pfnNew)
+		if (!pOrig || !pTarget)
 			return FALSE;
-		m_pfnOrig = pfnOrig;
-		m_pfnNew = pfnNew;
-		if (!VirtualProtect((LPVOID)m_pfnOrig, JMP_32_SIZE, PAGE_EXECUTE_READWRITE, &m_dwOrigProtect))
+		m_pOrig = pOrig;
+		m_pTarget = pTarget;
+		if (!VirtualProtect((LPVOID)m_pOrig, JMP_32_SIZE, PAGE_EXECUTE_READWRITE, &m_dwOrigProtect))
 			return FALSE;
-		memcpy(m_data, (const void*)m_pfnOrig, JMP_32_SIZE);
+		memcpy(m_data, (const void*)m_pOrig, JMP_32_SIZE);
 		return TRUE;
 	}
 	BOOL TinyDetour::BeginDetour()
 	{
-		if (!m_pfnOrig || !m_pfnNew)
+		if (!m_pOrig || !m_pTarget)
 			return FALSE;
-		ULONG start = ULONG(m_pfnOrig);
-		ULONG target = ULONG(m_pfnNew);
-		ULONG64 offset = 0;
-		ULONG64 diff = 0;
+		ULONG orig = ULONG(m_pOrig);
+		ULONG target = ULONG(m_pTarget);
+		ULONG64 relative = 0;
+		//http://blogs.msdn.com/b/oldnewthing/archive/2011/09/21/10214405.aspx
 		//http://www.cnblogs.com/zhangdongsheng/archive/2012/12/06/2804234.html
 		//计算偏移量(JMP的地址–代码地址–5 = 机器码跳转地址 x86)
-		offset = target - (start + JMP_32_SIZE);
+		relative = target - (orig + JMP_32_SIZE);
 		DWORD oldProtect;
-		VirtualProtect((LPVOID)m_pfnOrig, JMP_32_SIZE, PAGE_EXECUTE_READWRITE, &oldProtect);
-		LPBYTE ps = (LPBYTE)m_pfnOrig;
-		*ps = 0xE9;
-		*(DWORD*)(ps + 1) = DWORD(offset);
+		if (!VirtualProtect((LPVOID)m_pOrig, JMP_32_SIZE, PAGE_EXECUTE_READWRITE, &oldProtect))
+			return FALSE;
+		LPBYTE val = (LPBYTE)m_pOrig;
+		*val = 0xE9;//JUMP
+		*(DWORD*)(val + 1) = DWORD(relative);
+		if (!FlushInstructionCache(GetCurrentProcess(), m_pOrig, JMP_32_SIZE))
+			return FALSE;
 		m_bDetour = TRUE;
 		return TRUE;
 	}
@@ -275,9 +278,13 @@ namespace TinyUI
 	{
 		if (!m_bDetour) return FALSE;
 		DWORD oldProtect;
-		VirtualProtect((LPVOID)m_pfnOrig, JMP_32_SIZE, PAGE_EXECUTE_READWRITE, &oldProtect);
-		memcpy((void*)m_pfnOrig, m_data, JMP_32_SIZE);
-		VirtualProtect((LPVOID)m_pfnOrig, JMP_32_SIZE, m_dwOrigProtect, &oldProtect);
+		if (!VirtualProtect((LPVOID)m_pOrig, JMP_32_SIZE, PAGE_EXECUTE_READWRITE, &oldProtect))
+			return FALSE;
+		memcpy((void*)m_pOrig, m_data, JMP_32_SIZE);
+		if (!VirtualProtect((LPVOID)m_pOrig, JMP_32_SIZE, m_dwOrigProtect, &oldProtect))
+			return FALSE;
+		if (!FlushInstructionCache(GetCurrentProcess(), m_pOrig, JMP_32_SIZE))
+			return FALSE;
 		m_bDetour = FALSE;
 		return TRUE;
 	}
@@ -287,7 +294,7 @@ namespace TinyUI
 	}
 	FARPROC TinyDetour::GetOrig() const
 	{
-		return m_pfnOrig;
+		return m_pOrig;
 	}
 	//////////////////////////////////////////////////////////////////////////
 }
