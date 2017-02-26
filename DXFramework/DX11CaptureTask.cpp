@@ -3,7 +3,7 @@
 
 namespace DXFramework
 {
-	DX11CaptureTask::DX11CaptureTask(DX11* pDX11, DX11Image& image)
+	DX11CaptureTask::DX11CaptureTask(DX11* pDX11, DX11Image2D& image)
 		:m_bCapturing(FALSE),
 		m_pDX11(pDX11),
 		m_image(image)

@@ -23,14 +23,14 @@ namespace DXApp
 		BOOL			Initialize(DXWindow* pWindow, INT cx, INT cy, DWORD dwFPS);
 		DWORD			Render();
 		BOOL			Submit();
-		BOOL			Contain(DX11Element* element);
-		BOOL			Add(DX11Element* element);
-		void			Remove(DX11Element* element);
-		void			BringToTop(DX11Element* element);
-		void			BringToBottom(DX11Element* element);
-		void			MoveUp(DX11Element* element);
-		void			MoveDown(DX11Element* element);
-		DX11Element*	HitTest(const TinyPoint& pos);
+		BOOL			Contain(DX11Element2D* element);
+		BOOL			Add(DX11Element2D* element);
+		void			Remove(DX11Element2D* element);
+		void			BringToTop(DX11Element2D* element);
+		void			BringToBottom(DX11Element2D* element);
+		void			MoveUp(DX11Element2D* element);
+		void			MoveDown(DX11Element2D* element);
+		DX11Element2D*	HitTest(const TinyPoint& pos);
 	public:
 		void			OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter) OVERRIDE;
 		BOOL			Close(DWORD dwMs = INFINITE) OVERRIDE;
@@ -52,9 +52,9 @@ namespace DXApp
 		DX11Graphics2D				m_graphics;
 		TinyEvent					m_close;
 		TinyPerformanceTimer		m_timer;
-		TinyArray<DX11Element*>		m_scenes;
-		DX11Element*				m_lastElement;
-		DX11Rectangle				m_handles[8];
+		TinyArray<DX11Element2D*>	m_scenes;
+		DX11Element2D*				m_lastElement;
+		DX11Rectangle2D				m_handles[8];
 	private:
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onSize;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonDown;

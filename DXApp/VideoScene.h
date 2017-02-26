@@ -3,7 +3,7 @@
 #include "VideoCaptureParam.h"
 #include "AudioCapture.h"
 #include "AudioCaptureParam.h"
-#include "DX11Image.h"
+#include "DX11Image2D.h"
 #include "DX11.h"
 using namespace DXFramework;
 using namespace DShow;
@@ -13,7 +13,7 @@ namespace DXApp
 	/// <summary>
 	/// …„œÒÕ∑≥°æ∞
 	/// </summary>
-	class VideoScene : public DX11Image
+	class VideoScene : public DX11Image2D
 	{
 		DECLARE_DYNAMIC(VideoScene)
 	public:

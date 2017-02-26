@@ -1,6 +1,6 @@
 #pragma once
 #include "DX11.h"
-#include "DX11Font.h"
+#include "DX11Font2D.h"
 #include "Common/TinyString.h"
 #include <Richedit.h>
 using namespace TinyUI;
@@ -8,7 +8,7 @@ using namespace DXFramework;
 
 namespace DXApp
 {
-	class TextScene : public DX11Font
+	class TextScene : public DX11Font2D
 	{
 		DECLARE_DYNAMIC(TextScene)
 	public:

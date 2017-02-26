@@ -1,6 +1,6 @@
 #pragma once
 #include "DXFramework.h"
-#include "DX11Image.h"
+#include "DX11Image2D.h"
 using namespace TinyUI::IO;
 
 namespace DXFramework
@@ -15,7 +15,7 @@ namespace DXFramework
 
 
 
-	class DX11DWMImage : public DX11Image
+	class DX11DWMImage : public DX11Image2D
 	{
 		DECLARE_DYNAMIC(DX11DWMImage)
 		DISALLOW_COPY_AND_ASSIGN(DX11DWMImage)

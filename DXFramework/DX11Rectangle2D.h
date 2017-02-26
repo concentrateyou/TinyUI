@@ -1,11 +1,11 @@
 #pragma once
-#include "DX11Element.h"
+#include "DX11Element2D.h"
 #include "Render/TinyGDI.h"
 using namespace TinyUI;
 
 namespace DXFramework
 {
-	class DX11Rectangle
+	class DX11Rectangle2D
 	{
 		struct VERTEXTYPE
 		{
@@ -13,8 +13,8 @@ namespace DXFramework
 			XMFLOAT4 color;
 		};
 	public:
-		DX11Rectangle();
-		virtual ~DX11Rectangle();
+		DX11Rectangle2D();
+		virtual ~DX11Rectangle2D();
 		BOOL Create(DX11& dx11);
 		BOOL SetRectangle(DX11& dx11, const TinyRectangle& rectangle);
 		BOOL Render(DX11& dx11);

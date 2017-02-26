@@ -3,7 +3,8 @@
 
 namespace DXApp
 {
-	IMPLEMENT_DYNAMIC(GameScene, DX11Image);
+	IMPLEMENT_DYNAMIC(GameScene, DX11Image2D);
+
 	GameScene::GameScene()
 	{
 		m_mutes[0].Create(FALSE, TEXTURE_MUTEX1, NULL);
@@ -110,6 +111,6 @@ namespace DXApp
 				}
 			}
 		}
-		return DX11Image::Render(dx11);
+		return DX11Image2D::Render(dx11);
 	}
 }

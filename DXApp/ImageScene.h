@@ -1,10 +1,10 @@
 #pragma once
-#include "DX11Image.h"
+#include "DX11Image2D.h"
 using namespace DXFramework;
 
 namespace DXApp
 {
-	class ImageScene : public DX11Image
+	class ImageScene : public DX11Image2D
 	{
 		DECLARE_DYNAMIC(ImageScene)
 	public:

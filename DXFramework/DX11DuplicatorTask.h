@@ -1,7 +1,7 @@
 #pragma once
 #include "DXFramework.h"
 #include "DX11Texture2D.h"
-#include "DX11Image.h"
+#include "DX11Image2D.h"
 #include "DX11Duplicator.h"
 using namespace TinyUI::IO;
 
@@ -10,7 +10,7 @@ namespace DXFramework
 	class DX11DuplicatorTask : public TinyTaskBase
 	{
 	public:
-		DX11DuplicatorTask(DX11* pDX11, DX11Image& image);
+		DX11DuplicatorTask(DX11* pDX11, DX11Image2D& image);
 		virtual ~DX11DuplicatorTask();
 		void					SetConfig(const TinyString& exeName, const TinyString& dllName);
 		BOOL					Submit();
@@ -41,7 +41,7 @@ namespace DXFramework
 		TinyString				m_className;
 		TinyString				m_exeName;
 		TinyString				m_dllName;
-		DX11Image&				m_image;
+		DX11Image2D&				m_image;
 		TinySharedMemory		m_captureMemory;
 		TinySharedMemory		m_textureMemery;
 	};

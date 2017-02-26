@@ -33,19 +33,10 @@
     <ClInclude Include="DX11.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DX11Image.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="DX11TextureShader.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DX11CaptureTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11Font.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11Element.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DX11Graphics2D.h">
@@ -58,9 +49,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DX11Texture2D.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11Rectangle.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DX11DWMImage.h">
@@ -81,6 +69,18 @@
     <ClInclude Include="DX2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="DX11Element2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Image2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Rectangle2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Font2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -98,19 +98,10 @@
     <ClCompile Include="DX11.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DX11Image.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="DX11TextureShader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DX11CaptureTask.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11Font.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11Element.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DX11Graphics2D.cpp">
@@ -123,9 +114,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DX11Texture2D.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11Rectangle.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DX11DWMImage.cpp">
@@ -141,6 +129,18 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DX2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Element2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Image2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Rectangle2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Font2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

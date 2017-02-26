@@ -1,5 +1,5 @@
 #pragma once
-#include "DX11Image.h"
+#include "DX11Image2D.h"
 #include <dxgi1_2.h>
 
 namespace DXFramework

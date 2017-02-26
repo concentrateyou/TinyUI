@@ -86,10 +86,10 @@ namespace DXApp
 		m_graphics.BeginDraw();
 		for (INT i = 0;i < m_scenes.GetSize();i++)
 		{
-			DX11Element* ps = m_scenes[i];
-			if (ps->IsKindof(RUNTIME_CLASS(DX11Image)))
+			DX11Element2D* ps = m_scenes[i];
+			if (ps->IsKindof(RUNTIME_CLASS(DX11Image2D)))
 			{
-				DX11Image* pImage = static_cast<DX11Image*>(ps);
+				DX11Image2D* pImage = static_cast<DX11Image2D*>(ps);
 				if (ps == m_lastElement)
 				{
 					UINT mask = pImage->GetHandleMask();
@@ -128,7 +128,7 @@ namespace DXApp
 		ASSERT(m_pWindow);
 		bHandled = FALSE;
 		TinyPoint point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		DX11Element* element = HitTest(point);
+		DX11Element2D* element = HitTest(point);
 		if (element != m_lastElement)
 		{
 			m_lastElement = element;
@@ -152,7 +152,7 @@ namespace DXApp
 		ASSERT(m_pWindow);
 		bHandled = FALSE;
 		TinyPoint point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		DX11Element* element = HitTest(point);
+		DX11Element2D* element = HitTest(point);
 		if (element != m_lastElement)
 		{
 			m_lastElement = element;
@@ -231,21 +231,21 @@ namespace DXApp
 		}
 	}
 
-	BOOL RenderTask::Add(DX11Element* element)
+	BOOL RenderTask::Add(DX11Element2D* element)
 	{
 		m_graphics.Lock();
 		BOOL bRes = m_scenes.Add(element);
 		m_graphics.Unlock();
 		return bRes;
 	}
-	void RenderTask::Remove(DX11Element* element)
+	void RenderTask::Remove(DX11Element2D* element)
 	{
 		m_graphics.Lock();
 		m_scenes.Remove(element);
 		m_graphics.Unlock();
 	}
 
-	void RenderTask::BringToTop(DX11Element* element)
+	void RenderTask::BringToTop(DX11Element2D* element)
 	{
 		m_graphics.Lock();
 		if (m_scenes.Lookup(element) >= 0)
@@ -255,7 +255,7 @@ namespace DXApp
 		}
 		m_graphics.Unlock();
 	}
-	void RenderTask::BringToBottom(DX11Element* element)
+	void RenderTask::BringToBottom(DX11Element2D* element)
 	{
 		m_graphics.Lock();
 		if (m_scenes.Lookup(element) >= 0)
@@ -265,7 +265,7 @@ namespace DXApp
 		}
 		m_graphics.Unlock();
 	}
-	void RenderTask::MoveUp(DX11Element* element)
+	void RenderTask::MoveUp(DX11Element2D* element)
 	{
 		m_graphics.Lock();
 		INT index = m_scenes.Lookup(element);
@@ -276,7 +276,7 @@ namespace DXApp
 		}
 		m_graphics.Unlock();
 	}
-	void RenderTask::MoveDown(DX11Element* element)
+	void RenderTask::MoveDown(DX11Element2D* element)
 	{
 		m_graphics.Lock();
 		INT index = m_scenes.Lookup(element);
@@ -287,7 +287,7 @@ namespace DXApp
 		}
 		m_graphics.Unlock();
 	}
-	DX11Element* RenderTask::HitTest(const TinyPoint& pos)
+	DX11Element2D* RenderTask::HitTest(const TinyPoint& pos)
 	{
 		for (INT i = 0;i < m_scenes.GetSize();i++)
 		{
@@ -303,7 +303,7 @@ namespace DXApp
 	{
 	}
 
-	BOOL RenderTask::Contain(DX11Element* element)
+	BOOL RenderTask::Contain(DX11Element2D* element)
 	{
 		m_graphics.Lock();
 		BOOL bRes = m_scenes.Lookup(element) >= 0;

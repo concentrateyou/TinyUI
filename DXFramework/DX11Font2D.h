@@ -2,7 +2,7 @@
 #include "DXFramework.h"
 #include "DX11Texture2D.h"
 #include "DX11TextureShader.h"
-#include "DX11Image.h"
+#include "DX11Image2D.h"
 #include <Richedit.h>
 
 namespace DXFramework
@@ -14,12 +14,12 @@ namespace DXFramework
 	/// <summary>
 	/// DX11×ÖÌå
 	/// </summary>
-	class DX11Font : public DX11Image
+	class DX11Font2D : public DX11Image2D
 	{
-		DECLARE_DYNAMIC(DX11Font)
+		DECLARE_DYNAMIC(DX11Font2D)
 	public:
-		DX11Font();
-		virtual ~DX11Font();
+		DX11Font2D();
+		virtual ~DX11Font2D();
 		BOOL CreateCompatible(DX11& dx11, const wstring& str, const CHARFORMAT& cf, const COLORREF& bkColor);
 		BOOL DrawString(DX11& dx11, const TinyString& str, const RectF& rectF, const StringFormat* format);
 		BOOL ClearContext();

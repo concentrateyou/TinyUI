@@ -16,6 +16,7 @@
 #include "Network/TinySocket.h"
 #include "Network/TinyHTTPClient.h"
 #include "Media/TinyWave.h"
+#include "Common/TinyHook.h"
 
 #include "Media/TinyMFMP3Decode.h"
 
@@ -90,7 +91,21 @@ Media::TinyWaveFile waveFile;
 //	}
 //}
 
+TinyUI::TinyDetour detour;
 
+//typedef INT(WINAPI *MESSAGEBOX)(HWND, LPCSTR, LPCSTR, UINT);
+//
+//INT WINAPI MyMessageBox(
+//	_In_opt_ HWND hWnd,
+//	_In_opt_ LPCSTR lpText,
+//	_In_opt_ LPCSTR lpCaption,
+//	_In_ UINT uType)
+//{
+//	MESSAGEBOX ps = (MESSAGEBOX)detour.GetOrig();
+//	detour.EndDetour();
+//	return ps(NULL, "Ìæ»»ºó", "À²À²À²", MB_OK);
+//}
+//
 
 
 
@@ -196,6 +211,13 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	}
 	decode.Close();*/
 
+	
+	//detour.Initialize((FARPROC)&MessageBox, (FARPROC)&MyMessageBox);
+	//detour.BeginDetour();
+
+
+	//MessageBox(NULL, "Ìæ»»Ç°", "À²À²À²", MB_OK);
+
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
@@ -211,5 +233,8 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	OleUninitialize();
 	MFShutdown();
 	WSACleanup();
+
+	detour.EndDetour();
+
 	return loopRes;
 };

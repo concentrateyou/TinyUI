@@ -1,13 +1,13 @@
 #pragma once
 #include "DX11.h"
-#include "DX11Image.h"
+#include "DX11Image2D.h"
 #include "Common/TinyString.h"
 #include <Richedit.h>
 using namespace DXFramework;
 
 namespace DXApp
 {
-	class WindowScene : public DX11Image
+	class WindowScene : public DX11Image2D
 	{
 		DECLARE_DYNAMIC(WindowScene)
 	public:

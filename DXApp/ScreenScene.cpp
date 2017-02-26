@@ -4,7 +4,7 @@
 
 namespace DXApp
 {
-	IMPLEMENT_DYNAMIC(ScreenScene, DX11Image);
+	IMPLEMENT_DYNAMIC(ScreenScene, DX11Image2D);
 
 	ScreenScene::ScreenScene()
 		:m_bits(NULL),
@@ -23,7 +23,7 @@ namespace DXApp
 		if (!s.IsRectEmpty())
 		{
 			m_snapshot = s;
-			if (DX11Image::Create(dx11, m_snapshot.Size(), NULL, FALSE))
+			if (DX11Image2D::Create(dx11, m_snapshot.Size(), NULL, FALSE))
 			{
 				SAFE_DELETE_OBJECT(m_hBitmap);
 				BITMAPINFO bmi = { 0 };
@@ -66,7 +66,7 @@ namespace DXApp
 			UINT  linesize = cx * 4;
 			this->Copy(dx11, m_bits, linesize * m_size.cy, linesize);
 			::ReleaseDC(NULL, hDC);
-			return DX11Image::Render(dx11);
+			return DX11Image2D::Render(dx11);
 		}
 		return FALSE;
 	}

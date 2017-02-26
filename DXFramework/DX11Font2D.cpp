@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "DX11Font.h"
+#include "DX11Font2D.h"
 
 namespace DXFramework
 {
@@ -74,15 +74,15 @@ namespace DXFramework
 		return boundingBox;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	IMPLEMENT_DYNAMIC(DX11Font, DX11Image);
-	DX11Font::DX11Font()
+	IMPLEMENT_DYNAMIC(DX11Font2D, DX11Image2D);
+	DX11Font2D::DX11Font2D()
 	{
 	}
 
-	DX11Font::~DX11Font()
+	DX11Font2D::~DX11Font2D()
 	{
 	}
-	BOOL DX11Font::CreateCompatible(DX11& dx11, const wstring& str, const CHARFORMAT& cf, const COLORREF& bkColor)
+	BOOL DX11Font2D::CreateCompatible(DX11& dx11, const wstring& str, const CHARFORMAT& cf, const COLORREF& bkColor)
 	{
 		if (str.empty())
 			return FALSE;
@@ -108,11 +108,11 @@ namespace DXFramework
 			{
 				sizeF.Height = static_cast<Gdiplus::REAL>(s.Height());
 			}
-			return DX11Image::CreateCompatible(dx11, TinySize((INT)sizeF.Width, (INT)sizeF.Height));
+			return DX11Image2D::CreateCompatible(dx11, TinySize((INT)sizeF.Width, (INT)sizeF.Height));
 		}
 		return FALSE;
 	}
-	BOOL DX11Font::ClearContext()
+	BOOL DX11Font2D::ClearContext()
 	{
 		HDC hDC = NULL;
 		if (!m_texture.GetDC(TRUE, hDC))
@@ -129,7 +129,7 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11Font::DrawString(DX11& dx11, const TinyString& str, const RectF& rectF, const StringFormat* format)
+	BOOL DX11Font2D::DrawString(DX11& dx11, const TinyString& str, const RectF& rectF, const StringFormat* format)
 	{
 		ASSERT(m_texture.IsEmpty());
 		HDC hDC = NULL;

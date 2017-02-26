@@ -1,9 +1,9 @@
 #pragma once
 #include "DXFramework.h"
-#include "DX11Image.h"
+#include "DX11Image2D.h"
 #include "DXCamera.h"
 #include "DX11ColorShader.h"
-#include "DX11Rectangle.h"
+#include "DX11Rectangle2D.h"
 
 namespace DXFramework
 {
@@ -20,8 +20,8 @@ namespace DXFramework
 		BOOL	 EndDraw();
 		BOOL     Resize(const TinySize& size);
 		DX11&	 GetDX11();
-		BOOL	 DrawImage(DX11Image* ps);
-		BOOL	 DrawRectangle(DX11Rectangle* ps, const TinyRectangle& rectangle);
+		BOOL	 DrawImage(DX11Image2D* ps);
+		BOOL	 DrawRectangle(DX11Rectangle2D* ps, const TinyRectangle& rectangle);
 		void	 Lock();
 		void	 Unlock();
 		BYTE*	 GetPointer(DWORD& dwSize);

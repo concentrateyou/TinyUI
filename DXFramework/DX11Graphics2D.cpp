@@ -60,7 +60,7 @@ namespace DXFramework
 	{
 		return m_dx11;
 	}
-	BOOL DX11Graphics2D::DrawImage(DX11Image* ps)
+	BOOL DX11Graphics2D::DrawImage(DX11Image2D* ps)
 	{
 		ASSERT(ps);
 		if (!ps->IsEmpty())
@@ -74,7 +74,7 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
-	BOOL DX11Graphics2D::DrawRectangle(DX11Rectangle* ps, const TinyRectangle& rectangle)
+	BOOL DX11Graphics2D::DrawRectangle(DX11Rectangle2D* ps, const TinyRectangle& rectangle)
 	{
 		ASSERT(ps);
 		if (!ps->SetRectangle(m_dx11, rectangle))

@@ -23,12 +23,12 @@ namespace DXFramework
 	/// <summary>
 	/// DX11ÔªËØ
 	/// </summary>
-	class DX11Element : public TinyObject, public TinyRectTracker
+	class DX11Element2D : public TinyObject, public TinyRectTracker
 	{
-		DECLARE_DYNAMIC(DX11Element)
+		DECLARE_DYNAMIC(DX11Element2D)
 	public:
-		DX11Element();
-		~DX11Element();
+		DX11Element2D();
+		~DX11Element2D();
 	public:
 		TinyString GetName() const;
 		TinyPoint GetPosition() const;

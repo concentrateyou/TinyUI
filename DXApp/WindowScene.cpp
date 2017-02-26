@@ -3,9 +3,7 @@
 
 namespace DXApp
 {
-
-
-	IMPLEMENT_DYNAMIC(WindowScene, DX11Image);
+	IMPLEMENT_DYNAMIC(WindowScene, DX11Image2D);
 
 	WindowScene::WindowScene()
 		:m_hWND(NULL)
@@ -39,7 +37,7 @@ namespace DXApp
 				ULONGLONG win32kUpdateId;
 				if (dwmGetDxSharedSurface(hWND, &handle, &adapterLuid, &fmtWindow, &presentFlags, &win32kUpdateId))
 				{
-					return DX11Image::Load(dx11, handle);
+					return DX11Image2D::Load(dx11, handle);
 				}
 			}
 		}
@@ -50,7 +48,7 @@ namespace DXApp
 			if (!rectangle.IsRectEmpty())
 			{
 				Destory();
-				return DX11Image::CreateCompatible(dx11, rectangle.Size());
+				return DX11Image2D::CreateCompatible(dx11, rectangle.Size());
 			}
 		}
 		return FALSE;
@@ -78,7 +76,7 @@ namespace DXApp
 			return FALSE;
 		if (bEnable)
 		{
-			DX11Image::Render(dx11);
+			DX11Image2D::Render(dx11);
 			return TRUE;
 		}
 		else
@@ -88,35 +86,14 @@ namespace DXApp
 			{
 				TinyRectangle rectangle;
 				GetClientRect(m_hWND, &rectangle);
-				DX11Image::BitBlt(dx11, rectangle, hDC, TinyPoint(0, 0));
+				TinyMemDC dc(hDC, TO_CX(rectangle), TO_CY(rectangle));
+				PrintWindow(m_hWND, dc, 0);
+				DX11Image2D::BitBlt(dx11, rectangle, hDC, TinyPoint(0, 0));
 				::ReleaseDC(m_hWND, hDC);
-				DX11Image::Render(dx11);
+				DX11Image2D::Render(dx11);
 				return TRUE;
 			}
 		}
 		return FALSE;
-		/*HRESULT hRes = S_OK;
-		HDC hDC = ::GetDC(m_hWND);
-		if (hDC != NULL)
-		{
-			BOOL bEnable = FALSE;
-			DwmIsCompositionEnabled(&bEnable);
-			TinyRectangle rectangle;
-			GetClientRect(m_hWND, &rectangle);
-			if (bEnable)
-			{
-				DX11Image::BitBlt(dx11, rectangle, hDC, TinyPoint(0, 0));
-			}
-			else
-			{
-				TinyMemDC dc(hDC, TO_CX(rectangle), TO_CY(rectangle));
-				PrintWindow(m_hWND, dc, PW_CLIENTONLY);
-				DX11Image::BitBlt(dx11, rectangle, hDC, TinyPoint(0, 0));
-			}
-			::ReleaseDC(m_hWND, hDC);
-			DX11Image::Render(dx11);
-			return TRUE;
-		}
-		return FALSE;*/
 	}
 }

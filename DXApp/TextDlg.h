@@ -4,7 +4,7 @@
 #include "Control/TinyTextBox.h"
 #include "Control/TinyRichTextBox.h"
 #include "Control/TinyCustomDialog.h"
-#include "DX11Font.h"
+#include "DX11Font2D.h"
 using namespace TinyUI;
 using namespace DXFramework;;
 

@@ -3,7 +3,8 @@
 
 namespace DXApp
 {
-	IMPLEMENT_DYNAMIC(TextScene, DX11Font);
+	IMPLEMENT_DYNAMIC(TextScene, DX11Font2D);
+
 	TextScene::TextScene()
 		:m_bkColor(RGB(255, 255, 255))
 	{
@@ -23,7 +24,7 @@ namespace DXApp
 		wstring ws = StringToWString(m_text.STR());
 		m_timerID = SetTimer(NULL, NULL, 100, &TextScene::TimerProc);
 		Destory();
-		if (DX11Font::CreateCompatible(dx11, ws, cf, bkColor))
+		if (DX11Font2D::CreateCompatible(dx11, ws, cf, bkColor))
 		{
 			m_displaySize = m_size.cx;
 			m_maxSize = m_size.cx;
@@ -62,21 +63,21 @@ namespace DXApp
 		Gdiplus::StringFormat format(Gdiplus::StringFormat::GenericTypographic());
 		format.SetFormatFlags(Gdiplus::StringFormatFlagsNoFitBlackBox | Gdiplus::StringFormatFlagsMeasureTrailingSpaces);
 		format.SetTrimming(Gdiplus::StringTrimmingWord);
-		DX11Font::ClearContext();
+		DX11Font2D::ClearContext();
 		Gdiplus::RectF rectF;
 		rectF.X = static_cast<Gdiplus::REAL>(m_displaySize);
 		rectF.Y = 0.0;
 		rectF.Width = static_cast<Gdiplus::REAL>(m_size.cx);
 		rectF.Height = static_cast<Gdiplus::REAL>(m_size.cy);
-		DX11Font::DrawString(dx11, m_text, rectF, &format);
+		DX11Font2D::DrawString(dx11, m_text, rectF, &format);
 		if (m_displaySize < -200)
 		{
 			rectF.X = static_cast<Gdiplus::REAL>(m_maxSize + m_displaySize + 200);
 			rectF.Y = 0.0;
 			rectF.Width = static_cast<Gdiplus::REAL>(m_size.cx);
 			rectF.Height = static_cast<Gdiplus::REAL>(m_size.cy);
-			DX11Font::DrawString(dx11, m_text, rectF, &format);
+			DX11Font2D::DrawString(dx11, m_text, rectF, &format);
 		}
-		return DX11Image::Render(dx11);
+		return DX11Image2D::Render(dx11);
 	}
 }

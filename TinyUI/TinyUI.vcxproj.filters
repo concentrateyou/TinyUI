@@ -67,6 +67,12 @@
     <Filter Include="源文件\Network">
       <UniqueIdentifier>{ac6f29a6-0362-47eb-941b-f7084c021f6a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\HDE">
+      <UniqueIdentifier>{d7f0b601-2ce3-4da0-8a29-f202ac30391c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\HDE">
+      <UniqueIdentifier>{c8da406c-b2ee-46d2-8d76-f6c8b4546431}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -459,6 +465,21 @@
     <ClInclude Include="Media\TinyMFH264Encode.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
+    <ClInclude Include="HDE\hde32.h">
+      <Filter>头文件\HDE</Filter>
+    </ClInclude>
+    <ClInclude Include="HDE\hde64.h">
+      <Filter>头文件\HDE</Filter>
+    </ClInclude>
+    <ClInclude Include="HDE\pstdint.h">
+      <Filter>头文件\HDE</Filter>
+    </ClInclude>
+    <ClInclude Include="HDE\table32.h">
+      <Filter>头文件\HDE</Filter>
+    </ClInclude>
+    <ClInclude Include="HDE\table64.h">
+      <Filter>头文件\HDE</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -850,6 +871,12 @@
     </ClCompile>
     <ClCompile Include="Media\TinyMFH264Decode.cpp">
       <Filter>源文件\Media</Filter>
+    </ClCompile>
+    <ClCompile Include="HDE\hde32.c">
+      <Filter>源文件\HDE</Filter>
+    </ClCompile>
+    <ClCompile Include="HDE\hde64.c">
+      <Filter>源文件\HDE</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

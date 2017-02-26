@@ -3,7 +3,7 @@
 
 namespace DXFramework
 {
-	IMPLEMENT_DYNAMIC(DX11DWMImage, DX11Image);
+	IMPLEMENT_DYNAMIC(DX11DWMImage, DX11Image2D);
 
 	DX11DWMImage::DX11DWMImage()
 	{
@@ -26,7 +26,7 @@ namespace DXFramework
 			ULONGLONG win32kUpdateId;
 			if (dwmGetDxSharedSurface(hWND, &handle, &adapterLuid, &fmtWindow, &presentFlags, &win32kUpdateId))
 			{
-				return DX11Image::Load(dx11, handle);
+				return DX11Image2D::Load(dx11, handle);
 			}
 		}
 		return FALSE;

@@ -1,5 +1,5 @@
 #pragma once
-#include "DX11Image.h"
+#include "DX11Image2D.h"
 #include "DX11CaptureTask.h"
 using namespace DXFramework;
 
@@ -8,7 +8,7 @@ namespace DXApp
 	/// <summary>
 	/// ”Œœ∑≥°æ∞
 	/// </summary>
-	class GameScene : public DX11Image
+	class GameScene : public DX11Image2D
 	{
 		DECLARE_DYNAMIC(GameScene)
 	public:

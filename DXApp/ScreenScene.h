@@ -1,6 +1,6 @@
 #pragma once
 #include "Common/TinyCommon.h"
-#include "DX11Image.h"
+#include "DX11Image2D.h"
 #include "DX11.h"
 #include "Utility.h"
 using namespace TinyUI;
@@ -8,7 +8,7 @@ using namespace DXFramework;
 
 namespace DXApp
 {
-	class ScreenScene : public DX11Image
+	class ScreenScene : public DX11Image2D
 	{
 		DECLARE_DYNAMIC(ScreenScene)
 	public:

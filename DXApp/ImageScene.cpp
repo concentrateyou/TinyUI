@@ -3,7 +3,7 @@
 
 namespace DXApp
 {
-	IMPLEMENT_DYNAMIC(ImageScene, DX11Image);
+	IMPLEMENT_DYNAMIC(ImageScene, DX11Image2D);
 	ImageScene::ImageScene()
 	{
 	}
@@ -31,7 +31,7 @@ namespace DXApp
 
 	BOOL ImageScene::Render(DX11& dx11)
 	{
-		return DX11Image::Render(dx11);
+		return DX11Image2D::Render(dx11);
 	}
 }
 

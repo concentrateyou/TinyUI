@@ -1,10 +1,11 @@
 #include "stdafx.h"
 #include "VideoScene.h"
-#include "DX11Image.h"
+#include "DX11Image2D.h"
 
 namespace DXApp
 {
-	IMPLEMENT_DYNAMIC(VideoScene, DX11Image);
+	IMPLEMENT_DYNAMIC(VideoScene, DX11Image2D);
+
 	VideoScene::VideoScene()
 	{
 	}
@@ -22,7 +23,7 @@ namespace DXApp
 		if (!m_video.Allocate(param))
 			return FALSE;
 		Destory();
-		return DX11Image::CreateCompatible(dx11, param.GetSize());
+		return DX11Image2D::CreateCompatible(dx11, param.GetSize());
 	}
 
 	BOOL VideoScene::Process(DX11& dx11)
@@ -39,8 +40,8 @@ namespace DXApp
 	{
 		m_video.Lock();
 		BYTE* bits = m_video.GetPointer();
-		DX11Image::BitBlt(dx11, bits, m_video.GetSize(), m_size.cx * 4);
-		DX11Image::Render(dx11);
+		DX11Image2D::BitBlt(dx11, bits, m_video.GetSize(), m_size.cx * 4);
+		DX11Image2D::Render(dx11);
 		m_video.Unlock();
 		return bits != NULL;
 	}

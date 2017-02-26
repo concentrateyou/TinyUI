@@ -1,27 +1,27 @@
 #include "stdafx.h"
-#include "DX11Rectangle.h"
+#include "DX11Rectangle2D.h"
 
 
 namespace DXFramework
 {
-	DX11Rectangle::DX11Rectangle()
+	DX11Rectangle2D::DX11Rectangle2D()
 	{
 	}
 
-	DX11Rectangle::~DX11Rectangle()
+	DX11Rectangle2D::~DX11Rectangle2D()
 	{
 	}
-	INT	DX11Rectangle::GetIndexCount() const
+	INT	DX11Rectangle2D::GetIndexCount() const
 	{
 		return 6;
 	}
-	BOOL DX11Rectangle::Create(DX11& dx11)
+	BOOL DX11Rectangle2D::Create(DX11& dx11)
 	{
 		if (!Initialize(dx11))
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11Rectangle::Initialize(DX11& dx11)
+	BOOL DX11Rectangle2D::Initialize(DX11& dx11)
 	{
 		D3D11_BUFFER_DESC	vertexBufferDesc = { 0 };
 		D3D11_BUFFER_DESC	indexBufferDesc = { 0 };
@@ -62,7 +62,7 @@ namespace DXFramework
 		m_vertices.Reset(new VERTEXTYPE[vertexCount]);
 		return TRUE;
 	}
-	BOOL DX11Rectangle::Render(DX11& dx11)
+	BOOL DX11Rectangle2D::Render(DX11& dx11)
 	{
 		UINT stride = sizeof(VERTEXTYPE);
 		UINT offset = 0;
@@ -71,7 +71,7 @@ namespace DXFramework
 		dx11.GetImmediateContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		return TRUE;
 	}
-	BOOL DX11Rectangle::SetRectangle(DX11& dx11, const TinyRectangle& rectangle)
+	BOOL DX11Rectangle2D::SetRectangle(DX11& dx11, const TinyRectangle& rectangle)
 	{
 		m_rectangle = rectangle;
 		TinySize scale = m_rectangle.Size();
@@ -106,7 +106,7 @@ namespace DXFramework
 		dx11.GetImmediateContext()->Unmap(m_vertexBuffer, 0);
 		return TRUE;
 	}
-	void DX11Rectangle::Destory()
+	void DX11Rectangle2D::Destory()
 	{
 		m_vertexBuffer.Release();
 		m_indexBuffer.Release();
