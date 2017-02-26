@@ -3,7 +3,7 @@
 #include "TinyCore.h"
 #include "TinyString.h"
 
-#if defined(_M_X64) || defined(__x86_64__)
+#ifdef _WIN64
 #include "../HDE/hde64.h"
 typedef hde64s HDE;
 #define HDE_DISASM(code, hs) hde64_disasm(code, hs)
@@ -70,7 +70,6 @@ namespace TinyUI
 		static PVOID        m_pMaximumApplicationAddress;
 	};
 	SELECTANY PVOID TinyIATFunction::m_pMaximumApplicationAddress = NULL;
-
 #define JMP_64_SIZE            14
 #define JMP_32_SIZE            5
 	/// <summary>
@@ -106,4 +105,68 @@ namespace TinyUI
 			return;
 		*(vtable + funcOffset) = (ULONG)funcAddress;
 	}
+
+#pragma pack(push, 1)
+	typedef struct tagJMP_REL_SHORT
+	{
+		UINT8  opcode;
+		UINT8  relative;
+	} JMP_REL_SHORT, *PJMP_REL_SHORT;
+
+	typedef struct tagJMP_REL
+	{
+		UINT8  opcode;
+		UINT32 relative;
+	} JMP_REL, *PJMP_REL, CALL_REL;
+
+	typedef struct tagJMP_ABS
+	{
+		UINT8  opcode0;
+		UINT8  opcode1;
+		UINT32 dummy;
+		UINT64 address;
+	} JMP_ABS, *PJMP_ABS;
+
+	typedef struct tagCALL_ABS
+	{
+		UINT8  opcode0;
+		UINT8  opcode1;
+		UINT32 dummy0;
+		UINT8  dummy1;
+		UINT8  dummy2;
+		UINT64 address;
+	} CALL_ABS;
+
+	typedef struct tagJCC_REL
+	{
+		UINT8  opcode0;
+		UINT8  opcode1;
+		UINT32 operand;
+	} JCC_REL;
+
+	typedef struct tagJCC_ABS
+	{
+		UINT8  opcode;
+		UINT8  dummy0;
+		UINT8  dummy1;
+		UINT8  dummy2;
+		UINT32 dummy3;
+		UINT64 address;
+	} JCC_ABS;
+#pragma pack(pop)
+#define PAGE_EXECUTE_FLAGS \
+    (PAGE_EXECUTE | PAGE_EXECUTE_READ | PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY)
+	BOOL IsExecutableAddress(LPVOID pAddress);
+	/// <summary>
+	/// ÄÚÁª
+	/// </summary>
+	class TinyInlineHook
+	{
+	public:
+		BOOL Initialize(LPVOID pTarget, LPVOID pDetour);
+	protected:
+		LPVOID					m_pSRC;
+		LPVOID					m_pDST;
+		TinyScopedArray<BYTE>	m_data;
+	};
 }

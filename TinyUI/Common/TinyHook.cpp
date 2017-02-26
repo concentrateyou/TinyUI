@@ -267,7 +267,7 @@ namespace TinyUI
 		if (!VirtualProtect((LPVOID)m_pOrig, JMP_32_SIZE, PAGE_EXECUTE_READWRITE, &oldProtect))
 			return FALSE;
 		LPBYTE val = (LPBYTE)m_pOrig;
-		*val = 0xE9;//JUMP
+		*val = 0xE9;//jump
 		*(DWORD*)(val + 1) = DWORD(relative);
 		if (!FlushInstructionCache(GetCurrentProcess(), m_pOrig, JMP_32_SIZE))
 			return FALSE;
@@ -297,4 +297,116 @@ namespace TinyUI
 		return m_pOrig;
 	}
 	//////////////////////////////////////////////////////////////////////////
+	BOOL IsExecutableAddress(LPVOID pAddress)
+	{
+		MEMORY_BASIC_INFORMATION mi;
+		VirtualQuery(pAddress, &mi, sizeof(mi));
+		return (mi.State == MEM_COMMIT && (mi.Protect & PAGE_EXECUTE_FLAGS));
+	}
+	BOOL TinyInlineHook::Initialize(LPVOID lpSRC, LPVOID lpDST)
+	{
+		if (!IsExecutableAddress(lpSRC) || !IsExecutableAddress(lpDST))
+			return FALSE;
+#ifdef _WIN64
+		CALL_ABS call =
+		{
+			0xFF, 0x15, 0x00000002,
+			0xEB, 0x08,
+			0x0000000000000000ULL
+		};
+		JMP_ABS jmp =
+		{
+			0xFF, 0x25, 0x00000000,
+			0x0000000000000000ULL
+		};
+		JCC_ABS jcc =
+		{
+			0x70, 0x0E,
+			0xFF, 0x25, 0x00000000,
+			0x0000000000000000ULL
+		};
+#else
+		CALL_REL call =
+		{
+			0xE8,
+			0x00000000
+		};
+		JMP_REL jmp =
+		{
+			0xE9,
+			0x00000000
+		};
+		JCC_REL jcc =
+		{
+			0x0F, 0x80,
+			0x00000000
+		};
+		m_pSRC = lpSRC;
+		m_pDST = lpDST;
+		ULONG_PTR src = reinterpret_cast<ULONG_PTR>(lpSRC);
+		ULONG_PTR dst = reinterpret_cast<ULONG_PTR>(lpDST);
+#endif
+		UINT8     offset = 0;
+		do
+		{
+			HDE       hs;
+			UINT      size;
+			ULONG_PTR address = reinterpret_cast<ULONG_PTR>(lpSRC) + offset;
+			size = HDE_DISASM((LPVOID)address, &hs);
+			if (hs.flags & F_ERROR)
+				return FALSE;
+			if (offset >= sizeof(JMP_REL))
+			{
+#ifdef _WIN64
+				jmp.address = address;
+#else
+				jmp.relative = (UINT32)(address - (reinterpret_cast<ULONG_PTR>(lpDST) + sizeof(jmp)));
+#endif
+				break;
+			}
+			if (hs.opcode == 0xE8)
+			{
+				ULONG_PTR dest = address + hs.len + (INT32)hs.imm.imm32;
+#if defined(_M_X64) || defined(__x86_64__)
+				call.address = dest;
+#else
+				call.relative = (UINT32)(dest - (pNewInst + sizeof(call)));
+#endif
+			}
+			else if ((hs.opcode & 0xFD) == 0xE9)
+			{
+				ULONG_PTR dest = address + hs.len;
+
+				if (hs.opcode == 0xEB)
+					dest += (INT8)hs.imm.imm8;
+				else
+					dest += (INT32)hs.imm.imm32;
+
+				if (src <= dest  && dest < (src + sizeof(JMP_REL)))
+				{
+
+				}
+				else
+				{
+#ifdef _WIN64
+					jmp.address = dest;
+#else
+					//jmp.relative = (UINT32)(dest - (pNewInst + sizeof(jmp)));
+#endif
+			}
+		}
+			else if ((hs.opcode & 0xF0) == 0x70
+				|| (hs.opcode & 0xFC) == 0xE0
+				|| (hs.opcode2 & 0xF0) == 0x80)
+			{
+
+			}
+			else if ((hs.opcode & 0xFC) == 0xE0)
+			{
+				return FALSE;
+			}
+			src += hs.len;
+	} while (1);
+	return TRUE;
+}
 }

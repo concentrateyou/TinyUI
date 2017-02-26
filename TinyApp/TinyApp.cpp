@@ -91,21 +91,20 @@ Media::TinyWaveFile waveFile;
 //	}
 //}
 
-TinyUI::TinyDetour detour;
+TinyUI::TinyInlineHook detour;
 
-//typedef INT(WINAPI *MESSAGEBOX)(HWND, LPCSTR, LPCSTR, UINT);
-//
-//INT WINAPI MyMessageBox(
-//	_In_opt_ HWND hWnd,
-//	_In_opt_ LPCSTR lpText,
-//	_In_opt_ LPCSTR lpCaption,
-//	_In_ UINT uType)
-//{
-//	MESSAGEBOX ps = (MESSAGEBOX)detour.GetOrig();
-//	detour.EndDetour();
-//	return ps(NULL, "Ìæ»»ºó", "À²À²À²", MB_OK);
-//}
-//
+typedef INT(WINAPI *MESSAGEBOX)(HWND, LPCSTR, LPCSTR, UINT);
+
+INT WINAPI MyMessageBox(
+	_In_opt_ HWND hWnd,
+	_In_opt_ LPCSTR lpText,
+	_In_opt_ LPCSTR lpCaption,
+	_In_ UINT uType)
+{
+	INT a = 0;
+	return 1;
+}
+
 
 
 
@@ -212,8 +211,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	decode.Close();*/
 
 	
-	//detour.Initialize((FARPROC)&MessageBox, (FARPROC)&MyMessageBox);
-	//detour.BeginDetour();
+	detour.Initialize((FARPROC)&MessageBox, (FARPROC)&MyMessageBox);
 
 
 	//MessageBox(NULL, "Ìæ»»Ç°", "À²À²À²", MB_OK);
@@ -233,8 +231,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	OleUninitialize();
 	MFShutdown();
 	WSACleanup();
-
-	detour.EndDetour();
 
 	return loopRes;
 };
