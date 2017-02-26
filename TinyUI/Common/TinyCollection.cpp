@@ -86,7 +86,7 @@ namespace TinyUI
 	BOOL TinyPointerMap::Add(UINT_PTR key, UINT_PTR value)
 	{
 		UINT index = 0;
-		UINT hash = 0;
+		UINT_PTR hash = 0;
 		TinyNode* ps = NULL;
 		if ((ps = Lookup(key, index, hash)) == NULL)
 		{
@@ -134,7 +134,7 @@ namespace TinyUI
 	BOOL TinyPointerMap::Lookup(UINT_PTR key, UINT_PTR& value) const
 	{
 		UINT index = 0;
-		UINT hash = 0;
+		UINT_PTR hash = 0;
 		TinyNode* ps = Lookup(key, index, hash);
 		if (ps == NULL)
 			return FALSE;
@@ -159,7 +159,7 @@ namespace TinyUI
 	UINT_PTR& TinyPointerMap::operator[](UINT_PTR key)
 	{
 		UINT index = 0;
-		UINT hash = 0;
+		UINT_PTR hash = 0;
 		TinyNode* ps = NULL;
 		if ((ps = Lookup(key, index, hash)) == NULL)
 		{

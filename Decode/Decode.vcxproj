@@ -42,7 +42,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -94,13 +94,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\ThirdParty\librtmp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\ThirdParty\ffmpeg\include;..\ThirdParty\mpg123\include;..\ThirdParty\libfaad\include;..\ThirdParty\librtmp\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>..\ThirdParty\librtmp\lib;..\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\TinyUI;..\Debug;..\ThirdParty\mpg123\lib;..\ThirdParty\libfaad\lib;..\ThirdParty\ffmpeg\lib;..\ThirdParty\librtmp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libfaad.lib;librtmp.lib;libmpg123.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

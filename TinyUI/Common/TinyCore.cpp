@@ -214,7 +214,7 @@ namespace TinyUI
 			ReleaseSRWLockShared(&m_SRW);
 	}
 	//////////////////////////////////////////////////////////////////////////
-	TinyPerformanceLock::TinyPerformanceLock()
+	/*TinyPerformanceLock::TinyPerformanceLock()
 		:m_lock(NULL)
 	{
 		GetSystemInfo(&m_si);
@@ -251,7 +251,7 @@ namespace TinyUI
 	void TinyPerformanceLock::Unlock()
 	{
 		*(m_lock) = 0;
-	};
+	};*/
 	//////////////////////////////////////////////////////////////////////////
 	TinySemaphore::TinySemaphore()
 		:m_hSemaphore(NULL)
