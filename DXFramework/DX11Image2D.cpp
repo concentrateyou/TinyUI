@@ -7,6 +7,7 @@
 namespace DXFramework
 {
 	IMPLEMENT_DYNAMIC(DX11Image2D, DX11Element2D);
+
 	DX11Image2D::DX11Image2D()
 	{
 		m_lastPos.x = m_lastPos.y = -1;
@@ -51,6 +52,10 @@ namespace DXFramework
 			return TRUE;
 		}
 		return FALSE;
+	}
+	BOOL DX11Image2D::Save(DX11& dx11, const CHAR* pzName)
+	{
+		return m_texture.Save(dx11, pzName, BMP);
 	}
 	void DX11Image2D::Destory()
 	{

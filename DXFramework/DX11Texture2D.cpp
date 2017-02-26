@@ -160,16 +160,17 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	/*BOOL DX11Texture2D::Save(DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT format)
+	BOOL DX11Texture2D::Save(DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT format)
 	{
 		ASSERT(m_texture2D);
-		HRESULT hRes = D3DX11SaveTextureToFile(dx11.GetImmediateContext(), m_texture2D, format, pzFile);
+		wstring ws = StringToWString(pzFile);
+		HRESULT hRes = SaveWICTextureToFile(dx11.GetImmediateContext(), m_texture2D, GetWICCodec(format), ws.c_str());
 		if (SUCCEEDED(hRes))
 		{
 			return TRUE;
 		}
 		return FALSE;
-	}*/
+	}
 	BOOL DX11Texture2D::Copy(DX11& dx11, ID3D11Texture2D* texture2D)
 	{
 		if (!m_texture2D || !texture2D)

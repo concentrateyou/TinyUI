@@ -10,6 +10,7 @@
 #include <TlHelp32.h>
 #include <string>
 #include <d2d1_1.h>
+#include <wincodec.h>
 #include "Common/TinyCommon.h"
 #include "Common/TinyUtility.h"
 #include "Common/TinyTime.h"
@@ -27,6 +28,19 @@ using namespace std;
 
 namespace DXFramework
 {
+
+	enum D3DX11_IMAGE_FILE_FORMAT
+	{
+		BMP,
+		JPG,
+		PNG,
+		TIFF,
+		GIF,
+		WMP
+	};
+
+	REFGUID GetWICCodec(D3DX11_IMAGE_FILE_FORMAT format);
+
 	typedef struct tagWNDINFO
 	{
 		CHAR	className[MAX_PATH];

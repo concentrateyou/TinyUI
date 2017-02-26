@@ -25,6 +25,7 @@
 #include <crtdbg.h>
 #include <utility>
 #include <Winsock2.h>
+#include <gdiplus.h>
 #pragma comment(lib, "gdi32.lib")
 #pragma comment(lib, "shlwapi.lib")
 #pragma comment(lib, "gdiplus.lib")

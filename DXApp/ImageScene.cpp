@@ -4,6 +4,7 @@
 namespace DXApp
 {
 	IMPLEMENT_DYNAMIC(ImageScene, DX11Image2D);
+
 	ImageScene::ImageScene()
 	{
 	}

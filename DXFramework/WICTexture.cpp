@@ -867,11 +867,11 @@ namespace DXFramework
 		ID3D11DeviceContext* pContext,
 		ID3D11Resource* pSource,
 		REFGUID guidContainerFormat,
-		const WCHAR* fileName,
+		const WCHAR* pzName,
 		const GUID* targetFormat,
 		std::function<void __cdecl(IPropertyBag2*)> setCustomProps)
 	{
-		if (!fileName)
+		if (!pzName)
 			return E_INVALIDARG;
 
 		D3D11_TEXTURE2D_DESC desc = {};
@@ -934,7 +934,7 @@ namespace DXFramework
 		if (FAILED(hRes))
 			return hRes;
 
-		hRes = stream->InitializeFromFilename(fileName, GENERIC_WRITE);
+		hRes = stream->InitializeFromFilename(pzName, GENERIC_WRITE);
 		if (FAILED(hRes))
 			return hRes;
 

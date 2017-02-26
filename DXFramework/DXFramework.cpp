@@ -10,6 +10,33 @@ namespace DXFramework
 	typedef BOOL(WINAPI *VIRTUALFREEEX)(HANDLE, LPVOID, SIZE_T, DWORD);
 	typedef HANDLE(WINAPI *LOADLIBRARY) (DWORD, BOOL, DWORD);
 	typedef HANDLE(WINAPI *FREELIBRARY) (HMODULE);
+
+	REFGUID GetWICCodec(D3DX11_IMAGE_FILE_FORMAT format)
+	{
+		switch (format)
+		{
+		case DXFramework::JPG:
+			return GUID_ContainerFormatJpeg;
+			break;
+		case DXFramework::PNG:
+			return GUID_ContainerFormatPng;
+			break;
+		case DXFramework::TIFF:
+			return GUID_ContainerFormatTiff;
+			break;
+		case DXFramework::GIF:
+			return GUID_ContainerFormatGif;
+			break;
+		case DXFramework::WMP:
+			return GUID_ContainerFormatWmp;
+			break;
+		case DXFramework::BMP:
+			return GUID_ContainerFormatBmp;
+		default:
+			break;
+		}
+	}
+
 	BOOL WINAPI InjectLibrary(HANDLE hProcess, const CHAR *pszDLL)
 	{
 		if (!hProcess || !pszDLL)

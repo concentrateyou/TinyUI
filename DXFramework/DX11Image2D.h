@@ -22,6 +22,7 @@ namespace DXFramework
 		BOOL Create(DX11& dx11, ID3D11Texture2D* texture2D);
 		BOOL Create(DX11& dx11, const TinySize& size, BYTE* bits = NULL, BOOL bReadonly = TRUE);
 		BOOL CreateCompatible(DX11& dx11, const TinySize& size);
+		BOOL Save(DX11& dx11,const CHAR* pzName);
 		BOOL BitBlt(DX11& dx11, const BYTE* bits, LONG size, LONG linesize);//RGB32
 		BOOL BitBlt(DX11& dx11, const TinyRectangle& dst, HBITMAP hBitmapSrc, const TinyPoint& src);
 		BOOL BitBlt(DX11& dx11, const TinyRectangle& dst, HDC hDCSrc, const TinyPoint& src);

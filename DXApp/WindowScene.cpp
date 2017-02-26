@@ -37,7 +37,12 @@ namespace DXApp
 				ULONGLONG win32kUpdateId;
 				if (dwmGetDxSharedSurface(hWND, &handle, &adapterLuid, &fmtWindow, &presentFlags, &win32kUpdateId))
 				{
-					return DX11Image2D::Load(dx11, handle);
+					if (DX11Image2D::Load(dx11, handle))
+					{
+						DX11Image2D::Save(dx11, "D:\\12345.bmp");
+						return TRUE;
+					}
+					return FALSE;
 				}
 			}
 		}
