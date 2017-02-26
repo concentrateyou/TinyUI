@@ -178,7 +178,6 @@
     <ClInclude Include="DX11ColorShader.h" />
     <ClInclude Include="DX11Duplicator.h" />
     <ClInclude Include="DX11DuplicatorTask.h" />
-    <ClInclude Include="DX11DWMImage.h" />
     <ClInclude Include="DX11Font2D.h" />
     <ClInclude Include="DX11Graphics2D.h" />
     <ClInclude Include="DX11Image2D.h" />
@@ -190,7 +189,6 @@
     <ClInclude Include="DXCamera.h" />
     <ClInclude Include="DXFramework.h" />
     <ClInclude Include="DXInput.h" />
-    <ClInclude Include="IDXGIFactoryDWM.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="WICTexture.h" />
@@ -200,7 +198,6 @@
     <ClCompile Include="DX11ColorShader.cpp" />
     <ClCompile Include="DX11Duplicator.cpp" />
     <ClCompile Include="DX11DuplicatorTask.cpp" />
-    <ClCompile Include="DX11DWMImage.cpp" />
     <ClCompile Include="DX11Font2D.cpp" />
     <ClCompile Include="DX11Graphics2D.cpp" />
     <ClCompile Include="DX11Image2D.cpp" />

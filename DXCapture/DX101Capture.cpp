@@ -154,9 +154,4 @@ namespace DXCapture
 		m_dx.m_ready.SetEvent();
 		return TRUE;
 	}
-	/*BOOL DX101Capture::SaveAs(D3DX10_IMAGE_FILE_FORMAT s, LPCSTR pzFile)
-	{
-		ASSERT(m_resource);
-		return D3DX10SaveTextureToFile(m_resource, s, pzFile);
-	}*/
 }

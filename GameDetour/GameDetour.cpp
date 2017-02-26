@@ -11,20 +11,6 @@ using namespace DXCapture;
 
 namespace GameDetour
 {
-	LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
-	{
-		switch (message)
-		{
-		case WM_CLOSE:
-			::DestroyWindow(hwnd);
-			break;
-		case WM_DESTROY:
-			LOG(INFO) << "WindowProcedure WM_DESTROY\n";
-			::PostQuitMessage(0);
-			break;
-		}
-		return ::DefWindowProc(hwnd, message, wParam, lParam); ;
-	}
 	GameCapture::GameCapture()
 		:m_hWNDD3D(NULL),
 		m_bDX8Detour(FALSE),
@@ -46,7 +32,7 @@ namespace GameDetour
 		LOG(INFO) << szName << " GameCapture::Attach\n";
 		return m_task.Submit(BindCallback(&GameCapture::OnMessagePump, this));
 	}
-	void GameCapture::Detach(HMODULE hModule)
+	BOOL GameCapture::Detach(HMODULE hModule)
 	{
 		CHAR szName[MAX_PATH];
 		memset(szName, 0, MAX_PATH);
@@ -57,7 +43,7 @@ namespace GameDetour
 		{
 			::PostMessage(m_hWNDD3D, WM_CLOSE, NULL, NULL);
 		}
-		m_task.Close(1500);
+		return m_task.Close(1500);
 	}
 	void GameCapture::BeginCapture()
 	{
@@ -92,7 +78,7 @@ namespace GameDetour
 		ZeroMemory(&wc, sizeof(wc));
 		wc.style = CS_OWNDC;
 		wc.hInstance = m_hInstance;
-		wc.lpfnWndProc = (WNDPROC)WindowProcedure;
+		wc.lpfnWndProc = (WNDPROC)GameCapture::WindowProcedure;
 		wc.lpszClassName = D3D_WINDOWCLASS;
 		if (RegisterClass(&wc))
 		{
@@ -119,6 +105,21 @@ namespace GameDetour
 			}
 			EndCapture();
 		}
+	}
+
+	LRESULT CALLBACK GameCapture::WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+	{
+		switch (message)
+		{
+		case WM_CLOSE:
+			::DestroyWindow(hwnd);
+			break;
+		case WM_DESTROY:
+			LOG(INFO) << "WindowProcedure WM_DESTROY\n";
+			::PostQuitMessage(0);
+			break;
+		}
+		return ::DefWindowProc(hwnd, message, wParam, lParam); ;
 	}
 }
 

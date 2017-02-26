@@ -172,9 +172,4 @@ namespace DXCapture
 		m_dx.m_ready.SetEvent();
 		return TRUE;
 	}
-	/*BOOL DX11Capture::SaveAs(ID3D11DeviceContext* context, D3DX11_IMAGE_FILE_FORMAT s, LPCSTR pzFile)
-	{
-		ASSERT(m_resource && context);
-		return D3DX11SaveTextureToFile(context, m_resource, s, pzFile);
-	}*/
 }

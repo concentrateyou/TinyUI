@@ -14,8 +14,6 @@ namespace DXCapture
 		BOOL Setup(IDXGISwapChain *swap);
 		BOOL Render(IDXGISwapChain *swap, UINT flags);
 		BOOL DX101GPUHook(ID3D10Device1 *device);
-	//public:
-	//	BOOL SaveAs(D3DX10_IMAGE_FILE_FORMAT s, LPCSTR pzFile);
 	public:
 		SharedCaptureDATA				m_captureDATA;
 		DXGI_FORMAT						m_dxgiFormat;

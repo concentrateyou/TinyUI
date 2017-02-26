@@ -1,5 +1,6 @@
 #pragma once
-#include "Common.h"
+#include "Common/TinyCommon.h"
+#include "IO/TinySharedMemory.h"
 #include "IO/TinyTaskBase.h"
 using namespace TinyUI;
 
@@ -18,11 +19,13 @@ namespace GameDetour
 		~GameCapture();
 	public:
 		BOOL Attach(HMODULE hModule);
-		void Detach(HMODULE hModule);
+		BOOL Detach(HMODULE hModule);
 	private:
 		void BeginCapture();
 		void EndCapture();
 		void OnMessagePump();
+	private:
+		static LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 	private:
 		IO::TinyTaskBase	m_task;
 		HINSTANCE			m_hInstance;

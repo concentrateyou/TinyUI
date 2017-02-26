@@ -28,8 +28,6 @@ namespace DXCapture
 		void Reset();
 		BOOL Setup(IDirect3DDevice9 *pThis);
 		BOOL DX9GPUHook(IDirect3DDevice9 *device);
-	/*public:
-		BOOL SaveAs(D3DX10_IMAGE_FILE_FORMAT s, LPCSTR pzFile);*/
 	public:
 		SharedCaptureDATA				m_captureDATA;
 		LPVOID							m_currentPointer;
