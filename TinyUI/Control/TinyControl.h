@@ -66,6 +66,7 @@ namespace TinyUI
 			MESSAGE_HANDLER(WM_NCRBUTTONDBLCLK, OnNCRButtonDBClick)
 			MESSAGE_HANDLER(WM_NCACTIVATE, OnNCActivate)
 			MESSAGE_HANDLER(WM_NCCALCSIZE, OnNCCalcSize)
+			MESSAGE_HANDLER(WM_PRINTCLIENT,OnPrintClient)
 			MESSAGE_HANDLER(WM_PAINT, OnPaint)
 			MESSAGE_HANDLER(WM_ERASEBKGND, OnErasebkgnd)
 			MESSAGE_HANDLER(WM_MOUSEMOVE, OnMouseMove)
@@ -103,6 +104,7 @@ namespace TinyUI
 		END_MSG_MAP()
 		virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnPrintClient(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnNCMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnNCMouseHover(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

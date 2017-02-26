@@ -18,8 +18,7 @@ namespace TinyUI
 			m_this = PtrToUlong(pThis);
 			m_jmp = 0xe9;
 			m_proc = DWORD((INT_PTR)proc - ((INT_PTR)this + sizeof(_callthunk)));
-			FlushInstructionCache(GetCurrentProcess(), this, sizeof(_callthunk));
-			return TRUE;
+			return FlushInstructionCache(GetCurrentProcess(), this, sizeof(_callthunk));
 		}
 
 		void* GetCodeAddress()

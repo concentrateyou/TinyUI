@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "WindowScene.h"
+#include <d3d9types.h>
 
 namespace DXApp
 {
@@ -18,7 +19,6 @@ namespace DXApp
 	BOOL WindowScene::Initialize(DX11& dx11, HWND hWND)
 	{
 		m_hWND = hWND;
-
 		BOOL bEnable = FALSE;
 		if (FAILED(DwmIsCompositionEnabled(&bEnable)))
 			return FALSE;
@@ -26,7 +26,7 @@ namespace DXApp
 		if (bEnable)
 		{
 			Destory();
-			TinyScopedLibrary user32("user32.dll");
+			TinyScopedLibrary user32("USER32.dll");
 			DwmGetDxSharedSurface dwmGetDxSharedSurface = reinterpret_cast<DwmGetDxSharedSurface>(user32.GetFunctionPointer("DwmGetDxSharedSurface"));
 			if (dwmGetDxSharedSurface != NULL)
 			{
@@ -37,12 +37,7 @@ namespace DXApp
 				ULONGLONG win32kUpdateId;
 				if (dwmGetDxSharedSurface(hWND, &handle, &adapterLuid, &fmtWindow, &presentFlags, &win32kUpdateId))
 				{
-					if (DX11Image2D::Load(dx11, handle))
-					{
-						DX11Image2D::Save(dx11, "D:\\12345.bmp");
-						return TRUE;
-					}
-					return FALSE;
+					return DX11Image2D::Load(dx11, handle);
 				}
 			}
 		}
@@ -91,8 +86,6 @@ namespace DXApp
 			{
 				TinyRectangle rectangle;
 				GetClientRect(m_hWND, &rectangle);
-				TinyMemDC dc(hDC, TO_CX(rectangle), TO_CY(rectangle));
-				PrintWindow(m_hWND, dc, 0);
 				DX11Image2D::BitBlt(dx11, rectangle, hDC, TinyPoint(0, 0));
 				::ReleaseDC(m_hWND, hDC);
 				DX11Image2D::Render(dx11);

@@ -3,6 +3,7 @@
 #include "DX11Image2D.h"
 #include "Common/TinyString.h"
 #include <Richedit.h>
+#include "WindowDetour.h"
 using namespace DXFramework;
 
 namespace DXApp
@@ -20,7 +21,8 @@ namespace DXApp
 		BOOL Render(DX11& dx11) OVERRIDE;
 		void Clear(DX11& dx11) OVERRIDE;
 	private:
-		HWND	m_hWND;
+		HWND			m_hWND;
+		WindowDetour	m_window;
 	};
 }
 

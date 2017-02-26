@@ -32,9 +32,8 @@ namespace DXFramework
 			break;
 		case DXFramework::BMP:
 			return GUID_ContainerFormatBmp;
-		default:
-			break;
 		}
+		return GUID_ContainerFormatBmp;
 	}
 
 	BOOL WINAPI InjectLibrary(HANDLE hProcess, const CHAR *pszDLL)
