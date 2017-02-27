@@ -342,12 +342,12 @@ namespace TinyUI
 			0x0F, 0x80,
 			0x00000000
 		};
-		//64字节足够了
-		m_pTrampoline = VirtualAlloc(NULL, 64, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+		m_pTrampoline = VirtualAlloc(NULL, 64, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);//64字节足够了
 		if (!m_pTrampoline)
 			return FALSE;
 		UINT8 srcPos = 0;
 		UINT8 dstPos = 0;
+		ULONG_PTR destJMP = 0;
 		BOOL bBreak = FALSE;
 		for (;;)
 		{
@@ -357,8 +357,8 @@ namespace TinyUI
 			ULONG_PTR src = (ULONG_PTR)lpSRC + srcPos;
 			ULONG_PTR dst = (ULONG_PTR)m_pTrampoline + dstPos;
 			LPVOID pCopy = NULL;
-			DWORD dwCopy = HDE_DISASM((LPVOID)src, &hs);
-			ASSERT(dwCopy == hs.len);
+			UINT8 copySize = HDE_DISASM((LPVOID)src, &hs);
+			ASSERT(copySize == hs.len);
 			if (hs.flags & F_ERROR)
 				return FALSE;
 			do
@@ -368,21 +368,69 @@ namespace TinyUI
 				{
 					jmp.operand = (UINT32)(src - (dst + sizeof(jmp)));
 					pCopy = &jmp;
-					dwCopy = sizeof(jmp);
+					copySize = sizeof(jmp);
 					bBreak = TRUE;
 					break;
 				}
-				if (hs.opcode == 0xE8)//call
+				if (hs.opcode == 0xE8)	//CALL
 				{
+					ULONG_PTR dest = src + hs.len + (INT32)hs.imm.imm32;
+					call.operand = (UINT32)(dest - (dst + sizeof(call)));
+					pCopy = &call;
+					copySize = sizeof(call);
+					break;
+				}
+				if ((hs.opcode & 0xFD) == 0xE9) //JMP
+				{
+					ULONG_PTR dest = src + hs.len;
 
+					if (hs.opcode == 0xEB)
+						dest += (INT8)hs.imm.imm8;
+					else
+						dest += (INT32)hs.imm.imm32;
+					if ((ULONG_PTR)m_lpSRC <= dest
+						&& dest < ((ULONG_PTR)m_lpSRC + sizeof(JMP_REL)))
+					{
+						if (destJMP < dest)
+							destJMP = dest;
+					}
+					else
+					{
+						jmp.operand = (UINT32)(dest - (dst + sizeof(jmp)));
+						pCopy = &jmp;
+						copySize = sizeof(jmp);
+						bBreak = (src >= destJMP);
+					}
 					break;
 				}
-				if ((hs.opcode & 0xFD) == 0xE9) // jmp
+				if (((hs.opcode & 0xF0) == 0x70) || (hs.opcode == 0xE3) || ((hs.opcode2 & 0xF0) == 0x80)) //JCC
 				{
-					break;
-				}
-				if (((hs.opcode & 0xF0) == 0x70) || (hs.opcode == 0xE3) || ((hs.opcode2 & 0xF0) == 0x80)) // jcc
-				{
+					ULONG_PTR dest = dst + hs.len;
+
+					if ((hs.opcode & 0xF0) == 0x70      //JCC
+						|| (hs.opcode & 0xFC) == 0xE0)  //LOOPNZ/LOOPZ/LOOP/JECXZ
+						dest += (INT8)hs.imm.imm8;
+					else
+						dest += (INT32)hs.imm.imm32;
+					if ((ULONG_PTR)m_lpSRC <= dest
+						&& dest < ((ULONG_PTR)m_lpSRC + sizeof(JMP_REL)))
+					{
+						if (destJMP < dest)
+							destJMP = dest;
+					}
+					else if ((hs.opcode & 0xFC) == 0xE0)
+					{
+						// LOOPNZ/LOOPZ/LOOP/JCXZ/JECXZ 不支持
+						return FALSE;
+					}
+					else
+					{
+						UINT8 cond = ((hs.opcode != 0x0F ? hs.opcode : hs.opcode2) & 0x0F);
+						jcc.opcode1 = 0x80 | cond;
+						jcc.operand = (UINT32)(dest - (dst + sizeof(jcc)));
+						pCopy = &jcc;
+						copySize = sizeof(jcc);
+					}
 					break;
 				}
 				if (((hs.opcode & 0xFE) == 0xC2) || // ret
@@ -390,18 +438,24 @@ namespace TinyUI
 					(((hs.modrm & 0xC7) == 0x05) && ((hs.opcode == 0xFF) && (hs.modrm_reg == 4))) || // jmp rip
 					((hs.opcode == 0xFF) && (hs.opcode2 == 0x25))) // jmp abs
 				{
+					bBreak = (src >= destJMP);
 					break;
 				}
 			} while (0);
-			__movsb((LPBYTE)m_pTrampoline + dstPos, (LPBYTE)pCopy, dwCopy);
+			if (dst < destJMP && copySize != hs.len)
+				return FALSE;
+			if ((dstPos + copySize) > TRAMPOLINE_MAX_SIZE)
+				return FALSE;
+			__movsb((LPBYTE)m_pTrampoline + dstPos, (LPBYTE)pCopy, copySize);
 			srcPos += hs.len;
-			dstPos += dwCopy;
+			dstPos += copySize;
 		}
 		memcpy(m_backup, lpSRC, sizeof(JMP_REL));
 		m_lpSRC = lpSRC;
 		m_lpDST = lpDST;
 		return TRUE;
 	}
+
 	BOOL TinyInlineHook::BeginDetour()
 	{
 		SIZE_T size = sizeof(JMP_REL);

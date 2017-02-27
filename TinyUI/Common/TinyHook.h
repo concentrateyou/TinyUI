@@ -179,10 +179,10 @@ namespace TinyUI
 		BOOL	IsValid() const;
 		LPVOID	GetOrig() const;
 	protected:
-		BOOL					m_bDetour;
-		BYTE					m_backup[16];
-		LPVOID					m_lpSRC;
-		LPVOID					m_lpDST;
-		LPVOID					m_pTrampoline;
+		BOOL	m_bDetour;
+		BYTE	m_backup[16];
+		LPVOID	m_lpSRC;
+		LPVOID	m_lpDST;
+		LPVOID	m_pTrampoline;
 	};
 }
