@@ -8,6 +8,14 @@
 
 namespace TinyUI
 {
+	BOOL IsExecutableAddress(LPVOID pAddress)
+	{
+		if (!pAddress)
+			return FALSE;
+		MEMORY_BASIC_INFORMATION mi;
+		VirtualQuery(pAddress, &mi, sizeof(mi));
+		return (mi.State == MEM_COMMIT && (mi.Protect & PAGE_EXECUTE_FLAGS));
+	}
 	TinyIATHook::TinyIATHook()
 	{
 	}
@@ -241,35 +249,32 @@ namespace TinyUI
 	{
 
 	}
-	BOOL TinyDetour::Initialize(FARPROC pOrig, FARPROC pTarget)
+	BOOL TinyDetour::Initialize(FARPROC lpSRC, FARPROC lpDST)
 	{
-		if (!pOrig || !pTarget)
+		if (!IsExecutableAddress(lpSRC) || !IsExecutableAddress(lpDST))
 			return FALSE;
-		m_pOrig = pOrig;
-		m_pTarget = pTarget;
-		if (!VirtualProtect((LPVOID)m_pOrig, JMP_32_SIZE, PAGE_EXECUTE_READWRITE, &m_dwOrigProtect))
+		m_lpSRC = lpSRC;
+		m_lpDST = lpDST;
+		if (!VirtualProtect((LPVOID)m_lpSRC, JMP_SIZE, PAGE_EXECUTE_READWRITE, &m_dwProtect))
 			return FALSE;
-		memcpy(m_data, (const void*)m_pOrig, JMP_32_SIZE);
+		memcpy(m_data, (const void*)m_lpSRC, JMP_SIZE);
 		return TRUE;
 	}
 	BOOL TinyDetour::BeginDetour()
 	{
-		if (!m_pOrig || !m_pTarget)
+		if (!IsExecutableAddress(m_lpSRC) || !IsExecutableAddress(m_lpDST))
 			return FALSE;
-		ULONG orig = ULONG(m_pOrig);
-		ULONG target = ULONG(m_pTarget);
+		ULONG src = ULONG(m_lpSRC);
+		ULONG dst = ULONG(m_lpDST);
 		ULONG64 relative = 0;
-		//http://blogs.msdn.com/b/oldnewthing/archive/2011/09/21/10214405.aspx
-		//http://www.cnblogs.com/zhangdongsheng/archive/2012/12/06/2804234.html
-		//计算偏移量(JMP的地址–代码地址–5 = 机器码跳转地址 x86)
-		relative = target - (orig + JMP_32_SIZE);
+		relative = dst - (src + JMP_SIZE);
 		DWORD oldProtect;
-		if (!VirtualProtect((LPVOID)m_pOrig, JMP_32_SIZE, PAGE_EXECUTE_READWRITE, &oldProtect))
+		if (!VirtualProtect((LPVOID)m_lpSRC, JMP_SIZE, PAGE_EXECUTE_READWRITE, &oldProtect))
 			return FALSE;
-		LPBYTE val = (LPBYTE)m_pOrig;
-		*val = 0xE9;//jump
+		LPBYTE val = (LPBYTE)m_lpSRC;
+		*val = 0xE9;
 		*(DWORD*)(val + 1) = DWORD(relative);
-		if (!FlushInstructionCache(GetCurrentProcess(), m_pOrig, JMP_32_SIZE))
+		if (!FlushInstructionCache(GetCurrentProcess(), m_lpSRC, JMP_SIZE))
 			return FALSE;
 		m_bDetour = TRUE;
 		return TRUE;
@@ -278,12 +283,12 @@ namespace TinyUI
 	{
 		if (!m_bDetour) return FALSE;
 		DWORD oldProtect;
-		if (!VirtualProtect((LPVOID)m_pOrig, JMP_32_SIZE, PAGE_EXECUTE_READWRITE, &oldProtect))
+		if (!VirtualProtect((LPVOID)m_lpSRC, JMP_SIZE, PAGE_EXECUTE_READWRITE, &oldProtect))
 			return FALSE;
-		memcpy((void*)m_pOrig, m_data, JMP_32_SIZE);
-		if (!VirtualProtect((LPVOID)m_pOrig, JMP_32_SIZE, m_dwOrigProtect, &oldProtect))
+		memcpy((void*)m_lpSRC, m_data, JMP_SIZE);
+		if (!VirtualProtect((LPVOID)m_lpSRC, JMP_SIZE, m_dwProtect, &oldProtect))
 			return FALSE;
-		if (!FlushInstructionCache(GetCurrentProcess(), m_pOrig, JMP_32_SIZE))
+		if (!FlushInstructionCache(GetCurrentProcess(), m_lpSRC, JMP_SIZE))
 			return FALSE;
 		m_bDetour = FALSE;
 		return TRUE;
@@ -294,119 +299,123 @@ namespace TinyUI
 	}
 	FARPROC TinyDetour::GetOrig() const
 	{
-		return m_pOrig;
+		return m_lpSRC;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	BOOL IsExecutableAddress(LPVOID pAddress)
+	TinyInlineHook::TinyInlineHook()
+		:m_lpSRC(NULL),
+		m_lpDST(NULL),
+		m_dwPatch(0),
+		m_dwTrampoline(0),
+		m_dwProtect(0),
+		m_bDetour(FALSE)
 	{
-		MEMORY_BASIC_INFORMATION mi;
-		VirtualQuery(pAddress, &mi, sizeof(mi));
-		return (mi.State == MEM_COMMIT && (mi.Protect & PAGE_EXECUTE_FLAGS));
+
+	}
+	TinyInlineHook::~TinyInlineHook()
+	{
+
 	}
 	BOOL TinyInlineHook::Initialize(LPVOID lpSRC, LPVOID lpDST)
 	{
 		if (!IsExecutableAddress(lpSRC) || !IsExecutableAddress(lpDST))
 			return FALSE;
-#ifdef _WIN64
-		CALL_ABS call =
-		{
-			0xFF, 0x15, 0x00000002,
-			0xEB, 0x08,
-			0x0000000000000000ULL
+		CALL_REL call = {
+			0xE8,                   // E8 xxxxxxxx: CALL +5+xxxxxxxx
+			0x00000000              // Relative destination address
 		};
-		JMP_ABS jmp =
-		{
-			0xFF, 0x25, 0x00000000,
-			0x0000000000000000ULL
+		JMP_REL jmp = {
+			0xE9,                   // E9 xxxxxxxx: JMP +5+xxxxxxxx
+			0x00000000              // Relative destination address
 		};
-		JCC_ABS jcc =
-		{
-			0x70, 0x0E,
-			0xFF, 0x25, 0x00000000,
-			0x0000000000000000ULL
+		JCC_REL jcc = {
+			0x0F, 0x80,             // 0F8* xxxxxxxx: J** +6+xxxxxxxx
+			0x00000000              // Relative destination address
 		};
-#else
-		CALL_REL call =
+		BYTE	trampoline[128] = { 0 };
+		BYTE*	ps = trampoline;
+		BOOL bBreak = FALSE;
+		for (;;)
 		{
-			0xE8,
-			0x00000000
-		};
-		JMP_REL jmp =
-		{
-			0xE9,
-			0x00000000
-		};
-		JCC_REL jcc =
-		{
-			0x0F, 0x80,
-			0x00000000
-		};
-		m_pSRC = lpSRC;
-		m_pDST = lpDST;
-		ULONG_PTR src = reinterpret_cast<ULONG_PTR>(lpSRC);
-		ULONG_PTR dst = reinterpret_cast<ULONG_PTR>(lpDST);
-#endif
-		UINT8     offset = 0;
-		do
-		{
-			HDE       hs;
-			UINT      size;
-			ULONG_PTR address = reinterpret_cast<ULONG_PTR>(lpSRC) + offset;
-			size = HDE_DISASM((LPVOID)address, &hs);
+			if (bBreak)
+				break;
+			HDE hs = { 0 };
+			LPVOID lpAddress = (LPVOID)((ULONG_PTR)lpSRC + m_dwTrampoline);
+			DWORD dwCopy = HDE_DISASM(lpAddress, &hs);
+			ASSERT(dwCopy == hs.len);
 			if (hs.flags & F_ERROR)
 				return FALSE;
-			if (offset >= sizeof(JMP_REL))
+			do
 			{
-#ifdef _WIN64
-				jmp.address = address;
-#else
-				jmp.relative = (UINT32)(address - (reinterpret_cast<ULONG_PTR>(lpDST) + sizeof(jmp)));
-#endif
-				break;
-			}
-			if (hs.opcode == 0xE8)
-			{
-				ULONG_PTR dest = address + hs.len + (INT32)hs.imm.imm32;
-#if defined(_M_X64) || defined(__x86_64__)
-				call.address = dest;
-#else
-				call.relative = (UINT32)(dest - (pNewInst + sizeof(call)));
-#endif
-			}
-			else if ((hs.opcode & 0xFD) == 0xE9)
-			{
-				ULONG_PTR dest = address + hs.len;
-
-				if (hs.opcode == 0xEB)
-					dest += (INT8)hs.imm.imm8;
-				else
-					dest += (INT32)hs.imm.imm32;
-
-				if (src <= dest  && dest < (src + sizeof(JMP_REL)))
+				if (((ULONG_PTR)lpAddress - (ULONG_PTR)lpSRC) >= sizeof(JMP_REL))
 				{
-
+					dwCopy = sizeof(jmp);//跳回来
+					m_dwPatch = dwCopy;
+					bBreak = TRUE;
+					break;
 				}
-				else
+				if (hs.opcode == 0xE8)//call
 				{
-#ifdef _WIN64
-					jmp.address = dest;
-#else
-					//jmp.relative = (UINT32)(dest - (pNewInst + sizeof(jmp)));
-#endif
-			}
+					ULONG_PTR dest = (ULONG_PTR)lpAddress + hs.len + (INT32)hs.imm.imm32;
+					//(UINT32)(dest - ((ULONG_PTR)lpDST + sizeof(call)));
+					break;
+				}
+				if ((hs.opcode & 0xFD) == 0xE9) // jmp
+				{
+					break;
+				}
+				if (((hs.opcode & 0xF0) == 0x70) || (hs.opcode == 0xE3) || ((hs.opcode2 & 0xF0) == 0x80)) // jcc
+				{
+					break;
+				}
+				if (((hs.opcode & 0xFE) == 0xC2) || // ret
+					((hs.opcode & 0xFD) == 0xE9) || // jmp rel
+					(((hs.modrm & 0xC7) == 0x05) && ((hs.opcode == 0xFF) && (hs.modrm_reg == 4))) || // jmp rip
+					((hs.opcode == 0xFF) && (hs.opcode2 == 0x25))) // jmp abs
+				{
+					break;
+				}
+			} while (0);
+			memcpy(ps, (LPVOID)lpAddress, hs.len);
+			ps += hs.len;
+			m_dwTrampoline += dwCopy;
 		}
-			else if ((hs.opcode & 0xF0) == 0x70
-				|| (hs.opcode & 0xFC) == 0xE0
-				|| (hs.opcode2 & 0xF0) == 0x80)
-			{
+		m_trampoline.Reset(new BYTE[m_dwTrampoline]);
+		memcpy(m_trampoline, trampoline, m_dwTrampoline);
 
-			}
-			else if ((hs.opcode & 0xFC) == 0xE0)
-			{
-				return FALSE;
-			}
-			src += hs.len;
-	} while (1);
-	return TRUE;
-}
+		//DWORD dwOffset = m_dwTrampoline - m_dwPatch;
+
+		//m_pBACK = trampoline + dwOffset;
+		//*m_pBACK = 0xE9;
+		//*(DWORD*)(m_pBACK + 1) = (reinterpret_cast<DWORD>(m_trampoline) - reinterpret_cast<DWORD>(m_pBACK) - m_dwPatch);
+
+		return TRUE;
+	}
+	BOOL TinyInlineHook::BeginDetour()
+	{
+		DWORD oldProtect = 0;
+		if (!VirtualProtect((LPVOID)m_trampoline, m_dwPatch, PAGE_EXECUTE_READWRITE, &oldProtect))
+			return FALSE;
+		DWORD src = DWORD(m_lpSRC);
+		DWORD dst = DWORD(m_lpDST);
+		DWORD relative = 0;
+		relative = dst - (src + m_dwPatch);
+		LPBYTE val = (LPBYTE)m_trampoline;
+		*val = 0xE9;
+		*(DWORD*)(val + 1) = DWORD(relative);
+		if (!FlushInstructionCache(GetCurrentProcess(), m_lpSRC, JMP_SIZE))
+			return FALSE;
+	}
+	BOOL TinyInlineHook::EndDetour()
+	{
+		return TRUE;
+	}
+	BOOL TinyInlineHook::IsValid() const
+	{
+		return m_bDetour;
+	}
+	LPVOID TinyInlineHook::GetOrig()
+	{
+		return reinterpret_cast<LPVOID>(m_trampoline.Ptr());
+	}
 }

@@ -101,8 +101,9 @@ INT WINAPI MyMessageBox(
 	_In_opt_ LPCSTR lpCaption,
 	_In_ UINT uType)
 {
-	INT a = 0;
-	return 1;
+	return 0;
+	//MESSAGEBOX  ps = (MESSAGEBOX)detour.GetOrig();
+	//return ps(NULL, "Ìæ»»ºó", "À²À²À²", MB_OK);
 }
 
 
@@ -212,9 +213,9 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	
 	detour.Initialize((FARPROC)&MessageBox, (FARPROC)&MyMessageBox);
+	detour.BeginDetour();
 
-
-	//MessageBox(NULL, "Ìæ»»Ç°", "À²À²À²", MB_OK);
+	MessageBox(NULL, "Ìæ»»Ç°", "À²À²À²", MB_OK);
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));

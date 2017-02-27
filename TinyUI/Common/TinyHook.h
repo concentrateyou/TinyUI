@@ -7,14 +7,69 @@
 #include "../HDE/hde64.h"
 typedef hde64s HDE;
 #define HDE_DISASM(code, hs) hde64_disasm(code, hs)
+#define MEMORY_SLOT_SIZE 64
+#define TRAMPOLINE_MAX_SIZE (MEMORY_SLOT_SIZE - sizeof(JMP_ABS))
 #else
 #include "../HDE/hde32.h"
 typedef hde32s HDE;
 #define HDE_DISASM(code, hs) hde32_disasm(code, hs)
+#define MEMORY_SLOT_SIZE 32
+#define TRAMPOLINE_MAX_SIZE MEMORY_SLOT_SIZE
 #endif
 
 namespace TinyUI
 {
+#pragma pack(push, 1)
+	/// <summary>
+	/// 相对跳转
+	/// </summary>
+	typedef struct tagJMP_REL
+	{
+		UINT8  opcode;
+		UINT32 operand;
+	} JMP_REL, *PJMP_REL, CALL_REL;
+	/// <summary>
+	/// 绝对跳转
+	/// </summary>
+	typedef struct tagJMP_ABS
+	{
+		UINT8  opcode0;
+		UINT8  opcode1;
+		UINT32 dummy;
+		UINT64 address;
+	} JMP_ABS, *PJMP_ABS;
+	/// <summary>
+	/// 绝对Call
+	/// </summary>
+	typedef struct tagCALL_ABS
+	{
+		UINT8  opcode0;
+		UINT8  opcode1;
+		UINT32 dummy0;
+		UINT8  dummy1;
+		UINT8  dummy2;
+		UINT64 address;
+	} CALL_ABS;
+	typedef struct tagJCC_REL
+	{
+		UINT8  opcode0;
+		UINT8  opcode1;
+		UINT32 operand;
+	} JCC_REL;
+	typedef struct tagJCC_ABS
+	{
+		UINT8  opcode;
+		UINT8  dummy0;
+		UINT8  dummy1;
+		UINT8  dummy2;
+		UINT32 dummy3;
+		UINT64 address;
+	} JCC_ABS;
+#pragma pack(pop)
+#define PAGE_EXECUTE_FLAGS \
+    (PAGE_EXECUTE | PAGE_EXECUTE_READ | PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY)
+	BOOL IsExecutableAddress(LPVOID pAddress);
+
 	class TinyIATFunction;
 	class TinyIATHook;
 	/// <summary>
@@ -70,8 +125,12 @@ namespace TinyUI
 		static PVOID        m_pMaximumApplicationAddress;
 	};
 	SELECTANY PVOID TinyIATFunction::m_pMaximumApplicationAddress = NULL;
-#define JMP_64_SIZE            14
-#define JMP_32_SIZE            5
+
+#ifdef _WIN64
+#define JMP_SIZE            14
+#else
+#define JMP_SIZE            5
+#endif // _WIN64
 	/// <summary>
 	/// 虚表Hook
 	/// </summary>
@@ -80,16 +139,16 @@ namespace TinyUI
 	public:
 		TinyDetour();
 		~TinyDetour();
-		BOOL	Initialize(FARPROC pfnOrig, FARPROC pfnNew);
+		BOOL	Initialize(FARPROC lpSRC, FARPROC lpDST);
 		BOOL	BeginDetour();
 		BOOL	EndDetour();
 		BOOL	IsValid() const;
 		FARPROC GetOrig() const;
 	protected:
-		FARPROC	m_pOrig;
-		FARPROC	m_pTarget;
-		DWORD	m_dwOrigProtect;
-		BYTE	m_data[5];
+		FARPROC	m_lpSRC;
+		FARPROC	m_lpDST;
+		DWORD	m_dwProtect;
+		BYTE	m_data[JMP_SIZE];
 		BOOL	m_bDetour;
 	};
 	inline FARPROC GetVTable(LPVOID ptr, UINT funcOffset)
@@ -105,68 +164,27 @@ namespace TinyUI
 			return;
 		*(vtable + funcOffset) = (ULONG)funcAddress;
 	}
-
-#pragma pack(push, 1)
-	typedef struct tagJMP_REL_SHORT
-	{
-		UINT8  opcode;
-		UINT8  relative;
-	} JMP_REL_SHORT, *PJMP_REL_SHORT;
-
-	typedef struct tagJMP_REL
-	{
-		UINT8  opcode;
-		UINT32 relative;
-	} JMP_REL, *PJMP_REL, CALL_REL;
-
-	typedef struct tagJMP_ABS
-	{
-		UINT8  opcode0;
-		UINT8  opcode1;
-		UINT32 dummy;
-		UINT64 address;
-	} JMP_ABS, *PJMP_ABS;
-
-	typedef struct tagCALL_ABS
-	{
-		UINT8  opcode0;
-		UINT8  opcode1;
-		UINT32 dummy0;
-		UINT8  dummy1;
-		UINT8  dummy2;
-		UINT64 address;
-	} CALL_ABS;
-
-	typedef struct tagJCC_REL
-	{
-		UINT8  opcode0;
-		UINT8  opcode1;
-		UINT32 operand;
-	} JCC_REL;
-
-	typedef struct tagJCC_ABS
-	{
-		UINT8  opcode;
-		UINT8  dummy0;
-		UINT8  dummy1;
-		UINT8  dummy2;
-		UINT32 dummy3;
-		UINT64 address;
-	} JCC_ABS;
-#pragma pack(pop)
-#define PAGE_EXECUTE_FLAGS \
-    (PAGE_EXECUTE | PAGE_EXECUTE_READ | PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY)
-	BOOL IsExecutableAddress(LPVOID pAddress);
 	/// <summary>
-	/// 内联
+	/// 内联Hook
 	/// </summary>
 	class TinyInlineHook
 	{
 	public:
-		BOOL Initialize(LPVOID pTarget, LPVOID pDetour);
+		TinyInlineHook();
+		~TinyInlineHook();
+		BOOL Initialize(LPVOID pSRC, LPVOID pDST);
+		BOOL	BeginDetour();
+		BOOL	EndDetour();
+		BOOL	IsValid() const;
+		LPVOID	GetOrig();
 	protected:
-		LPVOID					m_pSRC;
-		LPVOID					m_pDST;
-		TinyScopedArray<BYTE>	m_data;
+		BOOL					m_bDetour;
+		LPVOID					m_lpSRC;
+		LPVOID					m_lpDST;
+		LPVOID					m_pBACK;
+		DWORD					m_dwProtect;
+		DWORD					m_dwPatch;
+		DWORD					m_dwTrampoline;
+		TinyScopedArray<BYTE>	m_trampoline;
 	};
 }
