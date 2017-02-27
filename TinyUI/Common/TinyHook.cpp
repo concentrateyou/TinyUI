@@ -305,59 +305,76 @@ namespace TinyUI
 	TinyInlineHook::TinyInlineHook()
 		:m_lpSRC(NULL),
 		m_lpDST(NULL),
-		m_dwPatch(0),
-		m_dwTrampoline(0),
-		m_dwProtect(0),
 		m_bDetour(FALSE)
 	{
 
 	}
 	TinyInlineHook::~TinyInlineHook()
 	{
-
+		Uninitialize();
+	}
+	BOOL TinyInlineHook::Uninitialize()
+	{
+		BOOL bRes = TRUE;
+		if (m_pTrampoline)
+		{
+			bRes &= VirtualFree(m_pTrampoline, 0, MEM_RELEASE);
+			m_pTrampoline = NULL;
+		}
+		return bRes;
 	}
 	BOOL TinyInlineHook::Initialize(LPVOID lpSRC, LPVOID lpDST)
 	{
 		if (!IsExecutableAddress(lpSRC) || !IsExecutableAddress(lpDST))
 			return FALSE;
-		CALL_REL call = {
-			0xE8,                   // E8 xxxxxxxx: CALL +5+xxxxxxxx
-			0x00000000              // Relative destination address
+		CALL_REL call =
+		{
+			0xE8,
+			0x00000000
 		};
-		JMP_REL jmp = {
-			0xE9,                   // E9 xxxxxxxx: JMP +5+xxxxxxxx
-			0x00000000              // Relative destination address
+		JMP_REL jmp =
+		{
+			0xE9,
+			0x00000000
 		};
-		JCC_REL jcc = {
-			0x0F, 0x80,             // 0F8* xxxxxxxx: J** +6+xxxxxxxx
-			0x00000000              // Relative destination address
+		JCC_REL jcc =
+		{
+			0x0F, 0x80,
+			0x00000000
 		};
-		BYTE	trampoline[128] = { 0 };
-		BYTE*	ps = trampoline;
+		//64字节足够了
+		m_pTrampoline = VirtualAlloc(NULL, 64, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+		if (!m_pTrampoline)
+			return FALSE;
+		UINT8 srcPos = 0;
+		UINT8 dstPos = 0;
 		BOOL bBreak = FALSE;
 		for (;;)
 		{
 			if (bBreak)
 				break;
 			HDE hs = { 0 };
-			LPVOID lpAddress = (LPVOID)((ULONG_PTR)lpSRC + m_dwTrampoline);
-			DWORD dwCopy = HDE_DISASM(lpAddress, &hs);
+			ULONG_PTR src = (ULONG_PTR)lpSRC + srcPos;
+			ULONG_PTR dst = (ULONG_PTR)m_pTrampoline + dstPos;
+			LPVOID pCopy = NULL;
+			DWORD dwCopy = HDE_DISASM((LPVOID)src, &hs);
 			ASSERT(dwCopy == hs.len);
 			if (hs.flags & F_ERROR)
 				return FALSE;
 			do
 			{
-				if (((ULONG_PTR)lpAddress - (ULONG_PTR)lpSRC) >= sizeof(JMP_REL))
+				pCopy = (LPVOID)src;
+				if (srcPos >= sizeof(JMP_REL))
 				{
-					dwCopy = sizeof(jmp);//跳回来
-					m_dwPatch = dwCopy;
+					jmp.operand = (UINT32)(src - (dst + sizeof(jmp)));
+					pCopy = &jmp;
+					dwCopy = sizeof(jmp);
 					bBreak = TRUE;
 					break;
 				}
 				if (hs.opcode == 0xE8)//call
 				{
-					ULONG_PTR dest = (ULONG_PTR)lpAddress + hs.len + (INT32)hs.imm.imm32;
-					//(UINT32)(dest - ((ULONG_PTR)lpDST + sizeof(call)));
+
 					break;
 				}
 				if ((hs.opcode & 0xFD) == 0xE9) // jmp
@@ -376,46 +393,53 @@ namespace TinyUI
 					break;
 				}
 			} while (0);
-			memcpy(ps, (LPVOID)lpAddress, hs.len);
-			ps += hs.len;
-			m_dwTrampoline += dwCopy;
+			__movsb((LPBYTE)m_pTrampoline + dstPos, (LPBYTE)pCopy, dwCopy);
+			srcPos += hs.len;
+			dstPos += dwCopy;
 		}
-		m_trampoline.Reset(new BYTE[m_dwTrampoline]);
-		memcpy(m_trampoline, trampoline, m_dwTrampoline);
-
-		//DWORD dwOffset = m_dwTrampoline - m_dwPatch;
-
-		//m_pBACK = trampoline + dwOffset;
-		//*m_pBACK = 0xE9;
-		//*(DWORD*)(m_pBACK + 1) = (reinterpret_cast<DWORD>(m_trampoline) - reinterpret_cast<DWORD>(m_pBACK) - m_dwPatch);
-
+		memcpy(m_backup, lpSRC, sizeof(JMP_REL));
+		m_lpSRC = lpSRC;
+		m_lpDST = lpDST;
 		return TRUE;
 	}
 	BOOL TinyInlineHook::BeginDetour()
 	{
-		DWORD oldProtect = 0;
-		if (!VirtualProtect((LPVOID)m_trampoline, m_dwPatch, PAGE_EXECUTE_READWRITE, &oldProtect))
+		SIZE_T size = sizeof(JMP_REL);
+		LPBYTE pSRC = (LPBYTE)m_lpSRC;
+		DWORD dwOldProtect = 0;
+		if (!VirtualProtect(pSRC, size, PAGE_EXECUTE_READWRITE, &dwOldProtect))
 			return FALSE;
-		DWORD src = DWORD(m_lpSRC);
-		DWORD dst = DWORD(m_lpDST);
-		DWORD relative = 0;
-		relative = dst - (src + m_dwPatch);
-		LPBYTE val = (LPBYTE)m_trampoline;
-		*val = 0xE9;
-		*(DWORD*)(val + 1) = DWORD(relative);
-		if (!FlushInstructionCache(GetCurrentProcess(), m_lpSRC, JMP_SIZE))
+		JMP_REL* pJMP = (JMP_REL*)pSRC;
+		pJMP->opcode = 0xE9;
+		pJMP->operand = (UINT32)((LPBYTE)m_lpDST - (pSRC + sizeof(JMP_REL)));
+		if (!VirtualProtect(pSRC, size, dwOldProtect, &dwOldProtect))
 			return FALSE;
+		if (!FlushInstructionCache(GetCurrentProcess(), pSRC, size))
+			return FALSE;
+		m_bDetour = TRUE;
+		return TRUE;
 	}
 	BOOL TinyInlineHook::EndDetour()
 	{
+		SIZE_T size = sizeof(JMP_REL);
+		LPBYTE pSRC = (LPBYTE)m_lpSRC;
+		DWORD dwOldProtect = 0;
+		if (!VirtualProtect(pSRC, size, PAGE_EXECUTE_READWRITE, &dwOldProtect))
+			return FALSE;
+		memcpy(pSRC, m_backup, sizeof(JMP_REL));
+		if (!VirtualProtect(pSRC, size, dwOldProtect, &dwOldProtect))
+			return FALSE;
+		if (!FlushInstructionCache(GetCurrentProcess(), pSRC, size))
+			return FALSE;
+		m_bDetour = FALSE;
 		return TRUE;
 	}
 	BOOL TinyInlineHook::IsValid() const
 	{
 		return m_bDetour;
 	}
-	LPVOID TinyInlineHook::GetOrig()
+	LPVOID TinyInlineHook::GetOrig() const
 	{
-		return reinterpret_cast<LPVOID>(m_trampoline.Ptr());
+		return m_pTrampoline;
 	}
 }

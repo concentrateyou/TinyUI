@@ -172,19 +172,17 @@ namespace TinyUI
 	public:
 		TinyInlineHook();
 		~TinyInlineHook();
-		BOOL Initialize(LPVOID pSRC, LPVOID pDST);
+		BOOL	Initialize(LPVOID pSRC, LPVOID pDST);
+		BOOL	Uninitialize();
 		BOOL	BeginDetour();
 		BOOL	EndDetour();
 		BOOL	IsValid() const;
-		LPVOID	GetOrig();
+		LPVOID	GetOrig() const;
 	protected:
 		BOOL					m_bDetour;
+		BYTE					m_backup[16];
 		LPVOID					m_lpSRC;
 		LPVOID					m_lpDST;
-		LPVOID					m_pBACK;
-		DWORD					m_dwProtect;
-		DWORD					m_dwPatch;
-		DWORD					m_dwTrampoline;
-		TinyScopedArray<BYTE>	m_trampoline;
+		LPVOID					m_pTrampoline;
 	};
 }

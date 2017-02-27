@@ -101,7 +101,8 @@ INT WINAPI MyMessageBox(
 	_In_opt_ LPCSTR lpCaption,
 	_In_ UINT uType)
 {
-	return 0;
+	MESSAGEBOX ps = (MESSAGEBOX)detour.GetOrig();
+	return ps(NULL,"Ìæ»»ºó", "À²À²À²", MB_OK);
 	//MESSAGEBOX  ps = (MESSAGEBOX)detour.GetOrig();
 	//return ps(NULL, "Ìæ»»ºó", "À²À²À²", MB_OK);
 }
@@ -214,6 +215,12 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	
 	detour.Initialize((FARPROC)&MessageBox, (FARPROC)&MyMessageBox);
 	detour.BeginDetour();
+
+	MessageBox(NULL, "Ìæ»»Ç°", "À²À²À²", MB_OK);
+
+	detour.EndDetour();
+
+	detour.Uninitialize();
 
 	MessageBox(NULL, "Ìæ»»Ç°", "À²À²À²", MB_OK);
 
