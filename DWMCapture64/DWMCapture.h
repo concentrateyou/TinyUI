@@ -4,7 +4,7 @@
 #include "IO/TinyTaskBase.h"
 using namespace TinyUI;
 
-namespace DWMDetour64
+namespace DWM
 {
 #define DWM_WINDOWCLASS			TEXT("DWMCapture")
 

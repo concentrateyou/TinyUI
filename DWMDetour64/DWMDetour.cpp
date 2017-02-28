@@ -2,9 +2,9 @@
 //
 
 #include "stdafx.h"
-#include "DWMDetour64.h"
+#include "DWMDetour.h"
 
-namespace DWMDetour64
+namespace DWM
 {
 	DWMCapture::DWMCapture()
 	{

@@ -27,7 +27,7 @@
     <ClInclude Include="IDXGIFactoryDWM.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DWMDetour64.h">
+    <ClInclude Include="DWMDetour.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -35,10 +35,10 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DWMDetour64.cpp">
+    <ClCompile Include="dllmain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="dllmain.cpp">
+    <ClCompile Include="DWMDetour.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
