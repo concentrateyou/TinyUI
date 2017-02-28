@@ -6,6 +6,25 @@
 
 namespace DWM
 {
+	CreateDXGIFactory g_createDXGIFactory;
+	HRESULT WINAPI CreateDXGIFactoryDetour(REFIID iid, void **ppFactory)
+	{
+		if (!ppFactory)
+			return E_INVALIDARG;
+		HRESULT hRes = g_createDXGIFactory(iid, ppFactory);
+		if (FAILED(hRes))
+			return hRes;
+		IUnknown* unknow = reinterpret_cast<IUnknown*>(*ppFactory);
+		hRes = unknow->QueryInterface(&g_dwmCapture.m_dxgiFactoryDWM);
+		if (FAILED(hRes))
+			return hRes;
+
+		return S_OK;
+	}
+
+
+
+	//////////////////////////////////////////////////////////////////////////
 	DWMCapture::DWMCapture()
 	{
 
@@ -36,11 +55,16 @@ namespace DWM
 		return m_task.Close(1500);
 	}
 
-	void DWMCapture::BeginCapture()
+	BOOL DWMCapture::BeginCapture()
 	{
+		TinyScopedLibrary lib("dxgi.dll");
+		CreateDXGIFactory ps = reinterpret_cast<CreateDXGIFactory>(lib.GetFunctionPointer("CreateDXGIFactory"));
+		if (m_createDXGIFactory.Initialize(ps, CreateDXGIFactoryDetour, g_createDXGIFactory))
+		{
 
+		}
 	}
-	void DWMCapture::EndCapture()
+	BOOL DWMCapture::EndCapture()
 	{
 
 	}

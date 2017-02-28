@@ -8,6 +8,11 @@ namespace DWM
 {
 #define DWM_WINDOWCLASS			TEXT("DWMCapture")
 
+	typedef HRESULT(WINAPI *CreateDXGIFactory)(
+		REFIID riid,
+		_Out_ void   **ppFactory
+		);
+
 	class DWMCapture
 	{
 	public:
@@ -16,16 +21,22 @@ namespace DWM
 		BOOL Attach(HMODULE hModule);
 		BOOL Detach(HMODULE hModule);
 	private:
-		void BeginCapture();
-		void EndCapture();
+		BOOL BeginCapture();
+		BOOL EndCapture();
 		void OnMessagePump();
 	private:
 		static LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 	private:
-		IO::TinyTaskBase	m_task;
-		HINSTANCE			m_hInstance;
 		HWND				m_hWNDD3D;
+		IO::TinyTaskBase	m_task;
+		TinyDetour			m_createDXGIFactory;
+		TinyDetour			m_createSwap;
+		HINSTANCE			m_hInstance;
+	public:
+		TinyComPtr<IDXGIFactoryDWM> m_dxgiFactoryDWM;
 	};
+
+	SELECTANY extern DWMCapture g_dwmCapture;
 }
 
 
