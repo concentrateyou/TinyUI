@@ -91,7 +91,7 @@ Media::TinyWaveFile waveFile;
 //	}
 //}
 
-TinyUI::TinyInlineHook detour;
+TinyUI::TinyDetour detour;
 
 typedef INT(WINAPI *MESSAGEBOX)(HWND, LPCSTR, LPCSTR, UINT);
 
