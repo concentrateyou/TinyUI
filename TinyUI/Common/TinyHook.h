@@ -17,9 +17,19 @@ typedef hde32s HDE;
 #define TRAMPOLINE_MAX_SIZE MEMORY_SLOT_SIZE
 #endif
 
+
 namespace TinyUI
 {
 #pragma pack(push, 1)
+	/// <summary>
+	/// 短跳
+	/// </summary>
+	typedef struct tagJMP_REL_SHORT
+	{
+		UINT8  opcode;
+		UINT8  operand;
+	} JMP_REL_SHORT, *PJMP_REL_SHORT;
+
 	/// <summary>
 	/// 相对跳转
 	/// </summary>
@@ -66,6 +76,9 @@ namespace TinyUI
 		UINT64 address;
 	} JCC_ABS;
 #pragma pack(pop)
+
+#define JMP_SIZE 5
+
 #define PAGE_EXECUTE_FLAGS \
     (PAGE_EXECUTE | PAGE_EXECUTE_READ | PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY)
 	BOOL IsExecutableAddress(LPVOID pAddress);
@@ -125,31 +138,28 @@ namespace TinyUI
 		static PVOID        m_pMaximumApplicationAddress;
 	};
 	SELECTANY PVOID TinyIATFunction::m_pMaximumApplicationAddress = NULL;
-
-#ifdef _WIN64
-#define JMP_SIZE            14
-#else
-#define JMP_SIZE            5
-#endif // _WIN64
 	/// <summary>
-	/// 虚表Hook
+	/// 内联Hook(参考mini hook)
 	/// </summary>
 	class TinyDetour
 	{
 	public:
 		TinyDetour();
 		~TinyDetour();
-		BOOL	Initialize(FARPROC lpSRC, FARPROC lpDST);
+		BOOL	Initialize(LPVOID pSRC, LPVOID pDST);
+		BOOL	Uninitialize();
 		BOOL	BeginDetour();
 		BOOL	EndDetour();
 		BOOL	IsValid() const;
-		FARPROC GetOrig() const;
+		LPVOID	GetOrig() const;
 	protected:
-		FARPROC	m_lpSRC;
-		FARPROC	m_lpDST;
-		DWORD	m_dwProtect;
-		BYTE	m_data[JMP_SIZE];
+		BOOL	m_bAbove;
 		BOOL	m_bDetour;
+		BYTE	m_backup[16];
+		LPVOID	m_lpSRC;
+		LPVOID	m_lpDST;
+		LPVOID	m_lpRelay;
+		LPVOID	m_pTrampoline;
 	};
 	inline FARPROC GetVTable(LPVOID ptr, UINT funcOffset)
 	{
@@ -164,25 +174,4 @@ namespace TinyUI
 			return;
 		*(vtable + funcOffset) = (ULONG)funcAddress;
 	}
-	/// <summary>
-	/// 内联Hook
-	/// </summary>
-	class TinyInlineHook
-	{
-	public:
-		TinyInlineHook();
-		~TinyInlineHook();
-		BOOL	Initialize(LPVOID pSRC, LPVOID pDST);
-		BOOL	Uninitialize();
-		BOOL	BeginDetour();
-		BOOL	EndDetour();
-		BOOL	IsValid() const;
-		LPVOID	GetOrig() const;
-	protected:
-		BOOL	m_bDetour;
-		BYTE	m_backup[16];
-		LPVOID	m_lpSRC;
-		LPVOID	m_lpDST;
-		LPVOID	m_pTrampoline;
-	};
 }

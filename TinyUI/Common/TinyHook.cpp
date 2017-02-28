@@ -16,6 +16,21 @@ namespace TinyUI
 		VirtualQuery(pAddress, &mi, sizeof(mi));
 		return (mi.State == MEM_COMMIT && (mi.Protect & PAGE_EXECUTE_FLAGS));
 	}
+	static BOOL IsCodePadding(LPBYTE pInst, UINT size)
+	{
+		UINT i;
+
+		if (pInst[0] != 0x00 && pInst[0] != 0x90 && pInst[0] != 0xCC)
+			return FALSE;
+
+		for (i = 1; i < size; ++i)
+		{
+			if (pInst[i] != pInst[0])
+				return FALSE;
+		}
+		return TRUE;
+	}
+	//////////////////////////////////////////////////////////////////////////
 	TinyIATHook::TinyIATHook()
 	{
 	}
@@ -241,79 +256,19 @@ namespace TinyUI
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinyDetour::TinyDetour()
-		:m_bDetour(FALSE)
+		:m_lpSRC(NULL),
+		m_lpDST(NULL),
+		m_lpRelay(NULL),
+		m_bDetour(FALSE),
+		m_bAbove(FALSE)
 	{
 
 	}
 	TinyDetour::~TinyDetour()
 	{
-
-	}
-	BOOL TinyDetour::Initialize(FARPROC lpSRC, FARPROC lpDST)
-	{
-		if (!IsExecutableAddress(lpSRC) || !IsExecutableAddress(lpDST))
-			return FALSE;
-		m_lpSRC = lpSRC;
-		m_lpDST = lpDST;
-		if (!VirtualProtect((LPVOID)m_lpSRC, JMP_SIZE, PAGE_EXECUTE_READWRITE, &m_dwProtect))
-			return FALSE;
-		memcpy(m_data, (const void*)m_lpSRC, JMP_SIZE);
-		return TRUE;
-	}
-	BOOL TinyDetour::BeginDetour()
-	{
-		if (!IsExecutableAddress(m_lpSRC) || !IsExecutableAddress(m_lpDST))
-			return FALSE;
-		ULONG src = ULONG(m_lpSRC);
-		ULONG dst = ULONG(m_lpDST);
-		ULONG64 relative = 0;
-		relative = dst - (src + JMP_SIZE);
-		DWORD oldProtect;
-		if (!VirtualProtect((LPVOID)m_lpSRC, JMP_SIZE, PAGE_EXECUTE_READWRITE, &oldProtect))
-			return FALSE;
-		LPBYTE val = (LPBYTE)m_lpSRC;
-		*val = 0xE9;
-		*(DWORD*)(val + 1) = DWORD(relative);
-		if (!FlushInstructionCache(GetCurrentProcess(), m_lpSRC, JMP_SIZE))
-			return FALSE;
-		m_bDetour = TRUE;
-		return TRUE;
-	}
-	BOOL TinyDetour::EndDetour()
-	{
-		if (!m_bDetour) return FALSE;
-		DWORD oldProtect;
-		if (!VirtualProtect((LPVOID)m_lpSRC, JMP_SIZE, PAGE_EXECUTE_READWRITE, &oldProtect))
-			return FALSE;
-		memcpy((void*)m_lpSRC, m_data, JMP_SIZE);
-		if (!VirtualProtect((LPVOID)m_lpSRC, JMP_SIZE, m_dwProtect, &oldProtect))
-			return FALSE;
-		if (!FlushInstructionCache(GetCurrentProcess(), m_lpSRC, JMP_SIZE))
-			return FALSE;
-		m_bDetour = FALSE;
-		return TRUE;
-	}
-	BOOL TinyDetour::IsValid() const
-	{
-		return m_bDetour;
-	}
-	FARPROC TinyDetour::GetOrig() const
-	{
-		return m_lpSRC;
-	}
-	//////////////////////////////////////////////////////////////////////////
-	TinyInlineHook::TinyInlineHook()
-		:m_lpSRC(NULL),
-		m_lpDST(NULL),
-		m_bDetour(FALSE)
-	{
-
-	}
-	TinyInlineHook::~TinyInlineHook()
-	{
 		Uninitialize();
 	}
-	BOOL TinyInlineHook::Uninitialize()
+	BOOL TinyDetour::Uninitialize()
 	{
 		BOOL bRes = TRUE;
 		if (m_pTrampoline)
@@ -323,10 +278,29 @@ namespace TinyUI
 		}
 		return bRes;
 	}
-	BOOL TinyInlineHook::Initialize(LPVOID lpSRC, LPVOID lpDST)
+	BOOL TinyDetour::Initialize(LPVOID lpSRC, LPVOID lpDST)
 	{
 		if (!IsExecutableAddress(lpSRC) || !IsExecutableAddress(lpDST))
 			return FALSE;
+#ifdef _WIN64
+		CALL_ABS call =
+		{
+			0xFF, 0x15, 0x00000002,
+			0xEB, 0x08,
+			0x0000000000000000ULL
+		};
+		JMP_ABS jmp =
+		{
+			0xFF, 0x25, 0x00000000,
+			0x0000000000000000ULL
+		};
+		JCC_ABS jcc =
+		{
+			0x70, 0x0E,
+			0xFF, 0x25, 0x00000000,
+			0x0000000000000000ULL
+		};
+#else
 		CALL_REL call =
 		{
 			0xE8,
@@ -342,6 +316,7 @@ namespace TinyUI
 			0x0F, 0x80,
 			0x00000000
 		};
+#endif
 		m_pTrampoline = VirtualAlloc(NULL, 64, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);//64字节足够了
 		if (!m_pTrampoline)
 			return FALSE;
@@ -366,7 +341,11 @@ namespace TinyUI
 				pCopy = (LPVOID)src;
 				if (srcPos >= sizeof(JMP_REL))
 				{
+#ifdef _WIN64
+					jmp.address = src;
+#else
 					jmp.operand = (UINT32)(src - (dst + sizeof(jmp)));
+#endif
 					pCopy = &jmp;
 					copySize = sizeof(jmp);
 					bBreak = TRUE;
@@ -375,7 +354,11 @@ namespace TinyUI
 				if (hs.opcode == 0xE8)	//CALL
 				{
 					ULONG_PTR dest = src + hs.len + (INT32)hs.imm.imm32;
+#ifdef _WIN64
+					call.address = dest;
+#else
 					call.operand = (UINT32)(dest - (dst + sizeof(call)));
+#endif 
 					pCopy = &call;
 					copySize = sizeof(call);
 					break;
@@ -388,15 +371,18 @@ namespace TinyUI
 						dest += (INT8)hs.imm.imm8;
 					else
 						dest += (INT32)hs.imm.imm32;
-					if ((ULONG_PTR)m_lpSRC <= dest
-						&& dest < ((ULONG_PTR)m_lpSRC + sizeof(JMP_REL)))
+					if ((ULONG_PTR)m_lpSRC <= dest && dest < ((ULONG_PTR)m_lpSRC + sizeof(JMP_REL)))
 					{
 						if (destJMP < dest)
 							destJMP = dest;
 					}
 					else
 					{
+#ifdef _WIN64
+						jmp.address = dest;
+#else
 						jmp.operand = (UINT32)(dest - (dst + sizeof(jmp)));
+#endif // _WIN64
 						pCopy = &jmp;
 						copySize = sizeof(jmp);
 						bBreak = (src >= destJMP);
@@ -426,17 +412,22 @@ namespace TinyUI
 					else
 					{
 						UINT8 cond = ((hs.opcode != 0x0F ? hs.opcode : hs.opcode2) & 0x0F);
+#ifdef _WIN64
+						jcc.opcode = 0x71 ^ cond;
+						jcc.address = dest;
+#else
 						jcc.opcode1 = 0x80 | cond;
 						jcc.operand = (UINT32)(dest - (dst + sizeof(jcc)));
+#endif
 						pCopy = &jcc;
 						copySize = sizeof(jcc);
 					}
 					break;
 				}
-				if (((hs.opcode & 0xFE) == 0xC2) || // ret
-					((hs.opcode & 0xFD) == 0xE9) || // jmp rel
-					(((hs.modrm & 0xC7) == 0x05) && ((hs.opcode == 0xFF) && (hs.modrm_reg == 4))) || // jmp rip
-					((hs.opcode == 0xFF) && (hs.opcode2 == 0x25))) // jmp abs
+				if (((hs.opcode & 0xFE) == 0xC2) || // RET
+					((hs.opcode & 0xFD) == 0xE9) || // JMP REL
+					(((hs.modrm & 0xC7) == 0x05) && ((hs.opcode == 0xFF) && (hs.modrm_reg == 4))) || // JMP RIP
+					((hs.opcode == 0xFF) && (hs.opcode2 == 0x25))) // JMP ABS
 				{
 					bBreak = (src >= destJMP);
 					break;
@@ -450,22 +441,60 @@ namespace TinyUI
 			srcPos += hs.len;
 			dstPos += copySize;
 		}
-		memcpy(m_backup, lpSRC, sizeof(JMP_REL));
+		//如果偏移量小于5字节 Try 短跳
+		if (srcPos < sizeof(JMP_REL) && !IsCodePadding((LPBYTE)m_lpSRC + srcPos, sizeof(JMP_REL) - srcPos))
+		{
+			//判断是否支持短跳
+			if (srcPos < sizeof(JMP_REL_SHORT) && !IsCodePadding((LPBYTE)m_lpSRC + srcPos, sizeof(JMP_REL_SHORT) - srcPos))
+				return FALSE;
+			if (!IsExecutableAddress((LPBYTE)m_lpSRC - sizeof(JMP_REL)))
+				return FALSE;
+			if (!IsCodePadding((LPBYTE)m_lpSRC - sizeof(JMP_REL), sizeof(JMP_REL)))
+				return FALSE;
+			memcpy(m_backup, (LPBYTE)m_lpSRC - sizeof(JMP_REL), sizeof(JMP_REL) + sizeof(JMP_REL_SHORT));
+		}
+		else
+		{
+			memcpy(m_backup, lpSRC, sizeof(JMP_REL));
+		}
 		m_lpSRC = lpSRC;
 		m_lpDST = lpDST;
+
+#ifdef _WIN64
+		jmp.address = (ULONG_PTR)m_lpDST;
+		m_lpRelay = (LPBYTE)m_pTrampoline + dstPos;
+		memcpy(m_lpRelay, &jmp, sizeof(jmp));
+#endif
 		return TRUE;
 	}
 
-	BOOL TinyInlineHook::BeginDetour()
+	BOOL TinyDetour::BeginDetour()
 	{
 		SIZE_T size = sizeof(JMP_REL);
 		LPBYTE pSRC = (LPBYTE)m_lpSRC;
+#ifdef _WIN64
+		LPBYTE pDST = (LPBYTE)m_lpRelay;
+#else
+		LPBYTE pDST = (LPBYTE)m_lpDST;
+#endif
+		if (m_bAbove)
+		{
+			pSRC -= sizeof(JMP_REL);
+			size += sizeof(JMP_REL_SHORT);
+		}
 		DWORD dwOldProtect = 0;
 		if (!VirtualProtect(pSRC, size, PAGE_EXECUTE_READWRITE, &dwOldProtect))
 			return FALSE;
 		JMP_REL* pJMP = (JMP_REL*)pSRC;
 		pJMP->opcode = 0xE9;
-		pJMP->operand = (UINT32)((LPBYTE)m_lpDST - (pSRC + sizeof(JMP_REL)));
+		pJMP->operand = (UINT32)((LPBYTE)pDST - (pSRC + sizeof(JMP_REL)));
+
+		if (m_bAbove)
+		{
+			PJMP_REL_SHORT pShortJMP = (PJMP_REL_SHORT)m_lpSRC;
+			pShortJMP->opcode = 0xEB;
+			pShortJMP->operand = (UINT8)(0 - (sizeof(JMP_REL_SHORT) + sizeof(JMP_REL)));
+		}
 		if (!VirtualProtect(pSRC, size, dwOldProtect, &dwOldProtect))
 			return FALSE;
 		if (!FlushInstructionCache(GetCurrentProcess(), pSRC, size))
@@ -473,14 +502,21 @@ namespace TinyUI
 		m_bDetour = TRUE;
 		return TRUE;
 	}
-	BOOL TinyInlineHook::EndDetour()
+	BOOL TinyDetour::EndDetour()
 	{
 		SIZE_T size = sizeof(JMP_REL);
 		LPBYTE pSRC = (LPBYTE)m_lpSRC;
 		DWORD dwOldProtect = 0;
 		if (!VirtualProtect(pSRC, size, PAGE_EXECUTE_READWRITE, &dwOldProtect))
 			return FALSE;
-		memcpy(pSRC, m_backup, sizeof(JMP_REL));
+		if (m_bAbove)
+		{
+			memcpy(pSRC, m_backup, sizeof(JMP_REL) + sizeof(JMP_REL_SHORT));
+		}
+		else
+		{
+			memcpy(pSRC, m_backup, sizeof(JMP_REL));
+		}
 		if (!VirtualProtect(pSRC, size, dwOldProtect, &dwOldProtect))
 			return FALSE;
 		if (!FlushInstructionCache(GetCurrentProcess(), pSRC, size))
@@ -488,11 +524,11 @@ namespace TinyUI
 		m_bDetour = FALSE;
 		return TRUE;
 	}
-	BOOL TinyInlineHook::IsValid() const
+	BOOL TinyDetour::IsValid() const
 	{
 		return m_bDetour;
 	}
-	LPVOID TinyInlineHook::GetOrig() const
+	LPVOID TinyDetour::GetOrig() const
 	{
 		return m_pTrampoline;
 	}
