@@ -1,7 +1,8 @@
 #pragma once
-#include "Common/TinyCommon.h"
+#include "Common/TinyHook.h"
 #include "IO/TinySharedMemory.h"
 #include "IO/TinyTaskBase.h"
+#include "IDXGIFactoryDWM.h"
 using namespace TinyUI;
 
 namespace DWM

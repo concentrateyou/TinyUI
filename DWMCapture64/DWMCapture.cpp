@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "DWMDetour64.h"
+#include "DWMCapture.h"
 
 namespace DWM
 {
@@ -15,15 +15,12 @@ namespace DWM
 		if (FAILED(hRes))
 			return hRes;
 		IUnknown* unknow = reinterpret_cast<IUnknown*>(*ppFactory);
-		hRes = unknow->QueryInterface(&g_dwmCapture.m_dxgiFactoryDWM);
+		hRes = unknow->QueryInterface(__uuidof(IDXGIFactoryDWM), (void**)&g_dwmCapture.m_dxgiFactoryDWM);
 		if (FAILED(hRes))
 			return hRes;
 
 		return S_OK;
 	}
-
-
-
 	//////////////////////////////////////////////////////////////////////////
 	DWMCapture::DWMCapture()
 	{
@@ -59,14 +56,16 @@ namespace DWM
 	{
 		TinyScopedLibrary lib("dxgi.dll");
 		CreateDXGIFactory ps = reinterpret_cast<CreateDXGIFactory>(lib.GetFunctionPointer("CreateDXGIFactory"));
-		if (m_createDXGIFactory.Initialize(ps, CreateDXGIFactoryDetour, g_createDXGIFactory))
+		if (m_createDXGIFactory.Initialize(ps, CreateDXGIFactoryDetour))
 		{
-
+			g_createDXGIFactory = reinterpret_cast<CreateDXGIFactory>(m_createDXGIFactory.GetOrig());
+			return TRUE;
 		}
+		return FALSE;
 	}
 	BOOL DWMCapture::EndCapture()
 	{
-
+		return TRUE;
 	}
 	void DWMCapture::OnMessagePump()
 	{
