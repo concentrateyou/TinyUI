@@ -68,7 +68,7 @@ namespace TinyUI
 		virtual BOOL	BeginTransaction(INT iIsolationLevel = 0);
 		virtual BOOL	CommitTransaction();
 		virtual BOOL	RollbackTransaction();
-		virtual void	GetLatestError(string& error);
+		virtual void	GetLastError(string& error);
 		INT64			GetRowID();//最新的行号
 	private:
 		TinyString				m_connectionString;

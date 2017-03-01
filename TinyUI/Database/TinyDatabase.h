@@ -26,7 +26,7 @@ namespace TinyUI
 		virtual BOOL			BeginTransaction(INT iIsolationLevel = 0) = 0;
 		virtual BOOL			CommitTransaction() = 0;
 		virtual BOOL			RollbackTransaction() = 0;
-		virtual void			GetLatestError(string& error) = 0;
+		virtual void			GetLastError(string& error) = 0;
 	};
 	/// <summary>
 	/// 数据库命令接口

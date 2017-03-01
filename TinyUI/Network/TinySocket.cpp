@@ -251,7 +251,7 @@ namespace TinyUI
 			context->Reserve = reinterpret_cast<LONG_PTR>(this);
 			context->Result = result;
 			context->Result->AsyncState = arg;
-			context->Complete = std::forward<CompleteCallback>(callback);
+			context->Complete = std::move(callback);
 			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
 			return PostQueuedCompletionStatus(m_ioserver->GetIOCP(), 0, 0, ps);
 		}
@@ -276,7 +276,7 @@ namespace TinyUI
 			context->Reserve = reinterpret_cast<LONG_PTR>(socket);
 			context->Result = new AcceptAsyncResult();
 			context->Result->AsyncState = arg;
-			context->Complete = std::forward<CompleteCallback>(callback);
+			context->Complete = std::move(callback);
 			DWORD dwBytes = 0;
 			DWORD dwAddressSize = m_addressFamily == AF_INET ? sizeof(SOCKADDR_IN) + 16 : sizeof(SOCKADDR_IN6) + 16;
 			data.Reset(new CHAR[dwAddressSize * 2]);
@@ -320,7 +320,7 @@ namespace TinyUI
 			context->Reserve = reinterpret_cast<LONG_PTR>(this);
 			context->Result = new AsyncResult();
 			context->Result->AsyncState = arg;
-			context->Complete = std::forward<CompleteCallback>(callback);
+			context->Complete = std::move(callback);
 			size_t size = 0;
 			if (!endpoint.ToSOCKADDR(&s, &size))
 			{
@@ -367,7 +367,7 @@ namespace TinyUI
 			StreamAsyncResult* result = new StreamAsyncResult();
 			context->Result = result;
 			context->Result->AsyncState = arg;
-			context->Complete = std::forward<CompleteCallback>(callback);
+			context->Complete = std::move(callback);
 			result->Array.buf = data;
 			result->Array.len = dwSize;
 			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
@@ -405,7 +405,7 @@ namespace TinyUI
 			StreamAsyncResult* result = new StreamAsyncResult();
 			context->Result = result;
 			context->Result->AsyncState = arg;
-			context->Complete = std::forward<CompleteCallback>(callback);
+			context->Complete = std::move(callback);
 			result->Array.buf = data;
 			result->Array.len = dwSize;
 			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
@@ -447,7 +447,7 @@ namespace TinyUI
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
 			context->OP = OP_SENDTO;
 			context->Reserve = reinterpret_cast<LONG_PTR>(this);
-			context->Complete = std::forward<CompleteCallback>(callback);
+			context->Complete = std::move(callback);
 			DatagramAsyncResult* result = new DatagramAsyncResult();
 			context->Result = result;
 			result->AsyncState = arg;
@@ -487,7 +487,7 @@ namespace TinyUI
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
 			context->OP = OP_RECVFROM;
 			context->Reserve = reinterpret_cast<LONG_PTR>(this);
-			context->Complete = std::forward<CompleteCallback>(callback);
+			context->Complete = std::move(callback);
 			DatagramAsyncResult* result = new DatagramAsyncResult();
 			context->Result = result;
 			result->Array.buf = data;
@@ -536,7 +536,7 @@ namespace TinyUI
 			context->Reserve = reinterpret_cast<LONG_PTR>(this);
 			context->Result = new AsyncResult();
 			context->Result->AsyncState = arg;
-			context->Complete = std::forward<CompleteCallback>(callback);
+			context->Complete = std::move(callback);
 			LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
 			if (!m_disconnectex(m_socket, ps, TF_REUSE_SOCKET, 0) &&
 				ERROR_IO_PENDING != WSAGetLastError())

@@ -149,7 +149,7 @@ namespace TinyUI
 			m_primaryDSB.Release();
 			return TRUE;
 		}
-		BOOL TinySoundPlayer::SetNotifys(DWORD dwSize, LPCDSBPOSITIONNOTIFY pNotify)
+		BOOL TinySoundPlayer::SetNotificationPositions(DWORD dwSize, LPCDSBPOSITIONNOTIFY pNotify)
 		{
 			ASSERT(m_secondaryDSB);
 			TinyComPtr<IDirectSoundNotify>	notify;

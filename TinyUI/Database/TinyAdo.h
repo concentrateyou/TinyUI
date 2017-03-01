@@ -38,7 +38,7 @@ namespace TinyUI
 		virtual BOOL			BeginTransaction(INT iIsolationLevel = adXactReadUncommitted);
 		virtual BOOL			CommitTransaction();
 		virtual BOOL			RollbackTransaction();
-		virtual void			GetLatestError(string& error);
+		virtual void			GetLastError(string& error);
 	private:
 		ADOConnectionPtr	m_connectionPtr;
 	};
@@ -48,7 +48,7 @@ namespace TinyUI
 	class ADOCommand : public IDbCommand
 	{
 		friend class ADOConnection;
-		DISALLOW_IMPLICIT_CONSTRUCTORS(ADOCommand);
+		DISALLOW_IMPLICIT_CONSTRUCTORS(ADOCommand)
 	public:
 		ADOCommand(ADOConnection& connection);
 		virtual ~ADOCommand();

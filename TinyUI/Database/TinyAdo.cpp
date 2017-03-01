@@ -127,7 +127,7 @@ namespace TinyUI
 		}
 		return FALSE;
 	}
-	void	ADOConnection::GetLatestError(string& error)
+	void	ADOConnection::GetLastError(string& error)
 	{
 		ASSERT(m_connectionPtr);
 		m_connectionPtr->Errors->Clear();

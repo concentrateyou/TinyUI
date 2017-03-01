@@ -31,7 +31,7 @@ namespace FLVPlayer
 				vals[0].hEventNotify = m_event[0];
 				vals[1].dwOffset = 8192 * 2 - 1;
 				vals[1].hEventNotify = m_event[1];
-				if (m_player.SetNotifys(2, vals))
+				if (m_player.SetNotificationPositions(2, vals))
 				{
 					m_player.Play();
 				}

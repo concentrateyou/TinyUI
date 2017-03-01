@@ -17,7 +17,7 @@ namespace TinyUI
 			virtual ~TinySoundPlayer();
 		public:
 			BOOL	Initialize(HWND hWND, WAVEFORMATEX* pFMT,DWORD dwSize);
-			BOOL	SetNotifys(DWORD dwSize, LPCDSBPOSITIONNOTIFY pNotify);
+			BOOL	SetNotificationPositions(DWORD dwSize, LPCDSBPOSITIONNOTIFY pNotify);
 			BOOL	Play();
 			BOOL	Fill(BYTE* bits, INT size);
 			BOOL	GetCaps(DSCAPS& caps);

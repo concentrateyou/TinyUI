@@ -75,7 +75,7 @@ namespace TinyUI
 	{
 		return sqlite3_exec(m_sqlite, "ROLLBACK TRANSACTION", NULL, NULL, NULL) == SQLITE_OK;
 	}
-	void SqliteConnection::GetLatestError(string& error)
+	void SqliteConnection::GetLastError(string& error)
 	{
 		ASSERT(m_sqlite);
 		error = const_cast<LPSTR>(sqlite3_errmsg(m_sqlite));
