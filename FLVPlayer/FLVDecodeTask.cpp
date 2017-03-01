@@ -64,8 +64,8 @@ namespace FLVPlayer
 					av.bits = new BYTE[size];
 					memcpy(av.bits, bits, size);
 					av.size = size;
-					av.dts = packet->dts;
-					av.pts = packet->pts;
+					av.sampleDTS = packet->dts;
+					av.samplePTS = packet->pts;
 					m_audioTask->Push(av);
 				}
 			}
@@ -91,8 +91,8 @@ namespace FLVPlayer
 					av.bits = new BYTE[size];
 					memcpy(av.bits, bits, size);
 					av.size = size;
-					av.dts = packet->dts;
-					av.pts = packet->pts;
+					av.sampleDTS = packet->dts;
+					av.samplePTS = packet->pts;
 					m_videoTask->Push(av);
 				}
 			}

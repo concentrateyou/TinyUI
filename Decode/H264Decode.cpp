@@ -60,16 +60,16 @@ namespace Decode
 		Close();
 		return FALSE;
 	}
-	BOOL H264Decode::Decode(BYTE* bi, LONG si, SampleTag& tag, BYTE*& bo, LONG& so)
+	BOOL H264Decode::Decode(SampleTag& tag, BYTE*& bo, LONG& so)
 	{
 		if (!m_context)
 			return FALSE;
 		so = 0;
 		bo = NULL;
-		m_packet.dts = tag.dts;
-		m_packet.pts = tag.pts;
-		m_packet.data = bi;
-		m_packet.size = si;
+		m_packet.dts = tag.sampleDTS;
+		m_packet.pts = tag.samplePTS;
+		m_packet.data = tag.bits;
+		m_packet.size = tag.size;
 		INT iRes = avcodec_send_packet(m_context, &m_packet);
 		if (iRes != 0)
 			return FALSE;

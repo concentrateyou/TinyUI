@@ -69,7 +69,7 @@ namespace FLVPlayer
 		m_queue.pop();
 		BYTE* bo = NULL;
 		LONG  so = 0;
-		if (m_h264->Decode(tag.bits, tag.size, tag, bo, so))
+		if (m_h264->Decode(tag, bo, so))
 		{
 			this->OnRender(bo, so);
 		}

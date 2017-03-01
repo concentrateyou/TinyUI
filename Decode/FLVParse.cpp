@@ -196,7 +196,7 @@ namespace Decode
 		BYTE* bits = data;
 		BYTE aacPacketType = *bits++;
 		size -= 1;
-		INT cts = (Utility::ToINT24(bits) + 0xFF800000) ^ 0xFF800000;
+		INT cts = (ToINT24(bits) + 0xFF800000) ^ 0xFF800000;
 		bits += 3;
 		size -= 3;
 		if (aacPacketType == 0)
@@ -256,7 +256,7 @@ namespace Decode
 			{
 			case 4:
 			{
-				sizeofNALU = Utility::ToINT32(bits);
+				sizeofNALU = ToINT32(bits);
 				bits += 4;
 				offset += 4;
 				TinyScopedPtr<BYTE> val(new BYTE[sizeofNALU + 4]);
@@ -274,7 +274,7 @@ namespace Decode
 			break;
 			case 3:
 			{
-				sizeofNALU = Utility::ToINT24(bits);
+				sizeofNALU = ToINT24(bits);
 				bits += 3;
 				offset += 3;
 				TinyScopedPtr<BYTE> val(new BYTE[sizeofNALU + 4]);
@@ -292,7 +292,7 @@ namespace Decode
 			break;
 			case 2:
 			{
-				sizeofNALU = Utility::ToINT16(data + offset);
+				sizeofNALU = ToINT16(data + offset);
 				bits += 2;
 				offset += 2;
 				TinyScopedPtr<BYTE> val(new BYTE[sizeofNALU + 4]);
@@ -310,7 +310,7 @@ namespace Decode
 			break;
 			case 1:
 			{
-				sizeofNALU = Utility::ToINT8(data + offset);
+				sizeofNALU = ToINT8(data + offset);
 				bits += 1;
 				offset += 1;
 				TinyScopedPtr<BYTE> val(new BYTE[sizeofNALU + 4]);
@@ -375,7 +375,7 @@ namespace Decode
 			return FALSE;
 		m_bAudio = (header.streamType & 0x04) != 0;
 		m_bVideo = (header.streamType & 0x01) != 0;
-		INT offset = Utility::ToINT32(header.offset);
+		INT offset = ToINT32(header.offset);
 		fseek(m_hFile, offset, SEEK_SET);
 		size_t size = 0;
 		for (;;)
@@ -387,7 +387,7 @@ namespace Decode
 			FLV_TAG_HEADER tag = { 0 };
 			if (fread(&tag, sizeof(FLV_TAG_HEADER), 1, m_hFile) <= 0)
 				break;
-			INT size = Utility::ToINT24(tag.size);
+			INT size = ToINT24(tag.size);
 			if (size > 0)
 			{
 				TinyScopedArray<BYTE> data(new BYTE[size]);
@@ -396,11 +396,11 @@ namespace Decode
 				switch (tag.type)
 				{
 				case 0x08:
-					m_dts = static_cast<LONGLONG>(static_cast<UINT32>(Utility::ToINT24(tag.timestamp) | (tag.timestampex << 24)));
+					m_dts = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
 					ParseAudio(data, size);
 					break;
 				case 0x09:
-					m_dts = static_cast<LONGLONG>(static_cast<UINT32>(Utility::ToINT24(tag.timestamp) | (tag.timestampex << 24)));
+					m_dts = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
 					ParseVideo(data, size);
 					break;
 				case 0x12:

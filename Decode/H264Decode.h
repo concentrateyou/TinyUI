@@ -17,7 +17,6 @@ extern "C"
 #pragma comment(lib, "avutil.lib")
 #pragma comment(lib, "swscale.lib")
 using namespace TinyUI;
-using namespace Utility;
 
 namespace Decode
 {
@@ -28,7 +27,7 @@ namespace Decode
 		virtual ~H264Decode();
 		BOOL Initialize(const TinySize& srcsize, const TinySize& dstsize);
 		BOOL Open(BYTE* metadata, LONG size);
-		BOOL Decode(BYTE* bi, LONG si, SampleTag& tag, BYTE*& bo, LONG& so);
+		BOOL Decode(SampleTag& tag, BYTE*& bo, LONG& so);
 		BOOL Close();
 		AVFrame* GetYUV420() const;
 		AVFrame* GetBGR24() const;
