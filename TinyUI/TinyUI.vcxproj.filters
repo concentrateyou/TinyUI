@@ -480,6 +480,12 @@
     <ClInclude Include="HDE\table64.h">
       <Filter>头文件\HDE</Filter>
     </ClInclude>
+    <ClInclude Include="Network\TinyHTTPMessage.h">
+      <Filter>头文件\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\TinyStringPiece.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -877,6 +883,12 @@
     </ClCompile>
     <ClCompile Include="HDE\hde64.c">
       <Filter>源文件\HDE</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\TinyHTTPMessage.cpp">
+      <Filter>源文件\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\TinyStringPiece.cpp">
+      <Filter>源文件\Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

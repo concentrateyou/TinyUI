@@ -182,6 +182,7 @@
     <ClInclude Include="Common\TinyMsg.h" />
     <ClInclude Include="Common\TinyHook.h" />
     <ClInclude Include="Common\TinySignal.h" />
+    <ClInclude Include="Common\TinyStringPiece.h" />
     <ClInclude Include="Common\TinyUtility.h" />
     <ClInclude Include="Common\TinyTreeBox.h" />
     <ClInclude Include="Common\TinyObject.h" />
@@ -260,6 +261,7 @@
     <ClInclude Include="Media\TinyWASAPIAudioRender.h" />
     <ClInclude Include="Media\TinyWave.h" />
     <ClInclude Include="Network\TinyHTTPClient.h" />
+    <ClInclude Include="Network\TinyHTTPMessage.h" />
     <ClInclude Include="Network\TinyHTTPRequest.h" />
     <ClInclude Include="Network\TinyHTTPResponse.h" />
     <ClInclude Include="Network\TinyHTTPSession.h" />
@@ -318,6 +320,7 @@
     <ClCompile Include="Common\TinyMsg.cpp" />
     <ClCompile Include="Common\TinyHook.cpp" />
     <ClCompile Include="Common\TinySignal.cpp" />
+    <ClCompile Include="Common\TinyStringPiece.cpp" />
     <ClCompile Include="Common\TinyUtility.cpp" />
     <ClCompile Include="Common\TinyTreeBox.cpp" />
     <ClCompile Include="Common\TinyObject.cpp" />
@@ -393,6 +396,7 @@
     <ClCompile Include="Media\TinyWASAPIAudioRender.cpp" />
     <ClCompile Include="Media\TinyWave.cpp" />
     <ClCompile Include="Network\TinyHTTPClient.cpp" />
+    <ClCompile Include="Network\TinyHTTPMessage.cpp" />
     <ClCompile Include="Network\TinyHTTPRequest.cpp" />
     <ClCompile Include="Network\TinyHTTPResponse.cpp" />
     <ClCompile Include="Network\TinyHTTPSession.cpp" />
