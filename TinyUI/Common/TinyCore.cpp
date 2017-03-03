@@ -214,7 +214,8 @@ namespace TinyUI
 			ReleaseSRWLockShared(&m_SRW);
 	}
 	//////////////////////////////////////////////////////////////////////////
-	/*TinyPerformanceLock::TinyPerformanceLock()
+#ifdef _WIN32
+	TinyPerformanceLock::TinyPerformanceLock()
 		:m_lock(NULL)
 	{
 		GetSystemInfo(&m_si);
@@ -251,7 +252,8 @@ namespace TinyUI
 	void TinyPerformanceLock::Unlock()
 	{
 		*(m_lock) = 0;
-	};*/
+	};
+#endif // _WIN32
 	//////////////////////////////////////////////////////////////////////////
 	TinySemaphore::TinySemaphore()
 		:m_hSemaphore(NULL)
@@ -332,7 +334,47 @@ namespace TinyUI
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
+	TinyWatcher::TinyWatcher()
+		:m_hWaitHandle(NULL)
+	{
 
+	}
+	TinyWatcher::~TinyWatcher()
+	{
+
+	}
+	BOOL TinyWatcher::IsWatching() const
+	{
+		return m_hWaitHandle != NULL;
+	}
+	BOOL TinyWatcher::Register(HANDLE handle, DWORD dwMS, Callback<void(BOOLEAN)> callback)
+	{
+		if (RegisterWaitForSingleObject(&m_hWaitHandle, handle, &TinyWatcher::WaitOrTimerCallback, this, dwMS, WT_EXECUTEINWAITTHREAD))
+		{
+			m_callback = std::move(callback);
+			m_handle = handle;
+			return TRUE;
+		}
+		return FALSE;
+	}
+	BOOL TinyWatcher::Unregister()
+	{
+		if (UnregisterWait(m_hWaitHandle))
+		{
+			m_hWaitHandle = NULL;
+			return TRUE;
+		}
+		return FALSE;
+	}
+	void CALLBACK TinyWatcher::WaitOrTimerCallback(PVOID pThis, BOOLEAN b)
+	{
+		TinyWatcher* ps = reinterpret_cast<TinyWatcher*>(pThis);
+		if (ps)
+		{
+			ps->m_callback(b);
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
 	TinyScopedLibrary::TinyScopedLibrary()
 		: m_hInstance(NULL)
 	{

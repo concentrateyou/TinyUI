@@ -1,6 +1,7 @@
 #pragma once
 #include "TinyObject.h"
 #include "TinyString.h"
+#include "TinyCallback.h"
 
 /// <summary>
 /// 信号量对象
@@ -131,19 +132,21 @@ namespace TinyUI
 	/// <summary>
 	/// 高性能锁
 	/// </summary>
-	//class TinyPerformanceLock : public TinyObject
-	//{
-	//	DISALLOW_COPY_AND_ASSIGN(TinyPerformanceLock)
-	//public:
-	//	TinyPerformanceLock();
-	//	~TinyPerformanceLock();
-	//public:
-	//	void Lock(LONG value = 1, UINT spin = 2048);
-	//	void Unlock();
-	//private:
-	//	SYSTEM_INFO  m_si;
-	//	volatile LONG* m_lock;
-	//};
+#ifdef _WIN32
+	class TinyPerformanceLock : public TinyObject
+	{
+		DISALLOW_COPY_AND_ASSIGN(TinyPerformanceLock)
+	public:
+		TinyPerformanceLock();
+		~TinyPerformanceLock();
+	public:
+		void Lock(LONG value = 1, UINT spin = 2048);
+		void Unlock();
+	private:
+		SYSTEM_INFO  m_si;
+		volatile LONG* m_lock;
+	};
+#endif // _WIN32
 	/// <summary>
 	/// 条件变量
 	/// </summary>
@@ -161,6 +164,26 @@ namespace TinyUI
 		CRITICAL_SECTION	m_cs;
 		SRWLOCK				m_lock;
 		BOOL				m_allowSRW;
+	};
+	/// <summary>
+	/// Handle监控
+	/// </summary>
+	class TinyWatcher
+	{
+		DISALLOW_COPY_AND_ASSIGN(TinyWatcher)
+	public:
+		TinyWatcher();
+		~TinyWatcher();
+		BOOL IsWatching() const;
+	public:
+		BOOL Register(HANDLE handle, DWORD dwMS, Callback<void(BOOLEAN)> cb);
+		BOOL Unregister();
+	private:
+		static void CALLBACK WaitOrTimerCallback(PVOID ps, BOOLEAN b);
+	private:
+		HANDLE		m_hWaitHandle;
+		HANDLE		m_handle;
+		Callback<void(BOOLEAN)> m_callback;
 	};
 	/// <summary>
 	/// Library封装 
