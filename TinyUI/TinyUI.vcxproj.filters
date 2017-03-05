@@ -486,6 +486,9 @@
     <ClInclude Include="Common\TinyStringPiece.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
+    <ClInclude Include="Network\TinyDNS.h">
+      <Filter>头文件\Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -889,6 +892,9 @@
     </ClCompile>
     <ClCompile Include="Common\TinyStringPiece.cpp">
       <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\TinyDNS.cpp">
+      <Filter>源文件\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

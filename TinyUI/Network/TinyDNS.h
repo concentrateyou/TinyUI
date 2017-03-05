@@ -6,12 +6,12 @@ namespace TinyUI
 	namespace Network
 	{
 		/// <summary>
-		/// URL½âÎö
+		/// DNS½âÎö
 		/// </summary>
-		class TinyURL
+		class TinyDNS
 		{
 		public:
-			TinyURL(const string& url);
+			TinyDNS(const string& url);
 		};
 	}
 }
