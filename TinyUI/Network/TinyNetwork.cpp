@@ -316,7 +316,7 @@ namespace TinyUI
 		//////////////////////////////////////////////////////////////////////////
 		AsyncResult::AsyncResult()
 			:AsyncState(NULL),
-			AsyncHandle(NULL)
+			AsyncHandle(INVALID_HANDLE_VALUE)
 		{
 
 		}
@@ -324,13 +324,13 @@ namespace TinyUI
 		{
 
 		}
+		//////////////////////////////////////////////////////////////////////////
 		PER_IO_CONTEXT::PER_IO_CONTEXT()
 		{
 			Reset();
 		}
 		PER_IO_CONTEXT::~PER_IO_CONTEXT()
 		{
-
 		}
 		void PER_IO_CONTEXT::Reset()
 		{

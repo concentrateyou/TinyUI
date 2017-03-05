@@ -50,8 +50,8 @@ namespace TinyUI
 					TinyScopedPtr<PER_IO_CONTEXT> context(static_cast<PER_IO_CONTEXT*>(lpOP));
 					if (context != NULL)
 					{
-						TinySocket* s = reinterpret_cast<TinySocket*>(context->Reserve);
-						errorCode = GetErrorCode(s->Handle(), lpOP);
+						SOCKET s = static_cast<SOCKET>(completionKey);
+						errorCode = GetErrorCode(s, lpOP);
 						if (!context->Complete.IsNull())
 						{
 							context->Complete(errorCode, context->Result);
@@ -73,16 +73,16 @@ namespace TinyUI
 				case OP_ACCEPT:
 				{
 					SOCKET listen = static_cast<SOCKET>(completionKey);
-					TinySocket* s = reinterpret_cast<TinySocket*>(context->Reserve);
-					if (s != NULL)
+					TinySocket* socket = reinterpret_cast<TinySocket*>(context->Context);
+					if (socket != NULL)
 					{
-						if (setsockopt(s->Handle(), SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, (CHAR*)&listen, sizeof(listen)) != ERROR_SUCCESS)
+						if (setsockopt(socket->Handle(), SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, (CHAR*)&listen, sizeof(listen)) != ERROR_SUCCESS)
 						{
 							errorCode = WSAGetLastError();
 						}
 						else
 						{
-							if (!m_pIOCP->Register((HANDLE)s->Handle(), 0))
+							if (!m_pIOCP->Register((HANDLE)socket->Handle(), 0))
 							{
 								errorCode = WSAGetLastError();
 							}
@@ -90,74 +90,30 @@ namespace TinyUI
 						if (!context->Complete.IsNull())
 						{
 							TinySocket::AcceptAsyncResult* result = static_cast<TinySocket::AcceptAsyncResult*>(context->Result.Ptr());
-							result->AcceptSocket = s;
+							result->AcceptSocket = socket;
 							result->AcceptSocket->m_connect = errorCode == 0;
 							context->Complete(errorCode, context->Result);
 						}
 					}
 				}
 				break;
-				case OP_RECV:
-				{
-					TinySocket* s = reinterpret_cast<TinySocket*>(context->Reserve);
-					if (s != NULL && !context->Complete.IsNull())
-					{
-						TinySocket::StreamAsyncResult* result = static_cast<TinySocket::StreamAsyncResult*>(context->Result.Ptr());
-						result->BytesTransferred = dwNumberOfBytesTransferred;
-						context->Complete(errorCode, context->Result);
-					}
-				}
-				break;
-				case OP_RECVFROM:
-				{
-					TinySocket* s = reinterpret_cast<TinySocket*>(context->Reserve);
-					if (s != NULL && !context->Complete.IsNull())
-					{
-						TinySocket::DatagramAsyncResult* result = static_cast<TinySocket::DatagramAsyncResult*>(context->Result.Ptr());
-						result->BytesTransferred = dwNumberOfBytesTransferred;
-						context->Complete(errorCode, context->Result);
-					}
-				}
-				break;
-				case OP_SEND:
-				{
-					TinySocket* s = reinterpret_cast<TinySocket*>(context->Reserve);
-					if (s != NULL && !context->Complete.IsNull())
-					{
-						TinySocket::StreamAsyncResult* result = static_cast<TinySocket::StreamAsyncResult*>(context->Result.Ptr());
-						result->BytesTransferred = dwNumberOfBytesTransferred;
-						context->Complete(errorCode, context->Result);
-					}
-				}
-				break;
-				case OP_SENDTO:
-				{
-					TinySocket* s = reinterpret_cast<TinySocket*>(context->Reserve);
-					if (s != NULL && !context->Complete.IsNull())
-					{
-						TinySocket::DatagramAsyncResult* result = static_cast<TinySocket::DatagramAsyncResult*>(context->Result.Ptr());
-						result->BytesTransferred = dwNumberOfBytesTransferred;
-						context->Complete(errorCode, context->Result);
-					}
-				}
-				break;
 				case OP_CONNECT:
 				{
-					TinySocket* s = reinterpret_cast<TinySocket*>(context->Reserve);
-					if (s != NULL)
+					TinySocket* socket = reinterpret_cast<TinySocket*>(context->Context);
+					if (socket != NULL)
 					{
-						if (setsockopt(s->Handle(), SOL_SOCKET, SO_UPDATE_CONNECT_CONTEXT, NULL, 0) != ERROR_SUCCESS)
+						if (setsockopt(socket->Handle(), SOL_SOCKET, SO_UPDATE_CONNECT_CONTEXT, NULL, 0) != ERROR_SUCCESS)
 						{
 							errorCode = WSAGetLastError();
 						}
 						else
 						{
-							if (!m_pIOCP->Register((HANDLE)s->Handle(), 0))
+							if (!m_pIOCP->Register((HANDLE)socket->Handle(), 0))
 							{
 								errorCode = WSAGetLastError();
 							}
 						}
-						s->m_connect = TRUE;
+						socket->m_connect = TRUE;
 						if (!context->Complete.IsNull())
 						{
 							context->Complete(errorCode, context->Result);
@@ -167,14 +123,58 @@ namespace TinyUI
 				break;
 				case OP_DISCONNECT:
 				{
-					TinySocket* s = reinterpret_cast<TinySocket*>(context->Reserve);
-					if (s != NULL)
+					TinySocket* socket = reinterpret_cast<TinySocket*>(context->Context);
+					if (socket != NULL)
 					{
-						s->m_connect = FALSE;
+						socket->m_connect = FALSE;
 						if (!context->Complete.IsNull())
 						{
 							context->Complete(errorCode, context->Result);
 						}
+					}
+				}
+				break;
+				case OP_RECV:
+				{
+					TinySocket* socket = reinterpret_cast<TinySocket*>(context->Context);
+					if (socket != NULL && !context->Complete.IsNull())
+					{
+						TinySocket::StreamAsyncResult* result = static_cast<TinySocket::StreamAsyncResult*>(context->Result.Ptr());
+						result->BytesTransferred = dwNumberOfBytesTransferred;
+						context->Complete(errorCode, context->Result);
+					}
+				}
+				break;
+				case OP_RECVFROM:
+				{
+					TinySocket* socket = reinterpret_cast<TinySocket*>(context->Context);
+					if (socket != NULL && !context->Complete.IsNull())
+					{
+						TinySocket::DatagramAsyncResult* result = static_cast<TinySocket::DatagramAsyncResult*>(context->Result.Ptr());
+						result->BytesTransferred = dwNumberOfBytesTransferred;
+						context->Complete(errorCode, context->Result);
+					}
+				}
+				break;
+				case OP_SEND:
+				{
+					TinySocket* socket = reinterpret_cast<TinySocket*>(context->Context);
+					if (socket != NULL && !context->Complete.IsNull())
+					{
+						TinySocket::StreamAsyncResult* result = static_cast<TinySocket::StreamAsyncResult*>(context->Result.Ptr());
+						result->BytesTransferred = dwNumberOfBytesTransferred;
+						context->Complete(errorCode, context->Result);
+					}
+				}
+				break;
+				case OP_SENDTO:
+				{
+					TinySocket* socket = reinterpret_cast<TinySocket*>(context->Context);
+					if (socket != NULL && !context->Complete.IsNull())
+					{
+						TinySocket::DatagramAsyncResult* result = static_cast<TinySocket::DatagramAsyncResult*>(context->Result.Ptr());
+						result->BytesTransferred = dwNumberOfBytesTransferred;
+						context->Complete(errorCode, context->Result);
 					}
 				}
 				break;

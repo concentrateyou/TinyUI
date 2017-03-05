@@ -112,7 +112,7 @@ namespace TinyUI
 		/// <summary>
 		/// OVERLAPPEDÕÿ’πΩ·ππ
 		/// </summary>
-		class NO_VTABLE PER_IO_CONTEXT : public OVERLAPPED
+		class  PER_IO_CONTEXT : public WSAOVERLAPPED
 		{
 		public:
 			PER_IO_CONTEXT();
@@ -120,7 +120,7 @@ namespace TinyUI
 			void Reset();
 		public:
 			DWORD								OP;
-			LONG_PTR							Reserve;
+			LONG_PTR							Context;
 			TinyScopedReferencePtr<AsyncResult>	Result;
 			CompleteCallback					Complete;
 		};

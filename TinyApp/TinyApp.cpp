@@ -23,6 +23,8 @@
 #include "MPG123Decode.h"
 #include "Media/TinyMP3File.h"
 
+#include "Network/TinySocket.h"
+
 BOOL LoadSeDebugPrivilege()
 {
 	DWORD   err;
@@ -91,24 +93,100 @@ Media::TinyWaveFile waveFile;
 //	}
 //}
 
-TinyUI::TinyDetour detour;
+//TinyUI::TinyDetour detour;
+//typedef INT(WINAPI *MESSAGEBOX)(HWND, LPCSTR, LPCSTR, UINT);
+//INT WINAPI MyMessageBox(
+//	_In_opt_ HWND hWnd,
+//	_In_opt_ LPCSTR lpText,
+//	_In_opt_ LPCSTR lpCaption,
+//	_In_ UINT uType)
+//{
+//	MESSAGEBOX ps = (MESSAGEBOX)detour.GetOrig();
+//	return ps(NULL,"Ìæ»»ºó", "À²À²À²", MB_OK);
+//	//MESSAGEBOX  ps = (MESSAGEBOX)detour.GetOrig();
+//	//return ps(NULL, "Ìæ»»ºó", "À²À²À²", MB_OK);
+//}
+//
 
-typedef INT(WINAPI *MESSAGEBOX)(HWND, LPCSTR, LPCSTR, UINT);
+//typedef struct tagTCPMsg
+//{
+//	UINT size;
+//	UINT message;
+//	CHAR context[256];
+//
+//	tagTCPMsg()
+//	{
+//		size = sizeof(tagTCPMsg);
+//	}
+//
+//}TCPMsg;
+//
+//Network::TinyTCPClient client;
+//
+//void OnSend(INT error)
+//{
+//	if (error == 0)
+//	{
+//
+//	}
+//	else
+//	{
+//
+//	}
+//};
+//
+//TCPMsg g_msg;
+//
+//void OnConnect(INT error)
+//{
+//	if (error == 0)
+//	{
+//		g_msg.message = 100;
+//		string val = "test on connect";
+//		memcpy(g_msg.context, &val[0], val.size());
+//		client.Send((CHAR*)&g_msg, g_msg.size, BindCallback(&OnSend));
+//	}
+//}
 
-INT WINAPI MyMessageBox(
-	_In_opt_ HWND hWnd,
-	_In_opt_ LPCSTR lpText,
-	_In_opt_ LPCSTR lpCaption,
-	_In_ UINT uType)
+Network::TinySocket g_socket;
+
+CHAR m_msg[1024] = { 0 };
+
+void ReceiveCallback(DWORD dwError, Network::AsyncResult* async)
 {
-	MESSAGEBOX ps = (MESSAGEBOX)detour.GetOrig();
-	return ps(NULL,"Ìæ»»ºó", "À²À²À²", MB_OK);
-	//MESSAGEBOX  ps = (MESSAGEBOX)detour.GetOrig();
-	//return ps(NULL, "Ìæ»»ºó", "À²À²À²", MB_OK);
+	Network::TinySocket::StreamAsyncResult* result = reinterpret_cast<Network::TinySocket::StreamAsyncResult*>(async);
+	TRACE("ReceiveCallback:%d,%s\n", result->BytesTransferred, m_msg);
+
+	if (!g_socket.BeginReceive(m_msg, 1024, 0, BindCallback(&ReceiveCallback), &g_socket))
+	{
+		INT a = 0;
+	}
 }
 
+void SendCallback(DWORD dwError, Network::AsyncResult* async)
+{
+	Network::TinySocket::StreamAsyncResult* result = reinterpret_cast<Network::TinySocket::StreamAsyncResult*>(async);
+	TRACE("SendCallback:%d\n", result->BytesTransferred);
+}
 
+void ConnectCallback(DWORD dwError, Network::AsyncResult* async)
+{
+	string msg = "test send";
+	memcpy(m_msg, &msg[0], msg.size());
+	if (!g_socket.BeginSend(m_msg, 1024, 0, BindCallback(&SendCallback), &g_socket))
+	{
+		INT a = 0;
+	}
+	if (!g_socket.BeginReceive(m_msg, 1024, 0, BindCallback(&ReceiveCallback), &g_socket))
+	{
+		INT a = 0;
+	}
+}
 
+void AcceptCallback(DWORD dwError, Network::AsyncResult* async)
+{
+
+}
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -212,17 +290,31 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	}
 	decode.Close();*/
 
-	
-	detour.Initialize((FARPROC)&MessageBox, (FARPROC)&MyMessageBox);
-	detour.BeginDetour();
+	//detour.Initialize((FARPROC)&MessageBox, (FARPROC)&MyMessageBox);
+	//detour.BeginDetour();
+	//MessageBox(NULL, "Ìæ»»Ç°", "À²À²À²", MB_OK);
+	//detour.EndDetour();
+	//detour.Uninitialize();
+	//MessageBox(NULL, "Ìæ»»Ç°", "À²À²À²", MB_OK);
 
-	MessageBox(NULL, "Ìæ»»Ç°", "À²À²À²", MB_OK);
+	if (g_socket.Open())
+	{
+		if (g_socket.BeginConnect(Network::IPEndPoint(Network::IPAddress("127.0.0.1"), 5400), BindCallback(&ConnectCallback), &g_socket))
+		{
 
-	detour.EndDetour();
+		}
+		/*if (g_socket.Bind(Network::IPEndPoint(Network::IPAddress("127.0.0.1"), 5400)))
+		{
+			if (g_socket.Listen(10))
+			{
+				if (g_socket.BeginAccept(BindCallback(&AcceptCallback), &g_socket))
+				{
+					INT a = 0;
+				}
+			}
+		}*/
+	}
 
-	detour.Uninitialize();
-
-	MessageBox(NULL, "Ìæ»»Ç°", "À²À²À²", MB_OK);
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));

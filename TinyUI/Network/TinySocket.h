@@ -43,14 +43,18 @@ namespace TinyUI
 			friend class TinyIOServer;
 			friend class TinyIOTask;
 			DISALLOW_COPY_AND_ASSIGN(TinySocket)
-		protected:
+		public:
 			class AcceptAsyncResult : public AsyncResult
 			{
+			public:
+				virtual ~AcceptAsyncResult();
 			public:
 				TinySocket*	AcceptSocket;
 			};
 			class StreamAsyncResult : public AsyncResult
 			{
+			public:
+				virtual ~StreamAsyncResult();
 			public:
 				WSABUF	Array;
 				DWORD	BytesTransferred;
@@ -58,13 +62,10 @@ namespace TinyUI
 			class DatagramAsyncResult : public StreamAsyncResult
 			{
 			public:
+				virtual ~DatagramAsyncResult();
+			public:
 				SOCKADDR	Address;
 				INT			Size;
-			};
-			class ErrorAsyncResult : public StreamAsyncResult
-			{
-			public:
-				DWORD	ErrorCode;
 			};
 		public:
 			TinySocket(TinyIOServer* ioserver = NULL);
@@ -72,11 +73,12 @@ namespace TinyUI
 			TinyIOServer* GetIOServer() const;
 			BOOL IsConnect() const;
 			BOOL Open(INT addressFamily = AF_INET, INT socketType = SOCK_STREAM, INT protocolType = IPPROTO_TCP);
-			BOOL KeepAlive(BOOL bAllow, INT ms);
+			BOOL SetKeepAlive(BOOL bAllow);
 			BOOL IsKeepAlive();
-			BOOL Blocking(BOOL bAllow);
+			BOOL SetBlocking(BOOL bAllow);
 			BOOL Duplicate(DWORD processID, WSAPROTOCOL_INFO& s);
-			INT	 Available();
+			BOOL Available(INT& argp);
+			INT	GetLastError();
 		public:
 			BOOL Bind(const IPEndPoint& endpoint);
 			BOOL Listen(DWORD backlog = SOMAXCONN);
@@ -87,7 +89,7 @@ namespace TinyUI
 			INT	 ReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, IPEndPoint& endpoint);
 			INT	 SendTo(CHAR* data, DWORD dwSize, DWORD dwFlag, IPEndPoint& endpoint);
 			BOOL Post(CompleteCallback&& callback, AsyncResult* result, LPVOID arg);
-			//////////////////////////////////////////////////////////////////////////
+		public:
 			BOOL BeginAccept(CompleteCallback&& callback, LPVOID arg);
 			TinySocket* EndAccept(AsyncResult* result);
 			BOOL BeginConnect(const IPEndPoint& endpoint, CompleteCallback&& callback, LPVOID arg);
@@ -105,6 +107,8 @@ namespace TinyUI
 		public:
 			virtual void Close();
 			virtual BOOL Shutdown(INT how = SD_BOTH);
+		private:
+			static void CALLBACK AsyncCallback(PVOID pThis, BOOLEAN b);
 		protected:
 			TinyIOServer*		m_ioserver;
 			LPFN_DISCONNECTEX	m_disconnectex;

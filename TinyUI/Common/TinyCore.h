@@ -166,18 +166,21 @@ namespace TinyUI
 		BOOL				m_allowSRW;
 	};
 	/// <summary>
-	/// Handle¼à¿Ø
+	/// Òì²½µÈ´ý
 	/// </summary>
-	class TinyWatcher
+	class TinyWait
 	{
-		DISALLOW_COPY_AND_ASSIGN(TinyWatcher)
+		DISALLOW_COPY_AND_ASSIGN(TinyWait)
 	public:
-		TinyWatcher();
-		~TinyWatcher();
-		BOOL IsWatching() const;
+		TinyWait();
+		~TinyWait();
 	public:
-		BOOL Register(HANDLE handle, DWORD dwMS, Callback<void(BOOLEAN)> cb);
+		BOOL IsValid() const;
+		BOOL RegisterOnce(HANDLE handle, DWORD dwMS, Callback<void(BOOLEAN)>&& callback);
+		BOOL Register(HANDLE handle, DWORD dwMS, Callback<void(BOOLEAN)>&& callback);
 		BOOL Unregister();
+	private:
+		BOOL Register(HANDLE handle, DWORD dwMS, DWORD dwFlag, Callback<void(BOOLEAN)>&& callback);
 	private:
 		static void CALLBACK WaitOrTimerCallback(PVOID ps, BOOLEAN b);
 	private:
