@@ -112,8 +112,11 @@ namespace TinyUI
 							{
 								errorCode = WSAGetLastError();
 							}
+							else
+							{
+								socket->m_connect = TRUE;
+							}
 						}
-						socket->m_connect = TRUE;
 						if (!context->Complete.IsNull())
 						{
 							context->Complete(errorCode, context->Result);

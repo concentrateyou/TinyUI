@@ -344,11 +344,7 @@ namespace TinyUI
 		{
 			ASSERT(m_socket);
 			AcceptAsyncResult* accept = static_cast<AcceptAsyncResult*>(result);
-			if (accept)
-			{
-				return accept->AcceptSocket;
-			}
-			return NULL;
+			return accept->AcceptSocket;
 		}
 		BOOL TinySocket::BeginConnect(const IPEndPoint& endpoint, CompleteCallback&& callback, LPVOID arg)
 		{
@@ -449,6 +445,73 @@ namespace TinyUI
 		{
 
 		}
+		BOOL TinySocket::BeginDisconnect(CompleteCallback&& callback, LPVOID arg)
+		{
+			ASSERT(m_socket);
+			TinyAutoLock lock(m_synclock);
+			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
+			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
+			context->OP = OP_DISCONNECT;
+			context->Context = reinterpret_cast<LONG_PTR>(this);
+			context->Result = new AsyncResult();
+			context->Result->AsyncState = arg;
+			context->Complete = std::move(callback);
+			DWORD errorCode = ERROR_SUCCESS;
+			if (!m_disconnectex)
+			{
+				if (!TinySocket::GetDisconnectEx(m_socket, &m_disconnectex))
+				{
+					errorCode = WSAGetLastError();
+					goto OVERLAPPED_ERROR;
+				}
+			}
+			if (m_ioserver != NULL)
+			{
+				LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
+				if (!m_disconnectex(m_socket, ps, TF_REUSE_SOCKET, 0))
+				{
+					errorCode = WSAGetLastError();
+					if (ERROR_IO_PENDING != errorCode)
+					{
+						goto OVERLAPPED_ERROR;
+					}
+				}
+			}
+			else
+			{
+				context->hEvent = WSACreateEvent();
+				LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
+				if (!m_disconnectex(m_socket, ps, TF_REUSE_SOCKET, 0))
+				{
+					errorCode = WSAGetLastError();
+					if (ERROR_IO_PENDING != errorCode)
+					{
+						goto OVERLAPPED_ERROR;
+					}
+					else
+					{
+						if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEINWAITTHREAD | WT_EXECUTEONLYONCE))
+						{
+							errorCode = GetLastError();
+							goto OVERLAPPED_ERROR;
+						}
+					}
+				}
+			}
+			return TRUE;
+		OVERLAPPED_ERROR:
+			if (!callback.IsNull())
+			{
+				callback(errorCode, context->Result);
+			}
+			SAFE_DELETE(context);
+			Close();
+			return FALSE;
+		}
+		void TinySocket::EndDisconnect(AsyncResult* result)
+		{
+
+		}
 		BOOL TinySocket::BeginReceive(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback&& callback, LPVOID arg)
 		{
 			ASSERT(m_socket);
@@ -507,7 +570,7 @@ namespace TinyUI
 			Close();
 			return FALSE;
 		}
-		INT TinySocket::EndReceive(AsyncResult* result)
+		DWORD TinySocket::EndReceive(AsyncResult* result)
 		{
 			StreamAsyncResult* s = static_cast<StreamAsyncResult*>(result);
 			return s->BytesTransferred;
@@ -570,7 +633,7 @@ namespace TinyUI
 			Close();
 			return FALSE;
 		}
-		INT  TinySocket::EndSend(AsyncResult* result)
+		DWORD TinySocket::EndSend(AsyncResult* result)
 		{
 			StreamAsyncResult* s = static_cast<StreamAsyncResult*>(result);
 			return s->BytesTransferred;
@@ -642,7 +705,7 @@ namespace TinyUI
 			Close();
 			return FALSE;
 		}
-		INT  TinySocket::EndSendTo(AsyncResult* result)
+		DWORD  TinySocket::EndSendTo(AsyncResult* result)
 		{
 			DatagramAsyncResult* s = static_cast<DatagramAsyncResult*>(result);
 			return s->BytesTransferred;
@@ -706,79 +769,12 @@ namespace TinyUI
 			Close();
 			return FALSE;
 		}
-		INT  TinySocket::EndReceiveFrom(AsyncResult* result, IPEndPoint& endpoint)
+		DWORD  TinySocket::EndReceiveFrom(AsyncResult* result, IPEndPoint& endpoint)
 		{
 			DatagramAsyncResult* s = static_cast<DatagramAsyncResult*>(result);
 			ASSERT(s);
 			endpoint.FromSOCKADDR(&s->Address, s->Size);
 			return s->BytesTransferred;
-		}
-		BOOL TinySocket::BeginDisconnect(CompleteCallback&& callback, LPVOID arg)
-		{
-			ASSERT(m_socket);
-			TinyAutoLock lock(m_synclock);
-			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
-			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
-			context->OP = OP_DISCONNECT;
-			context->Context = reinterpret_cast<LONG_PTR>(this);
-			context->Result = new AsyncResult();
-			context->Result->AsyncState = arg;
-			context->Complete = std::move(callback);
-			DWORD errorCode = ERROR_SUCCESS;
-			if (!m_disconnectex)
-			{
-				if (!TinySocket::GetDisconnectEx(m_socket, &m_disconnectex))
-				{
-					errorCode = WSAGetLastError();
-					goto OVERLAPPED_ERROR;
-				}
-			}
-			if (m_ioserver != NULL)
-			{
-				LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
-				if (!m_disconnectex(m_socket, ps, TF_REUSE_SOCKET, 0))
-				{
-					errorCode = WSAGetLastError();
-					if (ERROR_IO_PENDING != errorCode)
-					{
-						goto OVERLAPPED_ERROR;
-					}
-				}
-			}
-			else
-			{
-				context->hEvent = WSACreateEvent();
-				LPOVERLAPPED ps = static_cast<LPOVERLAPPED>(context);
-				if (!m_disconnectex(m_socket, ps, TF_REUSE_SOCKET, 0))
-				{
-					errorCode = WSAGetLastError();
-					if (ERROR_IO_PENDING != errorCode)
-					{
-						goto OVERLAPPED_ERROR;
-					}
-					else
-					{
-						if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEINWAITTHREAD | WT_EXECUTEONLYONCE))
-						{
-							errorCode = GetLastError();
-							goto OVERLAPPED_ERROR;
-						}
-					}
-				}
-			}
-			return TRUE;
-		OVERLAPPED_ERROR:
-			if (!callback.IsNull())
-			{
-				callback(errorCode, context->Result);
-			}
-			SAFE_DELETE(context);
-			Close();
-			return FALSE;
-		}
-		void TinySocket::EndDisconnect(AsyncResult* result)
-		{
-
 		}
 		BOOL TinySocket::IsConnect() const
 		{

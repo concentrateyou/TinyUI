@@ -7,6 +7,7 @@
 #include <WinSock2.h>
 #include <mswsock.h>
 #include <Ws2ipdef.h>
+#include <WS2tcpip.h>
 #include <Websocket.h>
 #pragma comment(lib,"Mswsock.lib")
 #pragma comment(lib,"Ws2_32.lib")
@@ -96,6 +97,47 @@ namespace TinyUI
 			IPAddress	m_address;
 			USHORT		m_port;
 		};
+		/// <summary>
+		/// 地址集合
+		/// </summary>
+		class AddressList
+		{
+		public:
+			AddressList();
+			~AddressList();
+			explicit AddressList(const IPEndPoint& endpoint);
+			void SetCanonical(const std::string& canonical);
+			static AddressList CreateFromIPAddress(const IPAddress& address, USHORT port);
+			static AddressList CreateFromIPAddressList(const IPAddressList& addresses, const std::string& canonical);
+			static AddressList CreateFromAddrinfo(const ADDRINFO* head);
+			using iterator = std::vector<IPEndPoint>::iterator;
+			using const_iterator = std::vector<IPEndPoint>::const_iterator;
+			size_t size() const;
+			bool empty() const;
+			void clear();
+			void reserve(size_t count);
+			size_t capacity() const;
+			IPEndPoint& operator[](size_t index);
+			const IPEndPoint& operator[](size_t index) const;
+			IPEndPoint& front();
+			const IPEndPoint& front() const;
+			IPEndPoint& back();
+			const IPEndPoint& back() const;
+			void push_back(const IPEndPoint& val);
+			template <typename InputIt>
+			void insert(iterator pos, InputIt first, InputIt last)
+			{
+				m_endpoints.insert(pos, first, last);
+			}
+			iterator begin();
+			const_iterator begin() const;
+			iterator end();
+			const_iterator end() const;
+		private:
+			std::vector<IPEndPoint> m_endpoints;
+			std::string				m_canonical;
+		};
+
 		/// <summary>
 		/// 异步模型
 		/// </summary>

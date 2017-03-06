@@ -11,7 +11,9 @@ namespace TinyUI
 		class TinyDNS
 		{
 		public:
-			TinyDNS(const string& url);
+			TinyDNS();
+		public:
+			BOOL Resolver(const string& host, const string& service, AddressList& list, INT addressFamily = AF_UNSPEC);
 		};
 	}
 }

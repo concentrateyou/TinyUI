@@ -5,7 +5,10 @@ namespace TinyUI
 {
 	namespace Network
 	{
+		class TinyHTTPResponse
+		{
 
+		};
 	}
 }
 

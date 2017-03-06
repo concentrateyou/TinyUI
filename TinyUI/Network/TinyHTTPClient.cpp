@@ -22,7 +22,6 @@ namespace TinyUI
 		}
 		void TinyHTTPClient::OnConnect(DWORD dwError, AsyncResult* result)
 		{
-			TinySocket::StreamAsyncResult* async = static_cast<TinySocket::StreamAsyncResult*>(result);
 			if (dwError != 0)
 			{
 				OnError(dwError);

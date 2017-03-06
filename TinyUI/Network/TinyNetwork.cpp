@@ -314,6 +314,116 @@ namespace TinyUI
 			return m_address == other.m_address && m_port == other.m_port;
 		}
 		//////////////////////////////////////////////////////////////////////////
+		AddressList::AddressList()
+		{
+		}
+		AddressList::~AddressList()
+		{
+		}
+		AddressList::AddressList(const IPEndPoint& endpoint)
+		{
+			m_endpoints.push_back(endpoint);
+		}
+		AddressList AddressList::CreateFromIPAddress(const IPAddress& address, USHORT port)
+		{
+			return AddressList(IPEndPoint(address, port));
+		}
+		AddressList AddressList::CreateFromIPAddressList(const IPAddressList& addresses, const std::string& canonical)
+		{
+			AddressList list;
+			list.SetCanonical(canonical);
+			for (IPAddressList::const_iterator iter = addresses.begin();iter != addresses.end(); ++iter)
+			{
+				list.push_back(IPEndPoint(*iter, 0));
+			}
+			return list;
+		}
+		AddressList AddressList::CreateFromAddrinfo(const ADDRINFO* hints)
+		{
+			AddressList list;
+			if (hints->ai_canonname)
+			{
+				list.SetCanonical(std::string(hints->ai_canonname));
+			}
+			for (const addrinfo* ai = hints; ai; ai = ai->ai_next)
+			{
+				IPEndPoint ipe;
+				if (ipe.FromSOCKADDR(ai->ai_addr, ai->ai_addrlen))
+				{
+					list.push_back(ipe);
+				}
+			}
+			return list;
+		}
+		void AddressList::SetCanonical(const std::string& canonical)
+		{
+			m_canonical = std::move(canonical);
+		}
+		size_t AddressList::size() const
+		{
+			return m_endpoints.size();
+		}
+		bool AddressList::empty() const
+		{
+			return m_endpoints.empty();
+		}
+		void AddressList::clear()
+		{
+			m_endpoints.clear();
+		}
+		void AddressList::reserve(size_t count)
+		{
+			m_endpoints.reserve(count);
+		}
+		size_t AddressList::capacity() const
+		{
+			return m_endpoints.capacity();
+		}
+		IPEndPoint& AddressList::operator[](size_t index)
+		{
+			return m_endpoints[index];
+		}
+		const IPEndPoint& AddressList::operator[](size_t index) const
+		{
+			return m_endpoints[index];
+		}
+		IPEndPoint& AddressList::front()
+		{
+			return m_endpoints.front();
+		}
+		const IPEndPoint& AddressList::front() const
+		{
+			return m_endpoints.front();
+		}
+		IPEndPoint& AddressList::back()
+		{
+			return m_endpoints.back();
+		}
+		const IPEndPoint& AddressList::back() const
+		{
+			return m_endpoints.back();
+		};
+		void AddressList::push_back(const IPEndPoint& val)
+		{
+			m_endpoints.push_back(val);
+		}
+		AddressList::iterator AddressList::begin()
+		{
+			return m_endpoints.begin();
+		}
+		AddressList::const_iterator AddressList::begin() const
+		{
+			return m_endpoints.begin();
+		}
+		AddressList::iterator AddressList::end()
+		{
+			return m_endpoints.end();
+		}
+		AddressList::const_iterator AddressList::end() const
+		{
+			return m_endpoints.end();
+		}
+		//////////////////////////////////////////////////////////////////////////
 		AsyncResult::AsyncResult()
 			:AsyncState(NULL),
 			AsyncHandle(INVALID_HANDLE_VALUE)

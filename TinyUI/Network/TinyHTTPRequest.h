@@ -1,11 +1,15 @@
 #pragma once
-#include "TinyNetwork.h"
+#include "TinyHTTPMessage.h"
 
 namespace TinyUI
 {
 	namespace Network
 	{
-
+		class TinyHTTPRequest : public TinyHTTPMessage
+		{
+		public:
+			TinyHTTPRequest();
+		};
 	}
 }
 

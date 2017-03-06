@@ -51,7 +51,7 @@ namespace TinyUI
 		}
 		void TinyHTTPMessage::SetEncoding(const std::string& encoding)
 		{
-		
+
 		}
 	}
 }
