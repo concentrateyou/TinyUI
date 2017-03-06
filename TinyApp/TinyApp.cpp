@@ -77,15 +77,14 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	Network::TinyHTTPClient client;
 
-	Network::TinyDNS dns;
+	/*Network::TinyDNS dns;
 	AddressList list;
 	dns.Resolver("www.baidu.com", "http", list);
 	if (list.size() > 0)
 	{
 		client.Connect(list[0]);
 	}
-
-
+*/
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
