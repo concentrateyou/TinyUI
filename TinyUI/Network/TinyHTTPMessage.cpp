@@ -37,21 +37,6 @@ namespace TinyUI
 		{
 
 		}
-		void TinyHTTPMessage::SetVersion(const string& version)
-		{
 		
-		}
-		void TinyHTTPMessage::SetContent(const std::string& type, LONG size)
-		{
-			
-		}
-		void TinyHTTPMessage::SetKeepAlive(BOOL keepAlive)
-		{
-			
-		}
-		void TinyHTTPMessage::SetEncoding(const std::string& encoding)
-		{
-
-		}
 	}
 }

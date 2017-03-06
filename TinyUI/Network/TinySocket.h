@@ -43,7 +43,7 @@ namespace TinyUI
 			friend class TinyIOServer;
 			friend class TinyIOTask;
 			DISALLOW_COPY_AND_ASSIGN(TinySocket)
-		public:
+		private:
 			class AcceptAsyncResult : public AsyncResult
 			{
 			public:

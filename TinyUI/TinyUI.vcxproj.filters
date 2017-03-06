@@ -363,9 +363,6 @@
     <ClInclude Include="Network\TinyHTTPClient.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
-    <ClInclude Include="Network\TinyHTTPSession.h">
-      <Filter>头文件\Network</Filter>
-    </ClInclude>
     <ClInclude Include="Network\TinyWebSocketClient.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
@@ -487,6 +484,9 @@
       <Filter>头文件\Common</Filter>
     </ClInclude>
     <ClInclude Include="Network\TinyDNS.h">
+      <Filter>头文件\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\TinyHTTPSession.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
   </ItemGroup>
@@ -776,9 +776,6 @@
     <ClCompile Include="Network\TinyHTTPClient.cpp">
       <Filter>源文件\Network</Filter>
     </ClCompile>
-    <ClCompile Include="Network\TinyHTTPSession.cpp">
-      <Filter>源文件\Network</Filter>
-    </ClCompile>
     <ClCompile Include="Network\TinyWebSocketClient.cpp">
       <Filter>源文件\Network</Filter>
     </ClCompile>
@@ -894,6 +891,9 @@
       <Filter>源文件\Common</Filter>
     </ClCompile>
     <ClCompile Include="Network\TinyDNS.cpp">
+      <Filter>源文件\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\TinyHTTPSession.cpp">
       <Filter>源文件\Network</Filter>
     </ClCompile>
   </ItemGroup>

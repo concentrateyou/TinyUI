@@ -9,7 +9,7 @@ namespace TinyUI
 	{
 		class TinyInternet;
 		class TinyInternetSession;
-		class TinyHTTPConnection;
+		class TinyHTTPSession;
 
 		class TinyInternet
 		{
@@ -48,7 +48,7 @@ namespace TinyUI
 				DWORD dwFlags = 0);
 			virtual ~TinyInternetSession();
 			DWORD_PTR GetContext() const;
-			TinyHTTPConnection* GetHttpConnection(LPCTSTR pstrServer,
+			TinyHTTPSession* GetHttpConnection(LPCTSTR pstrServer,
 				INTERNET_PORT nPort = INTERNET_INVALID_PORT_NUMBER,
 				LPCTSTR pstrUserName = NULL, LPCTSTR pstrPassword = NULL);
 			BOOL EnableStatusCallback(BOOL bEnable);
@@ -85,7 +85,7 @@ namespace TinyUI
 		class TinyInternetStream : public TinyInternet
 		{
 			friend class TinyInternetSession;
-			friend class TinyHTTPConnection;
+			friend class TinyHTTPSession;
 			DISALLOW_COPY_AND_ASSIGN(TinyInternetStream)
 		public:
 			TinyInternetStream(HINTERNET hRequest, TinyInternetConnection* pConnection, LPCTSTR pstrObject, LPCTSTR pstrServer, LPCTSTR pstrVerb, DWORD_PTR dwContext);
@@ -121,7 +121,7 @@ namespace TinyUI
 		class TinyHTTPStream : public TinyInternetStream
 		{
 		public:
-			TinyHTTPStream(HINTERNET hRequest, TinyHTTPConnection* pConnection, LPCTSTR pstrObject, LPCTSTR pstrServer, LPCTSTR pstrVerb, DWORD_PTR dwContext);
+			TinyHTTPStream(HINTERNET hRequest, TinyHTTPSession* pConnection, LPCTSTR pstrObject, LPCTSTR pstrServer, LPCTSTR pstrVerb, DWORD_PTR dwContext);
 			virtual ~TinyHTTPStream();
 		public:
 			BOOL AddRequestHeaders(LPCTSTR pstrHeaders, DWORD dwFlags = HTTP_ADDREQ_FLAG_ADD_IF_NEW, INT dwHeadersLen = -1);
@@ -138,9 +138,9 @@ namespace TinyUI
 			BOOL QueryInfoStatusCode(DWORD& dwStatusCode) const;
 		};
 		//////////////////////////////////////////////////////////////////////////
-		class TinyHTTPConnection : public TinyInternetConnection
+		class TinyHTTPSession : public TinyInternetConnection
 		{
-			DISALLOW_COPY_AND_ASSIGN(TinyHTTPConnection)
+			DISALLOW_COPY_AND_ASSIGN(TinyHTTPSession)
 		public:
 			enum
 			{
@@ -155,9 +155,9 @@ namespace TinyUI
 				_HTTP_VERB_MAX = 6,
 			};
 		public:
-			TinyHTTPConnection(TinyInternetSession* pSession, HINTERNET hConnected,
+			TinyHTTPSession(TinyInternetSession* pSession, HINTERNET hConnected,
 				LPCTSTR pstrServer, DWORD_PTR dwContext);
-			TinyHTTPConnection(TinyInternetSession* pSession, LPCTSTR pstrServer,
+			TinyHTTPSession(TinyInternetSession* pSession, LPCTSTR pstrServer,
 				INTERNET_PORT nPort = INTERNET_INVALID_PORT_NUMBER,
 				LPCTSTR pstrUserName = NULL, LPCTSTR pstrPassword = NULL,
 				DWORD_PTR dwContext = 1);
@@ -168,7 +168,7 @@ namespace TinyUI
 				LPCTSTR pstrReferer = NULL, DWORD_PTR dwContext = 1,
 				LPCTSTR* ppstrAcceptTypes = NULL, LPCTSTR pstrVersion = NULL,
 				DWORD dwFlags = INTERNET_FLAG_EXISTING_CONNECT);
-			virtual ~TinyHTTPConnection();
+			virtual ~TinyHTTPSession();
 		protected:
 			static const LPCTSTR szHtmlVerbs[];
 		};

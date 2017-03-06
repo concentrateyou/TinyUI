@@ -38,11 +38,8 @@ namespace TinyUI
 		public:
 			TinyHTTPMessage();
 			virtual ~TinyHTTPMessage();
-		public:
-			void SetVersion(const string& version);
-			void SetEncoding(const std::string& encoding);
-			void SetContent(const std::string& type, LONG size);
-			void SetKeepAlive(BOOL keepAlive);
+		protected:
+			map<string, string> m_map;
 		};
 	}
 }

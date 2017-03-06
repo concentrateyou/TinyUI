@@ -9,6 +9,8 @@ namespace TinyUI
 		{
 		public:
 			TinyHTTPRequest();
+		public:
+			void SetVersion(const string& version);
 		};
 	}
 }

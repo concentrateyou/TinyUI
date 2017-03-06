@@ -181,9 +181,9 @@ namespace TinyUI
 		{
 			return m_dwContext;
 		}
-		TinyHTTPConnection* TinyInternetSession::GetHttpConnection(LPCTSTR pstrServer, INTERNET_PORT nPort, LPCTSTR pstrUserName, LPCTSTR pstrPassword)
+		TinyHTTPSession* TinyInternetSession::GetHttpConnection(LPCTSTR pstrServer, INTERNET_PORT nPort, LPCTSTR pstrUserName, LPCTSTR pstrPassword)
 		{
-			TinyHTTPConnection* pResult = new TinyHTTPConnection(this, pstrServer, nPort, pstrUserName, pstrPassword, m_dwContext);
+			TinyHTTPSession* pResult = new TinyHTTPSession(this, pstrServer, nPort, pstrUserName, pstrPassword, m_dwContext);
 			return pResult;
 		}
 		BOOL TinyInternetSession::EnableStatusCallback(BOOL bEnable)
@@ -530,7 +530,7 @@ namespace TinyUI
 			return InternetErrorDlg(hWND, m_hNET, dwError, dwFlags, lppvData);
 		}
 		//////////////////////////////////////////////////////////////////////////
-		TinyHTTPStream::TinyHTTPStream(HINTERNET hRequest, TinyHTTPConnection* pConnection, LPCTSTR pstrObject, LPCTSTR pstrServer, LPCTSTR pstrVerb, DWORD_PTR dwContext)
+		TinyHTTPStream::TinyHTTPStream(HINTERNET hRequest, TinyHTTPSession* pConnection, LPCTSTR pstrObject, LPCTSTR pstrServer, LPCTSTR pstrVerb, DWORD_PTR dwContext)
 			:TinyInternetStream(hRequest, pConnection, pstrObject, pstrServer, pstrVerb, dwContext)
 		{
 
@@ -628,7 +628,7 @@ namespace TinyUI
 			return bRes;
 		}
 		//////////////////////////////////////////////////////////////////////////
-		const LPCTSTR TinyHTTPConnection::szHtmlVerbs[] = {
+		const LPCTSTR TinyHTTPSession::szHtmlVerbs[] = {
 			_T("POST"),
 			_T("GET"),
 			_T("HEAD"),
@@ -637,21 +637,21 @@ namespace TinyUI
 			_T("DELETE"),
 			_T("UNLINK"),
 		};
-		TinyHTTPConnection::TinyHTTPConnection(TinyInternetSession* pSession, HINTERNET hConnected, LPCTSTR pstrServer, DWORD_PTR dwContext)
+		TinyHTTPSession::TinyHTTPSession(TinyInternetSession* pSession, HINTERNET hConnected, LPCTSTR pstrServer, DWORD_PTR dwContext)
 			:TinyInternetConnection(pSession, pstrServer, INTERNET_INVALID_PORT_NUMBER, dwContext)
 		{
 			m_hNET = hConnected;
 		}
-		TinyHTTPConnection::TinyHTTPConnection(TinyInternetSession* pSession, LPCTSTR pstrServer, INTERNET_PORT nPort, LPCTSTR pstrUserName, LPCTSTR pstrPassword, DWORD_PTR dwContext)
+		TinyHTTPSession::TinyHTTPSession(TinyInternetSession* pSession, LPCTSTR pstrServer, INTERNET_PORT nPort, LPCTSTR pstrUserName, LPCTSTR pstrPassword, DWORD_PTR dwContext)
 			: TinyInternetConnection(pSession, pstrServer, nPort, dwContext)
 		{
 			m_hNET = InternetConnect((HINTERNET)*pSession, pstrServer, nPort, pstrUserName, pstrPassword, INTERNET_SERVICE_HTTP, 0, dwContext);
 		}
-		TinyHTTPConnection::~TinyHTTPConnection()
+		TinyHTTPSession::~TinyHTTPSession()
 		{
 
 		}
-		TinyHTTPStream* TinyHTTPConnection::OpenRequest(LPCTSTR pstrVerb,
+		TinyHTTPStream* TinyHTTPSession::OpenRequest(LPCTSTR pstrVerb,
 			LPCTSTR pstrObjectName, LPCTSTR pstrReferer, DWORD_PTR dwContext,
 			LPCTSTR* ppstrAcceptTypes, LPCTSTR pstrVersion, DWORD dwFlags)
 		{
@@ -665,7 +665,7 @@ namespace TinyUI
 			return stream;
 		}
 
-		TinyHTTPStream* TinyHTTPConnection::OpenRequest(INT nVerb,
+		TinyHTTPStream* TinyHTTPSession::OpenRequest(INT nVerb,
 			LPCTSTR pstrObjectName, LPCTSTR pstrReferer, DWORD_PTR dwContext,
 			LPCTSTR* ppstrAcceptTypes,
 			LPCTSTR pstrVersion, DWORD dwFlags)

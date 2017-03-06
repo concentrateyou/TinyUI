@@ -6,6 +6,9 @@ namespace TinyUI
 {
 	namespace Network
 	{
+		TinyHTTPRequest::TinyHTTPRequest()
+		{
 
+		}
 	}
 }
