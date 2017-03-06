@@ -49,7 +49,7 @@ namespace TinyUI
 			hRes = inputType->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_PCM);
 			if (FAILED(hRes))
 				return FALSE;
-			hRes = inputType->SetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE, 16);
+			hRes = inputType->SetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE, pFMT->wBitsPerSample);
 			if (FAILED(hRes))
 				return FALSE;
 			hRes = inputType->SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, pFMT->nSamplesPerSec);
@@ -78,10 +78,10 @@ namespace TinyUI
 			hRes = outputType->SetUINT32(MF_MT_AUDIO_NUM_CHANNELS, pFMT->nChannels);
 			if (FAILED(hRes))
 				return FALSE;
-			hRes = outputType->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, pFMT->nAvgBytesPerSec);
+			hRes = outputType->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, pFMT->nAvgBytesPerSec / 8);
 			if (FAILED(hRes))
 				return FALSE;
-			hRes = outputType->SetUINT32(MF_MT_AAC_PAYLOAD_TYPE, 1);//ADTS
+			hRes = outputType->SetUINT32(MF_MT_AAC_PAYLOAD_TYPE, 0x00);//Window8 1,0|Window7 must be 0
 			if (FAILED(hRes))
 				return FALSE;
 			hRes = outputType->SetUINT32(MF_MT_AAC_AUDIO_PROFILE_LEVEL_INDICATION, 0x29);

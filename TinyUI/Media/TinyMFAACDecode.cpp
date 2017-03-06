@@ -30,13 +30,20 @@ namespace TinyUI
 		{
 
 		}
-		BOOL TinyMFAACDecode::Open(const WAVEFORMATEX* pFMT, DWORD dwBitRate, Callback<void(BYTE*, LONG, LPVOID)>&& callback)
+		BOOL TinyMFAACDecode::Open(const WAVEFORMATEX* pFMT, DWORD dwBitRate, BOOL bADTS, Callback<void(BYTE*, LONG, LPVOID)>&& callback)
 		{
 			HRESULT hRes = S_OK;
 			TinyComPtr<IMFMediaType> inputType;
 			hRes = MFCreateMediaType(&inputType);
 			if (FAILED(hRes))
 				return FALSE;
+			/*HEAACWAVEINFO aacFMT = { 0 };
+			aacFMT.wfx.wFormatTag = WAVE_FORMAT_MPEG_HEAAC;
+			aacFMT.wfx.nChannels = pFMT->nChannels;
+			aacFMT.wfx.cbSize = sizeof(HEAACWAVEINFO) - sizeof(WAVEFORMATEX);
+			aacFMT.wfx.nSamplesPerSec = pFMT->nSamplesPerSec;
+			aacFMT.wPayloadType = bADTS ? 1 : 0;
+			aacFMT.wAudioProfileLevelIndication = 0x29;*/
 			hRes = inputType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio);
 			if (FAILED(hRes))
 				return FALSE;
@@ -52,21 +59,21 @@ namespace TinyUI
 			hRes = inputType->SetUINT32(MF_MT_AUDIO_NUM_CHANNELS, pFMT->nChannels);
 			if (FAILED(hRes))
 				return FALSE;
-			hRes = inputType->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, dwBitRate * 1000 / pFMT->nChannels);
+			hRes = inputType->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, dwBitRate / 8);
 			if (FAILED(hRes))
 				return FALSE;
-			hRes = inputType->SetUINT32(MF_MT_AUDIO_BLOCK_ALIGNMENT, pFMT->nBlockAlign);
+			hRes = inputType->SetUINT32(MF_MT_AUDIO_BLOCK_ALIGNMENT, pFMT->nChannels * 1);
 			if (FAILED(hRes))
 				return FALSE;
-			hRes = inputType->SetUINT32(MF_MT_AAC_PAYLOAD_TYPE, 0x01);//ADTS
+			hRes = inputType->SetUINT32(MF_MT_AAC_PAYLOAD_TYPE, bADTS ? 1 : 0);
 			if (FAILED(hRes))
 				return FALSE;
 			hRes = inputType->SetUINT32(MF_MT_AAC_AUDIO_PROFILE_LEVEL_INDICATION, 0x29);
 			if (FAILED(hRes))
 				return FALSE;
 			BYTE heaac[MF_MT_USER_DATA_SIZE] = { 0 };
-			heaac[0] = 1;
-			heaac[1] = 0x29;
+			heaac[0] = bADTS ? 1 : 0;
+			heaac[2] = 0x29;
 			UINT AUDIO_OBJECT_AAC_LC = 2;
 			UINT SAMPLE_FREQUENCY_IDX = GetSRIndex(pFMT->nSamplesPerSec);
 			UINT audioSpecificConfig = (AUDIO_OBJECT_AAC_LC << 11) | (SAMPLE_FREQUENCY_IDX << 7) | (pFMT->nChannels << 3);

@@ -24,8 +24,9 @@ namespace TinyUI
 		{
 			if (m_socket.IsConnect())
 			{
-				
+				return TRUE;
 			}
+			return FALSE;
 		}
 		void TinyHTTPClient::OnConnect(DWORD dwError, AsyncResult* result)
 		{

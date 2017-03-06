@@ -24,6 +24,8 @@
 #include "Network/TinyURL.h"
 #include "Network/TinyDNS.h"
 
+#include "MediaTest.h"
+
 using namespace TinyUI;
 using namespace TinyUI::Network;
 
@@ -75,16 +77,10 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
-	Network::TinyHTTPClient client;
+	MediaTest test;
+	//test.WaveToAAC("D:\\Íõ·Æ - ´Ò´ÒÄÇÄê.wav", "D:\\test.aac");
+	test.AACToWave("D:\\test.aac", "D:\\test.wav");
 
-	/*Network::TinyDNS dns;
-	AddressList list;
-	dns.Resolver("www.baidu.com", "http", list);
-	if (list.size() > 0)
-	{
-		client.Connect(list[0]);
-	}
-*/
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));

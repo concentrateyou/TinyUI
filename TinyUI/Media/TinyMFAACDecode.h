@@ -33,7 +33,7 @@ namespace TinyUI
 			TinyMFAACDecode();
 			virtual ~TinyMFAACDecode();
 		public:
-			BOOL Open(const WAVEFORMATEX* pFMT, DWORD dwBitRate, Callback<void(BYTE*, LONG, LPVOID)>&& callback);
+			BOOL Open(const WAVEFORMATEX* pFMT, DWORD dwBitRate, BOOL bADTS, Callback<void(BYTE*, LONG, LPVOID)>&& callback);
 		};
 	};
 }

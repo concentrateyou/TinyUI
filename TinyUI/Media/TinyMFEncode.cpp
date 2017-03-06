@@ -240,7 +240,7 @@ namespace TinyUI
 			hRes = m_inputSample->SetSampleTime(hnsSampleTime);
 			if (FAILED(hRes))
 				return FALSE;
-			hRes = m_inputSample->SetSampleDuration(hnsSampleTime);
+			hRes = m_inputSample->SetSampleDuration(hnsSampleDuration);
 			if (FAILED(hRes))
 				return FALSE;
 			DWORD dwStatus = 0;

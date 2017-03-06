@@ -172,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChatFrame.h" />
+    <ClInclude Include="MediaTest.h" />
     <ClInclude Include="MFFrame.h" />
     <ClInclude Include="RenderTask.h" />
     <ClInclude Include="Resource.h" />
@@ -183,6 +184,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChatFrame.cpp" />
+    <ClCompile Include="MediaTest.cpp" />
     <ClCompile Include="MFFrame.cpp" />
     <ClCompile Include="RenderTask.cpp" />
     <ClCompile Include="stdafx.cpp">

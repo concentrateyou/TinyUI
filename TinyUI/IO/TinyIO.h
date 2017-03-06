@@ -52,7 +52,7 @@ namespace TinyUI
 			HANDLE Handle() const;
 			BOOL GetStatus(FileStatus& rStatus) const;
 			virtual BOOL Create(LPCTSTR lpszFileName, DWORD dwFlagsAndAttributes = 0);
-			virtual BOOL Open(LPCTSTR lpszFileName, DWORD dwDesiredAccess, DWORD dwShareMode, DWORD dwFlagsAndAttributes);
+			virtual BOOL Open(LPCTSTR lpszFileName, DWORD dwDesiredAccess = GENERIC_READ, DWORD dwShareMode = FILE_SHARE_READ, DWORD dwFlagsAndAttributes = FILE_ATTRIBUTE_NORMAL);
 			virtual LPTSTR GetTitle() const;
 			virtual LPTSTR GetPath() const;
 			virtual BOOL SetSize(ULARGE_INTEGER dwNewLen);
