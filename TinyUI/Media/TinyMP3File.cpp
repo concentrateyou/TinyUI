@@ -7,7 +7,7 @@ namespace TinyUI
 	{
 		TinyMP3File::TinyMP3File()
 			:m_size(0),
-			m_duration(0),
+			m_sampleTime(0),
 			m_bitRate(0),
 			m_dwMaxOutputBytes(0),
 			m_dwStreamIndex(MF_SOURCE_READER_FIRST_AUDIO_STREAM)
@@ -28,7 +28,7 @@ namespace TinyUI
 		}
 		LONGLONG TinyMP3File::GetDuration() const
 		{
-			return m_duration;
+			return m_sampleTime;
 		}
 		LONG TinyMP3File::GetBitRate() const
 		{
@@ -72,7 +72,7 @@ namespace TinyUI
 			hRes = m_reader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_DURATION, &val);
 			if (FAILED(hRes))
 				return FALSE;
-			m_duration = static_cast<LONGLONG>(val.ulVal);//(val.ulVal / 10000000L);
+			m_sampleTime = static_cast<LONGLONG>(val.ulVal);//(val.ulVal / 10000000L);
 			PropVariantClear(&val);
 			hRes = m_reader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_TOTAL_FILE_SIZE, &val);
 			if (FAILED(hRes))
@@ -168,7 +168,7 @@ namespace TinyUI
 			*lpNumberOfBytesRead = dwCurrentLength;
 			return TRUE;
 		}
-		BOOL TinyMP3File::Write(BYTE* lpBuffer, LONG nNumberOfBytesToRead)
+		BOOL TinyMP3File::Write(BYTE* lpBuffer, LONG nNumberOfBytesToRead, LONGLONG duration)
 		{
 			ASSERT(m_writer);
 			HRESULT hRes = m_sample->RemoveAllBuffers();
@@ -192,17 +192,17 @@ namespace TinyUI
 			hRes = buffer->Unlock();
 			if (FAILED(hRes))
 				return FALSE;
-			hRes = m_sample->SetSampleTime(m_duration);
+			hRes = m_sample->SetSampleTime(m_sampleTime);
 			if (FAILED(hRes))
 				return FALSE;
-			LONGLONG duration = (10000000L * nNumberOfBytesToRead) / m_sFMT.wfx.nAvgBytesPerSec;
-			hRes = m_sample->SetSampleTime(duration);
+			//LONGLONG duration = (10000000L * nNumberOfBytesToRead) / m_sFMT.wfx.nAvgBytesPerSec;
+			hRes = m_sample->SetSampleDuration(duration);
 			if (FAILED(hRes))
 				return FALSE;
 			hRes = m_writer->WriteSample(m_dwStreamIndex, m_sample);
 			if (FAILED(hRes))
 				return FALSE;
-			m_duration += duration;
+			m_sampleTime += duration;
 			return TRUE;
 		}
 		BOOL TinyMP3File::ResetFile()

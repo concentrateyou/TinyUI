@@ -152,5 +152,57 @@ namespace TinyUI
 			TinyReference < MediaBuffer >::Release();
 			return TinyReference < MediaBuffer >::GetReference();
 		}
+		//////////////////////////////////////////////////////////////////////////
+		BOOL WINAPI GetAudioOutputType(REFCLSID clsid, const WAVEFORMATEX* pMFT, IMFMediaType** ppMediaType)
+		{
+			TinyComPtr<IUnknown> unknow;
+			HRESULT hRes = unknow.CoCreateInstance(clsid, NULL, CLSCTX_INPROC_SERVER);
+			if (FAILED(hRes))
+				return FALSE;
+			TinyComPtr<IMFTransform> transform;
+			hRes = unknow->QueryInterface(IID_PPV_ARGS(&transform));
+			if (FAILED(hRes))
+				return FALSE;
+			do
+			{
+				if (clsid == CLSID_AACMFTEncoder)
+				{
+					DWORD dwTypeIndex = 0;
+					TinyComPtr<IMFMediaType> mediaType;
+					while (SUCCEEDED(transform->GetOutputAvailableType(0, dwTypeIndex++, &mediaType)))
+					{
+
+						UINT32 val = 0;
+						mediaType->GetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE, &val);
+						if (val != pMFT->wBitsPerSample && val != 16)
+							continue;
+						mediaType->GetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, &val);
+						if (val != pMFT->nSamplesPerSec)
+							continue;
+						mediaType->GetUINT32(MF_MT_AUDIO_NUM_CHANNELS, &val);
+						if (val != pMFT->nChannels)
+							continue;
+						mediaType->GetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, &val);
+						if (val != (pMFT->nAvgBytesPerSec / 8))
+							continue;
+						*ppMediaType = mediaType.Detach();
+						return TRUE;
+					}
+					break;
+				}
+				if (clsid == CLSID_CMSAACDecMFT)
+				{
+					DWORD dwTypeIndex = 0;
+					TinyComPtr<IMFMediaType> mediaType;
+					while (SUCCEEDED(transform->GetOutputAvailableType(0, dwTypeIndex++, &mediaType)))
+					{
+						*ppMediaType = mediaType.Detach();
+						return TRUE;
+					}
+					break;
+				}
+			} while (0);
+			return FALSE;
+		}
 	};
 }

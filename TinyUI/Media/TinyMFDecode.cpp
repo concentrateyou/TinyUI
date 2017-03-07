@@ -15,6 +15,16 @@ namespace TinyUI
 		{
 			Close();
 		}
+		BOOL TinyMFDecode::GetInputType(IMFMediaType** mediaType)
+		{
+			ASSERT(m_transform);
+			return SUCCEEDED(m_transform->GetInputCurrentType(0, mediaType));
+		}
+		BOOL TinyMFDecode::GetOutputType(IMFMediaType** mediaType)
+		{
+			ASSERT(m_transform);
+			return SUCCEEDED(m_transform->GetOutputCurrentType(0, mediaType));
+		}
 		BOOL TinyMFDecode::Create(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType)
 		{
 			HRESULT hRes = S_OK;

@@ -21,7 +21,7 @@ namespace TinyUI
 			return FALSE;
 		};
 		/// <summary>
-		/// AAC编码 window8开始支持ADTS
+		/// AAC编码(Window8支持ADTS)
 		/// https://msdn.microsoft.com/en-us/library/windows/desktop/dd742785(v=vs.85).aspx
 		/// </summary>
 		class TinyMFAACEncode : public TinyMFEncode
@@ -32,10 +32,6 @@ namespace TinyUI
 			virtual ~TinyMFAACEncode();
 		public:
 			BOOL Open(const WAVEFORMATEX* pFMT, Callback<void(BYTE*, LONG, LPVOID)>&& callback);
-		private:
-			void InitializeASC(const WAVEFORMATEX* pFMT);
-		private:
-			UINT8 m_asc[3];
 		};
 	};
 }

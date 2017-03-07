@@ -106,7 +106,6 @@ namespace TinyUI
 		//////////////////////////////////////////////////////////////////////////
 		class AudioObserver : public TinyLock
 		{
-			DECLARE_DYNAMIC(AudioObserver)
 			DISALLOW_COPY_AND_ASSIGN(AudioObserver)
 		public:
 			AudioObserver();
@@ -147,5 +146,6 @@ namespace TinyUI
 			DWORD	m_dwSize;
 			DWORD	m_dwMaxSize;
 		};
+		BOOL WINAPI GetAudioOutputType(REFCLSID clsid,const WAVEFORMATEX* pMFT, IMFMediaType** mediaType);
 	};
 }

@@ -3,6 +3,7 @@
 
 
 MediaTest::MediaTest()
+	:m_dwhnsSampleDuration(0)
 {
 }
 
@@ -16,21 +17,34 @@ BOOL MediaTest::WaveToAAC(const string& waveFile, const string& aacFile)
 	TinyWaveFile wave;
 	if (!wave.Open((LPTSTR)&waveFile[0]))
 		return FALSE;
-	WAVEFORMATEX aacFormat = *wave.GetFormat();
+	WAVEFORMATEX pcmFormat = *wave.GetFormat();
+	WAVEFORMATEX aacFormat = pcmFormat;
 	aacFormat.nAvgBytesPerSec = 192 * 1000; //BitRate * 1000 /8;
 	if (!aacencode.Open(&aacFormat, BindCallback(&MediaTest::OnAACEncode, this)))
 		return FALSE;
-	m_file.Create(aacFile.c_str());
+
+	TinyComPtr<IMFMediaType> inputType;
+	aacencode.GetInputType(&inputType);
+
+	TinyComPtr<IMFMediaType> outputType;
+	aacencode.GetOutputType(&outputType);
+
+
+	m_mp4File.Create((LPTSTR)aacFile.c_str());
 	BYTE data[1024 * 8];
 	LONG dwNumberOfBytesRead = 0;
+	LONGLONG hnsSampleTime = 0;
 	do
 	{
 		wave.Read(data, 1024 * 8, &dwNumberOfBytesRead);
-		LONGLONG hnsSampleTime = timeGetTime();
-		LONGLONG hnsSampleDuration = (aacFormat.nChannels * (LONGLONG)10000000) / aacFormat.nSamplesPerSec;
-		if (!aacencode.Encode(data, dwNumberOfBytesRead, hnsSampleTime, hnsSampleDuration))
+		LONGLONG hnsSampleDuration = (dwNumberOfBytesRead* (LONGLONG)10000000) / pcmFormat.nAvgBytesPerSec;
+		//if (m_mp4File.Write(data, dwNumberOfBytesRead, hnsSampleDuration))
+		//{
+		//	hnsSampleTime += hnsSampleDuration;
+		//}
+		if (aacencode.Encode(data, dwNumberOfBytesRead, hnsSampleTime, hnsSampleDuration))
 		{
-			INT a = 0;
+			hnsSampleTime += hnsSampleDuration;
 		}
 	} while (dwNumberOfBytesRead > 0);
 	aacencode.Close();
@@ -40,9 +54,9 @@ BOOL MediaTest::WaveToAAC(const string& waveFile, const string& aacFile)
 
 BOOL MediaTest::AACToWave(const string& aacFile, const string& waveFile)
 {
-	m_file.Open(aacFile.c_str());
+	//m_file.Open(aacFile.c_str());
 
-	WAVEFORMATEX waveFormat;
+	/*WAVEFORMATEX waveFormat;
 	waveFormat.wFormatTag = WAVE_FORMAT_PCM;
 	waveFormat.cbSize = 0;
 	waveFormat.nChannels = 2;
@@ -66,13 +80,26 @@ BOOL MediaTest::AACToWave(const string& aacFile, const string& waveFile)
 		}
 	} while (dwNumberOfBytesRead > 0);
 
-	aacdecode.Close();
+	aacdecode.Close();*/
 	return TRUE;
+}
+
+BOOL MediaTest::WaveToMP3(const string& waveFile, const string& mp3File)
+{
+	TinyWaveFile wave;
+	if (!wave.Open((LPTSTR)&waveFile[0]))
+		return FALSE;
+	if (!mp3encode.Open(&aacFormat, BindCallback(&MediaTest::OnAACEncode, this)))
+		return FALSE;
+}
+BOOL MediaTest::MP3ToWave(const string& mp3File, const string& waveFile)
+{
+
 }
 
 void MediaTest::OnAACEncode(BYTE* bits, LONG size, LPVOID)
 {
-	m_file.Write(bits, size);
+	m_mp4File.Write(bits, size);
 }
 
 void MediaTest::OnAACDecode(BYTE* bits, LONG size, LPVOID)

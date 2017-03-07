@@ -6,7 +6,7 @@ namespace TinyUI
 	namespace Media
 	{
 		/// <summary>
-		/// MP3±àÂë
+		/// MP3±àÂë(Window8Ö§³Ö)
 		/// https://msdn.microsoft.com/en-us/library/windows/desktop/hh162907(v=vs.85).aspx
 		/// </summary>
 		class TinyMFMP3Encode : public TinyMFEncode

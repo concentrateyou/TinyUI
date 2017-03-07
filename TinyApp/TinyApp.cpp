@@ -78,8 +78,8 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadSeDebugPrivilege();
 
 	MediaTest test;
-	//test.WaveToAAC("D:\\王菲 - 匆匆那年.wav", "D:\\王菲 - 匆匆那年.aac");
-	test.AACToWave("D:\\test.aac", "D:\\test.wav");
+	test.WaveToAAC("D:\\王菲 - 匆匆那年.wav", "D:\\王菲 - 匆匆那年.aac");
+	//test.AACToWave("D:\\test.aac", "D:\\test.wav");
 
 
 	::DefWindowProc(NULL, 0, 0, 0L);

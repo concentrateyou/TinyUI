@@ -22,7 +22,7 @@ namespace TinyUI
 			BOOL Create(LPTSTR pzFile, const MPEGLAYER3WAVEFORMAT* pMFT);
 			BOOL Open(LPTSTR pzFile);
 			BOOL Read(BYTE* lpBuffer, LONG nNumberOfBytesToRead, LPLONG lpNumberOfBytesRead, LONGLONG& timestamp);
-			BOOL Write(BYTE* lpBuffer, LONG nNumberOfBytesToRead);
+			BOOL Write(BYTE* lpBuffer, LONG nNumberOfBytesToRead, LONGLONG duration);
 			BOOL ResetFile();
 			BOOL Close();
 			static void FormatConvert(const WAVEFORMATEX* pFMT, DWORD dwBitRate, MPEGLAYER3WAVEFORMAT* pMP3FMT);
@@ -31,7 +31,7 @@ namespace TinyUI
 			DWORD						m_dwMaxOutputBytes;
 			LONG						m_bitRate;
 			LONG						m_size;
-			LONGLONG					m_duration;
+			LONGLONG					m_sampleTime;
 			MPEGLAYER3WAVEFORMAT		m_sFMT;
 			TinyComPtr<IMFSample>		m_sample;
 			TinyComPtr<IMFSinkWriter>	m_writer;

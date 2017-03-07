@@ -15,6 +15,16 @@ namespace TinyUI
 		{
 			Close();
 		}
+		BOOL TinyMFEncode::GetInputType(IMFMediaType** mediaType)
+		{
+			ASSERT(m_transform);
+			return SUCCEEDED(m_transform->GetInputCurrentType(0, mediaType));
+		}
+		BOOL TinyMFEncode::GetOutputType(IMFMediaType** mediaType)
+		{
+			ASSERT(m_transform);
+			return SUCCEEDED(m_transform->GetOutputCurrentType(0, mediaType));
+		}
 		BOOL TinyMFEncode::Create(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType)
 		{
 			HRESULT hRes = S_OK;
@@ -307,6 +317,7 @@ namespace TinyUI
 			m_transform.Release();
 			return TRUE;
 		}
+
 		void TinyMFEncode::OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
 		{
 			if (!m_callback.IsNull())

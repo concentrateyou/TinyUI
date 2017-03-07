@@ -20,6 +20,9 @@ namespace TinyUI
 			BOOL Open(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType, Callback<void(BYTE*, LONG, LPVOID)>&& callback);
 			BOOL Encode(const BYTE* bits, DWORD size, LONGLONG hnsSampleTime, LONGLONG hnsSampleDuration);
 			BOOL Close();
+			BOOL GetInputType(IMFMediaType** mediaType);
+			BOOL GetOutputType(IMFMediaType** mediaType);
+			
 		private:
 			BOOL Create(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType);
 			BOOL CreateInputSample(const BYTE* bits, DWORD size);

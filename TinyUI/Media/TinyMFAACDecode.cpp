@@ -30,6 +30,7 @@ namespace TinyUI
 		{
 
 		}
+
 		BOOL TinyMFAACDecode::Open(const WAVEFORMATEX* pFMT, DWORD dwBitRate, BOOL bADTS, Callback<void(BYTE*, LONG, LPVOID)>&& callback)
 		{
 			HRESULT hRes = S_OK;
@@ -55,7 +56,7 @@ namespace TinyUI
 			hRes = inputType->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, dwBitRate / 8);
 			if (FAILED(hRes))
 				return FALSE;
-			hRes = inputType->SetUINT32(MF_MT_AUDIO_BLOCK_ALIGNMENT, pFMT->nBlockAlign);
+			hRes = inputType->SetUINT32(MF_MT_AUDIO_BLOCK_ALIGNMENT, 1);
 			if (FAILED(hRes))
 				return FALSE;
 			hRes = inputType->SetUINT32(MF_MT_AAC_PAYLOAD_TYPE, bADTS ? 1 : 0);
