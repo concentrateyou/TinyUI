@@ -37,13 +37,6 @@ namespace TinyUI
 			hRes = MFCreateMediaType(&inputType);
 			if (FAILED(hRes))
 				return FALSE;
-			/*HEAACWAVEINFO aacFMT = { 0 };
-			aacFMT.wfx.wFormatTag = WAVE_FORMAT_MPEG_HEAAC;
-			aacFMT.wfx.nChannels = pFMT->nChannels;
-			aacFMT.wfx.cbSize = sizeof(HEAACWAVEINFO) - sizeof(WAVEFORMATEX);
-			aacFMT.wfx.nSamplesPerSec = pFMT->nSamplesPerSec;
-			aacFMT.wPayloadType = bADTS ? 1 : 0;
-			aacFMT.wAudioProfileLevelIndication = 0x29;*/
 			hRes = inputType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio);
 			if (FAILED(hRes))
 				return FALSE;
@@ -62,7 +55,7 @@ namespace TinyUI
 			hRes = inputType->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, dwBitRate / 8);
 			if (FAILED(hRes))
 				return FALSE;
-			hRes = inputType->SetUINT32(MF_MT_AUDIO_BLOCK_ALIGNMENT, pFMT->nChannels * 1);
+			hRes = inputType->SetUINT32(MF_MT_AUDIO_BLOCK_ALIGNMENT, pFMT->nBlockAlign);
 			if (FAILED(hRes))
 				return FALSE;
 			hRes = inputType->SetUINT32(MF_MT_AAC_PAYLOAD_TYPE, bADTS ? 1 : 0);

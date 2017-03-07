@@ -6,6 +6,7 @@ namespace TinyUI
 {
 	namespace Media
 	{
+
 		/// <summary>
 		/// MFT½âÂë
 		/// </summary>
@@ -32,7 +33,7 @@ namespace TinyUI
 		private:
 			TinyComPtr<IMFSample>		m_inputSample;
 			TinyComPtr<IMFSample>		m_outputSample;
-			Callback<void(BYTE*, LONG, LPVOID)> m_callback;
+			Callback<void(BYTE*, LONG, LPVOID)>	 m_callback;
 		};
 	};
 }

@@ -25,22 +25,61 @@ namespace TinyUI
 			hRes = unknow->QueryInterface(IID_PPV_ARGS(&m_transform));
 			if (FAILED(hRes))
 				return FALSE;
-			if (outputType != NULL)
-			{
-				hRes = m_transform->SetOutputType(0, outputType, 0);
-				if (FAILED(hRes))
-					return FALSE;
-			}
 			if (inputType != NULL)
 			{
 				hRes = m_transform->SetInputType(0, inputType, 0);
 				if (FAILED(hRes))
 					return FALSE;
+				if (outputType == NULL)
+				{
+					TinyComPtr<IMFMediaType> mediaType;
+					DWORD dwTypeIndex = 0;
+					while (SUCCEEDED(m_transform->GetOutputAvailableType(0, dwTypeIndex++, &mediaType)))
+					{
+						BOOL bResult;
+						hRes = mediaType->Compare(mediaType, MF_ATTRIBUTES_MATCH_OUR_ITEMS, &bResult);
+						if (SUCCEEDED(hRes) && bResult)
+						{
+							hRes = m_transform->SetOutputType(0, mediaType, 0);
+							if (FAILED(hRes))
+								return FALSE;
+							break;
+						}
+					}
+				}
+				else
+				{
+					hRes = m_transform->SetOutputType(0, outputType, 0);
+					if (FAILED(hRes))
+						return FALSE;
+				}
 			}
-			hRes = m_transform->GetOutputStreamInfo(0, &m_outputInfo);
+			else
+			{
+				if (outputType == NULL)
+					return FALSE;
+				hRes = m_transform->SetOutputType(0, outputType, 0);
+				if (FAILED(hRes))
+					return FALSE;
+				TinyComPtr<IMFMediaType> mediaType;
+				DWORD dwTypeIndex = 0;
+				while (SUCCEEDED(m_transform->GetInputAvailableType(0, dwTypeIndex++, &mediaType)))
+				{
+					BOOL bResult;
+					hRes = mediaType->Compare(mediaType, MF_ATTRIBUTES_MATCH_OUR_ITEMS, &bResult);
+					if (SUCCEEDED(hRes) && bResult)
+					{
+						hRes = m_transform->SetInputType(0, mediaType, 0);
+						if (FAILED(hRes))
+							return FALSE;
+						break;
+					}
+				}
+			}
+			hRes = m_transform->GetInputStreamInfo(0, &m_inputInfo);
 			if (FAILED(hRes))
 				return FALSE;
-			hRes = m_transform->GetInputStreamInfo(0, &m_inputInfo);
+			hRes = m_transform->GetOutputStreamInfo(0, &m_outputInfo);
 			if (FAILED(hRes))
 				return FALSE;
 			return TRUE;

@@ -147,11 +147,5 @@ namespace TinyUI
 			DWORD	m_dwSize;
 			DWORD	m_dwMaxSize;
 		};
-		//////////////////////////////////////////////////////////////////////////
-		class AudioOperations
-		{
-		public:
-			static void StereoToMono(const BYTE* src, DWORD dwSamples, BYTE* dst);
-		};
 	};
 }

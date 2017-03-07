@@ -152,15 +152,5 @@ namespace TinyUI
 			TinyReference < MediaBuffer >::Release();
 			return TinyReference < MediaBuffer >::GetReference();
 		}
-		//////////////////////////////////////////////////////////////////////////
-		void AudioOperations::StereoToMono(const BYTE* src, DWORD dwSamples, BYTE* dst)
-		{
-			DWORD count = dwSamples / 2;
-
-			for (DWORD i = 0; i < count; i++)
-			{
-				
-			}
-		}
 	};
 }

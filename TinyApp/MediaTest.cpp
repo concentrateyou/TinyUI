@@ -28,8 +28,13 @@ BOOL MediaTest::WaveToAAC(const string& waveFile, const string& aacFile)
 		wave.Read(data, 1024 * 8, &dwNumberOfBytesRead);
 		LONGLONG hnsSampleTime = timeGetTime();
 		LONGLONG hnsSampleDuration = (aacFormat.nChannels * (LONGLONG)10000000) / aacFormat.nSamplesPerSec;
-		aacencode.Encode(data, dwNumberOfBytesRead, hnsSampleTime, hnsSampleDuration);
+		if (!aacencode.Encode(data, dwNumberOfBytesRead, hnsSampleTime, hnsSampleDuration))
+		{
+			INT a = 0;
+		}
 	} while (dwNumberOfBytesRead > 0);
+	aacencode.Close();
+
 	return TRUE;
 }
 
@@ -50,14 +55,18 @@ BOOL MediaTest::AACToWave(const string& aacFile, const string& waveFile)
 	if (!aacdecode.Open(&waveFormat, 192000, FALSE, BindCallback(&MediaTest::OnAACDecode, this)))
 		return FALSE;
 
-	BYTE data[1024];
+	BYTE data[1024 * 8];
 	LONG dwNumberOfBytesRead = 0;
 	do
 	{
-		dwNumberOfBytesRead = m_file.Read(data, 1024);
-		aacdecode.Decode(data, dwNumberOfBytesRead);
+		dwNumberOfBytesRead = m_file.Read(data, 1024 * 8);
+		if (!aacdecode.Decode(data, dwNumberOfBytesRead))
+		{
+			INT a = 0;
+		}
 	} while (dwNumberOfBytesRead > 0);
 
+	aacdecode.Close();
 	return TRUE;
 }
 

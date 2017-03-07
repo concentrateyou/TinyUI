@@ -21,7 +21,7 @@ namespace TinyUI
 			return FALSE;
 		};
 		/// <summary>
-		/// AAC编码
+		/// AAC编码 window8开始支持ADTS
 		/// https://msdn.microsoft.com/en-us/library/windows/desktop/dd742785(v=vs.85).aspx
 		/// </summary>
 		class TinyMFAACEncode : public TinyMFEncode

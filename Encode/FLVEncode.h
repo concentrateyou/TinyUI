@@ -2,8 +2,6 @@
 
 namespace Encode
 {
-
-
 	class FLVEncode
 	{
 	public:
