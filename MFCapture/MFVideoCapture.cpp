@@ -108,9 +108,7 @@ namespace MF
 	void MFVideoCapture::Deallocate()
 	{
 		if (m_reader)
-		{
 			m_reader->Flush(static_cast<DWORD>(MF_SOURCE_READER_ALL_STREAMS));
-		}
 		m_bCapturing = FALSE;
 	}
 	BOOL MFVideoCapture::GetDevices(vector<Name>& names)
@@ -168,7 +166,8 @@ namespace MF
 		if (FAILED(hRes))
 			return FALSE;
 		TinyComPtr<IMFMediaSource> source;
-		hRes = MFCreateDeviceSource(attributes, &source);
+		BOOL fSelect = FALSE;
+		hRes = MFCreateDeviceSource(attributes, &source);//这个函数有内存泄漏
 		if (FAILED(hRes))
 			return FALSE;
 		TinyComPtr<IMFSourceReader> reader;
@@ -184,31 +183,27 @@ namespace MF
 			UINT32 cx, cy;
 			hRes = MFGetAttributeSize(mediaType, MF_MT_FRAME_SIZE, &cx, &cy);
 			if (FAILED(hRes))
-				continue;
+				goto MFERROR;
 			MFVideoCaptureParam param;
 			param.SetSize(cx, cy);
 			UINT32 numerator, denominator;
 			hRes = MFGetAttributeRatio(mediaType, MF_MT_FRAME_RATE, &numerator, &denominator);
 			if (FAILED(hRes))
-				continue;
+				goto MFERROR;
 			param.SetRate(denominator ? static_cast<FLOAT>(numerator) / denominator : 0.0F);
 			GUID guid;
 			hRes = mediaType->GetGUID(MF_MT_SUBTYPE, &guid);
 			if (FAILED(hRes))
-				continue;
+				goto MFERROR;
 			VideoPixelFormat format;
 			if (!GetFormat(guid, &format))
-				continue;
+				goto MFERROR;
 			param.SetFormat(format);
 			params.push_back(param);
 		}
-		if (source != NULL)
-			source->Shutdown();
-		return TRUE;
 	MFERROR:
-		if (source != NULL)
-			source->Shutdown();
-		return FALSE;
+		source->Shutdown();
+		return SUCCEEDED(hRes);
 	}
 	BOOL MFVideoCapture::GetDeviceSource(const MFVideoCapture::Name& device, IMFMediaSource** source)
 	{

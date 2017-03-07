@@ -62,9 +62,15 @@ LRESULT MFFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandle
 	MF::MFVideoCapture::GetDevices(names);
 	vector<MF::MFVideoCaptureParam> params;
 	MF::MFVideoCapture::GetDeviceParams(names[0], params);
-	m_param = params[10];
+
+	/*for (INT i = 0;i < params.size();i++)
+	{
+		TRACE("%d, desc:%s\n", i, params[i].ToString().c_str());
+	}*/
+
+	/*m_param = params[10];
 	m_capture.Initialize(names[0], BindCallback(&MFFrame::OnFrame, this));
-	m_capture.Allocate(m_param);
+	m_capture.Allocate(m_param);*/
 
 	return FALSE;
 }
@@ -73,7 +79,7 @@ LRESULT MFFrame::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 {
 	bHandled = FALSE;
 
-	m_capture.Uninitialize();
+	//m_capture.Uninitialize();
 
 	return FALSE;
 }
@@ -98,9 +104,9 @@ void MFFrame::OnFrame(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)
 	MF::MFVideoCapture* capture = reinterpret_cast<MF::MFVideoCapture*>(ps);
 	ASSERT(capture);
 	HDC hDC = GetDC(m_hWND);
-	TinyCanvas canvas(hDC);
-	TinyImage image;
-	image.Load(bits, size);
-	canvas.DrawImage(image, 0, 0, image.GetSize().cx, image.GetSize().cy);
+	//TinyCanvas canvas(hDC);
+	//TinyImage image;
+	//image.Load(bits, size);
+	//canvas.DrawImage(image, 0, 0, image.GetSize().cx, image.GetSize().cy);
 	ReleaseDC(m_hWND, hDC);
 }

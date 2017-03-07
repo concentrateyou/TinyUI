@@ -77,16 +77,12 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
-	MediaTest test;
-	test.WaveToAAC("D:\\王菲 - 匆匆那年.wav", "D:\\王菲 - 匆匆那年.aac");
-	//test.AACToWave("D:\\test.aac", "D:\\test.wav");
-
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	CMainFrame uiImpl;
+	MFFrame uiImpl;
 	uiImpl.Create(NULL, 50, 50, 800, 800);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();

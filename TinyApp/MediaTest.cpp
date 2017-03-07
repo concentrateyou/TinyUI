@@ -89,12 +89,11 @@ BOOL MediaTest::WaveToMP3(const string& waveFile, const string& mp3File)
 	TinyWaveFile wave;
 	if (!wave.Open((LPTSTR)&waveFile[0]))
 		return FALSE;
-	if (!mp3encode.Open(&aacFormat, BindCallback(&MediaTest::OnAACEncode, this)))
-		return FALSE;
+	return TRUE;
 }
 BOOL MediaTest::MP3ToWave(const string& mp3File, const string& waveFile)
 {
-
+	return FALSE;
 }
 
 void MediaTest::OnAACEncode(BYTE* bits, LONG size, LPVOID)
