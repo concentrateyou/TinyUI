@@ -9,10 +9,9 @@ namespace DWM
 {
 #define DWM_WINDOWCLASS			TEXT("DWMCapture")
 
-	typedef HRESULT(WINAPI *CreateDXGIFactory)(
-		REFIID riid,
-		_Out_ void   **ppFactory
-		);
+	typedef HRESULT(WINAPI *Present)(IDXGISwapChainDWM* swap, UINT sync_interval, UINT flags);
+	typedef HRESULT(WINAPI *CreateDXGIFactory)(REFIID riid, _Out_ void   **ppFactory);
+	typedef HRESULT(WINAPI *CreateSwapChain)(IDXGIFactoryDWM *factory, IUnknown *pDevice, DXGI_SWAP_CHAIN_DESC *pDesc, IDXGIOutput *pOutput, IDXGISwapChainDWM **ppSwapChainDWM);
 
 	class DWMCapture
 	{
@@ -30,9 +29,13 @@ namespace DWM
 	private:
 		HWND				m_hWNDD3D;
 		IO::TinyTaskBase	m_task;
+		HINSTANCE			m_hInstance;
+	public:
 		TinyDetour			m_createDXGIFactory;
 		TinyDetour			m_createSwap;
-		HINSTANCE			m_hInstance;
+	public:
+		CreateDXGIFactory	m_origCreateDXGIFactory;
+		CreateSwapChain		m_origCreateSwapChain;
 	public:
 		TinyComPtr<IDXGIFactoryDWM> m_dxgiFactoryDWM;
 	};

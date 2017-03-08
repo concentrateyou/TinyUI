@@ -32,8 +32,13 @@ namespace DWM
 		ULONG STDMETHODCALLTYPE AddRef(void) OVERRIDE;
 		ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
 	private:
+		TinyComPtr<IDXGIResource>	m_desktop;
 		RECT						m_monitor;
 		HANDLE						m_handle;
+		TinyEvent					m_event;
+		TinyMutex					m_mutex;
+		HCURSOR						m_lastCursor;
+		ICONINFO					m_cursorInfo;
 	};
 
 }

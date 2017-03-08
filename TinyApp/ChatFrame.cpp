@@ -49,14 +49,43 @@ HICON ChatFrame::RetrieveIcon()
 LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	m_rectTracker.m_rectangle = { 10,10,100,100 };
-	m_rectTracker.m_handleSize = 4;
+
+	DISPLAY_DEVICE dd;
+	ZeroMemory(&dd, sizeof(dd));
+	dd.cb = sizeof(dd);
+	DWORD dwCount = 0;
+	string RDP_EMD = "RDP Encoder Mirror Driver";
+	while (EnumDisplayDevices(NULL, dwCount, &dd, EDD_GET_DEVICE_INTERFACE_NAME))
+	{
+		dwCount++;
+
+		DEVMODE dm;
+		ZeroMemory(&dm, sizeof(DEVMODE));
+		dm.dmSize = sizeof(DEVMODE);
+		dm.dmDriverExtra = 0;
+		if (EnumDisplaySettingsEx(dd.DeviceName, ENUM_CURRENT_SETTINGS, &dm, EDS_ROTATEDMODE))
+		{
+			m_capture = new RDPCapture(dd, dm);
+		}
+
+		if (RDP_EMD == string(dd.DeviceString))
+		{
+			TinyRectangle rectangle;
+			::GetClientRect(m_hWND, &rectangle);
+			m_capture->Init(rectangle.left, rectangle.top, rectangle.Width(), rectangle.Height());
+		}
+	}
+
+
 	return FALSE;
 }
 
 LRESULT ChatFrame::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
+	
+	SAFE_DELETE(m_capture);
+
 	return FALSE;
 }
 
@@ -66,9 +95,9 @@ LRESULT ChatFrame::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	PAINTSTRUCT ps = { 0 };
 
 	HDC hDC = BeginPaint(m_hWND, &ps);
-	TinyDC dc(hDC);
-	m_rectTracker.Draw(&dc);
-	dc.Detach();
+
+	m_capture->Fill(hDC);
+
 	EndPaint(m_hWND, &ps);
 	return FALSE;
 }
@@ -88,26 +117,12 @@ LRESULT ChatFrame::OnTimer(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 LRESULT ChatFrame::OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	if (m_rectTracker.SetCursor(m_hWND, LOWORD(lParam)))
-	{
-		bHandled = TRUE;
-	}
 	return FALSE;
 }
 
 LRESULT ChatFrame::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	POINT pos = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-	INT nHandle = m_rectTracker.HitTest(pos);
-	if (nHandle >= 0)
-	{
-		m_rectTracker.TrackRubberBand(m_hWND, pos, TRUE);
-	}
-	else
-	{
-		m_rectTracker.Track(m_hWND, pos, FALSE);
-	}
 	return FALSE;
 }
 
@@ -120,6 +135,8 @@ LRESULT ChatFrame::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bH
 LRESULT ChatFrame::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	//Invalidate();
+
+
+
 	return FALSE;
 }

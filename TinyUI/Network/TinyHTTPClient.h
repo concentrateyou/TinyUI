@@ -1,6 +1,6 @@
 #pragma once
-#include "TinyHTTPSession.h"
 #include "TinyHTTPRequest.h"
+#include "TinyHTTPResponse.h"
 
 namespace TinyUI
 {

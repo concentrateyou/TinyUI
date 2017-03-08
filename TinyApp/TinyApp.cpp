@@ -74,15 +74,14 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	MFStartup(MF_VERSION);
 
 	HRESULT hRes = OleInitialize(NULL);
-
+	
 	LoadSeDebugPrivilege();
-
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	MFFrame uiImpl;
+	ChatFrame uiImpl;
 	uiImpl.Create(NULL, 50, 50, 800, 800);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();

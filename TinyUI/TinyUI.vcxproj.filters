@@ -486,9 +486,6 @@
     <ClInclude Include="Network\TinyDNS.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
-    <ClInclude Include="Network\TinyHTTPSession.h">
-      <Filter>头文件\Network</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -891,9 +888,6 @@
       <Filter>源文件\Common</Filter>
     </ClCompile>
     <ClCompile Include="Network\TinyDNS.cpp">
-      <Filter>源文件\Network</Filter>
-    </ClCompile>
-    <ClCompile Include="Network\TinyHTTPSession.cpp">
       <Filter>源文件\Network</Filter>
     </ClCompile>
   </ItemGroup>

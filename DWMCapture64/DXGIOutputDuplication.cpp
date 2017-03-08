@@ -4,9 +4,13 @@
 namespace DWM
 {
 	DXGIOutputDuplication::DXGIOutputDuplication()
-		:m_handle(NULL)
+		:m_handle(NULL),
+		m_lastCursor(NULL),
+		m_event(NULL),
+		m_mutex(NULL)
 	{
 		ZeroMemory(&m_monitor, sizeof(m_monitor));
+		ZeroMemory(&m_cursorInfo, sizeof(m_cursorInfo));
 	}
 
 	DXGIOutputDuplication::~DXGIOutputDuplication()
@@ -38,11 +42,10 @@ namespace DWM
 		hRes = device->CreateTexture2D(&textureDesc, NULL, &texture);
 		if FAILED(hRes)
 			return FALSE;
-		TinyComPtr<IDXGIResource> dxgi;
-		hRes = texture->QueryInterface(&dxgi);
+		hRes = texture->QueryInterface(&m_desktop);
 		if FAILED(hRes)
 			return FALSE;
-		hRes = dxgi->GetSharedHandle(&m_handle);
+		hRes = m_desktop->GetSharedHandle(&m_handle);
 		if FAILED(hRes)
 			return FALSE;
 		return TRUE;
@@ -63,7 +66,66 @@ namespace DWM
 
 	HRESULT STDMETHODCALLTYPE DXGIOutputDuplication::AcquireNextFrame(_In_ UINT TimeoutInMilliseconds, _Out_ DXGI_OUTDUPL_FRAME_INFO *pFrameInfo, _Out_ IDXGIResource **ppDesktopResource)
 	{
-		return TRUE;
+		if (!pFrameInfo || !ppDesktopResource)
+			return E_INVALIDARG;
+		HANDLE handles[2] = { m_event, m_mutex };
+		switch (WaitForMultipleObjects(2, handles, TRUE, TimeoutInMilliseconds))
+		{
+		case WAIT_TIMEOUT:
+		{
+			m_timeoutMsecs += TimeoutInMilliseconds;
+			if (m_timeoutMsecs > 5000)
+				return DXGI_ERROR_ACCESS_LOST;
+
+		}
+		return DXGI_ERROR_WAIT_TIMEOUT;
+		case WAIT_OBJECT_0:
+		{
+			m_timeoutMsecs = 0;
+			QueryPerformanceCounter(&pFrameInfo->LastPresentTime);
+			pFrameInfo->AccumulatedFrames = 1;
+			pFrameInfo->RectsCoalesced = FALSE;
+			pFrameInfo->ProtectedContentMaskedOut = FALSE;
+
+			m_desktopImageAcquired = true;
+			*ppDesktopResource = m_desktopImage.get();
+			(*ppDesktopResource)->AddRef();
+			CURSORINFO info;
+			info.cbSize = sizeof(CURSORINFO);
+			if (GetCursorInfo(&info))
+			{
+				pFrameInfo->LastMouseUpdateTime = pFrameInfo->LastPresentTime;
+				pFrameInfo->PointerPosition.Visible = (info.flags == CURSOR_SHOWING);
+				if (info.hCursor != m_lastCursor)
+				{
+					clearCursorInfo();
+					m_lastCursor = info.hCursor;
+					GetIconInfo(m_lastCursor, &m_cursorInfo);
+				}
+				pFrameInfo->PointerPosition.Position.x = info.ptScreenPos.x - m_cursorInfo.xHotspot - m_monitor.left;
+				pFrameInfo->PointerPosition.Position.y = info.ptScreenPos.y - m_cursorInfo.yHotspot - m_monitor.top;
+				if (m_cursorInfo.hbmColor)
+				{
+					pFrameInfo->PointerShapeBufferSize = UINT(calculate_bitmap_size_rgb32(m_cursorInfo.hbmColor));
+				}
+				else
+				{
+					pFrameInfo->PointerShapeBufferSize = UINT(calculate_bitmap_size_mono(m_cursorInfo.hbmMask));
+				}
+			}
+			else
+			{
+				pFrameInfo->LastMouseUpdateTime.QuadPart = 0;
+			}
+			pFrameInfo->TotalMetadataBufferSize = pFrameInfo->PointerShapeBufferSize + sizeof(RECT);
+		}
+		return S_OK;
+		case WAIT_ABANDONED_0:
+			return DXGI_ERROR_ACCESS_LOST;
+		case WAIT_FAILED:
+		default:
+			return E_FAIL;
+		}
 	}
 
 	HRESULT STDMETHODCALLTYPE DXGIOutputDuplication::GetFrameDirtyRects(_In_ UINT DirtyRectsBufferSize, _Out_writes_bytes_to_(DirtyRectsBufferSize, *pDirtyRectsBufferSizeRequired) RECT *pDirtyRectsBuffer, _Out_ UINT *pDirtyRectsBufferSizeRequired)

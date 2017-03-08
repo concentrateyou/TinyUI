@@ -6,23 +6,44 @@
 
 namespace DWM
 {
-	CreateDXGIFactory g_createDXGIFactory;
+	HRESULT WINAPI PresentDetour(IDXGISwapChainDWM *swap, UINT sync_interval, UINT flags)
+	{
+
+	}
+	HRESULT WINAPI CreateSwapChainDetour(IDXGIFactoryDWM *factory, IUnknown *pDevice, DXGI_SWAP_CHAIN_DESC *pDesc, IDXGIOutput *pOutput, IDXGISwapChainDWM **ppSwapChainDWM)
+	{
+		if (!ppFactory || !pDevice)
+			return E_INVALIDARG;
+		HRESULT hRes = g_dwmCapture.m_origCreateSwapChain(factory, pDevice, pDesc, pOutput, ppSwapChainDWM);
+		if (FAILED(hRes))
+			return hRes;
+
+		return E_FAIL;
+	}
 	HRESULT WINAPI CreateDXGIFactoryDetour(REFIID iid, void **ppFactory)
 	{
 		if (!ppFactory)
 			return E_INVALIDARG;
-		HRESULT hRes = g_createDXGIFactory(iid, ppFactory);
+		if (!g_dwmCapture.m_origCreateDXGIFactory)
+			return E_POINTER;
+		HRESULT hRes = g_dwmCapture.m_origCreateDXGIFactory(iid, ppFactory);
 		if (FAILED(hRes))
 			return hRes;
 		IUnknown* unknow = reinterpret_cast<IUnknown*>(*ppFactory);
 		hRes = unknow->QueryInterface(__uuidof(IDXGIFactoryDWM), (void**)&g_dwmCapture.m_dxgiFactoryDWM);
 		if (FAILED(hRes))
 			return hRes;
-
-		return S_OK;
+		if (g_dwmCapture.m_createSwap.Initialize(g_dwmCapture.m_dxgiFactoryDWM->CreateSwapChain, CreateSwapChainDetour))
+		{
+			if (g_dwmCapture.m_createSwap.BeginDetour())
+				return S_OK;
+		}
+		return E_FAIL;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	DWMCapture::DWMCapture()
+		:m_origCreateDXGIFactory(NULL),
+		m_origCreateSwapChain(NULL)
 	{
 
 	}
@@ -58,8 +79,8 @@ namespace DWM
 		CreateDXGIFactory ps = reinterpret_cast<CreateDXGIFactory>(lib.GetFunctionPointer("CreateDXGIFactory"));
 		if (m_createDXGIFactory.Initialize(ps, CreateDXGIFactoryDetour))
 		{
-			g_createDXGIFactory = reinterpret_cast<CreateDXGIFactory>(m_createDXGIFactory.GetOrig());
-			return TRUE;
+			g_dwmCapture.m_origCreateDXGIFactory = reinterpret_cast<CreateDXGIFactory>(m_createDXGIFactory.GetOrig());
+			return m_createDXGIFactory.BeginDetour();
 		}
 		return FALSE;
 	}
@@ -114,6 +135,7 @@ namespace DWM
 		}
 		return ::DefWindowProc(hwnd, message, wParam, lParam); ;
 	}
+
 }
 
 
