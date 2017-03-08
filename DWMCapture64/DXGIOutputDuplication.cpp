@@ -5,9 +5,7 @@ namespace DWM
 {
 	DXGIOutputDuplication::DXGIOutputDuplication()
 		:m_handle(NULL),
-		m_lastCursor(NULL),
-		m_event(NULL),
-		m_mutex(NULL)
+		m_lastCursor(NULL)
 	{
 		ZeroMemory(&m_monitor, sizeof(m_monitor));
 		ZeroMemory(&m_cursorInfo, sizeof(m_cursorInfo));
