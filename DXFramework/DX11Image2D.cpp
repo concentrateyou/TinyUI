@@ -119,7 +119,7 @@ namespace DXFramework
 		HDC hDC = NULL;
 		if (!m_texture.GetDC(TRUE, hDC))
 			return FALSE;
-		::BitBlt(hDC, dst.left, dst.top, dst.Width(), dst.Height(), hDCSrc, src.x, src.y, SRCCOPY);
+		::BitBlt(hDC, dst.left, dst.top, dst.Width(), dst.Height(), hDCSrc, src.x, src.y, SRCCOPY | CAPTUREBLT);
 		return m_texture.ReleaseDC();
 	}
 	BOOL DX11Image2D::Copy(DX11& dx11, ID3D11Texture2D* texture2D)

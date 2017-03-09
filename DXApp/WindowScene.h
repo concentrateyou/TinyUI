@@ -21,6 +21,10 @@ namespace DXApp
 		void Clear(DX11& dx11) OVERRIDE;
 	private:
 		HWND			m_hWND;
+		BYTE*			m_bits;
+		HBITMAP			m_hBitmap;
+		TinyRectangle	m_snapshot;
+		TinyScopedPtr<TinyMemDC> m_memDC;
 	};
 }
 

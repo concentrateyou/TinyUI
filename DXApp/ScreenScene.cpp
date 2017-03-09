@@ -56,10 +56,6 @@ namespace DXApp
 		HDC hDC = ::GetDC(NULL);
 		if (hDC != NULL)
 		{
-			/*TinyRectangle rectangle;
-			GetClientRect(GetDesktopWindow(), &rectangle);
-			TinyMemDC dc(hDC, TO_CX(rectangle), TO_CY(rectangle));;
-			PaintDesktop(dc);*/
 			INT cx = TO_CX(m_snapshot);
 			INT cy = TO_CY(m_snapshot);
 			::BitBlt(m_memDC->Handle(), 0, 0, cx, cy, hDC, m_snapshot.Position().x, m_snapshot.Position().y, SRCCOPY);
