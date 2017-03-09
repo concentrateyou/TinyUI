@@ -132,21 +132,21 @@ namespace TinyUI
 	/// <summary>
 	/// 高性能锁
 	/// </summary>
-#ifdef _WIN32
-	class TinyPerformanceLock : public TinyObject
-	{
-		DISALLOW_COPY_AND_ASSIGN(TinyPerformanceLock)
-	public:
-		TinyPerformanceLock();
-		~TinyPerformanceLock();
-	public:
-		void Lock(LONG value = 1, UINT spin = 2048);
-		void Unlock();
-	private:
-		SYSTEM_INFO  m_si;
-		volatile LONG* m_lock;
-	};
-#endif // _WIN32
+//#ifdef _WIN32
+//	class TinyPerformanceLock : public TinyObject
+//	{
+//		DISALLOW_COPY_AND_ASSIGN(TinyPerformanceLock)
+//	public:
+//		TinyPerformanceLock();
+//		~TinyPerformanceLock();
+//	public:
+//		void Lock(LONG value = 1, UINT spin = 2048);
+//		void Unlock();
+//	private:
+//		SYSTEM_INFO  m_si;
+//		volatile LONG* m_lock;
+//	};
+//#endif // _WIN32
 	/// <summary>
 	/// 条件变量
 	/// </summary>

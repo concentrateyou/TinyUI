@@ -5,10 +5,11 @@ namespace DWM
 {
 	DXGIOutputDuplication::DXGIOutputDuplication()
 		:m_handle(NULL),
-		m_lastCursor(NULL)
+		m_hCursor(NULL),
+		m_bAcquireFrame(FALSE)
 	{
 		ZeroMemory(&m_monitor, sizeof(m_monitor));
-		ZeroMemory(&m_cursorInfo, sizeof(m_cursorInfo));
+		ZeroMemory(&m_cursor, sizeof(m_cursor));
 	}
 
 	DXGIOutputDuplication::~DXGIOutputDuplication()
@@ -74,9 +75,9 @@ namespace DWM
 			m_timeoutMsecs += TimeoutInMilliseconds;
 			if (m_timeoutMsecs > 5000)
 				return DXGI_ERROR_ACCESS_LOST;
-
+			return DXGI_ERROR_WAIT_TIMEOUT;
 		}
-		return DXGI_ERROR_WAIT_TIMEOUT;
+		break;
 		case WAIT_OBJECT_0:
 		{
 			m_timeoutMsecs = 0;
@@ -85,8 +86,8 @@ namespace DWM
 			pFrameInfo->RectsCoalesced = FALSE;
 			pFrameInfo->ProtectedContentMaskedOut = FALSE;
 
-			m_desktopImageAcquired = true;
-			*ppDesktopResource = m_desktopImage.get();
+			m_bAcquireFrame = TRUE;
+			*ppDesktopResource = m_desktop;
 			(*ppDesktopResource)->AddRef();
 			CURSORINFO info;
 			info.cbSize = sizeof(CURSORINFO);
@@ -94,21 +95,21 @@ namespace DWM
 			{
 				pFrameInfo->LastMouseUpdateTime = pFrameInfo->LastPresentTime;
 				pFrameInfo->PointerPosition.Visible = (info.flags == CURSOR_SHOWING);
-				if (info.hCursor != m_lastCursor)
+				if (info.hCursor != m_hCursor)
 				{
-					clearCursorInfo();
-					m_lastCursor = info.hCursor;
-					GetIconInfo(m_lastCursor, &m_cursorInfo);
+					//clearCursorInfo();
+					m_hCursor = info.hCursor;
+					GetIconInfo(m_hCursor, &m_cursor);
 				}
-				pFrameInfo->PointerPosition.Position.x = info.ptScreenPos.x - m_cursorInfo.xHotspot - m_monitor.left;
-				pFrameInfo->PointerPosition.Position.y = info.ptScreenPos.y - m_cursorInfo.yHotspot - m_monitor.top;
-				if (m_cursorInfo.hbmColor)
+				pFrameInfo->PointerPosition.Position.x = info.ptScreenPos.x - m_cursor.xHotspot - m_monitor.left;
+				pFrameInfo->PointerPosition.Position.y = info.ptScreenPos.y - m_cursor.yHotspot - m_monitor.top;
+				if (m_cursor.hbmColor)
 				{
-					pFrameInfo->PointerShapeBufferSize = UINT(calculate_bitmap_size_rgb32(m_cursorInfo.hbmColor));
+					//pFrameInfo->PointerShapeBufferSize = UINT(calculate_bitmap_size_rgb32(m_cursor.hbmColor));
 				}
 				else
 				{
-					pFrameInfo->PointerShapeBufferSize = UINT(calculate_bitmap_size_mono(m_cursorInfo.hbmMask));
+					//pFrameInfo->PointerShapeBufferSize = UINT(calculate_bitmap_size_mono(m_cursor.hbmMask));
 				}
 			}
 			else
@@ -116,8 +117,9 @@ namespace DWM
 				pFrameInfo->LastMouseUpdateTime.QuadPart = 0;
 			}
 			pFrameInfo->TotalMetadataBufferSize = pFrameInfo->PointerShapeBufferSize + sizeof(RECT);
+			return S_OK;
 		}
-		return S_OK;
+		break;
 		case WAIT_ABANDONED_0:
 			return DXGI_ERROR_ACCESS_LOST;
 		case WAIT_FAILED:
@@ -154,7 +156,9 @@ namespace DWM
 
 	HRESULT STDMETHODCALLTYPE DXGIOutputDuplication::GetFramePointerShape(_In_ UINT PointerShapeBufferSize, _Out_writes_bytes_to_(PointerShapeBufferSize, *pPointerShapeBufferSizeRequired) void *pPointerShapeBuffer, _Out_ UINT *pPointerShapeBufferSizeRequired, _Out_ DXGI_OUTDUPL_POINTER_SHAPE_INFO *pPointerShapeInfo)
 	{
-		return S_FALSE;
+		if (!pPointerShapeBuffer || !pPointerShapeBufferSizeRequired || !pPointerShapeInfo)
+			return E_INVALIDARG;
+		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE DXGIOutputDuplication::MapDesktopSurface(_Out_ DXGI_MAPPED_RECT *pLockedRect)
@@ -169,7 +173,11 @@ namespace DWM
 
 	HRESULT STDMETHODCALLTYPE DXGIOutputDuplication::ReleaseFrame(void)
 	{
-		return S_FALSE;
+	/*	if (!m_desktopImageAcquired)
+			return DXGI_ERROR_INVALID_CALL;
+		ReleaseMutex(m_imageMutex);*/
+
+		return S_OK;
 	}
 	HRESULT STDMETHODCALLTYPE DXGIOutputDuplication::QueryInterface(REFIID riid, void **ppvObject)
 	{

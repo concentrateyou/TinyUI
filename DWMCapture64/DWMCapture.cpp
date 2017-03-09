@@ -8,11 +8,11 @@ namespace DWM
 {
 	HRESULT WINAPI PresentDetour(IDXGISwapChainDWM *swap, UINT sync_interval, UINT flags)
 	{
-
+		return S_OK;
 	}
 	HRESULT WINAPI CreateSwapChainDetour(IDXGIFactoryDWM *factory, IUnknown *pDevice, DXGI_SWAP_CHAIN_DESC *pDesc, IDXGIOutput *pOutput, IDXGISwapChainDWM **ppSwapChainDWM)
 	{
-		if (!ppFactory || !pDevice)
+		if (!factory || !pDevice)
 			return E_INVALIDARG;
 		HRESULT hRes = g_dwmCapture.m_origCreateSwapChain(factory, pDevice, pDesc, pOutput, ppSwapChainDWM);
 		if (FAILED(hRes))
@@ -33,7 +33,8 @@ namespace DWM
 		hRes = unknow->QueryInterface(__uuidof(IDXGIFactoryDWM), (void**)&g_dwmCapture.m_dxgiFactoryDWM);
 		if (FAILED(hRes))
 			return hRes;
-		if (g_dwmCapture.m_createSwap.Initialize(g_dwmCapture.m_dxgiFactoryDWM->CreateSwapChain, CreateSwapChainDetour))
+		ULONG *vtable = *(ULONG**)g_dwmCapture.m_dxgiFactoryDWM.Ptr();
+		if (g_dwmCapture.m_createSwap.Initialize((FARPROC)*(vtable + 3), CreateSwapChainDetour))
 		{
 			if (g_dwmCapture.m_createSwap.BeginDetour())
 				return S_OK;

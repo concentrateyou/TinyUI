@@ -1,5 +1,6 @@
 #pragma once
 #include "Common/TinyCommon.h"
+#include "Common/TinyCore.h"
 #include <dxgi1_2.h>
 #include <dxgi.h>
 #include <d3dcommon.h>
@@ -37,8 +38,10 @@ namespace DWM
 		HANDLE						m_handle;
 		TinyEvent					m_event;
 		TinyMutex					m_mutex;
-		HCURSOR						m_lastCursor;
-		ICONINFO					m_cursorInfo;
+		ULONG						m_timeoutMsecs;
+		BOOL						m_bAcquireFrame;
+		HCURSOR						m_hCursor;
+		ICONINFO					m_cursor;
 	};
 
 }

@@ -179,14 +179,14 @@ namespace TinyUI
 			size_t size = 0;
 			if (endpoint.ToSOCKADDR(&s, &size))
 			{
-				return bind(m_socket, &s, size) == S_OK;
+				return bind(m_socket, &s, size) == 0;
 			}
 			return FALSE;
 		}
 		BOOL TinySocket::Listen(DWORD backlog)
 		{
 			ASSERT(m_socket);
-			return listen(m_socket, SOMAXCONN) == S_OK;
+			return listen(m_socket, SOMAXCONN) == 0;
 		}
 		TinySocket* TinySocket::Accept()
 		{
@@ -214,7 +214,7 @@ namespace TinyUI
 			size_t size = 0;
 			if (endpoint.ToSOCKADDR(&si, &size))
 			{
-				m_connect = connect(m_socket, &si, size) == S_OK;
+				m_connect = connect(m_socket, &si, size) == 0;
 				return m_connect;
 			}
 			return FALSE;
@@ -358,6 +358,7 @@ namespace TinyUI
 			context->Result = new AsyncResult();
 			context->Result->AsyncState = arg;
 			context->Complete = std::move(callback);
+			SOCKADDR s = { 0 };
 			if (m_addressFamily == AF_INET)
 			{
 				SOCKADDR_IN local = { 0 };
@@ -382,9 +383,7 @@ namespace TinyUI
 					goto OVERLAPPED_ERROR;
 				}
 			}
-
-			size_t size = 0;
-			SOCKADDR s = { 0 };
+			size_t size = 0;		
 			if (!endpoint.ToSOCKADDR(&s, &size))
 			{
 				errorCode = ERROR_INVALID_ADDRESS;
