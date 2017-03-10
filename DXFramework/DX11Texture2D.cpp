@@ -36,7 +36,7 @@ namespace DXFramework
 		textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 		textureDesc.SampleDesc.Count = 1;
 		textureDesc.SampleDesc.Quality = 0;
-		textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
 		textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
 		textureDesc.Usage = D3D11_USAGE_DEFAULT;
 		HRESULT hRes = dx11.GetD3D()->CreateTexture2D(&textureDesc, NULL, &m_texture2D);
@@ -44,14 +44,6 @@ namespace DXFramework
 			return FALSE;
 		D3D11_TEXTURE2D_DESC desc;
 		m_texture2D->GetDesc(&desc);
-
-		D3D11_RENDER_TARGET_VIEW_DESC drtvd;
-		::ZeroMemory(&drtvd, sizeof(drtvd));
-		drtvd.Format = desc.Format;
-		drtvd.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-		hRes = dx11.GetD3D()->CreateRenderTargetView(m_texture2D, &drtvd, &m_renderView);
-		if (FAILED(hRes))
-			return FALSE;
 		D3D11_SHADER_RESOURCE_VIEW_DESC dsrvd;
 		::ZeroMemory(&dsrvd, sizeof(dsrvd));
 		dsrvd.Format = desc.Format;
@@ -250,10 +242,6 @@ namespace DXFramework
 	ID3D11ShaderResourceView* DX11Texture2D::GetSRView() const
 	{
 		return m_resourceView;
-	}
-	ID3D11RenderTargetView*	 DX11Texture2D::GetRTView() const
-	{
-		return m_renderView;
 	}
 	TinySize DX11Texture2D::GetSize()
 	{

@@ -115,7 +115,7 @@ namespace DXFramework
 	BOOL DX11Font2D::ClearContext()
 	{
 		HDC hDC = NULL;
-		if (!m_texture.GetDC(TRUE, hDC))
+		if (!m_texture.GetDC(FALSE, hDC))
 			return FALSE;
 		Graphics g(hDC);
 		g.SetTextRenderingHint(Gdiplus::TextRenderingHintAntiAlias);
@@ -133,7 +133,7 @@ namespace DXFramework
 	{
 		ASSERT(m_texture.IsEmpty());
 		HDC hDC = NULL;
-		if (!m_texture.GetDC(TRUE, hDC))
+		if (!m_texture.GetDC(FALSE, hDC))
 			return FALSE;
 		Graphics g(hDC);
 		g.SetTextRenderingHint(Gdiplus::TextRenderingHintAntiAlias);

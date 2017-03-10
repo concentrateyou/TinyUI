@@ -42,7 +42,6 @@ namespace DXFramework
 		TinyComPtr<IDXGISurface1>				m_surface;
 		TinyComPtr<ID3D11Texture2D>				m_texture2D;
 		TinyComPtr<ID3D11ShaderResourceView>	m_resourceView;
-		TinyComPtr<ID3D11RenderTargetView>		m_renderView;
 	};
 
 #define CAPTURETYPE_MEMORYTEXTURE   1
