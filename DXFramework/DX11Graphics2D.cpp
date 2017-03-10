@@ -36,7 +36,7 @@ namespace DXFramework
 		return TRUE;
 	}
 
-	BOOL DX11Graphics2D::BeginDraw()
+	void DX11Graphics2D::BeginDraw()
 	{
 		m_dx11.BeginDraw();
 		m_camera.UpdatePosition();
@@ -44,13 +44,11 @@ namespace DXFramework
 		m_worldMatrix = m_dx11.GetWorldMatrix();
 		m_orthoMatrix = m_dx11.GetOrthoMatrix();
 		m_projectionMatrix = m_dx11.GetProjectionMatrix();
-		return TRUE;
 	}
-	BOOL DX11Graphics2D::EndDraw()
+	void DX11Graphics2D::EndDraw()
 	{
 		m_dx11.AllowDepth(TRUE);
 		m_dx11.EndDraw();
-		return TRUE;
 	}
 	BOOL DX11Graphics2D::Resize(const TinySize& size)
 	{
