@@ -50,7 +50,7 @@ void RenderTask::OnMessagePump()
 			HBITMAP hBitmap = ::CreateDIBSection(wdc, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pvBits), NULL, 0);
 			memcpy(pvBits, bits, bmi.bmiHeader.biSizeImage);
 			TinyUI::TinyMemDC mdc(wdc, hBitmap);
-			::BitBlt(wdc, 0, 0, TO_CX(rectangle), TO_CY(rectangle), mdc, 0, 0, SRCCOPY);
+			::BitBlt(wdc, 0, 0, TO_CX(rectangle), TO_CY(rectangle), mdc, 0, 0, SRCCOPY | CAPTUREBLT);
 			DeleteObject(hBitmap);
 		}
 	}

@@ -282,7 +282,7 @@ namespace TinyUI
 	{
 		if (!IsExecutableAddress(lpSRC) || !IsExecutableAddress(lpDST))
 			return FALSE;
-#ifdef _WIN64
+#if defined(_WIN64)
 		CALL_ABS call =
 		{
 			0xFF, 0x15, 0x00000002,
@@ -341,7 +341,7 @@ namespace TinyUI
 				pCopy = (LPVOID)src;
 				if (srcPos >= sizeof(JMP_REL))
 				{
-#ifdef _WIN64
+#if defined(_WIN64)
 					jmp.address = src;
 #else
 					jmp.operand = (UINT32)(src - (dst + sizeof(jmp)));
@@ -354,7 +354,7 @@ namespace TinyUI
 				if (hs.opcode == 0xE8)	//CALL
 				{
 					ULONG_PTR dest = src + hs.len + (INT32)hs.imm.imm32;
-#ifdef _WIN64
+#if defined(_WIN64)
 					call.address = dest;
 #else
 					call.operand = (UINT32)(dest - (dst + sizeof(call)));
@@ -378,7 +378,7 @@ namespace TinyUI
 					}
 					else
 					{
-#ifdef _WIN64
+#if defined(_WIN64)
 						jmp.address = dest;
 #else
 						jmp.operand = (UINT32)(dest - (dst + sizeof(jmp)));
@@ -412,7 +412,7 @@ namespace TinyUI
 					else
 					{
 						UINT8 cond = ((hs.opcode != 0x0F ? hs.opcode : hs.opcode2) & 0x0F);
-#ifdef _WIN64
+#if defined(_WIN64)
 						jcc.opcode = 0x71 ^ cond;
 						jcc.address = dest;
 #else
@@ -460,7 +460,7 @@ namespace TinyUI
 		m_lpSRC = lpSRC;
 		m_lpDST = lpDST;
 
-#ifdef _WIN64
+#if defined(_WIN64)
 		jmp.address = (ULONG_PTR)m_lpDST;
 		m_lpRelay = (LPBYTE)m_pTrampoline + dstPos;
 		memcpy(m_lpRelay, &jmp, sizeof(jmp));
@@ -472,7 +472,7 @@ namespace TinyUI
 	{
 		SIZE_T size = sizeof(JMP_REL);
 		LPBYTE pSRC = (LPBYTE)m_lpSRC;
-#ifdef _WIN64
+#if defined(_WIN64)
 		LPBYTE pDST = (LPBYTE)m_lpRelay;
 #else
 		LPBYTE pDST = (LPBYTE)m_lpDST;

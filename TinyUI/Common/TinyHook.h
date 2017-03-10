@@ -3,7 +3,7 @@
 #include "TinyCore.h"
 #include "TinyString.h"
 
-#ifdef _WIN64
+#if defined(_WIN64)
 #include "../HDE/hde64.h"
 typedef hde64s HDE;
 #define HDE_DISASM(code, hs) hde64_disasm(code, hs)

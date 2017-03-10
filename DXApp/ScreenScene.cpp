@@ -17,12 +17,12 @@ namespace DXApp
 	{
 	}
 
-	BOOL ScreenScene::Initialize(DX11& dx11, const TinyRectangle& s)
+	BOOL ScreenScene::Initialize(DX11& dx11, const TinyRectangle& snapshot)
 	{
 		Destory();
-		if (!s.IsRectEmpty())
+		m_snapshot = snapshot;
+		if (!m_snapshot.IsRectEmpty())
 		{
-			m_snapshot = s;
 			if (DX11Image2D::Create(dx11, m_snapshot.Size(), NULL, FALSE))
 			{
 				SAFE_DELETE_OBJECT(m_hBitmap);
@@ -59,6 +59,25 @@ namespace DXApp
 			INT cx = TO_CX(m_snapshot);
 			INT cy = TO_CY(m_snapshot);
 			::BitBlt(m_memDC->Handle(), 0, 0, cx, cy, hDC, m_snapshot.Position().x, m_snapshot.Position().y, SRCCOPY);
+
+			CURSORINFO ci;
+			ZeroMemory(&ci, sizeof(ci));
+			ci.cbSize = sizeof(ci);
+			if (GetCursorInfo(&ci))
+			{
+				POINT pos = ci.ptScreenPos;
+				ScreenToClient(NULL, &pos);
+				if (ci.flags & CURSOR_SHOWING)
+				{
+					HICON hICON = CopyIcon(ci.hCursor);
+					if (hICON != NULL)
+					{
+						DrawIcon(m_memDC->Handle(), pos.x - m_snapshot.Position().x, pos.y - m_snapshot.Position().y, hICON);
+						DestroyIcon(hICON);
+					}
+				}
+			}
+
 			UINT  linesize = cx * 4;
 			this->Copy(dx11, m_bits, linesize * m_size.cy, linesize);
 			::ReleaseDC(NULL, hDC);

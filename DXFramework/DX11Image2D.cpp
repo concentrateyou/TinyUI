@@ -109,7 +109,7 @@ namespace DXFramework
 		if (!m_texture.GetDC(TRUE, hDC))
 			return FALSE;
 		TinyUI::TinyMemDC mdc(hDC, hBitmapSrc);
-		::BitBlt(hDC, dst.left, dst.top, dst.Width(), dst.Height(), mdc, src.x, src.y, SRCCOPY);
+		::BitBlt(hDC, dst.left, dst.top, dst.Width(), dst.Height(), mdc, src.x, src.y, SRCCOPY | CAPTUREBLT);
 		return m_texture.ReleaseDC();
 	}
 	BOOL DX11Image2D::BitBlt(DX11& dx11, const TinyRectangle& dst, HDC hDCSrc, const TinyPoint& src)
