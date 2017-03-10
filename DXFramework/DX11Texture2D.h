@@ -18,15 +18,16 @@ namespace DXFramework
 		DX11Texture2D();
 		DX11Texture2D(ID3D11Texture2D* texture2D);
 		virtual ~DX11Texture2D();
-		BOOL Create(DX11& dx11, ID3D11Texture2D* texture2D);
-		BOOL Create(DX11& dx11, INT cx, INT cy, const BYTE* bits, BOOL bReadoly);
-		BOOL CreateCompatible(DX11& dx11, INT cx, INT cy);
-		BOOL Save(DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT dxgi);
-		BOOL Load(DX11& dx11, const BYTE* bits, DWORD dwSize);
-		BOOL Load(DX11& dx11, HANDLE hResource);
-		BOOL Load(DX11& dx11, const CHAR* pzFile);
-		BOOL Copy(DX11& dx11, ID3D11Texture2D* texture2D);
-		void Destory();
+		virtual BOOL Create(DX11& dx11, ID3D11Texture2D* texture2D);
+		virtual BOOL Create(DX11& dx11, INT cx, INT cy, const BYTE* bits, BOOL bReadoly);
+		virtual BOOL CreateCompatible(DX11& dx11, INT cx, INT cy);
+		virtual BOOL Save(DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT dxgi);
+		virtual BOOL Load(DX11& dx11, const BYTE* bits, DWORD dwSize);
+		virtual BOOL Load(DX11& dx11, HANDLE hResource);
+		virtual BOOL Load(DX11& dx11, const CHAR* pzFile);
+		virtual BOOL Copy(DX11& dx11, ID3D11Texture2D* texture2D);
+		virtual void Destory();
+	public:
 		BOOL IsCompatible() const;
 		BOOL GetDC(BOOL discard, HDC& hDC);
 		BOOL ReleaseDC();
@@ -34,7 +35,6 @@ namespace DXFramework
 		void Unmap(DX11& dx11);
 		ID3D11Texture2D* GetTexture2D() const;
 		ID3D11ShaderResourceView* GetSRView() const;
-		ID3D11RenderTargetView*	  GetRTView() const;
 		BOOL IsEmpty() const;
 		TinySize GetSize();
 	protected:

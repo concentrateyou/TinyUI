@@ -183,6 +183,7 @@
     <ClInclude Include="DX11Image2D.h" />
     <ClInclude Include="DX11Element2D.h" />
     <ClInclude Include="DX11Rectangle2D.h" />
+    <ClInclude Include="DX11RenderTexture2D.h" />
     <ClInclude Include="DX11Texture2D.h" />
     <ClInclude Include="DX11TextureShader.h" />
     <ClInclude Include="DX2D.h" />
@@ -204,6 +205,7 @@
     <ClCompile Include="DX11CaptureTask.cpp" />
     <ClCompile Include="DX11Element2D.cpp" />
     <ClCompile Include="DX11Rectangle2D.cpp" />
+    <ClCompile Include="DX11RenderTexture2D.cpp" />
     <ClCompile Include="DX11Texture2D.cpp" />
     <ClCompile Include="DX11TextureShader.cpp" />
     <ClCompile Include="DX2D.cpp" />
