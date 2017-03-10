@@ -102,7 +102,7 @@ namespace QSV
 		sts = m_videoENCODE->Query(&m_videoParam, &m_videoParam);
 		if (sts != MFX_ERR_NONE)
 			return FALSE;
-		if (!AllocateSurfaces())
+		if (!Allocate())
 			return FALSE;
 		sts = m_videoENCODE->Init(&m_videoParam);
 		if (sts != MFX_ERR_NONE)
@@ -148,8 +148,9 @@ namespace QSV
 		m_ppsSize = opt.PPSBufSize;
 		return MFX_ERR_NONE;
 	}
-	BOOL QSVEncode::AllocateSurfaces()
+	mfxStatus QSVEncode::Allocate()
 	{
+		ASSERT(m_videoENCODE);
 		mfxFrameAllocRequest request;
 		memset(&request, 0, sizeof(request));
 		mfxStatus sts = m_videoENCODE->QueryIOSurf(&m_videoParam, &request);
@@ -160,7 +161,6 @@ namespace QSV
 		MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
 		m_surfaces.Reset(new mfxFrameSurface1 *[m_response.NumFrameActual]);
 		MSDK_CHECK_POINTER(m_surfaces, MFX_ERR_MEMORY_ALLOC);
-
 		for (INT i = 0; i < m_response.NumFrameActual; i++)
 		{
 			m_surfaces[i] = new mfxFrameSurface1();

@@ -25,7 +25,10 @@ namespace QSV
 		DWORD dwLookAheadDepth;
 		DWORD dwAsyncDepth;
 	}QSVParam;
-	//https://github.com/sivabudh/intel-media-sdk-tutorials
+	/// <summary>
+	/// DX11
+	/// https://github.com/sivabudh/intel-media-sdk-tutorials
+	/// </summary>
 	class QSVEncode
 	{
 	public:
@@ -33,7 +36,7 @@ namespace QSV
 		~QSVEncode();
 		BOOL Initialize(const QSVParam& param);
 	private:
-		BOOL AllocateSurfaces();
+		mfxStatus Allocate();
 		mfxStatus GetVideoParam();
 		BOOL IntelExists();
 	private:

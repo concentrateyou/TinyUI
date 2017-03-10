@@ -167,15 +167,6 @@ namespace DXApp
 	void RenderTask::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		/*if (!m_bMouseTracking)
-		{
-			TRACKMOUSEEVENT tme;
-			tme.cbSize = sizeof(tme);
-			tme.hwndTrack = m_pWindow->Handle();
-			tme.dwFlags = TME_LEAVE;
-			tme.dwHoverTime = 10;
-			m_bMouseTracking = _TrackMouseEvent(&tme);
-		}*/
 	}
 
 	void RenderTask::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
