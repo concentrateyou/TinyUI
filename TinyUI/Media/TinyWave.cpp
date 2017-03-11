@@ -6,7 +6,7 @@ namespace TinyUI
 	namespace Media
 	{
 		TinyWaveOut::TinyWaveOut()
-			:hWaveOut(NULL)
+			:m_hWAVE(NULL)
 		{
 		}
 		TinyWaveOut::~TinyWaveOut()
@@ -15,183 +15,153 @@ namespace TinyUI
 		}
 		TinyWaveOut::operator HWAVEOUT() const throw()
 		{
-			return (hWaveOut);
+			return (m_hWAVE);
 		}
-		MMRESULT TinyWaveOut::QueryFormat(LPWAVEFORMATEX pwfx)
+		BOOL TinyWaveOut::QueryFormat(LPWAVEFORMATEX pwfx)
 		{
 			ASSERT(pwfx != NULL);
-			return waveOutOpen(NULL, WAVE_MAPPER, pwfx, NULL, 0, WAVE_FORMAT_QUERY);
+			return waveOutOpen(NULL, WAVE_MAPPER, pwfx, NULL, 0, WAVE_FORMAT_QUERY) == MMSYSERR_NOERROR;
 		}
-		MMRESULT TinyWaveOut::Open(LPWAVEFORMATEX pwfx, DWORD_PTR dwCallbackInstance)
+		BOOL TinyWaveOut::Open(LPWAVEFORMATEX pwfx, DWORD_PTR dwCallbackInstance)
 		{
 			ASSERT(pwfx != NULL);
 			if (QueryFormat(pwfx) != MMSYSERR_NOERROR)
 				return FALSE;
-			return waveOutOpen(&hWaveOut, WAVE_MAPPER, pwfx, (DWORD_PTR)TinyWaveOut::waveOutProc, (DWORD_PTR)dwCallbackInstance, CALLBACK_FUNCTION);
+			return waveOutOpen(&m_hWAVE, WAVE_MAPPER, pwfx, (DWORD_PTR)TinyWaveOut::waveOutProc, (DWORD_PTR)dwCallbackInstance, CALLBACK_FUNCTION) == MMSYSERR_NOERROR;
 		}
 		void TinyWaveOut::GetErrorText(LPTSTR pzText, MMRESULT hRes)
 		{
 			waveOutGetErrorText(hRes, pzText, MAX_PATH);
 		}
-		MMRESULT TinyWaveOut::Pause()
+		BOOL TinyWaveOut::Pause()
 		{
-			if (hWaveOut == NULL)
-				return S_FALSE;
-			MMRESULT hRes = waveOutPause(hWaveOut);
+			if (waveOutPause(m_hWAVE) != MMSYSERR_NOERROR)
+			{
+				Close();
+				return FALSE;
+			}
+			return TRUE;
+		}
+		BOOL TinyWaveOut::Reset()
+		{
+			 MMRESULT hRes = waveOutReset(m_hWAVE);
+			 if (hRes != MMSYSERR_NOERROR)
+			 {
+				 Close();
+				 return FALSE;
+			 }
+			 return TRUE;
+		}
+		BOOL TinyWaveOut::Restart()
+		{
+			MMRESULT hRes = waveOutRestart(m_hWAVE);
 			if (hRes != MMSYSERR_NOERROR)
 			{
-				waveOutClose(hWaveOut);
-				hWaveOut = NULL;
-				return S_FALSE;
+				Close();
+				return FALSE;
 			}
-			return S_OK;
+			return TRUE;
 		}
-		MMRESULT TinyWaveOut::Reset()
+		BOOL TinyWaveOut::Close()
 		{
-			if (hWaveOut == NULL)
-				return S_FALSE;
-			MMRESULT hRes = waveOutReset(hWaveOut);
+			return waveOutClose(m_hWAVE) == MMSYSERR_NOERROR;
+		}
+		BOOL TinyWaveOut::SetVolume(DWORD dwVolume)
+		{
+			MMRESULT hRes = waveOutSetVolume(m_hWAVE, dwVolume);
 			if (hRes != MMSYSERR_NOERROR)
 			{
-				waveOutClose(hWaveOut);
-				hWaveOut = NULL;
-				return S_FALSE;
+				Close();
+				return FALSE;
 			}
-			return S_OK;
+			return TRUE;
 		}
-		MMRESULT TinyWaveOut::Restart()
+		BOOL TinyWaveOut::GetDevCaps(UINT_PTR uDeviceID, LPWAVEOUTCAPS pwoc)
 		{
-			if (hWaveOut == NULL)
-				return S_FALSE;
-			MMRESULT hRes = waveOutRestart(hWaveOut);
-			if (hRes != MMSYSERR_NOERROR)
-			{
-				waveOutClose(hWaveOut);
-				hWaveOut = NULL;
-				return S_FALSE;
-			}
-			return S_OK;
-		}
-		MMRESULT TinyWaveOut::Close()
-		{
-			if (hWaveOut != NULL)
-			{
-				waveOutClose(hWaveOut);
-				hWaveOut = NULL;
-				return S_OK;
-			}
-			return S_FALSE;
-		}
-		MMRESULT TinyWaveOut::SetVolume(DWORD dwVolume)
-		{
-			MMRESULT hRes = waveOutSetVolume(hWaveOut, dwVolume);
-			if (hRes != MMSYSERR_NOERROR)
-			{
-				waveOutClose(hWaveOut);
-				hWaveOut = NULL;
-			}
-			return hRes;
-		}
-		MMRESULT TinyWaveOut::GetDevCaps(UINT_PTR uDeviceID, LPWAVEOUTCAPS pwoc)
-		{
-			if (hWaveOut == NULL)
-				return S_FALSE;
 			MMRESULT hRes = waveOutGetDevCaps(uDeviceID, pwoc, sizeof(WAVEOUTCAPS));
 			if (hRes != MMSYSERR_NOERROR)
 			{
-				waveOutClose(hWaveOut);
-				hWaveOut = NULL;
+				Close();
+				return FALSE;
 			}
-			return hRes;
+			return TRUE;
 		}
 		DWORD TinyWaveOut::GetVolume()
 		{
 			DWORD dwVolume;
-			if (hWaveOut != NULL)
+			if (m_hWAVE != NULL)
 			{
-				waveOutGetVolume(hWaveOut, &dwVolume);
+				waveOutGetVolume(m_hWAVE, &dwVolume);
 			}
 			return dwVolume;
 		}
-		MMRESULT TinyWaveOut::GetPosition(LPMMTIME pmmt)
+		BOOL TinyWaveOut::GetPosition(LPMMTIME pmmt)
 		{
-			if (hWaveOut == NULL || pmmt == NULL)
-				return S_FALSE;
-			MMRESULT hRes = waveOutGetPosition(hWaveOut, pmmt, sizeof(WAVEOUTCAPS));
+			MMRESULT hRes = waveOutGetPosition(m_hWAVE, pmmt, sizeof(WAVEOUTCAPS));
 			if (hRes != MMSYSERR_NOERROR)
 			{
-				waveOutClose(hWaveOut);
-				hWaveOut = NULL;
+				Close();
+				return FALSE;
 			}
-			return hRes;
+			return TRUE;
 		}
 		DWORD TinyWaveOut::GetNumDevs()
 		{
 			return waveOutGetNumDevs();
 		}
-		MMRESULT TinyWaveOut::Prepare(LPWAVEHDR pwh)
+		BOOL TinyWaveOut::Prepare(LPWAVEHDR pwh)
 		{
-			if (hWaveOut == NULL || pwh == NULL)
-				return S_FALSE;
-			MMRESULT hRes = waveOutPrepareHeader(hWaveOut, pwh, sizeof(WAVEOUTCAPS));
+			MMRESULT hRes = waveOutPrepareHeader(m_hWAVE, pwh, sizeof(WAVEOUTCAPS));
 			if (hRes != MMSYSERR_NOERROR)
 			{
-				waveOutClose(hWaveOut);
-				hWaveOut = NULL;
+				Close();
+				return FALSE;
 			}
-			return hRes;
+			return TRUE;
 		}
-		MMRESULT TinyWaveOut::Unprepare(LPWAVEHDR pwh)
+		BOOL TinyWaveOut::Unprepare(LPWAVEHDR pwh)
 		{
-			if (hWaveOut == NULL || pwh == NULL)
-				return S_FALSE;
-			MMRESULT hRes = waveOutUnprepareHeader(hWaveOut, pwh, sizeof(WAVEHDR));
+			MMRESULT hRes = waveOutUnprepareHeader(m_hWAVE, pwh, sizeof(WAVEOUTCAPS));
 			if (hRes != MMSYSERR_NOERROR)
 			{
-				waveOutClose(hWaveOut);
-				hWaveOut = NULL;
+				Close();
+				return FALSE;
 			}
-			return hRes;
+			return TRUE;
 		}
-		MMRESULT TinyWaveOut::Write(LPWAVEHDR pwh)
+		BOOL TinyWaveOut::Write(LPWAVEHDR pwh)
 		{
-			if (hWaveOut == NULL || pwh == NULL)
-				return S_FALSE;
-			MMRESULT hRes = waveOutWrite(hWaveOut, pwh, sizeof(WAVEHDR));
+			MMRESULT hRes = waveOutWrite(m_hWAVE, pwh, sizeof(WAVEHDR));
 			if (hRes != MMSYSERR_NOERROR)
 			{
-				waveOutClose(hWaveOut);
-				hWaveOut = NULL;
+				Close();
+				return FALSE;
 			}
-			return hRes;
+			return TRUE;
 		}
-		MMRESULT TinyWaveOut::SetPlaybackRate(DWORD dwRate)
+		BOOL TinyWaveOut::SetPlaybackRate(DWORD dwRate)
 		{
-			if (hWaveOut == NULL)
-				return S_FALSE;
-			MMRESULT hRes = waveOutSetPlaybackRate(hWaveOut, dwRate);
+			MMRESULT hRes = waveOutSetPlaybackRate(m_hWAVE, dwRate);
 			if (hRes != MMSYSERR_NOERROR)
 			{
-				waveOutClose(hWaveOut);
-				hWaveOut = NULL;
+				Close();
+				return FALSE;
 			}
-			return hRes;
+			return TRUE;
 		}
-		MMRESULT TinyWaveOut::BreakLoop()
+		BOOL TinyWaveOut::BreakLoop()
 		{
-			if (hWaveOut == NULL)
-				return S_FALSE;
-			MMRESULT hRes = waveOutBreakLoop(hWaveOut);
+			MMRESULT hRes = waveOutBreakLoop(m_hWAVE);
 			if (hRes != MMSYSERR_NOERROR)
 			{
-				waveOutClose(hWaveOut);
-				hWaveOut = NULL;
+				Close();
+				return FALSE;
 			}
-			return hRes;
+			return TRUE;
 		}
 		void TinyWaveOut::SendMessage(UINT uMsg, DWORD_PTR dwParam1, DWORD_PTR dwParam2)
 		{
-			waveOutMessage(hWaveOut, uMsg, dwParam1, dwParam2);
+			waveOutMessage(m_hWAVE, uMsg, dwParam1, dwParam2);
 		}
 		void CALLBACK TinyWaveOut::waveOutProc(HWAVEOUT hwo, UINT uMsg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2)
 		{
@@ -222,7 +192,7 @@ namespace TinyUI
 		}
 		//////////////////////////////////////////////////////////////////////////
 		TinyWaveIn::TinyWaveIn()
-			:hWaveIn(NULL)
+			:m_hWAVE(NULL)
 		{
 
 		}
@@ -230,118 +200,95 @@ namespace TinyUI
 		{
 			Close();
 		}
-		MMRESULT TinyWaveIn::QueryFormat(LPWAVEFORMATEX pwfx)
+		BOOL TinyWaveIn::QueryFormat(LPWAVEFORMATEX pwfx)
 		{
 			ASSERT(pwfx != NULL);
-			return waveInOpen(NULL, WAVE_MAPPER, pwfx, NULL, 0, WAVE_FORMAT_QUERY);
+			return waveInOpen(NULL, WAVE_MAPPER, pwfx, NULL, 0, WAVE_FORMAT_QUERY) == MMSYSERR_NOERROR;
 		}
 		TinyWaveIn::operator HWAVEIN() const throw()
 		{
-			return (hWaveIn);
+			return (m_hWAVE);
 		}
-		MMRESULT TinyWaveIn::Open(LPWAVEFORMATEX pwfx, DWORD_PTR dwCallbackInstance)
+		BOOL TinyWaveIn::Open(LPWAVEFORMATEX pwfx, DWORD_PTR dwCallbackInstance)
 		{
 			ASSERT(pwfx != NULL);
 			if (QueryFormat(pwfx) != MMSYSERR_NOERROR)
 				return FALSE;
-			return waveInOpen(&hWaveIn, WAVE_MAPPER, pwfx, (DWORD_PTR)TinyWaveIn::waveInProc, (DWORD_PTR)dwCallbackInstance, CALLBACK_FUNCTION);
+			return waveInOpen(&m_hWAVE, WAVE_MAPPER, pwfx, (DWORD_PTR)TinyWaveIn::waveInProc, (DWORD_PTR)dwCallbackInstance, CALLBACK_FUNCTION);
 		}
-		MMRESULT TinyWaveIn::Close()
+		BOOL TinyWaveIn::Close()
 		{
-			if (hWaveIn != NULL)
-			{
-				waveInClose(hWaveIn);
-				hWaveIn = NULL;
-				return S_OK;
-			}
-			return S_FALSE;
+			return waveInClose(m_hWAVE) == MMSYSERR_NOERROR;
 		}
-		MMRESULT TinyWaveIn::Start()
+		BOOL TinyWaveIn::Start()
 		{
-			if (hWaveIn == NULL)
-				return S_FALSE;
-			MMRESULT hRes = waveInStart(hWaveIn);
+			MMRESULT hRes = waveInStart(m_hWAVE);
 			if (hRes != MMSYSERR_NOERROR)
 			{
-				waveInClose(hWaveIn);
-				hWaveIn = NULL;
-				return S_FALSE;
+				Close();
+				return FALSE;
 			}
-			return S_OK;
+			return TRUE;
 		}
-		MMRESULT TinyWaveIn::Stop()
+		BOOL TinyWaveIn::Stop()
 		{
-			if (hWaveIn == NULL)
-				return S_FALSE;
-			MMRESULT hRes = waveInStop(hWaveIn);
+			MMRESULT hRes = waveInStop(m_hWAVE);
 			if (hRes != MMSYSERR_NOERROR)
 			{
-				waveInClose(hWaveIn);
-				hWaveIn = NULL;
-				return S_FALSE;
+				Close();
+				return FALSE;
 			}
-			return S_OK;
+			return TRUE;
 		}
-		MMRESULT TinyWaveIn::Reset()
+		BOOL TinyWaveIn::Reset()
 		{
-			if (hWaveIn == NULL)
-				return S_FALSE;
-			MMRESULT hRes = waveInReset(hWaveIn);
+			MMRESULT hRes = waveInReset(m_hWAVE);
 			if (hRes != MMSYSERR_NOERROR)
 			{
-				waveInClose(hWaveIn);
-				hWaveIn = NULL;
-				return S_FALSE;
+				Close();
+				return FALSE;
 			}
-			return S_OK;
+			return TRUE;
 		}
-		MMRESULT TinyWaveIn::Prepare(LPWAVEHDR pwh)
+		BOOL TinyWaveIn::Prepare(LPWAVEHDR pwh)
 		{
-			if (hWaveIn == NULL || pwh == NULL)
-				return S_FALSE;
-			MMRESULT hRes = waveInPrepareHeader(hWaveIn, pwh, sizeof(WAVEOUTCAPS));
+			MMRESULT hRes = waveInPrepareHeader(m_hWAVE, pwh, sizeof(WAVEOUTCAPS));
 			if (hRes != MMSYSERR_NOERROR)
 			{
-				waveInClose(hWaveIn);
-				hWaveIn = NULL;
+				Close();
+				return FALSE;
 			}
-			return hRes;
+			return TRUE;
 		}
-		MMRESULT TinyWaveIn::Unprepare(LPWAVEHDR pwh)
+		BOOL TinyWaveIn::Unprepare(LPWAVEHDR pwh)
 		{
-			if (hWaveIn == NULL || pwh == NULL)
-				return S_FALSE;
-			MMRESULT hRes = waveInUnprepareHeader(hWaveIn, pwh, sizeof(WAVEHDR));
+			MMRESULT hRes = waveInUnprepareHeader(m_hWAVE, pwh, sizeof(WAVEHDR));
 			if (hRes != MMSYSERR_NOERROR)
 			{
-				waveInClose(hWaveIn);
-				hWaveIn = NULL;
+				Close();
+				return FALSE;
 			}
-			return hRes;
+			return TRUE;
 		}
-		MMRESULT TinyWaveIn::Add(LPWAVEHDR pwh)
+		BOOL TinyWaveIn::Add(LPWAVEHDR pwh)
 		{
-			if (hWaveIn == NULL || pwh == NULL)
-				return S_FALSE;
-			MMRESULT hRes = waveInAddBuffer(hWaveIn, pwh, sizeof(WAVEHDR));
+			MMRESULT hRes = waveInAddBuffer(m_hWAVE, pwh, sizeof(WAVEHDR));
 			if (hRes != MMSYSERR_NOERROR)
 			{
-				waveInClose(hWaveIn);
-				hWaveIn = NULL;
+				Close();
+				return FALSE;
 			}
-			return hRes;
+			return TRUE;
 		}
-		MMRESULT TinyWaveIn::GetPosition(LPMMTIME pmmt)
+		BOOL TinyWaveIn::GetPosition(LPMMTIME pmmt)
 		{
-			if (hWaveIn == NULL || pmmt == NULL)
-				return S_FALSE;
-			MMRESULT hRes = waveInGetPosition(hWaveIn, pmmt, sizeof(WAVEINCAPS));
+			MMRESULT hRes = waveInGetPosition(m_hWAVE, pmmt, sizeof(WAVEINCAPS));
 			if (hRes != MMSYSERR_NOERROR)
 			{
-				waveInClose(hWaveIn);
-				hWaveIn = NULL;
+				Close();
+				return FALSE;
 			}
-			return hRes;
+			return TRUE;
 		}
 		void TinyWaveIn::GetErrorText(LPTSTR pzText, MMRESULT hRes)
 		{

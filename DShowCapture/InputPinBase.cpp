@@ -73,20 +73,20 @@ namespace DShow
 		ASSERT(m_observer);
 		HRESULT hRes = CheckStreaming();
 		if (hRes != NOERROR)
-		{
 			return hRes;
-		}
 		const LONG size = pSample->GetActualDataLength();
 		BYTE* bits = NULL;
-		if (FAILED(pSample->GetPointer(&bits)))
-			return S_FALSE;
+		hRes = pSample->GetPointer(&bits);
+		if (FAILED(hRes))
+			return hRes;
 		REFERENCE_TIME times;
 		REFERENCE_TIME timee;
 		//°´ÕÕ100ns¼ÆËã 10000000/30 = 333333.33
-		if (FAILED(pSample->GetTime(&times, &timee)))
-			return S_FALSE;
+		hRes = pSample->GetTime(&times, &timee);
+		if (FAILED(hRes))
+			return hRes;
 		FLOAT ts = static_cast<FLOAT>((timee - times) * 1000 / 10000000);
-		m_observer->OnFrameReceive(bits, size, ts, &m_mediaType);
+		m_observer->OnFrameReceive(bits, size, ts, m_observer->m_lpParameter);
 		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE InputPinBase::ReceiveMultiple(_In_reads_(nSamples) IMediaSample **pSamples, long nSamples, _Out_ long *nSamplesProcessed)

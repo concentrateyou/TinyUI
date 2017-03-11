@@ -61,21 +61,21 @@ namespace TinyUI
 		class TinyWaveIn
 		{
 		private:
-			HWAVEIN	hWaveIn;
+			HWAVEIN	m_hWAVE;
 		public:
 			TinyWaveIn();
 			~TinyWaveIn();
 			operator HWAVEIN() const throw();
-			MMRESULT QueryFormat(LPWAVEFORMATEX pwfx);
-			MMRESULT Open(LPWAVEFORMATEX pwfx, DWORD_PTR dwCallbackInstance);
-			MMRESULT Start();
-			MMRESULT Stop();
-			MMRESULT Reset();
-			MMRESULT Close();
-			MMRESULT Prepare(LPWAVEHDR pwh);
-			MMRESULT Unprepare(LPWAVEHDR pwh);
-			MMRESULT Add(LPWAVEHDR pwh);
-			MMRESULT GetPosition(LPMMTIME pmmt);
+			BOOL QueryFormat(LPWAVEFORMATEX pwfx);
+			BOOL Open(LPWAVEFORMATEX pwfx, DWORD_PTR dwCallbackInstance);
+			BOOL Start();
+			BOOL Stop();
+			BOOL Reset();
+			BOOL Close();
+			BOOL Prepare(LPWAVEHDR pwh);
+			BOOL Unprepare(LPWAVEHDR pwh);
+			BOOL Add(LPWAVEHDR pwh);
+			BOOL GetPosition(LPMMTIME pmmt);
 			void	GetErrorText(LPTSTR pzText, MMRESULT hRes);
 			virtual void OnOpen();
 			virtual void OnClose();
@@ -89,25 +89,25 @@ namespace TinyUI
 		class TinyWaveOut
 		{
 		private:
-			HWAVEOUT hWaveOut;
+			HWAVEOUT m_hWAVE;
 		public:
 			TinyWaveOut();
 			~TinyWaveOut();
 			operator HWAVEOUT() const throw();
-			MMRESULT QueryFormat(LPWAVEFORMATEX pwfx);
-			MMRESULT Open(LPWAVEFORMATEX pwfx, DWORD_PTR dwCallbackInstance);
-			MMRESULT Pause();
-			MMRESULT Reset();
-			MMRESULT Restart();
-			MMRESULT Close();
-			MMRESULT SetVolume(DWORD dwVolume);
-			MMRESULT GetDevCaps(UINT_PTR uDeviceID, LPWAVEOUTCAPS pwoc);
-			MMRESULT GetPosition(LPMMTIME pmmt);
-			MMRESULT Prepare(LPWAVEHDR pwh);
-			MMRESULT Unprepare(LPWAVEHDR pwh);
-			MMRESULT BreakLoop();
-			MMRESULT Write(LPWAVEHDR pwh);
-			MMRESULT SetPlaybackRate(DWORD dwRate);
+			BOOL QueryFormat(LPWAVEFORMATEX pwfx);
+			BOOL Open(LPWAVEFORMATEX pwfx, DWORD_PTR dwCallbackInstance);
+			BOOL Pause();
+			BOOL Reset();
+			BOOL Restart();
+			BOOL Close();
+			BOOL SetVolume(DWORD dwVolume);
+			BOOL GetDevCaps(UINT_PTR uDeviceID, LPWAVEOUTCAPS pwoc);
+			BOOL GetPosition(LPMMTIME pmmt);
+			BOOL Prepare(LPWAVEHDR pwh);
+			BOOL Unprepare(LPWAVEHDR pwh);
+			BOOL BreakLoop();
+			BOOL Write(LPWAVEHDR pwh);
+			BOOL SetPlaybackRate(DWORD dwRate);
 			void	SendMessage(UINT uMsg, DWORD_PTR dwParam1, DWORD_PTR dwParam2);
 			DWORD	GetVolume();
 			DWORD	GetNumDevs();
