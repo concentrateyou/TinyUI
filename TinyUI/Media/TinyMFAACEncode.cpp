@@ -46,9 +46,6 @@ namespace TinyUI
 			if (FAILED(hRes))
 				return FALSE;
 			TinyComPtr<IMFMediaType> outputType;
-			if (!GetAudioOutputType(CLSID_AACMFTEncoder, pFMT, &outputType))
-				return FALSE;
-			/*TinyComPtr<IMFMediaType> outputType;
 			hRes = MFCreateMediaType(&outputType);
 			if (FAILED(hRes))
 				return FALSE;
@@ -73,12 +70,12 @@ namespace TinyUI
 			hRes = outputType->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, pFMT->nAvgBytesPerSec / 8);
 			if (FAILED(hRes))
 				return FALSE;
-			hRes = outputType->SetUINT32(MF_MT_AAC_PAYLOAD_TYPE, 0);
+			hRes = outputType->SetUINT32(MF_MT_AAC_PAYLOAD_TYPE, 1);
 			if (FAILED(hRes))
 				return FALSE;
 			hRes = outputType->SetUINT32(MF_MT_AAC_AUDIO_PROFILE_LEVEL_INDICATION, 0x29);
 			if (FAILED(hRes))
-				return FALSE;*/
+				return FALSE;
 			return TinyMFEncode::Open(CLSID_AACMFTEncoder, inputType, outputType, std::move(callback));
 		}
 	};

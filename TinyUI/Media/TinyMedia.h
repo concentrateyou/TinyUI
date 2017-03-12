@@ -146,6 +146,6 @@ namespace TinyUI
 			DWORD	m_dwSize;
 			DWORD	m_dwMaxSize;
 		};
-		BOOL WINAPI GetAudioOutputType(REFCLSID clsid,const WAVEFORMATEX* pMFT, IMFMediaType** mediaType);
+		BOOL WINAPI GetAudioOutputType(REFCLSID clsid, IMFMediaType* inputType, const WAVEFORMATEX* pMFT, IMFMediaType** mediaType);
 	};
 }

@@ -153,7 +153,7 @@ namespace TinyUI
 			return TinyReference < MediaBuffer >::GetReference();
 		}
 		//////////////////////////////////////////////////////////////////////////
-		BOOL WINAPI GetAudioOutputType(REFCLSID clsid, const WAVEFORMATEX* pMFT, IMFMediaType** ppMediaType)
+		BOOL WINAPI GetAudioOutputType(REFCLSID clsid, IMFMediaType* inputType, const WAVEFORMATEX* pMFT, IMFMediaType** ppMediaType)
 		{
 			TinyComPtr<IUnknown> unknow;
 			HRESULT hRes = unknow.CoCreateInstance(clsid, NULL, CLSCTX_INPROC_SERVER);
@@ -165,6 +165,9 @@ namespace TinyUI
 				return FALSE;
 			do
 			{
+				hRes = transform->SetInputType(0, inputType, 0);
+				if (FAILED(hRes))
+					return FALSE;
 				if (clsid == CLSID_AACMFTEncoder)
 				{
 					DWORD dwTypeIndex = 0;

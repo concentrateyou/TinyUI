@@ -34,7 +34,7 @@ private:
 	TinyMFMP3Decode mp3decode;
 	
 
-	TinyFile m_mp4File;
+	TinyFile m_aacFile;
 	TinyWaveFile m_waveFile;
 	DWORD m_dwhnsSampleDuration;
 };

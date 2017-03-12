@@ -77,6 +77,10 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	
 	LoadSeDebugPrivilege();
 
+	MediaTest test;
+	//test.WaveToAAC("D:\\赵雷-三十岁的女人.wav", "D:\\12345.aac");
+	test.AACToWave("D:\\12345.aac", "D:\\12345.wav");
+
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
