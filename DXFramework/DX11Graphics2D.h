@@ -16,7 +16,7 @@ namespace DXFramework
 		DX11Graphics2D();
 		virtual ~DX11Graphics2D();
 		BOOL	 Initialize(HWND hWND, const TinySize& size);
-		void	 BeginDraw();
+		void	 BeginDraw(ID3D11RenderTargetView* pView);
 		void	 EndDraw();
 		BOOL     Resize(const TinySize& size);
 		DX11&	 GetDX11();

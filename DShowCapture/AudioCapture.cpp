@@ -55,10 +55,10 @@ namespace DShow
 			if (m_size != size)
 			{
 				m_bits.Reset(new BYTE[size]);
-				m_queue.Initialize(ROUNDUP_POW_2(size * 3));
+				m_queue.Initialize(3, size);
 				m_size = size;
 			}
-			m_queue.Write(bits, size);
+			m_queue.Write(bits, 1);
 		}
 	}
 	BOOL AudioCapture::Initialize(const Name& name)
@@ -154,7 +154,7 @@ namespace DShow
 	}
 	BYTE* AudioCapture::GetPointer()
 	{
-		m_queue.Read(m_bits, m_size);
+		m_queue.Read(m_bits, 1);
 		return m_bits;
 	}
 	LONG AudioCapture::GetSize()

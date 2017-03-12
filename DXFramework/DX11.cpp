@@ -208,7 +208,6 @@ namespace DXFramework
 		hRes = m_d3d->CreateDepthStencilView(m_depthStencilBuffer, &depthStencilViewDesc, &m_depthStencilView);
 		if (FAILED(hRes))
 			return FALSE;
-		m_immediateContext->OMSetRenderTargets(1, &m_renderView, m_depthStencilView);
 		//更新视口
 		D3D11_VIEWPORT viewport;
 		viewport.Width = static_cast<FLOAT>(m_size.cx);
@@ -242,32 +241,32 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	void DX11::BeginDraw()
+	void DX11::BeginDraw(ID3D11RenderTargetView* pView)
 	{
-		if (m_immediateContext)
+		if (m_immediateContext != NULL &&
+			pView != NULL &&
+			m_depthStencilView != NULL)
 		{
-			if (m_renderView)
-			{
-				FLOAT color[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
-				m_immediateContext->ClearRenderTargetView(m_renderView, color);
-			}
-			if (m_depthStencilView)
-			{
-				m_immediateContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0F, 0);
-			}
+			m_immediateContext->OMSetRenderTargets(1, &pView, m_depthStencilView);
+			FLOAT color[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
+			m_immediateContext->ClearRenderTargetView(pView, color);
+			m_immediateContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0F, 0);
 		}
 	}
 	void DX11::EndDraw()
 	{
-		if (m_immediateContext && m_swap)
+		if (m_swap != NULL)
 		{
 			m_swap->Present(0, 0);
+		}
+		if (m_immediateContext != NULL)
+		{
 			m_immediateContext->Flush();
 		}
 	}
 	void DX11::AllowDepth(BOOL allow)
 	{
-		if (m_immediateContext)
+		if (m_immediateContext != NULL)
 		{
 			m_immediateContext->OMSetDepthStencilState(allow ? m_depthStencilState : m_disableDepthState, 1);
 		}
@@ -291,6 +290,10 @@ namespace DXFramework
 	ID3D11DepthStencilView* DX11::GetDSView() const
 	{
 		return m_depthStencilView;
+	}
+	ID3D11RenderTargetView*	DX11::GetRTView() const
+	{
+		return m_renderView;
 	}
 	HWND DX11::GetHWND() const
 	{

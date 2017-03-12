@@ -50,7 +50,7 @@ namespace DShow
 		static TinyComPtr<IPin> GetPin(IBaseFilter* filter, PIN_DIRECTION pin_dir, REFGUID category);
 	private:
 		LONG										m_size;
-		IO::TinyRingQueue							m_queue;
+		IO::TinyRingBuffer							m_queue;
 		TinyScopedPtr<BYTE>							m_bits;
 		TinyComPtr<IBaseFilter>						m_captureFilter;
 		TinyComPtr<IGraphBuilder>					m_builder;

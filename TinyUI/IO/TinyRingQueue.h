@@ -15,7 +15,7 @@ namespace TinyUI
 	namespace IO
 	{
 		/// <summary>
-		/// 读取速度大于写的速度
+		/// 大小必须是2的整数幂,
 		/// </summary>
 		class TinyRingQueue
 		{

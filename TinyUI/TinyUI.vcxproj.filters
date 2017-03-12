@@ -486,6 +486,9 @@
     <ClInclude Include="Network\TinyDNS.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
+    <ClInclude Include="IO\TinyRingBuffer.h">
+      <Filter>头文件\IO</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -889,6 +892,9 @@
     </ClCompile>
     <ClCompile Include="Network\TinyDNS.cpp">
       <Filter>源文件\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\TinyRingBuffer.cpp">
+      <Filter>源文件\IO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

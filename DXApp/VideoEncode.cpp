@@ -73,7 +73,6 @@ namespace DXApp
 			s = dwTime > s ? 0 : s - dwTime;
 			if (m_close.Lock(s))
 			{
-
 				break;
 			}
 			dwTime = this->Encode();

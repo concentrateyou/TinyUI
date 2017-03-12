@@ -24,6 +24,7 @@ namespace TinyUI
 			{
 				m_data.Reset(new BYTE[size]);
 				memset(m_data, 0, size * sizeof(BYTE));
+				TRACE("size:%d\n", size);
 				m_io.data = m_data;
 				m_io.size = size;
 				m_io.offsetI = 0;

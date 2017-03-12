@@ -36,9 +36,9 @@ namespace DXFramework
 		return TRUE;
 	}
 
-	void DX11Graphics2D::BeginDraw()
+	void DX11Graphics2D::BeginDraw(ID3D11RenderTargetView* pView)
 	{
-		m_dx11.BeginDraw();
+		m_dx11.BeginDraw(pView);
 		m_camera.UpdatePosition();
 		m_viewMatrix = m_camera.GetViewMatrix();
 		m_worldMatrix = m_dx11.GetWorldMatrix();

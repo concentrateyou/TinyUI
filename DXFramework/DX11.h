@@ -11,7 +11,7 @@ namespace DXFramework
 		~DX11();
 		BOOL Initialize(HWND hWND, INT x, INT y, INT cx, INT cy);
 		BOOL ResizeView(INT cx = 0, INT cy = 0);
-		void BeginDraw();
+		void BeginDraw(ID3D11RenderTargetView* pView = NULL);
 		void EndDraw();
 		void AllowDepth(BOOL allow);
 		ID3D11Device*			GetD3D() const;
@@ -19,6 +19,7 @@ namespace DXFramework
 		IDXGISwapChain*			GetSwap() const;
 		ID3D11Texture2D*		GetTexture2D() const;
 		ID3D11DepthStencilView* GetDSView() const;
+		ID3D11RenderTargetView*	GetRTView() const;
 		HWND					GetHWND() const;
 		XMMATRIX				GetProjectionMatrix();
 		XMMATRIX				GetWorldMatrix();

@@ -83,7 +83,7 @@ namespace DXApp
 	DWORD RenderTask::Render()
 	{
 		m_timer.BeginTime();
-		m_graphics.BeginDraw();
+		m_graphics.BeginDraw(m_graphics.GetDX11().GetRTView());
 		for (INT i = 0;i < m_scenes.GetSize();i++)
 		{
 			DX11Element2D* ps = m_scenes[i];
