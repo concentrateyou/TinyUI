@@ -15,7 +15,7 @@ namespace TinyUI
 	namespace IO
 	{
 		/// <summary>
-		/// 大小必须是2的整数幂,
+		/// 无锁循环队列,单生产者单消费者,大小必须是2的整数幂,
 		/// </summary>
 		class TinyRingQueue
 		{
@@ -27,7 +27,7 @@ namespace TinyUI
 				UINT	offsetO;
 			}FIFO;
 		public:
-			TinyRingQueue(TinyLock& lock);
+			TinyRingQueue();
 			~TinyRingQueue();
 			BOOL	Initialize(UINT size);
 			UINT	GetSize();
@@ -38,9 +38,8 @@ namespace TinyUI
 			UINT	ReadBytes(BYTE *data, UINT size);
 			UINT	WriteBytes(BYTE *data, UINT size);
 		protected:
-			TinyLock&				m_lock;
-			TinyScopedArray<BYTE>	m_data;
 			FIFO					m_io;
+			TinyScopedArray<BYTE>	m_data;
 		};
 	};
 }

@@ -7,8 +7,7 @@ namespace TinyUI
 {
 	namespace IO
 	{
-		TinyRingQueue::TinyRingQueue(TinyLock& lock)
-			:m_lock(lock)
+		TinyRingQueue::TinyRingQueue()
 		{
 			ZeroMemory(&m_io, sizeof(m_io));
 		}
@@ -24,7 +23,6 @@ namespace TinyUI
 			{
 				m_data.Reset(new BYTE[size]);
 				memset(m_data, 0, size * sizeof(BYTE));
-				TRACE("size:%d\n", size);
 				m_io.data = m_data;
 				m_io.size = size;
 				m_io.offsetI = 0;
@@ -39,20 +37,16 @@ namespace TinyUI
 		}
 		UINT TinyRingQueue::Read(BYTE *data, UINT size)
 		{
-			m_lock.Lock();
 			BOOL bRes = ReadBytes(data, size);
 			if (m_io.offsetI == m_io.offsetO)
 			{
 				m_io.offsetI = m_io.offsetO = 0;
 			}
-			m_lock.Unlock();
 			return bRes;
 		}
 		UINT TinyRingQueue::Write(BYTE *data, UINT size)
 		{
-			m_lock.Lock();
 			BOOL bRes = WriteBytes(data, size);
-			m_lock.Unlock();
 			return bRes;
 		}
 		UINT TinyRingQueue::ReadBytes(BYTE *data, UINT size)
@@ -75,9 +69,7 @@ namespace TinyUI
 		}
 		void TinyRingQueue::Reset()
 		{
-			m_lock.Lock();
 			m_io.offsetI = m_io.offsetO = 0;
-			m_lock.Unlock();
 		}
 	}
 }
