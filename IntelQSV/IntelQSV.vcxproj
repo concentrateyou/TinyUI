@@ -77,13 +77,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;DX11_D3D;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(INTELMEDIASDKROOT)\include;..\TinyUI</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(INTELMEDIASDKROOT)include;..\TinyUI</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(INTELMEDIASDKROOT)\lib\win32;..\TinyUI;..\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(INTELMEDIASDKROOT)lib\win32;..\TinyUI;..\Debug</AdditionalLibraryDirectories>
       <AdditionalDependencies>libmfx.lib;dxgi.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>

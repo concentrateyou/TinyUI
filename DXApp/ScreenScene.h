@@ -1,6 +1,7 @@
 #pragma once
 #include "Common/TinyCommon.h"
 #include "DX11Image2D.h"
+#include "DX11Duplicator.h"
 #include "DX11.h"
 #include "Utility.h"
 using namespace TinyUI;
@@ -23,9 +24,9 @@ namespace DXApp
 		BYTE*			m_bits;
 		HBITMAP			m_hBitmap;
 		TinyRectangle	m_snapshot;
+		DX11Duplicator	m_duplicator;
 		TinyScopedPtr<TinyMemDC> m_memDC;
 	};
-
 }
 
 

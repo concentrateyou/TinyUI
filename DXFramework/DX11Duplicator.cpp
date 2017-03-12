@@ -4,6 +4,7 @@
 namespace DXFramework
 {
 	DX11Duplicator::DX11Duplicator()
+		:m_handle(NULL)
 	{
 	}
 
@@ -68,13 +69,13 @@ namespace DXFramework
 		textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 		textureDesc.Usage = D3D11_USAGE_DEFAULT;
 		textureDesc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
-		TinyComPtr<ID3D11Texture2D> dx11Texture2D;
-		if (FAILED(hRes = dx11.GetD3D()->CreateTexture2D(&textureDesc, NULL, &dx11Texture2D)))
+		TinyComPtr<ID3D11Texture2D> texture2D;
+		if (FAILED(hRes = dx11.GetD3D()->CreateTexture2D(&textureDesc, NULL, &texture2D)))
 			return FALSE;
-		if (FAILED(hRes = dx11Texture2D->QueryInterface(__uuidof(ID3D11Resource), (void**)&m_resource)))
+		if (FAILED(hRes = texture2D->QueryInterface(__uuidof(ID3D11Resource), (void**)&m_resource)))
 			return FALSE;
 		TinyComPtr<IDXGIResource> resource;
-		if (FAILED(hRes = dx11Texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&resource)))
+		if (FAILED(hRes = texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&resource)))
 			return FALSE;
 		if (FAILED(hRes = resource->GetSharedHandle(&m_handle)))
 			return FALSE;
@@ -84,7 +85,6 @@ namespace DXFramework
 	{
 		if (!m_duplication)
 			return FALSE;
-		m_duplication->ReleaseFrame();
 		DXGI_OUTDUPL_FRAME_INFO s;
 		TinyComPtr<IDXGIResource> resource;
 		HRESULT hRes = m_duplication->AcquireNextFrame(timeout, &s, &resource);
