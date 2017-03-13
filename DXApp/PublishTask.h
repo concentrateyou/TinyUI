@@ -15,7 +15,7 @@ namespace DXApp
 		~PublishTask();
 		BOOL	Connect(const TinyString& url = "rtmp://10.121.86.127/live/test");
 		BOOL	Submit();
-		BOOL	Close(DWORD dwMS) OVERRIDE;
+		BOOL	Close(DWORD dwMS = INFINITE) OVERRIDE;
 	private:
 		void	Publish(Sample& sample);
 		void	OnMessagePump();

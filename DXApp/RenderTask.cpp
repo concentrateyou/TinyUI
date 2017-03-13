@@ -322,7 +322,6 @@ namespace DXApp
 			}
 			m_graphics.Lock();
 			dwTime = this->Render();
-			TRACE("dwTime:%d\n", dwTime);
 			m_graphics.Unlock();
 		}
 	}

@@ -173,10 +173,12 @@ namespace DXApp
 	void MainUI::DestoryUI()
 	{
 		m_renderTask.Close();
-		if (m_videoEncode)
+		if (m_videoEncode != NULL)
 			m_videoEncode->Close();
-		if (m_audioEncode)
+		if (m_audioEncode != NULL)
 			m_audioEncode->Close();
+		if (m_publishTask != NULL)
+			m_publishTask->Close();
 
 		m_broadcast.EVENT_CLICK -= m_onBroadcastClick;
 		m_record.EVENT_CLICK -= m_onRecordClick;

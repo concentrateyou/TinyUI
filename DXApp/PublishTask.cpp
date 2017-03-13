@@ -32,7 +32,6 @@ namespace DXApp
 	BOOL PublishTask::Submit()
 	{
 		m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
-
 		return TinyTaskBase::Submit(BindCallback(&PublishTask::OnMessagePump, this));
 	}
 	BOOL PublishTask::Close(DWORD dwMS)
