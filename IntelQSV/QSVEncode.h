@@ -8,22 +8,23 @@ namespace QSV
 {
 	typedef struct tagQSVParam
 	{
-		DWORD dwCX;
-		DWORD dwCY;
-		DWORD dwFPS;
-		DWORD dwKbps;
-		DWORD dwMaxKbps;
-		DWORD dwICQQuality;
-		DWORD dwAccuracy;
-		DWORD dwConvergence;
-		DWORD dwQPI;
-		DWORD dwQPB;
-		DWORD dwQPP;
-		DWORD dwRC;
-		DWORD dwGopPicSize;
-		DWORD dwGopRefDist;
-		DWORD dwLookAheadDepth;
-		DWORD dwAsyncDepth;
+		WORD wTargetUsage;
+		WORD wCX;
+		WORD wCY;
+		WORD wFPS;
+		WORD wKbps;
+		WORD wMaxKbps;
+		WORD wICQQuality;
+		WORD wAccuracy;
+		WORD wConvergence;
+		WORD wQPI;
+		WORD wQPB;
+		WORD wQPP;
+		WORD wRC;
+		WORD wKeyPerSec;//每秒关键帧数
+		WORD wbFrames;//b帧数
+		WORD wLookAheadDepth;
+		WORD wAsyncDepth;
 	}QSVParam;
 	/// <summary>
 	/// DX11
@@ -34,8 +35,12 @@ namespace QSV
 	public:
 		QSVEncode();
 		~QSVEncode();
-		BOOL Initialize(const QSVParam& param);
+		QSVParam GetDefaultQSV(WORD wCX, WORD wCY);
+		BOOL Open(const QSVParam& param);
+		mfxStatus Encode(UINT64 ts, BYTE *pDataY, BYTE *pDataUV, UINT32 strideY, UINT32 strideUV, mfxBitstream **pBS);
+		BOOL Close();
 	private:
+		mfxStatus LoadNV12(mfxFrameSurface1 *pSurface, BYTE *pDataY, BYTE* pDataUV, UINT32 strideY, UINT32 strideUV);
 		mfxStatus Allocate();
 		mfxStatus GetVideoParam();
 		BOOL IntelExists();
@@ -52,7 +57,7 @@ namespace QSV
 		mfxBitstream			m_bitstream;
 		mfxExtCodingOption2     m_co2;
 		mfxExtCodingOption      m_co;
-		TinyScopedArray<Task>				m_taskPool;
+		TinyScopedArray<Task>				m_tasks;
 		TinyScopedArray<mfxFrameSurface1*>	m_surfaces;
 		TinyScopedPtr<MFXVideoENCODE>		m_videoENCODE;
 	};
