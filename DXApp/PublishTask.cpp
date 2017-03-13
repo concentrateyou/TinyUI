@@ -129,14 +129,13 @@ namespace DXApp
 	{
 		for (;;)
 		{
-			if (m_close.Lock(0))
+			if (m_close.Lock(5))
 			{
 				OnClose();
 				break;
 			}
 			if (!m_samples.empty())
 			{
-				Sleep(10);
 				Sample sample;
 				if (m_samples.try_pop(sample))
 				{

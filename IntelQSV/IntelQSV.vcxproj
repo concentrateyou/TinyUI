@@ -85,6 +85,7 @@
     <Lib>
       <AdditionalLibraryDirectories>$(INTELMEDIASDKROOT)lib\win32;..\TinyUI;..\Debug</AdditionalLibraryDirectories>
       <AdditionalDependencies>libmfx.lib;dxgi.lib</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

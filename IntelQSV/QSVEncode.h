@@ -35,32 +35,24 @@ namespace QSV
 	public:
 		QSVEncode();
 		~QSVEncode();
-		QSVParam GetDefaultQSV(WORD wCX, WORD wCY);
-		BOOL Open(const QSVParam& param);
-		mfxStatus Encode(UINT64 ts, BYTE *pDataY, BYTE *pDataUV, UINT32 strideY, UINT32 strideUV, mfxBitstream **pBS);
-		BOOL Close();
-	private:
-		mfxStatus LoadNV12(mfxFrameSurface1 *pSurface, BYTE *pDataY, BYTE* pDataUV, UINT32 strideY, UINT32 strideUV);
-		mfxStatus Allocate();
-		mfxStatus GetVideoParam();
-		BOOL IntelExists();
-	private:
-		mfxVideoParam           m_parameter;
-		mfxVideoParam			m_videoParam;
+		mfxStatus Open(const QSVParam& param);
+		mfxStatus Encode(BYTE* data, LONG size);
+		mfxStatus Close();
+	protected:
 		MFXVideoSession			m_session;
 		mfxFrameAllocator		m_allocator;
-		mfxFrameAllocResponse   m_response;
-		mfxU8                   m_sps[100];
-		mfxU8                   m_pps[100];
-		mfxU16                  m_spsSize;
-		mfxU16                  m_ppsSize;
+		mfxVideoParam			m_videoParam;
+		mfxVideoParam			m_videoVPPParam;
+		mfxFrameAllocRequest	m_videoRequest;
+		mfxU16					m_vppIN;
+		mfxU16					m_vppOUT;
 		mfxBitstream			m_bitstream;
-		mfxExtCodingOption2     m_co2;
-		mfxExtCodingOption      m_co;
-		TinyScopedArray<Task>				m_tasks;
-		TinyScopedArray<mfxFrameSurface1*>	m_surfaces;
 		TinyScopedPtr<MFXVideoENCODE>		m_videoENCODE;
+		TinyScopedPtr<MFXVideoVPP>			m_videoVPP;
+		TinyScopedPtr<mfxFrameSurface1*>	m_surfaceVPPIN;
+		TinyScopedPtr<mfxFrameSurface1*>	m_surfaceVPPOUT;
 	};
+
 }
 
 
