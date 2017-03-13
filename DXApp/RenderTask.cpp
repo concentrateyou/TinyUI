@@ -29,12 +29,10 @@ namespace DXApp
 		ASSERT(pWindow);
 		if (!m_graphics.Initialize(pWindow->Handle(), TinySize(cx, cy)))
 			return FALSE;
-
 		for (INT i = 0;i < 8;i++)
 		{
 			m_handles[i].Create(m_graphics.GetDX11());
 		}
-
 		m_pWindow = pWindow;
 		m_dwFPS = dwFPS;
 		m_onSize.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &RenderTask::OnSize));
@@ -80,7 +78,7 @@ namespace DXApp
 		return TinyTaskBase::Submit(BindCallback(&RenderTask::OnMessagePump, this));
 	}
 
-	DWORD RenderTask::Render()
+	LONGLONG RenderTask::Render()
 	{
 		m_timer.BeginTime();
 		m_graphics.BeginDraw(m_graphics.GetDX11().GetRTView());
@@ -308,6 +306,7 @@ namespace DXApp
 		{
 			DWORD s = 1000 / m_dwFPS;
 			s = dwTime > s ? 0 : s - dwTime;
+			TRACE("time:%d\n", s);
 			if (m_close.Lock(s))
 			{
 				for (INT i = 0; i < 8; ++i)

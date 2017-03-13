@@ -27,7 +27,7 @@ namespace DXApp
 	{
 		return m_dwFPS;
 	}
-	DWORD VideoEncode::Encode()
+	LONGLONG VideoEncode::Encode()
 	{
 		ASSERT(m_renderTask);
 		m_timer.BeginTime();
@@ -66,16 +66,16 @@ namespace DXApp
 
 	void VideoEncode::OnMessagePump()
 	{
-		DWORD dwTime = 0;
+		LONGLONG time = 0;
 		for (;;)
 		{
 			DWORD s = 1000 / m_dwFPS;
-			s = dwTime > s ? 0 : s - dwTime;
+			s = time > s ? 0 : s - time;
 			if (m_close.Lock(s))
 			{
 				break;
 			}
-			dwTime = this->Encode();
+			time = this->Encode();
 		}
 	}
 }

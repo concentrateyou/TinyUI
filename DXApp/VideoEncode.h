@@ -24,7 +24,7 @@ namespace DXApp
 		TinySize			GetSize() const;
 		DWORD				GetFPS() const;
 	private:
-		DWORD				Encode();
+		LONGLONG			Encode();
 		void				OnMessagePump();
 	private:
 		TinyPerformanceTimer			m_timer;

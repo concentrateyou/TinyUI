@@ -165,7 +165,7 @@ namespace DXApp
 
 		RECT s = { 0 };
 		m_pDXWND->GetClientRect(&s);
-		if (m_renderTask.Initialize(m_pDXWND, TO_CX(s), TO_CY(s), 30))
+		if (m_renderTask.Initialize(m_pDXWND, TO_CX(s), TO_CY(s), 40))
 		{
 			m_renderTask.Submit();
 		}
@@ -207,24 +207,16 @@ namespace DXApp
 			scale.SetSize(1920, 1080);
 			break;
 		}
-		if (m_videoEncode)
-		{
+		if (m_videoEncode != NULL)
 			m_videoEncode->Close();
-		}
 		m_videoEncode.Reset(new VideoEncode(&m_renderTask));
 		m_videoEncode->Initialize(scale, 30, 1000);
-
-		if (m_audioEncode)
-		{
+		if (m_audioEncode != NULL)
 			m_audioEncode->Close();
-		}
 		m_audioEncode.Reset(new AudioEncode(m_audioName, m_audioParam));
 		m_audioEncode->Open(128);
-
-		if (m_publishTask)
-		{
+		if (m_publishTask != NULL)
 			m_publishTask->Close(INFINITE);
-		}
 		m_publishTask.Reset(new PublishTask(m_audioEncode, m_videoEncode));
 		TinyString rtmpURL;
 		rtmpURL.Resize(256);

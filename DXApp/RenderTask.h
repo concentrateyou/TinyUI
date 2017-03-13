@@ -21,7 +21,7 @@ namespace DXApp
 		virtual	~RenderTask();
 		DX11Graphics2D&	GetGraphics();
 		BOOL			Initialize(DXWindow* pWindow, INT cx, INT cy, DWORD dwFPS);
-		DWORD			Render();
+		LONGLONG		Render();
 		BOOL			Submit();
 		BOOL			Contain(DX11Element2D* element);
 		BOOL			Add(DX11Element2D* element);
