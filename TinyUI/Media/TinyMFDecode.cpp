@@ -285,7 +285,7 @@ namespace TinyUI
 			HRESULT hRes = m_transform->GetInputStatus(0, &dwStatus);
 			if (MFT_INPUT_STATUS_ACCEPT_DATA != dwStatus)
 				return TRUE;
-			HRESULT hRes = m_transform->ProcessInput(0, m_inputSample, 0);
+			hRes = m_transform->ProcessInput(0, m_inputSample, 0);
 			if (FAILED(hRes))
 				return FALSE;
 			return GetOutputSample(size * 2);
