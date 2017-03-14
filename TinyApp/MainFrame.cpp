@@ -268,8 +268,6 @@ LRESULT CMainFrame::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHa
 	m_audioOutput1.EVENT_SELECTCHANGE -= m_onAudioOutputChange1;
 	m_audioOutput2.EVENT_SELECTCHANGE -= m_onAudioOutputChange2;
 
-	//m_capture.Close();
-
 	return FALSE;
 }
 
@@ -294,6 +292,7 @@ void CMainFrame::OnVideoSelectChange1(INT index)
 	{
 		m_videoDevice2.AddString(m_videoParams[i].ToString().c_str());
 	}
+
 }
 
 void CMainFrame::OnVideoSelectChange2(INT index)
@@ -302,12 +301,7 @@ void CMainFrame::OnVideoSelectChange2(INT index)
 	m_videoDevice.Uninitialize();
 	m_videoDevice.Initialize(m_videoNames[m_videoDevice1.GetCurSel()]);
 	m_videoDevice.Allocate(param);
-	if (m_renderTask)
-	{
-		m_renderTask->Close(INFINITE);
-	}
 	m_renderTask.Reset(new RenderTask(m_control.Handle(), &m_videoDevice, param));
-	m_renderTask->Submit();
 }
 
 void CMainFrame::OnAudioInputSelectChange1(INT index)
@@ -368,11 +362,19 @@ void CMainFrame::OnAudioOutput(BYTE* bits, LONG size, FLOAT ts, LPVOID ps)
 
 void CMainFrame::OnVideoStart(void*, INT)
 {
-
+	m_videoDevice.Start();
+	if (m_renderTask != NULL)
+	{
+		m_renderTask->Submit();
+	}
 }
 void CMainFrame::OnVideoStop(void*, INT)
 {
 	m_videoDevice.Stop();
+	if (m_renderTask != NULL)
+	{
+		m_renderTask->Close(INFINITE);
+	}
 }
 
 void CMainFrame::OnAudioInputStart(void*, INT)

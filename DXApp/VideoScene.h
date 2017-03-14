@@ -5,6 +5,7 @@
 #include "AudioCaptureParam.h"
 #include "DX11Image2D.h"
 #include "DX11.h"
+
 using namespace DXFramework;
 using namespace DShow;
 

@@ -7,7 +7,6 @@ RenderTask::RenderTask(HWND hWND, DShow::VideoCapture* pVideo, const DShow::Vide
 	m_pVideo(pVideo),
 	m_videoParam(videoParam)
 {
-
 }
 
 

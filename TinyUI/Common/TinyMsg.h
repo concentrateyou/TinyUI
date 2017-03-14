@@ -16,8 +16,8 @@ namespace TinyUI
 		INT cbSize;
 		BOOL bHandled;
 		TinyMsg();
-		TinyMsg(HWND hWnd, UINT uMsg, WPARAM wParamIn, LPARAM lParamIn, DWORD dwTime, POINT ptIn, BOOL bHandledIn);
-		TinyMsg(HWND hWnd, UINT uMsg, WPARAM wParamIn, LPARAM lParamIn, BOOL bHandledIn = TRUE);
+		TinyMsg(HWND hWND, UINT uMsg, WPARAM wParamIn, LPARAM lParamIn, DWORD dwTime, POINT ptIn, BOOL bHandledIn);
+		TinyMsg(HWND hWND, UINT uMsg, WPARAM wParamIn, LPARAM lParamIn, BOOL bHandledIn = TRUE);
 		TinyMsg(MSG& msg, BOOL bHandledIn = TRUE);
 	};
 	/// <summary>
@@ -26,8 +26,13 @@ namespace TinyUI
 	class NO_VTABLE TinyMessageMap
 	{
 	public:
-		virtual BOOL ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
+		virtual BOOL ProcessWindowMessage(HWND hWND, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
 		{
+			UNUSED(hWND);
+			UNUSED(uMsg);
+			UNUSED(wParam);
+			UNUSED(lParam);
+			UNUSED(lResult);
 			return FALSE;
 		};
 	};

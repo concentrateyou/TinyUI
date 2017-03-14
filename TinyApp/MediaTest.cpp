@@ -63,7 +63,7 @@ BOOL MediaTest::AACToWave(const string& aacFile, const string& waveFile)
 	waveFormat.nAvgBytesPerSec = waveFormat.nSamplesPerSec * waveFormat.nBlockAlign;
 	if (!m_waveFile.Create((LPTSTR)&waveFile[0], &waveFormat))
 		return FALSE;
-	if (!aacdecode.Open(&waveFormat, 192000, BindCallback(&MediaTest::OnAACDecode, this)))
+	if (!aacdecode.Open(&waveFormat, 192000,TRUE, BindCallback(&MediaTest::OnAACDecode, this)))
 		return FALSE;
 
 	BYTE data[1024 * 4];

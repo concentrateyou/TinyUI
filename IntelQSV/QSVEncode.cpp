@@ -1,25 +1,51 @@
 #include "stdafx.h"
 #include "QSVEncode.h"
+#include <VersionHelpers.h>
 
 namespace QSV
 {
 	QSVEncode::QSVEncode()
+		:m_vppIN(0),
+		m_vppOUT(0),
+		m_syncpVPP(NULL),
+		m_syncpVideo(NULL)
 	{
+
 	}
 	QSVEncode::~QSVEncode()
 	{
 	}
-	mfxStatus QSVEncode::Open(const QSVParam& param)
+	QSVParam QSVEncode::GetDefaultQSV(WORD wCX, WORD wCY, WORD wKbps)
 	{
-		mfxStatus sts = MFX_ERR_NONE;
-		mfxIMPL impl = MFX_IMPL_AUTO_ANY | MFX_IMPL_VIA_D3D11;
-		mfxVersion ver = { { 1, 1 } };
-		sts = ::Initialize(impl, ver, &m_session, &m_allocator);
-		MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
+		QSVParam param = { 0 };
+		param.wTargetUsage = MFX_TARGETUSAGE_BALANCED;
+		param.wCX = wCX;
+		param.wCY = wCY;
+		param.wRC = MFX_RATECONTROL_VBR;
+		param.wFPS = 30;
+		param.wQPB = param.wQPI = param.wQPP = 23;
+		param.wConvergence = 1;
+		param.wAccuracy = 1000;
+		param.wMaxKbps = 3000;
+		param.wKbps = wKbps;
+		param.wAsyncDepth = 4;
+		param.wICQQuality = 23;
+		param.wKeyPerSec = 3;
+		param.wbFrames = 7;
+		param.wLookAheadDepth = 40;
+		return param;
+	}
+	mfxStatus QSVEncode::Open(const QSVParam& param, Callback<void(BYTE*, LONG)>&& callback)
+	{
+		mfxIMPL impl = MFX_IMPL_HARDWARE_ANY;
+		mfxVersion ver = { { 0, 1 } };
+		mfxStatus status = Initialize(impl, ver, &m_session, &m_allocator);
+		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
 		memset(&m_videoParam, 0, sizeof(m_videoParam));
 		m_videoParam.mfx.CodecId = MFX_CODEC_AVC;
 		m_videoParam.mfx.TargetUsage = MFX_TARGETUSAGE_BALANCED;
 		m_videoParam.mfx.TargetKbps = param.wKbps;
+		m_videoParam.mfx.MaxKbps = param.wMaxKbps;
 		m_videoParam.mfx.RateControlMethod = MFX_RATECONTROL_VBR;
 		m_videoParam.mfx.FrameInfo.FrameRateExtN = param.wFPS;
 		m_videoParam.mfx.FrameInfo.FrameRateExtD = 1;
@@ -63,170 +89,194 @@ namespace QSV
 		MSDK_CHECK_POINTER(m_videoENCODE, MFX_ERR_MEMORY_ALLOC);
 		m_videoVPP.Reset(new MFXVideoVPP(m_session));
 		MSDK_CHECK_POINTER(m_videoVPP, MFX_ERR_MEMORY_ALLOC);
-
-		memset(&m_videoRequest, 0, sizeof(m_videoRequest));
-		sts = m_videoENCODE->QueryIOSurf(&m_videoParam, &m_videoRequest);
-		MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
-
-
+		mfxFrameAllocRequest videoRequest;
+		memset(&videoRequest, 0, sizeof(videoRequest));
+		status = m_videoENCODE->Query(&m_videoParam, &m_videoParam);
+		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
+		status = m_videoENCODE->QueryIOSurf(&m_videoParam, &videoRequest);
+		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
 		mfxFrameAllocRequest videoVPPRequest[2];
-		memset(&videoVPPRequest, 0, sizeof(mfxFrameAllocResponse) * 2);
-		sts = m_videoVPP->QueryIOSurf(&m_videoVPPParam, videoVPPRequest);
-		MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
-		m_videoRequest.Type |= MFX_MEMTYPE_FROM_VPPOUT;
+		memset(&videoVPPRequest, 0, sizeof(mfxFrameAllocRequest) * 2);
+		status = m_videoVPP->QueryIOSurf(&m_videoVPPParam, videoVPPRequest);
+		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
+		videoRequest.Type |= MFX_MEMTYPE_FROM_VPPOUT;
 		m_vppIN = videoVPPRequest[0].NumFrameSuggested;
-		m_vppOUT = m_videoRequest.NumFrameSuggested + videoVPPRequest[1].NumFrameSuggested;
-		m_videoRequest.NumFrameSuggested = m_vppOUT;
+		m_vppOUT = videoRequest.NumFrameSuggested + videoVPPRequest[1].NumFrameSuggested;
+		videoRequest.NumFrameSuggested = m_vppOUT;
 		videoVPPRequest[0].Type |= WILL_WRITE;
-
-		mfxFrameAllocResponse	videoVPPINReponse;
-		mfxFrameAllocResponse	videoVPPOUTReponse;
-		memset(&videoVPPINReponse, 0, sizeof(mfxFrameAllocResponse));
-		memset(&videoVPPOUTReponse, 0, sizeof(mfxFrameAllocResponse));
-
-		sts = m_allocator.Alloc(m_allocator.pthis, &videoVPPRequest[0], &videoVPPINReponse);
-		MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
-		sts = m_allocator.Alloc(m_allocator.pthis, &m_videoRequest, &videoVPPOUTReponse);
-		MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
-
-		m_surfaceVPPIN.Reset(new mfxFrameSurface1*[m_vppIN]);
+		status = m_allocator.Alloc(m_allocator.pthis, &videoVPPRequest[0], &m_videoVPPINReponse);
+		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
+		status = m_allocator.Alloc(m_allocator.pthis, &videoRequest, &m_videoVPPOUTReponse);
+		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
+		m_surfaceVPPIN.Reset(new mfxFrameSurface1 *[m_vppIN]);
 		MSDK_CHECK_POINTER(m_surfaceVPPIN, MFX_ERR_MEMORY_ALLOC);
 		for (mfxU16 i = 0; i < m_vppIN; i++)
 		{
 			m_surfaceVPPIN[i] = new mfxFrameSurface1;
 			memset(m_surfaceVPPIN[i], 0, sizeof(mfxFrameSurface1));
 			memcpy(&(m_surfaceVPPIN[i]->Info), &(m_videoVPPParam.vpp.In), sizeof(mfxFrameInfo));
-			m_surfaceVPPIN[i]->Data.MemId = videoVPPINReponse.mids[i];
+			m_surfaceVPPIN[i]->Data.MemId = m_videoVPPINReponse.mids[i];
 			ClearRGBSurfaceVMem(m_surfaceVPPIN[i]->Data.MemId);
 		}
-		m_surfaceVPPOUT.Reset(new mfxFrameSurface1*[m_vppOUT]);
+
+		m_surfaceVPPOUT.Reset(new mfxFrameSurface1 *[m_vppOUT]);
 		MSDK_CHECK_POINTER(m_surfaceVPPOUT, MFX_ERR_MEMORY_ALLOC);
 		for (mfxU16 i = 0; i < m_vppOUT; i++)
 		{
 			m_surfaceVPPOUT[i] = new mfxFrameSurface1;
 			memset(m_surfaceVPPOUT[i], 0, sizeof(mfxFrameSurface1));
 			memcpy(&(m_surfaceVPPOUT[i]->Info), &(m_videoVPPParam.vpp.Out), sizeof(mfxFrameInfo));
-			m_surfaceVPPOUT[i]->Data.MemId = videoVPPOUTReponse.mids[i];
+			m_surfaceVPPOUT[i]->Data.MemId = m_videoVPPOUTReponse.mids[i];
 		}
 
-		mfxExtVPPDoNotUse extDoNotUse;
-		memset(&extDoNotUse, 0, sizeof(mfxExtVPPDoNotUse));
-		extDoNotUse.Header.BufferId = MFX_EXTBUFF_VPP_DONOTUSE;
-		extDoNotUse.Header.BufferSz = sizeof(mfxExtVPPDoNotUse);
-		extDoNotUse.NumAlg = 4;
-		extDoNotUse.AlgList = new mfxU32[extDoNotUse.NumAlg];
-		MSDK_CHECK_POINTER(extDoNotUse.AlgList, MFX_ERR_MEMORY_ALLOC);
-		extDoNotUse.AlgList[0] = MFX_EXTBUFF_VPP_DENOISE;
-		extDoNotUse.AlgList[1] = MFX_EXTBUFF_VPP_SCENE_ANALYSIS;
-		extDoNotUse.AlgList[2] = MFX_EXTBUFF_VPP_DETAIL;
-		extDoNotUse.AlgList[3] = MFX_EXTBUFF_VPP_PROCAMP;
-
-		mfxExtBuffer* extBuffers[1];
-		extBuffers[0] = (mfxExtBuffer*)& extDoNotUse;
-		m_videoVPPParam.ExtParam = extBuffers;
+		memset(&m_vppDoNotUse, 0, sizeof(mfxExtVPPDoNotUse));
+		m_vppDoNotUse.Header.BufferId = MFX_EXTBUFF_VPP_DONOTUSE;
+		m_vppDoNotUse.Header.BufferSz = sizeof(mfxExtVPPDoNotUse);
+		m_vppDoNotUse.NumAlg = 4;
+		m_vppDoNotUse.AlgList = new mfxU32[m_vppDoNotUse.NumAlg];
+		MSDK_CHECK_POINTER(m_vppDoNotUse.AlgList, MFX_ERR_MEMORY_ALLOC);
+		m_vppDoNotUse.AlgList[0] = MFX_EXTBUFF_VPP_DENOISE;
+		m_vppDoNotUse.AlgList[1] = MFX_EXTBUFF_VPP_SCENE_ANALYSIS;
+		m_vppDoNotUse.AlgList[2] = MFX_EXTBUFF_VPP_DETAIL;
+		m_vppDoNotUse.AlgList[3] = MFX_EXTBUFF_VPP_PROCAMP;
+		mfxExtBuffer* vppBuffers[1];
+		vppBuffers[0] = (mfxExtBuffer*)& m_vppDoNotUse;
+		m_videoVPPParam.ExtParam = vppBuffers;
 		m_videoVPPParam.NumExtParam = 1;
-
-
-		sts = m_videoENCODE->Init(&m_videoParam);
-		MSDK_IGNORE_MFX_STS(sts, MFX_WRN_PARTIAL_ACCELERATION);
-		MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
-
-		sts = m_videoVPP->Init(&m_videoVPPParam);
-		MSDK_IGNORE_MFX_STS(sts, MFX_WRN_PARTIAL_ACCELERATION);
-		MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
-
-		sts = m_videoENCODE->GetVideoParam(&m_videoParam);
-		MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
+		status = m_videoENCODE->Init(&m_videoParam);
+		MSDK_IGNORE_MFX_STS(status, MFX_WRN_PARTIAL_ACCELERATION);
+		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
+		status = m_videoVPP->Init(&m_videoVPPParam);
+		MSDK_IGNORE_MFX_STS(status, MFX_WRN_PARTIAL_ACCELERATION);
+		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
+		mfxVideoParam par;
+		memset(&par, 0, sizeof(par));
+		status = m_videoENCODE->GetVideoParam(&par);
+		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
 		memset(&m_bitstream, 0, sizeof(m_bitstream));
-		m_bitstream.MaxLength = m_videoParam.mfx.BufferSizeInKB * 1000;
+		m_bitstream.MaxLength = par.mfx.BufferSizeInKB * 1000;
 		m_bitstream.Data = new mfxU8[m_bitstream.MaxLength];
 		MSDK_CHECK_POINTER(m_bitstream.Data, MFX_ERR_MEMORY_ALLOC);
+		m_callback = std::move(callback);
+		return status;
+	}
+	void QSVEncode::LoadRGBA(mfxFrameSurface1* surface, BYTE* data, LONG size)
+	{
+		mfxU16 w, h;
+		mfxFrameInfo* pInfo = &surface->Info;
+		if (pInfo->CropH > 0 && pInfo->CropW > 0)
+		{
+			w = pInfo->CropW;
+			h = pInfo->CropH;
+		}
+		else
+		{
+			w = pInfo->Width;
+			h = pInfo->Height;
+		}
+		ASSERT(size == surface->Data.Pitch * h);
+		for (mfxU16 i = 0; i < h; i++)
+		{
+			memcpy(surface->Data.B + i * surface->Data.Pitch, data + i * surface->Data.Pitch, w * 4);
+		}
+	}
+	mfxStatus QSVEncode::EncodeVPP(mfxFrameSurface1* surfaceIN, mfxFrameSurface1* surfaceOUT)
+	{
+		mfxStatus sts = MFX_ERR_NONE;
+		for (;;)
+		{
+			sts = m_videoVPP->RunFrameVPPAsync(surfaceIN, surfaceOUT, NULL, &m_syncpVPP);
+			if (MFX_WRN_DEVICE_BUSY == sts)
+			{
+				MSDK_SLEEP(1);
+				continue;
+			}
+			break;
+		}
 		return sts;
+	}
+	mfxStatus QSVEncode::EncodeVideo(mfxFrameSurface1* surfaceOUT)
+	{
+		mfxStatus status = MFX_ERR_NONE;
+		for (;;)
+		{
+			status = m_videoENCODE->EncodeFrameAsync(NULL, surfaceOUT, &m_bitstream, &m_syncpVideo);
+			if (MFX_ERR_NONE < status && !m_syncpVideo)
+			{
+				if (MFX_WRN_DEVICE_BUSY == status)
+					MSDK_SLEEP(1);
+				continue;
+			}
+			if (MFX_ERR_NONE < status && m_syncpVideo)
+			{
+				status = MFX_ERR_NONE;
+				break;
+			}
+			break;
+		}
+		return status;
 	}
 	mfxStatus QSVEncode::Encode(BYTE* data, LONG size)
 	{
-		mfxStatus sts = MFX_ERR_NONE;
-		INT indexVPPIN = 0;
-		INT indexVPPOUT = 0;
-		mfxSyncPoint syncpVPP;
-		mfxSyncPoint syncpVideo;
-		while (MFX_ERR_NONE <= sts || MFX_ERR_MORE_DATA == sts)
+		mfxStatus status = MFX_ERR_NONE;
+		INT indexVPPIN = GetFreeSurfaceIndex(m_surfaceVPPIN, m_vppIN);
+		MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, indexVPPIN, MFX_ERR_MEMORY_ALLOC);
+		INT indexVPPOUT = GetFreeSurfaceIndex(m_surfaceVPPOUT, m_vppOUT);
+		MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, indexVPPOUT, MFX_ERR_MEMORY_ALLOC);
+		status = m_allocator.Lock(m_allocator.pthis, m_surfaceVPPIN[indexVPPIN]->Data.MemId, &(m_surfaceVPPIN[indexVPPIN]->Data));
+		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
+		this->LoadRGBA(m_surfaceVPPIN[indexVPPIN], data, size);
+		status = m_allocator.Unlock(m_allocator.pthis, m_surfaceVPPIN[indexVPPIN]->Data.MemId, &(m_surfaceVPPIN[indexVPPIN]->Data));
+		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
+		status = EncodeVPP(m_surfaceVPPIN[indexVPPIN], m_surfaceVPPOUT[indexVPPOUT]);
+		if (MFX_ERR_MORE_DATA == status)
+			return status;
+		status = EncodeVideo(m_surfaceVPPOUT[indexVPPOUT]);
+		if (MFX_ERR_MORE_DATA == status)
+			return status;
+		if (MFX_ERR_NONE == status)
 		{
-			indexVPPIN = GetFreeSurfaceIndex(m_surfaceVPPIN, m_vppIN);
-			MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, indexVPPIN, MFX_ERR_MEMORY_ALLOC);
-			mfxFrameSurface1* surface = m_surfaceVPPIN[indexVPPIN];
-			sts = m_allocator.Lock(m_allocator.pthis, surface->Data.MemId, &(surface->Data));
-			MSDK_BREAK_ON_ERROR(sts);
-			mfxU16 w = 0;
-			mfxU16 h = 0;
-			mfxFrameInfo* pInfo = &surface->Info;
-			if (pInfo->CropH > 0 && pInfo->CropW > 0)
+			status = m_session.SyncOperation(m_syncpVideo, 60000);
+			MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
+			if (!m_callback.IsNull())
 			{
-				w = pInfo->CropW;
-				h = pInfo->CropH;
-			}
-			else
-			{
-				w = pInfo->Width;
-				h = pInfo->Height;
-			}
-			ASSERT(size == h * surface->Data.Pitch);
-			for (mfxU16 i = 0; i < h; i++)
-			{
-				memcpy(surface->Data.B + i * surface->Data.Pitch, data, w * 4);
-			}
-			sts = m_allocator.Unlock(m_allocator.pthis, m_surfaceVPPIN[indexVPPIN]->Data.MemId, &(m_surfaceVPPIN[indexVPPIN]->Data));
-			MSDK_BREAK_ON_ERROR(sts);
-			indexVPPOUT = GetFreeSurfaceIndex(m_surfaceVPPOUT, m_vppOUT);
-			MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, indexVPPOUT, MFX_ERR_MEMORY_ALLOC);
-
-			for (;;)
-			{
-				sts = m_videoVPP->RunFrameVPPAsync(m_surfaceVPPIN[indexVPPIN], m_surfaceVPPOUT[indexVPPOUT], NULL, &syncpVPP);
-				if (MFX_WRN_DEVICE_BUSY != sts)
-					break;
-				MSDK_SLEEP(1);
-			}
-			if (MFX_ERR_MORE_DATA == sts)
-				continue;
-			MSDK_BREAK_ON_ERROR(sts);
-
-			for (;;)
-			{
-				sts = m_videoENCODE->EncodeFrameAsync(NULL, m_surfaceVPPOUT[indexVPPOUT], &m_bitstream, &syncpVideo);
-				if (MFX_ERR_NONE < sts && !syncpVideo)
-				{
-					if (MFX_WRN_DEVICE_BUSY == sts)
-						MSDK_SLEEP(1);
-				}
-				else if (MFX_ERR_NONE < sts && syncpVideo)
-				{
-					sts = MFX_ERR_NONE;
-					break;
-				}
-				else if (MFX_ERR_NOT_ENOUGH_BUFFER == sts)
-				{
-					break;
-				}
-				else
-					break;
-			}
-			if (MFX_ERR_NONE == sts)
-			{
-				sts = m_session.SyncOperation(syncpVideo, 60000);
-				MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
-				//sts = WriteBitStreamFrame(&m_bitstream, fSink);
-				MSDK_BREAK_ON_ERROR(sts);
+				m_callback(m_bitstream.Data + m_bitstream.DataOffset, m_bitstream.DataLength);
+				m_bitstream.DataLength = 0;
 			}
 		}
-
-		MSDK_IGNORE_MFX_STS(sts, MFX_ERR_MORE_DATA);
-		MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
-		return sts;
+		return status;
 	}
 	mfxStatus QSVEncode::Close()
 	{
-		return MFX_ERR_NONE;
+		if (m_videoENCODE != NULL)
+		{
+			m_videoENCODE->Close();
+			m_videoENCODE.Reset(NULL);
+		}
+		if (m_videoVPP != NULL)
+		{
+			m_videoVPP->Close();
+			m_videoVPP.Reset(NULL);
+		}
+		for (mfxU16 i = 0; i < m_vppIN; i++)
+		{
+			SAFE_DELETE(m_surfaceVPPIN[i]);
+		}
+		m_surfaceVPPIN.Reset(NULL);
+		for (mfxU16 i = 0; i < m_vppOUT; i++)
+		{
+			SAFE_DELETE(m_surfaceVPPOUT[i]);
+		}
+		m_surfaceVPPOUT.Reset(NULL);
+		SAFE_DELETE_ARRAY(m_bitstream.Data);
+		SAFE_DELETE_ARRAY(m_vppDoNotUse.AlgList);
+		m_allocator.Free(m_allocator.pthis, &m_videoVPPINReponse);
+		m_allocator.Free(m_allocator.pthis, &m_videoVPPOUTReponse);
+		Release();
+		mfxStatus sts = MFX_ERR_NONE;
+		sts = m_session.Close();
+		MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
+		return sts;
 	}
 }
 

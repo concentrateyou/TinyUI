@@ -23,7 +23,6 @@
 #include "Network/TinyHTTPClient.h"
 #include "Network/TinyURL.h"
 #include "Network/TinyDNS.h"
-
 #include "MediaTest.h"
 
 using namespace TinyUI;
@@ -60,6 +59,32 @@ BOOL LoadSeDebugPrivilege()
 	return TRUE;
 }
 
+class QSVTest
+{
+public:
+	QSVTest()
+	{
+		QSV::QSVParam param = m_encode.GetDefaultQSV(640, 360, 1000);
+		m_encode.Open(param, BindCallback(&QSVTest::OnDone, this));
+		m_rgbaFile.Open("D:\\12345.rgba");
+		m_h264File.Create("D:\\12345.h264");
+	}
+	~QSVTest()
+	{
+		m_rgbaFile.Close();
+		m_h264File.Close();
+	}
+
+	void OnDone(BYTE* data, LONG size)
+	{
+		m_h264File.Write(data, size);
+	}
+public:
+	QSV::QSVEncode m_encode;
+	TinyFile m_rgbaFile;
+	TinyFile m_h264File;
+};
+
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -74,18 +99,24 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	MFStartup(MF_VERSION);
 
 	HRESULT hRes = OleInitialize(NULL);
-	
+
 	LoadSeDebugPrivilege();
 
-	MediaTest test;
-	//test.WaveToAAC("D:\\赵雷-三十岁的女人.wav", "D:\\12345.aac");
-	test.AACToWave("D:\\12345.aac", "D:\\12345.wav");
+	QSVTest  test;
+	LONG size = 640 * 360 * 4;
+	TinyScopedArray<BYTE> data(new BYTE[size]);
+	DWORD dwRead = 0;
+	do
+	{
+		dwRead = test.m_rgbaFile.Read(data, size);
+		test.m_encode.Encode(data, size);
+	} while (dwRead > 0);
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	ChatFrame uiImpl;
+	CMainFrame uiImpl;
 	uiImpl.Create(NULL, 50, 50, 800, 800);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();

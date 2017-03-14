@@ -212,6 +212,9 @@
     <ProjectReference Include="..\DShowCapture\DShowCapture.vcxproj">
       <Project>{b8f16b34-e13e-4757-b09a-792046bcc2d3}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\IntelQSV\IntelQSV.vcxproj">
+      <Project>{681511e3-1b32-43c5-89f4-18a20c1590c9}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\MFCapture\MFCapture.vcxproj">
       <Project>{a49d09ee-2163-41b4-9157-92962de7d038}</Project>
     </ProjectReference>

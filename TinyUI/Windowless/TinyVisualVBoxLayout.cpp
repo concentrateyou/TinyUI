@@ -46,6 +46,8 @@ namespace TinyUI
 		}
 		BOOL TinyVisualVBoxLayout::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
+			UNUSED(hDC);
+			UNUSED(rcPaint);
 			return TRUE;
 		}
 		HRESULT	TinyVisualVBoxLayout::OnMouseEnter()

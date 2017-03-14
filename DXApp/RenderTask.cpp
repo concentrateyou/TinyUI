@@ -306,7 +306,6 @@ namespace DXApp
 		{
 			DWORD s = 1000 / m_dwFPS;
 			s = dwTime > s ? 0 : s - dwTime;
-			TRACE("time:%d\n", s);
 			if (m_close.Lock(s))
 			{
 				for (INT i = 0; i < 8; ++i)
