@@ -18,9 +18,10 @@ public:
 private:
 	void				OnMessagePump();
 	void				OnExit();
+	void				Flush(BYTE* data, LONG size);
 private:
-	IO::TinyFile		m_h264File;
-	QSV::QSVEncode		m_encode;
+	IO::TinyFile				m_h264File;
+	QSV::QSVEncode				m_encode;
 	DShow::VideoCapture*		m_pVideo;
 	DShow::VideoCaptureParam	m_videoParam;
 	HWND						m_hWND;

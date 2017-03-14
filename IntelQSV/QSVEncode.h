@@ -55,6 +55,8 @@ namespace QSV
 		mfxVideoParam			m_videoVPPParam;
 		mfxFrameAllocResponse	m_videoVPPINReponse;
 		mfxFrameAllocResponse	m_videoVPPOUTReponse;
+		mfxExtCodingOption		m_co;
+		mfxExtCodingOption2		m_co2;
 		mfxSyncPoint			m_syncpVPP;
 		mfxSyncPoint			m_syncpVideo;
 		TinyScopedPtr<MFXVideoENCODE>		m_videoENCODE;

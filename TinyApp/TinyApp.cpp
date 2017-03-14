@@ -102,7 +102,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
-	QSVTest  test;
+	/*QSVTest  test;
 	LONG size = 640 * 360 * 4;
 	TinyScopedArray<BYTE> data(new BYTE[size]);
 	DWORD dwRead = 0;
@@ -110,7 +110,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	{
 		dwRead = test.m_rgbaFile.Read(data, size);
 		test.m_encode.Encode(data, size);
-	} while (dwRead > 0);
+	} while (dwRead > 0);*/
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));

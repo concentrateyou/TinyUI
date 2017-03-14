@@ -41,12 +41,12 @@ namespace QSV
 		mfxVersion ver = { { 0, 1 } };
 		mfxStatus status = Initialize(impl, ver, &m_session, &m_allocator);
 		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
-		memset(&m_videoParam, 0, sizeof(m_videoParam));
+		ZeroMemory(&m_videoParam, sizeof(m_videoParam));
 		m_videoParam.mfx.CodecId = MFX_CODEC_AVC;
-		m_videoParam.mfx.TargetUsage = MFX_TARGETUSAGE_BALANCED;
-		m_videoParam.mfx.TargetKbps = param.wKbps;
-		m_videoParam.mfx.MaxKbps = param.wMaxKbps;
-		m_videoParam.mfx.RateControlMethod = MFX_RATECONTROL_VBR;
+		m_videoParam.mfx.GopOptFlag = MFX_GOP_STRICT;
+		m_videoParam.mfx.NumSlice = 1;
+		m_videoParam.mfx.CodecProfile = MFX_PROFILE_AVC_BASELINE;
+		m_videoParam.mfx.TargetUsage = param.wTargetUsage;
 		m_videoParam.mfx.FrameInfo.FrameRateExtN = param.wFPS;
 		m_videoParam.mfx.FrameInfo.FrameRateExtD = 1;
 		m_videoParam.mfx.FrameInfo.FourCC = MFX_FOURCC_NV12;
@@ -56,6 +56,66 @@ namespace QSV
 		m_videoParam.mfx.FrameInfo.CropY = 0;
 		m_videoParam.mfx.FrameInfo.CropW = param.wCX;
 		m_videoParam.mfx.FrameInfo.CropH = param.wCY;
+		m_videoParam.mfx.RateControlMethod = param.wRC;
+		switch (param.wRC)
+		{
+		case MFX_RATECONTROL_LA:
+		case MFX_RATECONTROL_CBR://恒定码率
+			m_videoParam.mfx.TargetKbps = param.wKbps;
+			break;
+		case MFX_RATECONTROL_VBR:
+		case MFX_RATECONTROL_VCM://
+			m_videoParam.mfx.TargetKbps = param.wKbps;
+			m_videoParam.mfx.MaxKbps = param.wMaxKbps;
+			break;
+		case MFX_RATECONTROL_CQP://恒定质量
+			m_videoParam.mfx.QPI = param.wQPI;
+			m_videoParam.mfx.QPB = param.wQPB;
+			m_videoParam.mfx.QPP = param.wQPP;
+			break;
+		case MFX_RATECONTROL_AVBR://平均码率
+			m_videoParam.mfx.TargetKbps = param.wKbps;
+			m_videoParam.mfx.Accuracy = param.wAccuracy;
+			m_videoParam.mfx.Convergence = param.wConvergence;
+			break;
+		case MFX_RATECONTROL_ICQ:
+		case MFX_RATECONTROL_LA_ICQ:
+			m_videoParam.mfx.ICQQuality = param.wICQQuality;
+			break;
+		default:
+			break;
+		}
+		m_videoParam.AsyncDepth = param.wAsyncDepth;
+		m_videoParam.mfx.GopPicSize = (mfxU16)(param.wKeyPerSec *param.wFPS);
+		static mfxExtBuffer* extendedBuffers[2];
+		INT iBuffers = 0;
+		if (param.wAsyncDepth == 1)
+		{
+			m_videoParam.mfx.NumRefFrame = 1;
+			m_videoParam.mfx.GopRefDist = 1;
+			memset(&m_co, 0, sizeof(mfxExtCodingOption));
+			m_co.Header.BufferId = MFX_EXTBUFF_CODING_OPTION;
+			m_co.Header.BufferSz = sizeof(mfxExtCodingOption);
+			m_co.MaxDecFrameBuffering = 1;
+			extendedBuffers[iBuffers++] = (mfxExtBuffer*)&m_co;
+		}
+		else
+		{
+			m_videoParam.mfx.GopRefDist = param.wbFrames + 1;
+		}
+		if (param.wRC == MFX_RATECONTROL_LA_ICQ || param.wRC == MFX_RATECONTROL_LA)
+		{
+			memset(&m_co2, 0, sizeof(mfxExtCodingOption2));
+			m_co2.Header.BufferId = MFX_EXTBUFF_CODING_OPTION;
+			m_co2.Header.BufferSz = sizeof(m_co2);
+			m_co2.LookAheadDepth = param.wLookAheadDepth;
+			extendedBuffers[iBuffers++] = (mfxExtBuffer*)& m_co2;
+		}
+		if (iBuffers > 0)
+		{
+			m_videoParam.ExtParam = extendedBuffers;
+			m_videoParam.NumExtParam = (mfxU16)iBuffers;
+		}
 		m_videoParam.mfx.FrameInfo.Width = MSDK_ALIGN16(param.wCX);
 		m_videoParam.mfx.FrameInfo.Height = (MFX_PICSTRUCT_PROGRESSIVE == m_videoParam.mfx.FrameInfo.PicStruct) ? MSDK_ALIGN16(param.wCY) : MSDK_ALIGN32(param.wCY);
 		m_videoParam.IOPattern = MFX_IOPATTERN_IN_VIDEO_MEMORY;
@@ -200,6 +260,7 @@ namespace QSV
 		mfxStatus status = MFX_ERR_NONE;
 		for (;;)
 		{
+			m_bitstream.TimeStamp = timeGetTime();
 			status = m_videoENCODE->EncodeFrameAsync(NULL, surfaceOUT, &m_bitstream, &m_syncpVideo);
 			if (MFX_ERR_NONE < status && !m_syncpVideo)
 			{
@@ -242,6 +303,55 @@ namespace QSV
 			{
 				m_callback(m_bitstream.Data + m_bitstream.DataOffset, m_bitstream.DataLength);
 				m_bitstream.DataLength = 0;
+				if (m_bitstream.FrameType & MFX_FRAMETYPE_I)
+				{
+					TRACE("MFX_FRAMETYPE_I\n");
+				}
+				if (m_bitstream.FrameType & MFX_FRAMETYPE_P)
+				{
+					TRACE("MFX_FRAMETYPE_P\n");
+				}
+				if (m_bitstream.FrameType & MFX_FRAMETYPE_B)
+				{
+					TRACE("MFX_FRAMETYPE_B\n");
+				}
+				if (m_bitstream.FrameType & MFX_FRAMETYPE_S)
+				{
+					TRACE("MFX_FRAMETYPE_S\n");
+				}
+
+				if (m_bitstream.FrameType & MFX_FRAMETYPE_REF)
+				{
+					TRACE("MFX_FRAMETYPE_REF\n");
+				}
+				if (m_bitstream.FrameType & MFX_FRAMETYPE_IDR)
+				{
+					TRACE("MFX_FRAMETYPE_IDR\n");
+				}
+				if (m_bitstream.FrameType & MFX_FRAMETYPE_xI)
+				{
+					TRACE("MFX_FRAMETYPE_xI\n");
+				}
+				if (m_bitstream.FrameType & MFX_FRAMETYPE_xP)
+				{
+					TRACE("MFX_FRAMETYPE_xP\n");
+				}
+				if (m_bitstream.FrameType & MFX_FRAMETYPE_xB)
+				{
+					TRACE("MFX_FRAMETYPE_xB\n");
+				}
+				if (m_bitstream.FrameType & MFX_FRAMETYPE_xS)
+				{
+					TRACE("MFX_FRAMETYPE_xS\n");
+				}
+				if (m_bitstream.FrameType & MFX_FRAMETYPE_xREF)
+				{
+					TRACE("MFX_FRAMETYPE_xREF\n");
+				}
+				if (m_bitstream.FrameType & MFX_FRAMETYPE_xIDR)
+				{
+					TRACE("MFX_FRAMETYPE_xIDR\n");
+				}
 			}
 		}
 		return status;
