@@ -40,6 +40,11 @@ Copyright(c) 2005-2014 Intel Corporation. All Rights Reserved.
 #define MSDK_SAFE_RELEASE(X)            {if (X) { X->Release(); X = NULL; }}
 #define MSDK_MAX(A, B)                  (((A) > (B)) ? (A) : (B))
 
+#define MSDK_DEC_WAIT_INTERVAL 300000
+#define MSDK_ENC_WAIT_INTERVAL 300000
+#define MSDK_VPP_WAIT_INTERVAL 300000
+#define MSDK_WAIT_INTERVAL MSDK_DEC_WAIT_INTERVAL+3*MSDK_VPP_WAIT_INTERVAL+MSDK_ENC_WAIT_INTERVAL // an estimate for the longest pipeline we have in samples
+
 // Usage of the following two macros are only required for certain Windows DirectX11 use cases
 #define WILL_READ  0x1000
 #define WILL_WRITE 0x2000
