@@ -19,7 +19,7 @@ namespace QSV
 		param.wTargetUsage = MFX_TARGETUSAGE_BALANCED;
 		param.wCX = wCX;
 		param.wCY = wCY;
-		param.wRC = MFX_RATECONTROL_VBR;
+		param.wRC = MFX_RATECONTROL_CBR;
 		param.wFPS = 30;
 		param.wQPB = param.wQPI = param.wQPP = 23;
 		param.wConvergence = 1;
@@ -27,9 +27,8 @@ namespace QSV
 		param.wMaxKbps = 3000;
 		param.wKbps = wKbps;
 		param.wAsyncDepth = 4;
-		param.wKeyPerSec = 3;
-		param.wbFrames = 7;
-		param.wLookAheadDepth = 40;
+		param.wKeyPerSec = wKbps * 2;
+		param.wbFrames = 3;
 		return param;
 	}
 	mfxStatus QSVEncode::InitializeVPPParam(const QSVParam& param)
@@ -82,7 +81,17 @@ namespace QSV
 		ZeroMemory(&m_co, sizeof(mfxExtCodingOption));
 		m_co.Header.BufferId = MFX_EXTBUFF_CODING_OPTION;
 		m_co.Header.BufferSz = sizeof(m_co);
-		m_encodeParams.push_back((mfxExtBuffer *)&m_co);
+		m_encodeParams.push_back((mfxExtBuffer*)&m_co);
+
+		ZeroMemory(&m_spspps, sizeof(mfxExtCodingOptionSPSPPS));
+		m_spspps.Header.BufferId = MFX_EXTBUFF_CODING_OPTION_SPSPPS;
+		m_spspps.Header.BufferSz = sizeof(mfxExtCodingOptionSPSPPS);
+		m_spspps.PPSBuffer = m_pps;
+		m_spspps.PPSBufSize = 100;
+		m_spspps.SPSBuffer = m_sps;
+		m_spspps.SPSBufSize = 100;
+		m_encodeParams.push_back((mfxExtBuffer *)&m_spspps);
+
 		m_videoVPPParam.ExtParam = &m_encodeParams[0];
 		m_videoVPPParam.NumExtParam = (mfxU16)m_encodeParams.size();
 
@@ -191,10 +200,11 @@ namespace QSV
 		MSDK_IGNORE_MFX_STS(status, MFX_WRN_PARTIAL_ACCELERATION);
 		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
 		mfxVideoParam par;
-		memset(&par, 0, sizeof(par));
+		ZeroMemory(&par, sizeof(par));
 		status = m_videoENCODE->GetVideoParam(&par);
+
 		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
-		memset(&m_bitstream, 0, sizeof(m_bitstream));
+		ZeroMemory(&m_bitstream, sizeof(m_bitstream));
 		m_bitstream.MaxLength = par.mfx.BufferSizeInKB * 1000;
 		m_bitstream.Data = new mfxU8[m_bitstream.MaxLength];
 		MSDK_CHECK_POINTER(m_bitstream.Data, MFX_ERR_MEMORY_ALLOC);
@@ -215,6 +225,13 @@ namespace QSV
 		m_callback = std::move(callback);
 		return status;
 	}
+	void QSVEncode::GetSPSPPS(mfxU8 **sps, mfxU8 **pps, mfxU16& spssize, mfxU16& ppssize)
+	{
+		*sps = m_sps;
+		*pps = m_pps;
+		spssize = m_spspps.PPSBufSize;
+		ppssize = m_spspps.SPSBufSize;
+	}
 	void QSVEncode::LoadRGBA(mfxFrameSurface1* surface, BYTE* data, LONG size)
 	{
 		mfxU16 w, h;
@@ -232,7 +249,8 @@ namespace QSV
 		ASSERT(size == surface->Data.Pitch * h);
 		for (mfxU16 i = 0; i < h; i++)
 		{
-			memcpy(surface->Data.B + i * surface->Data.Pitch, data + i * surface->Data.Pitch, w * 4);
+			mfxU16 index = h - i - 1;
+			memcpy(surface->Data.B + i * surface->Data.Pitch, data + index * surface->Data.Pitch, w * 4);
 		}
 	}
 	mfxStatus QSVEncode::EncodeVPP(mfxFrameSurface1* surfaceIN, mfxFrameSurface1* surfaceOUT)
@@ -297,8 +315,7 @@ namespace QSV
 			if (!m_callback.IsNull())
 			{
 				m_callback(m_bitstream.Data + m_bitstream.DataOffset, m_bitstream.DataLength);
-				m_bitstream.DataLength = 0;
-				if (m_bitstream.FrameType & MFX_FRAMETYPE_I)
+				/*if (m_bitstream.FrameType & MFX_FRAMETYPE_I)
 				{
 					TRACE("MFX_FRAMETYPE_I\n");
 				}
@@ -345,8 +362,9 @@ namespace QSV
 				if (m_bitstream.FrameType & MFX_FRAMETYPE_xIDR)
 				{
 					TRACE("MFX_FRAMETYPE_xIDR\n");
-				}
+				}*/
 			}
+			m_bitstream.DataLength = 0;
 		}
 		return status;
 	}
