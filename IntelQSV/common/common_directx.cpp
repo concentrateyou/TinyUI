@@ -7,7 +7,7 @@ or disclosed except in accordance with the terms of that agreement.
 Copyright(c) 2005-2014 Intel Corporation. All Rights Reserved.
 
 *****************************************************************************/
-
+#include "stdafx.h"
 #include "common_directx.h"
 
 #include<map>

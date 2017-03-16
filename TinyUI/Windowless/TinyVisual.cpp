@@ -397,7 +397,7 @@ namespace TinyUI
 			{
 				LOGFONT lf;
 				::GetObject(m_hFONT, sizeof(LOGFONT), &lf);
-				strcpy(lf.lfFaceName, value.STR());
+				strcpy_s(lf.lfFaceName, ARRAYSIZE(lf.lfFaceName), value.STR());
 				SAFE_DELETE_OBJECT(m_hFONT);
 				m_hFONT = CreateFontIndirect(&lf);
 			}

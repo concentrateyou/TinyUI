@@ -7,7 +7,7 @@ or disclosed except in accordance with the terms of that agreement.
 Copyright(c) 2005-2014 Intel Corporation. All Rights Reserved.
 
 *****************************************************************************/
-
+#include "stdafx.h"
 #include "common_utils.h"
 
 // ATTENTION: If D3D surfaces are used, DX9_D3D or DX11_D3D must be set in project settings or hardcoded here

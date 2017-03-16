@@ -130,7 +130,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__STDC_CONSTANT_MACROS;__STDC_LIMIT_MACROS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(DXSDK_DIR)Include;..\TinyUI;..\DXFramework;..\DShowCapture;..\ThirdParty\vld;..\ThirdParty\librtmp\include;..\ThirdParty\libfaac\include;..\ThirdParty\ffmpeg\include;..\ThirdParty\x264</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\DXFramework;..\DShowCapture;..\ThirdParty\vld;..\ThirdParty\librtmp\include;..\ThirdParty\libfaac\include;..\ThirdParty\ffmpeg\include;..\ThirdParty\x264</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -138,9 +138,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\TinyUI;..\Release;..\ThirdParty\vld\x86;..\ThirdParty\ffmpeg\lib;..\ThirdParty\librtmp\lib;..\ThirdParty\libfaac\lib;..\ThirdParty\x264\libs\32bit</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\TinyUI;..\Release;..\ThirdParty\vld\x86;..\ThirdParty\ffmpeg\lib;..\ThirdParty\librtmp\lib;..\ThirdParty\libfaac\lib;..\ThirdParty\x264\libs\32bit</AdditionalLibraryDirectories>
       <AdditionalDependencies>DXFramework.lib;librtmp.lib;legacy_stdio_definitions.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <IgnoreSpecificDefaultLibraries>LIBCMTD.lib;LIBCMT.lib</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMT.lib;</IgnoreSpecificDefaultLibraries>
       <AdditionalOptions>/SAFESEH:NO %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
