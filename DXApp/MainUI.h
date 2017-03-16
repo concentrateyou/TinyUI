@@ -9,7 +9,7 @@
 #include "DXWindow.h"
 #include "VideoScene.h"
 #include "GameScene.h"
-#include "ImageScene.h"
+#include "PictureScene.h"
 #include "WindowScene.h"
 #include "ScreenScene.h"
 #include "TextScene.h"
@@ -95,7 +95,7 @@ namespace DXApp
 		TextScene	m_textScene;
 		GameScene	m_gameScene;
 		VideoScene	m_videoScene;
-		ImageScene	m_imageScene;
+		PictureScene	m_imageScene;
 		WindowScene m_windowScene;
 		ScreenScene	m_screenScene;
 

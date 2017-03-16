@@ -178,7 +178,7 @@
     <ClInclude Include="FindTool.h" />
     <ClInclude Include="GameDlg.h" />
     <ClInclude Include="GameScene.h" />
-    <ClInclude Include="ImageScene.h" />
+    <ClInclude Include="PictureScene.h" />
     <ClInclude Include="MainUI.h" />
     <ClInclude Include="MediaCaptureDlg.h" />
     <ClInclude Include="PublishTask.h" />
@@ -210,7 +210,7 @@
     <ClCompile Include="FindTool.cpp" />
     <ClCompile Include="GameDlg.cpp" />
     <ClCompile Include="GameScene.cpp" />
-    <ClCompile Include="ImageScene.cpp" />
+    <ClCompile Include="PictureScene.cpp" />
     <ClCompile Include="MainUI.cpp" />
     <ClCompile Include="MediaCaptureDlg.cpp" />
     <ClCompile Include="PublishTask.cpp" />

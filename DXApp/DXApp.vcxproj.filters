@@ -72,9 +72,6 @@
     <ClInclude Include="VideoScene.h">
       <Filter>头文件\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="ImageScene.h">
-      <Filter>头文件\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="GameScene.h">
       <Filter>头文件\Scene</Filter>
     </ClInclude>
@@ -132,6 +129,9 @@
     <ClInclude Include="AudioEncode.h">
       <Filter>头文件\Encode</Filter>
     </ClInclude>
+    <ClInclude Include="PictureScene.h">
+      <Filter>头文件\Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -163,9 +163,6 @@
     </ClCompile>
     <ClCompile Include="MainUI.cpp">
       <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageScene.cpp">
-      <Filter>源文件\Scene</Filter>
     </ClCompile>
     <ClCompile Include="GameScene.cpp">
       <Filter>源文件\Scene</Filter>
@@ -217,6 +214,9 @@
     </ClCompile>
     <ClCompile Include="x264Encode.cpp">
       <Filter>源文件\Encode</Filter>
+    </ClCompile>
+    <ClCompile Include="PictureScene.cpp">
+      <Filter>源文件\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -4,12 +4,12 @@ using namespace DXFramework;
 
 namespace DXApp
 {
-	class ImageScene : public DX11Image2D
+	class PictureScene : public DX11Image2D
 	{
-		DECLARE_DYNAMIC(ImageScene)
+		DECLARE_DYNAMIC(PictureScene)
 	public:
-		ImageScene();
-		~ImageScene();
+		PictureScene();
+		~PictureScene();
 		BOOL Initialize(DX11& dx11, const TinyString& imageFile);
 	public:
 		BOOL Process(DX11& dx11) OVERRIDE;
