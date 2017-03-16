@@ -176,9 +176,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DWMCapture64\DWMCapture64.vcxproj">
-      <Project>{31c474d3-9b75-4918-ba29-d0b625ea08ea}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\TinyUI\TinyUI.vcxproj">
       <Project>{58903be2-bb4f-4983-b8b7-905d2db5393d}</Project>
     </ProjectReference>

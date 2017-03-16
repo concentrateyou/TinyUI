@@ -489,6 +489,9 @@
     <ClInclude Include="IO\TinyRingBuffer.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
+    <ClInclude Include="IO\TinyPipe.h">
+      <Filter>头文件\IO</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -894,6 +897,9 @@
       <Filter>源文件\Network</Filter>
     </ClCompile>
     <ClCompile Include="IO\TinyRingBuffer.cpp">
+      <Filter>源文件\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\TinyPipe.cpp">
       <Filter>源文件\IO</Filter>
     </ClCompile>
   </ItemGroup>
