@@ -129,7 +129,7 @@
     <ClInclude Include="AudioEncode.h">
       <Filter>头文件\Encode</Filter>
     </ClInclude>
-    <ClInclude Include="PictureScene.h">
+    <ClInclude Include="ImageScene.h">
       <Filter>头文件\Scene</Filter>
     </ClInclude>
   </ItemGroup>
@@ -215,7 +215,7 @@
     <ClCompile Include="x264Encode.cpp">
       <Filter>源文件\Encode</Filter>
     </ClCompile>
-    <ClCompile Include="PictureScene.cpp">
+    <ClCompile Include="ImageScene.cpp">
       <Filter>源文件\Scene</Filter>
     </ClCompile>
   </ItemGroup>

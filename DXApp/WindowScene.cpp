@@ -40,12 +40,13 @@ namespace DXApp
 			m_memDC.Reset(new TinyMemDC(NULL, m_hBitmap));
 			return TRUE;
 		}
+		return FALSE;
 		//BOOL bEnable = FALSE;
 		//if (FAILED(DwmIsCompositionEnabled(&bEnable)))
 		//	return FALSE;
 		//if (bEnable)
 		//{
-		//	//ƒ≥–©∂¿œ‘œ‘ æ∫⁄∆¡
+		//	//ƒ≥–©∂¿œ‘œ‘ø®∫⁄∆¡
 		//	TinyScopedLibrary user32("USER32.dll");
 		//	DwmGetDxSharedSurface dwmGetDxSharedSurface = reinterpret_cast<DwmGetDxSharedSurface>(user32.GetFunctionPointer("DwmGetDxSharedSurface"));
 		//	if (dwmGetDxSharedSurface != NULL)
