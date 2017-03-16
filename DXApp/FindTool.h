@@ -5,6 +5,8 @@ using namespace TinyUI;
 
 namespace DXApp
 {
+	HWND GetWindowByPos(const POINT& point);
+
 	class FindTool : public TinyLabel
 	{
 	public:

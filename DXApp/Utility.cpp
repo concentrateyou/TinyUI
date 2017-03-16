@@ -170,28 +170,28 @@ BOOL WINAPI ScreenSave(const TinyRectangle& s)
 	ReleaseDC(NULL, hDC);
 	return TRUE;
 }
+
 BOOL WINAPI InvertWindow(HWND hWND)
 {
-	if (!hWND)
+	HDC hDC = NULL;
+	RECT rectangle;
+#define DINV 3
+	if (hWND == NULL || !IsWindow(hWND))
 		return FALSE;
-	TinyRectangle rectangle;
-	GetWindowRect(hWND, &rectangle);
-	rectangle.OffsetRect(-rectangle.Position().x, -rectangle.Position().y);
-	HDC hDC = GetWindowDC(hWND);
-	if (hDC != NULL)
+	::GetWindowRect(hWND, &rectangle);
+	::OffsetRect(&rectangle, -rectangle.left, -rectangle.top);
+	if (!IsRectEmpty(&rectangle))
 	{
-		RECT s = { 0 };
-		SetRect(&s, 0, 0, rectangle.right, 4);
-		InvertRect(hDC, &s);
-		SetRect(&s, 0, 4, 4, rectangle.bottom);
-		InvertRect(hDC, &s);
-		SetRect(&s, 4, rectangle.bottom - 4, rectangle.right, rectangle.bottom);
-		InvertRect(hDC, &s);
-		SetRect(&s, rectangle.right - 4, 4, rectangle.right, rectangle.bottom - 4);
-		InvertRect(hDC, &s);
-		ReleaseDC(hWND, hDC);
-		return TRUE;
+		hDC = ::GetWindowDC(hWND);
+		if (hDC != NULL)
+		{
+			PatBlt(hDC, rectangle.left, rectangle.top, rectangle.right - rectangle.left, DINV, DSTINVERT);
+			PatBlt(hDC, rectangle.left, rectangle.bottom - DINV, DINV, -(rectangle.bottom - rectangle.top - 2 * DINV), DSTINVERT);
+			PatBlt(hDC, rectangle.right - DINV, rectangle.top + DINV, DINV, rectangle.bottom - rectangle.top - 2 * DINV, DSTINVERT);
+			PatBlt(hDC, rectangle.right, rectangle.bottom - DINV, -(rectangle.right - rectangle.left), DINV, DSTINVERT);
+			::ReleaseDC(hWND, hDC);
+		}
 	}
-	return FALSE;
+	return TRUE;
 }
 

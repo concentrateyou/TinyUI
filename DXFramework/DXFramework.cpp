@@ -200,9 +200,6 @@ namespace DXFramework
 					CloseHandle(hProcess);
 					return TRUE;
 				}
-				CloseHandle(hProcess);
-				hProcess = NULL;
-				return TRUE;
 			}
 			CloseHandle(hProcess);
 			hProcess = NULL;

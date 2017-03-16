@@ -4,6 +4,38 @@
 
 namespace DXApp
 {
+	HWND GetWindowByPos(const POINT& point)
+	{
+		RECT rectangle;
+		HWND hParent = NULL;
+		HWND hWND = ::WindowFromPoint(point);
+		if (hWND != NULL)
+		{
+			HWND hTemp;
+			::GetWindowRect(hWND, &rectangle);
+			hParent = ::GetParent(hWND);
+			if (hParent != NULL)
+			{
+				RECT s;
+				hTemp = hWND;
+				do
+				{
+					hTemp = ::GetWindow(hTemp, GW_HWNDNEXT);
+					::GetWindowRect(hTemp, &s);
+					if (::PtInRect(&s, point) && ::GetParent(hTemp) == hParent && ::IsWindowVisible(hTemp))
+					{
+						if (((s.right - s.left) * (s.bottom - s.top)) < ((rectangle.right - rectangle.left) * (rectangle.bottom - rectangle.top)))
+						{
+							hWND = hTemp;
+							::GetWindowRect(hWND, &rectangle);
+						}
+					}
+				} while (hTemp != NULL);
+			}
+		}
+		return hWND;
+	}
+	//////////////////////////////////////////////////////////////////////////
 	FindTool::FindTool()
 		:m_bDragging(FALSE),
 		m_hCursor(NULL),
@@ -25,13 +57,22 @@ namespace DXApp
 		{
 			m_lastPos = pos;
 			::ClientToScreen(m_hWND, (POINT *)&pos);
-			HWND hWND = WindowFromPoint(pos);
-			if (hWND && hWND != m_lastHWND)
+			HWND hWND = GetWindowByPos(pos);
+			DWORD dwProcessID = 0;
+			::GetWindowThreadProcessId(hWND, &dwProcessID);
+			if (dwProcessID != GetCurrentProcessId())
 			{
-				InvertWindow(m_lastHWND);
-				InvertWindow(hWND);
-				m_lastHWND = hWND;
-				EVENT_WINDOWCHANGE(m_lastHWND);
+				if (hWND != m_lastHWND)
+				{
+					TRACE("hWND:%d,m_lastHWND:%d\n", hWND, m_lastHWND);
+					if (m_lastHWND != NULL)
+					{
+						InvertWindow(m_lastHWND);
+					}
+					InvertWindow(hWND);
+					m_lastHWND = hWND;
+					EVENT_WINDOWCHANGE(m_lastHWND);
+				}
 			}
 		}
 		return TinyLabel::OnMouseMove(uMsg, wParam, lParam, bHandled);
