@@ -2,9 +2,8 @@
 #include "TinyModule.h"
 #include "TinyString.h"
 #include "TinyHook.h"
+#include "TinyLogging.h"
 #include "TinyApplication.h"
-#include <imagehlp.h>
-#pragma comment(lib, "imagehlp.lib")
 
 namespace TinyUI
 {
@@ -281,7 +280,10 @@ namespace TinyUI
 	BOOL TinyDetour::Initialize(LPVOID lpSRC, LPVOID lpDST)
 	{
 		if (!IsExecutableAddress(lpSRC) || !IsExecutableAddress(lpDST))
+		{
+			LOG(INFO) << "!IsExecutableAddress: || !IsExecutableAddress FAIL\n";
 			return FALSE;
+		}
 #if defined(_WIN64)
 		CALL_ABS call =
 		{
@@ -319,7 +321,11 @@ namespace TinyUI
 #endif
 		m_pTrampoline = VirtualAlloc(NULL, 64, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);//64字节足够了
 		if (!m_pTrampoline)
+		{
+			LOG(INFO) << "VirtualAlloc FAIL\n";
 			return FALSE;
+		}
+		LOG(INFO) << "VirtualAlloc OK\n";
 		UINT8 srcPos = 0;
 		UINT8 dstPos = 0;
 		ULONG_PTR destJMP = 0;
@@ -327,15 +333,24 @@ namespace TinyUI
 		for (;;)
 		{
 			if (bBreak)
+			{
+				LOG(INFO) << "bBreak = TRUE\n";
 				break;
+			}
+			LOG(INFO) << "bBreak = FALSE\n";
 			HDE hs = { 0 };
 			ULONG_PTR src = (ULONG_PTR)lpSRC + srcPos;
 			ULONG_PTR dst = (ULONG_PTR)m_pTrampoline + dstPos;
 			LPVOID pCopy = NULL;
+			LOG(INFO) << "Begin HDE_DISASM\n";
 			UINT8 copySize = HDE_DISASM((LPVOID)src, &hs);
+			LOG(INFO) << "End HDE_DISASM\n";
 			ASSERT(copySize == hs.len);
 			if (hs.flags & F_ERROR)
+			{
+				LOG(INFO) << "hs.flags & F_ERROR\n";
 				return FALSE;
+			}
 			do
 			{
 				pCopy = (LPVOID)src;
@@ -349,6 +364,7 @@ namespace TinyUI
 					pCopy = &jmp;
 					copySize = sizeof(jmp);
 					bBreak = TRUE;
+					LOG(INFO) << "srcPos >= sizeof(JMP_REL)\n";
 					break;
 				}
 				if (hs.opcode == 0xE8)	//CALL
@@ -361,6 +377,7 @@ namespace TinyUI
 #endif 
 					pCopy = &call;
 					copySize = sizeof(call);
+					LOG(INFO) << "hs.opcode == 0xE8\n";
 					break;
 				}
 				if ((hs.opcode & 0xFD) == 0xE9) //JMP
@@ -387,6 +404,7 @@ namespace TinyUI
 						copySize = sizeof(jmp);
 						bBreak = (src >= destJMP);
 					}
+					LOG(INFO) << "(hs.opcode & 0xFD) == 0xE9n";
 					break;
 				}
 				if (((hs.opcode & 0xF0) == 0x70) || (hs.opcode == 0xE3) || ((hs.opcode2 & 0xF0) == 0x80)) //JCC
@@ -407,6 +425,7 @@ namespace TinyUI
 					else if ((hs.opcode & 0xFC) == 0xE0)
 					{
 						// LOOPNZ/LOOPZ/LOOP/JCXZ/JECXZ 不支持
+						LOG(INFO) << "LOOPNZ/LOOPZ/LOOP/JCXZ/JECXZ 不支持\n";
 						return FALSE;
 					}
 					else
@@ -422,6 +441,7 @@ namespace TinyUI
 						pCopy = &jcc;
 						copySize = sizeof(jcc);
 					}
+					LOG(INFO) << "((hs.opcode & 0xF0) == 0x70) || (hs.opcode == 0xE3) || ((hs.opcode2 & 0xF0) == 0x80)\n";
 					break;
 				}
 				if (((hs.opcode & 0xFE) == 0xC2) || // RET
@@ -430,13 +450,22 @@ namespace TinyUI
 					((hs.opcode == 0xFF) && (hs.opcode2 == 0x25))) // JMP ABS
 				{
 					bBreak = (src >= destJMP);
+					LOG(INFO) << "bBreak = (src >= destJMP)\n";
 					break;
 				}
 			} while (0);
+			LOG(INFO) << "test-----1\n";
 			if (dst < destJMP && copySize != hs.len)
+			{
+				LOG(INFO) << "dst < destJMP && copySize != hs.len\n";
 				return FALSE;
+			}
 			if ((dstPos + copySize) > TRAMPOLINE_MAX_SIZE)
+			{
+				LOG(INFO) << "(dstPos + copySize) > TRAMPOLINE_MAX_SIZE\n";
 				return FALSE;
+			}
+			LOG(INFO) << "__movsb\n";
 			__movsb((LPBYTE)m_pTrampoline + dstPos, (LPBYTE)pCopy, copySize);
 			srcPos += hs.len;
 			dstPos += copySize;
@@ -444,17 +473,28 @@ namespace TinyUI
 		//如果偏移量小于5字节 Try 短跳
 		if (srcPos < sizeof(JMP_REL) && !IsCodePadding((LPBYTE)m_lpSRC + srcPos, sizeof(JMP_REL) - srcPos))
 		{
+			LOG(INFO) << "srcPos < sizeof(JMP_REL) && !IsCodePadding((LPBYTE)m_lpSRC + srcPos, sizeof(JMP_REL) - srcPos)\n";
 			//判断是否支持短跳
 			if (srcPos < sizeof(JMP_REL_SHORT) && !IsCodePadding((LPBYTE)m_lpSRC + srcPos, sizeof(JMP_REL_SHORT) - srcPos))
+			{
+				LOG(INFO) << "srcPos < sizeof(JMP_REL_SHORT) && !IsCodePadding((LPBYTE)m_lpSRC + srcPos, sizeof(JMP_REL_SHORT) - srcPos)\n";
 				return FALSE;
+			}
 			if (!IsExecutableAddress((LPBYTE)m_lpSRC - sizeof(JMP_REL)))
+			{
+				LOG(INFO) << "!IsExecutableAddress((LPBYTE)m_lpSRC - sizeof(JMP_REL))\n";
 				return FALSE;
+			}
 			if (!IsCodePadding((LPBYTE)m_lpSRC - sizeof(JMP_REL), sizeof(JMP_REL)))
+			{
+				LOG(INFO) << "!IsCodePadding((LPBYTE)m_lpSRC - sizeof(JMP_REL), sizeof(JMP_REL))\n";
 				return FALSE;
+			}
 			memcpy(m_backup, (LPBYTE)m_lpSRC - sizeof(JMP_REL), sizeof(JMP_REL) + sizeof(JMP_REL_SHORT));
 		}
 		else
 		{
+			LOG(INFO) << "memcpy(m_backup, lpSRC, sizeof(JMP_REL))\n";
 			memcpy(m_backup, lpSRC, sizeof(JMP_REL));
 		}
 		m_lpSRC = lpSRC;
@@ -465,6 +505,7 @@ namespace TinyUI
 		m_lpRelay = (LPBYTE)m_pTrampoline + dstPos;
 		memcpy(m_lpRelay, &jmp, sizeof(jmp));
 #endif
+		LOG(INFO) << "TinyDetour Initialize OK\n";
 		return TRUE;
 	}
 

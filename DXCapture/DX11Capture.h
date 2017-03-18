@@ -14,14 +14,14 @@ namespace DXCapture
 		BOOL Render(IDXGISwapChain *pThis, UINT flags);
 		BOOL DX11GPUHook(ID3D11Device *pThis);
 	public:
-		SharedCaptureDATA				m_captureDATA;
-		DXGI_FORMAT						m_dxgiFormat;
+		DX&								m_dx;
 		BOOL							m_bCapturing;
 		BOOL							m_bTextures;
 		HANDLE							m_hTextureHandle;
 		HMODULE							m_hD3D11;
+		DXGI_FORMAT						m_dxgiFormat;
+		SharedCaptureDATA				m_captureDATA;
 		TinyComPtr<ID3D11Resource>		m_resource;
-		DX&								m_dx;
 	};
 	SELECTANY extern DX11Capture g_dx11(g_dx);
 }

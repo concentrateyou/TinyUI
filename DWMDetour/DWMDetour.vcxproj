@@ -103,13 +103,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;DWMDETOUR_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;$(DXSDK_DIR)Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\x64\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d10_1.lib;d3d11.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\x64\Debug;$(DXSDK_DIR)Lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d10_1.lib;d3d11.lib;d3dx11.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

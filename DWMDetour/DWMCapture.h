@@ -11,11 +11,19 @@ using namespace TinyUI;
 
 namespace DWM
 {
-#define DWM_WINDOWCLASS			TEXT("DWMCapture")
+#define DWM_WINDOWCLASS			TEXT("DWM WindowClass")
 
-	typedef HRESULT(WINAPI *Present)(IDXGISwapChainDWM* swap, UINT sync_interval, UINT flags);
-	typedef HRESULT(WINAPI *CreateDXGIFactory)(REFIID riid, _Out_ void   **ppFactory);
-	typedef HRESULT(WINAPI *CreateSwapChain)(IDXGIFactoryDWM *factory, IUnknown *pDevice, DXGI_SWAP_CHAIN_DESC *pDesc, IDXGIOutput *pOutput, IDXGISwapChainDWM **ppSwapChainDWM);
+	typedef struct tagDWMCaptureDATA
+	{
+		UINT		CaptureType;
+		DWORD		Format;
+		SIZE		Size;
+		BOOL		bFlip;
+		BOOL		bMultisample;
+		UINT		Pitch;
+		DWORD		MapSize;
+		HWND		HwndCapture;
+	}DWMCaptureDATA;
 
 	class DWMCapture
 	{
@@ -24,10 +32,15 @@ namespace DWM
 		~DWMCapture();
 		BOOL Attach(HMODULE hModule);
 		BOOL Detach(HMODULE hModule);
-	private:
+	public:
+		BOOL Setup(IDXGISwapChain *swap);
+		BOOL Render(IDXGISwapChain *swap, UINT flags);
+		void Release();
+	public:
 		BOOL BeginCapture();
 		BOOL EndCapture();
 		void OnMessagePump();
+		BOOL DX101GPUHook(ID3D10Device1 *device);
 	private:
 		static LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 	private:
@@ -35,16 +48,20 @@ namespace DWM
 		IO::TinyTaskBase	m_task;
 		HINSTANCE			m_hInstance;
 	public:
-		TinyDetour			m_createDXGIFactory;
-		TinyDetour			m_createSwap;
-	public:
-		CreateDXGIFactory	m_origCreateDXGIFactory;
-		CreateSwapChain		m_origCreateSwapChain;
-	public:
-		TinyComPtr<IDXGIFactoryDWM> m_dxgiFactoryDWM;
+		DWMCaptureDATA					m_captureDATA;
+		DXGI_FORMAT						m_dxgiFormat;
+		BOOL							m_bCapturing;
+		BOOL							m_bTextures;
+		BOOL							m_bDX101;
+		HANDLE							m_hTextureHandle;
+		HMODULE							m_hD3D101;
+		IDXGISwapChain*					m_currentSwap;
+		TinyComPtr<ID3D10Resource>		m_resource;
+		TinyDetour						m_dxPresent;
+		TinyDetour						m_dxResizeBuffers;
 	};
 
-	SELECTANY extern DWMCapture g_dwmCapture;
+	SELECTANY extern DWMCapture g_dwm;
 }
 
 

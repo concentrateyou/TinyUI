@@ -110,7 +110,7 @@
       <AdditionalLibraryDirectories>..\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>..\TinyUI;..\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\Debug</AdditionalLibraryDirectories>
       <AdditionalDependencies>d3d10_1.lib;d3d11.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>

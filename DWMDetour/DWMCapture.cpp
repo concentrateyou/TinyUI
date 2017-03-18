@@ -3,50 +3,87 @@
 
 #include "stdafx.h"
 #include "DWMCapture.h"
+#include <D3DX10tex.h>
+#pragma comment(lib,"D3DX10.lib")
 
 namespace DWM
 {
-	//HRESULT WINAPI PresentDetour(IDXGISwapChainDWM *swap, UINT sync_interval, UINT flags)
-	//{
-	//	return S_OK;
-	//}
-	//HRESULT WINAPI CreateSwapChainDetour(IDXGIFactoryDWM *factory, IUnknown *pDevice, DXGI_SWAP_CHAIN_DESC *pDesc, IDXGIOutput *pOutput, IDXGISwapChainDWM **ppSwapChainDWM)
-	//{
-	//	LOG(INFO) << "CreateSwapChainDetour OK\n";
-	//	if (!factory || !pDevice)
-	//		return E_INVALIDARG;
-	//	HRESULT hRes = g_dwmCapture.m_origCreateSwapChain(factory, pDevice, pDesc, pOutput, ppSwapChainDWM);
-	//	if (FAILED(hRes))
-	//		return hRes;
+	typedef HRESULT(WINAPI *D3D101CREATEPROC)(IDXGIAdapter*, D3D10_DRIVER_TYPE, HMODULE, UINT, D3D10_FEATURE_LEVEL1, UINT, DXGI_SWAP_CHAIN_DESC*, IDXGISwapChain**, ID3D10Device1**);
 
-	//	return E_FAIL;
-	//}
-	//HRESULT WINAPI CreateDXGIFactoryDetour(REFIID iid, void **ppFactory)
-	//{
-	//	LOG(INFO) << "CreateDXGIFactoryDetour OK\n";
-	//	if (!ppFactory)
-	//		return E_INVALIDARG;
-	//	if (!g_dwmCapture.m_origCreateDXGIFactory)
-	//		return E_POINTER;
-	//	HRESULT hRes = g_dwmCapture.m_origCreateDXGIFactory(iid, ppFactory);
-	//	if (FAILED(hRes))
-	//		return hRes;
-	//	IUnknown* unknow = reinterpret_cast<IUnknown*>(*ppFactory);
-	//	hRes = unknow->QueryInterface(__uuidof(IDXGIFactoryDWM), (void**)&g_dwmCapture.m_dxgiFactoryDWM);
-	//	if (FAILED(hRes))
-	//		return hRes;
-	//	ULONG *vtable = *(ULONG**)g_dwmCapture.m_dxgiFactoryDWM.Ptr();
-	//	if (g_dwmCapture.m_createSwap.Initialize((FARPROC)*(vtable + 3), CreateSwapChainDetour))
-	//	{
-	//		if (g_dwmCapture.m_createSwap.BeginDetour())
-	//			return S_OK;
-	//	}
-	//	return E_FAIL;
-	//}
-	//////////////////////////////////////////////////////////////////////////
+	DXGI_FORMAT GetDWMPlusTextureFormat(DXGI_FORMAT s)
+	{
+		switch (s)
+		{
+		case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:
+			return DXGI_FORMAT_B8G8R8A8_UNORM;
+		case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
+			return DXGI_FORMAT_R8G8B8A8_UNORM;
+		}
+		return s;
+	}
+
+	HRESULT STDMETHODCALLTYPE DWM_DXGISwapPresent(IDXGISwapChain *pThis, UINT syncInterval, UINT flags)
+	{
+		LOG(INFO) << "DWM_DXGISwapPresent\n";
+		g_dwm.m_dxPresent.EndDetour();
+		TinyComPtr<IUnknown> unknow;
+		if (SUCCEEDED(pThis->GetDevice(__uuidof(IUnknown), (void**)&unknow)))
+		{
+			do
+			{
+				TinyComPtr<IUnknown> device;
+				if (SUCCEEDED(unknow->QueryInterface(__uuidof(ID3D10Device1), (void**)&device)))
+				{
+					g_dwm.m_bDX101 = TRUE;
+					if (g_dwm.m_currentSwap == NULL)
+					{
+						g_dwm.m_currentSwap = g_dwm.Setup(pThis) ? pThis : NULL;
+						LOG(INFO) << "DWMCapture::m_currentSwap:" << g_dwm.m_currentSwap << "\n";
+					}
+					if ((flags & DXGI_PRESENT_TEST) == 0 && g_dwm.m_currentSwap == pThis)
+					{
+						g_dwm.Render(pThis, flags);
+						LOG(INFO) << "DWMCapture::Render\n";
+					}
+					break;
+				}
+			} while (0);
+		}
+		HRESULT hRes = pThis->Present(syncInterval, flags);
+		g_dwm.m_dxPresent.BeginDetour();
+		return hRes;
+	}
+	HRESULT STDMETHODCALLTYPE DWM_DXGISwapResizeBuffers(IDXGISwapChain *pThis, UINT bufferCount, UINT width, UINT height, DXGI_FORMAT giFormat, UINT flags)
+	{
+		LOG(INFO) << "DWM_DXGISwapResizeBuffers\n";
+		g_dwm.m_dxResizeBuffers.EndDetour();
+		TinyComPtr<IUnknown> unknow;
+		if (SUCCEEDED(pThis->GetDevice(__uuidof(IUnknown), (void**)&unknow)))
+		{
+			do
+			{
+				TinyComPtr<IUnknown> device;
+				if (SUCCEEDED(unknow->QueryInterface(__uuidof(ID3D10Device1), (void**)&device)))
+				{
+					g_dwm.m_bDX101 = TRUE;
+					g_dwm.Release();
+					break;
+				}
+			} while (0);
+		}
+		g_dwm.m_currentSwap = NULL;
+		HRESULT hRes = pThis->ResizeBuffers(bufferCount, width, height, giFormat, flags);
+		g_dwm.m_dxResizeBuffers.BeginDetour();
+		return hRes;
+	}
+
 	DWMCapture::DWMCapture()
-		:m_origCreateDXGIFactory(NULL),
-		m_origCreateSwapChain(NULL)
+		:m_currentSwap(NULL),
+		m_dxgiFormat(DXGI_FORMAT_UNKNOWN),
+		m_hTextureHandle(NULL),
+		m_bCapturing(FALSE),
+		m_bTextures(FALSE),
+		m_hD3D101(NULL)
 	{
 
 	}
@@ -77,16 +114,107 @@ namespace DWM
 		}
 		return m_task.Close(1500);
 	}
-
+	BOOL DWMCapture::Render(IDXGISwapChain *swap, UINT flags)
+	{
+		HRESULT hRes = S_OK;
+		TinyComPtr<ID3D10Device1> device;
+		if (SUCCEEDED(hRes = swap->GetDevice(__uuidof(ID3D10Device1), (void**)&device)))
+		{
+			if (!m_bTextures)
+			{
+				LOG(INFO) << "DWMCapture::DX101GPUHook\n";
+				m_bTextures = DX101GPUHook(device);
+			}
+			if (m_bTextures)
+			{
+				LOG(INFO) << "DWMCapture::CopyResource\n";
+				TinyComPtr<ID3D10Resource> backBuffer;
+				if (SUCCEEDED(swap->GetBuffer(0, __uuidof(ID3D10Resource), (void**)&backBuffer)))
+				{
+					if (m_captureDATA.bMultisample)
+					{
+						device->ResolveSubresource(m_resource, 0, backBuffer, 0, m_dxgiFormat);
+					}
+					else
+					{
+						device->CopyResource(m_resource, backBuffer);
+					}
+					D3DX10SaveTextureToFile(m_resource, D3DX10_IFF_PNG, "D:\\desktopp.png");
+				}
+			}
+		}
+		return TRUE;
+	}
+	BOOL DWMCapture::Setup(IDXGISwapChain *swap)
+	{
+		LOG(INFO) << "DX101Capture Setup OK\n";
+		HRESULT hRes = S_OK;
+		TinyComPtr<ID3D10Device1> device;
+		hRes = swap->GetDevice(__uuidof(ID3D10Device1), (void**)&device);
+		if (FAILED(hRes))
+			return FALSE;
+		DXGI_SWAP_CHAIN_DESC scd;
+		::ZeroMemory(&scd, sizeof(scd));
+		hRes = swap->GetDesc(&scd);
+		if (FAILED(hRes))
+			return FALSE;
+		m_dxgiFormat = GetDWMPlusTextureFormat(scd.BufferDesc.Format);
+		m_captureDATA.Format = m_dxgiFormat;
+		m_captureDATA.Size.cx = scd.BufferDesc.Width;
+		m_captureDATA.Size.cy = scd.BufferDesc.Height;
+		m_captureDATA.HwndCapture = scd.OutputWindow;
+		m_captureDATA.bMultisample = scd.SampleDesc.Count > 1;
+		return TRUE;
+	}
+	void DWMCapture::Release()
+	{
+		m_bTextures = FALSE;
+		m_hTextureHandle = NULL;
+		m_resource.Release();
+	}
+	BOOL DWMCapture::DX101GPUHook(ID3D10Device1 *device)
+	{
+		HRESULT hRes = S_OK;
+		D3D10_TEXTURE2D_DESC texGameDesc;
+		ZeroMemory(&texGameDesc, sizeof(texGameDesc));
+		texGameDesc.Width = m_captureDATA.Size.cx;
+		texGameDesc.Height = m_captureDATA.Size.cy;
+		texGameDesc.MipLevels = 1;
+		texGameDesc.ArraySize = 1;
+		texGameDesc.Format = m_dxgiFormat;
+		texGameDesc.SampleDesc.Count = 1;
+		texGameDesc.BindFlags = D3D10_BIND_RENDER_TARGET | D3D10_BIND_SHADER_RESOURCE;
+		texGameDesc.Usage = D3D10_USAGE_DEFAULT;
+		texGameDesc.MiscFlags = D3D10_RESOURCE_MISC_SHARED;
+		TinyComPtr<ID3D10Texture2D> dx10Texture2D;
+		if (FAILED(hRes = device->CreateTexture2D(&texGameDesc, NULL, &dx10Texture2D)))
+			return FALSE;
+		if (FAILED(hRes = dx10Texture2D->QueryInterface(__uuidof(ID3D10Resource), (void**)&m_resource)))
+			return FALSE;
+		TinyComPtr<IDXGIResource> resource;
+		if (FAILED(hRes = dx10Texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&resource)))
+			return FALSE;
+		if (FAILED(hRes = resource->GetSharedHandle(&m_hTextureHandle)))
+			return FALSE;
+		m_captureDATA.CaptureType = 2;
+		m_captureDATA.bFlip = FALSE;
+		m_captureDATA.MapSize = sizeof(DWMCaptureDATA);
+		return TRUE;
+	}
 	BOOL DWMCapture::BeginCapture()
 	{
 		LOG(INFO) << "DWMCapture::BeginCapture\n";
-		TinyComPtr<ID3D10Device1>		d3d101;
-		TinyComPtr<IDXGIFactory>		dxgiFactory;
-		TinyComPtr<IDXGIFactoryDWM>		dxgiFactoryDWM;
-		TinyComPtr<IDXGISwapChainDWM>	dxgiSwapDWM;
-		TinyComPtr<IDXGIDevice>			dxgi;
-		TinyComPtr<IDXGIAdapter>		dxgiAdapter;
+		HRESULT hRes = S_OK;
+		CHAR szD3DPath[MAX_PATH];
+		if (FAILED(hRes = SHGetFolderPath(NULL, CSIDL_SYSTEM, NULL, SHGFP_TYPE_CURRENT, szD3DPath)))
+			return FALSE;
+		strcat_s(szD3DPath, MAX_PATH, TEXT("\\d3d10_1.dll"));
+		m_hD3D101 = GetModuleHandle(szD3DPath);
+		if (m_hD3D101 == NULL)
+			return FALSE;
+		D3D101CREATEPROC d3d101Create = (D3D101CREATEPROC)GetProcAddress(m_hD3D101, TEXT("D3D10CreateDeviceAndSwapChain1"));
+		if (!d3d101Create)
+			return FALSE;
 		DXGI_SWAP_CHAIN_DESC swapDesc;
 		ZeroMemory(&swapDesc, sizeof(swapDesc));
 		swapDesc.BufferCount = 2;
@@ -104,77 +232,33 @@ namespace DWM
 		swapDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 		swapDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 		swapDesc.Flags = 0;
-		HRESULT hRes = D3D10CreateDevice1(NULL,
-			D3D10_DRIVER_TYPE_NULL,
-			NULL,
-			0,
-			D3D10_FEATURE_LEVEL_10_1,
-			D3D10_1_SDK_VERSION,
-			&d3d101);
-		if (FAILED(hRes))
+		TinyComPtr<ID3D10Device1>	device;
+		TinyComPtr<IDXGISwapChain>	swap;
+		if (FAILED(hRes = (*d3d101Create)(NULL, D3D10_DRIVER_TYPE_NULL, NULL, 0, D3D10_FEATURE_LEVEL_10_1, D3D10_1_SDK_VERSION, &swapDesc, &swap, &device)))
+			return FALSE;
+		LOG(INFO) << "DX101Capture::Initialize OK\n";
+		ULONG *vtable = *(ULONG**)swap.Ptr();
+		if (!m_dxPresent.Initialize((FARPROC)*(vtable + (32 / 4)), (FARPROC)DWM_DXGISwapPresent))
 		{
-			LOG(INFO) << "D3D10CreateDevice1 FAIL\n";
+			LOG(INFO) << "m_dxPresent::Initialize FAIL\n";
 			return FALSE;
 		}
-		else
+		if (!m_dxResizeBuffers.Initialize((FARPROC)*(vtable + (52 / 4)), (FARPROC)DWM_DXGISwapResizeBuffers))
 		{
-			LOG(INFO) << "D3D10CreateDevice1 OK\n";
-			hRes = d3d101->QueryInterface(__uuidof(IDXGIDevice), (void **)&dxgi);
-			if (FAILED(hRes))
-			{
-				LOG(INFO) << "QueryInterface IDXGIDevice FAIL\n";
-				return FALSE;
-			}
-			LOG(INFO) << "QueryInterface IDXGIDevice OK\n";
-			hRes = dxgi->GetParent(__uuidof(IDXGIAdapter), (void **)&dxgiAdapter);
-			if (FAILED(hRes))
-			{
-				LOG(INFO) << "GetParent IDXGIAdapter FAIL\n";
-				return FALSE;
-			}
-			LOG(INFO) << "GetParent IDXGIAdapter OK\n";
-			hRes = dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void **)&dxgiFactory);
-			if (FAILED(hRes))
-			{
-				LOG(INFO) << "GetParent IDXGIFactory FAIL\n";
-				return FALSE;
-			}
-			LOG(INFO) << "GetParent IDXGIFactory OK\n";
-			hRes = dxgiFactory->QueryInterface(__uuidof(IDXGIFactoryDWM), (void **)&dxgiFactoryDWM);
-			if (FAILED(hRes))
-			{
-				LOG(INFO) << "QueryInterface IDXGIFactoryDWM FAIL\n";
-				return FALSE;
-			}
-			LOG(INFO) << "QueryInterface IDXGIFactoryDWM OK\n";
-			hRes = dxgiFactoryDWM->CreateSwapChain(d3d101, &swapDesc, NULL, &dxgiSwapDWM);
-			if (FAILED(hRes))
-			{
-				if (hRes == DXGI_ERROR_INVALID_CALL)
-				{
-					LOG(INFO) << "CreateSwapChainDWM FAIL DXGI_ERROR_INVALID_CALL\n:";
-				}
-				else
-				{
-					LOG(INFO) << "CreateSwapChainDWM FAIL:" << hRes << "\n";
-				}
-				return FALSE;
-			}
-			LOG(INFO) << "CreateSwapChainDWM OK\n";
-			return TRUE;
+			LOG(INFO) << "m_dxResizeBuffers::Initialize FAIL\n";
+			return FALSE;
 		}
-		/*TinyScopedLibrary lib("dxgi.dll");
-		CreateDXGIFactory  ps = reinterpret_cast<CreateDXGIFactory>(lib.GetFunctionPointer("CreateDXGIFactory"));
-		HRESULT hRes = ps(__uuidof(IDXGIFactoryDWM), (void**)&m_dxgiFactoryDWM);
-		if (SUCCEEDED(hRes))
+		if (!m_dxPresent.BeginDetour())
 		{
-			LOG(INFO) << "Create IDXGIFactoryDWM OK\n";
+			LOG(INFO) << "m_dxPresent::BeginDetour FAIL\n";
+			return FALSE;
 		}
-		else
+		if (!m_dxResizeBuffers.BeginDetour())
 		{
-			LOG(INFO) << "Create IDXGIFactoryDWM FAIL\n";
-		}*/
-		return FALSE;
+			LOG(INFO) << "m_dxResizeBuffers::BeginDetour FAIL\n";
+			return FALSE;
+		}
+		return TRUE;
 	}
 	BOOL DWMCapture::EndCapture()
 	{

@@ -12,12 +12,12 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	{
 	case DLL_PROCESS_ATTACH:
 	{
-		g_dwmCapture.Attach(hModule);
+		g_dwm.Attach(hModule);
 	}
 	break;
 	case DLL_PROCESS_DETACH:
 	{
-		g_dwmCapture.Detach(hModule);
+		g_dwm.Detach(hModule);
 	}
 	break;
 	case DLL_THREAD_ATTACH:
