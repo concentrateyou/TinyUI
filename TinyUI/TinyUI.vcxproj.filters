@@ -492,6 +492,9 @@
     <ClInclude Include="IO\TinyPipe.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
+    <ClInclude Include="Network\TinyHTTPCommon.h">
+      <Filter>头文件\Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -901,6 +904,9 @@
     </ClCompile>
     <ClCompile Include="IO\TinyPipe.cpp">
       <Filter>源文件\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\TinyHTTPCommon.cpp">
+      <Filter>源文件\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

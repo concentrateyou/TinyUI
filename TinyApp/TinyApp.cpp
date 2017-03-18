@@ -24,6 +24,7 @@
 #include "Network/TinyURL.h"
 #include "Network/TinyDNS.h"
 #include "MediaTest.h"
+#include "Common/TinySignal.h";
 
 using namespace TinyUI;
 using namespace TinyUI::Network;
@@ -85,6 +86,33 @@ public:
 	TinyFile m_h264File;
 };
 
+
+class single_threaded
+{
+
+};
+
+class TestA
+{
+public:
+	void Add(INT a, INT b)
+	{
+		m_signal(a, b);
+	}
+public:
+	TinySignal<single_threaded, INT, INT> m_signal;
+};
+
+class TestB : public TinySlots<single_threaded>
+{
+public:
+	void Show(INT a, INT b)
+	{
+
+	}
+};
+
+
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -102,9 +130,10 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
-
-	InjectLibrary(hProcess, "D:\\dll\\DWMDetour64\\x64\\Debug\\DWMDetour64.dll");
-
+	TestA testA;
+	TestB testB;
+	testA.m_signal.connect(&testB, &TestB::Show);
+	testA.Add(10, 15);
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
