@@ -380,7 +380,7 @@ namespace TinyUI
 	{
 		m_stream << std::endl;
 		string newline(m_stream.str());
-		if (InitializeLogFile(NULL))
+		if (InitializeLogFile(g_log.c_str()))
 		{
 			g_logFile.Write(static_cast<const void*>(newline.c_str()), static_cast<DWORD>(newline.length()));
 			g_logFile.Flush();

@@ -90,7 +90,7 @@
     </Link>
     <Lib>
       <AdditionalDependencies>Strmiids.lib;Quartz.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\TinyUI;..\Debug;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\Debug;</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

@@ -43,18 +43,25 @@ namespace DXCapture
 	BOOL DX::Initialize()
 	{
 		if (!BuildEvents())
+		{
 			return FALSE;
-		if (!m_mutes[0].Open(MUTEX_ALL_ACCESS, FALSE, TEXTURE_MUTEX1)
-			&& !m_mutes[0].Create(FALSE, TEXTURE_MUTEX1, NULL))
+		}
+		if (!m_mutes[0].Open(MUTEX_ALL_ACCESS, FALSE, TEXTURE_MUTEX1) && !m_mutes[0].Create(FALSE, TEXTURE_MUTEX1, NULL))
+		{
 			return FALSE;
-		if (!m_mutes[1].Open(MUTEX_ALL_ACCESS, FALSE, TEXTURE_MUTEX2)
-			&& !m_mutes[1].Create(FALSE, TEXTURE_MUTEX2, NULL))
+		}
+		if (!m_mutes[1].Open(MUTEX_ALL_ACCESS, FALSE, TEXTURE_MUTEX2) && !m_mutes[1].Create(FALSE, TEXTURE_MUTEX2, NULL))
+		{
 			return FALSE;
-		if (!m_captureMemery.Open(SHAREDCAPTURE_MEMORY) &&
-			!m_captureMemery.Create(SHAREDCAPTURE_MEMORY, sizeof(SharedCaptureDATA)))
+		}
+		if (!m_captureMemery.Open(SHAREDCAPTURE_MEMORY) && !m_captureMemery.Create(SHAREDCAPTURE_MEMORY, sizeof(SharedCaptureDATA)))
+		{
 			return FALSE;
+		}
 		if (!m_captureMemery.Map(0, 0))
+		{
 			return FALSE;
+		}
 		return TRUE;
 	}
 	void DX::Uninitialize()
@@ -75,11 +82,14 @@ namespace DXCapture
 	{
 		if (!m_captureMemery.Address())
 		{
-			if (!m_captureMemery.Open(SHAREDCAPTURE_MEMORY) &&
-				!m_captureMemery.Create(SHAREDCAPTURE_MEMORY, sizeof(SharedCaptureDATA)))
+			if (!m_captureMemery.Open(SHAREDCAPTURE_MEMORY) && !m_captureMemery.Create(SHAREDCAPTURE_MEMORY, sizeof(SharedCaptureDATA)))
+			{
 				return NULL;
+			}
 			if (!m_captureMemery.Map(0, 0))
+			{
 				return NULL;
+			}
 		}
 		return reinterpret_cast<SharedCaptureDATA*>(m_captureMemery.Address());
 	}
@@ -92,11 +102,14 @@ namespace DXCapture
 		}
 		if (!m_textureMemery.Address())
 		{
-			if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE) &&
-				!m_textureMemery.Create(TEXTURE_MEMORY, dwSize))
+			if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE) && !m_textureMemery.Create(TEXTURE_MEMORY, dwSize))
+			{
 				return NULL;
+			}
 			if (!m_textureMemery.Map(0, dwSize))
+			{
 				return NULL;
+			}
 		}
 		return reinterpret_cast<SharedTextureDATA*>(m_textureMemery.Address());
 	}
@@ -109,11 +122,14 @@ namespace DXCapture
 		}
 		if (!m_textureMemery.Address())
 		{
-			if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE) &&
-				!m_textureMemery.Create(TEXTURE_MEMORY, dwSize))
+			if (!m_textureMemery.Open(TEXTURE_MEMORY, FALSE) && !m_textureMemery.Create(TEXTURE_MEMORY, dwSize))
+			{
 				return NULL;
+			}
 			if (!m_textureMemery.Map(0, dwSize))
+			{
 				return NULL;
+			}
 		}
 		return reinterpret_cast<BYTE*>(m_textureMemery.Address());
 	}
