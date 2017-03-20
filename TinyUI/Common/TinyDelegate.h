@@ -46,6 +46,11 @@ namespace TinyUI
 		typedef R					ReturnType;
 		typedef Functor<R(Args...)> FunctorType;
 	public:
+		UnaryFunctor()
+			:m_fType(NULL)
+		{
+
+		}
 		UnaryFunctor(const FunctionType& fType)
 			: m_fType(fType)
 		{
@@ -53,6 +58,11 @@ namespace TinyUI
 		UnaryFunctor(const UnaryFunctor& other)
 			:m_fType(other.m_fType)
 		{
+		}
+		UnaryFunctor(UnaryFunctor&& other)
+			:m_fType(other.m_fType)
+		{
+			other.m_fType = NULL;
 		}
 		UnaryFunctor& operator = (const UnaryFunctor& other)
 		{
@@ -62,15 +72,24 @@ namespace TinyUI
 			}
 			return *this;
 		}
-		UnaryFunctor* DoClone() const override
+		UnaryFunctor& operator = (UnaryFunctor&& other)
+		{
+			if (&other != this)
+			{
+				m_fType = other.m_fType;
+				other.m_fType = NULL;
+			}
+			return *this;
+		}
+		UnaryFunctor* DoClone() const OVERRIDE
 		{
 			return new UnaryFunctor(*this);
 		}
-		const void *Target() const override
+		const void *Target() const OVERRIDE
 		{
 			return m_fType != NULL ? reinterpret_cast<const void*>(m_fType) : NULL;
 		}
-		const type_info& TargetType() const override
+		const type_info& TargetType() const OVERRIDE
 		{
 			return m_fType != NULL ? typeid(m_fType) : typeid(void);
 		}
@@ -99,14 +118,29 @@ namespace TinyUI
 		typedef R					ReturnType;
 		typedef Functor<R(Args...)> FunctorType;
 	public:
+		BinaryFunctor()
+			:m_iType(NULL),
+			m_fType(NULL)
+		{
+
+		}
 		BinaryFunctor(const InstanceType& iType, const FunctionType& fType)
-			: m_iType(iType), m_fType(fType)
+			: m_iType(iType),
+			m_fType(fType)
 
 		{
 		}
 		BinaryFunctor(const BinaryFunctor& other)
-			:m_iType(other.m_iType), m_fType(other.m_fType)
+			:m_iType(other.m_iType),
+			m_fType(other.m_fType)
 		{
+		}
+		BinaryFunctor(BinaryFunctor&& other)
+			:m_iType(other.m_iType),
+			m_fType(other.m_fType)
+		{
+			other.m_iType = NULL;
+			other.m_fType = NULL;
 		}
 		BinaryFunctor& operator = (const BinaryFunctor& other)
 		{
@@ -117,16 +151,27 @@ namespace TinyUI
 			}
 			return *this;
 		}
-		BinaryFunctor* DoClone() const override
+		BinaryFunctor& operator = (BinaryFunctor&& other)
+		{
+			if (&other != this)
+			{
+				m_fType = other.m_fType;
+				m_iType = other.m_iType;
+				other.m_fType = NULL;
+				other.m_iType = NULL;
+			}
+			return *this;
+		}
+		BinaryFunctor* DoClone() const OVERRIDE
 		{
 			return new BinaryFunctor(*this);
 		}
 
-		const void *Target() const override
+		const void *Target() const OVERRIDE
 		{
 			return m_fType != NULL ? reinterpret_cast<const void*>(&m_fType) : NULL;
 		}
-		const type_info& TargetType() const override
+		const type_info& TargetType() const OVERRIDE
 		{
 			return m_fType != NULL ? typeid(m_fType) : typeid(void);
 		}
@@ -157,73 +202,89 @@ namespace TinyUI
 		typedef Functor<R(Args...)>	FunctorType;
 	public:
 		DelegateBase()
-			:m_my(NULL)
+			:m_fType(NULL)
 		{
 
 		}
-		DelegateBase(const DelegateBase& db)
-			:m_my(FunctorType::Clone(db.m_my.Ptr()))
+		DelegateBase(const DelegateBase& other)
+			:m_fType(FunctorType::Clone(other.m_fType.Ptr()))
 		{
+
 		}
+
+		DelegateBase(DelegateBase&& other)
+			:m_fType(other.m_fType.Release())
+		{
+
+		}
+
 		DelegateBase& operator=(const DelegateBase& other)
 		{
 			if (&other != this)
 			{
 				DelegateBase copy(other);
-				FunctorType* ps = m_my.Release();
-				m_my.Reset(copy.m_my.Release());
-				copy.m_my.Reset(ps);
+				FunctorType* ps = m_fType.Release();
+				m_fType.Reset(copy.m_fType.Release());
+				copy.m_fType.Reset(ps);
+			}
+			return *this;
+		}
+		DelegateBase& operator=(DelegateBase&& other)
+		{
+			if (&other != this)
+			{
+				m_fType.Reset(other.m_fType.Release());
 			}
 			return *this;
 		}
 		template <typename FunctionType>
 		DelegateBase(const FunctionType& fType)
-			: m_my(new UnaryFunctor<R, FunctionType, Args...>(fType))
+			: m_fType(new UnaryFunctor<R, FunctionType, Args...>(fType))
 		{
 
 		}
 		template <class InstanceType, typename FunctionType>
 		DelegateBase(const InstanceType& iType, FunctionType mType)
-			: m_my(new BinaryFunctor<R, InstanceType, FunctionType, Args...>(iType, mType))
+			: m_fType(new BinaryFunctor<R, InstanceType, FunctionType, Args...>(iType, mType))
 		{
 
 		}
 		template <typename FunctionType>
 		void BindDelegate(const FunctionType& fType)
 		{
-			m_my.Reset(new UnaryFunctor<R, FunctionType, Args...>(fType));
+			m_fType.Reset(new UnaryFunctor<R, FunctionType, Args...>(fType));
 		}
 		template <class InstanceType, typename FunctionType>
 		void BindDelegate(const InstanceType& iType, FunctionType mType)
 		{
-			m_my.Reset(new BinaryFunctor<R, InstanceType, FunctionType, Args...>(iType, mType));
+			m_fType.Reset(new BinaryFunctor<R, InstanceType, FunctionType, Args...>(iType, mType));
 		}
 		BOOL IsEmpty() const
 		{
-			return m_my.Ptr() == NULL;
+			return m_fType.Ptr() == NULL;
 		}
 		void Release()
 		{
-			m_my.Reset(NULL);
+			m_fType.Reset(NULL);
 		}
 		const void *Target() const
 		{
-			return m_my->Target();
+			return m_fType->Target();
 		}
 		const type_info& TargetType() const
 		{
-			return m_my->TargetType();
+			return m_fType->TargetType();
 		}
 	public:
 		BOOL operator==(const DelegateBase& other) const
 		{
-			if (m_my.Ptr() == NULL && other.m_my.Ptr() == NULL)
+			if (m_fType.Ptr() == NULL && other.m_fType.Ptr() == NULL)
 			{
 				return TRUE;
 			}
-			if (m_my.Ptr() != NULL && other.m_my.Ptr() != NULL)
+			if (m_fType.Ptr() != NULL && other.m_fType.Ptr() != NULL)
 			{
-				return (*m_my.Ptr()) == *(other.m_my.Ptr());
+				return (*m_fType.Ptr()) == *(other.m_fType.Ptr());
 			}
 			return FALSE;
 		}
@@ -233,10 +294,10 @@ namespace TinyUI
 		}
 		ReturnType operator()(Args... args) const
 		{
-			return (*m_my)(args...);
+			return (*m_fType)(args...);
 		}
 	private:
-		TinyAutoPtr<FunctorType>	m_my;
+		TinyAutoPtr<FunctorType> m_fType;
 	};
 	//////////////////////////////////////////////////////////////////////////
 	template<typename R>
@@ -247,13 +308,22 @@ namespace TinyUI
 	public:
 		typedef DelegateBase<R, Args... > BaseType;
 	protected:
-		Delegate() : BaseType(){}
+		Delegate() : BaseType() {}
 	public:
-		Delegate(const Delegate& os) : BaseType()
+		Delegate(const Delegate& os)
+			: BaseType()
 		{
 			if (!os.IsEmpty())
 			{
 				BaseType::operator=(os);
+			}
+		}
+		Delegate(Delegate&& os)
+			: BaseType()
+		{
+			if (!os.IsEmpty())
+			{
+				BaseType::operator=(std::move(os));
 			}
 		}
 		template<class FunctionType>

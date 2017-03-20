@@ -11,8 +11,12 @@ namespace TinyUI
 	class TinyPlaceNew
 	{
 	public:
-		TinyPlaceNew(const T& _myT) :
-			m_myT(_myT)
+		TinyPlaceNew(const T& _myT)
+			:m_myT(_myT)
+		{
+		};
+		TinyPlaceNew(T&& _myT)
+			:m_myT(std::move(_myT))
 		{
 		};
 		template <class _Ty>
@@ -240,6 +244,7 @@ namespace TinyUI
 		~TinyArray();
 		BOOL		IsEmpty() const;
 		BOOL		Add(const T& myT);
+		BOOL		Add(T&& myT);
 		BOOL		Insert(INT index, const T& myT);
 		BOOL		Resize(INT newSize);
 		BOOL		Remove(const T& myT);
@@ -357,6 +362,32 @@ namespace TinyUI
 #pragma push_macro("new")
 #undef new
 		::new(m_value + m_size) TinyPlaceNew<T>(myT);
+#pragma pop_macro("new")
+		m_size++;
+		return TRUE;
+	}
+	template<class T>
+	BOOL TinyArray<T>::Add(T&& myT)
+	{
+		if (m_size == m_alloc_size)//需要重新分配内存
+		{
+			T* myP = NULL;
+			INT size = (m_alloc_size == 0) ? 1 : (m_size * 2);
+			if (size < 0 || size >(INT_MAX / sizeof(T)))
+			{
+				return FALSE;
+			}
+			myP = (T*)_recalloc(m_value, size, sizeof(T));
+			if (myP == NULL)
+			{
+				return FALSE;
+			}
+			m_alloc_size = size;
+			m_value = myP;
+		}
+#pragma push_macro("new")
+#undef new
+		::new(m_value + m_size) TinyPlaceNew<T>(std::move(myT));
 #pragma pop_macro("new")
 		m_size++;
 		return TRUE;

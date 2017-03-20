@@ -86,24 +86,22 @@ public:
 	TinyFile m_h264File;
 };
 
-
-class single_threaded
-{
-
-};
-
 class TestA
 {
 public:
+	TestA()
+	{
+
+	}
 	void Add(INT a, INT b)
 	{
 		m_signal(a, b);
 	}
 public:
-	TinySignal<single_threaded, INT, INT> m_signal;
+	SIGNAL<void(INT, INT)> m_signal;
 };
 
-class TestB : public TinySlots<single_threaded>
+class TestB
 {
 public:
 	void Show(INT a, INT b)
@@ -130,10 +128,14 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
-	TestA testA;
-	TestB testB;
-	testA.m_signal.connect(&testB, &TestB::Show);
-	testA.Add(10, 15);
+	//TestA testA;
+
+	//TestB testB;
+	//testA.m_signal.Connect(&testB, &TestB::Show);
+
+	////testA.Add(10, 20);
+
+	//testA.m_signal.Disconnect(&testB, &TestB::Show);
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));

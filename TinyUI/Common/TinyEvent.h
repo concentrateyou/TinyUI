@@ -8,8 +8,10 @@ namespace TinyUI
 	template<typename... Args>
 	class Event < void(Args...) >
 	{
+		using DelegateType = Delegate < void(Args...) >;
 		DISALLOW_COPY_AND_ASSIGN(Event)
-		using DelegateType = Delegate < void(Args...) > ;
+	public:
+		Event() = DEFAULT;
 	public:
 		void operator+= (DelegateType* ps)
 		{
@@ -47,8 +49,6 @@ namespace TinyUI
 		{
 			return m_array.GetSize();
 		};
-	public:
-		Event() = DEFAULT;
 	private:
 		TinyArray<DelegateType*> m_array;
 	};

@@ -92,7 +92,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\TinySmiley;$(BOOSTDIR);..\DShowCapture;..\MFCapture;..\Decode;..\IntelQSV;..\ThirdParty\mpg123\include;..\ThirdParty\libfaad\include;..\ThirdParty\ffmpeg\include;$(INTELMEDIASDKROOT)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\TinySmiley;$(BOOSTDIR);..\DShowCapture;..\MFCapture;..\Decode;..\IntelQSV;..\ThirdParty\mpg123\include;..\ThirdParty\libfaad\include;..\ThirdParty\ffmpeg\include;..\ThirdParty\vld;$(INTELMEDIASDKROOT)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
@@ -111,7 +111,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\TinySmiley;$(BOOSTDIR);..\DShowCapture;..\MFCapture;..\Decode;..\IntelQSV;..\ThirdParty\mpg123\include;..\ThirdParty\libfaad\include;..\ThirdParty\ffmpeg\include;$(INTELMEDIASDKROOT)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\TinySmiley;$(BOOSTDIR);..\DShowCapture;..\MFCapture;..\Decode;..\IntelQSV;..\ThirdParty\mpg123\include;..\ThirdParty\libfaad\include;..\ThirdParty\ffmpeg\include;$(INTELMEDIASDKROOT)\include;..\ThirdParty\vld;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
