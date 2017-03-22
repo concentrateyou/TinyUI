@@ -154,8 +154,8 @@ namespace DXApp
 		m_lbl2.SetText("设置推流分辨率:");
 		m_lbl2.SetDefaultFont();
 		m_resolution.Create(m_hWND, 0, 0, 200, 21);
-		m_resolution.AddString("880*480");
-		m_resolution.AddString("1320*720");
+		m_resolution.AddString("640*480");
+		m_resolution.AddString("1280*720");
 		m_resolution.AddString("1920*1080");
 
 		m_speaker.Create(m_hWND, 0, 0, 0, 0);
@@ -198,10 +198,10 @@ namespace DXApp
 		switch (index)
 		{
 		case 0:
-			scale.SetSize(880, 480);
+			scale.SetSize(640, 480);
 			break;
 		case 1:
-			scale.SetSize(1320, 720);
+			scale.SetSize(1280, 720);
 			break;
 		case 2:
 			scale.SetSize(1920, 1080);
