@@ -14,20 +14,21 @@ namespace TinyUI
 		{
 
 		}
-		BOOL TinyHTTPClient::Connect(const IPEndPoint& endpoint)
+
+		BOOL TinyHTTPClient::GetURL(const string& val)
 		{
 			if (!m_socket.Open())
 				return FALSE;
 			return m_socket.BeginConnect(endpoint, BindCallback(&TinyHTTPClient::OnConnect, this), this);
 		}
-		BOOL TinyHTTPClient::SendRequest(TinyHTTPRequest& request)
+
+		BOOL TinyHTTPClient::PostURL(const string& val)
 		{
-			if (m_socket.IsConnect())
-			{
-				return TRUE;
-			}
-			return FALSE;
+			if (!m_socket.Open())
+				return FALSE;
+			return m_socket.BeginConnect(endpoint, BindCallback(&TinyHTTPClient::OnConnect, this), this);
 		}
+
 		void TinyHTTPClient::OnConnect(DWORD dwError, AsyncResult* result)
 		{
 			if (dwError != 0)

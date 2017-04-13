@@ -16,8 +16,8 @@ namespace TinyUI
 		public:
 			TinyHTTPClient(TinyIOServer* ioserver = NULL);
 			virtual ~TinyHTTPClient();
-			BOOL Connect(const IPEndPoint& endpoint);
-			BOOL SendRequest(TinyHTTPRequest& request);
+			BOOL GetURL(const string& val);
+			BOOL PostURL(const string& val);
 		private:
 			void OnConnect(DWORD dwError, AsyncResult* result);
 			void OnSend(DWORD dwError, AsyncResult* result);

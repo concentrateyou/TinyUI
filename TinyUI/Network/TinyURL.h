@@ -11,7 +11,10 @@ namespace TinyUI
 		class TinyURL
 		{
 		public:
-			TinyURL(const string& url);
+			TinyURL();
+			BOOL ParseURL(const CHAR* val, DWORD size);
+		protected:
+			 
 		};
 	}
 }
