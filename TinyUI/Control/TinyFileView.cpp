@@ -352,7 +352,7 @@ namespace TinyUI
 			ReleaseItem();
 			hRes = LockItem(shellItemPtr);
 
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 			{
 				return hRes;
 			}

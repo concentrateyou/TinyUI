@@ -3,7 +3,28 @@
 
 namespace TinyUI
 {
-	const TinyRuntimeClass TinyObject::classTinyObject = { "TinyObject", sizeof(TinyObject), NULL, NULL };
+	TinyRuntimeClass* TinyRuntimeClass::m_pFirstClass = NULL;
+
+	TinyRuntimeClass* PASCAL TinyRuntimeClass::FromName(LPCSTR lpszClassName)
+	{
+		const TinyRuntimeClass* pClass = &TinyObject::classTinyObject;
+		while (pClass != NULL)
+		{
+			TRACE("className:%s\n", pClass->m_pszClassName);
+			if (lstrcmpA(lpszClassName, pClass->m_pszClassName) == 0)
+			{
+				return const_cast<TinyRuntimeClass*>(pClass);
+			}
+			pClass = pClass->m_pNextClass;
+		}
+		return NULL;
+	}
+	CLASSINIT::CLASSINIT(const TinyRuntimeClass* pNewClass)
+	{
+		TinyRuntimeClass::m_pFirstClass = const_cast<TinyRuntimeClass*>(pNewClass);
+	}
+	//////////////////////////////////////////////////////////////////////////
+	const TinyRuntimeClass TinyObject::classTinyObject = { "TinyObject", sizeof(TinyObject), NULL, NULL, (TinyRuntimeClass*)TinyRuntimeClass::m_pFirstClass };
 
 	TinyObject::TinyObject()
 	{
@@ -14,7 +35,7 @@ namespace TinyUI
 
 	}
 
-	BOOL TinyObject::IsKindof(const TinyRuntimeClass* pClass) const
+	BOOL TinyObject::IsKindOf(const TinyRuntimeClass* pClass) const
 	{
 		TinyRuntimeClass* pClassThis = this->GetRuntimeClass();
 		while (pClassThis != NULL)
@@ -25,7 +46,7 @@ namespace TinyUI
 		}
 		return FALSE;
 	}
-	BOOL TinyObject::IsKindof(const TinyObject* pObject) const
+	BOOL TinyObject::IsKindOf(const TinyObject* pObject) const
 	{
 		TinyRuntimeClass* pClassThis = this->GetRuntimeClass();
 		while (pClassThis != NULL)
@@ -39,5 +60,15 @@ namespace TinyUI
 	TinyRuntimeClass* TinyObject::GetRuntimeClass() const
 	{
 		return ((TinyRuntimeClass*)(&TinyObject::classTinyObject));
+	}
+
+	TinyObject* PASCAL TinyObject::FromName(LPCSTR lpszClassName)
+	{
+		TinyRuntimeClass* pClass = TinyRuntimeClass::FromName(lpszClassName);
+		if (pClass && pClass->m_pNew)
+		{
+			return pClass->m_pNew();
+		}
+		return NULL;
 	}
 };

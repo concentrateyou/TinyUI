@@ -85,7 +85,7 @@ namespace TinyUI
 				NULL, IID_IShellFolder,
 				(LPVOID*)&pParentFolder);
 		}
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 		{
 			SendMessage(m_hWND, WM_SETREDRAW, (WPARAM)TRUE, 0);
 			return FALSE;
@@ -258,7 +258,7 @@ namespace TinyUI
 		HRESULT hRes = shellItemPtr1->pParentFolder->CompareIDs(0,
 			shellItemPtr1->relativePIDL,
 			shellItemPtr2->relativePIDL);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 		{
 			return 0;
 		}
@@ -368,7 +368,7 @@ namespace TinyUI
 			hRes = shellItemPtr->pParentFolder->BindToObject(shellItemPtr->relativePIDL, 0, IID_IShellFolder, (LPVOID*)&lpShellFolder);
 		}
 
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 		{
 			return FALSE;
 		}

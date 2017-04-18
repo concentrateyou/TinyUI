@@ -86,30 +86,19 @@ public:
 	TinyFile m_h264File;
 };
 
-class TestA
+class TestA : public TinyObject
 {
-public:
-	TestA()
-	{
-
-	}
-	void Add(INT a, INT b)
-	{
-		m_signal(a, b);
-	}
-public:
-	SIGNAL<void(INT, INT)> m_signal;
+	DECLARE_DYNCREATE(TestA)
 };
 
-class TestB
-{
-public:
-	void Show(INT a, INT b)
-	{
+IMPLEMENT_DYNCREATE(TestA, TinyObject)
 
-	}
+class TestB : public TestA
+{
+	DECLARE_DYNCREATE(TestB)
 };
 
+IMPLEMENT_DYNCREATE(TestB, TestA)
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -128,14 +117,10 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
-	//TestA testA;
+	TestA testA;
+	TestB testB;
+	TestB* ps = (TestB*)TinyObject::FromName("TestA");
 
-	//TestB testB;
-	//testA.m_signal.Connect(&testB, &TestB::Show);
-
-	////testA.Add(10, 20);
-
-	//testA.m_signal.Disconnect(&testB, &TestB::Show);
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));

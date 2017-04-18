@@ -83,24 +83,24 @@ namespace MF
 		ASSERT(m_source);
 		TinyComPtr<IMFAttributes> attributes;
 		HRESULT hRes = MFCreateAttributes(&attributes, 1);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		m_readerCB = new MFReaderCallback(this);
 		hRes = attributes->SetUnknown(MF_SOURCE_READER_ASYNC_CALLBACK, m_readerCB);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		hRes = MFCreateSourceReaderFromMediaSource(m_source, attributes, &m_reader);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		TinyComPtr<IMFMediaType> mdeiaType;
 		hRes = m_reader->GetNativeMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_VIDEO_STREAM), param.GetStreamIndex(), &mdeiaType);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		hRes = m_reader->SetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_VIDEO_STREAM), NULL, mdeiaType);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		hRes = m_reader->ReadSample(static_cast<DWORD>(MF_SOURCE_READER_FIRST_VIDEO_STREAM), 0, NULL, NULL, NULL, NULL);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		m_bCapturing = TRUE;
 		return TRUE;
@@ -115,15 +115,15 @@ namespace MF
 	{
 		TinyComPtr<IMFAttributes> attributes;
 		HRESULT hRes = MFCreateAttributes(&attributes, 1);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		hRes = attributes->SetGUID(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE, MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_GUID);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		IMFActivate** activates = NULL;
 		UINT32 count = 0;
 		hRes = MFEnumDeviceSources(attributes, &activates, &count);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		for (UINT32 i = 0; i < count; ++i)
 		{
@@ -157,43 +157,43 @@ namespace MF
 	{
 		TinyComPtr<IMFAttributes> attributes;
 		HRESULT hRes = MFCreateAttributes(&attributes, 2);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		hRes = attributes->SetGUID(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE, MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_GUID);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		hRes = attributes->SetString(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_SYMBOLIC_LINK, StringToWString(device.id(), CP_UTF8).c_str());
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		TinyComPtr<IMFMediaSource> source;
 		BOOL fSelect = FALSE;
 		hRes = MFCreateDeviceSource(attributes, &source);//这个函数有内存泄漏
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		TinyComPtr<IMFSourceReader> reader;
 		hRes = MFCreateSourceReaderFromMediaSource(source, NULL, &reader);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			goto MFERROR;
 		for (DWORD dwIndex = 0;;dwIndex++)
 		{
 			TinyComPtr<IMFMediaType> mediaType;
 			hRes = reader->GetNativeMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_VIDEO_STREAM), dwIndex, &mediaType);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				break;
 			UINT32 cx, cy;
 			hRes = MFGetAttributeSize(mediaType, MF_MT_FRAME_SIZE, &cx, &cy);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				goto MFERROR;
 			MFVideoCaptureParam param;
 			param.SetSize(cx, cy);
 			UINT32 numerator, denominator;
 			hRes = MFGetAttributeRatio(mediaType, MF_MT_FRAME_RATE, &numerator, &denominator);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				goto MFERROR;
 			param.SetRate(denominator ? static_cast<FLOAT>(numerator) / denominator : 0.0F);
 			GUID guid;
 			hRes = mediaType->GetGUID(MF_MT_SUBTYPE, &guid);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				goto MFERROR;
 			VideoPixelFormat format;
 			if (!GetFormat(guid, &format))
@@ -209,16 +209,16 @@ namespace MF
 	{
 		TinyComPtr<IMFAttributes> attributes;
 		HRESULT hRes = MFCreateAttributes(&attributes, 2);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		hRes = attributes->SetGUID(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE, MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_GUID);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		hRes = attributes->SetString(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_SYMBOLIC_LINK, StringToWString(device.id(), CP_UTF8).c_str());
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		hRes = MFCreateDeviceSource(attributes, source);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		return TRUE;
 	}

@@ -164,10 +164,10 @@ namespace TinyUI
 	BOOL TinySurface::Create()
 	{
 		HRESULT hRes = DirectDrawCreateEx(NULL, (VOID**)&m_dd7, IID_IDirectDraw7, NULL);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		hRes = m_dd7->SetCooperativeLevel(NULL, DDSCL_NORMAL);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		DDSURFACEDESC2 ddsd;
 		ZeroMemory(&ddsd, sizeof(ddsd));
@@ -175,7 +175,7 @@ namespace TinyUI
 		ddsd.dwFlags = DDSD_CAPS;
 		ddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
 		hRes = m_dd7->CreateSurface(&ddsd, &m_ddsPrimary, NULL);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		return TRUE;
 	}

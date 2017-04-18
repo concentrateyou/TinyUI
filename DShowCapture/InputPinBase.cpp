@@ -77,13 +77,13 @@ namespace DShow
 		const LONG size = pSample->GetActualDataLength();
 		BYTE* bits = NULL;
 		hRes = pSample->GetPointer(&bits);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		REFERENCE_TIME times;
 		REFERENCE_TIME timee;
 		//°´ÕÕ100ns¼ÆËã 10000000/30 = 333333.33
 		hRes = pSample->GetTime(&times, &timee);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		FLOAT ts = static_cast<FLOAT>((timee - times) * 1000 / 10000000);
 		m_observer->OnFrameReceive(bits, size, ts, m_observer->m_lpParameter);

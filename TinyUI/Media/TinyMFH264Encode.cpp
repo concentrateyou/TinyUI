@@ -19,57 +19,57 @@ namespace TinyUI
 			HRESULT hRes = S_OK;
 			TinyComPtr<IMFMediaType> inputType;
 			hRes = MFCreateMediaType(&inputType);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = inputType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Video);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = inputType->SetGUID(MF_MT_SUBTYPE, MFVideoFormat_I420);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = MFSetAttributeSize(inputType, MF_MT_FRAME_SIZE, size.cx, size.cy);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = MFSetAttributeRatio(inputType, MF_MT_FRAME_RATE, dwFrameRate, 1);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = inputType->SetUINT32(MF_MT_INTERLACE_MODE, MFVideoInterlaceMode::MFVideoInterlace_Progressive);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = MFSetAttributeRatio(inputType, MF_MT_PIXEL_ASPECT_RATIO, 1, 1);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 
 			TinyComPtr<IMFMediaType> outputType;
 			hRes = MFCreateMediaType(&outputType);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = outputType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Video);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = outputType->SetGUID(MF_MT_MAJOR_TYPE, MFVideoFormat_H264);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = outputType->SetUINT32(MF_MT_AVG_BITRATE, MFVideoInterlaceMode::MFVideoInterlace_Progressive);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = MFSetAttributeSize(outputType, MF_MT_FRAME_SIZE, size.cx, size.cy);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = MFSetAttributeRatio(outputType, MF_MT_FRAME_RATE, dwFrameRate, 1);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = outputType->SetUINT32(MF_MT_INTERLACE_MODE, MFVideoInterlaceMode::MFVideoInterlace_Progressive);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = outputType->SetUINT32(MF_MT_MPEG2_LEVEL, (UINT32)-1);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = outputType->SetUINT32(MF_MT_MPEG2_PROFILE, eAVEncH264VProfile_Main);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = MFSetAttributeRatio(outputType, MF_MT_PIXEL_ASPECT_RATIO, 1, 1);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			return TinyMFEncode::Open(CLSID_CMP3DecMediaObject, inputType, outputType, std::move(callback));
 		}

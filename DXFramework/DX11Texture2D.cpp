@@ -40,7 +40,7 @@ namespace DXFramework
 		textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
 		textureDesc.Usage = D3D11_USAGE_DEFAULT;
 		HRESULT hRes = dx11.GetD3D()->CreateTexture2D(&textureDesc, NULL, &m_texture2D);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		D3D11_TEXTURE2D_DESC desc;
 		m_texture2D->GetDesc(&desc);
@@ -50,7 +50,7 @@ namespace DXFramework
 		dsrvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		dsrvd.Texture2D.MipLevels = 1;
 		hRes = dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &dsrvd, &m_resourceView);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		m_bCompatible = TRUE;
 		return TRUE;
@@ -61,10 +61,10 @@ namespace DXFramework
 			return FALSE;
 		m_surface.Release();
 		HRESULT hRes = m_texture2D->QueryInterface(__uuidof(IDXGISurface1), (void**)&m_surface);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		hRes = m_surface->GetDC(discard, &hDC);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		return TRUE;
 	}
@@ -100,7 +100,7 @@ namespace DXFramework
 		texture2D->GetDesc(&desc);
 		m_bCompatible = desc.MiscFlags & D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
 		HRESULT hRes = dx11.GetD3D()->CreateTexture2D(&desc, NULL, &m_texture2D);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		D3D11_SHADER_RESOURCE_VIEW_DESC dsrvd;
 		::ZeroMemory(&dsrvd, sizeof(dsrvd));
@@ -108,7 +108,7 @@ namespace DXFramework
 		dsrvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		dsrvd.Texture2D.MipLevels = 1;
 		hRes = dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &dsrvd, &m_resourceView);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		return TRUE;
 	}
@@ -138,7 +138,7 @@ namespace DXFramework
 			lpSRD = &dsd;
 		}
 		HRESULT hRes = dx11.GetD3D()->CreateTexture2D(&textureDesc, lpSRD, &m_texture2D);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		D3D11_TEXTURE2D_DESC desc;
 		m_texture2D->GetDesc(&desc);
@@ -148,7 +148,7 @@ namespace DXFramework
 		dsrvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		dsrvd.Texture2D.MipLevels = 1;
 		hRes = dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &dsrvd, &m_resourceView);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		return TRUE;
 	}
@@ -179,7 +179,7 @@ namespace DXFramework
 		wstring wpzFile = StringToWString(pzFile);
 		TinyComPtr<ID3D11Resource> resource;
 		hRes = CreateWICTextureFromFile(dx11.GetD3D(), wpzFile.c_str(), &resource, &m_resourceView);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		if (FAILED(hRes = resource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&m_texture2D)))
 			return FALSE;

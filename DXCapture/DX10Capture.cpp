@@ -60,12 +60,12 @@ namespace DXCapture
 		HRESULT hRes = S_OK;
 		TinyComPtr<ID3D10Device> device;
 		hRes = swap->GetDevice(__uuidof(ID3D10Device), (void**)&device);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		DXGI_SWAP_CHAIN_DESC scd;
 		::ZeroMemory(&scd, sizeof(scd));
 		hRes = swap->GetDesc(&scd);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		m_dxgiFormat = GetDX10PlusTextureFormat(scd.BufferDesc.Format);
 		m_captureDATA.Format = (DWORD)m_dxgiFormat;

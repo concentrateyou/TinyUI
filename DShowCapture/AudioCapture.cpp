@@ -64,21 +64,21 @@ namespace DShow
 	BOOL AudioCapture::Initialize(const Name& name)
 	{
 		HRESULT hRes = m_builder.CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		hRes = m_builder->QueryInterface(&m_control);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		if (!GetDeviceFilter(name, &m_captureFilter))
 			return FALSE;
 		hRes = m_captureFilter->QueryInterface(&m_mixer);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		m_captureO = GetPin(m_captureFilter, PINDIR_OUTPUT, PIN_CATEGORY_CAPTURE);
 		if (!m_captureO)
 			return FALSE;
 		hRes = m_builder->AddFilter(m_captureFilter, NULL);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		m_sinkFilter = new AudioSinkFilter(this);
 		if (!m_sinkFilter)
@@ -87,7 +87,7 @@ namespace DShow
 		if (!m_sinkI)
 			return FALSE;
 		hRes = m_builder->AddFilter(m_sinkFilter, NULL);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		return TRUE;
 	}
@@ -171,12 +171,12 @@ namespace DShow
 	{
 		TinyComPtr<IAMStreamConfig> streamConfig;
 		HRESULT hRes = m_captureO->QueryInterface(&streamConfig);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		INT count = 0;
 		INT size = 0;
 		hRes = streamConfig->GetNumberOfCapabilities(&count, &size);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		WAVEFORMATEX w = param.GetFormat();
 		for (INT i = 0; i < count; ++i)
@@ -184,7 +184,7 @@ namespace DShow
 			ScopedMediaType mediaType;
 			AUDIO_STREAM_CONFIG_CAPS caps;
 			hRes = streamConfig->GetStreamCaps(i, mediaType.Receive(), (BYTE*)&caps);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			//目前只支持PCM采集
 			if (mediaType->majortype == MEDIATYPE_Audio && mediaType->formattype == FORMAT_WaveFormatEx)
@@ -271,11 +271,11 @@ namespace DShow
 	{
 		TinyComPtr<ICreateDevEnum> devEnum;
 		HRESULT hRes = devEnum.CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		TinyComPtr<IEnumMoniker> enumMoniker;
 		hRes = devEnum->CreateClassEnumerator(CLSID_AudioInputDeviceCategory, &enumMoniker, 0);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		names.clear();
 		TinyComPtr<IMoniker> moniker;
@@ -284,7 +284,7 @@ namespace DShow
 		{
 			TinyComPtr<IPropertyBag> propertyBag;
 			hRes = moniker->BindToStorage(0, 0, IID_IPropertyBag, (void**)&propertyBag);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 			{
 				moniker.Release();
 				continue;
@@ -292,7 +292,7 @@ namespace DShow
 			string friendlyName;
 			ScopedVariant variant;
 			hRes = propertyBag->Read(L"Description", &variant, 0);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 			{
 				hRes = propertyBag->Read(L"FriendlyName", &variant, 0);
 			}
@@ -320,11 +320,11 @@ namespace DShow
 	{
 		TinyComPtr<ICreateDevEnum> dev;
 		HRESULT hRes = dev.CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		TinyComPtr<IEnumMoniker> enumMoniker;
 		hRes = dev->CreateClassEnumerator(CLSID_AudioInputDeviceCategory, &enumMoniker, 0);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		TinyComPtr<IMoniker> moniker;
 		DWORD fetched = 0;
@@ -332,7 +332,7 @@ namespace DShow
 		{
 			TinyComPtr<IPropertyBag> propertyBag;
 			hRes = moniker->BindToStorage(0, 0, IID_IPropertyBag, (void**)&propertyBag);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 			{
 				moniker.Release();
 				continue;
@@ -369,11 +369,11 @@ namespace DShow
 	{
 		TinyComPtr<ICreateDevEnum> devEnum;
 		HRESULT hRes = devEnum.CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		TinyComPtr<IEnumMoniker> enumMoniker;
 		hRes = devEnum->CreateClassEnumerator(CLSID_AudioInputDeviceCategory, &enumMoniker, 0);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		TinyComPtr<IBaseFilter> captureFilter;
 		if (!GetDeviceFilter(device, &captureFilter))
@@ -383,19 +383,19 @@ namespace DShow
 			return FALSE;
 		TinyComPtr<IAMStreamConfig> streamConfig;
 		hRes = outputPin->QueryInterface(&streamConfig);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		INT iCount = 0;
 		INT iSize = 0;
 		hRes = streamConfig->GetNumberOfCapabilities(&iCount, &iSize);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		TinyScopedArray<BYTE> caps(new BYTE[iSize]);
 		for (INT i = 0; i < iCount; ++i)
 		{
 			ScopedMediaType mediaType;
 			hRes = streamConfig->GetStreamCaps(i, mediaType.Receive(), caps.Ptr());
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			if (mediaType->majortype == MEDIATYPE_Audio &&mediaType->formattype == FORMAT_WaveFormatEx)
 			{

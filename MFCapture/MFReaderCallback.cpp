@@ -28,17 +28,17 @@ namespace MF
 			{
 				TinyComPtr<IMFMediaBuffer> buffer;
 				hRes = pSample->GetBufferByIndex(0, &buffer);
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					goto MFERROR;
 				DWORD dwLength = 0;
 				DWORD dwMaxLength = 0;
 				BYTE* data = NULL;
 				hRes = buffer->Lock(&data, &dwMaxLength, &dwLength);
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					goto MFERROR;
 				m_observer->OnFrameReceive(data, dwLength, timeGetTime(), this);
 				hRes = buffer->Unlock();
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					goto MFERROR;
 				return hRes;
 			}

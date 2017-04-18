@@ -20,41 +20,41 @@ namespace TinyUI
 			HRESULT hRes = S_OK;
 			TinyComPtr<IMFMediaType> inputType;
 			hRes = MFCreateMediaType(&inputType);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = inputType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = inputType->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_PCM);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = inputType->SetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE, 16);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = inputType->SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, pFMT->nSamplesPerSec);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = inputType->SetUINT32(MF_MT_AUDIO_NUM_CHANNELS, pFMT->nChannels);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			TinyComPtr<IMFMediaType> outputType;
 			hRes = MFCreateMediaType(&outputType);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = outputType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = outputType->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_MP3);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = outputType->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, dwBitRate);// 128000/8=16000
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = outputType->SetUINT32(MF_MT_AUDIO_NUM_CHANNELS, pFMT->nChannels);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = outputType->SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, pFMT->nSamplesPerSec);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			return TinyMFEncode::Open(CLSID_MP3ACMCodecWrapper, inputType, outputType, std::move(callback));
 		}

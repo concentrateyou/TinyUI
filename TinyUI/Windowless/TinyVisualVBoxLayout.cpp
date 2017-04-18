@@ -7,7 +7,8 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		IMPLEMENT_DYNAMIC(TinyVisualVBoxLayout, TinyVisual);
+		IMPLEMENT_DYNAMIC(TinyVisualVBoxLayout, TinyVisual)
+
 		TinyVisualVBoxLayout::TinyVisualVBoxLayout(TinyVisual* spvisParent, TinyVisualDocument* vtree)
 			:TinyVisual(spvisParent, vtree),
 			m_bAuto(TRUE)

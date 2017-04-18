@@ -360,7 +360,7 @@ namespace DXCapture
 				HRESULT hRes = S_OK;
 				TinyComPtr<IDirect3DSurface8> backBuffer;
 				hRes = d3d->GetRenderTarget(&backBuffer);
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 
 				for (INT i = 0; i < NUM_BUFFERS; i++)
@@ -369,7 +369,7 @@ namespace DXCapture
 					if (!pDATA->IsCopying())
 					{
 						hRes = d3d->CopyRects(backBuffer, NULL, 0, pDATA->GetSurface(), NULL);
-						if (FAILED(hRes))
+						if (hRes != S_OK)
 							return FALSE;
 						if (!pDATA->Update())
 							return FALSE;

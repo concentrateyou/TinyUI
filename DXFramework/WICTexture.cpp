@@ -216,7 +216,7 @@ namespace DXFramework
 	{
 		UINT width, height;
 		HRESULT hRes = frame->GetSize(&width, &height);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		ASSERT(width > 0 && height > 0);
 		if (!maxsize)
@@ -263,7 +263,7 @@ namespace DXFramework
 		}
 		WICPixelFormatGUID pixelFormat;
 		hRes = frame->GetPixelFormat(&pixelFormat);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		WICPixelFormatGUID convertGUID;
 		memcpy(&convertGUID, &pixelFormat, sizeof(WICPixelFormatGUID));
@@ -377,7 +377,7 @@ namespace DXFramework
 			&& theight == height)
 		{
 			hRes = frame->CopyPixels(0, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), temp.get());
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return hRes;
 		}
 		else if (twidth != width || theight != height)
@@ -387,26 +387,26 @@ namespace DXFramework
 				return E_NOINTERFACE;
 			TinyComPtr<IWICBitmapScaler> scaler;
 			hRes = pWIC->CreateBitmapScaler(&scaler);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return hRes;
 			hRes = scaler->Initialize(frame, twidth, theight, WICBitmapInterpolationModeFant);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return hRes;
 			WICPixelFormatGUID pfScaler;
 			hRes = scaler->GetPixelFormat(&pfScaler);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return hRes;
 			if (memcmp(&convertGUID, &pfScaler, sizeof(GUID)) == 0)
 			{
 				hRes = scaler->CopyPixels(0, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), temp.get());
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return hRes;
 			}
 			else
 			{
 				TinyComPtr<IWICFormatConverter> FC;
 				hRes = pWIC->CreateFormatConverter(&FC);
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return hRes;
 				BOOL canConvert = FALSE;
 				hRes = FC->CanConvert(pfScaler, convertGUID, &canConvert);
@@ -416,11 +416,11 @@ namespace DXFramework
 				}
 
 				hRes = FC->Initialize(scaler, convertGUID, WICBitmapDitherTypeErrorDiffusion, 0, 0, WICBitmapPaletteTypeCustom);
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return hRes;
 
 				hRes = FC->CopyPixels(0, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), temp.get());
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return hRes;
 			}
 		}
@@ -431,7 +431,7 @@ namespace DXFramework
 				return E_NOINTERFACE;
 			TinyComPtr<IWICFormatConverter> FC;
 			hRes = pWIC->CreateFormatConverter(&FC);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return hRes;
 			BOOL canConvert = FALSE;
 			hRes = FC->CanConvert(pixelFormat, convertGUID, &canConvert);
@@ -440,10 +440,10 @@ namespace DXFramework
 				return E_UNEXPECTED;
 			}
 			hRes = FC->Initialize(frame, convertGUID, WICBitmapDitherTypeErrorDiffusion, 0, 0, WICBitmapPaletteTypeCustom);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return hRes;
 			hRes = FC->CopyPixels(0, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), temp.get());
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return hRes;
 		}
 		BOOL autogen = FALSE;
@@ -493,7 +493,7 @@ namespace DXFramework
 				SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 				SRVDesc.Texture2D.MipLevels = (autogen) ? -1 : 1;
 				hRes = d3dDevice->CreateShaderResourceView(tex, &SRVDesc, textureView);
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 				{
 					tex->Release();
 					return hRes;
@@ -566,24 +566,24 @@ namespace DXFramework
 			return E_NOINTERFACE;
 		TinyComPtr<IWICStream> stream;
 		HRESULT hRes = pWIC->CreateStream(&stream);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		hRes = stream->InitializeFromMemory(const_cast<BYTE*>(wicData), static_cast<DWORD>(wicDataSize));
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		TinyComPtr<IWICBitmapDecoder> decoder;
 		hRes = pWIC->CreateDecoderFromStream(stream, 0, WICDecodeMetadataCacheOnDemand, &decoder);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		TinyComPtr<IWICBitmapFrameDecode> frame;
 		hRes = decoder->GetFrame(0, &frame);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		hRes = CreateTextureFromWIC(d3dDevice, d3dContext,
 			frame, maxsize,
 			usage, bindFlags, cpuAccessFlags, miscFlags, loadFlags,
 			texture, textureView);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		return hRes;
 	}
@@ -620,24 +620,24 @@ namespace DXFramework
 
 		TinyComPtr<IWICStream> stream;
 		HRESULT hRes = pWIC->CreateStream(&stream);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		hRes = stream->InitializeFromMemory(const_cast<BYTE*>(wicData), static_cast<DWORD>(wicDataSize));
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		TinyComPtr<IWICBitmapDecoder> decoder;
 		hRes = pWIC->CreateDecoderFromStream(stream, 0, WICDecodeMetadataCacheOnDemand, &decoder);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		TinyComPtr<IWICBitmapFrameDecode> frame;
 		hRes = decoder->GetFrame(0, &frame);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		hRes = CreateTextureFromWIC(d3dDevice, NULL,
 			frame, maxsize,
 			usage, bindFlags, cpuAccessFlags, miscFlags, loadFlags,
 			texture, textureView);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		return hRes;
 	}
@@ -707,11 +707,11 @@ namespace DXFramework
 			return E_NOINTERFACE;
 		TinyComPtr<IWICBitmapDecoder> decoder;
 		HRESULT hRes = pWIC->CreateDecoderFromFilename(fileName, 0, GENERIC_READ, WICDecodeMetadataCacheOnDemand, &decoder);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		TinyComPtr<IWICBitmapFrameDecode> frame;
 		hRes = decoder->GetFrame(0, &frame);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		hRes = CreateTextureFromWIC(d3dDevice, NULL,
 			frame, maxsize,
@@ -750,11 +750,11 @@ namespace DXFramework
 			return E_NOINTERFACE;
 		TinyComPtr<IWICBitmapDecoder> decoder;
 		HRESULT hRes = pWIC->CreateDecoderFromFilename(szFileName, 0, GENERIC_READ, WICDecodeMetadataCacheOnDemand, &decoder);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		TinyComPtr<IWICBitmapFrameDecode> frame;
 		hRes = decoder->GetFrame(0, &frame);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		hRes = CreateTextureFromWIC(d3dDevice, NULL,
 			frame.Ptr(), maxsize,
@@ -800,7 +800,7 @@ namespace DXFramework
 			return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
 		TinyComPtr<ID3D11Texture2D> texture;
 		HRESULT hRes = pSource->QueryInterface(&texture);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		ASSERT(texture);
 		texture->GetDesc(&desc);
@@ -812,13 +812,13 @@ namespace DXFramework
 			desc.SampleDesc.Quality = 0;
 			TinyComPtr<ID3D11Texture2D> newTexture;
 			hRes = d3dDevice->CreateTexture2D(&desc, NULL, &newTexture);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return hRes;
 			ASSERT(newTexture);
 			DXGI_FORMAT fmt = EnsureNotTypeless(desc.Format);
 			UINT support = 0;
 			hRes = d3dDevice->CheckFormatSupport(fmt, &support);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return hRes;
 
 			if (!(support & D3D11_FORMAT_SUPPORT_MULTISAMPLE_RESOLVE))
@@ -838,7 +838,7 @@ namespace DXFramework
 			desc.Usage = D3D11_USAGE_STAGING;
 			pStaging.Release();
 			hRes = d3dDevice->CreateTexture2D(&desc, 0, &pStaging);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return hRes;
 			ASSERT(pStaging);
 			pContext->CopyResource(pStaging, newTexture);
@@ -855,7 +855,7 @@ namespace DXFramework
 			desc.Usage = D3D11_USAGE_STAGING;
 			pStaging.Release();
 			hRes = d3dDevice->CreateTexture2D(&desc, 0, &pStaging);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return hRes;
 			ASSERT(pStaging);
 			pContext->CopyResource(pStaging, pSource);
@@ -877,7 +877,7 @@ namespace DXFramework
 		D3D11_TEXTURE2D_DESC desc = {};
 		TinyComPtr<ID3D11Texture2D> pStaging;
 		HRESULT hRes = CaptureTexture(pContext, pSource, desc, pStaging);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		WICPixelFormatGUID pfGuid;
 		BOOL sRGB = FALSE;
@@ -931,26 +931,26 @@ namespace DXFramework
 
 		TinyComPtr<IWICStream> stream;
 		hRes = pWIC->CreateStream(&stream);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 
 		hRes = stream->InitializeFromFilename(pzName, GENERIC_WRITE);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 
 		TinyComPtr<IWICBitmapEncoder> encoder;
 		hRes = pWIC->CreateEncoder(guidContainerFormat, 0, &encoder);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 
 		hRes = encoder->Initialize(stream, WICBitmapEncoderNoCache);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 
 		TinyComPtr<IWICBitmapFrameEncode> frame;
 		TinyComPtr<IPropertyBag2> props;
 		hRes = encoder->CreateNewFrame(&frame, &props);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		if (targetFormat && memcmp(&guidContainerFormat, &GUID_ContainerFormatBmp, sizeof(WICPixelFormatGUID)) == 0 && IsWIC2())
 		{
@@ -966,13 +966,13 @@ namespace DXFramework
 			setCustomProps(props);
 		}
 		hRes = frame->Initialize(props);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		hRes = frame->SetSize(desc.Width, desc.Height);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		hRes = frame->SetResolution(72, 72);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		WICPixelFormatGUID targetGuid;
 		if (targetFormat)
@@ -1016,7 +1016,7 @@ namespace DXFramework
 		}
 
 		hRes = frame->SetPixelFormat(&targetGuid);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 
 		if (targetFormat && memcmp(targetFormat, &targetGuid, sizeof(WICPixelFormatGUID)) != 0)
@@ -1051,20 +1051,20 @@ namespace DXFramework
 
 		D3D11_MAPPED_SUBRESOURCE mapped;
 		hRes = pContext->Map(pStaging, 0, D3D11_MAP_READ, 0, &mapped);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		if (memcmp(&targetGuid, &pfGuid, sizeof(WICPixelFormatGUID)) != 0)
 		{
 			TinyComPtr<IWICBitmap> source;
 			hRes = pWIC->CreateBitmapFromMemory(desc.Width, desc.Height, pfGuid, mapped.RowPitch, mapped.RowPitch * desc.Height, reinterpret_cast<BYTE*>(mapped.pData), &source);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 			{
 				pContext->Unmap(pStaging, 0);
 				return hRes;
 			}
 			TinyComPtr<IWICFormatConverter> FC;
 			hRes = pWIC->CreateFormatConverter(&FC);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 			{
 				pContext->Unmap(pStaging, 0);
 				return hRes;
@@ -1076,14 +1076,14 @@ namespace DXFramework
 				return E_UNEXPECTED;
 			}
 			hRes = FC->Initialize(source, targetGuid, WICBitmapDitherTypeNone, 0, 0, WICBitmapPaletteTypeCustom);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 			{
 				pContext->Unmap(pStaging, 0);
 				return hRes;
 			}
 			WICRect rect = { 0, 0, static_cast<INT>(desc.Width), static_cast<INT>(desc.Height) };
 			hRes = frame->WriteSource(FC, &rect);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 			{
 				pContext->Unmap(pStaging, 0);
 				return hRes;
@@ -1092,15 +1092,15 @@ namespace DXFramework
 		else
 		{
 			hRes = frame->WritePixels(desc.Height, mapped.RowPitch, mapped.RowPitch * desc.Height, reinterpret_cast<BYTE*>(mapped.pData));
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return hRes;
 		}
 		pContext->Unmap(pStaging, 0);
 		hRes = frame->Commit();
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		hRes = encoder->Commit();
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return hRes;
 		return S_OK;
 	}

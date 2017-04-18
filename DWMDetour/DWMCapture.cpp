@@ -151,12 +151,12 @@ namespace DWM
 		HRESULT hRes = S_OK;
 		TinyComPtr<ID3D10Device1> device;
 		hRes = swap->GetDevice(__uuidof(ID3D10Device1), (void**)&device);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		DXGI_SWAP_CHAIN_DESC scd;
 		::ZeroMemory(&scd, sizeof(scd));
 		hRes = swap->GetDesc(&scd);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		m_dxgiFormat = GetDWMPlusTextureFormat(scd.BufferDesc.Format);
 		m_captureDATA.Format = m_dxgiFormat;

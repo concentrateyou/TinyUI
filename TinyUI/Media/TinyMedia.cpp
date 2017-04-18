@@ -157,16 +157,16 @@ namespace TinyUI
 		{
 			TinyComPtr<IUnknown> unknow;
 			HRESULT hRes = unknow.CoCreateInstance(clsid, NULL, CLSCTX_INPROC_SERVER);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			TinyComPtr<IMFTransform> transform;
 			hRes = unknow->QueryInterface(IID_PPV_ARGS(&transform));
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			do
 			{
 				hRes = transform->SetInputType(0, inputType, 0);
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 				if (clsid == CLSID_AACMFTEncoder)
 				{

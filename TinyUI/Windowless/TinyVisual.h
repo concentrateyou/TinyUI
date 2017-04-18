@@ -38,6 +38,7 @@ namespace TinyUI
 			DECLARE_DYNAMIC(TinyVisual)
 			DISALLOW_COPY_AND_ASSIGN(TinyVisual)
 		protected:
+			TinyVisual();
 			TinyVisual(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:
 			HWND				Handle() const;

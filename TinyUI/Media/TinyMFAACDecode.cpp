@@ -36,34 +36,34 @@ namespace TinyUI
 			HRESULT hRes = S_OK;
 			TinyComPtr<IMFMediaType> inputType;
 			hRes = MFCreateMediaType(&inputType);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = inputType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = inputType->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_AAC);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = inputType->SetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE, pFMT->wBitsPerSample);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = inputType->SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, pFMT->nSamplesPerSec);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = inputType->SetUINT32(MF_MT_AUDIO_NUM_CHANNELS, pFMT->nChannels);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = inputType->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, dwBitRate / 8);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = inputType->SetUINT32(MF_MT_AUDIO_BLOCK_ALIGNMENT, 1);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = inputType->SetUINT32(MF_MT_AAC_PAYLOAD_TYPE, bADTS ? 1 : 0);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = inputType->SetUINT32(MF_MT_AAC_AUDIO_PROFILE_LEVEL_INDICATION, 0x29);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			BYTE heaac[MF_MT_USER_DATA_SIZE] = { 0 };
 			heaac[0] = bADTS ? 1 : 0;
@@ -74,14 +74,14 @@ namespace TinyUI
 			heaac[MF_MT_USER_DATA_SIZE - 2] = (audioSpecificConfig & 0xFF00) >> 8;;
 			heaac[MF_MT_USER_DATA_SIZE - 1] = audioSpecificConfig & 0x00FF;
 			hRes = inputType->SetBlob(MF_MT_USER_DATA, heaac, MF_MT_USER_DATA_SIZE);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			TinyComPtr<IMFMediaType> outputType;
 			hRes = MFCreateMediaType(&outputType);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = MFInitMediaTypeFromWaveFormatEx(outputType, pFMT, sizeof(WAVEFORMATEX) + pFMT->cbSize);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			return TinyMFDecode::Open(CLSID_CMSAACDecMFT, inputType, outputType, std::move(callback));
 		}

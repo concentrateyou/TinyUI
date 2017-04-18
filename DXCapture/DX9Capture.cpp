@@ -421,17 +421,17 @@ namespace DXCapture
 		desc.MiscFlags = D3D10_RESOURCE_MISC_SHARED;
 		TinyComPtr<ID3D10Texture2D> d3d10Texture2D;
 		HRESULT hRes = m_d3d10->CreateTexture2D(&desc, NULL, &d3d10Texture2D);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		hRes = d3d10Texture2D->QueryInterface(__uuidof(ID3D10Resource), (void**)&m_resource);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		TinyComPtr<IDXGIResource> dxgiResource;
 		hRes = d3d10Texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&dxgiResource);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		hRes = dxgiResource->GetSharedHandle(&m_hTextureHandle);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		LPBYTE patchAddress = (m_patchType != 0) ? GetDX9PatchAddress(m_hD3D9, m_patchType) : NULL;
 		DWORD dwOldProtect;
@@ -448,7 +448,7 @@ namespace DXCapture
 		}
 		TinyComPtr<IDirect3DTexture9> d3d9Texture;
 		hRes = pThis->CreateTexture(m_captureDATA.Size.cx, m_captureDATA.Size.cy, 1, D3DUSAGE_RENDERTARGET, (D3DFORMAT)m_d3dFormat, D3DPOOL_DEFAULT, &d3d9Texture, &m_hTextureHandle);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		if (patchAddress)
 		{
@@ -456,7 +456,7 @@ namespace DXCapture
 			VirtualProtect(patchAddress, patchSize, dwOldProtect, &dwOldProtect);
 		}
 		hRes = d3d9Texture->GetSurfaceLevel(0, &m_surface);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		m_captureDATA.CaptureType = CAPTURETYPE_SHAREDTEXTURE;
 		m_captureDATA.bFlip = FALSE;

@@ -639,13 +639,13 @@ namespace TinyUI
 		LPUNKNOWN pUnk = NULL;
 
 		SendMessage(m_hWND, EM_GETOLEINTERFACE, 0, (LPARAM)&pRichEditOle);
-		if (FAILED(hRes)) goto error;
+		if (hRes != S_OK) goto error;
 		hRes = CreateILockBytesOnHGlobal(NULL, TRUE, &pLockBytes);
-		if (FAILED(hRes)) goto error;
+		if (hRes != S_OK) goto error;
 		hRes = StgCreateDocfileOnILockBytes(pLockBytes, STGM_SHARE_EXCLUSIVE | STGM_CREATE | STGM_READWRITE, 0, &pStorage);
-		if (FAILED(hRes)) goto error;
+		if (hRes != S_OK) goto error;
 		hRes = pRichEditOle->GetClientSite(&pClientSite);
-		if (FAILED(hRes)) goto error;
+		if (hRes != S_OK) goto error;
 		//多字节转Unicode
 		INT size = ::MultiByteToWideChar(CP_UTF8, 0, pszFileName, -1, NULL, 0);
 		wchar_t*  pUnicode = new  wchar_t[size + 1];
@@ -653,13 +653,13 @@ namespace TinyUI
 		//多字节转Unicode
 		hRes = OleCreateFromFile(clsid, pUnicode, IID_IUnknown, OLERENDER_DRAW, &formatEtc, pClientSite, pStorage, (void**)&pUnk);
 		SAFE_DELETE_ARRAY(pUnicode);
-		if (FAILED(hRes)) goto error;
+		if (hRes != S_OK) goto error;
 		hRes = pUnk->QueryInterface(IID_IOleObject, (void**)&pObject);
 		pUnk->Release();
-		if (FAILED(hRes)) goto error;
+		if (hRes != S_OK) goto error;
 		OleSetContainedObject(pObject, TRUE);
 		hRes = pObject->GetUserClassID(&clsid);
-		if (FAILED(hRes)) goto error;
+		if (hRes != S_OK) goto error;
 		reobject.clsid = clsid;
 		reobject.cp = REO_CP_SELECTION;
 		reobject.dvaspect = DVASPECT_CONTENT;

@@ -63,10 +63,10 @@ namespace DShow
 	BOOL VideoCapture::Initialize(const Name& name)
 	{
 		HRESULT hRes = m_builder.CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		hRes = m_builder->QueryInterface(&m_control);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		if (!GetDeviceFilter(name, &m_captureFilter))
 			return FALSE;
@@ -74,7 +74,7 @@ namespace DShow
 		if (!m_captureO)
 			return FALSE;
 		hRes = m_builder->AddFilter(m_captureFilter, NULL);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		m_sinkFilter = new VideoSinkFilter(this);
 		if (!m_sinkFilter)
@@ -83,7 +83,7 @@ namespace DShow
 		if (!m_sinkI)
 			return FALSE;
 		hRes = m_builder->AddFilter(m_sinkFilter, FILTER_NAME);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		return TRUE;
 	}
@@ -125,19 +125,19 @@ namespace DShow
 	{
 		TinyComPtr<IAMStreamConfig> streamConfig;
 		HRESULT hRes = m_captureO->QueryInterface(&streamConfig);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		INT count = 0;
 		INT size = 0;
 		hRes = streamConfig->GetNumberOfCapabilities(&count, &size);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		for (INT i = 0; i < count; ++i)
 		{
 			ScopedMediaType mediaType;
 			VIDEO_STREAM_CONFIG_CAPS caps;
 			hRes = streamConfig->GetStreamCaps(i, mediaType.Receive(), (BYTE*)&caps);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			if (mediaType->majortype == MEDIATYPE_Video && mediaType->formattype == FORMAT_VideoInfo)
 			{
@@ -198,7 +198,7 @@ namespace DShow
 						if (hRes != S_OK)
 							return FALSE;
 						hRes = m_builder->AddFilter(m_avFilter, NULL);
-						if (FAILED(hRes))
+						if (hRes != S_OK)
 							return FALSE;
 						m_avO = GetPin(m_avFilter, PINDIR_OUTPUT, GUID_NULL);
 						if (!m_avO)
@@ -300,11 +300,11 @@ namespace DShow
 	{
 		TinyComPtr<ICreateDevEnum> devEnum;
 		HRESULT hRes = devEnum.CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		TinyComPtr<IEnumMoniker> enumMoniker;
 		hRes = devEnum->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &enumMoniker, 0);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		names.clear();
 		TinyComPtr<IMoniker> moniker;
@@ -313,14 +313,14 @@ namespace DShow
 		{
 			TinyComPtr<IPropertyBag> propertyBag;
 			hRes = moniker->BindToStorage(0, 0, IID_IPropertyBag, (void**)&propertyBag);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 			{
 				moniker.Release();
 				continue;
 			}
 			ScopedVariant variant;
 			hRes = propertyBag->Read(L"Description", &variant, 0);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 			{
 				hRes = propertyBag->Read(L"FriendlyName", &variant, 0);
 			}
@@ -349,11 +349,11 @@ namespace DShow
 	{
 		TinyComPtr<ICreateDevEnum> dev;
 		HRESULT hRes = dev.CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		TinyComPtr<IEnumMoniker> enumMoniker;
 		hRes = dev->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &enumMoniker, 0);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		TinyComPtr<IMoniker> moniker;
 		DWORD fetched = 0;
@@ -361,7 +361,7 @@ namespace DShow
 		{
 			TinyComPtr<IPropertyBag> propertyBag;
 			hRes = moniker->BindToStorage(0, 0, IID_IPropertyBag, (void**)&propertyBag);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 			{
 				moniker.Release();
 				continue;
@@ -514,11 +514,11 @@ namespace DShow
 	{
 		TinyComPtr<ICreateDevEnum> devEnum;
 		HRESULT hRes = devEnum.CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		TinyComPtr<IEnumMoniker> enumMoniker;
 		hRes = devEnum->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &enumMoniker, 0);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		TinyComPtr<IBaseFilter> captureFilter;
 		if (!GetDeviceFilter(device, &captureFilter))
@@ -528,19 +528,19 @@ namespace DShow
 			return FALSE;
 		TinyComPtr<IAMStreamConfig> streamConfig;
 		hRes = outputPin->QueryInterface(&streamConfig);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		INT iCount = 0;
 		INT iSize = 0;
 		hRes = streamConfig->GetNumberOfCapabilities(&iCount, &iSize);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		TinyScopedArray<BYTE> caps(new BYTE[iSize]);
 		for (INT i = 0; i < iCount; ++i)
 		{
 			ScopedMediaType mediaType;
 			hRes = streamConfig->GetStreamCaps(i, mediaType.Receive(), caps.Ptr());
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			if (mediaType->majortype == MEDIATYPE_Video &&mediaType->formattype == FORMAT_VideoInfo)
 			{

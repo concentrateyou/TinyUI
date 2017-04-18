@@ -26,7 +26,7 @@ namespace DShow
 			return VFW_E_NO_CLOCK;
 		}
 		HRESULT hRes = m_clock->GetTime((REFERENCE_TIME*)&rtStream);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 		{
 			return hRes;
 		}
@@ -127,7 +127,7 @@ namespace DShow
 		if (m_pGraph)
 		{
 			HRESULT hRes = m_pGraph->QueryInterface(IID_IMediaEventSink, (void**)&m_pSink);
-			if (FAILED(hRes)) 
+			if (hRes != S_OK) 
 			{
 				ASSERT(m_pSink == NULL);
 			}
@@ -145,7 +145,7 @@ namespace DShow
 		{
 			size_t size;
 			HRESULT hRes = StringCchLengthW(pName, STRSAFE_MAX_CCH, &size);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 			{
 				return hRes;
 			}

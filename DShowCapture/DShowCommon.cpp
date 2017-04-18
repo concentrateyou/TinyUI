@@ -42,11 +42,11 @@ HRESULT WINAPI AMovieSetupRegisterFilter(const AMOVIESETUP_FILTER * const psetup
 							, psetupdata->lpPin[m1].strName
 							, *(psetupdata->lpPin[m1].lpMediaType[m2].clsMajorType)
 							, *(psetupdata->lpPin[m1].lpMediaType[m2].clsMinorType));
-						if (FAILED(hRes)) break;
+						if (hRes != S_OK) break;
 					}
-					if (FAILED(hRes)) break;
+					if (hRes != S_OK) break;
 				}
-				if (FAILED(hRes)) break;
+				if (hRes != S_OK) break;
 			}
 		}
 	}
@@ -138,11 +138,11 @@ HRESULT WINAPI ShowFilterPropertyPage(IBaseFilter *pFilter, HWND hwndParent)
 		{
 			FILTER_INFO FilterInfo;
 			hRes = pFilter->QueryFilterInfo(&FilterInfo);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				break;
 			CAUUID caGUID;
 			hRes = specify->GetPages(&caGUID);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				break;
 			OleCreatePropertyFrame(
 				hwndParent,

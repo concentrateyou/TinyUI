@@ -20,20 +20,20 @@ namespace TinyUI
 			m_waveFMT = pFMT;
 			HRESULT hRes = S_OK;
 			hRes = DirectSoundCreate8(NULL, &m_sound, NULL);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_sound->SetCooperativeLevel(hWND, DSSCL_PRIORITY);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			DSBUFFERDESC dbdesc;
 			ZeroMemory(&dbdesc, sizeof(dbdesc));
 			dbdesc.dwSize = sizeof(dbdesc);
 			dbdesc.dwFlags = DSBCAPS_PRIMARYBUFFER;
 			hRes = m_sound->CreateSoundBuffer(&dbdesc, &m_primaryDSB, NULL);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_primaryDSB->SetFormat(pFMT);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			ZeroMemory(&dbdesc, sizeof(dbdesc));
 			dbdesc.dwSize = sizeof(dbdesc);
@@ -42,10 +42,10 @@ namespace TinyUI
 			dbdesc.lpwfxFormat = pFMT;
 			TinyComPtr<IDirectSoundBuffer> dsb;
 			hRes = m_sound->CreateSoundBuffer(&dbdesc, &dsb, NULL);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = dsb->QueryInterface(IID_IDirectSoundBuffer8, (void**)&m_secondaryDSB);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			return TRUE;
 		}
@@ -90,10 +90,10 @@ namespace TinyUI
 			ASSERT(m_secondaryDSB);
 			HRESULT hRes = S_OK;
 			hRes = m_secondaryDSB->SetCurrentPosition(0);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_secondaryDSB->Play(0, 0, DSBPLAY_LOOPING);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			return TRUE;
 		}
@@ -102,15 +102,15 @@ namespace TinyUI
 			LPVOID	ppvAudioPtr = NULL;
 			DWORD	dwAudioBytes = 0;
 			HRESULT hRes = m_secondaryDSB->Lock(m_dwOffset, size, &ppvAudioPtr, &dwAudioBytes, NULL, 0, 0);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 			{
 				if (hRes != DSERR_BUFFERLOST)
 					return FALSE;
 				hRes = m_secondaryDSB->Restore();
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 				hRes = m_secondaryDSB->Lock(m_dwOffset, size, &ppvAudioPtr, &dwAudioBytes, NULL, 0, 0);
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 			}
 			memcpy(ppvAudioPtr, bits, size);
@@ -124,7 +124,7 @@ namespace TinyUI
 			ASSERT(m_secondaryDSB);
 			HRESULT hRes = S_OK;
 			hRes = m_secondaryDSB->Restore();
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			return m_secondaryDSB->Stop() == S_OK;
 		}
@@ -134,16 +134,16 @@ namespace TinyUI
 			if (!m_secondaryDSB || !m_primaryDSB)
 				return hRes;
 			hRes = m_secondaryDSB->Restore();
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_secondaryDSB->Stop();
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_primaryDSB->Restore();
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_primaryDSB->Stop();
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			m_secondaryDSB.Release();
 			m_primaryDSB.Release();
@@ -154,7 +154,7 @@ namespace TinyUI
 			ASSERT(m_secondaryDSB);
 			TinyComPtr<IDirectSoundNotify>	notify;
 			HRESULT hRes = m_secondaryDSB->QueryInterface(IID_IDirectSoundNotify, (void**)&notify);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			return SUCCEEDED(notify->SetNotificationPositions(dwSize, pNotify));
 		}

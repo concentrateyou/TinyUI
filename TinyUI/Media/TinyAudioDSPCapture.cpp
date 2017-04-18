@@ -40,11 +40,11 @@ namespace TinyUI
 			if (!SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS))
 				return FALSE;
 			HRESULT hRes = CoCreateInstance(CLSID_CWMAudioAEC, NULL, CLSCTX_INPROC_SERVER, __uuidof(IMediaObject), (void**)&m_dmo);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			TinyComPtr<IPropertyStore> propertyStore;
 			hRes = m_dmo->QueryInterface(IID_IPropertyStore, reinterpret_cast<void**>(&propertyStore));
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			AEC_SYSTEM_MODE mode = SINGLE_CHANNEL_AEC;
 			if (captureName.type() == KSNODETYPE_MICROPHONE_ARRAY)
@@ -67,7 +67,7 @@ namespace TinyUI
 			if (!SetVTI4Property(propertyStore, MFPKEY_WMAAECMA_DEVICE_INDEXES, index))
 				return FALSE;
 			hRes = MoInitMediaType(&m_mediaType, sizeof(WAVEFORMATEX));
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			m_mediaType.majortype = MEDIATYPE_Audio;
 			m_mediaType.subtype = MEDIASUBTYPE_PCM;
@@ -78,7 +78,7 @@ namespace TinyUI
 			memcpy(m_mediaType.pbFormat, pFMT, sizeof(WAVEFORMATEX));
 			hRes = m_dmo->SetOutputType(0, &m_mediaType, 0);
 			MoFreeMediaType(&m_mediaType);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			m_pFMT = pFMT;
 			return TRUE;
@@ -89,7 +89,7 @@ namespace TinyUI
 			if (m_dmo)
 			{
 				hRes = m_dmo->AllocateStreamingResources();
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 			}
 			m_audioStop.ResetEvent();
@@ -105,7 +105,7 @@ namespace TinyUI
 			if (m_dmo)
 			{
 				hRes = m_dmo->FreeStreamingResources();
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 			}
 			m_audioStop.SetEvent();
@@ -175,7 +175,7 @@ namespace TinyUI
 					hRes = m_dmo->ProcessOutput(0, 1, &m_dmoBuffer, &dwStatus);
 					dwStatus = m_dmoBuffer.dwStatus;
 					DWORD cbProduced = 0;
-					if (FAILED(hRes))
+					if (hRes != S_OK)
 					{
 						bCapturing = FALSE;
 						break;

@@ -46,7 +46,7 @@ namespace DXFramework
 		vertexData.SysMemPitch = 0;
 		vertexData.SysMemSlicePitch = 0;
 		HRESULT hRes = dx11.GetD3D()->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 		indexBufferDesc.ByteWidth = sizeof(ULONG) * indexCount;
@@ -57,7 +57,7 @@ namespace DXFramework
 		indexData.SysMemPitch = 0;
 		indexData.SysMemSlicePitch = 0;
 		hRes = dx11.GetD3D()->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		m_vertices.Reset(new VERTEXTYPE[vertexCount]);
 		return TRUE;
@@ -100,7 +100,7 @@ namespace DXFramework
 		m_vertices[5].color = XMFLOAT4(1.0f, 0.415f, 0.0f, 1.0f);
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
 		HRESULT hRes = dx11.GetImmediateContext()->Map(m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		memcpy(mappedResource.pData, (void*)m_vertices.Ptr(), sizeof(VERTEXTYPE) * vertexCount);
 		dx11.GetImmediateContext()->Unmap(m_vertexBuffer, 0);

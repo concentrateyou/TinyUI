@@ -28,7 +28,7 @@ namespace DXFramework
 		desc.CPUAccessFlags = 0;
 		desc.MiscFlags = 0;
 		HRESULT hRes = dx11.GetD3D()->CreateTexture2D(&desc, NULL, &m_texture2D);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		D3D11_RENDER_TARGET_VIEW_DESC rtvd;
 		ZeroMemory(&rtvd, sizeof(rtvd));
@@ -36,7 +36,7 @@ namespace DXFramework
 		rtvd.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 		rtvd.Texture2D.MipSlice = 0;
 		hRes = dx11.GetD3D()->CreateRenderTargetView(m_texture2D, &rtvd, &m_renderView);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		D3D11_SHADER_RESOURCE_VIEW_DESC dsrvd;
 		ZeroMemory(&dsrvd, sizeof(dsrvd));
@@ -44,7 +44,7 @@ namespace DXFramework
 		dsrvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		dsrvd.Texture2D.MipLevels = 1;
 		hRes = dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &dsrvd, &m_resourceView);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		return TRUE;
 	}

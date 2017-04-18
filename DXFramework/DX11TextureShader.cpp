@@ -19,17 +19,17 @@ namespace DXFramework
 		D3D11_SAMPLER_DESC samplerDesc;
 		wstring wvsFile = StringToWString(vsFile);
 		hRes = D3DCompileFromFile(wvsFile.c_str(), NULL, NULL, "TextureVertexShader", "vs_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &vertexShaderBuffer, NULL);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		wstring wpsFile = StringToWString(psFile);
 		hRes = D3DCompileFromFile(wpsFile.c_str(), NULL, NULL, "TexturePixelShader", "ps_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &pixelShaderBuffer, NULL);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		hRes = dx11.GetD3D()->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &m_vertexShader);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		hRes = dx11.GetD3D()->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &m_pixelShader);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		layout[0].SemanticName = "POSITION";
 		layout[0].SemanticIndex = 0;
@@ -49,7 +49,7 @@ namespace DXFramework
 
 		ULONG size = sizeof(layout) / sizeof(layout[0]);
 		hRes = dx11.GetD3D()->CreateInputLayout(layout, size, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), &m_layout);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
@@ -65,7 +65,7 @@ namespace DXFramework
 		samplerDesc.MinLOD = 0;
 		samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 		hRes = dx11.GetD3D()->CreateSamplerState(&samplerDesc, &m_sampleState);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 
 		matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -75,7 +75,7 @@ namespace DXFramework
 		matrixBufferDesc.MiscFlags = 0;
 		matrixBufferDesc.StructureByteStride = 0;
 		hRes = dx11.GetD3D()->CreateBuffer(&matrixBufferDesc, NULL, &m_matrixBuffer);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 			return FALSE;
 		return TRUE;
 	}

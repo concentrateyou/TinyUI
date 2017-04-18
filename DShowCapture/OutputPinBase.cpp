@@ -30,7 +30,7 @@ namespace DShow
 		if (m_allocator)
 		{
 			HRESULT hRes = m_allocator->Decommit();
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 			{
 				return hRes;
 			}

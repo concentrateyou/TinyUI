@@ -19,11 +19,11 @@ namespace TinyUI
 			HRESULT hRes = S_OK;
 			TinyComPtr<IMFMediaType> inputType;
 			hRes = MFCreateMediaType(&inputType);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			TinyComPtr<IMFMediaType> outputType;
 			hRes = MFCreateMediaType(&outputType);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			return TinyMFDecode::Open(CLSID_CMSH264DecoderMFT, inputType, outputType, std::move(callback));
 		}

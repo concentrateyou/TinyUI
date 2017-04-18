@@ -285,7 +285,7 @@ namespace DShow
 			return VFW_E_ALREADY_CONNECTED;
 		}
 		HRESULT hRes = CheckConnect(pConnector);
-		if (FAILED(hRes))
+		if (hRes != S_OK)
 		{
 			ASSERT(OnDisconnect() == NOERROR);
 			return hRes;
@@ -317,7 +317,7 @@ namespace DShow
 		if (m_connector)
 		{
 			HRESULT hRes = OnDisconnect();
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 			{
 				return hRes;
 			}

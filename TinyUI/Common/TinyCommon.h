@@ -55,7 +55,7 @@ namespace TinyUI
 #ifndef NOEXCEPT
 #define NOEXCEPT	throw()
 #endif 
-
+	//编译器不生成虚表
 #ifndef NO_VTABLE
 #define NO_VTABLE	__declspec(novtable)
 #endif 

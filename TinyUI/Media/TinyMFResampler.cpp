@@ -20,43 +20,43 @@ namespace TinyUI
 			HRESULT hRes = S_OK;
 			TinyComPtr<IUnknown> unknow;
 			hRes = unknow.CoCreateInstance(CLSID_CResamplerMediaObject, NULL, CLSCTX_INPROC_SERVER);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = unknow->QueryInterface(IID_PPV_ARGS(&m_resampler));
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			TinyComPtr<IMFMediaType> inputMediaType;
 			hRes = MFCreateMediaType(&inputMediaType);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = MFInitMediaTypeFromWaveFormatEx(inputMediaType, pInputFormat, sizeof(WAVEFORMATEX) + pInputFormat->cbSize);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_resampler->SetInputType(0, inputMediaType, 0);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			TinyComPtr<IMFMediaType> outputMediaType;
 			hRes = MFCreateMediaType(&outputMediaType);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = MFInitMediaTypeFromWaveFormatEx(outputMediaType, pOutputFormat, sizeof(WAVEFORMATEX) + pOutputFormat->cbSize);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_resampler->SetOutputType(0, outputMediaType, 0);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_resampler->GetInputStreamInfo(0, &m_inputInfo);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_resampler->GetOutputStreamInfo(0, &m_outputInfo);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			TinyComPtr<IWMResamplerProps> resamplerProps;
 			hRes = unknow->QueryInterface(IID_PPV_ARGS(&resamplerProps));
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = resamplerProps->SetHalfFilterLength(60);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			return TRUE;
 		}
@@ -70,13 +70,13 @@ namespace TinyUI
 				return FALSE;
 			HRESULT hRes = S_OK;
 			hRes = m_resampler->ProcessMessage(MFT_MESSAGE_COMMAND_FLUSH, NULL);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_resampler->ProcessMessage(MFT_MESSAGE_NOTIFY_BEGIN_STREAMING, NULL);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_resampler->ProcessMessage(MFT_MESSAGE_NOTIFY_START_OF_STREAM, NULL);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			return TRUE;
 		}
@@ -87,62 +87,62 @@ namespace TinyUI
 			if (!m_inputSample)
 			{
 				hRes = MFCreateSample(&m_inputSample);
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 				if (m_inputInfo.cbAlignment > 0)
 				{
 					hRes = MFCreateAlignedMemoryBuffer(std::max<DWORD>(m_inputInfo.cbSize, dwSize), m_inputInfo.cbAlignment - 1, &buffer);
-					if (FAILED(hRes))
+					if (hRes != S_OK)
 						return FALSE;
 				}
 				else
 				{
 					hRes = MFCreateMemoryBuffer(std::max<DWORD>(m_inputInfo.cbSize, dwSize), &buffer);
-					if (FAILED(hRes))
+					if (hRes != S_OK)
 						return FALSE;
 				}
 				hRes = m_inputSample->AddBuffer(buffer);
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 			}
 			hRes = m_inputSample->GetBufferByIndex(0, &buffer);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			DWORD dwMax = 0;
 			hRes = buffer->GetMaxLength(&dwMax);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			if (dwMax < dwSize)
 			{
 				hRes = m_inputSample->RemoveAllBuffers();
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 				if (m_inputInfo.cbAlignment > 0)
 				{
 					hRes = MFCreateAlignedMemoryBuffer(std::max<DWORD>(m_inputInfo.cbSize, dwSize), m_inputInfo.cbAlignment - 1, &buffer);
-					if (FAILED(hRes))
+					if (hRes != S_OK)
 						return FALSE;
 				}
 				else
 				{
 					hRes = MFCreateMemoryBuffer(std::max<DWORD>(m_inputInfo.cbSize, dwSize), &buffer);
-					if (FAILED(hRes))
+					if (hRes != S_OK)
 						return FALSE;
 				}
 				hRes = m_inputSample->AddBuffer(buffer);
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 			}
 			BYTE* ps = NULL;
 			hRes = buffer->Lock(&ps, NULL, NULL);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			memcpy(ps, bits, dwSize);
 			hRes = buffer->Unlock();
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = buffer->SetCurrentLength(dwSize);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			return TRUE;
 		}
@@ -153,50 +153,50 @@ namespace TinyUI
 			if (!m_outputSample)
 			{
 				hRes = MFCreateSample(&m_outputSample);
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 				if (m_outputInfo.cbAlignment > 0)
 				{
 					hRes = MFCreateAlignedMemoryBuffer(std::max<DWORD>(m_outputInfo.cbSize, dwSize), m_outputInfo.cbAlignment - 1, &buffer);
-					if (FAILED(hRes))
+					if (hRes != S_OK)
 						return FALSE;
 				}
 				else
 				{
 					hRes = MFCreateMemoryBuffer(std::max<DWORD>(m_outputInfo.cbSize, dwSize), &buffer);
-					if (FAILED(hRes))
+					if (hRes != S_OK)
 						return FALSE;
 				}
 				hRes = m_outputSample->AddBuffer(buffer);
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 			}
 			hRes = m_outputSample->GetBufferByIndex(0, &buffer);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			DWORD dwMax = 0;
 			hRes = buffer->GetMaxLength(&dwMax);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			if (dwMax < dwSize)
 			{
 				hRes = m_outputSample->RemoveAllBuffers();
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 				if (m_outputInfo.cbAlignment > 0)
 				{
 					hRes = MFCreateAlignedMemoryBuffer(std::max<DWORD>(m_outputInfo.cbSize, dwSize), m_outputInfo.cbAlignment - 1, &buffer);
-					if (FAILED(hRes))
+					if (hRes != S_OK)
 						return FALSE;
 				}
 				else
 				{
 					hRes = MFCreateMemoryBuffer(std::max<DWORD>(m_outputInfo.cbSize, dwSize), &buffer);
-					if (FAILED(hRes))
+					if (hRes != S_OK)
 						return FALSE;
 				}
 				hRes = m_outputSample->AddBuffer(buffer);
-				if (FAILED(hRes))
+				if (hRes != S_OK)
 					return FALSE;
 			}
 			return TRUE;
@@ -253,7 +253,7 @@ namespace TinyUI
 				return TRUE;
 			}
 			hRes = m_resampler->ProcessInput(0, m_inputSample, 0);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			DWORD dwSize = (DWORD)((LONGLONG)size * m_waveFMTO.nAvgBytesPerSec / m_waveFMTI.nAvgBytesPerSec);
 			dwSize = (dwSize + (m_waveFMTO.nBlockAlign - 1)) / m_waveFMTO.nBlockAlign * m_waveFMTO.nBlockAlign;
@@ -265,13 +265,13 @@ namespace TinyUI
 			if (!m_resampler)
 				return FALSE;
 			HRESULT hRes = m_resampler->ProcessMessage(MFT_MESSAGE_NOTIFY_END_OF_STREAM, NULL);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_resampler->ProcessMessage(MFT_MESSAGE_COMMAND_DRAIN, NULL);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_resampler->ProcessMessage(MFT_MESSAGE_NOTIFY_END_STREAMING, NULL);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			m_resampler.Release();
 			return TRUE;

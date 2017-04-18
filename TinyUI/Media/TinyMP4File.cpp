@@ -25,28 +25,28 @@ namespace TinyUI
 			wstring str = StringToWString(pzFile);
 			TinyComPtr<IMFAttributes> attr;
 			HRESULT hRes = MFCreateAttributes(&attr, 1);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = attr->SetUINT32(MF_READWRITE_ENABLE_HARDWARE_TRANSFORMS, 1);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = attr->SetUINT32(MF_SINK_WRITER_DISABLE_THROTTLING, 1);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = MFCreateSinkWriterFromURL(str.c_str(), NULL, attr, &m_writer);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = MFCreateSample(&m_sample);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_writer->AddStream(outputType, &m_dwStreamIndex);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 	/*		hRes = m_writer->SetInputMediaType(m_dwStreamIndex, inputType, NULL);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;*/
 			hRes = m_writer->BeginWriting();
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			return TRUE;
 		}
@@ -56,27 +56,27 @@ namespace TinyUI
 				return FALSE;
 			wstring str = StringToWString(pzFile);
 			HRESULT hRes = MFCreateSourceReaderFromURL(str.c_str(), NULL, &m_reader);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_reader->SetStreamSelection(MF_SOURCE_READER_ALL_STREAMS, FALSE);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_reader->SetStreamSelection(m_dwStreamIndex, TRUE);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			PROPVARIANT val;
 			hRes = m_reader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_DURATION, &val);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			m_sampleTime = static_cast<LONGLONG>(val.ulVal);//(val.ulVal / 10000000L);
 			PropVariantClear(&val);
 			hRes = m_reader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_TOTAL_FILE_SIZE, &val);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			m_size = val.ulVal;
 			PropVariantClear(&val);
 			hRes = m_reader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_AUDIO_ENCODING_BITRATE, &val);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			m_bitRate = val.ulVal;
 			PropVariantClear(&val);
@@ -85,18 +85,18 @@ namespace TinyUI
 			DWORD dwFlags;
 			TinyComPtr<IMFSample> sample;
 			hRes = m_reader->ReadSample(m_dwStreamIndex, 0, &dwStreamIndex, &dwFlags, &timestamp, &sample);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			TinyComPtr<IMFMediaBuffer> mediaBuffer;
 			hRes = sample->ConvertToContiguousBuffer(&mediaBuffer);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			BYTE* pBits = NULL;
 			hRes = mediaBuffer->Lock(&pBits, &m_dwMaxOutputBytes, NULL);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = mediaBuffer->Unlock();
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			return ResetFile();
 		}
@@ -107,22 +107,22 @@ namespace TinyUI
 			DWORD dwFlags;
 			TinyComPtr<IMFSample> sample;
 			HRESULT hRes = m_reader->ReadSample(m_dwStreamIndex, 0, &dwStreamIndex, &dwFlags, &timestamp, &sample);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			if (dwFlags & MF_SOURCE_READERF_ENDOFSTREAM)
 				return FALSE;
 			TinyComPtr<IMFMediaBuffer> mediaBuffer;
 			hRes = sample->ConvertToContiguousBuffer(&mediaBuffer);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			BYTE* pBits = NULL;
 			DWORD dwCurrentLength = 0;
 			hRes = mediaBuffer->Lock(&pBits, NULL, &dwCurrentLength);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			memcpy(lpBuffer, pBits, dwCurrentLength);
 			hRes = mediaBuffer->Unlock();
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			*lpNumberOfBytesRead = dwCurrentLength;
 			return TRUE;
@@ -131,35 +131,35 @@ namespace TinyUI
 		{
 			ASSERT(m_writer);
 			HRESULT hRes = m_sample->RemoveAllBuffers();
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			TinyComPtr<IMFMediaBuffer> buffer;
 			hRes = MFCreateMemoryBuffer(nNumberOfBytesToRead, &buffer);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_sample->AddBuffer(buffer);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = buffer->SetCurrentLength(nNumberOfBytesToRead);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			BYTE* pBits = NULL;
 			hRes = buffer->Lock(&pBits, NULL, NULL);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			memcpy(pBits, lpBuffer, nNumberOfBytesToRead);
 			hRes = buffer->Unlock();
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_sample->SetSampleTime(m_sampleTime);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			//LONGLONG duration = (10000000L * nNumberOfBytesToRead) / m_dwAvgBytesPerSec;
 			hRes = m_sample->SetSampleDuration(duration);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_writer->WriteSample(m_dwStreamIndex, m_sample);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			m_sampleTime += duration;
 			return TRUE;
@@ -168,10 +168,10 @@ namespace TinyUI
 		{
 			PROPVARIANT val;
 			HRESULT hRes = InitPropVariantFromInt64(0, &val);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_reader->SetCurrentPosition(GUID_NULL, val);
-			if (FAILED(hRes))
+			if (hRes != S_OK)
 			{
 				PropVariantClear(&val);
 				return FALSE;

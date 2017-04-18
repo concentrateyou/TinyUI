@@ -7,6 +7,25 @@ namespace TinyUI
 	namespace Windowless
 	{
 		IMPLEMENT_DYNAMIC(TinyVisual, TinyObject);
+
+		TinyVisual::TinyVisual()
+			:m_spvisNext(NULL),
+			m_spvisChild(NULL),
+			m_spvisOwner(NULL),
+			m_hrgnClip(NULL),
+			m_hFONT(NULL),
+			m_document(NULL),
+			m_visible(TRUE),
+			m_enable(TRUE),
+			m_textAlign(0),
+			m_textColor(RGB(255, 255, 255)),
+			m_dwCount(0)
+		{
+			LOGFONT lf;
+			::GetObject(reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)), sizeof(LOGFONT), &lf);
+			lf.lfCharSet = GB2312_CHARSET;
+			m_hFONT = CreateFontIndirect(&lf);
+		}
 		TinyVisual::TinyVisual(TinyVisual* spvisParent, TinyVisualDocument* document)
 			:m_spvisParent(spvisParent),
 			m_spvisNext(NULL),

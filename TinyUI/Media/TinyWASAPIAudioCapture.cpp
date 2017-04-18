@@ -276,10 +276,10 @@ namespace TinyUI
 					UINT64  pu64Pos = 0;
 					UINT64	pu64QPCPos = 0;
 					hRes = m_audioCapture->GetBuffer(&bits, &count, &dwFlags, &pu64Pos, &pu64QPCPos);
-					if (FAILED(hRes))
+					if (hRes != S_OK)
 						continue;
 					hRes = m_audioClock->GetPosition(&pu64Pos, &pu64QPCPos);
-					if (FAILED(hRes))
+					if (hRes != S_OK)
 						continue;
 					if (dwFlags & AUDCLNT_BUFFERFLAGS_SILENT)
 						bits = NULL;
