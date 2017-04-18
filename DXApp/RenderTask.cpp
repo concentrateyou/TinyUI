@@ -85,7 +85,7 @@ namespace DXApp
 		for (INT i = 0;i < m_scenes.GetSize();i++)
 		{
 			DX11Element2D* ps = m_scenes[i];
-			if (ps->IsKindof(RUNTIME_CLASS(DX11Image2D)))
+			if (ps->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
 			{
 				DX11Image2D* pImage = static_cast<DX11Image2D*>(ps);
 				if (ps == m_lastElement)
