@@ -5,9 +5,9 @@ namespace TinyUI
 {
 	namespace Network
 	{
-		class TinyHTTPResponse
+		class TinyHTTPResponse : public TinyHTTPMessage
 		{
-
+			DISALLOW_COPY_AND_ASSIGN(TinyHTTPResponse)
 		};
 	}
 }

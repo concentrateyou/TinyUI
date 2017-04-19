@@ -9,13 +9,20 @@ namespace TinyUI
 		{
 
 		}
+
 		TinyHTTPMessage::~TinyHTTPMessage()
 		{
 
 		}
+
 		void TinyHTTPMessage::Add(const string& key, const string& value)
 		{
+			m_map[key] = value;
+		}
 
+		void TinyHTTPMessage::Remove(const string& key)
+		{
+			m_map.erase(key);
 		}
 	}
 }

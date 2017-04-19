@@ -1,5 +1,7 @@
 #include "../stdafx.h"
 #include "TinyHTTPClient.h"
+#include "TinyDNS.h"
+#include "TinyURL.h"
 
 namespace TinyUI
 {
@@ -17,16 +19,27 @@ namespace TinyUI
 
 		BOOL TinyHTTPClient::GetURL(const string& val)
 		{
-			if (!m_socket.Open())
+			TinyURL url;
+			if (!url.ParseURL(val.c_str(), val.size()))
 				return FALSE;
-			//return m_socket.BeginConnect(endpoint, BindCallback(&TinyHTTPClient::OnConnect, this), this);
+			string host = url.GetComponent(TinyURL::HOST);
+			if (inet_addr(host.c_str()) == INADDR_NONE)
+			{
+				string scheme = url.GetComponent(TinyURL::SCHEME);
+				TinyDNS dns;
+				AddressList list;
+				if (!dns.Resolver(host, scheme, list))
+					return FALSE;
+				IPEndPoint endpoint = list[0];
+				//string val = endpoint.ToString();
+				//INT a = 0;
+			}
+			return TRUE;
 		}
 
 		BOOL TinyHTTPClient::PostURL(const string& val)
 		{
-			if (!m_socket.Open())
-				return FALSE;
-			//return m_socket.BeginConnect(endpoint, BindCallback(&TinyHTTPClient::OnConnect, this), this);
+			return TRUE;
 		}
 
 		void TinyHTTPClient::OnConnect(DWORD dwError, AsyncResult* result)

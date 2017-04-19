@@ -286,6 +286,12 @@ namespace TinyUI
 			}
 			return TRUE;
 		}
+		BOOL IPEndPoint::FromIPAddress(const IPAddress& address, SHORT port)
+		{
+			m_address = std::move(address);
+			m_port = port;
+			return TRUE;
+		}
 		BOOL IPEndPoint::FromSOCKADDR(const SOCKADDR* address, size_t size)
 		{
 			const BYTE* addressdata = NULL;

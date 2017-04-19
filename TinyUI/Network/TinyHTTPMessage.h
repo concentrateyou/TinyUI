@@ -14,8 +14,9 @@ namespace TinyUI
 			virtual ~TinyHTTPMessage();
 		public:
 			void Add(const string& key, const string& value);
+			void Remove(const string& key);
 		protected:
-			map<string, string> m_map;
+			std::map<std::string, std::string> m_map;
 		};
 	}
 }

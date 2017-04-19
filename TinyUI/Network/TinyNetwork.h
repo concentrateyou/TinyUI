@@ -89,6 +89,7 @@ namespace TinyUI
 			INT	AddressFamily() const;
 			USHORT port() const;
 			BOOL ToSOCKADDR(SOCKADDR* address, size_t* size) const;
+			BOOL FromIPAddress(const IPAddress& address, SHORT port);
 			BOOL FromSOCKADDR(const  SOCKADDR* address, size_t size);
 			std::string ToString() const;
 			BOOL operator<(const IPEndPoint& other) const;

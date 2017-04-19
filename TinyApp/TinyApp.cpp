@@ -117,10 +117,8 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
-	TestA testA;
-	TestB testB;
-	TestB* ps = (TestB*)TinyObject::FromName("TestA");
-
+	TinyHTTPClient client;
+	client.GetURL("http://101.200.29.173/topics/80164684");
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
