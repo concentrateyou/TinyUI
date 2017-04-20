@@ -12,16 +12,16 @@ namespace TinyUI
 
 		class TinyHTTPRequest
 		{
-			DISALLOW_COPY_AND_ASSIGN(TinyHTTPRequest);
 			struct KeyValue
 			{
 				KeyValue();
 				KeyValue(const std::string& k, const std::string& v);
 				KeyValue(KeyValue&& other);
-				KeyValue& operator = (KeyValue&& other);
+				KeyValue& operator= (KeyValue&& other);
 				std::string key;
 				std::string value;
 			};
+			DISALLOW_COPY_AND_ASSIGN(TinyHTTPRequest)
 		public:
 			static const CHAR GET[];
 			static const CHAR POST[];
@@ -53,17 +53,22 @@ namespace TinyUI
 			static const CHAR UserAgent[];
 		public:
 			TinyHTTPRequest();
-			BOOL Create(const string& szURL, const string& requestMS);
+			BOOL Create(const string& szURL, const string& ms);
+			void SetTimeout(DWORD dwTimeout);
 			void Add(const string& key, const string& val);
 			void Remove(const string& key);
 			void SetContext(const string& value);
 			void GetResponse();
+		public:
+			string	operator[](const string& key);
 		private:
 			std::vector<TinyHTTPRequest::KeyValue>::const_iterator Lookup(const string& key) const;
 			std::vector<TinyHTTPRequest::KeyValue>::iterator Lookup(const string& key);
 		private:
-			string					m_requestMS;
+			DWORD					m_dwTO;
+			string					m_ms;
 			string					m_context;
+			string					m_line;
 			TinyURL					m_sURL;
 			TinySocket				m_socket;
 			IPEndPoint				m_endpoint;

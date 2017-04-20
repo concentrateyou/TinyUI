@@ -132,18 +132,28 @@ namespace TinyUI
 		BOOL TinySocket::SetKeepAlive(BOOL bAllow)
 		{
 			ASSERT(m_socket);
-			if (SetOption(SOL_SOCKET, SO_KEEPALIVE, (const CHAR*)bAllow, sizeof(bAllow)))
-			{
-				return TRUE;
-			}
-			return FALSE;
+			INT size = sizeof(bAllow);
+			return SetOption(SOL_SOCKET, SO_KEEPALIVE, (const CHAR*)bAllow, size);
 		}
-		BOOL TinySocket::IsKeepAlive()
+		BOOL TinySocket::GetKeepAlive(BOOL& bAllow)
 		{
 			ASSERT(m_socket);
-			BOOL bAllow = FALSE;
-			INT size = 0;
+			bAllow = FALSE;
+			INT size = sizeof(bAllow);
 			return GetOption(SOL_SOCKET, SO_KEEPALIVE, (CHAR*)bAllow, size);
+		}
+		BOOL TinySocket::SetDelay(BOOL bAllow)
+		{
+			ASSERT(m_socket);
+			INT size = sizeof(bAllow);
+			return SetOption(IPPROTO_TCP, TCP_NODELAY, (const CHAR*)bAllow, size);
+		}
+		BOOL TinySocket::GetDelay(BOOL& bAllow)
+		{
+			ASSERT(m_socket);
+			bAllow = FALSE;
+			INT size = sizeof(bAllow);
+			return GetOption(IPPROTO_TCP, TCP_NODELAY, (CHAR*)bAllow, size);
 		}
 		BOOL TinySocket::Available(INT& argp)
 		{
@@ -154,6 +164,18 @@ namespace TinyUI
 		{
 			ASSERT(m_socket);
 			return ioctlsocket(m_socket, FIONBIO, (ULONG*)&bAllow) != 0;
+		}
+		BOOL TinySocket::GetTimeout(BOOL bRecv, DWORD& dwTime)
+		{
+			ASSERT(m_socket);
+			INT size = sizeof(dwTime);
+			return GetOption(SOL_SOCKET, bRecv ? SO_RCVTIMEO : SO_SNDTIMEO, (CHAR *)&dwTime, size);
+		}
+		BOOL TinySocket::SetTimeout(BOOL bRecv, DWORD dwTime)
+		{
+			ASSERT(m_socket);
+			INT size = sizeof(dwTime);
+			return SetOption(SOL_SOCKET, bRecv ? SO_RCVTIMEO : SO_SNDTIMEO, (CHAR *)&dwTime, size);
 		}
 		BOOL TinySocket::Duplicate(DWORD processID, WSAPROTOCOL_INFO& s)
 		{
@@ -383,7 +405,7 @@ namespace TinyUI
 					goto OVERLAPPED_ERROR;
 				}
 			}
-			size_t size = 0;		
+			size_t size = 0;
 			if (!endpoint.ToSOCKADDR(&s, &size))
 			{
 				errorCode = ERROR_INVALID_ADDRESS;

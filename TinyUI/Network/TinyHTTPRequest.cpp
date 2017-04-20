@@ -65,18 +65,22 @@ namespace TinyUI
 		const CHAR TinyHTTPRequest::TokenBinding[] = "Sec-Token-Binding";
 		const CHAR TinyHTTPRequest::UserAgent[] = "User-Agent";
 		TinyHTTPRequest::TinyHTTPRequest()
+			:m_dwTO(3000)
 		{
 
 		}
 
-		BOOL TinyHTTPRequest::Create(const string& szURL, const string& requestMS)
+		BOOL TinyHTTPRequest::Create(const string& szURL, const string& ms)
 		{
-			m_requestMS = std::move(requestMS);
+			m_ms = std::move(ms);
 			if (!m_sURL.ParseURL(szURL.c_str(), szURL.size()))
 				return FALSE;
+			string host = m_sURL.GetComponent(TinyURL::HOST);
+			if (host.empty())
+				return FALSE;
+			Add(Host, host);
 			string scheme = m_sURL.GetComponent(TinyURL::SCHEME);
 			string port = m_sURL.GetComponent(TinyURL::PORT);
-			string host = m_sURL.GetComponent(TinyURL::HOST);
 			if (inet_addr(host.c_str()) == INADDR_NONE)
 			{
 				TinyDNS dns;
@@ -89,7 +93,14 @@ namespace TinyUI
 			{
 				m_endpoint.FromIPAddress(IPAddress(host), port.empty() ? (strcasecmp(scheme.c_str(), HTTP) == 0 ? 80 : 443) : static_cast<SHORT>(atoi(port.c_str())));
 			}
-			return TRUE;
+			string all = m_sURL.GetComponent(TinyURL::FULLPATH);
+			m_line = StringPrintf("%s %s HTTP/1.1\r\n", m_ms.c_str(), all.empty() ? "/" : all.c_str());
+			return m_socket.Open();
+		}
+
+		void TinyHTTPRequest::SetTimeout(DWORD dwTO)
+		{
+			m_dwTO = dwTO;
 		}
 
 		void TinyHTTPRequest::Remove(const string& key)
@@ -100,32 +111,29 @@ namespace TinyUI
 				m_attributes.erase(s);
 			}
 		}
-
+		string TinyHTTPRequest::operator[](const string& key)
+		{
+			std::vector<KeyValue>::const_iterator s = Lookup(key);
+			if (s != m_attributes.end())
+			{
+				return s->value;
+			}
+			return string();
+		}
 		void TinyHTTPRequest::GetResponse()
 		{
-			m_socket.Close();
-			if (m_socket.Open())
+			m_socket.SetDelay(FALSE);
+			m_socket.SetTimeout(TRUE, m_dwTO);
+			m_socket.SetTimeout(FALSE, m_dwTO);
+			m_socket.Connect(m_endpoint);
+			string request = m_line;
+			for (std::vector<KeyValue>::const_iterator s = m_attributes.begin(); s != m_attributes.end(); ++s)
 			{
-				m_socket.Connect(m_endpoint);
-				string scheme = m_sURL.GetComponent(TinyURL::SCHEME);
-				string host = m_sURL.GetComponent(TinyURL::HOST);
-				if (!host.empty())
-				{
-					Add(Host, host);
-				}
-				string path = m_sURL.GetComponent(TinyURL::PATH);
-				string query = m_sURL.GetComponent(TinyURL::QUERY);
-				string ref = m_sURL.GetComponent(TinyURL::REF);
-				string all = path + query + ref;
-				string request = StringPrintf("%s %s HTTP/1.1\r\n", m_requestMS.c_str(), all.empty() ? "/" : all.c_str());
-				for (std::vector<KeyValue>::const_iterator s = m_attributes.begin(); s != m_attributes.end(); ++s)
-				{
-					request += StringPrintf("%s:%s\r\n", s->key.c_str(), s->value.c_str());
-				}
-				request += "\r\n";
-				request += m_context;
-				INT s = m_socket.Send(&request[0], request.size(), 0);
+				request += StringPrintf("%s:%s\r\n", s->key.c_str(), s->value.c_str());
 			}
+			request += "\r\n";
+			INT val = m_socket.Send(&request[0], request.size());
+			val = m_socket.Send(&m_context[0], m_context.size());
 		}
 		void TinyHTTPRequest::Add(const string& key, const string& value)
 		{

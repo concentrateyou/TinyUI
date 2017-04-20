@@ -74,18 +74,22 @@ namespace TinyUI
 			BOOL	IsConnect() const;
 			BOOL	Open(INT addressFamily = AF_INET, INT socketType = SOCK_STREAM, INT protocolType = IPPROTO_TCP);
 			BOOL	SetKeepAlive(BOOL bAllow);
-			BOOL	IsKeepAlive();
+			BOOL	GetKeepAlive(BOOL& bAllow);
+			BOOL	SetDelay(BOOL bAllow);
+			BOOL	GetDelay(BOOL& bAllow);
 			BOOL	SetBlocking(BOOL bAllow);
+			BOOL	GetTimeout(BOOL bRecv, DWORD& dwTime);
+			BOOL	SetTimeout(BOOL bRecv, DWORD dwTime);
 			BOOL	Duplicate(DWORD processID, WSAPROTOCOL_INFO& s);
 			BOOL	Available(INT& argp);
 			INT		GetLastError();
 		public:
+			TinySocket* Accept();
 			BOOL	Bind(const IPEndPoint& endpoint);
 			BOOL	Listen(DWORD backlog = SOMAXCONN);
-			TinySocket* Accept();
 			BOOL	Connect(const IPEndPoint& endpoint);
-			INT		Receive(CHAR* data, DWORD dwSize, DWORD dwFlag);
-			INT		Send(CHAR* data, DWORD dwSize, DWORD dwFlag);
+			INT		Receive(CHAR* data, DWORD dwSize, DWORD dwFlag = 0);
+			INT		Send(CHAR* data, DWORD dwSize, DWORD dwFlag = 0);
 			INT		ReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, IPEndPoint& endpoint);
 			INT		SendTo(CHAR* data, DWORD dwSize, DWORD dwFlag, IPEndPoint& endpoint);
 			BOOL	Post(CompleteCallback&& callback, AsyncResult* result, LPVOID arg);

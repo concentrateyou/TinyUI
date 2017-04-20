@@ -248,6 +248,8 @@ namespace TinyUI
 				return m_szREF;
 			case USERNAME:
 				return m_szUSERNAME;
+			case FULLPATH:
+				return m_szFULLPATH;
 			}
 			return string();
 		}
@@ -278,9 +280,10 @@ namespace TinyUI
 				Component path;
 				Component query;
 				Component ref;
-				authority = auth == size ? Component() : Component(auth, size - auth);
+				authority = auth == size ? Component() : Component(auth, size - auth);		
 				ParsePath(pzURL, authority, &path, &query, &ref);
 				string val = pzURL;
+				m_szFULLPATH = val.substr(auth);
 				if (!scheme.empty())
 				{
 					m_szSCHEME = val.substr(scheme.begin, scheme.size);

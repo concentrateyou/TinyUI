@@ -34,6 +34,7 @@ namespace TinyUI
 				PATH,
 				QUERY,
 				REF,
+				FULLPATH
 			};
 		public:
 			TinyURL();
@@ -48,6 +49,7 @@ namespace TinyUI
 			string	m_szPATH;
 			string	m_szQUERY;
 			string	m_szREF;
+			string	m_szFULLPATH;
 		};
 	}
 }
