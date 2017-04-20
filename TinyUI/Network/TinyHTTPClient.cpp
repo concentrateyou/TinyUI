@@ -31,8 +31,6 @@ namespace TinyUI
 				if (!dns.Resolver(host, scheme, list))
 					return FALSE;
 				IPEndPoint endpoint = list[0];
-				//string val = endpoint.ToString();
-				//INT a = 0;
 			}
 			return TRUE;
 		}

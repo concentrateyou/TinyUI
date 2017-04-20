@@ -5,7 +5,7 @@ namespace TinyUI
 {
 	namespace Network
 	{
-	
+
 		Component MakeRange(INT begin, INT end)
 		{
 			return Component(begin, end - begin);

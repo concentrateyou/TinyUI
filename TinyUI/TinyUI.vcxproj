@@ -265,7 +265,6 @@
     <ClInclude Include="Network\TinyDNS.h" />
     <ClInclude Include="Network\TinyHTTPClient.h" />
     <ClInclude Include="Network\TinyHTTPCommon.h" />
-    <ClInclude Include="Network\TinyHTTPMessage.h" />
     <ClInclude Include="Network\TinyHTTPRequest.h" />
     <ClInclude Include="Network\TinyHTTPResponse.h" />
     <ClInclude Include="Network\TinyInternet.h" />
@@ -403,7 +402,6 @@
     <ClCompile Include="Network\TinyDNS.cpp" />
     <ClCompile Include="Network\TinyHTTPClient.cpp" />
     <ClCompile Include="Network\TinyHTTPCommon.cpp" />
-    <ClCompile Include="Network\TinyHTTPMessage.cpp" />
     <ClCompile Include="Network\TinyHTTPRequest.cpp" />
     <ClCompile Include="Network\TinyHTTPResponse.cpp" />
     <ClCompile Include="Network\TinyInternet.cpp" />

@@ -1,12 +1,12 @@
 #pragma once
-#include "TinyHTTPMessage.h"
+#include "TinyNetwork.h"
 #include "TinyURL.h"
 
 namespace TinyUI
 {
 	namespace Network
 	{
-		class TinyHTTPResponse : public TinyHTTPMessage
+		class TinyHTTPResponse 
 		{
 			DISALLOW_COPY_AND_ASSIGN(TinyHTTPResponse)
 		public:

@@ -20,7 +20,7 @@
 #include "Media/TinyMFMP3Decode.h"
 #include "MPG123Decode.h"
 #include "Media/TinyMP3File.h"
-#include "Network/TinyHTTPClient.h"
+#include "Network/TinyHTTPRequest.h"
 #include "Network/TinyURL.h"
 #include "Network/TinyDNS.h"
 #include "MediaTest.h"
@@ -117,8 +117,12 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
-	TinyHTTPClient client;
-	client.GetURL("http://101.200.29.173/topics/80164684");
+	TinyHTTPRequest request;
+	if (request.Create("http://www.baidu.com", TinyHTTPRequest::GET))
+	{
+		request.Add(TinyHTTPRequest::Connection, "close");
+		request.GetResponse();
+	}
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
