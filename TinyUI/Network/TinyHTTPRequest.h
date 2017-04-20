@@ -1,5 +1,6 @@
 #pragma once
 #include "TinyHTTPMessage.h"
+#include "TinyURL.h"
 #include <map>
 
 namespace TinyUI

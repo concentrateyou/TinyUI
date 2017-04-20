@@ -1,5 +1,7 @@
 #include "../stdafx.h"
 #include "TinyHTTPRequest.h"
+#include "TinyHTTPResponse.h"
+#include "TinyDNS.h"
 #include <process.h>
 
 namespace TinyUI
@@ -18,13 +20,13 @@ namespace TinyUI
 
 		BOOL TinyHTTPRequest::Create(const string& szURL)
 		{
-			if (!m_sURL.ParseURL(szURL))
+			if (!m_sURL.ParseURL(szURL.c_str(),szURL.size()))
 				return FALSE;
+			string scheme = m_sURL.GetComponent(TinyURL::SCHEME);
 			string port = m_sURL.GetComponent(TinyURL::PORT);
 			string host = m_sURL.GetComponent(TinyURL::HOST);
 			if (inet_addr(host.c_str()) == INADDR_NONE)
 			{
-				string scheme = m_sURL.GetComponent(TinyURL::SCHEME);
 				TinyDNS dns;
 				AddressList list;
 				if (!dns.Resolver(host, scheme, list))
@@ -71,7 +73,7 @@ namespace TinyUI
 				val = StringPrintf("%s %s %s/%s\r\n", m_ms.c_str(), path.c_str(), scheme.c_str(), m_version.c_str());
 			}
 			val += StringPrintf("Host:%s\r\n", host.c_str());
-			for (auto v : m_map.end())
+			for (auto v : m_map)
 			{
 				val += StringPrintf("%s:%s\r\n", v.first.c_str(), v.second.c_str());
 			}
