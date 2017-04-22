@@ -5,46 +5,59 @@ namespace TinyUI
 {
 	namespace Network
 	{
-		static const char* HttpVersions[HTTP_VERSION_LAST + 1] =
+		IOBuffer::IOBuffer()
+			: m_data(NULL)
 		{
-			"1.0", "1.1", "Unknown"
-		};
+		}
 
-		static const char* HttpVerbs[HTTP_VERB_LAST + 1] =
+		IOBuffer::IOBuffer(INT size)
+			: m_size(size)
 		{
-			"GET", "POST", "PUT", "DELETE", "CONNECT", "HEAD"
-		};
+			m_data = new char[size];
+		}
 
-		static const char* HttpHeaders[HTTP_HEADER_LAST + 1] = 
+		IOBuffer::IOBuffer(CHAR* data, INT size)
+			: m_data(data),
+			m_size(size)
 		{
-			"Age",
-			"Cache-Control",
-			"Connection",
-			"Content-Disposition",
-			"Content-Length",
-			"Content-Range",
-			"Content-Type",
-			"Cookie",
-			"Date",
-			"ETag",
-			"Expires",
-			"Host",
-			"If-Modified-Since",
-			"If-None-Match",
-			"Keep-Alive",
-			"Last-Modified",
-			"Location",
-			"Proxy-Authenticate",
-			"Proxy-Authorization",
-			"Proxy-Connection",
-			"Range",
-			"Set-Cookie",
-			"TE",
-			"Trailers",
-			"Transfer-Encoding",
-			"Upgrade",
-			"User-Agent",
-			"WWW-Authenticate",
-		};
+		}
+
+		IOBuffer::~IOBuffer()
+		{
+			SAFE_DELETE_ARRAY(m_data);
+		}
+
+		CHAR* IOBuffer::data() const
+		{
+			return m_data;
+		}
+		INT	IOBuffer::size() const
+		{
+			return m_size;
+		}
+		//////////////////////////////////////////////////////////////////////////
+		StringIOBuffer::StringIOBuffer(const std::string& s)
+			: IOBuffer(static_cast<CHAR*>(NULL), 0),
+			m_value(std::move(s))
+		{
+			m_data = &m_value[0];
+			m_size = m_value.size();
+		}
+		StringIOBuffer::StringIOBuffer(std::unique_ptr<std::string> s)
+			: IOBuffer(static_cast<char*>(NULL), 0)
+		{
+			m_value.swap(*s.get());
+			m_data = &m_value[0];
+			m_size = m_value.size();
+		}
+
+		INT StringIOBuffer::size() const
+		{
+			return static_cast<int>(m_value.size());
+		}
+		StringIOBuffer::~StringIOBuffer()
+		{
+			m_data = NULL;
+		}
 	}
 }

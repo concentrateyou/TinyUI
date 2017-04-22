@@ -95,7 +95,14 @@ namespace TinyUI
 			}
 			string all = m_sURL.GetComponent(TinyURL::FULLPATH);
 			m_line = StringPrintf("%s %s HTTP/1.1\r\n", m_ms.c_str(), all.empty() ? "/" : all.c_str());
-			return m_socket.Open();
+			if (m_socket.Open())
+			{
+				m_socket.SetDelay(FALSE);
+				m_socket.SetTimeout(TRUE, m_dwTO);
+				m_socket.SetTimeout(FALSE, m_dwTO);
+				return TRUE;
+			}
+			return FALSE;
 		}
 
 		void TinyHTTPRequest::SetTimeout(DWORD dwTO)
@@ -122,19 +129,12 @@ namespace TinyUI
 		}
 		void TinyHTTPRequest::GetResponse()
 		{
-			m_socket.SetDelay(FALSE);
-			m_socket.SetTimeout(TRUE, m_dwTO);
-			m_socket.SetTimeout(FALSE, m_dwTO);
-			m_socket.Connect(m_endpoint);
-			string request = m_line;
-			for (std::vector<KeyValue>::const_iterator s = m_attributes.begin(); s != m_attributes.end(); ++s)
+			if (m_socket.IsValid())
 			{
-				request += StringPrintf("%s:%s\r\n", s->key.c_str(), s->value.c_str());
+				m_socket.BeginConnect(m_endpoint, BindCallback(&TinyHTTPRequest::OnHandleConnect, this), this);
 			}
-			request += "\r\n";
-			INT val = m_socket.Send(&request[0], request.size());
-			val = m_socket.Send(&m_context[0], m_context.size());
 		}
+
 		void TinyHTTPRequest::Add(const string& key, const string& value)
 		{
 			std::vector<TinyHTTPRequest::KeyValue>::iterator s = Lookup(key);
@@ -176,6 +176,53 @@ namespace TinyUI
 				}
 			}
 			return m_attributes.end();
+		}
+
+		void TinyHTTPRequest::OnHandleConnect(DWORD dwError, AsyncResult* result)
+		{
+			if (dwError != 0)
+			{
+				OnHandleError(dwError);
+			}
+			else
+			{
+				m_socket.EndConnect(result);
+
+			}
+		}
+		
+		void TinyHTTPRequest::OnHandleSend(DWORD dwError, AsyncResult* result)
+		{
+			if (dwError != 0)
+			{
+				OnHandleError(dwError);
+			}
+			else
+			{
+				m_socket.EndSend(result);
+			}
+		}
+		INT TinyHTTPRequest::SendHeader()
+		{
+			string output = std::move(m_line);
+			for (std::vector<KeyValue>::const_iterator s = m_attributes.begin(); s != m_attributes.end(); ++s)
+			{
+				if (!s->value.empty())
+				{
+					output.append(StringPrintf("%s: %s\r\n", s->key.c_str(), s->value.c_str()));
+				}
+				else
+				{
+					output.append(StringPrintf("%s:\r\n", s->key.c_str()));
+				}
+			}
+			output.append("\r\n");
+			INT val = m_socket.BeginSend(&output[0], output.size(), 0, BindCallback(&TinyHTTPRequest::OnHandleSend, this), this);
+			return val;
+		}
+		void TinyHTTPRequest::OnHandleError(DWORD dwError)
+		{
+
 		}
 	}
 }

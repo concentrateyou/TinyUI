@@ -1,5 +1,6 @@
 #pragma once
 #include "TinyNetwork.h"
+#include "TinyHTTPCommon.h"
 #include "TinyURL.h"
 #include <string>
 #include <map>
@@ -12,6 +13,20 @@ namespace TinyUI
 
 		class TinyHTTPRequest
 		{
+			enum State
+			{
+				STATE_NONE,
+				STATE_SEND_HEADERS,
+				STATE_SEND_HEADERS_COMPLETE,
+				STATE_SEND_BODY,
+				STATE_SEND_BODY_COMPLETE,
+				STATE_SEND_REQUEST_READ_BODY_COMPLETE,
+				STATE_READ_HEADERS,
+				STATE_READ_HEADERS_COMPLETE,
+				STATE_READ_BODY,
+				STATE_READ_BODY_COMPLETE,
+				STATE_DONE
+			};
 			struct KeyValue
 			{
 				KeyValue();
@@ -64,6 +79,11 @@ namespace TinyUI
 		private:
 			std::vector<TinyHTTPRequest::KeyValue>::const_iterator Lookup(const string& key) const;
 			std::vector<TinyHTTPRequest::KeyValue>::iterator Lookup(const string& key);
+			INT SendHeader();
+		private:
+			void OnHandleConnect(DWORD, AsyncResult*);
+			void OnHandleSend(DWORD, AsyncResult*);
+			void OnHandleError(DWORD);
 		private:
 			DWORD					m_dwTO;
 			string					m_ms;

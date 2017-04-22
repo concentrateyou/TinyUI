@@ -71,6 +71,7 @@ namespace TinyUI
 			TinySocket(TinyIOServer* ioserver = NULL);
 			virtual ~TinySocket();
 			TinyIOServer* GetIOServer() const;
+			BOOL	IsValid() const;
 			BOOL	IsConnect() const;
 			BOOL	Open(INT addressFamily = AF_INET, INT socketType = SOCK_STREAM, INT protocolType = IPPROTO_TCP);
 			BOOL	SetKeepAlive(BOOL bAllow);
