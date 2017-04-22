@@ -82,6 +82,7 @@ namespace TinyUI
 		private:
 			void OnHandleConnect(DWORD, AsyncResult*);
 			void OnHandleSend(DWORD, AsyncResult*);
+			void OnHandleReceive(DWORD, AsyncResult*);
 			void OnHandleError(DWORD);
 		private:
 			DWORD					m_dwOffset;
@@ -94,6 +95,8 @@ namespace TinyUI
 			std::vector<KeyValue>	m_attributes;
 			TinyBufferArray<CHAR>	m_request;
 			TinyBufferArray<CHAR>	m_body;
+			TinyScopedArray<CHAR>	m_buffer;
+			TinyBufferArray<CHAR>	m_response;
 		};
 	}
 }

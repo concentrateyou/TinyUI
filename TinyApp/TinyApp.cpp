@@ -118,7 +118,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadSeDebugPrivilege();
 
 	TinyHTTPRequest request;
-	if (request.Create("http://www.baidu.com", TinyHTTPRequest::GET))
+	if (request.Create("http://www.toutiao.com/a6411506088949121281/", TinyHTTPRequest::GET))
 	{
 		request.Add(TinyHTTPRequest::Connection, "close");
 		request.GetResponse();

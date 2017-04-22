@@ -68,7 +68,7 @@ namespace TinyUI
 			:m_dwTO(3000),
 			m_dwOffset(0)
 		{
-
+			m_buffer.Reset(new CHAR[8192]);
 		}
 
 		BOOL TinyHTTPRequest::Create(const string& szURL, const string& ms)
@@ -143,8 +143,10 @@ namespace TinyUI
 					}
 				}
 				output.append("\r\n");
+				m_request.Clear();
 				m_request.Add(&output[0], output.size());
 				m_request.Add(m_body.GetPointer(), m_body.GetSize());
+				m_body.Clear();
 				m_socket.BeginConnect(m_endpoint, BindCallback(&TinyHTTPRequest::OnHandleConnect, this), this);
 			}
 		}
@@ -215,6 +217,7 @@ namespace TinyUI
 			else
 			{
 				DWORD dwRes = m_socket.EndSend(result);
+				dwRes += m_dwOffset;
 				if (dwRes < static_cast<DWORD>(m_request.GetSize()))
 				{
 					m_dwOffset = dwRes;
@@ -222,6 +225,36 @@ namespace TinyUI
 					{
 						OnHandleError(GetLastError());
 					}
+				}
+				else
+				{
+					if (!m_socket.BeginReceive(m_buffer, 8192, 0, BindCallback(&TinyHTTPRequest::OnHandleReceive, this), this))
+					{
+						OnHandleError(GetLastError());
+					}
+				}
+			}
+		}
+		void TinyHTTPRequest::OnHandleReceive(DWORD dwError, AsyncResult* result)
+		{
+			if (dwError != 0)
+			{
+				OnHandleError(dwError);
+			}
+			else
+			{
+				DWORD dwRes = m_socket.EndReceive(result);
+				if (dwRes > 0)
+				{
+					m_response.Add(m_buffer, dwRes);
+					if (!m_socket.BeginReceive(m_buffer, 8192, 0, BindCallback(&TinyHTTPRequest::OnHandleReceive, this), this))
+					{
+						OnHandleError(GetLastError());
+					}
+				}
+				else
+				{
+					
 				}
 			}
 		}
