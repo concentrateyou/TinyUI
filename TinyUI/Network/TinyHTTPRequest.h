@@ -72,27 +72,28 @@ namespace TinyUI
 			void SetTimeout(DWORD dwTimeout);
 			void Add(const string& key, const string& val);
 			void Remove(const string& key);
-			void SetContext(const string& value);
+			void SetContext(CHAR* ps, INT size);
 			void GetResponse();
 		public:
 			string	operator[](const string& key);
 		private:
 			std::vector<TinyHTTPRequest::KeyValue>::const_iterator Lookup(const string& key) const;
 			std::vector<TinyHTTPRequest::KeyValue>::iterator Lookup(const string& key);
-			INT SendHeader();
 		private:
 			void OnHandleConnect(DWORD, AsyncResult*);
 			void OnHandleSend(DWORD, AsyncResult*);
 			void OnHandleError(DWORD);
 		private:
+			DWORD					m_dwOffset;
 			DWORD					m_dwTO;
 			string					m_ms;
-			string					m_context;
 			string					m_line;
 			TinyURL					m_sURL;
 			TinySocket				m_socket;
 			IPEndPoint				m_endpoint;
 			std::vector<KeyValue>	m_attributes;
+			TinyBufferArray<CHAR>	m_request;
+			TinyBufferArray<CHAR>	m_body;
 		};
 	}
 }

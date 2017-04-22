@@ -59,5 +59,39 @@ namespace TinyUI
 		{
 			m_data = NULL;
 		}
+		//////////////////////////////////////////////////////////////////////////
+		DrainableIOBuffer::DrainableIOBuffer(IOBuffer* base)
+			: IOBuffer(base->data(), base->size()),
+			m_base(base),
+			m_bytes(0)
+		{
+
+		}
+
+		void DrainableIOBuffer::SetConsume(INT bytes)
+		{
+			SetOffset(m_bytes + bytes);
+		}
+
+		INT DrainableIOBuffer::Remaining() const
+		{
+			return m_size - m_bytes;
+		}
+
+		INT DrainableIOBuffer::Consume() const
+		{
+			return m_bytes;
+		}
+
+		void DrainableIOBuffer::SetOffset(INT bytes)
+		{
+			m_bytes = bytes;
+			m_data = m_base->data() + m_bytes;
+		}
+
+		DrainableIOBuffer::~DrainableIOBuffer()
+		{
+			m_data = NULL;
+		}
 	}
 }

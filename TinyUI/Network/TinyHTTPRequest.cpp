@@ -65,7 +65,8 @@ namespace TinyUI
 		const CHAR TinyHTTPRequest::TokenBinding[] = "Sec-Token-Binding";
 		const CHAR TinyHTTPRequest::UserAgent[] = "User-Agent";
 		TinyHTTPRequest::TinyHTTPRequest()
-			:m_dwTO(3000)
+			:m_dwTO(3000),
+			m_dwOffset(0)
 		{
 
 		}
@@ -104,12 +105,10 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-
 		void TinyHTTPRequest::SetTimeout(DWORD dwTO)
 		{
 			m_dwTO = dwTO;
 		}
-
 		void TinyHTTPRequest::Remove(const string& key)
 		{
 			std::vector<KeyValue>::const_iterator s = Lookup(key);
@@ -131,10 +130,24 @@ namespace TinyUI
 		{
 			if (m_socket.IsValid())
 			{
+				string output = std::move(m_line);
+				for (std::vector<KeyValue>::const_iterator s = m_attributes.begin(); s != m_attributes.end(); ++s)
+				{
+					if (!s->value.empty())
+					{
+						output.append(StringPrintf("%s: %s\r\n", s->key.c_str(), s->value.c_str()));
+					}
+					else
+					{
+						output.append(StringPrintf("%s:\r\n", s->key.c_str()));
+					}
+				}
+				output.append("\r\n");
+				m_request.Add(&output[0], output.size());
+				m_request.Add(m_body.GetPointer(), m_body.GetSize());
 				m_socket.BeginConnect(m_endpoint, BindCallback(&TinyHTTPRequest::OnHandleConnect, this), this);
 			}
 		}
-
 		void TinyHTTPRequest::Add(const string& key, const string& value)
 		{
 			std::vector<TinyHTTPRequest::KeyValue>::iterator s = Lookup(key);
@@ -147,11 +160,10 @@ namespace TinyUI
 				m_attributes.push_back(KeyValue(key, value));
 			}
 		}
-
-		void TinyHTTPRequest::SetContext(const string& value)
+		void TinyHTTPRequest::SetContext(CHAR* ps, INT size)
 		{
-			Add(ContentLength, StringPrintf("%d", value.size()));
-			m_context = std::move(value);
+			Add(ContentLength, StringPrintf("%d", size));
+			m_body.Add(ps, size);
 		}
 
 		std::vector<TinyHTTPRequest::KeyValue>::const_iterator TinyHTTPRequest::Lookup(const string& key) const
@@ -187,10 +199,13 @@ namespace TinyUI
 			else
 			{
 				m_socket.EndConnect(result);
-
+				if (!m_socket.BeginSend(m_request.GetPointer(), m_request.GetSize(), 0, BindCallback(&TinyHTTPRequest::OnHandleSend, this), this))
+				{
+					OnHandleError(GetLastError());
+				}
 			}
 		}
-		
+
 		void TinyHTTPRequest::OnHandleSend(DWORD dwError, AsyncResult* result)
 		{
 			if (dwError != 0)
@@ -199,26 +214,16 @@ namespace TinyUI
 			}
 			else
 			{
-				m_socket.EndSend(result);
-			}
-		}
-		INT TinyHTTPRequest::SendHeader()
-		{
-			string output = std::move(m_line);
-			for (std::vector<KeyValue>::const_iterator s = m_attributes.begin(); s != m_attributes.end(); ++s)
-			{
-				if (!s->value.empty())
+				DWORD dwRes = m_socket.EndSend(result);
+				if (dwRes < static_cast<DWORD>(m_request.GetSize()))
 				{
-					output.append(StringPrintf("%s: %s\r\n", s->key.c_str(), s->value.c_str()));
-				}
-				else
-				{
-					output.append(StringPrintf("%s:\r\n", s->key.c_str()));
+					m_dwOffset = dwRes;
+					if (!m_socket.BeginSend(m_request.GetPointer() + dwRes, m_request.GetSize() - dwRes, 0, BindCallback(&TinyHTTPRequest::OnHandleSend, this), this))
+					{
+						OnHandleError(GetLastError());
+					}
 				}
 			}
-			output.append("\r\n");
-			INT val = m_socket.BeginSend(&output[0], output.size(), 0, BindCallback(&TinyHTTPRequest::OnHandleSend, this), this);
-			return val;
 		}
 		void TinyHTTPRequest::OnHandleError(DWORD dwError)
 		{

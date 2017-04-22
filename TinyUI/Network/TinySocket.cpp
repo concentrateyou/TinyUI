@@ -513,14 +513,11 @@ namespace TinyUI
 					{
 						goto OVERLAPPED_ERROR;
 					}
-					else
-					{
-						if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEINWAITTHREAD | WT_EXECUTEONLYONCE))
-						{
-							errorCode = GetLastError();
-							goto OVERLAPPED_ERROR;
-						}
-					}
+				}
+				if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEINWAITTHREAD | WT_EXECUTEONLYONCE))
+				{
+					errorCode = GetLastError();
+					goto OVERLAPPED_ERROR;
 				}
 			}
 			return TRUE;
@@ -575,14 +572,11 @@ namespace TinyUI
 					{
 						goto OVERLAPPED_ERROR;
 					}
-					else
-					{
-						if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEINWAITTHREAD | WT_EXECUTEONLYONCE))
-						{
-							errorCode = GetLastError();
-							goto OVERLAPPED_ERROR;
-						}
-					}
+				}
+				if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEINWAITTHREAD | WT_EXECUTEONLYONCE))
+				{
+					errorCode = GetLastError();
+					goto OVERLAPPED_ERROR;
 				}
 			}
 			return TRUE;
@@ -638,14 +632,11 @@ namespace TinyUI
 					{
 						goto OVERLAPPED_ERROR;
 					}
-					else
-					{
-						if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEINWAITTHREAD | WT_EXECUTEONLYONCE))
-						{
-							errorCode = GetLastError();
-							goto OVERLAPPED_ERROR;
-						}
-					}
+				}
+				if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEINWAITTHREAD | WT_EXECUTEONLYONCE))
+				{
+					errorCode = GetLastError();
+					goto OVERLAPPED_ERROR;
 				}
 			}
 			return TRUE;
@@ -710,14 +701,11 @@ namespace TinyUI
 					{
 						goto OVERLAPPED_ERROR;
 					}
-					else
-					{
-						if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEINWAITTHREAD | WT_EXECUTEONLYONCE))
-						{
-							errorCode = GetLastError();
-							goto OVERLAPPED_ERROR;
-						}
-					}
+				}
+				if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEINWAITTHREAD | WT_EXECUTEONLYONCE))
+				{
+					errorCode = GetLastError();
+					goto OVERLAPPED_ERROR;
 				}
 			}
 			return TRUE;
@@ -774,14 +762,11 @@ namespace TinyUI
 					{
 						goto OVERLAPPED_ERROR;
 					}
-					else
-					{
-						if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEINWAITTHREAD | WT_EXECUTEONLYONCE))
-						{
-							errorCode = GetLastError();
-							goto OVERLAPPED_ERROR;
-						}
-					}
+				}
+				if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEINWAITTHREAD | WT_EXECUTEONLYONCE))
+				{
+					errorCode = GetLastError();
+					goto OVERLAPPED_ERROR;
 				}
 			}
 			return TRUE;

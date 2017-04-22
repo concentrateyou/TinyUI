@@ -33,6 +33,20 @@ namespace TinyUI
 			virtual ~StringIOBuffer() OVERRIDE;
 			std::string m_value;
 		};
+
+		class DrainableIOBuffer : public IOBuffer
+		{
+		public:
+			DrainableIOBuffer(IOBuffer* base);
+			INT Remaining() const;
+			INT Consume() const;
+			void SetConsume(INT bytes);
+			void SetOffset(INT bytes);
+		private:
+			~DrainableIOBuffer() OVERRIDE;
+			TinyScopedReferencePtr<IOBuffer> m_base;
+			INT m_bytes;
+		};
 	}
 }
 
