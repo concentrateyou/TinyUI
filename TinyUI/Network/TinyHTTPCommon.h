@@ -1,51 +1,39 @@
 #pragma once
 #include "../Common/TinyCommon.h"
+#include "../Common/TinyString.h"
 #include <string>
 #include <memory>
+#include <vector>
 using namespace TinyUI;
 
 namespace TinyUI
 {
 	namespace Network
 	{
-		class IOBuffer : public TinyReference<IOBuffer>
+		class TinyHTTPAttribute
 		{
-		public:
-			IOBuffer();
-			explicit IOBuffer(INT size);
-			CHAR*	data() const;
-			INT		size() const;
 		protected:
-			friend class TinyReference<IOBuffer>;
-			explicit IOBuffer(CHAR* data, INT size);
-			virtual ~IOBuffer();
-			CHAR*	m_data;
-			INT		m_size;
-		};
-
-		class StringIOBuffer : public IOBuffer
-		{
+			struct KeyValue
+			{
+				KeyValue();
+				KeyValue(const std::string& k, const std::string& v);
+				KeyValue(KeyValue&& other);
+				KeyValue& operator= (KeyValue&& other);
+				std::string key;
+				std::string value;
+			};
+			DISALLOW_COPY_AND_ASSIGN(TinyHTTPAttribute)
 		public:
-			explicit StringIOBuffer(const std::string& s);
-			explicit StringIOBuffer(std::unique_ptr<std::string> s);
-			INT size() const;
-		private:
-			virtual ~StringIOBuffer() OVERRIDE;
-			std::string m_value;
-		};
-
-		class DrainableIOBuffer : public IOBuffer
-		{
+			TinyHTTPAttribute();
+			void Add(const string& key, const string& val);
+			void Remove(const string& key);
 		public:
-			DrainableIOBuffer(IOBuffer* base);
-			INT Remaining() const;
-			INT Consume() const;
-			void SetConsume(INT bytes);
-			void SetOffset(INT bytes);
-		private:
-			~DrainableIOBuffer() OVERRIDE;
-			TinyScopedReferencePtr<IOBuffer> m_base;
-			INT m_bytes;
+			string	operator[](const string& key);
+		public:
+			std::vector<TinyHTTPAttribute::KeyValue>::const_iterator Lookup(const string& key) const;
+			std::vector<TinyHTTPAttribute::KeyValue>::iterator Lookup(const string& key);
+		protected:
+			std::vector<KeyValue>	m_attributes;
 		};
 	}
 }

@@ -11,7 +11,7 @@ namespace TinyUI
 	{
 		class TinyHTTPResponse;
 
-		class TinyHTTPRequest
+		class TinyHTTPRequest : public TinyHTTPAttribute
 		{
 			enum State
 			{
@@ -27,15 +27,6 @@ namespace TinyUI
 				STATE_READ_BODY_COMPLETE,
 				STATE_DONE
 			};
-			struct KeyValue
-			{
-				KeyValue();
-				KeyValue(const std::string& k, const std::string& v);
-				KeyValue(KeyValue&& other);
-				KeyValue& operator= (KeyValue&& other);
-				std::string key;
-				std::string value;
-			};
 			DISALLOW_COPY_AND_ASSIGN(TinyHTTPRequest)
 		public:
 			static const CHAR GET[];
@@ -43,6 +34,7 @@ namespace TinyUI
 			static const CHAR HTTP[];
 			static const CHAR HTTP10[];
 			static const CHAR HTTP11[];
+			static const CHAR HTTP20[];
 			static const CHAR HTTPS[];
 			static const CHAR AcceptCharset[];
 			static const CHAR AcceptEncoding[];
@@ -69,30 +61,27 @@ namespace TinyUI
 		public:
 			TinyHTTPRequest();
 			BOOL Create(const string& szURL, const string& ms);
-			void SetTimeout(DWORD dwTimeout);
-			void Add(const string& key, const string& val);
-			void Remove(const string& key);
-			void SetContext(CHAR* ps, INT size);
-			void GetResponse();
-		public:
-			string	operator[](const string& key);
+			void Close();
+			void SetTimeout(DWORD dwTimeout);	
+			void SetBody(CHAR* ps, INT size);
+			TinyHTTPResponse* GetResponse();
 		private:
-			std::vector<TinyHTTPRequest::KeyValue>::const_iterator Lookup(const string& key) const;
-			std::vector<TinyHTTPRequest::KeyValue>::iterator Lookup(const string& key);
-		private:
+			void BuildRequest();
 			void OnHandleConnect(DWORD, AsyncResult*);
 			void OnHandleSend(DWORD, AsyncResult*);
 			void OnHandleReceive(DWORD, AsyncResult*);
 			void OnHandleError(DWORD);
 		private:
+			BOOL					m_bClose;
+			DWORD					m_dwError;
 			DWORD					m_dwOffset;
 			DWORD					m_dwTO;
 			string					m_ms;
 			string					m_line;
+			TinyEvent				m_event;
 			TinyURL					m_sURL;
 			TinySocket				m_socket;
 			IPEndPoint				m_endpoint;
-			std::vector<KeyValue>	m_attributes;
 			TinyBufferArray<CHAR>	m_request;
 			TinyBufferArray<CHAR>	m_body;
 			TinyScopedArray<CHAR>	m_buffer;

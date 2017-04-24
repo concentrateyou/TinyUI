@@ -63,10 +63,39 @@ namespace TinyUI
 	/// <summary>
 	/// 转小写CHAR
 	/// </summary>
-	template<class Char>
 	inline CHAR ToLowerASCII(CHAR c)
 	{
 		return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
+	}
+	inline CHAR ToUpperASCII(CHAR c)
+	{
+		return (c >= 'a' && c <= 'z') ? (c + ('A' - 'a')) : c;
+	}
+	inline BOOL IsAsciiWhitespace(CHAR c)
+	{
+		return c == ' ' || c == '\r' || c == '\n' || c == '\t';
+	}
+	inline BOOL IsAsciiAlpha(CHAR c)
+	{
+		return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+	}
+	inline BOOL IsAsciiUpper(CHAR c)
+	{
+		return c >= 'A' && c <= 'Z';
+	}
+	inline BOOL IsAsciiLower(CHAR c)
+	{
+		return c >= 'a' && c <= 'z';
+	}
+
+	inline BOOL IsAsciiDigit(CHAR c)
+	{
+		return c >= '0' && c <= '9';
+	}
+
+	inline BOOL IsHexDigit(CHAR c)
+	{
+		return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f');
 	}
 	/// <summary>
 	/// 字符串操作类多字节

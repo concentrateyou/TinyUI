@@ -5,93 +5,87 @@ namespace TinyUI
 {
 	namespace Network
 	{
-		IOBuffer::IOBuffer()
-			: m_data(NULL)
-		{
-		}
-
-		IOBuffer::IOBuffer(INT size)
-			: m_size(size)
-		{
-			m_data = new char[size];
-		}
-
-		IOBuffer::IOBuffer(CHAR* data, INT size)
-			: m_data(data),
-			m_size(size)
-		{
-		}
-
-		IOBuffer::~IOBuffer()
-		{
-			SAFE_DELETE_ARRAY(m_data);
-		}
-
-		CHAR* IOBuffer::data() const
-		{
-			return m_data;
-		}
-		INT	IOBuffer::size() const
-		{
-			return m_size;
-		}
-		//////////////////////////////////////////////////////////////////////////
-		StringIOBuffer::StringIOBuffer(const std::string& s)
-			: IOBuffer(static_cast<CHAR*>(NULL), 0),
-			m_value(std::move(s))
-		{
-			m_data = &m_value[0];
-			m_size = m_value.size();
-		}
-		StringIOBuffer::StringIOBuffer(std::unique_ptr<std::string> s)
-			: IOBuffer(static_cast<char*>(NULL), 0)
-		{
-			m_value.swap(*s.get());
-			m_data = &m_value[0];
-			m_size = m_value.size();
-		}
-
-		INT StringIOBuffer::size() const
-		{
-			return static_cast<int>(m_value.size());
-		}
-		StringIOBuffer::~StringIOBuffer()
-		{
-			m_data = NULL;
-		}
-		//////////////////////////////////////////////////////////////////////////
-		DrainableIOBuffer::DrainableIOBuffer(IOBuffer* base)
-			: IOBuffer(base->data(), base->size()),
-			m_base(base),
-			m_bytes(0)
+		TinyHTTPAttribute::KeyValue::KeyValue()
 		{
 
 		}
-
-		void DrainableIOBuffer::SetConsume(INT bytes)
+		TinyHTTPAttribute::KeyValue::KeyValue(const std::string& k, const std::string& v)
+			: key(std::move(k)),
+			value(std::move(v))
 		{
-			SetOffset(m_bytes + bytes);
+
 		}
-
-		INT DrainableIOBuffer::Remaining() const
+		TinyHTTPAttribute::KeyValue::KeyValue(TinyHTTPAttribute::KeyValue&& other)
+			: key(std::move(other.key)),
+			value(std::move(other.value))
 		{
-			return m_size - m_bytes;
+
 		}
-
-		INT DrainableIOBuffer::Consume() const
+		TinyHTTPAttribute::KeyValue& TinyHTTPAttribute::KeyValue::operator = (TinyHTTPAttribute::KeyValue&& other)
 		{
-			return m_bytes;
+			if (this != &other)
+			{
+				key = std::move(other.key);
+				value = std::move(other.value);
+				other.key.clear();
+				other.value.clear();
+			}
+			return *this;
 		}
-
-		void DrainableIOBuffer::SetOffset(INT bytes)
+		std::vector<TinyHTTPAttribute::KeyValue>::const_iterator TinyHTTPAttribute::Lookup(const string& key) const
 		{
-			m_bytes = bytes;
-			m_data = m_base->data() + m_bytes;
+			for (std::vector<TinyHTTPAttribute::KeyValue>::const_iterator s = m_attributes.begin(); s != m_attributes.end(); ++s)
+			{
+				if (strncasecmp(key.c_str(), s->key.c_str(), key.size()) == 0)
+				{
+					return s;
+				}
+			}
+			return m_attributes.end();
 		}
-
-		DrainableIOBuffer::~DrainableIOBuffer()
+		TinyHTTPAttribute::TinyHTTPAttribute()
 		{
-			m_data = NULL;
+
+		}
+		void TinyHTTPAttribute::Add(const string& key, const string& value)
+		{
+			std::vector<TinyHTTPAttribute::KeyValue>::iterator s = Lookup(key);
+			if (s != m_attributes.end())
+			{
+				s->value = std::move(value);
+			}
+			else
+			{
+				m_attributes.push_back(KeyValue(key, value));
+			}
+		}
+		void TinyHTTPAttribute::Remove(const string& key)
+		{
+			std::vector<KeyValue>::const_iterator s = Lookup(key);
+			if (s != m_attributes.end())
+			{
+				m_attributes.erase(s);
+			}
+		}
+		string TinyHTTPAttribute::operator[](const string& key)
+		{
+			std::vector<KeyValue>::const_iterator s = Lookup(key);
+			if (s != m_attributes.end())
+			{
+				return s->value;
+			}
+			return string();
+		}
+		std::vector<TinyHTTPAttribute::KeyValue>::iterator TinyHTTPAttribute::Lookup(const string& key)
+		{
+			for (std::vector<TinyHTTPAttribute::KeyValue>::iterator s = m_attributes.begin(); s != m_attributes.end(); ++s)
+			{
+				if (strncasecmp(key.c_str(), s->key.c_str(), key.size()) == 0)
+				{
+					return s;
+				}
+			}
+			return m_attributes.end();
 		}
 	}
 }

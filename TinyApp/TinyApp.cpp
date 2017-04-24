@@ -118,10 +118,11 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadSeDebugPrivilege();
 
 	TinyHTTPRequest request;
-	if (request.Create("http://www.toutiao.com/a6411506088949121281/", TinyHTTPRequest::GET))
+	if (request.Create("http://www.toutiao.com/a641150608894912111/", TinyHTTPRequest::GET))
 	{
 		request.Add(TinyHTTPRequest::Connection, "close");
-		request.GetResponse();
+		TinyHTTPResponse* ps = request.GetResponse();
+		ps->Close();
 	}
 
 	::DefWindowProc(NULL, 0, 0, 0L);

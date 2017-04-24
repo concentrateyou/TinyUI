@@ -8,39 +8,12 @@ namespace TinyUI
 {
 	namespace Network
 	{
-		TinyHTTPRequest::KeyValue::KeyValue()
-		{
-
-		}
-		TinyHTTPRequest::KeyValue::KeyValue(const std::string& k, const std::string& v)
-			: key(std::move(k)),
-			value(std::move(v))
-		{
-
-		}
-		TinyHTTPRequest::KeyValue::KeyValue(TinyHTTPRequest::KeyValue&& other)
-			: key(std::move(other.key)),
-			value(std::move(other.value))
-		{
-
-		}
-		TinyHTTPRequest::KeyValue& TinyHTTPRequest::KeyValue::operator = (TinyHTTPRequest::KeyValue&& other)
-		{
-			if (this != &other)
-			{
-				key = std::move(other.key);
-				value = std::move(other.value);
-				other.key.clear();
-				other.value.clear();
-			}
-			return *this;
-		}
-		//////////////////////////////////////////////////////////////////////////
 		const CHAR TinyHTTPRequest::GET[] = "GET";
 		const CHAR TinyHTTPRequest::POST[] = "POST";
 		const CHAR TinyHTTPRequest::HTTP[] = "HTTP";
 		const CHAR TinyHTTPRequest::HTTP10[] = "HTTP/1.0";
 		const CHAR TinyHTTPRequest::HTTP11[] = "HTTP/1.1";
+		const CHAR TinyHTTPRequest::HTTP20[] = "HTTP/2.0";
 		const CHAR TinyHTTPRequest::HTTPS[] = "HTTPS";
 		const CHAR TinyHTTPRequest::AcceptCharset[] = "Accept-Charset";
 		const CHAR TinyHTTPRequest::AcceptEncoding[] = "Accept-Encoding";
@@ -64,13 +37,16 @@ namespace TinyUI
 		const CHAR TinyHTTPRequest::TransferEncoding[] = "Transfer-Encoding";
 		const CHAR TinyHTTPRequest::TokenBinding[] = "Sec-Token-Binding";
 		const CHAR TinyHTTPRequest::UserAgent[] = "User-Agent";
+
 		TinyHTTPRequest::TinyHTTPRequest()
 			:m_dwTO(3000),
-			m_dwOffset(0)
+			m_dwOffset(0),
+			m_dwError(S_OK),
+			m_bClose(TRUE)
 		{
 			m_buffer.Reset(new CHAR[8192]);
+			m_event.CreateEvent();
 		}
-
 		BOOL TinyHTTPRequest::Create(const string& szURL, const string& ms)
 		{
 			m_ms = std::move(ms);
@@ -95,7 +71,7 @@ namespace TinyUI
 				m_endpoint.FromIPAddress(IPAddress(host), port.empty() ? (strcasecmp(scheme.c_str(), HTTP) == 0 ? 80 : 443) : static_cast<SHORT>(atoi(port.c_str())));
 			}
 			string all = m_sURL.GetComponent(TinyURL::FULLPATH);
-			m_line = StringPrintf("%s %s HTTP/1.1\r\n", m_ms.c_str(), all.empty() ? "/" : all.c_str());
+			m_line = StringPrintf("%s %s %s\r\n", m_ms.c_str(), all.empty() ? "/" : all.c_str(), TinyHTTPRequest::HTTP11);
 			if (m_socket.Open())
 			{
 				m_socket.SetDelay(FALSE);
@@ -109,89 +85,36 @@ namespace TinyUI
 		{
 			m_dwTO = dwTO;
 		}
-		void TinyHTTPRequest::Remove(const string& key)
+		void TinyHTTPRequest::Close()
 		{
-			std::vector<KeyValue>::const_iterator s = Lookup(key);
-			if (s != m_attributes.end())
-			{
-				m_attributes.erase(s);
-			}
+			m_socket.Shutdown();
+			m_socket.Close();
 		}
-		string TinyHTTPRequest::operator[](const string& key)
-		{
-			std::vector<KeyValue>::const_iterator s = Lookup(key);
-			if (s != m_attributes.end())
-			{
-				return s->value;
-			}
-			return string();
-		}
-		void TinyHTTPRequest::GetResponse()
+		TinyHTTPResponse* TinyHTTPRequest::GetResponse()
 		{
 			if (m_socket.IsValid())
 			{
-				string output = std::move(m_line);
-				for (std::vector<KeyValue>::const_iterator s = m_attributes.begin(); s != m_attributes.end(); ++s)
-				{
-					if (!s->value.empty())
-					{
-						output.append(StringPrintf("%s: %s\r\n", s->key.c_str(), s->value.c_str()));
-					}
-					else
-					{
-						output.append(StringPrintf("%s:\r\n", s->key.c_str()));
-					}
-				}
-				output.append("\r\n");
-				m_request.Clear();
-				m_request.Add(&output[0], output.size());
-				m_request.Add(m_body.GetPointer(), m_body.GetSize());
-				m_body.Clear();
+				BuildRequest();
 				m_socket.BeginConnect(m_endpoint, BindCallback(&TinyHTTPRequest::OnHandleConnect, this), this);
+				if (m_event.Lock(INFINITE) && m_dwError == S_OK)
+				{
+					TinyHTTPResponse* response = new TinyHTTPResponse();
+					if (response->ParseResponse(m_response.GetPointer(), m_response.GetSize()))
+					{
+						return response;
+					}
+					response->Close();
+				}
 			}
+			return NULL;
 		}
-		void TinyHTTPRequest::Add(const string& key, const string& value)
+
+		void TinyHTTPRequest::SetBody(CHAR* ps, INT size)
 		{
-			std::vector<TinyHTTPRequest::KeyValue>::iterator s = Lookup(key);
-			if (s != m_attributes.end())
-			{
-				s->value = std::move(value);
-			}
-			else
-			{
-				m_attributes.push_back(KeyValue(key, value));
-			}
-		}
-		void TinyHTTPRequest::SetContext(CHAR* ps, INT size)
-		{
+			m_body.Clear();
 			Add(ContentLength, StringPrintf("%d", size));
 			m_body.Add(ps, size);
 		}
-
-		std::vector<TinyHTTPRequest::KeyValue>::const_iterator TinyHTTPRequest::Lookup(const string& key) const
-		{
-			for (std::vector<TinyHTTPRequest::KeyValue>::const_iterator s = m_attributes.begin(); s != m_attributes.end(); ++s)
-			{
-				if (strncasecmp(key.c_str(), s->key.c_str(), key.size()) == 0)
-				{
-					return s;
-				}
-			}
-			return m_attributes.end();
-		}
-
-		std::vector<TinyHTTPRequest::KeyValue>::iterator TinyHTTPRequest::Lookup(const string& key)
-		{
-			for (std::vector<TinyHTTPRequest::KeyValue>::iterator s = m_attributes.begin(); s != m_attributes.end(); ++s)
-			{
-				if (strncasecmp(key.c_str(), s->key.c_str(), key.size()) == 0)
-				{
-					return s;
-				}
-			}
-			return m_attributes.end();
-		}
-
 		void TinyHTTPRequest::OnHandleConnect(DWORD dwError, AsyncResult* result)
 		{
 			if (dwError != 0)
@@ -207,7 +130,6 @@ namespace TinyUI
 				}
 			}
 		}
-
 		void TinyHTTPRequest::OnHandleSend(DWORD dwError, AsyncResult* result)
 		{
 			if (dwError != 0)
@@ -254,13 +176,43 @@ namespace TinyUI
 				}
 				else
 				{
-					
+					if (m_bClose)
+					{
+						this->Close();
+					}
+					m_event.SetEvent();
 				}
 			}
 		}
 		void TinyHTTPRequest::OnHandleError(DWORD dwError)
 		{
-
+			m_dwError = dwError;
+			this->Close();
+			m_event.SetEvent();
+		}
+		void TinyHTTPRequest::BuildRequest()
+		{
+			string output = std::move(m_line);
+			for (std::vector<KeyValue>::const_iterator s = m_attributes.begin(); s != m_attributes.end(); ++s)
+			{
+				if (s->key == Connection && s->value == string("close"))
+				{
+					m_bClose = TRUE;
+				}
+				if (!s->value.empty())
+				{
+					output.append(StringPrintf("%s: %s\r\n", s->key.c_str(), s->value.c_str()));
+				}
+				else
+				{
+					output.append(StringPrintf("%s:\r\n", s->key.c_str()));
+				}
+			}
+			output.append("\r\n");
+			m_request.Clear();
+			m_request.Add(&output[0], output.size());
+			m_request.Add(m_body.GetPointer(), m_body.GetSize());
+			m_body.Clear();
 		}
 	}
 }
