@@ -1633,10 +1633,9 @@ namespace TinyUI
 		BOOL	Copy(T* value, INT size);
 		void	Clear();
 		T&		operator[](INT index);
-	public:
-		INT		m_size;
-		T*		m_value;
 	private:
+		T*		m_value;
+		INT		m_size;
 		INT		m_alloc_size;
 	};
 	template<class T>

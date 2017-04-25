@@ -44,7 +44,7 @@ namespace TinyUI
 			m_dwError(S_OK),
 			m_bClose(TRUE)
 		{
-			m_buffer.Reset(new CHAR[8192]);
+			m_raw.Reset(new CHAR[8192]);
 			m_event.CreateEvent();
 		}
 		BOOL TinyHTTPRequest::Create(const string& szURL, const string& ms)
@@ -150,7 +150,7 @@ namespace TinyUI
 				}
 				else
 				{
-					if (!m_socket.BeginReceive(m_buffer, 8192, 0, BindCallback(&TinyHTTPRequest::OnHandleReceive, this), this))
+					if (!m_socket.BeginReceive(m_raw, 8192, 0, BindCallback(&TinyHTTPRequest::OnHandleReceive, this), this))
 					{
 						OnHandleError(GetLastError());
 					}
@@ -168,8 +168,8 @@ namespace TinyUI
 				DWORD dwRes = m_socket.EndReceive(result);
 				if (dwRes > 0)
 				{
-					m_response.Add(m_buffer, dwRes);
-					if (!m_socket.BeginReceive(m_buffer, 8192, 0, BindCallback(&TinyHTTPRequest::OnHandleReceive, this), this))
+					m_response.Add(m_raw, dwRes);
+					if (!m_socket.BeginReceive(m_raw, 8192, 0, BindCallback(&TinyHTTPRequest::OnHandleReceive, this), this))
 					{
 						OnHandleError(GetLastError());
 					}

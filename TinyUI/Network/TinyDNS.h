@@ -13,7 +13,7 @@ namespace TinyUI
 		public:
 			TinyDNS();
 		public:
-			BOOL Resolver(const string& host, const string& service, AddressList& list, INT addressFamily = AF_UNSPEC);
+			BOOL Resolver(const string& host, const string& service, AddressList& list, INT addressFamily = AF_UNSPEC);	
 		};
 	}
 }

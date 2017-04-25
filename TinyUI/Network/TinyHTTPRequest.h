@@ -82,9 +82,9 @@ namespace TinyUI
 			TinyURL					m_sURL;
 			TinySocket				m_socket;
 			IPEndPoint				m_endpoint;
+			TinyScopedArray<CHAR>	m_raw;
 			TinyBufferArray<CHAR>	m_request;
 			TinyBufferArray<CHAR>	m_body;
-			TinyScopedArray<CHAR>	m_buffer;
 			TinyBufferArray<CHAR>	m_response;
 		};
 	}
