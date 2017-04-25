@@ -263,7 +263,6 @@
     <ClInclude Include="Media\TinyWASAPIAudioRender.h" />
     <ClInclude Include="Media\TinyWave.h" />
     <ClInclude Include="Network\TinyDNS.h" />
-    <ClInclude Include="Network\TinyHTTPClient.h" />
     <ClInclude Include="Network\TinyHTTPCommon.h" />
     <ClInclude Include="Network\TinyHTTPRequest.h" />
     <ClInclude Include="Network\TinyHTTPResponse.h" />
@@ -400,7 +399,6 @@
     <ClCompile Include="Media\TinyWASAPIAudioRender.cpp" />
     <ClCompile Include="Media\TinyWave.cpp" />
     <ClCompile Include="Network\TinyDNS.cpp" />
-    <ClCompile Include="Network\TinyHTTPClient.cpp" />
     <ClCompile Include="Network\TinyHTTPCommon.cpp" />
     <ClCompile Include="Network\TinyHTTPRequest.cpp" />
     <ClCompile Include="Network\TinyHTTPResponse.cpp" />

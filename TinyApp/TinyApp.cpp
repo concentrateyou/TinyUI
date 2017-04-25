@@ -14,13 +14,13 @@
 #include "Media/TinyAudioDSPCapture.h"
 #include "Network/TinyIOServer.h"
 #include "Network/TinySocket.h"
-#include "Network/TinyHTTPClient.h"
 #include "Media/TinyWave.h"
 #include "Common/TinyHook.h"
 #include "Media/TinyMFMP3Decode.h"
 #include "MPG123Decode.h"
 #include "Media/TinyMP3File.h"
 #include "Network/TinyHTTPRequest.h"
+#include "Network/TinyHTTPResponse.h"
 #include "Network/TinyURL.h"
 #include "Network/TinyDNS.h"
 #include "MediaTest.h"
@@ -122,7 +122,10 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	{
 		request.Add(TinyHTTPRequest::Connection, "close");
 		TinyHTTPResponse* ps = request.GetResponse();
-		ps->Close();
+		if (ps)
+		{
+			ps->Close();
+		}
 	}
 
 	::DefWindowProc(NULL, 0, 0, 0L);
