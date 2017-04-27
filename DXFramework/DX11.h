@@ -11,6 +11,8 @@ namespace DXFramework
 		~DX11();
 		BOOL Initialize(HWND hWND, INT x, INT y, INT cx, INT cy);
 		BOOL ResizeView(INT cx = 0, INT cy = 0);
+		BOOL SetViewport(const TinyPoint& pos, const TinySize& size);
+		void SetMatrixs(const TinySize& size);
 		void BeginDraw(ID3D11RenderTargetView* pView = NULL);
 		void EndDraw();
 		void AllowDepth(BOOL allow);

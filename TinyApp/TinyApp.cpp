@@ -118,7 +118,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadSeDebugPrivilege();
 
 	//udp://238.1.1.36:10036:192.168.100.212
-	string val = "udp://238.1.1.36:10036:192.168.100.212";
+	/*string val = "udp://238.1.1.36:10036:192.168.100.212";
 	if (strncasecmp(val.c_str(), "udp://", 6) == 0)
 	{
 		string val1 = val.substr(6, val.size() - 6);
@@ -131,7 +131,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 				INT a = 0;
 			}
 		}
-	}
+	}*/
 	/*TinyHTTPRequest request;
 	if (request.Create("http://m.haiwainet.cb/ttc/3541093/2017/0425/content_30880045_1.html", TinyHTTPRequest::GET))
 	{

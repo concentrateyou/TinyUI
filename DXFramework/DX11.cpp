@@ -113,19 +113,19 @@ namespace DXFramework
 		if (hRes != S_OK)
 			return FALSE;
 		m_immediateContext->RSSetState(m_rasterizerState);
-		D3D11_VIEWPORT viewport = { 0 };
-		viewport.Width = static_cast<FLOAT>(cx);
-		viewport.Height = static_cast<FLOAT>(cy);
-		viewport.MinDepth = 0.0F;
-		viewport.MaxDepth = 1.0F;
-		viewport.TopLeftX = 0.0F;
-		viewport.TopLeftY = 0.0F;
-		m_immediateContext->RSSetViewports(1, &viewport);
-		FLOAT fov = (FLOAT)D3DX_PI / 4.0F;
-		FLOAT aspect = (FLOAT)cx / (FLOAT)cy;
-		m_projectionMatrix = XMMatrixPerspectiveFovLH(fov, aspect, 1000.0F, 0.1F);
-		m_worldMatrix = XMMatrixIdentity();
-		m_orthoMatrix = XMMatrixOrthographicLH((FLOAT)cx, (FLOAT)cy, 1000.0F, 0.1F);
+		/*	D3D11_VIEWPORT viewport = { 0 };
+			viewport.Width = static_cast<FLOAT>(cx);
+			viewport.Height = static_cast<FLOAT>(cy);
+			viewport.MinDepth = 0.0F;
+			viewport.MaxDepth = 1.0F;
+			viewport.TopLeftX = 0.0F;
+			viewport.TopLeftY = 0.0F;
+			m_immediateContext->RSSetViewports(1, &viewport);
+			FLOAT fov = (FLOAT)D3DX_PI / 4.0F;
+			FLOAT aspect = (FLOAT)cx / (FLOAT)cy;
+			m_projectionMatrix = XMMatrixPerspectiveFovLH(fov, aspect, 1000.0F, 0.1F);
+			m_worldMatrix = XMMatrixIdentity();
+			m_orthoMatrix = XMMatrixOrthographicLH((FLOAT)cx, (FLOAT)cy, 1000.0F, 0.1F);*/
 		D3D11_DEPTH_STENCIL_DESC disableDepthStencilDesc;
 		ZeroMemory(&disableDepthStencilDesc, sizeof(disableDepthStencilDesc));
 		disableDepthStencilDesc.DepthEnable = FALSE;
@@ -208,20 +208,6 @@ namespace DXFramework
 		hRes = m_d3d->CreateDepthStencilView(m_depthStencilBuffer, &depthStencilViewDesc, &m_depthStencilView);
 		if (hRes != S_OK)
 			return FALSE;
-		//更新视口
-		D3D11_VIEWPORT viewport;
-		viewport.Width = static_cast<FLOAT>(m_size.cx);
-		viewport.Height = static_cast<FLOAT>(m_size.cy);
-		viewport.MinDepth = 0.0F;
-		viewport.MaxDepth = 1.0F;
-		viewport.TopLeftX = 0.0F;
-		viewport.TopLeftY = 0.0F;
-		m_immediateContext->RSSetViewports(1, &viewport);
-		FLOAT fov = (FLOAT)D3DX_PI / 4.0F;
-		FLOAT aspect = (FLOAT)m_size.cx / (FLOAT)m_size.cy;
-		m_projectionMatrix = XMMatrixPerspectiveFovLH(fov, aspect, 1000.0F, 0.1F);
-		m_worldMatrix = XMMatrixIdentity();
-		m_orthoMatrix = XMMatrixOrthographicLH((FLOAT)cx, (FLOAT)cy, 1000.0F, 0.1F);
 		m_renderTexture.Release();
 		D3D11_TEXTURE2D_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
@@ -251,7 +237,31 @@ namespace DXFramework
 			FLOAT color[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
 			m_immediateContext->ClearRenderTargetView(pView, color);
 			m_immediateContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0F, 0);
+			this->SetViewport(TinyPoint(0, 0), m_size);
+			this->SetMatrixs(m_size);
 		}
+	}
+	void DX11::SetMatrixs(const TinySize& size)
+	{
+		FLOAT fov = (FLOAT)D3DX_PI / 4.0F;
+		FLOAT aspect = (FLOAT)size.cx / (FLOAT)size.cy;
+		m_projectionMatrix = XMMatrixPerspectiveFovLH(fov, aspect, 1000.0F, 0.1F);
+		m_worldMatrix = XMMatrixIdentity();
+		m_orthoMatrix = XMMatrixOrthographicLH((FLOAT)size.cx, (FLOAT)size.cy, 1000.0F, 0.1F);
+	}
+	BOOL DX11::SetViewport(const TinyPoint& pos, const TinySize& size)
+	{
+		if (!m_immediateContext)
+			return FALSE;
+		D3D11_VIEWPORT viewport;
+		viewport.Width = static_cast<FLOAT>(size.cx);
+		viewport.Height = static_cast<FLOAT>(size.cy);
+		viewport.MinDepth = 0.0F;
+		viewport.MaxDepth = 1.0F;
+		viewport.TopLeftX = static_cast<FLOAT>(pos.x);
+		viewport.TopLeftY = static_cast<FLOAT>(pos.y);
+		m_immediateContext->RSSetViewports(1, &viewport);
+		return TRUE;
 	}
 	void DX11::EndDraw()
 	{
