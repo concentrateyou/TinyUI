@@ -100,7 +100,9 @@ namespace DShow
 	{
 		Deallocate();
 		if (m_control)
+		{
 			m_control->Pause();
+		}
 		if (m_builder)
 		{
 			m_builder->RemoveFilter(m_sinkFilter);
