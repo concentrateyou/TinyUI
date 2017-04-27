@@ -113,19 +113,6 @@ namespace DXFramework
 		if (hRes != S_OK)
 			return FALSE;
 		m_immediateContext->RSSetState(m_rasterizerState);
-		/*	D3D11_VIEWPORT viewport = { 0 };
-			viewport.Width = static_cast<FLOAT>(cx);
-			viewport.Height = static_cast<FLOAT>(cy);
-			viewport.MinDepth = 0.0F;
-			viewport.MaxDepth = 1.0F;
-			viewport.TopLeftX = 0.0F;
-			viewport.TopLeftY = 0.0F;
-			m_immediateContext->RSSetViewports(1, &viewport);
-			FLOAT fov = (FLOAT)D3DX_PI / 4.0F;
-			FLOAT aspect = (FLOAT)cx / (FLOAT)cy;
-			m_projectionMatrix = XMMatrixPerspectiveFovLH(fov, aspect, 1000.0F, 0.1F);
-			m_worldMatrix = XMMatrixIdentity();
-			m_orthoMatrix = XMMatrixOrthographicLH((FLOAT)cx, (FLOAT)cy, 1000.0F, 0.1F);*/
 		D3D11_DEPTH_STENCIL_DESC disableDepthStencilDesc;
 		ZeroMemory(&disableDepthStencilDesc, sizeof(disableDepthStencilDesc));
 		disableDepthStencilDesc.DepthEnable = FALSE;
