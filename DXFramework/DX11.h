@@ -15,7 +15,6 @@ namespace DXFramework
 		void SetMatrixs(const TinySize& size);
 		void BeginDraw(ID3D11RenderTargetView* pView = NULL);
 		void EndDraw();
-		void AllowDepth(BOOL allow);
 		ID3D11Device*			GetD3D() const;
 		ID3D11DeviceContext*	GetImmediateContext() const;
 		IDXGISwapChain*			GetSwap() const;
@@ -36,7 +35,6 @@ namespace DXFramework
 		TinyComPtr<ID3D11Device>			m_d3d;
 		TinyComPtr<ID3D11DeviceContext>		m_immediateContext;
 		TinyComPtr<ID3D11DepthStencilState>	m_depthStencilState;
-		TinyComPtr<ID3D11DepthStencilState> m_disableDepthState;
 		TinyComPtr<ID3D11RasterizerState>	m_rasterizerState;
 		HWND								m_hWND;
 		TinyPoint							m_pos;

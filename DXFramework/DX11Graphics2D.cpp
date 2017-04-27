@@ -47,7 +47,6 @@ namespace DXFramework
 	}
 	void DX11Graphics2D::EndDraw()
 	{
-		m_dx11.AllowDepth(TRUE);
 		m_dx11.EndDraw();
 	}
 	BOOL DX11Graphics2D::Resize(const TinySize& size)

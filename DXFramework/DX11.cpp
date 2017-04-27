@@ -75,23 +75,23 @@ namespace DXFramework
 		hRes = m_d3d->CreateTexture2D(&depthBufferDesc, NULL, &m_depthStencilBuffer);
 		if (hRes != S_OK)
 			return FALSE;
-		D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
-		ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
-		depthStencilDesc.DepthEnable = TRUE;
-		depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-		depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
-		depthStencilDesc.StencilEnable = TRUE;
-		depthStencilDesc.StencilReadMask = 0xFF;
-		depthStencilDesc.StencilWriteMask = 0xFF;
-		depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-		depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-		depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-		depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-		hRes = m_d3d->CreateDepthStencilState(&depthStencilDesc, &m_depthStencilState);
+		D3D11_DEPTH_STENCIL_DESC enableDepthStencilDesc;
+		ZeroMemory(&enableDepthStencilDesc, sizeof(enableDepthStencilDesc));
+		enableDepthStencilDesc.DepthEnable = TRUE;
+		enableDepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+		enableDepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+		enableDepthStencilDesc.StencilEnable = TRUE;
+		enableDepthStencilDesc.StencilReadMask = 0xFF;
+		enableDepthStencilDesc.StencilWriteMask = 0xFF;
+		enableDepthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		enableDepthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+		enableDepthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		enableDepthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+		enableDepthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		enableDepthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+		enableDepthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		enableDepthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+		hRes = m_d3d->CreateDepthStencilState(&enableDepthStencilDesc, &m_depthStencilState);
 		if (hRes != S_OK)
 			return FALSE;
 		m_immediateContext->OMSetDepthStencilState(m_depthStencilState, 1);
@@ -113,25 +113,6 @@ namespace DXFramework
 		if (hRes != S_OK)
 			return FALSE;
 		m_immediateContext->RSSetState(m_rasterizerState);
-		D3D11_DEPTH_STENCIL_DESC disableDepthStencilDesc;
-		ZeroMemory(&disableDepthStencilDesc, sizeof(disableDepthStencilDesc));
-		disableDepthStencilDesc.DepthEnable = FALSE;
-		disableDepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-		disableDepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
-		disableDepthStencilDesc.StencilEnable = TRUE;
-		disableDepthStencilDesc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
-		disableDepthStencilDesc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
-		disableDepthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		disableDepthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-		disableDepthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		disableDepthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-		disableDepthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		disableDepthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-		disableDepthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		disableDepthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-		hRes = m_d3d->CreateDepthStencilState(&disableDepthStencilDesc, &m_disableDepthState);
-		if (hRes != S_OK)
-			return FALSE;
 		D3D11_TEXTURE2D_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
 		desc.Width = m_size.cx;
@@ -259,13 +240,6 @@ namespace DXFramework
 		if (m_immediateContext != NULL)
 		{
 			m_immediateContext->Flush();
-		}
-	}
-	void DX11::AllowDepth(BOOL allow)
-	{
-		if (m_immediateContext != NULL)
-		{
-			m_immediateContext->OMSetDepthStencilState(allow ? m_depthStencilState : m_disableDepthState, 1);
 		}
 	}
 	ID3D11Device* DX11::GetD3D() const
