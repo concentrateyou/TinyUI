@@ -11,7 +11,7 @@ namespace DXFramework
 		~DX11();
 		BOOL Initialize(HWND hWND, INT cx, INT cy);
 		BOOL ResizeView(INT cx = 0, INT cy = 0);
-		BOOL SetViewport(const TinyPoint& pos, const TinySize& size);
+		void SetViewport(const TinyPoint& pos, const TinySize& size);
 		void SetMatrixs(const TinySize& size);
 		void BeginDraw();
 		void EndDraw();

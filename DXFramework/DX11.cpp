@@ -127,6 +127,8 @@ namespace DXFramework
 		hRes = m_d3d->CreateTexture2D(&desc, NULL, &m_renderTexture);
 		if (hRes != S_OK)
 			return FALSE;
+		this->SetViewport(TinyPoint(0, 0), m_size);
+		this->SetMatrixs(m_size);
 		return TRUE;
 	}
 	BOOL DX11::ResizeView(INT cx, INT cy)
@@ -216,19 +218,19 @@ namespace DXFramework
 		m_matrixs[1] = XMMatrixIdentity();
 		m_matrixs[2] = XMMatrixOrthographicLH((FLOAT)size.cx, (FLOAT)size.cy, 1000.0F, 0.1F);
 	}
-	BOOL DX11::SetViewport(const TinyPoint& pos, const TinySize& size)
+	void DX11::SetViewport(const TinyPoint& pos, const TinySize& size)
 	{
-		if (!m_immediateContext)
-			return FALSE;
-		D3D11_VIEWPORT viewport;
-		viewport.Width = static_cast<FLOAT>(size.cx);
-		viewport.Height = static_cast<FLOAT>(size.cy);
-		viewport.MinDepth = 0.0F;
-		viewport.MaxDepth = 1.0F;
-		viewport.TopLeftX = static_cast<FLOAT>(pos.x);
-		viewport.TopLeftY = static_cast<FLOAT>(pos.y);
-		m_immediateContext->RSSetViewports(1, &viewport);
-		return TRUE;
+		if (m_immediateContext != NULL)
+		{
+			D3D11_VIEWPORT viewport;
+			viewport.Width = static_cast<FLOAT>(size.cx);
+			viewport.Height = static_cast<FLOAT>(size.cy);
+			viewport.MinDepth = 0.0F;
+			viewport.MaxDepth = 1.0F;
+			viewport.TopLeftX = static_cast<FLOAT>(pos.x);
+			viewport.TopLeftY = static_cast<FLOAT>(pos.y);
+			m_immediateContext->RSSetViewports(1, &viewport);
+		}
 	}
 	void DX11::EndDraw()
 	{
