@@ -68,7 +68,7 @@ namespace DXFramework
 		lookAtVector = XMVectorAdd(positionVector, lookAtVector);
 		m_viewMatrix = XMMatrixLookAtLH(positionVector, lookAtVector, upVector);
 	}
-	XMMATRIX DXCamera::GetViewMatrix()
+	XMMATRIX DXCamera::GetView()
 	{
 		return m_viewMatrix;
 	}

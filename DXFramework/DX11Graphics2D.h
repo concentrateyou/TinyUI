@@ -31,10 +31,6 @@ namespace DXFramework
 		TinyScopedPtr<BYTE>		m_bits;
 		DX11					m_dx11;
 		DXCamera				m_camera;
-		XMMATRIX				m_viewMatrix;
-		XMMATRIX				m_worldMatrix;
-		XMMATRIX				m_projectionMatrix;
-		XMMATRIX				m_orthoMatrix;
 		DX11TextureShader		m_textureShader;
 		DX11ColorShader			m_colorShader;
 	};

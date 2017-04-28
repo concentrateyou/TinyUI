@@ -213,9 +213,9 @@ namespace DXFramework
 	{
 		FLOAT fov = (FLOAT)D3DX_PI / 4.0F;
 		FLOAT aspect = (FLOAT)size.cx / (FLOAT)size.cy;
-		m_projectionMatrix = XMMatrixPerspectiveFovLH(fov, aspect, 1000.0F, 0.1F);
-		m_worldMatrix = XMMatrixIdentity();
-		m_orthoMatrix = XMMatrixOrthographicLH((FLOAT)size.cx, (FLOAT)size.cy, 1000.0F, 0.1F);
+		m_matrixs[0] = XMMatrixPerspectiveFovLH(fov, aspect, 1000.0F, 0.1F);
+		m_matrixs[1] = XMMatrixIdentity();
+		m_matrixs[2] = XMMatrixOrthographicLH((FLOAT)size.cx, (FLOAT)size.cy, 1000.0F, 0.1F);
 	}
 	BOOL DX11::SetViewport(const TinyPoint& pos, const TinySize& size)
 	{
@@ -236,10 +236,6 @@ namespace DXFramework
 		if (m_swap != NULL)
 		{
 			m_swap->Present(0, 0);
-		}
-		if (m_immediateContext != NULL)
-		{
-			m_immediateContext->Flush();
 		}
 	}
 	ID3D11Device* DX11::GetD3D() const
@@ -274,16 +270,8 @@ namespace DXFramework
 	{
 		return m_size;
 	}
-	XMMATRIX DX11::GetProjectionMatrix()
+	XMMATRIX* DX11::GetMatrixs()
 	{
-		return m_projectionMatrix;
-	}
-	XMMATRIX DX11::GetWorldMatrix()
-	{
-		return m_worldMatrix;
-	}
-	XMMATRIX DX11::GetOrthoMatrix()
-	{
-		return m_orthoMatrix;
+		return m_matrixs;
 	}
 }

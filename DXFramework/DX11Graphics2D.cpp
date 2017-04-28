@@ -40,10 +40,6 @@ namespace DXFramework
 	{
 		m_dx11.BeginDraw(pView);
 		m_camera.UpdatePosition();
-		m_viewMatrix = m_camera.GetViewMatrix();
-		m_worldMatrix = m_dx11.GetWorldMatrix();
-		m_orthoMatrix = m_dx11.GetOrthoMatrix();
-		m_projectionMatrix = m_dx11.GetProjectionMatrix();
 	}
 	void DX11Graphics2D::EndDraw()
 	{
@@ -66,7 +62,8 @@ namespace DXFramework
 			return FALSE;
 		if (ps->Render(m_dx11))
 		{
-			m_textureShader.Render(m_dx11, ps->GetIndexCount(), m_worldMatrix, m_viewMatrix, m_orthoMatrix, ps->GetTexture());
+			XMMATRIX* ms = m_dx11.GetMatrixs();
+			m_textureShader.Render(m_dx11, ps->GetIndexCount(), ms[1], m_camera.GetView(), ms[2], ps->GetTexture());
 			return TRUE;
 		}
 		return FALSE;
@@ -78,7 +75,8 @@ namespace DXFramework
 			return FALSE;
 		if (ps->Render(m_dx11))
 		{
-			m_colorShader.Render(m_dx11, ps->GetIndexCount(), m_worldMatrix, m_viewMatrix, m_orthoMatrix);
+			XMMATRIX* ms = m_dx11.GetMatrixs();
+			m_colorShader.Render(m_dx11, ps->GetIndexCount(), ms[1], m_camera.GetView(), ms[2]);
 			return TRUE;
 		}
 		return FALSE;
