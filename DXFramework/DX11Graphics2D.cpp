@@ -14,7 +14,7 @@ namespace DXFramework
 
 	BOOL DX11Graphics2D::Initialize(HWND hWND, const TinySize& size)
 	{
-		if (!m_dx11.Initialize(hWND, 0, 0, size.cx, size.cy))
+		if (!m_dx11.Initialize(hWND, size.cx, size.cy))
 			return FALSE;
 		string str;
 		str.resize(MAX_PATH);
@@ -36,9 +36,9 @@ namespace DXFramework
 		return TRUE;
 	}
 
-	void DX11Graphics2D::BeginDraw(ID3D11RenderTargetView* pView)
+	void DX11Graphics2D::BeginDraw()
 	{
-		m_dx11.BeginDraw(pView);
+		m_dx11.BeginDraw();
 		m_camera.UpdatePosition();
 	}
 	void DX11Graphics2D::EndDraw()

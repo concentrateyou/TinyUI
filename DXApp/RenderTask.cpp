@@ -81,7 +81,7 @@ namespace DXApp
 	LONGLONG RenderTask::Render()
 	{
 		m_timer.BeginTime();
-		m_graphics.BeginDraw(m_graphics.GetDX11().GetRTView());
+		m_graphics.BeginDraw();
 		for (INT i = 0;i < m_scenes.GetSize();i++)
 		{
 			DX11Element2D* ps = m_scenes[i];

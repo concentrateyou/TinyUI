@@ -12,11 +12,9 @@ namespace DXFramework
 	{
 
 	}
-	BOOL DX11::Initialize(HWND hWND, INT x, INT y, INT cx, INT cy)
+	BOOL DX11::Initialize(HWND hWND, INT cx, INT cy)
 	{
 		m_hWND = hWND;
-		m_pos.x = x;
-		m_pos.y = y;
 		m_size.cx = cx;
 		m_size.cy = cy;
 		DXGI_SWAP_CHAIN_DESC swapDesc;
@@ -193,20 +191,21 @@ namespace DXFramework
 		hRes = m_d3d->CreateTexture2D(&desc, NULL, &m_renderTexture);
 		if (hRes != S_OK)
 			return FALSE;
+		//////////////////////////////////////////////////////////////////////////
+		this->SetViewport(TinyPoint(0, 0), m_size);
+		this->SetMatrixs(m_size);
 		return TRUE;
 	}
-	void DX11::BeginDraw(ID3D11RenderTargetView* pView)
+	void DX11::BeginDraw()
 	{
 		if (m_immediateContext != NULL &&
-			pView != NULL &&
+			m_renderView != NULL &&
 			m_depthStencilView != NULL)
 		{
-			m_immediateContext->OMSetRenderTargets(1, &pView, m_depthStencilView);
+			m_immediateContext->OMSetRenderTargets(1, &m_renderView, m_depthStencilView);
 			FLOAT color[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
-			m_immediateContext->ClearRenderTargetView(pView, color);
+			m_immediateContext->ClearRenderTargetView(m_renderView, color);
 			m_immediateContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0F, 0);
-			this->SetViewport(TinyPoint(0, 0), m_size);
-			this->SetMatrixs(m_size);
 		}
 	}
 	void DX11::SetMatrixs(const TinySize& size)
