@@ -57,48 +57,48 @@ namespace DXFramework
 		hRes = m_d3d->CreateRenderTargetView(backBuffer, NULL, &m_renderView);
 		if (hRes != S_OK)
 			return FALSE;
-		D3D11_TEXTURE2D_DESC depthBufferDesc;
-		ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
-		depthBufferDesc.Width = cx;
-		depthBufferDesc.Height = cy;
-		depthBufferDesc.MipLevels = 1;
-		depthBufferDesc.ArraySize = 1;
-		depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-		depthBufferDesc.SampleDesc.Count = 1;
-		depthBufferDesc.SampleDesc.Quality = 0;
-		depthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-		depthBufferDesc.CPUAccessFlags = 0;
-		depthBufferDesc.MiscFlags = 0;
-		hRes = m_d3d->CreateTexture2D(&depthBufferDesc, NULL, &m_depthStencilBuffer);
+		D3D11_TEXTURE2D_DESC depthDesc;
+		ZeroMemory(&depthDesc, sizeof(depthDesc));
+		depthDesc.Width = cx;
+		depthDesc.Height = cy;
+		depthDesc.MipLevels = 1;
+		depthDesc.ArraySize = 1;
+		depthDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthDesc.SampleDesc.Count = 1;
+		depthDesc.SampleDesc.Quality = 0;
+		depthDesc.Usage = D3D11_USAGE_DEFAULT;
+		depthDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		depthDesc.CPUAccessFlags = 0;
+		depthDesc.MiscFlags = 0;
+		hRes = m_d3d->CreateTexture2D(&depthDesc, NULL, &m_depth2D);
 		if (hRes != S_OK)
 			return FALSE;
-		D3D11_DEPTH_STENCIL_DESC enableDepthStencilDesc;
-		ZeroMemory(&enableDepthStencilDesc, sizeof(enableDepthStencilDesc));
-		enableDepthStencilDesc.DepthEnable = TRUE;
-		enableDepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-		enableDepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
-		enableDepthStencilDesc.StencilEnable = TRUE;
-		enableDepthStencilDesc.StencilReadMask = 0xFF;
-		enableDepthStencilDesc.StencilWriteMask = 0xFF;
-		enableDepthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		enableDepthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-		enableDepthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		enableDepthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-		enableDepthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		enableDepthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-		enableDepthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		enableDepthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-		hRes = m_d3d->CreateDepthStencilState(&enableDepthStencilDesc, &m_depthStencilState);
+		D3D11_DEPTH_STENCIL_DESC enableDepthDesc;
+		ZeroMemory(&enableDepthDesc, sizeof(enableDepthDesc));
+		enableDepthDesc.DepthEnable = TRUE;
+		enableDepthDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+		enableDepthDesc.DepthFunc = D3D11_COMPARISON_LESS;
+		enableDepthDesc.StencilEnable = TRUE;
+		enableDepthDesc.StencilReadMask = 0xFF;
+		enableDepthDesc.StencilWriteMask = 0xFF;
+		enableDepthDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		enableDepthDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+		enableDepthDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		enableDepthDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+		enableDepthDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		enableDepthDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+		enableDepthDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		enableDepthDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+		hRes = m_d3d->CreateDepthStencilState(&enableDepthDesc, &m_depthStencilState);
 		if (hRes != S_OK)
 			return FALSE;
 		m_immediateContext->OMSetDepthStencilState(m_depthStencilState, 1);
-		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
-		ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
-		depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-		depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-		depthStencilViewDesc.Texture2D.MipSlice = 0;
-		hRes = m_d3d->CreateDepthStencilView(m_depthStencilBuffer, &depthStencilViewDesc, &m_depthStencilView);
+		D3D11_DEPTH_STENCIL_VIEW_DESC depthViewDesc;
+		ZeroMemory(&depthViewDesc, sizeof(depthViewDesc));
+		depthViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		depthViewDesc.Texture2D.MipSlice = 0;
+		hRes = m_d3d->CreateDepthStencilView(m_depth2D, &depthViewDesc, &m_depthView);
 		if (hRes != S_OK)
 			return FALSE;
 		D3D11_RASTERIZER_DESC rasterDesc;
@@ -148,30 +148,30 @@ namespace DXFramework
 		hRes = m_d3d->CreateRenderTargetView(backBuffer, NULL, &m_renderView);
 		if (hRes != S_OK)
 			return FALSE;
-		m_depthStencilBuffer.Release();
-		D3D11_TEXTURE2D_DESC depthBufferDesc;
-		ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
-		depthBufferDesc.Width = m_size.cx;
-		depthBufferDesc.Height = m_size.cy;
-		depthBufferDesc.MipLevels = 1;
-		depthBufferDesc.ArraySize = 1;
-		depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-		depthBufferDesc.SampleDesc.Count = 1;
-		depthBufferDesc.SampleDesc.Quality = 0;
-		depthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-		depthBufferDesc.CPUAccessFlags = 0;
-		depthBufferDesc.MiscFlags = 0;
-		hRes = m_d3d->CreateTexture2D(&depthBufferDesc, NULL, &m_depthStencilBuffer);
+		m_depth2D.Release();
+		D3D11_TEXTURE2D_DESC depthDesc;
+		ZeroMemory(&depthDesc, sizeof(depthDesc));
+		depthDesc.Width = m_size.cx;
+		depthDesc.Height = m_size.cy;
+		depthDesc.MipLevels = 1;
+		depthDesc.ArraySize = 1;
+		depthDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthDesc.SampleDesc.Count = 1;
+		depthDesc.SampleDesc.Quality = 0;
+		depthDesc.Usage = D3D11_USAGE_DEFAULT;
+		depthDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		depthDesc.CPUAccessFlags = 0;
+		depthDesc.MiscFlags = 0;
+		hRes = m_d3d->CreateTexture2D(&depthDesc, NULL, &m_depth2D);
 		if (hRes != S_OK)
 			return FALSE;
-		m_depthStencilView.Release();
-		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
-		ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
-		depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-		depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-		depthStencilViewDesc.Texture2D.MipSlice = 0;
-		hRes = m_d3d->CreateDepthStencilView(m_depthStencilBuffer, &depthStencilViewDesc, &m_depthStencilView);
+		m_depthView.Release();
+		D3D11_DEPTH_STENCIL_VIEW_DESC depthViewDesc;
+		ZeroMemory(&depthViewDesc, sizeof(depthViewDesc));
+		depthViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		depthViewDesc.Texture2D.MipSlice = 0;
+		hRes = m_d3d->CreateDepthStencilView(m_depth2D, &depthViewDesc, &m_depthView);
 		if (hRes != S_OK)
 			return FALSE;
 		m_renderTexture.Release();
@@ -200,12 +200,12 @@ namespace DXFramework
 	{
 		if (m_immediateContext != NULL &&
 			m_renderView != NULL &&
-			m_depthStencilView != NULL)
+			m_depthView != NULL)
 		{
-			m_immediateContext->OMSetRenderTargets(1, &m_renderView, m_depthStencilView);
+			m_immediateContext->OMSetRenderTargets(1, &m_renderView, m_depthView);
 			FLOAT color[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
 			m_immediateContext->ClearRenderTargetView(m_renderView, color);
-			m_immediateContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0F, 0);
+			m_immediateContext->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH, 1.0F, 0);
 		}
 	}
 	void DX11::SetMatrixs(const TinySize& size)
@@ -255,7 +255,7 @@ namespace DXFramework
 	}
 	ID3D11DepthStencilView* DX11::GetDSView() const
 	{
-		return m_depthStencilView;
+		return m_depthView;
 	}
 	ID3D11RenderTargetView*	DX11::GetRTView() const
 	{

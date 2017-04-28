@@ -29,8 +29,8 @@ namespace DXFramework
 		TinyComPtr<IDXGISwapChain>			m_swap;
 		TinyComPtr<ID3D11RenderTargetView>	m_renderView;
 		TinyComPtr<ID3D11Texture2D>			m_renderTexture;
-		TinyComPtr<ID3D11DepthStencilView>	m_depthStencilView;
-		TinyComPtr<ID3D11Texture2D>			m_depthStencilBuffer;
+		TinyComPtr<ID3D11DepthStencilView>	m_depthView;
+		TinyComPtr<ID3D11Texture2D>			m_depth2D;
 		TinyComPtr<ID3D11DeviceContext>		m_immediateContext;
 		TinyComPtr<ID3D11DepthStencilState>	m_depthStencilState;
 		TinyComPtr<ID3D11RasterizerState>	m_rasterizerState;
