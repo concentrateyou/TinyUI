@@ -137,20 +137,23 @@ namespace DXFramework
 			return FALSE;
 		m_size.cx = cx;
 		m_size.cy = cy;
+
+		m_renderView.Release();
+		m_depth2D.Release();
+		m_depthView.Release();
+
 		LPVOID val = NULL;
 		m_immediateContext->OMSetRenderTargets(1, (ID3D11RenderTargetView**)&val, NULL);
-		m_renderView.Release();
 		HRESULT hRes = m_swap->ResizeBuffers(2, 0, 0, DXGI_FORMAT_B8G8R8A8_UNORM, 0);
 		if (hRes != S_OK)
 			return FALSE;
 		TinyComPtr<ID3D11Texture2D> backBuffer;
 		hRes = m_swap->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
 		if (hRes != S_OK)
-			return FALSE;
+			return FALSE;	
 		hRes = m_d3d->CreateRenderTargetView(backBuffer, NULL, &m_renderView);
 		if (hRes != S_OK)
 			return FALSE;
-		m_depth2D.Release();
 		D3D11_TEXTURE2D_DESC depthDesc;
 		ZeroMemory(&depthDesc, sizeof(depthDesc));
 		depthDesc.Width = m_size.cx;
@@ -166,8 +169,7 @@ namespace DXFramework
 		depthDesc.MiscFlags = 0;
 		hRes = m_d3d->CreateTexture2D(&depthDesc, NULL, &m_depth2D);
 		if (hRes != S_OK)
-			return FALSE;
-		m_depthView.Release();
+			return FALSE;	
 		D3D11_DEPTH_STENCIL_VIEW_DESC depthViewDesc;
 		ZeroMemory(&depthViewDesc, sizeof(depthViewDesc));
 		depthViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -176,6 +178,7 @@ namespace DXFramework
 		hRes = m_d3d->CreateDepthStencilView(m_depth2D, &depthViewDesc, &m_depthView);
 		if (hRes != S_OK)
 			return FALSE;
+
 		m_renderTexture.Release();
 		D3D11_TEXTURE2D_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
