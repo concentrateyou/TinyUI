@@ -28,7 +28,7 @@ namespace DXFramework
 		DECLARE_DYNAMIC(DX11Element2D)
 	public:
 		DX11Element2D();
-		~DX11Element2D();
+		virtual ~DX11Element2D();
 	public:
 		TinyString GetName() const;
 		TinyPoint GetPosition() const;

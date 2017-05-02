@@ -29,6 +29,10 @@ namespace DXApp
 		ASSERT(pWindow);
 		if (!m_graphics.Initialize(pWindow->Handle(), TinySize(cx, cy)))
 			return FALSE;
+
+		m_render1.Reset(new DX11RenderTexture2D(m_graphics.GetDX11()));
+		m_render1->Create(1600, 900);
+		m_graphics.GetDX11().SetRenderTexture2D(NULL);
 		for (INT i = 0;i < 8;i++)
 		{
 			m_handles[i].Create(m_graphics.GetDX11());
@@ -81,7 +85,7 @@ namespace DXApp
 	LONGLONG RenderTask::Render()
 	{
 		m_timer.BeginTime();
-		m_graphics.BeginDraw();
+		m_graphics.GetDX11().GetRender2D()->BeginDraw();
 		for (INT i = 0;i < m_scenes.GetSize();i++)
 		{
 			DX11Element2D* ps = m_scenes[i];
@@ -104,7 +108,8 @@ namespace DXApp
 				m_graphics.DrawImage(pImage);
 			}
 		}
-		m_graphics.EndDraw();
+		m_graphics.GetDX11().GetRender2D()->EndDraw();
+		m_graphics.Present();
 		m_timer.EndTime();
 		return m_timer.GetMillisconds();
 	}

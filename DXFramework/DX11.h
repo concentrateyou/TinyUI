@@ -13,28 +13,26 @@ namespace DXFramework
 		~DX11();
 		BOOL Initialize(HWND hWND, INT cx, INT cy);
 		BOOL ResizeView(INT cx = 0, INT cy = 0);
+		void SetRenderTexture2D(DX11RenderTexture2D* render2D);
 		void SetViewport(const TinyPoint& pos, const TinySize& size);
 		void SetMatrixs(const TinySize& size);
-		void BeginDraw();
-		void EndDraw();
+		void Present();
 		BOOL					IsValid() const;
 		ID3D11Device*			GetD3D() const;
 		ID3D11DeviceContext*	GetImmediateContext() const;
 		IDXGISwapChain*			GetSwap() const;
-		ID3D11DepthStencilView* GetDSView() const;
-		ID3D11RenderTargetView*	GetRTView() const;
+		DX11RenderTexture2D*	GetRender2D() const;
 		HWND					GetHWND() const;
 		XMMATRIX*				GetMatrixs();
-		TinySize				GetSize() const;
 	private:
 		TinyComPtr<ID3D11Device>			m_d3d;
 		TinyComPtr<IDXGISwapChain>			m_swap;
 		TinyComPtr<ID3D11DeviceContext>		m_immediateContext;
 		TinyComPtr<ID3D11DepthStencilState>	m_depthStencilState;
 		TinyComPtr<ID3D11RasterizerState>	m_rasterizerState;
-		TinyScopedPtr<DX11RenderTexture2D>	m_render;
+		TinyScopedPtr<DX11RenderTexture2D>	m_back2D;
+		DX11RenderTexture2D*				m_render2D;
 		HWND								m_hWND;
-		TinySize							m_size;
 		XMMATRIX							m_matrixs[3];
 	};
 }

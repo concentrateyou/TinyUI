@@ -2,6 +2,7 @@
 #include "DXFramework.h"
 #include "DX11Graphics2D.h"
 #include "DX11CaptureTask.h"
+#include "DX11RenderTexture2D.h"
 #include "VideoCapture.h"
 #include "Utility.h"
 #include "Control/TinyMenu.h"
@@ -50,6 +51,8 @@ namespace DXApp
 		DXWindow*					m_pWindow;
 		DWORD						m_dwFPS;
 		DX11Graphics2D				m_graphics;
+		TinyScopedPtr<DX11RenderTexture2D> m_render1;
+		TinyScopedPtr<DX11RenderTexture2D> m_render2;
 		TinyEvent					m_close;
 		TinyPerformanceTimer		m_timer;
 		TinyArray<DX11Element2D*>	m_scenes;

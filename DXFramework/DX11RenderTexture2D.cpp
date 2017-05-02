@@ -153,10 +153,37 @@ namespace DXFramework
 			m_dx11.GetImmediateContext()->ClearRenderTargetView(m_renderView, color);
 			m_dx11.GetImmediateContext()->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH, 1.0F, 0);
 		}
-		
+
 	}
 	void DX11RenderTexture2D::EndDraw()
 	{
 		//TODO
+	}
+	BOOL DX11RenderTexture2D::Save(const CHAR* pzName, D3DX11_IMAGE_FILE_FORMAT format)
+	{
+		if (!m_dx11.IsValid())
+			return FALSE;
+		wstring ws = StringToWString(pzName);
+		if (m_render2D != NULL)
+		{
+			HRESULT hRes = SaveWICTextureToFile(m_dx11.GetImmediateContext(), m_render2D, GetWICCodec(format), ws.c_str());
+			if (SUCCEEDED(hRes))
+			{
+				return TRUE;
+			}
+		}
+		else
+		{
+			TinyComPtr<ID3D11Texture2D> texture2D;
+			HRESULT hRes = m_dx11.GetSwap()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&texture2D);
+			if (hRes != S_OK)
+				return FALSE;
+			hRes = SaveWICTextureToFile(m_dx11.GetImmediateContext(), texture2D, GetWICCodec(format), ws.c_str());
+			if (SUCCEEDED(hRes))
+			{
+				return TRUE;
+			}
+		}
+		return FALSE;
 	}
 }

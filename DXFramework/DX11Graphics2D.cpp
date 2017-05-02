@@ -33,17 +33,13 @@ namespace DXFramework
 		if (!m_colorShader.Initialize(m_dx11, vs.c_str(), ps.c_str()))
 			return FALSE;
 		m_camera.SetPosition(0.0F, 0.0F, -10.0F);
+		m_camera.UpdatePosition();
 		return TRUE;
 	}
 
-	void DX11Graphics2D::BeginDraw()
+	void DX11Graphics2D::Present()
 	{
-		m_dx11.BeginDraw();
-		m_camera.UpdatePosition();
-	}
-	void DX11Graphics2D::EndDraw()
-	{
-		m_dx11.EndDraw();
+		m_dx11.Present();
 	}
 	BOOL DX11Graphics2D::Resize(const TinySize& size)
 	{
@@ -56,9 +52,11 @@ namespace DXFramework
 	BOOL DX11Graphics2D::DrawImage(DX11Image2D* ps)
 	{
 		ASSERT(ps);
+		if (!m_dx11.GetRender2D())
+			return FALSE;
 		if (!ps->IsEmpty())
 			return FALSE;
-		if (!ps->Update(m_dx11))
+		if (!ps->Update(m_dx11, m_dx11.GetRender2D()->GetSize()))
 			return FALSE;
 		if (ps->Render(m_dx11))
 		{
@@ -71,7 +69,9 @@ namespace DXFramework
 	BOOL DX11Graphics2D::DrawRectangle(DX11Rectangle2D* ps, const TinyRectangle& rectangle)
 	{
 		ASSERT(ps);
-		if (!ps->SetRectangle(m_dx11, rectangle))
+		if (!m_dx11.GetRender2D())
+			return FALSE;
+		if (!ps->SetRectangle(m_dx11, rectangle, m_dx11.GetRender2D()->GetSize()))
 			return FALSE;
 		if (ps->Render(m_dx11))
 		{
@@ -117,6 +117,6 @@ namespace DXFramework
 	}
 	TinySize DX11Graphics2D::GetSize() const
 	{
-		return m_dx11.GetSize();
+		return TinySize(0, 0);
 	}
 }

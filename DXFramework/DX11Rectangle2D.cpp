@@ -71,7 +71,7 @@ namespace DXFramework
 		dx11.GetImmediateContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		return TRUE;
 	}
-	BOOL DX11Rectangle2D::SetRectangle(DX11& dx11, const TinyRectangle& rectangle)
+	BOOL DX11Rectangle2D::SetRectangle(DX11& dx11, const TinyRectangle& rectangle,const TinySize& size)
 	{
 		m_rectangle = rectangle;
 		TinySize scale = m_rectangle.Size();
@@ -80,7 +80,6 @@ namespace DXFramework
 		FLOAT right = 0.0F;
 		FLOAT top = 0.0F;
 		FLOAT bottom = 0.0F;
-		TinySize size = dx11.GetSize();
 		left = (FLOAT)((size.cx / 2) * -1) + (FLOAT)pos.x;
 		right = left + (FLOAT)scale.cx;
 		top = (FLOAT)(size.cy / 2) - (FLOAT)pos.y;

@@ -251,7 +251,7 @@ namespace DXFramework
 		m_vertices.Reset(new VERTEXTYPE[vertexCount]);
 		return TRUE;
 	}
-	BOOL DX11Image2D::Update(DX11& dx11)
+	BOOL DX11Image2D::Update(DX11& dx11,const TinySize& size)
 	{
 		TinySize scale = GetScale();
 		TinyPoint pos = GetPosition();
@@ -265,7 +265,6 @@ namespace DXFramework
 		FLOAT right = 0.0F;
 		FLOAT top = 0.0F;
 		FLOAT bottom = 0.0F;
-		TinySize size = dx11.GetSize();
 		left = (FLOAT)((size.cx / 2) * -1) + (FLOAT)pos.x;
 		right = left + (FLOAT)scale.cx;
 		top = (FLOAT)(size.cy / 2) - (FLOAT)pos.y;

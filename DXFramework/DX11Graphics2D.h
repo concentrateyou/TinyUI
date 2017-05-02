@@ -4,6 +4,7 @@
 #include "DXCamera.h"
 #include "DX11ColorShader.h"
 #include "DX11Rectangle2D.h"
+#include "DX11RenderTexture2D.h"
 
 namespace DXFramework
 {
@@ -17,7 +18,7 @@ namespace DXFramework
 		virtual ~DX11Graphics2D();
 		BOOL	 Initialize(HWND hWND, const TinySize& size);
 		void	 BeginDraw();
-		void	 EndDraw();
+		void	 Present();
 		BOOL     Resize(const TinySize& size);
 		DX11&	 GetDX11();
 		BOOL	 DrawImage(DX11Image2D* ps);

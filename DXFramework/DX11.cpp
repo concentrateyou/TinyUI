@@ -5,7 +5,8 @@
 namespace DXFramework
 {
 	DX11::DX11()
-		:m_hWND(NULL)
+		:m_hWND(NULL),
+		m_render2D(NULL)
 	{
 
 	}
@@ -16,11 +17,6 @@ namespace DXFramework
 	BOOL DX11::Initialize(HWND hWND, INT cx, INT cy)
 	{
 		m_hWND = hWND;
-		m_size.cx = cx;
-		m_size.cy = cy;
-
-		m_render.Reset(new DX11RenderTexture2D(*this));
-
 		DXGI_SWAP_CHAIN_DESC swapDesc;
 		ZeroMemory(&swapDesc, sizeof(swapDesc));
 		swapDesc.BufferCount = 2;
@@ -54,7 +50,8 @@ namespace DXFramework
 		hRes = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, dwFlag, levels, sizeof(levels) / sizeof(D3D_FEATURE_LEVEL), D3D11_SDK_VERSION, &swapDesc, &m_swap, &m_d3d, &level, &m_immediateContext);
 		if (hRes != S_OK)
 			return FALSE;
-		if (!m_render->Create())
+		m_back2D.Reset(new DX11RenderTexture2D(*this));
+		if (!m_back2D->Create())
 			return FALSE;
 		D3D11_DEPTH_STENCIL_DESC enableDepthDesc;
 		ZeroMemory(&enableDepthDesc, sizeof(enableDepthDesc));
@@ -86,24 +83,33 @@ namespace DXFramework
 		if (hRes != S_OK)
 			return FALSE;
 		m_immediateContext->RSSetState(m_rasterizerState);
-		this->SetViewport(TinyPoint(0, 0), m_size);
-		this->SetMatrixs(m_size);
 		return TRUE;
 	}
 	BOOL DX11::ResizeView(INT cx, INT cy)
 	{
-		m_size.cx = cx;
-		m_size.cy = cy;
-		if (!m_render->Resize())
+		if (!IsValid())
 			return FALSE;
-		this->SetViewport(TinyPoint(0, 0), m_size);
-		this->SetMatrixs(m_size);
+		if (!m_back2D->Resize())
+			return FALSE;
+		this->SetViewport(TinyPoint(0, 0), m_back2D->GetSize());
+		this->SetMatrixs(m_back2D->GetSize());
 		return TRUE;
 	}
-	void DX11::BeginDraw()
+	void DX11::SetRenderTexture2D(DX11RenderTexture2D* render2D)
 	{
-		ASSERT(m_render);
-		m_render->BeginDraw();
+		if (render2D == NULL)
+		{
+			m_render2D = m_back2D;
+		}
+		else
+		{
+			if (m_render2D != m_back2D)
+			{
+				m_render2D = m_back2D;
+			}
+		}
+		this->SetViewport(TinyPoint(0, 0), m_render2D->GetSize());
+		this->SetMatrixs(m_render2D->GetSize());
 	}
 	void DX11::SetMatrixs(const TinySize& size)
 	{
@@ -127,7 +133,7 @@ namespace DXFramework
 			m_immediateContext->RSSetViewports(1, &viewport);
 		}
 	}
-	void DX11::EndDraw()
+	void DX11::Present()
 	{
 		if (IsValid())
 		{
@@ -152,21 +158,13 @@ namespace DXFramework
 	{
 		return m_swap;
 	}
-	ID3D11DepthStencilView* DX11::GetDSView() const
+	DX11RenderTexture2D* DX11::GetRender2D() const
 	{
-		return  m_render != NULL ? m_render->GetDSView() : NULL;
-	}
-	ID3D11RenderTargetView*	DX11::GetRTView() const
-	{
-		return m_render != NULL ? m_render->GetRTView() : NULL;
+		return m_render2D;
 	}
 	HWND DX11::GetHWND() const
 	{
 		return m_hWND;
-	}
-	TinySize DX11::GetSize() const
-	{
-		return m_size;
 	}
 	XMMATRIX* DX11::GetMatrixs()
 	{
