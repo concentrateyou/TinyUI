@@ -36,7 +36,6 @@ namespace DXFramework
 		m_camera.UpdatePosition();
 		return TRUE;
 	}
-
 	void DX11Graphics2D::Present()
 	{
 		m_dx11.Present();
@@ -56,7 +55,7 @@ namespace DXFramework
 			return FALSE;
 		if (!ps->IsEmpty())
 			return FALSE;
-		if (!ps->Update(m_dx11, m_dx11.GetRender2D()->GetSize()))
+		if (!ps->Update(m_dx11))
 			return FALSE;
 		if (ps->Render(m_dx11))
 		{
@@ -71,7 +70,7 @@ namespace DXFramework
 		ASSERT(ps);
 		if (!m_dx11.GetRender2D())
 			return FALSE;
-		if (!ps->SetRectangle(m_dx11, rectangle, m_dx11.GetRender2D()->GetSize()))
+		if (!ps->SetRectangle(m_dx11, rectangle))
 			return FALSE;
 		if (ps->Render(m_dx11))
 		{

@@ -3,11 +3,11 @@
 
 namespace DXFramework
 {
-	class DX11RenderTexture2D
+	class DX11RenderView
 	{
 	public:
-		DX11RenderTexture2D(DX11& dx11);
-		virtual ~DX11RenderTexture2D();
+		DX11RenderView(DX11& dx11);
+		virtual ~DX11RenderView();
 		DX11& GetDX11();
 		TinySize GetSize() const;
 		BOOL Create();
@@ -26,7 +26,6 @@ namespace DXFramework
 		TinyComPtr<ID3D11DepthStencilView>	m_depthView;
 		TinyComPtr<ID3D11Texture2D>			m_render2D;
 		TinyComPtr<ID3D11RenderTargetView>	m_renderView;
-		
 	};
 }
 

@@ -34,17 +34,21 @@ namespace DXFramework
 		TinyPoint GetPosition() const;
 		TinySize GetScale() const;
 		TinySize GetSize() const;
+		TinyRectangle GetRectangle() const;
 		void	SetPosition(const TinyPoint& pos);
 		void	SetScale(const TinySize& size);
 		void	SetSize(const TinySize& size);
 		void	SetName(const TinyString& name);
+		void	Save();
+		void	Restore();
 	public:
 		virtual BOOL Process(DX11& dx11) = 0;
 		virtual BOOL Render(DX11& dx11) = 0;
 		virtual void Clear(DX11& dx11) = 0;
 	public:
-		TinySize	m_size;
-		TinyString	m_name;
+		TinyString		m_name;
+		TinySize		m_size;
+		TinyRectangle	m_save;
 	};
 }
 

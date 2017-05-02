@@ -75,7 +75,7 @@
     <ClInclude Include="DX11Font2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DX11RenderTexture2D.h">
+    <ClInclude Include="DX11RenderView.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -137,7 +137,7 @@
     <ClCompile Include="DX11Font2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DX11RenderTexture2D.cpp">
+    <ClCompile Include="DX11RenderView.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

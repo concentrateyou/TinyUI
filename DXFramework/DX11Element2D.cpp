@@ -36,6 +36,10 @@ namespace DXFramework
 	{
 		return m_size;
 	}
+	TinyRectangle DX11Element2D::GetRectangle() const
+	{
+		return m_rectangle;
+	}
 	void DX11Element2D::SetName(const TinyString& name)
 	{
 		m_name = std::move(name);
@@ -43,5 +47,13 @@ namespace DXFramework
 	TinyString DX11Element2D::GetName() const
 	{
 		return m_name;
+	}
+	void DX11Element2D::Save()
+	{
+		m_save = m_rectangle;
+	}
+	void DX11Element2D::Restore()
+	{
+		m_rectangle = m_save;
 	}
 }

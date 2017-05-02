@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "DX11.h"
-#include "DX11RenderTexture2D.h"
+#include "DX11RenderView.h"
 
 namespace DXFramework
 {
@@ -50,9 +50,12 @@ namespace DXFramework
 		hRes = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, dwFlag, levels, sizeof(levels) / sizeof(D3D_FEATURE_LEVEL), D3D11_SDK_VERSION, &swapDesc, &m_swap, &m_d3d, &level, &m_immediateContext);
 		if (hRes != S_OK)
 			return FALSE;
-		m_back2D.Reset(new DX11RenderTexture2D(*this));
+		m_back2D.Reset(new DX11RenderView(*this));
 		if (!m_back2D->Create())
 			return FALSE;
+		this->SetViewport(TinyPoint(0, 0), m_back2D->GetSize());
+		this->SetMatrixs(m_back2D->GetSize());
+		m_render2D = m_back2D;
 		D3D11_DEPTH_STENCIL_DESC enableDepthDesc;
 		ZeroMemory(&enableDepthDesc, sizeof(enableDepthDesc));
 		enableDepthDesc.DepthEnable = TRUE;
@@ -90,12 +93,12 @@ namespace DXFramework
 		if (!IsValid())
 			return FALSE;
 		if (!m_back2D->Resize())
-			return FALSE;
+			return FALSE;	
 		this->SetViewport(TinyPoint(0, 0), m_back2D->GetSize());
 		this->SetMatrixs(m_back2D->GetSize());
 		return TRUE;
 	}
-	void DX11::SetRenderTexture2D(DX11RenderTexture2D* render2D)
+	void DX11::SetRenderTexture2D(DX11RenderView* render2D)
 	{
 		if (render2D == NULL)
 		{
@@ -103,13 +106,11 @@ namespace DXFramework
 		}
 		else
 		{
-			if (m_render2D != m_back2D)
+			if (m_render2D != render2D)
 			{
-				m_render2D = m_back2D;
+				m_render2D = render2D;
 			}
 		}
-		this->SetViewport(TinyPoint(0, 0), m_render2D->GetSize());
-		this->SetMatrixs(m_render2D->GetSize());
 	}
 	void DX11::SetMatrixs(const TinySize& size)
 	{
@@ -158,7 +159,7 @@ namespace DXFramework
 	{
 		return m_swap;
 	}
-	DX11RenderTexture2D* DX11::GetRender2D() const
+	DX11RenderView* DX11::GetRender2D() const
 	{
 		return m_render2D;
 	}

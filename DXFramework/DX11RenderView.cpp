@@ -1,25 +1,25 @@
 #include "stdafx.h"
-#include "DX11RenderTexture2D.h"
+#include "DX11RenderView.h"
 
 namespace DXFramework
 {
-	DX11RenderTexture2D::DX11RenderTexture2D(DX11& dx11)
+	DX11RenderView::DX11RenderView(DX11& dx11)
 		:m_dx11(dx11)
 	{
 	}
 
-	DX11RenderTexture2D::~DX11RenderTexture2D()
+	DX11RenderView::~DX11RenderView()
 	{
 	}
-	DX11& DX11RenderTexture2D::GetDX11()
+	DX11& DX11RenderView::GetDX11()
 	{
 		return m_dx11;
 	}
-	TinySize DX11RenderTexture2D::GetSize() const
+	TinySize DX11RenderView::GetSize() const
 	{
 		return m_size;
 	}
-	BOOL DX11RenderTexture2D::Create()
+	BOOL DX11RenderView::Create()
 	{
 		if (!m_dx11.IsValid())
 			return FALSE;
@@ -60,7 +60,7 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11RenderTexture2D::Create(INT cx, INT cy)
+	BOOL DX11RenderView::Create(INT cx, INT cy)
 	{
 		if (!m_dx11.IsValid())
 			return FALSE;
@@ -110,7 +110,7 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11RenderTexture2D::Resize()
+	BOOL DX11RenderView::Resize()
 	{
 		if (!m_dx11.IsValid())
 			return FALSE;
@@ -124,7 +124,7 @@ namespace DXFramework
 			return FALSE;
 		return Create();
 	}
-	BOOL DX11RenderTexture2D::Resize(INT cx, INT cy)
+	BOOL DX11RenderView::Resize(INT cx, INT cy)
 	{
 		m_renderView.Release();
 		m_depth2D.Release();
@@ -136,30 +136,31 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
-	ID3D11RenderTargetView* DX11RenderTexture2D::GetRTView() const
+	ID3D11RenderTargetView* DX11RenderView::GetRTView() const
 	{
 		return m_renderView;
 	}
-	ID3D11DepthStencilView* DX11RenderTexture2D::GetDSView() const
+	ID3D11DepthStencilView* DX11RenderView::GetDSView() const
 	{
 		return m_depthView;
 	}
-	void DX11RenderTexture2D::BeginDraw()
+	void DX11RenderView::BeginDraw()
 	{
 		if (m_dx11.IsValid())
 		{
+			m_dx11.SetViewport(TinyPoint(0, 0), m_size);
+			m_dx11.SetMatrixs(m_size);
 			m_dx11.GetImmediateContext()->OMSetRenderTargets(1, &m_renderView, m_depthView);
 			FLOAT color[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
 			m_dx11.GetImmediateContext()->ClearRenderTargetView(m_renderView, color);
 			m_dx11.GetImmediateContext()->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH, 1.0F, 0);
 		}
-
 	}
-	void DX11RenderTexture2D::EndDraw()
+	void DX11RenderView::EndDraw()
 	{
 		//TODO
 	}
-	BOOL DX11RenderTexture2D::Save(const CHAR* pzName, D3DX11_IMAGE_FILE_FORMAT format)
+	BOOL DX11RenderView::Save(const CHAR* pzName, D3DX11_IMAGE_FILE_FORMAT format)
 	{
 		if (!m_dx11.IsValid())
 			return FALSE;

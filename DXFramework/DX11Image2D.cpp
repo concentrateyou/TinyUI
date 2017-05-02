@@ -53,10 +53,6 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
-	BOOL DX11Image2D::Save(DX11& dx11, const CHAR* pzName)
-	{
-		return m_texture.Save(dx11, pzName, BMP);
-	}
 	void DX11Image2D::Destory()
 	{
 		m_lastPos.x = m_lastPos.y = -1;
@@ -251,7 +247,7 @@ namespace DXFramework
 		m_vertices.Reset(new VERTEXTYPE[vertexCount]);
 		return TRUE;
 	}
-	BOOL DX11Image2D::Update(DX11& dx11,const TinySize& size)
+	BOOL DX11Image2D::Update(DX11& dx11)
 	{
 		TinySize scale = GetScale();
 		TinyPoint pos = GetPosition();
@@ -265,9 +261,14 @@ namespace DXFramework
 		FLOAT right = 0.0F;
 		FLOAT top = 0.0F;
 		FLOAT bottom = 0.0F;
-		left = (FLOAT)((size.cx / 2) * -1) + (FLOAT)pos.x;
+		D3D11_VIEWPORT vp;
+		ZeroMemory(&vp, sizeof(vp));
+		UINT count = 1;
+		dx11.GetImmediateContext()->RSGetViewports(&count, &vp);
+		XMFLOAT2 size(vp.Width, vp.Height);
+		left = (FLOAT)((size.x / 2) * -1) + (FLOAT)pos.x;
 		right = left + (FLOAT)scale.cx;
-		top = (FLOAT)(size.cy / 2) - (FLOAT)pos.y;
+		top = (FLOAT)(size.y / 2) - (FLOAT)pos.y;
 		bottom = top - (FLOAT)scale.cy;
 		INT vertexCount = GetIndexCount();
 		m_vertices[0].position = XMFLOAT3(left, top, 0.0F);
