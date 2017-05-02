@@ -78,8 +78,6 @@ namespace DXApp
 			if (sample.mediaTag.dwINC == 1)
 			{
 				WAVEFORMATEX wfx = m_audioEncode->GetParam().GetFormat();
-				//wfx.nSamplesPerSec = 48000;
-				//wfx.nAvgBytesPerSec = wfx.nSamplesPerSec * wfx.nBlockAlign;
 				TinySize size = m_videoEncode->GetSize();
 				m_client.SendMetadata(size.cx, size.cy, static_cast<INT>(m_videoEncode->GetFPS()), 1000, wfx, 128);
 			}

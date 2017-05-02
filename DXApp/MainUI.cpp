@@ -156,7 +156,7 @@ namespace DXApp
 		m_resolution.Create(m_hWND, 0, 0, 200, 21);
 		m_resolution.AddString("640*480");
 		m_resolution.AddString("1280*720");
-		m_resolution.AddString("1920*1080");
+		m_resolution.AddString("1600*900");
 
 		m_speaker.Create(m_hWND, 0, 0, 0, 0);
 		m_microphone.Create(m_hWND, 0, 0, 0, 0);
@@ -204,7 +204,7 @@ namespace DXApp
 			scale.SetSize(1280, 720);
 			break;
 		case 2:
-			scale.SetSize(1920, 1080);
+			scale.SetSize(1600, 900);
 			break;
 		}
 		if (m_videoEncode != NULL)

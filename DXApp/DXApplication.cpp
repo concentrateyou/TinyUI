@@ -53,8 +53,8 @@ namespace DXApp
 		m_frameUI.Reset(new DXFrameUI());
 		RECT rect;
 		SystemParametersInfo(SPI_GETWORKAREA, 0, &rect, 0);
-		INT cx = TO_CX(rect) * 4 / 5;
-		INT cy = TO_CY(rect) * 4 / 5;
+		INT cx = 1280;
+		INT cy = TO_CY(rect) * 7 / 8;
 		return m_frameUI->Create(NULL, 0, 0, cx, cy);
 	}
 	INT DXApplication::Run()
