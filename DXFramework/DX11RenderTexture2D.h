@@ -8,6 +8,8 @@ namespace DXFramework
 	public:
 		DX11RenderTexture2D(DX11& dx11);
 		virtual ~DX11RenderTexture2D();
+		DX11& GetDX11();
+		TinySize GetSize() const;
 		BOOL Create();
 		BOOL Create(INT cx, INT cy);
 		BOOL Resize();

@@ -54,10 +54,8 @@ namespace DXFramework
 		hRes = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, dwFlag, levels, sizeof(levels) / sizeof(D3D_FEATURE_LEVEL), D3D11_SDK_VERSION, &swapDesc, &m_swap, &m_d3d, &level, &m_immediateContext);
 		if (hRes != S_OK)
 			return FALSE;
-
 		if (!m_render->Create())
 			return FALSE;
-
 		D3D11_DEPTH_STENCIL_DESC enableDepthDesc;
 		ZeroMemory(&enableDepthDesc, sizeof(enableDepthDesc));
 		enableDepthDesc.DepthEnable = TRUE;
@@ -94,8 +92,6 @@ namespace DXFramework
 	}
 	BOOL DX11::ResizeView(INT cx, INT cy)
 	{
-		if (!IsValid())
-			return FALSE;
 		m_size.cx = cx;
 		m_size.cy = cy;
 		if (!m_render->Resize())
@@ -106,10 +102,8 @@ namespace DXFramework
 	}
 	void DX11::BeginDraw()
 	{
-		if (IsValid())
-		{
-			m_render->BeginDraw();
-		}
+		ASSERT(m_render);
+		m_render->BeginDraw();
 	}
 	void DX11::SetMatrixs(const TinySize& size)
 	{

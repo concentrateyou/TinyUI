@@ -11,6 +11,14 @@ namespace DXFramework
 	DX11RenderTexture2D::~DX11RenderTexture2D()
 	{
 	}
+	DX11& DX11RenderTexture2D::GetDX11()
+	{
+		return m_dx11;
+	}
+	TinySize DX11RenderTexture2D::GetSize() const
+	{
+		return m_size;
+	}
 	BOOL DX11RenderTexture2D::Create()
 	{
 		if (!m_dx11.IsValid())
