@@ -12,9 +12,11 @@ namespace DXFramework
 		BOOL Create(INT cx, INT cy);
 		BOOL Resize();
 		BOOL Resize(INT cx, INT cy);
+		void BeginDraw();
+		void EndDraw();
 		ID3D11RenderTargetView* GetRTView() const;
 		ID3D11DepthStencilView* GetDSView() const;
-	protected:
+ 	protected:
 		DX11&								m_dx11;
 		TinySize							m_size;
 		TinyComPtr<ID3D11Texture2D>			m_depth2D;

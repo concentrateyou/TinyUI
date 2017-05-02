@@ -13,6 +13,8 @@ namespace DXFramework
 	}
 	BOOL DX11RenderTexture2D::Create()
 	{
+		if (!m_dx11.IsValid())
+			return FALSE;
 		TinyComPtr<ID3D11Texture2D> texture2D;
 		HRESULT hRes = m_dx11.GetSwap()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&texture2D);
 		if (hRes != S_OK)
@@ -52,6 +54,8 @@ namespace DXFramework
 	}
 	BOOL DX11RenderTexture2D::Create(INT cx, INT cy)
 	{
+		if (!m_dx11.IsValid())
+			return FALSE;
 		m_size.cx = cx;
 		m_size.cy = cy;
 		D3D11_TEXTURE2D_DESC desc;
@@ -100,9 +104,16 @@ namespace DXFramework
 	}
 	BOOL DX11RenderTexture2D::Resize()
 	{
+		if (!m_dx11.IsValid())
+			return FALSE;
 		m_renderView.Release();
 		m_depth2D.Release();
 		m_depthView.Release();
+		LPVOID val = NULL;
+		m_dx11.GetImmediateContext()->OMSetRenderTargets(1, (ID3D11RenderTargetView**)&val, NULL);
+		HRESULT hRes = m_dx11.GetSwap()->ResizeBuffers(2, 0, 0, DXGI_FORMAT_B8G8R8A8_UNORM, 0);
+		if (hRes != S_OK)
+			return FALSE;
 		return Create();
 	}
 	BOOL DX11RenderTexture2D::Resize(INT cx, INT cy)
@@ -124,5 +135,20 @@ namespace DXFramework
 	ID3D11DepthStencilView* DX11RenderTexture2D::GetDSView() const
 	{
 		return m_depthView;
+	}
+	void DX11RenderTexture2D::BeginDraw()
+	{
+		if (m_dx11.IsValid())
+		{
+			m_dx11.GetImmediateContext()->OMSetRenderTargets(1, &m_renderView, m_depthView);
+			FLOAT color[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
+			m_dx11.GetImmediateContext()->ClearRenderTargetView(m_renderView, color);
+			m_dx11.GetImmediateContext()->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH, 1.0F, 0);
+		}
+		
+	}
+	void DX11RenderTexture2D::EndDraw()
+	{
+		//TODO
 	}
 }
