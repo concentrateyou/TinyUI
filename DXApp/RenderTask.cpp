@@ -120,7 +120,7 @@ namespace DXApp
 				}
 			}
 			m_graphics.GetDX11().GetRender2D()->EndDraw();
-			//m_graphics.GetDX11().GetRender2D()->Save("D:\\123.jpg", JPG);
+			m_graphics.GetDX11().GetRender2D()->Save("D:\\123.jpg", JPG);
 			index = FALSE;
 		}
 		else

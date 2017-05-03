@@ -125,12 +125,12 @@ namespace DXFramework
 		if (IsValid())
 		{
 			D3D11_VIEWPORT viewport;
+			viewport.TopLeftX = static_cast<FLOAT>(pos.x);
+			viewport.TopLeftY = static_cast<FLOAT>(pos.y);
 			viewport.Width = static_cast<FLOAT>(size.cx);
 			viewport.Height = static_cast<FLOAT>(size.cy);
 			viewport.MinDepth = 0.0F;
 			viewport.MaxDepth = 1.0F;
-			viewport.TopLeftX = static_cast<FLOAT>(pos.x);
-			viewport.TopLeftY = static_cast<FLOAT>(pos.y);
 			m_immediateContext->RSSetViewports(1, &viewport);
 		}
 	}
