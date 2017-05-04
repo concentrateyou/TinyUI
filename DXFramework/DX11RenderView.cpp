@@ -84,6 +84,23 @@ namespace DXFramework
 		hRes = m_dx11.GetD3D()->CreateRenderTargetView(m_render2D, NULL, &m_renderView);
 		if (hRes != S_OK)
 			return FALSE;
+
+		ZeroMemory(&desc, sizeof(desc));
+		desc.Width = m_size.cx;
+		desc.Height = m_size.cy;
+		desc.MipLevels = 1;
+		desc.ArraySize = 1;
+		desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		desc.SampleDesc.Count = 1;
+		desc.SampleDesc.Quality = 0;
+		desc.Usage = D3D11_USAGE_STAGING;
+		desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+		desc.MiscFlags = 0;
+		desc.BindFlags = 0;
+		hRes = m_dx11.GetD3D()->CreateTexture2D(&desc, NULL, &m_copy2D);
+		if (hRes != S_OK)
+			return FALSE;
+
 		D3D11_TEXTURE2D_DESC depthDesc;
 		ZeroMemory(&depthDesc, sizeof(depthDesc));
 		depthDesc.Width = m_size.cx;
@@ -126,6 +143,7 @@ namespace DXFramework
 	}
 	BOOL DX11RenderView::Resize(INT cx, INT cy)
 	{
+		m_copy2D.Release();
 		m_renderView.Release();
 		m_depth2D.Release();
 		m_depthView.Release();
@@ -144,6 +162,26 @@ namespace DXFramework
 	{
 		return m_depthView;
 	}
+	BYTE* DX11RenderView::Map(DWORD& dwSize)
+	{
+		dwSize = 0;
+		if (!m_dx11.IsValid() || !m_copy2D)
+			return FALSE;
+		D3D11_MAPPED_SUBRESOURCE ms = { 0 };
+		if (SUCCEEDED(m_dx11.GetImmediateContext()->Map(m_copy2D, 0, D3D11_MAP_READ, 0, &ms)))
+		{
+			dwSize = ms.RowPitch * m_size.cy;
+			return static_cast<BYTE*>(ms.pData);
+		}
+		return NULL;
+	}
+	void DX11RenderView::Unmap()
+	{
+		if (m_copy2D != NULL)
+		{
+			m_dx11.GetImmediateContext()->Unmap(m_copy2D, 0);
+		}
+	}
 	void DX11RenderView::BeginDraw()
 	{
 		if (m_dx11.IsValid())
@@ -158,7 +196,10 @@ namespace DXFramework
 	}
 	void DX11RenderView::EndDraw()
 	{
-
+		if (m_render2D != NULL)
+		{
+			m_dx11.GetImmediateContext()->CopyResource(m_copy2D, m_render2D);
+		}
 	}
 	BOOL DX11RenderView::SaveAs(const CHAR* pzName, D3DX11_IMAGE_FILE_FORMAT format)
 	{

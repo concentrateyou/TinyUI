@@ -19,6 +19,8 @@ namespace DXFramework
 		BOOL SaveAs(const CHAR* pzName, D3DX11_IMAGE_FILE_FORMAT format);
 		ID3D11RenderTargetView* GetRTView() const;
 		ID3D11DepthStencilView* GetDSView() const;
+		BYTE*		Map(DWORD& dwSize);
+		void		Unmap();
  	protected:
 		FLOAT								m_aspect;//±ÈÀý
 		DX11&								m_dx11;
@@ -26,7 +28,8 @@ namespace DXFramework
 		TinyComPtr<ID3D11Texture2D>			m_depth2D;
 		TinyComPtr<ID3D11DepthStencilView>	m_depthView;
 		TinyComPtr<ID3D11Texture2D>			m_render2D;
-		TinyComPtr<ID3D11RenderTargetView>	m_renderView;								
+		TinyComPtr<ID3D11RenderTargetView>	m_renderView;
+		TinyComPtr<ID3D11Texture2D>			m_copy2D;
 	};
 }
 

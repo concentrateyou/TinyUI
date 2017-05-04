@@ -21,7 +21,7 @@ namespace DXApp
 	}
 	TinySize VideoEncode::GetSize() const
 	{
-		return	m_renderTask->GetGraphics().GetSize();
+		return	m_renderTask->GetSize();
 	}
 	DWORD VideoEncode::GetFPS() const
 	{
@@ -32,8 +32,8 @@ namespace DXApp
 		ASSERT(m_renderTask);
 		m_timer.BeginTime();
 		DWORD dwSize = 0;
-		BYTE* bits = m_renderTask->GetGraphics().GetPointer(dwSize);
-		if (m_converter->BRGAToI420(bits))
+		BYTE* bits = m_renderTask->GetPointer(dwSize);
+		if (bits && m_converter->BRGAToI420(bits))
 		{
 			m_x264.Encode(m_converter->GetI420());
 		}
@@ -60,7 +60,7 @@ namespace DXApp
 		m_dwVideoRate = dwVideoRate;
 		if (!m_x264.Open(scale.cx, scale.cy, (INT)dwFPS, (INT)dwVideoRate))
 			return FALSE;
-		m_converter.Reset(new I420Converter(GetSize(), scale));
+		m_converter.Reset(new I420Converter(scale, scale));
 		return TRUE;
 	}
 

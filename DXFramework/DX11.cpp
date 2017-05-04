@@ -125,6 +125,10 @@ namespace DXFramework
 			return TRUE;
 		return FALSE;
 	}
+	TinySize DX11::GetSize() const
+	{
+		return m_background2D->GetSize();
+	}
 	ID3D11Device* DX11::GetD3D() const
 	{
 		return m_d3d;

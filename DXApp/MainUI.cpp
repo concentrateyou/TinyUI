@@ -165,7 +165,7 @@ namespace DXApp
 
 		RECT s = { 0 };
 		m_pDXWND->GetClientRect(&s);
-		if (m_renderTask.Initialize(m_pDXWND, TO_CX(s), TO_CY(s), 40))
+		if (m_renderTask.Initialize(m_pDXWND, TO_CX(s), TO_CY(s), 50))
 		{
 			m_renderTask.Submit();
 		}
@@ -207,6 +207,7 @@ namespace DXApp
 			scale.SetSize(1600, 900);
 			break;
 		}
+		m_renderTask.SetPulgSize(XMFLOAT2(scale.cx, scale.cy));
 		if (m_videoEncode != NULL)
 			m_videoEncode->Close();
 		m_videoEncode.Reset(new VideoEncode(&m_renderTask));

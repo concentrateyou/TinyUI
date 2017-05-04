@@ -24,15 +24,11 @@ namespace DXFramework
 		BOOL	 DrawRectangle(DX11Rectangle2D* ps, const TinyRectangle& rectangle, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F);
 		void	 Lock();
 		void	 Unlock();
-		BYTE*	 GetPointer(DWORD& dwSize);
-		TinySize GetSize() const;
 	private:
 		DX11					m_dx11;
 		DXCamera				m_camera;
 		DX11TextureShader		m_textureShader;
 		DX11ColorShader			m_colorShader;
-		DWORD					m_dwSize;
-		TinyScopedPtr<BYTE>		m_bits;
 	};
 }
 

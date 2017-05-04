@@ -4,7 +4,6 @@
 namespace DXFramework
 {
 	DX11Graphics2D::DX11Graphics2D()
-		:m_dwSize(0)
 	{
 	}
 
@@ -87,35 +86,5 @@ namespace DXFramework
 	void DX11Graphics2D::Unlock()
 	{
 		m_dx11.Unlock();
-	}
-	BYTE* DX11Graphics2D::GetPointer(DWORD& dwSize)
-	{
-		m_dx11.Lock();
-		/*TinyComPtr<ID3D11Resource> backBuffer;
-		if (SUCCEEDED(m_dx11.GetSwap()->GetBuffer(0, __uuidof(ID3D11Resource), (void**)&backBuffer)))
-		{
-			ID3D11Texture2D* texture2D = m_dx11.GetTexture2D();
-			m_dx11.GetImmediateContext()->CopyResource(texture2D, backBuffer);
-			D3D11_MAPPED_SUBRESOURCE ms = { 0 };
-			if (SUCCEEDED(m_dx11.GetImmediateContext()->Map(texture2D, 0, D3D11_MAP_READ, 0, &ms)))
-			{
-				dwSize = ms.RowPitch * m_dx11.GetSize().cy;
-				if (m_dwSize != dwSize)
-				{
-					m_dwSize = dwSize;
-					m_bits.Reset(new BYTE[dwSize]);
-				}
-				memcpy(m_bits, static_cast<BYTE*>(ms.pData), dwSize);
-				m_dx11.GetImmediateContext()->Unmap(texture2D, 0);
-				m_dx11.Unlock();
-				return m_bits;
-			}
-		}*/
-		m_dx11.Unlock();
-		return NULL;
-	}
-	TinySize DX11Graphics2D::GetSize() const
-	{
-		return TinySize(0, 0);
 	}
 }

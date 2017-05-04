@@ -24,6 +24,7 @@ namespace DXFramework
 		ID3D11DeviceContext*	GetImmediateContext() const;
 		DX11RenderView*			GetRender2D() const;
 		XMMATRIX*				GetMatrixs();
+		TinySize				GetSize() const;
 	private:
 		TinyComPtr<ID3D11Device>			m_d3d;
 		TinyComPtr<IDXGISwapChain>			m_swap;

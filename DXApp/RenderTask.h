@@ -32,7 +32,9 @@ namespace DXApp
 		void			MoveUp(DX11Element2D* element);
 		void			MoveDown(DX11Element2D* element);
 		DX11Element2D*	HitTest(const TinyPoint& pos);
-		void			SetPulgSize(const TinySize& size);
+		void			SetPulgSize(const XMFLOAT2& size);
+		BYTE*			GetPointer(DWORD& dwSize);
+		TinySize		GetSize() const;
 	public:
 		void			OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter) OVERRIDE;
 		BOOL			Close(DWORD dwMs = INFINITE) OVERRIDE;
@@ -47,19 +49,20 @@ namespace DXApp
 		void			OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void			OnMenuClick(void*, INT wID);
 	private:
-		BOOL						m_bMouseTracking;
-		TinyMenu					m_menu;
-		DXWindow*					m_pWindow;
-		DWORD						m_dwFPS;
-		DX11Graphics2D				m_graphics;
-		TinyScopedPtr<DX11RenderView> m_renderView;
-		TinyEvent					m_close;
-		TinyPerformanceTimer		m_timer;
-		TinyArray<DX11Element2D*>	m_scenes;
-		DX11Element2D*				m_lastElement;
-		DX11Image2D					m_handles[8];
-		TinySize					m_pulgSize;//原始大小
-		INT							m_index;
+		BOOL							m_bMouseTracking;
+		TinyMenu						m_menu;
+		DXWindow*						m_pWindow;
+		DWORD							m_dwFPS;
+		DX11Graphics2D					m_graphics;
+		TinyScopedPtr<DX11RenderView>	m_renderView;
+		TinyEvent						m_close;
+		TinyPerformanceTimer			m_timer;
+		TinyArray<DX11Element2D*>		m_scenes;
+		DX11Element2D*					m_lastElement;
+		DX11Image2D						m_handles[8];
+		XMFLOAT2						m_pulgSize;//原始大小
+		DWORD							m_dwSize;
+		TinyScopedPtr<BYTE>				m_bits;
 	private:
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onSize;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonDown;
