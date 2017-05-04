@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "DX11Capture.h"
+#include <wincodec.h>
 
 namespace DXCapture
 {
@@ -83,6 +84,7 @@ namespace DXCapture
 		hRes = swap->GetDesc(&scd);
 		if (hRes != S_OK)
 			return FALSE;
+		LOG(INFO) << "DX11Capture::Setup Format:" << scd.BufferDesc.Format << " bMultisample:" << scd.SampleDesc.Count << "\n";
 		m_dxgiFormat = GetDX10PlusTextureFormat(scd.BufferDesc.Format);
 		m_captureDATA.Format = m_dxgiFormat;
 		m_captureDATA.Size.cx = scd.BufferDesc.Width;
@@ -114,7 +116,7 @@ namespace DXCapture
 			{
 				m_bTextures = DX11GPUHook(device);
 				LOG(INFO) << "DX11Capture::Render DX11GPUHook\n";
-				LOG(INFO) << "DX11Capture::Render  swap->GetDevice m_bCapturing:" << m_bCapturing << "m_bTextures:" << m_bTextures << "\n";
+				LOG(INFO) << "DX11Capture::Render  swap->GetDevice m_bCapturing:" << m_bCapturing << " -m_bTextures:" << m_bTextures << "\n";
 				LOG(INFO) << "------------------------------------------------------------------------------------------------\n";
 			}
 			if (m_bTextures)

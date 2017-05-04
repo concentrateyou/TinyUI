@@ -96,6 +96,9 @@ namespace DXCapture
 			if (m_bCapturing && !m_bTextures)
 			{
 				m_bTextures = DX10GPUHook(device);
+				LOG(INFO) << "DX10Capture::Render DX10GPUHook\n";
+				LOG(INFO) << "DX10Capture::Render  swap->GetDevice m_bCapturing:" << m_bCapturing << " m_bTextures:" << m_bTextures << "\n";
+				LOG(INFO) << "------------------------------------------------------------------------------------------------\n";
 			}
 			if (m_bTextures)
 			{
