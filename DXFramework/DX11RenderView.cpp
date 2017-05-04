@@ -148,9 +148,9 @@ namespace DXFramework
 	{
 		if (m_dx11.IsValid())
 		{
+			m_dx11.GetImmediateContext()->OMSetRenderTargets(1, &m_renderView, m_depthView);
 			m_dx11.SetViewport(TinyPoint(0, 0), m_size);
 			m_dx11.SetMatrixs(m_size);
-			m_dx11.GetImmediateContext()->OMSetRenderTargets(1, &m_renderView, m_depthView);
 			FLOAT color[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
 			m_dx11.GetImmediateContext()->ClearRenderTargetView(m_renderView, color);
 			m_dx11.GetImmediateContext()->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH, 1.0F, 0);
@@ -158,9 +158,9 @@ namespace DXFramework
 	}
 	void DX11RenderView::EndDraw()
 	{
-		//TODO
+
 	}
-	BOOL DX11RenderView::Save(const CHAR* pzName, D3DX11_IMAGE_FILE_FORMAT format)
+	BOOL DX11RenderView::SaveAs(const CHAR* pzName, D3DX11_IMAGE_FILE_FORMAT format)
 	{
 		if (!m_dx11.IsValid())
 			return FALSE;

@@ -251,10 +251,10 @@ namespace DXFramework
 	{
 		TinySize scale = GetScale();
 		TinyPoint pos = GetPosition();
-		if (pos == m_lastPos && scale == m_lastScale)
+		/*if (pos == m_lastPos && scale == m_lastScale)
 		{
 			return TRUE;
-		}
+		}*/
 		m_lastPos = pos;
 		m_lastScale = scale;
 		FLOAT left = 0.0F;

@@ -16,7 +16,7 @@ namespace DXFramework
 		BOOL Resize(INT cx, INT cy);
 		void BeginDraw();
 		void EndDraw();
-		BOOL Save(const CHAR* pzName, D3DX11_IMAGE_FILE_FORMAT format);
+		BOOL SaveAs(const CHAR* pzName, D3DX11_IMAGE_FILE_FORMAT format);
 		ID3D11RenderTargetView* GetRTView() const;
 		ID3D11DepthStencilView* GetDSView() const;
  	protected:

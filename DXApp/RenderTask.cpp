@@ -31,7 +31,7 @@ namespace DXApp
 			return FALSE;
 
 		m_renderView.Reset(new DX11RenderView(m_graphics.GetDX11()));
-		m_renderView->Create(1600, 900);
+		m_renderView->Create(720, 405);
 
 		for (INT i = 0;i < 8;i++)
 		{
@@ -88,72 +88,48 @@ namespace DXApp
 	{
 		m_timer.BeginTime();
 
-		if (index)
+		m_graphics.GetDX11().SetRenderTexture2D(m_renderView);
+		m_graphics.GetDX11().GetRender2D()->BeginDraw();
+		for (INT i = 0;i < m_scenes.GetSize();i++)
 		{
-			m_graphics.GetDX11().SetRenderTexture2D(m_renderView);
-			m_graphics.GetDX11().GetRender2D()->BeginDraw();
-			for (INT i = 0;i < m_scenes.GetSize();i++)
+			DX11Element2D* ps = m_scenes[i];
+			if (ps->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
 			{
-				DX11Element2D* ps = m_scenes[i];
-				if (ps->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
-				{
-					DX11Image2D* image = static_cast<DX11Image2D*>(ps);
-					image->Save();
-					TinyPoint pos = image->GetPosition();
-					TinySize scale = image->GetScale();
-					pos.x = pos.x * 1.25;
-					pos.y = pos.y * 1.25;
-					image->SetPosition(pos);
-					scale.cx = scale.cx * 1.25;
-					scale.cy = scale.cy * 1.25;
-					image->SetScale(scale);
-					m_graphics.DrawImage(image);
-				}
+				DX11Image2D* image = static_cast<DX11Image2D*>(ps);
+				m_graphics.DrawImage(image,TRUE);
 			}
-			for (INT i = 0;i < m_scenes.GetSize();i++)
-			{
-				DX11Element2D* ps = m_scenes[i];
-				if (ps->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
-				{
-					DX11Image2D* image = static_cast<DX11Image2D*>(ps);
-					image->Restore();
-				}
-			}
-			m_graphics.GetDX11().GetRender2D()->EndDraw();
-			m_graphics.GetDX11().GetRender2D()->Save("D:\\123.jpg", JPG);
-			index = FALSE;
 		}
-		else
+		m_graphics.GetDX11().GetRender2D()->EndDraw();
+		m_graphics.GetDX11().GetRender2D()->SaveAs("D:\\123.jpg", JPG);
+		
+		m_graphics.GetDX11().SetRenderTexture2D(NULL);
+		m_graphics.GetDX11().GetRender2D()->BeginDraw();
+		for (INT i = 0;i < m_scenes.GetSize();i++)
 		{
-			m_graphics.GetDX11().SetRenderTexture2D(NULL);
-			m_graphics.GetDX11().GetRender2D()->BeginDraw();
-			for (INT i = 0;i < m_scenes.GetSize();i++)
+			DX11Element2D* ps = m_scenes[i];
+			if (ps->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
 			{
-				DX11Element2D* ps = m_scenes[i];
-				if (ps->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
+				DX11Image2D* image = static_cast<DX11Image2D*>(ps);
+				/*if (ps == m_lastElement)
 				{
-					DX11Image2D* image = static_cast<DX11Image2D*>(ps);
-					if (ps == m_lastElement)
+					UINT mask = image->GetHandleMask();
+					for (INT i = 0; i < 8; ++i)
 					{
-						UINT mask = image->GetHandleMask();
-						for (INT i = 0; i < 8; ++i)
+						if (mask & (1 << i))
 						{
-							if (mask & (1 << i))
-							{
-								TinyRectangle rectangle;
-								image->GetHandleRect((TrackerHit)i, &rectangle);
-								rectangle.NormalizeRect();
-								m_graphics.DrawRectangle(&m_handles[i], rectangle);
-							}
+							TinyRectangle rectangle;
+							image->GetHandleRect((TrackerHit)i, &rectangle);
+							m_graphics.DrawRectangle(&m_handles[i], rectangle);
 						}
 					}
-					m_graphics.DrawImage(image);
-				}
+				}*/
+				m_graphics.DrawImage(image);
 			}
-			m_graphics.GetDX11().GetRender2D()->EndDraw();
-			index = TRUE;
 		}
+		m_graphics.GetDX11().GetRender2D()->EndDraw();
 		m_graphics.Present();
+
+		
 		m_timer.EndTime();
 		return m_timer.GetMillisconds();
 	}
