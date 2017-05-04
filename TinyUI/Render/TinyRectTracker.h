@@ -17,7 +17,6 @@ namespace TinyUI
 		virtual ~TinyRectTracker();
 		virtual INT GetHandleSize() const;
 		virtual void OnChangedRect(const TinyRectangle& rectOld);
-		virtual BOOL AllowTracker() const;
 		void Draw(TinyDC* pDC) const;
 		INT HitTest(const TinyPoint& point) const;
 		BOOL Track(HWND hWND, const TinyPoint& point, BOOL bAllowInvert);

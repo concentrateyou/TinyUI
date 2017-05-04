@@ -32,6 +32,7 @@ namespace DXApp
 		void			MoveUp(DX11Element2D* element);
 		void			MoveDown(DX11Element2D* element);
 		DX11Element2D*	HitTest(const TinyPoint& pos);
+		void			SetPulgSize(const TinySize& size);
 	public:
 		void			OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter) OVERRIDE;
 		BOOL			Close(DWORD dwMs = INFINITE) OVERRIDE;
@@ -56,7 +57,9 @@ namespace DXApp
 		TinyPerformanceTimer		m_timer;
 		TinyArray<DX11Element2D*>	m_scenes;
 		DX11Element2D*				m_lastElement;
-		DX11Rectangle2D				m_handles[8];
+		DX11Image2D					m_handles[8];
+		TinySize					m_pulgSize;//原始大小
+		INT							m_index;
 	private:
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onSize;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonDown;

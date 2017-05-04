@@ -6,7 +6,8 @@ namespace DXApp
 {
 	RenderTask::RenderTask()
 		:m_lastElement(NULL),
-		m_bMouseTracking(NULL)
+		m_bMouseTracking(NULL),
+		m_pulgSize(1280, 720)
 	{
 
 	}
@@ -32,10 +33,15 @@ namespace DXApp
 
 		m_renderView.Reset(new DX11RenderView(m_graphics.GetDX11()));
 		m_renderView->Create(720, 405);
-
+		string box;
+		box.resize(MAX_PATH);
+		GetModuleFileName(NULL, &box[0], MAX_PATH);
+		box = box.substr(0, box.find_last_of("\\", string::npos, 1));
+		string vs = box + "\\box.png";
+		ASSERT(PathFileExists(vs.c_str()));
 		for (INT i = 0;i < 8;i++)
 		{
-			m_handles[i].Create(m_graphics.GetDX11());
+			m_handles[i].Load(m_graphics.GetDX11(), vs.c_str());
 		}
 		m_pWindow = pWindow;
 		m_dwFPS = dwFPS;
@@ -82,52 +88,57 @@ namespace DXApp
 		return TinyTaskBase::Submit(BindCallback(&RenderTask::OnMessagePump, this));
 	}
 
-	BOOL index = FALSE;
 
 	LONGLONG RenderTask::Render()
 	{
 		m_timer.BeginTime();
-		m_graphics.GetDX11().SetRenderTexture2D(m_renderView);
-		m_graphics.GetDX11().GetRender2D()->BeginDraw();
-		for (INT i = 0;i < m_scenes.GetSize();i++)
-		{
-			DX11Element2D* ps = m_scenes[i];
-			if (ps->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
-			{
-				DX11Image2D* image = static_cast<DX11Image2D*>(ps);
-				m_graphics.DrawImage(image, (FLOAT)(720.0F / 1280.0F), (FLOAT)(405.F / 720.0));
-			}
-		}
-		m_graphics.GetDX11().GetRender2D()->EndDraw();
 
-		m_graphics.GetDX11().SetRenderTexture2D(NULL);
-		m_graphics.GetDX11().GetRender2D()->BeginDraw();
-		for (INT i = 0;i < m_scenes.GetSize();i++)
+		if (m_index)
 		{
-			DX11Element2D* ps = m_scenes[i];
-			if (ps->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
+			m_graphics.GetDX11().SetRenderTexture2D(m_renderView);
+			m_graphics.GetDX11().GetRender2D()->BeginDraw();
+			for (INT i = 0;i < m_scenes.GetSize();i++)
 			{
-				DX11Image2D* image = static_cast<DX11Image2D*>(ps);
-				if (ps == m_lastElement)
+				DX11Element2D* ps = m_scenes[i];
+				if (ps->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
 				{
-					UINT mask = image->GetHandleMask();
-					for (INT i = 0; i < 8; ++i)
+					DX11Image2D* image = static_cast<DX11Image2D*>(ps);
+					m_graphics.DrawImage(image, (FLOAT)(720.0F / 1280.0F), (FLOAT)(405.F / 720.0));
+				}
+			}
+			m_graphics.GetDX11().GetRender2D()->EndDraw();
+		}
+		else
+		{
+			m_graphics.GetDX11().SetRenderTexture2D(NULL);
+			m_graphics.GetDX11().GetRender2D()->BeginDraw();
+			for (INT i = 0;i < m_scenes.GetSize();i++)
+			{
+				DX11Element2D* ps = m_scenes[i];
+				if (ps->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
+				{
+					DX11Image2D* image = static_cast<DX11Image2D*>(ps);
+					if (ps == m_lastElement)
 					{
-						if (mask & (1 << i))
+						UINT mask = image->GetHandleMask();
+						for (INT i = 0; i < 8; ++i)
 						{
-							TinyRectangle rectangle;
-							image->GetHandleRect((TrackerHit)i, &rectangle);
-							m_graphics.DrawRectangle(&m_handles[i], rectangle);
+							if (mask & (1 << i))
+							{
+								TinyRectangle rectangle;
+								image->GetHandleRect((TrackerHit)i, &rectangle);
+								m_handles[i].SetPosition(rectangle.Position());
+								m_handles[i].SetScale(rectangle.Size());
+								m_graphics.DrawImage(&m_handles[i]);
+							}
 						}
 					}
+					m_graphics.DrawImage(image);
 				}
-				m_graphics.DrawImage(image);
 			}
+			m_graphics.GetDX11().GetRender2D()->EndDraw();
+			m_graphics.Present();
 		}
-		m_graphics.GetDX11().GetRender2D()->EndDraw();
-		m_graphics.Present();
-
-
 		m_timer.EndTime();
 		return m_timer.GetMillisconds();
 	}
@@ -309,6 +320,11 @@ namespace DXApp
 			}
 		}
 		return NULL;
+	}
+
+	void RenderTask::SetPulgSize(const TinySize& size)
+	{
+		m_pulgSize = size;
 	}
 
 	void RenderTask::OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)

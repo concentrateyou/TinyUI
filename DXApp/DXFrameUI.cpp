@@ -41,9 +41,9 @@ namespace DXApp
 	void DXFrameUI::Resize(INT cx, INT cy)
 	{
 		m_window.SetPosition(0, 0);
-		m_window.SetSize(cx, 720);
-		m_mainUI.SetPosition(0, 720);
-		m_mainUI.SetSize(cx, cy - 720);
+		m_window.SetSize(cx, 576);
+		m_mainUI.SetPosition(0, 576);
+		m_mainUI.SetSize(cx, cy - 576);
 	}
 
 	LRESULT DXFrameUI::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -54,8 +54,8 @@ namespace DXApp
 
 		RECT rect;
 		SystemParametersInfo(SPI_GETWORKAREA, 0, &rect, 0);
-		INT cx = 1280;
-		INT cy = TO_CY(rect) * 5 / 6;
+		INT cx = 1024;
+		INT cy = TO_CY(rect) * 3 / 4;
 		CenterWindow(NULL, { cx, cy });
 
 		return FALSE;

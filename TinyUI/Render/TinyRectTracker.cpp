@@ -137,17 +137,13 @@ namespace TinyUI
 	}
 	BOOL TinyRectTracker::Track(HWND hWND, const TinyPoint& point, BOOL bAllowInvert)
 	{
-		if (AllowTracker())
+		INT nHandle = HitTestHandles(point);
+		if (nHandle < 0)
 		{
-			INT nHandle = HitTestHandles(point);
-			if (nHandle < 0)
-			{
-				return FALSE;
-			}
-			m_bAllowInvert = bAllowInvert;
-			return TrackHandle(nHandle, hWND, point);
+			return FALSE;
 		}
-		return FALSE;
+		m_bAllowInvert = bAllowInvert;
+		return TrackHandle(nHandle, hWND, point);
 	}
 	void TinyRectTracker::OnChangedRect(const TinyRectangle& rectOld)
 	{
@@ -155,13 +151,9 @@ namespace TinyUI
 	}
 	BOOL TinyRectTracker::TrackRubberBand(HWND hWND, const TinyPoint& point, BOOL bAllowInvert)
 	{
-		if (AllowTracker())
-		{
-			m_bAllowInvert = bAllowInvert;
-			m_trackerRect.SetRect(point.x, point.y, point.x, point.y);
-			return TrackHandle(hitBottomRight, hWND, point);
-		}
-		return FALSE;
+		m_bAllowInvert = bAllowInvert;
+		m_trackerRect.SetRect(point.x, point.y, point.x, point.y);
+		return TrackHandle(hitBottomRight, hWND, point);
 	}
 	BOOL TinyRectTracker::TrackHandle(INT nHandle, HWND hWND, const TinyPoint& point)
 	{
@@ -405,9 +397,5 @@ namespace TinyUI
 	INT TinyRectTracker::GetHandleSize() const
 	{
 		return m_handleSize;
-	}
-	BOOL TinyRectTracker::AllowTracker() const
-	{
-		return TRUE;
 	}
 }
