@@ -154,7 +154,7 @@ namespace DXFramework
 	}
 	BOOL DX11Image2D::SaveAs(DX11& dx11, const CHAR* pzName)
 	{
-		return m_texture.SaveAs(dx11, pzName, BMP);
+		return m_texture.SaveAs(dx11, pzName, JPG);
 	}
 	BOOL DX11Image2D::GetDC(BOOL discard, HDC& hDC)
 	{

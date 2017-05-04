@@ -66,18 +66,18 @@ namespace DXFramework
 		SIZE_T size = 0;
 		BOOL bRes = (*pWRITEPROCESSMEMORY)(hProcess, pAlloc, (LPVOID)pszDLL, dwSize, &size);
 		if (!bRes)
-			goto error;
+			goto _ERROR;
 		address = (FARPROC)GetProcAddress(hInstance, TEXT("LoadLibraryA"));
 		if (!address)
 		{
 			bRes = FALSE;
-			goto error;
+			goto _ERROR;
 		}
 		hTask = (*pCREATEREMOTETHREAD)(hProcess, NULL, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(address), pAlloc, 0, 0);
 		if (!hTask)
 		{
 			bRes = FALSE;
-			goto error;
+			goto _ERROR;
 		}
 		if (WaitForSingleObject(hTask, 2000) == WAIT_OBJECT_0)
 		{
@@ -85,7 +85,7 @@ namespace DXFramework
 			GetExitCodeThread(hTask, &dw);
 			bRes = dw != 0;
 		}
-	error:
+	_ERROR:
 		if (hTask != NULL)
 		{
 			CloseHandle(hTask);
@@ -132,19 +132,19 @@ namespace DXFramework
 		} while (Module32Next(hSnapshot, &me));
 		if (!bRes)
 		{
-			goto error;
+			goto _ERROR;
 		}
 		address = (FARPROC)GetProcAddress(hInstance, TEXT("FreeLibrary"));
 		if (!address)
 		{
 			bRes = FALSE;
-			goto error;
+			goto _ERROR;
 		}
 		hTask = (*pCREATEREMOTETHREAD)(hProcess, NULL, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(address), (LPVOID)me.modBaseAddr, 0, 0);
 		if (!hTask)
 		{
 			bRes = FALSE;
-			goto error;
+			goto _ERROR;
 		}
 		if (WaitForSingleObject(hTask, 2000) == WAIT_OBJECT_0)
 		{
@@ -152,7 +152,7 @@ namespace DXFramework
 			GetExitCodeThread(hTask, &dw);
 			bRes = dw != 0;
 		}
-	error:
+	_ERROR:
 		if (hTask != NULL)
 		{
 			CloseHandle(hTask);
@@ -178,18 +178,18 @@ namespace DXFramework
 		SIZE_T size = 0;
 		BOOL bRes = (*pWRITEPROCESSMEMORY)(hProcess, pAlloc, (LPVOID)pszDLL, dwSize, &size);
 		if (!bRes)
-			goto error;
+			goto _ERROR;
 		address = (FARPROC)GetProcAddress(hInstance, TEXT("GetModuleHandleA"));
 		if (!address)
 		{
 			bRes = FALSE;
-			goto error;
+			goto _ERROR;
 		}
 		hTask = (*pCREATEREMOTETHREAD)(hProcess, NULL, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(address), pAlloc, 0, 0);
 		if (!hTask)
 		{
 			bRes = FALSE;
-			goto error;
+			goto _ERROR;
 		}
 		DWORD dwHandle = 0;
 		if (WaitForSingleObject(hTask, 2000) == WAIT_OBJECT_0)
@@ -198,20 +198,20 @@ namespace DXFramework
 			if (dwHandle == 0)
 			{
 				bRes = FALSE;
-				goto error;
+				goto _ERROR;
 			}
 		}
 		address = (FARPROC)GetProcAddress(hInstance, TEXT("FreeLibrary"));
 		if (!address)
 		{
 			bRes = FALSE;
-			goto error;
+			goto _ERROR;
 		}
 		hTask = (*pCREATEREMOTETHREAD)(hProcess, NULL, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(address), (LPVOID)dwHandle, 0, 0);
 		if (!hTask)
 		{
 			bRes = FALSE;
-			goto error;
+			goto _ERROR;
 		}
 		if (WaitForSingleObject(hTask, 2000) == WAIT_OBJECT_0)
 		{
@@ -219,7 +219,7 @@ namespace DXFramework
 			GetExitCodeThread(hTask, &dw);
 			bRes = dw != 0;
 		}
-	error:
+	_ERROR:
 		if (hTask != NULL)
 		{
 			CloseHandle(hTask);

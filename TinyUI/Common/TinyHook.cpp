@@ -454,7 +454,6 @@ namespace TinyUI
 					break;
 				}
 			} while (0);
-			LOG(INFO) << "test-----1\n";
 			if (dst < destJMP && copySize != hs.len)
 			{
 				LOG(INFO) << "dst < destJMP && copySize != hs.len\n";
