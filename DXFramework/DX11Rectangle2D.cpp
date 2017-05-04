@@ -72,11 +72,9 @@ namespace DXFramework
 		dx11.GetImmediateContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		return TRUE;
 	}
-	BOOL DX11Rectangle2D::SetRectangle(DX11& dx11, const TinyRectangle& rectangle)
+	BOOL DX11Rectangle2D::SetRectangle(DX11& dx11, const TinyRectangle& rectangle, FLOAT ratioX, FLOAT ratioY)
 	{
 		m_rectangle = rectangle;
-		TinySize scale = m_rectangle.Size();
-		TinyPoint pos = m_rectangle.Position();
 		FLOAT left = 0.0F;
 		FLOAT right = 0.0F;
 		FLOAT top = 0.0F;
@@ -85,11 +83,13 @@ namespace DXFramework
 		ZeroMemory(&vp, sizeof(vp));
 		UINT count = 1;
 		dx11.GetImmediateContext()->RSGetViewports(&count, &vp);
+		XMFLOAT2 scale(static_cast<FLOAT>(m_rectangle.Size().cx) * ratioX, static_cast<FLOAT>(m_rectangle.Size().cy) * ratioY);
+		XMFLOAT2 pos(static_cast<FLOAT>(m_rectangle.Position().x) * ratioX, static_cast<FLOAT>(m_rectangle.Position().y) * ratioY);
 		XMFLOAT2 size(vp.Width, vp.Height);
-		left = (FLOAT)((size.x / 2) * -1) + (FLOAT)pos.x;
-		right = left + (FLOAT)scale.cx;
-		top = (FLOAT)(size.y / 2) - (FLOAT)pos.y;
-		bottom = top - (FLOAT)scale.cy;
+		left = (FLOAT)((size.x / 2) * -1) + pos.x;
+		right = left + scale.x;
+		top = (FLOAT)(size.y / 2) - pos.y;
+		bottom = top - scale.y;
 		INT vertexCount = GetIndexCount();
 		m_vertices[0].position = XMFLOAT3(left, top, 0.0F);
 		m_vertices[0].color = XMFLOAT4(1.0f, 0.415f, 0.0f, 1.0f);

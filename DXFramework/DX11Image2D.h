@@ -36,7 +36,7 @@ namespace DXFramework
 		BOOL Load(DX11& dx11, const CHAR* pzFile);
 		BOOL Load(DX11& dx11, const BYTE* bits, DWORD dwSize);
 		BOOL IsEmpty() const;
-		BOOL Update(DX11& dx11);
+		BOOL Update(DX11& dx11, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F);
 		DX11Texture2D* GetTexture();
 	public:
 		virtual INT	GetIndexCount() const;

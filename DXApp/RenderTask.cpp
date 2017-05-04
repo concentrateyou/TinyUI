@@ -87,7 +87,6 @@ namespace DXApp
 	LONGLONG RenderTask::Render()
 	{
 		m_timer.BeginTime();
-
 		m_graphics.GetDX11().SetRenderTexture2D(m_renderView);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();
 		for (INT i = 0;i < m_scenes.GetSize();i++)
@@ -96,12 +95,11 @@ namespace DXApp
 			if (ps->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
 			{
 				DX11Image2D* image = static_cast<DX11Image2D*>(ps);
-				m_graphics.DrawImage(image);
+				m_graphics.DrawImage(image, (FLOAT)(720.0F / 1280.0F), (FLOAT)(405.F / 720.0));
 			}
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
-		m_graphics.GetDX11().GetRender2D()->SaveAs("D:\\123.jpg", JPG);
-		
+
 		m_graphics.GetDX11().SetRenderTexture2D(NULL);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();
 		for (INT i = 0;i < m_scenes.GetSize();i++)
@@ -110,7 +108,7 @@ namespace DXApp
 			if (ps->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
 			{
 				DX11Image2D* image = static_cast<DX11Image2D*>(ps);
-				/*if (ps == m_lastElement)
+				if (ps == m_lastElement)
 				{
 					UINT mask = image->GetHandleMask();
 					for (INT i = 0; i < 8; ++i)
@@ -122,14 +120,14 @@ namespace DXApp
 							m_graphics.DrawRectangle(&m_handles[i], rectangle);
 						}
 					}
-				}*/
+				}
 				m_graphics.DrawImage(image);
 			}
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
 		m_graphics.Present();
 
-		
+
 		m_timer.EndTime();
 		return m_timer.GetMillisconds();
 	}

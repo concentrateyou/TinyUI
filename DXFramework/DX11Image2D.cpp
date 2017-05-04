@@ -247,10 +247,8 @@ namespace DXFramework
 		m_vertices.Reset(new VERTEXTYPE[vertexCount]);
 		return TRUE;
 	}
-	BOOL DX11Image2D::Update(DX11& dx11)
+	BOOL DX11Image2D::Update(DX11& dx11, FLOAT ratioX, FLOAT ratioY)
 	{
-		TinySize scale = GetScale();
-		TinyPoint pos = GetPosition();
 		FLOAT left = 0.0F;
 		FLOAT right = 0.0F;
 		FLOAT top = 0.0F;
@@ -259,11 +257,13 @@ namespace DXFramework
 		ZeroMemory(&vp, sizeof(vp));
 		UINT count = 1;
 		dx11.GetImmediateContext()->RSGetViewports(&count, &vp);
+		XMFLOAT2 scale(static_cast<FLOAT>(GetScale().cx) * ratioX, static_cast<FLOAT>(GetScale().cy) * ratioY);
+		XMFLOAT2 pos(static_cast<FLOAT>(GetPosition().x) * ratioX, static_cast<FLOAT>(GetPosition().y) * ratioY);
 		XMFLOAT2 size(vp.Width, vp.Height);
-		left = (FLOAT)((size.x / 2) * -1) + (FLOAT)pos.x;
-		right = left + (FLOAT)scale.cx;
-		top = (FLOAT)(size.y / 2) - (FLOAT)pos.y;
-		bottom = top - (FLOAT)scale.cy;
+		left = (FLOAT)((size.x / 2) * -1) + pos.x;
+		right = left + scale.x;
+		top = (FLOAT)(size.y / 2) - pos.y;
+		bottom = top - scale.y;
 		INT vertexCount = GetIndexCount();
 		m_vertices[0].position = XMFLOAT3(left, top, 0.0F);
 		m_vertices[0].texture = XMFLOAT2(0.0F, 0.0F);

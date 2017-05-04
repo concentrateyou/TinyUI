@@ -112,28 +112,6 @@ namespace DXFramework
 			}
 		}
 	}
-	void DX11::SetMatrixs(const TinySize& size)
-	{
-		FLOAT fov = (FLOAT)D3DX_PI / 4.0F;
-		FLOAT aspect = (FLOAT)size.cx / (FLOAT)size.cy;
-		m_matrixs[0] = XMMatrixPerspectiveFovLH(fov, aspect, 1000.0F, 0.1F);
-		m_matrixs[1] = XMMatrixIdentity();
-		m_matrixs[2] = XMMatrixOrthographicLH((FLOAT)size.cx, (FLOAT)size.cy, 1000.0F, 0.1F);
-	}
-	void DX11::SetViewport(const TinyPoint& pos, const TinySize& size)
-	{
-		if (IsValid())
-		{
-			D3D11_VIEWPORT viewport;
-			viewport.TopLeftX = static_cast<FLOAT>(pos.x);
-			viewport.TopLeftY = static_cast<FLOAT>(pos.y);
-			viewport.Width = static_cast<FLOAT>(size.cx);
-			viewport.Height = static_cast<FLOAT>(size.cy);
-			viewport.MinDepth = 0.0F;
-			viewport.MaxDepth = 1.0F;
-			m_immediateContext->RSSetViewports(1, &viewport);
-		}
-	}
 	void DX11::Present()
 	{
 		if (IsValid())
@@ -170,5 +148,27 @@ namespace DXFramework
 	XMMATRIX* DX11::GetMatrixs()
 	{
 		return m_matrixs;
+	}
+	void DX11::SetMatrixs(const TinySize& size)
+	{
+		FLOAT fov = (FLOAT)D3DX_PI / 4.0F;
+		FLOAT aspect = (FLOAT)size.cx / (FLOAT)size.cy;
+		m_matrixs[0] = XMMatrixPerspectiveFovLH(fov, aspect, 1000.0F, 0.1F);
+		m_matrixs[1] = XMMatrixIdentity();
+		m_matrixs[2] = XMMatrixOrthographicLH((FLOAT)size.cx, (FLOAT)size.cy, 1000.0F, 0.1F);
+	}
+	BOOL DX11::SetViewport(const TinyPoint& pos, const TinySize& size)
+	{
+		if (!m_immediateContext)
+			return FALSE;
+		D3D11_VIEWPORT viewport;
+		viewport.TopLeftX = static_cast<FLOAT>(pos.x);
+		viewport.TopLeftY = static_cast<FLOAT>(pos.y);
+		viewport.Width = static_cast<FLOAT>(size.cx);
+		viewport.Height = static_cast<FLOAT>(size.cy);
+		viewport.MinDepth = 0.0F;
+		viewport.MaxDepth = 1.0F;
+		m_immediateContext->RSSetViewports(1, &viewport);
+		return TRUE;
 	}
 }

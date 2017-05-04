@@ -48,14 +48,14 @@ namespace DXFramework
 	{
 		return m_dx11;
 	}
-	BOOL DX11Graphics2D::DrawImage(DX11Image2D* ps)
+	BOOL DX11Graphics2D::DrawImage(DX11Image2D* ps, FLOAT ratioX, FLOAT ratioY)
 	{
 		ASSERT(ps);
 		if (!m_dx11.GetRender2D())
 			return FALSE;
 		if (!ps->IsEmpty())
 			return FALSE;
-		if (!ps->Update(m_dx11))
+		if (!ps->Update(m_dx11, ratioX, ratioY))
 			return FALSE;
 		if (ps->Render(m_dx11))
 		{
@@ -65,12 +65,12 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
-	BOOL DX11Graphics2D::DrawRectangle(DX11Rectangle2D* ps, const TinyRectangle& rectangle)
+	BOOL DX11Graphics2D::DrawRectangle(DX11Rectangle2D* ps, const TinyRectangle& rectangle, FLOAT ratioX, FLOAT ratioY)
 	{
 		ASSERT(ps);
 		if (!m_dx11.GetRender2D())
 			return FALSE;
-		if (!ps->SetRectangle(m_dx11, rectangle))
+		if (!ps->SetRectangle(m_dx11, rectangle, ratioX, ratioY))
 			return FALSE;
 		if (ps->Render(m_dx11))
 		{

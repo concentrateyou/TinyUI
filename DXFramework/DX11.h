@@ -14,7 +14,7 @@ namespace DXFramework
 		BOOL Initialize(HWND hWND, INT cx, INT cy);
 		BOOL ResizeView(INT cx = 0, INT cy = 0);
 		void SetRenderTexture2D(DX11RenderView* render2D);
-		void SetViewport(const TinyPoint& pos, const TinySize& size);
+		BOOL SetViewport(const TinyPoint& pos, const TinySize& size);
 		void SetMatrixs(const TinySize& size);
 		void Present();
 		HWND					GetHWND() const;

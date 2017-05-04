@@ -20,8 +20,8 @@ namespace DXFramework
 		void	 Present();
 		BOOL     Resize(const TinySize& size);
 		DX11&	 GetDX11();
-		BOOL	 DrawImage(DX11Image2D* ps);
-		BOOL	 DrawRectangle(DX11Rectangle2D* ps, const TinyRectangle& rectangle);
+		BOOL	 DrawImage(DX11Image2D* ps, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F);
+		BOOL	 DrawRectangle(DX11Rectangle2D* ps, const TinyRectangle& rectangle, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F);
 		void	 Lock();
 		void	 Unlock();
 		BYTE*	 GetPointer(DWORD& dwSize);

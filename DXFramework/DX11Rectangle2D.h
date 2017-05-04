@@ -16,7 +16,7 @@ namespace DXFramework
 		DX11Rectangle2D();
 		virtual ~DX11Rectangle2D();
 		BOOL	Create(DX11& dx11);
-		BOOL	SetRectangle(DX11& dx11, const TinyRectangle& rectangle);
+		BOOL	SetRectangle(DX11& dx11, const TinyRectangle& rectangle, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F);
 		BOOL	Render(DX11& dx11);
 	public:
 		virtual INT	GetIndexCount() const;
