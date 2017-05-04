@@ -48,7 +48,7 @@ namespace DXFramework
 	{
 		return m_dx11;
 	}
-	BOOL DX11Graphics2D::DrawImage(DX11Image2D* ps,BOOL bTest)
+	BOOL DX11Graphics2D::DrawImage(DX11Image2D* ps)
 	{
 		ASSERT(ps);
 		if (!m_dx11.GetRender2D())

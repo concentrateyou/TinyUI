@@ -27,6 +27,7 @@ namespace DXFramework
 		BOOL BitBlt(DX11& dx11, const TinyRectangle& dst, HDC hDCSrc, const TinyPoint& src);
 		BOOL Copy(DX11& dx11, ID3D11Texture2D* texture2D);
 		BOOL Copy(DX11& dx11, const BYTE* bits, LONG size, LONG linesize);
+		BOOL SaveAs(DX11& dx11, const CHAR* pzName);
 		BOOL GetDC(BOOL discard, HDC& hDC);
 		BOOL ReleaseDC();
 		BOOL Map(DX11& dx11, BYTE *&lpData, UINT &pitch);
@@ -47,8 +48,6 @@ namespace DXFramework
 	private:
 		BOOL Initialize(DX11& dx11);
 	protected:
-		TinyPoint					m_lastPos;
-		TinySize					m_lastScale;
 		DX11Texture2D				m_texture;
 		TinyComPtr<ID3D11Buffer>	m_vertexBuffer;
 		TinyComPtr<ID3D11Buffer>	m_indexBuffer;

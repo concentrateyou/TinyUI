@@ -17,12 +17,12 @@ namespace DXFramework
 		void SetViewport(const TinyPoint& pos, const TinySize& size);
 		void SetMatrixs(const TinySize& size);
 		void Present();
+		HWND					GetHWND() const;
 		BOOL					IsValid() const;
 		ID3D11Device*			GetD3D() const;
-		ID3D11DeviceContext*	GetImmediateContext() const;
 		IDXGISwapChain*			GetSwap() const;
-		DX11RenderView*	GetRender2D() const;
-		HWND					GetHWND() const;
+		ID3D11DeviceContext*	GetImmediateContext() const;
+		DX11RenderView*			GetRender2D() const;
 		XMMATRIX*				GetMatrixs();
 	private:
 		TinyComPtr<ID3D11Device>			m_d3d;
@@ -30,8 +30,8 @@ namespace DXFramework
 		TinyComPtr<ID3D11DeviceContext>		m_immediateContext;
 		TinyComPtr<ID3D11DepthStencilState>	m_depthStencilState;
 		TinyComPtr<ID3D11RasterizerState>	m_rasterizerState;
-		TinyScopedPtr<DX11RenderView>	m_back2D;
-		DX11RenderView*				m_render2D;
+		TinyScopedPtr<DX11RenderView>		m_background2D;
+		DX11RenderView*						m_render2D;
 		HWND								m_hWND;
 		XMMATRIX							m_matrixs[3];
 	};

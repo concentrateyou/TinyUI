@@ -152,7 +152,7 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11Texture2D::Save(DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT format)
+	BOOL DX11Texture2D::SaveAs(DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT format)
 	{
 		ASSERT(m_texture2D);
 		wstring ws = StringToWString(pzFile);

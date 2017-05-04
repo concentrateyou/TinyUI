@@ -6,8 +6,7 @@ namespace DXFramework
 {
 	DX11Rectangle2D::DX11Rectangle2D()
 	{
-		m_lastPos.x = m_lastPos.y = -1;
-		m_lastScale.cx = m_lastScale.cy = -1;
+
 	}
 
 	DX11Rectangle2D::~DX11Rectangle2D()
@@ -78,12 +77,6 @@ namespace DXFramework
 		m_rectangle = rectangle;
 		TinySize scale = m_rectangle.Size();
 		TinyPoint pos = m_rectangle.Position();
-		if (pos == m_lastPos && scale == m_lastScale)
-		{
-			return TRUE;
-		}
-		m_lastPos = pos;
-		m_lastScale = scale;
 		FLOAT left = 0.0F;
 		FLOAT right = 0.0F;
 		FLOAT top = 0.0F;
@@ -120,8 +113,6 @@ namespace DXFramework
 	}
 	void DX11Rectangle2D::Destory()
 	{
-		m_lastPos.x = m_lastPos.y = -1;
-		m_lastScale.cx = m_lastScale.cy = -1;
 		m_vertexBuffer.Release();
 		m_indexBuffer.Release();
 	}

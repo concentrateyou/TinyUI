@@ -10,8 +10,6 @@ namespace DXFramework
 
 	DX11Image2D::DX11Image2D()
 	{
-		m_lastPos.x = m_lastPos.y = -1;
-		m_lastScale.cx = m_lastScale.cy = -1;
 	}
 	DX11Image2D::~DX11Image2D()
 	{
@@ -55,8 +53,6 @@ namespace DXFramework
 	}
 	void DX11Image2D::Destory()
 	{
-		m_lastPos.x = m_lastPos.y = -1;
-		m_lastScale.cx = m_lastScale.cy = -1;
 		m_vertexBuffer.Release();
 		m_indexBuffer.Release();
 		m_texture.Destory();
@@ -156,6 +152,10 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
+	BOOL DX11Image2D::SaveAs(DX11& dx11, const CHAR* pzName)
+	{
+		return m_texture.SaveAs(dx11, pzName, BMP);
+	}
 	BOOL DX11Image2D::GetDC(BOOL discard, HDC& hDC)
 	{
 		return m_texture.GetDC(discard, hDC);
@@ -251,12 +251,6 @@ namespace DXFramework
 	{
 		TinySize scale = GetScale();
 		TinyPoint pos = GetPosition();
-		/*if (pos == m_lastPos && scale == m_lastScale)
-		{
-			return TRUE;
-		}*/
-		m_lastPos = pos;
-		m_lastScale = scale;
 		FLOAT left = 0.0F;
 		FLOAT right = 0.0F;
 		FLOAT top = 0.0F;

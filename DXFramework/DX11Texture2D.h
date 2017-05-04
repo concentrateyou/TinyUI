@@ -21,7 +21,7 @@ namespace DXFramework
 		virtual BOOL Create(DX11& dx11, ID3D11Texture2D* texture2D);
 		virtual BOOL Create(DX11& dx11, INT cx, INT cy, const BYTE* bits, BOOL bReadoly);
 		virtual BOOL CreateCompatible(DX11& dx11, INT cx, INT cy);
-		virtual BOOL Save(DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT dxgi);
+		virtual BOOL SaveAs(DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT dxgi);
 		virtual BOOL Load(DX11& dx11, const BYTE* bits, DWORD dwSize);
 		virtual BOOL Load(DX11& dx11, HANDLE hResource);
 		virtual BOOL Load(DX11& dx11, const CHAR* pzFile);

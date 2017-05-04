@@ -96,7 +96,7 @@ namespace DXApp
 			if (ps->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
 			{
 				DX11Image2D* image = static_cast<DX11Image2D*>(ps);
-				m_graphics.DrawImage(image,TRUE);
+				m_graphics.DrawImage(image);
 			}
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();

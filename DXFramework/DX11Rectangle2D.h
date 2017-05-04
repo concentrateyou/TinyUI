@@ -24,8 +24,6 @@ namespace DXFramework
 	private:
 		BOOL Initialize(DX11& dx11);
 	protected:
-		TinyPoint					m_lastPos;
-		TinySize					m_lastScale;
 		TinyRectangle				m_rectangle;
 		TinyComPtr<ID3D11Buffer>	m_vertexBuffer;
 		TinyComPtr<ID3D11Buffer>	m_indexBuffer;

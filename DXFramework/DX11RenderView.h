@@ -20,12 +20,13 @@ namespace DXFramework
 		ID3D11RenderTargetView* GetRTView() const;
 		ID3D11DepthStencilView* GetDSView() const;
  	protected:
+		FLOAT								m_aspect;//±ÈÀý
 		DX11&								m_dx11;
 		TinySize							m_size;
 		TinyComPtr<ID3D11Texture2D>			m_depth2D;
 		TinyComPtr<ID3D11DepthStencilView>	m_depthView;
 		TinyComPtr<ID3D11Texture2D>			m_render2D;
-		TinyComPtr<ID3D11RenderTargetView>	m_renderView;
+		TinyComPtr<ID3D11RenderTargetView>	m_renderView;								
 	};
 }
 

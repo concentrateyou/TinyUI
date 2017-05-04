@@ -17,12 +17,13 @@ namespace TinyUI
 		virtual ~TinyRectTracker();
 		virtual INT GetHandleSize() const;
 		virtual void OnChangedRect(const TinyRectangle& rectOld);
+		virtual BOOL AllowTracker() const;
 		void Draw(TinyDC* pDC) const;
-		BOOL TrackRubberBand(HWND hWND, const TinyPoint& point, BOOL bAllowInvert);
-		BOOL SetCursor(HWND hWND, UINT nHitTest) const;
 		INT HitTest(const TinyPoint& point) const;
 		BOOL Track(HWND hWND, const TinyPoint& point, BOOL bAllowInvert);
+		BOOL TrackRubberBand(HWND hWND, const TinyPoint& point, BOOL bAllowInvert);
 		UINT GetHandleMask() const;
+		BOOL SetCursor(HWND hWND, UINT nHitTest) const;
 		void GetHandleRect(INT nHandle, TinyRectangle* pHandleRect) const;
 		void SetEmpty();
 	private:
@@ -33,6 +34,7 @@ namespace TinyUI
 		void GetModifyPointers(INT nHandle, INT**ppx, INT**ppy, INT* px, INT*py);
 		BOOL TrackHandle(INT nHandle, HWND hWND, const TinyPoint& point);
 		void GetTrueRect(LPRECT lpTrueRect) const;
+		
 	public:
 		INT				m_handleSize;
 		BOOL			m_bErase;
