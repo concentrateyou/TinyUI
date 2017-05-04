@@ -127,9 +127,9 @@ namespace DXApp
 			TinyMemDC dc(hDC, TO_CX(s), TO_CY(s));
 			dc.SelectObject(GetStockObject(NULL_BRUSH));
 			::BitBlt(dc, 0, 0, TO_CX(s), TO_CY(s), m_hBDC, 0, 0, SRCCOPY);
-			TinyRectangle rectangle = m_rectangle;
-			rectangle.NormalizeRect();
-			::BitBlt(dc, rectangle.left, rectangle.top, rectangle.Width(), rectangle.Height(), m_hFDC, rectangle.left, rectangle.top, SRCCOPY);
+			TinyRectangle trackerRect = m_trackerRect;
+			trackerRect.NormalizeRect();
+			::BitBlt(dc, trackerRect.left, trackerRect.top, trackerRect.Width(), trackerRect.Height(), m_hFDC, trackerRect.left, trackerRect.top, SRCCOPY);
 			this->Draw(&dc);
 			dc.Render(s, s, FALSE);
 		}
@@ -167,7 +167,7 @@ namespace DXApp
 	LRESULT Snapshot::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		EVENT_SELECTED(m_rectangle);
+		EVENT_SELECTED(m_trackerRect);
 		return FALSE;
 	}
 

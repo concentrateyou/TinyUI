@@ -15,30 +15,31 @@ namespace TinyUI
 	public:
 		TinyRectTracker();
 		virtual ~TinyRectTracker();
+		virtual INT GetHandleSize() const;
+		virtual void OnChangedRect(const TinyRectangle& rectOld);
 		void Draw(TinyDC* pDC) const;
 		BOOL TrackRubberBand(HWND hWND, const TinyPoint& point, BOOL bAllowInvert);
-		void GetTrueRect(LPRECT lpTrueRect) const;
 		BOOL SetCursor(HWND hWND, UINT nHitTest) const;
 		INT HitTest(const TinyPoint& point) const;
 		BOOL Track(HWND hWND, const TinyPoint& point, BOOL bAllowInvert);
-		virtual INT GetHandleSize() const;
-		virtual void OnChangedRect(const TinyRectangle& rectOld);
 		UINT GetHandleMask() const;
 		void GetHandleRect(INT nHandle, TinyRectangle* pHandleRect) const;
-	protected:
+		void SetEmpty();
+	private:
 		void Construct();
 		INT NormalizeHit(INT nHandle) const;
 		INT HitTestHandles(const TinyPoint& point) const;
 		void AdjustRect(INT nHandle, LPRECT);
 		void GetModifyPointers(INT nHandle, INT**ppx, INT**ppy, INT* px, INT*py);
 		BOOL TrackHandle(INT nHandle, HWND hWND, const TinyPoint& point);
+		void GetTrueRect(LPRECT lpTrueRect) const;
 	public:
 		INT				m_handleSize;
 		BOOL			m_bErase;
 		BOOL			m_bFinalErase;
 		BOOL			m_bAllowInvert;
 		TinySize		m_sizeMin;
-		TinyRectangle	m_rectangle;
+		TinyRectangle	m_trackerRect;
 		TinyPen			m_pen;
 		TinyBrush		m_brush;
 	};

@@ -125,12 +125,4 @@ namespace DXFramework
 		m_vertexBuffer.Release();
 		m_indexBuffer.Release();
 	}
-	void DX11Rectangle2D::Save()
-	{
-		m_save = m_rectangle;
-	}
-	void DX11Rectangle2D::Restore()
-	{
-		m_rectangle = m_save;
-	}
 }

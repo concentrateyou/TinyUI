@@ -305,7 +305,7 @@ namespace DXApp
 	{
 		for (INT i = 0;i < m_scenes.GetSize();i++)
 		{
-			if (m_scenes[i]->m_rectangle.PtInRect(pos))
+			if (m_scenes[i]->PtInRect(pos))
 			{
 				return m_scenes[i];
 			}

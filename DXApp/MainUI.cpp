@@ -369,7 +369,7 @@ namespace DXApp
 		s.NormalizeRect();
 		m_snapshot.EVENT_SELECTED -= m_onSelected;
 		m_snapshot.DestroyWindow();
-		m_snapshot.m_rectangle.SetRectEmpty();
+		m_snapshot.SetEmpty();
 		m_renderTask.Remove(&m_screenScene);
 		m_screenScene.Clear(m_renderTask.GetGraphics().GetDX11());
 		m_screenScene.Initialize(m_renderTask.GetGraphics().GetDX11(), s);

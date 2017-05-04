@@ -51,7 +51,7 @@ namespace TinyUI
 	{
 		m_bErase = FALSE;
 		m_bFinalErase = FALSE;
-		m_rectangle.SetRectEmpty();
+		m_trackerRect.SetRectEmpty();
 	}
 	void TinyRectTracker::Construct()
 	{
@@ -79,13 +79,13 @@ namespace TinyUI
 		m_sizeMin.cy = m_sizeMin.cx = m_handleSize * 2;
 		m_bErase = FALSE;
 		m_bFinalErase = FALSE;
-		m_rectangle.SetRectEmpty();
+		m_trackerRect.SetRectEmpty();
 		m_pen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
 		m_brush.CreateBrush(RGB(100, 200, 255));
 	}
 	void TinyRectTracker::GetTrueRect(LPRECT lpTrueRect) const
 	{
-		TinyRectangle rect = m_rectangle;
+		TinyRectangle rect = m_trackerRect;
 		rect.NormalizeRect();
 		INT nInflateBy = 1;
 		rect.InflateRect(nInflateBy, nInflateBy);
@@ -112,7 +112,7 @@ namespace TinyUI
 		pDC->SetBkMode(TRANSPARENT);
 		pDC->SetViewportOrg(0, 0);
 		pDC->SetWindowOrg(0, 0);
-		TinyRectangle rectangle = m_rectangle;
+		TinyRectangle rectangle = m_trackerRect;
 		rectangle.NormalizeRect();
 		HBRUSH hOldBrush = (HBRUSH)pDC->SelectObject(GetStockObject(NULL_BRUSH));
 		HPEN hOldPen = (HPEN)pDC->SelectObject(m_pen);
@@ -152,7 +152,7 @@ namespace TinyUI
 	BOOL TinyRectTracker::TrackRubberBand(HWND hWND, const TinyPoint& point, BOOL bAllowInvert)
 	{
 		m_bAllowInvert = bAllowInvert;
-		m_rectangle.SetRect(point.x, point.y, point.x, point.y);
+		m_trackerRect.SetRect(point.x, point.y, point.x, point.y);
 		return TrackHandle(hitBottomRight, hWND, point);
 	}
 	BOOL TinyRectTracker::TrackHandle(INT nHandle, HWND hWND, const TinyPoint& point)
@@ -163,12 +163,12 @@ namespace TinyUI
 			return FALSE;
 		ASSERT(!m_bFinalErase);
 
-		INT nWidth = m_rectangle.Width();
-		INT nHeight = m_rectangle.Height();
+		INT nWidth = m_trackerRect.Width();
+		INT nHeight = m_trackerRect.Height();
 
 		::SetCapture(hWND);
 		ASSERT(hWND == ::GetCapture());
-		TinyRectangle rectSave = m_rectangle;
+		TinyRectangle rectSave = m_trackerRect;
 		INT *px, *py;
 		INT xDiff, yDiff;
 		GetModifyPointers(nHandle, &px, &py, &xDiff, &yDiff);
@@ -186,19 +186,19 @@ namespace TinyUI
 			{
 			case WM_LBUTTONUP:
 			case WM_MOUSEMOVE:
-				rectOld = m_rectangle;
+				rectOld = m_trackerRect;
 				if (px != NULL)
 					*px = GET_X_LPARAM(msg.lParam) - xDiff;
 				if (py != NULL)
 					*py = GET_Y_LPARAM(msg.lParam) - yDiff;
 				if (nHandle == hitMiddle)
 				{
-					m_rectangle.right = m_rectangle.left + nWidth;
-					m_rectangle.bottom = m_rectangle.top + nHeight;
+					m_trackerRect.right = m_trackerRect.left + nWidth;
+					m_trackerRect.bottom = m_trackerRect.top + nHeight;
 				}
-				AdjustRect(nHandle, &m_rectangle);
+				AdjustRect(nHandle, &m_trackerRect);
 				m_bFinalErase = (msg.message == WM_LBUTTONUP);
-				if (!rectOld.EqualRect(&m_rectangle) || m_bFinalErase)
+				if (!rectOld.EqualRect(&m_trackerRect) || m_bFinalErase)
 				{
 					if (bMoved)
 					{
@@ -214,7 +214,7 @@ namespace TinyUI
 				{
 					goto ExitLoop;
 				}
-				if (!rectOld.EqualRect(&m_rectangle))
+				if (!rectOld.EqualRect(&m_trackerRect))
 				{
 					m_bErase = FALSE;
 				}
@@ -227,7 +227,7 @@ namespace TinyUI
 				{
 					m_bErase = m_bFinalErase = TRUE;
 				}
-				m_rectangle = rectSave;
+				m_trackerRect = rectSave;
 				goto ExitLoop;
 			default:
 				DispatchMessage(&msg);
@@ -238,11 +238,11 @@ namespace TinyUI
 		ReleaseCapture();
 		if (!bMoved)
 		{
-			m_rectangle = rectSave;
+			m_trackerRect = rectSave;
 		}
 		m_bFinalErase = FALSE;
 		m_bErase = FALSE;
-		return !rectSave.EqualRect(&m_rectangle);
+		return !rectSave.EqualRect(&m_trackerRect);
 	}
 
 	INT TinyRectTracker::NormalizeHit(INT nHandle) const
@@ -250,12 +250,12 @@ namespace TinyUI
 		if (nHandle == hitMiddle || nHandle == hitNothing)
 			return nHandle;
 		const HANDLEINFO* pHandleInfo = &g_handleInfos[nHandle];
-		if (m_rectangle.Width() < 0)
+		if (m_trackerRect.Width() < 0)
 		{
 			nHandle = (TrackerHit)pHandleInfo->nInvertX;
 			pHandleInfo = &g_handleInfos[nHandle];
 		}
-		if (m_rectangle.Height() < 0)
+		if (m_trackerRect.Height() < 0)
 		{
 			nHandle = (TrackerHit)pHandleInfo->nInvertY;
 		}
@@ -294,7 +294,7 @@ namespace TinyUI
 				}
 			}
 		}
-		rect = m_rectangle;
+		rect = m_trackerRect;
 		rect.NormalizeRect();
 		rect.InflateRect(+1, +1);
 		if (!rect.PtInRect(point))
@@ -307,16 +307,19 @@ namespace TinyUI
 	{
 		UINT mask = 0x0F;
 		INT size = m_handleSize * 3;
-		if (abs(m_rectangle.Width()) - size > 4)
+		if (abs(m_trackerRect.Width()) - size > 4)
 			mask |= 0x50;
-		if (abs(m_rectangle.Height()) - size > 4)
+		if (abs(m_trackerRect.Height()) - size > 4)
 			mask |= 0xA0;
 		return mask;
 	}
-
+	void TinyRectTracker::SetEmpty()
+	{
+		m_trackerRect.SetRectEmpty();
+	}
 	void TinyRectTracker::GetHandleRect(INT nHandle, TinyRectangle* pHandleRect) const
 	{
-		TinyRectangle rectT = m_rectangle;
+		TinyRectangle rectT = m_trackerRect;
 		rectT.NormalizeRect();
 		rectT.InflateRect(1, 1);
 		nHandle = NormalizeHit(nHandle);
@@ -341,23 +344,23 @@ namespace TinyUI
 			return;
 		INT *px, *py;
 		GetModifyPointers(nHandle, &px, &py, NULL, NULL);
-		INT nNewWidth = m_rectangle.Width();
+		INT nNewWidth = m_trackerRect.Width();
 		INT nAbsWidth = m_bAllowInvert ? abs(nNewWidth) : nNewWidth;
 		if (px != NULL && nAbsWidth < m_sizeMin.cx)
 		{
 			nNewWidth = nAbsWidth != 0 ? nNewWidth / nAbsWidth : 1;
-			ptrdiff_t iRectInfo = (INT*)px - (INT*)&m_rectangle;
+			ptrdiff_t iRectInfo = (INT*)px - (INT*)&m_trackerRect;
 			const RECTINFO* pRectInfo = &g_rectInfos[iRectInfo];
-			*px = *(INT*)((BYTE*)&m_rectangle + pRectInfo->nOffsetAcross) + nNewWidth * m_sizeMin.cx * -pRectInfo->nSignAcross;
+			*px = *(INT*)((BYTE*)&m_trackerRect + pRectInfo->nOffsetAcross) + nNewWidth * m_sizeMin.cx * -pRectInfo->nSignAcross;
 		}
-		INT nNewHeight = m_rectangle.Height();
+		INT nNewHeight = m_trackerRect.Height();
 		INT nAbsHeight = m_bAllowInvert ? abs(nNewHeight) : nNewHeight;
 		if (py != NULL && nAbsHeight < m_sizeMin.cy)
 		{
 			nNewHeight = nAbsHeight != 0 ? nNewHeight / nAbsHeight : 1;
-			ptrdiff_t iRectInfo = (INT*)py - (INT*)&m_rectangle;
+			ptrdiff_t iRectInfo = (INT*)py - (INT*)&m_trackerRect;
 			const RECTINFO* pRectInfo = &g_rectInfos[iRectInfo];
-			*py = *(INT*)((BYTE*)&m_rectangle + pRectInfo->nOffsetAcross) + nNewHeight * m_sizeMin.cy * -pRectInfo->nSignAcross;
+			*py = *(INT*)((BYTE*)&m_trackerRect + pRectInfo->nOffsetAcross) + nNewHeight * m_sizeMin.cy * -pRectInfo->nSignAcross;
 		}
 	}
 
@@ -370,25 +373,25 @@ namespace TinyUI
 		const HANDLEINFO* pHandleInfo = &g_handleInfos[nHandle];
 		if (pHandleInfo->nInvertX != nHandle)
 		{
-			*ppx = (INT*)((BYTE*)&m_rectangle + pHandleInfo->nOffsetX);
+			*ppx = (INT*)((BYTE*)&m_trackerRect + pHandleInfo->nOffsetX);
 			if (px != NULL)
 				*px = **ppx;
 		}
 		else
 		{
 			if (px != NULL)
-				*px = m_rectangle.left + abs(m_rectangle.Width()) / 2;
+				*px = m_trackerRect.left + abs(m_trackerRect.Width()) / 2;
 		}
 		if (pHandleInfo->nInvertY != nHandle)
 		{
-			*ppy = (int*)((BYTE*)&m_rectangle + pHandleInfo->nOffsetY);
+			*ppy = (int*)((BYTE*)&m_trackerRect + pHandleInfo->nOffsetY);
 			if (py != NULL)
 				*py = **ppy;
 		}
 		else
 		{
 			if (py != NULL)
-				*py = m_rectangle.top + abs(m_rectangle.Height()) / 2;
+				*py = m_trackerRect.top + abs(m_trackerRect.Height()) / 2;
 		}
 	}
 	INT TinyRectTracker::GetHandleSize() const

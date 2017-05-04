@@ -14,15 +14,15 @@ namespace DXFramework
 
 	void DX11Element2D::SetPosition(const TinyPoint& position)
 	{
-		m_rectangle.SetPosition(position);
+		m_trackerRect.SetPosition(position);
 	}
 	TinyPoint DX11Element2D::GetPosition() const
 	{
-		return m_rectangle.Position();
+		return m_trackerRect.Position();
 	}
 	void DX11Element2D::SetScale(const TinySize& scale)
 	{
-		m_rectangle.SetSize(scale);
+		m_trackerRect.SetSize(scale);
 	}
 	void DX11Element2D::SetSize(const TinySize& size)
 	{
@@ -30,15 +30,15 @@ namespace DXFramework
 	}
 	TinySize DX11Element2D::GetScale() const
 	{
-		return m_rectangle.Size();
+		return m_trackerRect.Size();
 	}
 	TinySize DX11Element2D::GetSize() const
 	{
 		return m_size;
 	}
-	TinyRectangle DX11Element2D::GetRectangle() const
+	BOOL DX11Element2D::PtInRect(const TinyPoint& pos)
 	{
-		return m_rectangle;
+		return m_trackerRect.PtInRect(pos);
 	}
 	void DX11Element2D::SetName(const TinyString& name)
 	{
@@ -47,13 +47,5 @@ namespace DXFramework
 	TinyString DX11Element2D::GetName() const
 	{
 		return m_name;
-	}
-	void DX11Element2D::Save()
-	{
-		m_save = m_rectangle;
-	}
-	void DX11Element2D::Restore()
-	{
-		m_rectangle = m_save;
 	}
 }
