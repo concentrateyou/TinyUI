@@ -196,22 +196,42 @@ namespace DXFramework
 					return FALSE;
 				}
 				TinyAutoLock lock(*m_pDX11);
+				TinyPoint pos = m_image.GetPosition();
+				TinySize scale = m_image.GetScale();
 				m_image.Destory();
 				if (!m_image.Load(*m_pDX11, pTextureDATA->TextureHandle))
 				{
 					TRACE("BeginCapture m_image.Load-FAIL\n");
 					return FALSE;
 				}
+				if (!pos.IsEmpty())
+				{
+					m_image.SetPosition(pos);
+				}
+				if (!scale.IsEmpty())
+				{
+					m_image.SetScale(scale);
+				}
 				break;
 			}
 			if (pCaptureDATA->CaptureType == CAPTURETYPE_MEMORYTEXTURE)
 			{
 				TinyAutoLock lock(*m_pDX11);
+				TinyPoint pos = m_image.GetPosition();
+				TinySize scale = m_image.GetScale();
 				m_image.Destory();
 				if (!m_image.Create(*m_pDX11, pCaptureDATA->Size, NULL, FALSE))
 				{
 					TRACE("BeginCapture m_image.Create-FAIL\n");
 					return FALSE;
+				}
+				if (!pos.IsEmpty())
+				{
+					m_image.SetPosition(pos);
+				}
+				if (!scale.IsEmpty())
+				{
+					m_image.SetScale(scale);
 				}
 				break;
 			}
