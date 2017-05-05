@@ -23,6 +23,7 @@ namespace DXCapture
 		DXGI_FORMAT						m_dxgiFormat;
 		SharedCaptureDATA				m_captureDATA;
 		TinyComPtr<ID3D10Resource>		m_resource;
+		TinyComPtr<ID3D10Texture2D>		m_copy2D;
 	};
 	SELECTANY extern DX101Capture g_dx101(g_dx);
 }

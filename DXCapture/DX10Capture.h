@@ -21,6 +21,7 @@ namespace DXCapture
 		HANDLE							m_hTextureHandle;
 		HMODULE							m_hD3D10;
 		TinyComPtr<ID3D10Resource>		m_resource;
+		TinyComPtr<ID3D10Texture2D>		m_copy2D;
 		TinyDetour						m_dxPresent;
 		TinyDetour						m_dxResizeBuffers;
 		DX&								m_dx;

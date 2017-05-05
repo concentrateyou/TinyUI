@@ -51,6 +51,7 @@ namespace DXCapture
 		m_bTextures = FALSE;
 		m_hTextureHandle = NULL;
 		m_resource.Release();
+		m_copy2D.Release();
 		m_dx.m_textureMemery.Unmap();
 		m_dx.m_textureMemery.Close();
 	}
@@ -73,6 +74,26 @@ namespace DXCapture
 		m_captureDATA.Size.cy = scd.BufferDesc.Height;
 		m_captureDATA.HwndCapture = scd.OutputWindow;
 		m_captureDATA.bMultisample = scd.SampleDesc.Count > 1;
+		if (m_captureDATA.bMultisample)
+		{
+			TinyComPtr<ID3D10Texture2D> backBuffer;
+			hRes = swap->GetBuffer(0, __uuidof(ID3D10Texture2D), (void**)&backBuffer);
+			if (hRes != S_OK)
+				return FALSE;
+			D3D10_TEXTURE2D_DESC desc;
+			backBuffer->GetDesc(&desc);
+			desc.MipLevels = 1;
+			desc.ArraySize = 1;
+			desc.Format = scd.BufferDesc.Format;
+			desc.SampleDesc.Count = 1;
+			desc.SampleDesc.Quality = 0;
+			desc.BindFlags = D3D10_BIND_RENDER_TARGET | D3D10_BIND_SHADER_RESOURCE;
+			desc.Usage = D3D10_USAGE_DEFAULT;
+			desc.MiscFlags = D3D10_RESOURCE_MISC_SHARED;
+			hRes = device->CreateTexture2D(&desc, NULL, &m_copy2D);
+			if (hRes != S_OK)
+				return FALSE;
+		}
 		m_dx.SetWindowsHook();
 		return TRUE;
 	}
@@ -102,12 +123,18 @@ namespace DXCapture
 			}
 			if (m_bTextures)
 			{
-				TinyComPtr<ID3D10Resource> backBuffer;
-				if (SUCCEEDED(swap->GetBuffer(0, __uuidof(ID3D10Resource), (void**)&backBuffer)))
+				TinyComPtr<ID3D10Texture2D> backBuffer;
+				if (SUCCEEDED(swap->GetBuffer(0, __uuidof(ID3D10Texture2D), (void**)&backBuffer)))
 				{
 					if (m_captureDATA.bMultisample)
 					{
-						device->ResolveSubresource(m_resource, 0, backBuffer, 0, m_dxgiFormat);
+						if (m_copy2D != NULL)
+						{
+							D3D10_TEXTURE2D_DESC desc;
+							backBuffer->GetDesc(&desc);
+							device->ResolveSubresource(m_copy2D, 0, backBuffer, 0, desc.Format);
+							device->CopyResource(m_resource, m_copy2D);
+						}
 					}
 					else
 					{

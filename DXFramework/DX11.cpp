@@ -50,7 +50,6 @@ namespace DXFramework
 		hRes = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, dwFlag, levels, sizeof(levels) / sizeof(D3D_FEATURE_LEVEL), D3D11_SDK_VERSION, &swapDesc, &m_swap, &m_d3d, &level, &m_immediateContext);
 		if (hRes != S_OK)
 			return FALSE;
-
 		m_background2D.Reset(new DX11RenderView(*this));
 		if (!m_background2D->Create())
 			return FALSE;
