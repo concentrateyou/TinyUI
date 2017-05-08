@@ -214,46 +214,46 @@ namespace TinyUI
 			ReleaseSRWLockShared(&m_SRW);
 	}
 	//////////////////////////////////////////////////////////////////////////
-//#ifdef _WIN32
-//	TinyPerformanceLock::TinyPerformanceLock()
-//		:m_lock(NULL)
-//	{
-//		GetSystemInfo(&m_si);
-//	}
-//	TinyPerformanceLock::~TinyPerformanceLock()
-//	{
-//
-//	}
-//	void TinyPerformanceLock::Lock(LONG value, UINT spin)
-//	{
-//		for (;;)
-//		{
-//			if (*m_lock == 0 && InterlockedCompareExchange(m_lock, 0, value))
-//			{
-//				return;
-//			}
-//			if (m_si.dwNumberOfProcessors > 1)
-//			{
-//				for (UINT s = 1; s < spin; s <<= 1)
-//				{
-//					for (UINT v = 0; v < s; v++)
-//					{
-//						__asm { pause };
-//					}
-//					if (*m_lock == 0 && InterlockedCompareExchange(m_lock, 0, value))
-//					{
-//						return;
-//					}
-//				}
-//			}
-//			SwitchToThread();
-//		}
-//	}
-//	void TinyPerformanceLock::Unlock()
-//	{
-//		*(m_lock) = 0;
-//	};
-//#endif // _WIN32
+#ifdef _WIN32
+	TinyPerformanceLock::TinyPerformanceLock()
+		:m_lock(NULL)
+	{
+		GetSystemInfo(&m_si);
+	}
+	TinyPerformanceLock::~TinyPerformanceLock()
+	{
+
+	}
+	void TinyPerformanceLock::Lock(LONG value, UINT spin)
+	{
+		for (;;)
+		{
+			if (*m_lock == 0 && InterlockedCompareExchange(m_lock, 0, value))
+			{
+				return;
+			}
+			if (m_si.dwNumberOfProcessors > 1)
+			{
+				for (UINT s = 1; s < spin; s <<= 1)
+				{
+					for (UINT v = 0; v < s; v++)
+					{
+						__asm { pause };
+					}
+					if (*m_lock == 0 && InterlockedCompareExchange(m_lock, 0, value))
+					{
+						return;
+					}
+				}
+			}
+			SwitchToThread();
+		}
+	}
+	void TinyPerformanceLock::Unlock()
+	{
+		*(m_lock) = 0;
+	};
+#endif // _WIN32
 	//////////////////////////////////////////////////////////////////////////
 	TinySemaphore::TinySemaphore()
 		:m_hSemaphore(NULL)
