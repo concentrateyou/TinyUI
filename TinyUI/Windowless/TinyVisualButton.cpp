@@ -30,7 +30,6 @@ namespace TinyUI
 		{
 			return m_images[(INT)type].Load(ps, dwSize);
 		}
-
 		HRESULT TinyVisualButton::SetProperty(const TinyString& name, const TinyString& value)
 		{
 			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGENORMAL.STR()) == 0)

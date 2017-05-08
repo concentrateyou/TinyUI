@@ -147,8 +147,9 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	CMainFrame uiImpl;
-	uiImpl.Create(NULL, 50, 50, 800, 800);
+	Windowless::TinyVisualHWND uiImpl;
+	uiImpl.SetResource("D:\\Develop\\TinyUI\\TinyUI\\resource.xml");
+	uiImpl.Create(NULL);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();
 	INT loopRes = theLoop.MessageLoop();

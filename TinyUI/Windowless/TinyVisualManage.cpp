@@ -98,6 +98,10 @@ namespace TinyUI
 					{
 						spvis = document->Create<TinyVisualButton>(spvisParent);
 					}
+					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::COMBOBOX.STR()))
+					{
+						spvis = document->Create<TinyVisualComboBox>(spvisParent);
+					}
 					if (spvis != NULL)
 					{
 						TinyMap<TinyString, TinyString> map;

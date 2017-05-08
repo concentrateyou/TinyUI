@@ -88,6 +88,7 @@ namespace TinyUI
 
 		LRESULT TinyVisualHWND::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
+			ASSERT(m_document);
 			bHandled = FALSE;
 			PAINTSTRUCT ps = { 0 };
 			HDC hDC = BeginPaint(m_hWND, &ps);
@@ -102,6 +103,7 @@ namespace TinyUI
 		}
 		LRESULT TinyVisualHWND::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
+			ASSERT(m_visualDC && m_document);
 			bHandled = FALSE;
 			m_size.cx = LOWORD(lParam);
 			m_size.cy = HIWORD(lParam);

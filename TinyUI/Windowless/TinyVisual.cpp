@@ -59,27 +59,27 @@ namespace TinyUI
 		}
 		void TinyVisual::SetText(LPCSTR pzText)
 		{
-			m_strText = pzText;
+			m_szText = pzText;
 		}
 		TinyString	TinyVisual::GetText() const
 		{
-			return m_strText;
+			return m_szText;
 		}
 		void TinyVisual::SetName(LPCSTR pzName)
 		{
-			m_strName = pzName;
+			m_szName = pzName;
 		}
 		TinyString	TinyVisual::GetName() const
 		{
-			return m_strName;
+			return m_szName;
 		}
 		void TinyVisual::SetToolTip(LPCSTR pzTitle)
 		{
-			m_strToolTip = pzTitle;
+			m_szToolTip = pzTitle;
 		}
 		TinyString	TinyVisual::GetToolTip() const
 		{
-			return m_strToolTip;
+			return m_szToolTip;
 		}
 		void TinyVisual::SetMaximumSize(const TinySize& size)
 		{

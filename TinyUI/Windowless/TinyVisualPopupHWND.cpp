@@ -26,11 +26,11 @@ namespace TinyUI
 		}
 		LPCSTR TinyVisualPopupHWND::RetrieveClassName()
 		{
-			return TEXT("TinyVisualDropDownHWND");
+			return TEXT("TinyVisualPopupHWND");
 		}
 		LPCSTR TinyVisualPopupHWND::RetrieveTitle()
 		{
-			return TEXT("TinyVisualDropDownHWND");
+			return TEXT("TinyVisualPopupHWND");
 		}
 		HICON TinyVisualPopupHWND::RetrieveIcon()
 		{

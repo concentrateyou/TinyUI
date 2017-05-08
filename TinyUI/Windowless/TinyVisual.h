@@ -16,6 +16,7 @@ namespace TinyUI
 			HIGHLIGHT = 1,
 			DOWN = 2,
 			PUSH = 3,
+			COUNT = PUSH + 1
 		};
 		enum Alignment
 		{
@@ -128,9 +129,9 @@ namespace TinyUI
 			TinyVisual*			m_spvisParent;//父节点
 			TinyVisual*			m_spvisChild;//第一个孩子节点
 			TinyVisual*			m_spvisOwner;//对于Popup窗口使用
-			TinyString			m_strName;
-			TinyString			m_strText;
-			TinyString			m_strToolTip;
+			TinyString			m_szName;
+			TinyString			m_szText;
+			TinyString			m_szToolTip;
 			TinySize			m_maximumSize;//元素的最大像素大小
 			TinySize			m_minimumSize;//元素的最小像素大小
 			TinyRectangle		m_rectangle;//相对于父元素区域

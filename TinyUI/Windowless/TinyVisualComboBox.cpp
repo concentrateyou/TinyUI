@@ -22,10 +22,17 @@ namespace TinyUI
 		{
 			return TinyVisualTag::COMBOBOX;
 		}
-
+		BOOL TinyVisualComboBox::SetStyleImage(StyleImage type, LPCSTR pzFile)
+		{
+			return m_images[(INT)type].Load(pzFile);
+		}
+		BOOL TinyVisualComboBox::SetStyleImage(StyleImage type, BYTE* ps, DWORD dwSize)
+		{
+			return m_images[(INT)type].Load(ps, dwSize);
+		}
 		BOOL TinyVisualComboBox::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
-			/*TinyImage& image = m_images[m_dwFlag];
+			TinyImage& image = m_images[m_dwFlag];
 			if (image.IsEmpty())
 				return FALSE;
 			TinyClipCanvas canvas(hDC, this, rcPaint);
@@ -35,16 +42,16 @@ namespace TinyUI
 			RECT srcPaint = image.GetRectangle();
 			RECT srcCenter = { srcPaint.left + 4, srcPaint.top + 4, srcPaint.right - 4, srcPaint.bottom - 4 };
 			canvas.DrawImage(image, clip, srcPaint, srcCenter);
-			canvas.DrawString(GetText(), clip, DT_SINGLELINE | DT_CENTER | DT_VCENTER);*/
+			canvas.DrawString(GetText(), clip, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
 			return TRUE;
 		}
 		HRESULT	TinyVisualComboBox::OnCreate()
 		{
 			TinySize size = this->GetSize();
-			/*SetStyleImage(DOWN, "D:\\Develop\\TinyUI\\Resource\\combobox\\combobox_down.png");
+			SetStyleImage(DOWN, "D:\\Develop\\TinyUI\\Resource\\combobox\\combobox_push.png");
 			SetStyleImage(NORMAL, "D:\\Develop\\TinyUI\\Resource\\combobox\\combobox_normal.png");
 			SetStyleImage(HIGHLIGHT, "D:\\Develop\\TinyUI\\Resource\\combobox\\combobox_hover.png");
-			SetStyleImage(PUSH, "D:\\Develop\\TinyUI\\Resource\\combobox\\combobox_push.png");*/
+			SetStyleImage(PUSH, "D:\\Develop\\TinyUI\\Resource\\combobox\\combobox_push.png");
 			return TinyVisual::OnCreate();
 		}
 		HRESULT TinyVisualComboBox::OnDestory()
@@ -78,7 +85,7 @@ namespace TinyUI
 		}
 		HRESULT	TinyVisualComboBox::OnLButtonUp(const TinyPoint& pos, DWORD dwFlags)
 		{
-			m_dwFlag = HIGHLIGHT;
+			m_dwFlag = NORMAL;
 			TinyRectangle s = m_document->GetWindowRect(this);
 			m_document->Redraw(&s);
 			m_document->SetCapture(NULL);

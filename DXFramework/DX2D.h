@@ -11,6 +11,7 @@ namespace DXFramework
 	/// </summary>
 	class DX2D
 	{
+		DISALLOW_COPY_AND_ASSIGN(DX2D)
 	public:
 		DX2D();
 		~DX2D();

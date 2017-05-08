@@ -19,6 +19,9 @@ namespace TinyUI
 		public:
 			virtual ~TinyVisualComboBox();
 			TinyString RetrieveTag() const OVERRIDE;
+		public:
+			BOOL SetStyleImage(StyleImage type, LPCSTR pzFile);
+			BOOL SetStyleImage(StyleImage type, BYTE* ps, DWORD dwSize);
 		protected:
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT	OnCreate() OVERRIDE;
@@ -29,6 +32,7 @@ namespace TinyUI
 			HRESULT	OnLButtonUp(const TinyPoint& pos, DWORD dwFlags);
 		private:
 			StyleImage	m_dwFlag;
+			TinyImage	m_images[StyleImage::COUNT];
 		};
 	}
 }

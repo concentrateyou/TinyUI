@@ -28,7 +28,7 @@ namespace TinyUI
 			HFONT hOldFONT = canvas.SetFont(m_hFONT);
 			COLORREF oldColor = canvas.SetTextColor(m_textColor);
 			TinyRectangle clip = m_document->GetWindowRect(this);
-			canvas.DrawString(m_strText, clip, m_textAlign);
+			canvas.DrawString(m_szText, clip, m_textAlign);
 			canvas.SetFont(hOldFONT);
 			canvas.SetTextColor(oldColor);
 			return TRUE;
