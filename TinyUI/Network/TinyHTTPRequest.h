@@ -60,7 +60,7 @@ namespace TinyUI
 			static const CHAR UserAgent[];
 		public:
 			TinyHTTPRequest();
-			BOOL Create(const string& szURL, const string& ms);
+			BOOL Open(const string& szURL, const string& ms = GET);
 			void Close();
 			void SetTimeout(DWORD dwTimeout);	
 			void SetBody(CHAR* ps, INT size);

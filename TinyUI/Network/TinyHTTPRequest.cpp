@@ -47,7 +47,7 @@ namespace TinyUI
 			m_raw.Reset(new CHAR[8192]);
 			m_event.CreateEvent();
 		}
-		BOOL TinyHTTPRequest::Create(const string& szURL, const string& ms)
+		BOOL TinyHTTPRequest::Open(const string& szURL, const string& ms)
 		{
 			m_ms = std::move(ms);
 			if (!m_sURL.ParseURL(szURL.c_str(), szURL.size()))
@@ -108,7 +108,6 @@ namespace TinyUI
 			}
 			return NULL;
 		}
-
 		void TinyHTTPRequest::SetBody(CHAR* ps, INT size)
 		{
 			m_body.Clear();

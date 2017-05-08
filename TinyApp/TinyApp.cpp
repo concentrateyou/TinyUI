@@ -117,32 +117,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
-	//udp://238.1.1.36:10036:192.168.100.212
-	/*string val = "udp://238.1.1.36:10036:192.168.100.212";
-	if (strncasecmp(val.c_str(), "udp://", 6) == 0)
-	{
-		string val1 = val.substr(6, val.size() - 6);
-		size_t s = val1.find(':');
-		if (s > 0 && s < val1.size())
-		{
-			string str = val1.substr(0, s);
-			if (inet_addr(str.c_str()) != -1)
-			{
-				INT a = 0;
-			}
-		}
-	}*/
-	/*TinyHTTPRequest request;
-	if (request.Create("http://m.haiwainet.cb/ttc/3541093/2017/0425/content_30880045_1.html", TinyHTTPRequest::GET))
-	{
-		request.Add(TinyHTTPRequest::Connection, "close");
-		TinyHTTPResponse* ps = request.GetResponse();
-		if (ps)
-		{
-			ps->Close();
-		}
-	}*/
-
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;

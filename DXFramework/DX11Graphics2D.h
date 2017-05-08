@@ -21,14 +21,12 @@ namespace DXFramework
 		BOOL     Resize(const TinySize& size);
 		DX11&	 GetDX11();
 		BOOL	 DrawImage(DX11Image2D* ps, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F);
-		BOOL	 DrawRectangle(DX11Rectangle2D* ps, const TinyRectangle& rectangle, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F);
 		void	 Lock();
 		void	 Unlock();
 	private:
 		DX11					m_dx11;
 		DXCamera				m_camera;
 		DX11TextureShader		m_textureShader;
-		DX11ColorShader			m_colorShader;
 	};
 }
 

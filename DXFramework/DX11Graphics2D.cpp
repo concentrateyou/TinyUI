@@ -23,14 +23,6 @@ namespace DXFramework
 		ASSERT(PathFileExists(vs.c_str()));
 		string ps = str + "\\texture.ps";
 		ASSERT(PathFileExists(ps.c_str()));
-		if (!m_textureShader.Initialize(m_dx11, vs.c_str(), ps.c_str()))
-			return FALSE;
-		vs = str + "\\color.vs";
-		ASSERT(PathFileExists(vs.c_str()));
-		ps = str + "\\color.ps";
-		ASSERT(PathFileExists(ps.c_str()));
-		if (!m_colorShader.Initialize(m_dx11, vs.c_str(), ps.c_str()))
-			return FALSE;
 		m_camera.SetPosition(0.0F, 0.0F, -10.0F);
 		m_camera.UpdatePosition();
 		return TRUE;
@@ -60,21 +52,6 @@ namespace DXFramework
 		{
 			XMMATRIX* ms = m_dx11.GetMatrixs();
 			m_textureShader.Render(m_dx11, ps->GetIndexCount(), ms[1], m_camera.GetView(), ms[2], ps->GetTexture());
-			return TRUE;
-		}
-		return FALSE;
-	}
-	BOOL DX11Graphics2D::DrawRectangle(DX11Rectangle2D* ps, const TinyRectangle& rectangle, FLOAT ratioX, FLOAT ratioY)
-	{
-		ASSERT(ps);
-		if (!m_dx11.GetRender2D())
-			return FALSE;
-		if (!ps->SetRectangle(m_dx11, rectangle, ratioX, ratioY))
-			return FALSE;
-		if (ps->Render(m_dx11))
-		{
-			XMMATRIX* ms = m_dx11.GetMatrixs();
-			m_colorShader.Render(m_dx11, ps->GetIndexCount(), ms[1], m_camera.GetView(), ms[2]);
 			return TRUE;
 		}
 		return FALSE;
