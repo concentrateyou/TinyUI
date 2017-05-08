@@ -12,6 +12,7 @@ typedef struct tagTS_PACKET_HEADER
 /// </summary>
 class TSDecode
 {
+	DISALLOW_COPY_AND_ASSIGN(TSDecode)
 public:
 	TSDecode();
 	~TSDecode();

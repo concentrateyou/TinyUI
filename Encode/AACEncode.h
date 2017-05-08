@@ -17,9 +17,10 @@ namespace Encode
 #define  AAC_TIMEDEN  1000
 	class AACEncode
 	{
+		DISALLOW_COPY_AND_ASSIGN(AACEncode)
 	public:
 		AACEncode();
-		~AACEncode();
+		virtual ~AACEncode();
 	public:
 		BOOL	Open(const WAVEFORMATEX& waveFMT, INT audioRate, BOOL bAllowF = FALSE);
 		BOOL	Encode(BYTE* bits, LONG size, BYTE*& bo, LONG& so);

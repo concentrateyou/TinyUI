@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include "FLVPlayer.h"
 #include "FLVFrameUI.h"
-#include "Network/TinyHTTPClient.h"
 using namespace FLVPlayer;
 
 BOOL LoadSeDebugPrivilege()

@@ -7,9 +7,10 @@ namespace Decode
 {
 	class AC3Decode
 	{
+		DISALLOW_COPY_AND_ASSIGN(AC3Decode)
 	public:
 		AC3Decode();
-		~AC3Decode();
+		virtual ~AC3Decode();
 	};
 
 }

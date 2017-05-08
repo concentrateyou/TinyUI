@@ -11,6 +11,7 @@ namespace Decode
 #define LTP  4
 	class AACDecode
 	{
+		DISALLOW_COPY_AND_ASSIGN(AACDecode)
 	public:
 		AACDecode();
 		virtual ~AACDecode();
