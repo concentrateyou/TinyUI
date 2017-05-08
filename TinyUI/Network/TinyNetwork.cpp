@@ -455,7 +455,7 @@ namespace TinyUI
 			this->Offset = 0;
 			this->OffsetHigh = 0;
 			this->Pointer = NULL;
-			this->hEvent = NULL;
+			this->hEvent = INVALID_HANDLE_VALUE;
 		}
 	}
 }
