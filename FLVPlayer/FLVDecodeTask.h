@@ -1,5 +1,5 @@
 #pragma once
-#include "FLVStream.h"
+#include "FLVParser.h"
 #include "FLVPlayer.h"
 #include "IO/TinyTaskBase.h"
 #include "FLVAudioTask.h"
@@ -32,7 +32,7 @@ namespace FLVPlayer
 		TinyLock					m_videoLock;
 		TinyLock					m_audioLock;
 		TinySize					m_size;
-		FLVStream					m_parse;
+		FLVParser					m_parse;
 		TinyScopedPtr<FLVAudioTask>	m_audioTask;
 		TinyScopedPtr<FLVVideoTask>	m_videoTask;
 	};

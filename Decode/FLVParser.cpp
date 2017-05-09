@@ -1,10 +1,10 @@
 #include "stdafx.h"
-#include "FLVStream.h"
+#include "FLVParser.h"
 #include "amf.h"
 
 namespace Decode
 {
-	FLVStream::FLVStream()
+	FLVParser::FLVParser()
 		:m_hFile(NULL),
 		m_lengthSizeMinusOne(4),
 		m_bAudio(FALSE),
@@ -14,7 +14,7 @@ namespace Decode
 	{
 
 	}
-	FLVStream::~FLVStream()
+	FLVParser::~FLVParser()
 	{
 		if (m_hFile != NULL)
 		{
@@ -22,14 +22,14 @@ namespace Decode
 			m_hFile = NULL;
 		}
 	}
-	BOOL FLVStream::Open(LPCSTR pzFile)
+	BOOL FLVParser::Open(LPCSTR pzFile)
 	{
 		Close();
 		m_bStop = FALSE;
 		fopen_s(&m_hFile, pzFile, "rb");
 		return m_hFile != NULL;
 	}
-	BOOL FLVStream::Close()
+	BOOL FLVParser::Close()
 	{
 		m_bStop = TRUE;
 		if (m_hFile != NULL)
@@ -39,7 +39,7 @@ namespace Decode
 		}
 		return TRUE;
 	}
-	BOOL FLVStream::ParseVideo(BYTE* data, INT size)
+	BOOL FLVParser::ParseVideo(BYTE* data, INT size)
 	{
 		BOOL bRes = FALSE;
 		FLV_TAG_VIDEO* video = reinterpret_cast<FLV_TAG_VIDEO*>(data);
@@ -61,7 +61,7 @@ namespace Decode
 		}
 		return TRUE;
 	}
-	BOOL FLVStream::ParseAudio(BYTE* data, INT size)
+	BOOL FLVParser::ParseAudio(BYTE* data, INT size)
 	{
 		BOOL bRes = FALSE;
 		//目前只支持MP3,AAC和PCM
@@ -89,7 +89,7 @@ namespace Decode
 		}
 		return bRes;
 	}
-	BOOL FLVStream::ParseScript(BYTE* data, INT size)
+	BOOL FLVParser::ParseScript(BYTE* data, INT size)
 	{
 		AMFObject metaObj;
 		if (AMF_Decode(&metaObj, reinterpret_cast<CHAR*>(data), size, FALSE) > 0)
@@ -187,11 +187,11 @@ namespace Decode
 		}
 		return TRUE;
 	}
-	BOOL FLVStream::ParseMPEG4(FLV_TAG_VIDEO* video, BYTE* data, INT size)
+	BOOL FLVParser::ParseMPEG4(FLV_TAG_VIDEO* video, BYTE* data, INT size)
 	{
 		return TRUE;
 	}
-	BOOL FLVStream::ParseH264(FLV_TAG_VIDEO* video, BYTE* data, INT size)
+	BOOL FLVParser::ParseH264(FLV_TAG_VIDEO* video, BYTE* data, INT size)
 	{
 		BYTE* bits = data;
 		BYTE aacPacketType = *bits++;
@@ -242,7 +242,7 @@ namespace Decode
 		}
 		return TRUE;
 	}
-	BOOL FLVStream::ParseNALU(FLV_TAG_VIDEO* video, INT* cts, BYTE* data, INT size)
+	BOOL FLVParser::ParseNALU(FLV_TAG_VIDEO* video, INT* cts, BYTE* data, INT size)
 	{
 		BYTE* bits = data;
 		INT offset = 0;
@@ -330,7 +330,7 @@ namespace Decode
 		}
 		return TRUE;
 	}
-	BOOL FLVStream::ParseAAC(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
+	BOOL FLVParser::ParseAAC(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
 	{
 		ASSERT(size >= 2);
 		BYTE* bits = data;
@@ -359,15 +359,15 @@ namespace Decode
 		}
 		return TRUE;
 	}
-	BOOL FLVStream::ParseMP3(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
+	BOOL FLVParser::ParseMP3(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
 	{
 		return TRUE;
 	}
-	BOOL FLVStream::ParsePCM(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
+	BOOL FLVParser::ParsePCM(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
 	{
 		return TRUE;
 	}
-	BOOL FLVStream::Parse()
+	BOOL FLVParser::Parse()
 	{
 		FLV_HEADER header = { 0 };
 		ASSERT(sizeof(FLV_HEADER) != fread(&header, sizeof(FLV_HEADER), 1, m_hFile));

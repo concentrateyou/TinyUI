@@ -42,7 +42,7 @@
     <ClInclude Include="H264Decode.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="FLVStream.h">
+    <ClInclude Include="FLVParser.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -68,7 +68,7 @@
     <ClCompile Include="H264Decode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="FLVStream.cpp">
+    <ClCompile Include="FLVParser.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
