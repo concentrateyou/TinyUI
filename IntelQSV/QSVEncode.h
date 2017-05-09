@@ -32,9 +32,10 @@ namespace QSV
 	/// </summary>
 	class QSVEncode
 	{
+		DISALLOW_COPY_AND_ASSIGN(QSVEncode)
 	public:
 		QSVEncode();
-		~QSVEncode();
+		virtual ~QSVEncode();
 		mfxStatus Open(const QSVParam& param, Callback<void(BYTE*, LONG)>&& callback);
 		mfxStatus Encode(BYTE* data, LONG size);
 		mfxStatus Close();
@@ -70,7 +71,6 @@ namespace QSV
 		TinyScopedPtr<mfxFrameSurface1*>	m_surfaceVPP;
 		Callback<void(BYTE*, LONG)>			m_callback;
 	};
-
 }
 
 

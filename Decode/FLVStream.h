@@ -170,11 +170,11 @@ namespace Decode
 	/// FLV大端数据
 	/// 目前音频支持支AAC,MP3和PCM,视频H.264
 	/// </summary>
-	class FLVParse
+	class FLVStream
 	{
 	public:
-		FLVParse();
-		~FLVParse();
+		FLVStream();
+		~FLVStream();
 		BOOL Open(LPCSTR pzFile);
 		BOOL Parse();
 		BOOL Close();

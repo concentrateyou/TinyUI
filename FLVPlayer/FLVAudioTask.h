@@ -1,6 +1,6 @@
 #pragma once
 #include "Media/TinySoundPlayer.h"
-#include "FLVParse.h"
+#include "FLVStream.h"
 #include "FLVPlayer.h"
 #include "Common/TinyTime.h"
 #include "IO/TinyTaskBase.h"
