@@ -98,6 +98,13 @@ namespace Decode
 		FLV_AACRaw = 3
 	};
 
+	enum FLV_TAG_TYPE
+	{
+		FLV_AUDIO = 0x08,
+		FLV_VIDEO = 0x09,
+		FLV_SCRIPT = 0x12
+	};
+
 	enum AMFDataType
 	{
 		AMF_DATA_TYPE_NUMBER = 0x00,

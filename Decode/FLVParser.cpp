@@ -229,6 +229,9 @@ namespace Decode
 			FLV_PACKET packet;
 			packet.dts = m_dts;
 			packet.pts = m_dts + cts;
+
+			//TRACE("pts:%d,dts:%d\n", (DWORD)packet.pts, (DWORD)packet.dts);
+
 			packet.codeID = video->codeID;
 			packet.codeType = video->codeType;
 			packet.packetType = FLV_AVCDecoderConfigurationRecord;
@@ -265,6 +268,9 @@ namespace Decode
 				packet.packetType = FLV_NALU;
 				packet.dts = m_dts;
 				packet.pts = m_dts + *cts;
+
+				//TRACE("pts:%d,dts:%d\n", (DWORD)packet.pts, (DWORD)packet.dts);
+
 				EVENT_VIDEO(val, sizeofNALU + 4, &packet);
 				bits += sizeofNALU;
 				offset += sizeofNALU;
@@ -392,15 +398,15 @@ namespace Decode
 					break;
 				switch (tag.type)
 				{
-				case 0x08:
+				case FLV_AUDIO:
 					m_dts = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
 					ParseAudio(data, size);
 					break;
-				case 0x09:
+				case FLV_VIDEO:
 					m_dts = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
 					ParseVideo(data, size);
 					break;
-				case 0x12:
+				case FLV_SCRIPT:
 					ParseScript(data, size);
 					break;
 				default:
@@ -470,17 +476,17 @@ namespace Decode
 				hRes = m_stream->Read(data, size, &ls);
 				if (hRes != S_OK || ls <= 0)
 					return FALSE;
-				if (tag.type == 0x08)
+				if (tag.type == FLV_AUDIO)
 				{
 					m_dts = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
 					return ParseAudio(data, size, block);
 				}
-				if (tag.type == 0x09)
+				if (tag.type == FLV_VIDEO)
 				{
 					m_dts = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
 					return ParseVideo(data, size, block);
 				}
-				if (tag.type == 0x12)
+				if (tag.type == FLV_SCRIPT)
 				{
 					return ParseScript(data, size, block);
 				}
