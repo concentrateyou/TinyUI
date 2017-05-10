@@ -34,7 +34,7 @@ namespace FLVPlayer
 	}
 	void FLVDecodeTask::OnMessagePump()
 	{
-		m_parse.Open("D:\\1.flv");
+		m_parse.Open("D:\\3.flv");
 		m_parse.Parse();
 		m_parse.Close();
 	}

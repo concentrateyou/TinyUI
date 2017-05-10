@@ -20,7 +20,7 @@ namespace Decode
 			return FALSE;
 		ULONG sampleRate = 0;
 		BYTE channel = 0;
-		if (NeAACDecInit2(m_handle, adts, size - 1, &sampleRate, &channel) != 0)
+		if (NeAACDecInit2(m_handle, adts, size, &sampleRate, &channel) != 0)
 			goto AAC_ERROR;
 		m_sMFT.nSamplesPerSec = sampleRate;
 		m_sMFT.nChannels = channel;

@@ -28,8 +28,6 @@ namespace FLVPlayer
 	private:
 		TinyScopedPtr<FLVAudio>	m_audioTask;
 		TinyScopedPtr<FLVVideo>	m_videoTask;
-
-		TinyScopedPtr<FLVDecodeTask>	m_task;
 	};
 }
 

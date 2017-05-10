@@ -5,7 +5,7 @@ namespace FLVPlayer
 {
 	FLVVideo::FLVVideo(HWND hWND)
 		:m_hWND(hWND),
-		m_cPTS(0)
+		m_sPTS(0)
 	{
 		m_h264.Reset(new H264Decode());
 		m_close.CreateEvent();
@@ -17,7 +17,7 @@ namespace FLVPlayer
 	BOOL FLVVideo::Submit()
 	{
 		ASSERT(m_h264);
-		if (m_reader.Open("D:\\1.flv"))
+		if (m_reader.Open("D:\\4.flv"))
 		{
 			return TinyTaskBase::Submit(BindCallback(&FLVVideo::OnMessagePump, this));
 		}
@@ -80,11 +80,11 @@ namespace FLVPlayer
 						if (yuv420->pkt_pts > 0)
 						{
 							DWORD s = yuv420->pkt_pts - ms;
-							if (m_cPTS != s)
+							if (m_sPTS != s)
 							{
-								DWORD offset = s - m_cPTS - 7;
-								m_cPTS = s;
-								Sleep(offset);
+								INT offset = s - m_sPTS - 7;
+								m_sPTS = s;
+								Sleep(offset < 0 ? 0 : offset);
 							}
 						}
 					}

@@ -55,7 +55,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
 	FLVFrameUI uiImpl;
-	uiImpl.Create(NULL, 50, 50, 800, 800);
+	uiImpl.Create(NULL, 50, 50, 1300, 840);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();
 	INT loopRes = theLoop.MessageLoop();

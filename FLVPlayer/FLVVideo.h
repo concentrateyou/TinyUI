@@ -23,7 +23,7 @@ namespace FLVPlayer
 	private:
 		TinySize					m_size;
 		DWORD						m_rate;
-		LONG						m_cPTS;
+		LONG						m_sPTS;
 		HWND						m_hWND;
 		TinyEvent					m_close;
 		TinyPerformanceTimer		m_timer;

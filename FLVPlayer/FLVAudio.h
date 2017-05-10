@@ -23,6 +23,7 @@ namespace FLVPlayer
 		void	OnMessagePump();
 	private:
 		HWND						m_hWND;
+		BOOL						m_bInitialize;
 		TinyEvent					m_close;
 		TinyScopedPtr<AACDecode>	m_aac;
 		TinyBufferArray<BYTE>		m_audios;
