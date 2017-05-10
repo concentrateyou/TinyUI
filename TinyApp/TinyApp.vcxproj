@@ -208,6 +208,9 @@
     <Image Include="TinyApp.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Decode\Decode.vcxproj">
+      <Project>{2b7dbc16-dc0d-49c6-a0b8-9f26c31aa758}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\DShowCapture\DShowCapture.vcxproj">
       <Project>{b8f16b34-e13e-4757-b09a-792046bcc2d3}</Project>
     </ProjectReference>

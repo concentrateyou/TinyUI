@@ -155,8 +155,8 @@ namespace Decode
 
 	typedef struct tagFLV_PACKET
 	{
-		INT			dts;
-		INT			pts;
+		LONGLONG	dts;
+		LONGLONG	pts;
 		BYTE		codeID;//帧类型 h264,aac
 		BYTE		codeType;//帧类型 
 		BYTE		packetType;//包类型
@@ -172,6 +172,7 @@ namespace Decode
 	/// </summary>
 	class FLVParser
 	{
+		DISALLOW_COPY_AND_ASSIGN(FLVParser)
 	public:
 		FLVParser();
 		~FLVParser();
@@ -193,13 +194,103 @@ namespace Decode
 		BOOL ParseMPEG4(FLV_TAG_VIDEO* video, BYTE* data, INT size);
 		BOOL ParseNALU(FLV_TAG_VIDEO* video, INT* cts, BYTE* data, INT size);
 	private:
-		BOOL							m_bStop;
 		BOOL							m_bAudio;
 		BOOL							m_bVideo;
 		BYTE							m_lengthSizeMinusOne;
 		FILE*							m_hFile;
-		INT								m_dts;
+		LONGLONG						m_dts;
 		LONG							m_index;
+	};
+
+	typedef struct tagFLV_BLOCK
+	{
+		BYTE		type;
+		LONGLONG	dts;
+		LONGLONG	pts;
+		union
+		{
+			struct
+			{
+				BYTE*	data;
+				LONG	size;
+				BYTE	channel : 1;
+				BYTE	bitsPerSample : 1;
+				BYTE	samplesPerSec : 2;
+				BYTE	codeID : 4;
+				BYTE	packetType;
+			}audio;
+			struct
+			{
+				BYTE*	data;
+				LONG	size;
+				LONG	cts;
+				BYTE	codeID : 4;//编码ID
+				BYTE	codeType : 4;//帧类型
+				BYTE	packetType;
+			}video;
+			struct
+			{
+				BOOL	hasAudio;
+				BOOL	hasVideo;
+				BOOL	hasMetadata;
+				BOOL	hasKeyframes;
+				BOOL	canSeekToEnd;
+				BOOL	stereo;
+				DOUBLE	duration;
+				DOUBLE	filesize;
+				DOUBLE	datasize;
+				DOUBLE	audiosize;
+				DOUBLE	videosize;
+				DOUBLE	videocodecid;
+				DOUBLE	audiocodecid;
+				DOUBLE	audiodatarate;
+				DOUBLE	audiosamplesize;
+				DOUBLE	audiosamplerate;
+				DOUBLE	videodatarate;
+				DOUBLE	framerate;
+				DOUBLE	width;
+				DOUBLE	height;
+				DOUBLE	lasttimestamp;
+				DOUBLE	lastkeyframetimestamp;
+				DOUBLE	lastkeyframelocation;
+			}script;
+		};
+	}FLV_BLOCK;
+
+
+	/// <summary>
+	/// FLV读取器
+	/// </summary>
+	class FLVReader
+	{
+		DISALLOW_COPY_AND_ASSIGN(FLVReader)
+	public:
+		FLVReader();
+		~FLVReader();
+		BOOL Open(LPCSTR pzFile);
+		BOOL ReadBlock(FLV_BLOCK& block);
+		BOOL Close();
+	private:
+		BOOL ParseScript(BYTE* data, INT size, FLV_BLOCK& block);
+		BOOL ParseVideo(BYTE* data, INT size, FLV_BLOCK& block);
+		BOOL ParseAudio(BYTE* data, INT size, FLV_BLOCK& block);
+		BOOL ParseAAC(FLV_TAG_AUDIO* audio, BYTE* data, INT size, FLV_BLOCK& block);
+		BOOL ParseMP3(FLV_TAG_AUDIO* audio, BYTE* data, INT size, FLV_BLOCK& block);
+		BOOL ParsePCM(FLV_TAG_AUDIO* audio, BYTE* data, INT size, FLV_BLOCK& block);
+		BOOL ParseH264(FLV_TAG_VIDEO* video, BYTE* data, INT size, FLV_BLOCK& block);
+		BOOL ParseMPEG4(FLV_TAG_VIDEO* video, BYTE* data, INT size, FLV_BLOCK& block);
+		BOOL ParseNALU(FLV_TAG_VIDEO* video, FLV_BLOCK& block);
+	private:
+		INT						m_offset;
+		BOOL					m_bAudio;
+		BOOL					m_bVideo;
+		BYTE					m_lengthSizeMinusOne;
+		TinyComPtr<IStream>		m_stream;
+		TinyBufferArray<BYTE>	m_nalus;
+		FLV_TAG_VIDEO			m_videoTag;
+		LONGLONG				m_dts;
+		BYTE*					m_naluPtr;
+		INT						m_naluOffset;
 	};
 }
 

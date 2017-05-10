@@ -18,13 +18,13 @@
 #include "Common/TinyHook.h"
 #include "Media/TinyMFMP3Decode.h"
 #include "MPG123Decode.h"
+#include "FLVParser.h"
 #include "Media/TinyMP3File.h"
 #include "Network/TinyHTTPRequest.h"
 #include "Network/TinyHTTPResponse.h"
 #include "Network/TinyURL.h"
 #include "Network/TinyDNS.h"
-#include "MediaTest.h"
-#include "Common/TinySignal.h";
+#include "Common/TinySignal.h"
 
 using namespace TinyUI;
 using namespace TinyUI::Network;
@@ -60,45 +60,6 @@ BOOL LoadSeDebugPrivilege()
 	return TRUE;
 }
 
-class QSVTest
-{
-public:
-	QSVTest()
-	{
-		QSV::QSVParam param = m_encode.GetDefaultQSV(640, 360, 1000);
-		m_encode.Open(param, BindCallback(&QSVTest::OnDone, this));
-		m_rgbaFile.Open("D:\\12345.rgba");
-		m_h264File.Create("D:\\12345.h264");
-	}
-	~QSVTest()
-	{
-		m_rgbaFile.Close();
-		m_h264File.Close();
-	}
-
-	void OnDone(BYTE* data, LONG size)
-	{
-		m_h264File.Write(data, size);
-	}
-public:
-	QSV::QSVEncode m_encode;
-	TinyFile m_rgbaFile;
-	TinyFile m_h264File;
-};
-
-class TestA : public TinyObject
-{
-	DECLARE_DYNCREATE(TestA)
-};
-
-IMPLEMENT_DYNCREATE(TestA, TinyObject)
-
-class TestB : public TestA
-{
-	DECLARE_DYNCREATE(TestB)
-};
-
-IMPLEMENT_DYNCREATE(TestB, TestA)
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -116,6 +77,26 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	HRESULT hRes = OleInitialize(NULL);
 
 	LoadSeDebugPrivilege();
+
+	/*Decode::FLVReader reader;
+	if (reader.Open("D:\\1.flv"))
+	{
+		INT i = 0;
+		for (;;)
+		{
+			Decode::FLV_BLOCK block = { 0 };
+			if (!reader.ReadBlock(block))
+			{
+				break;
+			}
+			i++;
+			SAFE_DELETE(block.audio.data);
+			SAFE_DELETE(block.video.data);
+			TRACE("index:%d\n", i);
+		}
+		reader.Close();
+	}*/
+	
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));

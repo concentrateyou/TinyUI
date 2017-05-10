@@ -1625,6 +1625,7 @@ namespace TinyUI
 		TinyBufferArray();
 		TinyBufferArray(T* value, INT size);
 		~TinyBufferArray();
+		operator T*();
 		INT		GetSize() const;
 		T*		GetPointer();
 		BOOL	Add(T* value, INT size);
@@ -1659,6 +1660,11 @@ namespace TinyUI
 	}
 	template<class T>
 	T*  TinyBufferArray<T>::GetPointer()
+	{
+		return m_value;
+	}
+	template<class T>
+	TinyBufferArray<T>::operator T*()
 	{
 		return m_value;
 	}
@@ -1765,6 +1771,7 @@ namespace TinyUI
 	void TinyBufferArray<T>::Clear()
 	{
 		SAFE_DELETE_ARRAY(m_value);
+		m_alloc_size = 0;
 		m_size = 0;
 	}
 	template<class T>
