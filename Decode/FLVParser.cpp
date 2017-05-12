@@ -452,6 +452,34 @@ namespace Decode
 		hRes = m_stream->Seek(dlibMove, STREAM_SEEK_SET, NULL);
 		if (hRes != S_OK)
 			return FALSE;
+		UINT tagSize = 0;
+		hRes = m_stream->Read(&tagSize, sizeof(UINT), &ls);
+		if (hRes != S_OK || ls <= 0)
+			return FALSE;
+		tagSize = htonl(tagSize);
+		FLV_TAG_HEADER tag = { 0 };
+		hRes = m_stream->Read(&tag, sizeof(FLV_TAG_HEADER), &ls);
+		if (hRes != S_OK || ls <= 0)
+			return FALSE;
+		INT size = ToINT24(tag.size);
+		if (size > 0)
+		{
+			TinyScopedArray<BYTE> data(new BYTE[size]);
+			hRes = m_stream->Read(data, size, &ls);
+			if (hRes != S_OK || ls <= 0)
+				return FALSE;
+			if (tag.type == FLV_SCRIPT)
+			{
+				if (!ParseScript(data, size, m_script))
+					return FALSE;
+				ULARGE_INTEGER libNew = { 0 };
+				ZeroMemory(&dlibMove, sizeof(dlibMove));
+				hRes = m_stream->Seek(dlibMove, STREAM_SEEK_CUR, &libNew);
+				if (hRes != S_OK)
+					return FALSE;
+				m_offset = libNew.LowPart;
+			}
+		}
 		return TRUE;
 	}
 	BOOL FLVReader::ReadBlock(FLV_BLOCK& block)
@@ -485,10 +513,6 @@ namespace Decode
 				{
 					m_dts = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
 					return ParseVideo(data, size, block);
-				}
-				if (tag.type == FLV_SCRIPT)
-				{
-					return ParseScript(data, size, block);
 				}
 			}
 		}
@@ -732,7 +756,7 @@ namespace Decode
 		}
 		return TRUE;
 	}
-	BOOL FLVReader::ParseScript(BYTE* data, INT size, FLV_BLOCK& block)
+	BOOL FLVReader::ParseScript(BYTE* data, INT size, FLV_SCRIPTDATA& script)
 	{
 		AMFObject metaObj;
 		if (AMF_Decode(&metaObj, reinterpret_cast<CHAR*>(data), size, FALSE) > 0)
@@ -753,72 +777,72 @@ namespace Decode
 							if ("width" == val)
 							{
 								ASSERT(objProp->p_type == AMF_NUMBER);
-								block.script.width = objProp->p_vu.p_number;
+								script.width = objProp->p_vu.p_number;
 							}
 							if ("height" == val)
 							{
 								ASSERT(objProp->p_type == AMF_NUMBER);
-								block.script.height = objProp->p_vu.p_number;
+								script.height = objProp->p_vu.p_number;
 							}
 							if ("duration" == val)
 							{
 								ASSERT(objProp->p_type == AMF_NUMBER);
-								block.script.duration = objProp->p_vu.p_number * 1000000;
+								script.duration = objProp->p_vu.p_number * 1000000;
 							}
 							if ("framerate" == val)
 							{
 								ASSERT(objProp->p_type == AMF_NUMBER);
-								block.script.framerate = objProp->p_vu.p_number;
+								script.framerate = objProp->p_vu.p_number;
 							}
 							if ("filesize" == val)
 							{
 								ASSERT(objProp->p_type == AMF_NUMBER);
-								block.script.filesize = objProp->p_vu.p_number;
+								script.filesize = objProp->p_vu.p_number;
 							}
 							if ("datasize" == val)
 							{
 								ASSERT(objProp->p_type == AMF_NUMBER);
-								block.script.datasize = objProp->p_vu.p_number;
+								script.datasize = objProp->p_vu.p_number;
 							}
 							if ("audiosize" == val)
 							{
 								ASSERT(objProp->p_type == AMF_NUMBER);
-								block.script.audiosize = objProp->p_vu.p_number;
+								script.audiosize = objProp->p_vu.p_number;
 							}
 							if ("videosize" == val)
 							{
 								ASSERT(objProp->p_type == AMF_NUMBER);
-								block.script.videosize = objProp->p_vu.p_number;
+								script.videosize = objProp->p_vu.p_number;
 							}
 							if ("videocodecid" == val)
 							{
 								ASSERT(objProp->p_type == AMF_NUMBER);
-								block.script.videocodecid = objProp->p_vu.p_number;
+								script.videocodecid = objProp->p_vu.p_number;
 							}
 							if ("videodatarate" == val)
 							{
 								ASSERT(objProp->p_type == AMF_NUMBER);
-								block.script.videodatarate = objProp->p_vu.p_number;
+								script.videodatarate = objProp->p_vu.p_number;
 							}
 							if ("audiocodecid" == val)
 							{
 								ASSERT(objProp->p_type == AMF_NUMBER);
-								block.script.audiocodecid = objProp->p_vu.p_number;
+								script.audiocodecid = objProp->p_vu.p_number;
 							}
 							if ("audiodatarate" == val)
 							{
 								ASSERT(objProp->p_type == AMF_NUMBER);
-								block.script.audiodatarate = objProp->p_vu.p_number;
+								script.audiodatarate = objProp->p_vu.p_number;
 							}
 							if ("audiosamplesize" == val)
 							{
 								ASSERT(objProp->p_type == AMF_NUMBER);
-								block.script.audiosamplesize = objProp->p_vu.p_number;
+								script.audiosamplesize = objProp->p_vu.p_number;
 							}
 							if ("audiosamplerate" == val)
 							{
 								ASSERT(objProp->p_type == AMF_NUMBER);
-								block.script.audiosamplerate = objProp->p_vu.p_number;
+								script.audiosamplerate = objProp->p_vu.p_number;
 							}
 						}
 					}

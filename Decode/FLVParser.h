@@ -278,7 +278,7 @@ namespace Decode
 		BOOL ReadBlock(FLV_BLOCK& block);
 		BOOL Close();
 	private:
-		BOOL ParseScript(BYTE* data, INT size, FLV_BLOCK& block);
+		BOOL ParseScript(BYTE* data, INT size, FLV_SCRIPTDATA& script);
 		BOOL ParseVideo(BYTE* data, INT size, FLV_BLOCK& block);
 		BOOL ParseAudio(BYTE* data, INT size, FLV_BLOCK& block);
 		BOOL ParseAAC(FLV_TAG_AUDIO* audio, BYTE* data, INT size, FLV_BLOCK& block);
@@ -288,7 +288,8 @@ namespace Decode
 		BOOL ParseMPEG4(FLV_TAG_VIDEO* video, BYTE* data, INT size, FLV_BLOCK& block);
 		BOOL ParseNALU(FLV_TAG_VIDEO* video, FLV_BLOCK& block);
 	private:
-		INT						m_offset;
+		FLV_SCRIPTDATA			m_script;
+		ULONGLONG				m_offset;
 		BOOL					m_bAudio;
 		BOOL					m_bVideo;
 		BYTE					m_lengthSizeMinusOne;
