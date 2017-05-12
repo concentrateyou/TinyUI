@@ -31,6 +31,7 @@ namespace FLVPlayer
 
 	void FLVAudio::OnMessagePump()
 	{
+		Sleep(100);
 		for (;;)
 		{
 			if (m_close.Lock(0))

@@ -400,6 +400,7 @@ namespace Decode
 				{
 				case FLV_AUDIO:
 					m_dts = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
+					TRACE("audio:%d\n", (DWORD)m_dts);
 					ParseAudio(data, size);
 					break;
 				case FLV_VIDEO:
@@ -485,6 +486,16 @@ namespace Decode
 			}
 		}
 		return TRUE;
+	}
+	DWORD FLVReader::Seek(DWORD dwOffset, DWORD dwFlag)
+	{
+		LARGE_INTEGER dlibMove = { 0 };
+		dlibMove.LowPart = dwOffset;
+		ULARGE_INTEGER libNew = { 0 };
+		HRESULT hRes = m_stream->Seek(dlibMove, dwFlag, &libNew);
+		if (hRes != S_OK)
+			return FALSE;
+		return libNew.LowPart;
 	}
 	BOOL FLVReader::ReadBlock(FLV_BLOCK& block)
 	{

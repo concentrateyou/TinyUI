@@ -277,6 +277,7 @@ namespace Decode
 		FLV_SCRIPTDATA GetScript();
 		BOOL Open(LPCSTR pzFile);
 		BOOL ReadBlock(FLV_BLOCK& block);
+		DWORD Seek(DWORD dwOffset, DWORD dwFlag);
 		BOOL Close();
 	private:
 		BOOL ParseScript(BYTE* data, INT size, FLV_SCRIPTDATA& script);
