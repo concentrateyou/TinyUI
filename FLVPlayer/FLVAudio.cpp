@@ -17,7 +17,7 @@ namespace FLVPlayer
 	}
 	BOOL FLVAudio::Submit()
 	{
-		if (m_reader.Open("D:\\4.flv"))
+		if (m_reader.Open("D:\\1.flv"))
 		{
 			return TinyTaskBase::Submit(BindCallback(&FLVAudio::OnMessagePump, this));
 		}
@@ -76,18 +76,23 @@ namespace FLVPlayer
 								vals[0].hEventNotify = m_event[0];
 								vals[1].dwOffset = so * 2 - 1;
 								vals[1].hEventNotify = m_event[1];
-								if (m_player.SetNotificationPositions(2, vals))
+								if (m_player.SetPositions(2, vals))
 								{
 									m_player.Play();
+									if (so != 4096)
+									{
+										m_player.Fill(bo, so);
+									}
 								}
 							}
 							m_player.Fill(bo, so);
 						}
-
 						HANDLE handles[2] = { m_event[0],m_event[1] };
 						HRESULT hRes = WaitForMultipleObjects(2, handles, FALSE, INFINITE);
 						if (hRes >= WAIT_OBJECT_0 && hRes <= (WAIT_OBJECT_0 + 1))
 						{
+							SAFE_DELETE_ARRAY(block.audio.data);
+							SAFE_DELETE_ARRAY(block.video.data);
 							continue;
 						}
 					}

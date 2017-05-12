@@ -85,14 +85,14 @@ namespace TinyUI
 			ASSERT(m_secondaryDSB);
 			return m_secondaryDSB->GetPan(&plan) == S_OK;
 		}
-		BOOL TinySoundPlayer::Play()
+		BOOL TinySoundPlayer::Play(DWORD dwFlag)
 		{
 			ASSERT(m_secondaryDSB);
 			HRESULT hRes = S_OK;
 			hRes = m_secondaryDSB->SetCurrentPosition(0);
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = m_secondaryDSB->Play(0, 0, DSBPLAY_LOOPING);
+			hRes = m_secondaryDSB->Play(0, 0, dwFlag);
 			if (hRes != S_OK)
 				return FALSE;
 			return TRUE;
@@ -149,7 +149,7 @@ namespace TinyUI
 			m_primaryDSB.Release();
 			return TRUE;
 		}
-		BOOL TinySoundPlayer::SetNotificationPositions(DWORD dwSize, LPCDSBPOSITIONNOTIFY pNotify)
+		BOOL TinySoundPlayer::SetPositions(DWORD dwSize, LPCDSBPOSITIONNOTIFY pNotify)
 		{
 			ASSERT(m_secondaryDSB);
 			TinyComPtr<IDirectSoundNotify>	notify;
