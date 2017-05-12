@@ -17,7 +17,7 @@ namespace FLVPlayer
 	}
 	BOOL FLVAudio::Submit()
 	{
-		if (m_reader.Open("D:\\1.flv"))
+		if (m_reader.Open("D:\\3.flv"))
 		{
 			return TinyTaskBase::Submit(BindCallback(&FLVAudio::OnMessagePump, this));
 		}

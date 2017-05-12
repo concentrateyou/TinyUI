@@ -5,7 +5,7 @@ namespace FLVPlayer
 {
 	FLVVideo::FLVVideo(HWND hWND)
 		:m_hWND(hWND),
-		m_sPTS(0)
+		m_currentPTS(0)
 	{
 		m_h264.Reset(new H264Decode());
 		m_close.CreateEvent();
@@ -17,8 +17,12 @@ namespace FLVPlayer
 	BOOL FLVVideo::Submit()
 	{
 		ASSERT(m_h264);
-		if (m_reader.Open("D:\\1.flv"))
+		if (m_reader.Open("D:\\3.flv"))
 		{
+			FLV_SCRIPTDATA script = m_reader.GetScript();
+			m_rate = static_cast<DWORD>(script.framerate);
+			m_size.cx = static_cast<LONG>(script.width);
+			m_size.cy = static_cast<LONG>(script.height);
 			return TinyTaskBase::Submit(BindCallback(&FLVVideo::OnMessagePump, this));
 		}
 		return FALSE;
@@ -40,14 +44,7 @@ namespace FLVPlayer
 			{
 				break;
 			}
-			if (block.type == FLV_SCRIPT)
-			{
-				m_size.cx = static_cast<LONG>(block.script.width);
-				m_size.cy = static_cast<LONG>(block.script.height);
-				m_rate = static_cast<DWORD>(block.script.framerate);
-				continue;
-			}
-			if (block.type == FLV_AUDIO)
+			if (block.type != FLV_VIDEO)
 			{
 				SAFE_DELETE_ARRAY(block.audio.data);
 				SAFE_DELETE_ARRAY(block.video.data);
@@ -75,19 +72,15 @@ namespace FLVPlayer
 					{
 						this->OnRender(bo, so);
 						m_timer.EndTime();
-						Sleep(64);
-						/*DWORD ms = m_timer.GetMillisconds();
-						AVFrame* yuv420 = m_h264->GetYUV420();
-						if (yuv420->pkt_pts > 0)
+						int64_t pkt_pts = m_h264->GetYUV420()->pkt_pts;
+						if (pkt_pts != m_currentPTS)
 						{
-							DWORD s = yuv420->pkt_pts - ms;
-							if (m_sPTS != s)
-							{
-								INT offset = s - m_sPTS;
-								m_sPTS = s;
-								Sleep(offset < 0 ? 0 : offset);
-							}
-						}*/
+							DWORD ms = m_timer.GetMillisconds();
+							INT offset = pkt_pts - m_currentPTS - ms;
+							TRACE("pkt_pts:%d, ms:%d offset:%d\n", (DWORD)pkt_pts, ms, offset);
+							Sleep(offset < 0 ? 0 : offset);
+							m_currentPTS = pkt_pts;
+						}
 					}
 				}
 			}

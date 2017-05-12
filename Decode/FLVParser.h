@@ -274,6 +274,7 @@ namespace Decode
 	public:
 		FLVReader();
 		~FLVReader();
+		FLV_SCRIPTDATA GetScript();
 		BOOL Open(LPCSTR pzFile);
 		BOOL ReadBlock(FLV_BLOCK& block);
 		BOOL Close();

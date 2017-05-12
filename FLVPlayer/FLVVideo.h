@@ -21,12 +21,12 @@ namespace FLVPlayer
 		void	OnMessagePump();
 		void	OnRender(BYTE* bits, LONG size);
 	private:
+		TinyPerformanceTimer		m_timer;
 		TinySize					m_size;
 		DWORD						m_rate;
-		LONG						m_sPTS;
+		LONG						m_currentPTS;
 		HWND						m_hWND;
 		TinyEvent					m_close;
-		TinyPerformanceTimer		m_timer;
 		TinyScopedPtr<H264Decode>	m_h264;
 		FLVReader					m_reader;
 	};

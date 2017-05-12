@@ -432,6 +432,10 @@ namespace Decode
 	{
 
 	}
+	FLV_SCRIPTDATA FLVReader::GetScript()
+	{
+		return m_script;
+	}
 	BOOL FLVReader::Open(LPCSTR pzFile)
 	{
 		HRESULT hRes = SHCreateStreamOnFileA(pzFile, STGM_READ | STGM_FAILIFTHERE, &m_stream);
