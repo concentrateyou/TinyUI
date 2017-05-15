@@ -143,6 +143,7 @@ namespace FLVPlayer
 				TRACE("FLVAudioRender size <= 0\n");
 				continue;
 			}
+			TRACE("Audio pts:%d\n", tag.samplePTS);
 			BYTE* bo = NULL;
 			LONG  so = 0;
 			if (m_decode.m_aac->Decode(tag.bits, tag.size, bo, so))
@@ -173,7 +174,8 @@ namespace FLVPlayer
 							while (m_decode.m_videoMS == 0);
 							if (m_decode.m_audioMS > m_decode.m_videoMS)
 							{
-								Sleep(m_decode.m_audioMS - m_decode.m_videoMS);
+								TRACE("audio-ms:%d\n", m_decode.m_audioMS - m_decode.m_videoMS);
+								Sleep(m_decode.m_audioMS - m_decode.m_videoMS + 40);
 							}
 							m_bFlag = TRUE;
 						}
@@ -238,7 +240,6 @@ namespace FLVPlayer
 			{
 				DWORD ms = m_timer.GetMillisconds();
 				LONGLONG offset = tag.samplePTS - m_pts - ms;
-				//TRACE("ms:%d\n", offset);
 				Sleep(offset < 0 ? 0 : offset);
 				m_pts = tag.samplePTS;
 			}
@@ -314,6 +315,7 @@ namespace FLVPlayer
 					memcpy(tag.bits, bo, so);
 					tag.size = so;
 					tag.samplePTS = m_decode.m_h264->GetYUV420()->pkt_pts;
+					TRACE("Video pts:%d\n", tag.samplePTS);
 					tag.sampleDTS = tag.samplePTS;
 					m_queue.Push(tag);
 				}
