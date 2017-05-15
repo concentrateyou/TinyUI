@@ -2,7 +2,7 @@
 #include "Control/TinyControl.h"
 #include "FLVAudio.h"
 #include "FLVVideo.h"
-#include "FLVDecodeTask.h"
+#include "FLVDecode.h"
 using namespace TinyUI;
 
 namespace FLVPlayer
@@ -26,8 +26,9 @@ namespace FLVPlayer
 		LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	private:
-		TinyScopedPtr<FLVAudio>	m_audioTask;
-		TinyScopedPtr<FLVVideo>	m_videoTask;
+		TinyScopedPtr<FLVDecode>	m_decode;
+		/*TinyScopedPtr<FLVAudio>	m_audioTask;
+		TinyScopedPtr<FLVVideo>	m_videoTask;*/
 	};
 }
 

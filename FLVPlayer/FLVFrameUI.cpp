@@ -51,13 +51,14 @@ namespace FLVPlayer
 	LRESULT FLVFrameUI::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-
-		/*FLVReader reader;
-		reader.Open("D:\\1.flv");*/
-		m_videoTask.Reset(new FLVVideo(m_hWND));
-		m_videoTask->Submit();
-		m_audioTask.Reset(new FLVAudio(m_hWND));
-		m_audioTask->Submit();
+		m_decode.Reset(new FLVDecode(m_hWND));
+		m_decode->Submit();
+		///*FLVReader reader;
+		//reader.Open("D:\\1.flv");*/
+		//m_videoTask.Reset(new FLVVideo(m_hWND));
+		//m_videoTask->Submit();
+		//m_audioTask.Reset(new FLVAudio(m_hWND));
+		//m_audioTask->Submit();
 
 		return FALSE;
 	}
@@ -65,10 +66,10 @@ namespace FLVPlayer
 	LRESULT FLVFrameUI::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		if (m_audioTask)
+		/*if (m_audioTask)
 			m_audioTask->Close(INFINITE);
 		if (m_videoTask)
-			m_videoTask->Close(INFINITE);
+			m_videoTask->Close(INFINITE);*/
 		return FALSE;
 	}
 

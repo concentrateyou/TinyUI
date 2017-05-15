@@ -33,22 +33,10 @@
     <ClInclude Include="FLVFrameUI.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="FLVDecodeTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="FLVAudioTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="FLVVideoTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="FLVAudio.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="FLVVideo.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="FLVDecode.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketQueue.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -62,22 +50,10 @@
     <ClCompile Include="FLVFrameUI.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="FLVDecodeTask.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="FLVAudioTask.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="FLVVideoTask.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="FLVAudio.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="FLVVideo.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="FLVDecode.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketQueue.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -152,27 +152,19 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FLVAudio.h" />
-    <ClInclude Include="FLVAudioTask.h" />
     <ClInclude Include="FLVDecode.h" />
-    <ClInclude Include="FLVDecodeTask.h" />
     <ClInclude Include="FLVFrameUI.h" />
     <ClInclude Include="FLVPlayer.h" />
-    <ClInclude Include="FLVVideo.h" />
-    <ClInclude Include="FLVVideoTask.h" />
+    <ClInclude Include="PacketQueue.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FLVAudio.cpp" />
-    <ClCompile Include="FLVAudioTask.cpp" />
     <ClCompile Include="FLVDecode.cpp" />
-    <ClCompile Include="FLVDecodeTask.cpp" />
     <ClCompile Include="FLVFrameUI.cpp" />
     <ClCompile Include="FLVPlayer.cpp" />
-    <ClCompile Include="FLVVideo.cpp" />
-    <ClCompile Include="FLVVideoTask.cpp" />
+    <ClCompile Include="PacketQueue.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
