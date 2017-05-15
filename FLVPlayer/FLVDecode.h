@@ -24,6 +24,7 @@ namespace FLVPlayer
 	private:
 		void	OnMessagePump();
 	private:
+		LONGLONG		m_pts;
 		BOOL			m_bFlag;
 		BOOL			m_bInitialize;
 		TinyEvent		m_events[2];
@@ -44,6 +45,7 @@ namespace FLVPlayer
 		TinyLock	m_lock;
 		PacketQueue	m_queue;
 		FLVDecode&	m_decode;
+		TinyPerformanceTimer	m_timer;
 	};
 
 	class FLVVideoRender : public TinyTaskBase

@@ -138,8 +138,11 @@ namespace FLVPlayer
 		for (;;)
 		{
 			SampleTag tag = m_decode.m_audioQueue.Pop();
-			if (tag.size == 0)
+			if (tag.size <= 0)
+			{
+				TRACE("FLVAudioRender size <= 0\n");
 				continue;
+			}
 			BYTE* bo = NULL;
 			LONG  so = 0;
 			if (m_decode.m_aac->Decode(tag.bits, tag.size, bo, so))
@@ -158,21 +161,21 @@ namespace FLVPlayer
 					vals[1].hEventNotify = m_events[1];
 					if (m_player.SetPositions(2, vals))
 					{
+						m_player.Play();
+						if (so != 4096)
+						{
+							m_player.Fill(bo, so);
+						}
+						//Í¬²½
 						if (!m_bFlag)
 						{
 							m_decode.m_audioMS = timeGetTime();
 							while (m_decode.m_videoMS == 0);
 							if (m_decode.m_audioMS > m_decode.m_videoMS)
 							{
-								DWORD ms = m_decode.m_audioMS - m_decode.m_videoMS;
-								Sleep(ms);
+								Sleep(m_decode.m_audioMS - m_decode.m_videoMS);
 							}
 							m_bFlag = TRUE;
-						}
-						m_player.Play();
-						if (so != 4096)
-						{
-							m_player.Fill(bo, so);
 						}
 					}
 				}
@@ -213,28 +216,31 @@ namespace FLVPlayer
 		for (;;)
 		{
 			SampleTag tag = m_decode.m_queue.Pop();
-			if (tag.size > 0)
+			if (tag.size <= 0)
 			{
-				m_timer.BeginTime();
-				if (!m_bFlag)
+				TRACE("FLVVideoRender size=0\n");
+				continue;
+			}
+			m_timer.BeginTime();
+			if (!m_bFlag)
+			{
+				m_decode.m_decode.m_videoMS = timeGetTime();
+				while (m_decode.m_decode.m_audioMS == 0);
+				if (m_decode.m_decode.m_videoMS > m_decode.m_decode.m_audioMS)
 				{
-					m_decode.m_decode.m_videoMS = timeGetTime();
-					while (m_decode.m_decode.m_audioMS == 0);
-					if (m_decode.m_decode.m_videoMS > m_decode.m_decode.m_audioMS)
-					{
-						Sleep(m_decode.m_decode.m_videoMS - m_decode.m_decode.m_audioMS);
-					}
-					m_bFlag = TRUE;
+					Sleep(m_decode.m_decode.m_videoMS - m_decode.m_decode.m_audioMS);
 				}
-				OnRender(tag.bits, tag.size);
-				m_timer.EndTime();
-				if (m_pts != tag.samplePTS)
-				{
-					DWORD ms = m_timer.GetMillisconds();
-					LONGLONG offset = tag.samplePTS - m_pts - ms;
-					Sleep(offset < 0 ? 0 : offset);
-					m_pts = tag.samplePTS;
-				}
+				m_bFlag = TRUE;
+			}
+			OnRender(tag.bits, tag.size);
+			m_timer.EndTime();
+			if (m_pts != tag.samplePTS)
+			{
+				DWORD ms = m_timer.GetMillisconds();
+				LONGLONG offset = tag.samplePTS - m_pts - ms;
+				//TRACE("ms:%d\n", offset);
+				Sleep(offset < 0 ? 0 : offset);
+				m_pts = tag.samplePTS;
 			}
 			SAFE_DELETE_ARRAY(tag.bits);
 		}
@@ -299,15 +305,17 @@ namespace FLVPlayer
 			SampleTag tag = m_decode.m_videoQueue.Pop();
 			if (tag.size > 0)
 			{
+				m_timer.BeginTime();
 				BYTE* bo = NULL;
 				LONG  so = 0;
 				if (m_decode.m_h264->Decode(tag, bo, so))
 				{
+					m_timer.EndTime();
 					SAFE_DELETE_ARRAY(tag.bits);
 					tag.bits = new BYTE[so];
 					memcpy(tag.bits, bo, so);
 					tag.size = so;
-					tag.samplePTS = m_decode.m_h264->GetYUV420()->pkt_pts;
+					tag.samplePTS = m_decode.m_h264->GetYUV420()->pkt_pts + m_timer.GetMillisconds();
 					tag.sampleDTS = tag.samplePTS;
 					m_queue.Push(tag);
 				}
