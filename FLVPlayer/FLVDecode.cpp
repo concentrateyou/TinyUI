@@ -9,7 +9,9 @@ namespace FLVPlayer
 		m_videoQueue(m_lock),
 		m_decodeTask(*this),
 		m_audioRender(*this),
-		m_videoRender(m_decodeTask)
+		m_videoRender(m_decodeTask),
+		m_audioMS(0),
+		m_videoMS(0)
 	{
 		m_aac.Reset(new AACDecode());
 		m_h264.Reset(new H264Decode());
@@ -46,7 +48,7 @@ namespace FLVPlayer
 			INT size = m_audioQueue.GetSize() + m_videoQueue.GetSize();
 			if (size > MAX_QUEUE_SIZE)
 			{
-				Sleep(10);
+				Sleep(5);
 				continue;
 			}
 			if (!m_reader.ReadBlock(block))
@@ -114,7 +116,8 @@ namespace FLVPlayer
 	//////////////////////////////////////////////////////////////////////////
 	FLVAudioRender::FLVAudioRender(FLVDecode& decode)
 		:m_decode(decode),
-		m_bInitialize(FALSE)
+		m_bInitialize(FALSE),
+		m_bFlag(FALSE)
 	{
 
 	}
@@ -155,6 +158,17 @@ namespace FLVPlayer
 					vals[1].hEventNotify = m_events[1];
 					if (m_player.SetPositions(2, vals))
 					{
+						if (!m_bFlag)
+						{
+							m_decode.m_audioMS = timeGetTime();
+							while (m_decode.m_videoMS == 0);
+							if (m_decode.m_audioMS > m_decode.m_videoMS)
+							{
+								DWORD ms = m_decode.m_audioMS - m_decode.m_videoMS;
+								Sleep(ms);
+							}
+							m_bFlag = TRUE;
+						}
 						m_player.Play();
 						if (so != 4096)
 						{
@@ -177,7 +191,8 @@ namespace FLVPlayer
 	//////////////////////////////////////////////////////////////////////////
 	FLVVideoRender::FLVVideoRender(FLVDecodeTask& decode)
 		:m_decode(decode),
-		m_pts(0)
+		m_pts(0),
+		m_bFlag(FALSE)
 	{
 
 	}
@@ -200,10 +215,23 @@ namespace FLVPlayer
 			SampleTag tag = m_decode.m_queue.Pop();
 			if (tag.size > 0)
 			{
+				m_timer.BeginTime();
+				if (!m_bFlag)
+				{
+					m_decode.m_decode.m_videoMS = timeGetTime();
+					while (m_decode.m_decode.m_audioMS == 0);
+					if (m_decode.m_decode.m_videoMS > m_decode.m_decode.m_audioMS)
+					{
+						Sleep(m_decode.m_decode.m_videoMS - m_decode.m_decode.m_audioMS);
+					}
+					m_bFlag = TRUE;
+				}
 				OnRender(tag.bits, tag.size);
+				m_timer.EndTime();
 				if (m_pts != tag.samplePTS)
 				{
-					LONGLONG offset = tag.samplePTS - m_pts;
+					DWORD ms = m_timer.GetMillisconds();
+					LONGLONG offset = tag.samplePTS - m_pts - ms;
 					Sleep(offset < 0 ? 0 : offset);
 					m_pts = tag.samplePTS;
 				}

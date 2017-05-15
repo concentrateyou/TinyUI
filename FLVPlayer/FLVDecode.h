@@ -24,6 +24,7 @@ namespace FLVPlayer
 	private:
 		void	OnMessagePump();
 	private:
+		BOOL			m_bFlag;
 		BOOL			m_bInitialize;
 		TinyEvent		m_events[2];
 		FLVDecode&		m_decode;
@@ -56,6 +57,7 @@ namespace FLVPlayer
 		void	OnMessagePump();
 		void	OnRender(BYTE* bits, LONG size);
 	private:
+		BOOL					m_bFlag;
 		LONGLONG				m_pts;
 		FLVDecodeTask&			m_decode;
 		TinyPerformanceTimer	m_timer;
@@ -74,6 +76,8 @@ namespace FLVPlayer
 	private:
 		void	OnMessagePump();
 	private:
+		DWORD						m_audioMS;
+		DWORD						m_videoMS;
 		HWND						m_hWND;
 		TinySize					m_size;
 		FLVReader					m_reader;
