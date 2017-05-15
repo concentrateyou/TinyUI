@@ -45,7 +45,6 @@ namespace FLVPlayer
 		TinyLock	m_lock;
 		PacketQueue	m_queue;
 		FLVDecode&	m_decode;
-		TinyPerformanceTimer	m_timer;
 	};
 
 	class FLVVideoRender : public TinyTaskBase

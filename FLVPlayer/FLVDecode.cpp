@@ -305,17 +305,15 @@ namespace FLVPlayer
 			SampleTag tag = m_decode.m_videoQueue.Pop();
 			if (tag.size > 0)
 			{
-				m_timer.BeginTime();
 				BYTE* bo = NULL;
 				LONG  so = 0;
 				if (m_decode.m_h264->Decode(tag, bo, so))
 				{
-					m_timer.EndTime();
 					SAFE_DELETE_ARRAY(tag.bits);
 					tag.bits = new BYTE[so];
 					memcpy(tag.bits, bo, so);
 					tag.size = so;
-					tag.samplePTS = m_decode.m_h264->GetYUV420()->pkt_pts + m_timer.GetMillisconds();
+					tag.samplePTS = m_decode.m_h264->GetYUV420()->pkt_pts;
 					tag.sampleDTS = tag.samplePTS;
 					m_queue.Push(tag);
 				}
