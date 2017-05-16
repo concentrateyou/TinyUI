@@ -10,8 +10,7 @@ namespace FLVPlayer
 		m_decodeTask(*this),
 		m_audioRender(*this),
 		m_videoRender(m_decodeTask),
-		m_audioMS(0),
-		m_videoMS(0)
+		m_dwBaseMS(0)
 	{
 		m_aac.Reset(new AACDecode());
 		m_h264.Reset(new H264Decode());
@@ -43,6 +42,7 @@ namespace FLVPlayer
 	void FLVDecode::OnMessagePump()
 	{
 		FLV_BLOCK block = { 0 };
+		m_dwBaseMS = timeGetTime();
 		for (;;)
 		{
 			INT size = m_audioQueue.GetSize() + m_videoQueue.GetSize();
@@ -117,7 +117,8 @@ namespace FLVPlayer
 	FLVAudioRender::FLVAudioRender(FLVDecode& decode)
 		:m_decode(decode),
 		m_bInitialize(FALSE),
-		m_bFlag(FALSE)
+		m_bFlag(FALSE),
+		m_dwMS(0)
 	{
 
 	}
@@ -140,14 +141,16 @@ namespace FLVPlayer
 			SampleTag tag = m_decode.m_audioQueue.Pop();
 			if (tag.size <= 0)
 			{
-				TRACE("FLVAudioRender size <= 0\n");
 				continue;
 			}
-			TRACE("Audio pts:%d\n", tag.samplePTS);
 			BYTE* bo = NULL;
 			LONG  so = 0;
 			if (m_decode.m_aac->Decode(tag.bits, tag.size, bo, so))
 			{
+				DWORD dwMS = timeGetTime() - m_decode.m_dwBaseMS;
+				INT offset = tag.samplePTS - dwMS;
+				TRACE("audio:%d\n", offset);
+				Sleep(offset < 0 ? 0 : offset);
 				if (!m_bInitialize)
 				{
 					m_bInitialize = TRUE;
@@ -167,18 +170,6 @@ namespace FLVPlayer
 						{
 							m_player.Fill(bo, so);
 						}
-						//Í¬²½
-						if (!m_bFlag)
-						{
-							m_decode.m_audioMS = timeGetTime();
-							while (m_decode.m_videoMS == 0);
-							if (m_decode.m_audioMS > m_decode.m_videoMS)
-							{
-								TRACE("audio-ms:%d\n", m_decode.m_audioMS - m_decode.m_videoMS);
-								Sleep(m_decode.m_audioMS - m_decode.m_videoMS + 40);
-							}
-							m_bFlag = TRUE;
-						}
 					}
 				}
 				m_player.Fill(bo, so);
@@ -196,8 +187,9 @@ namespace FLVPlayer
 	//////////////////////////////////////////////////////////////////////////
 	FLVVideoRender::FLVVideoRender(FLVDecodeTask& decode)
 		:m_decode(decode),
-		m_pts(0),
-		m_bFlag(FALSE)
+		m_wPTS(0),
+		m_bFlag(FALSE),
+		m_dwMS(0)
 	{
 
 	}
@@ -220,29 +212,13 @@ namespace FLVPlayer
 			SampleTag tag = m_decode.m_queue.Pop();
 			if (tag.size <= 0)
 			{
-				TRACE("FLVVideoRender size=0\n");
 				continue;
 			}
-			m_timer.BeginTime();
-			if (!m_bFlag)
-			{
-				m_decode.m_decode.m_videoMS = timeGetTime();
-				while (m_decode.m_decode.m_audioMS == 0);
-				if (m_decode.m_decode.m_videoMS > m_decode.m_decode.m_audioMS)
-				{
-					Sleep(m_decode.m_decode.m_videoMS - m_decode.m_decode.m_audioMS);
-				}
-				m_bFlag = TRUE;
-			}
+			DWORD dwMS = timeGetTime() - m_decode.m_decode.m_dwBaseMS;
+			INT offset = tag.samplePTS - dwMS;
+			TRACE("video:%d\n", offset);
+			Sleep(offset < 0 ? 0 : offset);
 			OnRender(tag.bits, tag.size);
-			m_timer.EndTime();
-			if (m_pts != tag.samplePTS)
-			{
-				DWORD ms = m_timer.GetMillisconds();
-				LONGLONG offset = tag.samplePTS - m_pts - ms;
-				Sleep(offset < 0 ? 0 : offset);
-				m_pts = tag.samplePTS;
-			}
 			SAFE_DELETE_ARRAY(tag.bits);
 		}
 	}
@@ -315,7 +291,6 @@ namespace FLVPlayer
 					memcpy(tag.bits, bo, so);
 					tag.size = so;
 					tag.samplePTS = m_decode.m_h264->GetYUV420()->pkt_pts;
-					TRACE("Video pts:%d\n", tag.samplePTS);
 					tag.sampleDTS = tag.samplePTS;
 					m_queue.Push(tag);
 				}

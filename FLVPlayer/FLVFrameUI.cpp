@@ -51,6 +51,12 @@ namespace FLVPlayer
 	LRESULT FLVFrameUI::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+
+	/*	FLVParser parser;
+		parser.Open("D:\\3.flv");
+		parser.Parse();
+		parser.Close();*/
+
 		m_decode.Reset(new FLVDecode(m_hWND));
 		m_decode->Submit();
 		return FALSE;

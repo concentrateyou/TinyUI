@@ -400,7 +400,6 @@ namespace Decode
 				{
 				case FLV_AUDIO:
 					m_dts = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
-					TRACE("audio:%d\n", (DWORD)m_dts);
 					ParseAudio(data, size);
 					break;
 				case FLV_VIDEO:
@@ -598,6 +597,7 @@ namespace Decode
 		if (aacPacketType == 0)
 		{
 			block.dts = m_dts;
+			block.pts = m_dts;
 			block.audio.bitsPerSample = audio->bitsPerSample;
 			block.audio.channel = audio->channel;
 			block.audio.codeID = FLV_CODECID_AAC;
@@ -609,6 +609,7 @@ namespace Decode
 		if (aacPacketType == 1)
 		{
 			block.dts = m_dts;
+			block.pts = m_dts;
 			block.audio.bitsPerSample = audio->bitsPerSample;
 			block.audio.channel = audio->channel;
 			block.audio.codeID = FLV_CODECID_AAC;
