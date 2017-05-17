@@ -23,6 +23,8 @@ namespace DXFramework
 		ASSERT(PathFileExists(vs.c_str()));
 		string ps = str + "\\texture.ps";
 		ASSERT(PathFileExists(ps.c_str()));
+		if (!m_textureShader.Initialize(m_dx11, vs.c_str(), ps.c_str()))
+			return FALSE;
 		m_camera.SetPosition(0.0F, 0.0F, -10.0F);
 		m_camera.UpdatePosition();
 		return TRUE;
