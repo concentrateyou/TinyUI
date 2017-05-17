@@ -12,12 +12,30 @@ using namespace TinyUI::IO;
 namespace FLVPlayer
 {
 #define MAX_QUEUE_SIZE (8 * 1024 * 1024)
+#define MAX_AUDIO_QUEUE_SIZE (48 * 1024)
 
 	class FLVDecode;
+
+	class FLVVAudioDecodeTask : public TinyTaskBase
+	{
+	public:
+		FLVVAudioDecodeTask(FLVDecode& decode);
+		~FLVVAudioDecodeTask();
+		BOOL	Submit();
+		BOOL	Close(DWORD dwMs) OVERRIDE;
+	private:
+		void	OnMessagePump();
+	public:
+		TinyLock	m_lock;
+		PacketQueue	m_queue;
+		FLVDecode&	m_decode;
+	};
+
+
 	class FLVAudioRender : public TinyTaskBase
 	{
 	public:
-		FLVAudioRender(FLVDecode& decode);
+		FLVAudioRender(FLVVAudioDecodeTask& decode);
 		~FLVAudioRender();
 		BOOL	Submit();
 		BOOL	Close(DWORD dwMs) OVERRIDE;
@@ -29,15 +47,15 @@ namespace FLVPlayer
 		BOOL			m_bFlag;
 		BOOL			m_bInitialize;
 		TinyEvent		m_events[2];
-		FLVDecode&		m_decode;
 		TinySoundPlayer	m_player;
+		FLVVAudioDecodeTask&	m_decode;
 	};
 
-	class FLVDecodeTask : public TinyTaskBase
+	class FLVVideoDecodeTask : public TinyTaskBase
 	{
 	public:
-		FLVDecodeTask(FLVDecode& decode);
-		~FLVDecodeTask();
+		FLVVideoDecodeTask(FLVDecode& decode);
+		~FLVVideoDecodeTask();
 		BOOL	Submit();
 		BOOL	Close(DWORD dwMs) OVERRIDE;
 	private:
@@ -48,10 +66,11 @@ namespace FLVPlayer
 		FLVDecode&	m_decode;
 	};
 
+	
 	class FLVVideoRender : public TinyTaskBase
 	{
 	public:
-		FLVVideoRender(FLVDecodeTask& decode);
+		FLVVideoRender(FLVVideoDecodeTask& decode);
 		~FLVVideoRender();
 		BOOL	Submit();
 		BOOL	Close(DWORD dwMs) OVERRIDE;
@@ -62,7 +81,7 @@ namespace FLVPlayer
 		DWORD					m_dwMS;
 		BOOL					m_bFlag;
 		LONGLONG				m_wPTS;
-		FLVDecodeTask&			m_decode;
+		FLVVideoDecodeTask&			m_decode;
 		TinyPerformanceTimer	m_timer;
 	};
 
@@ -70,7 +89,8 @@ namespace FLVPlayer
 	{
 		friend class FLVAudioRender;
 		friend class FLVVideoRender;
-		friend class FLVDecodeTask;
+		friend class FLVVideoDecodeTask;
+		friend class FLVVAudioDecodeTask;
 	public:
 		FLVDecode(HWND hWND);
 		~FLVDecode();
@@ -90,7 +110,8 @@ namespace FLVPlayer
 		TinyScopedPtr<AACDecode>	m_aac;
 		FLVAudioRender				m_audioRender;
 		FLVVideoRender				m_videoRender;
-		FLVDecodeTask				m_decodeTask;
+		FLVVideoDecodeTask			m_videoTask;
+		FLVVAudioDecodeTask			m_audioTask;
 	};
 }
 

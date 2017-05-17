@@ -7,9 +7,10 @@ namespace FLVPlayer
 		:m_hWND(hWND),
 		m_audioQueue(m_lock),
 		m_videoQueue(m_lock),
-		m_decodeTask(*this),
-		m_audioRender(*this),
-		m_videoRender(m_decodeTask),
+		m_videoTask(*this),
+		m_audioTask(*this),
+		m_audioRender(m_audioTask),
+		m_videoRender(m_videoTask),
 		m_dwBaseMS(0)
 	{
 		m_aac.Reset(new AACDecode());
@@ -22,15 +23,16 @@ namespace FLVPlayer
 	}
 	BOOL FLVDecode::Submit()
 	{
-		if (m_reader.Open("D:\\3.flv"))
+		if (m_reader.Open("D:\\2.flv"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);
 			if (TinyTaskBase::Submit(BindCallback(&FLVDecode::OnMessagePump, this)))
 			{
 				m_audioRender.Submit();
+				m_audioTask.Submit();
 				m_videoRender.Submit();
-				m_decodeTask.Submit();
+				m_videoTask.Submit();
 			}
 		}
 		return FALSE;
@@ -114,7 +116,7 @@ namespace FLVPlayer
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	FLVAudioRender::FLVAudioRender(FLVDecode& decode)
+	FLVAudioRender::FLVAudioRender(FLVVAudioDecodeTask& decode)
 		:m_decode(decode),
 		m_bInitialize(FALSE),
 		m_bFlag(FALSE),
@@ -138,7 +140,45 @@ namespace FLVPlayer
 	{
 		for (;;)
 		{
-			SampleTag tag = m_decode.m_audioQueue.Pop();
+			SampleTag tag = m_decode.m_queue.Pop();
+			if (tag.size <= 0)
+			{
+				continue;
+			}
+			DWORD dwMS = timeGetTime() - m_decode.m_decode.m_dwBaseMS;
+			INT offset = tag.samplePTS - dwMS;
+			TRACE("audio:%d\n", offset);
+			Sleep(offset < 0 ? 0 : offset);
+			if (!m_bInitialize)
+			{
+				m_bInitialize = TRUE;
+				if (!m_player.Initialize(m_decode.m_decode.m_hWND, &m_decode.m_decode.m_aac->GetFormat(), tag.size * 2))
+					break;
+				m_events[0].CreateEvent();
+				m_events[1].CreateEvent();
+				DSBPOSITIONNOTIFY vals[2];
+				vals[0].dwOffset = tag.size - 1;
+				vals[0].hEventNotify = m_events[0];
+				vals[1].dwOffset = tag.size * 2 - 1;
+				vals[1].hEventNotify = m_events[1];
+				if (m_player.SetPositions(2, vals))
+				{
+					m_player.Play();
+					if (tag.size != 4096)
+					{
+						m_player.Fill(tag.bits, tag.size);
+					}
+				}
+			}
+			m_player.Fill(tag.bits, tag.size);
+			SAFE_DELETE_ARRAY(tag.bits);
+			HANDLE handles[2] = { m_events[0],m_events[1] };
+			HRESULT hRes = WaitForMultipleObjects(2, handles, FALSE, INFINITE);
+			if (hRes >= WAIT_OBJECT_0 && hRes <= (WAIT_OBJECT_0 + 1))
+			{
+				continue;
+			}
+			/*SampleTag tag = m_decode.m_audioQueue.Pop();
 			if (tag.size <= 0)
 			{
 				continue;
@@ -181,11 +221,11 @@ namespace FLVPlayer
 				SAFE_DELETE_ARRAY(tag.bits);
 				continue;
 			}
-			SAFE_DELETE_ARRAY(tag.bits);
+			SAFE_DELETE_ARRAY(tag.bits);*/
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	FLVVideoRender::FLVVideoRender(FLVDecodeTask& decode)
+	FLVVideoRender::FLVVideoRender(FLVVideoDecodeTask& decode)
 		:m_decode(decode),
 		m_wPTS(0),
 		m_bFlag(FALSE),
@@ -251,25 +291,25 @@ namespace FLVPlayer
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	FLVDecodeTask::FLVDecodeTask(FLVDecode& decode)
+	FLVVideoDecodeTask::FLVVideoDecodeTask(FLVDecode& decode)
 		:m_decode(decode),
 		m_queue(m_lock)
 	{
 
 	}
-	FLVDecodeTask::~FLVDecodeTask()
+	FLVVideoDecodeTask::~FLVVideoDecodeTask()
 	{
 
 	}
-	BOOL FLVDecodeTask::Submit()
+	BOOL FLVVideoDecodeTask::Submit()
 	{
-		return TinyTaskBase::Submit(BindCallback(&FLVDecodeTask::OnMessagePump, this));
+		return TinyTaskBase::Submit(BindCallback(&FLVVideoDecodeTask::OnMessagePump, this));
 	}
-	BOOL FLVDecodeTask::Close(DWORD dwMs)
+	BOOL FLVVideoDecodeTask::Close(DWORD dwMs)
 	{
 		return TRUE;
 	}
-	void FLVDecodeTask::OnMessagePump()
+	void FLVVideoDecodeTask::OnMessagePump()
 	{
 		for (;;)
 		{
@@ -292,6 +332,55 @@ namespace FLVPlayer
 					tag.size = so;
 					tag.samplePTS = m_decode.m_h264->GetYUV420()->pkt_pts;
 					tag.sampleDTS = tag.samplePTS;
+					m_queue.Push(tag);
+				}
+				else
+				{
+					SAFE_DELETE_ARRAY(tag.bits);
+				}
+			}
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
+	FLVVAudioDecodeTask::FLVVAudioDecodeTask(FLVDecode& decode)
+		:m_decode(decode),
+		m_queue(m_lock)
+	{
+
+	}
+	FLVVAudioDecodeTask::~FLVVAudioDecodeTask()
+	{
+
+	}
+	BOOL FLVVAudioDecodeTask::Submit()
+	{
+		return TinyTaskBase::Submit(BindCallback(&FLVVAudioDecodeTask::OnMessagePump, this));
+	}
+	BOOL FLVVAudioDecodeTask::Close(DWORD dwMs)
+	{
+		return TRUE;
+	}
+	void FLVVAudioDecodeTask::OnMessagePump()
+	{
+		for (;;)
+		{
+			INT size = m_queue.GetSize();
+			if (size > MAX_AUDIO_QUEUE_SIZE)
+			{
+				Sleep(1);
+				continue;
+			}
+			SampleTag tag = m_decode.m_audioQueue.Pop();
+			if (tag.size > 0)
+			{
+				BYTE* bo = NULL;
+				LONG  so = 0;
+				if (m_decode.m_aac->Decode(tag.bits, tag.size, bo, so))
+				{
+					SAFE_DELETE_ARRAY(tag.bits);
+					tag.bits = new BYTE[so];
+					memcpy(tag.bits, bo, so);
+					tag.size = so;
 					m_queue.Push(tag);
 				}
 				else
