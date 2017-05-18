@@ -488,7 +488,6 @@ namespace Decode
 	}
 	DWORD FLVReader::Seek(LONGLONG timestamp, DWORD dwFlag)
 	{
-
 		/*LARGE_INTEGER dlibMove = { 0 };
 		dlibMove.LowPart = dwOffset;
 		ULARGE_INTEGER libNew = { 0 };
@@ -496,6 +495,7 @@ namespace Decode
 		if (hRes != S_OK)
 			return FALSE;
 		return libNew.LowPart;*/
+		return 0;
 	}
 	BOOL FLVReader::ReadBlock(FLV_BLOCK& block)
 	{

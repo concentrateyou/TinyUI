@@ -1,31 +1,8 @@
 #pragma once
-#include "Common/TinyCommon.h"
-#include "Common/TinyCallback.h"
-#include "common/common_utils.h"
-#include <vector>
-#include <dxgi.h>
-using namespace TinyUI;
+#include "QSVCommon.h"
 
 namespace QSV
 {
-	typedef struct tagQSVParam
-	{
-		WORD wCX;
-		WORD wCY;
-		WORD wFPS;
-		WORD wKbps;
-		WORD wMaxKbps;
-		WORD wAccuracy;
-		WORD wConvergence;
-		WORD wQPI;
-		WORD wQPB;
-		WORD wQPP;
-		WORD wRC;
-		WORD wKeyPerSec;//每秒关键帧数
-		WORD wbFrames;//b帧数
-		WORD wAsyncDepth;
-		WORD wTargetUsage;
-	}QSVParam;
 	/// <summary>
 	/// Intel QSV DX9
 	/// https://github.com/sivabudh/intel-media-sdk-tutorials
@@ -49,20 +26,20 @@ namespace QSV
 		mfxStatus EncodeVPP(mfxFrameSurface1* surfaceIN, mfxFrameSurface1* surfaceOUT);
 		mfxStatus EncodeVideo(mfxFrameSurface1* surfaceOUT);
 	private:
-		mfxBitstream				m_bitstream;
-		mfxVideoParam				m_videoParam;
-		mfxVideoParam				m_videoVPPParam;
-		MFXVideoSession				m_session;
-		mfxFrameAllocator			m_allocator;
-		mfxFrameAllocResponse		m_encodeReponse;
-		mfxFrameAllocResponse		m_vppReponse;
-		mfxExtVPPDoNotUse			m_vppDNU;
-		mfxExtCodingOptionSPSPPS	m_spspps;
-		mfxExtCodingOption			m_co;
-		mfxSyncPoint				m_syncpVPP;
-		mfxSyncPoint				m_syncpVideo;
-		mfxU8						m_sps[100];
-		mfxU8						m_pps[100];
+		mfxBitstream						m_bitstream;
+		mfxVideoParam						m_videoParam;
+		mfxVideoParam						m_videoVPPParam;
+		MFXVideoSession						m_session;
+		mfxFrameAllocator					m_allocator;
+		mfxFrameAllocResponse				m_encodeReponse;
+		mfxFrameAllocResponse				m_vppReponse;
+		mfxExtVPPDoNotUse					m_vppDNU;
+		mfxExtCodingOptionSPSPPS			m_spspps;
+		mfxExtCodingOption					m_co;
+		mfxSyncPoint						m_syncpVPP;
+		mfxSyncPoint						m_syncpVideo;
+		mfxU8								m_sps[100];
+		mfxU8								m_pps[100];
 		std::vector<mfxExtBuffer*>			m_encodeParams;
 		std::vector<mfxExtBuffer*>			m_vppParams;
 		TinyScopedPtr<MFXVideoENCODE>		m_videoENCODE;
