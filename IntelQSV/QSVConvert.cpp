@@ -11,30 +11,17 @@ namespace QSV
 	QSVConvert::~QSVConvert()
 	{
 	}
-	QSVParam QSVConvert::GetDefaultQSV(WORD wCX, WORD wCY, WORD wFPS)
-	{
-		QSVParam param = { 0 };
-		param.wTargetUsage = MFX_TARGETUSAGE_BALANCED;
-		param.wCX = wCX;
-		param.wCY = wCY;
-		param.wFPS = wFPS;
-		return param;
-	}
-	mfxStatus QSVConvert::Open(const QSVParam& param, Callback<void(BYTE*, LONG)>&& callback)
+	mfxStatus QSVConvert::Open(const TinySize& src, DWORD dwFPSSRC, const TinySize& dst, DWORD dwFPSDST, Callback<void(BYTE*, LONG)>&& callback)
 	{
 		mfxIMPL impl = MFX_IMPL_HARDWARE_ANY;
 		mfxVersion ver = { { 0, 1 } };
 		mfxStatus status = Initialize(impl, ver, &m_session, &m_allocator);
-		status = InitializeVPPParam(param);
+		status = InitializeVPPParam(src, dwFPSSRC, dst, dwFPSDST);
 		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
-		status = Allocate(param);
+		status = Allocate();
 		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
 		m_callback = std::move(callback);
 		return status;
-	}
-	BOOL WriteSection(mfxU8* plane, mfxU16 factor, mfxU16 chunksize, mfxFrameInfo* pInfo, mfxFrameData* pData, mfxU32 i, mfxU32 j, TinyBufferArray<BYTE>& bits)
-	{
-		return bits.Add(plane + (pInfo->CropY * pData->Pitch / factor + pInfo->CropX) + i * pData->Pitch + j, chunksize);
 	}
 
 	mfxStatus QSVConvert::Convert(BYTE* data, LONG size)
@@ -153,36 +140,31 @@ namespace QSV
 		MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
 		return sts;
 	}
-	mfxStatus QSVConvert::InitializeVPPParam(const QSVParam& param)
+	mfxStatus QSVConvert::InitializeVPPParam(const TinySize& src, DWORD dwFPSSRC, const TinySize& dst, DWORD dwFPSDST)
 	{
 		ZeroMemory(&m_videoVPPParam, sizeof(m_videoVPPParam));
 		m_videoVPPParam.vpp.In.FourCC = MFX_FOURCC_RGB4;
 		m_videoVPPParam.vpp.In.ChromaFormat = MFX_CHROMAFORMAT_YUV420;
 		m_videoVPPParam.vpp.In.PicStruct = MFX_PICSTRUCT_PROGRESSIVE;
-		m_videoVPPParam.vpp.In.CropX = 0;
-		m_videoVPPParam.vpp.In.CropY = 0;
-		m_videoVPPParam.vpp.In.CropW = param.wCX;
-		m_videoVPPParam.vpp.In.CropH = param.wCY;
-		m_videoVPPParam.vpp.In.FrameRateExtN = param.wFPS;
+		m_videoVPPParam.vpp.In.FrameRateExtN = dwFPSSRC;
 		m_videoVPPParam.vpp.In.FrameRateExtD = 1;
-		m_videoVPPParam.vpp.In.Width = MSDK_ALIGN16(param.wCX);
-		m_videoVPPParam.vpp.In.Height = (MFX_PICSTRUCT_PROGRESSIVE == m_videoVPPParam.vpp.In.PicStruct) ? MSDK_ALIGN16(param.wCY) : MSDK_ALIGN32(param.wCY);
+		m_videoVPPParam.vpp.In.CropW = static_cast<mfxU16>(src.cx);
+		m_videoVPPParam.vpp.In.CropH = static_cast<mfxU16>(src.cy);
+		m_videoVPPParam.vpp.In.Width = MSDK_ALIGN16(m_videoVPPParam.vpp.In.CropW);
+		m_videoVPPParam.vpp.In.Height = (MFX_PICSTRUCT_PROGRESSIVE == m_videoVPPParam.vpp.In.PicStruct) ? MSDK_ALIGN16(m_videoVPPParam.vpp.In.CropH) : MSDK_ALIGN32(m_videoVPPParam.vpp.In.CropW);
 		m_videoVPPParam.vpp.Out.FourCC = MFX_FOURCC_NV12;
 		m_videoVPPParam.vpp.Out.ChromaFormat = MFX_CHROMAFORMAT_YUV420;
 		m_videoVPPParam.vpp.Out.PicStruct = MFX_PICSTRUCT_PROGRESSIVE;
-		m_videoVPPParam.vpp.Out.CropX = 0;
-		m_videoVPPParam.vpp.Out.CropY = 0;
-		m_videoVPPParam.vpp.Out.CropW = param.wCX;
-		m_videoVPPParam.vpp.Out.CropH = param.wCY;
-		m_videoVPPParam.vpp.Out.FrameRateExtN = param.wFPS;
+		m_videoVPPParam.vpp.Out.FrameRateExtN = dwFPSDST;
 		m_videoVPPParam.vpp.Out.FrameRateExtD = 1;
+		m_videoVPPParam.vpp.Out.CropW = static_cast<mfxU16>(dst.cx);
+		m_videoVPPParam.vpp.Out.CropH = static_cast<mfxU16>(dst.cy);
 		m_videoVPPParam.vpp.Out.Width = MSDK_ALIGN16(m_videoVPPParam.vpp.Out.CropW);
 		m_videoVPPParam.vpp.Out.Height = (MFX_PICSTRUCT_PROGRESSIVE == m_videoVPPParam.vpp.Out.PicStruct) ? MSDK_ALIGN16(m_videoVPPParam.vpp.Out.CropH) : MSDK_ALIGN32(m_videoVPPParam.vpp.Out.CropH);
 		m_videoVPPParam.IOPattern = MFX_IOPATTERN_IN_VIDEO_MEMORY | MFX_IOPATTERN_OUT_VIDEO_MEMORY;
-		m_videoVPPParam.AsyncDepth = param.wAsyncDepth;
 		return MFX_ERR_NONE;
 	}
-	mfxStatus QSVConvert::Allocate(const QSVParam& param)
+	mfxStatus QSVConvert::Allocate()
 	{
 		m_videoVPP.Reset(new MFXVideoVPP(m_session));
 		mfxFrameAllocRequest requests[2];

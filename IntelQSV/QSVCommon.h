@@ -1,5 +1,6 @@
 #pragma once
 #include "Common/TinyCommon.h"
+#include "Render/TinyGDI.h"
 #include "Common/TinyCallback.h"
 #include "common/common_utils.h"
 #include <vector>

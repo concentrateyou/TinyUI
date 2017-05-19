@@ -16,8 +16,7 @@ RenderTask::~RenderTask()
 
 BOOL RenderTask::Submit()
 {
-	QSV::QSVParam param = m_convert.GetDefaultQSV(m_videoParam.GetSize().cx, m_videoParam.GetSize().cy, 1000);
-	if (m_convert.Open(param, BindCallback(&RenderTask::Flush, this)) != MFX_ERR_NONE)
+	if (m_convert.Open(m_videoParam.GetSize(), 60, TinySize(500, 400), 60, BindCallback(&RenderTask::Flush, this)) != MFX_ERR_NONE)
 		return FALSE;
 	m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
 	m_h264File.Create("D:\\123.yuv");

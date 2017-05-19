@@ -13,21 +13,22 @@ namespace QSV
 		QSVConvert();
 		~QSVConvert();
 	public:
-		mfxStatus Open(const QSVParam& param, Callback<void(BYTE*, LONG)>&& callback);
+		mfxStatus Open(const TinySize& src, DWORD dwFPSSRC, const TinySize& dst, DWORD dwFPSDST, Callback<void(BYTE*, LONG)>&& callback);
 		mfxStatus Convert(BYTE* data, LONG size);
 		mfxStatus Close();
-		QSVParam GetDefaultQSV(WORD wCX, WORD wCY, WORD wFPS);
 	private:
-		mfxStatus InitializeVPPParam(const QSVParam& param);
-		mfxStatus Allocate(const QSVParam& param);
+		mfxStatus InitializeVPPParam(const TinySize& src, DWORD dwFPSSRC, const TinySize& dst, DWORD dwFPSDST);
+		mfxStatus Allocate();
 		void LoadRGBA(mfxFrameSurface1* surface, BYTE* data, LONG size);
 	private:
-		TinyScopedPtr<MFXVideoVPP>			m_videoVPP;
+		TinySize							m_dstSize;
+		TinySize							m_srcSize;
 		mfxVideoParam						m_videoVPPParam;
 		MFXVideoSession						m_session;
 		mfxFrameAllocator					m_allocator;
 		mfxFrameAllocResponse				m_reponses[2];
 		mfxSyncPoint						m_syncpVPP;
+		TinyScopedPtr<MFXVideoVPP>			m_videoVPP;
 		TinyScopedPtr<mfxFrameSurface1*>	m_surfaceI;
 		TinyScopedPtr<mfxFrameSurface1*>	m_surfaceO;
 		TinyScopedArray<BYTE>				m_bits;
