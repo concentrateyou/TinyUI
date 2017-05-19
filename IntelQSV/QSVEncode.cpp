@@ -33,21 +33,6 @@ namespace QSV
 	}
 	mfxStatus QSVEncode::InitializeVPPParam(const QSVParam& param)
 	{
-		ZeroMemory(&m_vppDNU, sizeof(mfxExtVPPDoNotUse));
-		m_vppDNU.Header.BufferId = MFX_EXTBUFF_VPP_DONOTUSE;
-		m_vppDNU.Header.BufferSz = sizeof(mfxExtVPPDoNotUse);
-		m_vppDNU.NumAlg = 4;
-		m_vppDNU.AlgList = new mfxU32[m_vppDNU.NumAlg];
-		MSDK_CHECK_POINTER(m_vppDNU.AlgList, MFX_ERR_MEMORY_ALLOC);
-		m_vppDNU.AlgList[0] = MFX_EXTBUFF_VPP_DENOISE;
-		m_vppDNU.AlgList[1] = MFX_EXTBUFF_VPP_SCENE_ANALYSIS;
-		m_vppDNU.AlgList[2] = MFX_EXTBUFF_VPP_DETAIL;
-		m_vppDNU.AlgList[3] = MFX_EXTBUFF_VPP_PROCAMP;
-		m_vppParams.push_back((mfxExtBuffer *)&m_vppDNU);
-		m_videoVPPParam.ExtParam = &m_vppParams[0];
-		m_videoVPPParam.NumExtParam = (mfxU16)m_vppParams.size();
-
-
 		ZeroMemory(&m_videoVPPParam, sizeof(m_videoVPPParam));
 		m_videoVPPParam.vpp.In.FourCC = MFX_FOURCC_RGB4;
 		m_videoVPPParam.vpp.In.ChromaFormat = MFX_CHROMAFORMAT_YUV420;
@@ -60,7 +45,6 @@ namespace QSV
 		m_videoVPPParam.vpp.In.FrameRateExtD = 1;
 		m_videoVPPParam.vpp.In.Width = MSDK_ALIGN16(param.wCX);
 		m_videoVPPParam.vpp.In.Height = (MFX_PICSTRUCT_PROGRESSIVE == m_videoVPPParam.vpp.In.PicStruct) ? MSDK_ALIGN16(param.wCY) : MSDK_ALIGN32(param.wCY);
-
 		m_videoVPPParam.vpp.Out.FourCC = MFX_FOURCC_NV12;
 		m_videoVPPParam.vpp.Out.ChromaFormat = MFX_CHROMAFORMAT_YUV420;
 		m_videoVPPParam.vpp.Out.PicStruct = MFX_PICSTRUCT_PROGRESSIVE;
@@ -78,22 +62,6 @@ namespace QSV
 	}
 	mfxStatus QSVEncode::InitializeEncodeParam(const QSVParam& param)
 	{
-		ZeroMemory(&m_co, sizeof(mfxExtCodingOption));
-		m_co.Header.BufferId = MFX_EXTBUFF_CODING_OPTION;
-		m_co.Header.BufferSz = sizeof(m_co);
-		m_encodeParams.push_back((mfxExtBuffer*)&m_co);
-
-		ZeroMemory(&m_spspps, sizeof(mfxExtCodingOptionSPSPPS));
-		m_spspps.Header.BufferId = MFX_EXTBUFF_CODING_OPTION_SPSPPS;
-		m_spspps.Header.BufferSz = sizeof(mfxExtCodingOptionSPSPPS);
-		m_spspps.PPSBuffer = m_pps;
-		m_spspps.PPSBufSize = 100;
-		m_spspps.SPSBuffer = m_sps;
-		m_spspps.SPSBufSize = 100;
-		m_encodeParams.push_back((mfxExtBuffer *)&m_spspps);
-
-		m_videoVPPParam.ExtParam = &m_encodeParams[0];
-		m_videoVPPParam.NumExtParam = (mfxU16)m_encodeParams.size();
 
 		ZeroMemory(&m_videoParam, sizeof(m_videoParam));
 		m_videoParam.mfx.CodecId = MFX_CODEC_AVC;
@@ -136,6 +104,7 @@ namespace QSV
 			m_videoParam.mfx.Convergence = param.wConvergence;
 			break;
 		}
+
 		return MFX_ERR_NONE;
 	}
 	mfxStatus QSVEncode::Allocate(const QSVParam& param)
@@ -192,17 +161,40 @@ namespace QSV
 			memcpy(&(m_surfaceVPP[i]->Info), &(m_videoVPPParam.vpp.Out), sizeof(mfxFrameInfo));
 			m_surfaceVPP[i]->Data.MemId = m_vppReponse.mids[i];
 		}
-
+		mfxExtCodingOption co;
+		ZeroMemory(&co, sizeof(mfxExtCodingOption));
+		co.Header.BufferId = MFX_EXTBUFF_CODING_OPTION;
+		co.Header.BufferSz = sizeof(co);
+		mfxExtBuffer* extEncode[1];
+		extEncode[0] = (mfxExtBuffer*)&co;
+		m_videoParam.ExtParam = &extEncode[0];
+		m_videoParam.NumExtParam = 1;
 		status = m_videoENCODE->Init(&m_videoParam);
 		MSDK_IGNORE_MFX_STS(status, MFX_WRN_PARTIAL_ACCELERATION);
 		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
+
+		mfxExtVPPDoNotUse vppDNU;
+		ZeroMemory(&vppDNU, sizeof(mfxExtVPPDoNotUse));
+		vppDNU.Header.BufferId = MFX_EXTBUFF_VPP_DONOTUSE;
+		vppDNU.Header.BufferSz = sizeof(mfxExtVPPDoNotUse);
+		vppDNU.NumAlg = 4;
+		mfxU32 algList[4];
+		vppDNU.AlgList = algList;
+		MSDK_CHECK_POINTER(vppDNU.AlgList, MFX_ERR_MEMORY_ALLOC);
+		vppDNU.AlgList[0] = MFX_EXTBUFF_VPP_DENOISE;
+		vppDNU.AlgList[1] = MFX_EXTBUFF_VPP_SCENE_ANALYSIS;
+		vppDNU.AlgList[2] = MFX_EXTBUFF_VPP_DETAIL;
+		vppDNU.AlgList[3] = MFX_EXTBUFF_VPP_PROCAMP;
+		mfxExtBuffer* extVVP[1];
+		extVVP[0] = (mfxExtBuffer *)&vppDNU;
+		m_videoVPPParam.ExtParam = &extVVP[0];
+		m_videoVPPParam.NumExtParam = 1;
 		status = m_videoVPP->Init(&m_videoVPPParam);
 		MSDK_IGNORE_MFX_STS(status, MFX_WRN_PARTIAL_ACCELERATION);
 		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
 		mfxVideoParam par;
 		ZeroMemory(&par, sizeof(par));
 		status = m_videoENCODE->GetVideoParam(&par);
-
 		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
 		ZeroMemory(&m_bitstream, sizeof(m_bitstream));
 		m_bitstream.MaxLength = par.mfx.BufferSizeInKB * 1000;
@@ -225,12 +217,33 @@ namespace QSV
 		m_callback = std::move(callback);
 		return status;
 	}
-	void QSVEncode::GetSPSPPS(mfxU8 **sps, mfxU8 **pps, mfxU16& spssize, mfxU16& ppssize)
+	BOOL QSVEncode::GetSPSPPS(vector<mfxU8>& sps, vector<mfxU8>& pps)
 	{
-		*sps = m_sps;
-		*pps = m_pps;
-		spssize = m_spspps.PPSBufSize;
-		ppssize = m_spspps.SPSBufSize;
+		mfxU8	mfxsps[100];
+		mfxU8	mfxpps[100];
+		mfxVideoParam par;
+		ZeroMemory(&par, sizeof(par));
+		mfxExtCodingOptionSPSPPS spspps;
+		ZeroMemory(&spspps, sizeof(mfxExtCodingOptionSPSPPS));
+		spspps.Header.BufferId = MFX_EXTBUFF_CODING_OPTION_SPSPPS;
+		spspps.Header.BufferSz = sizeof(mfxExtCodingOptionSPSPPS);
+		spspps.PPSBuffer = mfxpps;
+		spspps.PPSBufSize = 100;
+		spspps.SPSBuffer = mfxsps;
+		spspps.SPSBufSize = 100;
+		mfxExtBuffer* ext[1];
+		ext[0] = (mfxExtBuffer *)&spspps;
+		par.ExtParam = &ext[0];
+		par.NumExtParam = 1;
+		if (m_videoENCODE->GetVideoParam(&par) == MFX_ERR_NONE)
+		{
+			sps.resize(spspps.SPSBufSize);
+			memcpy(&sps[0], mfxsps, spspps.SPSBufSize);
+			pps.resize(spspps.PPSBufSize);
+			memcpy(&sps[0], mfxpps, spspps.PPSBufSize);
+			return TRUE;
+		}
+		return FALSE;
 	}
 	void QSVEncode::LoadRGBA(mfxFrameSurface1* surface, BYTE* data, LONG size)
 	{
@@ -391,7 +404,6 @@ namespace QSV
 		}
 		m_surfaceVPP.Reset(NULL);
 		SAFE_DELETE_ARRAY(m_bitstream.Data);
-		SAFE_DELETE_ARRAY(m_vppDNU.AlgList);
 		m_allocator.Free(m_allocator.pthis, &m_encodeReponse);
 		m_allocator.Free(m_allocator.pthis, &m_vppReponse);
 		Release();

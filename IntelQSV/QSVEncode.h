@@ -17,8 +17,8 @@ namespace QSV
 		mfxStatus Encode(BYTE* data, LONG size);
 		mfxStatus Close();
 		QSVParam GetDefaultQSV(WORD wCX, WORD wCY, WORD wKbps);
+		BOOL GetSPSPPS(vector<mfxU8>& sps, vector<mfxU8>& pps);
 	private:
-		void GetSPSPPS(mfxU8 **sps, mfxU8 **pps, mfxU16& spssize, mfxU16& ppssize);
 		void LoadRGBA(mfxFrameSurface1* surface, BYTE* data, LONG size);
 		mfxStatus InitializeEncodeParam(const QSVParam& param);
 		mfxStatus InitializeVPPParam(const QSVParam& param);
@@ -33,15 +33,9 @@ namespace QSV
 		mfxFrameAllocator					m_allocator;
 		mfxFrameAllocResponse				m_encodeReponse;
 		mfxFrameAllocResponse				m_vppReponse;
-		mfxExtVPPDoNotUse					m_vppDNU;
 		mfxExtCodingOptionSPSPPS			m_spspps;
-		mfxExtCodingOption					m_co;
 		mfxSyncPoint						m_syncpVPP;
 		mfxSyncPoint						m_syncpVideo;
-		mfxU8								m_sps[100];
-		mfxU8								m_pps[100];
-		std::vector<mfxExtBuffer*>			m_encodeParams;
-		std::vector<mfxExtBuffer*>			m_vppParams;
 		TinyScopedPtr<MFXVideoENCODE>		m_videoENCODE;
 		TinyScopedPtr<MFXVideoVPP>			m_videoVPP;
 		TinyScopedPtr<mfxFrameSurface1*>	m_surfaceEncode;

@@ -60,6 +60,9 @@ void RenderTask::OnMessagePump()
 			if (m_encode.Encode(bits, bmi.bmiHeader.biSizeImage) == MFX_ERR_NONE)
 			{
 				//TODO
+				/*vector<BYTE> sps;
+				vector<BYTE> pps;
+				m_encode.GetSPSPPS(sps, pps);*/
 			}
 		}
 	}
