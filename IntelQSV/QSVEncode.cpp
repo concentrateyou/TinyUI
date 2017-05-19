@@ -250,7 +250,7 @@ namespace QSV
 		for (mfxU16 i = 0; i < h; i++)
 		{
 			mfxU16 index = h - i - 1;
-			memcpy(surface->Data.B + i * surface->Data.Pitch, data + index * surface->Data.Pitch, w * 4);
+			memcpy(surface->Data.B + i * surface->Data.Pitch, data + index * w * 4, w * 4);
 		}
 	}
 	mfxStatus QSVEncode::EncodeVPP(mfxFrameSurface1* surfaceIN, mfxFrameSurface1* surfaceOUT)

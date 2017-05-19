@@ -5,6 +5,7 @@
 #include "DShowCommon.h"
 #include "VideoCapture.h"
 #include "QSVConvert.h"
+#include "QSVEncode.h"
 using namespace TinyUI;
 using namespace TinyUI::IO;
 
@@ -21,8 +22,7 @@ private:
 	void				Flush(BYTE* data, LONG size);
 private:
 	IO::TinyFile				m_h264File;
-	IO::TinyFile				m_hRGBAFile;
-	QSV::QSVConvert				m_convert;
+	QSV::QSVEncode				m_encode;
 	DShow::VideoCapture*		m_pVideo;
 	DShow::VideoCaptureParam	m_videoParam;
 	HWND						m_hWND;
