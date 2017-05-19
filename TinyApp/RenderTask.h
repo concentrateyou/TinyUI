@@ -21,6 +21,7 @@ private:
 	void				Flush(BYTE* data, LONG size);
 private:
 	IO::TinyFile				m_h264File;
+	IO::TinyFile				m_hRGBAFile;
 	QSV::QSVConvert				m_convert;
 	DShow::VideoCapture*		m_pVideo;
 	DShow::VideoCaptureParam	m_videoParam;

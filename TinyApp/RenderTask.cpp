@@ -21,6 +21,7 @@ BOOL RenderTask::Submit()
 		return FALSE;
 	m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
 	m_h264File.Create("D:\\123.yuv");
+	m_hRGBAFile.Create("D:\\app.rgba");
 	return TinyTaskBase::Submit(BindCallback(&RenderTask::OnMessagePump, this));
 }
 BOOL RenderTask::Close(DWORD dwMS)
@@ -55,9 +56,11 @@ void RenderTask::OnMessagePump()
 			TinyUI::TinyMemDC mdc(wdc, hBitmap);
 			::BitBlt(wdc, 0, 0, TO_CX(rectangle), TO_CY(rectangle), mdc, 0, 0, SRCCOPY | CAPTUREBLT);
 			DeleteObject(hBitmap);
+			//m_hRGBAFile.Write(pvBits, bmi.bmiHeader.biSizeImage);
 			m_convert.Convert(bits, bmi.bmiHeader.biSizeImage);
 		}
 	}
+	m_hRGBAFile.Close();
 	m_h264File.Close();
 	m_convert.Close();
 }

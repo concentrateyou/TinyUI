@@ -11,22 +11,13 @@ namespace QSV
 	QSVConvert::~QSVConvert()
 	{
 	}
-	QSVParam QSVConvert::GetDefaultQSV(WORD wCX, WORD wCY, WORD wKbps)
+	QSVParam QSVConvert::GetDefaultQSV(WORD wCX, WORD wCY, WORD wFPS)
 	{
 		QSVParam param = { 0 };
 		param.wTargetUsage = MFX_TARGETUSAGE_BALANCED;
 		param.wCX = wCX;
 		param.wCY = wCY;
-		param.wRC = MFX_RATECONTROL_CBR;
-		param.wFPS = 30;
-		param.wQPB = param.wQPI = param.wQPP = 23;
-		param.wConvergence = 1;
-		param.wAccuracy = 1000;
-		param.wMaxKbps = 3000;
-		param.wKbps = wKbps;
-		param.wAsyncDepth = 4;
-		param.wKeyPerSec = wKbps * 2;
-		param.wbFrames = 3;
+		param.wFPS = wFPS;
 		return param;
 	}
 	mfxStatus QSVConvert::Open(const QSVParam& param, Callback<void(BYTE*, LONG)>&& callback)
@@ -80,33 +71,37 @@ namespace QSV
 			{
 				mfxFrameInfo* pInfo = &m_surfaceO[indexO]->Info;
 				mfxFrameData* pData = &m_surfaceO[indexO]->Data;
+				LONG size = pInfo->CropW * pInfo->CropH * 3 / 2;
 				if (!m_bits)
 				{
-					m_bits.Reset(new BYTE[pInfo->CropW * pInfo->CropH * 1.5]);
+					m_bits.Reset(new BYTE[size]);
 				}
-				mfxU32 i, j, h, w;
-				TinyBufferArray<BYTE> buffer;
-				for (i = 0; i < pInfo->CropH; i++)
+				LONG offset = 0;
+				for (mfxU32 i = 0; i < pInfo->CropH; i++)
 				{
-					WriteSection(pData->Y, 1, pInfo->CropW, pInfo, pData, i, 0, buffer);
+					memcpy(m_bits + offset, pData->Y + (pInfo->CropY * pData->Pitch + pInfo->CropX) + i * pData->Pitch, pInfo->CropW);
+					offset += pInfo->CropW;
 				}
-				h = pInfo->CropH / 2;
-				w = pInfo->CropW;
-				for (i = 0; i < h; i++)
+				mfxU32 h = pInfo->CropH / 2;
+				mfxU32 w = pInfo->CropW;
+				for (mfxU32 i = 0; i < h; i++)
 				{
-					for (j = 0; j < w; j += 2)
+					for (mfxU32 j = 0; j < w; j += 2)
 					{
-						WriteSection(pData->UV, 2, 1, pInfo, pData, i, j, buffer);
+						memcpy(m_bits + offset, pData->UV + (pInfo->CropY * pData->Pitch / 2 + pInfo->CropX) + i * pData->Pitch + j, 1);
+						offset += 1;
 					}
 				}
-				for (i = 0; i < h; i++)
+				for (mfxU32 i = 0; i < h; i++)
 				{
-					for (j = 1; j < w; j += 2)
+					for (mfxU32 j = 1; j < w; j += 2)
 					{
-						WriteSection(pData->UV, 2, 1, pInfo, pData, i, j, buffer);
+						memcpy(m_bits + offset, pData->UV + (pInfo->CropY * pData->Pitch / 2 + pInfo->CropX) + i * pData->Pitch + j, 1);
+						offset += 1;
 					}
 				}
-				m_callback(buffer.GetPointer(), buffer.GetSize());
+				ASSERT(offset == size);
+				m_callback(m_bits, offset);
 			}
 			status = m_allocator.Unlock(m_allocator.pthis, m_surfaceO[indexO]->Data.MemId, &(m_surfaceO[indexO]->Data));
 			MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
@@ -127,11 +122,10 @@ namespace QSV
 			w = pInfo->Width;
 			h = pInfo->Height;
 		}
-		ASSERT(size == surface->Data.Pitch * h);
 		for (mfxU16 i = 0; i < h; i++)
 		{
 			mfxU16 index = h - i - 1;
-			memcpy(surface->Data.B + i * surface->Data.Pitch, data + index * surface->Data.Pitch, w * 4);
+			memcpy(surface->Data.B + i * surface->Data.Pitch, data + index * w * 4, w * 4);
 		}
 	}
 	mfxStatus QSVConvert::Close()
@@ -197,8 +191,6 @@ namespace QSV
 		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
 		requests[0].Type |= WILL_WRITE;
 		requests[1].Type |= WILL_READ;
-		mfxFrameAllocResponse mfxResponseIn;
-		mfxFrameAllocResponse mfxResponseOut;
 		status = m_allocator.Alloc(m_allocator.pthis, &requests[0], &m_reponses[0]);//IN
 		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
 		status = m_allocator.Alloc(m_allocator.pthis, &requests[1], &m_reponses[1]);//OUT

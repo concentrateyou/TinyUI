@@ -16,7 +16,7 @@ namespace QSV
 		mfxStatus Open(const QSVParam& param, Callback<void(BYTE*, LONG)>&& callback);
 		mfxStatus Convert(BYTE* data, LONG size);
 		mfxStatus Close();
-		QSVParam GetDefaultQSV(WORD wCX, WORD wCY, WORD wKbps);
+		QSVParam GetDefaultQSV(WORD wCX, WORD wCY, WORD wFPS);
 	private:
 		mfxStatus InitializeVPPParam(const QSVParam& param);
 		mfxStatus Allocate(const QSVParam& param);
