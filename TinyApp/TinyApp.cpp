@@ -26,7 +26,7 @@
 #include "Network/TinyDNS.h"
 #include "Common/TinySignal.h"
 
-#include "resource.pb.h"
+//#include "resource.pb.h"
 
 using namespace TinyUI;
 using namespace TinyUI::Network;
@@ -94,7 +94,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	Switch::Msg msg1;
 	msg1.ParseFromString(str);*/
 	
-
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
