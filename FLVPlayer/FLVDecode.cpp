@@ -24,7 +24,7 @@ namespace FLVPlayer
 	BOOL FLVDecode::Submit()
 	{
 		FLVParser p;
-		p.Open("D:\\1.flv");
+		p.Open("D:\\3.flv");
 		p.Parse();
 		p.Close();
 
