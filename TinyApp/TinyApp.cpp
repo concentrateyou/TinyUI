@@ -26,6 +26,8 @@
 #include "Network/TinyDNS.h"
 #include "Common/TinySignal.h"
 
+#include "resource.pb.h"
+
 using namespace TinyUI;
 using namespace TinyUI::Network;
 
@@ -78,24 +80,19 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
-	/*Decode::FLVReader reader;
-	if (reader.Open("D:\\1.flv"))
-	{
-		INT i = 0;
-		for (;;)
-		{
-			Decode::FLV_BLOCK block = { 0 };
-			if (!reader.ReadBlock(block))
-			{
-				break;
-			}
-			i++;
-			SAFE_DELETE(block.audio.data);
-			SAFE_DELETE(block.video.data);
-			TRACE("index:%d\n", i);
-		}
-		reader.Close();
-	}*/
+	/*Switch::Msg msg;
+	msg.set_x(10);
+	msg.set_y(11);
+	msg.set_id("test");
+	msg.mutable_image()->set_cx(100);
+	msg.mutable_image()->set_cy(101);
+	msg.mutable_audio()->set_count(10);
+	msg.mutable_video()->set_count(11);
+	string str;
+	msg.SerializePartialToString(&str);
+
+	Switch::Msg msg1;
+	msg1.ParseFromString(str);*/
 	
 
 	::DefWindowProc(NULL, 0, 0, 0L);

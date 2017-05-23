@@ -342,17 +342,6 @@ namespace DXApp
 				m_bits.Reset(new BYTE[m_dwSize]);
 			}
 			memcpy(m_bits, bits, m_dwSize);
-
-			/*if (!g_hFile)
-			{
-				fopen_s(&g_hFile,"D:\\dxapp.rgba", "wb");
-			}
-			if (g_hFile)
-			{
-				fwrite(m_bits, m_dwSize, 1, g_hFile);
-				fflush(g_hFile);
-			}
-*/
 			m_renderView->Unmap();
 			m_graphics.GetDX11().Unlock();
 			return m_bits;

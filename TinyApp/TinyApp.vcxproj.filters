@@ -48,6 +48,9 @@
     <ClInclude Include="RDPCapture.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="resource.pb.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -72,6 +75,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="RDPCapture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="resource.pb.cc">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

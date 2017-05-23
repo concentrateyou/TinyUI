@@ -57,3 +57,5 @@
 /DWMDetour64/x64/Debug
 /DWMDetour/Debug
 /DWMDetour/x64/Debug
+/TinyApp/resource.pb.h
+/TinyApp/resource.pb.cc

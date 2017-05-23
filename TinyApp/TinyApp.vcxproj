@@ -92,15 +92,15 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\TinySmiley;$(BOOSTDIR);..\DShowCapture;..\MFCapture;..\Decode;..\IntelQSV;..\ThirdParty\mpg123\include;..\ThirdParty\libfaad\include;..\ThirdParty\ffmpeg\include;..\ThirdParty\vld;$(INTELMEDIASDKROOT)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\TinySmiley;$(BOOSTDIR);..\DShowCapture;..\MFCapture;..\Decode;..\IntelQSV;..\ThirdParty\mpg123\include;..\ThirdParty\libfaad\include;..\ThirdParty\ffmpeg\include;..\ThirdParty\vld;$(INTELMEDIASDKROOT)\include;$(PROTOBUF_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\ThirdParty\vld\x86;..\ThirdParty\mpg123\lib;..\ThirdParty\ffmpeg\lib;..\Debug;$(INTELMEDIASDKROOT)\lib\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxgi.lib;dxguid.lib;d3d10_1.lib;d3d11.lib;ddraw.lib;DShowCapture.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\ThirdParty\vld\x86;..\ThirdParty\mpg123\lib;..\ThirdParty\ffmpeg\lib;..\Debug;$(INTELMEDIASDKROOT)\lib\$(Platform);$(PROTOBUF_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dxgi.lib;dxguid.lib;d3d10_1.lib;d3d11.lib;ddraw.lib;DShowCapture.lib;libprotobufd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -178,6 +178,7 @@
     <ClInclude Include="RDPCapture.h" />
     <ClInclude Include="RenderTask.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="resource.pb.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TinyApp.h" />
@@ -189,6 +190,7 @@
     <ClCompile Include="MFFrame.cpp" />
     <ClCompile Include="RDPCapture.cpp" />
     <ClCompile Include="RenderTask.cpp" />
+    <ClCompile Include="resource.pb.cc" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
