@@ -229,9 +229,6 @@ namespace Decode
 			FLV_PACKET packet;
 			packet.dts = m_dts;
 			packet.pts = m_dts + cts;
-
-			//TRACE("pts:%d,dts:%d\n", (DWORD)packet.pts, (DWORD)packet.dts);
-
 			packet.codeID = video->codeID;
 			packet.codeType = video->codeType;
 			packet.packetType = FLV_AVCDecoderConfigurationRecord;
@@ -268,9 +265,6 @@ namespace Decode
 				packet.packetType = FLV_NALU;
 				packet.dts = m_dts;
 				packet.pts = m_dts + *cts;
-
-				//TRACE("pts:%d,dts:%d\n", (DWORD)packet.pts, (DWORD)packet.dts);
-
 				EVENT_VIDEO(val, sizeofNALU + 4, &packet);
 				bits += sizeofNALU;
 				offset += sizeofNALU;
@@ -486,16 +480,15 @@ namespace Decode
 		}
 		return TRUE;
 	}
-	DWORD FLVReader::Seek(LONGLONG timestamp, DWORD dwFlag)
+	DWORD FLVReader::Seek(LONG offset, DWORD dwFlag)
 	{
-		/*LARGE_INTEGER dlibMove = { 0 };
-		dlibMove.LowPart = dwOffset;
+		LARGE_INTEGER dlibMove = { 0 };
+		dlibMove.LowPart = offset;
 		ULARGE_INTEGER libNew = { 0 };
 		HRESULT hRes = m_stream->Seek(dlibMove, dwFlag, &libNew);
 		if (hRes != S_OK)
 			return FALSE;
-		return libNew.LowPart;*/
-		return 0;
+		return libNew.LowPart;
 	}
 	BOOL FLVReader::ReadBlock(FLV_BLOCK& block)
 	{

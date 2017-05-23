@@ -207,6 +207,7 @@ namespace Decode
 		FILE*							m_hFile;
 		LONGLONG						m_dts;
 		LONG							m_index;
+		LONG							m_duration;
 	};
 
 	typedef struct tagFLV_BLOCK
@@ -277,7 +278,7 @@ namespace Decode
 		FLV_SCRIPTDATA GetScript();
 		BOOL Open(LPCSTR pzFile);
 		BOOL ReadBlock(FLV_BLOCK& block);
-		DWORD Seek(LONGLONG timestamp, DWORD dwFlag);
+		DWORD Seek(LONG offset, DWORD dwFlag);
 		BOOL Close();
 	private:
 		BOOL ParseScript(BYTE* data, INT size, FLV_SCRIPTDATA& script);
