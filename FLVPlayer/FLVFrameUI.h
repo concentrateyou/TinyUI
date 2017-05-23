@@ -1,7 +1,5 @@
 #pragma once
 #include "Control/TinyControl.h"
-#include "FLVAudio.h"
-#include "FLVVideo.h"
 #include "FLVDecode.h"
 using namespace TinyUI;
 
@@ -27,8 +25,6 @@ namespace FLVPlayer
 		LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	private:
 		TinyScopedPtr<FLVDecode>	m_decode;
-		/*TinyScopedPtr<FLVAudio>	m_audioTask;
-		TinyScopedPtr<FLVVideo>	m_videoTask;*/
 	};
 }
 

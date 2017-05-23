@@ -15,6 +15,7 @@ namespace FLVPlayer
 	{
 		m_aac.Reset(new AACDecode());
 		m_h264.Reset(new H264Decode());
+		m_close.CreateEvent(FALSE, FALSE, NULL, NULL);
 	}
 
 	FLVDecode::~FLVDecode()
@@ -23,11 +24,6 @@ namespace FLVPlayer
 	}
 	BOOL FLVDecode::Submit()
 	{
-		FLVParser p;
-		p.Open("D:\\3.flv");
-		p.Parse();
-		p.Close();
-
 		if (m_reader.Open("D:\\1.flv"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
@@ -38,12 +34,18 @@ namespace FLVPlayer
 				m_audioTask.Submit();
 				m_videoRender.Submit();
 				m_videoTask.Submit();
+				return TRUE;
 			}
 		}
 		return FALSE;
 	}
 	BOOL FLVDecode::Close(DWORD dwMs)
 	{
+		m_close.SetEvent();
+		m_audioRender.Close(dwMs);
+		m_videoRender.Close(dwMs);
+		m_videoTask.Close(dwMs);
+		m_audioTask.Close(dwMs);
 		return TRUE;
 	}
 	void FLVDecode::OnMessagePump()
@@ -52,6 +54,10 @@ namespace FLVPlayer
 		m_dwBaseMS = timeGetTime();
 		for (;;)
 		{
+			if (m_close.Lock(0))
+			{
+				break;
+			}
 			INT size = m_audioQueue.GetSize() + m_videoQueue.GetSize();
 			if (size > MAX_QUEUE_SIZE)
 			{
@@ -121,13 +127,13 @@ namespace FLVPlayer
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	FLVAudioRender::FLVAudioRender(FLVVAudioDecodeTask& decode)
+	FLVAudioRender::FLVAudioRender(FLVVAudioTask& decode)
 		:m_decode(decode),
 		m_bInitialize(FALSE),
 		m_bFlag(FALSE),
 		m_dwMS(0)
 	{
-
+		m_close.CreateEvent(FALSE, FALSE, NULL, NULL);
 	}
 	FLVAudioRender::~FLVAudioRender()
 	{
@@ -137,14 +143,19 @@ namespace FLVPlayer
 	{
 		return TinyTaskBase::Submit(BindCallback(&FLVAudioRender::OnMessagePump, this));
 	}
-	BOOL FLVAudioRender::Close(DWORD dwMs)
+	BOOL FLVAudioRender::Close(DWORD dwMS)
 	{
-		return TRUE;
+		m_close.SetEvent();
+		return TinyTaskBase::Close(dwMS);
 	}
 	void FLVAudioRender::OnMessagePump()
 	{
 		for (;;)
 		{
+			if (m_close.Lock(0))
+			{
+				break;
+			}
 			SampleTag tag = m_decode.m_queue.Pop();
 			if (tag.size <= 0)
 			{
@@ -152,7 +163,6 @@ namespace FLVPlayer
 			}
 			DWORD dwMS = timeGetTime() - m_decode.m_decode.m_dwBaseMS;
 			INT offset = tag.samplePTS - dwMS;
-			TRACE("audio:%d\n", offset);
 			Sleep(offset < 0 ? 0 : offset);
 			if (!m_bInitialize)
 			{
@@ -178,65 +188,17 @@ namespace FLVPlayer
 			m_player.Fill(tag.bits, tag.size);
 			SAFE_DELETE_ARRAY(tag.bits);
 			HANDLE handles[2] = { m_events[0],m_events[1] };
-			HRESULT hRes = WaitForMultipleObjects(2, handles, FALSE, INFINITE);
-			if (hRes >= WAIT_OBJECT_0 && hRes <= (WAIT_OBJECT_0 + 1))
-			{
-				continue;
-			}
-			/*SampleTag tag = m_decode.m_audioQueue.Pop();
-			if (tag.size <= 0)
-			{
-				continue;
-			}
-			BYTE* bo = NULL;
-			LONG  so = 0;
-			if (m_decode.m_aac->Decode(tag.bits, tag.size, bo, so))
-			{
-				DWORD dwMS = timeGetTime() - m_decode.m_dwBaseMS;
-				INT offset = tag.samplePTS - dwMS;
-				TRACE("audio:%d\n", offset);
-				Sleep(offset < 0 ? 0 : offset);
-				if (!m_bInitialize)
-				{
-					m_bInitialize = TRUE;
-					if (!m_player.Initialize(m_decode.m_hWND, &m_decode.m_aac->GetFormat(), so * 2))
-						break;
-					m_events[0].CreateEvent();
-					m_events[1].CreateEvent();
-					DSBPOSITIONNOTIFY vals[2];
-					vals[0].dwOffset = so - 1;
-					vals[0].hEventNotify = m_events[0];
-					vals[1].dwOffset = so * 2 - 1;
-					vals[1].hEventNotify = m_events[1];
-					if (m_player.SetPositions(2, vals))
-					{
-						m_player.Play();
-						if (so != 4096)
-						{
-							m_player.Fill(bo, so);
-						}
-					}
-				}
-				m_player.Fill(bo, so);
-			}
-			HANDLE handles[2] = { m_events[0],m_events[1] };
-			HRESULT hRes = WaitForMultipleObjects(2, handles, FALSE, INFINITE);
-			if (hRes >= WAIT_OBJECT_0 && hRes <= (WAIT_OBJECT_0 + 1))
-			{
-				SAFE_DELETE_ARRAY(tag.bits);
-				continue;
-			}
-			SAFE_DELETE_ARRAY(tag.bits);*/
+			WaitForMultipleObjects(2, handles, FALSE, INFINITE);
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	FLVVideoRender::FLVVideoRender(FLVVideoDecodeTask& decode)
+	FLVVideoRender::FLVVideoRender(FLVVideoTask& decode)
 		:m_decode(decode),
 		m_wPTS(0),
 		m_bFlag(FALSE),
 		m_dwMS(0)
 	{
-
+		m_close.CreateEvent(FALSE, FALSE, NULL, NULL);
 	}
 	FLVVideoRender::~FLVVideoRender()
 	{
@@ -246,14 +208,19 @@ namespace FLVPlayer
 	{
 		return TinyTaskBase::Submit(BindCallback(&FLVVideoRender::OnMessagePump, this));
 	}
-	BOOL FLVVideoRender::Close(DWORD dwMs)
+	BOOL FLVVideoRender::Close(DWORD dwMS)
 	{
-		return TRUE;
+		m_close.SetEvent();
+		return TinyTaskBase::Close(dwMS);
 	}
 	void FLVVideoRender::OnMessagePump()
 	{
 		for (;;)
 		{
+			if (m_close.Lock(0))
+			{
+				break;
+			}
 			SampleTag tag = m_decode.m_queue.Pop();
 			if (tag.size <= 0)
 			{
@@ -261,7 +228,6 @@ namespace FLVPlayer
 			}
 			DWORD dwMS = timeGetTime() - m_decode.m_decode.m_dwBaseMS;
 			INT offset = tag.samplePTS - dwMS;
-			TRACE("video:%d\n", offset);
 			Sleep(offset < 0 ? 0 : offset);
 			OnRender(tag.bits, tag.size);
 			SAFE_DELETE_ARRAY(tag.bits);
@@ -296,28 +262,33 @@ namespace FLVPlayer
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	FLVVideoDecodeTask::FLVVideoDecodeTask(FLVDecode& decode)
+	FLVVideoTask::FLVVideoTask(FLVDecode& decode)
 		:m_decode(decode),
 		m_queue(m_lock)
 	{
-
+		m_close.CreateEvent(FALSE, FALSE, NULL, NULL);
 	}
-	FLVVideoDecodeTask::~FLVVideoDecodeTask()
+	FLVVideoTask::~FLVVideoTask()
 	{
 
 	}
-	BOOL FLVVideoDecodeTask::Submit()
+	BOOL FLVVideoTask::Submit()
 	{
-		return TinyTaskBase::Submit(BindCallback(&FLVVideoDecodeTask::OnMessagePump, this));
+		return TinyTaskBase::Submit(BindCallback(&FLVVideoTask::OnMessagePump, this));
 	}
-	BOOL FLVVideoDecodeTask::Close(DWORD dwMs)
+	BOOL FLVVideoTask::Close(DWORD dwMS)
 	{
-		return TRUE;
+		m_close.SetEvent();
+		return TinyTaskBase::Close(dwMS);
 	}
-	void FLVVideoDecodeTask::OnMessagePump()
+	void FLVVideoTask::OnMessagePump()
 	{
 		for (;;)
 		{
+			if (m_close.Lock(0))
+			{
+				break;
+			}
 			INT size = m_queue.GetSize();
 			if (size > MAX_QUEUE_SIZE)
 			{
@@ -347,28 +318,33 @@ namespace FLVPlayer
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	FLVVAudioDecodeTask::FLVVAudioDecodeTask(FLVDecode& decode)
+	FLVVAudioTask::FLVVAudioTask(FLVDecode& decode)
 		:m_decode(decode),
 		m_queue(m_lock)
 	{
-
+		m_close.CreateEvent(FALSE, FALSE, NULL, NULL);
 	}
-	FLVVAudioDecodeTask::~FLVVAudioDecodeTask()
+	FLVVAudioTask::~FLVVAudioTask()
 	{
 
 	}
-	BOOL FLVVAudioDecodeTask::Submit()
+	BOOL FLVVAudioTask::Submit()
 	{
-		return TinyTaskBase::Submit(BindCallback(&FLVVAudioDecodeTask::OnMessagePump, this));
+		return TinyTaskBase::Submit(BindCallback(&FLVVAudioTask::OnMessagePump, this));
 	}
-	BOOL FLVVAudioDecodeTask::Close(DWORD dwMs)
+	BOOL FLVVAudioTask::Close(DWORD dwMS)
 	{
-		return TRUE;
+		m_close.SetEvent();
+		return TinyTaskBase::Close(dwMS);
 	}
-	void FLVVAudioDecodeTask::OnMessagePump()
+	void FLVVAudioTask::OnMessagePump()
 	{
 		for (;;)
 		{
+			if (m_close.Lock(0))
+			{
+				break;
+			}
 			INT size = m_queue.GetSize();
 			if (size > MAX_AUDIO_QUEUE_SIZE)
 			{

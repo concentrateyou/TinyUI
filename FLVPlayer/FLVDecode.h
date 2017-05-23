@@ -1,13 +1,13 @@
 #pragma once
-#include "FLVParser.h"
-#include "FLVPlayer.h"
+#include "Media/TinySoundPlayer.h"
 #include "IO/TinyTaskBase.h"
-#include "FLVAudio.h"
-#include "FLVVideo.h"
+#include "Common/TinyTime.h"
+#include "FLVParser.h"
 #include "PacketQueue.h"
 using namespace Decode;
 using namespace TinyUI;
 using namespace TinyUI::IO;
+using namespace TinyUI::Media;
 
 namespace FLVPlayer
 {
@@ -16,26 +16,26 @@ namespace FLVPlayer
 
 	class FLVDecode;
 
-	class FLVVAudioDecodeTask : public TinyTaskBase
+	class FLVVAudioTask : public TinyTaskBase
 	{
 	public:
-		FLVVAudioDecodeTask(FLVDecode& decode);
-		~FLVVAudioDecodeTask();
+		FLVVAudioTask(FLVDecode& decode);
+		~FLVVAudioTask();
 		BOOL	Submit();
 		BOOL	Close(DWORD dwMs) OVERRIDE;
 	private:
 		void	OnMessagePump();
 	public:
+		TinyEvent	m_close;
 		TinyLock	m_lock;
 		PacketQueue	m_queue;
 		FLVDecode&	m_decode;
 	};
 
-
 	class FLVAudioRender : public TinyTaskBase
 	{
 	public:
-		FLVAudioRender(FLVVAudioDecodeTask& decode);
+		FLVAudioRender(FLVVAudioTask& decode);
 		~FLVAudioRender();
 		BOOL	Submit();
 		BOOL	Close(DWORD dwMs) OVERRIDE;
@@ -47,30 +47,31 @@ namespace FLVPlayer
 		BOOL			m_bFlag;
 		BOOL			m_bInitialize;
 		TinyEvent		m_events[2];
+		TinyEvent		m_close;
 		TinySoundPlayer	m_player;
-		FLVVAudioDecodeTask&	m_decode;
+		FLVVAudioTask&	m_decode;
 	};
 
-	class FLVVideoDecodeTask : public TinyTaskBase
+	class FLVVideoTask : public TinyTaskBase
 	{
 	public:
-		FLVVideoDecodeTask(FLVDecode& decode);
-		~FLVVideoDecodeTask();
+		FLVVideoTask(FLVDecode& decode);
+		~FLVVideoTask();
 		BOOL	Submit();
 		BOOL	Close(DWORD dwMs) OVERRIDE;
 	private:
 		void	OnMessagePump();
 	public:
 		TinyLock	m_lock;
+		TinyEvent	m_close;
 		PacketQueue	m_queue;
 		FLVDecode&	m_decode;
 	};
 
-	
 	class FLVVideoRender : public TinyTaskBase
 	{
 	public:
-		FLVVideoRender(FLVVideoDecodeTask& decode);
+		FLVVideoRender(FLVVideoTask& decode);
 		~FLVVideoRender();
 		BOOL	Submit();
 		BOOL	Close(DWORD dwMs) OVERRIDE;
@@ -81,7 +82,8 @@ namespace FLVPlayer
 		DWORD					m_dwMS;
 		BOOL					m_bFlag;
 		LONGLONG				m_wPTS;
-		FLVVideoDecodeTask&			m_decode;
+		TinyEvent				m_close;
+		FLVVideoTask&			m_decode;
 		TinyPerformanceTimer	m_timer;
 	};
 
@@ -89,8 +91,8 @@ namespace FLVPlayer
 	{
 		friend class FLVAudioRender;
 		friend class FLVVideoRender;
-		friend class FLVVideoDecodeTask;
-		friend class FLVVAudioDecodeTask;
+		friend class FLVVideoTask;
+		friend class FLVVAudioTask;
 	public:
 		FLVDecode(HWND hWND);
 		~FLVDecode();
@@ -104,14 +106,15 @@ namespace FLVPlayer
 		TinySize					m_size;
 		FLVReader					m_reader;
 		TinyLock					m_lock;
+		TinyEvent					m_close;
 		PacketQueue					m_audioQueue;
 		PacketQueue					m_videoQueue;
 		TinyScopedPtr<H264Decode>	m_h264;
 		TinyScopedPtr<AACDecode>	m_aac;
 		FLVAudioRender				m_audioRender;
 		FLVVideoRender				m_videoRender;
-		FLVVideoDecodeTask			m_videoTask;
-		FLVVAudioDecodeTask			m_audioTask;
+		FLVVideoTask				m_videoTask;
+		FLVVAudioTask				m_audioTask;
 	};
 }
 
