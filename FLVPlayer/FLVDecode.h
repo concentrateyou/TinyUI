@@ -13,6 +13,7 @@ namespace FLVPlayer
 {
 #define MAX_QUEUE_SIZE (8 * 1024 * 1024)
 #define MAX_AUDIO_QUEUE_SIZE (48 * 1024)
+#define MAX_VIDEO_QUEUE_SIZE (6 * 1024 * 1024)
 
 	class FLVDecode;
 
@@ -101,7 +102,8 @@ namespace FLVPlayer
 	private:
 		void	OnMessagePump();
 	private:
-		DWORD						m_dwBaseMS;
+		LONG						m_baseTime;
+		LONG						m_basePTS;
 		HWND						m_hWND;
 		TinySize					m_size;
 		FLVReader					m_reader;

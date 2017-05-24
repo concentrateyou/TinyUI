@@ -11,7 +11,8 @@ namespace FLVPlayer
 		m_audioTask(*this),
 		m_audioRender(m_audioTask),
 		m_videoRender(m_videoTask),
-		m_dwBaseMS(0)
+		m_baseTime(-1),
+		m_basePTS(-1)
 	{
 		m_aac.Reset(new AACDecode());
 		m_h264.Reset(new H264Decode());
@@ -24,7 +25,7 @@ namespace FLVPlayer
 	}
 	BOOL FLVDecode::Submit()
 	{
-		if (m_reader.Open("D:\\1.flv"))
+		if (m_reader.Open("D:\\3.flv"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);
@@ -51,7 +52,6 @@ namespace FLVPlayer
 	void FLVDecode::OnMessagePump()
 	{
 		FLV_BLOCK block = { 0 };
-		m_dwBaseMS = timeGetTime();
 		for (;;)
 		{
 			if (m_close.Lock(0))
@@ -88,6 +88,10 @@ namespace FLVPlayer
 						tag.size = block.audio.size;
 						tag.sampleDTS = block.dts;
 						tag.samplePTS = block.pts;
+						if (m_basePTS == -1)
+						{
+							m_basePTS = tag.samplePTS;
+						}
 						m_audioQueue.Push(tag);
 					}
 				}
@@ -116,6 +120,10 @@ namespace FLVPlayer
 						tag.size = block.video.size;
 						tag.sampleDTS = block.dts;
 						tag.samplePTS = block.pts;
+						if (m_basePTS == -1)
+						{
+							m_basePTS = tag.samplePTS;
+						}
 						m_videoQueue.Push(tag);
 					}
 				}
@@ -158,10 +166,13 @@ namespace FLVPlayer
 			}
 			SampleTag tag = m_decode.m_queue.Pop();
 			if (tag.size <= 0)
-			{
 				continue;
+			if (tag.samplePTS == m_decode.m_decode.m_basePTS)
+			{
+				m_decode.m_decode.m_baseTime = timeGetTime();
 			}
-			DWORD dwMS = timeGetTime() - m_decode.m_decode.m_dwBaseMS;
+			while (m_decode.m_decode.m_baseTime == -1);
+			DWORD dwMS = timeGetTime() - m_decode.m_decode.m_baseTime;
 			INT offset = tag.samplePTS - dwMS;
 			Sleep(offset < 0 ? 0 : offset);
 			if (!m_bInitialize)
@@ -223,10 +234,14 @@ namespace FLVPlayer
 			}
 			SampleTag tag = m_decode.m_queue.Pop();
 			if (tag.size <= 0)
-			{
 				continue;
+			if (tag.samplePTS == m_decode.m_decode.m_basePTS)
+			{
+				m_decode.m_decode.m_baseTime = timeGetTime();
 			}
-			DWORD dwMS = timeGetTime() - m_decode.m_decode.m_dwBaseMS;
+			while (m_decode.m_decode.m_baseTime == -1);
+
+			DWORD dwMS = timeGetTime() - m_decode.m_decode.m_baseTime;
 			INT offset = tag.samplePTS - dwMS;
 			Sleep(offset < 0 ? 0 : offset);
 			OnRender(tag.bits, tag.size);
@@ -290,7 +305,7 @@ namespace FLVPlayer
 				break;
 			}
 			INT size = m_queue.GetSize();
-			if (size > MAX_QUEUE_SIZE)
+			if (size > MAX_VIDEO_QUEUE_SIZE)
 			{
 				Sleep(1);
 				continue;
