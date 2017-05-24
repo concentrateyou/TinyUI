@@ -25,7 +25,7 @@ namespace FLVPlayer
 	}
 	BOOL FLVDecode::Submit()
 	{
-		if (m_reader.Open("D:\\3.flv"))
+		if (m_reader.Open("D:\\4.flv"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);
@@ -172,9 +172,6 @@ namespace FLVPlayer
 				m_decode.m_decode.m_baseTime = timeGetTime();
 			}
 			while (m_decode.m_decode.m_baseTime == -1);
-			DWORD dwMS = timeGetTime() - m_decode.m_decode.m_baseTime;
-			INT offset = tag.samplePTS - dwMS;
-			Sleep(offset < 0 ? 0 : offset);
 			if (!m_bInitialize)
 			{
 				m_bInitialize = TRUE;
@@ -240,7 +237,6 @@ namespace FLVPlayer
 				m_decode.m_decode.m_baseTime = timeGetTime();
 			}
 			while (m_decode.m_decode.m_baseTime == -1);
-
 			DWORD dwMS = timeGetTime() - m_decode.m_decode.m_baseTime;
 			INT offset = tag.samplePTS - dwMS;
 			Sleep(offset < 0 ? 0 : offset);
