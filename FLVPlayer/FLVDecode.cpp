@@ -88,10 +88,6 @@ namespace FLVPlayer
 						tag.size = block.audio.size;
 						tag.sampleDTS = block.dts;
 						tag.samplePTS = block.pts;
-						if (m_basePTS == -1)
-						{
-							m_basePTS = tag.samplePTS;
-						}
 						m_audioQueue.Push(tag);
 					}
 				}
@@ -120,10 +116,6 @@ namespace FLVPlayer
 						tag.size = block.video.size;
 						tag.sampleDTS = block.dts;
 						tag.samplePTS = block.pts;
-						if (m_basePTS == -1)
-						{
-							m_basePTS = tag.samplePTS;
-						}
 						m_videoQueue.Push(tag);
 					}
 				}
@@ -319,6 +311,10 @@ namespace FLVPlayer
 					tag.size = so;
 					tag.samplePTS = m_decode.m_h264->GetYUV420()->pkt_pts;
 					tag.sampleDTS = tag.samplePTS;
+					if (m_decode.m_basePTS == -1)
+					{
+						m_decode.m_basePTS = tag.samplePTS;
+					}
 					m_queue.Push(tag);
 				}
 				else
@@ -373,6 +369,10 @@ namespace FLVPlayer
 					tag.bits = new BYTE[so];
 					memcpy(tag.bits, bo, so);
 					tag.size = so;
+					if (m_decode.m_basePTS == -1)
+					{
+						m_decode.m_basePTS = tag.samplePTS;
+					}
 					m_queue.Push(tag);
 				}
 				else

@@ -265,6 +265,7 @@ namespace Decode
 				packet.packetType = FLV_NALU;
 				packet.dts = m_dts;
 				packet.pts = m_dts + *cts;
+				//TRACE("video-pts:%d\n", packet.pts);
 				EVENT_VIDEO(val, sizeofNALU + 4, &packet);
 				bits += sizeofNALU;
 				offset += sizeofNALU;
@@ -339,6 +340,7 @@ namespace Decode
 		{
 			packet.dts = m_dts;
 			packet.pts = m_dts;
+			//TRACE("audio-pts:%d\n", packet.pts);
 			packet.bitsPerSample = audio->bitsPerSample;
 			packet.channel = audio->channel;
 			packet.codeID = FLV_CODECID_AAC;
@@ -349,6 +351,7 @@ namespace Decode
 		{
 			packet.dts = m_dts;
 			packet.pts = m_dts;
+			//TRACE("audio-pts:%d\n", packet.pts);
 			packet.bitsPerSample = audio->bitsPerSample;
 			packet.channel = audio->channel;
 			packet.codeID = FLV_CODECID_AAC;

@@ -22,6 +22,9 @@ namespace Decode
 		BYTE channel = 0;
 		if (NeAACDecInit2(m_handle, adts, size, &sampleRate, &channel) != 0)
 			goto AAC_ERROR;
+		//NeAACDecConfiguration* config = NeAACDecGetCurrentConfiguration(m_handle);
+		//config->dontUpSampleImplicitSBR = 1;
+		//NeAACDecSetConfiguration(m_handle, config);
 		m_sMFT.nSamplesPerSec = sampleRate;
 		m_sMFT.nChannels = channel;
 		m_sMFT.wBitsPerSample = wBitsPerSample;
