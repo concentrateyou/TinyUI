@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "FLVParser.h"
 #include "amf.h"
+#include "RTMPStream.h"
 
 namespace Decode
 {
@@ -417,11 +418,13 @@ namespace Decode
 	FLVReader::FLVReader()
 		:m_bAudio(FALSE),
 		m_bVideo(FALSE),
+		m_bNetwork(FALSE),
 		m_lengthSizeMinusOne(0),
 		m_offset(0),
 		m_naluOffset(0),
 		m_naluPtr(NULL),
-		m_dts(0)
+		m_timestamp(0),
+		m_lFirst(-1)
 	{
 
 	}
@@ -433,8 +436,53 @@ namespace Decode
 	{
 		return m_script;
 	}
-	BOOL FLVReader::Open(LPCSTR pzFile)
+	BOOL FLVReader::OpenURL(LPCSTR pzURL)
 	{
+		m_bNetwork = TRUE;
+		RTMPStream* ps = new RTMPStream();
+		m_stream = (IStream *)ps;
+		if (!m_stream)
+			return FALSE;
+		if (!ps->Open(pzURL))
+			return FALSE;
+		HRESULT hRes = S_OK;
+		FLV_HEADER header = { 0 };
+		ULONG ls = 0;
+		hRes = m_stream->Read(&header, sizeof(FLV_HEADER), &ls);
+		if (hRes != S_OK || ls != sizeof(FLV_HEADER))
+			return FALSE;
+		if (strncmp("FLV", (CHAR*)header.signature, 3) != 0)
+			return FALSE;
+		m_bAudio = (header.streamType & 0x04) != 0;
+		m_bVideo = (header.streamType & 0x01) != 0;
+		m_offset = ToINT32(header.offset);
+		UINT tagSize = 0;
+		hRes = m_stream->Read(&tagSize, sizeof(UINT), &ls);
+		if (hRes != S_OK || ls <= 0)
+			return FALSE;
+		tagSize = htonl(tagSize);
+		FLV_TAG_HEADER tag = { 0 };
+		hRes = m_stream->Read(&tag, sizeof(FLV_TAG_HEADER), &ls);
+		if (hRes != S_OK || ls <= 0)
+			return FALSE;
+		INT size = ToINT24(tag.size);
+		if (size > 0)
+		{
+			TinyScopedArray<BYTE> data(new BYTE[size]);
+			hRes = m_stream->Read(data, size, &ls);
+			if (hRes != S_OK || ls <= 0)
+				return FALSE;
+			if (tag.type == FLV_SCRIPT)
+			{
+				if (!ParseScript(data, size, m_script))
+					return FALSE;
+			}
+		}
+		return TRUE;
+	}
+	BOOL FLVReader::OpenFile(LPCSTR pzFile)
+	{
+		m_bNetwork = FALSE;
 		HRESULT hRes = SHCreateStreamOnFileA(pzFile, STGM_READ | STGM_FAILIFTHERE, &m_stream);
 		if (hRes != S_OK)
 			return FALSE;
@@ -517,12 +565,22 @@ namespace Decode
 					return FALSE;
 				if (tag.type == FLV_AUDIO)
 				{
-					m_dts = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
+					m_timestamp = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
+					if (m_lFirst == -1)
+					{
+						m_lFirst = m_timestamp;
+					}
+					m_timestamp -= m_lFirst;
 					return ParseAudio(data, size, block);
 				}
 				if (tag.type == FLV_VIDEO)
 				{
-					m_dts = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
+					m_timestamp = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
+					if (m_lFirst == -1)
+					{
+						m_lFirst = m_timestamp;
+					}
+					m_timestamp -= m_lFirst;
 					return ParseVideo(data, size, block);
 				}
 			}
@@ -593,8 +651,8 @@ namespace Decode
 		size -= 1;
 		if (aacPacketType == 0)
 		{
-			block.dts = m_dts;
-			block.pts = m_dts;
+			block.dts = m_timestamp;
+			block.pts = m_timestamp;
 			block.audio.bitsPerSample = audio->bitsPerSample;
 			block.audio.channel = audio->channel;
 			block.audio.codeID = FLV_CODECID_AAC;
@@ -605,8 +663,8 @@ namespace Decode
 		}
 		if (aacPacketType == 1)
 		{
-			block.dts = m_dts;
-			block.pts = m_dts;
+			block.dts = m_timestamp;
+			block.pts = m_timestamp;
 			block.audio.bitsPerSample = audio->bitsPerSample;
 			block.audio.channel = audio->channel;
 			block.audio.codeID = FLV_CODECID_AAC;
@@ -662,7 +720,7 @@ namespace Decode
 				buffer.Add(bits, s);
 				bits += s;
 			}
-			block.dts = m_dts;
+			block.dts = m_timestamp;
 			block.pts = block.dts + block.video.cts;
 			block.video.codeID = video->codeID;
 			block.video.codeType = video->codeType;
@@ -702,7 +760,7 @@ namespace Decode
 			block.video.codeID = video->codeID;
 			block.video.codeType = video->codeType;
 			block.video.packetType = FLV_NALU;
-			block.dts = m_dts;
+			block.dts = m_timestamp;
 			block.pts = block.dts + block.video.cts;
 			m_naluPtr += sizeofNALU;
 			m_naluOffset += sizeofNALU;
@@ -720,7 +778,7 @@ namespace Decode
 			block.video.codeID = video->codeID;
 			block.video.codeType = video->codeType;
 			block.video.packetType = FLV_NALU;
-			block.dts = m_dts;
+			block.dts = m_timestamp;
 			block.pts = block.dts + block.video.cts;
 			m_naluPtr += sizeofNALU;
 			m_naluOffset += sizeofNALU;
@@ -738,7 +796,7 @@ namespace Decode
 			block.video.codeID = video->codeID;
 			block.video.codeType = video->codeType;
 			block.video.packetType = FLV_NALU;
-			block.dts = m_dts;
+			block.dts = m_timestamp;
 			block.pts = block.dts + block.video.cts;
 			m_naluPtr += sizeofNALU;
 			m_naluOffset += sizeofNALU;
@@ -756,7 +814,7 @@ namespace Decode
 			block.video.codeID = video->codeID;
 			block.video.codeType = video->codeType;
 			block.video.packetType = FLV_NALU;
-			block.dts = m_dts;
+			block.dts = m_timestamp;
 			block.pts = block.dts + block.video.cts;
 			m_naluPtr += sizeofNALU;
 			m_naluOffset += sizeofNALU;
@@ -870,6 +928,10 @@ namespace Decode
 	{
 		m_stream.Release();
 		return TRUE;
+	}
+	BOOL FLVReader::IsNetwork() const
+	{
+		return m_bNetwork;
 	}
 }
 

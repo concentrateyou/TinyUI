@@ -4,6 +4,7 @@
 #include "MPG123Decode.h"
 #include "H264Decode.h"
 #include <vector>
+#include "rtmp.h"
 
 using namespace std;
 using namespace TinyUI;
@@ -265,7 +266,6 @@ namespace Decode
 		};
 	}FLV_BLOCK;
 
-
 	/// <summary>
 	/// FLV¶ÁÈ¡Æ÷
 	/// </summary>
@@ -274,12 +274,14 @@ namespace Decode
 		DISALLOW_COPY_AND_ASSIGN(FLVReader)
 	public:
 		FLVReader();
-		~FLVReader();
+		virtual ~FLVReader();
 		FLV_SCRIPTDATA GetScript();
-		BOOL Open(LPCSTR pzFile);
+		BOOL OpenFile(LPCSTR pzFile);
+		BOOL OpenURL(LPCSTR pzURL);
 		BOOL ReadBlock(FLV_BLOCK& block);
 		DWORD Seek(LONG offset, DWORD dwFlag);
 		BOOL Close();
+		BOOL IsNetwork() const;
 	private:
 		BOOL ParseScript(BYTE* data, INT size, FLV_SCRIPTDATA& script);
 		BOOL ParseVideo(BYTE* data, INT size, FLV_BLOCK& block);
@@ -291,15 +293,17 @@ namespace Decode
 		BOOL ParseMPEG4(FLV_TAG_VIDEO* video, BYTE* data, INT size, FLV_BLOCK& block);
 		BOOL ParseNALU(FLV_TAG_VIDEO* video, FLV_BLOCK& block);
 	private:
-		FLV_SCRIPTDATA			m_script;
-		ULONGLONG				m_offset;
+		BOOL					m_bNetwork;
 		BOOL					m_bAudio;
 		BOOL					m_bVideo;
+		LONGLONG				m_lFirst;
+		FLV_SCRIPTDATA			m_script;
+		ULONGLONG				m_offset;
 		BYTE					m_lengthSizeMinusOne;
 		TinyComPtr<IStream>		m_stream;
 		TinyBufferArray<BYTE>	m_nalus;
 		FLV_TAG_VIDEO			m_videoTag;
-		LONGLONG				m_dts;
+		LONGLONG				m_timestamp;
 		BYTE*					m_naluPtr;
 		INT						m_naluOffset;
 	};

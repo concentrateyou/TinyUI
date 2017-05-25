@@ -60,7 +60,9 @@ namespace FLVPlayer
 	{
 		bHandled = FALSE;
 		if (m_decode)
+		{
 			m_decode->Close(INFINITE);
+		}
 		return FALSE;
 	}
 

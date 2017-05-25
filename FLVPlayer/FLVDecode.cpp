@@ -12,7 +12,8 @@ namespace FLVPlayer
 		m_audioRender(m_audioTask),
 		m_videoRender(m_videoTask),
 		m_baseTime(-1),
-		m_basePTS(-1)
+		m_basePTS(-1),
+		m_bFirstI(FALSE)
 	{
 		m_aac.Reset(new AACDecode());
 		m_h264.Reset(new H264Decode());
@@ -25,7 +26,7 @@ namespace FLVPlayer
 	}
 	BOOL FLVDecode::Submit()
 	{
-		if (m_reader.Open("D:\\3.flv"))
+		if (m_reader.OpenURL("rtmp://10.121.86.127/live/test_360p_1"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);
@@ -40,14 +41,14 @@ namespace FLVPlayer
 		}
 		return FALSE;
 	}
-	BOOL FLVDecode::Close(DWORD dwMs)
+	BOOL FLVDecode::Close(DWORD dwMS)
 	{
 		m_close.SetEvent();
-		m_audioRender.Close(dwMs);
-		m_videoRender.Close(dwMs);
-		m_videoTask.Close(dwMs);
-		m_audioTask.Close(dwMs);
-		return TRUE;
+		m_audioRender.Close(dwMS);
+		m_videoRender.Close(dwMS);
+		m_videoTask.Close(dwMS);
+		m_audioTask.Close(dwMS);
+		return TinyTaskBase::Close(dwMS);
 	}
 	void FLVDecode::OnMessagePump()
 	{
@@ -68,6 +69,7 @@ namespace FLVPlayer
 			{
 				break;
 			}
+
 			if (block.type == FLV_AUDIO)
 			{
 				if (block.audio.codeID == FLV_CODECID_AAC)
@@ -83,6 +85,15 @@ namespace FLVPlayer
 					}
 					if (block.audio.packetType == FLV_AACRaw)
 					{
+						if (m_reader.IsNetwork())//网络流等待第一个关键帧
+						{
+							if (!m_bFirstI)
+							{
+								SAFE_DELETE_ARRAY(block.audio.data);
+								SAFE_DELETE_ARRAY(block.video.data);
+								continue;
+							}
+						}
 						SampleTag tag = { 0 };
 						tag.bits = block.audio.data;
 						tag.size = block.audio.size;
@@ -111,6 +122,16 @@ namespace FLVPlayer
 					}
 					if (block.video.packetType == FLV_NALU)
 					{
+						if (!m_bFirstI)
+						{
+							if (block.video.codeType != 1)
+							{
+								SAFE_DELETE_ARRAY(block.audio.data);
+								SAFE_DELETE_ARRAY(block.video.data);
+								continue;
+							}
+							m_bFirstI = TRUE;
+						}
 						SampleTag tag = { 0 };
 						tag.bits = block.video.data;
 						tag.size = block.video.size;
@@ -194,7 +215,6 @@ namespace FLVPlayer
 				DWORD dwMS = timeGetTime() - m_decode.m_decode.m_baseTime;
 				INT offset = tag.samplePTS - dwMS;
 				Sleep(offset < 0 ? 0 : offset);
-				TRACE("audio-offset:%d\n", offset);
 				m_player.Fill(tag.bits, tag.size);
 				SAFE_DELETE_ARRAY(tag.bits);
 			}

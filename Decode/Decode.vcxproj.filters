@@ -45,6 +45,9 @@
     <ClInclude Include="FLVParser.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="RTMPStream.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -69,6 +72,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="FLVParser.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RTMPStream.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

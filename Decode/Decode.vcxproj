@@ -144,6 +144,7 @@
     <ClInclude Include="AC3Decode.h" />
     <ClInclude Include="H264Decode.h" />
     <ClInclude Include="MPG123Decode.h" />
+    <ClInclude Include="RTMPStream.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="FLVParser.h" />
     <ClInclude Include="TSDecode.h" />
@@ -155,6 +156,7 @@
     <ClCompile Include="AC3Decode.cpp" />
     <ClCompile Include="H264Decode.cpp" />
     <ClCompile Include="MPG123Decode.cpp" />
+    <ClCompile Include="RTMPStream.cpp" />
     <ClCompile Include="Utility.cpp" />
     <ClCompile Include="FLVParser.cpp" />
     <ClCompile Include="TSDecode.cpp" />

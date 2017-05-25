@@ -103,6 +103,7 @@ namespace FLVPlayer
 	private:
 		void	OnMessagePump();
 	private:
+		BOOL						m_bFirstI;
 		TinyLock					m_lockTime;
 		LONG						m_baseTime;
 		LONG						m_basePTS;
