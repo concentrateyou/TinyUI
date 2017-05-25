@@ -16,8 +16,9 @@ namespace TinyUI
 			TinySoundPlayer();
 			virtual ~TinySoundPlayer();
 		public:
-			BOOL	Initialize(HWND hWND, WAVEFORMATEX* pFMT,DWORD dwSize);
+			BOOL	Initialize(HWND hWND);
 			BOOL	SetPositions(DWORD dwSize, LPCDSBPOSITIONNOTIFY pNotify);
+			BOOL	SetFormat(WAVEFORMATEX* pFMT, DWORD dwSize);
 			BOOL	Play(DWORD dwFlags = DSBPLAY_LOOPING);
 			BOOL	Fill(BYTE* bits, INT size);
 			BOOL	GetCaps(DSCAPS& caps);
@@ -29,6 +30,7 @@ namespace TinyUI
 			BOOL	GetPlan(LONG& plan);
 			BOOL	Stop();
 			BOOL	Close();
+			DWORD	GetSize() const;
 		private:
 			TinyComPtr<IDirectSound8>		m_sound;
 			TinyComPtr<IDirectSoundBuffer>	m_primaryDSB;

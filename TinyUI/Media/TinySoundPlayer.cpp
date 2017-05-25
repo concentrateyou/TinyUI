@@ -14,10 +14,8 @@ namespace TinyUI
 		TinySoundPlayer::~TinySoundPlayer()
 		{
 		}
-		BOOL TinySoundPlayer::Initialize(HWND hWND, WAVEFORMATEX* pFMT, DWORD dwSize)
+		BOOL TinySoundPlayer::Initialize(HWND hWND)
 		{
-			m_dwSize = dwSize;
-			m_waveFMT = pFMT;
 			HRESULT hRes = S_OK;
 			hRes = DirectSoundCreate8(NULL, &m_sound, NULL);
 			if (hRes != S_OK)
@@ -25,6 +23,14 @@ namespace TinyUI
 			hRes = m_sound->SetCooperativeLevel(hWND, DSSCL_PRIORITY);
 			if (hRes != S_OK)
 				return FALSE;
+			return TRUE;
+		}
+		BOOL TinySoundPlayer::SetFormat(WAVEFORMATEX* pFMT, DWORD dwSize)
+		{
+			ASSERT(m_sound);
+			m_dwSize = dwSize;
+			m_waveFMT = pFMT;
+			HRESULT hRes = S_OK;
 			DSBUFFERDESC dbdesc;
 			ZeroMemory(&dbdesc, sizeof(dbdesc));
 			dbdesc.dwSize = sizeof(dbdesc);
@@ -148,6 +154,10 @@ namespace TinyUI
 			m_secondaryDSB.Release();
 			m_primaryDSB.Release();
 			return TRUE;
+		}
+		DWORD TinySoundPlayer::GetSize() const
+		{
+			return m_dwSize;
 		}
 		BOOL TinySoundPlayer::SetPositions(DWORD dwSize, LPCDSBPOSITIONNOTIFY pNotify)
 		{

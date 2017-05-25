@@ -25,7 +25,7 @@ namespace FLVPlayer
 	}
 	BOOL FLVDecode::Submit()
 	{
-		if (m_reader.Open("D:\\4.flv"))
+		if (m_reader.Open("D:\\3.flv"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);
@@ -141,6 +141,8 @@ namespace FLVPlayer
 	}
 	BOOL FLVAudioRender::Submit()
 	{
+		if (!m_player.Initialize(m_decode.m_decode.m_hWND))
+			return FALSE;
 		return TinyTaskBase::Submit(BindCallback(&FLVAudioRender::OnMessagePump, this));
 	}
 	BOOL FLVAudioRender::Close(DWORD dwMS)
@@ -164,10 +166,12 @@ namespace FLVPlayer
 				m_decode.m_decode.m_baseTime = timeGetTime();
 			}
 			while (m_decode.m_decode.m_baseTime == -1);
+			TinyPerformanceTimer timer;
+			timer.BeginTime();
 			if (!m_bInitialize)
 			{
 				m_bInitialize = TRUE;
-				if (!m_player.Initialize(m_decode.m_decode.m_hWND, &m_decode.m_decode.m_aac->GetFormat(), tag.size * 2))
+				if (!m_player.SetFormat(&m_decode.m_decode.m_aac->GetFormat(), tag.size * 2))
 					break;
 				m_events[0].CreateEvent();
 				m_events[1].CreateEvent();
@@ -185,8 +189,17 @@ namespace FLVPlayer
 					}
 				}
 			}
+			timer.EndTime();
+			TRACE("audio-cast:%d\n", timer.GetMillisconds());
 			m_player.Fill(tag.bits, tag.size);
 			SAFE_DELETE_ARRAY(tag.bits);
+
+
+			DWORD dwMS = timeGetTime() - m_decode.m_decode.m_baseTime;
+			INT offset = tag.samplePTS - dwMS;
+			Sleep(offset < 0 ? 0 : offset);
+			TRACE("audio-offset:%d,%d,%d\n", offset, dwMS, tag.samplePTS);
+
 			HANDLE handles[2] = { m_events[0],m_events[1] };
 			WaitForMultipleObjects(2, handles, FALSE, INFINITE);
 		}
