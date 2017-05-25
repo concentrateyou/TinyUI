@@ -25,7 +25,7 @@ namespace FLVPlayer
 	}
 	BOOL FLVDecode::Submit()
 	{
-		if (m_reader.Open("D:\\3.flv"))
+		if (m_reader.Open("D:\\4.flv"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);
@@ -163,13 +163,13 @@ namespace FLVPlayer
 				continue;
 			if (tag.samplePTS == m_decode.m_decode.m_basePTS)
 			{
+				TinyAutoLock lock(m_decode.m_decode.m_lockTime);
 				m_decode.m_decode.m_baseTime = timeGetTime();
 			}
 			while (m_decode.m_decode.m_baseTime == -1);
-			TinyPerformanceTimer timer;
-			timer.BeginTime();
 			if (!m_bInitialize)
 			{
+				m_timer.BeginTime();
 				m_bInitialize = TRUE;
 				if (!m_player.SetFormat(&m_decode.m_decode.m_aac->GetFormat(), tag.size * 2))
 					break;
@@ -180,26 +180,23 @@ namespace FLVPlayer
 				vals[0].hEventNotify = m_events[0];
 				vals[1].dwOffset = tag.size * 2 - 1;
 				vals[1].hEventNotify = m_events[1];
-				if (m_player.SetPositions(2, vals))
-				{
-					m_player.Play();
-					if (tag.size != 4096)
-					{
-						m_player.Fill(tag.bits, tag.size);
-					}
-				}
+				m_player.SetPositions(2, vals);
+				m_player.Play();
+				m_timer.EndTime();
+				TinyAutoLock lock(m_decode.m_decode.m_lockTime);
+				m_decode.m_decode.m_baseTime += m_timer.GetMillisconds();
+				DWORD dwMS = timeGetTime() - m_decode.m_decode.m_baseTime;
+				INT offset = tag.samplePTS - dwMS;
+				Sleep(offset < 0 ? 0 : offset);
+				TRACE("audio-offset:%d\n", offset);
+				m_player.Fill(tag.bits, tag.size);
+				SAFE_DELETE_ARRAY(tag.bits);
 			}
-			timer.EndTime();
-			TRACE("audio-cast:%d\n", timer.GetMillisconds());
-			m_player.Fill(tag.bits, tag.size);
-			SAFE_DELETE_ARRAY(tag.bits);
-
-
-			DWORD dwMS = timeGetTime() - m_decode.m_decode.m_baseTime;
-			INT offset = tag.samplePTS - dwMS;
-			Sleep(offset < 0 ? 0 : offset);
-			TRACE("audio-offset:%d,%d,%d\n", offset, dwMS, tag.samplePTS);
-
+			else
+			{
+				m_player.Fill(tag.bits, tag.size);
+				SAFE_DELETE_ARRAY(tag.bits);
+			}
 			HANDLE handles[2] = { m_events[0],m_events[1] };
 			WaitForMultipleObjects(2, handles, FALSE, INFINITE);
 		}
@@ -239,6 +236,7 @@ namespace FLVPlayer
 				continue;
 			if (tag.samplePTS == m_decode.m_decode.m_basePTS)
 			{
+				TinyAutoLock lock(m_decode.m_decode.m_lockTime);
 				m_decode.m_decode.m_baseTime = timeGetTime();
 			}
 			while (m_decode.m_decode.m_baseTime == -1);
@@ -252,7 +250,7 @@ namespace FLVPlayer
 
 	void FLVVideoRender::OnRender(BYTE* bits, LONG size)
 	{
-		ASSERT(size == m_decode.m_decode.m_size.cx *  m_decode.m_decode.m_size.cy * 3);
+		ASSERT(size == m_decode.m_decode.m_size.cx *  m_decode.m_decode.m_size.cy * 4);
 		HDC hDC = GetDC(m_decode.m_decode.m_hWND);
 		if (hDC != NULL)
 		{
@@ -261,9 +259,9 @@ namespace FLVPlayer
 			bmi.bmiHeader.biWidth = m_decode.m_decode.m_size.cx;
 			bmi.bmiHeader.biHeight = -m_decode.m_decode.m_size.cy;
 			bmi.bmiHeader.biPlanes = 1;
-			bmi.bmiHeader.biBitCount = 24;
+			bmi.bmiHeader.biBitCount = 32;
 			bmi.bmiHeader.biCompression = BI_RGB;
-			bmi.bmiHeader.biSizeImage = m_decode.m_decode.m_size.cx *  m_decode.m_decode.m_size.cy * 3;
+			bmi.bmiHeader.biSizeImage = m_decode.m_decode.m_size.cx *  m_decode.m_decode.m_size.cy * 4;
 			BYTE* pvBits = NULL;
 			HBITMAP hBitmap = ::CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pvBits), NULL, 0);
 			if (hBitmap)

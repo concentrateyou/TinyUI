@@ -43,14 +43,15 @@ namespace FLVPlayer
 	private:
 		void	OnMessagePump();
 	private:
-		DWORD			m_dwMS;
-		LONGLONG		m_pts;
-		BOOL			m_bFlag;
-		BOOL			m_bInitialize;
-		TinyEvent		m_events[2];
-		TinyEvent		m_close;
-		TinySoundPlayer	m_player;
-		FLVVAudioTask&	m_decode;
+		DWORD					m_dwMS;
+		LONGLONG				m_pts;
+		BOOL					m_bFlag;
+		BOOL					m_bInitialize;
+		TinyEvent				m_events[2];
+		TinyEvent				m_close;
+		TinySoundPlayer			m_player;
+		FLVVAudioTask&			m_decode;
+		TinyPerformanceTimer	m_timer;
 	};
 
 	class FLVVideoTask : public TinyTaskBase
@@ -102,6 +103,7 @@ namespace FLVPlayer
 	private:
 		void	OnMessagePump();
 	private:
+		TinyLock					m_lockTime;
 		LONG						m_baseTime;
 		LONG						m_basePTS;
 		HWND						m_hWND;

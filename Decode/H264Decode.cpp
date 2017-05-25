@@ -8,7 +8,7 @@ namespace Decode
 		m_context(NULL),
 		m_codec(NULL),
 		m_sws(NULL),
-		m_pBGR24(NULL)
+		m_pRGB32(NULL)
 	{
 		ZeroMemory(&m_packet, sizeof(m_packet));
 	}
@@ -30,18 +30,18 @@ namespace Decode
 		m_pYUV420 = av_frame_alloc();
 		if (!m_pYUV420)
 			goto H264_ERROR;
-		m_pBGR24 = av_frame_alloc();
-		if (!m_pBGR24)
+		m_pRGB32 = av_frame_alloc();
+		if (!m_pRGB32)
 			goto H264_ERROR;
 		m_srcsize = srcsize;
 		m_dstsize = dstsize;
-		m_sws = sws_getContext(srcsize.cx, srcsize.cy, AV_PIX_FMT_YUV420P, dstsize.cx, dstsize.cy, AV_PIX_FMT_BGR24, 0, NULL, NULL, NULL);
+		m_sws = sws_getContext(srcsize.cx, srcsize.cy, AV_PIX_FMT_YUV420P, dstsize.cx, dstsize.cy, AV_PIX_FMT_RGB32, 0, NULL, NULL, NULL);
 		if (!m_sws)
 			goto H264_ERROR;
-		INT size = av_image_get_buffer_size(AV_PIX_FMT_BGR24, m_dstsize.cx, m_dstsize.cy, 1);
+		INT size = av_image_get_buffer_size(AV_PIX_FMT_RGB32, m_dstsize.cx, m_dstsize.cy, 1);
 		m_bits.Reset(new BYTE[size]);
 		ZeroMemory(m_bits, size);
-		return size == av_image_fill_arrays(m_pBGR24->data, m_pBGR24->linesize, m_bits.Ptr(), AV_PIX_FMT_BGR24, m_dstsize.cx, m_dstsize.cy, 1);
+		return size == av_image_fill_arrays(m_pRGB32->data, m_pRGB32->linesize, m_bits.Ptr(), AV_PIX_FMT_RGB32, m_dstsize.cx, m_dstsize.cy, 1);
 	H264_ERROR:
 		Close();
 		return FALSE;
@@ -76,10 +76,10 @@ namespace Decode
 		iRes = avcodec_receive_frame(m_context, m_pYUV420);
 		if (iRes != 0)
 			return FALSE;
-		INT cy = sws_scale(m_sws, m_pYUV420->data, m_pYUV420->linesize, 0, m_srcsize.cy, m_pBGR24->data, m_pBGR24->linesize);
+		INT cy = sws_scale(m_sws, m_pYUV420->data, m_pYUV420->linesize, 0, m_srcsize.cy, m_pRGB32->data, m_pRGB32->linesize);
 		ASSERT(cy == m_dstsize.cy);
-		bo = m_pBGR24->data[0];
-		so = m_pBGR24->linesize[0] * cy;
+		bo = m_pRGB32->data[0];
+		so = m_pRGB32->linesize[0] * cy;
 		return TRUE;
 	}
 	BOOL H264Decode::Close()
@@ -106,10 +106,10 @@ namespace Decode
 			av_frame_free(&m_pYUV420);
 			m_pYUV420 = NULL;
 		}
-		if (m_pBGR24)
+		if (m_pRGB32)
 		{
-			av_frame_free(&m_pBGR24);
-			m_pBGR24 = NULL;
+			av_frame_free(&m_pRGB32);
+			m_pRGB32 = NULL;
 		}
 		return TRUE;
 	}
@@ -117,8 +117,8 @@ namespace Decode
 	{
 		return m_pYUV420;
 	}
-	AVFrame* H264Decode::GetBGR24() const
+	AVFrame* H264Decode::GetRGB32() const
 	{
-		return m_pBGR24;
+		return m_pRGB32;
 	}
 }

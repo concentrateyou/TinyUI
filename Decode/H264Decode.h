@@ -30,13 +30,13 @@ namespace Decode
 		BOOL Decode(SampleTag& tag, BYTE*& bo, LONG& so);
 		BOOL Close();
 		AVFrame* GetYUV420() const;
-		AVFrame* GetBGR24() const;
+		AVFrame* GetRGB32() const;
 	private:
 		TinySize				m_srcsize;
 		TinySize				m_dstsize;
 		AVPacket				m_packet;
 		AVFrame*				m_pYUV420;
-		AVFrame*				m_pBGR24;
+		AVFrame*				m_pRGB32;
 		AVCodec*				m_codec;
 		SwsContext*				m_sws;
 		AVCodecContext*			m_context;
