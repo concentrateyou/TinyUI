@@ -2,7 +2,7 @@
 #include "Media/TinySoundPlayer.h"
 #include "IO/TinyTaskBase.h"
 #include "Common/TinyTime.h"
-#include "FLVParser.h"
+#include "FLVReader.h"
 #include "PacketQueue.h"
 using namespace Decode;
 using namespace TinyUI;

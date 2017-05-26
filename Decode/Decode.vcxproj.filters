@@ -30,9 +30,6 @@
     <ClInclude Include="TSDecode.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Utility.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="MPG123Decode.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -48,6 +45,15 @@
     <ClInclude Include="RTMPStream.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FLVReader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FLVWriter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -57,9 +63,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="TSDecode.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Utility.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MPG123Decode.cpp">
@@ -75,6 +78,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="RTMPStream.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Common.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FLVReader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FLVWriter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
