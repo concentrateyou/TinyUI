@@ -45,7 +45,7 @@ namespace TinyUI
 			m_bClose(TRUE)
 		{
 			m_raw.Reset(new CHAR[8192]);
-			m_event.CreateEvent();
+			m_wait.CreateEvent();
 		}
 		BOOL TinyHTTPRequest::Open(const string& szURL, const string& ms)
 		{
@@ -96,7 +96,7 @@ namespace TinyUI
 			{
 				BuildRequest();
 				m_socket.BeginConnect(m_endpoint, BindCallback(&TinyHTTPRequest::OnHandleConnect, this), this);
-				if (m_event.Lock(INFINITE) && m_dwError == S_OK)
+				if (m_wait.Lock(INFINITE) && m_dwError == S_OK)
 				{
 					TinyHTTPResponse* response = new TinyHTTPResponse();
 					if (response->ParseResponse(m_response.GetPointer(), m_response.GetSize()))
@@ -179,7 +179,7 @@ namespace TinyUI
 					{
 						this->Close();
 					}
-					m_event.SetEvent();
+					m_wait.SetEvent();
 				}
 			}
 		}
@@ -187,7 +187,7 @@ namespace TinyUI
 		{
 			m_dwError = dwError;
 			this->Close();
-			m_event.SetEvent();
+			m_wait.SetEvent();
 		}
 		void TinyHTTPRequest::BuildRequest()
 		{

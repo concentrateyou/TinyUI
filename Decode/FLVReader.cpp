@@ -505,6 +505,11 @@ namespace Decode
 								ASSERT(objProp->p_type == AMF_NUMBER);
 								script.audiosamplerate = objProp->p_vu.p_number;
 							}
+							if ("audiochannels" == val)
+							{
+								ASSERT(objProp->p_type == AMF_NUMBER);
+								script.audiochannels = objProp->p_vu.p_number;
+							}
 						}
 					}
 				}

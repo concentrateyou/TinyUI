@@ -78,7 +78,7 @@ namespace TinyUI
 			DWORD					m_dwTO;
 			string					m_ms;
 			string					m_line;
-			TinyEvent				m_event;
+			TinyEvent				m_wait;
 			TinyURL					m_sURL;
 			TinySocket				m_socket;
 			IPEndPoint				m_endpoint;

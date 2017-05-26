@@ -152,6 +152,7 @@ namespace Decode
 		DOUBLE	audiodatarate;
 		DOUBLE	audiosamplesize;
 		DOUBLE	audiosamplerate;
+		DOUBLE	audiochannels;
 		DOUBLE	videodatarate;
 		DOUBLE	framerate;
 		DOUBLE	width;
