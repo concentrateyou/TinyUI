@@ -15,6 +15,7 @@ namespace TinyUI
 
 		class TinyRingBuffer
 		{
+			DISALLOW_COPY_AND_ASSIGN(TinyRingBuffer)
 		public:
 			TinyRingBuffer(TinyLock& lock);
 			~TinyRingBuffer();

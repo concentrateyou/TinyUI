@@ -19,6 +19,7 @@ BOOL RTMPStream::Open(LPCSTR pzURL)
 		return FALSE;
 	m_sRTMP.Link.timeout = 3000;//ƒ¨»œ3√Î≥¨ ±
 	m_sRTMP.Link.lFlags |= RTMP_LF_BUFX | RTMP_LF_FTCU | RTMP_LF_LIVE;
+	RTMP_SetBufferMS(&m_sRTMP, 600);//10∑÷÷”
 	if (!RTMP_Connect(&m_sRTMP, NULL))
 		return FALSE;
 	if (!RTMP_ConnectStream(&m_sRTMP, 0))
