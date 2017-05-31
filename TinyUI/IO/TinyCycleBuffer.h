@@ -15,12 +15,19 @@ namespace TinyUI
 		{
 			DISALLOW_COPY_AND_ASSIGN(TinyCycleBuffer)
 		public:
-			TinyCycleBuffer(TinyLock& lock,DWORD dwSize);
-			~TinyCycleBuffer();
-		private:
+			TinyCycleBuffer(TinyLock& lock);
+			virtual ~TinyCycleBuffer();
+			BOOL Initialize(DWORD size);
+			DWORD Read(void* data, DWORD count);
+			DWORD Write(const void* data, DWORD count);
+		public:
+			DWORD		m_readPos;
+			DWORD		m_writePos;
+			DWORD		m_size;
 			TinyLock&	m_lock;
-			DWORD		m_dwSize;//ª∫¥Ê¥Û–°
+			TinyScopedArray<CHAR> m_data;
 		};
+
 	};
 }
 

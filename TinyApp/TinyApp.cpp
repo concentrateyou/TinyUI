@@ -26,7 +26,8 @@
 #include "Network/TinyDNS.h"
 #include "Common/TinySignal.h"
 
-//#include "resource.pb.h"
+#include "message.pb.h"
+#include <fstream>
 
 using namespace TinyUI;
 using namespace TinyUI::Network;
@@ -80,20 +81,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
-	/*Switch::Msg msg;
-	msg.set_x(10);
-	msg.set_y(11);
-	msg.set_id("test");
-	msg.mutable_image()->set_cx(100);
-	msg.mutable_image()->set_cy(101);
-	msg.mutable_audio()->set_count(10);
-	msg.mutable_video()->set_count(11);
-	string str;
-	msg.SerializePartialToString(&str);
-
-	Switch::Msg msg1;
-	msg1.ParseFromString(str);*/
-	
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;

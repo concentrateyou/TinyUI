@@ -1,12 +1,16 @@
 #pragma once
 #include <string>
 #include "IO/TinyIO.h"
+#include "IO/TinyTaskBase.h"
 #include "rtmp.h"
 using namespace std;
+using namespace TinyUI;
+using namespace TinyUI::IO;
+#define MAX_QUEUE_SIZE (1024 * 1024 * 4)
 /// <summary>
 /// RTMPÍøÂçÁ÷
 /// </summary>
-class RTMPStream : public IStream
+class RTMPStream : public IStream, public TinyTaskBase
 {
 public:
 	// *** IUnknown methods ***
@@ -26,12 +30,17 @@ public:
 	STDMETHOD(Stat) (STATSTG *pstatstg, DWORD grfStatFlag);
 	STDMETHOD(Clone)(IStream **ppstm);
 public:
+	BOOL Submit(Closure&& callback) OVERRIDE;
+	BOOL Close(DWORD dwMs) OVERRIDE;
+public:
 	RTMPStream();
 	virtual~RTMPStream();
 	BOOL Open(LPCSTR pzURL);
-	BOOL Close();
 private:
-	LONG        m_cRef;
-	RTMP		m_sRTMP;
+	void OnMessagePump();
+private:
+	LONG			m_cRef;
+	RTMP			m_sRTMP;
+	TinyLock		m_lock;
 };
 

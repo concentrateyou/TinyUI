@@ -3,7 +3,6 @@
 #include "AACDecode.h"
 #include "H264Decode.h"
 #include <vector>
-#include "rtmp.h"
 
 using namespace std;
 using namespace TinyUI;
