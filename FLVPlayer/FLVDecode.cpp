@@ -26,7 +26,7 @@ namespace FLVPlayer
 	}
 	BOOL FLVDecode::Submit()
 	{
-		//if(m_reader.OpenURL("rtmp://10.121.86.127/live/test_360p"))
+		//if(m_reader.OpenURL("rtmp://10.121.86.127/live/test_360p_1"))
 		if (m_reader.OpenURL("rtmp://live.hkstv.hk.lxdns.com/live/hks"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
@@ -331,7 +331,8 @@ namespace FLVPlayer
 				break;
 			}
 			INT size = m_queue.GetSize();
-			if (size > MAX_VIDEO_QUEUE_SIZE)
+			if (size > MAX_VIDEO_QUEUE_SIZE ||
+				m_decode.m_videoQueue.IsEmpty())
 			{
 				Sleep(1);
 				continue;
@@ -391,7 +392,8 @@ namespace FLVPlayer
 				break;
 			}
 			INT size = m_queue.GetSize();
-			if (size > MAX_AUDIO_QUEUE_SIZE)
+			if (size > MAX_AUDIO_QUEUE_SIZE ||
+				m_decode.m_audioQueue.IsEmpty())
 			{
 				Sleep(1);
 				continue;

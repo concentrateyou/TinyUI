@@ -9,6 +9,7 @@ public:
 	void Push(Decode::SampleTag& tag);
 	Decode::SampleTag Pop();
 	INT GetSize() const;
+	BOOL IsEmpty() const;
 private:
 	INT						m_size;
 	TinyLock&				m_lock;
