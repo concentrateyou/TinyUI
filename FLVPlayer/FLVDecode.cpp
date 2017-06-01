@@ -26,7 +26,8 @@ namespace FLVPlayer
 	}
 	BOOL FLVDecode::Submit()
 	{
-		if (m_reader.OpenURL("rtmp://10.121.86.127/live/test_360p"))
+		//if(m_reader.OpenURL("rtmp://10.121.86.127/live/test_360p"))
+		if (m_reader.OpenURL("rtmp://live.hkstv.hk.lxdns.com/live/hks"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);
@@ -62,7 +63,7 @@ namespace FLVPlayer
 			INT size = m_audioQueue.GetSize() + m_videoQueue.GetSize();
 			if (size > MAX_QUEUE_SIZE)
 			{
-				Sleep(3);
+				Sleep(5);
 				continue;
 			}
 			if (!m_reader.ReadBlock(block))
@@ -153,7 +154,7 @@ namespace FLVPlayer
 		m_bFlag(FALSE),
 		m_dwMS(0)
 	{
-		m_close.CreateEvent(FALSE, FALSE, NULL, NULL);
+		m_close.CreateEvent();
 	}
 	FLVAudioRender::~FLVAudioRender()
 	{
@@ -201,19 +202,16 @@ namespace FLVPlayer
 				vals[1].dwOffset = tag.size * 2 - 1;
 				vals[1].hEventNotify = m_events[1];
 				m_player.SetPositions(2, vals);
-				
 				m_timer.EndTime();
+				m_decode.m_decode.m_lockTime.Lock();
+				m_decode.m_decode.m_baseTime += m_timer.GetMillisconds();
+				m_decode.m_decode.m_lockTime.Unlock();
+				DWORD dwMS = timeGetTime() - m_decode.m_decode.m_baseTime;
+				INT offset = tag.samplePTS - dwMS;
+				Sleep(offset < 0 ? 0 : offset);
+				if (tag.size != 4096)
 				{
-					m_decode.m_decode.m_lockTime.Lock();
-					m_decode.m_decode.m_baseTime += m_timer.GetMillisconds();
-					m_decode.m_decode.m_lockTime.Unlock();
-					DWORD dwMS = timeGetTime() - m_decode.m_decode.m_baseTime;
-					INT offset = tag.samplePTS - dwMS;
-					Sleep(offset < 0 ? 0 : offset);
-					if (tag.size != 4096)
-					{
-						m_player.Fill(tag.bits, tag.size);
-					}
+					m_player.Fill(tag.bits, tag.size);
 				}
 				m_player.Fill(tag.bits, tag.size);
 				SAFE_DELETE_ARRAY(tag.bits);
@@ -260,7 +258,9 @@ namespace FLVPlayer
 			}
 			SampleTag tag = m_decode.m_queue.Pop();
 			if (tag.size <= 0)
+			{
 				continue;
+			}
 			if (tag.samplePTS == m_decode.m_decode.m_basePTS)
 			{
 				TinyAutoLock lock(m_decode.m_decode.m_lockTime);
@@ -269,7 +269,6 @@ namespace FLVPlayer
 			while (m_decode.m_decode.m_baseTime == -1);
 			DWORD dwMS = timeGetTime() - m_decode.m_decode.m_baseTime;
 			INT offset = tag.samplePTS - dwMS;
-			//TRACE("video sleep:%d\n", offset < 0 ? 0 : offset);
 			Sleep(offset < 0 ? 0 : offset);
 			OnRender(tag.bits, tag.size);
 			SAFE_DELETE_ARRAY(tag.bits);
