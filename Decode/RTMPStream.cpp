@@ -5,12 +5,11 @@
 RTMPStream::RTMPStream()
 	:m_cRef(1)
 {
-
 }
 
 RTMPStream::~RTMPStream()
 {
-	
+	Close();
 }
 
 BOOL RTMPStream::Open(LPCSTR pzURL)
@@ -20,7 +19,7 @@ BOOL RTMPStream::Open(LPCSTR pzURL)
 		return FALSE;
 	m_sRTMP.Link.timeout = 3000;//ƒ¨»œ3√Î≥¨ ±
 	m_sRTMP.Link.lFlags |= RTMP_LF_BUFX | RTMP_LF_FTCU | RTMP_LF_LIVE;
-	RTMP_SetBufferMS(&m_sRTMP, 600);//10∑÷÷”
+	RTMP_SetBufferMS(&m_sRTMP, 10 * 1000);//10s
 	if (!RTMP_Connect(&m_sRTMP, NULL))
 		return FALSE;
 	if (!RTMP_ConnectStream(&m_sRTMP, 0))
@@ -28,21 +27,10 @@ BOOL RTMPStream::Open(LPCSTR pzURL)
 	return TRUE;
 }
 
-BOOL RTMPStream::Close(DWORD dwMs)
+BOOL RTMPStream::Close()
 {
 	RTMP_Close(&m_sRTMP);
-	return TinyTaskBase::Close(dwMs);
-}
-
-void RTMPStream::OnMessagePump()
-{
-	for (;;)
-	{
-		if (!RTMP_IsConnected(&m_sRTMP))
-			break;
-		if (RTMP_IsTimedout(&m_sRTMP))
-			break;
-	}
+	return TRUE;
 }
 
 STDMETHODIMP RTMPStream::QueryInterface(REFIID riid, void **ppvObj)
@@ -76,7 +64,6 @@ STDMETHODIMP_(ULONG) RTMPStream::Release()
 
 STDMETHODIMP RTMPStream::Read(VOID *pv, ULONG cb, ULONG *pcbRead)
 {
-	TinyAutoLock lock(m_lock);
 	ULONG   cbRead;
 	HRESULT hRes = S_OK;
 	if (!pv) return E_INVALIDARG;
@@ -140,13 +127,4 @@ STDMETHODIMP RTMPStream::Stat(STATSTG *pstatstg, DWORD grfStatFlag)
 STDMETHODIMP RTMPStream::Clone(IStream * *ppstm)
 {
 	return E_NOTIMPL;
-}
-
-BOOL RTMPStream::Submit(Closure&& callback)
-{
-	if (!RTMP_IsConnected(&m_sRTMP))
-		return FALSE;
-	if (RTMP_IsTimedout(&m_sRTMP))
-		return FALSE;
-	return TinyTaskBase::Submit(BindCallback(&RTMPStream::OnMessagePump, this));
 }

@@ -233,7 +233,6 @@
     <ClInclude Include="HDE\pstdint.h" />
     <ClInclude Include="HDE\table32.h" />
     <ClInclude Include="HDE\table64.h" />
-    <ClInclude Include="IO\TinyCycleBuffer.h" />
     <ClInclude Include="IO\TinyPipe.h" />
     <ClInclude Include="IO\TinyRingBuffer.h" />
     <ClInclude Include="IO\TinyIO.h" />
@@ -370,7 +369,6 @@
     <ClCompile Include="Database\TinySqlite.cpp" />
     <ClCompile Include="HDE\hde32.c" />
     <ClCompile Include="HDE\hde64.c" />
-    <ClCompile Include="IO\TinyCycleBuffer.cpp" />
     <ClCompile Include="IO\TinyPipe.cpp" />
     <ClCompile Include="IO\TinyRingBuffer.cpp" />
     <ClCompile Include="IO\TinyIO.cpp" />
