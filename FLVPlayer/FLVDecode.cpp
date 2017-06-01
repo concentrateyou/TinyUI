@@ -26,7 +26,7 @@ namespace FLVPlayer
 	}
 	BOOL FLVDecode::Submit()
 	{
-		if (m_reader.OpenURL("rtmp://10.121.86.127/live/test_360p_1"))
+		if (m_reader.OpenURL("rtmp://10.121.86.127/live/test_360p"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);
@@ -62,14 +62,13 @@ namespace FLVPlayer
 			INT size = m_audioQueue.GetSize() + m_videoQueue.GetSize();
 			if (size > MAX_QUEUE_SIZE)
 			{
-				Sleep(5);
+				Sleep(3);
 				continue;
 			}
 			if (!m_reader.ReadBlock(block))
 			{
 				break;
 			}
-
 			if (block.type == FLV_AUDIO)
 			{
 				if (block.audio.codeID == FLV_CODECID_AAC)
@@ -205,16 +204,18 @@ namespace FLVPlayer
 				m_player.Play();
 				m_timer.EndTime();
 				{
-					TinyAutoLock lock(m_decode.m_decode.m_lockTime);
-					m_decode.m_decode.m_baseTime += m_timer.GetMillisconds();
+					{
+						TinyAutoLock lock(m_decode.m_decode.m_lockTime);
+						m_decode.m_decode.m_baseTime += m_timer.GetMillisconds();
+					}
+					DWORD dwMS = timeGetTime() - m_decode.m_decode.m_baseTime;
+					INT offset = tag.samplePTS - dwMS;
+					Sleep(offset < 0 ? 0 : offset);
 					if (tag.size != 4096)
 					{
 						m_player.Fill(tag.bits, tag.size);
 					}
 				}
-				DWORD dwMS = timeGetTime() - m_decode.m_decode.m_baseTime;
-				INT offset = tag.samplePTS - dwMS;
-				Sleep(offset < 0 ? 0 : offset);
 				m_player.Fill(tag.bits, tag.size);
 				SAFE_DELETE_ARRAY(tag.bits);
 			}
@@ -223,8 +224,11 @@ namespace FLVPlayer
 				m_player.Fill(tag.bits, tag.size);
 				SAFE_DELETE_ARRAY(tag.bits);
 			}
+			//m_timer.BeginTime();
 			HANDLE handles[2] = { m_events[0],m_events[1] };
 			WaitForMultipleObjects(2, handles, FALSE, INFINITE);
+			/*m_timer.EndTime();
+			TRACE("audio wait:%d\n", m_timer.GetMillisconds());*/
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -268,6 +272,7 @@ namespace FLVPlayer
 			while (m_decode.m_decode.m_baseTime == -1);
 			DWORD dwMS = timeGetTime() - m_decode.m_decode.m_baseTime;
 			INT offset = tag.samplePTS - dwMS;
+			//TRACE("video sleep:%d\n", offset < 0 ? 0 : offset);
 			Sleep(offset < 0 ? 0 : offset);
 			OnRender(tag.bits, tag.size);
 			SAFE_DELETE_ARRAY(tag.bits);
