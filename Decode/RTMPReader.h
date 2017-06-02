@@ -1,11 +1,6 @@
 #pragma once
 #include "Common.h"
-#include "AACDecode.h"
-#include "H264Decode.h"
-#include <vector>
-
-using namespace std;
-using namespace TinyUI;
+#include "rtmp.h"
 
 namespace Decode
 {
@@ -13,20 +8,20 @@ namespace Decode
 	/// FLV大端数据
 	/// 目前音频支持支AAC,MP3和PCM,视频H.264
 	/// </summary>
-	class FLVParser
+	class RTMPReader : public TinyTaskBase
 	{
-		DISALLOW_COPY_AND_ASSIGN(FLVParser)
+		DISALLOW_COPY_AND_ASSIGN(RTMPReader)
 	public:
-		FLVParser();
-		~FLVParser();
-		BOOL Open(LPCSTR pzFile);
-		BOOL Parse();
-		BOOL Close();
+		RTMPReader();
+		~RTMPReader();
+		BOOL Open(LPCSTR pzURL);
+		BOOL Close(DWORD dwMs) OVERRIDE;
 	public:
 		Event<void(BYTE*, LONG, FLV_PACKET*)> EVENT_AUDIO;
 		Event<void(BYTE*, LONG, FLV_PACKET*)> EVENT_VIDEO;
 		Event<void(FLV_SCRIPTDATA*)> EVENT_SCRIPT;
 	private:
+		void OnMessagePump();
 		BOOL ParseVideo(BYTE* data, INT size);
 		BOOL ParseAudio(BYTE* data, INT size);
 		BOOL ParseScript(BYTE* data, INT size);
@@ -37,13 +32,11 @@ namespace Decode
 		BOOL ParseMPEG4(FLV_TAG_VIDEO* video, BYTE* data, INT size);
 		BOOL ParseNALU(FLV_TAG_VIDEO* video, INT* cts, BYTE* data, INT size);
 	private:
-		BOOL							m_bAudio;
-		BOOL							m_bVideo;
-		BYTE							m_minusOne;
-		FILE*							m_hFile;
-		LONGLONG						m_dts;
-		LONG							m_index;
-		LONG							m_duration;
+		BYTE		m_minusOne;
+		RTMP		m_sRTMP;
+		TinyEvent	m_close;
+		LONGLONG	m_timestamp;
 	};
 }
+
 

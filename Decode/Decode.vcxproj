@@ -147,6 +147,7 @@
     <ClInclude Include="FLVWriter.h" />
     <ClInclude Include="H264Decode.h" />
     <ClInclude Include="MPG123Decode.h" />
+    <ClInclude Include="RTMPReader.h" />
     <ClInclude Include="RTMPStream.h" />
     <ClInclude Include="FLVParser.h" />
     <ClInclude Include="TSDecode.h" />
@@ -161,6 +162,7 @@
     <ClCompile Include="FLVWriter.cpp" />
     <ClCompile Include="H264Decode.cpp" />
     <ClCompile Include="MPG123Decode.cpp" />
+    <ClCompile Include="RTMPReader.cpp" />
     <ClCompile Include="RTMPStream.cpp" />
     <ClCompile Include="FLVParser.cpp" />
     <ClCompile Include="TSDecode.cpp" />

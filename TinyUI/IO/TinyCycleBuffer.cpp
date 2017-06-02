@@ -7,12 +7,11 @@ namespace TinyUI
 {
 	namespace IO
 	{
-		TinyCycleBuffer::TinyCycleBuffer(TinyLock& lock)
+		TinyCycleBuffer::TinyCycleBuffer()
 			:m_size(0),
 			m_readPos(0),
 			m_writePos(0),
-			m_wrap(SAME_WRAP),
-			m_lock(lock)
+			m_wrap(SAME_WRAP)
 		{
 
 		}
@@ -38,7 +37,6 @@ namespace TinyUI
 
 		DWORD TinyCycleBuffer::Read(void* data, DWORD size)
 		{
-			TinyAutoLock lock(m_lock);
 			if (!data)
 				return 0;
 			DWORD dwOUT = this->GetAvailableOUT();
@@ -59,7 +57,6 @@ namespace TinyUI
 
 		DWORD TinyCycleBuffer::Write(const void* data, DWORD size)
 		{
-			TinyAutoLock lock(m_lock);
 			if (!data)
 				return 0;
 			DWORD dwIN = this->GetAvailableIN();
@@ -80,7 +77,6 @@ namespace TinyUI
 
 		DWORD TinyCycleBuffer::GetAvailable(BOOL bIN)
 		{
-			TinyAutoLock lock(m_lock);
 			return bIN ? this->GetAvailableIN() : this->GetAvailableOUT();
 		}
 

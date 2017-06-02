@@ -1,44 +1,40 @@
 #include "stdafx.h"
-#include "FLVParser.h"
-#include "amf.h"
-#include "RTMPStream.h"
+#include "RTMPReader.h"
 
 namespace Decode
 {
-	FLVParser::FLVParser()
-		:m_hFile(NULL),
-		m_minusOne(4),
-		m_bAudio(FALSE),
-		m_bVideo(FALSE),
-		m_dts(0),
-		m_index(0)
+	RTMPReader::RTMPReader()
+		:m_minusOne(4),
+		m_timestamp(0)
 	{
 
 	}
-	FLVParser::~FLVParser()
+	RTMPReader::~RTMPReader()
 	{
-		if (m_hFile != NULL)
-		{
-			fclose(m_hFile);
-			m_hFile = NULL;
-		}
+		Close(INFINITE);
 	}
-	BOOL FLVParser::Open(LPCSTR pzFile)
+	BOOL RTMPReader::Open(LPCSTR pzURL)
 	{
-		Close();
-		fopen_s(&m_hFile, pzFile, "rb");
-		return m_hFile != NULL;
+		RTMP_Init(&m_sRTMP);
+		if (!RTMP_SetupURL(&m_sRTMP, (CHAR*)pzURL))
+			return FALSE;
+		m_sRTMP.Link.timeout = 3000;//默认3秒超时
+		m_sRTMP.Link.lFlags |= RTMP_LF_BUFX | RTMP_LF_FTCU | RTMP_LF_LIVE;
+		RTMP_SetBufferMS(&m_sRTMP, 3600 * 1000);//1h
+		if (!RTMP_Connect(&m_sRTMP, NULL))
+			return FALSE;
+		if (!RTMP_ConnectStream(&m_sRTMP, 0))
+			return FALSE;
+		m_close.CreateEvent();
+		return TinyTaskBase::Submit(BindCallback(&RTMPReader::OnMessagePump, this));
 	}
-	BOOL FLVParser::Close()
+	BOOL RTMPReader::Close(DWORD dwMs)
 	{
-		if (m_hFile != NULL)
-		{
-			fclose(m_hFile);
-			m_hFile = NULL;
-		}
-		return TRUE;
+		m_close.SetEvent();
+		RTMP_Close(&m_sRTMP);
+		return TinyTaskBase::Close(dwMs);
 	}
-	BOOL FLVParser::ParseVideo(BYTE* data, INT size)
+	BOOL RTMPReader::ParseVideo(BYTE* data, INT size)
 	{
 		BOOL bRes = FALSE;
 		FLV_TAG_VIDEO* video = reinterpret_cast<FLV_TAG_VIDEO*>(data);
@@ -60,7 +56,7 @@ namespace Decode
 		}
 		return TRUE;
 	}
-	BOOL FLVParser::ParseAudio(BYTE* data, INT size)
+	BOOL RTMPReader::ParseAudio(BYTE* data, INT size)
 	{
 		BOOL bRes = FALSE;
 		//目前只支持MP3,AAC和PCM
@@ -88,7 +84,7 @@ namespace Decode
 		}
 		return bRes;
 	}
-	BOOL FLVParser::ParseScript(BYTE* data, INT size)
+	BOOL RTMPReader::ParseScript(BYTE* data, INT size)
 	{
 		AMFObject metaObj;
 		if (AMF_Decode(&metaObj, reinterpret_cast<CHAR*>(data), size, FALSE) > 0)
@@ -186,11 +182,11 @@ namespace Decode
 		}
 		return TRUE;
 	}
-	BOOL FLVParser::ParseMPEG4(FLV_TAG_VIDEO* video, BYTE* data, INT size)
+	BOOL RTMPReader::ParseMPEG4(FLV_TAG_VIDEO* video, BYTE* data, INT size)
 	{
 		return TRUE;
 	}
-	BOOL FLVParser::ParseH264(FLV_TAG_VIDEO* video, BYTE* data, INT size)
+	BOOL RTMPReader::ParseH264(FLV_TAG_VIDEO* video, BYTE* data, INT size)
 	{
 		BYTE* bits = data;
 		BYTE aacPacketType = *bits++;
@@ -228,8 +224,8 @@ namespace Decode
 				bits += s;
 			}
 			FLV_PACKET packet;
-			packet.dts = m_dts;
-			packet.pts = m_dts + cts;
+			packet.dts = m_timestamp;
+			packet.pts = m_timestamp + cts;
 			packet.codeID = video->codeID;
 			packet.codeType = video->codeType;
 			packet.packetType = FLV_AVCDecoderConfigurationRecord;
@@ -241,7 +237,7 @@ namespace Decode
 		}
 		return TRUE;
 	}
-	BOOL FLVParser::ParseNALU(FLV_TAG_VIDEO* video, INT* cts, BYTE* data, INT size)
+	BOOL RTMPReader::ParseNALU(FLV_TAG_VIDEO* video, INT* cts, BYTE* data, INT size)
 	{
 		BYTE* bits = data;
 		INT offset = 0;
@@ -264,8 +260,8 @@ namespace Decode
 				packet.codeID = video->codeID;
 				packet.codeType = video->codeType;
 				packet.packetType = FLV_NALU;
-				packet.dts = m_dts;
-				packet.pts = m_dts + *cts;
+				packet.dts = m_timestamp;
+				packet.pts = m_timestamp + *cts;
 				EVENT_VIDEO(val, sizeofNALU + 4, &packet);
 				bits += sizeofNALU;
 				offset += sizeofNALU;
@@ -282,8 +278,8 @@ namespace Decode
 				packet.codeID = video->codeID;
 				packet.codeType = video->codeType;
 				packet.packetType = FLV_NALU;
-				packet.dts = m_dts;
-				packet.pts = m_dts + *cts;
+				packet.dts = m_timestamp;
+				packet.pts = m_timestamp + *cts;
 				EVENT_VIDEO(val, sizeofNALU + 4, &packet);
 				bits += sizeofNALU;
 				offset += sizeofNALU;
@@ -300,8 +296,8 @@ namespace Decode
 				packet.codeID = video->codeID;
 				packet.codeType = video->codeType;
 				packet.packetType = FLV_NALU;
-				packet.dts = m_dts;
-				packet.pts = m_dts + *cts;
+				packet.dts = m_timestamp;
+				packet.pts = m_timestamp + *cts;
 				EVENT_VIDEO(val, sizeofNALU + 4, &packet);
 				bits += sizeofNALU;
 				offset += sizeofNALU;
@@ -318,8 +314,8 @@ namespace Decode
 				packet.codeID = video->codeID;
 				packet.codeType = video->codeType;
 				packet.packetType = FLV_NALU;
-				packet.dts = m_dts;
-				packet.pts = m_dts + *cts;
+				packet.dts = m_timestamp;
+				packet.pts = m_timestamp + *cts;
 				EVENT_VIDEO(val, sizeofNALU + 4, &packet);
 				bits += sizeofNALU;
 				offset += sizeofNALU;
@@ -329,7 +325,7 @@ namespace Decode
 		}
 		return TRUE;
 	}
-	BOOL FLVParser::ParseAAC(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
+	BOOL RTMPReader::ParseAAC(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
 	{
 		ASSERT(size >= 2);
 		BYTE* bits = data;
@@ -338,8 +334,8 @@ namespace Decode
 		FLV_PACKET packet = { 0 };
 		if (aacPacketType == 0)
 		{
-			packet.dts = m_dts;
-			packet.pts = m_dts;
+			packet.dts = m_timestamp;
+			packet.pts = m_timestamp;
 			packet.bitsPerSample = audio->bitsPerSample;
 			packet.channel = audio->channel;
 			packet.codeID = FLV_CODECID_AAC;
@@ -348,8 +344,8 @@ namespace Decode
 		}
 		if (aacPacketType == 1)
 		{
-			packet.dts = m_dts;
-			packet.pts = m_dts;
+			packet.dts = m_timestamp;
+			packet.pts = m_timestamp;
 			packet.bitsPerSample = audio->bitsPerSample;
 			packet.channel = audio->channel;
 			packet.codeID = FLV_CODECID_AAC;
@@ -358,64 +354,43 @@ namespace Decode
 		}
 		return TRUE;
 	}
-	BOOL FLVParser::ParseMP3(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
+	BOOL RTMPReader::ParseMP3(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
 	{
 		return TRUE;
 	}
-	BOOL FLVParser::ParsePCM(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
+	BOOL RTMPReader::ParsePCM(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
 	{
 		return TRUE;
 	}
-	BOOL FLVParser::Parse()
+	void RTMPReader::OnMessagePump()
 	{
-		FLV_HEADER header = { 0 };
-		ASSERT(sizeof(FLV_HEADER) != fread(&header, sizeof(FLV_HEADER), 1, m_hFile));
-		if (strncmp("FLV", (CHAR*)header.signature, 3) != 0)
-			return FALSE;
-		m_bAudio = (header.streamType & 0x04) != 0;
-		m_bVideo = (header.streamType & 0x01) != 0;
-		INT offset = ToINT32(header.offset);
-		fseek(m_hFile, offset, SEEK_SET);
 		for (;;)
 		{
-			UINT tagSize = 0;
-			if (fread(&tagSize, sizeof(UINT), 1, m_hFile) <= 0)
+			if (m_close.Lock(0))
 				break;
-			tagSize = htonl(tagSize);
-			FLV_TAG_HEADER tag = { 0 };
-			if (fread(&tag, sizeof(FLV_TAG_HEADER), 1, m_hFile) <= 0)
+			if (!RTMP_IsConnected(&m_sRTMP) ||
+				RTMP_IsTimedout(&m_sRTMP))
 				break;
-			INT size = ToINT24(tag.size);
-			if (size > 0)
+			RTMPPacket packet = { 0 };
+			INT val = RTMP_GetNextMediaPacket(&m_sRTMP, &packet);
+			if (val <= 0 || val == 2)
+				break;
+			if (packet.m_packetType == FLV_AUDIO)
 			{
-				TinyScopedArray<BYTE> data(new BYTE[size]);
-				if (fread(data, size, 1, m_hFile) <= 0)
+				m_timestamp = packet.m_nTimeStamp;
+				if (!ParseAudio((BYTE*)packet.m_body, packet.m_nBodySize))
 					break;
-				switch (tag.type)
-				{
-				case FLV_AUDIO:
-				{
-					m_dts = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
-					if (!ParseAudio(data, size))
-						return FALSE;
-				}
-				break;
-				case FLV_VIDEO:
-				{
-					m_dts = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
-					if (!ParseVideo(data, size))
-						return FALSE;
-				}
-				break;
-				case FLV_SCRIPT:
-					ParseScript(data, size);
+			}
+			if (packet.m_packetType == FLV_VIDEO)
+			{
+				m_timestamp = packet.m_nTimeStamp;
+				if (!ParseVideo((BYTE*)packet.m_body, packet.m_nBodySize))
 					break;
-				default:
-					break;
-				}
+			}
+			if (packet.m_packetType == FLV_AUDIO)
+			{
+				ParseScript((BYTE*)packet.m_body, packet.m_nBodySize);
 			}
 		}
-		return TRUE;
 	}
 }
-

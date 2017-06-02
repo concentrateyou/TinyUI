@@ -16,7 +16,7 @@ namespace TinyUI
 			enum Wrap { SAME_WRAP, DIFF_WRAP };
 			DISALLOW_COPY_AND_ASSIGN(TinyCycleBuffer)
 		public:
-			TinyCycleBuffer(TinyLock& lock);
+			TinyCycleBuffer();
 			~TinyCycleBuffer();
 			BOOL Initialize(DWORD size);
 			DWORD Read(void* data, DWORD size);
@@ -31,7 +31,6 @@ namespace TinyUI
 			DWORD		m_writePos;
 			DWORD		m_size;
 			Wrap		m_wrap;
-			TinyLock&	m_lock;
 			TinyScopedArray<CHAR> m_data;
 		};
 

@@ -31,9 +31,9 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		UINT TinyRingQueue::GetSize()
+		UINT TinyRingQueue::GetAvailable(BOOL bIN)
 		{
-			return (m_io.offsetI - m_io.offsetO);
+			return bIN ? (m_io.size - (m_io.offsetI - m_io.offsetO)) : (m_io.offsetI - m_io.offsetO);
 		}
 		UINT TinyRingQueue::Read(CHAR *data, UINT size)
 		{

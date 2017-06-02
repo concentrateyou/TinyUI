@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "MShowApp.h"
 #include "RTMPReader.h"
-#include "IO/TinyCycleBuffer.h"
+using namespace std;
 
 namespace MShow
 {
@@ -75,9 +75,9 @@ namespace MShow
 	{
 		return &m_mshow;
 	}
-	//////////////////////////////////////////////////////////////////////////
 }
 
+//////////////////////////////////////////////////////////////////////////
 INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPTSTR    lpCmdLine,
@@ -85,9 +85,13 @@ INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
-	
+
 	MShow::MShowApp app;
 	app.Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_MSHOWAPP));
+
+	Decode::RTMPReader reader;
+	reader.Open("rtmp://live.hkstv.hk.lxdns.com/live/hks");
+
 	INT iRes = app.Run();
 	return iRes;
 }

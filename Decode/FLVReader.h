@@ -38,7 +38,7 @@ namespace Decode
 		BOOL					m_bAudio;
 		BOOL					m_bVideo;
 		LONGLONG				m_lFirst;
-		BYTE					m_lengthSizeMinusOne;
+		BYTE					m_minusOne;
 		FLV_SCRIPTDATA			m_script;
 		ULONGLONG				m_offset;
 		TinyComPtr<IStream>		m_stream;

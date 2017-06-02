@@ -9,7 +9,7 @@ namespace Decode
 		:m_bAudio(FALSE),
 		m_bVideo(FALSE),
 		m_bNetwork(FALSE),
-		m_lengthSizeMinusOne(0),
+		m_minusOne(0),
 		m_offset(0),
 		m_naluOffset(0),
 		m_naluPtr(NULL),
@@ -291,7 +291,7 @@ namespace Decode
 			avcconfig.AVCLevelIndication = *bits++;
 			avcconfig.LengthSizeMinusOne = *bits++ & 0x03 + 1;//一般是4
 			avcconfig.NumOfSequenceParameterSets = *bits++ & 0x1F;//一般是1
-			m_lengthSizeMinusOne = avcconfig.LengthSizeMinusOne;
+			m_minusOne = avcconfig.LengthSizeMinusOne;
 			for (INT i = 0; i < avcconfig.NumOfSequenceParameterSets; i++)
 			{
 				BYTE* val = reinterpret_cast<BYTE*>(const_cast<UINT32*>(&H264StartCode));
@@ -336,7 +336,7 @@ namespace Decode
 	BOOL FLVReader::ParseNALU(FLV_TAG_VIDEO* video, FLV_BLOCK& block)
 	{
 		INT sizeofNALU = 0;
-		switch (m_lengthSizeMinusOne)
+		switch (m_minusOne)
 		{
 		case 4:
 		{

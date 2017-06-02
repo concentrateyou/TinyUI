@@ -30,7 +30,7 @@ namespace TinyUI
 			TinyRingQueue();
 			~TinyRingQueue();
 			BOOL	Initialize(UINT size);
-			UINT	GetSize();
+			UINT	GetAvailable(BOOL bIN);
 			void	Reset();
 			UINT	Read(CHAR *data, UINT size);
 			UINT	Write(CHAR *data, UINT size);

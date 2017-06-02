@@ -1,10 +1,14 @@
 #pragma once
 #include <stdio.h>
 #include "Common/TinyCommon.h"
+#include "Common/TinyCollection.h"
 #include "Common/TinyCallback.h"
 #include "Common/TinyEvent.h"
 #include "Render/TinyGDI.h"
+#include "IO/TinyTaskBase.h"
+#include "IO/TinyIO.h"
 using namespace TinyUI;
+using namespace TinyUI::IO;
 
 namespace Decode
 {
