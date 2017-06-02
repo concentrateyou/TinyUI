@@ -11,7 +11,7 @@ using namespace TinyUI::Media;
 
 namespace FLVPlayer
 {
-#define MAX_QUEUE_SIZE (2 * 1024 * 1024)
+#define MAX_QUEUE_SIZE (1 * 1024 * 1024)
 #define MAX_AUDIO_QUEUE_SIZE (48 * 1024)
 #define MAX_VIDEO_QUEUE_SIZE (6 * 1024 * 1024)
 

@@ -36,6 +36,12 @@
     <ClInclude Include="MShowWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MShowCommon.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RTMPReader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -48,6 +54,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MShowWindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MShowCommon.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RTMPReader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

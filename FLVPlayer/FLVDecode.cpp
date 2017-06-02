@@ -26,8 +26,8 @@ namespace FLVPlayer
 	}
 	BOOL FLVDecode::Submit()
 	{
-		//if(m_reader.OpenURL("rtmp://10.121.86.127/live/test_360p_1"))
-		if (m_reader.OpenURL("rtmp://live.hkstv.hk.lxdns.com/live/hks"))
+		//if (m_reader.OpenURL("rtmp://live.hkstv.hk.lxdns.com/live/hks"))
+		if (m_reader.OpenURL("rtmp://10.121.86.127/live/test_360p"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);
@@ -291,7 +291,7 @@ namespace FLVPlayer
 			bmi.bmiHeader.biSizeImage = m_decode.m_decode.m_size.cx *  m_decode.m_decode.m_size.cy * 4;
 			BYTE* pvBits = NULL;
 			HBITMAP hBitmap = ::CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pvBits), NULL, 0);
-			if (hBitmap)
+			if (hBitmap != NULL)
 			{
 				memcpy(pvBits, bits, size);
 				TinyMemDC dc(hDC, hBitmap);
@@ -331,10 +331,9 @@ namespace FLVPlayer
 				break;
 			}
 			INT size = m_queue.GetSize();
-			if (size > MAX_VIDEO_QUEUE_SIZE ||
-				m_decode.m_videoQueue.IsEmpty())
+			if (size > MAX_VIDEO_QUEUE_SIZE || m_decode.m_videoQueue.IsEmpty())
 			{
-				Sleep(1);
+				Sleep(3);
 				continue;
 			}
 			SampleTag tag = m_decode.m_videoQueue.Pop();
@@ -392,10 +391,9 @@ namespace FLVPlayer
 				break;
 			}
 			INT size = m_queue.GetSize();
-			if (size > MAX_AUDIO_QUEUE_SIZE ||
-				m_decode.m_audioQueue.IsEmpty())
+			if (size > MAX_AUDIO_QUEUE_SIZE || m_decode.m_audioQueue.IsEmpty())
 			{
-				Sleep(1);
+				Sleep(3);
 				continue;
 			}
 			SampleTag tag = m_decode.m_audioQueue.Pop();

@@ -34,6 +34,12 @@ INT PacketQueue::GetSize() const
 	return m_size;
 }
 
+INT PacketQueue::GetCount() const
+{
+	TinyAutoLock lock(m_lock);
+	return m_list.GetSize();
+}
+
 BOOL PacketQueue::IsEmpty() const
 {
 	TinyAutoLock lock(m_lock);

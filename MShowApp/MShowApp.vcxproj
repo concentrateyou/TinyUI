@@ -150,15 +150,19 @@
   <ItemGroup>
     <ClInclude Include="DXView.h" />
     <ClInclude Include="MShowApp.h" />
+    <ClInclude Include="MShowCommon.h" />
     <ClInclude Include="MShowWindow.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="RTMPReader.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXView.cpp" />
     <ClCompile Include="MShowApp.cpp" />
+    <ClCompile Include="MShowCommon.cpp" />
     <ClCompile Include="MShowWindow.cpp" />
+    <ClCompile Include="RTMPReader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

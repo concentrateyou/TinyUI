@@ -10,6 +10,7 @@ public:
 	Decode::SampleTag Pop();
 	INT GetSize() const;
 	BOOL IsEmpty() const;
+	INT GetCount() const;
 private:
 	INT						m_size;
 	TinyLock&				m_lock;

@@ -21,7 +21,7 @@ namespace TinyUI
 		{
 			typedef struct tagFIFO
 			{
-				BYTE*	data;
+				CHAR*	data;
 				UINT	size;
 				UINT	offsetI;
 				UINT	offsetO;
@@ -32,14 +32,14 @@ namespace TinyUI
 			BOOL	Initialize(UINT size);
 			UINT	GetSize();
 			void	Reset();
-			UINT	Read(BYTE *data, UINT size);
-			UINT	Write(BYTE *data, UINT size);
+			UINT	Read(CHAR *data, UINT size);
+			UINT	Write(CHAR *data, UINT size);
 		private:
-			UINT	ReadBytes(BYTE *data, UINT size);
-			UINT	WriteBytes(BYTE *data, UINT size);
+			UINT	ReadBytes(CHAR *data, UINT size);
+			UINT	WriteBytes(CHAR *data, UINT size);
 		protected:
 			FIFO					m_io;
-			TinyScopedArray<BYTE>	m_data;
+			TinyScopedArray<CHAR>	m_data;
 		};
 	};
 }

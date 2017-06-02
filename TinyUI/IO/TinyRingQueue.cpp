@@ -21,8 +21,8 @@ namespace TinyUI
 				return TRUE;
 			if (IS_POWER_OF_2(size))
 			{
-				m_data.Reset(new BYTE[size]);
-				memset(m_data, 0, size * sizeof(BYTE));
+				m_data.Reset(new CHAR[size]);
+				memset(m_data, 0, size * sizeof(CHAR));
 				m_io.data = m_data;
 				m_io.size = size;
 				m_io.offsetI = 0;
@@ -35,7 +35,7 @@ namespace TinyUI
 		{
 			return (m_io.offsetI - m_io.offsetO);
 		}
-		UINT TinyRingQueue::Read(BYTE *data, UINT size)
+		UINT TinyRingQueue::Read(CHAR *data, UINT size)
 		{
 			BOOL bRes = ReadBytes(data, size);
 			if (m_io.offsetI == m_io.offsetO)
@@ -44,12 +44,12 @@ namespace TinyUI
 			}
 			return bRes;
 		}
-		UINT TinyRingQueue::Write(BYTE *data, UINT size)
+		UINT TinyRingQueue::Write(CHAR *data, UINT size)
 		{
 			BOOL bRes = WriteBytes(data, size);
 			return bRes;
 		}
-		UINT TinyRingQueue::ReadBytes(BYTE *data, UINT size)
+		UINT TinyRingQueue::ReadBytes(CHAR *data, UINT size)
 		{
 			size = min(size, m_io.offsetI - m_io.offsetO);
 			UINT s = min(size, m_io.size - (m_io.offsetO & (m_io.size - 1)));
@@ -58,7 +58,7 @@ namespace TinyUI
 			m_io.offsetO += size;
 			return size;
 		}
-		UINT TinyRingQueue::WriteBytes(BYTE *data, UINT size)
+		UINT TinyRingQueue::WriteBytes(CHAR *data, UINT size)
 		{
 			size = min(size, m_io.size - m_io.offsetI + m_io.offsetO);
 			UINT s = min(size, m_io.size - (m_io.offsetI & (m_io.size - 1)));

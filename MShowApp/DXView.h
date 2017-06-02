@@ -1,6 +1,5 @@
 #pragma once
-#include "DX11.h"
-#include "Control/TinyControl.h"
+#include "MShowCommon.h"
 
 namespace MShow
 {

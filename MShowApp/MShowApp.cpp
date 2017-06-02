@@ -3,6 +3,8 @@
 
 #include "stdafx.h"
 #include "MShowApp.h"
+#include "RTMPReader.h"
+#include "IO/TinyCycleBuffer.h"
 
 namespace MShow
 {
@@ -53,12 +55,7 @@ namespace MShow
 			return FALSE;
 		if (!TinyApplication::GetInstance()->AddMessageLoop(&m_msgLoop))
 			return FALSE;
-		m_mshowUI.Reset(new MShowWindow());
-		RECT rect;
-		SystemParametersInfo(SPI_GETWORKAREA, 0, &rect, 0);
-		INT cx = 1024;
-		INT cy = TO_CY(rect) * 3 / 4;
-		return m_mshowUI->Create(NULL, 0, 0, cx, cy);
+		return m_mshow.Create(NULL, 0, 0, 1, 1);
 	}
 	INT MShowApp::Run()
 	{
@@ -76,7 +73,7 @@ namespace MShow
 	}
 	MShowWindow* MShowApp::GetWindow()
 	{
-		return m_mshowUI.Ptr();
+		return &m_mshow;
 	}
 	//////////////////////////////////////////////////////////////////////////
 }
@@ -88,7 +85,7 @@ INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
-
+	
 	MShow::MShowApp app;
 	app.Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_MSHOWAPP));
 	INT iRes = app.Run();

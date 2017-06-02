@@ -18,7 +18,7 @@ namespace MShow
 		BOOL			Uninitialize();
 	private:
 		TinyMessageLoop				m_msgLoop;
-		TinyScopedPtr<MShowWindow>	m_mshowUI;//Ö÷´°¿Ú
+		MShowWindow					m_mshow;
 	};
 }
 
