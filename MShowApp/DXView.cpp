@@ -48,9 +48,6 @@ namespace MShow
 	LRESULT DXView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		RECT s = { 0 };
-		GetWindowRect(&s);
-		m_dx.Initialize(m_hWND, TO_CX(s), TO_CY(s));
 		return FALSE;
 	}
 
@@ -78,7 +75,6 @@ namespace MShow
 	LRESULT DXView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		m_dx.Resize();
 		return FALSE;
 	}
 

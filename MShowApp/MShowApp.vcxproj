@@ -149,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DXView.h" />
+    <ClInclude Include="MRenderTask.h" />
     <ClInclude Include="MShowApp.h" />
     <ClInclude Include="MShowCommon.h" />
     <ClInclude Include="MShowWindow.h" />
@@ -158,6 +159,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXView.cpp" />
+    <ClCompile Include="MRenderTask.cpp" />
     <ClCompile Include="MShowApp.cpp" />
     <ClCompile Include="MShowCommon.cpp" />
     <ClCompile Include="MShowWindow.cpp" />
