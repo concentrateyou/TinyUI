@@ -1,5 +1,6 @@
 #pragma once
 #include "DXView.h"
+#include "MRenderTask.h"
 using namespace TinyUI;
 
 namespace MShow
@@ -31,6 +32,7 @@ namespace MShow
 	private:
 		DXView	m_previewView;//Ô¤ÀÀ´°¿Ú
 		DXView	m_playView;//²¥·Å´°¿Ú
+		MRenderTask	m_renderTask1;
 	};
 }
 

@@ -25,12 +25,12 @@ namespace MShow
 
 	LPCSTR MShowWindow::RetrieveClassName()
 	{
-		return TEXT("MShowFrameUI");
+		return TEXT("MShowWindow");
 	}
 
 	LPCSTR MShowWindow::RetrieveTitle()
 	{
-		return TEXT("MShowFrameUI");
+		return TEXT("MShowWindow");
 	}
 
 	HICON MShowWindow::RetrieveIcon()
@@ -58,6 +58,9 @@ namespace MShow
 		CenterWindow(NULL, { cx, cy });
 		m_previewView.Create(m_hWND, 33, 90, 512, 288);
 		m_playView.Create(m_hWND, 755, 90, 512, 288);
+
+		m_renderTask1.Initialize(m_previewView.Handle(), 512, 288);
+		m_renderTask1.Submit("rtmp://live.hkstv.hk.lxdns.com/live/hks");
 		return FALSE;
 	}
 	LRESULT MShowWindow::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -68,6 +71,7 @@ namespace MShow
 	LRESULT MShowWindow::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		m_renderTask1.Close(INFINITE);
 		PostQuitMessage(0);
 		return FALSE;
 	}
@@ -78,7 +82,7 @@ namespace MShow
 	}
 	LRESULT MShowWindow::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
-		bHandled = TRUE;
+		bHandled = FALSE;
 		return FALSE;
 	}
 

@@ -15,7 +15,7 @@ namespace Decode
 		RTMPReader();
 		~RTMPReader();
 		BOOL Open(LPCSTR pzURL);
-		BOOL Close(DWORD dwMs) OVERRIDE;
+		BOOL Close(DWORD dwMS) OVERRIDE;
 	public:
 		Event<void(BYTE*, LONG, FLV_PACKET*)> EVENT_AUDIO;
 		Event<void(BYTE*, LONG, FLV_PACKET*)> EVENT_VIDEO;
@@ -36,6 +36,22 @@ namespace Decode
 		RTMP		m_sRTMP;
 		TinyEvent	m_close;
 		LONGLONG	m_timestamp;
+	};
+
+	class PacketQueue
+	{
+	public:
+		PacketQueue(TinyLock& lock);
+		~PacketQueue();
+		void Push(Decode::SampleTag& tag);
+		Decode::SampleTag Pop();
+		INT GetSize() const;
+		BOOL IsEmpty() const;
+		INT GetCount() const;
+	private:
+		INT						m_size;
+		TinyLock&				m_lock;
+		TinyLinkList<Decode::SampleTag>	m_list;
 	};
 }
 

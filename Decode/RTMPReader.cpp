@@ -28,11 +28,11 @@ namespace Decode
 		m_close.CreateEvent();
 		return TinyTaskBase::Submit(BindCallback(&RTMPReader::OnMessagePump, this));
 	}
-	BOOL RTMPReader::Close(DWORD dwMs)
+	BOOL RTMPReader::Close(DWORD dwMS)
 	{
-		m_close.SetEvent();
 		RTMP_Close(&m_sRTMP);
-		return TinyTaskBase::Close(dwMs);
+		m_close.SetEvent();
+		return TinyTaskBase::Close(dwMS);
 	}
 	BOOL RTMPReader::ParseVideo(BYTE* data, INT size)
 	{
@@ -368,8 +368,9 @@ namespace Decode
 		{
 			if (m_close.Lock(0))
 				break;
-			if (!RTMP_IsConnected(&m_sRTMP) ||
-				RTMP_IsTimedout(&m_sRTMP))
+			if (!RTMP_IsConnected(&m_sRTMP))
+				break;
+			if (RTMP_IsTimedout(&m_sRTMP))
 				break;
 			RTMPPacket packet = { 0 };
 			INT val = RTMP_GetNextMediaPacket(&m_sRTMP, &packet);
@@ -387,10 +388,61 @@ namespace Decode
 				if (!ParseVideo((BYTE*)packet.m_body, packet.m_nBodySize))
 					break;
 			}
-			if (packet.m_packetType == FLV_AUDIO)
+			if (packet.m_packetType == FLV_SCRIPT)
 			{
 				ParseScript((BYTE*)packet.m_body, packet.m_nBodySize);
 			}
+		
 		}
+	}
+	//////////////////////////////////////////////////////////////////////////
+	PacketQueue::PacketQueue(TinyLock& lock)
+		:m_size(0),
+		m_lock(lock)
+	{
+
+	}
+
+	void PacketQueue::Push(Decode::SampleTag& tag)
+	{
+		TinyAutoLock lock(m_lock);
+		m_list.InsertLast(tag);
+		m_size += tag.size;
+	}
+	Decode::SampleTag PacketQueue::Pop()
+	{
+		TinyAutoLock lock(m_lock);
+		Decode::SampleTag tag = { 0 };
+		if (m_list.GetSize() > 0)
+		{
+			ITERATOR s = m_list.First();
+			tag = m_list.GetAt(s);
+			m_list.RemoveAt(s);
+			m_size -= tag.size;
+		}
+		return tag;
+	}
+
+	INT PacketQueue::GetSize() const
+	{
+		TinyAutoLock lock(m_lock);
+		return m_size;
+	}
+
+	INT PacketQueue::GetCount() const
+	{
+		TinyAutoLock lock(m_lock);
+		return m_list.GetSize();
+	}
+
+	BOOL PacketQueue::IsEmpty() const
+	{
+		TinyAutoLock lock(m_lock);
+		return m_list.IsEmpty();
+	}
+
+	PacketQueue::~PacketQueue()
+	{
+
 	}
 }

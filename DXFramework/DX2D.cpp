@@ -133,5 +133,9 @@ namespace DXFramework
 	{
 		return m_context;
 	}
+	HWND DX2D::GetHWND() const
+	{
+		return m_hWND;
+	}
 }
 

@@ -32,12 +32,12 @@ namespace MShow
 
 	LPCSTR DXView::RetrieveClassName()
 	{
-		return TEXT("FLVFrameUI");
+		return TEXT("DXView");
 	}
 
 	LPCSTR DXView::RetrieveTitle()
 	{
-		return TEXT("FLVFrameUI");
+		return TEXT("DXView");
 	}
 
 	HICON DXView::RetrieveIcon()
