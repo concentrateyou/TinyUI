@@ -88,10 +88,6 @@ INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 	MShow::MShowApp app;
 	app.Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_MSHOWAPP));
-
-	Decode::RTMPReader reader;
-	reader.Open("rtmp://live.hkstv.hk.lxdns.com/live/hks");
-
 	INT iRes = app.Run();
 	return iRes;
 }

@@ -22,32 +22,42 @@ namespace MShow
 	{
 		return (WS_EX_LEFT | WS_EX_RIGHTSCROLLBAR);
 	}
+
 	LPCSTR MShowWindow::RetrieveClassName()
 	{
 		return TEXT("MShowFrameUI");
 	}
+
 	LPCSTR MShowWindow::RetrieveTitle()
 	{
 		return TEXT("MShowFrameUI");
 	}
+
 	HICON MShowWindow::RetrieveIcon()
 	{
 		return NULL;
 	}
 
-	void MShowWindow::Resize(INT cx, INT cy)
+	DXView& MShowWindow::GetPreivewView()
 	{
+		return m_previewView;
+	}
 
+	DXView& MShowWindow::GetPlayView()
+	{
+		return m_playView;
 	}
 
 	LRESULT MShowWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		RECT rect;
-		SystemParametersInfo(SPI_GETWORKAREA, 0, &rect, 0);
-		INT cx = 1024;
-		INT cy = TO_CY(rect) * 3 / 4;
+		RECT s;
+		SystemParametersInfo(SPI_GETWORKAREA, 0, &s, 0);
+		INT cx = 1300;
+		INT cy = 730;
 		CenterWindow(NULL, { cx, cy });
+		m_previewView.Create(m_hWND, 33, 90, 512, 288);
+		m_playView.Create(m_hWND, 755, 90, 512, 288);
 		return FALSE;
 	}
 	LRESULT MShowWindow::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -77,7 +87,7 @@ namespace MShow
 		bHandled = FALSE;
 		INT cx = LOWORD(lParam);
 		INT cy = HIWORD(lParam);
-		Resize(cx, cy);
+		//TODO
 		return FALSE;
 	}
 }

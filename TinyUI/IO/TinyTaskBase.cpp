@@ -39,11 +39,11 @@ namespace TinyUI
 			m_hTask = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)TinyTaskBase::Callback, (LPVOID)this, 0, &m_dwTaskID);
 			return m_hTask != NULL;
 		}
-		BOOL TinyTaskBase::Close(DWORD dwMs)
+		BOOL TinyTaskBase::Close(DWORD dwMS)
 		{
 			if (m_hTask)
 			{
-				switch (WaitForSingleObject(m_hTask, dwMs))
+				switch (WaitForSingleObject(m_hTask, dwMS))
 				{
 				case WAIT_TIMEOUT:
 					return FALSE;

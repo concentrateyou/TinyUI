@@ -98,7 +98,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>..\TinyUI;..\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d11.lib;d3d9.lib;dxgi.lib;D3DCompiler.lib;TinyUI.lib</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d3d9.lib;dxgi.lib;d2d1.lib;D3DCompiler.lib;TinyUI.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

@@ -24,7 +24,7 @@ namespace TinyUI
 			BOOL	IsValid() const;
 			BOOL	SetPriority(DWORD dwPriority);
 			virtual BOOL Submit(Closure&& callback);
-			virtual BOOL Close(DWORD dwMs);
+			virtual BOOL Close(DWORD dwMS);
 		private:
 			static DWORD WINAPI Callback(LPVOID ps);
 		protected:

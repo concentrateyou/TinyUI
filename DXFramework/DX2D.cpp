@@ -59,7 +59,7 @@ namespace DXFramework
 		desc.RefreshRate.Denominator = 1;
 		desc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 		desc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-		desc.Windowed = FALSE;
+		desc.Windowed = TRUE;
 		DXGI_SWAP_CHAIN_DESC1 dest1 = {};
 		dest1.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 		dest1.SampleDesc.Count = 2;

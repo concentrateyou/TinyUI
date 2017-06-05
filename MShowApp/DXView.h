@@ -1,5 +1,7 @@
 #pragma once
 #include "MShowCommon.h"
+#include "DX2D.h"
+using namespace DXFramework;
 
 namespace MShow
 {
@@ -25,8 +27,9 @@ namespace MShow
 		LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+		LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	private:
-
+		DX2D	m_dx;
 	};
 }
 
