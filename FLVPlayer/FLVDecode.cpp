@@ -176,9 +176,7 @@ namespace FLVPlayer
 		for (;;)
 		{
 			if (m_close.Lock(0))
-			{
 				break;
-			}
 			SampleTag tag = m_decode.m_queue.Pop();
 			if (tag.size <= 0)
 				continue;
@@ -253,14 +251,10 @@ namespace FLVPlayer
 		for (;;)
 		{
 			if (m_close.Lock(0))
-			{
 				break;
-			}
 			SampleTag tag = m_decode.m_queue.Pop();
 			if (tag.size <= 0)
-			{
 				continue;
-			}
 			if (tag.samplePTS == m_decode.m_decode.m_basePTS)
 			{
 				TinyAutoLock lock(m_decode.m_decode.m_lockTime);

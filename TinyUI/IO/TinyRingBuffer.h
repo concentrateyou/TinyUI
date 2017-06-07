@@ -11,19 +11,28 @@ namespace TinyUI
 {
 	namespace IO
 	{
+		/// <summary>
+		/// 循环缓冲
+		/// </summary>
 		class TinyRingBuffer
 		{
 			enum Wrap { SAME_WRAP, DIFF_WRAP };
 			DISALLOW_COPY_AND_ASSIGN(TinyRingBuffer)
 		public:
-			TinyRingBuffer(TinyLock& lock);
-			~TinyRingBuffer();
-			BOOL Initialize(DWORD count, DWORD size);
+			TinyRingBuffer();
+			virtual ~TinyRingBuffer();
+			BOOL Initialize(DWORD count, DWORD esize);
 			DWORD Read(void* data, DWORD count);
 			DWORD Write(const void* data, DWORD count);
-		private:
+			/// <summary>
+			/// 已写入的数据
+			/// </summary>
 			DWORD GetAvailableOUT();
+			/// <summary>
+			/// 剩余数据
+			/// </summary>
 			DWORD GetAvailableIN();
+		private:
 			LONG MoveReadPtr(LONG count);
 		public:
 			DWORD		m_readPos;
@@ -31,8 +40,7 @@ namespace TinyUI
 			DWORD		m_count;
 			DWORD		m_size;
 			Wrap		m_wrap;
-			TinyLock&	m_lock;
-			TinyScopedArray<CHAR> m_data;
+			TinyScopedArray<CHAR> m_bits;
 		};
 	};
 }

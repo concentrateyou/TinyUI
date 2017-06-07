@@ -47,12 +47,13 @@ namespace DShow
 				m_queue.Initialize(3, size);
 				m_size = size;
 			}
+			this->Lock();
 			m_queue.Write(bits, 1);
+			this->Unlock();
 		}
 	}
 	VideoCapture::VideoCapture()
-		:m_size(0),
-		m_queue(*this)
+		:m_size(0)
 	{
 
 	}
@@ -266,7 +267,9 @@ namespace DShow
 	}
 	BYTE* VideoCapture::GetPointer()
 	{
+		this->Lock();
 		m_queue.Read((CHAR*)m_bits.Ptr(), 1);
+		this->Unlock();
 		return m_bits;
 	}
 	LONG VideoCapture::GetSize()

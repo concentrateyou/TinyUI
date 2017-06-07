@@ -4,11 +4,8 @@
 namespace Decode
 {
 	RTMPStream::RTMPStream()
-		:m_cRef(1),
-		m_break(FALSE),
-		m_ringBuffer(m_lock)
+		:m_cRef(1)
 	{
-		m_ringBuffer.Initialize(4 * 1024 * 1024, 1);
 	}
 
 	RTMPStream::~RTMPStream()
@@ -23,46 +20,18 @@ namespace Decode
 			return FALSE;
 		m_sRTMP.Link.timeout = 3000;//默认3秒超时
 		m_sRTMP.Link.lFlags |= RTMP_LF_BUFX | RTMP_LF_FTCU | RTMP_LF_LIVE;
-		RTMP_SetBufferMS(&m_sRTMP, 3600 * 1000);//1h
+		RTMP_SetBufferMS(&m_sRTMP, 10 * 1000);//10s
 		if (!RTMP_Connect(&m_sRTMP, NULL))
 			return FALSE;
 		if (!RTMP_ConnectStream(&m_sRTMP, 0))
 			return FALSE;
-		m_bits.Reset(new CHAR[32 * 1024]);
-		m_task.Submit(BindCallback(&RTMPStream::OnMessagePump, this));
-		Sleep(1000);
 		return TRUE;
 	}
 
 	BOOL RTMPStream::Close()
 	{
-		m_break = TRUE;
-		m_task.Close(INFINITE);
 		RTMP_Close(&m_sRTMP);
 		return TRUE;
-	}
-
-	void RTMPStream::OnMessagePump()
-	{
-		do
-		{
-			if (!RTMP_IsConnected(&m_sRTMP))
-				break;
-			if (RTMP_IsTimedout(&m_sRTMP))
-				break;
-			INT s = RTMP_Read(&m_sRTMP, m_bits, 16 * 1024);
-			if (s < 0)
-				break;
-			INT v = m_ringBuffer.Write(m_bits, s);
-			if (v < s)
-			{
-				TRACE("RTMPStream - 写入RTMP数据已满\n");
-			}
-			else
-			{
-				TRACE("write数据:%d\n", s);
-			}
-		} while (!m_break);
 	}
 
 	STDMETHODIMP RTMPStream::QueryInterface(REFIID riid, void **ppvObj)
@@ -98,21 +67,16 @@ namespace Decode
 	{
 		ULONG   cbRead;
 		HRESULT hRes = S_OK;
-		if (!pv)
-			return E_INVALIDARG;
+		if (!pv) return E_INVALIDARG;
 		if (!pcbRead)
 		{
 			pcbRead = &cbRead;
 		}
-		*pcbRead = m_ringBuffer.Read(pv, cb);
-		if (*pcbRead < cb)
-		{
-			TRACE("RTMPStream - 写入RTMP数据不够\n");
-		}
-		else
-		{
-			TRACE("read数据:%d\n", *pcbRead);
-		}
+		if (!RTMP_IsConnected(&m_sRTMP))
+			return E_FAIL;
+		if (RTMP_IsTimedout(&m_sRTMP))
+			return E_FAIL;
+		*pcbRead = RTMP_Read(&m_sRTMP, (CHAR*)pv, cb);
 		return S_OK;
 	}
 

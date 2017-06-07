@@ -34,8 +34,7 @@ namespace DShow
 	}
 
 	AudioCapture::AudioCapture()
-		:m_size(0),
-		m_queue(*this)
+		:m_size(0)
 	{
 	}
 
@@ -58,7 +57,9 @@ namespace DShow
 				m_queue.Initialize(3, size);
 				m_size = size;
 			}
+			this->Lock();
 			m_queue.Write(bits, 1);
+			this->Unlock();
 		}
 	}
 	BOOL AudioCapture::Initialize(const Name& name)
@@ -154,7 +155,9 @@ namespace DShow
 	}
 	BYTE* AudioCapture::GetPointer()
 	{
+		this->Lock();
 		m_queue.Read(m_bits, 1);
+		this->Unlock();
 		return m_bits;
 	}
 	LONG AudioCapture::GetSize()

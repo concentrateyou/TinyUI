@@ -7,13 +7,12 @@ namespace TinyUI
 {
 	namespace IO
 	{
-		TinyRingBuffer::TinyRingBuffer(TinyLock& lock)
+		TinyRingBuffer::TinyRingBuffer()
 			:m_count(0),
 			m_size(0),
 			m_readPos(0),
 			m_writePos(0),
-			m_wrap(SAME_WRAP),
-			m_lock(lock)
+			m_wrap(SAME_WRAP)
 		{
 
 		}
@@ -26,21 +25,20 @@ namespace TinyUI
 		{
 			if (count == 0 || size == 0)
 				return FALSE;
-			this->m_data.Reset(new CHAR[count * size]);
-			if (!this->m_data)
+			this->m_bits.Reset(new CHAR[count * size]);
+			if (!this->m_bits)
 				return FALSE;
 			this->m_count = count;
 			this->m_size = size;
 			this->m_readPos = 0;
 			this->m_writePos = 0;
 			this->m_wrap = SAME_WRAP;
-			memset(this->m_data, 0, this->m_count * this->m_size);
+			memset(this->m_bits, 0, this->m_count * this->m_size);
 			return TRUE;
 		}
 
 		DWORD TinyRingBuffer::Read(void* data, DWORD count)
 		{
-			TinyAutoLock lock(m_lock);
 			if (!data)
 				return 0;
 			DWORD dwOUT = this->GetAvailableOUT();
@@ -48,12 +46,12 @@ namespace TinyUI
 			const DWORD dwOffset = this->m_count - this->m_readPos;
 			if (dwOUT > dwOffset)
 			{
-				memcpy(data, this->m_data + this->m_readPos * this->m_size, dwOffset * this->m_size);
-				memcpy(((CHAR*)data) + dwOffset * this->m_size, this->m_data, (dwOUT - dwOffset) * this->m_size);
+				memcpy(data, this->m_bits + this->m_readPos * this->m_size, dwOffset * this->m_size);
+				memcpy(((CHAR*)data) + dwOffset * this->m_size, this->m_bits, (dwOUT - dwOffset) * this->m_size);
 			}
 			else
 			{
-				memcpy(data, this->m_data + this->m_readPos * this->m_size, dwOUT * this->m_size);
+				memcpy(data, this->m_bits + this->m_readPos * this->m_size, dwOUT * this->m_size);
 			}
 			this->MoveReadPtr((LONG)dwOUT);
 			return dwOUT;
@@ -61,7 +59,6 @@ namespace TinyUI
 
 		DWORD TinyRingBuffer::Write(const void* data, DWORD count)
 		{
-			TinyAutoLock lock(m_lock);
 			if (!data)
 				return 0;
 			DWORD dwIN = this->GetAvailableIN();
@@ -70,12 +67,12 @@ namespace TinyUI
 			const DWORD dwOffset = this->m_count - this->m_writePos;
 			if (dwIN > dwOffset)
 			{
-				memcpy(this->m_data + this->m_writePos * this->m_size, data, dwOffset * this->m_size);
+				memcpy(this->m_bits + this->m_writePos * this->m_size, data, dwOffset * this->m_size);
 				this->m_writePos = 0;
 				dwT -= dwOffset;
 				this->m_wrap = DIFF_WRAP;
 			}
-			memcpy(this->m_data + this->m_writePos * this->m_size, ((const char*)data) + ((dwIN - dwT) * this->m_size), dwT * this->m_size);
+			memcpy(this->m_bits + this->m_writePos * this->m_size, ((const char*)data) + ((dwIN - dwT) * this->m_size), dwT * this->m_size);
 			this->m_writePos += dwT;
 			return dwIN;
 		}
