@@ -21,7 +21,6 @@ namespace TinyUI
 			BOOL Initialize(DWORD count, DWORD size);
 			DWORD Read(void* data, DWORD count);
 			DWORD Write(const void* data, DWORD count);
-			DWORD GetAvailable(BOOL bIN);
 		private:
 			DWORD GetAvailableOUT();
 			DWORD GetAvailableIN();

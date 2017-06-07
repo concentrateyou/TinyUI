@@ -80,12 +80,6 @@ namespace TinyUI
 			return dwIN;
 		}
 
-		DWORD TinyRingBuffer::GetAvailable(BOOL bIN)
-		{
-			TinyAutoLock lock(m_lock);
-			return bIN ? this->GetAvailableIN() : this->GetAvailableOUT();
-		}
-
 		LONG TinyRingBuffer::MoveReadPtr(LONG count)
 		{
 			const LONG dwIN = (LONG)this->GetAvailableIN();

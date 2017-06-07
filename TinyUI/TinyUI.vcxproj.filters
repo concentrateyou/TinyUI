@@ -489,9 +489,6 @@
     <ClInclude Include="Network\TinyHTTPCommon.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
-    <ClInclude Include="IO\TinyCycleBuffer.h">
-      <Filter>头文件\IO</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -898,9 +895,6 @@
     </ClCompile>
     <ClCompile Include="Network\TinyHTTPCommon.cpp">
       <Filter>源文件\Network</Filter>
-    </ClCompile>
-    <ClCompile Include="IO\TinyCycleBuffer.cpp">
-      <Filter>源文件\IO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

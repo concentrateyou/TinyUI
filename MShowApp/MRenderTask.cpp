@@ -57,11 +57,6 @@ namespace MShow
 
 	void MRenderTask::OnMessagePump()
 	{
-		for (;;)
-		{
-			if (m_videoQueue.GetCount() > 100)
-				break;
-		}
 		DWORD baseTime = timeGetTime();
 		for (;;)
 		{

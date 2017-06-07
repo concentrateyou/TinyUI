@@ -1,8 +1,13 @@
 #pragma once
 #include <string>
+#include "Common/TinyTime.h"
+#include "IO/TinyRingBuffer.h"
 #include "IO/TinyIO.h"
+#include "IO/TinyTaskBase.h"
 #include "rtmp.h"
 using namespace std;
+using namespace TinyUI;
+using namespace TinyUI::IO;
 
 namespace Decode
 {
@@ -34,8 +39,15 @@ namespace Decode
 		BOOL Open(LPCSTR pzURL);
 		BOOL Close();
 	private:
-		LONG        m_cRef;
-		RTMP		m_sRTMP;
+		void OnMessagePump();
+	private:
+		LONG			m_cRef;
+		RTMP			m_sRTMP;
+		BOOL			m_break;
+		TinyLock		m_lock;
+		TinyTaskBase	m_task;
+		TinyRingBuffer	m_ringBuffer;
+		TinyScopedArray<CHAR>	m_bits;
 	};
 }
 
