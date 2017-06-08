@@ -19,7 +19,7 @@ namespace Decode
 		if (!RTMP_SetupURL(&m_sRTMP, (CHAR*)pzURL))
 			return FALSE;
 		m_sRTMP.Link.timeout = 3000;//Ä¬ÈÏ3Ãë³¬Ê±
-		m_sRTMP.Link.lFlags |= RTMP_LF_BUFX | RTMP_LF_FTCU | RTMP_LF_LIVE;
+		m_sRTMP.Link.lFlags |= RTMP_LF_FTCU | RTMP_LF_LIVE;
 		RTMP_SetBufferMS(&m_sRTMP, 10 * 1000);//10s
 		if (!RTMP_Connect(&m_sRTMP, NULL))
 			return FALSE;

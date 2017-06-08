@@ -39,7 +39,16 @@
     <ClInclude Include="MShowCommon.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MRenderTask.h">
+    <ClInclude Include="MVideoTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MAudioTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MReadTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MPacketQueue.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -59,7 +68,16 @@
     <ClCompile Include="MShowCommon.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MRenderTask.cpp">
+    <ClCompile Include="MVideoTask.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MAudioTask.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MReadTask.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MPacketQueue.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
