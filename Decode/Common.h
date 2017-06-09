@@ -29,6 +29,7 @@ namespace Decode
 		BYTE		sampleType;
 		BYTE*		bits;
 		LONG		size;
+		LONGLONG	index;
 	}SampleTag;
 
 	typedef struct tagFLV_HEADER

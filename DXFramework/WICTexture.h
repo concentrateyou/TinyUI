@@ -11,6 +11,9 @@ namespace DXFramework
 		WIC_LOADER_IGNORE_SRGB = 0x2,
 	};
 
+	HRESULT __cdecl CreateWICImageFromFile(LPCWSTR fileName, ID2D1Bitmap** pBitmap);
+	HRESULT __cdecl CreateWICImageFromMemory(const BYTE* wicData,size_t wicDataSize, ID2D1Bitmap** pBitmap);
+
 	HRESULT __cdecl CreateWICTextureFromMemory(
 		ID3D11Device* d3dDevice,
 		const BYTE* wicData,

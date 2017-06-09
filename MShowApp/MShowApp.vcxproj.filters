@@ -51,6 +51,15 @@
     <ClInclude Include="MPacketQueue.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MClock.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MAudioRenderTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MVideoRenderTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -78,6 +87,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MPacketQueue.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MClock.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MAudioRenderTask.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MVideoRenderTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

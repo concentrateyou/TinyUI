@@ -22,7 +22,6 @@ namespace Decode
 		BOOL ReadBlock(FLV_BLOCK& block);
 		DWORD Seek(LONG offset, DWORD dwFlag);
 		BOOL Close();
-		BOOL IsNetwork() const;
 	private:
 		BOOL ParseScript(BYTE* data, INT size, FLV_SCRIPTDATA& script);
 		BOOL ParseVideo(BYTE* data, INT size, FLV_BLOCK& block);

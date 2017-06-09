@@ -99,6 +99,7 @@ namespace DXFramework
 	{
 		ASSERT(m_context);
 		m_context->BeginDraw();
+		m_context->Clear(D2D1::ColorF(D2D1::ColorF::Black));
 		return TRUE;
 	}
 	BOOL DX2D::EndDraw()

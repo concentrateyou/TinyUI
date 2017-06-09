@@ -24,29 +24,4 @@ namespace Decode
 	{
 		return	(INT)(val[0] << 8);
 	}
-
-	/*BYTE ToBYTE4(INT s)
-	{
-		BYTE val[4]
-		val[0] = (s >> 24) & 0xFF;
-		val[1] = (s >> 16) & 0xFF;
-		val[2] = (s >> 8) & 0xFF;
-		val[3] = s & 0xFF;
-	}
-
-	void ToBYTE3(INT s, BYTE val[3])
-	{
-		val[0] = (s >> 16) & 0xFF;
-		val[1] = (s >> 8) & 0xFF;
-		val[2] = s & 0xFF;
-	}
-	void ToBYTE2(INT s, BYTE val[2])
-	{
-		val[0] = (s >> 8) & 0xFF;
-		val[1] = s & 0xFF;
-	}
-	void ToBYTE(INT s, BYTE val[1])
-	{
-		val[0] = s & 0xFF;
-	}*/
 }

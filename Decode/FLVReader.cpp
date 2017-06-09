@@ -524,9 +524,5 @@ namespace Decode
 		m_stream.Release();
 		return TRUE;
 	}
-	BOOL FLVReader::IsNetwork() const
-	{
-		return m_bNetwork;
-	}
 }
 
