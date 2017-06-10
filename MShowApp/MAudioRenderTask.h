@@ -20,8 +20,8 @@ namespace MShow
 	private:
 		void OnMessagePump();
 	private:
-		BOOL					m_close;
 		BOOL					m_bInitialize;
+		TinyEvent				m_close;
 		TinyEvent				m_events[2];
 		MClock&					m_clock;
 		MAudioTask&				m_task;

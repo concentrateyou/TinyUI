@@ -21,9 +21,9 @@ namespace MShow
 		void OnMessagePump();
 		void OnRender(BYTE* bits, LONG size);
 	private:
-		BOOL		m_close;
-		TinySize	m_size;
 		DX2D		m_d2d;
+		TinyEvent	m_close;
+		TinySize	m_size;
 		MClock&		m_clock;
 		MVideoTask& m_task;
 		TinyComPtr<ID2D1Bitmap1> m_bitmap;

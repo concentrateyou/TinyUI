@@ -4,8 +4,7 @@
 namespace MShow
 {
 	MVideoTask::MVideoTask(MReadTask& task, MClock& clock)
-		:m_close(FALSE),
-		m_task(task),
+		:m_task(task),
 		m_clock(clock)
 	{
 	}
@@ -17,12 +16,13 @@ namespace MShow
 
 	BOOL MVideoTask::Submit()
 	{
+		m_close.CreateEvent();
 		return TinyTaskBase::Submit(BindCallback(&MVideoTask::OnMessagePump, this));
 	}
 
 	BOOL MVideoTask::Close(DWORD dwMS)
 	{
-		m_close = TRUE;
+		m_close.SetEvent();
 		return TinyTaskBase::Close(dwMS);
 	}
 
@@ -50,7 +50,7 @@ namespace MShow
 	{
 		for (;;)
 		{
-			if (m_close)
+			if (m_close.Lock(0))
 				break;
 			INT size = m_task.GetVideoQueue().GetSize();
 			if (size > MAX_VIDEO_QUEUE_SIZE)

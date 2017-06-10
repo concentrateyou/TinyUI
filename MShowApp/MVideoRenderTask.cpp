@@ -4,8 +4,7 @@
 namespace MShow
 {
 	MVideoRenderTask::MVideoRenderTask(MVideoTask& task, MClock& clock)
-		:m_close(FALSE),
-		m_task(task),
+		:m_task(task),
 		m_clock(clock)
 	{
 	}
@@ -35,13 +34,14 @@ namespace MShow
 
 	BOOL MVideoRenderTask::Submit()
 	{
+		m_close.CreateEvent();
 		return TinyTaskBase::Submit(BindCallback(&MVideoRenderTask::OnMessagePump, this));
 	}
 
 
 	BOOL MVideoRenderTask::Close(DWORD dwMS)
 	{
-		m_close = TRUE;
+		m_close.SetEvent();
 		return TinyTaskBase::Close(dwMS);
 	}
 
@@ -57,11 +57,14 @@ namespace MShow
 	{
 		for (;;)
 		{
-			if (m_close)
+			if (m_close.Lock(0))
 				break;
 			SampleTag tag = { 0 };
 			if (!GetTag(m_task, tag) || tag.size <= 0)
+			{
+				Sleep(3);
 				continue;
+			}
 			if (tag.samplePTS == m_clock.GetBasetPTS())
 			{
 				m_clock.SetBaseTime(timeGetTime());

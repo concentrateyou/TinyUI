@@ -4,8 +4,7 @@
 namespace MShow
 {
 	MAudioTask::MAudioTask(MReadTask& task, MClock& clock)
-		:m_close(FALSE),
-		m_task(task),
+		:m_task(task),
 		m_clock(clock)
 	{
 	}
@@ -17,12 +16,13 @@ namespace MShow
 
 	BOOL MAudioTask::Submit()
 	{
+		m_close.CreateEvent();
 		return TinyTaskBase::Submit(BindCallback(&MAudioTask::OnMessagePump, this));
 	}
 
 	BOOL MAudioTask::Close(DWORD dwMS)
 	{
-		m_close = TRUE;
+		m_close.SetEvent();
 		return TinyTaskBase::Close(dwMS);
 	}
 
@@ -45,7 +45,7 @@ namespace MShow
 	{
 		for (;;)
 		{
-			if (m_close)
+			if (m_close.Lock(0))
 				break;
 			INT size = m_task.GetAudioQueue().GetSize();
 			if (size > MAX_AUDIO_QUEUE_SIZE)
@@ -80,6 +80,10 @@ namespace MShow
 				{
 					SAFE_DELETE_ARRAY(tag.bits);
 				}
+			}
+			else
+			{
+				Sleep(1);
 			}
 		}
 		m_audioQueue.RemoveAll();

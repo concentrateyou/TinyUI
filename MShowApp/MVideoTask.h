@@ -23,7 +23,7 @@ namespace MShow
 	private:
 		void OnMessagePump();
 	private:
-		BOOL			m_close;
+		TinyEvent		m_close;
 		TinyLock		m_lock;
 		MClock&			m_clock;
 		MReadTask&		m_task;

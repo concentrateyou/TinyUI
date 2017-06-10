@@ -4,8 +4,7 @@
 namespace MShow
 {
 	MReadTask::MReadTask()
-		:m_close(FALSE),
-		m_sample(0),
+		:m_sample(0),
 		m_bFI(0)
 	{
 
@@ -29,12 +28,13 @@ namespace MShow
 
 	BOOL MReadTask::Submit()
 	{
+		m_close.CreateEvent();
 		return TinyTaskBase::Submit(BindCallback(&MReadTask::OnMessagePump, this));
 	}
 
 	BOOL MReadTask::Close(DWORD dwMS)
 	{
-		m_close = TRUE;
+		m_close.SetEvent();
 		return TinyTaskBase::Close(dwMS);
 	}
 
@@ -78,10 +78,10 @@ namespace MShow
 	}
 
 	void MReadTask::OnMessagePump()
-	{	
+	{
 		for (;;)
 		{
-			if (m_close)
+			if (m_close.Lock(0))
 				break;
 			INT size = m_audioQueue.GetSize() + m_videoQueue.GetSize();
 			if (size > MAX_QUEUE_SIZE)
