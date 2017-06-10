@@ -3,7 +3,7 @@
 
 namespace MShow
 {
-	MVideoTask::MVideoTask(MReadTask& task, MClock& clock)
+	MVideoTask::MVideoTask(MFLVTask& task, MClock& clock)
 		:m_task(task),
 		m_clock(clock)
 	{

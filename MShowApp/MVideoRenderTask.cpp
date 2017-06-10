@@ -78,8 +78,8 @@ namespace MShow
 		{
 			TinySize s = m_task.GetSize();
 			m_bitmap->CopyFromMemory(NULL, bits, s.cx * 4);
-			D2D_RECT_F dst = { 0,0,m_size.cx,m_size.cy };
-			D2D_RECT_F src = { 0,0,s.cx,s.cy };
+			D2D_RECT_F dst = { 0.0F,0.0F,static_cast<FLOAT>(m_size.cx),static_cast<FLOAT>(m_size.cy) };
+			D2D_RECT_F src = { 0.0F,0.0F,static_cast<FLOAT>(s.cx),static_cast<FLOAT>(s.cy) };
 			m_d2d.GetContext()->DrawBitmap(m_bitmap, dst, 1.0F, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, src, NULL);
 			m_d2d.EndDraw();
 		}

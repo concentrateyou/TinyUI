@@ -5,6 +5,7 @@
 
 namespace MShow
 {
+	class MVideoTask;
 	/// <summary>
 	/// 视频播放线程
 	/// </summary>

@@ -1,6 +1,5 @@
 #pragma once
-#include "MReadTask.h"
-#include "MFLV.h"
+#include "MFLVTask.h"
 using namespace DXFramework;
 
 namespace MShow
@@ -29,7 +28,7 @@ namespace MShow
 		LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	private:
-		MFLV		m_mFLV;
+		MFLVTask	m_task;
 	};
 }
 

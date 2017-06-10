@@ -3,7 +3,7 @@
 
 namespace MShow
 {
-	MAudioTask::MAudioTask(MReadTask& task, MClock& clock)
+	MAudioTask::MAudioTask(MFLVTask& task, MClock& clock)
 		:m_task(task),
 		m_clock(clock)
 	{

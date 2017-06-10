@@ -152,11 +152,10 @@
     <ClInclude Include="MAudioTask.h" />
     <ClInclude Include="MClock.h" />
     <ClInclude Include="MPacketQueue.h" />
-    <ClInclude Include="MReadTask.h" />
+    <ClInclude Include="MFLVTask.h" />
     <ClInclude Include="MAudioRenderTask.h" />
     <ClInclude Include="MShowApp.h" />
     <ClInclude Include="MShowCommon.h" />
-    <ClInclude Include="MFLV.h" />
     <ClInclude Include="MShowWindow.h" />
     <ClInclude Include="MVideoRenderTask.h" />
     <ClInclude Include="MVideoTask.h" />
@@ -169,11 +168,10 @@
     <ClCompile Include="MAudioTask.cpp" />
     <ClCompile Include="MClock.cpp" />
     <ClCompile Include="MPacketQueue.cpp" />
-    <ClCompile Include="MReadTask.cpp" />
+    <ClCompile Include="MFLVTask.cpp" />
     <ClCompile Include="MAudioRenderTask.cpp" />
     <ClCompile Include="MShowApp.cpp" />
     <ClCompile Include="MShowCommon.cpp" />
-    <ClCompile Include="MFLV.cpp" />
     <ClCompile Include="MShowWindow.cpp" />
     <ClCompile Include="MVideoRenderTask.cpp" />
     <ClCompile Include="MVideoTask.cpp" />

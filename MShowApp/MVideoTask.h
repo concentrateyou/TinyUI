@@ -1,10 +1,11 @@
 #pragma once
 #include "MShowCommon.h"
-#include "MReadTask.h"
+#include "MFLVTask.h"
 #include "MClock.h"
 
 namespace MShow
 {
+	class MFLVTask;
 	/// <summary>
 	/// 视频解码线程
 	/// </summary>
@@ -12,7 +13,7 @@ namespace MShow
 	{
 		DISALLOW_COPY_AND_ASSIGN(MVideoTask)
 	public:
-		MVideoTask(MReadTask& task, MClock& clock);
+		MVideoTask(MFLVTask& task, MClock& clock);
 		virtual ~MVideoTask();
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
@@ -25,7 +26,7 @@ namespace MShow
 	private:
 		TinyEvent		m_close;
 		MClock&			m_clock;
-		MReadTask&		m_task;
+		MFLVTask&		m_task;
 		MPacketQueue	m_queue;
 	};
 }

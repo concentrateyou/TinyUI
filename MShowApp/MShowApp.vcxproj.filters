@@ -45,9 +45,6 @@
     <ClInclude Include="MAudioTask.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MReadTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="MPacketQueue.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -60,7 +57,7 @@
     <ClInclude Include="MVideoRenderTask.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MFLV.h">
+    <ClInclude Include="MFLVTask.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -86,9 +83,6 @@
     <ClCompile Include="MAudioTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MReadTask.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="MPacketQueue.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -101,7 +95,7 @@
     <ClCompile Include="MVideoRenderTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MFLV.cpp">
+    <ClCompile Include="MFLVTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

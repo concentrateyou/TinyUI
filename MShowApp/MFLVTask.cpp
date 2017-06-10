@@ -1,9 +1,9 @@
 #include "stdafx.h"
-#include "MReadTask.h"
+#include "MFLVTask.h"
 
 namespace MShow
 {
-	MReadTask::MReadTask()
+	MFLVTask::MFLVTask()
 		:m_sample(0),
 		m_bFI(0)
 	{
@@ -11,53 +11,92 @@ namespace MShow
 	}
 
 
-	MReadTask::~MReadTask()
+	MFLVTask::~MFLVTask()
 	{
 	}
 
-	BOOL MReadTask::Initialize(LPCSTR pzURL)
+	BOOL MFLVTask::Initialize(HWND hWND, LPCSTR pzURL)
 	{
-		m_reader.Close();
+		m_videoTask.Reset(new MVideoTask(*this, m_clock));
+		if (!m_videoTask)
+			return FALSE;
+		m_videoRenderTask.Reset(new MVideoRenderTask(*m_videoTask, m_clock));
+		if (!m_videoRenderTask)
+			return FALSE;
+		if (!m_videoRenderTask->Initialize(hWND))
+			return FALSE;
+		m_audioTask.Reset(new MAudioTask(*this, m_clock));
+		if (!m_audioTask)
+			return FALSE;
+		m_audioRenderTask.Reset(new MAudioRenderTask(*m_audioTask, m_clock));
+		if (!m_audioRenderTask)
+			return FALSE;
+		if (!m_audioRenderTask->Initialize(hWND))
+			return FALSE;
+		m_aac.Reset(new AACDecode());
+		if (!m_aac)
+			return FALSE;
+		m_h264.Reset(new H264Decode());
+		if (!m_h264)
+			return FALSE;
 		if (!m_reader.OpenURL(pzURL))
 			return FALSE;
 		m_script = m_reader.GetScript();
-		m_aac.Reset(new AACDecode());
-		m_h264.Reset(new H264Decode());
 		return TRUE;
 	}
 
-	BOOL MReadTask::Submit()
+	BOOL MFLVTask::Submit()
 	{
 		m_close.CreateEvent();
-		return TinyTaskBase::Submit(BindCallback(&MReadTask::OnMessagePump, this));
+		if (TinyTaskBase::Submit(BindCallback(&MFLVTask::OnMessagePump, this)))
+		{
+			if (!m_videoTask || !m_videoTask->Submit())
+				return FALSE;
+			if (!m_videoRenderTask || !m_videoRenderTask->Submit())
+				return FALSE;
+			if (!m_audioTask || !m_audioTask->Submit())
+				return FALSE;
+			if (!m_audioRenderTask || !m_audioRenderTask->Submit())
+				return FALSE;
+			return TRUE;
+		}
+		return FALSE;
 	}
 
-	BOOL MReadTask::Close(DWORD dwMS)
+	BOOL MFLVTask::Close(DWORD dwMS)
 	{
+		if (m_videoTask && m_videoTask->IsValid())
+			m_videoTask->Close(dwMS);
+		if (m_videoRenderTask && m_videoRenderTask->IsValid())
+			m_videoRenderTask->Close(dwMS);
+		if (m_audioTask && m_audioTask->IsValid())
+			m_audioTask->Close(dwMS);
+		if (m_audioRenderTask && m_audioRenderTask->IsValid())
+			m_audioRenderTask->Close(dwMS);
 		m_close.SetEvent();
 		return TinyTaskBase::Close(dwMS);
 	}
 
-	MPacketQueue& MReadTask::GetAudioQueue()
+	MPacketQueue& MFLVTask::GetAudioQueue()
 	{
 		return m_audioQueue;
 	}
 
-	MPacketQueue& MReadTask::GetVideoQueue()
+	MPacketQueue& MFLVTask::GetVideoQueue()
 	{
 		return m_videoQueue;
 	}
 
-	H264Decode* MReadTask::GetH264()
+	H264Decode* MFLVTask::GetH264()
 	{
 		return m_h264;
 	}
-	AACDecode* MReadTask::GetAAC()
+	AACDecode* MFLVTask::GetAAC()
 	{
 		return m_aac;
 	}
 
-	const FLV_SCRIPTDATA& MReadTask::GetScript() const
+	const FLV_SCRIPTDATA& MFLVTask::GetScript() const
 	{
 		return m_script;
 	}
@@ -68,7 +107,7 @@ namespace MShow
 		SAFE_DELETE_ARRAY(block.video.data);
 	}
 
-	void MReadTask::OnMessagePump()
+	void MFLVTask::OnMessagePump()
 	{
 		for (;;)
 		{

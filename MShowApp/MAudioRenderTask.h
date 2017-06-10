@@ -5,6 +5,7 @@
 
 namespace MShow
 {
+	class MAudioTask;
 	/// <summary>
 	/// ≤•∑≈“Ù∆µœﬂ≥Ã
 	/// </summary>

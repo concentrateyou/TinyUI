@@ -4,7 +4,6 @@
 namespace MShow
 {
 	DXView::DXView()
-		:m_render(m_readTask, m_clock)
 	{
 	}
 
@@ -49,14 +48,15 @@ namespace MShow
 	LRESULT DXView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		m_task.Initialize(m_hWND, "rtmp://live.hkstv.hk.lxdns.com/live/hks");
+		m_task.Submit();
 		return FALSE;
 	}
 
 	LRESULT DXView::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		m_render.Close();
-		m_readTask.Close(INFINITE);
+		m_task.Close(INFINITE);
 		return FALSE;
 	}
 
