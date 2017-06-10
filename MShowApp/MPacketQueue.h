@@ -22,7 +22,8 @@ namespace MShow
 		DWORD GetCount() const;
 		void RemoveAll();
 	private:
-		LONG							m_size;
+		LONG					m_size;
+		TinyLock				m_lock;
 		TinyLinkList<SampleTag>	m_list;
 	};
 }

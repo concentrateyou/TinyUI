@@ -31,11 +31,6 @@ namespace MShow
 		return m_videoQueue;
 	}
 
-	TinyLock& MVideoTask::GetLock()
-	{
-		return m_lock;
-	}
-
 	H264Decode* MVideoTask::GetH264()
 	{
 		return m_task.GetH264();
@@ -58,10 +53,8 @@ namespace MShow
 				Sleep(5);
 				continue;
 			}
-			m_task.GetVideoLock().Lock();
 			SampleTag tag = { 0 };
 			BOOL val = m_task.GetVideoQueue().Pop(tag);
-			m_task.GetVideoLock().Unlock();
 			if (val && tag.size > 0)
 			{
 				BYTE* bo = NULL;
@@ -78,9 +71,7 @@ namespace MShow
 					memcpy(tag.bits, bo, so);
 					tag.samplePTS = m_task.GetH264()->GetYUV420()->pkt_pts;
 					tag.sampleDTS = tag.samplePTS;
-					m_lock.Lock();
 					m_videoQueue.Push(tag);
-					m_lock.Unlock();
 				}
 				else
 				{

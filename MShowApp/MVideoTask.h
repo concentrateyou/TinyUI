@@ -16,15 +16,14 @@ namespace MShow
 		virtual ~MVideoTask();
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
-		MPacketQueue& GetQueue();
-		TinyLock&	GetLock();
-		H264Decode* GetH264();
-		TinySize	GetSize() const;
+	public:
+		MPacketQueue&	GetQueue();
+		H264Decode*		GetH264();
+		TinySize		GetSize() const;
 	private:
 		void OnMessagePump();
 	private:
 		TinyEvent		m_close;
-		TinyLock		m_lock;
 		MClock&			m_clock;
 		MReadTask&		m_task;
 		MPacketQueue	m_videoQueue;

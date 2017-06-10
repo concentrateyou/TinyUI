@@ -20,8 +20,6 @@ namespace MShow
 		BOOL Close(DWORD dwMS) OVERRIDE;
 	public:
 		const FLV_SCRIPTDATA& GetScript() const;
-		TinyLock& GetAudioLock();
-		TinyLock& GetVideoLock();
 		MPacketQueue& GetAudioQueue();
 		MPacketQueue& GetVideoQueue();
 		H264Decode* GetH264();
@@ -34,7 +32,6 @@ namespace MShow
 		TinyEvent		m_close;
 		FLVReader		m_reader;
 		FLV_SCRIPTDATA	m_script;
-		TinyLock		m_locks[2];
 		MPacketQueue	m_audioQueue;
 		MPacketQueue	m_videoQueue;
 		TinyScopedPtr<H264Decode>	m_h264;

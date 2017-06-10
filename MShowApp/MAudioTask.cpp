@@ -31,11 +31,6 @@ namespace MShow
 		return m_audioQueue;
 	}
 
-	TinyLock& MAudioTask::GetLock()
-	{
-		return m_lock;
-	}
-
 	AACDecode* MAudioTask::GetAAC()
 	{
 		return m_task.GetAAC();
@@ -53,10 +48,8 @@ namespace MShow
 				Sleep(5);
 				continue;
 			}
-			m_task.GetAudioLock().Lock();
 			SampleTag tag = { 0 };
 			BOOL val = m_task.GetAudioQueue().Pop(tag);
-			m_task.GetAudioLock().Unlock();
 			if (val && tag.size > 0)
 			{
 				BYTE* bo = NULL;
@@ -72,18 +65,12 @@ namespace MShow
 					tag.size = so;
 					tag.bits = new BYTE[so];
 					memcpy(tag.bits, bo, so);
-					m_lock.Lock();
 					m_audioQueue.Push(tag);
-					m_lock.Unlock();
 				}
 				else
 				{
 					SAFE_DELETE_ARRAY(tag.bits);
 				}
-			}
-			else
-			{
-				Sleep(1);
 			}
 		}
 		m_audioQueue.RemoveAll();

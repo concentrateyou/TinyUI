@@ -12,6 +12,7 @@ namespace MShow
 	}
 	BOOL MPacketQueue::Push(Decode::SampleTag& tag)
 	{
+		TinyAutoLock lock(m_lock);
 		if (m_list.InsertLast(tag) != NULL)
 		{
 			m_size += tag.size;
@@ -21,6 +22,7 @@ namespace MShow
 	}
 	BOOL MPacketQueue::Pop(Decode::SampleTag& tag)
 	{
+		TinyAutoLock lock(m_lock);
 		if (m_list.GetSize() > 0)
 		{
 			ITERATOR s = m_list.First();
@@ -46,6 +48,7 @@ namespace MShow
 	}
 	void MPacketQueue::RemoveAll()
 	{
+		TinyAutoLock lock(m_lock);
 		ITERATOR pos = m_list.First();
 		while (pos != NULL)
 		{

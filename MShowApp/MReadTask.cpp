@@ -38,15 +38,6 @@ namespace MShow
 		return TinyTaskBase::Close(dwMS);
 	}
 
-	TinyLock& MReadTask::GetAudioLock()
-	{
-		return m_locks[0];
-	}
-	TinyLock& MReadTask::GetVideoLock()
-	{
-		return m_locks[1];
-	}
-
 	MPacketQueue& MReadTask::GetAudioQueue()
 	{
 		return m_audioQueue;
@@ -81,7 +72,7 @@ namespace MShow
 	{
 		for (;;)
 		{
-			if (m_close.Lock(0))
+			if (m_close.Lock(1))
 				break;
 			INT size = m_audioQueue.GetSize() + m_videoQueue.GetSize();
 			if (size > MAX_QUEUE_SIZE)
@@ -121,9 +112,7 @@ namespace MShow
 						tag.sample = ++m_sample;
 						tag.sampleDTS = block.dts;
 						tag.samplePTS = block.pts;
-						m_locks[0].Lock();
 						m_audioQueue.Push(tag);
-						m_locks[0].Unlock();
 					}
 				}
 			}
@@ -163,9 +152,7 @@ namespace MShow
 						tag.sample = ++m_sample;
 						tag.sampleDTS = block.dts;
 						tag.samplePTS = block.pts;
-						m_locks[1].Lock();
 						m_videoQueue.Push(tag);
-						m_locks[1].Unlock();
 					}
 				}
 			}

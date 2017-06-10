@@ -45,14 +45,6 @@ namespace MShow
 		return TinyTaskBase::Close(dwMS);
 	}
 
-	BOOL GetTag(MVideoTask& task, SampleTag& tag)
-	{
-		task.GetLock().Lock();
-		BOOL bRes = task.GetQueue().Pop(tag);
-		task.GetLock().Unlock();
-		return bRes;
-	}
-
 	void MVideoRenderTask::OnMessagePump()
 	{
 		for (;;)
@@ -60,7 +52,8 @@ namespace MShow
 			if (m_close.Lock(0))
 				break;
 			SampleTag tag = { 0 };
-			if (!GetTag(m_task, tag) || tag.size <= 0)
+			BOOL val = m_task.GetQueue().Pop(tag);
+			if (!val || tag.size <= 0)
 			{
 				Sleep(3);
 				continue;
