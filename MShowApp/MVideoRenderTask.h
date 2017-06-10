@@ -2,7 +2,6 @@
 #include "MShowCommon.h"
 #include "MAudioTask.h"
 #include "MVideoTask.h"
-#include "DXView.h"
 
 namespace MShow
 {
@@ -16,15 +15,18 @@ namespace MShow
 		MVideoRenderTask(MVideoTask& task,MClock& clock);
 		virtual ~MVideoRenderTask();
 		BOOL Initialize(HWND hWND);
-	private:
+		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
 	private:
 		void OnMessagePump();
+		void OnRender(BYTE* bits, LONG size);
 	private:
 		BOOL		m_close;
+		TinySize	m_size;
 		DX2D		m_d2d;
 		MClock&		m_clock;
-		MVideoTask& m_task;		
+		MVideoTask& m_task;
+		TinyComPtr<ID2D1Bitmap1> m_bitmap;
 	};
 }
 

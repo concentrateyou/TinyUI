@@ -156,6 +156,7 @@
     <ClInclude Include="MAudioRenderTask.h" />
     <ClInclude Include="MShowApp.h" />
     <ClInclude Include="MShowCommon.h" />
+    <ClInclude Include="MShowRender.h" />
     <ClInclude Include="MShowWindow.h" />
     <ClInclude Include="MVideoRenderTask.h" />
     <ClInclude Include="MVideoTask.h" />
@@ -172,6 +173,7 @@
     <ClCompile Include="MAudioRenderTask.cpp" />
     <ClCompile Include="MShowApp.cpp" />
     <ClCompile Include="MShowCommon.cpp" />
+    <ClCompile Include="MShowRender.cpp" />
     <ClCompile Include="MShowWindow.cpp" />
     <ClCompile Include="MVideoRenderTask.cpp" />
     <ClCompile Include="MVideoTask.cpp" />

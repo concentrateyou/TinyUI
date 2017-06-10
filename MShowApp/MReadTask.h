@@ -16,7 +16,10 @@ namespace MShow
 		MReadTask();
 		virtual ~MReadTask();
 		BOOL Initialize(LPCSTR pzURL);
+		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
+	public:
+		const FLV_SCRIPTDATA& GetScript() const;
 		TinyLock& GetAudioLock();
 		TinyLock& GetVideoLock();
 		MPacketQueue& GetAudioQueue();

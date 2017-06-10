@@ -4,6 +4,7 @@
 namespace MShow
 {
 	DXView::DXView()
+		:m_render(m_readTask, m_clock)
 	{
 	}
 
@@ -48,12 +49,18 @@ namespace MShow
 	LRESULT DXView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		m_readTask.Initialize("rtmp://10.121.86.127/live/test_360p");
+		m_readTask.Submit();
+		m_render.Initialize(m_hWND);
+		m_render.Submit();
 		return FALSE;
 	}
 
 	LRESULT DXView::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		m_readTask.Close(INFINITE);
+		m_render.Close();
 		return FALSE;
 	}
 
@@ -77,7 +84,6 @@ namespace MShow
 		bHandled = FALSE;
 		return FALSE;
 	}
-
 }
 
 

@@ -15,6 +15,11 @@ namespace MShow
 	{
 	}
 
+	BOOL MVideoTask::Submit()
+	{
+		return TinyTaskBase::Submit(BindCallback(&MVideoTask::OnMessagePump, this));
+	}
+
 	BOOL MVideoTask::Close(DWORD dwMS)
 	{
 		m_close = TRUE;
@@ -36,6 +41,10 @@ namespace MShow
 		return m_task.GetH264();
 	}
 
+	TinySize MVideoTask::GetSize() const
+	{
+		return TinySize(m_task.GetScript().width, m_task.GetScript().height);
+	}
 
 	void MVideoTask::OnMessagePump()
 	{

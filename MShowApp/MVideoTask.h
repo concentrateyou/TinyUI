@@ -14,10 +14,12 @@ namespace MShow
 	public:
 		MVideoTask(MReadTask& task, MClock& clock);
 		virtual ~MVideoTask();
+		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
 		MPacketQueue& GetQueue();
 		TinyLock&	GetLock();
 		H264Decode* GetH264();
+		TinySize	GetSize() const;
 	private:
 		void OnMessagePump();
 	private:

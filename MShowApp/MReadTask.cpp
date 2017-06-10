@@ -26,6 +26,11 @@ namespace MShow
 		return TRUE;
 	}
 
+	BOOL MReadTask::Submit()
+	{
+		return TinyTaskBase::Submit(BindCallback(&MReadTask::OnMessagePump, this));
+	}
+
 	BOOL MReadTask::Close(DWORD dwMS)
 	{
 		m_close = TRUE;
@@ -59,6 +64,12 @@ namespace MShow
 	{
 		return m_aac;
 	}
+
+	const FLV_SCRIPTDATA& MReadTask::GetScript() const
+	{
+		return m_script;
+	}
+
 	void ReleaseBlock(FLV_BLOCK& block)
 	{
 		SAFE_DELETE_ARRAY(block.audio.data);
