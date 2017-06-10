@@ -14,6 +14,7 @@ namespace MShow
 	public:
 		MAudioTask(MReadTask& task,MClock& clock);
 		virtual ~MAudioTask();
+		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
 		MPacketQueue& GetQueue();
 		TinyLock&	GetLock();

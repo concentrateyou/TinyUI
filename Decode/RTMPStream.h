@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "IO/TinyIO.h"
+#include "IO/TinyRingBuffer.h"
 #include "rtmp.h"
 using namespace std;
 
@@ -34,8 +35,8 @@ namespace Decode
 		BOOL Open(LPCSTR pzURL);
 		BOOL Close();
 	private:
-		LONG        m_cRef;
-		RTMP		m_sRTMP;
+		LONG			m_cRef;
+		RTMP			m_sRTMP;
 	};
 }
 

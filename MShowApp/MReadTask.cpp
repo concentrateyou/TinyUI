@@ -5,7 +5,8 @@ namespace MShow
 {
 	MReadTask::MReadTask()
 		:m_close(FALSE),
-		m_index(1)
+		m_sample(0),
+		m_bFI(0)
 	{
 
 	}
@@ -89,7 +90,6 @@ namespace MShow
 				Sleep(5);
 				continue;
 			}
-			ZeroMemory(&block, sizeof(block));
 			if (!m_reader.ReadBlock(block))
 			{
 				goto _ERROR;
@@ -104,10 +104,11 @@ namespace MShow
 						{
 							goto _ERROR;
 						}
+						ReleaseBlock(block);
 					}
 					if (block.audio.packetType == FLV_AACRaw)
 					{
-						if (m_index == 1)
+						if (!m_bFI)
 						{
 							ReleaseBlock(block);
 							continue;
@@ -117,7 +118,7 @@ namespace MShow
 						tag.size = block.audio.size;
 						tag.sampleDTS = block.dts;
 						tag.samplePTS = block.pts;
-						tag.sampleIndex = m_index++;
+						tag.sampleIndex = ++m_sample;
 						m_locks[0].Lock();
 						m_audioQueue.Push(tag);
 						m_locks[0].Unlock();
@@ -139,20 +140,25 @@ namespace MShow
 						{
 							goto _ERROR;
 						}
+						ReleaseBlock(block);
 					}
 					if (block.video.packetType == FLV_NALU)
 					{
-						if (m_index == 1 && block.video.codeType != 1)
+						if (!m_bFI)
 						{
-							ReleaseBlock(block);
-							continue;
+							if (block.video.codeType != 1)
+							{
+								ReleaseBlock(block);
+								continue;
+							}
+							m_bFI = TRUE;
 						}
 						SampleTag tag = { 0 };
 						tag.bits = block.video.data;
 						tag.size = block.video.size;
 						tag.sampleDTS = block.dts;
 						tag.samplePTS = block.pts;
-						tag.sampleIndex = m_index++;
+						tag.sampleIndex = ++m_sample;
 						m_locks[1].Lock();
 						m_videoQueue.Push(tag);
 						m_locks[1].Unlock();

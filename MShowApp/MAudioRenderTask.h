@@ -14,7 +14,8 @@ namespace MShow
 	public:
 		MAudioRenderTask(MAudioTask& task, MClock& clock);
 		virtual ~MAudioRenderTask();
-	private:
+		BOOL Initialize(HWND hWND);
+		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
 	private:
 		void OnMessagePump();

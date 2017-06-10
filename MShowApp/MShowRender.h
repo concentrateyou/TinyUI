@@ -3,6 +3,8 @@
 #include "MReadTask.h"
 #include "MVideoTask.h"
 #include "MVideoRenderTask.h"
+#include "MAudioTask.h"
+#include "MAudioRenderTask.h"
 
 namespace MShow
 {
@@ -18,7 +20,9 @@ namespace MShow
 	private:
 		MReadTask&			m_task;
 		MVideoTask			m_videoTask;
-		MVideoRenderTask	m_renderTask;
+		MVideoRenderTask	m_videoRenderTask;
+		MAudioTask			m_audioTask;
+		MAudioRenderTask	m_audioRenderTask;
 	};
 }
 

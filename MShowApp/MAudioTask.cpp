@@ -14,6 +14,12 @@ namespace MShow
 	MAudioTask::~MAudioTask()
 	{
 	}
+
+	BOOL MAudioTask::Submit()
+	{
+		return TinyTaskBase::Submit(BindCallback(&MAudioTask::OnMessagePump, this));
+	}
+
 	BOOL MAudioTask::Close(DWORD dwMS)
 	{
 		m_close = TRUE;
@@ -41,12 +47,10 @@ namespace MShow
 		{
 			if (m_close)
 				break;
-			m_task.GetAudioLock().Lock();
-			INT size = m_task.GetVideoQueue().GetSize();
-			m_task.GetAudioLock().Unlock();
+			INT size = m_task.GetAudioQueue().GetSize();
 			if (size > MAX_AUDIO_QUEUE_SIZE)
 			{
-				Sleep(3);
+				Sleep(5);
 				continue;
 			}
 			m_task.GetAudioLock().Lock();
@@ -60,6 +64,10 @@ namespace MShow
 				AACDecode* aac = m_task.GetAAC();
 				if (aac != NULL && aac->Decode(tag.bits, tag.size, bo, so))
 				{
+					if (m_clock.GetBasetPTS() == -1)
+					{
+						m_clock.SetBasetPTS(tag.samplePTS);
+					}
 					SAFE_DELETE_ARRAY(tag.bits);
 					tag.size = so;
 					tag.bits = new BYTE[so];

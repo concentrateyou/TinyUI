@@ -85,14 +85,11 @@ namespace FLVPlayer
 					}
 					if (block.audio.packetType == FLV_AACRaw)
 					{
-						if (m_reader.IsNetwork())//网络流等待第一个关键帧
+						if (!m_bFirstI)
 						{
-							if (!m_bFirstI)
-							{
-								SAFE_DELETE_ARRAY(block.audio.data);
-								SAFE_DELETE_ARRAY(block.video.data);
-								continue;
-							}
+							SAFE_DELETE_ARRAY(block.audio.data);
+							SAFE_DELETE_ARRAY(block.video.data);
+							continue;
 						}
 						SampleTag tag = { 0 };
 						tag.bits = block.audio.data;

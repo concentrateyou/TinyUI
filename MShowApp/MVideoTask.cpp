@@ -52,9 +52,7 @@ namespace MShow
 		{
 			if (m_close)
 				break;
-			m_task.GetVideoLock().Lock();
 			INT size = m_task.GetVideoQueue().GetSize();
-			m_task.GetVideoLock().Unlock();
 			if (size > MAX_VIDEO_QUEUE_SIZE)
 			{
 				Sleep(5);
@@ -70,6 +68,10 @@ namespace MShow
 				LONG  so = 0;
 				if (m_task.GetH264()->Decode(tag, bo, so))
 				{
+					if (m_clock.GetBasetPTS() == -1)
+					{
+						m_clock.SetBasetPTS(tag.samplePTS);
+					}
 					SAFE_DELETE_ARRAY(tag.bits);
 					tag.size = so;
 					tag.bits = new BYTE[so];

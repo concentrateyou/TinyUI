@@ -43,43 +43,44 @@ namespace MShow
 		return TinyTaskBase::Close(dwMS);
 	}
 
+	BOOL GetTag(MVideoTask& task, SampleTag& tag)
+	{
+		task.GetLock().Lock();
+		BOOL bRes = task.GetQueue().Pop(tag);
+		task.GetLock().Unlock();
+		return bRes;
+	}
+
 	void MVideoRenderTask::OnMessagePump()
 	{
 		for (;;)
 		{
 			if (m_close)
 				break;
-			m_task.GetLock().Lock();
-			SampleTag sample = { 0 };
-			BOOL val = m_task.GetQueue().Pop(sample);
-			m_task.GetLock().Unlock();
-			if (val && sample.size > 0)
+			SampleTag tag = { 0 };
+			if (!GetTag(m_task, tag) || tag.size <= 0)
+				continue;
+			if (tag.samplePTS == m_clock.GetBasetPTS())
 			{
-				if (sample.sampleIndex == 1)
-				{
-					m_clock.SetBaseTime(timeGetTime());
-				}
-				DWORD dwMS = timeGetTime() - m_clock.GetBaseTime();
-				INT offset = static_cast<INT>(sample.samplePTS - dwMS);
-				Sleep(offset < 0 ? 0 : offset);
-				OnRender(sample.bits, sample.size);
-				SAFE_DELETE_ARRAY(sample.bits);
+				m_clock.SetBaseTime(timeGetTime());
 			}
+			while (m_clock.GetBasetPTS() == -1);
+			DWORD dwMS = timeGetTime() - m_clock.GetBaseTime();
+			INT offset = static_cast<INT>(tag.samplePTS - dwMS);
+			Sleep(offset < 0 ? 0 : offset);
+			OnRender(tag.bits, tag.size);
+			SAFE_DELETE_ARRAY(tag.bits);
 		}
 	}
 
 	void MVideoRenderTask::OnRender(BYTE* bits, LONG size)
 	{
-		TinyPerformanceTimer timer;
-		timer.BeginTime();
-		if (m_d2d.BeginDraw())
+		if (m_d2d.BeginDraw() && bits)
 		{
 			TinySize s = m_task.GetSize();
 			m_bitmap->CopyFromMemory(NULL, bits, s.cx * 4);
 			m_d2d.GetContext()->DrawBitmap(m_bitmap);
 			m_d2d.EndDraw();
 		}
-		timer.EndTime();
-		TRACE("MVideoRenderTask - Render:%d\n", timer.GetMillisconds());
 	}
 }

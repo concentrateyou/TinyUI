@@ -59,8 +59,8 @@ namespace MShow
 	LRESULT DXView::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		m_readTask.Close(INFINITE);
 		m_render.Close();
+		m_readTask.Close(INFINITE);
 		return FALSE;
 	}
 

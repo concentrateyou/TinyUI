@@ -15,8 +15,11 @@ namespace MShow
 		void SetBaseTime(LONG timestamp);
 		void AddBaseTime(DWORD dwMS);
 		LONG GetBaseTime() const;
+		LONG GetBasetPTS() const;
+		void SetBasetPTS(LONG basePTS);
 	private:
 		LONG		m_baseTime;
+		LONG		m_basePTS;
 		TinyLock	m_lock;
 	};
 }

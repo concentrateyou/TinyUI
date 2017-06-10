@@ -29,8 +29,9 @@ namespace MShow
 	private:
 		void OnMessagePump();
 	private:
+		BOOL			m_bFI;
 		BOOL			m_close;
-		LONGLONG		m_index;
+		LONGLONG		m_sample;
 		FLVReader		m_reader;
 		FLV_SCRIPTDATA	m_script;
 		TinyLock		m_locks[2];
