@@ -56,7 +56,7 @@ namespace MShow
 			BOOL val = m_task.GetQueue().Pop(tag);
 			if (!val || !tag.bits || tag.size <= 0)
 			{
-				Sleep(5);
+				Sleep(3);
 				continue;
 			}
 			if (tag.samplePTS == m_clock.GetBasetPTS())

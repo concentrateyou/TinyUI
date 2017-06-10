@@ -50,13 +50,16 @@ namespace MShow
 			INT size = m_queue.GetSize();
 			if (size > MAX_VIDEO_QUEUE_SIZE)
 			{
-				Sleep(5);
+				Sleep(3);
 				continue;
 			}
 			SampleTag tag = { 0 };
 			BOOL val = m_task.GetVideoQueue().Pop(tag);
-			if (!val || tag.size <= 0)
+			if (!val || !tag.bits || tag.size <= 0)
+			{
+				Sleep(3);
 				continue;
+			}
 			BYTE* bo = NULL;
 			LONG  so = 0;
 			if (m_task.GetH264()->Decode(tag, bo, so))

@@ -321,7 +321,7 @@ namespace FLVPlayer
 				break;
 			}
 			INT size = m_queue.GetSize();
-			if (size > MAX_VIDEO_QUEUE_SIZE || m_decode.m_videoQueue.IsEmpty())
+			if (size > MAX_VIDEO_QUEUE_SIZE)
 			{
 				Sleep(3);
 				continue;
