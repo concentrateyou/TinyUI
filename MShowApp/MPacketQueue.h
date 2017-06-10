@@ -17,9 +17,9 @@ namespace MShow
 		~MPacketQueue();
 		BOOL Push(SampleTag& tag);
 		BOOL Pop(SampleTag& tag);
-		BOOL IsEmpty() const;
-		LONG GetSize() const;
-		DWORD GetCount() const;
+		BOOL IsEmpty();
+		LONG GetSize();
+		DWORD GetCount();
 		void RemoveAll();
 	private:
 		LONG					m_size;

@@ -5,8 +5,8 @@ namespace FLVPlayer
 {
 	FLVDecode::FLVDecode(HWND hWND)
 		:m_hWND(hWND),
-		m_audioQueue(m_lock),
-		m_videoQueue(m_lock),
+		m_audioQueue(m_lock1),
+		m_videoQueue(m_lock2),
 		m_videoTask(*this),
 		m_audioTask(*this),
 		m_audioRender(m_audioTask),
@@ -26,8 +26,8 @@ namespace FLVPlayer
 	}
 	BOOL FLVDecode::Submit()
 	{
-		if (m_reader.OpenURL("rtmp://live.hkstv.hk.lxdns.com/live/hks"))
-		//if (m_reader.OpenURL("rtmp://10.121.86.127/live/test_360p"))
+		//if (m_reader.OpenURL("rtmp://live.hkstv.hk.lxdns.com/live/hks"))
+		if (m_reader.OpenURL("rtmp://10.121.86.127/live/test_360p"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);
@@ -63,7 +63,7 @@ namespace FLVPlayer
 			INT size = m_audioQueue.GetSize() + m_videoQueue.GetSize();
 			if (size > MAX_QUEUE_SIZE)
 			{
-				Sleep(5);
+				Sleep(15);
 				continue;
 			}
 			if (!m_reader.ReadBlock(block))

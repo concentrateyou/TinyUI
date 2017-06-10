@@ -110,7 +110,8 @@ namespace FLVPlayer
 		HWND						m_hWND;
 		TinySize					m_size;
 		FLVReader					m_reader;
-		TinyLock					m_lock;
+		TinyLock					m_lock1;
+		TinyLock					m_lock2;
 		TinyEvent					m_close;
 		PacketQueue					m_audioQueue;
 		PacketQueue					m_videoQueue;

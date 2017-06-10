@@ -41,8 +41,8 @@ namespace MShow
 			if (m_close.Lock(0))
 				break;
 			SampleTag tag = { 0 };
-			BOOL bRes = m_task.GetQueue().Pop(tag);
-			if (!bRes || tag.size <= 0)
+			BOOL val = m_task.GetQueue().Pop(tag);
+			if (!val || !tag.bits || tag.size <= 0)
 			{
 				Sleep(5);
 				continue;

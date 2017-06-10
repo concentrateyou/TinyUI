@@ -34,18 +34,22 @@ namespace MShow
 		}
 		return FALSE;
 	}
-	BOOL MPacketQueue::IsEmpty() const
+	BOOL MPacketQueue::IsEmpty()
 	{
+		TinyAutoLock lock(m_lock);
 		return m_list.IsEmpty();
 	}
-	LONG MPacketQueue::GetSize() const
+	LONG MPacketQueue::GetSize()
 	{
+		TinyAutoLock lock(m_lock);
 		return m_size;
 	}
-	DWORD MPacketQueue::GetCount() const
+	DWORD MPacketQueue::GetCount()
 	{
+		TinyAutoLock lock(m_lock);
 		return m_list.GetSize();
 	}
+
 	void MPacketQueue::RemoveAll()
 	{
 		TinyAutoLock lock(m_lock);

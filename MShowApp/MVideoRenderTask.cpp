@@ -53,7 +53,7 @@ namespace MShow
 				break;
 			SampleTag tag = { 0 };
 			BOOL val = m_task.GetQueue().Pop(tag);
-			if (!val || tag.size <= 0)
+			if (!val || !tag.bits || tag.size <= 0)
 			{
 				Sleep(5);
 				continue;
@@ -73,7 +73,7 @@ namespace MShow
 
 	void MVideoRenderTask::OnRender(BYTE* bits, LONG size)
 	{
-		if (m_d2d.BeginDraw() && bits)
+		if (m_d2d.BeginDraw())
 		{
 			TinySize s = m_task.GetSize();
 			m_bitmap->CopyFromMemory(NULL, bits, s.cx * 4);
