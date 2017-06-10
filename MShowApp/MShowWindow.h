@@ -28,10 +28,8 @@ namespace MShow
 	public:
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 		DXView& GetPreivewView();
-		//DXView& GetPlayView();
 	private:
 		DXView	m_previewView;//Ô¤ÀÀ´°¿Ú
-		//DXView	m_playView;//²¥·Å´°¿Ú
 	};
 }
 

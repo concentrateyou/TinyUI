@@ -78,8 +78,7 @@ namespace MShow
 	}
 
 	void MReadTask::OnMessagePump()
-	{
-		FLV_BLOCK block = { 0 };
+	{	
 		for (;;)
 		{
 			if (m_close)
@@ -90,8 +89,10 @@ namespace MShow
 				Sleep(5);
 				continue;
 			}
+			FLV_BLOCK block = { 0 };
 			if (!m_reader.ReadBlock(block))
 			{
+				ReleaseBlock(block);
 				goto _ERROR;
 			}
 			if (block.type == FLV_AUDIO)
@@ -102,6 +103,7 @@ namespace MShow
 					{
 						if (!m_aac->Open(block.audio.data, block.audio.size, block.audio.bitsPerSample == 0 ? 8 : 16))
 						{
+							ReleaseBlock(block);
 							goto _ERROR;
 						}
 						ReleaseBlock(block);
@@ -134,10 +136,12 @@ namespace MShow
 						TinySize size(static_cast<LONG>(m_script.width), static_cast<LONG>(m_script.height));
 						if (!m_h264->Initialize(size, size))
 						{
+							ReleaseBlock(block);
 							goto _ERROR;
 						}
 						if (!m_h264->Open(block.video.data, block.video.size))
 						{
+							ReleaseBlock(block);
 							goto _ERROR;
 						}
 						ReleaseBlock(block);
@@ -167,7 +171,6 @@ namespace MShow
 			}
 		}
 	_ERROR:
-		ReleaseBlock(block);
 		m_audioQueue.RemoveAll();
 		m_videoQueue.RemoveAll();
 	}

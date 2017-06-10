@@ -43,11 +43,6 @@ namespace MShow
 		return m_previewView;
 	}
 
-	/*DXView& MShowWindow::GetPlayView()
-	{
-		return m_playView;
-	}*/
-
 	LRESULT MShowWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
@@ -57,7 +52,6 @@ namespace MShow
 		INT cy = 730;
 		CenterWindow(NULL, { cx, cy });
 		m_previewView.Create(m_hWND, 33, 90, 512, 288);
-		//m_playView.Create(m_hWND, 755, 90, 512, 288);
 		return FALSE;
 	}
 	LRESULT MShowWindow::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
