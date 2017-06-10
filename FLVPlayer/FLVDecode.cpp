@@ -265,7 +265,6 @@ namespace FLVPlayer
 			SAFE_DELETE_ARRAY(tag.bits);
 		}
 	}
-
 	void FLVVideoRender::OnRender(BYTE* bits, LONG size)
 	{
 		ASSERT(size == m_decode.m_decode.m_size.cx *  m_decode.m_decode.m_size.cy * 4);

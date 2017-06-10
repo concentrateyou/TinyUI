@@ -26,6 +26,6 @@ namespace MShow
 		TinyEvent		m_close;
 		MClock&			m_clock;
 		MReadTask&		m_task;
-		MPacketQueue	m_videoQueue;
+		MPacketQueue	m_queue;
 	};
 }

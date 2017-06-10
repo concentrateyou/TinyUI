@@ -36,23 +36,19 @@ namespace MShow
 	}
 	BOOL MPacketQueue::IsEmpty()
 	{
-		TinyAutoLock lock(m_lock);
 		return m_list.IsEmpty();
 	}
 	LONG MPacketQueue::GetSize()
 	{
-		TinyAutoLock lock(m_lock);
 		return m_size;
 	}
 	DWORD MPacketQueue::GetCount()
 	{
-		TinyAutoLock lock(m_lock);
 		return m_list.GetSize();
 	}
 
 	void MPacketQueue::RemoveAll()
 	{
-		TinyAutoLock lock(m_lock);
 		ITERATOR pos = m_list.First();
 		while (pos != NULL)
 		{

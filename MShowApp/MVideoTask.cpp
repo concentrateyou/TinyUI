@@ -28,7 +28,7 @@ namespace MShow
 
 	MPacketQueue& MVideoTask::GetQueue()
 	{
-		return m_videoQueue;
+		return m_queue;
 	}
 
 	H264Decode* MVideoTask::GetH264()
@@ -47,7 +47,7 @@ namespace MShow
 		{
 			if (m_close.Lock(0))
 				break;
-			INT size = m_task.GetVideoQueue().GetSize();
+			INT size = m_queue.GetSize();
 			if (size > MAX_VIDEO_QUEUE_SIZE)
 			{
 				Sleep(5);
@@ -71,13 +71,13 @@ namespace MShow
 				memcpy(tag.bits, bo, so);
 				tag.samplePTS = m_task.GetH264()->GetYUV420()->pkt_pts;
 				tag.sampleDTS = tag.samplePTS;
-				m_videoQueue.Push(tag);
+				m_queue.Push(tag);
 			}
 			else
 			{
 				SAFE_DELETE_ARRAY(tag.bits);
 			}
 		}
-		m_videoQueue.RemoveAll();
+		m_queue.RemoveAll();
 	}
 }

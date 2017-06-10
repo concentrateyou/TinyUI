@@ -47,11 +47,12 @@ namespace MShow
 
 	void MVideoRenderTask::OnMessagePump()
 	{
+		SampleTag tag = { 0 };
 		for (;;)
 		{
 			if (m_close.Lock(0))
 				break;
-			SampleTag tag = { 0 };
+			ZeroMemory(&tag, sizeof(tag));
 			BOOL val = m_task.GetQueue().Pop(tag);
 			if (!val || !tag.bits || tag.size <= 0)
 			{

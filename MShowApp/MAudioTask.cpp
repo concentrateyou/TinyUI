@@ -28,7 +28,7 @@ namespace MShow
 
 	MPacketQueue& MAudioTask::GetQueue()
 	{
-		return m_audioQueue;
+		return m_queue;
 	}
 
 	AACDecode* MAudioTask::GetAAC()
@@ -42,7 +42,7 @@ namespace MShow
 		{
 			if (m_close.Lock(0))
 				break;
-			INT size = m_task.GetAudioQueue().GetSize();
+			INT size = m_queue.GetSize();
 			if (size > MAX_AUDIO_QUEUE_SIZE)
 			{
 				Sleep(5);
@@ -65,13 +65,13 @@ namespace MShow
 				tag.size = so;
 				tag.bits = new BYTE[so];
 				memcpy(tag.bits, bo, so);
-				m_audioQueue.Push(tag);
+				m_queue.Push(tag);
 			}
 			else
 			{
 				SAFE_DELETE_ARRAY(tag.bits);
 			}
 		}
-		m_audioQueue.RemoveAll();
+		m_queue.RemoveAll();
 	}
 }
