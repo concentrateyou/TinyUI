@@ -96,7 +96,7 @@ namespace MShow
 					}
 					if (block.audio.packetType == FLV_AACRaw)
 					{
-						if (!m_bFirstI)
+						if (m_index == 1)
 						{
 							ReleaseBlock(block);
 							continue;
@@ -106,7 +106,7 @@ namespace MShow
 						tag.size = block.audio.size;
 						tag.sampleDTS = block.dts;
 						tag.samplePTS = block.pts;
-						tag.index = m_index++;
+						tag.sampleIndex = m_index++;
 						m_locks[0].Lock();
 						m_audioQueue.Push(tag);
 						m_locks[0].Unlock();
@@ -119,7 +119,8 @@ namespace MShow
 				{
 					if (block.video.packetType == FLV_AVCDecoderConfigurationRecord)
 					{
-						if (!m_h264->Initialize(m_size, m_size))
+						TinySize size(static_cast<LONG>(m_script.width), static_cast<LONG>(m_script.height));
+						if (!m_h264->Initialize(size, size))
 						{
 							goto _ERROR;
 						}
@@ -130,21 +131,17 @@ namespace MShow
 					}
 					if (block.video.packetType == FLV_NALU)
 					{
-						if (!m_bFirstI)
+						if (m_index == 1 && block.video.codeType != 1)
 						{
-							if (block.video.codeType != 1)
-							{
-								ReleaseBlock(block);
-								continue;
-							}
-							m_bFirstI = TRUE;
+							ReleaseBlock(block);
+							continue;
 						}
 						SampleTag tag = { 0 };
 						tag.bits = block.video.data;
 						tag.size = block.video.size;
 						tag.sampleDTS = block.dts;
 						tag.samplePTS = block.pts;
-						tag.index = m_index++;
+						tag.sampleIndex = m_index++;
 						m_locks[1].Lock();
 						m_videoQueue.Push(tag);
 						m_locks[1].Unlock();

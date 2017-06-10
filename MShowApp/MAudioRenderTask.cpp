@@ -33,7 +33,7 @@ namespace MShow
 			m_task.GetLock().Unlock();
 			if (val && tag.size > 0)
 			{
-				if (tag.index == 1)
+				if (tag.sampleIndex == 1)
 				{
 					m_clock.SetBaseTime(timeGetTime());
 				}
@@ -52,10 +52,8 @@ namespace MShow
 					vals[1].hEventNotify = m_events[1];
 					m_player.SetPositions(2, vals);
 					m_timer.EndTime();
-					m_decode.m_decode.m_lockTime.Lock();
-					m_decode.m_decode.m_baseTime += m_timer.GetMillisconds();
-					m_decode.m_decode.m_lockTime.Unlock();
-					DWORD dwMS = timeGetTime() - m_decode.m_decode.m_baseTime;
+					m_clock.AddBaseTime(m_timer.GetMillisconds());
+					DWORD dwMS = timeGetTime() - m_clock.GetBaseTime();
 					INT offset = tag.samplePTS - dwMS;
 					Sleep(offset < 0 ? 0 : offset);
 					if (tag.size != 4096)

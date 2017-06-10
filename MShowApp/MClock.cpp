@@ -4,20 +4,26 @@
 namespace MShow
 {
 	MClock::MClock()
-		:m_timestamp(-1)
+		:m_baseTime(-1)
 	{
 	}
 
 	MClock::~MClock()
 	{
 	}
-	void MClock::SetBaseTime(LONG timestamp)
+	void MClock::SetBaseTime(LONG baseTime)
 	{
-		m_timestamp = timestamp;
+		TinyAutoLock lock(m_lock);
+		m_baseTime = baseTime;
+	}
+	void MClock::AddBaseTime(DWORD dwMS)
+	{
+		TinyAutoLock lock(m_lock);
+		m_baseTime += dwMS;
 	}
 	LONG MClock::GetBaseTime() const
 	{
-		return m_timestamp;
+		return m_baseTime;
 	}
 }
 

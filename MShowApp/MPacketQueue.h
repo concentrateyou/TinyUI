@@ -1,4 +1,5 @@
 #pragma once
+#include "MShowCommon.h"
 
 namespace MShow
 {
@@ -14,15 +15,15 @@ namespace MShow
 	public:
 		MPacketQueue();
 		~MPacketQueue();
-		BOOL Push(Decode::SampleTag& tag);
-		BOOL Pop(Decode::SampleTag& tag);
+		BOOL Push(SampleTag& tag);
+		BOOL Pop(SampleTag& tag);
 		BOOL IsEmpty() const;
 		LONG GetSize() const;
 		DWORD GetCount() const;
 		void RemoveAll();
 	private:
 		LONG							m_size;
-		TinyLinkList<Decode::SampleTag>	m_list;
+		TinyLinkList<SampleTag>	m_list;
 	};
 }
 

@@ -32,7 +32,6 @@ namespace MShow
 	private:
 		DXView	m_previewView;//Ô¤ÀÀ´°¿Ú
 		DXView	m_playView;//²¥·Å´°¿Ú
-		MAudioRenderTask	m_renderTask1;
 	};
 }
 

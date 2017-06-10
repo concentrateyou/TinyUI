@@ -13,7 +13,7 @@ namespace MShow
 	{
 		DISALLOW_COPY_AND_ASSIGN(MVideoRenderTask)
 	public:
-		MVideoRenderTask(MVideoTask& task);
+		MVideoRenderTask(MVideoTask& task,MClock& clock);
 		virtual ~MVideoRenderTask();
 		BOOL Initialize(HWND hWND);
 	private:
@@ -22,8 +22,9 @@ namespace MShow
 		void OnMessagePump();
 	private:
 		BOOL		m_close;
-		MVideoTask& m_task;
 		DX2D		m_d2d;
+		MClock&		m_clock;
+		MVideoTask& m_task;		
 	};
 }
 

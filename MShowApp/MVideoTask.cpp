@@ -67,10 +67,6 @@ namespace MShow
 					memcpy(tag.bits, bo, so);
 					tag.samplePTS = m_task.GetH264()->GetYUV420()->pkt_pts;
 					tag.sampleDTS = tag.samplePTS;
-					if (m_clock.GetFirstPTS() == -1)
-					{
-						m_clock.SetFirstPTS(tag.samplePTS);
-					}
 					m_lock.Lock();
 					m_videoQueue.Push(tag);
 					m_lock.Unlock();

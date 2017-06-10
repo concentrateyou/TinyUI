@@ -64,10 +64,6 @@ namespace MShow
 					tag.size = so;
 					tag.bits = new BYTE[so];
 					memcpy(tag.bits, bo, so);
-					if (m_clock.GetFirstPTS() == -1)
-					{
-						m_clock.SetFirstPTS(tag.samplePTS);
-					}
 					m_lock.Lock();
 					m_audioQueue.Push(tag);
 					m_lock.Unlock();

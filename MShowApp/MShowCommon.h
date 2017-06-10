@@ -5,6 +5,8 @@
 #include "IO/TinyTaskBase.h"
 #include "Control/TinyControl.h"
 #include "Media/TinySoundPlayer.h"
+#include "Common.h"
 using namespace TinyUI;
 using namespace TinyUI::IO;
 using namespace TinyUI::Media;
+using namespace Decode;

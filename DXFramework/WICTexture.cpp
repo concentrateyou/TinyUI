@@ -517,7 +517,7 @@ namespace DXFramework
 		return hRes;
 	}
 
-	HRESULT CreateWICImageFromFile(LPCWSTR fileName, ID2D1Bitmap** pBitmap)
+	HRESULT CreateD2DBitmapFromFile(LPCWSTR fileName, ID2D1RenderTarget* pTarget, ID2D1Bitmap** pBitmap)
 	{
 		if (!fileName)
 			return E_INVALIDARG;
@@ -532,10 +532,41 @@ namespace DXFramework
 		hRes = decoder->GetFrame(0, &frame);
 		if (hRes != S_OK)
 			return hRes;
+		TinyComPtr<IWICFormatConverter> converter;
+		hRes = pWIC->CreateFormatConverter(&converter);
+		if (hRes != S_OK)
+			return hRes;
+		hRes = converter->Initialize(frame, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0F, WICBitmapPaletteTypeMedianCut);
+		if (hRes != S_OK)
+			return hRes;
+		hRes = pTarget->CreateBitmapFromWicBitmap(converter, pBitmap);
+		if (hRes != S_OK)
+			return hRes;
 		return S_OK;
 	}
 
-	HRESULT CreateWICImageFromMemory(const BYTE* wicData, size_t wicDataSize, ID2D1Bitmap** pBitmap)
+	HRESULT CreateWICBitmapFromFile(LPCWSTR fileName, IWICBitmap** pBitmap)
+	{
+		if (!fileName)
+			return E_INVALIDARG;
+		auto pWIC = GetWIC();
+		if (!pWIC)
+			return E_NOINTERFACE;
+		TinyComPtr<IWICBitmapDecoder> decoder;
+		HRESULT hRes = pWIC->CreateDecoderFromFilename(fileName, 0, GENERIC_READ, WICDecodeMetadataCacheOnDemand, &decoder);
+		if (hRes != S_OK)
+			return hRes;
+		TinyComPtr<IWICBitmapFrameDecode> frame;
+		hRes = decoder->GetFrame(0, &frame);
+		if (hRes != S_OK)
+			return hRes;
+		hRes = pWIC->CreateBitmapFromSource(frame, WICBitmapCacheOnDemand, pBitmap);
+		if (hRes != S_OK)
+			return hRes;
+		return S_OK;
+	}
+
+	HRESULT CreateD2DBitmapFromMemory(const BYTE* wicData, size_t wicDataSize, ID2D1RenderTarget* pTarget, ID2D1Bitmap** pBitmap)
 	{
 		if (!wicData)
 			return E_INVALIDARG;
@@ -559,6 +590,48 @@ namespace DXFramework
 			return hRes;
 		TinyComPtr<IWICBitmapFrameDecode> frame;
 		hRes = decoder->GetFrame(0, &frame);
+		if (hRes != S_OK)
+			return hRes;
+		TinyComPtr<IWICFormatConverter> converter;
+		hRes = pWIC->CreateFormatConverter(&converter);
+		if (hRes != S_OK)
+			return hRes;
+		hRes = converter->Initialize(frame, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0F, WICBitmapPaletteTypeMedianCut);
+		if (hRes != S_OK)
+			return hRes;
+		hRes = pTarget->CreateBitmapFromWicBitmap(converter, pBitmap);
+		if (hRes != S_OK)
+			return hRes;
+		return S_OK;
+	}
+
+	HRESULT  CreateWICBitmapFromMemory(const BYTE* wicData, size_t wicDataSize, IWICBitmap** pBitmap)
+	{
+		if (!wicData)
+			return E_INVALIDARG;
+		if (!wicDataSize)
+			return E_FAIL;
+		if (wicDataSize > UINT32_MAX)
+			return HRESULT_FROM_WIN32(ERROR_FILE_TOO_LARGE);
+		auto pWIC = GetWIC();
+		if (!pWIC)
+			return E_NOINTERFACE;
+		TinyComPtr<IWICStream> stream;
+		HRESULT hRes = pWIC->CreateStream(&stream);
+		if (hRes != S_OK)
+			return hRes;
+		hRes = stream->InitializeFromMemory(const_cast<BYTE*>(wicData), static_cast<DWORD>(wicDataSize));
+		if (hRes != S_OK)
+			return hRes;
+		TinyComPtr<IWICBitmapDecoder> decoder;
+		hRes = pWIC->CreateDecoderFromStream(stream, 0, WICDecodeMetadataCacheOnDemand, &decoder);
+		if (hRes != S_OK)
+			return hRes;
+		TinyComPtr<IWICBitmapFrameDecode> frame;
+		hRes = decoder->GetFrame(0, &frame);
+		if (hRes != S_OK)
+			return hRes;
+		hRes = pWIC->CreateBitmapFromSource(frame, WICBitmapCacheOnDemand, pBitmap);
 		if (hRes != S_OK)
 			return hRes;
 		return S_OK;

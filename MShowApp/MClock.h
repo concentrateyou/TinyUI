@@ -13,9 +13,11 @@ namespace MShow
 		MClock();
 		~MClock();
 		void SetBaseTime(LONG timestamp);
+		void AddBaseTime(DWORD dwMS);
 		LONG GetBaseTime() const;
 	private:
-		LONG		m_timestamp;
+		LONG		m_baseTime;
+		TinyLock	m_lock;
 	};
 }
 

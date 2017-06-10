@@ -24,12 +24,12 @@ namespace Decode
 
 	typedef struct tagSampleTag
 	{
-		LONG		sampleDTS;
-		LONG		samplePTS;
+		LONGLONG	sampleDTS;
+		LONGLONG	samplePTS;
+		LONGLONG	sampleIndex;
 		BYTE		sampleType;
 		BYTE*		bits;
 		LONG		size;
-		LONGLONG	index;
 	}SampleTag;
 
 	typedef struct tagFLV_HEADER

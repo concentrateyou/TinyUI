@@ -1,5 +1,6 @@
 #pragma once
 #include "MShowCommon.h"
+#include "MPacketQueue.h"
 #include "FLVReader.h"
 using namespace Decode;
 

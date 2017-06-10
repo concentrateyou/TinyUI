@@ -3,9 +3,10 @@
 
 namespace MShow
 {
-	MVideoRenderTask::MVideoRenderTask(MVideoTask& task)
+	MVideoRenderTask::MVideoRenderTask(MVideoTask& task, MClock& clock)
 		:m_close(FALSE),
-		m_task(task)
+		m_task(task),
+		m_clock(clock)
 	{
 	}
 
@@ -40,7 +41,7 @@ namespace MShow
 			m_task.GetLock().Unlock();
 			if (val && sample.size > 0)
 			{
-				if (sample.index == 1)
+				if (sample.sampleIndex == 1)
 				{
 					m_clock.SetBaseTime(timeGetTime());
 				}
