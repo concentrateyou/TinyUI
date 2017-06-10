@@ -24,9 +24,9 @@ namespace Decode
 
 	typedef struct tagSampleTag
 	{
+		LONGLONG	sample;
 		LONGLONG	sampleDTS;
 		LONGLONG	samplePTS;
-		LONGLONG	sampleIndex;
 		BYTE		sampleType;
 		BYTE*		bits;
 		LONG		size;

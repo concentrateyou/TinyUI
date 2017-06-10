@@ -108,7 +108,7 @@ namespace MShow
 					}
 					if (block.audio.packetType == FLV_AACRaw)
 					{
-						if (!m_bFI)
+						if (!m_bFI)//等待关键帧
 						{
 							ReleaseBlock(block);
 							continue;
@@ -116,9 +116,9 @@ namespace MShow
 						SampleTag tag = { 0 };
 						tag.bits = block.audio.data;
 						tag.size = block.audio.size;
+						tag.sample = ++m_sample;
 						tag.sampleDTS = block.dts;
 						tag.samplePTS = block.pts;
-						tag.sampleIndex = ++m_sample;
 						m_locks[0].Lock();
 						m_audioQueue.Push(tag);
 						m_locks[0].Unlock();
@@ -144,7 +144,7 @@ namespace MShow
 					}
 					if (block.video.packetType == FLV_NALU)
 					{
-						if (!m_bFI)
+						if (!m_bFI)//等待关键帧
 						{
 							if (block.video.codeType != 1)
 							{
@@ -156,9 +156,9 @@ namespace MShow
 						SampleTag tag = { 0 };
 						tag.bits = block.video.data;
 						tag.size = block.video.size;
+						tag.sample = ++m_sample;
 						tag.sampleDTS = block.dts;
 						tag.samplePTS = block.pts;
-						tag.sampleIndex = ++m_sample;
 						m_locks[1].Lock();
 						m_videoQueue.Push(tag);
 						m_locks[1].Unlock();
