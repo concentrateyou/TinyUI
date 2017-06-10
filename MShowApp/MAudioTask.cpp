@@ -50,27 +50,26 @@ namespace MShow
 			}
 			SampleTag tag = { 0 };
 			BOOL val = m_task.GetAudioQueue().Pop(tag);
-			if (val && tag.size > 0)
+			if (!val || tag.size <= 0)
+				continue;
+			BYTE* bo = NULL;
+			LONG  so = 0;
+			AACDecode* aac = m_task.GetAAC();
+			if (aac != NULL && aac->Decode(tag.bits, tag.size, bo, so))
 			{
-				BYTE* bo = NULL;
-				LONG  so = 0;
-				AACDecode* aac = m_task.GetAAC();
-				if (aac != NULL && aac->Decode(tag.bits, tag.size, bo, so))
+				if (m_clock.GetBasetPTS() == -1)
 				{
-					if (m_clock.GetBasetPTS() == -1)
-					{
-						m_clock.SetBasetPTS(tag.samplePTS);
-					}
-					SAFE_DELETE_ARRAY(tag.bits);
-					tag.size = so;
-					tag.bits = new BYTE[so];
-					memcpy(tag.bits, bo, so);
-					m_audioQueue.Push(tag);
+					m_clock.SetBasetPTS(tag.samplePTS);
 				}
-				else
-				{
-					SAFE_DELETE_ARRAY(tag.bits);
-				}
+				SAFE_DELETE_ARRAY(tag.bits);
+				tag.size = so;
+				tag.bits = new BYTE[so];
+				memcpy(tag.bits, bo, so);
+				m_audioQueue.Push(tag);
+			}
+			else
+			{
+				SAFE_DELETE_ARRAY(tag.bits);
 			}
 		}
 		m_audioQueue.RemoveAll();
