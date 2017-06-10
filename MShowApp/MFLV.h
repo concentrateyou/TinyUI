@@ -8,17 +8,19 @@
 
 namespace MShow
 {
-	class MShowRender
+	class MFLV 
 	{
-		DISALLOW_COPY_AND_ASSIGN(MShowRender)
+		DISALLOW_COPY_AND_ASSIGN(MFLV)
 	public:
-		MShowRender(MReadTask& task,MClock& clock);
-		virtual ~MShowRender();
-		BOOL Initialize(HWND hWND);
+		MFLV();
+		virtual ~MFLV();
+		BOOL Initialize(HWND hWND, LPCSTR pzURL);
 		BOOL Submit();
-		BOOL Close();
+		void Close();
 	private:
-		MReadTask&			m_task;
+		TinyEvent			m_close;
+		MClock				m_clock;
+		MReadTask			m_task;
 		MVideoTask			m_videoTask;
 		MVideoRenderTask	m_videoRenderTask;
 		MAudioTask			m_audioTask;

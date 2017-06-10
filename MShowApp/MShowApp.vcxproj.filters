@@ -60,7 +60,7 @@
     <ClInclude Include="MVideoRenderTask.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MShowRender.h">
+    <ClInclude Include="MFLV.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -101,7 +101,7 @@
     <ClCompile Include="MVideoRenderTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MShowRender.cpp">
+    <ClCompile Include="MFLV.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
