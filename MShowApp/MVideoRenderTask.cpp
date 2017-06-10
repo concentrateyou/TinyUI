@@ -18,7 +18,9 @@ namespace MShow
 	{
 		RECT s = { 0 };
 		GetWindowRect(hWND, &s);
-		if (!m_d2d.Initialize(hWND, TO_CX(s), TO_CY(s)))
+		m_size.cx = TO_CX(s);
+		m_size.cy = TO_CY(s);
+		if (!m_d2d.Initialize(hWND, m_size.cx, m_size.cy))
 			return FALSE;
 		TinySize size = m_task.GetSize();
 		HRESULT hRes = m_d2d.GetContext()->CreateBitmap(D2D1::SizeU(size.cx, size.cy),
@@ -79,7 +81,9 @@ namespace MShow
 		{
 			TinySize s = m_task.GetSize();
 			m_bitmap->CopyFromMemory(NULL, bits, s.cx * 4);
-			m_d2d.GetContext()->DrawBitmap(m_bitmap);
+			D2D_RECT_F dst = { 0,0,m_size.cx,m_size.cy };
+			D2D_RECT_F src = { 0,0,s.cx,s.cy };
+			m_d2d.GetContext()->DrawBitmap(m_bitmap, dst, 1.0F, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, src, NULL);
 			m_d2d.EndDraw();
 		}
 	}
