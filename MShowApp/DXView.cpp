@@ -48,8 +48,15 @@ namespace MShow
 	LRESULT DXView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		m_task.Initialize(m_hWND, "rtmp://live.hkstv.hk.lxdns.com/live/hks");
-		m_task.Submit();
+		RECT s = { 0 };
+		::GetWindowRect(m_hWND, &s);
+		TinySize size = { TO_CX(s) ,TO_CY(s) };
+		if (!m_d2d.Initialize(m_hWND, size.cx, size.cy))
+			return FALSE;
+		if (!m_task.Initialize(m_d2d, "rtmp://live.hkstv.hk.lxdns.com/live/hks"))
+			return FALSE;
+		if (!m_task.Submit())
+			return FALSE;
 		return FALSE;
 	}
 

@@ -13,16 +13,16 @@ namespace MShow
 	{
 		DISALLOW_COPY_AND_ASSIGN(MVideoRenderTask)
 	public:
-		MVideoRenderTask(MVideoTask& task,MClock& clock);
+		MVideoRenderTask(MVideoTask& task, MClock& clock, DX2D& d2d);
 		virtual ~MVideoRenderTask();
-		BOOL Initialize(HWND hWND);
+		BOOL Initialize();
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
 	private:
 		void OnMessagePump();
 		void OnRender(BYTE* bits, LONG size);
 	private:
-		DX2D		m_d2d;
+		DX2D&		m_d2d;
 		TinySize	m_size;
 		TinyEvent	m_close;
 		MClock&		m_clock;

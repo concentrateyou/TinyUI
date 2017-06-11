@@ -23,7 +23,7 @@ namespace MShow
 	public:
 		MFLVTask();
 		virtual ~MFLVTask();
-		BOOL Initialize(HWND hWND,LPCSTR pzURL);
+		BOOL Initialize(DX2D& d2d,LPCSTR pzURL);
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
 	public:

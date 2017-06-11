@@ -15,7 +15,7 @@ namespace MShow
 	{
 	}
 
-	BOOL MFLVTask::Initialize(HWND hWND, LPCSTR pzURL)
+	BOOL MFLVTask::Initialize(DX2D& d2d, LPCSTR pzURL)
 	{
 		m_audioTask.Reset(new MAudioTask(*this, m_clock));
 		if (!m_audioTask)
@@ -26,7 +26,7 @@ namespace MShow
 		m_videoTask.Reset(new MVideoTask(*this, m_clock));
 		if (!m_videoTask)
 			return FALSE;
-		m_videoRenderTask.Reset(new MVideoRenderTask(*m_videoTask, m_clock));
+		m_videoRenderTask.Reset(new MVideoRenderTask(*m_videoTask, m_clock, d2d));
 		if (!m_videoRenderTask)
 			return FALSE;
 		m_aac.Reset(new AACDecode());
@@ -38,9 +38,9 @@ namespace MShow
 		if (!m_reader.OpenURL(pzURL))
 			return FALSE;
 		m_script = m_reader.GetScript();
-		if (!m_audioRenderTask->Initialize(hWND))
+		if (!m_audioRenderTask->Initialize(d2d.GetHWND()))
 			return FALSE;
-		if (!m_videoRenderTask->Initialize(hWND))
+		if (!m_videoRenderTask->Initialize())
 			return FALSE;
 		return TRUE;
 	}

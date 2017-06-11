@@ -3,9 +3,10 @@
 
 namespace MShow
 {
-	MVideoRenderTask::MVideoRenderTask(MVideoTask& task, MClock& clock)
+	MVideoRenderTask::MVideoRenderTask(MVideoTask& task, MClock& clock, DX2D& d2d)
 		:m_task(task),
-		m_clock(clock)
+		m_clock(clock),
+		m_d2d(d2d)
 	{
 	}
 
@@ -13,14 +14,8 @@ namespace MShow
 	{
 	}
 
-	BOOL MVideoRenderTask::Initialize(HWND hWND)
+	BOOL MVideoRenderTask::Initialize()
 	{
-		RECT s = { 0 };
-		GetWindowRect(hWND, &s);
-		m_size.cx = TO_CX(s);
-		m_size.cy = TO_CY(s);
-		if (!m_d2d.Initialize(hWND, m_size.cx, m_size.cy))
-			return FALSE;
 		TinySize size = m_task.GetSize();
 		HRESULT hRes = m_d2d.GetContext()->CreateBitmap(D2D1::SizeU(size.cx, size.cy),
 			(const void *)NULL,
@@ -78,7 +73,8 @@ namespace MShow
 		{
 			TinySize s = m_task.GetSize();
 			m_bitmap->CopyFromMemory(NULL, bits, s.cx * 4);
-			D2D_RECT_F dst = { 0.0F,0.0F,static_cast<FLOAT>(m_size.cx),static_cast<FLOAT>(m_size.cy) };
+			D2D_SIZE_F sf = m_d2d.GetContext()->GetSize();
+			D2D_RECT_F dst = { 0.0F,0.0F,sf.width,sf.height };
 			D2D_RECT_F src = { 0.0F,0.0F,static_cast<FLOAT>(s.cx),static_cast<FLOAT>(s.cy) };
 			m_d2d.GetContext()->DrawBitmap(m_bitmap, dst, 1.0F, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, src, NULL);
 			m_d2d.EndDraw();
