@@ -27,28 +27,28 @@ namespace MShow
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
 	public:
+		MPacketQueue&	GetAudioQueue();
+		MPacketQueue&	GetVideoQueue();
+		H264Decode*		GetH264();
+		AACDecode*		GetAAC();
 		const FLV_SCRIPTDATA& GetScript() const;
-		MPacketQueue& GetAudioQueue();
-		MPacketQueue& GetVideoQueue();
-		H264Decode* GetH264();
-		AACDecode* GetAAC();
 	private:
 		void OnMessagePump();
 	private:
-		BOOL						m_bFI;
-		LONGLONG					m_sample;
-		TinyEvent					m_close;
-		FLVReader					m_reader;
-		MPacketQueue				m_audioQueue;
-		MPacketQueue				m_videoQueue;
-		MClock						m_clock;
-		TinyScopedPtr<MVideoTask>	m_videoTask;
-		TinyScopedPtr<MAudioTask>	m_audioTask;
+		BOOL							m_bFI;
+		LONGLONG						m_sample;
+		TinyEvent						m_close;
+		FLVReader						m_reader;
+		MPacketQueue					m_audioQueue;
+		MPacketQueue					m_videoQueue;
+		MClock							m_clock;
+		FLV_SCRIPTDATA					m_script;
+		TinyScopedPtr<H264Decode>		m_h264;
+		TinyScopedPtr<AACDecode>		m_aac;
+		TinyScopedPtr<MVideoTask>		m_videoTask;
+		TinyScopedPtr<MAudioTask>		m_audioTask;
 		TinyScopedPtr<MVideoRenderTask>	m_videoRenderTask;
 		TinyScopedPtr<MAudioRenderTask>	m_audioRenderTask;
-		FLV_SCRIPTDATA				m_script;
-		TinyScopedPtr<H264Decode>	m_h264;
-		TinyScopedPtr<AACDecode>	m_aac;
 	};
 }
 

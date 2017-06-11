@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="头文件\RTMP">
+      <UniqueIdentifier>{89b4728b-469c-44d3-a4fd-5a82c92eba5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\RTMP">
+      <UniqueIdentifier>{9468a1ad-563f-4623-944a-c1c1d5b5577e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -39,26 +45,26 @@
     <ClInclude Include="MShowCommon.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MVideoTask.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="MAudioRenderTask.h">
+      <Filter>头文件\RTMP</Filter>
     </ClInclude>
     <ClInclude Include="MAudioTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MPacketQueue.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\RTMP</Filter>
     </ClInclude>
     <ClInclude Include="MClock.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MAudioRenderTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MVideoRenderTask.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\RTMP</Filter>
     </ClInclude>
     <ClInclude Include="MFLVTask.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\RTMP</Filter>
+    </ClInclude>
+    <ClInclude Include="MPacketQueue.h">
+      <Filter>头文件\RTMP</Filter>
+    </ClInclude>
+    <ClInclude Include="MVideoRenderTask.h">
+      <Filter>头文件\RTMP</Filter>
+    </ClInclude>
+    <ClInclude Include="MVideoTask.h">
+      <Filter>头文件\RTMP</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -77,26 +83,26 @@
     <ClCompile Include="MShowCommon.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MVideoTask.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="MAudioRenderTask.cpp">
+      <Filter>源文件\RTMP</Filter>
     </ClCompile>
     <ClCompile Include="MAudioTask.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MPacketQueue.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\RTMP</Filter>
     </ClCompile>
     <ClCompile Include="MClock.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MAudioRenderTask.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MVideoRenderTask.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\RTMP</Filter>
     </ClCompile>
     <ClCompile Include="MFLVTask.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\RTMP</Filter>
+    </ClCompile>
+    <ClCompile Include="MPacketQueue.cpp">
+      <Filter>源文件\RTMP</Filter>
+    </ClCompile>
+    <ClCompile Include="MVideoRenderTask.cpp">
+      <Filter>源文件\RTMP</Filter>
+    </ClCompile>
+    <ClCompile Include="MVideoTask.cpp">
+      <Filter>源文件\RTMP</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

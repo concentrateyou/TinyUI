@@ -17,21 +17,17 @@ namespace MShow
 
 	BOOL MFLVTask::Initialize(HWND hWND, LPCSTR pzURL)
 	{
-		m_videoTask.Reset(new MVideoTask(*this, m_clock));
-		if (!m_videoTask)
-			return FALSE;
-		m_videoRenderTask.Reset(new MVideoRenderTask(*m_videoTask, m_clock));
-		if (!m_videoRenderTask)
-			return FALSE;
-		if (!m_videoRenderTask->Initialize(hWND))
-			return FALSE;
 		m_audioTask.Reset(new MAudioTask(*this, m_clock));
 		if (!m_audioTask)
 			return FALSE;
 		m_audioRenderTask.Reset(new MAudioRenderTask(*m_audioTask, m_clock));
 		if (!m_audioRenderTask)
 			return FALSE;
-		if (!m_audioRenderTask->Initialize(hWND))
+		m_videoTask.Reset(new MVideoTask(*this, m_clock));
+		if (!m_videoTask)
+			return FALSE;
+		m_videoRenderTask.Reset(new MVideoRenderTask(*m_videoTask, m_clock));
+		if (!m_videoRenderTask)
 			return FALSE;
 		m_aac.Reset(new AACDecode());
 		if (!m_aac)
@@ -42,6 +38,10 @@ namespace MShow
 		if (!m_reader.OpenURL(pzURL))
 			return FALSE;
 		m_script = m_reader.GetScript();
+		if (!m_audioRenderTask->Initialize(hWND))
+			return FALSE;
+		if (!m_videoRenderTask->Initialize(hWND))
+			return FALSE;
 		return TRUE;
 	}
 
@@ -109,9 +109,11 @@ namespace MShow
 
 	void MFLVTask::OnMessagePump()
 	{
+		SampleTag tag = { 0 };
+		FLV_BLOCK block = { 0 };
 		for (;;)
 		{
-			if (m_close.Lock(1))
+			if (m_close.Lock(0))
 				break;
 			INT size = m_audioQueue.GetSize() + m_videoQueue.GetSize();
 			if (size > MAX_QUEUE_SIZE)
@@ -119,7 +121,6 @@ namespace MShow
 				Sleep(15);
 				continue;
 			}
-			FLV_BLOCK block = { 0 };
 			if (!m_reader.ReadBlock(block))
 			{
 				ReleaseBlock(block);
@@ -145,7 +146,7 @@ namespace MShow
 							ReleaseBlock(block);
 							continue;
 						}
-						SampleTag tag = { 0 };
+						ZeroMemory(&tag, sizeof(tag));
 						tag.bits = block.audio.data;
 						tag.size = block.audio.size;
 						tag.sample = ++m_sample;
@@ -185,10 +186,10 @@ namespace MShow
 							}
 							m_bFI = TRUE;
 						}
-						SampleTag tag = { 0 };
+						ZeroMemory(&tag, sizeof(tag));
+						tag.sample = ++m_sample;
 						tag.bits = block.video.data;
 						tag.size = block.video.size;
-						tag.sample = ++m_sample;
 						tag.sampleDTS = block.dts;
 						tag.samplePTS = block.pts;
 						m_videoQueue.Push(tag);

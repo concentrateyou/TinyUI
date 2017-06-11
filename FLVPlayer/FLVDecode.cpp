@@ -26,8 +26,8 @@ namespace FLVPlayer
 	}
 	BOOL FLVDecode::Submit()
 	{
-		//if (m_reader.OpenURL("rtmp://live.hkstv.hk.lxdns.com/live/hks"))
-		if (m_reader.OpenURL("rtmp://10.121.86.127/live/test_360p"))
+		if (m_reader.OpenURL("rtmp://live.hkstv.hk.lxdns.com/live/hks"))
+		//if (m_reader.OpenURL("rtmp://10.121.86.127/live/test_360p"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);
@@ -53,6 +53,7 @@ namespace FLVPlayer
 	}
 	void FLVDecode::OnMessagePump()
 	{
+		SampleTag tag = { 0 };
 		FLV_BLOCK block = { 0 };
 		for (;;)
 		{
@@ -91,7 +92,7 @@ namespace FLVPlayer
 							SAFE_DELETE_ARRAY(block.video.data);
 							continue;
 						}
-						SampleTag tag = { 0 };
+						ZeroMemory(&tag, sizeof(tag));
 						tag.bits = block.audio.data;
 						tag.size = block.audio.size;
 						tag.sampleDTS = block.dts;
@@ -129,7 +130,7 @@ namespace FLVPlayer
 							}
 							m_bFirstI = TRUE;
 						}
-						SampleTag tag = { 0 };
+						ZeroMemory(&tag, sizeof(tag));
 						tag.bits = block.video.data;
 						tag.size = block.video.size;
 						tag.sampleDTS = block.dts;

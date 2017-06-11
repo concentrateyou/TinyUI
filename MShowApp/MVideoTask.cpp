@@ -38,7 +38,7 @@ namespace MShow
 
 	TinySize MVideoTask::GetSize() const
 	{
-		return TinySize(m_task.GetScript().width, m_task.GetScript().height);
+		return TinySize(static_cast<LONG>(m_task.GetScript().width), static_cast<LONG>(m_task.GetScript().height));
 	}
 
 	void MVideoTask::OnMessagePump()
