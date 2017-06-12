@@ -18,7 +18,7 @@ namespace MShow
 		BOOL Initialize(LPCSTR pzURL);
 		void Uninitialize();
 	private:
-		void	OnVideo(ID2D1Bitmap1*);
+		void	OnVideo(ID2D1Bitmap1*,UINT);
 		void	OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -30,8 +30,9 @@ namespace MShow
 		DX2D		m_d2d;
 		MFLVTask	m_task;
 		DXView&		m_view;
-		TinyArray<MElement*>		m_scenes;
-		TinyScopedPtr<Delegate<void(ID2D1Bitmap1*)>> m_onVideo;
+		TinyPerformanceTimer	m_timer;
+		TinyArray<MElement*>	m_scenes;
+		TinyScopedPtr<Delegate<void(ID2D1Bitmap1*,UINT)>> m_onVideo;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onSize;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonDown;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonUp;
@@ -39,6 +40,7 @@ namespace MShow
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onMouseMove;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onMouseLeave;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onSetCursor;
+		MGIFScene m_gifScene;
 	};
 }
 

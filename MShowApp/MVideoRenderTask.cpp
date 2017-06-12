@@ -3,7 +3,7 @@
 
 namespace MShow
 {
-	MVideoRenderTask::MVideoRenderTask(MVideoTask& task, MClock& clock, DX2D& d2d, TinyUI::Callback<void(ID2D1Bitmap1*)>&& callback)
+	MVideoRenderTask::MVideoRenderTask(MVideoTask& task, MClock& clock, DX2D& d2d, TinyUI::Callback<void(ID2D1Bitmap1*, UINT)>&& callback)
 		:m_task(task),
 		m_clock(clock),
 		m_d2d(d2d),
@@ -61,20 +61,20 @@ namespace MShow
 			}
 			while (m_clock.GetBasetPTS() == -1);
 			DWORD dwMS = timeGetTime() - m_clock.GetBaseTime();
-			INT offset = static_cast<INT>(tag.samplePTS - dwMS);
-			Sleep(offset < 0 ? 0 : offset);
-			OnRender(tag.bits, tag.size);
+			INT delay = static_cast<INT>(tag.samplePTS - dwMS);
+			Sleep(delay < 0 ? 0 : delay);
+			OnRender(tag.bits, tag.size, delay);
 			SAFE_DELETE_ARRAY(tag.bits);
 		}
 	}
 
-	void MVideoRenderTask::OnRender(BYTE* bits, LONG size)
+	void MVideoRenderTask::OnRender(BYTE* bits, LONG size, INT delay)
 	{
 		if (!m_callback.IsNull() && m_bitmap != NULL)
 		{
 			TinySize s = m_task.GetSize();
 			m_bitmap->CopyFromMemory(NULL, bits, s.cx * 4);
-			m_callback(m_bitmap);
+			m_callback(m_bitmap, delay);
 		}
 	}
 }

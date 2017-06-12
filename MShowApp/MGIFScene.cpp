@@ -5,6 +5,7 @@
 namespace MShow
 {
 	const FLOAT DEFAULT_DPI = 96.F;
+	const UINT DELAY_TIMER_ID = 1;
 
 	IMPLEMENT_DYNAMIC(MGIFScene, MElement);
 
@@ -13,14 +14,15 @@ namespace MShow
 		m_cyGifImage(0),
 		m_cxGifImagePixel(0),
 		m_cyGifImagePixel(0),
-		m_loops(0),
-		m_count(0)
+		m_count(0),
+		m_index(0)
 	{
 	}
 
 	MGIFScene::~MGIFScene()
 	{
 	}
+
 	BOOL MGIFScene::Load(DX2D& d2d, const CHAR* pzFile)
 	{
 		ASSERT(d2d.GetContext());
@@ -43,7 +45,116 @@ namespace MShow
 			D2D1_SIZE_F sizeF = { static_cast<FLOAT>(m_cxGifImage), static_cast<FLOAT>(m_cyGifImage) };
 			hRes = d2d.GetContext()->CreateCompatibleRenderTarget(sizeF, &m_bitmapRT);
 		}
+		if (SUCCEEDED(hRes))
+		{
+			for (UINT i = 0;i < m_count;i++)
+			{
+				hRes |= GetFrame(d2d, ps, i);
+			}
+		}
+		TinyComPtr<ID2D1Bitmap> bitmap;
+		hRes = m_bitmapRT->GetBitmap(&bitmap);
+		if (SUCCEEDED(hRes))
+		{
+			auto bitmapSize = bitmap->GetPixelSize();
+			D2D1_BITMAP_PROPERTIES bitmapProp;
+			bitmap->GetDpi(&bitmapProp.dpiX, &bitmapProp.dpiY);
+			bitmapProp.pixelFormat = bitmap->GetPixelFormat();
+			hRes = m_bitmapRT->CreateBitmap(
+				bitmapSize,
+				bitmapProp,
+				&m_bitmap);
+		}
 		return SUCCEEDED(hRes);
+	}
+
+	BOOL MGIFScene::Draw(DX2D& d2d, UINT delay)
+	{
+		m_timer.BeginTime();
+		HRESULT hRes = DrawFrame(d2d);
+		if (SUCCEEDED(hRes))
+		{
+			m_timer.EndTime();
+			WIC_GIF& gif = m_images[m_index];
+			if (gif.delay > delay)
+			{
+				
+			}
+		}
+		return TRUE;
+	}
+
+	HRESULT MGIFScene::ClearCurrentFrame()
+	{
+		WIC_GIF& gif = m_images[m_index];
+		m_bitmapRT->BeginDraw();
+		m_bitmapRT->PushAxisAlignedClip(&gif.rectF, D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+		m_bitmapRT->Clear(m_backgroundColor);
+		m_bitmapRT->PopAxisAlignedClip();
+		return m_bitmapRT->EndDraw();
+	}
+
+	HRESULT MGIFScene::SaveComposedFrame()
+	{
+		HRESULT hRes = S_OK;
+		TinyComPtr<ID2D1Bitmap> bitmap;
+		hRes = m_bitmapRT->GetBitmap(&bitmap);
+		if (SUCCEEDED(hRes))
+		{
+			if (m_bitmap == NULL)
+			{
+				auto bitmapSize = bitmap->GetPixelSize();
+				D2D1_BITMAP_PROPERTIES bitmapProp;
+				bitmap->GetDpi(&bitmapProp.dpiX, &bitmapProp.dpiY);
+				bitmapProp.pixelFormat = bitmap->GetPixelFormat();
+				hRes = m_bitmapRT->CreateBitmap(
+					bitmapSize,
+					bitmapProp,
+					&m_bitmap);
+			}
+		}
+		if (SUCCEEDED(hRes))
+		{
+			hRes = m_bitmap->CopyFromBitmap(nullptr, bitmap, nullptr);
+		}
+		return hRes;
+	}
+
+	HRESULT MGIFScene::RestoreSavedFrame()
+	{
+		HRESULT hRes = S_OK;
+		TinyComPtr<ID2D1Bitmap> bitmap;
+		hRes = m_bitmap ? S_OK : E_FAIL;
+		if (SUCCEEDED(hRes))
+		{
+			hRes = m_bitmapRT->GetBitmap(&bitmap);
+		}
+		if (SUCCEEDED(hRes))
+		{
+			hRes = bitmap->CopyFromBitmap(nullptr, m_bitmap, nullptr);
+		}
+		return hRes;
+	}
+
+	HRESULT MGIFScene::DisposeCurrentFrame()
+	{
+		HRESULT hRes = S_OK;
+		WIC_GIF& gif = m_images[m_index];
+		switch (gif.disposal)
+		{
+		case DM_UNDEFINED:
+		case DM_NONE:
+			break;
+		case DM_BACKGROUND:
+			hRes = ClearCurrentFrame();
+			break;
+		case DM_PREVIOUS:
+			hRes = RestoreSavedFrame();
+			break;
+		default:
+			hRes = E_FAIL;
+		}
+		return hRes;
 	}
 
 	HRESULT MGIFScene::GetGlobalMetadata(IWICImagingFactory* ps)
@@ -123,30 +234,6 @@ namespace MShow
 				PropVariantClear(&propValue);
 			}
 		}
-		if (SUCCEEDED(hRes))
-		{
-			if (SUCCEEDED(metadataQueryReader->GetMetadataByName(
-				L"/appext/application",
-				&propValue)) &&
-				propValue.vt == (VT_UI1 | VT_VECTOR) &&
-				propValue.caub.cElems == 11 &&
-				(!memcmp(propValue.caub.pElems, "NETSCAPE2.0", propValue.caub.cElems) ||
-					!memcmp(propValue.caub.pElems, "ANIMEXTS1.0", propValue.caub.cElems)))
-			{
-				PropVariantClear(&propValue);
-				hRes = metadataQueryReader->GetMetadataByName(L"/appext/data", &propValue);
-				if (SUCCEEDED(hRes))
-				{
-					if (propValue.vt == (VT_UI1 | VT_VECTOR) &&
-						propValue.caub.cElems >= 4 &&
-						propValue.caub.pElems[0] > 0 &&
-						propValue.caub.pElems[1] == 1)
-					{
-						m_loops = MAKEWORD(propValue.caub.pElems[2], propValue.caub.pElems[3]);
-					}
-				}
-			}
-		}
 		PropVariantClear(&propValue);
 		return hRes;
 	}
@@ -211,6 +298,168 @@ namespace MShow
 			dwBGColor = rgColors[backgroundIndex];
 			FLOAT alpha = (dwBGColor >> 24) / 255.F;
 			m_backgroundColor = D2D1::ColorF(dwBGColor, alpha);
+		}
+		return hRes;
+	}
+
+	HRESULT MGIFScene::DrawFrame(DX2D& d2d)
+	{
+		WIC_GIF& gif = m_images[m_index];
+		HRESULT hRes = DisposeCurrentFrame();
+		if (SUCCEEDED(hRes))
+		{
+			if (gif.disposal == DM_PREVIOUS)
+			{
+				hRes = SaveComposedFrame();
+			}
+		}
+		if (SUCCEEDED(hRes))
+		{
+			m_bitmapRT->BeginDraw();
+			if (m_index == 0)
+			{
+				m_bitmapRT->Clear(m_backgroundColor);
+			}
+			m_bitmapRT->DrawBitmap(gif.bitmap, gif.rectF);
+			hRes = m_bitmapRT->EndDraw();
+		}
+		if (SUCCEEDED(hRes))
+		{
+			D2D_RECT_F dst = { 0.0F,0.0F,static_cast<FLOAT>(m_cxGifImage),static_cast<FLOAT>(m_cyGifImage) };
+			D2D_RECT_F src = { 0.0F,0.0F,static_cast<FLOAT>(m_cxGifImagePixel),static_cast<FLOAT>(m_cyGifImagePixel) };
+			TinyComPtr<ID2D1Bitmap> bitmap;
+			m_bitmapRT->GetBitmap(&bitmap);
+			d2d.GetContext()->DrawBitmap(bitmap, dst, 1.0F, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, src, NULL);
+			m_index = (++m_index) % m_count;
+		}
+		return hRes;
+	}
+
+	HRESULT MGIFScene::GetFrame(DX2D& d2d, IWICImagingFactory* ps, UINT index)
+	{
+		TinyComPtr<IWICFormatConverter> converter;
+		TinyComPtr<IWICBitmapFrameDecode> decode;
+		TinyComPtr<IWICMetadataQueryReader> metadataQueryReader;
+		PROPVARIANT propValue;
+		PropVariantInit(&propValue);
+		HRESULT hRes = m_decoder->GetFrame(index, &decode);
+		if (SUCCEEDED(hRes))
+		{
+			hRes = ps->CreateFormatConverter(&converter);
+		}
+		if (SUCCEEDED(hRes))
+		{
+			hRes = converter->Initialize(
+				decode,
+				GUID_WICPixelFormat32bppPBGRA,
+				WICBitmapDitherTypeNone,
+				nullptr,
+				0.f,
+				WICBitmapPaletteTypeCustom);
+		}
+		WIC_GIF gif = { 0 };
+		if (SUCCEEDED(hRes))
+		{
+			hRes = d2d.GetContext()->CreateBitmapFromWicBitmap(
+				converter,
+				nullptr,
+				&gif.bitmap);
+		}
+		if (SUCCEEDED(hRes))
+		{
+			hRes = decode->GetMetadataQueryReader(&metadataQueryReader);
+		}
+		if (SUCCEEDED(hRes))
+		{
+			hRes = metadataQueryReader->GetMetadataByName(L"/imgdesc/Left", &propValue);
+			if (SUCCEEDED(hRes))
+			{
+				hRes = (propValue.vt == VT_UI2 ? S_OK : E_FAIL);
+				if (SUCCEEDED(hRes))
+				{
+					gif.rectF.left = static_cast<float>(propValue.uiVal);
+				}
+				PropVariantClear(&propValue);
+			}
+		}
+		if (SUCCEEDED(hRes))
+		{
+			hRes = metadataQueryReader->GetMetadataByName(L"/imgdesc/Top", &propValue);
+			if (SUCCEEDED(hRes))
+			{
+				hRes = (propValue.vt == VT_UI2 ? S_OK : E_FAIL);
+				if (SUCCEEDED(hRes))
+				{
+					gif.rectF.top = static_cast<float>(propValue.uiVal);
+				}
+				PropVariantClear(&propValue);
+			}
+		}
+		if (SUCCEEDED(hRes))
+		{
+			hRes = metadataQueryReader->GetMetadataByName(L"/imgdesc/Width", &propValue);
+			if (SUCCEEDED(hRes))
+			{
+				hRes = (propValue.vt == VT_UI2 ? S_OK : E_FAIL);
+				if (SUCCEEDED(hRes))
+				{
+					gif.rectF.right = static_cast<float>(propValue.uiVal) + gif.rectF.left;
+				}
+				PropVariantClear(&propValue);
+			}
+		}
+		if (SUCCEEDED(hRes))
+		{
+			hRes = metadataQueryReader->GetMetadataByName(L"/imgdesc/Height", &propValue);
+			if (SUCCEEDED(hRes))
+			{
+				hRes = (propValue.vt == VT_UI2 ? S_OK : E_FAIL);
+				if (SUCCEEDED(hRes))
+				{
+					gif.rectF.bottom = static_cast<float>(propValue.uiVal) + gif.rectF.top;
+				}
+				PropVariantClear(&propValue);
+			}
+		}
+		if (SUCCEEDED(hRes))
+		{
+			if (SUCCEEDED(metadataQueryReader->GetMetadataByName(
+				L"/grctlext/Delay",
+				&propValue)))
+			{
+				hRes = (propValue.vt == VT_UI2 ? S_OK : E_FAIL);
+				if (SUCCEEDED(hRes))
+				{
+					hRes = UIntMult(propValue.uiVal, 10, &gif.delay);
+				}
+				PropVariantClear(&propValue);
+			}
+			else
+			{
+				gif.delay = 0;
+			}
+		}
+		if (SUCCEEDED(hRes))
+		{
+			if (SUCCEEDED(metadataQueryReader->GetMetadataByName(
+				L"/grctlext/Disposal",
+				&propValue)))
+			{
+				hRes = (propValue.vt == VT_UI1) ? S_OK : E_FAIL;
+				if (SUCCEEDED(hRes))
+				{
+					gif.disposal = propValue.bVal;
+				}
+			}
+			else
+			{
+				gif.disposal = DM_UNDEFINED;
+			}
+		}
+		PropVariantClear(&propValue);
+		if (SUCCEEDED(hRes))
+		{
+			m_images.Add(gif);
 		}
 		return hRes;
 	}

@@ -70,8 +70,8 @@ namespace MShow
 				m_timer.EndTime();
 				m_clock.AddBaseTime(m_timer.GetMillisconds());
 				DWORD dwMS = timeGetTime() - m_clock.GetBaseTime();
-				INT offset = tag.samplePTS - dwMS;
-				Sleep(offset < 0 ? 0 : offset);
+				INT delay = tag.samplePTS - dwMS;
+				Sleep(delay < 0 ? 0 : delay);
 				if (tag.size != 4096)
 				{
 					m_player.Fill(tag.bits, tag.size);
