@@ -48,14 +48,21 @@ namespace MShow
 	LRESULT DXView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		controller.Initialize(m_hWND, "rtmp://live.hkstv.hk.lxdns.com/live/hks");
+		m_controller.Reset(new MShowController(*this));
+		if (m_controller)
+		{
+			m_controller->Initialize("rtmp://live.hkstv.hk.lxdns.com/live/hks");
+		}
 		return FALSE;
 	}
 
 	LRESULT DXView::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		controller.Uninitialize();
+		if (m_controller)
+		{
+			m_controller->Uninitialize();
+		}
 		return FALSE;
 	}
 

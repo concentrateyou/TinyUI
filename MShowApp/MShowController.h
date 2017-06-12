@@ -5,6 +5,8 @@
 
 namespace MShow
 {
+	class DXView;
+
 	class MShowController
 	{
 		DISALLOW_COPY_AND_ASSIGN(MShowController)

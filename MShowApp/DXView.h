@@ -4,6 +4,7 @@ using namespace DXFramework;
 
 namespace MShow
 {
+	class MShowController;
 	/// <summary>
 	/// DXäÖÈ¾¿Ø¼þ
 	/// </summary>
@@ -28,7 +29,7 @@ namespace MShow
 		LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	private:
-		MShowController controller;
+		TinyScopedPtr<MShowController> m_controller;
 	};
 }
 
