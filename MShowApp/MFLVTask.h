@@ -23,17 +23,20 @@ namespace MShow
 	public:
 		MFLVTask();
 		virtual ~MFLVTask();
-		BOOL Initialize(DX2D& d2d,LPCSTR pzURL);
+		BOOL Initialize(DX2D& d2d, LPCSTR pzURL);
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
+	public:
+		Event<void(ID2D1Bitmap1*)>	EVENT_VIDEO;
 	public:
 		MPacketQueue&	GetAudioQueue();
 		MPacketQueue&	GetVideoQueue();
 		H264Decode*		GetH264();
 		AACDecode*		GetAAC();
-		const FLV_SCRIPTDATA& GetScript() const;
+		FLV_SCRIPTDATA& GetScript();
 	private:
 		void OnMessagePump();
+		void OnVideo(ID2D1Bitmap1* bitmap);
 	private:
 		BOOL							m_bFI;
 		LONGLONG						m_sample;

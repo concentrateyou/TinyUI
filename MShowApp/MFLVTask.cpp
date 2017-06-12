@@ -26,7 +26,7 @@ namespace MShow
 		m_videoTask.Reset(new MVideoTask(*this, m_clock));
 		if (!m_videoTask)
 			return FALSE;
-		m_videoRenderTask.Reset(new MVideoRenderTask(*m_videoTask, m_clock, d2d));
+		m_videoRenderTask.Reset(new MVideoRenderTask(*m_videoTask, m_clock, d2d, BindCallback(&MFLVTask::OnVideo, this)));
 		if (!m_videoRenderTask)
 			return FALSE;
 		m_aac.Reset(new AACDecode());
@@ -96,7 +96,7 @@ namespace MShow
 		return m_aac;
 	}
 
-	const FLV_SCRIPTDATA& MFLVTask::GetScript() const
+	 FLV_SCRIPTDATA& MFLVTask::GetScript() 
 	{
 		return m_script;
 	}
@@ -200,5 +200,10 @@ namespace MShow
 	_ERROR:
 		m_audioQueue.RemoveAll();
 		m_videoQueue.RemoveAll();
+	}
+
+	void MFLVTask::OnVideo(ID2D1Bitmap1* bitmap)
+	{
+		EVENT_VIDEO(bitmap);
 	}
 }

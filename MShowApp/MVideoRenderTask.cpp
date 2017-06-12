@@ -3,10 +3,11 @@
 
 namespace MShow
 {
-	MVideoRenderTask::MVideoRenderTask(MVideoTask& task, MClock& clock, DX2D& d2d)
+	MVideoRenderTask::MVideoRenderTask(MVideoTask& task, MClock& clock, DX2D& d2d, TinyUI::Callback<void(ID2D1Bitmap1*)>&& callback)
 		:m_task(task),
 		m_clock(clock),
-		m_d2d(d2d)
+		m_d2d(d2d),
+		m_callback(std::move(callback))
 	{
 	}
 
@@ -69,15 +70,11 @@ namespace MShow
 
 	void MVideoRenderTask::OnRender(BYTE* bits, LONG size)
 	{
-		if (m_d2d.BeginDraw())
+		if (!m_callback.IsNull() && m_bitmap != NULL)
 		{
 			TinySize s = m_task.GetSize();
 			m_bitmap->CopyFromMemory(NULL, bits, s.cx * 4);
-			D2D_SIZE_F sf = m_d2d.GetContext()->GetSize();
-			D2D_RECT_F dst = { 0.0F,0.0F,sf.width,sf.height };
-			D2D_RECT_F src = { 0.0F,0.0F,static_cast<FLOAT>(s.cx),static_cast<FLOAT>(s.cy) };
-			m_d2d.GetContext()->DrawBitmap(m_bitmap, dst, 1.0F, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, src, NULL);
-			m_d2d.EndDraw();
+			m_callback(m_bitmap);
 		}
 	}
 }

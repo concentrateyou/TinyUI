@@ -13,7 +13,7 @@ namespace MShow
 	{
 		DISALLOW_COPY_AND_ASSIGN(MVideoRenderTask)
 	public:
-		MVideoRenderTask(MVideoTask& task, MClock& clock, DX2D& d2d);
+		MVideoRenderTask(MVideoTask& task, MClock& clock, DX2D& d2d, TinyUI::Callback<void(ID2D1Bitmap1*)>&& callback);
 		virtual ~MVideoRenderTask();
 		BOOL Initialize();
 		BOOL Submit();
@@ -28,6 +28,7 @@ namespace MShow
 		MClock&		m_clock;
 		MVideoTask& m_task;
 		TinyComPtr<ID2D1Bitmap1> m_bitmap;
+		TinyUI::Callback<void(ID2D1Bitmap1*)> m_callback;
 	};
 }
 

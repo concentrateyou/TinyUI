@@ -2,6 +2,7 @@
 #include "rtmp.h"
 #include "DX11.h"
 #include "DX2D.h"
+#include "Common/TinyCallback.h"
 #include "IO/TinyIO.h"
 #include "IO/TinyTaskBase.h"
 #include "Control/TinyControl.h"
