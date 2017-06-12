@@ -28,18 +28,20 @@ namespace MShow
 		MGIFScene();
 		virtual ~MGIFScene();
 	public:
-		BOOL Load(DX2D& d2d, const CHAR* pzFile);
-		BOOL Draw(DX2D& d2d, UINT delay);
+		BOOL Initialize(DX2D& d2d, const CHAR* pzFile);
+		BOOL Draw(DX2D& d2d, INT& delay);
+		void Uninitialize();
 	private:
-		HRESULT DrawFrame(DX2D& d2d);
+		HRESULT DrawFrame(DX2D& d2d, UINT index);
 		HRESULT GetFrame(DX2D& d2d, IWICImagingFactory* ps, UINT index);
 		HRESULT GetGlobalMetadata(IWICImagingFactory* ps);
 		HRESULT GetBackgroundColor(IWICImagingFactory* ps, IWICMetadataQueryReader *pMetadataQueryReader);
-		HRESULT ClearCurrentFrame();
+		HRESULT ClearFrame(UINT index);
+		HRESULT DisposeFrame(UINT index);
 		HRESULT SaveComposedFrame();
 		HRESULT	RestoreSavedFrame();
-		HRESULT DisposeCurrentFrame();
 	private:
+		UINT								m_delay;
 		UINT								m_index;
 		UINT								m_count;
 		UINT								m_cxGifImage;

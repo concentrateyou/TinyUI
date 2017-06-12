@@ -24,7 +24,7 @@ namespace MShow
 			return FALSE;
 		if (!m_task.Submit())
 			return FALSE;
-		m_onVideo.Reset(new Delegate<void(ID2D1Bitmap1*, UINT)>(this, &MShowController::OnVideo));
+		m_onVideo.Reset(new Delegate<void(ID2D1Bitmap1*, INT)>(this, &MShowController::OnVideo));
 		m_onSize.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MShowController::OnSize));
 		m_onLButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MShowController::OnLButtonDown));
 		m_onLButtonUp.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MShowController::OnLButtonUp));
@@ -40,22 +40,23 @@ namespace MShow
 		m_view.EVENT_MOUSEMOVE += m_onMouseMove;
 		m_view.EVENT_MOUSELEAVE += m_onMouseLeave;
 		m_view.EVENT_SETCURSOR += m_onSetCursor;
-		m_gifScene.Load(m_d2d, "D:\\timg.gif");
+		m_gifScene.Initialize(m_d2d, "D:\\timg.gif");
 		return TRUE;
 	}
 
-	void MShowController::OnVideo(ID2D1Bitmap1* bitmap, UINT delay)
+	void MShowController::OnVideo(ID2D1Bitmap1* bitmap, INT delay)
 	{
 		if (m_d2d.BeginDraw())
 		{
+			//m_timer.BeginTime();
 			FLV_SCRIPTDATA& script = m_task.GetScript();
 			D2D_SIZE_F sf = m_d2d.GetContext()->GetSize();
 			D2D_RECT_F dst = { 0.0F,0.0F,sf.width,sf.height };
 			D2D_RECT_F src = { 0.0F,0.0F,script.width,script.height };
 			m_d2d.GetContext()->DrawBitmap(bitmap, dst, 1.0F, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, src, NULL);
-
-			m_gifScene.Draw(m_d2d, delay);
-
+			//m_timer.EndTime();
+			//delay -= m_timer.GetMillisconds();
+			//m_gifScene.Draw(m_d2d, delay);
 			m_d2d.EndDraw();
 		}
 	}

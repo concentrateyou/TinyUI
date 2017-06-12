@@ -27,7 +27,7 @@ namespace MShow
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
 	public:
-		Event<void(ID2D1Bitmap1*, UINT)>	EVENT_VIDEO;
+		Event<void(ID2D1Bitmap1*, INT)>	EVENT_VIDEO;
 	public:
 		MPacketQueue&	GetAudioQueue();
 		MPacketQueue&	GetVideoQueue();
@@ -36,7 +36,7 @@ namespace MShow
 		FLV_SCRIPTDATA& GetScript();
 	private:
 		void OnMessagePump();
-		void OnVideo(ID2D1Bitmap1* bitmap, UINT delay);
+		void OnVideo(ID2D1Bitmap1* bitmap, INT delay);
 	private:
 		BOOL							m_bFI;
 		LONGLONG						m_sample;

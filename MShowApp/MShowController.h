@@ -18,7 +18,7 @@ namespace MShow
 		BOOL Initialize(LPCSTR pzURL);
 		void Uninitialize();
 	private:
-		void	OnVideo(ID2D1Bitmap1*,UINT);
+		void	OnVideo(ID2D1Bitmap1*, INT);
 		void	OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -32,7 +32,7 @@ namespace MShow
 		DXView&		m_view;
 		TinyPerformanceTimer	m_timer;
 		TinyArray<MElement*>	m_scenes;
-		TinyScopedPtr<Delegate<void(ID2D1Bitmap1*,UINT)>> m_onVideo;
+		TinyScopedPtr<Delegate<void(ID2D1Bitmap1*, INT)>> m_onVideo;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onSize;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonDown;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonUp;

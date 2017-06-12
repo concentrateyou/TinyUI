@@ -202,7 +202,7 @@ namespace MShow
 		m_videoQueue.RemoveAll();
 	}
 
-	void MFLVTask::OnVideo(ID2D1Bitmap1* bitmap,UINT delay)
+	void MFLVTask::OnVideo(ID2D1Bitmap1* bitmap, INT delay)
 	{
 		EVENT_VIDEO(bitmap, delay);
 	}

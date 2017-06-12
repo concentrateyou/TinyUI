@@ -14,6 +14,7 @@ namespace MShow
 		m_cyGifImage(0),
 		m_cxGifImagePixel(0),
 		m_cyGifImagePixel(0),
+		m_delay(0),
 		m_count(0),
 		m_index(0)
 	{
@@ -21,9 +22,10 @@ namespace MShow
 
 	MGIFScene::~MGIFScene()
 	{
+		Uninitialize();
 	}
 
-	BOOL MGIFScene::Load(DX2D& d2d, const CHAR* pzFile)
+	BOOL MGIFScene::Initialize(DX2D& d2d, const CHAR* pzFile)
 	{
 		ASSERT(d2d.GetContext());
 		auto ps = GetWIC();
@@ -68,25 +70,37 @@ namespace MShow
 		return SUCCEEDED(hRes);
 	}
 
-	BOOL MGIFScene::Draw(DX2D& d2d, UINT delay)
+	void MGIFScene::Uninitialize()
 	{
-		m_timer.BeginTime();
-		HRESULT hRes = DrawFrame(d2d);
-		if (SUCCEEDED(hRes))
+		for (UINT i = 0;i < m_images.GetSize();i++)
 		{
-			m_timer.EndTime();
-			WIC_GIF& gif = m_images[m_index];
-			if (gif.delay > delay)
-			{
-				
-			}
+			SAFE_RELEASE(m_images[i].bitmap);
 		}
-		return TRUE;
+		m_images.RemoveAll();
 	}
 
-	HRESULT MGIFScene::ClearCurrentFrame()
+	BOOL MGIFScene::Draw(DX2D& d2d, INT& delay)
 	{
-		WIC_GIF& gif = m_images[m_index];
+		m_timer.BeginTime();
+		m_delay += delay;
+		if (m_images[m_index].delay > m_delay)
+		{
+			HRESULT hRes = DrawFrame(d2d, m_index);
+			m_timer.EndTime();
+			delay += m_timer.GetMillisconds();
+			return SUCCEEDED(hRes);
+		}
+		else
+		{
+			m_delay = 0;
+			m_index = (++m_index) % m_count;
+		}
+		return FALSE;
+	}
+
+	HRESULT MGIFScene::ClearFrame(UINT index)
+	{
+		WIC_GIF& gif = m_images[index];
 		m_bitmapRT->BeginDraw();
 		m_bitmapRT->PushAxisAlignedClip(&gif.rectF, D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 		m_bitmapRT->Clear(m_backgroundColor);
@@ -136,17 +150,17 @@ namespace MShow
 		return hRes;
 	}
 
-	HRESULT MGIFScene::DisposeCurrentFrame()
+	HRESULT MGIFScene::DisposeFrame(UINT index)
 	{
 		HRESULT hRes = S_OK;
-		WIC_GIF& gif = m_images[m_index];
+		WIC_GIF& gif = m_images[index];
 		switch (gif.disposal)
 		{
 		case DM_UNDEFINED:
 		case DM_NONE:
 			break;
 		case DM_BACKGROUND:
-			hRes = ClearCurrentFrame();
+			hRes = ClearFrame(index);
 			break;
 		case DM_PREVIOUS:
 			hRes = RestoreSavedFrame();
@@ -302,13 +316,12 @@ namespace MShow
 		return hRes;
 	}
 
-	HRESULT MGIFScene::DrawFrame(DX2D& d2d)
+	HRESULT MGIFScene::DrawFrame(DX2D& d2d, UINT index)
 	{
-		WIC_GIF& gif = m_images[m_index];
-		HRESULT hRes = DisposeCurrentFrame();
+		HRESULT hRes = DisposeFrame(index);
 		if (SUCCEEDED(hRes))
 		{
-			if (gif.disposal == DM_PREVIOUS)
+			if (m_images[index].disposal == DM_PREVIOUS)
 			{
 				hRes = SaveComposedFrame();
 			}
@@ -320,7 +333,7 @@ namespace MShow
 			{
 				m_bitmapRT->Clear(m_backgroundColor);
 			}
-			m_bitmapRT->DrawBitmap(gif.bitmap, gif.rectF);
+			m_bitmapRT->DrawBitmap(m_images[index].bitmap, m_images[index].rectF);
 			hRes = m_bitmapRT->EndDraw();
 		}
 		if (SUCCEEDED(hRes))
@@ -330,7 +343,6 @@ namespace MShow
 			TinyComPtr<ID2D1Bitmap> bitmap;
 			m_bitmapRT->GetBitmap(&bitmap);
 			d2d.GetContext()->DrawBitmap(bitmap, dst, 1.0F, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, src, NULL);
-			m_index = (++m_index) % m_count;
 		}
 		return hRes;
 	}

@@ -3,7 +3,7 @@
 
 namespace MShow
 {
-	MVideoRenderTask::MVideoRenderTask(MVideoTask& task, MClock& clock, DX2D& d2d, TinyUI::Callback<void(ID2D1Bitmap1*, UINT)>&& callback)
+	MVideoRenderTask::MVideoRenderTask(MVideoTask& task, MClock& clock, DX2D& d2d, TinyUI::Callback<void(ID2D1Bitmap1*, INT)>&& callback)
 		:m_task(task),
 		m_clock(clock),
 		m_d2d(d2d),
@@ -46,6 +46,7 @@ namespace MShow
 		SampleTag tag = { 0 };
 		for (;;)
 		{
+			m_timer.BeginTime();
 			if (m_close.Lock(0))
 				break;
 			ZeroMemory(&tag, sizeof(tag));
@@ -62,9 +63,11 @@ namespace MShow
 			while (m_clock.GetBasetPTS() == -1);
 			DWORD dwMS = timeGetTime() - m_clock.GetBaseTime();
 			INT delay = static_cast<INT>(tag.samplePTS - dwMS);
-			Sleep(delay < 0 ? 0 : delay);
 			OnRender(tag.bits, tag.size, delay);
 			SAFE_DELETE_ARRAY(tag.bits);
+			m_timer.EndTime();
+			delay -= m_timer.GetMillisconds();
+			Sleep(delay < 0 ? 0 : delay);
 		}
 	}
 
