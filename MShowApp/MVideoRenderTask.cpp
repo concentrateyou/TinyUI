@@ -62,6 +62,9 @@ namespace MShow
 			while (m_clock.GetBasetPTS() == -1);
 			INT ms = timeGetTime() - m_clock.GetBaseTime();
 			INT delay = static_cast<INT>(tag.samplePTS - ms);
+
+			TRACE("ms:%d, delay:%d, tag.samplePTS:%d\n", ms, delay, tag.samplePTS);
+
 			Sleep(delay < 0 ? 0 : delay);
 			OnRender(tag.bits, tag.size, delay);
 			SAFE_DELETE_ARRAY(tag.bits);
