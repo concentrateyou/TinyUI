@@ -46,7 +46,6 @@ namespace MShow
 		SampleTag tag = { 0 };
 		for (;;)
 		{
-			m_timer.BeginTime();
 			if (m_close.Lock(0))
 				break;
 			ZeroMemory(&tag, sizeof(tag));
@@ -61,13 +60,11 @@ namespace MShow
 				m_clock.SetBaseTime(timeGetTime());
 			}
 			while (m_clock.GetBasetPTS() == -1);
-			DWORD dwMS = timeGetTime() - m_clock.GetBaseTime();
-			INT delay = static_cast<INT>(tag.samplePTS - dwMS);
+			INT ms = timeGetTime() - m_clock.GetBaseTime();
+			INT delay = static_cast<INT>(tag.samplePTS - ms);
+			Sleep(delay < 0 ? 0 : delay);
 			OnRender(tag.bits, tag.size, delay);
 			SAFE_DELETE_ARRAY(tag.bits);
-			m_timer.EndTime();
-			delay -= m_timer.GetMillisconds();
-			Sleep(delay < 0 ? 0 : delay);
 		}
 	}
 

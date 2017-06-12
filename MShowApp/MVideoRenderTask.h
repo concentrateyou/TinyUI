@@ -27,7 +27,6 @@ namespace MShow
 		TinyEvent	m_close;
 		MClock&		m_clock;
 		MVideoTask& m_task;
-		TinyPerformanceTimer	m_timer;
 		TinyComPtr<ID2D1Bitmap1> m_bitmap;
 		TinyUI::Callback<void(ID2D1Bitmap1*, INT)> m_callback;
 	};

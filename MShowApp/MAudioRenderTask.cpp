@@ -55,22 +55,23 @@ namespace MShow
 			while (m_clock.GetBasetPTS() == -1);
 			if (!m_bInitialize)
 			{
-				m_timer.BeginTime();
+				TinyPerformanceTimer timer;
+				timer.BeginTime();
 				m_bInitialize = TRUE;
 				if (!m_player.SetFormat(&m_task.GetAAC()->GetFormat(), tag.size * 2))
 					break;
 				m_events[0].CreateEvent(TRUE, FALSE);
 				m_events[1].CreateEvent(TRUE, FALSE);
 				DSBPOSITIONNOTIFY vals[2];
-				vals[0].dwOffset = tag.size - 1;
+				vals[0].dwOffset = tag.size - 10;
 				vals[0].hEventNotify = m_events[0];
-				vals[1].dwOffset = tag.size * 2 - 1;
+				vals[1].dwOffset = tag.size * 2 - 10;
 				vals[1].hEventNotify = m_events[1];
 				m_player.SetPositions(2, vals);
-				m_timer.EndTime();
-				m_clock.AddBaseTime(m_timer.GetMillisconds());
-				DWORD dwMS = timeGetTime() - m_clock.GetBaseTime();
-				INT delay = tag.samplePTS - dwMS;
+				timer.EndTime();
+				m_clock.AddBaseTime(timer.GetMillisconds());
+				INT ms = timeGetTime() - m_clock.GetBaseTime();
+				INT delay = tag.samplePTS - ms;
 				Sleep(delay < 0 ? 0 : delay);
 				if (tag.size != 4096)
 				{

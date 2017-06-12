@@ -13,7 +13,7 @@ namespace TinyUI
 
 #pragma warning(push)//保存当前的编译器警告状态
 #pragma warning(disable : 4996)
-		nBuf = _vsntprintf(szBuffer, ARRAYSIZE(szBuffer), lpszFormat, args);
+		nBuf = _vsntprintf(szBuffer, 512, lpszFormat, args);
 #pragma warning(pop)//恢复原先的警告状态
 
 		ASSERT(nBuf >= 0);
