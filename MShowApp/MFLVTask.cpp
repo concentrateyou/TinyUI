@@ -126,6 +126,7 @@ namespace MShow
 				ReleaseBlock(block);
 				goto _ERROR;
 			}
+			
 			if (block.type == FLV_AUDIO)
 			{
 				if (block.audio.codeID == FLV_CODECID_AAC)
@@ -158,6 +159,7 @@ namespace MShow
 			}
 			if (block.type == FLV_VIDEO)
 			{
+				TRACE("video pts:%d\n", block.pts);
 				if (block.video.codeID == FLV_CODECID_H264)
 				{
 					if (block.video.packetType == FLV_AVCDecoderConfigurationRecord)
