@@ -25,7 +25,21 @@ namespace MShow
 		if (!m_task.Submit())
 			return FALSE;
 		m_onVideo.Reset(new Delegate<void(ID2D1Bitmap1*)>(this, &MShowController::OnVideo));
+		m_onSize.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MShowController::OnSize));
+		m_onLButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MShowController::OnLButtonDown));
+		m_onLButtonUp.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MShowController::OnLButtonUp));
+		m_onRButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MShowController::OnRButtonDown));
+		m_onMouseMove.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MShowController::OnMouseMove));
+		m_onMouseLeave.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MShowController::OnMouseLeave));
+		m_onSetCursor.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MShowController::OnSetCursor));
 		m_task.EVENT_VIDEO += m_onVideo;
+		m_view.EVENT_SIZE += m_onSize;
+		m_view.EVENT_LBUTTONDOWN += m_onLButtonDown;
+		m_view.EVENT_LBUTTONUP += m_onLButtonUp;
+		m_view.EVENT_RBUTTONDOWN += m_onRButtonDown;
+		m_view.EVENT_MOUSEMOVE += m_onMouseMove;
+		m_view.EVENT_MOUSELEAVE += m_onMouseLeave;
+		m_view.EVENT_SETCURSOR += m_onSetCursor;
 	}
 
 	void MShowController::OnVideo(ID2D1Bitmap1* bitmap)
@@ -41,9 +55,53 @@ namespace MShow
 		}
 	}
 
+	void MShowController::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		INT cx = LOWORD(lParam);
+		INT cy = HIWORD(lParam);
+	}
+
+	void MShowController::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+	}
+
+	void MShowController::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+	}
+
+	void MShowController::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+
+	}
+
+	void MShowController::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+	}
+
+	void MShowController::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+	}
+
+	void MShowController::OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+	}
+
 	void MShowController::Uninitialize()
 	{
 		m_task.EVENT_VIDEO -= m_onVideo;
+		m_view.EVENT_SIZE -= m_onSize;
+		m_view.EVENT_LBUTTONDOWN -= m_onLButtonDown;
+		m_view.EVENT_LBUTTONUP -= m_onLButtonUp;
+		m_view.EVENT_RBUTTONDOWN -= m_onRButtonDown;
+		m_view.EVENT_MOUSEMOVE -= m_onMouseMove;
+		m_view.EVENT_MOUSELEAVE -= m_onMouseLeave;
+		m_view.EVENT_SETCURSOR -= m_onSetCursor;
 		m_task.Close(INFINITE);
 	}
 }

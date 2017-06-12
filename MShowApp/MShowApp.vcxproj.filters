@@ -75,10 +75,10 @@
     <ClInclude Include="MShowController.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MGIFScene.h">
+    <ClInclude Include="MElement.h">
       <Filter>头文件\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="MElement.h">
+    <ClInclude Include="MGIFScene.h">
       <Filter>头文件\Scene</Filter>
     </ClInclude>
   </ItemGroup>
@@ -122,10 +122,10 @@
     <ClCompile Include="MShowController.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MGIFScene.cpp">
+    <ClCompile Include="MElement.cpp">
       <Filter>源文件\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="MElement.cpp">
+    <ClCompile Include="MGIFScene.cpp">
       <Filter>源文件\Scene</Filter>
     </ClCompile>
   </ItemGroup>

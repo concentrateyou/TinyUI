@@ -11,6 +11,8 @@ namespace DXFramework
 		WIC_LOADER_IGNORE_SRGB = 0x2,
 	};
 
+	IWICImagingFactory* GetWIC();
+
 	HRESULT __cdecl CreateD2DBitmapFromFile(LPCWSTR fileName, 
 		ID2D1RenderTarget* pTarget, 
 		ID2D1Bitmap** pBitmap);
