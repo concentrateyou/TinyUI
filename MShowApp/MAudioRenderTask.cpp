@@ -72,6 +72,7 @@ namespace MShow
 				m_clock.AddBaseTime(timer.GetMillisconds());
 				INT ms = timeGetTime() - m_clock.GetBaseTime();
 				INT delay = tag.samplePTS - ms;
+				TRACE("audio - ms:%d, delay:%d, samplePTS:%d\n", ms, delay, tag.samplePTS);
 				Sleep(delay < 0 ? 0 : delay);
 				if (tag.size != 4096)
 				{
@@ -83,6 +84,9 @@ namespace MShow
 			}
 			else
 			{
+				INT ms = timeGetTime() - m_clock.GetBaseTime();
+				INT delay = tag.samplePTS - ms;
+				//TRACE("audio - ms:%d, delay:%d, samplePTS:%d\n", ms, delay, tag.samplePTS);
 				m_player.Fill(tag.bits, tag.size);
 				SAFE_DELETE_ARRAY(tag.bits);
 			}
