@@ -4,6 +4,9 @@
 #include "stdafx.h"
 #include "FLVPlayer.h"
 #include "FLVFrameUI.h"
+
+#include "FLVParser.h"
+
 using namespace FLVPlayer;
 
 BOOL LoadSeDebugPrivilege()
@@ -49,6 +52,11 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	HRESULT hRes = OleInitialize(NULL);
 
 	LoadSeDebugPrivilege();
+
+	Decode::FLVParser parser;
+	parser.Open("D:\\test.flv");
+	parser.Parse();
+	parser.Close();
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_FLVPLAYER));

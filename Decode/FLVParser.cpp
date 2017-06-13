@@ -365,7 +365,8 @@ namespace Decode
 	BOOL FLVParser::ParsePCM(FLV_TAG_AUDIO* audio, BYTE* data, INT size)
 	{
 		return TRUE;
-	}
+	};
+
 	BOOL FLVParser::Parse()
 	{
 		FLV_HEADER header = { 0 };
