@@ -3,7 +3,7 @@
 
 namespace TinyUI
 {
-	void Trace(LPCTSTR lpszFormat, ...)
+	void __cdecl Trace(LPCTSTR lpszFormat, ...)
 	{
 		TCHAR szBuffer[512];
 		va_list args;

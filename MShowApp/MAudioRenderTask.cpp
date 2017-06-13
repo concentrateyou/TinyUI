@@ -18,6 +18,8 @@ namespace MShow
 	{
 		if (!m_player.Initialize(hWND))
 			return FALSE;
+		m_events[0].CreateEvent(TRUE, FALSE);
+		m_events[1].CreateEvent(TRUE, FALSE);
 		return TRUE;
 	}
 
@@ -55,13 +57,11 @@ namespace MShow
 			while (m_clock.GetBasetPTS() == -1);
 			if (!m_bInitialize)
 			{
+				m_bInitialize = TRUE;
 				TinyPerformanceTimer timer;
 				timer.BeginTime();
-				m_bInitialize = TRUE;
 				if (!m_player.SetFormat(&m_task.GetAAC()->GetFormat(), tag.size * 2))
 					break;
-				m_events[0].CreateEvent(TRUE, FALSE);
-				m_events[1].CreateEvent(TRUE, FALSE);
 				DSBPOSITIONNOTIFY vals[2];
 				vals[0].dwOffset = tag.size - 1;
 				vals[0].hEventNotify = m_events[0];
