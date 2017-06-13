@@ -188,6 +188,25 @@ namespace TinyUI
 		HANDLE		m_handle;
 		Callback<void(BOOLEAN)> m_callback;
 	};
+
+	/// <summary>
+	/// 计数器队列
+	/// </summary>
+	class TinyTimerQueue
+	{
+		DISALLOW_COPY_AND_ASSIGN(TinyTimerQueue)
+	public:
+		TinyTimerQueue();
+		~TinyTimerQueue();
+		BOOL Create();
+		void Destory();
+		HANDLE Register(WAITORTIMERCALLBACK callback, LPVOID ps, WORD dueTime, DWORD period, DWORD dwFlag = WT_EXECUTEINTIMERTHREAD);
+		BOOL Change(HANDLE hTimer, WORD dueTime, DWORD period);
+		BOOL Unregister(HANDLE hTimer);
+	private:
+		HANDLE m_handle;
+	};
+
 	/// <summary>
 	/// Library封装 
 	/// </summary>

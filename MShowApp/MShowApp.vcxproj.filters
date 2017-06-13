@@ -60,9 +60,6 @@
     <ClInclude Include="MClock.h">
       <Filter>头文件\RTMP</Filter>
     </ClInclude>
-    <ClInclude Include="MFLVTask.h">
-      <Filter>头文件\RTMP</Filter>
-    </ClInclude>
     <ClInclude Include="MPacketQueue.h">
       <Filter>头文件\RTMP</Filter>
     </ClInclude>
@@ -79,6 +76,9 @@
       <Filter>头文件\Scene</Filter>
     </ClInclude>
     <ClInclude Include="MGIFScene.h">
+      <Filter>头文件\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="MFLVScene.h">
       <Filter>头文件\Scene</Filter>
     </ClInclude>
   </ItemGroup>
@@ -107,9 +107,6 @@
     <ClCompile Include="MClock.cpp">
       <Filter>源文件\RTMP</Filter>
     </ClCompile>
-    <ClCompile Include="MFLVTask.cpp">
-      <Filter>源文件\RTMP</Filter>
-    </ClCompile>
     <ClCompile Include="MPacketQueue.cpp">
       <Filter>源文件\RTMP</Filter>
     </ClCompile>
@@ -126,6 +123,9 @@
       <Filter>源文件\Scene</Filter>
     </ClCompile>
     <ClCompile Include="MGIFScene.cpp">
+      <Filter>源文件\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="MFLVScene.cpp">
       <Filter>源文件\Scene</Filter>
     </ClCompile>
   </ItemGroup>

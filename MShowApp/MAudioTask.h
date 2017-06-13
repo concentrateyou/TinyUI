@@ -1,11 +1,11 @@
 #pragma once
 #include "MShowCommon.h"
 #include "MClock.h"
-#include "MFLVTask.h"
+#include "MFLVScene.h"
 
 namespace MShow
 {
-	class MFLVTask;
+	class MFLVScene;
 	/// <summary>
 	/// “Ù∆µΩ‚¬Îœﬂ≥Ã
 	/// </summary>
@@ -13,7 +13,7 @@ namespace MShow
 	{
 		DISALLOW_COPY_AND_ASSIGN(MAudioTask)
 	public:
-		MAudioTask(MFLVTask& task, MClock& clock);
+		MAudioTask(MFLVScene& task, MClock& clock);
 		virtual ~MAudioTask();
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
@@ -25,7 +25,7 @@ namespace MShow
 	private:
 		TinyEvent		m_close;
 		MClock&			m_clock;
-		MFLVTask&		m_task;
+		MFLVScene&		m_task;
 		MPacketQueue	m_queue;
 	};
 }

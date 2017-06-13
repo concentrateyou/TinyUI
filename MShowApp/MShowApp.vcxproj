@@ -154,7 +154,7 @@
     <ClInclude Include="MElement.h" />
     <ClInclude Include="MGIFScene.h" />
     <ClInclude Include="MPacketQueue.h" />
-    <ClInclude Include="MFLVTask.h" />
+    <ClInclude Include="MFLVScene.h" />
     <ClInclude Include="MAudioRenderTask.h" />
     <ClInclude Include="MShowApp.h" />
     <ClInclude Include="MShowCommon.h" />
@@ -173,7 +173,7 @@
     <ClCompile Include="MElement.cpp" />
     <ClCompile Include="MGIFScene.cpp" />
     <ClCompile Include="MPacketQueue.cpp" />
-    <ClCompile Include="MFLVTask.cpp" />
+    <ClCompile Include="MFLVScene.cpp" />
     <ClCompile Include="MAudioRenderTask.cpp" />
     <ClCompile Include="MShowApp.cpp" />
     <ClCompile Include="MShowCommon.cpp" />

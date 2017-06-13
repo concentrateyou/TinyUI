@@ -1,6 +1,7 @@
 #pragma once
 #include "MShowCommon.h"
 #include "Render/TinyRectTracker.h"
+#include "DX2D.h"
 
 namespace MShow
 {
@@ -26,6 +27,10 @@ namespace MShow
 	public:
 		MElement();
 		virtual ~MElement();
+	public:
+		virtual BOOL Draw(DX2D& d2d) = 0;
+		virtual BOOL Submit() = 0;
+		virtual BOOL Close() = 0;
 	public:
 		TinyString GetName() const;
 		TinyPoint GetPosition() const;

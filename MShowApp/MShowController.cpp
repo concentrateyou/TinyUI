@@ -20,11 +20,29 @@ namespace MShow
 		TinySize size = { TO_CX(s) ,TO_CY(s) };
 		if (!m_d2d.Initialize(m_view.Handle(), size.cx, size.cy))
 			return FALSE;
-		if (!m_task.Initialize(m_d2d, pzURL))
+		if (!m_queue.Create())
 			return FALSE;
-		if (!m_task.Submit())
+		MFLVScene* pFLV = new MFLVScene(this);
+		if (!pFLV->Initialize(m_d2d, pzURL))
+		{
+			SAFE_DELETE(pFLV);
 			return FALSE;
-		m_onVideo.Reset(new Delegate<void(ID2D1Bitmap1*, INT)>(this, &MShowController::OnVideo));
+		}
+		if (!pFLV->Submit())
+		{
+			SAFE_DELETE(pFLV);
+			return FALSE;
+		}
+		
+		MGIFScene* pGIF = new MGIFScene(this);
+		if (!pGIF->Initialize(m_d2d, "D:\\timg.gif"))
+		{
+			SAFE_DELETE(pGIF);
+			return FALSE;
+		}
+		m_scenes.Add(pFLV);
+		m_scenes.Add(pGIF);
+	
 		m_onSize.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MShowController::OnSize));
 		m_onLButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MShowController::OnLButtonDown));
 		m_onLButtonUp.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MShowController::OnLButtonUp));
@@ -32,7 +50,7 @@ namespace MShow
 		m_onMouseMove.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MShowController::OnMouseMove));
 		m_onMouseLeave.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MShowController::OnMouseLeave));
 		m_onSetCursor.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MShowController::OnSetCursor));
-		m_task.EVENT_VIDEO += m_onVideo;
+
 		m_view.EVENT_SIZE += m_onSize;
 		m_view.EVENT_LBUTTONDOWN += m_onLButtonDown;
 		m_view.EVENT_LBUTTONUP += m_onLButtonUp;
@@ -40,21 +58,7 @@ namespace MShow
 		m_view.EVENT_MOUSEMOVE += m_onMouseMove;
 		m_view.EVENT_MOUSELEAVE += m_onMouseLeave;
 		m_view.EVENT_SETCURSOR += m_onSetCursor;
-		m_gifScene.Initialize(m_d2d, "D:\\timg.gif");
 		return TRUE;
-	}
-
-	void MShowController::OnVideo(ID2D1Bitmap1* bitmap, INT delay)
-	{
-		if (m_d2d.BeginDraw())
-		{
-			FLV_SCRIPTDATA& script = m_task.GetScript();
-			D2D_SIZE_F sf = m_d2d.GetContext()->GetSize();
-			D2D_RECT_F dst = { 0.0F,0.0F,sf.width,sf.height };
-			D2D_RECT_F src = { 0.0F,0.0F,script.width,script.height };
-			m_d2d.GetContext()->DrawBitmap(bitmap, dst, 1.0F, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, src, NULL);
-			m_d2d.EndDraw();
-		}
 	}
 
 	void MShowController::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -96,7 +100,7 @@ namespace MShow
 
 	void MShowController::Uninitialize()
 	{
-		m_task.EVENT_VIDEO -= m_onVideo;
+		m_queue.Destory();
 		m_view.EVENT_SIZE -= m_onSize;
 		m_view.EVENT_LBUTTONDOWN -= m_onLButtonDown;
 		m_view.EVENT_LBUTTONUP -= m_onLButtonUp;
@@ -104,6 +108,26 @@ namespace MShow
 		m_view.EVENT_MOUSEMOVE -= m_onMouseMove;
 		m_view.EVENT_MOUSELEAVE -= m_onMouseLeave;
 		m_view.EVENT_SETCURSOR -= m_onSetCursor;
-		m_task.Close(INFINITE);
+		for (UINT i = 0;i < m_scenes.GetSize();i++)
+		{
+			m_scenes[i]->Close();
+		}
+	}
+
+	TinyTimerQueue* MShowController::GetTimerQueue()
+	{
+		return &m_queue;
+	}
+
+	void MShowController::Draw(MElement* ps)
+	{
+		if (m_d2d.BeginDraw())
+		{
+			for (UINT i = 0;i < m_scenes.GetSize();i++)
+			{
+				m_scenes[i]->Draw(m_d2d);
+			}
+			m_d2d.EndDraw();
+		}
 	}
 }

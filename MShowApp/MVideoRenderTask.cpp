@@ -34,6 +34,10 @@ namespace MShow
 		return TinyTaskBase::Submit(BindCallback(&MVideoRenderTask::OnMessagePump, this));
 	}
 
+	ID2D1Bitmap1* MVideoRenderTask::GetBitmap()
+	{
+		return m_bitmap;
+	}
 
 	BOOL MVideoRenderTask::Close(DWORD dwMS)
 	{
@@ -62,7 +66,6 @@ namespace MShow
 			while (m_clock.GetBasePTS() == -1);
 			LONG ms = static_cast<LONG>(timeGetTime() - m_clock.GetBaseTime());
 			INT delay = static_cast<INT>(tag.samplePTS - ms);
-			//TRACE("video - ms:%d, delay:%d , samplePTS:%d \n", ms, delay, tag.samplePTS);
 			Sleep(delay < 0 ? 0 : delay);
 			OnRender(tag.bits, tag.size, delay);
 			SAFE_DELETE_ARRAY(tag.bits);

@@ -1,21 +1,22 @@
 #include "stdafx.h"
-#include "MFLVTask.h"
+#include "MFLVScene.h"
+#include "MShowController.h"
 
 namespace MShow
 {
-	MFLVTask::MFLVTask()
+	MFLVScene::MFLVScene(MShowController* pController)
 		:m_sample(0),
-		m_bFI(0)
+		m_bFI(0),
+		m_pController(pController)
 	{
 
 	}
 
-
-	MFLVTask::~MFLVTask()
+	MFLVScene::~MFLVScene()
 	{
 	}
 
-	BOOL MFLVTask::Initialize(DX2D& d2d, LPCSTR pzURL)
+	BOOL MFLVScene::Initialize(DX2D& d2d, LPCSTR pzURL)
 	{
 		m_audioTask.Reset(new MAudioTask(*this, m_clock));
 		if (!m_audioTask)
@@ -26,7 +27,7 @@ namespace MShow
 		m_videoTask.Reset(new MVideoTask(*this, m_clock));
 		if (!m_videoTask)
 			return FALSE;
-		m_videoRenderTask.Reset(new MVideoRenderTask(*m_videoTask, m_clock, d2d, BindCallback(&MFLVTask::OnVideo, this)));
+		m_videoRenderTask.Reset(new MVideoRenderTask(*m_videoTask, m_clock, d2d, BindCallback(&MFLVScene::OnVideo, this)));
 		if (!m_videoRenderTask)
 			return FALSE;
 		m_aac.Reset(new AACDecode());
@@ -45,10 +46,10 @@ namespace MShow
 		return TRUE;
 	}
 
-	BOOL MFLVTask::Submit()
+	BOOL MFLVScene::Submit()
 	{
 		m_close.CreateEvent();
-		if (TinyTaskBase::Submit(BindCallback(&MFLVTask::OnMessagePump, this)))
+		if (TinyTaskBase::Submit(BindCallback(&MFLVScene::OnMessagePump, this)))
 		{
 			if (!m_videoTask || !m_videoTask->Submit())
 				return FALSE;
@@ -63,40 +64,49 @@ namespace MShow
 		return FALSE;
 	}
 
-	BOOL MFLVTask::Close(DWORD dwMS)
+	BOOL MFLVScene::Draw(DX2D& d2d)
 	{
-		if (m_videoTask && m_videoTask->IsValid())
-			m_videoTask->Close(dwMS);
-		if (m_videoRenderTask && m_videoRenderTask->IsValid())
-			m_videoRenderTask->Close(dwMS);
-		if (m_audioTask && m_audioTask->IsValid())
-			m_audioTask->Close(dwMS);
-		if (m_audioRenderTask && m_audioRenderTask->IsValid())
-			m_audioRenderTask->Close(dwMS);
-		m_close.SetEvent();
-		return TinyTaskBase::Close(dwMS);
+		D2D_SIZE_F sf = d2d.GetContext()->GetSize();
+		D2D_RECT_F dst = { 0.0F,0.0F,sf.width,sf.height };
+		D2D_RECT_F src = { 0.0F,0.0F,m_script.width,m_script.height };
+		d2d.GetContext()->DrawBitmap(m_videoRenderTask->GetBitmap(), dst, 1.0F, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, src, NULL);
+		return TRUE;
 	}
 
-	MPacketQueue& MFLVTask::GetAudioQueue()
+	BOOL MFLVScene::Close()
+	{
+		if (m_videoTask && m_videoTask->IsValid())
+			m_videoTask->Close(INFINITE);
+		if (m_videoRenderTask && m_videoRenderTask->IsValid())
+			m_videoRenderTask->Close(INFINITE);
+		if (m_audioTask && m_audioTask->IsValid())
+			m_audioTask->Close(INFINITE);
+		if (m_audioRenderTask && m_audioRenderTask->IsValid())
+			m_audioRenderTask->Close(INFINITE);
+		m_close.SetEvent();
+		return TinyTaskBase::Close(INFINITE);
+	}
+
+	MPacketQueue& MFLVScene::GetAudioQueue()
 	{
 		return m_audioQueue;
 	}
 
-	MPacketQueue& MFLVTask::GetVideoQueue()
+	MPacketQueue& MFLVScene::GetVideoQueue()
 	{
 		return m_videoQueue;
 	}
 
-	H264Decode* MFLVTask::GetH264()
+	H264Decode* MFLVScene::GetH264()
 	{
 		return m_h264;
 	}
-	AACDecode* MFLVTask::GetAAC()
+	AACDecode* MFLVScene::GetAAC()
 	{
 		return m_aac;
 	}
 
-	FLV_SCRIPTDATA& MFLVTask::GetScript()
+	FLV_SCRIPTDATA& MFLVScene::GetScript()
 	{
 		return m_script;
 	}
@@ -107,7 +117,7 @@ namespace MShow
 		SAFE_DELETE_ARRAY(block.video.data);
 	}
 
-	void MFLVTask::OnMessagePump()
+	void MFLVScene::OnMessagePump()
 	{
 		SampleTag tag = { 0 };
 		FLV_BLOCK block = { 0 };
@@ -203,8 +213,9 @@ namespace MShow
 		m_videoQueue.RemoveAll();
 	}
 
-	void MFLVTask::OnVideo(ID2D1Bitmap1* bitmap, INT delay)
+	void MFLVScene::OnVideo(ID2D1Bitmap1* bitmap, INT delay)
 	{
-		EVENT_VIDEO(bitmap, delay);
+		ASSERT(m_pController);
+		m_pController->Draw(this);
 	}
 }

@@ -18,6 +18,8 @@ namespace MShow
 		BOOL Initialize();
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
+	public:
+		ID2D1Bitmap1* GetBitmap();
 	private:
 		void OnMessagePump();
 		void OnRender(BYTE* bits, LONG size,INT delay);

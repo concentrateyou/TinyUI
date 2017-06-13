@@ -385,6 +385,53 @@ namespace TinyUI
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
+	TinyTimerQueue::TinyTimerQueue()
+		:m_handle(NULL)
+	{
+
+	}
+	TinyTimerQueue::~TinyTimerQueue()
+	{
+
+	}
+	BOOL TinyTimerQueue::Create()
+	{
+		m_handle = CreateTimerQueue();
+		if (!m_handle)
+			return FALSE;
+		return TRUE;
+	}
+	HANDLE TinyTimerQueue::Register(WAITORTIMERCALLBACK callback, LPVOID ps, WORD dueTime, DWORD period,DWORD dwFlag)
+	{
+		if (!m_handle)
+			return FALSE;
+		HANDLE hTimer = NULL;
+		if (CreateTimerQueueTimer(&hTimer, m_handle, callback, ps, dueTime, period, dwFlag))
+			return hTimer;
+		return NULL;
+	}
+	BOOL TinyTimerQueue::Change(HANDLE hTimer, WORD dueTime, DWORD period)
+	{
+		if (!m_handle)
+			return FALSE;
+		return ChangeTimerQueueTimer(m_handle, hTimer, dueTime, period);
+	}
+	BOOL TinyTimerQueue::Unregister(HANDLE hTimer)
+	{
+		ASSERT(hTimer);
+		if (!m_handle)
+			return FALSE;
+		return DeleteTimerQueueTimer(m_handle, hTimer, INVALID_HANDLE_VALUE);
+	}
+	void TinyTimerQueue::Destory()
+	{
+		if (m_handle != NULL)
+		{
+			DeleteTimerQueue(m_handle);
+			m_handle = NULL;
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
 	TinyScopedLibrary::TinyScopedLibrary()
 		: m_hInstance(NULL)
 	{

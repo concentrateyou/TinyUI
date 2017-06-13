@@ -6,6 +6,7 @@
 #include "MAudioRenderTask.h"
 #include "MVideoTask.h"
 #include "MVideoRenderTask.h"
+#include "MElement.h"
 using namespace Decode;
 
 namespace MShow
@@ -14,20 +15,23 @@ namespace MShow
 	class MAudioRenderTask;
 	class MVideoTask;
 	class MVideoRenderTask;
+	class MShowController;
 	/// <summary>
-	/// RTMP处理线程
+	/// FLV场景
 	/// </summary>
-	class MFLVTask : public TinyTaskBase
+	class MFLVScene : public TinyTaskBase, public MElement
 	{
-		DISALLOW_COPY_AND_ASSIGN(MFLVTask)
+		DISALLOW_COPY_AND_ASSIGN(MFLVScene)
 	public:
-		MFLVTask();
-		virtual ~MFLVTask();
+		MFLVScene(MShowController* pController);
+		virtual ~MFLVScene();
 		BOOL Initialize(DX2D& d2d, LPCSTR pzURL);
-		BOOL Submit();
-		BOOL Close(DWORD dwMS) OVERRIDE;
 	public:
-		Event<void(ID2D1Bitmap1*, INT)>	EVENT_VIDEO;
+		BOOL Draw(DX2D& d2d) OVERRIDE;
+		BOOL Submit() OVERRIDE;
+		BOOL Close() OVERRIDE;
+	public:
+		Event<void(ID2D1Bitmap1*, INT, MElement*)>	EVENT_VIDEO;
 	public:
 		MPacketQueue&	GetAudioQueue();
 		MPacketQueue&	GetVideoQueue();
@@ -46,6 +50,7 @@ namespace MShow
 		MPacketQueue					m_videoQueue;
 		MClock							m_clock;
 		FLV_SCRIPTDATA					m_script;
+		MShowController*				m_pController;
 		TinyScopedPtr<H264Decode>		m_h264;
 		TinyScopedPtr<AACDecode>		m_aac;
 		TinyScopedPtr<MVideoTask>		m_videoTask;

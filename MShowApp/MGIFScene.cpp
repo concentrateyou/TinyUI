@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "MGIFScene.h"
-
+#include "MShowController.h"
 
 namespace MShow
 {
@@ -9,20 +9,22 @@ namespace MShow
 
 	IMPLEMENT_DYNAMIC(MGIFScene, MElement);
 
-	MGIFScene::MGIFScene()
-		:m_cxGifImage(0),
+	MGIFScene::MGIFScene(MShowController* pController)
+		:m_pController(pController),
+		m_cxGifImage(0),
 		m_cyGifImage(0),
 		m_cxGifImagePixel(0),
 		m_cyGifImagePixel(0),
 		m_delay(0),
 		m_count(0),
-		m_index(0)
+		m_index(0),
+		m_hTimer(NULL)
 	{
 	}
 
 	MGIFScene::~MGIFScene()
 	{
-		Uninitialize();
+		Close();
 	}
 
 	BOOL MGIFScene::Initialize(DX2D& d2d, const CHAR* pzFile)
@@ -38,71 +40,76 @@ namespace MShow
 			GENERIC_READ,
 			WICDecodeMetadataCacheOnLoad,
 			&m_decoder);
-		if (SUCCEEDED(hRes))
+		if (hRes != S_OK)
+			return FALSE;
+		hRes = GetGlobalMetadata(ps);
+		if (hRes != S_OK)
+			return FALSE;
+		D2D1_SIZE_F sizeF = { static_cast<FLOAT>(m_cxGifImage), static_cast<FLOAT>(m_cyGifImage) };
+		hRes = d2d.GetContext()->CreateCompatibleRenderTarget(sizeF, &m_bitmapRT);
+		if (hRes != S_OK)
+			return FALSE;
+		for (UINT i = 0;i < m_count;i++)
 		{
-			hRes = GetGlobalMetadata(ps);
+			hRes |= GetFrame(d2d, ps, i);
 		}
-		if (SUCCEEDED(hRes))
-		{
-			D2D1_SIZE_F sizeF = { static_cast<FLOAT>(m_cxGifImage), static_cast<FLOAT>(m_cyGifImage) };
-			hRes = d2d.GetContext()->CreateCompatibleRenderTarget(sizeF, &m_bitmapRT);
-		}
-		if (SUCCEEDED(hRes))
-		{
-			for (UINT i = 0;i < m_count;i++)
-			{
-				hRes |= GetFrame(d2d, ps, i);
-			}
-		}
+		if (hRes != S_OK)
+			return FALSE;
 		TinyComPtr<ID2D1Bitmap> bitmap;
 		hRes = m_bitmapRT->GetBitmap(&bitmap);
-		if (SUCCEEDED(hRes))
-		{
-			auto bitmapSize = bitmap->GetPixelSize();
-			D2D1_BITMAP_PROPERTIES bitmapProp;
-			bitmap->GetDpi(&bitmapProp.dpiX, &bitmapProp.dpiY);
-			bitmapProp.pixelFormat = bitmap->GetPixelFormat();
-			hRes = m_bitmapRT->CreateBitmap(
-				bitmapSize,
-				bitmapProp,
-				&m_bitmap);
-		}
+		if (hRes != S_OK)
+			return FALSE;
+		auto bitmapSize = bitmap->GetPixelSize();
+		D2D1_BITMAP_PROPERTIES bitmapProp;
+		bitmap->GetDpi(&bitmapProp.dpiX, &bitmapProp.dpiY);
+		bitmapProp.pixelFormat = bitmap->GetPixelFormat();
+		hRes = m_bitmapRT->CreateBitmap(
+			bitmapSize,
+			bitmapProp,
+			&m_bitmap);
 		return SUCCEEDED(hRes);
 	}
 
-	void MGIFScene::Uninitialize()
+	BOOL MGIFScene::Submit()
 	{
+		ASSERT(m_pController);
+		m_hTimer = m_pController->GetTimerQueue()->Register(&MGIFScene::Callback, this, m_images[m_index].delay, 1);
+		return m_hTimer != NULL;
+	}
+
+	VOID CALLBACK MGIFScene::Callback(PVOID lpParameter, BOOLEAN val)
+	{
+		MGIFScene* ps = reinterpret_cast<MGIFScene*>(lpParameter);
+		if (ps && val)
+		{
+			ps->m_pController->Draw(ps);
+		}
+	}
+
+	BOOL MGIFScene::Close()
+	{
+		m_pController->GetTimerQueue()->Unregister(m_hTimer);
 		for (UINT i = 0;i < m_images.GetSize();i++)
 		{
 			SAFE_RELEASE(m_images[i].bitmap);
 		}
 		m_images.RemoveAll();
+		return TRUE;
 	}
 
-	BOOL MGIFScene::Draw(DX2D& d2d, INT& delay)
+	BOOL MGIFScene::Draw(DX2D& d2d)
 	{
-		m_timer.BeginTime();
-		m_delay += delay;
-		if (m_images[m_index].delay > m_delay)
-		{
-			HRESULT hRes = DrawFrame(d2d, m_index);
-			m_timer.EndTime();
-			delay += m_timer.GetMillisconds();
-			return SUCCEEDED(hRes);
-		}
-		else
-		{
-			m_delay = 0;
-			m_index = (++m_index) % m_count;
-		}
-		return FALSE;
+		ASSERT(m_pController);
+		m_pController->m_queue.Change(m_hTimer, m_images[m_index].delay, 1);
+		HRESULT hRes = DrawFrame(d2d, m_index);
+		m_index = (++m_index) % m_count;
+		return SUCCEEDED(hRes);
 	}
 
 	HRESULT MGIFScene::ClearFrame(UINT index)
 	{
-		WIC_GIF& gif = m_images[index];
 		m_bitmapRT->BeginDraw();
-		m_bitmapRT->PushAxisAlignedClip(&gif.rectF, D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+		m_bitmapRT->PushAxisAlignedClip(&m_images[index].rectF, D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 		m_bitmapRT->Clear(m_backgroundColor);
 		m_bitmapRT->PopAxisAlignedClip();
 		return m_bitmapRT->EndDraw();
