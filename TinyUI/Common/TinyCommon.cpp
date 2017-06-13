@@ -5,10 +5,10 @@ namespace TinyUI
 {
 	void Trace(LPCTSTR lpszFormat, ...)
 	{
+		TCHAR szBuffer[512];
 		va_list args;
 		va_start(args, lpszFormat);
-		TCHAR szBuffer[512];
-		INT iRes = _vstprintf_s(szBuffer, ARRAYSIZE(szBuffer), lpszFormat, args);
+		INT iRes = _vstprintf_s(szBuffer, _countof(szBuffer), lpszFormat, args);
 		ASSERT(iRes >= 0);
 		OutputDebugString(szBuffer);
 		va_end(args);

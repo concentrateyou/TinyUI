@@ -18,13 +18,14 @@ namespace Decode
 		m_handle = NeAACDecOpen();
 		if (!m_handle)
 			return FALSE;
+		NeAACDecConfigurationPtr cfg;
+		cfg = NeAACDecGetCurrentConfiguration(m_handle);
+		cfg->dontUpSampleImplicitSBR = 1;
+		NeAACDecSetConfiguration(m_handle, cfg);
 		ULONG sampleRate = 0;
 		BYTE channel = 0;
 		if (NeAACDecInit2(m_handle, adts, size, &sampleRate, &channel) != 0)
 			goto AAC_ERROR;
-		//NeAACDecConfiguration* config = NeAACDecGetCurrentConfiguration(m_handle);
-		//config->dontUpSampleImplicitSBR = 1;
-		//NeAACDecSetConfiguration(m_handle, config);
 		m_sMFT.nSamplesPerSec = sampleRate;
 		m_sMFT.nChannels = channel;
 		m_sMFT.wBitsPerSample = wBitsPerSample;
@@ -78,7 +79,7 @@ namespace Decode
 	{
 		ASSERT(m_handle);
 		bo = reinterpret_cast<BYTE*>(NeAACDecDecode(m_handle, &m_frame, bi, si));
-		if (!bo || m_frame.error > 0 || m_frame.samples <= 0)
+		if (m_frame.error != 0 || m_frame.samples <= 0)
 			return FALSE;
 		so = m_frame.samples * m_frame.channels;
 		return TRUE;

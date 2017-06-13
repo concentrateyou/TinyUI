@@ -489,6 +489,9 @@
     <ClInclude Include="Network\TinyHTTPCommon.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
+    <ClInclude Include="Media\TinyXAudio.h">
+      <Filter>头文件\Media</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -895,6 +898,9 @@
     </ClCompile>
     <ClCompile Include="Network\TinyHTTPCommon.cpp">
       <Filter>源文件\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\TinyXAudio.cpp">
+      <Filter>源文件\Media</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

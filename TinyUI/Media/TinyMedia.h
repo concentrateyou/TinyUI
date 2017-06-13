@@ -20,6 +20,7 @@
 #include <mmdeviceapi.h>
 #include <Wmcodecdsp.h>
 #include <functiondiscoverykeys.h>
+#include <XAudio2.h>
 
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "strmiids.lib")
@@ -33,6 +34,7 @@
 #pragma comment(lib, "mfreadwrite.lib")
 #pragma comment(lib, "mfuuid.lib")
 #pragma comment(lib, "wmcodecdspuuid.lib")
+#pragma comment(lib, "Xaudio2.lib")
 
 namespace TinyUI
 {

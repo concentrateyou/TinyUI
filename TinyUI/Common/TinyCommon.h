@@ -75,7 +75,7 @@ namespace TinyUI
 #ifndef ASSERT
 #define ASSERT(expr) _ASSERTE(expr)
 #endif 
-	void Trace(LPCTSTR lpszFormat, ...);
+	void _cdecl Trace(LPCTSTR lpszFormat, ...);
 #ifndef TRACE
 #define TRACE Trace
 #endif

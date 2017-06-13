@@ -53,11 +53,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
-	Decode::FLVParser parser;
-	parser.Open("D:\\test.flv");
-	parser.Parse();
-	parser.Close();
-
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_FLVPLAYER));
 	TinyMessageLoop theLoop;
