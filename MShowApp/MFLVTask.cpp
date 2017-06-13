@@ -96,7 +96,7 @@ namespace MShow
 		return m_aac;
 	}
 
-	 FLV_SCRIPTDATA& MFLVTask::GetScript() 
+	FLV_SCRIPTDATA& MFLVTask::GetScript()
 	{
 		return m_script;
 	}
@@ -126,7 +126,7 @@ namespace MShow
 				ReleaseBlock(block);
 				goto _ERROR;
 			}
-			
+
 			if (block.type == FLV_AUDIO)
 			{
 				if (block.audio.codeID == FLV_CODECID_AAC)

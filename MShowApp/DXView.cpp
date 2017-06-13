@@ -52,7 +52,7 @@ namespace MShow
 		if (m_controller)
 		{
 			m_controller->Initialize("rtmp://live.hkstv.hk.lxdns.com/live/hks");
-			//m_controller->Initialize("rtmp://10.110.21.146/live/lb_benpaobaxiongdi_720p");
+			//m_controller->Initialize("rtmp://10.121.86.127/live/test_360p");
 		}
 		return FALSE;
 	}

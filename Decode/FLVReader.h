@@ -33,21 +33,19 @@ namespace Decode
 		BOOL ParseMPEG4(FLV_TAG_VIDEO* video, BYTE* data, INT size, FLV_BLOCK& block);
 		BOOL ParseNALU(FLV_TAG_VIDEO* video, FLV_BLOCK& block);
 	private:
-		BOOL					m_bFirstAudio;
-		BOOL					m_bFirstVideo;
 		BOOL					m_bNetwork;
 		BOOL					m_bAudio;
 		BOOL					m_bVideo;
-		LONGLONG				m_llFirst;
 		BYTE					m_minusOne;
-		FLV_SCRIPTDATA			m_script;
-		ULONGLONG				m_offset;
-		TinyComPtr<IStream>		m_stream;
-		TinyBufferArray<BYTE>	m_nalus;
-		FLV_TAG_VIDEO			m_videoTag;
-		LONGLONG				m_timestamp;
 		BYTE*					m_naluPtr;
 		INT						m_naluOffset;
+		ULONGLONG				m_offset;
+		LONGLONG				m_basePTS;
+		LONGLONG				m_timestamp;
+		FLV_TAG_VIDEO			m_videoTag;
+		FLV_SCRIPTDATA			m_script;
+		TinyComPtr<IStream>		m_stream;
+		TinyBufferArray<BYTE>	m_nalus;
 	};
 }
 
