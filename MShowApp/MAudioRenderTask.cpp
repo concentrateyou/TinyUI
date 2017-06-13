@@ -63,9 +63,9 @@ namespace MShow
 				m_events[0].CreateEvent(TRUE, FALSE);
 				m_events[1].CreateEvent(TRUE, FALSE);
 				DSBPOSITIONNOTIFY vals[2];
-				vals[0].dwOffset = tag.size - 10;
+				vals[0].dwOffset = tag.size - 1;
 				vals[0].hEventNotify = m_events[0];
-				vals[1].dwOffset = tag.size * 2 - 10;
+				vals[1].dwOffset = tag.size * 2 - 1;
 				vals[1].hEventNotify = m_events[1];
 				m_player.SetPositions(2, vals);
 				timer.EndTime();
