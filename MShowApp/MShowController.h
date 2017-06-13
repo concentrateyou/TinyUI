@@ -30,7 +30,6 @@ namespace MShow
 		DX2D		m_d2d;
 		MFLVTask	m_task;
 		DXView&		m_view;
-		TinyPerformanceTimer	m_timer;
 		TinyArray<MElement*>	m_scenes;
 		TinyScopedPtr<Delegate<void(ID2D1Bitmap1*, INT)>> m_onVideo;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onSize;
@@ -40,6 +39,7 @@ namespace MShow
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onMouseMove;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onMouseLeave;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onSetCursor;
+	private:
 		MGIFScene m_gifScene;
 	};
 }

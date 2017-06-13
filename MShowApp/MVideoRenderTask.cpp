@@ -57,11 +57,13 @@ namespace MShow
 			}
 			if (tag.samplePTS == m_clock.GetBasetPTS())
 			{
+				TRACE("Video Render\n");
 				m_clock.SetBaseTime(timeGetTime());
 			}
 			while (m_clock.GetBasetPTS() == -1);
 			INT ms = timeGetTime() - m_clock.GetBaseTime();
 			INT delay = static_cast<INT>(tag.samplePTS - ms);
+			TRACE("Video Delay:%d, %d, %d\n", ms, delay, tag.samplePTS);
 			Sleep(delay < 0 ? 0 : delay);
 			OnRender(tag.bits, tag.size, delay);
 			SAFE_DELETE_ARRAY(tag.bits);

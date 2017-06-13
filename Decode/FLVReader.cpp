@@ -14,7 +14,9 @@ namespace Decode
 		m_naluOffset(0),
 		m_naluPtr(NULL),
 		m_timestamp(0),
-		m_lFirst(-1)
+		m_bFirstAudio(FALSE),
+		m_bFirstVideo(FALSE),
+		m_llFirst(-1)
 	{
 
 	}
@@ -156,21 +158,37 @@ namespace Decode
 				if (tag.type == FLV_AUDIO)
 				{
 					m_timestamp = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
-					if (m_lFirst == -1)
+					if (!m_bFirstAudio)
 					{
-						m_lFirst = m_timestamp;
+						m_bFirstAudio = TRUE;
+						m_llFirst = -1;
 					}
-					m_timestamp -= m_lFirst;
+					else
+					{
+						if (m_llFirst == -1)
+						{
+							m_llFirst = m_timestamp;
+						}
+						m_timestamp -= m_llFirst;
+					}
 					return ParseAudio(data, size, block);
 				}
 				if (tag.type == FLV_VIDEO)
 				{
 					m_timestamp = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
-					if (m_lFirst == -1)
+					if (!m_bFirstVideo)
 					{
-						m_lFirst = m_timestamp;
+						m_bFirstVideo = TRUE;
+						m_llFirst = -1;
 					}
-					m_timestamp -= m_lFirst;
+					else
+					{
+						if (m_llFirst == -1)
+						{
+							m_llFirst = m_timestamp;
+						}
+						m_timestamp -= m_llFirst;
+					}
 					return ParseVideo(data, size, block);
 				}
 			}

@@ -50,6 +50,7 @@ namespace MShow
 			}
 			if (tag.samplePTS == m_clock.GetBasetPTS())
 			{
+				TRACE("Audio Render\n");
 				m_clock.SetBaseTime(timeGetTime());
 			}
 			while (m_clock.GetBasetPTS() == -1);
