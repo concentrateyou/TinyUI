@@ -30,6 +30,8 @@ namespace MShow
 		void	OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	private:
+		MElement* HitTest(const TinyPoint& pos);
+	private:
 		DX2D		m_d2d;
 		DXView&		m_view;
 		TinyArray<MElement*>	m_scenes;
@@ -42,6 +44,7 @@ namespace MShow
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onMouseLeave;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onSetCursor;
 	private:
+		MElement*		m_lastElement;
 		TinyTimerQueue	m_queue;
 	};
 }

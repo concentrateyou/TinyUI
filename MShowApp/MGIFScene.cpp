@@ -67,6 +67,9 @@ namespace MShow
 			bitmapSize,
 			bitmapProp,
 			&m_bitmap);
+		TinySize size(m_cxGifImage, m_cyGifImage);
+		SetSize(size);
+		SetScale(size);
 		return SUCCEEDED(hRes);
 	}
 
@@ -345,8 +348,10 @@ namespace MShow
 		}
 		if (SUCCEEDED(hRes))
 		{
-			D2D_RECT_F dst = { 0.0F,0.0F,static_cast<FLOAT>(m_cxGifImage),static_cast<FLOAT>(m_cyGifImage) };
-			D2D_RECT_F src = { 0.0F,0.0F,static_cast<FLOAT>(m_cxGifImagePixel),static_cast<FLOAT>(m_cyGifImagePixel) };
+			TinyPoint pos = GetPosition();
+			TinySize size = GetScale();
+			D2D_RECT_F dst = { static_cast<FLOAT>(pos.x),static_cast<FLOAT>(pos.y),static_cast<FLOAT>(pos.x + size.cx),static_cast<FLOAT>(pos.y + size.cy) };
+			D2D_RECT_F src = { 0.0F,0.0F,static_cast<LONG>(m_size.cx), static_cast<LONG>(m_size.cy) };
 			TinyComPtr<ID2D1Bitmap> bitmap;
 			m_bitmapRT->GetBitmap(&bitmap);
 			d2d.GetContext()->DrawBitmap(bitmap, dst, 1.0F, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, src, NULL);

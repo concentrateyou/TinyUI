@@ -32,10 +32,10 @@ namespace MShow
 		virtual BOOL Submit() = 0;
 		virtual BOOL Close() = 0;
 	public:
-		TinyString GetName() const;
-		TinyPoint GetPosition() const;
-		TinySize GetScale() const;
-		TinySize GetSize() const;
+		TinyString	GetName() const;
+		TinyPoint	GetPosition() const;
+		TinySize	GetScale() const;
+		TinySize	GetSize() const;
 		void	SetPosition(const TinyPoint& pos);
 		void	SetScale(const TinySize& size);
 		void	SetSize(const TinySize& size);

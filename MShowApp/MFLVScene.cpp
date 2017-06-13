@@ -43,6 +43,9 @@ namespace MShow
 			return FALSE;
 		if (!m_videoRenderTask->Initialize())
 			return FALSE;
+		TinySize size(static_cast<LONG>(m_script.width), static_cast<LONG>(m_script.height));
+		SetSize(size);
+		SetScale(size);
 		return TRUE;
 	}
 
@@ -66,9 +69,10 @@ namespace MShow
 
 	BOOL MFLVScene::Draw(DX2D& d2d)
 	{
-		D2D_SIZE_F sf = d2d.GetContext()->GetSize();
-		D2D_RECT_F dst = { 0.0F,0.0F,sf.width,sf.height };
-		D2D_RECT_F src = { 0.0F,0.0F,m_script.width,m_script.height };
+		TinyPoint pos = GetPosition();
+		TinySize size = GetScale();
+		D2D_RECT_F dst = { static_cast<FLOAT>(pos.x),static_cast<FLOAT>(pos.y),static_cast<FLOAT>(pos.x + size.cx),static_cast<FLOAT>(pos.y + size.cy) };
+		D2D_RECT_F src = { 0.0F,0.0F,static_cast<LONG>(m_size.cx), static_cast<LONG>(m_size.cy) };
 		d2d.GetContext()->DrawBitmap(m_videoRenderTask->GetBitmap(), dst, 1.0F, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, src, NULL);
 		return TRUE;
 	}

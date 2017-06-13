@@ -4,7 +4,8 @@
 namespace MShow
 {
 	MShowController::MShowController(DXView& view)
-		:m_view(view)
+		:m_view(view),
+		m_lastElement(NULL)
 	{
 	}
 
@@ -67,6 +68,18 @@ namespace MShow
 		return TRUE;
 	}
 
+	MElement* MShowController::HitTest(const TinyPoint& pos)
+	{
+		for (INT i = 0;i < m_scenes.GetSize();i++)
+		{
+			if (m_scenes[i]->PtInRect(pos))
+			{
+				return m_scenes[i];
+			}
+		}
+		return NULL;
+	}
+
 	void MShowController::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		INT cx = LOWORD(lParam);
@@ -76,6 +89,19 @@ namespace MShow
 	void MShowController::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		TinyPoint point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		MElement* element = HitTest(point);
+		if (element != m_lastElement)
+		{
+			m_lastElement = element;
+		}
+		if (m_lastElement)
+		{
+			if (m_lastElement->HitTest(point) >= 0)
+			{
+				m_lastElement->Track(m_view.Handle(), point, FALSE);
+			}
+		}
 	}
 
 	void MShowController::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
