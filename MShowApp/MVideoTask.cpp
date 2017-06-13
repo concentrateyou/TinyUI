@@ -64,9 +64,9 @@ namespace MShow
 			LONG  so = 0;
 			if (m_task.GetH264()->Decode(tag, bo, so))
 			{
-				if (m_clock.GetBasetPTS() == -1)
+				if (m_clock.GetBasePTS() == -1)
 				{
-					m_clock.SetBasetPTS(tag.samplePTS);
+					m_clock.SetBasePTS(tag.samplePTS);
 				}
 				SAFE_DELETE_ARRAY(tag.bits);
 				tag.size = so;

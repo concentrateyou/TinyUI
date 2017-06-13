@@ -26,11 +26,11 @@ namespace MShow
 	{
 		return m_baseTime;
 	}
-	LONG MClock::GetBasetPTS() const
+	LONG MClock::GetBasePTS() const
 	{
 		return m_basePTS;
 	}
-	void MClock::SetBasetPTS(LONG basePTS)
+	void MClock::SetBasePTS(LONG basePTS)
 	{
 		m_basePTS = basePTS;
 	}

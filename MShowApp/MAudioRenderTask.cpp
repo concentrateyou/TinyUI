@@ -50,11 +50,11 @@ namespace MShow
 				Sleep(3);
 				continue;
 			}
-			if (tag.samplePTS == m_clock.GetBasetPTS())
+			if (tag.samplePTS == m_clock.GetBasePTS())
 			{
 				m_clock.SetBaseTime(timeGetTime());
 			}
-			while (m_clock.GetBasetPTS() == -1);
+			while (m_clock.GetBasePTS() == -1);
 			if (!m_bInitialize)
 			{
 				m_bInitialize = TRUE;

@@ -60,9 +60,9 @@ namespace MShow
 			AACDecode* aac = m_task.GetAAC();
 			if (aac != NULL && aac->Decode(tag.bits, tag.size, bo, so))
 			{
-				if (m_clock.GetBasetPTS() == -1)
+				if (m_clock.GetBasePTS() == -1)
 				{
-					m_clock.SetBasetPTS(tag.samplePTS);
+					m_clock.SetBasePTS(tag.samplePTS);
 				}
 				SAFE_DELETE_ARRAY(tag.bits);
 				tag.size = so;
