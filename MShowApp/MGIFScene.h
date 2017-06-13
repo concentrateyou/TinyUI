@@ -53,8 +53,8 @@ namespace MShow
 		UINT								m_cyGifImage;
 		UINT								m_cxGifImagePixel;
 		UINT								m_cyGifImagePixel;
-		D2D1_COLOR_F						m_backgroundColor;
 		HANDLE								m_hTimer;
+		D2D1_COLOR_F						m_backgroundColor;
 		TinyComPtr<ID2D1Bitmap>				m_bitmap;//±£´æ
 		TinyComPtr<IWICBitmapDecoder>		m_decoder;
 		TinyComPtr<ID2D1BitmapRenderTarget>	m_bitmapRT;

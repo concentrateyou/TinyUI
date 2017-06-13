@@ -82,7 +82,9 @@ namespace MShow
 		MGIFScene* ps = reinterpret_cast<MGIFScene*>(lpParameter);
 		if (ps && val)
 		{
+			ps->m_pController->GetTimerQueue()->Change(ps->m_hTimer, ps->m_images[ps->m_index].delay, 1);
 			ps->m_pController->Draw(ps);
+			ps->m_index = (++ps->m_index) % ps->m_count;
 		}
 	}
 
@@ -100,9 +102,7 @@ namespace MShow
 	BOOL MGIFScene::Draw(DX2D& d2d)
 	{
 		ASSERT(m_pController);
-		m_pController->m_queue.Change(m_hTimer, m_images[m_index].delay, 1);
 		HRESULT hRes = DrawFrame(d2d, m_index);
-		m_index = (++m_index) % m_count;
 		return SUCCEEDED(hRes);
 	}
 

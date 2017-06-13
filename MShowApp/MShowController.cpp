@@ -40,6 +40,12 @@ namespace MShow
 			SAFE_DELETE(pGIF);
 			return FALSE;
 		}
+		if (!pGIF->Submit())
+		{
+			SAFE_DELETE(pGIF);
+			return FALSE;
+		}
+
 		m_scenes.Add(pFLV);
 		m_scenes.Add(pGIF);
 	
