@@ -47,7 +47,7 @@ namespace FLVPlayer
 		LONGLONG				m_pts;
 		BOOL					m_bFlag;
 		BOOL					m_bInitialize;
-		TinyEvent				m_events[2];
+		TinyEvent				m_events[3];
 		TinyEvent				m_close;
 		TinySoundPlayer			m_player;
 		FLVVAudioTask&			m_decode;

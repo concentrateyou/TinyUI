@@ -26,11 +26,13 @@
 #include "Network/TinyDNS.h"
 #include "Common/TinySignal.h"
 
-#include "message.pb.h"
+#include "Media/TinyWave.h"
+
 #include <fstream>
 
 using namespace TinyUI;
 using namespace TinyUI::Network;
+using namespace TinyUI::Media;
 
 BOOL LoadSeDebugPrivilege()
 {
@@ -80,6 +82,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	HRESULT hRes = OleInitialize(NULL);
 
 	LoadSeDebugPrivilege();
+
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));

@@ -5,6 +5,42 @@ namespace TinyUI
 {
 	namespace Media
 	{
+		VoiceCallback::VoiceCallback()
+		{
+
+		}
+		VoiceCallback::~VoiceCallback()
+		{
+
+		}
+		void VoiceCallback::OnVoiceProcessingPassStart(UINT32 BytesRequired)
+		{
+
+		}
+		void VoiceCallback::OnVoiceProcessingPassEnd()
+		{
+
+		}
+		void VoiceCallback::OnStreamEnd()
+		{
+
+		}
+		void VoiceCallback::OnBufferStart(void* ps)
+		{
+
+		}
+		void VoiceCallback::OnBufferEnd(void* ps)
+		{
+
+		}
+		void VoiceCallback::OnLoopEnd(void* ps)
+		{
+
+		}
+		void VoiceCallback::OnVoiceError(void*, HRESULT)
+		{
+
+		}
 		//////////////////////////////////////////////////////////////////////////
 		TinyXAudio::TinyXAudio()
 			:m_pMasteringVoice(NULL),
@@ -18,7 +54,7 @@ namespace TinyUI
 		}
 		BOOL TinyXAudio::Initialize(const WAVEFORMATEX* pFMT)
 		{
-			HRESULT hRes = XAudio2Create(&m_audio, 0);
+			HRESULT hRes = XAudio2Create(&m_audio, 0, XAUDIO2_DEFAULT_PROCESSOR);
 			if (hRes != S_OK)
 				return FALSE;
 #if (_WIN32_WINNT >= 0x0602 /*_WIN32_WINNT_WIN8*/) && defined(_DEBUG)

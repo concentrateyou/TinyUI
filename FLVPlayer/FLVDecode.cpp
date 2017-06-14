@@ -154,6 +154,9 @@ namespace FLVPlayer
 		m_dwMS(0)
 	{
 		m_close.CreateEvent();
+		m_events[0].CreateEvent(TRUE, FALSE);
+		m_events[1].CreateEvent(TRUE, FALSE);
+		m_events[2].CreateEvent(TRUE, FALSE);
 	}
 	FLVAudioRender::~FLVAudioRender()
 	{
@@ -189,20 +192,21 @@ namespace FLVPlayer
 			{
 				m_timer.BeginTime();
 				m_bInitialize = TRUE;
-				if (!m_player.SetFormat(&m_decode.m_decode.m_aac->GetFormat(), tag.size * 2))
+				if (!m_player.SetFormat(&m_decode.m_decode.m_aac->GetFormat(), tag.size * 3))
 					break;
-				m_events[0].CreateEvent(TRUE, FALSE);
-				m_events[1].CreateEvent(TRUE, FALSE);
-				DSBPOSITIONNOTIFY vals[2];
+				DSBPOSITIONNOTIFY vals[3];
 				vals[0].dwOffset = tag.size - 1;
 				vals[0].hEventNotify = m_events[0];
 				vals[1].dwOffset = tag.size * 2 - 1;
 				vals[1].hEventNotify = m_events[1];
-				m_player.SetPositions(2, vals);
+				vals[2].dwOffset = tag.size * 3 - 1;
+				vals[2].hEventNotify = m_events[2];
+				m_player.SetNotifys(3, vals);
 				m_timer.EndTime();
 				m_decode.m_decode.m_lockTime.Lock();
 				m_decode.m_decode.m_baseTime += m_timer.GetMillisconds();
 				m_decode.m_decode.m_lockTime.Unlock();
+				m_player.Play();
 				DWORD dwMS = timeGetTime() - m_decode.m_decode.m_baseTime;
 				INT offset = tag.samplePTS - dwMS;
 				Sleep(offset < 0 ? 0 : offset);
@@ -210,17 +214,11 @@ namespace FLVPlayer
 				{
 					m_player.Fill(tag.bits, tag.size);
 				}
-				m_player.Fill(tag.bits, tag.size);
-				SAFE_DELETE_ARRAY(tag.bits);
-				m_player.Play();
 			}
-			else
-			{
-				m_player.Fill(tag.bits, tag.size);
-				SAFE_DELETE_ARRAY(tag.bits);
-			}
-			HANDLE handles[2] = { m_events[0],m_events[1] };
-			WaitForMultipleObjects(2, handles, FALSE, INFINITE);
+			m_player.Fill(tag.bits, tag.size);
+			SAFE_DELETE_ARRAY(tag.bits);
+			HANDLE handles[3] = { m_events[0],m_events[1],m_events[2] };
+			WaitForMultipleObjects(3, handles, FALSE, INFINITE);
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////

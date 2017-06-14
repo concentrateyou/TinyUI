@@ -6,6 +6,7 @@ namespace TinyUI
 {
 	namespace Network
 	{
+#if (_WIN32_WINNT >= 0x0602 /*_WIN32_WINNT_WIN8*/)
 		/// <summary>
 		/// Win32 WebSocket½Ó¿Ú
 		/// </summary>
@@ -20,6 +21,7 @@ namespace TinyUI
 		protected:
 			WEB_SOCKET_HANDLE m_client;
 		};
+#endif
 	}
 }
 

@@ -71,6 +71,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;$(WindowsSDK_IncludePath);$(UniversalCRT_IncludePath);D:\Program Files (x86)\BCGSoft\BCGControlBarPro\BCGCBPro;D:\Program Files (x86)\BCGSoft\BCGControlBarPro\BCGCBPro</IncludePath>
+    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSdkDir)lib;$(FrameworkSDKDir)\lib;$(WindowsSDK_LibraryPath_x86);$(UniversalCRT_LibraryPath_x86);D:\Program Files (x86)\BCGSoft\BCGControlBarPro\bin;D:\Program Files (x86)\BCGSoft\BCGControlBarPro\bin</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>

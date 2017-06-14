@@ -90,7 +90,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WIN32_WINNT=0x0601;WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
       <AdditionalIncludeDirectories>..\TinyUI;..\TinySmiley;$(BOOSTDIR);..\DShowCapture;..\MFCapture;..\Decode;..\IntelQSV;..\ThirdParty\mpg123\include;..\ThirdParty\libfaad\include;..\ThirdParty\ffmpeg\include;..\ThirdParty\vld;$(INTELMEDIASDKROOT)\include;$(PROTOBUF_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WholeProgramOptimization>false</WholeProgramOptimization>
@@ -100,7 +100,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\ThirdParty\vld\x86;..\ThirdParty\mpg123\lib;..\ThirdParty\ffmpeg\lib;..\Debug;$(INTELMEDIASDKROOT)\lib\$(Platform);$(PROTOBUF_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxgi.lib;dxguid.lib;d3d10_1.lib;d3d11.lib;ddraw.lib;DShowCapture.lib;libprotobufd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxgi.lib;dxguid.lib;d3d10_1.lib;d3d11.lib;ddraw.lib;DShowCapture.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -174,7 +174,6 @@
   <ItemGroup>
     <ClInclude Include="ChatFrame.h" />
     <ClInclude Include="MediaTest.h" />
-    <ClInclude Include="message.pb.h" />
     <ClInclude Include="MFFrame.h" />
     <ClInclude Include="RDPCapture.h" />
     <ClInclude Include="RenderTask.h" />
@@ -187,7 +186,6 @@
   <ItemGroup>
     <ClCompile Include="ChatFrame.cpp" />
     <ClCompile Include="MediaTest.cpp" />
-    <ClCompile Include="message.pb.cc" />
     <ClCompile Include="MFFrame.cpp" />
     <ClCompile Include="RDPCapture.cpp" />
     <ClCompile Include="RenderTask.cpp" />

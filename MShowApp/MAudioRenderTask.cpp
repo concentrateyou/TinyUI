@@ -75,13 +75,17 @@ namespace MShow
 				vals[1].hEventNotify = m_events[1];
 				vals[2].dwOffset = tag.size * 3 - 1;
 				vals[2].hEventNotify = m_events[2];
-				m_player.SetPositions(3, vals);
+				m_player.SetNotifys(3, vals);
 				timer.EndTime();
 				m_clock.AddBaseTime(timer.GetMillisconds());
 				m_player.Play();
 				INT ms = timeGetTime() - m_clock.GetBaseTime();
 				INT delay = tag.samplePTS - ms;
 				Sleep(delay < 0 ? 0 : delay);
+				if (tag.size != 4096)
+				{
+					m_player.Fill(tag.bits, tag.size);
+				}
 			}
 			m_player.Fill(tag.bits, tag.size);
 			SAFE_DELETE_ARRAY(tag.bits);

@@ -5,6 +5,7 @@ namespace TinyUI
 {
 	namespace Network
 	{
+#if (_WIN32_WINNT >= 0x0602 /*_WIN32_WINNT_WIN8*/)
 		TinyWebSocketClient::TinyWebSocketClient()
 			:m_client(NULL)
 		{
@@ -35,5 +36,6 @@ namespace TinyUI
 			WebSocketBeginClientHandshake(m_client, NULL, 0, NULL, 0, NULL, 0, NULL, NULL);
 			return TRUE;
 		}
+#endif
 	}
 }

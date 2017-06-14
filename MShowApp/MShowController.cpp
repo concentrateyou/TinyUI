@@ -23,7 +23,7 @@ namespace MShow
 			return FALSE;
 		if (!m_queue.Create())
 			return FALSE;
-		/*MFLVScene* pFLV1 = new MFLVScene(this);
+		MFLVScene* pFLV1 = new MFLVScene(this);
 		if (!pFLV1->Initialize(m_d2d, "rtmp://10.121.86.127/live/test_360p"))
 		{
 			SAFE_DELETE(pFLV1);
@@ -35,7 +35,7 @@ namespace MShow
 			return FALSE;
 		}
 
-		MFLVScene* pFLV2 = new MFLVScene(this);
+		/*MFLVScene* pFLV2 = new MFLVScene(this);
 		if (!pFLV2->Initialize(m_d2d, "rtmp://10.121.86.127/live/test_360p_1"))
 		{
 			SAFE_DELETE(pFLV2);
@@ -45,7 +45,7 @@ namespace MShow
 		{
 			SAFE_DELETE(pFLV2);
 			return FALSE;
-		}*/
+		}
 
 		MFLVScene* pFLV3 = new MFLVScene(this);
 		if (!pFLV3->Initialize(m_d2d, "rtmp://live.hkstv.hk.lxdns.com/live/hks"))
@@ -57,7 +57,7 @@ namespace MShow
 		{
 			SAFE_DELETE(pFLV3);
 			return FALSE;
-		}
+		}*/
 
 		MGIFScene* pGIF = new MGIFScene(this);
 		if (!pGIF->Initialize(m_d2d, "D:\\timg.gif"))
@@ -71,9 +71,9 @@ namespace MShow
 			return FALSE;
 		}
 
-		//this->Add(pFLV1);
-		//this->Add(pFLV2);
-		this->Add(pFLV3);
+		this->Add(pFLV1);
+	/*	this->Add(pFLV2);
+		this->Add(pFLV3);*/
 		this->Add(pGIF);
 
 		m_onSize.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MShowController::OnSize));

@@ -26,10 +26,11 @@ namespace Decode
 		BYTE channel = 0;
 		if (NeAACDecInit2(m_handle, adts, size, &sampleRate, &channel) != 0)
 			goto AAC_ERROR;
+		m_sMFT.cbSize = 0;
 		m_sMFT.nSamplesPerSec = sampleRate;
 		m_sMFT.nChannels = channel;
 		m_sMFT.wBitsPerSample = wBitsPerSample;
-		m_sMFT.nBlockAlign = wBitsPerSample *channel / 8;
+		m_sMFT.nBlockAlign = wBitsPerSample * channel / 8;
 		m_sMFT.nAvgBytesPerSec = m_sMFT.nSamplesPerSec * m_sMFT.nBlockAlign;
 		m_sMFT.wFormatTag = WAVE_FORMAT_PCM;
 		return TRUE;
