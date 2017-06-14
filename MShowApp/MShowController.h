@@ -21,7 +21,7 @@ namespace MShow
 		void	Uninitialize();
 		void	Draw(MElement* ps);
 		BOOL	Add(MElement* element);
-		void	Remove(MElement* element);
+		BOOL	Remove(MElement* element);
 		void	BringToTop(MElement* element);
 		void	BringToBottom(MElement* element);
 		void	MoveUp(MElement* element);
@@ -37,11 +37,11 @@ namespace MShow
 		void	OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	private:
 		MElement* HitTest(const TinyPoint& pos);
-
 	private:
-		DX2D		m_d2d;
-		DXView&		m_view;
+		DX2D					m_d2d;
+		DXView&					m_view;
 		TinyArray<MElement*>	m_scenes;
+		TinyComPtr<ID2D1Bitmap>	m_bitmapBox;
 		TinyScopedPtr<Delegate<void(ID2D1Bitmap1*, INT, MElement*)>> m_onVideo;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onSize;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonDown;

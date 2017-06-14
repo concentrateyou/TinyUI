@@ -23,8 +23,17 @@ namespace MShow
 			return FALSE;
 		if (!m_queue.Create())
 			return FALSE;
+		string box;
+		box.resize(MAX_PATH);
+		GetModuleFileName(NULL, &box[0], MAX_PATH);
+		box = box.substr(0, box.find_last_of("\\", string::npos, 1));
+		string vs = box + "\\box.png";
+		ASSERT(PathFileExists(vs.c_str()));
+		HRESULT hRes = CreateD2DBitmapFromFile(StringToWString(vs).c_str(), m_d2d.GetContext(), &m_bitmapBox);
+		if (hRes != S_OK)
+			return FALSE;
 		MFLVScene* pFLV1 = new MFLVScene(this);
-		if (!pFLV1->Initialize(m_d2d, "rtmp://10.110.21.146/live/lb_qinziqimeng_720p"))
+		if (!pFLV1->Initialize(m_d2d, "rtmp://live.hkstv.hk.lxdns.com/live/hks"))
 		{
 			SAFE_DELETE(pFLV1);
 			return FALSE;
@@ -169,6 +178,7 @@ namespace MShow
 
 	void MShowController::Uninitialize()
 	{
+		m_bitmapBox.Release();
 		m_view.EVENT_SIZE -= m_onSize;
 		m_view.EVENT_LBUTTONDOWN -= m_onLButtonDown;
 		m_view.EVENT_LBUTTONUP -= m_onLButtonUp;
@@ -178,7 +188,7 @@ namespace MShow
 		m_view.EVENT_SETCURSOR -= m_onSetCursor;
 		for (UINT i = 0;i < m_scenes.GetSize();i++)
 		{
-			m_scenes[i]->Close();	
+			m_scenes[i]->Close();
 		}
 		m_queue.Destory();
 		for (UINT i = 0;i < m_scenes.GetSize();i++)
@@ -199,11 +209,12 @@ namespace MShow
 		m_lock.Unlock();
 		return bRes;
 	}
-	void MShowController::Remove(MElement* element)
+	BOOL MShowController::Remove(MElement* element)
 	{
 		m_lock.Lock();
-		m_scenes.Remove(element);
+		BOOL bRes = m_scenes.Remove(element);
 		m_lock.Unlock();
+		return bRes;
 	}
 
 	void MShowController::BringToTop(MElement* element)
@@ -251,13 +262,37 @@ namespace MShow
 
 	void MShowController::Draw(MElement* ps)
 	{
+		m_lock.Lock();
 		if (m_d2d.BeginDraw())
 		{
 			for (UINT i = 0;i < m_scenes.GetSize();i++)
 			{
 				m_scenes[i]->Draw(m_d2d);
+				if (m_scenes[i] == m_lastElement)
+				{
+					UINT mask = m_scenes[i]->GetHandleMask();
+					for (INT j = 0; j < 8; ++j)
+					{
+						if (mask & (1 << j))
+						{
+							TinyRectangle rectangle;
+							m_scenes[i]->GetHandleRect((TrackerHit)j, &rectangle);
+							TinyPoint pos = rectangle.Position();
+							TinySize size = rectangle.Size();
+							D2D_RECT_F dst = { static_cast<FLOAT>(pos.x),static_cast<FLOAT>(pos.y),static_cast<FLOAT>(pos.x + size.cx),static_cast<FLOAT>(pos.y + size.cy) };
+							D2D_RECT_F src = { 0.0F,0.0F,6.0,6.0F };
+							if (m_bitmapBox != NULL)
+							{
+								m_d2d.GetContext()->DrawBitmap(m_bitmapBox, dst, 1.0F, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, src, NULL);
+							}
+						}
+					}
+				}
 			}
 			m_d2d.EndDraw();
 		}
+		m_lock.Unlock();
 	}
+
+
 }
