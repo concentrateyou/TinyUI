@@ -17,9 +17,15 @@ namespace MShow
 	public:
 		MShowController(DXView& view);
 		virtual ~MShowController();
-		BOOL Initialize(LPCSTR pzURL);
-		void Uninitialize();
-		void Draw(MElement* ps);
+		BOOL	Initialize();
+		void	Uninitialize();
+		void	Draw(MElement* ps);
+		BOOL	Add(MElement* element);
+		void	Remove(MElement* element);
+		void	BringToTop(MElement* element);
+		void	BringToBottom(MElement* element);
+		void	MoveUp(MElement* element);
+		void	MoveDown(MElement* element);
 		TinyTimerQueue* GetTimerQueue();
 	private:
 		void	OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -31,6 +37,7 @@ namespace MShow
 		void	OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	private:
 		MElement* HitTest(const TinyPoint& pos);
+
 	private:
 		DX2D		m_d2d;
 		DXView&		m_view;
@@ -44,6 +51,7 @@ namespace MShow
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onMouseLeave;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onSetCursor;
 	private:
+		TinyLock		m_lock;
 		MElement*		m_lastElement;
 		TinyTimerQueue	m_queue;
 	};

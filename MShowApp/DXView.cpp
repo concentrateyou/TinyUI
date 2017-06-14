@@ -51,7 +51,7 @@ namespace MShow
 		m_controller.Reset(new MShowController(*this));
 		if (m_controller)
 		{
-			m_controller->Initialize("rtmp://live.hkstv.hk.lxdns.com/live/hks");
+			m_controller->Initialize();
 			//m_controller->Initialize("rtmp://10.121.86.127/live/test_360p");
 		}
 		return FALSE;

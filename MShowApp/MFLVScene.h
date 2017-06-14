@@ -26,6 +26,7 @@ namespace MShow
 		MFLVScene(MShowController* pController);
 		virtual ~MFLVScene();
 		BOOL Initialize(DX2D& d2d, LPCSTR pzURL);
+		BOOL SetVolume(LONG volume);
 	public:
 		BOOL Draw(DX2D& d2d) OVERRIDE;
 		BOOL Submit() OVERRIDE;

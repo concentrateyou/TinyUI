@@ -63,37 +63,44 @@ namespace TinyUI
 		}
 		BOOL TinySoundPlayer::SetVolume(LONG volume)
 		{
-			ASSERT(m_secondaryDSB);
-			return m_secondaryDSB->SetVolume(volume) == S_OK;
+			if (m_secondaryDSB)
+				return m_secondaryDSB->SetVolume(volume) == S_OK;
+			return TRUE;
 		}
 		BOOL TinySoundPlayer::GetVolume(LONG& volume)
 		{
-			ASSERT(m_secondaryDSB);
-			return m_secondaryDSB->GetVolume(&volume) == S_OK;
+			if (m_secondaryDSB)
+				return m_secondaryDSB->GetVolume(&volume) == S_OK;
+			return TRUE;
 		}
 		BOOL TinySoundPlayer::SetFrequency(DWORD dwFrequency)
 		{
-			ASSERT(m_secondaryDSB);
-			return m_secondaryDSB->SetFrequency(dwFrequency) == S_OK;
+			if (m_secondaryDSB)
+				return m_secondaryDSB->SetFrequency(dwFrequency) == S_OK;
+			return TRUE;
 		}
 		BOOL TinySoundPlayer::GetFrequency(DWORD& dwFrequency)
 		{
-			ASSERT(m_secondaryDSB);
-			return m_secondaryDSB->GetFrequency(&dwFrequency) == S_OK;
+			if (m_secondaryDSB)
+				return m_secondaryDSB->GetFrequency(&dwFrequency) == S_OK;
+			return TRUE;
 		}
 		BOOL TinySoundPlayer::SetPlan(LONG plan)
 		{
-			ASSERT(m_secondaryDSB);
-			return m_secondaryDSB->SetPan(plan) == S_OK;
+			if (m_secondaryDSB)
+				return m_secondaryDSB->SetPan(plan) == S_OK;
+			return TRUE;
 		}
 		BOOL TinySoundPlayer::GetPlan(LONG& plan)
 		{
-			ASSERT(m_secondaryDSB);
-			return m_secondaryDSB->GetPan(&plan) == S_OK;
+			if (m_secondaryDSB)
+				return m_secondaryDSB->GetPan(&plan) == S_OK;
+			return TRUE;
 		}
 		BOOL TinySoundPlayer::Play(DWORD dwFlag)
 		{
-			ASSERT(m_secondaryDSB);
+			if (!m_secondaryDSB)
+				return FALSE;
 			HRESULT hRes = S_OK;
 			hRes = m_secondaryDSB->SetCurrentPosition(0);
 			if (hRes != S_OK)

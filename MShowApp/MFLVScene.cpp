@@ -91,6 +91,14 @@ namespace MShow
 		return TinyTaskBase::Close(INFINITE);
 	}
 
+	BOOL MFLVScene::SetVolume(LONG volume)
+	{
+		if (m_audioRenderTask)
+			return m_audioRenderTask->SetVolume(volume);
+		return FALSE;
+	}
+
+
 	MPacketQueue& MFLVScene::GetAudioQueue()
 	{
 		return m_audioQueue;

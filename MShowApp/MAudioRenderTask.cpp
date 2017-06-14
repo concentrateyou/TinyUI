@@ -23,6 +23,11 @@ namespace MShow
 		return TRUE;
 	}
 
+	BOOL MAudioRenderTask::SetVolume(LONG volume)
+	{
+		return m_player.SetVolume(volume);
+	}
+
 	BOOL MAudioRenderTask::Submit()
 	{
 		m_close.CreateEvent();

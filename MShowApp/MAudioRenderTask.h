@@ -16,6 +16,7 @@ namespace MShow
 		MAudioRenderTask(MAudioTask& task, MClock& clock);
 		virtual ~MAudioRenderTask();
 		BOOL Initialize(HWND hWND);
+		BOOL SetVolume(LONG volume);
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
 	private:
