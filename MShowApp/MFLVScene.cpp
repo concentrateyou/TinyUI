@@ -45,6 +45,8 @@ namespace MShow
 			return FALSE;
 		TinySize size(static_cast<LONG>(m_script.width), static_cast<LONG>(m_script.height));
 		SetSize(size);
+		size.cx = size.cx / 2;
+		size.cy = size.cy / 2;
 		SetScale(size);
 		return TRUE;
 	}

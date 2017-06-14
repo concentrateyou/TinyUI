@@ -24,7 +24,7 @@ namespace MShow
 	private:
 		BOOL					m_bInitialize;
 		TinyEvent				m_close;
-		TinyEvent				m_events[2];
+		TinyEvent				m_events[3];
 		MClock&					m_clock;
 		MAudioTask&				m_task;
 		TinySoundPlayer			m_player;

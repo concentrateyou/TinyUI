@@ -53,6 +53,9 @@ namespace TinyUI
 			hRes = dsb->QueryInterface(IID_IDirectSoundBuffer8, (void**)&m_secondaryDSB);
 			if (hRes != S_OK)
 				return FALSE;
+			TinyScopedArray<BYTE> bits(new BYTE[m_dwSize]);
+			ZeroMemory(bits, m_dwSize);
+			this->Fill(bits, m_dwSize);
 			return TRUE;
 		}
 		BOOL TinySoundPlayer::GetCaps(DSCAPS& caps)

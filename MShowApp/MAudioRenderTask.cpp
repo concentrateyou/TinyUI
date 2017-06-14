@@ -20,6 +20,7 @@ namespace MShow
 			return FALSE;
 		m_events[0].CreateEvent(TRUE, FALSE);
 		m_events[1].CreateEvent(TRUE, FALSE);
+		m_events[2].CreateEvent(TRUE, FALSE);
 		return TRUE;
 	}
 
@@ -65,38 +66,27 @@ namespace MShow
 				m_bInitialize = TRUE;
 				TinyPerformanceTimer timer;
 				timer.BeginTime();
-				if (!m_player.SetFormat(&m_task.GetAAC()->GetFormat(), tag.size * 2))
+				if (!m_player.SetFormat(&m_task.GetAAC()->GetFormat(), tag.size * 3))
 					break;
-				DSBPOSITIONNOTIFY vals[2];
+				DSBPOSITIONNOTIFY vals[3];
 				vals[0].dwOffset = tag.size - 1;
 				vals[0].hEventNotify = m_events[0];
 				vals[1].dwOffset = tag.size * 2 - 1;
 				vals[1].hEventNotify = m_events[1];
-				m_player.SetPositions(2, vals);
+				vals[2].dwOffset = tag.size * 3 - 1;
+				vals[2].hEventNotify = m_events[2];
+				m_player.SetPositions(3, vals);
 				timer.EndTime();
 				m_clock.AddBaseTime(timer.GetMillisconds());
-				INT ms = timeGetTime() - m_clock.GetBaseTime();
-				INT delay = tag.samplePTS - ms;
-				TRACE("audio - ms:%d, delay:%d, samplePTS:%d\n", ms, delay, tag.samplePTS);
-				Sleep(delay < 0 ? 0 : delay);
-				if (tag.size != 4096)
-				{
-					m_player.Fill(tag.bits, tag.size);
-				}
-				m_player.Fill(tag.bits, tag.size);
-				SAFE_DELETE_ARRAY(tag.bits);
 				m_player.Play();
-			}
-			else
-			{
 				INT ms = timeGetTime() - m_clock.GetBaseTime();
 				INT delay = tag.samplePTS - ms;
-				//TRACE("audio - ms:%d, delay:%d, samplePTS:%d\n", ms, delay, tag.samplePTS);
-				m_player.Fill(tag.bits, tag.size);
-				SAFE_DELETE_ARRAY(tag.bits);
+				Sleep(delay < 0 ? 0 : delay);
 			}
-			HANDLE handles[2] = { m_events[0],m_events[1] };
-			WaitForMultipleObjects(2, handles, FALSE, INFINITE);
+			m_player.Fill(tag.bits, tag.size);
+			SAFE_DELETE_ARRAY(tag.bits);
+			HANDLE handles[3] = { m_events[0],m_events[1],m_events[2] };
+			WaitForMultipleObjects(3, handles, FALSE, INFINITE);
 		}
 	}
 }

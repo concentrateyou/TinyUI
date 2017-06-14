@@ -69,6 +69,8 @@ namespace MShow
 			&m_bitmap);
 		TinySize size(m_cxGifImage, m_cyGifImage);
 		SetSize(size);
+		size.cx = size.cx / 2;
+		size.cy = size.cy / 2;
 		SetScale(size);
 		return SUCCEEDED(hRes);
 	}
