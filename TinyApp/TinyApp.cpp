@@ -27,12 +27,14 @@
 #include "Common/TinySignal.h"
 
 #include "Media/TinyWave.h"
+#include "FLVParser.h"
 
 #include <fstream>
 
 using namespace TinyUI;
 using namespace TinyUI::Network;
 using namespace TinyUI::Media;
+using namespace Decode;
 
 BOOL LoadSeDebugPrivilege()
 {
@@ -82,6 +84,11 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	HRESULT hRes = OleInitialize(NULL);
 
 	LoadSeDebugPrivilege();
+
+	FLVParser parser;
+	parser.Open("D:\\test_2.flv");
+	parser.Parse();
+	parser.Close();
 
 
 	::DefWindowProc(NULL, 0, 0, 0L);

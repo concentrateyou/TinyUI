@@ -24,7 +24,7 @@ namespace MShow
 		if (!m_queue.Create())
 			return FALSE;
 		MFLVScene* pFLV1 = new MFLVScene(this);
-		if (!pFLV1->Initialize(m_d2d, "rtmp://10.121.86.127/live/test_360p"))
+		if (!pFLV1->Initialize(m_d2d, "rtmp://10.110.21.146/live/lb_qinziqimeng_720p"))
 		{
 			SAFE_DELETE(pFLV1);
 			return FALSE;
@@ -36,7 +36,7 @@ namespace MShow
 		}
 
 		/*MFLVScene* pFLV2 = new MFLVScene(this);
-		if (!pFLV2->Initialize(m_d2d, "rtmp://10.121.86.127/live/test_360p_1"))
+		if (!pFLV2->Initialize(m_d2d, "rtmp://10.10.13.98/live/lb_junlvjuchang_720p"))
 		{
 			SAFE_DELETE(pFLV2);
 			return FALSE;
@@ -72,7 +72,7 @@ namespace MShow
 		}
 
 		this->Add(pFLV1);
-	/*	this->Add(pFLV2);
+		/*this->Add(pFLV2);
 		this->Add(pFLV3);*/
 		this->Add(pGIF);
 

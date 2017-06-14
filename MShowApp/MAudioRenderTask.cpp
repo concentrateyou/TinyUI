@@ -44,6 +44,7 @@ namespace MShow
 
 	void MAudioRenderTask::OnMessagePump()
 	{
+		DWORD	dwOffset = 0;
 		SampleTag tag = { 0 };
 		for (;;)
 		{
@@ -78,19 +79,34 @@ namespace MShow
 				m_player.SetNotifys(3, vals);
 				timer.EndTime();
 				m_clock.AddBaseTime(timer.GetMillisconds());
-				m_player.Play();
 				INT ms = timeGetTime() - m_clock.GetBaseTime();
 				INT delay = tag.samplePTS - ms;
 				Sleep(delay < 0 ? 0 : delay);
 				if (tag.size != 4096)
 				{
-					m_player.Fill(tag.bits, tag.size);
+					m_player.Fill(tag.bits, tag.size, dwOffset);
 				}
+				m_player.Play();
 			}
-			m_player.Fill(tag.bits, tag.size);
-			SAFE_DELETE_ARRAY(tag.bits);
+			else
+			{
+				m_player.Fill(tag.bits, tag.size, dwOffset);
+				SAFE_DELETE_ARRAY(tag.bits);
+			}
 			HANDLE handles[3] = { m_events[0],m_events[1],m_events[2] };
-			WaitForMultipleObjects(3, handles, FALSE, INFINITE);
+			HRESULT hRes = WaitForMultipleObjects(3, handles, FALSE, INFINITE);
+			switch (hRes)
+			{
+			case WAIT_OBJECT_0:
+				dwOffset = 0;
+				break;
+			case WAIT_OBJECT_0 + 1:
+				dwOffset = m_player.GetSize() / 3 * 1;
+				break;
+			case WAIT_OBJECT_0 + 2:
+				dwOffset = m_player.GetSize() / 3 * 2;
+				break;
+			}
 		}
 	}
 }

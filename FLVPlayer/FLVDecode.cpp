@@ -175,6 +175,7 @@ namespace FLVPlayer
 	}
 	void FLVAudioRender::OnMessagePump()
 	{
+		DWORD	dwOffset = 0;
 		for (;;)
 		{
 			if (m_close.Lock(0))
@@ -212,13 +213,28 @@ namespace FLVPlayer
 				Sleep(offset < 0 ? 0 : offset);
 				if (tag.size != 4096)
 				{
-					m_player.Fill(tag.bits, tag.size);
+					m_player.Fill(tag.bits, tag.size, dwOffset);
 				}
 			}
-			m_player.Fill(tag.bits, tag.size);
-			SAFE_DELETE_ARRAY(tag.bits);
+			else
+			{
+				m_player.Fill(tag.bits, tag.size, dwOffset);
+				SAFE_DELETE_ARRAY(tag.bits);
+			}
 			HANDLE handles[3] = { m_events[0],m_events[1],m_events[2] };
-			WaitForMultipleObjects(3, handles, FALSE, INFINITE);
+			HRESULT hRes = WaitForMultipleObjects(3, handles, FALSE, INFINITE);
+			switch (hRes)
+			{
+			case WAIT_OBJECT_0:
+				dwOffset = 0;
+				break;
+			case WAIT_OBJECT_0 + 1:
+				dwOffset = m_player.GetSize() / 3 * 1;
+				break;
+			case WAIT_OBJECT_0 + 2:
+				dwOffset = m_player.GetSize() / 3 * 2;
+				break;
+			}
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////

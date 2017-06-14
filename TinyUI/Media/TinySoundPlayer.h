@@ -20,7 +20,7 @@ namespace TinyUI
 			BOOL	SetNotifys(DWORD dwSize, LPCDSBPOSITIONNOTIFY pNotify);
 			BOOL	SetFormat(WAVEFORMATEX* pFMT, DWORD dwSize);
 			BOOL	Play(DWORD dwFlags = DSBPLAY_LOOPING);
-			BOOL	Fill(BYTE* bits, INT size);
+			BOOL	Fill(BYTE* bits, LONG size, DWORD dwOffset);
 			BOOL	GetCaps(DSCAPS& caps);
 			BOOL	SetVolume(LONG volume);
 			BOOL	GetVolume(LONG& volume);
@@ -30,6 +30,9 @@ namespace TinyUI
 			BOOL	GetPlan(LONG& plan);
 			BOOL	Stop();
 			BOOL	Close();
+			/// <summary>
+			/// ª∫≥Â¥Û–°
+			/// </summary>
 			DWORD	GetSize() const;
 		private:
 			TinyComPtr<IDirectSound8>		m_sound;

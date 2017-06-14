@@ -367,6 +367,8 @@ namespace Decode
 		return TRUE;
 	};
 
+	LONG g_tagSize = 0;
+
 	BOOL FLVParser::Parse()
 	{
 		FLV_HEADER header = { 0 };
@@ -387,6 +389,12 @@ namespace Decode
 			if (fread(&tag, sizeof(FLV_TAG_HEADER), 1, m_hFile) <= 0)
 				break;
 			INT size = ToINT24(tag.size);
+			if (tagSize != (g_tagSize))
+			{
+				TRACE("g_tagSize != tag.size : %d, %d\n", tagSize, g_tagSize + 11);
+			}
+			g_tagSize = size + 11;
+
 			if (size > 0)
 			{
 				TinyScopedArray<BYTE> data(new BYTE[size]);

@@ -53,9 +53,6 @@ namespace TinyUI
 			hRes = dsb->QueryInterface(IID_IDirectSoundBuffer8, (void**)&m_secondaryDSB);
 			if (hRes != S_OK)
 				return FALSE;
-			TinyScopedArray<BYTE> bits(new BYTE[m_dwSize]);
-			ZeroMemory(bits, m_dwSize);
-			this->Fill(bits, m_dwSize);
 			return TRUE;
 		}
 		BOOL TinySoundPlayer::GetCaps(DSCAPS& caps)
@@ -113,11 +110,11 @@ namespace TinyUI
 				return FALSE;
 			return TRUE;
 		}
-		BOOL TinySoundPlayer::Fill(BYTE* bits, INT size)
+		BOOL TinySoundPlayer::Fill(BYTE* bits, LONG size, DWORD dwOffset)
 		{
 			LPVOID	ppvAudioPtr = NULL;
 			DWORD	dwAudioBytes = 0;
-			HRESULT hRes = m_secondaryDSB->Lock(m_dwOffset, size, &ppvAudioPtr, &dwAudioBytes, NULL, 0, 0);
+			HRESULT hRes = m_secondaryDSB->Lock(dwOffset, size, &ppvAudioPtr, &dwAudioBytes, NULL, 0, 0);
 			if (hRes != S_OK)
 			{
 				if (hRes != DSERR_BUFFERLOST)
@@ -125,14 +122,12 @@ namespace TinyUI
 				hRes = m_secondaryDSB->Restore();
 				if (hRes != S_OK)
 					return FALSE;
-				hRes = m_secondaryDSB->Lock(m_dwOffset, size, &ppvAudioPtr, &dwAudioBytes, NULL, 0, 0);
+				hRes = m_secondaryDSB->Lock(dwOffset, size, &ppvAudioPtr, &dwAudioBytes, NULL, 0, 0);
 				if (hRes != S_OK)
 					return FALSE;
 			}
 			memcpy(ppvAudioPtr, bits, size);
 			m_secondaryDSB->Unlock(ppvAudioPtr, dwAudioBytes, NULL, 0);
-			m_dwOffset += size;
-			m_dwOffset %= m_dwSize;
 			return TRUE;
 		}
 		BOOL TinySoundPlayer::Stop()
