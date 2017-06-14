@@ -32,7 +32,7 @@ namespace MShow
 		HRESULT hRes = CreateD2DBitmapFromFile(StringToWString(vs).c_str(), m_d2d.GetContext(), &m_bitmapBox);
 		if (hRes != S_OK)
 			return FALSE;
-		MFLVScene* pFLV1 = new MFLVScene(this);
+		/*MFLVScene* pFLV1 = new MFLVScene(this);
 		if (!pFLV1->Initialize(m_d2d, "rtmp://live.hkstv.hk.lxdns.com/live/hks"))
 		{
 			SAFE_DELETE(pFLV1);
@@ -42,10 +42,10 @@ namespace MShow
 		{
 			SAFE_DELETE(pFLV1);
 			return FALSE;
-		}
+		}*/
 
-		/*MFLVScene* pFLV2 = new MFLVScene(this);
-		if (!pFLV2->Initialize(m_d2d, "rtmp://10.10.13.98/live/lb_junlvjuchang_720p"))
+		MFLVScene* pFLV2 = new MFLVScene(this);
+		if (!pFLV2->Initialize(m_d2d, "rtmp://edge2.everyon.tv/etv2/pld926"))
 		{
 			SAFE_DELETE(pFLV2);
 			return FALSE;
@@ -56,17 +56,17 @@ namespace MShow
 			return FALSE;
 		}
 
-		MFLVScene* pFLV3 = new MFLVScene(this);
-		if (!pFLV3->Initialize(m_d2d, "rtmp://live.hkstv.hk.lxdns.com/live/hks"))
-		{
-			SAFE_DELETE(pFLV3);
-			return FALSE;
-		}
-		if (!pFLV3->Submit())
-		{
-			SAFE_DELETE(pFLV3);
-			return FALSE;
-		}*/
+		//MFLVScene* pFLV3 = new MFLVScene(this);
+		//if (!pFLV3->Initialize(m_d2d, "rtmp://live.hkstv.hk.lxdns.com/live/hks"))
+		//{
+		//	SAFE_DELETE(pFLV3);
+		//	return FALSE;
+		//}
+		//if (!pFLV3->Submit())
+		//{
+		//	SAFE_DELETE(pFLV3);
+		//	return FALSE;
+		//}
 
 		MGIFScene* pGIF = new MGIFScene(this);
 		if (!pGIF->Initialize(m_d2d, "D:\\timg.gif"))
@@ -80,9 +80,9 @@ namespace MShow
 			return FALSE;
 		}
 
-		this->Add(pFLV1);
-		/*this->Add(pFLV2);
-		this->Add(pFLV3);*/
+		//this->Add(pFLV1);
+		this->Add(pFLV2);
+		//this->Add(pFLV3);
 		this->Add(pGIF);
 
 		m_onSize.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MShowController::OnSize));
