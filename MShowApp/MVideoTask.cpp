@@ -3,10 +3,12 @@
 
 namespace MShow
 {
-	MVideoTask::MVideoTask(MFLVScene& task, MClock& clock)
+	MVideoTask::MVideoTask(MRTMPTask& task, MClock& clock)
 		:m_task(task),
-		m_clock(clock)
+		m_clock(clock),
+		m_bClose(FALSE)
 	{
+
 	}
 
 
@@ -16,71 +18,74 @@ namespace MShow
 
 	BOOL MVideoTask::Submit()
 	{
-		m_close.CreateEvent();
+		m_bClose = FALSE;
+		m_onAVCDC.Reset(new Delegate<void(BYTE*, LONG)>(this, &MVideoTask::OnAVCDC));
+		m_task.EVENT_AVCDCR += m_onAVCDC;
 		return TinyTaskBase::Submit(BindCallback(&MVideoTask::OnMessagePump, this));
+	}
+
+	MPacketQueue& MVideoTask::GetVideoQueue()
+	{
+		return m_videoQueue;
+	}
+
+	void MVideoTask::OnAVCDC(BYTE* bits, LONG size)
+	{
+		FLV_SCRIPTDATA script = m_task.GetScript();
+		TinySize s(static_cast<LONG>(script.width), static_cast<LONG>(script.height));
+		if (m_h264.Initialize(s, s))
+		{
+			m_h264.Open(bits, size);
+		}
 	}
 
 	BOOL MVideoTask::Close(DWORD dwMS)
 	{
-		m_close.SetEvent();
+		m_bClose = TRUE;
+		m_task.EVENT_AVCDCR -= m_onAVCDC;
 		return TinyTaskBase::Close(dwMS);
-	}
-
-	MPacketQueue& MVideoTask::GetQueue()
-	{
-		return m_queue;
-	}
-
-	H264Decode* MVideoTask::GetH264()
-	{
-		return m_task.GetH264();
-	}
-
-	TinySize MVideoTask::GetSize() const
-	{
-		return TinySize(static_cast<LONG>(m_task.GetScript().width), static_cast<LONG>(m_task.GetScript().height));
 	}
 
 	void MVideoTask::OnMessagePump()
 	{
+		SampleTag sampleTag = { 0 };
 		for (;;)
 		{
-			if (m_close.Lock(0))
+			if (m_bClose)
 				break;
-			INT size = m_queue.GetSize();
+			INT size = m_videoQueue.GetSize();
 			if (size > MAX_VIDEO_QUEUE_SIZE)
 			{
 				Sleep(3);
 				continue;
 			}
-			SampleTag tag = { 0 };
-			BOOL val = m_task.GetVideoQueue().Pop(tag);
-			if (!val || !tag.bits || tag.size <= 0)
+			BOOL bRes = m_task.GetVideoQueue().Pop(sampleTag);
+			if (!bRes || sampleTag.size <= 0)
 			{
 				Sleep(3);
 				continue;
 			}
 			BYTE* bo = NULL;
 			LONG  so = 0;
-			if (m_task.GetH264()->Decode(tag, bo, so))
+			if (m_h264.Decode(sampleTag, bo, so))
 			{
 				if (m_clock.GetBasePTS() == -1)
 				{
-					m_clock.SetBasePTS(tag.samplePTS);
+					m_clock.SetBasePTS(sampleTag.samplePTS);
 				}
-				SAFE_DELETE_ARRAY(tag.bits);
-				tag.size = so;
-				tag.bits = new BYTE[so];
-				memcpy(tag.bits, bo, so);
-				tag.samplePTS = m_task.GetH264()->GetYUV420()->pkt_pts;
-				tag.sampleDTS = tag.samplePTS;
-				m_queue.Push(tag);
+				SAFE_DELETE_ARRAY(sampleTag.bits);
+				sampleTag.size = so;
+				sampleTag.bits = new BYTE[so];
+				memcpy(sampleTag.bits, bo, so);
+				sampleTag.samplePTS = m_h264.GetYUV420()->pkt_pts;
+				sampleTag.sampleDTS = sampleTag.samplePTS;
+				m_videoQueue.Push(sampleTag);
 			}
 			else
 			{
-				SAFE_DELETE_ARRAY(tag.bits);
+				SAFE_DELETE_ARRAY(sampleTag.bits);
 			}
 		}
-		m_queue.RemoveAll();
+		m_videoQueue.RemoveAll();
 	}
 }

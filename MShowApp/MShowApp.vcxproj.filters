@@ -78,8 +78,14 @@
     <ClInclude Include="MGIFScene.h">
       <Filter>头文件\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="MFLVScene.h">
-      <Filter>头文件\Scene</Filter>
+    <ClInclude Include="TabView.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoView.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MRTMPTask.h">
+      <Filter>头文件\RTMP</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -125,8 +131,14 @@
     <ClCompile Include="MGIFScene.cpp">
       <Filter>源文件\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="MFLVScene.cpp">
-      <Filter>源文件\Scene</Filter>
+    <ClCompile Include="TabView.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoView.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MRTMPTask.cpp">
+      <Filter>源文件\RTMP</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -139,6 +151,12 @@
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="MShowApp.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="mute.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="volume.ico">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

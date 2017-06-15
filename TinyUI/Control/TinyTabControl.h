@@ -17,7 +17,7 @@ namespace TinyUI
 		virtual DWORD RetrieveStyle();
 		virtual DWORD RetrieveExStyle();
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
-
+		HRESULT OnNotifyReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		HIMAGELIST GetImageList() const;
 		HIMAGELIST SetImageList(HIMAGELIST hImageList);
 		INT GetItemCount() const;
@@ -46,16 +46,16 @@ namespace TinyUI
 		LONG InsertItem(UINT nMask, INT nItem, LPCTSTR lpszItem, INT nImage, LPARAM lParam, DWORD dwState, DWORD dwStateMask);
 		BOOL DeleteItem(INT nItem);
 		BOOL DeleteAllItems();
-		void AdjustRect(BOOL bLarger,  LPRECT lpRect);
+		void AdjustRect(BOOL bLarger, LPRECT lpRect);
 		void RemoveImage(INT nImage);
 		INT HitTest(TCHITTESTINFO* pHitTestInfo) const;
 		void DeselectAll(BOOL fExcludeFocus);
 		BOOL HighlightItem(INT idItem, BOOL fHighlight = TRUE);
-		virtual HRESULT OnNotifyReflect(void* sender, UINT ctlID, LPARAM lParam, BOOL &bHandled);
+	public:
 		virtual void OnSelectChangingTab(void* sender, BOOL& bPrevent);
 		virtual void OnSelectChangeTab(void* sender);
-	private:
-		Event<void(void*, BOOL&)> EVENT_SelectChangingTab;
-		Event<void(void*)> EVENT_SELECTCHANGETab;
+	public:
+		Event<void(void*, BOOL&)>	EVENT_SELCHANGING;
+		Event<void(void*)>			EVENT_SELCHANGE;
 	};
 }

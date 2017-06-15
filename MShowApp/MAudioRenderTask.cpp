@@ -5,6 +5,7 @@ namespace MShow
 {
 	MAudioRenderTask::MAudioRenderTask(MAudioTask& task, MClock& clock)
 		:m_bInitialize(FALSE),
+		m_bClose(FALSE),
 		m_task(task),
 		m_clock(clock)
 	{
@@ -31,13 +32,13 @@ namespace MShow
 
 	BOOL MAudioRenderTask::Submit()
 	{
-		m_close.CreateEvent();
+		m_bClose = FALSE;
 		return TinyTaskBase::Submit(BindCallback(&MAudioRenderTask::OnMessagePump, this));
 	}
 
 	BOOL MAudioRenderTask::Close(DWORD dwMS)
 	{
-		m_close.SetEvent();
+		m_bClose = TRUE;
 		return TinyTaskBase::Close(dwMS);
 	}
 
@@ -48,11 +49,11 @@ namespace MShow
 		SampleTag tag = { 0 };
 		for (;;)
 		{
-			if (m_close.Lock(0))
+			if (m_bClose)
 				break;
 			ZeroMemory(&tag, sizeof(tag));
-			BOOL val = m_task.GetQueue().Pop(tag);
-			if (!val || !tag.bits || tag.size <= 0)
+			BOOL bRes = m_task.GetAudioQueue().Pop(tag);
+			if (!bRes || tag.size <= 0)
 			{
 				Sleep(3);
 				continue;
@@ -67,7 +68,7 @@ namespace MShow
 				m_bInitialize = TRUE;
 				TinyPerformanceTimer timer;
 				timer.BeginTime();
-				if (!m_player.SetFormat(&m_task.GetAAC()->GetFormat(), tag.size * 3))
+				if (!m_player.SetFormat(m_task.GetFormat(), tag.size * 3))
 					break;
 				DSBPOSITIONNOTIFY vals[3];
 				vals[0].dwOffset = tag.size - 1;

@@ -48,22 +48,12 @@ namespace MShow
 	LRESULT DXView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		m_controller.Reset(new MShowController(*this));
-		if (m_controller)
-		{
-			m_controller->Initialize();
-			//m_controller->Initialize("rtmp://10.121.86.127/live/test_360p");
-		}
 		return FALSE;
 	}
 
 	LRESULT DXView::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		if (m_controller)
-		{
-			m_controller->Uninitialize();
-		}
 		return FALSE;
 	}
 

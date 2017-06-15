@@ -6,14 +6,14 @@ namespace MShow
 {
 	class MShowController;
 	/// <summary>
-	/// DX渲染控件
+	/// 视频源View
 	/// </summary>
-	class DXView : public TinyControl
+	class VideoView : public TinyControl
 	{
-		DISALLOW_COPY_AND_ASSIGN(DXView)
+		DISALLOW_COPY_AND_ASSIGN(VideoView)
 	public:
-		DXView();
-		virtual ~DXView();
+		VideoView();
+		virtual ~VideoView();
 		//5个创建函数
 		DWORD RetrieveStyle() OVERRIDE;
 		DWORD RetrieveExStyle() OVERRIDE;

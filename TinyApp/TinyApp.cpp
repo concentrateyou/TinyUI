@@ -86,7 +86,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadSeDebugPrivilege();
 
 	FLVParser parser;
-	parser.Open("D:\\test_2.flv");
+	parser.Open("D:\\seg.flv");
 	parser.Parse();
 	parser.Close();
 

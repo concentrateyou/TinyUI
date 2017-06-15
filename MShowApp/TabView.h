@@ -5,15 +5,13 @@ using namespace DXFramework;
 namespace MShow
 {
 	class MShowController;
-	/// <summary>
-	/// DX渲染控件
-	/// </summary>
-	class DXView : public TinyControl
+
+	class TabView : public TinyControl
 	{
-		DISALLOW_COPY_AND_ASSIGN(DXView)
+		DISALLOW_COPY_AND_ASSIGN(TabView)
 	public:
-		DXView();
-		virtual ~DXView();
+		TabView();
+		virtual ~TabView();
 		//5个创建函数
 		DWORD RetrieveStyle() OVERRIDE;
 		DWORD RetrieveExStyle() OVERRIDE;

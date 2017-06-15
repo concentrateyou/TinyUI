@@ -1,6 +1,5 @@
 #pragma once
 #include "MShowCommon.h"
-#include "MFLVScene.h"
 #include "DXView.h"
 #include "MGIFScene.h"
 using namespace TinyUI;
@@ -42,7 +41,6 @@ namespace MShow
 		DXView&					m_view;
 		TinyArray<MElement*>	m_scenes;
 		TinyComPtr<ID2D1Bitmap>	m_bitmapBox;
-		TinyScopedPtr<Delegate<void(ID2D1Bitmap1*, INT, MElement*)>> m_onVideo;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onSize;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonDown;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonUp;

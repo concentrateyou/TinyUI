@@ -1,6 +1,9 @@
 #pragma once
 #include "DXView.h"
 #include "MAudioRenderTask.h"
+#include "Control/TinyTabControl.h"
+#include "TabView.h"
+#include "VideoView.h"
 using namespace TinyUI;
 
 namespace MShow
@@ -29,7 +32,14 @@ namespace MShow
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 		DXView& GetPreivewView();
 	private:
-		DXView	m_previewView;//Ô¤ÀÀ´°¿Ú
+		void OnTabChange(void*);
+	private:
+		DXView			m_preview;
+		TabView			m_tabViews[2];
+		VideoView		m_videoViews[6];
+		TinyTabControl	m_tab;
+	private:
+		TinyScopedPtr<Delegate<void(void*)>> m_onTabChange;
 	};
 }
 

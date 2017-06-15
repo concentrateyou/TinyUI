@@ -1,7 +1,5 @@
 #pragma once
-#include "MShowCommon.h"
-#include "MFLVScene.h"
-#include "MClock.h"
+#include "MRTMPTask.h"
 
 namespace MShow
 {
@@ -13,20 +11,20 @@ namespace MShow
 	{
 		DISALLOW_COPY_AND_ASSIGN(MVideoTask)
 	public:
-		MVideoTask(MFLVScene& task, MClock& clock);
+		MVideoTask(MRTMPTask& task, MClock& clock);
 		virtual ~MVideoTask();
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
-	public:
-		MPacketQueue&	GetQueue();
-		H264Decode*		GetH264();
-		TinySize		GetSize() const;
+		MPacketQueue& GetVideoQueue();
 	private:
 		void OnMessagePump();
+		void OnAVCDC(BYTE* bits, LONG size);
 	private:
-		TinyEvent		m_close;
-		MClock&			m_clock;
-		MFLVScene&		m_task;
-		MPacketQueue	m_queue;
+		BOOL						m_bClose;
+		MClock&						m_clock;
+		MRTMPTask&					m_task;
+		MPacketQueue				m_videoQueue;
+		H264Decode					m_h264;
+		TinyScopedPtr<Delegate<void(BYTE*, LONG)>>	m_onAVCDC;
 	};
 }

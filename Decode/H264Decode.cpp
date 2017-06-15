@@ -17,6 +17,7 @@ namespace Decode
 	{
 		Close();
 	}
+
 	BOOL H264Decode::Initialize(const TinySize& srcsize, const TinySize& dstsize)
 	{
 		avcodec_register_all();
@@ -62,7 +63,7 @@ namespace Decode
 	}
 	BOOL H264Decode::Decode(SampleTag& tag, BYTE*& bo, LONG& so)
 	{
-		if (!m_context)
+		if (!m_context || !m_sws)
 			return FALSE;
 		so = 0;
 		bo = NULL;

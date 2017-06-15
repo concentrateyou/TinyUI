@@ -12,7 +12,7 @@ namespace MShow
 	MClock::~MClock()
 	{
 	}
-	void MClock::SetBaseTime(LONG baseTime)
+	void MClock::SetBaseTime(DWORD baseTime)
 	{
 		TinyAutoLock lock(m_lock);
 		m_baseTime = baseTime;
@@ -22,15 +22,15 @@ namespace MShow
 		TinyAutoLock lock(m_lock);
 		m_baseTime += dwMS;
 	}
-	LONG MClock::GetBaseTime() const
+	LONGLONG MClock::GetBaseTime() const
 	{
 		return m_baseTime;
 	}
-	LONG MClock::GetBasePTS() const
+	LONGLONG MClock::GetBasePTS() const
 	{
 		return m_basePTS;
 	}
-	void MClock::SetBasePTS(LONG basePTS)
+	void MClock::SetBasePTS(LONGLONG basePTS)
 	{
 		m_basePTS = basePTS;
 	}

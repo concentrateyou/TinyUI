@@ -12,14 +12,14 @@ namespace MShow
 	public:
 		MClock();
 		~MClock();
-		void SetBaseTime(LONG timestamp);
+		void SetBaseTime(DWORD timestamp);
 		void AddBaseTime(DWORD dwMS);
-		LONG GetBaseTime() const;
-		LONG GetBasePTS() const;
-		void SetBasePTS(LONG basePTS);
+		LONGLONG GetBaseTime() const;
+		LONGLONG GetBasePTS() const;
+		void SetBasePTS(LONGLONG basePTS);
 	private:
-		LONG		m_baseTime;
-		LONG		m_basePTS;
+		DWORD		m_baseTime;
+		LONGLONG	m_basePTS;
 		TinyLock	m_lock;
 	};
 }

@@ -3,9 +3,10 @@
 
 namespace MShow
 {
-	MAudioTask::MAudioTask(MFLVScene& task, MClock& clock)
+	MAudioTask::MAudioTask(MRTMPTask& task, MClock& clock)
 		:m_task(task),
-		m_clock(clock)
+		m_clock(clock),
+		m_bClose(FALSE)
 	{
 	}
 
@@ -16,65 +17,70 @@ namespace MShow
 
 	BOOL MAudioTask::Submit()
 	{
-		m_close.CreateEvent();
+		m_bClose = FALSE;
+		m_onASC.Reset(new Delegate<void(BYTE*, LONG, WORD)>(this, &MAudioTask::OnASC));
 		return TinyTaskBase::Submit(BindCallback(&MAudioTask::OnMessagePump, this));
 	}
 
 	BOOL MAudioTask::Close(DWORD dwMS)
 	{
-		m_close.SetEvent();
+		m_bClose = TRUE;
 		return TinyTaskBase::Close(dwMS);
 	}
 
-	MPacketQueue& MAudioTask::GetQueue()
+	WAVEFORMATEX* MAudioTask::GetFormat()
 	{
-		return m_queue;
+		return m_aac.GetFormat();
 	}
 
-	AACDecode* MAudioTask::GetAAC()
+	MPacketQueue& MAudioTask::GetAudioQueue()
 	{
-		return m_task.GetAAC();
+		return m_audioQueue;
+	}
+
+	void MAudioTask::OnASC(BYTE* bits, LONG size, WORD wBitsPerSample)
+	{
+		m_aac.Open(bits, size, wBitsPerSample);
 	}
 
 	void MAudioTask::OnMessagePump()
 	{
+		SampleTag sampleTag = { 0 };
 		for (;;)
 		{
-			if (m_close.Lock(0))
+			if (m_bClose)
 				break;
-			INT size = m_queue.GetSize();
+			INT size = m_audioQueue.GetSize();
 			if (size > MAX_AUDIO_QUEUE_SIZE)
 			{
 				Sleep(3);
 				continue;
 			}
-			SampleTag tag = { 0 };
-			BOOL val = m_task.GetAudioQueue().Pop(tag);
-			if (!val || !tag.bits || tag.size <= 0)
+			BOOL bRes = m_task.GetAudioQueue().Pop(sampleTag);
+			if (!bRes || sampleTag.size <= 0)
 			{
 				Sleep(3);
 				continue;
 			}
 			BYTE* bo = NULL;
 			LONG  so = 0;
-			AACDecode* aac = m_task.GetAAC();
-			if (aac != NULL && aac->Decode(tag.bits, tag.size, bo, so))
+			if (m_aac.Decode(sampleTag.bits, sampleTag.size, bo, so))
 			{
 				if (m_clock.GetBasePTS() == -1)
 				{
-					m_clock.SetBasePTS(tag.samplePTS);
+					m_clock.SetBasePTS(sampleTag.samplePTS);
 				}
-				SAFE_DELETE_ARRAY(tag.bits);
-				tag.size = so;
-				tag.bits = new BYTE[so];
-				memcpy(tag.bits, bo, so);
-				m_queue.Push(tag);
+				SAFE_DELETE_ARRAY(sampleTag.bits);
+				sampleTag.size = so;
+				sampleTag.bits = new BYTE[so];
+				memcpy(sampleTag.bits, bo, so);
+				m_audioQueue.Push(sampleTag);
 			}
 			else
 			{
-				SAFE_DELETE_ARRAY(tag.bits);
+				SAFE_DELETE_ARRAY(sampleTag.bits);
 			}
 		}
-		m_queue.RemoveAll();
+		m_audioQueue.RemoveAll();
 	}
 }

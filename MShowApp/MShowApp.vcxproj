@@ -156,8 +156,8 @@
     <ClInclude Include="MElement.h" />
     <ClInclude Include="MGIFScene.h" />
     <ClInclude Include="MPacketQueue.h" />
-    <ClInclude Include="MFLVScene.h" />
     <ClInclude Include="MAudioRenderTask.h" />
+    <ClInclude Include="MRTMPTask.h" />
     <ClInclude Include="MShowApp.h" />
     <ClInclude Include="MShowCommon.h" />
     <ClInclude Include="MShowController.h" />
@@ -166,7 +166,9 @@
     <ClInclude Include="MVideoTask.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TabView.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="VideoView.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXView.cpp" />
@@ -175,8 +177,8 @@
     <ClCompile Include="MElement.cpp" />
     <ClCompile Include="MGIFScene.cpp" />
     <ClCompile Include="MPacketQueue.cpp" />
-    <ClCompile Include="MFLVScene.cpp" />
     <ClCompile Include="MAudioRenderTask.cpp" />
+    <ClCompile Include="MRTMPTask.cpp" />
     <ClCompile Include="MShowApp.cpp" />
     <ClCompile Include="MShowCommon.cpp" />
     <ClCompile Include="MShowController.cpp" />
@@ -189,13 +191,17 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TabView.cpp" />
+    <ClCompile Include="VideoView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MShowApp.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="MShowApp.ico" />
+    <Image Include="mute.ico" />
     <Image Include="small.ico" />
+    <Image Include="volume.ico" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Decode\Decode.vcxproj">

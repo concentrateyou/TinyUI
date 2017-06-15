@@ -72,13 +72,14 @@ namespace Decode
 		m_handle = NULL;
 		return FALSE;
 	}
-	WAVEFORMATEX AACDecode::GetFormat() const
+	WAVEFORMATEX* AACDecode::GetFormat()
 	{
-		return m_sMFT;
+		return &m_sMFT;
 	}
 	BOOL AACDecode::Decode(BYTE* bi, LONG si, BYTE*& bo, LONG& so)
 	{
-		ASSERT(m_handle);
+		if (!m_handle)
+			return FALSE;
 		bo = reinterpret_cast<BYTE*>(NeAACDecDecode(m_handle, &m_frame, bi, si));
 		if (m_frame.error != 0 || m_frame.samples <= 0)
 			return FALSE;

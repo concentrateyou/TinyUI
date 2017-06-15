@@ -3,11 +3,11 @@
 
 namespace MShow
 {
-	MVideoRenderTask::MVideoRenderTask(MVideoTask& task, MClock& clock, DX2D& d2d, TinyUI::Callback<void(ID2D1Bitmap1*, INT)>&& callback)
+	MVideoRenderTask::MVideoRenderTask(MVideoTask& task, MClock& clock, TinyUI::Callback<void(BYTE*, LONG)>&& callback)
 		:m_task(task),
 		m_clock(clock),
-		m_d2d(d2d),
-		m_callback(std::move(callback))
+		m_callback(std::move(callback)),
+		m_bClose(FALSE)
 	{
 	}
 
@@ -15,70 +15,45 @@ namespace MShow
 	{
 	}
 
-	BOOL MVideoRenderTask::Initialize()
-	{
-		TinySize size = m_task.GetSize();
-		HRESULT hRes = m_d2d.GetContext()->CreateBitmap(D2D1::SizeU(size.cx, size.cy),
-			(const void *)NULL,
-			0,
-			&D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)),
-			&m_bitmap);
-		if (hRes != S_OK)
-			return FALSE;
-		return TRUE;
-	}
-
 	BOOL MVideoRenderTask::Submit()
 	{
-		m_close.CreateEvent();
+		m_bClose = FALSE;
 		return TinyTaskBase::Submit(BindCallback(&MVideoRenderTask::OnMessagePump, this));
-	}
-
-	ID2D1Bitmap1* MVideoRenderTask::GetBitmap()
-	{
-		return m_bitmap;
 	}
 
 	BOOL MVideoRenderTask::Close(DWORD dwMS)
 	{
-		m_close.SetEvent();
+		m_bClose = TRUE;
 		return TinyTaskBase::Close(dwMS);
 	}
 
 	void MVideoRenderTask::OnMessagePump()
 	{
-		SampleTag tag = { 0 };
+		SampleTag sampleTag = { 0 };
 		for (;;)
 		{
-			if (m_close.Lock(0))
+			if (m_bClose)
 				break;
-			ZeroMemory(&tag, sizeof(tag));
-			BOOL val = m_task.GetQueue().Pop(tag);
-			if (!val || !tag.bits || tag.size <= 0)
+			ZeroMemory(&sampleTag, sizeof(sampleTag));
+			BOOL bRes = m_task.GetVideoQueue().Pop(sampleTag);
+			if (!bRes || sampleTag.size <= 0)
 			{
 				Sleep(3);
 				continue;
 			}
-			if (tag.samplePTS == m_clock.GetBasePTS())
+			if (sampleTag.samplePTS == m_clock.GetBasePTS())
 			{
 				m_clock.SetBaseTime(timeGetTime());
 			}
 			while (m_clock.GetBasePTS() == -1);
 			LONG ms = static_cast<LONG>(timeGetTime() - m_clock.GetBaseTime());
-			INT delay = static_cast<INT>(tag.samplePTS - ms);
+			INT delay = static_cast<INT>(sampleTag.samplePTS - ms);
 			Sleep(delay < 0 ? 0 : delay);
-			OnRender(tag.bits, tag.size, delay);
-			SAFE_DELETE_ARRAY(tag.bits);
-		}
-	}
-
-	void MVideoRenderTask::OnRender(BYTE* bits, LONG size, INT delay)
-	{
-		if (!m_callback.IsNull() && m_bitmap != NULL)
-		{
-			TinySize s = m_task.GetSize();
-			m_bitmap->CopyFromMemory(NULL, bits, s.cx * 4);
-			m_callback(m_bitmap, delay);
+			if (!m_callback.IsNull())
+			{
+				m_callback(sampleTag.bits, sampleTag.size);
+			}
+			SAFE_DELETE_ARRAY(sampleTag.bits);
 		}
 	}
 }

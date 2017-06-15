@@ -22,18 +22,18 @@ namespace TinyUI
 	}
 	DWORD TinyTabControl::RetrieveStyle()
 	{
-		return (WS_CHILDWINDOW | WS_VISIBLE | WS_CLIPSIBLINGS | WS_TABSTOP | WS_BORDER);
+		return (WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_TABSTOP| TCS_TABS);
 	}
 	DWORD TinyTabControl::RetrieveExStyle()
 	{
-		return (WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY);
+		return (WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR);
 	}
 	BOOL TinyTabControl::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
 	{
 		INITCOMMONCONTROLSEX initCtrls = { sizeof(INITCOMMONCONTROLSEX), ICC_TAB_CLASSES };
 		if (InitCommonControlsEx(&initCtrls))
 		{
-			return TinyTabControl::Create(hParent, x, y, cx, cy);
+			return TinyControl::Create(hParent, x, y, cx, cy);
 		}
 		return FALSE;
 	}
@@ -207,13 +207,13 @@ namespace TinyUI
 	}
 	void TinyTabControl::OnSelectChangingTab(void* sender, BOOL& bPrevent)
 	{
-		EVENT_SelectChangingTab(this, bPrevent);
+		EVENT_SELCHANGING(this, bPrevent);
 	}
 	void TinyTabControl::OnSelectChangeTab(void* sender)
 	{
-		EVENT_SELECTCHANGETab(this);
+		EVENT_SELCHANGE(this);
 	}
-	HRESULT TinyTabControl::OnNotifyReflect(void* sender, UINT ctlID, LPARAM lParam, BOOL &bHandled)
+	HRESULT TinyTabControl::OnNotifyReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		BOOL bPrevent = FALSE;
 		switch (((LPNMHDR)lParam)->code)
