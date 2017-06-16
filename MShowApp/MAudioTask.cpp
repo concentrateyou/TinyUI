@@ -19,12 +19,14 @@ namespace MShow
 	{
 		m_bClose = FALSE;
 		m_onASC.Reset(new Delegate<void(BYTE*, LONG, WORD)>(this, &MAudioTask::OnASC));
+		m_task.EVENT_ASC += m_onASC;
 		return TinyTaskBase::Submit(BindCallback(&MAudioTask::OnMessagePump, this));
 	}
 
 	BOOL MAudioTask::Close(DWORD dwMS)
 	{
 		m_bClose = TRUE;
+		m_task.EVENT_ASC -= m_onASC;
 		return TinyTaskBase::Close(dwMS);
 	}
 

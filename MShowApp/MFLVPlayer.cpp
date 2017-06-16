@@ -29,10 +29,12 @@ namespace MShow
 			return FALSE;
 		if (!m_videoRenderTask.Submit())
 			return FALSE;
-		/*if (!m_audioTask.Submit())
+		if (!m_audioTask.Submit())
+			return FALSE;
+		if (!m_audioRenderTask.Initialize(m_d2d.GetHWND()))
 			return FALSE;
 		if (!m_audioRenderTask.Submit())
-			return FALSE;*/
+			return FALSE;
 		FLV_SCRIPTDATA script = m_task.GetScript();
 		m_size.cx = static_cast<LONG>(script.width);
 		m_size.cy = static_cast<LONG>(script.height);
