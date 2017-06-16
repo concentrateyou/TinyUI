@@ -19,7 +19,7 @@ namespace MShow
 		DM_BACKGROUND = 2,
 		DM_PREVIOUS = 3
 	};
-	class MShowController;
+	class MPreviewController;
 	/// <summary>
 	/// GIF³¡¾°
 	/// </summary>
@@ -27,7 +27,7 @@ namespace MShow
 	{
 		DECLARE_DYNAMIC(MGIFScene)
 	public:
-		MGIFScene(MShowController* pController);
+		MGIFScene(MPreviewController* pController);
 		virtual ~MGIFScene();
 	public:
 		BOOL Initialize(DX2D& d2d, const CHAR* pzFile);
@@ -59,7 +59,7 @@ namespace MShow
 		TinyComPtr<IWICBitmapDecoder>		m_decoder;
 		TinyComPtr<ID2D1BitmapRenderTarget>	m_bitmapRT;
 		TinyArray<WIC_GIF>					m_images;
-		MShowController*					m_pController;
+		MPreviewController*					m_pController;
 	};
 }
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "MShowCommon.h"
 #include "MClock.h"
-#include "MRTMPTask.h"
+#include "MFLVTask.h"
 
 namespace MShow
 {
@@ -13,7 +13,7 @@ namespace MShow
 	{
 		DISALLOW_COPY_AND_ASSIGN(MAudioTask)
 	public:
-		MAudioTask(MRTMPTask& task, MClock& clock);
+		MAudioTask(MFLVTask& task, MClock& clock);
 		virtual ~MAudioTask();
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
@@ -27,7 +27,7 @@ namespace MShow
 		BOOL						m_bClose;
 		AACDecode					m_aac;
 		MClock&						m_clock;
-		MRTMPTask&					m_task;
+		MFLVTask&					m_task;
 		MPacketQueue				m_audioQueue;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG, WORD)>>	m_onASC;
 	};

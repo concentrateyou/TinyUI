@@ -1,9 +1,46 @@
 #include "stdafx.h"
 #include "VideoView.h"
+#include "resource.h"
 
 namespace MShow
 {
+	MVideoDialog::MVideoDialog()
+	{
+
+	}
+	MVideoDialog::~MVideoDialog()
+	{
+
+	}
+	LRESULT MVideoDialog::OnCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		switch (LOWORD(wParam))
+		{
+		case IDOK:
+		case IDCANCEL:
+			m_address = m_textbox.GetText();
+			if (EndDialog(LOWORD(wParam)))
+			{
+
+			}
+			break;
+		}
+		return TinyCustomDialog::OnCommand(uMsg, wParam, lParam, bHandled);
+	}
+	LRESULT MVideoDialog::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		m_textbox.SubclassDlgItem(IDC_EDIT_VIDEO, m_hWND);
+		return FALSE;
+	}
+	TinyString MVideoDialog::GetAddress()
+	{
+		return m_address;
+	}
+	//////////////////////////////////////////////////////////////////////////
 	VideoView::VideoView()
+		:m_player(m_d2d)
 	{
 	}
 
@@ -48,12 +85,16 @@ namespace MShow
 	LRESULT VideoView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		RECT s = { 0 };
+		this->GetClientRect(&s);
+		m_d2d.Initialize(m_hWND, TO_CX(s), TO_CY(s));
 		return FALSE;
 	}
 
 	LRESULT VideoView::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		m_player.Close();
 		return FALSE;
 	}
 
@@ -77,6 +118,24 @@ namespace MShow
 	{
 		bHandled = FALSE;
 		return FALSE;
+	}
+
+
+	LRESULT VideoView::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		MVideoDialog dlg;
+		if (dlg.DoModal(m_hWND, IDD_VIDEO) == IDOK)
+		{
+			TinyString val = dlg.GetAddress();
+			m_player.Open(val.STR());
+		}
+		return FALSE;
+	}
+
+	DX2D& VideoView::GetD2D()
+	{
+		return m_d2d;
 	}
 }
 

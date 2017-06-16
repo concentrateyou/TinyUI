@@ -38,9 +38,9 @@ namespace MShow
 		return NULL;
 	}
 
-	DXView& MShowWindow::GetPreivewView()
+	MPreviewView& MShowWindow::GetPreivewView()
 	{
-		return m_preview;
+		return m_previewView;
 	}
 
 	LRESULT MShowWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -51,7 +51,7 @@ namespace MShow
 		INT cx = 1300;
 		INT cy = 730;
 		CenterWindow(NULL, { cx, cy });
-		m_preview.Create(m_hWND, 33, 90, 512, 288);
+		m_previewView.Create(m_hWND, 33, 90, 512, 288);
 		m_tab.Create(m_hWND, 0, 440, 1300, 250);
 		m_tab.GetClientRect(&s);
 		s.top += 23;

@@ -58,11 +58,7 @@ namespace MShow
 			return FALSE;
 		if (m_mshow.Create(NULL, 0, 0, 1, 1))
 		{
-			m_controller.Reset(new MShowController(m_mshow.GetPreivewView()));
-			if (m_controller != NULL)
-			{
-				m_controller->Initialize();
-			}
+
 		}
 	}
 	INT MShowApp::Run()
@@ -73,10 +69,6 @@ namespace MShow
 	}
 	BOOL MShowApp::Uninitialize()
 	{
-		if (m_controller != NULL)
-		{
-			m_controller->Uninitialize();
-		}
 		if (!TinyApplication::GetInstance()->RemoveMessageLoop())
 			return FALSE;
 		if (!TinyApplication::GetInstance()->Uninitialize())

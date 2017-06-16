@@ -9,15 +9,15 @@ namespace MShow
 	/// <summary>
 	/// RTMP∂¡»°œﬂ≥Ã
 	/// </summary>
-	class MRTMPTask : public TinyTaskBase
+	class MFLVTask : public TinyTaskBase
 	{
-		DISALLOW_COPY_AND_ASSIGN(MRTMPTask)
+		DISALLOW_COPY_AND_ASSIGN(MFLVTask)
 	public:
-		MRTMPTask();
-		virtual ~MRTMPTask();
+		MFLVTask(MClock& clock);
+		virtual ~MFLVTask();
 		BOOL Initialize(LPCSTR pzURL);
 		BOOL Submit();
-		BOOL Close();
+		BOOL Close(DWORD dwMS) OVERRIDE;
 		MPacketQueue&	GetAudioQueue();
 		MPacketQueue&	GetVideoQueue();
 		FLV_SCRIPTDATA&	GetScript();
@@ -32,7 +32,7 @@ namespace MShow
 		LONGLONG		m_sample;
 		FLVReader		m_reader;
 		FLV_SCRIPTDATA	m_script;
-		MClock			m_clock;
+		MClock&			m_clock;
 		MPacketQueue	m_audioQueue;
 		MPacketQueue	m_videoQueue;
 	};

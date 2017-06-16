@@ -93,6 +93,9 @@ namespace TinyUI
 			MESSAGE_HANDLER(WM_KEYDOWN, OnKeyDown)
 			MESSAGE_HANDLER(WM_KEYUP, OnKeyUp)
 			MESSAGE_HANDLER(WM_CHAR, OnChar)
+			MESSAGE_HANDLER(WM_PASTE,OnPaste)
+			MESSAGE_HANDLER(WM_CUT, OnCut)
+			MESSAGE_HANDLER(WM_CLEAR, OnClear)
 			MESSAGE_HANDLER(WM_SETFOCUS, OnSetFocus)
 			MESSAGE_HANDLER(WM_KILLFOCUS, OnKillFocus)
 			MESSAGE_HANDLER(WM_GETMINMAXINFO, OnGetMinMaxInfo)
@@ -150,6 +153,9 @@ namespace TinyUI
 		virtual LRESULT OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnKeyUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnPaste(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnCut(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnClear(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnSetFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

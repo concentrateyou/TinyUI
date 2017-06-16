@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "MGIFScene.h"
-#include "MShowController.h"
+#include "MPreviewController.h"
 
 namespace MShow
 {
@@ -9,7 +9,7 @@ namespace MShow
 
 	IMPLEMENT_DYNAMIC(MGIFScene, MElement);
 
-	MGIFScene::MGIFScene(MShowController* pController)
+	MGIFScene::MGIFScene(MPreviewController* pController)
 		:m_pController(pController),
 		m_cxGifImage(0),
 		m_cyGifImage(0),

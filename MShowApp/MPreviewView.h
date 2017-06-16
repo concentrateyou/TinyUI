@@ -1,19 +1,19 @@
 #pragma once
-#include "MShowController.h"
+#include "MPreviewController.h"
 using namespace DXFramework;
 
 namespace MShow
 {
-	class MShowController;
+	class MPreviewController;
 	/// <summary>
 	/// DX渲染控件
 	/// </summary>
-	class DXView : public TinyControl
+	class MPreviewView : public TinyControl
 	{
-		DISALLOW_COPY_AND_ASSIGN(DXView)
+		DISALLOW_COPY_AND_ASSIGN(MPreviewView)
 	public:
-		DXView();
-		virtual ~DXView();
+		MPreviewView();
+		virtual ~MPreviewView();
 		//5个创建函数
 		DWORD RetrieveStyle() OVERRIDE;
 		DWORD RetrieveExStyle() OVERRIDE;

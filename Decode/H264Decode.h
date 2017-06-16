@@ -25,7 +25,6 @@ namespace Decode
 	public:
 		H264Decode();
 		virtual ~H264Decode();
-		BOOL IsValid();
 		BOOL Initialize(const TinySize& srcsize, const TinySize& dstsize);
 		BOOL Open(BYTE* metadata, LONG size);
 		BOOL Decode(SampleTag& tag, BYTE*& bo, LONG& so);

@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "MRTMPTask.h"
+#include "MFLVTask.h"
 
 namespace MShow
 {
@@ -9,48 +9,49 @@ namespace MShow
 		SAFE_DELETE_ARRAY(block.video.data);
 	}
 	//////////////////////////////////////////////////////////////////////////
-	MRTMPTask::MRTMPTask()
+	MFLVTask::MFLVTask(MClock& clock)
 		:m_bFI(FALSE),
 		m_bClose(FALSE),
-		m_sample(0)
+		m_sample(0),
+		m_clock(clock)
 	{
 	}
 
-	BOOL MRTMPTask::Initialize(LPCSTR pzURL)
+	BOOL MFLVTask::Initialize(LPCSTR pzURL)
 	{
 		if (!m_reader.OpenURL(pzURL))
 			return FALSE;
 		m_script = m_reader.GetScript();
 	}
 
-	BOOL MRTMPTask::Submit()
+	BOOL MFLVTask::Submit()
 	{
 		m_bClose = FALSE;
-		return TinyTaskBase::Submit(BindCallback(&MRTMPTask::OnMessagePump, this));
+		return TinyTaskBase::Submit(BindCallback(&MFLVTask::OnMessagePump, this));
 	}
 
-	BOOL MRTMPTask::Close()
+	BOOL MFLVTask::Close(DWORD dwMS)
 	{
 		m_bClose = TRUE;
 		return TinyTaskBase::Close(INFINITE);
 	}
 
-	FLV_SCRIPTDATA&	MRTMPTask::GetScript()
+	FLV_SCRIPTDATA&	MFLVTask::GetScript()
 	{
 		return m_script;
 	}
 
-	MPacketQueue& MRTMPTask::GetAudioQueue()
+	MPacketQueue& MFLVTask::GetAudioQueue()
 	{
 		return m_audioQueue;
 	}
 
-	MPacketQueue& MRTMPTask::GetVideoQueue()
+	MPacketQueue& MFLVTask::GetVideoQueue()
 	{
 		return m_videoQueue;
 	}
 
-	void MRTMPTask::OnMessagePump()
+	void MFLVTask::OnMessagePump()
 	{
 		SampleTag tag = { 0 };
 		FLV_BLOCK block = { 0 };
@@ -132,7 +133,7 @@ namespace MShow
 		m_videoQueue.RemoveAll();
 	}
 
-	MRTMPTask::~MRTMPTask()
+	MFLVTask::~MFLVTask()
 	{
 	}
 }

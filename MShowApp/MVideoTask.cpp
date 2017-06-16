@@ -3,12 +3,13 @@
 
 namespace MShow
 {
-	MVideoTask::MVideoTask(MRTMPTask& task, MClock& clock)
+	MVideoTask::MVideoTask(MFLVTask& task, MClock& clock)
 		:m_task(task),
 		m_clock(clock),
 		m_bClose(FALSE)
 	{
-
+		m_h264.Reset(new H264Decode());
+		ASSERT(m_h264);
 	}
 
 
@@ -33,9 +34,9 @@ namespace MShow
 	{
 		FLV_SCRIPTDATA script = m_task.GetScript();
 		TinySize s(static_cast<LONG>(script.width), static_cast<LONG>(script.height));
-		if (m_h264.Initialize(s, s))
+		if (m_h264->Initialize(s, s))
 		{
-			m_h264.Open(bits, size);
+			m_h264->Open(bits, size);
 		}
 	}
 
@@ -67,7 +68,7 @@ namespace MShow
 			}
 			BYTE* bo = NULL;
 			LONG  so = 0;
-			if (m_h264.Decode(sampleTag, bo, so))
+			if (m_h264->Decode(sampleTag, bo, so))
 			{
 				if (m_clock.GetBasePTS() == -1)
 				{
@@ -77,7 +78,7 @@ namespace MShow
 				sampleTag.size = so;
 				sampleTag.bits = new BYTE[so];
 				memcpy(sampleTag.bits, bo, so);
-				sampleTag.samplePTS = m_h264.GetYUV420()->pkt_pts;
+				sampleTag.samplePTS = m_h264->GetYUV420()->pkt_pts;
 				sampleTag.sampleDTS = sampleTag.samplePTS;
 				m_videoQueue.Push(sampleTag);
 			}

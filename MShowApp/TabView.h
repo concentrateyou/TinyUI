@@ -1,10 +1,10 @@
 #pragma once
-#include "MShowController.h"
+#include "MPreviewController.h"
 using namespace DXFramework;
 
 namespace MShow
 {
-	class MShowController;
+	class MPreviewController;
 
 	class TabView : public TinyControl
 	{

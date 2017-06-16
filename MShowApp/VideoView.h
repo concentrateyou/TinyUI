@@ -1,10 +1,27 @@
 #pragma once
-#include "MShowController.h"
+#include "Control/TinyCustomDialog.h"
+#include "Control/TinyTextBox.h"
+#include "MPreviewController.h"
+#include "MFLVPlayer.h"
 using namespace DXFramework;
 
 namespace MShow
 {
-	class MShowController;
+	class MPreviewController;
+
+	class MVideoDialog : public TinyCustomDialog
+	{
+	public:
+		MVideoDialog();
+		virtual ~MVideoDialog();
+		LRESULT OnCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+		LRESULT OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+	public:
+		TinyString GetAddress();
+	private:
+		TinyTextBox	m_textbox;
+		TinyString	m_address;
+	};
 	/// <summary>
 	///  ”∆µ‘¥View
 	/// </summary>
@@ -28,6 +45,12 @@ namespace MShow
 		LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+		LRESULT OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+	public:
+		DX2D& GetD2D();
+	private:
+		DX2D		m_d2d;
+		MFLVPlayer	m_player;
 	};
 }
 

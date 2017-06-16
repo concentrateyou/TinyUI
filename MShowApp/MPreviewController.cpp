@@ -1,20 +1,20 @@
 #include "stdafx.h"
-#include "MShowController.h"
+#include "MPreviewController.h"
 
 namespace MShow
 {
-	MShowController::MShowController(DXView& view)
+	MPreviewController::MPreviewController(MPreviewView& view)
 		:m_view(view),
 		m_lastElement(NULL)
 	{
 	}
 
 
-	MShowController::~MShowController()
+	MPreviewController::~MPreviewController()
 	{
 	}
 
-	BOOL MShowController::Initialize()
+	BOOL MPreviewController::Initialize()
 	{
 		RECT s = { 0 };
 		::GetWindowRect(m_view.Handle(), &s);
@@ -85,13 +85,13 @@ namespace MShow
 		//this->Add(pFLV3);
 		//this->Add(pGIF);
 
-		m_onSize.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MShowController::OnSize));
-		m_onLButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MShowController::OnLButtonDown));
-		m_onLButtonUp.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MShowController::OnLButtonUp));
-		m_onRButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MShowController::OnRButtonDown));
-		m_onMouseMove.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MShowController::OnMouseMove));
-		m_onMouseLeave.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MShowController::OnMouseLeave));
-		m_onSetCursor.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MShowController::OnSetCursor));
+		m_onSize.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnSize));
+		m_onLButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonDown));
+		m_onLButtonUp.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonUp));
+		m_onRButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnRButtonDown));
+		m_onMouseMove.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnMouseMove));
+		m_onMouseLeave.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnMouseLeave));
+		m_onSetCursor.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnSetCursor));
 
 		m_view.EVENT_SIZE += m_onSize;
 		m_view.EVENT_LBUTTONDOWN += m_onLButtonDown;
@@ -103,7 +103,7 @@ namespace MShow
 		return TRUE;
 	}
 
-	MElement* MShowController::HitTest(const TinyPoint& pos)
+	MElement* MPreviewController::HitTest(const TinyPoint& pos)
 	{
 		for (INT i = m_scenes.GetSize() - 1;i >= 0;i--)
 		{
@@ -115,13 +115,13 @@ namespace MShow
 		return NULL;
 	}
 
-	void MShowController::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	void MPreviewController::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		INT cx = LOWORD(lParam);
 		INT cy = HIWORD(lParam);
 	}
 
-	void MShowController::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	void MPreviewController::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		TinyPoint point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -139,29 +139,29 @@ namespace MShow
 		}
 	}
 
-	void MShowController::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	void MPreviewController::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 	}
 
-	void MShowController::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	void MPreviewController::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 
 	}
 
-	void MShowController::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	void MPreviewController::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 	}
 
-	void MShowController::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	void MPreviewController::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		m_lastElement = NULL;
 	}
 
-	void MShowController::OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	void MPreviewController::OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		TinyPoint point;
@@ -176,7 +176,7 @@ namespace MShow
 		}
 	}
 
-	void MShowController::Uninitialize()
+	void MPreviewController::Uninitialize()
 	{
 		m_bitmapBox.Release();
 		m_view.EVENT_SIZE -= m_onSize;
@@ -197,19 +197,19 @@ namespace MShow
 		}
 	}
 
-	TinyTimerQueue* MShowController::GetTimerQueue()
+	TinyTimerQueue* MPreviewController::GetTimerQueue()
 	{
 		return &m_queue;
 	}
 
-	BOOL MShowController::Add(MElement* element)
+	BOOL MPreviewController::Add(MElement* element)
 	{
 		m_lock.Lock();
 		BOOL bRes = m_scenes.Add(element);
 		m_lock.Unlock();
 		return bRes;
 	}
-	BOOL MShowController::Remove(MElement* element)
+	BOOL MPreviewController::Remove(MElement* element)
 	{
 		m_lock.Lock();
 		BOOL bRes = m_scenes.Remove(element);
@@ -217,7 +217,7 @@ namespace MShow
 		return bRes;
 	}
 
-	void MShowController::BringToTop(MElement* element)
+	void MPreviewController::BringToTop(MElement* element)
 	{
 		m_lock.Lock();
 		if (m_scenes.Lookup(element) >= 0)
@@ -227,7 +227,7 @@ namespace MShow
 		}
 		m_lock.Unlock();
 	}
-	void MShowController::BringToBottom(MElement* element)
+	void MPreviewController::BringToBottom(MElement* element)
 	{
 		m_lock.Lock();
 		if (m_scenes.Lookup(element) >= 0)
@@ -237,7 +237,7 @@ namespace MShow
 		}
 		m_lock.Unlock();
 	}
-	void MShowController::MoveUp(MElement* element)
+	void MPreviewController::MoveUp(MElement* element)
 	{
 		m_lock.Lock();
 		INT index = m_scenes.Lookup(element);
@@ -248,7 +248,7 @@ namespace MShow
 		}
 		m_lock.Unlock();
 	}
-	void MShowController::MoveDown(MElement* element)
+	void MPreviewController::MoveDown(MElement* element)
 	{
 		m_lock.Lock();
 		INT index = m_scenes.Lookup(element);
@@ -260,7 +260,7 @@ namespace MShow
 		m_lock.Unlock();
 	}
 
-	void MShowController::Draw(MElement* ps)
+	void MPreviewController::Draw(MElement* ps)
 	{
 		m_lock.Lock();
 		if (m_d2d.BeginDraw())

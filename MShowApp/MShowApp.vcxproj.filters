@@ -42,9 +42,6 @@
     <ClInclude Include="MShowApp.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DXView.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="MShowWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -69,9 +66,6 @@
     <ClInclude Include="MVideoTask.h">
       <Filter>头文件\RTMP</Filter>
     </ClInclude>
-    <ClInclude Include="MShowController.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="MElement.h">
       <Filter>头文件\Scene</Filter>
     </ClInclude>
@@ -84,7 +78,16 @@
     <ClInclude Include="VideoView.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MRTMPTask.h">
+    <ClInclude Include="MPreviewController.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MPreviewView.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MFLVTask.h">
+      <Filter>头文件\RTMP</Filter>
+    </ClInclude>
+    <ClInclude Include="MFLVPlayer.h">
       <Filter>头文件\RTMP</Filter>
     </ClInclude>
   </ItemGroup>
@@ -93,9 +96,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MShowApp.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DXView.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MShowWindow.cpp">
@@ -122,9 +122,6 @@
     <ClCompile Include="MVideoTask.cpp">
       <Filter>源文件\RTMP</Filter>
     </ClCompile>
-    <ClCompile Include="MShowController.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="MElement.cpp">
       <Filter>源文件\Scene</Filter>
     </ClCompile>
@@ -137,7 +134,16 @@
     <ClCompile Include="VideoView.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MRTMPTask.cpp">
+    <ClCompile Include="MPreviewController.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MPreviewView.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MFLVTask.cpp">
+      <Filter>源文件\RTMP</Filter>
+    </ClCompile>
+    <ClCompile Include="MFLVPlayer.cpp">
       <Filter>源文件\RTMP</Filter>
     </ClCompile>
   </ItemGroup>

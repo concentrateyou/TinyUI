@@ -1,5 +1,5 @@
 #pragma once
-#include "DXView.h"
+#include "MPreviewView.h"
 #include "MAudioRenderTask.h"
 #include "Control/TinyTabControl.h"
 #include "TabView.h"
@@ -30,11 +30,11 @@ namespace MShow
 		LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	public:
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
-		DXView& GetPreivewView();
+		MPreviewView& GetPreivewView();
 	private:
 		void OnTabChange(void*);
 	private:
-		DXView			m_preview;
+		MPreviewView	m_previewView;
 		TabView			m_tabViews[2];
 		VideoView		m_videoViews[6];
 		TinyTabControl	m_tab;

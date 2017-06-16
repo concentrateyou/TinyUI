@@ -334,6 +334,21 @@ namespace TinyUI
 		bHandled = FALSE;
 		return FALSE;
 	}
+	LRESULT TinyControl::OnPaste(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		return FALSE;
+	}
+	LRESULT TinyControl::OnCut(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		return FALSE;
+	}
+	LRESULT TinyControl::OnClear(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		return FALSE;
+	}
 	LRESULT TinyControl::OnSetFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;

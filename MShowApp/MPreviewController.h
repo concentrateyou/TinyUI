@@ -1,21 +1,23 @@
 #pragma once
 #include "MShowCommon.h"
-#include "DXView.h"
+#include "MPreviewView.h"
 #include "MGIFScene.h"
 using namespace TinyUI;
 
 namespace MShow
 {
-	class DXView;
-
-	class MShowController
+	class MPreviewView;
+	/// <summary>
+	/// ‘§¿¿ΩÁ√Ê
+	/// </summary>
+	class MPreviewController
 	{
 		friend class MGIFScene;
 		friend class MFLVScene;
-		DISALLOW_COPY_AND_ASSIGN(MShowController)
+		DISALLOW_COPY_AND_ASSIGN(MPreviewController)
 	public:
-		MShowController(DXView& view);
-		virtual ~MShowController();
+		MPreviewController(MPreviewView& view);
+		virtual ~MPreviewController();
 		BOOL	Initialize();
 		void	Uninitialize();
 		void	Draw(MElement* ps);
@@ -38,7 +40,7 @@ namespace MShow
 		MElement* HitTest(const TinyPoint& pos);
 	private:
 		DX2D					m_d2d;
-		DXView&					m_view;
+		MPreviewView&					m_view;
 		TinyArray<MElement*>	m_scenes;
 		TinyComPtr<ID2D1Bitmap>	m_bitmapBox;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onSize;

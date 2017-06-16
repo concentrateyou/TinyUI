@@ -1,9 +1,8 @@
 #pragma once
-#include "MRTMPTask.h"
+#include "MFLVTask.h"
 
 namespace MShow
 {
-	class MFLVScene;
 	/// <summary>
 	/// 视频解码线程
 	/// </summary>
@@ -11,7 +10,7 @@ namespace MShow
 	{
 		DISALLOW_COPY_AND_ASSIGN(MVideoTask)
 	public:
-		MVideoTask(MRTMPTask& task, MClock& clock);
+		MVideoTask(MFLVTask& task, MClock& clock);
 		virtual ~MVideoTask();
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
@@ -22,9 +21,9 @@ namespace MShow
 	private:
 		BOOL						m_bClose;
 		MClock&						m_clock;
-		MRTMPTask&					m_task;
+		MFLVTask&					m_task;
 		MPacketQueue				m_videoQueue;
-		H264Decode					m_h264;
+		TinyScopedPtr<H264Decode>	m_h264;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG)>>	m_onAVCDC;
 	};
 }
