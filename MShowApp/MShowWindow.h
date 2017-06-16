@@ -4,6 +4,7 @@
 #include "Control/TinyTabControl.h"
 #include "TabView.h"
 #include "VideoView.h"
+#include "VolumeView.h"
 using namespace TinyUI;
 
 namespace MShow
@@ -37,6 +38,7 @@ namespace MShow
 		MPreviewView	m_previewView;
 		TabView			m_tabViews[2];
 		VideoView		m_videoViews[6];
+		VolumeView		m_volumeViews[6];
 		TinyTabControl	m_tab;
 	private:
 		TinyScopedPtr<Delegate<void(void*)>> m_onTabChange;

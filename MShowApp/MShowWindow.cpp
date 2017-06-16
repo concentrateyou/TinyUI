@@ -71,6 +71,7 @@ namespace MShow
 		for (INT i = 0;i < 6;i++)
 		{
 			m_videoViews[i].Create(m_tabViews[0], offset, 45, 192, 108);
+			m_volumeViews[i].Create(m_tabViews[0], offset, 10, 32, 32);
 			offset += 212;
 		}
 		return FALSE;
