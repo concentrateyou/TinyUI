@@ -244,6 +244,7 @@ namespace TinyUI
 	LRESULT TinyControl::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		EVENT_LDBCLICK(uMsg, wParam, lParam, bHandled);
 		return FALSE;
 	}
 	LRESULT TinyControl::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -261,6 +262,7 @@ namespace TinyUI
 	LRESULT TinyControl::OnRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;;
+		EVENT_RDBCLICK(uMsg, wParam, lParam, bHandled);
 		return FALSE;
 	}
 	LRESULT TinyControl::OnMButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
