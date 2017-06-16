@@ -6,14 +6,14 @@ namespace MShow
 {
 	class MPreviewController;
 	/// <summary>
-	/// DX渲染控件
+	/// 音量控制
 	/// </summary>
-	class MPreviewView : public TinyControl
+	class VolumeView : public TinyControl
 	{
-		DISALLOW_COPY_AND_ASSIGN(MPreviewView)
+		DISALLOW_COPY_AND_ASSIGN(VolumeView)
 	public:
-		MPreviewView();
-		virtual ~MPreviewView();
+		VolumeView();
+		virtual ~VolumeView();
 		//5个创建函数
 		DWORD RetrieveStyle() OVERRIDE;
 		DWORD RetrieveExStyle() OVERRIDE;
@@ -28,9 +28,6 @@ namespace MShow
 		LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-	private:
-		DX2D	m_d2d;
-
 	};
 }
 

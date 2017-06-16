@@ -90,6 +90,9 @@
     <ClInclude Include="MFLVPlayer.h">
       <Filter>头文件\RTMP</Filter>
     </ClInclude>
+    <ClInclude Include="VolumeView.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -145,6 +148,9 @@
     </ClCompile>
     <ClCompile Include="MFLVPlayer.cpp">
       <Filter>源文件\RTMP</Filter>
+    </ClCompile>
+    <ClCompile Include="VolumeView.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
