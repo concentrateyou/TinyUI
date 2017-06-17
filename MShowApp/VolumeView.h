@@ -30,7 +30,7 @@ namespace MShow
 		LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	private:
-		BOOL	m_bMute;
+		BOOL	m_bFlag;
 		HICON	m_hICONS[2];
 	};
 }

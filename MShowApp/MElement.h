@@ -28,9 +28,9 @@ namespace MShow
 		MElement();
 		virtual ~MElement();
 	public:
+		virtual BOOL Initialize(LPVOID ps) = 0;
 		virtual BOOL Draw(DX2D& d2d) = 0;
-		virtual BOOL Submit() = 0;
-		virtual BOOL Close() = 0;
+		virtual BOOL Uninitialize(LPVOID ps) = 0;
 	public:
 		TinyString	GetName() const;
 		TinyPoint	GetPosition() const;

@@ -1,5 +1,6 @@
 #pragma once
 #include "MPreviewView.h"
+#include "MPreviewController.h"
 #include "MAudioRenderTask.h"
 #include "Control/TinyTabControl.h"
 #include "TabView.h"
@@ -35,11 +36,12 @@ namespace MShow
 	private:
 		void OnTabChange(void*);
 	private:
-		MPreviewView	m_previewView;
-		TabView			m_tabViews[2];
-		VideoView		m_videoViews[6];
-		VolumeView		m_volumeViews[6];
-		TinyTabControl	m_tab;
+		TabView				m_tabViews[2];
+		VideoView			m_videoViews[6];
+		VolumeView			m_volumeViews[6];
+		TinyTabControl		m_tab;
+		MPreviewView		m_previewView;
+		MPreviewController	m_controller;
 	private:
 		TinyScopedPtr<Delegate<void(void*)>> m_onTabChange;
 	};

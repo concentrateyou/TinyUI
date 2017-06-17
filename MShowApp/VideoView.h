@@ -48,9 +48,13 @@ namespace MShow
 		LRESULT OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	public:
 		DX2D& GetD2D();
+		void SetController(MPreviewController* pController);
 	private:
-		DX2D		m_d2d;
-		MFLVPlayer	m_player;
+		void OnVideo(ID2D1Bitmap1* bitmap);
+	private:
+		DX2D				m_d2d;
+		MFLVPlayer			m_player;
+		MPreviewController*	m_pController;
 	};
 }
 

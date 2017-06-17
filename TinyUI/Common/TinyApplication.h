@@ -27,6 +27,7 @@ namespace TinyUI
 		HACCEL				m_hAccTable;
 		ULONG_PTR			m_token;
 		WSADATA				m_wsd;
+		TinyTimerQueue		m_timers;
 	private:
 		TinyApplication();
 	protected:
@@ -39,6 +40,7 @@ namespace TinyUI
 		BOOL AddMessageLoop(TinyMessageLoop* pMsgLoop);
 		BOOL RemoveMessageLoop();
 		TinyMessageLoop* GetMessageLoop(DWORD dwThreadID = ::GetCurrentThreadId());
+		TinyTimerQueue&	 GetTimers();
 		BOOL Initialize(HINSTANCE m_hInstance, LPTSTR m_lpCmdLine, INT m_nCmdShow, LPCTSTR lpTableName);
 		BOOL Uninitialize();
 	public:

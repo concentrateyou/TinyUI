@@ -32,12 +32,12 @@ namespace MShow
 
 	LPCSTR MPreviewView::RetrieveClassName()
 	{
-		return TEXT("DXView");
+		return TEXT("MPreviewView");
 	}
 
 	LPCSTR MPreviewView::RetrieveTitle()
 	{
-		return TEXT("DXView");
+		return TEXT("MPreviewView");
 	}
 
 	HICON MPreviewView::RetrieveIcon()
@@ -62,6 +62,7 @@ namespace MShow
 		bHandled = FALSE;
 		PAINTSTRUCT s = { 0 };
 		HDC hDC = BeginPaint(m_hWND, &s);
+		::FillRect(hDC, &s.rcPaint, (HBRUSH)GetStockObject(BLACK_BRUSH));
 		EndPaint(m_hWND, &s);
 		return FALSE;
 	}
@@ -76,6 +77,11 @@ namespace MShow
 	{
 		bHandled = FALSE;
 		return FALSE;
+	}
+
+	DX2D& MPreviewView::GetD2D()
+	{
+		return m_d2d;
 	}
 }
 

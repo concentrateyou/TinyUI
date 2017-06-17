@@ -1,7 +1,7 @@
 #pragma once
 #include "MShowCommon.h"
 #include "MPreviewView.h"
-#include "MGIFScene.h"
+#include "MElement.h"
 using namespace TinyUI;
 
 namespace MShow
@@ -13,21 +13,21 @@ namespace MShow
 	class MPreviewController
 	{
 		friend class MGIFScene;
-		friend class MFLVScene;
+		friend class MFLVModel;
 		DISALLOW_COPY_AND_ASSIGN(MPreviewController)
 	public:
 		MPreviewController(MPreviewView& view);
 		virtual ~MPreviewController();
 		BOOL	Initialize();
 		void	Uninitialize();
-		void	Draw(MElement* ps);
 		BOOL	Add(MElement* element);
 		BOOL	Remove(MElement* element);
 		void	BringToTop(MElement* element);
 		void	BringToBottom(MElement* element);
 		void	MoveUp(MElement* element);
 		void	MoveDown(MElement* element);
-		TinyTimerQueue* GetTimerQueue();
+	public:
+		void	Draw(MElement* ps);
 	private:
 		void	OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -40,8 +40,8 @@ namespace MShow
 		MElement* HitTest(const TinyPoint& pos);
 	private:
 		DX2D					m_d2d;
-		MPreviewView&					m_view;
-		TinyArray<MElement*>	m_scenes;
+		MPreviewView&			m_view;
+		TinyArray<MElement*>	m_models;
 		TinyComPtr<ID2D1Bitmap>	m_bitmapBox;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onSize;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonDown;
@@ -53,7 +53,6 @@ namespace MShow
 	private:
 		TinyLock		m_lock;
 		MElement*		m_lastElement;
-		TinyTimerQueue	m_queue;
 	};
 }
 

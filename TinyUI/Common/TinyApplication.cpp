@@ -34,11 +34,16 @@ namespace TinyUI
 		BOOL bRet = m_msgLoops.Remove(::GetCurrentThreadId());
 		return bRet;
 	}
+
 	TinyMessageLoop* TinyApplication::GetMessageLoop(DWORD dwThreadID)
 	{
 		TinyAutoLock lock(m_lock);
 		TinyMessageLoop* ps = *m_msgLoops.Lookup(dwThreadID);
 		return ps;
+	}
+	TinyTimerQueue&	 TinyApplication::GetTimers()
+	{
+		return m_timers;
 	}
 	BOOL TinyApplication::Initialize(HINSTANCE m_hInstance, LPTSTR m_lpCmdLine, INT m_nCmdShow, LPCTSTR lpTableName)
 	{
@@ -50,13 +55,13 @@ namespace TinyUI
 		this->m_hInstance = m_hInstance;
 		this->m_iCmdShow = m_nCmdShow;
 		this->m_hAccTable = LoadAccelerators(m_hInstance, lpTableName);
-		if (!m_token)
-		{
-			GdiplusStartupInput input;
-			GdiplusStartupOutput output;
-			Status status = GdiplusStartup(&m_token, &input, &output);
-			return (status == Ok);
-		}
+		GdiplusStartupInput input;
+		GdiplusStartupOutput output;
+		Status status = GdiplusStartup(&m_token, &input, &output);
+		if (status != Ok)
+			return FALSE;
+		if (!m_timers.Create())
+			return FALSE;
 		return TRUE;
 	}
 	BOOL TinyApplication::Uninitialize()
@@ -70,6 +75,7 @@ namespace TinyUI
 			GdiplusShutdown(m_token);
 			m_token = 0;
 		}
+		m_timers.Destory();
 		OleUninitialize();
 		return TRUE;
 	}

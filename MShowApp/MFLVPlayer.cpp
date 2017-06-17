@@ -3,8 +3,9 @@
 
 namespace MShow
 {
-	MFLVPlayer::MFLVPlayer(DX2D& d2d)
+	MFLVPlayer::MFLVPlayer(DX2D& d2d, Callback<void(ID2D1Bitmap1*)>&& callback)
 		:m_d2d(d2d),
+		m_callback(std::move(callback)),
 		m_task(m_clock),
 		m_audioTask(m_task, m_clock),
 		m_audioRenderTask(m_audioTask, m_clock),
@@ -65,6 +66,10 @@ namespace MShow
 			D2D_RECT_F src = { 0.0F,0.0F,static_cast<FLOAT>(m_size.cx), static_cast<FLOAT>(m_size.cy) };
 			m_d2d.GetContext()->DrawBitmap(m_bitmap, dst, 1.0F, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, src, NULL);
 			m_d2d.EndDraw();
+			if (!m_callback.IsNull())
+			{
+				m_callback(m_bitmap);
+			}
 		}
 	}
 

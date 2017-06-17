@@ -5,7 +5,7 @@
 namespace MShow
 {
 	VolumeView::VolumeView()
-		:m_bMute(FALSE)
+		:m_bFlag(FALSE)
 	{
 	}
 
@@ -50,8 +50,8 @@ namespace MShow
 	LRESULT VolumeView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		m_hICONS[0] = LoadIcon(TinyApplication::GetInstance()->Handle(), MAKEINTRESOURCE(IDI_ICON1));
-		m_hICONS[1] = LoadIcon(TinyApplication::GetInstance()->Handle(), MAKEINTRESOURCE(IDI_ICON2));
+		m_hICONS[0] = LoadIcon(TinyApplication::GetInstance()->Handle(), MAKEINTRESOURCE(IDI_ICON2));
+		m_hICONS[1] = LoadIcon(TinyApplication::GetInstance()->Handle(), MAKEINTRESOURCE(IDI_ICON1));
 		return FALSE;
 	}
 
@@ -67,7 +67,7 @@ namespace MShow
 		PAINTSTRUCT s = { 0 };
 		HDC hDC = BeginPaint(m_hWND, &s);
 		::FillRect(hDC, &s.rcPaint, (HBRUSH)GetStockObject(WHITE_BRUSH));
-		DrawIcon(hDC, 0, 0, m_hICONS[m_bMute]);
+		DrawIcon(hDC, 0, 0, m_hICONS[m_bFlag]);
 		EndPaint(m_hWND, &s);
 		return FALSE;
 	}
@@ -87,7 +87,8 @@ namespace MShow
 	LRESULT VolumeView::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		m_bMute = !m_bMute;
+		m_bFlag = !m_bFlag;
+		this->Invalidate();
 		return FALSE;
 	}
 

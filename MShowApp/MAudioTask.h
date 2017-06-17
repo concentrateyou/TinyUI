@@ -5,7 +5,7 @@
 
 namespace MShow
 {
-	class MFLVScene;
+	class MFLVModel;
 	/// <summary>
 	/// ÒôÆµ½âÂëÏß³Ì
 	/// </summary>

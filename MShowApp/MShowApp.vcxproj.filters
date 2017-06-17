@@ -19,10 +19,10 @@
     <Filter Include="源文件\RTMP">
       <UniqueIdentifier>{9468a1ad-563f-4623-944a-c1c1d5b5577e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="头文件\Scene">
+    <Filter Include="头文件\Model">
       <UniqueIdentifier>{1dc75f0f-085c-4d89-92c0-fc369727bfaa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\Scene">
+    <Filter Include="源文件\Model">
       <UniqueIdentifier>{1bea42e2-27b3-42fd-82c6-d019586dfb7b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -67,10 +67,7 @@
       <Filter>头文件\RTMP</Filter>
     </ClInclude>
     <ClInclude Include="MElement.h">
-      <Filter>头文件\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="MGIFScene.h">
-      <Filter>头文件\Scene</Filter>
+      <Filter>头文件\Model</Filter>
     </ClInclude>
     <ClInclude Include="TabView.h">
       <Filter>头文件</Filter>
@@ -92,6 +89,9 @@
     </ClInclude>
     <ClInclude Include="VolumeView.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MFLVModel.h">
+      <Filter>头文件\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -126,10 +126,7 @@
       <Filter>源文件\RTMP</Filter>
     </ClCompile>
     <ClCompile Include="MElement.cpp">
-      <Filter>源文件\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="MGIFScene.cpp">
-      <Filter>源文件\Scene</Filter>
+      <Filter>源文件\Model</Filter>
     </ClCompile>
     <ClCompile Include="TabView.cpp">
       <Filter>源文件</Filter>
@@ -151,6 +148,9 @@
     </ClCompile>
     <ClCompile Include="VolumeView.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MFLVModel.cpp">
+      <Filter>源文件\Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

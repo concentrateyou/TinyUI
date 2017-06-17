@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "MPreviewController.h"
+#include "WICTexture.h"
 
 namespace MShow
 {
@@ -21,8 +22,6 @@ namespace MShow
 		TinySize size = { TO_CX(s) ,TO_CY(s) };
 		if (!m_d2d.Initialize(m_view.Handle(), size.cx, size.cy))
 			return FALSE;
-		if (!m_queue.Create())
-			return FALSE;
 		string box;
 		box.resize(MAX_PATH);
 		GetModuleFileName(NULL, &box[0], MAX_PATH);
@@ -32,59 +31,6 @@ namespace MShow
 		HRESULT hRes = CreateD2DBitmapFromFile(StringToWString(vs).c_str(), m_d2d.GetContext(), &m_bitmapBox);
 		if (hRes != S_OK)
 			return FALSE;
-		/*MFLVScene* pFLV1 = new MFLVScene(this);
-		if (!pFLV1->Initialize(m_d2d, "rtmp://live.hkstv.hk.lxdns.com/live/hks"))
-		{
-			SAFE_DELETE(pFLV1);
-			return FALSE;
-		}
-		if (!pFLV1->Submit())
-		{
-			SAFE_DELETE(pFLV1);
-			return FALSE;
-		}*/
-
-		/*MFLVScene* pFLV2 = new MFLVScene(this);
-		if (!pFLV2->Initialize(m_d2d, "rtmp://edge2.everyon.tv/etv2/pld926"))
-		{
-			SAFE_DELETE(pFLV2);
-			return FALSE;
-		}
-		if (!pFLV2->Submit())
-		{
-			SAFE_DELETE(pFLV2);
-			return FALSE;
-		}*/
-
-	/*	MFLVScene* pFLV3 = new MFLVScene(this);
-		if (!pFLV3->Initialize(m_d2d, "	rtmp://10.10.13.98/live/lb_kaixinjuchang_720p"))
-		{
-			SAFE_DELETE(pFLV3);
-			return FALSE;
-		}
-		if (!pFLV3->Submit())
-		{
-			SAFE_DELETE(pFLV3);
-			return FALSE;
-		}*/
-
-		/*MGIFScene* pGIF = new MGIFScene(this);
-		if (!pGIF->Initialize(m_d2d, "D:\\timg.gif"))
-		{
-			SAFE_DELETE(pGIF);
-			return FALSE;
-		}
-		if (!pGIF->Submit())
-		{
-			SAFE_DELETE(pGIF);
-			return FALSE;
-		}*/
-
-		//this->Add(pFLV1);
-		//this->Add(pFLV2);
-		//this->Add(pFLV3);
-		//this->Add(pGIF);
-
 		m_onSize.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnSize));
 		m_onLButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonDown));
 		m_onLButtonUp.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonUp));
@@ -92,7 +38,6 @@ namespace MShow
 		m_onMouseMove.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnMouseMove));
 		m_onMouseLeave.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnMouseLeave));
 		m_onSetCursor.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnSetCursor));
-
 		m_view.EVENT_SIZE += m_onSize;
 		m_view.EVENT_LBUTTONDOWN += m_onLButtonDown;
 		m_view.EVENT_LBUTTONUP += m_onLButtonUp;
@@ -105,11 +50,11 @@ namespace MShow
 
 	MElement* MPreviewController::HitTest(const TinyPoint& pos)
 	{
-		for (INT i = m_scenes.GetSize() - 1;i >= 0;i--)
+		for (INT i = m_models.GetSize() - 1;i >= 0;i--)
 		{
-			if (m_scenes[i]->PtInRect(pos))
+			if (m_models[i]->PtInRect(pos))
 			{
-				return m_scenes[i];
+				return m_models[i];
 			}
 		}
 		return NULL;
@@ -186,33 +131,27 @@ namespace MShow
 		m_view.EVENT_MOUSEMOVE -= m_onMouseMove;
 		m_view.EVENT_MOUSELEAVE -= m_onMouseLeave;
 		m_view.EVENT_SETCURSOR -= m_onSetCursor;
-		for (INT i = 0;i < m_scenes.GetSize();i++)
+		for (INT i = 0;i < m_models.GetSize();i++)
 		{
-			m_scenes[i]->Close();
+			m_models[i]->Uninitialize(NULL);
 		}
-		m_queue.Destory();
-		for (INT i = 0;i < m_scenes.GetSize();i++)
+		for (INT i = 0;i < m_models.GetSize();i++)
 		{
-			SAFE_DELETE(m_scenes[i]);
+			SAFE_DELETE(m_models[i]);
 		}
-	}
-
-	TinyTimerQueue* MPreviewController::GetTimerQueue()
-	{
-		return &m_queue;
 	}
 
 	BOOL MPreviewController::Add(MElement* element)
 	{
 		m_lock.Lock();
-		BOOL bRes = m_scenes.Add(element);
+		BOOL bRes = m_models.Add(element);
 		m_lock.Unlock();
 		return bRes;
 	}
 	BOOL MPreviewController::Remove(MElement* element)
 	{
 		m_lock.Lock();
-		BOOL bRes = m_scenes.Remove(element);
+		BOOL bRes = m_models.Remove(element);
 		m_lock.Unlock();
 		return bRes;
 	}
@@ -220,42 +159,42 @@ namespace MShow
 	void MPreviewController::BringToTop(MElement* element)
 	{
 		m_lock.Lock();
-		if (m_scenes.Lookup(element) >= 0)
+		if (m_models.Lookup(element) >= 0)
 		{
-			m_scenes.Remove(element);
-			m_scenes.Insert(0, element);
+			m_models.Remove(element);
+			m_models.Insert(0, element);
 		}
 		m_lock.Unlock();
 	}
 	void MPreviewController::BringToBottom(MElement* element)
 	{
 		m_lock.Lock();
-		if (m_scenes.Lookup(element) >= 0)
+		if (m_models.Lookup(element) >= 0)
 		{
-			m_scenes.Remove(element);
-			m_scenes.Add(element);
+			m_models.Remove(element);
+			m_models.Add(element);
 		}
 		m_lock.Unlock();
 	}
 	void MPreviewController::MoveUp(MElement* element)
 	{
 		m_lock.Lock();
-		INT index = m_scenes.Lookup(element);
+		INT index = m_models.Lookup(element);
 		if (index > 0)
 		{
-			m_scenes.Remove(element);
-			m_scenes.Insert(index - 1, element);
+			m_models.Remove(element);
+			m_models.Insert(index - 1, element);
 		}
 		m_lock.Unlock();
 	}
 	void MPreviewController::MoveDown(MElement* element)
 	{
 		m_lock.Lock();
-		INT index = m_scenes.Lookup(element);
-		if (index >= 0 && index < (m_scenes.GetSize() - 1))
+		INT index = m_models.Lookup(element);
+		if (index >= 0 && index < (m_models.GetSize() - 1))
 		{
-			m_scenes.Remove(element);
-			m_scenes.Insert(index + 1, element);
+			m_models.Remove(element);
+			m_models.Insert(index + 1, element);
 		}
 		m_lock.Unlock();
 	}
@@ -265,21 +204,21 @@ namespace MShow
 		m_lock.Lock();
 		if (m_d2d.BeginDraw())
 		{
-			for (INT i = 0;i < m_scenes.GetSize();i++)
+			for (INT i = 0;i < m_models.GetSize();i++)
 			{
-				m_scenes[i]->Draw(m_d2d);
+				m_models[i]->Draw(m_d2d);
 				if (m_bitmapBox != NULL)
 				{
 					D2D_SIZE_F sizeF = m_bitmapBox->GetSize();
-					if (m_scenes[i] == m_lastElement)
+					if (m_models[i] == m_lastElement)
 					{
-						UINT mask = m_scenes[i]->GetHandleMask();
+						UINT mask = m_models[i]->GetHandleMask();
 						for (INT j = 0; j < 8; ++j)
 						{
 							if (mask & (1 << j))
 							{
 								TinyRectangle rectangle;
-								m_scenes[i]->GetHandleRect((TrackerHit)j, &rectangle);
+								m_models[i]->GetHandleRect((TrackerHit)j, &rectangle);
 								TinyPoint pos = rectangle.Position();
 								TinySize size = rectangle.Size();
 								D2D_RECT_F dst = { static_cast<FLOAT>(pos.x),static_cast<FLOAT>(pos.y),static_cast<FLOAT>(pos.x + size.cx),static_cast<FLOAT>(pos.y + size.cy) };

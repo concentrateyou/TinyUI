@@ -40,7 +40,8 @@ namespace MShow
 	}
 	//////////////////////////////////////////////////////////////////////////
 	VideoView::VideoView()
-		:m_player(m_d2d)
+		:m_player(m_d2d, BindCallback(&VideoView::OnVideo, this)),
+		m_pController(NULL)
 	{
 	}
 
@@ -80,6 +81,11 @@ namespace MShow
 	HICON VideoView::RetrieveIcon()
 	{
 		return NULL;
+	}
+
+	void VideoView::SetController(MPreviewController* pController)
+	{
+		m_pController = pController;
 	}
 
 	LRESULT VideoView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -131,6 +137,11 @@ namespace MShow
 			m_player.Open(val.STR());
 		}
 		return FALSE;
+	}
+
+	void VideoView::OnVideo(ID2D1Bitmap1* bitmap)
+	{
+
 	}
 
 	DX2D& VideoView::GetD2D()

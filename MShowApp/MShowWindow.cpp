@@ -5,7 +5,12 @@ namespace MShow
 {
 	IMPLEMENT_DYNAMIC(MShowWindow, TinyControl);
 	MShowWindow::MShowWindow()
+		:m_controller(m_previewView)
 	{
+		for (INT i = 0;i < ARRAYSIZE(m_videoViews);i++)
+		{
+			m_videoViews[i].SetController(&m_controller);
+		}
 	}
 	MShowWindow::~MShowWindow()
 	{
@@ -68,7 +73,7 @@ namespace MShow
 		m_onTabChange.Reset(new Delegate<void(void*)>(this, &MShowWindow::OnTabChange));
 		m_tab.EVENT_SELCHANGE += m_onTabChange;
 		INT offset = 20;
-		for (INT i = 0;i < 6;i++)
+		for (INT i = 0;i < ARRAYSIZE(m_videoViews);i++)
 		{
 			m_videoViews[i].Create(m_tabViews[0], offset, 45, 192, 108);
 			m_volumeViews[i].Create(m_tabViews[0], offset, 10, 32, 32);
