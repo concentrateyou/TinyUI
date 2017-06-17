@@ -78,11 +78,6 @@ namespace MShow
 		bHandled = FALSE;
 		return FALSE;
 	}
-
-	DX2D& MPreviewView::GetD2D()
-	{
-		return m_d2d;
-	}
 }
 
 

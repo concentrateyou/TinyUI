@@ -89,5 +89,10 @@ namespace MShow
 			bRes &= m_audioRenderTask.Close(INFINITE);
 		return bRes;
 	}
+
+	TinySize MFLVPlayer::GetSize()
+	{
+		return m_size;
+	}
 }
 

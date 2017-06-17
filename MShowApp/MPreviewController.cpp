@@ -133,7 +133,7 @@ namespace MShow
 		m_view.EVENT_SETCURSOR -= m_onSetCursor;
 		for (INT i = 0;i < m_models.GetSize();i++)
 		{
-			m_models[i]->Uninitialize(NULL);
+			m_models[i]->Release();
 		}
 		for (INT i = 0;i < m_models.GetSize();i++)
 		{

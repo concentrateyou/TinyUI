@@ -17,6 +17,7 @@ namespace MShow
 		virtual ~MFLVPlayer();
 		BOOL Open(LPCSTR pzURL);
 		BOOL Close();
+		TinySize GetSize();
 		ID2D1Bitmap1* GetBitmap();
 	private:
 		void OnVideo(BYTE* bits, LONG size);

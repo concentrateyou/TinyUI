@@ -7,10 +7,7 @@ namespace MShow
 	MShowWindow::MShowWindow()
 		:m_controller(m_previewView)
 	{
-		for (INT i = 0;i < ARRAYSIZE(m_videoViews);i++)
-		{
-			m_videoViews[i].SetController(&m_controller);
-		}
+	
 	}
 	MShowWindow::~MShowWindow()
 	{
@@ -57,6 +54,7 @@ namespace MShow
 		INT cy = 730;
 		CenterWindow(NULL, { cx, cy });
 		m_previewView.Create(m_hWND, 33, 90, 512, 288);
+		m_controller.Initialize();
 		m_tab.Create(m_hWND, 0, 440, 1300, 250);
 		m_tab.GetClientRect(&s);
 		s.top += 23;
@@ -73,9 +71,11 @@ namespace MShow
 		m_onTabChange.Reset(new Delegate<void(void*)>(this, &MShowWindow::OnTabChange));
 		m_tab.EVENT_SELCHANGE += m_onTabChange;
 		INT offset = 20;
-		for (INT i = 0;i < ARRAYSIZE(m_videoViews);i++)
+		for (INT i = 0;i < 6;i++)
 		{
-			m_videoViews[i].Create(m_tabViews[0], offset, 45, 192, 108);
+			VideoView* pView = new VideoView(m_controller);
+			pView->Create(m_tabViews[0], offset, 45, 192, 108);
+			m_videoViews.Add(pView);
 			m_volumeViews[i].Create(m_tabViews[0], offset, 10, 32, 32);
 			offset += 212;
 		}
@@ -84,7 +84,14 @@ namespace MShow
 	LRESULT MShowWindow::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		for (INT i = 0;i < 6;i++)
+		{
+			m_videoViews[i]->DestroyWindow();
+			SAFE_DELETE(m_videoViews[i]);
+		}
+		m_videoViews.RemoveAll();
 		m_tab.EVENT_SELCHANGE -= m_onTabChange;
+		m_controller.Uninitialize();
 		return FALSE;
 	}
 	LRESULT MShowWindow::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

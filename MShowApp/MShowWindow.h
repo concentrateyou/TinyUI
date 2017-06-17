@@ -36,12 +36,12 @@ namespace MShow
 	private:
 		void OnTabChange(void*);
 	private:
-		TabView				m_tabViews[2];
-		VideoView			m_videoViews[6];
-		VolumeView			m_volumeViews[6];
-		TinyTabControl		m_tab;
-		MPreviewView		m_previewView;
-		MPreviewController	m_controller;
+		TabView					m_tabViews[2];
+		VolumeView				m_volumeViews[6];
+		TinyTabControl			m_tab;
+		MPreviewView			m_previewView;
+		MPreviewController		m_controller;
+		TinyArray<VideoView*>	m_videoViews;
 	private:
 		TinyScopedPtr<Delegate<void(void*)>> m_onTabChange;
 	};

@@ -26,7 +26,6 @@ namespace MShow
 		void	BringToBottom(MElement* element);
 		void	MoveUp(MElement* element);
 		void	MoveDown(MElement* element);
-	public:
 		void	Draw(MElement* ps);
 	private:
 		void	OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

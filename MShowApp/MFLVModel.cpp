@@ -3,8 +3,8 @@
 
 namespace MShow
 {
-	MFLVModel::MFLVModel(MPreviewController* pController)
-		:m_pController(pController)
+	MFLVModel::MFLVModel(MPreviewController& controller)
+		:m_controller(controller)
 	{
 	}
 
@@ -17,11 +17,6 @@ namespace MShow
 	ID2D1Bitmap1* MFLVModel::GetBitmap()
 	{
 		return m_bitmap;
-	}
-
-	BOOL MFLVModel::Initialize(LPVOID ps)
-	{
-		return TRUE;
 	}
 
 	BOOL MFLVModel::Draw(DX2D& d2d)
@@ -38,7 +33,7 @@ namespace MShow
 		return FALSE;
 	}
 
-	BOOL MFLVModel::Uninitialize(LPVOID ps)
+	BOOL MFLVModel::Release()
 	{
 		m_bitmap.Release();
 		return TRUE;

@@ -39,9 +39,10 @@ namespace MShow
 		return m_address;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	VideoView::VideoView()
-		:m_player(m_d2d, BindCallback(&VideoView::OnVideo, this)),
-		m_pController(NULL)
+	VideoView::VideoView(MPreviewController& controller)
+		:m_player(m_dx2d, BindCallback(&VideoView::OnVideo, this)),
+		m_controller(controller),
+		m_model(controller)
 	{
 	}
 
@@ -83,17 +84,12 @@ namespace MShow
 		return NULL;
 	}
 
-	void VideoView::SetController(MPreviewController* pController)
-	{
-		m_pController = pController;
-	}
-
 	LRESULT VideoView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		RECT s = { 0 };
 		this->GetClientRect(&s);
-		m_d2d.Initialize(m_hWND, TO_CX(s), TO_CY(s));
+		m_dx2d.Initialize(m_hWND, TO_CX(s), TO_CY(s));
 		return FALSE;
 	}
 
@@ -101,6 +97,7 @@ namespace MShow
 	{
 		bHandled = FALSE;
 		m_player.Close();
+		m_model.Release();
 		return FALSE;
 	}
 
@@ -134,19 +131,37 @@ namespace MShow
 		if (dlg.DoModal(m_hWND, IDD_VIDEO) == IDOK)
 		{
 			TinyString val = dlg.GetAddress();
-			m_player.Open(val.STR());
+			if (m_player.Open(val.STR()))
+			{
+				TinySize size = m_player.GetSize();
+				m_model.SetSize(size);
+				size.cx = size.cx / 2;
+				size.cy = size.cy / 2;
+				m_model.SetScale(size);
+				ID2D1Bitmap1* bitmap = m_model.GetBitmap();
+				HRESULT hRes = m_dx2d.GetContext()->CreateBitmap(D2D1::SizeU(size.cx, size.cy),
+					(const void *)NULL,
+					0,
+					&D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)),
+					&bitmap);
+			}
 		}
 		return FALSE;
 	}
 
 	void VideoView::OnVideo(ID2D1Bitmap1* bitmap)
 	{
-
+		ID2D1Bitmap1* ps = m_model.GetBitmap();
+		if (ps != NULL)
+		{
+			ps->CopyFromBitmap(NULL, bitmap, NULL);
+		}
+		m_controller.Draw(&m_model);
 	}
 
 	DX2D& VideoView::GetD2D()
 	{
-		return m_d2d;
+		return m_dx2d;
 	}
 }
 

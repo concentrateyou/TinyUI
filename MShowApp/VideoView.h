@@ -3,6 +3,7 @@
 #include "Control/TinyTextBox.h"
 #include "MPreviewController.h"
 #include "MFLVPlayer.h"
+#include "MFLVModel.h"
 using namespace DXFramework;
 
 namespace MShow
@@ -29,7 +30,7 @@ namespace MShow
 	{
 		DISALLOW_COPY_AND_ASSIGN(VideoView)
 	public:
-		VideoView();
+		VideoView(MPreviewController& controller);
 		virtual ~VideoView();
 		//5个创建函数
 		DWORD RetrieveStyle() OVERRIDE;
@@ -48,13 +49,13 @@ namespace MShow
 		LRESULT OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	public:
 		DX2D& GetD2D();
-		void SetController(MPreviewController* pController);
 	private:
 		void OnVideo(ID2D1Bitmap1* bitmap);
 	private:
-		DX2D				m_d2d;
+		DX2D				m_dx2d;
+		MFLVModel			m_model;
 		MFLVPlayer			m_player;
-		MPreviewController*	m_pController;
+		MPreviewController&	m_controller;
 	};
 }
 

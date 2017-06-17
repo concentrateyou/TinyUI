@@ -3,6 +3,7 @@
 
 namespace MShow
 {
+	class MPreviewController;
 	/// <summary>
 	/// FLV³¡¾°
 	/// </summary>
@@ -10,15 +11,14 @@ namespace MShow
 	{
 		DISALLOW_COPY_AND_ASSIGN(MFLVModel)
 	public:
-		MFLVModel(MPreviewController* pController);
+		MFLVModel(MPreviewController& controller);
 		virtual ~MFLVModel();
 		BOOL Draw(DX2D& d2d) OVERRIDE;
-		BOOL Initialize(LPVOID ps) OVERRIDE;
-		BOOL Uninitialize(LPVOID ps) OVERRIDE;
+		BOOL Release() OVERRIDE;
 	public:
 		ID2D1Bitmap1*	GetBitmap();
 	private:
-		MPreviewController*			m_pController;
+		MPreviewController&			m_controller;
 		TinyComPtr<ID2D1Bitmap1>	m_bitmap;
 	};
 }
