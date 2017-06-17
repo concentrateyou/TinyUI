@@ -3,7 +3,7 @@
 
 namespace MShow
 {
-	MFLVPlayer::MFLVPlayer(DX2D& d2d, Callback<void(ID2D1Bitmap1*)>&& callback)
+	MFLVPlayer::MFLVPlayer(DX2D& d2d, Callback<void(BYTE*, LONG)>&& callback)
 		:m_d2d(d2d),
 		m_callback(std::move(callback)),
 		m_task(m_clock),
@@ -52,7 +52,7 @@ namespace MShow
 		return m_bitmap;
 	}
 
-	void MFLVPlayer::OnVideo(BYTE* bits, LONG size)
+	void MFLVPlayer::OnVideo(BYTE* bits, LONG lsize)
 	{
 		if (m_bitmap != NULL)
 		{
@@ -68,7 +68,7 @@ namespace MShow
 			m_d2d.EndDraw();
 			if (!m_callback.IsNull())
 			{
-				m_callback(m_bitmap);
+				m_callback(bits, lsize);
 			}
 		}
 	}
@@ -90,7 +90,7 @@ namespace MShow
 		return bRes;
 	}
 
-	TinySize MFLVPlayer::GetSize()
+	TinySize MFLVPlayer::GetVideoSize()
 	{
 		return m_size;
 	}

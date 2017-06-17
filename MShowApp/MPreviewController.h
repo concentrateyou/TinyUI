@@ -27,6 +27,9 @@ namespace MShow
 		void	MoveUp(MElement* element);
 		void	MoveDown(MElement* element);
 		void	Draw(MElement* ps);
+	public:
+		DX2D&	GetD2D();
+		MPreviewView& GetView();
 	private:
 		void	OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -38,7 +41,7 @@ namespace MShow
 	private:
 		MElement* HitTest(const TinyPoint& pos);
 	private:
-		DX2D					m_d2d;
+		DX2D					m_dx2d;
 		MPreviewView&			m_view;
 		TinyArray<MElement*>	m_models;
 		TinyComPtr<ID2D1Bitmap>	m_bitmapBox;

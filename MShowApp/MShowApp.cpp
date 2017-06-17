@@ -56,10 +56,7 @@ namespace MShow
 			return FALSE;
 		if (!TinyApplication::GetInstance()->AddMessageLoop(&m_msgLoop))
 			return FALSE;
-		if (m_mshow.Create(NULL, 0, 0, 1, 1))
-		{
-
-		}
+		return m_mshow.Create(NULL, 0, 0, 1, 1);
 	}
 	INT MShowApp::Run()
 	{

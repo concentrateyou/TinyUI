@@ -41,8 +41,7 @@ namespace MShow
 	//////////////////////////////////////////////////////////////////////////
 	VideoView::VideoView(MPreviewController& controller)
 		:m_player(m_dx2d, BindCallback(&VideoView::OnVideo, this)),
-		m_controller(controller),
-		m_model(controller)
+		m_controller(controller)
 	{
 	}
 
@@ -97,7 +96,6 @@ namespace MShow
 	{
 		bHandled = FALSE;
 		m_player.Close();
-		m_model.Release();
 		return FALSE;
 	}
 
@@ -123,8 +121,7 @@ namespace MShow
 		return FALSE;
 	}
 
-
-	LRESULT VideoView::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT VideoView::OnRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		MVideoDialog dlg;
@@ -133,30 +130,46 @@ namespace MShow
 			TinyString val = dlg.GetAddress();
 			if (m_player.Open(val.STR()))
 			{
-				TinySize size = m_player.GetSize();
-				m_model.SetSize(size);
-				size.cx = size.cx / 2;
-				size.cy = size.cy / 2;
-				m_model.SetScale(size);
-				ID2D1Bitmap1* bitmap = m_model.GetBitmap();
-				HRESULT hRes = m_dx2d.GetContext()->CreateBitmap(D2D1::SizeU(size.cx, size.cy),
+				m_model.Reset(new MFLVModel(m_controller));
+				RECT s = { 0 };
+				::GetWindowRect(m_controller.GetView().Handle(), &s);
+				TinySize size(TinySize(TO_CX(s), TO_CY(s)));
+				m_model->SetSize(size);
+				TinySize videoSize = m_player.GetVideoSize();
+				videoSize.cx = videoSize.cx / 2;
+				videoSize.cy = videoSize.cy / 2;
+				m_model->SetScale(videoSize);
+				ID2D1Bitmap1** bitmap = m_model->GetBitmap();
+				HRESULT hRes = m_controller.GetD2D().GetContext()->CreateBitmap(D2D1::SizeU(size.cx, size.cy),
 					(const void *)NULL,
 					0,
 					&D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)),
-					&bitmap);
+					bitmap);
 			}
 		}
 		return FALSE;
 	}
 
-	void VideoView::OnVideo(ID2D1Bitmap1* bitmap)
+	LRESULT VideoView::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
-		ID2D1Bitmap1* ps = m_model.GetBitmap();
-		if (ps != NULL)
+		bHandled = FALSE;
+		m_controller.Remove(m_model);
+		m_controller.Add(m_model);
+		return FALSE;
+	}
+
+	void VideoView::OnVideo(BYTE* bits, LONG size)
+	{
+		if (m_model != NULL)
 		{
-			ps->CopyFromBitmap(NULL, bitmap, NULL);
+			ID2D1Bitmap1* ps = *m_model->GetBitmap();
+			if (ps != NULL)
+			{
+				TinySize size = m_player.GetVideoSize();
+				ps->CopyFromMemory(NULL, bits, size.cx * 4);
+			}
+			m_controller.Draw(m_model);
 		}
-		m_controller.Draw(&m_model);
 	}
 
 	DX2D& VideoView::GetD2D()

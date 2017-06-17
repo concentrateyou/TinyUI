@@ -46,16 +46,17 @@ namespace MShow
 		LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+		LRESULT OnRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	public:
 		DX2D& GetD2D();
 	private:
-		void OnVideo(ID2D1Bitmap1* bitmap);
+		void OnVideo(BYTE* bits, LONG size);
 	private:
-		DX2D				m_dx2d;
-		MFLVModel			m_model;
-		MFLVPlayer			m_player;
-		MPreviewController&	m_controller;
+		DX2D						m_dx2d;
+		MFLVPlayer					m_player;
+		MPreviewController&			m_controller;
+		TinyScopedPtr<MFLVModel>	m_model;
 	};
 }
 

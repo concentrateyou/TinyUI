@@ -20,7 +20,7 @@ namespace MShow
 		RECT s = { 0 };
 		::GetWindowRect(m_view.Handle(), &s);
 		TinySize size = { TO_CX(s) ,TO_CY(s) };
-		if (!m_d2d.Initialize(m_view.Handle(), size.cx, size.cy))
+		if (!m_dx2d.Initialize(m_view.Handle(), size.cx, size.cy))
 			return FALSE;
 		string box;
 		box.resize(MAX_PATH);
@@ -28,7 +28,7 @@ namespace MShow
 		box = box.substr(0, box.find_last_of("\\", string::npos, 1));
 		string vs = box + "\\box.png";
 		ASSERT(PathFileExists(vs.c_str()));
-		HRESULT hRes = CreateD2DBitmapFromFile(StringToWString(vs).c_str(), m_d2d.GetContext(), &m_bitmapBox);
+		HRESULT hRes = CreateD2DBitmapFromFile(StringToWString(vs).c_str(), m_dx2d.GetContext(), &m_bitmapBox);
 		if (hRes != S_OK)
 			return FALSE;
 		m_onSize.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnSize));
@@ -131,20 +131,19 @@ namespace MShow
 		m_view.EVENT_MOUSEMOVE -= m_onMouseMove;
 		m_view.EVENT_MOUSELEAVE -= m_onMouseLeave;
 		m_view.EVENT_SETCURSOR -= m_onSetCursor;
-		for (INT i = 0;i < m_models.GetSize();i++)
-		{
-			m_models[i]->Release();
-		}
-		for (INT i = 0;i < m_models.GetSize();i++)
-		{
-			SAFE_DELETE(m_models[i]);
-		}
+		m_lock.Lock();
+		m_models.RemoveAll();
+		m_lock.Unlock();
 	}
 
 	BOOL MPreviewController::Add(MElement* element)
 	{
 		m_lock.Lock();
-		BOOL bRes = m_models.Add(element);
+		BOOL bRes = FALSE;
+		if (m_models.Lookup(element) < 0)
+		{
+			bRes = m_models.Add(element);
+		}
 		m_lock.Unlock();
 		return bRes;
 	}
@@ -198,15 +197,24 @@ namespace MShow
 		}
 		m_lock.Unlock();
 	}
+	DX2D& MPreviewController::GetD2D()
+	{
+		return m_dx2d;
+	}
+
+	MPreviewView& MPreviewController::GetView()
+	{
+		return m_view;
+	}
 
 	void MPreviewController::Draw(MElement* ps)
 	{
 		m_lock.Lock();
-		if (m_d2d.BeginDraw())
+		if (m_dx2d.BeginDraw())
 		{
 			for (INT i = 0;i < m_models.GetSize();i++)
 			{
-				m_models[i]->Draw(m_d2d);
+				m_models[i]->Draw(m_dx2d);
 				if (m_bitmapBox != NULL)
 				{
 					D2D_SIZE_F sizeF = m_bitmapBox->GetSize();
@@ -223,13 +231,13 @@ namespace MShow
 								TinySize size = rectangle.Size();
 								D2D_RECT_F dst = { static_cast<FLOAT>(pos.x),static_cast<FLOAT>(pos.y),static_cast<FLOAT>(pos.x + size.cx),static_cast<FLOAT>(pos.y + size.cy) };
 								D2D_RECT_F src = { 0.0F,0.0F,sizeF.width / 2,sizeF.height / 2 };
-								m_d2d.GetContext()->DrawBitmap(m_bitmapBox, dst, 1.0F, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, src, NULL);
+								m_dx2d.GetContext()->DrawBitmap(m_bitmapBox, dst, 1.0F, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, src, NULL);
 							}
 						}
 					}
 				}
 			}
-			m_d2d.EndDraw();
+			m_dx2d.EndDraw();
 		}
 		m_lock.Unlock();
 	}

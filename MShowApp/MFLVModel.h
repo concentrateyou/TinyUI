@@ -16,7 +16,7 @@ namespace MShow
 		BOOL Draw(DX2D& d2d) OVERRIDE;
 		BOOL Release() OVERRIDE;
 	public:
-		ID2D1Bitmap1*	GetBitmap();
+		ID2D1Bitmap1**	GetBitmap();
 	private:
 		MPreviewController&			m_controller;
 		TinyComPtr<ID2D1Bitmap1>	m_bitmap;

@@ -13,11 +13,11 @@ namespace MShow
 	{
 		DISALLOW_COPY_AND_ASSIGN(MFLVPlayer)
 	public:
-		MFLVPlayer(DX2D& d2d, Callback<void(ID2D1Bitmap1*)>&& callback);
+		MFLVPlayer(DX2D& d2d, Callback<void(BYTE*, LONG)>&& callback);
 		virtual ~MFLVPlayer();
 		BOOL Open(LPCSTR pzURL);
 		BOOL Close();
-		TinySize GetSize();
+		TinySize GetVideoSize();
 		ID2D1Bitmap1* GetBitmap();
 	private:
 		void OnVideo(BYTE* bits, LONG size);
@@ -31,7 +31,7 @@ namespace MShow
 		MAudioRenderTask				m_audioRenderTask;
 		MVideoRenderTask				m_videoRenderTask;
 		TinyComPtr<ID2D1Bitmap1>		m_bitmap;
-		Callback<void(ID2D1Bitmap1*)>	m_callback;
+		Callback<void(BYTE*, LONG)>		m_callback;
 	};
 }
 

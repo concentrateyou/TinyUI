@@ -14,9 +14,9 @@ namespace MShow
 
 	}
 
-	ID2D1Bitmap1* MFLVModel::GetBitmap()
+	ID2D1Bitmap1** MFLVModel::GetBitmap()
 	{
-		return m_bitmap;
+		return &m_bitmap;
 	}
 
 	BOOL MFLVModel::Draw(DX2D& d2d)
