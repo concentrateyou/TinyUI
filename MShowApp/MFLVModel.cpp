@@ -11,7 +11,7 @@ namespace MShow
 
 	MFLVModel::~MFLVModel()
 	{
-
+		Release();
 	}
 
 	ID2D1Bitmap1** MFLVModel::GetBitmap()

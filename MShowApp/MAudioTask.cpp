@@ -8,6 +8,7 @@ namespace MShow
 		m_clock(clock),
 		m_bClose(FALSE)
 	{
+		m_onASC.Reset(new Delegate<void(BYTE*, LONG, WORD)>(this, &MAudioTask::OnASC));
 	}
 
 
@@ -18,7 +19,6 @@ namespace MShow
 	BOOL MAudioTask::Submit()
 	{
 		m_bClose = FALSE;
-		m_onASC.Reset(new Delegate<void(BYTE*, LONG, WORD)>(this, &MAudioTask::OnASC));
 		m_task.EVENT_ASC += m_onASC;
 		return TinyTaskBase::Submit(BindCallback(&MAudioTask::OnMessagePump, this));
 	}
@@ -27,7 +27,13 @@ namespace MShow
 	{
 		m_bClose = TRUE;
 		m_task.EVENT_ASC -= m_onASC;
-		return TinyTaskBase::Close(dwMS);
+		if (TinyTaskBase::Close(dwMS))
+		{
+			m_aac.Close();
+			m_audioQueue.RemoveAll();
+			return TRUE;
+		}
+		return FALSE;
 	}
 
 	WAVEFORMATEX* MAudioTask::GetFormat()
@@ -42,6 +48,8 @@ namespace MShow
 
 	void MAudioTask::OnASC(BYTE* bits, LONG size, WORD wBitsPerSample)
 	{
+		TRACE("MAudioTask - OnASC\n");
+		m_aac.Close();
 		m_aac.Open(bits, size, wBitsPerSample);
 	}
 
@@ -58,6 +66,7 @@ namespace MShow
 				Sleep(3);
 				continue;
 			}
+			ZeroMemory(&sampleTag, sizeof(sampleTag));
 			BOOL bRes = m_task.GetAudioQueue().Pop(sampleTag);
 			if (!bRes || sampleTag.size <= 0)
 			{

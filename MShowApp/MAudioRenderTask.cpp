@@ -17,6 +17,7 @@ namespace MShow
 
 	BOOL MAudioRenderTask::Initialize(HWND hWND)
 	{
+		m_bClose = FALSE;
 		if (!m_player.Initialize(hWND))
 			return FALSE;
 		m_events[0].CreateEvent(TRUE, FALSE);
@@ -39,7 +40,16 @@ namespace MShow
 	BOOL MAudioRenderTask::Close(DWORD dwMS)
 	{
 		m_bClose = TRUE;
-		return TinyTaskBase::Close(dwMS);
+		if (TinyTaskBase::Close(dwMS))
+		{
+			m_events[0].SetEvent();
+			m_events[1].SetEvent();
+			m_events[2].SetEvent();
+			m_player.Close();
+			m_bInitialize = FALSE;
+			return TRUE;
+		}
+		return FALSE;
 	}
 
 

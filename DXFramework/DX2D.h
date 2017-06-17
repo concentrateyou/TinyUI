@@ -21,7 +21,6 @@ namespace DXFramework
 		BOOL Resize();
 		ID2D1DeviceContext* GetContext() const;
 		HWND GetHWND() const;
-		BOOL IsValid() const;
 	private:
 		HWND							m_hWND;
 		TinySize						m_size;

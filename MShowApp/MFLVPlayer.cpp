@@ -3,14 +3,15 @@
 
 namespace MShow
 {
-	MFLVPlayer::MFLVPlayer(DX2D& d2d, Callback<void(BYTE*, LONG)>&& callback)
-		:m_d2d(d2d),
+	MFLVPlayer::MFLVPlayer(DX2D& dx2d, Callback<void(BYTE*, LONG)>&& callback)
+		:m_dx2d(dx2d),
 		m_callback(std::move(callback)),
 		m_task(m_clock),
 		m_audioTask(m_task, m_clock),
 		m_audioRenderTask(m_audioTask, m_clock),
 		m_videoTask(m_task, m_clock),
-		m_videoRenderTask(m_videoTask, m_clock, BindCallback(&MFLVPlayer::OnVideo, this))
+		m_videoRenderTask(m_videoTask, m_clock, BindCallback(&MFLVPlayer::OnVideo, this)),
+		m_bPlaying(FALSE)
 	{
 	}
 
@@ -18,10 +19,14 @@ namespace MShow
 	{
 	}
 
+	BOOL MFLVPlayer::IsPlaying() const
+	{
+		return m_bPlaying;
+	}
+
 	BOOL MFLVPlayer::Open(LPCSTR pzURL)
 	{
-		if (!m_d2d.IsValid())
-			return FALSE;
+		m_bitmap.Release();
 		if (!m_task.Initialize(pzURL))
 			return FALSE;
 		if (!m_task.Submit())
@@ -32,19 +37,20 @@ namespace MShow
 			return FALSE;
 		if (!m_audioTask.Submit())
 			return FALSE;
-		if (!m_audioRenderTask.Initialize(m_d2d.GetHWND()))
+		if (!m_audioRenderTask.Initialize(m_dx2d.GetHWND()))
 			return FALSE;
 		if (!m_audioRenderTask.Submit())
 			return FALSE;
 		FLV_SCRIPTDATA script = m_task.GetScript();
 		m_size.cx = static_cast<LONG>(script.width);
 		m_size.cy = static_cast<LONG>(script.height);
-		HRESULT hRes = m_d2d.GetContext()->CreateBitmap(D2D1::SizeU(m_size.cx, m_size.cy),
+		HRESULT hRes = m_dx2d.GetContext()->CreateBitmap(D2D1::SizeU(m_size.cx, m_size.cy),
 			(const void *)NULL,
 			0,
 			&D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)),
 			&m_bitmap);
-		return SUCCEEDED(hRes);
+		m_bPlaying = SUCCEEDED(hRes);
+		return m_bPlaying;
 	}
 
 	ID2D1Bitmap1* MFLVPlayer::GetBitmap()
@@ -57,15 +63,15 @@ namespace MShow
 		if (m_bitmap != NULL)
 		{
 			m_bitmap->CopyFromMemory(NULL, bits, m_size.cx * 4);
-			m_d2d.BeginDraw();
+			m_dx2d.BeginDraw();
 			TinyRectangle s;
-			::GetClientRect(m_d2d.GetHWND(), &s);
+			::GetClientRect(m_dx2d.GetHWND(), &s);
 			TinyPoint pos = s.Position();
 			TinySize size = s.Size();
 			D2D_RECT_F dst = { static_cast<FLOAT>(pos.x),static_cast<FLOAT>(pos.y),static_cast<FLOAT>(pos.x + size.cx),static_cast<FLOAT>(pos.y + size.cy) };
 			D2D_RECT_F src = { 0.0F,0.0F,static_cast<FLOAT>(m_size.cx), static_cast<FLOAT>(m_size.cy) };
-			m_d2d.GetContext()->DrawBitmap(m_bitmap, dst, 1.0F, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, src, NULL);
-			m_d2d.EndDraw();
+			m_dx2d.GetContext()->DrawBitmap(m_bitmap, dst, 1.0F, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, src, NULL);
+			m_dx2d.EndDraw();
 			if (!m_callback.IsNull())
 			{
 				m_callback(bits, lsize);
@@ -75,6 +81,7 @@ namespace MShow
 
 	BOOL MFLVPlayer::Close()
 	{
+		m_bPlaying = FALSE;
 		m_bitmap.Release();
 		BOOL bRes = TRUE;
 		if (m_task.IsValid())
@@ -87,6 +94,9 @@ namespace MShow
 			bRes &= m_audioTask.Close(INFINITE);
 		if (m_audioRenderTask.IsValid())
 			bRes &= m_audioRenderTask.Close(INFINITE);
+		m_clock.SetBasePTS(-1);
+		m_clock.SetBaseTime(-1);
+		Sleep(250);
 		return bRes;
 	}
 

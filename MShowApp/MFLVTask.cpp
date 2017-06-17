@@ -26,6 +26,8 @@ namespace MShow
 
 	BOOL MFLVTask::Submit()
 	{
+		m_sample = 0;
+		m_bFI = FALSE;
 		m_bClose = FALSE;
 		return TinyTaskBase::Submit(BindCallback(&MFLVTask::OnMessagePump, this));
 	}
@@ -33,7 +35,17 @@ namespace MShow
 	BOOL MFLVTask::Close(DWORD dwMS)
 	{
 		m_bClose = TRUE;
-		return TinyTaskBase::Close(INFINITE);
+		if (TinyTaskBase::Close(INFINITE))
+		{
+			ZeroMemory(&m_script, sizeof(m_script));
+			m_reader.Close();
+			m_bFI = FALSE;
+			m_sample = 0;
+			m_audioQueue.RemoveAll();
+			m_videoQueue.RemoveAll();
+			return TRUE;
+		}
+		return FALSE;
 	}
 
 	FLV_SCRIPTDATA&	MFLVTask::GetScript()

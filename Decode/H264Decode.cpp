@@ -10,6 +10,7 @@ namespace Decode
 		m_sws(NULL),
 		m_pRGB32(NULL)
 	{
+		avcodec_register_all();
 		ZeroMemory(&m_packet, sizeof(m_packet));
 	}
 
@@ -20,7 +21,6 @@ namespace Decode
 
 	BOOL H264Decode::Initialize(const TinySize& srcsize, const TinySize& dstsize)
 	{
-		avcodec_register_all();
 		av_init_packet(&m_packet);
 		m_codec = avcodec_find_decoder(AV_CODEC_ID_H264);
 		if (!m_codec)

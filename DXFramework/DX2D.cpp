@@ -10,10 +10,6 @@ namespace DXFramework
 	DX2D::~DX2D()
 	{
 	}
-	BOOL DX2D::IsValid() const
-	{
-		return m_context != NULL;
-	}
 	BOOL DX2D::Initialize(HWND hWND, INT cx, INT cy)
 	{
 		m_hWND = hWND;

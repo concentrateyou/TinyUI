@@ -27,7 +27,8 @@ namespace TinyUI
 		}
 		BOOL TinySoundPlayer::SetFormat(WAVEFORMATEX* pFMT, DWORD dwSize)
 		{
-			ASSERT(m_sound);
+			if (!m_sound)
+				return FALSE;
 			m_dwSize = dwSize;
 			m_waveFMT = pFMT;
 			HRESULT hRes = S_OK;
@@ -57,7 +58,8 @@ namespace TinyUI
 		}
 		BOOL TinySoundPlayer::GetCaps(DSCAPS& caps)
 		{
-			ASSERT(m_sound);
+			if (!m_sound)
+				return FALSE;
 			caps.dwSize = sizeof(DSCAPS);
 			return m_sound->GetCaps(&caps) == S_OK;
 		}
@@ -112,6 +114,8 @@ namespace TinyUI
 		}
 		BOOL TinySoundPlayer::Fill(BYTE* bits, LONG size, DWORD dwOffset)
 		{
+			if (!m_secondaryDSB)
+				return FALSE;
 			LPVOID	ppvAudioPtr = NULL;
 			DWORD	dwAudioBytes = 0;
 			HRESULT hRes = m_secondaryDSB->Lock(dwOffset, size, &ppvAudioPtr, &dwAudioBytes, NULL, 0, 0);
@@ -132,7 +136,8 @@ namespace TinyUI
 		}
 		BOOL TinySoundPlayer::Stop()
 		{
-			ASSERT(m_secondaryDSB);
+			if (!m_secondaryDSB)
+				return FALSE;
 			HRESULT hRes = S_OK;
 			hRes = m_secondaryDSB->Restore();
 			if (hRes != S_OK)
@@ -143,7 +148,7 @@ namespace TinyUI
 		{
 			HRESULT hRes = S_OK;
 			if (!m_secondaryDSB || !m_primaryDSB)
-				return hRes;
+				return FALSE;
 			hRes = m_secondaryDSB->Restore();
 			if (hRes != S_OK)
 				return FALSE;
@@ -158,15 +163,24 @@ namespace TinyUI
 				return FALSE;
 			m_secondaryDSB.Release();
 			m_primaryDSB.Release();
+			m_dwSize = 0;
+			m_dwOffset = 0;
 			return TRUE;
 		}
+
+		BOOL TinySoundPlayer::IsValid() const
+		{
+			return m_sound != NULL && m_secondaryDSB != NULL && m_primaryDSB != NULL;
+		}
+
 		DWORD TinySoundPlayer::GetSize() const
 		{
 			return m_dwSize;
 		}
 		BOOL TinySoundPlayer::SetNotifys(DWORD dwSize, LPCDSBPOSITIONNOTIFY pNotify)
 		{
-			ASSERT(m_secondaryDSB);
+			if (!m_secondaryDSB)
+				return FALSE;
 			TinyComPtr<IDirectSoundNotify>	notify;
 			HRESULT hRes = m_secondaryDSB->QueryInterface(IID_IDirectSoundNotify, (void**)&notify);
 			if (hRes != S_OK)

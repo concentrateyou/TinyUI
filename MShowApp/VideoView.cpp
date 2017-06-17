@@ -128,8 +128,13 @@ namespace MShow
 		if (dlg.DoModal(m_hWND, IDD_VIDEO) == IDOK)
 		{
 			TinyString val = dlg.GetAddress();
+			if (m_player.IsPlaying())
+			{
+				m_player.Close();
+			}
 			if (m_player.Open(val.STR()))
 			{
+				m_controller.Remove(m_model);
 				m_model.Reset(new MFLVModel(m_controller));
 				RECT s = { 0 };
 				::GetWindowRect(m_controller.GetView().Handle(), &s);
@@ -153,8 +158,11 @@ namespace MShow
 	LRESULT VideoView::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		m_controller.Remove(m_model);
-		m_controller.Add(m_model);
+		if (m_player.IsPlaying())
+		{
+			m_controller.Remove(m_model);
+			m_controller.Add(m_model);
+		}
 		return FALSE;
 	}
 

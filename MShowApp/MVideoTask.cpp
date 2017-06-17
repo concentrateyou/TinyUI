@@ -8,6 +8,7 @@ namespace MShow
 		m_clock(clock),
 		m_bClose(FALSE)
 	{
+		m_onAVCDC.Reset(new Delegate<void(BYTE*, LONG)>(this, &MVideoTask::OnAVCDC));
 	}
 
 
@@ -18,9 +19,21 @@ namespace MShow
 	BOOL MVideoTask::Submit()
 	{
 		m_bClose = FALSE;
-		m_onAVCDC.Reset(new Delegate<void(BYTE*, LONG)>(this, &MVideoTask::OnAVCDC));
 		m_task.EVENT_AVCDCR += m_onAVCDC;
 		return TinyTaskBase::Submit(BindCallback(&MVideoTask::OnMessagePump, this));
+	}
+
+	BOOL MVideoTask::Close(DWORD dwMS)
+	{
+		m_bClose = TRUE;
+		m_task.EVENT_AVCDCR -= m_onAVCDC;
+		if (TinyTaskBase::Close(dwMS))
+		{
+			m_h264.Close();
+			m_videoQueue.RemoveAll();
+			return TRUE;
+		}
+		return FALSE;
 	}
 
 	MPacketQueue& MVideoTask::GetVideoQueue()
@@ -30,20 +43,16 @@ namespace MShow
 
 	void MVideoTask::OnAVCDC(BYTE* bits, LONG size)
 	{
+		TRACE("MVideoTask - OnAVCDC\n");
 		FLV_SCRIPTDATA script = m_task.GetScript();
 		TinySize s(static_cast<LONG>(script.width), static_cast<LONG>(script.height));
+		m_h264.Close();
 		if (m_h264.Initialize(s, s))
 		{
 			m_h264.Open(bits, size);
 		}
 	}
 
-	BOOL MVideoTask::Close(DWORD dwMS)
-	{
-		m_bClose = TRUE;
-		m_task.EVENT_AVCDCR -= m_onAVCDC;
-		return TinyTaskBase::Close(dwMS);
-	}
 
 	void MVideoTask::OnMessagePump()
 	{
@@ -58,6 +67,7 @@ namespace MShow
 				Sleep(3);
 				continue;
 			}
+			ZeroMemory(&sampleTag, sizeof(sampleTag));
 			BOOL bRes = m_task.GetVideoQueue().Pop(sampleTag);
 			if (!bRes || sampleTag.size <= 0)
 			{

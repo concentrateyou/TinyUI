@@ -49,6 +49,7 @@ namespace MShow
 
 	void MPacketQueue::RemoveAll()
 	{
+		TinyAutoLock lock(m_lock);
 		ITERATOR pos = m_list.First();
 		while (pos != NULL)
 		{
@@ -57,5 +58,6 @@ namespace MShow
 			pos = m_list.Next(pos);
 		}
 		m_list.RemoveAll();
+		m_size = 0;
 	}
 }

@@ -30,6 +30,7 @@ namespace TinyUI
 			BOOL	GetPlan(LONG& plan);
 			BOOL	Stop();
 			BOOL	Close();
+			BOOL	IsValid() const;
 			/// <summary>
 			/// ª∫≥Â¥Û–°
 			/// </summary>

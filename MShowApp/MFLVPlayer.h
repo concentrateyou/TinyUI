@@ -13,8 +13,9 @@ namespace MShow
 	{
 		DISALLOW_COPY_AND_ASSIGN(MFLVPlayer)
 	public:
-		MFLVPlayer(DX2D& d2d, Callback<void(BYTE*, LONG)>&& callback);
+		MFLVPlayer(DX2D& dx2d, Callback<void(BYTE*, LONG)>&& callback);
 		virtual ~MFLVPlayer();
+		BOOL IsPlaying() const;
 		BOOL Open(LPCSTR pzURL);
 		BOOL Close();
 		TinySize GetVideoSize();
@@ -22,7 +23,8 @@ namespace MShow
 	private:
 		void OnVideo(BYTE* bits, LONG size);
 	private:
-		DX2D&							m_d2d;
+		BOOL							m_bPlaying;
+		DX2D&							m_dx2d;
 		TinySize						m_size;
 		MClock							m_clock;
 		MFLVTask						m_task;
