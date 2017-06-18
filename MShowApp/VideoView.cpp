@@ -136,20 +136,23 @@ namespace MShow
 			{
 				m_controller.Remove(m_model);
 				m_model.Reset(new MFLVModel(m_controller));
-				RECT s = { 0 };
-				::GetWindowRect(m_controller.GetView().Handle(), &s);
-				TinySize size(TinySize(TO_CX(s), TO_CY(s)));
-				m_model->SetSize(size);
 				TinySize videoSize = m_player.GetVideoSize();
-				videoSize.cx = videoSize.cx / 2;
-				videoSize.cy = videoSize.cy / 2;
-				m_model->SetScale(videoSize);
 				ID2D1Bitmap1** bitmap = m_model->GetBitmap();
-				HRESULT hRes = m_controller.GetD2D().GetContext()->CreateBitmap(D2D1::SizeU(size.cx, size.cy),
+				HRESULT hRes = m_controller.GetD2D().GetContext()->CreateBitmap(D2D1::SizeU(videoSize.cx, videoSize.cy),
 					(const void *)NULL,
 					0,
 					&D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)),
 					bitmap);
+				if (SUCCEEDED(hRes))
+				{
+					RECT s = { 0 };
+					::GetClientRect(m_controller.GetView().Handle(), &s);
+					TinySize size(TinySize(TO_CX(s), TO_CY(s)));
+					m_model->SetSize(size);
+					videoSize.cx = videoSize.cx / 2;
+					videoSize.cy = videoSize.cy / 2;
+					m_model->SetScale(videoSize);
+				}
 			}
 		}
 		return FALSE;
@@ -158,11 +161,7 @@ namespace MShow
 	LRESULT VideoView::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		if (m_player.IsPlaying())
-		{
-			m_controller.Remove(m_model);
-			m_controller.Add(m_model);
-		}
+		m_controller.Add(m_model);
 		return FALSE;
 	}
 
@@ -170,11 +169,12 @@ namespace MShow
 	{
 		if (m_model != NULL)
 		{
-			ID2D1Bitmap1* ps = *m_model->GetBitmap();
+			ID2D1Bitmap1* ps = *(m_model->GetBitmap());
 			if (ps != NULL)
 			{
-				TinySize size = m_player.GetVideoSize();
-				ps->CopyFromMemory(NULL, bits, size.cx * 4);
+				TinySize s = m_player.GetVideoSize();
+				ASSERT(s.cx * s.cy * 4 == size);
+				ps->CopyFromMemory(NULL, bits, s.cx * 4);
 			}
 			m_controller.Draw(m_model);
 		}

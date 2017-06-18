@@ -76,6 +76,10 @@ namespace Decode
 	{
 		return &m_sMFT;
 	}
+	NeAACDecHandle AACDecode::GetHandle()
+	{
+		return m_handle;
+	}
 	BOOL AACDecode::Decode(BYTE* bi, LONG si, BYTE*& bo, LONG& so)
 	{
 		if (!m_handle)

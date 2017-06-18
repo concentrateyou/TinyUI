@@ -19,7 +19,9 @@ namespace Decode
 		BOOL Open(BYTE* adts, LONG size, WORD wBitsPerSample);
 		BOOL Decode(BYTE* bi, LONG si, BYTE*& bo, LONG& so);
 		BOOL Close();
-		WAVEFORMATEX* GetFormat();
+		NeAACDecHandle	GetHandle();
+		WAVEFORMATEX*	GetFormat();
+		
 	private:
 		DWORD					m_dwINC;
 		WAVEFORMATEX			m_sMFT;
