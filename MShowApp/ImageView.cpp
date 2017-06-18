@@ -144,10 +144,11 @@ namespace MShow
 
 	void ImageView::OnVideo(BYTE* bits, LONG size)
 	{
-		if (m_model != NULL && m_bitmap1 != NULL)
+		if (m_model != NULL && m_bitmap1)
 		{
 			TinySize s = m_model->GetSize();
 			m_bitmap1->CopyFromMemory(NULL, bits, s.cx * 4);
+			m_model->GetBitmap()->CopyFromMemory(NULL, bits, s.cx * 4);
 			this->DrawView();
 			m_controller.Draw(m_model);
 		}

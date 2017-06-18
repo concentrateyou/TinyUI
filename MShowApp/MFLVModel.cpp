@@ -45,6 +45,7 @@ namespace MShow
 
 	BOOL MFLVModel::Release()
 	{
+		m_controller.Remove(this);
 		m_bitmap1.Release();
 		return TRUE;
 	}

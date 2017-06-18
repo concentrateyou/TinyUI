@@ -1,6 +1,7 @@
 #pragma once
 #include "MShowCommon.h"
 #include "MPreviewView.h"
+#include "Control/TinyMenu.h"
 #include "MElement.h"
 using namespace TinyUI;
 
@@ -38,10 +39,12 @@ namespace MShow
 		void	OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		void	OnMenuClick(void*, INT wID);
 	private:
 		MElement* HitTest(const TinyPoint& pos);
 	private:
 		DX2D					m_dx2d;
+		TinyMenu				m_menu;
 		MPreviewView&			m_view;
 		TinyArray<MElement*>	m_models;
 		TinyComPtr<ID2D1Bitmap>	m_bitmapBox;
@@ -52,6 +55,7 @@ namespace MShow
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onMouseMove;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onMouseLeave;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onSetCursor;
+		TinyScopedPtr<Delegate<void(void*, INT)>>				   m_onMenuClick;
 	private:
 		TinyLock		m_lock;
 		MElement*		m_lastElement;

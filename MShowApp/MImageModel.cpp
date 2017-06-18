@@ -51,7 +51,6 @@ namespace MShow
 	{
 		if (m_image.Load(pzFile))
 		{
-			//´´½¨Ô¤ÀÀ´°¿ÚBitmap;
 			TinySize imageSize = m_image.GetSize();
 			HRESULT hRes = m_controller.GetD2D().GetContext()->CreateBitmap(D2D1::SizeU(imageSize.cx, imageSize.cy),
 				(const void *)NULL,
@@ -104,12 +103,13 @@ namespace MShow
 
 	BOOL MImageModel::Release()
 	{
-		m_bitmap1.Release();
 		if (m_hTimer != NULL)
 		{
 			TinyApplication::GetInstance()->GetTimers().Unregister(m_hTimer);
 			m_hTimer = NULL;
 		}
+		m_controller.Remove(this);
+		m_bitmap1.Release();
 		m_index = 0;
 		return TRUE;
 	}

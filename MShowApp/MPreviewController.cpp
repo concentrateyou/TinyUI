@@ -4,6 +4,12 @@
 
 namespace MShow
 {
+#define IDM_MOVEUP		100
+#define IDM_MOVEDOWN	101
+#define IDM_MOVETOP		102
+#define IDM_MOVEBOTTPM	103
+#define IDM_REMOVE		104
+
 	MPreviewController::MPreviewController(MPreviewView& view)
 		:m_view(view),
 		m_lastElement(NULL)
@@ -45,12 +51,22 @@ namespace MShow
 		m_view.EVENT_MOUSEMOVE += m_onMouseMove;
 		m_view.EVENT_MOUSELEAVE += m_onMouseLeave;
 		m_view.EVENT_SETCURSOR += m_onSetCursor;
+
+		m_menu.CreatePopupMenu();
+		m_menu.AppendMenu(MF_STRING, IDM_MOVEUP, TEXT("上移"));
+		m_menu.AppendMenu(MF_STRING, IDM_MOVEDOWN, TEXT("下移"));
+		m_menu.AppendMenu(MF_STRING, IDM_MOVETOP, TEXT("移至顶部"));
+		m_menu.AppendMenu(MF_STRING, IDM_MOVEBOTTPM, TEXT("移至底部"));
+		m_menu.AppendMenu(MF_STRING, IDM_REMOVE, TEXT("移除"));
+		m_onMenuClick.Reset(new Delegate<void(void*, INT)>(this, &MPreviewController::OnMenuClick));
+		m_menu.EVENT_CLICK += m_onMenuClick;
+
 		return TRUE;
 	}
 
 	MElement* MPreviewController::HitTest(const TinyPoint& pos)
 	{
-		for (INT i = m_models.GetSize() - 1;i >= 0;i--)
+		for (INT i = 0;i < m_models.GetSize();i++)
 		{
 			if (m_models[i]->PtInRect(pos))
 			{
@@ -92,7 +108,17 @@ namespace MShow
 	void MPreviewController::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-
+		TinyPoint point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		MElement* element = HitTest(point);
+		if (element != m_lastElement)
+		{
+			m_lastElement = element;
+		}
+		if (m_lastElement)
+		{
+			m_view.ClientToScreen(&point);
+			m_menu.TrackPopupMenu(TPM_LEFTBUTTON, point.x, point.y, m_view.Handle(), NULL);
+		}
 	}
 
 	void MPreviewController::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -121,8 +147,37 @@ namespace MShow
 		}
 	}
 
+	void MPreviewController::OnMenuClick(void*, INT wID)
+	{
+		switch (wID)
+		{
+		case IDM_MOVEDOWN:
+			MoveDown(m_lastElement);
+			break;
+		case IDM_MOVEUP:
+			MoveUp(m_lastElement);
+			break;
+		case IDM_MOVETOP:
+			BringToTop(m_lastElement);
+			break;
+		case IDM_MOVEBOTTPM:
+			BringToBottom(m_lastElement);
+			break;
+		case IDM_REMOVE:
+		{
+			if (m_lastElement)
+			{
+				Remove(m_lastElement);
+				m_lastElement = NULL;
+			}
+		}
+		break;
+		}
+	}
+
 	void MPreviewController::Uninitialize()
 	{
+		TinyAutoLock lock(m_lock);
 		m_bitmapBox.Release();
 		m_view.EVENT_SIZE -= m_onSize;
 		m_view.EVENT_LBUTTONDOWN -= m_onLButtonDown;
@@ -131,71 +186,65 @@ namespace MShow
 		m_view.EVENT_MOUSEMOVE -= m_onMouseMove;
 		m_view.EVENT_MOUSELEAVE -= m_onMouseLeave;
 		m_view.EVENT_SETCURSOR -= m_onSetCursor;
-		m_lock.Lock();
 		m_models.RemoveAll();
-		m_lock.Unlock();
 	}
 
 	BOOL MPreviewController::Add(MElement* element)
 	{
-		m_lock.Lock();
+		TinyAutoLock lock(m_lock);
 		BOOL bRes = FALSE;
-		if (m_models.Lookup(element) < 0)
+		if (element != NULL)
 		{
-			bRes = m_models.Add(element);
+			if (m_models.Lookup(element) < 0)
+			{
+				bRes = m_models.Add(element);
+			}
 		}
-		m_lock.Unlock();
 		return bRes;
 	}
 	BOOL MPreviewController::Remove(MElement* element)
 	{
-		m_lock.Lock();
-		BOOL bRes = m_models.Remove(element);
-		m_lock.Unlock();
-		return bRes;
+		TinyAutoLock lock(m_lock);
+		return m_models.Remove(element);
 	}
 
 	void MPreviewController::BringToTop(MElement* element)
 	{
-		m_lock.Lock();
+		TinyAutoLock lock(m_lock);
 		if (m_models.Lookup(element) >= 0)
 		{
 			m_models.Remove(element);
 			m_models.Insert(0, element);
 		}
-		m_lock.Unlock();
 	}
 	void MPreviewController::BringToBottom(MElement* element)
 	{
-		m_lock.Lock();
+		TinyAutoLock lock(m_lock);
 		if (m_models.Lookup(element) >= 0)
 		{
 			m_models.Remove(element);
 			m_models.Add(element);
 		}
-		m_lock.Unlock();
 	}
 	void MPreviewController::MoveUp(MElement* element)
 	{
-		m_lock.Lock();
+		TinyAutoLock lock(m_lock);
 		INT index = m_models.Lookup(element);
 		if (index > 0)
 		{
 			m_models.Remove(element);
 			m_models.Insert(index - 1, element);
 		}
-		m_lock.Unlock();
 	}
 	void MPreviewController::MoveDown(MElement* element)
 	{
-		m_lock.Lock();
+		TinyAutoLock lock(m_lock);
 		INT index = m_models.Lookup(element);
 		if (index >= 0 && index < (m_models.GetSize() - 1))
 		{
 			m_models.Remove(element);
 			m_models.Insert(index + 1, element);
 		}
-		m_lock.Unlock();
 	}
 	DX2D& MPreviewController::GetD2D()
 	{
@@ -209,10 +258,10 @@ namespace MShow
 
 	void MPreviewController::Draw(MElement* ps)
 	{
-		m_lock.Lock();
+		TinyAutoLock lock(m_lock);
 		if (m_dx2d.BeginDraw())
 		{
-			for (INT i = 0;i < m_models.GetSize();i++)
+			for (INT i = m_models.GetSize() - 1;i >= 0;i--)
 			{
 				m_models[i]->Draw();
 				if (m_bitmapBox != NULL)
@@ -239,8 +288,5 @@ namespace MShow
 			}
 			m_dx2d.EndDraw();
 		}
-		m_lock.Unlock();
 	}
-
-
 }

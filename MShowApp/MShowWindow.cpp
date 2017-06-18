@@ -91,11 +91,10 @@ namespace MShow
 		bHandled = FALSE;
 		for (INT i = 0;i < 6;i++)
 		{
-			m_videoViews[i]->DestroyWindow();
-			SAFE_DELETE(m_videoViews[i]);
-
 			m_imageViews[i]->DestroyWindow();
 			SAFE_DELETE(m_imageViews[i]);
+			m_videoViews[i]->DestroyWindow();
+			SAFE_DELETE(m_videoViews[i]);
 		}
 		m_videoViews.RemoveAll();
 		m_imageViews.RemoveAll();
