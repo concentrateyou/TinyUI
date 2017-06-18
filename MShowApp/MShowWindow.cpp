@@ -7,7 +7,7 @@ namespace MShow
 	MShowWindow::MShowWindow()
 		:m_controller(m_previewView)
 	{
-	
+
 	}
 	MShowWindow::~MShowWindow()
 	{
@@ -73,10 +73,15 @@ namespace MShow
 		INT offset = 20;
 		for (INT i = 0;i < 6;i++)
 		{
-			VideoView* pView = new VideoView(m_controller);
-			pView->Create(m_tabViews[0], offset, 45, 192, 108);
-			m_videoViews.Add(pView);
-			m_volumeViews[i].Create(m_tabViews[0], offset, 10, 32, 32);
+			VideoView* pVideoView = new VideoView(m_controller);
+			pVideoView->Create(m_tabViews[0], offset, 45, 192, 108);
+			m_videoViews.Add(pVideoView);
+			m_volumeViews[i].Create(m_tabViews[0], offset, 10, 20, 20);
+
+			ImageView* pImageView = new ImageView(m_controller);
+			pImageView->Create(m_tabViews[1], offset, 45, 192, 108);
+			m_imageViews.Add(pImageView);
+
 			offset += 212;
 		}
 		return FALSE;
@@ -88,8 +93,12 @@ namespace MShow
 		{
 			m_videoViews[i]->DestroyWindow();
 			SAFE_DELETE(m_videoViews[i]);
+
+			m_imageViews[i]->DestroyWindow();
+			SAFE_DELETE(m_imageViews[i]);
 		}
 		m_videoViews.RemoveAll();
+		m_imageViews.RemoveAll();
 		m_tab.EVENT_SELCHANGE -= m_onTabChange;
 		m_controller.Uninitialize();
 		return FALSE;

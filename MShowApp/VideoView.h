@@ -33,12 +33,13 @@ namespace MShow
 		VideoView(MPreviewController& controller);
 		virtual ~VideoView();
 		//5个创建函数
-		DWORD RetrieveStyle() OVERRIDE;
-		DWORD RetrieveExStyle() OVERRIDE;
-		LPCSTR RetrieveClassName() OVERRIDE;
-		LPCSTR RetrieveTitle() OVERRIDE;
-		HICON RetrieveIcon() OVERRIDE;
-		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
+		DWORD	RetrieveStyle() OVERRIDE;
+		DWORD	RetrieveExStyle() OVERRIDE;
+		LPCSTR	RetrieveClassName() OVERRIDE;
+		LPCSTR	RetrieveTitle() OVERRIDE;
+		HICON	RetrieveIcon() OVERRIDE;
+		BOOL	Create(HWND hParent, INT x, INT y, INT cx, INT cy);
+		DX2D&	GetD2D();
 		//事件
 		LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
@@ -48,12 +49,12 @@ namespace MShow
 		LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-	public:
-		DX2D& GetD2D();
 	private:
-		void OnVideo(BYTE* bits, LONG size);
+		void	OnVideo(BYTE* bits, LONG size);
+		void	DrawView();
 	private:
 		DX2D						m_dx2d;
+		TinyComPtr<ID2D1Bitmap>		m_bitmapClose;
 		MFLVPlayer					m_player;
 		MPreviewController&			m_controller;
 		TinyScopedPtr<MFLVModel>	m_model;

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "VideoView.h"
+#include "WICTexture.h"
 #include "resource.h"
 
 namespace MShow
@@ -88,7 +89,17 @@ namespace MShow
 		bHandled = FALSE;
 		RECT s = { 0 };
 		this->GetClientRect(&s);
-		m_dx2d.Initialize(m_hWND, TO_CX(s), TO_CY(s));
+		if (m_dx2d.Initialize(m_hWND, TO_CX(s), TO_CY(s)))
+		{
+			string val;
+			val.resize(MAX_PATH);
+			GetModuleFileName(NULL, &val[0], MAX_PATH);
+			val = val.substr(0, val.find_last_of("\\", string::npos, 1));
+			string vs = val + "\\close.png";
+			ASSERT(PathFileExists(vs.c_str()));
+			HRESULT hRes = CreateD2DBitmapFromFile(StringToWString(vs).c_str(), m_dx2d.GetContext(), &m_bitmapClose);
+			ASSERT(SUCCEEDED(hRes));
+		}
 		return FALSE;
 	}
 
@@ -165,16 +176,35 @@ namespace MShow
 		return FALSE;
 	}
 
+	void VideoView::DrawView()
+	{
+		ID2D1Bitmap1* bitmap = m_player.GetBitmap();
+		if (bitmap != NULL)
+		{
+			m_dx2d.BeginDraw();
+			TinyRectangle s;
+			::GetClientRect(m_hWND, &s);
+			TinySize videoSize = m_player.GetVideoSize();
+			TinyPoint pos = s.Position();
+			TinySize size = s.Size();
+			D2D_RECT_F dst = { static_cast<FLOAT>(pos.x),static_cast<FLOAT>(pos.y),static_cast<FLOAT>(pos.x + size.cx),static_cast<FLOAT>(pos.y + size.cy) };
+			D2D_RECT_F src = { 0.0F,0.0F,static_cast<FLOAT>(videoSize.cx), static_cast<FLOAT>(videoSize.cy) };
+			m_dx2d.GetContext()->DrawBitmap(bitmap, dst, 1.0F, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, src, NULL);
+			m_dx2d.EndDraw();
+		}
+	}
+
 	void VideoView::OnVideo(BYTE* bits, LONG size)
 	{
 		if (m_model != NULL)
 		{
-			ID2D1Bitmap1* ps = *(m_model->GetBitmap());
-			if (ps != NULL)
+			this->DrawView();
+			ID2D1Bitmap1* bitmap = *(m_model->GetBitmap());
+			if (bitmap != NULL)
 			{
 				TinySize s = m_player.GetVideoSize();
 				ASSERT(s.cx * s.cy * 4 == size);
-				ps->CopyFromMemory(NULL, bits, s.cx * 4);
+				bitmap->CopyFromMemory(NULL, bits, s.cx * 4);
 			}
 			m_controller.Draw(m_model);
 		}

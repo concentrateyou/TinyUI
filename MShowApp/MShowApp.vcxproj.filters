@@ -25,6 +25,12 @@
     <Filter Include="源文件\Model">
       <UniqueIdentifier>{1bea42e2-27b3-42fd-82c6-d019586dfb7b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\View">
+      <UniqueIdentifier>{cde0edb1-35ee-4c81-b2cc-21c19f6b7f8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\View">
+      <UniqueIdentifier>{b79b512a-1f1c-4a79-8273-6c50805e0663}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -40,9 +46,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="MShowApp.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MShowWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="MShowCommon.h">
@@ -69,16 +72,7 @@
     <ClInclude Include="MElement.h">
       <Filter>头文件\Model</Filter>
     </ClInclude>
-    <ClInclude Include="TabView.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="VideoView.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="MPreviewController.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MPreviewView.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="MFLVTask.h">
@@ -87,10 +81,28 @@
     <ClInclude Include="MFLVPlayer.h">
       <Filter>头文件\RTMP</Filter>
     </ClInclude>
+    <ClInclude Include="MFLVModel.h">
+      <Filter>头文件\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageView.h">
+      <Filter>头文件\View</Filter>
+    </ClInclude>
+    <ClInclude Include="TabView.h">
+      <Filter>头文件\View</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoView.h">
+      <Filter>头文件\View</Filter>
+    </ClInclude>
     <ClInclude Include="VolumeView.h">
+      <Filter>头文件\View</Filter>
+    </ClInclude>
+    <ClInclude Include="MShowWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MFLVModel.h">
+    <ClInclude Include="MPreviewView.h">
+      <Filter>头文件\View</Filter>
+    </ClInclude>
+    <ClInclude Include="MImageModel.h">
       <Filter>头文件\Model</Filter>
     </ClInclude>
   </ItemGroup>
@@ -128,16 +140,7 @@
     <ClCompile Include="MElement.cpp">
       <Filter>源文件\Model</Filter>
     </ClCompile>
-    <ClCompile Include="TabView.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="VideoView.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="MPreviewController.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MPreviewView.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MFLVTask.cpp">
@@ -146,10 +149,25 @@
     <ClCompile Include="MFLVPlayer.cpp">
       <Filter>源文件\RTMP</Filter>
     </ClCompile>
-    <ClCompile Include="VolumeView.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="MFLVModel.cpp">
+      <Filter>源文件\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageView.cpp">
+      <Filter>源文件\View</Filter>
+    </ClCompile>
+    <ClCompile Include="VolumeView.cpp">
+      <Filter>源文件\View</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoView.cpp">
+      <Filter>源文件\View</Filter>
+    </ClCompile>
+    <ClCompile Include="TabView.cpp">
+      <Filter>源文件\View</Filter>
+    </ClCompile>
+    <ClCompile Include="MPreviewView.cpp">
+      <Filter>源文件\View</Filter>
+    </ClCompile>
+    <ClCompile Include="MImageModel.cpp">
       <Filter>源文件\Model</Filter>
     </ClCompile>
   </ItemGroup>

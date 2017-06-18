@@ -63,15 +63,6 @@ namespace MShow
 		if (m_bitmap != NULL)
 		{
 			m_bitmap->CopyFromMemory(NULL, bits, m_size.cx * 4);
-			m_dx2d.BeginDraw();
-			TinyRectangle s;
-			::GetClientRect(m_dx2d.GetHWND(), &s);
-			TinyPoint pos = s.Position();
-			TinySize size = s.Size();
-			D2D_RECT_F dst = { static_cast<FLOAT>(pos.x),static_cast<FLOAT>(pos.y),static_cast<FLOAT>(pos.x + size.cx),static_cast<FLOAT>(pos.y + size.cy) };
-			D2D_RECT_F src = { 0.0F,0.0F,static_cast<FLOAT>(m_size.cx), static_cast<FLOAT>(m_size.cy) };
-			m_dx2d.GetContext()->DrawBitmap(m_bitmap, dst, 1.0F, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, src, NULL);
-			m_dx2d.EndDraw();
 			if (!m_callback.IsNull())
 			{
 				m_callback(bits, lsize);

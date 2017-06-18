@@ -1,26 +1,26 @@
 #pragma once
 #include "MPreviewController.h"
+#include "MImageModel.h"
 using namespace DXFramework;
 
 namespace MShow
 {
 	class MPreviewController;
-	/// <summary>
-	/// 音量控制
-	/// </summary>
-	class VolumeView : public TinyControl
+
+	class ImageView : public TinyControl
 	{
-		DISALLOW_COPY_AND_ASSIGN(VolumeView)
+		DISALLOW_COPY_AND_ASSIGN(ImageView)
 	public:
-		VolumeView();
-		virtual ~VolumeView();
+		ImageView(MPreviewController& controller);
+		virtual ~ImageView();
 		//5个创建函数
-		DWORD RetrieveStyle() OVERRIDE;
-		DWORD RetrieveExStyle() OVERRIDE;
-		LPCSTR RetrieveClassName() OVERRIDE;
-		LPCSTR RetrieveTitle() OVERRIDE;
-		HICON RetrieveIcon() OVERRIDE;
-		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
+		DWORD	RetrieveStyle() OVERRIDE;
+		DWORD	RetrieveExStyle() OVERRIDE;
+		LPCSTR	RetrieveClassName() OVERRIDE;
+		LPCSTR	RetrieveTitle() OVERRIDE;
+		HICON	RetrieveIcon() OVERRIDE;
+		BOOL	Create(HWND hParent, INT x, INT y, INT cx, INT cy);
+		DX2D&	GetD2D();
 		//事件
 		LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
@@ -29,10 +29,15 @@ namespace MShow
 		LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+		LRESULT OnRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	private:
-		BOOL		m_bFlag;
-		HICON		m_hICONS[2];
-		TinySize	m_size;
+		void OnVideo(ID2D1Bitmap1* bitmap);
+		void DrawView(ID2D1Bitmap1* bitmap);
+	private:
+		DX2D						m_dx2d;
+		MPreviewController&			m_controller;
+		TinyScopedPtr<MImageModel>	m_model;
+		
 	};
 }
 

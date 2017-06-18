@@ -150,8 +150,10 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ImageView.h" />
     <ClInclude Include="MFLVPlayer.h" />
     <ClInclude Include="MFLVModel.h" />
+    <ClInclude Include="MImageModel.h" />
     <ClInclude Include="MPreviewView.h" />
     <ClInclude Include="MAudioTask.h" />
     <ClInclude Include="MClock.h" />
@@ -173,8 +175,10 @@
     <ClInclude Include="VolumeView.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ImageView.cpp" />
     <ClCompile Include="MFLVPlayer.cpp" />
     <ClCompile Include="MFLVModel.cpp" />
+    <ClCompile Include="MImageModel.cpp" />
     <ClCompile Include="MPreviewView.cpp" />
     <ClCompile Include="MAudioTask.cpp" />
     <ClCompile Include="MClock.cpp" />

@@ -67,7 +67,7 @@ namespace MShow
 		PAINTSTRUCT s = { 0 };
 		HDC hDC = BeginPaint(m_hWND, &s);
 		::FillRect(hDC, &s.rcPaint, (HBRUSH)GetStockObject(WHITE_BRUSH));
-		DrawIcon(hDC, 0, 0, m_hICONS[m_bFlag]);
+		DrawIconEx(hDC, 0, 0, m_hICONS[m_bFlag], m_size.cx, m_size.cy, 0, NULL, DI_NORMAL);
 		EndPaint(m_hWND, &s);
 		return FALSE;
 	}
@@ -81,6 +81,8 @@ namespace MShow
 	LRESULT VolumeView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		m_size.cx = LOWORD(lParam);
+		m_size.cy = HIWORD(lParam);
 		return FALSE;
 	}
 
