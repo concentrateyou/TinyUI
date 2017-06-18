@@ -214,7 +214,7 @@ namespace MShow
 		{
 			for (INT i = 0;i < m_models.GetSize();i++)
 			{
-				m_models[i]->Draw(m_dx2d);
+				m_models[i]->Draw();
 				if (m_bitmapBox != NULL)
 				{
 					D2D_SIZE_F sizeF = m_bitmapBox->GetSize();

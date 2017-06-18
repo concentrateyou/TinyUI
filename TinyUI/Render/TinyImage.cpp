@@ -23,7 +23,7 @@ namespace TinyUI
 	{
 		for (INT i = 0; i < m_images.GetSize(); i++)
 		{
-			SAFE_DELETE_OBJECT(m_images[i]);
+			SAFE_DELETE_OBJECT(m_images[i].hBitmap);
 		}
 	}
 	BOOL TinyImage::IsEmpty() const
@@ -32,6 +32,10 @@ namespace TinyUI
 	}
 	BOOL TinyImage::Load(LPCSTR pz)
 	{
+		for (INT i = 0; i < m_images.GetSize(); i++)
+		{
+			SAFE_DELETE_OBJECT(m_images[i].hBitmap);
+		}
 		FILE* pFile = NULL;
 		if (fopen_s(&pFile, pz, "rb") || !pFile)
 			return S_FALSE;
@@ -55,32 +59,32 @@ namespace TinyUI
 			bmi.bmiHeader.biBitCount = 32;
 			bmi.bmiHeader.biCompression = BI_RGB;
 			bmi.bmiHeader.biSizeImage = m_cx * m_cy * 4;
-			BYTE* pvBits = NULL;
-			HBITMAP hBitmap = ::CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, (void**)&pvBits, NULL, 0);
-			if (hBitmap)
+			IMAGE_INFO s = { 0 };
+			s.hBitmap = ::CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, (void**)&s.Bits, NULL, 0);
+			if (s.hBitmap != NULL)
 			{
 				for (INT i = 0; i < m_cx * m_cy; i++)
 				{
-					pvBits[i * 4 + 3] = pData[i * 4 + 3];
-					if (pvBits[i * 4 + 3] < 255)
+					s.Bits[i * 4 + 3] = pData[i * 4 + 3];
+					if (s.Bits[i * 4 + 3] < 255)
 					{
-						pvBits[i * 4] = (BYTE)(DWORD(pData[i * 4 + 2])*pData[i * 4 + 3] / 255);//B
-						pvBits[i * 4 + 1] = (BYTE)(DWORD(pData[i * 4 + 1])*pData[i * 4 + 3] / 255);//G
-						pvBits[i * 4 + 2] = (BYTE)(DWORD(pData[i * 4])*pData[i * 4 + 3] / 255);//R
+						s.Bits[i * 4] = (BYTE)(DWORD(pData[i * 4 + 2])*pData[i * 4 + 3] / 255);//B
+						s.Bits[i * 4 + 1] = (BYTE)(DWORD(pData[i * 4 + 1])*pData[i * 4 + 3] / 255);//G
+						s.Bits[i * 4 + 2] = (BYTE)(DWORD(pData[i * 4])*pData[i * 4 + 3] / 255);//R
 					}
 					else
 					{
-						pvBits[i * 4] = pData[i * 4 + 2];
-						pvBits[i * 4 + 1] = pData[i * 4 + 1];
-						pvBits[i * 4 + 2] = pData[i * 4];
+						s.Bits[i * 4] = pData[i * 4 + 2];
+						s.Bits[i * 4 + 1] = pData[i * 4 + 1];
+						s.Bits[i * 4 + 2] = pData[i * 4];
 					}
 				}
-				m_images.Add(hBitmap);
+				m_images.Add(s);
 			}
 		}
 		else
 		{
-			BYTE* p = pData + m_count * 4 * m_cx * m_cy;
+			BYTE* bits = pData + m_count * 4 * m_cx * m_cy;
 			for (INT i = 0; i < m_count; i++)
 			{
 				BYTE* ps = pData + i * 4 * m_cx * m_cy;
@@ -93,44 +97,49 @@ namespace TinyUI
 				bmi.bmiHeader.biBitCount = 32;
 				bmi.bmiHeader.biCompression = BI_RGB;
 				bmi.bmiHeader.biSizeImage = m_cx * m_cy * 4;
-				BYTE* pvBits = NULL;
-				HBITMAP hBitmap = ::CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, (void**)&pvBits, NULL, 0);
-				if (hBitmap)
+				IMAGE_INFO s = { 0 };
+				s.hBitmap = ::CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, (void**)&s.Bits, NULL, 0);
+				if (s.hBitmap != NULL)
 				{
 					for (INT i = 0; i < m_cx * m_cy; i++)
 					{
-						pvBits[i * 4 + 3] = ps[i * 4 + 3];
-						if (pvBits[i * 4 + 3] < 255)
+						s.Bits[i * 4 + 3] = ps[i * 4 + 3];
+						if (s.Bits[i * 4 + 3] < 255)
 						{
-							pvBits[i * 4] = (BYTE)(DWORD(ps[i * 4 + 2])*ps[i * 4 + 3] / 255);//B
-							pvBits[i * 4 + 1] = (BYTE)(DWORD(ps[i * 4 + 1])*ps[i * 4 + 3] / 255);//G
-							pvBits[i * 4 + 2] = (BYTE)(DWORD(ps[i * 4])*ps[i * 4 + 3] / 255);//R
+							s.Bits[i * 4] = (BYTE)(DWORD(ps[i * 4 + 2])*ps[i * 4 + 3] / 255);//B
+							s.Bits[i * 4 + 1] = (BYTE)(DWORD(ps[i * 4 + 1])*ps[i * 4 + 3] / 255);//G
+							s.Bits[i * 4 + 2] = (BYTE)(DWORD(ps[i * 4])*ps[i * 4 + 3] / 255);//R
 						}
 						else
 						{
-							pvBits[i * 4] = ps[i * 4 + 2];
-							pvBits[i * 4 + 1] = ps[i * 4 + 1];
-							pvBits[i * 4 + 2] = ps[i * 4];
+							s.Bits[i * 4] = ps[i * 4 + 2];
+							s.Bits[i * 4 + 1] = ps[i * 4 + 1];
+							s.Bits[i * 4 + 2] = ps[i * 4];
 						}
 					}
-					m_images.Add(hBitmap);
-					m_delays.Add(*(UINT*)p);
-					p += sizeof(UINT);
+					s.Delay = (*(UINT*)bits) * 10;
+					m_images.Add(s);
+					bits += sizeof(UINT);
 				}
 			}
 		}
 		stbi_image_free(pData);
-		m_hBitmap = m_images.GetSize() == 0 ? NULL : m_images[0];
+		m_hBitmap = m_images.GetSize() == 0 ? NULL : m_images[0].hBitmap;
 		return m_images.GetSize() == m_count ? TRUE : FALSE;
 	_ERROR:
 		stbi_image_free(pData);
 		return FALSE;
 	}
-	BOOL TinyImage::Load(BYTE* ps, DWORD size)
+	BOOL TinyImage::Load(BYTE* bits, DWORD size)
 	{
-		if (!ps) return S_FALSE;
+		for (INT i = 0; i < m_images.GetSize(); i++)
+		{
+			SAFE_DELETE_OBJECT(m_images[i].hBitmap);
+		}
+		if (!bits)
+			return S_FALSE;
 		INT comp = 0;
-		BYTE* pData = stbi_load_from_memory_ex(ps, size, &m_cx, &m_cy, &comp, 4, &m_count);
+		BYTE* pData = stbi_load_from_memory_ex(bits, size, &m_cx, &m_cy, &comp, 4, &m_count);
 		if (!pData)
 		{
 			goto _ERROR;
@@ -146,27 +155,27 @@ namespace TinyUI
 			bmi.bmiHeader.biBitCount = 32;
 			bmi.bmiHeader.biCompression = BI_RGB;
 			bmi.bmiHeader.biSizeImage = m_cx * m_cy * 4;
-			BYTE* pvBits = NULL;
-			HBITMAP hBitmap = ::CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, (void**)&pvBits, NULL, 0);
-			if (hBitmap)
+			IMAGE_INFO s = { 0 };
+			s.hBitmap = ::CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, (void**)&s.Bits, NULL, 0);
+			if (s.hBitmap)
 			{
 				for (INT i = 0; i < m_cx * m_cy; i++)
 				{
-					pvBits[i * 4 + 3] = pData[i * 4 + 3];
-					if (pvBits[i * 4 + 3] < 255)
+					s.Bits[i * 4 + 3] = pData[i * 4 + 3];
+					if (s.Bits[i * 4 + 3] < 255)
 					{
-						pvBits[i * 4] = (BYTE)(DWORD(pData[i * 4 + 2])*pData[i * 4 + 3] / 255);//B
-						pvBits[i * 4 + 1] = (BYTE)(DWORD(pData[i * 4 + 1])*pData[i * 4 + 3] / 255);//G
-						pvBits[i * 4 + 2] = (BYTE)(DWORD(pData[i * 4])*pData[i * 4 + 3] / 255);//R
+						s.Bits[i * 4] = (BYTE)(DWORD(pData[i * 4 + 2])*pData[i * 4 + 3] / 255);//B
+						s.Bits[i * 4 + 1] = (BYTE)(DWORD(pData[i * 4 + 1])*pData[i * 4 + 3] / 255);//G
+						s.Bits[i * 4 + 2] = (BYTE)(DWORD(pData[i * 4])*pData[i * 4 + 3] / 255);//R
 					}
 					else
 					{
-						pvBits[i * 4] = pData[i * 4 + 2];
-						pvBits[i * 4 + 1] = pData[i * 4 + 1];
-						pvBits[i * 4 + 2] = pData[i * 4];
+						s.Bits[i * 4] = pData[i * 4 + 2];
+						s.Bits[i * 4 + 1] = pData[i * 4 + 1];
+						s.Bits[i * 4 + 2] = pData[i * 4];
 					}
 				}
-				m_images.Add(hBitmap);
+				m_images.Add(s);
 			}
 		}
 		else
@@ -183,35 +192,35 @@ namespace TinyUI
 				bmi.bmiHeader.biBitCount = 32;
 				bmi.bmiHeader.biCompression = BI_RGB;
 				bmi.bmiHeader.biSizeImage = m_cx * m_cy * 4;
-				BYTE* pvBits = NULL;
-				HBITMAP hBitmap = ::CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, (void**)&pvBits, NULL, 0);
-				if (hBitmap)
+				IMAGE_INFO s = { 0 };
+				s.hBitmap = ::CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, (void**)&s.Bits, NULL, 0);
+				if (s.hBitmap)
 				{
 					BYTE* ps = pData + i * m_cx * m_cy;
 					for (INT i = 0; i < m_cx * m_cy; i++)
 					{
-						pvBits[i * 4 + 3] = ps[i * 4 + 3];
-						if (pvBits[i * 4 + 3] < 255)
+						s.Bits[i * 4 + 3] = ps[i * 4 + 3];
+						if (s.Bits[i * 4 + 3] < 255)
 						{
-							pvBits[i * 4] = (BYTE)(DWORD(ps[i * 4 + 2])*ps[i * 4 + 3] / 255);//B
-							pvBits[i * 4 + 1] = (BYTE)(DWORD(ps[i * 4 + 1])*ps[i * 4 + 3] / 255);//G
-							pvBits[i * 4 + 2] = (BYTE)(DWORD(ps[i * 4])*ps[i * 4 + 3] / 255);//R
+							s.Bits[i * 4] = (BYTE)(DWORD(ps[i * 4 + 2])*ps[i * 4 + 3] / 255);//B
+							s.Bits[i * 4 + 1] = (BYTE)(DWORD(ps[i * 4 + 1])*ps[i * 4 + 3] / 255);//G
+							s.Bits[i * 4 + 2] = (BYTE)(DWORD(ps[i * 4])*ps[i * 4 + 3] / 255);//R
 						}
 						else
 						{
-							pvBits[i * 4] = ps[i * 4 + 2];
-							pvBits[i * 4 + 1] = ps[i * 4 + 1];
-							pvBits[i * 4 + 2] = ps[i * 4];
+							s.Bits[i * 4] = ps[i * 4 + 2];
+							s.Bits[i * 4 + 1] = ps[i * 4 + 1];
+							s.Bits[i * 4 + 2] = ps[i * 4];
 						}
 					}
-					m_images.Add(hBitmap);
-					m_delays.Add(*(UINT*)seek);
+					s.Delay = (*(UINT*)seek) * 10;
+					m_images.Add(s);
 					seek += sizeof(UINT);
 				}
 			}
 		}
 		stbi_image_free(pData);
-		m_hBitmap = m_images.GetSize() == 0 ? NULL : m_images[0];
+		m_hBitmap = m_images.GetSize() == 0 ? NULL : m_images[0].hBitmap;
 		return m_images.GetSize() == m_count ? TRUE : FALSE;
 	_ERROR:
 		stbi_image_free(pData);
@@ -229,25 +238,33 @@ namespace TinyUI
 	{
 		return TRUE;
 	}
-	size_t TinyImage::GetFrameCount()
+	size_t TinyImage::GetCount()
 	{
 		return m_count;
 	}
-	HBITMAP	TinyImage::GetFrame(INT index)
+	HBITMAP	TinyImage::GetHBITMAP(INT index)
 	{
 		if (index < 0 || index >= (INT)m_count)
 		{
 			return NULL;
 		}
-		return m_images[index];
+		return m_images[index].hBitmap;
 	}
-	INT	TinyImage::GetFrameDelay(INT index)
+	BYTE* TinyImage::GetBits(INT index)
+	{
+		if (index < 0 || index >= (INT)m_count)
+		{
+			return NULL;
+		}
+		return m_images[index].Bits;
+	}
+	INT	TinyImage::GetDelay(INT index)
 	{
 		if (index < 0 || index >= (INT)m_count)
 		{
 			return -1;
 		}
-		return m_delays[index];
+		return m_images[index].Delay;
 	}
 	TinyImage::operator HBITMAP() const
 	{

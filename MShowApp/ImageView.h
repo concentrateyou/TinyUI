@@ -31,11 +31,12 @@ namespace MShow
 		LRESULT OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	private:
-		void OnVideo(ID2D1Bitmap1* bitmap);
-		void DrawView(ID2D1Bitmap1* bitmap);
+		void OnVideo(BYTE* bits, LONG size);
+		void DrawView();
 	private:
 		DX2D						m_dx2d;
 		MPreviewController&			m_controller;
+		TinyComPtr<ID2D1Bitmap1>	m_bitmap1;
 		TinyScopedPtr<MImageModel>	m_model;
 		
 	};

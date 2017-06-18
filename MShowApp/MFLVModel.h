@@ -1,5 +1,6 @@
 #pragma once
 #include "MPreviewController.h"
+#include "ImageView.h"
 
 namespace MShow
 {
@@ -13,13 +14,15 @@ namespace MShow
 	public:
 		MFLVModel(MPreviewController& controller);
 		virtual ~MFLVModel();
-		BOOL Draw(DX2D& d2d) OVERRIDE;
-		BOOL Release() OVERRIDE;
+		BOOL	Initialize(const TinySize& size);
 	public:
-		ID2D1Bitmap1**	GetBitmap();
+		BOOL	Draw() OVERRIDE;
+		BOOL	Release() OVERRIDE;
+	public:
+		ID2D1Bitmap1*	GetBitmap();
 	private:
 		MPreviewController&			m_controller;
-		TinyComPtr<ID2D1Bitmap1>	m_bitmap;
+		TinyComPtr<ID2D1Bitmap1>	m_bitmap1;
 	};
 }
 

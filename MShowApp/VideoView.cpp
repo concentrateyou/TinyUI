@@ -148,13 +148,7 @@ namespace MShow
 				m_controller.Remove(m_model);
 				m_model.Reset(new MFLVModel(m_controller));
 				TinySize videoSize = m_player.GetVideoSize();
-				ID2D1Bitmap1** bitmap = m_model->GetBitmap();
-				HRESULT hRes = m_controller.GetD2D().GetContext()->CreateBitmap(D2D1::SizeU(videoSize.cx, videoSize.cy),
-					(const void *)NULL,
-					0,
-					&D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)),
-					bitmap);
-				if (SUCCEEDED(hRes))
+				if (m_model->Initialize(videoSize))
 				{
 					RECT s = { 0 };
 					::GetClientRect(m_controller.GetView().Handle(), &s);
@@ -199,7 +193,7 @@ namespace MShow
 		if (m_model != NULL)
 		{
 			this->DrawView();
-			ID2D1Bitmap1* bitmap = *(m_model->GetBitmap());
+			ID2D1Bitmap1* bitmap = m_model->GetBitmap();
 			if (bitmap != NULL)
 			{
 				TinySize s = m_player.GetVideoSize();

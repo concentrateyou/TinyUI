@@ -13,6 +13,14 @@ namespace TinyUI
 	///       4           red, green, blue, alpha
 	/// 只支持24和32位
 	/// </summary>
+
+	typedef struct tagIMAGE_INFO
+	{
+		HBITMAP hBitmap;
+		BYTE*	Bits;
+		UINT	Delay;
+	}IMAGE_INFO;
+
 	class TinyImage
 	{
 	public:
@@ -23,18 +31,18 @@ namespace TinyUI
 		BOOL			Load(LPCSTR pz);
 		BOOL			Load(BYTE* p, DWORD size);
 		BOOL			Save(LPCSTR pz);//保存成BMP
-		size_t			GetFrameCount();
-		INT				GetFrameDelay(INT index);
-		HBITMAP			GetFrame(INT index);
+		size_t			GetCount();
+		INT				GetDelay(INT index);
+		HBITMAP			GetHBITMAP(INT index);
+		BYTE*			GetBits(INT index);
 		TinySize		GetSize();
 		TinyRectangle	GetRectangle();
 	protected:
-		TinyArray<HBITMAP>  m_images;
-		TinyArray<UINT>		m_delays;//延时
-		HBITMAP				m_hBitmap;
-		INT					m_count;//帧个数
-		INT					m_cx;
-		INT					m_cy;
+		INT						m_cx;
+		INT						m_cy;
+		INT						m_count;
+		HBITMAP					m_hBitmap;
+		TinyArray<IMAGE_INFO>	m_images;
 	};
 }
 
