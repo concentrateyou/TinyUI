@@ -21,9 +21,11 @@ namespace DXFramework
 		BOOL Resize();
 		ID2D1DeviceContext* GetContext() const;
 		HWND GetHWND() const;
+		BOOL Save(LPCSTR pzFile);
 	private:
 		HWND							m_hWND;
 		TinySize						m_size;
+		TinySize						m_pulgSize;
 		TinyComPtr<ID2D1DeviceContext>	m_context;
 		TinyComPtr<IDXGISwapChain1>		m_swap;
 		TinyComPtr<ID2D1Factory1>		m_factory;

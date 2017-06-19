@@ -91,14 +91,14 @@ namespace MShow
 		this->GetClientRect(&s);
 		if (m_dx2d.Initialize(m_hWND, TO_CX(s), TO_CY(s)))
 		{
-			string val;
+			/*string val;
 			val.resize(MAX_PATH);
 			GetModuleFileName(NULL, &val[0], MAX_PATH);
 			val = val.substr(0, val.find_last_of("\\", string::npos, 1));
 			string vs = val + "\\close.png";
 			ASSERT(PathFileExists(vs.c_str()));
 			HRESULT hRes = CreateD2DBitmapFromFile(StringToWString(vs).c_str(), m_dx2d.GetContext(), &m_bitmapClose);
-			ASSERT(SUCCEEDED(hRes));
+			ASSERT(SUCCEEDED(hRes));*/
 		}
 		return FALSE;
 	}

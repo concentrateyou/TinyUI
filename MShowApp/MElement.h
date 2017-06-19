@@ -28,7 +28,7 @@ namespace MShow
 		MElement();
 		virtual ~MElement();
 	public:
-		virtual BOOL Draw() = 0;
+		virtual BOOL Draw(FLOAT radioX, FLOAT radioY) = 0;
 		virtual BOOL Release() = 0;
 	public:
 		TinyString	GetName() const;

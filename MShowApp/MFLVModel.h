@@ -16,7 +16,7 @@ namespace MShow
 		virtual ~MFLVModel();
 		BOOL	Initialize(const TinySize& size);
 	public:
-		BOOL	Draw() OVERRIDE;
+		BOOL	Draw(FLOAT radioX, FLOAT radioY) OVERRIDE;
 		BOOL	Release() OVERRIDE;
 	public:
 		ID2D1Bitmap1*	GetBitmap();

@@ -33,7 +33,7 @@ namespace MShow
 		BOOL	 Initialize(const CHAR* pzFile);
 		BOOL	 Animate();
 	public:
-		BOOL Draw() OVERRIDE;
+		BOOL Draw(FLOAT radioX, FLOAT radioY) OVERRIDE;
 		BOOL Release() OVERRIDE;
 	public:
 		ID2D1Bitmap1*	GetBitmap();

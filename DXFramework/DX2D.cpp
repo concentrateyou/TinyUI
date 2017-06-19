@@ -95,6 +95,7 @@ namespace DXFramework
 		m_context->SetDpi(dpiX, dpiY);
 		return TRUE;
 	}
+
 	BOOL DX2D::BeginDraw()
 	{
 		ASSERT(m_context);
@@ -130,6 +131,7 @@ namespace DXFramework
 		m_context->SetDpi(dpiX, dpiY);
 		return TRUE;
 	}
+
 	ID2D1DeviceContext* DX2D::GetContext() const
 	{
 		return m_context;
@@ -137,6 +139,11 @@ namespace DXFramework
 	HWND DX2D::GetHWND() const
 	{
 		return m_hWND;
+	}
+
+	BOOL DX2D::Save(LPCSTR pzFile)
+	{
+		return TRUE;
 	}
 }
 

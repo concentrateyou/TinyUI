@@ -29,7 +29,7 @@ namespace MShow
 		return m_bitmap1;
 	}
 
-	BOOL MFLVModel::Draw()
+	BOOL MFLVModel::Draw(FLOAT radioX, FLOAT radioY)
 	{
 		if (m_bitmap1 != NULL)
 		{

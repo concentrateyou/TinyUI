@@ -21,10 +21,10 @@ namespace MShow
 	{
 	}
 
-	BOOL MPreviewController::Initialize()
+	BOOL MPreviewController::Initialize(const TinySize& pushSize)
 	{
 		RECT s = { 0 };
-		::GetWindowRect(m_view.Handle(), &s);
+		::GetClientRect(m_view.Handle(), &s);
 		TinySize size = { TO_CX(s) ,TO_CY(s) };
 		if (!m_dx2d.Initialize(m_view.Handle(), size.cx, size.cy))
 			return FALSE;
@@ -35,6 +35,25 @@ namespace MShow
 		string vs = box + "\\box.png";
 		ASSERT(PathFileExists(vs.c_str()));
 		HRESULT hRes = CreateD2DBitmapFromFile(StringToWString(vs).c_str(), m_dx2d.GetContext(), &m_bitmapBox);
+		if (hRes != S_OK)
+			return FALSE;
+		//D2D1_BITMAP_PROPERTIES1 prop = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_CPU_READ | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED));
+		//hRes = m_dx2d.GetContext()->CreateBitmap(
+		//	D2D1::SizeU(pushSize.cx, pushSize.cy),
+		//	nullptr,
+		//	0,
+		//	&prop,
+		//	&m_bitmapMap);
+		//prop = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED));
+		//hRes = m_dx2d.GetContext()->CreateBitmap(
+		//	D2D1::SizeU(pushSize.cx, pushSize.cy),
+		//	nullptr,
+		//	0,
+		//	&prop,
+		//	&m_bitmapPush);
+		//m_dx2d.GetContext()->SetTarget(m_bitmapPush);
+
+
 		if (hRes != S_OK)
 			return FALSE;
 		m_onSize.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnSize));
@@ -263,7 +282,7 @@ namespace MShow
 		{
 			for (INT i = m_models.GetSize() - 1;i >= 0;i--)
 			{
-				m_models[i]->Draw();
+				m_models[i]->Draw(1.0F, 1.0F);
 				if (m_bitmapBox != NULL)
 				{
 					D2D_SIZE_F sizeF = m_bitmapBox->GetSize();

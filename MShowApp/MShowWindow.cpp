@@ -54,7 +54,7 @@ namespace MShow
 		INT cy = 730;
 		CenterWindow(NULL, { cx, cy });
 		m_previewView.Create(m_hWND, 33, 90, 512, 288);
-		m_controller.Initialize();
+		m_controller.Initialize(TinySize(1280, 720));
 		m_tab.Create(m_hWND, 0, 440, 1300, 250);
 		m_tab.GetClientRect(&s);
 		s.top += 23;

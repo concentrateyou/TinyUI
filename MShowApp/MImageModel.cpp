@@ -86,12 +86,16 @@ namespace MShow
 		return m_bitmap1;
 	}
 
-	BOOL MImageModel::Draw()
+	BOOL MImageModel::Draw(FLOAT radioX, FLOAT radioY)
 	{
 		if (m_bitmap1 != NULL)
 		{
 			TinyPoint pos = GetPosition();
+			pos.x = pos.x * radioX;
+			pos.y = pos.y * radioX;
 			TinySize size = GetScale();
+			size.cx = size.cx * radioX;
+			size.cy = size.cy * radioY;
 			D2D_RECT_F dst = { static_cast<FLOAT>(pos.x),static_cast<FLOAT>(pos.y),static_cast<FLOAT>(pos.x + size.cx),static_cast<FLOAT>(pos.y + size.cy) };
 			D2D_RECT_F src = { 0.0F,0.0F,static_cast<FLOAT>(m_size.cx), static_cast<FLOAT>(m_size.cy) };
 			m_controller.GetD2D().GetContext()->DrawBitmap(m_bitmap1, dst, 1.0F, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, src, NULL);
