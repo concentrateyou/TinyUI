@@ -47,8 +47,8 @@ namespace MShow
 		TinyMenu				m_menu;
 		MPreviewView&			m_view;
 		TinyArray<MElement*>	m_models;
-		//TinyComPtr<ID2D1Bitmap1>m_bitmapMap;
-		//TinyComPtr<ID2D1Bitmap1>m_bitmapPush;
+		TinyComPtr<ID2D1Bitmap1>m_bitmapMap;
+		TinyComPtr<ID2D1Bitmap1>m_bitmapPush;
 		TinyComPtr<ID2D1Bitmap>	m_bitmapBox;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onSize;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonDown;

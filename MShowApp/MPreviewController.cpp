@@ -37,25 +37,39 @@ namespace MShow
 		HRESULT hRes = CreateD2DBitmapFromFile(StringToWString(vs).c_str(), m_dx2d.GetContext(), &m_bitmapBox);
 		if (hRes != S_OK)
 			return FALSE;
-		//D2D1_BITMAP_PROPERTIES1 prop = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_CPU_READ | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED));
-		//hRes = m_dx2d.GetContext()->CreateBitmap(
-		//	D2D1::SizeU(pushSize.cx, pushSize.cy),
-		//	nullptr,
-		//	0,
-		//	&prop,
-		//	&m_bitmapMap);
-		//prop = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED));
-		//hRes = m_dx2d.GetContext()->CreateBitmap(
-		//	D2D1::SizeU(pushSize.cx, pushSize.cy),
-		//	nullptr,
-		//	0,
-		//	&prop,
-		//	&m_bitmapPush);
-		//m_dx2d.GetContext()->SetTarget(m_bitmapPush);
 
+		D2D1_BITMAP_PROPERTIES1 props1 = D2D1::BitmapProperties1(
+			D2D1_BITMAP_OPTIONS_TARGET,
+			D2D1::PixelFormat(
+				DXGI_FORMAT_B8G8R8A8_UNORM,
+				D2D1_ALPHA_MODE_PREMULTIPLIED
+			)
+		);
+		D2D1_SIZE_U size1 = { 1280, 720 };
+		m_dx2d.GetContext()->CreateBitmap(
+			size1,
+			nullptr,
+			0,
+			&props1,
+			&m_bitmapPush
+		);
 
-		if (hRes != S_OK)
-			return FALSE;
+		props1 = D2D1::BitmapProperties1(
+			D2D1_BITMAP_OPTIONS_CPU_READ | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
+			D2D1::PixelFormat(
+				DXGI_FORMAT_B8G8R8A8_UNORM,
+				D2D1_ALPHA_MODE_PREMULTIPLIED
+			)
+		);
+
+		m_dx2d.GetContext()->CreateBitmap(
+			size1,
+			nullptr,
+			0,
+			&props1,
+			&m_bitmapMap
+		);
+
 		m_onSize.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnSize));
 		m_onLButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonDown));
 		m_onLButtonUp.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonUp));
@@ -274,10 +288,24 @@ namespace MShow
 	{
 		return m_view;
 	}
-
+	void WINAPI SaveBitmap(const BITMAPINFOHEADER& bi, const BYTE* pBits, DWORD dwSize)
+	{
+		BITMAPFILEHEADER  bmfHeader = { 0 };
+		DWORD dwSizeofDIB = dwSize + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+		bmfHeader.bfOffBits = (DWORD)sizeof(BITMAPFILEHEADER) + (DWORD)sizeof(BITMAPINFOHEADER);
+		bmfHeader.bfSize = dwSizeofDIB;
+		bmfHeader.bfType = 0x4D42;
+		HANDLE hFile = CreateFile("D:\\test.bmp", GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		DWORD dwBytesWritten = 0;
+		WriteFile(hFile, (LPSTR)&bmfHeader, sizeof(BITMAPFILEHEADER), &dwBytesWritten, NULL);
+		WriteFile(hFile, (LPSTR)&bi, sizeof(BITMAPINFOHEADER), &dwBytesWritten, NULL);
+		WriteFile(hFile, (LPSTR)pBits, dwSize, &dwBytesWritten, NULL);
+		CloseHandle(hFile);
+	}
 	void MPreviewController::Draw(MElement* ps)
 	{
 		TinyAutoLock lock(m_lock);
+		m_dx2d.GetContext()->SetTarget(m_bitmapPush);
 		if (m_dx2d.BeginDraw())
 		{
 			for (INT i = m_models.GetSize() - 1;i >= 0;i--)
@@ -307,5 +335,21 @@ namespace MShow
 			}
 			m_dx2d.EndDraw();
 		}
+		m_bitmapMap->CopyFromBitmap(NULL, m_bitmapPush, NULL);
+		D2D1_MAP_OPTIONS options = D2D1_MAP_OPTIONS_READ;
+		D2D1_MAPPED_RECT mappedRect;
+		m_bitmapMap->Map(options, &mappedRect);
+		BITMAPINFOHEADER bmi;
+		memset(&bmi, 0, sizeof(BITMAPINFOHEADER));
+		bmi.biSize = sizeof(BITMAPINFOHEADER);
+		bmi.biWidth = 1280;
+		bmi.biHeight = 720;
+		bmi.biPlanes = 1;
+		bmi.biBitCount = 32;
+		bmi.biCompression = BI_RGB;
+		bmi.biSizeImage = 1280 * 720 * 4;
+		SaveBitmap(bmi, mappedRect.bits, bmi.biSizeImage);
+		//memcpy(pixels, mappedRect.bits, W * H * 4);
+		m_bitmapMap->Unmap();
 	}
 }
