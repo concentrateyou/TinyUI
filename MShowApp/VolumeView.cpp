@@ -52,6 +52,8 @@ namespace MShow
 		bHandled = FALSE;
 		m_hICONS[0] = LoadIcon(TinyApplication::GetInstance()->Handle(), MAKEINTRESOURCE(IDI_ICON2));
 		m_hICONS[1] = LoadIcon(TinyApplication::GetInstance()->Handle(), MAKEINTRESOURCE(IDI_ICON1));
+		m_onPosChange.Reset(new Delegate<void(void*,INT)>(this, &VolumeView::OnPosChange));
+		m_trackBar.Create(m_hWND, 25, 0, 150, 20);
 		return FALSE;
 	}
 
@@ -67,7 +69,7 @@ namespace MShow
 		PAINTSTRUCT s = { 0 };
 		HDC hDC = BeginPaint(m_hWND, &s);
 		::FillRect(hDC, &s.rcPaint, (HBRUSH)GetStockObject(WHITE_BRUSH));
-		DrawIconEx(hDC, 0, 0, m_hICONS[m_bFlag], m_size.cx, m_size.cy, 0, NULL, DI_NORMAL);
+		::DrawIconEx(hDC, 0, 0, m_hICONS[m_bFlag], 20, 20, 0, NULL, DI_NORMAL);
 		EndPaint(m_hWND, &s);
 		return FALSE;
 	}
@@ -92,6 +94,11 @@ namespace MShow
 		m_bFlag = !m_bFlag;
 		this->Invalidate();
 		return FALSE;
+	}
+
+	void VolumeView::OnPosChange()
+	{
+
 	}
 
 }

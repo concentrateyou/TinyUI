@@ -19,15 +19,15 @@ namespace TinyUI
 	}
 	LPCSTR TinyTrackBar::RetrieveTitle()
 	{
-		return TEXT("SysTrackbar");
+		return TEXT("TinyTrackBar");
 	}
 	DWORD TinyTrackBar::RetrieveStyle()
 	{
-		return (WS_CHILDWINDOW | WS_VISIBLE | WS_EX_LEFT | TBS_HORZ | TBS_NOTICKS | TBS_TOOLTIPS);
+		return (WS_VISIBLE | WS_CHILDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_EX_LEFT | TBS_HORZ | TBS_NOTICKS | TBS_TOOLTIPS);
 	}
 	DWORD TinyTrackBar::RetrieveExStyle()
 	{
-		return (WS_EX_LTRREADING);
+		return WS_EX_LTRREADING;
 	}
 	BOOL TinyTrackBar::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
 	{

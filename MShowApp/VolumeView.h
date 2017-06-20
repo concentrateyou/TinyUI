@@ -1,5 +1,6 @@
 #pragma once
 #include "MPreviewController.h"
+#include "Control/TinyTrackBar.h"
 using namespace DXFramework;
 
 namespace MShow
@@ -29,10 +30,14 @@ namespace MShow
 		LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+	public:
+		Event<void(DWORD)>	EVENT_VOLUME;
 	private:
-		BOOL		m_bFlag;
-		HICON		m_hICONS[2];
-		TinySize	m_size;
+		BOOL			m_bFlag;
+		HICON			m_hICONS[2];
+		TinySize		m_size;
+		TinyTrackBar	m_trackBar;
+		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onPosChange;
 	};
 }
 
