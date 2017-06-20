@@ -9,12 +9,11 @@ namespace DXFramework
 
 	DX2D::~DX2D()
 	{
+
 	}
 	BOOL DX2D::Initialize(HWND hWND, INT cx, INT cy)
 	{
 		m_hWND = hWND;
-		m_size.cx = cx;
-		m_size.cy = cy;
 		DWORD dwFlag = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 #ifdef _DEBUG
 		dwFlag |= D3D11_CREATE_DEVICE_DEBUG;
@@ -65,8 +64,8 @@ namespace DXFramework
 		dest1.SampleDesc.Count = 2;
 		dest1.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		dest1.BufferCount = 2;
-		dest1.Width = m_size.cx;
-		dest1.Height = m_size.cy;
+		dest1.Width = cx;
+		dest1.Height = cy;
 		hRes = factory->CreateSwapChainForHwnd(m_d3d, hWND, &dest1, &desc, NULL, &m_swap);
 		if (hRes != S_OK)
 			return FALSE;
@@ -84,30 +83,37 @@ namespace DXFramework
 		hRes = m_swap->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(&surface));
 		if (hRes != S_OK)
 			return FALSE;
+		m_bitmap.Release();
 		D2D1_BITMAP_PROPERTIES1 props1 = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE));
-		TinyComPtr<ID2D1Bitmap1> bitmap;
-		hRes = m_context->CreateBitmapFromDxgiSurface(surface, (const D2D1_BITMAP_PROPERTIES1*)&props1, &bitmap);
+		hRes = m_context->CreateBitmapFromDxgiSurface(surface, (const D2D1_BITMAP_PROPERTIES1*)&props1, &m_bitmap);
 		if (hRes != S_OK)
 			return FALSE;
-		m_context->SetTarget(bitmap);
+		m_context->SetTarget(m_bitmap);
 		FLOAT dpiX, dpiY;
 		m_factory->GetDesktopDpi(&dpiX, &dpiY);
 		m_context->SetDpi(dpiX, dpiY);
 		return TRUE;
 	}
 
-	BOOL DX2D::BeginDraw()
+	BOOL DX2D::BeginDraw(ID2D1Bitmap1* bitmap)
 	{
-		ASSERT(m_context);
-		m_context->BeginDraw();
-		m_context->Clear(D2D1::ColorF(D2D1::ColorF::Black));
-		return TRUE;
+		if (m_context != NULL)
+		{
+			m_context->SetTarget(bitmap != NULL ? bitmap : m_bitmap);
+			m_context->BeginDraw();
+			m_context->Clear(D2D1::ColorF(D2D1::ColorF::Black));
+			return TRUE;
+		}
+		return FALSE;
 	}
 	BOOL DX2D::EndDraw()
 	{
-		ASSERT(m_context);
-		m_context->EndDraw();
-		return SUCCEEDED(m_swap->Present(0, 0));
+		if (m_context != NULL)
+		{
+			m_context->EndDraw();
+			return SUCCEEDED(m_swap->Present(0, 0));
+		}
+		return FALSE;
 	}
 	BOOL DX2D::Resize()
 	{
@@ -120,12 +126,12 @@ namespace DXFramework
 		hRes = m_swap->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(&surface));
 		if (hRes != S_OK)
 			return FALSE;
+		m_bitmap.Release();
 		D2D1_BITMAP_PROPERTIES1 props = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE));
-		TinyComPtr<ID2D1Bitmap1> bitmap;
-		hRes = m_context->CreateBitmapFromDxgiSurface(surface, (const D2D1_BITMAP_PROPERTIES1*)&props, &bitmap);
+		hRes = m_context->CreateBitmapFromDxgiSurface(surface, (const D2D1_BITMAP_PROPERTIES1*)&props, &m_bitmap);
 		if (hRes != S_OK)
 			return FALSE;
-		m_context->SetTarget(bitmap);
+		m_context->SetTarget(m_bitmap);
 		FLOAT dpiX, dpiY;
 		m_factory->GetDesktopDpi(&dpiX, &dpiY);
 		m_context->SetDpi(dpiX, dpiY);
@@ -139,11 +145,6 @@ namespace DXFramework
 	HWND DX2D::GetHWND() const
 	{
 		return m_hWND;
-	}
-
-	BOOL DX2D::Save(LPCSTR pzFile)
-	{
-		return TRUE;
 	}
 }
 
