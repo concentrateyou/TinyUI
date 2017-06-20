@@ -5,6 +5,9 @@
 
 namespace MShow
 {
+#define IDM_ADD_VIDEO		105
+#define IDM_REMOVE_VIDEO	106
+
 	MVideoDialog::MVideoDialog()
 	{
 
@@ -89,23 +92,19 @@ namespace MShow
 		bHandled = FALSE;
 		RECT s = { 0 };
 		this->GetClientRect(&s);
-		if (m_dx2d.Initialize(m_hWND, TO_CX(s), TO_CY(s)))
-		{
-			/*string val;
-			val.resize(MAX_PATH);
-			GetModuleFileName(NULL, &val[0], MAX_PATH);
-			val = val.substr(0, val.find_last_of("\\", string::npos, 1));
-			string vs = val + "\\close.png";
-			ASSERT(PathFileExists(vs.c_str()));
-			HRESULT hRes = CreateD2DBitmapFromFile(StringToWString(vs).c_str(), m_dx2d.GetContext(), &m_bitmapClose);
-			ASSERT(SUCCEEDED(hRes));*/
-		}
+		m_dx2d.Initialize(m_hWND, TO_CX(s), TO_CY(s));
+		m_menu.CreatePopupMenu();
+		m_menu.AppendMenu(MF_STRING, IDM_ADD_VIDEO, TEXT("Ìí¼Ó"));
+		m_menu.AppendMenu(MF_STRING, IDM_REMOVE_VIDEO, TEXT("É¾³ý"));
+		m_onMenuClick.Reset(new Delegate<void(void*, INT)>(this, &VideoView::OnMenuClick));
+		m_menu.EVENT_CLICK += m_onMenuClick;
 		return FALSE;
 	}
 
 	LRESULT VideoView::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		m_menu.EVENT_CLICK -= m_onMenuClick;
 		m_player.Close();
 		return FALSE;
 	}
@@ -132,34 +131,12 @@ namespace MShow
 		return FALSE;
 	}
 
-	LRESULT VideoView::OnRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT VideoView::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		MVideoDialog dlg;
-		if (dlg.DoModal(m_hWND, IDD_VIDEO) == IDOK)
-		{
-			TinyString val = dlg.GetAddress();
-			if (m_player.IsPlaying())
-			{
-				m_player.Close();
-			}
-			if (m_player.Open(val.STR()))
-			{
-				m_controller.Remove(m_model);
-				m_model.Reset(new MFLVModel(m_controller));
-				TinySize videoSize = m_player.GetVideoSize();
-				if (m_model->Initialize(videoSize))
-				{
-					RECT s = { 0 };
-					::GetClientRect(m_controller.GetView().Handle(), &s);
-					TinySize size(TinySize(TO_CX(s), TO_CY(s)));
-					m_model->SetSize(size);
-					videoSize.cx = videoSize.cx / 2;
-					videoSize.cy = videoSize.cy / 2;
-					m_model->SetScale(videoSize);
-				}
-			}
-		}
+		TinyPoint point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		this->ClientToScreen(&point);
+		m_menu.TrackPopupMenu(TPM_LEFTBUTTON, point.x, point.y, m_hWND, NULL);
 		return FALSE;
 	}
 
@@ -201,6 +178,56 @@ namespace MShow
 				bitmap->CopyFromMemory(NULL, bits, s.cx * 4);
 			}
 			m_controller.Draw(m_model);
+		}
+	}
+
+	void VideoView::OnMenuClick(void*, INT wID)
+	{
+		switch (wID)
+		{
+		case IDM_ADD_VIDEO:
+			OnAdd();
+			break;
+		case IDM_REMOVE_VIDEO:
+			OnRemove();
+			break;
+		}
+	}
+
+	void VideoView::OnAdd()
+	{
+		MVideoDialog dlg;
+		if (dlg.DoModal(m_hWND, IDD_VIDEO) == IDOK)
+		{
+			this->OnRemove();
+			TinyString val = dlg.GetAddress();
+			m_player.Close();
+			if (m_player.Open(val.STR()))
+			{
+				m_controller.Remove(m_model);
+				m_model.Reset(new MFLVModel(m_controller));
+				TinySize videoSize = m_player.GetVideoSize();
+				if (m_model->Initialize(videoSize))
+				{
+					RECT s = { 0 };
+					::GetClientRect(m_controller.GetView().Handle(), &s);
+					TinySize size(TinySize(TO_CX(s), TO_CY(s)));
+					m_model->SetSize(size);
+					videoSize.cx = videoSize.cx / 2;
+					videoSize.cy = videoSize.cy / 2;
+					m_model->SetScale(videoSize);
+				}
+			}
+		}
+	}
+
+	void VideoView::OnRemove()
+	{
+		if (m_model != NULL)
+		{
+			m_controller.Remove(m_model);
+			m_model.Reset(NULL);
+			m_player.Close();
 		}
 	}
 

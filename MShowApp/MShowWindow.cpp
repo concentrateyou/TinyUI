@@ -77,11 +77,9 @@ namespace MShow
 			pVideoView->Create(m_tabViews[0], offset, 45, 192, 108);
 			m_videoViews.Add(pVideoView);
 			m_volumeViews[i].Create(m_tabViews[0], offset, 10, 192, 20);
-
 			ImageView* pImageView = new ImageView(m_controller);
 			pImageView->Create(m_tabViews[1], offset, 45, 192, 108);
 			m_imageViews.Add(pImageView);
-
 			offset += 212;
 		}
 		return FALSE;

@@ -4,6 +4,9 @@
 
 namespace MShow
 {
+#define IDM_ADD_IMAGE		107
+#define IDM_REMOVE_IMAGE	108
+
 	ImageView::ImageView(MPreviewController& controller)
 		:m_controller(controller)
 	{
@@ -53,6 +56,11 @@ namespace MShow
 		RECT s = { 0 };
 		this->GetClientRect(&s);
 		m_dx2d.Initialize(m_hWND, TO_CX(s), TO_CY(s));
+		m_menu.CreatePopupMenu();
+		m_menu.AppendMenu(MF_STRING, IDM_ADD_IMAGE, TEXT("Ìí¼Ó"));
+		m_menu.AppendMenu(MF_STRING, IDM_REMOVE_IMAGE, TEXT("É¾³ý"));
+		m_onMenuClick.Reset(new Delegate<void(void*, INT)>(this, &ImageView::OnMenuClick));
+		m_menu.EVENT_CLICK += m_onMenuClick;
 		return FALSE;
 	}
 
@@ -91,37 +99,19 @@ namespace MShow
 		return FALSE;
 	}
 
+	LRESULT ImageView::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		TinyPoint point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		this->ClientToScreen(&point);
+		m_menu.TrackPopupMenu(TPM_LEFTBUTTON, point.x, point.y, m_hWND, NULL);
+		return FALSE;
+	}
+
 	LRESULT ImageView::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		m_controller.Add(m_model);
-		return FALSE;
-	}
-
-	LRESULT ImageView::OnRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		bHandled = FALSE;
-		LPCTSTR lpszFilter = _T("Image Files(*.bmp, *.jpg, *.png, *.gif)|*.bmp;*.jpg;*.png;*.gif|All Files (*.*)|*.*||");
-		TinyFileDialog dlg(TRUE, NULL, "", OFN_HIDEREADONLY | OFN_READONLY | OFN_FILEMUSTEXIST, lpszFilter);
-		if (dlg.DoModal(m_hWND) == IDOK)
-		{
-			m_controller.Remove(m_model);
-			m_model.Reset(new MImageModel(m_controller, BindCallback(&ImageView::OnVideo, this)));
-			if (m_model->Initialize(dlg.GetPathName().STR()))
-			{
-				TinySize imageSize = m_model->GetSize();
-				HRESULT hRes = m_dx2d.GetContext()->CreateBitmap(D2D1::SizeU(imageSize.cx, imageSize.cy),
-					(const void *)NULL,
-					0,
-					&D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)),
-					&m_bitmap1);
-				if (SUCCEEDED(hRes))
-				{
-					m_model->Animate();
-					return TRUE;
-				}
-			}
-		}
 		return FALSE;
 	}
 
@@ -151,6 +141,54 @@ namespace MShow
 			m_model->GetBitmap()->CopyFromMemory(NULL, bits, s.cx * 4);
 			this->DrawView();
 			m_controller.Draw(m_model);
+		}
+	}
+
+	void ImageView::OnMenuClick(void*, INT wID)
+	{
+		switch (wID)
+		{
+		case IDM_ADD_IMAGE:
+			OnAdd();
+			break;
+		case IDM_REMOVE_IMAGE:
+			OnRemove();
+			break;
+		}
+	}
+
+	void ImageView::OnAdd()
+	{
+		LPCTSTR lpszFilter = _T("Image Files(*.bmp, *.jpg, *.png, *.gif)|*.bmp;*.jpg;*.png;*.gif|All Files (*.*)|*.*||");
+		TinyFileDialog dlg(TRUE, NULL, "", OFN_HIDEREADONLY | OFN_READONLY | OFN_FILEMUSTEXIST, lpszFilter);
+		if (dlg.DoModal(m_hWND) == IDOK)
+		{
+			this->OnRemove();
+
+			m_model.Reset(new MImageModel(m_controller, BindCallback(&ImageView::OnVideo, this)));
+			if (m_model->Initialize(dlg.GetPathName().STR()))
+			{
+				TinySize imageSize = m_model->GetSize();
+				HRESULT hRes = m_dx2d.GetContext()->CreateBitmap(D2D1::SizeU(imageSize.cx, imageSize.cy),
+					(const void *)NULL,
+					0,
+					&D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)),
+					&m_bitmap1);
+				if (SUCCEEDED(hRes))
+				{
+					m_model->Animate();
+				}
+			}
+		}
+	}
+
+	void ImageView::OnRemove()
+	{
+		if (m_model != NULL)
+		{
+			m_controller.Remove(m_model);
+			m_model.Reset(NULL);
+			m_bitmap1.Release();
 		}
 	}
 }

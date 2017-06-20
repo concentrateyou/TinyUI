@@ -45,7 +45,7 @@ namespace MShow
 		TinyArray<VideoView*>	m_videoViews;
 		TinyArray<ImageView*>	m_imageViews;
 	private:
-		TinyScopedPtr<Delegate<void(void*)>> m_onTabChange;
+		TinyScopedPtr<Delegate<void(void*)>>	m_onTabChange;
 	};
 }
 

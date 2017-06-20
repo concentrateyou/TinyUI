@@ -5,7 +5,7 @@
 namespace MShow
 {
 	VolumeView::VolumeView()
-		:m_bFlag(FALSE)
+		:m_bFlag(TRUE)
 	{
 	}
 
@@ -52,14 +52,16 @@ namespace MShow
 		bHandled = FALSE;
 		m_hICONS[0] = LoadIcon(TinyApplication::GetInstance()->Handle(), MAKEINTRESOURCE(IDI_ICON2));
 		m_hICONS[1] = LoadIcon(TinyApplication::GetInstance()->Handle(), MAKEINTRESOURCE(IDI_ICON1));
-		m_onPosChange.Reset(new Delegate<void(void*,INT)>(this, &VolumeView::OnPosChange));
+		m_onPosChange.Reset(new Delegate<void(void*, INT)>(this, &VolumeView::OnPosChange));
 		m_trackBar.Create(m_hWND, 25, 0, 150, 20);
+		m_trackBar.EVENT_POSCHANGING += m_onPosChange;
 		return FALSE;
 	}
 
 	LRESULT VolumeView::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		m_trackBar.EVENT_POSCHANGING -= m_onPosChange;
 		return FALSE;
 	}
 
@@ -96,11 +98,12 @@ namespace MShow
 		return FALSE;
 	}
 
-	void VolumeView::OnPosChange()
+	void VolumeView::OnPosChange(void*, INT pos)
 	{
-
+		m_bFlag = (pos == 0 ? TRUE : FALSE);
+		this->Invalidate();
+		EVENT_VOLUME(pos);
 	}
-
 }
 
 
