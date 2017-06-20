@@ -26,7 +26,7 @@ namespace MShow
 			INT count = pThis->m_image.GetCount();
 			if (count > 0)
 			{
-				TinyApplication::GetInstance()->GetTimers().Change(pThis->m_hTimer, pThis->m_image.GetDelay(pThis->m_index), 1);
+				TinyApplication::GetInstance()->GetTimers().Change(pThis->m_hTimer, pThis->m_image.GetDelay(pThis->m_index), pThis->m_image.GetDelay(pThis->m_index));
 				if (!pThis->m_callback.IsNull())
 				{
 					BYTE* bits = pThis->m_image.GetBits(pThis->m_index);
@@ -77,7 +77,7 @@ namespace MShow
 			timers.Unregister(m_hTimer);
 			m_hTimer = NULL;
 		}
-		m_hTimer = timers.Register(&MImageModel::TimerCallback, this, m_image.GetDelay(m_index), 1, m_image.GetCount() > 1 ? WT_EXECUTEINTIMERTHREAD : WT_EXECUTEONLYONCE);
+		m_hTimer = timers.Register(&MImageModel::TimerCallback, this, m_image.GetDelay(m_index), m_image.GetDelay(m_index), m_image.GetCount() > 1 ? WT_EXECUTEINTIMERTHREAD : WT_EXECUTEONLYONCE);
 		return m_hTimer != NULL;
 	}
 
