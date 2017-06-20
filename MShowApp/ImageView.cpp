@@ -111,7 +111,10 @@ namespace MShow
 	LRESULT ImageView::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		m_controller.Add(m_model);
+		if (m_controller.Add(m_model))
+		{
+			m_controller.Draw(m_model);
+		}
 		return FALSE;
 	}
 
@@ -134,7 +137,7 @@ namespace MShow
 
 	void ImageView::OnVideo(BYTE* bits, LONG size)
 	{
-		if (m_model != NULL && m_bitmap1)
+		if (m_model != NULL && m_bitmap1 != NULL)
 		{
 			TinySize s = m_model->GetSize();
 			m_bitmap1->CopyFromMemory(NULL, bits, s.cx * 4);
@@ -164,7 +167,6 @@ namespace MShow
 		if (dlg.DoModal(m_hWND) == IDOK)
 		{
 			this->OnRemove();
-
 			m_model.Reset(new MImageModel(m_controller, BindCallback(&ImageView::OnVideo, this)));
 			if (m_model->Initialize(dlg.GetPathName().STR()))
 			{
@@ -186,9 +188,13 @@ namespace MShow
 	{
 		if (m_model != NULL)
 		{
-			m_controller.Remove(m_model);
+			if (m_controller.Remove(m_model))
+			{
+				m_controller.Draw(m_model);
+			}
 			m_model.Reset(NULL);
 			m_bitmap1.Release();
+			this->Invalidate();
 		}
 	}
 }

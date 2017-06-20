@@ -24,7 +24,7 @@ namespace MShow
 		if (pThis && val)
 		{
 			INT count = pThis->m_image.GetCount();
-			if (count > 0)
+			if (count > 1)
 			{
 				TinyApplication::GetInstance()->GetTimers().Change(pThis->m_hTimer, pThis->m_image.GetDelay(pThis->m_index), pThis->m_image.GetDelay(pThis->m_index));
 				if (!pThis->m_callback.IsNull())

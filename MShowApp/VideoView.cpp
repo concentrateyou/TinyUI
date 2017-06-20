@@ -143,7 +143,10 @@ namespace MShow
 	LRESULT VideoView::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		m_controller.Add(m_model);
+		if (m_controller.Add(m_model))
+		{
+			m_controller.Draw(m_model);
+		}
 		return FALSE;
 	}
 
@@ -225,9 +228,13 @@ namespace MShow
 	{
 		if (m_model != NULL)
 		{
-			m_controller.Remove(m_model);
+			if (m_controller.Remove(m_model))
+			{
+				m_controller.Draw(m_model);
+			}
 			m_model.Reset(NULL);
 			m_player.Close();
+			this->Invalidate();
 		}
 	}
 
