@@ -37,6 +37,12 @@
     <Filter Include="源文件\Controller">
       <UniqueIdentifier>{c4992bf5-4093-4602-ac25-161fe60ae970}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\Push">
+      <UniqueIdentifier>{3239b253-3ba0-42d1-8773-3e8109bb8288}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Push">
+      <UniqueIdentifier>{1f05cce4-85e2-4ad9-b8c3-2008a091bba0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -117,6 +123,9 @@
     <ClInclude Include="MPlayController.h">
       <Filter>头文件\Controller</Filter>
     </ClInclude>
+    <ClInclude Include="MRTMPPusher.h">
+      <Filter>头文件\Push</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -187,6 +196,9 @@
     </ClCompile>
     <ClCompile Include="MPlayController.cpp">
       <Filter>源文件\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="MRTMPPusher.cpp">
+      <Filter>源文件\Push</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -163,6 +163,7 @@
     <ClInclude Include="MPacketQueue.h" />
     <ClInclude Include="MAudioRenderTask.h" />
     <ClInclude Include="MFLVTask.h" />
+    <ClInclude Include="MRTMPPusher.h" />
     <ClInclude Include="MShowApp.h" />
     <ClInclude Include="MShowCommon.h" />
     <ClInclude Include="MPreviewController.h" />
@@ -190,6 +191,7 @@
     <ClCompile Include="MPacketQueue.cpp" />
     <ClCompile Include="MAudioRenderTask.cpp" />
     <ClCompile Include="MFLVTask.cpp" />
+    <ClCompile Include="MRTMPPusher.cpp" />
     <ClCompile Include="MShowApp.cpp" />
     <ClCompile Include="MShowCommon.cpp" />
     <ClCompile Include="MPreviewController.cpp" />
