@@ -2,7 +2,7 @@
 #include "Common.h"
 #include "AACDecode.h"
 #include "MPG123Decode.h"
-#include "H264Decode.h"
+#include "x264Decode.h"
 #include <vector>
 
 namespace Decode

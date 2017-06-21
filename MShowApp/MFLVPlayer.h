@@ -18,6 +18,7 @@ namespace MShow
 		BOOL IsPlaying() const;
 		BOOL Open(LPCSTR pzURL);
 		BOOL Close();
+		BOOL SetVolume(LONG volume);
 		TinySize GetVideoSize();
 		ID2D1Bitmap1* GetBitmap();
 	private:

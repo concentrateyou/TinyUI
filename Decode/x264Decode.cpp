@@ -1,9 +1,9 @@
 #include "stdafx.h"
-#include "H264Decode.h"
+#include "x264Decode.h"
 
 namespace Decode
 {
-	H264Decode::H264Decode()
+	x264Decode::x264Decode()
 		:m_pYUV420(NULL),
 		m_context(NULL),
 		m_codec(NULL),
@@ -14,12 +14,12 @@ namespace Decode
 		ZeroMemory(&m_packet, sizeof(m_packet));
 	}
 
-	H264Decode::~H264Decode()
+	x264Decode::~x264Decode()
 	{
 		Close();
 	}
 
-	BOOL H264Decode::Initialize(const TinySize& srcsize, const TinySize& dstsize)
+	BOOL x264Decode::Initialize(const TinySize& srcsize, const TinySize& dstsize)
 	{
 		av_init_packet(&m_packet);
 		m_codec = avcodec_find_decoder(AV_CODEC_ID_H264);
@@ -48,7 +48,7 @@ namespace Decode
 		return FALSE;
 
 	}
-	BOOL H264Decode::Open(BYTE* metadata, LONG size)
+	BOOL x264Decode::Open(BYTE* metadata, LONG size)
 	{
 		ASSERT(m_context);
 		m_context->extradata_size = size;
@@ -61,7 +61,7 @@ namespace Decode
 		Close();
 		return FALSE;
 	}
-	BOOL H264Decode::Decode(SampleTag& tag, BYTE*& bo, LONG& so)
+	BOOL x264Decode::Decode(SampleTag& tag, BYTE*& bo, LONG& so)
 	{
 		if (!m_context || !m_sws)
 			return FALSE;
@@ -83,9 +83,11 @@ namespace Decode
 		so = m_pRGB32->linesize[0] * cy;
 		return TRUE;
 	}
-	BOOL H264Decode::Close()
+	BOOL x264Decode::Close()
 	{
-		if (m_context)
+		m_srcsize.Empty();
+		m_dstsize.Empty();
+		if (m_context != NULL)
 		{
 			if (m_context->extradata)
 			{
@@ -97,28 +99,29 @@ namespace Decode
 			m_context = NULL;
 			m_codec = NULL;
 		}
-		if (m_sws)
+		if (m_sws != NULL)
 		{
 			sws_freeContext(m_sws);
 			m_sws = NULL;
 		}
-		if (m_pYUV420)
+		if (m_pYUV420 != NULL)
 		{
 			av_frame_free(&m_pYUV420);
 			m_pYUV420 = NULL;
 		}
-		if (m_pRGB32)
+		if (m_pRGB32 != NULL)
 		{
 			av_frame_free(&m_pRGB32);
 			m_pRGB32 = NULL;
 		}
+		m_bits.Reset(NULL);
 		return TRUE;
 	}
-	AVFrame* H264Decode::GetYUV420() const
+	AVFrame* x264Decode::GetYUV420() const
 	{
 		return m_pYUV420;
 	}
-	AVFrame* H264Decode::GetRGB32() const
+	AVFrame* x264Decode::GetRGB32() const
 	{
 		return m_pRGB32;
 	}

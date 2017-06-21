@@ -36,9 +36,6 @@
     <ClInclude Include="AACDecode.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="H264Decode.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="FLVParser.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -55,6 +52,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="RTMPReader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="x264Decode.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -74,9 +74,6 @@
     <ClCompile Include="AACDecode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="H264Decode.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="FLVParser.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -93,6 +90,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="RTMPReader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="x264Decode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

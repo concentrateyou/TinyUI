@@ -20,11 +20,11 @@ using namespace TinyUI;
 
 namespace Decode
 {
-	class H264Decode
+	class x264Decode
 	{
 	public:
-		H264Decode();
-		virtual ~H264Decode();
+		x264Decode();
+		virtual ~x264Decode();
 		BOOL Initialize(const TinySize& srcsize, const TinySize& dstsize);
 		BOOL Open(BYTE* metadata, LONG size);
 		BOOL Decode(SampleTag& tag, BYTE*& bo, LONG& so);

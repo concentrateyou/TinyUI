@@ -4,8 +4,7 @@
 namespace Decode
 {
 	AACDecode::AACDecode()
-		:m_handle(NULL),
-		m_dwINC(0)
+		:m_handle(NULL)
 	{
 	}
 	AACDecode::~AACDecode()
@@ -92,6 +91,8 @@ namespace Decode
 	}
 	BOOL AACDecode::Close()
 	{
+		ZeroMemory(&m_sMFT, sizeof(m_sMFT));
+		ZeroMemory(&m_frame, sizeof(m_frame));
 		if (m_handle != NULL)
 		{
 			NeAACDecClose(m_handle);

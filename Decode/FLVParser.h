@@ -1,7 +1,7 @@
 #pragma once
 #include "Common.h"
 #include "AACDecode.h"
-#include "H264Decode.h"
+#include "x264Decode.h"
 #include <vector>
 
 using namespace std;

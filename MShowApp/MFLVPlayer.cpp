@@ -53,6 +53,11 @@ namespace MShow
 		return m_bPlaying;
 	}
 
+	BOOL MFLVPlayer::SetVolume(LONG volume)
+	{
+		return m_audioRenderTask.SetVolume(volume);
+	}
+
 	ID2D1Bitmap1* MFLVPlayer::GetBitmap()
 	{
 		return m_bitmap;

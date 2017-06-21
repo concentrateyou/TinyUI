@@ -21,9 +21,7 @@ namespace Decode
 		BOOL Close();
 		NeAACDecHandle	GetHandle();
 		WAVEFORMATEX*	GetFormat();
-		
 	private:
-		DWORD					m_dwINC;
 		WAVEFORMATEX			m_sMFT;
 		NeAACDecHandle			m_handle;
 		NeAACDecFrameInfo		m_frame;

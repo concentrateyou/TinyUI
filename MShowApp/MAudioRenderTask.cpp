@@ -89,9 +89,9 @@ namespace MShow
 				vals[2].hEventNotify = m_events[2];
 				m_player.SetNotifys(3, vals);
 				timer.EndTime();
-				m_clock.AddBaseTime(timer.GetMillisconds());
-				INT ms = timeGetTime() - m_clock.GetBaseTime();
-				INT delay = tag.samplePTS - ms;
+				m_clock.AddBaseTime(static_cast<DWORD>(timer.GetMillisconds()));
+				LONGLONG ms = timeGetTime() - m_clock.GetBaseTime();
+				LONG delay = static_cast<LONG>(tag.samplePTS - ms);
 				Sleep(delay < 0 ? 0 : delay);
 				if (tag.size != 4096)
 				{

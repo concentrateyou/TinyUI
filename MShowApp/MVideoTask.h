@@ -20,7 +20,7 @@ namespace MShow
 		void OnAVCDC(BYTE* bits, LONG size);
 	private:
 		BOOL						m_bClose;
-		H264Decode					m_h264;
+		x264Decode					m_h264;
 		MClock&						m_clock;
 		MFLVTask&					m_task;
 		MPacketQueue				m_videoQueue;
