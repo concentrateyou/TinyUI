@@ -82,7 +82,7 @@ namespace Decode
 	}
 	BOOL AACDecode::Decode(BYTE* bi, LONG si, BYTE*& bo, LONG& so)
 	{
-		if (!m_handle || !bi || si == 0)
+		if (!m_handle)
 			return FALSE;
 		bo = reinterpret_cast<BYTE*>(NeAACDecDecode(m_handle, &m_frame, bi, si));
 		if (m_frame.error != 0 || m_frame.samples <= 0)

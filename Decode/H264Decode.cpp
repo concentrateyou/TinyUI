@@ -63,7 +63,7 @@ namespace Decode
 	}
 	BOOL H264Decode::Decode(SampleTag& tag, BYTE*& bo, LONG& so)
 	{
-		if (!m_context || !m_sws || !bo || so == 0)
+		if (!m_context || !m_sws)
 			return FALSE;
 		so = 0;
 		bo = NULL;

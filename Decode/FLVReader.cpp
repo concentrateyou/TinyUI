@@ -521,7 +521,18 @@ namespace Decode
 	}
 	BOOL FLVReader::Close()
 	{
+		m_bNetwork = FALSE;
+		m_bAudio = FALSE;
+		m_bVideo = FALSE;
+		m_minusOne = 0;
+		m_offset = 0;
+		m_naluOffset = 0;
+		m_naluPtr = NULL;
+		m_timestamp = 0;
+		m_basePTS = -1;
+		m_nalus.Clear();
 		m_stream.Release();
+		ZeroMemory(&m_script, sizeof(m_script));
 		return TRUE;
 	}
 }

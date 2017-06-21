@@ -26,7 +26,7 @@ namespace MShow
 
 	BOOL MFLVPlayer::Open(LPCSTR pzURL)
 	{
-		this->Close();
+		m_bitmap.Release();
 		if (!m_task.Initialize(pzURL))
 			return FALSE;
 		if (!m_audioRenderTask.Initialize(m_dx2d.GetHWND()))
