@@ -1,4 +1,5 @@
 #pragma once
+#include "MShowCommon.h"
 
 namespace MShow
 {

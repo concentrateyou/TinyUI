@@ -15,7 +15,7 @@ namespace MShow
 	BOOL MRTMPPusher::Submit()
 	{
 		m_bClose = FALSE;
-		return TinyTaskBase::Submit(BindCallback(&MAudioRenderTask::OnMessagePump, this));
+		return TinyTaskBase::Submit(BindCallback(&MRTMPPusher::OnMessagePump, this));
 	}
 
 	BOOL MRTMPPusher::Close(DWORD dwMS)
