@@ -210,16 +210,7 @@ namespace MShow
 				m_controller.Remove(m_model);
 				m_model.Reset(new MFLVModel(m_controller));
 				TinySize videoSize = m_player.GetVideoSize();
-				if (m_model->Initialize(videoSize))
-				{
-					RECT s = { 0 };
-					::GetClientRect(m_controller.GetView().Handle(), &s);
-					TinySize size(TinySize(TO_CX(s), TO_CY(s)));
-					m_model->SetSize(size);
-					videoSize.cx = videoSize.cx / 2;
-					videoSize.cy = videoSize.cy / 2;
-					m_model->SetScale(videoSize);
-				}
+				m_model->Initialize(videoSize);
 			}
 		}
 	}

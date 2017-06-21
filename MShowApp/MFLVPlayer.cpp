@@ -33,13 +33,13 @@ namespace MShow
 			return FALSE;
 		if (!m_task.Submit())
 			return FALSE;
-		if (!m_audioTask.Submit())
-			return FALSE;
 		if (!m_videoTask.Submit())
 			return FALSE;
-		if (!m_audioRenderTask.Submit())
-			return FALSE;
 		if (!m_videoRenderTask.Submit())
+			return FALSE;
+		if (!m_audioTask.Submit())
+			return FALSE;
+		if (!m_audioRenderTask.Submit())
 			return FALSE;
 		FLV_SCRIPTDATA script = m_task.GetScript();
 		m_size.cx = static_cast<LONG>(script.width);

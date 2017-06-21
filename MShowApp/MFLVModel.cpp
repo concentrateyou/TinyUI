@@ -21,7 +21,13 @@ namespace MShow
 			0,
 			&D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)),
 			&m_bitmap1);
-		return SUCCEEDED(hRes);
+		if (SUCCEEDED(hRes))
+		{
+			this->SetSize(size);
+			this->SetScale(TinySize(size.cx / 2, size.cy / 2));
+			return TRUE;
+		}
+		return FALSE;
 	}
 
 	ID2D1Bitmap1* MFLVModel::GetBitmap()
@@ -34,7 +40,11 @@ namespace MShow
 		if (m_bitmap1 != NULL)
 		{
 			TinyPoint pos = GetPosition();
+			pos.x = pos.x * static_cast<LONG>(radioX);
+			pos.y = pos.y * static_cast<LONG>(radioY);
 			TinySize size = GetScale();
+			size.cx = size.cx * static_cast<LONG>(radioX);
+			size.cy = size.cy * static_cast<LONG>(radioY);
 			D2D_RECT_F dst = { static_cast<FLOAT>(pos.x),static_cast<FLOAT>(pos.y),static_cast<FLOAT>(pos.x + size.cx),static_cast<FLOAT>(pos.y + size.cy) };
 			D2D_RECT_F src = { 0.0F,0.0F,static_cast<FLOAT>(m_size.cx), static_cast<FLOAT>(m_size.cy) };
 			m_controller.GetD2D().GetContext()->DrawBitmap(m_bitmap1, dst, 1.0F, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, src, NULL);

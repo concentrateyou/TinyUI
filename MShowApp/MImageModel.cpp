@@ -60,9 +60,7 @@ namespace MShow
 			if (SUCCEEDED(hRes))
 			{
 				this->SetSize(imageSize);
-				imageSize.cx = imageSize.cx / 2;
-				imageSize.cy = imageSize.cy / 2;
-				this->SetScale(imageSize);
+				this->SetScale(TinySize(imageSize.cx / 2, imageSize.cy / 2));
 				return TRUE;
 			}
 		}
