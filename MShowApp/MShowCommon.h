@@ -7,6 +7,7 @@
 #include "IO/TinyTaskBase.h"
 #include "Control/TinyControl.h"
 #include "Media/TinySoundPlayer.h"
+#include "Common/TinyTime.h"
 #include "Common.h"
 using namespace TinyUI;
 using namespace TinyUI::IO;

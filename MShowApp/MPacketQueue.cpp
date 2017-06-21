@@ -10,7 +10,7 @@ namespace MShow
 	MPacketQueue::~MPacketQueue()
 	{
 	}
-	BOOL MPacketQueue::Push(Decode::SampleTag& tag)
+	BOOL MPacketQueue::Push(Media::SampleTag& tag)
 	{
 		TinyAutoLock lock(m_lock);
 		if (m_list.InsertLast(tag) != NULL)
@@ -20,14 +20,14 @@ namespace MShow
 		}
 		return FALSE;
 	}
-	BOOL MPacketQueue::Pop(Decode::SampleTag& tag)
+	BOOL MPacketQueue::Pop(Media::SampleTag& tag)
 	{
 		TinyAutoLock lock(m_lock);
 		if (m_list.GetSize() > 0)
 		{
 			ITERATOR s = m_list.First();
-			Decode::SampleTag& sampleTag = m_list.GetAt(s);
-			memcpy(&tag, &sampleTag, sizeof(Decode::SampleTag));
+			Media::SampleTag& sampleTag = m_list.GetAt(s);
+			memcpy(&tag, &sampleTag, sizeof(Media::SampleTag));
 			m_list.RemoveAt(s);
 			m_size -= tag.size;
 			return TRUE;
@@ -53,7 +53,7 @@ namespace MShow
 		ITERATOR pos = m_list.First();
 		while (pos != NULL)
 		{
-			SampleTag& tag = m_list.GetAt(pos);
+			Media::SampleTag& tag = m_list.GetAt(pos);
 			SAFE_DELETE_ARRAY(tag.bits);
 			pos = m_list.Next(pos);
 		}

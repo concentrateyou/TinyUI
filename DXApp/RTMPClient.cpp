@@ -69,6 +69,11 @@ namespace DXApp
 		return TRUE;
 	}
 
+	BOOL RTMPClient::Disconnect()
+	{
+
+	}
+
 	BOOL RTMPClient::SendMetadata(INT cx, INT cy, INT framerate, INT videoRate, const WAVEFORMATEX& wfx, INT audioRate)
 	{
 		ASSERT(m_pRTMP);

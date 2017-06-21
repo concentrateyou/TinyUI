@@ -146,5 +146,15 @@ namespace TinyUI
 			DWORD	m_dwMaxSize;
 		};
 		BOOL WINAPI GetAudioOutputType(REFCLSID clsid, IMFMediaType* inputType, const WAVEFORMATEX* pMFT, IMFMediaType** mediaType);
+
+		typedef struct tagSampleTag
+		{
+			LONGLONG	sample;
+			LONGLONG	sampleDTS;
+			LONGLONG	samplePTS;
+			BYTE		sampleType;
+			BYTE*		bits;
+			LONG		size;
+		}SampleTag;
 	};
 }

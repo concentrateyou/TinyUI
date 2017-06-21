@@ -90,13 +90,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\Decode;..\DXFramework;..\ThirdParty\libfaad\include;..\ThirdParty\ffmpeg\include;..\ThirdParty\mpg123\include;..\ThirdParty\librtmp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\Encode;..\Decode;..\DXFramework;..\ThirdParty\libfaad\include;..\ThirdParty\ffmpeg\include;..\ThirdParty\mpg123\include;..\ThirdParty\librtmp\include;..\ThirdParty\x264</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\Debug;..\ThirdParty\mpg123\lib;..\ThirdParty\ffmpeg\lib;..\ThirdParty\libfaad\lib;..\ThirdParty\librtmp\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>TinyUI.lib;Decode.lib;DXFramework.lib;DShowCapture.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Debug;..\ThirdParty\mpg123\lib;..\ThirdParty\ffmpeg\lib;..\ThirdParty\libfaad\lib;..\ThirdParty\librtmp\lib;..\ThirdParty\x264\libs\32bit</AdditionalLibraryDirectories>
+      <AdditionalDependencies>TinyUI.lib;DXFramework.lib;DShowCapture.lib;Decode.lib;Encode.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -163,6 +163,8 @@
     <ClInclude Include="MPacketQueue.h" />
     <ClInclude Include="MAudioRenderTask.h" />
     <ClInclude Include="MFLVTask.h" />
+    <ClInclude Include="MRTMPClient.h" />
+    <ClInclude Include="MRTMPEncoder.h" />
     <ClInclude Include="MRTMPPusher.h" />
     <ClInclude Include="MShowApp.h" />
     <ClInclude Include="MShowCommon.h" />
@@ -191,6 +193,8 @@
     <ClCompile Include="MPacketQueue.cpp" />
     <ClCompile Include="MAudioRenderTask.cpp" />
     <ClCompile Include="MFLVTask.cpp" />
+    <ClCompile Include="MRTMPClient.cpp" />
+    <ClCompile Include="MRTMPEncoder.cpp" />
     <ClCompile Include="MRTMPPusher.cpp" />
     <ClCompile Include="MShowApp.cpp" />
     <ClCompile Include="MShowCommon.cpp" />

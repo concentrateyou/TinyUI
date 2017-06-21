@@ -282,8 +282,15 @@ namespace MShow
 		return m_view;
 	}
 
+	ID2D1Bitmap1* MPreviewController::GetBitmap()
+	{
+		return m_bitmapCopy;
+	}
+
 	void MPreviewController::Draw(MElement* ps)
 	{
+		TinyPerformanceTimer time;
+		time.BeginTime();
 		TinyAutoLock lock(m_lock);
 		if (m_dx2d.BeginDraw(m_bitmap))
 		{
@@ -292,6 +299,7 @@ namespace MShow
 				m_models[i]->Draw(FLOAT(m_pulgSize.cx) / FLOAT(m_size.cx), FLOAT(m_pulgSize.cy) / FLOAT(m_size.cy));
 			}
 			m_dx2d.EndDraw();
+			m_bitmapCopy->CopyFromBitmap(NULL, m_bitmap, NULL);
 		}
 		if (m_dx2d.BeginDraw())
 		{
@@ -322,5 +330,7 @@ namespace MShow
 			}
 			m_dx2d.EndDraw();
 		}
+		time.EndTime();
+		TRACE("Draw Cost:%lld\n", time.GetMillisconds());
 	}
 }

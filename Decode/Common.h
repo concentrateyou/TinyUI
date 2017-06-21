@@ -7,8 +7,10 @@
 #include "Render/TinyGDI.h"
 #include "IO/TinyTaskBase.h"
 #include "IO/TinyIO.h"
+#include "Media/TinyMedia.h"
 using namespace TinyUI;
 using namespace TinyUI::IO;
+using namespace TinyUI::Media;
 
 namespace Decode
 {
@@ -21,16 +23,6 @@ namespace Decode
 	INT ToINT24(BYTE val[3]);
 	INT ToINT16(BYTE val[2]);
 	INT ToINT8(BYTE val[1]);
-
-	typedef struct tagSampleTag
-	{
-		LONGLONG	sample;
-		LONGLONG	sampleDTS;
-		LONGLONG	samplePTS;
-		BYTE		sampleType;
-		BYTE*		bits;
-		LONG		size;
-	}SampleTag;
 
 	typedef struct tagFLV_HEADER
 	{

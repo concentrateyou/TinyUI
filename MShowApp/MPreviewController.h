@@ -29,8 +29,9 @@ namespace MShow
 		void	MoveDown(MElement* element);
 		void	Draw(MElement* ps);
 	public:
-		DX2D&	GetD2D();
-		MPreviewView& GetView();
+		DX2D&			GetD2D();
+		MPreviewView&	GetView();
+		ID2D1Bitmap1*	GetBitmap();
 	private:
 		void	OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

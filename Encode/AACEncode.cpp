@@ -29,6 +29,10 @@ namespace Encode
 		SAFE_FREE(buffer);
 		return TRUE;
 	}
+	DWORD AACEncode::GetOutputBytes() const
+	{
+		return m_maxOutputBytes;
+	}
 	BOOL AACEncode::Open(const WAVEFORMATEX& waveFMT, INT audioRate, BOOL bAllowF)
 	{
 		Close();
@@ -77,7 +81,7 @@ namespace Encode
 	}
 	BOOL AACEncode::Encode(BYTE* bits, LONG size, BYTE*& bo, LONG& so)
 	{
-		if (!bits)
+		if (!m_aac || !bits || size == 0)
 			return FALSE;
 		INT s = faacEncEncode(m_aac, (int32_t*)bits, m_inputSamples, m_bits, m_maxOutputBytes);
 		if (s > 0)

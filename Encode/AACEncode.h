@@ -26,6 +26,7 @@ namespace Encode
 		BOOL	Encode(BYTE* bits, LONG size, BYTE*& bo, LONG& so);
 		void	Close();
 		BOOL	GetSpecificInfo(vector<BYTE>& info);
+		DWORD	GetOutputBytes() const;
 	private:
 		faacEncHandle			m_aac;
 		faacEncConfigurationPtr	m_config;
