@@ -16,6 +16,8 @@ namespace DXFramework
 		DX2D();
 		~DX2D();
 		BOOL Initialize(HWND hWND, INT cx, INT cy);
+		BOOL Enter();
+		BOOL Leave();
 		BOOL BeginDraw(ID2D1Bitmap1* bitmap = NULL);
 		BOOL EndDraw();
 		BOOL Resize();
@@ -25,6 +27,7 @@ namespace DXFramework
 		HWND							m_hWND;
 		TinyComPtr<ID2D1Factory1>		m_factory;
 		TinyComPtr<IDXGISwapChain1>		m_swap;
+		TinyComPtr<ID2D1Multithread>	m_d2dMultithread;
 		TinyComPtr<ID3D11Device>		m_d3d;
 		TinyComPtr<ID2D1DeviceContext>	m_context;
 		TinyComPtr<ID2D1Bitmap1>		m_bitmap;

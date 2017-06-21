@@ -24,7 +24,7 @@ namespace MShow
 		if (SUCCEEDED(hRes))
 		{
 			this->SetSize(size);
-			this->SetScale(TinySize(size.cx / 2, size.cy / 2));
+			this->SetScale(TinySize(170, 144));
 			return TRUE;
 		}
 		return FALSE;

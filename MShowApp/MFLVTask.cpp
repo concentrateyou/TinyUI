@@ -22,6 +22,7 @@ namespace MShow
 		if (!m_reader.OpenURL(pzURL))
 			return FALSE;
 		m_script = m_reader.GetScript();
+		return TRUE;
 	}
 
 	BOOL MFLVTask::Submit()

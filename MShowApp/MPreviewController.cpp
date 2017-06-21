@@ -289,9 +289,9 @@ namespace MShow
 
 	void MPreviewController::Draw(MElement* ps)
 	{
-		TinyPerformanceTimer time;
-		time.BeginTime();
 		TinyAutoLock lock(m_lock);
+		m_time.BeginTime();
+		m_dx2d.Enter();
 		if (m_dx2d.BeginDraw(m_bitmap))
 		{
 			for (INT i = m_models.GetSize() - 1;i >= 0;i--)
@@ -330,7 +330,8 @@ namespace MShow
 			}
 			m_dx2d.EndDraw();
 		}
-		time.EndTime();
-		TRACE("Draw Cost:%lld\n", time.GetMillisconds());
+		m_dx2d.Leave();
+		m_time.EndTime();
+		TRACE("Draw Cost:%lld\n", m_time.GetMillisconds());
 	}
 }

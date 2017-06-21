@@ -49,6 +49,9 @@ namespace MShow
 		TinySize					m_size;
 		TinyMenu					m_menu;
 		MPreviewView&				m_view;
+		TinyLock					m_lock;
+		MElement*					m_lastElement;
+		TinyPerformanceTimer		m_time;
 		TinyArray<MElement*>		m_models;
 		TinyComPtr<ID2D1Bitmap>		m_box;
 		TinyComPtr<ID2D1Bitmap1>	m_bitmap;
@@ -61,9 +64,7 @@ namespace MShow
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onMouseMove;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onMouseLeave;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onSetCursor;
-	private:
-		TinyLock		m_lock;
-		MElement*		m_lastElement;
+
 	};
 }
 

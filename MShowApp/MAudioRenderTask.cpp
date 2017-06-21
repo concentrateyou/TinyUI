@@ -80,6 +80,7 @@ namespace MShow
 				timer.BeginTime();
 				if (!m_player.SetFormat(m_task.GetFormat(), tag.size * 3))
 					break;
+				m_player.SetVolume(0);
 				DSBPOSITIONNOTIFY vals[3];
 				vals[0].dwOffset = tag.size - 1;
 				vals[0].hEventNotify = m_events[0];

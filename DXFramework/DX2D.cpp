@@ -72,6 +72,9 @@ namespace DXFramework
 		hRes = D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, __uuidof(ID2D1Factory1), reinterpret_cast<void**>(&m_factory));
 		if (hRes != S_OK)
 			return FALSE;
+		hRes = m_factory->QueryInterface(&m_d2dMultithread);
+		if (hRes != S_OK)
+			return FALSE;
 		TinyComPtr<ID2D1Device> d2d1device;
 		hRes = m_factory->CreateDevice(dxgi, &d2d1device);
 		if (hRes != S_OK)
@@ -92,6 +95,27 @@ namespace DXFramework
 		FLOAT dpiX, dpiY;
 		m_factory->GetDesktopDpi(&dpiX, &dpiY);
 		m_context->SetDpi(dpiX, dpiY);
+		return TRUE;
+	}
+
+	BOOL DX2D::Enter()
+	{
+		if (!m_d2dMultithread)
+			return FALSE;
+		if (m_d2dMultithread->GetMultithreadProtected())
+		{
+			m_d2dMultithread->Enter();
+		}
+		return TRUE;
+	}
+	BOOL DX2D::Leave()
+	{
+		if (!m_d2dMultithread)
+			return FALSE;
+		if (m_d2dMultithread->GetMultithreadProtected())
+		{
+			m_d2dMultithread->Leave();
+		}
 		return TRUE;
 	}
 
@@ -117,7 +141,8 @@ namespace DXFramework
 	}
 	BOOL DX2D::Resize()
 	{
-		ASSERT(m_context);
+		if (!m_context)
+			return FALSE;
 		m_context->SetTarget(NULL);
 		HRESULT hRes = m_swap->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
 		if (hRes != S_OK)
