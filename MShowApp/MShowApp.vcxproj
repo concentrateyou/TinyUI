@@ -154,6 +154,8 @@
     <ClInclude Include="MFLVPlayer.h" />
     <ClInclude Include="MFLVModel.h" />
     <ClInclude Include="MImageModel.h" />
+    <ClInclude Include="MPlayController.h" />
+    <ClInclude Include="MPlayView.h" />
     <ClInclude Include="MPreviewView.h" />
     <ClInclude Include="MAudioTask.h" />
     <ClInclude Include="MClock.h" />
@@ -179,6 +181,8 @@
     <ClCompile Include="MFLVPlayer.cpp" />
     <ClCompile Include="MFLVModel.cpp" />
     <ClCompile Include="MImageModel.cpp" />
+    <ClCompile Include="MPlayController.cpp" />
+    <ClCompile Include="MPlayView.cpp" />
     <ClCompile Include="MPreviewView.cpp" />
     <ClCompile Include="MAudioTask.cpp" />
     <ClCompile Include="MClock.cpp" />

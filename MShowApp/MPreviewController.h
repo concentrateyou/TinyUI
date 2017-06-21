@@ -9,7 +9,7 @@ namespace MShow
 {
 	class MPreviewView;
 	/// <summary>
-	/// ‘§¿¿ΩÁ√Ê
+	/// ‘§¿¿
 	/// </summary>
 	class MPreviewController
 	{
