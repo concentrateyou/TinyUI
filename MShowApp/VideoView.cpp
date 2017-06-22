@@ -180,8 +180,8 @@ namespace MShow
 				TinySize s = m_player.GetVideoSize();
 				ASSERT(s.cx * s.cy * 4 == size);
 				bitmap->CopyFromMemory(NULL, bits, s.cx * 4);
-				/*HANDLE handle = m_controller.GetSignal(m_dwIndex);
-				SetEvent(handle);*/
+				HANDLE handle = m_controller.GetSignal(m_dwIndex);
+				SetEvent(handle);
 			}
 		}
 	}

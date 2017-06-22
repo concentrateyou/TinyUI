@@ -143,7 +143,6 @@ namespace MShow
 			TinySize s = m_model->GetSize();
 			m_bitmap1->CopyFromMemory(NULL, bits, s.cx * 4);
 			this->DrawView();
-			//Preview
 			m_model->GetBitmap()->CopyFromMemory(NULL, bits, s.cx * 4);
 			HANDLE handle = m_controller.GetSignal(m_dwIndex);
 			SetEvent(handle);

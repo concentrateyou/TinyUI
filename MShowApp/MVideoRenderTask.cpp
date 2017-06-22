@@ -38,7 +38,7 @@ namespace MShow
 			BOOL bRes = m_task.GetVideoQueue().Pop(sampleTag);
 			if (!bRes || sampleTag.size <= 0)
 			{
-				Sleep(3);
+				Sleep(5);
 				continue;
 			}
 			if (sampleTag.samplePTS == m_clock.GetBasePTS())
