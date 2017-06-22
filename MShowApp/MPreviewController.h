@@ -11,7 +11,7 @@ namespace MShow
 	/// <summary>
 	/// ‘§¿¿
 	/// </summary>
-	class MPreviewController
+	class MPreviewController : public TinyTaskBase
 	{
 		friend class MGIFScene;
 		friend class MFLVModel;
@@ -27,6 +27,7 @@ namespace MShow
 		void	BringToBottom(MElement* element);
 		void	MoveUp(MElement* element);
 		void	MoveDown(MElement* element);
+	public:
 		void	Draw(MElement* ps);
 	public:
 		DX2D&			GetD2D();
@@ -48,10 +49,9 @@ namespace MShow
 		TinySize					m_pulgSize;
 		TinySize					m_size;
 		TinyMenu					m_menu;
-		MPreviewView&				m_view;
 		TinyLock					m_lock;
+		MPreviewView&				m_view;
 		MElement*					m_lastElement;
-		TinyPerformanceTimer		m_time;
 		TinyArray<MElement*>		m_models;
 		TinyComPtr<ID2D1Bitmap>		m_box;
 		TinyComPtr<ID2D1Bitmap1>	m_bitmap;
@@ -64,7 +64,6 @@ namespace MShow
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onMouseMove;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onMouseLeave;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onSetCursor;
-
 	};
 }
 

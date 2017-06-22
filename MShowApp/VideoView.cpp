@@ -172,15 +172,17 @@ namespace MShow
 	{
 		if (m_model != NULL)
 		{
+			m_dx2d.Enter();
 			this->DrawView();
+			m_dx2d.Leave();
 			ID2D1Bitmap1* bitmap = m_model->GetBitmap();
 			if (bitmap != NULL)
 			{
 				TinySize s = m_player.GetVideoSize();
 				ASSERT(s.cx * s.cy * 4 == size);
 				bitmap->CopyFromMemory(NULL, bits, s.cx * 4);
+
 			}
-			m_controller.Draw(m_model);
 		}
 	}
 

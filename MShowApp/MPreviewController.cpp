@@ -289,8 +289,6 @@ namespace MShow
 
 	void MPreviewController::Draw(MElement* ps)
 	{
-		TinyAutoLock lock(m_lock);
-		m_time.BeginTime();
 		m_dx2d.Enter();
 		if (m_dx2d.BeginDraw(m_bitmap))
 		{
@@ -331,7 +329,5 @@ namespace MShow
 			m_dx2d.EndDraw();
 		}
 		m_dx2d.Leave();
-		m_time.EndTime();
-		TRACE("Draw Cost:%lld\n", m_time.GetMillisconds());
 	}
 }

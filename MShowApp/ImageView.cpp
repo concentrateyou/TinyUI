@@ -139,11 +139,16 @@ namespace MShow
 	{
 		if (m_model != NULL && m_bitmap1 != NULL)
 		{
+			m_dx2d.Enter();
 			TinySize s = m_model->GetSize();
 			m_bitmap1->CopyFromMemory(NULL, bits, s.cx * 4);
-			m_model->GetBitmap()->CopyFromMemory(NULL, bits, s.cx * 4);
 			this->DrawView();
+			m_dx2d.Leave();
+
+			m_controller.GetD2D().Enter();
+			m_model->GetBitmap()->CopyFromMemory(NULL, bits, s.cx * 4);
 			m_controller.Draw(m_model);
+			m_controller.GetD2D().Leave();
 		}
 	}
 
