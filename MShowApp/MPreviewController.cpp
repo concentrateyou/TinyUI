@@ -312,6 +312,10 @@ namespace MShow
 	BOOL MPreviewController::Close(DWORD dwMS)
 	{
 		m_bClose = TRUE;
+		for (INT i = 0;i < 16;i++)
+		{
+			SetEvent(m_events[i]);
+		}
 		return TinyTaskBase::Close(dwMS);
 	}
 
@@ -368,8 +372,6 @@ namespace MShow
 			HRESULT hRes = WaitForMultipleObjects(16, m_events, FALSE, INFINITE);
 			if (hRes == WAIT_ABANDONED)
 				break;
-			if (hRes == WAIT_TIMEOUT)
-				continue;
 			this->Draw();
 		}
 	}

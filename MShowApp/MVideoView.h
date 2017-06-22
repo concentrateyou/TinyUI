@@ -1,18 +1,37 @@
 #pragma once
+#include "Control/TinyCustomDialog.h"
+#include "Control/TinyTextBox.h"
 #include "MPreviewController.h"
-#include "MImageModel.h"
+#include "MFLVPlayer.h"
+#include "MFLVModel.h"
 using namespace DXFramework;
 
 namespace MShow
 {
 	class MPreviewController;
 
-	class ImageView : public TinyControl
+	class MVideoDialog : public TinyCustomDialog
 	{
-		DISALLOW_COPY_AND_ASSIGN(ImageView)
 	public:
-		ImageView(MPreviewController& controller,DWORD dwIndex);
-		virtual ~ImageView();
+		MVideoDialog();
+		virtual ~MVideoDialog();
+		LRESULT OnCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+		LRESULT OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+	public:
+		TinyString GetAddress();
+	private:
+		TinyTextBox	m_textbox;
+		TinyString	m_address;
+	};
+	/// <summary>
+	/// 视频源View
+	/// </summary>
+	class MVideoView : public TinyControl
+	{
+		DISALLOW_COPY_AND_ASSIGN(MVideoView)
+	public:
+		MVideoView(MPreviewController& controller, DWORD dwIndex);
+		virtual ~MVideoView();
 		//5个创建函数
 		DWORD	RetrieveStyle() OVERRIDE;
 		DWORD	RetrieveExStyle() OVERRIDE;
@@ -28,21 +47,21 @@ namespace MShow
 		LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-		LRESULT OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+		LRESULT OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	private:
+		void	DrawView();
 		void	OnVideo(BYTE* bits, LONG size);
 		void	OnAdd();
 		void	OnRemove();
 		void	OnMenuClick(void*, INT wID);
-		void	DrawView();
 	private:
 		DWORD						m_dwIndex;
 		DX2D						m_dx2d;
 		TinyMenu					m_menu;
+		MFLVPlayer					m_player;
 		MPreviewController&			m_controller;
-		TinyComPtr<ID2D1Bitmap1>	m_bitmap1;
-		TinyScopedPtr<MImageModel>	m_model;
+		TinyScopedPtr<MFLVModel>	m_model;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onMenuClick;
 	};
 }

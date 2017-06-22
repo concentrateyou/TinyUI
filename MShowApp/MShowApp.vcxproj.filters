@@ -87,16 +87,7 @@
     <ClInclude Include="MFLVModel.h">
       <Filter>头文件\Model</Filter>
     </ClInclude>
-    <ClInclude Include="ImageView.h">
-      <Filter>头文件\View</Filter>
-    </ClInclude>
     <ClInclude Include="TabView.h">
-      <Filter>头文件\View</Filter>
-    </ClInclude>
-    <ClInclude Include="VideoView.h">
-      <Filter>头文件\View</Filter>
-    </ClInclude>
-    <ClInclude Include="VolumeView.h">
       <Filter>头文件\View</Filter>
     </ClInclude>
     <ClInclude Include="MShowWindow.h">
@@ -125,6 +116,15 @@
     </ClInclude>
     <ClInclude Include="MRTMPEncoder.h">
       <Filter>头文件\RTMP</Filter>
+    </ClInclude>
+    <ClInclude Include="MImageView.h">
+      <Filter>头文件\View</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeView.h">
+      <Filter>头文件\View</Filter>
+    </ClInclude>
+    <ClInclude Include="MVideoView.h">
+      <Filter>头文件\View</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -170,15 +170,6 @@
     <ClCompile Include="MFLVModel.cpp">
       <Filter>源文件\Model</Filter>
     </ClCompile>
-    <ClCompile Include="ImageView.cpp">
-      <Filter>源文件\View</Filter>
-    </ClCompile>
-    <ClCompile Include="VolumeView.cpp">
-      <Filter>源文件\View</Filter>
-    </ClCompile>
-    <ClCompile Include="VideoView.cpp">
-      <Filter>源文件\View</Filter>
-    </ClCompile>
     <ClCompile Include="TabView.cpp">
       <Filter>源文件\View</Filter>
     </ClCompile>
@@ -205,6 +196,15 @@
     </ClCompile>
     <ClCompile Include="MRTMPEncoder.cpp">
       <Filter>源文件\RTMP</Filter>
+    </ClCompile>
+    <ClCompile Include="MImageView.cpp">
+      <Filter>源文件\View</Filter>
+    </ClCompile>
+    <ClCompile Include="VolumeView.cpp">
+      <Filter>源文件\View</Filter>
+    </ClCompile>
+    <ClCompile Include="MVideoView.cpp">
+      <Filter>源文件\View</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

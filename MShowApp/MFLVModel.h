@@ -1,6 +1,6 @@
 #pragma once
 #include "MPreviewController.h"
-#include "ImageView.h"
+#include "MImageView.h"
 
 namespace MShow
 {

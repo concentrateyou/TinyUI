@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "ImageView.h"
+#include "MImageView.h"
 #include "Control/TinyCommonDialog.h"
 
 namespace MShow
@@ -7,51 +7,51 @@ namespace MShow
 #define IDM_ADD_IMAGE		107
 #define IDM_REMOVE_IMAGE	108
 
-	ImageView::ImageView(MPreviewController& controller, DWORD dwIndex)
+	MImageView::MImageView(MPreviewController& controller, DWORD dwIndex)
 		:m_controller(controller),
 		m_dwIndex(dwIndex)
 	{
 	}
 
-	ImageView::~ImageView()
+	MImageView::~MImageView()
 	{
 	}
 
-	BOOL ImageView::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
+	BOOL MImageView::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
 	{
 		return TinyControl::Create(hParent, x, y, cx, cy, FALSE);
 	}
-	DWORD ImageView::RetrieveStyle()
+	DWORD MImageView::RetrieveStyle()
 	{
 		return (WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_CHILD);
 	}
 
-	DWORD ImageView::RetrieveExStyle()
+	DWORD MImageView::RetrieveExStyle()
 	{
 		return (WS_EX_LEFT | WS_EX_RIGHTSCROLLBAR);
 	}
 
-	LPCSTR ImageView::RetrieveClassName()
+	LPCSTR MImageView::RetrieveClassName()
 	{
 		return TEXT("ImageView");
 	}
 
-	LPCSTR ImageView::RetrieveTitle()
+	LPCSTR MImageView::RetrieveTitle()
 	{
 		return TEXT("ImageView");
 	}
 
-	HICON ImageView::RetrieveIcon()
+	HICON MImageView::RetrieveIcon()
 	{
 		return NULL;
 	}
 
-	DX2D& ImageView::GetD2D()
+	DX2D& MImageView::GetD2D()
 	{
 		return m_dx2d;
 	}
 
-	LRESULT ImageView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT MImageView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		RECT s = { 0 };
@@ -60,25 +60,25 @@ namespace MShow
 		m_menu.CreatePopupMenu();
 		m_menu.AppendMenu(MF_STRING, IDM_ADD_IMAGE, TEXT("Ìí¼Ó"));
 		m_menu.AppendMenu(MF_STRING, IDM_REMOVE_IMAGE, TEXT("É¾³ý"));
-		m_onMenuClick.Reset(new Delegate<void(void*, INT)>(this, &ImageView::OnMenuClick));
+		m_onMenuClick.Reset(new Delegate<void(void*, INT)>(this, &MImageView::OnMenuClick));
 		m_menu.EVENT_CLICK += m_onMenuClick;
 		return FALSE;
 	}
 
-	LRESULT ImageView::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT MImageView::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		m_bitmap1.Release();
 		return FALSE;
 	}
 
-	LRESULT ImageView::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT MImageView::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		return FALSE;
 	}
 
-	LRESULT ImageView::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT MImageView::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		PAINTSTRUCT s = { 0 };
@@ -88,19 +88,19 @@ namespace MShow
 		return FALSE;
 	}
 
-	LRESULT ImageView::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT MImageView::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		return FALSE;
 	}
 
-	LRESULT ImageView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT MImageView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		return FALSE;
 	}
 
-	LRESULT ImageView::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT MImageView::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		TinyPoint point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -109,7 +109,7 @@ namespace MShow
 		return FALSE;
 	}
 
-	LRESULT ImageView::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT MImageView::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		if (m_controller.Add(m_model))
@@ -119,7 +119,7 @@ namespace MShow
 		return FALSE;
 	}
 
-	void ImageView::DrawView()
+	void MImageView::DrawView()
 	{
 		if (m_bitmap1 != NULL)
 		{
@@ -136,7 +136,7 @@ namespace MShow
 		}
 	}
 
-	void ImageView::OnVideo(BYTE* bits, LONG size)
+	void MImageView::OnVideo(BYTE* bits, LONG size)
 	{
 		if (m_model != NULL && m_bitmap1 != NULL)
 		{
@@ -149,7 +149,7 @@ namespace MShow
 		}
 	}
 
-	void ImageView::OnMenuClick(void*, INT wID)
+	void MImageView::OnMenuClick(void*, INT wID)
 	{
 		switch (wID)
 		{
@@ -162,14 +162,14 @@ namespace MShow
 		}
 	}
 
-	void ImageView::OnAdd()
+	void MImageView::OnAdd()
 	{
 		LPCTSTR lpszFilter = _T("Image Files(*.bmp, *.jpg, *.png, *.gif)|*.bmp;*.jpg;*.png;*.gif|All Files (*.*)|*.*||");
 		TinyFileDialog dlg(TRUE, NULL, "", OFN_HIDEREADONLY | OFN_READONLY | OFN_FILEMUSTEXIST, lpszFilter);
 		if (dlg.DoModal(m_hWND) == IDOK)
 		{
 			this->OnRemove();
-			m_model.Reset(new MImageModel(m_controller, m_dwIndex, BindCallback(&ImageView::OnVideo, this)));
+			m_model.Reset(new MImageModel(m_controller, m_dwIndex, BindCallback(&MImageView::OnVideo, this)));
 			if (m_model->Initialize(dlg.GetPathName().STR()))
 			{
 				TinySize imageSize = m_model->GetSize();
@@ -186,7 +186,7 @@ namespace MShow
 		}
 	}
 
-	void ImageView::OnRemove()
+	void MImageView::OnRemove()
 	{
 		if (m_model != NULL)
 		{

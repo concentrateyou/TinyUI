@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "VideoView.h"
+#include "MVideoView.h"
 #include "WICTexture.h"
 #include "resource.h"
 
@@ -43,52 +43,52 @@ namespace MShow
 		return m_address;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	VideoView::VideoView(MPreviewController& controller, DWORD dwIndex)
-		:m_player(m_dx2d, BindCallback(&VideoView::OnVideo, this)),
+	MVideoView::MVideoView(MPreviewController& controller, DWORD dwIndex)
+		:m_player(m_dx2d, BindCallback(&MVideoView::OnVideo, this)),
 		m_controller(controller),
 		m_dwIndex(dwIndex)
 	{
 	}
 
-	VideoView::~VideoView()
+	MVideoView::~MVideoView()
 	{
 	}
-	LRESULT VideoView::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT MVideoView::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		return FALSE;
 	}
 
-	BOOL VideoView::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
+	BOOL MVideoView::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
 	{
 		return TinyControl::Create(hParent, x, y, cx, cy, FALSE);
 	}
-	DWORD VideoView::RetrieveStyle()
+	DWORD MVideoView::RetrieveStyle()
 	{
 		return (WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_CHILD);
 	}
 
-	DWORD VideoView::RetrieveExStyle()
+	DWORD MVideoView::RetrieveExStyle()
 	{
 		return (WS_EX_LEFT | WS_EX_RIGHTSCROLLBAR);
 	}
 
-	LPCSTR VideoView::RetrieveClassName()
+	LPCSTR MVideoView::RetrieveClassName()
 	{
 		return TEXT("VideoView");
 	}
 
-	LPCSTR VideoView::RetrieveTitle()
+	LPCSTR MVideoView::RetrieveTitle()
 	{
 		return TEXT("VideoView");
 	}
 
-	HICON VideoView::RetrieveIcon()
+	HICON MVideoView::RetrieveIcon()
 	{
 		return NULL;
 	}
 
-	LRESULT VideoView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT MVideoView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		RECT s = { 0 };
@@ -97,12 +97,12 @@ namespace MShow
 		m_menu.CreatePopupMenu();
 		m_menu.AppendMenu(MF_STRING, IDM_ADD_VIDEO, TEXT("Ìí¼Ó"));
 		m_menu.AppendMenu(MF_STRING, IDM_REMOVE_VIDEO, TEXT("É¾³ý"));
-		m_onMenuClick.Reset(new Delegate<void(void*, INT)>(this, &VideoView::OnMenuClick));
+		m_onMenuClick.Reset(new Delegate<void(void*, INT)>(this, &MVideoView::OnMenuClick));
 		m_menu.EVENT_CLICK += m_onMenuClick;
 		return FALSE;
 	}
 
-	LRESULT VideoView::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT MVideoView::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		m_menu.EVENT_CLICK -= m_onMenuClick;
@@ -110,7 +110,7 @@ namespace MShow
 		return FALSE;
 	}
 
-	LRESULT VideoView::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT MVideoView::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		PAINTSTRUCT s = { 0 };
@@ -120,19 +120,19 @@ namespace MShow
 		return FALSE;
 	}
 
-	LRESULT VideoView::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT MVideoView::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		return FALSE;
 	}
 
-	LRESULT VideoView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT MVideoView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		return FALSE;
 	}
 
-	LRESULT VideoView::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT MVideoView::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		TinyPoint point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -141,7 +141,7 @@ namespace MShow
 		return FALSE;
 	}
 
-	LRESULT VideoView::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT MVideoView::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		if (m_controller.Add(m_model))
@@ -151,7 +151,7 @@ namespace MShow
 		return FALSE;
 	}
 
-	void VideoView::DrawView()
+	void MVideoView::DrawView()
 	{
 		ID2D1Bitmap1* bitmap = m_player.GetBitmap();
 		if (bitmap != NULL)
@@ -169,7 +169,7 @@ namespace MShow
 		}
 	}
 
-	void VideoView::OnVideo(BYTE* bits, LONG size)
+	void MVideoView::OnVideo(BYTE* bits, LONG size)
 	{
 		if (m_model != NULL)
 		{
@@ -186,7 +186,7 @@ namespace MShow
 		}
 	}
 
-	void VideoView::OnMenuClick(void*, INT wID)
+	void MVideoView::OnMenuClick(void*, INT wID)
 	{
 		switch (wID)
 		{
@@ -199,7 +199,7 @@ namespace MShow
 		}
 	}
 
-	void VideoView::OnAdd()
+	void MVideoView::OnAdd()
 	{
 		MVideoDialog dlg;
 		if (dlg.DoModal(m_hWND, IDD_VIDEO) == IDOK)
@@ -217,7 +217,7 @@ namespace MShow
 		}
 	}
 
-	void VideoView::OnRemove()
+	void MVideoView::OnRemove()
 	{
 		if (m_model != NULL)
 		{
@@ -231,7 +231,7 @@ namespace MShow
 		}
 	}
 
-	DX2D& VideoView::GetD2D()
+	DX2D& MVideoView::GetD2D()
 	{
 		return m_dx2d;
 	}
