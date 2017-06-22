@@ -7,8 +7,9 @@ namespace MShow
 #define IDM_ADD_IMAGE		107
 #define IDM_REMOVE_IMAGE	108
 
-	ImageView::ImageView(MPreviewController& controller)
-		:m_controller(controller)
+	ImageView::ImageView(MPreviewController& controller, DWORD dwIndex)
+		:m_controller(controller),
+		m_dwIndex(dwIndex)
 	{
 	}
 
@@ -113,7 +114,7 @@ namespace MShow
 		bHandled = FALSE;
 		if (m_controller.Add(m_model))
 		{
-			m_controller.Draw(m_model);
+			m_controller.Draw();
 		}
 		return FALSE;
 	}
@@ -139,16 +140,13 @@ namespace MShow
 	{
 		if (m_model != NULL && m_bitmap1 != NULL)
 		{
-			m_dx2d.Enter();
 			TinySize s = m_model->GetSize();
 			m_bitmap1->CopyFromMemory(NULL, bits, s.cx * 4);
 			this->DrawView();
-			m_dx2d.Leave();
-
-			m_controller.GetD2D().Enter();
+			//Preview
 			m_model->GetBitmap()->CopyFromMemory(NULL, bits, s.cx * 4);
-			m_controller.Draw(m_model);
-			m_controller.GetD2D().Leave();
+			HANDLE handle = m_controller.GetSignal(m_dwIndex);
+			SetEvent(handle);
 		}
 	}
 
@@ -172,7 +170,7 @@ namespace MShow
 		if (dlg.DoModal(m_hWND) == IDOK)
 		{
 			this->OnRemove();
-			m_model.Reset(new MImageModel(m_controller, BindCallback(&ImageView::OnVideo, this)));
+			m_model.Reset(new MImageModel(m_controller, m_dwIndex, BindCallback(&ImageView::OnVideo, this)));
 			if (m_model->Initialize(dlg.GetPathName().STR()))
 			{
 				TinySize imageSize = m_model->GetSize();
@@ -195,7 +193,7 @@ namespace MShow
 		{
 			if (m_controller.Remove(m_model))
 			{
-				m_controller.Draw(m_model);
+				m_controller.Draw();
 			}
 			m_model.Reset(NULL);
 			m_bitmap1.Release();

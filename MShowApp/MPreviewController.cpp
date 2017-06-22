@@ -12,7 +12,8 @@ namespace MShow
 
 	MPreviewController::MPreviewController(MPreviewView& view)
 		:m_view(view),
-		m_lastElement(NULL)
+		m_lastElement(NULL),
+		m_bClose(FALSE)
 	{
 	}
 
@@ -82,6 +83,11 @@ namespace MShow
 		m_menu.AppendMenu(MF_STRING, IDM_REMOVE, TEXT("ÒÆ³ý"));
 		m_onMenuClick.Reset(new Delegate<void(void*, INT)>(this, &MPreviewController::OnMenuClick));
 		m_menu.EVENT_CLICK += m_onMenuClick;
+
+		for (INT i = 0;i < 16;i++)
+		{
+			m_events[i] = CreateEvent(NULL, FALSE, TRUE, NULL);
+		}
 
 		return TRUE;
 	}
@@ -201,7 +207,11 @@ namespace MShow
 
 	void MPreviewController::Uninitialize()
 	{
-		TinyAutoLock lock(m_lock);
+		for (INT i = 0;i < 16;i++)
+		{
+			CloseHandle(m_events[i]);
+			m_events[i] = NULL;
+		}
 		m_box.Release();
 		m_bitmap.Release();
 		m_bitmapCopy.Release();
@@ -212,6 +222,7 @@ namespace MShow
 		m_view.EVENT_MOUSEMOVE -= m_onMouseMove;
 		m_view.EVENT_MOUSELEAVE -= m_onMouseLeave;
 		m_view.EVENT_SETCURSOR -= m_onSetCursor;
+		TinyAutoLock lock(m_lock);
 		m_models.RemoveAll();
 	}
 
@@ -287,7 +298,24 @@ namespace MShow
 		return m_bitmapCopy;
 	}
 
-	void MPreviewController::Draw(MElement* ps)
+	HANDLE	MPreviewController::GetSignal(DWORD dwIndex)
+	{
+		return m_events[dwIndex];
+	}
+
+	BOOL MPreviewController::Submit()
+	{
+		m_bClose = FALSE;
+		return TinyTaskBase::Submit(BindCallback(&MPreviewController::OnMessagePump, this));
+	}
+
+	BOOL MPreviewController::Close(DWORD dwMS)
+	{
+		m_bClose = TRUE;
+		return TinyTaskBase::Close(dwMS);
+	}
+
+	void MPreviewController::Draw()
 	{
 		m_dx2d.Enter();
 		if (m_dx2d.BeginDraw(m_bitmap))
@@ -329,5 +357,20 @@ namespace MShow
 			m_dx2d.EndDraw();
 		}
 		m_dx2d.Leave();
+	}
+
+	void MPreviewController::OnMessagePump()
+	{
+		for (;;)
+		{
+			if (m_bClose)
+				break;
+			HRESULT hRes = WaitForMultipleObjects(16, m_events, FALSE, INFINITE);
+			if (hRes == WAIT_ABANDONED)
+				break;
+			if (hRes == WAIT_TIMEOUT)
+				continue;
+			this->Draw();
+		}
 	}
 }

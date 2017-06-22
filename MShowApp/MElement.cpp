@@ -5,7 +5,8 @@ namespace MShow
 {
 	IMPLEMENT_DYNAMIC(MElement, TinyObject);
 
-	MElement::MElement()
+	MElement::MElement(DWORD dwIndex)
+		:m_dwIndex(dwIndex)
 	{
 	}
 
@@ -37,6 +38,10 @@ namespace MShow
 	TinySize MElement::GetSize() const
 	{
 		return m_size;
+	}
+	DWORD MElement::GetIndex() const
+	{
+		return m_dwIndex;
 	}
 	BOOL MElement::PtInRect(const TinyPoint& pos)
 	{

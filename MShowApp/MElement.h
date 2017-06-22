@@ -25,7 +25,7 @@ namespace MShow
 	{
 		DECLARE_DYNAMIC(MElement)
 	public:
-		MElement();
+		MElement(DWORD dwIndex);
 		virtual ~MElement();
 	public:
 		virtual BOOL Draw(FLOAT radioX, FLOAT radioY) = 0;
@@ -35,6 +35,7 @@ namespace MShow
 		TinyPoint	GetPosition() const;
 		TinySize	GetScale() const;
 		TinySize	GetSize() const;
+		DWORD		GetIndex() const;
 		void	SetPosition(const TinyPoint& pos);
 		void	SetScale(const TinySize& size);
 		void	SetSize(const TinySize& size);
@@ -43,5 +44,6 @@ namespace MShow
 	protected:
 		TinySize	m_size;
 		TinyString	m_name;
+		DWORD		m_dwIndex;
 	};
 }

@@ -12,7 +12,7 @@ namespace MShow
 	{
 		DISALLOW_COPY_AND_ASSIGN(MFLVModel)
 	public:
-		MFLVModel(MPreviewController& controller);
+		MFLVModel(MPreviewController& controller,DWORD dwIndex);
 		virtual ~MFLVModel();
 		BOOL	Initialize(const TinySize& size);
 	public:

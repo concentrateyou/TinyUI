@@ -43,9 +43,10 @@ namespace MShow
 		return m_address;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	VideoView::VideoView(MPreviewController& controller)
+	VideoView::VideoView(MPreviewController& controller, DWORD dwIndex)
 		:m_player(m_dx2d, BindCallback(&VideoView::OnVideo, this)),
-		m_controller(controller)
+		m_controller(controller),
+		m_dwIndex(dwIndex)
 	{
 	}
 
@@ -145,7 +146,7 @@ namespace MShow
 		bHandled = FALSE;
 		if (m_controller.Add(m_model))
 		{
-			m_controller.Draw(m_model);
+			m_controller.Draw();
 		}
 		return FALSE;
 	}
@@ -172,16 +173,15 @@ namespace MShow
 	{
 		if (m_model != NULL)
 		{
-			m_dx2d.Enter();
 			this->DrawView();
-			m_dx2d.Leave();
 			ID2D1Bitmap1* bitmap = m_model->GetBitmap();
 			if (bitmap != NULL)
 			{
 				TinySize s = m_player.GetVideoSize();
 				ASSERT(s.cx * s.cy * 4 == size);
 				bitmap->CopyFromMemory(NULL, bits, s.cx * 4);
-
+				/*HANDLE handle = m_controller.GetSignal(m_dwIndex);
+				SetEvent(handle);*/
 			}
 		}
 	}
@@ -210,7 +210,7 @@ namespace MShow
 			if (m_player.Open(val.STR()))
 			{
 				m_controller.Remove(m_model);
-				m_model.Reset(new MFLVModel(m_controller));
+				m_model.Reset(new MFLVModel(m_controller, m_dwIndex));
 				TinySize videoSize = m_player.GetVideoSize();
 				m_model->Initialize(videoSize);
 			}
@@ -223,7 +223,7 @@ namespace MShow
 		{
 			if (m_controller.Remove(m_model))
 			{
-				m_controller.Draw(m_model);
+				m_controller.Draw();
 			}
 			m_model.Reset(NULL);
 			m_player.Close();

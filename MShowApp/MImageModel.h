@@ -28,7 +28,7 @@ namespace MShow
 	{
 		DISALLOW_COPY_AND_ASSIGN(MImageModel)
 	public:
-		MImageModel(MPreviewController& controller, Callback<void(BYTE*, LONG)>&& callback);
+		MImageModel(MPreviewController& controller, DWORD dwIndex, Callback<void(BYTE*, LONG)>&& callback);
 		virtual ~MImageModel();
 		BOOL	 Initialize(const CHAR* pzFile);
 		BOOL	 Animate();

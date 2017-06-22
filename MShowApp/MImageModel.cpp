@@ -4,8 +4,9 @@
 
 namespace MShow
 {
-	MImageModel::MImageModel(MPreviewController& controller, Callback<void(BYTE*, LONG)>&& callback)
-		:m_controller(controller),
+	MImageModel::MImageModel(MPreviewController& controller, DWORD dwIndex, Callback<void(BYTE*, LONG)>&& callback)
+		:MElement(dwIndex),
+		m_controller(controller),
 		m_callback(std::move(callback)),
 		m_hTimer(NULL),
 		m_index(0)

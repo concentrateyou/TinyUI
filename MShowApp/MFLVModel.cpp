@@ -3,8 +3,9 @@
 
 namespace MShow
 {
-	MFLVModel::MFLVModel(MPreviewController& controller)
-		:m_controller(controller)
+	MFLVModel::MFLVModel(MPreviewController& controller, DWORD dwIndex)
+		:MElement(dwIndex),
+		m_controller(controller)
 	{
 	}
 

@@ -11,7 +11,7 @@ namespace MShow
 	{
 		DISALLOW_COPY_AND_ASSIGN(ImageView)
 	public:
-		ImageView(MPreviewController& controller);
+		ImageView(MPreviewController& controller,DWORD dwIndex);
 		virtual ~ImageView();
 		//5个创建函数
 		DWORD	RetrieveStyle() OVERRIDE;
@@ -37,6 +37,7 @@ namespace MShow
 		void	OnMenuClick(void*, INT wID);
 		void	DrawView();
 	private:
+		DWORD						m_dwIndex;
 		DX2D						m_dx2d;
 		TinyMenu					m_menu;
 		MPreviewController&			m_controller;

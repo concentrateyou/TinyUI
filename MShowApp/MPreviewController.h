@@ -28,11 +28,14 @@ namespace MShow
 		void	MoveUp(MElement* element);
 		void	MoveDown(MElement* element);
 	public:
-		void	Draw(MElement* ps);
+		void	Draw();
+		BOOL	Submit();
+		BOOL	Close(DWORD dwMS) OVERRIDE;
 	public:
 		DX2D&			GetD2D();
 		MPreviewView&	GetView();
 		ID2D1Bitmap1*	GetBitmap();
+		HANDLE			GetSignal(DWORD dwIndex);
 	private:
 		void	OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -42,9 +45,11 @@ namespace MShow
 		void	OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnMenuClick(void*, INT wID);
+		void	OnMessagePump();
 	private:
 		MElement* HitTest(const TinyPoint& pos);
 	private:
+		BOOL						m_bClose;
 		DX2D						m_dx2d;
 		TinySize					m_pulgSize;
 		TinySize					m_size;
@@ -52,6 +57,7 @@ namespace MShow
 		TinyLock					m_lock;
 		MPreviewView&				m_view;
 		MElement*					m_lastElement;
+		HANDLE						m_events[16];
 		TinyArray<MElement*>		m_models;
 		TinyComPtr<ID2D1Bitmap>		m_box;
 		TinyComPtr<ID2D1Bitmap1>	m_bitmap;

@@ -30,7 +30,7 @@ namespace MShow
 	{
 		DISALLOW_COPY_AND_ASSIGN(VideoView)
 	public:
-		VideoView(MPreviewController& controller);
+		VideoView(MPreviewController& controller, DWORD dwIndex);
 		virtual ~VideoView();
 		//5个创建函数
 		DWORD	RetrieveStyle() OVERRIDE;
@@ -56,6 +56,7 @@ namespace MShow
 		void	OnRemove();
 		void	OnMenuClick(void*, INT wID);
 	private:
+		DWORD						m_dwIndex;
 		DX2D						m_dx2d;
 		TinyMenu					m_menu;
 		MFLVPlayer					m_player;

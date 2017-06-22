@@ -71,22 +71,25 @@ namespace MShow
 		m_onTabChange.Reset(new Delegate<void(void*)>(this, &MShowWindow::OnTabChange));
 		m_tab.EVENT_SELCHANGE += m_onTabChange;
 		INT offset = 20;
+		DWORD dwIndex = 0;
 		for (INT i = 0;i < 6;i++)
 		{
-			VideoView* pVideoView = new VideoView(m_controller);
+			VideoView* pVideoView = new VideoView(m_controller, dwIndex++);
 			pVideoView->Create(m_tabViews[0], offset, 45, 192, 108);
 			m_videoViews.Add(pVideoView);
 			m_volumeViews[i].Create(m_tabViews[0], offset, 10, 192, 20);
-			ImageView* pImageView = new ImageView(m_controller);
+			ImageView* pImageView = new ImageView(m_controller, dwIndex++);
 			pImageView->Create(m_tabViews[1], offset, 45, 192, 108);
 			m_imageViews.Add(pImageView);
 			offset += 212;
 		}
+		m_controller.Submit();
 		return FALSE;
 	}
 	LRESULT MShowWindow::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		m_controller.Close(INFINITE);
 		for (INT i = 0;i < 6;i++)
 		{
 			m_imageViews[i]->DestroyWindow();
