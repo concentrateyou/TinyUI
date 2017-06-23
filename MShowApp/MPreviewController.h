@@ -62,6 +62,7 @@ namespace MShow
 		TinyComPtr<ID2D1Bitmap>		m_box;
 		TinyComPtr<ID2D1Bitmap1>	m_bitmap;
 		TinyComPtr<ID2D1Bitmap1>	m_bitmapCopy;
+		TinyPerformanceTimer		m_timer;
 		TinyScopedPtr<Delegate<void(void*, INT)>>				   m_onMenuClick;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onSize;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonDown;

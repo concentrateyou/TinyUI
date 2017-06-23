@@ -352,7 +352,7 @@ namespace MShow
 								TinySize size = rectangle.Size();
 								D2D_RECT_F dst = { static_cast<FLOAT>(pos.x),static_cast<FLOAT>(pos.y),static_cast<FLOAT>(pos.x + size.cx),static_cast<FLOAT>(pos.y + size.cy) };
 								D2D_RECT_F src = { 0.0F,0.0F,sizeF.width / 2,sizeF.height / 2 };
-								m_dx2d.GetContext()->DrawBitmap(m_box, dst, 1.0F, D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC, src, NULL);
+								m_dx2d.GetContext()->DrawBitmap(m_box, dst, 1.0F, D2D1_INTERPOLATION_MODE_MULTI_SAMPLE_LINEAR, src, NULL);
 							}
 						}
 					}
@@ -372,8 +372,13 @@ namespace MShow
 			HRESULT hRes = WaitForMultipleObjects(16, m_events, FALSE, INFINITE);
 			if (hRes == WAIT_ABANDONED)
 				break;
-			TinyAutoLock lock(m_lock);
+			m_timer.BeginTime();
 			this->Draw();
+			m_timer.EndTime();
+			if (m_timer.GetMillisconds() >= 40)
+			{
+				TRACE("Cost:%lld\n", m_timer.GetMillisconds());
+			}
 		}
 	}
 }

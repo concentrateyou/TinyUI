@@ -92,7 +92,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;__STDC_CONSTANT_MACROS;__STDC_LIMIT_MACROS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\DXFramework;..\DShowCapture;..\WebRTCNS;..\ThirdParty\vld;..\ThirdParty\librtmp\include;..\ThirdParty\libfaac\include;..\ThirdParty\ffmpeg\include;..\ThirdParty\x264;..\ThirdParty\libsamplerate\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\DXFramework;..\DShowCapture;..\ThirdParty\vld;..\ThirdParty\librtmp\include;..\ThirdParty\libfaac\include;..\ThirdParty\ffmpeg\include;..\ThirdParty\x264;..\ThirdParty\libsamplerate\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

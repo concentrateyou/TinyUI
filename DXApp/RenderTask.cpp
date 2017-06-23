@@ -137,7 +137,9 @@ namespace DXApp
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
 		m_graphics.Present();
 		m_timer.EndTime();
-		return m_timer.GetMillisconds();
+		LONGLONG lls = m_timer.GetMillisconds();
+		TRACE("Cost:%lld\n", lls);
+		return lls;
 	}
 
 	void RenderTask::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

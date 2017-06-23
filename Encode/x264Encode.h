@@ -38,24 +38,6 @@ namespace Encode
 		LONGLONG	DTS;
 	}MediaTag;
 
-	class I420Converter
-	{
-		DISALLOW_COPY_AND_ASSIGN(I420Converter)
-	public:
-		I420Converter(const TinySize& srcSize, const TinySize& dstSize);
-		~I420Converter();
-		BOOL		BRGAToI420(BYTE* pBGRA);
-		AVFrame*	GetI420() const;
-	private:
-		AVFrame*				m_i420;
-		AVFrame*				m_bgra;
-		SwsContext*				m_sws;
-		TinySize				m_srcSize;
-		TinySize				m_dstSize;
-		INT						m_size;
-		TinyScopedArray<BYTE>	m_bits;
-	};
-
 	class x264Encode
 	{
 		DISALLOW_COPY_AND_ASSIGN(x264Encode)
