@@ -95,6 +95,7 @@ namespace MShow
 	{
 		bHandled = FALSE;
 		m_bFlag = !m_bFlag;
+		m_trackBar.SetPos(m_bFlag ? 0 : 100);
 		this->Invalidate();
 		return FALSE;
 	}

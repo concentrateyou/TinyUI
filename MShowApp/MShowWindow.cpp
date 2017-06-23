@@ -93,20 +93,21 @@ namespace MShow
 	{
 		bHandled = FALSE;
 		m_controller.Close(INFINITE);
-
+		m_controller.Uninitialize();
 		for (INT i = 0;i < 6;i++)
 		{
 			m_volumeViews[i].EVENT_VOLUME -= m_volumes[i];
 			SAFE_DELETE(m_volumes[i]);
+			m_imageViews[i]->OnRemove();
 			m_imageViews[i]->DestroyWindow();
 			SAFE_DELETE(m_imageViews[i]);
+			m_videoViews[i]->OnRemove();
 			m_videoViews[i]->DestroyWindow();
 			SAFE_DELETE(m_videoViews[i]);
 		}
 		m_videoViews.RemoveAll();
 		m_imageViews.RemoveAll();
 		m_tab.EVENT_SELCHANGE -= m_onTabChange;
-		m_controller.Uninitialize();
 		return FALSE;
 	}
 	LRESULT MShowWindow::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

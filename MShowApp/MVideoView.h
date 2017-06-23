@@ -49,15 +49,13 @@ namespace MShow
 		LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-
 	public:
 		void	OnVolume(LONG volume);
-
+		void	OnRemove();
 	private:
 		void	DrawView();
 		void	OnVideo(BYTE* bits, LONG size);
 		void	OnAdd();
-		void	OnRemove();
 		void	OnMenuClick(void*, INT wID);
 	private:
 		DWORD						m_dwIndex;
