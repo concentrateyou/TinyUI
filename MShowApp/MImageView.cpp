@@ -192,10 +192,11 @@ namespace MShow
 		{
 			if (m_controller.Remove(m_model))
 			{
-				m_controller.Draw();
+				HANDLE handle = m_controller.GetSignal(m_dwIndex);
+				SetEvent(handle);
 			}
-			m_model.Reset(NULL);
 			m_bitmap1.Release();
+			m_model.Reset(NULL);
 			this->Invalidate();
 		}
 	}

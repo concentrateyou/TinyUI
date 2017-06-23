@@ -372,6 +372,7 @@ namespace MShow
 			HRESULT hRes = WaitForMultipleObjects(16, m_events, FALSE, INFINITE);
 			if (hRes == WAIT_ABANDONED)
 				break;
+			TinyAutoLock lock(m_lock);
 			this->Draw();
 		}
 	}

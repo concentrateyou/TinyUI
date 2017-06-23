@@ -209,7 +209,6 @@ namespace MShow
 			m_player.Close();
 			if (m_player.Open(val.STR()))
 			{
-				m_controller.Remove(m_model);
 				m_model.Reset(new MFLVModel(m_controller, m_dwIndex));
 				TinySize videoSize = m_player.GetVideoSize();
 				m_model->Initialize(videoSize);
@@ -223,10 +222,11 @@ namespace MShow
 		{
 			if (m_controller.Remove(m_model))
 			{
-				m_controller.Draw();
+				HANDLE handle = m_controller.GetSignal(m_dwIndex);
+				SetEvent(handle);
 			}
-			m_model.Reset(NULL);
 			m_player.Close();
+			m_model.Reset(NULL);
 			this->Invalidate();
 		}
 	}
