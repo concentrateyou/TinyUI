@@ -46,6 +46,7 @@ namespace MShow
 		TinyArray<MImageView*>	m_imageViews;
 	private:
 		TinyScopedPtr<Delegate<void(void*)>>	m_onTabChange;
+		Delegate<void(DWORD)>*					m_volumes[6];
 	};
 }
 

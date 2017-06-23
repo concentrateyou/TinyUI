@@ -44,7 +44,7 @@ namespace TinyUI
 				return FALSE;
 			ZeroMemory(&dbdesc, sizeof(dbdesc));
 			dbdesc.dwSize = sizeof(dbdesc);
-			dbdesc.dwFlags = DSBCAPS_STATIC | DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLPOSITIONNOTIFY | DSBCAPS_GETCURRENTPOSITION2;
+			dbdesc.dwFlags = DSBCAPS_STATIC | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLPOSITIONNOTIFY | DSBCAPS_GETCURRENTPOSITION2;
 			dbdesc.dwBufferBytes = m_dwSize;
 			dbdesc.lpwfxFormat = pFMT;
 			TinyComPtr<IDirectSoundBuffer> dsb;

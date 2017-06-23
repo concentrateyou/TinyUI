@@ -78,6 +78,9 @@ namespace MShow
 			pVideoView->Create(m_tabViews[0], offset, 45, 192, 108);
 			m_videoViews.Add(pVideoView);
 			m_volumeViews[i].Create(m_tabViews[0], offset, 10, 192, 20);
+			m_volumes[i] = new Delegate<void(DWORD)>(pVideoView, &MVideoView::OnVolume);
+			m_volumeViews[i].EVENT_VOLUME += m_volumes[i];
+
 			MImageView* pImageView = new MImageView(m_controller, dwIndex++);
 			pImageView->Create(m_tabViews[1], offset, 45, 192, 108);
 			m_imageViews.Add(pImageView);
@@ -90,8 +93,11 @@ namespace MShow
 	{
 		bHandled = FALSE;
 		m_controller.Close(INFINITE);
+
 		for (INT i = 0;i < 6;i++)
 		{
+			m_volumeViews[i].EVENT_VOLUME -= m_volumes[i];
+			SAFE_DELETE(m_volumes[i]);
 			m_imageViews[i]->DestroyWindow();
 			SAFE_DELETE(m_imageViews[i]);
 			m_videoViews[i]->DestroyWindow();

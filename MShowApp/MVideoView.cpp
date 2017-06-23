@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <math.h>
 #include "MVideoView.h"
 #include "WICTexture.h"
 #include "resource.h"
@@ -184,6 +185,21 @@ namespace MShow
 				SetEvent(handle);
 			}
 		}
+	}
+
+	void MVideoView::OnVolume(LONG pos)
+	{
+		if (pos == 0)
+		{
+			m_player.SetVolume(-10000);
+		}
+		else
+		{
+			LONG volume = static_cast<LONG>(floorf(2000.0F * log10f((FLOAT)(pos) / (FLOAT)100) + 0.5F));
+			m_player.SetVolume(volume);
+		}
+
+
 	}
 
 	void MVideoView::OnMenuClick(void*, INT wID)

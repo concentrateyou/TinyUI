@@ -54,6 +54,7 @@ namespace MShow
 		m_hICONS[1] = LoadIcon(TinyApplication::GetInstance()->Handle(), MAKEINTRESOURCE(IDI_ICON1));
 		m_onPosChange.Reset(new Delegate<void(void*, INT)>(this, &VolumeView::OnPosChange));
 		m_trackBar.Create(m_hWND, 25, 0, 150, 20);
+		m_trackBar.SetRange(0, 100);
 		m_trackBar.EVENT_POSCHANGING += m_onPosChange;
 		return FALSE;
 	}
