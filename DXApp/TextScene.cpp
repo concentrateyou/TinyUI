@@ -47,18 +47,18 @@ namespace DXApp
 		}
 	}
 
-	BOOL TextScene::Process(DX11& dx11)
+	BOOL TextScene::Allocate(DX11& dx11)
 	{
 		return TRUE;
 	}
 
-	void TextScene::Clear(DX11& dx11)
+	void TextScene::Deallocate(DX11& dx11)
 	{
 		KillTimer(NULL, m_timerID);
 		m_displaySize = m_maxSize;
 	}
 
-	BOOL TextScene::Render(DX11& dx11)
+	BOOL TextScene::Draw(DX11& dx11)
 	{
 		Gdiplus::StringFormat format(Gdiplus::StringFormat::GenericTypographic());
 		format.SetFormatFlags(Gdiplus::StringFormatFlagsNoFitBlackBox | Gdiplus::StringFormatFlagsMeasureTrailingSpaces);
@@ -78,6 +78,6 @@ namespace DXApp
 			rectF.Height = static_cast<Gdiplus::REAL>(m_size.cy);
 			DX11Font2D::DrawString(dx11, m_text, rectF, &format);
 		}
-		return DX11Image2D::Render(dx11);
+		return DX11Image2D::Draw(dx11);
 	}
 }

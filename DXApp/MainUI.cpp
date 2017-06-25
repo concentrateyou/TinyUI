@@ -266,15 +266,15 @@ namespace DXApp
 						m_gameScene.SetConfig(className, pzName, str.c_str());
 						if (m_renderTask.Add(&m_gameScene))
 						{
-							m_gameScene.Process(m_renderTask.GetGraphics().GetDX11());
+							m_gameScene.Allocate(m_renderTask.GetGraphics().GetDX11());
 						}
 					}
 					else
 					{
-						m_gameScene.Clear(m_renderTask.GetGraphics().GetDX11());
+						m_gameScene.Deallocate(m_renderTask.GetGraphics().GetDX11());
 						m_gameScene.Initialize(m_renderTask.GetGraphics().GetDX11());
 						m_gameScene.SetConfig(className, pzName, str.c_str());
-						m_gameScene.Process(m_renderTask.GetGraphics().GetDX11());
+						m_gameScene.Allocate(m_renderTask.GetGraphics().GetDX11());
 					}
 				}
 				CloseHandle(hProcess);
@@ -297,11 +297,11 @@ namespace DXApp
 			if (IsWindow(dlg.GetHWND()))
 			{
 				m_renderTask.Remove(&m_windowScene);
-				m_windowScene.Clear(m_renderTask.GetGraphics().GetDX11());
+				m_windowScene.Deallocate(m_renderTask.GetGraphics().GetDX11());
 				m_windowScene.Initialize(m_renderTask.GetGraphics().GetDX11(), dlg.GetHWND());
 				if (m_renderTask.Add(&m_windowScene))
 				{
-					m_windowScene.Process(m_renderTask.GetGraphics().GetDX11());
+					m_windowScene.Allocate(m_renderTask.GetGraphics().GetDX11());
 				}
 			}
 		}
@@ -319,11 +319,11 @@ namespace DXApp
 			if (dlg.GetVideoName() != NULL && dlg.GetVideoParam() != NULL)
 			{
 				m_renderTask.Remove(&m_videoScene);
-				m_videoScene.Clear(m_renderTask.GetGraphics().GetDX11());
+				m_videoScene.Deallocate(m_renderTask.GetGraphics().GetDX11());
 				m_videoScene.Initialize(m_renderTask.GetGraphics().GetDX11(), *dlg.GetVideoName(), *dlg.GetVideoParam());
 				if (m_renderTask.Add(&m_videoScene))
 				{
-					m_videoScene.Process(m_renderTask.GetGraphics().GetDX11());
+					m_videoScene.Allocate(m_renderTask.GetGraphics().GetDX11());
 				}
 			}
 		}
@@ -336,11 +336,11 @@ namespace DXApp
 		if (dlg.DoModal(m_hWND, IDD_DLG_TEXT) == IDOK)
 		{
 			m_renderTask.Remove(&m_textScene);
-			m_textScene.Clear(m_renderTask.GetGraphics().GetDX11());
+			m_textScene.Deallocate(m_renderTask.GetGraphics().GetDX11());
 			m_textScene.Initialize(m_renderTask.GetGraphics().GetDX11(), dlg.GetText(), dlg.GetFormat(), dlg.GetBkColor());
 			if (m_renderTask.Add(&m_textScene))
 			{
-				m_textScene.Process(m_renderTask.GetGraphics().GetDX11());
+				m_textScene.Allocate(m_renderTask.GetGraphics().GetDX11());
 			}
 		}
 		dlg.EVENT_CONTEXTCHANGE -= m_onTextChange;
@@ -352,11 +352,11 @@ namespace DXApp
 		if (dlg.DoModal(m_hWND) == IDOK)
 		{
 			m_renderTask.Remove(&m_imageScene);
-			m_imageScene.Clear(m_renderTask.GetGraphics().GetDX11());
+			m_imageScene.Deallocate(m_renderTask.GetGraphics().GetDX11());
 			m_imageScene.Initialize(m_renderTask.GetGraphics().GetDX11(), dlg.GetPathName());
 			if (m_renderTask.Add(&m_imageScene))
 			{
-				m_imageScene.Process(m_renderTask.GetGraphics().GetDX11());
+				m_imageScene.Allocate(m_renderTask.GetGraphics().GetDX11());
 			}
 		}
 	}
@@ -372,11 +372,11 @@ namespace DXApp
 		m_snapshot.DestroyWindow();
 		m_snapshot.SetEmpty();
 		m_renderTask.Remove(&m_screenScene);
-		m_screenScene.Clear(m_renderTask.GetGraphics().GetDX11());
+		m_screenScene.Deallocate(m_renderTask.GetGraphics().GetDX11());
 		m_screenScene.Initialize(m_renderTask.GetGraphics().GetDX11(), s);
 		if (m_renderTask.Add(&m_screenScene))
 		{
-			m_screenScene.Process(m_renderTask.GetGraphics().GetDX11());
+			m_screenScene.Allocate(m_renderTask.GetGraphics().GetDX11());
 		}
 	}
 	void MainUI::OnContextChange(void* sender)

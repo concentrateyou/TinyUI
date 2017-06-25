@@ -42,9 +42,9 @@ namespace DXFramework
 		virtual INT	GetIndexCount() const;
 		virtual void Destory();
 	public:
-		BOOL Process(DX11& dx11) OVERRIDE;
-		BOOL Render(DX11& dx11) OVERRIDE;
-		void Clear(DX11& dx11) OVERRIDE;
+		BOOL Allocate(DX11& dx11) OVERRIDE;
+		BOOL Draw(DX11& dx11) OVERRIDE;
+		void Deallocate(DX11& dx11) OVERRIDE;
 	private:
 		BOOL Initialize(DX11& dx11);
 	protected:

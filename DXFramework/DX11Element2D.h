@@ -40,9 +40,9 @@ namespace DXFramework
 		void	SetName(const TinyString& name);
 		BOOL	PtInRect(const TinyPoint& pos);
 	public:
-		virtual BOOL Process(DX11& dx11) = 0;
-		virtual BOOL Render(DX11& dx11) = 0;
-		virtual void Clear(DX11& dx11) = 0;
+		virtual BOOL Allocate(DX11& dx11) = 0;
+		virtual BOOL Draw(DX11& dx11) = 0;
+		virtual void Deallocate(DX11& dx11) = 0;
 	public:
 		TinyString		m_name;
 		TinySize		m_size;

@@ -17,9 +17,9 @@ namespace DXApp
 		BOOL Initialize(DX11& dx11, const TinyString& text, const CHARFORMAT& cf, const COLORREF& bkColor);
 		static VOID CALLBACK TimerProc(HWND  hwnd, UINT  uMsg, UINT_PTR idEvent, DWORD dwTime);
 	public:
-		BOOL Process(DX11& dx11) OVERRIDE;
-		BOOL Render(DX11& dx11) OVERRIDE;
-		void Clear(DX11& dx11) OVERRIDE;
+		BOOL Allocate(DX11& dx11) OVERRIDE;
+		BOOL Draw(DX11& dx11) OVERRIDE;
+		void Deallocate(DX11& dx11) OVERRIDE;
 	private:
 		TinyString		m_text;
 		COLORREF		m_bkColor;

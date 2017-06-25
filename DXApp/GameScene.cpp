@@ -27,19 +27,19 @@ namespace DXApp
 		m_captureTask->SetConfig(className, exeName, dllName);
 	}
 
-	BOOL GameScene::Process(DX11& dx11)
+	BOOL GameScene::Allocate(DX11& dx11)
 	{
 		return m_captureTask->Submit();
 	}
 
-	void GameScene::Clear(DX11& dx11)
+	void GameScene::Deallocate(DX11& dx11)
 	{
 		if (m_captureTask != NULL)
 			m_captureTask->Close();
 		m_captureTask.Reset(NULL);
 	}
 
-	BOOL GameScene::Render(DX11& dx11)
+	BOOL GameScene::Draw(DX11& dx11)
 	{
 		ASSERT(m_captureTask);
 		SharedCaptureDATA* pCaptureDATA = m_captureTask->GetSharedCaptureDATA();
@@ -109,6 +109,6 @@ namespace DXApp
 				}
 			}
 		}
-		return DX11Image2D::Render(dx11);
+		return DX11Image2D::Draw(dx11);
 	}
 }

@@ -16,7 +16,7 @@ namespace FLVPlayer
 		m_bFirstI(FALSE)
 	{
 		m_aac.Reset(new AACDecode());
-		m_h264.Reset(new H264Decode());
+		m_h264.Reset(new x264Decode());
 		m_close.CreateEvent(FALSE, FALSE, NULL, NULL);
 	}
 

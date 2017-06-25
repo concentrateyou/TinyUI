@@ -17,9 +17,9 @@ namespace DXApp
 		virtual ~ScreenScene();
 		BOOL Initialize(DX11& dx11, const TinyRectangle& s);
 	public:
-		BOOL Process(DX11& dx11) OVERRIDE;
-		BOOL Render(DX11& dx11) OVERRIDE;
-		void Clear(DX11& dx11) OVERRIDE;
+		BOOL Allocate(DX11& dx11) OVERRIDE;
+		BOOL Draw(DX11& dx11) OVERRIDE;
+		void Deallocate(DX11& dx11) OVERRIDE;
 	private:
 		BYTE*			m_bits;
 		HBITMAP			m_hBitmap;

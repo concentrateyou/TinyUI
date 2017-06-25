@@ -26,17 +26,17 @@ namespace DXApp
 		return DX11Image2D::CreateCompatible(dx11, param.GetSize());
 	}
 
-	BOOL VideoScene::Process(DX11& dx11)
+	BOOL VideoScene::Allocate(DX11& dx11)
 	{
 		return m_video.Start();
 	}
 
-	void VideoScene::Clear(DX11& dx11)
+	void VideoScene::Deallocate(DX11& dx11)
 	{
 		m_video.Uninitialize();
 	}
 
-	BOOL VideoScene::Render(DX11& dx11)
+	BOOL VideoScene::Draw(DX11& dx11)
 	{
 		m_video.Lock();
 		BYTE* bits = m_video.GetPointer();
@@ -44,7 +44,7 @@ namespace DXApp
 		if (bits != NULL)
 		{
 			DX11Image2D::BitBlt(dx11, bits, m_video.GetSize(), linesize);
-			DX11Image2D::Render(dx11);
+			DX11Image2D::Draw(dx11);
 		}
 		m_video.Unlock();
 		return bits != NULL;

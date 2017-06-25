@@ -58,16 +58,16 @@ namespace DXApp
 		return FALSE;
 	}
 
-	BOOL ScreenScene::Process(DX11& dx11)
+	BOOL ScreenScene::Allocate(DX11& dx11)
 	{
 		return TRUE;
 	}
-	void ScreenScene::Clear(DX11& dx11)
+	void ScreenScene::Deallocate(DX11& dx11)
 	{
 		SAFE_DELETE_OBJECT(m_hBitmap);
 		m_memDC.Reset(NULL);
 	}
-	BOOL ScreenScene::Render(DX11& dx11)
+	BOOL ScreenScene::Draw(DX11& dx11)
 	{
 		if (IsWindows8OrGreater())
 		{
@@ -103,6 +103,6 @@ namespace DXApp
 				::ReleaseDC(NULL, hDC);
 			}
 		}
-		return DX11Image2D::Render(dx11);
+		return DX11Image2D::Draw(dx11);
 	}
 }

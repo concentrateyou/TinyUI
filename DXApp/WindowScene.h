@@ -16,9 +16,9 @@ namespace DXApp
 		BOOL Initialize(DX11& dx11, HWND hWND);
 		HWND GetCaptureWindow() const;
 	public:
-		BOOL Process(DX11& dx11) OVERRIDE;
-		BOOL Render(DX11& dx11) OVERRIDE;
-		void Clear(DX11& dx11) OVERRIDE;
+		BOOL Allocate(DX11& dx11) OVERRIDE;
+		BOOL Draw(DX11& dx11) OVERRIDE;
+		void Deallocate(DX11& dx11) OVERRIDE;
 	private:
 		HWND			m_hWND;
 		BYTE*			m_bits;

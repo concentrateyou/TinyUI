@@ -17,9 +17,9 @@ namespace DXApp
 		BOOL Initialize(DX11& dx11);
 		void SetConfig(const TinyString& className, const TinyString& exeName, const TinyString& dllName);
 	public:
-		BOOL Process(DX11& dx11) OVERRIDE;
-		BOOL Render(DX11& dx11) OVERRIDE;
-		void Clear(DX11& dx11) OVERRIDE;
+		BOOL Allocate(DX11& dx11) OVERRIDE;
+		BOOL Draw(DX11& dx11) OVERRIDE;
+		void Deallocate(DX11& dx11) OVERRIDE;
 	private:
 		TinyScopedPtr<DX11CaptureTask>	m_captureTask;
 		TinyMutex						m_mutes[2];

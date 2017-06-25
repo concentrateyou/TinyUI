@@ -89,18 +89,18 @@ namespace DXApp
 		return m_hWND;
 	}
 
-	BOOL WindowScene::Process(DX11& dx11)
+	BOOL WindowScene::Allocate(DX11& dx11)
 	{
 		return TRUE;
 	}
 
-	void WindowScene::Clear(DX11& dx11)
+	void WindowScene::Deallocate(DX11& dx11)
 	{
 		SAFE_DELETE_OBJECT(m_hBitmap);
 		m_memDC.Reset(NULL);
 	}
 
-	BOOL WindowScene::Render(DX11& dx11)
+	BOOL WindowScene::Draw(DX11& dx11)
 	{
 		HDC hDC = ::GetDC(m_hWND);
 		if (hDC != NULL)
@@ -136,7 +136,7 @@ namespace DXApp
 			UINT  linesize = cx * 4;
 			this->Copy(dx11, m_bits, linesize * m_size.cy, linesize);
 			::ReleaseDC(m_hWND, hDC);
-			DX11Image2D::Render(dx11);
+			DX11Image2D::Draw(dx11);
 			return TRUE;
 		}
 		return FALSE;

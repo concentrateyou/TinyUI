@@ -286,12 +286,12 @@ namespace DXFramework
 		return TRUE;
 	}
 
-	BOOL DX11Image2D::Process(DX11& dx11)
+	BOOL DX11Image2D::Allocate(DX11& dx11)
 	{
 		return TRUE;
 	}
 
-	void DX11Image2D::Clear(DX11& dx11)
+	void DX11Image2D::Deallocate(DX11& dx11)
 	{
 
 	}
@@ -304,7 +304,7 @@ namespace DXFramework
 	{
 		return m_texture.IsEmpty();
 	}
-	BOOL DX11Image2D::Render(DX11& dx11)
+	BOOL DX11Image2D::Draw(DX11& dx11)
 	{
 		UINT stride = sizeof(VERTEXTYPE);
 		UINT offset = 0;
