@@ -23,7 +23,7 @@ namespace DXApp
 		if (!m_video.Allocate(param))
 			return FALSE;
 		Destory();
-		return DX11Image2D::CreateCompatible(dx11, param.GetSize());
+		return DX11Image2D::Create(dx11, param.GetSize(), TRUE);
 	}
 
 	BOOL VideoScene::Allocate(DX11& dx11)

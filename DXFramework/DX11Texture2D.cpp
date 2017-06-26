@@ -15,7 +15,7 @@ namespace DXFramework
 		}
 	}
 	DX11Texture2D::DX11Texture2D()
-		:m_bCompatible(FALSE)
+		:m_handle(FALSE)
 	{
 	}
 
@@ -23,7 +23,7 @@ namespace DXFramework
 	{
 	}
 
-	BOOL DX11Texture2D::CreateCompatible(DX11& dx11, INT cx, INT cy)
+	BOOL DX11Texture2D::Create(DX11& dx11, INT cx, INT cy, BOOL bShared)
 	{
 		m_texture2D.Release();
 		m_resourceView.Release();
@@ -37,7 +37,7 @@ namespace DXFramework
 		textureDesc.SampleDesc.Count = 1;
 		textureDesc.SampleDesc.Quality = 0;
 		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
-		textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
+		textureDesc.MiscFlags = bShared ? D3D11_RESOURCE_MISC_SHARED | D3D11_RESOURCE_MISC_GDI_COMPATIBLE : D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
 		textureDesc.Usage = D3D11_USAGE_DEFAULT;
 		HRESULT hRes = dx11.GetD3D()->CreateTexture2D(&textureDesc, NULL, &m_texture2D);
 		if (hRes != S_OK)
@@ -52,12 +52,19 @@ namespace DXFramework
 		hRes = dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &dsrvd, &m_resourceView);
 		if (hRes != S_OK)
 			return FALSE;
-		m_bCompatible = TRUE;
+		if (bShared)
+		{
+			TinyComPtr<IDXGIResource> resource;
+			if (FAILED(hRes = m_texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&resource)))
+				return FALSE;
+			if (FAILED(hRes = resource->GetSharedHandle(&m_handle)))
+				return FALSE;
+		}
 		return TRUE;
 	}
 	BOOL  DX11Texture2D::GetDC(BOOL discard, HDC& hDC)
 	{
-		if (!m_bCompatible || !m_texture2D)
+		if (!m_texture2D)
 			return FALSE;
 		m_surface.Release();
 		HRESULT hRes = m_texture2D->QueryInterface(__uuidof(IDXGISurface1), (void**)&m_surface);
@@ -70,7 +77,7 @@ namespace DXFramework
 	}
 	BOOL DX11Texture2D::ReleaseDC()
 	{
-		if (!m_bCompatible || !m_surface)
+		if (!m_surface)
 			return FALSE;
 		HRESULT hRes = m_surface->ReleaseDC(NULL);
 		m_surface.Release();
@@ -98,7 +105,6 @@ namespace DXFramework
 			return FALSE;
 		D3D11_TEXTURE2D_DESC desc;
 		texture2D->GetDesc(&desc);
-		m_bCompatible = desc.MiscFlags & D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
 		HRESULT hRes = dx11.GetD3D()->CreateTexture2D(&desc, NULL, &m_texture2D);
 		if (hRes != S_OK)
 			return FALSE;
@@ -198,7 +204,6 @@ namespace DXFramework
 			return FALSE;
 		D3D11_TEXTURE2D_DESC desc;
 		m_texture2D->GetDesc(&desc);
-		m_bCompatible = desc.MiscFlags & D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
 		D3D11_SHADER_RESOURCE_VIEW_DESC dsrvd;
 		::ZeroMemory(&dsrvd, sizeof(dsrvd));
 		dsrvd.Format = desc.Format;
@@ -219,22 +224,20 @@ namespace DXFramework
 			return FALSE;
 		if (FAILED(hRes = resource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&m_texture2D)))
 			return FALSE;
-		D3D11_TEXTURE2D_DESC desc;
-		m_texture2D->GetDesc(&desc);
-		m_bCompatible = desc.MiscFlags & D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
 		return TRUE;
 	}
 	void DX11Texture2D::Destory()
 	{
-		m_bCompatible = FALSE;
 		m_surface.Release();
 		m_resourceView.Release();
 		m_texture2D.Release();
 	}
-	BOOL DX11Texture2D::IsCompatible() const
+
+	HANDLE DX11Texture2D::GetHandle() const
 	{
-		return m_bCompatible;
+		return m_handle;
 	}
+
 	ID3D11Texture2D* DX11Texture2D::GetTexture2D() const
 	{
 		return m_texture2D;

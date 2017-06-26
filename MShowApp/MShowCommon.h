@@ -1,6 +1,9 @@
 #pragma once
 #include "rtmp.h"
 #include "DX11.h"
+#include "DX11Element2D.h"
+#include "DX11Image2D.h"
+#include "DX11Graphics2D.h"
 #include "Common/TinyCallback.h"
 #include "IO/TinyIO.h"
 #include "IO/TinyTaskBase.h"

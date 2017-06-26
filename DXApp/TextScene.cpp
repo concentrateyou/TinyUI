@@ -24,7 +24,7 @@ namespace DXApp
 		wstring ws = StringToWString(m_text.STR());
 		m_timerID = SetTimer(NULL, NULL, 100, &TextScene::TimerProc);
 		Destory();
-		if (DX11Font2D::CreateCompatible(dx11, ws, cf, bkColor))
+		if (DX11Font2D::Create(dx11, ws, cf, bkColor))
 		{
 			m_displaySize = m_size.cx;
 			m_maxSize = m_size.cx;

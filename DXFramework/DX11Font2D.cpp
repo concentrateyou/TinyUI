@@ -82,7 +82,7 @@ namespace DXFramework
 	DX11Font2D::~DX11Font2D()
 	{
 	}
-	BOOL DX11Font2D::CreateCompatible(DX11& dx11, const wstring& str, const CHARFORMAT& cf, const COLORREF& bkColor)
+	BOOL DX11Font2D::Create(DX11& dx11, const wstring& str, const CHARFORMAT& cf, const COLORREF& bkColor)
 	{
 		if (str.empty())
 			return FALSE;
@@ -108,7 +108,7 @@ namespace DXFramework
 			{
 				sizeF.Height = static_cast<Gdiplus::REAL>(s.Height());
 			}
-			return DX11Image2D::CreateCompatible(dx11, TinySize((INT)sizeF.Width, (INT)sizeF.Height));
+			return DX11Image2D::Create(dx11, TinySize((INT)sizeF.Width, (INT)sizeF.Height), TRUE);
 		}
 		return FALSE;
 	}

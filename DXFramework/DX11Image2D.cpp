@@ -39,11 +39,11 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
-	BOOL DX11Image2D::CreateCompatible(DX11& dx11, const TinySize& size)
+	BOOL DX11Image2D::Create(DX11& dx11, const TinySize& size, BOOL bShared)
 	{
 		if (!Initialize(dx11))
 			return FALSE;
-		if (m_texture.CreateCompatible(dx11, size.cx, size.cy))
+		if (m_texture.Create(dx11, size.cx, size.cy, bShared))
 		{
 			SetSize(m_texture.GetSize());
 			SetScale(m_size);
@@ -116,8 +116,24 @@ namespace DXFramework
 	}
 	BOOL DX11Image2D::Copy(DX11& dx11, ID3D11Texture2D* texture2D)
 	{
+		if (!texture2D)
+			return FALSE;
 		return m_texture.Copy(dx11, texture2D);
 	}
+	BOOL DX11Image2D::Copy(DX11& dx11, DX11Texture2D* texture2D)
+	{
+		if (!texture2D)
+			return FALSE;
+		return Copy(dx11, texture2D->GetTexture2D());
+	}
+
+	BOOL DX11Image2D::Copy(DX11& dx11, DX11Image2D* image2D)
+	{
+		if (!image2D)
+			return FALSE;
+		return Copy(dx11,image2D->GetTexture2D());
+	}
+
 	BOOL DX11Image2D::Map(DX11& dx11, BYTE *&lpData, UINT &pitch)
 	{
 		return m_texture.Map(dx11, lpData, pitch);
@@ -126,7 +142,7 @@ namespace DXFramework
 	{
 		m_texture.Unmap(dx11);
 	}
-	BOOL DX11Image2D::Copy(DX11& dx11, const BYTE* bits, LONG size, LONG stride)
+	BOOL DX11Image2D::Copy(DX11& dx11, const BYTE* bits, LONG size, INT stride)
 	{
 		if (!m_texture.IsEmpty())
 			return FALSE;
@@ -296,7 +312,7 @@ namespace DXFramework
 
 	}
 
-	DX11Texture2D* DX11Image2D::GetTexture()
+	DX11Texture2D* DX11Image2D::GetTexture2D()
 	{
 		return &m_texture;
 	}
