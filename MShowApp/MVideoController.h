@@ -1,4 +1,5 @@
 #pragma once
+#include "Control/TinyMenu.h"
 #include "MVideoView.h"
 #include "MFLVPlayer.h"
 using namespace DXFramework;
@@ -18,9 +19,13 @@ namespace MShow
 		TinyTextBox	m_textbox;
 		TinyString	m_address;
 	};
-
+	class MShowController;
+	/// <summary>
+	/// 视频控制器
+	/// </summary>
 	class MVideoController
 	{
+		friend class MShowController;
 		DISALLOW_COPY_AND_ASSIGN(MVideoController)
 	public:
 		MVideoController(MVideoView& view);
@@ -30,13 +35,25 @@ namespace MShow
 		BOOL	Close();
 		HANDLE	GetHandle();//共享的纹理
 	private:
+		void	OnAdd();
+		void	OnRemove();
 		void	OnVideo(BYTE* bits, LONG size);
+		void	OnMenuClick(void*, INT wID);
+		void	OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		void	OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		void	OnVolume(DWORD volume);
 	private:
 		MVideoView&		m_view;
-		MFLVPlayer		m_player;
 		DX11Graphics2D	m_graphics;
 		DX11Image2D		m_video2D;
 		DX11Image2D		m_copy2D;
+		MFLVPlayer		m_player;
+		TinyMenu		m_popup;
+	private:
+		TinyScopedPtr<Delegate<void(DWORD)>>						m_onVolume;
+		TinyScopedPtr<Delegate<void(void*, INT)>>					m_onMenuClick;
+		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>>	m_onLButtonDBClick;
+		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>>	m_onRButtonDown;
 	};
 }
 

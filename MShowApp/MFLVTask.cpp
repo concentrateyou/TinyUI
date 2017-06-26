@@ -165,6 +165,8 @@ namespace MShow
 		}
 	_ERROR:
 		ReleaseBlock(block);
+		m_videoQueue.RemoveAll();
+		m_audioQueue.RemoveAll();
 		EVENT_EXIT(hRes);
 	}
 

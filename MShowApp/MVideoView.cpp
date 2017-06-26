@@ -5,8 +5,7 @@
 
 namespace MShow
 {
-	MVideoView::MVideoView(DWORD dwIndex)
-		:m_dwIndex(dwIndex)
+	MVideoView::MVideoView()
 	{
 	}
 

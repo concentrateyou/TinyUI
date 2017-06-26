@@ -65,15 +65,10 @@ namespace MShow
 		m_tab.EVENT_SELCHANGE += m_onTabChange;
 
 		INT offset = 20;
-		DWORD dwIndex = 0;
 		for (INT i = 0;i < 6;i++)
 		{
-			MVideoView* pVideoView = new MVideoView(0);
-			pVideoView->Create(m_tabViews[0], offset, 45, 192, 108);
-			MVideoController* controller = new MVideoController(*pVideoView);
-			controller->Initialize();
-			controller->Open(StringPrintf("D:\\%d.flv", i + 1).c_str());
-
+			m_videoViews[i].Create(m_tabViews[0], offset, 45, 192, 108);
+			m_volumeViews[i].Create(m_tabViews[0], offset, 10, 192, 20);
 			offset += 212;
 		}
 
@@ -107,7 +102,6 @@ namespace MShow
 		bHandled = FALSE;
 		INT cx = LOWORD(lParam);
 		INT cy = HIWORD(lParam);
-		//TODO
 		return FALSE;
 	}
 

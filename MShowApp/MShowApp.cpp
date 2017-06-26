@@ -41,6 +41,7 @@ namespace MShow
 	}
 	//////////////////////////////////////////////////////////////////////////
 	MShowApp::MShowApp()
+		:m_controller(m_mshow)
 	{
 	}
 	MShowApp::~MShowApp()
@@ -58,6 +59,8 @@ namespace MShow
 			return FALSE;
 		if (!m_mshow.Create(NULL, 0, 0, 1, 1))
 			return FALSE;
+		if (!m_controller.Initialize())
+			return FALSE;
 		return TRUE;
 	}
 	INT MShowApp::Run()
@@ -72,9 +75,10 @@ namespace MShow
 			return FALSE;
 		if (!TinyApplication::GetInstance()->Uninitialize())
 			return FALSE;
+		m_controller.Uninitialize();
 		return TRUE;
 	}
-	MShowWindow* MShowApp::GetWindow()
+	MShowWindow* MShowApp::GetShow()
 	{
 		return &m_mshow;
 	}

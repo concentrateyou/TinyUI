@@ -13,7 +13,7 @@ namespace MShow
 	{
 		DISALLOW_COPY_AND_ASSIGN(MVideoView)
 	public:
-		MVideoView(DWORD dwIndex);
+		MVideoView();
 		virtual ~MVideoView();
 		//5个创建函数
 		DWORD	RetrieveStyle() OVERRIDE;
@@ -25,8 +25,6 @@ namespace MShow
 		//事件
 		LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-	private:
-		DWORD	m_dwIndex;
 	};
 }
 

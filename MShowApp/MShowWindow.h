@@ -8,11 +8,13 @@ using namespace TinyUI;
 
 namespace MShow
 {
+	class MShowController;
 	/// <summary>
 	/// Ö÷´°¿ÚUI
 	/// </summary>
 	class MShowWindow : public TinyControl
 	{
+		friend class MShowController;
 		DECLARE_DYNAMIC(MShowWindow)
 	public:
 		MShowWindow();
@@ -35,9 +37,9 @@ namespace MShow
 	private:
 		MTabView				m_tabViews[2];
 		MVolumeView				m_volumeViews[6];
+		MVideoView				m_videoViews[6];
 		TinyTabControl			m_tab;
 	private:
 		TinyScopedPtr<Delegate<void(void*)>>	m_onTabChange;
-		Delegate<void(DWORD)>*					m_volumes[6];
 	};
 }
