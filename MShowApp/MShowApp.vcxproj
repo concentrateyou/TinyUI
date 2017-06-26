@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{735425E9-6FDA-4528-B896-208067B4BFFF}</ProjectGuid>
+    <ProjectGuid>{7F83F882-5BA7-4343-B1E6-DA3A44DF3ADA}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>MShowApp</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
@@ -71,8 +71,6 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;$(WindowsSDK_IncludePath);$(UniversalCRT_IncludePath);D:\Program Files (x86)\BCGSoft\BCGControlBarPro\BCGCBPro;D:\Program Files (x86)\BCGSoft\BCGControlBarPro\BCGCBPro</IncludePath>
-    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSdkDir)lib;$(FrameworkSDKDir)\lib;$(WindowsSDK_LibraryPath_x86);$(UniversalCRT_LibraryPath_x86);D:\Program Files (x86)\BCGSoft\BCGControlBarPro\bin;D:\Program Files (x86)\BCGSoft\BCGControlBarPro\bin</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -150,93 +148,28 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MImageView.h" />
-    <ClInclude Include="MFLVPlayer.h" />
-    <ClInclude Include="MFLVModel.h" />
-    <ClInclude Include="MImageModel.h" />
-    <ClInclude Include="MPlayController.h" />
-    <ClInclude Include="MPlayView.h" />
-    <ClInclude Include="MPreviewView.h" />
-    <ClInclude Include="MAudioTask.h" />
-    <ClInclude Include="MClock.h" />
-    <ClInclude Include="MElement.h" />
-    <ClInclude Include="MPacketQueue.h" />
-    <ClInclude Include="MAudioRenderTask.h" />
-    <ClInclude Include="MFLVTask.h" />
-    <ClInclude Include="MRTMPClient.h" />
-    <ClInclude Include="MRTMPEncoder.h" />
-    <ClInclude Include="MRTMPPusher.h" />
     <ClInclude Include="MShowApp.h" />
     <ClInclude Include="MShowCommon.h" />
-    <ClInclude Include="MPreviewController.h" />
-    <ClInclude Include="MShowWindow.h" />
-    <ClInclude Include="MVideoRenderTask.h" />
-    <ClInclude Include="MVideoTask.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="TabView.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="MVideoView.h" />
-    <ClInclude Include="VolumeView.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MImageView.cpp" />
-    <ClCompile Include="MFLVPlayer.cpp" />
-    <ClCompile Include="MFLVModel.cpp" />
-    <ClCompile Include="MImageModel.cpp" />
-    <ClCompile Include="MPlayController.cpp" />
-    <ClCompile Include="MPlayView.cpp" />
-    <ClCompile Include="MPreviewView.cpp" />
-    <ClCompile Include="MAudioTask.cpp" />
-    <ClCompile Include="MClock.cpp" />
-    <ClCompile Include="MElement.cpp" />
-    <ClCompile Include="MPacketQueue.cpp" />
-    <ClCompile Include="MAudioRenderTask.cpp" />
-    <ClCompile Include="MFLVTask.cpp" />
-    <ClCompile Include="MRTMPClient.cpp" />
-    <ClCompile Include="MRTMPEncoder.cpp" />
-    <ClCompile Include="MRTMPPusher.cpp" />
     <ClCompile Include="MShowApp.cpp" />
     <ClCompile Include="MShowCommon.cpp" />
-    <ClCompile Include="MPreviewController.cpp" />
-    <ClCompile Include="MShowWindow.cpp" />
-    <ClCompile Include="MVideoRenderTask.cpp" />
-    <ClCompile Include="MVideoTask.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TabView.cpp" />
-    <ClCompile Include="MVideoView.cpp" />
-    <ClCompile Include="VolumeView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MShowApp.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="MShowApp.ico" />
-    <Image Include="mute.ico" />
     <Image Include="small.ico" />
-    <Image Include="volume.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Decode\Decode.vcxproj">
-      <Project>{2b7dbc16-dc0d-49c6-a0b8-9f26c31aa758}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\DShowCapture\DShowCapture.vcxproj">
-      <Project>{b8f16b34-e13e-4757-b09a-792046bcc2d3}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\DXFramework\DXFramework.vcxproj">
-      <Project>{e5bf40dd-f8a0-4fb9-b27b-051c447a5c2b}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\IntelQSV\IntelQSV.vcxproj">
-      <Project>{681511e3-1b32-43c5-89f4-18a20c1590c9}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\TinyUI\TinyUI.vcxproj">
-      <Project>{58903be2-bb4f-4983-b8b7-905d2db5393d}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
