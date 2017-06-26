@@ -33,6 +33,15 @@
     <ClInclude Include="MShowCommon.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MShowWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MTabView.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MVolumeView.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -42,6 +51,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MShowCommon.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MShowWindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MTabView.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MVolumeView.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -55,6 +73,12 @@
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="MShowApp.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="volume.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="mute.ico">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

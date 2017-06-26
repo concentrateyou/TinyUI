@@ -5,6 +5,7 @@
 #include "IO/TinyIO.h"
 #include "IO/TinyTaskBase.h"
 #include "Control/TinyControl.h"
+#include "Control/TinyTabControl.h"
 #include "Media/TinySoundPlayer.h"
 #include "Common/TinyTime.h"
 #include "Common.h"

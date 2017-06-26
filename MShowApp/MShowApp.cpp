@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "MShowApp.h"
 #include "RTMPReader.h"
-
+#include "resource.h"
 using namespace std;
 
 namespace MShow

@@ -1,6 +1,4 @@
 #pragma once
-
-#include "resource.h"
 #include "MShowWindow.h"
 using namespace TinyUI;
 
