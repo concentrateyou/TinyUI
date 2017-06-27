@@ -100,7 +100,7 @@ namespace DXApp
 		m_memDC.Reset(NULL);
 	}
 
-	BOOL WindowScene::Draw(DX11& dx11)
+	BOOL WindowScene::Process(DX11& dx11)
 	{
 		HDC hDC = ::GetDC(m_hWND);
 		if (hDC != NULL)
@@ -136,7 +136,7 @@ namespace DXApp
 			UINT  linesize = cx * 4;
 			this->Copy(dx11, m_bits, linesize * m_size.cy, linesize);
 			::ReleaseDC(m_hWND, hDC);
-			DX11Image2D::Draw(dx11);
+			DX11Image2D::Process(dx11);
 			return TRUE;
 		}
 		return FALSE;

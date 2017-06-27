@@ -1,5 +1,8 @@
 ﻿#include "stdafx.h"
 #include "MVideoController.h"
+#include "MPreviewController.h"
+#include "MVideoElement.h"
+#include "MShowApp.h"
 #include "resource.h"
 
 namespace MShow
@@ -41,6 +44,7 @@ namespace MShow
 	//////////////////////////////////////////////////////////////////////////
 	MVideoController::MVideoController(MVideoView& view)
 		:m_view(view),
+		m_video(NULL),
 		m_player(BindCallback(&MVideoController::OnVideo, this))
 	{
 		m_onLButtonDBClick.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MVideoController::OnLButtonDBClick));
@@ -57,6 +61,7 @@ namespace MShow
 		m_view.EVENT_LDBCLICK -= m_onLButtonDBClick;
 		m_view.EVENT_RBUTTONDOWN -= m_onRButtonDown;
 		m_popup.EVENT_CLICK -= m_onMenuClick;
+		m_popup.DestroyMenu();
 	}
 
 	BOOL MVideoController::Initialize()
@@ -68,7 +73,6 @@ namespace MShow
 		m_popup.CreatePopupMenu();
 		m_popup.AppendMenu(MF_STRING, 1, TEXT("添加"));
 		m_popup.AppendMenu(MF_STRING, 2, TEXT("删除"));
-
 		return TRUE;
 	}
 
@@ -107,7 +111,7 @@ namespace MShow
 
 	HANDLE MVideoController::GetHandle()
 	{
-		DX11Texture2D* ps = m_video2D.GetTexture2D();
+		DX11Texture2D* ps = m_copy2D.GetTexture2D();
 		if (ps && !ps->IsEmpty())
 		{
 			return ps->GetHandle();
@@ -159,6 +163,22 @@ namespace MShow
 	void MVideoController::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		MPreviewController* preview = MShowApp::Instance().GetController().GetPreviewController();
+		if (preview != NULL)
+		{
+			if (m_video == NULL)
+			{
+				m_video = new MVideoElement(*this);
+				if (m_video->Allocate(preview->Graphics().GetDX11()))
+				{
+					preview->Add(m_video);
+				}
+			}
+			else
+			{
+				preview->Add(m_video);
+			}
+		}
 	}
 
 	void MVideoController::OnMenuClick(void*, INT wID)

@@ -30,9 +30,9 @@ namespace DXApp
 
 	}
 
-	BOOL ImageScene::Draw(DX11& dx11)
+	BOOL ImageScene::Process(DX11& dx11)
 	{
-		return DX11Image2D::Draw(dx11);
+		return DX11Image2D::Process(dx11);
 	}
 }
 

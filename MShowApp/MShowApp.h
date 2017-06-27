@@ -12,13 +12,15 @@ namespace MShow
 		MShowApp();
 		~MShowApp();
 	public:
-		BOOL			Initialize(HINSTANCE hInstance, LPTSTR  lpCmdLine, INT nCmdShow, LPCTSTR lpTableName);
-		MShowWindow*	GetShow();
-		INT				Run();
+		BOOL				Initialize(HINSTANCE hInstance, LPTSTR  lpCmdLine, INT nCmdShow, LPCTSTR lpTableName);
+		BOOL				Uninitialize();
+		MShowWindow&		GetView();
+		MShowController&	GetController();
+		INT					Run();
+	public:
+		static MShowApp& Instance() throw();
 	private:
-		BOOL			Uninitialize();
-	private:
-		MShowWindow			m_mshow;
+		MShowWindow			m_window;
 		MShowController		m_controller;
 		TinyMessageLoop		m_msgLoop;
 	};

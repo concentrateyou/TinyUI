@@ -59,7 +59,7 @@ namespace DXFramework
 	}
 	BOOL DX11Image2D::BitBlt(DX11& dx11, const BYTE* bits, LONG size, LONG linesize)
 	{
-		if (!bits || !m_texture.IsEmpty() || size != (m_size.cx * m_size.cy * 4))
+		if (!bits || m_texture.IsEmpty() || size != (m_size.cx * m_size.cy * 4))
 			return FALSE;
 		HDC hDC = NULL;
 		if (!m_texture.GetDC(FALSE, hDC))
@@ -95,7 +95,7 @@ namespace DXFramework
 
 	BOOL DX11Image2D::BitBlt(DX11& dx11, const TinyRectangle& dst, HBITMAP hBitmapSrc, const TinyPoint& src)
 	{
-		if (!m_texture.IsEmpty())
+		if (m_texture.IsEmpty())
 			return FALSE;
 		HDC hDC = NULL;
 		if (!m_texture.GetDC(TRUE, hDC))
@@ -106,7 +106,7 @@ namespace DXFramework
 	}
 	BOOL DX11Image2D::BitBlt(DX11& dx11, const TinyRectangle& dst, HDC hDCSrc, const TinyPoint& src)
 	{
-		if (!m_texture.IsEmpty())
+		if (m_texture.IsEmpty())
 			return FALSE;
 		HDC hDC = NULL;
 		if (!m_texture.GetDC(TRUE, hDC))
@@ -144,7 +144,7 @@ namespace DXFramework
 	}
 	BOOL DX11Image2D::Copy(DX11& dx11, const BYTE* bits, LONG size, INT stride)
 	{
-		if (!m_texture.IsEmpty())
+		if (m_texture.IsEmpty())
 			return FALSE;
 		BYTE* bitso = NULL;
 		UINT linesize = 0;
@@ -320,7 +320,7 @@ namespace DXFramework
 	{
 		return m_texture.IsEmpty();
 	}
-	BOOL DX11Image2D::Draw(DX11& dx11)
+	BOOL DX11Image2D::Process(DX11& dx11)
 	{
 		UINT stride = sizeof(VERTEXTYPE);
 		UINT offset = 0;

@@ -46,11 +46,11 @@ namespace DXFramework
 		ASSERT(ps);
 		if (!m_dx11.GetRender2D())
 			return FALSE;
-		if (!ps->IsEmpty())
+		if (ps->IsEmpty())
 			return FALSE;
 		if (!ps->Update(m_dx11, ratioX, ratioY))
 			return FALSE;
-		if (ps->Draw(m_dx11))
+		if (ps->Process(m_dx11))
 		{
 			XMMATRIX* ms = m_dx11.GetMatrixs();
 			m_textureShader.Render(m_dx11, ps->GetIndexCount(), ms[1], m_camera.GetView(), ms[2], ps->GetTexture2D());

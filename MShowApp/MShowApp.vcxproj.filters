@@ -75,6 +75,24 @@
     <ClInclude Include="MShowController.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MPreviewController.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MPreviewView.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MVideoElement.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MRTMPEncoder.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MRTMPPusher.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MRTMPClient.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -126,6 +144,24 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MShowController.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MPreviewController.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MPreviewView.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MVideoElement.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MRTMPEncoder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MRTMPPusher.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MRTMPClient.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

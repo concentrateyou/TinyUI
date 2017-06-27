@@ -17,7 +17,7 @@ namespace DXApp
 		HWND GetCaptureWindow() const;
 	public:
 		BOOL Allocate(DX11& dx11) OVERRIDE;
-		BOOL Draw(DX11& dx11) OVERRIDE;
+		BOOL Process(DX11& dx11) OVERRIDE;
 		void Deallocate(DX11& dx11) OVERRIDE;
 	private:
 		HWND			m_hWND;

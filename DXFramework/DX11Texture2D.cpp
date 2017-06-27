@@ -256,6 +256,6 @@ namespace DXFramework
 	}
 	BOOL DX11Texture2D::IsEmpty() const
 	{
-		return m_texture2D != NULL;
+		return m_texture2D == NULL;
 	}
 }

@@ -63,7 +63,7 @@ namespace MShow
 		m_tab.SetCurSel(0);
 		m_onTabChange.Reset(new Delegate<void(void*)>(this, &MShowWindow::OnTabChange));
 		m_tab.EVENT_SELCHANGE += m_onTabChange;
-
+		m_previewView.Create(m_hWND, 33, 90, 512, 288);
 		INT offset = 20;
 		for (INT i = 0;i < 6;i++)
 		{

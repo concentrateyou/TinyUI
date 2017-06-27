@@ -41,7 +41,7 @@ namespace MShow
 	}
 	//////////////////////////////////////////////////////////////////////////
 	MShowApp::MShowApp()
-		:m_controller(m_mshow)
+		:m_controller(m_window)
 	{
 	}
 	MShowApp::~MShowApp()
@@ -57,7 +57,7 @@ namespace MShow
 			return FALSE;
 		if (!TinyApplication::GetInstance()->AddMessageLoop(&m_msgLoop))
 			return FALSE;
-		if (!m_mshow.Create(NULL, 0, 0, 1, 1))
+		if (!m_window.Create(NULL, 0, 0, 1, 1))
 			return FALSE;
 		if (!m_controller.Initialize())
 			return FALSE;
@@ -71,16 +71,27 @@ namespace MShow
 	}
 	BOOL MShowApp::Uninitialize()
 	{
+		m_controller.Uninitialize();
 		if (!TinyApplication::GetInstance()->RemoveMessageLoop())
 			return FALSE;
 		if (!TinyApplication::GetInstance()->Uninitialize())
 			return FALSE;
-		m_controller.Uninitialize();
 		return TRUE;
 	}
-	MShowWindow* MShowApp::GetShow()
+
+	MShowWindow& MShowApp::GetView()
 	{
-		return &m_mshow;
+		return m_window;
+	}
+	MShowController& MShowApp::GetController()
+	{
+		return m_controller;
+	}
+
+	MShowApp& MShowApp::Instance() throw()
+	{
+		static MShowApp app;
+		return app;
 	}
 }
 
@@ -93,7 +104,7 @@ INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	MShow::MShowApp app;
+	MShow::MShowApp& app = MShow::MShowApp::Instance();
 	app.Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_MSHOWAPP));
 	INT iRes = app.Run();
 	return iRes;

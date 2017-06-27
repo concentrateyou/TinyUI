@@ -20,6 +20,8 @@ namespace MShow
 		TinyString	m_address;
 	};
 	class MShowController;
+	class MPreviewController;
+	class MVideoElement;
 	/// <summary>
 	/// ÊÓÆµ¿ØÖÆÆ÷
 	/// </summary>
@@ -49,6 +51,7 @@ namespace MShow
 		DX11Image2D		m_copy2D;
 		MFLVPlayer		m_player;
 		TinyMenu		m_popup;
+		MVideoElement*	m_video;
 	private:
 		TinyScopedPtr<Delegate<void(DWORD)>>						m_onVolume;
 		TinyScopedPtr<Delegate<void(void*, INT)>>					m_onMenuClick;

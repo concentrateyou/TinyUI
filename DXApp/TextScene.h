@@ -18,7 +18,7 @@ namespace DXApp
 		static VOID CALLBACK TimerProc(HWND  hwnd, UINT  uMsg, UINT_PTR idEvent, DWORD dwTime);
 	public:
 		BOOL Allocate(DX11& dx11) OVERRIDE;
-		BOOL Draw(DX11& dx11) OVERRIDE;
+		BOOL Process(DX11& dx11) OVERRIDE;
 		void Deallocate(DX11& dx11) OVERRIDE;
 	private:
 		TinyString		m_text;

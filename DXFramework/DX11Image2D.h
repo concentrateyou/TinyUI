@@ -40,12 +40,12 @@ namespace DXFramework
 		BOOL IsEmpty() const;
 		BOOL Update(DX11& dx11, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F);
 		DX11Texture2D* GetTexture2D();
+		void Destory();
 	public:
 		virtual INT	GetIndexCount() const;
-		virtual void Destory();
 	public:
 		BOOL Allocate(DX11& dx11) OVERRIDE;
-		BOOL Draw(DX11& dx11) OVERRIDE;
+		BOOL Process(DX11& dx11) OVERRIDE;
 		void Deallocate(DX11& dx11) OVERRIDE;
 	private:
 		BOOL Initialize(DX11& dx11);

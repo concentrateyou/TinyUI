@@ -13,7 +13,7 @@ namespace DXApp
 		BOOL Initialize(DX11& dx11, const TinyString& imageFile);
 	public:
 		BOOL Allocate(DX11& dx11) OVERRIDE;
-		BOOL Draw(DX11& dx11) OVERRIDE;
+		BOOL Process(DX11& dx11) OVERRIDE;
 		void Deallocate(DX11& dx11) OVERRIDE;
 	private:
 		TinyString	m_imageFile;

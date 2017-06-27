@@ -36,7 +36,7 @@ namespace DXApp
 		m_video.Uninitialize();
 	}
 
-	BOOL VideoScene::Draw(DX11& dx11)
+	BOOL VideoScene::Process(DX11& dx11)
 	{
 		m_video.Lock();
 		BYTE* bits = m_video.GetPointer();
@@ -44,7 +44,7 @@ namespace DXApp
 		if (bits != NULL)
 		{
 			DX11Image2D::BitBlt(dx11, bits, m_video.GetSize(), linesize);
-			DX11Image2D::Draw(dx11);
+			DX11Image2D::Process(dx11);
 		}
 		m_video.Unlock();
 		return bits != NULL;
