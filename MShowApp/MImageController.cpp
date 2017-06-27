@@ -64,7 +64,8 @@ namespace MShow
 			timers.Unregister(m_handle);
 			m_handle = NULL;
 		}
-		m_handle = timers.Register(&MImageController::TimerCallback, this, m_image.GetDelay(m_index), m_image.GetDelay(m_index), m_image.GetCount() > 1 ? WT_EXECUTEINTIMERTHREAD : WT_EXECUTEONLYONCE);
+		DWORD deDelay = m_image.GetCount() > 1 ? m_image.GetDelay(m_index) : 40;
+		m_handle = timers.Register(&MImageController::TimerCallback, this, deDelay, deDelay, WT_EXECUTEINTIMERTHREAD);
 		return m_handle != NULL;
 	L_ERROR:
 		m_copy2D.Destory();
