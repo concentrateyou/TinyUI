@@ -36,7 +36,7 @@ namespace TinyUI
 		{
 			if (strcasecmp(name.STR(), TinyVisualProperty::BACKGROUNDIMAGE.STR()) == 0)
 			{
-				m_backgroundImage.Load(value.STR());
+				m_backgroundImage.Open(value.STR());
 			}
 			return TinyVisual::SetProperty(name, value);
 		}

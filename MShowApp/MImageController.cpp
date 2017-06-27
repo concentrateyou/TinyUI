@@ -47,7 +47,8 @@ namespace MShow
 	{
 		TinySize size;
 		TinyRectangle rectangle;
-		if (!m_image.Load(pzFile))
+		m_image.Close();
+		if (!m_image.Open(pzFile))
 			goto L_ERROR;
 		size = m_image.GetSize();
 		if (!m_copy2D.Create(m_graphics.GetDX11(), size, TRUE))

@@ -12,15 +12,15 @@ namespace TinyUI
 			:TinyVisual(spvisParent, vtree)
 		{
 			memset(&m_si, 0, sizeof(SCROLLBOXINFO));
-			m_images[0].Load("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\arrow_up_normal.png");
-			m_images[1].Load("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\arrow_up_hover.png");
-			m_images[2].Load("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\arrow_up_press.png");
-			m_images[3].Load("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\arrow_down_normal.png");
-			m_images[4].Load("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\arrow_down_hover.png");
-			m_images[5].Load("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\arrow_down_press.png");
-			m_images[6].Load("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\scrollbar_groove.png");
-			m_images[7].Load("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\scrollbar_normal.png");
-			m_images[8].Load("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\scrollbar_hover.png");
+			m_images[0].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\arrow_up_normal.png");
+			m_images[1].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\arrow_up_hover.png");
+			m_images[2].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\arrow_up_press.png");
+			m_images[3].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\arrow_down_normal.png");
+			m_images[4].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\arrow_down_hover.png");
+			m_images[5].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\arrow_down_press.png");
+			m_images[6].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\scrollbar_groove.png");
+			m_images[7].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\scrollbar_normal.png");
+			m_images[8].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\scrollbar_hover.png");
 		}
 		TinyVisualHScrollBar::~TinyVisualHScrollBar()
 		{
@@ -406,15 +406,15 @@ namespace TinyUI
 		{
 			memset(&m_si, 0, sizeof(SCROLLBOXINFO));
 			m_si.iHitTest = m_si.iHitTestPress = HTSCROLL_NONE;
-			m_images[0].Load("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_up_normal.png");
-			m_images[1].Load("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_up_hover.png");
-			m_images[2].Load("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_up_press.png");
-			m_images[3].Load("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_down_normal.png");
-			m_images[4].Load("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_down_hover.png");
-			m_images[5].Load("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_down_press.png");
-			m_images[6].Load("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\scrollbar_groove.png");
-			m_images[7].Load("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\scrollbar_normal.png");
-			m_images[8].Load("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\scrollbar_hover.png");
+			m_images[0].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_up_normal.png");
+			m_images[1].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_up_hover.png");
+			m_images[2].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_up_press.png");
+			m_images[3].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_down_normal.png");
+			m_images[4].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_down_hover.png");
+			m_images[5].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_down_press.png");
+			m_images[6].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\scrollbar_groove.png");
+			m_images[7].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\scrollbar_normal.png");
+			m_images[8].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\scrollbar_hover.png");
 		}
 		TinyVisualVScrollBar::~TinyVisualVScrollBar()
 		{

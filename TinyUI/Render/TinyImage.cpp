@@ -21,14 +21,14 @@ namespace TinyUI
 	}
 	TinyImage::~TinyImage()
 	{
-		Release();
+		Close();
 	}
 	BOOL TinyImage::IsEmpty() const
 	{
 		return m_hBitmap == NULL || m_count == 0;
 	}
 
-	void TinyImage::Release()
+	void TinyImage::Close()
 	{
 		for (INT i = 0; i < m_images.GetSize(); i++)
 		{
@@ -40,9 +40,9 @@ namespace TinyUI
 		m_cx = m_cy = 0;
 	}
 
-	BOOL TinyImage::Load(LPCSTR pz)
+	BOOL TinyImage::Open(LPCSTR pz)
 	{
-		Release();
+		Close();
 		FILE* pFile = NULL;
 		if (fopen_s(&pFile, pz, "rb") || !pFile)
 			return S_FALSE;
@@ -137,7 +137,7 @@ namespace TinyUI
 		stbi_image_free(pData);
 		return FALSE;
 	}
-	BOOL TinyImage::Load(BYTE* bits, DWORD size)
+	BOOL TinyImage::Open(BYTE* bits, DWORD size)
 	{
 		for (INT i = 0; i < m_images.GetSize(); i++)
 		{

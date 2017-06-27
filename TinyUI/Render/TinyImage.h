@@ -28,8 +28,8 @@ namespace TinyUI
 		~TinyImage();
 		operator HBITMAP() const;//默认第一帧
 		BOOL			IsEmpty() const;
-		BOOL			Load(LPCSTR pz);
-		BOOL			Load(BYTE* p, DWORD size);
+		BOOL			Open(LPCSTR pz);
+		BOOL			Open(BYTE* p, DWORD size);
 		BOOL			Save(LPCSTR pz);//保存成BMP
 		size_t			GetCount();
 		INT				GetDelay(INT index);
@@ -37,7 +37,7 @@ namespace TinyUI
 		BYTE*			GetBits(INT index);
 		TinySize		GetSize();
 		TinyRectangle	GetRectangle();
-		void			Release();
+		void			Close();
 	protected:
 		INT						m_cx;
 		INT						m_cy;

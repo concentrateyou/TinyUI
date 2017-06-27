@@ -24,11 +24,11 @@ namespace TinyUI
 		}
 		BOOL TinyVisualComboBox::SetStyleImage(StyleImage type, LPCSTR pzFile)
 		{
-			return m_images[(INT)type].Load(pzFile);
+			return m_images[(INT)type].Open(pzFile);
 		}
 		BOOL TinyVisualComboBox::SetStyleImage(StyleImage type, BYTE* ps, DWORD dwSize)
 		{
-			return m_images[(INT)type].Load(ps, dwSize);
+			return m_images[(INT)type].Open(ps, dwSize);
 		}
 		BOOL TinyVisualComboBox::OnDraw(HDC hDC, const RECT& rcPaint)
 		{

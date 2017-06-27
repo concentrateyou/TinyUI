@@ -36,7 +36,7 @@ namespace TinyUI
 	{
 		ASSERT(pDD7);
 		SAFE_RELEASE(m_dds);
-		if (!m_image.Load(pzFile))
+		if (!m_image.Open(pzFile))
 			return FALSE;
 		m_size = m_image.GetSize();
 		DDSURFACEDESC2 ddsd;
@@ -75,7 +75,7 @@ namespace TinyUI
 	{
 		ASSERT(pDD7);
 		SAFE_RELEASE(m_dds);
-		if (!m_image.Load(ps, size))
+		if (!m_image.Open(ps, size))
 			return FALSE;
 		m_size = m_image.GetSize();
 		DDSURFACEDESC2 ddsd;

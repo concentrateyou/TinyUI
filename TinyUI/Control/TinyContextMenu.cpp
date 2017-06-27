@@ -111,11 +111,11 @@ namespace TinyUI
 	LRESULT TinyContextMenu::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		m_images[0].Load("..\\Resource\\Menu\\menu_bkg.png");
-		m_images[1].Load("..\\Resource\\Menu\\menu_highlight.png");
-		m_images[2].Load("..\\Resource\\Menu\\menu_check.png");
-		m_images[3].Load("..\\Resource\\Menu\\menu_cutling.png");
-		m_images[4].Load("..\\Resource\\Menu\\menu_arrow.png");
+		m_images[0].Open("..\\Resource\\Menu\\menu_bkg.png");
+		m_images[1].Open("..\\Resource\\Menu\\menu_highlight.png");
+		m_images[2].Open("..\\Resource\\Menu\\menu_check.png");
+		m_images[3].Open("..\\Resource\\Menu\\menu_cutling.png");
+		m_images[4].Open("..\\Resource\\Menu\\menu_arrow.png");
 		return FALSE;
 	}
 	LRESULT TinyContextMenu::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
