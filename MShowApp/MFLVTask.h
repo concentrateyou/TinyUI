@@ -24,7 +24,6 @@ namespace MShow
 	public:
 		Event<void(BYTE*, LONG, WORD, BOOL&)>	EVENT_ASC;
 		Event<void(BYTE*, LONG, BOOL&)>			EVENT_AVCDCR;
-		Event<void(HRESULT)>					EVENT_EXIT;
 	private:
 		void			OnMessagePump();
 	private:

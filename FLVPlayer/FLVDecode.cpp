@@ -27,8 +27,8 @@ namespace FLVPlayer
 	BOOL FLVDecode::Submit()
 	{
 		//if (m_reader.OpenURL("rtmp://live.hkstv.hk.lxdns.com/live/hks"))
-		if (m_reader.OpenURL("rtmp://10.10.13.98/live/lb_xijudianying_720p"))
-		//if (m_reader.OpenFile("D:\\seg.flv"))
+		//if (m_reader.OpenURL("rtmp://10.10.13.98/live/lb_xijudianying_720p"))
+		if (m_reader.OpenFile("D:\\1.flv"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);
@@ -65,7 +65,7 @@ namespace FLVPlayer
 			INT size = m_audioQueue.GetSize() + m_videoQueue.GetSize();
 			if (size > MAX_QUEUE_SIZE)
 			{
-				Sleep(15);
+				Sleep(5);
 				continue;
 			}
 			if (!m_reader.ReadBlock(block))
@@ -94,8 +94,9 @@ namespace FLVPlayer
 							continue;
 						}
 						ZeroMemory(&tag, sizeof(tag));
-						tag.bits = block.audio.data;
-						tag.size = block.audio.size;
+						tag.size = block.video.size;
+						tag.bits = new BYTE[tag.size];
+						memcpy_s(tag.bits, tag.size, block.audio.data, block.audio.size);
 						tag.sampleDTS = block.dts;
 						tag.samplePTS = block.pts;
 						m_audioQueue.Push(tag);
@@ -132,8 +133,9 @@ namespace FLVPlayer
 							m_bFirstI = TRUE;
 						}
 						ZeroMemory(&tag, sizeof(tag));
-						tag.bits = block.video.data;
 						tag.size = block.video.size;
+						tag.bits = new BYTE[tag.size];
+						memcpy_s(tag.bits, tag.size, block.video.data, block.video.size);
 						tag.sampleDTS = block.dts;
 						tag.samplePTS = block.pts;
 						m_videoQueue.Push(tag);

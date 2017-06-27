@@ -319,7 +319,7 @@ namespace MShow
 			}
 			if (m_waits.size() == 0)
 			{
-				Sleep(15);
+				Sleep(5);
 			}
 			else
 			{

@@ -79,7 +79,6 @@ namespace MShow
 
 	void MFLVTask::OnMessagePump()
 	{
-		HRESULT hRes = S_OK;
 		SampleTag tag = { 0 };
 		FLV_BLOCK block = { 0 };
 		for (;;)
@@ -89,12 +88,11 @@ namespace MShow
 			INT size = m_audioQueue.GetSize() + m_videoQueue.GetSize();
 			if (size > MAX_QUEUE_SIZE)
 			{
-				Sleep(15);
+				Sleep(5);
 				continue;
 			}
 			if (!m_reader.ReadBlock(block))
 			{
-				hRes = E_FAIL;
 				goto _ERROR;
 			}
 			if (block.type == FLV_AUDIO)
@@ -107,7 +105,6 @@ namespace MShow
 						EVENT_ASC(block.audio.data, block.audio.size, block.audio.bitsPerSample == 0 ? 8 : 16, bRes);
 						if (!bRes)
 						{
-							hRes = E_FAIL;
 							goto _ERROR;
 						}
 					}
@@ -116,10 +113,9 @@ namespace MShow
 						if (m_bFI)
 						{
 							ZeroMemory(&tag, sizeof(tag));
-							tag.size = block.audio.size;
+							tag.size = block.video.size;
 							tag.bits = new BYTE[tag.size];
 							memcpy_s(tag.bits, tag.size, block.audio.data, block.audio.size);
-							tag.sample = ++m_sample;
 							tag.sampleDTS = block.dts;
 							tag.samplePTS = block.pts;
 							m_audioQueue.Push(tag);
@@ -137,26 +133,24 @@ namespace MShow
 						EVENT_AVCDCR(block.video.data, block.video.size, bRes);
 						if (!bRes)
 						{
-							hRes = E_FAIL;
 							goto _ERROR;
 						}
 					}
 					if (block.video.packetType == FLV_NALU)
 					{
+						if (!m_bFI)
+						{
+							m_bFI = (block.video.codeType == 1);
+						}
 						if (m_bFI)
 						{
 							ZeroMemory(&tag, sizeof(tag));
-							tag.sample = ++m_sample;
 							tag.size = block.video.size;
 							tag.bits = new BYTE[tag.size];
 							memcpy_s(tag.bits, tag.size, block.video.data, block.video.size);
 							tag.sampleDTS = block.dts;
 							tag.samplePTS = block.pts;
 							m_videoQueue.Push(tag);
-						}
-						else
-						{
-							m_bFI = block.video.codeType == 1;
 						}
 					}
 				}
@@ -165,9 +159,6 @@ namespace MShow
 		}
 	_ERROR:
 		ReleaseBlock(block);
-		m_videoQueue.RemoveAll();
-		m_audioQueue.RemoveAll();
-		EVENT_EXIT(hRes);
 	}
 
 	MFLVTask::~MFLVTask()
