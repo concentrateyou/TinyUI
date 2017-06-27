@@ -6,14 +6,14 @@ class PacketQueue
 public:
 	PacketQueue(TinyLock& lock);
 	~PacketQueue();
-	void Push(Decode::SampleTag& tag);
-	Decode::SampleTag Pop();
+	void Push(Media::SampleTag& tag);
+	Media::SampleTag Pop();
 	INT GetSize() const;
 	BOOL IsEmpty() const;
 	INT GetCount() const;
 private:
 	INT						m_size;
 	TinyLock&				m_lock;
-	TinyLinkList<Decode::SampleTag>	m_list;
+	TinyLinkList<Media::SampleTag>	m_list;
 };
 

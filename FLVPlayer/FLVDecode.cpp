@@ -16,7 +16,7 @@ namespace FLVPlayer
 		m_bFirstI(FALSE)
 	{
 		m_aac.Reset(new AACDecode());
-		m_h264.Reset(new x264Decode());
+		m_x264.Reset(new x264Decode());
 		m_close.CreateEvent(FALSE, FALSE, NULL, NULL);
 	}
 
@@ -27,8 +27,8 @@ namespace FLVPlayer
 	BOOL FLVDecode::Submit()
 	{
 		//if (m_reader.OpenURL("rtmp://live.hkstv.hk.lxdns.com/live/hks"))
-		//if (m_reader.OpenURL("rtmp://10.121.86.127/live/test_360p"))
-		if (m_reader.OpenFile("D:\\seg.flv"))
+		if (m_reader.OpenURL("rtmp://10.10.13.98/live/lb_xijudianying_720p"))
+		//if (m_reader.OpenFile("D:\\seg.flv"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);
@@ -108,11 +108,11 @@ namespace FLVPlayer
 				{
 					if (block.video.packetType == FLV_AVCDecoderConfigurationRecord)
 					{
-						if (!m_h264->Initialize(m_size, m_size))
+						if (!m_x264->Initialize(m_size, m_size))
 						{
 							goto _ERROR;
 						}
-						if (!m_h264->Open(block.video.data, block.video.size))
+						if (!m_x264->Open(block.video.data, block.video.size))
 						{
 							goto _ERROR;
 						}
@@ -193,7 +193,7 @@ namespace FLVPlayer
 			{
 				m_timer.BeginTime();
 				m_bInitialize = TRUE;
-				if (!m_player.SetFormat(&m_decode.m_decode.m_aac->GetFormat(), tag.size * 3))
+				if (!m_player.SetFormat(m_decode.m_decode.m_aac->GetFormat(), tag.size * 3))
 					break;
 				DSBPOSITIONNOTIFY vals[3];
 				vals[0].dwOffset = tag.size - 1;
@@ -347,13 +347,13 @@ namespace FLVPlayer
 			{
 				BYTE* bo = NULL;
 				LONG  so = 0;
-				if (m_decode.m_h264->Decode(tag, bo, so))
+				if (m_decode.m_x264->Decode(tag, bo, so))
 				{
 					SAFE_DELETE_ARRAY(tag.bits);
 					tag.bits = new BYTE[so];
 					memcpy(tag.bits, bo, so);
 					tag.size = so;
-					tag.samplePTS = m_decode.m_h264->GetYUV420()->pkt_pts;
+					tag.samplePTS = m_decode.m_x264->GetYUV420()->pkt_pts;
 					tag.sampleDTS = tag.samplePTS;
 					if (m_decode.m_basePTS == -1)
 					{

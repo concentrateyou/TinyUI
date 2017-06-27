@@ -115,7 +115,7 @@ namespace FLVPlayer
 		TinyEvent					m_close;
 		PacketQueue					m_audioQueue;
 		PacketQueue					m_videoQueue;
-		TinyScopedPtr<H264Decode>	m_h264;
+		TinyScopedPtr<x264Decode>	m_x264;
 		TinyScopedPtr<AACDecode>	m_aac;
 		FLVAudioRender				m_audioRender;
 		FLVVideoRender				m_videoRender;

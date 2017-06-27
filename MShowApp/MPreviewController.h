@@ -12,11 +12,13 @@ namespace MShow
 	/// </summary>
 	class MPreviewController : public TinyTaskBase
 	{
+		friend class MShowController;
 		DISALLOW_COPY_AND_ASSIGN(MPreviewController)
 	public:
 		MPreviewController(MPreviewView& view);
 		virtual ~MPreviewController();
-		BOOL	Initialize(const TinySize& pulgSize);
+		BOOL	Initialize();
+		void	SetPulgSize(const TinySize& size);
 	public:
 		BOOL	Add(DX11Element2D* ps);
 		BOOL	Remove(DX11Element2D* ps);
@@ -40,16 +42,18 @@ namespace MShow
 		DWORD	Draw();
 		DX11Element2D* HitTest(const TinyPoint& pos);
 	private:
-		TinyEvent					m_close;
-		TinySize					m_pulgSize;
-		TinyMenu					m_popup;
-		TinyLock					m_lock;
-		DX11Element2D*				m_current;
-		MPreviewView&				m_view;
-		DX11Graphics2D				m_graphics;
-		DX11Image2D					m_handles[8];
-		TinyArray<DX11Element2D*>	m_array;
-		TinyPerformanceTimer		m_timer;
+		BOOL							m_bBreak;
+		TinySize						m_pulgSize;
+		TinyMenu						m_popup;
+		TinyLock						m_lock;
+		DX11Element2D*					m_current;
+		MPreviewView&					m_view;
+		DX11Graphics2D					m_graphics;
+		DX11Image2D						m_handles[8];
+		TinyArray<DX11Element2D*>		m_array;
+		TinyPerformanceTimer			m_timer;
+		TinyScopedPtr<DX11RenderView>	m_renderView;
+		vector<HANDLE>					m_waits;
 	private:
 		TinyScopedPtr<Delegate<void(void*, INT)>>				   m_onMenuClick;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonDown;

@@ -66,13 +66,14 @@ namespace MShow
 
 	BOOL MVideoController::Initialize()
 	{
-		TinyRectangle s;
-		m_view.GetClientRect(&s);
-		if (!m_graphics.Initialize(m_view.Handle(), s.Size()))
+		TinyRectangle rectangle;
+		m_view.GetClientRect(&rectangle);
+		if (!m_graphics.Initialize(m_view.Handle(), rectangle.Size()))
 			return FALSE;
 		m_popup.CreatePopupMenu();
 		m_popup.AppendMenu(MF_STRING, 1, TEXT("添加"));
 		m_popup.AppendMenu(MF_STRING, 2, TEXT("删除"));
+		m_signal.CreateEvent();
 		return TRUE;
 	}
 
@@ -109,6 +110,11 @@ namespace MShow
 		return FALSE;
 	}
 
+	TinyString	MVideoController::GetURL() const
+	{
+		return m_player.GetURL();
+	}
+
 	HANDLE MVideoController::GetHandle()
 	{
 		DX11Texture2D* ps = m_copy2D.GetTexture2D();
@@ -130,6 +136,7 @@ namespace MShow
 			m_graphics.GetDX11().GetRender2D()->EndDraw();
 			m_graphics.Present();
 			m_copy2D.Copy(m_graphics.GetDX11(), &m_video2D);
+			m_signal.SetEvent();
 		}
 	}
 
@@ -149,6 +156,12 @@ namespace MShow
 
 	void MVideoController::OnRemove()
 	{
+		MPreviewController* preview = MShowApp::Instance().GetController().GetPreviewController();
+		if (preview != NULL && m_video != NULL)
+		{
+			m_video->Deallocate(preview->Graphics().GetDX11());
+			SAFE_DELETE(m_video);
+		}
 		this->Close();
 	}
 

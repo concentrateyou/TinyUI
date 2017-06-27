@@ -8,16 +8,16 @@ PacketQueue::PacketQueue(TinyLock& lock)
 
 }
 
-void PacketQueue::Push(Decode::SampleTag& tag)
+void PacketQueue::Push(Media::SampleTag& tag)
 {
 	TinyAutoLock lock(m_lock);
 	m_list.InsertLast(tag);
 	m_size += tag.size;
 }
-Decode::SampleTag PacketQueue::Pop()
+Media::SampleTag PacketQueue::Pop()
 {
 	TinyAutoLock lock(m_lock);
-	Decode::SampleTag tag = { 0 };
+	Media::SampleTag tag = { 0 };
 	if (m_list.GetSize() > 0)
 	{
 		ITERATOR s = m_list.First();

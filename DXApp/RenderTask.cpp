@@ -323,8 +323,8 @@ namespace DXApp
 
 	void RenderTask::SetPulgSize(const XMFLOAT2& size)
 	{
-		m_pulgSize = size;
 		m_graphics.Lock();
+		m_pulgSize = size;
 		m_renderView.Reset(new DX11RenderView(m_graphics.GetDX11()));
 		m_renderView->Create(static_cast<INT>(m_pulgSize.x), static_cast<INT>(m_pulgSize.y));
 		m_graphics.Unlock();

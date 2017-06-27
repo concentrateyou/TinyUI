@@ -20,6 +20,7 @@ namespace MShow
 
 	BOOL MFLVPlayer::Open(HWND hWND, LPCSTR pzURL)
 	{
+		m_szURL = pzURL;
 		if (!m_task.Initialize(pzURL))
 			return FALSE;
 		if (!m_audioRenderTask.Initialize(hWND))
@@ -73,14 +74,19 @@ namespace MShow
 		return bRes;
 	}
 
-	TinySize MFLVPlayer::GetSize()
+	TinySize MFLVPlayer::GetSize() const
 	{
 		return m_size;
 	}
 
-	DWORD MFLVPlayer::GetRate()
+	DWORD MFLVPlayer::GetRate() const
 	{
 		return m_dwRate;
+	}
+
+	TinyString	MFLVPlayer::GetURL() const
+	{
+		return m_szURL;
 	}
 }
 

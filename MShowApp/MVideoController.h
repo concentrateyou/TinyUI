@@ -27,15 +27,17 @@ namespace MShow
 	/// </summary>
 	class MVideoController
 	{
+		friend class MPreviewController;
 		friend class MShowController;
 		DISALLOW_COPY_AND_ASSIGN(MVideoController)
 	public:
 		MVideoController(MVideoView& view);
 		virtual ~MVideoController();
-		BOOL	Initialize();
-		BOOL	Open(LPCSTR pzURL);
-		BOOL	Close();
-		HANDLE	GetHandle();//共享的纹理
+		BOOL		Initialize();
+		BOOL		Open(LPCSTR pzURL);
+		BOOL		Close();
+		HANDLE		GetHandle();//共享的纹理
+		TinyString	GetURL() const;
 	private:
 		void	OnAdd();
 		void	OnRemove();
@@ -45,12 +47,13 @@ namespace MShow
 		void	OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnVolume(DWORD volume);
 	private:
+		TinyMenu		m_popup;
 		MVideoView&		m_view;
 		DX11Graphics2D	m_graphics;
 		DX11Image2D		m_video2D;
 		DX11Image2D		m_copy2D;
 		MFLVPlayer		m_player;
-		TinyMenu		m_popup;
+		TinyEvent		m_signal;
 		MVideoElement*	m_video;
 	private:
 		TinyScopedPtr<Delegate<void(DWORD)>>						m_onVolume;

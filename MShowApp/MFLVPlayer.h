@@ -18,12 +18,14 @@ namespace MShow
 		BOOL		Open(HWND hWND, LPCSTR pzURL);
 		BOOL		Close();
 		BOOL		SetVolume(LONG volume);
-		TinySize	GetSize();
-		DWORD		GetRate();
+		TinySize	GetSize() const;
+		DWORD		GetRate() const;
+		TinyString	GetURL() const;
 	private:
 		void OnVideo(BYTE* bits, LONG size);
 	private:
 		DWORD							m_dwRate;
+		TinyString						m_szURL;
 		TinySize						m_size;
 		MClock							m_clock;
 		MFLVTask						m_task;

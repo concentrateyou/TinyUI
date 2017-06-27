@@ -12,7 +12,8 @@ namespace MShow
 
 	MPreviewController::MPreviewController(MPreviewView& view)
 		:m_view(view),
-		m_current(NULL)
+		m_current(NULL),
+		m_bBreak(FALSE)
 	{
 		m_onLButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonDown));
 		m_onLButtonUp.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonUp));
@@ -42,9 +43,8 @@ namespace MShow
 		m_popup.DestroyMenu();
 	}
 
-	BOOL MPreviewController::Initialize(const TinySize& pulgSize)
+	BOOL MPreviewController::Initialize()
 	{
-		m_pulgSize = pulgSize;
 		TinyRectangle s;
 		m_view.GetClientRect(&s);
 		if (!m_graphics.Initialize(m_view.Handle(), s.Size()))
@@ -59,7 +59,6 @@ namespace MShow
 		{
 			m_handles[i].Load(m_graphics.GetDX11(), vs.c_str());
 		}
-		m_close.CreateEvent();
 		m_popup.CreatePopupMenu();
 		m_popup.AppendMenu(MF_STRING, IDM_MOVEUP, TEXT("иорф"));
 		m_popup.AppendMenu(MF_STRING, IDM_MOVEDOWN, TEXT("обрф"));
@@ -235,18 +234,41 @@ namespace MShow
 
 	BOOL MPreviewController::Submit()
 	{
+		m_bBreak = FALSE;
 		return TinyTaskBase::Submit(BindCallback(&MPreviewController::OnMessagePump, this));
 	}
 
 	BOOL MPreviewController::Close(DWORD dwMS)
 	{
-		m_close.SetEvent();
+		m_bBreak = TRUE;
 		return TinyTaskBase::Close(dwMS);
+	}
+
+	void MPreviewController::SetPulgSize(const TinySize& size)
+	{
+		m_pulgSize = size;
+		m_renderView.Reset(new DX11RenderView(m_graphics.GetDX11()));
+		m_renderView->Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy));
 	}
 
 	DWORD MPreviewController::Draw()
 	{
 		m_timer.BeginTime();
+		if (m_renderView != NULL)
+		{
+			m_graphics.GetDX11().SetRenderTexture2D(m_renderView);
+			m_graphics.GetDX11().GetRender2D()->BeginDraw();
+			for (INT i = 0;i < m_array.GetSize();i++)
+			{
+				DX11Element2D* ps = m_array[i];
+				if (ps->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
+				{
+					DX11Image2D* image = static_cast<DX11Image2D*>(ps);
+					m_graphics.DrawImage(image, (FLOAT)((FLOAT)m_pulgSize.cx / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cx)), (FLOAT)((FLOAT)m_pulgSize.cy / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cy)));
+				}
+			}
+			m_graphics.GetDX11().GetRender2D()->EndDraw();
+		}
 		m_graphics.GetDX11().SetRenderTexture2D(NULL);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();
 		for (INT i = 0;i < m_array.GetSize();i++)
@@ -276,18 +298,14 @@ namespace MShow
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
 		m_graphics.Present();
 		m_timer.EndTime();
-		TRACE("Cost:%lld\n", m_timer.GetMillisconds());
 		return static_cast<DWORD>(m_timer.GetMillisconds());
 	}
 
 	void MPreviewController::OnMessagePump()
 	{
-		DWORD dwTime = 0;
 		for (;;)
 		{
-			DWORD s = 40;
-			s = dwTime > s ? 0 : s - dwTime;
-			if (m_close.Lock(s))
+			if (m_bBreak)
 			{
 				for (INT i = 0; i < 8; ++i)
 				{
@@ -299,7 +317,17 @@ namespace MShow
 				}
 				break;
 			}
-			dwTime = this->Draw();
+			HRESULT hRes = WaitForMultipleObjects(m_waits.size(), &m_waits[0], FALSE, 40);
+			if (hRes == WAIT_FAILED || hRes == WAIT_ABANDONED)
+			{
+				break;
+			}
+			if (hRes != WAIT_TIMEOUT)
+			{
+				DWORD index = hRes - WAIT_OBJECT_0;
+				DWORD dwMS = this->Draw();
+				TRACE("index:%d, cost:%d\n", index, dwMS);
+			}
 		}
 	}
 }

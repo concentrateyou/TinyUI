@@ -20,8 +20,9 @@ namespace MShow
 		m_preview = new MPreviewController(m_window.m_previewView);
 		if (!m_preview)
 			return FALSE;
-		if (!m_preview->Initialize(TinySize(1280, 720)))
+		if (!m_preview->Initialize())
 			return FALSE;
+		m_preview->SetPulgSize(TinySize(1280, 720));
 		for (UINT i = 0;i < 6;i++)
 		{
 			m_videos[i] = new MVideoController(m_window.m_videoViews[i]);
@@ -29,6 +30,7 @@ namespace MShow
 				return FALSE;
 			if (!m_videos[i]->Initialize())
 				return FALSE;
+			m_preview->m_waits.push_back(m_videos[i]->m_signal);
 			m_window.m_volumeViews[i].EVENT_VOLUME += m_videos[i]->m_onVolume;
 		}
 		m_preview->Submit();
