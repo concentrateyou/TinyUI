@@ -21,21 +21,28 @@ namespace TinyUI
 	}
 	TinyImage::~TinyImage()
 	{
-		for (INT i = 0; i < m_images.GetSize(); i++)
-		{
-			SAFE_DELETE_OBJECT(m_images[i].hBitmap);
-		}
+		Release();
 	}
 	BOOL TinyImage::IsEmpty() const
 	{
 		return m_hBitmap == NULL || m_count == 0;
 	}
-	BOOL TinyImage::Load(LPCSTR pz)
+
+	void TinyImage::Release()
 	{
 		for (INT i = 0; i < m_images.GetSize(); i++)
 		{
 			SAFE_DELETE_OBJECT(m_images[i].hBitmap);
 		}
+		m_images.RemoveAll();
+		m_hBitmap = NULL;
+		m_count = 1;
+		m_cx = m_cy = 0;
+	}
+
+	BOOL TinyImage::Load(LPCSTR pz)
+	{
+		Release();
 		FILE* pFile = NULL;
 		if (fopen_s(&pFile, pz, "rb") || !pFile)
 			return S_FALSE;

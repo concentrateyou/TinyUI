@@ -8,19 +8,19 @@ namespace DXFramework
 	public:
 		DX11RenderView(DX11& dx11);
 		virtual ~DX11RenderView();
-		DX11& GetDX11();
-		TinySize GetSize() const;
-		BOOL Create();
-		BOOL Create(INT cx, INT cy);
-		BOOL Resize();
-		BOOL Resize(INT cx, INT cy);
-		void BeginDraw();
-		void EndDraw();
-		BOOL SaveAs(const CHAR* pzName, D3DX11_IMAGE_FILE_FORMAT format);
-		ID3D11RenderTargetView* GetRTView() const;
-		ID3D11DepthStencilView* GetDSView() const;
+		DX11&		GetDX11();
+		TinySize	GetSize() const;
+		BOOL		Create();
+		BOOL		Create(INT cx, INT cy);
+		BOOL		Resize();
+		BOOL		Resize(INT cx, INT cy);
+		void		BeginDraw();
+		void		EndDraw();
+		BOOL		SaveAs(const CHAR* pzName, D3DX11_IMAGE_FILE_FORMAT format);
 		BYTE*		Map(DWORD& dwSize);
 		void		Unmap();
+		ID3D11RenderTargetView* GetRTView() const;
+		ID3D11DepthStencilView* GetDSView() const;
  	protected:
 		FLOAT								m_aspect;//±ÈÀý
 		DX11&								m_dx11;

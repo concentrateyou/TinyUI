@@ -37,6 +37,7 @@ namespace TinyUI
 		BYTE*			GetBits(INT index);
 		TinySize		GetSize();
 		TinyRectangle	GetRectangle();
+		void			Release();
 	protected:
 		INT						m_cx;
 		INT						m_cy;

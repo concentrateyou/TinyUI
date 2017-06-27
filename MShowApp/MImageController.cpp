@@ -131,6 +131,7 @@ namespace MShow
 			preview->Remove(m_pImage);
 			m_pImage->Deallocate(preview->Graphics().GetDX11());
 			SAFE_DELETE(m_pImage);
+			m_signal.SetEvent();
 			auto s = std::find(preview->m_waits.begin(), preview->m_waits.end(), m_signal);
 			if (s != preview->m_waits.end())
 			{
@@ -138,6 +139,7 @@ namespace MShow
 			}
 		}
 		this->Close();
+		m_view.Invalidate();
 	}
 
 	void MImageController::OnImage(BYTE* bits, LONG size)

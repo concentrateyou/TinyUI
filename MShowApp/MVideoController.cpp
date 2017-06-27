@@ -169,6 +169,7 @@ namespace MShow
 			preview->Remove(m_pVideo);
 			m_pVideo->Deallocate(preview->Graphics().GetDX11());
 			SAFE_DELETE(m_pVideo);
+			m_signal.SetEvent();
 			auto s = std::find(preview->m_waits.begin(), preview->m_waits.end(), m_signal);
 			if (s != preview->m_waits.end())
 			{
@@ -176,6 +177,7 @@ namespace MShow
 			}
 		}
 		this->Close();
+		m_view.Invalidate();
 	}
 
 	void MVideoController::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
