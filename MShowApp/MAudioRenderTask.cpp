@@ -65,7 +65,7 @@ namespace MShow
 			BOOL bRes = m_task.GetAudioQueue().Pop(tag);
 			if (!bRes || tag.size <= 0)
 			{
-				Sleep(5);
+				Sleep(10);
 				continue;
 			}
 			if (tag.samplePTS == m_clock.GetBasePTS())

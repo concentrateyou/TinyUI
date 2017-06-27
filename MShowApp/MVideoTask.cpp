@@ -65,14 +65,14 @@ namespace MShow
 			INT size = m_videoQueue.GetSize();
 			if (size > MAX_VIDEO_QUEUE_SIZE)
 			{
-				Sleep(5);
+				Sleep(10);
 				continue;
 			}
 			ZeroMemory(&sampleTag, sizeof(sampleTag));
 			BOOL bRes = m_task.GetVideoQueue().Pop(sampleTag);
 			if (!bRes || sampleTag.size <= 0)
 			{
-				Sleep(5);
+				Sleep(10);
 				continue;
 			}
 			BYTE* bo = NULL;

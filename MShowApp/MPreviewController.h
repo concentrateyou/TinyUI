@@ -13,6 +13,7 @@ namespace MShow
 	class MPreviewController : public TinyTaskBase
 	{
 		friend class MShowController;
+		friend class MVideoController;
 		DISALLOW_COPY_AND_ASSIGN(MPreviewController)
 	public:
 		MPreviewController(MPreviewView& view);
