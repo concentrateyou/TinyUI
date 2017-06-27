@@ -24,7 +24,7 @@ namespace MShow
 
 	BOOL MVideoElement::Process(DX11& dx11)
 	{
-		return TRUE;
+		return DX11Image2D::Process(dx11);
 	}
 
 	void MVideoElement::Deallocate(DX11& dx11)
