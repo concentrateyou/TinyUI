@@ -93,6 +93,15 @@
     <ClInclude Include="MRTMPClient.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MImageController.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MImageView.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MImageElement.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -162,6 +171,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MRTMPClient.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MImageController.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MImageView.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MImageElement.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

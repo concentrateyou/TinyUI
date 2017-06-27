@@ -14,6 +14,7 @@ namespace MShow
 	{
 		friend class MShowController;
 		friend class MVideoController;
+		friend class MImageController;
 		DISALLOW_COPY_AND_ASSIGN(MPreviewController)
 	public:
 		MPreviewController(MPreviewView& view);

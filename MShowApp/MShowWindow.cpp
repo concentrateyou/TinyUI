@@ -69,6 +69,7 @@ namespace MShow
 		{
 			m_videoViews[i].Create(m_tabViews[0], offset, 45, 192, 108);
 			m_volumeViews[i].Create(m_tabViews[0], offset, 10, 192, 20);
+			m_imageViews[i].Create(m_tabViews[1], offset, 45, 192, 108);
 			offset += 212;
 		}
 

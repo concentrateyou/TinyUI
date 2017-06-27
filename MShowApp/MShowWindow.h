@@ -3,6 +3,7 @@
 #include "MTabView.h"
 #include "MVolumeView.h"
 #include "MVideoView.h"
+#include "MImageView.h"
 #include "MPreviewView.h"
 using namespace TinyUI;
 
@@ -38,6 +39,7 @@ namespace MShow
 		MTabView				m_tabViews[2];
 		MVolumeView				m_volumeViews[6];
 		MVideoView				m_videoViews[6];
+		MImageView				m_imageViews[6];
 		MPreviewView			m_previewView;
 		TinyTabControl			m_tab;
 	private:

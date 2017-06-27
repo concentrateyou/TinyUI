@@ -2,6 +2,7 @@
 #include "MShowController.h"
 #include "MPreviewController.h"
 #include "MVideoController.h"
+#include "MImageController.h"
 
 namespace MShow
 {
@@ -30,8 +31,12 @@ namespace MShow
 				return FALSE;
 			if (!m_videos[i]->Initialize())
 				return FALSE;
-			m_preview->m_waits.push_back(m_videos[i]->m_signal);
 			m_window.m_volumeViews[i].EVENT_VOLUME += m_videos[i]->m_onVolume;
+			m_images[i] = new MImageController(m_window.m_imageViews[i]);
+			if (!m_images[i])
+				return FALSE;
+			if (!m_images[i]->Initialize())
+				return FALSE;
 		}
 		m_preview->Submit();
 		return TRUE;
@@ -68,5 +73,12 @@ namespace MShow
 		if (i < 0 || i > 5)
 			return NULL;
 		return m_videos[i];
+	}
+
+	MImageController* MShowController::GetImageController(UINT i)
+	{
+		if (i < 0 || i > 5)
+			return NULL;
+		return m_images[i];
 	}
 }

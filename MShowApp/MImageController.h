@@ -1,62 +1,51 @@
 #pragma once
 #include "Control/TinyMenu.h"
-#include "MVideoView.h"
-#include "MFLVPlayer.h"
+#include "MImageView.h"
+#include "Render/TinyImage.h"
 using namespace DXFramework;
 
 namespace MShow
 {
-	class MVideoDialog : public TinyCustomDialog
-	{
-	public:
-		MVideoDialog();
-		virtual ~MVideoDialog();
-		LRESULT OnCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-		LRESULT OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-	public:
-		TinyString GetAddress();
-	private:
-		TinyTextBox	m_textbox;
-		TinyString	m_address;
-	};
 	class MShowController;
 	class MPreviewController;
-	class MVideoElement;
+	class MImageElement;
 	/// <summary>
-	/// 视频控制器
+	/// 图片控制器
 	/// </summary>
-	class MVideoController
+	class MImageController
 	{
 		friend class MPreviewController;
 		friend class MShowController;
-		DISALLOW_COPY_AND_ASSIGN(MVideoController)
+		DISALLOW_COPY_AND_ASSIGN(MImageController)
 	public:
-		MVideoController(MVideoView& view);
-		virtual ~MVideoController();
+		MImageController(MImageView& view);
+		virtual ~MImageController();
 		BOOL		Initialize();
-		BOOL		Open(LPCSTR pzURL);
+		BOOL		Open(LPCSTR pzFile);
 		BOOL		Close();
 		HANDLE		GetHandle();//共享的纹理
-		TinyString	GetURL() const;
+		TinyString	GetFile() const;
 	private:
 		void	OnAdd();
 		void	OnRemove();
-		void	OnVideo(BYTE* bits, LONG size);
+		void	OnImage(BYTE* bits, LONG size);
 		void	OnMenuClick(void*, INT wID);
 		void	OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		void	OnVolume(DWORD volume);
+		static VOID CALLBACK TimerCallback(PVOID lpParameter, BOOLEAN TimerOrWaitFired);
 	private:
+		UINT			m_index;
+		HANDLE			m_handle;
+		TinyString		m_szFile;
 		TinyMenu		m_popup;
-		MVideoView&		m_view;
+		MImageView&		m_view;
 		DX11Graphics2D	m_graphics;
-		DX11Image2D		m_video2D;
+		DX11Image2D		m_image2D;
 		DX11Image2D		m_copy2D;
-		MFLVPlayer		m_player;
+		TinyImage		m_image;
 		TinyEvent		m_signal;
-		MVideoElement*	m_pVideo;
+		MImageElement*	m_pImage;
 	private:
-		TinyScopedPtr<Delegate<void(DWORD)>>						m_onVolume;
 		TinyScopedPtr<Delegate<void(void*, INT)>>					m_onMenuClick;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>>	m_onLButtonDBClick;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>>	m_onRButtonDown;

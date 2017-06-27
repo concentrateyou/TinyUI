@@ -44,7 +44,7 @@ namespace MShow
 	//////////////////////////////////////////////////////////////////////////
 	MVideoController::MVideoController(MVideoView& view)
 		:m_view(view),
-		m_video(NULL),
+		m_pVideo(NULL),
 		m_player(BindCallback(&MVideoController::OnVideo, this))
 	{
 		m_onLButtonDBClick.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MVideoController::OnLButtonDBClick));
@@ -149,7 +149,14 @@ namespace MShow
 			TinyString szName = dlg.GetAddress();
 			if (!szName.IsEmpty())
 			{
-				this->Open(szName.STR());
+				if (this->Open(szName.STR()))
+				{
+					MPreviewController* preview = MShowApp::Instance().GetController().GetPreviewController();
+					if (preview != NULL)
+					{
+						preview->m_waits.push_back(m_signal);
+					}
+				}
 			}
 		}
 	}
@@ -157,10 +164,16 @@ namespace MShow
 	void MVideoController::OnRemove()
 	{
 		MPreviewController* preview = MShowApp::Instance().GetController().GetPreviewController();
-		if (preview != NULL && m_video != NULL)
+		if (preview != NULL && m_pVideo != NULL)
 		{
-			m_video->Deallocate(preview->Graphics().GetDX11());
-			SAFE_DELETE(m_video);
+			preview->Remove(m_pVideo);
+			m_pVideo->Deallocate(preview->Graphics().GetDX11());
+			SAFE_DELETE(m_pVideo);
+			auto s = std::find(preview->m_waits.begin(), preview->m_waits.end(), m_signal);
+			if (s != preview->m_waits.end())
+			{
+				preview->m_waits.erase(s);
+			}
 		}
 		this->Close();
 	}
@@ -179,17 +192,17 @@ namespace MShow
 		MPreviewController* preview = MShowApp::Instance().GetController().GetPreviewController();
 		if (preview != NULL)
 		{
-			if (m_video == NULL)
+			if (m_pVideo == NULL)
 			{
-				m_video = new MVideoElement(*this);
-				if (m_video->Allocate(preview->Graphics().GetDX11()))
+				m_pVideo = new MVideoElement(*this);
+				if (m_pVideo->Allocate(preview->Graphics().GetDX11()))
 				{
-					preview->Add(m_video);
+					preview->Add(m_pVideo);
 				}
 			}
 			else
 			{
-				preview->Add(m_video);
+				preview->Add(m_pVideo);
 			}
 		}
 	}
