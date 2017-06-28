@@ -21,12 +21,14 @@ namespace MShow
 	};
 	class MShowController;
 	class MPreviewController;
+	class MRTMPEncoder;
 	class MVideoElement;
 	/// <summary>
-	/// 视频控制器
+	/// 音视频控制器
 	/// </summary>
 	class MVideoController
 	{
+		friend class MRTMPEncoder;
 		friend class MPreviewController;
 		friend class MShowController;
 		DISALLOW_COPY_AND_ASSIGN(MVideoController)

@@ -21,7 +21,6 @@ namespace MShow
 		DWORD					m_dwReconnect;
 		BOOL					m_bClose;
 		MRTMPClient				m_client;
-		TinyPerformanceTimer	m_time;
 	};
 }
 

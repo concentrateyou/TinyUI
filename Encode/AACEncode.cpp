@@ -33,10 +33,9 @@ namespace Encode
 	{
 		return m_maxOutputBytes;
 	}
-	BOOL AACEncode::Open(const WAVEFORMATEX& waveFMT, INT audioRate, BOOL bAllowF)
+	BOOL AACEncode::Open(const WAVEFORMATEX& waveFMT, INT audioRate)
 	{
 		Close();
-		m_bAllowFloat = bAllowF;
 		m_waveFMT = waveFMT;
 		m_aac = faacEncOpen(waveFMT.nSamplesPerSec, waveFMT.nChannels, &m_inputSamples, &m_maxOutputBytes);
 		if (!m_aac)
@@ -44,24 +43,17 @@ namespace Encode
 		//AAC固定1024
 		m_dwPTS = AAC_TIMEBASE * AAC_TIMEDEN / waveFMT.nSamplesPerSec;//播放一帧时间
 		m_config = faacEncGetCurrentConfiguration(m_aac);
-		if (m_bAllowFloat)
+		switch (waveFMT.wBitsPerSample)
 		{
-			m_config->inputFormat = FAAC_INPUT_FLOAT;
-		}
-		else
-		{
-			switch (waveFMT.wBitsPerSample)
-			{
-			case 16:
-				m_config->inputFormat = FAAC_INPUT_16BIT;
-				break;
-			case 24:
-				m_config->inputFormat = FAAC_INPUT_24BIT;
-				break;
-			case 32:
-				m_config->inputFormat = FAAC_INPUT_32BIT;
-				break;
-			}
+		case 16:
+			m_config->inputFormat = FAAC_INPUT_16BIT;
+			break;
+		case 24:
+			m_config->inputFormat = FAAC_INPUT_24BIT;
+			break;
+		case 32:
+			m_config->inputFormat = FAAC_INPUT_32BIT;
+			break;
 		}
 		m_config->quantqual = 100;
 		m_config->mpegVersion = MPEG4;
@@ -94,7 +86,7 @@ namespace Encode
 	}
 	void AACEncode::Close()
 	{
-		if (m_aac)
+		if (m_aac != NULL)
 		{
 			faacEncClose(m_aac);
 			m_aac = NULL;

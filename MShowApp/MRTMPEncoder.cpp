@@ -1,12 +1,21 @@
 #include "stdafx.h"
 #include "MRTMPEncoder.h"
+#include "MShowApp.h"
 
 namespace MShow
 {
-	MRTMPEncoder::MRTMPEncoder(MPreviewController& controller)
-		:m_controller(controller)
+	MRTMPEncoder::MRTMPEncoder()
+		:m_audioRate(128),
+		m_videoFPS(25),
+		m_videoRate(1000)
 	{
-
+		m_waveFMT.cbSize = 0;
+		m_waveFMT.nSamplesPerSec = 44100;
+		m_waveFMT.nChannels = 2;
+		m_waveFMT.wBitsPerSample = 16;
+		m_waveFMT.nBlockAlign = 4;
+		m_waveFMT.nAvgBytesPerSec = 176400;
+		m_waveFMT.wFormatTag = WAVE_FORMAT_PCM;
 	}
 
 	MRTMPEncoder::~MRTMPEncoder()
@@ -14,30 +23,37 @@ namespace MShow
 
 	}
 
-	BOOL MRTMPEncoder::Submit()
+	void MRTMPEncoder::SetAudioConfig(const WAVEFORMATEX& waveFMT, INT audioRate)
 	{
-		m_bClose = FALSE;
-		return TinyTaskBase::Submit(BindCallback(&MRTMPEncoder::OnMessagePump, this));
+		m_waveFMT = waveFMT;
+		m_audioRate = audioRate;
 	}
 
-	BOOL MRTMPEncoder::Close(DWORD dwMS)
+	void MRTMPEncoder::SetVideoConfig(const TinySize& size, INT videoFPS, INT videoRate)
 	{
-		m_bClose = TRUE;
-		if (TinyTaskBase::Close(dwMS))
-		{
-			return TRUE;
-		}
-		return FALSE;
+		m_size = size;
+		m_videoFPS = videoFPS;
+		m_videoRate = videoRate;
 	}
 
-	void MRTMPEncoder::OnMessagePump()
+	BOOL MRTMPEncoder::Open()
 	{
-		//DWORD dwMS = 1000 / m_dwRate;
-		SampleTag sampleTag = { 0 };
-		for (;;)
-		{
-			if (m_bClose)
-				break;
-		}
+		MVideoController* pCTRL = MShowApp::Instance().GetController().GetVideoController(0);
+		if (!pCTRL)
+			return FALSE;
+		this->Close();
+		if (!m_aac.Open(*pCTRL->m_player.GetFormat()))
+			return FALSE;
+		TinySize size = pCTRL->m_player.GetSize();
+		if (!m_x264.Open(size.cx, size.cy, 25, 1000))
+			return FALSE;
+		return TRUE;
+	}
+
+	BOOL MRTMPEncoder::Close()
+	{
+		m_aac.Close();
+		m_x264.Close();
+		return TRUE;
 	}
 }

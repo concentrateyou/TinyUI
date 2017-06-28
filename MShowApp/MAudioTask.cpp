@@ -26,7 +26,6 @@ namespace MShow
 	BOOL MAudioTask::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
-		m_task.EVENT_ASC -= m_onASC;
 		if (TinyTaskBase::Close(dwMS))
 		{
 			m_aac.Close();
@@ -74,7 +73,7 @@ namespace MShow
 			BOOL bRes = m_task.GetAudioQueue().Pop(sampleTag);
 			if (!bRes || sampleTag.size <= 0)
 			{
-				Sleep(10);
+				Sleep(15);
 				continue;
 			}
 			BYTE* bo = NULL;

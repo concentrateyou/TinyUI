@@ -45,7 +45,7 @@ namespace Encode
 		x264Encode();
 		virtual ~x264Encode();
 	public:
-		BOOL	Open(INT cx, INT cy, INT fps = 50, INT rate = 1000);//rate平均码率
+		BOOL	Open(INT cx, INT cy, INT videoFPS = 25, INT videoRate = 1000);//rate平均码率
 		BOOL	Encode(AVFrame* pI420);
 		void	Close();
 	private:

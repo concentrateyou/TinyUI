@@ -83,7 +83,7 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalDependencies>libfaac.lib</AdditionalDependencies>
+      <AdditionalDependencies>legacy_stdio_definitions.lib;libfaac.lib</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>..\ThirdParty\libfaac\lib;..\ThirdParty\libx264\libs\32bit;..\ThirdParty\ffmpeg\lib</AdditionalLibraryDirectories>

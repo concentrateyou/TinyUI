@@ -16,10 +16,10 @@ namespace Encode
 		Close();
 	}
 
-	BOOL x264Encode::Open(INT cx, INT cy, INT fps, INT rate)
+	BOOL x264Encode::Open(INT cx, INT cy, INT videoFPS, INT videoRate)
 	{
 		Close();
-		if (!BuildParam(cx, cy, fps, rate))
+		if (!BuildParam(cx, cy, videoFPS, videoRate))
 			return FALSE;
 		if ((m_x264 = x264_encoder_open(m_x264Param)) == NULL)
 			return FALSE;
@@ -32,7 +32,7 @@ namespace Encode
 		return TRUE;
 	}
 
-	BOOL x264Encode::BuildParam(INT cx, INT cy, INT fps, INT bitrate)
+	BOOL x264Encode::BuildParam(INT cx, INT cy, INT videoFPS, INT videoRate)
 	{
 		m_x264Param = new x264_param_t();
 		if (!m_x264Param)
@@ -46,7 +46,7 @@ namespace Encode
 		m_x264Param->i_csp = X264_CSP_I420;
 		m_x264Param->i_width = cx;
 		m_x264Param->i_height = cy;
-		m_x264Param->i_fps_num = fps;
+		m_x264Param->i_fps_num = videoFPS;
 		m_x264Param->i_fps_den = 1;
 		m_x264Param->i_keyint_max = m_x264Param->i_fps_num * 2;
 		m_x264Param->b_cabac = 1; /*cabac的开关*/
@@ -56,9 +56,9 @@ namespace Encode
 		m_x264Param->rc.i_rc_method = X264_RC_ABR;//CQP(恒定质量)，CRF(恒定码率)，ABR(平均码率)
 		m_x264Param->rc.f_rf_constant = 25;
 		m_x264Param->rc.f_rf_constant_max = 40;
-		m_x264Param->rc.i_bitrate = bitrate;/*设置平均码率大小*/
+		m_x264Param->rc.i_bitrate = videoRate;/*设置平均码率大小*/
 		m_x264Param->rc.f_rate_tolerance = 0.1F;
-		m_x264Param->rc.i_vbv_max_bitrate = static_cast<INT>(bitrate * 1.2);
+		m_x264Param->rc.i_vbv_max_bitrate = static_cast<INT>(videoRate * 1.2);
 		m_sPTS = (1000 / m_x264Param->i_fps_num);
 		x264_param_apply_profile(m_x264Param, "baseline");
 		return TRUE;

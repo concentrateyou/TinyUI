@@ -22,7 +22,7 @@ namespace Encode
 		AACEncode();
 		virtual ~AACEncode();
 	public:
-		BOOL	Open(const WAVEFORMATEX& waveFMT, INT audioRate, BOOL bAllowF = FALSE);
+		BOOL	Open(const WAVEFORMATEX& waveFMT, INT audioRate = 128);
 		BOOL	Encode(BYTE* bits, LONG size, BYTE*& bo, LONG& so);
 		void	Close();
 		BOOL	GetSpecificInfo(vector<BYTE>& info);
@@ -30,7 +30,6 @@ namespace Encode
 	private:
 		faacEncHandle			m_aac;
 		faacEncConfigurationPtr	m_config;
-		BOOL					m_bAllowFloat;
 		DWORD					m_inputSamples;
 		DWORD					m_maxOutputBytes;
 		DWORD					m_dwINC;
