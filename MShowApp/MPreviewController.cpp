@@ -197,7 +197,15 @@ namespace MShow
 		{
 			m_bMouseTracking = FALSE;
 		}
-		m_current = NULL;
+		TinyPoint point;
+		GetCursorPos(&point);
+		::ScreenToClient(m_view.Handle(), &point);
+		TinyRectangle rectangle;
+		::GetClientRect(m_view.Handle(), &rectangle);
+		if (!rectangle.PtInRect(point))
+		{
+			m_current = NULL;
+		}
 	}
 
 	void MPreviewController::OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
