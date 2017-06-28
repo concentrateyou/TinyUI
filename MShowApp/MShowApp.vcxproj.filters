@@ -102,6 +102,12 @@
     <ClInclude Include="MImageElement.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MPlayController.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MPlayView.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -180,6 +186,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MImageElement.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MPlayController.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MPlayView.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

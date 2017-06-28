@@ -88,5 +88,10 @@ namespace MShow
 	{
 		return m_szURL;
 	}
+
+	WAVEFORMATEX* MFLVPlayer::GetFormat()
+	{
+		return m_audioTask.GetFormat();
+	}
 }
 

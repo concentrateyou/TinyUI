@@ -333,7 +333,7 @@ namespace MShow
 			}
 			if (m_waits.size() == 0)
 			{
-				Sleep(5);
+				Sleep(15);
 			}
 			else
 			{
@@ -342,11 +342,15 @@ namespace MShow
 				{
 					break;
 				}
+				
 				if (hRes != WAIT_TIMEOUT)
 				{
-					DWORD index = hRes - WAIT_OBJECT_0;
 					DWORD dwMS = this->Draw();
-					TRACE("index:%d, cost:%d\n", index, dwMS);
+					TRACE("index:%d, cost:%d\n", hRes - WAIT_OBJECT_0, dwMS);
+				}
+				else
+				{
+					TRACE("timeout:%d\n", hRes - WAIT_OBJECT_0);
 				}
 			}
 		}

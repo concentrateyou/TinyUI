@@ -88,7 +88,7 @@ namespace MShow
 			INT size = m_audioQueue.GetSize() + m_videoQueue.GetSize();
 			if (size > MAX_QUEUE_SIZE)
 			{
-				Sleep(5);
+				Sleep(15);
 				continue;
 			}
 			if (!m_reader.ReadBlock(block))

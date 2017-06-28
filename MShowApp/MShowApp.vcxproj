@@ -154,6 +154,8 @@
     <ClInclude Include="MImageController.h" />
     <ClInclude Include="MImageElement.h" />
     <ClInclude Include="MImageView.h" />
+    <ClInclude Include="MPlayController.h" />
+    <ClInclude Include="MPlayView.h" />
     <ClInclude Include="MPreviewController.h" />
     <ClInclude Include="MPreviewView.h" />
     <ClInclude Include="MRTMPClient.h" />
@@ -184,6 +186,8 @@
     <ClCompile Include="MImageController.cpp" />
     <ClCompile Include="MImageElement.cpp" />
     <ClCompile Include="MImageView.cpp" />
+    <ClCompile Include="MPlayController.cpp" />
+    <ClCompile Include="MPlayView.cpp" />
     <ClCompile Include="MPreviewController.cpp" />
     <ClCompile Include="MPreviewView.cpp" />
     <ClCompile Include="MRTMPClient.cpp" />

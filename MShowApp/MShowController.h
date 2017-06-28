@@ -6,6 +6,7 @@ namespace MShow
 	class MVideoController;
 	class MImageController;
 	class MPreviewController;
+	class MPlayController;
 	/// <summary>
 	/// Ö÷¿ØÖÆÆ÷
 	/// </summary>
@@ -18,6 +19,7 @@ namespace MShow
 		BOOL	Initialize();
 		void	Uninitialize();
 		MPreviewController* GetPreviewController();
+		MPlayController*	GetPlayController();
 		MVideoController*	GetVideoController(UINT i);
 		MImageController*	GetImageController(UINT i);
 	private:
@@ -25,6 +27,7 @@ namespace MShow
 		MVideoController*	m_videos[6];
 		MImageController*	m_images[6];
 		MPreviewController*	m_preview;
+		MPlayController*	m_play;
 	};
 }
 

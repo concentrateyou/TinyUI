@@ -67,7 +67,7 @@ namespace MShow
 			INT size = m_audioQueue.GetSize();
 			if (size > MAX_AUDIO_QUEUE_SIZE)
 			{
-				Sleep(5);
+				Sleep(15);
 				continue;
 			}
 			ZeroMemory(&sampleTag, sizeof(sampleTag));

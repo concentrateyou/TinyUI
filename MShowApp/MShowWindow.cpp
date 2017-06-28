@@ -64,6 +64,9 @@ namespace MShow
 		m_onTabChange.Reset(new Delegate<void(void*)>(this, &MShowWindow::OnTabChange));
 		m_tab.EVENT_SELCHANGE += m_onTabChange;
 		m_previewView.Create(m_hWND, 33, 90, 512, 288);
+		m_playView.Create(m_hWND, 756, 90, 512, 288);
+		m_toggle.Create(m_hWND, 570, 175, 165, 100);
+		m_toggle.SetText("ÇÐ»»");
 		m_layout[0].Create(m_hWND, 545 - 32 * 3 - 30, 378 + 5, 32, 32);
 		m_layout[0].SetText("1*1");
 		m_layout[1].Create(m_hWND, 545 - 32 * 2 - 20, 378 + 5, 32, 32);

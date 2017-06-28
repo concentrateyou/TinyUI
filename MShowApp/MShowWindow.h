@@ -5,6 +5,7 @@
 #include "MVideoView.h"
 #include "MImageView.h"
 #include "MPreviewView.h"
+#include "MPlayView.h"
 using namespace TinyUI;
 
 namespace MShow
@@ -41,7 +42,9 @@ namespace MShow
 		MVideoView				m_videoViews[6];
 		MImageView				m_imageViews[6];
 		MPreviewView			m_previewView;
+		MPlayView				m_playView;
 		TinyButton				m_layout[3];
+		TinyButton				m_toggle;
 		TinyTabControl			m_tab;
 	private:
 		TinyScopedPtr<Delegate<void(void*)>>	m_onTabChange;

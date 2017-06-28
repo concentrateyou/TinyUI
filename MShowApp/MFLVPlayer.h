@@ -15,12 +15,13 @@ namespace MShow
 	public:
 		MFLVPlayer(Callback<void(BYTE*, LONG)>&& callback);
 		virtual ~MFLVPlayer();
-		BOOL		Open(HWND hWND, LPCSTR pzURL);
-		BOOL		Close();
-		BOOL		SetVolume(LONG volume);
-		TinySize	GetSize() const;
-		DWORD		GetRate() const;
-		TinyString	GetURL() const;
+		BOOL			Open(HWND hWND, LPCSTR pzURL);
+		BOOL			Close();
+		BOOL			SetVolume(LONG volume);
+		TinySize		GetSize() const;
+		DWORD			GetRate() const;
+		TinyString		GetURL() const;
+		WAVEFORMATEX*	GetFormat();
 	private:
 		void OnVideo(BYTE* bits, LONG size);
 	private:

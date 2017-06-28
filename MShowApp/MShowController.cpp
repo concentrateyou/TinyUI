@@ -23,6 +23,13 @@ namespace MShow
 			return FALSE;
 		if (!m_preview->Initialize())
 			return FALSE;
+
+		m_play = new MPlayController(m_window.m_playView);
+		if (!m_play)
+			return FALSE;
+		if (!m_play->Initialize())
+			return FALSE;
+
 		m_preview->SetPulgSize(TinySize(1280, 720));
 		for (UINT i = 0;i < 6;i++)
 		{
@@ -71,6 +78,11 @@ namespace MShow
 	MPreviewController* MShowController::GetPreviewController()
 	{
 		return m_preview;
+	}
+
+	MPlayController*	MShowController::GetPlayController()
+	{
+		return m_play;
 	}
 
 	MVideoController*	MShowController::GetVideoController(UINT i)
