@@ -333,25 +333,23 @@ namespace MShow
 			}
 			if (m_waits.size() == 0)
 			{
-				Sleep(15);
+				Sleep(10);
+				continue;
+			}
+			HRESULT hRes = WaitForMultipleObjects(m_waits.size(), &m_waits[0], FALSE, 40);
+			if (hRes == WAIT_FAILED || hRes == WAIT_ABANDONED)
+			{
+				break;
+			}
+
+			if (hRes != WAIT_TIMEOUT)
+			{
+				DWORD dwMS = this->Draw();
+				TRACE("index:%d, cost:%d\n", hRes - WAIT_OBJECT_0, dwMS);
 			}
 			else
 			{
-				HRESULT hRes = WaitForMultipleObjects(m_waits.size(), &m_waits[0], FALSE, 40);
-				if (hRes == WAIT_FAILED || hRes == WAIT_ABANDONED)
-				{
-					break;
-				}
-				
-				if (hRes != WAIT_TIMEOUT)
-				{
-					DWORD dwMS = this->Draw();
-					TRACE("index:%d, cost:%d\n", hRes - WAIT_OBJECT_0, dwMS);
-				}
-				else
-				{
-					TRACE("timeout:%d\n", hRes - WAIT_OBJECT_0);
-				}
+				TRACE("timeout:%d\n", hRes - WAIT_OBJECT_0);
 			}
 		}
 	}

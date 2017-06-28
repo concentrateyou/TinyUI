@@ -65,9 +65,9 @@ namespace MShow
 	}
 	INT MShowApp::Run()
 	{
-		INT loopRes = m_msgLoop.MessageLoop();
+		INT iRes = m_msgLoop.MessageLoop();
 		this->Uninitialize();
-		return loopRes;
+		return iRes;
 	}
 	BOOL MShowApp::Uninitialize()
 	{

@@ -59,6 +59,11 @@ namespace MShow
 			}
 			SAFE_DELETE(m_preview);
 		}
+		if (m_play != NULL)
+		{
+			m_play->Close();
+			SAFE_DELETE(m_play);
+		}
 		for (UINT i = 0;i < 6;i++)
 		{
 			m_window.m_volumeViews[i].EVENT_VOLUME -= m_videos[i]->m_onVolume;
