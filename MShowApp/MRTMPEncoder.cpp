@@ -25,7 +25,6 @@ namespace MShow
 		m_bClose = TRUE;
 		if (TinyTaskBase::Close(dwMS))
 		{
-
 			return TRUE;
 		}
 		return FALSE;
