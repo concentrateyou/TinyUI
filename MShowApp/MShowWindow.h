@@ -41,6 +41,7 @@ namespace MShow
 		MVideoView				m_videoViews[6];
 		MImageView				m_imageViews[6];
 		MPreviewView			m_previewView;
+		TinyButton				m_layout[3];
 		TinyTabControl			m_tab;
 	private:
 		TinyScopedPtr<Delegate<void(void*)>>	m_onTabChange;

@@ -13,7 +13,8 @@ namespace MShow
 	MPreviewController::MPreviewController(MPreviewView& view)
 		:m_view(view),
 		m_current(NULL),
-		m_bBreak(FALSE)
+		m_bBreak(FALSE),
+		m_bMouseTracking(FALSE)
 	{
 		m_onLButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonDown));
 		m_onLButtonUp.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonUp));
@@ -178,11 +179,24 @@ namespace MShow
 	void MPreviewController::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		if (!m_bMouseTracking)
+		{
+			TRACKMOUSEEVENT tme;
+			tme.cbSize = sizeof(tme);
+			tme.hwndTrack = m_view.Handle();
+			tme.dwFlags = TME_LEAVE;
+			tme.dwHoverTime = 0;
+			m_bMouseTracking = _TrackMouseEvent(&tme);
+		}
 	}
 
 	void MPreviewController::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		if (m_bMouseTracking)
+		{
+			m_bMouseTracking = FALSE;
+		}
 		m_current = NULL;
 	}
 

@@ -44,6 +44,7 @@ namespace MShow
 		DWORD	Draw();
 		DX11Element2D* HitTest(const TinyPoint& pos);
 	private:
+		BOOL							m_bMouseTracking;
 		BOOL							m_bBreak;
 		TinySize						m_pulgSize;
 		TinyMenu						m_popup;

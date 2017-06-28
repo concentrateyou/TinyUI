@@ -9,6 +9,7 @@
 #include "IO/TinyTaskBase.h"
 #include "Control/TinyControl.h"
 #include "Control/TinyTabControl.h"
+#include "Control/TinyButton.h"
 #include "Media/TinySoundPlayer.h"
 #include "Common/TinyTime.h"
 #include "Common.h"

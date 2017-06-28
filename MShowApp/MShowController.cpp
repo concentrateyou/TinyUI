@@ -56,10 +56,14 @@ namespace MShow
 		{
 			m_window.m_volumeViews[i].EVENT_VOLUME -= m_videos[i]->m_onVolume;
 			if (m_videos[i])
+			{
 				m_videos[i]->Close();
+			}
 			SAFE_DELETE(m_videos[i]);
 			if (m_images[i])
+			{
 				m_images[i]->Close();
+			}
 			SAFE_DELETE(m_images[i]);
 		}
 	}

@@ -49,26 +49,26 @@ namespace MShow
 		TinyRectangle rectangle;
 		m_image.Close();
 		if (!m_image.Open(pzFile))
-			goto L_ERROR;
+			goto _ERROR;
 		size = m_image.GetSize();
 		if (!m_copy2D.Create(m_graphics.GetDX11(), size, TRUE))
-			goto L_ERROR;
+			goto _ERROR;
 		m_copy2D.SetScale(size);
 		if (!m_image2D.Create(m_graphics.GetDX11(), size, FALSE, FALSE))
-			goto L_ERROR;
+			goto _ERROR;
 		m_view.GetClientRect(&rectangle);
 		m_image2D.SetScale(rectangle.Size());
 		m_szFile = pzFile;
-		TinyTimerQueue& timers = TinyApplication::GetInstance()->GetTimers();
+		TinyTimerQueue& queue = TinyApplication::GetInstance()->GetTimers();
 		if (m_handle != NULL)
 		{
-			timers.Unregister(m_handle);
+			queue.Unregister(m_handle);
 			m_handle = NULL;
 		}
 		DWORD deDelay = m_image.GetCount() > 1 ? m_image.GetDelay(m_index) : 40;
-		m_handle = timers.Register(&MImageController::TimerCallback, this, deDelay, deDelay, WT_EXECUTEINTIMERTHREAD);
+		m_handle = queue.Register(&MImageController::TimerCallback, this, deDelay, deDelay, WT_EXECUTEINTIMERTHREAD);
 		return m_handle != NULL;
-	L_ERROR:
+	_ERROR:
 		m_copy2D.Destory();
 		m_image2D.Destory();
 		return FALSE;
@@ -76,10 +76,10 @@ namespace MShow
 
 	BOOL MImageController::Close()
 	{
-		TinyTimerQueue& timers = TinyApplication::GetInstance()->GetTimers();
+		TinyTimerQueue& queue = TinyApplication::GetInstance()->GetTimers();
 		if (m_handle != NULL)
 		{
-			timers.Unregister(m_handle);
+			queue.Unregister(m_handle);
 			m_handle = NULL;
 		}
 		m_copy2D.Destory();

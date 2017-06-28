@@ -64,6 +64,12 @@ namespace MShow
 		m_onTabChange.Reset(new Delegate<void(void*)>(this, &MShowWindow::OnTabChange));
 		m_tab.EVENT_SELCHANGE += m_onTabChange;
 		m_previewView.Create(m_hWND, 33, 90, 512, 288);
+		m_layout[0].Create(m_hWND, 545 - 32 * 3 - 30, 378 + 5, 32, 32);
+		m_layout[0].SetText("1*1");
+		m_layout[1].Create(m_hWND, 545 - 32 * 2 - 20, 378 + 5, 32, 32);
+		m_layout[1].SetText("2*2");
+		m_layout[2].Create(m_hWND, 545 - 32 * 1 - 10, 378 + 5, 32, 32);
+		m_layout[2].SetText("3*2");
 		INT offset = 20;
 		for (INT i = 0;i < 6;i++)
 		{
