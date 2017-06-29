@@ -349,15 +349,9 @@ namespace MShow
 			{
 				break;
 			}
-
 			if (hRes != WAIT_TIMEOUT)
 			{
 				DWORD dwMS = this->Draw();
-				TRACE("index:%d, cost:%d\n", hRes - WAIT_OBJECT_0, dwMS);
-			}
-			else
-			{
-				TRACE("timeout:%d\n", hRes - WAIT_OBJECT_0);
 			}
 		}
 	}
