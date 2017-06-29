@@ -23,6 +23,7 @@ namespace MShow
 		case IDOK:
 		case IDCANCEL:
 			m_address = m_textbox.GetText();
+			m_address = m_address.Trim(" ");
 			if (EndDialog(LOWORD(wParam)))
 			{
 
