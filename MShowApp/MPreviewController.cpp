@@ -14,7 +14,8 @@ namespace MShow
 		:m_view(view),
 		m_current(NULL),
 		m_bBreak(FALSE),
-		m_bMouseTracking(FALSE)
+		m_bMouseTracking(FALSE),
+		m_bPopup(FALSE)
 	{
 		m_onLButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonDown));
 		m_onLButtonUp.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonUp));
@@ -173,6 +174,7 @@ namespace MShow
 		{
 			m_view.ClientToScreen(&point);
 			m_popup.TrackPopupMenu(TPM_LEFTBUTTON, point.x, point.y, m_view.Handle(), NULL);
+			m_bPopup = TRUE;
 		}
 	}
 
@@ -197,14 +199,17 @@ namespace MShow
 		{
 			m_bMouseTracking = FALSE;
 		}
-		TinyPoint point;
-		GetCursorPos(&point);
-		::ScreenToClient(m_view.Handle(), &point);
-		TinyRectangle rectangle;
-		::GetClientRect(m_view.Handle(), &rectangle);
-		if (!rectangle.PtInRect(point))
+		if (!m_bPopup)
 		{
-			m_current = NULL;
+			TinyPoint point;
+			GetCursorPos(&point);
+			::ScreenToClient(m_view.Handle(), &point);
+			TinyRectangle rectangle;
+			::GetClientRect(m_view.Handle(), &rectangle);
+			if (!rectangle.PtInRect(point))
+			{
+				m_current = NULL;
+			}
 		}
 	}
 
@@ -243,6 +248,7 @@ namespace MShow
 			Remove(m_current);
 			break;
 		}
+		m_bPopup = FALSE;
 	}
 	MPreviewView& MPreviewController::GetView()
 	{

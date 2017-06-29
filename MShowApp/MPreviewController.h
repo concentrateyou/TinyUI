@@ -46,6 +46,7 @@ namespace MShow
 	private:
 		BOOL							m_bMouseTracking;
 		BOOL							m_bBreak;
+		BOOL							m_bPopup;
 		TinySize						m_pulgSize;
 		TinyMenu						m_popup;
 		TinyLock						m_lock;
