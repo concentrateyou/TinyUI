@@ -12,7 +12,7 @@ namespace MShow
 
 	MPlayController::~MPlayController()
 	{
-		
+
 	}
 
 	BOOL MPlayController::Initialize()

@@ -17,10 +17,10 @@ namespace MShow
 	private:
 		void OnMessagePump();
 	private:
-		DWORD					m_dwRate;
-		DWORD					m_dwReconnect;
-		BOOL					m_bClose;
-		MRTMPClient				m_client;
+		BOOL			m_bClose;
+		DWORD			m_dwRate;
+		DWORD			m_dwReconnect;
+		MRTMPClient		m_client;
 	};
 }
 

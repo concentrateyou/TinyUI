@@ -9,6 +9,16 @@ namespace MShow
 		m_task(task),
 		m_clock(clock)
 	{
+
+	}
+
+	MAudioRenderTask::MAudioRenderTask(MAudioTask& task, MClock& clock, TinyUI::Callback<void(BYTE*, LONG)>&& callback)
+		:m_bInitialize(FALSE),
+		m_bBreak(FALSE),
+		m_task(task),
+		m_clock(clock),
+		m_callback(std::move(callback))
+	{
 	}
 
 	MAudioRenderTask::~MAudioRenderTask()
@@ -76,8 +86,8 @@ namespace MShow
 			if (!m_bInitialize)
 			{
 				m_bInitialize = TRUE;
-				TinyPerformanceTimer timer;
-				timer.BeginTime();
+				TinyPerformanceTimer time;
+				time.BeginTime();
 				if (!m_player.SetFormat(m_task.GetFormat(), tag.size * 3))
 					break;
 				m_player.SetVolume(-10000);
@@ -89,22 +99,30 @@ namespace MShow
 				vals[2].dwOffset = tag.size * 3 - 1;
 				vals[2].hEventNotify = m_events[2];
 				m_player.SetNotifys(3, vals);
-				timer.EndTime();
-				m_clock.AddBaseTime(static_cast<DWORD>(timer.GetMillisconds()));
+				time.EndTime();
+				m_clock.AddBaseTime(static_cast<DWORD>(time.GetMillisconds()));
 				LONGLONG ms = timeGetTime() - m_clock.GetBaseTime();
 				LONG delay = static_cast<LONG>(tag.samplePTS - ms);
 				Sleep(delay < 0 ? 0 : delay);
 				if (tag.size != 4096)
 				{
+					if (!m_callback.IsNull())
+					{
+						m_callback(tag.bits, tag.size);
+					}
 					m_player.Fill(tag.bits, tag.size, dwOffset);
 				}
 				m_player.Play();
 			}
 			else
 			{
+				if (!m_callback.IsNull())
+				{
+					m_callback(tag.bits, tag.size);
+				}
 				m_player.Fill(tag.bits, tag.size, dwOffset);
-				SAFE_DELETE_ARRAY(tag.bits);
 			}
+			SAFE_DELETE_ARRAY(tag.bits);
 			HANDLE handles[3] = { m_events[0],m_events[1],m_events[2] };
 			HRESULT hRes = WaitForMultipleObjects(3, handles, FALSE, INFINITE);
 			switch (hRes)

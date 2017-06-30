@@ -21,17 +21,17 @@ namespace TinyUI
 		public:
 			TinyRingBuffer();
 			virtual ~TinyRingBuffer();
-			BOOL Initialize(DWORD count, DWORD esize);
-			DWORD Read(void* data, DWORD count);
-			DWORD Write(const void* data, DWORD count);
+			BOOL	Initialize(DWORD count, DWORD esize);
+			DWORD	Read(void* data, DWORD count);
+			DWORD	Write(const void* data, DWORD count);
 			/// <summary>
 			/// 已写入的数据
 			/// </summary>
-			DWORD GetAvailableOUT();
+			DWORD	GetAvailableOUT();
 			/// <summary>
 			/// 剩余数据
 			/// </summary>
-			DWORD GetAvailableIN();
+			DWORD	GetAvailableIN();
 		private:
 			LONG MoveReadPtr(LONG count);
 		public:

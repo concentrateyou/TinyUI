@@ -14,6 +14,7 @@ namespace MShow
 		DISALLOW_COPY_AND_ASSIGN(MAudioRenderTask)
 	public:
 		MAudioRenderTask(MAudioTask& task, MClock& clock);
+		MAudioRenderTask(MAudioTask& task, MClock& clock, TinyUI::Callback<void(BYTE*, LONG)>&& callback);
 		virtual ~MAudioRenderTask();
 		BOOL Initialize(HWND hWND);
 		BOOL SetVolume(LONG volume);
@@ -28,6 +29,7 @@ namespace MShow
 		MClock&					m_clock;
 		MAudioTask&				m_task;
 		TinySoundPlayer			m_player;
+		TinyUI::Callback<void(BYTE*, LONG)> m_callback;
 	};
 }
 

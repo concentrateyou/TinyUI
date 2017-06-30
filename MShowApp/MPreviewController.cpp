@@ -281,7 +281,7 @@ namespace MShow
 
 	DWORD MPreviewController::Draw()
 	{
-		m_timer.BeginTime();
+		m_time.BeginTime();
 		if (m_renderView != NULL)
 		{
 			m_graphics.GetDX11().SetRenderTexture2D(m_renderView);
@@ -325,8 +325,8 @@ namespace MShow
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
 		m_graphics.Present();
-		m_timer.EndTime();
-		return static_cast<DWORD>(m_timer.GetMillisconds());
+		m_time.EndTime();
+		return static_cast<DWORD>(m_time.GetMillisconds());
 	}
 
 	void MPreviewController::OnMessagePump()

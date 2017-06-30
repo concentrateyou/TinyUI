@@ -46,7 +46,7 @@ namespace MShow
 	MVideoController::MVideoController(MVideoView& view)
 		:m_view(view),
 		m_pVideo(NULL),
-		m_player(BindCallback(&MVideoController::OnVideo, this))
+		m_player(BindCallback(&MVideoController::OnAudio, this), BindCallback(&MVideoController::OnVideo, this))
 	{
 		m_onLButtonDBClick.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MVideoController::OnLButtonDBClick));
 		m_onRButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MVideoController::OnRButtonDown));
@@ -124,6 +124,11 @@ namespace MShow
 			return ps->GetHandle();
 		}
 		return NULL;
+	}
+
+	void MVideoController::OnAudio(BYTE* bits, LONG size)
+	{
+
 	}
 
 	void MVideoController::OnVideo(BYTE* bits, LONG size)

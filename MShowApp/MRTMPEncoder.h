@@ -5,6 +5,7 @@
 #include "MRTMPClient.h"
 #include "x264Encode.h"
 #include "AACEncode.h"
+#include <concurrent_queue.h>
 using namespace Encode;
 
 namespace MShow

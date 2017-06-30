@@ -43,6 +43,7 @@ namespace MShow
 	private:
 		void	OnAdd();
 		void	OnRemove();
+		void	OnAudio(BYTE* bits, LONG size);
 		void	OnVideo(BYTE* bits, LONG size);
 		void	OnMenuClick(void*, INT wID);
 		void	OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

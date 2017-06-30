@@ -51,14 +51,6 @@ namespace MShow
 		{
 			if (m_bClose)
 				break;
-			/*INT size = m_queue.GetSize();
-			if (size > MAX_PUSH_QUEUE_SIZE)
-			{
-				Sleep(3);
-				continue;
-			}
-			ZeroMemory(&sampleTag, sizeof(sampleTag));*/
-
 		}
 	}
 }

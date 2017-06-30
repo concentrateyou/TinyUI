@@ -57,7 +57,7 @@ namespace MShow
 		TinyArray<DX11Element2D*>		m_array;
 		TinyScopedPtr<DX11RenderView>	m_renderView;
 		vector<HANDLE>					m_waits;
-		TinyPerformanceTimer			m_timer;
+		TinyPerformanceTimer			m_time;
 	private:
 		TinyScopedPtr<Delegate<void(void*, INT)>>				   m_onMenuClick;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonDown;

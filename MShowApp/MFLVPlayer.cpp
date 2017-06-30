@@ -3,11 +3,24 @@
 
 namespace MShow
 {
-	MFLVPlayer::MFLVPlayer(Callback<void(BYTE*, LONG)>&& callback)
-		:m_callback(std::move(callback)),
+	MFLVPlayer::MFLVPlayer(Callback<void(BYTE*, LONG)>&& videoCB)
+		: m_videoCB(std::move(videoCB)),
 		m_task(m_clock),
 		m_audioTask(m_task, m_clock),
 		m_audioRenderTask(m_audioTask, m_clock),
+		m_videoTask(m_task, m_clock),
+		m_videoRenderTask(m_videoTask, m_clock, BindCallback(&MFLVPlayer::OnVideo, this)),
+		m_dwRate(25)
+	{
+
+	}
+
+	MFLVPlayer::MFLVPlayer(Callback<void(BYTE*, LONG)>&& audioCB, Callback<void(BYTE*, LONG)>&& videoCB)
+		:m_audioCB(std::move(audioCB)),
+		m_videoCB(std::move(videoCB)),
+		m_task(m_clock),
+		m_audioTask(m_task, m_clock),
+		m_audioRenderTask(m_audioTask, m_clock, BindCallback(&MFLVPlayer::OnAudio, this)),
 		m_videoTask(m_task, m_clock),
 		m_videoRenderTask(m_videoTask, m_clock, BindCallback(&MFLVPlayer::OnVideo, this)),
 		m_dwRate(25)
@@ -49,9 +62,17 @@ namespace MShow
 
 	void MFLVPlayer::OnVideo(BYTE* bits, LONG lsize)
 	{
-		if (!m_callback.IsNull())
+		if (!m_videoCB.IsNull())
 		{
-			m_callback(bits, lsize);
+			m_videoCB(bits, lsize);
+		}
+	}
+
+	void MFLVPlayer::OnAudio(BYTE* bits, LONG lsize)
+	{
+		if (!m_audioCB.IsNull())
+		{
+			m_audioCB(bits, lsize);
 		}
 	}
 
