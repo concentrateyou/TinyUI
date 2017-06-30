@@ -260,6 +260,11 @@ namespace MShow
 		return m_graphics;
 	}
 
+	DX11RenderView*	MPreviewController::GetRenderView()
+	{
+		return m_renderView;
+	}
+
 	BOOL MPreviewController::Submit()
 	{
 		m_bBreak = FALSE;
@@ -277,6 +282,11 @@ namespace MShow
 		m_pulgSize = size;
 		m_renderView.Reset(new DX11RenderView(m_graphics.GetDX11()));
 		m_renderView->Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy));
+	}
+
+	TinySize MPreviewController::GetPulgSize() const
+	{
+		return m_pulgSize;
 	}
 
 	DWORD MPreviewController::Draw()

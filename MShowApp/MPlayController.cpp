@@ -29,14 +29,14 @@ namespace MShow
 		TinySize size;
 		TinyRectangle rectangle;
 		if (!m_player.Open(m_view.Handle(), pzURL))
-			goto L_ERROR;
+			goto _ERROR;
 		size = m_player.GetSize();
 		if (!m_video2D.Create(m_graphics.GetDX11(), size, FALSE, FALSE))
-			goto L_ERROR;
+			goto _ERROR;
 		m_view.GetClientRect(&rectangle);
 		m_video2D.SetScale(rectangle.Size());
 		return TRUE;
-	L_ERROR:
+	_ERROR:
 		m_player.Close();
 		m_video2D.Destory();
 		return FALSE;

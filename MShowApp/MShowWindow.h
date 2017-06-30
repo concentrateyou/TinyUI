@@ -36,6 +36,8 @@ namespace MShow
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 	private:
 		void OnTabChange(void*);
+		void OnToggle(void*, INT);
+		void OnPusher(void*, INT);
 	private:
 		MTabView				m_tabViews[2];
 		MVolumeView				m_volumeViews[6];
@@ -45,8 +47,9 @@ namespace MShow
 		MPlayView				m_playView;
 		TinyButton				m_layout[3];
 		TinyButton				m_toggle;
+		TinyButton				m_pusher;
 		TinyTabControl			m_tab;
 	private:
-		TinyScopedPtr<Delegate<void(void*)>>	m_onTabChange;
+		TinyScopedPtr<Delegate<void(void*)>>		m_onTabChange;
 	};
 }

@@ -16,7 +16,7 @@ extern "C"
 #pragma comment(lib, "avutil.lib")
 #pragma comment(lib, "swscale.lib")
 
-namespace DXApp
+namespace MShow
 {
 	class I420Converter
 	{

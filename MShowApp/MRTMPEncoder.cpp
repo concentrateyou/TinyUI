@@ -1,13 +1,16 @@
 #include "stdafx.h"
 #include "MRTMPEncoder.h"
 #include "MShowApp.h"
+#include "MShowController.h"
 
 namespace MShow
 {
 	MRTMPEncoder::MRTMPEncoder()
 		:m_audioRate(128),
 		m_videoFPS(25),
-		m_videoRate(1000)
+		m_videoRate(1000),
+		m_dwSize(0),
+		m_x264(BindCallback(&MRTMPEncoder::OnX264, this))
 	{
 		m_waveFMT.cbSize = 0;
 		m_waveFMT.nSamplesPerSec = 44100;
@@ -36,24 +39,115 @@ namespace MShow
 		m_videoRate = videoRate;
 	}
 
+	INT	MRTMPEncoder::GetVideoFPS() const
+	{
+		return m_videoFPS;
+	}
+	INT	MRTMPEncoder::GetVideoRate() const
+	{
+		return m_videoRate;
+	}
+	INT	MRTMPEncoder::GetAudioRate() const
+	{
+		return m_audioRate;
+	}
+
+	WAVEFORMATEX MRTMPEncoder::GetFormat() const
+	{
+		return m_waveFMT;
+	}
+
+	TinySize MRTMPEncoder::GetSize() const
+	{
+		return m_size;
+	}
+
+	AACEncode&	MRTMPEncoder::GetAAC()
+	{
+		return m_aac;
+	}
+
+	x264Encode&	MRTMPEncoder::GetX264()
+	{
+		return m_x264;
+	}
+
 	BOOL MRTMPEncoder::Open()
 	{
 		MVideoController* pCTRL = MShowApp::Instance().GetController().GetVideoController(0);
 		if (!pCTRL)
 			return FALSE;
+		MPreviewController* pCTRL1 = MShowApp::Instance().GetController().GetPreviewController();
+		if (!pCTRL1)
+			return FALSE;
 		this->Close();
 		if (!m_aac.Open(*pCTRL->m_player.GetFormat()))
 			return FALSE;
-		TinySize size = pCTRL->m_player.GetSize();
-		if (!m_x264.Open(size.cx, size.cy, 25, 1000))
+		TinySize pulgSize = pCTRL1->GetPulgSize();
+		if (!m_x264.Open(pulgSize.cx, pulgSize.cy, 25, 1000))
 			return FALSE;
+		m_converter.Reset(new I420Converter(pulgSize, pulgSize));
+		m_bBreaks = FALSE;
+		m_videoTask.Submit(BindCallback(&MRTMPEncoder::OnMessagePump, this));
 		return TRUE;
 	}
 
 	BOOL MRTMPEncoder::Close()
 	{
+		m_bBreaks = TRUE;
+		m_videoTask.Close(INFINITE);
 		m_aac.Close();
 		m_x264.Close();
 		return TRUE;
+	}
+
+	void MRTMPEncoder::OnX264(BYTE* bits, LONG size, const MediaTag& tag)
+	{
+		Sample sample;
+		memcpy(&sample.mediaTag, &tag, sizeof(tag));
+		sample.size = size;
+		sample.bits = new BYTE[size];
+		memcpy(sample.bits, bits, size);
+		sample.mediaTag.dwTime = timeGetTime() - m_baseTime + sample.mediaTag.PTS;
+		MShowApp::Instance().GetController().GetPusher().m_samples.push(sample);
+	}
+
+	void MRTMPEncoder::OnMessagePump()
+	{
+		m_baseTime = timeGetTime();
+		//默认每隔40ms编码一次
+		LONGLONG time = 0;
+		DWORD dwMS = static_cast<DWORD>(1000 / m_videoFPS);
+		for (;;)
+		{
+			if (m_bBreaks)
+				break;
+			INT delay = dwMS - time;
+			Sleep(delay < 0 ? 0 : delay);
+			m_time.BeginTime();
+			MPreviewController* pCTRL = MShowApp::Instance().GetController().GetPreviewController();
+			if (pCTRL != NULL)
+			{
+				DX11RenderView* pView = pCTRL->GetRenderView();
+				if (pView != NULL)
+				{
+					DWORD dwSize = 0;
+					BYTE* bits = pView->Map(dwSize);
+					if (m_dwSize != dwSize && bits != NULL)
+					{
+						m_dwSize = dwSize;
+						m_bits.Reset(new BYTE[m_dwSize]);
+					}
+					memcpy(m_bits, bits, m_dwSize);
+					pView->Unmap();
+					if (m_bits != NULL && m_converter->BRGAToI420(m_bits))
+					{
+						m_x264.Encode(m_converter->GetI420());
+					}
+				}
+			}
+			m_time.EndTime();
+			time = m_time.GetMillisconds();
+		}
 	}
 }

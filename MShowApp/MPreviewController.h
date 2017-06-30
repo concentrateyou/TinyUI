@@ -19,18 +19,20 @@ namespace MShow
 	public:
 		MPreviewController(MPreviewView& view);
 		virtual ~MPreviewController();
-		BOOL	Initialize();
-		void	SetPulgSize(const TinySize& size);
+		BOOL		Initialize();
+		void		SetPulgSize(const TinySize& size);
+		TinySize	GetPulgSize() const;
 	public:
-		BOOL	Add(DX11Element2D* ps);
-		BOOL	Remove(DX11Element2D* ps);
-		BOOL	Move(DX11Element2D* ps, BOOL bUp);
-		BOOL	Bring(DX11Element2D* ps, BOOL bTop);
+		BOOL		Add(DX11Element2D* ps);
+		BOOL		Remove(DX11Element2D* ps);
+		BOOL		Move(DX11Element2D* ps, BOOL bUp);
+		BOOL		Bring(DX11Element2D* ps, BOOL bTop);
 	public:
-		BOOL	Submit();
-		BOOL	Close(DWORD dwMS) OVERRIDE;
+		BOOL		Submit();
+		BOOL		Close(DWORD dwMS) OVERRIDE;
 	public:
 		MPreviewView&	GetView();
+		DX11RenderView*	GetRenderView();
 		DX11Graphics2D&	Graphics();
 	private:
 		void	OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

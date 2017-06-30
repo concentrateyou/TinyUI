@@ -3,6 +3,7 @@
 #include "MVideoView.h"
 #include "MFLVPlayer.h"
 using namespace DXFramework;
+using namespace TinyUI::IO;
 
 namespace MShow
 {
@@ -35,11 +36,12 @@ namespace MShow
 	public:
 		MVideoController(MVideoView& view);
 		virtual ~MVideoController();
-		BOOL		Initialize();
-		BOOL		Open(LPCSTR pzURL);
-		BOOL		Close();
-		HANDLE		GetHandle();//共享的纹理
-		TinyString	GetURL() const;
+		BOOL			Initialize();
+		BOOL			Open(LPCSTR pzURL);
+		BOOL			Close();
+		HANDLE			GetHandle();//共享的纹理
+		TinyString		GetURL() const;
+		WAVEFORMATEX*	GetFormat();
 	private:
 		void	OnAdd();
 		void	OnRemove();

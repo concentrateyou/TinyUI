@@ -106,21 +106,17 @@ namespace MShow
 				Sleep(delay < 0 ? 0 : delay);
 				if (tag.size != 4096)
 				{
-					if (!m_callback.IsNull())
-					{
-						m_callback(tag.bits, tag.size);
-					}
 					m_player.Fill(tag.bits, tag.size, dwOffset);
 				}
 				m_player.Play();
 			}
 			else
 			{
-				if (!m_callback.IsNull())
-				{
-					m_callback(tag.bits, tag.size);
-				}
 				m_player.Fill(tag.bits, tag.size, dwOffset);
+			}
+			if (!m_callback.IsNull())
+			{
+				m_callback(tag.bits, tag.size);
 			}
 			SAFE_DELETE_ARRAY(tag.bits);
 			HANDLE handles[3] = { m_events[0],m_events[1],m_events[2] };

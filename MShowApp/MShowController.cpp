@@ -18,18 +18,20 @@ namespace MShow
 
 	BOOL MShowController::Initialize()
 	{
+		m_onPusherClick.Reset(new Delegate<void(void*, INT)>(this, &MShowController::OnPusher));
+		m_window.m_pusher.EVENT_CLICK += m_onPusherClick;
+		m_onToggleClick.Reset(new Delegate<void(void*, INT)>(this, &MShowController::OnToggle));
+		m_window.m_toggle.EVENT_CLICK += m_onToggleClick;
 		m_preview = new MPreviewController(m_window.m_previewView);
 		if (!m_preview)
 			return FALSE;
 		if (!m_preview->Initialize())
 			return FALSE;
-
 		m_play = new MPlayController(m_window.m_playView);
 		if (!m_play)
 			return FALSE;
 		if (!m_play->Initialize())
 			return FALSE;
-
 		m_preview->SetPulgSize(TinySize(1280, 720));
 		for (UINT i = 0;i < 6;i++)
 		{
@@ -51,6 +53,8 @@ namespace MShow
 
 	void MShowController::Uninitialize()
 	{
+		m_window.m_pusher.EVENT_CLICK -= m_onPusherClick;
+		m_window.m_toggle.EVENT_CLICK -= m_onToggleClick;
 		if (m_preview != NULL)
 		{
 			if (m_preview->IsValid())
@@ -102,5 +106,38 @@ namespace MShow
 		if (i < 0 || i > 5)
 			return NULL;
 		return m_images[i];
+	}
+
+	MRTMPEncoder& MShowController::GetEncoder()
+	{
+		return m_encoder;
+	}
+
+	MRTMPPusher& MShowController::GetPusher()
+	{
+		return m_pusher;
+	}
+
+	void MShowController::OnPusher(void*, INT)
+	{
+		MVideoController* pCTRL = GetVideoController(0);
+		if (pCTRL != NULL && m_preview != NULL)
+		{
+			m_encoder.SetAudioConfig(*pCTRL->GetFormat(), 128);
+			m_encoder.SetVideoConfig(m_preview->GetPulgSize(), 25, 1000);
+			m_encoder.Close();
+			m_encoder.Open();
+			if (m_pusher.IsValid())
+			{
+				m_pusher.Close(INFINITE);
+			}
+			m_pusher.Connect();
+			m_pusher.Submit();
+		}
+	}
+
+	void MShowController::OnToggle(void*, INT)
+	{
+
 	}
 }

@@ -42,7 +42,7 @@ namespace Encode
 	{
 		DISALLOW_COPY_AND_ASSIGN(x264Encode)
 	public:
-		x264Encode();
+		x264Encode(Callback<void(BYTE*, LONG, const MediaTag&)>&& callback);
 		virtual ~x264Encode();
 	public:
 		BOOL	Open(INT cx, INT cy, INT videoFPS = 25, INT videoRate = 1000);//rateÆ½¾ùÂëÂÊ
@@ -56,5 +56,6 @@ namespace Encode
 		x264_picture_t*		m_x264Image;
 		LONGLONG			m_sINC;
 		LONGLONG			m_sPTS;
+		Callback<void(BYTE*, LONG, const MediaTag&)> m_callback;
 	};
 }

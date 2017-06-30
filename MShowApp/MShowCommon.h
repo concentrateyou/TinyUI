@@ -14,21 +14,15 @@
 #include "Media/TinySoundPlayer.h"
 #include "Common/TinyTime.h"
 #include "Common.h"
+#include "x264Encode.h"
+#include "AACEncode.h"
 using namespace TinyUI;
 using namespace TinyUI::IO;
 using namespace TinyUI::Media;
 using namespace DXFramework;
+using namespace Encode;
 using namespace Decode;
 
-typedef struct tagMediaTag
-{
-	DWORD	dwType;
-	DWORD	dwFlag;
-	DWORD	dwINC;
-	DWORD	dwTime;
-	DWORD	dwPTS;
-	DWORD	dwDTS;
-}MediaTag;
 
 typedef struct tagSample
 {

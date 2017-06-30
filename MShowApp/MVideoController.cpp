@@ -126,9 +126,14 @@ namespace MShow
 		return NULL;
 	}
 
+	WAVEFORMATEX* MVideoController::GetFormat()
+	{
+		return m_player.GetFormat();
+	}
+
 	void MVideoController::OnAudio(BYTE* bits, LONG size)
 	{
-
+		//重采样+编码
 	}
 
 	void MVideoController::OnVideo(BYTE* bits, LONG size)
@@ -239,7 +244,6 @@ namespace MShow
 			LONG volume = static_cast<LONG>(floorf(2000.0F * log10f((FLOAT)(pos) / (FLOAT)100) + 0.5F));
 			m_player.SetVolume(volume);
 		}
-
 	}
 }
 

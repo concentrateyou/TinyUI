@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "I420Converter.h"
 
-namespace DXApp
+namespace MShow
 {
 	I420Converter::I420Converter(const TinySize& srcSize, const TinySize& dstSize)
 		:m_sws(NULL),

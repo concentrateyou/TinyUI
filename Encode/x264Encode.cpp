@@ -3,11 +3,12 @@
 
 namespace Encode
 {
-	x264Encode::x264Encode()
+	x264Encode::x264Encode(Callback<void(BYTE*, LONG, const MediaTag&)>&& callback)
 		:m_x264Image(NULL),
 		m_x264(NULL),
 		m_x264Param(NULL),
-		m_sINC(0)
+		m_sINC(0),
+		m_callback(callback)
 	{
 	}
 
@@ -99,7 +100,10 @@ namespace Encode
 					tag.dwTime = timeGetTime();
 					tag.dwFlag = pNAL[i].i_type;
 					tag.INC = ++m_sINC;
-					//OnDone(sps, size, tag);
+					if (!m_callback.IsNull())
+					{
+						m_callback(sps, size, tag);
+					}
 				}
 				break;
 				case NAL_PPS:
@@ -113,7 +117,10 @@ namespace Encode
 					tag.dwTime = timeGetTime();
 					tag.dwFlag = pNAL[i].i_type;
 					tag.INC = ++m_sINC;
-					//OnDone(pps, size, tag);
+					if (!m_callback.IsNull())
+					{
+						m_callback(pps, size, tag);
+					}
 				}
 				break;
 				case NAL_SLICE:
@@ -131,7 +138,10 @@ namespace Encode
 					tag.dwTime = timeGetTime();
 					tag.dwFlag = pNAL[i].i_type;
 					tag.INC = ++m_sINC;
-					//OnDone(bits, size, tag);
+					if (!m_callback.IsNull())
+					{
+						m_callback(bits, size, tag);
+					}
 				}
 				break;
 				}
@@ -142,7 +152,7 @@ namespace Encode
 	}
 	void x264Encode::Close()
 	{
-		if (m_x264)
+		if (m_x264 != NULL)
 		{
 			x264_encoder_close(m_x264);
 			m_x264 = NULL;

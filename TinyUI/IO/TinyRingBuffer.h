@@ -21,6 +21,7 @@ namespace TinyUI
 		public:
 			TinyRingBuffer();
 			virtual ~TinyRingBuffer();
+			BOOL	IsEmpty();
 			BOOL	Initialize(DWORD count, DWORD esize);
 			DWORD	Read(void* data, DWORD count);
 			DWORD	Write(const void* data, DWORD count);
@@ -33,7 +34,7 @@ namespace TinyUI
 			/// </summary>
 			DWORD	GetAvailableIN();
 		private:
-			LONG MoveReadPtr(LONG count);
+			LONG	MoveReadPtr(LONG count);
 		public:
 			DWORD		m_readPos;
 			DWORD		m_writePos;
