@@ -168,12 +168,12 @@ namespace TinyUI
 	/// <summary>
 	/// Òì²½µÈ´ý
 	/// </summary>
-	class TinyWait
+	class TinyWaiter
 	{
-		DISALLOW_COPY_AND_ASSIGN(TinyWait)
+		DISALLOW_COPY_AND_ASSIGN(TinyWaiter)
 	public:
-		TinyWait();
-		~TinyWait();
+		TinyWaiter();
+		~TinyWaiter();
 	public:
 		BOOL IsValid() const;
 		BOOL RegisterOnce(HANDLE handle, DWORD dwMS, Callback<void(BOOLEAN)>&& callback);

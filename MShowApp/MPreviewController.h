@@ -15,6 +15,7 @@ namespace MShow
 		friend class MShowController;
 		friend class MVideoController;
 		friend class MImageController;
+		friend class MRTMPEncoder;
 		DISALLOW_COPY_AND_ASSIGN(MPreviewController)
 	public:
 		MPreviewController(MPreviewView& view);
@@ -32,7 +33,6 @@ namespace MShow
 		BOOL		Close(DWORD dwMS) OVERRIDE;
 	public:
 		MPreviewView&	GetView();
-		DX11RenderView*	GetRenderView();
 		DX11Graphics2D&	Graphics();
 	private:
 		void	OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -43,9 +43,12 @@ namespace MShow
 		void	OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnMenuClick(void*, INT wID);
 		void	OnMessagePump();
-		DWORD	Draw();
-		DX11Element2D* HitTest(const TinyPoint& pos);
 	private:
+
+		DWORD			Draw();
+		DX11Element2D*	HitTest(const TinyPoint& pos);
+	private:
+		LONG							m_iCopy;
 		BOOL							m_bMouseTracking;
 		BOOL							m_bBreak;
 		BOOL							m_bPopup;
@@ -56,8 +59,10 @@ namespace MShow
 		MPreviewView&					m_view;
 		DX11Graphics2D					m_graphics;
 		DX11Image2D						m_handles[8];
+		TinyEvent						m_copy;
+		TinyEvent						m_render;
 		TinyArray<DX11Element2D*>		m_array;
-		TinyScopedPtr<DX11RenderView>	m_renderView;
+		TinyScopedPtr<DX11RenderView>	m_views[2];
 		vector<HANDLE>					m_waits;
 		TinyPerformanceTimer			m_time;
 	private:

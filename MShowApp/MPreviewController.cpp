@@ -15,7 +15,8 @@ namespace MShow
 		m_current(NULL),
 		m_bBreak(FALSE),
 		m_bMouseTracking(FALSE),
-		m_bPopup(FALSE)
+		m_bPopup(FALSE),
+		m_iCopy(0)
 	{
 		m_onLButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonDown));
 		m_onLButtonUp.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonUp));
@@ -31,8 +32,9 @@ namespace MShow
 		m_view.EVENT_MOUSELEAVE += m_onMouseLeave;
 		m_view.EVENT_SETCURSOR += m_onSetCursor;
 		m_popup.EVENT_CLICK += m_onMenuClick;
+		m_render.CreateEvent();
+		m_copy.CreateEvent();
 	}
-
 
 	MPreviewController::~MPreviewController()
 	{
@@ -260,11 +262,6 @@ namespace MShow
 		return m_graphics;
 	}
 
-	DX11RenderView*	MPreviewController::GetRenderView()
-	{
-		return m_renderView;
-	}
-
 	BOOL MPreviewController::Submit()
 	{
 		m_bBreak = FALSE;
@@ -280,8 +277,10 @@ namespace MShow
 	void MPreviewController::SetPulgSize(const TinySize& size)
 	{
 		m_pulgSize = size;
-		m_renderView.Reset(new DX11RenderView(m_graphics.GetDX11()));
-		m_renderView->Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy));
+		m_views[0].Reset(new DX11RenderView(m_graphics.GetDX11()));
+		m_views[0]->Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy));
+		m_views[1].Reset(new DX11RenderView(m_graphics.GetDX11()));
+		m_views[1]->Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy));
 	}
 
 	TinySize MPreviewController::GetPulgSize() const
@@ -292,20 +291,25 @@ namespace MShow
 	DWORD MPreviewController::Draw()
 	{
 		m_time.BeginTime();
-		if (m_renderView != NULL)
+		if (m_views[0] != NULL && m_views[1] != NULL)
 		{
-			m_graphics.GetDX11().SetRenderTexture2D(m_renderView);
-			m_graphics.GetDX11().GetRender2D()->BeginDraw();
-			for (INT i = 0;i < m_array.GetSize();i++)
+			if (m_render.Lock(0))
 			{
-				DX11Element2D* ps = m_array[i];
-				if (ps->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
+				m_graphics.GetDX11().SetRenderTexture2D(m_views[m_iCopy]);
+				m_graphics.GetDX11().GetRender2D()->BeginDraw();
+				for (INT i = 0;i < m_array.GetSize();i++)
 				{
-					DX11Image2D* image = static_cast<DX11Image2D*>(ps);
-					m_graphics.DrawImage(image, (FLOAT)((FLOAT)m_pulgSize.cx / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cx)), (FLOAT)((FLOAT)m_pulgSize.cy / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cy)));
+					DX11Element2D* ps = m_array[i];
+					if (ps->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
+					{
+						DX11Image2D* image = static_cast<DX11Image2D*>(ps);
+						m_graphics.DrawImage(image, (FLOAT)((FLOAT)m_pulgSize.cx / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cx)), (FLOAT)((FLOAT)m_pulgSize.cy / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cy)));
+					}
 				}
+				m_graphics.GetDX11().GetRender2D()->EndDraw();
+				InterlockedExchange(&m_iCopy, !m_iCopy);
+				m_copy.SetEvent();
 			}
-			m_graphics.GetDX11().GetRender2D()->EndDraw();
 		}
 		m_graphics.GetDX11().SetRenderTexture2D(NULL);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();
@@ -368,6 +372,7 @@ namespace MShow
 			if (hRes != WAIT_TIMEOUT)
 			{
 				DWORD dwMS = this->Draw();
+				TRACE("Draw - MS:%d,Index:%d\n", dwMS, hRes - WAIT_OBJECT_0);
 			}
 		}
 	}

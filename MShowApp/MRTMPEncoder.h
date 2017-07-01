@@ -16,6 +16,8 @@ namespace MShow
 	/// </summary>
 	class MRTMPEncoder
 	{
+		friend class MPreviewController;
+		DISALLOW_COPY_AND_ASSIGN(MRTMPEncoder)
 	public:
 		MRTMPEncoder();
 		virtual ~MRTMPEncoder();

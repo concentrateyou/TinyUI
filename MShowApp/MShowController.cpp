@@ -123,16 +123,16 @@ namespace MShow
 		MVideoController* pCTRL = GetVideoController(0);
 		if (pCTRL != NULL && m_preview != NULL)
 		{
+			/*if (m_pusher.IsValid())
+				m_pusher.Close(INFINITE);
+			if (m_pusher.Connect())
+			{
+				m_pusher.Submit();
+			}*/
 			m_encoder.SetAudioConfig(*pCTRL->GetFormat(), 128);
 			m_encoder.SetVideoConfig(m_preview->GetPulgSize(), 25, 1000);
 			m_encoder.Close();
 			m_encoder.Open();
-			if (m_pusher.IsValid())
-			{
-				m_pusher.Close(INFINITE);
-			}
-			m_pusher.Connect();
-			m_pusher.Submit();
 		}
 	}
 

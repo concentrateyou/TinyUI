@@ -334,32 +334,32 @@ namespace TinyUI
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	TinyWait::TinyWait()
+	TinyWaiter::TinyWaiter()
 		:m_hWaitHandle(NULL)
 	{
 
 	}
-	TinyWait::~TinyWait()
+	TinyWaiter::~TinyWaiter()
 	{
 
 	}
-	BOOL TinyWait::IsValid() const
+	BOOL TinyWaiter::IsValid() const
 	{
 		return m_hWaitHandle != NULL;
 	}
-	BOOL TinyWait::RegisterOnce(HANDLE handle, DWORD dwMS, Callback<void(BOOLEAN)>&& callback)
+	BOOL TinyWaiter::RegisterOnce(HANDLE handle, DWORD dwMS, Callback<void(BOOLEAN)>&& callback)
 	{
 		return Register(handle, dwMS, WT_EXECUTEINWAITTHREAD | WT_EXECUTEONLYONCE, std::move(callback));
 	}
-	BOOL TinyWait::Register(HANDLE handle, DWORD dwMS, Callback<void(BOOLEAN)>&& callback)
+	BOOL TinyWaiter::Register(HANDLE handle, DWORD dwMS, Callback<void(BOOLEAN)>&& callback)
 	{
 		return Register(handle, dwMS, WT_EXECUTEINWAITTHREAD, std::move(callback));
 	}
-	BOOL TinyWait::Register(HANDLE handle, DWORD dwMS, DWORD dwFlag, Callback<void(BOOLEAN)>&& callback)
+	BOOL TinyWaiter::Register(HANDLE handle, DWORD dwMS, DWORD dwFlag, Callback<void(BOOLEAN)>&& callback)
 	{
 		if (IsValid())
 			return FALSE;
-		if (RegisterWaitForSingleObject(&m_hWaitHandle, handle, &TinyWait::WaitOrTimerCallback, this, dwMS, dwFlag))
+		if (RegisterWaitForSingleObject(&m_hWaitHandle, handle, &TinyWaiter::WaitOrTimerCallback, this, dwMS, dwFlag))
 		{
 			m_callback = std::move(callback);
 			m_handle = handle;
@@ -367,7 +367,7 @@ namespace TinyUI
 		}
 		return FALSE;
 	}
-	BOOL TinyWait::Unregister()
+	BOOL TinyWaiter::Unregister()
 	{
 		if (UnregisterWait(m_hWaitHandle))
 		{
@@ -376,9 +376,9 @@ namespace TinyUI
 		}
 		return FALSE;
 	}
-	void CALLBACK TinyWait::WaitOrTimerCallback(PVOID pThis, BOOLEAN b)
+	void CALLBACK TinyWaiter::WaitOrTimerCallback(PVOID pThis, BOOLEAN b)
 	{
-		TinyWait* ps = reinterpret_cast<TinyWait*>(pThis);
+		TinyWaiter* ps = reinterpret_cast<TinyWaiter*>(pThis);
 		if (ps)
 		{
 			ps->m_callback(b);
