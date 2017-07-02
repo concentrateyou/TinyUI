@@ -27,6 +27,8 @@ namespace MShow
 			return FALSE;
 		if (!m_preview->Initialize())
 			return FALSE;
+		if (!m_encoder.Initialize(m_window.m_shadowView))
+			return FALSE;
 		m_play = new MPlayController(m_window.m_playView);
 		if (!m_play)
 			return FALSE;

@@ -26,15 +26,24 @@ namespace MShow
 
 	}
 
+	BOOL MRTMPEncoder::Initialize(MPreviewView& view)
+	{
+		TinyRectangle s;
+		view.GetClientRect(&s);
+		if (!m_dx11.Initialize(view.Handle(), s.Size().cx, s.Size().cy))
+			return FALSE;
+		return TRUE;
+	}
+
 	void MRTMPEncoder::SetAudioConfig(const WAVEFORMATEX& waveFMT, INT audioRate)
 	{
 		m_waveFMT = waveFMT;
 		m_audioRate = audioRate;
 	}
 
-	void MRTMPEncoder::SetVideoConfig(const TinySize& size, INT videoFPS, INT videoRate)
+	void MRTMPEncoder::SetVideoConfig(const TinySize& pulgSize, INT videoFPS, INT videoRate)
 	{
-		m_size = size;
+		m_pulgSize = pulgSize;
 		m_videoFPS = videoFPS;
 		m_videoRate = videoRate;
 	}
@@ -59,7 +68,7 @@ namespace MShow
 
 	TinySize MRTMPEncoder::GetSize() const
 	{
-		return m_size;
+		return m_pulgSize;
 	}
 
 	AACEncode&	MRTMPEncoder::GetAAC()
@@ -74,28 +83,35 @@ namespace MShow
 
 	BOOL MRTMPEncoder::Open()
 	{
-		MVideoController* pCTRL = MShowApp::Instance().GetController().GetVideoController(0);
+		this->Close();
+		MPreviewController* pCTRL = MShowApp::Instance().GetController().GetPreviewController();
 		if (!pCTRL)
 			return FALSE;
-		MPreviewController* pCTRL1 = MShowApp::Instance().GetController().GetPreviewController();
-		if (!pCTRL1)
+		m_converter.Reset(new I420Converter(m_pulgSize, m_pulgSize));
+		if (!m_converter)
 			return FALSE;
-		this->Close();
-		if (!m_aac.Open(*pCTRL->m_player.GetFormat()))
+		if (!m_aac.Open(m_waveFMT))
 			return FALSE;
-		TinySize pulgSize = pCTRL1->GetPulgSize();
-		if (!m_x264.Open(pulgSize.cx, pulgSize.cy, 25, 1000))
+		if (!m_x264.Open(m_pulgSize.cx, m_pulgSize.cy, 25, 1000))
 			return FALSE;
-		m_converter.Reset(new I420Converter(pulgSize, pulgSize));
+		DX11RenderView* renderView = pCTRL->GetRenderView();
+		if (!renderView)
+			return FALSE;
+		if (!m_image2D.Load(m_dx11, renderView->GetHandle()))
+			return FALSE;
+		if (!m_copy2D.Create(m_dx11, m_pulgSize.cx, m_pulgSize.cy, NULL, FALSE))
+			return FALSE;
 		m_bBreaks = FALSE;
-		m_videoTask.Submit(BindCallback(&MRTMPEncoder::OnMessagePump, this));
-		return TRUE;
+		return m_videoTask.Submit(BindCallback(&MRTMPEncoder::OnMessagePump, this));
 	}
 
 	BOOL MRTMPEncoder::Close()
 	{
 		m_bBreaks = TRUE;
-		m_videoTask.Close(INFINITE);
+		if (m_videoTask.IsValid())
+			m_videoTask.Close(INFINITE);
+		m_image2D.Destory();
+		m_copy2D.Destory();
 		m_aac.Close();
 		m_x264.Close();
 		return TRUE;
@@ -117,39 +133,16 @@ namespace MShow
 		m_baseTime = timeGetTime();
 		LONGLONG time = 0;
 		DWORD dwMS = static_cast<DWORD>(1000 / m_videoFPS);
-		//MPreviewController* pCTRL = MShowApp::Instance().GetController().GetPreviewController();
-		//pCTRL->m_iCopy = 0;
-		//pCTRL->m_render.SetEvent();
-		//for (;;)
-		//{
-		//	if (m_bBreaks)
-		//		break;
-		//	INT delay = dwMS - time;
-		//	Sleep(delay < 0 ? 0 : delay);
-		//	m_time.BeginTime();
-		//	if (pCTRL->m_copy.Lock(0))//Copy
-		//	{
-		//		DX11RenderView* pView = pCTRL->m_views[pCTRL->m_iCopy];
-		//		if (pView != NULL)
-		//		{
-		//			DWORD dwSize = 0;
-		//			BYTE* bits = pView->Map(dwSize);
-		//			if (m_dwSize != dwSize && bits != NULL)
-		//			{
-		//				m_dwSize = dwSize;
-		//				m_bits.Reset(new BYTE[m_dwSize]);
-		//			}
-		//			memcpy_s(m_bits, m_dwSize, bits, dwSize);
-		//			pView->Unmap();
-		//			/*if (m_bits != NULL && m_converter->BRGAToI420(m_bits))
-		//			{
-		//				m_x264.Encode(m_converter->GetI420());
-		//			}*/
-		//		}
-		//		pCTRL->m_render.SetEvent();
-		//	}
-		//	m_time.EndTime();
-		//	time = m_time.GetMillisconds();
-		//}
+		for (;;)
+		{
+			if (m_bBreaks)
+				break;
+			INT delay = dwMS - time;
+			Sleep(delay < 0 ? 0 : delay);
+			m_time.BeginTime();
+			m_copy2D.Copy(m_dx11, m_image2D);
+			m_time.EndTime();
+			time = m_time.GetMillisconds();
+		}
 	}
 }

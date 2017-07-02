@@ -176,6 +176,15 @@ namespace DXFramework
 		dx11.GetImmediateContext()->CopyResource(m_texture2D, texture2D);
 		return TRUE;
 	}
+
+	BOOL DX11Texture2D::Copy(DX11& dx11, DX11Texture2D& texture2D)
+	{
+		if (!m_texture2D || texture2D.IsEmpty())
+			return FALSE;
+		dx11.GetImmediateContext()->CopyResource(m_texture2D, texture2D.GetTexture2D());
+		return TRUE;
+	}
+
 	BOOL DX11Texture2D::Load(DX11& dx11, const CHAR* pzFile)
 	{
 		ASSERT(pzFile);

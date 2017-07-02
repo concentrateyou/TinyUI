@@ -86,7 +86,7 @@ namespace DXFramework
 		if (hRes != S_OK)
 			return FALSE;
 		TinyComPtr<IDXGIResource> resource;
-		hRes = m_renderView->QueryInterface(__uuidof(IDXGIResource), (void**)&resource);
+		hRes = m_render2D->QueryInterface(__uuidof(IDXGIResource), (void**)&resource);
 		if (hRes != S_OK)
 			return FALSE;
 		hRes = resource->GetSharedHandle(&m_handle);
@@ -214,7 +214,7 @@ namespace DXFramework
 	}
 	void DX11RenderView::EndDraw()
 	{
-		if (m_render2D != NULL)
+		if (m_render2D != NULL && m_copy2D != NULL)
 		{
 			m_dx11.GetImmediateContext()->CopyResource(m_copy2D, m_render2D);
 		}

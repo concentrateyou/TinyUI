@@ -33,6 +33,7 @@ namespace MShow
 		BOOL		Close(DWORD dwMS) OVERRIDE;
 	public:
 		MPreviewView&	GetView();
+		DX11RenderView*	GetRenderView();
 		DX11Graphics2D&	Graphics();
 	private:
 		void	OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

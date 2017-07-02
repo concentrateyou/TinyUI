@@ -216,6 +216,7 @@ namespace MShow
 			else
 			{
 				preview->Add(m_pVideo);
+				preview->Bring(m_pVideo, TRUE);
 			}
 		}
 	}

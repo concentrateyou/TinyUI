@@ -21,6 +21,7 @@ namespace MShow
 	public:
 		MRTMPEncoder();
 		virtual ~MRTMPEncoder();
+		BOOL	Initialize(MPreviewView& view);
 		BOOL	Open();
 		BOOL	Close();
 	public:
@@ -44,12 +45,15 @@ namespace MShow
 		LONG					m_baseTime;
 		DWORD					m_dwSize;
 		WAVEFORMATEX			m_waveFMT;
-		TinySize				m_size;
+		TinySize				m_pulgSize;
 		x264Encode				m_x264;
 		AACEncode				m_aac;
 		TinyPerformanceTimer	m_time;
 		TinyTaskBase			m_videoTask;
 		TinyScopedPtr<BYTE>		m_bits;
+		DX11					m_dx11;
+		DX11Texture2D			m_image2D;
+		DX11Texture2D			m_copy2D;
 		TinyScopedPtr<I420Converter>	m_converter;
 	};
 }

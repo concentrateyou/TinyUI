@@ -61,7 +61,6 @@ namespace MShow
 		{
 			m_handles[i].Load(m_graphics.GetDX11(), vs.c_str());
 		}
-		m_view.ShowWindow(SW_HIDE);
 		m_popup.CreatePopupMenu();
 		m_popup.AppendMenu(MF_STRING, IDM_MOVEUP, TEXT("иорф"));
 		m_popup.AppendMenu(MF_STRING, IDM_MOVEDOWN, TEXT("обрф"));
@@ -256,6 +255,11 @@ namespace MShow
 		return m_view;
 	}
 
+	DX11RenderView*	MPreviewController::GetRenderView()
+	{
+		return m_renderView;
+	}
+
 	DX11Graphics2D&	MPreviewController::Graphics()
 	{
 		return m_graphics;
@@ -277,7 +281,10 @@ namespace MShow
 	{
 		m_pulgSize = size;
 		m_renderView.Reset(new DX11RenderView(m_graphics.GetDX11()));
-		m_renderView->Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), FALSE);
+		if (m_renderView != NULL)
+		{
+			m_renderView->Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), FALSE);
+		}	
 	}
 
 	TinySize MPreviewController::GetPulgSize() const
