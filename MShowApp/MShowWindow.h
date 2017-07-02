@@ -44,6 +44,7 @@ namespace MShow
 		MVideoView				m_videoViews[6];
 		MImageView				m_imageViews[6];
 		MPreviewView			m_previewView;
+		MPreviewView			m_shadowView;//Ó°×Ó´°¿Ú
 		MPlayView				m_playView;
 		TinyButton				m_layout[3];
 		TinyButton				m_toggle;

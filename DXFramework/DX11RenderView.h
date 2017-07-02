@@ -11,7 +11,7 @@ namespace DXFramework
 		DX11&		GetDX11();
 		TinySize	GetSize() const;
 		BOOL		Create();
-		BOOL		Create(INT cx, INT cy);
+		BOOL		Create(INT cx, INT cy, BOOL bMap = TRUE);
 		BOOL		Resize();
 		BOOL		Resize(INT cx, INT cy);
 		void		BeginDraw();
@@ -19,9 +19,11 @@ namespace DXFramework
 		BOOL		SaveAs(const CHAR* pzName, D3DX11_IMAGE_FILE_FORMAT format);
 		BYTE*		Map(DWORD& dwSize);
 		void		Unmap();
+		HANDLE		GetHandle() const;
 		ID3D11RenderTargetView* GetRTView() const;
 		ID3D11DepthStencilView* GetDSView() const;
- 	protected:
+	protected:
+		HANDLE								m_handle;
 		FLOAT								m_aspect;//±ÈÀý
 		DX11&								m_dx11;
 		TinySize							m_size;

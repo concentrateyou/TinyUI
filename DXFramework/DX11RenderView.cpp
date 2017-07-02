@@ -4,7 +4,8 @@
 namespace DXFramework
 {
 	DX11RenderView::DX11RenderView(DX11& dx11)
-		:m_dx11(dx11)
+		:m_dx11(dx11),
+		m_handle(NULL)
 	{
 	}
 
@@ -60,7 +61,7 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11RenderView::Create(INT cx, INT cy)
+	BOOL DX11RenderView::Create(INT cx, INT cy, BOOL bMap)
 	{
 		if (!m_dx11.IsValid())
 			return FALSE;
@@ -75,8 +76,8 @@ namespace DXFramework
 		desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 		desc.SampleDesc.Count = 1;
 		desc.SampleDesc.Quality = 0;
-		desc.BindFlags = D3D11_BIND_RENDER_TARGET;
-		desc.MiscFlags = D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
+		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+		desc.MiscFlags = D3D11_RESOURCE_MISC_SHARED | D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
 		desc.Usage = D3D11_USAGE_DEFAULT;
 		HRESULT hRes = m_dx11.GetD3D()->CreateTexture2D(&desc, NULL, &m_render2D);
 		if (hRes != S_OK)
@@ -84,22 +85,30 @@ namespace DXFramework
 		hRes = m_dx11.GetD3D()->CreateRenderTargetView(m_render2D, NULL, &m_renderView);
 		if (hRes != S_OK)
 			return FALSE;
-
-		ZeroMemory(&desc, sizeof(desc));
-		desc.Width = m_size.cx;
-		desc.Height = m_size.cy;
-		desc.MipLevels = 1;
-		desc.ArraySize = 1;
-		desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-		desc.SampleDesc.Count = 1;
-		desc.SampleDesc.Quality = 0;
-		desc.Usage = D3D11_USAGE_STAGING;
-		desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-		desc.MiscFlags = 0;
-		desc.BindFlags = 0;
-		hRes = m_dx11.GetD3D()->CreateTexture2D(&desc, NULL, &m_copy2D);
+		TinyComPtr<IDXGIResource> resource;
+		hRes = m_renderView->QueryInterface(__uuidof(IDXGIResource), (void**)&resource);
 		if (hRes != S_OK)
 			return FALSE;
+		hRes = resource->GetSharedHandle(&m_handle);
+		if (hRes != S_OK)
+			return FALSE;
+
+		if (bMap)
+		{
+			ZeroMemory(&desc, sizeof(desc));
+			desc.Width = m_size.cx;
+			desc.Height = m_size.cy;
+			desc.MipLevels = 1;
+			desc.ArraySize = 1;
+			desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+			desc.SampleDesc.Count = 1;
+			desc.SampleDesc.Quality = 0;
+			desc.Usage = D3D11_USAGE_STAGING;
+			desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+			hRes = m_dx11.GetD3D()->CreateTexture2D(&desc, NULL, &m_copy2D);
+			if (hRes != S_OK)
+				return FALSE;
+		}
 
 		D3D11_TEXTURE2D_DESC depthDesc;
 		ZeroMemory(&depthDesc, sizeof(depthDesc));
@@ -164,14 +173,17 @@ namespace DXFramework
 	}
 	BYTE* DX11RenderView::Map(DWORD& dwSize)
 	{
+		if (!m_dx11.IsValid())
+			return NULL;
 		dwSize = 0;
-		if (!m_dx11.IsValid() || !m_copy2D)
-			return FALSE;
-		D3D11_MAPPED_SUBRESOURCE ms = { 0 };
-		if (SUCCEEDED(m_dx11.GetImmediateContext()->Map(m_copy2D, 0, D3D11_MAP_READ, 0, &ms)))
+		if (m_copy2D != NULL)
 		{
-			dwSize = ms.RowPitch * m_size.cy;
-			return static_cast<BYTE*>(ms.pData);
+			D3D11_MAPPED_SUBRESOURCE ms = { 0 };
+			if (SUCCEEDED(m_dx11.GetImmediateContext()->Map(m_copy2D, 0, D3D11_MAP_READ, 0, &ms)))
+			{
+				dwSize = ms.RowPitch * m_size.cy;
+				return static_cast<BYTE*>(ms.pData);
+			}
 		}
 		return NULL;
 	}
@@ -182,6 +194,12 @@ namespace DXFramework
 			m_dx11.GetImmediateContext()->Unmap(m_copy2D, 0);
 		}
 	}
+
+	HANDLE	DX11RenderView::GetHandle() const
+	{
+		return m_handle;
+	}
+
 	void DX11RenderView::BeginDraw()
 	{
 		if (m_dx11.IsValid())

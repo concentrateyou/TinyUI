@@ -59,10 +59,8 @@ namespace MShow
 		MPreviewView&					m_view;
 		DX11Graphics2D					m_graphics;
 		DX11Image2D						m_handles[8];
-		TinyEvent						m_copy;
-		TinyEvent						m_render;
 		TinyArray<DX11Element2D*>		m_array;
-		TinyScopedPtr<DX11RenderView>	m_views[2];
+		TinyScopedPtr<DX11RenderView>	m_renderView;
 		vector<HANDLE>					m_waits;
 		TinyPerformanceTimer			m_time;
 	private:

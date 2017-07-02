@@ -117,39 +117,39 @@ namespace MShow
 		m_baseTime = timeGetTime();
 		LONGLONG time = 0;
 		DWORD dwMS = static_cast<DWORD>(1000 / m_videoFPS);
-		MPreviewController* pCTRL = MShowApp::Instance().GetController().GetPreviewController();
-		pCTRL->m_iCopy = 0;
-		pCTRL->m_render.SetEvent();
-		for (;;)
-		{
-			if (m_bBreaks)
-				break;
-			INT delay = dwMS - time;
-			Sleep(delay < 0 ? 0 : delay);
-			m_time.BeginTime();
-			if (pCTRL->m_copy.Lock(0))//Copy
-			{
-				DX11RenderView* pView = pCTRL->m_views[pCTRL->m_iCopy];
-				if (pView != NULL)
-				{
-					DWORD dwSize = 0;
-					BYTE* bits = pView->Map(dwSize);
-					if (m_dwSize != dwSize && bits != NULL)
-					{
-						m_dwSize = dwSize;
-						m_bits.Reset(new BYTE[m_dwSize]);
-					}
-					memcpy_s(m_bits, m_dwSize, bits, dwSize);
-					pView->Unmap();
-					/*if (m_bits != NULL && m_converter->BRGAToI420(m_bits))
-					{
-						m_x264.Encode(m_converter->GetI420());
-					}*/
-				}
-				pCTRL->m_render.SetEvent();
-			}
-			m_time.EndTime();
-			time = m_time.GetMillisconds();
-		}
+		//MPreviewController* pCTRL = MShowApp::Instance().GetController().GetPreviewController();
+		//pCTRL->m_iCopy = 0;
+		//pCTRL->m_render.SetEvent();
+		//for (;;)
+		//{
+		//	if (m_bBreaks)
+		//		break;
+		//	INT delay = dwMS - time;
+		//	Sleep(delay < 0 ? 0 : delay);
+		//	m_time.BeginTime();
+		//	if (pCTRL->m_copy.Lock(0))//Copy
+		//	{
+		//		DX11RenderView* pView = pCTRL->m_views[pCTRL->m_iCopy];
+		//		if (pView != NULL)
+		//		{
+		//			DWORD dwSize = 0;
+		//			BYTE* bits = pView->Map(dwSize);
+		//			if (m_dwSize != dwSize && bits != NULL)
+		//			{
+		//				m_dwSize = dwSize;
+		//				m_bits.Reset(new BYTE[m_dwSize]);
+		//			}
+		//			memcpy_s(m_bits, m_dwSize, bits, dwSize);
+		//			pView->Unmap();
+		//			/*if (m_bits != NULL && m_converter->BRGAToI420(m_bits))
+		//			{
+		//				m_x264.Encode(m_converter->GetI420());
+		//			}*/
+		//		}
+		//		pCTRL->m_render.SetEvent();
+		//	}
+		//	m_time.EndTime();
+		//	time = m_time.GetMillisconds();
+		//}
 	}
 }

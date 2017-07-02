@@ -93,7 +93,7 @@ namespace DXFramework
 		if (!IsValid())
 			return FALSE;
 		if (!m_background2D->Resize())
-			return FALSE;	
+			return FALSE;
 		this->SetViewport(TinyPoint(0, 0), m_background2D->GetSize());
 		this->SetMatrixs(m_background2D->GetSize());
 		return TRUE;
@@ -121,7 +121,9 @@ namespace DXFramework
 	}
 	BOOL DX11::IsValid() const
 	{
-		if (m_immediateContext && m_swap && m_d3d)
+		if (m_immediateContext != NULL &&
+			m_swap != NULL &&
+			m_d3d != NULL)
 			return TRUE;
 		return FALSE;
 	}
