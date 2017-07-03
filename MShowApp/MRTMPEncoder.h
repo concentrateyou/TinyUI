@@ -1,7 +1,7 @@
 #pragma once
 #include "Common/TinyTime.h"
 #include "MShowCommon.h"
-#include "MPreviewController.h"
+#include "MPreviewView.h"
 #include "MRTMPClient.h"
 #include "x264Encode.h"
 #include "AACEncode.h"
@@ -38,11 +38,13 @@ namespace MShow
 		void OnAudioPump();
 		void OnVideoPump();
 		void OnX264(BYTE* bits, LONG size, const MediaTag& tag);
+		void OnAAC(BYTE* bits, LONG size, const MediaTag& tag);
 	private:
 		INT						m_audioRate;
 		INT						m_videoFPS;
 		INT						m_videoRate;
-		DWORD					m_dwSize;
+		DWORD					m_videoSize;
+		DWORD					m_audioSize;
 		BOOL					m_bBreaks;
 		LONG					m_baseTime;
 		WAVEFORMATEX			m_waveFMT;
@@ -55,7 +57,8 @@ namespace MShow
 		DX11					m_dx11;
 		DX11Texture2D			m_image2D;
 		DX11Texture2D			m_copy2D;
-		TinyScopedArray<BYTE>	m_bits;
+		TinyScopedArray<BYTE>	m_videoBits;
+		TinyScopedArray<BYTE>	m_audioBits;
 		TinyScopedPtr<I420Converter>	m_converter;
 	};
 }

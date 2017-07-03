@@ -147,6 +147,16 @@ namespace TinyUI
 		};
 		BOOL WINAPI GetAudioOutputType(REFCLSID clsid, IMFMediaType* inputType, const WAVEFORMATEX* pMFT, IMFMediaType** mediaType);
 
+		typedef struct tagMediaTag
+		{
+			DWORD		dwType;
+			DWORD		dwFlag;
+			DWORD		dwTime;
+			LONGLONG	INC;
+			LONGLONG	PTS;
+			LONGLONG	DTS;
+		}MediaTag;
+
 		typedef struct tagSampleTag
 		{
 			LONGLONG	sample;

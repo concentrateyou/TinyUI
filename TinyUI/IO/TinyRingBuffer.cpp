@@ -21,20 +21,25 @@ namespace TinyUI
 
 		}
 
+		DWORD TinyRingBuffer::GetElementSize() const
+		{
+			return m_size;
+		}
+
 		BOOL TinyRingBuffer::IsEmpty()
 		{
 			return m_bits != NULL;
 		}
 
-		BOOL TinyRingBuffer::Initialize(DWORD count, DWORD size)
+		BOOL TinyRingBuffer::Initialize(DWORD count, DWORD esize)
 		{
-			if (count == 0 || size == 0)
+			if (count == 0 || esize == 0)
 				return FALSE;
-			this->m_bits.Reset(new CHAR[count * size]);
+			this->m_bits.Reset(new CHAR[count * esize]);
 			if (!this->m_bits)
 				return FALSE;
 			this->m_count = count;
-			this->m_size = size;
+			this->m_size = esize;
 			this->m_readPos = 0;
 			this->m_writePos = 0;
 			this->m_wrap = SAME_WRAP;

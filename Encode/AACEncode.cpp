@@ -3,10 +3,11 @@
 
 namespace Encode
 {
-	AACEncode::AACEncode()
+	AACEncode::AACEncode(Callback<void(BYTE*, LONG, const MediaTag&)>&& callback)
 		:m_inputSamples(0),
 		m_maxOutputBytes(0),
-		m_dwPTS(0)
+		m_dwPTS(0),
+		m_callback(std::move(callback))
 	{
 	}
 
@@ -29,10 +30,17 @@ namespace Encode
 		SAFE_FREE(buffer);
 		return TRUE;
 	}
+
 	DWORD AACEncode::GetOutputBytes() const
 	{
 		return m_maxOutputBytes;
 	}
+
+	DWORD AACEncode::GetFPS() const
+	{
+		return m_dwPTS;
+	}
+
 	BOOL AACEncode::Open(const WAVEFORMATEX& waveFMT, INT audioRate)
 	{
 		Close();
@@ -71,15 +79,24 @@ namespace Encode
 		m_bits.Reset(new BYTE[m_maxOutputBytes]);
 		return TRUE;
 	}
-	BOOL AACEncode::Encode(BYTE* bits, LONG size, BYTE*& bo, LONG& so)
+	BOOL AACEncode::Encode(BYTE* bits, LONG size)
 	{
 		if (!m_aac || !bits || size == 0)
 			return FALSE;
 		INT s = faacEncEncode(m_aac, (int32_t*)bits, m_inputSamples, m_bits, m_maxOutputBytes);
 		if (s > 0)
 		{
-			bo = m_bits;
-			so = s;
+			Media::MediaTag tag;
+			tag.PTS = m_dwPTS;
+			tag.DTS = 0;
+			tag.INC = ++m_dwINC;
+			tag.dwType = 1;
+			tag.dwTime = timeGetTime();
+			tag.dwFlag = 0;
+			if (!m_callback.IsNull())
+			{
+				m_callback(m_bits, s, tag);
+			}
 			return TRUE;
 		}
 		return FALSE;

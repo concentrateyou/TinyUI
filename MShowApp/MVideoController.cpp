@@ -133,7 +133,12 @@ namespace MShow
 
 	void MVideoController::OnAudio(BYTE* bits, LONG size)
 	{
-		//重采样+编码
+		if (m_buffer.IsEmpty())
+		{
+			m_buffer.Initialize(1024, size);
+		}
+		TinyAutoLock lock(m_lock);
+		m_buffer.Write(bits, 1);
 	}
 
 	void MVideoController::OnVideo(BYTE* bits, LONG size)

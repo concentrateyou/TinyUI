@@ -21,6 +21,7 @@ namespace TinyUI
 		public:
 			TinyRingBuffer();
 			virtual ~TinyRingBuffer();
+			DWORD	GetElementSize() const;
 			BOOL	IsEmpty();
 			BOOL	Initialize(DWORD count, DWORD esize);
 			DWORD	Read(void* data, DWORD count);

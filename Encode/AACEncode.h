@@ -3,6 +3,7 @@
 #include "Common/TinyCallback.h"
 #include "Common/TinyEvent.h"
 #include "Render/TinyGDI.h"
+#include "Media/TinyMedia.h"
 extern "C"
 {
 #include "faac.h"
@@ -10,6 +11,7 @@ extern "C"
 }
 #pragma comment(lib,"libfaac.lib")
 using namespace TinyUI;
+using namespace TinyUI::Media;
 
 namespace Encode
 {
@@ -19,14 +21,15 @@ namespace Encode
 	{
 		DISALLOW_COPY_AND_ASSIGN(AACEncode)
 	public:
-		AACEncode();
+		AACEncode(Callback<void(BYTE*, LONG, const MediaTag&)>&& callback);
 		virtual ~AACEncode();
 	public:
 		BOOL	Open(const WAVEFORMATEX& waveFMT, INT audioRate = 128);
-		BOOL	Encode(BYTE* bits, LONG size, BYTE*& bo, LONG& so);
+		BOOL	Encode(BYTE* bits, LONG size);
 		void	Close();
 		BOOL	GetSpecificInfo(vector<BYTE>& info);
 		DWORD	GetOutputBytes() const;
+		DWORD	GetFPS() const;
 	private:
 		faacEncHandle			m_aac;
 		faacEncConfigurationPtr	m_config;
@@ -34,7 +37,8 @@ namespace Encode
 		DWORD					m_maxOutputBytes;
 		DWORD					m_dwINC;
 		DWORD					m_dwPTS;
-		TinyScopedArray<BYTE>	m_bits;
 		WAVEFORMATEX			m_waveFMT;
+		TinyScopedArray<BYTE>	m_bits;
+		Callback<void(BYTE*, LONG, const MediaTag&)> m_callback;
 	};
 }

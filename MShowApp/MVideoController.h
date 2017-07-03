@@ -52,6 +52,7 @@ namespace MShow
 		void	OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnVolume(DWORD volume);
 	private:
+		TinyLock		m_lock;
 		TinyMenu		m_popup;
 		MVideoView&		m_view;
 		DX11Graphics2D	m_graphics;
@@ -60,6 +61,7 @@ namespace MShow
 		MFLVPlayer		m_player;
 		TinyEvent		m_signal;
 		MVideoElement*	m_pVideo;
+		TinyRingBuffer	m_buffer;
 	private:
 		TinyScopedPtr<Delegate<void(DWORD)>>						m_onVolume;
 		TinyScopedPtr<Delegate<void(void*, INT)>>					m_onMenuClick;

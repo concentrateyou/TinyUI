@@ -3,6 +3,7 @@
 #include "Common/TinyCallback.h"
 #include "Common/TinyEvent.h"
 #include "Render/TinyGDI.h"
+#include "Media/TinyMedia.h"
 extern "C"
 {
 #include "x264_config.h"
@@ -25,19 +26,10 @@ extern "C"
 #define SPS_SEP 4
 #define PPS_SEP 4
 using namespace TinyUI;
+using namespace TinyUI::Media;
 
 namespace Encode
 {
-	typedef struct tagMediaTag
-	{
-		DWORD		dwType;
-		DWORD		dwFlag;
-		DWORD		dwTime;
-		LONGLONG	INC;
-		LONGLONG	PTS;
-		LONGLONG	DTS;
-	}MediaTag;
-
 	class x264Encode
 	{
 		DISALLOW_COPY_AND_ASSIGN(x264Encode)
