@@ -33,7 +33,7 @@ namespace MShow
 		BOOL		Close(DWORD dwMS) OVERRIDE;
 	public:
 		MPreviewView&	GetView();
-		DX11RenderView*	GetRenderView();
+		DX11RenderView&	GetRenderView();
 		DX11Graphics2D&	Graphics();
 	private:
 		void	OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -45,12 +45,10 @@ namespace MShow
 		void	OnMenuClick(void*, INT wID);
 		void	OnMessagePump();
 	private:
-
 		DWORD			Draw();
 		DX11Element2D*	HitTest(const TinyPoint& pos);
 	private:
-		LONG							m_iCopy;
-		BOOL							m_bMouseTracking;
+		BOOL							m_bTracking;
 		BOOL							m_bBreak;
 		BOOL							m_bPopup;
 		TinySize						m_pulgSize;
@@ -61,7 +59,7 @@ namespace MShow
 		DX11Graphics2D					m_graphics;
 		DX11Image2D						m_handles[8];
 		TinyArray<DX11Element2D*>		m_array;
-		TinyScopedPtr<DX11RenderView>	m_renderView;
+		DX11RenderView					m_renderView;
 		vector<HANDLE>					m_waits;
 		TinyPerformanceTimer			m_time;
 	private:

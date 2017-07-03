@@ -70,6 +70,7 @@ namespace MShow
 			m_play->Close();
 			SAFE_DELETE(m_play);
 		}
+		m_encoder.Close();
 		for (UINT i = 0;i < 6;i++)
 		{
 			m_window.m_volumeViews[i].EVENT_VOLUME -= m_videos[i]->m_onVolume;
@@ -126,13 +127,9 @@ namespace MShow
 		if (pCTRL != NULL && m_preview != NULL)
 		{
 			if (m_pusher.IsValid())
-			{
 				m_pusher.Close(INFINITE);
-			}
 			if (m_pusher.Connect())
-			{
 				m_pusher.Submit();
-			}
 			m_encoder.SetAudioConfig(*pCTRL->GetFormat(), 128);
 			m_encoder.SetVideoConfig(m_preview->GetPulgSize(), 25, 1000);
 			m_encoder.Close();

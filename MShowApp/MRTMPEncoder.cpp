@@ -83,7 +83,6 @@ namespace MShow
 
 	BOOL MRTMPEncoder::Open()
 	{
-		this->Close();
 		MPreviewController* pCTRL = MShowApp::Instance().GetController().GetPreviewController();
 		if (!pCTRL)
 			return FALSE;
@@ -94,24 +93,24 @@ namespace MShow
 			return FALSE;
 		if (!m_x264.Open(m_pulgSize.cx, m_pulgSize.cy, 25, 1000))
 			return FALSE;
-		DX11RenderView* renderView = pCTRL->GetRenderView();
-		if (!renderView)
-			return FALSE;
-		if (!m_image2D.Load(m_dx11, renderView->GetHandle()))
+		if (!m_image2D.Load(m_dx11, pCTRL->GetRenderView().GetHandle()))
 			return FALSE;
 		if (!m_copy2D.Create(m_dx11, m_pulgSize.cx, m_pulgSize.cy, NULL, TRUE))
 			return FALSE;
 		m_bBreaks = FALSE;
-		return m_encodeTask.Submit(BindCallback(&MRTMPEncoder::OnMessagePump, this));
+		m_baseTime = timeGetTime();
+		m_videoTask.Submit(BindCallback(&MRTMPEncoder::OnVideoPump, this));
+		m_audioTask.Submit(BindCallback(&MRTMPEncoder::OnAudioPump, this));
+		return TRUE;
 	}
 
 	BOOL MRTMPEncoder::Close()
 	{
 		BOOL bRes = TRUE;
-		if (m_encodeTask.IsValid())
+		if (m_videoTask.IsValid())
 		{
 			m_bBreaks = TRUE;
-			bRes &= m_encodeTask.Close(INFINITE);
+			bRes &= m_videoTask.Close(INFINITE);
 		}
 		m_image2D.Destory();
 		m_copy2D.Destory();
@@ -128,13 +127,21 @@ namespace MShow
 		sample.bits = new BYTE[size];
 		memcpy(sample.bits, bits, size);
 		sample.mediaTag.dwTime = timeGetTime() - m_baseTime + sample.mediaTag.PTS;
-		TRACE("OnX264 : %d\n", sample.mediaTag.dwTime);
 		MShowApp::Instance().GetController().GetPusher().m_samples.push(sample);
 	}
 
-	void MRTMPEncoder::OnMessagePump()
+	void MRTMPEncoder::OnAudioPump()
 	{
-		m_baseTime = timeGetTime();
+		for (;;)
+		{
+			if (m_bBreaks)
+				break;
+
+		}
+	}
+
+	void MRTMPEncoder::OnVideoPump()
+	{
 		LONGLONG time = 0;
 		DWORD dwMS = static_cast<DWORD>(1000 / m_videoFPS);
 		for (;;)
@@ -145,8 +152,8 @@ namespace MShow
 			Sleep(delay < 0 ? 0 : delay);
 			m_time.BeginTime();
 			m_copy2D.Copy(m_dx11, m_image2D);
-			BYTE*	bits = NULL;
-			UINT	pitch = 0;
+			BYTE* bits = NULL;
+			UINT pitch = 0;
 			if (m_copy2D.Map(m_dx11, bits, pitch, TRUE))
 			{
 				DWORD dwSize = pitch * m_pulgSize.cy;

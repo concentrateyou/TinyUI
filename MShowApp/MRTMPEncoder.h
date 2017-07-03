@@ -35,7 +35,8 @@ namespace MShow
 		AACEncode&		GetAAC();
 		x264Encode&		GetX264();
 	private:
-		void OnMessagePump();
+		void OnAudioPump();
+		void OnVideoPump();
 		void OnX264(BYTE* bits, LONG size, const MediaTag& tag);
 	private:
 		INT						m_audioRate;
@@ -49,7 +50,8 @@ namespace MShow
 		x264Encode				m_x264;
 		AACEncode				m_aac;
 		TinyPerformanceTimer	m_time;
-		TinyTaskBase			m_encodeTask;
+		TinyTaskBase			m_videoTask;
+		TinyTaskBase			m_audioTask;
 		DX11					m_dx11;
 		DX11Texture2D			m_image2D;
 		DX11Texture2D			m_copy2D;
