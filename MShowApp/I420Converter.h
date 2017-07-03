@@ -32,7 +32,7 @@ namespace MShow
 		SwsContext*				m_sws;
 		TinySize				m_srcSize;
 		TinySize				m_dstSize;
-		INT						m_size;
+		LONG					m_size;
 		TinyScopedArray<BYTE>	m_bits;
 	};
 }

@@ -67,6 +67,7 @@ namespace DXApp
 	void VideoEncode::OnMessagePump()
 	{
 		LONGLONG time = 0;
+		TinyPerformanceTimer timer;
 		for (;;)
 		{
 			DWORD s = 1000 / m_dwFPS;
@@ -75,7 +76,10 @@ namespace DXApp
 			{
 				break;
 			}
+			timer.BeginTime();
 			time = this->Encode();
+			timer.EndTime();
+			TRACE("Encode Cost:%d\n", timer.GetMillisconds());
 		}
 	}
 }

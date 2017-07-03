@@ -41,19 +41,19 @@ namespace MShow
 		INT						m_audioRate;
 		INT						m_videoFPS;
 		INT						m_videoRate;
+		DWORD					m_dwSize;
 		BOOL					m_bBreaks;
 		LONG					m_baseTime;
-		DWORD					m_dwSize;
 		WAVEFORMATEX			m_waveFMT;
 		TinySize				m_pulgSize;
 		x264Encode				m_x264;
 		AACEncode				m_aac;
 		TinyPerformanceTimer	m_time;
-		TinyTaskBase			m_videoTask;
-		TinyScopedPtr<BYTE>		m_bits;
+		TinyTaskBase			m_encodeTask;
 		DX11					m_dx11;
 		DX11Texture2D			m_image2D;
 		DX11Texture2D			m_copy2D;
+		TinyScopedArray<BYTE>	m_bits;
 		TinyScopedPtr<I420Converter>	m_converter;
 	};
 }

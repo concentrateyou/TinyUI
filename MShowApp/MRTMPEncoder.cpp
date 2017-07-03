@@ -102,19 +102,22 @@ namespace MShow
 		if (!m_copy2D.Create(m_dx11, m_pulgSize.cx, m_pulgSize.cy, NULL, FALSE))
 			return FALSE;
 		m_bBreaks = FALSE;
-		return m_videoTask.Submit(BindCallback(&MRTMPEncoder::OnMessagePump, this));
+		return m_encodeTask.Submit(BindCallback(&MRTMPEncoder::OnMessagePump, this));
 	}
 
 	BOOL MRTMPEncoder::Close()
 	{
-		m_bBreaks = TRUE;
-		if (m_videoTask.IsValid())
-			m_videoTask.Close(INFINITE);
+		BOOL bRes = TRUE;
+		if (m_encodeTask.IsValid())
+		{
+			m_bBreaks = TRUE;
+			bRes &= m_encodeTask.Close(INFINITE);
+		}
 		m_image2D.Destory();
 		m_copy2D.Destory();
 		m_aac.Close();
 		m_x264.Close();
-		return TRUE;
+		return bRes;
 	}
 
 	void MRTMPEncoder::OnX264(BYTE* bits, LONG size, const MediaTag& tag)
@@ -141,6 +144,23 @@ namespace MShow
 			Sleep(delay < 0 ? 0 : delay);
 			m_time.BeginTime();
 			m_copy2D.Copy(m_dx11, m_image2D);
+			BYTE*	bits = NULL;
+			UINT	pitch = 0;
+			if (m_copy2D.Map(m_dx11, bits, pitch))
+			{
+				DWORD dwSize = pitch * m_pulgSize.cy;
+				if (m_dwSize != dwSize && bits != NULL)
+				{
+					m_dwSize = dwSize;
+					m_bits.Reset(new BYTE[m_dwSize]);
+				}
+				memcpy_s(m_bits, m_dwSize, bits, dwSize);
+				m_copy2D.Unmap(m_dx11);
+			}
+			if (m_bits != NULL && m_converter->BRGAToI420(m_bits))
+			{
+				m_x264.Encode(m_converter->GetI420());
+			}
 			m_time.EndTime();
 			time = m_time.GetMillisconds();
 		}
