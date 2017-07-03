@@ -83,11 +83,11 @@ namespace DXFramework
 		m_surface.Release();
 		return SUCCEEDED(hRes);
 	}
-	BOOL DX11Texture2D::Map(DX11& dx11, BYTE *&lpData, UINT &pitch)
+	BOOL DX11Texture2D::Map(DX11& dx11, BYTE *&lpData, UINT &pitch, BOOL bReadoly)
 	{
 		HRESULT hRes = S_OK;
 		D3D11_MAPPED_SUBRESOURCE ms = { 0 };
-		if (SUCCEEDED(dx11.GetImmediateContext()->Map(m_texture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &ms)))
+		if (SUCCEEDED(dx11.GetImmediateContext()->Map(m_texture2D, 0, bReadoly ? D3D11_MAP_READ : D3D11_MAP_WRITE_DISCARD, 0, &ms)))
 		{
 			lpData = (BYTE*)ms.pData;
 			pitch = ms.RowPitch;
@@ -131,9 +131,9 @@ namespace DXFramework
 		textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 		textureDesc.SampleDesc.Count = 1;
 		textureDesc.SampleDesc.Quality = 0;
-		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-		textureDesc.CPUAccessFlags = bReadoly ? 0 : D3D11_CPU_ACCESS_WRITE;
-		textureDesc.Usage = bReadoly ? D3D11_USAGE_DEFAULT : D3D11_USAGE_DYNAMIC;
+		textureDesc.BindFlags = bReadoly ? 0 : D3D11_BIND_SHADER_RESOURCE;
+		textureDesc.CPUAccessFlags = bReadoly ? D3D11_CPU_ACCESS_READ : D3D11_CPU_ACCESS_WRITE;
+		textureDesc.Usage = bReadoly ? D3D11_USAGE_STAGING : D3D11_USAGE_DYNAMIC;
 		D3D11_SUBRESOURCE_DATA dsd;
 		D3D11_SUBRESOURCE_DATA *lpSRD = NULL;
 		if (bits)
@@ -146,16 +146,19 @@ namespace DXFramework
 		HRESULT hRes = dx11.GetD3D()->CreateTexture2D(&textureDesc, lpSRD, &m_texture2D);
 		if (hRes != S_OK)
 			return FALSE;
-		D3D11_TEXTURE2D_DESC desc;
-		m_texture2D->GetDesc(&desc);
-		D3D11_SHADER_RESOURCE_VIEW_DESC dsrvd;
-		::ZeroMemory(&dsrvd, sizeof(dsrvd));
-		dsrvd.Format = desc.Format;
-		dsrvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-		dsrvd.Texture2D.MipLevels = 1;
-		hRes = dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &dsrvd, &m_resourceView);
-		if (hRes != S_OK)
-			return FALSE;
+		if (!bReadoly)
+		{
+			D3D11_TEXTURE2D_DESC desc;
+			m_texture2D->GetDesc(&desc);
+			D3D11_SHADER_RESOURCE_VIEW_DESC dsrvd;
+			::ZeroMemory(&dsrvd, sizeof(dsrvd));
+			dsrvd.Format = desc.Format;
+			dsrvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			dsrvd.Texture2D.MipLevels = 1;
+			hRes = dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &dsrvd, &m_resourceView);
+			if (hRes != S_OK)
+				return FALSE;
+		}
 		return TRUE;
 	}
 	BOOL DX11Texture2D::SaveAs(DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT format)

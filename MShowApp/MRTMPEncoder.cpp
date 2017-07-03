@@ -99,7 +99,7 @@ namespace MShow
 			return FALSE;
 		if (!m_image2D.Load(m_dx11, renderView->GetHandle()))
 			return FALSE;
-		if (!m_copy2D.Create(m_dx11, m_pulgSize.cx, m_pulgSize.cy, NULL, FALSE))
+		if (!m_copy2D.Create(m_dx11, m_pulgSize.cx, m_pulgSize.cy, NULL, TRUE))
 			return FALSE;
 		m_bBreaks = FALSE;
 		return m_encodeTask.Submit(BindCallback(&MRTMPEncoder::OnMessagePump, this));
@@ -128,6 +128,7 @@ namespace MShow
 		sample.bits = new BYTE[size];
 		memcpy(sample.bits, bits, size);
 		sample.mediaTag.dwTime = timeGetTime() - m_baseTime + sample.mediaTag.PTS;
+		TRACE("OnX264 : %d\n", sample.mediaTag.dwTime);
 		MShowApp::Instance().GetController().GetPusher().m_samples.push(sample);
 	}
 
@@ -146,7 +147,7 @@ namespace MShow
 			m_copy2D.Copy(m_dx11, m_image2D);
 			BYTE*	bits = NULL;
 			UINT	pitch = 0;
-			if (m_copy2D.Map(m_dx11, bits, pitch))
+			if (m_copy2D.Map(m_dx11, bits, pitch, TRUE))
 			{
 				DWORD dwSize = pitch * m_pulgSize.cy;
 				if (m_dwSize != dwSize && bits != NULL)

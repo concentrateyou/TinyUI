@@ -31,7 +31,7 @@ namespace DXFramework
 	public:
 		BOOL GetDC(BOOL discard, HDC& hDC);
 		BOOL ReleaseDC();
-		BOOL Map(DX11& dx11, BYTE *&lpData, UINT &pitch);
+		BOOL Map(DX11& dx11, BYTE *&lpData, UINT &pitch, BOOL bReadoly = FALSE);
 		void Unmap(DX11& dx11);
 		HANDLE	GetHandle() const;
 		ID3D11Texture2D* GetTexture2D() const;
