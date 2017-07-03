@@ -9,7 +9,7 @@ namespace MShow
 {
 	MVideoDialog::MVideoDialog()
 	{
-
+		
 	}
 	MVideoDialog::~MVideoDialog()
 	{
@@ -55,6 +55,7 @@ namespace MShow
 		m_onMenuClick.Reset(new Delegate<void(void*, INT)>(this, &MVideoController::OnMenuClick));
 		m_popup.EVENT_CLICK += m_onMenuClick;
 		m_onVolume.Reset(new Delegate<void(DWORD)>(this, &MVideoController::OnVolume));
+		m_signal.CreateEvent();
 	}
 
 	MVideoController::~MVideoController()
@@ -63,6 +64,7 @@ namespace MShow
 		m_view.EVENT_RBUTTONDOWN -= m_onRButtonDown;
 		m_popup.EVENT_CLICK -= m_onMenuClick;
 		m_popup.DestroyMenu();
+		m_signal.Close();
 	}
 
 	BOOL MVideoController::Initialize()
@@ -74,7 +76,7 @@ namespace MShow
 		m_popup.CreatePopupMenu();
 		m_popup.AppendMenu(MF_STRING, 1, TEXT("添加"));
 		m_popup.AppendMenu(MF_STRING, 2, TEXT("删除"));
-		m_signal.CreateEvent();
+		
 		return TRUE;
 	}
 
@@ -133,12 +135,7 @@ namespace MShow
 
 	void MVideoController::OnAudio(BYTE* bits, LONG size)
 	{
-		if (m_buffer.IsEmpty())
-		{
-			m_buffer.Initialize(1024, size);
-		}
-		TinyAutoLock lock(m_lock);
-		m_buffer.Write(bits, 1);
+		EVENT_AUDIO(bits, size);
 	}
 
 	void MVideoController::OnVideo(BYTE* bits, LONG size)

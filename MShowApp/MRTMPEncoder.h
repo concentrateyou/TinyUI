@@ -35,8 +35,8 @@ namespace MShow
 		AACEncode&		GetAAC();
 		x264Encode&		GetX264();
 	private:
-		void OnAudioPump();
 		void OnVideoPump();
+		void OnAudio(BYTE* bits, LONG size);
 		void OnX264(BYTE* bits, LONG size, const MediaTag& tag);
 		void OnAAC(BYTE* bits, LONG size, const MediaTag& tag);
 	private:
@@ -44,22 +44,19 @@ namespace MShow
 		INT						m_videoFPS;
 		INT						m_videoRate;
 		DWORD					m_videoSize;
-		DWORD					m_audioSize;
 		BOOL					m_bBreaks;
 		LONG					m_baseTime;
 		WAVEFORMATEX			m_waveFMT;
 		TinySize				m_pulgSize;
 		x264Encode				m_x264;
 		AACEncode				m_aac;
-		TinyPerformanceTimer	m_time;
 		TinyTaskBase			m_videoTask;
-		TinyTaskBase			m_audioTask;
 		DX11					m_dx11;
 		DX11Texture2D			m_image2D;
 		DX11Texture2D			m_copy2D;
 		TinyScopedArray<BYTE>	m_videoBits;
-		TinyScopedArray<BYTE>	m_audioBits;
 		TinyScopedPtr<I420Converter>	m_converter;
+		TinyScopedPtr<Delegate<void(BYTE*, LONG)>>	m_onAudio;
 	};
 }
 

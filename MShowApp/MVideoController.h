@@ -51,6 +51,8 @@ namespace MShow
 		void	OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnVolume(DWORD volume);
+	public:
+		Event<void(BYTE*, LONG)> EVENT_AUDIO;
 	private:
 		TinyLock		m_lock;
 		TinyMenu		m_popup;
@@ -61,8 +63,7 @@ namespace MShow
 		MFLVPlayer		m_player;
 		TinyEvent		m_signal;
 		MVideoElement*	m_pVideo;
-		TinyRingBuffer	m_buffer;
-	private:
+	private:							
 		TinyScopedPtr<Delegate<void(DWORD)>>						m_onVolume;
 		TinyScopedPtr<Delegate<void(void*, INT)>>					m_onMenuClick;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>>	m_onLButtonDBClick;

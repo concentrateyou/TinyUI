@@ -364,8 +364,7 @@ namespace MShow
 			}
 			if (hRes != WAIT_TIMEOUT)
 			{
-				DWORD dwMS = this->Draw();
-				//TRACE("Draw - MS:%d,Index:%d\n", dwMS, hRes - WAIT_OBJECT_0);
+				this->Draw();
 			}
 		}
 	}

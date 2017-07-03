@@ -11,7 +11,7 @@ namespace MShow
 		m_videoFPS(25),
 		m_videoRate(1000),
 		m_videoSize(0),
-		m_audioSize(0),
+		m_baseTime(timeGetTime()),
 		m_x264(BindCallback(&MRTMPEncoder::OnX264, this)),
 		m_aac(BindCallback(&MRTMPEncoder::OnAAC, this))
 	{
@@ -101,23 +101,27 @@ namespace MShow
 		if (!m_copy2D.Create(m_dx11, m_pulgSize.cx, m_pulgSize.cy, NULL, TRUE))
 			return FALSE;
 		m_bBreaks = FALSE;
-		m_baseTime = timeGetTime();
+		MVideoController* pCTRL1 = MShowApp::Instance().GetController().GetVideoController(0);
+		if (!pCTRL1)
+			return FALSE;
+		m_onAudio.Reset(new Delegate<void(BYTE*, LONG)>(this, &MRTMPEncoder::OnAudio));
+		pCTRL1->EVENT_AUDIO += m_onAudio;
 		m_videoTask.Submit(BindCallback(&MRTMPEncoder::OnVideoPump, this));
-		m_audioTask.Submit(BindCallback(&MRTMPEncoder::OnAudioPump, this));
 		return TRUE;
 	}
 
 	BOOL MRTMPEncoder::Close()
 	{
+		MVideoController* pCTRL1 = MShowApp::Instance().GetController().GetVideoController(0);
+		if (pCTRL1)
+		{
+			pCTRL1->EVENT_AUDIO -= m_onAudio;
+		}
 		m_bBreaks = TRUE;
 		BOOL bRes = TRUE;
 		if (m_videoTask.IsValid())
-		{		
-			bRes &= m_videoTask.Close(INFINITE);
-		}
-		if (m_audioTask.IsValid())
 		{
-			bRes &= m_audioTask.Close(INFINITE);
+			bRes &= m_videoTask.Close(INFINITE);
 		}
 		m_image2D.Destory();
 		m_copy2D.Destory();
@@ -125,6 +129,12 @@ namespace MShow
 		m_x264.Close();
 		return bRes;
 	}
+
+	void MRTMPEncoder::OnAudio(BYTE* bits, LONG size)
+	{
+		m_aac.Encode(bits, size);
+	}
+
 	void MRTMPEncoder::OnAAC(BYTE* bits, LONG size, const MediaTag& tag)
 	{
 		Sample sample;
@@ -146,40 +156,15 @@ namespace MShow
 		MShowApp::Instance().GetController().GetPusher().m_samples.push(sample);
 	}
 
-	void MRTMPEncoder::OnAudioPump()
-	{
-		for (;;)
-		{
-			if (m_bBreaks)
-				break;
-			MVideoController* pCTRL = MShowApp::Instance().GetController().GetVideoController(0);
-			if (pCTRL != NULL)
-			{
-				if (m_audioSize != pCTRL->m_buffer.GetElementSize())
-				{
-					m_audioSize = pCTRL->m_buffer.GetElementSize();
-					m_audioBits.Reset(new BYTE[m_audioSize]);
-				}
-				TinyAutoLock lock(pCTRL->m_lock);
-				if (pCTRL->m_buffer.Read(m_audioBits, 1) == 1)
-				{
-					m_aac.Encode(m_audioBits, m_audioSize);
-				}
-			}
-		}
-	}
-
 	void MRTMPEncoder::OnVideoPump()
 	{
-		LONGLONG time = 0;
+		TinyPerformanceTimer	time;
 		DWORD dwMS = static_cast<DWORD>(1000 / m_videoFPS);
 		for (;;)
 		{
 			if (m_bBreaks)
 				break;
-			INT delay = dwMS - time;
-			Sleep(delay < 0 ? 0 : delay);
-			m_time.BeginTime();
+			time.BeginTime();
 			m_copy2D.Copy(m_dx11, m_image2D);
 			BYTE* bits = NULL;
 			UINT pitch = 0;
@@ -198,8 +183,9 @@ namespace MShow
 			{
 				m_x264.Encode(m_converter->GetI420());
 			}
-			m_time.EndTime();
-			time = m_time.GetMillisconds();
+			time.EndTime();
+			INT delay = dwMS - static_cast<DWORD>(time.GetMillisconds());
+			Sleep(delay < 0 ? 0 : delay);
 		}
 	}
 }

@@ -7,6 +7,7 @@ namespace Encode
 		:m_inputSamples(0),
 		m_maxOutputBytes(0),
 		m_dwPTS(0),
+		m_dwINC(0),
 		m_callback(std::move(callback))
 	{
 	}

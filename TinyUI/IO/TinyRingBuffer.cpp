@@ -28,7 +28,7 @@ namespace TinyUI
 
 		BOOL TinyRingBuffer::IsEmpty()
 		{
-			return m_bits != NULL;
+			return m_bits == NULL;
 		}
 
 		BOOL TinyRingBuffer::Initialize(DWORD count, DWORD esize)

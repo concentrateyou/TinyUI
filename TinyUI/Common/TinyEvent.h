@@ -22,7 +22,6 @@ namespace TinyUI
 		}
 		void operator-= (DelegateType* ps)
 		{
-			ASSERT(ps);
 			INT index = m_array.Lookup(ps);
 			if (index >= 0)
 			{
