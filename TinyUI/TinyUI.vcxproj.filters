@@ -492,6 +492,9 @@
     <ClInclude Include="Media\TinyXAudio.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
+    <ClInclude Include="IO\TinyFixedAlloc.h">
+      <Filter>头文件\IO</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -901,6 +904,9 @@
     </ClCompile>
     <ClCompile Include="Media\TinyXAudio.cpp">
       <Filter>源文件\Media</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\TinyFixedAlloc.cpp">
+      <Filter>源文件\IO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
