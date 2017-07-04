@@ -1,4 +1,5 @@
 #pragma once
+#include "malloc.h"
 #include "rtmp.h"
 #include "DX11.h"
 #include "DX11Element2D.h"

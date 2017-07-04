@@ -364,7 +364,8 @@ namespace MShow
 			}
 			if (hRes != WAIT_TIMEOUT)
 			{
-				this->Draw();
+				TinyAutoLock lock(m_lock);
+				DWORD dwMS = this->Draw();
 			}
 		}
 	}
