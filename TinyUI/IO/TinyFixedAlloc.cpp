@@ -7,24 +7,74 @@ namespace TinyUI
 {
 	namespace IO
 	{
-		TinyFixedAlloc::TinyFixedAlloc(UINT nAllocSize, UINT nBlockSize)
+		TinyFixedAllocNoSync::TinyFixedAllocNoSync(UINT nAllocSize, UINT nBlockSize)
 		{
 			ASSERT(nAllocSize >= sizeof(TinyNode));
 			ASSERT(nBlockSize > 1);
+
 			if (nAllocSize < sizeof(TinyNode))
 				nAllocSize = sizeof(TinyNode);
 			if (nBlockSize <= 1)
 				nBlockSize = 64;
+
 			m_nAllocSize = nAllocSize;
 			m_nBlockSize = nBlockSize;
 			m_pNodeFree = NULL;
 			m_pBlocks = NULL;
+		}
+
+		TinyFixedAllocNoSync::~TinyFixedAllocNoSync()
+		{
+			FreeAll();
+		}
+		UINT TinyFixedAllocNoSync::GetAllocSize()
+		{
+			return m_nAllocSize;
+		}
+		void TinyFixedAllocNoSync::FreeAll()
+		{
+			m_pBlocks->Destory();
+			m_pBlocks = NULL;
+			m_pNodeFree = NULL;
+		}
+
+		void* TinyFixedAllocNoSync::Alloc()
+		{
+			if (m_pNodeFree == NULL)
+			{
+				TinyPlex* pNewBlock = TinyPlex::Create(m_pBlocks, m_nBlockSize, m_nAllocSize);
+				TinyNode* pNode = (TinyNode*)pNewBlock->data();
+				(BYTE*&)pNode += (m_nAllocSize * m_nBlockSize) - m_nAllocSize;
+				for (INT i = m_nBlockSize - 1; i >= 0; i--, (BYTE*&)pNode -= m_nAllocSize)
+				{
+					pNode->pNext = m_pNodeFree;
+					m_pNodeFree = pNode;
+				}
+			}
+			ASSERT(m_pNodeFree != NULL);
+			void* pNode = m_pNodeFree;
+			m_pNodeFree = m_pNodeFree->pNext;
+			return pNode;
+		}
+
+		void TinyFixedAllocNoSync::Free(void* p)
+		{
+			if (p != NULL)
+			{
+				TinyNode* pNode = (TinyNode*)p;
+				pNode->pNext = m_pNodeFree;
+				m_pNodeFree = pNode;
+			}
+		}
+		//////////////////////////////////////////////////////////////////////////
+		TinyFixedAlloc::TinyFixedAlloc(UINT nAllocSize, UINT nBlockSize)
+			: base(nAllocSize, nBlockSize)
+		{
 			InitializeCriticalSection(&m_cs);
 		}
 
 		TinyFixedAlloc::~TinyFixedAlloc()
 		{
-			FreeAll();
 			DeleteCriticalSection(&m_cs);
 		}
 
@@ -33,9 +83,7 @@ namespace TinyUI
 			EnterCriticalSection(&m_cs);
 			__try
 			{
-				m_pBlocks->Destory();
-				m_pBlocks = NULL;
-				m_pNodeFree = NULL;
+				base::FreeAll();
 			}
 			__finally
 			{
@@ -46,24 +94,10 @@ namespace TinyUI
 		void* TinyFixedAlloc::Alloc()
 		{
 			EnterCriticalSection(&m_cs);
+			void* ps = NULL;
 			try
 			{
-				if (m_pNodeFree == NULL)
-				{
-					TinyPlex* pNewBlock = TinyPlex::Create(m_pBlocks, m_nBlockSize, m_nAllocSize);
-					TinyNode* pNode = (TinyNode*)pNewBlock->data();
-					(BYTE*&)pNode += (m_nAllocSize * m_nBlockSize) - m_nAllocSize;
-					for (INT i = m_nBlockSize - 1; i >= 0; i--, (BYTE*&)pNode -= m_nAllocSize)
-					{
-						pNode->pNext = m_pNodeFree;
-						m_pNodeFree = pNode;
-					}
-				}
-				ASSERT(m_pNodeFree != NULL);
-				void* pNode = m_pNodeFree;
-				m_pNodeFree = m_pNodeFree->pNext;
-				LeaveCriticalSection(&m_cs);
-				return pNode;
+				ps = base::Alloc();
 			}
 			catch (...)
 			{
@@ -71,7 +105,7 @@ namespace TinyUI
 				throw;
 			}
 			LeaveCriticalSection(&m_cs);
-			return NULL;
+			return ps;
 		}
 
 		void TinyFixedAlloc::Free(void* p)
@@ -81,16 +115,13 @@ namespace TinyUI
 				EnterCriticalSection(&m_cs);
 				__try
 				{
-					TinyNode* pNode = (TinyNode*)p;
-					pNode->pNext = m_pNodeFree;
-					m_pNodeFree = pNode;
+					base::Free(p);
 				}
 				__finally
 				{
 					LeaveCriticalSection(&m_cs);
 				}
 			}
-			
 		}
 	}
 }
