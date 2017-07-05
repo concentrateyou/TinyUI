@@ -26,6 +26,29 @@ namespace MShow
 		TinyLock				m_lock;
 		TinyLinkList<SampleTag>	m_list;
 	};
+
+	class MPacketAllocQueue
+	{
+		DISALLOW_COPY_AND_ASSIGN(MPacketAllocQueue)
+	public:
+		MPacketAllocQueue();
+		~MPacketAllocQueue();
+		void Initialize(UINT count, UINT size);
+		UINT GetAllocSize();
+		void* Alloc();
+		void Free(void* p);
+		BOOL Push(SampleTag& tag);
+		BOOL Pop(SampleTag& tag);
+		BOOL IsEmpty();
+		LONG GetSize();
+		DWORD GetCount();
+		void RemoveAll();
+	private:
+		LONG					m_size;
+		TinyLock				m_lock;
+		TinyFixedAlloc			m_alloc;
+		TinyLinkList<SampleTag>	m_list;
+	};
 }
 
 

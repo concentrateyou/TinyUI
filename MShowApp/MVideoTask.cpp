@@ -30,13 +30,14 @@ namespace MShow
 		if (TinyTaskBase::Close(dwMS))
 		{
 			m_h264.Close();
+			m_task.GetVideoQueue().RemoveAll();
 			m_videoQueue.RemoveAll();
 			return TRUE;
 		}
 		return FALSE;
 	}
 
-	MPacketQueue& MVideoTask::GetVideoQueue()
+	MPacketAllocQueue& MVideoTask::GetVideoQueue()
 	{
 		return m_videoQueue;
 	}
@@ -79,14 +80,19 @@ namespace MShow
 			LONG  so = 0;
 			if (m_h264.Decode(sampleTag, bo, so))
 			{
+				SAFE_DELETE_ARRAY(sampleTag.bits);
 				if (m_clock.GetBasePTS() == -1)
 				{
 					m_clock.SetBasePTS(sampleTag.samplePTS);
 				}
-				SAFE_DELETE_ARRAY(sampleTag.bits);
+				if (m_videoQueue.GetAllocSize() == 0)
+				{
+					INT count = MAX_VIDEO_QUEUE_SIZE / so + 1;
+					m_videoQueue.Initialize(count, so + 4);
+				}
 				sampleTag.size = so;
-				sampleTag.bits = new BYTE[so];
-				memcpy(sampleTag.bits, bo, so);
+				sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
+				memcpy_s(sampleTag.bits + 4, sampleTag.size, bo, so);
 				sampleTag.samplePTS = m_h264.GetYUV420()->pkt_pts;
 				sampleTag.sampleDTS = sampleTag.samplePTS;
 				m_videoQueue.Push(sampleTag);

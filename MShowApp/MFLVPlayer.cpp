@@ -81,14 +81,14 @@ namespace MShow
 		BOOL bRes = TRUE;
 		if (m_task.IsValid())
 			bRes &= m_task.Close(INFINITE);
-		if (m_videoTask.IsValid())
-			bRes &= m_videoTask.Close(INFINITE);
 		if (m_videoRenderTask.IsValid())
 			bRes &= m_videoRenderTask.Close(INFINITE);
-		if (m_audioTask.IsValid())
-			bRes &= m_audioTask.Close(INFINITE);
+		if (m_videoTask.IsValid())
+			bRes &= m_videoTask.Close(INFINITE);
 		if (m_audioRenderTask.IsValid())
 			bRes &= m_audioRenderTask.Close(INFINITE);
+		if (m_audioTask.IsValid())
+			bRes &= m_audioTask.Close(INFINITE);
 		m_clock.SetBasePTS(-1);
 		m_clock.SetBaseTime(-1);
 		Sleep(100);

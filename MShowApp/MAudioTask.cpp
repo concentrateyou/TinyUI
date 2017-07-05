@@ -29,6 +29,7 @@ namespace MShow
 		if (TinyTaskBase::Close(dwMS))
 		{
 			m_aac.Close();
+			m_task.GetAudioQueue().RemoveAll();
 			m_audioQueue.RemoveAll();
 			return TRUE;
 		}
@@ -40,7 +41,7 @@ namespace MShow
 		return m_aac.GetFormat();
 	}
 
-	MPacketQueue& MAudioTask::GetAudioQueue()
+	MPacketAllocQueue& MAudioTask::GetAudioQueue()
 	{
 		return m_audioQueue;
 	}
@@ -80,14 +81,19 @@ namespace MShow
 			LONG  so = 0;
 			if (m_aac.Decode(sampleTag.bits, sampleTag.size, bo, so))
 			{
+				SAFE_DELETE_ARRAY(sampleTag.bits);
 				if (m_clock.GetBasePTS() == -1)
 				{
 					m_clock.SetBasePTS(sampleTag.samplePTS);
 				}
-				SAFE_DELETE_ARRAY(sampleTag.bits);
+				if (m_audioQueue.GetAllocSize() == 0)
+				{
+					INT count = MAX_AUDIO_QUEUE_SIZE / so + 1;
+					m_audioQueue.Initialize(count, so + 4);
+				}
 				sampleTag.size = so;
-				sampleTag.bits = new BYTE[so];
-				memcpy(sampleTag.bits, bo, so);
+				sampleTag.bits = static_cast<BYTE*>(m_audioQueue.Alloc());
+				memcpy_s(sampleTag.bits + 4, sampleTag.size, bo, so);
 				m_audioQueue.Push(sampleTag);
 			}
 			else

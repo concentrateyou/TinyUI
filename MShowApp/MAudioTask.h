@@ -19,7 +19,7 @@ namespace MShow
 		BOOL Close(DWORD dwMS) OVERRIDE;
 		WAVEFORMATEX* GetFormat();
 	public:
-		MPacketQueue&	GetAudioQueue();
+		MPacketAllocQueue&	GetAudioQueue();
 	private:
 		void OnMessagePump();
 		void OnASC(BYTE* bits, LONG size, WORD wBitsPerSample, BOOL& bRes);
@@ -28,7 +28,7 @@ namespace MShow
 		AACDecode					m_aac;
 		MClock&						m_clock;
 		MFLVTask&					m_task;
-		MPacketQueue				m_audioQueue;
+		MPacketAllocQueue			m_audioQueue;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG, WORD, BOOL&)>>	m_onASC;
 	};
 }

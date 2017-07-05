@@ -14,7 +14,7 @@ namespace MShow
 		virtual ~MVideoTask();
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
-		MPacketQueue& GetVideoQueue();
+		MPacketAllocQueue& GetVideoQueue();
 	private:
 		void OnMessagePump();
 		void OnAVCDC(BYTE* bits, LONG size, BOOL&);
@@ -23,7 +23,7 @@ namespace MShow
 		x264Decode					m_h264;
 		MClock&						m_clock;
 		MFLVTask&					m_task;
-		MPacketQueue				m_videoQueue;
+		MPacketAllocQueue			m_videoQueue;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG, BOOL&)>>	m_onAVCDC;
 	};
 }

@@ -9,6 +9,7 @@
 #include "IO/TinyIO.h"
 #include "IO/TinyTaskBase.h"
 #include "IO/TinyRingBuffer.h"
+#include "IO/TinyFixedAlloc.h"
 #include "Control/TinyControl.h"
 #include "Control/TinyTabControl.h"
 #include "Control/TinyButton.h"

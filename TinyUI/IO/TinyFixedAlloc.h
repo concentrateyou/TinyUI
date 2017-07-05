@@ -14,9 +14,10 @@ namespace TinyUI
 		class TinyFixedAllocNoSync
 		{
 		public:
-			TinyFixedAllocNoSync(UINT nAllocSize, UINT nBlockSize = 64);
+			TinyFixedAllocNoSync();
 			~TinyFixedAllocNoSync();
 			UINT GetAllocSize();
+			void Initialize(UINT m_count, UINT m_cbElement = 64);
 		public:
 			void* Alloc();
 			void Free(void* p);
@@ -26,8 +27,9 @@ namespace TinyUI
 			{
 				TinyNode* pNext;
 			};
-			UINT		m_nAllocSize;
-			UINT		m_nBlockSize;
+		protected:
+			UINT		m_cbElement;
+			UINT		m_count;
 			TinyPlex*	m_pBlocks;
 			TinyNode*	m_pNodeFree;
 		};
@@ -38,7 +40,7 @@ namespace TinyUI
 		{
 			typedef class TinyFixedAllocNoSync base;
 		public:
-			TinyFixedAlloc(UINT nAllocSize, UINT nBlockSize = 64);
+			TinyFixedAlloc();
 			~TinyFixedAlloc();
 		public:
 			void* Alloc();

@@ -51,9 +51,9 @@ namespace MShow
 			Sleep(delay < 0 ? 0 : delay);
 			if (!m_callback.IsNull())
 			{
-				m_callback(sampleTag.bits, sampleTag.size);
+				m_callback(sampleTag.bits + 4, sampleTag.size);
 			}
-			SAFE_DELETE_ARRAY(sampleTag.bits);
+			m_task.GetVideoQueue().Free(sampleTag.bits);
 		}
 	}
 }

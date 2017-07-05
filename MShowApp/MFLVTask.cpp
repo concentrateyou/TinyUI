@@ -55,8 +55,6 @@ namespace MShow
 			m_bFI = FALSE;
 			m_sample = 0;
 			ZeroMemory(&m_script, sizeof(m_script));
-			m_audioQueue.RemoveAll();
-			m_videoQueue.RemoveAll();
 			return TRUE;
 		}
 		return FALSE;
@@ -107,15 +105,19 @@ namespace MShow
 						{
 							goto _ERROR;
 						}
+						ReleaseBlock(block);
 					}
 					if (block.audio.packetType == FLV_AACRaw)
 					{
-						if (m_bFI)
+						if (!m_bFI)
+						{
+							ReleaseBlock(block);
+						}
+						else
 						{
 							ZeroMemory(&tag, sizeof(tag));
 							tag.size = block.video.size;
-							tag.bits = new BYTE[tag.size];
-							memcpy_s(tag.bits, tag.size, block.audio.data, block.audio.size);
+							tag.bits = block.audio.data;
 							tag.sampleDTS = block.dts;
 							tag.samplePTS = block.pts;
 							m_audioQueue.Push(tag);
@@ -135,6 +137,7 @@ namespace MShow
 						{
 							goto _ERROR;
 						}
+						ReleaseBlock(block);
 					}
 					if (block.video.packetType == FLV_NALU)
 					{
@@ -142,12 +145,15 @@ namespace MShow
 						{
 							m_bFI = (block.video.codeType == 1);
 						}
-						if (m_bFI)
+						if (!m_bFI)
+						{
+							ReleaseBlock(block);
+						}
+						else
 						{
 							ZeroMemory(&tag, sizeof(tag));
 							tag.size = block.video.size;
-							tag.bits = new BYTE[tag.size];
-							memcpy_s(tag.bits, tag.size, block.video.data, block.video.size);
+							tag.bits = block.video.data;
 							tag.sampleDTS = block.dts;
 							tag.samplePTS = block.pts;
 							m_videoQueue.Push(tag);
@@ -155,7 +161,6 @@ namespace MShow
 					}
 				}
 			}
-			ReleaseBlock(block);
 		}
 	_ERROR:
 		ReleaseBlock(block);
