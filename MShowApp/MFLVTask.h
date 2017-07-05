@@ -25,7 +25,8 @@ namespace MShow
 		Event<void(BYTE*, LONG, WORD, BOOL&)>	EVENT_ASC;
 		Event<void(BYTE*, LONG, BOOL&)>			EVENT_AVCDCR;
 	private:
-		void			OnMessagePump();
+		void	OnMessagePump();
+		BOOL	Invoke(SampleTag& tag, FLV_BLOCK& block);
 	private:
 		BOOL			m_bFI;
 		BOOL			m_bBreak;

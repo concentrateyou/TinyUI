@@ -50,7 +50,6 @@ namespace MShow
 		m_bBreak = TRUE;
 		if (TinyTaskBase::Close(INFINITE))
 		{
-			ZeroMemory(&m_script, sizeof(m_script));
 			m_reader.Close();
 			m_bFI = FALSE;
 			m_sample = 0;
@@ -79,6 +78,11 @@ namespace MShow
 	{
 		SampleTag tag = { 0 };
 		FLV_BLOCK block = { 0 };
+		Invoke(tag, block);
+	}
+
+	BOOL MFLVTask::Invoke(SampleTag& tag, FLV_BLOCK& block)
+	{
 		for (;;)
 		{
 			if (m_bBreak)
@@ -91,7 +95,8 @@ namespace MShow
 			}
 			if (!m_reader.ReadBlock(block))
 			{
-				goto _ERROR;
+				ReleaseBlock(block);
+				return FALSE;
 			}
 			if (block.type == FLV_AUDIO)
 			{
@@ -103,7 +108,8 @@ namespace MShow
 						EVENT_ASC(block.audio.data, block.audio.size, block.audio.bitsPerSample == 0 ? 8 : 16, bRes);
 						if (!bRes)
 						{
-							goto _ERROR;
+							ReleaseBlock(block);
+							return FALSE;
 						}
 						ReleaseBlock(block);
 					}
@@ -135,7 +141,8 @@ namespace MShow
 						EVENT_AVCDCR(block.video.data, block.video.size, bRes);
 						if (!bRes)
 						{
-							goto _ERROR;
+							ReleaseBlock(block);
+							return FALSE;
 						}
 						ReleaseBlock(block);
 					}
@@ -162,8 +169,7 @@ namespace MShow
 				}
 			}
 		}
-	_ERROR:
-		ReleaseBlock(block);
+		return TRUE;
 	}
 
 	MFLVTask::~MFLVTask()
