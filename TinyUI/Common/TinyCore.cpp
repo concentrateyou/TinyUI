@@ -295,15 +295,7 @@ namespace TinyUI
 		return ::ReleaseSemaphore(m_hSemaphore, lCount, lprevCount);
 	}
 	//////////////////////////////////////////////////////////////////////////
-	TinyConditionVariable::TinyConditionVariable(CRITICAL_SECTION& cs)
-		:m_cs(cs),
-		m_allowSRW(FALSE)
-	{
-		InitializeConditionVariable(&m_cv);
-	}
-	TinyConditionVariable::TinyConditionVariable(SRWLOCK& lock)
-		: m_lock(lock),
-		m_allowSRW(TRUE)
+	TinyConditionVariable::TinyConditionVariable()
 	{
 		InitializeConditionVariable(&m_cv);
 	}
@@ -311,16 +303,13 @@ namespace TinyUI
 	{
 
 	}
-	BOOL TinyConditionVariable::Lock(DWORD dwMS)
+	BOOL TinyConditionVariable::Lock(CRITICAL_SECTION& cs, DWORD dwMS)
 	{
-		if (m_allowSRW)
-		{
-			return SleepConditionVariableSRW(&m_cv, &m_lock, dwMS, 0);
-		}
-		else
-		{
-			return SleepConditionVariableCS(&m_cv, &m_cs, dwMS);
-		}
+		return SleepConditionVariableCS(&m_cv, &cs, dwMS);
+	}
+	BOOL TinyConditionVariable::Lock(SRWLOCK& lock, DWORD dwMS)
+	{
+		return SleepConditionVariableSRW(&m_cv, &lock, dwMS, 0);
 	}
 	void TinyConditionVariable::Unlock(BOOL bAll)
 	{
@@ -401,7 +390,7 @@ namespace TinyUI
 			return FALSE;
 		return TRUE;
 	}
-	HANDLE TinyTimerQueue::Register(WAITORTIMERCALLBACK callback, LPVOID ps, WORD dueTime, DWORD period,DWORD dwFlag)
+	HANDLE TinyTimerQueue::Register(WAITORTIMERCALLBACK callback, LPVOID ps, WORD dueTime, DWORD period, DWORD dwFlag)
 	{
 		if (!m_handle)
 			return FALSE;

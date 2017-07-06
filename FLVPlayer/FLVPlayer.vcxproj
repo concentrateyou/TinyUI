@@ -152,6 +152,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FFPlayer.h" />
     <ClInclude Include="FLVClock.h" />
     <ClInclude Include="FLVDecode.h" />
     <ClInclude Include="FLVFrameUI.h" />
@@ -162,6 +163,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FFPlayer.cpp" />
     <ClCompile Include="FLVClock.cpp" />
     <ClCompile Include="FLVDecode.cpp" />
     <ClCompile Include="FLVFrameUI.cpp" />

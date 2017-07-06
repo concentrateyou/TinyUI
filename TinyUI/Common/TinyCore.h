@@ -154,10 +154,10 @@ namespace TinyUI
 	{
 		DISALLOW_COPY_AND_ASSIGN(TinyConditionVariable)
 	public:
-		TinyConditionVariable(CRITICAL_SECTION& cs);
-		TinyConditionVariable(SRWLOCK& lock);
+		TinyConditionVariable();
 		~TinyConditionVariable();
-		BOOL Lock(DWORD dwMS = INFINITE);
+		BOOL Lock(CRITICAL_SECTION& cs, DWORD dwMS = INFINITE);
+		BOOL Lock(SRWLOCK& lock, DWORD dwMS = INFINITE);
 		void Unlock(BOOL bAll);
 	private:
 		CONDITION_VARIABLE	m_cv;
