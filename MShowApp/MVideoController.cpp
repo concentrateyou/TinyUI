@@ -9,7 +9,7 @@ namespace MShow
 {
 	MVideoDialog::MVideoDialog()
 	{
-		
+
 	}
 	MVideoDialog::~MVideoDialog()
 	{
@@ -76,7 +76,7 @@ namespace MShow
 		m_popup.CreatePopupMenu();
 		m_popup.AppendMenu(MF_STRING, 1, TEXT("添加"));
 		m_popup.AppendMenu(MF_STRING, 2, TEXT("删除"));
-		
+
 		return TRUE;
 	}
 
@@ -140,6 +140,10 @@ namespace MShow
 
 	void MVideoController::OnVideo(BYTE* bits, LONG size)
 	{
+		for (INT a = 0;a < 100;a++)
+		{
+			INT b = a;
+		}
 		TinySize videoSize = m_player.GetSize();
 		if (m_video2D.Copy(m_graphics.GetDX11(), bits, size, videoSize.cx * 4))
 		{

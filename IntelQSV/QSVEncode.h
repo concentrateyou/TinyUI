@@ -13,7 +13,7 @@ namespace QSV
 	public:
 		QSVEncode();
 		virtual ~QSVEncode();
-		mfxStatus Open(const QSVParam& param, Callback<void(BYTE*, LONG)>&& callback);
+		mfxStatus Open(const QSVParam& param, Callback<void(BYTE*, LONG, INT)>&& callback);
 		mfxStatus Encode(BYTE* data, LONG size);
 		mfxStatus Close();
 		QSVParam GetDefaultQSV(WORD wCX, WORD wCY, WORD wKbps);
@@ -40,7 +40,7 @@ namespace QSV
 		TinyScopedPtr<MFXVideoVPP>			m_videoVPP;
 		TinyScopedPtr<mfxFrameSurface1*>	m_surfaceEncode;
 		TinyScopedPtr<mfxFrameSurface1*>	m_surfaceVPP;
-		Callback<void(BYTE*, LONG)>			m_callback;
+		Callback<void(BYTE*, LONG, INT)>	m_callback;
 	};
 }
 

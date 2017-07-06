@@ -37,7 +37,6 @@ namespace MShow
 		MPacketQueue	m_audioQueue;
 		MPacketQueue	m_videoQueue;
 	};
-
 }
 
 

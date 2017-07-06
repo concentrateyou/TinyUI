@@ -45,6 +45,9 @@
     <ClInclude Include="QSVCommon.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="QSVDecode.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -66,6 +69,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="QSVCommon.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="QSVDecode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

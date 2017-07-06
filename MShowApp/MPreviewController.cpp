@@ -291,7 +291,7 @@ namespace MShow
 	DWORD MPreviewController::Draw()
 	{
 		m_time.BeginTime();
-		m_graphics.GetDX11().SetRenderTexture2D(&m_renderView);
+	/*	m_graphics.GetDX11().SetRenderTexture2D(&m_renderView);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();
 		for (INT i = 0;i < m_array.GetSize();i++)
 		{
@@ -302,7 +302,7 @@ namespace MShow
 				m_graphics.DrawImage(image, (FLOAT)((FLOAT)m_pulgSize.cx / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cx)), (FLOAT)((FLOAT)m_pulgSize.cy / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cy)));
 			}
 		}
-		m_graphics.GetDX11().GetRender2D()->EndDraw();
+		m_graphics.GetDX11().GetRender2D()->EndDraw();*/
 		//////////////////////////////////////////////////////////////////////////
 		m_graphics.GetDX11().SetRenderTexture2D(NULL);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();
@@ -354,7 +354,7 @@ namespace MShow
 			}
 			if (m_waits.size() == 0)
 			{
-				Sleep(10);
+				Sleep(50);
 				continue;
 			}
 			HRESULT hRes = WaitForMultipleObjects(m_waits.size(), &m_waits[0], FALSE, 40);

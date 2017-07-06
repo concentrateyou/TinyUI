@@ -202,7 +202,7 @@ namespace QSV
 		MSDK_CHECK_POINTER(m_bitstream.Data, MFX_ERR_MEMORY_ALLOC);
 		return status;
 	}
-	mfxStatus QSVEncode::Open(const QSVParam& param, Callback<void(BYTE*, LONG)>&& callback)
+	mfxStatus QSVEncode::Open(const QSVParam& param, Callback<void(BYTE*, LONG, INT)>&& callback)
 	{
 		mfxIMPL impl = MFX_IMPL_HARDWARE_ANY;
 		mfxVersion ver = { { 0, 1 } };
@@ -327,7 +327,7 @@ namespace QSV
 			MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
 			if (!m_callback.IsNull())
 			{
-				m_callback(m_bitstream.Data + m_bitstream.DataOffset, m_bitstream.DataLength);
+				m_callback(m_bitstream.Data + m_bitstream.DataOffset, m_bitstream.DataLength, m_bitstream.FrameType);
 				/*if (m_bitstream.FrameType & MFX_FRAMETYPE_I)
 				{
 					TRACE("MFX_FRAMETYPE_I\n");
