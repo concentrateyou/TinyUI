@@ -9,10 +9,12 @@ namespace QSV
 	public:
 		QSVDecode();
 		virtual ~QSVDecode();
-		mfxStatus Open(BYTE* bits, LONG size, Callback<void(BYTE*, LONG, INT)>&& callback);
+		mfxStatus Initialize(Callback<void(BYTE*, LONG, INT)>&& callback);
+		mfxStatus Open(BYTE* bits, LONG size);
 		mfxStatus Decode(BYTE* data, LONG size);
 		mfxStatus Close();
 	private:
+		mfxVideoParam						m_videoParams;
 		mfxBitstream						m_bitstream;
 		MFXVideoSession						m_session;
 		mfxFrameAllocator					m_allocator;
