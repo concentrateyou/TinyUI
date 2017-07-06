@@ -51,6 +51,11 @@ namespace Decode
 	BOOL x264Decode::Open(BYTE* metadata, LONG size)
 	{
 		ASSERT(m_context);
+		m_context->flags2 |= CODEC_FLAG2_CHUNKS | CODEC_FLAG2_FAST;
+		if (m_codec->capabilities & CODEC_CAP_TRUNCATED)
+		{
+			m_context->flags |= CODEC_FLAG_TRUNCATED;
+		}
 		m_context->extradata_size = size;
 		m_context->extradata = reinterpret_cast<BYTE*>(av_malloc(m_context->extradata_size));
 		memcpy(m_context->extradata, metadata, m_context->extradata_size);

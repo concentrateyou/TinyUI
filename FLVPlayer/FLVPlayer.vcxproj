@@ -88,7 +88,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\Decode;..\ThirdParty\libfaad\include;..\ThirdParty\ffmpeg\include;..\ThirdParty\mpg123\include;..\ThirdParty\librtmp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\Decode;..\IntelQSV;..\ThirdParty\libfaad\include;..\ThirdParty\ffmpeg\include;..\ThirdParty\mpg123\include;..\ThirdParty\librtmp\include;$(INTELMEDIASDKROOT)include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -184,6 +184,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Decode\Decode.vcxproj">
       <Project>{2b7dbc16-dc0d-49c6-a0b8-9f26c31aa758}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\IntelQSV\IntelQSV.vcxproj">
+      <Project>{681511e3-1b32-43c5-89f4-18a20c1590c9}</Project>
     </ProjectReference>
     <ProjectReference Include="..\TinyUI\TinyUI.vcxproj">
       <Project>{58903be2-bb4f-4983-b8b7-905d2db5393d}</Project>

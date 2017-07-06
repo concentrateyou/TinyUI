@@ -29,6 +29,8 @@ namespace QSV
 		m_bitstream.Data = new mfxU8[m_bitstream.MaxLength];
 		MSDK_CHECK_POINTER(m_bitstream.Data, MFX_ERR_MEMORY_ALLOC);
 		ASSERT(m_bitstream.MaxLength >= size);
+		m_bitstream.DataLength = size;
+		m_bitstream.DataOffset = 0;
 		memcpy_s(m_bitstream.Data, size, bits, size);
 		status = m_videoDECODE->DecodeHeader(&m_bitstream, &mfxVideoParams);
 		MSDK_IGNORE_MFX_STS(status, MFX_WRN_PARTIAL_ACCELERATION);
