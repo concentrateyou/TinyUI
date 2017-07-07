@@ -1,5 +1,6 @@
 #pragma once
 #include "Common.h"
+#include "Media/TinyWave.h"
 extern "C"
 {
 #include "libavutil/avstring.h"
@@ -19,21 +20,30 @@ extern "C"
 #include "libavcodec/avfft.h"
 #include "libswresample/swresample.h"
 }
+#pragma comment(lib,"swresample.lib")
 
+using namespace TinyUI::Media;
+
+#define MAX_QUEUE_SIZE				(3 * 1024 * 1024)
+#define MIN_FRAMES					25
+#define VIDEO_PICTURE_QUEUE_SIZE	3
+#define SUBPICTURE_QUEUE_SIZE		16
+#define SAMPLE_QUEUE_SIZE			9
+#define FRAME_QUEUE_SIZE			FFMAX(SAMPLE_QUEUE_SIZE, FFMAX(VIDEO_PICTURE_QUEUE_SIZE, SUBPICTURE_QUEUE_SIZE))
 
 class FFPacketQueue
 {
 public:
-	FFPacketQueue(TinyConditionVariable& cv,AVPacket& flush);
+	FFPacketQueue(TinyConditionVariable& cv);
 public:
-	BOOL Push(AVPacket* packet);
-	BOOL Pop(AVPacket* packet, BOOL block);
-	void Flush();
+	BOOL	Push(AVPacket* packet);
+	BOOL	Pop(AVPacket* packet, BOOL block);
+	void	Flush();
+	INT32	GetSize() const;
 private:
 	INT32					m_serial;
 	INT32					m_size;
 	INT64					m_duration;
-	AVPacket&				m_flush;
 	TinyLock				m_lock;
 	TinyConditionVariable&	m_cv;
 	TinyLinkList<AVPacket*>	m_list;
@@ -45,9 +55,36 @@ public:
 	FFPlayer();
 	~FFPlayer();
 	BOOL Initialize();
+	void Uninitialize();
 private:
-	void OnRead();
+	void OnMessagePump();
+	void OnAudioPump();
+	void OnVideoPump();
+	BOOL OpenAudioStream(AVFormatContext* context);
+	BOOL OpenVideoStream(AVFormatContext* context);
+	INT DecodeAudio(AVFrame *frame);
+	INT DecodeVideo(AVFrame *frame);
 private:
-	TinyTaskBase	m_readTask;
+	TinyWaveFile			m_waveFile;
+	INT						m_indexs[AVMEDIA_TYPE_NB];
+	BOOL					m_bEOF;
+	INT64					m_startTime;
+	INT64					m_duration;
+	INT64					m_seek;
+	TinyTaskBase			m_readTask;
+	TinyTaskBase			m_audioTask;
+	TinyTaskBase			m_videoTask;
+	AVCodec*				m_audioCodec;
+	AVCodec*				m_videoCodec;
+	AVCodecContext*			m_audioContext;
+	AVCodecContext*			m_videoContext;
+	AVFormatContext*		m_context;
+	WAVEFORMATEX			m_waveFMT;
+	TinyConditionVariable	m_audioCV;
+	TinyConditionVariable	m_videoCV;
+	TinyConditionVariable	m_readCV;
+	FFPacketQueue			m_audioQueue;
+	FFPacketQueue			m_videoQueue;
+	SwrContext*				m_swr;
 };
 

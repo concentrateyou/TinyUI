@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "FLVPlayer.h"
 #include "FLVFrameUI.h"
-
+#include "FFPlayer.h"
 #include "FLVParser.h"
 
 using namespace FLVPlayer;
@@ -52,6 +52,9 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	HRESULT hRes = OleInitialize(NULL);
 
 	LoadSeDebugPrivilege();
+
+	FFPlayer player;
+	player.Initialize();
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_FLVPLAYER));
