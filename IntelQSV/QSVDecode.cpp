@@ -11,6 +11,23 @@ namespace QSV
 	QSVDecode::~QSVDecode()
 	{
 	}
+	mfxStatus QSVDecode::Initialize()
+	{
+		memset(&m_videoParams, 0, sizeof(m_videoParams));
+		m_videoParams.mfx.CodecId = MFX_CODEC_AVC;
+		m_videoParams.IOPattern = MFX_IOPATTERN_OUT_VIDEO_MEMORY;
+		mfxIMPL impl = MFX_IMPL_HARDWARE_ANY;
+		mfxVersion ver = { { 0, 1 } };
+		mfxStatus status = ::Initialize(impl, ver, &m_session, &m_allocator);
+		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
+		m_videoDECODE.Reset(new MFXVideoDECODE(m_session));
+		MSDK_CHECK_POINTER(m_videoDECODE, MFX_ERR_MEMORY_ALLOC);
+		memset(&m_bitstream, 0, sizeof(m_bitstream));
+		m_bitstream.MaxLength = 1024 * 1024;
+		m_bitstream.Data = new mfxU8[m_bitstream.MaxLength];
+		MSDK_CHECK_POINTER(m_bitstream.Data, MFX_ERR_MEMORY_ALLOC);
+		return status;
+	}
 	mfxStatus QSVDecode::Initialize(Callback<void(BYTE*, LONG, INT)>&& callback)
 	{
 		m_callback = std::move(callback);
@@ -34,8 +51,25 @@ namespace QSV
 		mfxStatus status = MFX_ERR_NONE;
 		m_bitstream.DataLength += size;
 		memcpy_s(m_bitstream.Data + m_bitstream.DataOffset, size, bits, size);
-		m_bitstream.DataOffset += size;
 		status = m_videoDECODE->DecodeHeader(&m_bitstream, &m_videoParams);
+		if (status == MFX_ERR_MORE_DATA)
+		{
+			mfxU16 oldFlag = m_bitstream.DataFlag;
+			m_bitstream.DataFlag = MFX_BITSTREAM_COMPLETE_FRAME;
+			status = m_videoDECODE->DecodeHeader(&m_bitstream, &m_videoParams);
+			m_bitstream.DataFlag = oldFlag;
+		}
+		if (MFX_ERR_MORE_DATA == status && m_videoParams.mfx.CodecId == MFX_CODEC_AVC)
+		{
+			mfxBitstream bs2 = m_bitstream;
+			bs2.Data = new mfxU8[m_bitstream.DataLength + 5];
+			memcpy(bs2.Data, m_bitstream.Data + m_bitstream.DataOffset, m_bitstream.DataLength - m_bitstream.DataOffset);
+			bs2.MaxLength = bs2.DataLength = m_bitstream.DataLength + 5 - m_bitstream.DataOffset;
+			*((unsigned*)(bs2.Data + bs2.DataLength - 5)) = 0x01000000;
+			bs2.Data[bs2.DataLength - 1] = 1; // write SPLICE NALU
+			status = m_videoDECODE->DecodeHeader(&bs2, &m_videoParams);
+			delete[] bs2.Data; // Cleanup
+		}
 		MSDK_IGNORE_MFX_STS(status, MFX_WRN_PARTIAL_ACCELERATION);
 		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
 		memset(&m_allocRequest, 0, sizeof(m_allocRequest));

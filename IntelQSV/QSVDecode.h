@@ -9,6 +9,7 @@ namespace QSV
 	public:
 		QSVDecode();
 		virtual ~QSVDecode();
+		mfxStatus Initialize();
 		mfxStatus Initialize(Callback<void(BYTE*, LONG, INT)>&& callback);
 		mfxStatus Open(BYTE* bits, LONG size);
 		mfxStatus Decode(BYTE* data, LONG size);

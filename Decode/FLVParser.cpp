@@ -11,7 +11,8 @@ namespace Decode
 		m_bAudio(FALSE),
 		m_bVideo(FALSE),
 		m_dts(0),
-		m_index(0)
+		m_index(0),
+		m_h264File(NULL)
 	{
 
 	}
@@ -22,11 +23,19 @@ namespace Decode
 			fclose(m_hFile);
 			m_hFile = NULL;
 		}
+
+		if (m_h264File != NULL)
+		{
+			fclose(m_h264File);
+			m_h264File = NULL;
+		}
+
 	}
 	BOOL FLVParser::Open(LPCSTR pzFile)
 	{
 		Close();
 		fopen_s(&m_hFile, pzFile, "rb");
+		fopen_s(&m_h264File, "D:\\test.h264", "w+");
 		return m_hFile != NULL;
 	}
 	BOOL FLVParser::Close()
@@ -35,6 +44,12 @@ namespace Decode
 		{
 			fclose(m_hFile);
 			m_hFile = NULL;
+		}
+		if (m_h264File != NULL)
+		{
+			fflush(m_h264File);
+			fclose(m_h264File);
+			m_h264File = NULL;
 		}
 		return TRUE;
 	}
@@ -234,6 +249,7 @@ namespace Decode
 			packet.codeType = video->codeType;
 			packet.packetType = FLV_AVCDecoderConfigurationRecord;
 			EVENT_VIDEO(buffer.GetPointer(), buffer.GetSize(), &packet);
+			fwrite(buffer.GetPointer(), sizeof(BYTE), buffer.GetSize(), m_h264File);
 		}
 		if (aacPacketType == 1)
 		{
@@ -269,6 +285,7 @@ namespace Decode
 				EVENT_VIDEO(val, sizeofNALU + 4, &packet);
 				bits += sizeofNALU;
 				offset += sizeofNALU;
+				fwrite((void*)val, sizeof(BYTE), sizeofNALU + 4, m_h264File);
 			}
 			break;
 			case 3:

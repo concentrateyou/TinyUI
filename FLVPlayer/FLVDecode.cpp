@@ -28,7 +28,7 @@ namespace FLVPlayer
 	{
 		//if (m_reader.OpenURL("rtmp://live.hkstv.hk.lxdns.com/live/hks"))
 		//if (m_reader.OpenURL("rtmp://10.10.13.98/live/lb_xijudianying_720p"))
-		if (m_reader.OpenFile("D:\\2.flv"))
+		if (m_reader.OpenFile("D:\\File\\2.flv"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);
@@ -109,6 +109,12 @@ namespace FLVPlayer
 				{
 					if (block.video.packetType == FLV_AVCDecoderConfigurationRecord)
 					{
+						m_qsv.Initialize();
+						if (m_qsv.Open(block.video.data, block.video.size) == MFX_ERR_NONE)
+						{
+							//TODO
+						}
+
 						if (!m_x264->Initialize(m_size, m_size))
 						{
 							goto _ERROR;
@@ -122,6 +128,12 @@ namespace FLVPlayer
 					}
 					if (block.video.packetType == FLV_NALU)
 					{
+						if (m_qsv.Decode(block.video.data, block.video.size) == MFX_ERR_NONE)
+						{
+							//TODO
+							INT a = 0;
+						}
+
 						if (!m_bFirstI)
 						{
 							if (block.video.codeType != 1)

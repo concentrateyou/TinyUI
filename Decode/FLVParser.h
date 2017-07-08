@@ -44,6 +44,7 @@ namespace Decode
 		LONGLONG						m_dts;
 		LONG							m_index;
 		LONG							m_duration;
+		FILE*							m_h264File;
 	};
 }
 

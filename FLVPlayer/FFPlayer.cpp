@@ -352,11 +352,11 @@ INT FFPlayer::DecodeAudio(AVFrame *av)
 					}
 
 					TRACE("Audio swr_convert\n");
-					swr_convert(m_swr, &samples, av->nb_samples, (const uint8_t**)av->extended_data, av->nb_samples);
+					/*swr_convert(m_swr, &samples, av->nb_samples, (const uint8_t**)av->extended_data, av->nb_samples);
 					if (samples)
 					{
 						m_waveFile.Write(samples, av->linesize[0]);
-					}
+					}*/
 				}
 			}
 		}
