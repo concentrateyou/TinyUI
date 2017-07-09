@@ -12,12 +12,14 @@ namespace QSV
 		mfxStatus Initialize();
 		mfxStatus Initialize(Callback<void(BYTE*, LONG, INT)>&& callback);
 		mfxStatus Open(BYTE* bits, LONG size);
-		mfxStatus Decode(BYTE* data, LONG size);
+		mfxStatus Decode(BYTE* bits, LONG size, LONGLONG timestamp);
 		mfxStatus Close();
 	private:
+		mfxSyncPoint						m_syncp;
 		mfxVideoParam						m_videoParams;
 		mfxBitstream						m_bitstream;
 		MFXVideoSession						m_session;
+		mfxFrameSurface1*					m_surface;
 		mfxFrameAllocator					m_allocator;
 		mfxFrameAllocRequest				m_allocRequest;
 		mfxFrameAllocResponse				m_allocResponse;

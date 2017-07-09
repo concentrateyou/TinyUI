@@ -35,7 +35,7 @@ namespace Decode
 	{
 		Close();
 		fopen_s(&m_hFile, pzFile, "rb");
-		fopen_s(&m_h264File, "D:\\test.h264", "w+");
+		fopen_s(&m_h264File, "D:\\test1.h264", "wb+");
 		return m_hFile != NULL;
 	}
 	BOOL FLVParser::Close()

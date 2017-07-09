@@ -128,12 +128,6 @@ namespace FLVPlayer
 					}
 					if (block.video.packetType == FLV_NALU)
 					{
-						if (m_qsv.Decode(block.video.data, block.video.size) == MFX_ERR_NONE)
-						{
-							//TODO
-							INT a = 0;
-						}
-
 						if (!m_bFirstI)
 						{
 							if (block.video.codeType != 1)
@@ -143,6 +137,11 @@ namespace FLVPlayer
 								continue;
 							}
 							m_bFirstI = TRUE;
+						}
+						if (m_qsv.Decode(block.video.data, block.video.size, block.pts) == MFX_ERR_NONE)
+						{
+							//TODO
+							INT a = 0;
 						}
 						ZeroMemory(&tag, sizeof(tag));
 						tag.size = block.video.size;
