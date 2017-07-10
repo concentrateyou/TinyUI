@@ -17,7 +17,6 @@ namespace QSV
 	}
 	mfxStatus QSVDecode::Initialize()
 	{
-
 		mfxIMPL impl = MFX_IMPL_HARDWARE_ANY;
 		mfxVersion ver = { { 0, 1 } };
 		mfxStatus status = ::Initialize(impl, ver, &m_session, &m_allocator);
@@ -31,14 +30,21 @@ namespace QSV
 
 	mfxStatus QSVDecode::Open(BYTE* bits, LONG size)
 	{
-		memcpy_s(m_bitstream.Data, size, bits, size);
-		m_bitstream.DataLength += size;
 		m_videoDECODE.Reset(new MFXVideoDECODE(m_session));
 		MSDK_CHECK_POINTER(m_videoDECODE, MFX_ERR_MEMORY_ALLOC);
 		memset(&m_videoParams, 0, sizeof(m_videoParams));
 		m_videoParams.mfx.CodecId = MFX_CODEC_AVC;
 		m_videoParams.IOPattern = MFX_IOPATTERN_OUT_VIDEO_MEMORY;
+		memcpy_s(m_bitstream.Data, size, bits, size);
+		m_bitstream.DataLength += size;
 		mfxStatus status = m_videoDECODE->DecodeHeader(&m_bitstream, &m_videoParams);
+		if (MFX_ERR_MORE_DATA == status)
+		{
+			mfxU16 oldFlag = m_bitstream.DataFlag;
+			m_bitstream.DataFlag = MFX_BITSTREAM_COMPLETE_FRAME;
+			status = m_videoDECODE->DecodeHeader(&m_bitstream, &m_videoParams);
+			m_bitstream.DataFlag = oldFlag;
+		}
 		MSDK_IGNORE_MFX_STS(status, MFX_WRN_PARTIAL_ACCELERATION);
 		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
 		memset(&m_request, 0, sizeof(m_request));
@@ -63,53 +69,31 @@ namespace QSV
 		return status;
 	}
 
-
-	mfxStatus QSVDecode::Decode(LONGLONG timestamp)
-	{
-		if (!m_videoDECODE)
-			return MFX_ERR_NULL_PTR;
-		mfxStatus status = MFX_ERR_NONE;
-		m_bitstream.TimeStamp = timestamp;
-		INT index = 0;
-		while (MFX_ERR_NONE <= status || MFX_ERR_MORE_DATA == status || MFX_ERR_MORE_SURFACE == status)
-		{
-			if (MFX_WRN_DEVICE_BUSY == status)
-				MSDK_SLEEP(1);
-			if (MFX_ERR_MORE_DATA == status)
-				break;
-			if (MFX_ERR_MORE_SURFACE == status || MFX_ERR_NONE == status)
-			{
-				index = GetFreeSurfaceIndex(m_decodeSF, m_request.NumFrameSuggested);
-				MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index, MFX_ERR_MEMORY_ALLOC);
-			}
-			status = m_videoDECODE->DecodeFrameAsync(&m_bitstream, m_decodeSF[index], &m_currentSF, &m_syncPoint);
-			if (MFX_ERR_NONE < status && m_syncPoint)
-			{
-				status = MFX_ERR_NONE;
-			}
-			if (MFX_ERR_NONE == status)
-			{
-				status = m_session.SyncOperation(m_syncPoint, 60000);
-			}
-			if (MFX_ERR_NONE == status)
-			{
-				status = m_allocator.Lock(m_allocator.pthis, m_currentSF->Data.MemId, &(m_currentSF->Data));
-				MSDK_BREAK_ON_ERROR(status);
-				status = m_allocator.Unlock(m_allocator.pthis, m_currentSF->Data.MemId, &(m_currentSF->Data));
-				MSDK_BREAK_ON_ERROR(status);
-				return status;
-			}
-		}
-		return status;
-	}
-
 	mfxStatus QSVDecode::Decode(BYTE* bits, LONG size, LONGLONG timespan)
 	{
 		if (!m_videoDECODE)
 			return MFX_ERR_NULL_PTR;
 		mfxStatus status = MFX_ERR_NONE;
 		m_bitstream.TimeStamp = timespan;
-		memcpy_s(m_bitstream.Data + m_bitstream.DataOffset, size, bits, size);
+		mfxU32 value = m_bitstream.MaxLength - m_bitstream.DataOffset;
+		if (value < size)
+		{
+			memmove_s(m_bitstream.Data, m_bitstream.DataLength, m_bitstream.Data + m_bitstream.DataLength, m_bitstream.DataLength);
+			m_bitstream.DataOffset = 0;
+			value = min(size, m_bitstream.MaxLength - m_bitstream.DataLength);
+			memcpy_s(m_bitstream.Data + m_bitstream.DataLength, value, bits, value);
+		}
+		else
+		{
+			if (m_bitstream.DataLength > 0)
+			{
+				memcpy_s(m_bitstream.Data + m_bitstream.DataLength, size, bits, size);
+			}
+			else
+			{
+				memcpy_s(m_bitstream.Data + m_bitstream.DataOffset, size, bits, size);
+			}
+		}
 		m_bitstream.DataLength += size;
 		INT index = 0;
 		while (MFX_ERR_NONE <= status || MFX_ERR_MORE_DATA == status || MFX_ERR_MORE_SURFACE == status)
@@ -136,7 +120,7 @@ namespace QSV
 			{
 				status = m_allocator.Lock(m_allocator.pthis, m_currentSF->Data.MemId, &(m_currentSF->Data));
 				MSDK_BREAK_ON_ERROR(status);
-
+				WriteRawFrame(m_currentSF, m_hFile);
 				status = m_allocator.Unlock(m_allocator.pthis, m_currentSF->Data.MemId, &(m_currentSF->Data));
 				MSDK_BREAK_ON_ERROR(status);
 			}

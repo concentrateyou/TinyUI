@@ -11,7 +11,6 @@ namespace QSV
 		virtual ~QSVDecode();
 		mfxStatus Initialize();
 		mfxStatus Open(BYTE* bits, LONG size);
-		mfxStatus Decode(LONGLONG timestamp);
 		mfxStatus Decode(BYTE* bits, LONG size, LONGLONG timestamp);
 		mfxStatus Close();
 	private:

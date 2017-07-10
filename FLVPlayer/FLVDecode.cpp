@@ -113,8 +113,10 @@ namespace FLVPlayer
 					if (block.video.packetType == FLV_AVCDecoderConfigurationRecord)
 					{
 						m_qsv.Initialize();
-						g_array.Add(block.video.data, block.video.size);
-
+						if (m_qsv.Open(block.video.data, block.video.size) == MFX_ERR_NONE)
+						{
+							INT a = 0;
+						}
 						if (!m_x264->Initialize(m_size, m_size))
 						{
 							goto _ERROR;
@@ -136,20 +138,12 @@ namespace FLVPlayer
 								SAFE_DELETE_ARRAY(block.video.data);
 								continue;
 							}
-							g_array.Add(block.video.data, block.video.size);
-							if (m_qsv.Open(g_array.GetPointer(), g_array.GetSize()) == MFX_ERR_NONE)
-							{
-								m_qsv.Decode(block.pts);
-							}					
 							m_bFirstI = TRUE;
 						}
-						else
+						if (m_qsv.Decode(block.video.data, block.video.size, block.pts) == MFX_ERR_MORE_DATA)
 						{
-							if (m_qsv.Decode(block.video.data, block.video.size, block.pts) == MFX_ERR_NONE)
-							{
-								//TODO
-								INT a = 0;
-							}
+							//TODO
+							INT a = 0;
 						}
 						ZeroMemory(&tag, sizeof(tag));
 						tag.size = block.video.size;
