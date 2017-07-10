@@ -21,10 +21,10 @@ namespace QSV
 		mfxVideoParam						m_vppParams;
 		mfxBitstream						m_bitstream;
 		MFXVideoSession						m_session;
-		MFXVideoDECODE						m_videoDECODE;
 		mfxFrameAllocator					m_allocator;
 		mfxFrameAllocRequest				m_request;
 		mfxFrameAllocResponse				m_response;
+		TinyScopedPtr<MFXVideoDECODE>		m_videoDECODE;
 		TinyScopedPtr<mfxFrameSurface1*>	m_decodeSF;
 		FILE*								m_hFile;
 	};

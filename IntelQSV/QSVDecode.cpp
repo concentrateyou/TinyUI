@@ -5,8 +5,7 @@ namespace QSV
 {
 	QSVDecode::QSVDecode()
 		:m_currentSF(NULL),
-		m_hFile(NULL),
-		m_videoDECODE(m_session)
+		m_hFile(NULL)
 	{
 		fopen_s(&m_hFile, "D:\\test1.yuv", "wb");
 	}
@@ -18,9 +17,7 @@ namespace QSV
 	}
 	mfxStatus QSVDecode::Initialize()
 	{
-		memset(&m_videoParams, 0, sizeof(m_videoParams));
-		m_videoParams.mfx.CodecId = MFX_CODEC_AVC;
-		m_videoParams.IOPattern = MFX_IOPATTERN_OUT_VIDEO_MEMORY;
+
 		mfxIMPL impl = MFX_IMPL_HARDWARE_ANY;
 		mfxVersion ver = { { 0, 1 } };
 		mfxStatus status = ::Initialize(impl, ver, &m_session, &m_allocator);
@@ -36,11 +33,16 @@ namespace QSV
 	{
 		memcpy_s(m_bitstream.Data, size, bits, size);
 		m_bitstream.DataLength += size;
-		mfxStatus status = m_videoDECODE.DecodeHeader(&m_bitstream, &m_videoParams);
+		m_videoDECODE.Reset(new MFXVideoDECODE(m_session));
+		MSDK_CHECK_POINTER(m_videoDECODE, MFX_ERR_MEMORY_ALLOC);
+		memset(&m_videoParams, 0, sizeof(m_videoParams));
+		m_videoParams.mfx.CodecId = MFX_CODEC_AVC;
+		m_videoParams.IOPattern = MFX_IOPATTERN_OUT_VIDEO_MEMORY;
+		mfxStatus status = m_videoDECODE->DecodeHeader(&m_bitstream, &m_videoParams);
 		MSDK_IGNORE_MFX_STS(status, MFX_WRN_PARTIAL_ACCELERATION);
 		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
 		memset(&m_request, 0, sizeof(m_request));
-		status = m_videoDECODE.QueryIOSurf(&m_videoParams, &m_request);
+		status = m_videoDECODE->QueryIOSurf(&m_videoParams, &m_request);
 		MSDK_IGNORE_MFX_STS(status, MFX_WRN_PARTIAL_ACCELERATION);
 		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
 		m_request.Type |= WILL_READ;
@@ -55,7 +57,7 @@ namespace QSV
 			memcpy(&(m_decodeSF[i]->Info), &(m_videoParams.mfx.FrameInfo), sizeof(mfxFrameInfo));
 			m_decodeSF[i]->Data.MemId = m_response.mids[i];
 		}
-		status = m_videoDECODE.Init(&m_videoParams);
+		status = m_videoDECODE->Init(&m_videoParams);
 		MSDK_IGNORE_MFX_STS(status, MFX_WRN_PARTIAL_ACCELERATION);
 		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
 		return status;
@@ -64,6 +66,8 @@ namespace QSV
 
 	mfxStatus QSVDecode::Decode(LONGLONG timestamp)
 	{
+		if (!m_videoDECODE)
+			return MFX_ERR_NULL_PTR;
 		mfxStatus status = MFX_ERR_NONE;
 		m_bitstream.TimeStamp = timestamp;
 		INT index = 0;
@@ -78,7 +82,7 @@ namespace QSV
 				index = GetFreeSurfaceIndex(m_decodeSF, m_request.NumFrameSuggested);
 				MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index, MFX_ERR_MEMORY_ALLOC);
 			}
-			status = m_videoDECODE.DecodeFrameAsync(&m_bitstream, m_decodeSF[index], &m_currentSF, &m_syncPoint);
+			status = m_videoDECODE->DecodeFrameAsync(&m_bitstream, m_decodeSF[index], &m_currentSF, &m_syncPoint);
 			if (MFX_ERR_NONE < status && m_syncPoint)
 			{
 				status = MFX_ERR_NONE;
@@ -101,6 +105,8 @@ namespace QSV
 
 	mfxStatus QSVDecode::Decode(BYTE* bits, LONG size, LONGLONG timespan)
 	{
+		if (!m_videoDECODE)
+			return MFX_ERR_NULL_PTR;
 		mfxStatus status = MFX_ERR_NONE;
 		m_bitstream.TimeStamp = timespan;
 		memcpy_s(m_bitstream.Data + m_bitstream.DataOffset, size, bits, size);
@@ -117,7 +123,7 @@ namespace QSV
 				index = GetFreeSurfaceIndex(m_decodeSF, m_request.NumFrameSuggested);
 				MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index, MFX_ERR_MEMORY_ALLOC);
 			}
-			status = m_videoDECODE.DecodeFrameAsync(&m_bitstream, m_decodeSF[index], &m_currentSF, &m_syncPoint);
+			status = m_videoDECODE->DecodeFrameAsync(&m_bitstream, m_decodeSF[index], &m_currentSF, &m_syncPoint);
 			if (MFX_ERR_NONE < status && m_syncPoint)
 			{
 				status = MFX_ERR_NONE;
@@ -130,7 +136,7 @@ namespace QSV
 			{
 				status = m_allocator.Lock(m_allocator.pthis, m_currentSF->Data.MemId, &(m_currentSF->Data));
 				MSDK_BREAK_ON_ERROR(status);
-			
+
 				status = m_allocator.Unlock(m_allocator.pthis, m_currentSF->Data.MemId, &(m_currentSF->Data));
 				MSDK_BREAK_ON_ERROR(status);
 			}
@@ -140,7 +146,8 @@ namespace QSV
 
 	mfxStatus QSVDecode::Close()
 	{
-		m_videoDECODE.Close();
+		if (m_videoDECODE != NULL)
+			m_videoDECODE->Close();
 		for (INT i = 0; i < m_request.NumFrameSuggested; i++)
 		{
 			SAFE_DELETE(m_decodeSF[i]);
