@@ -80,11 +80,13 @@ namespace QSV
 		{
 			memmove_s(m_bitstream.Data, m_bitstream.DataLength, m_bitstream.Data + m_bitstream.DataLength, m_bitstream.DataLength);
 			m_bitstream.DataOffset = 0;
+			ASSERT((m_bitstream.DataLength + size) <= m_bitstream.MaxLength);
 			value = min(size, m_bitstream.MaxLength - m_bitstream.DataLength);
 			memcpy_s(m_bitstream.Data + m_bitstream.DataLength, value, bits, value);
 		}
 		else
 		{
+			ASSERT((m_bitstream.DataLength + size) <= m_bitstream.MaxLength);
 			if (m_bitstream.DataLength > 0)
 			{
 				memcpy_s(m_bitstream.Data + m_bitstream.DataLength, size, bits, size);
@@ -114,7 +116,7 @@ namespace QSV
 			}
 			if (MFX_ERR_NONE == status)
 			{
-				status = m_session.SyncOperation(m_syncPoint, INFINITE);
+				status = m_session.SyncOperation(m_syncPoint, 60000);
 			}
 			if (MFX_ERR_NONE == status)
 			{

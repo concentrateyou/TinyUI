@@ -258,6 +258,40 @@ mfxStatus WriteRawFrame(mfxFrameSurface1* pSurface, FILE* fSink)
     return sts;
 }
 
+mfxStatus WriteRwaRGBFrame(mfxFrameSurface1* pSurface, FILE* fSink)
+{
+	if (!fSink)
+	{
+		static int frameCount = 0;
+		if (1000 == frameCount++)
+			return MFX_ERR_MORE_DATA;
+		else
+			return MFX_ERR_NONE;
+	}
+
+	size_t nBytesRead;
+	mfxU16 w, h;
+	mfxFrameInfo* pInfo = &pSurface->Info;
+
+	if (pInfo->CropH > 0 && pInfo->CropW > 0)
+	{
+		w = pInfo->CropW;
+		h = pInfo->CropH;
+	}
+	else {
+		w = pInfo->Width;
+		h = pInfo->Height;
+	}
+
+	for (mfxU16 i = 0; i < h; i++)
+	{
+		nBytesRead = fwrite(pSurface->Data.B + i * pSurface->Data.Pitch, 1, w * 4, fSink);
+		if ((size_t)(w * 4) != nBytesRead)
+			return MFX_ERR_MORE_DATA;
+	}
+	return MFX_ERR_NONE;
+}
+
 int GetFreeTaskIndex(Task* pTaskPool, mfxU16 nPoolSize)
 {
     if (pTaskPool)
