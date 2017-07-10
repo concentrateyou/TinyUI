@@ -103,6 +103,7 @@ namespace FLVPlayer
 		BOOL	Close(DWORD dwMs) OVERRIDE;
 	private:
 		void	OnMessagePump();
+		void	OnQSV(BYTE* bits, LONG size, INT pts);
 	private:
 		BOOL						m_bFirstI;
 		TinyLock					m_lockTime;

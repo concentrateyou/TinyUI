@@ -10,22 +10,23 @@ namespace QSV
 		QSVDecode();
 		virtual ~QSVDecode();
 		mfxStatus Initialize();
-		mfxStatus Initialize(Callback<void(BYTE*, LONG, INT)>&& callback);
 		mfxStatus Open(BYTE* bits, LONG size);
+		mfxStatus Decode(LONGLONG timestamp);
 		mfxStatus Decode(BYTE* bits, LONG size, LONGLONG timestamp);
 		mfxStatus Close();
 	private:
-		mfxSyncPoint						m_syncp;
+		mfxFrameSurface1*					m_currentSF;
+		mfxSyncPoint						m_syncPoint;
 		mfxVideoParam						m_videoParams;
+		mfxVideoParam						m_vppParams;
 		mfxBitstream						m_bitstream;
 		MFXVideoSession						m_session;
-		mfxFrameSurface1*					m_surface;
+		MFXVideoDECODE						m_videoDECODE;
 		mfxFrameAllocator					m_allocator;
-		mfxFrameAllocRequest				m_allocRequest;
-		mfxFrameAllocResponse				m_allocResponse;
-		TinyScopedPtr<mfxFrameSurface1*>	m_surfaces;
-		TinyScopedPtr<MFXVideoDECODE>		m_videoDECODE;
-		Callback<void(BYTE*, LONG, INT)>	m_callback;
+		mfxFrameAllocRequest				m_request;
+		mfxFrameAllocResponse				m_response;
+		TinyScopedPtr<mfxFrameSurface1*>	m_decodeSF;
+		FILE*								m_hFile;
 	};
 }
 
