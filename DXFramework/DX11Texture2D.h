@@ -27,6 +27,7 @@ namespace DXFramework
 		virtual BOOL Load(DX11& dx11, const CHAR* pzFile);
 		virtual BOOL Copy(DX11& dx11, ID3D11Texture2D* texture2D);
 		virtual BOOL Copy(DX11& dx11, DX11Texture2D& texture2D);
+		virtual BOOL Copy(DX11& dx11, D3D11_BOX* ps, const BYTE* bits, LONG size, UINT rowPitch, UINT depthPitch);
 		virtual void Destory();
 	public:
 		BOOL GetDC(BOOL discard, HDC& hDC);

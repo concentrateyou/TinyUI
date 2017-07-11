@@ -146,7 +146,7 @@ namespace MShow
 	void MImageController::OnImage(BYTE* bits, LONG size)
 	{
 		TinySize imageSize = m_image.GetSize();
-		if (m_image2D.Copy(m_graphics.GetDX11(), bits, size, imageSize.cx * 4))
+		if (m_image2D.Copy(m_graphics.GetDX11(), NULL, bits, size))
 		{
 			m_graphics.GetDX11().SetRenderTexture2D(NULL);
 			m_graphics.GetDX11().GetRender2D()->BeginDraw();

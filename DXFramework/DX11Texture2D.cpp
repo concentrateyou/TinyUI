@@ -188,6 +188,14 @@ namespace DXFramework
 		return TRUE;
 	}
 
+	BOOL DX11Texture2D::Copy(DX11& dx11, D3D11_BOX* ps, const BYTE* bits, LONG size, UINT rowPitch, UINT depthPitch)
+	{
+		if (!m_texture2D || !bits || size <= 0)
+			return FALSE;
+		dx11.GetImmediateContext()->UpdateSubresource(m_texture2D, 0, ps, static_cast<const void*>(bits), rowPitch, depthPitch);
+		return TRUE;
+	}
+
 	BOOL DX11Texture2D::Load(DX11& dx11, const CHAR* pzFile)
 	{
 		ASSERT(pzFile);

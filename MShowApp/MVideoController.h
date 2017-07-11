@@ -59,7 +59,6 @@ namespace MShow
 		MVideoView&		m_view;
 		DX11Graphics2D	m_graphics;
 		DX11Image2D		m_video2D;
-		DX11Image2D		m_copy2D;
 		MFLVPlayer		m_player;
 		TinyEvent		m_signal;
 		MVideoElement*	m_pVideo;

@@ -87,17 +87,13 @@ namespace MShow
 		if (!m_player.Open(m_view.Handle(), pzURL))
 			goto L_ERROR;
 		size = m_player.GetSize();
-		if (!m_copy2D.Create(m_graphics.GetDX11(), size, TRUE))
-			goto L_ERROR;
-		m_copy2D.SetScale(size);
-		if (!m_video2D.Create(m_graphics.GetDX11(), size, FALSE, FALSE))
+		if (!m_video2D.Create(m_graphics.GetDX11(), size, TRUE))
 			goto L_ERROR;
 		m_view.GetClientRect(&rectangle);
 		m_video2D.SetScale(rectangle.Size());
 		return TRUE;
 	L_ERROR:
 		m_player.Close();
-		m_copy2D.Destory();
 		m_video2D.Destory();
 		return FALSE;
 	}
@@ -106,7 +102,6 @@ namespace MShow
 	{
 		if (m_player.Close())
 		{
-			m_copy2D.Destory();
 			m_video2D.Destory();
 			return TRUE;
 		}
@@ -120,7 +115,7 @@ namespace MShow
 
 	HANDLE MVideoController::GetHandle()
 	{
-		DX11Texture2D* ps = m_copy2D.GetTexture2D();
+		DX11Texture2D* ps = m_video2D.GetTexture2D();
 		if (ps && !ps->IsEmpty())
 		{
 			return ps->GetHandle();
@@ -140,19 +135,14 @@ namespace MShow
 
 	void MVideoController::OnVideo(BYTE* bits, LONG size)
 	{
-		for (INT a = 0;a < 100;a++)
-		{
-			INT b = a;
-		}
 		TinySize videoSize = m_player.GetSize();
-		if (m_video2D.Copy(m_graphics.GetDX11(), bits, size, videoSize.cx * 4))
+		if (m_video2D.Copy(m_graphics.GetDX11(), NULL, bits, size))
 		{
 			m_graphics.GetDX11().SetRenderTexture2D(NULL);
 			m_graphics.GetDX11().GetRender2D()->BeginDraw();
 			m_graphics.DrawImage(&m_video2D, 1.0F, 1.0F);
 			m_graphics.GetDX11().GetRender2D()->EndDraw();
 			m_graphics.Present();
-			m_copy2D.Copy(m_graphics.GetDX11(), &m_video2D);
 			m_signal.SetEvent();
 		}
 	}

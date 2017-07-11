@@ -55,7 +55,7 @@ namespace MShow
 	void MPlayController::OnVideo(BYTE* bits, LONG size)
 	{
 		TinySize videoSize = m_player.GetSize();
-		if (m_video2D.Copy(m_graphics.GetDX11(), bits, size, videoSize.cx * 4))
+		if (m_video2D.Copy(m_graphics.GetDX11(),NULL, bits, size))
 		{
 			m_graphics.GetDX11().SetRenderTexture2D(NULL);
 			m_graphics.GetDX11().GetRender2D()->BeginDraw();

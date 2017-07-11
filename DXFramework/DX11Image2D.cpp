@@ -131,7 +131,7 @@ namespace DXFramework
 	{
 		if (!image2D)
 			return FALSE;
-		return Copy(dx11,image2D->GetTexture2D());
+		return Copy(dx11, image2D->GetTexture2D());
 	}
 
 	BOOL DX11Image2D::Map(DX11& dx11, BYTE *&lpData, UINT &pitch)
@@ -142,16 +142,22 @@ namespace DXFramework
 	{
 		m_texture.Unmap(dx11);
 	}
-	BOOL DX11Image2D::Copy(DX11& dx11, const BYTE* bits, LONG size, INT stride)
+	BOOL DX11Image2D::Copy(DX11& dx11, D3D11_BOX* ps, const BYTE* bits, LONG size)
 	{
-		if (m_texture.IsEmpty())
+		if (m_texture.IsEmpty() || !bits || size <= 0)
+			return FALSE;
+		return m_texture.Copy(dx11, ps, bits, size, m_size.cx * 4, m_size.cx * m_size.cy * 4);
+	}
+	BOOL DX11Image2D::Copy(DX11& dx11, const BYTE* bits, LONG size, UINT stride)
+	{
+		if (m_texture.IsEmpty() || !bits || size <= 0)
 			return FALSE;
 		BYTE* bitso = NULL;
 		UINT linesize = 0;
-		INT rowcopy = (stride < linesize) ? stride : linesize;
+		UINT rowcopy = (stride < linesize) ? stride : linesize;
 		if (m_texture.Map(dx11, bitso, linesize))
 		{
-			INT rowcopy = (stride < linesize) ? stride : linesize;
+			UINT rowcopy = (stride < linesize) ? stride : linesize;
 			if (linesize == rowcopy)
 			{
 				memcpy(bitso, bits, linesize * m_size.cy);
