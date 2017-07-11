@@ -43,13 +43,14 @@ namespace TinyUI
 			m_pBlocks->Destory();
 			m_pBlocks = NULL;
 			m_pNodeFree = NULL;
+			m_count = 0;
+			m_cbElement = 0;
 		}
 
 		void* TinyFixedAllocNoSync::Alloc()
 		{
 			if (m_pNodeFree == NULL)
 			{
-				TRACE("TinyFixedAllocNoSync New Alloc\n");
 				TinyPlex* pNewBlock = TinyPlex::Create(m_pBlocks, m_count, m_cbElement);
 				TinyNode* pNode = (TinyNode*)pNewBlock->data();
 				(BYTE*&)pNode += (m_cbElement * m_count) - m_cbElement;
