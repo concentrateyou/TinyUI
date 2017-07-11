@@ -64,6 +64,7 @@ namespace FLVPlayer
 		BOOL	Close(DWORD dwMs) OVERRIDE;
 	private:
 		void	OnMessagePump();
+		void	OnQSV(Media::SampleTag& tag);
 	public:
 		TinyLock	m_lock;
 		TinyEvent	m_close;

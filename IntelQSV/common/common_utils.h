@@ -77,7 +77,8 @@ mfxStatus LoadRawRGBFrame(mfxFrameSurface1* pSurface, FILE* fSource);
 
 // Write raw YUV (NV12) surface to YUV (YV12) file
 mfxStatus WriteRawFrame(mfxFrameSurface1* pSurface, FILE* fSink);
-mfxStatus WriteRwaRGBFrame(mfxFrameSurface1* pSurface, FILE* fSink);
+mfxStatus WriteRawRGBFrame(mfxFrameSurface1* pSurface, FILE* fSink);
+mfxStatus SaveRawRGBFrame(mfxFrameSurface1* pSurface);
 // Write bit stream data for frame to file
 mfxStatus WriteBitStreamFrame(mfxBitstream* pMfxBitstream, FILE* fSink);
 // Read bit stream data from file. Stream is read as large chunks (= many frames)

@@ -28,7 +28,7 @@ namespace FLVPlayer
 	{
 		//if (m_reader.OpenURL("rtmp://live.hkstv.hk.lxdns.com/live/hks"))
 		//if (m_reader.OpenURL("rtmp://10.10.13.98/live/lb_xijudianying_720p"))
-		if (m_reader.OpenFile("D:\\File\\2.flv"))
+		if (m_reader.OpenFile("D:\\2.flv"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);
@@ -52,8 +52,6 @@ namespace FLVPlayer
 		m_audioTask.Close(dwMS);
 		return TinyTaskBase::Close(dwMS);
 	}
-
-	TinyBufferArray<BYTE> g_array;
 
 	void FLVDecode::OnMessagePump()
 	{
@@ -113,18 +111,18 @@ namespace FLVPlayer
 					if (block.video.packetType == FLV_AVCDecoderConfigurationRecord)
 					{
 						m_qsv.Initialize();
-						if (m_qsv.Open(block.video.data, block.video.size) == MFX_ERR_NONE)
+						if (m_qsv.Open(block.video.data, block.video.size) != MFX_ERR_NONE)
 						{
-							INT a = 0;
+							goto _ERROR;
 						}
-						if (!m_x264->Initialize(m_size, m_size))
+						/*if (!m_x264->Initialize(m_size, m_size))
 						{
 							goto _ERROR;
 						}
 						if (!m_x264->Open(block.video.data, block.video.size))
 						{
 							goto _ERROR;
-						}
+						}*/
 						SAFE_DELETE_ARRAY(block.audio.data);
 						SAFE_DELETE_ARRAY(block.video.data);
 					}
@@ -139,11 +137,6 @@ namespace FLVPlayer
 								continue;
 							}
 							m_bFirstI = TRUE;
-						}
-						if (m_qsv.Decode(block.video.data, block.video.size, block.pts) == MFX_ERR_MORE_DATA)
-						{
-							//TODO
-							INT a = 0;
 						}
 						ZeroMemory(&tag, sizeof(tag));
 						tag.size = block.video.size;
@@ -343,8 +336,19 @@ namespace FLVPlayer
 		m_close.SetEvent();
 		return TinyTaskBase::Close(dwMS);
 	}
+
+	void FLVVideoTask::OnQSV(Media::SampleTag& tag)
+	{
+		if (m_decode.m_basePTS == -1)
+		{
+			m_decode.m_basePTS = tag.samplePTS;
+		}
+		m_queue.Push(tag);
+	}
+
 	void FLVVideoTask::OnMessagePump()
 	{
+		m_decode.m_qsv.SetCallback(BindCallback(&FLVVideoTask::OnQSV, this));
 		for (;;)
 		{
 			if (m_close.Lock(0))
@@ -360,9 +364,8 @@ namespace FLVPlayer
 			SampleTag tag = m_decode.m_videoQueue.Pop();
 			if (tag.size > 0)
 			{
-				BYTE* bo = NULL;
-				LONG  so = 0;
-				if (m_decode.m_x264->Decode(tag, bo, so))
+				mfxStatus status = m_decode.m_qsv.Decode(tag);
+				/*if (m_decode.m_x264->Decode(tag, bo, so))
 				{
 					SAFE_DELETE_ARRAY(tag.bits);
 					tag.bits = new BYTE[so];
@@ -379,7 +382,7 @@ namespace FLVPlayer
 				else
 				{
 					SAFE_DELETE_ARRAY(tag.bits);
-				}
+				}*/
 			}
 		}
 	}

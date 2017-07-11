@@ -2,6 +2,7 @@
 #include "Common/TinyCommon.h"
 #include "Render/TinyGDI.h"
 #include "Common/TinyCallback.h"
+#include "Media/TinyMedia.h"
 #include "common/common_utils.h"
 #include <vector>
 #include <dxgi.h>

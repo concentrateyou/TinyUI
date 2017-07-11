@@ -11,21 +11,26 @@ namespace QSV
 		virtual ~QSVDecode();
 		mfxStatus Initialize();
 		mfxStatus Open(BYTE* bits, LONG size);
-		mfxStatus Decode(BYTE* bits, LONG size, LONGLONG timestamp);
+		mfxStatus Decode(Media::SampleTag& tag);
 		mfxStatus Close();
+	public:
+		void SetCallback(Callback<void(Media::SampleTag&)>&& callback);
 	private:
-		mfxFrameSurface1*					m_currentSF;
-		mfxSyncPoint						m_syncPoint;
-		mfxVideoParam						m_videoParams;
-		mfxVideoParam						m_vppParams;
 		mfxBitstream						m_bitstream;
+		mfxFrameSurface1*					m_currentSF;
+		mfxSyncPoint						m_syncDECODE;
+		mfxSyncPoint						m_syncpVPP;
+		mfxVideoParam						m_vppParam;
+		mfxVideoParam						m_videoParam;
 		MFXVideoSession						m_session;
 		mfxFrameAllocator					m_allocator;
-		mfxFrameAllocRequest				m_request;
 		mfxFrameAllocResponse				m_response;
+		mfxFrameAllocResponse				m_reponses[2];
 		TinyScopedPtr<MFXVideoDECODE>		m_videoDECODE;
-		TinyScopedPtr<mfxFrameSurface1*>	m_decodeSF;
-		FILE*								m_hFile;
+		TinyScopedPtr<MFXVideoVPP>			m_videoVPP;
+		TinyScopedPtr<mfxFrameSurface1*>	m_videoISF;
+		TinyScopedPtr<mfxFrameSurface1*>	m_videoOSF;
+		Callback<void(Media::SampleTag&)>	m_callback;
 	};
 }
 
