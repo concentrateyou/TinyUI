@@ -57,8 +57,8 @@ namespace QSV
 		MSDK_CHECK_RESULT(status, MFX_ERR_NONE, status);
 		//VPP
 		ZeroMemory(&m_vppParam, sizeof(m_vppParam));
-		m_vppParam.vpp.In.FourCC = m_videoParam.vpp.In.FourCC;
-		m_vppParam.vpp.In.ChromaFormat = m_videoParam.vpp.In.ChromaFormat;
+		m_vppParam.vpp.In.FourCC = MFX_FOURCC_NV12;
+		m_vppParam.vpp.In.ChromaFormat = MFX_CHROMAFORMAT_YUV420;
 		m_vppParam.vpp.In.PicStruct = m_videoParam.vpp.In.PicStruct;
 		m_vppParam.vpp.In.FrameRateExtN = 30;
 		m_vppParam.vpp.In.FrameRateExtD = 1;
@@ -158,6 +158,7 @@ namespace QSV
 			ASSERT((m_bitstream.DataLength + tag.size) <= m_bitstream.MaxLength);
 			value = min(static_cast<mfxU32>(tag.size), m_bitstream.MaxLength - m_bitstream.DataLength);
 			memcpy_s(m_bitstream.Data + m_bitstream.DataLength, value, tag.bits, value);
+			SAFE_DELETE_ARRAY(tag.bits);
 		}
 		else
 		{
@@ -165,10 +166,12 @@ namespace QSV
 			if (m_bitstream.DataLength > 0)
 			{
 				memcpy_s(m_bitstream.Data + m_bitstream.DataLength, tag.size, tag.bits, tag.size);
+				SAFE_DELETE_ARRAY(tag.bits);
 			}
 			else
 			{
 				memcpy_s(m_bitstream.Data + m_bitstream.DataOffset, tag.size, tag.bits, tag.size);
+				SAFE_DELETE_ARRAY(tag.bits);
 			}
 		}
 		m_bitstream.DataLength += tag.size;
