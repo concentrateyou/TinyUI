@@ -38,7 +38,7 @@ namespace DXFramework
 		textureDesc.SampleDesc.Quality = 0;
 		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
 		textureDesc.MiscFlags = bShared ? D3D11_RESOURCE_MISC_SHARED | D3D11_RESOURCE_MISC_GDI_COMPATIBLE : D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
-		textureDesc.Usage = D3D11_USAGE_DEFAULT;
+		textureDesc.Usage = D3D11_USAGE_DEFAULT;//GPU快速读写
 		HRESULT hRes = dx11.GetD3D()->CreateTexture2D(&textureDesc, NULL, &m_texture2D);
 		if (hRes != S_OK)
 			return FALSE;
@@ -133,6 +133,8 @@ namespace DXFramework
 		textureDesc.SampleDesc.Quality = 0;
 		textureDesc.BindFlags = bReadoly ? 0 : D3D11_BIND_SHADER_RESOURCE;
 		textureDesc.CPUAccessFlags = bReadoly ? D3D11_CPU_ACCESS_READ : D3D11_CPU_ACCESS_WRITE;
+		//D3D11_USAGE_DYNAMIC 快速的CPU写和较慢的GPU读 Map/Unmap
+		//D3D11_USAGE_STAGING 读取GPU数据 Map/Unmap
 		textureDesc.Usage = bReadoly ? D3D11_USAGE_STAGING : D3D11_USAGE_DYNAMIC;
 		D3D11_SUBRESOURCE_DATA dsd;
 		D3D11_SUBRESOURCE_DATA *lpSRD = NULL;
