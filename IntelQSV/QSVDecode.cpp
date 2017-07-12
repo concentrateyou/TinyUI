@@ -60,8 +60,8 @@ namespace QSV
 		m_vppParam.vpp.In.FourCC = MFX_FOURCC_NV12;
 		m_vppParam.vpp.In.ChromaFormat = MFX_CHROMAFORMAT_YUV420;
 		m_vppParam.vpp.In.PicStruct = m_videoParam.vpp.In.PicStruct;
-		m_vppParam.vpp.In.FrameRateExtN = 30;
-		m_vppParam.vpp.In.FrameRateExtD = 1;
+		m_vppParam.vpp.In.FrameRateExtN = m_videoParam.vpp.In.FrameRateExtN;
+		m_vppParam.vpp.In.FrameRateExtD = m_videoParam.vpp.In.FrameRateExtD;
 		m_vppParam.vpp.In.CropW = m_videoParam.vpp.In.CropW;
 		m_vppParam.vpp.In.CropH = m_videoParam.vpp.In.CropH;
 		m_vppParam.vpp.In.Width = m_videoParam.vpp.In.Width;
@@ -69,8 +69,8 @@ namespace QSV
 		m_vppParam.vpp.Out.FourCC = MFX_FOURCC_RGB4;
 		m_vppParam.vpp.Out.ChromaFormat = MFX_CHROMAFORMAT_YUV420;
 		m_vppParam.vpp.Out.PicStruct = MFX_PICSTRUCT_PROGRESSIVE;
-		m_vppParam.vpp.Out.FrameRateExtN = 30;
-		m_vppParam.vpp.Out.FrameRateExtD = 1;
+		m_vppParam.vpp.Out.FrameRateExtN = m_videoParam.vpp.In.FrameRateExtN;
+		m_vppParam.vpp.Out.FrameRateExtD = m_videoParam.vpp.In.FrameRateExtD;
 		m_vppParam.vpp.Out.CropW = m_videoParam.vpp.In.CropW;
 		m_vppParam.vpp.Out.CropH = m_videoParam.vpp.In.CropH;
 		m_vppParam.vpp.Out.Width = m_videoParam.vpp.In.Width;
