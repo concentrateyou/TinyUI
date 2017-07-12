@@ -6,6 +6,7 @@
 #include "FLVFrameUI.h"
 #include "FFPlayer.h"
 #include "FLVParser.h"
+#include "QSVView.h"
 
 using namespace FLVPlayer;
 
@@ -57,8 +58,8 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_FLVPLAYER));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	FLVFrameUI uiImpl;
-	uiImpl.Create(NULL, 50, 50, 1300, 840);
+	QSVView uiImpl;
+	uiImpl.Create(NULL, 50, 50, 800, 600);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();
 	INT loopRes = theLoop.MessageLoop();

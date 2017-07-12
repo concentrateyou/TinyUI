@@ -239,24 +239,34 @@ mfxStatus WriteRawFrame(mfxFrameSurface1* pSurface, FILE* fSink)
 	mfxU32 i, j, h, w;
 	mfxStatus sts = MFX_ERR_NONE;
 
-	for (i = 0; i < pInfo->CropH; i++)
-		sts =
-		WriteSection(pData->Y, 1, pInfo->CropW, pInfo, pData, i, 0,
-			fSink);
 
+	if (pData->Y)
+	{
+		for (i = 0; i < pInfo->CropH; i++)
+		{
+			sts = WriteSection(pData->Y, 1, pInfo->CropW, pInfo, pData, i, 0, fSink);
+		}
+	}
 	h = pInfo->CropH / 2;
 	w = pInfo->CropW;
-	for (i = 0; i < h; i++)
-		for (j = 0; j < w; j += 2)
-			sts =
-			WriteSection(pData->UV, 2, 1, pInfo, pData, i, j,
-				fSink);
-	for (i = 0; i < h; i++)
-		for (j = 1; j < w; j += 2)
-			sts =
-			WriteSection(pData->UV, 2, 1, pInfo, pData, i, j,
-				fSink);
 
+	if (pData->UV)
+	{
+		for (i = 0; i < h; i++)
+		{
+			for (j = 0; j < w; j += 2)
+			{
+				sts = WriteSection(pData->UV, 2, 1, pInfo, pData, i, j, fSink);
+			}
+		}
+		for (i = 0; i < h; i++)
+		{
+			for (j = 1; j < w; j += 2)
+			{
+				sts = WriteSection(pData->UV, 2, 1, pInfo, pData, i, j, fSink);
+			}
+		}
+	}
 	return sts;
 }
 
