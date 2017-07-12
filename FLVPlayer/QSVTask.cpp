@@ -5,7 +5,8 @@
 namespace FLVPlayer
 {
 	QSVTask::QSVTask()
-		:m_hFile(NULL)
+		:m_hFile(NULL),
+		m_size(NULL)
 	{
 
 	}
@@ -15,7 +16,7 @@ namespace FLVPlayer
 	}
 	BOOL QSVTask::Initialize(HWND hWND)
 	{
-		if (!m_reader.OpenFile("D:\\2.flv"))
+		if (!m_reader.OpenFile("D:\\File\\3.flv"))
 			return FALSE;
 		TinySize size(static_cast<LONG>(m_reader.GetScript().width), static_cast<LONG>(m_reader.GetScript().height));
 		TinyRectangle rectangle;
@@ -100,6 +101,7 @@ namespace FLVPlayer
 		status = m_allocator.Lock(m_allocator.pthis, surface1->Data.MemId, &(surface1->Data));
 		if (status != MFX_ERR_NONE)
 			goto _ERROR;
+
 		status = WriteRawFrame(surface1, m_hFile);
 		if (status != MFX_ERR_NONE)
 			goto _ERROR;

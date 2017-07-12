@@ -44,6 +44,8 @@ namespace FLVPlayer
 		mfxFrameSurface1**				m_pmfxSurfaces;
 		TinyScopedPtr<MFXVideoDECODE>	m_videoDECODE;
 		TinyScopedArray<BYTE>			m_bits;
+		TinyScopedArray<BYTE>			m_buffer;
+		LONG							m_size;
 	};
 }
 

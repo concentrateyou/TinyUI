@@ -28,14 +28,14 @@ namespace FLVPlayer
 	private:
 		void		OnMessagePump();
 		mfxStatus	OnInvoke();
-		mfxStatus	OnVideo(const BYTE* bi, LONG si, LONGLONG timestamp, mfxFrameSurface1*& surface1);
-		mfxStatus	OnVideo1(mfxBitstream& stream, mfxFrameSurface1*& surface1);
+		mfxStatus	OnVideo(const BYTE* bi, LONG si, LONGLONG timestamp);
+		mfxStatus	OnVideo1(mfxBitstream& stream);
 	private:
 		FILE*								m_hFile;
 		FLVReader							m_reader;
 		DX11Graphics2D						m_graphics;
 		DX11Image2D							m_video2D;
-
+		mfxFrameSurface1*					m_currentSF;
 		mfxBitstream						m_residial;
 		mfxSyncPoint						m_syncpDECODE;
 		mfxSyncPoint						m_syncpVPP;
@@ -50,6 +50,8 @@ namespace FLVPlayer
 		TinyScopedPtr<mfxFrameSurface1*>	m_videoISF;
 		TinyScopedPtr<mfxFrameSurface1*>	m_videoOSF;
 		TinyScopedArray<BYTE>				m_bits;
+		TinyScopedArray<BYTE>				m_buffer;
+		LONG								m_size;
 	};
 }
 
