@@ -10,6 +10,10 @@ namespace FLVPlayer
 	QSV::~QSV()
 	{
 	}
+	mfxVideoParam& QSV::GetParam()
+	{
+		return m_videoParam;
+	}
 	BOOL QSV::Open(const BYTE* bits, LONG size)
 	{
 		mfxStatus status = MFX_ERR_NONE;

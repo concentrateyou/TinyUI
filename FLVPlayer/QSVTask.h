@@ -26,6 +26,7 @@ namespace FLVPlayer
 		BOOL	Close(DWORD dwMs) OVERRIDE;
 	private:
 		void		OnMessagePump();
+		mfxStatus	OnMessagePump1();
 		mfxStatus	OnInvoke();
 	private:
 		FILE*							m_hFile;
@@ -33,7 +34,8 @@ namespace FLVPlayer
 		DX11Graphics2D					m_graphics;
 		DX11Image2D						m_video2D;
 		QSV								m_qsv;
-		AVFrame*						m_pYUV420;
+		QSVScale						m_qsvScale;
+		AVFrame*						m_pNV12;
 		TinyScopedPtr<BYTE>				m_bits;
 	};
 }

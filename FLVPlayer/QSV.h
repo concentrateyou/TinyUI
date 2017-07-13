@@ -15,7 +15,6 @@ using namespace DXFramework;
 namespace FLVPlayer
 {
 #define MAX_STREAM_SIZE (1024 * 1024)
-
 	class QSV
 	{
 	public:
@@ -26,6 +25,7 @@ namespace FLVPlayer
 		BOOL Close();
 		BOOL Lock(mfxFrameSurface1* surface1);
 		BOOL Unlock(mfxFrameSurface1* surface1);
+		mfxVideoParam& GetParam();
 	private:
 		mfxStatus Process(mfxBitstream& stream, mfxFrameSurface1*& surface1);
 	private:
