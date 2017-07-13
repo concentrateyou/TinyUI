@@ -19,7 +19,7 @@ namespace FLVPlayer
 		mfxStatus status = MFX_ERR_NONE;
 		mfxIMPL impl = MFX_IMPL_HARDWARE_ANY;
 		mfxVersion ver = { { 0, 1 } };
-		status = ::Initialize(impl, ver, &m_session, NULL);
+		status = ::Initialize(impl, ver, &m_session, &m_allocator);
 		if (status != MFX_ERR_NONE)
 			return FALSE;
 		m_videoDECODE.Reset(new MFXVideoDECODE(m_session));
@@ -37,7 +37,7 @@ namespace FLVPlayer
 		m_residial.DataLength += size;
 		memset(&m_videoParam, 0, sizeof(m_videoParam));
 		m_videoParam.mfx.CodecId = MFX_CODEC_AVC;
-		m_videoParam.IOPattern = MFX_IOPATTERN_OUT_SYSTEM_MEMORY;
+		m_videoParam.IOPattern = MFX_IOPATTERN_OUT_VIDEO_MEMORY;
 		status = m_videoDECODE->DecodeHeader(&m_residial, &m_videoParam);
 		if (MFX_ERR_MORE_DATA == status)
 		{
@@ -75,10 +75,20 @@ namespace FLVPlayer
 		status = m_videoDECODE->QueryIOSurf(&m_videoParam, &request);
 		if (status != MFX_ERR_NONE && status != MFX_WRN_PARTIAL_ACCELERATION)
 			return FALSE;
+		status = m_allocator.Alloc(m_allocator.pthis, &request, &m_response);
+		if (status != MFX_ERR_NONE)
+			return FALSE;
 		mfxFrameAllocRequest requests[2];//[0]-IN [1]-OUT
 		memset(&requests, 0, sizeof(mfxFrameAllocRequest) * 2);
 		status = m_videoVPP->QueryIOSurf(&m_vppParam, requests);
 		if (status != MFX_ERR_NONE && status != MFX_WRN_PARTIAL_ACCELERATION)
+			return FALSE;
+		requests[1].Type |= WILL_READ;
+		status = m_allocator.Alloc(m_allocator.pthis, &requests[0], &m_responses[0]);
+		if (status != MFX_ERR_NONE)
+			return FALSE;
+		status = m_allocator.Alloc(m_allocator.pthis, &requests[1], &m_responses[1]);
+		if (status != MFX_ERR_NONE)
 			return FALSE;
 		mfxU16 sizeIN = m_response.NumFrameActual + m_responses[0].NumFrameActual;
 		mfxU16 sizeOUT = m_responses[1].NumFrameActual;
@@ -96,11 +106,13 @@ namespace FLVPlayer
 			{
 				memcpy(&(m_videoIN[i]->Info), &(m_videoParam.mfx.FrameInfo), sizeof(mfxFrameInfo));
 				m_videoIN[i]->Data.MemId = m_response.mids[i];
+				ClearRGBSurfaceVMem(m_videoIN[i]->Data.MemId);
 			}
 			else
 			{
 				memcpy(&(m_videoIN[i]->Info), &(m_vppParam.vpp.In), sizeof(mfxFrameInfo));
 				m_videoIN[i]->Data.MemId = m_responses[0].mids[i - m_response.NumFrameActual];
+				ClearRGBSurfaceVMem(m_videoIN[i]->Data.MemId);
 			}
 		}
 		for (mfxU16 i = 0; i < sizeOUT; i++)
@@ -109,6 +121,7 @@ namespace FLVPlayer
 			memset(m_videoOUT[i], 0, sizeof(mfxFrameSurface1));
 			memcpy(&(m_videoOUT[i]->Info), &(m_vppParam.vpp.Out), sizeof(mfxFrameInfo));
 			m_videoOUT[i]->Data.MemId = m_responses[1].mids[i];
+			ClearRGBSurfaceVMem(m_videoOUT[i]->Data.MemId);
 		}
 		status = m_videoDECODE->Init(&m_videoParam);
 		if (status != MFX_ERR_NONE && status != MFX_WRN_PARTIAL_ACCELERATION)

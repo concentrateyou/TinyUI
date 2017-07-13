@@ -5,6 +5,7 @@
 #include "FLVReader.h"
 #include "PacketQueue.h"
 #include "QSV.h"
+#include "x264Decode.h"
 #include "DX11Graphics2D.h"
 
 using namespace Decode;
@@ -27,6 +28,7 @@ namespace FLVPlayer
 	private:
 		void		OnMessagePump();
 		mfxStatus	OnMessagePump1();
+		mfxStatus	OnMessagePump2();
 		mfxStatus	OnInvoke();
 	private:
 		FILE*							m_hFile;
@@ -34,9 +36,10 @@ namespace FLVPlayer
 		DX11Graphics2D					m_graphics;
 		DX11Image2D						m_video2D;
 		QSV								m_qsv;
-		QSVScale						m_qsvScale;
+		x264Decode						m_x264;
 		AVFrame*						m_pNV12;
 		TinyScopedPtr<BYTE>				m_bits;
+		TinyBufferArray<BYTE>			m_buffer;
 	};
 }
 
