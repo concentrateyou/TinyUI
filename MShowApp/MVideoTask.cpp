@@ -93,7 +93,8 @@ namespace MShow
 				sampleTag.size = so;
 				sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
 				memcpy_s(sampleTag.bits + 4, sampleTag.size, bo, so);
-				sampleTag.samplePTS = m_h264.GetYUV420()->pkt_pts;
+				sampleTag.samplePTS = m_h264.GetYUV420()->pts;
+				TRACE("PTS:%d\n", sampleTag.samplePTS);
 				sampleTag.sampleDTS = sampleTag.samplePTS;
 				m_videoQueue.Push(sampleTag);
 			}
