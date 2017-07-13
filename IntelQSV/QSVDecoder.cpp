@@ -130,7 +130,7 @@ namespace QSV
 			return FALSE;
 		return TRUE;
 	}
-	mfxStatus QSVDecoder::Process(mfxBitstream& stream, mfxFrameSurface1*& video)
+	mfxStatus QSVDecoder::Process(mfxBitstream& stream, Media::SampleTag& tag, mfxFrameSurface1*& video)
 	{
 		mfxStatus status = MFX_ERR_NONE;
 		while (stream.DataLength > 0)
@@ -157,33 +157,39 @@ namespace QSV
 			}
 			if (MFX_ERR_NONE == status)
 			{
-				mfxU16 index1 = GetFreeSurfaceIndex(m_videoOUT, m_sizeOUT);
-				MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index1, MFX_ERR_MEMORY_ALLOC);
-				do
-				{
-					status = m_videoVPP->RunFrameVPPAsync(surface, m_videoOUT[index1], NULL, &m_syncpVPP);
-					if (MFX_ERR_MORE_SURFACE == status)
-					{
-						index1 = GetFreeSurfaceIndex(m_videoOUT, m_sizeOUT);
-						MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index1, MFX_ERR_MEMORY_ALLOC);
-					}
-					if (MFX_WRN_DEVICE_BUSY == status)
-					{
-						MSDK_SLEEP(1);
-					}
-				} while (MFX_WRN_DEVICE_BUSY == status || MFX_ERR_MORE_SURFACE == status);
-				if (MFX_ERR_NONE < status && m_syncpVPP)
-				{
-					status = MFX_ERR_NONE;
-				}
+				status = m_session.SyncOperation(m_syncpDECODE, 60000);
 				if (MFX_ERR_NONE == status)
 				{
-					status = m_session.SyncOperation(m_syncpVPP, 60000);
-					if (status == MFX_ERR_NONE)
+					mfxU16 index1 = GetFreeSurfaceIndex(m_videoOUT, m_sizeOUT);
+					MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index1, MFX_ERR_MEMORY_ALLOC);
+					do
 					{
-						video = m_videoOUT[index1];
+						status = m_videoVPP->RunFrameVPPAsync(surface, m_videoOUT[index1], NULL, &m_syncpVPP);
+						if (MFX_ERR_MORE_SURFACE == status)
+						{
+							index1 = GetFreeSurfaceIndex(m_videoOUT, m_sizeOUT);
+							MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index1, MFX_ERR_MEMORY_ALLOC);
+						}
+						if (MFX_WRN_DEVICE_BUSY == status)
+						{
+							MSDK_SLEEP(1);
+						}
+					} while (MFX_WRN_DEVICE_BUSY == status || MFX_ERR_MORE_SURFACE == status);
+					if (MFX_ERR_NONE < status && m_syncpVPP)
+					{
+						status = MFX_ERR_NONE;
 					}
-					return status;
+					if (MFX_ERR_NONE == status)
+					{
+						status = m_session.SyncOperation(m_syncpVPP, 60000);
+						if (status == MFX_ERR_NONE)
+						{
+							tag.samplePTS = m_videoOUT[index1]->Data.TimeStamp;
+							tag.sampleDTS = m_videoOUT[index1]->Data.TimeStamp;
+							video = m_videoOUT[index1];
+						}
+						return status;
+					}
 				}
 			}
 		}
@@ -203,7 +209,7 @@ namespace QSV
 		m_residial.DataLength = 0;
 		memcpy(pData, tag.bits, tag.size);
 		pData += tag.size;
-		mfxStatus status = Process(stream, video);
+		mfxStatus status = Process(stream, tag, video);
 		if (status != MFX_ERR_NONE)
 			return FALSE;
 		m_residial.DataOffset = 0;
@@ -237,8 +243,11 @@ namespace QSV
 		}
 		m_videoIN.Reset(NULL);
 		m_videoOUT.Reset(NULL);
-		m_allocator.Free(m_allocator.pthis, &m_response);
-		m_allocator.Free(m_allocator.pthis, &m_responseVPP);
+		if (m_allocator.pthis != NULL)
+		{
+			m_allocator.Free(m_allocator.pthis, &m_response);
+			m_allocator.Free(m_allocator.pthis, &m_responseVPP);
+		}
 		Release();
 		return TRUE;
 	}

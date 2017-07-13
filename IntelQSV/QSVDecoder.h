@@ -14,7 +14,7 @@ namespace QSV
 		BOOL Decode(Media::SampleTag& tag, mfxFrameSurface1*& video);
 		BOOL Close();
 	private:
-		mfxStatus Process(mfxBitstream& stream, mfxFrameSurface1*& video);
+		mfxStatus Process(mfxBitstream& stream, Media::SampleTag& tag, mfxFrameSurface1*& video);
 	private:
 		mfxU16							m_sizeIN;
 		mfxU16							m_sizeOUT;
