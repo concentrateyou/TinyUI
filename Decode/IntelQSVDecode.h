@@ -21,28 +21,24 @@ using namespace TinyUI;
 
 namespace Decode
 {
-	class x264Decode
+	/// <summary>
+	/// Intel QSV½âÂë
+	/// </summary>
+	class IntelQSVDecode
 	{
-		DISALLOW_COPY_AND_ASSIGN(x264Decode)
+		DISALLOW_COPY_AND_ASSIGN(IntelQSVDecode)
 	public:
-		x264Decode();
-		virtual ~x264Decode();
+		IntelQSVDecode();
+		virtual ~IntelQSVDecode();
+	public:
 		BOOL Initialize(const TinySize& srcsize, const TinySize& dstsize);
 		BOOL Open(BYTE* metadata, LONG size);
-		BOOL Decode(SampleTag& tag, BYTE*& bo, LONG& so);
 		BOOL Close();
-		AVFrame* GetYUV420() const;
-		AVFrame* GetRGB32() const;
 	private:
-		TinySize				m_srcsize;
-		TinySize				m_dstsize;
-		AVPacket				m_packet;
-		AVFrame*				m_pYUV420;
-		AVFrame*				m_pRGB32;
-		AVCodec*				m_codec;
-		SwsContext*				m_sws;
-		AVCodecContext*			m_context;
-		TinyScopedArray<BYTE>	m_bits;
+		AVCodec*		m_codec;
+		AVPacket		m_packet;
+		AVBufferRef*	m_bufferRef;
+		AVCodecContext*	m_context;
 	};
 }
 
