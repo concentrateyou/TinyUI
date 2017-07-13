@@ -158,6 +158,7 @@
     <ClInclude Include="FLVFrameUI.h" />
     <ClInclude Include="FLVPlayer.h" />
     <ClInclude Include="PacketQueue.h" />
+    <ClInclude Include="QSV.h" />
     <ClInclude Include="QSVTask.h" />
     <ClInclude Include="QSVView.h" />
     <ClInclude Include="Resource.h" />
@@ -171,6 +172,7 @@
     <ClCompile Include="FLVFrameUI.cpp" />
     <ClCompile Include="FLVPlayer.cpp" />
     <ClCompile Include="PacketQueue.cpp" />
+    <ClCompile Include="QSV.cpp" />
     <ClCompile Include="QSVTask.cpp" />
     <ClCompile Include="QSVView.cpp" />
     <ClCompile Include="stdafx.cpp">
