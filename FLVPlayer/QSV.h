@@ -30,6 +30,8 @@ namespace FLVPlayer
 	private:
 		mfxStatus Process(mfxBitstream& stream, mfxFrameSurface1*& video);
 	private:
+		mfxU16							m_sizeIN;
+		mfxU16							m_sizeOUT;
 		mfxSyncPoint					m_syncpDECODE;
 		mfxSyncPoint					m_syncpVPP;
 		MFXVideoSession					m_session;
@@ -38,12 +40,13 @@ namespace FLVPlayer
 		mfxVideoParam					m_vppParam;
 		mfxFrameAllocator				m_allocator;
 		mfxFrameAllocResponse			m_response;
-		mfxFrameAllocResponse			m_responses[2];
+		mfxFrameAllocResponse			m_responseVPP;
 		TinyScopedPtr<mfxFrameSurface1*>m_videoIN;
 		TinyScopedPtr<mfxFrameSurface1*>m_videoOUT;
 		TinyScopedPtr<MFXVideoDECODE>	m_videoDECODE;
 		TinyScopedPtr<MFXVideoVPP>		m_videoVPP;
 		TinyScopedArray<BYTE>			m_bits[2];
+		TinyScopedArray<BYTE>			m_videoBits;
 	};
 }
 

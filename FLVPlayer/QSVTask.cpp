@@ -62,9 +62,9 @@ namespace FLVPlayer
 				{
 					if (block.video.packetType == FLV_AVCDecoderConfigurationRecord)
 					{
-						//m_qsv.Open(block.video.data, block.video.size);
-						m_x264.Initialize(size, size);
-						m_x264.Open(block.video.data, block.video.size);
+						m_qsv.Open(block.video.data, block.video.size);
+						//m_x264.Initialize(size, size);
+						//m_x264.Open(block.video.data, block.video.size);
 					}
 					if (block.video.packetType == FLV_NALU)
 					{
@@ -73,39 +73,16 @@ namespace FLVPlayer
 						tag.size = block.video.size;
 						tag.samplePTS = block.pts;
 						tag.sampleDTS = block.dts;
-						BYTE*	bo = NULL;
-						LONG	so = 0;
-						if (m_x264.Decode(tag, bo, so))
-						{
-							/*m_video2D.Copy(m_graphics.GetDX11(), NULL, bo, so);
-							m_graphics.GetDX11().SetRenderTexture2D(NULL);
-							m_graphics.GetDX11().GetRender2D()->BeginDraw();
-							m_graphics.DrawImage(&m_video2D, 1.0F, 1.0F);
-							m_graphics.GetDX11().GetRender2D()->EndDraw();
-							m_graphics.Present();*/
-						}
-						/*mfxFrameSurface1* video = NULL;
+						mfxFrameSurface1* video = NULL;
 						if (m_qsv.Decode(tag, video))
 						{
-							if (m_qsv.Lock(video))
-							{
-								if (m_buffer.GetSize() == 0)
-								{
-									m_buffer.Add(video->Data.B, video->Info.CropH * video->Data.Pitch);
-								}
-								else
-								{
-									m_buffer.Copy(video->Data.B, video->Info.CropH * video->Data.Pitch);
-								}
-								m_qsv.Unlock(video);
-							}
-							m_video2D.Copy(m_graphics.GetDX11(),NULL, m_buffer.GetPointer(), m_buffer.GetSize());
+							m_video2D.Copy(m_graphics.GetDX11(), NULL, video->Data.B, video->Info.CropH * video->Data.Pitch);
 							m_graphics.GetDX11().SetRenderTexture2D(NULL);
 							m_graphics.GetDX11().GetRender2D()->BeginDraw();
 							m_graphics.DrawImage(&m_video2D, 1.0F, 1.0F);
 							m_graphics.GetDX11().GetRender2D()->EndDraw();
 							m_graphics.Present();
-						}*/
+						}
 					}
 					SAFE_DELETE_ARRAY(block.audio.data);
 					SAFE_DELETE_ARRAY(block.video.data);
@@ -122,8 +99,8 @@ namespace FLVPlayer
 	void QSVTask::OnMessagePump()
 	{
 		//OnMessagePump2();
-		OnMessagePump1();
-		//OnInvoke();
+		//OnMessagePump1();
+		OnInvoke();
 	}
 
 	mfxStatus QSVTask::OnMessagePump1()

@@ -4,6 +4,8 @@
 namespace FLVPlayer
 {
 	QSV::QSV()
+		:m_sizeIN(0),
+		m_sizeOUT(0)
 	{
 	}
 
@@ -19,7 +21,7 @@ namespace FLVPlayer
 		mfxStatus status = MFX_ERR_NONE;
 		mfxIMPL impl = MFX_IMPL_HARDWARE_ANY;
 		mfxVersion ver = { { 0, 1 } };
-		status = ::Initialize(impl, ver, &m_session, NULL);
+		status = ::Initialize(impl, ver, &m_session, &m_allocator);
 		if (status != MFX_ERR_NONE)
 			return FALSE;
 		m_videoDECODE.Reset(new MFXVideoDECODE(m_session));
@@ -37,7 +39,7 @@ namespace FLVPlayer
 		m_residial.DataLength += size;
 		memset(&m_videoParam, 0, sizeof(m_videoParam));
 		m_videoParam.mfx.CodecId = MFX_CODEC_AVC;
-		m_videoParam.IOPattern = MFX_IOPATTERN_OUT_SYSTEM_MEMORY;
+		m_videoParam.IOPattern = MFX_IOPATTERN_OUT_VIDEO_MEMORY;
 		status = m_videoDECODE->DecodeHeader(&m_residial, &m_videoParam);
 		if (MFX_ERR_MORE_DATA == status)
 		{
@@ -69,26 +71,33 @@ namespace FLVPlayer
 		m_vppParam.vpp.Out.FrameRateExtD = 1;
 		m_vppParam.vpp.Out.Width = MSDK_ALIGN16(m_vppParam.vpp.Out.CropW);
 		m_vppParam.vpp.Out.Height = (MFX_PICSTRUCT_PROGRESSIVE == m_vppParam.vpp.Out.PicStruct) ? MSDK_ALIGN16(m_vppParam.vpp.Out.CropH) : MSDK_ALIGN32(m_vppParam.vpp.Out.CropH);
-		m_vppParam.IOPattern = MFX_IOPATTERN_IN_VIDEO_MEMORY | MFX_IOPATTERN_OUT_VIDEO_MEMORY;
+		m_vppParam.IOPattern = MFX_IOPATTERN_IN_VIDEO_MEMORY | MFX_IOPATTERN_OUT_SYSTEM_MEMORY;
 		mfxFrameAllocRequest request;
 		memset(&request, 0, sizeof(request));
 		status = m_videoDECODE->QueryIOSurf(&m_videoParam, &request);
 		if (status != MFX_ERR_NONE && status != MFX_WRN_PARTIAL_ACCELERATION)
+			return FALSE;
+		status = m_allocator.Alloc(m_allocator.pthis, &request, &m_response);
+		if (status != MFX_ERR_NONE)
 			return FALSE;
 		mfxFrameAllocRequest requests[2];//[0]-IN [1]-OUT
 		memset(&requests, 0, sizeof(mfxFrameAllocRequest) * 2);
 		status = m_videoVPP->QueryIOSurf(&m_vppParam, requests);
 		if (status != MFX_ERR_NONE && status != MFX_WRN_PARTIAL_ACCELERATION)
 			return FALSE;
-		mfxU16 sizeIN = m_response.NumFrameActual + m_responses[0].NumFrameActual;
-		mfxU16 sizeOUT = m_responses[1].NumFrameActual;
-		m_videoIN.Reset(new mfxFrameSurface1 *[sizeIN]);
+		status = m_allocator.Alloc(m_allocator.pthis, &requests[0], &m_responseVPP);
+		if (status != MFX_ERR_NONE)
+			return FALSE;
+
+		m_sizeIN = m_response.NumFrameActual + m_responseVPP.NumFrameActual;
+		m_sizeOUT = requests[1].NumFrameSuggested;
+		m_videoIN.Reset(new mfxFrameSurface1 *[m_sizeIN]);
 		if (!m_videoIN)
 			return FALSE;
-		m_videoOUT.Reset(new mfxFrameSurface1 *[sizeOUT]);
+		m_videoOUT.Reset(new mfxFrameSurface1 *[m_sizeOUT]);
 		if (!m_videoIN)
 			return FALSE;
-		for (mfxU16 i = 0; i < sizeIN; i++)
+		for (mfxU16 i = 0; i < m_sizeIN; i++)
 		{
 			m_videoIN[i] = new mfxFrameSurface1();
 			memset(m_videoIN[i], 0, sizeof(mfxFrameSurface1));
@@ -100,15 +109,23 @@ namespace FLVPlayer
 			else
 			{
 				memcpy(&(m_videoIN[i]->Info), &(m_vppParam.vpp.In), sizeof(mfxFrameInfo));
-				m_videoIN[i]->Data.MemId = m_responses[0].mids[i - m_response.NumFrameActual];
+				m_videoIN[i]->Data.MemId = m_responseVPP.mids[i - m_response.NumFrameActual];
 			}
 		}
-		for (mfxU16 i = 0; i < sizeOUT; i++)
+		mfxU32 surfaceSize = requests[1].Info.Width * requests[1].Info.Height * 4;
+		m_videoBits.Reset(new BYTE[m_sizeOUT * surfaceSize]);
+		if (!m_videoBits)
+			return FALSE;
+		for (mfxU16 i = 0; i < m_sizeOUT; i++)
 		{
 			m_videoOUT[i] = new mfxFrameSurface1();
 			memset(m_videoOUT[i], 0, sizeof(mfxFrameSurface1));
 			memcpy(&(m_videoOUT[i]->Info), &(m_vppParam.vpp.Out), sizeof(mfxFrameInfo));
-			m_videoOUT[i]->Data.MemId = m_responses[1].mids[i];
+			m_videoOUT[i]->Data.B = &m_videoBits[surfaceSize * i];
+			m_videoOUT[i]->Data.G = m_videoOUT[i]->Data.B + 1;
+			m_videoOUT[i]->Data.R = m_videoOUT[i]->Data.B + 2;
+			m_videoOUT[i]->Data.A = m_videoOUT[i]->Data.B + 3;
+			m_videoOUT[i]->Data.Pitch = requests[1].Info.Width * 4;
 		}
 		status = m_videoDECODE->Init(&m_videoParam);
 		if (status != MFX_ERR_NONE && status != MFX_WRN_PARTIAL_ACCELERATION)
@@ -124,16 +141,14 @@ namespace FLVPlayer
 		while (stream.DataLength > 0)
 		{
 			mfxFrameSurface1* surface = NULL;
-			mfxU16 sizeIN = m_response.NumFrameActual + m_responses[0].NumFrameActual;
-			mfxU16 sizeOUT = m_responses[1].NumFrameActual;
-			mfxU16 index = GetFreeSurfaceIndex(m_videoIN, sizeIN);
+			mfxU16 index = GetFreeSurfaceIndex(m_videoIN, m_sizeIN);
 			MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index, MFX_ERR_MEMORY_ALLOC);
 			do
 			{
 				status = m_videoDECODE->DecodeFrameAsync(&stream, m_videoIN[index], &surface, &m_syncpDECODE);
 				if (MFX_ERR_MORE_SURFACE == status)
 				{
-					index = GetFreeSurfaceIndex(m_videoIN, sizeIN);
+					index = GetFreeSurfaceIndex(m_videoIN, m_sizeIN);
 					MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index, MFX_ERR_MEMORY_ALLOC);
 				}
 				if (MFX_WRN_DEVICE_BUSY == status)
@@ -147,14 +162,14 @@ namespace FLVPlayer
 			}
 			if (MFX_ERR_NONE == status)
 			{
-				mfxU16 index1 = GetFreeSurfaceIndex(m_videoOUT, sizeOUT);
+				mfxU16 index1 = GetFreeSurfaceIndex(m_videoOUT, m_sizeOUT);
 				MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index1, MFX_ERR_MEMORY_ALLOC);
 				do
 				{
 					status = m_videoVPP->RunFrameVPPAsync(surface, m_videoOUT[index1], NULL, &m_syncpVPP);
 					if (MFX_ERR_MORE_SURFACE == status)
 					{
-						index1 = GetFreeSurfaceIndex(m_videoOUT, sizeOUT);
+						index1 = GetFreeSurfaceIndex(m_videoOUT, m_sizeOUT);
 						MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index1, MFX_ERR_MEMORY_ALLOC);
 					}
 					if (MFX_WRN_DEVICE_BUSY == status)
@@ -235,21 +250,18 @@ namespace FLVPlayer
 		{
 			m_videoVPP->Close();
 		}
-		mfxU16 sizeIN = m_response.NumFrameActual + m_responses[0].NumFrameActual;
-		for (mfxU16 i = 0; i < sizeIN; i++)
+		for (mfxU16 i = 0; i < m_sizeIN; i++)
 		{
 			SAFE_DELETE(m_videoIN[i]);
 		}
-		mfxU16 sizeOUT = m_responses[1].NumFrameActual;
-		for (mfxU16 i = 0; i < sizeOUT; i++)
+		for (mfxU16 i = 0; i < m_sizeOUT; i++)
 		{
 			SAFE_DELETE(m_videoOUT[i]);
 		}
 		m_videoIN.Reset(NULL);
 		m_videoOUT.Reset(NULL);
 		m_allocator.Free(m_allocator.pthis, &m_response);
-		m_allocator.Free(m_allocator.pthis, &m_responses[0]);
-		m_allocator.Free(m_allocator.pthis, &m_responses[1]);
+		m_allocator.Free(m_allocator.pthis, &m_responseVPP);
 		Release();
 		return TRUE;
 	}
