@@ -33,9 +33,6 @@
     <ClInclude Include="common\common_directx.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="QSVEncode.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="common\bits\linux_defs.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -45,7 +42,10 @@
     <ClInclude Include="QSVCommon.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="QSVDecode.h">
+    <ClInclude Include="QSVDecoder.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="QSVEncoder.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -62,16 +62,16 @@
     <ClCompile Include="common\common_directx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="QSVEncode.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="QSVConvert.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="QSVCommon.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="QSVDecode.cpp">
+    <ClCompile Include="QSVDecoder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="QSVEncoder.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

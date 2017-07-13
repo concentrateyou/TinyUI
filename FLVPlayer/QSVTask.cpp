@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "QSVTask.h"
-#include "QSVDecode.h"
+#include "QSVDecoder.h"
 
 namespace FLVPlayer
 {

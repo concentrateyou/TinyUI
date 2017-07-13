@@ -1,32 +1,18 @@
 #pragma once
-#include "Media/TinySoundPlayer.h"
-#include "IO/TinyTaskBase.h"
-#include "Common/TinyTime.h"
-#include "FLVReader.h"
-#include "PacketQueue.h"
-#include "QSVDecoder.h"
-#include "DX11Graphics2D.h"
-using namespace Decode;
-using namespace TinyUI;
-using namespace TinyUI::IO;
-using namespace TinyUI::Media;
-using namespace DXFramework;
+#include "QSVCommon.h"
 
-namespace FLVPlayer
+namespace QSV
 {
 #define MAX_STREAM_SIZE (1024 * 1024)
 
-	class QSV
+	class QSVDecoder
 	{
 	public:
-		QSV();
-		~QSV();
+		QSVDecoder();
+		~QSVDecoder();
 		BOOL Open(const BYTE* bits, LONG size);
 		BOOL Decode(Media::SampleTag& tag, mfxFrameSurface1*& video);
 		BOOL Close();
-		BOOL Lock(mfxFrameSurface1* surface1);
-		BOOL Unlock(mfxFrameSurface1* surface1);
-		mfxVideoParam& GetParam();
 	private:
 		mfxStatus Process(mfxBitstream& stream, mfxFrameSurface1*& video);
 	private:

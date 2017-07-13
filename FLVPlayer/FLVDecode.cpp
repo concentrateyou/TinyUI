@@ -110,8 +110,7 @@ namespace FLVPlayer
 				{
 					if (block.video.packetType == FLV_AVCDecoderConfigurationRecord)
 					{
-						m_qsv.Initialize();
-						if (m_qsv.Open(block.video.data, block.video.size) != MFX_ERR_NONE)
+						if (!m_qsv.Open(block.video.data, block.video.size))
 						{
 							goto _ERROR;
 						}
@@ -348,7 +347,6 @@ namespace FLVPlayer
 
 	void FLVVideoTask::OnMessagePump()
 	{
-		m_decode.m_qsv.SetCallback(BindCallback(&FLVVideoTask::OnQSV, this));
 		for (;;)
 		{
 			if (m_close.Lock(0))
@@ -364,7 +362,23 @@ namespace FLVPlayer
 			SampleTag tag = m_decode.m_videoQueue.Pop();
 			if (tag.size > 0)
 			{
-				mfxStatus status = m_decode.m_qsv.Decode(tag);
+				mfxFrameSurface1* surface1 = NULL;
+				if (m_decode.m_qsv.Decode(tag, surface1))
+				{
+					SAFE_DELETE_ARRAY(tag.bits);
+					tag.size = surface1->Info.CropH * surface1->Data.Pitch;
+					tag.bits = new BYTE[tag.size];
+					memcpy(tag.bits, surface1->Data.B, tag.size);
+					if (m_decode.m_basePTS == -1)
+					{
+						m_decode.m_basePTS = tag.samplePTS;
+					}
+					m_queue.Push(tag);
+				}
+				else
+				{
+					SAFE_DELETE_ARRAY(tag.bits);
+				}
 				/*if (m_decode.m_x264->Decode(tag, bo, so))
 				{
 					SAFE_DELETE_ARRAY(tag.bits);

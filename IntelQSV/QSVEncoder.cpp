@@ -1,19 +1,19 @@
 #include "stdafx.h"
-#include "QSVEncode.h"
+#include "QSVEncoder.h"
 #include <VersionHelpers.h>
 
 namespace QSV
 {
-	QSVEncode::QSVEncode()
+	QSVEncoder::QSVEncoder()
 		:m_syncpVPP(NULL),
 		m_syncpVideo(NULL)
 	{
 
 	}
-	QSVEncode::~QSVEncode()
+	QSVEncoder::~QSVEncoder()
 	{
 	}
-	QSVParam QSVEncode::GetDefaultQSV(WORD wCX, WORD wCY, WORD wKbps)
+	QSVParam QSVEncoder::GetDefaultQSV(WORD wCX, WORD wCY, WORD wKbps)
 	{
 		QSVParam param = { 0 };
 		param.wTargetUsage = MFX_TARGETUSAGE_BALANCED;
@@ -31,7 +31,7 @@ namespace QSV
 		param.wbFrames = 3;
 		return param;
 	}
-	mfxStatus QSVEncode::InitializeVPPParam(const QSVParam& param)
+	mfxStatus QSVEncoder::InitializeVPPParam(const QSVParam& param)
 	{
 		ZeroMemory(&m_videoVPPParam, sizeof(m_videoVPPParam));
 		m_videoVPPParam.vpp.In.FourCC = MFX_FOURCC_RGB4;
@@ -60,7 +60,7 @@ namespace QSV
 		m_videoVPPParam.AsyncDepth = param.wAsyncDepth;
 		return MFX_ERR_NONE;
 	}
-	mfxStatus QSVEncode::InitializeEncodeParam(const QSVParam& param)
+	mfxStatus QSVEncoder::InitializeEncodeParam(const QSVParam& param)
 	{
 
 		ZeroMemory(&m_videoParam, sizeof(m_videoParam));
@@ -107,7 +107,7 @@ namespace QSV
 
 		return MFX_ERR_NONE;
 	}
-	mfxStatus QSVEncode::Allocate(const QSVParam& param)
+	mfxStatus QSVEncoder::Allocate(const QSVParam& param)
 	{
 		mfxStatus status = MFX_ERR_NONE;
 		m_videoENCODE.Reset(new MFXVideoENCODE(m_session));
@@ -202,7 +202,7 @@ namespace QSV
 		MSDK_CHECK_POINTER(m_bitstream.Data, MFX_ERR_MEMORY_ALLOC);
 		return status;
 	}
-	mfxStatus QSVEncode::Open(const QSVParam& param, Callback<void(BYTE*, LONG, INT)>&& callback)
+	mfxStatus QSVEncoder::Open(const QSVParam& param, Callback<void(BYTE*, LONG, INT)>&& callback)
 	{
 		mfxIMPL impl = MFX_IMPL_HARDWARE_ANY;
 		mfxVersion ver = { { 0, 1 } };
@@ -217,7 +217,7 @@ namespace QSV
 		m_callback = std::move(callback);
 		return status;
 	}
-	BOOL QSVEncode::GetSPSPPS(vector<mfxU8>& sps, vector<mfxU8>& pps)
+	BOOL QSVEncoder::GetSPSPPS(vector<mfxU8>& sps, vector<mfxU8>& pps)
 	{
 		mfxU8	mfxsps[100];
 		mfxU8	mfxpps[100];
@@ -245,7 +245,7 @@ namespace QSV
 		}
 		return FALSE;
 	}
-	void QSVEncode::LoadRGBA(mfxFrameSurface1* surface, BYTE* data, LONG size)
+	void QSVEncoder::LoadRGBA(mfxFrameSurface1* surface, BYTE* data, LONG size)
 	{
 		mfxU16 w, h;
 		mfxFrameInfo* pInfo = &surface->Info;
@@ -266,7 +266,7 @@ namespace QSV
 			memcpy(surface->Data.B + i * surface->Data.Pitch, data + index * w * 4, w * 4);
 		}
 	}
-	mfxStatus QSVEncode::EncodeVPP(mfxFrameSurface1* surfaceIN, mfxFrameSurface1* surfaceOUT)
+	mfxStatus QSVEncoder::EncodeVPP(mfxFrameSurface1* surfaceIN, mfxFrameSurface1* surfaceOUT)
 	{
 		mfxStatus sts = MFX_ERR_NONE;
 		for (;;)
@@ -281,7 +281,7 @@ namespace QSV
 		}
 		return sts;
 	}
-	mfxStatus QSVEncode::EncodeVideo(mfxFrameSurface1* surfaceOUT)
+	mfxStatus QSVEncoder::EncodeVideo(mfxFrameSurface1* surfaceOUT)
 	{
 		mfxStatus status = MFX_ERR_NONE;
 		for (;;)
@@ -303,7 +303,7 @@ namespace QSV
 		}
 		return status;
 	}
-	mfxStatus QSVEncode::Encode(BYTE* data, LONG size)
+	mfxStatus QSVEncoder::Encode(BYTE* data, LONG size)
 	{
 		mfxStatus status = MFX_ERR_NONE;
 		INT indexVPPIN = GetFreeSurfaceIndex(m_surfaceEncode, m_encodeReponse.NumFrameActual);
@@ -381,7 +381,7 @@ namespace QSV
 		}
 		return status;
 	}
-	mfxStatus QSVEncode::Close()
+	mfxStatus QSVEncoder::Close()
 	{
 		if (m_videoENCODE != NULL)
 		{

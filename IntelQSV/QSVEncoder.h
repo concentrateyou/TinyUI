@@ -7,12 +7,12 @@ namespace QSV
 	/// Intel QSV DX9
 	/// https://github.com/sivabudh/intel-media-sdk-tutorials
 	/// </summary>
-	class QSVEncode
+	class QSVEncoder
 	{
-		DISALLOW_COPY_AND_ASSIGN(QSVEncode)
+		DISALLOW_COPY_AND_ASSIGN(QSVEncoder)
 	public:
-		QSVEncode();
-		virtual ~QSVEncode();
+		QSVEncoder();
+		virtual ~QSVEncoder();
 		mfxStatus Open(const QSVParam& param, Callback<void(BYTE*, LONG, INT)>&& callback);
 		mfxStatus Encode(BYTE* data, LONG size);
 		mfxStatus Close();

@@ -5,7 +5,7 @@
 #include "DShowCommon.h"
 #include "VideoCapture.h"
 #include "QSVConvert.h"
-#include "QSVEncode.h"
+#include "QSVEncoder.h"
 using namespace TinyUI;
 using namespace TinyUI::IO;
 

@@ -149,8 +149,8 @@
     <ClInclude Include="common\common_utils.h" />
     <ClInclude Include="QSVCommon.h" />
     <ClInclude Include="QSVConvert.h" />
-    <ClInclude Include="QSVDecode.h" />
-    <ClInclude Include="QSVEncode.h" />
+    <ClInclude Include="QSVDecoder.h" />
+    <ClInclude Include="QSVEncoder.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -160,8 +160,8 @@
     <ClCompile Include="common\common_utils_windows.cpp" />
     <ClCompile Include="QSVCommon.cpp" />
     <ClCompile Include="QSVConvert.cpp" />
-    <ClCompile Include="QSVDecode.cpp" />
-    <ClCompile Include="QSVEncode.cpp" />
+    <ClCompile Include="QSVDecoder.cpp" />
+    <ClCompile Include="QSVEncoder.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

@@ -4,7 +4,7 @@
 #include "Common/TinyTime.h"
 #include "FLVReader.h"
 #include "PacketQueue.h"
-#include "QSVDecode.h"
+#include "QSVDecoder.h"
 using namespace Decode;
 using namespace TinyUI;
 using namespace TinyUI::IO;
@@ -120,7 +120,7 @@ namespace FLVPlayer
 		PacketQueue					m_videoQueue;
 		TinyScopedPtr<x264Decode>	m_x264;
 		TinyScopedPtr<AACDecode>	m_aac;
-		QSV::QSVDecode				m_qsv;
+		QSV::QSVDecoder				m_qsv;
 		FLVAudioRender				m_audioRender;
 		FLVVideoRender				m_videoRender;
 		FLVVideoTask				m_videoTask;

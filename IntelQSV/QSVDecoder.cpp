@@ -1,22 +1,17 @@
 #include "stdafx.h"
-#include "QSV.h"
+#include "QSVDecoder.h"
 
-namespace FLVPlayer
+namespace QSV
 {
-	QSV::QSV()
+	QSVDecoder::QSVDecoder()
 		:m_sizeIN(0),
 		m_sizeOUT(0)
 	{
 	}
-
-	QSV::~QSV()
+	QSVDecoder::~QSVDecoder()
 	{
 	}
-	mfxVideoParam& QSV::GetParam()
-	{
-		return m_videoParam;
-	}
-	BOOL QSV::Open(const BYTE* bits, LONG size)
+	BOOL QSVDecoder::Open(const BYTE* bits, LONG size)
 	{
 		mfxStatus status = MFX_ERR_NONE;
 		mfxIMPL impl = MFX_IMPL_HARDWARE_ANY;
@@ -135,7 +130,7 @@ namespace FLVPlayer
 			return FALSE;
 		return TRUE;
 	}
-	mfxStatus QSV::Process(mfxBitstream& stream, mfxFrameSurface1*& video)
+	mfxStatus QSVDecoder::Process(mfxBitstream& stream, mfxFrameSurface1*& video)
 	{
 		mfxStatus status = MFX_ERR_NONE;
 		while (stream.DataLength > 0)
@@ -194,7 +189,7 @@ namespace FLVPlayer
 		}
 		return status;
 	}
-	BOOL QSV::Decode(Media::SampleTag& tag, mfxFrameSurface1*& video)
+	BOOL QSVDecoder::Decode(Media::SampleTag& tag, mfxFrameSurface1*& video)
 	{
 		mfxBitstream stream;
 		memset(&stream, 0, sizeof(stream));
@@ -222,25 +217,7 @@ namespace FLVPlayer
 		memcpy(m_residial.Data, stream.Data + stream.DataOffset, stream.DataLength);
 		return TRUE;
 	}
-	BOOL QSV::Lock(mfxFrameSurface1* video)
-	{
-		if (!video)
-			return FALSE;
-		mfxStatus status = m_allocator.Lock(m_allocator.pthis, video->Data.MemId, &(video->Data));
-		if (status != MFX_ERR_NONE)
-			return FALSE;
-		return TRUE;
-	}
-	BOOL QSV::Unlock(mfxFrameSurface1* video)
-	{
-		if (!video)
-			return FALSE;
-		mfxStatus status = m_allocator.Unlock(m_allocator.pthis, video->Data.MemId, &(video->Data));
-		if (status != MFX_ERR_NONE)
-			return FALSE;
-		return TRUE;
-	}
-	BOOL QSV::Close()
+	BOOL QSVDecoder::Close()
 	{
 		if (m_videoDECODE != NULL)
 		{
