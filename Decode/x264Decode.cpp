@@ -21,27 +21,22 @@ namespace Decode
 
 	BOOL x264Decode::Initialize(const TinySize& srcsize, const TinySize& dstsize)
 	{
+		avcodec_register_all();
 		av_init_packet(&m_packet);
-		m_codec = avcodec_find_decoder(AV_CODEC_ID_H264);
-		if (!m_codec)
-			return FALSE;
-		m_context = avcodec_alloc_context3(m_codec);
-		if (!m_context)
-			return FALSE;
+		m_srcsize = srcsize;
+		m_dstsize = dstsize;
 		m_pYUV420 = av_frame_alloc();
 		if (!m_pYUV420)
 			goto H264_ERROR;
 		m_pRGB32 = av_frame_alloc();
 		if (!m_pRGB32)
 			goto H264_ERROR;
-		m_srcsize = srcsize;
-		m_dstsize = dstsize;
 		m_sws = sws_getContext(srcsize.cx, srcsize.cy, AV_PIX_FMT_YUV420P, dstsize.cx, dstsize.cy, AV_PIX_FMT_RGB32, 0, NULL, NULL, NULL);
 		if (!m_sws)
 			goto H264_ERROR;
 		INT size = av_image_get_buffer_size(AV_PIX_FMT_RGB32, m_dstsize.cx, m_dstsize.cy, 1);
 		m_bits.Reset(new BYTE[size]);
-		ZeroMemory(m_bits, size);
+		memset(m_bits, 0, size);
 		return size == av_image_fill_arrays(m_pRGB32->data, m_pRGB32->linesize, m_bits.Ptr(), AV_PIX_FMT_RGB32, m_dstsize.cx, m_dstsize.cy, 1);
 	H264_ERROR:
 		Close();
@@ -50,7 +45,12 @@ namespace Decode
 	}
 	BOOL x264Decode::Open(BYTE* metadata, LONG size)
 	{
-		ASSERT(m_context);
+		m_codec = avcodec_find_decoder(AV_CODEC_ID_H264);
+		if (!m_codec)
+			goto H264_ERROR;
+		m_context = avcodec_alloc_context3(m_codec);
+		if (!m_context)
+			goto H264_ERROR;
 		m_context->flags2 |= CODEC_FLAG2_CHUNKS | CODEC_FLAG2_FAST;
 		if (m_codec->capabilities & CODEC_CAP_TRUNCATED)
 		{
@@ -78,15 +78,25 @@ namespace Decode
 		m_packet.size = tag.size;
 		INT iRes = avcodec_send_packet(m_context, &m_packet);
 		if (iRes != 0)
-			return FALSE;
-		iRes = avcodec_receive_frame(m_context, m_pYUV420);
-		if (iRes != 0)
-			return FALSE;
-		INT cy = sws_scale(m_sws, m_pYUV420->data, m_pYUV420->linesize, 0, m_srcsize.cy, m_pRGB32->data, m_pRGB32->linesize);
-		ASSERT(cy == m_dstsize.cy);
-		bo = m_pRGB32->data[0];
-		so = m_pRGB32->linesize[0] * cy;
-		return TRUE;
+			goto _ERROR;
+		while (iRes >= 0)
+		{
+			iRes = avcodec_receive_frame(m_context, m_pYUV420);
+			if (iRes == AVERROR(EAGAIN) || iRes == AVERROR_EOF)
+				break;
+			else if (iRes < 0)
+			{
+				goto _ERROR;
+			}
+			INT cy = sws_scale(m_sws, m_pYUV420->data, m_pYUV420->linesize, 0, m_srcsize.cy, m_pRGB32->data, m_pRGB32->linesize);
+			ASSERT(cy == m_dstsize.cy);
+			bo = m_pRGB32->data[0];
+			so = m_pRGB32->linesize[0] * cy;
+			goto _ERROR;
+		}
+	_ERROR:
+		av_packet_unref(&m_packet);
+		return iRes == 0;
 	}
 	BOOL x264Decode::Close()
 	{

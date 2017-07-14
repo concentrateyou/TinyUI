@@ -11,12 +11,12 @@ extern "C"
 #include "libavcodec/avcodec.h"
 #include "libswscale/swscale.h"
 }
-#pragma comment(lib, "avcodec.lib")
-#pragma comment(lib, "avdevice.lib")
-#pragma comment(lib, "avfilter.lib")
-#pragma comment(lib, "avformat.lib")
-#pragma comment(lib, "avutil.lib")
-#pragma comment(lib, "swscale.lib")
+#pragma comment(lib, "libavcodecd.lib")
+#pragma comment(lib, "libavdeviced.lib")
+#pragma comment(lib, "libavfilterd.lib")
+#pragma comment(lib, "libavformatd.lib")
+#pragma comment(lib, "libavutild.lib")
+#pragma comment(lib, "libswscaled.lib")
 using namespace TinyUI;
 
 namespace Decode
@@ -39,8 +39,8 @@ namespace Decode
 		AVPacket				m_packet;
 		AVFrame*				m_pYUV420;
 		AVFrame*				m_pRGB32;
-		AVCodec*				m_codec;
 		SwsContext*				m_sws;
+		AVCodec*				m_codec;
 		AVCodecContext*			m_context;
 		TinyScopedArray<BYTE>	m_bits;
 	};
