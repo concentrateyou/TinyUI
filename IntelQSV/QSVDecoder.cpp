@@ -157,7 +157,13 @@ namespace QSV
 			}
 			if (MFX_ERR_NONE == status)
 			{
-				status = m_session.SyncOperation(m_syncpDECODE, 60000);
+				do
+				{
+					status = m_session.SyncOperation(m_syncpDECODE, 1000);
+				} while (status == MFX_WRN_IN_EXECUTION);
+				tag.samplePTS = surface->Data.TimeStamp;
+				tag.sampleDTS = surface->Data.TimeStamp;
+				TRACE("video-time:%lld\n", surface->Data.TimeStamp);
 				if (MFX_ERR_NONE == status)
 				{
 					mfxU16 index1 = GetFreeSurfaceIndex(m_videoOUT, m_sizeOUT);
@@ -181,11 +187,12 @@ namespace QSV
 					}
 					if (MFX_ERR_NONE == status)
 					{
-						status = m_session.SyncOperation(m_syncpVPP, 60000);
+						do
+						{
+							status = m_session.SyncOperation(m_syncpVPP, 1000);
+						} while (status == MFX_WRN_IN_EXECUTION);
 						if (status == MFX_ERR_NONE)
 						{
-							tag.samplePTS = m_videoOUT[index1]->Data.TimeStamp;
-							tag.sampleDTS = m_videoOUT[index1]->Data.TimeStamp;
 							video = m_videoOUT[index1];
 						}
 						return status;
@@ -199,9 +206,10 @@ namespace QSV
 	{
 		mfxBitstream stream;
 		memset(&stream, 0, sizeof(stream));
+		stream.TimeStamp = tag.samplePTS;
+		TRACE("m_residial.DataLength:%d\n", m_residial.DataLength);
 		INT32 newsize = tag.size + m_residial.DataLength;
 		stream.MaxLength = stream.DataLength = (mfxU32)newsize;
-		stream.TimeStamp = tag.samplePTS;
 		stream.Data = m_streamBits[0];
 		mfxU8* pData = stream.Data;
 		memcpy(pData, m_residial.Data, m_residial.DataLength);
@@ -212,8 +220,10 @@ namespace QSV
 		mfxStatus status = Process(stream, tag, video);
 		if (status != MFX_ERR_NONE)
 			return FALSE;
+		//±£´æÊ£ÓàÊý¾Ý
 		m_residial.DataOffset = 0;
 		m_residial.DataLength = stream.DataLength;
+		m_residial.TimeStamp = tag.samplePTS;
 		if (stream.DataLength > m_residial.MaxLength)
 		{
 			m_streamBits[1].Reset(new mfxU8[m_residial.MaxLength]);

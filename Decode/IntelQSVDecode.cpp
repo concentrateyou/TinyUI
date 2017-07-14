@@ -81,18 +81,13 @@ namespace Decode
 		m_context = avcodec_alloc_context3(m_codec);
 		if (!m_context)
 			goto _ERROR;
-		INT iRes = av_hwdevice_ctx_create(&m_bufferRef, AV_HWDEVICE_TYPE_QSV, "auto", NULL, 0);
-		if (iRes < 0)
-			goto _ERROR;
 		m_context->extradata_size = size;
-		m_context->extradata = reinterpret_cast<BYTE*>(av_malloc(m_context->extradata_size));
+		m_context->extradata = reinterpret_cast<BYTE*>(av_malloc(m_context->extradata_size + AV_INPUT_BUFFER_PADDING_SIZE));
 		memcpy(m_context->extradata, metadata, m_context->extradata_size);
-		m_context->codec_id = AV_CODEC_ID_H264;
 		m_context->refcounted_frames = 1;
 		m_context->opaque = m_bufferRef;
-		m_context->sw_pix_fmt = m_context->pix_fmt;
-		m_context->get_format = Decode::GetFormat;
-		iRes = avcodec_open2(m_context, NULL, NULL);
+		m_context->codec_id = AV_CODEC_ID_H264;
+		INT iRes = avcodec_open2(m_context, NULL, NULL);
 		if (iRes < 0)
 			goto _ERROR;
 		return TRUE;

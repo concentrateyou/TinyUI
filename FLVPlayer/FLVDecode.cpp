@@ -28,7 +28,7 @@ namespace FLVPlayer
 	{
 		//if (m_reader.OpenURL("rtmp://live.hkstv.hk.lxdns.com/live/hks"))
 		//if (m_reader.OpenURL("rtmp://10.10.13.98/live/lb_xijudianying_720p"))
-		if (m_reader.OpenURL("rtmp://10.10.13.98/live/lb_kaixinjuchang_720p"))
+		if (m_reader.OpenFile("D:\\4.flv"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);

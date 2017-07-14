@@ -1,5 +1,6 @@
 #pragma once
 #include "MFLVTask.h"
+#include "QSVDecoder.h"
 
 namespace MShow
 {
@@ -20,7 +21,7 @@ namespace MShow
 		void OnAVCDC(BYTE* bits, LONG size, BOOL&);
 	private:
 		BOOL						m_bBreak;
-		x264Decode					m_h264;
+		QSV::QSVDecoder				m_h264;
 		MClock&						m_clock;
 		MFLVTask&					m_task;
 		MPacketAllocQueue			m_videoQueue;

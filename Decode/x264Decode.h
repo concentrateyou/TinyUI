@@ -11,12 +11,12 @@ extern "C"
 #include "libavcodec/avcodec.h"
 #include "libswscale/swscale.h"
 }
-#pragma comment(lib, "libavcodecd.lib")
-#pragma comment(lib, "libavdeviced.lib")
-#pragma comment(lib, "libavfilterd.lib")
-#pragma comment(lib, "libavformatd.lib")
-#pragma comment(lib, "libavutild.lib")
-#pragma comment(lib, "libswscaled.lib")
+#pragma comment(lib, "avcodec.lib")
+#pragma comment(lib, "avdevice.lib")
+#pragma comment(lib, "avfilter.lib")
+#pragma comment(lib, "avformat.lib")
+#pragma comment(lib, "avutil.lib")
+#pragma comment(lib, "swscale.lib")
 using namespace TinyUI;
 
 namespace Decode
