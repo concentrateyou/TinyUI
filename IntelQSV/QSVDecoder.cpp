@@ -207,7 +207,6 @@ namespace QSV
 		mfxBitstream stream;
 		memset(&stream, 0, sizeof(stream));
 		stream.TimeStamp = tag.samplePTS;
-		TRACE("m_residial.DataLength:%d\n", m_residial.DataLength);
 		INT32 newsize = tag.size + m_residial.DataLength;
 		stream.MaxLength = stream.DataLength = (mfxU32)newsize;
 		stream.Data = m_streamBits[0];
