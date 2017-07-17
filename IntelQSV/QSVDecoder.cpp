@@ -5,20 +5,62 @@ namespace QSV
 {
 	QSVDecoder::QSVDecoder()
 		:m_sizeIN(0),
-		m_sizeOUT(0)
+		m_sizeOUT(0),
+		m_handle(NULL)
 	{
 	}
 	QSVDecoder::~QSVDecoder()
 	{
+	}
+	BOOL QSVDecoder::Initialize(mfxFrameAllocator& allocator)
+	{
+
+		m_allocator.pthis = this;
+		m_allocator.Alloc = QSVDecoder::Alloc;
+		m_allocator.Free = QSVDecoder::Free;
+		m_allocator.Lock = QSVDecoder::Lock;
+		m_allocator.Unlock = QSVDecoder::Unlock;
+		m_allocator.GetHDL = QSVDecoder::GetHDL;
+		status = m_session->SetFrameAllocator(&m_allocator);
+		if (FAILED(hRes))
+			return FALSE;
+		return TRUE;
+	}
+	mfxStatus QSVDecoder::Alloc(mfxHDL pthis, mfxFrameAllocRequest* request, mfxFrameAllocResponse* response)
+	{
+		if (pthis == this)
+		{
+
+		}
+	}
+	mfxStatus QSVDecoder::Lock_(mfxHDL pthis, mfxMemId mid, mfxFrameData* ptr)
+	{
+
+	}
+	mfxStatus QSVDecoder::Unlock_(mfxHDL pthis, mfxMemId mid, mfxFrameData* ptr)
+	{
+
+	}
+	mfxStatus QSVDecoder::GetHDL_(mfxHDL pthis, mfxMemId mid, mfxHDL* handle)
+	{
+
+	}
+	mfxStatus QSVDecoder::Free_(mfxHDL pthis, mfxFrameAllocResponse* response)
+	{
+
 	}
 	BOOL QSVDecoder::Open(const BYTE* bits, LONG size)
 	{
 		mfxStatus status = MFX_ERR_NONE;
 		mfxIMPL impl = MFX_IMPL_HARDWARE_ANY;
 		mfxVersion ver = { { 0, 1 } };
-		status = ::Initialize(impl, ver, &m_session, &m_allocator);
+		mfxStatus status = m_session->Init(impl, &ver);
 		if (status != MFX_ERR_NONE)
 			return FALSE;
+
+		if (!m_d3d9.Initialize(GetIntelAdapter(m_session)))
+			return FALSE;
+
 		m_videoDECODE.Reset(new MFXVideoDECODE(m_session));
 		if (!m_videoDECODE)
 			return FALSE;

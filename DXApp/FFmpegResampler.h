@@ -7,9 +7,17 @@ extern "C"
 #include <libavformat/avformat.h>
 #include <libswresample/swresample.h>
 }
+#define DEBUG_FFMPEG 1
+#if DEBUG_FFMPEG
+#pragma comment(lib, "libavutild.lib")
+#pragma comment(lib, "libavformatd.lib")
+#pragma comment(lib, "libswresampled.lib")
+#else
 #pragma comment(lib, "avutil.lib")
 #pragma comment(lib, "avformat.lib")
 #pragma comment(lib, "swresample.lib")
+#endif
+
 
 using namespace TinyUI::IO;
 

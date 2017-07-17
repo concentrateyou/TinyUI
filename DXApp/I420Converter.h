@@ -9,12 +9,23 @@ extern "C"
 #include "libavcodec/avcodec.h"
 #include "libswscale/swscale.h"
 }
+#define DEBUG_FFMPEG 1
+#if DEBUG_FFMPEG
+#pragma comment(lib, "libavcodecd.lib")
+#pragma comment(lib, "libavdeviced.lib")
+#pragma comment(lib, "libpostprocd.lib")
+#pragma comment(lib, "libavfilterd.lib")
+#pragma comment(lib, "libavformatd.lib")
+#pragma comment(lib, "libavutild.lib")
+#pragma comment(lib, "libswscaled.lib")
+#else
 #pragma comment(lib, "avcodec.lib")
 #pragma comment(lib, "avdevice.lib")
 #pragma comment(lib, "avfilter.lib")
 #pragma comment(lib, "avformat.lib")
 #pragma comment(lib, "avutil.lib")
 #pragma comment(lib, "swscale.lib")
+#endif
 
 namespace DXApp
 {

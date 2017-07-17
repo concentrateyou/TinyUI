@@ -74,7 +74,7 @@ void RenderTask::OnExit()
 	m_close.SetEvent();
 }
 
-void RenderTask::Flush(BYTE* data, LONG size)
+void RenderTask::Flush(BYTE* data, LONG size, INT)
 {
 	if (size > 0)
 	{

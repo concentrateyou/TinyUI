@@ -16,7 +16,7 @@ namespace Decode
 				format = inputs[0];
 			}
 			av_hwframe_constraints_free(&constraints);
-			if (*pFormat == AV_PIX_FMT_NV12)
+			if (*pFormat == AV_PIX_FMT_QSV)
 			{
 				AVBufferRef*bufferRef = (AVBufferRef*)avctx->opaque;
 				INT iRes = 0;
@@ -25,7 +25,7 @@ namespace Decode
 					return AV_PIX_FMT_NONE;
 				AVHWFramesContext* avhwctx = (AVHWFramesContext*)avctx->hw_frames_ctx->data;
 				AVQSVFramesContext* avqsvcts = (AVQSVFramesContext*)avhwctx->hwctx;
-				avhwctx->format = format;
+				avhwctx->format = AV_PIX_FMT_QSV;
 				avhwctx->sw_format = avctx->sw_pix_fmt;
 				avhwctx->width = FFALIGN(avctx->coded_width, 32);
 				avhwctx->height = FFALIGN(avctx->coded_height, 32);
@@ -43,8 +43,8 @@ namespace Decode
 
 	IntelQSVDecode::IntelQSVDecode()
 		:m_codec(NULL),
-		m_bufferRef(NULL),
 		m_context(NULL),
+		m_bufferRef(NULL),
 		m_pYUV420(NULL),
 		m_pRGB32(NULL)
 	{
@@ -75,6 +75,8 @@ namespace Decode
 
 	BOOL IntelQSVDecode::Open(BYTE* metadata, LONG size)
 	{
+		if (av_hwdevice_ctx_create(&m_bufferRef, AV_HWDEVICE_TYPE_QSV, "auto", NULL, 0) < 0)
+			goto _ERROR;
 		m_codec = avcodec_find_decoder_by_name("h264_qsv");
 		if (!m_codec)
 			goto _ERROR;
@@ -84,10 +86,13 @@ namespace Decode
 		m_context->extradata_size = size;
 		m_context->extradata = reinterpret_cast<BYTE*>(av_malloc(m_context->extradata_size + AV_INPUT_BUFFER_PADDING_SIZE));
 		memcpy(m_context->extradata, metadata, m_context->extradata_size);
-		m_context->refcounted_frames = 1;
 		m_context->opaque = m_bufferRef;
+		m_context->get_format = GetFormat;
+		m_context->refcounted_frames = 1;
 		m_context->codec_id = AV_CODEC_ID_H264;
-		INT iRes = avcodec_open2(m_context, NULL, NULL);
+		m_context->pix_fmt = AV_PIX_FMT_QSV;
+		m_context->codec_type = AVMEDIA_TYPE_VIDEO;
+		INT iRes = avcodec_open2(m_context, m_codec, NULL);
 		if (iRes < 0)
 			goto _ERROR;
 		return TRUE;
@@ -101,10 +106,10 @@ namespace Decode
 		if (!m_context)
 			return FALSE;
 		INT iRes = 0;
+		av_new_packet(&m_packet, tag.size);
 		m_packet.dts = tag.sampleDTS;
 		m_packet.pts = tag.samplePTS;
-		m_packet.data = tag.bits;
-		m_packet.size = tag.size;
+		memcpy(m_packet.data, tag.bits, tag.size);
 		iRes = avcodec_send_packet(m_context, &m_packet);
 		if (iRes != 0)
 			goto _ERROR;
@@ -132,10 +137,6 @@ namespace Decode
 
 	BOOL IntelQSVDecode::Close()
 	{
-		if (m_bufferRef != NULL)
-		{
-			av_buffer_unref(&m_bufferRef);
-		}
 		if (m_context != NULL)
 		{
 			if (m_context->extradata)
@@ -160,5 +161,14 @@ namespace Decode
 		}
 		m_bits.Reset(NULL);
 		return TRUE;
+	}
+
+	AVFrame* IntelQSVDecode::GetYUV420() const
+	{
+		return m_pYUV420;
+	}
+	AVFrame* IntelQSVDecode::GetRGB32() const
+	{
+		return m_pRGB32;
 	}
 }

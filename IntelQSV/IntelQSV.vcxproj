@@ -143,25 +143,21 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="common\bits\linux_defs.h" />
     <ClInclude Include="common\bits\windows_defs.h" />
-    <ClInclude Include="common\common_directx.h" />
-    <ClInclude Include="common\common_utils.h" />
+    <ClInclude Include="QSVAllocator.h" />
     <ClInclude Include="QSVCommon.h" />
     <ClInclude Include="QSVConvert.h" />
     <ClInclude Include="QSVDecoder.h" />
-    <ClInclude Include="QSVEncoder.h" />
+    <ClInclude Include="QSVD3D.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="common\common_directx.cpp" />
-    <ClCompile Include="common\common_utils.cpp" />
-    <ClCompile Include="common\common_utils_windows.cpp" />
+    <ClCompile Include="QSVAllocator.cpp" />
     <ClCompile Include="QSVCommon.cpp" />
     <ClCompile Include="QSVConvert.cpp" />
     <ClCompile Include="QSVDecoder.cpp" />
-    <ClCompile Include="QSVEncoder.cpp" />
+    <ClCompile Include="QSVD3D.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
