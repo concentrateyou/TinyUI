@@ -24,16 +24,7 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="common\bits\windows_defs.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="QSVConvert.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="QSVCommon.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="QSVDecoder.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="QSVD3D.h">
@@ -42,24 +33,24 @@
     <ClInclude Include="QSVAllocator.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="QSVDecoder.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="QSVConvert.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="QSVCommon.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="QSVDecoder.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="QSVD3D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="QSVAllocator.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="QSVDecoder.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

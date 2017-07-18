@@ -16,10 +16,10 @@ RenderTask::~RenderTask()
 
 BOOL RenderTask::Submit()
 {
-	QSV::QSVParam param = m_encode.GetDefaultQSV(m_videoParam.GetSize().cx, m_videoParam.GetSize().cy, 1000);
+	/*QSV::QSVParam param = m_encode.GetDefaultQSV(m_videoParam.GetSize().cx, m_videoParam.GetSize().cy, 1000);
 	if (m_encode.Open(param, BindCallback(&RenderTask::Flush, this)) != MFX_ERR_NONE)
 		return FALSE;
-	m_h264File.Create("D:\\800-600.h264");
+	m_h264File.Create("D:\\800-600.h264");*/
 	m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
 	return TinyTaskBase::Submit(BindCallback(&RenderTask::OnMessagePump, this));
 }
@@ -55,19 +55,8 @@ void RenderTask::OnMessagePump()
 			TinyUI::TinyMemDC mdc(wdc, hBitmap);
 			::BitBlt(wdc, 0, 0, TO_CX(rectangle), TO_CY(rectangle), mdc, 0, 0, SRCCOPY | CAPTUREBLT);
 			DeleteObject(hBitmap);
-			BYTE* dataO = NULL;
-			LONG  sizeO = 0;
-			if (m_encode.Encode(bits, bmi.bmiHeader.biSizeImage) == MFX_ERR_NONE)
-			{
-				//TODO
-				/*vector<BYTE> sps;
-				vector<BYTE> pps;
-				m_encode.GetSPSPPS(sps, pps);*/
-			}
 		}
 	}
-	m_h264File.Close();
-	m_encode.Close();
 }
 void RenderTask::OnExit()
 {
