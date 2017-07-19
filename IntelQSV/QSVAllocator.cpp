@@ -369,7 +369,7 @@ namespace QSV
 				hRes = m_manager->OpenDeviceHandle(&m_hProcessor);
 				if (FAILED(hRes))
 					return MFX_ERR_MEMORY_ALLOC;
-				hRes = m_manager->GetVideoService(m_hProcessor, IID_IDirectXVideoProcessorService, (void**)&m_processorService);
+				hRes = m_manager->GetVideoService(m_hProcessor, __uuidof(IDirectXVideoProcessorService), (void**)&m_processorService);
 				if (FAILED(hRes))
 					return MFX_ERR_MEMORY_ALLOC;
 			}
@@ -382,7 +382,7 @@ namespace QSV
 				hRes = m_manager->OpenDeviceHandle(&m_hDecoder);
 				if (FAILED(hRes))
 					return MFX_ERR_MEMORY_ALLOC;
-				hRes = m_manager->GetVideoService(m_hDecoder, IID_IDirectXVideoDecoderService, (void**)&m_decoderService);
+				hRes = m_manager->GetVideoService(m_hDecoder, __uuidof(IDirectXVideoDecoderService), (void**)&m_decoderService);
 				if (FAILED(hRes))
 					return MFX_ERR_MEMORY_ALLOC;
 			}
@@ -582,6 +582,109 @@ namespace QSV
 		mfxHDLPair *dxMid = (mfxHDLPair*)mid;
 		*handle = dxMid->first;
 		return MFX_ERR_NONE;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	GeneralAllocator::GeneralAllocator()
+	{
+	};
+	GeneralAllocator::~GeneralAllocator()
+	{
+	};
+	mfxStatus GeneralAllocator::Initialize(mfxAllocatorParams *pParams)
+	{
+		mfxStatus status = MFX_ERR_NONE;
+		QSVD3D9AllocatorParams *d3dAllocParams = dynamic_cast<QSVD3D9AllocatorParams*>(pParams);
+		if (d3dAllocParams)
+		{
+			m_d3dAllocator.Reset(new QSVD3D9Allocator());
+			status = m_d3dAllocator->Initialize(pParams);
+			if (status != MFX_ERR_NONE)
+				return status;
+		}
+		m_memeryAllocator.Reset(new QSVMemeryAllocator());
+		status = m_memeryAllocator->Initialize(NULL);
+		if (status != MFX_ERR_NONE)
+			return status;
+		return status;
+	}
+	mfxStatus GeneralAllocator::Close()
+	{
+		mfxStatus status = MFX_ERR_NONE;
+		if (m_d3dAllocator)
+		{
+			status = m_d3dAllocator->Close();
+			if (status != MFX_ERR_NONE)
+				return status;
+		}
+		if (m_memeryAllocator)
+			status = m_memeryAllocator->Close();
+		if (status != MFX_ERR_NONE)
+			return status;
+		return status;
+	}
+
+	mfxStatus GeneralAllocator::LockFrame(mfxMemId mid, mfxFrameData *ptr)
+	{
+		if (IsD3DMid(mid) && m_d3dAllocator)
+			return m_d3dAllocator->Lock(m_d3dAllocator, mid, ptr);
+		else
+			return m_memeryAllocator->Lock(m_memeryAllocator, mid, ptr);
+	}
+	mfxStatus GeneralAllocator::UnlockFrame(mfxMemId mid, mfxFrameData *ptr)
+	{
+		if (IsD3DMid(mid) && m_d3dAllocator)
+			return m_d3dAllocator->Unlock(m_d3dAllocator, mid, ptr);
+		else
+			return m_memeryAllocator->Unlock(m_memeryAllocator, mid, ptr);
+	}
+
+	mfxStatus GeneralAllocator::GetFrameHDL(mfxMemId mid, mfxHDL *handle)
+	{
+		if (IsD3DMid(mid) && m_d3dAllocator)
+			return m_d3dAllocator->GetHDL(m_d3dAllocator, mid, handle);
+		else
+			return m_memeryAllocator->GetHDL(m_memeryAllocator, mid, handle);
+	}
+
+	mfxStatus GeneralAllocator::Deallocate(mfxFrameAllocResponse *response)
+	{
+		if (IsD3DMid(response->mids[0]) && m_d3dAllocator)
+			return m_d3dAllocator->Free(m_d3dAllocator, response);
+		else
+			return m_memeryAllocator->Free(m_memeryAllocator, response);
+	}
+	mfxStatus GeneralAllocator::Allocate(mfxFrameAllocRequest *request, mfxFrameAllocResponse *response)
+	{
+		mfxStatus status = MFX_ERR_NONE;
+		if ((request->Type & MFX_MEMTYPE_VIDEO_MEMORY_DECODER_TARGET || request->Type & MFX_MEMTYPE_VIDEO_MEMORY_PROCESSOR_TARGET) && m_d3dAllocator)
+		{
+			status = m_d3dAllocator->Alloc(m_d3dAllocator, request, response);
+			MSDK_CHECK_NOT_EQUAL(MFX_ERR_NONE, status, status);
+			StoreFrameMids(TRUE, response);
+		}
+		else
+		{
+			status = m_memeryAllocator->Alloc(m_memeryAllocator, request, response);
+			MSDK_CHECK_NOT_EQUAL(MFX_ERR_NONE, status, status);
+			StoreFrameMids(FALSE, response);
+		}
+		return status;
+	}
+	void    GeneralAllocator::StoreFrameMids(BOOL isD3DFrames, mfxFrameAllocResponse *response)
+	{
+		for (mfxU32 i = 0; i < response->NumFrameActual; i++)
+		{
+			m_Mids.insert(std::pair<mfxHDL, BOOL>(response->mids[i], isD3DFrames));
+		}
+	}
+	BOOL GeneralAllocator::IsD3DMid(mfxHDL mid)
+	{
+		std::map<mfxHDL, BOOL>::iterator it;
+		it = m_Mids.find(mid);
+		if (it == m_Mids.end())
+			return FALSE;
+		else
+			return it->second;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	QSVMemeryAllocator::QSVMemeryAllocator()

@@ -20,7 +20,7 @@ extern "C"
 #include "libavcodec/avfft.h"
 #include "libswresample/swresample.h"
 }
-#define DEBUG_FFMPEG 1
+#define DEBUG_FFMPEG 0
 #if DEBUG_FFMPEG
 #pragma comment(lib, "libavutild.lib")
 #pragma comment(lib, "libavformatd.lib")

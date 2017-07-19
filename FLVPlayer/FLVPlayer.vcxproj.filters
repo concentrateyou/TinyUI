@@ -42,18 +42,6 @@
     <ClInclude Include="FLVClock.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="FFPlayer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="QSVTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="QSVView.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="QSV.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -72,18 +60,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="FLVClock.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="FFPlayer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="QSVTask.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="QSVView.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="QSV.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

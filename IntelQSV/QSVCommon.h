@@ -3,13 +3,14 @@
 #include "Render/TinyGDI.h"
 #include "Common/TinyCallback.h"
 #include "Media/TinyMedia.h"
+#include <mfxvideo.h>
+#include <mfxvideo++.h>
+#include <dxgi.h>
 #include <d3d9.h>
 #include <d3d11.h>
 #include <dxva2api.h>
-#include <mfxvideo++.h>
 #include <vector>
 #include <list>
-#include <dxgi.h>
 using namespace TinyUI;
 
 namespace QSV
@@ -60,7 +61,11 @@ namespace QSV
 #define MSDK_ALIGN32(value)                      (((value + 31) >> 5) << 5) // round up to a multiple of 32
 #define MSDK_ALIGN(value, alignment)             (alignment) * ( (value) / (alignment) + (((value) % (alignment)) ? 1 : 0))
 #define MSDK_ARRAY_LEN(value)                    (sizeof(value) / sizeof(value[0]))
+#define MSDK_MEMCPY_BITSTREAM(bitstream, offset, src, count) memcpy((bitstream).Data + (offset), (src), (count))
+#define MSDK_MEMCPY_BUF(bufptr, offset, maxsize, src, count) memcpy((bufptr)+ (offset), (src), (count))
+#define MSDK_MEMCPY_VAR(dstVarName, src, count) memcpy(&(dstVarName), (src), (count))
 
+#define MSDK_MEMCPY(dst, src, count) memcpy(dst, (src), (count))
 #define D3DFMT_NV12 (D3DFORMAT)MAKEFOURCC('N','V','1','2')
 #define D3DFMT_YV12 (D3DFORMAT)MAKEFOURCC('Y','V','1','2')
 #define D3DFMT_NV16 (D3DFORMAT)MAKEFOURCC('N','V','1','6')
@@ -86,5 +91,6 @@ namespace QSV
 		{ MFX_IMPL_HARDWARE4, 3 }
 	};
 	mfxU32 GetIntelAdapter(mfxSession session);
+	INT GetFreeSurfaceIndex(mfxFrameSurface1** pSurfacesPool, mfxU16 nPoolSize);
 }
 

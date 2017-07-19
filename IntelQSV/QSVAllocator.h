@@ -168,6 +168,28 @@ namespace QSV
 		BOOL					m_bOwnBufferAllocator;
 		QSVBufferAllocatorBase*	m_pBufferAllocator;
 	};
+	//////////////////////////////////////////////////////////////////////////
+	class GeneralAllocator : public QSVAllocator
+	{
+	public:
+		GeneralAllocator();
+		virtual ~GeneralAllocator();
+	public:
+		mfxStatus Initialize(mfxAllocatorParams *pParams) OVERRIDE;
+		mfxStatus Close() OVERRIDE;
+	protected:
+		mfxStatus LockFrame(mfxMemId mid, mfxFrameData *ptr) OVERRIDE;
+		mfxStatus UnlockFrame(mfxMemId mid, mfxFrameData *ptr) OVERRIDE;
+		mfxStatus GetFrameHDL(mfxMemId mid, mfxHDL *handle) OVERRIDE;
+		mfxStatus Allocate(mfxFrameAllocRequest *request, mfxFrameAllocResponse *response) OVERRIDE;
+		mfxStatus Deallocate(mfxFrameAllocResponse *response) OVERRIDE;
+		void    StoreFrameMids(BOOL isD3DFrames, mfxFrameAllocResponse *response);
+		BOOL    IsD3DMid(mfxHDL mid);
+	protected:
+		std::map<mfxHDL, BOOL>  m_Mids;
+		TinyScopedPtr<QSVAllocator>			m_d3dAllocator;
+		TinyScopedPtr<QSVMemeryAllocator>   m_memeryAllocator;
+	};
 }
 
 

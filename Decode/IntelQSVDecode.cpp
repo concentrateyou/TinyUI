@@ -3,7 +3,7 @@
 
 namespace Decode
 {
-	static enum AVPixelFormat GetFormat(AVCodecContext *avctx, const enum AVPixelFormat *pFormat)
+	/*static enum AVPixelFormat GetFormat(AVCodecContext *avctx, const enum AVPixelFormat *pFormat)
 	{
 		while (*pFormat != AV_PIX_FMT_NONE)
 		{
@@ -170,5 +170,5 @@ namespace Decode
 	AVFrame* IntelQSVDecode::GetRGB32() const
 	{
 		return m_pRGB32;
-	}
+	}*/
 }
