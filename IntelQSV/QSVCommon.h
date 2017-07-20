@@ -10,7 +10,9 @@
 #include <d3d11.h>
 #include <dxva2api.h>
 #include <vector>
+#include <queue>
 #include <list>
+using namespace std;
 using namespace TinyUI;
 
 namespace QSV

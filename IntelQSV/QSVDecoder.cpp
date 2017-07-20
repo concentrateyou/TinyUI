@@ -87,6 +87,7 @@ namespace QSV
 		mfxBitstream stream;
 		memset(&stream, 0, sizeof(stream));
 		stream.TimeStamp = tag.samplePTS;
+		m_mfxResidial.TimeStamp = tag.samplePTS;
 		INT32 newsize = tag.size + m_mfxResidial.DataLength;
 		stream.MaxLength = stream.DataLength = (mfxU32)newsize;
 		stream.Data = m_streamBits[0];
@@ -101,7 +102,6 @@ namespace QSV
 			return FALSE;
 		m_mfxResidial.DataOffset = 0;
 		m_mfxResidial.DataLength = stream.DataLength;
-		m_mfxResidial.TimeStamp = tag.samplePTS;
 		if (stream.DataLength > m_mfxResidial.MaxLength)
 		{
 			m_streamBits[1].Reset(new mfxU8[m_mfxResidial.MaxLength]);
@@ -111,7 +111,7 @@ namespace QSV
 		memcpy(m_mfxResidial.Data, stream.Data + stream.DataOffset, stream.DataLength);
 		return TRUE;
 	}
-	mfxStatus QSVDecoder::Process(mfxBitstream& stream, Media::SampleTag& tag, mfxFrameSurface1*& video)
+	mfxStatus QSVDecoder::Process(mfxBitstream& stream, Media::SampleTag& tag, LONGLONG& timestamp, mfxFrameSurface1*& video)
 	{
 		mfxStatus status = MFX_ERR_NONE;
 		while (stream.DataLength > 0)
@@ -142,18 +142,17 @@ namespace QSV
 				{
 					status = m_mfxSession.SyncOperation(m_syncpDECODE, 1000);
 				} while (status == MFX_WRN_IN_EXECUTION);
-				tag.samplePTS = surface->Data.TimeStamp;
-				tag.sampleDTS = surface->Data.TimeStamp;
+				timestamp = surface->Data.TimeStamp;
 				if (MFX_ERR_NONE == status)
 				{
-					mfxU16 index1 = GetFreeSurfaceIndex(m_mfxVPPSurfaces, m_mfxVppResponse.NumFrameActual);
+					mfxU16 index1 = GetFreeSurfaceIndex(m_mfxVPPSurfaces, m_mfxVPPResponse.NumFrameActual);
 					MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index1, MFX_ERR_MEMORY_ALLOC);
 					do
 					{
 						status = m_mfxVideoVPP->RunFrameVPPAsync(surface, m_mfxVPPSurfaces[index1], NULL, &m_syncpVPP);
 						if (MFX_ERR_MORE_SURFACE == status)
 						{
-							index1 = GetFreeSurfaceIndex(m_mfxVPPSurfaces, m_mfxVppResponse.NumFrameActual);
+							index1 = GetFreeSurfaceIndex(m_mfxVPPSurfaces, m_mfxVPPResponse.NumFrameActual);
 							MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index1, MFX_ERR_MEMORY_ALLOC);
 						}
 						if (MFX_WRN_DEVICE_BUSY == status)
@@ -311,7 +310,7 @@ namespace QSV
 		if (MFX_ERR_NONE != status)
 			goto _ERROR;
 		MSDK_MEMCPY_VAR(requestVPP[1].Info, &(m_mfxVppVideoParam.vpp.Out), sizeof(mfxFrameInfo));
-		status = m_allocator->Alloc(m_allocator->pthis, &requestVPP[1], &m_mfxVppResponse);
+		status = m_allocator->Alloc(m_allocator->pthis, &requestVPP[1], &m_mfxVPPResponse);
 		if (MFX_ERR_NONE != status)
 			goto _ERROR;
 		nSurfNum = m_mfxResponse.NumFrameActual;
@@ -327,7 +326,7 @@ namespace QSV
 			MSDK_MEMCPY_VAR(m_mfxSurfaces[i]->Info, &(request.Info), sizeof(mfxFrameInfo));
 			m_mfxSurfaces[i]->Data.MemId = m_mfxResponse.mids[i];
 		}
-		nVppSurfNum = m_mfxVppResponse.NumFrameActual;
+		nVppSurfNum = m_mfxVPPResponse.NumFrameActual;
 		m_mfxVPPSurfaces.Reset(new mfxFrameSurface1*[nVppSurfNum]);
 		if (NULL == m_mfxVPPSurfaces)
 		{
@@ -338,7 +337,7 @@ namespace QSV
 		{
 			m_mfxVPPSurfaces[i] = new mfxFrameSurface1();
 			MSDK_MEMCPY_VAR(m_mfxVPPSurfaces[i]->Info, &requestVPP[1].Info, sizeof(mfxFrameInfo));
-			m_mfxVPPSurfaces[i]->Data.MemId = m_mfxVppResponse.mids[i];
+			m_mfxVPPSurfaces[i]->Data.MemId = m_mfxVPPResponse.mids[i];
 		}
 	_ERROR:
 		return status;
@@ -348,14 +347,14 @@ namespace QSV
 		if (m_allocator != NULL)
 		{
 			m_allocator->Free(m_allocator->pthis, &m_mfxResponse);
-			m_allocator->Free(m_allocator->pthis, &m_mfxVppResponse);
+			m_allocator->Free(m_allocator->pthis, &m_mfxVPPResponse);
 		}
 		for (INT i = 0; i < m_mfxResponse.NumFrameActual; i++)
 		{
 			SAFE_DELETE(m_mfxSurfaces[i]);
 		}
 		m_mfxSurfaces.Reset(NULL);
-		for (INT i = 0; i < m_mfxVppResponse.NumFrameActual; i++)
+		for (INT i = 0; i < m_mfxVPPResponse.NumFrameActual; i++)
 		{
 			SAFE_DELETE(m_mfxVPPSurfaces[i]);
 		}

@@ -16,13 +16,14 @@ namespace QSV
 		void Close();
 		QSVAllocator* GetAllocator();
 	private:
-		mfxStatus Process(mfxBitstream& stream, Media::SampleTag& tag, mfxFrameSurface1*& video);
+		mfxStatus Process(mfxBitstream& stream, Media::SampleTag& tag, LONGLONG& timestamp, mfxFrameSurface1*& video);
 		mfxStatus InitializeVideoParam(const BYTE* bits, LONG size);
 		mfxStatus CreateAllocator();
 		mfxStatus AllocFrames();
 		void DeleteFrames();
 		void DeleteAllocator();
 	private:
+		TinyLinkList<Media::SampleTag>		m_tags;
 		mfxIMPL								m_mfxImpl;
 		mfxVersion							m_mfxVersion;
 		mfxSyncPoint						m_syncpDECODE;
@@ -32,7 +33,7 @@ namespace QSV
 		mfxVideoParam						m_mfxVideoParam;
 		mfxVideoParam						m_mfxVppVideoParam;
 		mfxFrameAllocResponse				m_mfxResponse;
-		mfxFrameAllocResponse				m_mfxVppResponse;
+		mfxFrameAllocResponse				m_mfxVPPResponse;
 		mfxExtVPPDoNotUse					m_vppDoNotUse;
 		vector<mfxExtBuffer*>				m_vppExtParams;
 		TinyScopedArray<BYTE>				m_streamBits[2];
