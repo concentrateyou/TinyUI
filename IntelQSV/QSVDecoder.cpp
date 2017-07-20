@@ -14,6 +14,7 @@ namespace QSV
 
 	QSVDecoder::~QSVDecoder()
 	{
+		Close();
 	}
 	BOOL QSVDecoder::Open(const BYTE* bits, LONG size)
 	{
@@ -198,11 +199,6 @@ namespace QSV
 			status = m_mfxVideoDECODE->DecodeHeader(&m_mfxResidial, &m_mfxVideoParam);
 			m_mfxResidial.DataFlag = oldFlag;
 		}
-		if (m_mfxVideoParam.mfx.FrameInfo.FrameRateExtN == 0 || !m_mfxVideoParam.mfx.FrameInfo.FrameRateExtD)
-		{
-			m_mfxVideoParam.mfx.FrameInfo.FrameRateExtN = 30;
-			m_mfxVideoParam.mfx.FrameInfo.FrameRateExtD = 1;
-		}
 		return status;
 	}
 	mfxStatus QSVDecoder::CreateAllocator()
@@ -261,7 +257,11 @@ namespace QSV
 	}
 	void QSVDecoder::DeleteAllocator()
 	{
+		if (m_allocator)
+			m_allocator->Close();
 		m_allocator.Reset(NULL);
+		if (m_qsvd3d)
+			m_qsvd3d->Close();
 		m_qsvd3d.Reset(NULL);
 	}
 	mfxStatus QSVDecoder::AllocFrames()
@@ -275,43 +275,15 @@ namespace QSV
 		MSDK_ZERO_MEMORY(request);
 		MSDK_ZERO_MEMORY(requestVPP[0]);
 		MSDK_ZERO_MEMORY(requestVPP[1]);
-		//status = m_mfxVideoDECODE->Query(&m_mfxVideoParam, &m_mfxVideoParam);
-		//MSDK_IGNORE_MFX_STS(status, MFX_WRN_INCOMPATIBLE_VIDEO_PARAM);
-		//if (MFX_ERR_NONE != status)
-		//	goto _ERROR;
 		status = m_mfxVideoDECODE->QueryIOSurf(&m_mfxVideoParam, &request);
 		MSDK_IGNORE_MFX_STS(status, MFX_WRN_PARTIAL_ACCELERATION);
 		if (MFX_ERR_NONE != status)
 			goto _ERROR;
-		/*m_mfxVppVideoParam.IOPattern = MFX_IOPATTERN_IN_VIDEO_MEMORY | MFX_IOPATTERN_OUT_SYSTEM_MEMORY;
+
 		MSDK_MEMCPY_VAR(m_mfxVppVideoParam.vpp.In, &m_mfxVideoParam.mfx.FrameInfo, sizeof(mfxFrameInfo));
 		MSDK_MEMCPY_VAR(m_mfxVppVideoParam.vpp.Out, &m_mfxVppVideoParam.vpp.In, sizeof(mfxFrameInfo));
-		m_mfxVppVideoParam.vpp.Out.FourCC = MFX_FOURCC_RGB4;*/
-		memset(&m_mfxVppVideoParam, 0, sizeof(m_mfxVppVideoParam));
-		m_mfxVppVideoParam.vpp.In.FourCC = MFX_FOURCC_NV12;
-		m_mfxVppVideoParam.vpp.In.ChromaFormat = MFX_CHROMAFORMAT_YUV420;
-		m_mfxVppVideoParam.vpp.In.CropX = 0;
-		m_mfxVppVideoParam.vpp.In.CropY = 0;
-		m_mfxVppVideoParam.vpp.In.CropW = m_mfxVideoParam.mfx.FrameInfo.Width;
-		m_mfxVppVideoParam.vpp.In.CropH = m_mfxVideoParam.mfx.FrameInfo.Height;
-		m_mfxVppVideoParam.vpp.In.PicStruct = MFX_PICSTRUCT_PROGRESSIVE;
-		m_mfxVppVideoParam.vpp.In.FrameRateExtN = 30;
-		m_mfxVppVideoParam.vpp.In.FrameRateExtD = 1;
-		m_mfxVppVideoParam.vpp.In.Width = MSDK_ALIGN16(m_mfxVppVideoParam.vpp.In.CropW);
-		m_mfxVppVideoParam.vpp.In.Height = (MFX_PICSTRUCT_PROGRESSIVE == m_mfxVppVideoParam.vpp.In.PicStruct) ? MSDK_ALIGN16(m_mfxVppVideoParam.vpp.In.CropH) : MSDK_ALIGN32(m_mfxVppVideoParam.vpp.In.CropH);
 		m_mfxVppVideoParam.vpp.Out.FourCC = MFX_FOURCC_RGB4;
-		m_mfxVppVideoParam.vpp.Out.ChromaFormat = MFX_CHROMAFORMAT_YUV420;
-		m_mfxVppVideoParam.vpp.Out.CropX = 0;
-		m_mfxVppVideoParam.vpp.Out.CropY = 0;
-		m_mfxVppVideoParam.vpp.Out.CropW = m_mfxVppVideoParam.vpp.In.CropW;
-		m_mfxVppVideoParam.vpp.Out.CropH = m_mfxVppVideoParam.vpp.In.CropH;
-		m_mfxVppVideoParam.vpp.Out.PicStruct = MFX_PICSTRUCT_PROGRESSIVE;
-		m_mfxVppVideoParam.vpp.Out.FrameRateExtN = 30;
-		m_mfxVppVideoParam.vpp.Out.FrameRateExtD = 1;
-		m_mfxVppVideoParam.vpp.Out.Width = MSDK_ALIGN16(m_mfxVppVideoParam.vpp.Out.CropW);
-		m_mfxVppVideoParam.vpp.Out.Height = (MFX_PICSTRUCT_PROGRESSIVE == m_mfxVppVideoParam.vpp.Out.PicStruct) ? MSDK_ALIGN16(m_mfxVppVideoParam.vpp.Out.CropH) : MSDK_ALIGN32(m_mfxVppVideoParam.vpp.Out.CropH);
-		m_mfxVppVideoParam.IOPattern = MFX_IOPATTERN_IN_SYSTEM_MEMORY | MFX_IOPATTERN_OUT_SYSTEM_MEMORY;
-
+		m_mfxVppVideoParam.IOPattern = MFX_IOPATTERN_IN_VIDEO_MEMORY | MFX_IOPATTERN_OUT_SYSTEM_MEMORY;
 		m_vppDoNotUse.NumAlg = 4;
 		m_vppDoNotUse.AlgList = new mfxU32[m_vppDoNotUse.NumAlg];
 		if (NULL == m_vppDoNotUse.AlgList)
@@ -326,10 +298,6 @@ namespace QSV
 		m_vppExtParams.push_back((mfxExtBuffer*)&m_vppDoNotUse);
 		m_mfxVppVideoParam.ExtParam = &m_vppExtParams[0];
 		m_mfxVppVideoParam.NumExtParam = (mfxU16)m_vppExtParams.size();
-		/*status = m_mfxVideoVPP->Query(&m_mfxVppVideoParam, &m_mfxVppVideoParam);
-		MSDK_IGNORE_MFX_STS(status, MFX_WRN_INCOMPATIBLE_VIDEO_PARAM);
-		if (MFX_ERR_NONE != status)
-			return status;*/
 		status = m_mfxVideoVPP->QueryIOSurf(&m_mfxVppVideoParam, requestVPP);
 		if (MFX_WRN_PARTIAL_ACCELERATION == status)
 		{
@@ -405,5 +373,9 @@ namespace QSV
 		m_mfxSession.Close();
 		MSDK_SAFE_DELETE_ARRAY(m_vppDoNotUse.AlgList);
 		DeleteAllocator();
+	}
+	QSVAllocator* QSVDecoder::GetAllocator()
+	{
+		return m_allocator;
 	}
 }

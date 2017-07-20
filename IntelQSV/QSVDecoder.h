@@ -14,6 +14,7 @@ namespace QSV
 		BOOL Open(const BYTE* bits, LONG size);
 		BOOL Decode(Media::SampleTag& tag, mfxFrameSurface1*& video);
 		void Close();
+		QSVAllocator* GetAllocator();
 	private:
 		mfxStatus Process(mfxBitstream& stream, Media::SampleTag& tag, mfxFrameSurface1*& video);
 		mfxStatus InitializeVideoParam(const BYTE* bits, LONG size);

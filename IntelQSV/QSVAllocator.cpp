@@ -189,6 +189,7 @@ namespace QSV
 		{
 			mfxFrameAllocResponseEx& resex = m_responsexs.GetAt(s);
 			Deallocate(&resex);
+			s = m_responsexs.Next(s);
 		}
 		m_responsexs.RemoveAll();
 		s = m_responses.First();
@@ -196,6 +197,7 @@ namespace QSV
 		{
 			mfxFrameAllocResponse& res = m_responses.GetAt(s);
 			Deallocate(&res);
+			s = m_responses.Next(s);
 		}
 		m_responses.RemoveAll();
 		return MFX_ERR_NONE;
@@ -255,7 +257,8 @@ namespace QSV
 		while (s != NULL)
 		{
 			mfxFrameAllocResponseEx& resex = m_responsexs.GetAt(s);
-			if (resex.mids != 0 && response->mids != 0 &&
+			if (resex.mids != NULL &&
+				response->mids != NULL &&
 				resex.mids[0] == response->mids[0] &&
 				resex.NumFrameActual == response->NumFrameActual)
 			{
@@ -266,12 +269,14 @@ namespace QSV
 					return status;
 				}
 			}
+			s = m_responsexs.Next(s);
 		}
 		s = m_responses.First();
 		while (s != NULL)
 		{
 			mfxFrameAllocResponse& res = m_responses.GetAt(s);
-			if (res.mids != 0 && response->mids != 0 &&
+			if (res.mids != NULL &&
+				response->mids != NULL &&
 				res.mids[0] == response->mids[0] &&
 				res.NumFrameActual == response->NumFrameActual)
 			{
@@ -279,6 +284,7 @@ namespace QSV
 				m_responses.RemoveAt(s);
 				return status;
 			}
+			s = m_responses.Next(s);
 		}
 		return MFX_ERR_INVALID_HANDLE;
 	}
