@@ -5,6 +5,12 @@ namespace QSV
 {
 #define MAX_STREAM_SIZE (1024 * 1024)
 
+	struct SurfaceTag
+	{
+		mfxFrameSurface1*	surface1;
+		LONGLONG			timestamp;
+	};
+
 	class QSVDecoder
 	{
 		DISALLOW_COPY_AND_ASSIGN(QSVDecoder)
@@ -23,6 +29,7 @@ namespace QSV
 		void DeleteFrames();
 		void DeleteAllocator();
 	private:
+		TinyLinkList<SurfaceTag>			m_surfaceTags;
 		TinyLinkList<Media::SampleTag>		m_tags;
 		mfxIMPL								m_mfxImpl;
 		mfxVersion							m_mfxVersion;

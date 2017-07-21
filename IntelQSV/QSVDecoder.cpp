@@ -116,9 +116,9 @@ namespace QSV
 					return FALSE;
 				else
 				{
+					m_surfaceTags.InsertLast(SurfaceTag{ video,timestamp });
 					if (residial == 0)
 					{
-						tag.samplePTS = tag.sampleDTS = timestamp;
 						break;
 					}
 				}
@@ -131,14 +131,20 @@ namespace QSV
 					return FALSE;
 				else
 				{
+					m_surfaceTags.InsertLast(SurfaceTag{ video,timestamp });
 					if (residial == 0)
 					{
-						tag.samplePTS = tag.sampleDTS = timestamp;
+
 						break;
 					}
 				}
 			}
 		}
+		ITERATOR s = m_surfaceTags.First();
+		SurfaceTag& surfaceTag = m_surfaceTags.GetAt(s);
+		m_surfaceTags.RemoveAt(s);
+		tag.samplePTS = tag.sampleDTS = surfaceTag.timestamp;
+		video = surfaceTag.surface1;
 		return TRUE;
 	}
 	mfxStatus QSVDecoder::Process(mfxBitstream& stream, LONGLONG& timestamp, mfxFrameSurface1*& video)
