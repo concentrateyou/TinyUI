@@ -45,7 +45,8 @@ namespace QSV
 		mfxIMPL baseImpl = MFX_IMPL_BASETYPE(impl);
 		for (mfxU8 i = 0; i < sizeof(implTypes) / sizeof(implTypes[0]); i++)
 		{
-			if (implTypes[i].impl == baseImpl) {
+			if (implTypes[i].impl == baseImpl)
+			{
 				adapterNum = implTypes[i].adapterID;
 				break;
 			}
@@ -56,9 +57,13 @@ namespace QSV
 	INT GetFreeSurfaceIndex(mfxFrameSurface1** pSurfacesPool, mfxU16 nPoolSize)
 	{
 		if (pSurfacesPool)
+		{
 			for (mfxU16 i = 0; i < nPoolSize; i++)
+			{
 				if (0 == pSurfacesPool[i]->Data.Locked)
 					return i;
+			}
+		}
 		return MFX_ERR_NOT_FOUND;
 	}
 }

@@ -33,8 +33,6 @@ namespace QSV
 		TinyLinkList<Media::SampleTag>		m_tags;
 		mfxIMPL								m_mfxImpl;
 		mfxVersion							m_mfxVersion;
-		mfxSyncPoint						m_syncpDECODE;
-		mfxSyncPoint						m_syncpVPP;
 		MFXVideoSession						m_mfxSession;
 		mfxBitstream						m_mfxResidial;
 		mfxVideoParam						m_mfxVideoParam;

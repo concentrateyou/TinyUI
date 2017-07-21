@@ -150,6 +150,8 @@ namespace QSV
 	mfxStatus QSVDecoder::Process(mfxBitstream& stream, LONGLONG& timestamp, mfxFrameSurface1*& video)
 	{
 		mfxStatus status = MFX_ERR_NONE;
+		mfxSyncPoint	syncpDECODE;
+		mfxSyncPoint	syncpVPP;
 		while (stream.DataLength > 0)
 		{
 			mfxFrameSurface1* surface = NULL;
@@ -157,7 +159,7 @@ namespace QSV
 			MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index, MFX_ERR_MEMORY_ALLOC);
 			do
 			{
-				status = m_mfxVideoDECODE->DecodeFrameAsync(&stream, m_mfxSurfaces[index], &surface, &m_syncpDECODE);
+				status = m_mfxVideoDECODE->DecodeFrameAsync(&stream, m_mfxSurfaces[index], &surface, &syncpDECODE);
 				if (MFX_ERR_MORE_SURFACE == status)
 				{
 					index = GetFreeSurfaceIndex(m_mfxSurfaces, m_mfxResponse.NumFrameActual);
@@ -168,15 +170,16 @@ namespace QSV
 					Sleep(1);
 				}
 			} while (MFX_WRN_DEVICE_BUSY == status || MFX_ERR_MORE_SURFACE == status);
-			if (MFX_ERR_NONE < status && m_syncpDECODE)
+			if (MFX_ERR_NONE < status && syncpDECODE)
 			{
 				status = MFX_ERR_NONE;
 			}
 			if (MFX_ERR_NONE == status)
 			{
+				//TRACE("syncpDECODE:%d,surface:%d \n", syncpDECODE, surface);
 				do
 				{
-					status = m_mfxSession.SyncOperation(m_syncpDECODE, 1000);
+					status = m_mfxSession.SyncOperation(syncpDECODE, 1000);
 				} while (status == MFX_WRN_IN_EXECUTION);
 				timestamp = surface->Data.TimeStamp;
 				if (MFX_ERR_NONE == status)
@@ -185,7 +188,7 @@ namespace QSV
 					MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index1, MFX_ERR_MEMORY_ALLOC);
 					do
 					{
-						status = m_mfxVideoVPP->RunFrameVPPAsync(surface, m_mfxVPPSurfaces[index1], NULL, &m_syncpVPP);
+						status = m_mfxVideoVPP->RunFrameVPPAsync(surface, m_mfxVPPSurfaces[index1], NULL, &syncpVPP);
 						if (MFX_ERR_MORE_SURFACE == status)
 						{
 							index1 = GetFreeSurfaceIndex(m_mfxVPPSurfaces, m_mfxVPPResponse.NumFrameActual);
@@ -196,7 +199,7 @@ namespace QSV
 							Sleep(1);
 						}
 					} while (MFX_WRN_DEVICE_BUSY == status || MFX_ERR_MORE_SURFACE == status);
-					if (MFX_ERR_NONE < status && m_syncpVPP)
+					if (MFX_ERR_NONE < status && syncpVPP)
 					{
 						status = MFX_ERR_NONE;
 					}
@@ -204,7 +207,7 @@ namespace QSV
 					{
 						do
 						{
-							status = m_mfxSession.SyncOperation(m_syncpVPP, 1000);
+							status = m_mfxSession.SyncOperation(syncpVPP, 1000);
 						} while (status == MFX_WRN_IN_EXECUTION);
 						if (status == MFX_ERR_NONE)
 						{
