@@ -1,5 +1,8 @@
 #pragma once
 #include "QSVD3D.h"
+#include "IO/TinyFixedAlloc.h"
+using namespace TinyUI;
+using namespace TinyUI::IO;
 
 namespace QSV
 {

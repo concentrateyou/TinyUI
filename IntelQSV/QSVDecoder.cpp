@@ -84,34 +84,64 @@ namespace QSV
 	}
 	BOOL QSVDecoder::Decode(Media::SampleTag& tag, mfxFrameSurface1*& video)
 	{
-		mfxBitstream stream;
-		memset(&stream, 0, sizeof(stream));
-		stream.TimeStamp = tag.samplePTS;
-		m_mfxResidial.TimeStamp = tag.samplePTS;
-		INT32 newsize = tag.size + m_mfxResidial.DataLength;
-		stream.MaxLength = stream.DataLength = (mfxU32)newsize;
-		stream.Data = m_streamBits[0];
-		mfxU8* pData = stream.Data;
-		memcpy(pData, m_mfxResidial.Data, m_mfxResidial.DataLength);
-		pData += m_mfxResidial.DataLength;
-		m_mfxResidial.DataLength = 0;
-		memcpy(pData, tag.bits, tag.size);
-		pData += tag.size;
-		mfxStatus status = Process(stream, tag, video);
-		if (status != MFX_ERR_NONE)
-			return FALSE;
-		m_mfxResidial.DataOffset = 0;
-		m_mfxResidial.DataLength = stream.DataLength;
-		if (stream.DataLength > m_mfxResidial.MaxLength)
+		if (tag.size > 0)
 		{
-			m_streamBits[1].Reset(new mfxU8[m_mfxResidial.MaxLength]);
-			m_mfxResidial.MaxLength = stream.DataLength;
-			m_mfxResidial.Data = m_streamBits[1];
+			m_tags.InsertLast(tag);
 		}
-		memcpy(m_mfxResidial.Data, stream.Data + stream.DataOffset, stream.DataLength);
+		LONG residial = 0;
+		LONGLONG timestamp = 0;
+		mfxBitstream mfxStream;
+		for (;;)
+		{
+			if (residial == 0)
+			{
+				ITERATOR s = m_tags.First();
+				Media::SampleTag& sampleTag = m_tags.GetAt(s);
+				m_tags.RemoveAt(s);
+				memset(&mfxStream, 0, sizeof(mfxStream));
+				mfxStream.TimeStamp = sampleTag.samplePTS;
+				INT32 newsize = sampleTag.size + m_mfxResidial.DataLength;
+				mfxStream.MaxLength = mfxStream.DataLength = (mfxU32)newsize;
+				mfxStream.Data = m_streamBits[0];
+				mfxU8* pData = mfxStream.Data;
+				memcpy(pData, m_mfxResidial.Data, m_mfxResidial.DataLength);
+				pData += m_mfxResidial.DataLength;
+				m_mfxResidial.DataLength = 0;
+				memcpy(pData, sampleTag.bits, sampleTag.size);
+				pData += sampleTag.size;
+				residial += newsize;
+				mfxStatus status = Process(mfxStream, timestamp, video);
+				residial -= mfxStream.DataOffset;
+				if (status != MFX_ERR_NONE)
+					return FALSE;
+				else
+				{
+					if (residial == 0)
+					{
+						tag.samplePTS = tag.sampleDTS = timestamp;
+						break;
+					}
+				}
+			}
+			else
+			{
+				mfxStatus status = Process(mfxStream, timestamp, video);
+				residial -= mfxStream.DataOffset;
+				if (status != MFX_ERR_NONE)
+					return FALSE;
+				else
+				{
+					if (residial == 0)
+					{
+						tag.samplePTS = tag.sampleDTS = timestamp;
+						break;
+					}
+				}
+			}
+		}
 		return TRUE;
 	}
-	mfxStatus QSVDecoder::Process(mfxBitstream& stream, Media::SampleTag& tag, LONGLONG& timestamp, mfxFrameSurface1*& video)
+	mfxStatus QSVDecoder::Process(mfxBitstream& stream, LONGLONG& timestamp, mfxFrameSurface1*& video)
 	{
 		mfxStatus status = MFX_ERR_NONE;
 		while (stream.DataLength > 0)

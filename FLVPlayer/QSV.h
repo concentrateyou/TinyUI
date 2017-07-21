@@ -32,8 +32,6 @@ namespace FLVPlayer
 	private:
 		mfxU16							m_sizeIN;
 		mfxU16							m_sizeOUT;
-		mfxSyncPoint					m_syncpDECODE;
-		mfxSyncPoint					m_syncpVPP;
 		MFXVideoSession					m_session;
 		mfxBitstream					m_residial;
 		mfxVideoParam					m_videoParam;

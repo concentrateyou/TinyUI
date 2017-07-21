@@ -365,7 +365,7 @@ namespace FLVPlayer
 				mfxFrameSurface1* surface1 = NULL;
 				if (m_decode.m_qsv.Decode(tag, surface1))
 				{
-					//SAFE_DELETE_ARRAY(tag.bits);
+					SAFE_DELETE_ARRAY(tag.bits);
 					QSV::QSVAllocator* pAllocator = m_decode.m_qsv.GetAllocator();
 					pAllocator->Lock(pAllocator->pthis, surface1->Data.MemId, &(surface1->Data));
 					tag.size = surface1->Info.CropH * surface1->Data.Pitch;

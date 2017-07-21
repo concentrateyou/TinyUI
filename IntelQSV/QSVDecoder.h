@@ -16,7 +16,7 @@ namespace QSV
 		void Close();
 		QSVAllocator* GetAllocator();
 	private:
-		mfxStatus Process(mfxBitstream& stream, Media::SampleTag& tag, LONGLONG& timestamp, mfxFrameSurface1*& video);
+		mfxStatus Process(mfxBitstream& stream, LONGLONG& timestamp, mfxFrameSurface1*& video);
 		mfxStatus InitializeVideoParam(const BYTE* bits, LONG size);
 		mfxStatus CreateAllocator();
 		mfxStatus AllocFrames();
