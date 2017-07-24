@@ -425,6 +425,8 @@ namespace QSV
 			SAFE_DELETE(m_mfxVPPSurfaces[i]);
 		}
 		m_mfxVPPSurfaces.Reset(NULL);
+		ZeroMemory(&m_mfxResponse, sizeof(m_mfxResponse));
+		ZeroMemory(&m_mfxVPPResponse, sizeof(m_mfxVPPResponse));
 	}
 	void QSVDecoder::Close()
 	{

@@ -47,6 +47,11 @@ namespace MShow
 		bRes = FALSE;
 		FLV_SCRIPTDATA& script = m_task.GetScript();
 		TinySize s(static_cast<LONG>(script.width), static_cast<LONG>(script.height));
+		/*m_h264.Close();
+		if (m_h264.Initialize(s, s))
+		{
+			bRes = m_h264.Open(bits, size);
+		}*/
 		m_h264.Close();
 		bRes = m_h264.Open(bits, size);
 		m_bBreak = !bRes;
@@ -73,8 +78,27 @@ namespace MShow
 				Sleep(50);
 				continue;
 			}
-			BYTE* bo = NULL;
+			/*BYTE* bo = NULL;
 			LONG  so = 0;
+			if (m_h264.Decode(sampleTag, bo, so))
+			{
+				SAFE_DELETE_ARRAY(sampleTag.bits);
+				if (m_clock.GetBasePTS() == -1)
+				{
+					m_clock.SetBasePTS(sampleTag.samplePTS);
+				}
+				if (m_videoQueue.GetAllocSize() == 0)
+				{
+					INT count = MAX_VIDEO_QUEUE_SIZE / so + 1;
+					m_videoQueue.Initialize(count, so + 4);
+				}
+				sampleTag.size = so;
+				sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
+				memcpy_s(sampleTag.bits + 4, sampleTag.size, bo, so);
+				sampleTag.samplePTS = m_h264.GetYUV420()->pts;
+				sampleTag.sampleDTS = sampleTag.samplePTS;
+				m_videoQueue.Push(sampleTag);
+			}*/
 			mfxFrameSurface1* surface1 = NULL;
 			if (m_h264.Decode(sampleTag, surface1))
 			{

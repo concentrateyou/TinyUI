@@ -1193,20 +1193,18 @@ private:\
 			other.m_myP = ps;
 		}
 	private:
-		static IUnknown* ComQIPtrAssign(IUnknown** pp, IUnknown* lp, REFIID riid);
+		static IUnknown* ComQIPtrAssign(IUnknown** pp, IUnknown* lp, REFIID riid)
+		{
+			if (pp == NULL)
+				return NULL;
+			IUnknown* pTemp = *pp;
+			if (lp == NULL || FAILED(lp->QueryInterface(riid, (void**)pp)))
+				*pp = NULL;
+			if (pTemp)
+				pTemp->Release();
+			return *pp;
+		}
 	};
-	template<class T>
-	IUnknown* TinyComQIPtr<T>::ComQIPtrAssign(IUnknown** pp, IUnknown* lp, REFIID riid)
-	{
-		if (pp == NULL)
-			return NULL;
-		IUnknown* pTemp = *pp;
-		if (lp == NULL || FAILED(lp->QueryInterface(riid, (void**)pp)))
-			*pp = NULL;
-		if (pTemp)
-			pTemp->Release();
-		return *pp;
-	}
 	/// <summary>
 	/// Variant·â×°
 	/// </summary>
