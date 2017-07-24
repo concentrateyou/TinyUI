@@ -32,7 +32,7 @@ namespace DXFramework
 	}
 	BOOL DX11CaptureTask::OpenEvents()
 	{
-		string name = StringPrintf("%s%d", BEGIN_CAPTURE_EVENT, m_targetWND.dwProcessID);
+		string name = std::move(StringPrintf("%s%d", BEGIN_CAPTURE_EVENT, m_targetWND.dwProcessID));
 		if (!m_start.OpenEvent(EVENT_ALL_ACCESS, FALSE, name.c_str()))
 		{
 			return FALSE;
@@ -56,7 +56,7 @@ namespace DXFramework
 	}
 	BOOL DX11CaptureTask::CreateEvents()
 	{
-		string name = StringPrintf("%s%d", BEGIN_CAPTURE_EVENT, m_targetWND.dwProcessID);
+		string name = std::move(StringPrintf("%s%d", BEGIN_CAPTURE_EVENT, m_targetWND.dwProcessID));
 		if (!m_start.CreateEvent(FALSE, FALSE, name.c_str()))
 		{
 			return FALSE;

@@ -82,7 +82,7 @@ namespace QSV
 	_ERROR:
 		return status == MFX_ERR_NONE;
 	}
-	BOOL QSVDecoder::Decode(Media::SampleTag& tag, mfxFrameSurface1*& video)
+	BOOL QSVDecoder::Decode(SampleTag& tag, mfxFrameSurface1*& video)
 	{
 		if (tag.size > 0)
 		{
@@ -93,7 +93,7 @@ namespace QSV
 		mfxBitstream mfxStream;
 		for (;;)
 		{
-			if (residial == 0)
+			if (residial <= 0)
 			{
 				ITERATOR s = m_tags.First();
 				Media::SampleTag& sampleTag = m_tags.GetAt(s);
@@ -113,13 +113,20 @@ namespace QSV
 				mfxStatus status = Process(mfxStream, timestamp, video);
 				residial -= mfxStream.DataOffset;
 				if (status != MFX_ERR_NONE)
+				{
+					if (status == MFX_ERR_MORE_DATA && residial == 0)
+					{
+						goto _DATA;
+					}
+					SAFE_DELETE_ARRAY(tag.bits);
 					return FALSE;
+				}
 				else
 				{
 					m_surfaceTags.InsertLast(SurfaceTag{ video,timestamp });
 					if (residial == 0)
 					{
-						break;
+						goto _DATA;
 					}
 				}
 			}
@@ -128,24 +135,36 @@ namespace QSV
 				mfxStatus status = Process(mfxStream, timestamp, video);
 				residial -= mfxStream.DataOffset;
 				if (status != MFX_ERR_NONE)
+				{
+					if (status == MFX_ERR_MORE_DATA && residial == 0)
+					{
+						goto _DATA;
+					}
+					SAFE_DELETE_ARRAY(tag.bits);
 					return FALSE;
+				}
 				else
 				{
 					m_surfaceTags.InsertLast(SurfaceTag{ video,timestamp });
 					if (residial == 0)
 					{
-
-						break;
+						goto _DATA;
 					}
 				}
 			}
 		}
-		ITERATOR s = m_surfaceTags.First();
-		SurfaceTag& surfaceTag = m_surfaceTags.GetAt(s);
-		m_surfaceTags.RemoveAt(s);
-		tag.samplePTS = tag.sampleDTS = surfaceTag.timestamp;
-		video = surfaceTag.surface1;
-		return TRUE;
+	_DATA:
+		SAFE_DELETE_ARRAY(tag.bits);
+		if (m_surfaceTags.GetSize() > 0)
+		{
+			ITERATOR s = m_surfaceTags.First();
+			SurfaceTag& surfaceTag = m_surfaceTags.GetAt(s);
+			m_surfaceTags.RemoveAt(s);
+			tag.samplePTS = tag.sampleDTS = surfaceTag.timestamp;
+			video = surfaceTag.surface1;
+			return TRUE;
+		}
+		return FALSE;
 	}
 	mfxStatus QSVDecoder::Process(mfxBitstream& stream, LONGLONG& timestamp, mfxFrameSurface1*& video)
 	{
@@ -176,7 +195,6 @@ namespace QSV
 			}
 			if (MFX_ERR_NONE == status)
 			{
-				//TRACE("syncpDECODE:%d,surface:%d \n", syncpDECODE, surface);
 				do
 				{
 					status = m_mfxSession.SyncOperation(syncpDECODE, 1000);
@@ -236,6 +254,10 @@ namespace QSV
 			m_mfxResidial.DataFlag = MFX_BITSTREAM_COMPLETE_FRAME;
 			status = m_mfxVideoDECODE->DecodeHeader(&m_mfxResidial, &m_mfxVideoParam);
 			m_mfxResidial.DataFlag = oldFlag;
+		}
+		if (m_mfxVideoParam.AsyncDepth == 0)
+		{
+			m_mfxVideoParam.AsyncDepth = 4;
 		}
 		return status;
 	}
@@ -305,6 +327,7 @@ namespace QSV
 	mfxStatus QSVDecoder::AllocFrames()
 	{
 		MSDK_CHECK_POINTER(m_mfxVideoDECODE, MFX_ERR_NULL_PTR);
+		MSDK_CHECK_POINTER(m_mfxVideoVPP, MFX_ERR_NULL_PTR);
 		mfxStatus status = MFX_ERR_NONE;
 		mfxFrameAllocRequest request;
 		mfxFrameAllocRequest requestVPP[2];
@@ -334,6 +357,7 @@ namespace QSV
 		m_vppDoNotUse.AlgList[2] = MFX_EXTBUFF_VPP_DETAIL;
 		m_vppDoNotUse.AlgList[3] = MFX_EXTBUFF_VPP_PROCAMP;
 		m_vppExtParams.push_back((mfxExtBuffer*)&m_vppDoNotUse);
+		m_mfxVppVideoParam.AsyncDepth = m_mfxVideoParam.AsyncDepth;
 		m_mfxVppVideoParam.ExtParam = &m_vppExtParams[0];
 		m_mfxVppVideoParam.NumExtParam = (mfxU16)m_vppExtParams.size();
 		status = m_mfxVideoVPP->QueryIOSurf(&m_mfxVppVideoParam, requestVPP);
@@ -341,7 +365,10 @@ namespace QSV
 		{
 			MSDK_IGNORE_MFX_STS(status, MFX_WRN_PARTIAL_ACCELERATION);
 		}
-		nSurfNum = request.NumFrameSuggested + requestVPP[0].NumFrameSuggested;
+		if ((requestVPP[0].NumFrameSuggested < m_mfxVppVideoParam.AsyncDepth) ||
+			(requestVPP[1].NumFrameSuggested < m_mfxVppVideoParam.AsyncDepth))
+			return MFX_ERR_MEMORY_ALLOC;
+		nSurfNum = request.NumFrameSuggested + requestVPP[0].NumFrameSuggested - m_mfxVideoParam.AsyncDepth + 1;
 		nVppSurfNum = requestVPP[1].NumFrameSuggested;
 		request.NumFrameSuggested = request.NumFrameMin = nSurfNum;
 		request.Type = MFX_MEMTYPE_EXTERNAL_FRAME | MFX_MEMTYPE_FROM_DECODE | MFX_MEMTYPE_FROM_VPPIN | MFX_MEMTYPE_VIDEO_MEMORY_DECODER_TARGET;

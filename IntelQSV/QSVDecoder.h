@@ -1,6 +1,6 @@
 #pragma once
 #include "QSVAllocator.h"
-
+using namespace TinyUI::Media;
 namespace QSV
 {
 #define MAX_STREAM_SIZE (1024 * 1024)
@@ -30,7 +30,7 @@ namespace QSV
 		void DeleteAllocator();
 	private:
 		TinyLinkList<SurfaceTag>			m_surfaceTags;
-		TinyLinkList<Media::SampleTag>		m_tags;
+		TinyLinkList<SampleTag>				m_tags;
 		mfxIMPL								m_mfxImpl;
 		mfxVersion							m_mfxVersion;
 		MFXVideoSession						m_mfxSession;

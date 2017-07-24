@@ -27,18 +27,20 @@ namespace Decode
 		m_dstsize = dstsize;
 		m_pYUV420 = av_frame_alloc();
 		if (!m_pYUV420)
-			goto H264_ERROR;
+			goto _ERROR;
 		m_pRGB32 = av_frame_alloc();
 		if (!m_pRGB32)
-			goto H264_ERROR;
+			goto _ERROR;
 		m_sws = sws_getContext(srcsize.cx, srcsize.cy, AV_PIX_FMT_YUV420P, dstsize.cx, dstsize.cy, AV_PIX_FMT_RGB32, 0, NULL, NULL, NULL);
 		if (!m_sws)
-			goto H264_ERROR;
+			goto _ERROR;
 		INT size = av_image_get_buffer_size(AV_PIX_FMT_RGB32, m_dstsize.cx, m_dstsize.cy, 1);
 		m_bits.Reset(new BYTE[size]);
+		if (!m_bits)
+			goto _ERROR;
 		memset(m_bits, 0, size);
 		return size == av_image_fill_arrays(m_pRGB32->data, m_pRGB32->linesize, m_bits.Ptr(), AV_PIX_FMT_RGB32, m_dstsize.cx, m_dstsize.cy, 1);
-	H264_ERROR:
+	_ERROR:
 		Close();
 		return FALSE;
 
@@ -95,6 +97,7 @@ namespace Decode
 			goto _ERROR;
 		}
 	_ERROR:
+		SAFE_DELETE_ARRAY(tag.bits);
 		av_packet_unref(&m_packet);
 		return iRes == 0;
 	}

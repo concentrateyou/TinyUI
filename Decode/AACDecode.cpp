@@ -79,15 +79,24 @@ namespace Decode
 	{
 		return m_handle;
 	}
-	BOOL AACDecode::Decode(BYTE* bi, LONG si, BYTE*& bo, LONG& so)
+	BOOL AACDecode::Decode(SampleTag& tag, BYTE*& bo, LONG& so)
 	{
+		BOOL bRes = TRUE;
 		if (!m_handle)
-			return FALSE;
-		bo = reinterpret_cast<BYTE*>(NeAACDecDecode(m_handle, &m_frame, bi, si));
+		{
+			bRes = FALSE;
+			goto _ERROR;
+		}
+		bo = reinterpret_cast<BYTE*>(NeAACDecDecode(m_handle, &m_frame, tag.bits, tag.size));
 		if (m_frame.error != 0 || m_frame.samples <= 0)
-			return FALSE;
+		{
+			bRes = FALSE;
+			goto _ERROR;
+		}
 		so = m_frame.samples * m_frame.channels;
-		return TRUE;
+	_ERROR:
+		SAFE_DELETE_ARRAY(tag.bits);
+		return bRes;
 	}
 	BOOL AACDecode::Close()
 	{

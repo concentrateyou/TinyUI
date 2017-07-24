@@ -17,7 +17,7 @@ namespace Decode
 		virtual ~AACDecode();
 		BOOL Open(WORD wBitsPerSample, WORD wSampleRate);
 		BOOL Open(BYTE* adts, LONG size, WORD wBitsPerSample);
-		BOOL Decode(BYTE* bi, LONG si, BYTE*& bo, LONG& so);
+		BOOL Decode(SampleTag& tag, BYTE*& bo, LONG& so);
 		BOOL Close();
 		NeAACDecHandle	GetHandle();
 		WAVEFORMATEX*	GetFormat();

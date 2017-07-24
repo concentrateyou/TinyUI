@@ -27,7 +27,7 @@ namespace FLVPlayer
 	BOOL FLVDecode::Submit()
 	{
 		//if (m_reader.OpenURL("rtmp://live.hkstv.hk.lxdns.com/live/hks"))
-		if (m_reader.OpenURL("rtmp://10.10.13.100/live/lb_jilupian_720p"))
+		if (m_reader.OpenURL("rtmp://10.10.13.99/live/lb_diezhanjuchang_720p"))
 		/*if (m_reader.OpenFile("D:\\4.flv"))*/
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
@@ -442,9 +442,8 @@ namespace FLVPlayer
 			{
 				BYTE* bo = NULL;
 				LONG  so = 0;
-				if (m_decode.m_aac->Decode(tag.bits, tag.size, bo, so))
+				if (m_decode.m_aac->Decode(tag, bo, so))
 				{
-					SAFE_DELETE_ARRAY(tag.bits);
 					tag.bits = new BYTE[so];
 					memcpy(tag.bits, bo, so);
 					tag.size = so;
@@ -453,10 +452,6 @@ namespace FLVPlayer
 						m_decode.m_basePTS = tag.samplePTS;
 					}
 					m_queue.Push(tag);
-				}
-				else
-				{
-					SAFE_DELETE_ARRAY(tag.bits);
 				}
 			}
 		}

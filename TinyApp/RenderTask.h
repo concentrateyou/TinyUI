@@ -4,7 +4,6 @@
 #include "IO/TinyIO.h"
 #include "DShowCommon.h"
 #include "VideoCapture.h"
-#include "QSVConvert.h"
 using namespace TinyUI;
 using namespace TinyUI::IO;
 

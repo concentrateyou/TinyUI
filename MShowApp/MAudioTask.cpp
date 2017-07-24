@@ -79,9 +79,8 @@ namespace MShow
 			}
 			BYTE* bo = NULL;
 			LONG  so = 0;
-			if (m_aac.Decode(sampleTag.bits, sampleTag.size, bo, so))
+			if (m_aac.Decode(sampleTag, bo, so))
 			{
-				SAFE_DELETE_ARRAY(sampleTag.bits);
 				if (m_clock.GetBasePTS() == -1)
 				{
 					m_clock.SetBasePTS(sampleTag.samplePTS);
@@ -95,10 +94,6 @@ namespace MShow
 				sampleTag.bits = static_cast<BYTE*>(m_audioQueue.Alloc());
 				memcpy_s(sampleTag.bits + 4, sampleTag.size, bo, so);
 				m_audioQueue.Push(sampleTag);
-			}
-			else
-			{
-				SAFE_DELETE_ARRAY(sampleTag.bits);
 			}
 		}
 		m_audioQueue.RemoveAll();
