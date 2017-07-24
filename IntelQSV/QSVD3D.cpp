@@ -117,4 +117,68 @@ namespace QSV
 	{
 		return 0;
 	}
+	//////////////////////////////////////////////////////////////////////////
+	QSVD3D11::QSVD3D11()
+	{
+	}
+	QSVD3D11::~QSVD3D11()
+	{
+		Close();
+	}
+	mfxStatus QSVD3D11::Initialize(mfxHDL hWindow, UINT adapter)
+	{
+		static const D3D_FEATURE_LEVEL featureLevels[] = {
+			D3D_FEATURE_LEVEL_11_1,
+			D3D_FEATURE_LEVEL_11_0,
+			D3D_FEATURE_LEVEL_10_1,
+			D3D_FEATURE_LEVEL_10_0
+		};
+		D3D_FEATURE_LEVEL pFeatureLevelsOut;
+		mfxStatus status = MFX_ERR_NONE;
+		HRESULT hRes = S_OK;
+		hRes = CreateDXGIFactory(__uuidof(IDXGIFactory2), (void**)(&m_pDXGIFactory));
+		if (FAILED(hRes))
+			return MFX_ERR_DEVICE_FAILED;
+		hRes = m_pDXGIFactory->EnumAdapters(adapter, &m_pAdapter);
+		if (FAILED(hRes))
+			return MFX_ERR_DEVICE_FAILED;
+		hRes = D3D11CreateDevice(m_pAdapter,
+			D3D_DRIVER_TYPE_UNKNOWN,
+			NULL,
+			0,
+			featureLevels,
+			MSDK_ARRAY_LEN(featureLevels),
+			D3D11_SDK_VERSION,
+			&m_pD3D11Device,
+			&pFeatureLevelsOut,
+			&m_pD3D11Ctx);
+		if (FAILED(hRes))
+			return MFX_ERR_DEVICE_FAILED;
+		m_pDX11VideoDevice = m_pD3D11Device;
+		m_pVideoContext = m_pD3D11Ctx;
+		MSDK_CHECK_POINTER(m_pDX11VideoDevice, MFX_ERR_NULL_PTR);
+		MSDK_CHECK_POINTER(m_pVideoContext, MFX_ERR_NULL_PTR);
+		TinyComQIPtr<ID3D10Multithread> mt(m_pVideoContext);
+		if (mt)
+			mt->SetMultithreadProtected(TRUE);
+		else
+			return MFX_ERR_DEVICE_FAILED;
+		return status;
+	}
+	mfxHDL QSVD3D11::GetHandle(mfxHandleType type)
+	{
+		if (MFX_HANDLE_D3D11_DEVICE == type)
+		{
+			return (mfxHDL)m_pD3D11Device;
+		}
+		return NULL;
+	}
+	mfxStatus QSVD3D11::Reset()
+	{
+		return MFX_ERR_NONE;
+	}
+	void QSVD3D11::Close()
+	{
+		Reset();
+	}
 }

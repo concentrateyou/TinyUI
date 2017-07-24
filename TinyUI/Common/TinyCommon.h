@@ -1132,6 +1132,81 @@ private:\
 		ASSERT(m_myP != NULL);
 		return m_myP->QueryInterface(__uuidof(T), (void**)myPP);
 	}
+
+	template <class T, const IID* piid = &__uuidof(T)>
+	class TinyComQIPtr : public TinyComPtr<T>
+	{
+	public:
+		TinyComQIPtr() throw()
+		{
+		}
+		TinyComQIPtr(decltype(__nullptr)) throw()
+		{
+		}
+		TinyComQIPtr(T* lp) throw() :TinyComPtr<T>(lp)
+		{
+		}
+		TinyComQIPtr(const TinyComQIPtr<T, piid>& lp) throw() :TinyComPtr<T>(lp.m_myP)
+		{
+		}
+		TinyComQIPtr(IUnknown* lp) throw()
+		{
+			if (lp != NULL)
+			{
+				if (FAILED(lp->QueryInterface(*piid, (void **)&m_myP)))
+					m_myP = NULL;
+			}
+		}
+		T* operator=(decltype(__nullptr)) throw()
+		{
+			TinyComQIPtr(nullptr).swap(*this);
+			return nullptr;
+		}
+		T* operator=(T* lp) throw()
+		{
+			if (*this != lp)
+			{
+				TinyComQIPtr(lp).swap(*this);
+			}
+			return *this;
+		}
+		T* operator=(const TinyComQIPtr<T, piid>& lp) throw()
+		{
+			if (*this != lp)
+			{
+				TinyComQIPtr(lp).swap(*this);
+			}
+			return *this;
+		}
+		T* operator=(IUnknown* lp) throw()
+		{
+			if (*this != lp)
+			{
+				return static_cast<T*>(ComQIPtrAssign((IUnknown**)&m_myP, lp, *piid));
+			}
+			return *this;
+		}
+		void swap(TinyComQIPtr& other)
+		{
+			T* ps = m_myP;
+			m_myP = other.m_myP;
+			other.m_myP = ps;
+		}
+	private:
+		static IUnknown* ComQIPtrAssign(IUnknown** pp, IUnknown* lp, REFIID riid);
+	};
+	template<class T>
+	IUnknown* TinyComQIPtr<T>::ComQIPtrAssign(IUnknown** pp, IUnknown* lp, REFIID riid)
+	{
+		if (pp == NULL)
+			return NULL;
+		IUnknown* pTemp = *pp;
+		if (lp == NULL || FAILED(lp->QueryInterface(riid, (void**)pp)))
+			*pp = NULL;
+		if (pTemp)
+			pTemp->Release();
+		return *pp;
+	}
 	/// <summary>
 	/// Variant·â×°
 	/// </summary>

@@ -30,6 +30,18 @@ namespace QSV
 		{
 		}
 	};
+	struct QSVD3D11AllocatorParams : mfxAllocatorParams
+	{
+		ID3D11Device*	pDevice;
+		BOOL			bUseSingleTexture;
+		DWORD			uncompressedResourceMiscFlags;
+		QSVD3D11AllocatorParams()
+			: pDevice(NULL),
+			bUseSingleTexture(FALSE),
+			uncompressedResourceMiscFlags(0)
+		{
+		}
+	};
 	//////////////////////////////////////////////////////////////////////////
 	class QSVBufferAllocatorBase : public mfxBufferAllocator
 	{
@@ -130,6 +142,181 @@ namespace QSV
 		TinyComPtr<IDirect3DDeviceManager9>			m_manager;
 		TinyComPtr<IDirectXVideoDecoderService>		m_decoderService;
 		TinyComPtr<IDirectXVideoProcessorService>	m_processorService;
+	};
+	//////////////////////////////////////////////////////////////////////////
+	class QSVD3D11Allocator : public QSVAllocator
+	{
+		struct TextureResource
+		{
+			std::vector<mfxMemId> outerMids;
+			std::vector<ID3D11Texture2D*> textures;
+			std::vector<ID3D11Texture2D*> stagingTexture;
+			BOOL   bAlloc;
+			TextureResource()
+				: bAlloc(TRUE)
+			{
+			}
+			static BOOL IsAllocated(TextureResource & that)
+			{
+				return that.bAlloc;
+			}
+			ID3D11Texture2D* GetTexture(mfxMemId id)
+			{
+				if (outerMids.empty())
+					return NULL;
+
+				return textures[((uintptr_t)id - (uintptr_t)outerMids.front()) % textures.size()];
+			}
+			UINT GetSubResource(mfxMemId id)
+			{
+				if (outerMids.empty())
+					return NULL;
+				return (UINT)(((uintptr_t)id - (uintptr_t)outerMids.front()) / textures.size());
+			}
+			void Release()
+			{
+				for (size_t i = 0; i < textures.size(); i++)
+				{
+					textures[i]->Release();
+				}
+				textures.clear();
+				for (size_t i = 0; i < stagingTexture.size(); i++)
+				{
+					stagingTexture[i]->Release();
+				}
+				stagingTexture.clear();
+				bAlloc = false;
+			}
+		};
+		class TextureSubResource
+		{
+			TextureResource * m_pTarget;
+			ID3D11Texture2D * m_pTexture;
+			ID3D11Texture2D * m_pStaging;
+			UINT m_subResource;
+		public:
+			TextureSubResource(TextureResource * pTarget = NULL, mfxMemId id = 0)
+				: m_pTarget(pTarget)
+				, m_pTexture()
+				, m_subResource()
+				, m_pStaging(NULL)
+			{
+				if (NULL != m_pTarget && !m_pTarget->outerMids.empty())
+				{
+					ptrdiff_t idx = (uintptr_t)MFXReadWriteMid(id).raw() - (uintptr_t)m_pTarget->outerMids.front();
+					m_pTexture = m_pTarget->textures[idx % m_pTarget->textures.size()];
+					m_subResource = (UINT)(idx / m_pTarget->textures.size());
+					m_pStaging = m_pTarget->stagingTexture.empty() ? NULL : m_pTarget->stagingTexture[idx];
+				}
+			}
+			ID3D11Texture2D* GetStaging()const
+			{
+				return m_pStaging;
+			}
+			ID3D11Texture2D* GetTexture()const
+			{
+				return m_pTexture;
+			}
+			UINT GetSubResource()const
+			{
+				return m_subResource;
+			}
+			void Release()
+			{
+				if (NULL != m_pTarget)
+				{
+					m_pTarget->Release();
+				}
+			}
+		};
+		class MFXReadWriteMid
+		{
+			static const uintptr_t bits_offset = std::numeric_limits<uintptr_t>::digits - 1;
+			static const uintptr_t clear_mask = ~((uintptr_t)1 << bits_offset);
+		public:
+			enum
+			{
+				not_set = 0,
+				reuse = 1,
+				read = 2,
+				write = 4,
+			};
+			MFXReadWriteMid(mfxMemId mid, mfxU8 flag = not_set)
+			{
+				m_midReport = (mfxMemId)((uintptr_t)&m_mid | ((uintptr_t)1 << bits_offset));
+				if (0 != ((uintptr_t)mid >> bits_offset))
+				{
+					mfxMedIdEx * pMemIdExt = reinterpret_cast<mfxMedIdEx *>((uintptr_t)mid & clear_mask);
+					m_mid.pId = pMemIdExt->pId;
+					if (reuse == flag)
+					{
+						m_mid.flag = pMemIdExt->flag;
+					}
+					else
+					{
+						m_mid.flag = flag;
+					}
+				}
+				else
+				{
+					m_mid.pId = mid;
+					if (reuse == flag)
+						m_mid.flag = not_set;
+					else
+						m_mid.flag = flag;
+				}
+
+			}
+			BOOL IsRead() const
+			{
+				return 0 != (m_mid.flag & read) || !m_mid.flag;
+			}
+			BOOL IsWrite() const
+			{
+				return 0 != (m_mid.flag & write) || !m_mid.flag;
+			}
+
+			mfxMemId raw() const
+			{
+				return m_mid.pId;
+			}
+			operator mfxMemId() const
+			{
+				return m_midReport;
+			}
+
+		private:
+			struct mfxMedIdEx
+			{
+				mfxMemId	pId;
+				mfxU8		flag;//¶ÁÐ´±êÖ¾Î»
+			};
+
+			mfxMedIdEx m_mid;
+			mfxMemId   m_midReport;
+		};
+		DISALLOW_COPY_AND_ASSIGN(QSVD3D11Allocator)
+	public:
+		QSVD3D11Allocator();
+		virtual ~QSVD3D11Allocator();
+	public:
+		mfxStatus Initialize(mfxAllocatorParams *pParams) OVERRIDE;
+		mfxStatus Close() OVERRIDE;
+		mfxStatus LockFrame(mfxMemId mid, mfxFrameData *ptr);
+		mfxStatus GetFrameHDL(mfxMemId mid, mfxHDL *handle);
+		mfxStatus UnlockFrame(mfxMemId mid, mfxFrameData *ptr);
+	protected:
+		mfxStatus CheckRequestType(mfxFrameAllocRequest *request) OVERRIDE;
+		mfxStatus Allocate(mfxFrameAllocRequest *request, mfxFrameAllocResponse *response) OVERRIDE;
+		mfxStatus Deallocate(mfxFrameAllocResponse *response) OVERRIDE;
+	private:
+		TextureSubResource GetResourceFromMID(mfxMemId mid);
+	private:
+		typedef std::list <TextureResource>::iterator referenceType;
+		std::list <TextureResource>		m_resourcesByRequest;
+		std::vector<referenceType>		m_memIDMap;
+		QSVD3D11AllocatorParams			m_initParams;
+		TinyComPtr<ID3D11DeviceContext> m_deviceContext;
 	};
 	//////////////////////////////////////////////////////////////////////////
 	struct sBuffer
