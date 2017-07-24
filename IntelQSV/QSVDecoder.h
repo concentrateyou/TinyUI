@@ -5,12 +5,6 @@ namespace QSV
 {
 #define MAX_STREAM_SIZE (1024 * 1024)
 
-	struct SurfaceTag
-	{
-		mfxFrameSurface1*	surface1;
-		LONGLONG			timestamp;
-	};
-
 	class QSVDecoder
 	{
 		DISALLOW_COPY_AND_ASSIGN(QSVDecoder)
@@ -22,15 +16,15 @@ namespace QSV
 		void Close();
 		QSVAllocator* GetAllocator();
 	private:
-		mfxStatus Process(mfxBitstream& stream, LONGLONG& timestamp, mfxFrameSurface1*& video);
+		mfxStatus Process(mfxBitstream& stream, mfxFrameSurface1*& video);
 		mfxStatus InitializeVideoParam(const BYTE* bits, LONG size);
 		mfxStatus CreateAllocator();
 		mfxStatus AllocFrames();
 		void DeleteFrames();
 		void DeleteAllocator();
 	private:
-		TinyLinkList<SurfaceTag>			m_surfaceTags;
 		TinyLinkList<SampleTag>				m_tags;
+		TinyLinkList<mfxFrameSurface1*>		m_outputs;
 		mfxIMPL								m_mfxImpl;
 		mfxVersion							m_mfxVersion;
 		MFXVideoSession						m_mfxSession;
@@ -48,6 +42,8 @@ namespace QSV
 		TinyScopedPtr<QSVAllocator>			m_allocator;
 		TinyScopedPtr<MFXVideoVPP>			m_mfxVideoVPP;
 		TinyScopedPtr<MFXVideoDECODE>		m_mfxVideoDECODE;
+		volatile LONG						m_decodesSF[256];
+		volatile LONG						m_vppsSF[256];
 	};
 }
 

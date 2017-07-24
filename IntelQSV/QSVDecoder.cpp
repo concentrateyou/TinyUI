@@ -89,7 +89,6 @@ namespace QSV
 			m_tags.InsertLast(tag);
 		}
 		LONG residial = 0;
-		LONGLONG timestamp = 0;
 		mfxBitstream mfxStream;
 		for (;;)
 		{
@@ -110,7 +109,7 @@ namespace QSV
 				memcpy(pData, sampleTag.bits, sampleTag.size);
 				pData += sampleTag.size;
 				residial += newsize;
-				mfxStatus status = Process(mfxStream, timestamp, video);
+				mfxStatus status = Process(mfxStream, video);
 				residial -= mfxStream.DataOffset;
 				if (status != MFX_ERR_NONE)
 				{
@@ -123,7 +122,7 @@ namespace QSV
 				}
 				else
 				{
-					m_surfaceTags.InsertLast(SurfaceTag{ video,timestamp });
+					m_outputs.InsertLast(video);
 					if (residial == 0)
 					{
 						goto _DATA;
@@ -132,7 +131,7 @@ namespace QSV
 			}
 			else
 			{
-				mfxStatus status = Process(mfxStream, timestamp, video);
+				mfxStatus status = Process(mfxStream, video);
 				residial -= mfxStream.DataOffset;
 				if (status != MFX_ERR_NONE)
 				{
@@ -145,7 +144,7 @@ namespace QSV
 				}
 				else
 				{
-					m_surfaceTags.InsertLast(SurfaceTag{ video,timestamp });
+					m_outputs.InsertLast(video);
 					if (residial == 0)
 					{
 						goto _DATA;
@@ -155,18 +154,18 @@ namespace QSV
 		}
 	_DATA:
 		SAFE_DELETE_ARRAY(tag.bits);
-		if (m_surfaceTags.GetSize() > 0)
+		if (m_outputs.GetSize() > 0)
 		{
-			ITERATOR s = m_surfaceTags.First();
-			SurfaceTag& surfaceTag = m_surfaceTags.GetAt(s);
-			m_surfaceTags.RemoveAt(s);
-			tag.samplePTS = tag.sampleDTS = surfaceTag.timestamp;
-			video = surfaceTag.surface1;
+			ITERATOR s = m_outputs.First();
+			mfxFrameSurface1*& surface = m_outputs.GetAt(s);
+			m_outputs.RemoveAt(s);
+			tag.samplePTS = tag.sampleDTS = surface->Data.TimeStamp;
+			video = surface;
 			return TRUE;
 		}
 		return FALSE;
 	}
-	mfxStatus QSVDecoder::Process(mfxBitstream& stream, LONGLONG& timestamp, mfxFrameSurface1*& video)
+	mfxStatus QSVDecoder::Process(mfxBitstream& stream, mfxFrameSurface1*& video)
 	{
 		mfxStatus status = MFX_ERR_NONE;
 		mfxSyncPoint	syncpDECODE;
@@ -199,7 +198,6 @@ namespace QSV
 				{
 					status = m_mfxSession.SyncOperation(syncpDECODE, 1000);
 				} while (status == MFX_WRN_IN_EXECUTION);
-				timestamp = surface->Data.TimeStamp;
 				if (MFX_ERR_NONE == status)
 				{
 					mfxU16 index1 = GetFreeSurfaceIndex(m_mfxVPPSurfaces, m_mfxVPPResponse.NumFrameActual);

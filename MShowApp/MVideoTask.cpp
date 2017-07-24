@@ -99,6 +99,7 @@ namespace MShow
 				sampleTag.sampleDTS = sampleTag.samplePTS;
 				m_videoQueue.Push(sampleTag);
 			}*/
+
 			mfxFrameSurface1* surface1 = NULL;
 			if (m_h264.Decode(sampleTag, surface1))
 			{
