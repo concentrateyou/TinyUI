@@ -15,6 +15,8 @@ namespace QSV
 		BOOL Decode(Media::SampleTag& tag, mfxFrameSurface1*& video);
 		void Close();
 		QSVAllocator* GetAllocator();
+		void LockSurface(mfxFrameSurface1* pSurface);
+		void UnlockSurface(mfxFrameSurface1* pSurface);
 	private:
 		mfxStatus Process(mfxBitstream& stream, mfxFrameSurface1*& video);
 		mfxStatus InitializeVideoParam(const BYTE* bits, LONG size);
@@ -22,6 +24,8 @@ namespace QSV
 		mfxStatus AllocFrames();
 		void DeleteFrames();
 		void DeleteAllocator();
+		INT GetFreeVideoSurfaceIndex();
+		INT GetFreeVPPSurfaceIndex();
 	private:
 		TinyLinkList<SampleTag>				m_tags;
 		TinyLinkList<mfxFrameSurface1*>		m_outputs;
@@ -42,7 +46,6 @@ namespace QSV
 		TinyScopedPtr<QSVAllocator>			m_allocator;
 		TinyScopedPtr<MFXVideoVPP>			m_mfxVideoVPP;
 		TinyScopedPtr<MFXVideoDECODE>		m_mfxVideoDECODE;
-		volatile LONG						m_decodesSF[256];
 		volatile LONG						m_vppsSF[256];
 	};
 }

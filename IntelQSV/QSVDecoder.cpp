@@ -122,6 +122,7 @@ namespace QSV
 				}
 				else
 				{
+					LockSurface(video);
 					m_outputs.InsertLast(video);
 					if (residial == 0)
 					{
@@ -144,6 +145,7 @@ namespace QSV
 				}
 				else
 				{
+					LockSurface(video);
 					m_outputs.InsertLast(video);
 					if (residial == 0)
 					{
@@ -165,6 +167,54 @@ namespace QSV
 		}
 		return FALSE;
 	}
+	INT QSVDecoder::GetFreeVPPSurfaceIndex()
+	{
+		for (INT i = 0; i < m_mfxVPPResponse.NumFrameActual; ++i)
+		{
+			BOOL locked = m_vppsSF[i] > 0 || (m_mfxVPPSurfaces[i]->Data.Locked > 0);
+			if (!locked)
+			{
+				return i;
+			}
+		}
+		return MFX_ERR_NOT_FOUND;
+	}
+	void QSVDecoder::LockSurface(mfxFrameSurface1* pSurface)
+	{
+		if (pSurface != NULL)
+		{
+			size_t i = pSurface - m_mfxVPPSurfaces[0];
+			ASSERT(i < m_mfxVPPResponse.NumFrameActual);
+			if (i < m_mfxVPPResponse.NumFrameActual)
+			{
+				InterlockedIncrement(&m_vppsSF[i]);
+			}
+		}
+	}
+
+	void QSVDecoder::UnlockSurface(mfxFrameSurface1* pSurface)
+	{
+		if (pSurface != NULL)
+		{
+			size_t i = pSurface - m_mfxVPPSurfaces[0];
+			ASSERT(i < m_mfxVPPResponse.NumFrameActual);
+
+			if (i < m_mfxVPPResponse.NumFrameActual)
+			{
+				ASSERT(m_vppsSF[i] > 0);
+				InterlockedDecrement(&m_vppsSF[i]);
+			}
+		}
+	}
+	INT QSVDecoder::GetFreeVideoSurfaceIndex()
+	{
+		for (INT i = 0; i < m_mfxResponse.NumFrameActual; i++)
+		{
+			if (0 == m_mfxSurfaces[i]->Data.Locked)
+				return i;
+		}
+		return MFX_ERR_NOT_FOUND;
+	}
 	mfxStatus QSVDecoder::Process(mfxBitstream& stream, mfxFrameSurface1*& video)
 	{
 		mfxStatus status = MFX_ERR_NONE;
@@ -173,14 +223,14 @@ namespace QSV
 		while (stream.DataLength > 0)
 		{
 			mfxFrameSurface1* surface = NULL;
-			mfxU16 index = GetFreeSurfaceIndex(m_mfxSurfaces, m_mfxResponse.NumFrameActual);
+			INT index = GetFreeVideoSurfaceIndex();
 			MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index, MFX_ERR_MEMORY_ALLOC);
 			do
 			{
 				status = m_mfxVideoDECODE->DecodeFrameAsync(&stream, m_mfxSurfaces[index], &surface, &syncpDECODE);
 				if (MFX_ERR_MORE_SURFACE == status)
 				{
-					index = GetFreeSurfaceIndex(m_mfxSurfaces, m_mfxResponse.NumFrameActual);
+					index = GetFreeVideoSurfaceIndex();
 					MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index, MFX_ERR_MEMORY_ALLOC);
 				}
 				if (MFX_WRN_DEVICE_BUSY == status)
@@ -200,14 +250,14 @@ namespace QSV
 				} while (status == MFX_WRN_IN_EXECUTION);
 				if (MFX_ERR_NONE == status)
 				{
-					mfxU16 index1 = GetFreeSurfaceIndex(m_mfxVPPSurfaces, m_mfxVPPResponse.NumFrameActual);
+					INT index1 = GetFreeVPPSurfaceIndex();
 					MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index1, MFX_ERR_MEMORY_ALLOC);
 					do
 					{
 						status = m_mfxVideoVPP->RunFrameVPPAsync(surface, m_mfxVPPSurfaces[index1], NULL, &syncpVPP);
 						if (MFX_ERR_MORE_SURFACE == status)
 						{
-							index1 = GetFreeSurfaceIndex(m_mfxVPPSurfaces, m_mfxVPPResponse.NumFrameActual);
+							index1 = GetFreeVPPSurfaceIndex();
 							MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index1, MFX_ERR_MEMORY_ALLOC);
 						}
 						if (MFX_WRN_DEVICE_BUSY == status)
@@ -367,7 +417,7 @@ namespace QSV
 			(requestVPP[1].NumFrameSuggested < m_mfxVppVideoParam.AsyncDepth))
 			return MFX_ERR_MEMORY_ALLOC;
 		nSurfNum = request.NumFrameSuggested + requestVPP[0].NumFrameSuggested - m_mfxVideoParam.AsyncDepth + 1;
-		nVppSurfNum = requestVPP[1].NumFrameSuggested;
+		nVppSurfNum = requestVPP[1].NumFrameSuggested + 1;
 		request.NumFrameSuggested = request.NumFrameMin = nSurfNum;
 		request.Type = MFX_MEMTYPE_EXTERNAL_FRAME | MFX_MEMTYPE_FROM_DECODE | MFX_MEMTYPE_FROM_VPPIN | MFX_MEMTYPE_VIDEO_MEMORY_DECODER_TARGET;
 		status = m_allocator->Alloc(m_allocator->pthis, &request, &m_mfxResponse);

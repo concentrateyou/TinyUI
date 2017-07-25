@@ -94,6 +94,5 @@ namespace QSV
 		{ MFX_IMPL_HARDWARE4, 3 }
 	};
 	mfxU32 GetIntelAdapter(mfxSession session);
-	INT GetFreeSurfaceIndex(mfxFrameSurface1** pSurfacesPool, mfxU16 nPoolSize);
 }
 

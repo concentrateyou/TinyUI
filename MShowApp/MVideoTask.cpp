@@ -114,6 +114,7 @@ namespace MShow
 				sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
 				memcpy(sampleTag.bits + 4, surface1->Data.B, sampleTag.size);
 				pAllocator->Unlock(pAllocator->pthis, surface1->Data.MemId, &(surface1->Data));
+				m_h264.UnlockSurface(surface1);
 				if (m_clock.GetBasePTS() == -1)
 				{
 					m_clock.SetBasePTS(sampleTag.samplePTS);

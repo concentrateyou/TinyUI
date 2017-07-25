@@ -365,22 +365,18 @@ namespace FLVPlayer
 				mfxFrameSurface1* surface1 = NULL;
 				if (m_decode.m_qsv.Decode(tag, surface1))
 				{
-					SAFE_DELETE_ARRAY(tag.bits);
 					QSV::QSVAllocator* pAllocator = m_decode.m_qsv.GetAllocator();
 					pAllocator->Lock(pAllocator->pthis, surface1->Data.MemId, &(surface1->Data));
 					tag.size = surface1->Info.CropH * surface1->Data.Pitch;
 					tag.bits = new BYTE[tag.size];
 					memcpy(tag.bits, surface1->Data.B, tag.size);
 					pAllocator->Unlock(pAllocator->pthis, surface1->Data.MemId, &(surface1->Data));
+					m_decode.m_qsv.UnlockVPP(surface1);
 					if (m_decode.m_basePTS == -1)
 					{
 						m_decode.m_basePTS = tag.samplePTS;
 					}
 					m_queue.Push(tag);
-				}
-				else
-				{
-					SAFE_DELETE_ARRAY(tag.bits);
 				}
 				/*if (m_decode.m_x264->Decode(tag, bo, so))
 				{
