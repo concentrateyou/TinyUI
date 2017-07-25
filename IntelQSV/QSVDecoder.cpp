@@ -122,7 +122,6 @@ namespace QSV
 				}
 				else
 				{
-					LockSurface(video);
 					m_outputs.InsertLast(video);
 					if (residial == 0)
 					{
@@ -141,11 +140,10 @@ namespace QSV
 						goto _DATA;
 					}
 					SAFE_DELETE_ARRAY(tag.bits);
-					return FALSE;
+					goto _DATA;
 				}
 				else
 				{
-					LockSurface(video);
 					m_outputs.InsertLast(video);
 					if (residial == 0)
 					{
@@ -183,11 +181,18 @@ namespace QSV
 	{
 		if (pSurface != NULL)
 		{
-			size_t i = pSurface - m_mfxVPPSurfaces[0];
-			ASSERT(i < m_mfxVPPResponse.NumFrameActual);
-			if (i < m_mfxVPPResponse.NumFrameActual)
+			INT index = -1;
+			for (INT i = 0;i < m_mfxVPPResponse.NumFrameActual;i++)
 			{
-				InterlockedIncrement(&m_locks[i]);
+				if (m_mfxVPPSurfaces[i] == pSurface)
+				{
+					index = i;
+					break;
+				}
+			}
+			if (index >= 0 && index < m_mfxVPPResponse.NumFrameActual)
+			{
+				InterlockedIncrement(&m_locks[index]);
 			}
 		}
 	}
@@ -196,13 +201,19 @@ namespace QSV
 	{
 		if (pSurface != NULL)
 		{
-			size_t i = pSurface - m_mfxVPPSurfaces[0];
-			ASSERT(i < m_mfxVPPResponse.NumFrameActual);
-
-			if (i < m_mfxVPPResponse.NumFrameActual)
+			INT index = -1;
+			for (INT i = 0;i < m_mfxVPPResponse.NumFrameActual;i++)
 			{
-				ASSERT(m_locks[i] > 0);
-				InterlockedDecrement(&m_locks[i]);
+				if (m_mfxVPPSurfaces[i] == pSurface)
+				{
+					index = i;
+					break;
+				}
+			}
+			if (index >= 0 && index < m_mfxVPPResponse.NumFrameActual)
+			{
+				ASSERT(m_locks[index] > 0);
+				InterlockedDecrement(&m_locks[index]);
 			}
 		}
 	}
@@ -278,6 +289,7 @@ namespace QSV
 						if (status == MFX_ERR_NONE)
 						{
 							video = m_mfxVPPSurfaces[index1];
+							LockSurface(video);
 						}
 						return status;
 					}
@@ -423,6 +435,7 @@ namespace QSV
 		if (MFX_ERR_NONE != status)
 			goto _ERROR;
 		MSDK_MEMCPY_VAR(requestVPP[1].Info, &(m_mfxVppVideoParam.vpp.Out), sizeof(mfxFrameInfo));
+		requestVPP[1].NumFrameSuggested = requestVPP[1].NumFrameMin = nVppSurfNum;
 		status = m_allocator->Alloc(m_allocator->pthis, &requestVPP[1], &m_mfxVPPResponse);
 		if (MFX_ERR_NONE != status)
 			goto _ERROR;
