@@ -253,6 +253,7 @@
     <ClInclude Include="Media\TinyMFMP3Encode.h" />
     <ClInclude Include="Media\TinyMP3File.h" />
     <ClInclude Include="Media\TinyMP4File.h" />
+    <ClInclude Include="Media\TinySoundCapture.h" />
     <ClInclude Include="Media\TinySoundPlayer.h" />
     <ClInclude Include="Media\TinyAudioDSPCapture.h" />
     <ClInclude Include="Media\TinyAudioMixer.h" />
@@ -391,6 +392,7 @@
     <ClCompile Include="Media\TinyMFMP3Encode.cpp" />
     <ClCompile Include="Media\TinyMP3File.cpp" />
     <ClCompile Include="Media\TinyMP4File.cpp" />
+    <ClCompile Include="Media\TinySoundCapture.cpp" />
     <ClCompile Include="Media\TinySoundPlayer.cpp" />
     <ClCompile Include="Media\TinyAudioDSPCapture.cpp" />
     <ClCompile Include="Media\TinyAudioMixer.cpp" />
