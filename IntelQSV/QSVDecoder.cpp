@@ -171,7 +171,7 @@ namespace QSV
 	{
 		for (INT i = 0; i < m_mfxVPPResponse.NumFrameActual; ++i)
 		{
-			BOOL locked = m_vppsSF[i] > 0 || (m_mfxVPPSurfaces[i]->Data.Locked > 0);
+			BOOL locked = m_locks[i] > 0 || (m_mfxVPPSurfaces[i]->Data.Locked > 0);
 			if (!locked)
 			{
 				return i;
@@ -187,7 +187,7 @@ namespace QSV
 			ASSERT(i < m_mfxVPPResponse.NumFrameActual);
 			if (i < m_mfxVPPResponse.NumFrameActual)
 			{
-				InterlockedIncrement(&m_vppsSF[i]);
+				InterlockedIncrement(&m_locks[i]);
 			}
 		}
 	}
@@ -201,8 +201,8 @@ namespace QSV
 
 			if (i < m_mfxVPPResponse.NumFrameActual)
 			{
-				ASSERT(m_vppsSF[i] > 0);
-				InterlockedDecrement(&m_vppsSF[i]);
+				ASSERT(m_locks[i] > 0);
+				InterlockedDecrement(&m_locks[i]);
 			}
 		}
 	}
@@ -388,7 +388,6 @@ namespace QSV
 		MSDK_IGNORE_MFX_STS(status, MFX_WRN_PARTIAL_ACCELERATION);
 		if (MFX_ERR_NONE != status)
 			goto _ERROR;
-
 		MSDK_MEMCPY_VAR(m_mfxVppVideoParam.vpp.In, &m_mfxVideoParam.mfx.FrameInfo, sizeof(mfxFrameInfo));
 		MSDK_MEMCPY_VAR(m_mfxVppVideoParam.vpp.Out, &m_mfxVppVideoParam.vpp.In, sizeof(mfxFrameInfo));
 		m_mfxVppVideoParam.vpp.Out.FourCC = MFX_FOURCC_RGB4;

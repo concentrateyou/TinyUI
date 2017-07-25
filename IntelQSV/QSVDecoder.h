@@ -46,7 +46,7 @@ namespace QSV
 		TinyScopedPtr<QSVAllocator>			m_allocator;
 		TinyScopedPtr<MFXVideoVPP>			m_mfxVideoVPP;
 		TinyScopedPtr<MFXVideoDECODE>		m_mfxVideoDECODE;
-		volatile LONG						m_vppsSF[256];
+		volatile LONG						m_locks[256];
 	};
 }
 
