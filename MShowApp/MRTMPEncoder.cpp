@@ -104,8 +104,6 @@ namespace MShow
 		MVideoController* pCTRL1 = MShowApp::Instance().GetController().GetVideoController(0);
 		if (!pCTRL1)
 			return FALSE;
-		m_onAudio.Reset(new Delegate<void(BYTE*, LONG)>(this, &MRTMPEncoder::OnAudio));
-		pCTRL1->EVENT_AUDIO += m_onAudio;
 		m_videoTask.Submit(BindCallback(&MRTMPEncoder::OnVideoPump, this));
 		return TRUE;
 	}

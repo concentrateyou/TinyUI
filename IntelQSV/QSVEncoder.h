@@ -2,6 +2,7 @@
 #pragma once
 #include "QSVAllocator.h"
 using namespace TinyUI::Media;
+
 namespace QSV
 {
 	class QSVEncoder
@@ -12,6 +13,7 @@ namespace QSV
 		virtual ~QSVEncoder();
 	public:
 		BOOL Open(const TinySize& src, const TinySize& dest);
+		BOOL Encode(SampleTag& tag, mfxFrameSurface1*& video);
 		void Close();
 	private:
 		mfxStatus InitializeParam(const TinySize& src, const TinySize& dest);

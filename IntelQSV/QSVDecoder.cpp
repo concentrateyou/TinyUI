@@ -84,6 +84,8 @@ namespace QSV
 	}
 	BOOL QSVDecoder::Decode(SampleTag& tag, mfxFrameSurface1*& video)
 	{
+		MSDK_CHECK_POINTER(m_mfxVideoDECODE, MFX_ERR_MEMORY_ALLOC);
+		MSDK_CHECK_POINTER(m_mfxVideoVPP, MFX_ERR_MEMORY_ALLOC);
 		if (tag.size > 0)
 		{
 			m_tags.InsertLast(tag);
@@ -229,8 +231,8 @@ namespace QSV
 	mfxStatus QSVDecoder::Process(mfxBitstream& stream, mfxFrameSurface1*& video)
 	{
 		mfxStatus status = MFX_ERR_NONE;
-		mfxSyncPoint	syncpDECODE;
-		mfxSyncPoint	syncpVPP;
+		mfxSyncPoint syncpDECODE = NULL;
+		mfxSyncPoint syncpVPP = NULL;
 		while (stream.DataLength > 0)
 		{
 			mfxFrameSurface1* surface = NULL;

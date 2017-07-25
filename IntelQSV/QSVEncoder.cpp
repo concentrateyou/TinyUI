@@ -121,6 +121,16 @@ namespace QSV
 		DeleteFrames();
 		DeleteAllocator();
 	}
+	BOOL QSVEncoder::Encode(SampleTag& tag, mfxFrameSurface1*& video)
+	{
+		MSDK_CHECK_POINTER(m_mfxVideoENCODE, MFX_ERR_MEMORY_ALLOC);
+		MSDK_CHECK_POINTER(m_mfxVideoVPP, MFX_ERR_MEMORY_ALLOC);
+		mfxStatus status = MFX_ERR_NONE;
+		mfxU16 nEncSurfIdx = 0;
+		mfxU16 nVppSurfIdx = 0;
+		mfxSyncPoint VppSyncPoint = NULL;
+
+	}
 	mfxStatus QSVEncoder::CreateAllocator(const TinySize& src, const TinySize& dest)
 	{
 		mfxStatus status = MFX_ERR_NONE;
@@ -128,7 +138,7 @@ namespace QSV
 		mfxHDL handle = NULL;
 		POINT pos = { 0 };
 		QSVD3D9AllocatorParams* pParams = NULL;
-		m_allocator.Reset(new GeneralAllocator());
+		m_allocator.Reset(new QSVD3D9Allocator());
 		if (NULL == m_allocator)
 		{
 			status = MFX_ERR_MEMORY_ALLOC;
@@ -178,7 +188,7 @@ namespace QSV
 	mfxStatus QSVEncoder::InitializeParam(const TinySize& src, const TinySize& dest)
 	{
 		m_mfxEncodeParam.mfx.CodecId = MFX_CODEC_AVC;
-		m_mfxEncodeParam.mfx.TargetUsage = 4;
+		m_mfxEncodeParam.mfx.TargetUsage = MFX_TARGETUSAGE_BALANCED;
 		m_mfxEncodeParam.mfx.RateControlMethod = MFX_RATECONTROL_CBR;
 		m_mfxEncodeParam.mfx.GopRefDist = 0;
 		m_mfxEncodeParam.mfx.GopPicSize = 0;
@@ -186,7 +196,7 @@ namespace QSV
 		m_mfxEncodeParam.mfx.IdrInterval = 0;
 		m_mfxEncodeParam.mfx.CodecProfile = 0;
 		m_mfxEncodeParam.mfx.CodecLevel = 0;
-		m_mfxEncodeParam.mfx.MaxKbps = 0;
+		m_mfxEncodeParam.mfx.MaxKbps = 3000;
 		m_mfxEncodeParam.mfx.InitialDelayInKB = 0;
 		m_mfxEncodeParam.mfx.GopOptFlag = 0;
 		m_mfxEncodeParam.mfx.BufferSizeInKB = 0;
@@ -203,7 +213,7 @@ namespace QSV
 		m_mfxEncodeParam.mfx.FrameInfo.CropH = static_cast<mfxU16>(dest.cy);
 		m_mfxEncodeParam.AsyncDepth = 4;
 		//////////////////////////////////////////////////////////////////////////
-		m_mfxVppParam.IOPattern = MFX_IOPATTERN_IN_VIDEO_MEMORY | MFX_IOPATTERN_OUT_SYSTEM_MEMORY;
+		m_mfxVppParam.IOPattern = MFX_IOPATTERN_IN_VIDEO_MEMORY | MFX_IOPATTERN_OUT_VIDEO_MEMORY;
 		m_mfxVppParam.vpp.In.PicStruct = MFX_PICSTRUCT_PROGRESSIVE;
 		ConvertFrameRate(30.0F, &m_mfxVppParam.vpp.In.FrameRateExtN, &m_mfxVppParam.vpp.In.FrameRateExtD);
 		m_mfxVppParam.vpp.In.Width = MSDK_ALIGN16(static_cast<mfxU16>(src.cx));
@@ -227,7 +237,7 @@ namespace QSV
 		m_vppExtParams.push_back((mfxExtBuffer *)&m_vppDoNotUse);
 		m_mfxVppParam.ExtParam = &m_vppExtParams[0];
 		m_mfxVppParam.NumExtParam = (mfxU16)m_vppExtParams.size();
-		m_mfxVppParam.AsyncDepth = 4;
+		m_mfxVppParam.AsyncDepth = m_mfxEncodeParam.AsyncDepth;
 		return MFX_ERR_NONE;
 	}
 	mfxStatus QSVEncoder::AllocFrames()
