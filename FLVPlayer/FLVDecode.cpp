@@ -371,7 +371,7 @@ namespace FLVPlayer
 					tag.bits = new BYTE[tag.size];
 					memcpy(tag.bits, surface1->Data.B, tag.size);
 					pAllocator->Unlock(pAllocator->pthis, surface1->Data.MemId, &(surface1->Data));
-					m_decode.m_qsv.UnlockVPP(surface1);
+					m_decode.m_qsv.UnlockSurface(surface1);
 					if (m_decode.m_basePTS == -1)
 					{
 						m_decode.m_basePTS = tag.samplePTS;
