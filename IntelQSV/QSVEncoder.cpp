@@ -3,6 +3,154 @@
 
 namespace QSV
 {
+	PartiallyLinearFNC::PartiallyLinearFNC()
+		: m_pX()
+		, m_pY()
+		, m_nPoints()
+		, m_nAllocated()
+	{
+	}
+	PartiallyLinearFNC::~PartiallyLinearFNC()
+	{
+		delete[]m_pX;
+		m_pX = NULL;
+		delete[]m_pY;
+		m_pY = NULL;
+	}
+	void PartiallyLinearFNC::AddPair(mfxF64 x, mfxF64 y)
+	{
+		for (mfxU32 i = 0; i < m_nPoints; i++)
+		{
+			if (m_pX[i] == x)
+				return;
+		}
+		if (m_nPoints == m_nAllocated)
+		{
+			m_nAllocated += 20;
+			mfxF64 * pnew;
+			pnew = new mfxF64[m_nAllocated];
+			MSDK_MEMCPY_BUF(pnew, 0, sizeof(mfxF64)*m_nAllocated, m_pX, sizeof(mfxF64) * m_nPoints);
+			delete[] m_pX;
+			m_pX = pnew;
+
+			pnew = new mfxF64[m_nAllocated];
+			MSDK_MEMCPY_BUF(pnew, 0, sizeof(mfxF64)*m_nAllocated, m_pY, sizeof(mfxF64) * m_nPoints);
+			delete[] m_pY;
+			m_pY = pnew;
+		}
+		m_pX[m_nPoints] = x;
+		m_pY[m_nPoints] = y;
+
+		m_nPoints++;
+	}
+	mfxF64 PartiallyLinearFNC::GetAt(mfxF64 x)
+	{
+		if (m_nPoints < 2)
+		{
+			return 0;
+		}
+		bool bwasmin = false;
+		bool bwasmax = false;
+
+		mfxU32 maxx = 0;
+		mfxU32 minx = 0;
+		mfxU32 i;
+
+		for (i = 0; i < m_nPoints; i++)
+		{
+			if (m_pX[i] <= x && (!bwasmin || m_pX[i] > m_pX[maxx]))
+			{
+				maxx = i;
+				bwasmin = true;
+			}
+			if (m_pX[i] > x && (!bwasmax || m_pX[i] < m_pX[minx]))
+			{
+				minx = i;
+				bwasmax = true;
+			}
+		}
+		if (!bwasmin)
+		{
+			for (i = 0; i < m_nPoints; i++)
+			{
+				if (m_pX[i] > m_pX[minx] && (!bwasmin || m_pX[i] < m_pX[minx]))
+				{
+					maxx = i;
+					bwasmin = true;
+				}
+			}
+		}
+		if (!bwasmax)
+		{
+			for (i = 0; i < m_nPoints; i++)
+			{
+				if (m_pX[i] < m_pX[maxx] && (!bwasmax || m_pX[i] > m_pX[minx]))
+				{
+					minx = i;
+					bwasmax = true;
+				}
+			}
+		}
+		return (x - m_pX[minx])*(m_pY[maxx] - m_pY[minx]) / (m_pX[maxx] - m_pX[minx]) + m_pY[minx];
+	}
+	//////////////////////////////////////////////////////////////////////////
+	mfxU16 CalculateDefaultBitrate(mfxU32 nCodecId, mfxU32 nTargetUsage, mfxU32 nWidth, mfxU32 nHeight, mfxF64 dFrameRate)
+	{
+		PartiallyLinearFNC fnc;
+		mfxF64 bitrate = 0;
+
+		switch (nCodecId)
+		{
+		case MFX_CODEC_AVC:
+		{
+			fnc.AddPair(0, 0);
+			fnc.AddPair(25344, 225);
+			fnc.AddPair(101376, 1000);
+			fnc.AddPair(414720, 4000);
+			fnc.AddPair(2058240, 5000);
+			break;
+		}
+		case MFX_CODEC_MPEG2:
+		{
+			fnc.AddPair(0, 0);
+			fnc.AddPair(414720, 12000);
+			break;
+		}
+		default:
+		{
+			fnc.AddPair(0, 0);
+			fnc.AddPair(414720, 12000);
+			break;
+		}
+		}
+
+		mfxF64 at = nWidth * nHeight * dFrameRate / 30.0;
+
+		if (!at)
+			return 0;
+
+		switch (nTargetUsage)
+		{
+		case MFX_TARGETUSAGE_BEST_QUALITY:
+		{
+			bitrate = (&fnc)->GetAt(at);
+			break;
+		}
+		case MFX_TARGETUSAGE_BEST_SPEED:
+		{
+			bitrate = (&fnc)->GetAt(at) * 0.5;
+			break;
+		}
+		case MFX_TARGETUSAGE_BALANCED:
+		default:
+		{
+			bitrate = (&fnc)->GetAt(at) * 0.75;
+			break;
+		}
+		}
+
+		return (mfxU16)bitrate;
+	}
 	mfxU16 FourCCToChroma(mfxU32 fourCC)
 	{
 		switch (fourCC)
@@ -209,7 +357,19 @@ namespace QSV
 		MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index1, MFX_ERR_MEMORY_ALLOC);
 		do
 		{
-			status = m_mfxVideoVPP->RunFrameVPPAsync(m_mfxVPPSurfaces[index], m_mfxSurfaces[index1], NULL, &syncpVPP);
+			mfxFrameSurface1* surface = m_mfxVPPSurfaces[index];
+			m_allocator->Lock(m_allocator->pthis, surface->Data.MemId, &(surface->Data));
+			mfxU16 pitch = surface->Data.Pitch;
+			mfxU8 *pRGB = MSDK_MIN(MSDK_MIN(surface->Data.R, surface->Data.G), surface->Data.B);
+			pRGB = pRGB + surface->Info.CropX + surface->Info.CropY * surface->Data.Pitch;
+			const BYTE* pData = bits;
+			for (mfxU16 i = 0; i < surface->Info.Height; i++)
+			{
+				memcpy(pRGB + i * pitch, pData, 4 * surface->Info.Width);
+				pData += 4 * surface->Info.Width;
+			}
+			m_allocator->Unlock(m_allocator->pthis, surface->Data.MemId, &(surface->Data));
+			status = m_mfxVideoVPP->RunFrameVPPAsync(surface, m_mfxSurfaces[index1], NULL, &syncpVPP);
 			if (MFX_ERR_MORE_SURFACE == status)
 			{
 				index = GetFreeVPPSurfaceIndex();
@@ -336,21 +496,6 @@ namespace QSV
 	}
 	mfxStatus QSVEncoder::InitializeParam(const TinySize& src, const TinySize& dest)
 	{
-		m_mfxEncodeParam.mfx.CodecId = MFX_CODEC_AVC;
-		m_mfxEncodeParam.mfx.TargetUsage = MFX_TARGETUSAGE_BALANCED;
-		m_mfxEncodeParam.mfx.RateControlMethod = MFX_RATECONTROL_CBR;
-		m_mfxEncodeParam.mfx.GopRefDist = 0;
-		m_mfxEncodeParam.mfx.GopPicSize = 0;
-		m_mfxEncodeParam.mfx.NumRefFrame = 0;
-		m_mfxEncodeParam.mfx.IdrInterval = 0;
-		m_mfxEncodeParam.mfx.CodecProfile = 0;
-		m_mfxEncodeParam.mfx.CodecLevel = 0;
-		m_mfxEncodeParam.mfx.MaxKbps = 3000;
-		m_mfxEncodeParam.mfx.InitialDelayInKB = 0;
-		m_mfxEncodeParam.mfx.GopOptFlag = 0;
-		m_mfxEncodeParam.mfx.BufferSizeInKB = 0;
-		ConvertFrameRate(30.0F, &m_mfxEncodeParam.mfx.FrameInfo.FrameRateExtN, &m_mfxEncodeParam.mfx.FrameInfo.FrameRateExtD);
-		m_mfxEncodeParam.IOPattern = MFX_IOPATTERN_IN_VIDEO_MEMORY;
 		m_mfxEncodeParam.mfx.FrameInfo.FourCC = MFX_FOURCC_NV12;
 		m_mfxEncodeParam.mfx.FrameInfo.ChromaFormat = FourCCToChroma(MFX_FOURCC_NV12);
 		m_mfxEncodeParam.mfx.FrameInfo.PicStruct = MFX_PICSTRUCT_PROGRESSIVE;
@@ -361,6 +506,22 @@ namespace QSV
 		m_mfxEncodeParam.mfx.FrameInfo.CropW = static_cast<mfxU16>(dest.cx);
 		m_mfxEncodeParam.mfx.FrameInfo.CropH = static_cast<mfxU16>(dest.cy);
 		m_mfxEncodeParam.AsyncDepth = 4;
+		m_mfxEncodeParam.IOPattern = MFX_IOPATTERN_IN_VIDEO_MEMORY;
+		ConvertFrameRate(30.0F, &m_mfxEncodeParam.mfx.FrameInfo.FrameRateExtN, &m_mfxEncodeParam.mfx.FrameInfo.FrameRateExtD);
+		m_mfxEncodeParam.mfx.CodecId = MFX_CODEC_AVC;
+		m_mfxEncodeParam.mfx.TargetUsage = MFX_TARGETUSAGE_BALANCED;
+		m_mfxEncodeParam.mfx.RateControlMethod = MFX_RATECONTROL_CBR;
+		m_mfxEncodeParam.mfx.GopRefDist = 0;
+		m_mfxEncodeParam.mfx.GopPicSize = 0;
+		m_mfxEncodeParam.mfx.NumRefFrame = 0;
+		m_mfxEncodeParam.mfx.IdrInterval = 0;
+		m_mfxEncodeParam.mfx.CodecProfile = 0;
+		m_mfxEncodeParam.mfx.CodecLevel = 0;
+		m_mfxEncodeParam.mfx.MaxKbps = CalculateDefaultBitrate(m_mfxEncodeParam.mfx.CodecId, m_mfxEncodeParam.mfx.TargetUsage, m_mfxEncodeParam.mfx.FrameInfo.Width, m_mfxEncodeParam.mfx.FrameInfo.Height, 30);
+		m_mfxEncodeParam.mfx.InitialDelayInKB = 0;
+		m_mfxEncodeParam.mfx.GopOptFlag = 0;
+		m_mfxEncodeParam.mfx.BufferSizeInKB = 0;
+
 		//////////////////////////////////////////////////////////////////////////
 		m_mfxVppParam.IOPattern = MFX_IOPATTERN_IN_VIDEO_MEMORY | MFX_IOPATTERN_OUT_VIDEO_MEMORY;
 		m_mfxVppParam.vpp.In.PicStruct = MFX_PICSTRUCT_PROGRESSIVE;
@@ -426,28 +587,30 @@ namespace QSV
 		status = m_allocator->Alloc(m_allocator->pthis, &(requestVPP[0]), &m_mfxVPPResponse);
 		if (MFX_ERR_NONE != status)
 			goto _ERROR;
-		m_mfxSurfaces.Reset(new mfxFrameSurface1*[m_mfxResponse.NumFrameActual]);
+		nEncSurfNum = m_mfxResponse.NumFrameActual;
+		m_mfxSurfaces.Reset(new mfxFrameSurface1*[nEncSurfNum]);
 		if (NULL == m_mfxSurfaces)
 		{
 			status = MFX_ERR_MEMORY_ALLOC;
 			goto _ERROR;
 		}
-		for (mfxU16 i = 0; i < m_mfxResponse.NumFrameActual; i++)
+		for (mfxU16 i = 0; i < nEncSurfNum; i++)
 		{
-			memset(&(m_mfxSurfaces[i]), 0, sizeof(mfxFrameSurface1));
-			MSDK_MEMCPY_VAR(m_mfxSurfaces[i]->Info, &(m_mfxEncodeParam.mfx.FrameInfo), sizeof(mfxFrameInfo));
+			m_mfxSurfaces[i] = new mfxFrameSurface1();
+			MSDK_MEMCPY_VAR(m_mfxSurfaces[i]->Info, &(request.Info), sizeof(mfxFrameInfo));
 			m_mfxSurfaces[i]->Data.MemId = m_mfxResponse.mids[i];
 		}
-		m_mfxVPPSurfaces.Reset(new mfxFrameSurface1*[m_mfxVPPResponse.NumFrameActual]);
+		nVppSurfNum = m_mfxVPPResponse.NumFrameActual;
+		m_mfxVPPSurfaces.Reset(new mfxFrameSurface1*[nVppSurfNum]);
 		if (NULL == m_mfxVPPSurfaces)
 		{
 			status = MFX_ERR_MEMORY_ALLOC;
 			goto _ERROR;
 		}
-		for (mfxU16 i = 0; i < m_mfxVPPResponse.NumFrameActual; i++)
+		for (mfxU16 i = 0; i < nVppSurfNum; i++)
 		{
-			MSDK_ZERO_MEMORY(m_mfxVPPSurfaces[i]);
-			MSDK_MEMCPY_VAR(m_mfxVPPSurfaces[i]->Info, &(m_mfxVppParam.mfx.FrameInfo), sizeof(mfxFrameInfo));
+			m_mfxVPPSurfaces[i] = new mfxFrameSurface1();
+			MSDK_MEMCPY_VAR(m_mfxVPPSurfaces[i]->Info, &requestVPP[1].Info, sizeof(mfxFrameInfo));
 			m_mfxVPPSurfaces[i]->Data.MemId = m_mfxVPPResponse.mids[i];
 		}
 	_ERROR:

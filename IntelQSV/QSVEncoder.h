@@ -5,6 +5,22 @@ using namespace TinyUI::Media;
 
 namespace QSV
 {
+	class PartiallyLinearFNC
+	{
+		DISALLOW_COPY_AND_ASSIGN(PartiallyLinearFNC)
+	private:
+		mfxF64 *m_pX;
+		mfxF64 *m_pY;
+		mfxU32  m_nPoints;
+		mfxU32  m_nAllocated;
+
+	public:
+		PartiallyLinearFNC();
+		~PartiallyLinearFNC();
+		void AddPair(mfxF64 x, mfxF64 y);
+		mfxF64 GetAt(mfxF64);
+	};
+
 	class QSVEncoder
 	{
 		DISALLOW_COPY_AND_ASSIGN(QSVEncoder)
@@ -18,6 +34,7 @@ namespace QSV
 		BOOL GetSPSPPS(vector<mfxU8>& sps, vector<mfxU8>& pps);
 		void LockSurface(mfxFrameSurface1* pSurface);
 		void UnlockSurface(mfxFrameSurface1* pSurface);
+		mfxBitstream						m_mfxResidial;
 	private:
 		mfxStatus Process(const BYTE* bits, LONG size);
 		mfxStatus InitializeParam(const TinySize& src, const TinySize& dest);
@@ -31,7 +48,7 @@ namespace QSV
 		mfxIMPL								m_mfxImpl;
 		mfxVersion							m_mfxVersion;
 		mfxEncodeCtrl						m_mfxEncodeCtrl;
-		mfxBitstream						m_mfxResidial;
+		
 		MFXVideoSession						m_mfxSession;
 		mfxVideoParam						m_mfxEncodeParam;
 		mfxVideoParam						m_mfxVppParam;
@@ -39,7 +56,6 @@ namespace QSV
 		mfxFrameAllocResponse				m_mfxResponse;
 		mfxFrameAllocResponse				m_mfxVPPResponse;
 		std::vector<mfxExtBuffer*>			m_vppExtParams;
-		std::vector<mfxExtBuffer*>			m_EncExtParams;
 		TinyScopedArray<mfxFrameSurface1*>	m_mfxSurfaces;
 		TinyScopedArray<mfxFrameSurface1*>	m_mfxVPPSurfaces;
 		TinyScopedPtr<QSVD3D>				m_qsvd3d;

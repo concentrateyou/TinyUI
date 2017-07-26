@@ -30,7 +30,7 @@
 #include "FLVParser.h"
 
 #include "Media/TinySoundCapture.h"
-
+#include "QSVEncoder.h"
 #include <fstream>
 
 using namespace TinyUI;
@@ -86,6 +86,24 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	HRESULT hRes = OleInitialize(NULL);
 
 	LoadSeDebugPrivilege();
+
+	QSV::QSVEncoder encoder;
+	encoder.Open({ 1280,720 }, { 1280,720 });
+	FILE *hFile1 = fopen("D:\\output.rgb4", "rb");
+	FILE *hFile2 = fopen("D:\\test2.h264", "wb+");
+	BYTE* pArray = new BYTE[1024 * 1024 * 5];
+	LONG offset = 0;
+	for (;;)
+	{
+		SampleTag tag;
+		tag.bits = pArray;
+		LONG size = fread(pArray, 1280 * 720 * 4, 1, hFile1);
+		tag.size = size;
+		if (encoder.Encode(tag))
+		{
+			fwrite(encoder.m_mfxResidial.Data + encoder.m_mfxResidial.DataOffset, encoder.m_mfxResidial.DataLength, 1, hFile2);
+		}
+	}
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
