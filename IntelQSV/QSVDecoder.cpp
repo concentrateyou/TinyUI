@@ -477,12 +477,12 @@ namespace QSV
 			m_allocator->Free(m_allocator->pthis, &m_mfxResponse);
 			m_allocator->Free(m_allocator->pthis, &m_mfxVPPResponse);
 		}
-		for (INT i = 0; i < m_mfxResponse.NumFrameActual; i++)
+		for (mfxU16 i = 0; i < m_mfxResponse.NumFrameActual; i++)
 		{
 			SAFE_DELETE(m_mfxSurfaces[i]);
 		}
 		m_mfxSurfaces.Reset(NULL);
-		for (INT i = 0; i < m_mfxVPPResponse.NumFrameActual; i++)
+		for (mfxU16 i = 0; i < m_mfxVPPResponse.NumFrameActual; i++)
 		{
 			SAFE_DELETE(m_mfxVPPSurfaces[i]);
 		}

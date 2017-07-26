@@ -14,6 +14,26 @@ namespace TinyUI
 		TinySoundPlayer::~TinySoundPlayer()
 		{
 		}
+		BOOL TinySoundPlayer::Enumerate(std::vector<PLAYDEVICE>& devices)
+		{
+			HRESULT hRes = DirectSoundEnumerate(TinySoundPlayer::DSEnumCallback, &devices);
+			if (FAILED(hRes))
+				return FALSE;
+			return TRUE;
+		}
+		BOOL CALLBACK TinySoundPlayer::DSEnumCallback(LPGUID pzGUID, LPCSTR pzDesc, LPCSTR pzModule, LPVOID pContext)
+		{
+			if (pzGUID != NULL)
+			{
+				std::vector<PLAYDEVICE>* ps = static_cast<std::vector<PLAYDEVICE>*>(pContext);
+				PLAYDEVICE device = { 0 };
+				device.Guid = *pzGUID;
+				device.Description = pzDesc;
+				device.Module = pzModule;
+				ps->push_back(device);
+			}
+			return TRUE;
+		}
 		BOOL TinySoundPlayer::Initialize(HWND hWND)
 		{
 			HRESULT hRes = S_OK;

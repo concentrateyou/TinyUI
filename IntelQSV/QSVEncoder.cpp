@@ -44,19 +44,19 @@ namespace QSV
 		return MFX_ERR_NONE;
 	}
 	//////////////////////////////////////////////////////////////////////////
-
 	QSVEncoder::QSVEncoder()
 	{
 		ZeroMemory(&m_mfxEncodeParam, sizeof(m_mfxEncodeParam));
 		ZeroMemory(&m_mfxVppParam, sizeof(m_mfxVppParam));
 	}
-
 	QSVEncoder::~QSVEncoder()
 	{
 	}
 	BOOL QSVEncoder::Open(const TinySize& src, const TinySize& dest)
 	{
 		mfxStatus status = MFX_ERR_NONE;
+		m_mfxResidial.MaxLength = 1024 * 1024 * 5;
+		m_mfxResidial.Data = new mfxU8[m_mfxResidial.MaxLength];
 		mfxInitParam initParam = { 0 };
 		initParam.Version.Major = 1;
 		initParam.Version.Minor = 0;
@@ -117,19 +117,169 @@ namespace QSV
 			m_mfxVideoVPP->Close();
 			m_mfxVideoVPP.Reset(NULL);
 		}
+		SAFE_DELETE_ARRAY(m_mfxResidial.Data);
 		MSDK_SAFE_DELETE_ARRAY(m_vppDoNotUse.AlgList);
 		DeleteFrames();
 		DeleteAllocator();
 	}
-	BOOL QSVEncoder::Encode(SampleTag& tag, mfxFrameSurface1*& video)
+	BOOL QSVEncoder::GetSPSPPS(vector<mfxU8>& sps, vector<mfxU8>& pps)
+	{
+		if (!m_mfxVideoENCODE)
+			return FALSE;
+		mfxU8	mfxsps[100];
+		mfxU8	mfxpps[100];
+		mfxVideoParam par;
+		ZeroMemory(&par, sizeof(par));
+		mfxExtCodingOptionSPSPPS spspps;
+		ZeroMemory(&spspps, sizeof(mfxExtCodingOptionSPSPPS));
+		spspps.Header.BufferId = MFX_EXTBUFF_CODING_OPTION_SPSPPS;
+		spspps.Header.BufferSz = sizeof(mfxExtCodingOptionSPSPPS);
+		spspps.PPSBuffer = mfxpps;
+		spspps.PPSBufSize = 100;
+		spspps.SPSBuffer = mfxsps;
+		spspps.SPSBufSize = 100;
+		mfxExtBuffer* ext[1];
+		ext[0] = (mfxExtBuffer *)&spspps;
+		par.ExtParam = &ext[0];
+		par.NumExtParam = 1;
+		if (m_mfxVideoENCODE->GetVideoParam(&par) == MFX_ERR_NONE)
+		{
+			sps.resize(spspps.SPSBufSize);
+			memcpy(&sps[0], mfxsps, spspps.SPSBufSize);
+			pps.resize(spspps.PPSBufSize);
+			memcpy(&sps[0], mfxpps, spspps.PPSBufSize);
+			return TRUE;
+		}
+		return FALSE;
+	}
+	void QSVEncoder::LockSurface(mfxFrameSurface1* pSurface)
+	{
+		if (pSurface != NULL)
+		{
+			INT index = -1;
+			for (INT i = 0;i < m_mfxResponse.NumFrameActual;i++)
+			{
+				if (m_mfxSurfaces[i] == pSurface)
+				{
+					index = i;
+					break;
+				}
+			}
+			if (index >= 0 && index < m_mfxResponse.NumFrameActual)
+			{
+				InterlockedIncrement(&m_locks[index]);
+			}
+		}
+	}
+	void QSVEncoder::UnlockSurface(mfxFrameSurface1* pSurface)
+	{
+		if (pSurface != NULL)
+		{
+			INT index = -1;
+			for (INT i = 0;i < m_mfxResponse.NumFrameActual;i++)
+			{
+				if (m_mfxSurfaces[i] == pSurface)
+				{
+					index = i;
+					break;
+				}
+			}
+			if (index >= 0 && index < m_mfxResponse.NumFrameActual)
+			{
+				ASSERT(m_locks[index] > 0);
+				InterlockedDecrement(&m_locks[index]);
+			}
+		}
+	}
+	BOOL QSVEncoder::Encode(SampleTag& tag)
 	{
 		MSDK_CHECK_POINTER(m_mfxVideoENCODE, MFX_ERR_MEMORY_ALLOC);
 		MSDK_CHECK_POINTER(m_mfxVideoVPP, MFX_ERR_MEMORY_ALLOC);
 		mfxStatus status = MFX_ERR_NONE;
-		mfxU16 nEncSurfIdx = 0;
-		mfxU16 nVppSurfIdx = 0;
-		mfxSyncPoint VppSyncPoint = NULL;
-
+		return Process(tag.bits, tag.size);
+	}
+	mfxStatus QSVEncoder::Process(const BYTE* bits, LONG size)
+	{
+		mfxStatus status = MFX_ERR_NONE;
+		mfxSyncPoint syncpVPP = NULL;
+		mfxSyncPoint syncpEncode = NULL;
+		INT index = GetFreeVPPSurfaceIndex();
+		MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index, MFX_ERR_MEMORY_ALLOC);
+		INT index1 = GetFreeVideoSurfaceIndex();
+		MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index1, MFX_ERR_MEMORY_ALLOC);
+		do
+		{
+			status = m_mfxVideoVPP->RunFrameVPPAsync(m_mfxVPPSurfaces[index], m_mfxSurfaces[index1], NULL, &syncpVPP);
+			if (MFX_ERR_MORE_SURFACE == status)
+			{
+				index = GetFreeVPPSurfaceIndex();
+				MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index, MFX_ERR_MEMORY_ALLOC);
+			}
+			if (MFX_WRN_DEVICE_BUSY == status)
+			{
+				Sleep(1);
+			}
+		} while (MFX_WRN_DEVICE_BUSY == status || MFX_ERR_MORE_SURFACE == status);
+		if (MFX_ERR_NONE < status && syncpVPP)
+		{
+			status = MFX_ERR_NONE;
+		}
+		if (MFX_ERR_NONE == status)
+		{
+			do
+			{
+				status = m_mfxSession.SyncOperation(syncpVPP, 1000);
+			} while (status == MFX_WRN_IN_EXECUTION);
+			if (MFX_ERR_NONE == status)
+			{
+				MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index1, MFX_ERR_MEMORY_ALLOC);
+				do
+				{
+					m_mfxEncodeCtrl.FrameType = MFX_FRAMETYPE_UNKNOWN;
+					status = m_mfxVideoENCODE->EncodeFrameAsync(&m_mfxEncodeCtrl, m_mfxSurfaces[index1], &m_mfxResidial, &syncpEncode);
+					if (MFX_ERR_MORE_SURFACE == status)
+					{
+						index1 = GetFreeVideoSurfaceIndex();
+						MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index1, MFX_ERR_MEMORY_ALLOC);
+					}
+					if (MFX_WRN_DEVICE_BUSY == status)
+					{
+						Sleep(1);
+					}
+				} while (MFX_WRN_DEVICE_BUSY == status || MFX_ERR_MORE_SURFACE == status);
+				if (MFX_ERR_NONE < status && syncpEncode)
+				{
+					status = MFX_ERR_NONE;
+				}
+				if (MFX_ERR_NONE == status)
+				{
+					do
+					{
+						status = m_mfxSession.SyncOperation(syncpEncode, 1000);
+					} while (status == MFX_WRN_IN_EXECUTION);
+					return status;
+				}
+			}
+		}
+		return status;
+	}
+	INT QSVEncoder::GetFreeVPPSurfaceIndex()
+	{
+		for (INT i = 0; i < m_mfxVPPResponse.NumFrameActual; i++)
+		{
+			if (0 == m_mfxVPPSurfaces[i]->Data.Locked)
+				return i;
+		}
+		return MFX_ERR_NOT_FOUND;
+	}
+	INT QSVEncoder::GetFreeVideoSurfaceIndex()
+	{
+		for (INT i = 0; i < m_mfxResponse.NumFrameActual; i++)
+		{
+			if (0 == m_mfxSurfaces[i]->Data.Locked)
+				return i;
+		}
+		return MFX_ERR_NOT_FOUND;
 	}
 	mfxStatus QSVEncoder::CreateAllocator(const TinySize& src, const TinySize& dest)
 	{
@@ -150,7 +300,6 @@ namespace QSV
 			status = MFX_ERR_MEMORY_ALLOC;
 			goto _ERROR;
 		}
-
 		hWND = ::WindowFromPoint(pos);
 		if (!hWND)
 		{
@@ -277,37 +426,45 @@ namespace QSV
 		status = m_allocator->Alloc(m_allocator->pthis, &(requestVPP[0]), &m_mfxVPPResponse);
 		if (MFX_ERR_NONE != status)
 			goto _ERROR;
-		m_mfxSurfaces.Reset(new mfxFrameSurface1[m_mfxResponse.NumFrameActual]);
+		m_mfxSurfaces.Reset(new mfxFrameSurface1*[m_mfxResponse.NumFrameActual]);
 		if (NULL == m_mfxSurfaces)
 		{
 			status = MFX_ERR_MEMORY_ALLOC;
 			goto _ERROR;
 		}
-		for (INT i = 0; i < m_mfxResponse.NumFrameActual; i++)
+		for (mfxU16 i = 0; i < m_mfxResponse.NumFrameActual; i++)
 		{
 			memset(&(m_mfxSurfaces[i]), 0, sizeof(mfxFrameSurface1));
-			MSDK_MEMCPY_VAR(m_mfxSurfaces[i].Info, &(m_mfxEncodeParam.mfx.FrameInfo), sizeof(mfxFrameInfo));
-			m_mfxSurfaces[i].Data.MemId = m_mfxResponse.mids[i];
+			MSDK_MEMCPY_VAR(m_mfxSurfaces[i]->Info, &(m_mfxEncodeParam.mfx.FrameInfo), sizeof(mfxFrameInfo));
+			m_mfxSurfaces[i]->Data.MemId = m_mfxResponse.mids[i];
 		}
-		m_mfxVPPSurfaces.Reset(new mfxFrameSurface1[m_mfxVPPResponse.NumFrameActual]);
+		m_mfxVPPSurfaces.Reset(new mfxFrameSurface1*[m_mfxVPPResponse.NumFrameActual]);
 		if (NULL == m_mfxVPPSurfaces)
 		{
 			status = MFX_ERR_MEMORY_ALLOC;
 			goto _ERROR;
 		}
-		for (INT i = 0; i < m_mfxVPPResponse.NumFrameActual; i++)
+		for (mfxU16 i = 0; i < m_mfxVPPResponse.NumFrameActual; i++)
 		{
 			MSDK_ZERO_MEMORY(m_mfxVPPSurfaces[i]);
-			MSDK_MEMCPY_VAR(m_mfxVPPSurfaces[i].Info, &(m_mfxVppParam.mfx.FrameInfo), sizeof(mfxFrameInfo));
-			m_mfxVPPSurfaces[i].Data.MemId = m_mfxVPPResponse.mids[i];
+			MSDK_MEMCPY_VAR(m_mfxVPPSurfaces[i]->Info, &(m_mfxVppParam.mfx.FrameInfo), sizeof(mfxFrameInfo));
+			m_mfxVPPSurfaces[i]->Data.MemId = m_mfxVPPResponse.mids[i];
 		}
 	_ERROR:
 		return status;
 	}
 	void QSVEncoder::DeleteFrames()
 	{
-		m_mfxSurfaces.Reset(NULL);
+		for (mfxU16 i = 0; i < m_mfxVPPResponse.NumFrameActual; i++)
+		{
+			SAFE_DELETE(m_mfxVPPSurfaces[i]);
+		}
 		m_mfxVPPSurfaces.Reset(NULL);
+		for (mfxU16 i = 0; i < m_mfxResponse.NumFrameActual; i++)
+		{
+			SAFE_DELETE(m_mfxSurfaces[i]);
+		}
+		m_mfxSurfaces.Reset(NULL);
 		if (m_allocator != NULL)
 		{
 			m_allocator->Free(m_allocator->pthis, &m_mfxResponse);

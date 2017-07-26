@@ -29,6 +29,8 @@
 #include "Media/TinyWave.h"
 #include "FLVParser.h"
 
+#include "Media/TinySoundCapture.h"
+
 #include <fstream>
 
 using namespace TinyUI;
