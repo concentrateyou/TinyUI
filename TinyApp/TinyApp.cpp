@@ -97,13 +97,15 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	{
 		SampleTag tag;
 		tag.bits = pArray;
-		LONG size = fread(pArray, 1280 * 720 * 4, 1, hFile1);
+		LONG size = fread(pArray, 1, 1280 * 720 * 4, hFile1);
 		tag.size = size;
 		if (encoder.Encode(tag))
 		{
 			fwrite(encoder.m_mfxResidial.Data + encoder.m_mfxResidial.DataOffset, encoder.m_mfxResidial.DataLength, 1, hFile2);
 		}
 	}
+	fclose(hFile1);
+	fclose(hFile2);
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
