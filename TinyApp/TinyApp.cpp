@@ -98,10 +98,19 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 		SampleTag tag;
 		tag.bits = pArray;
 		LONG size = fread(pArray, 1, 1280 * 720 * 4, hFile1);
+		if (size == 0)
+			break;
 		tag.size = size;
-		if (encoder.Encode(tag))
+		TinyPerformanceTimer timer;
+		timer.BeginTime();
+		BYTE* bo = NULL;
+		LONG  so = 0;
+		encoder.Encode(tag, bo, so);
+		if (so > 0)
 		{
-			fwrite(encoder.m_mfxResidial.Data + encoder.m_mfxResidial.DataOffset, encoder.m_mfxResidial.DataLength, 1, hFile2);
+			timer.EndTime();
+			TRACE("Time:%lld\n", timer.GetMillisconds());
+			fwrite(bo, 1, so, hFile2);
 		}
 	}
 	fclose(hFile1);

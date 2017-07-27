@@ -29,24 +29,23 @@ namespace QSV
 		virtual ~QSVEncoder();
 	public:
 		BOOL Open(const TinySize& src, const TinySize& dest, DWORD dwBitRate = 1000, DWORD dwFrameRate = 30);
-		BOOL Encode(SampleTag& tag);
+		BOOL Encode(SampleTag& tag, BYTE*& bits, LONG& size);
 		void Close();
 		BOOL GetSPSPPS(vector<mfxU8>& sps, vector<mfxU8>& pps);
-		void LockSurface(mfxFrameSurface1* pSurface);
-		void UnlockSurface(mfxFrameSurface1* pSurface);
-		mfxBitstream	m_mfxResidial;
 	private:
-		mfxStatus Process(const BYTE* bits, LONG size);
-		mfxStatus InitializeParam(const TinySize& src, const TinySize& dest, DWORD dwBitRate = 1000, DWORD dwFrameRate = 30);
+		mfxStatus Process(const BYTE* bi, LONG si, BYTE*& bo, LONG& so);
+		mfxStatus InitializeParam(const TinySize& src, const TinySize& dest, DWORD dwBitRate = 3231, DWORD dwFrameRate = 30);
 		mfxStatus CreateAllocator(const TinySize& src, const TinySize& dest);
 		mfxStatus AllocFrames();
 		void DeleteFrames();
 		void DeleteAllocator();
 		INT GetFreeVPPSurfaceIndex();
 		INT GetFreeVideoSurfaceIndex();
+		void Fill(mfxFrameSurface1* pIN, const BYTE* bits, LONG size);
 	private:
 		mfxIMPL								m_mfxImpl;
 		mfxVersion							m_mfxVersion;
+		mfxBitstream						m_mfxResidial;
 		mfxEncodeCtrl						m_mfxEncodeCtrl;
 		mfxExtCodingOption					m_mfxCodingOption;
 		MFXVideoSession						m_mfxSession;
@@ -55,6 +54,7 @@ namespace QSV
 		mfxExtVPPDoNotUse					m_vppDoNotUse;
 		mfxFrameAllocResponse				m_mfxResponse;
 		mfxFrameAllocResponse				m_mfxVPPResponse;
+		TinyScopedArray<BYTE>				m_streamBits[2];
 		std::vector<mfxExtBuffer*>			m_vppExtParams;
 		std::vector<mfxExtBuffer*>			m_encExtParams;
 		TinyScopedArray<mfxFrameSurface1*>	m_mfxSurfaces;
@@ -63,7 +63,6 @@ namespace QSV
 		TinyScopedPtr<QSVAllocator>			m_allocator;
 		TinyScopedPtr<MFXVideoVPP>			m_mfxVideoVPP;
 		TinyScopedPtr<MFXVideoENCODE>		m_mfxVideoENCODE;
-		volatile LONG						m_locks[256];
 	};
 }
 

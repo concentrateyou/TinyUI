@@ -194,7 +194,8 @@ namespace QSV
 	//////////////////////////////////////////////////////////////////////////
 	QSVEncoder::QSVEncoder()
 	{
-
+		ZeroMemory(&m_mfxResidial, sizeof(m_mfxResidial));
+		ZeroMemory(&m_mfxEncodeCtrl, sizeof(m_mfxEncodeCtrl));
 	}
 	QSVEncoder::~QSVEncoder()
 	{
@@ -202,8 +203,10 @@ namespace QSV
 	BOOL QSVEncoder::Open(const TinySize& src, const TinySize& dest, DWORD dwBitRate, DWORD dwFrameRate)
 	{
 		mfxStatus status = MFX_ERR_NONE;
-		m_mfxResidial.MaxLength = 1280 * 720 * 8;
-		m_mfxResidial.Data = new mfxU8[m_mfxResidial.MaxLength];
+		m_streamBits[0].Reset(new BYTE[1920 * 1080 * 4]);
+		m_streamBits[1].Reset(new BYTE[1920 * 1080 * 4]);
+		m_mfxResidial.MaxLength = 1920 * 1080 * 4;
+		m_mfxResidial.Data = m_streamBits[0];
 		mfxInitParam initParam = { 0 };
 		initParam.Version.Major = 1;
 		initParam.Version.Minor = 0;
@@ -267,7 +270,6 @@ namespace QSV
 			m_mfxVideoVPP->Close();
 			m_mfxVideoVPP.Reset(NULL);
 		}
-		SAFE_DELETE_ARRAY(m_mfxResidial.Data);
 		MSDK_SAFE_DELETE_ARRAY(m_vppDoNotUse.AlgList);
 		DeleteFrames();
 		DeleteAllocator();
@@ -302,57 +304,28 @@ namespace QSV
 		}
 		return FALSE;
 	}
-	void QSVEncoder::LockSurface(mfxFrameSurface1* pSurface)
-	{
-		if (pSurface != NULL)
-		{
-			INT index = -1;
-			for (INT i = 0;i < m_mfxResponse.NumFrameActual;i++)
-			{
-				if (m_mfxSurfaces[i] == pSurface)
-				{
-					index = i;
-					break;
-				}
-			}
-			if (index >= 0 && index < m_mfxResponse.NumFrameActual)
-			{
-				InterlockedIncrement(&m_locks[index]);
-			}
-		}
-	}
-	void QSVEncoder::UnlockSurface(mfxFrameSurface1* pSurface)
-	{
-		if (pSurface != NULL)
-		{
-			INT index = -1;
-			for (INT i = 0;i < m_mfxResponse.NumFrameActual;i++)
-			{
-				if (m_mfxSurfaces[i] == pSurface)
-				{
-					index = i;
-					break;
-				}
-			}
-			if (index >= 0 && index < m_mfxResponse.NumFrameActual)
-			{
-				ASSERT(m_locks[index] > 0);
-				InterlockedDecrement(&m_locks[index]);
-			}
-		}
-	}
-	BOOL QSVEncoder::Encode(SampleTag& tag)
+	BOOL QSVEncoder::Encode(SampleTag& tag, BYTE*& bo, LONG& so)
 	{
 		MSDK_CHECK_POINTER(m_mfxVideoENCODE, MFX_ERR_MEMORY_ALLOC);
 		MSDK_CHECK_POINTER(m_mfxVideoVPP, MFX_ERR_MEMORY_ALLOC);
-		mfxStatus status = MFX_ERR_NONE;
-		return Process(tag.bits, tag.size);
+		return Process(tag.bits, tag.size, bo, so) == MFX_ERR_NONE;
 	}
-	mfxStatus QSVEncoder::Process(const BYTE* bits, LONG size)
+	void QSVEncoder::Fill(mfxFrameSurface1* pIN, const BYTE* bits, LONG size)
+	{
+		m_allocator->Lock(m_allocator->pthis, pIN->Data.MemId, &(pIN->Data));
+		mfxU8 *pRGB = pIN->Data.B;
+		pRGB = pRGB + pIN->Info.CropX + pIN->Info.CropY * pIN->Data.Pitch;
+		for (mfxU16 i = 0; i < pIN->Info.Height; i++)
+		{
+			memcpy(pRGB + i * pIN->Data.Pitch, bits + i * 4 * pIN->Info.Width, 4 * pIN->Info.Width);
+		}
+		m_allocator->Unlock(m_allocator->pthis, pIN->Data.MemId, &(pIN->Data));
+	}
+	mfxStatus QSVEncoder::Process(const BYTE* bi, LONG si, BYTE*& bo, LONG& so)
 	{
 		mfxStatus status = MFX_ERR_NONE;
-		mfxSyncPoint syncp = NULL;
 		mfxSyncPoint syncpVPP = NULL;
+		mfxSyncPoint syncpVideo = NULL;
 		INT index = GetFreeVPPSurfaceIndex();
 		MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index, MFX_ERR_MEMORY_ALLOC);
 		INT index1 = GetFreeVideoSurfaceIndex();
@@ -360,15 +333,8 @@ namespace QSV
 		do
 		{
 			mfxFrameSurface1* pVPPIN = m_mfxVPPSurfaces[index];
-			m_allocator->Lock(m_allocator->pthis, pVPPIN->Data.MemId, &(pVPPIN->Data));
-			mfxU8 *pRGB = pVPPIN->Data.B;
-			pRGB = pRGB + pVPPIN->Info.CropX + pVPPIN->Info.CropY * pVPPIN->Data.Pitch;
-			for (mfxU16 i = 0; i < pVPPIN->Info.Height; i++)
-			{
-				memcpy(pRGB + i * pVPPIN->Data.Pitch, bits + i * 4 * pVPPIN->Info.Width, 4 * pVPPIN->Info.Width);
-			}
-			m_allocator->Unlock(m_allocator->pthis, pVPPIN->Data.MemId, &(pVPPIN->Data));
-			status = m_mfxVideoVPP->RunFrameVPPAsync(pVPPIN, m_mfxSurfaces[index1], NULL, &syncpVPP);
+			this->Fill(pVPPIN, bi, si);
+			status = m_mfxVideoVPP->RunFrameVPPAsync(m_mfxVPPSurfaces[index], m_mfxSurfaces[index1], NULL, &syncpVPP);
 			if (MFX_ERR_MORE_SURFACE == status)
 			{
 				index = GetFreeVPPSurfaceIndex();
@@ -390,7 +356,7 @@ namespace QSV
 			do
 			{
 				m_mfxEncodeCtrl.FrameType = MFX_FRAMETYPE_UNKNOWN;
-				status = m_mfxVideoENCODE->EncodeFrameAsync(&m_mfxEncodeCtrl, m_mfxSurfaces[index1], &m_mfxResidial, &syncp);
+				status = m_mfxVideoENCODE->EncodeFrameAsync(&m_mfxEncodeCtrl, m_mfxSurfaces[index1], &m_mfxResidial, &syncpVideo);
 				if (MFX_ERR_MORE_SURFACE == status)
 				{
 					index1 = GetFreeVideoSurfaceIndex();
@@ -401,16 +367,20 @@ namespace QSV
 					Sleep(1);
 				}
 			} while (MFX_WRN_DEVICE_BUSY == status || MFX_ERR_MORE_SURFACE == status);
-			if (MFX_ERR_NONE < status && syncp)
+			if (MFX_ERR_NONE < status && syncpVideo)
 			{
 				status = MFX_ERR_NONE;
 			}
 			if (MFX_ERR_NONE == status)
 			{
-				do
+				status = m_mfxSession.SyncOperation(syncpVideo, 1000);
+				if (status == MFX_ERR_NONE)
 				{
-					status = m_mfxSession.SyncOperation(syncp, 1000);
-				} while (status == MFX_WRN_IN_EXECUTION);
+					memcpy(m_streamBits[1], m_mfxResidial.Data + m_mfxResidial.DataOffset, m_mfxResidial.DataLength);
+					bo = m_streamBits[1];
+					so = m_mfxResidial.DataLength;
+					m_mfxResidial.DataLength = 0;
+				}
 				return status;
 			}
 		}
@@ -497,6 +467,22 @@ namespace QSV
 		ZeroMemory(&m_mfxVideoParam, sizeof(m_mfxVideoParam));
 		m_mfxVideoParam.AsyncDepth = 4;
 		m_mfxVideoParam.IOPattern = MFX_IOPATTERN_IN_VIDEO_MEMORY;
+		m_mfxVideoParam.mfx.GopRefDist = 0;
+		m_mfxVideoParam.mfx.GopPicSize = 0;
+		m_mfxVideoParam.mfx.NumRefFrame = 0;
+		m_mfxVideoParam.mfx.IdrInterval = 0;
+		m_mfxVideoParam.mfx.CodecProfile = 0;
+		m_mfxVideoParam.mfx.CodecLevel = 0;
+		m_mfxVideoParam.mfx.MaxKbps = 0;
+		m_mfxVideoParam.mfx.InitialDelayInKB = 0;
+		m_mfxVideoParam.mfx.GopOptFlag = 0;
+		m_mfxVideoParam.mfx.BufferSizeInKB = 0;
+		m_mfxVideoParam.mfx.EncodedOrder = 0;
+		m_mfxVideoParam.mfx.NumSlice = 0;
+		m_mfxVideoParam.mfx.CodecId = MFX_CODEC_AVC;
+		m_mfxVideoParam.mfx.TargetUsage = MFX_TARGETUSAGE_BALANCED;
+		m_mfxVideoParam.mfx.TargetKbps = static_cast<mfxU16>(dwBitRate);
+		m_mfxVideoParam.mfx.RateControlMethod = MFX_RATECONTROL_CBR;
 		m_mfxVideoParam.mfx.FrameInfo.FourCC = MFX_FOURCC_NV12;
 		m_mfxVideoParam.mfx.FrameInfo.ChromaFormat = FourCCToChroma(MFX_FOURCC_NV12);
 		m_mfxVideoParam.mfx.FrameInfo.PicStruct = MFX_PICSTRUCT_PROGRESSIVE;
@@ -508,15 +494,6 @@ namespace QSV
 		m_mfxVideoParam.mfx.FrameInfo.CropH = static_cast<mfxU16>(dest.cy);
 		m_mfxVideoParam.mfx.FrameInfo.FrameRateExtN = static_cast<mfxU16>(dwFrameRate);
 		m_mfxVideoParam.mfx.FrameInfo.FrameRateExtD = 1;
-		m_mfxVideoParam.mfx.CodecId = MFX_CODEC_AVC;
-		m_mfxVideoParam.mfx.TargetUsage = MFX_TARGETUSAGE_BALANCED;
-		m_mfxVideoParam.mfx.TargetKbps = static_cast<mfxU16>(dwBitRate);
-		m_mfxVideoParam.mfx.RateControlMethod = MFX_RATECONTROL_CBR;
-		/*m_mfxVideoParam.mfx.CodecProfile = MFX_PROFILE_AVC_MAIN;
-		m_mfxVideoParam.mfx.GopOptFlag = MFX_GOP_STRICT;
-		m_mfxVideoParam.mfx.NumSlice = 1;
-		m_mfxVideoParam.mfx.GopRefDist = 8;
-		m_mfxVideoParam.mfx.GopPicSize = 90;*/
 		MSDK_ZERO_MEMORY(m_mfxCodingOption);
 		m_mfxCodingOption.Header.BufferId = MFX_EXTBUFF_CODING_OPTION;
 		m_mfxCodingOption.Header.BufferSz = sizeof(m_mfxCodingOption);
@@ -604,34 +581,33 @@ namespace QSV
 		status = m_allocator->Alloc(m_allocator->pthis, &request, &m_mfxResponse);
 		if (MFX_ERR_NONE != status)
 			goto _ERROR;
-		requestVPP[0].NumFrameSuggested = requestVPP[0].NumFrameMin = nVppSurfNum;
 		MSDK_MEMCPY_VAR(requestVPP[0].Info, &(m_mfxVppVideoParam.vpp.In), sizeof(mfxFrameInfo));
 		status = m_allocator->Alloc(m_allocator->pthis, &(requestVPP[0]), &m_mfxVPPResponse);
 		if (MFX_ERR_NONE != status)
 			goto _ERROR;
-		nEncSurfNum = m_mfxResponse.NumFrameActual;
-		m_mfxSurfaces.Reset(new mfxFrameSurface1*[nEncSurfNum]);
+		m_mfxSurfaces.Reset(new mfxFrameSurface1*[m_mfxResponse.NumFrameActual]);
 		if (NULL == m_mfxSurfaces)
 		{
 			status = MFX_ERR_MEMORY_ALLOC;
 			goto _ERROR;
 		}
-		for (mfxU16 i = 0; i < nEncSurfNum; i++)
+		for (mfxU16 i = 0; i < m_mfxResponse.NumFrameActual; i++)
 		{
 			m_mfxSurfaces[i] = new mfxFrameSurface1();
+			memset(m_mfxSurfaces[i], 0, sizeof(mfxFrameSurface1));
 			MSDK_MEMCPY_VAR(m_mfxSurfaces[i]->Info, &(m_mfxVideoParam.mfx.FrameInfo), sizeof(mfxFrameInfo));
 			m_mfxSurfaces[i]->Data.MemId = m_mfxResponse.mids[i];
 		}
-		nVppSurfNum = m_mfxVPPResponse.NumFrameActual;
-		m_mfxVPPSurfaces.Reset(new mfxFrameSurface1*[nVppSurfNum]);
+		m_mfxVPPSurfaces.Reset(new mfxFrameSurface1*[m_mfxVPPResponse.NumFrameActual]);
 		if (NULL == m_mfxVPPSurfaces)
 		{
 			status = MFX_ERR_MEMORY_ALLOC;
 			goto _ERROR;
 		}
-		for (mfxU16 i = 0; i < nVppSurfNum; i++)
+		for (mfxU16 i = 0; i < m_mfxVPPResponse.NumFrameActual; i++)
 		{
 			m_mfxVPPSurfaces[i] = new mfxFrameSurface1();
+			memset(m_mfxVPPSurfaces[i], 0, sizeof(mfxFrameSurface1));
 			MSDK_MEMCPY_VAR(m_mfxVPPSurfaces[i]->Info, &m_mfxVppVideoParam.mfx.FrameInfo, sizeof(mfxFrameInfo));
 			m_mfxVPPSurfaces[i]->Data.MemId = m_mfxVPPResponse.mids[i];
 		}

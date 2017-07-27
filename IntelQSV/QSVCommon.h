@@ -56,7 +56,7 @@ namespace QSV
 #define MSDK_SAFE_DELETE(P)                      { delete P; P = NULL; }
 #define MSDK_SAFE_DELETE_ARRAY(P)                { delete[] P; P = NULL; }
 #define MSDK_SAFE_RELEASE(P)                     { if (P) { P->Release(); P = NULL; } }
-
+#define MSDK_INVALID_SURF_IDX					0xFFFF
 #define MSDK_ZERO_MEMORY(VAR)                    {memset(&VAR, 0, sizeof(VAR));}
 #define MSDK_MAX(A, B)                           (((A) > (B)) ? (A) : (B))
 #define MSDK_MIN(A, B)                           (((A) < (B)) ? (A) : (B))
@@ -94,5 +94,6 @@ namespace QSV
 		{ MFX_IMPL_HARDWARE4, 3 }
 	};
 	mfxU32 GetIntelAdapter(mfxSession session);
+	mfxU16 GetFreeSurfaceIndex(mfxFrameSurface1* pSurfacesPool, mfxU16 nPoolSize);
 }
 
