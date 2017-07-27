@@ -5,6 +5,7 @@
 #include "MRTMPClient.h"
 #include "x264Encode.h"
 #include "AACEncode.h"
+#include "QSVEncoder.h"
 #include "I420Converter.h"
 #include <concurrent_queue.h>
 using namespace Encode;
@@ -48,15 +49,16 @@ namespace MShow
 		LONG					m_baseTime;
 		WAVEFORMATEX			m_waveFMT;
 		TinySize				m_pulgSize;
-		x264Encode				m_x264;
+		//x264Encode				m_x264;
 		AACEncode				m_aac;
 		TinyTaskBase			m_videoTask;
 		DX11					m_dx11;
 		DX11Texture2D			m_image2D;
 		DX11Texture2D			m_copy2D;
 		TinyScopedArray<BYTE>	m_videoBits;
-		TinyScopedPtr<I420Converter>	m_converter;
-		TinyScopedPtr<Delegate<void(BYTE*, LONG)>>	m_onAudio;
+		QSV::QSVEncoder			m_encoder;
+		//TinyScopedPtr<I420Converter>	m_converter;
+		//TinyScopedPtr<Delegate<void(BYTE*, LONG)>>	m_onAudio;
 	};
 }
 

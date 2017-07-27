@@ -335,6 +335,12 @@ namespace QSV
 			mfxFrameSurface1* pVPPIN = m_mfxVPPSurfaces[index];
 			this->Fill(pVPPIN, bi, si);
 			status = m_mfxVideoVPP->RunFrameVPPAsync(m_mfxVPPSurfaces[index], m_mfxSurfaces[index1], NULL, &syncpVPP);
+			/*	TRACE("RunFrameVPPAsync-----B\n");
+				for (INT i = 0; i < m_mfxVPPResponse.NumFrameActual; i++)
+				{
+					TRACE("VPP Locked:%d\n", m_mfxVPPSurfaces[i]->Data.Locked);
+				}
+				TRACE("RunFrameVPPAsync-----N\n");*/
 			if (MFX_ERR_MORE_SURFACE == status)
 			{
 				index = GetFreeVPPSurfaceIndex();
@@ -357,6 +363,12 @@ namespace QSV
 			{
 				m_mfxEncodeCtrl.FrameType = MFX_FRAMETYPE_UNKNOWN;
 				status = m_mfxVideoENCODE->EncodeFrameAsync(&m_mfxEncodeCtrl, m_mfxSurfaces[index1], &m_mfxResidial, &syncpVideo);
+			/*	TRACE("EncodeFrameAsync-----B\n");
+				for (INT i = 0; i < m_mfxResponse.NumFrameActual; i++)
+				{
+					TRACE("Video Locked:%d\n", m_mfxSurfaces[i]->Data.Locked);
+				}
+				TRACE("EncodeFrameAsync-----N\n");*/
 				if (MFX_ERR_MORE_SURFACE == status)
 				{
 					index1 = GetFreeVideoSurfaceIndex();

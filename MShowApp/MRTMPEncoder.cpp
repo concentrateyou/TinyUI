@@ -89,13 +89,15 @@ namespace MShow
 		MPreviewController* pCTRL = MShowApp::Instance().GetController().GetPreviewController();
 		if (!pCTRL)
 			return FALSE;
-		m_converter.Reset(new I420Converter(m_pulgSize, m_pulgSize));
+		/*m_converter.Reset(new I420Converter(m_pulgSize, m_pulgSize));
 		if (!m_converter)
-			return FALSE;
+			return FALSE;*/
 		if (!m_aac.Open(m_waveFMT))
 			return FALSE;
-		if (!m_x264.Open(m_pulgSize.cx, m_pulgSize.cy, 25, 1000))
+		if (!m_encoder.Open(m_pulgSize, m_pulgSize))
 			return FALSE;
+		//if (!m_x264.Open(m_pulgSize.cx, m_pulgSize.cy, 25, 1000))
+		//	return FALSE;
 		if (!m_image2D.Load(m_dx11, pCTRL->GetRenderView().GetHandle()))
 			return FALSE;
 		if (!m_copy2D.Create(m_dx11, m_pulgSize.cx, m_pulgSize.cy, NULL, TRUE))
@@ -110,11 +112,6 @@ namespace MShow
 
 	BOOL MRTMPEncoder::Close()
 	{
-		MVideoController* pCTRL1 = MShowApp::Instance().GetController().GetVideoController(0);
-		if (pCTRL1)
-		{
-			pCTRL1->EVENT_AUDIO -= m_onAudio;
-		}
 		m_bBreaks = TRUE;
 		BOOL bRes = TRUE;
 		if (m_videoTask.IsValid())
@@ -177,10 +174,10 @@ namespace MShow
 				memcpy_s(m_videoBits, m_videoSize, bits, dwSize);
 				m_copy2D.Unmap(m_dx11);
 			}
-			if (m_videoBits != NULL && m_converter->BRGAToI420(m_videoBits))
+			/*if (m_videoBits != NULL && m_converter->BRGAToI420(m_videoBits))
 			{
 				m_x264.Encode(m_converter->GetI420());
-			}
+			}*/
 			time.EndTime();
 			INT delay = dwMS - static_cast<DWORD>(time.GetMillisconds());
 			Sleep(delay < 0 ? 0 : delay);
