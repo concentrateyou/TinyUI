@@ -150,7 +150,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="I420Converter.h" />
+    <ClInclude Include="MAudioEncode.h" />
     <ClInclude Include="MAudioRenderTask.h" />
     <ClInclude Include="MAudioTask.h" />
     <ClInclude Include="MClock.h" />
@@ -173,6 +173,7 @@
     <ClInclude Include="MShowWindow.h" />
     <ClInclude Include="MVideoController.h" />
     <ClInclude Include="MVideoElement.h" />
+    <ClInclude Include="MVideoEncode.h" />
     <ClInclude Include="MVideoRenderTask.h" />
     <ClInclude Include="MVideoTask.h" />
     <ClInclude Include="MVideoView.h" />
@@ -183,7 +184,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="I420Converter.cpp" />
+    <ClCompile Include="MAudioEncode.cpp" />
     <ClCompile Include="MAudioRenderTask.cpp" />
     <ClCompile Include="MAudioTask.cpp" />
     <ClCompile Include="MClock.cpp" />
@@ -206,6 +207,7 @@
     <ClCompile Include="MShowWindow.cpp" />
     <ClCompile Include="MVideoController.cpp" />
     <ClCompile Include="MVideoElement.cpp" />
+    <ClCompile Include="MVideoEncode.cpp" />
     <ClCompile Include="MVideoRenderTask.cpp" />
     <ClCompile Include="MVideoTask.cpp" />
     <ClCompile Include="MVideoView.cpp" />

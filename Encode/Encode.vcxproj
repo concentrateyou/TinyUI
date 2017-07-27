@@ -143,6 +143,7 @@
   <ItemGroup>
     <ClInclude Include="AACEncode.h" />
     <ClInclude Include="FLVEncode.h" />
+    <ClInclude Include="I420Converter.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="x264Encode.h" />
@@ -150,6 +151,7 @@
   <ItemGroup>
     <ClCompile Include="AACEncode.cpp" />
     <ClCompile Include="FLVEncode.cpp" />
+    <ClCompile Include="I420Converter.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
