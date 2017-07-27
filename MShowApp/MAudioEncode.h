@@ -5,9 +5,10 @@ namespace MShow
 {
 	class MAudioEncode
 	{
+		DISALLOW_COPY_AND_ASSIGN(MAudioEncode)
 	public:
 		MAudioEncode();
-		~MAudioEncode();
+		virtual ~MAudioEncode();
 	};
 
 }

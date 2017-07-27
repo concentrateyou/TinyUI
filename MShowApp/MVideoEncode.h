@@ -5,9 +5,10 @@ namespace MShow
 {
 	class MVideoEncode
 	{
+		DISALLOW_COPY_AND_ASSIGN(MVideoEncode)
 	public:
 		MVideoEncode();
-		~MVideoEncode();
+		virtual ~MVideoEncode();
 	};
 }
 
