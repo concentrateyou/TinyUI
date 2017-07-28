@@ -358,7 +358,7 @@ namespace QSV
 		{
 			do
 			{
-				m_mfxSurfaces[index1]->Data.TimeStamp = tag.samplePTS * (m_dwINC + 1);
+				m_mfxVPPSurfaces[index]->Data.TimeStamp = (m_dwINC + 1) * 90000;
 				status = m_mfxVideoENCODE->EncodeFrameAsync(NULL, m_mfxSurfaces[index1], &m_mfxResidial, &syncpVideo);
 				if (MFX_ERR_MORE_SURFACE == status)
 				{
@@ -383,8 +383,9 @@ namespace QSV
 					memcpy(m_streamBits[1], m_mfxResidial.Data + m_mfxResidial.DataOffset, m_mfxResidial.DataLength);
 					bo = m_streamBits[1];
 					so = m_mfxResidial.DataLength;
-					mediaTag.DTS = m_mfxResidial.DecodeTimeStamp;//1000 * abs((LONG)m_mfxResidial.DecodeTimeStamp) / 90000;
-					mediaTag.PTS = m_mfxResidial.TimeStamp;//1000 * abs((LONG)m_mfxResidial.TimeStamp) / 90000;
+					mediaTag.DTS = 1000 * abs(m_mfxResidial.DecodeTimeStamp) / 90000;
+					mediaTag.PTS = tag.samplePTS * m_dwINC;
+					TRACE("mediaTag.DTS:%d   mediaTag.PTS:%d\n", mediaTag.DTS, mediaTag.PTS);
 					mediaTag.INC = m_dwINC;
 					mediaTag.dwType = 0;
 					mediaTag.dwFlag = m_mfxResidial.FrameType & (MFX_FRAMETYPE_I | MFX_FRAMETYPE_IDR) ? 0x17 : 0x27;
@@ -476,8 +477,8 @@ namespace QSV
 		ZeroMemory(&m_mfxVideoParam, sizeof(m_mfxVideoParam));
 		m_mfxVideoParam.AsyncDepth = 4;
 		m_mfxVideoParam.IOPattern = MFX_IOPATTERN_IN_VIDEO_MEMORY;
-		m_mfxVideoParam.mfx.GopRefDist = 1 + 0;
-		m_mfxVideoParam.mfx.GopPicSize = 1 + 3;
+		m_mfxVideoParam.mfx.GopRefDist = 1 + 3;// I帧或P帧之间的距离
+		m_mfxVideoParam.mfx.GopPicSize = 1 + 5;//每秒I帧个数
 		m_mfxVideoParam.mfx.NumRefFrame = 0;
 		m_mfxVideoParam.mfx.IdrInterval = 0;
 		m_mfxVideoParam.mfx.CodecProfile = 0;
