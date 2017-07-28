@@ -157,6 +157,13 @@ namespace TinyUI
 			LONGLONG	DTS;
 		}MediaTag;
 
+		typedef struct tagSample
+		{
+			MediaTag	mediaTag;
+			LONG		size;
+			BYTE*		bits;
+		}Sample;
+
 		typedef struct tagSampleTag
 		{
 			LONGLONG	sample;

@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "MRTMPPusher.h"
-#include "MRTMPEncoder.h"
 #include "MShowApp.h"
 #include "MShowController.h"
 
@@ -77,34 +76,21 @@ namespace MShow
 		{
 			if (sample.mediaTag.INC == 1)
 			{
-				MRTMPEncoder& encoder = MShowApp::Instance().GetController().GetEncoder();
-				TinySize pulgSize = encoder.GetSize();
-				m_client.SendMetadata(pulgSize.cx, pulgSize.cy, encoder.GetVideoFPS(), encoder.GetVideoRate(), encoder.GetFormat(), encoder.GetAudioRate());
-			}
-			switch (sample.mediaTag.dwFlag)
-			{
-			case NAL_SPS:
-			{
-				m_latestSPS.resize(sample.size);
-				memcpy(&m_latestSPS[0], sample.bits, sample.size);
-			}
-			break;
-			case NAL_PPS:
-			{
-				m_latestPPS.resize(sample.size);
-				memcpy(&m_latestPPS[0], sample.bits, sample.size);
+				MVideoEncodeTask& video = MShowApp::Instance().GetController().GetVideoEncoder();
+				MAudioEncodeTask& audio = MShowApp::Instance().GetController().GetAudioEncoder();
+				TinySize pulgSize = video.GetSize();
+				m_client.SendMetadata(pulgSize.cx, pulgSize.cy, video.GetVideoFPS(), video.GetVideoRate(), audio.GetFormat(), audio.GetAudioRate());
+				video.GetQSV().GetSPSPPS(m_latestSPS, m_latestPPS);
 				m_client.SendSPP(m_latestPPS, m_latestSPS, sample.mediaTag.dwTime);
 			}
-			break;
-			case NAL_SLICE:
-			case NAL_SLICE_DPA:
-			case NAL_SLICE_DPB:
-			case NAL_SLICE_DPC:
-			case NAL_SLICE_IDR:
+			if (sample.mediaTag.dwFlag & MFX_FRAMETYPE_I ||
+				sample.mediaTag.dwFlag & MFX_FRAMETYPE_IDR ||
+				sample.mediaTag.dwFlag & MFX_FRAMETYPE_P ||
+				sample.mediaTag.dwFlag & MFX_FRAMETYPE_B ||
+				sample.mediaTag.dwFlag & MFX_FRAMETYPE_S ||
+				sample.mediaTag.dwFlag & MFX_FRAMETYPE_REF)
 			{
 				m_client.SendVideo(sample.bits, sample.size, sample.mediaTag.dwTime);
-			}
-			break;
 			}
 		}
 		break;
@@ -112,7 +98,7 @@ namespace MShow
 		{
 			if (sample.mediaTag.INC == 1)
 			{
-				MRTMPEncoder& encoder = MShowApp::Instance().GetController().GetEncoder();
+				MAudioEncodeTask& encoder = MShowApp::Instance().GetController().GetAudioEncoder();
 				vector<BYTE> info;
 				encoder.GetAAC().GetSpecificInfo(info);
 				m_client.SendAAC(&info[0], info.size());

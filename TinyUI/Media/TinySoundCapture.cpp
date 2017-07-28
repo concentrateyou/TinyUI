@@ -8,14 +8,7 @@ namespace TinyUI
 		TinySoundCapture::TinySoundCapture()
 			:m_dwOffset(0)
 		{
-			ZeroMemory(&m_sFMT, sizeof(m_sFMT));
-			m_sFMT.cbSize = 0;
-			m_sFMT.wFormatTag = WAVE_FORMAT_PCM;
-			m_sFMT.nChannels = 2;
-			m_sFMT.nSamplesPerSec = 44100;
-			m_sFMT.wBitsPerSample = 16;
-			m_sFMT.nBlockAlign = m_sFMT.nChannels * (m_sFMT.wBitsPerSample / 8);
-			m_sFMT.nAvgBytesPerSec = m_sFMT.nSamplesPerSec * m_sFMT.nBlockAlign;
+
 		}
 		TinySoundCapture::~TinySoundCapture()
 		{
@@ -86,7 +79,20 @@ namespace TinyUI
 				return FALSE;
 			if (pFMT != NULL)
 			{
-				memcpy(&m_sFMT, pFMT, sizeof(WAVEFORMATEX));
+				m_waveFMT.Reset(new BYTE[sizeof(WAVEFORMATEX) + pFMT->cbSize]);
+				memcpy(m_waveFMT, (BYTE*)pFMT, sizeof(WAVEFORMATEX) + pFMT->cbSize);
+			}
+			else
+			{
+				m_waveFMT.Reset(new BYTE[sizeof(WAVEFORMATEX)]);
+				WAVEFORMATEX* ps = reinterpret_cast<WAVEFORMATEX*>(m_waveFMT.Ptr());
+				ps->cbSize = 0;
+				ps->nChannels = 2;
+				ps->wBitsPerSample = 16;
+				ps->nSamplesPerSec = 44100;
+				ps->wFormatTag = WAVE_FORMAT_PCM;
+				ps->nBlockAlign = 4;
+				ps->nAvgBytesPerSec = 176400;
 			}
 			DSCEFFECTDESC dsceds[2];
 			ZeroMemory(&dsceds[0], sizeof(DSCEFFECTDESC));
@@ -102,9 +108,9 @@ namespace TinyUI
 			DSCBUFFERDESC dscbdesc = { 0 };
 			dscbdesc.dwSize = sizeof(DSCBUFFERDESC);
 			dscbdesc.dwFlags = DSCBCAPS_CTRLFX;
-			dscbdesc.dwBufferBytes = m_sFMT.nAvgBytesPerSec;
+			dscbdesc.dwBufferBytes = reinterpret_cast<WAVEFORMATEX*>(m_waveFMT.Ptr())->nAvgBytesPerSec;
 			dscbdesc.dwReserved = 0;
-			dscbdesc.lpwfxFormat = &m_sFMT;
+			dscbdesc.lpwfxFormat = reinterpret_cast<WAVEFORMATEX*>(m_waveFMT.Ptr());
 			dscbdesc.dwFXCount = 2;
 			dscbdesc.lpDSCFXDesc = dsceds;
 			TinyComPtr<IDirectSoundCaptureBuffer> dscb;

@@ -1,6 +1,7 @@
 #pragma once
 #include "AudioEncode.h"
 #include "VideoEncode.h"
+#include "Media/TinyMedia.h"
 #include "RTMPClient.h"
 #include <concurrent_queue.h>
 using namespace TinyUI::IO;

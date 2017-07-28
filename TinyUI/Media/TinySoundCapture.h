@@ -56,7 +56,7 @@ namespace TinyUI
 			static BOOL CALLBACK DSEnumCallback(LPGUID, LPCSTR, LPCSTR, LPVOID);
 		private:
 			DWORD									m_dwOffset;
-			WAVEFORMATEX							m_sFMT;
+			TinyScopedArray<BYTE>					m_waveFMT;
 			TinyComPtr<IDirectSoundCapture8>		m_dsc8;
 			TinyComPtr<IDirectSoundCaptureBuffer8>	m_dscb8;
 		};

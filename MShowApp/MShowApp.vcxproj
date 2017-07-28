@@ -88,7 +88,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\Encode;..\Decode;..\DXFramework;..\IntelQSV;..\ThirdParty\libfaad\include;..\ThirdParty\ffmpeg\include;..\ThirdParty\mpg123\include;..\ThirdParty\librtmp\include;..\ThirdParty\x264;..\ThirdParty\vld;..\ThirdParty\libfaac\include;$(INTELMEDIASDKROOT)include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\Encode;..\Decode;..\DXFramework;..\DShowCapture;..\IntelQSV;..\ThirdParty\libfaad\include;..\ThirdParty\ffmpeg\include;..\ThirdParty\mpg123\include;..\ThirdParty\librtmp\include;..\ThirdParty\x264;..\ThirdParty\vld;..\ThirdParty\libfaac\include;$(INTELMEDIASDKROOT)include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -150,7 +150,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MAudioEncode.h" />
+    <ClInclude Include="MAudioEncodeTask.h" />
     <ClInclude Include="MAudioRenderTask.h" />
     <ClInclude Include="MAudioTask.h" />
     <ClInclude Include="MClock.h" />
@@ -162,7 +162,6 @@
     <ClInclude Include="MPreviewController.h" />
     <ClInclude Include="MPreviewView.h" />
     <ClInclude Include="MRTMPClient.h" />
-    <ClInclude Include="MRTMPEncoder.h" />
     <ClInclude Include="MRTMPPusher.h" />
     <ClInclude Include="MShowController.h" />
     <ClInclude Include="MFLVPlayer.h" />
@@ -173,7 +172,7 @@
     <ClInclude Include="MShowWindow.h" />
     <ClInclude Include="MVideoController.h" />
     <ClInclude Include="MVideoElement.h" />
-    <ClInclude Include="MVideoEncode.h" />
+    <ClInclude Include="MVideoEncodeTask.h" />
     <ClInclude Include="MVideoRenderTask.h" />
     <ClInclude Include="MVideoTask.h" />
     <ClInclude Include="MVideoView.h" />
@@ -184,7 +183,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MAudioEncode.cpp" />
+    <ClCompile Include="MAudioEncodeTask.cpp" />
     <ClCompile Include="MAudioRenderTask.cpp" />
     <ClCompile Include="MAudioTask.cpp" />
     <ClCompile Include="MClock.cpp" />
@@ -196,7 +195,6 @@
     <ClCompile Include="MPreviewController.cpp" />
     <ClCompile Include="MPreviewView.cpp" />
     <ClCompile Include="MRTMPClient.cpp" />
-    <ClCompile Include="MRTMPEncoder.cpp" />
     <ClCompile Include="MRTMPPusher.cpp" />
     <ClCompile Include="MShowController.cpp" />
     <ClCompile Include="MFLVPlayer.cpp" />
@@ -207,7 +205,7 @@
     <ClCompile Include="MShowWindow.cpp" />
     <ClCompile Include="MVideoController.cpp" />
     <ClCompile Include="MVideoElement.cpp" />
-    <ClCompile Include="MVideoEncode.cpp" />
+    <ClCompile Include="MVideoEncodeTask.cpp" />
     <ClCompile Include="MVideoRenderTask.cpp" />
     <ClCompile Include="MVideoTask.cpp" />
     <ClCompile Include="MVideoView.cpp" />

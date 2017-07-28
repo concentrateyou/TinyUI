@@ -7,7 +7,10 @@
 namespace MShow
 {
 	MShowController::MShowController(MShowWindow& window)
-		:m_window(window)
+		:m_window(window),
+		m_baseTime(0),
+		m_audio(m_pusher),
+		m_video(m_pusher)
 	{
 
 	}
@@ -27,7 +30,7 @@ namespace MShow
 			return FALSE;
 		if (!m_preview->Initialize())
 			return FALSE;
-		if (!m_encoder.Initialize(m_window.m_shadowView))
+		if (!m_video.Initialize(m_window.m_shadowView))
 			return FALSE;
 		m_play = new MPlayController(m_window.m_playView);
 		if (!m_play)
@@ -70,7 +73,14 @@ namespace MShow
 			m_play->Close();
 			SAFE_DELETE(m_play);
 		}
-		m_encoder.Close();
+		if (m_audio.IsValid())
+		{
+			m_audio.Close(INFINITE);
+		}
+		if (m_video.IsValid())
+		{
+			m_video.Close(INFINITE);
+		}
 		for (UINT i = 0;i < 6;i++)
 		{
 			m_window.m_volumeViews[i].EVENT_VOLUME -= m_videos[i]->m_onVolume;
@@ -111,9 +121,14 @@ namespace MShow
 		return m_images[i];
 	}
 
-	MRTMPEncoder& MShowController::GetEncoder()
+	MAudioEncodeTask& MShowController::GetAudioEncoder()
 	{
-		return m_encoder;
+		return m_audio;
+	}
+
+	MVideoEncodeTask& MShowController::GetVideoEncoder()
+	{
+		return m_video;
 	}
 
 	MRTMPPusher& MShowController::GetPusher()
@@ -130,11 +145,22 @@ namespace MShow
 				m_pusher.Close(INFINITE);
 			if (m_pusher.Connect())
 				m_pusher.Submit();
-			m_encoder.SetAudioConfig(*pCTRL->GetFormat(), 128);
-			m_encoder.SetVideoConfig(m_preview->GetPulgSize(), 25, 1000);
-			m_encoder.Close();
-			m_encoder.Open();
+			if (m_audio.IsValid())
+				m_audio.Close(INFINITE);
+			if (m_video.IsValid())
+				m_video.Close(INFINITE);
+			m_audio.Submit(128);
+			m_video.Submit(m_preview->GetPulgSize(), 25, 1000);
 		}
+	}
+	void MShowController::SetBaseTime(LONG baseTime)
+	{
+		TinyAutoLock lock(m_lock);
+		m_baseTime = baseTime;
+	}
+	LONG MShowController::GetBaseTime() const
+	{
+		return m_baseTime;
 	}
 
 	void MShowController::OnToggle(void*, INT)

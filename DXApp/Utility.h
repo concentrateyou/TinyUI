@@ -4,23 +4,6 @@
 #include <Richedit.h>
 using namespace TinyUI;
 
-typedef struct tagMediaTag
-{
-	DWORD	dwType;
-	DWORD	dwFlag;
-	DWORD	dwINC;
-	DWORD	dwTime;
-	DWORD	dwPTS;
-	DWORD	dwDTS;
-}MediaTag;
-
-typedef struct tagSample
-{
-	MediaTag	mediaTag;
-	LONG		size;
-	BYTE*		bits;
-}Sample;
-
 class GraphicsObserver : public TinyLock
 {
 	DISALLOW_COPY_AND_ASSIGN(GraphicsObserver)

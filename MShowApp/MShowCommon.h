@@ -13,6 +13,7 @@
 #include "Control/TinyControl.h"
 #include "Control/TinyTabControl.h"
 #include "Control/TinyButton.h"
+#include "Media/TinyMedia.h"
 #include "Media/TinySoundPlayer.h"
 #include "Common/TinyTime.h"
 #include "Common.h"
@@ -25,10 +26,3 @@ using namespace DXFramework;
 using namespace Encode;
 using namespace Decode;
 
-
-typedef struct tagSample
-{
-	MediaTag	mediaTag;
-	LONG		size;
-	BYTE*		bits;
-}Sample;

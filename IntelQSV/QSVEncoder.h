@@ -29,11 +29,11 @@ namespace QSV
 		virtual ~QSVEncoder();
 	public:
 		BOOL Open(const TinySize& src, const TinySize& dest, DWORD dwBitRate = 1000, DWORD dwFrameRate = 30);
-		BOOL Encode(SampleTag& tag, BYTE*& bits, LONG& size);
+		BOOL Encode(SampleTag& tag, BYTE*& bits, LONG& size, MediaTag& mediaTag);
 		void Close();
 		BOOL GetSPSPPS(vector<mfxU8>& sps, vector<mfxU8>& pps);
 	private:
-		mfxStatus Process(const BYTE* bi, LONG si, BYTE*& bo, LONG& so);
+		mfxStatus Process(SampleTag& tag, BYTE*& bo, LONG& so, MediaTag& mediaTag);
 		mfxStatus InitializeParam(const TinySize& src, const TinySize& dest, DWORD dwBitRate = 3231, DWORD dwFrameRate = 30);
 		mfxStatus CreateAllocator(const TinySize& src, const TinySize& dest);
 		mfxStatus AllocFrames();
@@ -43,6 +43,7 @@ namespace QSV
 		INT GetFreeVideoSurfaceIndex();
 		void Fill(mfxFrameSurface1* pIN, const BYTE* bits, LONG size);
 	private:
+		DWORD								m_dwINC;
 		mfxIMPL								m_mfxImpl;
 		mfxVersion							m_mfxVersion;
 		mfxBitstream						m_mfxResidial;

@@ -84,9 +84,6 @@
     <ClInclude Include="MVideoElement.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MRTMPEncoder.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="MRTMPPusher.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -108,10 +105,10 @@
     <ClInclude Include="MPlayView.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MVideoEncode.h">
+    <ClInclude Include="MVideoEncodeTask.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MAudioEncode.h">
+    <ClInclude Include="MAudioEncodeTask.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -176,9 +173,6 @@
     <ClCompile Include="MVideoElement.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MRTMPEncoder.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="MRTMPPusher.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -200,10 +194,10 @@
     <ClCompile Include="MPlayView.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MVideoEncode.cpp">
+    <ClCompile Include="MVideoEncodeTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MAudioEncode.cpp">
+    <ClCompile Include="MAudioEncodeTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

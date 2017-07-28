@@ -193,6 +193,7 @@ namespace QSV
 	}
 	//////////////////////////////////////////////////////////////////////////
 	QSVEncoder::QSVEncoder()
+		:m_dwINC(0)
 	{
 		ZeroMemory(&m_mfxResidial, sizeof(m_mfxResidial));
 		ZeroMemory(&m_mfxEncodeCtrl, sizeof(m_mfxEncodeCtrl));
@@ -304,11 +305,11 @@ namespace QSV
 		}
 		return FALSE;
 	}
-	BOOL QSVEncoder::Encode(SampleTag& tag, BYTE*& bo, LONG& so)
+	BOOL QSVEncoder::Encode(SampleTag& tag, BYTE*& bo, LONG& so, MediaTag& mediaTag)
 	{
 		MSDK_CHECK_POINTER(m_mfxVideoENCODE, MFX_ERR_MEMORY_ALLOC);
 		MSDK_CHECK_POINTER(m_mfxVideoVPP, MFX_ERR_MEMORY_ALLOC);
-		return Process(tag.bits, tag.size, bo, so) == MFX_ERR_NONE;
+		return Process(tag, bo, so, mediaTag) == MFX_ERR_NONE;
 	}
 	void QSVEncoder::Fill(mfxFrameSurface1* pIN, const BYTE* bits, LONG size)
 	{
@@ -321,7 +322,7 @@ namespace QSV
 		}
 		m_allocator->Unlock(m_allocator->pthis, pIN->Data.MemId, &(pIN->Data));
 	}
-	mfxStatus QSVEncoder::Process(const BYTE* bi, LONG si, BYTE*& bo, LONG& so)
+	mfxStatus QSVEncoder::Process(SampleTag& tag, BYTE*& bo, LONG& so, MediaTag& mediaTag)
 	{
 		mfxStatus status = MFX_ERR_NONE;
 		mfxSyncPoint syncpVPP = NULL;
@@ -333,14 +334,8 @@ namespace QSV
 		do
 		{
 			mfxFrameSurface1* pVPPIN = m_mfxVPPSurfaces[index];
-			this->Fill(pVPPIN, bi, si);
+			this->Fill(pVPPIN, tag.bits, tag.size);
 			status = m_mfxVideoVPP->RunFrameVPPAsync(m_mfxVPPSurfaces[index], m_mfxSurfaces[index1], NULL, &syncpVPP);
-			/*	TRACE("RunFrameVPPAsync-----B\n");
-				for (INT i = 0; i < m_mfxVPPResponse.NumFrameActual; i++)
-				{
-					TRACE("VPP Locked:%d\n", m_mfxVPPSurfaces[i]->Data.Locked);
-				}
-				TRACE("RunFrameVPPAsync-----N\n");*/
 			if (MFX_ERR_MORE_SURFACE == status)
 			{
 				index = GetFreeVPPSurfaceIndex();
@@ -362,13 +357,8 @@ namespace QSV
 			do
 			{
 				m_mfxEncodeCtrl.FrameType = MFX_FRAMETYPE_UNKNOWN;
+				m_mfxResidial.TimeStamp = tag.sampleDTS;
 				status = m_mfxVideoENCODE->EncodeFrameAsync(&m_mfxEncodeCtrl, m_mfxSurfaces[index1], &m_mfxResidial, &syncpVideo);
-			/*	TRACE("EncodeFrameAsync-----B\n");
-				for (INT i = 0; i < m_mfxResponse.NumFrameActual; i++)
-				{
-					TRACE("Video Locked:%d\n", m_mfxSurfaces[i]->Data.Locked);
-				}
-				TRACE("EncodeFrameAsync-----N\n");*/
 				if (MFX_ERR_MORE_SURFACE == status)
 				{
 					index1 = GetFreeVideoSurfaceIndex();
@@ -388,9 +378,14 @@ namespace QSV
 				status = m_mfxSession.SyncOperation(syncpVideo, 1000);
 				if (status == MFX_ERR_NONE)
 				{
+					m_dwINC++;
 					memcpy(m_streamBits[1], m_mfxResidial.Data + m_mfxResidial.DataOffset, m_mfxResidial.DataLength);
 					bo = m_streamBits[1];
 					so = m_mfxResidial.DataLength;
+					mediaTag.DTS = mediaTag.PTS = m_mfxResidial.TimeStamp;
+					mediaTag.INC = m_dwINC;
+					mediaTag.dwType = 0;
+					mediaTag.dwFlag = m_mfxResidial.FrameType;
 					m_mfxResidial.DataLength = 0;
 				}
 				return status;

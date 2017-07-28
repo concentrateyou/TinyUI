@@ -89,11 +89,11 @@ namespace DXApp
 					INT	size = pNAL[i].i_payload - SPS_SEP;
 					MediaTag tag = { 0 };
 					tag.dwType = 0;
-					tag.dwPTS = m_dwPTS;
-					tag.dwDTS = image.i_dts;
+					tag.PTS = m_dwPTS;
+					tag.DTS = image.i_dts;
+					tag.INC = ++m_dwINC;
 					tag.dwTime = timeGetTime();
 					tag.dwFlag = pNAL[i].i_type;
-					tag.dwINC = ++m_dwINC;
 					OnDone(sps, size, tag);
 				}
 				break;
@@ -103,11 +103,11 @@ namespace DXApp
 					INT size = pNAL[i].i_payload - PPS_SEP;
 					MediaTag tag = { 0 };
 					tag.dwType = 0;
-					tag.dwPTS = m_dwPTS;
-					tag.dwDTS = image.i_dts;
+					tag.PTS = m_dwPTS;
+					tag.DTS = image.i_dts;
+					tag.INC = ++m_dwINC;
 					tag.dwTime = timeGetTime();
 					tag.dwFlag = pNAL[i].i_type;
-					tag.dwINC = ++m_dwINC;
 					OnDone(pps, size, tag);
 				}
 				break;
@@ -121,11 +121,11 @@ namespace DXApp
 					INT	size = pNAL[i].i_payload;
 					MediaTag tag = { 0 };
 					tag.dwType = 0;
-					tag.dwPTS = m_dwPTS;
-					tag.dwDTS = image.i_dts;
+					tag.INC = ++m_dwINC;
+					tag.PTS = m_dwPTS;
+					tag.DTS = image.i_dts;
 					tag.dwTime = timeGetTime();
 					tag.dwFlag = pNAL[i].i_type;
-					tag.dwINC = ++m_dwINC;
 					OnDone(bits, size, tag);
 				}
 				break;

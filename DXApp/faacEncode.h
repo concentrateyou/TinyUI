@@ -1,6 +1,9 @@
 #pragma once
 #include "Utility.h"
 #include "IO/TinyIO.h"
+#include "Media/TinyMedia.h"
+using namespace TinyUI;
+using namespace TinyUI::Media;
 extern "C"
 {
 #include "faac.h"

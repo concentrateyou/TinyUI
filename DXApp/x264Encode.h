@@ -1,6 +1,9 @@
 #pragma once
 #include "Utility.h"
+#include "Media/TinyMedia.h"
 #include "I420Converter.h"
+using namespace TinyUI;
+using namespace TinyUI::Media;
 extern "C"
 {
 #include "x264_config.h"

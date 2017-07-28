@@ -20,9 +20,9 @@ namespace MShow
 		BOOL Disconnect();
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
+		void Publish(Sample& sample);
 	private:
 		void OnMessagePump();
-		void Publish(Sample& sample);
 	private:
 		BOOL			m_bClose;
 		DWORD			m_dwRate;

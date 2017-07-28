@@ -54,7 +54,7 @@ namespace DXApp
 		sample.size = size;
 		sample.bits = new BYTE[size];
 		memcpy(sample.bits, bits, size);
-		sample.mediaTag.dwTime = timeGetTime() - m_baseTime + sample.mediaTag.dwPTS;
+		sample.mediaTag.dwTime = timeGetTime() - m_baseTime + sample.mediaTag.PTS;
 		m_samples.push(sample);
 	}
 
@@ -65,7 +65,7 @@ namespace DXApp
 		sample.size = size;
 		sample.bits = new BYTE[size];
 		memcpy(sample.bits, bits, size);
-		sample.mediaTag.dwTime = timeGetTime() - m_baseTime + sample.mediaTag.dwPTS;
+		sample.mediaTag.dwTime = timeGetTime() - m_baseTime + sample.mediaTag.PTS;
 		m_samples.push(sample);
 	}
 
@@ -75,7 +75,7 @@ namespace DXApp
 		{
 		case 0://Video
 		{
-			if (sample.mediaTag.dwINC == 1)
+			if (sample.mediaTag.INC == 1)
 			{
 				WAVEFORMATEX wfx = m_audioEncode->GetParam().GetFormat();
 				TinySize size = m_videoEncode->GetSize();
@@ -110,7 +110,7 @@ namespace DXApp
 		break;
 		case 1://Audio
 		{
-			if (sample.mediaTag.dwINC == 1)
+			if (sample.mediaTag.INC == 1)
 			{
 				vector<BYTE> info;
 				m_audioEncode->GetEncode().GetSpecificInfo(info);

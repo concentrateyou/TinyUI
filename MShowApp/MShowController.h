@@ -1,6 +1,7 @@
 #pragma once
 #include "MShowWindow.h"
-#include "MRTMPEncoder.h"
+#include "MAudioEncodeTask.h"
+#include "MVideoEncodeTask.h"
 #include "MRTMPPusher.h"
 
 namespace MShow
@@ -24,19 +25,25 @@ namespace MShow
 		MPlayController*	GetPlayController();
 		MVideoController*	GetVideoController(UINT i);
 		MImageController*	GetImageController(UINT i);
-		MRTMPEncoder&		GetEncoder();
+		MAudioEncodeTask&	GetAudioEncoder();
+		MVideoEncodeTask&	GetVideoEncoder();
 		MRTMPPusher&		GetPusher();
+		void				SetBaseTime(LONG baseTime);
+		LONG				GetBaseTime() const;
 	private:
 		void OnPusher(void*, INT);
 		void OnToggle(void*, INT);
 	private:
+		LONG				m_baseTime;
 		MShowWindow&		m_window;
 		MVideoController*	m_videos[6];
 		MImageController*	m_images[6];
 		MPreviewController*	m_preview;
 		MPlayController*	m_play;
-		MRTMPEncoder		m_encoder;
 		MRTMPPusher			m_pusher;
+		MAudioEncodeTask	m_audio;
+		MVideoEncodeTask	m_video;
+		TinyLock			m_lock;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onToggleClick;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onPusherClick;
 	};

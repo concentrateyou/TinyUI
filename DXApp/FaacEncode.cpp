@@ -84,12 +84,12 @@ namespace DXApp
 		if (s > 0)
 		{
 			MediaTag tag;
-			tag.dwPTS = m_dwPTS;
-			tag.dwDTS = 0;
+			tag.PTS = m_dwPTS;
+			tag.DTS = 0;
+			tag.INC = ++m_dwINC;
 			tag.dwType = 1;
 			tag.dwTime = timeGetTime();
 			tag.dwFlag = 0;
-			tag.dwINC = ++m_dwINC;
 			OnDone(m_bits, s, tag);
 			return TRUE;
 		}
