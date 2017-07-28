@@ -29,6 +29,7 @@ namespace MShow
 	private:
 		void	OnMessagePump();
 	private:
+		LONGLONG				m_videoINC;
 		MRTMPPusher&			m_pusher;
 		BOOL					m_bBreak;
 		INT						m_videoFPS;

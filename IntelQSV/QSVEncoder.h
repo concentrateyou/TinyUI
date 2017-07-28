@@ -31,7 +31,8 @@ namespace QSV
 		BOOL Open(const TinySize& src, const TinySize& dest, DWORD dwBitRate = 1000, DWORD dwFrameRate = 30);
 		BOOL Encode(SampleTag& tag, BYTE*& bits, LONG& size, MediaTag& mediaTag);
 		void Close();
-		BOOL GetSPSPPS(vector<mfxU8>& sps, vector<mfxU8>& pps);
+		vector<mfxU8>& GetSPS();
+		vector<mfxU8>& GetPPS();
 	private:
 		mfxStatus Process(SampleTag& tag, BYTE*& bo, LONG& so, MediaTag& mediaTag);
 		mfxStatus InitializeParam(const TinySize& src, const TinySize& dest, DWORD dwBitRate = 3231, DWORD dwFrameRate = 30);
@@ -48,14 +49,17 @@ namespace QSV
 		mfxVersion							m_mfxVersion;
 		mfxBitstream						m_mfxResidial;
 		mfxEncodeCtrl						m_mfxEncodeCtrl;
-		mfxExtCodingOption					m_mfxCodingOption;
 		MFXVideoSession						m_mfxSession;
 		mfxVideoParam						m_mfxVideoParam;
 		mfxVideoParam						m_mfxVppVideoParam;
+		mfxExtCodingOption					m_mfxCodingOption;
+		mfxExtCodingOptionSPSPPS			m_mfxCodingOptionSPSPPS;
 		mfxExtVPPDoNotUse					m_vppDoNotUse;
 		mfxFrameAllocResponse				m_mfxResponse;
 		mfxFrameAllocResponse				m_mfxVPPResponse;
 		TinyScopedArray<BYTE>				m_streamBits[2];
+		std::vector<mfxU8>					m_mfxSPS;
+		std::vector<mfxU8>					m_mfxPPS;
 		std::vector<mfxExtBuffer*>			m_vppExtParams;
 		std::vector<mfxExtBuffer*>			m_encExtParams;
 		TinyScopedArray<mfxFrameSurface1*>	m_mfxSurfaces;

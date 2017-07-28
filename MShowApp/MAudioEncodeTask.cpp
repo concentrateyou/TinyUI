@@ -94,13 +94,12 @@ namespace MShow
 				MShowApp::Instance().GetController().SetBaseTime(timeGetTime());
 			}
 		}
-		LONG baseTime = MShowApp::Instance().GetController().GetBaseTime();
 		Sample sample;
 		memcpy(&sample.mediaTag, &tag, sizeof(tag));
 		sample.size = size;
 		sample.bits = new BYTE[size];
 		memcpy(sample.bits, bits, size);
-		sample.mediaTag.dwTime = timeGetTime() - baseTime + sample.mediaTag.PTS;
+		sample.mediaTag.dwTime = timeGetTime() - MShowApp::Instance().GetController().GetBaseTime() + sample.mediaTag.PTS;
 		m_pusher.Publish(sample);
 	}
 	INT	MAudioEncodeTask::GetAudioRate() const

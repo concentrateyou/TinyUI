@@ -219,7 +219,7 @@ namespace MShow
 		SAFE_FREE(packet);
 		return TRUE;
 	}
-	BOOL MRTMPClient::SendVideo(BYTE* bits, LONG size, DWORD timestamp)
+	BOOL MRTMPClient::SendVideo(DWORD dwFrameType, BYTE* bits, LONG size, DWORD timestamp)
 	{
 		if (!m_pRTMP)
 			return FALSE;
@@ -238,23 +238,13 @@ namespace MShow
 		}
 		RTMPPacket* packet = NULL;
 		BYTE* body = NULL;
-		INT type = bits[0] & 0x1F;
 		packet = (RTMPPacket*)malloc(RTMP_HEAD_SIZE + size + 9);
 		memset(packet, 0, RTMP_HEAD_SIZE);
 		packet->m_body = (CHAR*)packet + RTMP_HEAD_SIZE;
 		packet->m_nBodySize = size + 9;
 		body = (BYTE*)packet->m_body;
 		memset(body, 0, size + 9);
-		body[0] = 0x27;
-		switch (type)
-		{
-		case NAL_SLICE_IDR:
-			body[0] = 0x17;
-			break;
-		case NAL_SLICE:
-			body[0] = 0x27;
-			break;
-		}
+		body[0] = dwFrameType;
 		body[1] = 0x01;// AVC NALU  
 		body[2] = 0x00;
 		body[3] = 0x00;

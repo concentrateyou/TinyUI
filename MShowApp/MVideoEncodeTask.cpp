@@ -7,7 +7,8 @@ namespace MShow
 	MVideoEncodeTask::MVideoEncodeTask(MRTMPPusher& pusher)
 		:m_bBreak(FALSE),
 		m_videoSize(0),
-		m_pusher(pusher)
+		m_pusher(pusher),
+		m_videoINC(0)
 	{
 	}
 
@@ -66,9 +67,9 @@ namespace MShow
 			}
 			if (m_videoBits != NULL)
 			{
-				if (!bFirst)
+				m_videoINC++;
+				if (m_videoINC == 1)
 				{
-					bFirst = TRUE;
 					if (MShowApp::Instance().GetController().GetBaseTime() == -1)
 					{
 						MShowApp::Instance().GetController().SetBaseTime(timeGetTime());
@@ -77,7 +78,7 @@ namespace MShow
 				SampleTag sampleTag = { 0 };
 				sampleTag.bits = m_videoBits;
 				sampleTag.size = m_videoSize;
-				sampleTag.samplePTS = timeGetTime() - MShowApp::Instance().GetController().GetBaseTime();
+				sampleTag.samplePTS = 40;
 				BYTE* bo = NULL;
 				LONG  so = 0;
 				MediaTag tag = { 0 };
@@ -85,7 +86,7 @@ namespace MShow
 				{
 					Sample sample = { 0 };
 					memcpy(&sample.mediaTag, &tag, sizeof(tag));
-					sample.mediaTag.dwTime = timeGetTime() - MShow::MShowApp::Instance().GetController().GetBaseTime() + sample.mediaTag.PTS;
+					sample.mediaTag.dwTime = timeGetTime() - MShowApp::Instance().GetController().GetBaseTime() + sampleTag.samplePTS;
 					sample.size = so;
 					sample.bits = new BYTE[so];
 					memcpy(sample.bits, bo, so);

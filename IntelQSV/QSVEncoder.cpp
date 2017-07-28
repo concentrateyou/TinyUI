@@ -253,9 +253,33 @@ namespace QSV
 		status = m_mfxVideoVPP->GetVideoParam(&m_mfxVppVideoParam);
 		if (MFX_ERR_NONE != status)
 			goto _ERROR;
+		MSDK_ZERO_MEMORY(m_mfxCodingOption);
+		m_mfxCodingOption.Header.BufferId = MFX_EXTBUFF_CODING_OPTION;
+		m_mfxCodingOption.Header.BufferSz = sizeof(m_mfxCodingOption);
+		m_mfxCodingOption.ViewOutput = MFX_CODINGOPTION_ON;
+		m_encExtParams.push_back((mfxExtBuffer *)&m_mfxCodingOption);
+		m_mfxVideoParam.ExtParam = &m_encExtParams[0];
+		m_mfxVideoParam.NumExtParam = (mfxU16)m_encExtParams.size();
+		MSDK_ZERO_MEMORY(m_mfxCodingOptionSPSPPS);
+		mfxU8	mfxsps[128];
+		mfxU8	mfxpps[128];
+		m_mfxCodingOptionSPSPPS.Header.BufferId = MFX_EXTBUFF_CODING_OPTION_SPSPPS;
+		m_mfxCodingOptionSPSPPS.Header.BufferSz = sizeof(mfxExtCodingOptionSPSPPS);
+		m_mfxCodingOptionSPSPPS.PPSBuffer = mfxpps;
+		m_mfxCodingOptionSPSPPS.PPSBufSize = 128;
+		m_mfxCodingOptionSPSPPS.SPSBuffer = mfxsps;
+		m_mfxCodingOptionSPSPPS.SPSBufSize = 128;
+		m_encExtParams.push_back((mfxExtBuffer *)&m_mfxCodingOption);
+		m_encExtParams.push_back((mfxExtBuffer *)&m_mfxCodingOptionSPSPPS);
+		m_mfxVideoParam.ExtParam = &m_encExtParams[0];
+		m_mfxVideoParam.NumExtParam = (mfxU16)m_encExtParams.size();
 		status = m_mfxVideoENCODE->GetVideoParam(&m_mfxVideoParam);
 		if (MFX_ERR_NONE != status)
 			goto _ERROR;
+		m_mfxSPS.resize(m_mfxCodingOptionSPSPPS.SPSBufSize);
+		memcpy(&m_mfxSPS[0], m_mfxCodingOptionSPSPPS.SPSBuffer, m_mfxCodingOptionSPSPPS.SPSBufSize);
+		m_mfxPPS.resize(m_mfxCodingOptionSPSPPS.PPSBufSize);
+		memcpy(&m_mfxPPS[0], m_mfxCodingOptionSPSPPS.PPSBuffer, m_mfxCodingOptionSPSPPS.PPSBufSize);
 	_ERROR:
 		return status == MFX_ERR_NONE;
 	}
@@ -275,35 +299,13 @@ namespace QSV
 		DeleteFrames();
 		DeleteAllocator();
 	}
-	BOOL QSVEncoder::GetSPSPPS(vector<mfxU8>& sps, vector<mfxU8>& pps)
+	vector<mfxU8>& QSVEncoder::GetSPS()
 	{
-		if (!m_mfxVideoENCODE)
-			return FALSE;
-		mfxU8	mfxsps[100];
-		mfxU8	mfxpps[100];
-		mfxVideoParam par;
-		ZeroMemory(&par, sizeof(par));
-		mfxExtCodingOptionSPSPPS spspps;
-		ZeroMemory(&spspps, sizeof(mfxExtCodingOptionSPSPPS));
-		spspps.Header.BufferId = MFX_EXTBUFF_CODING_OPTION_SPSPPS;
-		spspps.Header.BufferSz = sizeof(mfxExtCodingOptionSPSPPS);
-		spspps.PPSBuffer = mfxpps;
-		spspps.PPSBufSize = 100;
-		spspps.SPSBuffer = mfxsps;
-		spspps.SPSBufSize = 100;
-		mfxExtBuffer* ext[1];
-		ext[0] = (mfxExtBuffer *)&spspps;
-		par.ExtParam = &ext[0];
-		par.NumExtParam = 1;
-		if (m_mfxVideoENCODE->GetVideoParam(&par) == MFX_ERR_NONE)
-		{
-			sps.resize(spspps.SPSBufSize);
-			memcpy(&sps[0], mfxsps, spspps.SPSBufSize);
-			pps.resize(spspps.PPSBufSize);
-			memcpy(&sps[0], mfxpps, spspps.PPSBufSize);
-			return TRUE;
-		}
-		return FALSE;
+		return m_mfxSPS;
+	}
+	vector<mfxU8>& QSVEncoder::GetPPS()
+	{
+		return m_mfxPPS;
 	}
 	BOOL QSVEncoder::Encode(SampleTag& tag, BYTE*& bo, LONG& so, MediaTag& mediaTag)
 	{
@@ -335,7 +337,6 @@ namespace QSV
 		{
 			mfxFrameSurface1* pVPPIN = m_mfxVPPSurfaces[index];
 			this->LoadRGB32(pVPPIN, tag.bits, tag.size);
-			pVPPIN->Data.TimeStamp = tag.samplePTS;
 			status = m_mfxVideoVPP->RunFrameVPPAsync(m_mfxVPPSurfaces[index], m_mfxSurfaces[index1], NULL, &syncpVPP);
 			if (MFX_ERR_MORE_SURFACE == status)
 			{
@@ -357,8 +358,8 @@ namespace QSV
 		{
 			do
 			{
-				m_mfxEncodeCtrl.FrameType = MFX_FRAMETYPE_UNKNOWN;
-				status = m_mfxVideoENCODE->EncodeFrameAsync(&m_mfxEncodeCtrl, m_mfxSurfaces[index1], &m_mfxResidial, &syncpVideo);
+				m_mfxSurfaces[index1]->Data.TimeStamp = tag.samplePTS * (m_dwINC + 1);
+				status = m_mfxVideoENCODE->EncodeFrameAsync(NULL, m_mfxSurfaces[index1], &m_mfxResidial, &syncpVideo);
 				if (MFX_ERR_MORE_SURFACE == status)
 				{
 					index1 = GetFreeVideoSurfaceIndex();
@@ -382,11 +383,11 @@ namespace QSV
 					memcpy(m_streamBits[1], m_mfxResidial.Data + m_mfxResidial.DataOffset, m_mfxResidial.DataLength);
 					bo = m_streamBits[1];
 					so = m_mfxResidial.DataLength;
-					mediaTag.DTS = m_mfxResidial.DecodeTimeStamp;
-					mediaTag.PTS = m_mfxResidial.TimeStamp;
+					mediaTag.DTS = m_mfxResidial.DecodeTimeStamp;//1000 * abs((LONG)m_mfxResidial.DecodeTimeStamp) / 90000;
+					mediaTag.PTS = m_mfxResidial.TimeStamp;//1000 * abs((LONG)m_mfxResidial.TimeStamp) / 90000;
 					mediaTag.INC = m_dwINC;
 					mediaTag.dwType = 0;
-					mediaTag.dwFlag = m_mfxResidial.FrameType;
+					mediaTag.dwFlag = m_mfxResidial.FrameType & (MFX_FRAMETYPE_I | MFX_FRAMETYPE_IDR) ? 0x17 : 0x27;
 					m_mfxResidial.DataLength = 0;
 				}
 				return status;
@@ -475,8 +476,8 @@ namespace QSV
 		ZeroMemory(&m_mfxVideoParam, sizeof(m_mfxVideoParam));
 		m_mfxVideoParam.AsyncDepth = 4;
 		m_mfxVideoParam.IOPattern = MFX_IOPATTERN_IN_VIDEO_MEMORY;
-		m_mfxVideoParam.mfx.GopRefDist = 0;
-		m_mfxVideoParam.mfx.GopPicSize = 0;
+		m_mfxVideoParam.mfx.GopRefDist = 1 + 0;
+		m_mfxVideoParam.mfx.GopPicSize = 1 + 3;
 		m_mfxVideoParam.mfx.NumRefFrame = 0;
 		m_mfxVideoParam.mfx.IdrInterval = 0;
 		m_mfxVideoParam.mfx.CodecProfile = 0;
@@ -486,7 +487,7 @@ namespace QSV
 		m_mfxVideoParam.mfx.GopOptFlag = 0;
 		m_mfxVideoParam.mfx.BufferSizeInKB = 0;
 		m_mfxVideoParam.mfx.EncodedOrder = 0;
-		m_mfxVideoParam.mfx.NumSlice = 0;
+		m_mfxVideoParam.mfx.NumSlice = 1;
 		m_mfxVideoParam.mfx.CodecId = MFX_CODEC_AVC;
 		m_mfxVideoParam.mfx.TargetUsage = MFX_TARGETUSAGE_BALANCED;
 		m_mfxVideoParam.mfx.TargetKbps = static_cast<mfxU16>(dwBitRate);
@@ -502,13 +503,6 @@ namespace QSV
 		m_mfxVideoParam.mfx.FrameInfo.CropH = static_cast<mfxU16>(dest.cy);
 		m_mfxVideoParam.mfx.FrameInfo.FrameRateExtN = static_cast<mfxU16>(dwFrameRate);
 		m_mfxVideoParam.mfx.FrameInfo.FrameRateExtD = 1;
-		MSDK_ZERO_MEMORY(m_mfxCodingOption);
-		m_mfxCodingOption.Header.BufferId = MFX_EXTBUFF_CODING_OPTION;
-		m_mfxCodingOption.Header.BufferSz = sizeof(m_mfxCodingOption);
-		m_mfxCodingOption.ViewOutput = MFX_CODINGOPTION_ON;
-		m_encExtParams.push_back((mfxExtBuffer *)&m_mfxCodingOption);
-		m_mfxVideoParam.ExtParam = &m_encExtParams[0];
-		m_mfxVideoParam.NumExtParam = (mfxU16)m_encExtParams.size();
 		status = m_mfxVideoENCODE->Query(&m_mfxVideoParam, &m_mfxVideoParam);
 		if (status != MFX_ERR_NONE)
 			return status;

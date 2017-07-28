@@ -28,8 +28,6 @@ namespace MShow
 		DWORD			m_dwRate;
 		DWORD			m_dwReconnect;
 		MRTMPClient		m_client;
-		vector<BYTE>	m_latestPPS;
-		vector<BYTE>	m_latestSPS;
 		Concurrency::concurrent_queue<Sample>	m_samples;
 	};
 }

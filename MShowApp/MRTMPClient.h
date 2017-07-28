@@ -29,7 +29,7 @@ namespace MShow
 		BOOL	SendMetadata(INT cx, INT cy, INT frameRate, INT videoRate, const WAVEFORMATEX& wfx, INT audioRate);
 		BOOL	SendSPP(const vector<BYTE>& pps, const vector<BYTE>& sps, DWORD timestamp);
 		BOOL	SendAAC(BYTE* bits, LONG size);
-		BOOL	SendVideo(BYTE* bits, LONG size, DWORD timestamp);
+		BOOL	SendVideo(DWORD dwFrameType, BYTE* bits, LONG size, DWORD timestamp);
 		BOOL	SendAudio(BYTE* bits, LONG size, DWORD timestamp);
 		DWORD	GetTime();
 	private:

@@ -67,7 +67,6 @@ namespace MShow
 			}
 		}
 	}
-
 	void MRTMPPusher::Publish(Sample& sample)
 	{
 		switch (sample.mediaTag.dwType)
@@ -76,22 +75,15 @@ namespace MShow
 		{
 			if (sample.mediaTag.INC == 1)
 			{
-				MVideoEncodeTask& video = MShowApp::Instance().GetController().GetVideoEncoder();
 				MAudioEncodeTask& audio = MShowApp::Instance().GetController().GetAudioEncoder();
+				MVideoEncodeTask& video = MShowApp::Instance().GetController().GetVideoEncoder();
 				TinySize pulgSize = video.GetSize();
 				m_client.SendMetadata(pulgSize.cx, pulgSize.cy, video.GetVideoFPS(), video.GetVideoRate(), audio.GetFormat(), audio.GetAudioRate());
-				video.GetQSV().GetSPSPPS(m_latestSPS, m_latestPPS);
-				m_client.SendSPP(m_latestPPS, m_latestSPS, sample.mediaTag.dwTime);
+				vector<BYTE>& sps = video.GetQSV().GetSPS();
+				vector<BYTE>& pps = video.GetQSV().GetPPS();
+				m_client.SendSPP(pps, sps, sample.mediaTag.dwTime);
 			}
-			if (sample.mediaTag.dwFlag & MFX_FRAMETYPE_I ||
-				sample.mediaTag.dwFlag & MFX_FRAMETYPE_IDR ||
-				sample.mediaTag.dwFlag & MFX_FRAMETYPE_P ||
-				sample.mediaTag.dwFlag & MFX_FRAMETYPE_B ||
-				sample.mediaTag.dwFlag & MFX_FRAMETYPE_S ||
-				sample.mediaTag.dwFlag & MFX_FRAMETYPE_REF)
-			{
-				m_client.SendVideo(sample.bits, sample.size, sample.mediaTag.dwTime);
-			}
+			m_client.SendVideo(sample.mediaTag.dwFlag, sample.bits, sample.size, sample.mediaTag.dwTime);
 		}
 		break;
 		case 1://Audio
