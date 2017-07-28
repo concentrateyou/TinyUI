@@ -42,6 +42,7 @@ namespace MShow
 	}
 	void MVideoEncodeTask::OnMessagePump()
 	{
+		BOOL bFirst = FALSE;
 		TinyPerformanceTimer time;
 		DWORD dwMS = static_cast<DWORD>(1000 / m_videoFPS);
 		for (;;)
@@ -65,19 +66,26 @@ namespace MShow
 			}
 			if (m_videoBits != NULL)
 			{
-				LONG baseTime = MShow::MShowApp::Instance().GetController().GetBaseTime();
+				if (!bFirst)
+				{
+					bFirst = TRUE;
+					if (MShowApp::Instance().GetController().GetBaseTime() == -1)
+					{
+						MShowApp::Instance().GetController().SetBaseTime(timeGetTime());
+					}
+				}
 				SampleTag sampleTag = { 0 };
 				sampleTag.bits = m_videoBits;
 				sampleTag.size = m_videoSize;
-				sampleTag.samplePTS = timeGetTime() - baseTime;
+				sampleTag.samplePTS = timeGetTime() - MShowApp::Instance().GetController().GetBaseTime();
 				BYTE* bo = NULL;
 				LONG  so = 0;
-				MediaTag mediaTag = { 0 };
-				if (m_encoder.Encode(sampleTag, bo, so, mediaTag))
+				MediaTag tag = { 0 };
+				if (m_encoder.Encode(sampleTag, bo, so, tag))
 				{
 					Sample sample = { 0 };
-					memcpy(&sample.mediaTag, &mediaTag, sizeof(mediaTag));
-					sample.mediaTag.dwTime = timeGetTime() - baseTime + sample.mediaTag.PTS;
+					memcpy(&sample.mediaTag, &tag, sizeof(tag));
+					sample.mediaTag.dwTime = timeGetTime() - MShow::MShowApp::Instance().GetController().GetBaseTime() + sample.mediaTag.PTS;
 					sample.size = so;
 					sample.bits = new BYTE[so];
 					memcpy(sample.bits, bo, so);

@@ -8,7 +8,7 @@ namespace MShow
 {
 	MShowController::MShowController(MShowWindow& window)
 		:m_window(window),
-		m_baseTime(0),
+		m_baseTime(-1),
 		m_audio(m_pusher),
 		m_video(m_pusher)
 	{

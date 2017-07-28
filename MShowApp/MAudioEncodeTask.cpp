@@ -87,6 +87,13 @@ namespace MShow
 	}
 	void MAudioEncodeTask::OnAAC(BYTE* bits, LONG size, const MediaTag& tag)
 	{
+		if (tag.INC == 1)
+		{
+			if (MShowApp::Instance().GetController().GetBaseTime() == -1)
+			{
+				MShowApp::Instance().GetController().SetBaseTime(timeGetTime());
+			}
+		}
 		LONG baseTime = MShowApp::Instance().GetController().GetBaseTime();
 		Sample sample;
 		memcpy(&sample.mediaTag, &tag, sizeof(tag));

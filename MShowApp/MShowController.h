@@ -34,6 +34,7 @@ namespace MShow
 		void OnPusher(void*, INT);
 		void OnToggle(void*, INT);
 	private:
+		TinyLock			m_lock;
 		LONG				m_baseTime;
 		MShowWindow&		m_window;
 		MVideoController*	m_videos[6];
@@ -43,7 +44,6 @@ namespace MShow
 		MRTMPPusher			m_pusher;
 		MAudioEncodeTask	m_audio;
 		MVideoEncodeTask	m_video;
-		TinyLock			m_lock;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onToggleClick;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onPusherClick;
 	};

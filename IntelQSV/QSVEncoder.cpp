@@ -311,7 +311,7 @@ namespace QSV
 		MSDK_CHECK_POINTER(m_mfxVideoVPP, MFX_ERR_MEMORY_ALLOC);
 		return Process(tag, bo, so, mediaTag) == MFX_ERR_NONE;
 	}
-	void QSVEncoder::Fill(mfxFrameSurface1* pIN, const BYTE* bits, LONG size)
+	void QSVEncoder::LoadRGB32(mfxFrameSurface1* pIN, const BYTE* bits, LONG size)
 	{
 		m_allocator->Lock(m_allocator->pthis, pIN->Data.MemId, &(pIN->Data));
 		mfxU8 *pRGB = pIN->Data.B;
@@ -334,7 +334,8 @@ namespace QSV
 		do
 		{
 			mfxFrameSurface1* pVPPIN = m_mfxVPPSurfaces[index];
-			this->Fill(pVPPIN, tag.bits, tag.size);
+			this->LoadRGB32(pVPPIN, tag.bits, tag.size);
+			pVPPIN->Data.TimeStamp = tag.samplePTS;
 			status = m_mfxVideoVPP->RunFrameVPPAsync(m_mfxVPPSurfaces[index], m_mfxSurfaces[index1], NULL, &syncpVPP);
 			if (MFX_ERR_MORE_SURFACE == status)
 			{
@@ -357,7 +358,6 @@ namespace QSV
 			do
 			{
 				m_mfxEncodeCtrl.FrameType = MFX_FRAMETYPE_UNKNOWN;
-				m_mfxResidial.TimeStamp = tag.sampleDTS;
 				status = m_mfxVideoENCODE->EncodeFrameAsync(&m_mfxEncodeCtrl, m_mfxSurfaces[index1], &m_mfxResidial, &syncpVideo);
 				if (MFX_ERR_MORE_SURFACE == status)
 				{
@@ -382,7 +382,8 @@ namespace QSV
 					memcpy(m_streamBits[1], m_mfxResidial.Data + m_mfxResidial.DataOffset, m_mfxResidial.DataLength);
 					bo = m_streamBits[1];
 					so = m_mfxResidial.DataLength;
-					mediaTag.DTS = mediaTag.PTS = m_mfxResidial.TimeStamp;
+					mediaTag.DTS = m_mfxResidial.DecodeTimeStamp;
+					mediaTag.PTS = m_mfxResidial.TimeStamp;
 					mediaTag.INC = m_dwINC;
 					mediaTag.dwType = 0;
 					mediaTag.dwFlag = m_mfxResidial.FrameType;
