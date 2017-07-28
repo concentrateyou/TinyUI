@@ -313,7 +313,7 @@ namespace QSV
 		MSDK_CHECK_POINTER(m_mfxVideoVPP, MFX_ERR_MEMORY_ALLOC);
 		return Process(tag, bo, so, mediaTag) == MFX_ERR_NONE;
 	}
-	void QSVEncoder::LoadRGB32(mfxFrameSurface1* pIN, const BYTE* bits, LONG size)
+	void QSVEncoder::LoadRGB32(mfxFrameSurface1* pIN, const BYTE* bits, LONG size, LONG timestamp)
 	{
 		m_allocator->Lock(m_allocator->pthis, pIN->Data.MemId, &(pIN->Data));
 		mfxU8 *pRGB = pIN->Data.B;
@@ -322,6 +322,7 @@ namespace QSV
 		{
 			memcpy(pRGB + i * pIN->Data.Pitch, bits + i * 4 * pIN->Info.Width, 4 * pIN->Info.Width);
 		}
+		pIN->Data.TimeStamp = timestamp * 90000 / 25;
 		m_allocator->Unlock(m_allocator->pthis, pIN->Data.MemId, &(pIN->Data));
 	}
 	mfxStatus QSVEncoder::Process(SampleTag& tag, BYTE*& bo, LONG& so, MediaTag& mediaTag)
@@ -336,7 +337,7 @@ namespace QSV
 		do
 		{
 			mfxFrameSurface1* pVPPIN = m_mfxVPPSurfaces[index];
-			this->LoadRGB32(pVPPIN, tag.bits, tag.size);
+			this->LoadRGB32(pVPPIN, tag.bits, tag.size, tag.samplePTS);
 			status = m_mfxVideoVPP->RunFrameVPPAsync(m_mfxVPPSurfaces[index], m_mfxSurfaces[index1], NULL, &syncpVPP);
 			if (MFX_ERR_MORE_SURFACE == status)
 			{
@@ -358,7 +359,6 @@ namespace QSV
 		{
 			do
 			{
-				m_mfxVPPSurfaces[index]->Data.TimeStamp = (m_dwINC + 1) * 90000;
 				status = m_mfxVideoENCODE->EncodeFrameAsync(NULL, m_mfxSurfaces[index1], &m_mfxResidial, &syncpVideo);
 				if (MFX_ERR_MORE_SURFACE == status)
 				{
@@ -383,9 +383,8 @@ namespace QSV
 					memcpy(m_streamBits[1], m_mfxResidial.Data + m_mfxResidial.DataOffset, m_mfxResidial.DataLength);
 					bo = m_streamBits[1];
 					so = m_mfxResidial.DataLength;
-					mediaTag.DTS = 1000 * abs(m_mfxResidial.DecodeTimeStamp) / 90000;
-					mediaTag.PTS = tag.samplePTS * m_dwINC;
-					TRACE("mediaTag.DTS:%d   mediaTag.PTS:%d\n", mediaTag.DTS, mediaTag.PTS);
+					mediaTag.DTS = m_mfxResidial.DecodeTimeStamp * 25 / 90000;
+					mediaTag.PTS = m_mfxResidial.TimeStamp * 25 / 90000;
 					mediaTag.INC = m_dwINC;
 					mediaTag.dwType = 0;
 					mediaTag.dwFlag = m_mfxResidial.FrameType & (MFX_FRAMETYPE_I | MFX_FRAMETYPE_IDR) ? 0x17 : 0x27;

@@ -78,7 +78,7 @@ namespace MShow
 				SampleTag sampleTag = { 0 };
 				sampleTag.bits = m_videoBits;
 				sampleTag.size = m_videoSize;
-				sampleTag.samplePTS = timeGetTime() - MShowApp::Instance().GetController().GetBaseTime();
+				sampleTag.samplePTS = (m_videoINC - 1);
 				BYTE* bo = NULL;
 				LONG  so = 0;
 				MediaTag tag = { 0 };
@@ -86,7 +86,7 @@ namespace MShow
 				{
 					Sample sample = { 0 };
 					memcpy(&sample.mediaTag, &tag, sizeof(tag));
-					sample.mediaTag.dwTime = tag.DTS;
+					sample.mediaTag.dwTime = timeGetTime() - MShowApp::Instance().GetController().GetBaseTime() + tag.DTS;
 					sample.size = so;
 					sample.bits = new BYTE[so];
 					memcpy(sample.bits, bo, so);
