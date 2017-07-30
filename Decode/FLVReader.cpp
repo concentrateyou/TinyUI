@@ -11,12 +11,10 @@ namespace Decode
 		m_bNetwork(FALSE),
 		m_minusOne(0),
 		m_offset(0),
-		m_naluOffset(0),
-		m_naluPtr(NULL),
 		m_timestamp(0),
 		m_basePTS(-1)
 	{
-		
+
 	}
 	FLVReader::~FLVReader()
 	{
@@ -133,57 +131,50 @@ namespace Decode
 	}
 	BOOL FLVReader::ReadBlock(FLV_BLOCK& block)
 	{
-		if (m_nalus.GetSize() <= 0)
+		UINT tagSize = 0;
+		ULONG ls = 0;
+		HRESULT hRes = m_stream->Read(&tagSize, sizeof(UINT), &ls);
+		if (hRes != S_OK || ls <= 0)
+			return FALSE;
+		tagSize = htonl(tagSize);
+		FLV_TAG_HEADER tag = { 0 };
+		hRes = m_stream->Read(&tag, sizeof(FLV_TAG_HEADER), &ls);
+		if (hRes != S_OK || ls <= 0)
+			return FALSE;
+		INT size = ToINT24(tag.size);
+		if (size > 0)
 		{
-			UINT tagSize = 0;
-			ULONG ls = 0;
-			HRESULT hRes = m_stream->Read(&tagSize, sizeof(UINT), &ls);
+			block.type = tag.type;
+			TinyScopedArray<BYTE> data(new BYTE[size]);
+			hRes = m_stream->Read(data, size, &ls);
 			if (hRes != S_OK || ls <= 0)
 				return FALSE;
-			tagSize = htonl(tagSize);
-			FLV_TAG_HEADER tag = { 0 };
-			hRes = m_stream->Read(&tag, sizeof(FLV_TAG_HEADER), &ls);
-			if (hRes != S_OK || ls <= 0)
-				return FALSE;
-			INT size = ToINT24(tag.size);
-			if (size > 0)
+			if (tag.type == FLV_AUDIO)
 			{
-				block.type = tag.type;
-				TinyScopedArray<BYTE> data(new BYTE[size]);
-				hRes = m_stream->Read(data, size, &ls);
-				if (hRes != S_OK || ls <= 0)
-					return FALSE;
-				if (tag.type == FLV_AUDIO)
+				m_timestamp = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
+				if (m_timestamp > 0)
 				{
-					m_timestamp = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
-					if (m_timestamp > 0)
+					if (m_basePTS == -1)
 					{
-						if (m_basePTS == -1)
-						{
-							m_basePTS = m_timestamp;
-						}
-						m_timestamp -= m_basePTS;
+						m_basePTS = m_timestamp;
 					}
-					return ParseAudio(data, size, block);
+					m_timestamp -= m_basePTS;
 				}
-				if (tag.type == FLV_VIDEO)
-				{
-					m_timestamp = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
-					if (m_timestamp > 0)
-					{
-						if (m_basePTS == -1)
-						{
-							m_basePTS = m_timestamp;
-						}
-						m_timestamp -= m_basePTS;
-					}
-					return ParseVideo(data, size, block);
-				}
+				return ParseAudio(data, size, block);
 			}
-		}
-		else
-		{
-			return ParseNALU(&m_videoTag, block);
+			if (tag.type == FLV_VIDEO)
+			{
+				m_timestamp = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
+				if (m_timestamp > 0)
+				{
+					if (m_basePTS == -1)
+					{
+						m_basePTS = m_timestamp;
+					}
+					m_timestamp -= m_basePTS;
+				}
+				return ParseVideo(data, size, block);
+			}
 		}
 		return FALSE;
 	}
@@ -327,11 +318,7 @@ namespace Decode
 		}
 		if (aacPacketType == 1)
 		{
-			m_nalus.Clear();
-			m_nalus.Add(bits, size);
-			m_naluPtr = m_nalus;
-			m_naluOffset = 0;
-			return ParseNALU(video, block);
+			return ParseNALUS(video, bits, size, block);
 		}
 		return TRUE;
 	}
@@ -339,87 +326,60 @@ namespace Decode
 	{
 		return TRUE;
 	}
-	BOOL FLVReader::ParseNALU(FLV_TAG_VIDEO* video, FLV_BLOCK& block)
+	BOOL FLVReader::ParseNALUS(FLV_TAG_VIDEO* video, BYTE* data, INT size, FLV_BLOCK& block)
 	{
+		INT offsetNALU = 0;
 		INT sizeofNALU = 0;
-		switch (m_minusOne)
+		BYTE* pNALU = data;
+		for (;;)
 		{
-		case 4:
-		{
-			sizeofNALU = ToINT32(m_naluPtr);
-			m_naluPtr += 4;
-			m_naluOffset += 4;
-			block.video.size = sizeofNALU + 4;
-			block.video.data = new BYTE[block.video.size];
-			memcpy(block.video.data, &H264StartCode, 4);
-			memcpy(block.video.data + 4, m_naluPtr, sizeofNALU);
-			block.video.codeID = video->codeID;
-			block.video.codeType = video->codeType;
-			block.video.packetType = FLV_NALU;
-			block.dts = m_timestamp;
-			block.pts = block.dts + block.video.cts;
-			m_naluPtr += sizeofNALU;
-			m_naluOffset += sizeofNALU;
-		}
-		break;
-		case 3:
-		{
-			sizeofNALU = ToINT24(m_naluPtr);
-			m_naluPtr += 3;
-			m_naluOffset += 3;
-			block.video.size = sizeofNALU + 4;
-			block.video.data = new BYTE[block.video.size];
-			memcpy(block.video.data, &H264StartCode, 4);
-			memcpy(block.video.data + 4, m_naluPtr, sizeofNALU);
-			block.video.codeID = video->codeID;
-			block.video.codeType = video->codeType;
-			block.video.packetType = FLV_NALU;
-			block.dts = m_timestamp;
-			block.pts = block.dts + block.video.cts;
-			m_naluPtr += sizeofNALU;
-			m_naluOffset += sizeofNALU;
-		}
-		break;
-		case 2:
-		{
-			sizeofNALU = ToINT16(m_naluPtr);
-			m_naluPtr += 2;
-			m_naluOffset += 2;
-			block.video.size = sizeofNALU + 4;
-			block.video.data = new BYTE[block.video.size];
-			memcpy(block.video.data, &H264StartCode, 4);
-			memcpy(block.video.data + 4, m_naluPtr, sizeofNALU);
-			block.video.codeID = video->codeID;
-			block.video.codeType = video->codeType;
-			block.video.packetType = FLV_NALU;
-			block.dts = m_timestamp;
-			block.pts = block.dts + block.video.cts;
-			m_naluPtr += sizeofNALU;
-			m_naluOffset += sizeofNALU;
-		}
-		break;
-		case 1:
-		{
-			sizeofNALU = ToINT8(m_naluPtr);
-			m_naluPtr += 1;
-			m_naluOffset += 1;
-			block.video.size = sizeofNALU + 4;
-			block.video.data = new BYTE[block.video.size];
-			memcpy(block.video.data, &H264StartCode, 4);
-			memcpy(block.video.data + 4, m_naluPtr, sizeofNALU);
-			block.video.codeID = video->codeID;
-			block.video.codeType = video->codeType;
-			block.video.packetType = FLV_NALU;
-			block.dts = m_timestamp;
-			block.pts = block.dts + block.video.cts;
-			m_naluPtr += sizeofNALU;
-			m_naluOffset += sizeofNALU;
-		}
-		break;
-		}
-		if (m_naluOffset >= m_nalus.GetSize())
-		{
-			m_nalus.Clear();
+			switch (m_minusOne)
+			{
+			case 4:
+			{
+				sizeofNALU = ToINT32(pNALU);
+				memcpy(pNALU, &H264StartCode, 4);
+				offsetNALU += sizeofNALU + 4;
+				pNALU += (sizeofNALU + 4);
+			}
+			break;
+			case 3:
+			{
+				sizeofNALU = ToINT24(pNALU);
+				memcpy(pNALU, &H264StartCode, 3);
+				offsetNALU += sizeofNALU + 3;
+				pNALU += (sizeofNALU + 3);
+			}
+			break;
+			case 2:
+			{
+				sizeofNALU = ToINT16(pNALU);
+				memcpy(pNALU, &H264StartCode, 4);
+				offsetNALU += sizeofNALU + 2;
+				pNALU += (sizeofNALU + 2);
+			}
+			break;
+			case 1:
+			{
+				sizeofNALU = ToINT8(pNALU);
+				memcpy(pNALU, &H264StartCode, 1);
+				offsetNALU += sizeofNALU + 1;
+				pNALU += (sizeofNALU + 1);
+			}
+			break;
+			}
+			if (offsetNALU >= size)
+			{
+				block.video.size = size;
+				block.video.data = new BYTE[block.video.size];
+				memcpy(block.video.data, data, size);
+				block.video.codeID = video->codeID;
+				block.video.codeType = video->codeType;
+				block.video.packetType = FLV_NALU;
+				block.dts = m_timestamp;
+				block.pts = block.dts + block.video.cts;
+				break;
+			}
 		}
 		return TRUE;
 	}
@@ -532,11 +492,8 @@ namespace Decode
 		m_bVideo = FALSE;
 		m_minusOne = 0;
 		m_offset = 0;
-		m_naluOffset = 0;
-		m_naluPtr = NULL;
 		m_timestamp = 0;
 		m_basePTS = -1;
-		m_nalus.Clear();
 		m_stream.Release();
 		ZeroMemory(&m_script, sizeof(m_script));
 		return TRUE;

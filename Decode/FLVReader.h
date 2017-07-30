@@ -31,21 +31,18 @@ namespace Decode
 		BOOL ParsePCM(FLV_TAG_AUDIO* audio, BYTE* data, INT size, FLV_BLOCK& block);
 		BOOL ParseH264(FLV_TAG_VIDEO* video, BYTE* data, INT size, FLV_BLOCK& block);
 		BOOL ParseMPEG4(FLV_TAG_VIDEO* video, BYTE* data, INT size, FLV_BLOCK& block);
-		BOOL ParseNALU(FLV_TAG_VIDEO* video, FLV_BLOCK& block);
+		BOOL ParseNALUS(FLV_TAG_VIDEO* video, BYTE* data, INT size, FLV_BLOCK& block);
 	private:
 		BOOL					m_bNetwork;
 		BOOL					m_bAudio;
 		BOOL					m_bVideo;
 		BYTE					m_minusOne;
-		BYTE*					m_naluPtr;
-		INT						m_naluOffset;
 		ULONGLONG				m_offset;
 		LONGLONG				m_basePTS;
 		LONGLONG				m_timestamp;
 		FLV_TAG_VIDEO			m_videoTag;
 		FLV_SCRIPTDATA			m_script;
 		TinyComPtr<IStream>		m_stream;
-		TinyBufferArray<BYTE>	m_nalus;
 	};
 }
 
