@@ -501,7 +501,7 @@ namespace QSV
 		m_mfxVideoParam.mfx.FrameInfo.CropY = 0;
 		m_mfxVideoParam.mfx.FrameInfo.CropW = static_cast<mfxU16>(dest.cx);
 		m_mfxVideoParam.mfx.FrameInfo.CropH = static_cast<mfxU16>(dest.cy);
-		m_mfxVideoParam.mfx.FrameInfo.FrameRateExtN = static_cast<mfxU16>(dwFrameRate);
+		m_mfxVideoParam.mfx.FrameInfo.FrameRateExtN = static_cast<mfxU32>(dwFrameRate);
 		m_mfxVideoParam.mfx.FrameInfo.FrameRateExtD = 1;
 		status = m_mfxVideoENCODE->Query(&m_mfxVideoParam, &m_mfxVideoParam);
 		if (status != MFX_ERR_NONE)
@@ -519,7 +519,7 @@ namespace QSV
 		m_mfxVppVideoParam.vpp.In.CropH = static_cast<mfxU16>(src.cy);
 		m_mfxVppVideoParam.vpp.In.CropX = 0;
 		m_mfxVppVideoParam.vpp.In.CropY = 0;
-		m_mfxVppVideoParam.vpp.In.FrameRateExtN = static_cast<mfxU16>(dwFrameRate);
+		m_mfxVppVideoParam.vpp.In.FrameRateExtN = static_cast<mfxU32>(dwFrameRate);
 		m_mfxVppVideoParam.vpp.In.FrameRateExtD = 1;
 		MSDK_MEMCPY_VAR(m_mfxVppVideoParam.vpp.Out, &m_mfxVppVideoParam.vpp.In, sizeof(mfxFrameInfo));
 		m_mfxVppVideoParam.vpp.Out.FourCC = MFX_FOURCC_NV12;
@@ -531,7 +531,7 @@ namespace QSV
 		m_mfxVppVideoParam.vpp.Out.CropH = static_cast<mfxU16>(dest.cy);
 		m_mfxVppVideoParam.vpp.Out.CropX = 0;
 		m_mfxVppVideoParam.vpp.Out.CropY = 0;
-		m_mfxVppVideoParam.vpp.Out.FrameRateExtN = static_cast<mfxU16>(dwFrameRate);
+		m_mfxVppVideoParam.vpp.Out.FrameRateExtN = static_cast<mfxU32>(dwFrameRate);
 		m_mfxVppVideoParam.vpp.Out.FrameRateExtD = 1;
 		ZeroMemory(&m_vppDoNotUse, sizeof(m_vppDoNotUse));
 		m_vppDoNotUse.Header.BufferId = MFX_EXTBUFF_VPP_DONOTUSE;
@@ -545,7 +545,7 @@ namespace QSV
 		m_vppDoNotUse.AlgList[3] = MFX_EXTBUFF_VPP_PROCAMP;
 		m_vppExtParams.push_back((mfxExtBuffer *)&m_vppDoNotUse);
 		m_mfxVppVideoParam.ExtParam = &m_vppExtParams[0];
-		m_mfxVppVideoParam.NumExtParam = (mfxU16)m_vppExtParams.size();
+		m_mfxVppVideoParam.NumExtParam = static_cast<mfxU16>(m_vppExtParams.size());
 		status = m_mfxVideoVPP->Query(&m_mfxVppVideoParam, &m_mfxVppVideoParam);
 		if (status != MFX_ERR_NONE)
 			return status;
