@@ -97,6 +97,11 @@ namespace QSV
 			if (residial <= 0)
 			{
 				ITERATOR s = m_tags.First();
+				if (s == NULL)
+				{
+					TRACE("m_tags: empty\n");
+					goto _DATA;
+				}
 				Media::SampleTag& sampleTag = m_tags.GetAt(s);
 				m_tags.RemoveAt(s);
 				memset(&mfxStream, 0, sizeof(mfxStream));

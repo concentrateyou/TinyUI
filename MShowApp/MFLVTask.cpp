@@ -95,6 +95,7 @@ namespace MShow
 			}
 			if (!m_reader.ReadBlock(block))
 			{
+				TRACE("ReadBlock = FALSE\n");
 				ReleaseBlock(block);
 				return FALSE;
 			}
