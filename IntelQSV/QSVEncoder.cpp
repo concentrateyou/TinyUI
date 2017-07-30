@@ -322,7 +322,7 @@ namespace QSV
 		{
 			memcpy(pRGB + i * pIN->Data.Pitch, bits + i * 4 * pIN->Info.Width, 4 * pIN->Info.Width);
 		}
-		pIN->Data.TimeStamp = timestamp * 90000 / (m_mfxVideoParam.mfx.FrameInfo.FrameRateExtN / m_mfxVideoParam.mfx.FrameInfo.FrameRateExtD);
+		pIN->Data.TimeStamp = timestamp * 90000 / m_mfxVideoParam.mfx.FrameInfo.FrameRateExtN;
 		m_allocator->Unlock(m_allocator->pthis, pIN->Data.MemId, &(pIN->Data));
 	}
 	mfxStatus QSVEncoder::Process(SampleTag& tag, BYTE*& bo, LONG& so, MediaTag& mediaTag)
@@ -383,9 +383,8 @@ namespace QSV
 					memcpy(m_streamBits[1], m_mfxResidial.Data + m_mfxResidial.DataOffset, m_mfxResidial.DataLength);
 					bo = m_streamBits[1];
 					so = m_mfxResidial.DataLength;
-					DWORD dwFrameRate = m_mfxVideoParam.mfx.FrameInfo.FrameRateExtN / m_mfxVideoParam.mfx.FrameInfo.FrameRateExtD;
-					mediaTag.DTS = m_mfxResidial.DecodeTimeStamp * dwFrameRate / 90000;
-					mediaTag.PTS = m_mfxResidial.TimeStamp * dwFrameRate / 90000;
+					mediaTag.DTS = m_mfxResidial.DecodeTimeStamp * m_mfxVideoParam.mfx.FrameInfo.FrameRateExtN / 90000;
+					mediaTag.PTS = m_mfxResidial.TimeStamp * m_mfxVideoParam.mfx.FrameInfo.FrameRateExtN / 90000;
 					mediaTag.INC = m_dwINC;
 					mediaTag.dwType = 0;
 					mediaTag.dwFlag = m_mfxResidial.FrameType & (MFX_FRAMETYPE_I | MFX_FRAMETYPE_IDR) ? 0x17 : 0x27;
