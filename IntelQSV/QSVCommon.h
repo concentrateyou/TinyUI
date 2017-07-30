@@ -46,8 +46,8 @@ namespace QSV
 }
 #define MSDK_SUCCEEDED(P)                        (MFX_ERR_NONE == (P))
 #define MSDK_FAILED(P)                           (MFX_ERR_NONE != (P))
-#define MSDK_CHECK_ERROR(P, X, ERR)              { if ((X) == (P)) { MSDK_PRINT_RET_MSG(ERR); return ERR; } }
-#define MSDK_CHECK_NOT_EQUAL(P, X, ERR)          { if ((X) != (P)) { MSDK_PRINT_RET_MSG(ERR); return ERR; } }
+#define MSDK_CHECK_ERROR(P, X, ERR)              { if ((X) == (P)) { return ERR; } }
+#define MSDK_CHECK_NOT_EQUAL(P, X, ERR)          { if ((X) != (P)) { return ERR; } }
 #define MSDK_CHECK_RESULT_P_RET(P, X)            { if ((X) != (P)) { return P; } }
 #define MSDK_CHECK_POINTER(P, ERR)               { if (!(P))       { return ERR;}}
 #define MSDK_CHECK_POINTER_NO_RET(P)             { if (!(P))       { return; } }
@@ -84,8 +84,8 @@ namespace QSV
 
 	const struct
 	{
-		mfxIMPL impl;      
-		mfxU32  adapterID; 
+		mfxIMPL impl;
+		mfxU32  adapterID;
 	} implTypes[] =
 	{
 		{ MFX_IMPL_HARDWARE, 0 },

@@ -476,7 +476,7 @@ namespace QSV
 		ZeroMemory(&m_mfxVideoParam, sizeof(m_mfxVideoParam));
 		m_mfxVideoParam.AsyncDepth = 4;
 		m_mfxVideoParam.IOPattern = MFX_IOPATTERN_IN_VIDEO_MEMORY;
-		m_mfxVideoParam.mfx.GopRefDist = 1 + 3;// I帧或P帧之间的距离
+		m_mfxVideoParam.mfx.GopRefDist = 1;// I帧或P帧之间的距离
 		m_mfxVideoParam.mfx.GopPicSize = 1 + 3;//每秒I帧个数
 		m_mfxVideoParam.mfx.NumRefFrame = 0;
 		m_mfxVideoParam.mfx.IdrInterval = 0;
