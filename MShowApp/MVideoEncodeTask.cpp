@@ -67,30 +67,33 @@ namespace MShow
 			}
 			if (m_videoBits != NULL)
 			{
-				m_videoINC++;
-				if (m_videoINC == 1)
-				{
-					if (MShowApp::Instance().GetController().GetBaseTime() == -1)
-					{
-						MShowApp::Instance().GetController().SetBaseTime(timeGetTime());
-					}
-				}
 				SampleTag sampleTag = { 0 };
 				sampleTag.bits = m_videoBits;
 				sampleTag.size = m_videoSize;
-				sampleTag.sampleDTS = sampleTag.samplePTS = (m_videoINC - 1) * 90000 / m_videoFPS;
+				sampleTag.sampleDTS = sampleTag.samplePTS = (m_videoINC++) * 90000 / m_videoFPS;
 				BYTE* bo = NULL;
 				LONG  so = 0;
 				MediaTag tag = { 0 };
 				if (m_encoder.Encode(sampleTag, bo, so, tag))
 				{
-					Sample sample = { 0 };
-					memcpy(&sample.mediaTag, &tag, sizeof(tag));
-					sample.mediaTag.dwTime = MShowApp::Instance().GetController().GetBaseTime() + tag.DTS > 0 ? tag.DTS * 1000 / 90000 : 0;
-					sample.size = so;
-					sample.bits = new BYTE[so];
-					memcpy(sample.bits, bo, so);
-					m_pusher.Publish(sample);
+					if (tag.INC == 1)
+					{
+						if (MShowApp::Instance().GetController().GetBaseTime() == -1)
+						{
+							MShowApp::Instance().GetController().SetBaseTime(0);
+						}
+					}
+					if (MShowApp::Instance().GetController().GetBaseTime() == 0)
+					{
+						Sample sample = { 0 };
+						memcpy(&sample.mediaTag, &tag, sizeof(tag));
+						sample.mediaTag.dwTime = static_cast<DWORD>(tag.DTS > 0 ? tag.DTS * 1000 / 90000 : 0);
+						sample.size = so;
+						sample.bits = new BYTE[so];
+						memcpy(sample.bits, bo, so);
+						m_pusher.Publish(sample);
+					}
+
 				}
 			}
 			time.EndTime();

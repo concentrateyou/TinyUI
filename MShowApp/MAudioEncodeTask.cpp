@@ -91,16 +91,19 @@ namespace MShow
 		{
 			if (MShowApp::Instance().GetController().GetBaseTime() == -1)
 			{
-				MShowApp::Instance().GetController().SetBaseTime(timeGetTime());
+				MShowApp::Instance().GetController().SetBaseTime(0);
 			}
 		}
-		Sample sample;
-		memcpy(&sample.mediaTag, &tag, sizeof(tag));
-		sample.size = size;
-		sample.bits = new BYTE[size];
-		memcpy(sample.bits, bits, size);
-		sample.mediaTag.dwTime = MShowApp::Instance().GetController().GetBaseTime() + tag.INC * sample.mediaTag.PTS;
-		m_pusher.Publish(sample);
+		if (MShowApp::Instance().GetController().GetBaseTime() == 0)
+		{
+			Sample sample;
+			memcpy(&sample.mediaTag, &tag, sizeof(tag));
+			sample.size = size;
+			sample.bits = new BYTE[size];
+			memcpy(sample.bits, bits, size);
+			sample.mediaTag.dwTime = static_cast<DWORD>(tag.INC * sample.mediaTag.PTS);
+			m_pusher.Publish(sample);
+		}
 	}
 	INT	MAudioEncodeTask::GetAudioRate() const
 	{
