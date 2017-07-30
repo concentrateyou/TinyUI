@@ -99,7 +99,7 @@ namespace MShow
 		sample.size = size;
 		sample.bits = new BYTE[size];
 		memcpy(sample.bits, bits, size);
-		sample.mediaTag.dwTime = timeGetTime() - MShowApp::Instance().GetController().GetBaseTime() + sample.mediaTag.PTS;
+		sample.mediaTag.dwTime = tag.INC * sample.mediaTag.PTS;
 		m_pusher.Publish(sample);
 	}
 	INT	MAudioEncodeTask::GetAudioRate() const
