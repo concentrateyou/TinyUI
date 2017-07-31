@@ -31,7 +31,7 @@ namespace MShow
 		if (!m_player.Open(m_view.Handle(), pzURL))
 			goto _ERROR;
 		size = m_player.GetSize();
-		if (!m_video2D.Create(m_graphics.GetDX11(), size, FALSE, FALSE))
+		if (!m_video2D.Create(m_graphics.GetDX11(), size, TRUE))
 			goto _ERROR;
 		m_view.GetClientRect(&rectangle);
 		m_video2D.SetScale(rectangle.Size());
@@ -55,7 +55,7 @@ namespace MShow
 	void MPlayController::OnVideo(BYTE* bits, LONG size)
 	{
 		TinySize videoSize = m_player.GetSize();
-		if (m_video2D.Copy(m_graphics.GetDX11(),NULL, bits, size))
+		if (m_video2D.Copy(m_graphics.GetDX11(), NULL, bits, size))
 		{
 			m_graphics.GetDX11().SetRenderTexture2D(NULL);
 			m_graphics.GetDX11().GetRender2D()->BeginDraw();

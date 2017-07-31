@@ -21,6 +21,7 @@ namespace MShow
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
 		void Publish(Sample& sample);
+		TinyString GetURL() const;
 	private:
 		void OnMessagePump();
 	private:
@@ -28,6 +29,7 @@ namespace MShow
 		DWORD			m_dwRate;
 		DWORD			m_dwReconnect;
 		MRTMPClient		m_client;
+		TinyString		m_szURL;
 		Concurrency::concurrent_queue<Sample>	m_samples;
 	};
 }

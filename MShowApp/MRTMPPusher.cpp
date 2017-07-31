@@ -22,6 +22,7 @@ namespace MShow
 		m_dwRate = dwRate;
 		if (m_client.Connect(szURL))
 		{
+			m_szURL = szURL;
 			return TRUE;
 		}
 		return FALSE;
@@ -100,5 +101,9 @@ namespace MShow
 		break;
 		}
 		SAFE_DELETE_ARRAY(sample.bits);
+	}
+	TinyString MRTMPPusher::GetURL() const
+	{
+		return m_szURL;
 	}
 }

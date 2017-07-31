@@ -152,6 +152,7 @@ namespace MShow
 			m_audio.SetController(pCTRL);
 			m_audio.Submit(128);
 			m_video.Submit(m_preview->GetPulgSize(), 25, 1500);
+			m_play->Open(m_pusher.GetURL().STR());
 		}
 	}
 	void MShowController::SetBaseTime(LONG baseTime)
