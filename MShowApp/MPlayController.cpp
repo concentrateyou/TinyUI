@@ -7,7 +7,7 @@ namespace MShow
 		:m_view(view),
 		m_player(BindCallback(&MPlayController::OnVideo, this))
 	{
-
+		m_onVolume.Reset(new Delegate<void(DWORD)>(this, &MPlayController::OnVolume));
 	}
 
 	MPlayController::~MPlayController()
@@ -62,6 +62,18 @@ namespace MShow
 			m_graphics.DrawImage(&m_video2D, 1.0F, 1.0F);
 			m_graphics.GetDX11().GetRender2D()->EndDraw();
 			m_graphics.Present();
+		}
+	}
+	void MPlayController::OnVolume(DWORD pos)
+	{
+		if (pos == 0)
+		{
+			m_player.SetVolume(-10000);
+		}
+		else
+		{
+			LONG volume = static_cast<LONG>(floorf(2000.0F * log10f((FLOAT)(pos) / (FLOAT)100) + 0.5F));
+			m_player.SetVolume(volume);
 		}
 	}
 }

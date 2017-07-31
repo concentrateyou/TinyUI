@@ -37,6 +37,7 @@ namespace MShow
 			return FALSE;
 		if (!m_play->Initialize())
 			return FALSE;
+		m_window.m_playVolumeView.EVENT_VOLUME += m_play->m_onVolume;
 		m_preview->SetPulgSize(TinySize(1280, 720));
 		for (UINT i = 0;i < 6;i++)
 		{
@@ -70,6 +71,7 @@ namespace MShow
 		}
 		if (m_play != NULL)
 		{
+			m_window.m_playVolumeView.EVENT_VOLUME -= m_play->m_onVolume;
 			m_play->Close();
 			SAFE_DELETE(m_play);
 		}
@@ -152,7 +154,10 @@ namespace MShow
 			m_audio.SetController(pCTRL);
 			m_audio.Submit(128);
 			m_video.Submit(m_preview->GetPulgSize(), 25, 1500);
-			m_play->Open(m_pusher.GetURL().STR());
+			if (m_play != NULL)
+			{
+				m_play->Open(m_pusher.GetURL().STR());
+			}
 		}
 	}
 	void MShowController::SetBaseTime(LONG baseTime)

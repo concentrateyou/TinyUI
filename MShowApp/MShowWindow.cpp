@@ -67,6 +67,7 @@ namespace MShow
 		m_shadowView.Create(m_hWND, 33, 90, 512, 288);
 		m_shadowView.ShowWindow(SW_HIDE);
 		m_playView.Create(m_hWND, 756, 90, 512, 288);
+		m_playVolumeView.Create(m_hWND, 756, 400, 192, 20);
 		m_toggle.Create(m_hWND, 570, 175, 165, 100);
 		m_toggle.SetText("ÇÐ»»");
 		m_pusher.Create(m_hWND, 1277 - 120, 383, 100, 25);
