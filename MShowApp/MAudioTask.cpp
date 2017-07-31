@@ -14,6 +14,7 @@ namespace MShow
 
 	MAudioTask::~MAudioTask()
 	{
+		m_task.EVENT_ASC -= m_onASC;
 	}
 
 	BOOL MAudioTask::Submit()
@@ -26,6 +27,7 @@ namespace MShow
 	BOOL MAudioTask::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
+		m_task.EVENT_ASC -= m_onASC;
 		if (TinyTaskBase::Close(dwMS))
 		{
 			m_aac.Close();
@@ -49,7 +51,6 @@ namespace MShow
 	void MAudioTask::OnASC(BYTE* bits, LONG size, WORD wBitsPerSample, BOOL& bRes)
 	{
 		bRes = FALSE;
-		m_aac.Close();
 		if (m_aac.Open(bits, size, wBitsPerSample))
 		{
 			bRes = TRUE;

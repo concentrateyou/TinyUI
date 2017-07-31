@@ -149,6 +149,7 @@ namespace MShow
 				m_audio.Close(INFINITE);
 			if (m_video.IsValid())
 				m_video.Close(INFINITE);
+			m_audio.SetController(pCTRL);
 			m_audio.Submit(128);
 			m_video.Submit(m_preview->GetPulgSize(), 25, 1000);
 		}

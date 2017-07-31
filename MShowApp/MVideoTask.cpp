@@ -14,6 +14,7 @@ namespace MShow
 
 	MVideoTask::~MVideoTask()
 	{
+		m_task.EVENT_AVCDCR -= m_onAVCDC;
 	}
 
 	BOOL MVideoTask::Submit()
@@ -29,7 +30,7 @@ namespace MShow
 		m_task.EVENT_AVCDCR -= m_onAVCDC;
 		if (TinyTaskBase::Close(dwMS))
 		{
-			m_h264.Close();
+			m_qsv.Close();
 			m_task.GetVideoQueue().RemoveAll();
 			m_videoQueue.RemoveAll();
 			return TRUE;
@@ -47,13 +48,7 @@ namespace MShow
 		bRes = FALSE;
 		FLV_SCRIPTDATA& script = m_task.GetScript();
 		TinySize s(static_cast<LONG>(script.width), static_cast<LONG>(script.height));
-		/*m_h264.Close();
-		if (m_h264.Initialize(s, s))
-		{
-			bRes = m_h264.Open(bits, size);
-		}*/
-		m_h264.Close();
-		bRes = m_h264.Open(bits, size);
+		bRes = m_qsv.Open(bits, size);
 		m_bBreak = !bRes;
 	}
 
@@ -78,32 +73,10 @@ namespace MShow
 				Sleep(50);
 				continue;
 			}
-			/*BYTE* bo = NULL;
-			LONG  so = 0;
-			if (m_h264.Decode(sampleTag, bo, so))
-			{
-				SAFE_DELETE_ARRAY(sampleTag.bits);
-				if (m_clock.GetBasePTS() == -1)
-				{
-					m_clock.SetBasePTS(sampleTag.samplePTS);
-				}
-				if (m_videoQueue.GetAllocSize() == 0)
-				{
-					INT count = MAX_VIDEO_QUEUE_SIZE / so + 1;
-					m_videoQueue.Initialize(count, so + 4);
-				}
-				sampleTag.size = so;
-				sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
-				memcpy_s(sampleTag.bits + 4, sampleTag.size, bo, so);
-				sampleTag.samplePTS = m_h264.GetYUV420()->pts;
-				sampleTag.sampleDTS = sampleTag.samplePTS;
-				m_videoQueue.Push(sampleTag);
-			}*/
-
 			mfxFrameSurface1* surface1 = NULL;
-			if (m_h264.Decode(sampleTag, surface1))
+			if (m_qsv.Decode(sampleTag, surface1))
 			{
-				QSV::QSVAllocator* pAllocator = m_h264.GetAllocator();
+				QSV::QSVAllocator* pAllocator = m_qsv.GetAllocator();
 				pAllocator->Lock(pAllocator->pthis, surface1->Data.MemId, &(surface1->Data));
 				sampleTag.size = surface1->Info.CropH * surface1->Data.Pitch;
 				if (m_videoQueue.GetAllocSize() == 0)
@@ -114,7 +87,7 @@ namespace MShow
 				sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
 				memcpy(sampleTag.bits + 4, surface1->Data.B, sampleTag.size);
 				pAllocator->Unlock(pAllocator->pthis, surface1->Data.MemId, &(surface1->Data));
-				m_h264.UnlockSurface(surface1);
+				m_qsv.UnlockSurface(surface1);
 				if (m_clock.GetBasePTS() == -1)
 				{
 					m_clock.SetBasePTS(sampleTag.samplePTS);

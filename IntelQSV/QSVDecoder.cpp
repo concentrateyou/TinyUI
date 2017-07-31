@@ -18,6 +18,7 @@ namespace QSV
 	}
 	BOOL QSVDecoder::Open(const BYTE* bits, LONG size)
 	{
+		this->Close();
 		mfxStatus status = MFX_ERR_NONE;
 		mfxInitParam initParam = { 0 };
 		initParam.Version.Major = 1;

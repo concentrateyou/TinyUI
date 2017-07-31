@@ -21,8 +21,7 @@ namespace MShow
 		void OnAVCDC(BYTE* bits, LONG size, BOOL&);
 	private:
 		BOOL						m_bBreak;
-		//x264Decode					m_h264;
-		QSV::QSVDecoder				m_h264;
+		QSV::QSVDecoder				m_qsv;
 		MClock&						m_clock;
 		MFLVTask&					m_task;
 		MPacketAllocQueue			m_videoQueue;

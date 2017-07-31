@@ -26,7 +26,9 @@ namespace MShow
 		TinyLock				m_lock;
 		TinyLinkList<SampleTag>	m_list;
 	};
-
+	/// <summary>
+	/// 固定元素大小的缓冲池队列
+	/// </summary>
 	class MPacketAllocQueue
 	{
 		DISALLOW_COPY_AND_ASSIGN(MPacketAllocQueue)

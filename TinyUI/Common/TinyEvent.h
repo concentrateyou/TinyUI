@@ -48,6 +48,10 @@ namespace TinyUI
 		{
 			return m_array.GetSize();
 		};
+		void Reset()
+		{
+			m_array.RemoveAll();
+		}
 	private:
 		TinyArray<DelegateType*> m_array;
 	};

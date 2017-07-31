@@ -108,6 +108,11 @@ namespace Encode
 		{
 			faacEncClose(m_aac);
 			m_aac = NULL;
+			m_dwINC = 0;
 		}
+	}
+	void AACEncode::Reset()
+	{
+		m_dwINC = 0;
 	}
 }
