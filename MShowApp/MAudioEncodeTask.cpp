@@ -1,8 +1,10 @@
 #include "stdafx.h"
 #include "MAudioEncodeTask.h"
-#include "MVideoController.h"
-#include "Media/TinyWASAPIAudio.h"
 #include "MShowApp.h"
+#include "MShowController.h"
+#include "MVideoController.h"
+#include "MPreviewController.h"
+#include "Media/TinyWASAPIAudio.h"
 
 namespace MShow
 {
@@ -112,10 +114,15 @@ namespace MShow
 
 	void MAudioEncodeTask::SetController(MVideoController* pCTRL)
 	{
+		if (m_pCTRL != NULL)
+		{
+			m_pCTRL->EVENT_AUDIO -= m_onAudio;
+		}
 		if (m_pCTRL != pCTRL)
 		{
 			if (pCTRL != NULL)
 			{
+				pCTRL->AddElement();
 				pCTRL->EVENT_AUDIO -= m_onAudio;
 			}
 			m_pCTRL = pCTRL;

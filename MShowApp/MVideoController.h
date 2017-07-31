@@ -42,6 +42,8 @@ namespace MShow
 		HANDLE			GetHandle();//¹²ÏíµÄÎÆÀí
 		TinyString		GetURL() const;
 		WAVEFORMATEX*	GetFormat();
+		DX11Element2D*	GetElement();
+		void			AddElement();
 	private:
 		void	OnAdd();
 		void	OnRemove();
@@ -63,7 +65,7 @@ namespace MShow
 		MFLVPlayer		m_player;
 		TinyEvent		m_signal;
 		MVideoElement*	m_pVideo;
-	private:							
+	private:
 		TinyScopedPtr<Delegate<void(DWORD)>>						m_onVolume;
 		TinyScopedPtr<Delegate<void(void*, INT)>>					m_onMenuClick;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>>	m_onLButtonDBClick;

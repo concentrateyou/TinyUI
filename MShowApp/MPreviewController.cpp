@@ -125,7 +125,11 @@ namespace MShow
 		}
 		return bRes;
 	}
-
+	BOOL MPreviewController::Find(DX11Element2D* ps)
+	{
+		TinyAutoLock lock(m_lock);
+		return m_array.Lookup(ps) >= 0;
+	}
 	DX11Element2D* MPreviewController::HitTest(const TinyPoint& pos)
 	{
 		for (INT i = 0;i < m_array.GetSize();i++)

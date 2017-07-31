@@ -28,6 +28,7 @@ namespace MShow
 		BOOL		Remove(DX11Element2D* ps);
 		BOOL		Move(DX11Element2D* ps, BOOL bUp);
 		BOOL		Bring(DX11Element2D* ps, BOOL bTop);
+		BOOL		Find(DX11Element2D* ps);
 	public:
 		BOOL		Submit();
 		BOOL		Close(DWORD dwMS) OVERRIDE;

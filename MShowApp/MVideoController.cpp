@@ -127,7 +127,10 @@ namespace MShow
 	{
 		return m_player.GetFormat();
 	}
-
+	DX11Element2D* MVideoController::GetElement()
+	{
+		return m_pVideo;
+	}
 	void MVideoController::OnAudio(BYTE* bits, LONG size)
 	{
 		EVENT_AUDIO(bits, size);
@@ -201,6 +204,11 @@ namespace MShow
 	void MVideoController::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		AddElement();
+	}
+
+	void MVideoController::AddElement()
+	{
 		MPreviewController* preview = MShowApp::Instance().GetController().GetPreviewController();
 		if (preview != NULL)
 		{
@@ -210,6 +218,7 @@ namespace MShow
 				if (m_pVideo->Allocate(preview->Graphics().GetDX11()))
 				{
 					preview->Add(m_pVideo);
+					preview->Bring(m_pVideo, TRUE);
 				}
 			}
 			else
