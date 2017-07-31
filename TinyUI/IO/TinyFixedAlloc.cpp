@@ -26,12 +26,11 @@ namespace TinyUI
 		void TinyFixedAllocNoSync::Initialize(UINT nBlockSize, UINT nAllocSize)
 		{
 			ASSERT(nAllocSize >= sizeof(TinyNode));
-			ASSERT(nBlockSize > 1);
 
 			if (nAllocSize < sizeof(TinyNode))
 				nAllocSize = sizeof(TinyNode);
 			if (nBlockSize <= 1)
-				nBlockSize = 64;
+				nBlockSize = 3;
 
 			m_cbElement = nAllocSize;
 			m_count = nBlockSize;

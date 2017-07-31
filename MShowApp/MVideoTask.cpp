@@ -75,7 +75,7 @@ namespace MShow
 				continue;
 			}
 			mfxFrameSurface1* surface1 = NULL;
-			if (m_qsv.Decode(sampleTag, surface1))
+			if (m_qsv.Decode(sampleTag, surface1) && sampleTag.size > 0)
 			{
 				QSV::QSVAllocator* pAllocator = m_qsv.GetAllocator();
 				pAllocator->Lock(pAllocator->pthis, surface1->Data.MemId, &(surface1->Data));

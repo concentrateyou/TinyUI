@@ -114,22 +114,18 @@ namespace MShow
 
 	void MAudioEncodeTask::SetController(MVideoController* pCTRL)
 	{
-		if (m_pCTRL != NULL)
-		{
-			m_pCTRL->EVENT_AUDIO -= m_onAudio;
-		}
 		if (m_pCTRL != pCTRL)
 		{
+			if (m_pCTRL != NULL)
+			{
+				m_pCTRL->EVENT_AUDIO -= m_onAudio;
+			}
 			if (pCTRL != NULL)
 			{
 				pCTRL->AddElement();
-				pCTRL->EVENT_AUDIO -= m_onAudio;
+				pCTRL->EVENT_AUDIO += m_onAudio;
 			}
 			m_pCTRL = pCTRL;
-			if (m_pCTRL != NULL)
-			{
-				m_pCTRL->EVENT_AUDIO += m_onAudio;
-			}
 		}
 	}
 }
