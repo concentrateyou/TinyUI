@@ -34,7 +34,7 @@ namespace MShow
 	BOOL MFLVPlayer::Open(HWND hWND, LPCSTR pzURL)
 	{
 		m_szURL = pzURL;
-		if (!m_task.Initialize(pzURL))
+		if (!m_task.Initialize(m_szURL.STR()))
 			return FALSE;
 		if (!m_audioRenderTask.Initialize(hWND))
 			return FALSE;

@@ -195,8 +195,7 @@ namespace QSV
 	QSVEncoder::QSVEncoder()
 		:m_dwINC(0)
 	{
-		ZeroMemory(&m_mfxResidial, sizeof(m_mfxResidial));
-		ZeroMemory(&m_mfxEncodeCtrl, sizeof(m_mfxEncodeCtrl));
+
 	}
 	QSVEncoder::~QSVEncoder()
 	{
@@ -204,6 +203,8 @@ namespace QSV
 	BOOL QSVEncoder::Open(const TinySize& src, const TinySize& dest, DWORD dwBitRate, DWORD dwFrameRate)
 	{
 		mfxStatus status = MFX_ERR_NONE;
+		ZeroMemory(&m_mfxResidial, sizeof(m_mfxResidial));
+		ZeroMemory(&m_mfxEncodeCtrl, sizeof(m_mfxEncodeCtrl));
 		m_streamBits[0].Reset(new BYTE[1920 * 1080 * 4]);
 		m_streamBits[1].Reset(new BYTE[1920 * 1080 * 4]);
 		m_mfxResidial.MaxLength = 1920 * 1080 * 4;
@@ -298,6 +299,8 @@ namespace QSV
 		MSDK_SAFE_DELETE_ARRAY(m_vppDoNotUse.AlgList);
 		DeleteFrames();
 		DeleteAllocator();
+		m_vppExtParams.clear();
+		m_encExtParams.clear();
 	}
 	vector<mfxU8>& QSVEncoder::GetSPS()
 	{
