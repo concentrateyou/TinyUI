@@ -641,7 +641,15 @@ namespace QSV
 	}
 	void QSVEncoder::DeleteAllocator()
 	{
+		if (m_allocator != NULL)
+		{
+			m_allocator->Close();
+		}
 		m_allocator.Reset(NULL);
+		if (m_qsvd3d != NULL)
+		{
+			m_qsvd3d->Close();
+		}
 		m_qsvd3d.Reset(NULL);
 	}
 }

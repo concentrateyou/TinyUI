@@ -5,7 +5,7 @@ namespace QSV
 {
 	QSVDecoder::QSVDecoder()
 	{
-		
+
 	}
 
 	QSVDecoder::~QSVDecoder()
@@ -384,11 +384,15 @@ namespace QSV
 	}
 	void QSVDecoder::DeleteAllocator()
 	{
-		if (m_allocator)
+		if (m_allocator != NULL)
+		{
 			m_allocator->Close();
+		}
 		m_allocator.Reset(NULL);
-		if (m_qsvd3d)
+		if (m_qsvd3d != NULL)
+		{
 			m_qsvd3d->Close();
+		}
 		m_qsvd3d.Reset(NULL);
 	}
 	mfxStatus QSVDecoder::AllocFrames()
@@ -497,11 +501,15 @@ namespace QSV
 	}
 	void QSVDecoder::Close()
 	{
-		if (m_mfxVideoVPP)
+		if (m_mfxVideoVPP != NULL)
+		{
 			m_mfxVideoVPP->Close();
+		}
 		m_mfxVideoVPP.Reset(NULL);
-		if (m_mfxVideoDECODE)
+		if (m_mfxVideoDECODE != NULL)
+		{
 			m_mfxVideoDECODE->Close();
+		}
 		m_mfxVideoDECODE.Reset(NULL);
 		DeleteFrames();
 		m_mfxSession.Close();

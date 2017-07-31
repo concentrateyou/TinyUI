@@ -86,6 +86,22 @@ namespace DXFramework
 		if (hRes != S_OK)
 			return FALSE;
 		m_immediateContext->RSSetState(m_rasterizerState);
+		D3D11_BLEND_DESC blenddesc;
+		blenddesc.AlphaToCoverageEnable = FALSE;
+		blenddesc.IndependentBlendEnable = FALSE;
+		blenddesc.RenderTarget[0].BlendEnable = FALSE;
+		blenddesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+		blenddesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+		blenddesc.RenderTarget[0].DestBlend = D3D11_BLEND_ZERO;
+		blenddesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+		blenddesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+		blenddesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+		blenddesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		hRes = m_d3d->CreateBlendState(&blenddesc, &m_blendState);
+		if (hRes != S_OK)
+			return FALSE;
+		FLOAT factor[4] = { 0.f,0.f,0.f,0.f };
+		m_immediateContext->OMSetBlendState(m_blendState, factor, 0xFFFFFFFF);
 		return TRUE;
 	}
 	BOOL DX11::ResizeView(INT cx, INT cy)

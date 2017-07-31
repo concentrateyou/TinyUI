@@ -26,9 +26,7 @@ namespace FLVPlayer
 	}
 	BOOL FLVDecode::Submit()
 	{
-		//if (m_reader.OpenURL("rtmp://live.hkstv.hk.lxdns.com/live/hks"))
-		if (m_reader.OpenURL("rtmp://10.10.13.99/live/lb_diezhanjuchang_720p"))
-		/*if (m_reader.OpenFile("D:\\4.flv"))*/
+		if (m_reader.OpenURL("rtmp://live.hkstv.hk.lxdns.com/live/hks"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);
@@ -73,6 +71,7 @@ namespace FLVPlayer
 			{
 				break;
 			}
+			TRACE("ReadBlock\n");
 			if (block.type == FLV_AUDIO)
 			{
 				if (block.audio.codeID == FLV_CODECID_AAC)

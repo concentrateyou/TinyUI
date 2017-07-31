@@ -51,10 +51,7 @@ namespace MShow
 		if (!m_image.Open(pzFile))
 			goto _ERROR;
 		size = m_image.GetSize();
-		if (!m_copy2D.Create(m_graphics.GetDX11(), size, TRUE))
-			goto _ERROR;
-		m_copy2D.SetScale(size);
-		if (!m_image2D.Create(m_graphics.GetDX11(), size, FALSE, FALSE))
+		if (!m_image2D.Create(m_graphics.GetDX11(), size, TRUE))
 			goto _ERROR;
 		m_view.GetClientRect(&rectangle);
 		m_image2D.SetScale(rectangle.Size());
@@ -69,7 +66,6 @@ namespace MShow
 		m_handle = queue.Register(&MImageController::TimerCallback, this, deDelay, deDelay, WT_EXECUTEINTIMERTHREAD);
 		return m_handle != NULL;
 	_ERROR:
-		m_copy2D.Destory();
 		m_image2D.Destory();
 		return FALSE;
 	}
@@ -82,7 +78,6 @@ namespace MShow
 			queue.Unregister(m_handle);
 			m_handle = NULL;
 		}
-		m_copy2D.Destory();
 		m_image2D.Destory();
 		return TRUE;
 	}
@@ -94,7 +89,7 @@ namespace MShow
 
 	HANDLE MImageController::GetHandle()
 	{
-		DX11Texture2D* ps = m_copy2D.GetTexture2D();
+		DX11Texture2D* ps = m_image2D.GetTexture2D();
 		if (ps && !ps->IsEmpty())
 		{
 			return ps->GetHandle();
@@ -153,7 +148,6 @@ namespace MShow
 			m_graphics.DrawImage(&m_image2D, 1.0F, 1.0F);
 			m_graphics.GetDX11().GetRender2D()->EndDraw();
 			m_graphics.Present();
-			m_copy2D.Copy(m_graphics.GetDX11(), &m_image2D);
 			m_signal.SetEvent();
 		}
 	}

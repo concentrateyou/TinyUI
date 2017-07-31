@@ -31,6 +31,7 @@ namespace DXFramework
 		TinyComPtr<ID3D11DeviceContext>		m_immediateContext;
 		TinyComPtr<ID3D11DepthStencilState>	m_depthStencilState;
 		TinyComPtr<ID3D11RasterizerState>	m_rasterizerState;
+		TinyComPtr<ID3D11BlendState>		m_blendState;
 		TinyScopedPtr<DX11RenderView>		m_background2D;
 		DX11RenderView*						m_render2D;
 		HWND								m_hWND;
