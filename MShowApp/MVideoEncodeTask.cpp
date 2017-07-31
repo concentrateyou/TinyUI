@@ -33,7 +33,7 @@ namespace MShow
 		m_pulgSize = pulgSize;
 		m_videoRate = videoRate;
 		m_videoFPS = videoFPS;
-		if (!m_encoder.Open(m_pulgSize, m_pulgSize))
+		if (!m_encoder.Open(m_pulgSize, m_pulgSize, m_videoRate, m_videoFPS))
 			return FALSE;
 		if (!m_image2D.Load(m_dx11, pCTRL->GetRenderView().GetHandle()))
 			return FALSE;
@@ -88,6 +88,7 @@ namespace MShow
 						Sample sample = { 0 };
 						memcpy(&sample.mediaTag, &tag, sizeof(tag));
 						sample.mediaTag.dwTime = static_cast<DWORD>(tag.DTS > 0 ? tag.DTS * 1000 / 90000 : 0);
+						TRACE("DTS:%d\n", sample.mediaTag.dwTime);
 						sample.size = so;
 						sample.bits = new BYTE[so];
 						memcpy(sample.bits, bo, so);

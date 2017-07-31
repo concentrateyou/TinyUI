@@ -313,7 +313,7 @@ namespace QSV
 		MSDK_CHECK_POINTER(m_mfxVideoVPP, MFX_ERR_MEMORY_ALLOC);
 		return Process(tag, bo, so, mediaTag) == MFX_ERR_NONE;
 	}
-	void QSVEncoder::LoadRGB32(mfxFrameSurface1* pIN, const BYTE* bits, LONG size, LONG timestamp)
+	void QSVEncoder::LoadRGB32(mfxFrameSurface1* pIN, const BYTE* bits, LONG size, LONGLONG timestamp)
 	{
 		m_allocator->Lock(m_allocator->pthis, pIN->Data.MemId, &(pIN->Data));
 		mfxU8 *pRGB = pIN->Data.B;

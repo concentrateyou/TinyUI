@@ -151,7 +151,7 @@ namespace MShow
 				m_video.Close(INFINITE);
 			m_audio.SetController(pCTRL);
 			m_audio.Submit(128);
-			m_video.Submit(m_preview->GetPulgSize(), 25, 1000);
+			m_video.Submit(m_preview->GetPulgSize(), 25, 2000);
 		}
 	}
 	void MShowController::SetBaseTime(LONG baseTime)
