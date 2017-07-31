@@ -88,7 +88,6 @@ namespace MShow
 						Sample sample = { 0 };
 						memcpy(&sample.mediaTag, &tag, sizeof(tag));
 						sample.mediaTag.dwTime = static_cast<DWORD>(tag.DTS > 0 ? tag.DTS * 1000 / 90000 : 0);
-						TRACE("DTS:%d\n", sample.mediaTag.dwTime);
 						sample.size = so;
 						sample.bits = new BYTE[so];
 						memcpy(sample.bits, bo, so);

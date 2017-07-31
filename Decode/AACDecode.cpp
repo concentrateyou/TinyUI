@@ -13,7 +13,6 @@ namespace Decode
 	}
 	BOOL AACDecode::Open(BYTE* adts, LONG size, WORD wBitsPerSample)
 	{
-		this->Close();
 		ZeroMemory(&m_sMFT, sizeof(m_sMFT));
 		m_handle = NeAACDecOpen();
 		if (!m_handle)

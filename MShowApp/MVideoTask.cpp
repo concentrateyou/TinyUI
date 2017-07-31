@@ -27,7 +27,6 @@ namespace MShow
 	BOOL MVideoTask::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
-		m_task.EVENT_AVCDCR -= m_onAVCDC;
 		if (TinyTaskBase::Close(dwMS))
 		{
 			m_qsv.Close();
@@ -48,8 +47,10 @@ namespace MShow
 		bRes = FALSE;
 		FLV_SCRIPTDATA& script = m_task.GetScript();
 		TinySize s(static_cast<LONG>(script.width), static_cast<LONG>(script.height));
+		m_qsv.Close();
 		bRes = m_qsv.Open(bits, size);
 		m_bBreak = !bRes;
+		m_task.EVENT_AVCDCR -= m_onAVCDC;
 	}
 
 

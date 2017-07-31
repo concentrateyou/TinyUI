@@ -5,11 +5,7 @@ namespace QSV
 {
 	QSVDecoder::QSVDecoder()
 	{
-		MSDK_ZERO_MEMORY(m_mfxVideoParam);
-		MSDK_ZERO_MEMORY(m_mfxVppVideoParam);
-		MSDK_ZERO_MEMORY(m_vppDoNotUse);
-		m_vppDoNotUse.Header.BufferId = MFX_EXTBUFF_VPP_DONOTUSE;
-		m_vppDoNotUse.Header.BufferSz = sizeof(m_vppDoNotUse);
+		
 	}
 
 	QSVDecoder::~QSVDecoder()
@@ -18,7 +14,11 @@ namespace QSV
 	}
 	BOOL QSVDecoder::Open(const BYTE* bits, LONG size)
 	{
-		this->Close();
+		MSDK_ZERO_MEMORY(m_mfxVideoParam);
+		MSDK_ZERO_MEMORY(m_mfxVppVideoParam);
+		MSDK_ZERO_MEMORY(m_vppDoNotUse);
+		m_vppDoNotUse.Header.BufferId = MFX_EXTBUFF_VPP_DONOTUSE;
+		m_vppDoNotUse.Header.BufferSz = sizeof(m_vppDoNotUse);
 		mfxStatus status = MFX_ERR_NONE;
 		mfxInitParam initParam = { 0 };
 		initParam.Version.Major = 1;
@@ -100,7 +100,6 @@ namespace QSV
 				ITERATOR s = m_tags.First();
 				if (s == NULL)
 				{
-					TRACE("m_tags: empty\n");
 					goto _DATA;
 				}
 				Media::SampleTag& sampleTag = m_tags.GetAt(s);
@@ -162,9 +161,9 @@ namespace QSV
 		}
 	_DATA:
 		SAFE_DELETE_ARRAY(tag.bits);
-		if (m_outputs.GetSize() > 0)
+		ITERATOR s = m_outputs.First();
+		if (s != NULL)
 		{
-			ITERATOR s = m_outputs.First();
 			mfxFrameSurface1*& surface = m_outputs.GetAt(s);
 			m_outputs.RemoveAt(s);
 			tag.samplePTS = tag.sampleDTS = surface->Data.TimeStamp;
@@ -508,6 +507,8 @@ namespace QSV
 		m_mfxSession.Close();
 		MSDK_SAFE_DELETE_ARRAY(m_vppDoNotUse.AlgList);
 		DeleteAllocator();
+		m_vppExtParams.clear();
+
 	}
 	QSVAllocator* QSVDecoder::GetAllocator()
 	{
