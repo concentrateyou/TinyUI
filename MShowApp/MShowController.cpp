@@ -162,14 +162,12 @@ namespace MShow
 	}
 	void MShowController::SetBaseTime(LONG baseTime)
 	{
-		TinyAutoLock lock(m_lock);
 		m_baseTime = baseTime;
 	}
 	LONG MShowController::GetBaseTime() const
 	{
 		return m_baseTime;
 	}
-
 	void MShowController::OnToggle(void*, INT)
 	{
 

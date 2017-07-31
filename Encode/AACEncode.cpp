@@ -111,8 +111,4 @@ namespace Encode
 			m_dwINC = 0;
 		}
 	}
-	void AACEncode::Reset()
-	{
-		m_dwINC = 0;
-	}
 }

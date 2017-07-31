@@ -76,7 +76,7 @@ namespace MShow
 		m_popup.CreatePopupMenu();
 		m_popup.AppendMenu(MF_STRING, 1, TEXT("添加"));
 		m_popup.AppendMenu(MF_STRING, 2, TEXT("删除"));
-
+		m_popup.AppendMenu(MF_STRING, 3, TEXT("切流"));
 		return TRUE;
 	}
 
@@ -167,7 +167,10 @@ namespace MShow
 			}
 		}
 	}
-
+	void MVideoController::OnChange()
+	{
+		MShowApp::Instance().GetController().GetAudioEncoder().SetController(this);
+	}
 	void MVideoController::OnRemove()
 	{
 		MPreviewController* preview = MShowApp::Instance().GetController().GetPreviewController();
@@ -226,6 +229,9 @@ namespace MShow
 			break;
 		case 2:
 			OnRemove();
+			break;
+		case 3:
+			OnChange();
 			break;
 		}
 	}

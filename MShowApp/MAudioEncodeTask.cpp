@@ -121,7 +121,6 @@ namespace MShow
 			m_pCTRL = pCTRL;
 			if (m_pCTRL != NULL)
 			{
-				m_aac.Reset();
 				m_pCTRL->EVENT_AUDIO += m_onAudio;
 			}
 		}

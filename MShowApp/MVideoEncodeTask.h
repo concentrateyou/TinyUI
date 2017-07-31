@@ -27,7 +27,7 @@ namespace MShow
 		INT				GetVideoRate() const;
 		QSVEncoder&		GetQSV();
 	private:
-		void	OnMessagePump();
+		void			OnMessagePump();
 	private:
 		LONGLONG				m_videoINC;
 		MRTMPPusher&			m_pusher;

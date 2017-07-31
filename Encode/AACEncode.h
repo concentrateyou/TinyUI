@@ -27,7 +27,6 @@ namespace Encode
 		BOOL	Open(const WAVEFORMATEX& waveFMT, INT audioRate = 128);
 		BOOL	Encode(BYTE* bits, LONG size);
 		void	Close();
-		void	Reset();
 		BOOL	GetSpecificInfo(vector<BYTE>& info);
 		DWORD	GetOutputBytes() const;
 		DWORD	GetFPS() const;
