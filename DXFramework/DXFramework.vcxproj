@@ -186,6 +186,7 @@
     <ClInclude Include="DX11RenderView.h" />
     <ClInclude Include="DX11Texture2D.h" />
     <ClInclude Include="DX11TextureShader.h" />
+    <ClInclude Include="DX11TransparentShader.h" />
     <ClInclude Include="DX2D.h" />
     <ClInclude Include="DXCamera.h" />
     <ClInclude Include="DXFramework.h" />
@@ -208,6 +209,7 @@
     <ClCompile Include="DX11RenderView.cpp" />
     <ClCompile Include="DX11Texture2D.cpp" />
     <ClCompile Include="DX11TextureShader.cpp" />
+    <ClCompile Include="DX11TransparentShader.cpp" />
     <ClCompile Include="DX2D.cpp" />
     <ClCompile Include="DXCamera.cpp" />
     <ClCompile Include="DXFramework.cpp" />
@@ -239,6 +241,8 @@
     <None Include="color.vs" />
     <None Include="texture.ps" />
     <None Include="texture.vs" />
+    <None Include="transparent.ps" />
+    <None Include="transparent.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

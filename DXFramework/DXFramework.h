@@ -64,6 +64,12 @@ namespace DXFramework
 		XMMATRIX projection;
 	};
 
+	struct TRANSPARENTBUFFER
+	{
+		FLOAT blendAmount;
+		XMFLOAT3 padding;
+	};
+
 	typedef BOOL(WINAPI *DwmGetDxSharedSurface)(
 		HWND hwnd,
 		HANDLE* phSurface,

@@ -78,6 +78,9 @@
     <ClInclude Include="DX11RenderView.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="DX11TransparentShader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -140,6 +143,9 @@
     <ClCompile Include="DX11RenderView.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="DX11TransparentShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="texture.ps">
@@ -152,6 +158,12 @@
       <Filter>资源文件</Filter>
     </None>
     <None Include="color.vs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="transparent.ps">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="transparent.vs">
       <Filter>资源文件</Filter>
     </None>
   </ItemGroup>
