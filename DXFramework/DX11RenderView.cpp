@@ -205,6 +205,7 @@ namespace DXFramework
 		if (m_dx11.IsValid())
 		{
 			m_dx11.GetImmediateContext()->OMSetRenderTargets(1, &m_renderView, m_depthView);
+			m_dx11.AllowDepth(TRUE);
 			m_dx11.SetViewport(TinyPoint(0, 0), m_size);
 			m_dx11.SetMatrixs(m_size);
 			FLOAT color[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
@@ -214,9 +215,13 @@ namespace DXFramework
 	}
 	void DX11RenderView::EndDraw()
 	{
-		if (m_render2D != NULL && m_copy2D != NULL)
+		if (m_dx11.IsValid())
 		{
-			m_dx11.GetImmediateContext()->CopyResource(m_copy2D, m_render2D);
+			m_dx11.AllowDepth(FALSE);
+			if (m_render2D != NULL && m_copy2D != NULL)
+			{
+				m_dx11.GetImmediateContext()->CopyResource(m_copy2D, m_render2D);
+			}
 		}
 	}
 	BOOL DX11RenderView::SaveAs(const CHAR* pzName, D3DX11_IMAGE_FILE_FORMAT format)

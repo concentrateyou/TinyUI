@@ -13,8 +13,10 @@ namespace DXFramework
 		~DX11();
 		BOOL Initialize(HWND hWND, INT cx, INT cy);
 		BOOL ResizeView(INT cx = 0, INT cy = 0);
-		void SetRenderTexture2D(DX11RenderView* render2D);
 		BOOL SetViewport(const TinyPoint& pos, const TinySize& size);
+		void AllowBlend(BOOL bAllow);
+		void AllowDepth(BOOL bAllow);
+		void SetRenderTexture2D(DX11RenderView* render2D);
 		void SetMatrixs(const TinySize& size);
 		void Present();
 		HWND					GetHWND() const;
@@ -29,9 +31,9 @@ namespace DXFramework
 		TinyComPtr<ID3D11Device>			m_d3d;
 		TinyComPtr<IDXGISwapChain>			m_swap;
 		TinyComPtr<ID3D11DeviceContext>		m_immediateContext;
-		TinyComPtr<ID3D11DepthStencilState>	m_depthStencilState;
 		TinyComPtr<ID3D11RasterizerState>	m_rasterizerState;
-		TinyComPtr<ID3D11BlendState>		m_blendState;
+		TinyComPtr<ID3D11DepthStencilState>	m_depthState[2];
+		TinyComPtr<ID3D11BlendState>		m_blendState[2];
 		TinyScopedPtr<DX11RenderView>		m_background2D;
 		DX11RenderView*						m_render2D;
 		HWND								m_hWND;

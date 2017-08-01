@@ -56,26 +56,29 @@ namespace DXFramework
 		this->SetViewport(TinyPoint(0, 0), m_background2D->GetSize());
 		this->SetMatrixs(m_background2D->GetSize());
 		m_render2D = m_background2D;
-		D3D11_DEPTH_STENCIL_DESC enableDepthDesc;
-		ZeroMemory(&enableDepthDesc, sizeof(enableDepthDesc));
-		enableDepthDesc.DepthEnable = TRUE;
-		enableDepthDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-		enableDepthDesc.DepthFunc = D3D11_COMPARISON_LESS;
-		enableDepthDesc.StencilEnable = TRUE;
-		enableDepthDesc.StencilReadMask = 0xFF;
-		enableDepthDesc.StencilWriteMask = 0xFF;
-		enableDepthDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		enableDepthDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-		enableDepthDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		enableDepthDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-		enableDepthDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		enableDepthDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-		enableDepthDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		enableDepthDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-		hRes = m_d3d->CreateDepthStencilState(&enableDepthDesc, &m_depthStencilState);
+		D3D11_DEPTH_STENCIL_DESC depthDesc;
+		ZeroMemory(&depthDesc, sizeof(depthDesc));
+		depthDesc.DepthEnable = FALSE;
+		depthDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+		depthDesc.DepthFunc = D3D11_COMPARISON_LESS;
+		depthDesc.StencilEnable = TRUE;
+		depthDesc.StencilReadMask = 0xFF;
+		depthDesc.StencilWriteMask = 0xFF;
+		depthDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		depthDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+		depthDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		depthDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+		depthDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		depthDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+		depthDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		depthDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+		hRes = m_d3d->CreateDepthStencilState(&depthDesc, &m_depthState[0]);
 		if (hRes != S_OK)
 			return FALSE;
-		m_immediateContext->OMSetDepthStencilState(m_depthStencilState, 1);
+		depthDesc.DepthEnable = TRUE;
+		hRes = m_d3d->CreateDepthStencilState(&depthDesc, &m_depthState[1]);
+		if (hRes != S_OK)
+			return FALSE;
 		D3D11_RASTERIZER_DESC rasterDesc;
 		ZeroMemory(&rasterDesc, sizeof(rasterDesc));
 		rasterDesc.FrontCounterClockwise = FALSE;
@@ -87,21 +90,22 @@ namespace DXFramework
 			return FALSE;
 		m_immediateContext->RSSetState(m_rasterizerState);
 		D3D11_BLEND_DESC blenddesc;
-		blenddesc.AlphaToCoverageEnable = FALSE;
-		blenddesc.IndependentBlendEnable = FALSE;
+		ZeroMemory(&blenddesc, sizeof(blenddesc));
 		blenddesc.RenderTarget[0].BlendEnable = FALSE;
-		blenddesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-		blenddesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
-		blenddesc.RenderTarget[0].DestBlend = D3D11_BLEND_ZERO;
+		blenddesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		blenddesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 		blenddesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 		blenddesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
 		blenddesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
 		blenddesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-		hRes = m_d3d->CreateBlendState(&blenddesc, &m_blendState);
+		blenddesc.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+		hRes = m_d3d->CreateBlendState(&blenddesc, &m_blendState[0]);
 		if (hRes != S_OK)
 			return FALSE;
-		FLOAT factor[4] = { 0.f,0.f,0.f,0.f };
-		m_immediateContext->OMSetBlendState(m_blendState, factor, 0xFFFFFFFF);
+		blenddesc.RenderTarget[0].BlendEnable = TRUE;
+		hRes = m_d3d->CreateBlendState(&blenddesc, &m_blendState[1]);
+		if (hRes != S_OK)
+			return FALSE;
 		return TRUE;
 	}
 	BOOL DX11::ResizeView(INT cx, INT cy)
@@ -113,6 +117,27 @@ namespace DXFramework
 		this->SetViewport(TinyPoint(0, 0), m_background2D->GetSize());
 		this->SetMatrixs(m_background2D->GetSize());
 		return TRUE;
+	}
+	void DX11::AllowBlend(BOOL bAllow)
+	{
+		if (m_depthState[0] != NULL &&
+			m_depthState[1] != NULL)
+		{
+			m_immediateContext->OMSetDepthStencilState(bAllow ? m_depthState[1] : m_depthState[0], 1);
+		}
+	}
+	void DX11::AllowDepth(BOOL bAllow)
+	{
+		if (m_blendState[0] != NULL &&
+			m_blendState[1] != NULL)
+		{
+			FLOAT blendFactor[4];
+			blendFactor[0] = 0.0f;
+			blendFactor[1] = 0.0f;
+			blendFactor[2] = 0.0f;
+			blendFactor[3] = 0.0f;
+			m_immediateContext->OMSetBlendState(bAllow ? m_blendState[1] : m_blendState[0], blendFactor, 0xFFFFFFFF);
+		}
 	}
 	void DX11::SetRenderTexture2D(DX11RenderView* render2D)
 	{
