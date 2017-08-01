@@ -75,6 +75,7 @@ namespace DXFramework
 		hRes = m_d3d->CreateDepthStencilState(&depthDesc, &m_depthState);
 		if (hRes != S_OK)
 			return FALSE;
+		m_immediateContext->OMSetDepthStencilState(m_depthState, 1);
 		D3D11_RASTERIZER_DESC rasterDesc;
 		ZeroMemory(&rasterDesc, sizeof(rasterDesc));
 		rasterDesc.FrontCounterClockwise = FALSE;
@@ -94,10 +95,12 @@ namespace DXFramework
 		blenddesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
 		blenddesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
 		blenddesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-		blenddesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+		blenddesc.RenderTarget[0].RenderTargetWriteMask = 0x0F;
 		hRes = m_d3d->CreateBlendState(&blenddesc, &m_blendState);
 		if (hRes != S_OK)
 			return FALSE;
+		FLOAT blendFactor[4] = { 0.0F,0.0F,0.0F,0.0F };
+		m_immediateContext->OMSetBlendState(m_blendState, blendFactor, 0xFFFFFFFF);
 		return TRUE;
 	}
 	BOOL DX11::ResizeView(INT cx, INT cy)

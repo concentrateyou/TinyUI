@@ -167,7 +167,7 @@ namespace DXFramework
 	{
 		ASSERT(m_texture2D);
 		wstring ws = StringToWString(pzFile);
-		HRESULT hRes = SaveWICTextureToFile(dx11.GetImmediateContext(), m_texture2D, GetWICCodec(format), ws.c_str());
+		HRESULT hRes = SaveWICTextureToFile(dx11.GetImmediateContext(), m_texture2D, GetWICCodec(format), ws.c_str(), &GUID_WICPixelFormat32bppBGRA, NULL);
 		if (SUCCEEDED(hRes))
 		{
 			return TRUE;
@@ -211,6 +211,11 @@ namespace DXFramework
 			return FALSE;
 		if (FAILED(hRes = resource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&m_texture2D)))
 			return FALSE;
+		TinyComPtr<IDXGIResource> dxgiResource;
+		if (FAILED(hRes = m_texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&dxgiResource)))
+			return FALSE;
+		if (FAILED(hRes = dxgiResource->GetSharedHandle(&m_handle)))
+			return FALSE;
 		return TRUE;
 	}
 	BOOL DX11Texture2D::Load(DX11& dx11, HANDLE hResource)
@@ -245,6 +250,11 @@ namespace DXFramework
 		if (!CreateWICTextureFromMemory(dx11.GetD3D(), bits, dwSize, &resource, &m_resourceView))
 			return FALSE;
 		if (FAILED(hRes = resource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&m_texture2D)))
+			return FALSE;
+		TinyComPtr<IDXGIResource> dxgiResource;
+		if (FAILED(hRes = m_texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&dxgiResource)))
+			return FALSE;
+		if (FAILED(hRes = dxgiResource->GetSharedHandle(&m_handle)))
 			return FALSE;
 		return TRUE;
 	}

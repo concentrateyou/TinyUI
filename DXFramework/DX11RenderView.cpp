@@ -205,18 +205,18 @@ namespace DXFramework
 		if (m_dx11.IsValid())
 		{
 			m_dx11.GetImmediateContext()->OMSetRenderTargets(1, &m_renderView, m_depthView);
-			m_dx11.AllowDepth(TRUE);
+			m_dx11.SetViewport(TinyPoint(0, 0), m_size);
+			m_dx11.SetMatrixs(m_size);
+			FLOAT color[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
+			m_dx11.GetImmediateContext()->ClearRenderTargetView(m_renderView, color);
+			m_dx11.GetImmediateContext()->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH, 1.0F, 0);
 			FLOAT blendFactor[4];
 			blendFactor[0] = 0.0F;
 			blendFactor[1] = 0.0F;
 			blendFactor[2] = 0.0F;
 			blendFactor[3] = 0.0F;
 			m_dx11.AllowBlend(TRUE, blendFactor);
-			m_dx11.SetViewport(TinyPoint(0, 0), m_size);
-			m_dx11.SetMatrixs(m_size);
-			FLOAT color[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
-			m_dx11.GetImmediateContext()->ClearRenderTargetView(m_renderView, color);
-			m_dx11.GetImmediateContext()->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH, 1.0F, 0);
+			m_dx11.AllowDepth(TRUE);
 		}
 	}
 	void DX11RenderView::EndDraw()

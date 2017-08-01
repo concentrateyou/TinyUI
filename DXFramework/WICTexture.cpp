@@ -645,7 +645,7 @@ namespace DXFramework
 		size_t maxsize)
 	{
 		return CreateWICTextureFromMemoryEx(d3dDevice, wicData, wicDataSize, maxsize,
-			D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, WIC_LOADER_DEFAULT,
+			D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, D3D11_RESOURCE_MISC_SHARED, WIC_LOADER_DEFAULT,
 			texture, textureView);
 	}
 
@@ -771,7 +771,7 @@ namespace DXFramework
 		size_t maxsize)
 	{
 		return CreateWICTextureFromMemoryEx(d3dDevice, d3dContext, wicData, wicDataSize, maxsize,
-			D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, WIC_LOADER_DEFAULT,
+			D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, D3D11_RESOURCE_MISC_SHARED, WIC_LOADER_DEFAULT,
 			texture, textureView);
 	}
 
@@ -784,7 +784,7 @@ namespace DXFramework
 		size_t maxsize)
 	{
 		return CreateWICTextureFromFileEx(d3dDevice, d3dContext, fileName, maxsize,
-			D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, WIC_LOADER_DEFAULT,
+			D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, D3D11_RESOURCE_MISC_SHARED, WIC_LOADER_DEFAULT,
 			texture, textureView);
 	}
 
@@ -795,7 +795,7 @@ namespace DXFramework
 		size_t maxsize)
 	{
 		return CreateWICTextureFromFileEx(d3dDevice, fileName, maxsize,
-			D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, WIC_LOADER_DEFAULT,
+			D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, D3D11_RESOURCE_MISC_SHARED, WIC_LOADER_DEFAULT,
 			texture, textureView);
 	}
 

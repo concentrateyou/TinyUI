@@ -45,13 +45,8 @@ namespace MShow
 
 	BOOL MImageController::Open(LPCSTR pzFile)
 	{
-		TinySize size;
 		TinyRectangle rectangle;
-		m_image.Close();
-		if (!m_image.Open(pzFile))
-			goto _ERROR;
-		size = m_image.GetSize();
-		if (!m_image2D.Create(m_graphics.GetDX11(), size, TRUE))
+		if (!m_image2D.Load(m_graphics.GetDX11(), pzFile))
 			goto _ERROR;
 		m_view.GetClientRect(&rectangle);
 		m_image2D.SetScale(rectangle.Size());
@@ -62,7 +57,7 @@ namespace MShow
 			queue.Unregister(m_handle);
 			m_handle = NULL;
 		}
-		DWORD deDelay = m_image.GetCount() > 1 ? m_image.GetDelay(m_index) : 40;
+		DWORD deDelay = 40;
 		m_handle = queue.Register(&MImageController::TimerCallback, this, deDelay, deDelay, WT_EXECUTEINTIMERTHREAD);
 		return m_handle != NULL;
 	_ERROR:
@@ -138,18 +133,14 @@ namespace MShow
 		m_view.Invalidate();
 	}
 
-	void MImageController::OnImage(BYTE* bits, LONG size)
+	void MImageController::OnImage()
 	{
-		TinySize imageSize = m_image.GetSize();
-		if (m_image2D.Copy(m_graphics.GetDX11(), NULL, bits, size))
-		{
-			m_graphics.GetDX11().SetRenderTexture2D(NULL);
-			m_graphics.GetDX11().GetRender2D()->BeginDraw();
-			m_graphics.DrawImage(&m_image2D, 1.0F, 1.0F);
-			m_graphics.GetDX11().GetRender2D()->EndDraw();
-			m_graphics.Present();
-			m_signal.SetEvent();
-		}
+		m_graphics.GetDX11().SetRenderTexture2D(NULL);
+		m_graphics.GetDX11().GetRender2D()->BeginDraw();
+		m_graphics.DrawImage(&m_image2D, 1.0F, 1.0F);
+		m_graphics.GetDX11().GetRender2D()->EndDraw();
+		m_graphics.Present();
+		m_signal.SetEvent();
 	}
 
 	void MImageController::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -199,21 +190,7 @@ namespace MShow
 		MImageController* pThis = reinterpret_cast<MImageController*>(lpParameter);
 		if (pThis && val)
 		{
-			INT count = pThis->m_image.GetCount();
-			if (count > 1)
-			{
-				TinyApplication::GetInstance()->GetTimers().Change(pThis->m_handle, pThis->m_image.GetDelay(pThis->m_index), pThis->m_image.GetDelay(pThis->m_index));
-				BYTE* bits = pThis->m_image.GetBits(pThis->m_index);
-				TinySize size = pThis->m_image.GetSize();
-				pThis->OnImage(bits, size.cx * size.cy * 4);
-				pThis->m_index = (++pThis->m_index) % count;
-			}
-			else
-			{
-				BYTE* bits = pThis->m_image.GetBits(0);
-				TinySize size = pThis->m_image.GetSize();
-				pThis->OnImage(bits, size.cx * size.cy * 4);
-			}
+			pThis->OnImage();
 		}
 	}
 
