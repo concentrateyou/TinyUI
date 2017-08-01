@@ -35,7 +35,7 @@ namespace DXFramework
 		layout[0].SemanticIndex = 0;
 		layout[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
 		layout[0].InputSlot = 0;
-		layout[0].AlignedByteOffset = 0;
+		layout[0].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
 		layout[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 		layout[0].InstanceDataStepRate = 0;
 

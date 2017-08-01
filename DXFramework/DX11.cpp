@@ -78,28 +78,31 @@ namespace DXFramework
 		m_immediateContext->OMSetDepthStencilState(m_depthState, 1);
 		D3D11_RASTERIZER_DESC rasterDesc;
 		ZeroMemory(&rasterDesc, sizeof(rasterDesc));
-		rasterDesc.FrontCounterClockwise = FALSE;
+		rasterDesc.FrontCounterClockwise = TRUE;
 		rasterDesc.DepthClipEnable = TRUE;
 		rasterDesc.FillMode = D3D11_FILL_SOLID;
-		rasterDesc.CullMode = D3D11_CULL_BACK;
+		rasterDesc.CullMode = D3D11_CULL_NONE;
 		hRes = m_d3d->CreateRasterizerState(&rasterDesc, &m_rasterizerState);
 		if (hRes != S_OK)
 			return FALSE;
 		m_immediateContext->RSSetState(m_rasterizerState);
 		D3D11_BLEND_DESC blenddesc;
 		ZeroMemory(&blenddesc, sizeof(blenddesc));
-		blenddesc.RenderTarget[0].BlendEnable = TRUE;
-		blenddesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-		blenddesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-		blenddesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-		blenddesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
-		blenddesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-		blenddesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-		blenddesc.RenderTarget[0].RenderTargetWriteMask = 0x0F;
+		for (INT i = 0;i < 8;i++)
+		{
+			blenddesc.RenderTarget[i].BlendEnable = TRUE;
+			blenddesc.RenderTarget[i].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+			blenddesc.RenderTarget[i].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+			blenddesc.RenderTarget[i].BlendOp = D3D11_BLEND_OP_ADD;
+			blenddesc.RenderTarget[i].SrcBlendAlpha = D3D11_BLEND_ONE;
+			blenddesc.RenderTarget[i].DestBlendAlpha = D3D11_BLEND_ONE;
+			blenddesc.RenderTarget[i].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+			blenddesc.RenderTarget[i].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+		}
 		hRes = m_d3d->CreateBlendState(&blenddesc, &m_blendState);
 		if (hRes != S_OK)
 			return FALSE;
-		FLOAT blendFactor[4] = { 0.0F,0.0F,0.0F,0.0F };
+		FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		m_immediateContext->OMSetBlendState(m_blendState, blendFactor, 0xFFFFFFFF);
 		return TRUE;
 	}

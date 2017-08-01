@@ -41,6 +41,7 @@ namespace MShow
 		MImageView&		m_view;
 		DX11Graphics2D	m_graphics;
 		DX11Image2D		m_image2D;
+		DX11Image2D		m_image2D1;
 		TinyEvent		m_signal;
 		MImageElement*	m_pImage;
 	private:

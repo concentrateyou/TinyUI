@@ -210,26 +210,12 @@ namespace DXFramework
 			FLOAT color[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
 			m_dx11.GetImmediateContext()->ClearRenderTargetView(m_renderView, color);
 			m_dx11.GetImmediateContext()->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH, 1.0F, 0);
-			FLOAT blendFactor[4];
-			blendFactor[0] = 0.0F;
-			blendFactor[1] = 0.0F;
-			blendFactor[2] = 0.0F;
-			blendFactor[3] = 0.0F;
-			m_dx11.AllowBlend(TRUE, blendFactor);
-			m_dx11.AllowDepth(TRUE);
 		}
 	}
 	void DX11RenderView::EndDraw()
 	{
 		if (m_dx11.IsValid())
 		{
-			m_dx11.AllowDepth(FALSE);
-			FLOAT blendFactor[4];
-			blendFactor[0] = 0.0F;
-			blendFactor[1] = 0.0F;
-			blendFactor[2] = 0.0F;
-			blendFactor[3] = 0.0F;
-			m_dx11.AllowBlend(FALSE, blendFactor);
 			if (m_render2D != NULL && m_copy2D != NULL)
 			{
 				m_dx11.GetImmediateContext()->CopyResource(m_copy2D, m_render2D);
