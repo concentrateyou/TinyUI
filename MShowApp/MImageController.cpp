@@ -48,11 +48,8 @@ namespace MShow
 		TinyRectangle rectangle;
 		if (!m_image2D.Load(m_graphics.GetDX11(), pzFile))
 			goto _ERROR;
-		if (!m_image2D1.Load(m_graphics.GetDX11(), "D:\\12345.png"))
-			goto _ERROR;
 		m_view.GetClientRect(&rectangle);
 		m_image2D.SetScale(rectangle.Size());
-		m_image2D1.SetScale(rectangle.Size());
 		m_szFile = pzFile;
 		TinyTimerQueue& queue = TinyApplication::GetInstance()->GetTimers();
 		if (m_handle != NULL)
@@ -140,8 +137,12 @@ namespace MShow
 	{
 		m_graphics.GetDX11().SetRenderTexture2D(NULL);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();
+		FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		m_graphics.GetDX11().AllowBlend(TRUE, blendFactor);
+		m_graphics.GetDX11().AllowDepth(FALSE);
 		m_graphics.DrawImage(&m_image2D, 1.0F, 1.0F);
-		m_graphics.DrawImage(&m_image2D1, 1.0F, 1.0F);
+		m_graphics.GetDX11().AllowDepth(TRUE);
+		m_graphics.GetDX11().AllowBlend(FALSE, blendFactor);
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
 		m_graphics.Present();
 		m_signal.SetEvent();

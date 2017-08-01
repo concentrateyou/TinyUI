@@ -12,7 +12,6 @@ namespace DXFramework
 		struct VERTEXTYPE
 		{
 			XMFLOAT3 position;
-			XMFLOAT4 color;
 			XMFLOAT2 texture;
 		};
 		DECLARE_DYNAMIC(DX11Image2D)

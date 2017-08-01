@@ -72,10 +72,15 @@ namespace DXFramework
 		depthDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
 		depthDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 		depthDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-		hRes = m_d3d->CreateDepthStencilState(&depthDesc, &m_depthState);
+		hRes = m_d3d->CreateDepthStencilState(&depthDesc, &m_enableDepthState);
 		if (hRes != S_OK)
 			return FALSE;
-		m_immediateContext->OMSetDepthStencilState(m_depthState, 1);
+		depthDesc.DepthEnable = FALSE;
+		depthDesc.StencilEnable = FALSE;
+		hRes = m_d3d->CreateDepthStencilState(&depthDesc, &m_disableDepthState);
+		if (hRes != S_OK)
+			return FALSE;
+		m_immediateContext->OMSetDepthStencilState(m_enableDepthState, 1);
 		D3D11_RASTERIZER_DESC rasterDesc;
 		ZeroMemory(&rasterDesc, sizeof(rasterDesc));
 		rasterDesc.FrontCounterClockwise = TRUE;
@@ -99,11 +104,23 @@ namespace DXFramework
 			blenddesc.RenderTarget[i].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 			blenddesc.RenderTarget[i].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 		}
-		hRes = m_d3d->CreateBlendState(&blenddesc, &m_blendState);
+		hRes = m_d3d->CreateBlendState(&blenddesc, &m_enableBlendState);
 		if (hRes != S_OK)
 			return FALSE;
-		FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		m_immediateContext->OMSetBlendState(m_blendState, blendFactor, 0xFFFFFFFF);
+		for (INT i = 0;i < 8;i++)
+		{
+			blenddesc.RenderTarget[i].BlendEnable = FALSE;
+			blenddesc.RenderTarget[i].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+			blenddesc.RenderTarget[i].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+			blenddesc.RenderTarget[i].BlendOp = D3D11_BLEND_OP_ADD;
+			blenddesc.RenderTarget[i].SrcBlendAlpha = D3D11_BLEND_ONE;
+			blenddesc.RenderTarget[i].DestBlendAlpha = D3D11_BLEND_ONE;
+			blenddesc.RenderTarget[i].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+			blenddesc.RenderTarget[i].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+		}
+		hRes = m_d3d->CreateBlendState(&blenddesc, &m_disableBlendState);
+		if (hRes != S_OK)
+			return FALSE;
 		return TRUE;
 	}
 	BOOL DX11::ResizeView(INT cx, INT cy)
@@ -118,11 +135,11 @@ namespace DXFramework
 	}
 	void DX11::AllowBlend(BOOL bAllow, FLOAT(&blendFactor)[4])
 	{
-		m_immediateContext->OMSetBlendState(bAllow ? m_blendState.Ptr() : NULL, bAllow ? blendFactor : NULL, 0xFFFFFFFF);
+		m_immediateContext->OMSetBlendState(bAllow ? m_enableBlendState : m_disableBlendState, blendFactor, 0xFFFFFFFF);
 	}
 	void DX11::AllowDepth(BOOL bAllow)
 	{
-		m_immediateContext->OMSetDepthStencilState(bAllow ? m_depthState.Ptr() : NULL, 1);
+		m_immediateContext->OMSetDepthStencilState(bAllow ? m_enableDepthState : m_disableDepthState, 1);
 	}
 	void DX11::SetRenderTexture2D(DX11RenderView* render2D)
 	{

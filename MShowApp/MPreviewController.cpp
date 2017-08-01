@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "MPreviewController.h"
 #include "WICTexture.h"
+#include "MImageElement.h"
+#include "MVideoElement.h"
 
 namespace MShow
 {
@@ -327,11 +329,28 @@ namespace MShow
 							image->GetHandleRect((TrackerHit)i, &rectangle);
 							m_handles[i].SetPosition(rectangle.Position());
 							m_handles[i].SetScale(rectangle.Size());
+							FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+							m_graphics.GetDX11().AllowBlend(FALSE, blendFactor);
+							m_graphics.GetDX11().AllowDepth(TRUE);
 							m_graphics.DrawImage(&m_handles[i]);
 						}
 					}
 				}
-				m_graphics.DrawImage(image);
+				if (ps->IsKindOf(RUNTIME_CLASS(MImageElement)))
+				{
+					FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+					m_graphics.GetDX11().AllowBlend(TRUE, blendFactor);
+					m_graphics.GetDX11().AllowDepth(FALSE);
+					m_graphics.DrawImage(image);
+				}
+				if (ps->IsKindOf(RUNTIME_CLASS(MVideoElement)))
+				{
+					FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+					m_graphics.GetDX11().AllowBlend(FALSE, blendFactor);
+					m_graphics.GetDX11().AllowDepth(TRUE);
+					m_graphics.DrawImage(image);
+				}
+				
 			}
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();

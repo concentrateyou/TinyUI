@@ -14,7 +14,7 @@ namespace DXFramework
 		HRESULT hRes = S_OK;
 		TinyComPtr<ID3D10Blob> vertexShaderBuffer;
 		TinyComPtr<ID3D10Blob> pixelShaderBuffer;
-		D3D11_INPUT_ELEMENT_DESC layout[3];
+		D3D11_INPUT_ELEMENT_DESC layout[2];
 		D3D11_BUFFER_DESC matrixBufferDesc = { 0 };
 		D3D11_SAMPLER_DESC samplerDesc;
 		wstring wvsFile = StringToWString(vsFile);
@@ -39,21 +39,13 @@ namespace DXFramework
 		layout[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 		layout[0].InstanceDataStepRate = 0;
 
-		layout[1].SemanticName = "COLOR";
+		layout[1].SemanticName = "TEXCOORD";
 		layout[1].SemanticIndex = 0;
-		layout[1].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		layout[1].Format = DXGI_FORMAT_R32G32_FLOAT;
 		layout[1].InputSlot = 0;
 		layout[1].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
 		layout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 		layout[1].InstanceDataStepRate = 0;
-
-		layout[2].SemanticName = "TEXCOORD";
-		layout[2].SemanticIndex = 0;
-		layout[2].Format = DXGI_FORMAT_R32G32_FLOAT;
-		layout[2].InputSlot = 0;
-		layout[2].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-		layout[2].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-		layout[2].InstanceDataStepRate = 0;
 
 		ULONG size = sizeof(layout) / sizeof(layout[0]);
 		hRes = dx11.GetD3D()->CreateInputLayout(layout, size, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), &m_layout);

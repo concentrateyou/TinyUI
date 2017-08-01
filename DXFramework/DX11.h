@@ -32,8 +32,10 @@ namespace DXFramework
 		TinyComPtr<IDXGISwapChain>			m_swap;
 		TinyComPtr<ID3D11DeviceContext>		m_immediateContext;
 		TinyComPtr<ID3D11RasterizerState>	m_rasterizerState;
-		TinyComPtr<ID3D11BlendState>		m_blendState;
-		TinyComPtr<ID3D11DepthStencilState>	m_depthState;
+		TinyComPtr<ID3D11BlendState>		m_enableBlendState;
+		TinyComPtr<ID3D11BlendState>		m_disableBlendState;
+		TinyComPtr<ID3D11DepthStencilState>	m_enableDepthState;
+		TinyComPtr<ID3D11DepthStencilState>	m_disableDepthState;
 		TinyScopedPtr<DX11RenderView>		m_background2D;
 		DX11RenderView*						m_render2D;
 		HWND								m_hWND;
