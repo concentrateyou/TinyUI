@@ -20,12 +20,14 @@ cbuffer MatrixBuffer
 struct VertexInputType
 {
     float4 position : POSITION;
+	float4 color : COLOR;
     float2 tex : TEXCOORD0;
 };
 
 struct PixelInputType
 {
     float4 position : SV_POSITION;
+	float4 color : COLOR;
     float2 tex : TEXCOORD0;
 };
 
@@ -42,7 +44,7 @@ PixelInputType TextureVertexShader(VertexInputType input)
     output.position = mul(input.position, worldMatrix);
     output.position = mul(output.position, viewMatrix);
     output.position = mul(output.position, projectionMatrix);
-
+	output.color = input.color;
 	output.tex = input.tex;
     
     return output;

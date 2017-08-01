@@ -90,7 +90,7 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	void DX11TransparentShader::Render(DX11& dx11, INT indexCount, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, DX11Texture2D* texture, FLOAT blend)
+	void DX11TransparentShader::Render(DX11& dx11, INT indexCount, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, DX11Texture2D* texture, FLOAT alpha)
 	{
 		XMMATRIX worldMatrix1 = XMMatrixTranspose(worldMatrix);
 		XMMATRIX viewMatrix1 = XMMatrixTranspose(viewMatrix);
@@ -108,7 +108,7 @@ namespace DXFramework
 		if (SUCCEEDED(dx11.GetImmediateContext()->Map(m_transparentBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource)))
 		{
 			TRANSPARENTBUFFER* dataPtr = (TRANSPARENTBUFFER*)mappedResource.pData;
-			dataPtr->blendAmount = blend;
+			dataPtr->alpha = alpha;
 			dx11.GetImmediateContext()->Unmap(m_matrixBuffer, 0);
 		}
 		dx11.GetImmediateContext()->VSSetConstantBuffers(0, 1, &m_transparentBuffer);

@@ -289,16 +289,22 @@ namespace DXFramework
 		INT vertexCount = GetIndexCount();
 		m_vertices[0].position = XMFLOAT3(left, top, 0.0F);
 		m_vertices[0].texture = XMFLOAT2(0.0F, 0.0F);
+		m_vertices[0].color = XMFLOAT4(1.0F, 0.0F, 0.0F, 1.0F);
 		m_vertices[1].position = XMFLOAT3(right, bottom, 0.0F);
 		m_vertices[1].texture = XMFLOAT2(1.0F, 1.0f);
+		m_vertices[1].color = XMFLOAT4(1.0F, 0.0F, 0.0F, 1.0F);
 		m_vertices[2].position = XMFLOAT3(left, bottom, 0.0F);
 		m_vertices[2].texture = XMFLOAT2(0.0F, 1.0f);
+		m_vertices[2].color = XMFLOAT4(1.0F, 0.0F, 0.0F, 1.0F);
 		m_vertices[3].position = XMFLOAT3(left, top, 0.0F);
 		m_vertices[3].texture = XMFLOAT2(0.0F, 0.0F);
+		m_vertices[3].color = XMFLOAT4(1.0F, 0.0F, 0.0F, 1.0F);
 		m_vertices[4].position = XMFLOAT3(right, top, 0.0F);
 		m_vertices[4].texture = XMFLOAT2(1.0F, 0.0F);
+		m_vertices[4].color = XMFLOAT4(1.0F, 0.0F, 0.0F, 1.0F);
 		m_vertices[5].position = XMFLOAT3(right, bottom, 0.0F);
 		m_vertices[5].texture = XMFLOAT2(1.0F, 1.0F);
+		m_vertices[5].color = XMFLOAT4(1.0F, 0.0F, 0.0F, 1.0F);
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
 		HRESULT hRes = dx11.GetImmediateContext()->Map(m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		if (hRes != S_OK)

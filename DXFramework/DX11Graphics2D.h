@@ -2,7 +2,6 @@
 #include "DXFramework.h"
 #include "DX11Image2D.h"
 #include "DXCamera.h"
-#include "DX11ColorShader.h"
 #include "DX11Rectangle2D.h"
 #include "DX11RenderView.h"
 

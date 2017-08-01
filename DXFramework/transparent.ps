@@ -3,7 +3,7 @@ SamplerState SampleType;
 
 cbuffer TransparentBuffer
 {
-	float blendAmount;
+	float alpha;
 };
 
 
@@ -24,6 +24,6 @@ float4 TransparentPixelShader(PixelInputType input) : SV_TARGET
 {
 	float4 color;
     color = shaderTexture.Sample(SampleType, input.tex);
-    color.a = blendAmount;
+    color.a = alpha;
 	return color;
 }

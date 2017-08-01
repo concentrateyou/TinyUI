@@ -66,8 +66,7 @@ namespace DXFramework
 
 	struct TRANSPARENTBUFFER
 	{
-		FLOAT blendAmount;
-		XMFLOAT3 padding;
+		FLOAT alpha;
 	};
 
 	typedef BOOL(WINAPI *DwmGetDxSharedSurface)(
