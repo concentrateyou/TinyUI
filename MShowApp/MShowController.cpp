@@ -3,6 +3,7 @@
 #include "MPreviewController.h"
 #include "MVideoController.h"
 #include "MImageController.h"
+#include "MAudioController.h"
 
 namespace MShow
 {
@@ -52,6 +53,11 @@ namespace MShow
 				return FALSE;
 			if (!m_images[i]->Initialize())
 				return FALSE;
+			m_audios[i] = new MAudioController(m_window.m_audioViews[i]);
+			if (!m_audios[i])
+				return FALSE;
+			if (!m_audios[i]->Initialize())
+				return FALSE;
 		}
 		m_preview->Submit();
 		return TRUE;
@@ -96,6 +102,11 @@ namespace MShow
 				m_images[i]->Close();
 			}
 			SAFE_DELETE(m_images[i]);
+			if (m_audios[i])
+			{
+				m_audios[i]->Close();
+			}
+			SAFE_DELETE(m_audios[i]);
 		}
 	}
 

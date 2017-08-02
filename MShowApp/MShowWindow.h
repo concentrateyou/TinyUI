@@ -6,6 +6,7 @@
 #include "MImageView.h"
 #include "MPreviewView.h"
 #include "MPlayView.h"
+#include "MAudioView.h"
 using namespace TinyUI;
 
 namespace MShow
@@ -39,10 +40,11 @@ namespace MShow
 		void OnToggle(void*, INT);
 		void OnPusher(void*, INT);
 	private:
-		MTabView				m_tabViews[2];
+		MTabView				m_tabViews[3];
 		MVolumeView				m_volumeViews[6];
 		MVideoView				m_videoViews[6];
 		MImageView				m_imageViews[6];
+		MAudioView				m_audioViews[6];
 		MPreviewView			m_previewView;
 		MPreviewView			m_shadowView;//Ó°×Ó´°¿Ú
 		MPlayView				m_playView;

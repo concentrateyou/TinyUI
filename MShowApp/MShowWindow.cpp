@@ -60,6 +60,9 @@ namespace MShow
 		m_tab.InsertItem(1, "   ͼƬԴ   ");
 		m_tabViews[1].Create(m_tab.Handle(), s.left, s.top, TO_CX(s), TO_CY(s));
 		m_tabViews[1].ShowWindow(SW_HIDE);
+		m_tab.InsertItem(2, "   ��ƵԴ   ");
+		m_tabViews[2].Create(m_tab.Handle(), s.left, s.top, TO_CX(s), TO_CY(s));
+		m_tabViews[2].ShowWindow(SW_HIDE);
 		m_tab.SetCurSel(0);
 		m_onTabChange.Reset(new Delegate<void(void*)>(this, &MShowWindow::OnTabChange));
 		m_tab.EVENT_SELCHANGE += m_onTabChange;
@@ -84,6 +87,7 @@ namespace MShow
 			m_videoViews[i].Create(m_tabViews[0], offset, 45, 192, 108);
 			m_volumeViews[i].Create(m_tabViews[0], offset, 10, 192, 20);
 			m_imageViews[i].Create(m_tabViews[1], offset, 45, 192, 108);
+			m_audioViews[i].Create(m_tabViews[2], offset, 45, 192, 108);
 			offset += 212;
 		}
 		return FALSE;
@@ -126,10 +130,17 @@ namespace MShow
 		case 0:
 			m_tabViews[0].ShowWindow(SW_SHOW);
 			m_tabViews[1].ShowWindow(SW_HIDE);
+			m_tabViews[2].ShowWindow(SW_HIDE);
 			break;
 		case 1:
-			m_tabViews[1].ShowWindow(SW_SHOW);
 			m_tabViews[0].ShowWindow(SW_HIDE);
+			m_tabViews[1].ShowWindow(SW_SHOW);
+			m_tabViews[2].ShowWindow(SW_HIDE);
+			break;
+		case 2:
+			m_tabViews[0].ShowWindow(SW_HIDE);
+			m_tabViews[1].ShowWindow(SW_HIDE);
+			m_tabViews[2].ShowWindow(SW_SHOW);
 			break;
 		default:
 			break;

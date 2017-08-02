@@ -8,6 +8,7 @@ namespace MShow
 {
 	class MVideoController;
 	class MImageController;
+	class MAudioController;
 	class MPreviewController;
 	class MPlayController;
 	/// <summary>
@@ -39,6 +40,7 @@ namespace MShow
 		MShowWindow&		m_window;
 		MVideoController*	m_videos[6];
 		MImageController*	m_images[6];
+		MAudioController*	m_audios[6];
 		MPreviewController*	m_preview;
 		MPlayController*	m_play;
 		MRTMPPusher			m_pusher;

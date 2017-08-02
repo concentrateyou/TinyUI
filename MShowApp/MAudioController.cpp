@@ -32,6 +32,7 @@ namespace MShow
 		m_popup.CreatePopupMenu();
 		m_popup.AppendMenu(MF_STRING, 1, TEXT("添加"));
 		m_popup.AppendMenu(MF_STRING, 2, TEXT("删除"));
+		m_popup.AppendMenu(MF_STRING, 3, TEXT("播放"));
 		return TRUE;
 	}
 
@@ -53,15 +54,11 @@ namespace MShow
 
 	void MAudioController::OnAdd()
 	{
-		LPCTSTR lpszFilter = _T("Image Files(*.bmp, *.jpg, *.png, *.gif)|*.bmp;*.jpg;*.png;*.gif|All Files (*.*)|*.*||");
+		LPCTSTR lpszFilter = _T("MP3 Files(*.mp3)|*.mp3;||");
 		TinyFileDialog dlg(TRUE, NULL, "", OFN_HIDEREADONLY | OFN_READONLY | OFN_FILEMUSTEXIST, lpszFilter);
 		if (dlg.DoModal(m_view.Handle()) == IDOK)
 		{
-			TinyString szName = dlg.GetPathName();
-			if (!szName.IsEmpty())
-			{
-				
-			}
+			m_szFile = dlg.GetPathName();
 		}
 	}
 
@@ -83,7 +80,7 @@ namespace MShow
 	void MAudioController::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		
+
 	}
 
 	void MAudioController::OnMenuClick(void*, INT wID)

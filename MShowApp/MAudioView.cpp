@@ -47,7 +47,7 @@ namespace MShow
 		bHandled = FALSE;
 		PAINTSTRUCT s = { 0 };
 		HDC hDC = BeginPaint(m_hWND, &s);
-		::FillRect(hDC, &s.rcPaint, (HBRUSH)GetStockObject(BLACK_BRUSH));
+		::FillRect(hDC, &s.rcPaint, (HBRUSH)GetStockObject(GRAY_BRUSH));
 		EndPaint(m_hWND, &s);
 		return FALSE;
 	}
