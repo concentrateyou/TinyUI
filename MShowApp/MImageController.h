@@ -28,7 +28,7 @@ namespace MShow
 	private:
 		void	OnAdd();
 		void	OnRemove();
-		void	OnImage();
+		void	OnImage(BYTE* bits, LONG size);
 		void	OnMenuClick(void*, INT wID);
 		void	OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -41,6 +41,7 @@ namespace MShow
 		MImageView&		m_view;
 		DX11Graphics2D	m_graphics;
 		DX11Image2D		m_image2D;
+		TinyImage		m_image;
 		TinyEvent		m_signal;
 		MImageElement*	m_pImage;
 	private:
