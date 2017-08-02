@@ -319,49 +319,72 @@ namespace MShow
 			if (ps->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
 			{
 				DX11Image2D* image = static_cast<DX11Image2D*>(ps);
-				m_graphics.DrawImage(image, (FLOAT)((FLOAT)m_pulgSize.cx / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cx)), (FLOAT)((FLOAT)m_pulgSize.cy / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cy)));
-			}
-		}
-		m_graphics.GetDX11().GetRender2D()->EndDraw();
-		//////////////////////////////////////////////////////////////////////////
-		m_graphics.GetDX11().SetRenderTexture2D(NULL);
-		m_graphics.GetDX11().GetRender2D()->BeginDraw();
-		for (INT i = m_array.GetSize() - 1;i >= 0;i--)
-		{
-			DX11Element2D* ps = m_array[i];
-			if (ps->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
-			{
-				DX11Image2D* image = static_cast<DX11Image2D*>(ps);
 				if (ps->IsKindOf(RUNTIME_CLASS(MImageElement)))
 				{
 					FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 					m_graphics.GetDX11().AllowBlend(TRUE, blendFactor);
 					m_graphics.GetDX11().AllowDepth(FALSE);
-					m_graphics.DrawImage(image);
+					m_graphics.DrawImage(image, (FLOAT)((FLOAT)m_pulgSize.cx / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cx)), (FLOAT)((FLOAT)m_pulgSize.cy / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cy)));
 				}
 				if (ps->IsKindOf(RUNTIME_CLASS(MVideoElement)))
 				{
 					FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 					m_graphics.GetDX11().AllowBlend(FALSE, blendFactor);
 					m_graphics.GetDX11().AllowDepth(TRUE);
+					m_graphics.DrawImage(image, (FLOAT)((FLOAT)m_pulgSize.cx / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cx)), (FLOAT)((FLOAT)m_pulgSize.cy / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cy)));
+				}
+			}
+		}
+		m_graphics.GetDX11().GetRender2D()->EndDraw();
+		//////////////////////////////////////////////////////////////////////////
+		m_graphics.GetDX11().SetRenderTexture2D(NULL);
+		m_graphics.GetDX11().GetRender2D()->BeginDraw();
+		INT index = -1;
+		for (INT i = m_array.GetSize() - 1;i >= 0;i--)
+		{
+			DX11Element2D* p2D = m_array[i];
+			if (p2D->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
+			{
+				DX11Image2D* image = static_cast<DX11Image2D*>(p2D);
+				if (p2D->IsKindOf(RUNTIME_CLASS(MImageElement)))
+				{
+					FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+					m_graphics.GetDX11().AllowBlend(TRUE, blendFactor);
+					m_graphics.GetDX11().AllowDepth(FALSE);
 					m_graphics.DrawImage(image);
 				}
-				if (ps == m_current)
+				if (p2D->IsKindOf(RUNTIME_CLASS(MVideoElement)))
 				{
-					UINT mask = image->GetHandleMask();
-					for (INT i = 0; i < 8; ++i)
+					FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+					m_graphics.GetDX11().AllowBlend(FALSE, blendFactor);
+					m_graphics.GetDX11().AllowDepth(TRUE);
+					m_graphics.DrawImage(image);
+				}
+			}
+			if (p2D == m_current)
+			{
+				index = i;
+			}
+		}
+		if (index >= 0)
+		{
+			DX11Element2D* p2D = m_array[index];
+			if (p2D->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
+			{
+				DX11Image2D* image = static_cast<DX11Image2D*>(p2D);
+				UINT mask = image->GetHandleMask();
+				for (INT i = 0; i < 8; ++i)
+				{
+					if (mask & (1 << i))
 					{
-						if (mask & (1 << i))
-						{
-							TinyRectangle rectangle;
-							image->GetHandleRect((TrackerHit)i, &rectangle);
-							m_handles[i].SetPosition(rectangle.Position());
-							m_handles[i].SetScale(rectangle.Size());
-							FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-							m_graphics.GetDX11().AllowBlend(FALSE, blendFactor);
-							m_graphics.GetDX11().AllowDepth(TRUE);
-							m_graphics.DrawImage(&m_handles[i]);
-						}
+						TinyRectangle rectangle;
+						image->GetHandleRect((TrackerHit)i, &rectangle);
+						m_handles[i].SetPosition(rectangle.Position());
+						m_handles[i].SetScale(rectangle.Size());
+						FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+						m_graphics.GetDX11().AllowBlend(TRUE, blendFactor);
+						m_graphics.GetDX11().AllowDepth(FALSE);
+						m_graphics.DrawImage(&m_handles[i]);
 					}
 				}
 			}
