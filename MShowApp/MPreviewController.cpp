@@ -75,13 +75,22 @@ namespace MShow
 	BOOL MPreviewController::Add(DX11Element2D* ps)
 	{
 		TinyAutoLock lock(m_lock);
-		return m_array.Add(ps);
+		if (m_array.Lookup(ps) < 0)
+		{
+			return m_array.Add(ps);
+		}
+		return FALSE;
 	}
 
 	BOOL MPreviewController::Remove(DX11Element2D* ps)
 	{
 		TinyAutoLock lock(m_lock);
-		return m_array.Remove(ps);
+		BOOL bRes = m_array.Remove(ps);
+		if (ps == m_current)
+		{
+			m_current = NULL;
+		}
+		return bRes;
 	}
 
 	BOOL MPreviewController::Move(DX11Element2D* ps, BOOL bUp)
@@ -113,8 +122,13 @@ namespace MShow
 	{
 		TinyAutoLock lock(m_lock);
 		BOOL bRes = TRUE;
-		if (m_array.Lookup(ps) >= 0)
+		INT index = m_array.Lookup(ps);
+		if (index >= 0)
 		{
+			if (bTop && index == 0)
+			{
+				return TRUE;
+			}
 			m_array.Remove(ps);
 			if (bTop)
 			{
@@ -299,7 +313,7 @@ namespace MShow
 		m_time.BeginTime();
 		m_graphics.GetDX11().SetRenderTexture2D(&m_renderView);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();
-		for (INT i = 0;i < m_array.GetSize();i++)
+		for (INT i = m_array.GetSize() - 1;i >= 0;i--)
 		{
 			DX11Element2D* ps = m_array[i];
 			if (ps->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
@@ -312,12 +326,26 @@ namespace MShow
 		//////////////////////////////////////////////////////////////////////////
 		m_graphics.GetDX11().SetRenderTexture2D(NULL);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();
-		for (INT i = 0;i < m_array.GetSize();i++)
+		for (INT i = m_array.GetSize() - 1;i >= 0;i--)
 		{
 			DX11Element2D* ps = m_array[i];
 			if (ps->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
 			{
 				DX11Image2D* image = static_cast<DX11Image2D*>(ps);
+				if (ps->IsKindOf(RUNTIME_CLASS(MImageElement)))
+				{
+					FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+					m_graphics.GetDX11().AllowBlend(TRUE, blendFactor);
+					m_graphics.GetDX11().AllowDepth(FALSE);
+					m_graphics.DrawImage(image);
+				}
+				if (ps->IsKindOf(RUNTIME_CLASS(MVideoElement)))
+				{
+					FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+					m_graphics.GetDX11().AllowBlend(FALSE, blendFactor);
+					m_graphics.GetDX11().AllowDepth(TRUE);
+					m_graphics.DrawImage(image);
+				}
 				if (ps == m_current)
 				{
 					UINT mask = image->GetHandleMask();
@@ -336,21 +364,6 @@ namespace MShow
 						}
 					}
 				}
-				if (ps->IsKindOf(RUNTIME_CLASS(MImageElement)))
-				{
-					FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-					m_graphics.GetDX11().AllowBlend(TRUE, blendFactor);
-					m_graphics.GetDX11().AllowDepth(FALSE);
-					m_graphics.DrawImage(image);
-				}
-				if (ps->IsKindOf(RUNTIME_CLASS(MVideoElement)))
-				{
-					FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-					m_graphics.GetDX11().AllowBlend(FALSE, blendFactor);
-					m_graphics.GetDX11().AllowDepth(TRUE);
-					m_graphics.DrawImage(image);
-				}
-				
 			}
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
