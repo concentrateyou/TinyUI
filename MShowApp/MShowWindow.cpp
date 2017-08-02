@@ -86,7 +86,6 @@ namespace MShow
 			m_imageViews[i].Create(m_tabViews[1], offset, 45, 192, 108);
 			offset += 212;
 		}
-
 		return FALSE;
 	}
 	LRESULT MShowWindow::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
