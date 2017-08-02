@@ -93,9 +93,9 @@ namespace MShow
 				Sleep(50);
 				continue;
 			}
+			ZeroMemory(&block, sizeof(block));
 			if (!m_reader.ReadBlock(block))
 			{
-				TRACE("ReadBlock = FALSE\n");
 				ReleaseBlock(block);
 				return FALSE;
 			}

@@ -172,11 +172,13 @@ namespace MShow
 				if (m_pImage->Allocate(preview->Graphics().GetDX11()))
 				{
 					preview->Add(m_pImage);
+					preview->Bring(m_pImage, TRUE);
 				}
 			}
 			else
 			{
 				preview->Add(m_pImage);
+				preview->Bring(m_pImage, TRUE);
 			}
 		}
 	}

@@ -97,12 +97,12 @@ namespace QSV
 		{
 			if (residial <= 0)
 			{
-				ITERATOR s = m_tags.First();
-				if (s == NULL)
+				if (m_tags.GetSize() <= 0)
 				{
 					goto _DATA;
 				}
-				Media::SampleTag& sampleTag = m_tags.GetAt(s);
+				ITERATOR s = m_tags.First();
+				SampleTag& sampleTag = m_tags.GetAt(s);
 				m_tags.RemoveAt(s);
 				memset(&mfxStream, 0, sizeof(mfxStream));
 				mfxStream.TimeStamp = sampleTag.samplePTS;
@@ -116,6 +116,7 @@ namespace QSV
 				memcpy(pData, sampleTag.bits, sampleTag.size);
 				pData += sampleTag.size;
 				residial += newsize;
+				SAFE_DELETE_ARRAY(sampleTag.bits);
 				mfxStatus status = Process(mfxStream, video);
 				residial -= mfxStream.DataOffset;
 				if (status != MFX_ERR_NONE)
@@ -124,7 +125,6 @@ namespace QSV
 					{
 						goto _DATA;
 					}
-					SAFE_DELETE_ARRAY(tag.bits);
 					return FALSE;
 				}
 				else
@@ -146,7 +146,6 @@ namespace QSV
 					{
 						goto _DATA;
 					}
-					SAFE_DELETE_ARRAY(tag.bits);
 					goto _DATA;
 				}
 				else
@@ -160,10 +159,9 @@ namespace QSV
 			}
 		}
 	_DATA:
-		SAFE_DELETE_ARRAY(tag.bits);
-		ITERATOR s = m_outputs.First();
-		if (s != NULL)
+		if (m_outputs.GetSize() > 0)
 		{
+			ITERATOR s = m_outputs.First();
 			mfxFrameSurface1*& surface = m_outputs.GetAt(s);
 			m_outputs.RemoveAt(s);
 			tag.samplePTS = tag.sampleDTS = surface->Data.TimeStamp;
