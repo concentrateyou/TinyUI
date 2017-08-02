@@ -10,7 +10,7 @@ using namespace TinyUI::Media;
 namespace Decode
 {
 	/// <summary>
-	/// MP3解码PCM
+	/// MP3解码成PCM并按AAC编码4096输出
 	/// </summary>
 	class MP3DecodeTask : public TinyTaskBase
 	{
@@ -29,6 +29,9 @@ namespace Decode
 		MP3Decode				m_decode;
 		TinyMP3File				m_mp3File;
 		WAVEFORMATEX			m_waveFMT;
+		TinyScopedArray<BYTE>	m_residial;
+		TinyScopedArray<BYTE>	m_bits;
+		INT						m_offset;
 		TinyUI::Callback<void(BYTE*, LONG)>	m_callback;
 	};
 }

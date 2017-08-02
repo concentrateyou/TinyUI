@@ -5,7 +5,8 @@ namespace Decode
 {
 	MP3DecodeTask::MP3DecodeTask(TinyUI::Callback<void(BYTE*, LONG)>&& callback)
 		:m_bBreak(FALSE),
-		m_callback(std::move(callback))
+		m_callback(std::move(callback)),
+		m_offset(0)
 	{
 		ZeroMemory(&m_waveFMT, sizeof(m_waveFMT));
 	}
@@ -45,14 +46,14 @@ namespace Decode
 	}
 	void MP3DecodeTask::OnMessagePump()
 	{
-		BYTE bits[1024 * 4];
+		BYTE bits[1024 * 8];
 		LONGLONG timestamp = 0;
 		for (;;)
 		{
 			if (m_bBreak)
 				break;
 			LONG numberOfBytesRead = 0;
-			if (!m_mp3File.Read(bits, 1024 * 4, &numberOfBytesRead, timestamp))
+			if (!m_mp3File.Read(bits, 1024 * 8, &numberOfBytesRead, timestamp))
 			{
 				TRACE("MP3 Read Fail\n");
 				break;
@@ -77,13 +78,21 @@ namespace Decode
 		if (size == 0)
 		{
 			m_waveFMT = *reinterpret_cast<WAVEFORMATEX*>(ps);
+			m_bits.Reset(4096);
+			m_residial.Reset(4096);
 		}
 		else
 		{
-			if (!m_callback.IsNull())
+			if ((m_offset + size) > 4096)
 			{
-				m_callback(bits, size);
+				memcpy(m_bits + m_offset, bits, 4096 - m_offset);
+				memcpy(m_residial, bits + 4096 - m_offset, size - (4096 - m_offset));
 			}
+			else
+			{
+				memcpy(m_bits + m_offset, bits, size);
+			}
+			m_offset += size;
 		}
 	}
 }
