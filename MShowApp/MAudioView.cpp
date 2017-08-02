@@ -48,6 +48,11 @@ namespace MShow
 		PAINTSTRUCT s = { 0 };
 		HDC hDC = BeginPaint(m_hWND, &s);
 		::FillRect(hDC, &s.rcPaint, (HBRUSH)GetStockObject(GRAY_BRUSH));
+		SetTextColor(hDC, RGB(255, 96, 81));
+		SetBkMode(hDC, TRANSPARENT);
+		CHAR szText[256];
+		INT size = GetWindowText(m_hWND, szText, 256);
+		::DrawText(hDC, szText, size, &s.rcPaint, DT_VCENTER | DT_CENTER);
 		EndPaint(m_hWND, &s);
 		return FALSE;
 	}

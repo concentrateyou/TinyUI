@@ -1,7 +1,6 @@
 #pragma once
 #include "Common.h"
 #include "mpg123.h"
-#include "Media/TinyWave.h"
 #pragma comment(lib,"libmpg123.lib")
 
 namespace Decode
@@ -11,11 +10,11 @@ namespace Decode
 	/// <summary>
 	/// MP3½âÂë
 	/// </summary>
-	class MPG123Decode
+	class MP3Decode
 	{
 	public:
-		MPG123Decode();
-		virtual ~MPG123Decode();
+		MP3Decode();
+		virtual ~MP3Decode();
 	public:
 		BOOL Initialize(Callback<void(BYTE*, LONG, LPVOID)>&& callback);
 		BOOL Open();

@@ -1,25 +1,25 @@
 #include "stdafx.h"
-#include "MPG123Decode.h"
+#include "MP3Decode.h"
 
 namespace Decode
 {
-	MPG123Decode::MPG123Decode()
+	MP3Decode::MP3Decode()
 		:m_handle(NULL)
 	{
 		mpg123_init();
 	}
 
 
-	MPG123Decode::~MPG123Decode()
+	MP3Decode::~MP3Decode()
 	{
 		mpg123_exit();
 	}
-	BOOL MPG123Decode::Initialize(Callback<void(BYTE*, LONG, LPVOID)>&& callback)
+	BOOL MP3Decode::Initialize(Callback<void(BYTE*, LONG, LPVOID)>&& callback)
 	{
 		m_callback = std::move(callback);
 		return TRUE;
 	}
-	BOOL MPG123Decode::Open()
+	BOOL MP3Decode::Open()
 	{
 		INT iRes = 0;
 		m_handle = mpg123_new(NULL, &iRes);
@@ -36,7 +36,7 @@ namespace Decode
 		m_handle = NULL;
 		return FALSE;
 	}
-	BOOL MPG123Decode::Decode(BYTE* rawdata, LONG rawsize)
+	BOOL MP3Decode::Decode(BYTE* rawdata, LONG rawsize)
 	{
 		if (!m_handle)
 			return FALSE;
@@ -97,7 +97,7 @@ namespace Decode
 			}
 		}
 	}
-	BOOL MPG123Decode::Close()
+	BOOL MP3Decode::Close()
 	{
 		if (m_handle != NULL)
 		{
@@ -107,7 +107,7 @@ namespace Decode
 		}
 		return TRUE;
 	}
-	BOOL MPG123Decode::SetFormat(WAVEFORMATEX& sFMT)
+	BOOL MP3Decode::SetFormat(WAVEFORMATEX& sFMT)
 	{
 		if (m_waveFMT.IsEmpty())
 		{
@@ -130,7 +130,7 @@ namespace Decode
 		}
 		return TRUE;
 	}
-	WAVEFORMATEX* MPG123Decode::GetFormat()
+	WAVEFORMATEX* MP3Decode::GetFormat()
 	{
 		return reinterpret_cast<WAVEFORMATEX*>(&m_waveFMT);
 	}

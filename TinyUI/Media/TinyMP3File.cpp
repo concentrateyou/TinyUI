@@ -38,7 +38,7 @@ namespace TinyUI
 		{
 			return m_dwMaxOutputBytes;
 		}
-		BOOL TinyMP3File::Open(LPTSTR pzFile)
+		BOOL TinyMP3File::Open(LPCSTR pzFile)
 		{
 			if (!pzFile)
 				return FALSE;
@@ -104,7 +104,7 @@ namespace TinyUI
 				return FALSE;
 			return ResetFile();
 		}
-		BOOL TinyMP3File::Create(LPTSTR pzFile, const MPEGLAYER3WAVEFORMAT* pMFT)
+		BOOL TinyMP3File::Create(LPCSTR pzFile, const MPEGLAYER3WAVEFORMAT* pMFT)
 		{
 			if (!pzFile || !pMFT)
 				return FALSE;

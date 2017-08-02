@@ -103,9 +103,15 @@ INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
-
+	WSADATA   wsd;
+	WSAStartup(MAKEWORD(2, 2), &wsd);
+	MFStartup(MF_VERSION);
+	OleInitialize(NULL);
 	MShow::MShowApp& app = MShow::MShowApp::Instance();
 	app.Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_MSHOWAPP));
 	INT iRes = app.Run();
+	OleUninitialize();
+	MFShutdown();
+	WSACleanup();
 	return iRes;
 }

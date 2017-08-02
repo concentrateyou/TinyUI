@@ -174,7 +174,7 @@ namespace MShow
 	}
 	void MVideoController::OnChange()
 	{
-		MShowApp::Instance().GetController().GetAudioEncoder().SetController(this);
+		MShowApp::Instance().GetController().GetAudioEncoder().SetVideoController(this);
 	}
 	void MVideoController::OnRemove()
 	{

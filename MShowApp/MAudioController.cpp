@@ -9,7 +9,8 @@
 namespace MShow
 {
 	MAudioController::MAudioController(MAudioView& view)
-		:m_view(view)
+		:m_view(view),
+		m_task(BindCallback(&MAudioController::OnAudio, this))
 	{
 		m_onLButtonDBClick.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MAudioController::OnLButtonDBClick));
 		m_onRButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MAudioController::OnRButtonDown));
@@ -39,12 +40,14 @@ namespace MShow
 	BOOL MAudioController::Open(LPCSTR pzFile)
 	{
 		m_szFile = pzFile;
-		return FALSE;
+		SetWindowText(m_view.Handle(), m_szFile.STR());
+		m_view.Invalidate();
+		return TRUE;
 	}
 
 	BOOL MAudioController::Close()
 	{
-		return FALSE;
+		return TRUE;
 	}
 
 	TinyString	MAudioController::GetFile() const
@@ -58,7 +61,11 @@ namespace MShow
 		TinyFileDialog dlg(TRUE, NULL, "", OFN_HIDEREADONLY | OFN_READONLY | OFN_FILEMUSTEXIST, lpszFilter);
 		if (dlg.DoModal(m_view.Handle()) == IDOK)
 		{
-			m_szFile = dlg.GetPathName();
+			TinyString szFile = dlg.GetPathName();
+			if (!szFile.IsEmpty())
+			{
+				this->Open(szFile.STR());
+			}
 		}
 	}
 
@@ -68,6 +75,18 @@ namespace MShow
 		m_view.Invalidate();
 	}
 
+	void MAudioController::OnPlay()
+	{
+		if (!m_szFile.IsEmpty())
+		{
+			m_task.Submit(m_szFile.STR());
+		}
+	}
+
+	void MAudioController::OnAudio(BYTE* bits, LONG size)
+	{
+		EVENT_AUDIO(bits, size);
+	}
 
 	void MAudioController::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
@@ -80,7 +99,6 @@ namespace MShow
 	void MAudioController::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-
 	}
 
 	void MAudioController::OnMenuClick(void*, INT wID)
@@ -92,6 +110,9 @@ namespace MShow
 			break;
 		case 2:
 			OnRemove();
+			break;
+		case 3:
+			OnPlay();
 			break;
 		}
 	}

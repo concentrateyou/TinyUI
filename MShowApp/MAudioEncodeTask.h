@@ -9,6 +9,7 @@ using namespace DShow;
 namespace MShow
 {
 	class MVideoController;
+	class MAudioController;
 	/// <summary>
 	/// 采集声卡数据和音频编码
 	/// </summary>
@@ -24,7 +25,8 @@ namespace MShow
 		BOOL			Submit(INT audioRate = 128);
 		BOOL			Close(DWORD dwMS) OVERRIDE;
 		AACEncode&		GetAAC();
-		void			SetController(MVideoController* pCTRL);
+		void			SetVideoController(MVideoController* pCTRL);
+		void			SetAudioController(MAudioController* pCTRL);
 	private:
 		void OnMessagePump();
 		void OnAudio(BYTE* bits, LONG size);
@@ -35,7 +37,8 @@ namespace MShow
 		MRTMPPusher&			m_pusher;
 		WAVEFORMATEX			m_waveFMT;
 		AACEncode				m_aac;
-		MVideoController*		m_pCTRL;
+		MVideoController*		m_pVideoCTRL;
+		MAudioController*		m_pAudioCTRL;
 		MPacketQueue			m_queue;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG)>> m_onAudio;
 	};

@@ -17,7 +17,7 @@
 #include "Media/TinyWave.h"
 #include "Common/TinyHook.h"
 #include "Media/TinyMFMP3Decode.h"
-#include "MPG123Decode.h"
+#include "MP3Decode.h"
 #include "FLVParser.h"
 #include "Media/TinyMP3File.h"
 #include "Network/TinyHTTPRequest.h"

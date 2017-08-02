@@ -19,8 +19,8 @@ namespace TinyUI
 			LONG GetSize() const;
 			LONG GetBitRate() const;
 			LONGLONG GetDuration() const;
-			BOOL Create(LPTSTR pzFile, const MPEGLAYER3WAVEFORMAT* pMFT);
-			BOOL Open(LPTSTR pzFile);
+			BOOL Create(LPCSTR pzFile, const MPEGLAYER3WAVEFORMAT* pMFT);
+			BOOL Open(LPCSTR pzFile);
 			BOOL Read(BYTE* lpBuffer, LONG nNumberOfBytesToRead, LPLONG lpNumberOfBytesRead, LONGLONG& timestamp);
 			BOOL Write(BYTE* lpBuffer, LONG nNumberOfBytesToRead, LONGLONG duration);
 			BOOL ResetFile();

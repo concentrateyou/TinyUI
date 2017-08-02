@@ -27,9 +27,6 @@
     <ClInclude Include="AC3Decode.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MPG123Decode.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="AACDecode.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -60,15 +57,18 @@
     <ClInclude Include="HTTPStream.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MP3DecodeTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MP3Decode.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="AC3Decode.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MPG123Decode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="AACDecode.cpp">
@@ -99,6 +99,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="HTTPStream.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MP3DecodeTask.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MP3Decode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

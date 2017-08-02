@@ -3,6 +3,7 @@
 #include "MShowApp.h"
 #include "MShowController.h"
 #include "MVideoController.h"
+#include "MAudioController.h"
 #include "MPreviewController.h"
 #include "Media/TinyWASAPIAudio.h"
 
@@ -12,7 +13,8 @@ namespace MShow
 		:m_pusher(pusher),
 		m_aac(BindCallback(&MAudioEncodeTask::OnAAC, this)),
 		m_bBreak(FALSE),
-		m_pCTRL(NULL)
+		m_pVideoCTRL(NULL),
+		m_pAudioCTRL(NULL)
 	{
 		m_onAudio.Reset(new Delegate<void(BYTE*, LONG)>(this, &MAudioEncodeTask::OnAudio));
 	}
@@ -112,20 +114,35 @@ namespace MShow
 		return m_aac;
 	}
 
-	void MAudioEncodeTask::SetController(MVideoController* pCTRL)
+	void MAudioEncodeTask::SetVideoController(MVideoController* pCTRL)
 	{
-		if (m_pCTRL != pCTRL)
+		if (m_pVideoCTRL != pCTRL)
 		{
-			if (m_pCTRL != NULL)
+			if (m_pVideoCTRL != NULL)
 			{
-				m_pCTRL->EVENT_AUDIO -= m_onAudio;
+				m_pVideoCTRL->EVENT_AUDIO -= m_onAudio;
 			}
 			if (pCTRL != NULL)
 			{
 				pCTRL->AddElement();
 				pCTRL->EVENT_AUDIO += m_onAudio;
 			}
-			m_pCTRL = pCTRL;
+			m_pVideoCTRL = pCTRL;
+		}
+	}
+	void MAudioEncodeTask::SetAudioController(MAudioController* pCTRL)
+	{
+		if (m_pAudioCTRL != pCTRL)
+		{
+			if (m_pAudioCTRL != NULL)
+			{
+				m_pAudioCTRL->EVENT_AUDIO -= m_onAudio;
+			}
+			if (pCTRL != NULL)
+			{
+				pCTRL->EVENT_AUDIO += m_onAudio;
+			}
+			m_pAudioCTRL = pCTRL;
 		}
 	}
 }
