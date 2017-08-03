@@ -1,5 +1,5 @@
 #pragma once
-#include "MP3Decode.h"
+#include "MPG123Decode.h"
 #include "Media/TinyMP3File.h"
 #include "Common/TinyCallback.h"
 #include "IO/TinyTaskBase.h"
@@ -12,27 +12,26 @@ namespace Decode
 	/// <summary>
 	/// MP3解码成PCM并按AAC编码4096输出
 	/// </summary>
-	class MP3DecodeTask : public TinyTaskBase
+	class MP3Task : public TinyTaskBase
 	{
-		DISALLOW_COPY_AND_ASSIGN(MP3DecodeTask)
+		DISALLOW_COPY_AND_ASSIGN(MP3Task)
 	public:
-		MP3DecodeTask(TinyUI::Callback<void(BYTE*, LONG)>&& callback);
-		virtual ~MP3DecodeTask();
+		MP3Task();
+		virtual ~MP3Task();
 		BOOL Submit(LPCSTR pzFile);
 		BOOL Close(DWORD dwMS) OVERRIDE;
 		WAVEFORMATEX GetFormat() const;
+	public:
+		Event<void(BYTE*, LONG)>	EVENT_AUDIO;
 	private:
 		void OnMessagePump();
 		void OnMP3Audio(BYTE*, LONG, LPVOID);
 	private:
 		BOOL					m_bBreak;
-		MP3Decode				m_decode;
-		TinyMP3File				m_mp3File;
+		MPG123Decode			m_decode;
+		TinyMP3File				m_reader;
 		WAVEFORMATEX			m_waveFMT;
-		TinyScopedArray<BYTE>	m_residial;
-		TinyScopedArray<BYTE>	m_bits;
-		INT						m_offset;
-		TinyUI::Callback<void(BYTE*, LONG)>	m_callback;
+		TinyBufferArray<BYTE>	m_residial;
 	};
 }
 

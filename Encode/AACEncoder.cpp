@@ -1,9 +1,9 @@
 #include "stdafx.h"
-#include "AACEncode.h"
+#include "AACEncoder.h"
 
 namespace Encode
 {
-	AACEncode::AACEncode(Callback<void(BYTE*, LONG, const MediaTag&)>&& callback)
+	AACEncoder::AACEncoder(Callback<void(BYTE*, LONG, const MediaTag&)>&& callback)
 		:m_inputSamples(0),
 		m_maxOutputBytes(0),
 		m_dwPTS(0),
@@ -12,12 +12,12 @@ namespace Encode
 	{
 	}
 
-	AACEncode::~AACEncode()
+	AACEncoder::~AACEncoder()
 	{
 
 	}
 
-	BOOL AACEncode::GetSpecificInfo(vector<BYTE>& info)
+	BOOL AACEncoder::GetSpecificInfo(vector<BYTE>& info)
 	{
 		BYTE* buffer = NULL;
 		ULONG size = 0;
@@ -32,17 +32,17 @@ namespace Encode
 		return TRUE;
 	}
 
-	DWORD AACEncode::GetOutputBytes() const
+	DWORD AACEncoder::GetOutputBytes() const
 	{
 		return m_maxOutputBytes;
 	}
 
-	DWORD AACEncode::GetFPS() const
+	DWORD AACEncoder::GetFPS() const
 	{
 		return m_dwPTS;
 	}
 
-	BOOL AACEncode::Open(const WAVEFORMATEX& waveFMT, INT audioRate)
+	BOOL AACEncoder::Open(const WAVEFORMATEX& waveFMT, INT audioRate)
 	{
 		Close();
 		m_waveFMT = waveFMT;
@@ -80,7 +80,7 @@ namespace Encode
 		m_bits.Reset(new BYTE[m_maxOutputBytes]);
 		return TRUE;
 	}
-	BOOL AACEncode::Encode(BYTE* bits, LONG size)
+	BOOL AACEncoder::Encode(BYTE* bits, LONG size)
 	{
 		if (!m_aac || !bits || size == 0)
 			return FALSE;
@@ -88,12 +88,11 @@ namespace Encode
 		if (s > 0)
 		{
 			Media::MediaTag tag;
-			ZeroMemory(&tag, sizeof(tag));
 			tag.PTS = m_dwPTS;
 			tag.DTS = 0;
 			tag.INC = ++m_dwINC;
 			tag.dwType = 1;
-			tag.dwTime = static_cast<DWORD>(tag.INC * tag.PTS);
+			tag.dwTime = timeGetTime();
 			tag.dwFlag = 0;
 			if (!m_callback.IsNull())
 			{
@@ -103,7 +102,7 @@ namespace Encode
 		}
 		return FALSE;
 	}
-	void AACEncode::Close()
+	void AACEncoder::Close()
 	{
 		if (m_aac != NULL)
 		{

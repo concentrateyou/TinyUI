@@ -30,6 +30,7 @@ namespace MShow
 	private:
 		void OnMessagePump();
 		void OnAudio(BYTE* bits, LONG size);
+		void OnEffectAudio(BYTE* bits, LONG size);
 		void OnAAC(BYTE*, LONG, const MediaTag&);
 	private:
 		BOOL					m_bBreak;
@@ -37,9 +38,11 @@ namespace MShow
 		MRTMPPusher&			m_pusher;
 		WAVEFORMATEX			m_waveFMT;
 		AACEncode				m_aac;
+		MPacketQueue			m_queue;
+		MPacketQueue			m_effectQueue;
 		MVideoController*		m_pVideoCTRL;
 		MAudioController*		m_pAudioCTRL;
-		MPacketQueue			m_queue;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG)>> m_onAudio;
+		TinyScopedPtr<Delegate<void(BYTE*, LONG)>> m_onEffectAudio;
 	};
 }

@@ -1,7 +1,7 @@
 #pragma once
 #include "Common.h"
 #include "AACDecode.h"
-#include "MP3Decode.h"
+#include "MPG123Decode.h"
 #include "x264Decode.h"
 #include <vector>
 

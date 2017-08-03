@@ -8,13 +8,13 @@ namespace Decode
 #define MPG123_INBUFFER_SIZE  16384
 #define MPG123_OUTBUFFER_SIZE 32768
 	/// <summary>
-	/// MP3½âÂë
+	/// MPG123½âÂë
 	/// </summary>
-	class MP3Decode
+	class MPG123Decode
 	{
 	public:
-		MP3Decode();
-		virtual ~MP3Decode();
+		MPG123Decode();
+		virtual ~MPG123Decode();
 	public:
 		BOOL Initialize(Callback<void(BYTE*, LONG, LPVOID)>&& callback);
 		BOOL Open();

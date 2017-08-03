@@ -1,7 +1,7 @@
 #pragma once
 #include "Control/TinyMenu.h"
 #include "MAudioView.h"
-#include "MP3DecodeTask.h"
+#include "MP3Task.h"
 using namespace DXFramework;
 using namespace Decode;
 using namespace TinyUI::Media;
@@ -37,8 +37,9 @@ namespace MShow
 		TinyString		m_szFile;
 		TinyMenu		m_popup;
 		MAudioView&		m_view;
-		MP3DecodeTask	m_task;
+		MP3Task			m_task;
 	private:
+		TinyScopedPtr<Delegate<void(BYTE*, LONG)>>					m_onAudio;
 		TinyScopedPtr<Delegate<void(void*, INT)>>					m_onMenuClick;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>>	m_onLButtonDBClick;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>>	m_onRButtonDown;

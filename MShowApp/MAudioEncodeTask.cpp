@@ -17,6 +17,7 @@ namespace MShow
 		m_pAudioCTRL(NULL)
 	{
 		m_onAudio.Reset(new Delegate<void(BYTE*, LONG)>(this, &MAudioEncodeTask::OnAudio));
+		m_onEffectAudio.Reset(new Delegate<void(BYTE*, LONG)>(this, &MAudioEncodeTask::OnEffectAudio));
 	}
 
 	MAudioEncodeTask::~MAudioEncodeTask()
@@ -78,6 +79,16 @@ namespace MShow
 		m_queue.Push(sampleTag);
 	}
 
+	void MAudioEncodeTask::OnEffectAudio(BYTE* bits, LONG size)
+	{
+		SampleTag sampleTag;
+		ZeroMemory(&sampleTag, sizeof(sampleTag));
+		sampleTag.bits = new BYTE[size];
+		sampleTag.size = size;
+		memcpy_s(sampleTag.bits, size, bits, size);
+		m_effectQueue.Push(sampleTag);
+	}
+
 	void MAudioEncodeTask::OnAAC(BYTE* bits, LONG size, const MediaTag& tag)
 	{
 		if (tag.INC == 1)
@@ -94,7 +105,6 @@ namespace MShow
 			sample.size = size;
 			sample.bits = new BYTE[size];
 			memcpy(sample.bits, bits, size);
-			sample.mediaTag.dwTime = static_cast<DWORD>(tag.INC * sample.mediaTag.PTS);
 			m_pusher.Publish(sample);
 		}
 	}
@@ -136,13 +146,14 @@ namespace MShow
 		{
 			if (m_pAudioCTRL != NULL)
 			{
-				m_pAudioCTRL->EVENT_AUDIO -= m_onAudio;
+				m_pAudioCTRL->EVENT_AUDIO -= m_onEffectAudio;
 			}
 			if (pCTRL != NULL)
 			{
-				pCTRL->EVENT_AUDIO += m_onAudio;
+				pCTRL->EVENT_AUDIO += m_onEffectAudio;
 			}
 			m_pAudioCTRL = pCTRL;
+			m_effectQueue.RemoveAll();
 		}
 	}
 }

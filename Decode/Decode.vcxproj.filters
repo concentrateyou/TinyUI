@@ -57,10 +57,10 @@
     <ClInclude Include="HTTPStream.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MP3DecodeTask.h">
+    <ClInclude Include="MPG123Decode.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MP3Decode.h">
+    <ClInclude Include="MP3Task.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -101,10 +101,10 @@
     <ClCompile Include="HTTPStream.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MP3DecodeTask.cpp">
+    <ClCompile Include="MPG123Decode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MP3Decode.cpp">
+    <ClCompile Include="MP3Task.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
