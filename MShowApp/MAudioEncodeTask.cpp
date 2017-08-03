@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "MAudioEncodeTask.h"
+#include "AudioMixer.h"
 #include "MShowApp.h"
 #include "MShowController.h"
 #include "MVideoController.h"
@@ -17,7 +18,7 @@ namespace MShow
 		m_pAudioCTRL(NULL)
 	{
 		m_onAudio.Reset(new Delegate<void(BYTE*, LONG)>(this, &MAudioEncodeTask::OnAudio));
-		m_onEffectAudio.Reset(new Delegate<void(BYTE*, LONG)>(this, &MAudioEncodeTask::OnEffectAudio));
+		m_onEffectAudio.Reset(new Delegate<void(BYTE*, LONG)>(this, &MAudioEncodeTask::OnAudio1));
 	}
 
 	MAudioEncodeTask::~MAudioEncodeTask()
@@ -71,22 +72,35 @@ namespace MShow
 
 	void MAudioEncodeTask::OnAudio(BYTE* bits, LONG size)
 	{
+		BYTE* output = new BYTE[size];
+		if (m_queue1.GetSize() > 0)
+		{
+			TRACE("»ìÒô\n");
+			SampleTag sampleTag = { 0 };
+			if (m_queue1.Pop(sampleTag))
+			{
+				AudioMixer::Mix(bits, sampleTag.bits, size, output);
+			}
+		}
+		else
+		{
+			memcpy_s(output, size, bits, size);
+		}
 		SampleTag sampleTag;
 		ZeroMemory(&sampleTag, sizeof(sampleTag));
-		sampleTag.bits = new BYTE[size];
+		sampleTag.bits = output;
 		sampleTag.size = size;
-		memcpy_s(sampleTag.bits, size, bits, size);
 		m_queue.Push(sampleTag);
 	}
 
-	void MAudioEncodeTask::OnEffectAudio(BYTE* bits, LONG size)
+	void MAudioEncodeTask::OnAudio1(BYTE* bits, LONG size)
 	{
 		SampleTag sampleTag;
 		ZeroMemory(&sampleTag, sizeof(sampleTag));
 		sampleTag.bits = new BYTE[size];
 		sampleTag.size = size;
 		memcpy_s(sampleTag.bits, size, bits, size);
-		m_effectQueue.Push(sampleTag);
+		m_queue1.Push(sampleTag);
 	}
 
 	void MAudioEncodeTask::OnAAC(BYTE* bits, LONG size, const MediaTag& tag)
@@ -153,7 +167,7 @@ namespace MShow
 				pCTRL->EVENT_AUDIO += m_onEffectAudio;
 			}
 			m_pAudioCTRL = pCTRL;
-			m_effectQueue.RemoveAll();
+			m_queue1.RemoveAll();
 		}
 	}
 }
