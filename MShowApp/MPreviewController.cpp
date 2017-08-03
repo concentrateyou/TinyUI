@@ -100,19 +100,20 @@ namespace MShow
 		if (bUp)
 		{
 			INT index = m_array.Lookup(ps);
-			if (index > 0)
-			{
-				bRes &= m_array.Remove(ps);
-				bRes &= m_array.Insert(index - 1, ps);
-			}
-		}
-		else
-		{
-			INT index = m_array.Lookup(ps);
 			if (index >= 0 && index < (m_array.GetSize() - 1))
 			{
 				bRes &= m_array.Remove(ps);
 				bRes &= m_array.Insert(index + 1, ps);
+			}
+
+		}
+		else
+		{
+			INT index = m_array.Lookup(ps);
+			if (index > 0)
+			{
+				bRes &= m_array.Remove(ps);
+				bRes &= m_array.Insert(index - 1, ps);
 			}
 		}
 		return bRes;
@@ -125,18 +126,14 @@ namespace MShow
 		INT index = m_array.Lookup(ps);
 		if (index >= 0)
 		{
-			if (bTop && index == 0)
-			{
-				return TRUE;
-			}
 			m_array.Remove(ps);
 			if (bTop)
 			{
-				bRes &= m_array.Insert(0, ps);
+				bRes &= m_array.Add(ps);
 			}
 			else
 			{
-				bRes &= m_array.Add(ps);
+				bRes &= m_array.Insert(0, ps);
 			}
 		}
 		return bRes;
@@ -148,7 +145,7 @@ namespace MShow
 	}
 	DX11Element2D* MPreviewController::HitTest(const TinyPoint& pos)
 	{
-		for (INT i = 0;i < m_array.GetSize();i++)
+		for (INT i = m_array.GetSize() - 1;i >= 0;i--)
 		{
 			if (m_array[i]->PtInRect(pos))
 			{
@@ -313,6 +310,7 @@ namespace MShow
 		m_time.BeginTime();
 		m_graphics.GetDX11().SetRenderTexture2D(&m_renderView);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();
+		TinyArray<DX11Element2D*> images;
 		for (INT i = m_array.GetSize() - 1;i >= 0;i--)
 		{
 			DX11Element2D* ps = m_array[i];
@@ -321,18 +319,26 @@ namespace MShow
 				DX11Image2D* image = static_cast<DX11Image2D*>(ps);
 				if (ps->IsKindOf(RUNTIME_CLASS(MImageElement)))
 				{
-					FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-					m_graphics.GetDX11().AllowBlend(TRUE, blendFactor);
-					m_graphics.GetDX11().AllowDepth(FALSE);
-					m_graphics.DrawImage(image, (FLOAT)((FLOAT)m_pulgSize.cx / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cx)), (FLOAT)((FLOAT)m_pulgSize.cy / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cy)));
+					images.Add(image);
 				}
 				if (ps->IsKindOf(RUNTIME_CLASS(MVideoElement)))
 				{
-					FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-					m_graphics.GetDX11().AllowBlend(FALSE, blendFactor);
+					m_graphics.GetDX11().AllowBlend(FALSE, NULL);
 					m_graphics.GetDX11().AllowDepth(TRUE);
 					m_graphics.DrawImage(image, (FLOAT)((FLOAT)m_pulgSize.cx / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cx)), (FLOAT)((FLOAT)m_pulgSize.cy / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cy)));
 				}
+			}
+		}
+		for (INT i = images.GetSize() - 1;i >= 0;i--)
+		{
+			DX11Element2D* ps = images[i];
+			if (ps->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
+			{
+				DX11Image2D* image = static_cast<DX11Image2D*>(ps);
+				FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+				m_graphics.GetDX11().AllowBlend(TRUE, blendFactor);
+				m_graphics.GetDX11().AllowDepth(FALSE);
+				m_graphics.DrawImage(image, (FLOAT)((FLOAT)m_pulgSize.cx / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cx)), (FLOAT)((FLOAT)m_pulgSize.cy / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cy)));
 			}
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
@@ -346,17 +352,9 @@ namespace MShow
 			if (p2D->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
 			{
 				DX11Image2D* image = static_cast<DX11Image2D*>(p2D);
-				if (p2D->IsKindOf(RUNTIME_CLASS(MImageElement)))
-				{
-					FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-					m_graphics.GetDX11().AllowBlend(TRUE, blendFactor);
-					m_graphics.GetDX11().AllowDepth(FALSE);
-					m_graphics.DrawImage(image);
-				}
 				if (p2D->IsKindOf(RUNTIME_CLASS(MVideoElement)))
 				{
-					FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-					m_graphics.GetDX11().AllowBlend(FALSE, blendFactor);
+					m_graphics.GetDX11().AllowBlend(FALSE, NULL);
 					m_graphics.GetDX11().AllowDepth(TRUE);
 					m_graphics.DrawImage(image);
 				}
@@ -366,11 +364,26 @@ namespace MShow
 				index = i;
 			}
 		}
+		for (INT i = images.GetSize() - 1;i >= 0;i--)
+		{
+			DX11Element2D* ps = images[i];
+			if (ps->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
+			{
+				DX11Image2D* image = static_cast<DX11Image2D*>(ps);
+				FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+				m_graphics.GetDX11().AllowBlend(TRUE, blendFactor);
+				m_graphics.GetDX11().AllowDepth(FALSE);
+				m_graphics.DrawImage(image);
+			}
+		}
 		if (index >= 0)
 		{
 			DX11Element2D* p2D = m_array[index];
 			if (p2D->IsKindOf(RUNTIME_CLASS(DX11Image2D)))
 			{
+				FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+				m_graphics.GetDX11().AllowBlend(TRUE, blendFactor);
+				m_graphics.GetDX11().AllowDepth(FALSE);
 				DX11Image2D* image = static_cast<DX11Image2D*>(p2D);
 				UINT mask = image->GetHandleMask();
 				for (INT i = 0; i < 8; ++i)
@@ -381,9 +394,6 @@ namespace MShow
 						image->GetHandleRect((TrackerHit)i, &rectangle);
 						m_handles[i].SetPosition(rectangle.Position());
 						m_handles[i].SetScale(rectangle.Size());
-						FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-						m_graphics.GetDX11().AllowBlend(TRUE, blendFactor);
-						m_graphics.GetDX11().AllowDepth(FALSE);
 						m_graphics.DrawImage(&m_handles[i]);
 					}
 				}

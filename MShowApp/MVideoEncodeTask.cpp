@@ -93,7 +93,6 @@ namespace MShow
 						memcpy(sample.bits, bo, so);
 						m_pusher.Publish(sample);
 					}
-
 				}
 			}
 			time.EndTime();

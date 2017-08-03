@@ -14,7 +14,7 @@ namespace DXFramework
 		BOOL Initialize(HWND hWND, INT cx, INT cy);
 		BOOL ResizeView(INT cx = 0, INT cy = 0);
 		BOOL SetViewport(const TinyPoint& pos, const TinySize& size);
-		void AllowBlend(BOOL bAllow, FLOAT(&blendFactor)[4]);
+		void AllowBlend(BOOL bAllow, FLOAT blendFactor[4]);
 		void AllowDepth(BOOL bAllow);
 		void SetRenderTexture2D(DX11RenderView* render2D);
 		void SetMatrixs(const TinySize& size);

@@ -47,7 +47,7 @@ namespace MShow
 		void	OnMessagePump();
 	private:
 		DWORD			Draw();
-		DX11Element2D*	HitTest(const TinyPoint& pos);
+		DX11Element2D*	HitTest(const TinyPoint& pos);//м╪ф╛сеох
 	private:
 		BOOL							m_bTracking;
 		BOOL							m_bBreak;

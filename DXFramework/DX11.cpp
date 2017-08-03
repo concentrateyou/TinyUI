@@ -113,7 +113,7 @@ namespace DXFramework
 			blenddesc.RenderTarget[i].SrcBlend = D3D11_BLEND_SRC_ALPHA;
 			blenddesc.RenderTarget[i].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 			blenddesc.RenderTarget[i].BlendOp = D3D11_BLEND_OP_ADD;
-			blenddesc.RenderTarget[i].SrcBlendAlpha = D3D11_BLEND_ONE;
+			blenddesc.RenderTarget[i].SrcBlendAlpha = D3D11_BLEND_ZERO;
 			blenddesc.RenderTarget[i].DestBlendAlpha = D3D11_BLEND_ONE;
 			blenddesc.RenderTarget[i].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 			blenddesc.RenderTarget[i].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
@@ -133,7 +133,7 @@ namespace DXFramework
 		this->SetMatrixs(m_background2D->GetSize());
 		return TRUE;
 	}
-	void DX11::AllowBlend(BOOL bAllow, FLOAT(&blendFactor)[4])
+	void DX11::AllowBlend(BOOL bAllow, FLOAT blendFactor[4])
 	{
 		m_immediateContext->OMSetBlendState(bAllow ? m_enableBlendState : m_disableBlendState, blendFactor, 0xFFFFFFFF);
 	}
