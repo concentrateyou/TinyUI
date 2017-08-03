@@ -480,7 +480,7 @@ namespace QSV
 		m_mfxVideoParam.AsyncDepth = 4;
 		m_mfxVideoParam.IOPattern = MFX_IOPATTERN_IN_VIDEO_MEMORY;
 		m_mfxVideoParam.mfx.GopRefDist = 1;// I帧或P帧之间的距离
-		m_mfxVideoParam.mfx.GopPicSize = 1 + 3;//每秒I帧个数
+		m_mfxVideoParam.mfx.GopPicSize = 75;//每秒I帧个数
 		m_mfxVideoParam.mfx.NumRefFrame = 0;
 		m_mfxVideoParam.mfx.IdrInterval = 0;
 		m_mfxVideoParam.mfx.CodecProfile = 0;
@@ -490,7 +490,7 @@ namespace QSV
 		m_mfxVideoParam.mfx.GopOptFlag = 0;
 		m_mfxVideoParam.mfx.BufferSizeInKB = 0;
 		m_mfxVideoParam.mfx.EncodedOrder = 0;
-		m_mfxVideoParam.mfx.NumSlice = 1;
+		m_mfxVideoParam.mfx.NumSlice = 0;
 		m_mfxVideoParam.mfx.CodecId = MFX_CODEC_AVC;
 		m_mfxVideoParam.mfx.TargetUsage = MFX_TARGETUSAGE_BALANCED;
 		m_mfxVideoParam.mfx.TargetKbps = static_cast<mfxU16>(dwBitRate);
@@ -506,6 +506,10 @@ namespace QSV
 		m_mfxVideoParam.mfx.FrameInfo.CropH = static_cast<mfxU16>(dest.cy);
 		m_mfxVideoParam.mfx.FrameInfo.FrameRateExtN = static_cast<mfxU32>(dwFrameRate);
 		m_mfxVideoParam.mfx.FrameInfo.FrameRateExtD = 1;
+		m_mfxVideoParam.mfx.FrameInfo.AspectRatioH = 1;
+		m_mfxVideoParam.mfx.FrameInfo.AspectRatioW = 1;
+		m_mfxVideoParam.mfx.FrameInfo.BitDepthLuma = 8;
+		m_mfxVideoParam.mfx.FrameInfo.BitDepthChroma = 8;
 		status = m_mfxVideoENCODE->Query(&m_mfxVideoParam, &m_mfxVideoParam);
 		if (status != MFX_ERR_NONE)
 			return status;

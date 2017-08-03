@@ -90,7 +90,7 @@ namespace Encode
 			Media::MediaTag tag;
 			ZeroMemory(&tag, sizeof(tag));
 			tag.PTS = m_dwPTS;
-			tag.DTS = 0;
+			tag.DTS = m_dwPTS;
 			tag.INC = ++m_dwINC;
 			tag.dwType = 1;
 			tag.dwTime = static_cast<DWORD>(tag.INC * tag.PTS);

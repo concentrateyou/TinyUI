@@ -51,7 +51,7 @@ namespace MShow
 			BOOL bRes = m_queue.Pop(sampleTag);
 			if (!bRes || sampleTag.size <= 0)
 			{
-				Sleep(15);
+				Sleep(3);
 				continue;
 			}
 			m_aac.Encode(sampleTag.bits, sampleTag.size);
@@ -75,7 +75,6 @@ namespace MShow
 		BYTE* output = new BYTE[size];
 		if (m_queue1.GetSize() > 0)
 		{
-			TRACE("ªÏ“Ù\n");
 			SampleTag sampleTag = { 0 };
 			if (m_queue1.Pop(sampleTag))
 			{
@@ -109,16 +108,17 @@ namespace MShow
 		{
 			if (MShowApp::Instance().GetController().GetBaseTime() == -1)
 			{
-				MShowApp::Instance().GetController().SetBaseTime(0);
+				MShowApp::Instance().GetController().SetBaseTime(timeGetTime());
 			}
 		}
-		if (MShowApp::Instance().GetController().GetBaseTime() == 0)
+		if (MShowApp::Instance().GetController().GetBaseTime() != -1)
 		{
 			Sample sample;
 			memcpy(&sample.mediaTag, &tag, sizeof(tag));
 			sample.size = size;
 			sample.bits = new BYTE[size];
 			memcpy(sample.bits, bits, size);
+			TRACE("Audio Time:%d, Current:%d\n", sample.mediaTag.dwTime, static_cast<DWORD>(timeGetTime() - MShowApp::Instance().GetController().GetBaseTime()));
 			m_pusher.Publish(sample);
 		}
 	}
@@ -140,16 +140,18 @@ namespace MShow
 
 	void MAudioEncodeTask::SetVideoController(MVideoController* pCTRL)
 	{
+		TRACE("SetVideoController\n");
 		if (m_pVideoCTRL != pCTRL)
 		{
-			if (m_pVideoCTRL != NULL)
-			{
-				m_pVideoCTRL->EVENT_AUDIO -= m_onAudio;
-			}
 			if (pCTRL != NULL)
 			{
 				pCTRL->AddElement();
 				pCTRL->EVENT_AUDIO += m_onAudio;
+			}
+			Sleep(1);
+			if (m_pVideoCTRL != NULL)
+			{
+				m_pVideoCTRL->EVENT_AUDIO -= m_onAudio;
 			}
 			m_pVideoCTRL = pCTRL;
 		}
@@ -158,13 +160,14 @@ namespace MShow
 	{
 		if (m_pAudioCTRL != pCTRL)
 		{
-			if (m_pAudioCTRL != NULL)
-			{
-				m_pAudioCTRL->EVENT_AUDIO -= m_onEffectAudio;
-			}
 			if (pCTRL != NULL)
 			{
 				pCTRL->EVENT_AUDIO += m_onEffectAudio;
+			}
+			Sleep(1);
+			if (m_pAudioCTRL != NULL)
+			{
+				m_pAudioCTRL->EVENT_AUDIO -= m_onEffectAudio;
 			}
 			m_pAudioCTRL = pCTRL;
 			m_queue1.RemoveAll();

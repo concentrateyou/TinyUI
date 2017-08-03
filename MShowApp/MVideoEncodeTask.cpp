@@ -50,6 +50,7 @@ namespace MShow
 		{
 			if (m_bBreak)
 				break;
+			Sample sample = { 0 };
 			time.BeginTime();
 			m_copy2D.Copy(m_dx11, m_image2D);
 			BYTE* bits = NULL;
@@ -80,14 +81,14 @@ namespace MShow
 					{
 						if (MShowApp::Instance().GetController().GetBaseTime() == -1)
 						{
-							MShowApp::Instance().GetController().SetBaseTime(0);
+							MShowApp::Instance().GetController().SetBaseTime(timeGetTime());
 						}
 					}
-					if (MShowApp::Instance().GetController().GetBaseTime() == 0)
+					if (MShowApp::Instance().GetController().GetBaseTime() != -1)
 					{
-						Sample sample = { 0 };
 						memcpy(&sample.mediaTag, &tag, sizeof(tag));
-						sample.mediaTag.dwTime = static_cast<DWORD>(tag.DTS > 0 ? tag.DTS * 1000 / 90000 : 0);
+						sample.mediaTag.dwTime = static_cast<DWORD>(tag.DTS > 0 ? tag.DTS * 1000 / 90000 : 0);;
+						TRACE("Video Time:%d, Current:%d\n", sample.mediaTag.dwTime, static_cast<DWORD>(timeGetTime() - MShowApp::Instance().GetController().GetBaseTime()));
 						sample.size = so;
 						sample.bits = new BYTE[so];
 						memcpy(sample.bits, bo, so);
