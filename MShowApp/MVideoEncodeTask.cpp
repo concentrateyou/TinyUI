@@ -43,13 +43,12 @@ namespace MShow
 		return TinyTaskBase::Submit(BindCallback(&MVideoEncodeTask::OnMessagePump, this));
 	}
 
-	DWORD g_s = 0;
-
 	void MVideoEncodeTask::OnMessagePump()
 	{
 		BOOL bFirst = FALSE;
 		DWORD dwMS = static_cast<DWORD>(1000 / m_videoFPS);
 		Sample sample;
+		DWORD dwTime = timeGetTime();
 		for (;;)
 		{
 			if (m_bBreak)
@@ -57,18 +56,28 @@ namespace MShow
 			if (m_clock.GetBaseTime() == -1)
 				continue;
 			DWORD dwCost = Encode(sample);
+			if (dwCost > dwMS)
+			{
+				//TRACE("Over:%d\n", dwCost - dwMS);
+			}
 			INT delay = dwMS - dwCost;
 			Sleep(delay < 0 ? 0 : delay);
+			if (sample.size > 0)
+			{
+				m_samples.Push(sample);
+			}
 		}
 	}
 
 	DWORD MVideoEncodeTask::Encode(Sample& sample)
 	{
-		m_timer.BeginTime();
 		ZeroMemory(&sample, sizeof(sample));
+		m_timer.BeginTime();
 		m_copy2D.Copy(m_dx11, m_image2D);
 		BYTE* bits = NULL;
 		UINT pitch = 0;
+		TinyPerformanceTimer ps;
+		ps.BeginTime();
 		if (m_copy2D.Map(m_dx11, bits, pitch, TRUE))
 		{
 			DWORD dwSize = pitch * m_pulgSize.cy;
@@ -79,6 +88,11 @@ namespace MShow
 			}
 			memcpy_s(m_videoBits, m_videoSize, bits, m_videoSize);
 			m_copy2D.Unmap(m_dx11);
+		}
+		ps.EndTime();
+		if ((DWORD)ps.GetMillisconds() >= 40)
+		{
+			TRACE("Map:%d\n", (DWORD)ps.GetMillisconds());
 		}
 		if (m_videoBits != NULL)
 		{
@@ -94,7 +108,6 @@ namespace MShow
 				sample.size = so;
 				sample.bits = new BYTE[so];
 				memcpy(sample.bits, bo, so);
-				m_samples.Push(sample);
 			}
 		}
 		m_timer.EndTime();
