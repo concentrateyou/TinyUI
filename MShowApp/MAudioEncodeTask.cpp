@@ -12,7 +12,6 @@ namespace MShow
 {
 	MAudioEncodeTask::MAudioEncodeTask(MRTMPPusher& pusher)
 		:m_pusher(pusher),
-		m_aac(BindCallback(&MAudioEncodeTask::OnAAC, this)),
 		m_bBreak(FALSE),
 		m_pVideoCTRL(NULL),
 		m_pAudioCTRL(NULL)
@@ -42,11 +41,13 @@ namespace MShow
 
 	void MAudioEncodeTask::OnMessagePump()
 	{
+		Sample sample;
 		SampleTag sampleTag;
 		for (;;)
 		{
 			if (m_bBreak)
 				break;
+
 			ZeroMemory(&sampleTag, sizeof(sampleTag));
 			BOOL bRes = m_queue.Pop(sampleTag);
 			if (!bRes || sampleTag.size <= 0)
@@ -54,7 +55,26 @@ namespace MShow
 				Sleep(3);
 				continue;
 			}
-			m_aac.Encode(sampleTag.bits, sampleTag.size);
+			BYTE* bo = NULL;
+			LONG  so = 0;
+			ZeroMemory(&sample, sizeof(sample));
+			if (m_aac.Encode(sampleTag.bits, sampleTag.size, bo, so, sample.mediaTag))
+			{
+				if (sample.mediaTag.INC == 1)
+				{
+					if (MShowApp::Instance().GetController().GetBaseTime() == -1)
+					{
+						MShowApp::Instance().GetController().SetBaseTime(timeGetTime());
+					}
+				}
+				if (MShowApp::Instance().GetController().GetBaseTime() != -1)
+				{
+					sample.size = so;
+					sample.bits = new BYTE[so];
+					memcpy(sample.bits, bo, so);
+					m_pusher.Publish(sample);
+				}
+			}
 			SAFE_DELETE_ARRAY(sampleTag.bits);
 		}
 	}
@@ -100,27 +120,6 @@ namespace MShow
 		sampleTag.size = size;
 		memcpy_s(sampleTag.bits, size, bits, size);
 		m_queue1.Push(sampleTag);
-	}
-
-	void MAudioEncodeTask::OnAAC(BYTE* bits, LONG size, const MediaTag& tag)
-	{
-		if (tag.INC == 1)
-		{
-			if (MShowApp::Instance().GetController().GetBaseTime() == -1)
-			{
-				MShowApp::Instance().GetController().SetBaseTime(timeGetTime());
-			}
-		}
-		if (MShowApp::Instance().GetController().GetBaseTime() != -1)
-		{
-			Sample sample;
-			memcpy(&sample.mediaTag, &tag, sizeof(tag));
-			sample.size = size;
-			sample.bits = new BYTE[size];
-			memcpy(sample.bits, bits, size);
-			TRACE("Audio Time:%d, Current:%d\n", sample.mediaTag.dwTime, static_cast<DWORD>(timeGetTime() - MShowApp::Instance().GetController().GetBaseTime()));
-			m_pusher.Publish(sample);
-		}
 	}
 
 	INT	MAudioEncodeTask::GetAudioRate() const

@@ -89,13 +89,12 @@ namespace MShow
 						sample.size = so;
 						sample.bits = new BYTE[so];
 						memcpy(sample.bits, bo, so);
-						m_pusher.Add(sample);
+						m_pusher.Publish(sample);
 					}
 				}
 			}
 			time.EndTime();
 			INT delay = dwMS - static_cast<DWORD>(time.GetMillisconds());
-			TRACE("Encode Delay:%d\n", delay);
 			Sleep(delay < 0 ? 0 : delay);
 		}
 	}

@@ -40,10 +40,10 @@ namespace MShow
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
 		TinyString GetURL() const;
+		void Publish(Sample& sample);
 		void Add(Sample& sample);
 	private:
 		void OnMessagePump();
-		void Publish(Sample& sample);
 	private:
 		BOOL			m_bClose;
 		DWORD			m_dwRate;

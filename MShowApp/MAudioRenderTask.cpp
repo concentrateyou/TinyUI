@@ -86,8 +86,7 @@ namespace MShow
 			if (!m_bInitialize)
 			{
 				m_bInitialize = TRUE;
-				TinyPerformanceTimer timer;
-				timer.BeginTime();
+				m_timer.BeginTime();
 				if (!m_player.SetFormat(m_task.GetFormat(), tag.size * 3))
 					break;
 				m_player.SetVolume(-10000);
@@ -99,24 +98,28 @@ namespace MShow
 				vals[2].dwOffset = tag.size * 3 - 1;
 				vals[2].hEventNotify = m_events[2];
 				m_player.SetNotifys(3, vals);
-				timer.EndTime();
-				m_clock.AddBaseTime(static_cast<DWORD>(timer.GetMillisconds()));
+				m_timer.EndTime();
+				m_clock.AddBaseTime(static_cast<DWORD>(m_timer.GetMillisconds()));
 				LONGLONG ms = timeGetTime() - m_clock.GetBaseTime();
 				LONG delay = static_cast<LONG>(tag.samplePTS - ms);
 				Sleep(delay < 0 ? 0 : delay);
 				if (tag.size != 4096)
 				{
+					if (!m_callback.IsNull())
+					{
+						m_callback(tag.bits + 4, tag.size);
+					}
 					m_player.Fill(tag.bits + 4, tag.size, dwOffset);
 				}
 				m_player.Play();
 			}
 			else
 			{
+				if (!m_callback.IsNull())
+				{
+					m_callback(tag.bits + 4, tag.size);
+				}
 				m_player.Fill(tag.bits + 4, tag.size, dwOffset);
-			}
-			if (!m_callback.IsNull())
-			{
-				m_callback(tag.bits + 4, tag.size);
 			}
 			m_task.GetAudioQueue().Free(tag.bits);
 			HANDLE handles[3] = { m_events[0],m_events[1],m_events[2] };
