@@ -29,9 +29,8 @@ namespace MShow
 		void			SetAudioController(MAudioController* pCTRL);
 	private:
 		void OnMessagePump();
-		void OnAudio(BYTE* bits, LONG size);
-		void OnAudio1(BYTE* bits, LONG size);
-		void OnAAC(BYTE*, LONG, const MediaTag&);
+		void OnAudioPCM(BYTE* bits, LONG size);
+		void OnAudioTrack(BYTE* bits, LONG size);
 	private:
 		BOOL					m_bBreak;
 		INT						m_audioRate;
@@ -39,7 +38,6 @@ namespace MShow
 		WAVEFORMATEX			m_waveFMT;
 		AACEncode				m_aac;
 		MPacketQueue			m_queue;
-		MPacketQueue			m_queue1;
 		MVideoController*		m_pVideoCTRL;
 		MAudioController*		m_pAudioCTRL;
 		TinyPerformanceTimer	m_timer;

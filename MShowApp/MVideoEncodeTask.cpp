@@ -50,7 +50,6 @@ namespace MShow
 		{
 			if (m_bBreak)
 				break;
-			Sample sample = { 0 };
 			time.BeginTime();
 			m_copy2D.Copy(m_dx11, m_image2D);
 			BYTE* bits = NULL;
@@ -74,30 +73,29 @@ namespace MShow
 				sampleTag.sampleDTS = sampleTag.samplePTS = (m_videoINC++) * 90000 / m_videoFPS;
 				BYTE* bo = NULL;
 				LONG  so = 0;
-				MediaTag tag = { 0 };
-				if (m_encoder.Encode(sampleTag, bo, so, tag))
+				Sample sample;
+				ZeroMemory(&sample, sizeof(sample));
+				if (m_encoder.Encode(sampleTag, bo, so, sample.mediaTag))
 				{
-					if (tag.INC == 1)
+					if (sample.mediaTag.INC == 1)
 					{
 						if (MShowApp::Instance().GetController().GetBaseTime() == -1)
 						{
-							MShowApp::Instance().GetController().SetBaseTime(timeGetTime());
+							MShowApp::Instance().GetController().SetBaseTime(sample.mediaTag.dwTime);
 						}
 					}
 					if (MShowApp::Instance().GetController().GetBaseTime() != -1)
 					{
-						memcpy(&sample.mediaTag, &tag, sizeof(tag));
-						sample.mediaTag.dwTime = static_cast<DWORD>(tag.DTS > 0 ? tag.DTS * 1000 / 90000 : 0);;
-						TRACE("Video Time:%d, Current:%d\n", sample.mediaTag.dwTime, static_cast<DWORD>(timeGetTime() - MShowApp::Instance().GetController().GetBaseTime()));
 						sample.size = so;
 						sample.bits = new BYTE[so];
 						memcpy(sample.bits, bo, so);
-						m_pusher.Publish(sample);
+						m_pusher.Add(sample);
 					}
 				}
 			}
 			time.EndTime();
 			INT delay = dwMS - static_cast<DWORD>(time.GetMillisconds());
+			TRACE("Encode Delay:%d\n", delay);
 			Sleep(delay < 0 ? 0 : delay);
 		}
 	}

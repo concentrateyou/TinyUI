@@ -12,13 +12,12 @@ namespace MShow
 {
 	MAudioEncodeTask::MAudioEncodeTask(MRTMPPusher& pusher)
 		:m_pusher(pusher),
-		m_aac(BindCallback(&MAudioEncodeTask::OnAAC, this)),
 		m_bBreak(FALSE),
 		m_pVideoCTRL(NULL),
 		m_pAudioCTRL(NULL)
 	{
-		m_onAudio.Reset(new Delegate<void(BYTE*, LONG)>(this, &MAudioEncodeTask::OnAudio));
-		m_onEffectAudio.Reset(new Delegate<void(BYTE*, LONG)>(this, &MAudioEncodeTask::OnAudio1));
+		m_onAudio.Reset(new Delegate<void(BYTE*, LONG)>(this, &MAudioEncodeTask::OnAudioPCM));
+		m_onEffectAudio.Reset(new Delegate<void(BYTE*, LONG)>(this, &MAudioEncodeTask::OnAudioTrack));
 	}
 
 	MAudioEncodeTask::~MAudioEncodeTask()
@@ -47,15 +46,18 @@ namespace MShow
 		{
 			if (m_bBreak)
 				break;
-			ZeroMemory(&sampleTag, sizeof(sampleTag));
+			Sleep(25);
+			/*ZeroMemory(&sampleTag, sizeof(sampleTag));
 			BOOL bRes = m_queue.Pop(sampleTag);
 			if (!bRes || sampleTag.size <= 0)
 			{
-				Sleep(3);
 				continue;
 			}
-			m_aac.Encode(sampleTag.bits, sampleTag.size);
-			SAFE_DELETE_ARRAY(sampleTag.bits);
+			if (MShowApp::Instance().GetController().GetBaseTime() != -1)
+			{
+				m_aac.Encode(sampleTag.bits, sampleTag.size);
+			}
+			SAFE_DELETE_ARRAY(sampleTag.bits);*/
 		}
 	}
 
@@ -70,58 +72,43 @@ namespace MShow
 		return FALSE;
 	}
 
-	void MAudioEncodeTask::OnAudio(BYTE* bits, LONG size)
+	void MAudioEncodeTask::OnAudioPCM(BYTE* bits, LONG size)
 	{
-		BYTE* output = new BYTE[size];
-		if (m_queue1.GetSize() > 0)
+		TinyScopedArray<BYTE> _array(new BYTE[size]);
+		if (m_queue.GetSize() > 0)
 		{
 			SampleTag sampleTag = { 0 };
-			if (m_queue1.Pop(sampleTag))
+			if (m_queue.Pop(sampleTag))
 			{
-				AudioMixer::Mix(bits, sampleTag.bits, size, output);
+				AudioMixer::Mix(bits, sampleTag.bits, size, _array);
 			}
 		}
 		else
 		{
-			memcpy_s(output, size, bits, size);
+			memcpy_s(_array, size, bits, size);
 		}
-		SampleTag sampleTag;
-		ZeroMemory(&sampleTag, sizeof(sampleTag));
-		sampleTag.bits = output;
-		sampleTag.size = size;
-		m_queue.Push(sampleTag);
+		BYTE* bo = NULL;
+		LONG  so = 0;
+		Sample sample;
+		ZeroMemory(&sample, sizeof(sample));
+		if (m_aac.Encode(_array, size, bo, so, sample.mediaTag))
+		{
+			sample.size = so;
+			sample.bits = new BYTE[so];
+			memcpy(sample.bits, bo, so);
+		}
 	}
 
-	void MAudioEncodeTask::OnAudio1(BYTE* bits, LONG size)
+	void MAudioEncodeTask::OnAudioTrack(BYTE* bits, LONG size)
 	{
 		SampleTag sampleTag;
 		ZeroMemory(&sampleTag, sizeof(sampleTag));
 		sampleTag.bits = new BYTE[size];
 		sampleTag.size = size;
 		memcpy_s(sampleTag.bits, size, bits, size);
-		m_queue1.Push(sampleTag);
+		m_queue.Push(sampleTag);
 	}
 
-	void MAudioEncodeTask::OnAAC(BYTE* bits, LONG size, const MediaTag& tag)
-	{
-		if (tag.INC == 1)
-		{
-			if (MShowApp::Instance().GetController().GetBaseTime() == -1)
-			{
-				MShowApp::Instance().GetController().SetBaseTime(timeGetTime());
-			}
-		}
-		if (MShowApp::Instance().GetController().GetBaseTime() != -1)
-		{
-			Sample sample;
-			memcpy(&sample.mediaTag, &tag, sizeof(tag));
-			sample.size = size;
-			sample.bits = new BYTE[size];
-			memcpy(sample.bits, bits, size);
-			TRACE("Audio Time:%d, Current:%d\n", sample.mediaTag.dwTime, static_cast<DWORD>(timeGetTime() - MShowApp::Instance().GetController().GetBaseTime()));
-			m_pusher.Publish(sample);
-		}
-	}
 
 	INT	MAudioEncodeTask::GetAudioRate() const
 	{
@@ -140,7 +127,6 @@ namespace MShow
 
 	void MAudioEncodeTask::SetVideoController(MVideoController* pCTRL)
 	{
-		TRACE("SetVideoController\n");
 		if (m_pVideoCTRL != pCTRL)
 		{
 			if (pCTRL != NULL)
@@ -170,7 +156,7 @@ namespace MShow
 				m_pAudioCTRL->EVENT_AUDIO -= m_onEffectAudio;
 			}
 			m_pAudioCTRL = pCTRL;
-			m_queue1.RemoveAll();
+			m_queue.RemoveAll();
 		}
 	}
 }

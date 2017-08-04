@@ -21,11 +21,11 @@ namespace Encode
 	{
 		DISALLOW_COPY_AND_ASSIGN(AACEncode)
 	public:
-		AACEncode(Callback<void(BYTE*, LONG, const MediaTag&)>&& callback);
+		AACEncode();
 		virtual ~AACEncode();
 	public:
 		BOOL	Open(const WAVEFORMATEX& waveFMT, INT audioRate = 128);
-		BOOL	Encode(BYTE* bits, LONG size);
+		BOOL	Encode(BYTE* bi, LONG si, BYTE*& bo, LONG& so, MediaTag& tag);
 		void	Close();
 		BOOL	GetSpecificInfo(vector<BYTE>& info);
 		DWORD	GetOutputBytes() const;

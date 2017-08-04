@@ -3,12 +3,11 @@
 
 namespace Encode
 {
-	AACEncode::AACEncode(Callback<void(BYTE*, LONG, const MediaTag&)>&& callback)
+	AACEncode::AACEncode()
 		:m_inputSamples(0),
 		m_maxOutputBytes(0),
 		m_dwPTS(0),
-		m_dwINC(0),
-		m_callback(std::move(callback))
+		m_dwINC(0)
 	{
 	}
 
@@ -80,14 +79,13 @@ namespace Encode
 		m_bits.Reset(new BYTE[m_maxOutputBytes]);
 		return TRUE;
 	}
-	BOOL AACEncode::Encode(BYTE* bits, LONG size)
+	BOOL AACEncode::Encode(BYTE* bi, LONG si, BYTE*& bo, LONG& so, MediaTag& tag)
 	{
-		if (!m_aac || !bits || size == 0)
+		if (!m_aac || !bi || si == 0)
 			return FALSE;
-		INT s = faacEncEncode(m_aac, (int32_t*)bits, m_inputSamples, m_bits, m_maxOutputBytes);
+		INT s = faacEncEncode(m_aac, (int32_t*)bi, m_inputSamples, m_bits, m_maxOutputBytes);
 		if (s > 0)
 		{
-			Media::MediaTag tag;
 			ZeroMemory(&tag, sizeof(tag));
 			tag.PTS = m_dwPTS;
 			tag.DTS = m_dwPTS;
@@ -95,10 +93,8 @@ namespace Encode
 			tag.dwType = 1;
 			tag.dwTime = static_cast<DWORD>(tag.INC * tag.PTS);
 			tag.dwFlag = 0;
-			if (!m_callback.IsNull())
-			{
-				m_callback(m_bits, s, tag);
-			}
+			bo = m_bits;
+			so = s;
 			return TRUE;
 		}
 		return FALSE;

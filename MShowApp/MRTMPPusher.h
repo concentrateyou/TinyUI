@@ -7,6 +7,25 @@ namespace MShow
 {
 	class MRTMPEncoder;
 	/// <summary>
+	/// 排序的采样队列
+	/// </summary>
+	class MSampleQueue
+	{
+		DISALLOW_COPY_AND_ASSIGN(MSampleQueue)
+	public:
+		MSampleQueue();
+		~MSampleQueue();
+	public:
+		BOOL Push(Sample& sample);
+		BOOL Pop(Sample& sample);
+	private:
+		void Print();
+	private:
+		TinyLock				m_lock;
+		TinyLinkList<Sample>	m_samples;
+	};
+
+	/// <summary>
 	/// RTMP推流
 	/// </summary>
 	class MRTMPPusher : public TinyTaskBase
@@ -20,17 +39,18 @@ namespace MShow
 		BOOL Disconnect();
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
-		void Publish(Sample& sample);
 		TinyString GetURL() const;
+		void Add(Sample& sample);
 	private:
 		void OnMessagePump();
+		void Publish(Sample& sample);
 	private:
 		BOOL			m_bClose;
 		DWORD			m_dwRate;
 		DWORD			m_dwReconnect;
 		MRTMPClient		m_client;
 		TinyString		m_szURL;
-		Concurrency::concurrent_queue<Sample>	m_samples;
+		MSampleQueue	m_samples;
 	};
 }
 

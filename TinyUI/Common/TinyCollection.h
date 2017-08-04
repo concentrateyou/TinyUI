@@ -698,7 +698,7 @@ namespace TinyUI
 		if (pos == NULL)
 			return InsertLast(value);
 		TinyNode* pOld = static_cast<TinyNode*>(pos);
-		TinyNode* pNew = New(value, pOld, pOld->m_pNext);
+		TinyNode* pNew = New(pOld, pOld->m_pNext, value);
 		if (pOld->m_pNext != NULL)
 			pOld->m_pNext->m_pPrev = pNew;
 		else

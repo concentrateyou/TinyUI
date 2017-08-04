@@ -490,7 +490,7 @@ namespace QSV
 		m_mfxVideoParam.mfx.GopOptFlag = 0;
 		m_mfxVideoParam.mfx.BufferSizeInKB = 0;
 		m_mfxVideoParam.mfx.EncodedOrder = 0;
-		m_mfxVideoParam.mfx.NumSlice = 0;
+		m_mfxVideoParam.mfx.NumSlice = 1;
 		m_mfxVideoParam.mfx.CodecId = MFX_CODEC_AVC;
 		m_mfxVideoParam.mfx.TargetUsage = MFX_TARGETUSAGE_BALANCED;
 		m_mfxVideoParam.mfx.TargetKbps = static_cast<mfxU16>(dwBitRate);
