@@ -3,7 +3,10 @@
 #include "MPreviewView.h"
 #include "DXFramework.h"
 #include "QSVEncoder.h"
+#include "MPacketQueue.h"
+#include "MSampleQueue.h"
 #include "MRTMPPusher.h"
+#include "MClock.h"
 using namespace DXFramework;
 using namespace QSV;
 
@@ -16,7 +19,7 @@ namespace MShow
 	{
 		DISALLOW_COPY_AND_ASSIGN(MVideoEncodeTask)
 	public:
-		MVideoEncodeTask(MRTMPPusher& pusher);
+		MVideoEncodeTask(MRTMPPusher& pusher, MClock& clock);
 		virtual ~MVideoEncodeTask();
 	public:
 		BOOL			Initialize(MPreviewView& view);
@@ -26,6 +29,7 @@ namespace MShow
 		INT				GetVideoFPS() const;
 		INT				GetVideoRate() const;
 		QSVEncoder&		GetQSV();
+		MSampleQueue&	GetSamples();
 	private:
 		void			OnMessagePump();
 	private:
@@ -34,13 +38,16 @@ namespace MShow
 		BOOL					m_bBreak;
 		INT						m_videoFPS;
 		INT						m_videoRate;
+		LONG					m_videoSize;
+		TinyScopedArray<BYTE>	m_videoBits;
 		TinySize				m_pulgSize;
+		MClock&					m_clock;
 		DX11					m_dx11;
 		DX11Texture2D			m_image2D;
 		DX11Texture2D			m_copy2D;
 		QSVEncoder				m_encoder;
-		LONG					m_videoSize;
-		TinyScopedArray<BYTE>	m_videoBits;
+		MSampleQueue			m_samples;
+		TinyPerformanceTimer	m_timer;
 	};
 }
 

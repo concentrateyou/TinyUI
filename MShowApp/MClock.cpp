@@ -12,12 +12,12 @@ namespace MShow
 	MClock::~MClock()
 	{
 	}
-	void MClock::SetBaseTime(DWORD baseTime)
+	void MClock::SetBaseTime(LONGLONG baseTime)
 	{
 		TinyAutoLock lock(m_lock);
 		m_baseTime = baseTime;
 	}
-	void MClock::AddBaseTime(DWORD dwMS)
+	void MClock::AddBaseTime(LONGLONG dwMS)
 	{
 		TinyAutoLock lock(m_lock);
 		m_baseTime += dwMS;

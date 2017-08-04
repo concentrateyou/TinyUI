@@ -4,11 +4,12 @@
 
 namespace MShow
 {
-	MVideoEncodeTask::MVideoEncodeTask(MRTMPPusher& pusher)
+	MVideoEncodeTask::MVideoEncodeTask(MRTMPPusher& pusher, MClock& clock)
 		:m_bBreak(FALSE),
 		m_videoSize(0),
 		m_pusher(pusher),
-		m_videoINC(0)
+		m_videoINC(0),
+		m_clock(clock)
 	{
 	}
 
@@ -33,11 +34,11 @@ namespace MShow
 		m_pulgSize = pulgSize;
 		m_videoRate = videoRate;
 		m_videoFPS = videoFPS;
-		if (!m_encoder.Open(m_pulgSize, m_pulgSize, m_videoRate, m_videoFPS))
-			return FALSE;
 		if (!m_image2D.Load(m_dx11, pCTRL->GetRenderView().GetHandle()))
 			return FALSE;
 		if (!m_copy2D.Create(m_dx11, m_pulgSize.cx, m_pulgSize.cy, NULL, TRUE))
+			return FALSE;
+		if (!m_encoder.Open(m_pulgSize, m_pulgSize, m_videoRate, m_videoFPS))
 			return FALSE;
 		return TinyTaskBase::Submit(BindCallback(&MVideoEncodeTask::OnMessagePump, this));
 	}
@@ -62,11 +63,12 @@ namespace MShow
 					m_videoSize = dwSize;
 					m_videoBits.Reset(new BYTE[m_videoSize]);
 				}
-				memcpy_s(m_videoBits, m_videoSize, bits, dwSize);
+				memcpy_s(m_videoBits, m_videoSize, bits, m_videoSize);
 				m_copy2D.Unmap(m_dx11);
 			}
 			if (m_videoBits != NULL)
 			{
+				m_timer.BeginTime();
 				SampleTag sampleTag = { 0 };
 				sampleTag.bits = m_videoBits;
 				sampleTag.size = m_videoSize;
@@ -77,20 +79,21 @@ namespace MShow
 				ZeroMemory(&sample, sizeof(sample));
 				if (m_encoder.Encode(sampleTag, bo, so, sample.mediaTag))
 				{
-					if (sample.mediaTag.INC == 1)
+					m_timer.EndTime();
+					TRACE("Cost Time:%d\n", m_timer.GetMillisconds());
+					if (m_clock.GetBaseTime() == -1)
 					{
-						if (MShowApp::Instance().GetController().GetBaseTime() == -1)
-						{
-							MShowApp::Instance().GetController().SetBaseTime(sample.mediaTag.dwTime);
-						}
+						m_clock.SetBaseTime(timeGetTime());
 					}
-					if (MShowApp::Instance().GetController().GetBaseTime() != -1)
+					if (m_clock.GetBaseTime() != -1)
 					{
+						//TRACE("Video Time:%d\n", sample.mediaTag.dwTime);
 						sample.size = so;
 						sample.bits = new BYTE[so];
 						memcpy(sample.bits, bo, so);
-						m_pusher.Publish(sample);
+						m_samples.Push(sample);
 					}
+
 				}
 			}
 			time.EndTime();
@@ -106,6 +109,7 @@ namespace MShow
 			m_image2D.Destory();
 			m_copy2D.Destory();
 			m_encoder.Close();
+			m_samples.RemoveAll();
 			return TRUE;
 		}
 		return FALSE;
@@ -125,5 +129,9 @@ namespace MShow
 	QSVEncoder&	MVideoEncodeTask::GetQSV()
 	{
 		return m_encoder;
+	}
+	MSampleQueue& MVideoEncodeTask::GetSamples()
+	{
+		return m_samples;
 	}
 }

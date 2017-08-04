@@ -29,14 +29,12 @@ namespace MShow
 		MAudioEncodeTask&	GetAudioEncoder();
 		MVideoEncodeTask&	GetVideoEncoder();
 		MRTMPPusher&		GetPusher();
-		void				SetBaseTime(LONG baseTime);
-		LONG				GetBaseTime() const;
 	private:
 		void OnPusher(void*, INT);
 		void OnToggle(void*, INT);
 	private:
 		TinyLock			m_lock;
-		LONG				m_baseTime;
+		MClock				m_clock;
 		MShowWindow&		m_window;
 		MVideoController*	m_videos[6];
 		MImageController*	m_images[6];

@@ -31,7 +31,6 @@ namespace DXApp
 		TinyEvent			m_close;
 		vector<BYTE>		m_latestPPS;
 		vector<BYTE>		m_latestSPS;
-		concurrency::concurrent_queue<Sample>	m_samples;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG, const MediaTag&)>>	m_videoDone;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG, const MediaTag&)>>	m_audioDone;
 	};

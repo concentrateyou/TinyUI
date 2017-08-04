@@ -9,9 +9,8 @@ namespace MShow
 {
 	MShowController::MShowController(MShowWindow& window)
 		:m_window(window),
-		m_baseTime(-1),
-		m_audio(m_pusher),
-		m_video(m_pusher)
+		m_audio(m_pusher, m_clock),
+		m_video(m_pusher, m_clock)
 	{
 
 	}
@@ -170,14 +169,6 @@ namespace MShow
 				m_play->Open(m_pusher.GetURL().STR());
 			}
 		}
-	}
-	void MShowController::SetBaseTime(LONG baseTime)
-	{
-		m_baseTime = baseTime;
-	}
-	LONG MShowController::GetBaseTime() const
-	{
-		return m_baseTime;
 	}
 	void MShowController::OnToggle(void*, INT)
 	{

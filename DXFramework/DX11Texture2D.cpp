@@ -156,7 +156,7 @@ namespace DXFramework
 			::ZeroMemory(&dsrvd, sizeof(dsrvd));
 			dsrvd.Format = desc.Format;
 			dsrvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-			dsrvd.Texture2D.MipLevels = 1;
+			dsrvd.Texture2D.MipLevels = desc.MipLevels;
 			hRes = dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &dsrvd, &m_resourceView);
 			if (hRes != S_OK)
 				return FALSE;
@@ -235,7 +235,7 @@ namespace DXFramework
 		::ZeroMemory(&dsrvd, sizeof(dsrvd));
 		dsrvd.Format = desc.Format;
 		dsrvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-		dsrvd.Texture2D.MipLevels = 1;
+		dsrvd.Texture2D.MipLevels = desc.MipLevels;
 		if (FAILED(hRes = dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &dsrvd, &m_resourceView)))
 			return FALSE;
 		return TRUE;

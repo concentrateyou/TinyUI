@@ -358,6 +358,10 @@ namespace QSV
 		{
 			status = MFX_ERR_NONE;
 		}
+		do
+		{
+			status = m_mfxSession.SyncOperation(syncpVPP, 1000);
+		} while (status == MFX_WRN_IN_EXECUTION);
 		if (MFX_ERR_NONE == status)
 		{
 			do
@@ -379,7 +383,10 @@ namespace QSV
 			}
 			if (MFX_ERR_NONE == status)
 			{
-				status = m_mfxSession.SyncOperation(syncpVideo, 1000);
+				do
+				{
+					status = m_mfxSession.SyncOperation(syncpVideo, 1000);
+				} while (status == MFX_WRN_IN_EXECUTION);
 				if (status == MFX_ERR_NONE)
 				{
 					m_dwINC++;
@@ -391,6 +398,7 @@ namespace QSV
 					mediaTag.INC = m_dwINC;
 					mediaTag.dwType = 0;
 					mediaTag.dwFlag = m_mfxResidial.FrameType & (MFX_FRAMETYPE_I | MFX_FRAMETYPE_IDR) ? 0x17 : 0x27;
+					mediaTag.dwTime = static_cast<DWORD>(mediaTag.DTS > 0 ? mediaTag.DTS * 1000 / 90000 : 0);;
 					m_mfxResidial.DataLength = 0;
 				}
 				return status;
