@@ -161,9 +161,10 @@ namespace MShow
 				m_audio.Close(INFINITE);
 			if (m_video.IsValid())
 				m_video.Close(INFINITE);
-			m_audio.SetVideoController(pCTRL);
 			m_audio.Submit(128);
 			m_video.Submit(m_preview->GetPulgSize(), 25, 1500);
+			Sleep(20);
+			m_audio.SetVideoController(pCTRL);
 			if (m_play != NULL)
 			{
 				m_play->Open(m_pusher.GetURL().STR());

@@ -42,65 +42,65 @@ namespace MShow
 			return FALSE;
 		return TinyTaskBase::Submit(BindCallback(&MVideoEncodeTask::OnMessagePump, this));
 	}
+
+	DWORD g_s = 0;
+
 	void MVideoEncodeTask::OnMessagePump()
 	{
 		BOOL bFirst = FALSE;
-		TinyPerformanceTimer time;
 		DWORD dwMS = static_cast<DWORD>(1000 / m_videoFPS);
+		Sample sample;
 		for (;;)
 		{
 			if (m_bBreak)
 				break;
-			time.BeginTime();
-			m_copy2D.Copy(m_dx11, m_image2D);
-			BYTE* bits = NULL;
-			UINT pitch = 0;
-			if (m_copy2D.Map(m_dx11, bits, pitch, TRUE))
-			{
-				DWORD dwSize = pitch * m_pulgSize.cy;
-				if (m_videoSize != dwSize && bits != NULL)
-				{
-					m_videoSize = dwSize;
-					m_videoBits.Reset(new BYTE[m_videoSize]);
-				}
-				memcpy_s(m_videoBits, m_videoSize, bits, m_videoSize);
-				m_copy2D.Unmap(m_dx11);
-			}
-			if (m_videoBits != NULL)
-			{
-				m_timer.BeginTime();
-				SampleTag sampleTag = { 0 };
-				sampleTag.bits = m_videoBits;
-				sampleTag.size = m_videoSize;
-				sampleTag.sampleDTS = sampleTag.samplePTS = (m_videoINC++) * 90000 / m_videoFPS;
-				BYTE* bo = NULL;
-				LONG  so = 0;
-				Sample sample;
-				ZeroMemory(&sample, sizeof(sample));
-				if (m_encoder.Encode(sampleTag, bo, so, sample.mediaTag))
-				{
-					m_timer.EndTime();
-					TRACE("Cost Time:%d\n", m_timer.GetMillisconds());
-					if (m_clock.GetBaseTime() == -1)
-					{
-						m_clock.SetBaseTime(timeGetTime());
-					}
-					if (m_clock.GetBaseTime() != -1)
-					{
-						//TRACE("Video Time:%d\n", sample.mediaTag.dwTime);
-						sample.size = so;
-						sample.bits = new BYTE[so];
-						memcpy(sample.bits, bo, so);
-						m_samples.Push(sample);
-					}
-
-				}
-			}
-			time.EndTime();
-			INT delay = dwMS - static_cast<DWORD>(time.GetMillisconds());
+			if (m_clock.GetBaseTime() == -1)
+				continue;
+			DWORD dwCost = Encode(sample);
+			INT delay = dwMS - dwCost;
 			Sleep(delay < 0 ? 0 : delay);
 		}
 	}
+
+	DWORD MVideoEncodeTask::Encode(Sample& sample)
+	{
+		m_timer.BeginTime();
+		ZeroMemory(&sample, sizeof(sample));
+		m_copy2D.Copy(m_dx11, m_image2D);
+		BYTE* bits = NULL;
+		UINT pitch = 0;
+		if (m_copy2D.Map(m_dx11, bits, pitch, TRUE))
+		{
+			DWORD dwSize = pitch * m_pulgSize.cy;
+			if (m_videoSize != dwSize && bits != NULL)
+			{
+				m_videoSize = dwSize;
+				m_videoBits.Reset(new BYTE[m_videoSize]);
+			}
+			memcpy_s(m_videoBits, m_videoSize, bits, m_videoSize);
+			m_copy2D.Unmap(m_dx11);
+		}
+		if (m_videoBits != NULL)
+		{
+			SampleTag sampleTag = { 0 };
+			sampleTag.bits = m_videoBits;
+			sampleTag.size = m_videoSize;
+			sampleTag.sampleDTS = sampleTag.samplePTS = (m_videoINC++) * 90000 / m_videoFPS;
+			BYTE* bo = NULL;
+			LONG  so = 0;
+			ZeroMemory(&sample, sizeof(sample));
+			if (m_encoder.Encode(sampleTag, bo, so, sample.mediaTag))
+			{
+				sample.size = so;
+				sample.bits = new BYTE[so];
+				memcpy(sample.bits, bo, so);
+				m_samples.Push(sample);
+			}
+		}
+		m_timer.EndTime();
+		return static_cast<DWORD>(m_timer.GetMillisconds());
+	}
+
 	BOOL MVideoEncodeTask::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;

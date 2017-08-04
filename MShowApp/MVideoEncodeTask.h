@@ -32,6 +32,7 @@ namespace MShow
 		MSampleQueue&	GetSamples();
 	private:
 		void			OnMessagePump();
+		DWORD			Encode(Sample& sample);
 	private:
 		LONGLONG				m_videoINC;
 		MRTMPPusher&			m_pusher;

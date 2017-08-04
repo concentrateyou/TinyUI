@@ -48,7 +48,6 @@ namespace MShow
 		{
 			if (m_bBreak)
 				break;
-
 			ZeroMemory(&sampleTag, sizeof(sampleTag));
 			BOOL bRes = m_queue.Pop(sampleTag);
 			if (!bRes || sampleTag.size <= 0)
@@ -56,22 +55,16 @@ namespace MShow
 				Sleep(1);
 				continue;
 			}
-			if (m_clock.GetBaseTime() != -1)
+			BYTE* bo = NULL;
+			LONG  so = 0;
+			ZeroMemory(&sample, sizeof(sample));
+			if (m_aac.Encode(sampleTag.bits, sampleTag.size, bo, so, sample.mediaTag))
 			{
-				m_timer.BeginTime();
-				BYTE* bo = NULL;
-				LONG  so = 0;
-				ZeroMemory(&sample, sizeof(sample));
-				if (m_aac.Encode(sampleTag.bits, sampleTag.size, bo, so, sample.mediaTag))
-				{
-					m_timer.EndTime();
-					sample.size = so;
-					sample.mediaTag.dwTime -= m_timer.GetMillisconds();
-					//TRACE("Audio Time:%d\n", sample.mediaTag.dwTime);
-					sample.bits = new BYTE[so];
-					memcpy(sample.bits, bo, so);
-					m_samples.Push(sample);
-				}
+				sample.size = so;
+				sample.mediaTag.dwTime -= m_timer.GetMillisconds();
+				sample.bits = new BYTE[so];
+				memcpy(sample.bits, bo, so);
+				m_samples.Push(sample);
 			}
 			SAFE_DELETE_ARRAY(sampleTag.bits);
 		}
@@ -109,6 +102,10 @@ namespace MShow
 		sampleTag.bits = output;
 		sampleTag.size = size;
 		m_queue.Push(sampleTag);
+		if (m_clock.GetBaseTime() == -1)
+		{
+			m_clock.SetBaseTime(timeGetTime());
+		}
 	}
 
 	void MAudioEncodeTask::OnAudioMix(BYTE* bits, LONG size)
