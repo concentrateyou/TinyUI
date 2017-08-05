@@ -1,48 +1,48 @@
 #include "stdafx.h"
-#include "MFVideoCapture.h"
+#include "MFAudioCapture.h"
 
 namespace MF
 {
-	MFVideoCapture::Name::Name()
+	MFAudioCapture::Name::Name()
 	{
 
 	}
-	MFVideoCapture::Name::Name(string&& name, string&& id)
+	MFAudioCapture::Name::Name(string&& name, string&& id)
 		:m_name(std::move(name)),
 		m_id(std::move(id))
 	{
 
 	}
-	MFVideoCapture::Name::Name(const string& name, const string& id)
+	MFAudioCapture::Name::Name(const string& name, const string& id)
 		: m_name(name),
 		m_id(id)
 	{
 
 	}
-	MFVideoCapture::Name::~Name()
+	MFAudioCapture::Name::~Name()
 	{
 
 	}
-	const string& MFVideoCapture::Name::name() const
+	const string& MFAudioCapture::Name::name() const
 	{
 		return m_name;
 	}
-	const string& MFVideoCapture::Name::id() const
+	const string& MFAudioCapture::Name::id() const
 	{
 		return m_id;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	MFVideoCapture::MFVideoCapture()
+	MFAudioCapture::MFAudioCapture()
 		:m_bCapturing(FALSE)
 	{
 
 
 	}
-	MFVideoCapture::~MFVideoCapture()
+	MFAudioCapture::~MFAudioCapture()
 	{
 		Uninitialize();
 	}
-	void MFVideoCapture::OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter)
+	void MFAudioCapture::OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter)
 	{
 		TinyAutoLock lock(*this);
 		if (m_bCapturing)
@@ -53,24 +53,24 @@ namespace MF
 			}
 			if (m_reader)
 			{
-				m_reader->ReadSample(static_cast<DWORD>(MF_SOURCE_READER_FIRST_VIDEO_STREAM), 0, NULL, NULL, NULL, NULL);
+				m_reader->ReadSample(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), 0, NULL, NULL, NULL, NULL);
 			}
 		}
 	}
-	BOOL MFVideoCapture::Initialize(const Name& name)
+	BOOL MFAudioCapture::Initialize(const Name& name)
 	{
 		if (!GetDeviceSource(name, &m_source))
 			return FALSE;
 		return TRUE;
 	}
-	BOOL MFVideoCapture::Initialize(const Name& name, Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& receiveCB)
+	BOOL MFAudioCapture::Initialize(const Name& name, Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& receiveCB)
 	{
 		if (!GetDeviceSource(name, &m_source))
 			return FALSE;
 		m_receiveCB = std::move(receiveCB);
 		return TRUE;
 	}
-	void MFVideoCapture::Uninitialize()
+	void MFAudioCapture::Uninitialize()
 	{
 		Deallocate();
 		m_reader.Release();
@@ -78,14 +78,14 @@ namespace MF
 			m_source->Shutdown();
 		m_source.Release();
 	}
-	BOOL MFVideoCapture::Allocate(const MFVideoCaptureParam& param)
+	BOOL MFAudioCapture::Allocate(const MFAudioCaptureParam& param)
 	{
 		ASSERT(m_source);
 		TinyComPtr<IMFAttributes> attributes;
 		HRESULT hRes = MFCreateAttributes(&attributes, 1);
 		if (hRes != S_OK)
 			return FALSE;
-		m_readerCB = new MFVideoReaderCallback(this);
+		m_readerCB = new MFAudioReaderCallback(this);
 		hRes = attributes->SetUnknown(MF_SOURCE_READER_ASYNC_CALLBACK, m_readerCB);
 		if (hRes != S_OK)
 			return FALSE;
@@ -93,31 +93,31 @@ namespace MF
 		if (hRes != S_OK)
 			return FALSE;
 		TinyComPtr<IMFMediaType> mdeiaType;
-		hRes = m_reader->GetNativeMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_VIDEO_STREAM), param.GetStreamIndex(), &mdeiaType);
+		hRes = m_reader->GetNativeMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), param.GetStreamIndex(), &mdeiaType);
 		if (hRes != S_OK)
 			return FALSE;
-		hRes = m_reader->SetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_VIDEO_STREAM), NULL, mdeiaType);
+		hRes = m_reader->SetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), NULL, mdeiaType);
 		if (hRes != S_OK)
 			return FALSE;
-		hRes = m_reader->ReadSample(static_cast<DWORD>(MF_SOURCE_READER_FIRST_VIDEO_STREAM), 0, NULL, NULL, NULL, NULL);
+		hRes = m_reader->ReadSample(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), 0, NULL, NULL, NULL, NULL);
 		if (hRes != S_OK)
 			return FALSE;
 		m_bCapturing = TRUE;
 		return TRUE;
 	}
-	void MFVideoCapture::Deallocate()
+	void MFAudioCapture::Deallocate()
 	{
 		if (m_reader)
 			m_reader->Flush(static_cast<DWORD>(MF_SOURCE_READER_ALL_STREAMS));
 		m_bCapturing = FALSE;
 	}
-	BOOL MFVideoCapture::GetDevices(vector<Name>& names)
+	BOOL MFAudioCapture::GetDevices(vector<Name>& names)
 	{
 		TinyComPtr<IMFAttributes> attributes;
 		HRESULT hRes = MFCreateAttributes(&attributes, 1);
 		if (hRes != S_OK)
 			return FALSE;
-		hRes = attributes->SetGUID(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE, MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_GUID);
+		hRes = attributes->SetGUID(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE, MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_AUDCAP_GUID);
 		if (hRes != S_OK)
 			return FALSE;
 		IMFActivate** activates = NULL;
@@ -138,7 +138,7 @@ namespace MF
 			}
 			string name = WStringToString(wstring(val, size));
 			CoTaskMemFree(val);
-			hRes = activates[i]->GetAllocatedString(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_SYMBOLIC_LINK, &val, &size);
+			hRes = activates[i]->GetAllocatedString(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_AUDCAP_SYMBOLIC_LINK, &val, &size);
 			if (FAILED(val))
 			{
 				CoTaskMemFree(val);
@@ -153,16 +153,16 @@ namespace MF
 		CoTaskMemFree(activates);
 		return TRUE;
 	}
-	BOOL MFVideoCapture::GetDeviceParams(const MFVideoCapture::Name& device, vector<MFVideoCaptureParam>& params)
+	BOOL MFAudioCapture::GetDeviceParams(const MFAudioCapture::Name& device, vector<MFAudioCaptureParam>& params)
 	{
 		TinyComPtr<IMFAttributes> attributes;
 		HRESULT hRes = MFCreateAttributes(&attributes, 2);
 		if (hRes != S_OK)
 			return FALSE;
-		hRes = attributes->SetGUID(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE, MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_GUID);
+		hRes = attributes->SetGUID(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE, MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_AUDCAP_GUID);
 		if (hRes != S_OK)
 			return FALSE;
-		hRes = attributes->SetString(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_SYMBOLIC_LINK, StringToWString(device.id(), CP_UTF8).c_str());
+		hRes = attributes->SetString(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_AUDCAP_SYMBOLIC_LINK, StringToWString(device.id(), CP_UTF8).c_str());
 		if (hRes != S_OK)
 			return FALSE;
 		TinyComPtr<IMFMediaSource> source;
@@ -177,14 +177,14 @@ namespace MF
 		for (DWORD dwIndex = 0;;dwIndex++)
 		{
 			TinyComPtr<IMFMediaType> mediaType;
-			hRes = reader->GetNativeMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_VIDEO_STREAM), dwIndex, &mediaType);
+			hRes = reader->GetNativeMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), dwIndex, &mediaType);
 			if (hRes != S_OK)
 				break;
 			UINT32 cx, cy;
 			hRes = MFGetAttributeSize(mediaType, MF_MT_FRAME_SIZE, &cx, &cy);
 			if (hRes != S_OK)
 				goto MFERROR;
-			MFVideoCaptureParam param;
+			MFAudioCaptureParam param;
 			param.SetSize(cx, cy);
 			UINT32 numerator, denominator;
 			hRes = MFGetAttributeRatio(mediaType, MF_MT_FRAME_RATE, &numerator, &denominator);
@@ -205,16 +205,16 @@ namespace MF
 		source->Shutdown();
 		return SUCCEEDED(hRes);
 	}
-	BOOL MFVideoCapture::GetDeviceSource(const MFVideoCapture::Name& device, IMFMediaSource** source)
+	BOOL MFAudioCapture::GetDeviceSource(const MFAudioCapture::Name& device, IMFMediaSource** source)
 	{
 		TinyComPtr<IMFAttributes> attributes;
 		HRESULT hRes = MFCreateAttributes(&attributes, 2);
 		if (hRes != S_OK)
 			return FALSE;
-		hRes = attributes->SetGUID(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE, MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_GUID);
+		hRes = attributes->SetGUID(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE, MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_AUDCAP_GUID);
 		if (hRes != S_OK)
 			return FALSE;
-		hRes = attributes->SetString(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_SYMBOLIC_LINK, StringToWString(device.id(), CP_UTF8).c_str());
+		hRes = attributes->SetString(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_AUDCAP_SYMBOLIC_LINK, StringToWString(device.id(), CP_UTF8).c_str());
 		if (hRes != S_OK)
 			return FALSE;
 		hRes = MFCreateDeviceSource(attributes, source);
@@ -222,7 +222,7 @@ namespace MF
 			return FALSE;
 		return TRUE;
 	}
-	BOOL MFVideoCapture::GetFormat(const GUID& guid, VideoPixelFormat* format)
+	BOOL MFAudioCapture::GetFormat(const GUID& guid, VideoPixelFormat* format)
 	{
 		struct
 		{

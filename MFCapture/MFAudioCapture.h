@@ -2,11 +2,11 @@
 #include "MFCommon.h"
 #include "MFObserver.h"
 #include "MFReaderCallback.h"
-#include "MFVideoCaptureParam.h"
+#include "MFAudioCaptureParam.h"
 
 namespace MF
 {
-	class MFVideoCapture : public MFObserver
+	class MFAudioCapture : public MFObserver
 	{
 	public:
 		class Name
@@ -23,23 +23,23 @@ namespace MF
 			string	m_id;
 		};
 	public:
-		MFVideoCapture();
-		virtual ~MFVideoCapture();
+		MFAudioCapture();
+		virtual ~MFAudioCapture();
 		BOOL	Initialize(const Name& name);
 		BOOL	Initialize(const Name& name, Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& receiveCB);
 		void	Uninitialize();
 	public:
-		virtual BOOL Allocate(const MFVideoCaptureParam& param);
+		virtual BOOL Allocate(const MFAudioCaptureParam& param);
 		virtual void Deallocate();
 		void	OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter) OVERRIDE;
 	public:
 		static BOOL GetFormat(const GUID& guid, VideoPixelFormat* format);
-		static BOOL GetDevices(vector<MFVideoCapture::Name>& names);
-		static BOOL GetDeviceParams(const MFVideoCapture::Name& device, vector<MFVideoCaptureParam>& params);
-		static BOOL GetDeviceSource(const MFVideoCapture::Name& device, IMFMediaSource** source);
+		static BOOL GetDevices(vector<MFAudioCapture::Name>& names);
+		static BOOL GetDeviceParams(const MFAudioCapture::Name& device, vector<MFAudioCaptureParam>& params);
+		static BOOL GetDeviceSource(const MFAudioCapture::Name& device, IMFMediaSource** source);
 	protected:
 		BOOL										m_bCapturing;
-		TinyScopedReferencePtr<MFVideoReaderCallback>	m_readerCB;
+		TinyScopedReferencePtr<MFAudioReaderCallback>	m_readerCB;
 		TinyComPtr<IMFSourceReader>					m_reader;
 		TinyComPtr<IMFMediaSource>					m_source;
 		Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_receiveCB;

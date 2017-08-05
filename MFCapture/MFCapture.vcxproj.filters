@@ -39,6 +39,12 @@
     <ClInclude Include="MFVideoCaptureParam.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MFAudioCapture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MFAudioCaptureParam.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -57,6 +63,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MFVideoCaptureParam.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MFAudioCapture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MFAudioCaptureParam.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
