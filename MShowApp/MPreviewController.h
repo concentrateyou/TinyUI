@@ -21,7 +21,7 @@ namespace MShow
 		MPreviewController(MPreviewView& view);
 		virtual ~MPreviewController();
 		BOOL		Initialize();
-		void		SetPulgSize(const TinySize& size);
+		BOOL		SetPulgSize(const TinySize& size);
 		TinySize	GetPulgSize() const;
 	public:
 		BOOL		Add(DX11Element2D* ps);

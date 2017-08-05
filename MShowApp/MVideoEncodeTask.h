@@ -1,6 +1,6 @@
 #pragma once
 #include "MShowCommon.h"
-#include "MPreviewView.h"
+#include "MShadowView.h"
 #include "DXFramework.h"
 #include "QSVEncoder.h"
 #include "MPacketQueue.h"
@@ -22,7 +22,6 @@ namespace MShow
 		MVideoEncodeTask(MRTMPPusher& pusher, MClock& clock);
 		virtual ~MVideoEncodeTask();
 	public:
-		BOOL			Initialize(MPreviewView& view);
 		BOOL			Submit(const TinySize& pulgSize, INT videoFPS, INT videoRate);
 		BOOL			Close(DWORD dwMS) OVERRIDE;
 		TinySize		GetSize() const;
@@ -32,22 +31,17 @@ namespace MShow
 		MSampleQueue&	GetSamples();
 	private:
 		void			OnMessagePump();
-		DWORD			Encode(Sample& sample);
 	private:
-		LONGLONG				m_videoINC;
 		MRTMPPusher&			m_pusher;
 		BOOL					m_bBreak;
+		LONG					m_videoINC;
 		INT						m_videoFPS;
 		INT						m_videoRate;
-		LONG					m_videoSize;
-		TinyScopedArray<BYTE>	m_videoBits;
 		TinySize				m_pulgSize;
 		MClock&					m_clock;
-		DX11					m_dx11;
-		DX11Texture2D			m_image2D;
-		DX11Texture2D			m_copy2D;
 		QSVEncoder				m_encoder;
 		MSampleQueue			m_samples;
+		MPacketQueue			m_queue;
 		TinyPerformanceTimer	m_timer;
 	};
 }

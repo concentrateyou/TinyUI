@@ -5,7 +5,7 @@ namespace MShow
 {
 #define MAX_QUEUE_SIZE (512 * 1024)
 #define MAX_AUDIO_QUEUE_SIZE (512 * 1024)
-#define MAX_VIDEO_QUEUE_SIZE (16 * 1024 * 1024)
+#define MAX_VIDEO_QUEUE_SIZE (8 * 1024 * 1024)
 	/// <summary>
 	/// 数据队列
 	/// </summary>

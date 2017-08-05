@@ -294,10 +294,10 @@ namespace MShow
 		return TinyTaskBase::Close(dwMS);
 	}
 
-	void MPreviewController::SetPulgSize(const TinySize& size)
+	BOOL MPreviewController::SetPulgSize(const TinySize& size)
 	{
 		m_pulgSize = size;
-		m_renderView.Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), FALSE);
+		return m_renderView.Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), FALSE);
 	}
 
 	TinySize MPreviewController::GetPulgSize() const

@@ -5,6 +5,7 @@
 #include "MVideoView.h"
 #include "MImageView.h"
 #include "MPreviewView.h"
+#include "MShadowView.h"
 #include "MPlayView.h"
 #include "MAudioView.h"
 using namespace TinyUI;
@@ -46,7 +47,7 @@ namespace MShow
 		MImageView				m_imageViews[6];
 		MAudioView				m_audioViews[6];
 		MPreviewView			m_previewView;
-		MPreviewView			m_shadowView;//影子窗口
+		MShadowView				m_shadowView;//影子窗口
 		MPlayView				m_playView;
 		MVolumeView				m_playVolumeView;
 		TinyButton				m_layout[3];

@@ -166,6 +166,8 @@
     <ClInclude Include="MRTMPClient.h" />
     <ClInclude Include="MRTMPPusher.h" />
     <ClInclude Include="MSampleQueue.h" />
+    <ClInclude Include="MShadowView.h" />
+    <ClInclude Include="MShadowController.h" />
     <ClInclude Include="MShowController.h" />
     <ClInclude Include="MFLVPlayer.h" />
     <ClInclude Include="MFLVTask.h" />
@@ -202,6 +204,8 @@
     <ClCompile Include="MRTMPClient.cpp" />
     <ClCompile Include="MRTMPPusher.cpp" />
     <ClCompile Include="MSampleQueue.cpp" />
+    <ClCompile Include="MShadowView.cpp" />
+    <ClCompile Include="MShadowController.cpp" />
     <ClCompile Include="MShowController.cpp" />
     <ClCompile Include="MFLVPlayer.cpp" />
     <ClCompile Include="MFLVTask.cpp" />
