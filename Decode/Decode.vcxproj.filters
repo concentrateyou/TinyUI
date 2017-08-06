@@ -51,9 +51,6 @@
     <ClInclude Include="x264Decode.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="IntelQSVDecode.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="HTTPStream.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -61,6 +58,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="MP3Task.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FFT.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -95,9 +95,6 @@
     <ClCompile Include="x264Decode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="IntelQSVDecode.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="HTTPStream.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -105,6 +102,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MP3Task.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FFT.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

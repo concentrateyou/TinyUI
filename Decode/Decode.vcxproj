@@ -143,6 +143,7 @@
     <ClInclude Include="AACDecode.h" />
     <ClInclude Include="AC3Decode.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="FFT.h" />
     <ClInclude Include="FLVReader.h" />
     <ClInclude Include="FLVWriter.h" />
     <ClInclude Include="HTTPStream.h" />
@@ -152,7 +153,6 @@
     <ClInclude Include="RTMPReader.h" />
     <ClInclude Include="RTMPStream.h" />
     <ClInclude Include="FLVParser.h" />
-    <ClInclude Include="IntelQSVDecode.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -160,6 +160,7 @@
     <ClCompile Include="AACDecode.cpp" />
     <ClCompile Include="AC3Decode.cpp" />
     <ClCompile Include="Common.cpp" />
+    <ClCompile Include="FFT.cpp" />
     <ClCompile Include="FLVReader.cpp" />
     <ClCompile Include="FLVWriter.cpp" />
     <ClCompile Include="HTTPStream.cpp" />
@@ -169,7 +170,6 @@
     <ClCompile Include="RTMPReader.cpp" />
     <ClCompile Include="RTMPStream.cpp" />
     <ClCompile Include="FLVParser.cpp" />
-    <ClCompile Include="IntelQSVDecode.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

@@ -1,14 +1,19 @@
 #pragma once
 #include <string>
+#include "Network/TinySocket.h"
+#include "Network/TinyDNS.h"
+#include "Network/TinyURL.h"
 #include "IO/TinyIO.h"
 #include "IO/TinyRingBuffer.h"
 #include "rtmp.h"
 using namespace std;
+using namespace TinyUI;
+using namespace TinyUI::Network;
 
 namespace Decode
 {
 	/// <summary>
-	/// FLV HTTPP利大送
+	/// FLV HTTP利大送
 	/// </summary>
 	class HTTPStream : public IStream
 	{
@@ -36,6 +41,7 @@ namespace Decode
 		BOOL Close();
 	private:
 		LONG			m_cRef;
+		TinySocket		m_socket;
 	};
 }
 
