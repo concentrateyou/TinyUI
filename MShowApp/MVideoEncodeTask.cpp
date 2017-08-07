@@ -28,33 +28,36 @@ namespace MShow
 
 	void MVideoEncodeTask::OnMessagePump()
 	{
-		Sample sample;
-		for (;;)
+		MShadowController* pCTRL = MShow::MShowApp::Instance().GetController().GetShadowController();
+		if (pCTRL != NULL)
 		{
-			if (m_bBreak)
-				break;
-			if (m_clock.GetBaseTime() == -1)
-				continue;
-			MShadowController* pCTRL = MShow::MShowApp::Instance().GetController().GetShadowController();
-			if (pCTRL != NULL)
+			MPacketAllocQueue& queue = pCTRL->GetVideoQueue();
+			Sample sample;
+			for (;;)
 			{
+				if (m_bBreak)
+					break;
 				SampleTag sampleTag;
 				ZeroMemory(&sampleTag, sizeof(sampleTag));
-				if (pCTRL->GetVideoQueue().Pop(sampleTag))
+				BOOL bRes = queue.Pop(sampleTag);
+				if (!bRes || sampleTag.size <= 0)
 				{
-					sampleTag.sampleDTS = sampleTag.samplePTS = (m_videoINC++) * 90000 / m_videoFPS;
-					ZeroMemory(&sample, sizeof(sample));
-					BYTE* bo = NULL;
-					LONG  so = 0;
-					ZeroMemory(&sample, sizeof(sample));
-					if (m_encoder.Encode(sampleTag, bo, so, sample.mediaTag))
-					{
-						sample.size = so;
-						sample.bits = new BYTE[so];
-						memcpy(sample.bits, bo, so);
-						m_samples.Push(sample);
-					}
+					Sleep(1);
+					continue;
 				}
+				sampleTag.sampleDTS = sampleTag.samplePTS = (m_videoINC++) * 90000 / m_videoFPS;
+				ZeroMemory(&sample, sizeof(sample));
+				BYTE* bo = NULL;
+				LONG  so = 0;
+				ZeroMemory(&sample, sizeof(sample));
+				if (m_encoder.Encode(sampleTag, bo, so, sample.mediaTag))
+				{
+					sample.size = so;
+					sample.bits = new BYTE[so];
+					memcpy(sample.bits, bo, so);
+					m_samples.Push(sample);
+				}
+				queue.Free(sampleTag.bits);
 			}
 		}
 	}

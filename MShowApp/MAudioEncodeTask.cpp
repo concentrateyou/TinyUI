@@ -61,7 +61,6 @@ namespace MShow
 			if (m_aac.Encode(sampleTag.bits, sampleTag.size, bo, so, sample.mediaTag))
 			{
 				sample.size = so;
-				sample.mediaTag.dwTime -= m_timer.GetMillisconds();
 				sample.bits = new BYTE[so];
 				memcpy(sample.bits, bo, so);
 				m_samples.Push(sample);
@@ -102,10 +101,6 @@ namespace MShow
 		sampleTag.bits = output;
 		sampleTag.size = size;
 		m_queue.Push(sampleTag);
-		if (m_clock.GetBaseTime() == -1)
-		{
-			m_clock.SetBaseTime(timeGetTime());
-		}
 	}
 
 	void MAudioEncodeTask::OnAudioMix(BYTE* bits, LONG size)

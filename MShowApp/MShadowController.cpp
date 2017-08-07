@@ -7,7 +7,7 @@ namespace MShow
 	MShadowController::MShadowController(MShadowView& view)
 		:m_view(view),
 		m_bBreak(FALSE),
-		m_videoFPS(30)
+		m_videoFPS(25)
 	{
 
 	}
@@ -60,13 +60,12 @@ namespace MShow
 	}
 	void MShadowController::OnMessagePump()
 	{
-		TinyPerformanceTimer timer;
+		TinyPerformanceTimer time;
 		DWORD dwMS = static_cast<DWORD>(1000 / m_videoFPS);
 		for (;;)
 		{
 			if (m_bBreak)
 				break;
-			timer.BeginTime();
 			m_copy2D.Copy(m_dx11, m_image2D);
 			BYTE* bits = NULL;
 			UINT pitch = 0;
@@ -85,8 +84,8 @@ namespace MShow
 				m_copy2D.Unmap(m_dx11);
 				m_videoQueue.Push(sampleTag);
 			}
-			timer.EndTime();
-			INT delay = dwMS - static_cast<DWORD>(timer.GetMillisconds());
+			time.EndTime();
+			INT delay = dwMS - static_cast<DWORD>(time.GetMillisconds());
 			Sleep(delay < 0 ? 0 : delay);
 		}
 	}
