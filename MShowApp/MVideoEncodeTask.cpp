@@ -42,7 +42,7 @@ namespace MShow
 				BOOL bRes = queue.Pop(sampleTag);
 				if (!bRes || sampleTag.size <= 0)
 				{
-					Sleep(1);
+					Sleep(3);
 					continue;
 				}
 				sampleTag.sampleDTS = sampleTag.samplePTS = (m_videoINC++) * 90000 / m_videoFPS;

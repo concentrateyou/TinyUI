@@ -52,7 +52,7 @@ namespace MShow
 			BOOL bRes = m_queue.Pop(sampleTag);
 			if (!bRes || sampleTag.size <= 0)
 			{
-				Sleep(1);
+				Sleep(3);
 				continue;
 			}
 			BYTE* bo = NULL;

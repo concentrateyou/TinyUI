@@ -1337,7 +1337,7 @@ namespace TinyUI
 	}
 	void TinyPerformanceTimer::BeginTime()
 	{
-		m_dwTimerMask = 1;
+		/*m_dwTimerMask = 1;
 		DWORD dwProcessMask = 0;
 		DWORD dwSystemMask = 0;
 #if _MSC_VER >= 1400 && defined (_M_X64)
@@ -1353,20 +1353,21 @@ namespace TinyUI
 			m_dwTimerMask <<= 1;
 		}
 		HANDLE hHandle = GetCurrentThread();
-		DWORD oldMask = SetThreadAffinityMask(hHandle, m_dwTimerMask);
+		DWORD oldMask = SetThreadAffinityMask(hHandle, m_dwTimerMask);*/
 		QueryPerformanceFrequency(&m_lFrequency);
 		QueryPerformanceCounter(&m_startPerformanceCount);
-		m_dwTick = GetTickCount();
-		SetThreadAffinityMask(hHandle, oldMask);
+		/*m_dwTick = GetTickCount();
+		SetThreadAffinityMask(hHandle, oldMask);*/
 	}
 
 	void TinyPerformanceTimer::EndTime()
 	{
-		HANDLE hHandle = GetCurrentThread();
-		DWORD oldMask = SetThreadAffinityMask(hHandle, m_dwTimerMask);
+		/*HANDLE hHandle = GetCurrentThread();
+		DWORD oldMask = SetThreadAffinityMask(hHandle, m_dwTimerMask);*/
 		LARGE_INTEGER currentPerformanceCount;
 		QueryPerformanceCounter(&currentPerformanceCount);
-		SetThreadAffinityMask(hHandle, oldMask);
+		LONGLONG elapseTime = currentPerformanceCount.QuadPart - m_startPerformanceCount.QuadPart;
+		/*SetThreadAffinityMask(hHandle, oldMask);
 		LONGLONG elapseTime = currentPerformanceCount.QuadPart - m_startPerformanceCount.QuadPart;
 		LONGLONG elapseTicks = (LONGLONG)(1000 * elapseTime / m_lFrequency.QuadPart);
 		ULONG check = GetTickCount() - m_dwTick;
@@ -1376,7 +1377,7 @@ namespace TinyUI
 			LONGLONG adjustment = std::min<LONGLONG>(offset * m_lFrequency.QuadPart / 1000, elapseTime - m_lastTime);
 			m_startPerformanceCount.QuadPart += adjustment;
 			elapseTime -= adjustment;
-		}
+		}*/
 		m_lastTime = elapseTime;
 	}
 

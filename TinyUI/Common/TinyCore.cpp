@@ -473,4 +473,21 @@ namespace TinyUI
 		}
 		m_hInstance = LoadLibrary(pzName);
 	}
+	//////////////////////////////////////////////////////////////////////////
+	void WINAPI SleepMS(DWORD dwMS)
+	{
+		static auto NtDll = GetModuleHandleW(L"ntdll.dll");
+		static auto NtDelayExecution = (long(__stdcall*)(BOOL alertable, PLARGE_INTEGER delayInterval))GetProcAddress(NtDll, "NtDelayExecution");
+		static auto ZwSetTimerResolution = (long(__stdcall*)(ULONG requestedRes, BOOL setNew, ULONG* actualRes))GetProcAddress(NtDll, "ZwSetTimerResolution");
+		static BOOL resolutionSet = FALSE;
+		if (!resolutionSet)
+		{
+			ULONG actualResolution;
+			ZwSetTimerResolution(1, TRUE, &actualResolution);
+			resolutionSet = TRUE;
+		}
+		LARGE_INTEGER interval;
+		interval.QuadPart = -1 * (LONGLONG)(dwMS * 10000);
+		NtDelayExecution(FALSE, &interval);
+	}
 };

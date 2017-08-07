@@ -49,6 +49,7 @@ namespace MShow
 	}
 	BOOL MShowApp::Initialize(HINSTANCE hInstance, LPTSTR  lpCmdLine, INT nCmdShow, LPCTSTR lpTableName)
 	{
+
 		LoadSeDebugPrivilege();
 		UNREFERENCED_PARAMETER(lpCmdLine);
 		UNREFERENCED_PARAMETER(nCmdShow);

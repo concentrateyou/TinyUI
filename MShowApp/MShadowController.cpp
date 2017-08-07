@@ -60,43 +60,84 @@ namespace MShow
 	}
 	void MShadowController::OnMessagePump()
 	{
-		TinyPerformanceTimer time;
 		DWORD dwMS = static_cast<DWORD>(1000 / m_videoFPS);
+		SampleTag tag;
 		for (;;)
 		{
 			if (m_bBreak)
 				break;
-			m_copy2D.Copy(m_dx11, m_image2D);
-			BYTE* bits = NULL;
-			UINT pitch = 0;
-			SampleTag sampleTag;
-			ZeroMemory(&sampleTag, sizeof(sampleTag));
-			if (m_copy2D.Map(m_dx11, bits, pitch, TRUE))
+			Sleep(100);
+			/*DWORD dwTime = OnVideo(tag);
+			if (tag.size > 0)
 			{
-				sampleTag.size = pitch * m_pulgSize.cy;
-				if (m_videoQueue.GetAllocSize() == 0)
+				if (m_signal.Lock(INFINITE))
 				{
-					INT count = MAX_VIDEO_QUEUE_SIZE / sampleTag.size + 1;
-					m_videoQueue.Initialize(count, sampleTag.size + 4);
+					m_timer.EndTime();
+					m_timer.BeginTime();
+					m_videoQueue.Push(tag);
+					INT ms = static_cast<DWORD>(m_timer.GetMillisconds()) - dwMS;
+					if (ms > 0)
+					{
+						TRACE("ms:%d\n", ms);
+					}
 				}
-				sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
-				memcpy_s(sampleTag.bits + 4, sampleTag.size, bits, sampleTag.size);
-				m_copy2D.Unmap(m_dx11);
-				m_videoQueue.Push(sampleTag);
+			}*/
+		}
+	}
+
+	DWORD MShadowController::OnVideo(SampleTag& sampleTag)
+	{
+		m_timer.BeginTime();
+		ZeroMemory(&sampleTag, sizeof(sampleTag));
+		m_copy2D.Copy(m_dx11, m_image2D);
+		BYTE* bits = NULL;
+		UINT pitch = 0;
+		if (m_copy2D.Map(m_dx11, bits, pitch, TRUE))
+		{
+			sampleTag.size = pitch * m_pulgSize.cy;
+			if (m_videoQueue.GetAllocSize() == 0)
+			{
+				INT count = MAX_VIDEO_QUEUE_SIZE / sampleTag.size + 1;
+				m_videoQueue.Initialize(count, sampleTag.size + 4);
 			}
-			time.EndTime();
-			INT delay = dwMS - static_cast<DWORD>(time.GetMillisconds());
-			Sleep(delay < 0 ? 0 : delay);
+			sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
+			memcpy_s(sampleTag.bits + 4, sampleTag.size, bits, sampleTag.size);
+			m_copy2D.Unmap(m_dx11);
+		}
+		m_timer.EndTime();
+		return static_cast<DWORD>(m_timer.GetMillisconds());
+	}
+	VOID CALLBACK MShadowController::TimerCallback(PVOID lpParameter, BOOLEAN TimerOrWaitFired)
+	{
+		MShadowController* pThis = reinterpret_cast<MShadowController*>(lpParameter);
+		if (pThis != NULL)
+		{
+			pThis->m_timer.EndTime();
+			DWORD dwTime = static_cast<DWORD>(pThis->m_timer.GetMillisconds());
+			if (dwTime > 40)
+			{
+				TRACE("Time:%d\n", dwTime);
+			}
+			pThis->m_timer.BeginTime();
 		}
 	}
 	BOOL MShadowController::Submit()
 	{
 		m_bBreak = FALSE;
+		m_signal.CreateEvent();
+		if (m_handle != NULL)
+		{
+			TinyApplication::GetInstance()->GetTimers().Unregister(m_handle);
+			m_handle = NULL;
+		}
+		DWORD dwMS = static_cast<DWORD>(1000 / m_videoFPS);
+		m_handle = TinyApplication::GetInstance()->GetTimers().Register(&MShadowController::TimerCallback, this, dwMS - 1, dwMS - 1, WT_EXECUTEINTIMERTHREAD);
 		return TinyTaskBase::Submit(BindCallback(&MShadowController::OnMessagePump, this));
 	}
 	BOOL MShadowController::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
+		m_signal.Close();
 		if (TinyTaskBase::Close(dwMS))
 		{
 			m_image2D.Destory();

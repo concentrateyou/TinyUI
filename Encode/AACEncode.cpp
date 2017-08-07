@@ -89,7 +89,7 @@ namespace Encode
 			ZeroMemory(&tag, sizeof(tag));
 			tag.PTS = m_dwPTS;
 			tag.DTS = m_dwPTS;
-			tag.INC = ++m_dwINC;
+			tag.INC = m_dwINC++;
 			tag.dwType = 1;
 			tag.dwTime = static_cast<DWORD>(tag.INC * tag.PTS);
 			tag.dwFlag = 0;

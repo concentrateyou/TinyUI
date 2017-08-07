@@ -226,5 +226,7 @@ namespace TinyUI
 	private:
 		HINSTANCE	m_hInstance;
 	};
+	//////////////////////////////////////////////////////////////////////////
+	void WINAPI SleepMS(DWORD dwMS);
 };
 

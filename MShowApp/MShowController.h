@@ -40,11 +40,11 @@ namespace MShow
 		MRTMPPusher			m_pusher;
 		MAudioEncodeTask	m_audio;
 		MVideoEncodeTask	m_video;
-		TinyScopedPtr<MVideoController>		m_videoCTRLS[6];
-		TinyScopedPtr<MImageController>		m_imageCTRLS[6];
-		TinyScopedPtr<MAudioController>		m_audioCTRLS[6];
-		TinyScopedPtr<MPreviewController>	m_previewCTRL;
-		TinyScopedPtr<MShadowController>	m_shadowCTRL;
+		TinyScopedPtr<MVideoController>		m_videos[6];
+		TinyScopedPtr<MImageController>		m_images[6];
+		TinyScopedPtr<MAudioController>		m_audios[6];
+		TinyScopedPtr<MPreviewController>	m_preview;
+		TinyScopedPtr<MShadowController>	m_shadow;
 		TinyScopedPtr<MPlayController>		m_play;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onToggleClick;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onPusherClick;

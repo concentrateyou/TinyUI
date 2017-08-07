@@ -29,6 +29,7 @@ namespace MShow
 
 	void MVideoRenderTask::OnMessagePump()
 	{
+		TinyPerformanceTimer timer;
 		SampleTag sampleTag = { 0 };
 		for (;;)
 		{
@@ -48,7 +49,14 @@ namespace MShow
 			while (m_clock.GetBasePTS() == -1);
 			LONG ms = static_cast<LONG>(timeGetTime() - m_clock.GetBaseTime());
 			INT delay = static_cast<INT>(sampleTag.samplePTS - ms);
-			Sleep(delay < 0 ? 0 : delay);
+			SleepEx(delay < 0 ? 0 : delay, FALSE);
+			timer.EndTime();
+			DWORD dwTime = static_cast<DWORD>(timer.GetMillisconds());
+			if (dwTime > 40)
+			{
+				TRACE("Play Time:%d\n", dwTime);
+			}
+			timer.BeginTime();
 			if (!m_callback.IsNull())
 			{
 				m_callback(sampleTag.bits + 4, sampleTag.size);
