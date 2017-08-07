@@ -5,6 +5,8 @@
 #include "MShowApp.h"
 #include "RTMPReader.h"
 #include "resource.h"
+#include <math.h>
+#include <algorithm>
 using namespace std;
 
 namespace MShow
@@ -40,16 +42,21 @@ namespace MShow
 		return TRUE;
 	}
 	//////////////////////////////////////////////////////////////////////////
+	LARGE_INTEGER g_clockFreq;
+	__declspec(thread) LONGLONG g_lastQPCTime = 0;
+	//////////////////////////////////////////////////////////////////////////
 	MShowApp::MShowApp()
 		:m_controller(m_window)
 	{
+		timeBeginPeriod(1);
 	}
 	MShowApp::~MShowApp()
 	{
+		timeEndPeriod(1);
 	}
 	BOOL MShowApp::Initialize(HINSTANCE hInstance, LPTSTR  lpCmdLine, INT nCmdShow, LPCTSTR lpTableName)
 	{
-
+		QueryPerformanceFrequency(&g_clockFreq);
 		LoadSeDebugPrivilege();
 		UNREFERENCED_PARAMETER(lpCmdLine);
 		UNREFERENCED_PARAMETER(nCmdShow);
@@ -89,10 +96,45 @@ namespace MShow
 		return m_controller;
 	}
 
-	MShowApp& MShowApp::Instance() throw()
+	MShowApp& MShowApp::GetInstance() throw()
 	{
 		static MShowApp app;
 		return app;
+	}
+	QWORD MShowApp::GetQPCTimeNS()
+	{
+		LARGE_INTEGER currentTime;
+		QueryPerformanceCounter(&currentTime);
+		ASSERT(currentTime.QuadPart >= g_lastQPCTime);
+		g_lastQPCTime = currentTime.QuadPart;
+		DOUBLE timeVal = DOUBLE(currentTime.QuadPart);
+		timeVal *= 1000000000.0;
+		timeVal /= DOUBLE(g_clockFreq.QuadPart);
+		return QWORD(timeVal);
+	}
+
+	QWORD MShowApp::GetQPCTimeMS()
+	{
+		LARGE_INTEGER currentTime;
+		QueryPerformanceCounter(&currentTime);
+		ASSERT(currentTime.QuadPart >= g_lastQPCTime);
+		g_lastQPCTime = currentTime.QuadPart;
+		QWORD timeVal = currentTime.QuadPart;
+		timeVal *= 1000;
+		timeVal /= g_clockFreq.QuadPart;
+		return timeVal;
+	}
+
+	QWORD MShowApp::GetQPCTime100NS()
+	{
+		LARGE_INTEGER currentTime;
+		QueryPerformanceCounter(&currentTime);
+		ASSERT(currentTime.QuadPart >= g_lastQPCTime);
+		g_lastQPCTime = currentTime.QuadPart;
+		DOUBLE timeVal = DOUBLE(currentTime.QuadPart);
+		timeVal *= 10000000.0;
+		timeVal /= DOUBLE(g_clockFreq.QuadPart);
+		return QWORD(timeVal);
 	}
 }
 
@@ -108,7 +150,7 @@ INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	WSAStartup(MAKEWORD(2, 2), &wsd);
 	MFStartup(MF_VERSION);
 	OleInitialize(NULL);
-	MShow::MShowApp& app = MShow::MShowApp::Instance();
+	MShow::MShowApp& app = MShow::MShowApp::GetInstance();
 	app.Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_MSHOWAPP));
 	INT iRes = app.Run();
 	OleUninitialize();

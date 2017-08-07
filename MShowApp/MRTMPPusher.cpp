@@ -53,8 +53,8 @@ namespace MShow
 
 	void MRTMPPusher::OnMessagePump()
 	{
-		MSampleQueue& videos = MShow::MShowApp::Instance().GetController().GetVideoEncoder().GetSamples();
-		MSampleQueue& audios = MShow::MShowApp::Instance().GetController().GetAudioEncoder().GetSamples();
+		MSampleQueue& videos = MShow::MShowApp::GetInstance().GetController().GetVideoEncoder().GetSamples();
+		MSampleQueue& audios = MShow::MShowApp::GetInstance().GetController().GetAudioEncoder().GetSamples();
 		Sample video, audio;
 		for (;;)
 		{
@@ -91,8 +91,8 @@ namespace MShow
 		{
 			if (sample.mediaTag.INC == 1)
 			{
-				MAudioEncodeTask& audio = MShowApp::Instance().GetController().GetAudioEncoder();
-				MVideoEncodeTask& video = MShowApp::Instance().GetController().GetVideoEncoder();
+				MAudioEncodeTask& audio = MShowApp::GetInstance().GetController().GetAudioEncoder();
+				MVideoEncodeTask& video = MShowApp::GetInstance().GetController().GetVideoEncoder();
 				TinySize pulgSize = video.GetSize();
 				m_client.SendMetadata(pulgSize.cx, pulgSize.cy, video.GetVideoFPS(), video.GetVideoRate(), audio.GetFormat(), audio.GetAudioRate());
 				vector<BYTE>& sps = video.GetQSV().GetSPS();
@@ -107,7 +107,7 @@ namespace MShow
 		{
 			if (sample.mediaTag.INC == 1)
 			{
-				MAudioEncodeTask& encoder = MShowApp::Instance().GetController().GetAudioEncoder();
+				MAudioEncodeTask& encoder = MShowApp::GetInstance().GetController().GetAudioEncoder();
 				vector<BYTE> info;
 				encoder.GetAAC().GetSpecificInfo(info);
 				m_client.SendAAC(&info[0], info.size());

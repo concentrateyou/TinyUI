@@ -17,8 +17,11 @@ namespace MShow
 		MShowWindow&		GetView();
 		MShowController&	GetController();
 		INT					Run();
+		QWORD				GetQPCTimeNS();
+		QWORD				GetQPCTimeMS();
+		QWORD				GetQPCTime100NS();
 	public:
-		static MShowApp& Instance() throw();
+		static MShowApp&	GetInstance() throw();
 	private:
 		MShowWindow			m_window;
 		MShowController		m_controller;

@@ -26,7 +26,7 @@ namespace MShow
 	}
 	BOOL MShadowController::SetPulgSize(const TinySize& size)
 	{
-		MPreviewController* pCTRL = MShowApp::Instance().GetController().GetPreviewController();
+		MPreviewController* pCTRL = MShowApp::GetInstance().GetController().GetPreviewController();
 		if (!pCTRL)
 			return FALSE;
 		m_pulgSize = size;

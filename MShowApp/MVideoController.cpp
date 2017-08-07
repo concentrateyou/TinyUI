@@ -163,7 +163,7 @@ namespace MShow
 			{
 				if (this->Open(szName.STR()))
 				{
-					MPreviewController* preview = MShowApp::Instance().GetController().GetPreviewController();
+					MPreviewController* preview = MShowApp::GetInstance().GetController().GetPreviewController();
 					if (preview != NULL)
 					{
 						preview->m_waits.push_back(m_signal);
@@ -174,11 +174,11 @@ namespace MShow
 	}
 	void MVideoController::OnChange()
 	{
-		MShowApp::Instance().GetController().GetAudioEncoder().SetVideoController(this);
+		MShowApp::GetInstance().GetController().GetAudioEncoder().SetVideoController(this);
 	}
 	void MVideoController::OnRemove()
 	{
-		MPreviewController* preview = MShowApp::Instance().GetController().GetPreviewController();
+		MPreviewController* preview = MShowApp::GetInstance().GetController().GetPreviewController();
 		if (preview != NULL && m_pVideo != NULL)
 		{
 			preview->Remove(m_pVideo);
@@ -211,7 +211,7 @@ namespace MShow
 
 	void MVideoController::AddElement()
 	{
-		MPreviewController* preview = MShowApp::Instance().GetController().GetPreviewController();
+		MPreviewController* preview = MShowApp::GetInstance().GetController().GetPreviewController();
 		if (preview != NULL)
 		{
 			if (m_pVideo == NULL)

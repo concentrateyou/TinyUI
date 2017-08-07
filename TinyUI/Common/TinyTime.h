@@ -1,6 +1,7 @@
 #pragma once
 #include <time.h>
 #include <ctime>
+#include <ShlObj.h>
 #include "TinyString.h"
 #ifndef __oledb_h__
 struct tagDBTIMESTAMP;

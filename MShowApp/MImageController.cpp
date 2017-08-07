@@ -109,7 +109,7 @@ namespace MShow
 			{
 				if (this->Open(szName.STR()))
 				{
-					MPreviewController* preview = MShowApp::Instance().GetController().GetPreviewController();
+					MPreviewController* preview = MShowApp::GetInstance().GetController().GetPreviewController();
 					if (preview != NULL)
 					{
 						preview->m_waits.push_back(m_signal);
@@ -121,7 +121,7 @@ namespace MShow
 
 	void MImageController::OnRemove()
 	{
-		MPreviewController* preview = MShowApp::Instance().GetController().GetPreviewController();
+		MPreviewController* preview = MShowApp::GetInstance().GetController().GetPreviewController();
 		if (preview != NULL && m_pImage != NULL)
 		{
 			preview->Remove(m_pImage);
@@ -163,7 +163,7 @@ namespace MShow
 	void MImageController::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		MPreviewController* preview = MShowApp::Instance().GetController().GetPreviewController();
+		MPreviewController* preview = MShowApp::GetInstance().GetController().GetPreviewController();
 		if (preview != NULL)
 		{
 			if (m_pImage == NULL)

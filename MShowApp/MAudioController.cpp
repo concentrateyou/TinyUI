@@ -81,7 +81,7 @@ namespace MShow
 	{
 		if (!m_szFile.IsEmpty())
 		{
-			MShow::MShowApp::Instance().GetController().GetAudioEncoder().SetAudioController(this);
+			MShow::MShowApp::GetInstance().GetController().GetAudioEncoder().SetAudioController(this);
 			m_task.Submit(m_szFile.STR());
 		}
 	}
