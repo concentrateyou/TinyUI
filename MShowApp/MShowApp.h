@@ -20,6 +20,7 @@ namespace MShow
 		QWORD				GetQPCTimeNS();
 		QWORD				GetQPCTimeMS();
 		QWORD				GetQPCTime100NS();
+		BOOL				SleepNS(QWORD qwNSTime);
 	public:
 		static MShowApp&	GetInstance() throw();
 	private:

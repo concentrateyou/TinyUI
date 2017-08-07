@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "MVideoRenderTask.h"
+#include "MShowApp.h"
 
 namespace MShow
 {
@@ -29,7 +30,7 @@ namespace MShow
 
 	void MVideoRenderTask::OnMessagePump()
 	{
-		TinyPerformanceTimer timer;
+		TinyPerformanceTimer time;
 		SampleTag sampleTag = { 0 };
 		for (;;)
 		{
@@ -39,7 +40,7 @@ namespace MShow
 			BOOL bRes = m_task.GetVideoQueue().Pop(sampleTag);
 			if (!bRes || sampleTag.size <= 0)
 			{
-				Sleep(50);
+				Sleep(25);
 				continue;
 			}
 			if (sampleTag.samplePTS == m_clock.GetBasePTS())
@@ -50,13 +51,6 @@ namespace MShow
 			LONG ms = static_cast<LONG>(timeGetTime() - m_clock.GetBaseTime());
 			INT delay = static_cast<INT>(sampleTag.samplePTS - ms);
 			SleepEx(delay < 0 ? 0 : delay, FALSE);
-			timer.EndTime();
-			DWORD dwTime = static_cast<DWORD>(timer.GetMillisconds());
-			if (dwTime > 40)
-			{
-				TRACE("Play Time:%d\n", dwTime);
-			}
-			timer.BeginTime();
 			if (!m_callback.IsNull())
 			{
 				m_callback(sampleTag.bits + 4, sampleTag.size);

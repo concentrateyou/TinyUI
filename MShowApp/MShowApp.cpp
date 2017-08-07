@@ -136,6 +136,26 @@ namespace MShow
 		timeVal /= DOUBLE(g_clockFreq.QuadPart);
 		return QWORD(timeVal);
 	}
+	BOOL MShowApp::SleepNS(QWORD qwNSTime)
+	{
+		QWORD s = GetQPCTimeNS();
+		if (s >= qwNSTime)
+			return FALSE;
+		UINT ms = (UINT)((qwNSTime - s) / 1000000);
+		if (ms > 1)
+		{
+			if (ms > 10000)
+				return FALSE;
+			Sleep(ms);
+		}
+		for (;;)
+		{
+			s = GetQPCTimeNS();
+			if (s >= qwNSTime)
+				return TRUE;
+			Sleep(1);
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

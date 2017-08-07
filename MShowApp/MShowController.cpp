@@ -32,7 +32,7 @@ namespace MShow
 		if (!m_preview->Initialize())
 			return FALSE;
 		m_preview->SetPulgSize(TinySize(1280, 720));
-		m_shadow.Reset(new MShadowController(m_window.m_shadowView));
+		m_shadow.Reset(new MShadowController(m_window.m_shadowView, m_clock));
 		if (!m_shadow)
 			return FALSE;
 		if (!m_shadow->Initialize())
@@ -43,7 +43,7 @@ namespace MShow
 			return FALSE;
 		if (!m_play->Initialize())
 			return FALSE;
-		m_window.m_playVolumeView.EVENT_VOLUME += m_play->m_onVolume;	
+		m_window.m_playVolumeView.EVENT_VOLUME += m_play->m_onVolume;
 		for (UINT i = 0;i < 6;i++)
 		{
 			m_videos[i].Reset(new MVideoController(m_window.m_videoViews[i]));
@@ -177,10 +177,10 @@ namespace MShow
 			{
 				m_video.Close(INFINITE);
 			}
-			if (m_pusher.Connect())
+			/*if (m_pusher.Connect())
 			{
 				m_pusher.Submit();
-			}
+			}*/
 			/*m_video.Submit(m_preview->GetPulgSize(), 25, 1500);
 			m_audio.SetVideoController(pCTRL);
 			m_audio.Submit(128);*/

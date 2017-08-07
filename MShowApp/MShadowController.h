@@ -2,6 +2,7 @@
 #include "MShowCommon.h"
 #include "MShadowView.h"
 #include "MPacketQueue.h"
+#include "MClock.h"
 using namespace TinyUI;
 
 namespace MShow
@@ -18,7 +19,7 @@ namespace MShow
 		friend class MRTMPEncoder;
 		DISALLOW_COPY_AND_ASSIGN(MShadowController)
 	public:
-		MShadowController(MShadowView& view);
+		MShadowController(MShadowView& view,MClock& clock);
 		virtual ~MShadowController();
 		BOOL		Initialize();
 		BOOL		SetPulgSize(const TinySize& size);
@@ -46,6 +47,7 @@ namespace MShow
 		MPacketQueue			m_queue;
 		MPacketAllocQueue		m_videoQueue;
 		TinyPerformanceTimer	m_timer;
+		MClock&					m_clock;
 		HANDLE					m_handle;
 		TinyEvent				m_signal;
 	};

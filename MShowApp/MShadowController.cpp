@@ -4,10 +4,11 @@
 
 namespace MShow
 {
-	MShadowController::MShadowController(MShadowView& view)
+	MShadowController::MShadowController(MShadowView& view, MClock& clock)
 		:m_view(view),
 		m_bBreak(FALSE),
-		m_videoFPS(25)
+		m_videoFPS(25),
+		m_clock(clock)
 	{
 
 	}
@@ -60,28 +61,29 @@ namespace MShow
 	}
 	void MShadowController::OnMessagePump()
 	{
-		DWORD dwMS = static_cast<DWORD>(1000 / m_videoFPS);
+		TinyPerformanceTimer timer;
+		WORD  qwLatestVideoTime;
+		QWORD qwLatestVideoTimeNS;
+		QWORD qwTime = MShow::MShowApp::GetInstance().GetQPCTimeNS();
+		QWORD qwNS = 1000000000 / m_videoFPS;
+		QWORD qwSleep = qwTime + qwNS;
 		SampleTag tag;
 		for (;;)
 		{
 			if (m_bBreak)
 				break;
-			Sleep(100);
-			/*DWORD dwTime = OnVideo(tag);
-			if (tag.size > 0)
+			if (m_clock.GetBaseTime() == -1)
 			{
-				if (m_signal.Lock(INFINITE))
-				{
-					m_timer.EndTime();
-					m_timer.BeginTime();
-					m_videoQueue.Push(tag);
-					INT ms = static_cast<DWORD>(m_timer.GetMillisconds()) - dwMS;
-					if (ms > 0)
-					{
-						TRACE("ms:%d\n", ms);
-					}
-				}
-			}*/
+				m_clock.SetBaseTime(timeGetTime());
+			}
+			timer.BeginTime();
+			DWORD dwTime = OnVideo(tag);
+			m_videoQueue.Free(tag.bits);
+			MShow::MShowApp::GetInstance().SleepNS(qwSleep += qwNS);
+			timer.EndTime();
+			TRACE("Cost:%d\n", static_cast<DWORD>(timer.GetMillisconds()));
+			qwLatestVideoTime = qwSleep / 1000000;
+			qwLatestVideoTimeNS = qwSleep;
 		}
 	}
 
@@ -124,14 +126,14 @@ namespace MShow
 	BOOL MShadowController::Submit()
 	{
 		m_bBreak = FALSE;
-		m_signal.CreateEvent();
+		/*m_signal.CreateEvent();
 		if (m_handle != NULL)
 		{
 			TinyApplication::GetInstance()->GetTimers().Unregister(m_handle);
 			m_handle = NULL;
 		}
 		DWORD dwMS = static_cast<DWORD>(1000 / m_videoFPS);
-		m_handle = TinyApplication::GetInstance()->GetTimers().Register(&MShadowController::TimerCallback, this, dwMS - 1, dwMS - 1, WT_EXECUTEINTIMERTHREAD);
+		m_handle = TinyApplication::GetInstance()->GetTimers().Register(&MShadowController::TimerCallback, this, dwMS, dwMS, WT_EXECUTEINTIMERTHREAD);*/
 		return TinyTaskBase::Submit(BindCallback(&MShadowController::OnMessagePump, this));
 	}
 	BOOL MShadowController::Close(DWORD dwMS)
