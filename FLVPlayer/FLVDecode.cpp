@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "FLVDecode.h"
+#include "Network/TinyHTTPRequest.h"
+#include "Network/TinyHTTPResponse.h"
+using namespace TinyUI::Network;
 
 namespace FLVPlayer
 {
@@ -26,9 +29,19 @@ namespace FLVPlayer
 	}
 	BOOL FLVDecode::Submit()
 	{
+		TinyHTTPRequest request;
+		if (request.Open("http://10.110.48.31:16654/73278a4a86960eeb576a8fd4c9ec6997", TinyHTTPRequest::GET))
+		{
+			TinyHTTPResponse* response = request.GetResponse();
+			if (response != NULL && response->GetStatus() == "200")
+			{
+				
+			}
+		}
+
 		//if (m_reader.OpenURL("rtmp://live.hkstv.hk.lxdns.com/live/hks"))
 		//if(m_reader.OpenURL("http://10.110.48.109:31152/6696864323&type=http&flashId=flv"))
-		if(m_reader.OpenURL("http://10.110.48.31:16654/73278a4a86960eeb576a8fd4c9ec6997"))
+		if (m_reader.OpenURL("http://10.110.48.31:16654/73278a4a86960eeb576a8fd4c9ec6997"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);

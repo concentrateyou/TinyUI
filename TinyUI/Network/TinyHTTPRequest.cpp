@@ -168,10 +168,15 @@ namespace TinyUI
 				if (dwRes > 0)
 				{
 					m_response.Add(m_raw, dwRes);
-					if (!m_socket.BeginReceive(m_raw, 8192, 0, BindCallback(&TinyHTTPRequest::OnHandleReceive, this), this))
+					TinyHTTPResponse* response = new TinyHTTPResponse();
+					if (response->ParseResponse(m_response.GetPointer(), m_response.GetSize()))
+					{
+						INT a = 0;
+					}
+					/*if (!m_socket.BeginReceive(m_raw, 8192, 0, BindCallback(&TinyHTTPRequest::OnHandleReceive, this), this))
 					{
 						OnHandleError(GetLastError());
-					}
+					}*/
 				}
 				else
 				{
