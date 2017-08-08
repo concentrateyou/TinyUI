@@ -4,7 +4,10 @@
 namespace Decode
 {
 	HTTPStream::HTTPStream()
-		:m_cRef(1)
+		:m_cRef(1),
+		m_stream(NULL),
+		m_bBreak(FALSE),
+		m_bSignal(FALSE)
 	{
 	}
 
@@ -15,13 +18,119 @@ namespace Decode
 
 	BOOL HTTPStream::Open(LPCSTR pzURL)
 	{
+		m_buffer.Initialize(MAX_HTTP_BUFFER_SIZE, sizeof(BYTE));
+		m_session.SetOption(INTERNET_OPTION_CONNECT_TIMEOUT, 5000);      // 5秒的连接超时  
+		m_session.SetOption(INTERNET_OPTION_SEND_TIMEOUT, 1000);         // 1秒的发送超时  
+		m_session.SetOption(INTERNET_OPTION_RECEIVE_TIMEOUT, 7000);      // 7秒的接收超时  
+		m_session.SetOption(INTERNET_OPTION_DATA_SEND_TIMEOUT, 1000);    // 1秒的发送超时  
+		m_session.SetOption(INTERNET_OPTION_DATA_RECEIVE_TIMEOUT, 7000); // 7秒的接收超时  
+		m_session.SetOption(INTERNET_OPTION_CONNECT_RETRIES, 5);
+		INTERNET_SCHEME scheme;
+		TinyString server;
+		TinyString object;
+		INTERNET_PORT port;
+		if (ParseURL(pzURL, scheme, server, object, port))
+		{
+			TinyHTTPConnection* connection = m_session.GetHttpConnection(server.CSTR(), port, NULL, NULL);
+			if (!connection)
+				goto _ERROR;
+			m_stream = connection->OpenRequest(TinyHTTPConnection::HTTP_VERB_GET, object.CSTR());
+			if (!m_stream)
+				goto _ERROR;
+			if (!m_stream->SendRequest())
+				goto _ERROR;
+			DWORD dwCode = 0;
+			if (!m_stream->QueryInfoStatusCode(dwCode) || dwCode != HTTP_STATUS_OK)
+				goto _ERROR;
+			m_bits.Reset(new BYTE[256 * 1024]);
+			if (!m_bits)
+				goto _ERROR;
+			m_bBreak = FALSE;
+			m_event.CreateEvent();
+			CacheHTTP(256 * 1024);
+			WriteHTTP(256 * 1024);
+			return m_task.Submit(BindCallback(&HTTPStream::OnMessagePump, this));
+		}
+	_ERROR:
+		this->Close();
 		return FALSE;
 	}
 
 	BOOL HTTPStream::Close()
 	{
+		m_bBreak = TRUE;
+		if (m_task.Close(INFINITE))
+		{
+			if (m_stream != NULL)
+			{
+				m_stream->Close();
+			}
+			m_session.Close();
+			return TRUE;
+		}
+		return FALSE;
+	}
 
+	void HTTPStream::OnMessagePump()
+	{
+		for (;;)
+		{
+			if (m_bBreak)
+				break;
+			CacheHTTP(64 * 1024);
+			for (;;)
+			{
+				if (WriteHTTP(64 * 1024))
+					break;
+			}
+		}
+	}
+
+	BOOL HTTPStream::WriteHTTP(DWORD dwSize)
+	{
+		TinyAutoLock lock(m_lock);
+		if (m_buffer.GetAvailableOUT() <= 64 * 1024 && m_buffer.GetAvailableIN() >= 64 * 1024)
+		{
+			DWORD dwRes = m_buffer.Write(m_bits, dwSize);
+			ASSERT(dwRes == dwSize);
+			//TRACE("--------------------WriteHTTP:%d, AvailableIN:%d, AvailableOUT:%d\n", dwRes, m_buffer.GetAvailableIN(), m_buffer.GetAvailableOUT());
+			return TRUE;
+		}
+		return FALSE;
+	}
+
+	BOOL HTTPStream::ReadHTTP(VOID *pv, ULONG cb, ULONG *pcbRead)
+	{
+		TinyAutoLock lock(m_lock);
+		if (m_buffer.GetAvailableOUT() <= cb)
+		{
+			return FALSE;
+		}
+		*pcbRead = m_buffer.Read(pv, cb);
+		//if (m_buffer.GetAvailableOUT() <= 64 * 1024)
+		//{
+		//	//TRACE("ReadHTTP:%d, AvailableOUT:%d   <= 64 * 1024\n", (DWORD)*pcbRead, m_buffer.GetAvailableOUT());
+		//	//m_event.SetEvent();
+		//}
+		//else
+		//{
+		//	TRACE("ReadHTTP:%d, AvailableOUT:%d\n", (DWORD)*pcbRead, m_buffer.GetAvailableOUT());
+		//}
 		return TRUE;
+	}
+
+	void HTTPStream::CacheHTTP(DWORD dwSize)
+	{
+		ULONG offset = 0;
+		BYTE* data = m_bits;
+		for (;;)
+		{
+			if (offset >= dwSize)
+				break;
+			data += offset;
+			ULONG size = m_stream->Read(data, dwSize - offset);
+			offset += size;
+		}
 	}
 
 	STDMETHODIMP HTTPStream::QueryInterface(REFIID riid, void **ppvObj)
@@ -55,6 +164,19 @@ namespace Decode
 
 	STDMETHODIMP HTTPStream::Read(VOID *pv, ULONG cb, ULONG *pcbRead)
 	{
+		if (!pv)
+			return E_INVALIDARG;
+		ULONG cbRead = 0;
+		if (!pcbRead)
+		{
+			pcbRead = &cbRead;
+		}
+		for (;;)
+		{
+			if (ReadHTTP(pv, cb, pcbRead))
+				break;
+			Sleep(25);
+		}
 		return S_OK;
 	}
 

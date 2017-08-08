@@ -120,7 +120,7 @@ namespace FLVPlayer
 		PacketQueue					m_videoQueue;
 		TinyScopedPtr<x264Decode>	m_x264;
 		TinyScopedPtr<AACDecode>	m_aac;
-		QSV::QSVDecoder				m_qsv;
+		//QSV::QSVDecoder				m_qsv;
 		FLVAudioRender				m_audioRender;
 		FLVVideoRender				m_videoRender;
 		FLVVideoTask				m_videoTask;

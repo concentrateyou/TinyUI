@@ -2,6 +2,7 @@
 #include "amf.h"
 #include "FLVReader.h"
 #include "RTMPStream.h"
+#include "HTTPStream.h"
 
 namespace Decode
 {
@@ -26,13 +27,28 @@ namespace Decode
 	}
 	BOOL FLVReader::OpenURL(LPCSTR pzURL)
 	{
+		if (!pzURL)
+			return FALSE;
 		m_bNetwork = TRUE;
-		RTMPStream* ps = new RTMPStream();
-		m_stream = (IStream *)ps;
-		if (!m_stream)
-			return FALSE;
-		if (!ps->Open(pzURL))
-			return FALSE;
+		TinyString szURL = pzURL;
+		if (szURL.IndexOf("http://") != -1)
+		{
+			HTTPStream* ps = new HTTPStream();
+			m_stream = (IStream *)ps;
+			if (!m_stream)
+				return FALSE;
+			if (!ps->Open(pzURL))
+				return FALSE;
+		}
+		if (szURL.IndexOf("rtmp://") != -1)
+		{
+			RTMPStream* ps = new RTMPStream();
+			m_stream = (IStream *)ps;
+			if (!m_stream)
+				return FALSE;
+			if (!ps->Open(pzURL))
+				return FALSE;
+		}
 		HRESULT hRes = S_OK;
 		FLV_HEADER header = { 0 };
 		ULONG ls = 0;

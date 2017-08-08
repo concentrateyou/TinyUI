@@ -181,9 +181,9 @@ namespace TinyUI
 		{
 			return m_dwContext;
 		}
-		TinyHTTPSession* TinyInternetSession::GetHttpConnection(LPCTSTR pstrServer, INTERNET_PORT nPort, LPCTSTR pstrUserName, LPCTSTR pstrPassword)
+		TinyHTTPConnection* TinyInternetSession::GetHttpConnection(LPCTSTR pstrServer, INTERNET_PORT nPort, LPCTSTR pstrUserName, LPCTSTR pstrPassword)
 		{
-			TinyHTTPSession* pResult = new TinyHTTPSession(this, pstrServer, nPort, pstrUserName, pstrPassword, m_dwContext);
+			TinyHTTPConnection* pResult = new TinyHTTPConnection(this, pstrServer, nPort, pstrUserName, pstrPassword, m_dwContext);
 			return pResult;
 		}
 		BOOL TinyInternetSession::EnableStatusCallback(BOOL bEnable)
@@ -530,7 +530,7 @@ namespace TinyUI
 			return InternetErrorDlg(hWND, m_hNET, dwError, dwFlags, lppvData);
 		}
 		//////////////////////////////////////////////////////////////////////////
-		TinyHTTPStream::TinyHTTPStream(HINTERNET hRequest, TinyHTTPSession* pConnection, LPCTSTR pstrObject, LPCTSTR pstrServer, LPCTSTR pstrVerb, DWORD_PTR dwContext)
+		TinyHTTPStream::TinyHTTPStream(HINTERNET hRequest, TinyHTTPConnection* pConnection, LPCTSTR pstrObject, LPCTSTR pstrServer, LPCTSTR pstrVerb, DWORD_PTR dwContext)
 			:TinyInternetStream(hRequest, pConnection, pstrObject, pstrServer, pstrVerb, dwContext)
 		{
 
@@ -628,7 +628,7 @@ namespace TinyUI
 			return bRes;
 		}
 		//////////////////////////////////////////////////////////////////////////
-		const LPCTSTR TinyHTTPSession::szHtmlVerbs[] = {
+		const LPCTSTR TinyHTTPConnection::szHtmlVerbs[] = {
 			_T("POST"),
 			_T("GET"),
 			_T("HEAD"),
@@ -637,21 +637,21 @@ namespace TinyUI
 			_T("DELETE"),
 			_T("UNLINK"),
 		};
-		TinyHTTPSession::TinyHTTPSession(TinyInternetSession* pSession, HINTERNET hConnected, LPCTSTR pstrServer, DWORD_PTR dwContext)
+		TinyHTTPConnection::TinyHTTPConnection(TinyInternetSession* pSession, HINTERNET hConnected, LPCTSTR pstrServer, DWORD_PTR dwContext)
 			:TinyInternetConnection(pSession, pstrServer, INTERNET_INVALID_PORT_NUMBER, dwContext)
 		{
 			m_hNET = hConnected;
 		}
-		TinyHTTPSession::TinyHTTPSession(TinyInternetSession* pSession, LPCTSTR pstrServer, INTERNET_PORT nPort, LPCTSTR pstrUserName, LPCTSTR pstrPassword, DWORD_PTR dwContext)
+		TinyHTTPConnection::TinyHTTPConnection(TinyInternetSession* pSession, LPCTSTR pstrServer, INTERNET_PORT nPort, LPCTSTR pstrUserName, LPCTSTR pstrPassword, DWORD_PTR dwContext)
 			: TinyInternetConnection(pSession, pstrServer, nPort, dwContext)
 		{
 			m_hNET = InternetConnect((HINTERNET)*pSession, pstrServer, nPort, pstrUserName, pstrPassword, INTERNET_SERVICE_HTTP, 0, dwContext);
 		}
-		TinyHTTPSession::~TinyHTTPSession()
+		TinyHTTPConnection::~TinyHTTPConnection()
 		{
 
 		}
-		TinyHTTPStream* TinyHTTPSession::OpenRequest(LPCTSTR pstrVerb,
+		TinyHTTPStream* TinyHTTPConnection::OpenRequest(LPCTSTR pstrVerb,
 			LPCTSTR pstrObjectName, LPCTSTR pstrReferer, DWORD_PTR dwContext,
 			LPCTSTR* ppstrAcceptTypes, LPCTSTR pstrVersion, DWORD dwFlags)
 		{
@@ -665,7 +665,7 @@ namespace TinyUI
 			return stream;
 		}
 
-		TinyHTTPStream* TinyHTTPSession::OpenRequest(INT nVerb,
+		TinyHTTPStream* TinyHTTPConnection::OpenRequest(INT nVerb,
 			LPCTSTR pstrObjectName, LPCTSTR pstrReferer, DWORD_PTR dwContext,
 			LPCTSTR* ppstrAcceptTypes,
 			LPCTSTR pstrVersion, DWORD dwFlags)
@@ -680,6 +680,128 @@ namespace TinyUI
 				pstrVerb = _T("");
 			return OpenRequest(pstrVerb, pstrObjectName, pstrReferer, dwContext, ppstrAcceptTypes, pstrVersion, dwFlags);
 		}
+		//////////////////////////////////////////////////////////////////////////
+		BOOL  DoParseURL(LPCTSTR pstrURL, LPURL_COMPONENTS lpComponents, INTERNET_SCHEME& scheme, INTERNET_PORT& nPort, DWORD dwFlags)
+		{
+			ASSERT(lpComponents != NULL && pstrURL != NULL);
+			if (lpComponents == NULL || pstrURL == NULL)
+				return FALSE;
+			ASSERT(lpComponents->dwHostNameLength == 0 ||
+				lpComponents->lpszHostName != NULL);
+			ASSERT(lpComponents->dwUrlPathLength == 0 ||
+				lpComponents->lpszUrlPath != NULL);
+			ASSERT(lpComponents->dwUserNameLength == 0 ||
+				lpComponents->lpszUserName != NULL);
+			ASSERT(lpComponents->dwPasswordLength == 0 ||
+				lpComponents->lpszPassword != NULL);
+			LPTSTR pstrCanonicalizedURL;
+			TCHAR szCanonicalizedURL[INTERNET_MAX_URL_LENGTH];
+			DWORD dwNeededLength = INTERNET_MAX_URL_LENGTH;
+			BOOL bRetVal;
+			BOOL bMustFree = FALSE;
+			DWORD dwCanonicalizeFlags = dwFlags &(ICU_NO_ENCODE | ICU_NO_META | ICU_ENCODE_SPACES_ONLY | ICU_BROWSER_MODE);
+			DWORD dwCrackFlags = 0;
+			BOOL bUnescape = FALSE;
+			if ((dwFlags & (ICU_ESCAPE | ICU_DECODE)) && (lpComponents->dwUrlPathLength != 0))
+			{
+				if (dwFlags & ICU_BROWSER_MODE)
+					bUnescape = TRUE;
+				else
+					dwCrackFlags |= ICU_ESCAPE;
+			}
 
+			bRetVal = InternetCanonicalizeUrl(pstrURL, szCanonicalizedURL,
+				&dwNeededLength, dwCanonicalizeFlags);
+			if (!bRetVal)
+			{
+				if (::GetLastError() != ERROR_INSUFFICIENT_BUFFER)
+					return FALSE;
+				pstrCanonicalizedURL = new TCHAR[dwNeededLength];
+				if (pstrCanonicalizedURL == NULL)
+					return FALSE;
+				bMustFree = TRUE;
+				bRetVal = InternetCanonicalizeUrl(pstrURL, pstrCanonicalizedURL,
+					&dwNeededLength, dwCanonicalizeFlags);
+				if (!bRetVal)
+				{
+					SAFE_DELETE_ARRAY(pstrCanonicalizedURL);
+					return FALSE;
+				}
+			}
+			else
+			{
+				pstrCanonicalizedURL = szCanonicalizedURL;
+			}
+			bRetVal = InternetCrackUrl(pstrCanonicalizedURL, 0, dwCrackFlags, lpComponents);
+			if (bUnescape)
+			{
+				if (strlen(lpComponents->lpszUrlPath) >= INTERNET_MAX_URL_LENGTH || FAILED(UrlUnescape(lpComponents->lpszUrlPath, NULL, NULL, URL_UNESCAPE_INPLACE | URL_DONT_UNESCAPE_EXTRA_INFO)))
+				{
+					if (bMustFree)
+					{
+						SAFE_DELETE_ARRAY(pstrCanonicalizedURL);
+					}
+					return FALSE;
+				}
+				lpComponents->dwUrlPathLength = static_cast<DWORD>(strlen(lpComponents->lpszUrlPath));
+			}
+			if (bMustFree)
+			{
+				SAFE_DELETE_ARRAY(pstrCanonicalizedURL);
+			}
+			if (!bRetVal)
+			{
+				scheme = INTERNET_SCHEME_UNKNOWN;
+			}
+			else
+			{
+				nPort = lpComponents->nPort;
+				scheme = lpComponents->nScheme;
+			}
+			return bRetVal;
+		}
+
+		BOOL WINAPI ParseURL(LPCTSTR pstrURL, INTERNET_SCHEME& scheme, TinyString& strServer, TinyString& strObject, INTERNET_PORT& nPort)
+		{
+			scheme = INTERNET_SCHEME_UNKNOWN;
+			ASSERT(pstrURL != NULL);
+			if (pstrURL == NULL)
+				return FALSE;
+			URL_COMPONENTS urlComponents;
+			memset(&urlComponents, 0, sizeof(URL_COMPONENTS));
+			urlComponents.dwStructSize = sizeof(URL_COMPONENTS);
+			urlComponents.dwHostNameLength = INTERNET_MAX_URL_LENGTH;
+			strServer.Resize(INTERNET_MAX_URL_LENGTH + 1);
+			urlComponents.lpszHostName = &strServer[0];
+			urlComponents.dwUrlPathLength = INTERNET_MAX_URL_LENGTH;
+			strObject.Resize(INTERNET_MAX_URL_LENGTH + 1);
+			urlComponents.lpszUrlPath = &strObject[0];
+			BOOL bRetVal = DoParseURL(pstrURL, &urlComponents, scheme, nPort, ICU_BROWSER_MODE);
+			return bRetVal;
+		}
+		BOOL WINAPI ParseURLEx(LPCTSTR pstrURL, INTERNET_SCHEME& scheme, TinyString& strServer, TinyString& strObject, INTERNET_PORT& nPort, TinyString& strUsername, TinyString& strPassword, DWORD dwFlags)
+		{
+			scheme = INTERNET_SCHEME_UNKNOWN;
+			ASSERT(pstrURL != NULL);
+			if (pstrURL == NULL)
+				return FALSE;
+			URL_COMPONENTS urlComponents;
+			memset(&urlComponents, 0, sizeof(URL_COMPONENTS));
+			urlComponents.dwStructSize = sizeof(URL_COMPONENTS);
+			urlComponents.dwHostNameLength = INTERNET_MAX_HOST_NAME_LENGTH;
+			strServer.Resize(INTERNET_MAX_HOST_NAME_LENGTH + 1);
+			urlComponents.lpszHostName = &strServer[0];
+			urlComponents.dwUrlPathLength = INTERNET_MAX_PATH_LENGTH;
+			strObject.Resize(INTERNET_MAX_PATH_LENGTH + 1);
+			urlComponents.lpszUrlPath = &strObject[0];
+			urlComponents.dwUserNameLength = INTERNET_MAX_USER_NAME_LENGTH;
+			strUsername.Resize(INTERNET_MAX_USER_NAME_LENGTH + 1);
+			urlComponents.lpszUserName = &strUsername[0];
+			urlComponents.dwPasswordLength = INTERNET_MAX_PASSWORD_LENGTH;
+			strPassword.Resize(INTERNET_MAX_PASSWORD_LENGTH + 1);
+			urlComponents.lpszPassword = &strPassword[0];
+			BOOL bRetVal = DoParseURL(pstrURL, &urlComponents, scheme, nPort, dwFlags);
+			return bRetVal;
+		}
 	}
 }
