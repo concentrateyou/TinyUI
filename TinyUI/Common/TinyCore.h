@@ -206,7 +206,23 @@ namespace TinyUI
 	private:
 		HANDLE m_handle;
 	};
-
+	/// <summary>
+	/// 高性能定时器
+	/// </summary>
+	class TinyTimer
+	{
+		DISALLOW_COPY_AND_ASSIGN(TinyTimer)
+	public:
+		TinyTimer();
+		~TinyTimer();
+		BOOL SetCallback(UINT delay, Closure&& callback);
+		BOOL Wait(UINT delay, HANDLE hEvent);
+	private:
+		UINT		m_timerID;
+		Closure		m_callback;
+	private:
+		static void CALLBACK TimerCallback(UINT uTimerID, UINT  uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2);
+	};
 	/// <summary>
 	/// Library封装 
 	/// </summary>

@@ -421,6 +421,58 @@ namespace TinyUI
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
+	TinyTimer::TinyTimer()
+		:m_timerID(NULL)
+	{
+
+	}
+	BOOL TinyTimer::SetCallback(UINT delay, Closure&& callback)
+	{
+		m_callback = std::move(callback);
+		if (m_timerID != NULL)
+		{
+			timeKillEvent(m_timerID);
+			m_timerID = 0;
+		}
+		m_timerID = static_cast<UINT>(timeSetEvent(delay, 1, &TinyTimer::TimerCallback, reinterpret_cast<DWORD_PTR>(this), TIME_PERIODIC));
+		return m_timerID != 0;
+	}
+	BOOL TinyTimer::Wait(UINT delay, HANDLE hEvent)
+	{
+		if (m_timerID != NULL)
+		{
+			timeKillEvent(m_timerID);
+			m_timerID = NULL;
+		}
+		m_timerID = static_cast<UINT>(timeSetEvent(delay, 1, reinterpret_cast<LPTIMECALLBACK>(hEvent), NULL, TIME_CALLBACK_EVENT_SET));
+		if (m_timerID != NULL)
+		{
+			DWORD dwRet = WaitForSingleObject(hEvent, INFINITE);
+			if (dwRet == WAIT_OBJECT_0 || dwRet == WAIT_ABANDONED)
+				return TRUE;
+		}
+		return FALSE;
+	}
+	TinyTimer::~TinyTimer()
+	{
+		if (m_timerID != NULL)
+		{
+			timeKillEvent(m_timerID);
+			m_timerID = NULL;
+		}
+	}
+	void CALLBACK TinyTimer::TimerCallback(UINT uTimerID, UINT  uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2)
+	{
+		TinyTimer* pThis = reinterpret_cast<TinyTimer*>(dwUser);
+		if (pThis != NULL)
+		{
+			if (!pThis->m_callback.IsNull())
+			{
+				pThis->m_callback();
+			}
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
 	TinyScopedLibrary::TinyScopedLibrary()
 		: m_hInstance(NULL)
 	{
