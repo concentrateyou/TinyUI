@@ -7,7 +7,7 @@ namespace MShow
 	MVideoEncodeTask::MVideoEncodeTask(MRTMPPusher& pusher, MClock& clock)
 		:m_bBreak(FALSE),
 		m_pusher(pusher),
-		m_videoINC(0),
+		m_videoINC(1),
 		m_clock(clock)
 	{
 	}
