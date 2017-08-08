@@ -216,10 +216,11 @@ namespace TinyUI
 		TinyTimer();
 		~TinyTimer();
 		BOOL SetCallback(UINT delay, Closure&& callback);
-		BOOL Wait(UINT delay, HANDLE hEvent);
+		BOOL Wait(UINT delay, DWORD dwMilliseconds);
 	private:
 		UINT		m_timerID;
 		Closure		m_callback;
+		TinyEvent	m_event;
 	private:
 		static void CALLBACK TimerCallback(UINT uTimerID, UINT  uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2);
 	};

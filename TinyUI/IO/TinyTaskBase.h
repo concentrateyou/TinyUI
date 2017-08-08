@@ -21,7 +21,7 @@ namespace TinyUI
 			TinyTaskBase();
 			virtual ~TinyTaskBase();
 			HANDLE	Handle() const;
-			BOOL	IsValid() const;
+			BOOL	IsActive() const;
 			BOOL	SetPriority(DWORD dwPriority);
 			virtual BOOL Submit(Closure&& callback);
 			virtual BOOL Close(DWORD dwMS);

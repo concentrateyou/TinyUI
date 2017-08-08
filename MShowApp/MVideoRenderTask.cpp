@@ -10,6 +10,7 @@ namespace MShow
 		m_callback(std::move(callback)),
 		m_bBreak(FALSE)
 	{
+
 	}
 
 	MVideoRenderTask::~MVideoRenderTask()
@@ -30,7 +31,7 @@ namespace MShow
 
 	void MVideoRenderTask::OnMessagePump()
 	{
-		TinyPerformanceTimer time;
+		TinyTimer timer;
 		SampleTag sampleTag = { 0 };
 		for (;;)
 		{
@@ -50,10 +51,12 @@ namespace MShow
 			while (m_clock.GetBasePTS() == -1);
 			LONG ms = static_cast<LONG>(timeGetTime() - m_clock.GetBaseTime());
 			INT delay = static_cast<INT>(sampleTag.samplePTS - ms);
-			SleepEx(delay < 0 ? 0 : delay, FALSE);
-			if (!m_callback.IsNull())
+			if (timer.Wait(delay, 1000))
 			{
-				m_callback(sampleTag.bits + 4, sampleTag.size);
+				if (!m_callback.IsNull())
+				{
+					m_callback(sampleTag.bits + 4, sampleTag.size);
+				}
 			}
 			m_task.GetVideoQueue().Free(sampleTag.bits);
 		}

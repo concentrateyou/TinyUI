@@ -140,7 +140,7 @@ namespace MShow
 				pCTRL->AddElement();
 				pCTRL->EVENT_AUDIO += m_onAudio;
 			}
-			Sleep(1);
+			Sleep(5);
 			if (m_pVideoCTRL != NULL)
 			{
 				m_pVideoCTRL->EVENT_AUDIO -= m_onAudio;
@@ -156,7 +156,7 @@ namespace MShow
 			{
 				pCTRL->EVENT_AUDIO += m_onAudioMix;
 			}
-			Sleep(1);
+			Sleep(5);
 			if (m_pAudioCTRL != NULL)
 			{
 				m_pAudioCTRL->EVENT_AUDIO -= m_onAudioMix;

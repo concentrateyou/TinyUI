@@ -73,7 +73,7 @@ namespace MShow
 		m_window.m_toggle.EVENT_CLICK -= m_onToggleClick;
 		if (m_preview != NULL)
 		{
-			if (m_preview->IsValid())
+			if (m_preview->IsActive())
 			{
 				m_preview->Close(INFINITE);
 			}
@@ -85,11 +85,11 @@ namespace MShow
 			m_play->Close();
 			m_play.Reset(NULL);
 		}
-		if (m_audio.IsValid())
+		if (m_audio.IsActive())
 		{
 			m_audio.Close(INFINITE);
 		}
-		if (m_video.IsValid())
+		if (m_video.IsActive())
 		{
 			m_video.Close(INFINITE);
 		}
@@ -161,34 +161,24 @@ namespace MShow
 		MVideoController* pCTRL = GetVideoController(0);
 		if (pCTRL != NULL && m_preview != NULL && m_shadow != NULL)
 		{
-			if (m_shadow->IsValid())
-			{
+			if (m_shadow->IsActive())
 				m_shadow->Close(INFINITE);
-			}
-			if (m_pusher.IsValid())
-			{
+			if (m_pusher.IsActive())
 				m_pusher.Close(INFINITE);
-			}
-			if (m_audio.IsValid())
-			{
+			if (m_audio.IsActive())
 				m_audio.Close(INFINITE);
-			}
-			if (m_video.IsValid())
-			{
+			if (m_video.IsActive())
 				m_video.Close(INFINITE);
-			}
-			/*if (m_pusher.Connect())
-			{
+			if (m_pusher.Connect())
 				m_pusher.Submit();
-			}*/
-			/*m_video.Submit(m_preview->GetPulgSize(), 25, 1500);
+			m_video.Submit(m_preview->GetPulgSize(), 25, 1500);
 			m_audio.SetVideoController(pCTRL);
-			m_audio.Submit(128);*/
+			m_audio.Submit(128);
 			m_shadow->Submit();
-			/*if (m_play != NULL)
+			if (m_play != NULL)
 			{
 				m_play->Open(m_pusher.GetURL().STR());
-			}*/
+			}
 		}
 	}
 	void MShowController::OnToggle(void*, INT)

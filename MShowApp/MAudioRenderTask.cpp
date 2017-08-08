@@ -86,7 +86,8 @@ namespace MShow
 			if (!m_bInitialize)
 			{
 				m_bInitialize = TRUE;
-				m_timer.BeginTime();
+				TinyTimer timer;
+				m_timeQPC.BeginTime();
 				if (!m_player.SetFormat(m_task.GetFormat(), tag.size * 3))
 					break;
 				m_player.SetVolume(-10000);
@@ -98,20 +99,22 @@ namespace MShow
 				vals[2].dwOffset = tag.size * 3 - 1;
 				vals[2].hEventNotify = m_events[2];
 				m_player.SetNotifys(3, vals);
-				m_timer.EndTime();
-				m_clock.AddBaseTime(static_cast<DWORD>(m_timer.GetMillisconds()));
+				m_timeQPC.EndTime();
+				m_clock.AddBaseTime(static_cast<DWORD>(m_timeQPC.GetMillisconds()));
 				LONGLONG ms = timeGetTime() - m_clock.GetBaseTime();
 				LONG delay = static_cast<LONG>(tag.samplePTS - ms);
-				Sleep(delay < 0 ? 0 : delay);
-				if (tag.size != 4096)
+				if (timer.Wait(delay, 1000))
 				{
-					if (!m_callback.IsNull())
+					if (tag.size != 4096)
 					{
-						m_callback(tag.bits + 4, tag.size);
+						if (!m_callback.IsNull())
+						{
+							m_callback(tag.bits + 4, tag.size);
+						}
+						m_player.Fill(tag.bits + 4, tag.size, dwOffset);
 					}
-					m_player.Fill(tag.bits + 4, tag.size, dwOffset);
+					m_player.Play();
 				}
-				m_player.Play();
 			}
 			else
 			{

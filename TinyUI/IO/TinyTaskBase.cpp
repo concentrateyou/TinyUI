@@ -54,7 +54,7 @@ namespace TinyUI
 			return FALSE;
 		}
 
-		BOOL TinyTaskBase::IsValid() const
+		BOOL TinyTaskBase::IsActive() const
 		{
 			if (m_hTask != NULL)
 			{

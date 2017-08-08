@@ -79,15 +79,15 @@ namespace MShow
 	BOOL MFLVPlayer::Close()
 	{
 		BOOL bRes = TRUE;
-		if (m_task.IsValid())
+		if (m_task.IsActive())
 			bRes &= m_task.Close(INFINITE);
-		if (m_videoRenderTask.IsValid())
+		if (m_videoRenderTask.IsActive())
 			bRes &= m_videoRenderTask.Close(INFINITE);
-		if (m_videoTask.IsValid())
+		if (m_videoTask.IsActive())
 			bRes &= m_videoTask.Close(INFINITE);
-		if (m_audioRenderTask.IsValid())
+		if (m_audioRenderTask.IsActive())
 			bRes &= m_audioRenderTask.Close(INFINITE);
-		if (m_audioTask.IsValid())
+		if (m_audioTask.IsActive())
 			bRes &= m_audioTask.Close(INFINITE);
 		m_clock.SetBasePTS(-1);
 		m_clock.SetBaseTime(-1);

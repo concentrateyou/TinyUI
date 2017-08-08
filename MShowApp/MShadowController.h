@@ -32,7 +32,6 @@ namespace MShow
 	private:
 		void		OnMessagePump();
 		DWORD		OnVideo(SampleTag& sampleTag);
-		static VOID CALLBACK TimerCallback(PVOID lpParameter, BOOLEAN TimerOrWaitFired);
 	public:
 		MShadowView&		GetView();
 		MPacketAllocQueue&	GetVideoQueue();
@@ -46,10 +45,8 @@ namespace MShow
 		MShadowView&			m_view;
 		MPacketQueue			m_queue;
 		MPacketAllocQueue		m_videoQueue;
-		TinyPerformanceTimer	m_timer;
+		TinyPerformanceTimer	m_timeQPC;
 		MClock&					m_clock;
-		HANDLE					m_handle;
-		TinyEvent				m_signal;
 	};
 }
 

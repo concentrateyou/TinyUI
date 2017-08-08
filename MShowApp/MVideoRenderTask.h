@@ -23,6 +23,7 @@ namespace MShow
 		BOOL		m_bBreak;
 		MClock&		m_clock;
 		MVideoTask& m_task;
+		TinyPerformanceTimer m_timeQPC;
 		TinyUI::Callback<void(BYTE*, LONG)> m_callback;
 	};
 }

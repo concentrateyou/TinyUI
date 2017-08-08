@@ -45,7 +45,7 @@ namespace MShow
 		MSampleQueue			m_samples;
 		MVideoController*		m_pVideoCTRL;
 		MAudioController*		m_pAudioCTRL;
-		TinyPerformanceTimer	m_timer;
+		TinyPerformanceTimer	m_timeQPC;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG)>> m_onAudio;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG)>> m_onAudioMix;
 	};

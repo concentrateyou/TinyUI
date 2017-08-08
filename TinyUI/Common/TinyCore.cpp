@@ -424,7 +424,7 @@ namespace TinyUI
 	TinyTimer::TinyTimer()
 		:m_timerID(NULL)
 	{
-
+		m_event.CreateEvent();
 	}
 	BOOL TinyTimer::SetCallback(UINT delay, Closure&& callback)
 	{
@@ -437,24 +437,25 @@ namespace TinyUI
 		m_timerID = static_cast<UINT>(timeSetEvent(delay, 1, &TinyTimer::TimerCallback, reinterpret_cast<DWORD_PTR>(this), TIME_PERIODIC));
 		return m_timerID != 0;
 	}
-	BOOL TinyTimer::Wait(UINT delay, HANDLE hEvent)
+	BOOL TinyTimer::Wait(UINT delay, DWORD dwMilliseconds)
 	{
 		if (m_timerID != NULL)
 		{
 			timeKillEvent(m_timerID);
 			m_timerID = NULL;
 		}
-		m_timerID = static_cast<UINT>(timeSetEvent(delay, 1, reinterpret_cast<LPTIMECALLBACK>(hEvent), NULL, TIME_CALLBACK_EVENT_SET));
+		m_timerID = static_cast<UINT>(timeSetEvent(delay, 1, reinterpret_cast<LPTIMECALLBACK>(m_event.Handle()), NULL, TIME_CALLBACK_EVENT_SET));
 		if (m_timerID != NULL)
 		{
-			DWORD dwRet = WaitForSingleObject(hEvent, INFINITE);
-			if (dwRet == WAIT_OBJECT_0 || dwRet == WAIT_ABANDONED)
+			DWORD dwRes = WaitForSingleObject(m_event, dwMilliseconds);
+			if (dwRes == WAIT_OBJECT_0 || dwRes == WAIT_ABANDONED)
 				return TRUE;
 		}
 		return FALSE;
 	}
 	TinyTimer::~TinyTimer()
 	{
+		m_event.Close();
 		if (m_timerID != NULL)
 		{
 			timeKillEvent(m_timerID);

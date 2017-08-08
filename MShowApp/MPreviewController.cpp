@@ -307,7 +307,7 @@ namespace MShow
 
 	DWORD MPreviewController::Draw()
 	{
-		m_time.BeginTime();
+		m_timeQPC.BeginTime();
 		m_graphics.GetDX11().SetRenderTexture2D(&m_renderView);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();
 		TinyArray<DX11Element2D*> images;
@@ -401,8 +401,8 @@ namespace MShow
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
 		m_graphics.Present();
-		m_time.EndTime();
-		return static_cast<DWORD>(m_time.GetMillisconds());
+		m_timeQPC.EndTime();
+		return static_cast<DWORD>(m_timeQPC.GetMillisconds());
 	}
 
 	void MPreviewController::OnMessagePump()
