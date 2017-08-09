@@ -4,7 +4,7 @@
 
 namespace Decode
 {
-#define FFT_BUFFER_SIZE		512
+#define FFT_SAMPLE_SIZE		512
 #define PI					3.14159265
 	/// <summary>
 	/// 快速傅里叶变换
@@ -16,15 +16,19 @@ namespace Decode
 	public:
 		FFT();
 		~FFT();
-		void Calculate();
+		BOOL	Initialize(INT sampleSize = FFT_SAMPLE_SIZE);
+		FLOAT*	Calculate(FLOAT* pSample, INT sampleSize);
 	private:
-		void Prepare();
+		INT ReverseBits(INT val, INT iterations);
 	private:
-		UINT		m_bitReverses[FFT_BUFFER_SIZE];
-		FLOAT		m_reals[FFT_BUFFER_SIZE];
-		FLOAT		m_imags[FFT_BUFFER_SIZE];
-		FLOAT		m_sintable[FFT_BUFFER_SIZE / 2];
-		FLOAT		m_costable[FFT_BUFFER_SIZE / 2];
+		INT						m_sampleSize;//采样个数
+		INT						m_iterations;//迭代次数
+		TinyScopedArray<INT>	m_bitReverses;
+		TinyScopedArray<FLOAT>	m_imags;//虚部
+		TinyScopedArray<FLOAT>	m_reals;//实部
+		TinyScopedArray<FLOAT>	m_mags;//信号强度
+		TinyScopedArray<FLOAT>	m_sintable;
+		TinyScopedArray<FLOAT>	m_costable;
 	};
 }
 

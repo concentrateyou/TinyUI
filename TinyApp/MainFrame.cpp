@@ -379,10 +379,9 @@ void CMainFrame::OnVideoStop(void*, INT)
 
 void CMainFrame::OnAudioInputStart(void*, INT)
 {
-
-	//m_audioInput.Start();
+	m_audioInput.Start();
 }
 void CMainFrame::OnAudioInputStop(void*, INT)
 {
-	//m_audioInput.Stop();
+	m_audioInput.Stop();
 }

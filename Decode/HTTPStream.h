@@ -13,7 +13,8 @@ using namespace TinyUI::Network;
 
 namespace Decode
 {
-#define MAX_HTTP_BUFFER_SIZE (1024 * 1024)
+#define MAX_HTTP_BUFFER_SIZE		(1024 * 1024)
+#define DEFAULT_CACHE_BLOCK_SIZE	(64 * 1024)
 	/// <summary>
 	/// FLV HTTPÍøÂçÁ÷
 	/// </summary>
@@ -43,14 +44,12 @@ namespace Decode
 		BOOL Close();
 	private:
 		void OnMessagePump();
-		void CacheHTTP(DWORD dwSize);
+		void DownloadHTTP(DWORD dwSize);
 		BOOL WriteHTTP(DWORD dwSize);
 		BOOL ReadHTTP(VOID *pv, ULONG cb, ULONG *pcbRead);
 	private:
 		BOOL					m_bBreak;
-		BOOL					m_bSignal;
 		LONG					m_cRef;
-		TinyEvent				m_event;
 		TinyLock				m_lock;
 		TinyHTTPStream*			m_stream;
 		TinyInternetSession		m_session;

@@ -7,14 +7,15 @@ namespace TinyUI
 {
 	namespace Network
 	{
-		TinyHTTPResponse::TinyHTTPResponse()
+		TinyHTTPResponse::TinyHTTPResponse(TinyHTTPRequest& request)
+			:m_request(request)
 		{
 
 		}
 
 		DWORD TinyHTTPResponse::GetCode() const
 		{
-			return m_code;
+			return m_dwCode;
 		}
 
 		string	TinyHTTPResponse::GetStatus() const
@@ -42,9 +43,7 @@ namespace TinyUI
 				CHAR* ps = line;
 				line = ReadLine(ps);
 				if (*line == '\r' && *(line + 1) == '\n')
-				{
 					break;
-				}
 				if (!ParseAttribute(ps, line - 2))
 					return FALSE;
 			}
@@ -60,15 +59,15 @@ namespace TinyUI
 				strncasecmp(ps1, TinyHTTPRequest::HTTP20, 8) != 0)
 				return FALSE;
 			m_vs = string(ps1, 8);
-			ps1 += 6;
-			while (*ps1 != ' ')
+			ps1 += 8;
+			while (*ps1 == ' ')
 				++ps1;
 			CHAR* ps3 = ps1;
 			while (IsAsciiDigit(*ps3))
 				++ps3;
 			string val(ps1, ps3 - ps1);
-			m_code = atoi(val.c_str());
-			while (*ps3 != ' ')
+			m_dwCode = atoi(val.c_str());
+			while (*ps3 == ' ')
 				++ps3;
 			m_desc.append(ps3, ps2);
 			return TRUE;

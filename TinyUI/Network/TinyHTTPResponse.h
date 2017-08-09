@@ -18,16 +18,17 @@ namespace TinyUI
 			string	GetBody() const;	
 			void	Close();
 		private:
-			TinyHTTPResponse();
+			TinyHTTPResponse(TinyHTTPRequest& request);
 			BOOL ParseResponse(CHAR* s, INT size);
 			BOOL ParseStatusLine(CHAR* ps1, CHAR* ps2);
 			BOOL ParseAttribute(CHAR* ps1, CHAR* ps2);
 			CHAR* ReadLine(CHAR* s);
 		private:
-			DWORD	m_code;
-			string	m_desc;
-			string	m_vs;
-			string	m_body;
+			DWORD				m_dwCode;
+			string				m_desc;
+			string				m_vs;
+			string				m_body;
+			TinyHTTPRequest&	m_request;
 		};
 	}
 }

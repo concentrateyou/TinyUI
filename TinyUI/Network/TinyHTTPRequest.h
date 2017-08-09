@@ -9,8 +9,10 @@ namespace TinyUI
 {
 	namespace Network
 	{
-		class TinyHTTPResponse;
 
+#define DEFAULT_BUFFER_SIZE 8192
+
+		class TinyHTTPResponse;
 		class TinyHTTPRequest : public TinyHTTPAttribute
 		{
 			enum State
@@ -76,16 +78,17 @@ namespace TinyUI
 			DWORD					m_dwError;
 			DWORD					m_dwOffset;
 			DWORD					m_dwTO;
+			CHAR					m_raw[DEFAULT_BUFFER_SIZE];
 			string					m_ms;
 			string					m_line;
 			TinyEvent				m_wait;
 			TinyURL					m_sURL;
 			TinySocket				m_socket;
 			IPEndPoint				m_endpoint;
-			TinyScopedArray<CHAR>	m_raw;
 			TinyBufferArray<CHAR>	m_request;
 			TinyBufferArray<CHAR>	m_body;
 			TinyBufferArray<CHAR>	m_response;
+			TinyHTTPResponse*		m_pResponse;
 		};
 	}
 }
