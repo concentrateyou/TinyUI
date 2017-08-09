@@ -1,6 +1,7 @@
 #pragma once
 #include "MShowCommon.h"
 #include "MPreviewView.h"
+#include "Control/TinyLabel.h"
 using namespace TinyUI;
 
 namespace MShow
@@ -34,7 +35,8 @@ namespace MShow
 		void OnToggle(void*, INT);
 		void OnPusher(void*, INT);
 	private:
-		MPreviewView			m_previewView;
+		MPreviewView		m_previewView;
+		TinyLabel			m_frequencyBAR;
 	private:
 		TinyScopedPtr<Delegate<void(void*)>>		m_onTabChange;
 	};

@@ -426,8 +426,10 @@ namespace TinyUI
 	{
 		m_event.CreateEvent();
 	}
-	BOOL TinyTimer::SetCallback(UINT delay, Closure&& callback)
+	BOOL TinyTimer::SetCallback(INT delay, Closure&& callback)
 	{
+		if (delay <= 0)
+			return TRUE;
 		m_callback = std::move(callback);
 		if (m_timerID != NULL)
 		{
@@ -437,8 +439,10 @@ namespace TinyUI
 		m_timerID = static_cast<UINT>(timeSetEvent(delay, 1, &TinyTimer::TimerCallback, reinterpret_cast<DWORD_PTR>(this), TIME_PERIODIC));
 		return m_timerID != 0;
 	}
-	BOOL TinyTimer::Wait(UINT delay, DWORD dwMilliseconds)
+	BOOL TinyTimer::Wait(INT delay, DWORD dwMilliseconds)
 	{
+		if (delay <= 0)
+			return TRUE;
 		if (m_timerID != NULL)
 		{
 			timeKillEvent(m_timerID);

@@ -21,7 +21,8 @@ namespace MShow
 			return FALSE;
 		if (!m_preview->Initialize())
 			return FALSE;
-		m_preview->Open("rtmp://10.10.13.100/live/lb_aoteman_720p");
+		if (!m_preview->Open("rtmp://live.hkstv.hk.lxdns.com/live/hks"))
+			return FALSE;
 		return TRUE;
 	}
 

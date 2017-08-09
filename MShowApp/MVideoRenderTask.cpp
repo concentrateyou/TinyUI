@@ -46,10 +46,10 @@ namespace MShow
 			}
 			if (sampleTag.samplePTS == m_clock.GetBasePTS())
 			{
-				m_clock.SetBaseTime(timeGetTime());
+				m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
 			}
 			while (m_clock.GetBasePTS() == -1);
-			LONG ms = static_cast<LONG>(timeGetTime() - m_clock.GetBaseTime());
+			LONG ms = static_cast<LONG>(MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime());
 			INT delay = static_cast<INT>(sampleTag.samplePTS - ms);
 			if (timer.Wait(delay, 1000))
 			{

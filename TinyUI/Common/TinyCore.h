@@ -215,8 +215,8 @@ namespace TinyUI
 	public:
 		TinyTimer();
 		~TinyTimer();
-		BOOL SetCallback(UINT delay, Closure&& callback);
-		BOOL Wait(UINT delay, DWORD dwMilliseconds);
+		BOOL SetCallback(INT delay, Closure&& callback);
+		BOOL Wait(INT delay, DWORD dwMilliseconds);
 	private:
 		UINT		m_timerID;
 		Closure		m_callback;

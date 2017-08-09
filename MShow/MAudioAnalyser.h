@@ -24,12 +24,14 @@ namespace MShow
 		virtual ~MAudioAnalyser();
 		BOOL Initialize(HWND hWND, WAVEFORMATEX& waveFMT);
 		void Process(BYTE* bits, LONG size);
+	private:
+		BOOL DrawGradient(HDC hDC, const RECT* pRect, const DWORD* cl, INT iNum, DWORD dwMode);
 	public:
-		FFT						m_wFFT;
-		TinySize				m_size;
-		WAVEFORMATEX			m_waveFMT;
-		TinyScopedArray<FLOAT>	m_samplesL;
-		TinyScopedArray<FLOAT>	m_samplesR;
+		HWND						m_hWND;
+		FFT							m_wFFT;
+		TinySize					m_size;
+		WAVEFORMATEX				m_waveFMT;
+		TinyScopedArray<FLOAT>		m_samples;
 	};
 }
 

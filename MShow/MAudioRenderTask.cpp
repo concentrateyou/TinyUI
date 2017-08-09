@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "MAudioRenderTask.h"
+#include "MShow.h"
 
 namespace MShow
 {
@@ -80,7 +81,7 @@ namespace MShow
 			}
 			if (tag.samplePTS == m_clock.GetBasePTS())
 			{
-				m_clock.SetBaseTime(timeGetTime());
+				m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
 			}
 			while (m_clock.GetBasePTS() == -1);
 			if (!m_bInitialize)
@@ -100,7 +101,7 @@ namespace MShow
 				m_player.SetNotifys(3, vals);
 				m_timeQPC.EndTime();
 				m_clock.AddBaseTime(static_cast<DWORD>(m_timeQPC.GetMillisconds()));
-				LONGLONG ms = timeGetTime() - m_clock.GetBaseTime();
+				LONGLONG ms = MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime();
 				LONG delay = static_cast<LONG>(tag.samplePTS - ms);
 				if (timer.Wait(delay, 1000))
 				{
