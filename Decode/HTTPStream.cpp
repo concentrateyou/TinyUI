@@ -20,10 +20,10 @@ namespace Decode
 	{
 		m_buffer.Initialize(MAX_HTTP_BUFFER_SIZE, sizeof(BYTE));
 		m_session.SetOption(INTERNET_OPTION_CONNECT_TIMEOUT, 5000);      // 5秒的连接超时  
-		m_session.SetOption(INTERNET_OPTION_SEND_TIMEOUT, 1000);         // 1秒的发送超时  
-		m_session.SetOption(INTERNET_OPTION_RECEIVE_TIMEOUT, 7000);      // 7秒的接收超时  
-		m_session.SetOption(INTERNET_OPTION_DATA_SEND_TIMEOUT, 1000);    // 1秒的发送超时  
-		m_session.SetOption(INTERNET_OPTION_DATA_RECEIVE_TIMEOUT, 7000); // 7秒的接收超时  
+		m_session.SetOption(INTERNET_OPTION_SEND_TIMEOUT, 3000);         // 3秒的发送超时  
+		m_session.SetOption(INTERNET_OPTION_RECEIVE_TIMEOUT, 3000);      // 3秒的接收超时  
+		m_session.SetOption(INTERNET_OPTION_DATA_SEND_TIMEOUT, 3000);    // 3秒的发送超时  
+		m_session.SetOption(INTERNET_OPTION_DATA_RECEIVE_TIMEOUT, 3000); // 3秒的接收超时  
 		m_session.SetOption(INTERNET_OPTION_CONNECT_RETRIES, 5);
 		INTERNET_SCHEME scheme;
 		TinyString server;
@@ -34,7 +34,12 @@ namespace Decode
 			TinyHTTPConnection* connection = m_session.GetHttpConnection(server.CSTR(), port, NULL, NULL);
 			if (!connection)
 				goto _ERROR;
-			m_stream = connection->OpenRequest(TinyHTTPConnection::HTTP_VERB_GET, object.CSTR());
+			m_stream = connection->OpenRequest(TinyHTTPConnection::HTTP_VERB_GET, object.CSTR(),
+				NULL,
+				1,
+				NULL,
+				NULL,
+				INTERNET_FLAG_EXISTING_CONNECT | INTERNET_FLAG_TRANSFER_BINARY | INTERNET_FLAG_DONT_CACHE | INTERNET_FLAG_RELOAD);
 			if (!m_stream)
 				goto _ERROR;
 			if (!m_stream->SendRequest())

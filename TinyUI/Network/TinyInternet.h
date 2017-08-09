@@ -24,16 +24,17 @@ namespace TinyUI
 			BOOL operator != (const TinyInternet& obj) const;
 			BOOL Attach(HINTERNET hNET);
 			HINTERNET Detach();
-			TinyInternet* Lookup(HINTERNET hNET);
+		public:
 			virtual void Close();
+		public:
+			static TinyInternet* Lookup(HINTERNET hNET);
 		public:
 			BOOL QueryOption(DWORD dwOption, LPVOID lpBuffer, LPDWORD lpdwBufLen) const;
 			BOOL QueryOption(DWORD dwOption, DWORD& dwValue) const;
 			BOOL SetOption(DWORD dwOption, LPVOID lpBuffer, DWORD dwBufferLength);
 			BOOL SetOption(DWORD dwOption, DWORD dwValue);
-			static BOOL ParseURL(LPCSTR lpszUrl, DWORD& dwServiceType, TinyString& strServer, TinyString& strObject, INTERNET_PORT& nPort, TinyString& strUsername, TinyString& strPassword);
 		protected:
-			HINTERNET			m_hNET;
+			HINTERNET	m_hNET;
 			static  TinyPointerMap	m_sessionMap;
 		};
 		//////////////////////////////////////////////////////////////////////////

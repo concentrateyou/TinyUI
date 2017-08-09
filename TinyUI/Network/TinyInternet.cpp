@@ -55,6 +55,15 @@ namespace TinyUI
 			m_hNET = NULL;
 			return hNET;
 		}
+		void TinyInternet::Close()
+		{
+			HINTERNET hNET = Detach();
+			if (hNET != NULL)
+			{
+				InternetCloseHandle(hNET);
+				hNET = NULL;
+			}
+		}
 		TinyInternet* TinyInternet::Lookup(HINTERNET hNET)
 		{
 			TinyPointerMap& map = TinyInternet::m_sessionMap;
@@ -62,14 +71,6 @@ namespace TinyUI
 			if (!map.Lookup((UINT_PTR)hNET, val))
 				return NULL;
 			return reinterpret_cast<TinyInternet*>(val);
-		}
-		void TinyInternet::Close()
-		{
-			if (m_hNET != NULL)
-			{
-				InternetCloseHandle(m_hNET);
-				m_hNET = NULL;
-			}
 		}
 		BOOL TinyInternet::QueryOption(DWORD dwOption, LPVOID lpBuffer, LPDWORD lpdwBufLen) const
 		{
@@ -91,78 +92,6 @@ namespace TinyUI
 		{
 			ASSERT(m_hNET);
 			return InternetSetOption(m_hNET, dwOption, &dwValue, sizeof(dwValue));
-		}
-		BOOL TinyInternet::ParseURL(LPCSTR lpszUrl, DWORD& dwServiceType, TinyString& strServer, TinyString& strObject, INTERNET_PORT& nPort, TinyString& strUsername, TinyString& strPassword)
-		{
-			URL_COMPONENTS urlComponents;
-			memset(&urlComponents, 0, sizeof(URL_COMPONENTS));
-			urlComponents.dwStructSize = sizeof(URL_COMPONENTS);
-			strServer.Resize(INTERNET_MAX_HOST_NAME_LENGTH + 1);
-			strObject.Resize(INTERNET_MAX_PATH_LENGTH + 1);
-			strUsername.Resize(INTERNET_MAX_USER_NAME_LENGTH + 1);
-			strPassword.Resize(INTERNET_MAX_PASSWORD_LENGTH + 1);
-			urlComponents.dwHostNameLength = INTERNET_MAX_HOST_NAME_LENGTH;
-			urlComponents.lpszHostName = strServer.STR();
-			urlComponents.dwUrlPathLength = INTERNET_MAX_PATH_LENGTH;
-			urlComponents.lpszUrlPath = strObject.STR();
-			urlComponents.dwUserNameLength = INTERNET_MAX_USER_NAME_LENGTH;
-			urlComponents.lpszUserName = strUsername.STR();
-			urlComponents.dwPasswordLength = INTERNET_MAX_PASSWORD_LENGTH;
-			urlComponents.lpszPassword = strPassword.STR();
-			LPTSTR pstrCanonicalizedURL;
-			TCHAR szCanonicalizedURL[INTERNET_MAX_URL_LENGTH];
-			DWORD dwNeededLength = INTERNET_MAX_URL_LENGTH;
-			BOOL bRetVal;
-			BOOL bMustFree = FALSE;
-			DWORD dwCanonicalizeFlags = ICU_NO_ENCODE | ICU_NO_META | ICU_ENCODE_SPACES_ONLY | ICU_BROWSER_MODE;
-			DWORD dwCrackFlags = 0;
-			BOOL bUnescape = FALSE;
-			bRetVal = InternetCanonicalizeUrl(lpszUrl, szCanonicalizedURL, &dwNeededLength, dwCanonicalizeFlags);
-			if (!bRetVal)
-			{
-				if (::GetLastError() != ERROR_INSUFFICIENT_BUFFER)
-					return FALSE;
-				pstrCanonicalizedURL = new TCHAR[dwNeededLength];
-				if (pstrCanonicalizedURL == NULL)
-					return FALSE;
-				bMustFree = TRUE;
-				bRetVal = InternetCanonicalizeUrl(lpszUrl, pstrCanonicalizedURL, &dwNeededLength, dwCanonicalizeFlags);
-				if (!bRetVal)
-				{
-					delete[] pstrCanonicalizedURL;
-					return FALSE;
-				}
-			}
-			else
-			{
-				pstrCanonicalizedURL = szCanonicalizedURL;
-			}
-			bRetVal = InternetCrackUrl(pstrCanonicalizedURL, 0, dwCrackFlags, &urlComponents);
-
-			if (bUnescape)
-			{
-				if (strlen(urlComponents.lpszUrlPath) >= INTERNET_MAX_URL_LENGTH || FAILED(UrlUnescape(urlComponents.lpszUrlPath, NULL, NULL, URL_UNESCAPE_INPLACE | URL_DONT_UNESCAPE_EXTRA_INFO)))
-				{
-					if (bMustFree)
-						delete[] pstrCanonicalizedURL;
-					return FALSE;
-				}
-				urlComponents.dwUrlPathLength = static_cast<DWORD>(strlen(urlComponents.lpszUrlPath));
-			}
-			if (bMustFree)
-			{
-				delete[] pstrCanonicalizedURL;
-			}
-			if (!bRetVal)
-			{
-				dwServiceType = -1;
-			}
-			else
-			{
-				nPort = urlComponents.nPort;
-				dwServiceType = urlComponents.nScheme;
-			}
-			return bRetVal;
 		}
 		//////////////////////////////////////////////////////////////////////////
 		TinyInternetSession::TinyInternetSession(LPCTSTR pstrAgent, DWORD_PTR dwContext, DWORD dwAccessType, LPCTSTR pstrProxyName, LPCTSTR pstrProxyBypass, DWORD dwFlags)
@@ -209,7 +138,11 @@ namespace TinyUI
 		}
 		void WINAPI TinyInternetSession::InertnetStatusCallback(HINTERNET hInternet, DWORD_PTR dwContext, DWORD dwInternetStatus, LPVOID lpvStatusInformation, DWORD dwStatusInformationLength)
 		{
-
+			TinyInternetSession* session = static_cast<TinyInternetSession*>(TinyInternet::Lookup(hInternet));
+			if (session != NULL)
+			{
+				session->OnStatusCallback(dwContext, dwInternetStatus, lpvStatusInformation, dwStatusInformationLength);
+			}
 		}
 		void TinyInternetSession::OnStatusCallback(DWORD_PTR dwContext, DWORD dwInternetStatus, LPVOID lpvStatusInformation, DWORD dwStatusInformationLength)
 		{

@@ -1,6 +1,7 @@
 #pragma once
 #include "TinyWindowMsg.h"
 #include "TinyCollection.h"
+#include "TinyCore.h"
 
 namespace TinyUI
 {
@@ -15,14 +16,15 @@ namespace TinyUI
 		TinyHandleMap();
 		~TinyHandleMap();
 		V* Lookup(T& _key);
-		V* Lookup(const T& _key) const;
+		V* Lookup(const T& _key);
 		V* operator[](T& _key);
-		V* operator[](const T& _key) const;
+		V* operator[](const T& _key);
 		void Add(const T& _key, const V& _value);
 		void Remove(const T& _key);
 		void RemoveAll();
 		INT GetSize() const;
 	private:
+		TinyLock			m_lock;
 		TinySimpleMap<T, V> m_handleMap;
 	};
 	template<class T, class V>
@@ -33,46 +35,54 @@ namespace TinyUI
 	template<class T, class V>
 	TinyHandleMap<T, V>::~TinyHandleMap()
 	{
-		m_handleMap.RemoveAll();
+		this->RemoveAll();
 	}
 	template<class T, class V>
 	V* TinyHandleMap<T, V>::Lookup(T& _key)
 	{
+		TinyAutoLock lock(m_lock);
 		return m_handleMap.Lookup(_key);
 	}
 	template<class T, class V>
-	V* TinyHandleMap<T, V>::Lookup(const T& _key) const
+	V* TinyHandleMap<T, V>::Lookup(const T& _key)
 	{
+		TinyAutoLock lock(m_lock);
 		return m_handleMap.Lookup(_key);
 	}
 	template<class T, class V>
 	V* TinyHandleMap<T, V>::operator[](T& _key)
 	{
+		TinyAutoLock lock(m_lock);
 		return m_handleMap.GetValue(_key);
 	}
 	template<class T, class V>
-	V* TinyHandleMap<T, V>::operator[](const T& _key) const
+	V* TinyHandleMap<T, V>::operator[](const T& _key)
 	{
+		TinyAutoLock lock(m_lock);
 		return m_handleMap.GetValue(_key);
 	}
 	template<class T, class V>
 	void TinyHandleMap<T, V>::Add(const T& _key, const V& _value)
 	{
+		TinyAutoLock lock(m_lock);
 		m_handleMap.Add(_key, _value);
 	}
 	template<class T, class V>
 	void TinyHandleMap<T, V>::Remove(const T& _key)
 	{
+		TinyAutoLock lock(m_lock);
 		m_handleMap.Remove(_key);
 	}
 	template<class T, class V>
 	void TinyHandleMap<T, V>::RemoveAll()
 	{
+		TinyAutoLock lock(m_lock);
 		m_handleMap.RemoveAll();
 	}
 	template<class T, class V>
 	INT TinyHandleMap<T, V>::GetSize() const
 	{
+		TinyAutoLock lock(m_lock);
 		return m_handleMap.GetSize();
 	}
 	/// <summary>
