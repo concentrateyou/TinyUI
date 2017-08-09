@@ -69,6 +69,9 @@
     <ClInclude Include="MClock.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MAudioAnalyser.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -114,6 +117,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MVideoTask.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MAudioAnalyser.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

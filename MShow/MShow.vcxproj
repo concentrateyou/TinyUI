@@ -148,6 +148,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="MAudioAnalyser.h" />
     <ClInclude Include="MAudioRenderTask.h" />
     <ClInclude Include="MAudioTask.h" />
     <ClInclude Include="MClock.h" />
@@ -167,6 +168,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="MAudioAnalyser.cpp" />
     <ClCompile Include="MAudioRenderTask.cpp" />
     <ClCompile Include="MAudioTask.cpp" />
     <ClCompile Include="MClock.cpp" />

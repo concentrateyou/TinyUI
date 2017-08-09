@@ -87,34 +87,34 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	LoadSeDebugPrivilege();
 
-	QSV::QSVEncoder encoder;
-	encoder.Open({ 1280,720 }, { 1280,720 });
-	FILE *hFile1 = fopen("D:\\output.rgb4", "rb");
-	FILE *hFile2 = fopen("D:\\test2.h264", "wb+");
-	BYTE* pArray = new BYTE[1024 * 1024 * 5];
-	LONG offset = 0;
-	for (;;)
-	{
-		SampleTag tag;
-		tag.bits = pArray;
-		LONG size = fread(pArray, 1, 1280 * 720 * 4, hFile1);
-		if (size == 0)
-			break;
-		tag.size = size;
-		TinyPerformanceTimer timer;
-		timer.BeginTime();
-		BYTE* bo = NULL;
-		/*LONG  so = 0;
-		encoder.Encode(tag, bo, so);
-		if (so > 0)
-		{
-			timer.EndTime();
-			TRACE("Time:%lld\n", timer.GetMillisconds());
-			fwrite(bo, 1, so, hFile2);
-		}*/
-	}
-	fclose(hFile1);
-	fclose(hFile2);
+	//QSV::QSVEncoder encoder;
+	//encoder.Open({ 1280,720 }, { 1280,720 });
+	//FILE *hFile1 = fopen("D:\\output.rgb4", "rb");
+	//FILE *hFile2 = fopen("D:\\test2.h264", "wb+");
+	//BYTE* pArray = new BYTE[1024 * 1024 * 5];
+	//LONG offset = 0;
+	//for (;;)
+	//{
+	//	SampleTag tag;
+	//	tag.bits = pArray;
+	//	LONG size = fread(pArray, 1, 1280 * 720 * 4, hFile1);
+	//	if (size == 0)
+	//		break;
+	//	tag.size = size;
+	//	TinyPerformanceTimer timer;
+	//	timer.BeginTime();
+	//	BYTE* bo = NULL;
+	//	/*LONG  so = 0;
+	//	encoder.Encode(tag, bo, so);
+	//	if (so > 0)
+	//	{
+	//		timer.EndTime();
+	//		TRACE("Time:%lld\n", timer.GetMillisconds());
+	//		fwrite(bo, 1, so, hFile2);
+	//	}*/
+	//}
+	//fclose(hFile1);
+	//fclose(hFile2);
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
