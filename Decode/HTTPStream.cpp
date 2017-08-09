@@ -6,8 +6,7 @@ namespace Decode
 	HTTPStream::HTTPStream()
 		:m_cRef(1),
 		m_stream(NULL),
-		m_bBreak(FALSE),
-		m_bSignal(FALSE)
+		m_bBreak(FALSE)
 	{
 	}
 
@@ -42,13 +41,12 @@ namespace Decode
 			DWORD dwCode = 0;
 			if (!m_stream->QueryInfoStatusCode(dwCode) || dwCode != HTTP_STATUS_OK)
 				goto _ERROR;
-			m_bits.Reset(new BYTE[256 * 1024]);
+			m_bits.Reset(new BYTE[DEFAULT_CACHE_BLOCK_SIZE * 4]);
 			if (!m_bits)
 				goto _ERROR;
 			m_bBreak = FALSE;
-			m_event.CreateEvent();
-			CacheHTTP(256 * 1024);
-			WriteHTTP(256 * 1024);
+			DownloadHTTP(DEFAULT_CACHE_BLOCK_SIZE * 4);
+			WriteHTTP(DEFAULT_CACHE_BLOCK_SIZE * 4);
 			return m_task.Submit(BindCallback(&HTTPStream::OnMessagePump, this));
 		}
 	_ERROR:
@@ -77,10 +75,10 @@ namespace Decode
 		{
 			if (m_bBreak)
 				break;
-			CacheHTTP(64 * 1024);
+			DownloadHTTP(DEFAULT_CACHE_BLOCK_SIZE);
 			for (;;)
 			{
-				if (WriteHTTP(64 * 1024))
+				if (WriteHTTP(DEFAULT_CACHE_BLOCK_SIZE))
 					break;
 			}
 		}
@@ -89,11 +87,10 @@ namespace Decode
 	BOOL HTTPStream::WriteHTTP(DWORD dwSize)
 	{
 		TinyAutoLock lock(m_lock);
-		if (m_buffer.GetAvailableOUT() <= 64 * 1024 && m_buffer.GetAvailableIN() >= 64 * 1024)
+		if (m_buffer.GetAvailableOUT() <= DEFAULT_CACHE_BLOCK_SIZE && m_buffer.GetAvailableIN() >= DEFAULT_CACHE_BLOCK_SIZE)
 		{
 			DWORD dwRes = m_buffer.Write(m_bits, dwSize);
 			ASSERT(dwRes == dwSize);
-			//TRACE("--------------------WriteHTTP:%d, AvailableIN:%d, AvailableOUT:%d\n", dwRes, m_buffer.GetAvailableIN(), m_buffer.GetAvailableOUT());
 			return TRUE;
 		}
 		return FALSE;
@@ -107,19 +104,10 @@ namespace Decode
 			return FALSE;
 		}
 		*pcbRead = m_buffer.Read(pv, cb);
-		//if (m_buffer.GetAvailableOUT() <= 64 * 1024)
-		//{
-		//	//TRACE("ReadHTTP:%d, AvailableOUT:%d   <= 64 * 1024\n", (DWORD)*pcbRead, m_buffer.GetAvailableOUT());
-		//	//m_event.SetEvent();
-		//}
-		//else
-		//{
-		//	TRACE("ReadHTTP:%d, AvailableOUT:%d\n", (DWORD)*pcbRead, m_buffer.GetAvailableOUT());
-		//}
 		return TRUE;
 	}
 
-	void HTTPStream::CacheHTTP(DWORD dwSize)
+	void HTTPStream::DownloadHTTP(DWORD dwSize)
 	{
 		ULONG offset = 0;
 		BYTE* data = m_bits;

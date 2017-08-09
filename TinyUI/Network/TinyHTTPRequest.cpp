@@ -42,9 +42,9 @@ namespace TinyUI
 			:m_dwTO(3000),
 			m_dwOffset(0),
 			m_dwError(S_OK),
-			m_bClose(TRUE)
+			m_bClose(TRUE),
+			m_pResponse(NULL)
 		{
-			m_raw.Reset(new CHAR[8192]);
 			m_wait.CreateEvent();
 		}
 		BOOL TinyHTTPRequest::Open(const string& szURL, const string& ms)
@@ -89,6 +89,7 @@ namespace TinyUI
 		{
 			m_socket.Shutdown();
 			m_socket.Close();
+			SAFE_DELETE(m_pResponse);
 		}
 		TinyHTTPResponse* TinyHTTPRequest::GetResponse()
 		{
@@ -98,12 +99,7 @@ namespace TinyUI
 				m_socket.BeginConnect(m_endpoint, BindCallback(&TinyHTTPRequest::OnHandleConnect, this), this);
 				if (m_wait.Lock(INFINITE) && m_dwError == S_OK)
 				{
-					TinyHTTPResponse* response = new TinyHTTPResponse();
-					if (response->ParseResponse(m_response.GetPointer(), m_response.GetSize()))
-					{
-						return response;
-					}
-					response->Close();
+					return m_pResponse;
 				}
 			}
 			return NULL;
@@ -149,7 +145,7 @@ namespace TinyUI
 				}
 				else
 				{
-					if (!m_socket.BeginReceive(m_raw, 8192, 0, BindCallback(&TinyHTTPRequest::OnHandleReceive, this), this))
+					if (!m_socket.BeginReceive(m_raw, DEFAULT_BUFFER_SIZE, 0, BindCallback(&TinyHTTPRequest::OnHandleReceive, this), this))
 					{
 						OnHandleError(GetLastError());
 					}
@@ -168,31 +164,22 @@ namespace TinyUI
 				if (dwRes > 0)
 				{
 					m_response.Add(m_raw, dwRes);
-					TinyHTTPResponse* response = new TinyHTTPResponse();
-					if (response->ParseResponse(m_response.GetPointer(), m_response.GetSize()))
+					if (m_pResponse == NULL)
 					{
-						INT a = 0;
+						m_pResponse = new TinyHTTPResponse(*this);
 					}
-					/*if (!m_socket.BeginReceive(m_raw, 8192, 0, BindCallback(&TinyHTTPRequest::OnHandleReceive, this), this))
+					if (m_pResponse->ParseResponse(m_response.GetPointer(), m_response.GetSize()))
 					{
-						OnHandleError(GetLastError());
-					}*/
-				}
-				else
-				{
-					if (m_bClose)
-					{
-						this->Close();
+						m_wait.SetEvent();
 					}
-					m_wait.SetEvent();
 				}
 			}
 		}
 		void TinyHTTPRequest::OnHandleError(DWORD dwError)
 		{
 			m_dwError = dwError;
-			this->Close();
 			m_wait.SetEvent();
+			this->Close();
 		}
 		void TinyHTTPRequest::BuildRequest()
 		{
