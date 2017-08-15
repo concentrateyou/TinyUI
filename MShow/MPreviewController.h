@@ -3,7 +3,6 @@
 #include "MPreviewView.h"
 #include "MFLVPlayer.h"
 #include "Control/TinyMenu.h"
-#include "audiosdk.h"
 using namespace TinyUI;
 
 namespace MShow

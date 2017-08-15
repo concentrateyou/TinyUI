@@ -69,7 +69,7 @@
     <ClInclude Include="MClock.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MAudioAnalyser.h">
+    <ClInclude Include="MAudioCapture.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -119,7 +119,7 @@
     <ClCompile Include="MVideoTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MAudioAnalyser.cpp">
+    <ClCompile Include="MAudioCapture.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
