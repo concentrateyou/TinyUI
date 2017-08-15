@@ -29,7 +29,7 @@ namespace MShow
 			return FALSE;
 		if (!m_audioAnalyser.Initialize())
 			return FALSE;
-		m_window.m_txtPreviewURL.SetText("rtmp://10.10.13.98/live/lb_kaixinjuchang_720p");
+		m_window.m_txtPreviewURL.SetText("rtmp://live.hkstv.hk.lxdns.com/live/hks");
 		m_waveFile.Create("D:\\record.wav", &m_audioCapture.GetFormat());
 		return TRUE;
 	}

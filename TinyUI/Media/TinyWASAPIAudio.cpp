@@ -111,6 +111,68 @@ namespace TinyUI
 		{
 
 		}
+		BOOL TinyWASAPIAudio::IsMicrophone(const Name& name, BOOL& IsMA)
+		{
+			TinyComPtr<IMMDeviceEnumerator>	enumerator;
+			HRESULT hRes = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER);
+			if (hRes != S_OK)
+				return FALSE;
+			wstring id = StringToWString(name.id());
+			TinyComPtr<IMMDevice> mmDevice;
+			hRes = enumerator->GetDevice(id.c_str(), &mmDevice);
+			if (hRes != S_OK)
+				return FALSE;
+			GUID subType = { 0 };
+			if (!GetJackSubtype(mmDevice, subType))
+				return FALSE;
+			IsMA = (subType == KSNODETYPE_MICROPHONE) ? TRUE : FALSE;
+			return TRUE;
+		}
+		BOOL TinyWASAPIAudio::IsMicrophone(const string& name, BOOL& IsMA)
+		{
+			TinyComPtr<IMMDeviceEnumerator>	enumerator;
+			HRESULT hRes = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER);
+			if (hRes != S_OK)
+				return FALSE;
+			TinyComPtr<IMMDeviceCollection> collection;
+			hRes = enumerator->EnumAudioEndpoints(eCapture, DEVICE_STATE_ACTIVE, &collection);
+			if (hRes != S_OK)
+				return FALSE;
+			UINT count = 0;
+			hRes = collection->GetCount(&count);
+			if (hRes != S_OK)
+				return FALSE;
+			for (UINT i = 0;i < count;i++)
+			{
+				TinyComPtr<IMMDevice> device;
+				hRes = collection->Item(i, &device);
+				if (hRes != S_OK)
+					continue;
+				string friendlyName;
+				TinyComPtr<IPropertyStore> prop;
+				hRes = device->OpenPropertyStore(STGM_READ, &prop);
+				if (SUCCEEDED(hRes))
+				{
+					PROPVARIANT varName;
+					PropVariantInit(&varName);
+					hRes = prop->GetValue(PKEY_Device_FriendlyName, &varName);
+					if (SUCCEEDED(hRes) && varName.pwszVal != NULL)
+					{
+						friendlyName = WStringToString(varName.pwszVal);
+						PropVariantClear(&varName);
+						if (friendlyName.find(name) != string::npos)
+						{
+							GUID subType;
+							if (!GetJackSubtype(device, subType))
+								return FALSE;
+							IsMA = (subType == KSNODETYPE_MICROPHONE) ? TRUE : FALSE;
+							return TRUE;
+						}
+					}
+				}
+			}
+			return TRUE;
+		}
 		BOOL TinyWASAPIAudio::IsMicrophoneArray(const Name& name, BOOL& IsMA)
 		{
 			TinyComPtr<IMMDeviceEnumerator>	enumerator;

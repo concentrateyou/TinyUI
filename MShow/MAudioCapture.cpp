@@ -25,22 +25,26 @@ namespace MShow
 		{
 			if (!Media::TinyWASAPIAudio::IsMicrophoneArray(names[i].name(), bIsMA))
 				return FALSE;
-			if (bIsMA)
+			if (!bIsMA)
 			{
-				vector<AudioCaptureParam> params;
-				if (!AudioCapture::GetDeviceParams(names[i], params))
+				if (!Media::TinyWASAPIAudio::IsMicrophone(names[i].name(), bIsMA))
 					return FALSE;
-				for (INT j = 0;j < params.size();j++)
+			}
+			if (!bIsMA)
+				return FALSE;
+			vector<AudioCaptureParam> params;
+			if (!AudioCapture::GetDeviceParams(names[i], params))
+				return FALSE;
+			for (INT j = 0;j < params.size();j++)
+			{
+				WAVEFORMATEX waveFMT = params[j].GetFormat();
+				if (waveFMT.nChannels == 2 &&
+					waveFMT.nSamplesPerSec == 44100
+					&& waveFMT.wBitsPerSample == 16)
 				{
-					WAVEFORMATEX waveFMT = params[j].GetFormat();
-					if (waveFMT.nChannels == 2 &&
-						waveFMT.nSamplesPerSec == 44100
-						&& waveFMT.wBitsPerSample == 16)
-					{
-						m_name = names[i];
-						m_param = params[j];
-						return TRUE;
-					}
+					m_name = names[i];
+					m_param = params[j];
+					return TRUE;
 				}
 			}
 		}
