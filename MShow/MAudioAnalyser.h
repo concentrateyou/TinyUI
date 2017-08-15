@@ -22,15 +22,18 @@ namespace MShow
 	public:
 		MAudioAnalyser();
 		virtual ~MAudioAnalyser();
-		BOOL Initialize(HWND hWND, WAVEFORMATEX& waveFMT);
+		BOOL Initialize(HWND hWND);
 		void Process(BYTE* bits, LONG size);
 	private:
 		BOOL DrawGradient(HDC hDC, const RECT* pRect, const DWORD* cl, INT iNum, DWORD dwMode);
 	public:
+		FLOAT						m_decay;
+		INT							m_sampleSize;
+		INT							m_sampleSizeFFT;
 		HWND						m_hWND;
 		FFT							m_wFFT;
 		TinySize					m_size;
-		WAVEFORMATEX				m_waveFMT;
+		TinyScopedArray<FLOAT>		m_oldFFT;
 		TinyScopedArray<FLOAT>		m_samples;
 	};
 }

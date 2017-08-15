@@ -12,7 +12,7 @@ namespace MShow
 
 	MPreviewController::MPreviewController(MPreviewView& view)
 		:m_view(view),
-		m_player(BindCallback(&MPreviewController::OnVideo, this))
+		m_player(BindCallback(&MPreviewController::OnAudio, this), BindCallback(&MPreviewController::OnVideo, this))
 	{
 
 	}
@@ -61,6 +61,11 @@ namespace MShow
 	MPreviewView& MPreviewController::GetView()
 	{
 		return m_view;
+	}
+
+	void MPreviewController::OnAudio(BYTE* bits, LONG size)
+	{
+
 	}
 
 	void MPreviewController::OnVideo(BYTE* bits, LONG size)

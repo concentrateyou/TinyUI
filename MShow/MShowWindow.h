@@ -36,7 +36,7 @@ namespace MShow
 		void OnPusher(void*, INT);
 	private:
 		MPreviewView		m_previewView;
-		TinyLabel			m_frequencyBAR;
+		TinyLabel			m_analyserBAR;
 	private:
 		TinyScopedPtr<Delegate<void(void*)>>		m_onTabChange;
 	};

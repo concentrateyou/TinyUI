@@ -7,7 +7,7 @@
 #include "Control/TinyButton.h"
 #include "Control/TinyLabel.h"
 #include "Control/TinyRichTextBox.h"
-#include "RDPCapture.h"
+#include "WavePlayer.h"
 
 #include <sapi.h>
 #include <sphelper.h>
@@ -39,6 +39,7 @@ public:
 	LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 private:
-	RDPCapture* m_capture;
+	TinyLabel m_analyserBAR;
+	WavePlayer m_wavePlayer;
 };
 

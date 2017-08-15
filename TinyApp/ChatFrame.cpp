@@ -49,8 +49,11 @@ HICON ChatFrame::RetrieveIcon()
 LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-
-	DISPLAY_DEVICE dd;
+	/*m_analyserBAR.Create(m_hWND, 10, 10, 298, 92);*/
+	m_analyserBAR.Create(m_hWND, 10, 10, 300, 180);
+	m_analyserBAR.SetText("²âÊÔ");
+	m_wavePlayer.Submit(m_analyserBAR.Handle());
+	/*DISPLAY_DEVICE dd;
 	ZeroMemory(&dd, sizeof(dd));
 	dd.cb = sizeof(dd);
 	DWORD dwCount = 0;
@@ -74,7 +77,7 @@ LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHand
 			::GetClientRect(m_hWND, &rectangle);
 			m_capture->Init(rectangle.left, rectangle.top, rectangle.Width(), rectangle.Height());
 		}
-	}
+	}*/
 
 
 	return FALSE;
@@ -83,9 +86,8 @@ LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHand
 LRESULT ChatFrame::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	
-	SAFE_DELETE(m_capture);
 
+	//SAFE_DELETE(m_capture);
 	return FALSE;
 }
 
@@ -95,9 +97,6 @@ LRESULT ChatFrame::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	PAINTSTRUCT ps = { 0 };
 
 	HDC hDC = BeginPaint(m_hWND, &ps);
-
-	m_capture->Fill(hDC);
-
 	EndPaint(m_hWND, &ps);
 	return FALSE;
 }
@@ -135,8 +134,5 @@ LRESULT ChatFrame::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bH
 LRESULT ChatFrame::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-
-
-
 	return FALSE;
 }

@@ -4,22 +4,16 @@
 
 namespace Decode
 {
-#define FFT_SAMPLE_SIZE		512
-#define PI					3.14159265
-	/// <summary>
-	/// 快速傅里叶变换
-	/// http://blog.jobbole.com/58246/
-	/// </summary>
 	class FFT
 	{
 		DISALLOW_COPY_AND_ASSIGN(FFT)
 	public:
 		FFT();
 		~FFT();
-		BOOL	Initialize(INT sampleSize = FFT_SAMPLE_SIZE);
+		BOOL	Initialize(INT sampleSize);
 		FLOAT*	Calculate(FLOAT* pSample, INT sampleSize);
 	private:
-		INT ReverseBits(INT val, INT iterations);
+		static INT	ReverseBits(INT index, INT size);
 	private:
 		INT						m_sampleSize;//采样个数
 		INT						m_iterations;//迭代次数

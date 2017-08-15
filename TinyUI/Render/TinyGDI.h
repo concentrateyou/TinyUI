@@ -374,7 +374,7 @@ namespace TinyUI
 	private:
 		SIZE		m_size;
 		HDC			m_hDestDC;
-		TinyBitmap	m_bitmap;
+		HBITMAP		m_bitmap;
 		HBITMAP		m_hOldBitmap;
 	};
 	/// <summary>
@@ -386,6 +386,18 @@ namespace TinyUI
 	public:
 		TinyWindowDC(HWND hWND);
 		virtual ~TinyWindowDC();
+	private:
+		HWND m_hWND;
+	};
+	/// <summary>
+	/// ¿Í»§¶ËDC
+	/// </summary>
+	class TinyClientDC : public TinyDC
+	{
+		DECLARE_DYNAMIC(TinyClientDC)
+	public:
+		TinyClientDC(HWND hWND);
+		virtual ~TinyClientDC();
 	private:
 		HWND m_hWND;
 	};

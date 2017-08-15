@@ -154,7 +154,7 @@ namespace MShow
 			s = GetQPCTimeNS();
 			if (s >= qwNSTime)
 				return TRUE;
-			Sleep(1);
+			Sleep(0);
 		}
 	}
 }

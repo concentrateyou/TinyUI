@@ -143,10 +143,8 @@ namespace TinyUI
 	}
 	BOOL TinyHandleHDC::Attach(HDC hDC)
 	{
-		if (hDC == NULL)
-		{
+		if (!hDC)
 			return FALSE;
-		}
 		m_hDC = hDC;
 		TinyHandleMap<HDC, TinyHandleHDC*>& map = TinyApplication::GetInstance()->GetMapHDC();
 		TinyHandleHDC* ps = this;
@@ -171,7 +169,7 @@ namespace TinyUI
 	}
 	//////////////////////////////////////////////////////////////////////////
 	IMPLEMENT_DYNAMIC(TinyHandleHBITMAP, TinyObject)
-	TinyHandleHBITMAP::TinyHandleHBITMAP()
+		TinyHandleHBITMAP::TinyHandleHBITMAP()
 		:m_hBITMAP(NULL)
 	{
 
@@ -198,10 +196,8 @@ namespace TinyUI
 	}
 	BOOL TinyHandleHBITMAP::Attach(HBITMAP hBITMAP)
 	{
-		if (hBITMAP == NULL)
-		{
+		if (!hBITMAP)
 			return FALSE;
-		}
 		m_hBITMAP = hBITMAP;
 		TinyHandleMap<HBITMAP, TinyHandleHBITMAP*>& map = TinyApplication::GetInstance()->GetMapHBITMAP();
 		TinyHandleHBITMAP* ps = this;
@@ -253,10 +249,8 @@ namespace TinyUI
 	}
 	BOOL TinyHandleHFONT::Attach(HFONT hFONT)
 	{
-		if (hFONT == NULL)
-		{
+		if (!hFONT)
 			return FALSE;
-		}
 		m_hFONT = hFONT;
 		TinyHandleMap<HFONT, TinyHandleHFONT*>& map = TinyApplication::GetInstance()->GetMapHFONT();
 		TinyHandleHFONT* ps = this;
@@ -308,7 +302,8 @@ namespace TinyUI
 	}
 	BOOL TinyHandleHPEN::Attach(HPEN hPEN)
 	{
-		if (!hPEN == NULL) return FALSE;
+		if (!hPEN)
+			return FALSE;
 		m_hPEN = hPEN;
 		TinyHandleMap<HPEN, TinyHandleHPEN*>& map = TinyApplication::GetInstance()->GetMapHPEN();
 		TinyHandleHPEN* ps = this;
@@ -360,7 +355,8 @@ namespace TinyUI
 	}
 	BOOL TinyHandleHBRUSH::Attach(HBRUSH hBRUSH)
 	{
-		if (!hBRUSH == NULL) return FALSE;
+		if (!hBRUSH)
+			return FALSE;
 		m_hBRUSH = hBRUSH;
 		TinyHandleMap<HBRUSH, TinyHandleHBRUSH*>& map = TinyApplication::GetInstance()->GetMapHBRUSH();
 		TinyHandleHBRUSH* ps = this;
@@ -412,7 +408,8 @@ namespace TinyUI
 	}
 	BOOL TinyHandleHPALETTE::Attach(HPALETTE hPALETTE)
 	{
-		if (!hPALETTE == NULL) return FALSE;
+		if (!hPALETTE)
+			return FALSE;
 		m_hPALETTE = hPALETTE;
 		TinyHandleMap<HPALETTE, TinyHandleHPALETTE*>& map = TinyApplication::GetInstance()->GetMapHPALETTE();
 		TinyHandleHPALETTE* ps = this;
@@ -464,7 +461,8 @@ namespace TinyUI
 	}
 	BOOL TinyHandleHRGN::Attach(HRGN hHRGN)
 	{
-		if (!hHRGN) return FALSE;
+		if (!hHRGN)
+			return FALSE;
 		m_hHRGN = hHRGN;
 		TinyHandleMap<HRGN, TinyHandleHRGN*>& map = TinyApplication::GetInstance()->GetMapHRGN();
 		TinyHandleHRGN* ps = this;
@@ -516,7 +514,8 @@ namespace TinyUI
 	}
 	BOOL TinyHandleHIMAGELIST::Attach(HIMAGELIST hIMAGELIST)
 	{
-		if (!hIMAGELIST) return FALSE;
+		if (!hIMAGELIST)
+			return FALSE;
 		m_hIMAGELIST = hIMAGELIST;
 		TinyHandleMap<HIMAGELIST, TinyHandleHIMAGELIST*>& map = TinyApplication::GetInstance()->GetMapHIMAGELIST();
 		TinyHandleHIMAGELIST* ps = this;

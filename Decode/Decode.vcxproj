@@ -142,6 +142,7 @@
   <ItemGroup>
     <ClInclude Include="AACDecode.h" />
     <ClInclude Include="AC3Decode.h" />
+    <ClInclude Include="AudioAnalyser.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="FFT.h" />
     <ClInclude Include="FLVReader.h" />
@@ -159,6 +160,7 @@
   <ItemGroup>
     <ClCompile Include="AACDecode.cpp" />
     <ClCompile Include="AC3Decode.cpp" />
+    <ClCompile Include="AudioAnalyser.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="FFT.cpp" />
     <ClCompile Include="FLVReader.cpp" />

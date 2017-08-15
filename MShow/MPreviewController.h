@@ -2,6 +2,7 @@
 #include "MShowCommon.h"
 #include "MPreviewView.h"
 #include "MFLVPlayer.h"
+#include "MAudioAnalyser.h"
 #include "Control/TinyMenu.h"
 using namespace TinyUI;
 
@@ -24,6 +25,7 @@ namespace MShow
 		MPreviewView&	GetView();
 	private:
 		void			OnVideo(BYTE* bits, LONG size);
+		void			OnAudio(BYTE* bits, LONG size);
 	private:
 		DX2D						m_dx2d;
 		TinySize					m_videoSize;

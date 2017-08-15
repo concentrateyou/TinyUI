@@ -1269,7 +1269,7 @@ namespace TinyUI
 		m_size.cy = cy;
 		if (Attach(::CreateCompatibleDC(hDC)))
 		{
-			m_bitmap.Attach(::CreateCompatibleBitmap(hDC, cx, cy));
+			m_bitmap = ::CreateCompatibleBitmap(hDC, cx, cy);
 			m_hOldBitmap = (HBITMAP)::SelectObject(m_hDC, m_bitmap);
 		}
 	}
@@ -1293,8 +1293,8 @@ namespace TinyUI
 		m_size.cy = cy;
 		if (Attach(::CreateCompatibleDC(dc)))
 		{
-			m_bitmap.Attach(::CreateCompatibleBitmap(dc, cx, cy));
-			m_hOldBitmap = (HBITMAP)::SelectObject(dc, m_bitmap);
+			m_bitmap = ::CreateCompatibleBitmap(dc, cx, cy);
+			m_hOldBitmap = (HBITMAP)::SelectObject(m_hDC, m_bitmap);
 		}
 	}
 
@@ -1500,6 +1500,7 @@ namespace TinyUI
 	}
 	TinyMemDC::~TinyMemDC()
 	{
+		SAFE_DELETE_OBJECT(m_bitmap);
 		if (m_hDC && m_hOldBitmap)
 		{
 			::SelectObject(m_hDC, m_hOldBitmap);
@@ -1518,6 +1519,25 @@ namespace TinyUI
 		}
 	}
 	TinyWindowDC::~TinyWindowDC()
+	{
+		if (m_hDC != NULL)
+		{
+			::ReleaseDC(m_hWND, Detach());
+			m_hDC = NULL;
+		}
+	}
+#pragma endregion 
+#pragma region  TinyClientDC
+	IMPLEMENT_DYNAMIC(TinyClientDC, TinyDC);
+	TinyClientDC::TinyClientDC(HWND hWND)
+		:m_hWND(hWND)
+	{
+		if (Attach(::GetDC(m_hWND)))
+		{
+			//TODO
+		}
+	}
+	TinyClientDC::~TinyClientDC()
 	{
 		if (m_hDC != NULL)
 		{
