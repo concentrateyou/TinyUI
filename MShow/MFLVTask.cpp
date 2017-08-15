@@ -21,7 +21,7 @@ namespace MShow
 	BOOL MFLVTask::Initialize(LPCSTR pzURL)
 	{
 		TinyString szName = pzURL;
-		if (szName.IndexOf("rtmp://") != -1)
+		if (szName.IndexOf("rtmp://") != -1 || szName.IndexOf("http://") != -1)
 		{
 			if (!m_reader.OpenURL(pzURL))
 				return FALSE;

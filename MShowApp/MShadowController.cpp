@@ -64,13 +64,25 @@ namespace MShow
 		DWORD dwMS = static_cast<DWORD>(1000 / m_videoFPS);
 		TinyTimer timer;
 		SampleTag tag;
+		INT delay = 0;
 		for (;;)
 		{
 			DWORD dwTime = OnVideo(tag);
-			INT delay = dwMS - dwTime;
+			delay = dwMS - dwTime;
+			m_timeQPC.BeginTime();
 			if (timer.Wait(delay < 0 ? 0 : delay, 1000))
 			{
 				m_videoQueue.Push(tag);
+			}
+			m_timeQPC.EndTime();
+			INT cps = static_cast<INT>(m_timeQPC.GetMillisconds());
+			if (cps > delay)
+			{
+				dwMS -= cps - delay;
+				if (dwMS <= 0)
+				{
+					dwMS = static_cast<DWORD>(1000 / m_videoFPS);
+				}
 			}
 		}
 	}
