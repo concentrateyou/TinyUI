@@ -2,8 +2,8 @@
 #include "MShowCommon.h"
 #include "MPreviewView.h"
 #include "MFLVPlayer.h"
-#include "MAudioAnalyser.h"
 #include "Control/TinyMenu.h"
+#include "audiosdk.h"
 using namespace TinyUI;
 
 namespace MShow
@@ -30,9 +30,9 @@ namespace MShow
 		DX2D						m_dx2d;
 		TinySize					m_videoSize;
 		TinySize					m_viewSize;
+		TinyPerformanceTimer		m_timeQPC;
 		TinyComPtr<ID2D1Bitmap1>	m_bitmap1;
 		MFLVPlayer					m_player;
-		TinyPerformanceTimer		m_timeQPC;
 		MPreviewView&				m_view;
 	};
 }

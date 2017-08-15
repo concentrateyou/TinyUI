@@ -2,6 +2,8 @@
 #include "MShowCommon.h"
 #include "MPreviewView.h"
 #include "Control/TinyLabel.h"
+#include "Control/TinyTextBox.h"
+#include "Control/TinyButton.h"
 using namespace TinyUI;
 
 namespace MShow
@@ -36,6 +38,9 @@ namespace MShow
 		void OnPusher(void*, INT);
 	private:
 		MPreviewView		m_previewView;
+		TinyTextBox			m_txtPreviewURL;
+		TinyButton			m_btnPreview;
+		TinyButton			m_btnRecord;
 		TinyLabel			m_analyserBAR;
 	private:
 		TinyScopedPtr<Delegate<void(void*)>>		m_onTabChange;

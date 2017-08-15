@@ -49,7 +49,12 @@ namespace MShow
 		INT cy = 730;
 		CenterWindow(NULL, { cx, cy });
 		m_previewView.Create(m_hWND, 25, 25, 768, 432);
-		m_analyserBAR.Create(m_hWND, 25, 482, 100, 300, 180);
+		m_txtPreviewURL.Create(m_hWND, 25, 475, 500, 23);
+		m_btnPreview.Create(m_hWND, 530, 475, 75, 23);
+		m_btnPreview.SetText("打开URL");
+		m_btnRecord.Create(m_hWND, 620, 475, 75, 23);
+		m_btnRecord.SetText("开始录音");
+		m_analyserBAR.Create(m_hWND, 25, 518, 300, 180);
 		return FALSE;
 	}
 	LRESULT MShowWindow::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

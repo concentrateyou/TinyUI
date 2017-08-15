@@ -1,5 +1,9 @@
 #pragma once
 #include "MShowWindow.h"
+#include "MAudioCapture.h"
+#include "AudioAnalyser.h"
+using namespace DShow;
+using namespace Decode;
 
 namespace MShow
 {
@@ -16,12 +20,18 @@ namespace MShow
 		void	Uninitialize();
 		MPreviewController* GetPreviewController();
 	private:
-		void OnPusher(void*, INT);
-		void OnToggle(void*, INT);
+		void OnPreview(void*, INT);
+		void OnRecord(void*, INT);
+		void OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID);
 	private:
 		TinyLock		m_lock;
 		MShowWindow&	m_window;
-		TinyScopedPtr<MPreviewController>	m_preview;
+		MAudioCapture	m_audioCapture;
+		AudioAnalyser	m_audioAnalyser;
+		TinyWaveFile	m_waveFile;
+		TinyScopedPtr<MPreviewController>			m_preview;
+		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onPreviewClick;
+		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onRecordClick;
 	};
 }
 
