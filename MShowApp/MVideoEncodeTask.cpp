@@ -23,7 +23,12 @@ namespace MShow
 		m_videoFPS = videoFPS;
 		if (!m_encoder.Open(m_pulgSize, m_pulgSize, m_videoRate, m_videoFPS))
 			return FALSE;
-		return TinyTaskBase::Submit(BindCallback(&MVideoEncodeTask::OnMessagePump, this));
+		if (TinyTaskBase::Submit(BindCallback(&MVideoEncodeTask::OnMessagePump, this)))
+		{
+			SetPriority(THREAD_PRIORITY_TIME_CRITICAL);
+			return TRUE;
+		}
+		return FALSE;
 	}
 
 	void MVideoEncodeTask::OnMessagePump()
@@ -42,7 +47,7 @@ namespace MShow
 				BOOL bRes = queue.Pop(sampleTag);
 				if (!bRes || sampleTag.size <= 0)
 				{
-					Sleep(3);
+					Sleep(0);
 					continue;
 				}
 				sampleTag.sampleDTS = sampleTag.samplePTS = (m_videoINC++) * 90000 / m_videoFPS;
@@ -52,6 +57,8 @@ namespace MShow
 				ZeroMemory(&sample, sizeof(sample));
 				if (m_encoder.Encode(sampleTag, bo, so, sample.mediaTag))
 				{
+					sample.mediaTag.DTS -= sampleTag.timestampOffset;
+					sample.mediaTag.PTS -= sampleTag.timestampOffset;
 					sample.size = so;
 					sample.bits = new BYTE[so];
 					memcpy(sample.bits, bo, so);

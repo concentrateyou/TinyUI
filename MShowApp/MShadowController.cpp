@@ -62,27 +62,22 @@ namespace MShow
 	void MShadowController::OnMessagePump()
 	{
 		DWORD dwMS = static_cast<DWORD>(1000 / m_videoFPS);
+		INT offset = 0;
 		TinyTimer timer;
 		SampleTag tag;
 		INT delay = 0;
 		for (;;)
 		{
-			DWORD dwTime = OnVideo(tag);
-			delay = dwMS - dwTime;
+			DWORD dwCost = OnVideo(tag);
+			delay = dwMS - dwCost - offset;
 			m_timeQPC.BeginTime();
 			if (timer.Wait(delay < 0 ? 0 : delay, 1000))
 			{
+				m_timeQPC.EndTime();
+				offset = static_cast<INT>(m_timeQPC.GetMillisconds()) - delay;
+				offset = offset < 0 ? 0 : offset;
+				tag.timestampOffset = offset;
 				m_videoQueue.Push(tag);
-			}
-			m_timeQPC.EndTime();
-			INT cps = static_cast<INT>(m_timeQPC.GetMillisconds());
-			if (cps > delay)
-			{
-				dwMS -= cps - delay;
-				if (dwMS <= 0)
-				{
-					dwMS = static_cast<DWORD>(1000 / m_videoFPS);
-				}
 			}
 		}
 	}
