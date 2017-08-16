@@ -65,20 +65,24 @@ namespace MShow
 		INT offset = 0;
 		TinyTimer timer;
 		SampleTag tag;
-		INT delay = 0;
 		for (;;)
 		{
-			DWORD dwCost = OnVideo(tag);
-			delay = dwMS - dwCost - offset;
+			if (m_clock.GetBaseTime() == -1)
+			{
+				m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
+			}
+			ZeroMemory(&tag, sizeof(tag));
+			INT delay = dwMS - OnVideo(tag);
+			delay -= offset;
 			m_timeQPC.BeginTime();
 			if (timer.Wait(delay < 0 ? 0 : delay, 1000))
 			{
-				m_timeQPC.EndTime();
-				offset = static_cast<INT>(m_timeQPC.GetMillisconds()) - delay;
-				offset = offset < 0 ? 0 : offset;
-				tag.timestampOffset = offset;
+				
 				m_videoQueue.Push(tag);
 			}
+			m_timeQPC.EndTime();
+			offset = static_cast<INT>(m_timeQPC.GetMillisconds()) - delay;
+			offset = offset < 0 ? 0 : offset;
 		}
 	}
 

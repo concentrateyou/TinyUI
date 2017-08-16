@@ -38,16 +38,16 @@ namespace MShow
 		{
 			MPacketAllocQueue& queue = pCTRL->GetVideoQueue();
 			Sample sample;
+			SampleTag sampleTag;
 			for (;;)
 			{
 				if (m_bBreak)
 					break;
-				SampleTag sampleTag;
 				ZeroMemory(&sampleTag, sizeof(sampleTag));
 				BOOL bRes = queue.Pop(sampleTag);
 				if (!bRes || sampleTag.size <= 0)
 				{
-					Sleep(0);
+					Sleep(1);
 					continue;
 				}
 				sampleTag.sampleDTS = sampleTag.samplePTS = (m_videoINC++) * 90000 / m_videoFPS;
@@ -57,8 +57,6 @@ namespace MShow
 				ZeroMemory(&sample, sizeof(sample));
 				if (m_encoder.Encode(sampleTag, bo, so, sample.mediaTag))
 				{
-					sample.mediaTag.DTS -= sampleTag.timestampOffset;
-					sample.mediaTag.PTS -= sampleTag.timestampOffset;
 					sample.size = so;
 					sample.bits = new BYTE[so];
 					memcpy(sample.bits, bo, so);

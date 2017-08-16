@@ -138,7 +138,7 @@ namespace DXApp
 		m_graphics.Present();
 		m_timer.EndTime();
 		LONGLONG lls = m_timer.GetMillisconds();
-		TRACE("Cost:%lld\n", lls);
+		//TRACE("Cost:%lld\n", lls);
 		return lls;
 	}
 

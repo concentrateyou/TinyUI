@@ -52,7 +52,7 @@ namespace MShow
 			BOOL bRes = m_queue.Pop(sampleTag);
 			if (!bRes || sampleTag.size <= 0)
 			{
-				Sleep(3);
+				Sleep(1);
 				continue;
 			}
 			BYTE* bo = NULL;
@@ -60,6 +60,7 @@ namespace MShow
 			ZeroMemory(&sample, sizeof(sample));
 			if (m_aac.Encode(sampleTag.bits, sampleTag.size, bo, so, sample.mediaTag))
 			{
+				//sample.mediaTag.dwTime += MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime();
 				sample.size = so;
 				sample.bits = new BYTE[so];
 				memcpy(sample.bits, bo, so);
@@ -83,24 +84,27 @@ namespace MShow
 
 	void MAudioEncodeTask::OnAudio(BYTE* bits, LONG size)
 	{
-		BYTE* output = new BYTE[size];
-		if (m_queueMix.GetSize() > 0)
+		if (m_clock.GetBaseTime() != -1)
 		{
-			SampleTag sampleTag = { 0 };
-			if (m_queueMix.Pop(sampleTag))
+			BYTE* output = new BYTE[size];
+			if (m_queueMix.GetSize() > 0)
 			{
-				AudioMixer::Mix(bits, sampleTag.bits, size, output);
+				SampleTag sampleTag = { 0 };
+				if (m_queueMix.Pop(sampleTag))
+				{
+					AudioMixer::Mix(bits, sampleTag.bits, size, output);
+				}
 			}
+			else
+			{
+				memcpy_s(output, size, bits, size);
+			}
+			SampleTag sampleTag;
+			ZeroMemory(&sampleTag, sizeof(sampleTag));
+			sampleTag.bits = output;
+			sampleTag.size = size;
+			m_queue.Push(sampleTag);
 		}
-		else
-		{
-			memcpy_s(output, size, bits, size);
-		}
-		SampleTag sampleTag;
-		ZeroMemory(&sampleTag, sizeof(sampleTag));
-		sampleTag.bits = output;
-		sampleTag.size = size;
-		m_queue.Push(sampleTag);
 	}
 
 	void MAudioEncodeTask::OnAudioMix(BYTE* bits, LONG size)

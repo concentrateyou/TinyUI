@@ -79,7 +79,7 @@ namespace DXApp
 			timer.BeginTime();
 			time = this->Encode();
 			timer.EndTime();
-			TRACE("Encode Cost:%d\n", timer.GetMillisconds());
+			//TRACE("Encode Cost:%d\n", timer.GetMillisconds());
 		}
 	}
 }
