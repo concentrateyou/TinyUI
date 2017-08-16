@@ -19,8 +19,11 @@ namespace MShow
 	}
 	void MClock::AddBaseTime(LONGLONG dwMS)
 	{
-		TinyAutoLock lock(m_lock);
-		m_baseTime += dwMS;
+		if (dwMS > 0)
+		{
+			TinyAutoLock lock(m_lock);
+			m_baseTime += dwMS;
+		}
 	}
 	LONGLONG MClock::GetBaseTime() const
 	{

@@ -55,6 +55,7 @@ namespace MShow
 		m_btnRecord.Create(m_hWND, 620, 475, 75, 23);
 		m_btnRecord.SetText("¿ªÊ¼Â¼Òô");
 		m_analyserBAR.Create(m_hWND, 25, 518, 300, 180);
+		m_address.Create(m_hWND, 340, 518, 120, 21);
 		return FALSE;
 	}
 	LRESULT MShowWindow::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

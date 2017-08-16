@@ -5,6 +5,7 @@ namespace DXFramework
 {
 	DX2D::DX2D()
 	{
+		SetLogFile("D:\\dx.log");
 	}
 
 	DX2D::~DX2D()
@@ -40,19 +41,31 @@ namespace DXFramework
 			&level,
 			NULL);
 		if (hRes != S_OK)
+		{
+			LOG(INFO) << "DX2D D3D11CreateDevice Fail\n";
 			return FALSE;
+		}
 		TinyComPtr<IDXGIDevice> dxgi;
 		hRes = m_d3d->QueryInterface(&dxgi);
 		if (hRes != S_OK)
+		{
+			LOG(INFO) << "DX2D QueryInterface IDXGIDevice Fail\n";
 			return FALSE;
+		}
 		TinyComPtr<IDXGIAdapter> adapter;
 		hRes = dxgi->GetAdapter(&adapter);
 		if (hRes != S_OK)
+		{
+			LOG(INFO) << "DX2D GetAdapter IDXGIAdapter Fail\n";
 			return FALSE;
+		}
 		TinyComPtr<IDXGIFactory2> factory;
 		hRes = adapter->GetParent(__uuidof(factory), reinterpret_cast<void **>(&factory));
 		if (hRes != S_OK)
+		{
+			LOG(INFO) << "DX2D GetParent IDXGIFactory2 Fail\n";
 			return FALSE;
+		}
 		DXGI_SWAP_CHAIN_FULLSCREEN_DESC desc = { 0 };
 		desc.RefreshRate.Numerator = 60;
 		desc.RefreshRate.Denominator = 1;
@@ -68,33 +81,55 @@ namespace DXFramework
 		dest1.Height = cy;
 		hRes = factory->CreateSwapChainForHwnd(m_d3d, hWND, &dest1, &desc, NULL, &m_swap);
 		if (hRes != S_OK)
+		{
+			LOG(INFO) << "DX2D CreateSwapChainForHwnd Fail\n";
 			return FALSE;
+		}
 		hRes = D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, __uuidof(ID2D1Factory1), reinterpret_cast<void**>(&m_factory));
 		if (hRes != S_OK)
+		{
+			LOG(INFO) << "DX2D D2D1CreateFactory Fail\n";
 			return FALSE;
+		}
 		hRes = m_factory->QueryInterface(&m_d2dMultithread);
 		if (hRes != S_OK)
+		{
+			LOG(INFO) << "DX2D QueryInterface ID2D1Multithread Fail\n";
 			return FALSE;
+		}
 		TinyComPtr<ID2D1Device> d2d1device;
 		hRes = m_factory->CreateDevice(dxgi, &d2d1device);
 		if (hRes != S_OK)
+		{
+			LOG(INFO) << "DX2D CreateDevice ID2D1Device Fail\n";
 			return FALSE;
+		}
 		hRes = d2d1device->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_ENABLE_MULTITHREADED_OPTIMIZATIONS, &m_context);
 		if (hRes != S_OK)
+		{
+			LOG(INFO) << "DX2D CreateDeviceContext Fail\n";
 			return FALSE;
+		}
 		TinyComPtr<IDXGISurface> surface;
 		hRes = m_swap->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(&surface));
 		if (hRes != S_OK)
+		{
+			LOG(INFO) << "DX2D GetBuffer Fail\n";
 			return FALSE;
+		}
 		m_bitmap.Release();
 		D2D1_BITMAP_PROPERTIES1 props1 = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE));
 		hRes = m_context->CreateBitmapFromDxgiSurface(surface, (const D2D1_BITMAP_PROPERTIES1*)&props1, &m_bitmap);
 		if (hRes != S_OK)
+		{
+			LOG(INFO) << "DX2D CreateBitmapFromDxgiSurface Fail\n";
 			return FALSE;
+		}
 		m_context->SetTarget(m_bitmap);
 		FLOAT dpiX, dpiY;
 		m_factory->GetDesktopDpi(&dpiX, &dpiY);
 		m_context->SetDpi(dpiX, dpiY);
+		LOG(INFO) << "DX2D Initialize OK\n";
 		return TRUE;
 	}
 

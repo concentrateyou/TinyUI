@@ -4,6 +4,7 @@
 #include "Control/TinyLabel.h"
 #include "Control/TinyTextBox.h"
 #include "Control/TinyButton.h"
+#include "Control/TinyIPAddress.h"
 using namespace TinyUI;
 
 namespace MShow
@@ -42,6 +43,7 @@ namespace MShow
 		TinyButton			m_btnPreview;
 		TinyButton			m_btnRecord;
 		TinyLabel			m_analyserBAR;
+		TinyIPAddress		m_address;
 	private:
 		TinyScopedPtr<Delegate<void(void*)>>		m_onTabChange;
 	};

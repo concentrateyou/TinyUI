@@ -60,7 +60,6 @@ namespace MShow
 			ZeroMemory(&sample, sizeof(sample));
 			if (m_aac.Encode(sampleTag.bits, sampleTag.size, bo, so, sample.mediaTag))
 			{
-				//sample.mediaTag.dwTime += MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime();
 				sample.size = so;
 				sample.bits = new BYTE[so];
 				memcpy(sample.bits, bo, so);
@@ -86,6 +85,7 @@ namespace MShow
 	{
 		if (m_clock.GetBaseTime() != -1)
 		{
+			m_clock.GetBaseTime()
 			BYTE* output = new BYTE[size];
 			if (m_queueMix.GetSize() > 0)
 			{

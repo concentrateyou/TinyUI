@@ -61,28 +61,23 @@ namespace MShow
 	}
 	void MShadowController::OnMessagePump()
 	{
-		DWORD dwMS = static_cast<DWORD>(1000 / m_videoFPS);
-		INT offset = 0;
+		INT ms = static_cast<INT>(1000 / m_videoFPS);
+		INT cost = 0;
 		TinyTimer timer;
 		SampleTag tag;
 		for (;;)
 		{
+			ZeroMemory(&tag, sizeof(tag));
+			OnVideo(tag);
 			if (m_clock.GetBaseTime() == -1)
 			{
 				m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
 			}
-			ZeroMemory(&tag, sizeof(tag));
-			INT delay = dwMS - OnVideo(tag);
-			delay -= offset;
 			m_timeQPC.BeginTime();
-			if (timer.Wait(delay < 0 ? 0 : delay, 1000))
-			{
-				
-				m_videoQueue.Push(tag);
-			}
+			timer.Wait(ms, 1000);
 			m_timeQPC.EndTime();
-			offset = static_cast<INT>(m_timeQPC.GetMillisconds()) - delay;
-			offset = offset < 0 ? 0 : offset;
+			cost = static_cast<INT>(m_timeQPC.GetMillisconds());
+			m_clock.AddBaseTime(cost < ms ? 0 : cost - ms);
 		}
 	}
 
@@ -105,6 +100,7 @@ namespace MShow
 			memcpy_s(sampleTag.bits + 4, sampleTag.size, bits, sampleTag.size);
 			m_copy2D.Unmap(m_dx11);
 		}
+		m_videoQueue.Push(sampleTag);
 		m_timeQPC.EndTime();
 		return static_cast<DWORD>(m_timeQPC.GetMillisconds());
 	}

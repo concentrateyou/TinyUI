@@ -50,6 +50,7 @@ namespace MShow
 		:m_controller(m_window),
 		m_audioTS(0)
 	{
+		SetLogFile("D:\\log.txt");
 		timeBeginPeriod(1);
 	}
 	MShowApp::~MShowApp()

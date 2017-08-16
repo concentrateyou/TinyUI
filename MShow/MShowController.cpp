@@ -17,6 +17,8 @@ namespace MShow
 
 	BOOL MShowController::Initialize()
 	{
+		m_window.m_txtPreviewURL.SetText("rtmp://live.hkstv.hk.lxdns.com/live/hks");
+		m_window.m_address.SetAddress(MAKEIPADDRESS(10, 5, 16, 47));
 		m_onRecordClick.Reset(new Delegate<void(void*, INT)>(this, &MShowController::OnRecord));
 		m_window.m_btnRecord.EVENT_CLICK += m_onRecordClick;
 		m_onPreviewClick.Reset(new Delegate<void(void*, INT)>(this, &MShowController::OnPreview));
@@ -25,14 +27,21 @@ namespace MShow
 		if (!m_preview)
 			return FALSE;
 		if (!m_preview->Initialize())
+		{
+			LOG(INFO) << "Preview Initialize Fail\n";
 			return FALSE;
+		}
 		if (!m_audioCapture.Initialize())
+		{
+			LOG(INFO) << "AudioCapture Initialize Fail\n";
 			return FALSE;
+		}
 		if (!m_audioAnalyser.Initialize())
+		{
+			LOG(INFO) << "AudioAnalyser Initialize Fail\n";
 			return FALSE;
-		m_window.m_txtPreviewURL.SetText("rtmp://live.hkstv.hk.lxdns.com/live/hks");
-		m_audioSDK.Reset(new AudioSdk("10.5.16.47", 6090));
-		//m_waveFile.Create("D:\\record.wav", &m_audioCapture.GetFormat());
+		}
+		LOG(INFO) << "MShowController Initialize OK\n";
 		return TRUE;
 	}
 
@@ -60,13 +69,19 @@ namespace MShow
 
 	void MShowController::OnRecord(void*, INT)
 	{
-		ASSERT(m_audioSDK);
-		if (m_audioSDK->init(44100, 2, 16) == 0)
+		DWORD dwAddress = 0;
+		m_window.m_address.GetAddress(dwAddress);
+		string ip = StringPrintf("%ld.%ld.%ld.%ld", FIRST_IPADDRESS(dwAddress), SECOND_IPADDRESS(dwAddress), THIRD_IPADDRESS(dwAddress), FOURTH_IPADDRESS(dwAddress));
+		m_audioSDK.Reset(new AudioSdk(ip, 6090));
+		if (m_audioSDK != NULL)
 		{
-			if (m_audioCapture.Open(BindCallback(&MShowController::OnAudio, this)))
+			if (m_audioSDK->init(44100, 2, 16) == 0)
 			{
-				m_audioCapture.Stop();
-				m_audioCapture.Start();
+				if (m_audioCapture.Open(BindCallback(&MShowController::OnAudio, this)))
+				{
+					m_audioCapture.Stop();
+					m_audioCapture.Start();
+				}
 			}
 		}
 	}
@@ -76,7 +91,10 @@ namespace MShow
 		if (size == 4096)
 		{
 			m_audioAnalyser.Process(m_window.m_analyserBAR.Handle(), bits, size);
-			m_audioSDK->audio_encode_send(bits, static_cast<INT32>(MShow::MShowApp::GetInstance().GetCurrentAudioTS()));
+			if (m_audioSDK != NULL)
+			{
+				m_audioSDK->audio_encode_send(bits, static_cast<INT32>(MShow::MShowApp::GetInstance().GetCurrentAudioTS()));
+			}
 		}
 	}
 
