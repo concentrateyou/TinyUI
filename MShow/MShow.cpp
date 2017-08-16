@@ -47,7 +47,8 @@ namespace MShow
 	__declspec(thread) LONGLONG g_lastQPCTime = 0;
 	//////////////////////////////////////////////////////////////////////////
 	MShowApp::MShowApp()
-		:m_controller(m_window)
+		:m_controller(m_window),
+		m_audioTS(0)
 	{
 		timeBeginPeriod(1);
 	}
@@ -156,6 +157,15 @@ namespace MShow
 				return TRUE;
 			Sleep(0);
 		}
+	}
+
+	void MShowApp::SetCurrentAudioTS(LONGLONG ts)
+	{
+		m_audioTS = ts;
+	}
+	LONGLONG MShowApp::GetCurrentAudioTS()
+	{
+		return m_audioTS;
 	}
 }
 

@@ -2,8 +2,14 @@
 #include "MShowWindow.h"
 #include "MAudioCapture.h"
 #include "AudioAnalyser.h"
+#include "audiosdk.h"
 using namespace DShow;
 using namespace Decode;
+
+using namespace pps::audiosdk;
+#pragma comment(lib,"audiosdk.lib")
+#pragma comment(lib,"fdkaac_dec.lib")
+#pragma comment(lib,"fdkaac_enc.lib")
 
 namespace MShow
 {
@@ -28,7 +34,7 @@ namespace MShow
 		MShowWindow&	m_window;
 		MAudioCapture	m_audioCapture;
 		AudioAnalyser	m_audioAnalyser;
-		TinyWaveFile	m_waveFile;
+		TinyScopedPtr<AudioSdk>	m_audioSDK;
 		TinyScopedPtr<MPreviewController>			m_preview;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onPreviewClick;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onRecordClick;

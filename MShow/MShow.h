@@ -21,12 +21,15 @@ namespace MShow
 		QWORD				GetQPCTimeMS();
 		QWORD				GetQPCTime100NS();
 		BOOL				SleepNS(QWORD qwNSTime);
+		void				SetCurrentAudioTS(LONGLONG ts);
+		LONGLONG			GetCurrentAudioTS();
 	public:
 		static MShowApp&	GetInstance() throw();
 	private:
 		MShowWindow			m_window;
 		MShowController		m_controller;
 		TinyMessageLoop		m_msgLoop;
+		LONGLONG			m_audioTS;
 	};
 }
 

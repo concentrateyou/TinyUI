@@ -111,6 +111,7 @@ namespace MShow
 						{
 							m_callback(tag.bits + 4, tag.size);
 						}
+						MShow::MShowApp::GetInstance().SetCurrentAudioTS(tag.samplePTS);
 						m_player.Fill(tag.bits + 4, tag.size, dwOffset);
 					}
 					m_player.Play();
@@ -122,6 +123,7 @@ namespace MShow
 				{
 					m_callback(tag.bits + 4, tag.size);
 				}
+				MShow::MShowApp::GetInstance().SetCurrentAudioTS(tag.samplePTS);
 				m_player.Fill(tag.bits + 4, tag.size, dwOffset);
 			}
 			m_task.GetAudioQueue().Free(tag.bits);
