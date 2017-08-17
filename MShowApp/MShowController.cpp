@@ -22,7 +22,6 @@ namespace MShow
 
 	BOOL MShowController::Initialize()
 	{
-		m_signal.CreateEvent();
 		m_onPusherClick.Reset(new Delegate<void(void*, INT)>(this, &MShowController::OnPusher));
 		m_window.m_pusher.EVENT_CLICK += m_onPusherClick;
 		m_onToggleClick.Reset(new Delegate<void(void*, INT)>(this, &MShowController::OnToggle));
@@ -155,10 +154,6 @@ namespace MShow
 	MRTMPPusher& MShowController::GetPusher()
 	{
 		return m_pusher;
-	}
-	TinyEvent& MShowController::GetSignal()
-	{
-		return m_signal;
 	}
 	void MShowController::OnPusher(void*, INT)
 	{

@@ -17,12 +17,15 @@ namespace MShow
 		LONGLONG GetBaseTime() const;
 		LONGLONG GetBasePTS() const;
 		void SetBasePTS(LONGLONG basePTS);
-		void SetOffsetPTS(LONGLONG offsetPTS);
-		LONGLONG GetOffsetPTS() const;
+		void SetVideoPTS(LONGLONG videoPTS);
+		LONGLONG GetVideoPTS() const;
+		void SetAudioPTS(LONGLONG audioPTS);
+		LONGLONG GetAudioPTS() const;
 	private:
 		LONGLONG	m_baseTime;
 		LONGLONG	m_basePTS;
-		LONGLONG	m_offsetPTS;
+		LONGLONG	m_videoPTS;
+		LONGLONG	m_audioPTS;
 		TinyLock	m_lock;
 	};
 }

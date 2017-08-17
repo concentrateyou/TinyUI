@@ -343,7 +343,6 @@ namespace MShow
 			}
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
-		MShow::MShowApp::GetInstance().GetController().GetSignal().SetEvent();
 		//////////////////////////////////////////////////////////////////////////
 		m_graphics.GetDX11().SetRenderTexture2D(NULL);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();

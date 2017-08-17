@@ -6,7 +6,8 @@ namespace MShow
 	MClock::MClock()
 		:m_baseTime(-1),
 		m_basePTS(-1),
-		m_offsetPTS(0)
+		m_videoPTS(-1),
+		m_audioPTS(-1)
 	{
 	}
 
@@ -38,13 +39,21 @@ namespace MShow
 	{
 		m_basePTS = basePTS;
 	}
-	void MClock::SetOffsetPTS(LONGLONG offsetPTS)
+	void MClock::SetVideoPTS(LONGLONG offsetPTS)
 	{
-		m_offsetPTS = offsetPTS;
+		m_videoPTS = offsetPTS;
 	}
-	LONGLONG MClock::GetOffsetPTS() const
+	LONGLONG MClock::GetVideoPTS() const
 	{
-		return m_offsetPTS;
+		return m_videoPTS;
+	}
+	void MClock::SetAudioPTS(LONGLONG audioPTS)
+	{
+		m_audioPTS = audioPTS;
+	}
+	LONGLONG MClock::GetAudioPTS() const
+	{
+		return m_audioPTS;
 	}
 }
 
