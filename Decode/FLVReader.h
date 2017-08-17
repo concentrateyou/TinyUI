@@ -17,11 +17,12 @@ namespace Decode
 		FLVReader();
 		virtual ~FLVReader();
 		FLV_SCRIPTDATA GetScript();
-		BOOL	OpenFile(LPCSTR pzFile);
-		BOOL	OpenURL(LPCSTR pzURL);
-		BOOL	ReadBlock(FLV_BLOCK& block);
-		DWORD	Seek(LONG offset, DWORD dwFlag);
-		BOOL	Close();
+		BOOL		OpenFile(LPCSTR pzFile);
+		BOOL		OpenURL(LPCSTR pzURL);
+		BOOL		ReadBlock(FLV_BLOCK& block);
+		DWORD		Seek(LONG offset, DWORD dwFlag);
+		BOOL		Close();
+		LONGLONG	GetBasePTS();
 	private:
 		BOOL ParseScript(BYTE* data, INT size, FLV_SCRIPTDATA& script);
 		BOOL ParseVideo(BYTE* data, INT size, FLV_BLOCK& block);

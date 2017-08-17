@@ -85,7 +85,6 @@ namespace MShow
 	{
 		if (m_clock.GetBaseTime() != -1)
 		{
-			m_clock.GetBaseTime()
 			BYTE* output = new BYTE[size];
 			if (m_queueMix.GetSize() > 0)
 			{

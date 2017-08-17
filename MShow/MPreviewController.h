@@ -22,6 +22,7 @@ namespace MShow
 		BOOL			Open(LPCSTR pzURL);
 		BOOL			Close();
 		MPreviewView&	GetView();
+		LONGLONG		GetBasePTS();
 	private:
 		void			OnVideo(BYTE* bits, LONG size);
 		void			OnAudio(BYTE* bits, LONG size);

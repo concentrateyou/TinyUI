@@ -65,7 +65,10 @@ namespace MShow
 	{
 		return m_view;
 	}
-
+	LONGLONG MPreviewController::GetBasePTS()
+	{
+		return m_player.GetBasePTS();
+	}
 	void MPreviewController::OnAudio(BYTE* bits, LONG size)
 	{
 

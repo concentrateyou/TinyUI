@@ -514,5 +514,9 @@ namespace Decode
 		ZeroMemory(&m_script, sizeof(m_script));
 		return TRUE;
 	}
+	LONGLONG FLVReader::GetBasePTS()
+	{
+		return m_basePTS;
+	}
 }
 

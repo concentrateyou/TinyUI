@@ -23,6 +23,7 @@ namespace MShow
 		DWORD			GetRate() const;
 		TinyString		GetURL() const;
 		WAVEFORMATEX*	GetFormat();
+		LONGLONG		GetBasePTS();
 	private:
 		void			OnAudio(BYTE* bits, LONG lsize);
 		void			OnVideo(BYTE* bits, LONG size);

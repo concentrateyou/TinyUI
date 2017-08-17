@@ -93,7 +93,8 @@ namespace MShow
 			m_audioAnalyser.Process(m_window.m_analyserBAR.Handle(), bits, size);
 			if (m_audioSDK != NULL)
 			{
-				m_audioSDK->audio_encode_send(bits, static_cast<INT32>(MShow::MShowApp::GetInstance().GetCurrentAudioTS()));
+				LONGLONG pts = MShow::MShowApp::GetInstance().GetCurrentAudioTS() + m_preview->GetBasePTS();
+				m_audioSDK->audio_encode_send(bits, static_cast<INT32>(pts));
 			}
 		}
 	}

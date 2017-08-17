@@ -63,7 +63,10 @@ namespace MShow
 	{
 		return m_script;
 	}
-
+	LONGLONG MFLVTask::GetBasePTS()
+	{
+		return m_reader.GetBasePTS();
+	}
 	MPacketQueue& MFLVTask::GetAudioQueue()
 	{
 		return m_audioQueue;
