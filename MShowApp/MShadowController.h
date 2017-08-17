@@ -26,6 +26,8 @@ namespace MShow
 		TinySize	GetPulgSize() const;
 		void		SetVideoFPS(INT	videoFPS);
 		INT			GetVideoFPS() const;
+		MClock&		GetClock();
+		TinyEvent&	GetSignal();
 	public:
 		BOOL		Submit();
 		BOOL		Close(DWORD dwMS) OVERRIDE;
@@ -47,6 +49,7 @@ namespace MShow
 		MPacketAllocQueue		m_videoQueue;
 		TinyPerformanceTimer	m_timeQPC;
 		MClock&					m_clock;
+		TinyEvent				m_signal;
 	};
 }
 

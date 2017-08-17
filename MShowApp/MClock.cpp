@@ -5,7 +5,8 @@ namespace MShow
 {
 	MClock::MClock()
 		:m_baseTime(-1),
-		m_basePTS(-1)
+		m_basePTS(-1),
+		m_offsetPTS(0)
 	{
 	}
 
@@ -36,6 +37,14 @@ namespace MShow
 	void MClock::SetBasePTS(LONGLONG basePTS)
 	{
 		m_basePTS = basePTS;
+	}
+	void MClock::SetOffsetPTS(LONGLONG offsetPTS)
+	{
+		m_offsetPTS = offsetPTS;
+	}
+	LONGLONG MClock::GetOffsetPTS() const
+	{
+		return m_offsetPTS;
 	}
 }
 

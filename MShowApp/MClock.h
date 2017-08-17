@@ -17,9 +17,12 @@ namespace MShow
 		LONGLONG GetBaseTime() const;
 		LONGLONG GetBasePTS() const;
 		void SetBasePTS(LONGLONG basePTS);
+		void SetOffsetPTS(LONGLONG offsetPTS);
+		LONGLONG GetOffsetPTS() const;
 	private:
 		LONGLONG	m_baseTime;
 		LONGLONG	m_basePTS;
+		LONGLONG	m_offsetPTS;
 		TinyLock	m_lock;
 	};
 }

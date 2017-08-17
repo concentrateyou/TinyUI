@@ -19,6 +19,7 @@ namespace MShow
 	}
 	BOOL MShadowController::Initialize()
 	{
+		m_signal.CreateEvent();
 		TinyRectangle s;
 		m_view.GetClientRect(&s);
 		if (!m_dx11.Initialize(m_view.Handle(), s.Size().cx, s.Size().cy))
@@ -55,29 +56,42 @@ namespace MShow
 	{
 		return m_view;
 	}
+	MClock&	MShadowController::GetClock()
+	{
+		return m_clock;
+	}
+	TinyEvent&	MShadowController::GetSignal()
+	{
+		return m_signal;
+	}
 	MPacketAllocQueue&	MShadowController::GetVideoQueue()
 	{
 		return m_videoQueue;
 	}
 	void MShadowController::OnMessagePump()
 	{
-		INT ms = static_cast<INT>(1000 / m_videoFPS);
-		INT cost = 0;
-		TinyTimer timer;
 		SampleTag tag;
 		for (;;)
 		{
-			ZeroMemory(&tag, sizeof(tag));
-			OnVideo(tag);
-			if (m_clock.GetBaseTime() == -1)
+			if (m_bBreak)
+				break;
+			if (MShow::MShowApp::GetInstance().GetController().GetSignal().Lock(INFINITE))
 			{
-				m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
+				ZeroMemory(&tag, sizeof(tag));
+				if (m_clock.GetBaseTime() == -1)
+				{
+					m_timeQPC.BeginTime();
+				}
+				m_timeQPC.EndTime();
+				LONGLONG value = m_clock.GetOffsetPTS() + m_timeQPC.GetMillisconds();
+				m_clock.SetOffsetPTS(value);
+				m_timeQPC.BeginTime();
+				DWORD dwMS = OnVideo(tag);
+				if (m_clock.GetBaseTime() == -1)
+				{
+					m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
+				}
 			}
-			m_timeQPC.BeginTime();
-			timer.Wait(ms, 1000);
-			m_timeQPC.EndTime();
-			cost = static_cast<INT>(m_timeQPC.GetMillisconds());
-			m_clock.AddBaseTime(cost < ms ? 0 : cost - ms);
 		}
 	}
 
@@ -101,6 +115,7 @@ namespace MShow
 			m_copy2D.Unmap(m_dx11);
 		}
 		m_videoQueue.Push(sampleTag);
+		m_signal.SetEvent();
 		m_timeQPC.EndTime();
 		return static_cast<DWORD>(m_timeQPC.GetMillisconds());
 	}

@@ -3,6 +3,7 @@
 #include "WICTexture.h"
 #include "MImageElement.h"
 #include "MVideoElement.h"
+#include "MShowApp.h"
 
 namespace MShow
 {
@@ -342,6 +343,7 @@ namespace MShow
 			}
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
+		MShow::MShowApp::GetInstance().GetController().GetSignal().SetEvent();
 		//////////////////////////////////////////////////////////////////////////
 		m_graphics.GetDX11().SetRenderTexture2D(NULL);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();

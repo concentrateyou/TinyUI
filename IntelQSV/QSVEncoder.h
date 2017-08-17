@@ -35,7 +35,7 @@ namespace QSV
 		vector<mfxU8>& GetPPS();
 	private:
 		mfxStatus Process(SampleTag& tag, BYTE*& bo, LONG& so, MediaTag& mediaTag);
-		mfxStatus InitializeParam(const TinySize& src, const TinySize& dest, DWORD dwBitRate = 3231, DWORD dwFrameRate = 30);
+		mfxStatus InitializeParam(const TinySize& src, const TinySize& dest, DWORD dwBitRate = 1000, DWORD dwFrameRate = 25);
 		mfxStatus CreateAllocator(const TinySize& src, const TinySize& dest);
 		mfxStatus AllocFrames();
 		void DeleteFrames();

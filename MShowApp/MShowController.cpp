@@ -22,6 +22,7 @@ namespace MShow
 
 	BOOL MShowController::Initialize()
 	{
+		m_signal.CreateEvent();
 		m_onPusherClick.Reset(new Delegate<void(void*, INT)>(this, &MShowController::OnPusher));
 		m_window.m_pusher.EVENT_CLICK += m_onPusherClick;
 		m_onToggleClick.Reset(new Delegate<void(void*, INT)>(this, &MShowController::OnToggle));
@@ -155,7 +156,10 @@ namespace MShow
 	{
 		return m_pusher;
 	}
-
+	TinyEvent& MShowController::GetSignal()
+	{
+		return m_signal;
+	}
 	void MShowController::OnPusher(void*, INT)
 	{
 		MVideoController* pCTRL = GetVideoController(0);
@@ -171,7 +175,7 @@ namespace MShow
 				m_video.Close(INFINITE);
 			if (m_pusher.Connect())
 				m_pusher.Submit();
-			m_video.Submit(m_preview->GetPulgSize(), 25, 1500);
+			m_video.Submit(m_preview->GetPulgSize(), 25, 1000);
 			m_audio.SetVideoController(pCTRL);
 			m_audio.Submit(128);
 			m_shadow->Submit();
