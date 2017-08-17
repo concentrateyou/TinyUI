@@ -6,7 +6,8 @@
 namespace MShow
 {
 	MShowController::MShowController(MShowWindow& window)
-		:m_window(window)
+		:m_window(window),
+		m_previousPTS(0)
 	{
 
 	}
@@ -28,17 +29,17 @@ namespace MShow
 			return FALSE;
 		if (!m_preview->Initialize())
 		{
-			LOG(INFO) << "Preview Initialize Fail\n";
+			LOG(ERROR) << "Preview Initialize Fail\n";
 			return FALSE;
 		}
 		if (!m_audioCapture.Initialize())
 		{
-			LOG(INFO) << "AudioCapture Initialize Fail\n";
+			LOG(ERROR) << "AudioCapture Initialize Fail\n";
 			return FALSE;
 		}
 		if (!m_audioAnalyser.Initialize())
 		{
-			LOG(INFO) << "AudioAnalyser Initialize Fail\n";
+			LOG(ERROR) << "AudioAnalyser Initialize Fail\n";
 			return FALSE;
 		}
 		LOG(INFO) << "MShowController Initialize OK\n";
@@ -93,8 +94,23 @@ namespace MShow
 			m_audioAnalyser.Process(m_window.m_analyserBAR.Handle(), bits, size);
 			if (m_audioSDK != NULL)
 			{
-				LONGLONG pts = MShow::MShowApp::GetInstance().GetCurrentAudioTS() + m_preview->GetBasePTS();
-				m_audioSDK->audio_encode_send(bits, static_cast<INT32>(pts));
+				LONGLONG currentPTS = MShow::MShowApp::GetInstance().GetCurrentAudioTS() + m_preview->GetBasePTS();
+				if (m_previousPTS != currentPTS)
+				{
+					if ((currentPTS - m_previousPTS) >= 50)
+					{
+						LOG(ERROR) << "OnAudio: " << currentPTS - m_previousPTS << "Error -----------";
+					}
+					m_previousPTS = currentPTS;
+				}
+				m_timeQPC.BeginTime();
+				m_audioSDK->audio_encode_send(bits, static_cast<INT32>(currentPTS));
+				m_timeQPC.EndTime();
+				DWORD dwMS = static_cast<DWORD>(m_timeQPC.GetMillisconds());
+				if (dwMS >= static_cast<DWORD>(ts / 2))
+				{
+					LOG(ERROR) << "audio_encode_send: " << dwMS - static_cast<DWORD>(ts / 2) << "Error -----------";
+				}
 			}
 		}
 	}

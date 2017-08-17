@@ -30,10 +30,12 @@ namespace MShow
 		void OnRecord(void*, INT);
 		void OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID);
 	private:
+		LONGLONG		m_previousPTS;
 		TinyLock		m_lock;
 		MShowWindow&	m_window;
 		MAudioCapture	m_audioCapture;
 		AudioAnalyser	m_audioAnalyser;
+		TinyPerformanceTimer	m_timeQPC;
 		TinyScopedPtr<AudioSdk>	m_audioSDK;
 		TinyScopedPtr<MPreviewController>			m_preview;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onPreviewClick;
