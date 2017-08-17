@@ -174,7 +174,8 @@ namespace MShow
 			m_audio.SetVideoController(pCTRL);
 			m_audio.Submit(128);
 			m_shadow->Submit();
-			/*if (m_play != NULL)
+			/*Sleep(50);
+			if (m_play != NULL)
 			{
 				m_play->Open(m_pusher.GetURL().STR());
 			}*/

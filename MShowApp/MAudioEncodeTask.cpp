@@ -60,8 +60,9 @@ namespace MShow
 					ZeroMemory(&sample, sizeof(sample));
 					if (m_aac.Encode(sampleTag.bits, sampleTag.size, bo, so, sample.mediaTag))
 					{
-						TRACE("Audio ----------- Stream:%lld, PTS:%d, Delay:%lld\n", m_clock.GetAudioPTS(), sample.mediaTag.dwTime, sample.mediaTag.dwTime - m_clock.GetAudioPTS());
+						//TRACE("Audio ----------- Stream:%lld, PTS:%d, Delay:%lld\n", m_clock.GetAudioPTS(), sample.mediaTag.dwTime, sample.mediaTag.dwTime - m_clock.GetAudioPTS());
 						sample.mediaTag.dwTime = m_clock.GetAudioPTS();
+						TRACE("Audio PTS:%d\n", sample.mediaTag.dwTime);
 						sample.size = so;
 						sample.bits = new BYTE[so];
 						memcpy(sample.bits, bo, so);

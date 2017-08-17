@@ -18,6 +18,8 @@ namespace MShow
 		LONGLONG GetBasePTS() const;
 		void SetBasePTS(LONGLONG basePTS);
 		void SetVideoPTS(LONGLONG videoPTS);
+		void SetOffset(LONGLONG offsetPTS);
+		LONGLONG GetOffset() const;
 		LONGLONG GetVideoPTS() const;
 		void SetAudioPTS(LONGLONG audioPTS);
 		LONGLONG GetAudioPTS() const;
@@ -26,6 +28,7 @@ namespace MShow
 		LONGLONG	m_basePTS;
 		LONGLONG	m_videoPTS;
 		LONGLONG	m_audioPTS;
+		LONGLONG	m_offsetPTS;
 		TinyLock	m_lock;
 	};
 }

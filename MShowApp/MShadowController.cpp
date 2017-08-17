@@ -90,7 +90,7 @@ namespace MShow
 			m_timeQPC.EndTime();
 			offset = static_cast<INT>(m_timeQPC.GetMillisconds()) - delay;
 			offset = offset < 0 ? 0 : offset;
-			
+			m_clock.SetOffset(offset);
 		}
 	}
 

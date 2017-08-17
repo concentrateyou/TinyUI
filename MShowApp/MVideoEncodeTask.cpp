@@ -56,8 +56,9 @@ namespace MShow
 						ZeroMemory(&sample, sizeof(sample));
 						if (m_encoder.Encode(sampleTag, bo, so, sample.mediaTag))
 						{
-							TRACE("Video ----------- Stream:%lld, PTS:%d, Delay:%lld\n", pCTRL->GetClock().GetVideoPTS(), sample.mediaTag.dwTime, sample.mediaTag.dwTime - pCTRL->GetClock().GetVideoPTS());
+							//TRACE("Video ----------- Stream:%lld, PTS:%d, Delay:%lld\n", pCTRL->GetClock().GetVideoPTS(), sample.mediaTag.dwTime, sample.mediaTag.dwTime - pCTRL->GetClock().GetVideoPTS());
 							sample.mediaTag.dwTime = static_cast<DWORD>(pCTRL->GetClock().GetVideoPTS());
+							TRACE("Video PTS:%d\n", sample.mediaTag.dwTime);
 							sample.size = so;
 							sample.bits = new BYTE[so];
 							memcpy(sample.bits, bo, so);
