@@ -70,7 +70,6 @@ namespace MShow
 	void MShadowController::OnMessagePump()
 	{
 		DWORD dwMS = static_cast<DWORD>(1000 / m_videoFPS);
-		INT compensate = 0;
 		TinyTimer timer;
 		SampleTag tag;
 		for (;;)
@@ -80,14 +79,18 @@ namespace MShow
 			ZeroMemory(&tag, sizeof(tag));
 			INT delay = dwMS - OnVideo(tag);
 			if (m_clock.GetBaseTime() == -1)
+			{
 				m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
-			compensate -= delay;
-			m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime());
+				m_clock.SetAudioPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());
+				m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());
+			}
+			LONGLONG value = MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetVideoPTS();
+			//TRACE("Video Cost:%lld\n", value);
+			m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());
+			//计数器1ms精度不够
 			m_timeQPC.BeginTime();
 			timer.Wait(delay < 0 ? 0 : delay, 1000);
 			m_timeQPC.EndTime();
-			compensate = static_cast<INT>(m_timeQPC.GetMillisconds()) - delay;
-			m_clock.AddBaseTime(delay);
 		}
 	}
 

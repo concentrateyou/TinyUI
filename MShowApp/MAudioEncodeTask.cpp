@@ -62,7 +62,6 @@ namespace MShow
 					{
 						//TRACE("Audio ----------- Stream:%lld, PTS:%d, Delay:%lld\n", m_clock.GetAudioPTS(), sample.mediaTag.dwTime, sample.mediaTag.dwTime - m_clock.GetAudioPTS());
 						sample.mediaTag.dwTime = m_clock.GetAudioPTS();
-						//TRACE("Audio PTS:%d\n", sample.mediaTag.dwTime);
 						sample.size = so;
 						sample.bits = new BYTE[so];
 						memcpy(sample.bits, bo, so);
@@ -108,8 +107,10 @@ namespace MShow
 			sampleTag.bits = output;
 			sampleTag.size = size;
 			m_queue.Push(sampleTag);
+			LONGLONG value = MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetAudioPTS();
+			TRACE("Audio Cost:%lld\n", value);
+			m_clock.SetAudioPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());
 			m_signal.SetEvent();
-			m_clock.SetAudioPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime());
 		}
 	}
 
