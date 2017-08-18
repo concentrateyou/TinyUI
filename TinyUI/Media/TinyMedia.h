@@ -169,8 +169,8 @@ namespace TinyUI
 			LONGLONG	sample;
 			LONGLONG	sampleDTS;
 			LONGLONG	samplePTS;
+			LONGLONG	timestamp;
 			BYTE		sampleType;
-			//LONG		timestampOffset;
 			BYTE*		bits;
 			LONG		size;
 		}SampleTag;

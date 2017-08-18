@@ -15,7 +15,8 @@ namespace MShow
 		m_bBreak(FALSE),
 		m_pVideoCTRL(NULL),
 		m_pAudioCTRL(NULL),
-		m_clock(clock)
+		m_clock(clock),
+		m_bFirst(FALSE)
 	{
 		m_onAudio.Reset(new Delegate<void(BYTE*, LONG)>(this, &MAudioEncodeTask::OnAudio));
 		m_onAudioMix.Reset(new Delegate<void(BYTE*, LONG)>(this, &MAudioEncodeTask::OnAudioMix));
@@ -60,8 +61,7 @@ namespace MShow
 					ZeroMemory(&sample, sizeof(sample));
 					if (m_aac.Encode(sampleTag.bits, sampleTag.size, bo, so, sample.mediaTag))
 					{
-						//TRACE("Audio ----------- Stream:%lld, PTS:%d, Delay:%lld\n", m_clock.GetAudioPTS(), sample.mediaTag.dwTime, sample.mediaTag.dwTime - m_clock.GetAudioPTS());
-						sample.mediaTag.dwTime = m_clock.GetAudioPTS();
+						sample.mediaTag.dwTime = sampleTag.timestamp;
 						sample.size = so;
 						sample.bits = new BYTE[so];
 						memcpy(sample.bits, bo, so);
@@ -87,30 +87,43 @@ namespace MShow
 
 	void MAudioEncodeTask::OnAudio(BYTE* bits, LONG size)
 	{
+		if (m_clock.GetBaseTime() == -1)
+		{
+			m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
+		}
 		if (m_clock.GetBaseTime() != -1)
 		{
-			BYTE* output = new BYTE[size];
-			if (m_queueMix.GetSize() > 0)
+			if (m_clock.GetVideoPTS() != -1)
 			{
-				SampleTag sampleTag = { 0 };
-				if (m_queueMix.Pop(sampleTag))
+				if (!m_bFirst)
 				{
-					AudioMixer::Mix(bits, sampleTag.bits, size, output);
+					m_clock.SetAudioPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置音频流时间
+					m_bFirst = TRUE;
 				}
+				
+				BYTE* output = new BYTE[size];
+				if (m_queueMix.GetSize() > 0)
+				{
+					SampleTag sampleTag = { 0 };
+					if (m_queueMix.Pop(sampleTag))
+					{
+						AudioMixer::Mix(bits, sampleTag.bits, size, output);
+					}
+				}
+				else
+				{
+					memcpy_s(output, size, bits, size);
+				}
+				SampleTag sampleTag;
+				ZeroMemory(&sampleTag, sizeof(sampleTag));
+				sampleTag.bits = output;
+				sampleTag.size = size;
+				m_clock.SetAudioPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());
+				sampleTag.timestamp = m_clock.GetAudioPTS() - m_clock.GetBaseTime();
+				//TRACE("Audio:%lld\n", m_clock.GetAudioPTS() - m_clock.GetBaseTime());
+				m_queue.Push(sampleTag);
+				m_signal.SetEvent();
 			}
-			else
-			{
-				memcpy_s(output, size, bits, size);
-			}
-			SampleTag sampleTag;
-			ZeroMemory(&sampleTag, sizeof(sampleTag));
-			sampleTag.bits = output;
-			sampleTag.size = size;
-			m_queue.Push(sampleTag);
-			LONGLONG value = MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetAudioPTS();
-			TRACE("Audio Cost:%lld\n", value);
-			m_clock.SetAudioPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());
-			m_signal.SetEvent();
 		}
 	}
 

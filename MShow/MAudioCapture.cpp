@@ -62,7 +62,6 @@ namespace MShow
 	}
 	void MAudioCapture::Close()
 	{
-		m_capture.Deallocate();
 		m_capture.Uninitialize();
 	}
 

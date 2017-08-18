@@ -34,6 +34,7 @@ namespace MShow
 		void OnAudio(BYTE* bits, LONG size);
 		void OnAudioMix(BYTE* bits, LONG size);
 	private:
+		BOOL					m_bFirst;
 		BOOL					m_bBreak;
 		INT						m_audioRate;
 		MClock&					m_clock;
@@ -47,6 +48,7 @@ namespace MShow
 		MAudioController*		m_pAudioCTRL;
 		TinyPerformanceTimer	m_timeQPC;
 		TinyEvent				m_signal;
+		TinyTimer				m_timer;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG)>> m_onAudio;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG)>> m_onAudioMix;
 	};

@@ -8,7 +8,8 @@ namespace MShow
 		m_basePTS(-1),
 		m_videoPTS(-1),
 		m_audioPTS(-1),
-		m_offsetPTS(0)
+		m_audioDelay(0),
+		m_videoDelay(0)
 	{
 	}
 
@@ -56,14 +57,21 @@ namespace MShow
 	{
 		return m_audioPTS;
 	}
-	void MClock::SetOffset(LONGLONG offsetPTS)
+	void MClock::SetAudioDelay(LONGLONG delay)
 	{
-		TinyAutoLock lock(m_lock);
-		m_offsetPTS = offsetPTS;
+		m_audioDelay = delay;
 	}
-	LONGLONG MClock::GetOffset() const
+	LONGLONG MClock::GetAudioDelay() const
 	{
-		return m_offsetPTS;
+		return m_audioDelay;
+	}
+	void MClock::SetVideoDelay(LONGLONG delay)
+	{
+		m_videoDelay = delay;
+	}
+	LONGLONG MClock::GetVideoDelay() const
+	{
+		return m_videoDelay;
 	}
 }
 

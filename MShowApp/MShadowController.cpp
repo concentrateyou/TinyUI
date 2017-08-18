@@ -71,26 +71,31 @@ namespace MShow
 	{
 		DWORD dwMS = static_cast<DWORD>(1000 / m_videoFPS);
 		TinyTimer timer;
-		SampleTag tag;
+		SampleTag sampleTag;
+		LONG compensate = 0;
 		for (;;)
 		{
 			if (m_bBreak)
 				break;
-			ZeroMemory(&tag, sizeof(tag));
-			INT delay = dwMS - OnVideo(tag);
-			if (m_clock.GetBaseTime() == -1)
+			while (m_clock.GetBaseTime() == -1);
+			/*if (m_clock.GetVideoPTS() != -1)
 			{
-				m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
-				m_clock.SetAudioPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());
-				m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());
-			}
-			LONGLONG value = MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetVideoPTS();
-			//TRACE("Video Cost:%lld\n", value);
-			m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());
+				LONGLONG value = MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetVideoPTS();
+				TRACE("value:%lld,compensate:%d\n", value, compensate);
+			}*/
+			ZeroMemory(&sampleTag, sizeof(sampleTag));
+			INT delay = dwMS - OnVideo(sampleTag) - compensate;
+			m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
+			//TRACE("Video:%lld\n", m_clock.GetVideoPTS() - m_clock.GetBaseTime());
+			sampleTag.timestamp = m_clock.GetVideoPTS() - m_clock.GetBaseTime();
+			m_videoQueue.Push(sampleTag);
+			m_signal.SetEvent();
 			//计数器1ms精度不够
 			m_timeQPC.BeginTime();
 			timer.Wait(delay < 0 ? 0 : delay, 1000);
 			m_timeQPC.EndTime();
+			compensate = m_timeQPC.GetMillisconds() - delay;
+			compensate = compensate < 0 ? 0 : compensate;
 		}
 	}
 
@@ -113,8 +118,6 @@ namespace MShow
 			memcpy_s(sampleTag.bits + 4, sampleTag.size, bits, sampleTag.size);
 			m_copy2D.Unmap(m_dx11);
 		}
-		m_videoQueue.Push(sampleTag);
-		m_signal.SetEvent();
 		m_timeQPC.EndTime();
 		return static_cast<DWORD>(m_timeQPC.GetMillisconds());
 	}
