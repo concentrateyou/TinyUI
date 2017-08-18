@@ -92,7 +92,7 @@ namespace DXApp
 					tag.PTS = m_dwPTS;
 					tag.DTS = image.i_dts;
 					tag.INC = ++m_dwINC;
-					tag.dwTime = timeGetTime();
+					tag.dwTime = image.i_dts;
 					tag.dwFlag = pNAL[i].i_type;
 					OnDone(sps, size, tag);
 				}
@@ -106,7 +106,7 @@ namespace DXApp
 					tag.PTS = m_dwPTS;
 					tag.DTS = image.i_dts;
 					tag.INC = ++m_dwINC;
-					tag.dwTime = timeGetTime();
+					tag.dwTime = image.i_dts;
 					tag.dwFlag = pNAL[i].i_type;
 					OnDone(pps, size, tag);
 				}
@@ -124,7 +124,8 @@ namespace DXApp
 					tag.INC = ++m_dwINC;
 					tag.PTS = m_dwPTS;
 					tag.DTS = image.i_dts;
-					tag.dwTime = timeGetTime();
+					TRACE("");
+					tag.dwTime = image.i_dts;
 					tag.dwFlag = pNAL[i].i_type;
 					OnDone(bits, size, tag);
 				}

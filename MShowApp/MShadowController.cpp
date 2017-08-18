@@ -78,15 +78,9 @@ namespace MShow
 			if (m_bBreak)
 				break;
 			while (m_clock.GetBaseTime() == -1);
-			/*if (m_clock.GetVideoPTS() != -1)
-			{
-				LONGLONG value = MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetVideoPTS();
-				TRACE("value:%lld,compensate:%d\n", value, compensate);
-			}*/
 			ZeroMemory(&sampleTag, sizeof(sampleTag));
 			INT delay = dwMS - OnVideo(sampleTag) - compensate;
 			m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
-			//TRACE("Video:%lld\n", m_clock.GetVideoPTS() - m_clock.GetBaseTime());
 			sampleTag.timestamp = m_clock.GetVideoPTS() - m_clock.GetBaseTime();
 			m_videoQueue.Push(sampleTag);
 			m_signal.SetEvent();

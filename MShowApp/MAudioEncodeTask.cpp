@@ -15,8 +15,7 @@ namespace MShow
 		m_bBreak(FALSE),
 		m_pVideoCTRL(NULL),
 		m_pAudioCTRL(NULL),
-		m_clock(clock),
-		m_bFirst(FALSE)
+		m_clock(clock)
 	{
 		m_onAudio.Reset(new Delegate<void(BYTE*, LONG)>(this, &MAudioEncodeTask::OnAudio));
 		m_onAudioMix.Reset(new Delegate<void(BYTE*, LONG)>(this, &MAudioEncodeTask::OnAudioMix));
@@ -95,12 +94,6 @@ namespace MShow
 		{
 			if (m_clock.GetVideoPTS() != -1)
 			{
-				if (!m_bFirst)
-				{
-					m_clock.SetAudioPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置音频流时间
-					m_bFirst = TRUE;
-				}
-				
 				BYTE* output = new BYTE[size];
 				if (m_queueMix.GetSize() > 0)
 				{
@@ -120,7 +113,6 @@ namespace MShow
 				sampleTag.size = size;
 				m_clock.SetAudioPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());
 				sampleTag.timestamp = m_clock.GetAudioPTS() - m_clock.GetBaseTime();
-				//TRACE("Audio:%lld\n", m_clock.GetAudioPTS() - m_clock.GetBaseTime());
 				m_queue.Push(sampleTag);
 				m_signal.SetEvent();
 			}

@@ -34,12 +34,14 @@ namespace Encode
 	{
 		DISALLOW_COPY_AND_ASSIGN(x264Encode)
 	public:
-		x264Encode(Callback<void(BYTE*, LONG, const MediaTag&)>&& callback);
+		x264Encode();
 		virtual ~x264Encode();
 	public:
-		BOOL	Open(INT cx, INT cy, INT videoFPS = 25, INT videoRate = 1000);//rate平均码率
-		BOOL	Encode(AVFrame* pI420);
-		void	Close();
+		BOOL			Open(INT cx, INT cy, INT videoFPS = 25, INT videoRate = 1000);//rate平均码率
+		BOOL			Encode(AVFrame* pI420, BYTE*& bits, LONG& size, MediaTag& tag);
+		void			Close();
+		vector<BYTE>&	GetPPS();
+		vector<BYTE>&	GetSPS();
 	private:
 		BOOL	BuildParam(INT cx, INT cy, INT fps, INT bitrate);
 	private:
@@ -48,6 +50,7 @@ namespace Encode
 		x264_picture_t*		m_x264Image;
 		LONGLONG			m_sINC;
 		LONGLONG			m_sPTS;
-		Callback<void(BYTE*, LONG, const MediaTag&)> m_callback;
+		vector<BYTE>		m_pps;
+		vector<BYTE>		m_sps;
 	};
 }

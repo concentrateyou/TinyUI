@@ -39,6 +39,5 @@ namespace Encode
 		DWORD					m_dwPTS;
 		WAVEFORMATEX			m_waveFMT;
 		TinyScopedArray<BYTE>	m_bits;
-		Callback<void(BYTE*, LONG, const MediaTag&)> m_callback;
 	};
 }

@@ -34,7 +34,6 @@ namespace MShow
 		void OnAudio(BYTE* bits, LONG size);
 		void OnAudioMix(BYTE* bits, LONG size);
 	private:
-		BOOL					m_bFirst;
 		BOOL					m_bBreak;
 		INT						m_audioRate;
 		MClock&					m_clock;

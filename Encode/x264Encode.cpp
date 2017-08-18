@@ -3,12 +3,11 @@
 
 namespace Encode
 {
-	x264Encode::x264Encode(Callback<void(BYTE*, LONG, const MediaTag&)>&& callback)
+	x264Encode::x264Encode()
 		:m_x264Image(NULL),
 		m_x264(NULL),
 		m_x264Param(NULL),
-		m_sINC(0),
-		m_callback(callback)
+		m_sINC(0)
 	{
 	}
 
@@ -54,7 +53,7 @@ namespace Encode
 		m_x264Param->i_bframe = 3;
 		m_x264Param->i_bframe_adaptive = X264_B_ADAPT_FAST;
 		m_x264Param->rc.b_mb_tree = 0;
-		m_x264Param->rc.i_rc_method = X264_RC_ABR;//CQP(恒定质量)，CRF(恒定码率)，ABR(平均码率)
+		m_x264Param->rc.i_rc_method = X264_RC_CRF;//CQP(恒定质量)，CRF(恒定码率)，ABR(平均码率)
 		m_x264Param->rc.f_rf_constant = 25;
 		m_x264Param->rc.f_rf_constant_max = 40;
 		m_x264Param->rc.i_bitrate = videoRate;/*设置平均码率大小*/
@@ -65,7 +64,7 @@ namespace Encode
 		return TRUE;
 	}
 
-	BOOL x264Encode::Encode(AVFrame* pI420)
+	BOOL x264Encode::Encode(AVFrame* pI420, BYTE*& bits, LONG& size, MediaTag& tag)
 	{
 		if (!m_x264Image || !pI420)
 			return FALSE;
@@ -81,8 +80,8 @@ namespace Encode
 		x264_picture_t image;
 		x264_nal_t * pNAL = NULL;
 		INT iNAL = 0;
-		INT size = x264_encoder_encode(m_x264, &pNAL, &iNAL, m_x264Image, &image);
-		if (size && iNAL)
+		INT encodeSize = x264_encoder_encode(m_x264, &pNAL, &iNAL, m_x264Image, &image);
+		if (encodeSize && iNAL)
 		{
 			m_x264Image->i_pts++;
 			for (INT i = 0; i < iNAL; i++)
@@ -91,36 +90,32 @@ namespace Encode
 				{
 				case NAL_SPS:
 				{
-					BYTE* sps = pNAL[i].p_payload + SPS_SEP;
-					INT	size = pNAL[i].i_payload - SPS_SEP;
-					MediaTag tag = { 0 };
+					bits = pNAL[i].p_payload + SPS_SEP;
+					size = pNAL[i].i_payload - SPS_SEP;
+					m_sps.resize(size);
+					memcpy(&m_sps[0], bits, size);
+					ZeroMemory(&tag, sizeof(tag));
 					tag.dwType = 0;
 					tag.PTS = m_sPTS;
 					tag.DTS = image.i_dts;
 					tag.dwTime = timeGetTime();
 					tag.dwFlag = pNAL[i].i_type;
 					tag.INC = ++m_sINC;
-					if (!m_callback.IsNull())
-					{
-						m_callback(sps, size, tag);
-					}
 				}
 				break;
 				case NAL_PPS:
 				{
-					BYTE* pps = pNAL[i].p_payload + PPS_SEP;
-					INT size = pNAL[i].i_payload - PPS_SEP;
-					MediaTag tag = { 0 };
+					bits = pNAL[i].p_payload + PPS_SEP;
+					size = pNAL[i].i_payload - PPS_SEP;
+					m_pps.resize(size);
+					memcpy(&m_pps[0], bits, size);
+					ZeroMemory(&tag, sizeof(tag));
 					tag.dwType = 0;
 					tag.PTS = m_sPTS;
 					tag.DTS = image.i_dts;
 					tag.dwTime = timeGetTime();
 					tag.dwFlag = pNAL[i].i_type;
 					tag.INC = ++m_sINC;
-					if (!m_callback.IsNull())
-					{
-						m_callback(pps, size, tag);
-					}
 				}
 				break;
 				case NAL_SLICE:
@@ -129,19 +124,15 @@ namespace Encode
 				case NAL_SLICE_DPC:
 				case NAL_SLICE_IDR:
 				{
-					BYTE* bits = pNAL[i].p_payload;
-					INT	size = pNAL[i].i_payload;
-					MediaTag tag = { 0 };
+					bits = pNAL[i].p_payload;
+					size = pNAL[i].i_payload;
+					ZeroMemory(&tag, sizeof(tag));
 					tag.dwType = 0;
 					tag.PTS = m_sPTS;
 					tag.DTS = image.i_dts;
 					tag.dwTime = timeGetTime();
 					tag.dwFlag = pNAL[i].i_type;
 					tag.INC = ++m_sINC;
-					if (!m_callback.IsNull())
-					{
-						m_callback(bits, size, tag);
-					}
 				}
 				break;
 				}
@@ -159,5 +150,13 @@ namespace Encode
 		}
 		SAFE_DELETE(m_x264Param);
 		SAFE_DELETE(m_x264Image);
+	}
+	vector<BYTE>& x264Encode::GetPPS()
+	{
+		return m_pps;
+	}
+	vector<BYTE>& x264Encode::GetSPS()
+	{
+		return m_sps;
 	}
 }

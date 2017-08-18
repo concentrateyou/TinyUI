@@ -99,7 +99,6 @@ namespace MShow
 				vector<BYTE>& pps = video.GetQSV().GetPPS();
 				m_client.SendSPP(pps, sps, sample.mediaTag.dwTime);
 			}
-			//TRACE("Video Time:%d\n", sample.mediaTag.dwTime);
 			m_client.SendVideo(sample.mediaTag.dwFlag, sample.bits, sample.size, sample.mediaTag.dwTime);
 		}
 		break;
@@ -112,7 +111,6 @@ namespace MShow
 				encoder.GetAAC().GetSpecificInfo(info);
 				m_client.SendAAC(&info[0], info.size());
 			}
-			//TRACE("Audio Time:%d\n", sample.mediaTag.dwTime);
 			m_client.SendAudio(sample.bits, sample.size, sample.mediaTag.dwTime);
 		}
 		break;
