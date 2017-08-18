@@ -109,7 +109,7 @@ namespace MShow
 				DWORD dwMS = static_cast<DWORD>(m_timeQPC.GetMillisconds());
 				if (dwMS >= static_cast<DWORD>(ts / 2))
 				{
-					LOG(ERROR) << "audio_encode_send: " << dwMS - static_cast<DWORD>(ts / 2) << "Error -----------";
+					LOG(ERROR) << "audio_encode_send: " << dwMS << "Error -----------";
 				}
 			}
 		}
