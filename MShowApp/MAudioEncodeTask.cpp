@@ -61,7 +61,7 @@ namespace MShow
 					if (m_aac.Encode(sampleTag.bits, sampleTag.size, bo, so, sample.mediaTag))
 					{
 						//TRACE("Audio ----------- Stream:%lld, PTS:%d, Delay:%lld\n", m_clock.GetAudioPTS(), sample.mediaTag.dwTime, sample.mediaTag.dwTime - m_clock.GetAudioPTS());
-						sample.mediaTag.dwTime = m_clock.GetAudioPTS();
+						sample.mediaTag.dwTime = m_clock.GetAudioPTS() - m_clock.GetOffset();
 						TRACE("Audio PTS:%d\n", sample.mediaTag.dwTime);
 						sample.size = so;
 						sample.bits = new BYTE[so];

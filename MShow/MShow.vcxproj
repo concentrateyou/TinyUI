@@ -150,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MAudioCapture.h" />
+    <ClInclude Include="MAudioQueue.h" />
     <ClInclude Include="MAudioRenderTask.h" />
     <ClInclude Include="MAudioTask.h" />
     <ClInclude Include="MClock.h" />
@@ -170,6 +171,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MAudioCapture.cpp" />
+    <ClCompile Include="MAudioQueue.cpp" />
     <ClCompile Include="MAudioRenderTask.cpp" />
     <ClCompile Include="MAudioTask.cpp" />
     <ClCompile Include="MClock.cpp" />

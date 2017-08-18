@@ -3,6 +3,7 @@
 #include "MAudioCapture.h"
 #include "AudioAnalyser.h"
 #include "audiosdk.h"
+#include "MAudioQueue.h"
 using namespace DShow;
 using namespace Decode;
 
@@ -29,14 +30,19 @@ namespace MShow
 		void OnPreview(void*, INT);
 		void OnRecord(void*, INT);
 		void OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID);
+		void OnMessagePump();
 	private:
-		LONGLONG		m_previousPTS;
-		TinyLock		m_lock;
-		MShowWindow&	m_window;
-		MAudioCapture	m_audioCapture;
-		AudioAnalyser	m_audioAnalyser;
+		BOOL					m_bBreak;
+		LONGLONG				m_previousPTS;
+		TinyLock				m_lock;
+		MShowWindow&			m_window;
+		MAudioCapture			m_audioCapture;
+		AudioAnalyser			m_audioAnalyser;
 		TinyPerformanceTimer	m_timeQPC;
 		TinyScopedPtr<AudioSdk>	m_audioSDK;
+		MAudioQueue				m_audioQueue;
+		TinyTaskBase			m_task;
+		TinyEvent				m_event;
 		TinyScopedPtr<MPreviewController>			m_preview;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onPreviewClick;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onRecordClick;

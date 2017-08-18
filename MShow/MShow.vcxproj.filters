@@ -72,6 +72,9 @@
     <ClInclude Include="MAudioCapture.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MAudioQueue.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -120,6 +123,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MAudioCapture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MAudioQueue.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

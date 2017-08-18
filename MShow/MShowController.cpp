@@ -7,9 +7,10 @@ namespace MShow
 {
 	MShowController::MShowController(MShowWindow& window)
 		:m_window(window),
-		m_previousPTS(0)
+		m_previousPTS(0),
+		m_bBreak(FALSE)
 	{
-
+		m_event.CreateEvent();
 	}
 
 	MShowController::~MShowController()
@@ -19,7 +20,7 @@ namespace MShow
 	BOOL MShowController::Initialize()
 	{
 		m_window.m_txtPreviewURL.SetText("rtmp://live.hkstv.hk.lxdns.com/live/hks");
-		m_window.m_address.SetAddress(MAKEIPADDRESS(10, 5, 16, 47));
+		m_window.m_address.SetAddress(MAKEIPADDRESS(10, 110, 48, 109));
 		m_onRecordClick.Reset(new Delegate<void(void*, INT)>(this, &MShowController::OnRecord));
 		m_window.m_btnRecord.EVENT_CLICK += m_onRecordClick;
 		m_onPreviewClick.Reset(new Delegate<void(void*, INT)>(this, &MShowController::OnPreview));
@@ -48,6 +49,8 @@ namespace MShow
 
 	void MShowController::Uninitialize()
 	{
+		m_bBreak = TRUE;
+		m_task.Close(1000);
 		m_audioCapture.Stop();
 		m_audioCapture.Close();
 		m_audioSDK.Reset(NULL);
@@ -73,45 +76,75 @@ namespace MShow
 		DWORD dwAddress = 0;
 		m_window.m_address.GetAddress(dwAddress);
 		string ip = StringPrintf("%ld.%ld.%ld.%ld", FIRST_IPADDRESS(dwAddress), SECOND_IPADDRESS(dwAddress), THIRD_IPADDRESS(dwAddress), FOURTH_IPADDRESS(dwAddress));
-		m_audioSDK.Reset(new AudioSdk(ip, 6090));
-		if (m_audioSDK != NULL)
+		if (m_task.IsActive())
 		{
-			if (m_audioSDK->init(44100, 2, 16) == 0)
+			m_bBreak = TRUE;
+			m_task.Close(1000);
+		}
+		m_bBreak = FALSE;
+		if (m_task.Submit(BindCallback(&MShowController::OnMessagePump, this)))
+		{
+			m_audioSDK.Reset(new AudioSdk(ip, 6090));
+			if (m_audioSDK != NULL)
 			{
-				if (m_audioCapture.Open(BindCallback(&MShowController::OnAudio, this)))
+				if (m_audioSDK->init(44100, 2, 16) == 0)
 				{
-					m_audioCapture.Stop();
-					m_audioCapture.Start();
+					if (m_audioCapture.Open(BindCallback(&MShowController::OnAudio, this)))
+					{
+						m_audioCapture.Stop();
+						m_audioCapture.Start();
+					}
 				}
 			}
 		}
 	}
-
+	void MShowController::OnMessagePump()
+	{
+		for (;;)
+		{
+			if (m_bBreak)
+				break;
+			if (m_event.Lock(1000))
+			{
+				if (m_audioSDK != NULL)
+				{
+					AUDIO_SAMPLE sample = { 0 };
+					BOOL bRes = m_audioQueue.Pop(sample);
+					if (bRes && sample.size > 0)
+					{
+						m_audioSDK->audio_encode_send(sample.bits + 4, static_cast<INT32>(sample.timestamp));
+					}
+					m_audioQueue.Free(sample.bits);
+				}
+			}
+		}
+	}
 	void MShowController::OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID)
 	{
 		if (size == 4096)
 		{
 			m_audioAnalyser.Process(m_window.m_analyserBAR.Handle(), bits, size);
-			if (m_audioSDK != NULL)
+			LONGLONG currentPTS = MShow::MShowApp::GetInstance().GetCurrentAudioTS() + m_preview->GetBasePTS();
+			if (m_previousPTS != currentPTS)
 			{
-				LONGLONG currentPTS = MShow::MShowApp::GetInstance().GetCurrentAudioTS() + m_preview->GetBasePTS();
-				if (m_previousPTS != currentPTS)
+				if ((currentPTS - m_previousPTS) >= 50)
 				{
-					if ((currentPTS - m_previousPTS) >= 50)
-					{
-						LOG(ERROR) << "OnAudio: " << currentPTS - m_previousPTS << "Error -----------";
-					}
-					m_previousPTS = currentPTS;
+					LOG(ERROR) << "OnAudio: " << currentPTS - m_previousPTS << "Error -----------\n";
 				}
-				m_timeQPC.BeginTime();
-				m_audioSDK->audio_encode_send(bits, static_cast<INT32>(currentPTS));
-				m_timeQPC.EndTime();
-				DWORD dwMS = static_cast<DWORD>(m_timeQPC.GetMillisconds());
-				if (dwMS >= static_cast<DWORD>(ts / 2))
-				{
-					LOG(ERROR) << "audio_encode_send: " << dwMS << "Error -----------";
-				}
+				m_previousPTS = currentPTS;
 			}
+			if (m_audioQueue.GetAllocSize() == 0)
+			{
+				INT count = 5;
+				m_audioQueue.Initialize(count, size + 4);
+			}
+			AUDIO_SAMPLE sample = { 0 };
+			sample.size = size;
+			sample.bits = static_cast<BYTE*>(m_audioQueue.Alloc());
+			sample.timestamp = currentPTS;
+			memcpy(sample.bits + 4, bits, size);
+			m_audioQueue.Push(sample);
+			m_event.SetEvent();
 		}
 	}
 
