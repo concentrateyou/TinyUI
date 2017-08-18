@@ -25,12 +25,10 @@ namespace MShow
 		{
 			if (!Media::TinyWASAPIAudio::IsMicrophoneArray(names[i].name(), bIsMA))
 				return FALSE;
-			LOG(INFO) << "MAudioCapture IsMicrophoneArray Name:" << names[i].name() << " IsMA:" << bIsMA << "\n";
 			if (!bIsMA)
 			{
 				if (!Media::TinyWASAPIAudio::IsMicrophone(names[i].name(), bIsMA))
 					return FALSE;
-				LOG(INFO) << "MAudioCapture IsMicrophone Name:" << names[i].name() << " IsMA:" << bIsMA << "\n";
 			}
 			if (!bIsMA)
 				return FALSE;
@@ -46,12 +44,10 @@ namespace MShow
 				{
 					m_name = names[i];
 					m_param = params[j];
-					LOG(INFO) << "MAudioCapture Initialize:" << names[i].name() << "\n";
 					return TRUE;
 				}
 			}
 		}
-		LOG(INFO) << "MAudioCapture Initialize Fail\n";
 		return FALSE;
 	}
 

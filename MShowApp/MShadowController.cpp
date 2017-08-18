@@ -70,7 +70,7 @@ namespace MShow
 	void MShadowController::OnMessagePump()
 	{
 		DWORD dwMS = static_cast<DWORD>(1000 / m_videoFPS);
-		INT offset = 0;
+		INT compensate = 0;
 		TinyTimer timer;
 		SampleTag tag;
 		for (;;)
@@ -79,18 +79,15 @@ namespace MShow
 				break;
 			ZeroMemory(&tag, sizeof(tag));
 			INT delay = dwMS - OnVideo(tag);
-			delay -= offset;
 			if (m_clock.GetBaseTime() == -1)
-			{
 				m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
-			}
+			compensate -= delay;
 			m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime());
 			m_timeQPC.BeginTime();
 			timer.Wait(delay < 0 ? 0 : delay, 1000);
 			m_timeQPC.EndTime();
-			offset = static_cast<INT>(m_timeQPC.GetMillisconds()) - delay;
-			offset = offset < 0 ? 0 : offset;
-			m_clock.SetOffset(offset);
+			compensate = static_cast<INT>(m_timeQPC.GetMillisconds()) - delay;
+			m_clock.AddBaseTime(delay);
 		}
 	}
 

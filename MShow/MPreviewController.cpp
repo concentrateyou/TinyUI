@@ -29,7 +29,6 @@ namespace MShow
 		m_viewSize = s.Size();
 		if (!m_dx2d.Initialize(m_view.Handle(), TO_CX(s), TO_CY(s)))
 		{
-			LOG(INFO) << "DX2D Initialize Fail\n";
 			return FALSE;
 		}
 		return TRUE;

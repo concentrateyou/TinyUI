@@ -50,8 +50,6 @@ namespace MShow
 		:m_controller(m_window),
 		m_audioTS(0)
 	{
-		SetLogFile("D:\\mshow.log");
-		LOG(INFO) << "MShow--------------------------------------------------";
 		timeBeginPeriod(1);
 	}
 	MShowApp::~MShowApp()
@@ -163,6 +161,7 @@ namespace MShow
 
 	void MShowApp::SetCurrentAudioTS(LONGLONG ts)
 	{
+		TinyAutoLock lock(m_lock);
 		m_audioTS = ts;
 	}
 	LONGLONG MShowApp::GetCurrentAudioTS()

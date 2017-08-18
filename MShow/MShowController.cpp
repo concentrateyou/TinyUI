@@ -8,18 +8,21 @@ namespace MShow
 	MShowController::MShowController(MShowWindow& window)
 		:m_window(window),
 		m_previousPTS(0),
-		m_bBreak(FALSE)
+		m_bBreak(FALSE),
+		m_bError(FALSE)
 	{
 		m_event.CreateEvent();
+		m_stream.open(L"D:\\mshow.log");
 	}
 
 	MShowController::~MShowController()
 	{
+		m_stream.close();
 	}
 
 	BOOL MShowController::Initialize()
 	{
-		m_window.m_txtPreviewURL.SetText("rtmp://live.hkstv.hk.lxdns.com/live/hks");
+		m_window.m_txtPreviewURL.SetText("http://10.110.48.109:46522/6696864323");
 		m_window.m_address.SetAddress(MAKEIPADDRESS(10, 110, 48, 109));
 		m_onRecordClick.Reset(new Delegate<void(void*, INT)>(this, &MShowController::OnRecord));
 		m_window.m_btnRecord.EVENT_CLICK += m_onRecordClick;
@@ -30,20 +33,20 @@ namespace MShow
 			return FALSE;
 		if (!m_preview->Initialize())
 		{
-			LOG(ERROR) << "Preview Initialize Fail\n";
 			return FALSE;
 		}
 		if (!m_audioCapture.Initialize())
 		{
-			LOG(ERROR) << "AudioCapture Initialize Fail\n";
 			return FALSE;
 		}
 		if (!m_audioAnalyser.Initialize())
 		{
-			LOG(ERROR) << "AudioAnalyser Initialize Fail\n";
 			return FALSE;
 		}
-		LOG(INFO) << "MShowController Initialize OK\n";
+		if (m_stream.is_open())
+		{
+			m_stream << "MShowController Initialize OK" << endl;
+		}
 		return TRUE;
 	}
 
@@ -129,9 +132,16 @@ namespace MShow
 			{
 				if ((currentPTS - m_previousPTS) >= 50)
 				{
-					LOG(ERROR) << "OnAudio: " << currentPTS - m_previousPTS << "Error -----------\n";
+					if (m_stream.is_open())
+					{
+						m_stream << "[ERROR] currentPTS:: " << currentPTS << " previousPTS:" << m_previousPTS << endl;
+					}
 				}
 				m_previousPTS = currentPTS;
+			}
+			if (m_stream.is_open())
+			{
+				m_stream << "[INFO] timestamp currentPTS:: " << currentPTS << endl;
 			}
 			if (m_audioQueue.GetAllocSize() == 0)
 			{

@@ -408,6 +408,7 @@ namespace MShow
 
 	void MPreviewController::OnMessagePump()
 	{
+		TinyPerformanceTimer timeQPC;
 		for (;;)
 		{
 			if (m_bBreak)

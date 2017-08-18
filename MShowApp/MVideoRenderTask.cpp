@@ -49,8 +49,8 @@ namespace MShow
 				m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
 			}
 			while (m_clock.GetBasePTS() == -1);
-			LONG ms = static_cast<LONG>(MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime());
-			INT delay = static_cast<INT>(sampleTag.samplePTS - ms);
+			LONG systemMS = static_cast<LONG>(MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime());
+			INT delay = static_cast<INT>(sampleTag.samplePTS - systemMS);
 			if (timer.Wait(delay, 1000))
 			{
 				if (!m_callback.IsNull())

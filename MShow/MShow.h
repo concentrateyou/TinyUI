@@ -26,6 +26,7 @@ namespace MShow
 	public:
 		static MShowApp&	GetInstance() throw();
 	private:
+		TinyLock			m_lock;
 		MShowWindow			m_window;
 		MShowController		m_controller;
 		TinyMessageLoop		m_msgLoop;
