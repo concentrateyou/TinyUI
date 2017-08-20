@@ -49,6 +49,7 @@ namespace TinyUI
 			TinyFile();
 			TinyFile(HANDLE hFile);
 			virtual ~TinyFile();
+			operator HANDLE()const;
 			HANDLE Handle() const;
 			BOOL GetStatus(FileStatus& rStatus) const;
 			virtual BOOL Create(LPCTSTR lpszFileName, DWORD dwFlagsAndAttributes = 0);

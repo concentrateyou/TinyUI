@@ -94,7 +94,7 @@ namespace TinyUI
 		INT					m_line;
 	};
 
-	void SetLogFile(LPCSTR pzFile);
+	BOOL SetLogFile(LPCSTR pzFile);
 	BOOL CloseLogFile();
 #define LOG(severity) \
 	LogMessage(__FILE__, __LINE__, LOG_##severity).stream()
