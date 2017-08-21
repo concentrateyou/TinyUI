@@ -42,12 +42,6 @@
     <ClInclude Include="MVolumeView.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MAudioRenderTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MAudioTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="MClock.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -60,18 +54,6 @@
     <ClInclude Include="MPacketQueue.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MVideoRenderTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MVideoTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MVideoController.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MVideoView.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="MShowController.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -79,9 +61,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="MPreviewView.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MVideoElement.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="MRTMPPusher.h">
@@ -105,18 +84,6 @@
     <ClInclude Include="MPlayView.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MVideoEncodeTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MAudioEncodeTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MAudioView.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MAudioController.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="MSampleQueue.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -124,6 +91,39 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="MShadowView.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MAudioController.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MAudioEncodeTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MAudioRenderTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MAudioTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MAudioView.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MVideoController.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MVideoElement.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MVideoEncodeTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MVideoRenderTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MVideoTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MVideoView.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

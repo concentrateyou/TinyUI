@@ -45,6 +45,7 @@ namespace MShow
 	BOOL MAudioRenderTask::Submit()
 	{
 		m_bBreak = FALSE;
+		TRACE("MAudioRenderTask::Submit\n");
 		return TinyTaskBase::Submit(BindCallback(&MAudioRenderTask::OnMessagePump, this));
 	}
 

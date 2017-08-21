@@ -23,12 +23,8 @@ namespace MShow
 		m_videoFPS = videoFPS;
 		if (!m_encoder.Open(m_pulgSize, m_pulgSize, m_videoRate, m_videoFPS))
 			return FALSE;
-		if (TinyTaskBase::Submit(BindCallback(&MVideoEncodeTask::OnMessagePump, this)))
-		{
-			SetPriority(THREAD_PRIORITY_TIME_CRITICAL);
-			return TRUE;
-		}
-		return FALSE;
+		TRACE("MVideoEncodeTask::Submit\n");
+		return TinyTaskBase::Submit(BindCallback(&MVideoEncodeTask::OnMessagePump, this));
 	}
 
 	void MVideoEncodeTask::OnMessagePump()

@@ -36,22 +36,38 @@ namespace TinyUI
 		BOOL TinyTaskBase::Submit(Closure&& callback)
 		{
 			m_callback = std::move(callback);
+			if (m_hTask != NULL)
+			{
+				CloseHandle(m_hTask);
+				m_hTask = NULL;
+			}
 			m_hTask = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)TinyTaskBase::Callback, (LPVOID)this, 0, &m_dwTaskID);
 			return m_hTask != NULL;
 		}
 		BOOL TinyTaskBase::Close(DWORD dwMS)
 		{
-			if (m_hTask)
+			BOOL bRes = FALSE;
+			if (m_hTask != NULL)
 			{
-				switch (WaitForSingleObject(m_hTask, dwMS))
+				HRESULT hRes = WaitForSingleObject(m_hTask, dwMS);
+				if (hRes == WAIT_TIMEOUT)
 				{
-				case WAIT_TIMEOUT:
-					return FALSE;
-				case WAIT_OBJECT_0:
-					return TRUE;
+					bRes = FALSE;
+					goto _ERROR;
+				}
+				if (hRes == WAIT_OBJECT_0)
+				{
+					bRes = TRUE;
+					goto _ERROR;
 				}
 			}
-			return FALSE;
+		_ERROR:
+			if (m_hTask != NULL)
+			{
+				CloseHandle(m_hTask);
+				m_hTask = NULL;
+			}
+			return bRes;
 		}
 
 		BOOL TinyTaskBase::IsActive() const
@@ -70,7 +86,7 @@ namespace TinyUI
 			try
 			{
 				TinyTaskBase* pTask = reinterpret_cast<TinyTaskBase*>(ps);
-				if (pTask)
+				if (pTask != NULL)
 				{
 					pTask->m_callback();
 				}

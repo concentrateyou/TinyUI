@@ -36,6 +36,7 @@ namespace MShow
 		MPreviewView&	GetView();
 		DX11RenderView&	GetRenderView();
 		DX11Graphics2D&	Graphics();
+		TinyLock&		GetLock();
 	private:
 		void	OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

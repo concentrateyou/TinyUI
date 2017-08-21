@@ -21,6 +21,7 @@ namespace MShow
 	{
 		m_bBreak = FALSE;
 		m_task.EVENT_AVCDCR += m_onAVCDC;
+		TRACE("MVideoTask::Submit\n");
 		return TinyTaskBase::Submit(BindCallback(&MVideoTask::OnMessagePump, this));
 	}
 
@@ -33,6 +34,10 @@ namespace MShow
 			m_task.GetVideoQueue().RemoveAll();
 			m_videoQueue.RemoveAll();
 			return TRUE;
+		}
+		else
+		{
+			TRACE("MVideoTask::Close Fail\n");
 		}
 		return FALSE;
 	}

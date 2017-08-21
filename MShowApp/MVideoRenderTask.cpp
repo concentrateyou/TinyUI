@@ -20,6 +20,7 @@ namespace MShow
 	BOOL MVideoRenderTask::Submit()
 	{
 		m_bBreak = FALSE;
+		TRACE("MVideoRenderTask::Submit\n");
 		return TinyTaskBase::Submit(BindCallback(&MVideoRenderTask::OnMessagePump, this));
 	}
 

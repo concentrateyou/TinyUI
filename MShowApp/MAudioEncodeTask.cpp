@@ -38,6 +38,7 @@ namespace MShow
 		m_waveFMT.wFormatTag = WAVE_FORMAT_PCM;
 		if (!m_aac.Open(m_waveFMT, audioRate))
 			return FALSE;
+		TRACE("MAudioEncodeTask::Submit\n");
 		return TinyTaskBase::Submit(BindCallback(&MAudioEncodeTask::OnMessagePump, this));
 	}
 

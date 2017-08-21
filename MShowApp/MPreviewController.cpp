@@ -282,7 +282,10 @@ namespace MShow
 	{
 		return m_graphics;
 	}
-
+	TinyLock& MPreviewController::GetLock()
+	{
+		return m_lock;
+	}
 	BOOL MPreviewController::Submit()
 	{
 		m_bBreak = FALSE;
@@ -408,7 +411,6 @@ namespace MShow
 
 	void MPreviewController::OnMessagePump()
 	{
-		TinyPerformanceTimer timeQPC;
 		for (;;)
 		{
 			if (m_bBreak)
@@ -425,19 +427,16 @@ namespace MShow
 			}
 			if (m_waits.size() == 0)
 			{
-				Sleep(50);
+				Sleep(25);
 				continue;
 			}
-			HRESULT hRes = WaitForMultipleObjects(m_waits.size(), &m_waits[0], FALSE, 40);
+			HRESULT hRes = WaitForMultipleObjects(m_waits.size(), &m_waits[0], FALSE, 1000);
 			if (hRes == WAIT_FAILED || hRes == WAIT_ABANDONED)
 			{
 				break;
 			}
-			if (hRes != WAIT_TIMEOUT)
-			{
-				TinyAutoLock lock(m_lock);
-				DWORD dwMS = this->Draw();
-			}
+			TinyAutoLock lock(m_lock);
+			this->Draw();
 		}
 	}
 }

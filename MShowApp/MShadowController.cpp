@@ -79,8 +79,8 @@ namespace MShow
 				break;
 			while (m_clock.GetBaseTime() == -1);
 			ZeroMemory(&sampleTag, sizeof(sampleTag));
-			INT delay = dwMS - OnVideo(sampleTag) - compensate;
 			m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
+			INT delay = dwMS - OnVideo(sampleTag) - compensate;
 			sampleTag.timestamp = m_clock.GetVideoPTS() - m_clock.GetBaseTime();
 			m_videoQueue.Push(sampleTag);
 			m_signal.SetEvent();
@@ -97,7 +97,10 @@ namespace MShow
 	{
 		m_timeQPC.BeginTime();
 		ZeroMemory(&sampleTag, sizeof(sampleTag));
+		TinyLock& lock = MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetLock();
+		lock.Lock();
 		m_copy2D.Copy(m_dx11, m_image2D);
+		lock.Unlock();
 		BYTE* bits = NULL;
 		UINT pitch = 0;
 		if (m_copy2D.Map(m_dx11, bits, pitch, TRUE))
