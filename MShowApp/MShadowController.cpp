@@ -97,10 +97,7 @@ namespace MShow
 	{
 		m_timeQPC.BeginTime();
 		ZeroMemory(&sampleTag, sizeof(sampleTag));
-		TinyLock& lock = MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetLock();
-		lock.Lock();
 		m_copy2D.Copy(m_dx11, m_image2D);
-		lock.Unlock();
 		BYTE* bits = NULL;
 		UINT pitch = 0;
 		if (m_copy2D.Map(m_dx11, bits, pitch, TRUE))
