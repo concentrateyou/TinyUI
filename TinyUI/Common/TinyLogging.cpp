@@ -41,10 +41,10 @@ namespace TinyUI
 	}
 	BOOL InitializeLogFile(LPCSTR pzFile)
 	{
-		if (g_logFile.Handle() != NULL)
+		if (g_logFile != INVALID_HANDLE_VALUE || g_logFile != NULL)
 			return TRUE;
 		g_log = (pzFile == NULL ? GetDefaultLogFile() : pzFile);
-		if (!g_logFile.Open(g_log.c_str(), FILE_APPEND_DATA, FILE_SHARE_READ | FILE_SHARE_WRITE, FILE_ATTRIBUTE_NORMAL))
+		if (!g_logFile.Open(g_log.c_str(), FILE_APPEND_DATA, FILE_ATTRIBUTE_NORMAL))
 		{
 			CHAR directory[MAX_PATH];
 			directory[0] = 0;
@@ -64,9 +64,10 @@ namespace TinyUI
 	{
 		return g_logFile.Close();
 	}
-	void SetLogFile(LPCSTR pzFile)
+	BOOL SetLogFile(LPCSTR pzFile)
 	{
 		g_log = pzFile;
+		return InitializeLogFile(pzFile);
 	}
 	//////////////////////////////////////////////////////////////////////////
 	SymbolContext::SymbolContext() : m_error(ERROR_SUCCESS)

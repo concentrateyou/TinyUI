@@ -34,6 +34,10 @@ namespace TinyUI
 		{
 			return m_hFile;
 		};
+		TinyFile::operator HANDLE()const
+		{
+			return m_hFile;
+		}
 		BOOL TinyFile::Create(LPCTSTR lpszFileName, DWORD dwFlagsAndAttributes)
 		{
 			m_hFile = INVALID_HANDLE_VALUE;

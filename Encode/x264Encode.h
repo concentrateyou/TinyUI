@@ -48,8 +48,8 @@ namespace Encode
 		x264_t*				m_x264;
 		x264_param_t*		m_x264Param;
 		x264_picture_t*		m_x264Image;
-		LONGLONG			m_sINC;
-		LONGLONG			m_sPTS;
+		LONGLONG			m_iINC;
+		LONGLONG			m_iPTS;
 		vector<BYTE>		m_pps;
 		vector<BYTE>		m_sps;
 	};

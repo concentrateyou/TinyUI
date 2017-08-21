@@ -7,7 +7,7 @@ namespace Encode
 		:m_x264Image(NULL),
 		m_x264(NULL),
 		m_x264Param(NULL),
-		m_sINC(0)
+		m_iINC(0)
 	{
 	}
 
@@ -23,6 +23,28 @@ namespace Encode
 			return FALSE;
 		if ((m_x264 = x264_encoder_open(m_x264Param)) == NULL)
 			return FALSE;
+		x264_nal_t* pNAL = NULL;
+		INT iNAL = 0;
+		if (x264_encoder_headers(m_x264, &pNAL, &iNAL) <= 0)
+			return FALSE;
+		for (INT i = 0; i < iNAL; ++i)
+		{
+			switch (pNAL[i].i_type)
+			{
+			case NAL_SPS:
+			{
+				m_sps.resize(pNAL[i].i_payload - SPS_SEP);//跳过起始码
+				memcpy(&m_sps[0], pNAL[i].p_payload + SPS_SEP, pNAL[i].i_payload - SPS_SEP);
+			}
+			break;
+			case  NAL_PPS:
+			{
+				m_pps.resize(pNAL[i].i_payload - PPS_SEP);
+				memcpy(&m_pps[0], pNAL[i].p_payload + PPS_SEP, pNAL[i].i_payload - PPS_SEP);
+			}
+			break;
+			}
+		}
 		if ((m_x264Image = new x264_picture_t()) == NULL)
 			return FALSE;
 		x264_picture_init(m_x264Image);
@@ -38,11 +60,11 @@ namespace Encode
 		if (!m_x264Param)
 			return FALSE;
 		x264_param_default(m_x264Param);
-		x264_param_default_preset(m_x264Param, "superfast", "zerolatency");
+		x264_param_default_preset(m_x264Param, "fast", "zerolatency");
 		m_x264Param->i_frame_total = 0;
 		m_x264Param->i_threads = 0;
 		m_x264Param->b_sliced_threads = 0;
-		m_x264Param->b_repeat_headers = 1;//重复SPS/PPS 放到关键帧前面 
+		m_x264Param->b_repeat_headers = 0;//1-重复SPS/PPS 0-不重复 放到关键帧前面 
 		m_x264Param->i_csp = X264_CSP_I420;
 		m_x264Param->i_width = cx;
 		m_x264Param->i_height = cy;
@@ -51,7 +73,7 @@ namespace Encode
 		m_x264Param->i_keyint_max = m_x264Param->i_fps_num * 2;
 		m_x264Param->b_cabac = 1; /*cabac的开关*/
 		m_x264Param->i_bframe = 3;
-		m_x264Param->i_bframe_adaptive = X264_B_ADAPT_FAST;
+		m_x264Param->i_bframe_adaptive = X264_B_ADAPT_FAST;//自适应B帧判定
 		m_x264Param->rc.b_mb_tree = 0;
 		m_x264Param->rc.i_rc_method = X264_RC_CRF;//CQP(恒定质量)，CRF(恒定码率)，ABR(平均码率)
 		m_x264Param->rc.f_rf_constant = 25;
@@ -59,7 +81,7 @@ namespace Encode
 		m_x264Param->rc.i_bitrate = videoRate;/*设置平均码率大小*/
 		m_x264Param->rc.f_rate_tolerance = 0.1F;
 		m_x264Param->rc.i_vbv_max_bitrate = static_cast<INT>(videoRate * 1.2);
-		m_sPTS = (1000 / m_x264Param->i_fps_num);
+		m_iPTS = (1000 / m_x264Param->i_fps_num);
 		x264_param_apply_profile(m_x264Param, "baseline");
 		return TRUE;
 	}
@@ -88,36 +110,6 @@ namespace Encode
 			{
 				switch (pNAL[i].i_type)
 				{
-				case NAL_SPS:
-				{
-					bits = pNAL[i].p_payload + SPS_SEP;
-					size = pNAL[i].i_payload - SPS_SEP;
-					m_sps.resize(size);
-					memcpy(&m_sps[0], bits, size);
-					ZeroMemory(&tag, sizeof(tag));
-					tag.dwType = 0;
-					tag.PTS = m_sPTS;
-					tag.DTS = image.i_dts;
-					tag.dwTime = timeGetTime();
-					tag.dwFlag = pNAL[i].i_type;
-					tag.INC = ++m_sINC;
-				}
-				break;
-				case NAL_PPS:
-				{
-					bits = pNAL[i].p_payload + PPS_SEP;
-					size = pNAL[i].i_payload - PPS_SEP;
-					m_pps.resize(size);
-					memcpy(&m_pps[0], bits, size);
-					ZeroMemory(&tag, sizeof(tag));
-					tag.dwType = 0;
-					tag.PTS = m_sPTS;
-					tag.DTS = image.i_dts;
-					tag.dwTime = timeGetTime();
-					tag.dwFlag = pNAL[i].i_type;
-					tag.INC = ++m_sINC;
-				}
-				break;
 				case NAL_SLICE:
 				case NAL_SLICE_DPA:
 				case NAL_SLICE_DPB:
@@ -128,11 +120,11 @@ namespace Encode
 					size = pNAL[i].i_payload;
 					ZeroMemory(&tag, sizeof(tag));
 					tag.dwType = 0;
-					tag.PTS = m_sPTS;
+					tag.PTS = m_iPTS;
 					tag.DTS = image.i_dts;
 					tag.dwTime = timeGetTime();
 					tag.dwFlag = pNAL[i].i_type;
-					tag.INC = ++m_sINC;
+					tag.INC = ++m_iINC;
 				}
 				break;
 				}
