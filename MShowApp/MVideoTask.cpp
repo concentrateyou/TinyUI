@@ -21,7 +21,6 @@ namespace MShow
 	{
 		m_bBreak = FALSE;
 		m_task.EVENT_AVCDCR += m_onAVCDC;
-		TRACE("MVideoTask::Submit\n");
 		return TinyTaskBase::Submit(BindCallback(&MVideoTask::OnMessagePump, this));
 	}
 

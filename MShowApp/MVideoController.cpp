@@ -45,8 +45,7 @@ namespace MShow
 	//////////////////////////////////////////////////////////////////////////
 	MVideoController::MVideoController(MVideoView& view)
 		:m_view(view),
-		m_pVideo(NULL),
-		m_player(BindCallback(&MVideoController::OnAudio, this), BindCallback(&MVideoController::OnVideo, this))
+		m_pVideo(NULL)
 	{
 		m_onLButtonDBClick.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MVideoController::OnLButtonDBClick));
 		m_onRButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MVideoController::OnRButtonDown));
@@ -84,23 +83,29 @@ namespace MShow
 	{
 		TinySize size;
 		TinyRectangle rectangle;
-		if (!m_player.Open(m_view.Handle(), pzURL))
+		m_player.Reset(new MFLVPlayer(BindCallback(&MVideoController::OnAudio, this), BindCallback(&MVideoController::OnVideo, this)));
+		if (!m_player || !m_player->Open(m_view.Handle(), pzURL))
 			goto L_ERROR;
-		size = m_player.GetSize();
+		size = m_player->GetSize();
 		if (!m_video2D.Create(m_graphics.GetDX11(), size, TRUE))
 			goto L_ERROR;
 		m_view.GetClientRect(&rectangle);
 		m_video2D.SetScale(rectangle.Size());
 		return TRUE;
 	L_ERROR:
-		m_player.Close();
+		if (m_player != NULL)
+		{
+			m_player->Close();
+		}
 		m_video2D.Destory();
 		return FALSE;
 	}
 
 	BOOL MVideoController::Close()
 	{
-		if (m_player.Close())
+		if (!m_player)
+			return FALSE;
+		if (m_player->Close())
 		{
 			m_video2D.Destory();
 			return TRUE;
@@ -110,7 +115,9 @@ namespace MShow
 
 	TinyString	MVideoController::GetURL() const
 	{
-		return m_player.GetURL();
+		if (!m_player)
+			return TinyString();
+		return m_player->GetURL();
 	}
 
 	HANDLE MVideoController::GetHandle()
@@ -125,7 +132,9 @@ namespace MShow
 
 	WAVEFORMATEX* MVideoController::GetFormat()
 	{
-		return m_player.GetFormat();
+		if (!m_player)
+			return NULL;
+		return m_player->GetFormat();
 	}
 	DX11Element2D* MVideoController::GetElement()
 	{
@@ -138,17 +147,20 @@ namespace MShow
 
 	void MVideoController::OnVideo(BYTE* bits, LONG size)
 	{
-		TinySize videoSize = m_player.GetSize();
-		if (m_video2D.Copy(m_graphics.GetDX11(), NULL, bits, size))
+		if (m_player != NULL)
 		{
-			m_graphics.GetDX11().SetRenderTexture2D(NULL);
-			m_graphics.GetDX11().GetRender2D()->BeginDraw();
-			FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-			m_graphics.GetDX11().AllowBlend(FALSE, blendFactor);
-			m_graphics.DrawImage(&m_video2D, 1.0F, 1.0F);
-			m_graphics.GetDX11().GetRender2D()->EndDraw();
-			m_graphics.Present();
-			m_signal.SetEvent();
+			TinySize videoSize = m_player->GetSize();
+			if (m_video2D.Copy(m_graphics.GetDX11(), NULL, bits, size))
+			{
+				m_graphics.GetDX11().SetRenderTexture2D(NULL);
+				m_graphics.GetDX11().GetRender2D()->BeginDraw();
+				FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+				m_graphics.GetDX11().AllowBlend(FALSE, blendFactor);
+				m_graphics.DrawImage(&m_video2D, 1.0F, 1.0F);
+				m_graphics.GetDX11().GetRender2D()->EndDraw();
+				m_graphics.Present();
+				m_signal.SetEvent();
+			}
 		}
 	}
 
@@ -249,14 +261,9 @@ namespace MShow
 
 	void MVideoController::OnVolume(DWORD pos)
 	{
-		if (pos == 0)
+		if (m_player != NULL)
 		{
-			m_player.SetVolume(-10000);
-		}
-		else
-		{
-			LONG volume = static_cast<LONG>(floorf(2000.0F * log10f((FLOAT)(pos) / (FLOAT)100) + 0.5F));
-			m_player.SetVolume(volume);
+			m_player->SetVolume(pos == 0 ? -10000 : static_cast<LONG>(floorf(2000.0F * log10f((FLOAT)(pos) / (FLOAT)100) + 0.5F)));
 		}
 	}
 }

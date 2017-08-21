@@ -57,14 +57,14 @@ namespace MShow
 	public:
 		Event<void(BYTE*, LONG)> EVENT_AUDIO;
 	private:
-		TinyLock		m_lock;
-		TinyMenu		m_popup;
-		MVideoView&		m_view;
-		DX11Graphics2D	m_graphics;
-		DX11Image2D		m_video2D;
-		MFLVPlayer		m_player;
-		TinyEvent		m_signal;
-		MVideoElement*	m_pVideo;
+		TinyLock					m_lock;
+		TinyMenu					m_popup;
+		TinyEvent					m_signal;
+		MVideoView&					m_view;
+		DX11Graphics2D				m_graphics;
+		DX11Image2D					m_video2D;
+		MVideoElement*				m_pVideo;
+		TinyScopedPtr<MFLVPlayer>	m_player;
 	private:
 		TinyScopedPtr<Delegate<void(DWORD)>>						m_onVolume;
 		TinyScopedPtr<Delegate<void(void*, INT)>>					m_onMenuClick;

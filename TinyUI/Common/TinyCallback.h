@@ -111,7 +111,7 @@ namespace TinyUI
 		typedef typename FunctorTraits<FunctionType>::RunType RunType;
 		typedef Invoker<SelfType, RunType> InvokerType;
 
-		UnaryInvokerStorage(const FunctionType& runnable)
+		explicit UnaryInvokerStorage(const FunctionType& runnable)
 			: m_runnable(runnable)
 		{
 		}
@@ -128,7 +128,7 @@ namespace TinyUI
 		typedef typename BinaryInvokerStorage SelfType;
 		typedef typename FunctorTraits<FunctionType>::RunType RunType;
 		typedef Invoker<SelfType, RunType> InvokerType;
-		BinaryInvokerStorage(const FunctionType& runnable, const InstanceType& instance)
+		explicit BinaryInvokerStorage(const FunctionType& runnable, const InstanceType& instance)
 			: m_runnable(runnable),
 			m_instance(instance)
 		{
@@ -145,7 +145,7 @@ namespace TinyUI
 	protected:
 		typedef void(*InvokeFunctionBase)(void);
 	public:
-		CallbackBase(InvokeFunctionBase invoke, InvokerStorageBase* storage);
+		explicit CallbackBase(InvokeFunctionBase invoke, InvokerStorageBase* storage);
 		CallbackBase(CallbackBase&& other);
 		CallbackBase(const CallbackBase& other);
 		CallbackBase& operator=(CallbackBase&& other);
@@ -192,34 +192,29 @@ namespace TinyUI
 		}
 		virtual ~Callback()
 		{
-			//TRACE("Callback析构:%d\n", this);
+
 		}
 		template<typename InvokerStorage>
 		Callback(const Caller<InvokerStorage>& caller)
 			: CallbackBase(reinterpret_cast<InvokeFunctionBase>(&InvokerStorage::InvokerType::DoInvoke), caller.m_storage.Ptr())
 		{
-			//TRACE("Callback构造函数:%d\n", this);
 			COMPILE_ASSERT((IsSameType<InvokeFunction, typename InvokerStorage::InvokerType::DoInvokeType>::Result), callback_type_not_match);
 		}
 		Callback(const Callback& callback)
 			: CallbackBase(callback)
 		{
-			//TRACE("Callback拷贝构造:new-%d,old-%d\n", this, &callback);
 		}
 		Callback(Callback&& other)
 			: CallbackBase(std::move(other))
 		{
-			//TRACE("Callback移动构造:new-%d,old-%d\n", this, &other);
 		}
 		Callback& operator=(const Callback& other)
 		{
-			//TRACE("Callback赋值构造:new-%d,old-%d\n", this, &other);
 			CallbackBase::operator=(other);
 			return *this;
 		}
 		Callback& operator=(Callback&& other)
 		{
-			//TRACE("Callback移动赋值构造:new-%d,old-%d\n", this, &other);
 			*static_cast<CallbackBase*>(this) = std::move(other);
 			return *this;
 		}
