@@ -186,7 +186,7 @@ namespace MShow
 	}
 	void MVideoController::OnChange()
 	{
-		MShowApp::GetInstance().GetController().GetAudioEncoder().SetVideoController(this);
+		MShowApp::GetInstance().GetController().SetCurrentCTRL(this);
 	}
 	void MVideoController::OnRemove()
 	{

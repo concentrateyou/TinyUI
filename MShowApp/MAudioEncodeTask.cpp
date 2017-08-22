@@ -157,7 +157,6 @@ namespace MShow
 				pCTRL->AddElement();
 				pCTRL->EVENT_AUDIO += m_onAudio;
 			}
-			Sleep(5);
 			if (m_pVideoCTRL != NULL)
 			{
 				m_pVideoCTRL->EVENT_AUDIO -= m_onAudio;
@@ -169,17 +168,16 @@ namespace MShow
 	{
 		if (m_pAudioCTRL != pCTRL)
 		{
+			m_queueMix.RemoveAll();
 			if (pCTRL != NULL)
 			{
 				pCTRL->EVENT_AUDIO += m_onAudioMix;
 			}
-			Sleep(5);
 			if (m_pAudioCTRL != NULL)
 			{
 				m_pAudioCTRL->EVENT_AUDIO -= m_onAudioMix;
 			}
 			m_pAudioCTRL = pCTRL;
-			m_queueMix.RemoveAll();
 		}
 	}
 }

@@ -32,8 +32,8 @@ namespace MShow
 		TinySize					m_viewSize;
 		TinyPerformanceTimer		m_timeQPC;
 		TinyComPtr<ID2D1Bitmap1>	m_bitmap1;
-		MFLVPlayer					m_player;
 		MPreviewView&				m_view;
+		TinyScopedPtr<MFLVPlayer>	m_player;
 	};
 }
 

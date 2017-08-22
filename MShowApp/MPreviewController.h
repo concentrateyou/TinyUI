@@ -56,6 +56,7 @@ namespace MShow
 		TinySize						m_pulgSize;
 		TinyMenu						m_popup;
 		TinyLock						m_lock;
+		TinyEvent						m_signal;
 		DX11Element2D*					m_current;
 		MPreviewView&					m_view;
 		DX11Graphics2D					m_graphics;
@@ -63,7 +64,7 @@ namespace MShow
 		TinyArray<DX11Element2D*>		m_array;
 		DX11RenderView					m_renderView;
 		vector<HANDLE>					m_waits;
-		TinyPerformanceTimer			m_timeQPC;
+		TinyPerformanceTimer			m_timeQPC;						
 	private:
 		TinyScopedPtr<Delegate<void(void*, INT)>>				   m_onMenuClick;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonDown;

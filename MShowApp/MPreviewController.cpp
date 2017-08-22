@@ -35,6 +35,7 @@ namespace MShow
 		m_view.EVENT_MOUSELEAVE += m_onMouseLeave;
 		m_view.EVENT_SETCURSOR += m_onSetCursor;
 		m_popup.EVENT_CLICK += m_onMenuClick;
+		m_signal.CreateEvent();
 	}
 
 	MPreviewController::~MPreviewController()
@@ -308,7 +309,6 @@ namespace MShow
 	{
 		return m_pulgSize;
 	}
-
 	DWORD MPreviewController::Draw()
 	{
 		m_timeQPC.BeginTime();

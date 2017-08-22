@@ -11,7 +11,8 @@ namespace MShow
 	MShowController::MShowController(MShowWindow& window)
 		:m_window(window),
 		m_audio(m_pusher, m_clock),
-		m_video(m_pusher, m_clock)
+		m_video(m_pusher, m_clock),
+		m_pCTRL(NULL)
 	{
 
 	}
@@ -154,6 +155,15 @@ namespace MShow
 	MRTMPPusher& MShowController::GetPusher()
 	{
 		return m_pusher;
+	}
+	void MShowController::SetCurrentCTRL(MVideoController* pCTRL)
+	{
+		m_audio.SetVideoController(pCTRL);
+		m_pCTRL = pCTRL;
+	}
+	MVideoController* MShowController::GetCurrentCTRL()
+	{
+		return m_pCTRL;
 	}
 	void MShowController::OnPusher(void*, INT)
 	{

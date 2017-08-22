@@ -11,8 +11,7 @@ namespace MShow
 #define IDM_REMOVE		104
 
 	MPreviewController::MPreviewController(MPreviewView& view)
-		:m_view(view),
-		m_player(BindCallback(&MPreviewController::OnAudio, this), BindCallback(&MPreviewController::OnVideo, this))
+		:m_view(view)
 	{
 
 	}
@@ -37,22 +36,30 @@ namespace MShow
 	BOOL MPreviewController::Open(LPCSTR pzURL)
 	{
 		D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
-		if (!m_player.Open(m_view.Handle(), pzURL))
+		m_player.Reset(new MFLVPlayer(BindCallback(&MPreviewController::OnAudio, this), BindCallback(&MPreviewController::OnVideo, this)));
+		if (!m_player)
 			goto _ERROR;
-		m_videoSize = m_player.GetSize();
+		if (!m_player->Open(m_view.Handle(), pzURL))
+			goto _ERROR;
+		m_videoSize = m_player->GetSize();
 		D2D1_SIZE_U bitmapPixelSize = D2D1::SizeU((UINT)(m_videoSize.cx), (UINT)(m_videoSize.cy));
 		HRESULT hRes = m_dx2d.GetContext()->CreateBitmap(bitmapPixelSize, NULL, 0, properties, &m_bitmap1);
 		if (FAILED(hRes))
 			goto _ERROR;
 		return TRUE;
 	_ERROR:
-		m_player.Close();
+		if (m_player != NULL)
+		{
+			m_player->Close();
+		}
 		return FALSE;
 	}
 
 	BOOL MPreviewController::Close()
 	{
-		if (m_player.Close())
+		if (!m_player)
+			return FALSE;
+		if (m_player->Close())
 		{
 			m_bitmap1.Release();
 			return TRUE;
@@ -66,7 +73,8 @@ namespace MShow
 	}
 	LONGLONG MPreviewController::GetBasePTS()
 	{
-		return m_player.GetBasePTS();
+		ASSERT(m_player);
+		return m_player->GetBasePTS();
 	}
 	void MPreviewController::OnAudio(BYTE* bits, LONG size)
 	{

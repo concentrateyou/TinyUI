@@ -41,6 +41,63 @@ namespace MShow
 		CloseHandle(hToken);
 		return TRUE;
 	}
+	//void DoEvents()
+	//{
+	//	MSG msg;
+	//	while (PeekMessage(&msg, (HWND)NULL, 0, 0, PM_REMOVE)) {
+	//		if (msg.message == WM_QUIT)
+	//		{
+	//			return;
+	//		}
+	//		TranslateMessage(&msg);
+	//		DispatchMessage(&msg);
+	//	}
+	//}
+	//BOOL HighPerformanceHighPrecisionDelay(UINT64 n64MilliSecond)
+	//{
+	//	HANDLE hTimer;
+	//	LARGE_INTEGER liDueTime;
+
+	//	liDueTime.QuadPart = -10 * n64MilliSecond * 1000LL;
+
+	//	DoEvents();
+
+	//	hTimer = CreateWaitableTimer(nullptr, FALSE, nullptr);
+	//	if (NULL == hTimer)
+	//	{
+	//		return  FALSE;
+	//	}
+
+	//	if (!SetWaitableTimer(hTimer, &liDueTime, 0, NULL, NULL, 0))
+	//	{
+	//		//printf("SetWaitableTimer failed (%d)\n", GetLastError());  
+	//		return FALSE;
+	//	}
+
+	//	DWORD ret;
+	//	while (ret = MsgWaitForMultipleObjects(1, &hTimer, FALSE, INFINITE, QS_ALLINPUT) != WAIT_OBJECT_0)
+	//	{
+	//		if (((WAIT_OBJECT_0 + 1) == ret) || (WAIT_TIMEOUT == ret))
+	//		{
+	//			DoEvents();
+	//		}
+	//		else
+	//		{
+	//			//WAIT_TIMEOUT,WAIT_FAILED  
+	//			break;
+	//		}
+	//	}
+
+	//	CancelWaitableTimer(hTimer);
+
+	//	CloseHandle(hTimer);
+
+	//	//DoEvents();
+
+	//	return TRUE;
+
+	//}
+
 	//////////////////////////////////////////////////////////////////////////
 	LARGE_INTEGER g_clockFreq;
 	__declspec(thread) LONGLONG g_lastQPCTime = 0;

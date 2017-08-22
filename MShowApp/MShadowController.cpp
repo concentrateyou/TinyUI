@@ -69,28 +69,28 @@ namespace MShow
 	}
 	void MShadowController::OnMessagePump()
 	{
-		DWORD dwMS = static_cast<DWORD>(1000 / m_videoFPS);
-		TinyTimer timer;
-		SampleTag sampleTag;
-		LONG compensate = 0;
-		for (;;)
-		{
-			if (m_bBreak)
-				break;
-			while (m_clock.GetBaseTime() == -1);
-			ZeroMemory(&sampleTag, sizeof(sampleTag));
-			m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
-			INT delay = dwMS - OnVideo(sampleTag) - compensate;
-			sampleTag.timestamp = m_clock.GetVideoPTS() - m_clock.GetBaseTime();
-			m_videoQueue.Push(sampleTag);
-			m_signal.SetEvent();
-			//计数器1ms精度不够
-			m_timeQPC.BeginTime();
-			timer.Wait(delay < 0 ? 0 : delay, 1000);
-			m_timeQPC.EndTime();
-			compensate = m_timeQPC.GetMillisconds() - delay;
-			compensate = compensate < 0 ? 0 : compensate;
-		}
+		//DWORD dwMS = static_cast<DWORD>(1000 / m_videoFPS);
+		//TinyTimer timer;
+		//SampleTag sampleTag;
+		//LONG compensate = 0;
+		//for (;;)
+		//{
+		//	if (m_bBreak)
+		//		break;
+		//	while (m_clock.GetBaseTime() == -1);
+		//	ZeroMemory(&sampleTag, sizeof(sampleTag));
+		//	m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
+		//	INT delay = dwMS - OnVideo(sampleTag) - compensate;
+		//	sampleTag.timestamp = m_clock.GetVideoPTS() - m_clock.GetBaseTime();
+		//	m_videoQueue.Push(sampleTag);
+		//	m_signal.SetEvent();
+		//	//计数器1ms精度不够
+		//	m_timeQPC.BeginTime();
+		//	timer.Wait(delay < 0 ? 0 : delay, 1000);
+		//	m_timeQPC.EndTime();
+		//	compensate = m_timeQPC.GetMillisconds() - delay;
+		//	compensate = compensate < 0 ? 0 : compensate;
+		//}
 	}
 
 	DWORD MShadowController::OnVideo(SampleTag& sampleTag)

@@ -30,6 +30,8 @@ namespace MShow
 		MAudioEncodeTask&	GetAudioEncoder();
 		MVideoEncodeTask&	GetVideoEncoder();
 		MRTMPPusher&		GetPusher();
+		void				SetCurrentCTRL(MVideoController* pCTRL);
+		MVideoController*	GetCurrentCTRL();
 	private:
 		void OnPusher(void*, INT);
 		void OnToggle(void*, INT);
@@ -40,6 +42,7 @@ namespace MShow
 		MRTMPPusher			m_pusher;
 		MAudioEncodeTask	m_audio;
 		MVideoEncodeTask	m_video;
+		MVideoController*	m_pCTRL;
 		TinyScopedPtr<MVideoController>		m_videos[6];
 		TinyScopedPtr<MImageController>		m_images[6];
 		TinyScopedPtr<MAudioController>		m_audios[6];
