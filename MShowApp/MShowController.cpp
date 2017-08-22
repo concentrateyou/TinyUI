@@ -72,6 +72,14 @@ namespace MShow
 	{
 		m_window.m_pusher.EVENT_CLICK -= m_onPusherClick;
 		m_window.m_toggle.EVENT_CLICK -= m_onToggleClick;
+		if (m_shadow != NULL)
+		{
+			if (m_shadow->IsActive())
+			{
+				m_shadow->Close(INFINITE);
+			}
+			m_preview.Reset(NULL);
+		}
 		if (m_preview != NULL)
 		{
 			if (m_preview->IsActive())

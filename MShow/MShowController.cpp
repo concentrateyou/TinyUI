@@ -22,7 +22,7 @@ namespace MShow
 
 	BOOL MShowController::Initialize()
 	{
-		m_window.m_txtPreviewURL.SetText("http://10.110.48.109:46522/6696864323");
+		m_window.m_txtPreviewURL.SetText("http://10.110.48.109:52193/6696864323");
 		m_window.m_address.SetAddress(MAKEIPADDRESS(10, 110, 48, 109));
 		m_onRecordClick.Reset(new Delegate<void(void*, INT)>(this, &MShowController::OnRecord));
 		m_window.m_btnRecord.EVENT_CLICK += m_onRecordClick;
