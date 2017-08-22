@@ -78,7 +78,7 @@ namespace MShow
 			{
 				m_shadow->Close(INFINITE);
 			}
-			m_preview.Reset(NULL);
+			m_shadow.Reset(NULL);
 		}
 		if (m_preview != NULL)
 		{

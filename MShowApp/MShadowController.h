@@ -41,12 +41,12 @@ namespace MShow
 		BOOL					m_bBreak;
 		INT						m_videoFPS;
 		TinySize				m_pulgSize;
-		DX11					m_dx11;
-		DX11Texture2D			m_image2D;
-		DX11Texture2D			m_copy2D;
+		DX11Graphics2D			m_graphics;
+		DX11Image2D				m_image2D;
 		MShadowView&			m_view;
 		MPacketQueue			m_queue;
 		MPacketAllocQueue		m_videoQueue;
+		DX11RenderView			m_renderView;
 		TinyPerformanceTimer	m_timeQPC;
 		MClock&					m_clock;
 		TinyEvent				m_signal;

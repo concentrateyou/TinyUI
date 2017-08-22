@@ -435,8 +435,6 @@ namespace MShow
 
 	void MPreviewController::OnMessagePump()
 	{
-		TinyPerformanceTimer timeQPC;
-		timeQPC.BeginTime();
 		for (;;)
 		{
 			if (m_bBreak)
@@ -465,9 +463,6 @@ namespace MShow
 			this->Draw();
 			if ((hRes - WAIT_OBJECT_0) == m_index)
 			{
-				timeQPC.EndTime();
-				TRACE("Cost:%lld, Index:%d\n", timeQPC.GetMillisconds(), m_index);
-				timeQPC.BeginTime();
 				m_signal.SetEvent();
 			}
 		}
