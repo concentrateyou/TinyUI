@@ -162,6 +162,13 @@ namespace DXFramework
 			m_swap->Present(0, 0);
 		}
 	}
+	void DX11::Flush()
+	{
+		if (m_immediateContext != NULL)
+		{
+			m_immediateContext->Flush();
+		}
+	}
 	BOOL DX11::IsValid() const
 	{
 		if (m_immediateContext != NULL &&

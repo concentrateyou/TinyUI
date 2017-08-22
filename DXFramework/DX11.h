@@ -19,6 +19,7 @@ namespace DXFramework
 		void SetRenderTexture2D(DX11RenderView* render2D);
 		void SetMatrixs(const TinySize& size);
 		void Present();
+		void Flush();
 		HWND					GetHWND() const;
 		BOOL					IsValid() const;
 		ID3D11Device*			GetD3D() const;

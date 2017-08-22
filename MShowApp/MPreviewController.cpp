@@ -433,6 +433,7 @@ namespace MShow
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
 		m_graphics.Present();
+		m_graphics.Flush();
 		m_timeQPC.EndTime();
 		return static_cast<DWORD>(m_timeQPC.GetMillisconds());
 	}

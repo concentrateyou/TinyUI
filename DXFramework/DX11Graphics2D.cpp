@@ -33,6 +33,10 @@ namespace DXFramework
 	{
 		m_dx11.Present();
 	}
+	void DX11Graphics2D::Flush()
+	{
+		m_dx11.Flush();
+	}
 	BOOL DX11Graphics2D::Resize(const TinySize& size)
 	{
 		return m_dx11.ResizeView(size.cx, size.cy);

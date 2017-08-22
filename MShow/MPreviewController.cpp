@@ -11,7 +11,9 @@ namespace MShow
 #define IDM_REMOVE		104
 
 	MPreviewController::MPreviewController(MPreviewView& view)
-		:m_view(view)
+		:m_view(view),
+		m_hBitmap(NULL),
+		m_pvBits(NULL)
 	{
 
 	}
@@ -26,29 +28,36 @@ namespace MShow
 		TinyRectangle s;
 		GetClientRect(m_view.Handle(), &s);
 		m_viewSize = s.Size();
-		if (!m_dx2d.Initialize(m_view.Handle(), TO_CX(s), TO_CY(s)))
+		/*if (!m_graphics.Initialize(m_view.Handle(), m_viewSize))
 		{
-			LOG(ERROR) << "DX2D Initialize Fail" << endl;
+			LOG(ERROR) << "DX3D Initialize Fail" << endl;
 			return FALSE;
 		}
-		LOG(INFO) << "DX2D Initialize OK" << endl;
+		LOG(INFO) << "DX3D Initialize OK" << endl;*/
 		return TRUE;
 	}
 
 	BOOL MPreviewController::Open(LPCSTR pzURL)
 	{
-		D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
+		BITMAPINFO bmi = { 0 };
 		m_player.Reset(new MFLVPlayer(BindCallback(&MPreviewController::OnAudio, this), BindCallback(&MPreviewController::OnVideo, this)));
 		if (!m_player)
 			goto _ERROR;
 		if (!m_player->Open(m_view.Handle(), pzURL))
 			goto _ERROR;
 		m_videoSize = m_player->GetSize();
-		D2D1_SIZE_U bitmapPixelSize = D2D1::SizeU((UINT)(m_videoSize.cx), (UINT)(m_videoSize.cy));
-		HRESULT hRes = m_dx2d.GetContext()->CreateBitmap(bitmapPixelSize, NULL, 0, properties, &m_bitmap1);
-		if (FAILED(hRes))
+		bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+		bmi.bmiHeader.biWidth = m_videoSize.cx;
+		bmi.bmiHeader.biHeight = -m_videoSize.cy;
+		bmi.bmiHeader.biPlanes = 1;
+		bmi.bmiHeader.biBitCount = 32;
+		bmi.bmiHeader.biCompression = BI_RGB;
+		bmi.bmiHeader.biSizeImage = m_videoSize.cx * m_videoSize.cy * 4;
+		m_hBitmap = ::CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&m_pvBits), NULL, 0);
+		/*if (!m_video2D.Create(m_graphics.GetDX11(), m_videoSize, FALSE))
 			goto _ERROR;
-		return TRUE;
+		m_video2D.SetScale(m_viewSize);*/
+		return m_hBitmap != NULL;
 	_ERROR:
 		if (m_player != NULL)
 		{
@@ -63,7 +72,7 @@ namespace MShow
 		{
 			m_player->Close();
 		}
-		m_bitmap1.Release();
+		SAFE_DELETE_OBJECT(m_hBitmap);
 		return TRUE;
 	}
 
@@ -83,14 +92,22 @@ namespace MShow
 
 	void MPreviewController::OnVideo(BYTE* bits, LONG size)
 	{
-		if (m_bitmap1 != NULL)
+		if (bits != NULL && size > 0 && m_hBitmap != NULL)
 		{
 			ASSERT(size == m_videoSize.cx * m_videoSize.cy * 4);
-			m_bitmap1->CopyFromMemory(NULL, bits, m_videoSize.cx * 4);
-			m_dx2d.BeginDraw();
-			D2D1_RECT_F dest = { 0.F,0.F,m_viewSize.cx,m_viewSize.cy };
-			m_dx2d.GetContext()->DrawBitmap(m_bitmap1, &dest, 1.0F, D2D1_INTERPOLATION_MODE_LINEAR, NULL, NULL);
-			m_dx2d.EndDraw();
+			memcpy(m_pvBits, bits, size);
+			RECT rectangle = { 0 };
+			::GetWindowRect(m_view.Handle(), &rectangle);
+			TinyUI::TinyWindowDC wdc(m_view.Handle());
+			TinyUI::TinyMemDC mdc(wdc, m_hBitmap);
+			::SetStretchBltMode(wdc, HALFTONE);
+			::StretchBlt(wdc, 0, 0, TO_CX(rectangle), TO_CY(rectangle), mdc, 0, 0, m_videoSize.cx, m_videoSize.cy, SRCCOPY);
+			/*m_video2D.Copy(m_graphics.GetDX11(), NULL, bits, size);
+			m_graphics.GetDX11().SetRenderTexture2D(NULL);
+			m_graphics.GetDX11().GetRender2D()->BeginDraw();
+			m_graphics.DrawImage(&m_video2D);
+			m_graphics.GetDX11().GetRender2D()->EndDraw();
+			m_graphics.Present();*/
 		}
 	}
 }

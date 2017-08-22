@@ -157,6 +157,7 @@ namespace MShow
 				m_graphics.DrawImage(&m_video2D, 1.0F, 1.0F);
 				m_graphics.GetDX11().GetRender2D()->EndDraw();
 				m_graphics.Present();
+				m_graphics.Flush();
 				m_signal.SetEvent();
 			}
 		}
