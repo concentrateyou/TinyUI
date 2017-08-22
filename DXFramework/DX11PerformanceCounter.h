@@ -11,8 +11,13 @@ namespace DXFramework
 		DX11PerformanceCounter(DX11& dx11);
 		~DX11PerformanceCounter();
 		BOOL	Initialize();
+		BOOL	BeginTime();
+		BOOL	EndTime();
+		BOOL	GetTime(FLOAT& val);
 	private:
 		DX11&					m_dx11;
+		INT64					m_beginTime;
+		INT64					m_endTime;
 		TinyComPtr<ID3D11Query> m_frequencyQuery;
 		TinyComPtr<ID3D11Query> m_beginTimeQuery;
 		TinyComPtr<ID3D11Query> m_endTimeQuery;
