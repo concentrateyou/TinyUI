@@ -12,12 +12,11 @@ namespace MShow
 		m_bError(FALSE)
 	{
 		m_event.CreateEvent();
-		m_stream.open(L"D:\\mshow.log");
 	}
 
 	MShowController::~MShowController()
 	{
-		m_stream.close();
+
 	}
 
 	BOOL MShowController::Initialize()
@@ -33,20 +32,20 @@ namespace MShow
 			return FALSE;
 		if (!m_preview->Initialize())
 		{
+			LOG(ERROR) << "Preview Initialize Fail" << endl;
 			return FALSE;
 		}
 		if (!m_audioCapture.Initialize())
 		{
+			LOG(ERROR) << "AudioCapture Initialize Fail" << endl;
 			return FALSE;
 		}
 		if (!m_audioAnalyser.Initialize())
 		{
+			LOG(ERROR) << "AudioAnalyser Initialize Fail" << endl;
 			return FALSE;
 		}
-		if (m_stream.is_open())
-		{
-			m_stream << "MShowController Initialize OK" << endl;
-		}
+		LOG(INFO) << "MShowController Initialize OK" << endl;
 		return TRUE;
 	}
 
@@ -70,7 +69,14 @@ namespace MShow
 		if (m_preview != NULL && !szURL.IsEmpty())
 		{
 			m_preview->Close();
-			m_preview->Open(szURL.CSTR());
+			if (m_preview->Open(szURL.CSTR()))
+			{
+				LOG(INFO) << "Preview Open OK" << endl;
+			}
+			else
+			{
+				LOG(ERROR) << "Preview Open Fail" << endl;
+			}
 		}
 	}
 
@@ -92,11 +98,21 @@ namespace MShow
 			{
 				if (m_audioSDK->init(44100, 2, 16) == 0)
 				{
+					LOG(INFO) << "AudioSDK init OK" << endl;
 					if (m_audioCapture.Open(BindCallback(&MShowController::OnAudio, this)))
 					{
+						LOG(INFO) << "AudioCapture Open OK" << endl;
 						m_audioCapture.Stop();
 						m_audioCapture.Start();
 					}
+					else
+					{
+						LOG(ERROR) << "AudioCapture Open Fail" << endl;
+					}
+				}
+				else
+				{
+					LOG(ERROR) << "AudioSDK init Fail" << endl;
 				}
 			}
 		}
@@ -130,18 +146,7 @@ namespace MShow
 			LONGLONG currentPTS = MShow::MShowApp::GetInstance().GetCurrentAudioTS() + m_preview->GetBasePTS();
 			if (m_previousPTS != currentPTS)
 			{
-				if ((currentPTS - m_previousPTS) >= 50)
-				{
-					if (m_stream.is_open())
-					{
-						m_stream << "[ERROR] currentPTS:: " << currentPTS << " previousPTS:" << m_previousPTS << endl;
-					}
-				}
 				m_previousPTS = currentPTS;
-			}
-			if (m_stream.is_open())
-			{
-				m_stream << "[INFO] timestamp currentPTS:: " << currentPTS << endl;
 			}
 			if (m_audioQueue.GetAllocSize() == 0)
 			{

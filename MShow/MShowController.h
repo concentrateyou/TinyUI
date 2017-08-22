@@ -46,7 +46,6 @@ namespace MShow
 		MAudioQueue				m_audioQueue;
 		TinyTaskBase			m_task;
 		TinyEvent				m_event;
-		ofstream 				m_stream;
 		TinyScopedPtr<MPreviewController>			m_preview;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onPreviewClick;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onRecordClick;

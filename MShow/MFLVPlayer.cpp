@@ -35,9 +35,15 @@ namespace MShow
 	{
 		m_szURL = pzURL;
 		if (!m_task.Initialize(m_szURL.STR()))
+		{
+			LOG(ERROR) << "[MFLVPlayer] FLVTask Initialize Fail" << endl;
 			return FALSE;
+		}
 		if (!m_audioRenderTask.Initialize(hWND))
+		{
+			LOG(ERROR) << "[MFLVPlayer] AudioRenderTask Initialize Fail" << endl;
 			return FALSE;
+		}
 		if (!m_task.Submit())
 			return FALSE;
 		if (!m_videoTask.Submit())
@@ -52,6 +58,7 @@ namespace MShow
 		m_size.cx = static_cast<LONG>(s.width);
 		m_size.cy = static_cast<LONG>(s.height);
 		m_dwRate = static_cast<LONG>(s.videodatarate);
+		LOG(INFO) << "[MFLVPlayer] Width:" << m_size.cx << " Height: " << m_size.cy << " Rate: " << m_dwRate << endl;
 		return TRUE;
 	}
 

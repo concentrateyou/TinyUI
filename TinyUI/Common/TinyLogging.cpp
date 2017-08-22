@@ -41,20 +41,11 @@ namespace TinyUI
 	}
 	BOOL InitializeLogFile(LPCSTR pzFile)
 	{
-		if (g_logFile != INVALID_HANDLE_VALUE || g_logFile != NULL)
+		if (g_logFile != NULL && g_logFile != INVALID_HANDLE_VALUE)
 			return TRUE;
-		g_log = (pzFile == NULL ? GetDefaultLogFile() : pzFile);
+		g_log = ((pzFile == NULL || strlen(pzFile) == 0) ? GetDefaultLogFile() : pzFile);
 		if (!g_logFile.Open(g_log.c_str(), FILE_APPEND_DATA, FILE_ATTRIBUTE_NORMAL))
 		{
-			CHAR directory[MAX_PATH];
-			directory[0] = 0;
-			DWORD s = ::GetCurrentDirectory(arraysize(directory), directory);
-			if (s == 0 || s > arraysize(directory))
-				return FALSE;
-			g_log = directory;
-			if (g_log.back() != TEXT('\\'))
-				g_log += TEXT("\\");
-			g_log += TEXT("debug.log");
 			if (!g_logFile.Open(g_log.c_str(), FILE_APPEND_DATA, FILE_SHARE_READ | FILE_SHARE_WRITE, FILE_ATTRIBUTE_NORMAL))
 				return FALSE;
 		}
