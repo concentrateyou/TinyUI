@@ -23,6 +23,8 @@ namespace MShow
 		BOOL		Initialize();
 		BOOL		SetPulgSize(const TinySize& size);
 		TinySize	GetPulgSize() const;
+		void		SetVideoController(MVideoController* pCTRL);
+		TinyEvent&	GetSignal();
 	public:
 		BOOL		Add(DX11Element2D* ps);
 		BOOL		Remove(DX11Element2D* ps);
@@ -53,6 +55,7 @@ namespace MShow
 		BOOL							m_bTracking;
 		BOOL							m_bBreak;
 		BOOL							m_bPopup;
+		INT								m_index;
 		TinySize						m_pulgSize;
 		TinyMenu						m_popup;
 		TinyLock						m_lock;

@@ -39,36 +39,60 @@ namespace MShow
 			return FALSE;
 		return TRUE;
 	}
+
 	TinySize MShadowController::GetPulgSize() const
 	{
 		return m_pulgSize;
 	}
+
 	void MShadowController::SetVideoFPS(INT	videoFPS)
 	{
 		m_videoFPS = videoFPS;
 	}
+
 	INT	MShadowController::GetVideoFPS() const
 	{
 		return m_videoFPS;
 	}
+
 	MShadowView& MShadowController::GetView()
 	{
 		return m_view;
 	}
+
 	MClock&	MShadowController::GetClock()
 	{
 		return m_clock;
 	}
+
 	TinyEvent&	MShadowController::GetSignal()
 	{
 		return m_signal;
 	}
+
 	MPacketAllocQueue&	MShadowController::GetVideoQueue()
 	{
 		return m_videoQueue;
 	}
+
 	void MShadowController::OnMessagePump()
 	{
+		SampleTag sampleTag;
+		for (;;)
+		{
+			if (m_bBreak)
+				break;
+			while (m_clock.GetBaseTime() == -1);
+			m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
+			TinyEvent& signal = MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetSignal();
+			if (signal.Lock(1000))
+			{
+				OnVideo(sampleTag);
+				sampleTag.timestamp = m_clock.GetVideoPTS() - m_clock.GetBaseTime();
+				m_videoQueue.Push(sampleTag);
+				m_signal.SetEvent();
+			}
+		}
 		//DWORD dwMS = static_cast<DWORD>(1000 / m_videoFPS);
 		//TinyTimer timer;
 		//SampleTag sampleTag;

@@ -57,14 +57,12 @@ namespace MShow
 
 	BOOL MPreviewController::Close()
 	{
-		if (!m_player)
-			return FALSE;
-		if (m_player->Close())
+		if (m_player != NULL)
 		{
-			m_bitmap1.Release();
-			return TRUE;
+			m_player->Close();
 		}
-		return FALSE;
+		m_bitmap1.Release();
+		return TRUE;
 	}
 
 	MPreviewView& MPreviewController::GetView()

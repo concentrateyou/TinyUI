@@ -19,7 +19,8 @@ namespace MShow
 		m_bBreak(FALSE),
 		m_bTracking(FALSE),
 		m_bPopup(FALSE),
-		m_renderView(m_graphics.GetDX11())
+		m_renderView(m_graphics.GetDX11()),
+		m_index(-1)
 	{
 		m_onLButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonDown));
 		m_onLButtonUp.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonUp));
@@ -309,6 +310,29 @@ namespace MShow
 	{
 		return m_pulgSize;
 	}
+
+	void MPreviewController::SetVideoController(MVideoController* pCTRL)
+	{
+		if (pCTRL != NULL)
+		{
+			for (INT i = 0;i < m_waits.size();i++)
+			{
+				if (m_waits[i] == pCTRL->m_signal)
+				{
+					m_index = i;
+					break;
+				}
+			}
+		}
+		else
+		{
+			m_index = -1;
+		}
+	}
+	TinyEvent&	MPreviewController::GetSignal()
+	{
+		return m_signal;
+	}
 	DWORD MPreviewController::Draw()
 	{
 		m_timeQPC.BeginTime();
@@ -437,6 +461,10 @@ namespace MShow
 			}
 			TinyAutoLock lock(m_lock);
 			this->Draw();
+			if ((hRes - WAIT_OBJECT_0) == m_index)
+			{
+				m_signal.SetEvent();
+			}
 		}
 	}
 }

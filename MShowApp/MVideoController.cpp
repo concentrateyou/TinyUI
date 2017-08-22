@@ -103,14 +103,12 @@ namespace MShow
 
 	BOOL MVideoController::Close()
 	{
-		if (!m_player)
-			return FALSE;
-		if (m_player->Close())
+		if (m_player != NULL)
 		{
-			m_video2D.Destory();
-			return TRUE;
+			m_player->Close();
 		}
-		return FALSE;
+		m_video2D.Destory();
+		return TRUE;
 	}
 
 	TinyString	MVideoController::GetURL() const
