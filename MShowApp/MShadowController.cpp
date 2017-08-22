@@ -87,6 +87,7 @@ namespace MShow
 			TinyEvent& signal = MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetSignal();
 			if (signal.Lock(1000))
 			{
+				ZeroMemory(&sampleTag, sizeof(sampleTag));
 				OnVideo(sampleTag);
 				sampleTag.timestamp = m_clock.GetVideoPTS() - m_clock.GetBaseTime();
 				m_videoQueue.Push(sampleTag);

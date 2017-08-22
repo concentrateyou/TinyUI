@@ -466,7 +466,7 @@ namespace MShow
 			if ((hRes - WAIT_OBJECT_0) == m_index)
 			{
 				timeQPC.EndTime();
-				TRACE("Cost:%lld, index:%d\n", timeQPC.GetMillisconds(), m_index);
+				TRACE("Cost:%lld, Index:%d\n", timeQPC.GetMillisconds(), m_index);
 				timeQPC.BeginTime();
 				m_signal.SetEvent();
 			}

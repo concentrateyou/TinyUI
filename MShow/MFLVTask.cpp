@@ -93,7 +93,7 @@ namespace MShow
 			INT size = m_audioQueue.GetSize() + m_videoQueue.GetSize();
 			if (size > MAX_QUEUE_SIZE)
 			{
-				Sleep(50);
+				Sleep(15);
 				continue;
 			}
 			ZeroMemory(&block, sizeof(block));
