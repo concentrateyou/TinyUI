@@ -146,6 +146,14 @@ namespace MShow
 		TinyAutoLock lock(m_lock);
 		return m_array.Lookup(ps) >= 0;
 	}
+	void MPreviewController::Lock()
+	{
+		m_lock.Lock();
+	}
+	void MPreviewController::Unlock()
+	{
+		m_lock.Unlock();
+	}
 	DX11Element2D* MPreviewController::HitTest(const TinyPoint& pos)
 	{
 		for (INT i = m_array.GetSize() - 1;i >= 0;i--)
@@ -283,10 +291,6 @@ namespace MShow
 	DX11Graphics2D&	MPreviewController::Graphics()
 	{
 		return m_graphics;
-	}
-	TinyLock& MPreviewController::GetLock()
-	{
-		return m_lock;
 	}
 	BOOL MPreviewController::Submit()
 	{

@@ -92,7 +92,6 @@ namespace DXFramework
 		hRes = resource->GetSharedHandle(&m_handle);
 		if (hRes != S_OK)
 			return FALSE;
-
 		if (bMap)
 		{
 			ZeroMemory(&desc, sizeof(desc));
@@ -109,7 +108,6 @@ namespace DXFramework
 			if (hRes != S_OK)
 				return FALSE;
 		}
-
 		D3D11_TEXTURE2D_DESC depthDesc;
 		ZeroMemory(&depthDesc, sizeof(depthDesc));
 		depthDesc.Width = m_size.cx;

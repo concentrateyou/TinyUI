@@ -21,7 +21,6 @@ namespace MShow
 	{
 		m_bBreak = FALSE;
 		m_task.EVENT_ASC += m_onASC;
-		TRACE("MAudioTask::Submit\n");
 		return TinyTaskBase::Submit(BindCallback(&MAudioTask::OnMessagePump, this));
 	}
 

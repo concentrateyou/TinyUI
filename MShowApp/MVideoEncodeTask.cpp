@@ -23,7 +23,6 @@ namespace MShow
 		m_videoFPS = videoFPS;
 		if (!m_encoder.Open(m_pulgSize, m_pulgSize, m_videoRate, m_videoFPS))
 			return FALSE;
-		TRACE("MVideoEncodeTask::Submit\n");
 		return TinyTaskBase::Submit(BindCallback(&MVideoEncodeTask::OnMessagePump, this));
 	}
 

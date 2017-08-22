@@ -8,8 +8,7 @@ namespace MShow
 		:m_view(view),
 		m_bBreak(FALSE),
 		m_videoFPS(25),
-		m_clock(clock),
-		m_renderView(m_graphics.GetDX11())
+		m_clock(clock)
 	{
 		m_signal.CreateEvent();
 	}
@@ -22,7 +21,7 @@ namespace MShow
 	{
 		TinyRectangle s;
 		m_view.GetClientRect(&s);
-		if (!m_graphics.Initialize(m_view.Handle(), s.Size()))
+		if (!m_dx11.Initialize(m_view.Handle(), s.Size().cx, s.Size().cy))
 			return FALSE;
 		return TRUE;
 	}
@@ -33,9 +32,10 @@ namespace MShow
 			return FALSE;
 		m_pulgSize = size;
 		m_image2D.Destory();
-		if (!m_image2D.Load(m_graphics.GetDX11(), pCTRL->GetRenderView().GetHandle()))
+		if (!m_image2D.Load(m_dx11, pCTRL->GetRenderView().GetHandle()))
 			return FALSE;
-		if (!m_renderView.Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), TRUE))
+		m_copy2D.Destory();
+		if (!m_copy2D.Create(m_dx11, m_pulgSize.cx, m_pulgSize.cy, NULL, TRUE))
 			return FALSE;
 		return TRUE;
 	}
@@ -86,31 +86,47 @@ namespace MShow
 			TinyEvent& signal = MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetSignal();
 			if (signal.Lock(1000))
 			{
-				ZeroMemory(&sampleTag, sizeof(sampleTag));
-				DWORD dwTime = OnVideo(sampleTag);
-				TRACE("dwTime:%d\n", dwTime);
+				OnVideo(sampleTag);
 				m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
 				sampleTag.timestamp = m_clock.GetVideoPTS() - m_clock.GetBaseTime();
 				m_videoQueue.Push(sampleTag);
 				m_signal.SetEvent();
 			}
 		}
+		//DWORD dwMS = static_cast<DWORD>(1000 / m_videoFPS);
+		//TinyTimer timer;
+		//SampleTag sampleTag;
+		//LONG compensate = 0;
+		//for (;;)
+		//{
+		//	if (m_bBreak)
+		//		break;
+		//	while (m_clock.GetBaseTime() == -1);
+		//	ZeroMemory(&sampleTag, sizeof(sampleTag));
+		//	m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
+		//	INT delay = dwMS - OnVideo(sampleTag) - compensate;
+		//	sampleTag.timestamp = m_clock.GetVideoPTS() - m_clock.GetBaseTime();
+		//	m_videoQueue.Push(sampleTag);
+		//	m_signal.SetEvent();
+		//	//计数器1ms精度不够
+		//	m_timeQPC.BeginTime();
+		//	timer.Wait(delay < 0 ? 0 : delay, 1000);
+		//	m_timeQPC.EndTime();
+		//	compensate = m_timeQPC.GetMillisconds() - delay;
+		//	compensate = compensate < 0 ? 0 : compensate;
+		//}
 	}
 
 	DWORD MShadowController::OnVideo(SampleTag& sampleTag)
 	{
 		m_timeQPC.BeginTime();
-		m_graphics.GetDX11().SetRenderTexture2D(&m_renderView);
-		m_graphics.GetDX11().GetRender2D()->BeginDraw();
-		m_graphics.GetDX11().AllowBlend(FALSE, NULL);
-		m_graphics.GetDX11().AllowDepth(TRUE);
-		m_graphics.DrawImage(&m_image2D, (FLOAT)((FLOAT)m_pulgSize.cx / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cx)), (FLOAT)((FLOAT)m_pulgSize.cy / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cy)));
-		m_graphics.GetDX11().GetRender2D()->EndDraw();
-		DWORD dwSize = 0;
-		BYTE* bits = m_renderView.Map(dwSize);
-		if (bits != NULL && dwSize > 0)
+		ZeroMemory(&sampleTag, sizeof(sampleTag));
+		m_copy2D.Copy(m_dx11, m_image2D);
+		BYTE* bits = NULL;
+		UINT pitch = 0;
+		if (m_copy2D.Map(m_dx11, bits, pitch, TRUE))
 		{
-			sampleTag.size = dwSize;
+			sampleTag.size = pitch * m_pulgSize.cy;
 			if (m_videoQueue.GetAllocSize() == 0)
 			{
 				INT count = MAX_VIDEO_QUEUE_SIZE / sampleTag.size + 1;
@@ -118,8 +134,8 @@ namespace MShow
 			}
 			sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
 			memcpy_s(sampleTag.bits + 4, sampleTag.size, bits, sampleTag.size);
+			m_copy2D.Unmap(m_dx11);
 		}
-		m_renderView.Unmap();
 		m_timeQPC.EndTime();
 		return static_cast<DWORD>(m_timeQPC.GetMillisconds());
 	}
@@ -134,6 +150,7 @@ namespace MShow
 		if (TinyTaskBase::Close(dwMS))
 		{
 			m_image2D.Destory();
+			m_copy2D.Destory();
 			m_videoQueue.RemoveAll();
 			return TRUE;
 		}

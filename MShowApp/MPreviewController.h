@@ -31,6 +31,8 @@ namespace MShow
 		BOOL		Move(DX11Element2D* ps, BOOL bUp);
 		BOOL		Bring(DX11Element2D* ps, BOOL bTop);
 		BOOL		Find(DX11Element2D* ps);
+		void		Lock();
+		void		Unlock();
 	public:
 		BOOL		Submit();
 		BOOL		Close(DWORD dwMS) OVERRIDE;
@@ -38,7 +40,6 @@ namespace MShow
 		MPreviewView&	GetView();
 		DX11RenderView&	GetRenderView();
 		DX11Graphics2D&	Graphics();
-		TinyLock&		GetLock();
 	private:
 		void	OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

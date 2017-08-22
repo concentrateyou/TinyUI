@@ -19,7 +19,7 @@ namespace MShow
 		friend class MRTMPEncoder;
 		DISALLOW_COPY_AND_ASSIGN(MShadowController)
 	public:
-		MShadowController(MShadowView& view,MClock& clock);
+		MShadowController(MShadowView& view, MClock& clock);
 		virtual ~MShadowController();
 		BOOL		Initialize();
 		BOOL		SetPulgSize(const TinySize& size);
@@ -41,12 +41,12 @@ namespace MShow
 		BOOL					m_bBreak;
 		INT						m_videoFPS;
 		TinySize				m_pulgSize;
-		DX11Graphics2D			m_graphics;
-		DX11Image2D				m_image2D;
+		DX11					m_dx11;
+		DX11Texture2D			m_image2D;
+		DX11Texture2D			m_copy2D;
 		MShadowView&			m_view;
 		MPacketQueue			m_queue;
 		MPacketAllocQueue		m_videoQueue;
-		DX11RenderView			m_renderView;
 		TinyPerformanceTimer	m_timeQPC;
 		MClock&					m_clock;
 		TinyEvent				m_signal;
