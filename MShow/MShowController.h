@@ -1,6 +1,7 @@
 #pragma once
 #include "MShowWindow.h"
 #include "MAudioCapture.h"
+#include "MAudioDSP.h"
 #include "AudioAnalyser.h"
 #include "audiosdk.h"
 #include "MAudioQueue.h"
@@ -32,6 +33,7 @@ namespace MShow
 		void OnPreview(void*, INT);
 		void OnRecord(void*, INT);
 		void OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID);
+		void OnAudioDSP(BYTE* bits, LONG size);
 		void OnMessagePump();
 	private:
 		BOOL					m_bError;
@@ -39,7 +41,8 @@ namespace MShow
 		LONGLONG				m_previousPTS;
 		TinyLock				m_lock;
 		MShowWindow&			m_window;
-		MAudioCapture			m_audioCapture;
+		//MAudioCapture			m_audioCapture;
+		MAudioDSP				m_audioDSP;
 		AudioAnalyser			m_audioAnalyser;
 		TinyPerformanceTimer	m_timeQPC;
 		TinyScopedPtr<AudioSdk>	m_audioSDK;

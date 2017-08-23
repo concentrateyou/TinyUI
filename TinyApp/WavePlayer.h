@@ -2,7 +2,6 @@
 #include "IO/TinyTaskBase.h"
 #include "Media/TinyWave.h"
 #include "Media/TinySoundPlayer.h"
-#include "AudioAnalyser1.h"
 #include "AudioAnalyser.h"
 using namespace TinyUI;
 using namespace TinyUI::Media;

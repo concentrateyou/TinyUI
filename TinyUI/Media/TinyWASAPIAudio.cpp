@@ -90,6 +90,10 @@ namespace TinyUI
 		{
 
 		}
+		BOOL TinyWASAPIAudio::Name::IsEmpty()
+		{
+			return m_name.empty() || m_id.empty();
+		}
 		const string& TinyWASAPIAudio::Name::name() const
 		{
 			return m_name;

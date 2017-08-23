@@ -28,12 +28,6 @@ namespace MShow
 		TinyRectangle s;
 		GetClientRect(m_view.Handle(), &s);
 		m_viewSize = s.Size();
-		/*if (!m_graphics.Initialize(m_view.Handle(), m_viewSize))
-		{
-			LOG(ERROR) << "DX3D Initialize Fail" << endl;
-			return FALSE;
-		}
-		LOG(INFO) << "DX3D Initialize OK" << endl;*/
 		return TRUE;
 	}
 
@@ -54,9 +48,6 @@ namespace MShow
 		bmi.bmiHeader.biCompression = BI_RGB;
 		bmi.bmiHeader.biSizeImage = m_videoSize.cx * m_videoSize.cy * 4;
 		m_hBitmap = ::CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&m_pvBits), NULL, 0);
-		/*if (!m_video2D.Create(m_graphics.GetDX11(), m_videoSize, FALSE))
-			goto _ERROR;
-		m_video2D.SetScale(m_viewSize);*/
 		return m_hBitmap != NULL;
 	_ERROR:
 		if (m_player != NULL)
@@ -102,12 +93,6 @@ namespace MShow
 			TinyUI::TinyMemDC mdc(wdc, m_hBitmap);
 			::SetStretchBltMode(wdc, HALFTONE);
 			::StretchBlt(wdc, 0, 0, TO_CX(rectangle), TO_CY(rectangle), mdc, 0, 0, m_videoSize.cx, m_videoSize.cy, SRCCOPY);
-			/*m_video2D.Copy(m_graphics.GetDX11(), NULL, bits, size);
-			m_graphics.GetDX11().SetRenderTexture2D(NULL);
-			m_graphics.GetDX11().GetRender2D()->BeginDraw();
-			m_graphics.DrawImage(&m_video2D);
-			m_graphics.GetDX11().GetRender2D()->EndDraw();
-			m_graphics.Present();*/
 		}
 	}
 }

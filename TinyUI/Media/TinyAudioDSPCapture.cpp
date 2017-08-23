@@ -159,7 +159,7 @@ namespace TinyUI
 			BOOL bCapturing = TRUE;
 			while (bCapturing)
 			{
-				switch (WaitForSingleObject(m_audioStop, 10))
+				switch (WaitForSingleObject(m_audioStop, MILLISECONDS_TO_VISUALIZE / 2))
 				{
 				case WAIT_FAILED:
 				case WAIT_ABANDONED:

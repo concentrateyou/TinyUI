@@ -347,11 +347,26 @@ namespace TinyUI
 	void LogMessage::Initialize()
 	{
 		m_stream << '[';
+		time_t t = time(NULL);
+		struct tm local_time = { 0 };
+		localtime_s(&local_time, &t);
+		struct tm* tm_time = &local_time;
+		m_stream << std::setfill('0')
+			<< std::setw(2) << 1 + tm_time->tm_mon
+			<< '-'
+			<< std::setw(2) << tm_time->tm_mday
+			<< '/'
+			<< std::setw(2) << tm_time->tm_hour
+			<< ':'
+			<< std::setw(2) << tm_time->tm_min
+			<< ':'
+			<< std::setw(2) << tm_time->tm_sec
+			<< ':';
 		if (m_severity >= 0)
 		{
 			m_stream << LogSeverityName(m_severity);
 		}
-		m_stream << ']';
+		m_stream << "] ";
 
 	}
 	void LogMessage::Initialize(LPCSTR pzFile, INT line)
@@ -371,10 +386,13 @@ namespace TinyUI
 		struct tm* tm_time = &local_time;
 		m_stream << std::setfill('0')
 			<< std::setw(2) << 1 + tm_time->tm_mon
+			<< '-'
 			<< std::setw(2) << tm_time->tm_mday
 			<< '/'
 			<< std::setw(2) << tm_time->tm_hour
+			<< ':'
 			<< std::setw(2) << tm_time->tm_min
+			<< ':'
 			<< std::setw(2) << tm_time->tm_sec
 			<< ':';
 		if (m_severity >= 0)

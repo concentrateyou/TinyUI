@@ -99,10 +99,10 @@ namespace TinyUI
 	BOOL SetLogFile(LPCSTR pzFile);
 	BOOL CloseLogFile();
 
-#define LOG_LINE(severity) \
+#define LOG(severity) \
 	LogMessage(LOG_##severity).stream()
 
-#define LOG(severity) \
+#define LOG_LINE(severity) \
 	LogMessage(__FILE__, __LINE__, LOG_##severity).stream()
 }
 

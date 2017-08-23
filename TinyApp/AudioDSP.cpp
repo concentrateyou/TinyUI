@@ -53,7 +53,7 @@ BOOL AudioDSP::Initialize()
 	waveFMTO.wBitsPerSample = 16;
 	waveFMTO.nBlockAlign = 4;
 	waveFMTO.nAvgBytesPerSec = 176400;
-	m_timer.SetCallback(23, BindCallback(&AudioDSP::OnTimer, this));
+	m_timer.SetCallback(24, BindCallback(&AudioDSP::OnTimer, this));
 	m_audioDSP.EnableNS(TRUE);
 	m_audioDSP.EnableAGC(FALSE);
 	m_audioDSP.Open(renderNames[0], captureName, &waveFMTI);
@@ -78,13 +78,15 @@ void AudioDSP::OnTimer()
 	TinyAutoLock lock(m_lock);
 	if (m_buffer.GetSize() >= 4096)
 	{
-		TRACE("OnTimer: Buffer - %d\n", m_buffer.GetSize());
 		memcpy(m_data, m_buffer.GetPointer(), 4096);
 		m_buffer.Remove(0, 4096);
+		m_timeQPC.EndTime();
 		m_waveFile.Write(m_data, 4096);
+		m_timeQPC.BeginTime();
+		TRACE("OnTimer:%lld\n", m_timeQPC.GetMillisconds());
 	}
 	else
 	{
-		TRACE("OnTimer: Buffer < 4096 \n");
+		TRACE("OnTimer: Buffer < 4096 - %d\n", m_buffer.GetSize());
 	}
 }

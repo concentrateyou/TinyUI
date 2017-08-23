@@ -33,6 +33,7 @@ namespace TinyUI
 				Name(const string& id, const string& name, const GUID& type);
 				Name(string&& id, string&& name, const GUID& type);
 				~Name();
+				BOOL IsEmpty();
 				const string& name() const;
 				const string& id() const;
 				const GUID& type() const;

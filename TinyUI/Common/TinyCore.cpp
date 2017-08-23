@@ -429,7 +429,9 @@ namespace TinyUI
 	BOOL TinyTimer::SetCallback(INT delay, Closure&& callback)
 	{
 		if (delay <= 0)
+		{
 			return TRUE;
+		}
 		m_callback = std::move(callback);
 		if (m_timerID != NULL)
 		{
@@ -457,7 +459,7 @@ namespace TinyUI
 		}
 		return FALSE;
 	}
-	TinyTimer::~TinyTimer()
+	void TinyTimer::Close()
 	{
 		m_event.Close();
 		if (m_timerID != NULL)
@@ -465,6 +467,10 @@ namespace TinyUI
 			timeKillEvent(m_timerID);
 			m_timerID = NULL;
 		}
+	}
+	TinyTimer::~TinyTimer()
+	{
+		Close();
 	}
 	void CALLBACK TinyTimer::TimerCallback(UINT uTimerID, UINT  uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2)
 	{
