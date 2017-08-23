@@ -87,8 +87,7 @@ namespace TinyUI
 			:m_dwMaxSize(dwMaxSize),
 			m_dwSize(0)
 		{
-			m_data.Reset(new BYTE[dwMaxSize]);
-			memset(m_data, 0, dwMaxSize);
+			m_data.Reset(new BYTE[m_dwMaxSize]);
 		}
 		MediaBuffer::~MediaBuffer()
 		{

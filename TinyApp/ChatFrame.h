@@ -8,7 +8,7 @@
 #include "Control/TinyLabel.h"
 #include "Control/TinyRichTextBox.h"
 #include "WavePlayer.h"
-
+#include "AudioDSP.h"
 #include <sapi.h>
 #include <sphelper.h>
 #pragma comment(lib,"sapi.lib")
@@ -39,7 +39,8 @@ public:
 	LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 private:
-	TinyLabel m_analyserBAR;
-	WavePlayer m_wavePlayer;
+	TinyLabel	m_analyserBAR;
+	AudioDSP	m_audioDSP;
+	//WavePlayer m_wavePlayer;
 };
 

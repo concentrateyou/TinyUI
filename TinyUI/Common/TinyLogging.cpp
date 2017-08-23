@@ -335,9 +335,24 @@ namespace TinyUI
 	{
 		Initialize(pzFile, line);
 	}
+	LogMessage::LogMessage(LogSeverity severity)
+		: m_severity(severity)
+	{
+		Initialize();
+	}
 	ostream& LogMessage::stream()
 	{
 		return m_stream;
+	}
+	void LogMessage::Initialize()
+	{
+		m_stream << '[';
+		if (m_severity >= 0)
+		{
+			m_stream << LogSeverityName(m_severity);
+		}
+		m_stream << ']';
+
 	}
 	void LogMessage::Initialize(LPCSTR pzFile, INT line)
 	{

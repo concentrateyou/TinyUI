@@ -131,7 +131,7 @@ namespace TinyUI
 		class MediaBuffer : public TinyReference<MediaBuffer>, public IMediaBuffer
 		{
 		public:
-			MediaBuffer(DWORD dwMaxSize);
+			explicit MediaBuffer(DWORD dwMaxSize);
 			~MediaBuffer();
 		public:
 			HRESULT STDMETHODCALLTYPE SetLength(DWORD cbLength) OVERRIDE;
@@ -141,9 +141,9 @@ namespace TinyUI
 			ULONG STDMETHODCALLTYPE AddRef(void) OVERRIDE;
 			ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
 		protected:
-			TinyScopedArray<BYTE> m_data;
-			DWORD	m_dwSize;
-			DWORD	m_dwMaxSize;
+			TinyScopedArray<BYTE>	m_data;
+			DWORD					m_dwSize;
+			DWORD					m_dwMaxSize;
 		};
 		BOOL WINAPI GetAudioOutputType(REFCLSID clsid, IMFMediaType* inputType, const WAVEFORMATEX* pMFT, IMFMediaType** mediaType);
 

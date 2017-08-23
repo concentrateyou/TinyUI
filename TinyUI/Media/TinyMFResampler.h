@@ -16,7 +16,7 @@ namespace TinyUI
 			TinyMFResampler();
 			virtual ~TinyMFResampler();
 		public:
-			BOOL Open(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO, Callback<void(BYTE*, LONG, LPVOID)>& callback);
+			BOOL Open(const WAVEFORMATEX* pFMTI, const WAVEFORMATEX* pFMTO, Callback<void(BYTE*, LONG, LPVOID)>&& callback);
 			BOOL Resample(const BYTE* bits, DWORD size);
 			BOOL Close();
 			virtual void OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter);

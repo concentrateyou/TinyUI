@@ -82,11 +82,13 @@ namespace TinyUI
 	{
 		DISALLOW_COPY_AND_ASSIGN(LogMessage)
 	public:
+		LogMessage(LogSeverity severity);
 		LogMessage(LPCSTR pzFile, INT line, LogSeverity severity);
 		virtual ~LogMessage();
 	public:
 		ostream& stream();
 	private:
+		void Initialize();
 		void Initialize(LPCSTR pzFile, INT line);
 	private:
 		LogSeverity			m_severity;
@@ -96,6 +98,10 @@ namespace TinyUI
 
 	BOOL SetLogFile(LPCSTR pzFile);
 	BOOL CloseLogFile();
+
+#define LOG_LINE(severity) \
+	LogMessage(LOG_##severity).stream()
+
 #define LOG(severity) \
 	LogMessage(__FILE__, __LINE__, LOG_##severity).stream()
 }

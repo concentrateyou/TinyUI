@@ -52,7 +52,8 @@ LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHand
 	/*m_analyserBAR.Create(m_hWND, 10, 10, 298, 92);*/
 	m_analyserBAR.Create(m_hWND, 10, 10, 300, 180);
 	m_analyserBAR.SetText("≤‚ ‘");
-	m_wavePlayer.Submit(m_analyserBAR.Handle());
+	m_audioDSP.Initialize();
+	//m_wavePlayer.Submit(m_analyserBAR.Handle());
 	/*DISPLAY_DEVICE dd;
 	ZeroMemory(&dd, sizeof(dd));
 	dd.cb = sizeof(dd);
@@ -95,7 +96,6 @@ LRESULT ChatFrame::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 {
 	bHandled = FALSE;
 	PAINTSTRUCT ps = { 0 };
-
 	HDC hDC = BeginPaint(m_hWND, &ps);
 	EndPaint(m_hWND, &ps);
 	return FALSE;

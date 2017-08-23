@@ -9,8 +9,7 @@ namespace TinyUI
 			:m_bCapturing(FALSE),
 			m_bEnableAGC(FALSE),
 			m_bEnableNS(FALSE),
-			m_vadMode(AEC_VAD_DISABLED),
-			m_pFMT(NULL)
+			m_vadMode(AEC_VAD_DISABLED)
 		{
 			m_audioStop.CreateEvent(FALSE, FALSE, NULL, NULL);
 		}
@@ -61,8 +60,8 @@ namespace TinyUI
 				return FALSE;
 			if (!SetVTI4Property(propertyStore, MFPKEY_WMAAECMA_FEATR_VAD, m_vadMode))
 				return FALSE;
-			UINT index1 = GetDeviceIndex(eRender, speakName);
-			UINT index2 = GetDeviceIndex(eCapture, captureName);
+			INT index1 = GetDeviceIndex(eRender, speakName);
+			INT index2 = GetDeviceIndex(eCapture, captureName);;
 			LONG index = static_cast<ULONG>(index1 << 16) + static_cast<ULONG>(0x0000FFFF & index2);
 			if (!SetVTI4Property(propertyStore, MFPKEY_WMAAECMA_DEVICE_INDEXES, index))
 				return FALSE;
@@ -75,18 +74,23 @@ namespace TinyUI
 			m_mediaType.bFixedSizeSamples = TRUE;
 			m_mediaType.bTemporalCompression = FALSE;
 			m_mediaType.formattype = FORMAT_WaveFormatEx;
+			m_mediaType.cbFormat = sizeof(WAVEFORMATEX);
 			memcpy(m_mediaType.pbFormat, pFMT, sizeof(WAVEFORMATEX));
 			hRes = m_dmo->SetOutputType(0, &m_mediaType, 0);
 			MoFreeMediaType(&m_mediaType);
 			if (hRes != S_OK)
 				return FALSE;
-			m_pFMT = pFMT;
+			if (pFMT != NULL)
+			{
+				m_waveFMT.Reset(new BYTE[sizeof(WAVEFORMATEX) + pFMT->cbSize]);
+				memcpy(m_waveFMT, (BYTE*)pFMT, sizeof(WAVEFORMATEX) + pFMT->cbSize);
+			}
 			return TRUE;
 		}
 		BOOL TinyAudioDSPCapture::Start()
 		{
 			HRESULT hRes = S_OK;
-			if (m_dmo)
+			if (m_dmo != NULL)
 			{
 				hRes = m_dmo->AllocateStreamingResources();
 				if (hRes != S_OK)
@@ -142,20 +146,20 @@ namespace TinyUI
 		}
 		WAVEFORMATEX* TinyAudioDSPCapture::GetFormat() const
 		{
-			return m_pFMT;
+			return reinterpret_cast<WAVEFORMATEX*>(m_waveFMT.Ptr());
 		}
 		void TinyAudioDSPCapture::OnMessagePump()
 		{
 			WAVEFORMATEX* pFMT = GetFormat();
 			TinyScopedAvrt avrt("Pro Audio");
 			avrt.SetPriority();
-			TinyScopedReferencePtr<MediaBuffer> mediaBuffer(new MediaBuffer(pFMT->nSamplesPerSec * pFMT->nBlockAlign));
+			TinyScopedReferencePtr<IMediaBuffer> mediaBuffer(new MediaBuffer(pFMT->nSamplesPerSec * pFMT->nBlockAlign));
 			m_dmoBuffer.pBuffer = mediaBuffer;
 			HRESULT hRes = S_OK;
 			BOOL bCapturing = TRUE;
 			while (bCapturing)
 			{
-				switch (WaitForSingleObject(m_audioStop, 5))
+				switch (WaitForSingleObject(m_audioStop, 10))
 				{
 				case WAIT_FAILED:
 				case WAIT_ABANDONED:
@@ -173,16 +177,19 @@ namespace TinyUI
 				{
 					m_dmoBuffer.dwStatus = 0;
 					hRes = m_dmo->ProcessOutput(0, 1, &m_dmoBuffer, &dwStatus);
-					dwStatus = m_dmoBuffer.dwStatus;
-					DWORD cbProduced = 0;
-					if (hRes != S_OK)
+					if (FAILED(hRes))
 					{
-						bCapturing = FALSE;
+						m_bCapturing = FALSE;
 						break;
 					}
+					dwStatus = m_dmoBuffer.dwStatus;
+					DWORD cbProduced = 0;
 					BYTE* data;
 					mediaBuffer->GetBufferAndLength(&data, &cbProduced);
-					OnDataAvailable(data, cbProduced, this);
+					if (cbProduced > 0)
+					{
+						OnDataAvailable(data, cbProduced, this);
+					}
 					mediaBuffer->SetLength(0);
 				} while (DMO_OUTPUT_DATA_BUFFERF_INCOMPLETE & dwStatus);
 			}
