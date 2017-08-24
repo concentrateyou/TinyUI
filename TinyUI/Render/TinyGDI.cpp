@@ -1302,7 +1302,7 @@ namespace TinyUI
 	{
 		return m_size;
 	}
-	BOOL TinyMemDC::Render(RECT dstPaint, RECT srcPaint, RECT srcCenter, BOOL bAlpha)
+	BOOL TinyMemDC::Render(const RECT& dstPaint, const RECT& srcPaint, const RECT& srcCenter, BOOL bAlpha)
 	{
 		if (dstPaint.left == dstPaint.right || dstPaint.top == dstPaint.bottom)
 			return FALSE;
@@ -1385,7 +1385,7 @@ namespace TinyUI
 		}
 		return TRUE;
 	}
-	BOOL TinyMemDC::Render(RECT dstPaint, RECT dstCenter, RECT srcPaint, RECT srcCenter, BOOL bAlpha)
+	BOOL TinyMemDC::Render(const RECT& dstPaint, const RECT& dstCenter, const RECT& srcPaint, const RECT& srcCenter, BOOL bAlpha)
 	{
 		if (dstPaint.left == dstPaint.right || dstPaint.top == dstPaint.bottom)
 			return FALSE;
@@ -1465,7 +1465,7 @@ namespace TinyUI
 		}
 		return TRUE;
 	}
-	BOOL TinyMemDC::Render(RECT dstPaint, RECT srcPaint, BOOL bAlpha)
+	BOOL TinyMemDC::Render(const RECT& dstPaint, const RECT& srcPaint, BOOL bAlpha)
 	{
 		if (dstPaint.left == dstPaint.right || dstPaint.top == dstPaint.bottom)
 			return FALSE;
@@ -1501,7 +1501,7 @@ namespace TinyUI
 	TinyMemDC::~TinyMemDC()
 	{
 		SAFE_DELETE_OBJECT(m_bitmap);
-		if (m_hDC && m_hOldBitmap)
+		if (m_hDC != NULL)
 		{
 			::SelectObject(m_hDC, m_hOldBitmap);
 			m_hOldBitmap = NULL;

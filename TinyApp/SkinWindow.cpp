@@ -49,7 +49,7 @@ HICON SkinWindow::RetrieveIcon()
 LRESULT SkinWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	m_imageBKG.Open(L"D:\\Develop\\TinyUI\\Debug\\skin\\common\\sysbkg.bmp");
+	m_imageBKG.Open("D:\\skin\\main_bkg.png");
 	return FALSE;
 }
 
@@ -71,8 +71,8 @@ LRESULT SkinWindow::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHand
 
 LRESULT SkinWindow::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-	bHandled = FALSE;
-	return FALSE;
+	bHandled = TRUE;
+	return TRUE;
 }
 LRESULT SkinWindow::OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
@@ -119,4 +119,7 @@ LRESULT SkinWindow::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& b
 
 void SkinWindow::OnDraw(HDC hDC, RECT& rectangle)
 {
+	TinyMemDC dc(hDC, m_imageBKG);
+	TinyRectangle rect = m_imageBKG.GetRectangle();
+	dc.Render(rectangle, rect, TRUE);
 }

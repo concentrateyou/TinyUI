@@ -8,6 +8,7 @@
 #include "Control/TinyButton.h"
 #include "Control/TinyLabel.h"
 #include "Control/TinyRichTextBox.h"
+#include "Render/TinyImage.h"
 #include <gdiplus.h>
 using namespace TinyUI;
 using namespace Gdiplus;

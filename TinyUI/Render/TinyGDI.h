@@ -360,15 +360,15 @@ namespace TinyUI
 		TinyMemDC(TinyDC& dc, INT cx, INT cy);
 		TinyMemDC(HDC hDC, INT cx, INT cy);
 		TinyMemDC(HDC hDC, HBITMAP hBitmap);
-		BOOL Render(RECT dstPaint, RECT srcPaint, BOOL bAlpha);
+		BOOL Render(const RECT& dstPaint, const RECT& srcPaint, BOOL bAlpha);
 		/// <summary>
 		/// ªÊ÷∆Õº∆¨æ≈π¨∏Ò
 		/// </summary>
-		BOOL Render(RECT dstPaint, RECT srcPaint, RECT srcCenter, BOOL bAlpha);
+		BOOL Render(const RECT& dstPaint, const RECT& srcPaint, const RECT& srcCenter, BOOL bAlpha);
 		/// <summary>
 		/// ªÊ÷∆Õº∆¨æ≈π¨∏Ò
 		/// </summary>
-		BOOL Render(RECT dstPaint, RECT dstCenter, RECT srcPaint, RECT srcCenter, BOOL bAlpha);
+		BOOL Render(const RECT& dstPaint, const RECT& dstCenter, const RECT& srcPaint, const RECT& srcCenter, BOOL bAlpha);
 		SIZE GetSize() const;
 		virtual ~TinyMemDC();
 	private:
