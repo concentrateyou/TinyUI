@@ -165,7 +165,6 @@ namespace TinyUI
 				case WAIT_ABANDONED:
 				case WAIT_OBJECT_0:
 					bCapturing = FALSE;
-					break;
 				case WAIT_TIMEOUT:
 					break;
 				default:
@@ -175,10 +174,13 @@ namespace TinyUI
 				DWORD dwStatus = 0;
 				do
 				{
+					if (!bCapturing)
+						break;
 					m_dmoBuffer.dwStatus = 0;
 					hRes = m_dmo->ProcessOutput(0, 1, &m_dmoBuffer, &dwStatus);
 					if (FAILED(hRes))
 					{
+						bCapturing = FALSE;
 						m_bCapturing = FALSE;
 						break;
 					}
@@ -193,7 +195,6 @@ namespace TinyUI
 					mediaBuffer->SetLength(0);
 				} while (DMO_OUTPUT_DATA_BUFFERF_INCOMPLETE & dwStatus);
 			}
-			this->Stop();
 		}
 		BOOL TinyAudioDSPCapture::SetVTI4Property(IPropertyStore* ptrPS, REFPROPERTYKEY key, LONG value)
 		{

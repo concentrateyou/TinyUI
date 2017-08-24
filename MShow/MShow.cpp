@@ -86,6 +86,7 @@ namespace MShow
 			return FALSE;
 		if (!TinyApplication::GetInstance()->Uninitialize())
 			return FALSE;
+		CloseLogFile();
 		return TRUE;
 	}
 

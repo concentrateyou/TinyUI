@@ -55,6 +55,10 @@ namespace MShow
 		m_task.Close(1000);
 		m_audioDSP.Stop();
 		m_audioDSP.Close();
+		if (m_audioSDK != NULL)
+		{
+			m_audioSDK->release();
+		}
 		m_audioSDK.Reset(NULL);
 		if (m_preview != NULL)
 		{
@@ -127,6 +131,7 @@ namespace MShow
 					BOOL bRes = m_audioQueue.Pop(sample);
 					if (bRes && sample.size > 0)
 					{
+						LOG(INFO) << "Timestamp: " << sample.timestamp;
 						m_audioSDK->audio_encode_send(sample.bits + 4, static_cast<INT32>(sample.timestamp));
 					}
 					m_audioQueue.Free(sample.bits);
