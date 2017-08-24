@@ -25,7 +25,7 @@
 #include "Network/TinyURL.h"
 #include "Network/TinyDNS.h"
 #include "Common/TinySignal.h"
-
+#include "SkinWindow.h"
 #include "Media/TinyWave.h"
 #include "FLVParser.h"
 
@@ -120,9 +120,9 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	ChatFrame uiImpl;
+	SkinWindow uiImpl;
 	uiImpl.Create(NULL, 10, 10, 800, 600);
-	uiImpl.ShowWindow(nCmdShow);
+	uiImpl.CenterWindow(NULL, { 800, 600 });
 	uiImpl.UpdateWindow();
 	INT loopRes = theLoop.MessageLoop();
 	TinyApplication::GetInstance()->RemoveMessageLoop();
