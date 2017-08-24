@@ -40,11 +40,6 @@ namespace MShow
 			LOG(ERROR) << "AudioDSP Initialize Fail" << endl;
 			return FALSE;
 		}
-		/*if (!m_audioCapture.Initialize())
-		{
-			LOG(ERROR) << "AudioCapture Initialize Fail" << endl;
-			return FALSE;
-		}*/
 		if (!m_audioAnalyser.Initialize())
 		{
 			LOG(ERROR) << "AudioAnalyser Initialize Fail" << endl;
@@ -60,8 +55,6 @@ namespace MShow
 		m_task.Close(1000);
 		m_audioDSP.Stop();
 		m_audioDSP.Close();
-		/*m_audioCapture.Stop();
-		m_audioCapture.Close();*/
 		m_audioSDK.Reset(NULL);
 		if (m_preview != NULL)
 		{
@@ -112,16 +105,6 @@ namespace MShow
 						m_audioDSP.Stop();
 						m_audioDSP.Start();
 					}
-					//if (m_audioCapture.Open(BindCallback(&MShowController::OnAudio, this)))
-					//{
-					//	LOG(INFO) << "AudioCapture Open OK" << endl;
-					//	m_audioCapture.Stop();
-					//	m_audioCapture.Start();
-					//}
-					//else
-					//{
-					//	LOG(ERROR) << "AudioCapture Open Fail" << endl;
-					//}
 				}
 				else
 				{

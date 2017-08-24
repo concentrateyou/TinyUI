@@ -32,7 +32,9 @@ namespace MShow
 		TinyMFResampler			m_resampler;
 		TinyBufferArray<BYTE>	m_buffer;
 		TinyTimer				m_timer;
-		TinyWaveFile			m_waveFile;
+		//TinyWaveFile			m_waveFile;
+		WAVEFORMATEX			m_waveFMTI;
+		WAVEFORMATEX			m_waveFMTO;
 		Callback<void(BYTE*, LONG)> m_callback;
 	};
 }

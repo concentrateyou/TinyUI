@@ -35,8 +35,6 @@ namespace MShow
 		TinyPerformanceTimer		m_timeQPC;
 		HBITMAP						m_hBitmap;
 		BYTE*						m_pvBits;
-		/*DX11Graphics2D				m_graphics;
-		DX11Image2D					m_video2D;*/
 		MPreviewView&				m_view;
 		TinyScopedPtr<MFLVPlayer>	m_player;
 	};

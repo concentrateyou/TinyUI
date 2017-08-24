@@ -244,6 +244,8 @@ namespace TinyUI
 		}
 		BOOL TinyMFResampler::Resample(const BYTE* bits, DWORD size)
 		{
+			if (!m_resampler)
+				return FALSE;
 			if (!CreateInputSample(bits, size))
 				return FALSE;
 			DWORD dwStatus = 0;

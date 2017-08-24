@@ -18,7 +18,7 @@ namespace MShow
 	}
 	DWORD MShowWindow::RetrieveStyle()
 	{
-		return (WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_OVERLAPPEDWINDOW | WS_CAPTION);
+		return (WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_DLGFRAME | WS_SYSMENU);
 	}
 	DWORD MShowWindow::RetrieveExStyle()
 	{
@@ -72,6 +72,7 @@ namespace MShow
 	LRESULT MShowWindow::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+
 		return FALSE;
 	}
 	LRESULT MShowWindow::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -86,6 +87,14 @@ namespace MShow
 		INT cx = LOWORD(lParam);
 		INT cy = HIWORD(lParam);
 		return FALSE;
+	}
+
+	void MShowWindow::OnDraw()
+	{
+		PAINTSTRUCT ps = { 0 };
+		HDC hDC = BeginPaint(m_hWND, &ps);
+
+		EndPaint(m_hWND, &ps);
 	}
 
 	void MShowWindow::OnTabChange(void*)

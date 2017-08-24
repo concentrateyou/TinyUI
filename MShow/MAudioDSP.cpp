@@ -16,29 +16,22 @@ namespace MShow
 	{
 		m_callback = std::move(callback);
 		m_audioDSP.Initialize(BindCallback(&MAudioDSP::OnDSP, this));
-		WAVEFORMATEX waveFMTI;
-		ZeroMemory(&waveFMTI, sizeof(waveFMTI));
-		waveFMTI.cbSize = 0;
-		waveFMTI.wFormatTag = WAVE_FORMAT_PCM;
-		waveFMTI.nChannels = 1;
-		waveFMTI.nSamplesPerSec = 16000;
-		waveFMTI.wBitsPerSample = 16;
-		waveFMTI.nBlockAlign = 2;
-		waveFMTI.nAvgBytesPerSec = 32000;
-		WAVEFORMATEX waveFMTO;
-		ZeroMemory(&waveFMTO, sizeof(waveFMTO));
-		waveFMTO.cbSize = 0;
-		waveFMTO.wFormatTag = WAVE_FORMAT_PCM;
-		waveFMTO.nChannels = 2;
-		waveFMTO.nSamplesPerSec = 44100;
-		waveFMTO.wBitsPerSample = 16;
-		waveFMTO.nBlockAlign = 4;
-		waveFMTO.nAvgBytesPerSec = 176400;
-		if (!m_resampler.Open(&waveFMTI, &waveFMTO, BindCallback(&MAudioDSP::OnAudio, this)))
-		{
-			LOG(ERROR) << "Resampler Open Fail" << endl;
-			return FALSE;
-		}
+		ZeroMemory(&m_waveFMTI, sizeof(m_waveFMTI));
+		m_waveFMTI.cbSize = 0;
+		m_waveFMTI.wFormatTag = WAVE_FORMAT_PCM;
+		m_waveFMTI.nChannels = 1;
+		m_waveFMTI.nSamplesPerSec = 16000;
+		m_waveFMTI.wBitsPerSample = 16;
+		m_waveFMTI.nBlockAlign = 2;
+		m_waveFMTI.nAvgBytesPerSec = 32000;
+		ZeroMemory(&m_waveFMTO, sizeof(m_waveFMTO));
+		m_waveFMTO.cbSize = 0;
+		m_waveFMTO.wFormatTag = WAVE_FORMAT_PCM;
+		m_waveFMTO.nChannels = 2;
+		m_waveFMTO.nSamplesPerSec = 44100;
+		m_waveFMTO.wBitsPerSample = 16;
+		m_waveFMTO.nBlockAlign = 4;
+		m_waveFMTO.nAvgBytesPerSec = 176400;
 		LOG(INFO) << "MAudioDSP Initialize OK" << endl;
 		return TRUE;
 	}
@@ -77,30 +70,17 @@ namespace MShow
 			LOG(ERROR) << "[MAudioDSP] Can't Get Render Device" << endl;
 			return FALSE;
 		}
-		WAVEFORMATEX waveFMTI;
-		ZeroMemory(&waveFMTI, sizeof(waveFMTI));
-		waveFMTI.cbSize = 0;
-		waveFMTI.wFormatTag = WAVE_FORMAT_PCM;
-		waveFMTI.nChannels = 1;
-		waveFMTI.nSamplesPerSec = 16000;
-		waveFMTI.wBitsPerSample = 16;
-		waveFMTI.nBlockAlign = 2;
-		waveFMTI.nAvgBytesPerSec = 32000;
-		WAVEFORMATEX waveFMTO;
-		ZeroMemory(&waveFMTO, sizeof(waveFMTO));
-		waveFMTO.cbSize = 0;
-		waveFMTO.wFormatTag = WAVE_FORMAT_PCM;
-		waveFMTO.nChannels = 2;
-		waveFMTO.nSamplesPerSec = 44100;
-		waveFMTO.wBitsPerSample = 16;
-		waveFMTO.nBlockAlign = 4;
-		waveFMTO.nAvgBytesPerSec = 176400;
-		if (!m_audioDSP.Open(renders[0], capture, &waveFMTI))
+		if (!m_resampler.Open(&m_waveFMTI, &m_waveFMTO, BindCallback(&MAudioDSP::OnAudio, this)))
+		{
+			LOG(ERROR) << "Resampler Open Fail" << endl;
+			return FALSE;
+		}
+		if (!m_audioDSP.Open(renders[0], capture, &m_waveFMTI))
 		{
 			LOG(ERROR) << "[MAudioDSP] Open Fail" << endl;
 			return FALSE;
 		}
-		m_waveFile.Create("D:\\mshow.wav", &waveFMTO);
+		//m_waveFile.Create("D:\\mshow.wav", &m_waveFMTO);
 		LOG(INFO) << "[MAudioDSP] Open OK" << endl;
 		return TRUE;
 	}
@@ -153,7 +133,7 @@ namespace MShow
 		{
 			memcpy(m_data, m_buffer.GetPointer(), 4096);
 			m_buffer.Remove(0, 4096);
-			m_waveFile.Write(m_data, 4096);
+			//m_waveFile.Write(m_data, 4096);
 			if (!m_callback.IsNull())
 			{
 				m_callback(m_data, 4096);

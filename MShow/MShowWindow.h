@@ -35,8 +35,8 @@ namespace MShow
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 	private:
 		void OnTabChange(void*);
-		void OnToggle(void*, INT);
-		void OnPusher(void*, INT);
+	private:
+		void OnDraw();
 	private:
 		MPreviewView		m_previewView;
 		TinyTextBox			m_txtPreviewURL;

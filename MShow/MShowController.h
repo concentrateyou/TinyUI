@@ -41,7 +41,6 @@ namespace MShow
 		LONGLONG				m_previousPTS;
 		TinyLock				m_lock;
 		MShowWindow&			m_window;
-		//MAudioCapture			m_audioCapture;
 		MAudioDSP				m_audioDSP;
 		AudioAnalyser			m_audioAnalyser;
 		TinyPerformanceTimer	m_timeQPC;
