@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "MAudioDSP.h"
+#include "MShowController.h"
+#include "MShow.h"
 
 namespace MShow
 {
@@ -62,37 +64,45 @@ namespace MShow
 		}
 		if (capture.IsEmpty())
 		{
-			LOG(ERROR) << "[MAudioDSP] Can't Get Capture Device" << endl;
+			LOG(ERROR) << "[MAudioDSP] Can't Get Capture Device";
 			return FALSE;
 		}
 		if (renders.size() == 0)
 		{
-			LOG(ERROR) << "[MAudioDSP] Can't Get Render Device" << endl;
+			LOG(ERROR) << "[MAudioDSP] Can't Get Render Device";
 			return FALSE;
 		}
 		if (!m_resampler.Open(&m_waveFMTI, &m_waveFMTO, BindCallback(&MAudioDSP::OnAudio, this)))
 		{
-			LOG(ERROR) << "Resampler Open Fail" << endl;
+			LOG(ERROR) << "Resampler Open Fail";
 			return FALSE;
 		}
 		if (!m_audioDSP.Open(renders[0], capture, &m_waveFMTI))
 		{
-			LOG(ERROR) << "[MAudioDSP] Open Fail" << endl;
+			LOG(ERROR) << "[MAudioDSP] Open Fail";
 			return FALSE;
 		}
-		//m_waveFile.Create("D:\\mshow.wav", &m_waveFMTO);
-		LOG(INFO) << "[MAudioDSP] Open OK" << endl;
+		MAppConfig& config = MShow::MShowApp::GetInstance().GetController().AppConfig();
+		string szFile = config.GetSaveFile();
+		if (szFile.size() > 0)
+		{
+			if (!m_waveFile.Create((LPTSTR)szFile.c_str(), &m_waveFMTO))
+			{
+				LOG(ERROR) << "[MAudioDSP] Create Wave File: " << szFile << " Fail";
+			}
+		}
+		LOG(INFO) << "[MAudioDSP] Open OK";
 		return TRUE;
 	}
 	BOOL MAudioDSP::Start()
 	{
 		if (!m_audioDSP.Start())
 		{
-			LOG(ERROR) << "AudioDSP Start Fail" << endl;
+			LOG(ERROR) << "AudioDSP Start Fail";
 			return FALSE;
 		}
 		m_timer.SetCallback(23, BindCallback(&MAudioDSP::OnTimer, this));
-		LOG(INFO) << "AudioDSP Start OK" << endl;
+		LOG(INFO) << "AudioDSP Start OK";
 		return TRUE;
 	}
 	BOOL MAudioDSP::Stop()
@@ -100,10 +110,10 @@ namespace MShow
 		m_timer.Close();
 		if (!m_audioDSP.Stop())
 		{
-			LOG(ERROR) << "AudioDSP Stop Fail" << endl;
+			LOG(ERROR) << "AudioDSP Stop Fail";
 			return FALSE;
 		}
-		LOG(INFO) << "AudioDSP Stop OK" << endl;
+		LOG(INFO) << "AudioDSP Stop OK";
 		return TRUE;
 	}
 	BOOL MAudioDSP::Close()
@@ -111,10 +121,10 @@ namespace MShow
 		m_resampler.Close();
 		if (!m_audioDSP.Close())
 		{
-			LOG(ERROR) << "AudioDSP Close Fail" << endl;
+			LOG(ERROR) << "AudioDSP Close Fail";
 			return FALSE;
 		}
-		LOG(INFO) << "AudioDSP Close OK" << endl;
+		LOG(INFO) << "AudioDSP Close OK";
 		return TRUE;
 	}
 	void MAudioDSP::OnDSP(BYTE* bits, LONG size, LPVOID lpParameter)
@@ -133,7 +143,10 @@ namespace MShow
 		{
 			memcpy(m_data, m_buffer.GetPointer(), 4096);
 			m_buffer.Remove(0, 4096);
-			//m_waveFile.Write(m_data, 4096);
+			if (m_waveFile != NULL)
+			{
+				m_waveFile.Write(m_data, 4096);
+			}
 			if (!m_callback.IsNull())
 			{
 				m_callback(m_data, 4096);

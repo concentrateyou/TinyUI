@@ -5,6 +5,7 @@
 #include "AudioAnalyser.h"
 #include "audiosdk.h"
 #include "MAudioQueue.h"
+#include "MAppConfig.h"
 #include <fstream> 
 using namespace std;
 using namespace DShow;
@@ -28,6 +29,7 @@ namespace MShow
 		~MShowController();
 		BOOL	Initialize();
 		void	Uninitialize();
+		MAppConfig& AppConfig();
 		MPreviewController* GetPreviewController();
 	private:
 		void OnPreview(void*, INT);
@@ -46,6 +48,7 @@ namespace MShow
 		TinyPerformanceTimer	m_timeQPC;
 		TinyScopedPtr<AudioSdk>	m_audioSDK;
 		MAudioQueue				m_audioQueue;
+		MAppConfig				m_appConfig;
 		TinyTaskBase			m_task;
 		TinyEvent				m_event;
 		TinyScopedPtr<MPreviewController>			m_preview;

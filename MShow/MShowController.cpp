@@ -32,20 +32,20 @@ namespace MShow
 			return FALSE;
 		if (!m_preview->Initialize())
 		{
-			LOG(ERROR) << "Preview Initialize Fail" << endl;
+			LOG(ERROR) << "Preview Initialize Fail";
 			return FALSE;
 		}
 		if (!m_audioDSP.Initialize(BindCallback(&MShowController::OnAudioDSP, this)))
 		{
-			LOG(ERROR) << "AudioDSP Initialize Fail" << endl;
+			LOG(ERROR) << "AudioDSP Initialize Fail";
 			return FALSE;
 		}
 		if (!m_audioAnalyser.Initialize())
 		{
-			LOG(ERROR) << "AudioAnalyser Initialize Fail" << endl;
+			LOG(ERROR) << "AudioAnalyser Initialize Fail";
 			return FALSE;
 		}
-		LOG(INFO) << "MShowController Initialize OK" << endl;
+		LOG(INFO) << "MShowController Initialize OK";
 		return TRUE;
 	}
 
@@ -65,6 +65,11 @@ namespace MShow
 			m_preview->Close();
 			m_preview.Reset(NULL);
 		}
+	}
+
+	MAppConfig& MShowController::AppConfig()
+	{
+		return m_appConfig;
 	}
 
 	void MShowController::OnPreview(void*, INT)

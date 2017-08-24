@@ -178,7 +178,7 @@ namespace TinyUI
 						break;
 					m_dmoBuffer.dwStatus = 0;
 					hRes = m_dmo->ProcessOutput(0, 1, &m_dmoBuffer, &dwStatus);
-					if (FAILED(hRes))
+					if (FAILED(hRes) && hRes != WMAAECMA_E_NO_ACTIVE_RENDER_STREAM)
 					{
 						bCapturing = FALSE;
 						m_bCapturing = FALSE;

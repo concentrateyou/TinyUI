@@ -149,6 +149,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="MAppConfig.h" />
     <ClInclude Include="MAudioCapture.h" />
     <ClInclude Include="MAudioDSP.h" />
     <ClInclude Include="MAudioQueue.h" />
@@ -171,6 +172,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="MAppConfig.cpp" />
     <ClCompile Include="MAudioCapture.cpp" />
     <ClCompile Include="MAudioDSP.cpp" />
     <ClCompile Include="MAudioQueue.cpp" />

@@ -44,13 +44,13 @@ namespace TinyUI
 		}
 		BOOL TinyWaveOut::Reset()
 		{
-			 MMRESULT hRes = waveOutReset(m_hWAVE);
-			 if (hRes != MMSYSERR_NOERROR)
-			 {
-				 Close();
-				 return FALSE;
-			 }
-			 return TRUE;
+			MMRESULT hRes = waveOutReset(m_hWAVE);
+			if (hRes != MMSYSERR_NOERROR)
+			{
+				Close();
+				return FALSE;
+			}
+			return TRUE;
 		}
 		BOOL TinyWaveOut::Restart()
 		{
@@ -556,6 +556,10 @@ namespace TinyUI
 		{
 			Close();
 		}
+		TinyWaveFile::operator HMMIO() const throw()
+		{
+			return m_hmmio;
+		}
 		BOOL TinyWaveFile::Create(LPTSTR pzFile, const WAVEFORMATEX* pWaveEx)
 		{
 			if (!pzFile)
@@ -617,7 +621,8 @@ namespace TinyUI
 		}
 		BOOL TinyWaveFile::Write(BYTE* lpBuffer, LONG nNumberOfBytesToRead)
 		{
-			ASSERT(m_hmmio);
+			if (!m_hmmio)
+				return FALSE;
 			MMRESULT  mmRes = MMSYSERR_NOERROR;
 			mmRes = mmioWrite(m_hmmio, (const char*)lpBuffer, nNumberOfBytesToRead);
 			return mmRes != MMSYSERR_NOERROR;
@@ -778,7 +783,8 @@ namespace TinyUI
 		}
 		BOOL TinyWaveFile::Read(BYTE* lpBuffer, LONG nNumberOfBytesToRead, LPLONG lpNumberOfBytesRead)
 		{
-			ASSERT(m_hmmio);
+			if (!m_hmmio)
+				return FALSE;
 			*lpNumberOfBytesRead = 0;
 			MMIOINFO mmioinfo;
 			MMRESULT mmRes = MMSYSERR_NOERROR;
@@ -809,7 +815,8 @@ namespace TinyUI
 		}
 		BOOL TinyWaveFile::Seek(LONG lOffset, INT iOrigin)
 		{
-			ASSERT(m_hmmio);
+			if (!m_hmmio)
+				return FALSE;
 			if (-1 == mmioSeek(m_hmmio, lOffset, iOrigin))
 				return FALSE;
 			return TRUE;

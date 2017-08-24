@@ -78,6 +78,9 @@
     <ClInclude Include="MAudioDSP.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MAppConfig.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -132,6 +135,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MAudioDSP.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MAppConfig.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
