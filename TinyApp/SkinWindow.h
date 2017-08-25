@@ -8,34 +8,24 @@
 #include "Control/TinyButton.h"
 #include "Control/TinyLabel.h"
 #include "Control/TinyRichTextBox.h"
-#include "Render/TinyImage.h"
+#include "Control/TinyImageButton.h"
 #include <gdiplus.h>
 using namespace TinyUI;
+using namespace TinyUI::Windowless;
 using namespace Gdiplus;
 
-class SkinWindow : public TinyControl
+class SkinWindow : public TinyVisualHWND
 {
+	DECLARE_DYNAMIC(SkinWindow)
 public:
 	SkinWindow();
-	~SkinWindow();
-	//5个创建函数
-	DWORD RetrieveStyle() OVERRIDE;
-	DWORD RetrieveExStyle() OVERRIDE;
-	LPCSTR RetrieveClassName() OVERRIDE;
-	LPCSTR RetrieveTitle() OVERRIDE;
-	HICON RetrieveIcon() OVERRIDE;
-	BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
-	//事件
-	LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-	LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-	LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-	LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-	LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-	LRESULT OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-	LRESULT OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+	virtual ~SkinWindow();
+public:
+	void OnInitialize() OVERRIDE;
+	void OnUninitialize() OVERRIDE;
 private:
-	void OnDraw(HDC hDC, RECT& rectangle);
+	void OnMinClick(EventArgs& args);
 private:
-	TinyImage	m_imageBKG;
+	TinyScopedPtr<Delegate<void(EventArgs&)>> m_onMinClick;
 };
 

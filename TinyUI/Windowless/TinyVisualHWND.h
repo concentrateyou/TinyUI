@@ -23,6 +23,11 @@ namespace TinyUI
 			HICON RetrieveIcon() OVERRIDE;
 		public:
 			BOOL SetResource(const TinyString& resource);
+			BOOL AddFilter(TinyVisualFilter* ps);
+			BOOL RemoveFilter(TinyVisualFilter* ps);
+			TinyVisualDocument*	GetDocument();
+			virtual void OnInitialize() = 0;
+			virtual void OnUninitialize() = 0;
 		public:
 			//ÏûÏ¢
 			BOOL ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult) OVERRIDE;
@@ -53,20 +58,19 @@ namespace TinyUI
 			LRESULT OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			//Other
 			LRESULT OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-		public:
-			BOOL AddFilter(TinyVisualFilter* ps);
-			BOOL RemoveFilter(TinyVisualFilter* ps);
 		private:
-			void Initialize();
+			BOOL Initialize();
 			void Uninitialize();
+		protected:
+			
 		private:
 			BOOL								m_bMouseTracking;
 			TinySize							m_size;
-			TinyScopedPtr<TinyVisualDocument>	m_document;
-			TinyScopedPtr<TinyVisualDC>			m_visualDC;
+			TinyString							m_szResource;
 			TinyVisualFilters					m_mFilters;
 			TinyVisualBuilder					m_builder;
-			TinyString							m_resource;
+			TinyScopedPtr<TinyVisualDC>			m_visualDC;
+			TinyScopedPtr<TinyVisualDocument>	m_document;
 		};
 	}
 }

@@ -43,6 +43,8 @@ namespace TinyUI
 		BOOL	ClientToScreen(LPRECT lpRect) const throw();
 		BOOL	ScreenToClient(LPPOINT lpPoint) const throw();
 		BOOL	ScreenToClient(LPRECT lpRect) const throw();
+		void	SetFont(HFONT hFont, BOOL bRedraw);
+		HFONT	GetFont() const;
 		void	SetDefaultFont();
 		//////////////////////////////////////////////////////////////////////////
 	public:
@@ -104,6 +106,7 @@ namespace TinyUI
 			MESSAGE_HANDLER(WM_INITMENU, OnIniMenu)
 			MESSAGE_HANDLER(WM_WINDOWPOSCHANGING, OnWindowPosChanging)
 			MESSAGE_HANDLER(WM_WINDOWPOSCHANGED, OnWindowPosChanged)
+			MESSAGE_HANDLER(WM_SYSCOMMAND,OnSysCommand)
 		END_MSG_MAP()
 		virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -164,6 +167,7 @@ namespace TinyUI
 		virtual LRESULT OnIniMenu(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnWindowPosChanging(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnWindowPosChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	public:
 		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_CREATE;
 		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_DESTORY;

@@ -498,6 +498,9 @@
     <ClInclude Include="Media\TinySoundCapture.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
+    <ClInclude Include="Control\TinyImageButton.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -913,6 +916,9 @@
     </ClCompile>
     <ClCompile Include="Media\TinySoundCapture.cpp">
       <Filter>源文件\Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Control\TinyImageButton.cpp">
+      <Filter>源文件\Control</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

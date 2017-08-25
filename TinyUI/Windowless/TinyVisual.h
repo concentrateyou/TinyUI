@@ -111,18 +111,18 @@ namespace TinyUI
 			virtual HRESULT		SetProperty(const TinyString& name, const TinyString& value);
 		public:
 			Event<void(EventArgs&)>			EVENT_CLICK;
-			Event<void(MouseEventArgs&)>	EVENT_MouseMove;
-			Event<void(MouseEventArgs&)>	EVENT_MouseWheel;
-			Event<void(MouseEventArgs&)>	EVENT_MouseDown;
-			Event<void(MouseEventArgs&)>	EVENT_MouseUp;
-			Event<void(MouseEventArgs&)>	EVENT_MouseClick;
-			Event<void(MouseEventArgs&)>	EVENT_MouseDoubleClick;
-			Event<void(KeyEventArgs&)>		EVENT_KeyDown;
-			Event<void(KeyEventArgs&)>		EVENT_KeyUp;
-			Event<void(KeyEventArgs&)>		EVENT_Char;
-			Event<void(FocusEventArgs&)>	EVENT_Focus;
-			Event<void(CaptureEventArgs&)>	EVENT_Capture;
-			Event<void(ActiveEventArgs&)>	EVENT_Active;
+			Event<void(MouseEventArgs&)>	EVENT_MOUSEMOVE;
+			Event<void(MouseEventArgs&)>	EVENT_MOUSEWHEEL;
+			Event<void(MouseEventArgs&)>	EVENT_MOUSEDOWN;
+			Event<void(MouseEventArgs&)>	EVENT_MOUSEUP;
+			Event<void(MouseEventArgs&)>	EVENT_MOUSECLICK;
+			Event<void(MouseEventArgs&)>	EVENT_MOUSEDBCLICK;
+			Event<void(KeyEventArgs&)>		EVENT_KEYDOWN;
+			Event<void(KeyEventArgs&)>		EVENT_KEYUP;
+			Event<void(KeyEventArgs&)>		EVENT_CHAR;
+			Event<void(FocusEventArgs&)>	EVENT_FOCUS;
+			Event<void(CaptureEventArgs&)>	EVENT_CAPTURE;
+			Event<void(ActiveEventArgs&)>	EVENT_ACTIVE;
 		protected:
 			TinyVisualDocument*	m_document;
 			TinyVisual*			m_spvisNext;//同级下一个兄弟节点

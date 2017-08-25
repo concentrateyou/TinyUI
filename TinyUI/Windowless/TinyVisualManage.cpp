@@ -154,17 +154,25 @@ namespace TinyUI
 		}
 		UINT TinyVisualBuilder::GetAlign(const TinyString& str)
 		{
-			if (strcasecmp(str.STR(), "left") == 0)
-				return DT_LEFT;
-			if (strcasecmp(str.STR(), "top") == 0)
-				return DT_TOP;
-			if (strcasecmp(str.STR(), "right") == 0)
-				return DT_RIGHT;
-			if (strcasecmp(str.STR(), "bottom") == 0)
-				return DT_BOTTOM;
-			if (strcasecmp(str.STR(), "center") == 0)
-				return DT_CENTER;
-			return DT_LEFT;
+			UINT sFlag = DT_LEFT| DT_SINGLELINE;
+			TinyArray<TinyString> sps;
+			str.Split('|', sps);
+			for (INT i = 0;i < sps.GetSize();i++)
+			{
+				if (strcasecmp(sps[i].STR(), "left") == 0)
+					sFlag |= DT_LEFT;
+				if (strcasecmp(sps[i].STR(), "top") == 0)
+					sFlag |= DT_TOP;
+				if (strcasecmp(sps[i].STR(), "right") == 0)
+					sFlag |= DT_RIGHT;
+				if (strcasecmp(sps[i].STR(), "bottom") == 0)
+					sFlag |= DT_BOTTOM;
+				if (strcasecmp(sps[i].STR(), "center") == 0)
+					sFlag |= DT_CENTER;
+				if (strcasecmp(sps[i].STR(), "vcenter") == 0)
+					sFlag |= DT_VCENTER;
+			}
+			return sFlag;
 		}
 		Alignment TinyVisualBuilder::GetAlignment(const TinyString& str)
 		{

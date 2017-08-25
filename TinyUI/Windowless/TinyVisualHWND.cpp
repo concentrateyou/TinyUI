@@ -23,7 +23,12 @@ namespace TinyUI
 		{
 			if (TinyControl::Create(hParent, 0, 0, 0, 0, FALSE))
 			{
-				return m_document->Initialize(&m_builder);
+				if (m_document->Initialize(&m_builder))
+				{
+					this->OnInitialize();
+					return TRUE;
+				}
+				return FALSE;
 			}
 			return FALSE;
 		}
@@ -50,18 +55,27 @@ namespace TinyUI
 
 		BOOL TinyVisualHWND::SetResource(const TinyString& resource)
 		{
-			m_resource = resource;
-			return m_builder.LoadFile(m_resource.CSTR());
+			m_szResource = resource;
+			return m_builder.LoadFile(m_szResource.CSTR());
 		}
-
-		void TinyVisualHWND::Initialize()
+		TinyVisualDocument*	TinyVisualHWND::GetDocument()
+		{
+			return m_document;
+		}
+		BOOL TinyVisualHWND::Initialize()
 		{
 			m_visualDC.Reset(new TinyVisualDC(m_hWND));
+			if (!m_visualDC)
+				return FALSE;
 			m_document.Reset(new TinyVisualDocument(this));
+			if (!m_document)
+				return FALSE;
+			return TRUE;
 		}
 		void TinyVisualHWND::Uninitialize()
 		{
-			m_document->Uninitialize();
+			if (m_document != NULL)
+				m_document->Uninitialize();
 			m_document.Reset(NULL);
 			m_visualDC.Reset(NULL);
 		}
@@ -128,12 +142,14 @@ namespace TinyUI
 		LRESULT TinyVisualHWND::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
-			Initialize();
+			if (!Initialize())
+				PostQuitMessage(0);//Ö±½ÓÍË³ö
 			return FALSE;
 		}
 		LRESULT TinyVisualHWND::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
+			OnUninitialize();
 			Uninitialize();
 			return FALSE;
 		}

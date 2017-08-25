@@ -16,7 +16,6 @@ namespace TinyUI
 			m_pWindow(pWindow)
 		{
 			ASSERT(m_pWindow);
-			m_vs.Reset(new TinyVisualFactory(this));
 		}
 		TinyVisualDocument::~TinyVisualDocument()
 		{
@@ -29,6 +28,11 @@ namespace TinyUI
 		}
 		BOOL TinyVisualDocument::Initialize(TinyVisualBuilder* builder)
 		{
+			if (!builder)
+				return FALSE;
+			m_vs.Reset(new TinyVisualFactory(this));
+			if (!m_vs)
+				return FALSE;
 			return builder->BuildDocument(this);
 		}
 		void TinyVisualDocument::Uninitialize()

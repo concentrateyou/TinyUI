@@ -29,6 +29,7 @@ namespace TinyUI
 		//////////////////////////////////////////////////////////////////////////
 		BOOL SetText(LPCSTR pzText);
 		BOOL GetText(LPSTR pzText, INT iSize);
+		TinyString GetText();
 		UINT GetState() const;
 		void SetState(BOOL bHighlight);
 		INT GetCheck() const;

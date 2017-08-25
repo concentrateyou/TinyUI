@@ -403,6 +403,11 @@ namespace TinyUI
 		EVENT_POSCHANGED(uMsg, wParam, lParam, bHandled);
 		return FALSE;
 	}
+	LRESULT TinyControl::OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		return FALSE;
+	}
 	BOOL TinyControl::ShowWindow(INT nCmdShow) throw()
 	{
 		ASSERT(::IsWindow(m_hWND));
@@ -551,5 +556,15 @@ namespace TinyUI
 	void TinyControl::SetDefaultFont()
 	{
 		::SendMessage(m_hWND, WM_SETFONT, (WPARAM)(HFONT)GetStockObject(DEFAULT_GUI_FONT), MAKELPARAM(TRUE, 0));
+	}
+	void TinyControl::SetFont(HFONT hFont, BOOL bRedraw)
+	{
+		ASSERT(::IsWindow(m_hWND));
+		::SendMessage(m_hWND, WM_SETFONT, (WPARAM)hFont, bRedraw);
+	}
+	HFONT TinyControl::GetFont() const
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return (HFONT)::SendMessage(m_hWND, WM_GETFONT, 0, 0);
 	}
 }

@@ -205,6 +205,7 @@
     <ClInclude Include="Control\TinyFileView.h" />
     <ClInclude Include="Control\TinyFolderView.h" />
     <ClInclude Include="Control\TinyHotKey.h" />
+    <ClInclude Include="Control\TinyImageButton.h" />
     <ClInclude Include="Control\TinyImageList.h" />
     <ClInclude Include="Control\TinyIPAddress.h" />
     <ClInclude Include="Control\TinyLabel.h" />
@@ -347,6 +348,7 @@
     <ClCompile Include="Control\TinyFileView.cpp" />
     <ClCompile Include="Control\TinyFolderView.cpp" />
     <ClCompile Include="Control\TinyHotKey.cpp" />
+    <ClCompile Include="Control\TinyImageButton.cpp" />
     <ClCompile Include="Control\TinyImageList.cpp" />
     <ClCompile Include="Control\TinyIPAddress.cpp" />
     <ClCompile Include="Control\TinyLabel.cpp" />

@@ -87,7 +87,7 @@ namespace TinyUI
 		}
 		HRESULT	TinyVisualButton::OnLButtonUp(const TinyPoint& pos, DWORD dwFlags)
 		{
-			m_dwFlag = HIGHLIGHT;
+			m_dwFlag = NORMAL;
 			TinyRectangle s = m_document->GetWindowRect(this);
 			m_document->Redraw(&s);
 			m_document->SetCapture(NULL);

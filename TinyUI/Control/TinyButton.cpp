@@ -4,7 +4,7 @@
 namespace TinyUI
 {
 	IMPLEMENT_DYNAMIC(TinyButton, TinyControl)
-	TinyButton::TinyButton()
+		TinyButton::TinyButton()
 	{
 	};
 	TinyButton::~TinyButton()
@@ -45,6 +45,18 @@ namespace TinyUI
 	{
 		ASSERT(::IsWindow(m_hWND));
 		return ::GetWindowText(m_hWND, pzText, iSize);
+	}
+	TinyString TinyButton::GetText()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		INT size = ::GetWindowTextLength(m_hWND);
+		if (size > 0)
+		{
+			TinyString szText(size + 1);
+			::GetWindowText(m_hWND, szText.STR(), size + 1);
+			return szText;
+		}
+		return TinyString();
 	}
 	UINT TinyButton::GetState() const
 	{
