@@ -32,15 +32,6 @@ namespace TinyUI
 			}
 		}
 
-		HRESULT TinyVisualWindow::SetProperty(const TinyString& name, const TinyString& value)
-		{
-			if (strcasecmp(name.STR(), TinyVisualProperty::BACKGROUNDIMAGE.STR()) == 0)
-			{
-				m_backgroundImage.Open(value.STR());
-			}
-			return TinyVisual::SetProperty(name, value);
-		}
-
 		void TinyVisualWindow::SetPosition(const TinyPoint& pos)
 		{
 			TinyVisual::SetPosition(TinyPoint(0, 0));

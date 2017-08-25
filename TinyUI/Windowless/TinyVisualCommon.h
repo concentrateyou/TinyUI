@@ -33,6 +33,7 @@ namespace TinyUI
 			static const TinyString VISIBLE;
 			static const TinyString ENABLE;
 			static const TinyString BACKGROUNDIMAGE;
+			static const TinyString BACKGROUNDCOLOR;
 
 			static const TinyString	FONTFAMILY;
 			static const TinyString	FONTSIZE;
@@ -46,6 +47,12 @@ namespace TinyUI
 			static const TinyString IMAGENORMAL;
 			static const TinyString IMAGEHIGHLIGHT;
 			static const TinyString IMAGEDOWN;
+			static const TinyString IMAGEPUSH;
+
+			static const TinyString ARROWDOWN;
+			static const TinyString ARROWUP;
+			static const TinyString ARROWHIGHLIGHT;
+
 			static const TinyString ALIGNMENT;
 		};
 		/// <summary>
@@ -59,6 +66,7 @@ namespace TinyUI
 			static const TinyString LABEL;
 			static const TinyString TAB;
 			static const TinyString BUTTON;
+			static const TinyString PANEL;
 			static const TinyString STACKPANEL;
 			static const TinyString HBOXLAYOUT;
 			static const TinyString VBOXLAYOUT;

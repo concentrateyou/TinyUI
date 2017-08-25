@@ -289,6 +289,7 @@
     <ClInclude Include="Windowless\TinyTextHost.h" />
     <ClInclude Include="Windowless\TinyVisualCaption.h" />
     <ClInclude Include="Windowless\TinyVisualHBoxLayout.h" />
+    <ClInclude Include="Windowless\TinyVisualPanel.h" />
     <ClInclude Include="Windowless\TinyVisualRichText.h" />
     <ClInclude Include="Windowless\TinyVisualTab.h" />
     <ClInclude Include="Windowless\TinyVisualUtility.h" />
@@ -434,6 +435,7 @@
     <ClCompile Include="Windowless\TinyVisualCaption.cpp" />
     <ClCompile Include="Windowless\TinyVisualHBoxLayout.cpp" />
     <ClCompile Include="Windowless\TinyVisualHWND.cpp" />
+    <ClCompile Include="Windowless\TinyVisualPanel.cpp" />
     <ClCompile Include="Windowless\TinyVisualRichText.cpp" />
     <ClCompile Include="Windowless\TinyVisualTab.cpp" />
     <ClCompile Include="Windowless\TinyVisualUtility.cpp" />
@@ -471,6 +473,7 @@
     <ResourceCompile Include="TinyUI.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Xml Include="menu.xml" />
     <Xml Include="resource.xml">
       <SubType>Designer</SubType>
     </Xml>

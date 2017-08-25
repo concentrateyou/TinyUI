@@ -22,6 +22,7 @@ namespace TinyUI
 		public:
 			BOOL SetStyleImage(StyleImage type, LPCSTR pzFile);
 			BOOL SetStyleImage(StyleImage type, BYTE* ps, DWORD dwSize);
+			HRESULT SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 		protected:
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT	OnCreate() OVERRIDE;
@@ -33,6 +34,7 @@ namespace TinyUI
 		private:
 			StyleImage	m_dwFlag;
 			TinyImage	m_images[StyleImage::COUNT];
+			TinyImage	m_arraws[3];
 		};
 	}
 }

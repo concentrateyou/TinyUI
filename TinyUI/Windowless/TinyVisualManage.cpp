@@ -13,6 +13,7 @@
 #include "TinyVisualRichText.h"
 #include "TinyVisualHBoxLayout.h"
 #include "TinyVisualVBoxLayout.h"
+#include "TinyVisualPanel.h"
 
 namespace TinyUI
 {
@@ -101,6 +102,10 @@ namespace TinyUI
 					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::COMBOBOX.STR()))
 					{
 						spvis = document->Create<TinyVisualComboBox>(spvisParent);
+					}
+					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::PANEL.STR()))
+					{
+						spvis = document->Create<TinyVisualPanel>(spvisParent);
 					}
 					if (spvis != NULL)
 					{

@@ -25,9 +25,6 @@ namespace TinyUI
 		BOOL TinyVisualTab::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
 			TinyClipCanvas canvas(hDC, this, rcPaint);
-
-
-
 			return TRUE;
 		}
 	}

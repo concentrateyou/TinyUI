@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<window name="mshow" text="MShow工具" position="100,100" size="818,730" background-image="D:\Develop\TinyUI\skin\main_bkg.png" minsize="818,730" maxsize="818,730">
-  <syscaption name ="syscaption" position="0,0" size="818,40">
-    <label name="title" position="10,0" size="60,30" text="MShow工具" text-align="left|vcenter" text_color="255,255,255">
+<window name="mshow" text="MShow工具" position="100,100" size="818,730" minsize="818,730" maxsize="818,730">
+  <syscaption name ="syscaption" position="0,0" size="818,27" background-image="D:\Develop\TinyUI\skin\syscaption.png">
+    <label name="title" position="10,0" size="60,27" text="MShow工具" text-align="left|vcenter" text-color="255,255,255" >
     </label>
     <button name="sysmin" tooltip="Min" position="758,0" size="30,27"
                 image-normal="D:\Develop\TinyUI\skin\sysbtn_min_normal.png"
@@ -14,4 +14,11 @@
             image-down="D:\Develop\TinyUI\skin\sysbtn_close_down.png">
     </button>
   </syscaption>
+  <vboxlayout position="0,27" size="818,703" background-image="D:\Develop\TinyUI\skin\panel.png">
+    <combobox position="10,30" size="200,28" text-align="left|vcenter" text="windows默认音频设备" text-color="0,0,0"
+              image-normal="D:\Develop\TinyUI\skin\combobox_normal.png"
+              image-highlight="D:\Develop\TinyUI\skin\combobox_hover.png"
+              image-push="D:\Develop\TinyUI\skin\combobox_push.png">
+    </combobox>
+  </vboxlayout>
 </window>

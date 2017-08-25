@@ -31,7 +31,7 @@ namespace TinyUI
 		BOOL			Open(LPCSTR pz);
 		BOOL			Open(BYTE* p, DWORD size);
 		BOOL			Save(LPCSTR pz);//±£´æ³ÉBMP
-		size_t			GetCount();
+		INT				GetCount();
 		INT				GetDelay(INT index);
 		HBITMAP			GetHBITMAP(INT index);
 		BYTE*			GetBits(INT index);

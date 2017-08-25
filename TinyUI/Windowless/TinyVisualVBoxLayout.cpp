@@ -47,8 +47,12 @@ namespace TinyUI
 		}
 		BOOL TinyVisualVBoxLayout::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
-			UNUSED(hDC);
-			UNUSED(rcPaint);
+			ASSERT(m_document || m_document->GetVisualHWND());
+			TinyClipCanvas canvas(hDC, this, rcPaint);
+			if (!m_backgroundImage.IsEmpty())
+			{
+				canvas.DrawImage(m_backgroundImage, m_rectangle, 0, 0, m_backgroundImage.GetSize().cx, m_backgroundImage.GetSize().cy);
+			}
 			return TRUE;
 		}
 		HRESULT	TinyVisualVBoxLayout::OnMouseEnter()

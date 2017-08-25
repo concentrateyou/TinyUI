@@ -91,6 +91,10 @@ namespace MShow
 
 	void MShowController::OnRecord(void*, INT)
 	{
+		//SetCapture(NULL);
+		//SendMessage(m_window.Handle(), WM_SYSCOMMAND, SC_MINIMIZE, 0);
+		//return;
+
 		DWORD dwAddress = 0;
 		m_window.m_address.GetAddress(dwAddress);
 		string ip = StringPrintf("%ld.%ld.%ld.%ld", FIRST_IPADDRESS(dwAddress), SECOND_IPADDRESS(dwAddress), THIRD_IPADDRESS(dwAddress), FOURTH_IPADDRESS(dwAddress));

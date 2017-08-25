@@ -14,25 +14,41 @@ SkinWindow::~SkinWindow()
 
 void SkinWindow::OnInitialize()
 {
-	TinyVisual* sysmin = GetDocument()->GetVisualByName("sysmin");
-	if (sysmin != NULL)
+	TinyVisual* visual = GetDocument()->GetVisualByName("sysmin");
+	if (visual != NULL)
 	{
-		m_onMinClick.Reset(new Delegate<void(EventArgs&)>(this, &SkinWindow::OnMinClick));
-		sysmin->EVENT_CLICK += m_onMinClick;
+		m_onMinimumClick.Reset(new Delegate<void(EventArgs&)>(this, &SkinWindow::OnMinimumClick));
+		visual->EVENT_CLICK += m_onMinimumClick;
+	}
+	visual = GetDocument()->GetVisualByName("sysclose");
+	if (visual != NULL)
+	{
+		m_onCloseClick.Reset(new Delegate<void(EventArgs&)>(this, &SkinWindow::OnCloseClick));
+		visual->EVENT_CLICK += m_onCloseClick;
 	}
 }
 
 void SkinWindow::OnUninitialize()
 {
-	TinyVisual* sysmin = GetDocument()->GetVisualByName("sysmin");
-	if (sysmin != NULL)
+	TinyVisual* visual = GetDocument()->GetVisualByName("sysmin");
+	if (visual != NULL)
 	{
-		sysmin->EVENT_CLICK -= m_onMinClick;
+		visual->EVENT_CLICK -= m_onMinimumClick;
+	}
+	visual = GetDocument()->GetVisualByName("sysclose");
+	if (visual != NULL)
+	{
+		visual->EVENT_CLICK -= m_onCloseClick;
 	}
 }
 
-void SkinWindow::OnMinClick(EventArgs& args)
+void SkinWindow::OnMinimumClick(EventArgs& args)
 {
-	SendMessage(m_hWND, WM_SYSCOMMAND, SC_MINIMIZE, 0);
-	//ShowWindow(SW_MINIMIZE);
+	GetDocument()->ReleaseCapture();//±ÿ–Î Õ∑≈≤∂ªÒ
+	SendMessage(m_hWND, WM_SYSCOMMAND, SC_MINIMIZE, NULL);
+}
+
+void SkinWindow::OnCloseClick(EventArgs& args)
+{
+	SendMessage(m_hWND, WM_CLOSE, NULL, NULL);
 }

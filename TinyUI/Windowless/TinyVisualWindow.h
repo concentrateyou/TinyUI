@@ -16,14 +16,11 @@ namespace TinyUI
 		public:
 			virtual ~TinyVisualWindow();
 			void OnSizeChange(const TinySize&, const TinySize&) OVERRIDE;
-			HRESULT SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 			void SetPosition(const TinyPoint& pos) OVERRIDE;
 		public:
 			TinyString RetrieveTag() const OVERRIDE;
 			BOOL IsLayout() const OVERRIDE;
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
-		private:
-			TinyImage	m_backgroundImage;
 		};
 	}
 }

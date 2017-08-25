@@ -53,6 +53,8 @@ namespace TinyUI
 			TinyRectangle		GetRectangle() const;
 			TinyRectangle		GetWindowRect()const;
 			TinyRectangle		GetClientRect() const;
+			TinyImage&			GetBackgroundImage();
+			COLORREF			GetBackgroundColor() const;
 			HRGN				GetClip() const;
 			HFONT				GetFont() const;
 			BOOL				IsVisible() const;
@@ -83,6 +85,8 @@ namespace TinyUI
 			virtual void		SetEnable(BOOL enable);
 			virtual void		SetTextColor(COLORREF color);
 			virtual void		SetTextAlian(UINT align);
+			virtual void		SetBackgroundImage(const TinyString& szFile);
+			virtual void		SetBackgroundColor(COLORREF color);
 		protected:
 			virtual BOOL		OnDraw(HDC hDC, const RECT& clip);
 			virtual HRESULT		OnCreate();
@@ -135,7 +139,9 @@ namespace TinyUI
 			TinySize			m_maximumSize;//元素的最大像素大小
 			TinySize			m_minimumSize;//元素的最小像素大小
 			TinyRectangle		m_rectangle;//相对于父元素区域
-			COLORREF 			m_textColor;
+			TinyImage			m_backgroundImage;//背景图片
+			COLORREF			m_backgroundColor;//背景颜色
+			COLORREF 			m_textColor;	
 			UINT				m_textAlign;
 			BOOL				m_visible;
 			BOOL				m_enable;

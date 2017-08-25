@@ -23,6 +23,7 @@ namespace TinyUI
 		const TinyString TinyVisualProperty::ENABLE = TEXT("enable");
 
 		const TinyString TinyVisualProperty::BACKGROUNDIMAGE = TEXT("background-image");
+		const TinyString TinyVisualProperty::BACKGROUNDCOLOR = TEXT("background-color");
 
 		const TinyString TinyVisualProperty::FONTFAMILY = TEXT("font-family");
 		const TinyString TinyVisualProperty::FONTSIZE = TEXT("font-size");
@@ -38,11 +39,16 @@ namespace TinyUI
 		const TinyString TinyVisualProperty::IMAGENORMAL = TEXT("image-normal");
 		const TinyString TinyVisualProperty::IMAGEHIGHLIGHT = TEXT("image-highlight");
 		const TinyString TinyVisualProperty::IMAGEDOWN = TEXT("image-down");
+		const TinyString TinyVisualProperty::IMAGEPUSH = TEXT("image-push");
 
+		const TinyString TinyVisualProperty::ARROWDOWN = TEXT("arrow-down");
+		const TinyString TinyVisualProperty::ARROWUP = TEXT("arrow-up");
+		const TinyString TinyVisualProperty::ARROWHIGHLIGHT = TEXT("arrow-highlight");
 		//////////////////////////////////////////////////////////////////////////
 		const TinyString TinyVisualTag::WINDOW = TEXT("window");
 		const TinyString TinyVisualTag::SYSCAPTION = TEXT("syscaption");
 		const TinyString TinyVisualTag::BUTTON = TEXT("button");
+		const TinyString TinyVisualTag::PANEL = TEXT("panel");
 		const TinyString TinyVisualTag::LABEL = TEXT("label");
 		const TinyString TinyVisualTag::TAB = TEXT("tab");
 		const TinyString TinyVisualTag::STACKPANEL = TEXT("stackpanel");

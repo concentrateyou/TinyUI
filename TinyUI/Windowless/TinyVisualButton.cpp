@@ -2,6 +2,7 @@
 #include "TinyVisualDocument.h"
 #include "TinyVisualManage.h"
 #include "TinyVisualButton.h"
+#include "TinyVisualHWND.h"
 
 namespace TinyUI
 {

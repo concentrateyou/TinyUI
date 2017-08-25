@@ -345,7 +345,7 @@ namespace TinyUI
 	{
 		return SaveBitmapToFile(m_hBitmap, pz);
 	}
-	size_t TinyImage::GetCount()
+	INT TinyImage::GetCount()
 	{
 		return m_count;
 	}

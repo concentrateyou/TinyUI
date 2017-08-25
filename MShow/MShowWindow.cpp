@@ -18,7 +18,7 @@ namespace MShow
 	}
 	DWORD MShowWindow::RetrieveStyle()
 	{
-		return (WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_DLGFRAME | WS_SYSMENU);
+		return (WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_OVERLAPPEDWINDOW & ~WS_CAPTION);
 	}
 	DWORD MShowWindow::RetrieveExStyle()
 	{

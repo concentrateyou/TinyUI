@@ -190,7 +190,7 @@ namespace TinyUI
 		}
 		LRESULT TinyVisualHWND::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
-			bHandled = FALSE;
+			SetMsgHandled(FALSE);
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 			LRESULT lRes = m_document->OnLButtonDown(pos, static_cast<DWORD>(wParam));
 			bHandled = IsMsgHandled();

@@ -24,8 +24,10 @@ public:
 	void OnInitialize() OVERRIDE;
 	void OnUninitialize() OVERRIDE;
 private:
-	void OnMinClick(EventArgs& args);
+	void OnMinimumClick(EventArgs& args);
+	void OnCloseClick(EventArgs& args);
 private:
-	TinyScopedPtr<Delegate<void(EventArgs&)>> m_onMinClick;
+	TinyScopedPtr<Delegate<void(EventArgs&)>> m_onMinimumClick;
+	TinyScopedPtr<Delegate<void(EventArgs&)>> m_onCloseClick;
 };
 

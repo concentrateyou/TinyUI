@@ -1,6 +1,7 @@
 #include "../stdafx.h"
 #include "TinyVisual.h"
 #include "TinyVisualDocument.h"
+#include "TinyVisualHWND.h"
 
 namespace TinyUI
 {
@@ -103,6 +104,14 @@ namespace TinyUI
 		{
 			return m_minimumSize;
 		}
+		TinyImage&	TinyVisual::GetBackgroundImage()
+		{
+			return m_backgroundImage;
+		}
+		COLORREF TinyVisual::GetBackgroundColor() const
+		{
+			return m_backgroundColor;
+		}
 		BOOL TinyVisual::IsVisible() const
 		{
 			return m_visible;
@@ -160,6 +169,16 @@ namespace TinyUI
 			{
 				m_textAlign = align;
 			}
+		}
+		void TinyVisual::SetBackgroundImage(const TinyString& szFile)
+		{
+			ASSERT(PathFileExists(szFile.CSTR()));
+			m_backgroundImage.Close();
+			m_backgroundImage.Open(szFile.CSTR());
+		}
+		void TinyVisual::SetBackgroundColor(COLORREF color)
+		{
+			m_backgroundColor = color;
 		}
 		TinyPoint TinyVisual::GetPosition() const
 		{
@@ -368,6 +387,14 @@ namespace TinyUI
 			if (strcasecmp(name.STR(), TinyVisualProperty::TEXT.STR()) == 0)
 			{
 				this->SetText(value.STR());
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::BACKGROUNDIMAGE.STR()) == 0)
+			{
+				this->SetBackgroundImage(value.STR());
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::BACKGROUNDCOLOR.STR()) == 0)
+			{
+				this->SetBackgroundColor(TinyVisualBuilder::GetColor(value));
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::TOOLTIP.STR()) == 0)
 			{

@@ -501,6 +501,9 @@
     <ClInclude Include="Control\TinyImageButton.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualPanel.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -920,6 +923,9 @@
     <ClCompile Include="Control\TinyImageButton.cpp">
       <Filter>源文件\Control</Filter>
     </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualPanel.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TinyUI.rc">
@@ -928,5 +934,6 @@
   </ItemGroup>
   <ItemGroup>
     <Xml Include="resource.xml" />
+    <Xml Include="menu.xml" />
   </ItemGroup>
 </Project>

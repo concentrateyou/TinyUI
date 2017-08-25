@@ -30,6 +30,26 @@ namespace TinyUI
 		{
 			return m_images[(INT)type].Open(ps, dwSize);
 		}
+		HRESULT TinyVisualComboBox::SetProperty(const TinyString& name, const TinyString& value)
+		{
+			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGENORMAL.STR()) == 0)
+			{
+				this->SetStyleImage(NORMAL, value.STR());
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGEHIGHLIGHT.STR()) == 0)
+			{
+				this->SetStyleImage(HIGHLIGHT, value.STR());
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGEDOWN.STR()) == 0)
+			{
+				this->SetStyleImage(DOWN, value.STR());
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGEDOWN.STR()) == 0)
+			{
+				this->SetStyleImage(DOWN, value.STR());
+			}
+			return TinyVisual::SetProperty(name, value);
+		}
 		BOOL TinyVisualComboBox::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
 			TinyImage& image = m_images[m_dwFlag];
@@ -38,20 +58,17 @@ namespace TinyUI
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			canvas.SetFont((HFONT)GetStockObject(DEFAULT_GUI_FONT));
-			canvas.SetTextColor(RGB(255, 255, 255));
+			canvas.SetTextColor(m_textColor);
 			RECT srcPaint = image.GetRectangle();
 			RECT srcCenter = { srcPaint.left + 4, srcPaint.top + 4, srcPaint.right - 4, srcPaint.bottom - 4 };
 			canvas.DrawImage(image, clip, srcPaint, srcCenter);
-			canvas.DrawString(GetText(), clip, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+			clip.OffsetRect(6, 0);
+			canvas.DrawString(GetText(), clip, m_textAlign);
 			return TRUE;
 		}
 		HRESULT	TinyVisualComboBox::OnCreate()
 		{
 			TinySize size = this->GetSize();
-			SetStyleImage(DOWN, "D:\\Develop\\TinyUI\\Resource\\combobox\\combobox_push.png");
-			SetStyleImage(NORMAL, "D:\\Develop\\TinyUI\\Resource\\combobox\\combobox_normal.png");
-			SetStyleImage(HIGHLIGHT, "D:\\Develop\\TinyUI\\Resource\\combobox\\combobox_hover.png");
-			SetStyleImage(PUSH, "D:\\Develop\\TinyUI\\Resource\\combobox\\combobox_push.png");
 			return TinyVisual::OnCreate();
 		}
 		HRESULT TinyVisualComboBox::OnDestory()
