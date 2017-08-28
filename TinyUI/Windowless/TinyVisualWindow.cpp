@@ -49,24 +49,23 @@ namespace TinyUI
 		{
 			ASSERT(m_document || m_document->GetVisualHWND());
 			TinyClipCanvas canvas(hDC, this, rcPaint);
+			TinyRectangle clip = m_document->GetWindowRect(this);
+			HBRUSH hOldBrush = canvas.SetBrush((HBRUSH)GetStockObject(NULL_BRUSH));
+			canvas.FillRectangle(clip);
 			if (!m_backgroundImage.IsEmpty())
 			{
 				TinyRectangle srcRect = m_backgroundImage.GetRectangle();
 				TinyRectangle srcCenter = GetBackgroundCenter();
 				if (srcCenter.IsRectEmpty())
 				{
-					canvas.DrawImage(m_backgroundImage, m_rectangle, srcRect);
+					canvas.DrawImage(m_backgroundImage, clip, srcRect);
 				}
 				else
 				{
-					canvas.DrawImage(m_backgroundImage, m_rectangle, srcRect, srcCenter);
+					canvas.DrawImage(m_backgroundImage, clip, srcRect, srcCenter);
 				}
 			}
-			else
-			{
-				canvas.SetBrush((HBRUSH)GetStockObject(WHITE_BRUSH));
-				canvas.FillRectangle(m_rectangle);
-			}
+			canvas.SetBrush(hOldBrush);
 			return TRUE;
 		}
 	}

@@ -36,6 +36,10 @@ namespace TinyUI
 			static const TinyString BACKGROUNDCOLOR;
 			static const TinyString BACKGROUNDCENTER;
 
+			static const TinyString BORDERIMAGE;
+			static const TinyString BORDERCOLOR;
+			static const TinyString BORDERCENTER;
+
 			static const TinyString	FONTFAMILY;
 			static const TinyString	FONTSIZE;
 			static const TinyString	FONTWEIGHT;

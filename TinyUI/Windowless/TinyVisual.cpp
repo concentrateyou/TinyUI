@@ -108,7 +108,7 @@ namespace TinyUI
 		{
 			return m_backgroundImage;
 		}
-		COLORREF TinyVisual::GetBackgroundColor() const
+		TinyColor TinyVisual::GetBackgroundColor() const
 		{
 			return m_backgroundColor;
 		}
@@ -385,71 +385,98 @@ namespace TinyUI
 		{
 			return FALSE;
 		}
-		HRESULT	TinyVisual::SetProperty(const TinyString& name, const TinyString& value)
+		TinyString TinyVisual::GetProperty(const TinyString& name)
 		{
-			HRESULT hRes = S_OK;
+			auto val = m_propertys.GetValue(name);
+			if (val != NULL)
+			{
+				return *val;
+			}
+			return TinyString();
+		}
+		BOOL TinyVisual::IsProperty(const TinyString& name)
+		{
+			return m_propertys.Contain(name);
+		}
+		BOOL TinyVisual::SetProperty(const TinyString& name, const TinyString& value)
+		{
 			if (strcasecmp(name.STR(), TinyVisualProperty::NAME.STR()) == 0)
 			{
 				this->SetName(value.STR());
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::TEXT.STR()) == 0)
 			{
 				this->SetText(value.STR());
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::BACKGROUNDIMAGE.STR()) == 0)
 			{
 				this->SetBackgroundImage(value.STR());
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::BACKGROUNDCOLOR.STR()) == 0)
 			{
 				this->SetBackgroundColor(TinyVisualBuilder::GetColor(value));
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::BACKGROUNDCENTER.STR()) == 0)
 			{
 				this->SetBackgroundCenter(TinyVisualBuilder::GetRectangle(value));
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::TOOLTIP.STR()) == 0)
 			{
 				this->SetToolTip(value.STR());
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::ENABLE.STR()) == 0)
 			{
 				this->SetEnable(TinyVisualBuilder::GetBool(value));
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::VISIBLE.STR()) == 0)
 			{
 				this->SetVisible(TinyVisualBuilder::GetBool(value));
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::POSITION.STR()) == 0)
 			{
 				this->SetPosition(TinyVisualBuilder::GetPosition(value));
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::SIZE.STR()) == 0)
 			{
 				this->SetSize(TinyVisualBuilder::GetSize(value));
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::MAXSIZE.STR()) == 0)
 			{
 				TinySize maxsize = TinyVisualBuilder::GetSize(value);
 				this->SetMaximumSize(maxsize);
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::MINSIZE.STR()) == 0)
 			{
 				TinySize minsize = TinyVisualBuilder::GetSize(value);
 				this->SetMinimumSize(minsize);
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::MINSIZE.STR()) == 0)
 			{
 				TinySize minsize = TinyVisualBuilder::GetSize(value);
 				this->SetMinimumSize(minsize);
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::TEXTCOLOR.STR()) == 0)
 			{
 				this->SetTextColor(TinyVisualBuilder::GetColor(value));
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::TEXTALIGN.STR()) == 0)
 			{
 				this->SetTextAlian(TinyVisualBuilder::GetAlign(value));
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::FONTFAMILY.STR()) == 0)
 			{
@@ -458,6 +485,7 @@ namespace TinyUI
 				strcpy_s(lf.lfFaceName, ARRAYSIZE(lf.lfFaceName), value.STR());
 				SAFE_DELETE_OBJECT(m_hFONT);
 				m_hFONT = CreateFontIndirect(&lf);
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::FONTWEIGHT.STR()) == 0)
 			{
@@ -466,6 +494,7 @@ namespace TinyUI
 				lf.lfWeight = atoi(value.STR());
 				SAFE_DELETE_OBJECT(m_hFONT);
 				m_hFONT = CreateFontIndirect(&lf);
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::FONTSIZE.STR()) == 0)
 			{
@@ -476,6 +505,7 @@ namespace TinyUI
 				lf.lfHeight = size.cy;
 				SAFE_DELETE_OBJECT(m_hFONT);
 				m_hFONT = CreateFontIndirect(&lf);
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::FONTSTYLE.STR()) == 0)
 			{
@@ -490,6 +520,7 @@ namespace TinyUI
 					lf.lfItalic = FALSE;
 				SAFE_DELETE_OBJECT(m_hFONT);
 				m_hFONT = CreateFontIndirect(&lf);
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::TEXTDECORATION.STR()) == 0)
 			{
@@ -503,8 +534,9 @@ namespace TinyUI
 					lf.lfStrikeOut = TRUE;
 				SAFE_DELETE_OBJECT(m_hFONT);
 				m_hFONT = CreateFontIndirect(&lf);
+				return TRUE;
 			}
-			return S_OK;
+			return FALSE;
 		}
 	}
 }

@@ -144,11 +144,12 @@ namespace TinyUI
 		}
 
 
-		HRESULT TinyVisualHBoxLayout::SetProperty(const TinyString& name, const TinyString& value)
+		BOOL TinyVisualHBoxLayout::SetProperty(const TinyString& name, const TinyString& value)
 		{
 			if (strcasecmp(name.STR(), TinyVisualProperty::ALIGNMENT.STR()) == 0)
 			{
 				this->SetAlignment(TinyVisualBuilder::GetAlignment(value));
+				return TRUE;
 			}
 			return TinyVisual::SetProperty(name, value);
 		}

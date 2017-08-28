@@ -21,12 +21,7 @@ namespace TinyUI
 
 		TinyString TinyVisualPanel::RetrieveTag() const
 		{
-			return TinyVisualTag::BUTTON;
-		}
-
-		HRESULT TinyVisualPanel::SetProperty(const TinyString& name, const TinyString& value)
-		{
-			return TinyVisual::SetProperty(name, value);
+			return TinyVisualTag::PANEL;
 		}
 
 		BOOL TinyVisualPanel::OnDraw(HDC hDC, const RECT& rcPaint)

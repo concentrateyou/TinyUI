@@ -20,7 +20,7 @@ namespace TinyUI
 			TinyString RetrieveTag() const OVERRIDE;
 			BOOL SetStyleImage(StyleImage type, LPCSTR pzFile);
 			BOOL SetStyleImage(StyleImage type, BYTE*ps, DWORD dwSize);
-			HRESULT SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
+			BOOL SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 		protected:
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT OnMouseLeave() OVERRIDE;

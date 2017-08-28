@@ -55,7 +55,10 @@ namespace TinyUI
 			TinyRectangle		GetClientRect() const;
 			TinyImage&			GetBackgroundImage();
 			TinyRectangle		GetBackgroundCenter() const;
-			COLORREF			GetBackgroundColor() const;
+			TinyColor			GetBackgroundColor() const;
+			TinyImage&			GetBorderImage();
+			TinyRectangle		GetBorderCenter() const;
+			TinyColor			GetBorderColor() const;
 			HRGN				GetClip() const;
 			HFONT				GetFont() const;
 			BOOL				IsVisible() const;
@@ -114,7 +117,9 @@ namespace TinyUI
 			virtual HRESULT		OnCapture(BOOL bFlag);
 			virtual HRESULT		OnActive(BOOL bFlag);
 		public:
-			virtual HRESULT		SetProperty(const TinyString& name, const TinyString& value);
+			virtual BOOL		SetProperty(const TinyString& name, const TinyString& value);
+			TinyString			GetProperty(const TinyString& name);
+			BOOL				IsProperty(const TinyString& name);
 		public:
 			Event<void(EventArgs&)>			EVENT_CLICK;
 			Event<void(MouseEventArgs&)>	EVENT_MOUSEMOVE;
@@ -143,14 +148,15 @@ namespace TinyUI
 			TinyRectangle		m_rectangle;//相对于父元素区域
 			TinyRectangle		m_backgroundCenter;//显示背景图片中心
 			TinyImage			m_backgroundImage;//背景图片
-			COLORREF			m_backgroundColor;//背景颜色
-			COLORREF 			m_textColor;	
+			TinyColor			m_backgroundColor;//背景颜色
+			TinyColor 			m_textColor;
 			UINT				m_textAlign;
 			BOOL				m_visible;
 			BOOL				m_enable;
 			DWORD				m_dwCount;//还是孩子节点个数
 			HRGN				m_hrgnClip;
 			HFONT				m_hFONT;
+			TinyMap<TinyString, TinyString>	m_propertys;//属性Map
 		};
 	}
 }

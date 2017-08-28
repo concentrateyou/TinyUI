@@ -402,9 +402,6 @@
     <ClInclude Include="Windowless\TinyVisualScrollBar.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
-    <ClInclude Include="Windowless\TinyVisualPopupHWND.h">
-      <Filter>头文件\Windowless</Filter>
-    </ClInclude>
     <ClInclude Include="Media\TinyMFAACDecode.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
@@ -502,6 +499,9 @@
       <Filter>头文件\Control</Filter>
     </ClInclude>
     <ClInclude Include="Windowless\TinyVisualPanel.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualDropDownHWND.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
   </ItemGroup>
@@ -830,9 +830,6 @@
     <ClCompile Include="Windowless\TinyVisualScrollBar.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
-    <ClCompile Include="Windowless\TinyVisualPopupHWND.cpp">
-      <Filter>源文件\Windowless</Filter>
-    </ClCompile>
     <ClCompile Include="Media\TinyMFAACDecode.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
@@ -924,6 +921,9 @@
       <Filter>源文件\Control</Filter>
     </ClCompile>
     <ClCompile Include="Windowless\TinyVisualPanel.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualDropDownHWND.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>

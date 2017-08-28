@@ -1,6 +1,6 @@
 #pragma once
 #include "TinyVisualButton.h"
-#include "TinyVisualPopupHWND.h"
+#include "TinyVisualDropDownHWND.h"
 
 namespace TinyUI
 {
@@ -22,7 +22,7 @@ namespace TinyUI
 		public:
 			BOOL SetStyleImage(StyleImage type, LPCSTR pzFile);
 			BOOL SetArrowImage(StyleImage type, LPCSTR pzFile);
-			HRESULT SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
+			BOOL SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 		protected:
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT	OnCreate() OVERRIDE;
@@ -36,10 +36,14 @@ namespace TinyUI
 			TinyImage				m_images[StyleImage::COUNT];
 			TinyImage				m_arraws[StyleImage::COUNT];
 			TinyString				m_dropdown;
-			TinyVisualPopupHWND		m_popup;
+			TinyVisualDropDownHWND		m_popup;
+		};
+		/// <summary>
+		/// ÏÂÀ­¿òÏî
+		/// </summary>
+		class TinyVisualOption : public TinyVisual
+		{
+
 		};
 	}
 }
-
-
-

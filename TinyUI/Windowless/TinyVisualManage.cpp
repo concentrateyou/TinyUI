@@ -127,10 +127,18 @@ namespace TinyUI
 			const TiXmlAttribute* pLA = pXMLNode->LastAttribute();
 			while (pFA != pLA)
 			{
-				spvis->SetProperty(pFA->Name(), UTF8ToASCII(pFA->Value()).c_str());
+				string value = UTF8ToASCII(pFA->Value());
+				if (spvis->SetProperty(pFA->Name(), value.c_str()))
+				{
+					spvis->m_propertys.Add(pFA->Name(), value.c_str());
+				}
 				pFA = pFA->Next();
 			}
-			spvis->SetProperty(pFA->Name(), UTF8ToASCII(pFA->Value()).c_str());
+			string value = UTF8ToASCII(pFA->Value());
+			if (spvis->SetProperty(pFA->Name(), UTF8ToASCII(pFA->Value()).c_str()))
+			{
+				spvis->m_propertys.Add(pFA->Name(), value.c_str());
+			}
 			return TRUE;
 		}
 		TinySize TinyVisualBuilder::GetSize(const TinyString& str)

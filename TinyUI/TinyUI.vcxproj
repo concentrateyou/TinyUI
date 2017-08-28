@@ -296,7 +296,7 @@
     <ClInclude Include="Windowless\TinyVisualButton.h" />
     <ClInclude Include="Windowless\TinyVisualComboBox.h" />
     <ClInclude Include="Windowless\TinyVisualCommon.h" />
-    <ClInclude Include="Windowless\TinyVisualPopupHWND.h" />
+    <ClInclude Include="Windowless\TinyVisualDropDownHWND.h" />
     <ClInclude Include="Windowless\TinyVisualLabel.h" />
     <ClInclude Include="Windowless\TinyVisualScrollBar.h" />
     <ClInclude Include="Windowless\TinyVisualVBoxLayout.h" />
@@ -442,7 +442,7 @@
     <ClCompile Include="Windowless\TinyVisualButton.cpp" />
     <ClCompile Include="Windowless\TinyVisualComboBox.cpp" />
     <ClCompile Include="Windowless\TinyVisualCommon.cpp" />
-    <ClCompile Include="Windowless\TinyVisualPopupHWND.cpp" />
+    <ClCompile Include="Windowless\TinyVisualDropDownHWND.cpp" />
     <ClCompile Include="Windowless\TinyVisualLabel.cpp" />
     <ClCompile Include="Windowless\TinyVisualScrollBar.cpp" />
     <ClCompile Include="Windowless\TinyVisualVBoxLayout.cpp" />

@@ -2,7 +2,7 @@
 #include "TinyVisualDocument.h"
 #include "TinyVisualManage.h"
 #include "TinyVisualComboBox.h"
-#include "TinyVisualPopupHWND.h"
+#include "TinyVisualDropDownHWND.h"
 
 namespace TinyUI
 {
@@ -35,43 +35,52 @@ namespace TinyUI
 				return FALSE;
 			return TRUE;
 		}
-		HRESULT TinyVisualComboBox::SetProperty(const TinyString& name, const TinyString& value)
+		BOOL TinyVisualComboBox::SetProperty(const TinyString& name, const TinyString& value)
 		{
 			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGENORMAL.STR()) == 0)
 			{
 				this->SetStyleImage(NORMAL, value.STR());
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGEHIGHLIGHT.STR()) == 0)
 			{
 				this->SetStyleImage(HIGHLIGHT, value.STR());
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGEPUSH.STR()) == 0)
 			{
 				this->SetStyleImage(PUSH, value.STR());
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGEDOWN.STR()) == 0)
 			{
 				this->SetStyleImage(DOWN, value.STR());
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::ARROWNORMAL.STR()) == 0)
 			{
 				this->SetArrowImage(NORMAL, value.STR());
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::ARROWHIGHLIGHT.STR()) == 0)
 			{
 				this->SetArrowImage(HIGHLIGHT, value.STR());
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::ARROWDOWN.STR()) == 0)
 			{
 				this->SetArrowImage(DOWN, value.STR());
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::ARROWPUSH.STR()) == 0)
 			{
 				this->SetArrowImage(PUSH, value.STR());
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::DROPDOWN.STR()) == 0)
 			{
 				m_popup.BuildResource(value.STR());
+				return TRUE;
 			}
 			return TinyVisual::SetProperty(name, value);
 		}
@@ -137,7 +146,7 @@ namespace TinyUI
 			m_document->Redraw(&s);
 			m_document->SetCapture(NULL);
 			EVENT_CLICK(EventArgs());
-			m_popup.SetPosition(TinyPoint(100, 100), TinySize(100, 100));
+			m_popup.SetPosition(TinyPoint(100, 100), TinySize(0, 0));
 			return TinyVisual::OnLButtonUp(pos, dwFlags);
 		}
 	}

@@ -24,6 +24,9 @@
               arrow-highlight="D:\Develop\TinyUI\skin\combobox\inputbtn_highlight.png"
               arrow-down="D:\Develop\TinyUI\skin\combobox\inputbtn_down.png"
               arrow-push="D:\Develop\TinyUI\skin\combobox\inputbtn_normal.png">
+      <option>
+        
+      </option>
     </combobox>
   </vboxlayout>
 </window>

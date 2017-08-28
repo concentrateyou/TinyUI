@@ -2468,4 +2468,34 @@ namespace TinyUI
 			::MulDiv(bottom, nMultiplier, nDivisor));
 	}
 #pragma endregion
+	//////////////////////////////////////////////////////////////////////////
+	TinyColor::TinyColor()
+		:m_color(-1)
+	{
+	}
+	TinyColor::TinyColor(COLORREF color)
+		: m_color(color)
+	{
+
+	}
+	void TinyColor::SetColor(COLORREF color)
+	{
+		m_color = color;
+	}
+	BOOL TinyColor::IsEmpty()
+	{
+		return m_color == -1;
+	}
+	void TinyColor::operator=(COLORREF color) throw()
+	{
+		m_color = color;
+	}
+	TinyColor::operator COLORREF() throw()
+	{
+		return m_color;
+	}
+	TinyColor::operator COLORREF() const throw()
+	{
+		return m_color;
+	}
 }

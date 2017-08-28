@@ -9,12 +9,15 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		class TinyVisualPopupHWND : public TinyVisualHWND
+		/// <summary>
+		/// ÏÂÀ­¿ò
+		/// </summary>
+		class TinyVisualDropDownHWND : public TinyVisualHWND
 		{
-			DECLARE_DYNAMIC(TinyVisualPopupHWND)
+			DECLARE_DYNAMIC(TinyVisualDropDownHWND)
 		public:
-			TinyVisualPopupHWND();
-			virtual ~TinyVisualPopupHWND();
+			TinyVisualDropDownHWND();
+			virtual ~TinyVisualDropDownHWND();
 			DWORD RetrieveStyle() OVERRIDE;
 			DWORD RetrieveExStyle() OVERRIDE;
 			LPCSTR RetrieveClassName() OVERRIDE;

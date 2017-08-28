@@ -31,19 +31,22 @@ namespace TinyUI
 		{
 			return m_images[(INT)type].Open(ps, dwSize);
 		}
-		HRESULT TinyVisualButton::SetProperty(const TinyString& name, const TinyString& value)
+		BOOL TinyVisualButton::SetProperty(const TinyString& name, const TinyString& value)
 		{
 			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGENORMAL.STR()) == 0)
 			{
 				this->SetStyleImage(NORMAL, value.STR());
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGEHIGHLIGHT.STR()) == 0)
 			{
 				this->SetStyleImage(HIGHLIGHT, value.STR());
+				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGEDOWN.STR()) == 0)
 			{
 				this->SetStyleImage(DOWN, value.STR());
+				return TRUE;
 			}
 			return TinyVisual::SetProperty(name, value);
 		}
@@ -58,7 +61,7 @@ namespace TinyUI
 			canvas.SetFont((HFONT)GetStockObject(DEFAULT_GUI_FONT));
 			canvas.SetTextColor(RGB(255, 255, 255));
 			canvas.DrawImage(image, clip, 0, 0, image.GetSize().cx, image.GetSize().cy);
-			canvas.DrawString(GetText(), clip, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+			canvas.DrawString(GetText(), clip, m_textAlign);
 			return TRUE;
 		}
 

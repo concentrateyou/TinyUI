@@ -26,6 +26,10 @@ namespace TinyUI
 		const TinyString TinyVisualProperty::BACKGROUNDCOLOR = TEXT("background-color");
 		const TinyString TinyVisualProperty::BACKGROUNDCENTER = TEXT("background-center");
 
+		const TinyString TinyVisualProperty::BORDERIMAGE = TEXT("border-image");
+		const TinyString TinyVisualProperty::BORDERCOLOR = TEXT("border-color");
+		const TinyString TinyVisualProperty::BORDERCENTER = TEXT("border-center");
+
 		const TinyString TinyVisualProperty::FONTFAMILY = TEXT("font-family");
 		const TinyString TinyVisualProperty::FONTSIZE = TEXT("font-size");
 		const TinyString TinyVisualProperty::FONTWEIGHT = TEXT("font-weight");

@@ -18,7 +18,6 @@ namespace TinyUI
 		public:
 			virtual ~TinyVisualPanel();
 			TinyString RetrieveTag() const OVERRIDE;
-			HRESULT SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 		protected:
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 		};

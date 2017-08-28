@@ -20,7 +20,7 @@ namespace TinyUI
 			virtual ~TinyVisualHBoxLayout();
 			TinyString RetrieveTag() const OVERRIDE;
 			BOOL IsLayout() const OVERRIDE;
-			HRESULT SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
+			BOOL SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 			void OnSizeChange(const TinySize&, const TinySize&) OVERRIDE;
 		public:
 			void AutoScroll(BOOL bAuto);
