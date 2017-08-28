@@ -2,6 +2,7 @@
 #include "TinyVisualDocument.h"
 #include "TinyVisualManage.h"
 #include "TinyVisualComboBox.h"
+#include "TinyVisualPopupHWND.h"
 
 namespace TinyUI
 {
@@ -24,11 +25,15 @@ namespace TinyUI
 		}
 		BOOL TinyVisualComboBox::SetStyleImage(StyleImage type, LPCSTR pzFile)
 		{
-			return m_images[(INT)type].Open(pzFile);
+			if (!m_images[(INT)type].Open(pzFile))
+				return FALSE;
+			return TRUE;
 		}
-		BOOL TinyVisualComboBox::SetStyleImage(StyleImage type, BYTE* ps, DWORD dwSize)
+		BOOL TinyVisualComboBox::SetArrowImage(StyleImage type, LPCSTR pzFile)
 		{
-			return m_images[(INT)type].Open(ps, dwSize);
+			if (!m_arraws[(INT)type].Open(pzFile))
+				return FALSE;
+			return TRUE;
 		}
 		HRESULT TinyVisualComboBox::SetProperty(const TinyString& name, const TinyString& value)
 		{
@@ -40,13 +45,33 @@ namespace TinyUI
 			{
 				this->SetStyleImage(HIGHLIGHT, value.STR());
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGEDOWN.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGEPUSH.STR()) == 0)
 			{
-				this->SetStyleImage(DOWN, value.STR());
+				this->SetStyleImage(PUSH, value.STR());
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGEDOWN.STR()) == 0)
 			{
 				this->SetStyleImage(DOWN, value.STR());
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::ARROWNORMAL.STR()) == 0)
+			{
+				this->SetArrowImage(NORMAL, value.STR());
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::ARROWHIGHLIGHT.STR()) == 0)
+			{
+				this->SetArrowImage(HIGHLIGHT, value.STR());
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::ARROWDOWN.STR()) == 0)
+			{
+				this->SetArrowImage(DOWN, value.STR());
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::ARROWPUSH.STR()) == 0)
+			{
+				this->SetArrowImage(PUSH, value.STR());
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::DROPDOWN.STR()) == 0)
+			{
+				m_popup.BuildResource(value.STR());
 			}
 			return TinyVisual::SetProperty(name, value);
 		}
@@ -59,20 +84,26 @@ namespace TinyUI
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			canvas.SetFont((HFONT)GetStockObject(DEFAULT_GUI_FONT));
 			canvas.SetTextColor(m_textColor);
-			RECT srcPaint = image.GetRectangle();
-			RECT srcCenter = { srcPaint.left + 4, srcPaint.top + 4, srcPaint.right - 4, srcPaint.bottom - 4 };
+			TinyRectangle srcPaint = image.GetRectangle();
+			TinyRectangle srcCenter(srcPaint.left + 5, srcPaint.top + 5, srcPaint.right - 5, srcPaint.bottom - 5);
 			canvas.DrawImage(image, clip, srcPaint, srcCenter);
-			clip.OffsetRect(6, 0);
+			TinyImage& arrow = m_arraws[m_dwFlag];
+			srcPaint = arrow.GetRectangle();
+			TinyRectangle dstPaint(TinyPoint(clip.right - srcPaint.Width() - 3, clip.top + (clip.Height() - srcPaint.Height()) / 2), srcPaint.Size());
+			canvas.DrawImage(arrow, dstPaint, srcPaint);
+			clip.OffsetRect(7, 0);
 			canvas.DrawString(GetText(), clip, m_textAlign);
 			return TRUE;
 		}
 		HRESULT	TinyVisualComboBox::OnCreate()
 		{
-			TinySize size = this->GetSize();
+			m_popup.Create(m_document->GetVisualHWND()->Handle(), NULL);
+			m_popup.UpdateWindow();
 			return TinyVisual::OnCreate();
 		}
 		HRESULT TinyVisualComboBox::OnDestory()
 		{
+			m_popup.DestroyWindow();
 			return TinyVisual::OnDestory();
 		}
 
@@ -82,7 +113,6 @@ namespace TinyUI
 			TinyRectangle s = m_document->GetWindowRect(this);
 			m_document->Redraw(&s);
 			m_document->SetCapture(this);
-			RECT rect = m_rectangle;
 			return TinyVisual::OnLButtonDown(pos, dwFlags);
 		}
 		HRESULT	TinyVisualComboBox::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)
@@ -102,11 +132,12 @@ namespace TinyUI
 		}
 		HRESULT	TinyVisualComboBox::OnLButtonUp(const TinyPoint& pos, DWORD dwFlags)
 		{
-			m_dwFlag = NORMAL;
+			m_dwFlag = PUSH;
 			TinyRectangle s = m_document->GetWindowRect(this);
 			m_document->Redraw(&s);
 			m_document->SetCapture(NULL);
 			EVENT_CLICK(EventArgs());
+			m_popup.SetPosition(TinyPoint(100, 100), TinySize(100, 100));
 			return TinyVisual::OnLButtonUp(pos, dwFlags);
 		}
 	}

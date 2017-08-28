@@ -51,7 +51,16 @@ namespace TinyUI
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			if (!m_backgroundImage.IsEmpty())
 			{
-				canvas.DrawImage(m_backgroundImage, m_rectangle, 0, 0, m_backgroundImage.GetSize().cx, m_backgroundImage.GetSize().cy);
+				TinyRectangle srcRect = m_backgroundImage.GetRectangle();
+				TinyRectangle srcCenter = GetBackgroundCenter();
+				if (srcCenter.IsRectEmpty())
+				{
+					canvas.DrawImage(m_backgroundImage, m_rectangle, srcRect);
+				}
+				else
+				{
+					canvas.DrawImage(m_backgroundImage, m_rectangle, srcRect, srcCenter);
+				}
 			}
 			else
 			{

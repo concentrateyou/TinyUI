@@ -112,6 +112,10 @@ namespace TinyUI
 		{
 			return m_backgroundColor;
 		}
+		TinyRectangle TinyVisual::GetBackgroundCenter() const
+		{
+			return m_backgroundCenter;
+		}
 		BOOL TinyVisual::IsVisible() const
 		{
 			return m_visible;
@@ -179,6 +183,10 @@ namespace TinyUI
 		void TinyVisual::SetBackgroundColor(COLORREF color)
 		{
 			m_backgroundColor = color;
+		}
+		void TinyVisual::SetBackgroundCenter(const TinyRectangle& center)
+		{
+			m_backgroundCenter = center;
 		}
 		TinyPoint TinyVisual::GetPosition() const
 		{
@@ -260,11 +268,11 @@ namespace TinyUI
 		}
 		HRESULT	TinyVisual::OnCreate()
 		{
-			return FALSE;
+			return TRUE;
 		}
 		HRESULT	TinyVisual::OnDestory()
 		{
-			return FALSE;
+			return TRUE;
 		}
 		BOOL	TinyVisual::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
@@ -395,6 +403,10 @@ namespace TinyUI
 			if (strcasecmp(name.STR(), TinyVisualProperty::BACKGROUNDCOLOR.STR()) == 0)
 			{
 				this->SetBackgroundColor(TinyVisualBuilder::GetColor(value));
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::BACKGROUNDCENTER.STR()) == 0)
+			{
+				this->SetBackgroundCenter(TinyVisualBuilder::GetRectangle(value));
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::TOOLTIP.STR()) == 0)
 			{

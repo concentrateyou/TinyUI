@@ -21,7 +21,7 @@ namespace TinyUI
 			TinyString RetrieveTag() const OVERRIDE;
 		public:
 			BOOL SetStyleImage(StyleImage type, LPCSTR pzFile);
-			BOOL SetStyleImage(StyleImage type, BYTE* ps, DWORD dwSize);
+			BOOL SetArrowImage(StyleImage type, LPCSTR pzFile);
 			HRESULT SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 		protected:
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
@@ -32,9 +32,11 @@ namespace TinyUI
 			HRESULT OnMouseLeave() OVERRIDE;
 			HRESULT	OnLButtonUp(const TinyPoint& pos, DWORD dwFlags);
 		private:
-			StyleImage	m_dwFlag;
-			TinyImage	m_images[StyleImage::COUNT];
-			TinyImage	m_arraws[3];
+			StyleImage				m_dwFlag;
+			TinyImage				m_images[StyleImage::COUNT];
+			TinyImage				m_arraws[StyleImage::COUNT];
+			TinyString				m_dropdown;
+			TinyVisualPopupHWND		m_popup;
 		};
 	}
 }

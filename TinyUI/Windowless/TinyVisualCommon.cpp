@@ -24,6 +24,7 @@ namespace TinyUI
 
 		const TinyString TinyVisualProperty::BACKGROUNDIMAGE = TEXT("background-image");
 		const TinyString TinyVisualProperty::BACKGROUNDCOLOR = TEXT("background-color");
+		const TinyString TinyVisualProperty::BACKGROUNDCENTER = TEXT("background-center");
 
 		const TinyString TinyVisualProperty::FONTFAMILY = TEXT("font-family");
 		const TinyString TinyVisualProperty::FONTSIZE = TEXT("font-size");
@@ -41,9 +42,12 @@ namespace TinyUI
 		const TinyString TinyVisualProperty::IMAGEDOWN = TEXT("image-down");
 		const TinyString TinyVisualProperty::IMAGEPUSH = TEXT("image-push");
 
+		const TinyString TinyVisualProperty::ARROWNORMAL = TEXT("arrow-normal");
 		const TinyString TinyVisualProperty::ARROWDOWN = TEXT("arrow-down");
-		const TinyString TinyVisualProperty::ARROWUP = TEXT("arrow-up");
 		const TinyString TinyVisualProperty::ARROWHIGHLIGHT = TEXT("arrow-highlight");
+		const TinyString TinyVisualProperty::ARROWPUSH = TEXT("arrow-push");
+
+		const TinyString TinyVisualProperty::DROPDOWN = TEXT("dropdown");
 		//////////////////////////////////////////////////////////////////////////
 		const TinyString TinyVisualTag::WINDOW = TEXT("window");
 		const TinyString TinyVisualTag::SYSCAPTION = TEXT("syscaption");

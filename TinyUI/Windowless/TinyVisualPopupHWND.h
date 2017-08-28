@@ -3,7 +3,7 @@
 #include "../Render/TinyImage.h"
 #include "TinyVisualHWND.h"
 #include "TinyVisualDocument.h"
-
+#include "TinyVisualManage.h"
 
 namespace TinyUI
 {
@@ -20,6 +20,8 @@ namespace TinyUI
 			LPCSTR RetrieveClassName() OVERRIDE;
 			LPCSTR RetrieveTitle() OVERRIDE;
 			HICON RetrieveIcon() OVERRIDE;
+			void OnInitialize() OVERRIDE;
+			void OnUninitialize() OVERRIDE;
 		public:
 			BOOL SetPosition(const TinyPoint& pos, const TinySize& size);
 		public:

@@ -1,24 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <window name="mshow" text="MShow工具" position="100,100" size="818,730" minsize="818,730" maxsize="818,730">
-  <syscaption name ="syscaption" position="0,0" size="818,27" background-image="D:\Develop\TinyUI\skin\syscaption.png">
+  <syscaption name ="syscaption" position="0,0" size="818,27" background-image="D:\Develop\TinyUI\skin\system\syscaption.png">
     <label name="title" position="10,0" size="60,27" text="MShow工具" text-align="left|vcenter" text-color="255,255,255" >
     </label>
     <button name="sysmin" tooltip="Min" position="758,0" size="30,27"
-                image-normal="D:\Develop\TinyUI\skin\sysbtn_min_normal.png"
-                image-highlight="D:\Develop\TinyUI\skin\sysbtn_min_hover.png"
-                image-down="D:\Develop\TinyUI\skin\sysbtn_min_down.png">
+            image-normal="D:\Develop\TinyUI\skin\system\sysbtn_min_normal.png"
+            image-highlight="D:\Develop\TinyUI\skin\system\sysbtn_min_hover.png"
+            image-down="D:\Develop\TinyUI\skin\system\sysbtn_min_down.png">
     </button>
     <button name="sysclose" tooltip="Close" position="788,0" size="30,27"
-            image-normal="D:\Develop\TinyUI\skin\sysbtn_close_normal.png"
-            image-highlight="D:\Develop\TinyUI\skin\sysbtn_close_hover.png"
-            image-down="D:\Develop\TinyUI\skin\sysbtn_close_down.png">
+            image-normal="D:\Develop\TinyUI\skin\system\sysbtn_close_normal.png"
+            image-highlight="D:\Develop\TinyUI\skin\system\sysbtn_close_hover.png"
+            image-down="D:\Develop\TinyUI\skin\system\sysbtn_close_down.png">
     </button>
   </syscaption>
-  <vboxlayout position="0,27" size="818,703" background-image="D:\Develop\TinyUI\skin\panel.png">
-    <combobox position="10,30" size="200,28" text-align="left|vcenter" text="windows默认音频设备" text-color="0,0,0"
-              image-normal="D:\Develop\TinyUI\skin\combobox_normal.png"
-              image-highlight="D:\Develop\TinyUI\skin\combobox_hover.png"
-              image-push="D:\Develop\TinyUI\skin\combobox_push.png">
+  <vboxlayout position="0,27" size="818,703" background-image="D:\Develop\TinyUI\skin\system\panel.png">
+    <combobox position="10,30" size="200,28" text-align="left|vcenter" text="windows默认音频设备" text-color="0,0,0" dropdown="D:\Develop\TinyUI\TinyUI\menu.xml"
+              image-normal="D:\Develop\TinyUI\skin\combobox\combobox_normal.png"
+              image-down="D:\Develop\TinyUI\skin\combobox\combobox_push.png"
+              image-highlight="D:\Develop\TinyUI\skin\combobox\combobox_hover.png"
+              image-push="D:\Develop\TinyUI\skin\combobox\combobox_push.png"
+              arrow-normal="D:\Develop\TinyUI\skin\combobox\inputbtn_normal.png"
+              arrow-highlight="D:\Develop\TinyUI\skin\combobox\inputbtn_highlight.png"
+              arrow-down="D:\Develop\TinyUI\skin\combobox\inputbtn_down.png"
+              arrow-push="D:\Develop\TinyUI\skin\combobox\inputbtn_normal.png">
     </combobox>
   </vboxlayout>
 </window>

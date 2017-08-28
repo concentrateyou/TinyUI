@@ -18,11 +18,11 @@ namespace TinyUI
 		}
 		DWORD TinyVisualPopupHWND::RetrieveStyle()
 		{
-			return (WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP & ~WS_CAPTION);
+			return (WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_OVERLAPPEDWINDOW & ~WS_CAPTION);
 		}
 		DWORD TinyVisualPopupHWND::RetrieveExStyle()
 		{
-			return (WS_EX_LEFT | WS_EX_RIGHTSCROLLBAR);
+			return (WS_EX_TOPMOST | WS_EX_LEFT | WS_EX_LTRREADING);
 		}
 		LPCSTR TinyVisualPopupHWND::RetrieveClassName()
 		{
@@ -36,6 +36,17 @@ namespace TinyUI
 		{
 			return NULL;
 		}
+
+		void TinyVisualPopupHWND::OnInitialize()
+		{
+
+		}
+
+		void TinyVisualPopupHWND::OnUninitialize()
+		{
+
+		}
+
 		BOOL TinyVisualPopupHWND::SetPosition(const TinyPoint& pos, const TinySize& size)
 		{
 			BOOL bRes = ::SetWindowPos(m_hWND, HWND_TOPMOST, pos.x, pos.y, size.cx, size.cy, SWP_SHOWWINDOW);
@@ -65,7 +76,7 @@ namespace TinyUI
 			bHandled = FALSE;
 			if (LOWORD(wParam) == WA_INACTIVE)
 			{
-				ShowWindow(SW_HIDE);
+				//ShowWindow(SW_HIDE);
 			}
 			return FALSE;
 		}

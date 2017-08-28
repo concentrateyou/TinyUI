@@ -19,18 +19,13 @@ namespace TinyUI
 		{
 
 		}
-		BOOL TinyVisualHWND::Create(HWND hParent)
+		BOOL TinyVisualHWND::Create(HWND hParent, LPCSTR pzFile)
 		{
-			if (TinyControl::Create(hParent, 0, 0, 0, 0, FALSE))
-			{
-				if (m_document->Initialize(&m_builder))
-				{
-					this->OnInitialize();
-					return TRUE;
-				}
+			if (!TinyControl::Create(hParent, 0, 0, 0, 0, FALSE))
 				return FALSE;
-			}
-			return FALSE;
+			if (!this->BuildResource(pzFile))
+				return FALSE;
+			return TRUE;
 		}
 		DWORD TinyVisualHWND::RetrieveStyle()
 		{
@@ -53,10 +48,21 @@ namespace TinyUI
 			return NULL;
 		}
 
-		BOOL TinyVisualHWND::SetResource(const TinyString& resource)
+		BOOL TinyVisualHWND::BuildResource(const TinyString& szFile)
 		{
-			m_szResource = resource;
-			return m_builder.LoadFile(m_szResource.CSTR());
+			if (!m_document || !PathFileExists(szFile.CSTR()))
+				return FALSE;
+			m_szResource = szFile;
+			if (m_builder.LoadFile(m_szResource.CSTR()))
+			{
+				if (m_document->Initialize(&m_builder))
+				{
+					this->OnInitialize();
+					m_document->Redraw();
+					return TRUE;
+				}
+			}
+			return FALSE;
 		}
 		TinyVisualDocument*	TinyVisualHWND::GetDocument()
 		{

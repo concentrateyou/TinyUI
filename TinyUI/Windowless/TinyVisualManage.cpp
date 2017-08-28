@@ -153,13 +153,23 @@ namespace TinyUI
 			}
 			return TinyPoint();
 		}
+		TinyRectangle TinyVisualBuilder::GetRectangle(const TinyString& str)
+		{
+			TinyArray<TinyString> sps;
+			str.Split(',', sps);
+			if (sps.GetSize() == 4)
+			{
+				return (TinyRectangle(atoi(sps[0].STR()), atoi(sps[1].STR()), atoi(sps[2].STR()), atoi(sps[3].STR())));
+			}
+			return TinyRectangle();
+		}
 		BOOL TinyVisualBuilder::GetBool(const TinyString& str)
 		{
 			return str.Compare("true") == 0;
 		}
 		UINT TinyVisualBuilder::GetAlign(const TinyString& str)
 		{
-			UINT sFlag = DT_LEFT| DT_SINGLELINE;
+			UINT sFlag = DT_LEFT | DT_SINGLELINE;
 			TinyArray<TinyString> sps;
 			str.Split('|', sps);
 			for (INT i = 0;i < sps.GetSize();i++)

@@ -121,8 +121,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
 	SkinWindow uiImpl;
-	uiImpl.SetResource("D:\\Develop\\TinyUI\\TinyUI\\resource.xml");
-	uiImpl.Create(NULL);
+	uiImpl.Create(NULL, "D:\\Develop\\TinyUI\\TinyUI\\resource.xml");
 	uiImpl.UpdateWindow();
 	INT loopRes = theLoop.MessageLoop();
 	TinyApplication::GetInstance()->RemoveMessageLoop();

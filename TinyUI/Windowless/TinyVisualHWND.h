@@ -15,14 +15,14 @@ namespace TinyUI
 		public:
 			TinyVisualHWND();
 			virtual ~TinyVisualHWND();
-			BOOL Create(HWND hParent);
+			BOOL Create(HWND hParent, LPCSTR pzFile);
 			DWORD RetrieveStyle() OVERRIDE;
 			DWORD RetrieveExStyle() OVERRIDE;
 			LPCSTR RetrieveClassName() OVERRIDE;
 			LPCSTR RetrieveTitle() OVERRIDE;
 			HICON RetrieveIcon() OVERRIDE;
 		public:
-			BOOL SetResource(const TinyString& resource);
+			BOOL BuildResource(const TinyString& resource);
 			BOOL AddFilter(TinyVisualFilter* ps);
 			BOOL RemoveFilter(TinyVisualFilter* ps);
 			TinyVisualDocument*	GetDocument();

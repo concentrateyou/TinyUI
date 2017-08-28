@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<window name="mshow" text="MShow工具" position="100,100" size="818,730" background-image="D:\Develop\TinyUI\skin\main_bkg.png" minsize="818,730" maxsize="818,730">
+<window name="popup" background-image="D:\Develop\TinyUI\skin\menu\menu_bkg_board.png" background-center="6,6,140,64" size="200,200">
   
 </window>

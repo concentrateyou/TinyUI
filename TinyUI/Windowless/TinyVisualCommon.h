@@ -34,6 +34,7 @@ namespace TinyUI
 			static const TinyString ENABLE;
 			static const TinyString BACKGROUNDIMAGE;
 			static const TinyString BACKGROUNDCOLOR;
+			static const TinyString BACKGROUNDCENTER;
 
 			static const TinyString	FONTFAMILY;
 			static const TinyString	FONTSIZE;
@@ -49,9 +50,12 @@ namespace TinyUI
 			static const TinyString IMAGEDOWN;
 			static const TinyString IMAGEPUSH;
 
+			static const TinyString ARROWNORMAL;
 			static const TinyString ARROWDOWN;
-			static const TinyString ARROWUP;
 			static const TinyString ARROWHIGHLIGHT;
+			static const TinyString ARROWPUSH;
+
+			static const TinyString DROPDOWN;
 
 			static const TinyString ALIGNMENT;
 		};
