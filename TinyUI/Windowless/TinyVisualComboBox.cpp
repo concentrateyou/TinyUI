@@ -11,13 +11,16 @@ namespace TinyUI
 		IMPLEMENT_DYNAMIC(TinyVisualComboBox, TinyVisual);
 		TinyVisualComboBox::TinyVisualComboBox(TinyVisual* spvisParent, TinyVisualDocument* vtree)
 			:TinyVisual(spvisParent, vtree),
-			m_dwFlag(NORMAL)
+			m_dwFlag(NORMAL),
+			m_dwArrawFlag(NORMAL),
+			m_bActive(FALSE)
 		{
-
+			m_onPopupActive.Reset(new Delegate<void(ActiveEventArgs&)>(this, &TinyVisualComboBox::OnPopupActive));
+			m_popup.EVENT_ACTIVE += m_onPopupActive;
 		}
 		TinyVisualComboBox::~TinyVisualComboBox()
 		{
-
+			m_popup.EVENT_ACTIVE -= m_onPopupActive;
 		}
 		TinyString TinyVisualComboBox::RetrieveTag() const
 		{
@@ -96,7 +99,7 @@ namespace TinyUI
 			TinyRectangle srcPaint = image.GetRectangle();
 			TinyRectangle srcCenter(srcPaint.left + 5, srcPaint.top + 5, srcPaint.right - 5, srcPaint.bottom - 5);
 			canvas.DrawImage(image, clip, srcPaint, srcCenter);
-			TinyImage& arrow = m_arraws[m_dwFlag];
+			TinyImage& arrow = m_arraws[m_dwArrawFlag];
 			srcPaint = arrow.GetRectangle();
 			TinyRectangle dstPaint(TinyPoint(clip.right - srcPaint.Width() - 3, clip.top + (clip.Height() - srcPaint.Height()) / 2), srcPaint.Size());
 			canvas.DrawImage(arrow, dstPaint, srcPaint);
@@ -118,25 +121,30 @@ namespace TinyUI
 
 		HRESULT	TinyVisualComboBox::OnLButtonDown(const TinyPoint& pos, DWORD dwFlags)
 		{
-			m_dwFlag = DOWN;
+			m_dwFlag = PUSH;
 			TinyRectangle s = m_document->GetWindowRect(this);
 			m_document->Redraw(&s);
-			m_document->SetCapture(this);
+			m_document->ReleaseCapture();
+			TinyPoint screenPos = m_document->GetScreenPos(this);
+			screenPos.Offset(1, s.Height());
+			TinySize size = s.Size();
+			size.cx = size.cx - 2;
+			m_popup.AllowTracking(FALSE);
+			m_popup.SetPosition(screenPos, size);
 			return TinyVisual::OnLButtonDown(pos, dwFlags);
 		}
 		HRESULT	TinyVisualComboBox::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)
 		{
-			m_dwFlag = dwFlags & MK_LBUTTON ? DOWN : HIGHLIGHT;
+			m_dwFlag = m_bActive ? PUSH : (dwFlags & MK_LBUTTON ? DOWN : HIGHLIGHT);
 			TinyRectangle s = m_document->GetWindowRect(this);
 			m_document->Redraw(&s);
 			return TinyVisual::OnMouseMove(pos, dwFlags);
 		}
 		HRESULT TinyVisualComboBox::OnMouseLeave()
 		{
-			m_dwFlag = NORMAL;
+			m_dwFlag = m_bActive ? PUSH : NORMAL;
 			TinyRectangle s = m_document->GetWindowRect(this);
 			m_document->Redraw(&s);
-			m_document->ReleaseCapture();
 			return TinyVisual::OnMouseLeave();
 		}
 		HRESULT	TinyVisualComboBox::OnLButtonUp(const TinyPoint& pos, DWORD dwFlags)
@@ -144,10 +152,19 @@ namespace TinyUI
 			m_dwFlag = PUSH;
 			TinyRectangle s = m_document->GetWindowRect(this);
 			m_document->Redraw(&s);
-			m_document->SetCapture(NULL);
 			EVENT_CLICK(EventArgs());
-			m_popup.SetPosition(TinyPoint(100, 100), TinySize(0, 0));
 			return TinyVisual::OnLButtonUp(pos, dwFlags);
+		}
+		void TinyVisualComboBox::OnPopupActive(ActiveEventArgs& args)
+		{
+			m_bActive = args.IsActive();
+			m_dwArrawFlag = m_bActive ? DOWN : NORMAL;
+			if (!m_bActive)
+			{
+				ShowWindow(m_popup, SW_HIDE);
+				TinyRectangle s = m_document->GetWindowRect(this);
+				m_document->Redraw(&s);
+			}
 		}
 	}
 }

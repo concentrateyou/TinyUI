@@ -175,6 +175,10 @@ namespace TinyUI
 		{
 			return str.Compare("true") == 0;
 		}
+		INT	TinyVisualBuilder::GetInt32(const TinyString& str)
+		{
+			return atoi(str.CSTR());
+		}
 		UINT TinyVisualBuilder::GetAlign(const TinyString& str)
 		{
 			UINT sFlag = DT_LEFT | DT_SINGLELINE;

@@ -11,7 +11,8 @@ namespace TinyUI
 		TinyVisualHWND::TinyVisualHWND()
 			:m_document(NULL),
 			m_visualDC(NULL),
-			m_bMouseTracking(FALSE)
+			m_bMouseTracking(FALSE),
+			m_bAllowTracking(FALSE)
 		{
 
 		}
@@ -29,11 +30,11 @@ namespace TinyUI
 		}
 		DWORD TinyVisualHWND::RetrieveStyle()
 		{
-			return (WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_OVERLAPPEDWINDOW & ~WS_CAPTION);
+			return (WS_POPUP | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
 		}
 		DWORD TinyVisualHWND::RetrieveExStyle()
 		{
-			return (WS_EX_LEFT | WS_EX_LTRREADING);
+			return (WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_OVERLAPPEDWINDOW);
 		}
 		LPCSTR TinyVisualHWND::RetrieveClassName()
 		{
@@ -92,6 +93,10 @@ namespace TinyUI
 		BOOL TinyVisualHWND::RemoveFilter(TinyVisualFilter* ps)
 		{
 			return m_mFilters.Remove(ps);
+		}
+		void TinyVisualHWND::AllowTracking(BOOL bAllow)
+		{
+			m_bAllowTracking = bAllow;
 		}
 		BOOL TinyVisualHWND::ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
 		{
@@ -162,14 +167,17 @@ namespace TinyUI
 		LRESULT TinyVisualHWND::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			if (!m_bMouseTracking)
+			if (m_bAllowTracking)
 			{
-				TRACKMOUSEEVENT tme;
-				tme.cbSize = sizeof(tme);
-				tme.hwndTrack = m_hWND;
-				tme.dwFlags = TME_LEAVE;
-				tme.dwHoverTime = 10;
-				m_bMouseTracking = _TrackMouseEvent(&tme);
+				if (!m_bMouseTracking)
+				{
+					TRACKMOUSEEVENT tme;
+					tme.cbSize = sizeof(tme);
+					tme.hwndTrack = m_hWND;
+					tme.dwFlags = TME_LEAVE;
+					tme.dwHoverTime = 10;
+					m_bMouseTracking = _TrackMouseEvent(&tme);
+				}
 			}
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 			LRESULT lRes = m_document->OnMouseMove(pos, static_cast<DWORD>(wParam));
@@ -179,8 +187,11 @@ namespace TinyUI
 		LRESULT TinyVisualHWND::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			if (m_bMouseTracking)
-				m_bMouseTracking = FALSE;
+			if (m_bAllowTracking)
+			{
+				if (m_bMouseTracking)
+					m_bMouseTracking = FALSE;
+			}
 			LRESULT lRes = m_document->OnMouseLeave();
 			bHandled = IsMsgHandled();
 			return lRes;

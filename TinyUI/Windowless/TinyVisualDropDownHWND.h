@@ -25,8 +25,10 @@ namespace TinyUI
 			HICON RetrieveIcon() OVERRIDE;
 			void OnInitialize() OVERRIDE;
 			void OnUninitialize() OVERRIDE;
+			BOOL IsPopup();
 		public:
 			BOOL SetPosition(const TinyPoint& pos, const TinySize& size);
+			Event<void(ActiveEventArgs&)>	EVENT_ACTIVE;
 		public:
 			LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;

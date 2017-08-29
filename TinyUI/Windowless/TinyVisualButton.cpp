@@ -58,8 +58,35 @@ namespace TinyUI
 				return FALSE;
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			TinyRectangle clip = m_document->GetWindowRect(this);
-			canvas.SetFont((HFONT)GetStockObject(DEFAULT_GUI_FONT));
-			canvas.SetTextColor(RGB(255, 255, 255));
+			canvas.SetFont(m_hFONT);
+			canvas.SetTextColor(m_textColor);
+			if (!m_backgroundColor.IsEmpty())
+			{
+				TinyBrush brush;
+				brush.CreateBrush(m_backgroundColor);
+				canvas.SetBrush(brush);
+				canvas.FillRectangle(clip);
+			}
+			if (!m_borderColor.IsEmpty() && m_borderThickness != -1)
+			{
+				TinyPen pen;
+				pen.CreatePen(m_borderStyle, m_borderThickness, m_borderColor);
+				canvas.SetPen(pen);
+				canvas.DrawRectangle(clip);
+			}
+			if (!m_backgroundImage.IsEmpty())
+			{
+				TinyRectangle srcRect = m_backgroundImage.GetRectangle();
+				TinyRectangle srcCenter = GetBackgroundCenter();
+				if (srcCenter.IsRectEmpty())
+				{
+					canvas.DrawImage(m_backgroundImage, clip, srcRect);
+				}
+				else
+				{
+					canvas.DrawImage(m_backgroundImage, clip, srcRect, srcCenter);
+				}
+			}
 			canvas.DrawImage(image, clip, 0, 0, image.GetSize().cx, image.GetSize().cy);
 			canvas.DrawString(GetText(), clip, m_textAlign);
 			return TRUE;

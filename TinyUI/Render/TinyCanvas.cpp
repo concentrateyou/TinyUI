@@ -114,6 +114,9 @@ namespace TinyUI
 		:m_hDC(hDC),
 		m_hPEN(NULL),
 		m_hBRUSH(NULL),
+		m_hOldPEN(NULL),
+		m_hOldFONT(NULL),
+		m_hOldBRUSH(NULL),
 		m_iSave(0)
 	{
 		InitializeDC(m_hDC);
@@ -122,6 +125,12 @@ namespace TinyUI
 	{
 		if (m_hDC != NULL)
 		{
+			if (m_hOldBRUSH != NULL)
+				SelectObject(m_hDC, m_hOldBRUSH);
+			if (m_hOldFONT != NULL)
+				SelectObject(m_hDC, m_hOldFONT);
+			if (m_hOldPEN != NULL)
+				SelectObject(m_hDC, m_hOldPEN);
 			RestoreDC(m_hDC, m_iSave);
 		}
 	}
@@ -149,7 +158,7 @@ namespace TinyUI
 		if (m_hPEN != hPen)
 		{
 			m_hPEN = hPen;
-			return (HPEN)SelectObject(m_hDC, hPen);
+			m_hOldPEN = (HPEN)SelectObject(m_hDC, hPen);
 		}
 		return m_hPEN;
 	}
@@ -158,7 +167,7 @@ namespace TinyUI
 		if (m_hBRUSH != hBrush)
 		{
 			m_hBRUSH = hBrush;
-			return (HBRUSH)SelectObject(m_hDC, hBrush);
+			m_hOldBRUSH = (HBRUSH)SelectObject(m_hDC, hBrush);
 		}
 		return m_hBRUSH;
 	}
@@ -167,7 +176,7 @@ namespace TinyUI
 		if (m_hFONT != hFont)
 		{
 			m_hFONT = hFont;
-			return (HFONT)SelectObject(m_hDC, m_hFONT);
+			m_hOldFONT = (HFONT)SelectObject(m_hDC, m_hFONT);
 		}
 		return m_hFONT;
 	}

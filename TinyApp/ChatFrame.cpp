@@ -23,12 +23,12 @@ BOOL ChatFrame::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
 }
 DWORD ChatFrame::RetrieveStyle()
 {
-	return (WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_OVERLAPPEDWINDOW | WS_CAPTION);
+	return (WS_VISIBLE | WS_OVERLAPPEDWINDOW);
 }
 
 DWORD ChatFrame::RetrieveExStyle()
 {
-	return (WS_EX_LEFT | WS_EX_RIGHTSCROLLBAR);
+	return (WS_EX_LAYERED | WS_EX_TOPMOST | WS_EX_TOOLWINDOW);
 }
 
 LPCSTR ChatFrame::RetrieveClassName()
@@ -50,9 +50,9 @@ LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHand
 {
 	bHandled = FALSE;
 	/*m_analyserBAR.Create(m_hWND, 10, 10, 298, 92);*/
-	m_analyserBAR.Create(m_hWND, 10, 10, 300, 180);
+	/*m_analyserBAR.Create(m_hWND, 10, 10, 300, 180);
 	m_analyserBAR.SetText("²âÊÔ");
-	m_audioDSP.Initialize();
+	m_audioDSP.Initialize();*/
 	//m_wavePlayer.Submit(m_analyserBAR.Handle());
 	/*DISPLAY_DEVICE dd;
 	ZeroMemory(&dd, sizeof(dd));
@@ -79,8 +79,24 @@ LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHand
 			m_capture->Init(rectangle.left, rectangle.top, rectangle.Width(), rectangle.Height());
 		}
 	}*/
-
-
+	/*TinyRectangle rectangle;
+	::GetWindowRect(m_hWND, &rectangle);
+	TinyClientDC dc(m_hWND);
+	TinyImage image;
+	image.Open("D:\\girl-2.png");
+	TinyMemDC memDC2(dc, TO_CX(rectangle), TO_CY(rectangle));
+	TinyMemDC memDC1(memDC2, image);
+	memDC1.Render()
+	BLENDFUNCTION blendFunction;
+	blendFunction.AlphaFormat = AC_SRC_ALPHA;
+	blendFunction.BlendFlags = 0;
+	blendFunction.BlendOp = AC_SRC_OVER;
+	blendFunction.SourceConstantAlpha = 255;
+	HDC hDC = GetDC(NULL);
+	SIZE size = rectangle.Size();
+	POINT pos = { 0,0 };
+	UpdateLayeredWindow(m_hWND, hDC, &pos, &size, memDC, &pos, 0, &blendFunction, 2);
+	ReleaseDC(NULL, hDC);*/
 	return FALSE;
 }
 

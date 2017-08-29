@@ -371,7 +371,7 @@ namespace TinyUI
 					m_spvisFocus->OnFocus(TRUE);
 				}
 			}
-			::SetFocus(m_pWindow->Handle());
+			::SetFocus(pNew != NULL ? m_pWindow->Handle() : NULL);
 			return spvis;
 		}
 		TinyVisual*	TinyVisualDocument::SetActive(TinyVisual* pNew)
@@ -390,7 +390,7 @@ namespace TinyUI
 					m_spvisActive->OnActive(TRUE);
 				}
 			}
-			::SetActiveWindow(m_pWindow->Handle());
+			::SetActiveWindow(pNew != NULL ? m_pWindow->Handle() : NULL);
 			return spvis;
 		}
 		TinyVisual* TinyVisualDocument::GetActive() const

@@ -37,7 +37,7 @@ namespace TinyUI
 	{
 	public:
 		TinyCanvas();
-		TinyCanvas(HDC hDC);
+		explicit TinyCanvas(HDC hDC);
 		virtual ~TinyCanvas();
 		operator HDC() const;
 		/// <summary>
@@ -274,6 +274,9 @@ namespace TinyUI
 		HPEN		m_hPEN;
 		HBRUSH		m_hBRUSH;
 		HRGN		m_hRGN;
+		HFONT		m_hOldFONT;
+		HPEN		m_hOldPEN;
+		HBRUSH		m_hOldBRUSH;
 		INT			m_iSave;
 		TinyMatrix	m_matrix;
 	};

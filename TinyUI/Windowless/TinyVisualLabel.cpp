@@ -26,6 +26,20 @@ namespace TinyUI
 		{
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			TinyRectangle clip = m_document->GetWindowRect(this);
+			if (!m_backgroundColor.IsEmpty())
+			{
+				TinyBrush brush;
+				brush.CreateBrush(m_backgroundColor);
+				canvas.SetBrush(brush);
+				canvas.FillRectangle(clip);
+			}
+			if (!m_borderColor.IsEmpty() && m_borderThickness != -1)
+			{
+				TinyPen pen;
+				pen.CreatePen(m_borderStyle, m_borderThickness, m_borderColor);
+				canvas.SetPen(pen);
+				canvas.DrawRectangle(clip);
+			}
 			if (!m_backgroundImage.IsEmpty())
 			{
 				TinyRectangle srcRect = m_backgroundImage.GetRectangle();
@@ -39,21 +53,9 @@ namespace TinyUI
 					canvas.DrawImage(m_backgroundImage, clip, srcRect, srcCenter);
 				}
 			}
-			INT oldColor = -1;
-			HFONT hOldFONT = NULL;
-			if (m_hFONT != NULL)
-			{
-				hOldFONT = canvas.SetFont(m_hFONT);
-			}
-			if (!m_textColor.IsEmpty())
-			{
-				oldColor = canvas.SetTextColor(m_textColor);
-			}
+			canvas.SetFont(m_hFONT);
+			canvas.SetTextColor(m_textColor);
 			canvas.DrawString(m_szText, clip, m_textAlign);
-			if (hOldFONT != NULL)
-				canvas.SetFont(hOldFONT);
-			if (oldColor != -1)
-				canvas.SetTextColor(oldColor);
 			return TRUE;
 		}
 	}

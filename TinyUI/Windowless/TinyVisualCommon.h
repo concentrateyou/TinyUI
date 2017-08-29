@@ -36,9 +36,9 @@ namespace TinyUI
 			static const TinyString BACKGROUNDCOLOR;
 			static const TinyString BACKGROUNDCENTER;
 
-			static const TinyString BORDERIMAGE;
+			static const TinyString BORDERWIDTH;
 			static const TinyString BORDERCOLOR;
-			static const TinyString BORDERCENTER;
+			static const TinyString BORDERSTYLE;
 
 			static const TinyString	FONTFAMILY;
 			static const TinyString	FONTSIZE;
@@ -99,6 +99,8 @@ namespace TinyUI
 			HDC	 GetMemDC() const;
 			BOOL Render(const RECT& s);
 			BOOL Render(const RECT& s, INT x, INT y);
+			BOOL RenderLayer(const RECT& s);
+			BOOL RenderLayer(const RECT& s, INT x, INT y);
 		protected:
 			HWND		m_hWND;
 			TinySize	m_size;

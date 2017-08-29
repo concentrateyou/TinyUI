@@ -18,11 +18,11 @@ namespace TinyUI
 		}
 		DWORD TinyVisualDropDownHWND::RetrieveStyle()
 		{
-			return (WS_POPUP | WS_CLIPSIBLINGS | WS_VISIBLE);
+			return (WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
 		}
 		DWORD TinyVisualDropDownHWND::RetrieveExStyle()
 		{
-			return (WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_LAYERED);
+			return (WS_EX_LEFT | WS_EX_LTRREADING);
 		}
 		LPCSTR TinyVisualDropDownHWND::RetrieveClassName()
 		{
@@ -45,19 +45,14 @@ namespace TinyUI
 		{
 
 		}
-
+		BOOL TinyVisualDropDownHWND::IsPopup()
+		{
+			return IsWindowVisible(m_hWND);
+		}
 		BOOL TinyVisualDropDownHWND::SetPosition(const TinyPoint& pos, const TinySize& size)
 		{
-			UINT uFlags = SWP_SHOWWINDOW;
-			if (size.IsEmpty())
-			{
-				uFlags |= SWP_NOSIZE;
-			}
-			if (pos.IsEmpty())
-			{
-				uFlags |= SWP_NOMOVE;
-			}
-			BOOL bRes = ::SetWindowPos(m_hWND, HWND_TOPMOST, pos.x, pos.y, size.cx, size.cy, uFlags);
+			BOOL bRes = ::SetWindowPos(m_hWND, HWND_TOPMOST, pos.x, pos.y, size.cx, size.cy, SWP_NOACTIVATE | SWP_SHOWWINDOW);
+			::UpdateWindow(m_hWND);
 			::SetActiveWindow(m_hWND);
 			return bRes;
 		}
@@ -84,7 +79,15 @@ namespace TinyUI
 			bHandled = FALSE;
 			if (LOWORD(wParam) == WA_INACTIVE)
 			{
-				//ShowWindow(SW_HIDE);
+				EVENT_ACTIVE(ActiveEventArgs(FALSE));
+			}
+			if (LOWORD(wParam) == WA_ACTIVE)
+			{
+				EVENT_ACTIVE(ActiveEventArgs(TRUE));
+			}
+			if (LOWORD(wParam) == WA_CLICKACTIVE)
+			{
+				EVENT_ACTIVE(ActiveEventArgs(TRUE));
 			}
 			return FALSE;
 		}

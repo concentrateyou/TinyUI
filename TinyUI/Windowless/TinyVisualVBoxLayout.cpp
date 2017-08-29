@@ -57,12 +57,12 @@ namespace TinyUI
 		}
 		HRESULT	TinyVisualVBoxLayout::OnMouseEnter()
 		{
-			m_document->SetFocus(m_scrollbar);
+			//m_document->SetFocus(m_scrollbar);
 			return FALSE;
 		}
 		HRESULT	TinyVisualVBoxLayout::OnMouseLeave()
 		{
-			m_document->SetFocus(NULL);
+			//m_document->SetFocus(NULL);
 			return FALSE;
 		}
 		void TinyVisualVBoxLayout::AdjustLayout(TinyVisual* spvis, INT dx, INT dy)

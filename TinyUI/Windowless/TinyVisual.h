@@ -56,9 +56,9 @@ namespace TinyUI
 			TinyImage&			GetBackgroundImage();
 			TinyRectangle		GetBackgroundCenter() const;
 			TinyColor			GetBackgroundColor() const;
-			TinyImage&			GetBorderImage();
-			TinyRectangle		GetBorderCenter() const;
 			TinyColor			GetBorderColor() const;
+			INT					GetBorderThickness() const;
+			INT					GetBorderStyle() const;
 			HRGN				GetClip() const;
 			HFONT				GetFont() const;
 			BOOL				IsVisible() const;
@@ -92,6 +92,9 @@ namespace TinyUI
 			virtual void		SetBackgroundImage(const TinyString& szFile);
 			virtual void		SetBackgroundColor(COLORREF color);
 			virtual void		SetBackgroundCenter(const TinyRectangle& center);
+			virtual void		SetBorderColor(COLORREF color);
+			virtual void		SetBorderThickness(INT cx);
+			virtual void		SetBorderStyle(INT style);
 		protected:
 			virtual BOOL		OnDraw(HDC hDC, const RECT& clip);
 			virtual HRESULT		OnCreate();
@@ -149,13 +152,16 @@ namespace TinyUI
 			TinyRectangle		m_backgroundCenter;//显示背景图片中心
 			TinyImage			m_backgroundImage;//背景图片
 			TinyColor			m_backgroundColor;//背景颜色
+			INT					m_borderThickness;//边框厚度
+			TinyColor			m_borderColor;//边框颜色
+			INT					m_borderStyle;//边框样式
 			TinyColor 			m_textColor;
 			UINT				m_textAlign;
 			BOOL				m_visible;
 			BOOL				m_enable;
-			DWORD				m_dwCount;//还是孩子节点个数
 			HRGN				m_hrgnClip;
 			HFONT				m_hFONT;
+			DWORD				m_dwCount;//还是孩子节点个数
 			TinyMap<TinyString, TinyString>	m_propertys;//属性Map
 		};
 	}

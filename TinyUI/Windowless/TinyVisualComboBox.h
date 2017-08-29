@@ -32,11 +32,16 @@ namespace TinyUI
 			HRESULT OnMouseLeave() OVERRIDE;
 			HRESULT	OnLButtonUp(const TinyPoint& pos, DWORD dwFlags);
 		private:
+			void OnPopupActive(ActiveEventArgs& args);
+		private:
 			StyleImage				m_dwFlag;
+			StyleImage				m_dwArrawFlag;
 			TinyImage				m_images[StyleImage::COUNT];
 			TinyImage				m_arraws[StyleImage::COUNT];
 			TinyString				m_dropdown;
-			TinyVisualDropDownHWND		m_popup;
+			BOOL					m_bActive;
+			TinyVisualDropDownHWND	m_popup;
+			TinyScopedArray<Delegate<void(ActiveEventArgs&)>> m_onPopupActive;
 		};
 		/// <summary>
 		/// ÏÂÀ­¿òÏî

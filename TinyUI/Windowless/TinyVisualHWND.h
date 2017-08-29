@@ -25,6 +25,7 @@ namespace TinyUI
 			BOOL BuildResource(const TinyString& resource);
 			BOOL AddFilter(TinyVisualFilter* ps);
 			BOOL RemoveFilter(TinyVisualFilter* ps);
+			void AllowTracking(BOOL bAllow);
 			TinyVisualDocument*	GetDocument();
 			virtual void OnInitialize() = 0;
 			virtual void OnUninitialize() = 0;
@@ -62,8 +63,8 @@ namespace TinyUI
 			BOOL Initialize();
 			void Uninitialize();
 		protected:
-			
 		private:
+			BOOL								m_bAllowTracking;
 			BOOL								m_bMouseTracking;
 			TinySize							m_size;
 			TinyString							m_szResource;

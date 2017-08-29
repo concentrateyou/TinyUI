@@ -28,6 +28,7 @@ namespace TinyUI
 			static Alignment GetAlignment(const TinyString& str);
 			static COLORREF	 GetColor(const TinyString& str);
 			static BOOL	GetBool(const TinyString& str);
+			static INT	GetInt32(const TinyString& str);
 		private:
 			static void CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualDocument* ps);
 			static BOOL BuildProperty(const TiXmlElement* pXMLNode, TinyVisual* spvis);

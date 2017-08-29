@@ -26,9 +26,9 @@ namespace TinyUI
 		const TinyString TinyVisualProperty::BACKGROUNDCOLOR = TEXT("background-color");
 		const TinyString TinyVisualProperty::BACKGROUNDCENTER = TEXT("background-center");
 
-		const TinyString TinyVisualProperty::BORDERIMAGE = TEXT("border-image");
+		const TinyString TinyVisualProperty::BORDERWIDTH = TEXT("border-width");
 		const TinyString TinyVisualProperty::BORDERCOLOR = TEXT("border-color");
-		const TinyString TinyVisualProperty::BORDERCENTER = TEXT("border-center");
+		const TinyString TinyVisualProperty::BORDERSTYLE = TEXT("border-style");
 
 		const TinyString TinyVisualProperty::FONTFAMILY = TEXT("font-family");
 		const TinyString TinyVisualProperty::FONTSIZE = TEXT("font-size");
@@ -142,6 +142,48 @@ namespace TinyUI
 		{
 			if (!m_hMemDC || !m_hMemBitmap) return FALSE;
 			return ::BitBlt(m_hDC, s.left, s.top, TO_CX(s), TO_CY(s), m_hMemDC, x, y, SRCCOPY);
+		}
+		BOOL TinyVisualDC::RenderLayer(const RECT& s)
+		{
+			if (!m_hMemDC || !m_hMemBitmap) return FALSE;
+			if (::BitBlt(m_hDC, s.left, s.top, TO_CX(s), TO_CY(s), m_hMemDC, s.left, s.top, SRCCOPY))
+			{
+				HDC hScreenDC = GetDC(NULL);
+				BLENDFUNCTION blendFunction;
+				blendFunction.AlphaFormat = AC_SRC_ALPHA;
+				blendFunction.BlendFlags = 0;
+				blendFunction.BlendOp = AC_SRC_OVER;
+				blendFunction.SourceConstantAlpha = 255;
+				RECT wndRect;
+				::GetWindowRect(m_hWND, &wndRect);
+				POINT ptSrc = { 0,0 };
+				SIZE wndSize = { wndRect.right - wndRect.left,wndRect.bottom - wndRect.top };
+				UpdateLayeredWindow(m_hWND, hScreenDC, &ptSrc, &wndSize, m_hMemDC, &ptSrc, 0, &blendFunction, 2);
+				ReleaseDC(NULL, hScreenDC);
+				return TRUE;
+			}
+			return FALSE;
+		}
+		BOOL TinyVisualDC::RenderLayer(const RECT& s, INT x, INT y)
+		{
+			if (!m_hMemDC || !m_hMemBitmap) return FALSE;
+			if (::BitBlt(m_hDC, s.left, s.top, TO_CX(s), TO_CY(s), m_hMemDC, x, y, SRCCOPY))
+			{
+				HDC hScreenDC = GetDC(NULL);
+				BLENDFUNCTION blendFunction;
+				blendFunction.AlphaFormat = AC_SRC_ALPHA;
+				blendFunction.BlendFlags = 0;
+				blendFunction.BlendOp = AC_SRC_OVER;
+				blendFunction.SourceConstantAlpha = 255;
+				RECT wndRect;
+				::GetWindowRect(m_hWND, &wndRect);
+				POINT ptSrc = { 0,0 };
+				SIZE wndSize = { wndRect.right - wndRect.left,wndRect.bottom - wndRect.top };
+				UpdateLayeredWindow(m_hWND, hScreenDC, &ptSrc, &wndSize, m_hMemDC, &ptSrc, 0, &blendFunction, 2);
+				ReleaseDC(NULL, hScreenDC);
+				return TRUE;
+			}
+			return FALSE;
 		}
 	}
 }

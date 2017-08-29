@@ -20,6 +20,8 @@ namespace TinyUI
 			m_enable(TRUE),
 			m_textAlign(0),
 			m_textColor(RGB(255, 255, 255)),
+			m_borderThickness(-1),
+			m_borderStyle(PS_SOLID),
 			m_dwCount(0)
 		{
 			LOGFONT lf;
@@ -39,6 +41,8 @@ namespace TinyUI
 			m_enable(TRUE),
 			m_textAlign(0),
 			m_textColor(RGB(255, 255, 255)),
+			m_borderThickness(-1),
+			m_borderStyle(-1),
 			m_dwCount(0)
 		{
 			LOGFONT lf;
@@ -116,6 +120,18 @@ namespace TinyUI
 		{
 			return m_backgroundCenter;
 		}
+		TinyColor TinyVisual::GetBorderColor() const
+		{
+			return m_borderColor;
+		}
+		INT	TinyVisual::GetBorderThickness() const
+		{
+			return m_borderThickness;
+		}
+		INT	TinyVisual::GetBorderStyle() const
+		{
+			return m_borderStyle;
+		}
 		BOOL TinyVisual::IsVisible() const
 		{
 			return m_visible;
@@ -187,6 +203,18 @@ namespace TinyUI
 		void TinyVisual::SetBackgroundCenter(const TinyRectangle& center)
 		{
 			m_backgroundCenter = center;
+		}
+		void TinyVisual::SetBorderColor(COLORREF color)
+		{
+			m_borderColor = color;
+		}
+		void TinyVisual::SetBorderThickness(INT cx)
+		{
+			m_borderThickness = cx;
+		}
+		void TinyVisual::SetBorderStyle(INT style)
+		{
+			m_borderStyle = style;
 		}
 		TinyPoint TinyVisual::GetPosition() const
 		{
@@ -423,6 +451,28 @@ namespace TinyUI
 			if (strcasecmp(name.STR(), TinyVisualProperty::BACKGROUNDCENTER.STR()) == 0)
 			{
 				this->SetBackgroundCenter(TinyVisualBuilder::GetRectangle(value));
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::BORDERCOLOR.STR()) == 0)
+			{
+				this->SetBorderColor(TinyVisualBuilder::GetColor(value));
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::BORDERWIDTH.STR()) == 0)
+			{
+				this->SetBorderThickness(TinyVisualBuilder::GetInt32(value));
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::BORDERSTYLE.STR()) == 0)
+			{
+				INT val = PS_SOLID;
+				if (strcasecmp(value.STR(), "solid") == 0)
+					val = PS_SOLID;
+				if (strcasecmp(value.STR(), "dash") == 0)
+					val = PS_DASH;
+				if (strcasecmp(value.STR(), "dot") == 0)
+					val = PS_DOT;
+				this->SetBorderStyle(val);
 				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::TOOLTIP.STR()) == 0)
