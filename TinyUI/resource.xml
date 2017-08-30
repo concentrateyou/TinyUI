@@ -14,8 +14,18 @@
             image-down="D:\Develop\TinyUI\skin\system\sysbtn_close_down.png">
     </button>
   </syscaption>
-  <vboxlayout position="0,27" size="818,703" background-image="D:\Develop\TinyUI\skin\system\panel.png">
-    <combobox name="audio" position="10,30" size="200,28" text-align="left|vcenter" text="windows默认音频设备" text-color="0,0,0"
+  <vboxlayout position="100,100" size="300,100" background-image="D:\Develop\TinyUI\skin\system\panel.png">
+    <button text="Button1" position="0,0" size="100,30" border-color="255,0,0" text-color="0,0,0">
+    </button>
+    <button text="Button2" position="0,30" size="100,30" border-color="255,0,0" text-color="0,0,0">
+    </button>
+    <button text="Button3" position="0,60" size="100,30" border-color="255,0,0" text-color="0,0,0">
+    </button>
+    <button text="Button4" position="0,90" size="100,30" border-color="255,0,0" text-color="0,0,0">
+    </button>
+    <button text="Button5" position="0,120" size="100,30" border-color="255,0,0" text-color="0,0,0">
+    </button>
+    <!--<combobox name="audio" position="10,30" size="200,28" text-align="left|vcenter" text="windows默认音频设备" text-color="0,0,0"
               image-normal="D:\Develop\TinyUI\skin\combobox\combobox_normal.png"
               image-down="D:\Develop\TinyUI\skin\combobox\combobox_push.png"
               image-highlight="D:\Develop\TinyUI\skin\combobox\combobox_hover.png"
@@ -24,6 +34,6 @@
               arrow-highlight="D:\Develop\TinyUI\skin\combobox\inputbtn_highlight.png"
               arrow-down="D:\Develop\TinyUI\skin\combobox\inputbtn_down.png"
               arrow-push="D:\Develop\TinyUI\skin\combobox\inputbtn_normal.png">
-    </combobox>
+    </combobox>-->
   </vboxlayout>
 </window>

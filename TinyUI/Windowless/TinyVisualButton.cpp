@@ -53,9 +53,6 @@ namespace TinyUI
 
 		BOOL TinyVisualButton::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
-			TinyImage& image = m_images[m_dwFlag];
-			if (image.IsEmpty())
-				return FALSE;
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			canvas.SetFont(m_hFONT);
@@ -87,7 +84,11 @@ namespace TinyUI
 					canvas.DrawImage(m_backgroundImage, clip, srcRect, srcCenter);
 				}
 			}
-			canvas.DrawImage(image, clip, 0, 0, image.GetSize().cx, image.GetSize().cy);
+			TinyImage& image = m_images[m_dwFlag];
+			if (!image.IsEmpty())
+			{
+				canvas.DrawImage(image, clip, 0, 0, image.GetSize().cx, image.GetSize().cy);
+			}
 			canvas.DrawString(GetText(), clip, m_textAlign);
 			return TRUE;
 		}

@@ -138,9 +138,11 @@ namespace TinyUI
 			TinyPoint screenPos = m_document->GetScreenPos(this);
 			screenPos.Offset(1, s.Height());
 			TinySize size = s.Size();
-			size.cx = size.cx - 2;
-			DWORD dwCount = m_popupWND.GetDocument()->GetParent(NULL)->GetChildCount();
-			size.cy = dwCount * DEFAULT_OPTION_HEIGHT;
+			TinyVisual* spvis = m_popupWND.GetDocument()->GetParent(NULL);
+			DWORD dwCount = spvis->GetChildCount();
+			TinyRectangle rectangle = spvis->GetRectangle();
+			size.cx = rectangle.Width() == 0 ? size.cx - 1 : rectangle.Width();
+			size.cy = rectangle.Height() == 0 ? dwCount * DEFAULT_OPTION_HEIGHT : rectangle.Height();
 			m_popupWND.AllowTracking(FALSE);
 			m_popupWND.SetPosition(screenPos, size);
 			return TinyVisual::OnLButtonDown(pos, dwFlags);

@@ -26,7 +26,7 @@ namespace TinyUI
 			BOOL	OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT	OnMouseEnter() OVERRIDE;
 			HRESULT	OnMouseLeave() OVERRIDE;
-			HRESULT	OnCreate() OVERRIDE;
+			HRESULT	OnInitialize() OVERRIDE;
 			HRESULT OnDestory() OVERRIDE;
 			virtual void OnPosChange(BOOL, INT, INT, INT);
 		private:

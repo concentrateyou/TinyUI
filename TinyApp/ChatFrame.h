@@ -7,6 +7,7 @@
 #include "Control/TinyButton.h"
 #include "Control/TinyLabel.h"
 #include "Control/TinyRichTextBox.h"
+#include "Control/TinyScrollBar.h"
 #include "WavePlayer.h"
 #include "AudioDSP.h"
 #include <sapi.h>
@@ -39,6 +40,7 @@ public:
 	LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 private:
+	TinyScrollBar m_scrollBar;
 	//TinyLabel	m_analyserBAR;
 	//AudioDSP	m_audioDSP;
 	//WavePlayer m_wavePlayer;

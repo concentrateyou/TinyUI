@@ -28,7 +28,7 @@ DWORD ChatFrame::RetrieveStyle()
 
 DWORD ChatFrame::RetrieveExStyle()
 {
-	return (WS_EX_LAYERED | WS_EX_TOPMOST | WS_EX_TOOLWINDOW);
+	return (WS_EX_TOPMOST);
 }
 
 LPCSTR ChatFrame::RetrieveClassName()
@@ -49,6 +49,9 @@ HICON ChatFrame::RetrieveIcon()
 LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
+	TinyRectangle rectangle;
+	GetClientRect(&rectangle);
+	m_scrollBar.Create(m_hWND, rectangle.Width() - 23, 0, 23, rectangle.Height());
 	/*m_analyserBAR.Create(m_hWND, 10, 10, 298, 92);*/
 	/*m_analyserBAR.Create(m_hWND, 10, 10, 300, 180);
 	m_analyserBAR.SetText("≤‚ ‘");
