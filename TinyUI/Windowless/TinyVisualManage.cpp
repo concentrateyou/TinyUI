@@ -78,7 +78,6 @@ namespace TinyUI
 			{
 				if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT)
 				{
-					spvisParent->m_dwCount++;
 					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::SYSCAPTION.STR()))
 					{
 						spvis = document->Create<TinyVisualCaption>(spvisParent);
@@ -99,6 +98,10 @@ namespace TinyUI
 					{
 						spvis = document->Create<TinyVisualButton>(spvisParent);
 					}
+					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::OPTION.STR()))
+					{
+						spvis = document->Create<TinyVisualOption>(spvisParent);
+					}
 					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::COMBOBOX.STR()))
 					{
 						spvis = document->Create<TinyVisualComboBox>(spvisParent);
@@ -109,8 +112,10 @@ namespace TinyUI
 					}
 					if (spvis != NULL)
 					{
-						TinyMap<TinyString, TinyString> map;
-						BuildProperty(static_cast<const TiXmlElement*>(pXMLChildNode), spvis);
+						if (BuildProperty(static_cast<const TiXmlElement*>(pXMLChildNode), spvis))
+						{
+							spvis->OnInitialize();//初始化完成
+						}
 						if (spvis->IsLayout())
 						{
 							CreateInstace(pXMLChildNode, spvis, document);
@@ -224,6 +229,49 @@ namespace TinyUI
 				return RGB(atoi(sps[0].STR()), atoi(sps[1].STR()), atoi(sps[2].STR()));
 			}
 			return RGB(255, 255, 255);
+		}
+		//////////////////////////////////////////////////////////////////////////
+		TinyVisualResource::TinyVisualResource()
+		{
+
+		}
+		TinyVisualResource::~TinyVisualResource()
+		{
+
+		}
+		BOOL TinyVisualResource::Add(const TinyString& name, TinyImage* image)
+		{
+			return m_imageMap.Add(name, image) != NULL;
+		}
+		void TinyVisualResource::Remove(const TinyString& name)
+		{
+			ITERATOR pos = m_imageMap.Lookup(name);
+			if (pos != NULL)
+			{
+				TinyImage** ps = m_imageMap.GetValueAt(pos);
+				SAFE_DELETE(*ps);
+				m_imageMap.Remove(name);
+			}
+		}
+		void TinyVisualResource::RemoveAll()
+		{
+			ITERATOR pos = m_imageMap.First();
+			while (pos != NULL)
+			{
+				TinyImage** ps = m_imageMap.GetValueAt(pos);
+				SAFE_DELETE(*ps);
+				pos = m_imageMap.Next(pos);
+			}
+			m_imageMap.RemoveAll();
+		}
+		TinyImage* TinyVisualResource::operator[](const TinyString& name)
+		{
+			TinyImage** ps = m_imageMap.GetValue(name);
+			if (ps != NULL)
+			{
+				return *ps;
+			}
+			return NULL;
 		}
 	};
 }

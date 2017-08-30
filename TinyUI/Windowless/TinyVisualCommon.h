@@ -59,9 +59,9 @@ namespace TinyUI
 			static const TinyString ARROWHIGHLIGHT;
 			static const TinyString ARROWPUSH;
 
-			static const TinyString DROPDOWN;
-
 			static const TinyString ALIGNMENT;
+			static const TinyString VALUE;
+			static const TinyString OPTIONHIGHLIGHT;
 		};
 		/// <summary>
 		/// Tag³£Á¿
@@ -84,6 +84,7 @@ namespace TinyUI
 			static const TinyString HSCROLLBAR;
 			static const TinyString VSCROLLBAR;
 			static const TinyString COMBOBOX;
+			static const TinyString OPTION;
 			static const TinyString RICHTEXT;
 			static const TinyString STRETCH;
 		};

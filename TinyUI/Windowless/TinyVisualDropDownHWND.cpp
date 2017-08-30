@@ -1,5 +1,6 @@
 #include "../stdafx.h"
 #include "TinyVisualDropDownHWND.h"
+#include "TinyVisualComboBox.h"
 #include "../Render/TinyTransform.h"
 #include "../Render/TinyCanvas.h"
 
@@ -8,7 +9,9 @@ namespace TinyUI
 	namespace Windowless
 	{
 		IMPLEMENT_DYNAMIC(TinyVisualDropDownHWND, TinyVisualHWND);
-		TinyVisualDropDownHWND::TinyVisualDropDownHWND()
+		TinyVisualDropDownHWND::TinyVisualDropDownHWND(TinyVisualComboBox* pOwner)
+			:m_pOwner(pOwner),
+			m_count(0)
 		{
 
 		}
@@ -89,7 +92,7 @@ namespace TinyUI
 			{
 				EVENT_ACTIVE(ActiveEventArgs(TRUE));
 			}
-			return FALSE;
+			return TinyVisualHWND::OnActivate(uMsg, wParam, lParam, bHandled);
 		}
 	}
 }

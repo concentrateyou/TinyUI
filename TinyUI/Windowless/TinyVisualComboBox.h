@@ -6,6 +6,9 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
+#define DEFAULT_OPTION_HEIGHT 23
+
+		class TinyVisualDropDownHWND;
 		/// <summary>
 		/// ÏÂÀ­¿ò¿Ø¼þ
 		/// </summary>
@@ -20,12 +23,13 @@ namespace TinyUI
 			virtual ~TinyVisualComboBox();
 			TinyString RetrieveTag() const OVERRIDE;
 		public:
+			void AddOption(const TinyString& value, const TinyString& text);
 			BOOL SetStyleImage(StyleImage type, LPCSTR pzFile);
 			BOOL SetArrowImage(StyleImage type, LPCSTR pzFile);
 			BOOL SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 		protected:
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
-			HRESULT	OnCreate() OVERRIDE;
+			HRESULT	OnInitialize() OVERRIDE;
 			HRESULT OnDestory() OVERRIDE;
 			HRESULT	OnLButtonDown(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
 			HRESULT OnMouseMove(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
@@ -34,13 +38,13 @@ namespace TinyUI
 		private:
 			void OnPopupActive(ActiveEventArgs& args);
 		private:
+			BOOL					m_bActive;
 			StyleImage				m_dwFlag;
 			StyleImage				m_dwArrawFlag;
 			TinyImage				m_images[StyleImage::COUNT];
 			TinyImage				m_arraws[StyleImage::COUNT];
-			TinyString				m_dropdown;
-			BOOL					m_bActive;
-			TinyVisualDropDownHWND	m_popup;
+			INT						m_cy;
+			TinyVisualDropDownHWND  m_popupWND;
 			TinyScopedArray<Delegate<void(ActiveEventArgs&)>> m_onPopupActive;
 		};
 		/// <summary>
@@ -48,7 +52,26 @@ namespace TinyUI
 		/// </summary>
 		class TinyVisualOption : public TinyVisual
 		{
-
+			friend class TinyVisualDocument;
+			DECLARE_DYNAMIC(TinyVisualOption)
+			DISALLOW_COPY_AND_ASSIGN(TinyVisualOption)
+		protected:
+			TinyVisualOption(TinyVisual* spvisParent, TinyVisualDocument* document);
+			virtual ~TinyVisualOption();
+			TinyString RetrieveTag() const OVERRIDE;
+			HRESULT OnMouseEnter() OVERRIDE;
+			HRESULT OnMouseLeave() OVERRIDE;
+			HRESULT OnLButtonDown(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
+		public:
+			BOOL SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
+			virtual void SetValue(LPCSTR pzValue);
+			virtual void SetOptionHighlight(LPCSTR pzFile);
+		protected:
+			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
+		private:
+			TinyString	m_szValue;
+			TinyImage	m_highlight;
+			DWORD		m_dwFlag;
 		};
 	}
 }

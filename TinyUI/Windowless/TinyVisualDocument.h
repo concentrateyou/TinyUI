@@ -29,7 +29,7 @@ namespace TinyUI
 			friend class TinyVisualHWND;
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualDocument)
 		public:
-			TinyVisualDocument( TinyVisualHWND* pv);
+			TinyVisualDocument(TinyVisualHWND* pv);
 			~TinyVisualDocument();
 			virtual BOOL	Initialize(TinyVisualBuilder* builder);
 			virtual void	Uninitialize();
@@ -154,6 +154,8 @@ namespace TinyUI
 				spvis = new T(spvisParent, m_document);
 				spvis->OnCreate();
 			}
+			if (spvisParent != NULL)
+				spvisParent->m_dwCount++;
 			return static_cast<T*>(spvis);
 		}
 		template<typename T>
@@ -176,6 +178,8 @@ namespace TinyUI
 				spvis->SetSize(TinySize(cx, cy));
 				spvis->OnCreate();
 			}
+			if (spvisParent != NULL)
+				spvisParent->m_dwCount++;
 			return static_cast<T*>(spvis);
 		}
 	};

@@ -4,6 +4,7 @@
 IMPLEMENT_DYNAMIC(SkinWindow, TinyVisualHWND)
 SkinWindow::SkinWindow()
 {
+	strncmp("", "audio", 5);
 }
 
 
@@ -25,6 +26,17 @@ void SkinWindow::OnInitialize()
 	{
 		m_onCloseClick.Reset(new Delegate<void(EventArgs&)>(this, &SkinWindow::OnCloseClick));
 		visual->EVENT_CLICK += m_onCloseClick;
+	}
+	visual = GetDocument()->GetVisualByName("audio");
+	if (visual != NULL)
+	{
+		if (visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
+		{
+			TinyVisualComboBox* combobox = static_cast<TinyVisualComboBox*>(visual);
+			combobox->AddOption("Name1", "Name1");
+			combobox->AddOption("Name2", "Name2");
+			combobox->AddOption("Name3", "Name3");
+		}
 	}
 }
 

@@ -63,7 +63,6 @@ namespace TinyUI
 			BOOL Initialize();
 			void Uninitialize();
 		protected:
-		private:
 			BOOL								m_bAllowTracking;
 			BOOL								m_bMouseTracking;
 			TinySize							m_size;

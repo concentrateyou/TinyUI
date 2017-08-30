@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window name="popup" position="30,30" size="-1,100"
+          background-image="D:\Develop\TinyUI\skin\combobox\ComboBoxList_bkg1.png"
+          background-center="2,2,65,52"
+          background-color="255,255,255">
+</window>

@@ -9,6 +9,7 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
+		class TinyVisualComboBox;
 		/// <summary>
 		/// ÏÂÀ­¿ò
 		/// </summary>
@@ -16,7 +17,7 @@ namespace TinyUI
 		{
 			DECLARE_DYNAMIC(TinyVisualDropDownHWND)
 		public:
-			TinyVisualDropDownHWND();
+			TinyVisualDropDownHWND(TinyVisualComboBox* pOwner);
 			virtual ~TinyVisualDropDownHWND();
 			DWORD RetrieveStyle() OVERRIDE;
 			DWORD RetrieveExStyle() OVERRIDE;
@@ -34,6 +35,9 @@ namespace TinyUI
 			LRESULT OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+		private:
+			TinyVisualComboBox*	m_pOwner;
+			INT					m_count;
 		};
 	}
 }

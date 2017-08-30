@@ -259,6 +259,10 @@ namespace TinyUI
 		{
 			return m_document;
 		}
+		DWORD TinyVisual::GetChildCount() const
+		{
+			return m_dwCount;
+		}
 		void TinyVisual::SetClip(HRGN hrgnClip)
 		{
 			this->m_hrgnClip = hrgnClip;
@@ -299,6 +303,10 @@ namespace TinyUI
 			return TRUE;
 		}
 		HRESULT	TinyVisual::OnDestory()
+		{
+			return TRUE;
+		}
+		HRESULT	TinyVisual::OnInitialize()
 		{
 			return TRUE;
 		}

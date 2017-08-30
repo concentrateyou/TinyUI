@@ -40,6 +40,8 @@ namespace TinyUI
 		const TinyString TinyVisualProperty::TEXTDECORATION = TEXT("text-decoration");
 
 		const TinyString TinyVisualProperty::ALIGNMENT = TEXT("alignment");
+		const TinyString TinyVisualProperty::VALUE = TEXT("value");
+		const TinyString TinyVisualProperty::OPTIONHIGHLIGHT = TEXT("option-highligh");
 
 		const TinyString TinyVisualProperty::IMAGENORMAL = TEXT("image-normal");
 		const TinyString TinyVisualProperty::IMAGEHIGHLIGHT = TEXT("image-highlight");
@@ -51,7 +53,6 @@ namespace TinyUI
 		const TinyString TinyVisualProperty::ARROWHIGHLIGHT = TEXT("arrow-highlight");
 		const TinyString TinyVisualProperty::ARROWPUSH = TEXT("arrow-push");
 
-		const TinyString TinyVisualProperty::DROPDOWN = TEXT("dropdown");
 		//////////////////////////////////////////////////////////////////////////
 		const TinyString TinyVisualTag::WINDOW = TEXT("window");
 		const TinyString TinyVisualTag::SYSCAPTION = TEXT("syscaption");
@@ -68,6 +69,7 @@ namespace TinyUI
 		const TinyString TinyVisualTag::HSCROLLBAR = TEXT("hscrollbar");
 		const TinyString TinyVisualTag::VSCROLLBAR = TEXT("vscrollbar");
 		const TinyString TinyVisualTag::COMBOBOX = TEXT("combobox");
+		const TinyString TinyVisualTag::OPTION = TEXT("option");
 		const TinyString TinyVisualTag::RICHTEXT = TEXT("richtext");
 		const TinyString TinyVisualTag::STRETCH = TEXT("stretch");
 		//////////////////////////////////////////////////////////////////////////

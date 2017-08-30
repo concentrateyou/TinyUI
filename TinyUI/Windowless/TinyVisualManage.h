@@ -16,6 +16,7 @@ namespace TinyUI
 		/// </summary>
 		class TinyVisualBuilder 
 		{
+			DISALLOW_COPY_AND_ASSIGN(TinyVisualBuilder)
 		public:
 			TinyVisualBuilder();
 			~TinyVisualBuilder();
@@ -33,7 +34,23 @@ namespace TinyUI
 			static void CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualDocument* ps);
 			static BOOL BuildProperty(const TiXmlElement* pXMLNode, TinyVisual* spvis);
 		private:
-			TiXmlDocument	m_doc;
+			TiXmlDocument		m_doc;
+		};
+		/// <summary>
+		/// 资源管理
+		/// </summary>
+		class TinyVisualResource
+		{
+			DISALLOW_COPY_AND_ASSIGN(TinyVisualResource)
+		public:
+			TinyVisualResource();
+			~TinyVisualResource();
+			BOOL Add(const TinyString& name, TinyImage* image);
+			void Remove(const TinyString& name);
+			void RemoveAll();
+			TinyImage* operator[](const TinyString& name);
+		public:
+			TinyMap<TinyString, TinyImage*>	m_imageMap;
 		};
 	};
 }

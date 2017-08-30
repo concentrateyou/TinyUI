@@ -473,7 +473,7 @@
     <ResourceCompile Include="TinyUI.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="menu.xml" />
+    <Xml Include="dropdown.xml" />
     <Xml Include="resource.xml">
       <SubType>Designer</SubType>
     </Xml>

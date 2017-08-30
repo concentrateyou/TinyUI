@@ -934,6 +934,6 @@
   </ItemGroup>
   <ItemGroup>
     <Xml Include="resource.xml" />
-    <Xml Include="menu.xml" />
+    <Xml Include="dropdown.xml" />
   </ItemGroup>
 </Project>

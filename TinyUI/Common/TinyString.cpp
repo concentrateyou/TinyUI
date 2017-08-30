@@ -688,7 +688,10 @@ namespace TinyUI
 		ASSERT(s);
 		if (this->_Mysize - pos < size)
 			size = this->_Mysize - pos;
-		return strncmp(this->_Mystr + pos, s, size < subsize ? size : subsize);
+		CHAR* val = this->_Mystr + pos;
+		if (val != NULL)
+			return strncmp(val, s, subsize);
+		return -1;
 	}
 	size_t	TinyString::Copy(CHAR* s, size_t pos, size_t size) const
 	{

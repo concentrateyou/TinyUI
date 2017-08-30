@@ -69,6 +69,7 @@ namespace TinyUI
 			BOOL				Invalidate();
 		public:
 			TinyVisualDocument*	GetDocument();
+			DWORD				GetChildCount() const;
 			virtual	HRESULT		SendMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes);
 			virtual void		OnSizeChange(const TinySize&, const TinySize&);
 			virtual void		OnPosChange(const TinyPoint&, const TinyPoint&);
@@ -99,6 +100,7 @@ namespace TinyUI
 			virtual BOOL		OnDraw(HDC hDC, const RECT& clip);
 			virtual HRESULT		OnCreate();
 			virtual HRESULT		OnDestory();
+			virtual HRESULT		OnInitialize();
 			virtual HRESULT		OnMouseMove(const TinyPoint& pos, DWORD dwFlags);
 			virtual HRESULT		OnMouseWheel(const TinyPoint& pos, SHORT zDelta, DWORD dwFlags);
 			virtual HRESULT		OnMouseEnter();
