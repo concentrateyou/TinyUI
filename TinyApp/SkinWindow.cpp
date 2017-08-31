@@ -33,9 +33,11 @@ void SkinWindow::OnInitialize()
 		if (visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
 		{
 			TinyVisualComboBox* combobox = static_cast<TinyVisualComboBox*>(visual);
-			combobox->AddOption("Name1", "Name1");
-			combobox->AddOption("Name2", "Name2");
-			combobox->AddOption("Name3", "Name3");
+			for (INT i = 0;i < 50;i++)
+			{
+				TinyString str = TinyString::Format("Name%d", i);
+				combobox->AddOption(str, str);
+			}
 		}
 	}
 }

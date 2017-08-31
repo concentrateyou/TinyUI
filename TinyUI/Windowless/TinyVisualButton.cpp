@@ -13,7 +13,7 @@ namespace TinyUI
 			:TinyVisual(spvisParent, vtree),
 			m_dwFlag(NORMAL)
 		{
-
+			ZeroMemory(&m_images, sizeof(m_images));
 		}
 		TinyVisualButton::~TinyVisualButton()
 		{
@@ -23,13 +23,10 @@ namespace TinyUI
 		{
 			return TinyVisualTag::BUTTON;
 		}
-		BOOL TinyVisualButton::SetStyleImage(StyleImage type, LPCSTR pzFile)
+		void TinyVisualButton::SetStyleImage(StyleImage type, LPCSTR pzFile)
 		{
-			return m_images[(INT)type].Open(pzFile);
-		}
-		BOOL TinyVisualButton::SetStyleImage(StyleImage type, BYTE* ps, DWORD dwSize)
-		{
-			return m_images[(INT)type].Open(ps, dwSize);
+			ASSERT(PathFileExists(pzFile));
+			m_images[(INT)type] = TinyVisualResource::GetInstance().Add(pzFile);
 		}
 		BOOL TinyVisualButton::SetProperty(const TinyString& name, const TinyString& value)
 		{
@@ -71,23 +68,23 @@ namespace TinyUI
 				canvas.SetPen(pen);
 				canvas.DrawRectangle(clip);
 			}
-			if (!m_backgroundImage.IsEmpty())
+			if (m_backgroundImage != NULL && !m_backgroundImage->IsEmpty())
 			{
-				TinyRectangle srcRect = m_backgroundImage.GetRectangle();
+				TinyRectangle srcRect = m_backgroundImage->GetRectangle();
 				TinyRectangle srcCenter = GetBackgroundCenter();
 				if (srcCenter.IsRectEmpty())
 				{
-					canvas.DrawImage(m_backgroundImage, clip, srcRect);
+					canvas.DrawImage(*m_backgroundImage, clip, srcRect);
 				}
 				else
 				{
-					canvas.DrawImage(m_backgroundImage, clip, srcRect, srcCenter);
+					canvas.DrawImage(*m_backgroundImage, clip, srcRect, srcCenter);
 				}
 			}
-			TinyImage& image = m_images[m_dwFlag];
-			if (!image.IsEmpty())
+			TinyImage* image = m_images[m_dwFlag];
+			if (image != NULL && !image->IsEmpty())
 			{
-				canvas.DrawImage(image, clip, 0, 0, image.GetSize().cx, image.GetSize().cy);
+				canvas.DrawImage(*image, clip, 0, 0, image->GetSize().cx, image->GetSize().cy);
 			}
 			canvas.DrawString(GetText(), clip, m_textAlign);
 			return TRUE;

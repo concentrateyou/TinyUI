@@ -22,7 +22,8 @@ namespace TinyUI
 			m_textColor(RGB(255, 255, 255)),
 			m_borderThickness(-1),
 			m_borderStyle(PS_SOLID),
-			m_dwCount(0)
+			m_dwCount(0),
+			m_backgroundImage(NULL)
 		{
 			LOGFONT lf;
 			::GetObject(reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)), sizeof(LOGFONT), &lf);
@@ -43,7 +44,8 @@ namespace TinyUI
 			m_textColor(RGB(255, 255, 255)),
 			m_borderThickness(-1),
 			m_borderStyle(-1),
-			m_dwCount(0)
+			m_dwCount(0),
+			m_backgroundImage(NULL)
 		{
 			LOGFONT lf;
 			::GetObject(reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)), sizeof(LOGFONT), &lf);
@@ -104,7 +106,7 @@ namespace TinyUI
 		{
 			return m_minimumSize;
 		}
-		TinyImage&	TinyVisual::GetBackgroundImage()
+		TinyImage*	TinyVisual::GetBackgroundImage()
 		{
 			return m_backgroundImage;
 		}
@@ -189,8 +191,7 @@ namespace TinyUI
 		void TinyVisual::SetBackgroundImage(const TinyString& szFile)
 		{
 			ASSERT(PathFileExists(szFile.CSTR()));
-			m_backgroundImage.Close();
-			m_backgroundImage.Open(szFile.CSTR());
+			m_backgroundImage = TinyVisualResource::GetInstance().Add(szFile);
 		}
 		void TinyVisual::SetBackgroundColor(COLORREF color)
 		{

@@ -59,6 +59,18 @@ namespace TinyUI
 			static const TinyString ARROWHIGHLIGHT;
 			static const TinyString ARROWPUSH;
 
+			static const TinyString ARROWUPNORMAL;
+			static const TinyString ARROWUPHIGHLIGHT;
+			static const TinyString ARROWUPDOWN;
+
+			static const TinyString ARROWDOWNNORMAL;
+			static const TinyString ARROWDOWNHIGHLIGHT;
+			static const TinyString ARROWDOWNDOWN;
+
+			static const TinyString SCROLLBARGROOVE;
+			static const TinyString SCROLLBARNORMAL;
+			static const TinyString SCROLLBARHIGHLIGHT;
+
 			static const TinyString ALIGNMENT;
 			static const TinyString VALUE;
 			static const TinyString OPTIONHIGHLIGHT;

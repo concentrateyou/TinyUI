@@ -17,6 +17,8 @@ namespace TinyUI
 			m_popupWND(this),
 			m_cy(0)
 		{
+			ZeroMemory(&m_images, sizeof(m_images));
+			ZeroMemory(&m_arraws, sizeof(m_arraws));
 			m_onPopupActive.Reset(new Delegate<void(ActiveEventArgs&)>(this, &TinyVisualComboBox::OnPopupActive));
 			m_popupWND.EVENT_ACTIVE += m_onPopupActive;
 		}
@@ -28,17 +30,15 @@ namespace TinyUI
 		{
 			return TinyVisualTag::COMBOBOX;
 		}
-		BOOL TinyVisualComboBox::SetStyleImage(StyleImage type, LPCSTR pzFile)
+		void TinyVisualComboBox::SetStyleImage(StyleImage type, LPCSTR pzFile)
 		{
-			if (!m_images[(INT)type].Open(pzFile))
-				return FALSE;
-			return TRUE;
+			ASSERT(PathFileExists(pzFile));
+			m_images[(INT)type] = TinyVisualResource::GetInstance().Add(pzFile);
 		}
-		BOOL TinyVisualComboBox::SetArrowImage(StyleImage type, LPCSTR pzFile)
+		void TinyVisualComboBox::SetArrowImage(StyleImage type, LPCSTR pzFile)
 		{
-			if (!m_arraws[(INT)type].Open(pzFile))
-				return FALSE;
-			return TRUE;
+			ASSERT(PathFileExists(pzFile));
+			m_arraws[(INT)type] = TinyVisualResource::GetInstance().Add(pzFile);
 		}
 		void TinyVisualComboBox::AddOption(const TinyString& szValue, const TinyString& szText)
 		{
@@ -99,20 +99,24 @@ namespace TinyUI
 		}
 		BOOL TinyVisualComboBox::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
-			TinyImage& image = m_images[m_dwFlag];
-			if (image.IsEmpty())
-				return FALSE;
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			canvas.SetFont((HFONT)GetStockObject(DEFAULT_GUI_FONT));
 			canvas.SetTextColor(m_textColor);
-			TinyRectangle srcPaint = image.GetRectangle();
-			TinyRectangle srcCenter(srcPaint.left + 5, srcPaint.top + 5, srcPaint.right - 5, srcPaint.bottom - 5);
-			canvas.DrawImage(image, clip, srcPaint, srcCenter);
-			TinyImage& arrow = m_arraws[m_dwArrawFlag];
-			srcPaint = arrow.GetRectangle();
-			TinyRectangle dstPaint(TinyPoint(clip.right - srcPaint.Width() - 3, clip.top + (clip.Height() - srcPaint.Height()) / 2), srcPaint.Size());
-			canvas.DrawImage(arrow, dstPaint, srcPaint);
+			TinyImage* image = m_images[m_dwFlag];
+			if (image != NULL && !image->IsEmpty())
+			{
+				TinyRectangle srcPaint = image->GetRectangle();
+				TinyRectangle srcCenter(srcPaint.left + 5, srcPaint.top + 5, srcPaint.right - 5, srcPaint.bottom - 5);
+				canvas.DrawImage(*image, clip, srcPaint, srcCenter);
+			}
+			TinyImage* arrow = m_arraws[m_dwArrawFlag];
+			if (arrow != NULL && !arrow->IsEmpty())
+			{
+				TinyRectangle srcPaint = arrow->GetRectangle();
+				TinyRectangle dstPaint(TinyPoint(clip.right - srcPaint.Width() - 3, clip.top + (clip.Height() - srcPaint.Height()) / 2), srcPaint.Size());
+				canvas.DrawImage(*arrow, dstPaint, srcPaint);
+			}
 			clip.OffsetRect(7, 0);
 			canvas.DrawString(GetText(), clip, m_textAlign);
 			return TRUE;
@@ -233,8 +237,7 @@ namespace TinyUI
 		void TinyVisualOption::SetOptionHighlight(LPCSTR pzFile)
 		{
 			ASSERT(PathFileExists(pzFile));
-			m_highlight.Close();
-			m_highlight.Open(pzFile);
+			m_highlight = TinyVisualResource::GetInstance().Add(pzFile);
 		}
 		BOOL TinyVisualOption::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
@@ -249,7 +252,10 @@ namespace TinyUI
 			else
 			{
 				canvas.SetTextColor(RGB(255, 255, 255));
-				canvas.DrawImage(m_highlight, clip, m_highlight.GetRectangle());
+				if (m_highlight != NULL && !m_highlight->IsEmpty())
+				{
+					canvas.DrawImage(*m_highlight, clip, m_highlight->GetRectangle());
+				}
 			}
 			clip.InflateRect({ -8, 0 });
 			canvas.DrawString(m_szText, clip, m_textAlign);

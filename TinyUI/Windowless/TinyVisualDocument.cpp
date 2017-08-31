@@ -117,6 +117,8 @@ namespace TinyUI
 					break;
 				}
 			}
+			if (spvis == NULL)
+				spvis = m_spvisWindow;
 			TinyVisual* pv = NULL;
 			BOOL fRebase = FALSE;
 			switch (cmd)

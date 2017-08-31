@@ -11,7 +11,8 @@ namespace TinyUI
 		IMPLEMENT_DYNAMIC(TinyVisualDropDownHWND, TinyVisualHWND);
 		TinyVisualDropDownHWND::TinyVisualDropDownHWND(TinyVisualComboBox* pOwner)
 			:m_pOwner(pOwner),
-			m_pVScrollbar(NULL)
+			m_pVScrollbar(NULL),
+			m_iNewPos(0)
 		{
 
 		}
@@ -49,6 +50,7 @@ namespace TinyUI
 		{
 			if (m_pVScrollbar != NULL)
 			{
+				m_pVScrollbar->EVENT_PosChange -= m_onPosChange;
 				m_document->Destory(m_pVScrollbar);
 				m_pVScrollbar = NULL;
 			}
@@ -62,19 +64,47 @@ namespace TinyUI
 			BOOL bRes = ::SetWindowPos(m_hWND, HWND_TOPMOST, pos.x, pos.y, size.cx, size.cy, SWP_NOACTIVATE | SWP_SHOWWINDOW);
 			::UpdateWindow(m_hWND);
 			::SetActiveWindow(m_hWND);
+			TinyVisual* spvis = m_document->GetParent(NULL);
 			if (m_pVScrollbar == NULL)
 			{
-				TinyVisual* spvis = m_document->GetParent(NULL);
 				m_pVScrollbar = m_document->Create<TinyVisualVScrollBar>(size.cx - 12, 0, 12, size.cy, spvis);
+				m_onPosChange.Reset(new Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualDropDownHWND::OnPosChange));
+				m_pVScrollbar->EVENT_PosChange += m_onPosChange;
 			}
 			if (m_pVScrollbar != NULL)
 			{
 				m_pVScrollbar->SetPosition(TinyPoint(size.cx - 12, 0));
 				m_pVScrollbar->SetSize(TinySize(12, size.cy));
-				m_pVScrollbar->SetVisible(TRUE);
-				m_document->Redraw();
+				if ((spvis->GetChildCount() * DEFAULT_OPTION_HEIGHT) > size.cy)
+				{
+					m_pVScrollbar->SetVisible(TRUE);
+					AdjustOption(size.cx - 12);
+					m_pVScrollbar->SetScrollInfo(0, spvis->GetChildCount() * DEFAULT_OPTION_HEIGHT - size.cy, DEFAULT_OPTION_HEIGHT, m_iNewPos);
+				}
+				else
+				{
+					m_pVScrollbar->SetVisible(FALSE);
+					AdjustOption(size.cx);
+				}
 			}
+			m_document->SetFocus(m_pVScrollbar);
+			m_document->Redraw();
 			return bRes;
+		}
+		void TinyVisualDropDownHWND::AdjustOption(INT cx)
+		{
+			TinyVisual* spvis = m_document->GetVisual(NULL, CMD_CHILD);
+			spvis = m_document->GetVisual(spvis, CMD_LAST);
+			while (spvis != NULL)
+			{
+				if (spvis->IsKindOf(RUNTIME_CLASS(TinyVisualOption)))
+				{
+					TinySize size = spvis->GetSize();
+					size.cx = cx;
+					spvis->SetSize(size);
+				}
+				spvis = m_document->GetVisual(spvis, CMD_PREV);
+			}
 		}
 		TinyVisualVScrollBar* TinyVisualDropDownHWND::GetScrollBar()
 		{
@@ -114,6 +144,29 @@ namespace TinyUI
 				EVENT_ACTIVE(ActiveEventArgs(TRUE));
 			}
 			return TinyVisualHWND::OnActivate(uMsg, wParam, lParam, bHandled);
+		}
+
+		void TinyVisualDropDownHWND::OnPosChange(BOOL bVer, INT code, INT iOldPos, INT iNewPos)
+		{
+			AdjustLayout(0, iOldPos - iNewPos);
+			m_iNewPos = iNewPos;
+			m_document->Redraw();
+		}
+		void TinyVisualDropDownHWND::AdjustLayout(INT dx, INT dy)
+		{
+			TinyVisual* spvis = m_document->GetVisual(NULL, CMD_CHILD);
+			spvis = m_document->GetVisual(spvis, CMD_LAST);
+			while (spvis != NULL)
+			{
+				if (spvis->IsKindOf(RUNTIME_CLASS(TinyVisualOption)))
+				{
+					TinyRectangle s = spvis->GetRectangle();
+					s.OffsetRect(dx, dy);
+					spvis->SetPosition(s.Position());
+					spvis->SetSize(s.Size());
+				}
+				spvis = m_document->GetVisual(spvis, CMD_PREV);
+			}
 		}
 	}
 }

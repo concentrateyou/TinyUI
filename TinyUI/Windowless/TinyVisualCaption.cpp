@@ -32,9 +32,9 @@ namespace TinyUI
 			ASSERT(m_document || m_document->GetVisualHWND());
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			TinyRectangle clip = m_document->GetWindowRect(this);
-			if (!m_backgroundImage.IsEmpty())
+			if (m_backgroundImage != NULL && !m_backgroundImage->IsEmpty())
 			{
-				canvas.DrawImage(m_backgroundImage, clip, 0, 0, m_backgroundImage.GetSize().cx, m_backgroundImage.GetSize().cy);
+				canvas.DrawImage(*m_backgroundImage, clip, 0, 0, m_backgroundImage->GetSize().cx, m_backgroundImage->GetSize().cy);
 			}
 			return TRUE;
 		}

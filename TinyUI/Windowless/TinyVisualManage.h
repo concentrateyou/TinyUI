@@ -36,6 +36,24 @@ namespace TinyUI
 		private:
 			TiXmlDocument	m_doc;
 		};
+		/// <summary>
+		/// 资源管理
+		/// </summary>
+		class TinyVisualResource
+		{
+			DISALLOW_COPY_AND_ASSIGN(TinyVisualResource)
+		public:
+			TinyVisualResource();
+			~TinyVisualResource();
+			static TinyVisualResource& GetInstance();
+		public:
+			TinyImage* Add(const TinyString& szFile);
+			void Remove(const TinyString& szFile);
+			void RemoveAll();
+			TinyImage* operator[](const TinyString& szFile);
+		private:
+			TinyMap<TinyString, TinyImage*> m_images;
+		};
 	};
 }
 

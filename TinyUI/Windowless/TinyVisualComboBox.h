@@ -24,8 +24,8 @@ namespace TinyUI
 			TinyString RetrieveTag() const OVERRIDE;
 		public:
 			void AddOption(const TinyString& szValue, const TinyString& szText);
-			BOOL SetStyleImage(StyleImage type, LPCSTR pzFile);
-			BOOL SetArrowImage(StyleImage type, LPCSTR pzFile);
+			void SetStyleImage(StyleImage type, LPCSTR pzFile);
+			void SetArrowImage(StyleImage type, LPCSTR pzFile);
 			BOOL SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 		protected:
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
@@ -41,8 +41,8 @@ namespace TinyUI
 			BOOL					m_bActive;
 			StyleImage				m_dwFlag;
 			StyleImage				m_dwArrawFlag;
-			TinyImage				m_images[StyleImage::COUNT];
-			TinyImage				m_arraws[StyleImage::COUNT];
+			TinyImage*				m_images[StyleImage::COUNT];
+			TinyImage*				m_arraws[StyleImage::COUNT];
 			INT						m_cy;
 			TinyVisualDropDownHWND  m_popupWND;
 			TinyScopedPtr<Delegate<void(ActiveEventArgs&)>> m_onPopupActive;
@@ -70,7 +70,7 @@ namespace TinyUI
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 		private:
 			TinyString	m_szValue;
-			TinyImage	m_highlight;
+			TinyImage*	m_highlight;
 			DWORD		m_dwFlag;
 		};
 	}

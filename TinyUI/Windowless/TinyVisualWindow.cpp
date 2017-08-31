@@ -62,17 +62,17 @@ namespace TinyUI
 				canvas.DrawRectangle(clip);
 				canvas.SetPen(hOldPen);
 			}
-			if (!m_backgroundImage.IsEmpty())
+			if (m_backgroundImage != NULL && !m_backgroundImage->IsEmpty())
 			{
-				TinyRectangle srcRect = m_backgroundImage.GetRectangle();
+				TinyRectangle srcRect = m_backgroundImage->GetRectangle();
 				TinyRectangle srcCenter = GetBackgroundCenter();
 				if (srcCenter.IsRectEmpty())
 				{
-					canvas.DrawImage(m_backgroundImage, clip, srcRect);
+					canvas.DrawImage(*m_backgroundImage, clip, srcRect);
 				}
 				else
 				{
-					canvas.DrawImage(m_backgroundImage, clip, srcRect, srcCenter);
+					canvas.DrawImage(*m_backgroundImage, clip, srcRect, srcCenter);
 				}
 			}
 			return TRUE;

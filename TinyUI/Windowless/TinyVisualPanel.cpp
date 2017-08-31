@@ -28,9 +28,17 @@ namespace TinyUI
 		{
 			ASSERT(m_document || m_document->GetVisualHWND());
 			TinyClipCanvas canvas(hDC, this, rcPaint);
-			if (!m_backgroundImage.IsEmpty())
+			TinyRectangle clip = m_document->GetWindowRect(this);
+			if (m_backgroundImage != NULL && !m_backgroundImage->IsEmpty())
 			{
-				canvas.DrawImage(m_backgroundImage, m_rectangle, 0, 0, m_backgroundImage.GetSize().cx, m_backgroundImage.GetSize().cy);
+				canvas.DrawImage(*m_backgroundImage, clip, 0, 0, m_backgroundImage->GetSize().cx, m_backgroundImage->GetSize().cy);
+			}
+			if (!m_borderColor.IsEmpty() && m_borderThickness != -1)
+			{
+				TinyPen pen;
+				pen.CreatePen(m_borderStyle, m_borderThickness, m_borderColor);
+				canvas.SetPen(pen);
+				canvas.DrawRectangle(clip);
 			}
 			return TRUE;
 		}

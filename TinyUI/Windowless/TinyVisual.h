@@ -53,7 +53,7 @@ namespace TinyUI
 			TinyRectangle		GetRectangle() const;
 			TinyRectangle		GetWindowRect()const;
 			TinyRectangle		GetClientRect() const;
-			TinyImage&			GetBackgroundImage();
+			TinyImage*			GetBackgroundImage();
 			TinyRectangle		GetBackgroundCenter() const;
 			TinyColor			GetBackgroundColor() const;
 			TinyColor			GetBorderColor() const;
@@ -151,7 +151,7 @@ namespace TinyUI
 			TinySize			m_minimumSize;//元素的最小像素大小
 			TinyRectangle		m_rectangle;//相对于父元素区域
 			TinyRectangle		m_backgroundCenter;//显示背景图片中心
-			TinyImage			m_backgroundImage;//背景图片
+			TinyImage*			m_backgroundImage;//背景图片
 			TinyColor			m_backgroundColor;//背景颜色
 			INT					m_borderThickness;//边框厚度
 			TinyColor			m_borderColor;//边框颜色

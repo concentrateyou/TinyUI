@@ -38,8 +38,14 @@ namespace TinyUI
 			LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		private:
+			void AdjustOption(INT cx);
+			void AdjustLayout(INT dx, INT dy);
+			void OnPosChange(BOOL bVer, INT code, INT iOldPos, INT iNewPos);
+		private:
 			TinyVisualComboBox*		m_pOwner;
 			TinyVisualVScrollBar*	m_pVScrollbar;
+			INT						m_iNewPos;
+			TinyScopedPtr<Delegate<void(BOOL, INT, INT, INT)>> m_onPosChange;
 		};
 	}
 }

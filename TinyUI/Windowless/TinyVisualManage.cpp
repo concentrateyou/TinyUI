@@ -12,6 +12,7 @@
 #include "TinyVisualComboBox.h"
 #include "TinyVisualRichText.h"
 #include "TinyVisualPanel.h"
+#include "../Render/TinyImage.h"
 
 namespace TinyUI
 {
@@ -217,6 +218,68 @@ namespace TinyUI
 				return RGB(atoi(sps[0].STR()), atoi(sps[1].STR()), atoi(sps[2].STR()));
 			}
 			return RGB(255, 255, 255);
+		}
+		//////////////////////////////////////////////////////////////////////////
+		TinyVisualResource::TinyVisualResource()
+		{
+
+		}
+		TinyVisualResource::~TinyVisualResource()
+		{
+
+		}
+		TinyVisualResource& TinyVisualResource::GetInstance()
+		{
+			static TinyVisualResource instance;
+			return instance;
+		}
+		TinyImage* TinyVisualResource::Add(const TinyString& szFile)
+		{
+			TinyImage** value = m_images.GetValue(szFile);
+			if (value != NULL)
+			{
+				return *value;
+			}
+			else
+			{
+				TinyImage* image = new TinyImage();
+				if (image != NULL && image->Open(szFile.CSTR()))
+				{
+					m_images.Add(szFile, image);
+					return image;
+				}
+			}
+			return NULL;
+		}
+		void TinyVisualResource::Remove(const TinyString& szFile)
+		{
+			TinyImage** value = m_images.GetValue(szFile);
+			if (value != NULL)
+			{
+				(*value)->Close();
+			}
+			SAFE_DELETE(*value);
+			m_images.Remove(szFile);
+		}
+		void TinyVisualResource::RemoveAll()
+		{
+			ITERATOR pos = m_images.First();
+			while (pos != NULL)
+			{
+				TinyImage** value = m_images.GetValueAt(pos);
+				if (value != NULL)
+				{
+					(*value)->Close();
+				}
+				SAFE_DELETE(*value);
+				pos = m_images.Next(pos);
+			}
+			m_images.RemoveAll();
+		}
+		TinyImage* TinyVisualResource::operator[](const TinyString& szFile)
+		{
+			TinyImage** value = m_images.GetValue(szFile);
+			return *value;
 		}
 	};
 }

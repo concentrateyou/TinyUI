@@ -35,6 +35,7 @@ namespace TinyUI
 		public:
 			virtual ~TinyVisualHScrollBar();
 			TinyString	RetrieveTag() const OVERRIDE;
+			BOOL		SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 			INT			GetScrollPos() const;
 			INT			GetPage() const;
 			void		SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos);
@@ -77,6 +78,8 @@ namespace TinyUI
 			INT			GetPage() const;
 			void		SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos);
 			void		SetScrollPos(INT iPos);
+			void		SetArrowImage(BOOL bUp, StyleImage type, LPCSTR pzFile);
+			void		SetScrollBarImage(StyleImage type, LPCSTR pzFile);
 		public:
 			Event<void(BOOL, INT, INT, INT)> EVENT_PosChange;
 		protected:
@@ -97,7 +100,9 @@ namespace TinyUI
 		private:
 			BOOL			m_bVertical;
 			SCROLLBARINFO	m_si;
-			TinyImage		m_images[9];
+			TinyImage*		m_arrowDown[StyleImage::COUNT];
+			TinyImage*		m_arrowUp[StyleImage::COUNT];
+			TinyImage*		m_scroll[StyleImage::COUNT];
 		};
 	}
 }
