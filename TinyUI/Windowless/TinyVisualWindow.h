@@ -19,7 +19,6 @@ namespace TinyUI
 			void SetPosition(const TinyPoint& pos) OVERRIDE;
 		public:
 			TinyString RetrieveTag() const OVERRIDE;
-			BOOL IsLayout() const OVERRIDE;
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 		};
 	}

@@ -54,10 +54,6 @@ namespace TinyUI
 		{
 			SAFE_DELETE_OBJECT(m_hFONT);
 		}
-		BOOL TinyVisual::IsLayout() const
-		{
-			return FALSE;
-		}
 		HWND TinyVisual::Handle() const
 		{
 			return m_document != NULL ? m_document->Handle() : NULL;

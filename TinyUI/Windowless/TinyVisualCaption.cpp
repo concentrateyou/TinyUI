@@ -22,10 +22,6 @@ namespace TinyUI
 		{
 			return TinyVisualTag::SYSCAPTION;
 		}
-		BOOL TinyVisualCaption::IsLayout() const
-		{
-			return TRUE;
-		}
 		void TinyVisualCaption::OnSizeChange(const TinySize& oldsize, const TinySize& newsize)
 		{
 			TinyVisual::OnSizeChange(oldsize, newsize);

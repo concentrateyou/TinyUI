@@ -11,8 +11,6 @@
 #include "TinyVisualScrollBar.h"
 #include "TinyVisualComboBox.h"
 #include "TinyVisualRichText.h"
-#include "TinyVisualHBoxLayout.h"
-#include "TinyVisualVBoxLayout.h"
 #include "TinyVisualPanel.h"
 
 namespace TinyUI
@@ -50,6 +48,7 @@ namespace TinyUI
 				}
 			}
 			CreateInstace(pXML, spvis, document);
+			spvis->OnInitialize();
 			TinySize size = document->GetParent(NULL)->GetSize();
 			RECT windowBounds;
 			RECT centerBounds = { 0 };
@@ -82,14 +81,6 @@ namespace TinyUI
 					{
 						spvis = document->Create<TinyVisualCaption>(spvisParent);
 					}
-					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::HBOXLAYOUT.STR()))
-					{
-						spvis = document->Create<TinyVisualHBoxLayout>(spvisParent);
-					}
-					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::VBOXLAYOUT.STR()))
-					{
-						spvis = document->Create<TinyVisualVBoxLayout>(spvisParent);
-					}
 					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::LABEL.STR()))
 					{
 						spvis = document->Create<TinyVisualLabel>(spvisParent);
@@ -114,11 +105,8 @@ namespace TinyUI
 					{
 						if (BuildProperty(static_cast<const TiXmlElement*>(pXMLChildNode), spvis))
 						{
-							spvis->OnInitialize();//初始化完成
-						}
-						if (spvis->IsLayout())
-						{
 							CreateInstace(pXMLChildNode, spvis, document);
+							spvis->OnInitialize();//初始化完成
 						}
 					}
 				}
@@ -229,49 +217,6 @@ namespace TinyUI
 				return RGB(atoi(sps[0].STR()), atoi(sps[1].STR()), atoi(sps[2].STR()));
 			}
 			return RGB(255, 255, 255);
-		}
-		//////////////////////////////////////////////////////////////////////////
-		TinyVisualResource::TinyVisualResource()
-		{
-
-		}
-		TinyVisualResource::~TinyVisualResource()
-		{
-
-		}
-		BOOL TinyVisualResource::Add(const TinyString& name, TinyImage* image)
-		{
-			return m_imageMap.Add(name, image) != NULL;
-		}
-		void TinyVisualResource::Remove(const TinyString& name)
-		{
-			ITERATOR pos = m_imageMap.Lookup(name);
-			if (pos != NULL)
-			{
-				TinyImage** ps = m_imageMap.GetValueAt(pos);
-				SAFE_DELETE(*ps);
-				m_imageMap.Remove(name);
-			}
-		}
-		void TinyVisualResource::RemoveAll()
-		{
-			ITERATOR pos = m_imageMap.First();
-			while (pos != NULL)
-			{
-				TinyImage** ps = m_imageMap.GetValueAt(pos);
-				SAFE_DELETE(*ps);
-				pos = m_imageMap.Next(pos);
-			}
-			m_imageMap.RemoveAll();
-		}
-		TinyImage* TinyVisualResource::operator[](const TinyString& name)
-		{
-			TinyImage** ps = m_imageMap.GetValue(name);
-			if (ps != NULL)
-			{
-				return *ps;
-			}
-			return NULL;
 		}
 	};
 }

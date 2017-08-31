@@ -41,7 +41,7 @@ namespace TinyUI
 
 		const TinyString TinyVisualProperty::ALIGNMENT = TEXT("alignment");
 		const TinyString TinyVisualProperty::VALUE = TEXT("value");
-		const TinyString TinyVisualProperty::OPTIONHIGHLIGHT = TEXT("option-highligh");
+		const TinyString TinyVisualProperty::OPTIONHIGHLIGHT = TEXT("highlight");
 
 		const TinyString TinyVisualProperty::IMAGENORMAL = TEXT("image-normal");
 		const TinyString TinyVisualProperty::IMAGEHIGHLIGHT = TEXT("image-highlight");

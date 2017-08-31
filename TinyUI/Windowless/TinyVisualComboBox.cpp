@@ -40,14 +40,14 @@ namespace TinyUI
 				return FALSE;
 			return TRUE;
 		}
-		void TinyVisualComboBox::AddOption(const TinyString& value, const TinyString& text)
+		void TinyVisualComboBox::AddOption(const TinyString& szValue, const TinyString& szText)
 		{
 			TinyVisual* spvisParent = m_popupWND.GetDocument()->GetParent(NULL);
 			TinyVisualOption* spvis = m_popupWND.GetDocument()->Create<TinyVisualOption>(0, spvisParent->GetChildCount() * DEFAULT_OPTION_HEIGHT, TO_CX(m_rectangle), DEFAULT_OPTION_HEIGHT, spvisParent);
 			if (spvis != NULL)
 			{
-				spvis->SetValue(value.CSTR());
-				spvis->SetText(text.CSTR());
+				spvis->SetValue(szValue.CSTR());
+				spvis->SetText(szText.CSTR());
 				spvis->SetTextAlian(DT_LEFT | DT_SINGLELINE | DT_VCENTER);
 				spvis->SetOptionHighlight("D:\\Develop\\TinyUI\\skin\\combobox\\ComboBoxList_highlight.png");
 				spvis->SetTextColor(RGB(0, 0, 0));
@@ -136,15 +136,13 @@ namespace TinyUI
 			m_document->Redraw(&s);
 			m_document->ReleaseCapture();
 			TinyPoint screenPos = m_document->GetScreenPos(this);
-			screenPos.Offset(1, s.Height());
-			TinySize size = s.Size();
+			screenPos.Offset(0, s.Height());
+			//获得根节点
 			TinyVisual* spvis = m_popupWND.GetDocument()->GetParent(NULL);
 			DWORD dwCount = spvis->GetChildCount();
 			TinyRectangle rectangle = spvis->GetRectangle();
-			size.cx = rectangle.Width() == 0 ? size.cx - 1 : rectangle.Width();
-			size.cy = rectangle.Height() == 0 ? dwCount * DEFAULT_OPTION_HEIGHT : rectangle.Height();
 			m_popupWND.AllowTracking(FALSE);
-			m_popupWND.SetPosition(screenPos, size);
+			m_popupWND.SetPosition(screenPos, rectangle.Size());
 			return TinyVisual::OnLButtonDown(pos, dwFlags);
 		}
 		HRESULT	TinyVisualComboBox::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)
@@ -254,7 +252,7 @@ namespace TinyUI
 				canvas.DrawImage(m_highlight, clip, m_highlight.GetRectangle());
 			}
 			clip.InflateRect({ -8, 0 });
-			canvas.DrawString(GetText(), clip, m_textAlign);
+			canvas.DrawString(m_szText, clip, m_textAlign);
 			return TRUE;
 		}
 	}

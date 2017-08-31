@@ -13,7 +13,6 @@ namespace TinyUI
 	///       4           red, green, blue, alpha
 	/// 只支持24和32位
 	/// </summary>
-
 	typedef struct tagIMAGE_INFO
 	{
 		HBITMAP hBitmap;

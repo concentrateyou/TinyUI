@@ -23,7 +23,7 @@ namespace TinyUI
 			virtual ~TinyVisualComboBox();
 			TinyString RetrieveTag() const OVERRIDE;
 		public:
-			void AddOption(const TinyString& value, const TinyString& text);
+			void AddOption(const TinyString& szValue, const TinyString& szText);
 			BOOL SetStyleImage(StyleImage type, LPCSTR pzFile);
 			BOOL SetArrowImage(StyleImage type, LPCSTR pzFile);
 			BOOL SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
@@ -45,7 +45,7 @@ namespace TinyUI
 			TinyImage				m_arraws[StyleImage::COUNT];
 			INT						m_cy;
 			TinyVisualDropDownHWND  m_popupWND;
-			TinyScopedArray<Delegate<void(ActiveEventArgs&)>> m_onPopupActive;
+			TinyScopedPtr<Delegate<void(ActiveEventArgs&)>> m_onPopupActive;
 		};
 		/// <summary>
 		/// ÏÂÀ­¿òÏî

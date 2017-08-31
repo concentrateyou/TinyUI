@@ -444,28 +444,31 @@ namespace TinyUI
 		void TinyVisualDocument::Draw(TinyVisual* spvis, HDC hDC, const RECT& rcPaint)
 		{
 			ASSERT(m_pWindow && m_pWindow->m_visualDC);
-			while (spvis != NULL && spvis->IsVisible())
+			while (spvis != NULL)
 			{
-				if (spvis->m_spvisParent)
+				if (spvis->IsVisible())
 				{
-					TinyRectangle clipAncestor = GetWindowRect(spvis->m_spvisParent);
-					if (::IntersectRect(&clipAncestor, &clipAncestor, &rcPaint))
+					if (spvis->m_spvisParent != NULL)
+					{
+						TinyRectangle clipAncestor = GetWindowRect(spvis->m_spvisParent);
+						if (::IntersectRect(&clipAncestor, &clipAncestor, &rcPaint))
+						{
+							TinyRectangle clip = GetWindowRect(spvis);
+							if (::IntersectRect(&clip, &clip, &clipAncestor))
+							{
+								spvis->OnDraw(hDC, clip);
+								Draw(spvis->m_spvisChild, hDC, clip);
+							}
+						}
+					}
+					else
 					{
 						TinyRectangle clip = GetWindowRect(spvis);
-						if (::IntersectRect(&clip, &clip, &clipAncestor))
+						if (::IntersectRect(&clip, &clip, &rcPaint))
 						{
 							spvis->OnDraw(hDC, clip);
 							Draw(spvis->m_spvisChild, hDC, clip);
 						}
-					}
-				}
-				else
-				{
-					TinyRectangle clip = GetWindowRect(spvis);
-					if (::IntersectRect(&clip, &clip, &rcPaint))
-					{
-						spvis->OnDraw(hDC, clip);
-						Draw(spvis->m_spvisChild, hDC, clip);
 					}
 				}
 				spvis = spvis->m_spvisNext;

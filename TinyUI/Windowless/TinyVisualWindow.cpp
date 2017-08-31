@@ -41,10 +41,6 @@ namespace TinyUI
 		{
 			return TinyVisualTag::WINDOW;
 		}
-		BOOL TinyVisualWindow::IsLayout() const
-		{
-			return TRUE;
-		}
 		BOOL TinyVisualWindow::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
 			ASSERT(m_document || m_document->GetVisualHWND());

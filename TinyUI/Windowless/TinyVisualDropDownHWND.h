@@ -3,6 +3,7 @@
 #include "../Render/TinyImage.h"
 #include "TinyVisualHWND.h"
 #include "TinyVisualDocument.h"
+#include "TinyVisualScrollBar.h"
 #include "TinyVisualManage.h"
 
 namespace TinyUI
@@ -29,6 +30,7 @@ namespace TinyUI
 			BOOL IsPopup();
 		public:
 			BOOL SetPosition(const TinyPoint& pos, const TinySize& size);
+			TinyVisualVScrollBar* GetScrollBar();
 			Event<void(ActiveEventArgs&)>	EVENT_ACTIVE;
 		public:
 			LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
@@ -36,8 +38,8 @@ namespace TinyUI
 			LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		private:
-			TinyVisualComboBox*	m_pOwner;
-			INT					m_count;
+			TinyVisualComboBox*		m_pOwner;
+			TinyVisualVScrollBar*	m_pVScrollbar;
 		};
 	}
 }

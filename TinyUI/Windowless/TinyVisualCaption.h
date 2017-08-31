@@ -18,7 +18,6 @@ namespace TinyUI
 		public:
 			virtual ~TinyVisualCaption();
 			TinyString RetrieveTag() const OVERRIDE;
-			BOOL IsLayout() const OVERRIDE;
 			void OnSizeChange(const TinySize&, const TinySize&) OVERRIDE;
 		protected:
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
