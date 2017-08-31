@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <window name="mshow" text="MShow工具" position="100,100" size="818,730" minsize="818,730" maxsize="818,730">
+  <context>
+    <add name="sysbtn_min_normal" value="D:\Develop\TinyUI\skin\system\sysbtn_min_normal.png"></add>
+    <add name="sysbtn_min_hover" value="D:\Develop\TinyUI\skin\system\sysbtn_min_hover.png"></add>
+    <add name="sysbtn_min_down" value="D:\Develop\TinyUI\skin\system\sysbtn_min_down.png"></add>
+    <add name="sysbtn_close_normal" value="D:\Develop\TinyUI\skin\system\sysbtn_close_normal.png"></add>
+    <add name="sysbtn_close_hover" value="D:\Develop\TinyUI\skin\system\sysbtn_close_hover.png"></add>
+    <add name="sysbtn_close_down" value="D:\Develop\TinyUI\skin\system\sysbtn_close_down.png"></add>
+    <add name="panel" value="D:\Develop\TinyUI\skin\system\syscaption.png"></add>
+
+    <add name="combobox_normal" value="D:\Develop\TinyUI\skin\combobox\combobox_normal.png"></add>
+    <add name="combobox_push" value="D:\Develop\TinyUI\skin\combobox\combobox_push.png"></add>
+    <add name="combobox_hover" value="D:\Develop\TinyUI\skin\combobox\combobox_hover.png"></add>
+    <add name="inputbtn_normal" value="D:\Develop\TinyUI\skin\combobox\inputbtn_normal.png"></add>
+    <add name="inputbtn_down" value="D:\Develop\TinyUI\skin\combobox\inputbtn_down.png"></add>
+    <add name="inputbtn_normal" value="D:\Develop\TinyUI\skin\combobox\inputbtn_normal.png"></add>
+  </context>
+  
   <syscaption name ="syscaption" position="0,0" size="818,27" background-image="D:\Develop\TinyUI\skin\system\syscaption.png">
     <label name="title" position="10,0" size="60,27" text="MShow工具" text-align="left|vcenter" text-color="255,255,255" >
     </label>

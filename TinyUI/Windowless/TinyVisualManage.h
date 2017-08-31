@@ -33,6 +33,7 @@ namespace TinyUI
 		private:
 			static void CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualDocument* ps);
 			static BOOL BuildProperty(const TiXmlElement* pXMLNode, TinyVisual* spvis);
+			static void BuildImages(const TiXmlNode* pXMLNode);
 		private:
 			TiXmlDocument	m_doc;
 		};

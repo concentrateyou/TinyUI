@@ -12,7 +12,9 @@ namespace TinyUI
 			:TinyVisual(spvisParent, vtree)
 		{
 			memset(&m_si, 0, sizeof(SCROLLBOXINFO));
-			m_images[0].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\arrow_up_normal.png");
+			m_si.iHitTest = m_si.iHitTestPress = HTSCROLL_NONE;
+			ZeroMemory(&m_images, sizeof(m_images));
+			/*m_images[0].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\arrow_up_normal.png");
 			m_images[1].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\arrow_up_hover.png");
 			m_images[2].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\arrow_up_press.png");
 			m_images[3].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\arrow_down_normal.png");
@@ -20,7 +22,7 @@ namespace TinyUI
 			m_images[5].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\arrow_down_press.png");
 			m_images[6].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\scrollbar_groove.png");
 			m_images[7].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\scrollbar_normal.png");
-			m_images[8].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\scrollbar_hover.png");
+			m_images[8].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\scrollbar_hover.png");*/
 		}
 		TinyVisualHScrollBar::~TinyVisualHScrollBar()
 		{
@@ -30,7 +32,55 @@ namespace TinyUI
 		{
 			return TinyVisualTag::HSCROLLBAR;
 		}
-
+		BOOL TinyVisualHScrollBar::SetProperty(const TinyString& name, const TinyString& value)
+		{
+			if (strcasecmp(name.STR(), TinyVisualProperty::ARROW1NORMAL.STR()) == 0)
+			{
+				this->SetStyleImage(ARROW1NORMAL, value.STR());
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::ARROW1HIGHLIGHT.STR()) == 0)
+			{
+				this->SetStyleImage(ARROW1HIGHLIGHT, value.STR());
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::ARROW1DOWN.STR()) == 0)
+			{
+				this->SetStyleImage(ARROW1DOWN, value.STR());
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::ARROW2NORMAL.STR()) == 0)
+			{
+				this->SetStyleImage(ARROW2NORMAL, value.STR());
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::ARROW2HIGHLIGHT.STR()) == 0)
+			{
+				this->SetStyleImage(ARROW2HIGHLIGHT, value.STR());
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::ARROW2DOWN.STR()) == 0)
+			{
+				this->SetStyleImage(ARROW2DOWN, value.STR());
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::SCROLLBARGROOVE.STR()) == 0)
+			{
+				this->SetStyleImage(SCROLLBARGROOVE, value.STR());
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::SCROLLBARNORMAL.STR()) == 0)
+			{
+				this->SetStyleImage(SCROLLBARNORMAL, value.STR());
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::SCROLLBARHIGHLIGHT.STR()) == 0)
+			{
+				this->SetStyleImage(SCROLLBARHIGHLIGHT, value.STR());
+				return TRUE;
+			}
+			return TinyVisual::SetProperty(name, value);
+		}
 		BOOL TinyVisualHScrollBar::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
 			TinyClipCanvas canvas(hDC, this, rcPaint);
@@ -288,32 +338,32 @@ namespace TinyUI
 			{
 				if (m_si.iHitTestPress == HTSCROLL_LINEUP)
 				{
-					canvas.DrawImage(m_images[2], arrowRectangle0, m_images[2].GetRectangle());
-					canvas.DrawImage(m_images[3], arrowRectangle1, m_images[3].GetRectangle());
+					canvas.DrawImage(*m_images[ARROW1DOWN], arrowRectangle0, m_images[ARROW1DOWN]->GetRectangle());
+					canvas.DrawImage(*m_images[ARROW2NORMAL], arrowRectangle1, m_images[ARROW2NORMAL]->GetRectangle());
 				}
 				else
 				{
-					canvas.DrawImage(m_images[1], arrowRectangle0, m_images[1].GetRectangle());
-					canvas.DrawImage(m_images[3], arrowRectangle1, m_images[3].GetRectangle());
+					canvas.DrawImage(*m_images[ARROW1HIGHLIGHT], arrowRectangle0, m_images[ARROW1HIGHLIGHT]->GetRectangle());
+					canvas.DrawImage(*m_images[ARROW2NORMAL], arrowRectangle1, m_images[ARROW2NORMAL]->GetRectangle());
 				}
 			}
 			else if (m_si.iHitTest == HTSCROLL_LINEDOWN)
 			{
 				if (m_si.iHitTestPress == HTSCROLL_LINEDOWN)
 				{
-					canvas.DrawImage(m_images[0], arrowRectangle0, m_images[0].GetRectangle());
-					canvas.DrawImage(m_images[5], arrowRectangle1, m_images[5].GetRectangle());
+					canvas.DrawImage(*m_images[ARROW1NORMAL], arrowRectangle0, m_images[ARROW1NORMAL]->GetRectangle());
+					canvas.DrawImage(*m_images[ARROW2DOWN], arrowRectangle1, m_images[ARROW2DOWN]->GetRectangle());
 				}
 				else
 				{
-					canvas.DrawImage(m_images[0], arrowRectangle0, m_images[0].GetRectangle());
-					canvas.DrawImage(m_images[4], arrowRectangle1, m_images[4].GetRectangle());
+					canvas.DrawImage(*m_images[ARROW1NORMAL], arrowRectangle0, m_images[ARROW1NORMAL]->GetRectangle());
+					canvas.DrawImage(*m_images[ARROW2HIGHLIGHT], arrowRectangle1, m_images[ARROW2HIGHLIGHT]->GetRectangle());
 				}
 			}
 			else
 			{
-				canvas.DrawImage(m_images[0], arrowRectangle0, m_images[0].GetRectangle());
-				canvas.DrawImage(m_images[3], arrowRectangle1, m_images[3].GetRectangle());
+				canvas.DrawImage(*m_images[ARROW1NORMAL], arrowRectangle0, m_images[ARROW1NORMAL]->GetRectangle());
+				canvas.DrawImage(*m_images[ARROW2NORMAL], arrowRectangle1, m_images[ARROW2NORMAL]->GetRectangle());
 			}
 		}
 		void TinyVisualHScrollBar::DrawThumb(TinyClipCanvas& canvas, SCROLLBARCALC* ps)
@@ -321,7 +371,7 @@ namespace TinyUI
 			if (m_si.iHitTest == HTSCROLL_THUMB)
 			{
 				RECT dstCenter, srcCenter;
-				CopyRect(&srcCenter, &m_images[8].GetRectangle());
+				CopyRect(&srcCenter, m_images[SCROLLBARHIGHLIGHT]->GetRectangle());
 				srcCenter.left = srcCenter.left + 4;
 				srcCenter.right = srcCenter.right - 4;
 				CopyRect(&dstCenter, &ps->thumbRectangle);
@@ -331,12 +381,12 @@ namespace TinyUI
 				TinyRectangle thumbRectangle = ps->thumbRectangle;
 				OffsetRect(&thumbRectangle, s.left, s.top);
 				OffsetRect(&dstCenter, s.left, s.top);
-				canvas.DrawImage(m_images[8], thumbRectangle, dstCenter, m_images[8].GetRectangle(), srcCenter);
+				canvas.DrawImage(*m_images[SCROLLBARHIGHLIGHT], thumbRectangle, dstCenter, m_images[SCROLLBARHIGHLIGHT]->GetRectangle(), srcCenter);
 			}
 			else
 			{
 				RECT dstCenter, srcCenter;
-				CopyRect(&srcCenter, &m_images[7].GetRectangle());
+				CopyRect(&srcCenter, m_images[SCROLLBARNORMAL]->GetRectangle());
 				srcCenter.left = srcCenter.left + 4;
 				srcCenter.right = srcCenter.right - 4;
 				CopyRect(&dstCenter, &ps->thumbRectangle);
@@ -346,13 +396,13 @@ namespace TinyUI
 				TinyRectangle thumbRectangle = ps->thumbRectangle;
 				OffsetRect(&thumbRectangle, s.left, s.top);
 				OffsetRect(&dstCenter, s.left, s.top);
-				canvas.DrawImage(m_images[7], thumbRectangle, dstCenter, m_images[7].GetRectangle(), srcCenter);
+				canvas.DrawImage(*m_images[SCROLLBARNORMAL], thumbRectangle, dstCenter, m_images[SCROLLBARNORMAL]->GetRectangle(), srcCenter);
 			}
 		}
 		void TinyVisualHScrollBar::DrawGroove(TinyClipCanvas& canvas, SCROLLBARCALC* ps)
 		{
 			RECT dstCenter, srcCenter;
-			CopyRect(&srcCenter, &m_images[7].GetRectangle());
+			CopyRect(&srcCenter, m_images[SCROLLBARNORMAL]->GetRectangle());
 			srcCenter.left = srcCenter.left + 4;
 			srcCenter.right = srcCenter.right - 4;
 			RECT grooveRectangle;
@@ -365,7 +415,7 @@ namespace TinyUI
 			TinyRectangle s = this->GetWindowRect();
 			OffsetRect(&grooveRectangle, s.left, s.top);
 			OffsetRect(&dstCenter, s.left, s.top);
-			canvas.DrawImage(m_images[7], grooveRectangle, dstCenter, m_images[7].GetRectangle(), srcCenter);
+			canvas.DrawImage(*m_images[SCROLLBARNORMAL], grooveRectangle, dstCenter, m_images[SCROLLBARNORMAL]->GetRectangle(), srcCenter);
 		}
 		void TinyVisualHScrollBar::SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos)
 		{
@@ -392,17 +442,6 @@ namespace TinyUI
 			TinyRectangle s = m_document->GetWindowRect(this);
 			m_document->Invalidate(&s);
 		}
-
-		BOOL TinyVisualHScrollBar::SetProperty(const TinyString& name, const TinyString& value)
-		{
-			if (strcasecmp(name.STR(), TinyVisualProperty::NAME.STR()) == 0)
-			{
-				this->SetName(value.STR());
-				return TRUE;
-			}
-			return TinyVisual::SetProperty(name, value);
-		}
-
 		INT	TinyVisualHScrollBar::GetScrollPos() const
 		{
 			return m_si.iPos;
@@ -411,6 +450,11 @@ namespace TinyUI
 		{
 			return m_si.iPage;
 		}
+		void TinyVisualHScrollBar::SetStyleImage(ScrollImageStyle type, LPCSTR pzFile)
+		{
+			m_images[type] = TinyVisualResource::GetInstance()[pzFile];
+			ASSERT(m_images[type]);
+		}
 		//////////////////////////////////////////////////////////////////////////
 		IMPLEMENT_DYNAMIC(TinyVisualVScrollBar, TinyVisual);
 		TinyVisualVScrollBar::TinyVisualVScrollBar(TinyVisual* spvisParent, TinyVisualDocument* vtree)
@@ -418,15 +462,16 @@ namespace TinyUI
 		{
 			memset(&m_si, 0, sizeof(SCROLLBOXINFO));
 			m_si.iHitTest = m_si.iHitTestPress = HTSCROLL_NONE;
-			/*m_images[0].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_up_normal.png");
-			m_images[1].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_up_hover.png");
-			m_images[2].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_up_press.png");
-			m_images[3].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_down_normal.png");
-			m_images[4].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_down_hover.png");
-			m_images[5].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_down_press.png");
-			m_images[6].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\scrollbar_groove.png");
-			m_images[7].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\scrollbar_normal.png");
-			m_images[8].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\scrollbar_hover.png");*/
+			ZeroMemory(&m_images, sizeof(m_images));
+			//m_images[0].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_up_normal.png");
+			//m_images[1].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_up_hover.png");
+			//m_images[2].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_up_press.png");
+			//m_images[3].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_down_normal.png");
+			//m_images[4].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_down_hover.png");
+			//m_images[5].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_down_press.png");
+			//m_images[6].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\scrollbar_groove.png");
+			//m_images[7].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\scrollbar_normal.png");
+			//m_images[8].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\scrollbar_hover.png");
 		}
 		TinyVisualVScrollBar::~TinyVisualVScrollBar()
 		{
@@ -435,6 +480,55 @@ namespace TinyUI
 		TinyString TinyVisualVScrollBar::RetrieveTag() const
 		{
 			return TinyVisualTag::VSCROLLBAR;
+		}
+		BOOL TinyVisualVScrollBar::SetProperty(const TinyString& name, const TinyString& value)
+		{
+			if (strcasecmp(name.STR(), TinyVisualProperty::ARROW1NORMAL.STR()) == 0)
+			{
+				this->SetStyleImage(ARROW1NORMAL, value.STR());
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::ARROW1HIGHLIGHT.STR()) == 0)
+			{
+				this->SetStyleImage(ARROW1HIGHLIGHT, value.STR());
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::ARROW1DOWN.STR()) == 0)
+			{
+				this->SetStyleImage(ARROW1DOWN, value.STR());
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::ARROW2NORMAL.STR()) == 0)
+			{
+				this->SetStyleImage(ARROW2NORMAL, value.STR());
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::ARROW2HIGHLIGHT.STR()) == 0)
+			{
+				this->SetStyleImage(ARROW2HIGHLIGHT, value.STR());
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::ARROW2DOWN.STR()) == 0)
+			{
+				this->SetStyleImage(ARROW2DOWN, value.STR());
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::SCROLLBARGROOVE.STR()) == 0)
+			{
+				this->SetStyleImage(SCROLLBARGROOVE, value.STR());
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::SCROLLBARNORMAL.STR()) == 0)
+			{
+				this->SetStyleImage(SCROLLBARNORMAL, value.STR());
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::SCROLLBARHIGHLIGHT.STR()) == 0)
+			{
+				this->SetStyleImage(SCROLLBARHIGHLIGHT, value.STR());
+				return TRUE;
+			}
+			return TinyVisual::SetProperty(name, value);
 		}
 		BOOL TinyVisualVScrollBar::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
@@ -692,71 +786,40 @@ namespace TinyUI
 			{
 				if (m_si.iHitTestPress == HTSCROLL_LINEUP)
 				{
-					if (m_arrowUp[DOWN] != NULL)
-					{
-						canvas.DrawImage(*m_arrowUp[DOWN], arrowRectangle0, m_arrowUp[DOWN]->GetRectangle());
-					}
-					if (m_arrowDown[NORMAL] != NULL)
-					{
-						canvas.DrawImage(*m_arrowDown[NORMAL], arrowRectangle1, m_arrowDown[NORMAL]->GetRectangle());
-					}
+					canvas.DrawImage(*m_images[ARROW1DOWN], arrowRectangle0, m_images[ARROW1DOWN]->GetRectangle());
+					canvas.DrawImage(*m_images[ARROW2NORMAL], arrowRectangle1, m_images[ARROW2NORMAL]->GetRectangle());
 				}
 				else
 				{
-					if (m_arrowUp[HIGHLIGHT] != NULL)
-					{
-						canvas.DrawImage(*m_arrowUp[HIGHLIGHT], arrowRectangle0, m_arrowUp[HIGHLIGHT]->GetRectangle());
-					}
-					if (m_arrowDown[NORMAL] != NULL)
-					{
-						canvas.DrawImage(*m_arrowDown[NORMAL], arrowRectangle1, m_arrowDown[NORMAL]->GetRectangle());
-					}
+					canvas.DrawImage(*m_images[ARROW1HIGHLIGHT], arrowRectangle0, m_images[ARROW1HIGHLIGHT]->GetRectangle());
+					canvas.DrawImage(*m_images[ARROW2NORMAL], arrowRectangle1, m_images[ARROW2NORMAL]->GetRectangle());
 				}
 			}
 			else if (m_si.iHitTest == HTSCROLL_LINEDOWN)
 			{
 				if (m_si.iHitTestPress == HTSCROLL_LINEDOWN)
 				{
-					if (m_arrowUp[NORMAL] != NULL)
-					{
-						canvas.DrawImage(*m_arrowUp[NORMAL], arrowRectangle0, m_arrowUp[NORMAL]->GetRectangle());
-					}
-					if (m_arrowDown[DOWN] != NULL)
-					{
-						canvas.DrawImage(*m_arrowDown[DOWN], arrowRectangle1, m_arrowDown[DOWN]->GetRectangle());
-					}
+					canvas.DrawImage(*m_images[ARROW1NORMAL], arrowRectangle0, m_images[ARROW1NORMAL]->GetRectangle());
+					canvas.DrawImage(*m_images[ARROW2DOWN], arrowRectangle1, m_images[ARROW2DOWN]->GetRectangle());
 				}
 				else
 				{
-					if (m_arrowUp[NORMAL] != NULL)
-					{
-						canvas.DrawImage(*m_arrowUp[NORMAL], arrowRectangle0, m_arrowUp[NORMAL]->GetRectangle());
-					}
-					if (m_arrowDown[HIGHLIGHT] != NULL)
-					{
-						canvas.DrawImage(*m_arrowDown[HIGHLIGHT], arrowRectangle1, m_arrowDown[HIGHLIGHT]->GetRectangle());
-					}
+					canvas.DrawImage(*m_images[ARROW1NORMAL], arrowRectangle0, m_images[ARROW1NORMAL]->GetRectangle());
+					canvas.DrawImage(*m_images[ARROW2HIGHLIGHT], arrowRectangle1, m_images[ARROW2HIGHLIGHT]->GetRectangle());
 				}
 			}
 			else
 			{
-				if (m_arrowUp[NORMAL] != NULL)
-				{
-					canvas.DrawImage(*m_arrowUp[NORMAL], arrowRectangle0, m_arrowUp[NORMAL]->GetRectangle());
-				}
-				if (m_arrowDown[NORMAL] != NULL)
-				{
-					canvas.DrawImage(*m_arrowDown[NORMAL], arrowRectangle1, m_arrowDown[NORMAL]->GetRectangle());
-				}
+				canvas.DrawImage(*m_images[ARROW1NORMAL], arrowRectangle0, m_images[ARROW1NORMAL]->GetRectangle());
+				canvas.DrawImage(*m_images[ARROW2NORMAL], arrowRectangle1, m_images[ARROW2NORMAL]->GetRectangle());
 			}
 		}
 		void TinyVisualVScrollBar::DrawThumb(TinyClipCanvas& canvas, SCROLLBARCALC* ps)
 		{
-			ASSERT(m_scroll[NORMAL] && m_scroll[HIGHLIGHT]);
 			if (m_si.iHitTest == HTSCROLL_THUMB)
 			{
 				RECT dstCenter, srcCenter;
-				CopyRect(&srcCenter, &m_scroll[HIGHLIGHT]->GetRectangle());
+				CopyRect(&srcCenter, m_images[SCROLLBARHIGHLIGHT]->GetRectangle());
 				srcCenter.top = srcCenter.top + 4;
 				srcCenter.bottom = srcCenter.bottom - 4;
 				CopyRect(&dstCenter, &ps->thumbRectangle);
@@ -766,12 +829,12 @@ namespace TinyUI
 				TinyRectangle thumbRectangle = ps->thumbRectangle;
 				OffsetRect(&thumbRectangle, s.left, s.top);
 				OffsetRect(&dstCenter, s.left, s.top);
-				canvas.DrawImage(*m_scroll[HIGHLIGHT], thumbRectangle, dstCenter, m_scroll[HIGHLIGHT]->GetRectangle(), srcCenter);
+				canvas.DrawImage(*m_images[SCROLLBARHIGHLIGHT], thumbRectangle, dstCenter, m_images[SCROLLBARHIGHLIGHT]->GetRectangle(), srcCenter);
 			}
 			else
 			{
 				RECT dstCenter, srcCenter;
-				CopyRect(&srcCenter, &m_scroll[NORMAL]->GetRectangle());
+				CopyRect(&srcCenter, m_images[SCROLLBARNORMAL]->GetRectangle());
 				srcCenter.top = srcCenter.top + 4;
 				srcCenter.bottom = srcCenter.bottom - 4;
 				CopyRect(&dstCenter, &ps->thumbRectangle);
@@ -781,13 +844,13 @@ namespace TinyUI
 				TinyRectangle thumbRectangle = ps->thumbRectangle;
 				OffsetRect(&thumbRectangle, s.left, s.top);
 				OffsetRect(&dstCenter, s.left, s.top);
-				canvas.DrawImage(*m_scroll[NORMAL], thumbRectangle, dstCenter, m_scroll[NORMAL]->GetRectangle(), srcCenter);
+				canvas.DrawImage(*m_images[SCROLLBARNORMAL], thumbRectangle, dstCenter, m_images[SCROLLBARNORMAL]->GetRectangle(), srcCenter);
 			}
 		}
 		void TinyVisualVScrollBar::DrawGroove(TinyClipCanvas& canvas, SCROLLBARCALC* ps)
 		{
 			RECT dstCenter, srcCenter;
-			CopyRect(&srcCenter, &m_scroll[NORMAL]->GetRectangle());
+			CopyRect(&srcCenter, m_images[SCROLLBARNORMAL]->GetRectangle());
 			srcCenter.top = srcCenter.top + 4;
 			srcCenter.bottom = srcCenter.bottom - 4;
 			RECT grooveRectangle;
@@ -800,7 +863,7 @@ namespace TinyUI
 			TinyRectangle s = this->GetWindowRect();
 			OffsetRect(&grooveRectangle, s.left, s.top);
 			OffsetRect(&dstCenter, s.left, s.top);
-			canvas.DrawImage(*m_scroll[NORMAL], grooveRectangle, dstCenter, m_scroll[NORMAL]->GetRectangle(), srcCenter);
+			canvas.DrawImage(*m_images[SCROLLBARNORMAL], grooveRectangle, dstCenter, m_images[SCROLLBARNORMAL]->GetRectangle(), srcCenter);
 		}
 		void TinyVisualVScrollBar::SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos)
 		{
@@ -835,27 +898,10 @@ namespace TinyUI
 		{
 			return m_si.iPage;
 		}
-		void TinyVisualVScrollBar::SetArrowImage(BOOL bUp, StyleImage type, LPCSTR pzFile)
+		void TinyVisualVScrollBar::SetStyleImage(ScrollImageStyle type, LPCSTR pzFile)
 		{
-			ASSERT(PathFileExists(pzFile));
-			if (bUp)
-			{
-				m_arrowUp[(INT)type] = TinyVisualResource::GetInstance().Add(pzFile);
-			}
-			else
-			{
-				m_arrowDown[(INT)type] = TinyVisualResource::GetInstance().Add(pzFile);
-			}
-		}
-		void TinyVisualVScrollBar::SetScrollBarGrooveImage(LPCSTR pzFile)
-		{
-			ASSERT(PathFileExists(pzFile));
-			m_scrollGroove = TinyVisualResource::GetInstance().Add(pzFile);
-		}
-		void TinyVisualVScrollBar::SetScrollBarImage(StyleImage type, LPCSTR pzFile)
-		{
-			ASSERT(PathFileExists(pzFile));
-			m_scroll[(INT)type] = TinyVisualResource::GetInstance().Add(pzFile);
+			m_images[type] = TinyVisualResource::GetInstance()[pzFile];
+			ASSERT(m_images[type]);
 		}
 	}
 }

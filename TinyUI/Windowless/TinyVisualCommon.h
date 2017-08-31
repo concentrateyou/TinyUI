@@ -59,13 +59,13 @@ namespace TinyUI
 			static const TinyString ARROWHIGHLIGHT;
 			static const TinyString ARROWPUSH;
 
-			static const TinyString ARROWUPNORMAL;
-			static const TinyString ARROWUPHIGHLIGHT;
-			static const TinyString ARROWUPDOWN;
+			static const TinyString ARROW1NORMAL;
+			static const TinyString ARROW1HIGHLIGHT;
+			static const TinyString ARROW1DOWN;
 
-			static const TinyString ARROWDOWNNORMAL;
-			static const TinyString ARROWDOWNHIGHLIGHT;
-			static const TinyString ARROWDOWNDOWN;
+			static const TinyString ARROW2NORMAL;
+			static const TinyString ARROW2HIGHLIGHT;
+			static const TinyString ARROW2DOWN;
 
 			static const TinyString SCROLLBARGROOVE;
 			static const TinyString SCROLLBARNORMAL;
@@ -82,6 +82,8 @@ namespace TinyUI
 		{
 		public:
 			static const TinyString WINDOW;
+			static const TinyString CONTEXT;
+			static const TinyString ADD;
 			static const TinyString SYSCAPTION;
 			static const TinyString LABEL;
 			static const TinyString TAB;

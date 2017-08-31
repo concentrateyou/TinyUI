@@ -53,13 +53,13 @@ namespace TinyUI
 		const TinyString TinyVisualProperty::ARROWHIGHLIGHT = TEXT("arrow-highlight");
 		const TinyString TinyVisualProperty::ARROWPUSH = TEXT("arrow-push");
 
-		const TinyString TinyVisualProperty::ARROWUPNORMAL = TEXT("arrowup-normal");
-		const TinyString TinyVisualProperty::ARROWUPHIGHLIGHT = TEXT("arrowup-highlight");
-		const TinyString TinyVisualProperty::ARROWUPDOWN = TEXT("arrowup-down");
+		const TinyString TinyVisualProperty::ARROW1NORMAL = TEXT("arrow1-normal");
+		const TinyString TinyVisualProperty::ARROW1HIGHLIGHT = TEXT("arrow1-highlight");
+		const TinyString TinyVisualProperty::ARROW1DOWN = TEXT("arrow1-down");
 
-		const TinyString TinyVisualProperty::ARROWDOWNNORMAL = TEXT("arrowdown-normal");
-		const TinyString TinyVisualProperty::ARROWDOWNHIGHLIGHT = TEXT("arrowdown-highlight");
-		const TinyString TinyVisualProperty::ARROWDOWNDOWN = TEXT("arrowdown-down");
+		const TinyString TinyVisualProperty::ARROW2NORMAL = TEXT("arrow2-normal");
+		const TinyString TinyVisualProperty::ARROW2HIGHLIGHT = TEXT("arrow2-highlight");
+		const TinyString TinyVisualProperty::ARROW2DOWN = TEXT("arrow2-down");
 
 		const TinyString TinyVisualProperty::SCROLLBARGROOVE = TEXT("scrollbar-groove");
 		const TinyString TinyVisualProperty::SCROLLBARNORMAL = TEXT("scrollbar-normal");
@@ -67,6 +67,8 @@ namespace TinyUI
 
 		//////////////////////////////////////////////////////////////////////////
 		const TinyString TinyVisualTag::WINDOW = TEXT("window");
+		const TinyString TinyVisualTag::CONTEXT = TEXT("context");
+		const TinyString TinyVisualTag::ADD = TEXT("add");
 		const TinyString TinyVisualTag::SYSCAPTION = TEXT("syscaption");
 		const TinyString TinyVisualTag::BUTTON = TEXT("button");
 		const TinyString TinyVisualTag::PANEL = TEXT("panel");

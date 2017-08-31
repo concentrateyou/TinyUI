@@ -22,6 +22,20 @@ namespace TinyUI
 			INT		iHitTest;
 			INT		iHitTestPress;
 		}SCROLLBARINFO, *LPSCROLLBARINFO;
+
+		enum ScrollImageStyle
+		{
+			ARROW1NORMAL = 0,
+			ARROW1HIGHLIGHT = 1,
+			ARROW1DOWN = 2,
+			ARROW2NORMAL = 3,
+			ARROW2HIGHLIGHT = 4,
+			ARROW2DOWN = 5,
+			SCROLLBARGROOVE = 6,
+			SCROLLBARNORMAL = 7,
+			SCROLLBARHIGHLIGHT = 8
+		};
+
 		/// <summary>
 		/// 水平滚动条
 		/// </summary>
@@ -35,11 +49,12 @@ namespace TinyUI
 		public:
 			virtual ~TinyVisualHScrollBar();
 			TinyString	RetrieveTag() const OVERRIDE;
-			BOOL		SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
+			BOOL		SetProperty(const TinyString& name, const TinyString& value);
 			INT			GetScrollPos() const;
 			INT			GetPage() const;
 			void		SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos);
 			void		SetScrollPos(INT iPos);
+			void		SetStyleImage(ScrollImageStyle type, LPCSTR pzFile);
 		public:
 			Event<void(BOOL, INT, INT, INT)> EVENT_PosChange;
 		protected:
@@ -59,7 +74,7 @@ namespace TinyUI
 			void		DrawGroove(TinyClipCanvas& canvas, SCROLLBARCALC* ps);
 		private:
 			SCROLLBARINFO	m_si;
-			TinyImage		m_images[9];
+			TinyImage*		m_images[SCROLLBARHIGHLIGHT + 1];
 		};
 		/// <summary>
 		/// 垂直滚动条
@@ -74,12 +89,12 @@ namespace TinyUI
 		public:
 			virtual ~TinyVisualVScrollBar();
 			TinyString	RetrieveTag() const OVERRIDE;
+			BOOL		SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 			INT			GetScrollPos() const;
 			INT			GetPage() const;
 			void		SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos);
 			void		SetScrollPos(INT iPos);
-			void		SetArrowImage(BOOL bUp, StyleImage type, LPCSTR pzFile);
-			void		SetScrollBarImage(StyleImage type, LPCSTR pzFile);
+			void		SetStyleImage(ScrollImageStyle type, LPCSTR pzFile);
 		public:
 			Event<void(BOOL, INT, INT, INT)> EVENT_PosChange;
 		protected:
@@ -100,9 +115,7 @@ namespace TinyUI
 		private:
 			BOOL			m_bVertical;
 			SCROLLBARINFO	m_si;
-			TinyImage*		m_arrowDown[StyleImage::COUNT];
-			TinyImage*		m_arrowUp[StyleImage::COUNT];
-			TinyImage*		m_scroll[StyleImage::COUNT];
+			TinyImage*		m_images[SCROLLBARHIGHLIGHT + 1];
 		};
 	}
 }
