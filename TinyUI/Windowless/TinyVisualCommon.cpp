@@ -68,6 +68,7 @@ namespace TinyUI
 		//////////////////////////////////////////////////////////////////////////
 		const TinyString TinyVisualTag::WINDOW = TEXT("window");
 		const TinyString TinyVisualTag::CONTEXT = TEXT("context");
+		const TinyString TinyVisualTag::IMAGE = TEXT("image");
 		const TinyString TinyVisualTag::ADD = TEXT("add");
 		const TinyString TinyVisualTag::SYSCAPTION = TEXT("syscaption");
 		const TinyString TinyVisualTag::BUTTON = TEXT("button");

@@ -59,6 +59,7 @@ namespace TinyUI
 			Event<void(BOOL, INT, INT, INT)> EVENT_PosChange;
 		protected:
 			BOOL		OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
+			HRESULT		OnCreate();
 			HRESULT		OnMouseLeave();
 			HRESULT		OnMouseMove(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
 			HRESULT		OnMouseWheel(const TinyPoint& pos, SHORT zDelta, DWORD dwFlags) OVERRIDE;
@@ -99,6 +100,7 @@ namespace TinyUI
 			Event<void(BOOL, INT, INT, INT)> EVENT_PosChange;
 		protected:
 			BOOL		OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
+			HRESULT		OnCreate() OVERRIDE;
 			HRESULT		OnMouseLeave();
 			HRESULT		OnMouseMove(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
 			HRESULT		OnMouseWheel(const TinyPoint& pos, SHORT zDelta, DWORD dwFlags) OVERRIDE;

@@ -33,7 +33,6 @@ namespace TinyUI
 		private:
 			static void CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualDocument* ps);
 			static BOOL BuildProperty(const TiXmlElement* pXMLNode, TinyVisual* spvis);
-			static void BuildImages(const TiXmlNode* pXMLNode);
 		private:
 			TiXmlDocument	m_doc;
 		};
@@ -47,13 +46,19 @@ namespace TinyUI
 			TinyVisualResource();
 			~TinyVisualResource();
 			static TinyVisualResource& GetInstance();
+			BOOL LoadResource(LPCSTR pzFile);
 		public:
-			TinyImage* Add(const TinyString& szFile);
-			void Remove(const TinyString& szFile);
+			TinyImage* Add(const TinyString& szName,const TinyString& szFile);
+			void Remove(const TinyString& szName);
 			void RemoveAll();
-			TinyImage* operator[](const TinyString& szFile);
+			TinyImage* operator[](const TinyString& szName);
 		private:
+			static void BuildContext(const TiXmlNode* pXMLNode);
+			static void BuildImage(const TiXmlNode* pXMLNode);
+		private:
+			TiXmlDocument	m_doc;
 			TinyMap<TinyString, TinyImage*> m_images;
+			
 		};
 	};
 }

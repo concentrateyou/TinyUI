@@ -139,13 +139,12 @@ namespace TinyUI
 			Event<void(CaptureEventArgs&)>	EVENT_CAPTURE;
 			Event<void(ActiveEventArgs&)>	EVENT_ACTIVE;
 		protected:
+			DWORD				m_dwCount;//还是孩子节点个数
 			TinyVisualDocument*	m_document;
 			TinyVisual*			m_spvisNext;//同级下一个兄弟节点
 			TinyVisual*			m_spvisParent;//父节点
 			TinyVisual*			m_spvisChild;//第一个孩子节点
 			TinyVisual*			m_spvisOwner;//对于Popup窗口使用
-
-
 			TinyString			m_szName;
 			TinyString			m_szText;
 			TinyString			m_szToolTip;
@@ -164,7 +163,6 @@ namespace TinyUI
 			BOOL				m_enable;
 			HRGN				m_hrgnClip;
 			HFONT				m_hFONT;
-			DWORD				m_dwCount;//还是孩子节点个数
 			TinyMap<TinyString, TinyString>	m_propertys;//属性Map
 		};
 	}

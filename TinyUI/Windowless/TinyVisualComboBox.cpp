@@ -30,15 +30,13 @@ namespace TinyUI
 		{
 			return TinyVisualTag::COMBOBOX;
 		}
-		void TinyVisualComboBox::SetStyleImage(StyleImage type, LPCSTR pzFile)
+		void TinyVisualComboBox::SetStyleImage(StyleImage type, LPCSTR pzName)
 		{
-			ASSERT(PathFileExists(pzFile));
-			m_images[(INT)type] = TinyVisualResource::GetInstance().Add(pzFile);
+			m_images[(INT)type] = TinyVisualResource::GetInstance()[pzName];
 		}
-		void TinyVisualComboBox::SetArrowImage(StyleImage type, LPCSTR pzFile)
+		void TinyVisualComboBox::SetArrowImage(StyleImage type, LPCSTR pzName)
 		{
-			ASSERT(PathFileExists(pzFile));
-			m_arraws[(INT)type] = TinyVisualResource::GetInstance().Add(pzFile);
+			m_arraws[(INT)type] = TinyVisualResource::GetInstance()[pzName];
 		}
 		void TinyVisualComboBox::AddOption(const TinyString& szValue, const TinyString& szText)
 		{
@@ -49,7 +47,7 @@ namespace TinyUI
 				spvis->SetValue(szValue.CSTR());
 				spvis->SetText(szText.CSTR());
 				spvis->SetTextAlian(DT_LEFT | DT_SINGLELINE | DT_VCENTER);
-				spvis->SetOptionHighlight("D:\\Develop\\TinyUI\\skin\\combobox\\ComboBoxList_highlight.png");
+				spvis->SetOptionHighlight("ComboBoxList_highlight");
 				spvis->SetTextColor(RGB(0, 0, 0));
 			}
 		}
@@ -234,10 +232,9 @@ namespace TinyUI
 		{
 			m_szValue = pzValue;
 		}
-		void TinyVisualOption::SetOptionHighlight(LPCSTR pzFile)
+		void TinyVisualOption::SetOptionHighlight(LPCSTR pzName)
 		{
-			ASSERT(PathFileExists(pzFile));
-			m_highlight = TinyVisualResource::GetInstance().Add(pzFile);
+			m_highlight = TinyVisualResource::GetInstance()[pzName];
 		}
 		BOOL TinyVisualOption::OnDraw(HDC hDC, const RECT& rcPaint)
 		{

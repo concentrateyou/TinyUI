@@ -23,10 +23,9 @@ namespace TinyUI
 		{
 			return TinyVisualTag::BUTTON;
 		}
-		void TinyVisualButton::SetStyleImage(StyleImage type, LPCSTR pzFile)
+		void TinyVisualButton::SetStyleImage(StyleImage type, LPCSTR pzName)
 		{
-			ASSERT(PathFileExists(pzFile));
-			m_images[(INT)type] = TinyVisualResource::GetInstance().Add(pzFile);
+			m_images[(INT)type] = TinyVisualResource::GetInstance()[pzName];
 		}
 		BOOL TinyVisualButton::SetProperty(const TinyString& name, const TinyString& value)
 		{

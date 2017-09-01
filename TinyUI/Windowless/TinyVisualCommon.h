@@ -82,8 +82,6 @@ namespace TinyUI
 		{
 		public:
 			static const TinyString WINDOW;
-			static const TinyString CONTEXT;
-			static const TinyString ADD;
 			static const TinyString SYSCAPTION;
 			static const TinyString LABEL;
 			static const TinyString TAB;
@@ -101,6 +99,10 @@ namespace TinyUI
 			static const TinyString OPTION;
 			static const TinyString RICHTEXT;
 			static const TinyString STRETCH;
+
+			static const TinyString CONTEXT;
+			static const TinyString IMAGE;
+			static const TinyString ADD;
 		};
 		/// <summary>
 		/// ª∫¥ÊDC

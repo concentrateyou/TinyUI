@@ -1,34 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<window name="mshow" text="MShow工具" position="100,100" size="818,730" minsize="818,730" maxsize="818,730">
-  <context>
-    <add name="vscrollbar">
-      
-    </add>
-  </context>
-  <syscaption name ="syscaption" position="0,0" size="818,27" background-image="D:\Develop\TinyUI\skin\system\syscaption.png">
-    <label name="title" position="10,0" size="60,27" text="MShow工具" text-align="left|vcenter" text-color="255,255,255" >
-    </label>
-    <button name="sysmin" tooltip="Min" position="758,0" size="30,27"
-            image-normal="D:\Develop\TinyUI\skin\system\sysbtn_min_normal.png"
-            image-highlight="D:\Develop\TinyUI\skin\system\sysbtn_min_hover.png"
-            image-down="D:\Develop\TinyUI\skin\system\sysbtn_min_down.png">
-    </button>
-    <button name="sysclose" tooltip="Close" position="788,0" size="30,27"
-            image-normal="D:\Develop\TinyUI\skin\system\sysbtn_close_normal.png"
-            image-highlight="D:\Develop\TinyUI\skin\system\sysbtn_close_hover.png"
-            image-down="D:\Develop\TinyUI\skin\system\sysbtn_close_down.png">
-    </button>
-  </syscaption>
-  <panel position="0,27" size="818,703" background-image="D:\Develop\TinyUI\skin\system\panel.png">
-    <combobox name="audio" position="10,30" size="200,28" text-align="left|vcenter" text="windows默认音频设备" text-color="0,0,0"
-              image-normal="D:\Develop\TinyUI\skin\combobox\combobox_normal.png"
-              image-down="D:\Develop\TinyUI\skin\combobox\combobox_push.png"
-              image-highlight="D:\Develop\TinyUI\skin\combobox\combobox_hover.png"
-              image-push="D:\Develop\TinyUI\skin\combobox\combobox_push.png"
-              arrow-normal="D:\Develop\TinyUI\skin\combobox\inputbtn_normal.png"
-              arrow-highlight="D:\Develop\TinyUI\skin\combobox\inputbtn_highlight.png"
-              arrow-down="D:\Develop\TinyUI\skin\combobox\inputbtn_down.png"
-              arrow-push="D:\Develop\TinyUI\skin\combobox\inputbtn_normal.png">
-    </combobox>
-  </panel>
-</window>
+<context>
+  <image>
+    <add name="hscrollbar_arrow_down_hover" value="D:\Develop\TinyUI\skin\scrollbar\horizontal\arrow_down_hover.png"></add>
+    <add name="hscrollbar_arrow_down_normal" value="D:\Develop\TinyUI\skin\scrollbar\horizontal\arrow_down_normal.png"></add>
+    <add name="hscrollbar_arrow_down_press" value="D:\Develop\TinyUI\skin\scrollbar\horizontal\arrow_down_press.png"></add>
+    <add name="hscrollbar_arrow_up_hover" value="D:\Develop\TinyUI\skin\scrollbar\horizontal\arrow_up_hover.png"></add>
+    <add name="hscrollbar_arrow_up_normal" value="D:\Develop\TinyUI\skin\scrollbar\horizontal\arrow_up_normal.png"></add>
+    <add name="hscrollbar_arrow_up_press" value="D:\Develop\TinyUI\skin\scrollbar\horizontal\arrow_up_press.png"></add>
+    <add name="hscrollbar_groove" value="D:\Develop\TinyUI\skin\scrollbar\horizontal\scrollbar_groove.png"></add>
+    <add name="hscrollbar_hover" value="D:\Develop\TinyUI\skin\scrollbar\horizontal\scrollbar_hover.png"></add>
+    <add name="hscrollbar_normal" value="D:\Develop\TinyUI\skin\scrollbar\horizontal\scrollbar_normal.png"></add>
+    <add name="vscrollbar_arrow_down_hover" value="D:\Develop\TinyUI\skin\scrollbar\vertical\arrow_down_hover.png"></add>
+    <add name="vscrollbar_arrow_down_normal" value="D:\Develop\TinyUI\skin\scrollbar\vertical\arrow_down_normal.png"></add>
+    <add name="vscrollbar_arrow_down_press" value="D:\Develop\TinyUI\skin\scrollbar\vertical\arrow_down_press.png"></add>
+    <add name="vscrollbar_arrow_up_hover" value="D:\Develop\TinyUI\skin\scrollbar\vertical\arrow_up_hover.png"></add>
+    <add name="vscrollbar_arrow_up_normal" value="D:\Develop\TinyUI\skin\scrollbar\vertical\arrow_up_normal.png"></add>
+    <add name="vscrollbar_arrow_up_press" value="D:\Develop\TinyUI\skin\scrollbar\vertical\arrow_up_press.png"></add>
+    <add name="vscrollbar_groove" value="D:\Develop\TinyUI\skin\scrollbar\vertical\scrollbar_groove.png"></add>
+    <add name="vscrollbar_hover" value="D:\Develop\TinyUI\skin\scrollbar\vertical\scrollbar_hover.png"></add>
+    <add name="vscrollbar_normal" value="D:\Develop\TinyUI\skin\scrollbar\vertical\scrollbar_normal.png"></add>
+
+    <add name="sysbtn_min_normal" value="D:\Develop\TinyUI\skin\system\sysbtn_min_normal.png"></add>
+    <add name="sysbtn_min_hover" value="D:\Develop\TinyUI\skin\system\sysbtn_min_hover.png"></add>
+    <add name="sysbtn_min_down" value="D:\Develop\TinyUI\skin\system\sysbtn_min_down.png"></add>
+
+    <add name="sysbtn_close_normal" value="D:\Develop\TinyUI\skin\system\sysbtn_close_normal.png"></add>
+    <add name="sysbtn_close_hover" value="D:\Develop\TinyUI\skin\system\sysbtn_close_hover.png"></add>
+    <add name="sysbtn_close_down" value="D:\Develop\TinyUI\skin\system\sysbtn_close_down.png"></add>
+
+    <add name="combobox_normal" value="D:\Develop\TinyUI\skin\combobox\combobox_normal.png"></add>
+    <add name="combobox_push" value="D:\Develop\TinyUI\skin\combobox\combobox_push.png"></add>
+    <add name="combobox_hover" value="D:\Develop\TinyUI\skin\combobox\combobox_hover.png"></add>
+    <add name="inputbtn_normal" value="D:\Develop\TinyUI\skin\combobox\inputbtn_normal.png"></add>
+    <add name="inputbtn_highlight" value="D:\Develop\TinyUI\skin\combobox\inputbtn_highlight.png"></add>
+    <add name="inputbtn_down" value="D:\Develop\TinyUI\skin\combobox\inputbtn_down.png"></add>
+    <add name="inputbtn_normal" value="D:\Develop\TinyUI\skin\combobox\inputbtn_normal.png"></add>
+
+    <add name="syscaption" value="D:\Develop\TinyUI\skin\system\syscaption.png"></add>
+    <add name="panel" value="D:\Develop\TinyUI\skin\system\panel.png"></add>
+
+    <add name="ComboBoxList_bkg1" value="D:\Develop\TinyUI\skin\combobox\ComboBoxList_bkg1.png"></add>
+    <add name="ComboBoxList_highlight" value="D:\Develop\TinyUI\skin\combobox\ComboBoxList_highlight.png"></add>
+    
+
+  </image>
+</context>

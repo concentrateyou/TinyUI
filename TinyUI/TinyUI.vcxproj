@@ -470,9 +470,10 @@
   </ItemGroup>
   <ItemGroup>
     <Xml Include="dropdown.xml" />
-    <Xml Include="resource.xml">
+    <Xml Include="main.xml">
       <SubType>Designer</SubType>
     </Xml>
+    <Xml Include="resource.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

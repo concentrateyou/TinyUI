@@ -921,7 +921,8 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="resource.xml" />
     <Xml Include="dropdown.xml" />
+    <Xml Include="main.xml" />
+    <Xml Include="resource.xml" />
   </ItemGroup>
 </Project>

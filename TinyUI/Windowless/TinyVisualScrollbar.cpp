@@ -14,15 +14,6 @@ namespace TinyUI
 			memset(&m_si, 0, sizeof(SCROLLBOXINFO));
 			m_si.iHitTest = m_si.iHitTestPress = HTSCROLL_NONE;
 			ZeroMemory(&m_images, sizeof(m_images));
-			/*m_images[0].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\arrow_up_normal.png");
-			m_images[1].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\arrow_up_hover.png");
-			m_images[2].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\arrow_up_press.png");
-			m_images[3].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\arrow_down_normal.png");
-			m_images[4].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\arrow_down_hover.png");
-			m_images[5].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\arrow_down_press.png");
-			m_images[6].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\scrollbar_groove.png");
-			m_images[7].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\scrollbar_normal.png");
-			m_images[8].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\horizontal\\scrollbar_hover.png");*/
 		}
 		TinyVisualHScrollBar::~TinyVisualHScrollBar()
 		{
@@ -80,6 +71,19 @@ namespace TinyUI
 				return TRUE;
 			}
 			return TinyVisual::SetProperty(name, value);
+		}
+		HRESULT TinyVisualHScrollBar::OnCreate()
+		{
+			m_images[ARROW1NORMAL] = TinyVisualResource::GetInstance()["hscrollbar_arrow_up_normal"];
+			m_images[ARROW1HIGHLIGHT] = TinyVisualResource::GetInstance()["hscrollbar_arrow_up_hover"];
+			m_images[ARROW1DOWN] = TinyVisualResource::GetInstance()["hscrollbar_arrow_up_press"];
+			m_images[ARROW2NORMAL] = TinyVisualResource::GetInstance()["hscrollbar_arrow_down_normal"];
+			m_images[ARROW2HIGHLIGHT] = TinyVisualResource::GetInstance()["hscrollbar_arrow_down_hover"];
+			m_images[ARROW2DOWN] = TinyVisualResource::GetInstance()["hscrollbar_arrow_down_normal"];
+			m_images[SCROLLBARGROOVE] = TinyVisualResource::GetInstance()["hscrollbar_groove"];
+			m_images[SCROLLBARNORMAL] = TinyVisualResource::GetInstance()["hscrollbar_normal"];
+			m_images[SCROLLBARHIGHLIGHT] = TinyVisualResource::GetInstance()["hscrollbar_hover"];
+			return S_OK;
 		}
 		BOOL TinyVisualHScrollBar::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
@@ -463,16 +467,22 @@ namespace TinyUI
 			memset(&m_si, 0, sizeof(SCROLLBOXINFO));
 			m_si.iHitTest = m_si.iHitTestPress = HTSCROLL_NONE;
 			ZeroMemory(&m_images, sizeof(m_images));
-			//m_images[0].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_up_normal.png");
-			//m_images[1].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_up_hover.png");
-			//m_images[2].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_up_press.png");
-			//m_images[3].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_down_normal.png");
-			//m_images[4].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_down_hover.png");
-			//m_images[5].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\arrow_down_press.png");
-			//m_images[6].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\scrollbar_groove.png");
-			//m_images[7].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\scrollbar_normal.png");
-			//m_images[8].Open("D:\\Develop\\TinyUI\\Resource\\scrollbar\\vertical\\scrollbar_hover.png");
 		}
+
+		HRESULT TinyVisualVScrollBar::OnCreate()
+		{
+			m_images[ARROW1NORMAL] = TinyVisualResource::GetInstance()["vscrollbar_arrow_up_normal"];
+			m_images[ARROW1HIGHLIGHT] = TinyVisualResource::GetInstance()["vscrollbar_arrow_up_hover"];
+			m_images[ARROW1DOWN] = TinyVisualResource::GetInstance()["vscrollbar_arrow_up_press"];
+			m_images[ARROW2NORMAL] = TinyVisualResource::GetInstance()["vscrollbar_arrow_down_normal"];
+			m_images[ARROW2HIGHLIGHT] = TinyVisualResource::GetInstance()["vscrollbar_arrow_down_hover"];
+			m_images[ARROW2DOWN] = TinyVisualResource::GetInstance()["vscrollbar_arrow_down_normal"];
+			m_images[SCROLLBARGROOVE] = TinyVisualResource::GetInstance()["vscrollbar_groove"];
+			m_images[SCROLLBARNORMAL] = TinyVisualResource::GetInstance()["vscrollbar_normal"];
+			m_images[SCROLLBARHIGHLIGHT] = TinyVisualResource::GetInstance()["vscrollbar_hover"];
+			return S_OK;
+		}
+
 		TinyVisualVScrollBar::~TinyVisualVScrollBar()
 		{
 

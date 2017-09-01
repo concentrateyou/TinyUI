@@ -115,13 +115,13 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	//}
 	//fclose(hFile1);
 	//fclose(hFile2);
-
+	TinyVisualResource::GetInstance().LoadResource("D:\\Develop\\TinyUI\\TinyUI\\resource.xml");
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
 	SkinWindow uiImpl;
-	uiImpl.Create(NULL, "D:\\Develop\\TinyUI\\TinyUI\\resource.xml");
+	uiImpl.Create(NULL, "D:\\Develop\\TinyUI\\TinyUI\\main.xml");
 	uiImpl.UpdateWindow();
 	//uiImpl.Create(NULL, 10, 10, 100, 100);
 	//uiImpl.CenterWindow(NULL, { 800,600 });

@@ -78,10 +78,6 @@ namespace TinyUI
 			{
 				if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT)
 				{
-					//if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::CONTEXT.STR()))
-					//{
-					//	BuildImages(pXMLChildNode);
-					//}
 					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::SYSCAPTION.STR()))
 					{
 						spvis = document->Create<TinyVisualCaption>(spvisParent);
@@ -117,24 +113,7 @@ namespace TinyUI
 				}
 			}
 		}
-		//void TinyVisualBuilder::BuildImages(const TiXmlNode* pXMLNode)
-		//{
-		//	for (const TiXmlNode* pXMLChildNode = pXMLNode->FirstChild(); pXMLChildNode; pXMLChildNode = pXMLChildNode->NextSibling())
-		//	{
-		//		if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::ADD.STR()))
-		//		{
-		//			const TiXmlElement* pXML = static_cast<const TiXmlElement*>(pXMLChildNode);
-		//			const TiXmlAttribute* pFA = pXML->FirstAttribute();
-		//			const TiXmlAttribute* pLA = pXML->LastAttribute();
-		//			while (pFA != pLA)
-		//			{
-		//				string value = UTF8ToASCII(pFA->Value());
-		//				pFA = pFA->Next();
-		//			}
-		//			string value = UTF8ToASCII(pFA->Value());
-		//		}
-		//	}
-		//}
+
 		BOOL TinyVisualBuilder::BuildProperty(const TiXmlElement* pXMLNode, TinyVisual* spvis)
 		{
 			if (!pXMLNode)
@@ -248,40 +227,54 @@ namespace TinyUI
 		}
 		TinyVisualResource::~TinyVisualResource()
 		{
-
+			RemoveAll();
 		}
 		TinyVisualResource& TinyVisualResource::GetInstance()
 		{
 			static TinyVisualResource instance;
 			return instance;
 		}
-		TinyImage* TinyVisualResource::Add(const TinyString& szFile)
+		BOOL TinyVisualResource::LoadResource(LPCSTR pzFile)
 		{
-			TinyImage** value = m_images.GetValue(szFile);
+			if (m_doc.LoadFile(pzFile, TIXML_ENCODING_UTF8))
+			{
+				TiXmlElement *pXMLNode = m_doc.RootElement();
+				if (pXMLNode && !strcasecmp(pXMLNode->Value(), TinyVisualTag::CONTEXT.STR()))
+				{
+					BuildContext(pXMLNode);
+				}
+				return TRUE;
+			}
+			return FALSE;
+		}
+		TinyImage* TinyVisualResource::Add(const TinyString& szName, const TinyString& szFile)
+		{
+			TinyImage** value = m_images.GetValue(szName);
 			if (value != NULL)
 			{
 				return *value;
 			}
 			else
 			{
+				ASSERT(PathFileExists(szFile.CSTR()));
 				TinyImage* image = new TinyImage();
 				if (image != NULL && image->Open(szFile.CSTR()))
 				{
-					ASSERT(m_images.Add(szFile, image));
+					ASSERT(m_images.Add(szName, image));
 					return image;
 				}
 			}
 			return NULL;
 		}
-		void TinyVisualResource::Remove(const TinyString& szFile)
+		void TinyVisualResource::Remove(const TinyString& szName)
 		{
-			TinyImage** value = m_images.GetValue(szFile);
+			TinyImage** value = m_images.GetValue(szName);
 			if (value != NULL)
 			{
 				(*value)->Close();
 			}
 			SAFE_DELETE(*value);
-			m_images.Remove(szFile);
+			m_images.Remove(szName);
 		}
 		void TinyVisualResource::RemoveAll()
 		{
@@ -298,10 +291,58 @@ namespace TinyUI
 			}
 			m_images.RemoveAll();
 		}
-		TinyImage* TinyVisualResource::operator[](const TinyString& szFile)
+		TinyImage* TinyVisualResource::operator[](const TinyString& szName)
 		{
-			TinyImage** value = m_images.GetValue(szFile);
+			TinyImage** value = m_images.GetValue(szName);
 			return *value;
+		}
+		void TinyVisualResource::BuildContext(const TiXmlNode* pXMLNode)
+		{
+			for (const TiXmlNode* pXMLChildNode = pXMLNode->FirstChild(); pXMLChildNode; pXMLChildNode = pXMLChildNode->NextSibling())
+			{
+				if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::IMAGE.STR()))
+				{
+					BuildImage(pXMLChildNode);
+				}
+			}
+		}
+		void TinyVisualResource::BuildImage(const TiXmlNode* pXMLNode)
+		{
+			for (const TiXmlNode* pXMLChildNode = pXMLNode->FirstChild(); pXMLChildNode; pXMLChildNode = pXMLChildNode->NextSibling())
+			{
+				if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::ADD.STR()))
+				{
+					const TiXmlElement* pXML = static_cast<const TiXmlElement*>(pXMLChildNode);
+					const TiXmlAttribute* pFA = pXML->FirstAttribute();
+					const TiXmlAttribute* pLA = pXML->LastAttribute();
+					string szName;
+					string szValue;
+					while (pFA != pLA)
+					{
+						if (!strcasecmp(pFA->Name(), "name"))
+						{
+							szName = UTF8ToASCII(pFA->Value());
+						}
+						if (!strcasecmp(pFA->Name(), "value"))
+						{
+							szValue = UTF8ToASCII(pFA->Value());
+						}
+						pFA = pFA->Next();
+					}
+					if (!strcasecmp(pFA->Name(), "name"))
+					{
+						szName = UTF8ToASCII(pFA->Value());
+					}
+					if (!strcasecmp(pFA->Name(), "value"))
+					{
+						szValue = UTF8ToASCII(pFA->Value());
+					}
+					if (!szName.empty() && !szValue.empty())
+					{
+						TinyVisualResource::GetInstance().Add(szName.c_str(), szValue.c_str());
+					}
+				}
+			}
 		}
 	};
 }
