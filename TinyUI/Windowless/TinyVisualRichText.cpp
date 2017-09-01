@@ -166,7 +166,7 @@ namespace TinyUI
 			m_texthost.m_ts->TxDraw(DVASPECT_CONTENT, 0, NULL, NULL, canvas, NULL, reinterpret_cast<LPCRECTL>(&clip), NULL, reinterpret_cast<LPRECT>(&clip), NULL, 0, 0);
 			return TRUE;
 		}
-		HRESULT TinyVisualRichText::OnCreate()
+		HRESULT TinyVisualRichText::OnInitialize()
 		{
 			TinySize size = this->GetSize();
 			m_hscroll = m_document->Create<TinyVisualHScrollBar>(0, size.cy - 12, size.cx, 12, this);
@@ -176,7 +176,7 @@ namespace TinyUI
 			m_vscroll = m_document->Create<TinyVisualVScrollBar>(size.cx - 12, 0, 12, size.cy, this);
 			m_onPosChange.Reset(new Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualRichText::OnPosChange));
 			m_vscroll->EVENT_PosChange += m_onPosChange;
-			m_vscroll->SetVisible(FALSE);
+			m_vscroll->SetVisible(TRUE);
 			m_texthost.Initialize(this);
 			m_texthost.UpdateView();
 			m_document->GetVisualHWND()->AddFilter(this);

@@ -25,5 +25,8 @@
               arrow-down="inputbtn_down"
               arrow-push="inputbtn_normal">
     </combobox>
+    <richtext name="txtURL" position="230,30" size="200,100">
+      
+    </richtext>
   </panel>
 </window>

@@ -98,6 +98,10 @@ namespace TinyUI
 					{
 						spvis = document->Create<TinyVisualComboBox>(spvisParent);
 					}
+					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::RICHTEXT.STR()))
+					{
+						spvis = document->Create<TinyVisualRichText>(spvisParent);
+					}
 					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::PANEL.STR()))
 					{
 						spvis = document->Create<TinyVisualPanel>(spvisParent);

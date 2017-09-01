@@ -51,8 +51,7 @@ namespace TinyUI
 			m_logpixelsy = ::GetDeviceCaps(hDC, LOGPIXELSY);
 			ReleaseDC(m_spvis->Handle(), hDC);
 			LOGFONT lf;
-			HFONT hFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
-			GetObject(hFont, sizeof(LOGFONT), &lf);
+			GetObject(spvis->m_hFONT, sizeof(LOGFONT), &lf);
 			m_cf.cbSize = sizeof(CHARFORMATW);
 			m_cf.yHeight = lf.lfHeight * LY_PER_INCH / m_logpixelsy;
 			m_cf.yOffset = 0;
@@ -81,9 +80,8 @@ namespace TinyUI
 			m_pf.wAlignment = PFA_LEFT;
 			m_pf.cTabCount = 1;
 			m_pf.rgxTabs[0] = lDefaultTab;
-
 			m_hInstance = ::LoadLibrary(TEXT("Msftedit.dll"));
-			if (m_hInstance)
+			if (m_hInstance != NULL)
 			{
 				PCreateTextServices ps = (PCreateTextServices)::GetProcAddress(m_hInstance, "CreateTextServices");
 				if (ps != NULL)
@@ -118,7 +116,7 @@ namespace TinyUI
 				return FALSE;
 			if (FAILED(m_ts->TxSendMessage(EM_SETPARAFORMAT, 0, (LPARAM)&m_pf, 0)))
 				return FALSE;
-			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE | TXTBIT_PARAFORMATCHANGE,TRUE)))
+			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE | TXTBIT_PARAFORMATCHANGE, TRUE)))
 				return FALSE;
 			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE | TXTBIT_EXTENTCHANGE, TRUE)))
 				return FALSE;
