@@ -144,6 +144,8 @@ namespace TinyUI
 			TinyVisual*			m_spvisParent;//父节点
 			TinyVisual*			m_spvisChild;//第一个孩子节点
 			TinyVisual*			m_spvisOwner;//对于Popup窗口使用
+
+
 			TinyString			m_szName;
 			TinyString			m_szText;
 			TinyString			m_szToolTip;

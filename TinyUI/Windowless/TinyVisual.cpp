@@ -71,6 +71,8 @@ namespace TinyUI
 		void TinyVisual::SetName(LPCSTR pzName)
 		{
 			m_szName = pzName;
+			TinyAttribute<TinyString>	m_szName1;
+			m_szName1.SetAttribute(m_szName);
 		}
 		TinyString	TinyVisual::GetName() const
 		{

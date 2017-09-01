@@ -78,10 +78,10 @@ namespace TinyUI
 			{
 				if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT)
 				{
-					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::CONTEXT.STR()))
-					{
-						BuildImages(pXMLChildNode);
-					}
+					//if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::CONTEXT.STR()))
+					//{
+					//	BuildImages(pXMLChildNode);
+					//}
 					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::SYSCAPTION.STR()))
 					{
 						spvis = document->Create<TinyVisualCaption>(spvisParent);
@@ -117,24 +117,24 @@ namespace TinyUI
 				}
 			}
 		}
-		void TinyVisualBuilder::BuildImages(const TiXmlNode* pXMLNode)
-		{
-			for (const TiXmlNode* pXMLChildNode = pXMLNode->FirstChild(); pXMLChildNode; pXMLChildNode = pXMLChildNode->NextSibling())
-			{
-				if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::ADD.STR()))
-				{
-					const TiXmlElement* pXML = static_cast<const TiXmlElement*>(pXMLChildNode);
-					const TiXmlAttribute* pFA = pXML->FirstAttribute();
-					const TiXmlAttribute* pLA = pXML->LastAttribute();
-					while (pFA != pLA)
-					{
-						string value = UTF8ToASCII(pFA->Value());
-						pFA = pFA->Next();
-					}
-					string value = UTF8ToASCII(pFA->Value());
-				}
-			}
-		}
+		//void TinyVisualBuilder::BuildImages(const TiXmlNode* pXMLNode)
+		//{
+		//	for (const TiXmlNode* pXMLChildNode = pXMLNode->FirstChild(); pXMLChildNode; pXMLChildNode = pXMLChildNode->NextSibling())
+		//	{
+		//		if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::ADD.STR()))
+		//		{
+		//			const TiXmlElement* pXML = static_cast<const TiXmlElement*>(pXMLChildNode);
+		//			const TiXmlAttribute* pFA = pXML->FirstAttribute();
+		//			const TiXmlAttribute* pLA = pXML->LastAttribute();
+		//			while (pFA != pLA)
+		//			{
+		//				string value = UTF8ToASCII(pFA->Value());
+		//				pFA = pFA->Next();
+		//			}
+		//			string value = UTF8ToASCII(pFA->Value());
+		//		}
+		//	}
+		//}
 		BOOL TinyVisualBuilder::BuildProperty(const TiXmlElement* pXMLNode, TinyVisual* spvis)
 		{
 			if (!pXMLNode)
