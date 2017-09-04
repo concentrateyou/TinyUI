@@ -114,8 +114,6 @@ namespace TinyUI
 			ASSERT(m_texthost.m_ts);
 			if (bFlag)
 			{
-				TinyRectangle clip = GetWindowRect();
-				m_texthost.m_ts->OnTxInPlaceActivate(clip);
 				m_texthost.m_ts->OnTxUIActivate();
 				m_texthost.m_ts->TxSendMessage(WM_SETFOCUS, 0, 0, NULL);
 			}
@@ -166,6 +164,11 @@ namespace TinyUI
 			m_texthost.m_ts->TxDraw(DVASPECT_CONTENT, 0, NULL, NULL, canvas, NULL, reinterpret_cast<LPCRECTL>(&clip), NULL, reinterpret_cast<LPRECT>(&clip), NULL, 0, 0);
 			return TRUE;
 		}
+		HRESULT TinyVisualRichText::OnCreate()
+		{
+			m_document->GetVisualHWND()->AddFilter(this);
+			return S_OK;
+		}
 		HRESULT TinyVisualRichText::OnInitialize()
 		{
 			TinySize size = this->GetSize();
@@ -178,7 +181,6 @@ namespace TinyUI
 			m_vscroll->SetVisible(FALSE);
 			m_texthost.Initialize(this);
 			m_texthost.UpdateView();
-			m_document->GetVisualHWND()->AddFilter(this);
 			return S_OK;
 		}
 		HRESULT TinyVisualRichText::OnDestory()

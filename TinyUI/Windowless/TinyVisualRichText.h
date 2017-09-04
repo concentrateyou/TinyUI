@@ -25,6 +25,7 @@ namespace TinyUI
 			BOOL ShowScrollBar(INT bar, BOOL fShow);
 		protected:
 			BOOL	OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
+			HRESULT OnCreate() OVERRIDE;
 			HRESULT OnInitialize() OVERRIDE;
 			HRESULT OnDestory() OVERRIDE;
 			HRESULT OnMouseMove(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;

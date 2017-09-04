@@ -317,6 +317,7 @@ namespace TinyUI
 			case SB_VERT:
 				m_spvis->m_vscroll->SetScrollPos(nPos);
 				break;
+			case SB_HORZ:
 				m_spvis->m_hscroll->SetScrollPos(nPos);
 				break;
 			}
