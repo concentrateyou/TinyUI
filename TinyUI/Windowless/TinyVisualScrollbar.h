@@ -49,9 +49,12 @@ namespace TinyUI
 		public:
 			virtual ~TinyVisualHScrollBar();
 			TinyString	RetrieveTag() const OVERRIDE;
-			BOOL		SetProperty(const TinyString& name, const TinyString& value);
+			BOOL		SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
+			void		SetSize(const TinySize& size) OVERRIDE;
 			INT			GetScrollPos() const;
 			INT			GetPage() const;
+			INT			GetMin() const;
+			INT			GetMax() const;
 			void		SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos);
 			void		SetScrollPos(INT iPos);
 			void		SetStyleImage(ScrollImageStyle type, LPCSTR pzFile);
@@ -91,8 +94,11 @@ namespace TinyUI
 			virtual ~TinyVisualVScrollBar();
 			TinyString	RetrieveTag() const OVERRIDE;
 			BOOL		SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
+			void		SetSize(const TinySize& size) OVERRIDE;
 			INT			GetScrollPos() const;
 			INT			GetPage() const;
+			INT			GetMin() const;
+			INT			GetMax() const;
 			void		SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos);
 			void		SetScrollPos(INT iPos);
 			void		SetStyleImage(ScrollImageStyle type, LPCSTR pzFile);

@@ -27,7 +27,8 @@ namespace TinyUI
 		TinyTextHost::TinyTextHost()
 			:m_hInstance(NULL),
 			m_dwStyle(ES_MULTILINE | WS_VSCROLL | WS_HSCROLL | ES_AUTOVSCROLL | ES_AUTOHSCROLL),
-			m_password('*')
+			m_password('*'),
+			m_limit(-1)
 		{
 
 		}
@@ -94,6 +95,19 @@ namespace TinyUI
 						m_ts->OnTxInPlaceDeactivate();
 						m_ts->OnTxUIDeactivate();
 						m_ts->TxSendMessage(WM_KILLFOCUS, 0, 0, 0);
+						m_rectangle = m_spvis->GetWindowRect();
+						m_extent.cx = MAP_PIX_TO_LOGHIM(m_rectangle.Width(), m_logpixelsx);
+						m_extent.cy = MAP_PIX_TO_LOGHIM(m_rectangle.Height(), m_logpixelsy);
+						if (FAILED(m_ts->OnTxInPlaceActivate(&m_rectangle)))
+							return FALSE;
+						if (FAILED(m_ts->TxSendMessage(EM_SETCHARFORMAT, 0, (LPARAM)&m_cf, 0)))
+							return FALSE;
+						if (FAILED(m_ts->TxSendMessage(EM_SETPARAFORMAT, 0, (LPARAM)&m_pf, 0)))
+							return FALSE;
+						if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE | TXTBIT_PARAFORMATCHANGE, TRUE)))
+							return FALSE;
+						if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE | TXTBIT_EXTENTCHANGE, TRUE)))
+							return FALSE;
 						return TRUE;
 					}
 				}
@@ -103,13 +117,8 @@ namespace TinyUI
 		BOOL TinyTextHost::UpdateView()
 		{
 			ASSERT(m_ts || m_spvis);
-			m_rectangle = m_spvis->GetWindowRect();
 			m_extent.cx = MAP_PIX_TO_LOGHIM(m_rectangle.Width(), m_logpixelsx);
 			m_extent.cy = MAP_PIX_TO_LOGHIM(m_rectangle.Height(), m_logpixelsy);
-			if (m_spvis->m_vscroll->IsVisible())
-				m_rectangle.right -= m_spvis->m_vscroll->GetSize().cx;
-			if (m_spvis->m_hscroll->IsVisible())
-				m_rectangle.bottom -= m_spvis->m_hscroll->GetSize().cx;
 			if (FAILED(m_ts->OnTxInPlaceActivate(&m_rectangle)))
 				return FALSE;
 			if (FAILED(m_ts->TxSendMessage(EM_SETCHARFORMAT, 0, (LPARAM)&m_cf, 0)))
@@ -120,7 +129,6 @@ namespace TinyUI
 				return FALSE;
 			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE | TXTBIT_EXTENTCHANGE, TRUE)))
 				return FALSE;
-			SetWordWrap(FALSE);
 			return TRUE;
 		}
 		BOOL TinyTextHost::SetReadonly(BOOL bReadOnly)
@@ -164,14 +172,12 @@ namespace TinyUI
 		}
 		BOOL TinyTextHost::SetWordWrap(BOOL bWarp)
 		{
-			if (bWarp)
-			{
-				return m_ts->OnTxPropertyBitsChange(TXTBIT_WORDWRAP, TRUE) == S_OK;
-			}
-			else
-			{
-				return m_ts->OnTxPropertyBitsChange(TXTBIT_WORDWRAP, FALSE) == S_OK;
-			}
+			return m_ts->OnTxPropertyBitsChange(TXTBIT_WORDWRAP, bWarp ? TXTBIT_WORDWRAP : 0) == S_OK;
+		}
+		BOOL TinyTextHost::SetLimit(LONG limit)
+		{
+			m_limit = limit;
+			return m_ts->OnTxPropertyBitsChange(TXTBIT_MAXLENGTHCHANGE, TXTBIT_MAXLENGTHCHANGE) == S_OK;
 		}
 		BOOL TinyTextHost::ShowScrollBar(INT bar, BOOL fShow)
 		{
@@ -255,62 +261,32 @@ namespace TinyUI
 			{
 			case SB_VERT:
 				m_spvis->m_vscroll->SetVisible(fShow);
-				if (fShow)
-				{
-					m_rectangle = m_spvis->GetWindowRect();
-					m_rectangle.right -= m_spvis->m_vscroll->GetSize().cx;
-					if (m_spvis->m_hscroll->IsVisible())
-					{
-						m_rectangle.bottom -= m_spvis->m_hscroll->GetSize().cy;
-					}
-					if (FAILED(m_ts->OnTxInPlaceActivate(&m_rectangle)))
-						return FALSE;
-					if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE, TXTBIT_CLIENTRECTCHANGE)))
-						return FALSE;
-				}
-				else
-				{
-					m_rectangle = m_spvis->GetWindowRect();
-					if (m_spvis->m_hscroll->IsVisible())
-					{
-						m_rectangle.bottom -= m_spvis->m_hscroll->GetSize().cy;
-					}
-					if (FAILED(m_ts->OnTxInPlaceActivate(&m_rectangle)))
-						return FALSE;
-					if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE, TXTBIT_CLIENTRECTCHANGE)))
-						return FALSE;
-				}
 				break;
 			case SB_HORZ:
 				m_spvis->m_hscroll->SetVisible(fShow);
-				if (fShow)
-				{
-					m_rectangle = m_spvis->GetWindowRect();
-					m_rectangle.bottom -= m_spvis->m_hscroll->GetSize().cy;
-					if (m_spvis->m_vscroll->IsVisible())
-					{
-						m_rectangle.right -= m_spvis->m_vscroll->GetSize().cx;
-					}
-					if (FAILED(m_ts->OnTxInPlaceActivate(&m_rectangle)))
-						return FALSE;
-					if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE, TXTBIT_CLIENTRECTCHANGE)))
-						return FALSE;
-				}
-				else
-				{
-					m_rectangle = m_spvis->GetWindowRect();
-					if (m_spvis->m_vscroll->IsVisible())
-					{
-						m_rectangle.bottom -= m_spvis->m_vscroll->GetSize().cx;
-					}
-					if (FAILED(m_ts->OnTxInPlaceActivate(&m_rectangle)))
-						return FALSE;
-					if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE, TXTBIT_CLIENTRECTCHANGE)))
-						return FALSE;
-				}
 				break;
 			}
-			return TRUE;
+			m_rectangle = m_spvis->GetWindowRect();
+			if (m_spvis->m_vscroll->IsVisible() && !m_spvis->m_hscroll->IsVisible())
+			{
+				m_rectangle.right -= m_spvis->m_vscroll->GetSize().cx;
+			}
+			if (!m_spvis->m_vscroll->IsVisible() && m_spvis->m_hscroll->IsVisible())
+			{
+				m_rectangle.bottom -= m_spvis->m_hscroll->GetSize().cy;
+			}
+			if (m_spvis->m_vscroll->IsVisible() && m_spvis->m_hscroll->IsVisible())
+			{
+				m_rectangle.right -= m_spvis->m_vscroll->GetSize().cx;
+				m_rectangle.bottom -= m_spvis->m_hscroll->GetSize().cy;
+				TinySize hsize = m_spvis->m_hscroll->GetSize();
+				TinySize vsize = m_spvis->m_vscroll->GetSize();
+				hsize.cx -= vsize.cx;
+				vsize.cy -= hsize.cy;
+				m_spvis->m_hscroll->SetSize(hsize);
+				m_spvis->m_vscroll->SetSize(vsize);
+			}
+			return this->UpdateView();
 		}
 
 		BOOL TinyTextHost::TxEnableScrollBar(INT fuSBFlags, INT fuArrowflags)
@@ -324,16 +300,10 @@ namespace TinyUI
 			switch (fnBar)
 			{
 			case SB_VERT:
-				if (TinyVisualVScrollBar* vscroll = m_spvis->m_vscroll)
-				{
-					vscroll->SetScrollInfo(nMinPos, nMaxPos, m_spvis->GetSize().cy, vscroll->GetScrollPos());
-				}
+				m_spvis->m_vscroll->SetScrollInfo(nMinPos, nMaxPos, m_spvis->GetSize().cy, m_spvis->m_vscroll->GetScrollPos());
 				break;
 			case SB_HORZ:
-				if (TinyVisualHScrollBar* hscroll = m_spvis->m_hscroll)
-				{
-					hscroll->SetScrollInfo(nMinPos, nMaxPos, m_spvis->GetSize().cx, hscroll->GetScrollPos());
-				}
+				m_spvis->m_hscroll->SetScrollInfo(nMinPos, nMaxPos, m_spvis->GetSize().cx, m_spvis->m_hscroll->GetScrollPos());
 				break;
 			}
 			return S_OK;
@@ -345,16 +315,9 @@ namespace TinyUI
 			switch (fnBar)
 			{
 			case SB_VERT:
-				if (TinyVisualVScrollBar* vscroll = m_spvis->m_vscroll)
-				{
-					vscroll->SetScrollPos(nPos);
-				}
+				m_spvis->m_vscroll->SetScrollPos(nPos);
 				break;
-			case SB_HORZ:
-				if (TinyVisualHScrollBar* hscroll = m_spvis->m_hscroll)
-				{
-					hscroll->SetScrollPos(nPos);
-				}
+				m_spvis->m_hscroll->SetScrollPos(nPos);
 				break;
 			}
 			return S_OK;
@@ -497,6 +460,7 @@ namespace TinyUI
 
 		HRESULT TinyTextHost::TxGetMaxLength(DWORD *plength)
 		{
+			*plength = m_limit == -1 ? INFINITE : m_limit;
 			return S_OK;
 		}
 

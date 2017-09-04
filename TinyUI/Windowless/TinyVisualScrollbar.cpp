@@ -72,6 +72,11 @@ namespace TinyUI
 			}
 			return TinyVisual::SetProperty(name, value);
 		}
+		void TinyVisualHScrollBar::SetSize(const TinySize& size)
+		{
+			TinyVisual::SetSize(size);
+			SetScrollInfo(m_si.iMin, m_si.iMax, size.cx, m_si.iPos);
+		}
 		HRESULT TinyVisualHScrollBar::OnCreate()
 		{
 			m_images[ARROW1NORMAL] = TinyVisualResource::GetInstance()["hscrollbar_arrow_up_normal"];
@@ -453,6 +458,14 @@ namespace TinyUI
 		INT TinyVisualHScrollBar::GetPage() const
 		{
 			return m_si.iPage;
+		}
+		INT	TinyVisualHScrollBar::GetMin() const
+		{
+			return m_si.iMin;
+		}
+		INT	TinyVisualHScrollBar::GetMax() const
+		{
+			return m_si.iMax;
 		}
 		void TinyVisualHScrollBar::SetStyleImage(ScrollImageStyle type, LPCSTR pzFile)
 		{
@@ -895,7 +908,7 @@ namespace TinyUI
 		void TinyVisualVScrollBar::SetScrollPos(INT iPos)
 		{
 			iPos = iPos < m_si.iMin ? m_si.iMin : iPos;
-			iPos = iPos > (m_si.iMax - m_si.iPage + 1) ? (m_si.iMax - m_si.iPage + 1) : iPos;
+			iPos = iPos > (m_si.iMax - m_si.iPage) ? (m_si.iMax - m_si.iPage + 1) : iPos;
 			m_si.iPos = iPos;
 			TinyRectangle s = m_document->GetWindowRect(this);
 			m_document->Invalidate(&s);
@@ -908,10 +921,25 @@ namespace TinyUI
 		{
 			return m_si.iPage;
 		}
+		INT	TinyVisualVScrollBar::GetMin() const
+		{
+			return m_si.iMin;
+		}
+		INT	TinyVisualVScrollBar::GetMax() const
+		{
+			return m_si.iMax;
+		}
 		void TinyVisualVScrollBar::SetStyleImage(ScrollImageStyle type, LPCSTR pzFile)
 		{
 			m_images[type] = TinyVisualResource::GetInstance()[pzFile];
 			ASSERT(m_images[type]);
 		}
+
+		void TinyVisualVScrollBar::SetSize(const TinySize& size)
+		{
+			TinyVisual::SetSize(size);
+			SetScrollInfo(m_si.iMin, m_si.iMax, size.cy, m_si.iPos);
+		}
+
 	}
 }

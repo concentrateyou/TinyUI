@@ -32,6 +32,7 @@ namespace TinyUI
 			BOOL SetPassword(BOOL fPassword, CHAR s);
 			BOOL SetWordWrap(BOOL fWarp);
 			BOOL ShowScrollBar(INT bar, BOOL fShow);
+			BOOL SetLimit(LONG limit);
 		public:
 			HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject);
 			ULONG STDMETHODCALLTYPE AddRef(void);
@@ -77,12 +78,13 @@ namespace TinyUI
 			HRESULT TxGetSelectionBarWidth(LONG *lSelBarWidth) OVERRIDE;
 		private:
 			TinyComPtr<ITextServices>	m_ts;
-			HINSTANCE					m_hInstance;
 			LONG						m_cRef;
+			HINSTANCE					m_hInstance;
 			TinyVisualRichText*			m_spvis;
 			TinySize					m_extent;
 			LONG						m_logpixelsx;
 			LONG						m_logpixelsy;
+			LONG						m_limit;
 			CHARFORMATW					m_cf;
 			PARAFORMAT					m_pf;
 			TinyRectangle				m_rectangle;
