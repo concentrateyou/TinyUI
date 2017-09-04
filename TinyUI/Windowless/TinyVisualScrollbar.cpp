@@ -195,7 +195,7 @@ namespace TinyUI
 				break;
 			case HTSCROLL_THUMB:
 				code = SB_THUMBPOSITION;
-				EVENT_PosChange(TRUE, code, m_si.iPos, iNewPos);
+				EVENT_PosChange(FALSE, code, m_si.iPos, iNewPos);
 				break;
 			}
 			if (iNewPos != m_si.iPos)

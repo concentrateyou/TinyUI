@@ -26,7 +26,7 @@ namespace TinyUI
 		//////////////////////////////////////////////////////////////////////////
 		TinyTextHost::TinyTextHost()
 			:m_hInstance(NULL),
-			m_dwStyle(ES_MULTILINE),
+			m_dwStyle(ES_MULTILINE | WS_VSCROLL | WS_HSCROLL | ES_AUTOVSCROLL | ES_AUTOHSCROLL),
 			m_password('*')
 		{
 
@@ -120,6 +120,7 @@ namespace TinyUI
 				return FALSE;
 			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE | TXTBIT_EXTENTCHANGE, TRUE)))
 				return FALSE;
+			SetWordWrap(FALSE);
 			return TRUE;
 		}
 		BOOL TinyTextHost::SetReadonly(BOOL bReadOnly)
@@ -259,7 +260,9 @@ namespace TinyUI
 					m_rectangle = m_spvis->GetWindowRect();
 					m_rectangle.right -= m_spvis->m_vscroll->GetSize().cx;
 					if (m_spvis->m_hscroll->IsVisible())
+					{
 						m_rectangle.bottom -= m_spvis->m_hscroll->GetSize().cy;
+					}
 					if (FAILED(m_ts->OnTxInPlaceActivate(&m_rectangle)))
 						return FALSE;
 					if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE, TXTBIT_CLIENTRECTCHANGE)))
@@ -269,7 +272,9 @@ namespace TinyUI
 				{
 					m_rectangle = m_spvis->GetWindowRect();
 					if (m_spvis->m_hscroll->IsVisible())
+					{
 						m_rectangle.bottom -= m_spvis->m_hscroll->GetSize().cy;
+					}
 					if (FAILED(m_ts->OnTxInPlaceActivate(&m_rectangle)))
 						return FALSE;
 					if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE, TXTBIT_CLIENTRECTCHANGE)))
@@ -283,7 +288,9 @@ namespace TinyUI
 					m_rectangle = m_spvis->GetWindowRect();
 					m_rectangle.bottom -= m_spvis->m_hscroll->GetSize().cy;
 					if (m_spvis->m_vscroll->IsVisible())
-						m_rectangle.bottom -= m_spvis->m_vscroll->GetSize().cx;
+					{
+						m_rectangle.right -= m_spvis->m_vscroll->GetSize().cx;
+					}
 					if (FAILED(m_ts->OnTxInPlaceActivate(&m_rectangle)))
 						return FALSE;
 					if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE, TXTBIT_CLIENTRECTCHANGE)))
@@ -293,7 +300,9 @@ namespace TinyUI
 				{
 					m_rectangle = m_spvis->GetWindowRect();
 					if (m_spvis->m_vscroll->IsVisible())
+					{
 						m_rectangle.bottom -= m_spvis->m_vscroll->GetSize().cx;
+					}
 					if (FAILED(m_ts->OnTxInPlaceActivate(&m_rectangle)))
 						return FALSE;
 					if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE, TXTBIT_CLIENTRECTCHANGE)))
@@ -348,7 +357,6 @@ namespace TinyUI
 				}
 				break;
 			}
-			return S_OK;
 			return S_OK;
 		}
 
@@ -489,13 +497,13 @@ namespace TinyUI
 
 		HRESULT TinyTextHost::TxGetMaxLength(DWORD *plength)
 		{
-			return E_NOTIMPL;
+			return S_OK;
 		}
 
 		HRESULT TinyTextHost::TxGetScrollBars(DWORD *pdwScrollBar)
 		{
 			*pdwScrollBar = m_dwStyle & (WS_VSCROLL | WS_HSCROLL | ES_AUTOVSCROLL | ES_AUTOHSCROLL);
-			return E_NOTIMPL;
+			return S_OK;
 		}
 
 		HRESULT TinyTextHost::TxGetPasswordChar(_Out_ TCHAR *pch)
@@ -506,7 +514,7 @@ namespace TinyUI
 
 		HRESULT TinyTextHost::TxGetAcceleratorPos(LONG *pcp)
 		{
-			return E_NOTIMPL;
+			return S_OK;
 		}
 
 		HRESULT TinyTextHost::TxGetExtent(LPSIZEL lpExtent)
