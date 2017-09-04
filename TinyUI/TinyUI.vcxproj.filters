@@ -495,7 +495,7 @@
     <ClInclude Include="Windowless\TinyVisualPanel.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
-    <ClInclude Include="Windowless\TinyVisualDropDownHWND.h">
+    <ClInclude Include="Windowless\TinyVisualComboBoxHWND.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
   </ItemGroup>
@@ -911,7 +911,7 @@
     <ClCompile Include="Windowless\TinyVisualPanel.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
-    <ClCompile Include="Windowless\TinyVisualDropDownHWND.cpp">
+    <ClCompile Include="Windowless\TinyVisualComboBoxHWND.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>

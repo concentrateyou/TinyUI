@@ -37,6 +37,57 @@ namespace TinyUI
 			ASSERT(m_texthost.m_ts);
 			return m_texthost.ShowScrollBar(bar, fShow);
 		}
+		void TinyVisualRichText::GetText(TinyString& szText)
+		{
+			ASSERT(m_texthost.m_ts);
+			LONG size = GetTextLength(GTL_DEFAULT);
+			GETTEXTEX gtx = { 0 };
+			gtx.flags = GT_DEFAULT;
+			gtx.cb = size + 1;
+			gtx.codepage = CP_ACP;
+			szText.Resize(gtx.cb);
+			gtx.lpDefaultChar = NULL;
+			gtx.lpUsedDefChar = NULL;
+			m_texthost.m_ts->TxSendMessage(EM_GETTEXTEX, (WPARAM)&gtx, (LPARAM)szText.STR(), 0);
+		}
+		LONG TinyVisualRichText::GetTextLength(DWORD dwFlag)
+		{
+			ASSERT(m_texthost.m_ts);
+			GETTEXTLENGTHEX gtlx = { 0 };
+			gtlx.flags = dwFlag;
+			gtlx.codepage = CP_ACP;
+			LRESULT lResult = 0;
+			m_texthost.m_ts->TxSendMessage(EM_GETTEXTLENGTHEX, (WPARAM)&gtlx, 0, &lResult);
+			return static_cast<LONG>(lResult);
+		}
+		void TinyVisualRichText::SetText(const TinyString& szText)
+		{
+			ASSERT(m_texthost.m_ts);
+			SetSel(0, -1);
+			ReplaceSel(szText, FALSE);
+		}
+		INT TinyVisualRichText::SetSel(CHARRANGE &cr)
+		{
+			ASSERT(m_texthost.m_ts);
+			LRESULT lResult;
+			m_texthost.m_ts->TxSendMessage(EM_EXSETSEL, 0, (LPARAM)&cr, &lResult);
+			return (INT)lResult;
+		}
+		INT TinyVisualRichText::SetSel(LONG nStartChar, LONG nEndChar)
+		{
+			ASSERT(m_texthost.m_ts);
+			CHARRANGE cr;
+			cr.cpMin = nStartChar;
+			cr.cpMax = nEndChar;
+			LRESULT lResult;
+			m_texthost.m_ts->TxSendMessage(EM_EXSETSEL, 0, (LPARAM)&cr, &lResult);
+			return (INT)lResult;
+		}
+		void TinyVisualRichText::ReplaceSel(const TinyString& szText, BOOL bCanUndo)
+		{
+			ASSERT(m_texthost.m_ts);
+			m_texthost.m_ts->TxSendMessage(EM_REPLACESEL, (WPARAM)bCanUndo, (LPARAM)szText.CSTR(), NULL);
+		}
 		HRESULT TinyVisualRichText::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)
 		{
 			ASSERT(m_texthost.m_ts);

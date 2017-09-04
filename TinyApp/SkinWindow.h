@@ -27,7 +27,9 @@ public:
 private:
 	void OnMinimumClick(EventArgs& args);
 	void OnCloseClick(EventArgs& args);
+	void OnSelectChanged(TinyVisualOption* ps);
 private:
+	TinyScopedPtr<Delegate<void(TinyVisualOption*)>> m_onSelectChanged;
 	TinyScopedPtr<Delegate<void(EventArgs&)>> m_onMinimumClick;
 	TinyScopedPtr<Delegate<void(EventArgs&)>> m_onCloseClick;
 };

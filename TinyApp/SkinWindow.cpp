@@ -33,7 +33,9 @@ void SkinWindow::OnInitialize()
 		if (visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
 		{
 			TinyVisualComboBox* combobox = static_cast<TinyVisualComboBox*>(visual);
-			for (INT i = 0;i < 50;i++)
+			m_onSelectChanged.Reset(new Delegate<void(TinyVisualOption*)>(this, &SkinWindow::OnSelectChanged));
+			combobox->EVENT_SELECTCHANGED += m_onSelectChanged;
+			for (INT i = 0;i < 10;i++)
 			{
 				TinyString str = TinyString::Format("Name%d", i);
 				combobox->AddOption(str, str);
@@ -54,6 +56,15 @@ void SkinWindow::OnUninitialize()
 	{
 		visual->EVENT_CLICK -= m_onCloseClick;
 	}
+	visual = GetDocument()->GetVisualByName("audio");
+	if (visual != NULL)
+	{
+		if (visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
+		{
+			TinyVisualComboBox* combobox = static_cast<TinyVisualComboBox*>(visual);
+			combobox->EVENT_SELECTCHANGED -= m_onSelectChanged;
+		}
+	}
 }
 
 void SkinWindow::OnMinimumClick(EventArgs& args)
@@ -65,4 +76,8 @@ void SkinWindow::OnMinimumClick(EventArgs& args)
 void SkinWindow::OnCloseClick(EventArgs& args)
 {
 	SendMessage(m_hWND, WM_CLOSE, NULL, NULL);
+}
+void SkinWindow::OnSelectChanged(TinyVisualOption* ps)
+{
+	TRACE("бЁжа: %s\n", ps->GetText().CSTR());
 }

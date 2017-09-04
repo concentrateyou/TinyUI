@@ -2,7 +2,7 @@
 #include "TinyVisualDocument.h"
 #include "TinyVisualManage.h"
 #include "TinyVisualComboBox.h"
-#include "TinyVisualDropDownHWND.h"
+#include "TinyVisualComboBoxHWND.h"
 
 namespace TinyUI
 {
@@ -47,7 +47,7 @@ namespace TinyUI
 				spvis->SetValue(szValue.CSTR());
 				spvis->SetText(szText.CSTR());
 				spvis->SetTextAlian(DT_LEFT | DT_SINGLELINE | DT_VCENTER);
-				spvis->SetOptionHighlight("ComboBoxList_highlight");
+				spvis->SetHighlightImage("ComboBoxList_highlight");
 				spvis->SetTextColor(RGB(0, 0, 0));
 			}
 		}
@@ -211,9 +211,23 @@ namespace TinyUI
 
 		HRESULT TinyVisualOption::OnLButtonDown(const TinyPoint& pos, DWORD dwFlags)
 		{
-			return FALSE;
+			return TinyVisual::OnLButtonDown(pos, dwFlags);
 		}
-
+		HRESULT TinyVisualOption::OnLButtonUp(const TinyPoint& pos, DWORD dwFlags)
+		{
+			TinyVisualHWND* pHWND = m_document->GetVisualHWND();
+			if (pHWND->IsKindOf(RUNTIME_CLASS(TinyVisualComboBoxHWND)))
+			{
+				TinyVisualComboBoxHWND*	ps = static_cast<TinyVisualComboBoxHWND*>(pHWND);
+				::ShowWindow(ps->Handle(), SW_HIDE);
+				if (ps->m_pCurrent != this)
+				{
+					ps->m_pOwner->EVENT_SELECTCHANGED(this);
+					ps->m_pCurrent = this;
+				}
+			}
+			return TinyVisual::OnLButtonUp(pos, dwFlags);
+		}
 		BOOL TinyVisualOption::SetProperty(const TinyString& name, const TinyString& value)
 		{
 			if (strcasecmp(name.STR(), TinyVisualProperty::VALUE.STR()) == 0)
@@ -223,16 +237,20 @@ namespace TinyUI
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::OPTIONHIGHLIGHT.STR()) == 0)
 			{
-				SetOptionHighlight(value.CSTR());
+				SetHighlightImage(value.CSTR());
 				return TRUE;
 			}
 			return TinyVisual::SetProperty(name, value);
+		}
+		BOOL TinyVisualOption::IsSelected()
+		{
+			return m_dwFlag == HIGHLIGHT;
 		}
 		void TinyVisualOption::SetValue(LPCSTR pzValue)
 		{
 			m_szValue = pzValue;
 		}
-		void TinyVisualOption::SetOptionHighlight(LPCSTR pzName)
+		void TinyVisualOption::SetHighlightImage(LPCSTR pzName)
 		{
 			m_highlight = TinyVisualResource::GetInstance()[pzName];
 		}

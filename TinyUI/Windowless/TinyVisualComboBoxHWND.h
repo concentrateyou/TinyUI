@@ -11,15 +11,17 @@ namespace TinyUI
 	namespace Windowless
 	{
 		class TinyVisualComboBox;
+		class TinyVisualOption;
 		/// <summary>
-		/// 下拉框
+		/// ComboBox下拉框
 		/// </summary>
-		class TinyVisualDropDownHWND : public TinyVisualHWND
+		class TinyVisualComboBoxHWND : public TinyVisualHWND
 		{
-			DECLARE_DYNAMIC(TinyVisualDropDownHWND)
+			DECLARE_DYNAMIC(TinyVisualComboBoxHWND)
+			friend class TinyVisualOption;
 		public:
-			TinyVisualDropDownHWND(TinyVisualComboBox* pOwner);
-			virtual ~TinyVisualDropDownHWND();
+			TinyVisualComboBoxHWND(TinyVisualComboBox* pOwner);
+			virtual ~TinyVisualComboBoxHWND();
 			DWORD RetrieveStyle() OVERRIDE;
 			DWORD RetrieveExStyle() OVERRIDE;
 			LPCSTR RetrieveClassName() OVERRIDE;
@@ -42,9 +44,10 @@ namespace TinyUI
 			void AdjustLayout(INT dx, INT dy);
 			void OnPosChange(BOOL bVer, INT code, INT iOldPos, INT iNewPos);
 		private:
+			INT						m_iNewPos;
+			TinyVisualOption*		m_pCurrent;
 			TinyVisualComboBox*		m_pOwner;
 			TinyVisualVScrollBar*	m_pVScrollbar;
-			INT						m_iNewPos;
 			TinyScopedPtr<Delegate<void(BOOL, INT, INT, INT)>> m_onPosChange;
 		};
 	}

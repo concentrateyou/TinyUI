@@ -23,6 +23,12 @@ namespace TinyUI
 			BOOL SetMultiline(BOOL bMultiline);
 			BOOL SetPassword(BOOL bPassword, CHAR s);
 			BOOL ShowScrollBar(INT bar, BOOL fShow);
+			void GetText(TinyString& szText);
+			void SetText(const TinyString& szText);
+			LONG GetTextLength(DWORD dwFlag);
+			INT SetSel(CHARRANGE &cr);
+			INT SetSel(LONG nStartChar, LONG nEndChar);
+			void ReplaceSel(const TinyString& szText, BOOL bCanUndo);
 		protected:
 			BOOL	OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT OnCreate() OVERRIDE;

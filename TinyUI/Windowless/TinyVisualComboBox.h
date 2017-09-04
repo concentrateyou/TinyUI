@@ -1,6 +1,6 @@
 #pragma once
 #include "TinyVisualButton.h"
-#include "TinyVisualDropDownHWND.h"
+#include "TinyVisualComboBoxHWND.h"
 
 namespace TinyUI
 {
@@ -8,7 +8,9 @@ namespace TinyUI
 	{
 #define DEFAULT_OPTION_HEIGHT 23
 
-		class TinyVisualDropDownHWND;
+		class TinyVisualComboBoxHWND;
+		class TinyVisualComboBox;
+		class TinyVisualOption;
 		/// <summary>
 		/// ÏÂÀ­¿ò¿Ø¼þ
 		/// </summary>
@@ -27,6 +29,8 @@ namespace TinyUI
 			void SetStyleImage(StyleImage type, LPCSTR pzFile);
 			void SetArrowImage(StyleImage type, LPCSTR pzFile);
 			BOOL SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
+		public:
+			Event<void(TinyVisualOption*)>	EVENT_SELECTCHANGED;
 		protected:
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT	OnInitialize() OVERRIDE;
@@ -44,7 +48,7 @@ namespace TinyUI
 			TinyImage*				m_images[StyleImage::COUNT];
 			TinyImage*				m_arraws[StyleImage::COUNT];
 			INT						m_cy;
-			TinyVisualDropDownHWND  m_popupWND;
+			TinyVisualComboBoxHWND  m_popupWND;
 			TinyScopedPtr<Delegate<void(ActiveEventArgs&)>> m_onPopupActive;
 		};
 		/// <summary>
@@ -62,10 +66,12 @@ namespace TinyUI
 			HRESULT OnMouseEnter() OVERRIDE;
 			HRESULT OnMouseLeave() OVERRIDE;
 			HRESULT OnLButtonDown(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
+			HRESULT OnLButtonUp(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
 		public:
 			BOOL SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
+			BOOL IsSelected();
 			virtual void SetValue(LPCSTR pzValue);
-			virtual void SetOptionHighlight(LPCSTR pzFile);
+			virtual void SetHighlightImage(LPCSTR pzFile);
 		protected:
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 		private:

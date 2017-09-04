@@ -1,5 +1,5 @@
 #include "../stdafx.h"
-#include "TinyVisualDropDownHWND.h"
+#include "TinyVisualComboBoxHWND.h"
 #include "TinyVisualComboBox.h"
 #include "../Render/TinyTransform.h"
 #include "../Render/TinyCanvas.h"
@@ -8,45 +8,46 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		IMPLEMENT_DYNAMIC(TinyVisualDropDownHWND, TinyVisualHWND);
-		TinyVisualDropDownHWND::TinyVisualDropDownHWND(TinyVisualComboBox* pOwner)
+		IMPLEMENT_DYNAMIC(TinyVisualComboBoxHWND, TinyVisualHWND);
+		TinyVisualComboBoxHWND::TinyVisualComboBoxHWND(TinyVisualComboBox* pOwner)
 			:m_pOwner(pOwner),
 			m_pVScrollbar(NULL),
+			m_pCurrent(NULL),
 			m_iNewPos(0)
 		{
 
 		}
-		TinyVisualDropDownHWND::~TinyVisualDropDownHWND()
+		TinyVisualComboBoxHWND::~TinyVisualComboBoxHWND()
 		{
 
 		}
-		DWORD TinyVisualDropDownHWND::RetrieveStyle()
+		DWORD TinyVisualComboBoxHWND::RetrieveStyle()
 		{
 			return (WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
 		}
-		DWORD TinyVisualDropDownHWND::RetrieveExStyle()
+		DWORD TinyVisualComboBoxHWND::RetrieveExStyle()
 		{
 			return (WS_EX_LEFT | WS_EX_LTRREADING);
 		}
-		LPCSTR TinyVisualDropDownHWND::RetrieveClassName()
+		LPCSTR TinyVisualComboBoxHWND::RetrieveClassName()
 		{
 			return TEXT("TinyVisualDropDownHWND");
 		}
-		LPCSTR TinyVisualDropDownHWND::RetrieveTitle()
+		LPCSTR TinyVisualComboBoxHWND::RetrieveTitle()
 		{
 			return TEXT("TinyVisualDropDownHWND");
 		}
-		HICON TinyVisualDropDownHWND::RetrieveIcon()
+		HICON TinyVisualComboBoxHWND::RetrieveIcon()
 		{
 			return NULL;
 		}
 
-		void TinyVisualDropDownHWND::OnInitialize()
+		void TinyVisualComboBoxHWND::OnInitialize()
 		{
 
 		}
 
-		void TinyVisualDropDownHWND::OnUninitialize()
+		void TinyVisualComboBoxHWND::OnUninitialize()
 		{
 			if (m_pVScrollbar != NULL)
 			{
@@ -55,11 +56,11 @@ namespace TinyUI
 				m_pVScrollbar = NULL;
 			}
 		}
-		BOOL TinyVisualDropDownHWND::IsPopup()
+		BOOL TinyVisualComboBoxHWND::IsPopup()
 		{
 			return IsWindowVisible(m_hWND);
 		}
-		BOOL TinyVisualDropDownHWND::SetPosition(const TinyPoint& pos, const TinySize& size)
+		BOOL TinyVisualComboBoxHWND::SetPosition(const TinyPoint& pos, const TinySize& size)
 		{
 			BOOL bRes = ::SetWindowPos(m_hWND, HWND_TOPMOST, pos.x, pos.y, size.cx, size.cy, SWP_NOACTIVATE | SWP_SHOWWINDOW);
 			::UpdateWindow(m_hWND);
@@ -68,7 +69,7 @@ namespace TinyUI
 			if (m_pVScrollbar == NULL)
 			{
 				m_pVScrollbar = m_document->Create<TinyVisualVScrollBar>(size.cx - 12, 0, 12, size.cy, spvis);
-				m_onPosChange.Reset(new Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualDropDownHWND::OnPosChange));
+				m_onPosChange.Reset(new Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualComboBoxHWND::OnPosChange));
 				m_pVScrollbar->EVENT_PosChange += m_onPosChange;
 			}
 			if (m_pVScrollbar != NULL)
@@ -91,7 +92,7 @@ namespace TinyUI
 			m_document->Redraw();
 			return bRes;
 		}
-		void TinyVisualDropDownHWND::AdjustOption(INT cx)
+		void TinyVisualComboBoxHWND::AdjustOption(INT cx)
 		{
 			TinyVisual* spvis = m_document->GetVisual(NULL, CMD_CHILD);
 			spvis = m_document->GetVisual(spvis, CMD_LAST);
@@ -106,29 +107,29 @@ namespace TinyUI
 				spvis = m_document->GetVisual(spvis, CMD_PREV);
 			}
 		}
-		TinyVisualVScrollBar* TinyVisualDropDownHWND::GetScrollBar()
+		TinyVisualVScrollBar* TinyVisualComboBoxHWND::GetScrollBar()
 		{
 			return m_pVScrollbar;
 		}
-		LRESULT TinyVisualDropDownHWND::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualComboBoxHWND::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			return TinyVisualHWND::OnCreate(uMsg, wParam, lParam, bHandled);
 		}
 
-		LRESULT TinyVisualDropDownHWND::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualComboBoxHWND::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = TRUE;
 			return HTCLIENT;
 		}
 
-		LRESULT TinyVisualDropDownHWND::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualComboBoxHWND::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			return TinyVisualHWND::OnDestory(uMsg, wParam, lParam, bHandled);
 		}
 
-		LRESULT TinyVisualDropDownHWND::OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualComboBoxHWND::OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			if (LOWORD(wParam) == WA_INACTIVE)
@@ -146,13 +147,13 @@ namespace TinyUI
 			return TinyVisualHWND::OnActivate(uMsg, wParam, lParam, bHandled);
 		}
 
-		void TinyVisualDropDownHWND::OnPosChange(BOOL bVer, INT code, INT iOldPos, INT iNewPos)
+		void TinyVisualComboBoxHWND::OnPosChange(BOOL bVer, INT code, INT iOldPos, INT iNewPos)
 		{
 			AdjustLayout(0, iOldPos - iNewPos);
 			m_iNewPos = iNewPos;
 			m_document->Redraw();
 		}
-		void TinyVisualDropDownHWND::AdjustLayout(INT dx, INT dy)
+		void TinyVisualComboBoxHWND::AdjustLayout(INT dx, INT dy)
 		{
 			TinyVisual* spvis = m_document->GetVisual(NULL, CMD_CHILD);
 			spvis = m_document->GetVisual(spvis, CMD_LAST);
