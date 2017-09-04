@@ -17,6 +17,7 @@ namespace TinyUI
 		class TinyVisualComboBox : public TinyVisual
 		{
 			friend class TinyVisualDocument;
+			friend class TinyVisualComboBoxHWND;
 			DECLARE_DYNAMIC(TinyVisualComboBox)
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualComboBox)
 		protected:
@@ -24,15 +25,16 @@ namespace TinyUI
 		public:
 			virtual ~TinyVisualComboBox();
 			TinyString RetrieveTag() const OVERRIDE;
+			BOOL SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 		public:
-			void AddOption(const TinyString& szValue, const TinyString& szText);
+			TinyVisualOption* AddOption(const TinyString& szValue, const TinyString& szText);
 			void SetStyleImage(StyleImage type, LPCSTR pzFile);
 			void SetArrowImage(StyleImage type, LPCSTR pzFile);
-			BOOL SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
+			void SetSelected(TinyVisualOption* spvis);
 		public:
 			Event<void(TinyVisualOption*)>	EVENT_SELECTCHANGED;
 		protected:
-			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
+			BOOL	OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT	OnInitialize() OVERRIDE;
 			HRESULT OnDestory() OVERRIDE;
 			HRESULT	OnLButtonDown(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
@@ -40,14 +42,14 @@ namespace TinyUI
 			HRESULT OnMouseLeave() OVERRIDE;
 			HRESULT	OnLButtonUp(const TinyPoint& pos, DWORD dwFlags);
 		private:
-			void OnPopupActive(ActiveEventArgs& args);
+			void	OnPopupActive(ActiveEventArgs& args);
 		private:
+			INT						m_cy;
 			BOOL					m_bActive;
 			StyleImage				m_dwFlag;
 			StyleImage				m_dwArrawFlag;
 			TinyImage*				m_images[StyleImage::COUNT];
 			TinyImage*				m_arraws[StyleImage::COUNT];
-			INT						m_cy;
 			TinyVisualComboBoxHWND  m_popupWND;
 			TinyScopedPtr<Delegate<void(ActiveEventArgs&)>> m_onPopupActive;
 		};
@@ -70,6 +72,8 @@ namespace TinyUI
 		public:
 			BOOL SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 			BOOL IsSelected();
+			void SetSelected(BOOL bFlag);
+		public:
 			virtual void SetValue(LPCSTR pzValue);
 			virtual void SetHighlightImage(LPCSTR pzFile);
 		protected:
@@ -78,6 +82,7 @@ namespace TinyUI
 			TinyString	m_szValue;
 			TinyImage*	m_highlight;
 			DWORD		m_dwFlag;
+			BOOL		m_bSelected;
 		};
 	}
 }

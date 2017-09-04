@@ -27,5 +27,7 @@
     </combobox>
     <richtext name="txtURL" position="230,30" size="200,100">
     </richtext>
+    <native name="nativeCTRL" position="230,30" size="200,100">
+    </native>
   </panel>
 </window>

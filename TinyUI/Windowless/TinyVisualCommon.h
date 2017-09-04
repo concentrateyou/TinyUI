@@ -99,7 +99,7 @@ namespace TinyUI
 			static const TinyString OPTION;
 			static const TinyString RICHTEXT;
 			static const TinyString STRETCH;
-
+			static const TinyString NATIVE;
 			static const TinyString CONTEXT;
 			static const TinyString IMAGE;
 			static const TinyString ADD;

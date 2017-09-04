@@ -38,7 +38,11 @@ void SkinWindow::OnInitialize()
 			for (INT i = 0;i < 10;i++)
 			{
 				TinyString str = TinyString::Format("Name%d", i);
-				combobox->AddOption(str, str);
+				TinyVisualOption* option = combobox->AddOption(str, str);
+				if (i == 5)
+				{
+					combobox->SetSelected(option);
+				}
 			}
 		}
 	}

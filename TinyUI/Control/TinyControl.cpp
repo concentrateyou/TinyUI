@@ -526,6 +526,16 @@ namespace TinyUI
 		ASSERT(::IsWindow(m_hWND));
 		return ::SetWindowPos(m_hWND, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 	}
+	BOOL TinyControl::SetSize(const TinySize& size) throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::SetWindowPos(m_hWND, NULL, 0, 0, size.cx, size.cy, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+	}
+	BOOL TinyControl::SetPosition(const TinyPoint& pos) throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::SetWindowPos(m_hWND, NULL, pos.x, pos.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+	}
 	BOOL TinyControl::ClientToScreen(LPPOINT lpPoint) const throw()
 	{
 		ASSERT(::IsWindow(m_hWND));

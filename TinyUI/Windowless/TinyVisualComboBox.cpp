@@ -38,7 +38,11 @@ namespace TinyUI
 		{
 			m_arraws[(INT)type] = TinyVisualResource::GetInstance()[pzName];
 		}
-		void TinyVisualComboBox::AddOption(const TinyString& szValue, const TinyString& szText)
+		void TinyVisualComboBox::SetSelected(TinyVisualOption* spvis)
+		{
+			m_popupWND.SetSelected(spvis, TRUE);
+		}
+		TinyVisualOption* TinyVisualComboBox::AddOption(const TinyString& szValue, const TinyString& szText)
 		{
 			TinyVisual* spvisParent = m_popupWND.GetDocument()->GetParent(NULL);
 			TinyVisualOption* spvis = m_popupWND.GetDocument()->Create<TinyVisualOption>(0, spvisParent->GetChildCount() * DEFAULT_OPTION_HEIGHT, TO_CX(m_rectangle), DEFAULT_OPTION_HEIGHT, spvisParent);
@@ -50,6 +54,7 @@ namespace TinyUI
 				spvis->SetHighlightImage("ComboBoxList_highlight");
 				spvis->SetTextColor(RGB(0, 0, 0));
 			}
+			return spvis;
 		}
 		BOOL TinyVisualComboBox::SetProperty(const TinyString& name, const TinyString& value)
 		{
@@ -184,7 +189,8 @@ namespace TinyUI
 		IMPLEMENT_DYNAMIC(TinyVisualOption, TinyVisual);
 		TinyVisualOption::TinyVisualOption(TinyVisual* spvisParent, TinyVisualDocument* vtree)
 			:TinyVisual(spvisParent, vtree),
-			m_dwFlag(NORMAL)
+			m_dwFlag(NORMAL),
+			m_bSelected(FALSE)
 		{
 		}
 		TinyVisualOption::~TinyVisualOption()
@@ -198,6 +204,16 @@ namespace TinyUI
 		HRESULT TinyVisualOption::OnMouseEnter()
 		{
 			m_dwFlag = HIGHLIGHT;
+			TinyVisualHWND* pHWND = m_document->GetVisualHWND();
+			if (pHWND->IsKindOf(RUNTIME_CLASS(TinyVisualComboBoxHWND)))
+			{
+				TinyVisualComboBoxHWND*	ps = static_cast<TinyVisualComboBoxHWND*>(pHWND);
+				TinyVisualOption* option = ps->GetSelected();
+				if (option != NULL)
+				{
+					option->m_dwFlag = NORMAL;
+				}
+			}
 			m_document->Redraw();
 			return FALSE;
 		}
@@ -220,11 +236,7 @@ namespace TinyUI
 			{
 				TinyVisualComboBoxHWND*	ps = static_cast<TinyVisualComboBoxHWND*>(pHWND);
 				::ShowWindow(ps->Handle(), SW_HIDE);
-				if (ps->m_pCurrent != this)
-				{
-					ps->m_pOwner->EVENT_SELECTCHANGED(this);
-					ps->m_pCurrent = this;
-				}
+				ps->SetSelected(this, TRUE);
 			}
 			return TinyVisual::OnLButtonUp(pos, dwFlags);
 		}
@@ -244,7 +256,12 @@ namespace TinyUI
 		}
 		BOOL TinyVisualOption::IsSelected()
 		{
-			return m_dwFlag == HIGHLIGHT;
+			return m_bSelected;
+		}
+		void TinyVisualOption::SetSelected(BOOL bFlag)
+		{
+			m_bSelected = bFlag;
+			m_dwFlag = m_bSelected ? HIGHLIGHT : NORMAL;
 		}
 		void TinyVisualOption::SetValue(LPCSTR pzValue)
 		{

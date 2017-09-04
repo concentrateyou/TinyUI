@@ -87,6 +87,7 @@ namespace TinyUI
 		const TinyString TinyVisualTag::OPTION = TEXT("option");
 		const TinyString TinyVisualTag::RICHTEXT = TEXT("richtext");
 		const TinyString TinyVisualTag::STRETCH = TEXT("stretch");
+		const TinyString TinyVisualTag::NATIVE = TEXT("native");
 		//////////////////////////////////////////////////////////////////////////
 		TinyVisualDC::TinyVisualDC(HWND hWND)
 			:m_hWND(hWND),

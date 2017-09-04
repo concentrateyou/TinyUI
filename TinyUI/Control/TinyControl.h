@@ -29,6 +29,8 @@ namespace TinyUI
 	public:
 		BOOL	SetSize(INT cx, INT cy) throw();
 		BOOL	SetPosition(INT x, INT y) throw();
+		BOOL	SetSize(const TinySize& size) throw();
+		BOOL	SetPosition(const TinyPoint& pos) throw();
 		BOOL	ShowWindow(INT nCmdShow) throw();
 		BOOL	UpdateWindow() throw();
 		BOOL	GetWindowRect(LPRECT lprect);

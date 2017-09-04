@@ -31,11 +31,11 @@ namespace TinyUI
 		}
 		LPCSTR TinyVisualComboBoxHWND::RetrieveClassName()
 		{
-			return TEXT("TinyVisualDropDownHWND");
+			return TEXT("TinyVisualComboBoxHWND");
 		}
 		LPCSTR TinyVisualComboBoxHWND::RetrieveTitle()
 		{
-			return TEXT("TinyVisualDropDownHWND");
+			return TEXT("TinyVisualComboBoxHWND");
 		}
 		HICON TinyVisualComboBoxHWND::RetrieveIcon()
 		{
@@ -59,6 +59,26 @@ namespace TinyUI
 		BOOL TinyVisualComboBoxHWND::IsPopup()
 		{
 			return IsWindowVisible(m_hWND);
+		}
+		void TinyVisualComboBoxHWND::SetSelected(TinyVisualOption* spvis, BOOL bFlag)
+		{
+			if (m_pCurrent != spvis)
+			{
+				if (m_pCurrent != NULL)
+				{
+					m_pCurrent->SetSelected(FALSE);
+				}
+				m_pCurrent = spvis;
+				if (m_pCurrent != NULL)
+				{
+					m_pCurrent->SetSelected(TRUE);
+				}
+				m_pOwner->EVENT_SELECTCHANGED(m_pCurrent);
+			}
+		}
+		TinyVisualOption* TinyVisualComboBoxHWND::GetSelected()
+		{
+			return m_pCurrent;
 		}
 		BOOL TinyVisualComboBoxHWND::SetPosition(const TinyPoint& pos, const TinySize& size)
 		{
@@ -106,10 +126,6 @@ namespace TinyUI
 				}
 				spvis = m_document->GetVisual(spvis, CMD_PREV);
 			}
-		}
-		TinyVisualVScrollBar* TinyVisualComboBoxHWND::GetScrollBar()
-		{
-			return m_pVScrollbar;
 		}
 		LRESULT TinyVisualComboBoxHWND::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{

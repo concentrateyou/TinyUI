@@ -1,5 +1,6 @@
 #include "../stdafx.h"
 #include "../Common/TinyString.h"
+#include "../Render/TinyImage.h"
 #include "TinyVisualCommon.h"
 #include "TinyVisualManage.h"
 #include "TinyVisualDocument.h"
@@ -12,7 +13,7 @@
 #include "TinyVisualComboBox.h"
 #include "TinyVisualRichText.h"
 #include "TinyVisualPanel.h"
-#include "../Render/TinyImage.h"
+#include "TinyVisualNative.h"
 
 namespace TinyUI
 {
@@ -105,6 +106,10 @@ namespace TinyUI
 					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::PANEL.STR()))
 					{
 						spvis = document->Create<TinyVisualPanel>(spvisParent);
+					}
+					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::NATIVE.STR()))
+					{
+						spvis = document->Create<TinyVisualNative>(spvisParent);
 					}
 					if (spvis != NULL)
 					{

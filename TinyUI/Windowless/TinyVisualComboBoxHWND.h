@@ -19,6 +19,7 @@ namespace TinyUI
 		{
 			DECLARE_DYNAMIC(TinyVisualComboBoxHWND)
 			friend class TinyVisualOption;
+			friend class TinyVisualComboBox;
 		public:
 			TinyVisualComboBoxHWND(TinyVisualComboBox* pOwner);
 			virtual ~TinyVisualComboBoxHWND();
@@ -32,7 +33,9 @@ namespace TinyUI
 			BOOL IsPopup();
 		public:
 			BOOL SetPosition(const TinyPoint& pos, const TinySize& size);
-			TinyVisualVScrollBar* GetScrollBar();
+			void SetSelected(TinyVisualOption* spvis,BOOL bFlag);
+			TinyVisualOption* GetSelected();
+		public:
 			Event<void(ActiveEventArgs&)>	EVENT_ACTIVE;
 		public:
 			LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
@@ -40,9 +43,9 @@ namespace TinyUI
 			LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		private:
-			void AdjustOption(INT cx);
-			void AdjustLayout(INT dx, INT dy);
-			void OnPosChange(BOOL bVer, INT code, INT iOldPos, INT iNewPos);
+			void	AdjustOption(INT cx);
+			void	AdjustLayout(INT dx, INT dy);
+			void	OnPosChange(BOOL bVer, INT code, INT iOldPos, INT iNewPos);
 		private:
 			INT						m_iNewPos;
 			TinyVisualOption*		m_pCurrent;
