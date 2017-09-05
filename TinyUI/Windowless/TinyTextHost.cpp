@@ -26,8 +26,8 @@ namespace TinyUI
 		//////////////////////////////////////////////////////////////////////////
 		TinyTextHost::TinyTextHost()
 			:m_hInstance(NULL),
-			m_dwStyle(ES_MULTILINE | WS_VSCROLL | WS_HSCROLL | ES_AUTOVSCROLL | ES_AUTOHSCROLL),
 			m_password('*'),
+			m_dwStyle(ES_MULTILINE | WS_VSCROLL | WS_HSCROLL | ES_AUTOVSCROLL | ES_AUTOHSCROLL),
 			m_limit(-1)
 		{
 
@@ -47,6 +47,7 @@ namespace TinyUI
 		{
 			ASSERT(spvis);
 			m_spvis = spvis;
+			m_dwStyle = m_spvis->RetrieveStyle();
 			HDC hDC = GetDC(m_spvis->Handle());
 			m_logpixelsx = ::GetDeviceCaps(hDC, LOGPIXELSX);
 			m_logpixelsy = ::GetDeviceCaps(hDC, LOGPIXELSY);

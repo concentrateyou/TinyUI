@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "SkinWindow.h"
 
+
 IMPLEMENT_DYNAMIC(SkinWindow, TinyVisualHWND)
 SkinWindow::SkinWindow()
 {
@@ -46,6 +47,12 @@ void SkinWindow::OnInitialize()
 			}
 		}
 	}
+	visual = GetDocument()->GetVisualByName("test");
+	if (visual != NULL)
+	{
+		m_onButtonClick.Reset(new Delegate<void(EventArgs&)>(this, &SkinWindow::OnButtonClick));
+		visual->EVENT_CLICK += m_onButtonClick;
+	}
 }
 
 void SkinWindow::OnUninitialize()
@@ -69,6 +76,12 @@ void SkinWindow::OnUninitialize()
 			combobox->EVENT_SELECTCHANGED -= m_onSelectChanged;
 		}
 	}
+	visual = GetDocument()->GetVisualByName("test");
+	if (visual != NULL)
+	{
+		m_onButtonClick.Reset(new Delegate<void(EventArgs&)>(this, &SkinWindow::OnButtonClick));
+		visual->EVENT_CLICK -= m_onButtonClick;
+	}
 }
 
 void SkinWindow::OnMinimumClick(EventArgs& args)
@@ -84,4 +97,20 @@ void SkinWindow::OnCloseClick(EventArgs& args)
 void SkinWindow::OnSelectChanged(TinyVisualOption* ps)
 {
 	TRACE("бЁжа: %s\n", ps->GetText().CSTR());
+}
+void SkinWindow::OnButtonClick(EventArgs& args)
+{
+	TinyVisualRichText* txtURL = static_cast<TinyVisualRichText*>(GetDocument()->GetVisualByName("txtURL"));
+	if (txtURL != NULL)
+	{
+		TRACE("linecount:%d\n", txtURL->GetLineCount());
+		INT index = txtURL->LineIndex(0);
+		INT size = txtURL->LineLength(index);
+		/*TinyScopedArray<TCHAR> s(new TCHAR[size + 1]);
+		*reinterpret_cast<USHORT*>(&s[0]) = static_cast<USHORT>(size + 1);
+		INT s1 = txtURL->GetLine(index, s);
+		wstring val = StringToWString(s.Ptr());
+		string text= WStringToUTF8(val);
+		INT a = 0;*/
+	}
 }

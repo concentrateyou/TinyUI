@@ -111,7 +111,8 @@ namespace TinyUI
 		void TinyVisualRichText::ReplaceSel(LPCTSTR lpszNewText, BOOL bCanUndo)
 		{
 			ASSERT(m_texthost.m_ts);
-			m_texthost.m_ts->TxSendMessage(EM_REPLACESEL, (WPARAM)bCanUndo, (LPARAM)lpszNewText, NULL);
+			wstring sz = StringToWString(lpszNewText);
+			m_texthost.m_ts->TxSendMessage(EM_REPLACESEL, (WPARAM)bCanUndo, (LPARAM)sz.c_str(), NULL);
 		}
 		DWORD TinyVisualRichText::GetDefaultCharFormat(CHARFORMAT &cf)
 		{
@@ -363,6 +364,10 @@ namespace TinyUI
 		{
 
 		}
+		DWORD TinyVisualRichText::RetrieveStyle() const
+		{
+			return ES_MULTILINE | WS_VSCROLL | WS_HSCROLL | ES_AUTOVSCROLL | ES_AUTOHSCROLL;
+		}
 		TinyString TinyVisualRichText::RetrieveTag() const
 		{
 			return TinyVisualTag::RICHTEXT;
@@ -378,7 +383,10 @@ namespace TinyUI
 			}
 			TinyVisual::SetText(pzText);
 		}
-
+		TinyString TinyVisualRichText::GetText()
+		{
+			return TinyString();
+		}
 		BOOL TinyVisualRichText::OnFilter(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
 		{
 			if (uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST)

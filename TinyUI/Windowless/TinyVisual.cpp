@@ -536,6 +536,7 @@ namespace TinyUI
 			{
 				LOGFONT lf;
 				::GetObject(m_hFONT, sizeof(LOGFONT), &lf);
+				lf.lfCharSet = GB2312_CHARSET;
 				strcpy_s(lf.lfFaceName, ARRAYSIZE(lf.lfFaceName), value.STR());
 				SAFE_DELETE_OBJECT(m_hFONT);
 				m_hFONT = CreateFontIndirect(&lf);
@@ -545,6 +546,7 @@ namespace TinyUI
 			{
 				LOGFONT lf;
 				::GetObject(m_hFONT, sizeof(LOGFONT), &lf);
+				lf.lfCharSet = GB2312_CHARSET;
 				lf.lfWeight = atoi(value.STR());
 				SAFE_DELETE_OBJECT(m_hFONT);
 				m_hFONT = CreateFontIndirect(&lf);
@@ -554,6 +556,7 @@ namespace TinyUI
 			{
 				LOGFONT lf;
 				::GetObject(m_hFONT, sizeof(LOGFONT), &lf);
+				lf.lfCharSet = GB2312_CHARSET;
 				TinySize size = TinyVisualBuilder::GetSize(value);
 				lf.lfWidth = size.cx;
 				lf.lfHeight = size.cy;
@@ -565,6 +568,7 @@ namespace TinyUI
 			{
 				LOGFONT lf;
 				::GetObject(m_hFONT, sizeof(LOGFONT), &lf);
+				lf.lfCharSet = GB2312_CHARSET;
 				lf.lfItalic = FALSE;
 				if (strcasecmp(value.STR(), "italic") == 0)
 					lf.lfItalic = TRUE;

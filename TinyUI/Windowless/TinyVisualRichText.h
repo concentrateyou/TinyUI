@@ -17,8 +17,10 @@ namespace TinyUI
 			TinyVisualRichText(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:
 			virtual ~TinyVisualRichText();
+			virtual DWORD RetrieveStyle() const;
 			TinyString RetrieveTag() const OVERRIDE;
 			void SetText(LPCSTR pzText) OVERRIDE;
+			TinyString GetText();
 		public:
 			BOOL SetReadonly(BOOL bReadOnly);
 			BOOL SetMultiline(BOOL bMultiline);
