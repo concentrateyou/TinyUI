@@ -41,7 +41,10 @@
 
     <add name="ComboBoxList_bkg1" value="D:\Develop\TinyUI\skin\combobox\ComboBoxList_bkg1.png"></add>
     <add name="ComboBoxList_highlight" value="D:\Develop\TinyUI\skin\combobox\ComboBoxList_highlight.png"></add>
-    
+
+    <add name="btn_down" value="D:\Develop\TinyUI\skin\button\btn_down.png"></add>
+    <add name="btn_highlight" value="D:\Develop\TinyUI\skin\button\btn_highlight.png"></add>
+    <add name="btn_normal" value="D:\Develop\TinyUI\skin\button\btn_normal.png"></add>
 
   </image>
 </context>

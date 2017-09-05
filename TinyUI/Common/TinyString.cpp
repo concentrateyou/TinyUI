@@ -575,6 +575,11 @@ namespace TinyUI
 	{
 		return _Mystr;
 	}
+	wstring	 TinyString::ToWString()
+	{
+		string szText(_Mystr);
+		return StringToWString(szText);
+	}
 	void TinyString::Resize(size_t _Newsize)
 	{
 		if (_Newsize <= this->_Mysize)

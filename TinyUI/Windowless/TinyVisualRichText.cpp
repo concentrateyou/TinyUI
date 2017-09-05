@@ -37,57 +37,235 @@ namespace TinyUI
 			ASSERT(m_texthost.m_ts);
 			return m_texthost.ShowScrollBar(bar, fShow);
 		}
-		void TinyVisualRichText::GetText(TinyString& szText)
+		INT TinyVisualRichText::GetLineCount()
 		{
 			ASSERT(m_texthost.m_ts);
-			LONG size = GetTextLength(GTL_DEFAULT);
-			GETTEXTEX gtx = { 0 };
-			gtx.flags = GT_DEFAULT;
-			gtx.cb = size + 1;
-			gtx.codepage = CP_ACP;
-			szText.Resize(gtx.cb);
-			gtx.lpDefaultChar = NULL;
-			gtx.lpUsedDefChar = NULL;
-			m_texthost.m_ts->TxSendMessage(EM_GETTEXTEX, (WPARAM)&gtx, (LPARAM)szText.STR(), 0);
+			LRESULT lRes = 0;
+			m_texthost.m_ts->TxSendMessage(EM_GETLINECOUNT, 0, 0, &lRes);
+			return static_cast<INT>(lRes);
 		}
-		LONG TinyVisualRichText::GetTextLength(DWORD dwFlag)
+		TinyPoint TinyVisualRichText::GetCharPos(LONG lChar)
 		{
 			ASSERT(m_texthost.m_ts);
-			GETTEXTLENGTHEX gtlx = { 0 };
-			gtlx.flags = dwFlag;
-			gtlx.codepage = CP_ACP;
-			LRESULT lResult = 0;
-			m_texthost.m_ts->TxSendMessage(EM_GETTEXTLENGTHEX, (WPARAM)&gtlx, 0, &lResult);
-			return static_cast<LONG>(lResult);
+			TinyPoint pos;
+			m_texthost.m_ts->TxSendMessage(EM_POSFROMCHAR, (WPARAM)&pos, (LPARAM)lChar, NULL);
+			return pos;
 		}
-		void TinyVisualRichText::SetText(const TinyString& szText)
+		INT TinyVisualRichText::GetLine(INT nIndex, LPTSTR lpszBuffer)
 		{
 			ASSERT(m_texthost.m_ts);
-			SetSel(0, -1);
-			ReplaceSel(szText, FALSE);
+			LRESULT lRes = 0;
+			m_texthost.m_ts->TxSendMessage(EM_GETLINE, nIndex, (LPARAM)lpszBuffer, &lRes);
+			return static_cast<INT>(lRes);
 		}
-		INT TinyVisualRichText::SetSel(CHARRANGE &cr)
+		INT TinyVisualRichText::GetLine(INT nIndex, LPTSTR lpszBuffer, INT nMaxLength)
 		{
 			ASSERT(m_texthost.m_ts);
-			LRESULT lResult;
-			m_texthost.m_ts->TxSendMessage(EM_EXSETSEL, 0, (LPARAM)&cr, &lResult);
-			return (INT)lResult;
+			ASSERT(sizeof(nMaxLength) <= nMaxLength * sizeof(TCHAR) && nMaxLength > 0);
+			*(LPINT)lpszBuffer = nMaxLength;
+			LRESULT lRes = 0;
+			m_texthost.m_ts->TxSendMessage(EM_GETLINE, (WPARAM)nIndex, (LPARAM)lpszBuffer, &lRes);
+			return static_cast<INT>(lRes);
 		}
-		INT TinyVisualRichText::SetSel(LONG nStartChar, LONG nEndChar)
+		INT TinyVisualRichText::LineIndex(INT nLine)
+		{
+			ASSERT(m_texthost.m_ts);
+			LRESULT lRes = 0;
+			m_texthost.m_ts->TxSendMessage(EM_LINEINDEX, nLine, 0, &lRes);
+			return static_cast<INT>(lRes);
+		}
+
+		INT TinyVisualRichText::LineLength(INT nLine)
+		{
+			ASSERT(m_texthost.m_ts);
+			LRESULT lRes = 0;
+			m_texthost.m_ts->TxSendMessage(EM_LINELENGTH, nLine, 0, &lRes);
+			return static_cast<INT>(lRes);
+		}
+		void TinyVisualRichText::GetSel(LONG& nStartChar, LONG& nEndChar)
+		{
+			ASSERT(m_texthost.m_ts);
+			CHARRANGE cr;
+			m_texthost.m_ts->TxSendMessage(EM_EXGETSEL, 0, (LPARAM)&cr, NULL);
+			nStartChar = cr.cpMin;
+			nEndChar = cr.cpMax;
+		}
+		void TinyVisualRichText::GetSel(CHARRANGE &cr)
+		{
+			ASSERT(m_texthost.m_ts);
+			m_texthost.m_ts->TxSendMessage(EM_EXGETSEL, 0, (LPARAM)&cr, NULL);
+		}
+		void TinyVisualRichText::SetSel(LONG nStartChar, LONG nEndChar)
 		{
 			ASSERT(m_texthost.m_ts);
 			CHARRANGE cr;
 			cr.cpMin = nStartChar;
 			cr.cpMax = nEndChar;
-			LRESULT lResult;
-			m_texthost.m_ts->TxSendMessage(EM_EXSETSEL, 0, (LPARAM)&cr, &lResult);
-			return (INT)lResult;
+			m_texthost.m_ts->TxSendMessage(EM_EXSETSEL, 0, (LPARAM)&cr, NULL);
 		}
-		void TinyVisualRichText::ReplaceSel(const TinyString& szText, BOOL bCanUndo)
+		void TinyVisualRichText::SetSel(CHARRANGE &cr)
 		{
 			ASSERT(m_texthost.m_ts);
-			m_texthost.m_ts->TxSendMessage(EM_REPLACESEL, (WPARAM)bCanUndo, (LPARAM)szText.CSTR(), NULL);
+			m_texthost.m_ts->TxSendMessage(EM_EXSETSEL, 0, (LPARAM)&cr, NULL);
 		}
+		void TinyVisualRichText::ReplaceSel(LPCTSTR lpszNewText, BOOL bCanUndo)
+		{
+			ASSERT(m_texthost.m_ts);
+			m_texthost.m_ts->TxSendMessage(EM_REPLACESEL, (WPARAM)bCanUndo, (LPARAM)lpszNewText, NULL);
+		}
+		DWORD TinyVisualRichText::GetDefaultCharFormat(CHARFORMAT &cf)
+		{
+			ASSERT(m_texthost.m_ts);
+			cf.cbSize = sizeof(CHARFORMAT);
+			LRESULT lRes = 0;
+			m_texthost.m_ts->TxSendMessage(EM_GETCHARFORMAT, 0, (LPARAM)&cf, &lRes);
+			return static_cast<DWORD>(lRes);
+		}
+
+		DWORD TinyVisualRichText::GetDefaultCharFormat(CHARFORMAT2 &cf)
+		{
+			ASSERT(m_texthost.m_ts);
+			LRESULT lRes = 0;
+			cf.cbSize = sizeof(CHARFORMAT2);
+			m_texthost.m_ts->TxSendMessage(EM_GETCHARFORMAT, 0, (LPARAM)&cf, &lRes);
+			return static_cast<DWORD>(lRes);
+		}
+
+		DWORD TinyVisualRichText::GetSelectionCharFormat(CHARFORMAT &cf)
+		{
+			ASSERT(m_texthost.m_ts);
+			LRESULT lRes = 0;
+			cf.cbSize = sizeof(CHARFORMAT);
+			m_texthost.m_ts->TxSendMessage(EM_GETCHARFORMAT, 1, (LPARAM)&cf, &lRes);
+			return static_cast<DWORD>(lRes);
+		}
+
+		DWORD TinyVisualRichText::GetSelectionCharFormat(CHARFORMAT2 &cf)
+		{
+			ASSERT(m_texthost.m_ts);
+			LRESULT lRes = 0;
+			cf.cbSize = sizeof(CHARFORMAT2);
+			m_texthost.m_ts->TxSendMessage(EM_GETCHARFORMAT, 1, (LPARAM)&cf, &lRes);
+			return static_cast<DWORD>(lRes);
+		}
+
+		DWORD TinyVisualRichText::GetParaFormat(PARAFORMAT &pf)
+		{
+			ASSERT(m_texthost.m_ts);
+			LRESULT lRes = 0;
+			pf.cbSize = sizeof(PARAFORMAT);
+			m_texthost.m_ts->TxSendMessage(EM_GETPARAFORMAT, 0, (LPARAM)&pf, &lRes);
+			return static_cast<DWORD>(lRes);
+		}
+
+		DWORD TinyVisualRichText::GetParaFormat(PARAFORMAT2 &pf)
+		{
+			ASSERT(m_texthost.m_ts);;
+			LRESULT lRes = 0;
+			pf.cbSize = sizeof(PARAFORMAT2);
+			m_texthost.m_ts->TxSendMessage(EM_GETPARAFORMAT, 0, (LPARAM)&pf, &lRes);
+			return static_cast<DWORD>(lRes);
+		}
+
+		BOOL TinyVisualRichText::SetParaFormat(PARAFORMAT &pf)
+		{
+			ASSERT(m_texthost.m_ts);
+			LRESULT lRes = 0;
+			pf.cbSize = sizeof(PARAFORMAT);
+			m_texthost.m_ts->TxSendMessage(EM_SETPARAFORMAT, 0, (LPARAM)&pf, &lRes);
+			return static_cast<BOOL>(lRes);
+		}
+		BOOL TinyVisualRichText::SetParaFormat(PARAFORMAT2 &pf)
+		{
+			ASSERT(m_texthost.m_ts);
+			LRESULT lRes = 0;
+			pf.cbSize = sizeof(PARAFORMAT2);
+			m_texthost.m_ts->TxSendMessage(EM_SETPARAFORMAT, 0, (LPARAM)&pf, &lRes);
+			return static_cast<BOOL>(lRes);
+		}
+		INT TinyVisualRichText::GetTextRange(INT nFirst, INT nLast, TinyString& refString)
+		{
+			ASSERT(m_texthost.m_ts);
+			TEXTRANGE textRange;
+			textRange.chrg.cpMin = nFirst;
+			textRange.chrg.cpMax = nLast;
+			INT nLength = INT(nLast - nFirst + 1);
+			ASSERT(nLength > 0);
+			textRange.lpstrText = refString.Substring(nFirst, nLength).STR();
+			m_texthost.m_ts->TxSendMessage(EM_GETTEXTRANGE, 0, (LPARAM)&textRange, reinterpret_cast<LRESULT*>(&nLength));
+			return (INT)nLength;
+		}
+		LONG TinyVisualRichText::GetSelText(LPSTR lpBuf)
+		{
+			ASSERT(m_texthost.m_ts);
+			LRESULT lRes = 0;
+			m_texthost.m_ts->TxSendMessage(EM_GETSELTEXT, 0, (LPARAM)lpBuf, &lRes);
+			return static_cast<LONG>(lRes);
+		}
+		TinyString TinyVisualRichText::GetSelText()
+		{
+			ASSERT(m_texthost.m_ts);
+			CHARRANGE cr;
+			cr.cpMin = cr.cpMax = 0;
+			m_texthost.m_ts->TxSendMessage(EM_EXGETSEL, 0, (LPARAM)&cr, NULL);
+			TinyString strText(cr.cpMax - cr.cpMin + 1);
+			m_texthost.m_ts->TxSendMessage(EM_GETSELTEXT, 0, (LPARAM)strText.STR(), NULL);
+			return TinyString(strText);
+		}
+		BOOL TinyVisualRichText::SetDefaultCharFormat(CHARFORMAT &cf)
+		{
+			ASSERT(m_texthost.m_ts);
+			cf.cbSize = sizeof(CHARFORMAT);
+			LRESULT lRes = 0;
+			m_texthost.m_ts->TxSendMessage(EM_SETCHARFORMAT, 0, (LPARAM)&cf, &lRes);
+			return static_cast<BOOL>(lRes);
+		}
+
+		BOOL TinyVisualRichText::SetDefaultCharFormat(CHARFORMAT2 &cf)
+		{
+			ASSERT(m_texthost.m_ts);
+			cf.cbSize = sizeof(CHARFORMAT2);
+			LRESULT lRes = 0;
+			m_texthost.m_ts->TxSendMessage(EM_SETCHARFORMAT, 0, (LPARAM)&cf, &lRes);
+			return static_cast<BOOL>(lRes);
+		}
+
+		BOOL TinyVisualRichText::SetSelectionCharFormat(CHARFORMAT &cf)
+		{
+			ASSERT(m_texthost.m_ts);
+			cf.cbSize = sizeof(CHARFORMAT);
+			LRESULT lRes = 0;
+			m_texthost.m_ts->TxSendMessage(EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf, &lRes);
+			return static_cast<BOOL>(lRes);
+		}
+
+		BOOL TinyVisualRichText::SetSelectionCharFormat(CHARFORMAT2 &cf)
+		{
+			ASSERT(m_texthost.m_ts);
+			LRESULT lRes = 0;
+			cf.cbSize = sizeof(CHARFORMAT2);
+			m_texthost.m_ts->TxSendMessage(EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf, &lRes);
+			return static_cast<BOOL>(lRes);
+		}
+
+		BOOL TinyVisualRichText::SetWordCharFormat(CHARFORMAT &cf)
+		{
+			ASSERT(m_texthost.m_ts);
+			LRESULT lRes = 0;
+			cf.cbSize = sizeof(CHARFORMAT);
+			m_texthost.m_ts->TxSendMessage(EM_SETCHARFORMAT, SCF_SELECTION | SCF_WORD, (LPARAM)&cf, &lRes);
+			return static_cast<BOOL>(lRes);
+		}
+
+		BOOL TinyVisualRichText::SetWordCharFormat(CHARFORMAT2 &cf)
+		{
+			ASSERT(m_texthost.m_ts);
+			LRESULT lRes = 0;
+			cf.cbSize = sizeof(CHARFORMAT2);
+			m_texthost.m_ts->TxSendMessage(EM_SETCHARFORMAT, SCF_SELECTION | SCF_WORD, (LPARAM)&cf, &lRes);
+			return static_cast<BOOL>(lRes);
+		}
+
 		HRESULT TinyVisualRichText::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)
 		{
 			ASSERT(m_texthost.m_ts);
@@ -189,6 +367,18 @@ namespace TinyUI
 		{
 			return TinyVisualTag::RICHTEXT;
 		}
+
+		void TinyVisualRichText::SetText(LPCSTR pzText)
+		{
+			if (m_texthost.m_ts != NULL)
+			{
+				string szText(pzText);
+				wstring val = StringToWString(pzText);
+				m_texthost.m_ts->TxSetText(val.c_str());
+			}
+			TinyVisual::SetText(pzText);
+		}
+
 		BOOL TinyVisualRichText::OnFilter(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
 		{
 			if (uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST)

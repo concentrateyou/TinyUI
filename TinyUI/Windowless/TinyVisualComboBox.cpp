@@ -209,7 +209,7 @@ namespace TinyUI
 			{
 				TinyVisualComboBoxHWND*	ps = static_cast<TinyVisualComboBoxHWND*>(pHWND);
 				TinyVisualOption* option = ps->GetSelected();
-				if (option != NULL)
+				if (option != NULL && option != this)
 				{
 					option->m_dwFlag = NORMAL;
 				}

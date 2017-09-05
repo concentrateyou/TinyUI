@@ -85,6 +85,10 @@ namespace TinyUI
 			{
 				canvas.DrawImage(*image, clip, 0, 0, image->GetSize().cx, image->GetSize().cy);
 			}
+			if (m_dwFlag == DOWN)
+			{
+				clip.OffsetRect(1, 1);
+			}
 			canvas.DrawString(GetText(), clip, m_textAlign);
 			return TRUE;
 		}
@@ -95,7 +99,6 @@ namespace TinyUI
 			TinyRectangle s = m_document->GetWindowRect(this);
 			m_document->Redraw(&s);
 			m_document->SetCapture(this);
-			RECT rect = m_rectangle;
 			return TinyVisual::OnLButtonDown(pos, dwFlags);
 		}
 		HRESULT	TinyVisualButton::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)
@@ -121,6 +124,14 @@ namespace TinyUI
 			m_document->SetCapture(NULL);
 			EVENT_CLICK(EventArgs());
 			return TinyVisual::OnLButtonUp(pos, dwFlags);
+		}
+		HRESULT	TinyVisualButton::OnLButtonDBClick(const TinyPoint& pos, DWORD dwFlags)
+		{
+			m_dwFlag = DOWN;
+			TinyRectangle s = m_document->GetWindowRect(this);
+			m_document->Redraw(&s);
+			EVENT_DBCLICK(EventArgs());
+			return TinyVisual::OnLButtonDown(pos, dwFlags);
 		}
 	}
 }

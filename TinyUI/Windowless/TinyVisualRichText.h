@@ -18,17 +18,40 @@ namespace TinyUI
 		public:
 			virtual ~TinyVisualRichText();
 			TinyString RetrieveTag() const OVERRIDE;
+			void SetText(LPCSTR pzText) OVERRIDE;
 		public:
 			BOOL SetReadonly(BOOL bReadOnly);
 			BOOL SetMultiline(BOOL bMultiline);
 			BOOL SetPassword(BOOL bPassword, CHAR s);
 			BOOL ShowScrollBar(INT bar, BOOL fShow);
-			void GetText(TinyString& szText);
-			void SetText(const TinyString& szText);
-			LONG GetTextLength(DWORD dwFlag);
-			INT SetSel(CHARRANGE &cr);
-			INT SetSel(LONG nStartChar, LONG nEndChar);
-			void ReplaceSel(const TinyString& szText, BOOL bCanUndo);
+			INT GetLineCount();
+			TinyPoint GetCharPos(LONG lChar);
+			INT GetLine(INT nIndex, LPTSTR lpszBuffer);
+			INT GetLine(INT nIndex, LPTSTR lpszBuffer, INT nMaxLength);
+			INT LineIndex(INT nLine);
+			INT LineLength(INT nLine);
+			void GetSel(LONG& nStartChar, LONG& nEndChar);
+			void GetSel(CHARRANGE &cr);
+			void SetSel(LONG nStartChar, LONG nEndChar);
+			void SetSel(CHARRANGE &cr);
+			void ReplaceSel(LPCTSTR lpszNewText, BOOL bCanUndo = FALSE);
+			DWORD GetDefaultCharFormat(CHARFORMAT &cf);
+			DWORD GetDefaultCharFormat(CHARFORMAT2 &cf);
+			DWORD GetSelectionCharFormat(CHARFORMAT &cf);
+			DWORD GetSelectionCharFormat(CHARFORMAT2 &cf);
+			DWORD GetParaFormat(PARAFORMAT &pf);
+			DWORD GetParaFormat(PARAFORMAT2 &pf);
+			BOOL SetParaFormat(PARAFORMAT &pf);
+			BOOL SetParaFormat(PARAFORMAT2 &pf);
+			BOOL SetDefaultCharFormat(CHARFORMAT &cf);
+			BOOL SetDefaultCharFormat(CHARFORMAT2 &cf);
+			BOOL SetSelectionCharFormat(CHARFORMAT &cf);
+			BOOL SetSelectionCharFormat(CHARFORMAT2 &cf);
+			BOOL SetWordCharFormat(CHARFORMAT &cf);
+			BOOL SetWordCharFormat(CHARFORMAT2 &cf);
+			INT GetTextRange(INT nFirst, INT nLast, TinyString& refString);
+			LONG GetSelText(LPSTR lpBuf);
+			TinyString GetSelText();
 		protected:
 			BOOL	OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT OnCreate() OVERRIDE;

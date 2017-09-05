@@ -11,39 +11,38 @@ namespace TinyUI
 		IMPLEMENT_DYNAMIC(TinyVisualNative, TinyVisual);
 
 		TinyVisualNative::TinyVisualNative(TinyVisual* spvisParent, TinyVisualDocument* vtree)
-			:TinyVisual(spvisParent, vtree)
+			:TinyVisual(spvisParent, vtree),
+			m_pWND(NULL)
 		{
 
 		}
 
 		HRESULT TinyVisualNative::OnCreate()
 		{
-			m_control.Create(m_document->GetVisualHWND()->Handle(), 0, 0, 1, 1, FALSE);
 			return TinyVisual::OnCreate();
 		}
 
 		HRESULT TinyVisualNative::OnDestory()
 		{
-			m_control.DestroyWindow();
 			return TinyVisual::OnDestory();
 		}
 
 		HRESULT TinyVisualNative::OnInitialize()
 		{
-			TinyRectangle rectangle = this->GetWindowRect();
-			m_control.SetPosition(rectangle.Position());
-			m_control.SetSize(rectangle.Size());
 			return TinyVisual::OnInitialize();
 		}
 
-		TinyControl& TinyVisualNative::GetNative()
+		TinyControl* TinyVisualNative::GetNativeWND()
 		{
-			return m_control;
+			return m_pWND;
 		}
 
 		void TinyVisualNative::SetVisible(BOOL visible)
 		{
-			ShowWindow(m_control.Handle(), visible ? SW_SHOW : SW_HIDE);
+			if (m_pWND != NULL)
+			{
+				ShowWindow(m_pWND->Handle(), visible ? SW_SHOW : SW_HIDE);
+			}
 			TinyVisual::SetVisible(visible);
 		}
 
@@ -53,7 +52,7 @@ namespace TinyUI
 		}
 		TinyString TinyVisualNative::RetrieveTag() const
 		{
-			return TinyVisualTag::NATIVE;
+			return TinyVisualTag::NATIVEWND;
 		}
 		BOOL TinyVisualNative::SetProperty(const TinyString& name, const TinyString& value)
 		{
@@ -63,15 +62,32 @@ namespace TinyUI
 		void TinyVisualNative::SetPosition(const TinyPoint& pos)
 		{
 			TinyVisual::SetPosition(pos);
-
+			if (m_pWND != NULL)
+			{
+				TinyRectangle rectangle = this->GetWindowRect();
+				m_pWND->SetPosition(rectangle.Position());
+			}
 		}
 
 		void TinyVisualNative::SetSize(const TinySize& size)
 		{
 			TinyVisual::SetSize(size);
-
+			if (m_pWND != NULL)
+			{
+				TinyRectangle rectangle = this->GetWindowRect();
+				m_pWND->SetSize(rectangle.Size());
+			}
 		}
-
+		void TinyVisualNative::SetNativeWND(TinyControl* pWND)
+		{
+			m_pWND = pWND;
+			if (m_pWND != NULL)
+			{
+				TinyRectangle rectangle = this->GetWindowRect();
+				m_pWND->SetPosition(rectangle.Position());
+				m_pWND->SetSize(rectangle.Size());
+			}
+		}
 		BOOL TinyVisualNative::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
 			return TRUE;

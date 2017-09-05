@@ -107,7 +107,7 @@ namespace TinyUI
 					{
 						spvis = document->Create<TinyVisualPanel>(spvisParent);
 					}
-					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::NATIVE.STR()))
+					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::NATIVEWND.STR()))
 					{
 						spvis = document->Create<TinyVisualNative>(spvisParent);
 					}

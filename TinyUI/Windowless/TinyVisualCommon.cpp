@@ -86,8 +86,9 @@ namespace TinyUI
 		const TinyString TinyVisualTag::COMBOBOX = TEXT("combobox");
 		const TinyString TinyVisualTag::OPTION = TEXT("option");
 		const TinyString TinyVisualTag::RICHTEXT = TEXT("richtext");
+		const TinyString TinyVisualTag::TEXTBOX = TEXT("textbox");
 		const TinyString TinyVisualTag::STRETCH = TEXT("stretch");
-		const TinyString TinyVisualTag::NATIVE = TEXT("native");
+		const TinyString TinyVisualTag::NATIVEWND = TEXT("nativeWND");
 		//////////////////////////////////////////////////////////////////////////
 		TinyVisualDC::TinyVisualDC(HWND hWND)
 			:m_hWND(hWND),

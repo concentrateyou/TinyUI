@@ -108,6 +108,8 @@ namespace TinyUI
 							return FALSE;
 						if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE | TXTBIT_EXTENTCHANGE, TRUE)))
 							return FALSE;
+						TinyString val = m_spvis->GetText();
+						m_ts->TxSetText(val.ToWString().c_str());
 						return TRUE;
 					}
 				}
@@ -260,11 +262,15 @@ namespace TinyUI
 			switch (fnBar)
 			{
 			case SB_VERT:
+			{
 				m_spvis->m_vscroll->SetVisible(fShow);
-				break;
+			}
+			break;
 			case SB_HORZ:
+			{
 				m_spvis->m_hscroll->SetVisible(fShow);
-				break;
+			}
+			break;
 			}
 			m_rectangle = m_spvis->GetWindowRect();
 			if (m_spvis->m_vscroll->IsVisible() && !m_spvis->m_hscroll->IsVisible())
@@ -300,11 +306,20 @@ namespace TinyUI
 			switch (fnBar)
 			{
 			case SB_VERT:
-				m_spvis->m_vscroll->SetScrollInfo(nMinPos, nMaxPos, m_spvis->GetSize().cy, m_spvis->m_vscroll->GetScrollPos());
-				break;
+			{
+				LONG lPage = 0;
+				m_ts->TxGetVScroll(NULL, NULL, NULL, &lPage, NULL);
+				m_spvis->m_vscroll->SetScrollInfo(nMinPos, nMaxPos, lPage, m_spvis->m_vscroll->GetScrollPos());
+			}
+			break;
 			case SB_HORZ:
-				m_spvis->m_hscroll->SetScrollInfo(nMinPos, nMaxPos, m_spvis->GetSize().cx, m_spvis->m_hscroll->GetScrollPos());
-				break;
+			{
+				LONG lMin = 0;
+				LONG lPage = 0;
+				m_ts->TxGetHScroll(NULL, NULL, NULL, &lPage, NULL);
+				m_spvis->m_hscroll->SetScrollInfo(nMinPos, nMaxPos, lPage, m_spvis->m_hscroll->GetScrollPos());
+			}
+			break;
 			}
 			return S_OK;
 		}

@@ -126,6 +126,7 @@ namespace TinyUI
 			BOOL				IsProperty(const TinyString& name);
 		public:
 			Event<void(EventArgs&)>			EVENT_CLICK;
+			Event<void(EventArgs&)>			EVENT_DBCLICK;
 			Event<void(MouseEventArgs&)>	EVENT_MOUSEMOVE;
 			Event<void(MouseEventArgs&)>	EVENT_MOUSEWHEEL;
 			Event<void(MouseEventArgs&)>	EVENT_MOUSEDOWN;

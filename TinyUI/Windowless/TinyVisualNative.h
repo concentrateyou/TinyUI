@@ -22,7 +22,9 @@ namespace TinyUI
 			void SetPosition(const TinyPoint& pos) OVERRIDE;
 			void SetSize(const TinySize& size) OVERRIDE;
 			void SetVisible(BOOL visible) OVERRIDE;
-			TinyControl& GetNative();
+		public:
+			void SetNativeWND(TinyControl* control);
+			TinyControl* GetNativeWND();
 		protected:
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT OnCreate() OVERRIDE;
@@ -33,7 +35,7 @@ namespace TinyUI
 			HRESULT	OnMouseMove(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
 			HRESULT	OnLButtonUp(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
 		private:
-			TinyControl	m_control;
+			TinyControl*	m_pWND;
 		};
 	}
 }
