@@ -20,23 +20,30 @@ namespace TinyUI
 			virtual DWORD RetrieveStyle() const;
 			TinyString RetrieveTag() const OVERRIDE;
 			void SetText(LPCSTR pzText) OVERRIDE;
-			TinyString GetText();
 		public:
 			BOOL SetReadonly(BOOL bReadOnly);
 			BOOL SetMultiline(BOOL bMultiline);
 			BOOL SetPassword(BOOL bPassword, CHAR s);
 			BOOL ShowScrollBar(INT bar, BOOL fShow);
 			INT GetLineCount();
-			TinyPoint GetCharPos(LONG lChar);
 			INT GetLine(INT nIndex, LPTSTR lpszBuffer);
 			INT GetLine(INT nIndex, LPTSTR lpszBuffer, INT nMaxLength);
 			INT LineIndex(INT nLine);
 			INT LineLength(INT nLine);
+			INT GetTextRange(INT nFirst, INT nLast, wstring& wszText);
+			LONG GetSelText(LPWSTR lpBuf);
+			string GetSelText();
 			void GetSel(LONG& nStartChar, LONG& nEndChar);
 			void GetSel(CHARRANGE &cr);
 			void SetSel(LONG nStartChar, LONG nEndChar);
 			void SetSel(CHARRANGE &cr);
 			void ReplaceSel(LPCTSTR lpszNewText, BOOL bCanUndo = FALSE);
+			void LimitText(LONG nChars = 0);
+			TinyPoint GetCharPos(LONG lChar);
+			TinyPoint PosFromChar(UINT nChar);
+			LONG LineFromChar(LONG nIndex);
+			INT CharFromPos(TinyPoint pt);
+			LONG GetLimitText();
 			DWORD GetDefaultCharFormat(CHARFORMAT &cf);
 			DWORD GetDefaultCharFormat(CHARFORMAT2 &cf);
 			DWORD GetSelectionCharFormat(CHARFORMAT &cf);
@@ -51,11 +58,9 @@ namespace TinyUI
 			BOOL SetSelectionCharFormat(CHARFORMAT2 &cf);
 			BOOL SetWordCharFormat(CHARFORMAT &cf);
 			BOOL SetWordCharFormat(CHARFORMAT2 &cf);
-			INT GetTextRange(INT nFirst, INT nLast, TinyString& refString);
-			LONG GetSelText(LPSTR lpBuf);
-			TinyString GetSelText();
 		protected:
 			BOOL	OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
+			BOOL	OnFilter(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult) OVERRIDE;
 			HRESULT OnCreate() OVERRIDE;
 			HRESULT OnInitialize() OVERRIDE;
 			HRESULT OnDestory() OVERRIDE;
@@ -69,7 +74,6 @@ namespace TinyUI
 			HRESULT OnSetCursor(HWND hWND, DWORD dwHitTest, DWORD dwMessage) OVERRIDE;
 			HRESULT	OnFocus(BOOL bFlag) OVERRIDE;
 			HRESULT SendMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes) OVERRIDE;
-			BOOL	OnFilter(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult) OVERRIDE;
 		public:
 			virtual void OnPosChange(BOOL, INT, INT, INT);
 		private:

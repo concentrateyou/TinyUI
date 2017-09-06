@@ -46,17 +46,15 @@ namespace TinyUI
 		BOOL SetPunctuation(UINT fType, PUNCTUATION* lpPunc);
 		INT GetLine(INT nIndex, LPTSTR lpszBuffer) const;
 		INT GetLine(INT nIndex, _Out_cap_post_count_(nMaxLength, return) LPTSTR lpszBuffer, INT nMaxLength) const;
-
 		BOOL CanPaste(UINT nFormat = 0) const;
 		void GetSel(LONG& nStartChar, LONG& nEndChar) const;
 		void GetSel(CHARRANGE &cr) const;
+		void SetSel(LONG nStartChar, LONG nEndChar);
+		void SetSel(CHARRANGE &cr);
 		void LimitText(LONG nChars = 0);
 		LONG LineFromChar(LONG nIndex) const;
 		TinyPoint PosFromChar(UINT nChar) const;
 		INT CharFromPos(TinyPoint pt) const;
-
-		void SetSel(LONG nStartChar, LONG nEndChar);
-		void SetSel(CHARRANGE &cr);
 		DWORD GetDefaultCharFormat(CHARFORMAT &cf) const;
 		DWORD GetDefaultCharFormat(CHARFORMAT2 &cf) const;
 		DWORD GetSelectionCharFormat(CHARFORMAT &cf) const;

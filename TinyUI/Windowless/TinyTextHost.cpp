@@ -109,8 +109,11 @@ namespace TinyUI
 							return FALSE;
 						if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE | TXTBIT_EXTENTCHANGE, TRUE)))
 							return FALSE;
-						TinyString val = m_spvis->GetText();
-						m_ts->TxSetText(val.ToWString().c_str());
+						TinyString sz = m_spvis->GetText();
+						if (!sz.IsEmpty())
+						{
+							m_ts->TxSetText(sz.ToWString().c_str());
+						}
 						return TRUE;
 					}
 				}

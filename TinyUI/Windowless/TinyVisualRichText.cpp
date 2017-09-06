@@ -114,6 +114,40 @@ namespace TinyUI
 			wstring sz = StringToWString(lpszNewText);
 			m_texthost.m_ts->TxSendMessage(EM_REPLACESEL, (WPARAM)bCanUndo, (LPARAM)sz.c_str(), NULL);
 		}
+		LONG TinyVisualRichText::LineFromChar(LONG nIndex)
+		{
+			ASSERT(m_texthost.m_ts);
+			LRESULT lRes = 0;
+			m_texthost.m_ts->TxSendMessage(EM_EXLINEFROMCHAR, 0, nIndex, &lRes);
+			return static_cast<LONG>(lRes);
+		}
+		TinyPoint TinyVisualRichText::PosFromChar(UINT nChar)
+		{
+			ASSERT(m_texthost.m_ts);
+			POINTL pos;
+			m_texthost.m_ts->TxSendMessage(EM_POSFROMCHAR, (WPARAM)&pos, nChar, NULL);
+			return TinyPoint(pos.x, pos.y);
+		}
+		INT TinyVisualRichText::CharFromPos(TinyPoint pt)
+		{
+			ASSERT(m_texthost.m_ts);
+			LRESULT lRes = 0;
+			POINTL ptl = { pt.x, pt.y };
+			m_texthost.m_ts->TxSendMessage(EM_CHARFROMPOS, 0, (LPARAM)&ptl, &lRes);
+			return static_cast<INT>(lRes);
+		}
+		void TinyVisualRichText::LimitText(LONG nChars)
+		{
+			ASSERT(m_texthost.m_ts);
+			m_texthost.m_ts->TxSendMessage(EM_EXLIMITTEXT, 0, nChars, NULL);
+		}
+		LONG TinyVisualRichText::GetLimitText()
+		{
+			ASSERT(m_texthost.m_ts);
+			LRESULT lRes = 0;
+			m_texthost.m_ts->TxSendMessage(EM_GETLIMITTEXT, 0, 0L, &lRes);
+			return static_cast<INT>(lRes);
+		}
 		DWORD TinyVisualRichText::GetDefaultCharFormat(CHARFORMAT &cf)
 		{
 			ASSERT(m_texthost.m_ts);
@@ -184,34 +218,38 @@ namespace TinyUI
 			m_texthost.m_ts->TxSendMessage(EM_SETPARAFORMAT, 0, (LPARAM)&pf, &lRes);
 			return static_cast<BOOL>(lRes);
 		}
-		INT TinyVisualRichText::GetTextRange(INT nFirst, INT nLast, TinyString& refString)
+		INT TinyVisualRichText::GetTextRange(INT nFirst, INT nLast, wstring& wszText)
 		{
 			ASSERT(m_texthost.m_ts);
-			TEXTRANGE textRange;
+			TEXTRANGEW textRange;
 			textRange.chrg.cpMin = nFirst;
 			textRange.chrg.cpMax = nLast;
 			INT nLength = INT(nLast - nFirst + 1);
 			ASSERT(nLength > 0);
-			textRange.lpstrText = refString.Substring(nFirst, nLength).STR();
-			m_texthost.m_ts->TxSendMessage(EM_GETTEXTRANGE, 0, (LPARAM)&textRange, reinterpret_cast<LRESULT*>(&nLength));
-			return (INT)nLength;
+			wszText.resize(nLength);
+			textRange.lpstrText = &wszText[0];
+			LRESULT lRes = 0;
+			m_texthost.m_ts->TxSendMessage(EM_GETTEXTRANGE, 0, (LPARAM)&textRange, &lRes);
+			return static_cast<INT>(lRes);
 		}
-		LONG TinyVisualRichText::GetSelText(LPSTR lpBuf)
+		LONG TinyVisualRichText::GetSelText(LPWSTR lpBuf)
 		{
 			ASSERT(m_texthost.m_ts);
 			LRESULT lRes = 0;
 			m_texthost.m_ts->TxSendMessage(EM_GETSELTEXT, 0, (LPARAM)lpBuf, &lRes);
 			return static_cast<LONG>(lRes);
 		}
-		TinyString TinyVisualRichText::GetSelText()
+		string TinyVisualRichText::GetSelText()
 		{
 			ASSERT(m_texthost.m_ts);
 			CHARRANGE cr;
 			cr.cpMin = cr.cpMax = 0;
 			m_texthost.m_ts->TxSendMessage(EM_EXGETSEL, 0, (LPARAM)&cr, NULL);
-			TinyString strText(cr.cpMax - cr.cpMin + 1);
-			m_texthost.m_ts->TxSendMessage(EM_GETSELTEXT, 0, (LPARAM)strText.STR(), NULL);
-			return TinyString(strText);
+			wstring wszText;
+			wszText.resize(cr.cpMax - cr.cpMin + 1);
+			m_texthost.m_ts->TxSendMessage(EM_GETSELTEXT, 0, (LPARAM)wszText.c_str(), NULL);
+			string szText = WStringToString(wszText);
+			return szText;
 		}
 		BOOL TinyVisualRichText::SetDefaultCharFormat(CHARFORMAT &cf)
 		{
@@ -383,10 +421,6 @@ namespace TinyUI
 			}
 			TinyVisual::SetText(pzText);
 		}
-		TinyString TinyVisualRichText::GetText()
-		{
-			return TinyString();
-		}
 		BOOL TinyVisualRichText::OnFilter(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
 		{
 			if (uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST)
@@ -405,13 +439,16 @@ namespace TinyUI
 		}
 		BOOL TinyVisualRichText::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
-			ASSERT(m_texthost.m_ts);
-			TinyClipCanvas canvas(hDC, this, rcPaint);
-			::SetGraphicsMode(canvas, GM_COMPATIBLE);
-			TinyRectangle clip;
-			m_texthost.TxGetClientRect(&clip);
-			m_texthost.m_ts->TxDraw(DVASPECT_CONTENT, 0, NULL, NULL, canvas, NULL, reinterpret_cast<LPCRECTL>(&clip), NULL, reinterpret_cast<LPRECT>(&clip), NULL, 0, 0);
-			return TRUE;
+			if (m_texthost.m_ts != NULL)
+			{
+				TinyClipCanvas canvas(hDC, this, rcPaint);
+				::SetGraphicsMode(canvas, GM_COMPATIBLE);
+				TinyRectangle clip;
+				m_texthost.TxGetClientRect(&clip);
+				m_texthost.m_ts->TxDraw(DVASPECT_CONTENT, 0, NULL, NULL, canvas, NULL, reinterpret_cast<LPCRECTL>(&clip), NULL, reinterpret_cast<LPRECT>(&clip), NULL, 0, 0);
+				return TRUE;
+			}
+			return FALSE;
 		}
 		HRESULT TinyVisualRichText::OnCreate()
 		{
@@ -441,27 +478,29 @@ namespace TinyUI
 		}
 		void TinyVisualRichText::OnPosChange(BOOL bVer, INT code, INT iOldPos, INT iNewPos)
 		{
-			ASSERT(m_texthost.m_ts);
-			if (bVer)
+			if (m_texthost.m_ts != NULL)
 			{
-				LRESULT lRes = 0;
-				m_texthost.m_ts->TxSendMessage(WM_VSCROLL, MAKEWPARAM(code, iNewPos), 0, &lRes);
-				LONG lPos = 0;
-				m_texthost.m_ts->TxGetVScroll(NULL, NULL, &lPos, NULL, NULL);
-				if (lPos != m_vscroll->GetScrollPos())
+				if (bVer)
 				{
-					m_vscroll->SetScrollPos(lPos);
+					LRESULT lRes = 0;
+					m_texthost.m_ts->TxSendMessage(WM_VSCROLL, MAKEWPARAM(code, iNewPos), 0, &lRes);
+					LONG lPos = 0;
+					m_texthost.m_ts->TxGetVScroll(NULL, NULL, &lPos, NULL, NULL);
+					if (lPos != m_vscroll->GetScrollPos())
+					{
+						m_vscroll->SetScrollPos(lPos);
+					}
 				}
-			}
-			else
-			{
-				LRESULT lRes = 0;
-				m_texthost.m_ts->TxSendMessage(WM_HSCROLL, MAKEWPARAM(code, iNewPos), 0, &lRes);
-				LONG lPos = 0;
-				m_texthost.m_ts->TxGetHScroll(NULL, NULL, &lPos, NULL, NULL);
-				if (lPos != m_hscroll->GetScrollPos())
+				else
 				{
-					m_hscroll->SetScrollPos(lPos);
+					LRESULT lRes = 0;
+					m_texthost.m_ts->TxSendMessage(WM_HSCROLL, MAKEWPARAM(code, iNewPos), 0, &lRes);
+					LONG lPos = 0;
+					m_texthost.m_ts->TxGetHScroll(NULL, NULL, &lPos, NULL, NULL);
+					if (lPos != m_hscroll->GetScrollPos())
+					{
+						m_hscroll->SetScrollPos(lPos);
+					}
 				}
 			}
 		}
