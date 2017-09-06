@@ -38,6 +38,8 @@ namespace TinyUI
 		const TinyString TinyVisualProperty::TEXTCOLOR = TEXT("text-color");
 		const TinyString TinyVisualProperty::TEXTALIGN = TEXT("text-align");
 		const TinyString TinyVisualProperty::TEXTDECORATION = TEXT("text-decoration");
+		const TinyString TinyVisualProperty::MULTILINE = TEXT("multiline");
+		const TinyString TinyVisualProperty::READONLY = TEXT("readonly");
 
 		const TinyString TinyVisualProperty::ALIGNMENT = TEXT("alignment");
 		const TinyString TinyVisualProperty::VALUE = TEXT("value");
@@ -85,10 +87,9 @@ namespace TinyUI
 		const TinyString TinyVisualTag::VSCROLLBAR = TEXT("vscrollbar");
 		const TinyString TinyVisualTag::COMBOBOX = TEXT("combobox");
 		const TinyString TinyVisualTag::OPTION = TEXT("option");
-		const TinyString TinyVisualTag::RICHTEXT = TEXT("richtext");
 		const TinyString TinyVisualTag::TEXTBOX = TEXT("textbox");
 		const TinyString TinyVisualTag::STRETCH = TEXT("stretch");
-		const TinyString TinyVisualTag::NATIVEWND = TEXT("nativeWND");
+		const TinyString TinyVisualTag::NATIVEWINDOW = TEXT("nativewindow");
 		//////////////////////////////////////////////////////////////////////////
 		TinyVisualDC::TinyVisualDC(HWND hWND)
 			:m_hWND(hWND),

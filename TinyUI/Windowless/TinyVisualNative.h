@@ -23,8 +23,8 @@ namespace TinyUI
 			void SetSize(const TinySize& size) OVERRIDE;
 			void SetVisible(BOOL visible) OVERRIDE;
 		public:
-			void SetNativeWND(TinyControl* control);
-			TinyControl* GetNativeWND();
+			void SetWindow(TinyControl* pWND);
+			TinyControl* GetWindow();
 		protected:
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT OnCreate() OVERRIDE;

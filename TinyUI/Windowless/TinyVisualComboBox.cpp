@@ -143,13 +143,16 @@ namespace TinyUI
 			m_document->Redraw(&s);
 			m_document->ReleaseCapture();
 			TinyPoint screenPos = m_document->GetScreenPos(this);
-			screenPos.Offset(0, s.Height());
+			screenPos.Offset(2, s.Height() - 1);
 			//获得根节点
 			TinyVisual* spvis = m_popupWND.GetDocument()->GetParent(NULL);
 			DWORD dwCount = spvis->GetChildCount();
-			TinyRectangle rectangle = spvis->GetRectangle();
-			m_popupWND.AllowTracking(FALSE);
-			m_popupWND.SetPosition(screenPos, rectangle.Size());
+			if (dwCount > 0)
+			{
+				TinyRectangle rectangle = spvis->GetRectangle();
+				m_popupWND.AllowTracking(FALSE);
+				m_popupWND.SetPosition(screenPos, rectangle.Size());
+			}
 			return TinyVisual::OnLButtonDown(pos, dwFlags);
 		}
 		HRESULT	TinyVisualComboBox::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)

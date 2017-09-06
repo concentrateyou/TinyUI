@@ -103,14 +103,6 @@ void SkinWindow::OnButtonClick(EventArgs& args)
 	TinyVisualRichText* txtURL = static_cast<TinyVisualRichText*>(GetDocument()->GetVisualByName("txtURL"));
 	if (txtURL != NULL)
 	{
-		TRACE("linecount:%d\n", txtURL->GetLineCount());
-		INT index = txtURL->LineIndex(0);
-		INT size = txtURL->LineLength(index);
-		/*TinyScopedArray<TCHAR> s(new TCHAR[size + 1]);
-		*reinterpret_cast<USHORT*>(&s[0]) = static_cast<USHORT>(size + 1);
-		INT s1 = txtURL->GetLine(index, s);
-		wstring val = StringToWString(s.Ptr());
-		string text= WStringToUTF8(val);
-		INT a = 0;*/
+
 	}
 }

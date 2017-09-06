@@ -1,7 +1,7 @@
 #include "../stdafx.h"
 #include "TinyTextHost.h"
 #include "TinyVisualDocument.h"
-#include "TinyVisualRichText.h"
+#include "TinyVisualTextBox.h"
 #pragma comment(lib,"imm32.lib")
 
 namespace TinyUI
@@ -27,7 +27,7 @@ namespace TinyUI
 		TinyTextHost::TinyTextHost()
 			:m_hInstance(NULL),
 			m_password('*'),
-			m_dwStyle(ES_MULTILINE | WS_VSCROLL | WS_HSCROLL | ES_AUTOVSCROLL | ES_AUTOHSCROLL),
+			m_dwStyle(0),
 			m_limit(-1)
 		{
 
@@ -43,17 +43,39 @@ namespace TinyUI
 				m_hInstance = NULL;
 			}
 		}
-		BOOL TinyTextHost::Initialize(TinyVisualRichText* spvis)
+		BOOL TinyTextHost::Initialize(TinyVisualTextBox* spvis)
 		{
 			ASSERT(spvis);
 			m_spvis = spvis;
-			m_dwStyle = m_spvis->RetrieveStyle();
+			m_hInstance = ::LoadLibrary(TEXT("Msftedit.dll"));
+			if (m_hInstance != NULL)
+			{
+				PCreateTextServices ps = (PCreateTextServices)::GetProcAddress(m_hInstance, "CreateTextServices");
+				if (ps != NULL)
+				{
+					IUnknown* pUnknown = NULL;
+					if (ps(NULL, static_cast<ITextHost*>(this), &pUnknown) == S_OK)
+					{
+						pUnknown->QueryInterface(IID_ITextServices, (void**)&m_ts);
+						pUnknown->Release();
+						m_ts->OnTxInPlaceDeactivate();
+						m_ts->OnTxUIDeactivate();
+						m_ts->TxSendMessage(WM_KILLFOCUS, 0, 0, 0);
+						return TRUE;
+					}
+				}
+			}
+			return FALSE;
+		}
+		BOOL TinyTextHost::UpdateFormat()
+		{
+			ASSERT(m_ts || m_spvis);
 			HDC hDC = GetDC(m_spvis->Handle());
 			m_logpixelsx = ::GetDeviceCaps(hDC, LOGPIXELSX);
 			m_logpixelsy = ::GetDeviceCaps(hDC, LOGPIXELSY);
 			ReleaseDC(m_spvis->Handle(), hDC);
 			LOGFONT lf;
-			GetObject(spvis->m_hFONT, sizeof(LOGFONT), &lf);
+			GetObject(m_spvis->m_hFONT, sizeof(LOGFONT), &lf);
 			m_cf.cbSize = sizeof(CHARFORMATW);
 			m_cf.yHeight = lf.lfHeight * LY_PER_INCH / m_logpixelsy;
 			m_cf.yOffset = 0;
@@ -82,43 +104,13 @@ namespace TinyUI
 			m_pf.wAlignment = PFA_LEFT;
 			m_pf.cTabCount = 1;
 			m_pf.rgxTabs[0] = lDefaultTab;
-			m_hInstance = ::LoadLibrary(TEXT("Msftedit.dll"));
-			if (m_hInstance != NULL)
-			{
-				PCreateTextServices ps = (PCreateTextServices)::GetProcAddress(m_hInstance, "CreateTextServices");
-				if (ps != NULL)
-				{
-					IUnknown* pUnknown = NULL;
-					if (ps(NULL, static_cast<ITextHost*>(this), &pUnknown) == S_OK)
-					{
-						pUnknown->QueryInterface(IID_ITextServices, (void**)&m_ts);
-						pUnknown->Release();
-						m_ts->OnTxInPlaceDeactivate();
-						m_ts->OnTxUIDeactivate();
-						m_ts->TxSendMessage(WM_KILLFOCUS, 0, 0, 0);
-						m_rectangle = m_spvis->GetWindowRect();
-						m_extent.cx = MAP_PIX_TO_LOGHIM(m_rectangle.Width(), m_logpixelsx);
-						m_extent.cy = MAP_PIX_TO_LOGHIM(m_rectangle.Height(), m_logpixelsy);
-						if (FAILED(m_ts->OnTxInPlaceActivate(&m_rectangle)))
-							return FALSE;
-						if (FAILED(m_ts->TxSendMessage(EM_SETCHARFORMAT, 0, (LPARAM)&m_cf, 0)))
-							return FALSE;
-						if (FAILED(m_ts->TxSendMessage(EM_SETPARAFORMAT, 0, (LPARAM)&m_pf, 0)))
-							return FALSE;
-						if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE | TXTBIT_PARAFORMATCHANGE, TRUE)))
-							return FALSE;
-						if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE | TXTBIT_EXTENTCHANGE, TRUE)))
-							return FALSE;
-						TinyString sz = m_spvis->GetText();
-						if (!sz.IsEmpty())
-						{
-							m_ts->TxSetText(sz.ToWString().c_str());
-						}
-						return TRUE;
-					}
-				}
-			}
-			return FALSE;
+			if (FAILED(m_ts->TxSendMessage(EM_SETCHARFORMAT, 0, (LPARAM)&m_cf, 0)))
+				return FALSE;
+			if (FAILED(m_ts->TxSendMessage(EM_SETPARAFORMAT, 0, (LPARAM)&m_pf, 0)))
+				return FALSE;
+			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE | TXTBIT_PARAFORMATCHANGE, TRUE)))
+				return FALSE;
+			return TRUE;
 		}
 		BOOL TinyTextHost::UpdateView()
 		{
@@ -126,12 +118,6 @@ namespace TinyUI
 			m_extent.cx = MAP_PIX_TO_LOGHIM(m_rectangle.Width(), m_logpixelsx);
 			m_extent.cy = MAP_PIX_TO_LOGHIM(m_rectangle.Height(), m_logpixelsy);
 			if (FAILED(m_ts->OnTxInPlaceActivate(&m_rectangle)))
-				return FALSE;
-			if (FAILED(m_ts->TxSendMessage(EM_SETCHARFORMAT, 0, (LPARAM)&m_cf, 0)))
-				return FALSE;
-			if (FAILED(m_ts->TxSendMessage(EM_SETPARAFORMAT, 0, (LPARAM)&m_pf, 0)))
-				return FALSE;
-			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE | TXTBIT_PARAFORMATCHANGE, TRUE)))
 				return FALSE;
 			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE | TXTBIT_EXTENTCHANGE, TRUE)))
 				return FALSE;
@@ -142,12 +128,12 @@ namespace TinyUI
 			if (bReadOnly)
 			{
 				m_dwStyle |= ES_READONLY;
-				return m_ts->OnTxPropertyBitsChange(TXTBIT_READONLY, TRUE) == S_OK;
+				return m_ts->OnTxPropertyBitsChange(TXTBIT_READONLY, TXTBIT_READONLY) == S_OK;
 			}
 			else
 			{
 				m_dwStyle &= ~ES_READONLY;
-				return m_ts->OnTxPropertyBitsChange(TXTBIT_READONLY, FALSE) == S_OK;
+				return m_ts->OnTxPropertyBitsChange(TXTBIT_READONLY, 0) == S_OK;
 			}
 		}
 		BOOL TinyTextHost::SetMultiline(BOOL bMultiline)
@@ -155,12 +141,12 @@ namespace TinyUI
 			if (bMultiline)
 			{
 				m_dwStyle |= ES_MULTILINE;
-				return m_ts->OnTxPropertyBitsChange(TXTBIT_MULTILINE, TRUE) == S_OK;
+				return m_ts->OnTxPropertyBitsChange(TXTBIT_MULTILINE, TXTBIT_MULTILINE) == S_OK;
 			}
 			else
 			{
 				m_dwStyle &= ~ES_MULTILINE;
-				return m_ts->OnTxPropertyBitsChange(TXTBIT_MULTILINE, FALSE) == S_OK;
+				return m_ts->OnTxPropertyBitsChange(TXTBIT_MULTILINE, 0) == S_OK;
 			}
 		}
 		BOOL TinyTextHost::SetPassword(BOOL bPassword, CHAR s)
@@ -168,12 +154,12 @@ namespace TinyUI
 			if (bPassword)
 			{
 				m_dwStyle |= ES_PASSWORD;
-				return m_ts->OnTxPropertyBitsChange(TXTBIT_USEPASSWORD, TRUE) == S_OK;
+				return m_ts->OnTxPropertyBitsChange(TXTBIT_USEPASSWORD, TXTBIT_USEPASSWORD) == S_OK;
 			}
 			else
 			{
 				m_dwStyle &= ~ES_PASSWORD;
-				return m_ts->OnTxPropertyBitsChange(TXTBIT_USEPASSWORD, FALSE) == S_OK;
+				return m_ts->OnTxPropertyBitsChange(TXTBIT_USEPASSWORD, 0) == S_OK;
 			}
 		}
 		BOOL TinyTextHost::SetWordWrap(BOOL bWarp)
@@ -184,6 +170,11 @@ namespace TinyUI
 		{
 			m_limit = limit;
 			return m_ts->OnTxPropertyBitsChange(TXTBIT_MAXLENGTHCHANGE, TXTBIT_MAXLENGTHCHANGE) == S_OK;
+		}
+		BOOL TinyTextHost::SetRectangle(const TinyRectangle& rectangle)
+		{
+			m_rectangle = rectangle;
+			return m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE, TXTBIT_SCROLLBARCHANGE) == S_OK;
 		}
 		BOOL TinyTextHost::ShowScrollBar(INT bar, BOOL fShow)
 		{
@@ -519,7 +510,7 @@ namespace TinyUI
 
 		HRESULT TinyTextHost::TxGetPropertyBits(DWORD dwMask, DWORD *pdwBits)
 		{
-			DWORD bits = TXTBIT_RICHTEXT | TXTBIT_WORDWRAP | TXTBIT_SCROLLBARCHANGE;
+			DWORD bits = TXTBIT_RICHTEXT | TXTBIT_WORDWRAP | TXTBIT_SCROLLBARCHANGE | TXTBIT_CHARFORMATCHANGE | TXTBIT_PARAFORMATCHANGE | TXTBIT_EXTENTCHANGE | TXTBIT_CLIENTRECTCHANGE;
 			if (m_dwStyle & ES_MULTILINE)
 			{
 				bits |= TXTBIT_MULTILINE;

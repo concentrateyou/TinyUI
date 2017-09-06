@@ -37,8 +37,16 @@ namespace TinyUI
 			{
 				TinyPen pen;
 				pen.CreatePen(m_borderStyle, m_borderThickness, m_borderColor);
+				canvas.SetBrush((HBRUSH)GetStockObject(NULL_BRUSH));
 				canvas.SetPen(pen);
 				canvas.DrawRectangle(clip);
+			}
+			if (!m_backgroundColor.IsEmpty())
+			{
+				TinyBrush brush;
+				brush.CreateBrush(m_backgroundColor);
+				canvas.SetBrush(brush);
+				canvas.FillRectangle(clip);
 			}
 			return TRUE;
 		}

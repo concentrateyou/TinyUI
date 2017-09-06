@@ -20,19 +20,21 @@ namespace TinyUI
 		//////////////////////////////////////////////////////////////////////////
 		class TinyTextHost :public ITextHost
 		{
-			friend class TinyVisualRichText;
+			friend class TinyVisualTextBox;
 		public:
 			TinyTextHost();
 			~TinyTextHost();
 		public:
-			BOOL Initialize(TinyVisualRichText* spvis);
+			BOOL Initialize(TinyVisualTextBox* spvis);
 			BOOL UpdateView();
+			BOOL UpdateFormat();
 			BOOL SetReadonly(BOOL fReadOnly);
 			BOOL SetMultiline(BOOL fMultiline);
 			BOOL SetPassword(BOOL fPassword, CHAR s);
 			BOOL SetWordWrap(BOOL fWarp);
 			BOOL ShowScrollBar(INT bar, BOOL fShow);
 			BOOL SetLimit(LONG limit);
+			BOOL SetRectangle(const TinyRectangle& rectangle);
 		public:
 			HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject);
 			ULONG STDMETHODCALLTYPE AddRef(void);
@@ -80,7 +82,7 @@ namespace TinyUI
 			TinyComPtr<ITextServices>	m_ts;
 			LONG						m_cRef;
 			HINSTANCE					m_hInstance;
-			TinyVisualRichText*			m_spvis;
+			TinyVisualTextBox*			m_spvis;
 			TinySize					m_extent;
 			LONG						m_logpixelsx;
 			LONG						m_logpixelsy;

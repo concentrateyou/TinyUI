@@ -11,7 +11,7 @@
 #include "TinyVisualButton.h"
 #include "TinyVisualScrollBar.h"
 #include "TinyVisualComboBox.h"
-#include "TinyVisualRichText.h"
+#include "TinyVisualTextBox.h"
 #include "TinyVisualPanel.h"
 #include "TinyVisualNative.h"
 
@@ -99,15 +99,15 @@ namespace TinyUI
 					{
 						spvis = document->Create<TinyVisualComboBox>(spvisParent);
 					}
-					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::RICHTEXT.STR()))
+					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::TEXTBOX.STR()))
 					{
-						spvis = document->Create<TinyVisualRichText>(spvisParent);
+						spvis = document->Create<TinyVisualTextBox>(spvisParent);
 					}
 					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::PANEL.STR()))
 					{
 						spvis = document->Create<TinyVisualPanel>(spvisParent);
 					}
-					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::NATIVEWND.STR()))
+					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::NATIVEWINDOW.STR()))
 					{
 						spvis = document->Create<TinyVisualNative>(spvisParent);
 					}

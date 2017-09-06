@@ -32,7 +32,7 @@ namespace TinyUI
 			return TinyVisual::OnInitialize();
 		}
 
-		TinyControl* TinyVisualNative::GetNativeWND()
+		TinyControl* TinyVisualNative::GetWindow()
 		{
 			return m_pWND;
 		}
@@ -52,7 +52,7 @@ namespace TinyUI
 		}
 		TinyString TinyVisualNative::RetrieveTag() const
 		{
-			return TinyVisualTag::NATIVEWND;
+			return TinyVisualTag::NATIVEWINDOW;
 		}
 		BOOL TinyVisualNative::SetProperty(const TinyString& name, const TinyString& value)
 		{
@@ -78,7 +78,7 @@ namespace TinyUI
 				m_pWND->SetSize(rectangle.Size());
 			}
 		}
-		void TinyVisualNative::SetNativeWND(TinyControl* pWND)
+		void TinyVisualNative::SetWindow(TinyControl* pWND)
 		{
 			m_pWND = pWND;
 			if (m_pWND != NULL)

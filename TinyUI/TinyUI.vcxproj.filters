@@ -312,9 +312,6 @@
     <ClInclude Include="Common\TinyUtility.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
-    <ClInclude Include="Windowless\TinyVisualRichText.h">
-      <Filter>头文件\Windowless</Filter>
-    </ClInclude>
     <ClInclude Include="Windowless\TinyTextHost.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
@@ -499,6 +496,9 @@
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
     <ClInclude Include="Windowless\TinyVisualNative.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualTextBox.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
   </ItemGroup>
@@ -737,9 +737,6 @@
     <ClCompile Include="Common\TinyUtility.cpp">
       <Filter>源文件\Common</Filter>
     </ClCompile>
-    <ClCompile Include="Windowless\TinyVisualRichText.cpp">
-      <Filter>源文件\Windowless</Filter>
-    </ClCompile>
     <ClCompile Include="Windowless\TinyTextHost.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
@@ -918,6 +915,9 @@
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
     <ClCompile Include="Windowless\TinyVisualNative.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualTextBox.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>

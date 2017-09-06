@@ -48,6 +48,8 @@ namespace TinyUI
 			static const TinyString TEXTCOLOR;
 			static const TinyString TEXTALIGN;
 			static const TinyString TEXTDECORATION;
+			static const TinyString MULTILINE;
+			static const TinyString READONLY;
 
 			static const TinyString IMAGENORMAL;
 			static const TinyString IMAGEHIGHLIGHT;
@@ -97,10 +99,9 @@ namespace TinyUI
 			static const TinyString VSCROLLBAR;
 			static const TinyString COMBOBOX;
 			static const TinyString OPTION;
-			static const TinyString RICHTEXT;
 			static const TinyString TEXTBOX;
 			static const TinyString STRETCH;
-			static const TinyString NATIVEWND;
+			static const TinyString NATIVEWINDOW;
 			static const TinyString CONTEXT;
 			static const TinyString IMAGE;
 			static const TinyString ADD;
