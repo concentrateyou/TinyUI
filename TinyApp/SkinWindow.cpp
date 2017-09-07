@@ -100,9 +100,9 @@ void SkinWindow::OnSelectChanged(TinyVisualOption* ps)
 }
 void SkinWindow::OnButtonClick(EventArgs& args)
 {
-	TinyVisualRichText* txtURL = static_cast<TinyVisualRichText*>(GetDocument()->GetVisualByName("txtURL"));
+	/*TinyVisualRichText* txtURL = static_cast<TinyVisualRichText*>(GetDocument()->GetVisualByName("txtURL"));
 	if (txtURL != NULL)
 	{
 
-	}
+	}*/
 }

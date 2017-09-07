@@ -48,7 +48,7 @@ namespace TinyUI
 			void	OnPosChange(BOOL bVer, INT code, INT iOldPos, INT iNewPos);
 		private:
 			INT						m_iNewPos;
-			TinyVisualOption*		m_pCurrent;
+			TinyVisualOption*		m_spvisCurrent;
 			TinyVisualComboBox*		m_pOwner;
 			TinyVisualVScrollBar*	m_pVScrollbar;
 			TinyScopedPtr<Delegate<void(BOOL, INT, INT, INT)>> m_onPosChange;

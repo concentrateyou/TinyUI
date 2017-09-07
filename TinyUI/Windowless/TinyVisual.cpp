@@ -60,25 +60,25 @@ namespace TinyUI
 		{
 			return m_document != NULL ? m_document->Handle() : NULL;
 		}
-		void TinyVisual::SetText(LPCSTR pzText)
+		void TinyVisual::SetText(const TinyString& pzText)
 		{
-			m_szText = pzText;
+			m_szText = std::move(pzText);
 		}
 		TinyString	TinyVisual::GetText() const
 		{
 			return m_szText;
 		}
-		void TinyVisual::SetName(LPCSTR pzName)
+		void TinyVisual::SetName(const TinyString& pzName)
 		{
-			m_szName = pzName;
+			m_szName = std::move(pzName);
 		}
 		TinyString	TinyVisual::GetName() const
 		{
 			return m_szName;
 		}
-		void TinyVisual::SetToolTip(LPCSTR pzTitle)
+		void TinyVisual::SetToolTip(const TinyString& pzTitle)
 		{
-			m_szToolTip = pzTitle;
+			m_szToolTip = std::move(pzTitle);
 		}
 		TinyString	TinyVisual::GetToolTip() const
 		{

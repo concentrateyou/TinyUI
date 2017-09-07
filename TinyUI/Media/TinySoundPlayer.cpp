@@ -34,7 +34,18 @@ namespace TinyUI
 			}
 			return TRUE;
 		}
-		BOOL TinySoundPlayer::Initialize(HWND hWND)
+		BOOL TinySoundPlayer::Open(const GUID& guid, HWND hWND)
+		{
+			HRESULT hRes = S_OK;
+			hRes = DirectSoundCreate8(&guid, &m_sound, NULL);
+			if (hRes != S_OK)
+				return FALSE;
+			hRes = m_sound->SetCooperativeLevel(hWND, DSSCL_PRIORITY);
+			if (hRes != S_OK)
+				return FALSE;
+			return TRUE;
+		}
+		BOOL TinySoundPlayer::Open(HWND hWND)
 		{
 			HRESULT hRes = S_OK;
 			hRes = DirectSoundCreate8(NULL, &m_sound, NULL);
@@ -45,12 +56,14 @@ namespace TinyUI
 				return FALSE;
 			return TRUE;
 		}
-		BOOL TinySoundPlayer::SetFormat(WAVEFORMATEX* pFMT, DWORD dwSize)
+		BOOL TinySoundPlayer::SetFormat(const WAVEFORMATEX* pFMT, DWORD dwSize)
 		{
-			if (!m_sound)
+			if (!m_sound || !pFMT)
 				return FALSE;
 			m_dwSize = dwSize;
-			m_waveFMT = pFMT;
+			INT size = sizeof(WAVEFORMATEX) + pFMT->cbSize;
+			m_waveFMT.Reset(new BYTE[size]);
+			memcpy(m_waveFMT, (BYTE*)pFMT, size);
 			HRESULT hRes = S_OK;
 			DSBUFFERDESC dbdesc;
 			ZeroMemory(&dbdesc, sizeof(dbdesc));
@@ -59,14 +72,14 @@ namespace TinyUI
 			hRes = m_sound->CreateSoundBuffer(&dbdesc, &m_primaryDSB, NULL);
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = m_primaryDSB->SetFormat(pFMT);
+			hRes = m_primaryDSB->SetFormat(reinterpret_cast<WAVEFORMATEX*>(m_waveFMT.Ptr()));
 			if (hRes != S_OK)
 				return FALSE;
 			ZeroMemory(&dbdesc, sizeof(dbdesc));
 			dbdesc.dwSize = sizeof(dbdesc);
 			dbdesc.dwFlags = DSBCAPS_STATIC | DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLPOSITIONNOTIFY | DSBCAPS_GETCURRENTPOSITION2;
 			dbdesc.dwBufferBytes = m_dwSize;
-			dbdesc.lpwfxFormat = pFMT;
+			dbdesc.lpwfxFormat = reinterpret_cast<WAVEFORMATEX*>(m_waveFMT.Ptr());
 			TinyComPtr<IDirectSoundBuffer> dsb;
 			hRes = m_sound->CreateSoundBuffer(&dbdesc, &dsb, NULL);
 			if (hRes != S_OK)

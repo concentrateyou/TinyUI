@@ -28,9 +28,12 @@ namespace TinyUI
 			BOOL SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 		public:
 			TinyVisualOption* AddOption(const TinyString& szValue, const TinyString& szText);
+			TinyArray<TinyVisualOption*>& GetOptions();
 			void SetStyleImage(StyleImage type, LPCSTR pzFile);
 			void SetArrowImage(StyleImage type, LPCSTR pzFile);
-			void SetSelected(TinyVisualOption* spvis);
+			void SetSelected(TinyVisualOption* spvis, BOOL bFlag = TRUE);
+			void SetSelected(INT index, BOOL bFlag = TRUE);
+			TinyVisualOption* GetSelected();
 		public:
 			Event<void(TinyVisualOption*)>	EVENT_SELECTCHANGED;
 		protected:
@@ -51,6 +54,7 @@ namespace TinyUI
 			TinyImage*				m_images[StyleImage::COUNT];
 			TinyImage*				m_arraws[StyleImage::COUNT];
 			TinyVisualComboBoxHWND  m_popupWND;
+			TinyArray<TinyVisualOption*>	m_options;
 			TinyScopedPtr<Delegate<void(ActiveEventArgs&)>> m_onPopupActive;
 		};
 		/// <summary>
@@ -65,14 +69,14 @@ namespace TinyUI
 			TinyVisualOption(TinyVisual* spvisParent, TinyVisualDocument* document);
 			virtual ~TinyVisualOption();
 			TinyString RetrieveTag() const OVERRIDE;
-			HRESULT OnMouseEnter() OVERRIDE;
 			HRESULT OnMouseLeave() OVERRIDE;
-			HRESULT OnLButtonDown(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
+			HRESULT OnMouseMove(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
 			HRESULT OnLButtonUp(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
+			BOOL	SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 		public:
-			BOOL SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 			BOOL IsSelected();
 			void SetSelected(BOOL bFlag);
+			TinyString GetValue() const;
 		public:
 			virtual void SetValue(LPCSTR pzValue);
 			virtual void SetHighlightImage(LPCSTR pzFile);

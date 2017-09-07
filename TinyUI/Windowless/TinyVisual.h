@@ -76,9 +76,9 @@ namespace TinyUI
 		public:
 			virtual ~TinyVisual();
 			virtual TinyString	RetrieveTag() const = 0;
-			virtual void		SetName(LPCSTR pzName);
-			virtual void		SetToolTip(LPCSTR pzTitle);
-			virtual void		SetText(LPCSTR pzText);
+			virtual void		SetName(const TinyString& pzName);
+			virtual void		SetToolTip(const TinyString& pzTitle);
+			virtual void		SetText(const TinyString& pzText);
 			virtual void		SetPosition(const TinyPoint& pos);
 			virtual void		SetSize(const TinySize& size);
 			virtual void		SetMaximumSize(const TinySize& size);

@@ -38,6 +38,19 @@ namespace TinyUI
 				return FALSE;
 			return OpenClient(mmDevice, pFMT);
 		}
+		BOOL TinyWASAPIAudioRender::Open(const TinyString& id, WAVEFORMATEX* pFMT)
+		{
+			TinyComPtr<IMMDeviceEnumerator> enumerator;
+			HRESULT hRes = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER);
+			if (hRes != S_OK)
+				return FALSE;
+			TinyComPtr<IMMDevice> mmDevice;
+			wstring ws = id.ToWString();
+			hRes = enumerator->GetDevice(ws.c_str(), &mmDevice);
+			if (hRes != S_OK)
+				return FALSE;
+			return OpenClient(mmDevice, pFMT);
+		}
 		BOOL TinyWASAPIAudioRender::OpenClient(TinyComPtr<IMMDevice>& mmDevice, WAVEFORMATEX* pFMT)
 		{
 			ASSERT(mmDevice);

@@ -26,7 +26,7 @@ namespace TinyUI
 			TinySoundCapture();
 			virtual ~TinySoundCapture();
 		public:
-			BOOL Enumerate(std::vector<CAPTUREDEVICE>& devices);
+			static BOOL Enumerate(std::vector<CAPTUREDEVICE>& devices);
 			/// <summary>
 			/// WAVE_FORMAT_1M08	11.025 kHz, mono, 8-bit
 			/// WAVE_FORMAT_1M16	11.025 kHz, mono, 16 - bit

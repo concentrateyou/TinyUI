@@ -26,6 +26,7 @@ namespace TinyUI
 		public:
 			virtual	void	Initialize(Callback<void(BYTE*, LONG, LPVOID)>&& callback, DWORD dwStreamFlag = DEFAULT_RENDER_AUDCLNT_STREAMFLAGS, AUDCLNT_SHAREMODE shareMode = AUDCLNT_SHAREMODE_SHARED);
 			virtual BOOL	Open(const Name& name, WAVEFORMATEX* pFMT = NULL);
+			virtual BOOL	Open(const TinyString& id, WAVEFORMATEX* pFMT = NULL);
 			virtual BOOL	Start();
 			virtual BOOL	Stop();
 			virtual BOOL	Reset();

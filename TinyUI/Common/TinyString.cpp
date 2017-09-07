@@ -575,7 +575,7 @@ namespace TinyUI
 	{
 		return _Mystr;
 	}
-	wstring	 TinyString::ToWString()
+	wstring	TinyString::ToWString() const
 	{
 		string szText(_Mystr);
 		return StringToWString(szText);

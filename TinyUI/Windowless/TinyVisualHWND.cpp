@@ -12,7 +12,7 @@ namespace TinyUI
 			:m_document(NULL),
 			m_visualDC(NULL),
 			m_bMouseTracking(FALSE),
-			m_bAllowTracking(FALSE)
+			m_bAllowTracking(TRUE)
 		{
 
 		}

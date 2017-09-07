@@ -175,7 +175,7 @@ namespace TinyUI
 		size_t		GetSize() const;
 		CHAR*		STR() const;
 		const CHAR*	CSTR() const;
-		wstring		ToWString();
+		wstring		ToWString() const;
 		static TinyString _cdecl Format(const CHAR* s, ...);
 		static INT __cdecl A2W(CHAR* mbstr, const WCHAR* wcstr, size_t count);
 		static INT __cdecl W2A(WCHAR* wcstr, const CHAR* mbstr, size_t count);

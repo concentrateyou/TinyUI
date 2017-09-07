@@ -12,10 +12,10 @@ namespace TinyUI
 		TinyVisualComboBoxHWND::TinyVisualComboBoxHWND(TinyVisualComboBox* pOwner)
 			:m_pOwner(pOwner),
 			m_pVScrollbar(NULL),
-			m_pCurrent(NULL),
+			m_spvisCurrent(NULL),
 			m_iNewPos(0)
 		{
-
+			AllowTracking(FALSE);
 		}
 		TinyVisualComboBoxHWND::~TinyVisualComboBoxHWND()
 		{
@@ -44,7 +44,7 @@ namespace TinyUI
 
 		void TinyVisualComboBoxHWND::OnInitialize()
 		{
-
+			
 		}
 
 		void TinyVisualComboBoxHWND::OnUninitialize()
@@ -62,23 +62,24 @@ namespace TinyUI
 		}
 		void TinyVisualComboBoxHWND::SetSelected(TinyVisualOption* spvis, BOOL bFlag)
 		{
-			if (m_pCurrent != spvis)
+			if (m_spvisCurrent != spvis)
 			{
-				if (m_pCurrent != NULL)
+				if (m_spvisCurrent != NULL)
 				{
-					m_pCurrent->SetSelected(FALSE);
+					m_spvisCurrent->SetSelected(FALSE);
 				}
-				m_pCurrent = spvis;
-				if (m_pCurrent != NULL)
+				m_spvisCurrent = spvis;
+				if (m_spvisCurrent != NULL)
 				{
-					m_pCurrent->SetSelected(TRUE);
+					m_spvisCurrent->SetSelected(TRUE);
 				}
-				m_pOwner->EVENT_SELECTCHANGED(m_pCurrent);
+				m_pOwner->SetText(spvis->GetText());
+				m_pOwner->EVENT_SELECTCHANGED(m_spvisCurrent);
 			}
 		}
 		TinyVisualOption* TinyVisualComboBoxHWND::GetSelected()
 		{
-			return m_pCurrent;
+			return m_spvisCurrent;
 		}
 		BOOL TinyVisualComboBoxHWND::SetPosition(const TinyPoint& pos, const TinySize& size)
 		{
@@ -96,11 +97,13 @@ namespace TinyUI
 			{
 				m_pVScrollbar->SetPosition(TinyPoint(size.cx - 12, 0));
 				m_pVScrollbar->SetSize(TinySize(12, size.cy));
-				if ((spvis->GetChildCount() * DEFAULT_OPTION_HEIGHT) > size.cy)
+				INT cy = m_pOwner->GetOptions().GetSize() * DEFAULT_OPTION_HEIGHT;
+				if (cy > size.cy)
 				{
 					m_pVScrollbar->SetVisible(TRUE);
 					AdjustOption(size.cx - 12);
-					m_pVScrollbar->SetScrollInfo(0, spvis->GetChildCount() * DEFAULT_OPTION_HEIGHT - size.cy, DEFAULT_OPTION_HEIGHT, m_iNewPos);
+					m_pVScrollbar->SetScrollInfo(0, cy - size.cy, DEFAULT_OPTION_HEIGHT, m_iNewPos);
+					m_document->SetFocus(m_pVScrollbar);
 				}
 				else
 				{
@@ -108,7 +111,6 @@ namespace TinyUI
 					AdjustOption(size.cx);
 				}
 			}
-			m_document->SetFocus(m_pVScrollbar);
 			m_document->Redraw();
 			return bRes;
 		}

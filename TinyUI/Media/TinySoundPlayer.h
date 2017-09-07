@@ -24,10 +24,11 @@ namespace TinyUI
 			TinySoundPlayer();
 			virtual ~TinySoundPlayer();
 		public:
-			BOOL	Enumerate(std::vector<PLAYDEVICE>& devices);
-			BOOL	Initialize(HWND hWND);
+			static BOOL	Enumerate(std::vector<PLAYDEVICE>& devices);
+			BOOL	Open(const GUID& guid, HWND hWND);
+			BOOL	Open(HWND hWND);
 			BOOL	SetNotifys(DWORD dwSize, LPCDSBPOSITIONNOTIFY pNotify);
-			BOOL	SetFormat(WAVEFORMATEX* pFMT, DWORD dwSize);
+			BOOL	SetFormat(const WAVEFORMATEX* pFMT, DWORD dwSize);
 			BOOL	Play(DWORD dwFlags = DSBPLAY_LOOPING);
 			BOOL	Fill(BYTE* bits, LONG size, DWORD dwOffset);
 			BOOL	GetCaps(DSCAPS& caps);
@@ -50,7 +51,7 @@ namespace TinyUI
 			TinyComPtr<IDirectSound8>		m_sound;
 			TinyComPtr<IDirectSoundBuffer>	m_primaryDSB;
 			TinyComPtr<IDirectSoundBuffer8>	m_secondaryDSB;
-			WAVEFORMATEX*					m_waveFMT;
+			TinyScopedArray<BYTE>			m_waveFMT;
 			DWORD							m_dwSize;
 			DWORD							m_dwOffset;
 		};

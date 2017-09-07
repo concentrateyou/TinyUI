@@ -347,7 +347,8 @@ namespace TinyUI
 		BOOL TinyWavePlayer::LoadStream(LPVOID pStream, DWORD bufferSize)
 		{
 			m_waveFile.Close();
-			if (!m_waveFile.Open(pStream, bufferSize)) return FALSE;
+			if (!m_waveFile.Open(pStream, bufferSize))
+				return FALSE;
 			WAVEFORMATEX* waveEx = m_waveFile.GetFormat();
 			if (m_waveOut.Open(waveEx, (DWORD_PTR)&m_waveOut) != MMSYSERR_NOERROR)
 				return FALSE;
@@ -545,6 +546,7 @@ namespace TinyUI
 		//Wave File http://msdn.microsoft.com/en-us/library/windows/desktop/dd742884(v=vs.85).aspx
 		TinyWaveFile::TinyWaveFile()
 			:m_hmmio(NULL),
+			m_wFormatSize(0),
 			m_reading(0)
 		{
 			ZeroMemory(&m_mmckRIFF, sizeof(m_mmckRIFF));
@@ -560,19 +562,21 @@ namespace TinyUI
 		{
 			return m_hmmio;
 		}
-		BOOL TinyWaveFile::Create(LPTSTR pzFile, const WAVEFORMATEX* pWaveEx)
+		BOOL TinyWaveFile::Create(LPTSTR pzFile, const WAVEFORMATEX* pFMT)
 		{
 			if (!pzFile)
 				return FALSE;
-			if (pWaveEx->wFormatTag == WAVE_FORMAT_PCM)
+			if (pFMT->wFormatTag == WAVE_FORMAT_PCM)
 			{
-				m_waveEx.Reset(new BYTE[sizeof(WAVEFORMATEX)]);
-				memcpy((void*)m_waveEx, (void*)pWaveEx, sizeof(WAVEFORMATEX));
+				m_wFormatSize = sizeof(WAVEFORMATEX);
+				m_waveFMT.Reset(new BYTE[m_wFormatSize]);
+				memcpy((void*)m_waveFMT, (void*)pFMT, sizeof(WAVEFORMATEX));
 			}
 			else
 			{
-				m_waveEx.Reset(new BYTE[sizeof(WAVEFORMATEX) + pWaveEx->cbSize]);
-				memcpy((void*)m_waveEx, (void*)pWaveEx, sizeof(WAVEFORMATEX) + pWaveEx->cbSize);
+				m_wFormatSize = sizeof(WAVEFORMATEX) + pFMT->cbSize;
+				m_waveFMT.Reset(new BYTE[m_wFormatSize]);
+				memcpy((void*)m_waveFMT, (void*)pFMT, m_wFormatSize);
 			}
 			if (m_hmmio != NULL)
 			{
@@ -592,8 +596,8 @@ namespace TinyUI
 			mmRes = mmioCreateChunk(m_hmmio, &m_mmckFMT, 0);
 			if (mmRes != MMSYSERR_NOERROR)
 				goto MMIO_ERROR;
-			DWORD dwSize = sizeof(WAVEFORMATEX) + pWaveEx->cbSize;
-			if (dwSize != mmioWrite(m_hmmio, (const char*)pWaveEx, dwSize))
+			DWORD dwSize = sizeof(WAVEFORMATEX) + pFMT->cbSize;
+			if (dwSize != mmioWrite(m_hmmio, (const char*)pFMT, dwSize))
 				goto MMIO_ERROR;
 			mmRes = mmioAscend(m_hmmio, &m_mmckFMT, 0);
 			if (mmRes != MMSYSERR_NOERROR)
@@ -642,7 +646,6 @@ namespace TinyUI
 			MMCKINFO    mmckRIFF = { 0 };
 			MMCKINFO    mmck = { 0 };
 			MMRESULT    mmRes = MMSYSERR_NOERROR;
-			WORD		wFormatSize = 0;
 			mmckRIFF.fccType = mmioWAVE;
 			mmRes = mmioDescend(m_hmmio, &mmckRIFF, NULL, MMIO_FINDRIFF);
 			if (mmRes != MMSYSERR_NOERROR)
@@ -653,23 +656,19 @@ namespace TinyUI
 				goto MMIO_ERROR;
 			if (mmck.cksize < sizeof(WAVEFORMAT))
 				goto MMIO_ERROR;
-			wFormatSize = (WORD)mmck.cksize;
-			m_waveEx.Reset(new BYTE[wFormatSize]);
-			if ((DWORD)mmioRead(m_hmmio, (HPSTR)m_waveEx.Ptr(), mmck.cksize) != mmck.cksize)//读取WAVEFORMAT
-				goto MMIO_ERROR;
-			WAVEFORMATEX* waveEx = reinterpret_cast<WAVEFORMATEX*>(m_waveEx.Ptr());
-			if (waveEx->wFormatTag == WAVE_FORMAT_PCM)//PCM格式
+			m_wFormatSize = (WORD)mmck.cksize;
+			if (m_wFormatSize <= sizeof(PCMWAVEFORMAT))
 			{
-				if (wFormatSize < sizeof(PCMWAVEFORMAT))
-					goto MMIO_ERROR;
-				waveEx->cbSize = 0;
+				m_waveFMT.Reset(new BYTE[sizeof(WAVEFORMATEX)]);
+				ZeroMemory(m_waveFMT, sizeof(WAVEFORMATEX));
 			}
 			else
 			{
-				if ((wFormatSize < sizeof(WAVEFORMATEX)) ||
-					(wFormatSize < sizeof(WAVEFORMATEX) + waveEx->cbSize))
-					goto MMIO_ERROR;
+				m_waveFMT.Reset(new BYTE[m_wFormatSize]);
+				ZeroMemory(m_waveFMT, m_wFormatSize);
 			}
+			if ((DWORD)mmioRead(m_hmmio, (HPSTR)m_waveFMT.Ptr(), mmck.cksize) != mmck.cksize)//读取WAVEFORMAT
+				goto MMIO_ERROR;
 			mmRes = mmioAscend(m_hmmio, &mmck, 0);
 			if (mmRes != MMSYSERR_NOERROR)
 				goto MMIO_ERROR;
@@ -721,14 +720,14 @@ namespace TinyUI
 			if (mmck.cksize < sizeof(WAVEFORMAT))
 				goto MMIO_ERROR;
 			wFormatSize = (WORD)mmck.cksize;
-			if ((DWORD)mmioRead(m_hmmio, (HPSTR)&m_waveEx, mmck.cksize) != mmck.cksize)//读取WAVEFORMAT
+			if ((DWORD)mmioRead(m_hmmio, (HPSTR)&m_waveFMT, mmck.cksize) != mmck.cksize)//读取WAVEFORMAT
 				goto MMIO_ERROR;
 			if (waveEx.wFormatTag == WAVE_FORMAT_PCM)//PCM格式
 			{
 				if (wFormatSize < sizeof(PCMWAVEFORMAT))
 					goto MMIO_ERROR;
-				m_waveEx.Reset(new BYTE[sizeof(WAVEFORMATEX)]);
-				memcpy(m_waveEx, &waveEx, sizeof(WAVEFORMATEX));
+				m_waveFMT.Reset(new BYTE[sizeof(WAVEFORMATEX)]);
+				memcpy(m_waveFMT, &waveEx, sizeof(WAVEFORMATEX));
 			}
 			else
 			{
@@ -741,9 +740,9 @@ namespace TinyUI
 					{
 						if (mmioRead(m_hmmio, (HPSTR)extraBytes, waveEx.cbSize) != waveEx.cbSize)
 						{
-							m_waveEx.Reset(new BYTE[sizeof(WAVEFORMATEX) + waveEx.cbSize]);
-							memcpy(m_waveEx, &waveEx, sizeof(WAVEFORMATEX));
-							memcpy(m_waveEx + sizeof(WAVEFORMATEX), (BYTE*)&waveEx + sizeof(WAVEFORMATEX), waveEx.cbSize);
+							m_waveFMT.Reset(new BYTE[sizeof(WAVEFORMATEX) + waveEx.cbSize]);
+							memcpy(m_waveFMT, &waveEx, sizeof(WAVEFORMATEX));
+							memcpy(m_waveFMT + sizeof(WAVEFORMATEX), (BYTE*)&waveEx + sizeof(WAVEFORMATEX), waveEx.cbSize);
 							SAFE_LOCAL_FREE(extraBytes);
 							goto MMIO_ERROR;
 						}
@@ -780,6 +779,7 @@ namespace TinyUI
 				m_hmmio = NULL;
 			}
 			m_dwSize = m_dwLSize = m_dwDataOffset = 0;
+			m_waveFMT.Reset(NULL);
 		}
 		BOOL TinyWaveFile::Read(BYTE* lpBuffer, LONG nNumberOfBytesToRead, LPLONG lpNumberOfBytesRead)
 		{
@@ -823,7 +823,11 @@ namespace TinyUI
 		}
 		WAVEFORMATEX* TinyWaveFile::GetFormat() const
 		{
-			return reinterpret_cast<WAVEFORMATEX*>(m_waveEx.Ptr());
+			return reinterpret_cast<WAVEFORMATEX*>(m_waveFMT.Ptr());
+		}
+		WORD TinyWaveFile::GetFormatSize() const
+		{
+			return m_wFormatSize;
 		}
 		DWORD TinyWaveFile::GetSize() const
 		{

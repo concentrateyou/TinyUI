@@ -29,17 +29,6 @@ namespace TinyUI
 		/// </summary>
 		class TinyWaveFile
 		{
-		private:
-			TinyScopedArray<BYTE> m_waveEx;
-			DWORD			m_dwSize;//数据大小
-			DWORD			m_dwLSize;//剩余数据大小
-			DWORD			m_dwDataOffset;//波形数据的偏移量
-			HMMIO			m_hmmio;
-			BOOL			m_reading;
-			MMCKINFO		m_mmckRIFF;
-			MMCKINFO		m_mmckFMT;
-			MMCKINFO		m_mmckFACT;
-			MMCKINFO		m_mmckDATA;
 		public:
 			TinyWaveFile();
 			~TinyWaveFile();
@@ -53,8 +42,21 @@ namespace TinyUI
 			BOOL ResetFile();
 			void Close();
 			WAVEFORMATEX* GetFormat() const;
+			WORD  GetFormatSize() const;
 			DWORD GetSize() const;
 			DWORD GetDataOffset() const;
+		private:
+			BOOL					m_reading;
+			DWORD					m_dwSize;//数据大小
+			DWORD					m_dwLSize;//剩余数据大小
+			DWORD					m_dwDataOffset;//波形数据的偏移量
+			HMMIO					m_hmmio;
+			MMCKINFO				m_mmckRIFF;
+			MMCKINFO				m_mmckFMT;
+			MMCKINFO				m_mmckFACT;
+			MMCKINFO				m_mmckDATA;
+			WORD					m_wFormatSize;
+			TinyScopedArray<BYTE>	m_waveFMT;
 		};
 		/// <summary>
 		/// Wave输入类
