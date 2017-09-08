@@ -45,17 +45,22 @@ namespace TinyUI
 			/// WAVE_FORMAT_96S08	96 kHz, stereo, 8 - bit
 			/// WAVE_FORMAT_96S16	96 kHz, stereo, 16 - bit
 			/// </summary>
-			BOOL GetCaps(const GUID& guid, DWORD& dwFormats);
-			BOOL SetNotifys(DWORD dwSize, LPCDSBPOSITIONNOTIFY pNotify);
-			BOOL Open(const GUID& guid, WAVEFORMATEX* pFMT = NULL);
-			BOOL Start(DWORD dwFlags = DSCBSTART_LOOPING);
-			BOOL Stop();
-			BOOL Close();
-			BOOL Fill(BYTE* bits, LONG size, DWORD dwOffset);
+			static BOOL GetCaps(const GUID& guid, DWORD& dwFormats);
+			BOOL	SetNotifys(DWORD dwCount, LPCDSBPOSITIONNOTIFY pNotify);
+			BOOL	SetFormat(const  WAVEFORMATEX* pFMT, DWORD dwDataSize);
+			BOOL	Open(const GUID& guid);
+			BOOL	Start(DWORD dwFlags = DSCBSTART_LOOPING);
+			BOOL	Stop();
+			BOOL	Close();
+			BOOL	GetBuffer(BYTE*& bits, LONG& size, DWORD dwFlag = DSCBLOCK_ENTIREBUFFER);
+			DWORD	GetSize() const;
 		private:
 			static BOOL CALLBACK DSEnumCallback(LPGUID, LPCSTR, LPCSTR, LPVOID);
 		private:
+			DWORD									m_dwCount;
+			DWORD									m_dwSize;
 			DWORD									m_dwOffset;
+			TinyScopedArray<BYTE>					m_bits;
 			TinyScopedArray<BYTE>					m_waveFMT;
 			TinyComPtr<IDirectSoundCapture8>		m_dsc8;
 			TinyComPtr<IDirectSoundCaptureBuffer8>	m_dscb8;

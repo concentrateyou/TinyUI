@@ -7,7 +7,8 @@ namespace TinyUI
 	{
 		TinySoundPlayer::TinySoundPlayer()
 			:m_dwSize(0),
-			m_dwOffset(0)
+			m_dwOffset(0),
+			m_dwCount(0)
 		{
 		}
 
@@ -60,7 +61,6 @@ namespace TinyUI
 		{
 			if (!m_sound || !pFMT)
 				return FALSE;
-			m_dwSize = dwSize;
 			INT size = sizeof(WAVEFORMATEX) + pFMT->cbSize;
 			m_waveFMT.Reset(new BYTE[size]);
 			memcpy(m_waveFMT, (BYTE*)pFMT, size);
@@ -78,7 +78,7 @@ namespace TinyUI
 			ZeroMemory(&dbdesc, sizeof(dbdesc));
 			dbdesc.dwSize = sizeof(dbdesc);
 			dbdesc.dwFlags = DSBCAPS_STATIC | DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLPOSITIONNOTIFY | DSBCAPS_GETCURRENTPOSITION2;
-			dbdesc.dwBufferBytes = m_dwSize;
+			dbdesc.dwBufferBytes = dwSize;
 			dbdesc.lpwfxFormat = reinterpret_cast<WAVEFORMATEX*>(m_waveFMT.Ptr());
 			TinyComPtr<IDirectSoundBuffer> dsb;
 			hRes = m_sound->CreateSoundBuffer(&dbdesc, &dsb, NULL);
@@ -87,6 +87,7 @@ namespace TinyUI
 			hRes = dsb->QueryInterface(IID_IDirectSoundBuffer8, (void**)&m_secondaryDSB);
 			if (hRes != S_OK)
 				return FALSE;
+			m_dwSize = dwSize;
 			return TRUE;
 		}
 		BOOL TinySoundPlayer::GetCaps(DSCAPS& caps)
@@ -167,6 +168,13 @@ namespace TinyUI
 			m_secondaryDSB->Unlock(ppvAudioPtr, dwAudioBytes, NULL, 0);
 			return TRUE;
 		}
+		BOOL TinySoundPlayer::GetPosition(DWORD& dwCurrentPlayCursor, DWORD& dwCurrentWriteCursor)
+		{
+			if (!m_secondaryDSB)
+				return FALSE;
+			HRESULT hRes = m_secondaryDSB->GetCurrentPosition(&dwCurrentPlayCursor, &dwCurrentWriteCursor);
+			return hRes == S_OK;
+		}
 		BOOL TinySoundPlayer::Stop()
 		{
 			if (!m_secondaryDSB)
@@ -210,7 +218,7 @@ namespace TinyUI
 		{
 			return m_dwSize;
 		}
-		BOOL TinySoundPlayer::SetNotifys(DWORD dwSize, LPCDSBPOSITIONNOTIFY pNotify)
+		BOOL TinySoundPlayer::SetNotifys(DWORD dwCount, LPCDSBPOSITIONNOTIFY pNotify)
 		{
 			if (!m_secondaryDSB)
 				return FALSE;
@@ -218,7 +226,12 @@ namespace TinyUI
 			HRESULT hRes = m_secondaryDSB->QueryInterface(IID_IDirectSoundNotify, (void**)&notify);
 			if (hRes != S_OK)
 				return FALSE;
-			return SUCCEEDED(notify->SetNotificationPositions(dwSize, pNotify));
+			if (SUCCEEDED(notify->SetNotificationPositions(dwCount, pNotify)))
+			{
+				m_dwCount = dwCount;
+				return TRUE;
+			}
+			return FALSE;
 		}
 	}
 }

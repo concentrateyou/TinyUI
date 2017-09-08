@@ -29,7 +29,7 @@ namespace MShow
 	BOOL MAudioRenderTask::Initialize(HWND hWND)
 	{
 		m_bBreak = FALSE;
-		if (!m_player.Initialize(hWND))
+		if (!m_player.Open(hWND))
 			return FALSE;
 		m_events[0].CreateEvent(TRUE, FALSE);
 		m_events[1].CreateEvent(TRUE, FALSE);

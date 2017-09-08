@@ -18,6 +18,8 @@ namespace MShow
 		~MAudioDSP();
 		BOOL Initialize(Callback<void(BYTE*, LONG)>&& callback);
 		BOOL Open();
+		BOOL Open(const TinyWASAPIAudio::Name& capture, const TinyWASAPIAudio::Name& speaker);
+		BOOL Open(const GUID& capture, const GUID& speaker);
 		BOOL Start();
 		BOOL Stop();
 		BOOL Close();
@@ -26,15 +28,15 @@ namespace MShow
 		void OnAudio(BYTE* bits, LONG size, LPVOID lpParameter);
 		void OnTimer();
 	private:
-		BYTE					m_data[4096];
-		TinyLock				m_lock;
-		TinyAudioDSPCapture		m_audioDSP;
-		TinyMFResampler			m_resampler;
-		TinyBufferArray<BYTE>	m_buffer;
-		TinyTimer				m_timer;
-		TinyWaveFile			m_waveFile;
-		WAVEFORMATEX			m_waveFMTI;
-		WAVEFORMATEX			m_waveFMTO;
+		BYTE						m_bits[4096];
+		TinyLock					m_lock;
+		TinyAudioDSPCapture			m_audioDSP;
+		TinyMFResampler				m_resampler;
+		TinyBufferArray<BYTE>		m_buffer;
+		TinyTimer					m_timer;
+		TinyWaveFile				m_waveFile;
+		WAVEFORMATEX				m_waveFMTI;
+		WAVEFORMATEX				m_waveFMTO;
 		Callback<void(BYTE*, LONG)> m_callback;
 	};
 }

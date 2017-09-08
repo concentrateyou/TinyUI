@@ -30,6 +30,7 @@ namespace TinyUI
 			BOOL	SetNotifys(DWORD dwSize, LPCDSBPOSITIONNOTIFY pNotify);
 			BOOL	SetFormat(const WAVEFORMATEX* pFMT, DWORD dwSize);
 			BOOL	Play(DWORD dwFlags = DSBPLAY_LOOPING);
+			BOOL	GetPosition(DWORD& dwCurrentPlayCursor, DWORD& dwCurrentWriteCursor);
 			BOOL	Fill(BYTE* bits, LONG size, DWORD dwOffset);
 			BOOL	GetCaps(DSCAPS& caps);
 			BOOL	SetVolume(LONG volume);
@@ -48,12 +49,13 @@ namespace TinyUI
 		private:
 			static BOOL CALLBACK DSEnumCallback(LPGUID pzGUID, LPCSTR pzDesc, LPCSTR pzModule, LPVOID pContext);
 		private:
+			DWORD							m_dwSize;
+			DWORD							m_dwOffset;
+			DWORD							m_dwCount;
 			TinyComPtr<IDirectSound8>		m_sound;
 			TinyComPtr<IDirectSoundBuffer>	m_primaryDSB;
 			TinyComPtr<IDirectSoundBuffer8>	m_secondaryDSB;
 			TinyScopedArray<BYTE>			m_waveFMT;
-			DWORD							m_dwSize;
-			DWORD							m_dwOffset;
 		};
 	}
 }

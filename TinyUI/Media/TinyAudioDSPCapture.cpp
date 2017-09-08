@@ -33,7 +33,60 @@ namespace TinyUI
 		{
 			m_callback = std::move(callback);
 		}
-
+		BOOL TinyAudioDSPCapture::Open(const GUID& speakGUID, const GUID& captureGUID, WAVEFORMATEX* pFMT)
+		{
+			if (!SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS))
+				return FALSE;
+			HRESULT hRes = CoCreateInstance(CLSID_CWMAudioAEC, NULL, CLSCTX_INPROC_SERVER, __uuidof(IMediaObject), (void**)&m_dmo);
+			if (hRes != S_OK)
+				return FALSE;
+			TinyComPtr<IPropertyStore> propertyStore;
+			hRes = m_dmo->QueryInterface(IID_IPropertyStore, reinterpret_cast<void**>(&propertyStore));
+			if (hRes != S_OK)
+				return FALSE;
+			BOOL IsMA = FALSE;
+			AEC_SYSTEM_MODE mode = SINGLE_CHANNEL_AEC;
+			if (!IsMicrophoneArray(captureGUID, IsMA))
+				return FALSE;
+			if (IsMA)
+				mode = OPTIBEAM_ARRAY_AND_AEC;
+			if (!SetVTI4Property(propertyStore, MFPKEY_WMAAECMA_SYSTEM_MODE, mode))
+				return FALSE;
+			if (!SetBOOLProperty(propertyStore, MFPKEY_WMAAECMA_FEATURE_MODE, VARIANT_TRUE))
+				return FALSE;
+			if (!SetBOOLProperty(propertyStore, MFPKEY_WMAAECMA_FEATR_AGC, m_bEnableAGC ? VARIANT_TRUE : VARIANT_FALSE))
+				return FALSE;
+			if (!SetVTI4Property(propertyStore, MFPKEY_WMAAECMA_FEATR_NS, m_bEnableNS ? 1 : 0))
+				return FALSE;
+			if (!SetVTI4Property(propertyStore, MFPKEY_WMAAECMA_FEATR_VAD, m_vadMode))
+				return FALSE;
+			INT index1 = GetDeviceIndex(eRender, speakGUID);
+			INT index2 = GetDeviceIndex(eCapture, captureGUID);
+			LONG index = static_cast<ULONG>(index1 << 16) + static_cast<ULONG>(0x0000FFFF & index2);
+			if (!SetVTI4Property(propertyStore, MFPKEY_WMAAECMA_DEVICE_INDEXES, index))
+				return FALSE;
+			hRes = MoInitMediaType(&m_mediaType, sizeof(WAVEFORMATEX));
+			if (hRes != S_OK)
+				return FALSE;
+			m_mediaType.majortype = MEDIATYPE_Audio;
+			m_mediaType.subtype = MEDIASUBTYPE_PCM;
+			m_mediaType.lSampleSize = 0;
+			m_mediaType.bFixedSizeSamples = TRUE;
+			m_mediaType.bTemporalCompression = FALSE;
+			m_mediaType.formattype = FORMAT_WaveFormatEx;
+			m_mediaType.cbFormat = sizeof(WAVEFORMATEX);
+			memcpy(m_mediaType.pbFormat, pFMT, sizeof(WAVEFORMATEX));
+			hRes = m_dmo->SetOutputType(0, &m_mediaType, 0);
+			MoFreeMediaType(&m_mediaType);
+			if (hRes != S_OK)
+				return FALSE;
+			if (pFMT != NULL)
+			{
+				m_waveFMT.Reset(new BYTE[sizeof(WAVEFORMATEX) + pFMT->cbSize]);
+				memcpy(m_waveFMT, (BYTE*)pFMT, sizeof(WAVEFORMATEX) + pFMT->cbSize);
+			}
+			return TRUE;
+		}
 		BOOL TinyAudioDSPCapture::Open(const Name& speakName, const Name& captureName, WAVEFORMATEX* pFMT)
 		{
 			if (!SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS))

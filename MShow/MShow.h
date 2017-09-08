@@ -2,6 +2,7 @@
 #include "resource.h"
 #include "MShowWindow.h"
 #include "MShowController.h"
+#include "Windowless/TinyVisualDocument.h"
 using namespace TinyUI;
 
 namespace MShow

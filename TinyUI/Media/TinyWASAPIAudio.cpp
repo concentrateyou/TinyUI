@@ -6,6 +6,12 @@ namespace TinyUI
 {
 	namespace Media
 	{
+		EXTERN_C const PROPERTYKEY PKEY_AudioEndpoint_GUID = { {
+				0x1da5d803, 0xd492, 0x4edd,{
+					0x8c, 0x23, 0xe0, 0xc0, 0xff, 0xee, 0x7f, 0x0e
+				} }, 4
+		};
+
 		AudioSessionEvents::AudioSessionEvents()
 		{
 
@@ -72,17 +78,19 @@ namespace TinyUI
 		{
 
 		}
-		TinyWASAPIAudio::Name::Name(string&& id, string&& name, const GUID& type)
+		TinyWASAPIAudio::Name::Name(string&& id, string&& name, const GUID& type, const GUID& subType)
 			: m_name(std::move(name)),
 			m_id(std::move(id)),
-			m_type(type)
+			m_type(type),
+			m_subType(subType)
 		{
 
 		}
-		TinyWASAPIAudio::Name::Name(const string& id, const string& name, const GUID& type)
+		TinyWASAPIAudio::Name::Name(const string& id, const string& name, const GUID& type, const GUID& subType)
 			: m_name(name),
 			m_id(id),
-			m_type(type)
+			m_type(type),
+			m_subType(subType)
 		{
 
 		}
@@ -105,6 +113,10 @@ namespace TinyUI
 		const GUID& TinyWASAPIAudio::Name::type() const
 		{
 			return m_type;
+		}
+		const GUID& TinyWASAPIAudio::Name::subtype() const
+		{
+			return m_subType;
 		}
 		//////////////////////////////////////////////////////////////////////////
 		TinyWASAPIAudio::TinyWASAPIAudio()
@@ -131,6 +143,51 @@ namespace TinyUI
 				return FALSE;
 			IsMA = (subType == KSNODETYPE_MICROPHONE) ? TRUE : FALSE;
 			return TRUE;
+		}
+		BOOL TinyWASAPIAudio::IsMicrophone(const GUID& guid, BOOL& IsMA)
+		{
+			TinyComPtr<IMMDeviceEnumerator>	enumerator;
+			HRESULT hRes = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER);
+			if (hRes != S_OK)
+				return FALSE;
+			TinyComPtr<IMMDeviceCollection> collection;
+			hRes = enumerator->EnumAudioEndpoints(eCapture, DEVICE_STATE_ACTIVE, &collection);
+			if (hRes != S_OK)
+				return FALSE;
+			UINT count = 0;
+			hRes = collection->GetCount(&count);
+			if (hRes != S_OK)
+				return FALSE;
+			for (UINT i = 0;i < count;i++)
+			{
+				TinyComPtr<IMMDevice> device;
+				hRes = collection->Item(i, &device);
+				if (hRes != S_OK)
+					continue;
+				TinyComPtr<IPropertyStore> prop;
+				hRes = device->OpenPropertyStore(STGM_READ, &prop);
+				if (SUCCEEDED(hRes))
+				{
+					GUID type;
+					PROPVARIANT varGUID;
+					PropVariantInit(&varGUID);
+					hRes = prop->GetValue(PKEY_AudioEndpoint_GUID, &varGUID);
+					if (SUCCEEDED(hRes) && varGUID.pwszVal != NULL)
+					{
+						CLSIDFromString(varGUID.pwszVal, &type);
+						PropVariantClear(&varGUID);
+						if (IsEqualGUID(guid, type))
+						{
+							GUID subType = GUID_NULL;
+							if (!GetJackSubtype(device, subType))
+								return FALSE;
+							IsMA = (subType == KSNODETYPE_MICROPHONE) ? TRUE : FALSE;
+							return TRUE;
+						}
+					}
+				}
+			}
+			return FALSE;
 		}
 		BOOL TinyWASAPIAudio::IsMicrophone(const string& name, BOOL& IsMA)
 		{
@@ -175,7 +232,52 @@ namespace TinyUI
 					}
 				}
 			}
-			return TRUE;
+			return FALSE;
+		}
+		BOOL TinyWASAPIAudio::IsMicrophoneArray(const GUID& guid, BOOL& IsMA)
+		{
+			TinyComPtr<IMMDeviceEnumerator>	enumerator;
+			HRESULT hRes = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER);
+			if (hRes != S_OK)
+				return FALSE;
+			TinyComPtr<IMMDeviceCollection> collection;
+			hRes = enumerator->EnumAudioEndpoints(eAll, DEVICE_STATE_ACTIVE, &collection);
+			if (hRes != S_OK)
+				return 1;
+			UINT count = 0;
+			hRes = collection->GetCount(&count);
+			if (hRes != S_OK)
+				return 1;
+			for (UINT i = 0;i < count;i++)
+			{
+				TinyComPtr<IMMDevice> device;
+				hRes = collection->Item(i, &device);
+				if (hRes != S_OK)
+					continue;
+				TinyComPtr<IPropertyStore> prop;
+				hRes = device->OpenPropertyStore(STGM_READ, &prop);
+				if (SUCCEEDED(hRes))
+				{
+					GUID type;
+					PROPVARIANT varGUID;
+					PropVariantInit(&varGUID);
+					hRes = prop->GetValue(PKEY_AudioEndpoint_GUID, &varGUID);
+					if (SUCCEEDED(hRes) && varGUID.pwszVal != NULL)
+					{
+						CLSIDFromString(varGUID.pwszVal, &type);
+						PropVariantClear(&varGUID);
+						if (IsEqualGUID(guid, type))
+						{
+							GUID subType = GUID_NULL;
+							if (!GetJackSubtype(device, subType))
+								return FALSE;
+							IsMA = (subType == KSNODETYPE_MICROPHONE_ARRAY) ? TRUE : FALSE;
+							return TRUE;
+						}
+					}
+				}
+			}
+			return FALSE;
 		}
 		BOOL TinyWASAPIAudio::IsMicrophoneArray(const Name& name, BOOL& IsMA)
 		{
@@ -295,6 +397,7 @@ namespace TinyUI
 					pwszVal = NULL;
 				}
 				string name;
+				string guid;
 				TinyComPtr<IPropertyStore> prop;
 				hRes = device->OpenPropertyStore(STGM_READ, &prop);
 				if (SUCCEEDED(hRes))
@@ -307,9 +410,19 @@ namespace TinyUI
 						name = WStringToString(varName.pwszVal);
 						PropVariantClear(&varName);
 						GUID type;
-						if (GetJackSubtype(device, type))
+						PROPVARIANT varGUID;
+						PropVariantInit(&varGUID);
+						hRes = prop->GetValue(PKEY_AudioEndpoint_GUID, &varGUID);
+						if (SUCCEEDED(hRes) && varGUID.pwszVal != NULL)
 						{
-							names.push_back(Name(std::move(id), std::move(name), type));
+							CLSIDFromString(varGUID.pwszVal, &type);
+							PropVariantClear(&varGUID);
+
+							GUID subtype;
+							if (GetJackSubtype(device, subtype))
+							{
+								names.push_back(Name(std::move(id), std::move(name), type, subtype));
+							}
 						}
 					}
 				}
@@ -347,6 +460,47 @@ namespace TinyUI
 					if (id == name.id())
 					{
 						return i;
+					}
+				}
+			}
+			return -1;
+		}
+		INT  TinyWASAPIAudio::GetDeviceIndex(EDataFlow dataFlow, const GUID& guid)
+		{
+			TinyComPtr<IMMDeviceEnumerator>	enumerator;
+			HRESULT hRes = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER);
+			if (hRes != S_OK)
+				return -1;
+			TinyComPtr<IMMDeviceCollection> collection;
+			hRes = enumerator->EnumAudioEndpoints(dataFlow, DEVICE_STATE_ACTIVE, &collection);
+			if (hRes != S_OK)
+				return 1;
+			UINT count = 0;
+			hRes = collection->GetCount(&count);
+			if (hRes != S_OK)
+				return 1;
+			for (UINT i = 0;i < count;i++)
+			{
+				TinyComPtr<IMMDevice> device;
+				hRes = collection->Item(i, &device);
+				if (hRes != S_OK)
+					continue;
+				TinyComPtr<IPropertyStore> prop;
+				hRes = device->OpenPropertyStore(STGM_READ, &prop);
+				if (SUCCEEDED(hRes))
+				{
+					GUID type;
+					PROPVARIANT varGUID;
+					PropVariantInit(&varGUID);
+					hRes = prop->GetValue(PKEY_AudioEndpoint_GUID, &varGUID);
+					if (SUCCEEDED(hRes) && varGUID.pwszVal != NULL)
+					{
+						CLSIDFromString(varGUID.pwszVal, &type);
+						PropVariantClear(&varGUID);
+						if (IsEqualGUID(guid, type))
+						{
+							return i;
+						}
 					}
 				}
 			}

@@ -21,12 +21,6 @@ namespace MShow
 
 	BOOL MShowController::Initialize()
 	{
-		m_window.m_txtPreviewURL.SetText("http://10.110.48.109:52193/6696864323");
-		m_window.m_address.SetAddress(MAKEIPADDRESS(10, 110, 48, 109));
-		m_onRecordClick.Reset(new Delegate<void(void*, INT)>(this, &MShowController::OnRecord));
-		m_window.m_btnRecord.EVENT_CLICK += m_onRecordClick;
-		m_onPreviewClick.Reset(new Delegate<void(void*, INT)>(this, &MShowController::OnPreview));
-		m_window.m_btnPreview.EVENT_CLICK += m_onPreviewClick;
 		m_preview.Reset(new MPreviewController(m_window.m_previewView));
 		if (!m_preview)
 			return FALSE;
@@ -45,10 +39,112 @@ namespace MShow
 			LOG(ERROR) << "AudioAnalyser Initialize Fail";
 			return FALSE;
 		}
-		LOG(INFO) << "MShowController Initialize OK";
+		InitializeUI();
 		return TRUE;
 	}
+	void MShowController::InitializeUI()
+	{
+		TinyVisual* visual = m_window.GetDocument()->GetVisualByName("sysmin");
+		if (visual != NULL)
+		{
+			m_onMinimumClick.Reset(new Delegate<void(EventArgs&)>(this, &MShowController::OnMinimumClick));
+			visual->EVENT_CLICK += m_onMinimumClick;
+		}
+		visual = m_window.GetDocument()->GetVisualByName("sysclose");
+		if (visual != NULL)
+		{
+			m_onCloseClick.Reset(new Delegate<void(EventArgs&)>(this, &MShowController::OnCloseClick));
+			visual->EVENT_CLICK += m_onCloseClick;
+		}
+		visual = m_window.GetDocument()->GetVisualByName("previewWND");
+		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualNative)))
+		{
+			TinyVisualNative* val = static_cast<TinyVisualNative*>(visual);
+			val->SetWindow(&m_window.m_previewView);
+		}
+		visual = m_window.GetDocument()->GetVisualByName("btnPreview");
+		if (visual != NULL)
+		{
+			m_onPreviewClick.Reset(new Delegate<void(EventArgs&)>(this, &MShowController::OnPreviewClick));
+			visual->EVENT_CLICK += m_onPreviewClick;
+		}
+		visual = m_window.GetDocument()->GetVisualByName("btnRecord");
+		if (visual != NULL)
+		{
+			m_onRecordClick.Reset(new Delegate<void(EventArgs&)>(this, &MShowController::OnRecordClick));//开始录音
+			visual->EVENT_CLICK += m_onRecordClick;
+		}
+		visual = m_window.GetDocument()->GetVisualByName("txtURL");
+		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualTextBox)))
+		{
+			TinyVisualTextBox* val = static_cast<TinyVisualTextBox*>(visual);
+			val->SetText("http://10.110.48.109:65449/6696864323");
+		}
+		vector<CAPTUREDEVICE> captures;
+		TinySoundCapture::Enumerate(captures);
+		visual = m_window.GetDocument()->GetVisualByName("microphone");
+		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
+		{
+			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
+			for (INT i = 0;i < captures.size();i++)
+			{
+				wstring szGUID;
+				szGUID.resize(39);
+				::StringFromGUID2(captures[i].Guid, &szGUID[0], 39);
+				string sz = WStringToString(szGUID);
+				val->AddOption(sz.c_str(), captures[i].Description.c_str());
+			}
+			val->SetSelected(0);
+		}
+		vector<PLAYDEVICE> renders;
+		TinySoundPlayer::Enumerate(renders);
+		visual = m_window.GetDocument()->GetVisualByName("speaker");
+		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
+		{
+			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
+			for (INT i = 0;i < renders.size();i++)
+			{
+				wstring szGUID;
+				szGUID.resize(39);
+				::StringFromGUID2(renders[i].Guid, &szGUID[0], 39);
+				string sz = WStringToString(szGUID);
+				val->AddOption(sz.c_str(), renders[i].Description.c_str());
+			}
+			val->SetSelected(0);
+		}
+		visual = m_window.GetDocument()->GetVisualByName("btnMicrophoneTest");
+		if (visual != NULL)
+		{
+			m_onMicrophoneTestClick.Reset(new Delegate<void(EventArgs&)>(this, &MShowController::OnMicrophoneTestClick));
+			visual->EVENT_CLICK += m_onMicrophoneTestClick;
+		}
+		visual = m_window.GetDocument()->GetVisualByName("btnSpeakerTest");
+		if (visual != NULL)
+		{
+			m_onSpeakerTestClick.Reset(new Delegate<void(EventArgs&)>(this, &MShowController::OnSpeakerTestClick));
+			visual->EVENT_CLICK += m_onSpeakerTestClick;
+		}
+		visual = m_window.GetDocument()->GetVisualByName("serverIP");
+		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
+		{
+			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
+			vector<string> ips = m_appConfig.GetIPList();
+			for (INT i = 0;i < ips.size();i++)
+			{
+				val->AddOption(ips[i].c_str(), ips[i].c_str());
+			}
+			val->SetSelected(0);
+		}
 
+
+		visual = m_window.GetDocument()->GetVisualByName("analyzeWND");
+		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualNative)))
+		{
+			TinyVisualNative* val = static_cast<TinyVisualNative*>(visual);
+			val->SetWindow(&m_window.m_analyserBAR);
+		}
+		m_window.GetDocument()->Redraw();
+	}
 	void MShowController::Uninitialize()
 	{
 		m_bBreak = TRUE;
@@ -71,57 +167,164 @@ namespace MShow
 	{
 		return m_appConfig;
 	}
-
-	void MShowController::OnPreview(void*, INT)
+	CLSID MShowController::GetSpeakCLSID()
 	{
-		TinyString szURL = m_window.m_txtPreviewURL.GetText();
-		if (m_preview != NULL && !szURL.IsEmpty())
+		CLSID clsid = GUID_NULL;
+		TinyVisual* visual = m_window.GetDocument()->GetVisualByName("speaker");
+		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
 		{
-			m_preview->Close();
-			if (m_preview->Open(szURL.CSTR()))
+			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
+			TinyVisualOption* option = val->GetSelected();
+			if (option != NULL)
 			{
-				LOG(INFO) << "Preview Open OK" << endl;
+				wstring szGUID = option->GetValue().ToWString();
+				CLSIDFromString(&szGUID[0], &clsid);
+				return clsid;
 			}
-			else
+		}
+		return clsid;
+	}
+	CLSID MShowController::GetMicrophoneCLSID()
+	{
+		CLSID clsid = GUID_NULL;
+		TinyVisual* visual = m_window.GetDocument()->GetVisualByName("microphone");
+		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
+		{
+			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
+			TinyVisualOption* option = val->GetSelected();
+			if (option != NULL)
 			{
-				LOG(ERROR) << "Preview Open Fail" << endl;
+				wstring szGUID = option->GetValue().ToWString();
+				CLSIDFromString(&szGUID[0], &clsid);
+				return clsid;
+			}
+		}
+		return clsid;
+	}
+	void MShowController::OnMinimumClick(EventArgs& args)
+	{
+		m_window.GetDocument()->ReleaseCapture();//必须释放捕获
+		SendMessage(m_window.Handle(), WM_SYSCOMMAND, SC_MINIMIZE, NULL);
+	}
+
+	void MShowController::OnCloseClick(EventArgs& args)
+	{
+		SendMessage(m_window.Handle(), WM_CLOSE, NULL, NULL);
+	}
+
+	void MShowController::OnMicrophoneTestClick(EventArgs& args)
+	{
+		TinyVisual* visual = m_window.GetDocument()->GetVisualByName("microphone");
+		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
+		{
+			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
+			TinyVisualOption* option = val->GetSelected();
+			if (option != NULL)
+			{
+				wstring szGUID = option->GetValue().ToWString();
+				CLSID clsid;
+				CLSIDFromString(&szGUID[0], &clsid);
+				WAVEFORMATEX w;
+				w.cbSize = 0;
+				w.nChannels = 2;
+				w.nSamplesPerSec = 44100;
+				w.wBitsPerSample = 16;
+				w.nBlockAlign = (w.wBitsPerSample * w.nChannels) / 8;
+				w.nAvgBytesPerSec = w.nSamplesPerSec * w.nBlockAlign;
+				w.wFormatTag = WAVE_FORMAT_PCM;
+				m_microphoneTest.Invoke(clsid, val->GetDocument()->GetVisualHWND()->Handle());
 			}
 		}
 	}
 
-	void MShowController::OnRecord(void*, INT)
+	void MShowController::OnSpeakerTestClick(EventArgs& args)
 	{
-		//SetCapture(NULL);
-		//SendMessage(m_window.Handle(), WM_SYSCOMMAND, SC_MINIMIZE, 0);
-		//return;
-
-		DWORD dwAddress = 0;
-		m_window.m_address.GetAddress(dwAddress);
-		string ip = StringPrintf("%ld.%ld.%ld.%ld", FIRST_IPADDRESS(dwAddress), SECOND_IPADDRESS(dwAddress), THIRD_IPADDRESS(dwAddress), FOURTH_IPADDRESS(dwAddress));
-		if (m_task.IsActive())
+		TinyVisual* visual = m_window.GetDocument()->GetVisualByName("speaker");
+		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
 		{
-			m_bBreak = TRUE;
-			m_task.Close(1000);
-		}
-		m_bBreak = FALSE;
-		if (m_task.Submit(BindCallback(&MShowController::OnMessagePump, this)))
-		{
-			m_audioSDK.Reset(new AudioSdk(ip, 6090));
-			if (m_audioSDK != NULL)
+			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
+			TinyVisualOption* option = val->GetSelected();
+			if (option != NULL)
 			{
-				if (m_audioSDK->init(44100, 2, 16) == 0)
+				wstring szGUID = option->GetValue().ToWString();
+				CLSID clsid;
+				CLSIDFromString(&szGUID[0], &clsid);
+				m_speakTest.Invoke("D:\\SoundTest.wav", clsid, val->GetDocument()->GetVisualHWND()->Handle());
+			}
+		}
+	}
+
+
+	void MShowController::OnPreviewClick(EventArgs& args)
+	{
+		TinyVisual* visual = m_window.GetDocument()->GetVisualByName("txtURL");
+		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualTextBox)))
+		{
+			TinyVisualTextBox* val = static_cast<TinyVisualTextBox*>(visual);
+			TinyString szURL = val->GetText();
+			if (m_preview != NULL && !szURL.IsEmpty())
+			{
+				m_preview->Close();
+				if (m_preview->Open(szURL.CSTR()))
 				{
-					LOG(INFO) << "AudioSDK init OK" << endl;
-					m_audioDSP.Close();
-					if (m_audioDSP.Open())
-					{
-						m_audioDSP.Stop();
-						m_audioDSP.Start();
-					}
+					LOG(INFO) << "Preview Open OK" << endl;
 				}
 				else
 				{
-					LOG(ERROR) << "AudioSDK init Fail" << endl;
+					LOG(ERROR) << "Preview Open Fail" << endl;
+				}
+			}
+		}
+	}
+
+	void MShowController::OnRecordClick(EventArgs& args)
+	{
+		TinyVisual* visual = m_window.GetDocument()->GetVisualByName("serverIP");
+		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
+		{
+			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
+			TinyVisualOption* option = val->GetSelected();
+			if (option != NULL)
+			{
+				string ip = option->GetValue().CSTR();
+				if (m_task.IsActive())
+				{
+					m_bBreak = TRUE;
+					m_task.Close(1000);
+				}
+				m_bBreak = FALSE;
+				if (m_task.Submit(BindCallback(&MShowController::OnMessagePump, this)))
+				{
+					m_audioSDK.Reset(new AudioSdk(ip, 6090));
+					if (m_audioSDK != NULL)
+					{
+						if (m_audioSDK->init(44100, 2, 16) == 0)
+						{
+							LOG(INFO) << "AudioSDK init OK" << endl;
+							CLSID speakerCLSID = GetSpeakCLSID();
+							if (IsEqualGUID(speakerCLSID, GUID_NULL))
+							{
+								LOG(ERROR) << "GetSpeakCLSID is null" << endl;
+							}
+							CLSID microphoneCLSID = GetMicrophoneCLSID();
+							if (IsEqualGUID(microphoneCLSID, GUID_NULL))
+							{
+								LOG(ERROR) << "GetMicrophoneCLSID is null" << endl;
+							}
+							m_audioDSP.Close();
+							if (m_audioDSP.Open(microphoneCLSID, speakerCLSID))
+							{
+								m_audioDSP.Stop();
+								m_audioDSP.Start();
+								visual = m_window.GetDocument()->GetVisualByName("analyzeWND");
+								visual->SetVisible(TRUE);
+							}
+						}
+						else
+						{
+							LOG(ERROR) << "AudioSDK init Fail" << endl;
+						}
+					}
 				}
 			}
 		}

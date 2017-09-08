@@ -81,6 +81,9 @@
     <ClInclude Include="MAppConfig.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MAudioTest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -140,6 +143,9 @@
     <ClCompile Include="MAppConfig.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="MAudioTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MShow.rc">
@@ -153,5 +159,10 @@
     <Image Include="MShow.ico">
       <Filter>资源文件</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="main.xml" />
+    <Xml Include="resource.xml" />
+    <Xml Include="dropdown.xml" />
   </ItemGroup>
 </Project>

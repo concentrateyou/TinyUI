@@ -1,14 +1,13 @@
 #pragma once
 #include "MShowWindow.h"
-#include "MAudioCapture.h"
 #include "MAudioDSP.h"
 #include "AudioAnalyser.h"
 #include "audiosdk.h"
 #include "MAudioQueue.h"
 #include "MAppConfig.h"
+#include "MAudioTest.h"
 #include <fstream> 
 using namespace std;
-using namespace DShow;
 using namespace Decode;
 
 using namespace pps::audiosdk;
@@ -32,11 +31,20 @@ namespace MShow
 		MAppConfig& AppConfig();
 		MPreviewController* GetPreviewController();
 	private:
-		void OnPreview(void*, INT);
-		void OnRecord(void*, INT);
+		void InitializeUI();
 		void OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID);
 		void OnAudioDSP(BYTE* bits, LONG size);
 		void OnMessagePump();
+	private:
+		void OnPreviewClick(EventArgs&);
+		void OnRecordClick(EventArgs&);
+		void OnMinimumClick(EventArgs& args);
+		void OnCloseClick(EventArgs& args);
+		void OnMicrophoneTestClick(EventArgs& args);
+		void OnSpeakerTestClick(EventArgs& args);
+	private:
+		CLSID GetSpeakCLSID();
+		CLSID GetMicrophoneCLSID();
 	private:
 		BOOL					m_bError;
 		BOOL					m_bBreak;
@@ -51,9 +59,15 @@ namespace MShow
 		MAppConfig				m_appConfig;
 		TinyTaskBase			m_task;
 		TinyEvent				m_event;
+		SpeakTest				m_speakTest;
+		MicrophoneTest			m_microphoneTest;
 		TinyScopedPtr<MPreviewController>			m_preview;
-		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onPreviewClick;
-		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onRecordClick;
+		TinyScopedPtr<Delegate<void(EventArgs&)>>   m_onMinimumClick;
+		TinyScopedPtr<Delegate<void(EventArgs&)>>   m_onCloseClick;
+		TinyScopedPtr<Delegate<void(EventArgs&)>>   m_onPreviewClick;
+		TinyScopedPtr<Delegate<void(EventArgs&)>>   m_onRecordClick;
+		TinyScopedPtr<Delegate<void(EventArgs&)>>   m_onMicrophoneTestClick;
+		TinyScopedPtr<Delegate<void(EventArgs&)>>   m_onSpeakerTestClick;
 	};
 }
 

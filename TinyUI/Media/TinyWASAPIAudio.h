@@ -30,28 +30,33 @@ namespace TinyUI
 			{
 			public:
 				Name();
-				Name(const string& id, const string& name, const GUID& type);
-				Name(string&& id, string&& name, const GUID& type);
+				Name(const string& id, const string& name, const GUID& type, const GUID& subType);
+				Name(string&& id, string&& name, const GUID& type, const GUID& subType);
 				~Name();
 				BOOL IsEmpty() const;
 				const string& name() const;
 				const string& id() const;
 				const GUID& type() const;
+				const GUID& subtype() const;
 			private:
 				string		m_name;
 				string		m_id;
 				GUID		m_type;
+				GUID		m_subType;
 			};
 		public:
 			TinyWASAPIAudio();
 			virtual ~TinyWASAPIAudio();
 		public:
 			static BOOL IsMicrophoneArray(const string& name, BOOL& IsMA);
+			static BOOL IsMicrophoneArray(const GUID& guid, BOOL& IsMA);
 			static BOOL IsMicrophoneArray(const Name& name, BOOL& IsMA);
 			static BOOL IsMicrophone(const string& name, BOOL& IsMA);
+			static BOOL IsMicrophone(const GUID& guid, BOOL& IsMA);
 			static BOOL IsMicrophone(const Name& name, BOOL& IsMA);
 			static BOOL GetDevices(EDataFlow dataFlow, vector<Name>& names);
 			static INT  GetDeviceIndex(EDataFlow dataFlow, const Name& name);
+			static INT  GetDeviceIndex(EDataFlow dataFlow, const GUID& guid);
 			static BOOL GetJackSubtype(IMMDevice* mmDevice, GUID& subType);
 			static BOOL IsFormatValid(const Name& name, AUDCLNT_SHAREMODE shareMode, WAVEFORMATEX* pFMT);
 		};

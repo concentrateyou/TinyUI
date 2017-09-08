@@ -25,6 +25,7 @@ namespace TinyUI
 			virtual	void Initialize();
 			virtual	void Initialize(Callback<void(BYTE*, LONG, LPVOID)>&& callback);
 			virtual BOOL Open(const Name& speakName,const Name& captureName, WAVEFORMATEX* pFMT);
+			virtual BOOL Open(const GUID& speakGUID, const GUID& captureGUID, WAVEFORMATEX* pFMT);
 			virtual BOOL Start();
 			virtual BOOL Stop();
 			virtual BOOL Reset();

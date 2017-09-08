@@ -86,10 +86,12 @@ namespace TinyUI
 				TinyRectangle rectangle = this->GetWindowRect();
 				m_pWND->SetPosition(rectangle.Position());
 				m_pWND->SetSize(rectangle.Size());
+				ShowWindow(m_pWND->Handle(), IsVisible() ? SW_SHOW : SW_HIDE);
 			}
 		}
 		BOOL TinyVisualNative::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
+
 			return TRUE;
 		}
 

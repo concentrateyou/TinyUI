@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include "malloc.h"
 #include "rtmp.h"
 #include "DX2D.h"
@@ -12,10 +13,12 @@
 #include "Control/TinyButton.h"
 #include "Media/TinyMedia.h"
 #include "Media/TinySoundPlayer.h"
+#include "Media/TinySoundCapture.h"
 #include "Common/TinyTime.h"
 #include "Common.h"
 #include "x264Encode.h"
 #include "AACEncode.h"
+using namespace std;
 using namespace TinyUI;
 using namespace TinyUI::IO;
 using namespace TinyUI::Media;

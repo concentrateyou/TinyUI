@@ -62,12 +62,13 @@ namespace MShow
 		LoadSeDebugPrivilege();
 		UNREFERENCED_PARAMETER(lpCmdLine);
 		UNREFERENCED_PARAMETER(nCmdShow);
+		TinyVisualResource::GetInstance().LoadResource("D:\\Develop\\TinyUI\\MShow\\resource.xml");
 		::DefWindowProc(NULL, 0, 0, 0L);
 		if (!TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, lpTableName))
 			return FALSE;
 		if (!TinyApplication::GetInstance()->AddMessageLoop(&m_msgLoop))
 			return FALSE;
-		if (!m_window.Create(NULL, 0, 0, 1, 1))
+		if (!m_window.Create(NULL,"D:\\Develop\\TinyUI\\MShow\\main.xml"))
 			return FALSE;
 		if (!m_controller.Initialize())
 			return FALSE;

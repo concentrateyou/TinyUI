@@ -37,6 +37,73 @@ namespace MShow
 		LOG(INFO) << "MAudioDSP Initialize OK" << endl;
 		return TRUE;
 	}
+	BOOL MAudioDSP::Open(const TinyWASAPIAudio::Name& capture, const TinyWASAPIAudio::Name& speaker)
+	{
+		m_audioDSP.EnableNS(TRUE);
+		m_audioDSP.EnableAGC(FALSE);
+		if (capture.IsEmpty())
+		{
+			LOG(ERROR) << "[MAudioDSP] Can't Get Capture Device";
+			return FALSE;
+		}
+		if (!m_resampler.Open(&m_waveFMTI, &m_waveFMTO, BindCallback(&MAudioDSP::OnAudio, this)))
+		{
+			LOG(ERROR) << "Resampler Open Fail";
+			return FALSE;
+		}
+		if (!m_audioDSP.Open(speaker, capture, &m_waveFMTI))
+		{
+			LOG(ERROR) << "[MAudioDSP] Open Fail";
+			return FALSE;
+		}
+		MAppConfig& config = MShow::MShowApp::GetInstance().GetController().AppConfig();
+		string szFile = config.GetSaveFile();
+		if (szFile.size() > 0)
+		{
+			if (!m_waveFile.Create((LPTSTR)szFile.c_str(), &m_waveFMTO))
+			{
+				LOG(ERROR) << "[MAudioDSP] Create Wave File: " << szFile << " Fail";
+			}
+		}
+		LOG(INFO) << "[MAudioDSP] Open OK";
+		return TRUE;
+	}
+	BOOL MAudioDSP::Open(const GUID& capture, const GUID& speaker)
+	{
+		m_audioDSP.EnableNS(TRUE);
+		m_audioDSP.EnableAGC(FALSE);
+		if (IsEqualGUID(capture, GUID_NULL))
+		{
+			LOG(ERROR) << "[MAudioDSP] Can't Get Capture Device";
+			return FALSE;
+		}
+		if (IsEqualGUID(speaker, GUID_NULL))
+		{
+			LOG(ERROR) << "[MAudioDSP] Can't Get Speaker Device";
+			return FALSE;
+		}
+		if (!m_resampler.Open(&m_waveFMTI, &m_waveFMTO, BindCallback(&MAudioDSP::OnAudio, this)))
+		{
+			LOG(ERROR) << "Resampler Open Fail";
+			return FALSE;
+		}
+		if (!m_audioDSP.Open(speaker, capture, &m_waveFMTI))
+		{
+			LOG(ERROR) << "[MAudioDSP] Open Fail";
+			return FALSE;
+		}
+		MAppConfig& config = MShow::MShowApp::GetInstance().GetController().AppConfig();
+		string szFile = config.GetSaveFile();
+		if (szFile.size() > 0)
+		{
+			if (!m_waveFile.Create((LPTSTR)szFile.c_str(), &m_waveFMTO))
+			{
+				LOG(ERROR) << "[MAudioDSP] Create Wave File: " << szFile << " Fail";
+			}
+		}
+		LOG(INFO) << "[MAudioDSP] Open OK";
+		return TRUE;
+	}
 	BOOL MAudioDSP::Open()
 	{
 		m_audioDSP.EnableNS(TRUE);
@@ -141,15 +208,15 @@ namespace MShow
 		TinyAutoLock lock(m_lock);
 		if (m_buffer.GetSize() >= 4096)
 		{
-			memcpy(m_data, m_buffer.GetPointer(), 4096);
+			memcpy(m_bits, m_buffer.GetPointer(), 4096);
 			m_buffer.Remove(0, 4096);
 			if (m_waveFile != NULL)
 			{
-				m_waveFile.Write(m_data, 4096);
+				m_waveFile.Write(m_bits, 4096);
 			}
 			if (!m_callback.IsNull())
 			{
-				m_callback(m_data, 4096);
+				m_callback(m_bits, 4096);
 			}
 		}
 	}
