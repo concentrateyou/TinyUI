@@ -24,9 +24,11 @@ namespace MShow
 		BOOL				SleepNS(QWORD qwNSTime);
 		void				SetCurrentAudioTS(LONGLONG ts);
 		LONGLONG			GetCurrentAudioTS();
+		string				GetDefaultPath();
 	public:
 		static MShowApp&	GetInstance() throw();
 	private:
+		string				m_szPath;
 		TinyLock			m_lock;
 		MShowWindow			m_window;
 		MShowController		m_controller;

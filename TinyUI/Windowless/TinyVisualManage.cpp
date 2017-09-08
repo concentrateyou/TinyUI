@@ -232,7 +232,14 @@ namespace TinyUI
 		//////////////////////////////////////////////////////////////////////////
 		TinyVisualResource::TinyVisualResource()
 		{
-
+			CHAR module[MAX_PATH];
+			GetModuleFileName(NULL, module, MAX_PATH);
+			m_szPath = module;
+			string::size_type backslash = m_szPath.rfind('\\', m_szPath.size());
+			if (backslash != string::npos)
+			{
+				m_szPath.erase(backslash + 1);
+			}
 		}
 		TinyVisualResource::~TinyVisualResource()
 		{
@@ -245,7 +252,8 @@ namespace TinyUI
 		}
 		BOOL TinyVisualResource::LoadResource(LPCSTR pzFile)
 		{
-			if (m_doc.LoadFile(pzFile, TIXML_ENCODING_UTF8))
+			string szFile = StringPrintf("%s\%s", m_szPath.c_str(), pzFile);
+			if (m_doc.LoadFile(szFile.c_str(), TIXML_ENCODING_UTF8))
 			{
 				TiXmlElement *pXMLNode = m_doc.RootElement();
 				if (pXMLNode && !strcasecmp(pXMLNode->Value(), TinyVisualTag::CONTEXT.STR()))
@@ -256,6 +264,10 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
+		string TinyVisualResource::GetDefaultPath()
+		{
+			return m_szPath;
+		}
 		TinyImage* TinyVisualResource::Add(const TinyString& szName, const TinyString& szFile)
 		{
 			TinyImage** value = m_images.GetValue(szName);
@@ -265,9 +277,10 @@ namespace TinyUI
 			}
 			else
 			{
-				ASSERT(PathFileExists(szFile.CSTR()));
+				string szNewFile = StringPrintf("%s\%s", m_szPath.c_str(), szFile.CSTR());
+				ASSERT(PathFileExists(szNewFile.c_str()));
 				TinyImage* image = new TinyImage();
-				if (image != NULL && image->Open(szFile.CSTR()))
+				if (image != NULL && image->Open(szNewFile.c_str()))
 				{
 					ASSERT(m_images.Add(szName, image));
 					return image;

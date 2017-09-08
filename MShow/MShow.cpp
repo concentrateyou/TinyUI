@@ -62,13 +62,14 @@ namespace MShow
 		LoadSeDebugPrivilege();
 		UNREFERENCED_PARAMETER(lpCmdLine);
 		UNREFERENCED_PARAMETER(nCmdShow);
-		TinyVisualResource::GetInstance().LoadResource("D:\\Develop\\TinyUI\\MShow\\resource.xml");
+		TinyVisualResource::GetInstance().LoadResource("skin\\resource.xml");
 		::DefWindowProc(NULL, 0, 0, 0L);
 		if (!TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, lpTableName))
 			return FALSE;
 		if (!TinyApplication::GetInstance()->AddMessageLoop(&m_msgLoop))
 			return FALSE;
-		if (!m_window.Create(NULL,"D:\\Develop\\TinyUI\\MShow\\main.xml"))
+		string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\main.xml");
+		if (!m_window.Create(NULL, szFile.c_str()))
 			return FALSE;
 		if (!m_controller.Initialize())
 			return FALSE;
@@ -169,6 +170,10 @@ namespace MShow
 	LONGLONG MShowApp::GetCurrentAudioTS()
 	{
 		return m_audioTS;
+	}
+	string MShowApp::GetDefaultPath()
+	{
+		return m_szPath;
 	}
 }
 

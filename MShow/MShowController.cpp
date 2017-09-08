@@ -249,7 +249,8 @@ namespace MShow
 				wstring szGUID = option->GetValue().ToWString();
 				CLSID clsid;
 				CLSIDFromString(&szGUID[0], &clsid);
-				m_speakTest.Invoke("D:\\SoundTest.wav", clsid, val->GetDocument()->GetVisualHWND()->Handle());
+				string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\SoundTest.wav");
+				m_speakTest.Invoke(szFile.c_str(), clsid, val->GetDocument()->GetVisualHWND()->Handle());
 			}
 		}
 	}
