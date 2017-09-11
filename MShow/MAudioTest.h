@@ -18,6 +18,7 @@ namespace MShow
 		SpeakTest();
 		~SpeakTest();
 		BOOL Invoke(const TinyString& szFile, const GUID& guid, HWND hWND);
+		BOOL Shutdown();
 	private:
 		void OnMessagePump();
 	private:

@@ -117,12 +117,16 @@ namespace MShow
 		{
 			m_onMicrophoneTestClick.Reset(new Delegate<void(EventArgs&)>(this, &MShowController::OnMicrophoneTestClick));
 			visual->EVENT_CLICK += m_onMicrophoneTestClick;
+			m_onMicrophoneFocus.Reset(new Delegate<void(FocusEventArgs&)>(this, &MShowController::OnMicrophoneFocus));
+			visual->EVENT_FOCUS += m_onMicrophoneFocus;
 		}
 		visual = m_window.GetDocument()->GetVisualByName("btnSpeakerTest");
 		if (visual != NULL)
 		{
 			m_onSpeakerTestClick.Reset(new Delegate<void(EventArgs&)>(this, &MShowController::OnSpeakerTestClick));
 			visual->EVENT_CLICK += m_onSpeakerTestClick;
+			m_onSpeakerFocus.Reset(new Delegate<void(FocusEventArgs&)>(this, &MShowController::OnSpeakerFocus));
+			visual->EVENT_FOCUS += m_onSpeakerFocus;
 		}
 		visual = m_window.GetDocument()->GetVisualByName("serverIP");
 		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
@@ -214,7 +218,12 @@ namespace MShow
 
 	void MShowController::OnMicrophoneTestClick(EventArgs& args)
 	{
-		TinyVisual* visual = m_window.GetDocument()->GetVisualByName("microphone");
+		TinyVisual* visual = m_window.GetDocument()->GetVisualByName("btnMicrophoneTest");
+		if (visual != NULL)
+		{
+			m_window.GetDocument()->SetFocus(visual);
+		}
+		visual = m_window.GetDocument()->GetVisualByName("microphone");
 		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
 		{
 			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
@@ -239,7 +248,12 @@ namespace MShow
 
 	void MShowController::OnSpeakerTestClick(EventArgs& args)
 	{
-		TinyVisual* visual = m_window.GetDocument()->GetVisualByName("speaker");
+		TinyVisual* visual = m_window.GetDocument()->GetVisualByName("btnSpeakerTest");
+		if (visual != NULL)
+		{
+			m_window.GetDocument()->SetFocus(visual);
+		}
+		visual = m_window.GetDocument()->GetVisualByName("speaker");
 		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
 		{
 			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
@@ -255,6 +269,21 @@ namespace MShow
 		}
 	}
 
+	void MShowController::OnMicrophoneFocus(FocusEventArgs& args)
+	{
+		if (!args.IsFocus())
+		{
+			m_microphoneTest.Shutdown();
+		}
+	}
+
+	void MShowController::OnSpeakerFocus(FocusEventArgs& args)
+	{
+		if (!args.IsFocus())
+		{
+			m_speakTest.Shutdown();
+		}
+	}
 
 	void MShowController::OnPreviewClick(EventArgs& args)
 	{

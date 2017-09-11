@@ -47,6 +47,15 @@ namespace MShow
 		LOG(INFO) << "[SpeakTest] Invoke OK";
 		return TRUE;
 	}
+	BOOL SpeakTest::Shutdown()
+	{
+		m_player.Stop();
+		m_player.Close();
+		m_waveFile.Close();
+		m_task.Close(INFINITE);
+		m_playing = FALSE;
+		return TRUE;
+	}
 	void SpeakTest::OnMessagePump()
 	{
 		for (;;)
@@ -147,11 +156,13 @@ namespace MShow
 	}
 	BOOL MicrophoneTest::Shutdown()
 	{
-		m_events[2].SetEvent();
+		m_events[3].SetEvent();
 		if (m_task.Close(INFINITE))
 		{
 			m_capture.Stop();
 			m_capture.Close();
+			m_player.Stop();
+			m_player.Close();
 			return TRUE;
 		}
 		return FALSE;

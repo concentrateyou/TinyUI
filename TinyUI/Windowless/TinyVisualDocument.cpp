@@ -345,7 +345,10 @@ namespace TinyUI
 					m_spvisCapture->OnCapture(TRUE);
 				}
 			}
-			::SetCapture(m_pWindow->Handle());
+			if (::GetCapture() != m_pWindow->Handle())
+			{
+				::SetCapture(pNew != NULL ? m_pWindow->Handle() : NULL);
+			}
 			return pv;
 		}
 		BOOL TinyVisualDocument::ReleaseCapture()
@@ -373,7 +376,10 @@ namespace TinyUI
 					m_spvisFocus->OnFocus(TRUE);
 				}
 			}
-			::SetFocus(pNew != NULL ? m_pWindow->Handle() : NULL);
+			if (::GetFocus() != m_pWindow->Handle())
+			{
+				::SetFocus(pNew != NULL ? m_pWindow->Handle() : NULL);
+			}
 			return spvis;
 		}
 		TinyVisual*	TinyVisualDocument::SetActive(TinyVisual* pNew)
@@ -392,7 +398,10 @@ namespace TinyUI
 					m_spvisActive->OnActive(TRUE);
 				}
 			}
-			::SetActiveWindow(pNew != NULL ? m_pWindow->Handle() : NULL);
+			if (::GetActiveWindow() != m_pWindow->Handle())
+			{
+				::SetActiveWindow(pNew != NULL ? m_pWindow->Handle() : NULL);
+			}
 			return spvis;
 		}
 		TinyVisual* TinyVisualDocument::GetActive() const

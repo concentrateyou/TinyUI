@@ -42,6 +42,8 @@ namespace MShow
 		void OnCloseClick(EventArgs& args);
 		void OnMicrophoneTestClick(EventArgs& args);
 		void OnSpeakerTestClick(EventArgs& args);
+		void OnMicrophoneFocus(FocusEventArgs& args);
+		void OnSpeakerFocus(FocusEventArgs& args);
 	private:
 		CLSID GetSpeakCLSID();
 		CLSID GetMicrophoneCLSID();
@@ -68,6 +70,8 @@ namespace MShow
 		TinyScopedPtr<Delegate<void(EventArgs&)>>   m_onRecordClick;
 		TinyScopedPtr<Delegate<void(EventArgs&)>>   m_onMicrophoneTestClick;
 		TinyScopedPtr<Delegate<void(EventArgs&)>>   m_onSpeakerTestClick;
+		TinyScopedPtr<Delegate<void(FocusEventArgs&)>>   m_onSpeakerFocus;
+		TinyScopedPtr<Delegate<void(FocusEventArgs&)>>   m_onMicrophoneFocus;
 	};
 }
 
