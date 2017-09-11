@@ -8,10 +8,13 @@
 #include "Control/TinyLabel.h"
 #include "Control/TinyRichTextBox.h"
 #include "Control/TinyScrollBar.h"
+#include "Network/TinyHTTPRequest.h"
+#include "Network/TinyHTTPResponse.h"
 #include "WavePlayer.h"
 #include "AudioDSP.h"
 #include <sapi.h>
 #include <sphelper.h>
+#include "Network/TinyInternet.h"
 #pragma comment(lib,"sapi.lib")
 
 using namespace TinyUI;
@@ -40,7 +43,7 @@ public:
 	LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 private:
-	TinyScrollBar m_scrollBar;
+	Network::TinyHTTPRequest	m_request;
 	//TinyLabel	m_analyserBAR;
 	//AudioDSP	m_audioDSP;
 	//WavePlayer m_wavePlayer;

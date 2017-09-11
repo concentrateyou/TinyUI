@@ -368,6 +368,7 @@ namespace TinyUI
 		HRESULT TinyVisualTextBox::OnLButtonDown(const TinyPoint& pos, DWORD dwFlags)
 		{
 			ASSERT(m_texthost.m_ts);
+			m_document->SetFocus(this);
 			const MSG* pMsg = m_document->GetVisualHWND()->GetCurrentMessage();
 			LRESULT lRes = FALSE;
 			m_document->GetVisualHWND()->SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
@@ -428,12 +429,14 @@ namespace TinyUI
 			{
 				m_texthost.m_ts->OnTxUIActivate();
 				m_texthost.m_ts->TxSendMessage(WM_SETFOCUS, 0, 0, NULL);
+				m_texthost.TxShowCaret(TRUE);
+				SetSel(MAKELONG(0, -1), TRUE);
 			}
 			else
 			{
-				m_texthost.m_ts->OnTxInPlaceDeactivate();
 				m_texthost.m_ts->OnTxUIDeactivate();
 				m_texthost.m_ts->TxSendMessage(WM_KILLFOCUS, 0, 0, NULL);
+				m_texthost.TxShowCaret(FALSE);
 			}
 			return FALSE;
 		}

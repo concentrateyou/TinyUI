@@ -174,7 +174,8 @@ namespace FLVPlayer
 	}
 	BOOL FLVAudioRender::Submit()
 	{
-		if (!m_player.Initialize(m_decode.m_decode.m_hWND))
+		m_player.Close();
+		if (!m_player.Open(m_decode.m_decode.m_hWND))
 			return FALSE;
 		return TinyTaskBase::Submit(BindCallback(&FLVAudioRender::OnMessagePump, this));
 	}

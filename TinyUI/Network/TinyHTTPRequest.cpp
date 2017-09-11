@@ -46,6 +46,7 @@ namespace TinyUI
 			m_pResponse(NULL)
 		{
 			m_wait.CreateEvent();
+			ZeroMemory(m_raw, DEFAULT_BUFFER_SIZE);
 		}
 		BOOL TinyHTTPRequest::Open(const string& szURL, const string& ms)
 		{

@@ -23,11 +23,6 @@ namespace TinyUI
 			return m_desc;
 		}
 
-		string	TinyHTTPResponse::GetBody() const
-		{
-			return m_body;
-		}
-
 		void TinyHTTPResponse::Close()
 		{
 			delete this;
@@ -46,6 +41,11 @@ namespace TinyUI
 					break;
 				if (!ParseAttribute(ps, line - 2))
 					return FALSE;
+			}
+			m_buffer.Initialize(1024 * 1024 * 6, 1);
+			if (!m_request.m_socket.BeginReceive(m_raw, DEFAULT_BUFFER_SIZE, 0, BindCallback(&TinyHTTPResponse::OnHandleReceive, this), this))
+			{
+				m_request.OnHandleError(GetLastError());
 			}
 			return TRUE;
 		}
@@ -94,6 +94,34 @@ namespace TinyUI
 			if (*val++ == '\n')
 				return val;
 			return NULL;
+		}
+		void TinyHTTPResponse::OnHandleReceive(DWORD dwError, AsyncResult* result)
+		{
+			if (dwError != 0)
+			{
+				m_request.OnHandleError(dwError);
+			}
+			else
+			{
+				DWORD dwRes = m_request.m_socket.EndReceive(result);
+				if (dwRes > 0)
+				{
+					TinyAutoLock lock(m_lock);
+					m_buffer.Write(m_raw, dwRes);
+					TRACE("Write:%d\n", dwRes);
+					if (!m_request.m_socket.BeginReceive(m_raw, DEFAULT_BUFFER_SIZE, 0, BindCallback(&TinyHTTPResponse::OnHandleReceive, this), this))
+					{
+						m_request.OnHandleError(GetLastError());
+					}
+				}
+			}
+		}
+		LONG TinyHTTPResponse::Read(BYTE* ps, LONG size)
+		{
+			TinyAutoLock lock(m_lock);
+			LONG val = m_buffer.Read(ps, size);
+			TRACE("read:%d\n", val);
+			return val;
 		}
 	}
 }

@@ -10,11 +10,12 @@ namespace TinyUI
 	namespace Network
 	{
 
-#define DEFAULT_BUFFER_SIZE 8192
+#define DEFAULT_BUFFER_SIZE 16384
 
 		class TinyHTTPResponse;
 		class TinyHTTPRequest : public TinyHTTPAttribute
 		{
+			friend class TinyHTTPResponse;
 			enum State
 			{
 				STATE_NONE,
@@ -64,7 +65,7 @@ namespace TinyUI
 			TinyHTTPRequest();
 			BOOL Open(const string& szURL, const string& ms = GET);
 			void Close();
-			void SetTimeout(DWORD dwTimeout);	
+			void SetTimeout(DWORD dwTimeout);
 			void SetBody(CHAR* ps, INT size);
 			TinyHTTPResponse* GetResponse();
 		private:

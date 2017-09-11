@@ -14,7 +14,8 @@ WavePlayer::~WavePlayer()
 BOOL WavePlayer::Submit(HWND hWND)
 {
 	m_hWND = hWND;
-	if (!m_player.Initialize(hWND))
+	m_player.Close();
+	if (!m_player.Open(hWND))
 		return FALSE;
 	if (!m_waveFile.Open("D:\\Íõ·Æ - ´Ò´ÒÄÇÄê.wav"))
 		return FALSE;

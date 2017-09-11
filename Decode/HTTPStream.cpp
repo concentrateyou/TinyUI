@@ -168,7 +168,7 @@ namespace Decode
 		{
 			if (ReadHTTP(pv, cb, pcbRead))
 				break;
-			Sleep(25);
+			Sleep(10);
 		}
 		return S_OK;
 	}

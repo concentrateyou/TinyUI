@@ -1,6 +1,8 @@
 #pragma once
 #include "TinyHTTPCommon.h"
+#include "TinyHTTPRequest.h"
 #include "TinyURL.h"
+#include "../IO/TinyRingBuffer.h"
 
 namespace TinyUI
 {
@@ -15,8 +17,8 @@ namespace TinyUI
 		public:
 			DWORD	GetCode() const;
 			string	GetStatus() const;
-			string	GetBody() const;	
 			void	Close();
+			LONG	Read(BYTE* ps, LONG size);
 		private:
 			TinyHTTPResponse(TinyHTTPRequest& request);
 			BOOL ParseResponse(CHAR* s, INT size);
@@ -24,11 +26,16 @@ namespace TinyUI
 			BOOL ParseAttribute(CHAR* ps1, CHAR* ps2);
 			CHAR* ReadLine(CHAR* s);
 		private:
+			void OnHandleReceive(DWORD, AsyncResult*);
+		private:
+			CHAR				m_raw[DEFAULT_BUFFER_SIZE];
 			DWORD				m_dwCode;
 			string				m_desc;
 			string				m_vs;
 			string				m_body;
+			TinyLock			m_lock;
 			TinyHTTPRequest&	m_request;
+			IO::TinyRingBuffer	m_buffer;
 		};
 	}
 }
