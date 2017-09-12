@@ -43,7 +43,11 @@ public:
 	LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 private:
-	Media::TinyXAudio m_audio;
+	void OnFinish();
+private:
+	TinyScopedArray<BYTE>	m_bits;
+	Media::TinyXAudio	m_audio;
+	TinyWaveFile		m_waveFile;
 	//Network::TinyHTTPRequest	m_request;
 	//TinyLabel	m_analyserBAR;
 	//AudioDSP	m_audioDSP;

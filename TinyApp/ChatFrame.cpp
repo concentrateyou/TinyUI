@@ -46,17 +46,23 @@ HICON ChatFrame::RetrieveIcon()
 	return NULL;
 }
 
+void ChatFrame::OnFinish()
+{
+	LONG size = 0;
+	m_waveFile.Read(m_bits, 1024 * 4, &size);
+	m_audio.Fill(m_bits, size);
+}
+
 LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	WAVEFORMATEX waveFMT = { 0 };
-	waveFMT.wFormatTag = WAVE_FORMAT_PCM;
-	waveFMT.nChannels = 2;
-	waveFMT.nSamplesPerSec = 44100;
-	waveFMT.wBitsPerSample = 16;
-	waveFMT.nBlockAlign = (waveFMT.nChannels * waveFMT.wBitsPerSample) / 8;
-	waveFMT.nAvgBytesPerSec = waveFMT.nSamplesPerSec * waveFMT.nBlockAlign;
-	m_audio.Initialize(&waveFMT);
+	m_waveFile.Open("D:\\Íõ·Æ - ´Ò´ÒÄÇÄê.wav");
+	m_audio.Open(m_waveFile.GetFormat(), BindCallback(&ChatFrame::OnFinish, this));
+	m_bits.Reset(new BYTE[1024 * 4]);
+	LONG size = 0;
+	m_waveFile.Read(m_bits, 1024 * 4, &size);
+	m_audio.Start();
+	m_audio.Fill(m_bits, size);
 	//m_request.Open("http://10.110.48.109:65449/6696864323");
 	//Network::TinyHTTPResponse* response = m_request.GetResponse();
 

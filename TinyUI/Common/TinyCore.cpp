@@ -79,7 +79,6 @@ namespace TinyUI
 	BOOL TinyEvent::Lock(DWORD dwTimeout)
 	{
 		ASSERT(m_hEvent != NULL);
-		//LOG(INFO) << "TinyEvent-Lock:" << m_hEvent << "\n";
 		DWORD dwRet = ::WaitForSingleObject(m_hEvent, dwTimeout);
 		if (dwRet == WAIT_OBJECT_0 || dwRet == WAIT_ABANDONED)
 			return TRUE;
