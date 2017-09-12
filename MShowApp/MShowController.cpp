@@ -74,10 +74,8 @@ namespace MShow
 		m_window.m_toggle.EVENT_CLICK -= m_onToggleClick;
 		if (m_shadow != NULL)
 		{
-			if (m_shadow->IsActive())
-			{
-				m_shadow->Close(INFINITE);
-			}
+			m_shadow->Stop();
+			m_shadow->Uninitialize();
 			m_shadow.Reset(NULL);
 		}
 		if (m_preview != NULL)
@@ -182,8 +180,7 @@ namespace MShow
 		MVideoController* pCTRL = GetVideoController(0);
 		if (pCTRL != NULL && m_preview != NULL && m_shadow != NULL)
 		{
-			if (m_shadow->IsActive())
-				m_shadow->Close(INFINITE);
+			m_shadow->Stop();
 			if (m_pusher.IsActive())
 				m_pusher.Close(INFINITE);
 			if (m_audio.IsActive())
@@ -195,12 +192,7 @@ namespace MShow
 			m_video.Submit(m_preview->GetPulgSize(), 25, 1000);
 			m_audio.SetVideoController(pCTRL);
 			m_audio.Submit(128);
-			m_shadow->Submit();
-			/*Sleep(100);
-			if (m_play != NULL)
-			{
-				m_play->Open(m_pusher.GetURL().STR());
-			}*/
+			m_shadow->Start();
 		}
 	}
 	void MShowController::OnToggle(void*, INT)

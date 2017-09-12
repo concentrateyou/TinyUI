@@ -6,11 +6,10 @@ namespace MShow
 {
 	MShadowController::MShadowController(MShadowView& view, MClock& clock)
 		:m_view(view),
-		m_bBreak(FALSE),
 		m_videoFPS(25),
 		m_clock(clock)
 	{
-		m_signal.CreateEvent();
+
 	}
 
 	MShadowController::~MShadowController()
@@ -65,56 +64,9 @@ namespace MShow
 		return m_clock;
 	}
 
-	TinyEvent&	MShadowController::GetSignal()
-	{
-		return m_signal;
-	}
-
 	MPacketAllocQueue&	MShadowController::GetVideoQueue()
 	{
 		return m_videoQueue;
-	}
-
-	void MShadowController::OnMessagePump()
-	{
-		SampleTag sampleTag;
-		for (;;)
-		{
-			if (m_bBreak)
-				break;
-			while (m_clock.GetBaseTime() == -1);
-			TinyEvent& signal = MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetSignal();
-			if (signal.Lock(1000))
-			{
-				OnVideo(sampleTag);
-				m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
-				sampleTag.timestamp = m_clock.GetVideoPTS() - m_clock.GetBaseTime();
-				m_videoQueue.Push(sampleTag);
-				m_signal.SetEvent();
-			}
-		}
-		//DWORD dwMS = static_cast<DWORD>(1000 / m_videoFPS);
-		//TinyTimer timer;
-		//SampleTag sampleTag;
-		//LONG compensate = 0;
-		//for (;;)
-		//{
-		//	if (m_bBreak)
-		//		break;
-		//	while (m_clock.GetBaseTime() == -1);
-		//	ZeroMemory(&sampleTag, sizeof(sampleTag));
-		//	m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
-		//	INT delay = dwMS - OnVideo(sampleTag) - compensate;
-		//	sampleTag.timestamp = m_clock.GetVideoPTS() - m_clock.GetBaseTime();
-		//	m_videoQueue.Push(sampleTag);
-		//	m_signal.SetEvent();
-		//	//计数器1ms精度不够
-		//	m_timeQPC.BeginTime();
-		//	timer.Wait(delay < 0 ? 0 : delay, 1000);
-		//	m_timeQPC.EndTime();
-		//	compensate = m_timeQPC.GetMillisconds() - delay;
-		//	compensate = compensate < 0 ? 0 : compensate;
-		//}
 	}
 
 	DWORD MShadowController::OnVideo(SampleTag& sampleTag)
@@ -139,22 +91,31 @@ namespace MShow
 		m_timeQPC.EndTime();
 		return static_cast<DWORD>(m_timeQPC.GetMillisconds());
 	}
-	BOOL MShadowController::Submit()
-	{
-		m_bBreak = FALSE;
-		return TinyTaskBase::Submit(BindCallback(&MShadowController::OnMessagePump, this));
-	}
-	BOOL MShadowController::Close(DWORD dwMS)
-	{
-		m_bBreak = TRUE;
-		if (TinyTaskBase::Close(dwMS))
-		{
-			m_image2D.Destory();
-			m_copy2D.Destory();
-			m_videoQueue.RemoveAll();
-			return TRUE;
-		}
-		return FALSE;
 
+	void MShadowController::OnTimer()
+	{
+		while (m_clock.GetBaseTime() == -1);
+		SampleTag sampleTag;
+		OnVideo(sampleTag);
+		m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
+		sampleTag.timestamp = m_clock.GetVideoPTS() - m_clock.GetBaseTime();
+		m_videoQueue.Push(sampleTag);
+	}
+	BOOL MShadowController::Start()
+	{
+		DWORD delay = 1000 / m_videoFPS;
+		return m_timer.SetCallback(delay, BindCallback(&MShadowController::OnTimer, this));
+	}
+	void MShadowController::Stop()
+	{
+		m_timer.Close();
+		m_videoQueue.RemoveAll();
+	}
+	BOOL MShadowController::Uninitialize()
+	{
+		m_image2D.Destory();
+		m_copy2D.Destory();
+		m_videoQueue.RemoveAll();
+		return TRUE;
 	}
 }

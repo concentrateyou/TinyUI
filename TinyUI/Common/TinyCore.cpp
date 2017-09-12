@@ -428,6 +428,8 @@ namespace TinyUI
 	}
 	BOOL TinyTimer::SetCallback(INT delay, Closure&& callback)
 	{
+		m_event.Close();
+		m_event.CreateEvent();
 		if (delay <= 0)
 		{
 			return TRUE;

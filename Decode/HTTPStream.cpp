@@ -18,11 +18,11 @@ namespace Decode
 	BOOL HTTPStream::Open(LPCSTR pzURL)
 	{
 		m_buffer.Initialize(MAX_HTTP_BUFFER_SIZE, sizeof(BYTE));
-		m_session.SetOption(INTERNET_OPTION_CONNECT_TIMEOUT, 5000);      // 5秒的连接超时  
-		m_session.SetOption(INTERNET_OPTION_SEND_TIMEOUT, 3000);         // 3秒的发送超时  
-		m_session.SetOption(INTERNET_OPTION_RECEIVE_TIMEOUT, 3000);      // 3秒的接收超时  
-		m_session.SetOption(INTERNET_OPTION_DATA_SEND_TIMEOUT, 3000);    // 3秒的发送超时  
-		m_session.SetOption(INTERNET_OPTION_DATA_RECEIVE_TIMEOUT, 3000); // 3秒的接收超时  
+		m_session.SetOption(INTERNET_OPTION_CONNECT_TIMEOUT, 2000);      // 2秒的连接超时  
+		m_session.SetOption(INTERNET_OPTION_SEND_TIMEOUT, 2000);         // 2秒的发送超时  
+		m_session.SetOption(INTERNET_OPTION_RECEIVE_TIMEOUT, 2000);      // 2秒的接收超时  
+		m_session.SetOption(INTERNET_OPTION_DATA_SEND_TIMEOUT, 2000);    // 2秒的发送超时  
+		m_session.SetOption(INTERNET_OPTION_DATA_RECEIVE_TIMEOUT, 2000); // 2秒的接收超时  
 		m_session.SetOption(INTERNET_OPTION_CONNECT_RETRIES, 5);
 		INTERNET_SCHEME scheme;
 		TinyString server;
@@ -50,8 +50,8 @@ namespace Decode
 			if (!m_bits)
 				goto _ERROR;
 			m_bBreak = FALSE;
-			DownloadHTTP(DEFAULT_CACHE_BLOCK_SIZE * 4);
-			WriteHTTP(DEFAULT_CACHE_BLOCK_SIZE * 4);
+			DownloadHTTP(1024);
+			WriteHTTP(1024);
 			return m_task.Submit(BindCallback(&HTTPStream::OnMessagePump, this));
 		}
 	_ERROR:
@@ -76,6 +76,8 @@ namespace Decode
 
 	void HTTPStream::OnMessagePump()
 	{
+		DownloadHTTP(DEFAULT_CACHE_BLOCK_SIZE * 4);
+		WriteHTTP(DEFAULT_CACHE_BLOCK_SIZE * 4);
 		for (;;)
 		{
 			if (m_bBreak)
