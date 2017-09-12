@@ -14,7 +14,7 @@
 #include "AudioDSP.h"
 #include <sapi.h>
 #include <sphelper.h>
-#include "Network/TinyInternet.h"
+#include "Media/TinyXAudio.h"
 #pragma comment(lib,"sapi.lib")
 
 using namespace TinyUI;
@@ -43,7 +43,8 @@ public:
 	LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 private:
-	Network::TinyHTTPRequest	m_request;
+	Media::TinyXAudio m_audio;
+	//Network::TinyHTTPRequest	m_request;
 	//TinyLabel	m_analyserBAR;
 	//AudioDSP	m_audioDSP;
 	//WavePlayer m_wavePlayer;

@@ -4,12 +4,11 @@
 #include <d3d11.h>
 #include <DXGIFormat.h>
 #include <DirectXMath.h>
-#include <d3dcompiler.h>
+#include <D3DX11async.h>
 #include <DXGI.h>
 #include <dwmapi.h>
 #include <TlHelp32.h>
 #include <string>
-#include <d2d1_1.h>
 #include <wincodec.h>
 #include "Common/TinyCommon.h"
 #include "Common/TinyUtility.h"

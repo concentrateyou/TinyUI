@@ -17,12 +17,10 @@ namespace DXFramework
 		D3D11_INPUT_ELEMENT_DESC layout[2];
 		D3D11_BUFFER_DESC matrixBufferDesc = { 0 };
 		D3D11_SAMPLER_DESC samplerDesc;
-		wstring wvsFile = StringToWString(vsFile);
-		hRes = D3DCompileFromFile(wvsFile.c_str(), NULL, NULL, "TextureVertexShader", "vs_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &vertexShaderBuffer, NULL);
+		hRes = D3DX11CompileFromFile(vsFile, NULL, NULL, "TextureVertexShader", "vs_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &vertexShaderBuffer, NULL, NULL);
 		if (hRes != S_OK)
 			return FALSE;
-		wstring wpsFile = StringToWString(psFile);
-		hRes = D3DCompileFromFile(wpsFile.c_str(), NULL, NULL, "TexturePixelShader", "ps_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &pixelShaderBuffer, NULL);
+		hRes = D3DX11CompileFromFile(psFile, NULL, NULL, "TexturePixelShader", "ps_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &pixelShaderBuffer, NULL, NULL);
 		if (hRes != S_OK)
 			return FALSE;
 		hRes = dx11.GetD3D()->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &m_vertexShader);

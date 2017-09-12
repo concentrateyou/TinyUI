@@ -1,15 +1,13 @@
 #pragma once
 #include "DXFramework.h"
-#include <dxgi1_2.h>
-#include <d2d1_1.h>
-#include <d2d1_1helper.h>
+//#include <dxgi1_2.h>
 
 namespace DXFramework
 {
 	/// <summary>
 	/// https://msdn.microsoft.com/magazine/dn198239
 	/// </summary>
-	class DX2D
+	/*class DX2D
 	{
 		DISALLOW_COPY_AND_ASSIGN(DX2D)
 	public:
@@ -31,7 +29,7 @@ namespace DXFramework
 		TinyComPtr<ID3D11Device>		m_d3d;
 		TinyComPtr<ID2D1DeviceContext>	m_context;
 		TinyComPtr<ID2D1Bitmap1>		m_bitmap;
-	};
+	};*/
 }
 
 

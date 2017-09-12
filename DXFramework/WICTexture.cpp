@@ -517,7 +517,7 @@ namespace DXFramework
 		return hRes;
 	}
 
-	HRESULT CreateD2DBitmapFromFile(LPCWSTR fileName, ID2D1RenderTarget* pTarget, ID2D1Bitmap** pBitmap)
+	/*HRESULT CreateD2DBitmapFromFile(LPCWSTR fileName, ID2D1RenderTarget* pTarget, ID2D1Bitmap** pBitmap)
 	{
 		if (!fileName)
 			return E_INVALIDARG;
@@ -543,7 +543,7 @@ namespace DXFramework
 		if (hRes != S_OK)
 			return hRes;
 		return S_OK;
-	}
+	}*/
 
 	HRESULT CreateWICBitmapFromFile(LPCWSTR fileName, IWICBitmap** pBitmap)
 	{
@@ -566,7 +566,7 @@ namespace DXFramework
 		return S_OK;
 	}
 
-	HRESULT CreateD2DBitmapFromMemory(const BYTE* wicData, size_t wicDataSize, ID2D1RenderTarget* pTarget, ID2D1Bitmap** pBitmap)
+	/*HRESULT CreateD2DBitmapFromMemory(const BYTE* wicData, size_t wicDataSize, ID2D1RenderTarget* pTarget, ID2D1Bitmap** pBitmap)
 	{
 		if (!wicData)
 			return E_INVALIDARG;
@@ -603,7 +603,7 @@ namespace DXFramework
 		if (hRes != S_OK)
 			return hRes;
 		return S_OK;
-	}
+	}*/
 
 	HRESULT  CreateWICBitmapFromMemory(const BYTE* wicData, size_t wicDataSize, IWICBitmap** pBitmap)
 	{

@@ -3,6 +3,8 @@
 #include "../Common/TinyString.h"
 #include "../Common/TinyCallback.h"
 #include "../Common/TinyCore.h"
+#include <objbase.h>
+#include <mmreg.h>
 #include <mmsystem.h>
 #include <dshow.h>
 #include <MMDeviceAPI.h>

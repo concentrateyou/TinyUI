@@ -14,7 +14,7 @@ namespace TinyUI
 		using DelegateType = Delegate < void(Args...) >;
 		DISALLOW_COPY_AND_ASSIGN(SIGNAL)
 	public:
-		SIGNAL() = DEFAULT;
+		SIGNAL() = default;
 	public:
 		template<class FunctionType>
 		void Connect(const FunctionType& fType)

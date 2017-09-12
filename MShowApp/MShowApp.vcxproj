@@ -88,12 +88,12 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\Encode;..\Decode;..\DXFramework;..\DShowCapture;..\IntelQSV;..\ThirdParty\libfaad\include;..\ThirdParty\ffmpeg\include;..\ThirdParty\mpg123\include;..\ThirdParty\librtmp\include;..\ThirdParty\x264;..\ThirdParty\vld;..\ThirdParty\libfaac\include;$(INTELMEDIASDKROOT)include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\Encode;..\Decode;..\DXFramework;..\DShowCapture;..\IntelQSV;..\ThirdParty\libfaad\include;..\ThirdParty\ffmpeg\include;..\ThirdParty\mpg123\include;..\ThirdParty\librtmp\include;..\ThirdParty\x264;..\ThirdParty\vld;..\ThirdParty\libfaac\include;$(INTELMEDIASDKROOT)include;$(DXSDK_DIR)\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\Debug;..\ThirdParty\mpg123\lib;..\ThirdParty\ffmpeg\lib;..\ThirdParty\libfaad\lib;..\ThirdParty\librtmp\lib;..\ThirdParty\x264\libs\32bit;..\ThirdParty\vld\x86;..\ThirdParty\libfaac\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\Debug;..\ThirdParty\mpg123\lib;..\ThirdParty\ffmpeg\lib;..\ThirdParty\libfaad\lib;..\ThirdParty\librtmp\lib;..\ThirdParty\x264\libs\32bit;..\ThirdParty\vld\x86;..\ThirdParty\libfaac\lib;$(DXSDK_DIR)\Lib\x86</AdditionalLibraryDirectories>
       <AdditionalDependencies>TinyUI.lib;DXFramework.lib;DShowCapture.lib;Decode.lib;Encode.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ForceSymbolReferences>
       </ForceSymbolReferences>

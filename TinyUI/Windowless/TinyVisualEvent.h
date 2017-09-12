@@ -16,7 +16,7 @@ namespace TinyUI
 		class EventArgs
 		{
 		public:
-			EventArgs() = DEFAULT;
+			EventArgs() = default;
 		};
 		class MouseEventArgs : public EventArgs
 		{

@@ -49,8 +49,16 @@ HICON ChatFrame::RetrieveIcon()
 LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	m_request.Open("http://10.110.48.109:65449/6696864323");
-	Network::TinyHTTPResponse* response = m_request.GetResponse();
+	WAVEFORMATEX waveFMT = { 0 };
+	waveFMT.wFormatTag = WAVE_FORMAT_PCM;
+	waveFMT.nChannels = 2;
+	waveFMT.nSamplesPerSec = 44100;
+	waveFMT.wBitsPerSample = 16;
+	waveFMT.nBlockAlign = (waveFMT.nChannels * waveFMT.wBitsPerSample) / 8;
+	waveFMT.nAvgBytesPerSec = waveFMT.nSamplesPerSec * waveFMT.nBlockAlign;
+	m_audio.Initialize(&waveFMT);
+	//m_request.Open("http://10.110.48.109:65449/6696864323");
+	//Network::TinyHTTPResponse* response = m_request.GetResponse();
 
 	/*m_analyserBAR.Create(m_hWND, 10, 10, 298, 92);*/
 	/*m_analyserBAR.Create(m_hWND, 10, 10, 300, 180);

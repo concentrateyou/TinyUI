@@ -92,14 +92,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_WIN32_WINNT=0x0601;WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\TinySmiley;$(BOOSTDIR);..\DShowCapture;..\MFCapture;..\Decode;..\IntelQSV;..\ThirdParty\mpg123\include;..\ThirdParty\libfaad\include;..\ThirdParty\ffmpeg\include;..\ThirdParty\vld;$(INTELMEDIASDKROOT)\include;$(PROTOBUF_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\TinySmiley;$(BOOSTDIR);..\DShowCapture;..\MFCapture;$(INTELMEDIASDKROOT)\include;$(PROTOBUF_DIR)\include;$(DXSDK_DIR)\Include;..\Decode;..\IntelQSV;..\ThirdParty\libfaad\include;..\ThirdParty\ffmpeg\include;..\ThirdParty\vld;..\ThirdParty\mpg123\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\ThirdParty\vld\x86;..\ThirdParty\mpg123\lib;..\ThirdParty\ffmpeg\lib;..\Debug;$(INTELMEDIASDKROOT)\lib\$(Platform);$(PROTOBUF_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\ThirdParty\vld\x86;..\ThirdParty\mpg123\lib;..\ThirdParty\ffmpeg\lib;..\Debug;$(INTELMEDIASDKROOT)\lib\$(Platform);$(PROTOBUF_DIR)\lib;$(DXSDK_DIR)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>dxgi.lib;dxguid.lib;d3d10_1.lib;d3d11.lib;ddraw.lib;DShowCapture.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Link>

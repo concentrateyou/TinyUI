@@ -2,7 +2,7 @@
 #include <vector>
 #include "malloc.h"
 #include "rtmp.h"
-#include "DX2D.h"
+#include "Common/TinyLogging.h"
 #include "Common/TinyCallback.h"
 #include "IO/TinyIO.h"
 #include "IO/TinyTaskBase.h"
@@ -22,7 +22,6 @@ using namespace std;
 using namespace TinyUI;
 using namespace TinyUI::IO;
 using namespace TinyUI::Media;
-using namespace DXFramework;
 using namespace Encode;
 using namespace Decode;
 

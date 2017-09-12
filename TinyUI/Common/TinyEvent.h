@@ -11,7 +11,7 @@ namespace TinyUI
 		using DelegateType = Delegate < void(Args...) >;
 		DISALLOW_COPY_AND_ASSIGN(Event)
 	public:
-		Event() = DEFAULT;
+		Event() = default;
 	public:
 		void operator+= (DelegateType* ps)
 		{

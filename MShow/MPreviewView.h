@@ -1,12 +1,11 @@
 #pragma once
 #include "MPreviewController.h"
-using namespace DXFramework;
 
 namespace MShow
 {
 	class MPreviewController;
 	/// <summary>
-	/// DX2dÔ¤ÀÀäÖÈ¾¿Ø¼ş
+	/// Ô¤ÀÀäÖÈ¾¿Ø¼ş
 	/// </summary>
 	class MPreviewView : public TinyControl
 	{

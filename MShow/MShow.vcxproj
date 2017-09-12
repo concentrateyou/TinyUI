@@ -88,7 +88,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\Encode;..\Decode;..\DXFramework;..\DShowCapture;..\IntelQSV;..\ThirdParty\libfaad\include;..\ThirdParty\ffmpeg\include;..\ThirdParty\mpg123\include;..\ThirdParty\librtmp\include;..\ThirdParty\x264;..\ThirdParty\vld;..\ThirdParty\libfaac\include;..\ThirdParty\sdk\include;$(INTELMEDIASDKROOT)include;$(BOOST_DIR)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(INTELMEDIASDKROOT)include;$(DXSDK_DIR)\Include;$(BOOST_DIR);..\TinyUI;..\Encode;..\Decode;..\DXFramework;..\DShowCapture;..\IntelQSV;..\ThirdParty\libfaad\include;..\ThirdParty\ffmpeg\include;..\ThirdParty\mpg123\include;..\ThirdParty\librtmp\include;..\ThirdParty\x264;..\ThirdParty\vld;..\ThirdParty\libfaac\include;..\ThirdParty\sdk\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -212,9 +212,6 @@
     </ProjectReference>
     <ProjectReference Include="..\DShowCapture\DShowCapture.vcxproj">
       <Project>{b8f16b34-e13e-4757-b09a-792046bcc2d3}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\DXFramework\DXFramework.vcxproj">
-      <Project>{e5bf40dd-f8a0-4fb9-b27b-051c447a5c2b}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Encode\Encode.vcxproj">
       <Project>{4b386eb4-e529-4c67-9733-7684de8defdc}</Project>

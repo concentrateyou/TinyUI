@@ -13,17 +13,17 @@ namespace DXFramework
 
 	IWICImagingFactory* GetWIC();
 
-	HRESULT __cdecl CreateD2DBitmapFromFile(LPCWSTR fileName, 
-		ID2D1RenderTarget* pTarget, 
-		ID2D1Bitmap** pBitmap);
+	//HRESULT __cdecl CreateD2DBitmapFromFile(LPCWSTR fileName, 
+	//	ID2D1RenderTarget* pTarget,
+	//	ID2D1Bitmap** pBitmap);
+
+	//HRESULT __cdecl CreateD2DBitmapFromMemory(const BYTE* wicData,
+	//	size_t wicDataSize,
+	//	ID2D1RenderTarget* pTarget,
+	//	ID2D1Bitmap** pBitmap);
 
 	HRESULT __cdecl CreateWICBitmapFromFile(LPCWSTR fileName,
 		IWICBitmap** pBitmap);
-
-	HRESULT __cdecl CreateD2DBitmapFromMemory(const BYTE* wicData,
-		size_t wicDataSize,
-		ID2D1RenderTarget* pTarget, 
-		ID2D1Bitmap** pBitmap);
 
 	HRESULT __cdecl CreateWICBitmapFromMemory(const BYTE* wicData,
 		size_t wicDataSize,

@@ -29,7 +29,6 @@ namespace MShow
 		void			OnVideo(BYTE* bits, LONG size);
 		void			OnAudio(BYTE* bits, LONG size);
 	private:
-		DX2D						m_dx2d;
 		TinySize					m_videoSize;
 		TinySize					m_viewSize;
 		TinyPerformanceTimer		m_timeQPC;
