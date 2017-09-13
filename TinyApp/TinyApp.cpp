@@ -84,7 +84,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	MFStartup(MF_VERSION);
 
 	HRESULT hRes = OleInitialize(NULL);
-
+	CoInitializeEx(NULL, COINIT_MULTITHREADED);
 	LoadSeDebugPrivilege();
 
 	//QSV::QSVEncoder encoder;

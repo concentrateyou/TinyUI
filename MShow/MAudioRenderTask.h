@@ -16,8 +16,8 @@ namespace MShow
 		MAudioRenderTask(MAudioTask& task, MClock& clock);
 		MAudioRenderTask(MAudioTask& task, MClock& clock, TinyUI::Callback<void(BYTE*, LONG)>&& callback);
 		virtual ~MAudioRenderTask();
-		BOOL Initialize(HWND hWND);
-		BOOL SetVolume(LONG volume);
+		BOOL Initialize();
+		BOOL SetVolume(DWORD dwVolume);
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
 	private:
@@ -25,10 +25,9 @@ namespace MShow
 	private:
 		BOOL					m_bBreak;
 		BOOL					m_bInitialize;
-		TinyEvent				m_events[3];
 		MClock&					m_clock;
 		MAudioTask&				m_task;
-		TinySoundPlayer			m_player;
+		TinyXAudio				m_audio;
 		TinyPerformanceTimer	m_timeQPC;
 		TinyUI::Callback<void(BYTE*, LONG)> m_callback;
 	};

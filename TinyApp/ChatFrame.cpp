@@ -49,7 +49,7 @@ HICON ChatFrame::RetrieveIcon()
 void ChatFrame::OnFinish()
 {
 	LONG size = 0;
-	m_waveFile.Read(m_bits, 1024 * 4, &size);
+	m_waveFile.Read(m_bits, 4096, &size);
 	m_audio.Fill(m_bits, size);
 }
 
@@ -57,12 +57,16 @@ LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHand
 {
 	bHandled = FALSE;
 	m_waveFile.Open("D:\\Íõ·Æ - ´Ò´ÒÄÇÄê.wav");
-	m_audio.Open(m_waveFile.GetFormat(), BindCallback(&ChatFrame::OnFinish, this));
-	m_bits.Reset(new BYTE[1024 * 4]);
-	LONG size = 0;
-	m_waveFile.Read(m_bits, 1024 * 4, &size);
+	//m_audio.SetCallback(BindCallback(&ChatFrame::OnFinish, this));
+	m_audio.Open(m_waveFile.GetFormat());
+	m_bits.Reset(new BYTE[4096]);
 	m_audio.Start();
-	m_audio.Fill(m_bits, size);
+	LONG size = 0;
+	for (;;)
+	{
+		m_waveFile.Read(m_bits, 4096, &size);
+		m_audio.Fill(m_bits, size, INFINITE);
+	}
 	//m_request.Open("http://10.110.48.109:65449/6696864323");
 	//Network::TinyHTTPResponse* response = m_request.GetResponse();
 

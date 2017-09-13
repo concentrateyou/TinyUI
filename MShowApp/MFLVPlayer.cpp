@@ -36,7 +36,7 @@ namespace MShow
 		m_szURL = pzURL;
 		if (!m_task.Initialize(m_szURL.STR()))
 			return FALSE;
-		if (!m_audioRenderTask.Initialize(hWND))
+		if (!m_audioRenderTask.Initialize())
 			return FALSE;
 		if (!m_task.Submit())
 			return FALSE;
@@ -55,7 +55,7 @@ namespace MShow
 		return TRUE;
 	}
 
-	BOOL MFLVPlayer::SetVolume(LONG volume)
+	BOOL MFLVPlayer::SetVolume(DWORD volume)
 	{
 		return m_audioRenderTask.SetVolume(volume);
 	}

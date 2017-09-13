@@ -39,7 +39,7 @@ namespace MShow
 			LOG_LINE(ERROR) << "[MFLVPlayer] FLVTask Initialize Fail" << endl;
 			return FALSE;
 		}
-		if (!m_audioRenderTask.Initialize(hWND))
+		if (!m_audioRenderTask.Initialize())
 		{
 			LOG_LINE(ERROR) << "[MFLVPlayer] AudioRenderTask Initialize Fail" << endl;
 			return FALSE;

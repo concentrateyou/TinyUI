@@ -30,15 +30,15 @@ namespace TinyUI
 	namespace Media
 	{
 #define MAX_BUFFER_COUNT 3
-
+#define MAX_STREAM_BUFFER_SIZE 65535
 		class VoiceCallback : public IXAudio2VoiceCallback
 		{
 		public:
-			VoiceCallback(Closure&& callback);
+			VoiceCallback();
 			virtual ~VoiceCallback();
 		public:
+			void SetCallback(Closure&& callback);
 			BOOL Lock(DWORD dwMS);
-			void Unlock();
 		public:
 			STDMETHOD_(void, OnVoiceProcessingPassStart)(UINT32);
 			STDMETHOD_(void, OnVoiceProcessingPassEnd)();
@@ -59,16 +59,19 @@ namespace TinyUI
 		public:
 			TinyXAudio();
 			virtual ~TinyXAudio();
-			BOOL Open(const WAVEFORMATEX* pFMT,Closure&& callback);
+			void SetCallback(Closure&& callback);
+			BOOL Open(const WAVEFORMATEX* pFMT);
 			BOOL Fill(BYTE* bits, LONG size);
+			BOOL Fill(BYTE* bits, LONG size, DWORD dwMS);
+			BOOL SetVolume(DWORD dwVolume);
+			BOOL SetChannelVolumes(UINT channels, DWORD dwVolume);
 			BOOL Start();
 			BOOL Stop();
 			BOOL Close();
 		private:
-			void OnVoice();
-		private:
+			DWORD								m_dwIndex;
 			Closure								m_callback;
-			TinyScopedArray<BYTE>				m_bits;
+			TinyScopedArray<BYTE>				m_array[MAX_BUFFER_COUNT];
 			TinyComPtr<IXAudio2>				m_audio;
 			IXAudio2MasteringVoice*				m_pMasteringVoice;
 			IXAudio2SourceVoice*				m_pSourceVoice;

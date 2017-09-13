@@ -66,7 +66,8 @@ namespace MShow
 	}
 	void MPlayController::OnVolume(DWORD pos)
 	{
-		if (pos == 0)
+		m_player.SetVolume(pos);
+		/*if (pos == 0)
 		{
 			m_player.SetVolume(-10000);
 		}
@@ -74,6 +75,6 @@ namespace MShow
 		{
 			LONG volume = static_cast<LONG>(floorf(2000.0F * log10f((FLOAT)(pos) / (FLOAT)100) + 0.5F));
 			m_player.SetVolume(volume);
-		}
+		}*/
 	}
 }

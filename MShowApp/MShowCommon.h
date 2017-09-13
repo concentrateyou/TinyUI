@@ -14,7 +14,7 @@
 #include "Control/TinyTabControl.h"
 #include "Control/TinyButton.h"
 #include "Media/TinyMedia.h"
-#include "Media/TinySoundPlayer.h"
+#include "Media/TinyXAudio.h"
 #include "Common/TinyTime.h"
 #include "Common.h"
 #include "x264Encode.h"

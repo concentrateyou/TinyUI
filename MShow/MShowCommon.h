@@ -14,6 +14,7 @@
 #include "Media/TinyMedia.h"
 #include "Media/TinySoundPlayer.h"
 #include "Media/TinySoundCapture.h"
+#include "Media/TinyXAudio.h"
 #include "Common/TinyTime.h"
 #include "Common.h"
 #include "x264Encode.h"

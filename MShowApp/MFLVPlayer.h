@@ -18,7 +18,7 @@ namespace MShow
 		virtual ~MFLVPlayer();
 		BOOL			Open(HWND hWND, LPCSTR pzURL);
 		BOOL			Close();
-		BOOL			SetVolume(LONG volume);
+		BOOL			SetVolume(DWORD volume);
 		TinySize		GetSize() const;
 		DWORD			GetRate() const;
 		TinyString		GetURL() const;

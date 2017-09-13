@@ -262,7 +262,8 @@ namespace MShow
 	{
 		if (m_player != NULL)
 		{
-			m_player->SetVolume(pos == 0 ? -10000 : static_cast<LONG>(floorf(2000.0F * log10f((FLOAT)(pos) / (FLOAT)100) + 0.5F)));
+			//m_player->SetVolume(pos == 0 ? -10000 : static_cast<LONG>(floorf(2000.0F * log10f((FLOAT)(pos) / (FLOAT)100) + 0.5F)));
+			m_player->SetVolume(pos);
 		}
 	}
 }
