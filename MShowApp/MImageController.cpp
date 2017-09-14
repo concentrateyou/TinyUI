@@ -39,7 +39,6 @@ namespace MShow
 		m_popup.CreatePopupMenu();
 		m_popup.AppendMenu(MF_STRING, 1, TEXT("添加"));
 		m_popup.AppendMenu(MF_STRING, 2, TEXT("删除"));
-		m_signal.CreateEvent();
 		return TRUE;
 	}
 
@@ -107,14 +106,7 @@ namespace MShow
 			TinyString szName = dlg.GetPathName();
 			if (!szName.IsEmpty())
 			{
-				if (this->Open(szName.STR()))
-				{
-					MPreviewController* preview = MShowApp::GetInstance().GetController().GetPreviewController();
-					if (preview != NULL)
-					{
-						preview->m_waits.push_back(m_signal);
-					}
-				}
+				this->Open(szName.STR());
 			}
 		}
 	}
@@ -127,12 +119,6 @@ namespace MShow
 			preview->Remove(m_pImage);
 			m_pImage->Deallocate(preview->Graphics().GetDX11());
 			SAFE_DELETE(m_pImage);
-			m_signal.SetEvent();
-			auto s = std::find(preview->m_waits.begin(), preview->m_waits.end(), m_signal);
-			if (s != preview->m_waits.end())
-			{
-				preview->m_waits.erase(s);
-			}
 		}
 		this->Close();
 		m_view.Invalidate();
@@ -147,8 +133,8 @@ namespace MShow
 			m_graphics.GetDX11().GetRender2D()->BeginDraw();
 			m_graphics.DrawImage(&m_image2D, 1.0F, 1.0F);
 			m_graphics.GetDX11().GetRender2D()->EndDraw();
+			m_graphics.Flush();
 			m_graphics.Present();
-			m_signal.SetEvent();
 		}
 	}
 

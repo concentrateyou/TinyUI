@@ -42,7 +42,6 @@ namespace MShow
 		DX11Graphics2D	m_graphics;
 		DX11Image2D		m_image2D;
 		TinyImage		m_image;
-		TinyEvent		m_signal;
 		MImageElement*	m_pImage;
 	private:
 		TinyScopedPtr<Delegate<void(void*, INT)>>					m_onMenuClick;

@@ -82,8 +82,8 @@ namespace MShow
 			if (!m_bInitialize)
 			{
 				m_bInitialize = TRUE;
-				TinyTimer timer;
 				m_timeQPC.BeginTime();
+				TinyTimer timer;
 				if (!m_audio.Open(m_task.GetFormat()))
 					break;
 				m_audio.Start();
@@ -92,6 +92,7 @@ namespace MShow
 				m_clock.AddBaseTime(static_cast<DWORD>(m_timeQPC.GetMillisconds()));
 				LONGLONG ms = MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime();
 				LONG delay = static_cast<LONG>(tag.samplePTS - ms);
+				
 				if (timer.Wait(delay, 1000))
 				{
 					m_audio.Fill(tag.bits + 4, tag.size, INFINITE);

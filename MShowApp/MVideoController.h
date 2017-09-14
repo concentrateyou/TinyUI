@@ -59,7 +59,6 @@ namespace MShow
 	private:
 		TinyLock					m_lock;
 		TinyMenu					m_popup;
-		TinyEvent					m_signal;
 		MVideoView&					m_view;
 		DX11Graphics2D				m_graphics;
 		DX11Image2D					m_video2D;

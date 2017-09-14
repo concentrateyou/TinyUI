@@ -10,7 +10,7 @@ namespace MShow
 	/// <summary>
 	/// ‘§¿¿
 	/// </summary>
-	class MPreviewController : public TinyTaskBase
+	class MPreviewController
 	{
 		friend class MShowController;
 		friend class MVideoController;
@@ -23,19 +23,18 @@ namespace MShow
 		BOOL		Initialize();
 		BOOL		SetPulgSize(const TinySize& size);
 		TinySize	GetPulgSize() const;
-		void		SetVideoController(MVideoController* pCTRL);
-		TinyEvent&	GetSignal();
+		void		SetVideoFPS(INT	videoFPS);
+		INT			GetVideoFPS() const;
 	public:
 		BOOL		Add(DX11Element2D* ps);
 		BOOL		Remove(DX11Element2D* ps);
 		BOOL		Move(DX11Element2D* ps, BOOL bUp);
 		BOOL		Bring(DX11Element2D* ps, BOOL bTop);
 		BOOL		Find(DX11Element2D* ps);
-		void		Lock();
-		void		Unlock();
+		BOOL		Lock(DWORD dwMS);
 	public:
-		BOOL		Submit();
-		BOOL		Close(DWORD dwMS) OVERRIDE;
+		BOOL		Start();
+		BOOL		Stop();
 	public:
 		MPreviewView&	GetView();
 		DX11RenderView&	GetRenderView();
@@ -48,27 +47,26 @@ namespace MShow
 		void	OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnMenuClick(void*, INT wID);
-		void	OnMessagePump();
+		void	OnTimer();
 	private:
 		DWORD			Draw();
 		DX11Element2D*	HitTest(const TinyPoint& pos);//Õº∆¨”≈œ»
 	private:
 		BOOL							m_bTracking;
-		BOOL							m_bBreak;
 		BOOL							m_bPopup;
-		INT								m_index;
+		INT								m_videoFPS;
 		TinySize						m_pulgSize;
 		TinyMenu						m_popup;
 		TinyLock						m_lock;
-		TinyEvent						m_signal;
+		TinyEvent						m_event;
 		DX11Element2D*					m_current;
 		MPreviewView&					m_view;
 		DX11Graphics2D					m_graphics;
 		DX11Image2D						m_handles[8];
 		TinyArray<DX11Element2D*>		m_array;
 		DX11RenderView					m_renderView;
-		vector<HANDLE>					m_waits;
-		TinyPerformanceTimer			m_timeQPC;						
+		TinyTimer						m_timer;
+		TinyPerformanceTimer			m_timeQPC;
 	private:
 		TinyScopedPtr<Delegate<void(void*, INT)>>				   m_onMenuClick;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonDown;

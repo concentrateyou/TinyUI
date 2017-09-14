@@ -32,6 +32,7 @@ namespace MShow
 			return FALSE;
 		if (!m_preview->Initialize())
 			return FALSE;
+		m_preview->SetVideoFPS(25);
 		m_preview->SetPulgSize(TinySize(1280, 720));
 		m_shadow.Reset(new MShadowController(m_window.m_shadowView, m_clock));
 		if (!m_shadow)
@@ -64,7 +65,7 @@ namespace MShow
 			if (!m_audios[i]->Initialize())
 				return FALSE;
 		}
-		m_preview->Submit();
+		m_preview->Start();
 		return TRUE;
 	}
 
@@ -80,10 +81,7 @@ namespace MShow
 		}
 		if (m_preview != NULL)
 		{
-			if (m_preview->IsActive())
-			{
-				m_preview->Close(INFINITE);
-			}
+			m_preview->Stop();
 			m_preview.Reset(NULL);
 		}
 		if (m_play != NULL)
@@ -166,10 +164,6 @@ namespace MShow
 	{
 		m_pCTRL = pCTRL;
 		m_audio.SetVideoController(pCTRL);
-		if (m_preview != NULL)
-		{
-			m_preview->SetVideoController(pCTRL);
-		}
 	}
 	MVideoController* MShowController::GetCurrentCTRL()
 	{

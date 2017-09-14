@@ -54,7 +54,6 @@ namespace MShow
 		m_onMenuClick.Reset(new Delegate<void(void*, INT)>(this, &MVideoController::OnMenuClick));
 		m_popup.EVENT_CLICK += m_onMenuClick;
 		m_onVolume.Reset(new Delegate<void(DWORD)>(this, &MVideoController::OnVolume));
-		m_signal.CreateEvent();
 	}
 
 	MVideoController::~MVideoController()
@@ -63,7 +62,6 @@ namespace MShow
 		m_view.EVENT_RBUTTONDOWN -= m_onRButtonDown;
 		m_popup.EVENT_CLICK -= m_onMenuClick;
 		m_popup.DestroyMenu();
-		m_signal.Close();
 	}
 
 	BOOL MVideoController::Initialize()
@@ -158,7 +156,6 @@ namespace MShow
 				m_graphics.GetDX11().GetRender2D()->EndDraw();
 				m_graphics.Flush();
 				m_graphics.Present();
-				m_signal.SetEvent();
 			}
 		}
 	}
@@ -172,14 +169,7 @@ namespace MShow
 			TinyString szName = dlg.GetAddress();
 			if (!szName.IsEmpty())
 			{
-				if (this->Open(szName.STR()))
-				{
-					MPreviewController* preview = MShowApp::GetInstance().GetController().GetPreviewController();
-					if (preview != NULL)
-					{
-						preview->m_waits.push_back(m_signal);
-					}
-				}
+				this->Open(szName.STR());
 			}
 		}
 	}
@@ -195,12 +185,6 @@ namespace MShow
 			preview->Remove(m_pVideo);
 			m_pVideo->Deallocate(preview->Graphics().GetDX11());
 			SAFE_DELETE(m_pVideo);
-			m_signal.SetEvent();
-			auto s = std::find(preview->m_waits.begin(), preview->m_waits.end(), m_signal);
-			if (s != preview->m_waits.end())
-			{
-				preview->m_waits.erase(s);
-			}
 		}
 		this->Close();
 		m_view.Invalidate();
@@ -262,7 +246,6 @@ namespace MShow
 	{
 		if (m_player != NULL)
 		{
-			//m_player->SetVolume(pos == 0 ? -10000 : static_cast<LONG>(floorf(2000.0F * log10f((FLOAT)(pos) / (FLOAT)100) + 0.5F)));
 			m_player->SetVolume(pos);
 		}
 	}

@@ -16,11 +16,10 @@ namespace MShow
 	MPreviewController::MPreviewController(MPreviewView& view)
 		:m_view(view),
 		m_current(NULL),
-		m_bBreak(FALSE),
 		m_bTracking(FALSE),
 		m_bPopup(FALSE),
 		m_renderView(m_graphics.GetDX11()),
-		m_index(-1)
+		m_videoFPS(25)
 	{
 		m_onLButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonDown));
 		m_onLButtonUp.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonUp));
@@ -36,7 +35,7 @@ namespace MShow
 		m_view.EVENT_MOUSELEAVE += m_onMouseLeave;
 		m_view.EVENT_SETCURSOR += m_onSetCursor;
 		m_popup.EVENT_CLICK += m_onMenuClick;
-		m_signal.CreateEvent();
+		m_event.CreateEvent();
 	}
 
 	MPreviewController::~MPreviewController()
@@ -146,13 +145,9 @@ namespace MShow
 		TinyAutoLock lock(m_lock);
 		return m_array.Lookup(ps) >= 0;
 	}
-	void MPreviewController::Lock()
+	BOOL MPreviewController::Lock(DWORD dwMS)
 	{
-		m_lock.Lock();
-	}
-	void MPreviewController::Unlock()
-	{
-		m_lock.Unlock();
+		return m_event.Lock(dwMS);
 	}
 	DX11Element2D* MPreviewController::HitTest(const TinyPoint& pos)
 	{
@@ -292,16 +287,25 @@ namespace MShow
 	{
 		return m_graphics;
 	}
-	BOOL MPreviewController::Submit()
+	BOOL MPreviewController::Start()
 	{
-		m_bBreak = FALSE;
-		return TinyTaskBase::Submit(BindCallback(&MPreviewController::OnMessagePump, this));
+		DWORD dwDelay = 1000 / m_videoFPS;
+		return m_timer.SetCallback(dwDelay, BindCallback(&MPreviewController::OnTimer, this));
 	}
 
-	BOOL MPreviewController::Close(DWORD dwMS)
+	BOOL MPreviewController::Stop()
 	{
-		m_bBreak = TRUE;
-		return TinyTaskBase::Close(dwMS);
+		m_timer.Close();
+		Sleep(100);
+		for (INT i = 0; i < 8; ++i)
+		{
+			m_handles[i].Destory();
+		}
+		for (INT i = 0;i < m_array.GetSize();i++)
+		{
+			m_array[i]->Deallocate(m_graphics.GetDX11());
+		}
+		return TRUE;
 	}
 
 	BOOL MPreviewController::SetPulgSize(const TinySize& size)
@@ -315,28 +319,16 @@ namespace MShow
 		return m_pulgSize;
 	}
 
-	void MPreviewController::SetVideoController(MVideoController* pCTRL)
+	void MPreviewController::SetVideoFPS(INT	videoFPS)
 	{
-		if (pCTRL != NULL)
-		{
-			for (INT i = 0;i < m_waits.size();i++)
-			{
-				if (m_waits[i] == pCTRL->m_signal)
-				{
-					m_index = i;
-					break;
-				}
-			}
-		}
-		else
-		{
-			m_index = -1;
-		}
+		m_videoFPS = videoFPS;
 	}
-	TinyEvent&	MPreviewController::GetSignal()
+
+	INT	MPreviewController::GetVideoFPS() const
 	{
-		return m_signal;
+		return m_videoFPS;
 	}
+
 	DWORD MPreviewController::Draw()
 	{
 		m_timeQPC.BeginTime();
@@ -438,38 +430,10 @@ namespace MShow
 		return static_cast<DWORD>(m_timeQPC.GetMillisconds());
 	}
 
-	void MPreviewController::OnMessagePump()
+	void MPreviewController::OnTimer()
 	{
-		for (;;)
-		{
-			if (m_bBreak)
-			{
-				for (INT i = 0; i < 8; ++i)
-				{
-					m_handles[i].Destory();
-				}
-				for (INT i = 0;i < m_array.GetSize();i++)
-				{
-					m_array[i]->Deallocate(m_graphics.GetDX11());
-				}
-				break;
-			}
-			if (m_waits.size() == 0)
-			{
-				Sleep(25);
-				continue;
-			}
-			HRESULT hRes = WaitForMultipleObjects(m_waits.size(), &m_waits[0], FALSE, 1000);
-			if (hRes == WAIT_FAILED || hRes == WAIT_ABANDONED)
-			{
-				break;
-			}
-			TinyAutoLock lock(m_lock);
-			this->Draw();
-			if ((hRes - WAIT_OBJECT_0) == m_index)
-			{
-				m_signal.SetEvent();
-			}
-		}
+		TinyAutoLock lock(m_lock);
+		this->Draw();
+		m_event.SetEvent();
 	}
 }
