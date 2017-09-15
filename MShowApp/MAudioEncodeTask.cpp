@@ -19,7 +19,7 @@ namespace MShow
 	{
 		m_onAudio.Reset(new Delegate<void(BYTE*, LONG)>(this, &MAudioEncodeTask::OnAudio));
 		m_onAudioMix.Reset(new Delegate<void(BYTE*, LONG)>(this, &MAudioEncodeTask::OnAudioMix));
-		m_signal.CreateEvent();
+		m_event.CreateEvent();
 	}
 
 	MAudioEncodeTask::~MAudioEncodeTask()
@@ -49,7 +49,7 @@ namespace MShow
 		{
 			if (m_bBreak)
 				break;
-			if (m_signal.Lock(INFINITE))
+			if (m_event.Lock(INFINITE))
 			{
 				ZeroMemory(&sampleTag, sizeof(sampleTag));
 				BOOL bRes = m_queue.Pop(sampleTag);
@@ -74,6 +74,7 @@ namespace MShow
 
 	BOOL MAudioEncodeTask::Close(DWORD dwMS)
 	{
+		m_event.SetEvent();
 		m_bBreak = TRUE;
 		if (TinyTaskBase::Close(dwMS))
 		{
@@ -114,7 +115,7 @@ namespace MShow
 				m_clock.SetAudioPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());
 				sampleTag.timestamp = m_clock.GetAudioPTS() - m_clock.GetBaseTime();
 				m_queue.Push(sampleTag);
-				m_signal.SetEvent();
+				m_event.SetEvent();
 			}
 		}
 	}

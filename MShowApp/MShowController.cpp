@@ -10,9 +10,9 @@ namespace MShow
 {
 	MShowController::MShowController(MShowWindow& window)
 		:m_window(window),
-		m_audio(m_pusher, m_clock),
-		m_video(m_pusher, m_clock),
-		m_pCTRL(NULL)
+		m_audioTask(m_pusher, m_clock),
+		m_videoTask(m_pusher, m_clock),
+		m_pVideoCTRL(NULL)
 	{
 
 	}
@@ -27,25 +27,25 @@ namespace MShow
 		m_window.m_pusher.EVENT_CLICK += m_onPusherClick;
 		m_onToggleClick.Reset(new Delegate<void(void*, INT)>(this, &MShowController::OnToggle));
 		m_window.m_toggle.EVENT_CLICK += m_onToggleClick;
-		m_preview.Reset(new MPreviewController(m_window.m_previewView));
-		if (!m_preview)
+		m_previewCTRL.Reset(new MPreviewController(m_window.m_previewView));
+		if (!m_previewCTRL)
 			return FALSE;
-		if (!m_preview->Initialize())
+		if (!m_previewCTRL->Initialize())
 			return FALSE;
-		m_preview->SetVideoFPS(25);
-		m_preview->SetPulgSize(TinySize(1280, 720));
-		m_shadow.Reset(new MShadowController(m_window.m_shadowView, m_clock));
-		if (!m_shadow)
+		m_previewCTRL->SetVideoFPS(25);
+		m_previewCTRL->SetPulgSize(TinySize(1280, 720));
+		m_shadowCTRL.Reset(new MShadowController(m_window.m_shadowView, m_clock));
+		if (!m_shadowCTRL)
 			return FALSE;
-		if (!m_shadow->Initialize())
+		if (!m_shadowCTRL->Initialize())
 			return FALSE;
-		m_shadow->SetPulgSize(TinySize(1280, 720));
-		m_play.Reset(new MPlayController(m_window.m_playView));
-		if (!m_play)
+		m_shadowCTRL->SetPulgSize(TinySize(1280, 720));
+		m_playCTRL.Reset(new MPlayController(m_window.m_playView));
+		if (!m_playCTRL)
 			return FALSE;
-		if (!m_play->Initialize())
+		if (!m_playCTRL->Initialize())
 			return FALSE;
-		m_window.m_playVolumeView.EVENT_VOLUME += m_play->m_onVolume;
+		m_window.m_playVolumeView.EVENT_VOLUME += m_playCTRL->m_onVolume;
 		for (UINT i = 0;i < 6;i++)
 		{
 			m_videos[i].Reset(new MVideoController(m_window.m_videoViews[i]));
@@ -65,7 +65,7 @@ namespace MShow
 			if (!m_audios[i]->Initialize())
 				return FALSE;
 		}
-		m_preview->Start();
+		m_previewCTRL->Start();
 		return TRUE;
 	}
 
@@ -73,31 +73,6 @@ namespace MShow
 	{
 		m_window.m_pusher.EVENT_CLICK -= m_onPusherClick;
 		m_window.m_toggle.EVENT_CLICK -= m_onToggleClick;
-		if (m_shadow != NULL)
-		{
-			m_shadow->Stop();
-			m_shadow->Uninitialize();
-			m_shadow.Reset(NULL);
-		}
-		if (m_preview != NULL)
-		{
-			m_preview->Stop();
-			m_preview.Reset(NULL);
-		}
-		if (m_play != NULL)
-		{
-			m_window.m_playVolumeView.EVENT_VOLUME -= m_play->m_onVolume;
-			m_play->Close();
-			m_play.Reset(NULL);
-		}
-		if (m_audio.IsActive())
-		{
-			m_audio.Close(INFINITE);
-		}
-		if (m_video.IsActive())
-		{
-			m_video.Close(INFINITE);
-		}
 		for (UINT i = 0;i < 6;i++)
 		{
 			m_window.m_volumeViews[i].EVENT_VOLUME -= m_videos[i]->m_onVolume;
@@ -117,19 +92,48 @@ namespace MShow
 			}
 			m_audios[i].Reset(NULL);
 		}
+		if (m_previewCTRL != NULL)
+		{
+			m_previewCTRL->Stop();
+			m_previewCTRL.Reset(NULL);
+		}
+		if (m_playCTRL != NULL)
+		{
+			m_window.m_playVolumeView.EVENT_VOLUME -= m_playCTRL->m_onVolume;
+			m_playCTRL->Close();
+			m_playCTRL.Reset(NULL);
+		}
+		if (m_audioTask.IsActive())
+		{
+			m_audioTask.Close(INFINITE);
+		}
+		if (m_videoTask.IsActive())
+		{
+			m_videoTask.Close(INFINITE);
+		}
+		if (m_pusher.IsActive())
+		{
+			m_pusher.Close(INFINITE);
+		}
+		if (m_shadowCTRL != NULL)
+		{
+			m_shadowCTRL->Stop();
+			m_shadowCTRL->Uninitialize();
+			m_shadowCTRL.Reset(NULL);
+		}
 	}
 
 	MPreviewController* MShowController::GetPreviewController()
 	{
-		return m_preview;
+		return m_previewCTRL;
 	}
 	MShadowController*	MShowController::GetShadowController()
 	{
-		return m_shadow;
+		return m_shadowCTRL;
 	}
 	MPlayController*	MShowController::GetPlayController()
 	{
-		return m_play;
+		return m_playCTRL;
 	}
 
 	MVideoController*	MShowController::GetVideoController(UINT i)
@@ -148,12 +152,12 @@ namespace MShow
 
 	MAudioEncodeTask& MShowController::GetAudioEncoder()
 	{
-		return m_audio;
+		return m_audioTask;
 	}
 
 	MVideoEncodeTask& MShowController::GetVideoEncoder()
 	{
-		return m_video;
+		return m_videoTask;
 	}
 
 	MRTMPPusher& MShowController::GetPusher()
@@ -162,31 +166,31 @@ namespace MShow
 	}
 	void MShowController::SetCurrentCTRL(MVideoController* pCTRL)
 	{
-		m_pCTRL = pCTRL;
-		m_audio.SetVideoController(pCTRL);
+		m_pVideoCTRL = pCTRL;
+		m_audioTask.SetVideoController(pCTRL);
 	}
 	MVideoController* MShowController::GetCurrentCTRL()
 	{
-		return m_pCTRL;
+		return m_pVideoCTRL;
 	}
 	void MShowController::OnPusher(void*, INT)
 	{
 		MVideoController* pCTRL = GetVideoController(0);
-		if (pCTRL != NULL && m_preview != NULL && m_shadow != NULL)
+		if (pCTRL != NULL && m_previewCTRL != NULL && m_shadowCTRL != NULL)
 		{
-			m_shadow->Stop();
+			m_shadowCTRL->Stop();
 			if (m_pusher.IsActive())
 				m_pusher.Close(INFINITE);
-			if (m_audio.IsActive())
-				m_audio.Close(INFINITE);
-			if (m_video.IsActive())
-				m_video.Close(INFINITE);
+			if (m_audioTask.IsActive())
+				m_audioTask.Close(INFINITE);
+			if (m_videoTask.IsActive())
+				m_videoTask.Close(INFINITE);
 			if (m_pusher.Connect())
 				m_pusher.Submit();
-			m_video.Submit(m_preview->GetPulgSize(), 25, 1000);
-			m_audio.SetVideoController(pCTRL);
-			m_audio.Submit(128);
-			m_shadow->Start();
+			m_videoTask.Submit(m_previewCTRL->GetPulgSize(), 25, 1000);
+			m_audioTask.SetVideoController(pCTRL);
+			m_audioTask.Submit(128);
+			m_shadowCTRL->Start();
 		}
 	}
 	void MShowController::OnToggle(void*, INT)

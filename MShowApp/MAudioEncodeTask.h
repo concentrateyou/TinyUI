@@ -46,7 +46,7 @@ namespace MShow
 		MVideoController*		m_pVideoCTRL;
 		MAudioController*		m_pAudioCTRL;
 		TinyPerformanceTimer	m_timeQPC;
-		TinyEvent				m_signal;
+		TinyEvent				m_event;
 		TinyTimer				m_timer;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG)>> m_onAudio;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG)>> m_onAudioMix;
