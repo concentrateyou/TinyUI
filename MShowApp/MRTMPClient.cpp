@@ -197,6 +197,9 @@ namespace MShow
 			return FALSE;
 		if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
 			return FALSE;
+		//»•µÙADTSÕ∑
+		bits += 7;
+		size -= 7;
 		RTMPPacket* packet = NULL;
 		BYTE* body = NULL;
 		packet = (RTMPPacket*)malloc(RTMP_HEAD_SIZE + size + 2);
