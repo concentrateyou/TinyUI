@@ -14,8 +14,9 @@ namespace DXFramework
 	{
 
 	}
-	BOOL DX11::Initialize(HWND hWND, INT cx, INT cy)
+	BOOL DX11::Initialize(HWND hWND, INT cx, INT cy, BOOL bMultithread)
 	{
+
 		m_hWND = hWND;
 		DXGI_SWAP_CHAIN_DESC swapDesc;
 		ZeroMemory(&swapDesc, sizeof(swapDesc));
@@ -121,6 +122,14 @@ namespace DXFramework
 		hRes = m_d3d->CreateBlendState(&blenddesc, &m_disableBlendState);
 		if (hRes != S_OK)
 			return FALSE;
+		if (bMultithread)
+		{
+			hRes = m_d3d->QueryInterface(__uuidof(ID3D10Multithread), (void**)&m_multithread);
+			if (hRes != S_OK)
+				return FALSE;
+			if (!m_multithread->SetMultithreadProtected(TRUE))
+				return FALSE;
+		}
 		return TRUE;
 	}
 	BOOL DX11::ResizeView(INT cx, INT cy)
@@ -167,6 +176,28 @@ namespace DXFramework
 		if (m_immediateContext != NULL)
 		{
 			m_immediateContext->Flush();
+		}
+	}
+	void DX11::Enter()
+	{
+		if (m_multithread != NULL)
+		{
+			m_multithread->Enter();
+		}
+		else
+		{
+			m_synchronize.Lock();
+		}
+	}
+	void DX11::Leave()
+	{
+		if (m_multithread != NULL)
+		{
+			m_multithread->Leave();
+		}
+		else
+		{
+			m_synchronize.Unlock();
 		}
 	}
 	BOOL DX11::IsValid() const

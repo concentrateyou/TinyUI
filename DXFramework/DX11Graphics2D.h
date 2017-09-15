@@ -15,14 +15,14 @@ namespace DXFramework
 	public:
 		DX11Graphics2D();
 		virtual ~DX11Graphics2D();
-		BOOL	Initialize(HWND hWND, const TinySize& size);
+		BOOL	Initialize(HWND hWND, const TinySize& size, BOOL bMultithread = FALSE);
 		void	Present();
 		void	Flush();
 		BOOL    Resize(const TinySize& size);
 		DX11&	GetDX11();
 		BOOL	DrawImage(DX11Image2D* ps, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F);
-		void	Lock();
-		void	Unlock();
+		void	Enter();
+		void	Leave();
 	private:
 		DX11					m_dx11;
 		DXCamera				m_camera;

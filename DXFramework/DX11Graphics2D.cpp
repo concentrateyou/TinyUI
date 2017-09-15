@@ -11,9 +11,9 @@ namespace DXFramework
 	{
 	}
 
-	BOOL DX11Graphics2D::Initialize(HWND hWND, const TinySize& size)
+	BOOL DX11Graphics2D::Initialize(HWND hWND, const TinySize& size, BOOL bMultithread)
 	{
-		if (!m_dx11.Initialize(hWND, size.cx, size.cy))
+		if (!m_dx11.Initialize(hWND, size.cx, size.cy, bMultithread))
 			return FALSE;
 		string str;
 		str.resize(MAX_PATH);
@@ -62,12 +62,12 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
-	void DX11Graphics2D::Lock()
+	void DX11Graphics2D::Enter()
 	{
-		m_dx11.Lock();
+		m_dx11.Enter();
 	}
-	void DX11Graphics2D::Unlock()
+	void DX11Graphics2D::Leave()
 	{
-		m_dx11.Unlock();
+		m_dx11.Leave();
 	}
 }

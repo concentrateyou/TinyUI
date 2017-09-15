@@ -65,8 +65,7 @@ namespace MShow
 			if (!m_audios[i]->Initialize())
 				return FALSE;
 		}
-		m_previewCTRL->Start();
-		return TRUE;
+		return m_previewCTRL->Submit();
 	}
 
 	void MShowController::Uninitialize()
@@ -92,9 +91,9 @@ namespace MShow
 			}
 			m_audios[i].Reset(NULL);
 		}
-		if (m_previewCTRL != NULL)
+		if (m_previewCTRL != NULL && m_previewCTRL->IsActive())
 		{
-			m_previewCTRL->Stop();
+			m_previewCTRL->Close(INFINITE);
 			m_previewCTRL.Reset(NULL);
 		}
 		if (m_playCTRL != NULL)

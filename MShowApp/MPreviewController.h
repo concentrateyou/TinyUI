@@ -10,7 +10,7 @@ namespace MShow
 	/// <summary>
 	/// ‘§¿¿
 	/// </summary>
-	class MPreviewController
+	class MPreviewController : public TinyTaskBase
 	{
 		friend class MShowController;
 		friend class MVideoController;
@@ -32,9 +32,10 @@ namespace MShow
 		BOOL		Bring(DX11Element2D* ps, BOOL bTop);
 		BOOL		Find(DX11Element2D* ps);
 		BOOL		Lock(DWORD dwMS);
+		DWORD		Draw();
 	public:
-		BOOL		Start();
-		BOOL		Stop();
+		BOOL		Submit();
+		BOOL		Close(DWORD dwMS) OVERRIDE;
 	public:
 		MPreviewView&	GetView();
 		DX11RenderView&	GetRenderView();
@@ -48,25 +49,26 @@ namespace MShow
 		void	OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnMenuClick(void*, INT wID);
 		void	OnTimer();
+		void	OnMessagePump();
 	private:
-		DWORD			Draw();
+		
 		DX11Element2D*	HitTest(const TinyPoint& pos);//Õº∆¨”≈œ»
 	private:
+		BOOL							m_bBreak;
 		BOOL							m_bTracking;
 		BOOL							m_bPopup;
 		INT								m_videoFPS;
 		TinySize						m_pulgSize;
 		TinyMenu						m_popup;
-		TinyLock						m_lock;
 		TinyEvent						m_event;
 		DX11Element2D*					m_current;
 		MPreviewView&					m_view;
 		DX11Graphics2D					m_graphics;
 		DX11Image2D						m_handles[8];
-		TinyArray<DX11Element2D*>		m_array;
 		DX11RenderView					m_renderView;
 		TinyTimer						m_timer;
 		TinyPerformanceTimer			m_timeQPC;
+		TinyArray<DX11Element2D*>		m_array;
 	private:
 		TinyScopedPtr<Delegate<void(void*, INT)>>				   m_onMenuClick;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonDown;

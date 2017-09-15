@@ -54,6 +54,7 @@ namespace MShow
 		m_onMenuClick.Reset(new Delegate<void(void*, INT)>(this, &MVideoController::OnMenuClick));
 		m_popup.EVENT_CLICK += m_onMenuClick;
 		m_onVolume.Reset(new Delegate<void(DWORD)>(this, &MVideoController::OnVolume));
+		m_synchronize.CreateEvent();
 	}
 
 	MVideoController::~MVideoController()
@@ -62,6 +63,7 @@ namespace MShow
 		m_view.EVENT_RBUTTONDOWN -= m_onRButtonDown;
 		m_popup.EVENT_CLICK -= m_onMenuClick;
 		m_popup.DestroyMenu();
+		m_synchronize.Close();
 	}
 
 	BOOL MVideoController::Initialize()
@@ -83,14 +85,14 @@ namespace MShow
 		TinyRectangle rectangle;
 		m_player.Reset(new MFLVPlayer(BindCallback(&MVideoController::OnAudio, this), BindCallback(&MVideoController::OnVideo, this)));
 		if (!m_player || !m_player->Open(m_view.Handle(), pzURL))
-			goto L_ERROR;
+			goto _ERROR;
 		size = m_player->GetSize();
 		if (!m_video2D.Create(m_graphics.GetDX11(), size, TRUE))
-			goto L_ERROR;
+			goto _ERROR;
 		m_view.GetClientRect(&rectangle);
 		m_video2D.SetScale(rectangle.Size());
 		return TRUE;
-	L_ERROR:
+	_ERROR:
 		if (m_player != NULL)
 		{
 			m_player->Close();
@@ -156,6 +158,7 @@ namespace MShow
 				m_graphics.GetDX11().GetRender2D()->EndDraw();
 				m_graphics.Flush();
 				m_graphics.Present();
+				m_synchronize.SetEvent();
 			}
 		}
 	}

@@ -11,7 +11,7 @@ namespace DXFramework
 	public:
 		DX11();
 		~DX11();
-		BOOL Initialize(HWND hWND, INT cx, INT cy);
+		BOOL Initialize(HWND hWND, INT cx, INT cy, BOOL bMultithread = FALSE);
 		BOOL ResizeView(INT cx = 0, INT cy = 0);
 		BOOL SetViewport(const TinyPoint& pos, const TinySize& size);
 		void AllowBlend(BOOL bAllow, FLOAT blendFactor[4]);
@@ -20,6 +20,8 @@ namespace DXFramework
 		void SetMatrixs(const TinySize& size);
 		void Present();
 		void Flush();
+		void Enter();
+		void Leave();
 		HWND					GetHWND() const;
 		BOOL					IsValid() const;
 		ID3D11Device*			GetD3D() const;
@@ -29,6 +31,11 @@ namespace DXFramework
 		XMMATRIX*				GetMatrixs();
 		TinySize				GetSize() const;
 	private:
+		BOOL								m_bMultithread;
+		HWND								m_hWND;
+		DX11RenderView*						m_render2D;
+		XMMATRIX							m_matrixs[3];
+		TinyLock							m_synchronize;
 		TinyComPtr<ID3D11Device>			m_d3d;
 		TinyComPtr<IDXGISwapChain>			m_swap;
 		TinyComPtr<ID3D11DeviceContext>		m_immediateContext;
@@ -37,10 +44,9 @@ namespace DXFramework
 		TinyComPtr<ID3D11BlendState>		m_disableBlendState;
 		TinyComPtr<ID3D11DepthStencilState>	m_enableDepthState;
 		TinyComPtr<ID3D11DepthStencilState>	m_disableDepthState;
+		TinyComPtr<ID3D10Multithread>		m_multithread;
 		TinyScopedPtr<DX11RenderView>		m_background2D;
-		DX11RenderView*						m_render2D;
-		HWND								m_hWND;
-		XMMATRIX							m_matrixs[3];
+		
 	};
 }
 

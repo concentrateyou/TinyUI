@@ -18,6 +18,7 @@ namespace MShow
 		m_current(NULL),
 		m_bTracking(FALSE),
 		m_bPopup(FALSE),
+		m_bBreak(FALSE),
 		m_renderView(m_graphics.GetDX11()),
 		m_videoFPS(25)
 	{
@@ -76,28 +77,31 @@ namespace MShow
 
 	BOOL MPreviewController::Add(DX11Element2D* ps)
 	{
-		TinyAutoLock lock(m_lock);
+		BOOL bRes = FALSE;
+		m_graphics.Enter();
 		if (m_array.Lookup(ps) < 0)
 		{
-			return m_array.Add(ps);
+			bRes = m_array.Add(ps);
 		}
-		return FALSE;
+		m_graphics.Leave();
+		return bRes;
 	}
 
 	BOOL MPreviewController::Remove(DX11Element2D* ps)
 	{
-		TinyAutoLock lock(m_lock);
+		m_graphics.Enter();
 		BOOL bRes = m_array.Remove(ps);
 		if (ps == m_current)
 		{
 			m_current = NULL;
 		}
+		m_graphics.Leave();
 		return bRes;
 	}
 
 	BOOL MPreviewController::Move(DX11Element2D* ps, BOOL bUp)
 	{
-		TinyAutoLock lock(m_lock);
+		m_graphics.Enter();
 		BOOL bRes = TRUE;
 		if (bUp)
 		{
@@ -118,12 +122,13 @@ namespace MShow
 				bRes &= m_array.Insert(index - 1, ps);
 			}
 		}
+		m_graphics.Leave();
 		return bRes;
 	}
 
 	BOOL MPreviewController::Bring(DX11Element2D* ps, BOOL bTop)
 	{
-		TinyAutoLock lock(m_lock);
+		m_graphics.Enter();
 		BOOL bRes = TRUE;
 		INT index = m_array.Lookup(ps);
 		if (index >= 0)
@@ -138,12 +143,15 @@ namespace MShow
 				bRes &= m_array.Insert(0, ps);
 			}
 		}
+		m_graphics.Leave();
 		return bRes;
 	}
 	BOOL MPreviewController::Find(DX11Element2D* ps)
 	{
-		TinyAutoLock lock(m_lock);
-		return m_array.Lookup(ps) >= 0;
+		m_graphics.GetDX11().Enter();
+		BOOL bRes = m_array.Lookup(ps) >= 0;
+		m_graphics.GetDX11().Leave();
+		return bRes;
 	}
 	BOOL MPreviewController::Lock(DWORD dwMS)
 	{
@@ -287,25 +295,17 @@ namespace MShow
 	{
 		return m_graphics;
 	}
-	BOOL MPreviewController::Start()
+
+	BOOL MPreviewController::Submit()
 	{
-		DWORD dwDelay = 1000 / m_videoFPS;
-		return m_timer.SetCallback(dwDelay, BindCallback(&MPreviewController::OnTimer, this));
+		m_bBreak = FALSE;
+		return TinyTaskBase::Submit(BindCallback(&MPreviewController::OnMessagePump, this));
 	}
 
-	BOOL MPreviewController::Stop()
+	BOOL MPreviewController::Close(DWORD dwMS)
 	{
-		m_timer.Close();
-		Sleep(100);
-		for (INT i = 0; i < 8; ++i)
-		{
-			m_handles[i].Destory();
-		}
-		for (INT i = 0;i < m_array.GetSize();i++)
-		{
-			m_array[i]->Deallocate(m_graphics.GetDX11());
-		}
-		return TRUE;
+		m_bBreak = TRUE;
+		return TinyTaskBase::Close(dwMS);
 	}
 
 	BOOL MPreviewController::SetPulgSize(const TinySize& size)
@@ -432,8 +432,44 @@ namespace MShow
 
 	void MPreviewController::OnTimer()
 	{
-		TinyAutoLock lock(m_lock);
+		m_graphics.Enter();
 		this->Draw();
+		m_graphics.Leave();
 		m_event.SetEvent();
+	}
+
+	void MPreviewController::OnMessagePump()
+	{
+		for (;;)
+		{
+			if (m_bBreak)
+			{
+				for (INT i = 0; i < 8; ++i)
+				{
+					m_handles[i].Destory();
+				}
+				for (INT i = 0;i < m_array.GetSize();i++)
+				{
+					m_array[i]->Deallocate(m_graphics.GetDX11());
+				}
+				break;
+			}
+			/*if (m_waits.size() == 0)
+			{
+				Sleep(25);
+				continue;
+			}
+			HRESULT hRes = WaitForMultipleObjects(m_waits.size(), &m_waits[0], FALSE, 1000);
+			if (hRes == WAIT_FAILED || hRes == WAIT_ABANDONED)
+			{
+				break;
+			}
+			TinyAutoLock lock(m_lock);
+			this->Draw();
+			if ((hRes - WAIT_OBJECT_0) == m_index)
+			{
+				m_signal.SetEvent();
+			}*/
+		}
 	}
 }

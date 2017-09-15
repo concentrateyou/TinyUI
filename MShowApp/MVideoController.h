@@ -20,10 +20,10 @@ namespace MShow
 		TinyTextBox	m_textbox;
 		TinyString	m_address;
 	};
-	class MShowController;
-	class MPreviewController;
 	class MRTMPEncoder;
 	class MVideoElement;
+	class MShowController;
+	class MPreviewController;
 	/// <summary>
 	/// “Ù ”∆µøÿ÷∆∆˜
 	/// </summary>
@@ -48,6 +48,7 @@ namespace MShow
 		void	OnAdd();
 		void	OnRemove();
 		void	OnChange();
+	private:
 		void	OnAudio(BYTE* bits, LONG size);
 		void	OnVideo(BYTE* bits, LONG size);
 		void	OnMenuClick(void*, INT wID);
@@ -59,10 +60,11 @@ namespace MShow
 	private:
 		TinyLock					m_lock;
 		TinyMenu					m_popup;
+		TinyEvent					m_synchronize;
+		MVideoElement*				m_pVideo;
 		MVideoView&					m_view;
 		DX11Graphics2D				m_graphics;
 		DX11Image2D					m_video2D;
-		MVideoElement*				m_pVideo;
 		TinyScopedPtr<MFLVPlayer>	m_player;
 	private:
 		TinyScopedPtr<Delegate<void(DWORD)>>						m_onVolume;
