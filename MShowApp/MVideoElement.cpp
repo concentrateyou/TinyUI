@@ -13,7 +13,10 @@ namespace MShow
 	MVideoElement::~MVideoElement()
 	{
 	}
-
+	MVideoController& MVideoElement::GetController()
+	{
+		return m_controller;
+	}
 	BOOL MVideoElement::Allocate(DX11& dx11)
 	{
 		HANDLE handle = m_controller.GetHandle();

@@ -48,10 +48,10 @@ namespace MShow
 		void	OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnMenuClick(void*, INT wID);
-		void	OnTimer();
 		void	OnMessagePump();
+		void	GetEvents(vector<HANDLE>&handles);
 	private:
-		
+
 		DX11Element2D*	HitTest(const TinyPoint& pos);//м╪ф╛сеох
 	private:
 		BOOL							m_bBreak;
@@ -66,9 +66,9 @@ namespace MShow
 		DX11Graphics2D					m_graphics;
 		DX11Image2D						m_handles[8];
 		DX11RenderView					m_renderView;
-		TinyTimer						m_timer;
 		TinyPerformanceTimer			m_timeQPC;
 		TinyArray<DX11Element2D*>		m_array;
+		TinyArray<HANDLE>				m_events;
 	private:
 		TinyScopedPtr<Delegate<void(void*, INT)>>				   m_onMenuClick;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonDown;

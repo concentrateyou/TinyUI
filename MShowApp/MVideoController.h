@@ -44,6 +44,7 @@ namespace MShow
 		WAVEFORMATEX*	GetFormat();
 		DX11Element2D*	GetElement();
 		void			AddElement();
+		HANDLE			GetEvent();
 	private:
 		void	OnAdd();
 		void	OnRemove();
@@ -60,7 +61,7 @@ namespace MShow
 	private:
 		TinyLock					m_lock;
 		TinyMenu					m_popup;
-		TinyEvent					m_synchronize;
+		TinyEvent					m_event;
 		MVideoElement*				m_pVideo;
 		MVideoView&					m_view;
 		DX11Graphics2D				m_graphics;

@@ -430,12 +430,18 @@ namespace MShow
 		return static_cast<DWORD>(m_timeQPC.GetMillisconds());
 	}
 
-	void MPreviewController::OnTimer()
+	void MPreviewController::GetEvents(vector<HANDLE>& handles)
 	{
-		m_graphics.Enter();
-		this->Draw();
-		m_graphics.Leave();
-		m_event.SetEvent();
+		handles.clear();
+		for (INT i = 0;i < m_array.GetSize();i++)
+		{
+			DX11Element2D* p2D = m_array[i];
+			if (p2D->IsKindOf(RUNTIME_CLASS(MVideoElement)))
+			{
+				MVideoElement* ps = static_cast<MVideoElement*>(p2D);
+				handles.push_back(ps->GetController().GetEvent());
+			}
+		}
 	}
 
 	void MPreviewController::OnMessagePump()
@@ -454,22 +460,22 @@ namespace MShow
 				}
 				break;
 			}
-			/*if (m_waits.size() == 0)
+			vector<HANDLE> handles;
+			GetEvents(handles);
+			if (handles.size() == 0)
 			{
 				Sleep(25);
 				continue;
 			}
-			HRESULT hRes = WaitForMultipleObjects(m_waits.size(), &m_waits[0], FALSE, 1000);
+			HRESULT hRes = WaitForMultipleObjects(handles.size(), &handles[0], FALSE, INFINITE);
 			if (hRes == WAIT_FAILED || hRes == WAIT_ABANDONED)
 			{
 				break;
 			}
-			TinyAutoLock lock(m_lock);
+			m_graphics.Enter();
 			this->Draw();
-			if ((hRes - WAIT_OBJECT_0) == m_index)
-			{
-				m_signal.SetEvent();
-			}*/
+			m_graphics.Leave();
+			m_event.SetEvent();
 		}
 	}
 }

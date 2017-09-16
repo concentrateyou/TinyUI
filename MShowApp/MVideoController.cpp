@@ -54,7 +54,7 @@ namespace MShow
 		m_onMenuClick.Reset(new Delegate<void(void*, INT)>(this, &MVideoController::OnMenuClick));
 		m_popup.EVENT_CLICK += m_onMenuClick;
 		m_onVolume.Reset(new Delegate<void(DWORD)>(this, &MVideoController::OnVolume));
-		m_synchronize.CreateEvent();
+		m_event.CreateEvent();
 	}
 
 	MVideoController::~MVideoController()
@@ -63,7 +63,7 @@ namespace MShow
 		m_view.EVENT_RBUTTONDOWN -= m_onRButtonDown;
 		m_popup.EVENT_CLICK -= m_onMenuClick;
 		m_popup.DestroyMenu();
-		m_synchronize.Close();
+		m_event.Close();
 	}
 
 	BOOL MVideoController::Initialize()
@@ -158,7 +158,7 @@ namespace MShow
 				m_graphics.GetDX11().GetRender2D()->EndDraw();
 				m_graphics.Flush();
 				m_graphics.Present();
-				m_synchronize.SetEvent();
+				m_event.SetEvent();
 			}
 		}
 	}
@@ -227,6 +227,11 @@ namespace MShow
 				preview->Bring(m_pVideo, TRUE);
 			}
 		}
+	}
+
+	HANDLE MVideoController::GetEvent()
+	{
+		return m_event.Handle();
 	}
 
 	void MVideoController::OnMenuClick(void*, INT wID)

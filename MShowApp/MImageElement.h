@@ -14,6 +14,7 @@ namespace MShow
 		MImageElement(MImageController& controller);
 		virtual ~MImageElement();
 	public:
+		MImageController& GetController();
 		BOOL Allocate(DX11& dx11) OVERRIDE;
 		BOOL Process(DX11& dx11) OVERRIDE;
 		void Deallocate(DX11& dx11) OVERRIDE;

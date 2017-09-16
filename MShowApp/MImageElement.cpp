@@ -13,7 +13,10 @@ namespace MShow
 	MImageElement::~MImageElement()
 	{
 	}
-
+	MImageController& MImageElement::GetController()
+	{
+		return m_controller;
+	}
 	BOOL MImageElement::Allocate(DX11& dx11)
 	{
 		HANDLE handle = m_controller.GetHandle();
