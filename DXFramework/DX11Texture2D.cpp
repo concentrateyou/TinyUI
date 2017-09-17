@@ -23,7 +23,7 @@ namespace DXFramework
 	{
 	}
 
-	BOOL DX11Texture2D::Create(DX11& dx11, INT cx, INT cy, BOOL bShared)
+	BOOL DX11Texture2D::Create(DX11& dx11, INT cx, INT cy, BOOL bShared, BOOL bSync)
 	{
 		m_texture2D.Release();
 		m_resourceView.Release();
@@ -37,7 +37,7 @@ namespace DXFramework
 		textureDesc.SampleDesc.Count = 1;
 		textureDesc.SampleDesc.Quality = 0;
 		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
-		textureDesc.MiscFlags = bShared ? D3D11_RESOURCE_MISC_SHARED | D3D11_RESOURCE_MISC_GDI_COMPATIBLE : D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
+		textureDesc.MiscFlags = bShared ? (bSync ? D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX : D3D11_RESOURCE_MISC_SHARED) | D3D11_RESOURCE_MISC_GDI_COMPATIBLE : D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
 		textureDesc.Usage = D3D11_USAGE_DEFAULT;//GPU¿ìËÙ¶ÁÐ´
 		HRESULT hRes = dx11.GetD3D()->CreateTexture2D(&textureDesc, NULL, &m_texture2D);
 		if (hRes != S_OK)
@@ -59,6 +59,11 @@ namespace DXFramework
 				return FALSE;
 			if (FAILED(hRes = resource->GetSharedHandle(&m_handle)))
 				return FALSE;
+			if (bSync)
+			{
+				if (FAILED(hRes = resource->QueryInterface(__uuidof(IDXGIKeyedMutex), (void**)&m_mutex)))
+					return FALSE;
+			}
 		}
 		return TRUE;
 	}
@@ -197,7 +202,24 @@ namespace DXFramework
 		dx11.GetImmediateContext()->UpdateSubresource(m_texture2D, 0, ps, static_cast<const void*>(bits), rowPitch, depthPitch);
 		return TRUE;
 	}
-
+	BOOL DX11Texture2D::Lock(UINT64 acqKey, DWORD dwMS)
+	{
+		if (!m_mutex)
+			return FALSE;
+		HRESULT hRes = m_mutex->AcquireSync(acqKey, dwMS);
+		if (hRes == WAIT_OBJECT_0)
+			return TRUE;
+		return FALSE;
+	}
+	BOOL DX11Texture2D::Unlock(UINT64 relKey)
+	{
+		if (!m_mutex)
+			return FALSE;
+		HRESULT hRes = m_mutex->ReleaseSync(relKey);
+		if (hRes == WAIT_OBJECT_0)
+			return TRUE;
+		return FALSE;
+	}
 	BOOL DX11Texture2D::Load(DX11& dx11, const CHAR* pzFile)
 	{
 		ASSERT(pzFile);
@@ -231,6 +253,11 @@ namespace DXFramework
 			return FALSE;
 		D3D11_TEXTURE2D_DESC desc;
 		m_texture2D->GetDesc(&desc);
+		if (desc.MiscFlags & D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX)
+		{
+			if (FAILED(hRes = resource->QueryInterface(__uuidof(IDXGIKeyedMutex), (void**)&m_mutex)))
+				return FALSE;
+		}
 		D3D11_SHADER_RESOURCE_VIEW_DESC dsrvd;
 		::ZeroMemory(&dsrvd, sizeof(dsrvd));
 		dsrvd.Format = desc.Format;

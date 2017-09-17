@@ -39,11 +39,11 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
-	BOOL DX11Image2D::Create(DX11& dx11, const TinySize& size, BOOL bShared)
+	BOOL DX11Image2D::Create(DX11& dx11, const TinySize& size, BOOL bShared, BOOL bSync)
 	{
 		if (!Initialize(dx11))
 			return FALSE;
-		if (m_texture.Create(dx11, size.cx, size.cy, bShared))
+		if (m_texture.Create(dx11, size.cx, size.cy, bShared, bSync))
 		{
 			SetSize(m_texture.GetSize());
 			SetScale(m_size);
@@ -227,6 +227,14 @@ namespace DXFramework
 			return TRUE;
 		}
 		return FALSE;
+	}
+	BOOL DX11Image2D::Lock(UINT64 acqKey, DWORD dwMS)
+	{
+		return m_texture.Lock(acqKey, dwMS);
+	}
+	BOOL DX11Image2D::Unlock(UINT64 relKey)
+	{
+		return m_texture.Unlock(relKey);
 	}
 	BOOL DX11Image2D::Initialize(DX11& dx11)
 	{

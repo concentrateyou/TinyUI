@@ -54,7 +54,7 @@ namespace MShow
 	{
 		TinyRectangle s;
 		m_view.GetClientRect(&s);
-		if (!m_graphics.Initialize(m_view.Handle(), s.Size()))
+		if (!m_graphics.Initialize(m_view.Handle(), s.Size(), TRUE))
 			return FALSE;
 		string box;
 		box.resize(MAX_PATH);

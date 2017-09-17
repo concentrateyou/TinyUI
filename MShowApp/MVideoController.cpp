@@ -87,7 +87,7 @@ namespace MShow
 		if (!m_player || !m_player->Open(m_view.Handle(), pzURL))
 			goto _ERROR;
 		size = m_player->GetSize();
-		if (!m_video2D.Create(m_graphics.GetDX11(), size, TRUE))
+		if (!m_video2D.Create(m_graphics.GetDX11(), size, TRUE, FALSE))
 			goto _ERROR;
 		m_view.GetClientRect(&rectangle);
 		m_video2D.SetScale(rectangle.Size());

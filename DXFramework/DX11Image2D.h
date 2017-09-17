@@ -21,7 +21,7 @@ namespace DXFramework
 		virtual ~DX11Image2D();
 		BOOL Create(DX11& dx11, ID3D11Texture2D* texture2D);
 		BOOL Create(DX11& dx11, const TinySize& size, BYTE* bits, BOOL bReadonly);//Map/Unmap
-		BOOL Create(DX11& dx11, const TinySize& size, BOOL bShared);//UpdateSubResource
+		BOOL Create(DX11& dx11, const TinySize& size, BOOL bShared, BOOL bSync = FALSE);//UpdateSubResource
 		BOOL BitBlt(DX11& dx11, const BYTE* bits, LONG size, LONG linesize);//RGB32
 		BOOL BitBlt(DX11& dx11, const TinyRectangle& dst, HBITMAP hBitmapSrc, const TinyPoint& src);
 		BOOL BitBlt(DX11& dx11, const TinyRectangle& dst, HDC hDCSrc, const TinyPoint& src);
@@ -38,6 +38,8 @@ namespace DXFramework
 		BOOL Load(DX11& dx11, HANDLE hResource);
 		BOOL Load(DX11& dx11, const CHAR* pzFile);
 		BOOL Load(DX11& dx11, const BYTE* bits, DWORD dwSize);
+		BOOL Lock(UINT64 acqKey,DWORD dwMS);
+		BOOL Unlock(UINT64 relKey);
 		BOOL IsEmpty() const;
 		BOOL Update(DX11& dx11, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F);
 		DX11Texture2D* GetTexture2D();

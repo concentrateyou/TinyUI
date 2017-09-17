@@ -43,8 +43,8 @@ namespace MShow
 		TinyString		GetURL() const;
 		WAVEFORMATEX*	GetFormat();
 		DX11Element2D*	GetElement();
-		void			AddElement();
 		HANDLE			GetEvent();
+		void			AddElement();
 	private:
 		void	OnAdd();
 		void	OnRemove();
