@@ -47,7 +47,6 @@ namespace MShow
 		m_view.EVENT_MOUSEMOVE -= m_onMouseMove;
 		m_view.EVENT_MOUSELEAVE -= m_onMouseLeave;
 		m_view.EVENT_SETCURSOR -= m_onSetCursor;
-		m_popup.DestroyMenu();
 	}
 
 	BOOL MPreviewController::Initialize()
@@ -349,7 +348,9 @@ namespace MShow
 				{
 					m_graphics.GetDX11().AllowBlend(FALSE, NULL);
 					m_graphics.GetDX11().AllowDepth(TRUE);
+					image->Lock(0, 250);
 					m_graphics.DrawImage(image, (FLOAT)((FLOAT)m_pulgSize.cx / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cx)), (FLOAT)((FLOAT)m_pulgSize.cy / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cy)));
+					image->Unlock(0);
 				}
 			}
 		}
@@ -380,7 +381,9 @@ namespace MShow
 				{
 					m_graphics.GetDX11().AllowBlend(FALSE, NULL);
 					m_graphics.GetDX11().AllowDepth(TRUE);
+					image->Lock(0, 250);
 					m_graphics.DrawImage(image);
+					image->Unlock(0);
 				}
 			}
 			if (p2D == m_current)
@@ -467,7 +470,7 @@ namespace MShow
 				Sleep(25);
 				continue;
 			}
-			HRESULT hRes = WaitForMultipleObjects(handles.size(), &handles[0], FALSE, INFINITE);
+			HRESULT hRes = WaitForMultipleObjects(handles.size(), &handles[0], FALSE, 1000);
 			if (hRes == WAIT_FAILED || hRes == WAIT_ABANDONED)
 			{
 				break;

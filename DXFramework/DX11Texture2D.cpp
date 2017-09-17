@@ -290,6 +290,7 @@ namespace DXFramework
 		m_surface.Release();
 		m_resourceView.Release();
 		m_texture2D.Release();
+		m_mutex.Release();
 		m_handle = NULL;
 	}
 
