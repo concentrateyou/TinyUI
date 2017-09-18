@@ -310,7 +310,7 @@ namespace MShow
 	BOOL MPreviewController::SetPulgSize(const TinySize& size)
 	{
 		m_pulgSize = size;
-		return m_renderView.Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), FALSE);
+		return m_renderView.Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), FALSE, FALSE);
 	}
 
 	TinySize MPreviewController::GetPulgSize() const

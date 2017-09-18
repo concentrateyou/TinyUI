@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "MShadowController.h"
+#include "MPreviewController.h"
 #include "MShowApp.h"
 
 namespace MShow
@@ -34,7 +35,8 @@ namespace MShow
 		if (!m_image2D.Load(m_dx11, pCTRL->GetRenderView().GetHandle()))
 			return FALSE;
 		m_copy2D.Destory();
-		if (!m_copy2D.Create(m_dx11, m_pulgSize.cx, m_pulgSize.cy, NULL, TRUE))
+		BYTE* bits = NULL;
+		if (!m_copy2D.Create(m_dx11, m_pulgSize.cx, m_pulgSize.cy, bits, TRUE))
 			return FALSE;
 		return TRUE;
 	}
@@ -73,6 +75,7 @@ namespace MShow
 	{
 		m_timeQPC.BeginTime();
 		ZeroMemory(&sampleTag, sizeof(sampleTag));
+		MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Graphics().Enter();
 		m_copy2D.Copy(m_dx11, m_image2D);
 		BYTE* bits = NULL;
 		UINT pitch = 0;
@@ -88,6 +91,7 @@ namespace MShow
 			memcpy_s(sampleTag.bits + 4, sampleTag.size, bits, sampleTag.size);
 			m_copy2D.Unmap(m_dx11);
 		}
+		MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Graphics().Leave();
 		m_timeQPC.EndTime();
 		return static_cast<DWORD>(m_timeQPC.GetMillisconds());
 	}
@@ -95,9 +99,9 @@ namespace MShow
 	void MShadowController::OnTimer()
 	{
 		while (m_clock.GetBaseTime() == -1);
+		m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
 		SampleTag sampleTag;
 		OnVideo(sampleTag);
-		m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
 		sampleTag.timestamp = m_clock.GetVideoPTS() - m_clock.GetBaseTime();
 		m_videoQueue.Push(sampleTag);
 	}

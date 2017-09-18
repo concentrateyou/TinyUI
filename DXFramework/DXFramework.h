@@ -10,6 +10,8 @@
 #include <TlHelp32.h>
 #include <string>
 #include <wincodec.h>
+#include <d2d1.h>
+#include <d2d1helper.h>
 #include "Common/TinyCommon.h"
 #include "Common/TinyUtility.h"
 #include "Common/TinyTime.h"

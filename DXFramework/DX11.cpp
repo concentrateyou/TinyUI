@@ -180,7 +180,10 @@ namespace DXFramework
 	{
 		if (m_multithread != NULL)
 		{
-			m_multithread->Enter();
+			if (m_multithread->GetMultithreadProtected())
+			{
+				m_multithread->Enter();
+			}
 		}
 		else
 		{
@@ -191,7 +194,10 @@ namespace DXFramework
 	{
 		if (m_multithread != NULL)
 		{
-			m_multithread->Leave();
+			if (m_multithread->GetMultithreadProtected())
+			{
+				m_multithread->Leave();
+			}
 		}
 		else
 		{

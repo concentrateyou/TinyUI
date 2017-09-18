@@ -61,7 +61,7 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11RenderView::Create(INT cx, INT cy, BOOL bMap)
+	BOOL DX11RenderView::Create(INT cx, INT cy, BOOL bMap, BOOL bSync)
 	{
 		if (!m_dx11.IsValid())
 			return FALSE;
@@ -77,7 +77,7 @@ namespace DXFramework
 		desc.SampleDesc.Count = 1;
 		desc.SampleDesc.Quality = 0;
 		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
-		desc.MiscFlags = D3D11_RESOURCE_MISC_SHARED | D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
+		desc.MiscFlags = (bSync ? D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX : D3D11_RESOURCE_MISC_SHARED) | D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
 		desc.Usage = D3D11_USAGE_DEFAULT;
 		HRESULT hRes = m_dx11.GetD3D()->CreateTexture2D(&desc, NULL, &m_render2D);
 		if (hRes != S_OK)
@@ -92,6 +92,12 @@ namespace DXFramework
 		hRes = resource->GetSharedHandle(&m_handle);
 		if (hRes != S_OK)
 			return FALSE;
+		if (bSync)
+		{
+			hRes = resource->QueryInterface(__uuidof(IDXGIKeyedMutex), (void**)&m_mutex);
+			if (hRes != S_OK)
+				return FALSE;
+		}
 		if (bMap)
 		{
 			ZeroMemory(&desc, sizeof(desc));
@@ -197,7 +203,24 @@ namespace DXFramework
 	{
 		return m_handle;
 	}
-
+	BOOL DX11RenderView::Lock(UINT64 acqKey, DWORD dwMS)
+	{
+		if (!m_mutex)
+			return FALSE;
+		HRESULT hRes = m_mutex->AcquireSync(acqKey, dwMS);
+		if (hRes == WAIT_OBJECT_0)
+			return TRUE;
+		return FALSE;
+	}
+	BOOL DX11RenderView::Unlock(UINT64 relKey)
+	{
+		if (!m_mutex)
+			return FALSE;
+		HRESULT hRes = m_mutex->ReleaseSync(relKey);
+		if (hRes == WAIT_OBJECT_0)
+			return TRUE;
+		return FALSE;
+	}
 	void DX11RenderView::BeginDraw()
 	{
 		if (m_dx11.IsValid())
