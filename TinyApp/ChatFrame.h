@@ -15,9 +15,11 @@
 #include <sapi.h>
 #include <sphelper.h>
 #include "Media/TinyXAudio.h"
+#include "Network/TinyHTTPClient.h"
 #pragma comment(lib,"sapi.lib")
 
 using namespace TinyUI;
+using namespace TinyUI::Network;
 
 class ChatFrame : public TinyControl
 {
@@ -45,9 +47,10 @@ public:
 private:
 	void OnFinish();
 private:
-	TinyScopedArray<BYTE>	m_bits;
-	Media::TinyXAudio	m_audio;
-	TinyWaveFile		m_waveFile;
+	TinyHTTPClient	m_client;
+	//TinyScopedArray<BYTE>	m_bits;
+	//Media::TinyXAudio	m_audio;
+	//TinyWaveFile		m_waveFile;
 	//Network::TinyHTTPRequest	m_request;
 	//TinyLabel	m_analyserBAR;
 	//AudioDSP	m_audioDSP;

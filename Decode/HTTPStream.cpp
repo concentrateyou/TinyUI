@@ -28,6 +28,8 @@ namespace Decode
 		TinyString server;
 		TinyString object;
 		INTERNET_PORT port;
+		TinyPerformanceTimer timeQPC;
+		timeQPC.BeginTime();
 		if (ParseURL(pzURL, scheme, server, object, port))
 		{
 			TinyHTTPConnection* connection = m_session.GetHttpConnection(server.CSTR(), port, NULL, NULL);
@@ -46,6 +48,8 @@ namespace Decode
 			DWORD dwCode = 0;
 			if (!m_stream->QueryInfoStatusCode(dwCode) || dwCode != HTTP_STATUS_OK)
 				goto _ERROR;
+			timeQPC.EndTime();
+			TRACE("Code:%lld\n", timeQPC.GetMillisconds());
 			m_bits.Reset(new BYTE[DEFAULT_CACHE_BLOCK_SIZE * 4]);
 			if (!m_bits)
 				goto _ERROR;

@@ -291,7 +291,7 @@ namespace TinyUI
 		{
 			ASSERT(m_socket != INVALID_SOCKET);
 			TinyAutoLock lock(m_synclock);
-			DWORD errorCode = ERROR_SUCCESS;
+			INT errorCode = ERROR_SUCCESS;
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
 			context->OP = OP_ACCEPT;
@@ -376,7 +376,7 @@ namespace TinyUI
 		{
 			//https://msdn.microsoft.com/en-us/library/windows/desktop/ms737606(v=vs.85).aspx
 			TinyAutoLock lock(m_synclock);
-			DWORD errorCode = ERROR_SUCCESS;
+			INT errorCode = ERROR_SUCCESS;
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
 			context->OP = OP_CONNECT;
@@ -598,7 +598,7 @@ namespace TinyUI
 		{
 			ASSERT(m_socket != INVALID_SOCKET);
 			TinyAutoLock lock(m_synclock);
-			DWORD errorCode = ERROR_SUCCESS;
+			INT errorCode = ERROR_SUCCESS;
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
 			context->OP = OP_SEND;
@@ -668,7 +668,7 @@ namespace TinyUI
 			result->AsyncState = arg;
 			result->Array.buf = data;
 			result->Array.len = dwSize;
-			DWORD errorCode = ERROR_SUCCESS;
+			INT errorCode = ERROR_SUCCESS;
 			SOCKADDR s = { 0 };
 			size_t size = 0;
 			if (!endpoint.ToSOCKADDR(&s, &size))
@@ -727,7 +727,7 @@ namespace TinyUI
 		{
 			ASSERT(m_socket != INVALID_SOCKET);
 			TinyAutoLock lock(m_synclock);
-			DWORD errorCode = ERROR_SUCCESS;
+			INT errorCode = ERROR_SUCCESS;
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
 			context->OP = OP_RECVFROM;
@@ -818,7 +818,7 @@ namespace TinyUI
 		}
 		void CALLBACK TinySocket::AsyncCallback(PVOID pThis, BOOLEAN b)
 		{
-			DWORD errorCode = 0;
+			INT errorCode = 0;
 			TinyScopedPtr<PER_IO_CONTEXT> context(static_cast<PER_IO_CONTEXT*>(pThis));
 			if (context)
 			{

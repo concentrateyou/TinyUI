@@ -339,12 +339,6 @@
     <ClInclude Include="Database\TinyMySQL.h">
       <Filter>头文件\Database</Filter>
     </ClInclude>
-    <ClInclude Include="Network\TinyHTTPRequest.h">
-      <Filter>头文件\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="Network\TinyHTTPResponse.h">
-      <Filter>头文件\Network</Filter>
-    </ClInclude>
     <ClInclude Include="Network\TinySocket.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
@@ -500,6 +494,9 @@
     </ClInclude>
     <ClInclude Include="Windowless\TinyVisualTextBox.h">
       <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\TinyHTTPClient.h">
+      <Filter>头文件\Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -764,12 +761,6 @@
     <ClCompile Include="Database\TinyMySQL.cpp">
       <Filter>源文件\Database</Filter>
     </ClCompile>
-    <ClCompile Include="Network\TinyHTTPRequest.cpp">
-      <Filter>源文件\Network</Filter>
-    </ClCompile>
-    <ClCompile Include="Network\TinyHTTPResponse.cpp">
-      <Filter>源文件\Network</Filter>
-    </ClCompile>
     <ClCompile Include="Network\TinySocket.cpp">
       <Filter>源文件\Network</Filter>
     </ClCompile>
@@ -919,6 +910,9 @@
     </ClCompile>
     <ClCompile Include="Windowless\TinyVisualTextBox.cpp">
       <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\TinyHTTPClient.cpp">
+      <Filter>源文件\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

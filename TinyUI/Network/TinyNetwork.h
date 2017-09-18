@@ -151,7 +151,7 @@ namespace TinyUI
 			LPVOID	AsyncState;
 			HANDLE	AsyncHandle;
 		};
-		using CompleteCallback = Callback<void(DWORD, AsyncResult*)>;
+		using CompleteCallback = Callback<void(INT, AsyncResult*)>;
 		/// <summary>
 		/// OVERLAPPEDÕÿ’πΩ·ππ
 		/// </summary>
