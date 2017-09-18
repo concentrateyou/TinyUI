@@ -8,7 +8,8 @@ namespace MShow
 	MShadowController::MShadowController(MShadowView& view, MClock& clock)
 		:m_view(view),
 		m_videoFPS(25),
-		m_clock(clock)
+		m_clock(clock),
+		m_bBreak(FALSE)
 	{
 
 	}
@@ -77,6 +78,7 @@ namespace MShow
 		ZeroMemory(&sampleTag, sizeof(sampleTag));
 		MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Graphics().Enter();
 		m_copy2D.Copy(m_dx11, m_image2D);
+		MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Graphics().Leave();
 		BYTE* bits = NULL;
 		UINT pitch = 0;
 		if (m_copy2D.Map(m_dx11, bits, pitch, TRUE))
@@ -91,7 +93,7 @@ namespace MShow
 			memcpy_s(sampleTag.bits + 4, sampleTag.size, bits, sampleTag.size);
 			m_copy2D.Unmap(m_dx11);
 		}
-		MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Graphics().Leave();
+		
 		m_timeQPC.EndTime();
 		return static_cast<DWORD>(m_timeQPC.GetMillisconds());
 	}
@@ -121,5 +123,38 @@ namespace MShow
 		m_copy2D.Destory();
 		m_videoQueue.RemoveAll();
 		return TRUE;
+	}
+	BOOL MShadowController::Submit()
+	{
+		m_bBreak = FALSE;
+		return TinyTaskBase::Submit(BindCallback(&MShadowController::OnMessagePump, this));
+	}
+
+	BOOL MShadowController::Close(DWORD dwMS)
+	{
+		m_bBreak = TRUE;
+		return TinyTaskBase::Close(dwMS);
+	}
+
+	void MShadowController::OnMessagePump()
+	{
+		for (;;)
+		{
+			if (m_bBreak)
+			{
+				Stop();
+				break;
+			}
+			BOOL bRes = MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Lock(INFINITE);
+			if (bRes)
+			{
+				while (m_clock.GetBaseTime() == -1);
+				m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
+				SampleTag sampleTag;
+				OnVideo(sampleTag);
+				sampleTag.timestamp = m_clock.GetVideoPTS() - m_clock.GetBaseTime();
+				m_videoQueue.Push(sampleTag);
+			}
+		}
 	}
 }

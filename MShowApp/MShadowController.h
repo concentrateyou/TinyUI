@@ -11,7 +11,7 @@ namespace MShow
 	/// <summary>
 	/// Ó°×ÓUI¿ØÖÆÆ÷
 	/// </summary>
-	class MShadowController
+	class MShadowController : public TinyTaskBase
 	{
 		friend class MShowController;
 		friend class MVideoController;
@@ -30,13 +30,18 @@ namespace MShow
 		BOOL		Start();
 		void		Stop();
 		BOOL		Uninitialize();
-	private:
-		DWORD		OnVideo(SampleTag& sampleTag);
-		void		OnTimer();
+	public:
+		BOOL		Submit();
+		BOOL		Close(DWORD dwMS) OVERRIDE;
 	public:
 		MShadowView&		GetView();
 		MPacketAllocQueue&	GetVideoQueue();
 	private:
+		DWORD		OnVideo(SampleTag& sampleTag);
+		void		OnTimer();
+		void		OnMessagePump();
+	private:
+		BOOL					m_bBreak;
 		INT						m_videoFPS;
 		TinySize				m_pulgSize;
 		MClock&					m_clock;

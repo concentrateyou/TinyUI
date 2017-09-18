@@ -475,10 +475,13 @@ namespace MShow
 			{
 				break;
 			}
-			m_graphics.Enter();
-			this->Draw();
-			m_graphics.Leave();
-			m_event.SetEvent();
+			if (hRes == WAIT_OBJECT_0)
+			{
+				m_graphics.Enter();
+				m_event.SetEvent();
+				this->Draw();
+				m_graphics.Leave();
+			}
 		}
 	}
 }

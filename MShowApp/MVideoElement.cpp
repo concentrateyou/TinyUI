@@ -6,7 +6,8 @@ namespace MShow
 	IMPLEMENT_DYNAMIC(MVideoElement, DX11Image2D);
 
 	MVideoElement::MVideoElement(MVideoController& controller)
-		:m_controller(controller)
+		:m_controller(controller),
+		m_bPush(FALSE)
 	{
 	}
 
@@ -16,6 +17,14 @@ namespace MShow
 	MVideoController& MVideoElement::GetController()
 	{
 		return m_controller;
+	}
+	void MVideoElement::SetPush(BOOL bVal)
+	{
+		m_bPush = bVal;
+	}
+	BOOL MVideoElement::IsPush() const
+	{
+		return m_bPush;
 	}
 	BOOL MVideoElement::Allocate(DX11& dx11)
 	{
