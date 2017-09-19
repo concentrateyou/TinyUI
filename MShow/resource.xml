@@ -41,13 +41,16 @@
 
     <add name="ComboBoxList_bkg1" value="skin\combobox\ComboBoxList_bkg1.png"></add>
     <add name="ComboBoxList_highlight" value="skin\combobox\ComboBoxList_highlight.png"></add>
-    
+
     <add name="btn_down" value="skin\button\btn_down.png"></add>
     <add name="btn_highlight" value="skin\button\btn_highlight.png"></add>
     <add name="btn_normal" value="skin\button\btn_normal.png"></add>
 
     <add name="txt_border" value="skin\textbox\border.png"></add>
-    
+
+    <add name="blue_normal" value="skin\button\blue_normal.png"></add>
+    <add name="blue_down" value="skin\button\blue_down.png"></add>
+    <add name="blue_highlight" value="skin\button\blue_highlight.png"></add>
 
   </image>
 </context>

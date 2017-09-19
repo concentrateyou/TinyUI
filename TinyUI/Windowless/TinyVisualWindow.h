@@ -17,6 +17,7 @@ namespace TinyUI
 			virtual ~TinyVisualWindow();
 			void OnSizeChange(const TinySize&, const TinySize&) OVERRIDE;
 			void SetPosition(const TinyPoint& pos) OVERRIDE;
+			void SetText(const TinyString& pzText) OVERRIDE;
 		public:
 			TinyString RetrieveTag() const OVERRIDE;
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;

@@ -37,6 +37,13 @@ namespace TinyUI
 			TinyVisual::SetPosition(TinyPoint(0, 0));
 		}
 
+		void TinyVisualWindow::SetText(const TinyString& pzText)
+		{
+			ASSERT(m_document || m_document->GetVisualHWND());
+			::SetWindowText(m_document->GetVisualHWND()->Handle(), pzText.CSTR());
+			TinyVisual::SetText(pzText);
+		}
+
 		TinyString TinyVisualWindow::RetrieveTag() const
 		{
 			return TinyVisualTag::WINDOW;
