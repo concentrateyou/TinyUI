@@ -8,9 +8,15 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		IMPLEMENT_DYNAMIC(TinyVisualButton, TinyVisual);
+		IMPLEMENT_DYNCREATE(TinyVisualButton, TinyVisual);
+
+		TinyVisualButton::TinyVisualButton()
+			:m_dwFlag(NORMAL)
+		{
+
+		}
 		TinyVisualButton::TinyVisualButton(TinyVisual* spvisParent, TinyVisualDocument* vtree)
-			:TinyVisual(spvisParent, vtree),
+			: TinyVisual(spvisParent, vtree),
 			m_dwFlag(NORMAL)
 		{
 			ZeroMemory(&m_images, sizeof(m_images));

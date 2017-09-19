@@ -18,9 +18,10 @@ namespace TinyUI
 		class TinyVisualTab : public TinyVisual
 		{
 			friend class TinyVisualDocument;
-			DECLARE_DYNAMIC(TinyVisualTab)
+			DECLARE_DYNCREATE(TinyVisualTab)
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualTab)
 		protected:
+			TinyVisualTab();
 			TinyVisualTab(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:
 			virtual ~TinyVisualTab();

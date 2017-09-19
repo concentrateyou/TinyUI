@@ -11,9 +11,10 @@ namespace TinyUI
 		class TinyVisualCaption : public TinyVisual
 		{
 			friend class TinyVisualDocument;
-			DECLARE_DYNAMIC(TinyVisualCaption)
+			DECLARE_DYNCREATE(TinyVisualCaption)
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualCaption)
 		protected:
+			TinyVisualCaption();
 			TinyVisualCaption(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:
 			virtual ~TinyVisualCaption();

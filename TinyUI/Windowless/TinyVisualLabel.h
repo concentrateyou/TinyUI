@@ -11,9 +11,10 @@ namespace TinyUI
 		class TinyVisualLabel : public TinyVisual
 		{
 			friend class TinyVisualDocument;
-			DECLARE_DYNAMIC(TinyVisualLabel)
+			DECLARE_DYNCREATE(TinyVisualLabel)
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualLabel)
 		protected:
+			TinyVisualLabel();
 			TinyVisualLabel(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:
 			virtual ~TinyVisualLabel();

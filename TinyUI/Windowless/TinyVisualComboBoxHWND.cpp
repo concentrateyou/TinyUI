@@ -44,7 +44,7 @@ namespace TinyUI
 
 		void TinyVisualComboBoxHWND::OnInitialize()
 		{
-			
+
 		}
 
 		void TinyVisualComboBoxHWND::OnUninitialize()
@@ -89,7 +89,7 @@ namespace TinyUI
 			TinyVisual* spvis = m_document->GetParent(NULL);
 			if (m_pVScrollbar == NULL)
 			{
-				m_pVScrollbar = m_document->Create<TinyVisualVScrollBar>(size.cx - 12, 0, 12, size.cy, spvis);
+				m_pVScrollbar = static_cast<TinyVisualVScrollBar*>(m_document->Create(size.cx - 12, 0, 12, size.cy, TinyVisualTag::VSCROLLBAR, spvis));
 				m_onPosChange.Reset(new Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualComboBoxHWND::OnPosChange));
 				m_pVScrollbar->EVENT_PosChange += m_onPosChange;
 			}

@@ -485,6 +485,92 @@ namespace TinyUI
 				spvis = spvis->m_spvisNext;
 			}
 		}
+		TinyVisual*	 TinyVisualDocument::Create(const TinyString& tag, TinyVisual* spvisParent)
+		{
+			ASSERT(m_vs);
+			TinyString classSTR = TinyVisualResource::GetInstance().GetClassName(tag);
+			return m_vs->Create(classSTR, spvisParent);
+		}
+		TinyVisual*	 TinyVisualDocument::Create(INT x, INT y, INT cx, INT cy, const TinyString& tag, TinyVisual* spvisParent)
+		{
+			ASSERT(m_vs);
+			TinyString classSTR = TinyVisualResource::GetInstance().GetClassName(tag);
+			return m_vs->Create(x, y, cx, cy, classSTR, spvisParent);
+		}
+		TinyVisual* TinyVisualDocument::TinyVisualFactory::Create(const TinyString& classSTR, TinyVisual* spvisParent)
+		{
+			ASSERT(m_document);
+			TinyVisual* spvis = NULL;
+			if (spvisParent != NULL)
+			{
+				TinyObject* ps = TinyObject::FromName(classSTR.CSTR());
+				if (ps != NULL)
+				{
+					if (ps->IsKindOf(RUNTIME_CLASS(TinyVisual)))
+					{
+						spvis = static_cast<TinyVisual*>(ps);
+						spvis->m_spvisParent = spvisParent;
+						spvis->m_document = m_document;
+						m_document->SetParent(spvis, spvisParent);
+						spvis->OnCreate();
+					}
+				}
+			}
+			else
+			{
+				TinyObject* ps = TinyObject::FromName(classSTR.CSTR());
+				if (ps != NULL)
+				{
+					if (ps->IsKindOf(RUNTIME_CLASS(TinyVisual)))
+					{
+						TinyVisual* spvis = static_cast<TinyVisual*>(ps);
+						spvis->m_spvisParent = spvisParent;
+						spvis->m_document = m_document;
+						spvis->OnCreate();
+					}
+				}
+			}
+			if (spvisParent != NULL)
+				spvisParent->m_dwCount++;
+			return spvis;
+		}
+		TinyVisual* TinyVisualDocument::TinyVisualFactory::Create(INT x, INT y, INT cx, INT cy, const TinyString& classSTR, TinyVisual* spvisParent)
+		{
+			ASSERT(m_document);
+			TinyVisual* spvis = NULL;
+			if (spvisParent != NULL)
+			{
+				TinyObject* ps = TinyObject::FromName(classSTR.CSTR());
+				if (ps != NULL)
+				{
+					if (ps->IsKindOf(RUNTIME_CLASS(TinyVisual)))
+					{
+						spvis = static_cast<TinyVisual*>(ps);
+						spvis->SetPosition(TinyPoint(x, y));
+						spvis->SetSize(TinySize(cx, cy));
+						m_document->SetParent(spvis, spvisParent);
+						spvis->OnCreate();
+					}
+				}
+			}
+			else
+			{
+				TinyObject* ps = TinyObject::FromName(classSTR.CSTR());
+				if (ps != NULL)
+				{
+					if (ps->IsKindOf(RUNTIME_CLASS(TinyVisual)))
+					{
+						spvis = static_cast<TinyVisual*>(ps);
+						spvis->SetPosition(TinyPoint(x, y));
+						spvis->SetSize(TinySize(cx, cy));
+						spvis->OnCreate();
+					}
+				}
+			}
+			if (spvisParent != NULL)
+				spvisParent->m_dwCount++;
+			return spvis;
+		}
 		HRESULT	TinyVisualDocument::OnSize(const TinySize& size)
 		{
 			if (m_spvisWindow)

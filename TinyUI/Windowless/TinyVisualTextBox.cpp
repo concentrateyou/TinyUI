@@ -10,9 +10,16 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		IMPLEMENT_DYNAMIC(TinyVisualTextBox, TinyVisual);
+		IMPLEMENT_DYNCREATE(TinyVisualTextBox, TinyVisual);
+
+		TinyVisualTextBox::TinyVisualTextBox()
+			:m_hscroll(NULL),
+			m_vscroll(NULL)
+		{
+
+		}
 		TinyVisualTextBox::TinyVisualTextBox(TinyVisual* spvisParent, TinyVisualDocument* vtree)
-			:TinyVisual(spvisParent, vtree),
+			: TinyVisual(spvisParent, vtree),
 			m_hscroll(NULL),
 			m_vscroll(NULL)
 		{
@@ -549,11 +556,11 @@ namespace TinyUI
 		HRESULT TinyVisualTextBox::OnInitialize()
 		{
 			TinySize size = this->GetSize();
-			m_hscroll = m_document->Create<TinyVisualHScrollBar>(0, size.cy - 12, size.cx, 12, this);
+			m_hscroll = static_cast<TinyVisualHScrollBar*>(m_document->Create(0, size.cy - 12, size.cx, 12, TinyVisualTag::HSCROLLBAR, this));
 			m_onPosChange.Reset(new Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualTextBox::OnPosChange));
 			m_hscroll->EVENT_PosChange += m_onPosChange;
 			m_hscroll->SetVisible(FALSE);
-			m_vscroll = m_document->Create<TinyVisualVScrollBar>(size.cx - 12, 0, 12, size.cy, this);
+			m_vscroll = static_cast<TinyVisualVScrollBar*>(m_document->Create(size.cx - 12, 0, 12, size.cy, TinyVisualTag::VSCROLLBAR, this));
 			m_vscroll->EVENT_PosChange += m_onPosChange;
 			m_vscroll->SetVisible(FALSE);
 			m_texthost.SetRectangle(GetWindowRect());

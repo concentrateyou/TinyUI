@@ -24,6 +24,8 @@ namespace TinyUI
 
 #define RUNTIME_CLASS(class_name) ((TinyRuntimeClass*)(&class_name::class##class_name))
 
+#define CLASS_NAME(class_name) (#class_name)
+
 #define DECLARE_DYNAMIC(class_name) \
 public: \
 	static const TinyRuntimeClass class##class_name; \

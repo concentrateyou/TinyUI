@@ -63,7 +63,7 @@ namespace MShow
 		LoadSeDebugPrivilege();
 		UNREFERENCED_PARAMETER(lpCmdLine);
 		UNREFERENCED_PARAMETER(nCmdShow);
-		TinyVisualResource::GetInstance().LoadResource("skin\\resource.xml");
+		TinyVisualResource::GetInstance().Load("skin\\resource.xml");
 		::DefWindowProc(NULL, 0, 0, 0L);
 		if (!TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, lpTableName))
 			return FALSE;

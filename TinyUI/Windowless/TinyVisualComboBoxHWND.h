@@ -17,7 +17,7 @@ namespace TinyUI
 		/// </summary>
 		class TinyVisualComboBoxHWND : public TinyVisualHWND
 		{
-			DECLARE_DYNAMIC(TinyVisualComboBoxHWND)
+			DECLARE_DYNCREATE(TinyVisualComboBoxHWND)
 			friend class TinyVisualOption;
 			friend class TinyVisualComboBox;
 		public:

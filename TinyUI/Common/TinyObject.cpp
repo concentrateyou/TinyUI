@@ -10,6 +10,7 @@ namespace TinyUI
 		const TinyRuntimeClass* pClass = &TinyObject::classTinyObject;
 		while (pClass != NULL)
 		{
+			TRACE("CLass: %s\n", pClass->m_pszClassName);
 			if (lstrcmpA(lpszClassName, pClass->m_pszClassName) == 0)
 			{
 				return const_cast<TinyRuntimeClass*>(pClass);
@@ -23,7 +24,7 @@ namespace TinyUI
 		TinyRuntimeClass::m_pFirstClass = const_cast<TinyRuntimeClass*>(pNewClass);
 	}
 	//////////////////////////////////////////////////////////////////////////
-	const TinyRuntimeClass TinyObject::classTinyObject = { "TinyObject", sizeof(TinyObject), NULL, NULL, (TinyRuntimeClass*)TinyRuntimeClass::m_pFirstClass };
+	const TinyRuntimeClass TinyObject::classTinyObject = { TEXT("TinyObject"), sizeof(TinyObject), NULL, NULL, (TinyRuntimeClass*)TinyRuntimeClass::m_pFirstClass };
 
 	TinyObject::TinyObject()
 	{

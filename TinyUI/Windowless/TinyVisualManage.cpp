@@ -40,7 +40,7 @@ namespace TinyUI
 			{
 				if (pXML && !strcasecmp(pXML->Value(), TinyVisualTag::WINDOW.STR()))
 				{
-					spvis = document->Create<TinyVisualWindow>(NULL);
+					spvis = document->Create(TinyVisualTag::WINDOW, NULL);
 					BuildProperty(pXML, spvis);
 					document->m_spvisWindow = spvis;
 				}
@@ -79,38 +79,8 @@ namespace TinyUI
 			{
 				if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT)
 				{
-					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::SYSCAPTION.STR()))
-					{
-						spvis = document->Create<TinyVisualCaption>(spvisParent);
-					}
-					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::LABEL.STR()))
-					{
-						spvis = document->Create<TinyVisualLabel>(spvisParent);
-					}
-					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::BUTTON.STR()))
-					{
-						spvis = document->Create<TinyVisualButton>(spvisParent);
-					}
-					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::OPTION.STR()))
-					{
-						spvis = document->Create<TinyVisualOption>(spvisParent);
-					}
-					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::COMBOBOX.STR()))
-					{
-						spvis = document->Create<TinyVisualComboBox>(spvisParent);
-					}
-					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::TEXTBOX.STR()))
-					{
-						spvis = document->Create<TinyVisualTextBox>(spvisParent);
-					}
-					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::PANEL.STR()))
-					{
-						spvis = document->Create<TinyVisualPanel>(spvisParent);
-					}
-					if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::NATIVEWINDOW.STR()))
-					{
-						spvis = document->Create<TinyVisualNative>(spvisParent);
-					}
+					TinyString classSTR = TinyVisualResource::GetInstance().GetClassName(pXMLChildNode->Value());
+					spvis = document->Create(classSTR, spvisParent);
 					if (spvis != NULL)
 					{
 						if (BuildProperty(static_cast<const TiXmlElement*>(pXMLChildNode), spvis))
@@ -240,6 +210,18 @@ namespace TinyUI
 			{
 				m_szPath.erase(backslash + 1);
 			}
+			Register(TinyVisualTag::WINDOW, CLASS_NAME(TinyVisualWindow));
+			Register(TinyVisualTag::TEXTBOX, CLASS_NAME(TinyVisualTextBox));
+			Register(TinyVisualTag::BUTTON, CLASS_NAME(TinyVisualButton));
+			Register(TinyVisualTag::LABEL, CLASS_NAME(TinyVisualLabel));
+			Register(TinyVisualTag::VSCROLLBAR, CLASS_NAME(TinyVisualVScrollBar));
+			Register(TinyVisualTag::HSCROLLBAR, CLASS_NAME(TinyVisualHScrollBar));
+			Register(TinyVisualTag::SYSCAPTION, CLASS_NAME(TinyVisualCaption));
+			Register(TinyVisualTag::COMBOBOX, CLASS_NAME(TinyVisualComboBox));
+			Register(TinyVisualTag::OPTION, CLASS_NAME(TinyVisualOption));
+			Register(TinyVisualTag::PANEL, CLASS_NAME(TinyVisualPanel));
+			Register(TinyVisualTag::TAB, CLASS_NAME(TinyVisualTag));
+			Register(TinyVisualTag::NATIVEWINDOW, CLASS_NAME(TinyVisualNative));
 		}
 		TinyVisualResource::~TinyVisualResource()
 		{
@@ -250,7 +232,7 @@ namespace TinyUI
 			static TinyVisualResource instance;
 			return instance;
 		}
-		BOOL TinyVisualResource::LoadResource(LPCSTR pzFile)
+		BOOL TinyVisualResource::Load(LPCSTR pzFile)
 		{
 			string szFile = StringPrintf("%s\%s", m_szPath.c_str(), pzFile);
 			if (m_doc.LoadFile(szFile.c_str(), TIXML_ENCODING_UTF8))
@@ -317,6 +299,19 @@ namespace TinyUI
 		{
 			TinyImage** value = m_images.GetValue(szName);
 			return *value;
+		}
+		BOOL TinyVisualResource::Register(const TinyString& tag, const TinyString& value)
+		{
+			return m_types.Add(tag, value) != NULL;
+		}
+		void TinyVisualResource::Unregister(const TinyString& tag)
+		{
+			m_types.Remove(tag);
+		}
+		TinyString TinyVisualResource::GetClassName(const TinyString& tag)
+		{
+			TinyString* val = m_types.GetValue(tag);
+			return val != NULL ? *val : TinyString();
 		}
 		void TinyVisualResource::BuildContext(const TiXmlNode* pXMLNode)
 		{

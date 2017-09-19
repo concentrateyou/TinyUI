@@ -18,9 +18,10 @@ namespace TinyUI
 		{
 			friend class TinyVisualDocument;
 			friend class TinyVisualComboBoxHWND;
-			DECLARE_DYNAMIC(TinyVisualComboBox)
+			DECLARE_DYNCREATE(TinyVisualComboBox)
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualComboBox)
 		protected:
+			TinyVisualComboBox();
 			TinyVisualComboBox(TinyVisual* spvisParent, TinyVisualDocument* document);
 		public:
 			virtual ~TinyVisualComboBox();
@@ -63,9 +64,10 @@ namespace TinyUI
 		class TinyVisualOption : public TinyVisual
 		{
 			friend class TinyVisualDocument;
-			DECLARE_DYNAMIC(TinyVisualOption)
+			DECLARE_DYNCREATE(TinyVisualOption)
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualOption)
 		protected:
+			TinyVisualOption();
 			TinyVisualOption(TinyVisual* spvisParent, TinyVisualDocument* document);
 			virtual ~TinyVisualOption();
 			TinyString RetrieveTag() const OVERRIDE;

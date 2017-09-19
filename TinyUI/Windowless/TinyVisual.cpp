@@ -22,8 +22,8 @@ namespace TinyUI
 			m_textColor(RGB(255, 255, 255)),
 			m_borderThickness(-1),
 			m_borderStyle(PS_SOLID),
-			m_dwCount(0),
-			m_backgroundImage(NULL)
+			m_backgroundImage(NULL),
+			m_dwCount(0)
 		{
 			LOGFONT lf;
 			::GetObject(reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)), sizeof(LOGFONT), &lf);
@@ -67,6 +67,10 @@ namespace TinyUI
 		TinyString	TinyVisual::GetText() const
 		{
 			return m_szText;
+		}
+		TinyString TinyVisual::RetrieveTag() const
+		{
+			return TinyString();
 		}
 		void TinyVisual::SetName(const TinyString& pzName)
 		{

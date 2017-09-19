@@ -75,7 +75,7 @@ namespace TinyUI
 			virtual void		OnPosChange(const TinyPoint&, const TinyPoint&);
 		public:
 			virtual ~TinyVisual();
-			virtual TinyString	RetrieveTag() const = 0;
+			virtual TinyString	RetrieveTag() const;
 			virtual void		SetName(const TinyString& pzName);
 			virtual void		SetToolTip(const TinyString& pzTitle);
 			virtual void		SetText(const TinyString& pzText);

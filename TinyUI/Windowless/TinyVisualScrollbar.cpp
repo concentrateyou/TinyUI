@@ -7,7 +7,12 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		IMPLEMENT_DYNAMIC(TinyVisualHScrollBar, TinyVisual);
+		IMPLEMENT_DYNCREATE(TinyVisualHScrollBar, TinyVisual);
+
+		TinyVisualHScrollBar::TinyVisualHScrollBar()
+		{
+
+		}
 		TinyVisualHScrollBar::TinyVisualHScrollBar(TinyVisual* spvisParent, TinyVisualDocument* vtree)
 			:TinyVisual(spvisParent, vtree)
 		{
@@ -473,7 +478,12 @@ namespace TinyUI
 			ASSERT(m_images[type]);
 		}
 		//////////////////////////////////////////////////////////////////////////
-		IMPLEMENT_DYNAMIC(TinyVisualVScrollBar, TinyVisual);
+		IMPLEMENT_DYNCREATE(TinyVisualVScrollBar, TinyVisual);
+
+		TinyVisualVScrollBar::TinyVisualVScrollBar()
+		{
+
+		}
 		TinyVisualVScrollBar::TinyVisualVScrollBar(TinyVisual* spvisParent, TinyVisualDocument* vtree)
 			:TinyVisual(spvisParent, vtree)
 		{

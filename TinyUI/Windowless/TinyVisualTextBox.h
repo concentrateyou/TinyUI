@@ -11,9 +11,10 @@ namespace TinyUI
 		{
 			friend class TinyVisualDocument;
 			friend class TinyTextHost;
-			DECLARE_DYNAMIC(TinyVisualTextBox)
+			DECLARE_DYNCREATE(TinyVisualTextBox)
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualTextBox)
 		protected:
+			TinyVisualTextBox();
 			TinyVisualTextBox(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:
 			virtual ~TinyVisualTextBox();

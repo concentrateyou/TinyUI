@@ -46,13 +46,16 @@ namespace TinyUI
 			TinyVisualResource();
 			~TinyVisualResource();
 			static TinyVisualResource& GetInstance();
-			BOOL LoadResource(LPCSTR pzFile);
+			BOOL Load(LPCSTR pzFile);
 			string GetDefaultPath();
 		public:
-			TinyImage* Add(const TinyString& szName,const TinyString& szFile);
+			TinyImage* Add(const TinyString& szName, const TinyString& szFile);
 			void Remove(const TinyString& szName);
 			void RemoveAll();
 			TinyImage* operator[](const TinyString& szName);
+			BOOL Register(const TinyString& tag, const TinyString& value);
+			void Unregister(const TinyString& tag);
+			TinyString GetClassName(const TinyString& tag);
 		private:
 			static void BuildContext(const TiXmlNode* pXMLNode);
 			static void BuildImage(const TiXmlNode* pXMLNode);
@@ -60,7 +63,8 @@ namespace TinyUI
 			string			m_szPath;
 			TiXmlDocument	m_doc;
 			TinyMap<TinyString, TinyImage*> m_images;
-			
+			TinyMap<TinyString, TinyString>	m_types;
+
 		};
 	};
 }

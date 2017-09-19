@@ -8,7 +8,12 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		IMPLEMENT_DYNAMIC(TinyVisualPanel, TinyVisual);
+		IMPLEMENT_DYNCREATE(TinyVisualPanel, TinyVisual);
+
+		TinyVisualPanel::TinyVisualPanel()
+		{
+
+		}
 		TinyVisualPanel::TinyVisualPanel(TinyVisual* spvisParent, TinyVisualDocument* vtree)
 			:TinyVisual(spvisParent, vtree)
 		{

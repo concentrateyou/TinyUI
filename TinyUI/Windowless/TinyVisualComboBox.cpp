@@ -8,7 +8,17 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		IMPLEMENT_DYNAMIC(TinyVisualComboBox, TinyVisual);
+		IMPLEMENT_DYNCREATE(TinyVisualComboBox, TinyVisual);
+
+		TinyVisualComboBox::TinyVisualComboBox()
+			: m_dwFlag(NORMAL),
+			m_dwArrawFlag(NORMAL),
+			m_bActive(FALSE),
+			m_popupWND(this),
+			m_cy(0)
+		{
+
+		}
 		TinyVisualComboBox::TinyVisualComboBox(TinyVisual* spvisParent, TinyVisualDocument* vtree)
 			:TinyVisual(spvisParent, vtree),
 			m_dwFlag(NORMAL),
@@ -56,7 +66,7 @@ namespace TinyUI
 		TinyVisualOption* TinyVisualComboBox::AddOption(const TinyString& szValue, const TinyString& szText)
 		{
 			TinyVisual* spvisParent = m_popupWND.GetDocument()->GetParent(NULL);
-			TinyVisualOption* spvis = m_popupWND.GetDocument()->Create<TinyVisualOption>(0, spvisParent->GetChildCount() * DEFAULT_OPTION_HEIGHT, TO_CX(m_rectangle), DEFAULT_OPTION_HEIGHT, spvisParent);
+			TinyVisualOption* spvis = static_cast<TinyVisualOption*>(m_popupWND.GetDocument()->Create(0, spvisParent->GetChildCount() * DEFAULT_OPTION_HEIGHT, TO_CX(m_rectangle), DEFAULT_OPTION_HEIGHT, TinyVisualTag::OPTION, spvisParent));
 			if (spvis != NULL)
 			{
 				spvis->SetValue(szValue.CSTR());
@@ -210,7 +220,15 @@ namespace TinyUI
 			}
 		}
 		//////////////////////////////////////////////////////////////////////////
-		IMPLEMENT_DYNAMIC(TinyVisualOption, TinyVisual);
+		IMPLEMENT_DYNCREATE(TinyVisualOption, TinyVisual);
+
+		TinyVisualOption::TinyVisualOption()
+			: m_dwFlag(NORMAL),
+			m_bSelected(FALSE)
+		{
+
+		}
+
 		TinyVisualOption::TinyVisualOption(TinyVisual* spvisParent, TinyVisualDocument* vtree)
 			:TinyVisual(spvisParent, vtree),
 			m_dwFlag(NORMAL),

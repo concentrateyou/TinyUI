@@ -9,9 +9,10 @@ namespace TinyUI
 		{
 			friend class TinyVisualBuilder;
 			friend class TinyVisualDocument;
-			DECLARE_DYNAMIC(TinyVisualWindow)
+			DECLARE_DYNCREATE(TinyVisualWindow)
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualWindow)
 		protected:
+			TinyVisualWindow();
 			TinyVisualWindow(TinyVisual* spvisParent, TinyVisualDocument* document);
 		public:
 			virtual ~TinyVisualWindow();

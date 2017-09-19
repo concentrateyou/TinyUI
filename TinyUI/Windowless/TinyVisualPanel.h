@@ -11,9 +11,10 @@ namespace TinyUI
 		class TinyVisualPanel : public TinyVisual
 		{
 			friend class TinyVisualDocument;
-			DECLARE_DYNAMIC(TinyVisualPanel)
+			DECLARE_DYNCREATE(TinyVisualPanel)
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualPanel)
 		protected:
+			TinyVisualPanel();
 			TinyVisualPanel(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:
 			virtual ~TinyVisualPanel();
