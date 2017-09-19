@@ -10,7 +10,7 @@ namespace TinyUI
 	namespace Network
 	{
 
-#define DEFAULT_HTTP_BUFFER_SIZE 16384
+#define DEFAULT_HTTP_BUFFER_SIZE (1024*1024)
 
 		class TinyHTTPClient : public TinyHTTPAttribute
 		{
@@ -62,11 +62,12 @@ namespace TinyUI
 			static const CHAR CRLF[];
 		public:
 			TinyHTTPClient();
-			BOOL Open(const string& szURL, const string& method = GET);
-			void Close();
-			void SetTimeout(DWORD dwTO);
-			void SetBody(CHAR* body, INT size);
-			INT Read(CHAR*& data, INT size);
+			BOOL	Open(const string& szURL, const string& method = GET);
+			void	Close();
+			void	SetTimeout(DWORD dwTO);
+			void	SetBody(CHAR* body, INT size);
+			INT		Read(CHAR*& data, INT size);
+			INT		GetErrorCode() const;
 		private:
 			void BuildRequest();
 			void OnHandleConnect(INT, AsyncResult*);

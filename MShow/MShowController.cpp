@@ -78,7 +78,7 @@ namespace MShow
 		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualTextBox)))
 		{
 			TinyVisualTextBox* val = static_cast<TinyVisualTextBox*>(visual);
-			val->SetText("http://10.110.48.109:65449/6696864323");
+			val->SetText("http://10.110.48.109:4330/6706763023");
 		}
 		vector<CAPTUREDEVICE> captures;
 		TinySoundCapture::Enumerate(captures);

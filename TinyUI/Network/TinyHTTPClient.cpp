@@ -126,6 +126,10 @@ namespace TinyUI
 			}
 			return -1;
 		}
+		INT	TinyHTTPClient::GetErrorCode() const
+		{
+			return m_errorCode;
+		}
 		void TinyHTTPClient::OnHandleConnect(INT errorCode, AsyncResult* result)
 		{
 			if (errorCode != 0)

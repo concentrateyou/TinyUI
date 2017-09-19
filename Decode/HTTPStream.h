@@ -3,7 +3,7 @@
 #include "Network/TinySocket.h"
 #include "Network/TinyDNS.h"
 #include "Network/TinyURL.h"
-#include "Network/TinyInternet.h"
+#include "Network/TinyHTTPClient.h"
 #include "IO/TinyIO.h"
 #include "IO/TinyRingBuffer.h"
 using namespace std;
@@ -13,10 +13,10 @@ using namespace TinyUI::Network;
 
 namespace Decode
 {
-#define MAX_HTTP_BUFFER_SIZE		(1024 * 1024)
+#define MAX_HTTP_BUFFER_SIZE		(2 * 1024 * 1024)
 #define DEFAULT_CACHE_BLOCK_SIZE	(64 * 1024)
 	/// <summary>
-	/// FLV HTTP网络流
+	/// FLV HTTP网络流(ps:微软的HTTP接口实在太慢)
 	/// </summary>
 	class HTTPStream : public IStream
 	{
@@ -43,19 +43,8 @@ namespace Decode
 		BOOL Open(LPCSTR pzURL = "http://10.110.48.109:42948/6703234523&type=http&flashId=flv");
 		BOOL Close();
 	private:
-		void OnMessagePump();
-		void DownloadHTTP(DWORD dwSize);
-		BOOL WriteHTTP(DWORD dwSize);
-		BOOL ReadHTTP(VOID *pv, ULONG cb, ULONG *pcbRead);
-	private:
-		BOOL					m_bBreak;
 		LONG					m_cRef;
-		TinyLock				m_lock;
-		TinyHTTPStream*			m_stream;
-		TinyInternetSession		m_session;
-		TinyRingBuffer			m_buffer;
-		TinyTaskBase			m_task;
-		TinyScopedArray<BYTE>	m_bits;
+		TinyHTTPClient			m_client;
 	};
 }
 

@@ -56,21 +56,21 @@ HICON ChatFrame::RetrieveIcon()
 LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	TinyPerformanceTimer timeQPC;
+	/*TinyPerformanceTimer timeQPC;
 	timeQPC.BeginTime();
 	CHAR* ps = NULL;
 	BOOL bRes = m_client.Open("http://10.110.48.109:4330/67067630233");
 	if (bRes)
 	{
+		INT val = m_client.Read(ps, 1024);
 		timeQPC.EndTime();
-		INT val = m_client.Read(ps, 1024 * 100);
 		TRACE("True Cost:%lld\n", timeQPC.GetMillisconds());
 	}
 	else
 	{
 		timeQPC.EndTime();
 		TRACE("False Cost:%lld\n", timeQPC.GetMillisconds());
-	}
+	}*/
 	//m_waveFile.Open("D:\\Íõ·Æ - ´Ò´ÒÄÇÄê.wav");
 	////m_audio.SetCallback(BindCallback(&ChatFrame::OnFinish, this));
 	//m_audio.Open(m_waveFile.GetFormat());
