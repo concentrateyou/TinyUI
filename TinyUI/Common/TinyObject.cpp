@@ -3,28 +3,37 @@
 
 namespace TinyUI
 {
-	TinyRuntimeClass* TinyRuntimeClass::m_pFirstClass = NULL;
+	GlobalRuntime::GlobalRuntime()
+	{
+		
+	}
+	GlobalRuntime::~GlobalRuntime()
+	{
 
+	}
+	STATIC_DATA GlobalRuntime g_runtime;
+	//////////////////////////////////////////////////////////////////////////
 	TinyRuntimeClass* PASCAL TinyRuntimeClass::FromName(LPCSTR lpszClassName)
 	{
-		const TinyRuntimeClass* pClass = &TinyObject::classTinyObject;
-		while (pClass != NULL)
+		if (!lpszClassName)
+			return NULL;
+		TinyRuntimeClass* pClass = NULL;
+		for (pClass = g_runtime.m_classList; pClass != NULL;pClass = pClass->m_pNextClass)
 		{
-			TRACE("CLass: %s\n", pClass->m_pszClassName);
 			if (lstrcmpA(lpszClassName, pClass->m_pszClassName) == 0)
 			{
-				return const_cast<TinyRuntimeClass*>(pClass);
+				return pClass;
 			}
-			pClass = pClass->m_pNextClass;
 		}
 		return NULL;
 	}
-	CLASSINIT::CLASSINIT(const TinyRuntimeClass* pNewClass)
+
+	CLASSINIT::CLASSINIT(register TinyRuntimeClass* pNewClass)
 	{
-		TinyRuntimeClass::m_pFirstClass = const_cast<TinyRuntimeClass*>(pNewClass);
+		g_runtime.m_classList.Add(pNewClass);
 	}
 	//////////////////////////////////////////////////////////////////////////
-	const TinyRuntimeClass TinyObject::classTinyObject = { TEXT("TinyObject"), sizeof(TinyObject), NULL, NULL, (TinyRuntimeClass*)TinyRuntimeClass::m_pFirstClass };
+	const TinyRuntimeClass TinyObject::classTinyObject = { TEXT("TinyObject"), sizeof(class TinyObject), NULL, NULL, NULL };
 
 	TinyObject::TinyObject()
 	{

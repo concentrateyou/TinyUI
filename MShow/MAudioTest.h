@@ -2,7 +2,7 @@
 #include "MShowWindow.h"
 #include "MAudioDSP.h"
 #include "AudioAnalyser.h"
-#include "audiosdk.h"
+//#include "audiosdk.h"
 #include "MAudioQueue.h"
 #include "MAppConfig.h"
 

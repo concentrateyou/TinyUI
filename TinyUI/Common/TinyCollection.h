@@ -556,6 +556,57 @@ namespace TinyUI
 		}
 	};
 	/// <summary>
+	/// 简单链表
+	/// </summary>
+	class TinySimpleList
+	{
+	public:
+		TinySimpleList(INT offset = 0);
+		void Construct(INT offset);
+		BOOL IsEmpty() const;
+		void Add(void* p);
+		void RemoveAll();
+		void* GetFirst() const;
+		void* GetNext(void* p) const;
+		BOOL Remove(void* p);
+		void** GetNextPtr(void* p) const;
+	private:
+		void* m_pFirst;
+		INT m_offset;
+	};
+	/// <summary>
+	/// 简单类型列表
+	/// </summary>
+	template<class TYPE>
+	class TinyTypedSimpleList : public TinySimpleList
+	{
+	public:
+		TinyTypedSimpleList(INT offset = 16)
+			: TinySimpleList(offset)
+		{
+		}
+		void Add(TYPE p)
+		{
+			TinySimpleList::Add(p);
+		}
+		TYPE GetFirst()
+		{
+			return (TYPE)TinySimpleList::GetFirst();
+		}
+		TYPE GetNext(TYPE p)
+		{
+			return (TYPE)TinySimpleList::GetNext(p);
+		}
+		BOOL Remove(TYPE p)
+		{
+			return TinySimpleList::Remove((TYPE)p);
+		}
+		operator TYPE()
+		{
+			return (TYPE)TinySimpleList::GetFirst();
+		}
+	};
+	/// <summary>
 	/// 链表结构
 	/// </summary>
 	template<typename T, typename Traits = DefaultTraits<T>>

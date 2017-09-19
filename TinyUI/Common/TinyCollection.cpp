@@ -25,6 +25,72 @@ namespace TinyUI
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
+	TinySimpleList::TinySimpleList(INT offset)
+		:m_pFirst(NULL),
+		m_offset(offset)
+	{
+
+	}
+	void TinySimpleList::Construct(INT offset)
+	{
+		ASSERT(m_pFirst == NULL);
+		m_offset = offset;
+	}
+	BOOL TinySimpleList::IsEmpty() const
+	{
+		return m_pFirst == NULL;
+	}
+	void** TinySimpleList::GetNextPtr(void* ps) const
+	{
+		ASSERT(ps != NULL);
+		return (void**)((BYTE*)ps + m_offset);
+	}
+	void TinySimpleList::RemoveAll()
+	{
+		m_pFirst = NULL;
+	}
+	void* TinySimpleList::GetFirst() const
+	{
+		return m_pFirst;
+	}
+	void* TinySimpleList::GetNext(void* ps) const
+	{
+		return *GetNextPtr(ps);
+	}
+	void TinySimpleList::Add(void* ps)
+	{
+		ASSERT(ps != NULL);
+		ASSERT(*GetNextPtr(ps) == NULL);
+		*GetNextPtr(ps) = m_pFirst;
+		m_pFirst = ps;
+	}
+
+	BOOL TinySimpleList::Remove(void* ps)
+	{
+		ASSERT(ps != NULL);
+		if (m_pFirst == NULL)
+			return FALSE;
+		BOOL bRes = FALSE;
+		if (m_pFirst == ps)
+		{
+			m_pFirst = *GetNextPtr(ps);
+			bRes = TRUE;
+		}
+		else
+		{
+			void* pTemp = m_pFirst;
+			while (pTemp != NULL && *GetNextPtr(pTemp) != ps)
+				pTemp = *GetNextPtr(pTemp);
+			if (pTemp != NULL)
+			{
+				*GetNextPtr(pTemp) = *GetNextPtr(ps);
+				bRes = TRUE;
+			}
+		}
+		return bRes;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	TinyPointerMap::TinyPointerMap()
 		:m_dwBlockSize(10),
 		m_dwHashSize(17),

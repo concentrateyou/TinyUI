@@ -36,7 +36,7 @@ namespace TinyUI
 			friend class TinyVisualBuilder;
 			friend class TinyVisualFactory;
 			friend class TinyClipCanvas;
-			DECLARE_DYNAMIC(TinyVisual)
+			DECLARE_DYNCREATE(TinyVisual)
 			DISALLOW_COPY_AND_ASSIGN(TinyVisual)
 		protected:
 			TinyVisual();

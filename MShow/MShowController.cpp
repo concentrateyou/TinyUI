@@ -155,11 +155,11 @@ namespace MShow
 		m_task.Close(1000);
 		m_audioDSP.Stop();
 		m_audioDSP.Close();
-		if (m_audioSDK != NULL)
+		/*if (m_audioSDK != NULL)
 		{
 			m_audioSDK->release();
 		}
-		m_audioSDK.Reset(NULL);
+		m_audioSDK.Reset(NULL);*/
 		if (m_preview != NULL)
 		{
 			m_preview->Close();
@@ -325,7 +325,7 @@ namespace MShow
 				m_bBreak = FALSE;
 				if (m_task.Submit(BindCallback(&MShowController::OnMessagePump, this)))
 				{
-					m_audioSDK.Reset(new AudioSdk(ip, 6090));
+					/*m_audioSDK.Reset(new AudioSdk(ip, 6090));
 					if (m_audioSDK != NULL)
 					{
 						if (m_audioSDK->init(44100, 2, 16) == 0)
@@ -354,7 +354,7 @@ namespace MShow
 						{
 							LOG(ERROR) << "AudioSDK init Fail" << endl;
 						}
-					}
+					}*/
 				}
 			}
 		}
@@ -367,7 +367,7 @@ namespace MShow
 				break;
 			if (m_event.Lock(1000))
 			{
-				if (m_audioSDK != NULL)
+				/*if (m_audioSDK != NULL)
 				{
 					AUDIO_SAMPLE sample = { 0 };
 					BOOL bRes = m_audioQueue.Pop(sample);
@@ -377,7 +377,7 @@ namespace MShow
 						m_audioSDK->audio_encode_send(sample.bits + 4, static_cast<INT32>(sample.timestamp));
 					}
 					m_audioQueue.Free(sample.bits);
-				}
+				}*/
 			}
 		}
 	}

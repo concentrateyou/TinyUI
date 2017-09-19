@@ -55,8 +55,8 @@ namespace TinyUI
 		TinyHandleMap<HRGN, TinyHandleHRGN*>&				GetMapHRGN();
 		TinyHandleMap<HIMAGELIST, TinyHandleHIMAGELIST*>&	GetMapHIMAGELIST();
 	private:
-		TinySimpleMap<DWORD, TinyMessageLoop*>			m_msgLoops;
 		TinyLock										m_lock;
+		TinySimpleMap<DWORD, TinyMessageLoop*>			m_msgLoops;
 	private:
 		TinyHandleMap<HWND, TinyHandleHWND*>			m_MapHWND;
 		TinyHandleMap<HMENU, TinyHandleHMENU*>			m_MapHMENU;

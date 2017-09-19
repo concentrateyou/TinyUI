@@ -7,7 +7,7 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		IMPLEMENT_DYNAMIC(TinyVisual, TinyObject);
+		IMPLEMENT_DYNCREATE(TinyVisual, TinyObject);
 
 		TinyVisual::TinyVisual()
 			:m_spvisNext(NULL),

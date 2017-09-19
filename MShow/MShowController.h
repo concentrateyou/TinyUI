@@ -2,7 +2,7 @@
 #include "MShowWindow.h"
 #include "MAudioDSP.h"
 #include "AudioAnalyser.h"
-#include "audiosdk.h"
+//#include "audiosdk.h"
 #include "MAudioQueue.h"
 #include "MAppConfig.h"
 #include "MAudioTest.h"
@@ -10,10 +10,10 @@
 using namespace std;
 using namespace Decode;
 
-using namespace pps::audiosdk;
-#pragma comment(lib,"audiosdk.lib")
-#pragma comment(lib,"fdkaac_dec.lib")
-#pragma comment(lib,"fdkaac_enc.lib")
+//using namespace pps::audiosdk;
+//#pragma comment(lib,"audiosdk.lib")
+//#pragma comment(lib,"fdkaac_dec.lib")
+//#pragma comment(lib,"fdkaac_enc.lib")
 
 namespace MShow
 {
@@ -56,7 +56,7 @@ namespace MShow
 		MAudioDSP				m_audioDSP;
 		AudioAnalyser			m_audioAnalyser;
 		TinyPerformanceTimer	m_timeQPC;
-		TinyScopedPtr<AudioSdk>	m_audioSDK;
+		//TinyScopedPtr<AudioSdk>	m_audioSDK;
 		MAudioQueue				m_audioQueue;
 		MAppConfig				m_appConfig;
 		TinyTaskBase			m_task;

@@ -8,7 +8,7 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		IMPLEMENT_DYNCREATE(TinyVisualButton, TinyVisual);
+		IMPLEMENT_DYNCREATE(TinyVisualButton, TinyVisual)
 
 		TinyVisualButton::TinyVisualButton()
 			:m_dwFlag(NORMAL)

@@ -3,8 +3,9 @@
 
 namespace TinyUI
 {
-	IMPLEMENT_DYNAMIC(TinyButton, TinyControl)
-		TinyButton::TinyButton()
+	IMPLEMENT_DYNAMIC(TinyButton, TinyControl);
+
+	TinyButton::TinyButton()
 	{
 	};
 	TinyButton::~TinyButton()
