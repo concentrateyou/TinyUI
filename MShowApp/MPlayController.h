@@ -10,7 +10,7 @@ namespace MShow
 	/// <summary>
 	/// ²¥·Å
 	/// </summary>
-	class MPlayController
+	class MPlayController : public TinyTaskBase
 	{
 		friend class MShowController;
 		DISALLOW_COPY_AND_ASSIGN(MPlayController)
@@ -18,17 +18,15 @@ namespace MShow
 		MPlayController(MPlayView& view);
 		virtual ~MPlayController();
 		BOOL	Initialize();
-		BOOL	Open(LPCSTR pzURL);
-		BOOL	Close();
+		BOOL	Submit();
+		BOOL	Close(DWORD dwMS) OVERRIDE;
 	private:
-		void	OnVideo(BYTE* bits, LONG size);
-		void	OnVolume(DWORD pos);
+		void	OnMessagePump();
 	private:
+		BOOL			m_bBreak;
 		MPlayView&		m_view;
 		DX11Graphics2D	m_graphics;
 		DX11Image2D		m_video2D;
-		MFLVPlayer		m_player;
-		TinyScopedPtr<Delegate<void(DWORD)>>	m_onVolume;
 	};
 }
 

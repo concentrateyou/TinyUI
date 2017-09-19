@@ -243,6 +243,7 @@ namespace TinyUI
 			CHAR* ps4 = ps3;
 			while (*ps4 != ' ')
 				++ps4;
+			ps4++;
 			Add(string(ps1, ps3 - ps1), string(ps4, ps2 - ps4));
 			return TRUE;
 		}

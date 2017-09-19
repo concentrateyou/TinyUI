@@ -2,6 +2,8 @@
 #include "resource.h"
 #include "MShowWindow.h"
 #include "MShowController.h"
+#include "MSearchWindow.h"
+#include "MSearchController.h"
 #include "Windowless/TinyVisualDocument.h"
 using namespace TinyUI;
 
@@ -32,6 +34,8 @@ namespace MShow
 		TinyLock			m_lock;
 		MShowWindow			m_window;
 		MShowController		m_controller;
+		MSearchWindow		m_searchWindow;
+		MSearchController	m_searchCTRL;
 		TinyMessageLoop		m_msgLoop;
 		LONGLONG			m_audioTS;
 	};

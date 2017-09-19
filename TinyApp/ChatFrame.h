@@ -45,8 +45,6 @@ public:
 	LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 private:
-	void OnFinish();
-private:
 	TinyHTTPClient	m_client;
 	//TinyScopedArray<BYTE>	m_bits;
 	//Media::TinyXAudio	m_audio;

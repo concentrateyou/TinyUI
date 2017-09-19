@@ -310,7 +310,12 @@ namespace MShow
 	BOOL MPreviewController::SetPulgSize(const TinySize& size)
 	{
 		m_pulgSize = size;
-		return m_renderView.Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), FALSE, FALSE);
+		return m_renderView.Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), FALSE, TRUE);
+	}
+
+	HANDLE	MPreviewController::GetHandle()
+	{
+		return m_renderView.GetHandle();
 	}
 
 	TinySize MPreviewController::GetPulgSize() const
@@ -332,6 +337,7 @@ namespace MShow
 	{
 		m_timeQPC.BeginTime();
 		m_graphics.GetDX11().SetRenderTexture2D(&m_renderView);
+		m_renderView.Lock(0, 250);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();
 		TinyArray<DX11Element2D*> images;
 		for (INT i = m_array.GetSize() - 1;i >= 0;i--)
@@ -367,6 +373,7 @@ namespace MShow
 			}
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
+		m_renderView.Unlock(0);
 		//////////////////////////////////////////////////////////////////////////
 		m_graphics.GetDX11().SetRenderTexture2D(NULL);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();
@@ -427,7 +434,6 @@ namespace MShow
 			}
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
-		m_graphics.Flush();
 		m_graphics.Present();
 		m_timeQPC.EndTime();
 		return static_cast<DWORD>(m_timeQPC.GetMillisconds());
@@ -475,13 +481,17 @@ namespace MShow
 			{
 				break;
 			}
-			if (hRes == WAIT_OBJECT_0)
+			m_graphics.Enter();
+			this->Draw();
+			m_graphics.Leave();
+			m_event.SetEvent();
+			/*if (hRes == WAIT_OBJECT_0)
 			{
 				m_graphics.Enter();
-				m_event.SetEvent();
 				this->Draw();
 				m_graphics.Leave();
-			}
+				m_event.SetEvent();
+			}*/
 		}
 	}
 }

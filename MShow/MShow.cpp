@@ -48,6 +48,7 @@ namespace MShow
 	//////////////////////////////////////////////////////////////////////////
 	MShowApp::MShowApp()
 		:m_controller(m_window),
+		m_searchCTRL(m_searchWindow),
 		m_audioTS(0)
 	{
 		timeBeginPeriod(1);
@@ -68,10 +69,10 @@ namespace MShow
 			return FALSE;
 		if (!TinyApplication::GetInstance()->AddMessageLoop(&m_msgLoop))
 			return FALSE;
-		string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\main.xml");
-		if (!m_window.Create(NULL, szFile.c_str()))
+		string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\search.xml");
+		if (!m_searchWindow.Create(NULL, szFile.c_str()))
 			return FALSE;
-		if (!m_controller.Initialize())
+		if (!m_searchCTRL.Initialize())
 			return FALSE;
 		return TRUE;
 	}

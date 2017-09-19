@@ -23,6 +23,7 @@ namespace MShow
 		BOOL		Initialize();
 		BOOL		SetPulgSize(const TinySize& size);
 		TinySize	GetPulgSize() const;
+		HANDLE		GetHandle();
 		void		SetVideoFPS(INT	videoFPS);
 		INT			GetVideoFPS() const;
 	public:

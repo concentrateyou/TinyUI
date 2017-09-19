@@ -28,12 +28,9 @@ namespace MShow
 	}
 	BOOL MShadowController::SetPulgSize(const TinySize& size)
 	{
-		MPreviewController* pCTRL = MShowApp::GetInstance().GetController().GetPreviewController();
-		if (!pCTRL)
-			return FALSE;
 		m_pulgSize = size;
 		m_image2D.Destory();
-		if (!m_image2D.Load(m_dx11, pCTRL->GetRenderView().GetHandle()))
+		if (!m_image2D.Load(m_dx11, MShowApp::GetInstance().GetController().GetPreviewController()->GetRenderView().GetHandle()))
 			return FALSE;
 		m_copy2D.Destory();
 		BYTE* bits = NULL;
@@ -93,7 +90,7 @@ namespace MShow
 			memcpy_s(sampleTag.bits + 4, sampleTag.size, bits, sampleTag.size);
 			m_copy2D.Unmap(m_dx11);
 		}
-		
+
 		m_timeQPC.EndTime();
 		return static_cast<DWORD>(m_timeQPC.GetMillisconds());
 	}

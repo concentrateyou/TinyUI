@@ -15,6 +15,8 @@
     </button>
   </syscaption>
   <panel position="0,27" size="818,703" background-image="panel">
-    
+    <label name="lblTitle" text="奇妙导播台" text-align="right|vcenter" text-color="0,153,255" position="0,0" size="409,27">
+      
+    </label>
   </panel>
 </window>
