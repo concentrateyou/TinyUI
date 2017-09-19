@@ -13,6 +13,24 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="头文件\Preview">
+      <UniqueIdentifier>{ffeb4d25-5706-4d09-9b06-58051d26a883}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Preview">
+      <UniqueIdentifier>{cc275083-74e1-4420-b384-3f66662e1e37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Audio">
+      <UniqueIdentifier>{eb951d91-ae9c-4df1-8c8c-e7e9bf161ba6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Audio">
+      <UniqueIdentifier>{a446efe5-1add-4b87-a154-c1c38d26fc67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Search">
+      <UniqueIdentifier>{7dc229a5-fb46-4f8d-808a-6205b8d8e766}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Search">
+      <UniqueIdentifier>{8791f5f2-39be-4246-8a64-9e30af5a8517}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -39,50 +57,53 @@
     <ClInclude Include="MShowController.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MPreviewView.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MPreviewController.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MAudioRenderTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MAudioTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MFLVPlayer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MFLVTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MVideoRenderTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MVideoTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MPacketQueue.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MClock.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MAudioCapture.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MAudioQueue.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MAudioDSP.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="MAppConfig.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MAudioRenderTask.h">
+      <Filter>头文件\Preview</Filter>
+    </ClInclude>
+    <ClInclude Include="MAudioTask.h">
+      <Filter>头文件\Preview</Filter>
+    </ClInclude>
+    <ClInclude Include="MClock.h">
+      <Filter>头文件\Preview</Filter>
+    </ClInclude>
+    <ClInclude Include="MFLVPlayer.h">
+      <Filter>头文件\Preview</Filter>
+    </ClInclude>
+    <ClInclude Include="MFLVTask.h">
+      <Filter>头文件\Preview</Filter>
+    </ClInclude>
+    <ClInclude Include="MPacketQueue.h">
+      <Filter>头文件\Preview</Filter>
+    </ClInclude>
+    <ClInclude Include="MPreviewController.h">
+      <Filter>头文件\Preview</Filter>
+    </ClInclude>
+    <ClInclude Include="MPreviewView.h">
+      <Filter>头文件\Preview</Filter>
+    </ClInclude>
+    <ClInclude Include="MVideoTask.h">
+      <Filter>头文件\Preview</Filter>
+    </ClInclude>
+    <ClInclude Include="MVideoRenderTask.h">
+      <Filter>头文件\Preview</Filter>
+    </ClInclude>
+    <ClInclude Include="MAudioDSP.h">
+      <Filter>头文件\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="MAudioQueue.h">
+      <Filter>头文件\Audio</Filter>
+    </ClInclude>
     <ClInclude Include="MAudioTest.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="MSearchController.h">
+      <Filter>头文件\Search</Filter>
+    </ClInclude>
+    <ClInclude Include="MSearchWindow.h">
+      <Filter>头文件\Search</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -101,50 +122,53 @@
     <ClCompile Include="MShowController.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MPreviewView.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MPreviewController.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MAudioRenderTask.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MAudioTask.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MClock.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MFLVPlayer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MFLVTask.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MPacketQueue.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MVideoRenderTask.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MVideoTask.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MAudioCapture.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MAudioQueue.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MAudioDSP.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="MAppConfig.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="MAudioRenderTask.cpp">
+      <Filter>源文件\Preview</Filter>
+    </ClCompile>
+    <ClCompile Include="MAudioTask.cpp">
+      <Filter>源文件\Preview</Filter>
+    </ClCompile>
+    <ClCompile Include="MClock.cpp">
+      <Filter>源文件\Preview</Filter>
+    </ClCompile>
+    <ClCompile Include="MFLVPlayer.cpp">
+      <Filter>源文件\Preview</Filter>
+    </ClCompile>
+    <ClCompile Include="MFLVTask.cpp">
+      <Filter>源文件\Preview</Filter>
+    </ClCompile>
+    <ClCompile Include="MPacketQueue.cpp">
+      <Filter>源文件\Preview</Filter>
+    </ClCompile>
+    <ClCompile Include="MVideoTask.cpp">
+      <Filter>源文件\Preview</Filter>
+    </ClCompile>
+    <ClCompile Include="MVideoRenderTask.cpp">
+      <Filter>源文件\Preview</Filter>
+    </ClCompile>
     <ClCompile Include="MAudioTest.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="MAudioDSP.cpp">
+      <Filter>源文件\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="MAudioQueue.cpp">
+      <Filter>源文件\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="MPreviewController.cpp">
+      <Filter>源文件\Preview</Filter>
+    </ClCompile>
+    <ClCompile Include="MPreviewView.cpp">
+      <Filter>源文件\Preview</Filter>
+    </ClCompile>
+    <ClCompile Include="MSearchController.cpp">
+      <Filter>源文件\Search</Filter>
+    </ClCompile>
+    <ClCompile Include="MSearchWindow.cpp">
+      <Filter>源文件\Search</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -164,5 +188,6 @@
     <Xml Include="main.xml" />
     <Xml Include="resource.xml" />
     <Xml Include="dropdown.xml" />
+    <Xml Include="search.xml" />
   </ItemGroup>
 </Project>

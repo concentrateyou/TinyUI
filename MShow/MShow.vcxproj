@@ -150,7 +150,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MAppConfig.h" />
-    <ClInclude Include="MAudioCapture.h" />
     <ClInclude Include="MAudioDSP.h" />
     <ClInclude Include="MAudioQueue.h" />
     <ClInclude Include="MAudioRenderTask.h" />
@@ -162,6 +161,8 @@
     <ClInclude Include="MPacketQueue.h" />
     <ClInclude Include="MPreviewController.h" />
     <ClInclude Include="MPreviewView.h" />
+    <ClInclude Include="MSearchController.h" />
+    <ClInclude Include="MSearchWindow.h" />
     <ClInclude Include="MShow.h" />
     <ClInclude Include="MShowCommon.h" />
     <ClInclude Include="MShowController.h" />
@@ -174,7 +175,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MAppConfig.cpp" />
-    <ClCompile Include="MAudioCapture.cpp" />
     <ClCompile Include="MAudioDSP.cpp" />
     <ClCompile Include="MAudioQueue.cpp" />
     <ClCompile Include="MAudioRenderTask.cpp" />
@@ -186,6 +186,8 @@
     <ClCompile Include="MPacketQueue.cpp" />
     <ClCompile Include="MPreviewController.cpp" />
     <ClCompile Include="MPreviewView.cpp" />
+    <ClCompile Include="MSearchController.cpp" />
+    <ClCompile Include="MSearchWindow.cpp" />
     <ClCompile Include="MShow.cpp" />
     <ClCompile Include="MShowCommon.cpp" />
     <ClCompile Include="MShowController.cpp" />
@@ -227,6 +229,7 @@
     <Xml Include="dropdown.xml" />
     <Xml Include="main.xml" />
     <Xml Include="resource.xml" />
+    <Xml Include="search.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
