@@ -96,6 +96,9 @@
     <Lib>
       <AdditionalLibraryDirectories>$(MYSQLSDK_DIR)Lib;$(DXSDK_DIR)\Lib\x86;..\ThirdParty\sqlite;..\ThirdParty\vld\x86;..\ThirdParty\xaudio2\lib\x86</AdditionalLibraryDirectories>
     </Lib>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>

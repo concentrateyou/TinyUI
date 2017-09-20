@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<context>
+  <image>
+    <add name="hscrollbar_arrow_down_hover" value="skin\scrollbar\horizontal\arrow_down_hover.png"></add>
+    <add name="hscrollbar_arrow_down_normal" value="skin\scrollbar\horizontal\arrow_down_normal.png"></add>
+    <add name="hscrollbar_arrow_down_press" value="skin\scrollbar\horizontal\arrow_down_press.png"></add>
+    <add name="hscrollbar_arrow_up_hover" value="skin\scrollbar\horizontal\arrow_up_hover.png"></add>
+    <add name="hscrollbar_arrow_up_normal" value="skin\scrollbar\horizontal\arrow_up_normal.png"></add>
+    <add name="hscrollbar_arrow_up_press" value="skin\scrollbar\horizontal\arrow_up_press.png"></add>
+    <add name="hscrollbar_groove" value="skin\scrollbar\horizontal\scrollbar_groove.png"></add>
+    <add name="hscrollbar_hover" value="skin\scrollbar\horizontal\scrollbar_hover.png"></add>
+    <add name="hscrollbar_normal" value="skin\scrollbar\horizontal\scrollbar_normal.png"></add>
+    <add name="vscrollbar_arrow_down_hover" value="skin\scrollbar\vertical\arrow_down_hover.png"></add>
+    <add name="vscrollbar_arrow_down_normal" value="skin\scrollbar\vertical\arrow_down_normal.png"></add>
+    <add name="vscrollbar_arrow_down_press" value="skin\scrollbar\vertical\arrow_down_press.png"></add>
+    <add name="vscrollbar_arrow_up_hover" value="skin\scrollbar\vertical\arrow_up_hover.png"></add>
+    <add name="vscrollbar_arrow_up_normal" value="skin\scrollbar\vertical\arrow_up_normal.png"></add>
+    <add name="vscrollbar_arrow_up_press" value="skin\scrollbar\vertical\arrow_up_press.png"></add>
+    <add name="vscrollbar_groove" value="skin\scrollbar\vertical\scrollbar_groove.png"></add>
+    <add name="vscrollbar_hover" value="skin\scrollbar\vertical\scrollbar_hover.png"></add>
+    <add name="vscrollbar_normal" value="skin\scrollbar\vertical\scrollbar_normal.png"></add>
+
+    <add name="sysbtn_min_normal" value="skin\system\sysbtn_min_normal.png"></add>
+    <add name="sysbtn_min_hover" value="skin\system\sysbtn_min_hover.png"></add>
+    <add name="sysbtn_min_down" value="skin\system\sysbtn_min_down.png"></add>
+
+    <add name="sysbtn_close_normal" value="skin\system\sysbtn_close_normal.png"></add>
+    <add name="sysbtn_close_hover" value="skin\system\sysbtn_close_hover.png"></add>
+    <add name="sysbtn_close_down" value="skin\system\sysbtn_close_down.png"></add>
+
+    <add name="combobox_normal" value="skin\combobox\combobox_normal.png"></add>
+    <add name="combobox_push" value="skin\combobox\combobox_push.png"></add>
+    <add name="combobox_hover" value="skin\combobox\combobox_hover.png"></add>
+    <add name="inputbtn_normal" value="skin\combobox\inputbtn_normal.png"></add>
+    <add name="inputbtn_highlight" value="skin\combobox\inputbtn_highlight.png"></add>
+    <add name="inputbtn_down" value="skin\combobox\inputbtn_down.png"></add>
+    <add name="inputbtn_normal" value="skin\combobox\inputbtn_normal.png"></add>
+
+    <add name="syscaption" value="skin\system\syscaption.png"></add>
+    <add name="panel" value="skin\system\panel.png"></add>
+
+    <add name="ComboBoxList_bkg1" value="skin\combobox\ComboBoxList_bkg1.png"></add>
+    <add name="ComboBoxList_highlight" value="skin\combobox\ComboBoxList_highlight.png"></add>
+
+    <add name="btn_down" value="skin\button\btn_down.png"></add>
+    <add name="btn_highlight" value="skin\button\btn_highlight.png"></add>
+    <add name="btn_normal" value="skin\button\btn_normal.png"></add>
+
+    <add name="txt_border" value="skin\textbox\border.png"></add>
+
+    <add name="blue_normal" value="skin\button\blue_normal.png"></add>
+    <add name="blue_down" value="skin\button\blue_down.png"></add>
+    <add name="blue_highlight" value="skin\button\blue_highlight.png"></add>
+
+  </image>
+</context>

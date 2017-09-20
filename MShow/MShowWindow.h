@@ -1,10 +1,6 @@
 #pragma once
 #include "MShowCommon.h"
 #include "MPreviewView.h"
-#include "Windowless/TinyVisualNative.h"
-#include "Windowless/TinyVisualHWND.h"
-#include "Windowless/TinyVisualComboBox.h"
-#include "Windowless/TinyVisualTextBox.h"
 #include "Media/TinyWASAPIAudioRender.h"
 using namespace TinyUI;
 using namespace TinyUI::Windowless;

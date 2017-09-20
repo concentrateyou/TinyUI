@@ -5,40 +5,34 @@
 namespace TinyUI
 {
 	class NO_VTABLE TinyObject;
+	struct TinyRuntimeClass;
 
-
-
+	struct CLASSINIT
+	{
+		CLASSINIT(const TinyRuntimeClass* pNewClass);
+	};
+	/// <summary>
+	/// https://stackoverflow.com/questions/23797681/c-static-variable-in-lib-does-not-initialize
+	/// 必须启用链接依赖项输入
+	/// </summary>
 	struct TinyRuntimeClass
 	{
-		LPCSTR	m_pszClassName;
+		LPCSTR	m_lpszClassName;
 		INT		m_objectSize;
 		TinyObject* (PASCAL* m_pNew)();
 		TinyRuntimeClass* m_pBaseClass;
 		TinyRuntimeClass* m_pNextClass;
+		static TinyRuntimeClass* pFirstClass;
 		static TinyRuntimeClass* PASCAL FromName(LPCSTR lpszClassName);
 	};
 
-	class GlobalRuntime
-	{
-	public:
-		GlobalRuntime();
-		~GlobalRuntime();
-	public:
-		TinyTypedSimpleList<TinyRuntimeClass*> m_classList;
-	};
-
-	struct CLASSINIT
-	{
-		CLASSINIT(register TinyRuntimeClass* pNewClass);
-	};
+#define CLASS_NAME(class_name) (#class_name)
 
 #define RUNTIME_CLASS(class_name) ((TinyRuntimeClass*)(&class_name::class##class_name))
 
-#define CLASS_NAME(class_name) (#class_name)
-
 #define DECLARE_DYNAMIC(class_name) \
 public: \
-	static  TinyRuntimeClass class##class_name; \
+	static const TinyRuntimeClass class##class_name; \
 	virtual TinyRuntimeClass* GetRuntimeClass() const; 
 
 #define DECLARE_DYNCREATE(class_name) \
@@ -46,14 +40,14 @@ public: \
 	static TinyObject* PASCAL New();
 
 #define IMPLEMENT_DYNAMIC(class_name, base_class_name) \
-	SELECTANY  TinyRuntimeClass class_name::class##class_name = { #class_name, sizeof(class class_name), NULL, RUNTIME_CLASS(base_class_name),NULL }; \
+	SELECTANY const TinyRuntimeClass class_name::class##class_name = { #class_name, sizeof(class class_name), NULL, RUNTIME_CLASS(base_class_name), TinyRuntimeClass::pFirstClass }; \
 	TinyRuntimeClass* class_name::GetRuntimeClass() const { return RUNTIME_CLASS(class_name); } \
 	static CLASSINIT _init_##class_name(&class_name::class##class_name); 
 
 
 #define IMPLEMENT_DYNCREATE(class_name, base_class_name) \
 	TinyObject* PASCAL class_name::New() { return new class_name; } \
-	SELECTANY  TinyRuntimeClass class_name::class##class_name = { #class_name, sizeof(class class_name), class_name::New, RUNTIME_CLASS(base_class_name),NULL }; \
+	SELECTANY const TinyRuntimeClass class_name::class##class_name = { #class_name, sizeof(class class_name), class_name::New, RUNTIME_CLASS(base_class_name), TinyRuntimeClass::pFirstClass }; \
 	TinyRuntimeClass* class_name::GetRuntimeClass() const { return RUNTIME_CLASS(class_name); } \
 	static CLASSINIT _init_##class_name(&class_name::class##class_name); 
 

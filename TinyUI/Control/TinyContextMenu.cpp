@@ -69,6 +69,8 @@ namespace TinyUI
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
+	IMPLEMENT_DYNAMIC(TinyContextMenu, TinyControl);
+
 	TinyContextMenu::TinyContextMenu()
 		:m_bMouseTracking(FALSE),
 		m_bMouseDown(FALSE),

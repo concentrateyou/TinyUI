@@ -8,7 +8,7 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		IMPLEMENT_DYNCREATE(TinyVisualCaption, TinyVisual)
+		IMPLEMENT_DYNCREATE(TinyVisualCaption, TinyVisual);
 
 		TinyVisualCaption::TinyVisualCaption()
 		{

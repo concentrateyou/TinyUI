@@ -8,7 +8,7 @@ namespace TinyUI
 	namespace Windowless
 	{
 		IMPLEMENT_DYNCREATE(TinyVisualLabel, TinyVisual);
-
+		
 		TinyVisualLabel::TinyVisualLabel()
 		{
 

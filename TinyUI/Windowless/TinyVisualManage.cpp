@@ -79,8 +79,7 @@ namespace TinyUI
 			{
 				if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT)
 				{
-					TinyString classSTR = TinyVisualResource::GetInstance().GetClassName(pXMLChildNode->Value());
-					spvis = document->Create(classSTR, spvisParent);
+					spvis = document->Create(pXMLChildNode->Value(), spvisParent);
 					if (spvis != NULL)
 					{
 						if (BuildProperty(static_cast<const TiXmlElement*>(pXMLChildNode), spvis))
@@ -97,6 +96,7 @@ namespace TinyUI
 		{
 			if (!pXMLNode)
 				return FALSE;
+
 			const TiXmlAttribute* pFA = pXMLNode->FirstAttribute();
 			const TiXmlAttribute* pLA = pXMLNode->LastAttribute();
 			while (pFA != pLA)

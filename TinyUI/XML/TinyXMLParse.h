@@ -10,17 +10,14 @@ namespace TinyUI
 	/// <summary>
 	/// XML SkinΩ‚Œˆ¿‡ 
 	/// </summary>
-	class TinyXMLParse : public TinyObject
+	class TinyXMLParse
 	{
-		DECLARE_DYNAMIC(TinyXMLParse)
 	public:
 		TinyXMLParse();
 		virtual ~TinyXMLParse();
 	public:
 		BOOL	LoadFile(LPCSTR pzFile);
 		BOOL	LoadStream(IStream* ps);
-	public:
-
 	};
 }
 

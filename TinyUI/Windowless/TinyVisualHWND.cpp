@@ -8,6 +8,7 @@ namespace TinyUI
 	namespace Windowless
 	{
 		IMPLEMENT_DYNAMIC(TinyVisualHWND, TinyControl);
+
 		TinyVisualHWND::TinyVisualHWND()
 			:m_document(NULL),
 			m_visualDC(NULL),

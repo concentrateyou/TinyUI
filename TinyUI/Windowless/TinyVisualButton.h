@@ -5,6 +5,7 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
+		class TinyVisualButton;
 		/// <summary>
 		/// ÏµÍ³°´Å¥
 		/// </summary>

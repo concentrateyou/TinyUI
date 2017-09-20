@@ -34,8 +34,8 @@ namespace TinyUI
 			virtual BOOL	Initialize(TinyVisualBuilder* builder);
 			virtual void	Uninitialize();
 		public:
-			TinyVisual*	 Create(INT x, INT y, INT cx, INT cy, const TinyString& className, TinyVisual* spvisParent);
-			TinyVisual*	 Create(const TinyString& className, TinyVisual* spvisParent);
+			TinyVisual*	 Create(INT x, INT y, INT cx, INT cy, const TinyString& tag, TinyVisual* spvisParent);
+			TinyVisual*	 Create(const TinyString& tag, TinyVisual* spvisParent);
 			BOOL Destory(TinyVisual* spvis);
 		public:
 			HWND				Handle() const;

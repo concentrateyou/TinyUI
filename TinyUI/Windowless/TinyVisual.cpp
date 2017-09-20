@@ -10,7 +10,8 @@ namespace TinyUI
 		IMPLEMENT_DYNCREATE(TinyVisual, TinyObject);
 
 		TinyVisual::TinyVisual()
-			:m_spvisNext(NULL),
+			:m_spvisParent(NULL),
+			m_spvisNext(NULL),
 			m_spvisChild(NULL),
 			m_spvisOwner(NULL),
 			m_hrgnClip(NULL),

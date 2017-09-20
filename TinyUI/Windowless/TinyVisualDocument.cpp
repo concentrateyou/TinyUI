@@ -489,13 +489,21 @@ namespace TinyUI
 		{
 			ASSERT(m_vs);
 			TinyString classSTR = TinyVisualResource::GetInstance().GetClassName(tag);
-			return m_vs->Create(classSTR, spvisParent);
+			if (!classSTR.IsEmpty())
+			{
+				return m_vs->Create(classSTR, spvisParent);
+			}
+			return NULL;
 		}
 		TinyVisual*	 TinyVisualDocument::Create(INT x, INT y, INT cx, INT cy, const TinyString& tag, TinyVisual* spvisParent)
 		{
 			ASSERT(m_vs);
 			TinyString classSTR = TinyVisualResource::GetInstance().GetClassName(tag);
-			return m_vs->Create(x, y, cx, cy, classSTR, spvisParent);
+			if (!classSTR.IsEmpty())
+			{
+				return m_vs->Create(x, y, cx, cy, classSTR, spvisParent);
+			}
+			return NULL;
 		}
 		TinyVisual* TinyVisualDocument::TinyVisualFactory::Create(const TinyString& classSTR, TinyVisual* spvisParent)
 		{
@@ -523,7 +531,7 @@ namespace TinyUI
 				{
 					if (ps->IsKindOf(RUNTIME_CLASS(TinyVisual)))
 					{
-						TinyVisual* spvis = static_cast<TinyVisual*>(ps);
+						spvis = static_cast<TinyVisual*>(ps);
 						spvis->m_spvisParent = spvisParent;
 						spvis->m_document = m_document;
 						spvis->OnCreate();
@@ -546,6 +554,8 @@ namespace TinyUI
 					if (ps->IsKindOf(RUNTIME_CLASS(TinyVisual)))
 					{
 						spvis = static_cast<TinyVisual*>(ps);
+						spvis->m_spvisParent = spvisParent;
+						spvis->m_document = m_document;
 						spvis->SetPosition(TinyPoint(x, y));
 						spvis->SetSize(TinySize(cx, cy));
 						m_document->SetParent(spvis, spvisParent);
@@ -561,6 +571,8 @@ namespace TinyUI
 					if (ps->IsKindOf(RUNTIME_CLASS(TinyVisual)))
 					{
 						spvis = static_cast<TinyVisual*>(ps);
+						spvis->m_spvisParent = spvisParent;
+						spvis->m_document = m_document;
 						spvis->SetPosition(TinyPoint(x, y));
 						spvis->SetSize(TinySize(cx, cy));
 						spvis->OnCreate();

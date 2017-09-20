@@ -9,6 +9,7 @@ namespace TinyUI
 	namespace Windowless
 	{
 		IMPLEMENT_DYNAMIC(TinyVisualComboBoxHWND, TinyVisualHWND);
+
 		TinyVisualComboBoxHWND::TinyVisualComboBoxHWND(TinyVisualComboBox* pOwner)
 			:m_pOwner(pOwner),
 			m_pVScrollbar(NULL),

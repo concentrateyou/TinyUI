@@ -8,7 +8,7 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		IMPLEMENT_DYNCREATE(TinyVisualComboBox, TinyVisual)
+		IMPLEMENT_DYNCREATE(TinyVisualComboBox, TinyVisual);
 
 		TinyVisualComboBox::TinyVisualComboBox()
 			: m_dwFlag(NORMAL),
