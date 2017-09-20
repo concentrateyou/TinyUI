@@ -134,9 +134,9 @@ namespace DXFramework
 		return Copy(dx11, image2D->GetTexture2D());
 	}
 
-	BOOL DX11Image2D::Map(DX11& dx11, BYTE *&lpData, UINT &pitch)
+	BOOL DX11Image2D::Map(DX11& dx11, BYTE *&lpData, UINT &pitch, BOOL bReadoly)
 	{
-		return m_texture.Map(dx11, lpData, pitch);
+		return m_texture.Map(dx11, lpData, pitch, bReadoly);
 	}
 	void DX11Image2D::Unmap(DX11& dx11)
 	{

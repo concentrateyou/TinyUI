@@ -46,7 +46,7 @@ namespace DXFramework
 		TinyComPtr<ID3D11DepthStencilState>	m_disableDepthState;
 		TinyComPtr<ID3D10Multithread>		m_multithread;
 		TinyScopedPtr<DX11RenderView>		m_background2D;
-		
+
 	};
 }
 

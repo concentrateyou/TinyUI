@@ -20,19 +20,19 @@ namespace DXFramework
 	{
 		return m_size;
 	}
-	BOOL DX11RenderView::Create()
+	BOOL DX11RenderView::Create(BOOL bMap)
 	{
 		if (!m_dx11.IsValid())
 			return FALSE;
-		TinyComPtr<ID3D11Texture2D> texture2D;
-		HRESULT hRes = m_dx11.GetSwap()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&texture2D);
+		m_render2D.Release();
+		HRESULT hRes = m_dx11.GetSwap()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_render2D);
 		if (hRes != S_OK)
 			return FALSE;
-		hRes = m_dx11.GetD3D()->CreateRenderTargetView(texture2D, NULL, &m_renderView);
+		hRes = m_dx11.GetD3D()->CreateRenderTargetView(m_render2D, NULL, &m_renderView);
 		if (hRes != S_OK)
 			return FALSE;
 		D3D11_TEXTURE2D_DESC desc;
-		texture2D->GetDesc(&desc);
+		m_render2D->GetDesc(&desc);
 		m_size.cx = desc.Width;
 		m_size.cy = desc.Height;
 		D3D11_TEXTURE2D_DESC depthDesc;
@@ -59,6 +59,22 @@ namespace DXFramework
 		hRes = m_dx11.GetD3D()->CreateDepthStencilView(m_depth2D, &depthViewDesc, &m_depthView);
 		if (hRes != S_OK)
 			return FALSE;
+		if (bMap)
+		{
+			ZeroMemory(&desc, sizeof(desc));
+			desc.Width = m_size.cx;
+			desc.Height = m_size.cy;
+			desc.MipLevels = 1;
+			desc.ArraySize = 1;
+			desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+			desc.SampleDesc.Count = 1;
+			desc.SampleDesc.Quality = 0;
+			desc.Usage = D3D11_USAGE_STAGING;
+			desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+			hRes = m_dx11.GetD3D()->CreateTexture2D(&desc, NULL, &m_copy2D);
+			if (hRes != S_OK)
+				return FALSE;
+		}
 		return TRUE;
 	}
 	BOOL DX11RenderView::Create(INT cx, INT cy, BOOL bMap, BOOL bSync)
@@ -174,6 +190,10 @@ namespace DXFramework
 	ID3D11DepthStencilView* DX11RenderView::GetDSView() const
 	{
 		return m_depthView;
+	}
+	ID3D11Texture2D* DX11RenderView::GetTexture2D() const
+	{
+		return m_render2D;
 	}
 	BYTE* DX11RenderView::Map(DWORD& dwSize)
 	{

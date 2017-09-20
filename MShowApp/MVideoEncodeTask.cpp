@@ -28,7 +28,7 @@ namespace MShow
 
 	void MVideoEncodeTask::OnMessagePump()
 	{
-		MShadowController* pCTRL = MShow::MShowApp::GetInstance().GetController().GetShadowController();
+		MPlayController* pCTRL = MShow::MShowApp::GetInstance().GetController().GetPlayController();
 		if (pCTRL != NULL)
 		{
 			MPacketAllocQueue& queue = pCTRL->GetVideoQueue();

@@ -33,12 +33,12 @@ namespace DXFramework
 		BOOL SaveAs(DX11& dx11, const CHAR* pzName);
 		BOOL GetDC(BOOL discard, HDC& hDC);
 		BOOL ReleaseDC();
-		BOOL Map(DX11& dx11, BYTE *&lpData, UINT &pitch);
+		BOOL Map(DX11& dx11, BYTE *&lpData, UINT &pitch, BOOL bReadoly = FALSE);
 		void Unmap(DX11& dx11);
 		BOOL Load(DX11& dx11, HANDLE hResource);
 		BOOL Load(DX11& dx11, const CHAR* pzFile);
 		BOOL Load(DX11& dx11, const BYTE* bits, DWORD dwSize);
-		BOOL Lock(UINT64 acqKey,DWORD dwMS);
+		BOOL Lock(UINT64 acqKey, DWORD dwMS);
 		BOOL Unlock(UINT64 relKey);
 		BOOL IsEmpty() const;
 		BOOL Update(DX11& dx11, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F);

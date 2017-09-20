@@ -10,7 +10,7 @@ namespace DXFramework
 		virtual ~DX11RenderView();
 		DX11&		GetDX11();
 		TinySize	GetSize() const;
-		BOOL		Create();
+		BOOL		Create(BOOL bMap = FALSE);
 		BOOL		Create(INT cx, INT cy, BOOL bMap = TRUE, BOOL bSync = FALSE);
 		BOOL		Resize();
 		BOOL		Resize(INT cx, INT cy);
@@ -22,6 +22,7 @@ namespace DXFramework
 		HANDLE		GetHandle() const;
 		BOOL		Lock(UINT64 acqKey, DWORD dwMS);
 		BOOL		Unlock(UINT64 relKey);
+		ID3D11Texture2D*		GetTexture2D() const;
 		ID3D11RenderTargetView* GetRTView() const;
 		ID3D11DepthStencilView* GetDSView() const;
 	protected:
