@@ -83,7 +83,7 @@ namespace MShow
 	{
 		TinySize size;
 		TinyRectangle rectangle;
-		m_player.Reset(new MFLVPlayer(BindCallback(&MVideoController::OnAudio, this), BindCallback(&MVideoController::OnVideo, this)));
+		m_player.Reset(new MFLVPlayer(BindCallback(&MVideoController::OnAudio, this), BindCallback(&MVideoController::OnVideoCopy, this), BindCallback(&MVideoController::OnVideoRender, this)));
 		if (!m_player || !m_player->Open(m_view.Handle(), pzURL))
 			goto _ERROR;
 		size = m_player->GetSize();
@@ -143,15 +143,12 @@ namespace MShow
 		EVENT_AUDIO(bits, size);
 	}
 
-	TinyPerformanceTimer g_timeQPC;
-
-	void MVideoController::OnVideo(BYTE* bits, LONG size)
+	void MVideoController::OnVideoCopy(BYTE* bits, LONG size)
 	{
 		if (m_player != NULL)
 		{
 			TinySize videoSize = m_player->GetSize();
 			m_video2D.Lock(0, 250);
-			g_timeQPC.BeginTime();
 			if (!m_video2D.Copy(m_graphics.GetDX11(), NULL, bits, size))
 			{
 				m_video2D.Unlock(0);
@@ -165,13 +162,15 @@ namespace MShow
 				m_graphics.DrawImage(&m_video2D, 1.0F, 1.0F);
 				m_graphics.GetDX11().GetRender2D()->EndDraw();
 				m_video2D.Unlock(0);
-				m_graphics.Flush();
-				m_graphics.Present();
-				m_event.SetEvent();
-				g_timeQPC.EndTime();
-				TRACE("Copy Cost:%lld\n", g_timeQPC.GetMillisconds());
 			}
 		}
+	}
+
+	void MVideoController::OnVideoRender()
+	{
+		m_graphics.Flush();
+		m_graphics.Present();
+		m_event.SetEvent();
 	}
 
 	void MVideoController::OnAdd()

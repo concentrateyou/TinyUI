@@ -3,26 +3,23 @@
 
 namespace MShow
 {
-	MFLVPlayer::MFLVPlayer(Callback<void(BYTE*, LONG)>&& videoCB)
-		: m_videoCB(std::move(videoCB)),
-		m_task(m_clock),
+	MFLVPlayer::MFLVPlayer(Callback<void(BYTE*, LONG)>&& videoCopyCB, Closure&& videoRenderCB)
+		:m_task(m_clock),
 		m_audioTask(m_task, m_clock),
 		m_audioRenderTask(m_audioTask, m_clock),
 		m_videoTask(m_task, m_clock),
-		m_videoRenderTask(m_videoTask, m_clock, BindCallback(&MFLVPlayer::OnVideo, this)),
+		m_videoRenderTask(m_videoTask, m_clock, std::move(videoCopyCB), std::move(videoRenderCB)),
 		m_dwRate(25)
 	{
 
 	}
 
-	MFLVPlayer::MFLVPlayer(Callback<void(BYTE*, LONG)>&& audioCB, Callback<void(BYTE*, LONG)>&& videoCB)
-		:m_audioCB(std::move(audioCB)),
-		m_videoCB(std::move(videoCB)),
-		m_task(m_clock),
+	MFLVPlayer::MFLVPlayer(Callback<void(BYTE*, LONG)>&& audioCB, Callback<void(BYTE*, LONG)>&& videoCopyCB, Closure&& videoRenderCB)
+		:m_task(m_clock),
 		m_audioTask(m_task, m_clock),
-		m_audioRenderTask(m_audioTask, m_clock, BindCallback(&MFLVPlayer::OnAudio, this)),
+		m_audioRenderTask(m_audioTask, m_clock, std::move(audioCB)),
 		m_videoTask(m_task, m_clock),
-		m_videoRenderTask(m_videoTask, m_clock, BindCallback(&MFLVPlayer::OnVideo, this)),
+		m_videoRenderTask(m_videoTask, m_clock, std::move(videoCopyCB), std::move(videoRenderCB)),
 		m_dwRate(25)
 	{
 	}
@@ -35,15 +32,9 @@ namespace MShow
 	{
 		m_szURL = pzURL;
 		if (!m_task.Initialize(m_szURL.STR()))
-		{
-			LOG_LINE(ERROR) << "[MFLVPlayer] FLVTask Initialize Fail" << endl;
 			return FALSE;
-		}
 		if (!m_audioRenderTask.Initialize())
-		{
-			LOG_LINE(ERROR) << "[MFLVPlayer] AudioRenderTask Initialize Fail" << endl;
 			return FALSE;
-		}
 		if (!m_task.Submit())
 			return FALSE;
 		if (!m_videoTask.Submit())
@@ -58,29 +49,12 @@ namespace MShow
 		m_size.cx = static_cast<LONG>(s.width);
 		m_size.cy = static_cast<LONG>(s.height);
 		m_dwRate = static_cast<LONG>(s.videodatarate);
-		LOG_LINE(INFO) << "[MFLVPlayer] Width:" << m_size.cx << " Height: " << m_size.cy << " Rate: " << m_dwRate << endl;
 		return TRUE;
 	}
 
-	BOOL MFLVPlayer::SetVolume(LONG volume)
+	BOOL MFLVPlayer::SetVolume(DWORD volume)
 	{
 		return m_audioRenderTask.SetVolume(volume);
-	}
-
-	void MFLVPlayer::OnVideo(BYTE* bits, LONG lsize)
-	{
-		if (!m_videoCB.IsNull())
-		{
-			m_videoCB(bits, lsize);
-		}
-	}
-
-	void MFLVPlayer::OnAudio(BYTE* bits, LONG lsize)
-	{
-		if (!m_audioCB.IsNull())
-		{
-			m_audioCB(bits, lsize);
-		}
 	}
 
 	BOOL MFLVPlayer::Close()
@@ -121,6 +95,7 @@ namespace MShow
 	{
 		return m_audioTask.GetFormat();
 	}
+
 	LONGLONG MFLVPlayer::GetBasePTS()
 	{
 		return m_task.GetBasePTS();

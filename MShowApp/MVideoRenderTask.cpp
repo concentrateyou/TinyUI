@@ -4,10 +4,11 @@
 
 namespace MShow
 {
-	MVideoRenderTask::MVideoRenderTask(MVideoTask& task, MClock& clock, TinyUI::Callback<void(BYTE*, LONG)>&& callback)
+	MVideoRenderTask::MVideoRenderTask(MVideoTask& task, MClock& clock, TinyUI::Callback<void(BYTE*, LONG)>&& copyCB, Closure&& renderCB)
 		:m_task(task),
 		m_clock(clock),
-		m_callback(std::move(callback)),
+		m_copyCB(std::move(copyCB)),
+		m_renderCB(std::move(renderCB)),
 		m_bBreak(FALSE)
 	{
 
@@ -50,13 +51,17 @@ namespace MShow
 				m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
 			}
 			while (m_clock.GetBasePTS() == -1);
+			if (!m_copyCB.IsNull())
+			{
+				m_copyCB(sampleTag.bits + 4, sampleTag.size);
+			}
 			LONG systemMS = static_cast<LONG>(MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime());
 			INT delay = static_cast<INT>(sampleTag.samplePTS - systemMS);
 			if (timer.Wait(delay, 1000))
 			{
-				if (!m_callback.IsNull())
+				if (!m_renderCB.IsNull())
 				{
-					m_callback(sampleTag.bits + 4, sampleTag.size);
+					m_renderCB();
 				}
 			}
 			m_task.GetVideoQueue().Free(sampleTag.bits);

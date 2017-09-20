@@ -13,7 +13,7 @@ namespace MShow
 	{
 		DISALLOW_COPY_AND_ASSIGN(MVideoRenderTask)
 	public:
-		MVideoRenderTask(MVideoTask& task, MClock& clock, TinyUI::Callback<void(BYTE*, LONG)>&& callback);
+		MVideoRenderTask(MVideoTask& task, MClock& clock, TinyUI::Callback<void(BYTE*, LONG)>&& copyCB, Closure&& renderCB);
 		virtual ~MVideoRenderTask();
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
@@ -23,8 +23,9 @@ namespace MShow
 		BOOL		m_bBreak;
 		MClock&		m_clock;
 		MVideoTask& m_task;
+		Closure		m_renderCB;
+		TinyUI::Callback<void(BYTE*, LONG)> m_copyCB;
 		TinyPerformanceTimer m_timeQPC;
-		TinyUI::Callback<void(BYTE*, LONG)> m_callback;
 	};
 }
 

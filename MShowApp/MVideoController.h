@@ -51,7 +51,8 @@ namespace MShow
 		void	OnChange();
 	private:
 		void	OnAudio(BYTE* bits, LONG size);
-		void	OnVideo(BYTE* bits, LONG size);
+		void	OnVideoCopy(BYTE* bits, LONG size);
+		void	OnVideoRender();
 		void	OnMenuClick(void*, INT wID);
 		void	OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

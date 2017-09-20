@@ -34,7 +34,7 @@ namespace MShow
 	BOOL MPreviewController::Open(LPCSTR pzURL)
 	{
 		BITMAPINFO bmi = { 0 };
-		m_player.Reset(new MFLVPlayer(BindCallback(&MPreviewController::OnAudio, this), BindCallback(&MPreviewController::OnVideo, this)));
+		m_player.Reset(new MFLVPlayer(BindCallback(&MPreviewController::OnAudio, this), BindCallback(&MPreviewController::OnVideoCopy, this)));
 		if (!m_player)
 			goto _ERROR;
 		if (!m_player->Open(m_view.Handle(), pzURL))
@@ -78,15 +78,21 @@ namespace MShow
 	}
 	void MPreviewController::OnAudio(BYTE* bits, LONG size)
 	{
-
-	}
-
-	void MPreviewController::OnVideo(BYTE* bits, LONG size)
-	{
+		TinyPerformanceTimer timeQPC;
+		timeQPC.BeginTime();
 		if (bits != NULL && size > 0 && m_hBitmap != NULL)
 		{
 			ASSERT(size == m_videoSize.cx * m_videoSize.cy * 4);
 			memcpy(m_pvBits, bits, size);
+		}
+		timeQPC.EndTime();
+		TRACE("Cost:%lld\n", timeQPC.GetMillisconds());
+	}
+
+	void MPreviewController::OnVideoCopy(BYTE* bits, LONG size)
+	{
+		if (m_hBitmap != NULL)
+		{
 			RECT rectangle = { 0 };
 			::GetWindowRect(m_view.Handle(), &rectangle);
 			TinyUI::TinyWindowDC wdc(m_view.Handle());

@@ -26,8 +26,9 @@ namespace MShow
 		MPreviewView&	GetView();
 		LONGLONG		GetBasePTS();
 	private:
-		void			OnVideo(BYTE* bits, LONG size);
 		void			OnAudio(BYTE* bits, LONG size);
+		void			OnVideoCopy(BYTE* bits, LONG size);
+		void			OnVideoRender();
 	private:
 		TinySize					m_videoSize;
 		TinySize					m_viewSize;

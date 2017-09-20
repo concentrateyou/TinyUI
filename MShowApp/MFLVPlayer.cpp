@@ -3,26 +3,23 @@
 
 namespace MShow
 {
-	MFLVPlayer::MFLVPlayer(Callback<void(BYTE*, LONG)>&& videoCB)
-		: m_videoCB(std::move(videoCB)),
-		m_task(m_clock),
+	MFLVPlayer::MFLVPlayer(Callback<void(BYTE*, LONG)>&& videoCopyCB, Closure&& videoRenderCB)
+		:m_task(m_clock),
 		m_audioTask(m_task, m_clock),
 		m_audioRenderTask(m_audioTask, m_clock),
 		m_videoTask(m_task, m_clock),
-		m_videoRenderTask(m_videoTask, m_clock, BindCallback(&MFLVPlayer::OnVideo, this)),
+		m_videoRenderTask(m_videoTask, m_clock, std::move(videoCopyCB), std::move(videoRenderCB)),
 		m_dwRate(25)
 	{
 
 	}
 
-	MFLVPlayer::MFLVPlayer(Callback<void(BYTE*, LONG)>&& audioCB, Callback<void(BYTE*, LONG)>&& videoCB)
-		:m_audioCB(std::move(audioCB)),
-		m_videoCB(std::move(videoCB)),
-		m_task(m_clock),
+	MFLVPlayer::MFLVPlayer(Callback<void(BYTE*, LONG)>&& audioCB, Callback<void(BYTE*, LONG)>&& videoCopyCB, Closure&& videoRenderCB)
+		:m_task(m_clock),
 		m_audioTask(m_task, m_clock),
-		m_audioRenderTask(m_audioTask, m_clock, BindCallback(&MFLVPlayer::OnAudio, this)),
+		m_audioRenderTask(m_audioTask, m_clock, std::move(audioCB)),
 		m_videoTask(m_task, m_clock),
-		m_videoRenderTask(m_videoTask, m_clock, BindCallback(&MFLVPlayer::OnVideo, this)),
+		m_videoRenderTask(m_videoTask, m_clock, std::move(videoCopyCB), std::move(videoRenderCB)),
 		m_dwRate(25)
 	{
 	}
@@ -58,22 +55,6 @@ namespace MShow
 	BOOL MFLVPlayer::SetVolume(DWORD volume)
 	{
 		return m_audioRenderTask.SetVolume(volume);
-	}
-
-	void MFLVPlayer::OnVideo(BYTE* bits, LONG lsize)
-	{
-		if (!m_videoCB.IsNull())
-		{
-			m_videoCB(bits, lsize);
-		}
-	}
-
-	void MFLVPlayer::OnAudio(BYTE* bits, LONG lsize)
-	{
-		if (!m_audioCB.IsNull())
-		{
-			m_audioCB(bits, lsize);
-		}
 	}
 
 	BOOL MFLVPlayer::Close()
