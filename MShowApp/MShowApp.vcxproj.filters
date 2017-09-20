@@ -87,12 +87,6 @@
     <ClInclude Include="MSampleQueue.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MShadowController.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MShadowView.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="MAudioController.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -222,12 +216,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MSampleQueue.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MShadowController.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MShadowView.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

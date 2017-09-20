@@ -47,7 +47,7 @@ namespace MShow
 		MImageView				m_imageViews[6];
 		MAudioView				m_audioViews[6];
 		MPreviewView			m_previewView;
-		MShadowView				m_shadowView;//影子窗口
+		//MShadowView				m_shadowView;//影子窗口
 		MPlayView				m_playView;
 		MVolumeView				m_playVolumeView;
 		TinyButton				m_layout[3];

@@ -143,12 +143,15 @@ namespace MShow
 		EVENT_AUDIO(bits, size);
 	}
 
+	TinyPerformanceTimer g_timeQPC;
+
 	void MVideoController::OnVideo(BYTE* bits, LONG size)
 	{
 		if (m_player != NULL)
 		{
 			TinySize videoSize = m_player->GetSize();
 			m_video2D.Lock(0, 250);
+			g_timeQPC.BeginTime();
 			if (!m_video2D.Copy(m_graphics.GetDX11(), NULL, bits, size))
 			{
 				m_video2D.Unlock(0);
@@ -165,6 +168,8 @@ namespace MShow
 				m_graphics.Flush();
 				m_graphics.Present();
 				m_event.SetEvent();
+				g_timeQPC.EndTime();
+				TRACE("Copy Cost:%lld\n", g_timeQPC.GetMillisconds());
 			}
 		}
 	}
