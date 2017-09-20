@@ -96,18 +96,18 @@ namespace MShow
 	TinyPerformanceTimer g_timeQPC;
 	void MPlayController::OnTimer()
 	{
-		g_timeQPC.EndTime();
+		
 		while (m_clock.GetBaseTime() == -1);
 		m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
 		SampleTag sampleTag;
 		ZeroMemory(&sampleTag, sizeof(sampleTag));
-		TRACE("Cost:%lld\n", g_timeQPC.GetMillisconds());
-		g_timeQPC.BeginTime();
 		m_graphics.Enter();
 		DWORD dwSize = 0;
 		BYTE* bits = m_renderView.Map(dwSize);
 		if (bits != NULL)
 		{
+			g_timeQPC.BeginTime();
+
 			sampleTag.size = dwSize;
 			if (m_videoQueue.GetAllocSize() == 0)
 			{
@@ -116,11 +116,17 @@ namespace MShow
 			}
 			sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
 			memcpy_s(sampleTag.bits + 4, sampleTag.size, bits, sampleTag.size);
-			sampleTag.timestamp = m_clock.GetVideoPTS() - m_clock.GetBaseTime();
+
+			g_timeQPC.EndTime();
+			TRACE("Cost:%lld\n", g_timeQPC.GetMillisconds());
+
 			m_renderView.Unmap();
+			sampleTag.timestamp = m_clock.GetVideoPTS() - m_clock.GetBaseTime();
 			m_videoQueue.Push(sampleTag);
+			
 		}
 		m_graphics.Leave();
+
 	}
 
 	void MPlayController::OnMessagePump()
