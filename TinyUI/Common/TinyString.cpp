@@ -364,9 +364,12 @@ namespace TinyUI
 		}
 		else//¿½±´ÄÚ´æ
 		{
-			memcpy(this->_Mystr, s, _Newsize);
-			this->_Mysize = _Newsize;
-			this->_Mystr[this->_Mysize] = '\0';
+			if (this->_Mystr != NULL && _Newsize > 0)
+			{
+				memcpy(this->_Mystr, s, _Newsize);
+				this->_Mysize = _Newsize;
+				this->_Mystr[this->_Mysize] = '\0';
+			}
 		}
 		return *this;
 	}

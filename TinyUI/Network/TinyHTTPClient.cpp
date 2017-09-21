@@ -57,20 +57,20 @@ namespace TinyUI
 			string szHOST = m_sURL.GetComponent(TinyURL::HOST);
 			if (szHOST.empty())
 				return FALSE;
-			Add(Host, szHOST);
-			string scheme = m_sURL.GetComponent(TinyURL::SCHEME);
-			string port = m_sURL.GetComponent(TinyURL::PORT);
+			string szPORT = m_sURL.GetComponent(TinyURL::PORT);
+			Add(Host, StringPrintf("%s:%s", szHOST.c_str(), szPORT.c_str()));
+			string szSCHEME = m_sURL.GetComponent(TinyURL::SCHEME);
 			if (inet_addr(szHOST.c_str()) == INADDR_NONE)
 			{
 				TinyDNS dns;
 				AddressList list;
-				if (!dns.Resolver(szHOST, scheme, list))
+				if (!dns.Resolver(szHOST, szSCHEME, list))
 					return FALSE;
-				m_endpoint.FromIPAddress(list[0].address(), port.empty() ? list[0].port() : static_cast<SHORT>(atoi(port.c_str())));
+				m_endpoint.FromIPAddress(list[0].address(), szPORT.empty() ? list[0].port() : static_cast<SHORT>(atoi(szPORT.c_str())));
 			}
 			else
 			{
-				m_endpoint.FromIPAddress(IPAddress(szHOST), port.empty() ? (strcasecmp(scheme.c_str(), HTTP) == 0 ? 80 : 443) : static_cast<SHORT>(atoi(port.c_str())));
+				m_endpoint.FromIPAddress(IPAddress(szHOST), szPORT.empty() ? (strcasecmp(szSCHEME.c_str(), HTTP) == 0 ? 80 : 443) : static_cast<SHORT>(atoi(szPORT.c_str())));
 			}
 			if (m_socket.Open())
 			{
@@ -81,7 +81,7 @@ namespace TinyUI
 				m_socket.BeginConnect(m_endpoint, BindCallback(&TinyHTTPClient::OnHandleConnect, this), this);
 				if (m_wait.Lock(INFINITE))
 				{
-					if (m_errorCode == 0 && m_statusCode == 200)
+					if (m_errorCode == S_OK && m_statusCode == 200)
 						return TRUE;
 				}
 			}
@@ -99,10 +99,11 @@ namespace TinyUI
 		void TinyHTTPClient::SetBody(CHAR* body, INT size)
 		{
 			m_body.Add(body, size);
+			Add(TinyHTTPClient::ContentLength, std::to_string(size));
 		}
 		INT TinyHTTPClient::Read(CHAR*& data, INT size)
 		{
-			m_errorCode = 0;
+			m_errorCode = S_OK;
 			m_dwOffset = 0;
 			m_size = size;
 			if (m_size > DEFAULT_HTTP_BUFFER_SIZE)
@@ -115,13 +116,10 @@ namespace TinyUI
 				{
 					OnHandleError(GetLastError());
 				}
-				if (m_wait.Lock(INFINITE))
+				if (m_wait.Lock(INFINITE) && m_errorCode == S_OK)
 				{
-					if (m_errorCode == 0)
-					{
-						data = m_raw;
-						return m_size;
-					}
+					data = m_raw;
+					return m_size;
 				}
 			}
 			return -1;
