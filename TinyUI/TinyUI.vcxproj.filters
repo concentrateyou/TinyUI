@@ -501,6 +501,9 @@
     <ClInclude Include="Windowless\TinyVisualList.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualAnimate.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -918,6 +921,9 @@
       <Filter>源文件\Network</Filter>
     </ClCompile>
     <ClCompile Include="Windowless\TinyVisualList.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualAnimate.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>

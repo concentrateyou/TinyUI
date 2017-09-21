@@ -14,6 +14,7 @@
 #include "TinyVisualTextBox.h"
 #include "TinyVisualPanel.h"
 #include "TinyVisualNative.h"
+#include "TinyVisualAnimate.h"
 
 namespace TinyUI
 {
@@ -224,6 +225,7 @@ namespace TinyUI
 			Register(TinyVisualTag::NATIVEWINDOW, CLASS_NAME(TinyVisualNative));
 			Register(TinyVisualTag::LIST, CLASS_NAME(TinyVisualList));
 			Register(TinyVisualTag::LISTITEM, CLASS_NAME(TinyVisualListItem));
+			Register(TinyVisualTag::ANIMATE, CLASS_NAME(TinyVisualAnimate));
 		}
 		TinyVisualResource::~TinyVisualResource()
 		{

@@ -87,6 +87,7 @@ namespace TinyUI
 			static const TinyString WINDOW;
 			static const TinyString SYSCAPTION;
 			static const TinyString LABEL;
+			static const TinyString ANIMATE;
 			static const TinyString TAB;
 			static const TinyString BUTTON;
 			static const TinyString PANEL;

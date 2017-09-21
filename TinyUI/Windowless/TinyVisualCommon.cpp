@@ -80,6 +80,7 @@ namespace TinyUI
 		const TinyString TinyVisualTag::LIST = TEXT("list");
 		const TinyString TinyVisualTag::LISTITEM = TEXT("listitem");
 		const TinyString TinyVisualTag::LABEL = TEXT("label");
+		const TinyString TinyVisualTag::ANIMATE = TEXT("animate");
 		const TinyString TinyVisualTag::TAB = TEXT("tab");
 		const TinyString TinyVisualTag::STACKPANEL = TEXT("stackpanel");
 		const TinyString TinyVisualTag::HBOXLAYOUT = TEXT("hboxlayout");
