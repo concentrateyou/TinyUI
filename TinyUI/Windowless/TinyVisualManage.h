@@ -49,10 +49,12 @@ namespace TinyUI
 			BOOL Load(LPCSTR pzFile);
 			string GetDefaultPath();
 		public:
+			BOOL Add(TinyImage* image);
 			TinyImage* Add(const TinyString& szName, const TinyString& szFile);
 			void Remove(const TinyString& szName);
 			void RemoveAll();
 			TinyImage* operator[](const TinyString& szName);
+		public:
 			BOOL Register(const TinyString& tag, const TinyString& value);
 			void Unregister(const TinyString& tag);
 			TinyString GetClassName(const TinyString& tag);
@@ -62,9 +64,9 @@ namespace TinyUI
 		private:
 			string			m_szPath;
 			TiXmlDocument	m_doc;
-			TinyMap<TinyString, TinyImage*> m_images;
+			TinyArray<TinyImage*>			m_dynamicImages;
+			TinyMap<TinyString, TinyImage*> m_staticImages;
 			TinyMap<TinyString, TinyString>	m_types;
-
 		};
 	};
 }

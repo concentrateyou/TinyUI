@@ -222,6 +222,8 @@ namespace TinyUI
 			Register(TinyVisualTag::PANEL, CLASS_NAME(TinyVisualPanel));
 			Register(TinyVisualTag::TAB, CLASS_NAME(TinyVisualTag));
 			Register(TinyVisualTag::NATIVEWINDOW, CLASS_NAME(TinyVisualNative));
+			Register(TinyVisualTag::LIST, CLASS_NAME(TinyVisualList));
+			Register(TinyVisualTag::LISTITEM, CLASS_NAME(TinyVisualListItem));
 		}
 		TinyVisualResource::~TinyVisualResource()
 		{
@@ -250,9 +252,13 @@ namespace TinyUI
 		{
 			return m_szPath;
 		}
+		BOOL TinyVisualResource::Add(TinyImage* image)
+		{
+			return m_dynamicImages.Add(image);
+		}
 		TinyImage* TinyVisualResource::Add(const TinyString& szName, const TinyString& szFile)
 		{
-			TinyImage** value = m_images.GetValue(szName);
+			TinyImage** value = m_staticImages.GetValue(szName);
 			if (value != NULL)
 			{
 				return *value;
@@ -260,11 +266,14 @@ namespace TinyUI
 			else
 			{
 				string szNewFile = StringPrintf("%s\%s", m_szPath.c_str(), szFile.CSTR());
-				ASSERT(PathFileExists(szNewFile.c_str()));
+				if (!PathIsURL(szNewFile.c_str()))
+				{
+					ASSERT(PathFileExists(szNewFile.c_str()));
+				}
 				TinyImage* image = new TinyImage();
 				if (image != NULL && image->Open(szNewFile.c_str()))
 				{
-					ASSERT(m_images.Add(szName, image));
+					ASSERT(m_staticImages.Add(szName, image));
 					return image;
 				}
 			}
@@ -272,32 +281,39 @@ namespace TinyUI
 		}
 		void TinyVisualResource::Remove(const TinyString& szName)
 		{
-			TinyImage** value = m_images.GetValue(szName);
+			TinyImage** value = m_staticImages.GetValue(szName);
 			if (value != NULL)
 			{
 				(*value)->Close();
 			}
 			SAFE_DELETE(*value);
-			m_images.Remove(szName);
+			m_staticImages.Remove(szName);
 		}
 		void TinyVisualResource::RemoveAll()
 		{
-			ITERATOR pos = m_images.First();
+			ITERATOR pos = m_staticImages.First();
 			while (pos != NULL)
 			{
-				TinyImage** value = m_images.GetValueAt(pos);
+				TinyImage** value = m_staticImages.GetValueAt(pos);
 				if (value != NULL)
 				{
 					(*value)->Close();
 				}
 				SAFE_DELETE(*value);
-				pos = m_images.Next(pos);
+				pos = m_staticImages.Next(pos);
 			}
-			m_images.RemoveAll();
+			m_staticImages.RemoveAll();
+
+			for (INT i = 0;i < m_dynamicImages.GetSize();i++)
+			{
+				m_dynamicImages[i]->Close();
+				SAFE_DELETE(m_dynamicImages[i]);
+			}
+			m_dynamicImages.RemoveAll();
 		}
 		TinyImage* TinyVisualResource::operator[](const TinyString& szName)
 		{
-			TinyImage** value = m_images.GetValue(szName);
+			TinyImage** value = m_staticImages.GetValue(szName);
 			return *value;
 		}
 		BOOL TinyVisualResource::Register(const TinyString& tag, const TinyString& value)

@@ -109,7 +109,8 @@ namespace TinyUI
 		protected:
 			BOOL		OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT		OnCreate() OVERRIDE;
-			HRESULT		OnMouseLeave();
+			HRESULT		OnMouseEnter() OVERRIDE;
+			HRESULT		OnMouseLeave() OVERRIDE;
 			HRESULT		OnMouseMove(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
 			HRESULT		OnMouseWheel(const TinyPoint& pos, SHORT zDelta, DWORD dwFlags) OVERRIDE;
 			HRESULT		OnLButtonDown(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;

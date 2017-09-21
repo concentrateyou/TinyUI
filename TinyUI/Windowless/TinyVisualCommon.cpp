@@ -25,6 +25,8 @@ namespace TinyUI
 		const TinyString TinyVisualProperty::BACKGROUNDIMAGE = TEXT("background-image");
 		const TinyString TinyVisualProperty::BACKGROUNDCOLOR = TEXT("background-color");
 		const TinyString TinyVisualProperty::BACKGROUNDCENTER = TEXT("background-center");
+		const TinyString TinyVisualProperty::BACKGROUNDSIZE = TEXT("background-size");
+		const TinyString TinyVisualProperty::BACKGROUNDPOSITION = TEXT("background-position");
 
 		const TinyString TinyVisualProperty::BORDERWIDTH = TEXT("border-width");
 		const TinyString TinyVisualProperty::BORDERCOLOR = TEXT("border-color");
@@ -75,6 +77,8 @@ namespace TinyUI
 		const TinyString TinyVisualTag::SYSCAPTION = TEXT("syscaption");
 		const TinyString TinyVisualTag::BUTTON = TEXT("button");
 		const TinyString TinyVisualTag::PANEL = TEXT("panel");
+		const TinyString TinyVisualTag::LIST = TEXT("list");
+		const TinyString TinyVisualTag::LISTITEM = TEXT("listitem");
 		const TinyString TinyVisualTag::LABEL = TEXT("label");
 		const TinyString TinyVisualTag::TAB = TEXT("tab");
 		const TinyString TinyVisualTag::STACKPANEL = TEXT("stackpanel");

@@ -498,6 +498,9 @@
     <ClInclude Include="Network\TinyHTTPClient.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualList.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -913,6 +916,9 @@
     </ClCompile>
     <ClCompile Include="Network\TinyHTTPClient.cpp">
       <Filter>源文件\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualList.cpp">
+      <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

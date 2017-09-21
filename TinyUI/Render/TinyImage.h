@@ -37,6 +37,8 @@ namespace TinyUI
 		TinySize		GetSize();
 		TinyRectangle	GetRectangle();
 		void			Close();
+	private:
+		BOOL			OpenFile(LPCSTR pzFile);
 	protected:
 		INT						m_cx;
 		INT						m_cy;

@@ -617,6 +617,11 @@ namespace TinyUI
 			m_document->Invalidate(&s);
 			return FALSE;
 		}
+		HRESULT	TinyVisualVScrollBar::OnMouseEnter()
+		{
+			m_document->SetFocus(this);
+			return TinyVisual::OnMouseEnter();
+		}
 		HRESULT	TinyVisualVScrollBar::OnMouseLeave()
 		{
 			m_si.iHitTest = HTSCROLL_NONE;
@@ -657,19 +662,19 @@ namespace TinyUI
 			{
 			case HTSCROLL_LINEUP:
 				code = SB_LINEUP;
-				iNewPos = (m_si.iPos - 1) > m_si.iMin ? m_si.iPos - 1 : m_si.iMin;
+				iNewPos = (m_si.iPos - 1) > m_si.iMin ? (m_si.iPos - 1) : m_si.iMin;
 				break;
 			case HTSCROLL_LINEDOWN:
 				code = SB_LINEDOWN;
-				iNewPos = (m_si.iPos + 1) < (m_si.iMax - m_si.iPage + 1) ? m_si.iPos + 1 : (m_si.iMax - m_si.iPage + 1);
+				iNewPos = (m_si.iPos + 1) < (m_si.iMax - m_si.iPage + 1) ? (m_si.iPos + 1) : (m_si.iMax - m_si.iPage + 1);
 				break;
 			case HTSCROLL_PAGEUP:
 				code = SB_PAGEUP;
-				iNewPos = (m_si.iPos - m_si.iPage) > m_si.iMin ? m_si.iPos - m_si.iPage : m_si.iMin;
+				iNewPos = (m_si.iPos - m_si.iPage) > m_si.iMin ? (m_si.iPos - m_si.iPage) : m_si.iMin;
 				break;
 			case HTSCROLL_PAGEDOWN:
 				code = SB_PAGEDOWN;
-				iNewPos = (m_si.iPos + m_si.iPage) < (m_si.iMax - m_si.iPage + 1) ? m_si.iPos + m_si.iPage : (m_si.iMax - m_si.iPage + 1);
+				iNewPos = (m_si.iPos + m_si.iPage) < (m_si.iMax - m_si.iPage + 1) ? (m_si.iPos + m_si.iPage) : (m_si.iMax - m_si.iPage + 1);
 				break;
 			case HTSCROLL_THUMB:
 				code = SB_THUMBPOSITION;

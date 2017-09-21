@@ -55,6 +55,8 @@ namespace TinyUI
 			TinyRectangle		GetClientRect() const;
 			TinyImage*			GetBackgroundImage();
 			TinyRectangle		GetBackgroundCenter() const;
+			TinySize			GetBackgroundSize() const;
+			TinyPoint			GetBackgroundPosition() const;
 			TinyColor			GetBackgroundColor() const;
 			TinyColor			GetBorderColor() const;
 			INT					GetBorderThickness() const;
@@ -89,9 +91,12 @@ namespace TinyUI
 			virtual void		SetEnable(BOOL enable);
 			virtual void		SetTextColor(COLORREF color);
 			virtual void		SetTextAlian(UINT align);
-			virtual void		SetBackgroundImage(const TinyString& szFile);
+			virtual void		SetBackgroundImage(const TinyString& szName);
+			virtual void		SetBackgroundImage(TinyImage* image);
 			virtual void		SetBackgroundColor(COLORREF color);
 			virtual void		SetBackgroundCenter(const TinyRectangle& center);
+			virtual void		SetBackgroundSize(const TinySize& size);
+			virtual void		SetBackgroundPosition(const TinyPoint& pos);
 			virtual void		SetBorderColor(COLORREF color);
 			virtual void		SetBorderThickness(INT cx);
 			virtual void		SetBorderStyle(INT style);
@@ -155,6 +160,8 @@ namespace TinyUI
 			TinyRectangle		m_backgroundCenter;//ÏÔÊ¾±³¾°Í¼Æ¬ÖÐÐÄ
 			TinyImage*			m_backgroundImage;//±³¾°Í¼Æ¬
 			TinyColor			m_backgroundColor;//±³¾°ÑÕÉ«
+			TinySize			m_backgroundSize;//±³¾°´óÐ¡
+			TinyPoint			m_backgroundPosition;
 			INT					m_borderThickness;//±ß¿òºñ¶È
 			TinyColor			m_borderColor;//±ß¿òÑÕÉ«
 			INT					m_borderStyle;//±ß¿òÑùÊ½

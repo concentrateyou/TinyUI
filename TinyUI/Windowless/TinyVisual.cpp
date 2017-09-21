@@ -123,6 +123,14 @@ namespace TinyUI
 		{
 			return m_backgroundCenter;
 		}
+		TinySize TinyVisual::GetBackgroundSize() const
+		{
+			return m_backgroundSize;
+		}
+		TinyPoint TinyVisual::GetBackgroundPosition() const
+		{
+			return m_backgroundPosition;
+		}
 		TinyColor TinyVisual::GetBorderColor() const
 		{
 			return m_borderColor;
@@ -193,9 +201,17 @@ namespace TinyUI
 				m_textAlign = align;
 			}
 		}
-		void TinyVisual::SetBackgroundImage(const TinyString& pzName)
+		void TinyVisual::SetBackgroundImage(const TinyString& szName)
 		{
-			m_backgroundImage = TinyVisualResource::GetInstance()[pzName];
+			m_backgroundImage = TinyVisualResource::GetInstance()[szName];
+		}
+		void TinyVisual::SetBackgroundImage(TinyImage* image)
+		{
+			m_backgroundImage = image;
+			if (m_backgroundImage != NULL)
+			{
+				TinyVisualResource::GetInstance().Add(m_backgroundImage);
+			}
 		}
 		void TinyVisual::SetBackgroundColor(COLORREF color)
 		{
@@ -204,6 +220,14 @@ namespace TinyUI
 		void TinyVisual::SetBackgroundCenter(const TinyRectangle& center)
 		{
 			m_backgroundCenter = center;
+		}
+		void TinyVisual::SetBackgroundSize(const TinySize& size)
+		{
+			m_backgroundSize = size;
+		}
+		void TinyVisual::SetBackgroundPosition(const TinyPoint& pos)
+		{
+			m_backgroundPosition = pos;
 		}
 		void TinyVisual::SetBorderColor(COLORREF color)
 		{
@@ -460,6 +484,16 @@ namespace TinyUI
 			if (strcasecmp(name.STR(), TinyVisualProperty::BACKGROUNDCENTER.STR()) == 0)
 			{
 				this->SetBackgroundCenter(TinyVisualBuilder::GetRectangle(value));
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::BACKGROUNDSIZE.STR()) == 0)
+			{
+				this->SetBackgroundSize(TinyVisualBuilder::GetSize(value));
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::BACKGROUNDPOSITION.STR()) == 0)
+			{
+				this->SetBackgroundPosition(TinyVisualBuilder::GetPosition(value));
 				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::BORDERCOLOR.STR()) == 0)

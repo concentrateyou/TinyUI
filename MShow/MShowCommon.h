@@ -28,6 +28,7 @@
 #include "Windowless/TinyVisualScrollBar.h"
 #include "Windowless/TinyVisualTab.h"
 #include "Windowless/TinyVisualTextBox.h"
+#include "Windowless/TinyVisualList.h"
 #include "Common.h"
 #include "x264Encode.h"
 #include "AACEncode.h"

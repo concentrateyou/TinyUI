@@ -35,7 +35,8 @@ namespace TinyUI
 			static const TinyString BACKGROUNDIMAGE;
 			static const TinyString BACKGROUNDCOLOR;
 			static const TinyString BACKGROUNDCENTER;
-
+			static const TinyString BACKGROUNDSIZE;
+			static const TinyString BACKGROUNDPOSITION;
 			static const TinyString BORDERWIDTH;
 			static const TinyString BORDERCOLOR;
 			static const TinyString BORDERSTYLE;
@@ -89,6 +90,8 @@ namespace TinyUI
 			static const TinyString TAB;
 			static const TinyString BUTTON;
 			static const TinyString PANEL;
+			static const TinyString LIST;
+			static const TinyString LISTITEM;
 			static const TinyString STACKPANEL;
 			static const TinyString HBOXLAYOUT;
 			static const TinyString VBOXLAYOUT;

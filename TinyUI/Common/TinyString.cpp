@@ -669,11 +669,11 @@ namespace TinyUI
 	}
 	INT TinyString::Compare(const TinyString& str) const throw()
 	{
-		return Compare(0, str.GetSize(), str.STR());
+		return Compare(str.STR());
 	}
 	INT	TinyString::Compare(const string& str) const throw()
 	{
-		return Compare(0, str.size(), str.c_str());
+		return Compare(str.c_str());
 	}
 	INT TinyString::Compare(size_t pos, size_t size, const TinyString& str) const throw()
 	{
@@ -681,8 +681,9 @@ namespace TinyUI
 	}
 	INT TinyString::Compare(const CHAR* s) const  throw()
 	{
-		ASSERT(s);
-		return Compare(0, strlen(s), s);
+		if (s != NULL && this->_Mystr != NULL)
+			return strcmp(s, this->_Mystr);
+		return -1;
 	}
 	INT TinyString::Compare(size_t pos, size_t size, const CHAR* s) const  throw()
 	{
