@@ -87,16 +87,36 @@ namespace TinyUI
 	{
 		return c >= 'a' && c <= 'z';
 	}
-
 	inline BOOL IsAsciiDigit(CHAR c)
 	{
 		return c >= '0' && c <= '9';
 	}
-
 	inline BOOL IsHexDigit(CHAR c)
 	{
 		return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f');
 	}
+	inline string ToLowerASCII(const string& str)
+	{
+		string val;
+		val.reserve(str.size());
+		for (size_t i = 0; i < val.size(); i++)
+		{
+			val.push_back(ToLowerASCII(str[i]));
+		}
+		return val;
+	};
+	inline string ToUpperASCII(const string& str)
+	{
+		string val;
+		val.reserve(str.size());
+		for (size_t i = 0; i < val.size(); i++)
+		{
+			val.push_back(ToUpperASCII(str[i]));
+		}
+		return val;
+	};
+	static void StringAppendVT(string* dst, const CHAR* format, va_list ap);
+	void StringAppendF(string* dst, const CHAR* format, ...);
 	/// <summary>
 	/// 字符串操作类多字节
 	/// </summary>

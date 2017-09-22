@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 using namespace TinyUI;
+using namespace std;
 
 namespace TinyUI
 {
@@ -25,15 +26,20 @@ namespace TinyUI
 			DISALLOW_COPY_AND_ASSIGN(TinyHTTPAttribute)
 		public:
 			TinyHTTPAttribute();
+			BOOL IsEmpty() const;
+			BOOL Include(const string& key);
 			void Add(const string& key, const string& val);
 			void Remove(const string& key);
+			void RemoveAll();
+			string ToString() const;
 		public:
 			string	operator[](const string& key);
+			string	GetAttribute(const string& key);
 		public:
-			std::vector<TinyHTTPAttribute::KeyValue>::const_iterator Lookup(const string& key) const;
-			std::vector<TinyHTTPAttribute::KeyValue>::iterator Lookup(const string& key);
+			vector<TinyHTTPAttribute::KeyValue>::const_iterator Lookup(const string& key) const;
+			vector<TinyHTTPAttribute::KeyValue>::iterator Lookup(const string& key);
 		protected:
-			std::vector<KeyValue>	m_attributes;
+			vector<KeyValue>	m_attributes;
 		};
 	}
 }

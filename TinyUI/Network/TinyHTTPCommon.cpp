@@ -32,11 +32,13 @@ namespace TinyUI
 			}
 			return *this;
 		}
-		std::vector<TinyHTTPAttribute::KeyValue>::const_iterator TinyHTTPAttribute::Lookup(const string& key) const
+		vector<TinyHTTPAttribute::KeyValue>::const_iterator TinyHTTPAttribute::Lookup(const string& key) const
 		{
-			for (std::vector<TinyHTTPAttribute::KeyValue>::const_iterator s = m_attributes.begin(); s != m_attributes.end(); ++s)
+			for (vector<TinyHTTPAttribute::KeyValue>::const_iterator s = m_attributes.begin(); s != m_attributes.end(); ++s)
 			{
-				if (strncasecmp(key.c_str(), s->key.c_str(), key.size()) == 0)
+				string key1 = ToLowerASCII(key);
+				string key2 = ToLowerASCII(s->key);
+				if (strncasecmp(key1.c_str(), key2.c_str(), key1.size()) == 0)
 				{
 					return s;
 				}
@@ -49,7 +51,7 @@ namespace TinyUI
 		}
 		void TinyHTTPAttribute::Add(const string& key, const string& value)
 		{
-			std::vector<TinyHTTPAttribute::KeyValue>::iterator s = Lookup(key);
+			vector<TinyHTTPAttribute::KeyValue>::iterator s = Lookup(key);
 			if (s != m_attributes.end())
 			{
 				s->value = std::move(value);
@@ -61,24 +63,67 @@ namespace TinyUI
 		}
 		void TinyHTTPAttribute::Remove(const string& key)
 		{
-			std::vector<KeyValue>::const_iterator s = Lookup(key);
+			vector<KeyValue>::const_iterator s = Lookup(key);
 			if (s != m_attributes.end())
 			{
 				m_attributes.erase(s);
 			}
 		}
+		BOOL TinyHTTPAttribute::IsEmpty() const
+		{
+			return m_attributes.empty();
+		}
+		BOOL TinyHTTPAttribute::Include(const string& key)
+		{
+			vector<KeyValue>::const_iterator s = Lookup(key);
+			if (s != m_attributes.end())
+			{
+				return TRUE;
+			}
+			return FALSE;
+		}
+		void TinyHTTPAttribute::RemoveAll()
+		{
+			m_attributes.clear();
+		}
+		string TinyHTTPAttribute::ToString() const
+		{
+			string output;
+			for (vector<KeyValue>::const_iterator s = m_attributes.begin(); s != m_attributes.end(); ++s)
+			{
+				if (!s->value.empty())
+				{
+					StringAppendF(&output, "%s: %s\r\n", s->key.c_str(), s->value.c_str());
+				}
+				else
+				{
+					StringAppendF(&output, "%s:\r\n", s->key.c_str());
+				}
+			}
+			output.append("\r\n");
+			return output;
+		}
 		string TinyHTTPAttribute::operator[](const string& key)
 		{
-			std::vector<KeyValue>::const_iterator s = Lookup(key);
+			vector<KeyValue>::const_iterator s = Lookup(key);
 			if (s != m_attributes.end())
 			{
 				return s->value;
 			}
 			return string();
 		}
-		std::vector<TinyHTTPAttribute::KeyValue>::iterator TinyHTTPAttribute::Lookup(const string& key)
+		string	TinyHTTPAttribute::GetAttribute(const string& key)
 		{
-			for (std::vector<TinyHTTPAttribute::KeyValue>::iterator s = m_attributes.begin(); s != m_attributes.end(); ++s)
+			vector<KeyValue>::const_iterator s = Lookup(key);
+			if (s != m_attributes.end())
+			{
+				return s->value;
+			}
+			return string();
+		}
+		vector<TinyHTTPAttribute::KeyValue>::iterator TinyHTTPAttribute::Lookup(const string& key)
+		{
+			for (vector<TinyHTTPAttribute::KeyValue>::iterator s = m_attributes.begin(); s != m_attributes.end(); ++s)
 			{
 				if (strncasecmp(key.c_str(), s->key.c_str(), key.size()) == 0)
 				{

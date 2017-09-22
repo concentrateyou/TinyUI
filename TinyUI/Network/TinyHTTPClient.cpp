@@ -2,6 +2,7 @@
 #include "TinyHTTPClient.h"
 #include "TinyDNS.h"
 #include <process.h>
+#include <algorithm>
 
 namespace TinyUI
 {
@@ -36,52 +37,180 @@ namespace TinyUI
 		const CHAR TinyHTTPClient::TransferEncoding[] = "Transfer-Encoding";
 		const CHAR TinyHTTPClient::TokenBinding[] = "Sec-Token-Binding";
 		const CHAR TinyHTTPClient::UserAgent[] = "User-Agent";
-		const CHAR TinyHTTPClient::CRLF[] = "\r\n";//回车换行
+		const CHAR TinyHTTPClient::CRLF[] = "\r\n";
+		//////////////////////////////////////////////////////////////////////////
+		HTTPRequest::HTTPRequest()
+			:m_verbs(TinyHTTPClient::GET)
+		{
 
+		}
+		HTTPRequest::~HTTPRequest()
+		{
+
+		}
+		void HTTPRequest::SetVerbs(const string& verbs)
+		{
+			m_verbs = std::move(verbs);
+		}
+		string HTTPRequest::GetVerbs() const
+		{
+			return m_verbs;
+		}
+		void HTTPRequest::SetBody(const string& body)
+		{
+			m_body = std::move(body);
+		}
+		string HTTPRequest::GetBody() const
+		{
+			return m_body;
+		}
+		//////////////////////////////////////////////////////////////////////////
+		HTTPResponse::HTTPResponse()
+			:m_statusCode(0)
+		{
+
+		}
+		HTTPResponse::~HTTPResponse()
+		{
+
+		}
+		string HTTPResponse::GetVersion() const
+		{
+			return m_version;
+		}
+		string HTTPResponse::GetGetStatusMsg() const
+		{
+			return m_statusMsg;
+		}
+		INT	 HTTPResponse::GetStatusCode() const
+		{
+			return m_statusCode;
+		}
+		string	HTTPResponse::GetContext() const
+		{
+			return m_context;
+		}
+		BOOL HTTPResponse::ParseResponse(CHAR* s, INT size)
+		{
+			CHAR* line = ReadLine(s);
+			if (!ParseStatusLine(s, line - 2))
+				return FALSE;
+			while (line != NULL)
+			{
+				CHAR* ps = line;
+				line = ReadLine(ps);
+				if (*line == '\r' && *(line + 1) == '\n')//应答头解析完成
+				{
+					INT offset = line - s + 2;
+					if (size > offset)
+					{
+						if (Include(TinyHTTPClient::ContentLength))
+						{
+							INT length = std::stoi(GetAttribute(TinyHTTPClient::ContentLength));
+							length = min(length, size - offset);
+							m_context.append(line + 2, length);
+						}
+					}
+					break;
+				}
+				if (!ParseAttribute(ps, line - 2))
+					return FALSE;
+			}
+			return TRUE;
+		}
+		BOOL HTTPResponse::ParseStatusLine(CHAR* ps1, CHAR* ps2)
+		{
+			if (!ps1 || !ps2)
+				return FALSE;
+			if (strncasecmp(ps1, TinyHTTPClient::HTTP10, 8) != 0 &&
+				strncasecmp(ps1, TinyHTTPClient::HTTP11, 8) != 0 &&
+				strncasecmp(ps1, TinyHTTPClient::HTTP20, 8) != 0)
+				return FALSE;
+			m_version = string(ps1, 8);
+			ps1 += 8;
+			while (*ps1 == ' ')
+				++ps1;
+			CHAR* ps3 = ps1;
+			while (IsAsciiDigit(*ps3))
+				++ps3;
+			string val(ps1, ps3 - ps1);
+			m_statusCode = std::stoi(val);
+			while (*ps3 == ' ')
+				++ps3;
+			m_statusMsg.append(ps3, ps2);
+			return TRUE;
+		}
+		BOOL HTTPResponse::ParseAttribute(CHAR* ps1, CHAR* ps2)
+		{
+			if (!ps1 || !ps2)
+				return FALSE;
+			CHAR* ps3 = ps1;
+			while (*ps3 != ':')
+				++ps3;
+			CHAR* ps4 = ps3;
+			while (*ps4 != ' ')
+				++ps4;
+			ps4++;
+			Add(string(ps1, ps3 - ps1), string(ps4, ps2 - ps4));
+			return TRUE;
+		}
+
+		CHAR* HTTPResponse::ReadLine(CHAR* s)
+		{
+			CHAR* val = s;
+			while (*val++ != '\r');
+			if (*val++ == '\n')
+				return val;
+			return NULL;
+		}
+		//////////////////////////////////////////////////////////////////////////
 		TinyHTTPClient::TinyHTTPClient()
-			:m_dwTimeout(3000),
-			m_dwOffset(0),
+			:m_timeout(3000),
+			m_offset(0),
 			m_size(0),
 			m_errorCode(S_OK),
-			m_statusCode(0),
 			m_bClose(TRUE)
 		{
 			m_wait.CreateEvent();
 			m_raw.Reset(new CHAR[DEFAULT_HTTP_BUFFER_SIZE]);
 		}
-		BOOL TinyHTTPClient::Open(const string& szURL, const string& method)
+		HTTPRequest& TinyHTTPClient::GetRequest()
 		{
-			m_method = std::move(method);
-			if (!m_sURL.ParseURL(szURL.c_str(), szURL.size()))
+			return m_request;
+		}
+		HTTPResponse& TinyHTTPClient::GetResponse()
+		{
+			return m_reponse;
+		}
+		BOOL TinyHTTPClient::Open(const string& szURL)
+		{
+			if (!m_szURL.ParseURL(szURL.c_str(), szURL.size()))
 				return FALSE;
-			string szHOST = m_sURL.GetComponent(TinyURL::HOST);
-			if (szHOST.empty())
-				return FALSE;
-			string szPORT = m_sURL.GetComponent(TinyURL::PORT);
-			Add(Host, StringPrintf("%s:%s", szHOST.c_str(), szPORT.c_str()));
-			string szSCHEME = m_sURL.GetComponent(TinyURL::SCHEME);
+			string szHOST = m_szURL.GetComponent(TinyURL::HOST);
+			string szPORT = m_szURL.GetComponent(TinyURL::PORT);
+			string sSCHEME = m_szURL.GetComponent(TinyURL::SCHEME);
 			if (inet_addr(szHOST.c_str()) == INADDR_NONE)
 			{
 				TinyDNS dns;
 				AddressList list;
-				if (!dns.Resolver(szHOST, szSCHEME, list))
+				if (!dns.Resolver(szHOST, sSCHEME, list))
 					return FALSE;
-				m_endpoint.FromIPAddress(list[0].address(), szPORT.empty() ? list[0].port() : static_cast<SHORT>(atoi(szPORT.c_str())));
+				m_endpoint.FromIPAddress(list[0].address(), szPORT.empty() ? list[0].port() : static_cast<SHORT>(std::stoi(szPORT)));
 			}
 			else
 			{
-				m_endpoint.FromIPAddress(IPAddress(szHOST), szPORT.empty() ? (strcasecmp(szSCHEME.c_str(), HTTP) == 0 ? 80 : 443) : static_cast<SHORT>(atoi(szPORT.c_str())));
+				m_endpoint.FromIPAddress(IPAddress(szHOST), szPORT.empty() ? (strcasecmp(sSCHEME.c_str(), HTTP) == 0 ? 80 : 443) : static_cast<SHORT>(std::stoi(szPORT)));
 			}
 			if (m_socket.Open())
 			{
 				m_socket.SetDelay(FALSE);
-				m_socket.SetTimeout(TRUE, m_dwTimeout);
-				m_socket.SetTimeout(FALSE, m_dwTimeout);
-				BuildRequest();
+				m_socket.SetTimeout(TRUE, m_timeout);
+				m_socket.SetTimeout(FALSE, m_timeout);
+				this->BuildRequest();
 				m_socket.BeginConnect(m_endpoint, BindCallback(&TinyHTTPClient::OnHandleConnect, this), this);
 				if (m_wait.Lock(INFINITE))
 				{
-					if (m_errorCode == S_OK && m_statusCode == 200)
+					if (m_errorCode == S_OK && m_reponse.GetStatusCode() == 200)
 						return TRUE;
 				}
 			}
@@ -89,22 +218,17 @@ namespace TinyUI
 		}
 		void TinyHTTPClient::SetTimeout(DWORD dwTO)
 		{
-			m_dwTimeout = dwTO;
+			m_timeout = dwTO;
 		}
 		void TinyHTTPClient::Close()
 		{
 			m_socket.Shutdown();
 			m_socket.Close();
 		}
-		void TinyHTTPClient::SetBody(CHAR* body, INT size)
-		{
-			m_body.Add(body, size);
-			Add(TinyHTTPClient::ContentLength, std::to_string(size));
-		}
 		INT TinyHTTPClient::Read(CHAR*& data, INT size)
 		{
 			m_errorCode = S_OK;
-			m_dwOffset = 0;
+			m_offset = 0;
 			m_size = size;
 			if (m_size > DEFAULT_HTTP_BUFFER_SIZE)
 			{
@@ -116,7 +240,7 @@ namespace TinyUI
 				{
 					OnHandleError(GetLastError());
 				}
-				if (m_wait.Lock(INFINITE) && m_errorCode == S_OK)
+				if (m_wait.Lock(m_timeout) && m_errorCode == S_OK)
 				{
 					data = m_raw;
 					return m_size;
@@ -137,7 +261,7 @@ namespace TinyUI
 			else
 			{
 				m_socket.EndConnect(result);
-				if (!m_socket.BeginSend(m_request.GetPointer(), m_request.GetSize(), 0, BindCallback(&TinyHTTPClient::OnHandleRequest, this), this))
+				if (!m_socket.BeginSend(m_requests.GetPointer(), m_requests.GetSize(), 0, BindCallback(&TinyHTTPClient::OnHandleRequest, this), this))
 				{
 					OnHandleError(GetLastError());
 				}
@@ -152,11 +276,11 @@ namespace TinyUI
 			else
 			{
 				DWORD dwRes = m_socket.EndSend(result);
-				dwRes += m_dwOffset;
-				if (dwRes < static_cast<DWORD>(m_request.GetSize()))
+				dwRes += static_cast<DWORD>(m_offset);
+				if (dwRes < static_cast<DWORD>(m_requests.GetSize()))
 				{
-					m_dwOffset = dwRes;
-					if (!m_socket.BeginSend(m_request.GetPointer() + dwRes, m_request.GetSize() - dwRes, 0, BindCallback(&TinyHTTPClient::OnHandleRequest, this), this))
+					m_offset = static_cast<INT>(dwRes);
+					if (!m_socket.BeginSend(m_requests.GetPointer() + dwRes, m_requests.GetSize() - dwRes, 0, BindCallback(&TinyHTTPClient::OnHandleRequest, this), this))
 					{
 						OnHandleError(GetLastError());
 					}
@@ -181,11 +305,8 @@ namespace TinyUI
 				DWORD dwRes = m_socket.EndReceive(result);
 				if (dwRes > 0)
 				{
-					m_response.Add(m_raw, dwRes);
-					if (ParseResponse(m_response.GetPointer(), m_response.GetSize()))
-					{
-						m_wait.SetEvent();
-					}
+					m_reponse.ParseResponse(m_raw, dwRes);
+					m_wait.SetEvent();
 				}
 			}
 		}
@@ -200,81 +321,20 @@ namespace TinyUI
 				DWORD dwRes = m_socket.EndReceive(result);
 				if (dwRes > 0)
 				{
-					m_dwOffset += dwRes;
-					if (m_dwOffset >= m_size)
+					m_offset += dwRes;
+					if (m_offset >= m_size)
 					{
 						m_wait.SetEvent();
 					}
 					else
 					{
-						if (!m_socket.BeginReceive(m_raw + m_dwOffset, m_size - m_dwOffset, 0, BindCallback(&TinyHTTPClient::OnHandleReceive, this), this))
+						if (!m_socket.BeginReceive(m_raw + m_offset, m_size - m_offset, 0, BindCallback(&TinyHTTPClient::OnHandleReceive, this), this))
 						{
 							OnHandleError(GetLastError());
 						}
 					}
 				}
 			}
-		}
-		BOOL TinyHTTPClient::ParseResponse(CHAR* s, INT size)
-		{
-			CHAR* line = ReadLine(s);
-			if (!ParseStatusLine(s, line - 2))
-				return FALSE;
-			while (line != NULL)
-			{
-				CHAR* ps = line;
-				line = ReadLine(ps);
-				if (*line == '\r' && *(line + 1) == '\n')
-					break;
-				if (!ParseAttribute(ps, line - 2))
-					return FALSE;
-			}
-			return TRUE;
-		}
-		BOOL TinyHTTPClient::ParseAttribute(CHAR* ps1, CHAR* ps2)
-		{
-			if (!ps1 || !ps2)
-				return FALSE;
-			CHAR* ps3 = ps1;
-			while (*ps3 != ':')
-				++ps3;
-			CHAR* ps4 = ps3;
-			while (*ps4 != ' ')
-				++ps4;
-			ps4++;
-			Add(string(ps1, ps3 - ps1), string(ps4, ps2 - ps4));
-			return TRUE;
-		}
-
-		CHAR* TinyHTTPClient::ReadLine(CHAR* s)
-		{
-			CHAR* val = s;
-			while (*val++ != '\r');
-			if (*val++ == '\n')
-				return val;
-			return NULL;
-		}
-		BOOL TinyHTTPClient::ParseStatusLine(CHAR* ps1, CHAR* ps2)
-		{
-			if (!ps1 || !ps2)
-				return FALSE;
-			if (strncasecmp(ps1, TinyHTTPClient::HTTP10, 8) != 0 &&
-				strncasecmp(ps1, TinyHTTPClient::HTTP11, 8) != 0 &&
-				strncasecmp(ps1, TinyHTTPClient::HTTP20, 8) != 0)
-				return FALSE;
-			m_version = string(ps1, 8);
-			ps1 += 8;
-			while (*ps1 == ' ')
-				++ps1;
-			CHAR* ps3 = ps1;
-			while (IsAsciiDigit(*ps3))
-				++ps3;
-			string val(ps1, ps3 - ps1);
-			m_statusCode = atoi(val.c_str());
-			while (*ps3 == ' ')
-				++ps3;
-			m_desc.append(ps3, ps2);
-			return TRUE;
 		}
 		void TinyHTTPClient::OnHandleError(INT errorCode)
 		{
@@ -284,27 +344,20 @@ namespace TinyUI
 		}
 		void TinyHTTPClient::BuildRequest()
 		{
-			string szAll = m_sURL.GetComponent(TinyURL::FULLPATH);
-			string szRequest = StringPrintf("%s %s %s\r\n", m_method.c_str(), szAll.empty() ? "/" : szAll.c_str(), TinyHTTPClient::HTTP11);
-			for (std::vector<KeyValue>::const_iterator s = m_attributes.begin(); s != m_attributes.end(); ++s)
+			string szHOST = m_szURL.GetComponent(TinyURL::HOST);
+			string szPORT = m_szURL.GetComponent(TinyURL::PORT);
+			m_request.Add(TinyHTTPClient::Host, szPORT.empty() ? szHOST : StringPrintf("%s:%s", szHOST.c_str(), szPORT.c_str()));
+			string body = m_request.GetBody();
+			if (!body.empty())
 			{
-				if (s->key == Connection && s->value == string("close"))
-				{
-					m_bClose = TRUE;
-				}
-				if (!s->value.empty())
-				{
-					szRequest.append(StringPrintf("%s: %s\r\n", s->key.c_str(), s->value.c_str()));
-				}
-				else
-				{
-					szRequest.append(StringPrintf("%s:\r\n", s->key.c_str()));
-				}
+				m_request.Add(TinyHTTPClient::ContentLength, std::to_string(body.size()));
 			}
-			szRequest.append("\r\n");
-			m_request.Clear();
-			m_request.Add(&szRequest[0], szRequest.size());
-			m_request.Add(m_body.GetPointer(), m_body.GetSize());
+			string szFullPath = m_szURL.GetComponent(TinyURL::FULLPATH);
+			string szRequest = StringPrintf("%s %s %s\r\n", m_request.GetVerbs().c_str(), szFullPath.empty() ? "/" : szFullPath.c_str(), TinyHTTPClient::HTTP11);//请求行
+			szRequest += m_request.ToString();
+			szRequest += m_request.GetBody();
+			m_requests.Clear();
+			m_requests.Add(&szRequest[0], szRequest.size());
 		}
 	}
 }

@@ -149,7 +149,7 @@ namespace TinyUI
 			TinyHTTPClient client;
 			if (client.Open(pzFile))
 			{
-				INT size = std::stoi(client[TinyHTTPClient::ContentLength]);
+				INT size = std::stoi(client.GetResponse().GetAttribute(TinyHTTPClient::ContentLength));
 				if (size > 0)
 				{
 					CHAR* ps = NULL;

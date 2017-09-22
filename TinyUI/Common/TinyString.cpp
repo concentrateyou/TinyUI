@@ -86,6 +86,53 @@ namespace TinyUI
 		return ASCIIToUTF8(WStringToString(wide));
 	}
 	//////////////////////////////////////////////////////////////////////////
+	static void StringAppendVT(string* dst, const CHAR* format, va_list ap)
+	{
+		CHAR buffer[1024];
+		va_list ap_copy;
+		va_copy(ap_copy, ap);
+		INT result = vsnprintf(buffer, arraysize(buffer), format, ap_copy);
+		va_end(ap_copy);
+		if (result >= 0 && result < static_cast<int>(arraysize(buffer)))
+		{
+			dst->append(buffer, result);
+			return;
+		}
+		INT size = arraysize(buffer);
+		while (true)
+		{
+			if (result < 0)
+			{
+				return;
+			}
+			else
+			{
+				size = result + 1;
+			}
+
+			if (size > 32 * 1024 * 1024)
+			{
+				return;
+			}
+			std::vector<CHAR> mem_buf(size);
+			va_copy(ap_copy, ap);
+			result = vsnprintf(&mem_buf[0], size, format, ap_copy);
+			va_end(ap_copy);
+			if ((result >= 0) && (result < size))
+			{
+				dst->append(&mem_buf[0], result);
+				return;
+			}
+		}
+	}
+	void StringAppendF(string* dst, const CHAR* format, ...)
+	{
+		va_list ap;
+		va_start(ap, format);
+		StringAppendVT(dst, format, ap);
+		va_end(ap);
+	}
+	//////////////////////////////////////////////////////////////////////////
 	TinyString::TinyString()
 		:_Myres(0),
 		_Mysize(0),

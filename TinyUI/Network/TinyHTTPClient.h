@@ -9,26 +9,55 @@ namespace TinyUI
 {
 	namespace Network
 	{
-
 #define DEFAULT_HTTP_BUFFER_SIZE (1024*1024)
-
-		class TinyHTTPClient : public TinyHTTPAttribute
+		class TinyHTTPClient;
+		/// <summary>
+		/// 请求
+		/// </summary>
+		class HTTPRequest : public TinyHTTPAttribute
 		{
-			enum State
-			{
-				STATE_NONE,
-				STATE_SEND_HEADERS,
-				STATE_SEND_HEADERS_COMPLETE,
-				STATE_SEND_BODY,
-				STATE_SEND_BODY_COMPLETE,
-				STATE_SEND_REQUEST_READ_BODY_COMPLETE,
-				STATE_READ_HEADERS,
-				STATE_READ_HEADERS_COMPLETE,
-				STATE_READ_BODY,
-				STATE_READ_BODY_COMPLETE,
-				STATE_DONE
-			};
-			DISALLOW_COPY_AND_ASSIGN(TinyHTTPClient)
+		public:
+			HTTPRequest();
+			~HTTPRequest();
+		public:
+			void SetBody(const string& body);
+			string GetBody() const;
+			void SetVerbs(const string& verb);
+			string GetVerbs() const;
+		private:
+			string	m_verbs;
+			string	m_body;
+		};
+		/// <summary>
+		/// 应答
+		/// </summary>
+		class HTTPResponse : public TinyHTTPAttribute
+		{
+			friend class TinyHTTPClient;
+		public:
+			HTTPResponse();
+			~HTTPResponse();
+		public:
+			INT		GetStatusCode() const;
+			string	GetVersion() const;
+			string	GetGetStatusMsg() const;
+			string	GetContext() const;
+		private:
+			CHAR* ReadLine(CHAR* s);
+			BOOL ParseAttribute(CHAR* ps1, CHAR* ps2);
+			BOOL ParseResponse(CHAR* s, INT size);
+			BOOL ParseStatusLine(CHAR* ps1, CHAR* ps2);
+		private:
+			INT						m_statusCode;
+			string					m_version;//版本
+			string					m_statusMsg;//状态信息
+			string					m_context;//Response信息
+		};
+		/// <summary>
+		/// HTTP客户端
+		/// </summary>
+		class TinyHTTPClient
+		{
 		public:
 			static const CHAR GET[];
 			static const CHAR POST[];
@@ -60,14 +89,30 @@ namespace TinyUI
 			static const CHAR TokenBinding[];
 			static const CHAR UserAgent[];
 			static const CHAR CRLF[];
+			enum State
+			{
+				STATE_NONE,
+				STATE_SEND_HEADERS,
+				STATE_SEND_HEADERS_COMPLETE,
+				STATE_SEND_BODY,
+				STATE_SEND_BODY_COMPLETE,
+				STATE_SEND_REQUEST_READ_BODY_COMPLETE,
+				STATE_READ_HEADERS,
+				STATE_READ_HEADERS_COMPLETE,
+				STATE_READ_BODY,
+				STATE_READ_BODY_COMPLETE,
+				STATE_DONE
+			};
+			DISALLOW_COPY_AND_ASSIGN(TinyHTTPClient)
 		public:
 			TinyHTTPClient();
-			BOOL	Open(const string& szURL, const string& method = GET);
-			void	Close();
-			void	SetTimeout(DWORD dwTO);
-			void	SetBody(CHAR* body, INT size);
-			INT		Read(CHAR*& data, INT size);
-			INT		GetErrorCode() const;
+			BOOL			Open(const string& szURL);
+			void			Close();
+			void			SetTimeout(DWORD dwTO);
+			INT				Read(CHAR*& data, INT size);
+			INT				GetErrorCode() const;
+			HTTPRequest&	GetRequest();
+			HTTPResponse&	GetResponse();
 		private:
 			void BuildRequest();
 			void OnHandleConnect(INT, AsyncResult*);
@@ -76,28 +121,19 @@ namespace TinyUI
 			void OnHandleReceive(INT, AsyncResult*);
 			void OnHandleError(INT);
 		private:
-			CHAR* ReadLine(CHAR* s);
-			BOOL ParseAttribute(CHAR* ps1, CHAR* ps2);
-			BOOL ParseResponse(CHAR* s, INT size);
-			BOOL ParseStatusLine(CHAR* ps1, CHAR* ps2);
-		private:
 			BOOL					m_bClose;
-			DWORD					m_dwOffset;
-			DWORD					m_dwTimeout;
+			INT						m_offset;
+			INT						m_timeout;
 			INT						m_errorCode;
-			INT						m_statusCode;
 			INT						m_size;
-			string					m_version;
-			string					m_method;
-			string					m_desc;
 			TinyEvent				m_wait;
-			TinyURL					m_sURL;
+			TinyURL					m_szURL;
 			TinySocket				m_socket;
 			IPEndPoint				m_endpoint;
+			HTTPRequest				m_request;
+			HTTPResponse			m_reponse;
 			TinyScopedArray<CHAR>	m_raw;
-			TinyBufferArray<CHAR>   m_body;
-			TinyBufferArray<CHAR>   m_response;
-			TinyBufferArray<CHAR>	m_request;
+			TinyBufferArray<CHAR>	m_requests;
 		};
 	}
 }

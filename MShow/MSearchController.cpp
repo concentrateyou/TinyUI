@@ -61,15 +61,16 @@ namespace MShow
 		if (txtSearch != NULL)
 		{
 			TinyHTTPClient client;
-			client.Add(TinyHTTPClient::ContentType, "application/x-www-form-urlencoded");
+			client.GetRequest().SetVerbs(TinyHTTPClient::POST);
+			client.GetRequest().Add(TinyHTTPClient::ContentType, "application/x-www-form-urlencoded");
 			TinyString szName = txtSearch->GetText();
 			string body;
 			body += "pname=";
 			body += szName.IsEmpty() ? "" : szName.CSTR();
-			client.SetBody(&body[0], body.size());
-			if (client.Open("http://10.23.84.150:7777/api/director/list",TinyHTTPClient::POST))
+			client.GetRequest().SetBody(body);
+			if (client.Open("http://10.23.84.150:7777/api/director/list"))
 			{
-				INT size = std::stoi(client[TinyHTTPClient::ContentLength]);
+				INT size = std::stoi(client.GetResponse().GetAttribute(TinyHTTPClient::ContentLength));
 				if (size > 0)
 				{
 					CHAR* bits = NULL;
