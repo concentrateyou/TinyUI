@@ -16,7 +16,8 @@ namespace TinyUI
 		/// </summary>
 		class HTTPRequest : public TinyHTTPAttribute
 		{
-		public:
+			friend class TinyHTTPClient;
+		protected:
 			HTTPRequest();
 			~HTTPRequest();
 		public:
@@ -34,14 +35,15 @@ namespace TinyUI
 		class HTTPResponse : public TinyHTTPAttribute
 		{
 			friend class TinyHTTPClient;
-		public:
-			HTTPResponse();
+		protected:
+			HTTPResponse(TinyHTTPClient& client);
 			~HTTPResponse();
 		public:
 			INT		GetStatusCode() const;
 			string	GetVersion() const;
 			string	GetGetStatusMsg() const;
-			string	GetContext() const;
+			BOOL	ReadAsString(string& val);
+			INT		ReadAsBinary(CHAR*& ps);
 		private:
 			CHAR* ReadLine(CHAR* s);
 			BOOL ParseAttribute(CHAR* ps1, CHAR* ps2);
@@ -51,7 +53,8 @@ namespace TinyUI
 			INT						m_statusCode;
 			string					m_version;//版本
 			string					m_statusMsg;//状态信息
-			string					m_context;//Response信息
+			TinyBufferArray<CHAR>	m_context;
+			TinyHTTPClient&			m_client;
 		};
 		/// <summary>
 		/// HTTP客户端
@@ -106,6 +109,7 @@ namespace TinyUI
 			DISALLOW_COPY_AND_ASSIGN(TinyHTTPClient)
 		public:
 			TinyHTTPClient();
+			~TinyHTTPClient();
 			BOOL			Open(const string& szURL);
 			void			Close();
 			void			SetTimeout(DWORD dwTO);

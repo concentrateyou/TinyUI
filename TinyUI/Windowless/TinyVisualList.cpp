@@ -29,6 +29,16 @@ namespace TinyUI
 			return TinyVisualTag::LISTITEM;
 		}
 
+		void TinyVisualListItem::SetItemData(LPVOID data)
+		{
+			m_data = data;
+		}
+
+		LPVOID TinyVisualListItem::GetItemData() const
+		{
+			return m_data;
+		}
+
 		HRESULT TinyVisualListItem::OnMouseEnter()
 		{
 			TinyVisualList* ps = static_cast<TinyVisualList*>(m_spvisParent);
@@ -206,6 +216,35 @@ namespace TinyUI
 		void TinyVisualList::SetColumnCount(INT count)
 		{
 			m_count = count;
+		}
+		BOOL TinyVisualList::Add(const TinyString& text)
+		{
+			TinyVisualListItem* ps = static_cast<TinyVisualListItem*>(m_document->Create(TinyVisualTag::LISTITEM, this));
+			if (ps != NULL)
+			{
+				INT row = (m_dwCount - 2) / m_count;//去掉滚动条
+				INT column = (m_dwCount - 2) % m_count;//去掉滚动条
+				INT itemCX = TO_CX(m_rectangle) / m_count - DEFAULT_LIST_ITEM_COLUMN_SPACE;//每行个数
+				INT x = column * (itemCX + DEFAULT_LIST_ITEM_COLUMN_SPACE);
+				INT y = row * (DEFAULT_LIST_ITEM_HEIGHT + DEFAULT_LIST_ITEM_COLUMN_SPACE);
+				ps->SetPosition(TinyPoint(x, y));
+				ps->SetSize(TinySize(itemCX, DEFAULT_LIST_ITEM_HEIGHT));
+				ps->SetText(text);
+				ps->SetTextAlian(DT_CENTER | DT_SINGLELINE | DT_VCENTER);
+				ps->SetTextColor(RGB(64, 64, 64));
+				y += (DEFAULT_LIST_ITEM_HEIGHT);
+				if (y > TO_CY(m_rectangle))
+				{
+					m_pVScrollbar->SetVisible(TRUE);
+					m_pVScrollbar->SetScrollInfo(0, y, TO_CY(m_rectangle), m_iNewPos);
+				}
+				else
+				{
+					m_pVScrollbar->SetVisible(FALSE);
+				}
+				return TRUE;
+			}
+			return FALSE;
 		}
 		BOOL TinyVisualList::Add(const TinyString& text, const TinyString& imageURL)
 		{

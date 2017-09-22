@@ -66,3 +66,4 @@
 /ThirdParty/sdk
 *.aac
 *.rar
+/ThirdParty/jsoncpp/lib/pkgconfig

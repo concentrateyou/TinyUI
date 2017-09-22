@@ -70,20 +70,23 @@ namespace MShow
 			client.GetRequest().SetBody(body);
 			if (client.Open("http://10.23.84.150:7777/api/director/list"))
 			{
-				string context = client.GetResponse().GetContext();
-				Json::Reader reader;
-				Json::Value value;
-				if (reader.parse(context, value))
+				string context;
+				if (client.GetResponse().ReadAsString(context))
 				{
-					Json::Value result = value["data"]["result"];
-					for (INT i = 0;i < result.size();i++)
+					Json::Reader reader;
+					Json::Value value;
+					if (reader.parse(context, value))
 					{
-						Json::Value val = result[i];
-						string str1 = val["programQipuId"].asString();
-						string str2 = val["programName"].asString();
-						string str3 = val["startPlayTime"].asString();
-						string str4 = val["stopPlayTime"].asString();
-						string str5 = val["programQipuId"].asString();
+						TinyVisualList* pList = static_cast<TinyVisualList*>(m_view.GetDocument()->GetVisualByName("programs"));
+						Json::Value result = value["data"]["result"];
+						for (INT i = 0;i < result.size();i++)
+						{
+							Json::Value val = result[i];
+							string programName = val["programName"].asString();
+							string imgUrl = val["imgUrl"].asString();
+							pList->Add(programName.c_str(), imgUrl.c_str());
+						}
+						m_view.Invalidate();
 					}
 				}
 			}

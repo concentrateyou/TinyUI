@@ -6,8 +6,8 @@ namespace TinyUI
 	namespace Windowless
 	{
 #define DEFAULT_LIST_ITEM_HEIGHT		120
-#define DEFAULT_LIST_ITEM_ROW_SPACE		10
-#define DEFAULT_LIST_ITEM_COLUMN_SPACE	10
+#define DEFAULT_LIST_ITEM_ROW_SPACE		15
+#define DEFAULT_LIST_ITEM_COLUMN_SPACE	15
 		class TinyVisualVScrollBar;
 		class TinyVisualList;
 		/// <summary>
@@ -25,8 +25,13 @@ namespace TinyUI
 			virtual ~TinyVisualListItem();
 			TinyString RetrieveTag() const OVERRIDE;
 			HRESULT	OnMouseEnter() OVERRIDE;
+		public:
+			void SetItemData(LPVOID data);
+			LPVOID GetItemData() const;
 		protected:
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
+		private:
+			LPVOID	m_data;//自定义数据
 		};
 		/// <summary>
 		/// 列表控件
@@ -47,7 +52,8 @@ namespace TinyUI
 			TinyVisualVScrollBar* GetVScrollBar();
 		public:
 			void SetColumnCount(INT count);
-			BOOL Add(const TinyString& text, const TinyString& imagrURL);
+			BOOL Add(const TinyString& text);
+			BOOL Add(const TinyString& text, const TinyString& imageURL);
 		protected:
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 		private:

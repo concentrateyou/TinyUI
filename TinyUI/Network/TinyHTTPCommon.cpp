@@ -73,7 +73,7 @@ namespace TinyUI
 		{
 			return m_attributes.empty();
 		}
-		BOOL TinyHTTPAttribute::Include(const string& key)
+		BOOL TinyHTTPAttribute::Contains(const string& key)
 		{
 			vector<KeyValue>::const_iterator s = Lookup(key);
 			if (s != m_attributes.end())

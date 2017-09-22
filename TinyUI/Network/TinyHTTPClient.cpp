@@ -65,8 +65,9 @@ namespace TinyUI
 			return m_body;
 		}
 		//////////////////////////////////////////////////////////////////////////
-		HTTPResponse::HTTPResponse()
-			:m_statusCode(0)
+		HTTPResponse::HTTPResponse(TinyHTTPClient& client)
+			:m_statusCode(0),
+			m_client(client)
 		{
 
 		}
@@ -86,12 +87,69 @@ namespace TinyUI
 		{
 			return m_statusCode;
 		}
-		string	HTTPResponse::GetContext() const
+
+		BOOL HTTPResponse::ReadAsString(string& val)
 		{
-			return m_context;
+			if (!this->Contains(TinyHTTPClient::ContentLength))
+			{
+				val.reserve(m_context.GetSize());
+				memcpy(&val[0], m_context.GetPointer(), m_context.GetSize());
+				return TRUE;
+			}
+			else
+			{
+				INT size = std::stoi(this->GetAttribute(TinyHTTPClient::ContentLength));
+				if (size == m_context.GetSize())
+				{
+					val.reserve(size);
+					memcpy(&val[0], m_context.GetPointer(), size);
+					return TRUE;
+				}
+				if (size > m_context.GetSize())
+				{
+					CHAR* ps = NULL;
+					INT remainder = size - m_context.GetSize();
+					INT iRes = m_client.Read(ps, remainder);
+					val.reserve(size);
+					memcpy(&val[0], m_context.GetPointer(), m_context.GetSize());
+					memcpy(&val[0] + m_context.GetSize(), ps, iRes);
+					return TRUE;
+				}
+			}
+			return FALSE;
 		}
+
+		INT HTTPResponse::ReadAsBinary(CHAR*& ps)
+		{
+			if (!this->Contains(TinyHTTPClient::ContentLength))
+			{
+				ps = m_context.GetPointer();
+				return m_context.GetSize();
+			}
+			else
+			{
+				INT size = std::stoi(this->GetAttribute(TinyHTTPClient::ContentLength));
+				if (size == m_context.GetSize())
+				{
+					ps = m_context.GetPointer();
+					return m_context.GetSize();
+				}
+				if (size > m_context.GetSize())
+				{
+					CHAR* pValue = NULL;
+					INT remainder = size - m_context.GetSize();
+					INT iRes = m_client.Read(pValue, remainder);
+					m_context.Add(pValue, iRes);
+					ps = m_context.GetPointer();
+					return size;
+				}
+			}
+			return -1;
+		}
+
 		BOOL HTTPResponse::ParseResponse(CHAR* s, INT size)
 		{
+			m_context.Clear();
 			CHAR* line = ReadLine(s);
 			if (!ParseStatusLine(s, line - 2))
 				return FALSE;
@@ -102,15 +160,7 @@ namespace TinyUI
 				if (*line == '\r' && *(line + 1) == '\n')//应答头解析完成
 				{
 					INT offset = line + 2 - s;
-					if (size > offset)
-					{
-						if (Include(TinyHTTPClient::ContentLength))
-						{
-							INT length = std::stoi(GetAttribute(TinyHTTPClient::ContentLength));
-							length = min(length, size - offset);
-							m_context.append(line + 2, length);
-						}
-					}
+					m_context.Add(line + 2, size - offset);//保存剩余数据
 					break;
 				}
 				if (!ParseAttribute(ps, line - 2))
@@ -169,10 +219,14 @@ namespace TinyUI
 			m_offset(0),
 			m_size(0),
 			m_errorCode(S_OK),
-			m_bClose(TRUE)
+			m_reponse(*this)
 		{
 			m_wait.CreateEvent();
 			m_raw.Reset(new CHAR[DEFAULT_HTTP_BUFFER_SIZE]);
+		}
+		TinyHTTPClient::~TinyHTTPClient()
+		{
+			this->Close();
 		}
 		HTTPRequest& TinyHTTPClient::GetRequest()
 		{
@@ -240,7 +294,7 @@ namespace TinyUI
 				{
 					OnHandleError(GetLastError());
 				}
-				if (m_wait.Lock(m_timeout) && m_errorCode == S_OK)
+				if (m_wait.Lock(INFINITE) && m_errorCode == S_OK)
 				{
 					data = m_raw;
 					return m_size;

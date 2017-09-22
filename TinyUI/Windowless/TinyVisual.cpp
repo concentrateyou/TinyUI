@@ -325,14 +325,17 @@ namespace TinyUI
 		}
 		HRESULT	TinyVisual::OnCreate()
 		{
+			EVENT_CREATE(EventArgs());
 			return TRUE;
 		}
 		HRESULT	TinyVisual::OnDestory()
 		{
+			EVENT_DESTORY(EventArgs());
 			return TRUE;
 		}
 		HRESULT	TinyVisual::OnInitialize()
 		{
+			EVENT_INITIALIZE(EventArgs());
 			return TRUE;
 		}
 		BOOL	TinyVisual::OnDraw(HDC hDC, const RECT& rcPaint)

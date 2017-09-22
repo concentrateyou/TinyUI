@@ -147,13 +147,13 @@ namespace TinyUI
 		if (PathIsURL(pzFile))
 		{
 			TinyHTTPClient client;
+			client.GetRequest().SetVerbs(TinyHTTPClient::GET);
 			if (client.Open(pzFile))
 			{
-				INT size = std::stoi(client.GetResponse().GetAttribute(TinyHTTPClient::ContentLength));
-				if (size > 0)
+				CHAR* ps = NULL;
+				INT iRes = client.GetResponse().ReadAsBinary(ps);
+				if (iRes > 0 && ps != NULL)
 				{
-					CHAR* ps = NULL;
-					INT iRes = client.Read(ps, size);
 					return Open((BYTE*)ps, iRes);
 				}
 			}

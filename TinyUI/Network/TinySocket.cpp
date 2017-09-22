@@ -796,7 +796,6 @@ namespace TinyUI
 			if (socket != INVALID_SOCKET)
 			{
 				closesocket(socket);
-				socket = NULL;
 				m_disconnectex = NULL;
 				m_acceptex = NULL;
 				m_connectex = NULL;

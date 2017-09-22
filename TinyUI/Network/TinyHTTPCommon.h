@@ -27,7 +27,7 @@ namespace TinyUI
 		public:
 			TinyHTTPAttribute();
 			BOOL IsEmpty() const;
-			BOOL Include(const string& key);
+			BOOL Contains(const string& key);
 			void Add(const string& key, const string& val);
 			void Remove(const string& key);
 			void RemoveAll();
