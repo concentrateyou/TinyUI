@@ -70,19 +70,20 @@ namespace MShow
 			client.GetRequest().SetBody(body);
 			if (client.Open("http://10.23.84.150:7777/api/director/list"))
 			{
-				INT size = std::stoi(client.GetResponse().GetAttribute(TinyHTTPClient::ContentLength));
-				if (size > 0)
+				string context = client.GetResponse().GetContext();
+				Json::Reader reader;
+				Json::Value value;
+				if (reader.parse(context, value))
 				{
-					CHAR* bits = NULL;
-					size = client.Read(bits, size);
-					string jsonSTR;
-					jsonSTR.resize(size);
-					memcpy(&jsonSTR[0], bits, size);
-					Json::Reader reader;
-					Json::Value value;
-					if (reader.parse(jsonSTR, value))
+					Json::Value result = value["data"]["result"];
+					for (INT i = 0;i < result.size();i++)
 					{
-						INT a = 0;
+						Json::Value val = result[i];
+						string str1 = val["programQipuId"].asString();
+						string str2 = val["programName"].asString();
+						string str3 = val["startPlayTime"].asString();
+						string str4 = val["stopPlayTime"].asString();
+						string str5 = val["programQipuId"].asString();
 					}
 				}
 			}

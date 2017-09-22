@@ -101,7 +101,7 @@ namespace TinyUI
 				line = ReadLine(ps);
 				if (*line == '\r' && *(line + 1) == '\n')//应答头解析完成
 				{
-					INT offset = line - s + 2;
+					INT offset = line + 2 - s;
 					if (size > offset)
 					{
 						if (Include(TinyHTTPClient::ContentLength))
@@ -306,8 +306,8 @@ namespace TinyUI
 				if (dwRes > 0)
 				{
 					m_reponse.ParseResponse(m_raw, dwRes);
-					m_wait.SetEvent();
 				}
+				m_wait.SetEvent();
 			}
 		}
 		void TinyHTTPClient::OnHandleReceive(INT errorCode, AsyncResult* result)
