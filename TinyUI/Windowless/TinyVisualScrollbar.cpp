@@ -431,7 +431,7 @@ namespace TinyUI
 			OffsetRect(&dstCenter, s.left, s.top);
 			canvas.DrawImage(*m_images[SCROLLBARNORMAL], grooveRectangle, dstCenter, m_images[SCROLLBARNORMAL]->GetRectangle(), srcCenter);
 		}
-		void TinyVisualHScrollBar::SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos)
+		void TinyVisualHScrollBar::SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos, BOOL  fRedraw)
 		{
 			m_si.iPos = iPos < iMin ? iMin : iPos;
 			m_si.iPos = iPos > (iMax - iPage + 1) ? (iMax - iPage + 1) : iPos;
@@ -445,16 +445,22 @@ namespace TinyUI
 			{
 				m_si.iPos = m_si.iMin = m_si.iMax = m_si.iMin = 0;
 			}
-			TinyRectangle s = m_document->GetWindowRect(this);
-			m_document->Invalidate(&s);
+			if (fRedraw)
+			{
+				TinyRectangle s = m_document->GetWindowRect(this);
+				m_document->Invalidate(&s);
+			}
 		}
-		void TinyVisualHScrollBar::SetScrollPos(INT iPos)
+		void TinyVisualHScrollBar::SetScrollPos(INT iPos, BOOL  fRedraw)
 		{
 			iPos = iPos < m_si.iMin ? m_si.iMin : iPos;
 			iPos = iPos > (m_si.iMax - m_si.iPage + 1) ? (m_si.iMax - m_si.iPage + 1) : iPos;
 			m_si.iPos = iPos;
-			TinyRectangle s = m_document->GetWindowRect(this);
-			m_document->Invalidate(&s);
+			if (fRedraw)
+			{
+				TinyRectangle s = m_document->GetWindowRect(this);
+				m_document->Invalidate(&s);
+			}
 		}
 		INT	TinyVisualHScrollBar::GetScrollPos() const
 		{
@@ -903,7 +909,7 @@ namespace TinyUI
 			OffsetRect(&dstCenter, s.left, s.top);
 			canvas.DrawImage(*m_images[SCROLLBARNORMAL], grooveRectangle, dstCenter, m_images[SCROLLBARNORMAL]->GetRectangle(), srcCenter);
 		}
-		void TinyVisualVScrollBar::SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos)
+		void TinyVisualVScrollBar::SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos, BOOL  fRedraw)
 		{
 			m_si.iPos = iPos < iMin ? iMin : iPos;
 			m_si.iPos = iPos > (iMax - iPage + 1) ? (iMax - iPage + 1) : iPos;
@@ -917,16 +923,22 @@ namespace TinyUI
 			{
 				m_si.iPos = m_si.iMin = m_si.iMax = m_si.iMin = 0;
 			}
-			TinyRectangle s = m_document->GetWindowRect(this);
-			m_document->Invalidate(&s);
+			if (fRedraw)
+			{
+				TinyRectangle s = m_document->GetWindowRect(this);
+				m_document->Invalidate(&s);
+			}
 		}
-		void TinyVisualVScrollBar::SetScrollPos(INT iPos)
+		void TinyVisualVScrollBar::SetScrollPos(INT iPos, BOOL  fRedraw)
 		{
 			iPos = iPos < m_si.iMin ? m_si.iMin : iPos;
 			iPos = iPos > (m_si.iMax - m_si.iPage) ? (m_si.iMax - m_si.iPage + 1) : iPos;
 			m_si.iPos = iPos;
-			TinyRectangle s = m_document->GetWindowRect(this);
-			m_document->Invalidate(&s);
+			if (fRedraw)
+			{
+				TinyRectangle s = m_document->GetWindowRect(this);
+				m_document->Invalidate(&s);
+			}
 		}
 		INT	TinyVisualVScrollBar::GetScrollPos() const
 		{

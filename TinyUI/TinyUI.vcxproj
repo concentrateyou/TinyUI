@@ -289,7 +289,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Render\TinyCanvas.h" />
     <ClInclude Include="Windowless\TinyTextHost.h" />
-    <ClInclude Include="Windowless\TinyVisualAnimate.h" />
+    <ClInclude Include="Windowless\TinyVisualAnimation.h" />
     <ClInclude Include="Windowless\TinyVisualCaption.h" />
     <ClInclude Include="Windowless\TinyVisualList.h" />
     <ClInclude Include="Windowless\TinyVisualNative.h" />
@@ -434,7 +434,7 @@
     </ClCompile>
     <ClCompile Include="Render\TinyCanvas.cpp" />
     <ClCompile Include="Windowless\TinyTextHost.cpp" />
-    <ClCompile Include="Windowless\TinyVisualAnimate.cpp" />
+    <ClCompile Include="Windowless\TinyVisualAnimation.cpp" />
     <ClCompile Include="Windowless\TinyVisualCaption.cpp" />
     <ClCompile Include="Windowless\TinyVisualHWND.cpp" />
     <ClCompile Include="Windowless\TinyVisualList.cpp" />

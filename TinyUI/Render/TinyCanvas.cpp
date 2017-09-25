@@ -182,12 +182,14 @@ namespace TinyUI
 	}
 	BOOL TinyCanvas::DrawString(const TinyString& str, LPRECT lprc, UINT format)
 	{
-		if (!m_hDC) return FALSE;
+		if (!m_hDC)
+			return FALSE;
 		return ::DrawTextEx(m_hDC, str.STR(), str.GetSize(), lprc, format, NULL);
 	}
 	BOOL TinyCanvas::DrawImage(TinyImage& image, INT x, INT y)
 	{
-		if (!m_hDC) return FALSE;
+		if (!m_hDC)
+			return FALSE;
 		TinyMemDC menDC(m_hDC, image);
 		TinyRectangle src = image.GetRectangle();
 		TinyRectangle dst = src;
@@ -196,7 +198,8 @@ namespace TinyUI
 	}
 	BOOL TinyCanvas::DrawImage(TinyImage& image, INT x, INT y, INT cx, INT cy)
 	{
-		if (!m_hDC) return FALSE;
+		if (!m_hDC)
+			return FALSE;
 		TinyMemDC menDC(m_hDC, image);
 		TinyRectangle src = image.GetRectangle();
 		TinyRectangle dst;
@@ -205,7 +208,8 @@ namespace TinyUI
 	}
 	BOOL TinyCanvas::DrawImage(TinyImage& image, const RECT& destRect, INT srcX, INT srcY, INT srcCX, INT srcCY)
 	{
-		if (!m_hDC) return FALSE;
+		if (!m_hDC)
+			return FALSE;
 		TinyMemDC menDC(m_hDC, image);
 		TinyRectangle src;
 		src.SetRect(srcX, srcY, srcX + srcCX, srcY + srcCY);
@@ -213,22 +217,72 @@ namespace TinyUI
 	}
 	BOOL TinyCanvas::DrawImage(TinyImage& image, const RECT& destRect, const RECT& srcRect)
 	{
-		if (!m_hDC) return FALSE;
+		if (!m_hDC)
+			return FALSE;
 		TinyMemDC menDC(m_hDC, image);
 		return menDC.Render(destRect, srcRect, TRUE);
 	}
 	BOOL TinyCanvas::DrawImage(TinyImage& image, const RECT& dstPaint, const RECT& srcPaint, const RECT& srcCenter)
 	{
-		if (!m_hDC) return FALSE;
+		if (!m_hDC)
+			return FALSE;
 		TinyMemDC menDC(m_hDC, image);
 		return menDC.Render(dstPaint, srcPaint, srcCenter, TRUE);
 	}
 	BOOL TinyCanvas::DrawImage(TinyImage& image, const RECT& dstPaint, const RECT& dstCenter, const RECT& srcPaint, const RECT& srcCenter)
 	{
-		if (!m_hDC) return FALSE;
+		if (!m_hDC)
+			return FALSE;
 		TinyMemDC menDC(m_hDC, image);
 		return menDC.Render(dstPaint, dstCenter, srcPaint, srcCenter, TRUE);
 	}
+
+	BOOL TinyCanvas::DrawBitmap(HBITMAP hBitmap, const RECT& srcRect, INT x, INT y)
+	{
+		if (!m_hDC || !hBitmap)
+			return FALSE;
+		TinyMemDC menDC(m_hDC, hBitmap);
+		TinyRectangle src = srcRect;
+		TinyRectangle dst = src;
+		dst.OffsetRect(x, y);
+		return menDC.Render(dst, src, TRUE);
+	}
+
+	BOOL TinyCanvas::DrawBitmap(HBITMAP hBitmap, const RECT& srcRect, INT x, INT y, INT cx, INT cy)
+	{
+		if (!m_hDC || !hBitmap)
+			return FALSE;
+		TinyMemDC menDC(m_hDC, hBitmap);
+		TinyRectangle src = srcRect;
+		TinyRectangle dst;
+		dst.SetRect(x, y, x + cx, y + cy);
+		return menDC.Render(dst, src, TRUE);
+	}
+
+	BOOL TinyCanvas::DrawBitmap(HBITMAP hBitmap, const RECT& destRect, const RECT& srcRect)
+	{
+		if (!m_hDC || !hBitmap)
+			return FALSE;
+		TinyMemDC menDC(m_hDC, hBitmap);
+		return menDC.Render(destRect, srcRect, TRUE);
+	}
+
+	BOOL TinyCanvas::DrawBitmap(HBITMAP hBitmap, const RECT& dstPaint, const RECT& srcPaint, const RECT& srcCenter)
+	{
+		if (!m_hDC || !hBitmap)
+			return FALSE;
+		TinyMemDC menDC(m_hDC, hBitmap);
+		return menDC.Render(dstPaint, srcPaint, srcCenter, TRUE);
+	}
+
+	BOOL TinyCanvas::DrawBitmap(HBITMAP hBitmap, const RECT& dstPaint, const RECT& dstCenter, const RECT& srcPaint, const RECT& srcCenter)
+	{
+		if (!m_hDC || !hBitmap)
+			return FALSE;
+		TinyMemDC menDC(m_hDC, hBitmap);
+		return menDC.Render(dstPaint, dstCenter, srcPaint, srcCenter, TRUE);
+	}
+
 	BOOL TinyCanvas::DrawLine(INT sx, INT sy, INT dx, INT dy)
 	{
 		if (!m_hDC) return FALSE;

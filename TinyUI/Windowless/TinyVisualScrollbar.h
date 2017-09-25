@@ -56,8 +56,8 @@ namespace TinyUI
 			INT			GetPage() const;
 			INT			GetMin() const;
 			INT			GetMax() const;
-			void		SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos);
-			void		SetScrollPos(INT iPos);
+			void		SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos, BOOL  fRedraw = TRUE);
+			void		SetScrollPos(INT iPos, BOOL  fRedraw = TRUE);
 			void		SetStyleImage(ScrollImageStyle type, LPCSTR pzFile);
 		public:
 			Event<void(BOOL, INT, INT, INT)> EVENT_PosChange;
@@ -101,8 +101,8 @@ namespace TinyUI
 			INT			GetPage() const;
 			INT			GetMin() const;
 			INT			GetMax() const;
-			void		SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos);
-			void		SetScrollPos(INT iPos);
+			void		SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos, BOOL  fRedraw = TRUE);
+			void		SetScrollPos(INT iPos, BOOL  fRedraw = TRUE);
 			void		SetStyleImage(ScrollImageStyle type, LPCSTR pzFile);
 		public:
 			Event<void(BOOL, INT, INT, INT)> EVENT_PosChange;

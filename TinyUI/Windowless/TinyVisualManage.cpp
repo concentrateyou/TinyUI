@@ -14,7 +14,7 @@
 #include "TinyVisualTextBox.h"
 #include "TinyVisualPanel.h"
 #include "TinyVisualNative.h"
-#include "TinyVisualAnimate.h"
+#include "TinyVisualAnimation.h"
 
 namespace TinyUI
 {
@@ -225,7 +225,7 @@ namespace TinyUI
 			Register(TinyVisualTag::NATIVEWINDOW, CLASS_NAME(TinyVisualNative));
 			Register(TinyVisualTag::LIST, CLASS_NAME(TinyVisualList));
 			Register(TinyVisualTag::LISTITEM, CLASS_NAME(TinyVisualListItem));
-			Register(TinyVisualTag::ANIMATE, CLASS_NAME(TinyVisualAnimate));
+			Register(TinyVisualTag::ANIMATION, CLASS_NAME(TinyVisualAnimation));
 		}
 		TinyVisualResource::~TinyVisualResource()
 		{
@@ -316,7 +316,9 @@ namespace TinyUI
 		TinyImage* TinyVisualResource::operator[](const TinyString& szName)
 		{
 			TinyImage** value = m_staticImages.GetValue(szName);
-			return *value;
+			if (value != NULL)
+				return *value;
+			return NULL;
 		}
 		BOOL TinyVisualResource::Register(const TinyString& tag, const TinyString& value)
 		{

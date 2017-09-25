@@ -52,5 +52,7 @@
     <add name="blue_down" value="skin\button\blue_down.png"></add>
     <add name="blue_highlight" value="skin\button\blue_highlight.png"></add>
 
+    <add name="loading" value="skin\button\loading.gif"></add>
+    
   </image>
 </context>

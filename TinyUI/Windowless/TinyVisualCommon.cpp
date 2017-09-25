@@ -52,6 +52,8 @@ namespace TinyUI
 		const TinyString TinyVisualProperty::IMAGEDOWN = TEXT("image-down");
 		const TinyString TinyVisualProperty::IMAGEPUSH = TEXT("image-push");
 
+		const TinyString TinyVisualProperty::IMAGE = TEXT("image");
+
 		const TinyString TinyVisualProperty::ARROWNORMAL = TEXT("arrow-normal");
 		const TinyString TinyVisualProperty::ARROWDOWN = TEXT("arrow-down");
 		const TinyString TinyVisualProperty::ARROWHIGHLIGHT = TEXT("arrow-highlight");
@@ -80,7 +82,7 @@ namespace TinyUI
 		const TinyString TinyVisualTag::LIST = TEXT("list");
 		const TinyString TinyVisualTag::LISTITEM = TEXT("listitem");
 		const TinyString TinyVisualTag::LABEL = TEXT("label");
-		const TinyString TinyVisualTag::ANIMATE = TEXT("animate");
+		const TinyString TinyVisualTag::ANIMATION = TEXT("animation");
 		const TinyString TinyVisualTag::TAB = TEXT("tab");
 		const TinyString TinyVisualTag::STACKPANEL = TEXT("stackpanel");
 		const TinyString TinyVisualTag::HBOXLAYOUT = TEXT("hboxlayout");

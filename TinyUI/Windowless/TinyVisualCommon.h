@@ -57,6 +57,8 @@ namespace TinyUI
 			static const TinyString IMAGEDOWN;
 			static const TinyString IMAGEPUSH;
 
+			static const TinyString	IMAGE;
+
 			static const TinyString ARROWNORMAL;
 			static const TinyString ARROWDOWN;
 			static const TinyString ARROWHIGHLIGHT;
@@ -87,7 +89,7 @@ namespace TinyUI
 			static const TinyString WINDOW;
 			static const TinyString SYSCAPTION;
 			static const TinyString LABEL;
-			static const TinyString ANIMATE;
+			static const TinyString ANIMATION;
 			static const TinyString TAB;
 			static const TinyString BUTTON;
 			static const TinyString PANEL;

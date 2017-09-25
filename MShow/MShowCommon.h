@@ -29,6 +29,7 @@
 #include "Windowless/TinyVisualTab.h"
 #include "Windowless/TinyVisualTextBox.h"
 #include "Windowless/TinyVisualList.h"
+#include "Windowless/TinyVisualAnimation.h"
 #include "json/json.h"
 #include "Common.h"
 #include "x264Encode.h"

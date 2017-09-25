@@ -54,6 +54,7 @@ namespace TinyUI
 			void SetColumnCount(INT count);
 			BOOL Add(const TinyString& text);
 			BOOL Add(const TinyString& text, const TinyString& imageURL);
+			void RemoveAll();
 		protected:
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 		private:

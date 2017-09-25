@@ -36,6 +36,7 @@ namespace MShow
 			m_onSearchClick.Reset(new Delegate<void(EventArgs&)>(this, &MSearchController::OnSearchClick));
 			visual->EVENT_CLICK += m_onSearchClick;
 		}
+
 		return TRUE;
 	}
 
@@ -51,6 +52,22 @@ namespace MShow
 	}
 
 	void MSearchController::OnSearchClick(EventArgs& args)
+	{
+		TinyVisualAnimation* loading = static_cast<TinyVisualAnimation*>(m_view.GetDocument()->GetVisualByName("loading"));
+		if (loading != NULL)
+		{
+			loading->SetVisible(TRUE);
+			loading->BeginAnimate();
+		}
+		TinyVisualList* list = static_cast<TinyVisualList*>(m_view.GetDocument()->GetVisualByName("programs"));
+		if (list != NULL)
+		{
+			list->SetVisible(FALSE);
+		}
+		m_task.Submit(BindCallback(&MSearchController::OnMessagePump, this));
+	}
+
+	void MSearchController::OnMessagePump()
 	{
 		GetPrograms();
 	}
@@ -77,14 +94,24 @@ namespace MShow
 					Json::Value value;
 					if (reader.parse(context, value))
 					{
-						TinyVisualList* pList = static_cast<TinyVisualList*>(m_view.GetDocument()->GetVisualByName("programs"));
-						Json::Value result = value["data"]["result"];
-						for (INT i = 0;i < result.size();i++)
+						TinyVisualList* list = static_cast<TinyVisualList*>(m_view.GetDocument()->GetVisualByName("programs"));
+						if (list != NULL)
 						{
-							Json::Value val = result[i];
-							string programName = val["programName"].asString();
-							string imgUrl = val["imgUrl"].asString();
-							pList->Add(programName.c_str(), imgUrl.c_str());
+							list->SetVisible(TRUE);
+							list->RemoveAll();
+							Json::Value result = value["data"]["result"];
+							for (INT i = 0;i < result.size();i++)
+							{
+								Json::Value val = result[i];
+								string programName = val["programName"].asString();
+								string imgUrl = val["imgUrl"].asString();
+								list->Add(programName.c_str(), imgUrl.c_str());
+							}
+						}
+						TinyVisualAnimation* loading = static_cast<TinyVisualAnimation*>(m_view.GetDocument()->GetVisualByName("loading"));
+						if (loading != NULL)
+						{
+							loading->SetVisible(FALSE);
 						}
 						m_view.Invalidate();
 					}

@@ -236,7 +236,7 @@ namespace TinyUI
 				if (y > TO_CY(m_rectangle))
 				{
 					m_pVScrollbar->SetVisible(TRUE);
-					m_pVScrollbar->SetScrollInfo(0, y, TO_CY(m_rectangle), m_iNewPos);
+					m_pVScrollbar->SetScrollInfo(0, y, TO_CY(m_rectangle), m_iNewPos, FALSE);
 				}
 				else
 				{
@@ -271,7 +271,7 @@ namespace TinyUI
 				if (y > TO_CY(m_rectangle))
 				{
 					m_pVScrollbar->SetVisible(TRUE);
-					m_pVScrollbar->SetScrollInfo(0, y, TO_CY(m_rectangle), m_iNewPos);
+					m_pVScrollbar->SetScrollInfo(0, y, TO_CY(m_rectangle), m_iNewPos, FALSE);
 				}
 				else
 				{
@@ -280,6 +280,28 @@ namespace TinyUI
 				return TRUE;
 			}
 			return FALSE;
+		}
+		void TinyVisualList::RemoveAll()
+		{
+			m_iNewPos = 0;
+			m_dwCount = 1;
+			if (m_pVScrollbar != NULL)
+			{
+				m_pVScrollbar->SetVisible(FALSE);
+				m_pVScrollbar->SetScrollInfo(0, 0, 0, 0, FALSE);
+			}
+			TinyVisual* spvis = m_document->GetVisual(this, CMD_CHILD);
+			spvis = m_document->GetVisual(spvis, CMD_LAST);
+			while (spvis != NULL)
+			{
+				TinyVisual* spvisT = spvis;
+				spvis = m_document->GetVisual(spvis, CMD_PREV);
+				if (spvisT->IsKindOf(RUNTIME_CLASS(TinyVisualListItem)))
+				{
+					m_document->Destory(spvisT);
+				}
+			}
+			Invalidate();
 		}
 	}
 }

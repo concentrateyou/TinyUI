@@ -70,7 +70,7 @@
     <Filter Include="源文件\HDE">
       <UniqueIdentifier>{c8da406c-b2ee-46d2-8d76-f6c8b4546431}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\Media\IO">
+    <Filter Include="源文件\IO">
       <UniqueIdentifier>{96530135-0d89-4ed2-bdd7-53fb3bf386d1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -501,7 +501,7 @@
     <ClInclude Include="Windowless\TinyVisualList.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
-    <ClInclude Include="Windowless\TinyVisualAnimate.h">
+    <ClInclude Include="Windowless\TinyVisualAnimation.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
   </ItemGroup>
@@ -618,7 +618,7 @@
       <Filter>源文件\Control</Filter>
     </ClCompile>
     <ClCompile Include="IO\TinyIO.cpp">
-      <Filter>源文件\Media\IO</Filter>
+      <Filter>源文件\IO</Filter>
     </ClCompile>
     <ClCompile Include="Media\TinyWave.cpp">
       <Filter>源文件\Media</Filter>
@@ -675,7 +675,7 @@
       <Filter>源文件\Common</Filter>
     </ClCompile>
     <ClCompile Include="IO\TinyIOCP.cpp">
-      <Filter>源文件\Media\IO</Filter>
+      <Filter>源文件\IO</Filter>
     </ClCompile>
     <ClCompile Include="Render\TinyCanvas.cpp">
       <Filter>源文件\Render</Filter>
@@ -732,7 +732,7 @@
       <Filter>源文件\Media</Filter>
     </ClCompile>
     <ClCompile Include="IO\TinySharedMemory.cpp">
-      <Filter>源文件\Media\IO</Filter>
+      <Filter>源文件\IO</Filter>
     </ClCompile>
     <ClCompile Include="Common\TinyCore.cpp">
       <Filter>源文件\Common</Filter>
@@ -750,13 +750,13 @@
       <Filter>源文件\Render</Filter>
     </ClCompile>
     <ClCompile Include="IO\TinyWin32TaskPool.cpp">
-      <Filter>源文件\Media\IO</Filter>
+      <Filter>源文件\IO</Filter>
     </ClCompile>
     <ClCompile Include="IO\TinyRingQueue.cpp">
-      <Filter>源文件\Media\IO</Filter>
+      <Filter>源文件\IO</Filter>
     </ClCompile>
     <ClCompile Include="IO\TinyTaskBase.cpp">
-      <Filter>源文件\Media\IO</Filter>
+      <Filter>源文件\IO</Filter>
     </ClCompile>
     <ClCompile Include="Media\TinyWASAPIAudioCapture.cpp">
       <Filter>源文件\Media</Filter>
@@ -786,10 +786,10 @@
       <Filter>源文件\Network</Filter>
     </ClCompile>
     <ClCompile Include="IO\TinyTaskPool.cpp">
-      <Filter>源文件\Media\IO</Filter>
+      <Filter>源文件\IO</Filter>
     </ClCompile>
     <ClCompile Include="IO\TinyThread.cpp">
-      <Filter>源文件\Media\IO</Filter>
+      <Filter>源文件\IO</Filter>
     </ClCompile>
     <ClCompile Include="Common\TinyConcurrency.cpp">
       <Filter>源文件\Common</Filter>
@@ -885,10 +885,10 @@
       <Filter>源文件\Network</Filter>
     </ClCompile>
     <ClCompile Include="IO\TinyRingBuffer.cpp">
-      <Filter>源文件\Media\IO</Filter>
+      <Filter>源文件\IO</Filter>
     </ClCompile>
     <ClCompile Include="IO\TinyPipe.cpp">
-      <Filter>源文件\Media\IO</Filter>
+      <Filter>源文件\IO</Filter>
     </ClCompile>
     <ClCompile Include="Network\TinyHTTPCommon.cpp">
       <Filter>源文件\Network</Filter>
@@ -897,7 +897,7 @@
       <Filter>源文件\Media</Filter>
     </ClCompile>
     <ClCompile Include="IO\TinyFixedAlloc.cpp">
-      <Filter>源文件\Media\IO</Filter>
+      <Filter>源文件\IO</Filter>
     </ClCompile>
     <ClCompile Include="Media\TinySoundCapture.cpp">
       <Filter>源文件\Media</Filter>
@@ -923,7 +923,7 @@
     <ClCompile Include="Windowless\TinyVisualList.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
-    <ClCompile Include="Windowless\TinyVisualAnimate.cpp">
+    <ClCompile Include="Windowless\TinyVisualAnimation.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>

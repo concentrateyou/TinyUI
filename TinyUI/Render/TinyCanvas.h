@@ -117,6 +117,26 @@ namespace TinyUI
 		/// </summary>
 		BOOL DrawImage(TinyImage& image, const RECT& dstPaint, const RECT& dstCenter, const RECT& srcPaint, const RECT& srcCenter);
 		/// <summary>
+		/// 在指定位置绘制原始的Image
+		/// </summary>
+		BOOL DrawBitmap(HBITMAP hBitmap, const RECT& srcRect, INT x, INT y);
+		/// <summary>
+		/// 在指定位置绘制指定大小的Image
+		/// </summary>
+		BOOL DrawBitmap(HBITMAP hBitmap, const RECT& srcRect, INT x, INT y, INT cx, INT cy);
+		/// <summary>
+		/// 在指定位置绘制原始Image的部分缩放自适应
+		/// </summary>
+		BOOL DrawBitmap(HBITMAP hBitmap, const RECT& destRect, const RECT& srcRect);
+		/// <summary>
+		/// 绘制9宫格中间矩形和4个角大小不变其余的拉伸
+		/// </summary>
+		BOOL DrawBitmap(HBITMAP hBitmap, const RECT& dstPaint, const RECT& srcPaint, const RECT& srcCenter);
+		/// <summary>
+		/// 绘制9宫格中间矩形和4个角大小不变其余的拉伸
+		/// </summary>
+		BOOL DrawBitmap(HBITMAP hBitmap, const RECT& dstPaint, const RECT& dstCenter, const RECT& srcPaint, const RECT& srcCenter);
+		/// <summary>
 		/// 绘制线(必须设置铅笔)
 		/// </summary>
 		BOOL DrawLine(INT sx, INT sy, INT dx, INT dy);
