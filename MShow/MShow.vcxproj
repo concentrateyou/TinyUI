@@ -162,7 +162,6 @@
     <ClInclude Include="MClock.h" />
     <ClInclude Include="MFLVPlayer.h" />
     <ClInclude Include="MFLVTask.h" />
-    <ClInclude Include="MMainWindow.h" />
     <ClInclude Include="MPacketQueue.h" />
     <ClInclude Include="MPreviewController.h" />
     <ClInclude Include="MPreviewView.h" />

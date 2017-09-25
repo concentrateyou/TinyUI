@@ -5,6 +5,13 @@ using namespace TinyUI;
 
 namespace MShow
 {
+	typedef struct tagSEARCH_ITEM
+	{
+		CHAR	Name[MAX_PATH];
+		LONG	BeginTime;
+		LONG	EndTime;
+	}SEARCH_ITEM;
+
 	class MSearchWindow;
 	/// <summary>
 	/// ‘§¿¿

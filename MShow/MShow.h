@@ -4,6 +4,8 @@
 #include "MShowController.h"
 #include "MSearchWindow.h"
 #include "MSearchController.h"
+#include "MClientWindow.h"
+#include "MClientController.h"
 using namespace TinyUI;
 
 namespace MShow
@@ -16,8 +18,10 @@ namespace MShow
 	public:
 		BOOL				Initialize(HINSTANCE hInstance, LPTSTR  lpCmdLine, INT nCmdShow, LPCTSTR lpTableName);
 		BOOL				Uninitialize();
-		MShowWindow&		GetView();
-		MShowController&	GetController();
+		MSearchWindow&		GetSearchView();
+		MSearchController&	GetSearchController();
+		MClientWindow&		GetClientView();
+		MClientController&	GetClientController();
 		INT					Run();
 		QWORD				GetQPCTimeNS();
 		QWORD				GetQPCTimeMS();
@@ -26,17 +30,21 @@ namespace MShow
 		void				SetCurrentAudioTS(LONGLONG ts);
 		LONGLONG			GetCurrentAudioTS();
 		string				GetDefaultPath();
+		MAppConfig&			AppConfig();
 	public:
 		static MShowApp&	GetInstance() throw();
 	private:
+		LONGLONG			m_audioTS;
 		string				m_szPath;
 		TinyLock			m_lock;
 		MShowWindow			m_window;
 		MShowController		m_controller;
 		MSearchWindow		m_searchWindow;
 		MSearchController	m_searchCTRL;
+		MClientWindow		m_clientWindow;
+		MClientController	m_clientCRTL;
 		TinyMessageLoop		m_msgLoop;
-		LONGLONG			m_audioTS;
+		MAppConfig			m_appConfig;
 	};
 }
 

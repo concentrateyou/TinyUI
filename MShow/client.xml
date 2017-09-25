@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window name="mshow" text="MShow工具" position="100,100" size="818,730" minsize="818,730" maxsize="818,730">
+  <syscaption name ="syscaption" position="0,0" size="818,27" background-image="syscaption">
+    <label name="title" position="10,0" size="60,27" text="MShow工具" text-align="left|vcenter" text-color="255,255,255" >
+    </label>
+    <button name="sysmin" tooltip="Min" position="758,0" size="30,27"
+            image-normal="sysbtn_min_normal"
+            image-highlight="sysbtn_min_hover"
+            image-down="sysbtn_min_down">
+    </button>
+    <button name="sysclose" tooltip="Close" position="788,0" size="30,27"
+            image-normal="sysbtn_close_normal"
+            image-highlight="sysbtn_close_hover"
+            image-down="sysbtn_close_down">
+    </button>
+  </syscaption>
+  <panel position="0,27" size="818,703" background-image="panel">
+    <nativewindow name="previewWND" position="25,20" size="768,432">
+    </nativewindow>
+  </panel>
+</window>

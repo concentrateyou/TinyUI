@@ -111,9 +111,6 @@
     <ClInclude Include="MSearchWindow.h">
       <Filter>头文件\Search</Filter>
     </ClInclude>
-    <ClInclude Include="MMainWindow.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="MClientController.h">
       <Filter>头文件\Client</Filter>
     </ClInclude>

@@ -56,7 +56,7 @@ namespace MShow
 			LOG(ERROR) << "[MAudioDSP] Open Fail";
 			return FALSE;
 		}
-		MAppConfig& config = MShow::MShowApp::GetInstance().GetController().AppConfig();
+		MAppConfig& config = MShow::MShowApp::GetInstance().AppConfig();
 		string szFile = config.GetSaveFile();
 		if (szFile.size() > 0)
 		{
@@ -92,7 +92,7 @@ namespace MShow
 			LOG(ERROR) << "[MAudioDSP] Open Fail";
 			return FALSE;
 		}
-		MAppConfig& config = MShow::MShowApp::GetInstance().GetController().AppConfig();
+		MAppConfig& config = MShow::MShowApp::GetInstance().AppConfig();
 		string szFile = config.GetSaveFile();
 		if (szFile.size() > 0)
 		{
@@ -149,7 +149,7 @@ namespace MShow
 			LOG(ERROR) << "[MAudioDSP] Open Fail";
 			return FALSE;
 		}
-		MAppConfig& config = MShow::MShowApp::GetInstance().GetController().AppConfig();
+		MAppConfig& config = MShow::MShowApp::GetInstance().AppConfig();
 		string szFile = config.GetSaveFile();
 		if (szFile.size() > 0)
 		{

@@ -132,7 +132,7 @@ namespace MShow
 		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
 		{
 			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
-			vector<string> ips = m_appConfig.GetIPList();
+			vector<string> ips = MShowApp::GetInstance().AppConfig().GetIPList();
 			for (INT i = 0;i < ips.size();i++)
 			{
 				val->AddOption(ips[i].c_str(), ips[i].c_str());
@@ -167,10 +167,6 @@ namespace MShow
 		}
 	}
 
-	MAppConfig& MShowController::AppConfig()
-	{
-		return m_appConfig;
-	}
 	CLSID MShowController::GetSpeakCLSID()
 	{
 		CLSID clsid = GUID_NULL;

@@ -2,6 +2,7 @@
 #include "MSearchController.h"
 #include "Network/TinyHTTPClient.h"
 using namespace TinyUI::Network;
+using namespace TinyUI::Windowless;
 
 namespace MShow
 {
@@ -67,9 +68,13 @@ namespace MShow
 		m_task.Submit(BindCallback(&MSearchController::OnMessagePump, this));
 	}
 
-	void MSearchController::OnItemClick(TinyVisual*, EventArgs& args)
+	void MSearchController::OnItemClick(TinyVisual* spvis, EventArgs& args)
 	{
+		if (spvis->IsKindOf(RUNTIME_CLASS(TinyVisualListItem)))
+		{
+			TinyVisualListItem* ps = static_cast<TinyVisualListItem*>(spvis);
 
+		}
 	}
 
 	void MSearchController::OnMessagePump()
@@ -94,12 +99,14 @@ namespace MShow
 		TinyHTTPClient client;
 		client.GetRequest().SetVerbs(TinyHTTPClient::POST);
 		client.GetRequest().Add(TinyHTTPClient::ContentType, "application/x-www-form-urlencoded");
+		client.GetRequest().Add("Sign", "#f93Uc31K24()_@");
 		TinyString szName = search->GetText();
 		string body;
 		body += "pname=";
 		body += szName.IsEmpty() ? "" : szName.CSTR();
+		body += "&fullMode=true";
 		client.GetRequest().SetBody(body);
-		if (!client.Open("http://10.23.84.150:7777/api/director/list"))
+		if (!client.Open("http://10.23.84.150/api/director/list"))
 		{
 			TRACE("[MSearchController][GetPrograms] Open Fail\n");
 			LOG(ERROR) << "[MSearchController][GetPrograms] " << "Open Fail";
@@ -136,7 +143,11 @@ namespace MShow
 				Json::Value val = result[i];
 				string programName = val["programName"].asString();
 				string imgUrl = val["imgUrl"].asString();
-				list->Add(programName.c_str(), imgUrl.c_str());
+				TinyVisualListItem* pItem = list->Add(programName.c_str(), imgUrl.c_str());
+				if (pItem != NULL)
+				{
+					pItem->EVENT_DBCLICK += m_onItemClick;
+				}
 			}
 		}
 		else
@@ -150,5 +161,5 @@ namespace MShow
 		loading->EndAnimate();
 		loading->SetVisible(FALSE);
 		m_view.Invalidate();
-	}
+	};
 }

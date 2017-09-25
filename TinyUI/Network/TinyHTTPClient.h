@@ -46,6 +46,7 @@ namespace TinyUI
 			INT		ReadAsBinary(CHAR*& ps);
 		private:
 			CHAR* ReadLine(CHAR* s);
+			BOOL ParseTransferEncoding(CHAR* line);
 			BOOL ParseAttribute(CHAR* ps1, CHAR* ps2);
 			BOOL ParseResponse(CHAR* s, INT size);
 			BOOL ParseStatusLine(CHAR* ps1, CHAR* ps2);

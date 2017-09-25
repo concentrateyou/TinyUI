@@ -58,7 +58,6 @@ namespace MShow
 		TinyPerformanceTimer	m_timeQPC;
 		TinyScopedPtr<AudioSdk>	m_audioSDK;
 		MAudioQueue				m_audioQueue;
-		MAppConfig				m_appConfig;
 		TinyTaskBase			m_task;
 		TinyEvent				m_event;
 		SpeakTest				m_speakTest;

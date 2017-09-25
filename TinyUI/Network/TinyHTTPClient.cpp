@@ -92,7 +92,7 @@ namespace TinyUI
 		{
 			if (!this->Contains(TinyHTTPClient::ContentLength))
 			{
-				val.reserve(m_context.GetSize());
+				val.resize(m_context.GetSize());
 				memcpy(&val[0], m_context.GetPointer(), m_context.GetSize());
 				return TRUE;
 			}
@@ -101,7 +101,7 @@ namespace TinyUI
 				INT size = std::stoi(this->GetAttribute(TinyHTTPClient::ContentLength));
 				if (size == m_context.GetSize())
 				{
-					val.reserve(size);
+					val.resize(size);
 					memcpy(&val[0], m_context.GetPointer(), size);
 					return TRUE;
 				}
@@ -110,7 +110,7 @@ namespace TinyUI
 					CHAR* ps = NULL;
 					INT remainder = size - m_context.GetSize();
 					INT iRes = m_client.Read(ps, remainder);
-					val.reserve(size);
+					val.resize(size);
 					memcpy(&val[0], m_context.GetPointer(), m_context.GetSize());
 					memcpy(&val[0] + m_context.GetSize(), ps, iRes);
 					return TRUE;
@@ -147,6 +147,30 @@ namespace TinyUI
 			return -1;
 		}
 
+		BOOL HTTPResponse::ParseTransferEncoding(CHAR* line)
+		{
+			while (line != NULL)
+			{
+				CHAR* ps = line;
+				line = ReadLine(ps);
+				INT offset = line - ps - 2;
+				if (offset > 0)
+				{
+					INT chunksize = 0;
+					sscanf_s(ps, "%x", &chunksize, offset);//16进制转10进制
+					if (chunksize == 0)
+						break;
+					m_context.Add(line, chunksize);//获得Body数据
+					line += chunksize;
+					continue;
+				}
+				if (offset == 0)
+					break;
+				return FALSE;
+			}
+			return TRUE;
+		}
+
 		BOOL HTTPResponse::ParseResponse(CHAR* s, INT size)
 		{
 			m_context.Clear();
@@ -159,8 +183,20 @@ namespace TinyUI
 				line = ReadLine(ps);
 				if (*line == '\r' && *(line + 1) == '\n')//应答头解析完成
 				{
-					INT offset = line + 2 - s;
-					m_context.Add(line + 2, size - offset);//保存剩余数据
+					line += 2;
+					if (this->Contains(TinyHTTPClient::TransferEncoding))//开始解析TransferEncoding
+					{
+						if (this->GetAttribute(TinyHTTPClient::TransferEncoding) == "chunked")//目前只处理分块
+						{
+							if (!ParseTransferEncoding(line))
+								return FALSE;
+						}
+					}
+					else
+					{
+						INT offset = line - s;
+						m_context.Add(line, size - offset);//保存剩余数据
+					}
 					break;
 				}
 				if (!ParseAttribute(ps, line - 2))

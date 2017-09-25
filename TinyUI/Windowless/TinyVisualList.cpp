@@ -217,7 +217,7 @@ namespace TinyUI
 		{
 			m_count = count;
 		}
-		BOOL TinyVisualList::Add(const TinyString& text)
+		TinyVisualListItem* TinyVisualList::Add(const TinyString& text)
 		{
 			TinyVisualListItem* ps = static_cast<TinyVisualListItem*>(m_document->Create(TinyVisualTag::LISTITEM, this));
 			if (ps != NULL)
@@ -242,11 +242,11 @@ namespace TinyUI
 				{
 					m_pVScrollbar->SetVisible(FALSE);
 				}
-				return TRUE;
+				return ps;
 			}
-			return FALSE;
+			return NULL;
 		}
-		BOOL TinyVisualList::Add(const TinyString& text, const TinyString& imageURL)
+		TinyVisualListItem* TinyVisualList::Add(const TinyString& text, const TinyString& imageURL)
 		{
 			TinyVisualListItem* ps = static_cast<TinyVisualListItem*>(m_document->Create(TinyVisualTag::LISTITEM, this));
 			if (ps != NULL)
@@ -277,9 +277,9 @@ namespace TinyUI
 				{
 					m_pVScrollbar->SetVisible(FALSE);
 				}
-				return TRUE;
+				return ps;
 			}
-			return FALSE;
+			return NULL;
 		}
 		void TinyVisualList::RemoveAll()
 		{

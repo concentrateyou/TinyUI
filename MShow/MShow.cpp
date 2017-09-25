@@ -49,6 +49,7 @@ namespace MShow
 	MShowApp::MShowApp()
 		:m_controller(m_window),
 		m_searchCTRL(m_searchWindow),
+		m_clientCRTL(m_clientWindow),
 		m_audioTS(0)
 	{
 		timeBeginPeriod(1);
@@ -93,13 +94,23 @@ namespace MShow
 		return TRUE;
 	}
 
-	MShowWindow& MShowApp::GetView()
+	MSearchWindow& MShowApp::GetSearchView()
 	{
-		return m_window;
+		return m_searchWindow;
 	}
-	MShowController& MShowApp::GetController()
+	MSearchController& MShowApp::GetSearchController()
 	{
-		return m_controller;
+		return m_searchCTRL;
+	}
+
+	MClientWindow& MShowApp::GetClientView()
+	{
+		return m_clientWindow;
+	}
+
+	MClientController& MShowApp::GetClientController()
+	{
+		return m_clientCRTL;
 	}
 
 	MShowApp& MShowApp::GetInstance() throw()
@@ -107,6 +118,12 @@ namespace MShow
 		static MShowApp app;
 		return app;
 	}
+
+	MAppConfig& MShowApp::AppConfig()
+	{
+		return m_appConfig;
+	}
+
 	QWORD MShowApp::GetQPCTimeNS()
 	{
 		LARGE_INTEGER currentTime;
