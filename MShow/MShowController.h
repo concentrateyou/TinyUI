@@ -36,14 +36,14 @@ namespace MShow
 		void OnAudioDSP(BYTE* bits, LONG size);
 		void OnMessagePump();
 	private:
-		void OnPreviewClick(EventArgs&);
-		void OnRecordClick(EventArgs&);
-		void OnMinimumClick(EventArgs& args);
-		void OnCloseClick(EventArgs& args);
-		void OnMicrophoneTestClick(EventArgs& args);
-		void OnSpeakerTestClick(EventArgs& args);
-		void OnMicrophoneFocus(FocusEventArgs& args);
-		void OnSpeakerFocus(FocusEventArgs& args);
+		void OnPreviewClick(TinyVisual*, EventArgs&);
+		void OnRecordClick(TinyVisual*, EventArgs&);
+		void OnMinimumClick(TinyVisual*, EventArgs& args);
+		void OnCloseClick(TinyVisual*, EventArgs& args);
+		void OnMicrophoneTestClick(TinyVisual*, EventArgs& args);
+		void OnSpeakerTestClick(TinyVisual*, EventArgs& args);
+		void OnMicrophoneFocus(TinyVisual*, FocusEventArgs& args);
+		void OnSpeakerFocus(TinyVisual*, FocusEventArgs& args);
 	private:
 		CLSID GetSpeakCLSID();
 		CLSID GetMicrophoneCLSID();
@@ -64,14 +64,14 @@ namespace MShow
 		SpeakTest				m_speakTest;
 		MicrophoneTest			m_microphoneTest;
 		TinyScopedPtr<MPreviewController>			m_preview;
-		TinyScopedPtr<Delegate<void(EventArgs&)>>   m_onMinimumClick;
-		TinyScopedPtr<Delegate<void(EventArgs&)>>   m_onCloseClick;
-		TinyScopedPtr<Delegate<void(EventArgs&)>>   m_onPreviewClick;
-		TinyScopedPtr<Delegate<void(EventArgs&)>>   m_onRecordClick;
-		TinyScopedPtr<Delegate<void(EventArgs&)>>   m_onMicrophoneTestClick;
-		TinyScopedPtr<Delegate<void(EventArgs&)>>   m_onSpeakerTestClick;
-		TinyScopedPtr<Delegate<void(FocusEventArgs&)>>   m_onSpeakerFocus;
-		TinyScopedPtr<Delegate<void(FocusEventArgs&)>>   m_onMicrophoneFocus;
+		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>   m_onMinimumClick;
+		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>   m_onCloseClick;
+		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>   m_onPreviewClick;
+		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>   m_onRecordClick;
+		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>   m_onMicrophoneTestClick;
+		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>   m_onSpeakerTestClick;
+		TinyScopedPtr<Delegate<void(TinyVisual*, FocusEventArgs&)>>   m_onSpeakerFocus;
+		TinyScopedPtr<Delegate<void(TinyVisual*, FocusEventArgs&)>>   m_onMicrophoneFocus;
 	};
 }
 

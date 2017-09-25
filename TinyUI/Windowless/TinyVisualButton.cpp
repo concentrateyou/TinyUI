@@ -128,7 +128,7 @@ namespace TinyUI
 			TinyRectangle s = m_document->GetWindowRect(this);
 			m_document->Redraw(&s);
 			m_document->SetCapture(NULL);
-			EVENT_CLICK(EventArgs());
+			EVENT_CLICK(this, EventArgs());
 			return TinyVisual::OnLButtonUp(pos, dwFlags);
 		}
 		HRESULT	TinyVisualButton::OnLButtonDBClick(const TinyPoint& pos, DWORD dwFlags)
@@ -136,7 +136,7 @@ namespace TinyUI
 			m_dwFlag = DOWN;
 			TinyRectangle s = m_document->GetWindowRect(this);
 			m_document->Redraw(&s);
-			EVENT_DBCLICK(EventArgs());
+			EVENT_DBCLICK(this, EventArgs());
 			return TinyVisual::OnLButtonDown(pos, dwFlags);
 		}
 	}

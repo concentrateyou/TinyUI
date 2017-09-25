@@ -130,23 +130,23 @@ namespace TinyUI
 			TinyString			GetProperty(const TinyString& name);
 			BOOL				IsProperty(const TinyString& name);
 		public:
-			Event<void(EventArgs&)>			EVENT_CREATE;
-			Event<void(EventArgs&)>			EVENT_DESTORY;
-			Event<void(EventArgs&)>			EVENT_INITIALIZE;
-			Event<void(EventArgs&)>			EVENT_CLICK;
-			Event<void(EventArgs&)>			EVENT_DBCLICK;
-			Event<void(MouseEventArgs&)>	EVENT_MOUSEMOVE;
-			Event<void(MouseEventArgs&)>	EVENT_MOUSEWHEEL;
-			Event<void(MouseEventArgs&)>	EVENT_MOUSEDOWN;
-			Event<void(MouseEventArgs&)>	EVENT_MOUSEUP;
-			Event<void(MouseEventArgs&)>	EVENT_MOUSECLICK;
-			Event<void(MouseEventArgs&)>	EVENT_MOUSEDBCLICK;
-			Event<void(KeyEventArgs&)>		EVENT_KEYDOWN;
-			Event<void(KeyEventArgs&)>		EVENT_KEYUP;
-			Event<void(KeyEventArgs&)>		EVENT_CHAR;
-			Event<void(FocusEventArgs&)>	EVENT_FOCUS;
-			Event<void(CaptureEventArgs&)>	EVENT_CAPTURE;
-			Event<void(ActiveEventArgs&)>	EVENT_ACTIVE;
+			Event<void(TinyVisual*, EventArgs&)>		EVENT_CREATE;
+			Event<void(TinyVisual*, EventArgs&)>		EVENT_DESTORY;
+			Event<void(TinyVisual*, EventArgs&)>		EVENT_INITIALIZE;
+			Event<void(TinyVisual*, EventArgs&)>		EVENT_CLICK;
+			Event<void(TinyVisual*, EventArgs&)>		EVENT_DBCLICK;
+			Event<void(TinyVisual*, MouseEventArgs&)>	EVENT_MOUSEMOVE;
+			Event<void(TinyVisual*, MouseEventArgs&)>	EVENT_MOUSEWHEEL;
+			Event<void(TinyVisual*, MouseEventArgs&)>	EVENT_MOUSEDOWN;
+			Event<void(TinyVisual*, MouseEventArgs&)>	EVENT_MOUSEUP;
+			Event<void(TinyVisual*, MouseEventArgs&)>	EVENT_MOUSECLICK;
+			Event<void(TinyVisual*, MouseEventArgs&)>	EVENT_MOUSEDBCLICK;
+			Event<void(TinyVisual*, KeyEventArgs&)>		EVENT_KEYDOWN;
+			Event<void(TinyVisual*, KeyEventArgs&)>		EVENT_KEYUP;
+			Event<void(TinyVisual*, KeyEventArgs&)>		EVENT_CHAR;
+			Event<void(TinyVisual*, FocusEventArgs&)>	EVENT_FOCUS;
+			Event<void(TinyVisual*, CaptureEventArgs&)>	EVENT_CAPTURE;
+			Event<void(TinyVisual*, ActiveEventArgs&)>	EVENT_ACTIVE;
 		protected:
 			DWORD				m_dwCount;//还是孩子节点个数
 			TinyVisualDocument*	m_document;

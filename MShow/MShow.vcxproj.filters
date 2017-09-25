@@ -31,6 +31,12 @@
     <Filter Include="源文件\Search">
       <UniqueIdentifier>{8791f5f2-39be-4246-8a64-9e30af5a8517}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\Client">
+      <UniqueIdentifier>{f24408f0-19ab-4cae-b23a-e75496d21e22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Client">
+      <UniqueIdentifier>{f5a182fd-41d0-41c2-9947-e537ff59a05b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -105,6 +111,12 @@
     <ClInclude Include="MSearchWindow.h">
       <Filter>头文件\Search</Filter>
     </ClInclude>
+    <ClInclude Include="MMainWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MClientController.h">
+      <Filter>头文件\Client</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -169,6 +181,12 @@
     </ClCompile>
     <ClCompile Include="MSearchWindow.cpp">
       <Filter>源文件\Search</Filter>
+    </ClCompile>
+    <ClCompile Include="MClientController.cpp">
+      <Filter>源文件\Client</Filter>
+    </ClCompile>
+    <ClCompile Include="MClientWindow.cpp">
+      <Filter>源文件\Client</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

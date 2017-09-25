@@ -298,6 +298,8 @@ namespace TinyUI
 				spvis = m_document->GetVisual(spvis, CMD_PREV);
 				if (spvisT->IsKindOf(RUNTIME_CLASS(TinyVisualListItem)))
 				{
+					TinyVisualListItem* pItem = static_cast<TinyVisualListItem*>(spvisT);
+					TinyVisualResource::GetInstance().Remove(pItem->GetBackgroundImage());
 					m_document->Destory(spvisT);
 				}
 			}

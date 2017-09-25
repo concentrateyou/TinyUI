@@ -205,7 +205,7 @@ namespace TinyUI
 			m_dwFlag = PUSH;
 			TinyRectangle s = m_document->GetWindowRect(this);
 			m_document->Redraw(&s);
-			EVENT_CLICK(EventArgs());
+			EVENT_CLICK(this, EventArgs());
 			return TinyVisual::OnLButtonUp(pos, dwFlags);
 		}
 		void TinyVisualComboBox::OnPopupActive(ActiveEventArgs& args)

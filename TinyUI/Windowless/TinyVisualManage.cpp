@@ -256,11 +256,11 @@ namespace TinyUI
 		}
 		BOOL TinyVisualResource::Add(TinyImage* image)
 		{
-			return m_dynamicImages.Add(image);
+			return m_images1.Add(image);
 		}
 		TinyImage* TinyVisualResource::Add(const TinyString& szName, const TinyString& szFile)
 		{
-			TinyImage** value = m_staticImages.GetValue(szName);
+			TinyImage** value = m_images2.GetValue(szName);
 			if (value != NULL)
 			{
 				return *value;
@@ -275,7 +275,7 @@ namespace TinyUI
 				TinyImage* image = new TinyImage();
 				if (image != NULL && image->Open(szNewFile.c_str()))
 				{
-					ASSERT(m_staticImages.Add(szName, image));
+					ASSERT(m_images2.Add(szName, image));
 					return image;
 				}
 			}
@@ -283,39 +283,64 @@ namespace TinyUI
 		}
 		void TinyVisualResource::Remove(const TinyString& szName)
 		{
-			TinyImage** value = m_staticImages.GetValue(szName);
+			TinyImage** value = m_images2.GetValue(szName);
 			if (value != NULL)
 			{
 				(*value)->Close();
 			}
 			SAFE_DELETE(*value);
-			m_staticImages.Remove(szName);
+			m_images2.Remove(szName);
+		}
+		void TinyVisualResource::Remove(TinyImage* image)
+		{
+			ITERATOR pos = m_images2.First();
+			while (pos != NULL)
+			{
+				TinyImage** value = m_images2.GetValueAt(pos);
+				if (value != NULL && *value == image)
+				{
+					(*value)->Close();
+					SAFE_DELETE(*value);
+					break;
+				}
+				pos = m_images2.Next(pos);
+			}
+			for (INT i = 0;i < m_images1.GetSize();i++)
+			{
+				if (m_images1[i] == image)
+				{
+					m_images1.Remove(image);
+					image->Close();
+					SAFE_DELETE(image);
+					break;
+				}
+			}
 		}
 		void TinyVisualResource::RemoveAll()
 		{
-			ITERATOR pos = m_staticImages.First();
+			ITERATOR pos = m_images2.First();
 			while (pos != NULL)
 			{
-				TinyImage** value = m_staticImages.GetValueAt(pos);
+				TinyImage** value = m_images2.GetValueAt(pos);
 				if (value != NULL)
 				{
 					(*value)->Close();
 				}
 				SAFE_DELETE(*value);
-				pos = m_staticImages.Next(pos);
+				pos = m_images2.Next(pos);
 			}
-			m_staticImages.RemoveAll();
+			m_images2.RemoveAll();
 
-			for (INT i = 0;i < m_dynamicImages.GetSize();i++)
+			for (INT i = 0;i < m_images1.GetSize();i++)
 			{
-				m_dynamicImages[i]->Close();
-				SAFE_DELETE(m_dynamicImages[i]);
+				m_images1[i]->Close();
+				SAFE_DELETE(m_images1[i]);
 			}
-			m_dynamicImages.RemoveAll();
+			m_images1.RemoveAll();
 		}
 		TinyImage* TinyVisualResource::operator[](const TinyString& szName)
 		{
-			TinyImage** value = m_staticImages.GetValue(szName);
+			TinyImage** value = m_images2.GetValue(szName);
 			if (value != NULL)
 				return *value;
 			return NULL;

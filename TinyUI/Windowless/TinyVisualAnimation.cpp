@@ -14,12 +14,10 @@ namespace TinyUI
 			m_index(0),
 			m_animation(NULL)
 		{
-
 		}
 		TinyVisualAnimation::TinyVisualAnimation(TinyVisual* spvisParent, TinyVisualDocument* vtree)
 			: TinyVisual(spvisParent, vtree)
 		{
-
 		}
 		TinyVisualAnimation::~TinyVisualAnimation()
 		{
@@ -92,6 +90,7 @@ namespace TinyUI
 			{
 				bRes = TinyApplication::GetInstance()->GetTimers().Unregister(m_hTimer);
 				m_hTimer = NULL;
+				Sleep(500);
 			}
 			m_index = 0;
 			return bRes;

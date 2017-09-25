@@ -47,13 +47,13 @@ namespace MShow
 		TinyVisual* visual = m_window.GetDocument()->GetVisualByName("sysmin");
 		if (visual != NULL)
 		{
-			m_onMinimumClick.Reset(new Delegate<void(EventArgs&)>(this, &MShowController::OnMinimumClick));
+			m_onMinimumClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MShowController::OnMinimumClick));
 			visual->EVENT_CLICK += m_onMinimumClick;
 		}
 		visual = m_window.GetDocument()->GetVisualByName("sysclose");
 		if (visual != NULL)
 		{
-			m_onCloseClick.Reset(new Delegate<void(EventArgs&)>(this, &MShowController::OnCloseClick));
+			m_onCloseClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MShowController::OnCloseClick));
 			visual->EVENT_CLICK += m_onCloseClick;
 		}
 		visual = m_window.GetDocument()->GetVisualByName("previewWND");
@@ -65,13 +65,13 @@ namespace MShow
 		visual = m_window.GetDocument()->GetVisualByName("btnPreview");
 		if (visual != NULL)
 		{
-			m_onPreviewClick.Reset(new Delegate<void(EventArgs&)>(this, &MShowController::OnPreviewClick));
+			m_onPreviewClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MShowController::OnPreviewClick));
 			visual->EVENT_CLICK += m_onPreviewClick;
 		}
 		visual = m_window.GetDocument()->GetVisualByName("btnRecord");
 		if (visual != NULL)
 		{
-			m_onRecordClick.Reset(new Delegate<void(EventArgs&)>(this, &MShowController::OnRecordClick));//开始录音
+			m_onRecordClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MShowController::OnRecordClick));//开始录音
 			visual->EVENT_CLICK += m_onRecordClick;
 		}
 		visual = m_window.GetDocument()->GetVisualByName("txtURL");
@@ -115,17 +115,17 @@ namespace MShow
 		visual = m_window.GetDocument()->GetVisualByName("btnMicrophoneTest");
 		if (visual != NULL)
 		{
-			m_onMicrophoneTestClick.Reset(new Delegate<void(EventArgs&)>(this, &MShowController::OnMicrophoneTestClick));
+			m_onMicrophoneTestClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MShowController::OnMicrophoneTestClick));
 			visual->EVENT_CLICK += m_onMicrophoneTestClick;
-			m_onMicrophoneFocus.Reset(new Delegate<void(FocusEventArgs&)>(this, &MShowController::OnMicrophoneFocus));
+			m_onMicrophoneFocus.Reset(new Delegate<void(TinyVisual*, FocusEventArgs&)>(this, &MShowController::OnMicrophoneFocus));
 			visual->EVENT_FOCUS += m_onMicrophoneFocus;
 		}
 		visual = m_window.GetDocument()->GetVisualByName("btnSpeakerTest");
 		if (visual != NULL)
 		{
-			m_onSpeakerTestClick.Reset(new Delegate<void(EventArgs&)>(this, &MShowController::OnSpeakerTestClick));
+			m_onSpeakerTestClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MShowController::OnSpeakerTestClick));
 			visual->EVENT_CLICK += m_onSpeakerTestClick;
-			m_onSpeakerFocus.Reset(new Delegate<void(FocusEventArgs&)>(this, &MShowController::OnSpeakerFocus));
+			m_onSpeakerFocus.Reset(new Delegate<void(TinyVisual*, FocusEventArgs&)>(this, &MShowController::OnSpeakerFocus));
 			visual->EVENT_FOCUS += m_onSpeakerFocus;
 		}
 		visual = m_window.GetDocument()->GetVisualByName("serverIP");
@@ -205,18 +205,18 @@ namespace MShow
 		}
 		return clsid;
 	}
-	void MShowController::OnMinimumClick(EventArgs& args)
+	void MShowController::OnMinimumClick(TinyVisual*, EventArgs& args)
 	{
 		m_window.GetDocument()->ReleaseCapture();//必须释放捕获
 		SendMessage(m_window.Handle(), WM_SYSCOMMAND, SC_MINIMIZE, NULL);
 	}
 
-	void MShowController::OnCloseClick(EventArgs& args)
+	void MShowController::OnCloseClick(TinyVisual*, EventArgs& args)
 	{
 		SendMessage(m_window.Handle(), WM_CLOSE, NULL, NULL);
 	}
 
-	void MShowController::OnMicrophoneTestClick(EventArgs& args)
+	void MShowController::OnMicrophoneTestClick(TinyVisual*, EventArgs& args)
 	{
 		TinyVisual* visual = m_window.GetDocument()->GetVisualByName("btnMicrophoneTest");
 		if (visual != NULL)
@@ -246,7 +246,7 @@ namespace MShow
 		}
 	}
 
-	void MShowController::OnSpeakerTestClick(EventArgs& args)
+	void MShowController::OnSpeakerTestClick(TinyVisual*, EventArgs& args)
 	{
 		TinyVisual* visual = m_window.GetDocument()->GetVisualByName("btnSpeakerTest");
 		if (visual != NULL)
@@ -269,7 +269,7 @@ namespace MShow
 		}
 	}
 
-	void MShowController::OnMicrophoneFocus(FocusEventArgs& args)
+	void MShowController::OnMicrophoneFocus(TinyVisual*, FocusEventArgs& args)
 	{
 		if (!args.IsFocus())
 		{
@@ -277,7 +277,7 @@ namespace MShow
 		}
 	}
 
-	void MShowController::OnSpeakerFocus(FocusEventArgs& args)
+	void MShowController::OnSpeakerFocus(TinyVisual*, FocusEventArgs& args)
 	{
 		if (!args.IsFocus())
 		{
@@ -285,7 +285,7 @@ namespace MShow
 		}
 	}
 
-	void MShowController::OnPreviewClick(EventArgs& args)
+	void MShowController::OnPreviewClick(TinyVisual*, EventArgs& args)
 	{
 		TinyVisual* visual = m_window.GetDocument()->GetVisualByName("txtURL");
 		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualTextBox)))
@@ -307,7 +307,7 @@ namespace MShow
 		}
 	}
 
-	void MShowController::OnRecordClick(EventArgs& args)
+	void MShowController::OnRecordClick(TinyVisual*, EventArgs& args)
 	{
 		TinyVisual* visual = m_window.GetDocument()->GetVisualByName("serverIP");
 		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))

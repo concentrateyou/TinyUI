@@ -17,17 +17,19 @@ namespace MShow
 		virtual ~MSearchController();
 		BOOL	Initialize();
 	private:
-		void OnMinimumClick(EventArgs& args);
-		void OnCloseClick(EventArgs& args);
-		void OnSearchClick(EventArgs& args);
+		void OnMinimumClick(TinyVisual*, EventArgs& args);
+		void OnCloseClick(TinyVisual*, EventArgs& args);
+		void OnSearchClick(TinyVisual*, EventArgs& args);
+		void OnItemClick(TinyVisual*, EventArgs& args);
 		void GetPrograms();
 		void OnMessagePump();
 	private:
 		MSearchWindow&				m_view;
 		TinyTaskBase				m_task;
-		TinyScopedPtr<Delegate<void(EventArgs&)>>   m_onMinimumClick;
-		TinyScopedPtr<Delegate<void(EventArgs&)>>   m_onCloseClick;
-		TinyScopedPtr<Delegate<void(EventArgs&)>>   m_onSearchClick;
+		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>  m_onMinimumClick;
+		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>  m_onCloseClick;
+		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>  m_onSearchClick;
+		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>	m_onItemClick;
 	};
 }
 

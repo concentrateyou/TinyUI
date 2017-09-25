@@ -52,6 +52,7 @@ namespace TinyUI
 			BOOL Add(TinyImage* image);
 			TinyImage* Add(const TinyString& szName, const TinyString& szFile);
 			void Remove(const TinyString& szName);
+			void Remove(TinyImage* image);
 			void RemoveAll();
 			TinyImage* operator[](const TinyString& szName);
 		public:
@@ -64,8 +65,8 @@ namespace TinyUI
 		private:
 			string			m_szPath;
 			TiXmlDocument	m_doc;
-			TinyArray<TinyImage*>			m_dynamicImages;
-			TinyMap<TinyString, TinyImage*> m_staticImages;
+			TinyArray<TinyImage*>			m_images1;//¶¯Ì¬
+			TinyMap<TinyString, TinyImage*> m_images2;//¾²Ì¬
 			TinyMap<TinyString, TinyString>	m_types;
 		};
 	};

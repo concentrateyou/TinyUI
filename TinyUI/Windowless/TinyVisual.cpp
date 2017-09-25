@@ -325,17 +325,17 @@ namespace TinyUI
 		}
 		HRESULT	TinyVisual::OnCreate()
 		{
-			EVENT_CREATE(EventArgs());
+			EVENT_CREATE(this, EventArgs());
 			return TRUE;
 		}
 		HRESULT	TinyVisual::OnDestory()
 		{
-			EVENT_DESTORY(EventArgs());
+			EVENT_DESTORY(this, EventArgs());
 			return TRUE;
 		}
 		HRESULT	TinyVisual::OnInitialize()
 		{
-			EVENT_INITIALIZE(EventArgs());
+			EVENT_INITIALIZE(this, EventArgs());
 			return TRUE;
 		}
 		BOOL	TinyVisual::OnDraw(HDC hDC, const RECT& rcPaint)
@@ -348,7 +348,7 @@ namespace TinyUI
 			if (dwFlags & MK_LBUTTON) button = MouseButtons::LBUTTON;
 			if (dwFlags & MK_RBUTTON) button = MouseButtons::RBUTTON;
 			if (dwFlags & MK_MBUTTON) button = MouseButtons::MBUTTON;
-			EVENT_MOUSEMOVE(MouseEventArgs(button, 0, pos.x, pos.y, 0));
+			EVENT_MOUSEMOVE(this, MouseEventArgs(button, 0, pos.x, pos.y, 0));
 			return FALSE;
 		}
 		HRESULT TinyVisual::OnMouseWheel(const TinyPoint& pos, SHORT zDelta, DWORD dwFlags)
@@ -357,7 +357,7 @@ namespace TinyUI
 			if (dwFlags & MK_LBUTTON) button = MouseButtons::LBUTTON;
 			if (dwFlags & MK_RBUTTON) button = MouseButtons::RBUTTON;
 			if (dwFlags & MK_MBUTTON) button = MouseButtons::MBUTTON;
-			EVENT_MOUSEMOVE(MouseEventArgs(button, 0, pos.x, pos.y, zDelta));
+			EVENT_MOUSEMOVE(this, MouseEventArgs(button, 0, pos.x, pos.y, zDelta));
 			return FALSE;
 		}
 		HRESULT	TinyVisual::OnMouseEnter()
@@ -370,79 +370,79 @@ namespace TinyUI
 		}
 		HRESULT	TinyVisual::OnLButtonDown(const TinyPoint& pos, DWORD dwFlags)
 		{
-			EVENT_MOUSEDOWN(MouseEventArgs(MouseButtons::LBUTTON, 0, pos.x, pos.y, 1));
+			EVENT_MOUSEDOWN(this, MouseEventArgs(MouseButtons::LBUTTON, 0, pos.x, pos.y, 1));
 			return FALSE;
 		}
 		HRESULT	TinyVisual::OnLButtonUp(const TinyPoint& pos, DWORD dwFlags)
 		{
-			EVENT_MOUSEUP(MouseEventArgs(MouseButtons::LBUTTON, 0, pos.x, pos.y, 1));
-			EVENT_MOUSECLICK(MouseEventArgs(MouseButtons::LBUTTON, 0, pos.x, pos.y, 1));
+			EVENT_MOUSEUP(this, MouseEventArgs(MouseButtons::LBUTTON, 0, pos.x, pos.y, 1));
+			EVENT_MOUSECLICK(this, MouseEventArgs(MouseButtons::LBUTTON, 0, pos.x, pos.y, 1));
 			return FALSE;
 		}
 		HRESULT	TinyVisual::OnLButtonDBClick(const TinyPoint& pos, DWORD dwFlags)
 		{
-			EVENT_MOUSEDBCLICK(MouseEventArgs(MouseButtons::LBUTTON, 0, pos.x, pos.y, 2));
+			EVENT_MOUSEDBCLICK(this, MouseEventArgs(MouseButtons::LBUTTON, 0, pos.x, pos.y, 2));
 			return FALSE;
 		}
 		HRESULT	TinyVisual::OnRButtonDown(const TinyPoint& pos, DWORD dwFlags)
 		{
-			EVENT_MOUSEDOWN(MouseEventArgs(MouseButtons::RBUTTON, 0, pos.x, pos.y, 1));
+			EVENT_MOUSEDOWN(this, MouseEventArgs(MouseButtons::RBUTTON, 0, pos.x, pos.y, 1));
 			return FALSE;
 		}
 		HRESULT	TinyVisual::OnRButtonUp(const TinyPoint& pos, DWORD dwFlags)
 		{
-			EVENT_MOUSEUP(MouseEventArgs(MouseButtons::RBUTTON, 0, pos.x, pos.y, 1));
-			EVENT_MOUSECLICK(MouseEventArgs(MouseButtons::RBUTTON, 0, pos.x, pos.y, 1));
+			EVENT_MOUSEUP(this, MouseEventArgs(MouseButtons::RBUTTON, 0, pos.x, pos.y, 1));
+			EVENT_MOUSECLICK(this, MouseEventArgs(MouseButtons::RBUTTON, 0, pos.x, pos.y, 1));
 			return FALSE;
 		}
 		HRESULT	TinyVisual::OnRButtonDBClick(const TinyPoint& pos, DWORD dwFlags)
 		{
-			EVENT_MOUSEDBCLICK(MouseEventArgs(MouseButtons::RBUTTON, 0, pos.x, pos.y, 2));
+			EVENT_MOUSEDBCLICK(this, MouseEventArgs(MouseButtons::RBUTTON, 0, pos.x, pos.y, 2));
 			return FALSE;
 		}
 		HRESULT	TinyVisual::OnMButtonDown(const TinyPoint& pos, DWORD dwFlags)
 		{
-			EVENT_MOUSEDOWN(MouseEventArgs(MouseButtons::MBUTTON, 0, pos.x, pos.y, 1));
+			EVENT_MOUSEDOWN(this, MouseEventArgs(MouseButtons::MBUTTON, 0, pos.x, pos.y, 1));
 			return FALSE;
 		}
 		HRESULT	TinyVisual::OnMButtonUp(const TinyPoint& pos, DWORD dwFlags)
 		{
-			EVENT_MOUSEUP(MouseEventArgs(MouseButtons::MBUTTON, 0, pos.x, pos.y, 1));
+			EVENT_MOUSEUP(this, MouseEventArgs(MouseButtons::MBUTTON, 0, pos.x, pos.y, 1));
 			return FALSE;
 		}
 		HRESULT	TinyVisual::OnMButtonDBClick(const TinyPoint& pos, DWORD dwFlags)
 		{
-			EVENT_MOUSEDBCLICK(MouseEventArgs(MouseButtons::MBUTTON, 0, pos.x, pos.y, 2));
+			EVENT_MOUSEDBCLICK(this, MouseEventArgs(MouseButtons::MBUTTON, 0, pos.x, pos.y, 2));
 			return FALSE;
 		}
 		HRESULT	TinyVisual::OnKeyDown(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags)
 		{
-			EVENT_KEYDOWN(KeyEventArgs(dwChar, dwRepCnt, dwFlags));
+			EVENT_KEYDOWN(this, KeyEventArgs(dwChar, dwRepCnt, dwFlags));
 			return FALSE;
 		}
 		HRESULT	TinyVisual::OnKeyUp(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags)
 		{
-			EVENT_KEYUP(KeyEventArgs(dwChar, dwRepCnt, dwFlags));
+			EVENT_KEYUP(this, KeyEventArgs(dwChar, dwRepCnt, dwFlags));
 			return FALSE;
 		}
 		HRESULT	TinyVisual::OnChar(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags)
 		{
-			EVENT_CHAR(KeyEventArgs(dwChar, dwRepCnt, dwFlags));
+			EVENT_CHAR(this, KeyEventArgs(dwChar, dwRepCnt, dwFlags));
 			return FALSE;
 		}
 		HRESULT	TinyVisual::OnFocus(BOOL bFlag)
 		{
-			EVENT_FOCUS(FocusEventArgs(bFlag));
+			EVENT_FOCUS(this, FocusEventArgs(bFlag));
 			return FALSE;
 		}
 		HRESULT	TinyVisual::OnCapture(BOOL bFlag)
 		{
-			EVENT_CAPTURE(CaptureEventArgs(bFlag));
+			EVENT_CAPTURE(this, CaptureEventArgs(bFlag));
 			return FALSE;
 		}
 		HRESULT	TinyVisual::OnActive(BOOL bFlag)
 		{
-			EVENT_ACTIVE(ActiveEventArgs(bFlag));
+			EVENT_ACTIVE(this, ActiveEventArgs(bFlag));
 			return FALSE;
 		}
 		HRESULT	 TinyVisual::OnSetCursor(HWND hWND, DWORD dwHitTest, DWORD dwMessage)
