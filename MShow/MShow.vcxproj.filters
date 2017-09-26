@@ -114,6 +114,9 @@
     <ClInclude Include="MClientController.h">
       <Filter>头文件\Client</Filter>
     </ClInclude>
+    <ClInclude Include="MClientWindow.h">
+      <Filter>头文件\Client</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

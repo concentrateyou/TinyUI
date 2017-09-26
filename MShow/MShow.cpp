@@ -48,8 +48,8 @@ namespace MShow
 	//////////////////////////////////////////////////////////////////////////
 	MShowApp::MShowApp()
 		:m_controller(m_window),
-		m_searchCTRL(m_searchWindow),
-		m_clientCRTL(m_clientWindow),
+		m_searchCTRL(m_searchView),
+		m_clientCRTL(m_clientView),
 		m_audioTS(0)
 	{
 		timeBeginPeriod(1);
@@ -71,9 +71,15 @@ namespace MShow
 		if (!TinyApplication::GetInstance()->AddMessageLoop(&m_msgLoop))
 			return FALSE;
 		string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\search.xml");
-		if (!m_searchWindow.Create(NULL, szFile.c_str()))
+		if (!m_searchView.Create(NULL, szFile.c_str()))
 			return FALSE;
 		if (!m_searchCTRL.Initialize())
+			return FALSE;
+		szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\client.xml");
+		if (!m_clientView.Create(NULL, szFile.c_str()))
+			return FALSE;
+		m_clientView.ShowWindow(SW_HIDE);
+		if (!m_clientCRTL.Initialize())
 			return FALSE;
 		return TRUE;
 	}
@@ -85,8 +91,11 @@ namespace MShow
 	}
 	BOOL MShowApp::Uninitialize()
 	{
-		m_controller.Uninitialize();
-		if (!TinyApplication::GetInstance()->RemoveMessageLoop())
+		m_searchView.DestroyWindow();
+		m_clientView.DestroyWindow();
+		m_clientCRTL.Uninitialize();
+		m_searchCTRL.Uninitialize();
+		if (!TinyApplication::GetInstance()->RemoveMessageLoop()) 
 			return FALSE;
 		if (!TinyApplication::GetInstance()->Uninitialize())
 			return FALSE;
@@ -96,7 +105,7 @@ namespace MShow
 
 	MSearchWindow& MShowApp::GetSearchView()
 	{
-		return m_searchWindow;
+		return m_searchView;
 	}
 	MSearchController& MShowApp::GetSearchController()
 	{
@@ -105,7 +114,7 @@ namespace MShow
 
 	MClientWindow& MShowApp::GetClientView()
 	{
-		return m_clientWindow;
+		return m_clientView;
 	}
 
 	MClientController& MShowApp::GetClientController()

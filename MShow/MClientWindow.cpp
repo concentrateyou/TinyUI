@@ -15,6 +15,7 @@ namespace MShow
 	{
 	}
 
+
 	void MClientWindow::OnInitialize()
 	{
 		m_previewView.Create(m_hWND, 0, 0, 0, 0);
@@ -24,5 +25,4 @@ namespace MShow
 	{
 
 	}
-
 }

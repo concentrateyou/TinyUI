@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "MSearchController.h"
 #include "Network/TinyHTTPClient.h"
+#include "MShow.h"
 using namespace TinyUI::Network;
 using namespace TinyUI::Windowless;
 
@@ -41,6 +42,11 @@ namespace MShow
 		return TRUE;
 	}
 
+	BOOL MSearchController::Uninitialize()
+	{
+		return FALSE;
+	}
+
 	void MSearchController::OnMinimumClick(TinyVisual*, EventArgs& args)
 	{
 		m_view.GetDocument()->ReleaseCapture();//必须释放捕获
@@ -73,7 +79,13 @@ namespace MShow
 		if (spvis->IsKindOf(RUNTIME_CLASS(TinyVisualListItem)))
 		{
 			TinyVisualListItem* ps = static_cast<TinyVisualListItem*>(spvis);
-
+			SEARCH_ITEM* val = static_cast<SEARCH_ITEM*>(ps->GetItemData());
+			if (val != NULL)
+			{
+				m_view.ShowWindow(SW_HIDE);
+				MShow::MShowApp::GetInstance().GetClientView().ShowWindow(SW_NORMAL);
+				MShow::MShowApp::GetInstance().GetClientController().UpdateItem(*val);
+			}
 		}
 	}
 
@@ -130,7 +142,7 @@ namespace MShow
 			lblMsg->SetText("http://10.23.84.150:7777/api/director/list Json解析失败");
 			goto _ERROR;
 		}
-		list->RemoveAll();
+		list->RemoveAll(TRUE);
 		result = value["data"]["result"];
 		TRACE("[MSearchController][GetPrograms] Program Count:%d\n", result.size());
 		LOG(INFO) << "[MSearchController][GetPrograms] " << "Program Count: " << result.size();
@@ -144,10 +156,17 @@ namespace MShow
 				Json::Value val = result[i];
 				string programName = val["programName"].asString();
 				string imgUrl = val["imgUrl"].asString();
-				TinyVisualListItem* pItem = list->Add(programName.c_str(), imgUrl.c_str());
-				if (pItem != NULL)
+				TinyVisualListItem* listitem = list->Add(programName.c_str(), imgUrl.c_str());
+				if (listitem != NULL)
 				{
-					pItem->EVENT_MOUSEDBCLICK += m_onItemClick;
+					SEARCH_ITEM* ps = new SEARCH_ITEM();
+					ps->szBeginTime = std::move(val["startPlayTime"].asString());
+					ps->szEndTime = std::move(val["stopPlayTime"].asString());
+					ps->szPreviewURL = std::move(val["previewStreamUrl"].asString());
+					ps->szProgramName = std::move(val["programName"].asString());
+					ps->szProgramID = std::move(val["programQipuId"].asString());
+					listitem->SetItemData(ps);
+					listitem->EVENT_MOUSEDBCLICK += m_onItemClick;
 				}
 			}
 		}

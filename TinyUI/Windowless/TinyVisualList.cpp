@@ -281,7 +281,7 @@ namespace TinyUI
 			}
 			return NULL;
 		}
-		void TinyVisualList::RemoveAll()
+		void TinyVisualList::RemoveAll(BOOL del)
 		{
 			m_iNewPos = 0;
 			m_dwCount = 1;
@@ -299,6 +299,11 @@ namespace TinyUI
 				if (spvisT->IsKindOf(RUNTIME_CLASS(TinyVisualListItem)))
 				{
 					TinyVisualListItem* pItem = static_cast<TinyVisualListItem*>(spvisT);
+					if (del)
+					{
+						LPVOID ps = pItem->GetItemData();
+						SAFE_DELETE(ps);
+					}
 					TinyVisualResource::GetInstance().Remove(pItem->GetBackgroundImage());
 					m_document->Destory(spvisT);
 				}

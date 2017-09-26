@@ -72,7 +72,7 @@ namespace TinyUI
 				class_ex.hInstance = hInstance;
 				class_ex.hIcon = RetrieveIcon();
 				class_ex.style &= ~CS_GLOBALCLASS;
-				class_ex.style |= CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS | CS_DROPSHADOW;
+				class_ex.style |= CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
 				class_ex.hCursor = LoadCursor(NULL, IDC_ARROW);
 				class_ex.hbrBackground = GetSysColorBrush(0x0F);
 				class_ex.lpszMenuName = NULL;

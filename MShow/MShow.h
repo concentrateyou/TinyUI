@@ -39,9 +39,9 @@ namespace MShow
 		TinyLock			m_lock;
 		MShowWindow			m_window;
 		MShowController		m_controller;
-		MSearchWindow		m_searchWindow;
+		MSearchWindow		m_searchView;
 		MSearchController	m_searchCTRL;
-		MClientWindow		m_clientWindow;
+		MClientWindow		m_clientView;
 		MClientController	m_clientCRTL;
 		TinyMessageLoop		m_msgLoop;
 		MAppConfig			m_appConfig;

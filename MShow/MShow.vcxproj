@@ -159,6 +159,7 @@
     <ClInclude Include="MAudioTask.h" />
     <ClInclude Include="MAudioTest.h" />
     <ClInclude Include="MClientController.h" />
+    <ClInclude Include="MClientWindow.h" />
     <ClInclude Include="MClock.h" />
     <ClInclude Include="MFLVPlayer.h" />
     <ClInclude Include="MFLVTask.h" />

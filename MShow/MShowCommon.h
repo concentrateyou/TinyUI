@@ -40,3 +40,12 @@ using namespace TinyUI::IO;
 using namespace TinyUI::Media;
 using namespace Encode;
 using namespace Decode;
+
+typedef struct tagSEARCH_ITEM
+{
+	string	szProgramName;
+	string	szProgramID;
+	string	szPreviewURL;
+	string	szBeginTime;
+	string	szEndTime;
+}SEARCH_ITEM;

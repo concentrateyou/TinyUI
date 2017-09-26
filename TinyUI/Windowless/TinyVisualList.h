@@ -54,7 +54,7 @@ namespace TinyUI
 			void SetColumnCount(INT count);
 			TinyVisualListItem* Add(const TinyString& text);
 			TinyVisualListItem* Add(const TinyString& text, const TinyString& imageURL);
-			void RemoveAll();
+			void RemoveAll(BOOL del = FALSE);
 		protected:
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 		private:

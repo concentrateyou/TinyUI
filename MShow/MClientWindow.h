@@ -14,7 +14,7 @@ namespace MShow
 	/// </summary>
 	class MClientWindow : public TinyVisualHWND
 	{
-		friend class MShowController;
+		friend class MClientController;
 		DECLARE_DYNAMIC(MClientWindow)
 	public:
 		MClientWindow();
@@ -24,5 +24,6 @@ namespace MShow
 		void OnUninitialize() OVERRIDE;
 	private:
 		MPreviewView		m_previewView;
+		SEARCH_ITEM			m_item;
 	};
 }
