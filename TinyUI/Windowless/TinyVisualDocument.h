@@ -69,10 +69,13 @@ namespace TinyUI
 			HRESULT				OnMouseWheel(const TinyPoint& pos, SHORT zDelta, DWORD dwFlags);
 			HRESULT				OnLButtonDown(const TinyPoint& pos, DWORD dwFlags);
 			HRESULT				OnLButtonUp(const TinyPoint& pos, DWORD dwFlags);
+			HRESULT				OnLButtonDBClick(const TinyPoint& pos, DWORD dwFlags);
 			HRESULT				OnRButtonDown(const TinyPoint& pos, DWORD dwFlags);
 			HRESULT				OnRButtonUp(const TinyPoint& pos, DWORD dwFlags);
+			HRESULT				OnRButtonDBClick(const TinyPoint& pos, DWORD dwFlags);
 			HRESULT				OnMButtonDown(const TinyPoint& pos, DWORD dwFlags);
 			HRESULT				OnMButtonUp(const TinyPoint& pos, DWORD dwFlags);
+			HRESULT				OnMButtonDBClick(const TinyPoint& pos, DWORD dwFlags);
 			HRESULT				OnKeyDown(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
 			HRESULT				OnKeyUp(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
 			LRESULT				OnChar(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);

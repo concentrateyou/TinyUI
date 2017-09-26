@@ -682,6 +682,27 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
+		HRESULT TinyVisualDocument::OnLButtonDBClick(const TinyPoint& pos, DWORD dwFlags)
+		{
+			TinyVisual* spvis = m_spvisCapture;
+			if (spvis != NULL)
+			{
+				TinyPoint pt = pos;
+				ConvertToVisualPos(spvis, pt);
+				return spvis->OnLButtonDBClick(pt, dwFlags);
+			}
+			else
+			{
+				spvis = GetVisualByPos(pos.x, pos.y);
+				if (spvis != NULL)
+				{
+					TinyPoint pt = pos;
+					ConvertToVisualPos(spvis, pt);
+					return spvis->OnLButtonDBClick(pt, dwFlags);
+				}
+			}
+			return FALSE;
+		}
 		HRESULT TinyVisualDocument::OnRButtonDown(const TinyPoint& pos, DWORD dwFlags)
 		{
 			TinyVisual* spvis = m_spvisCapture;
@@ -724,6 +745,27 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
+		HRESULT TinyVisualDocument::OnRButtonDBClick(const TinyPoint& pos, DWORD dwFlags)
+		{
+			TinyVisual* spvis = m_spvisCapture;
+			if (spvis != NULL)
+			{
+				TinyPoint pt = pos;
+				ConvertToVisualPos(spvis, pt);
+				return spvis->OnRButtonDBClick(pt, dwFlags);
+			}
+			else
+			{
+				spvis = GetVisualByPos(pos.x, pos.y);
+				if (spvis != NULL)
+				{
+					TinyPoint pt = pos;
+					ConvertToVisualPos(spvis, pt);
+					return spvis->OnRButtonDBClick(pt, dwFlags);
+				}
+			}
+			return FALSE;
+		}
 		HRESULT TinyVisualDocument::OnMButtonDown(const TinyPoint& pos, DWORD dwFlags)
 		{
 			TinyVisual* spvis = m_spvisCapture;
@@ -762,6 +804,27 @@ namespace TinyUI
 					TinyPoint pt = pos;
 					ConvertToVisualPos(spvis, pt);
 					return spvis->OnMButtonUp(pt, dwFlags);
+				}
+			}
+			return FALSE;
+		}
+		HRESULT TinyVisualDocument::OnMButtonDBClick(const TinyPoint& pos, DWORD dwFlags)
+		{
+			TinyVisual* spvis = m_spvisCapture;
+			if (spvis != NULL)
+			{
+				TinyPoint pt = pos;
+				ConvertToVisualPos(spvis, pt);
+				return spvis->OnMButtonDBClick(pt, dwFlags);
+			}
+			else
+			{
+				spvis = GetVisualByPos(pos.x, pos.y);
+				if (spvis != NULL)
+				{
+					TinyPoint pt = pos;
+					ConvertToVisualPos(spvis, pt);
+					return spvis->OnMButtonDBClick(pt, dwFlags);
 				}
 			}
 			return FALSE;

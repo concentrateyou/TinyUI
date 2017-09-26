@@ -37,7 +37,7 @@ namespace MShow
 			m_onSearchClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MSearchController::OnSearchClick));
 			visual->EVENT_CLICK += m_onSearchClick;
 		}
-		m_onItemClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MSearchController::OnItemClick));
+		m_onItemClick.Reset(new Delegate<void(TinyVisual*, MouseEventArgs&)>(this, &MSearchController::OnItemClick));
 		return TRUE;
 	}
 
@@ -68,7 +68,7 @@ namespace MShow
 		m_task.Submit(BindCallback(&MSearchController::OnMessagePump, this));
 	}
 
-	void MSearchController::OnItemClick(TinyVisual* spvis, EventArgs& args)
+	void MSearchController::OnItemClick(TinyVisual* spvis, MouseEventArgs& args)
 	{
 		if (spvis->IsKindOf(RUNTIME_CLASS(TinyVisualListItem)))
 		{
@@ -137,6 +137,7 @@ namespace MShow
 		if (result.size() > 0)
 		{
 			list->SetVisible(TRUE);
+			list->GetVScrollBar()->SetVisible(FALSE);
 			lblMsg->SetVisible(FALSE);
 			for (INT i = 0;i < result.size();i++)
 			{
@@ -146,7 +147,7 @@ namespace MShow
 				TinyVisualListItem* pItem = list->Add(programName.c_str(), imgUrl.c_str());
 				if (pItem != NULL)
 				{
-					pItem->EVENT_DBCLICK += m_onItemClick;
+					pItem->EVENT_MOUSEDBCLICK += m_onItemClick;
 				}
 			}
 		}

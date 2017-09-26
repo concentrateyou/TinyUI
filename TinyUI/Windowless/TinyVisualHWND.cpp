@@ -222,6 +222,14 @@ namespace TinyUI
 			bHandled = IsMsgHandled();
 			return lRes;
 		}
+		LRESULT TinyVisualHWND::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			SetMsgHandled(FALSE);
+			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			LRESULT lRes = m_document->OnLButtonDBClick(pos, static_cast<DWORD>(wParam));
+			bHandled = IsMsgHandled();
+			return lRes;
+		}
 		LRESULT TinyVisualHWND::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
@@ -238,6 +246,14 @@ namespace TinyUI
 			bHandled = IsMsgHandled();
 			return lRes;
 		}
+		LRESULT TinyVisualHWND::OnRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			SetMsgHandled(FALSE);
+			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			LRESULT lRes = m_document->OnRButtonDBClick(pos, static_cast<DWORD>(wParam));
+			bHandled = IsMsgHandled();
+			return lRes;
+		}
 		LRESULT TinyVisualHWND::OnMButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
@@ -251,6 +267,14 @@ namespace TinyUI
 			SetMsgHandled(FALSE);
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 			LRESULT lRes = m_document->OnMButtonUp(pos, static_cast<DWORD>(wParam));
+			bHandled = IsMsgHandled();
+			return lRes;
+		}
+		LRESULT TinyVisualHWND::OnMButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			SetMsgHandled(FALSE);
+			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			LRESULT lRes = m_document->OnMButtonDBClick(pos, static_cast<DWORD>(wParam));
 			bHandled = IsMsgHandled();
 			return lRes;
 		}
