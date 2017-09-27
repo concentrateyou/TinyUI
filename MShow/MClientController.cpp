@@ -1,7 +1,10 @@
 #include "stdafx.h"
 #include "MClientController.h"
 #include "MPreviewController.h"
+#include "Network/TinyHTTPClient.h"
 #include "MShow.h"
+using namespace TinyUI::Network;
+using namespace TinyUI::Windowless;
 
 namespace MShow
 {
@@ -158,6 +161,12 @@ namespace MShow
 			m_onCancelClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MClientController::OnCancelClick));
 			visual->EVENT_CLICK += m_onCancelClick;
 		}
+		visual = m_view.GetDocument()->GetVisualByName("btnCommentary");
+		if (visual != NULL)
+		{
+			m_onCommentaryClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MClientController::OnCommentaryClick));
+			visual->EVENT_CLICK += m_onCommentaryClick;
+		}
 		visual = m_view.GetDocument()->GetVisualByName("previewWND");
 		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualNative)))
 		{
@@ -222,6 +231,7 @@ namespace MShow
 
 	void MClientController::OnCloseClick(TinyVisual*, EventArgs& args)
 	{
+		Remove(m_szSourceID);
 		SendMessage(m_view.Handle(), WM_CLOSE, NULL, NULL);
 	}
 
@@ -311,6 +321,104 @@ namespace MShow
 			pTextBox->SetEnable(FALSE);
 		}
 		m_view.Invalidate();
+	}
+
+	BOOL MClientController::Add()
+	{
+		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
+		ASSERT(pTextBox);
+		string code;
+		string context;
+		Json::Reader reader;
+		Json::Value value;
+		Json::Value result;
+		TinyHTTPClient client;
+		client.GetRequest().SetVerbs(TinyHTTPClient::POST);
+		client.GetRequest().Add(TinyHTTPClient::ContentType, "application/x-www-form-urlencoded");
+		client.GetRequest().Add("Sign", "#f93Uc31K24()_@");
+		TinyString szName = pTextBox->GetText();
+		string body = StringPrintf("name=%s&programId=%s&directorId=%s&streamUrl=", szName.CSTR(), m_szProgramID.c_str(), m_szLogID.c_str());
+		body = std::move(ASCIIToUTF8(body));
+		client.GetRequest().SetBody(body);
+		string address = StringPrintf("%s/%s", MShow::MShowApp::GetInstance().AppConfig().GetPrefix().c_str(), "commentary/add");
+		if (!client.Open(address))
+		{
+			LOG(ERROR) << "[MClientController] " << "Open " << address << " Fail";
+			goto _ERROR;
+		}
+		if (!client.GetResponse().ReadAsString(context))
+		{
+			LOG(ERROR) << "[MClientController] " << "Read Json Fail";
+			goto _ERROR;
+		}
+		if (!reader.parse(context, value))
+		{
+			LOG(ERROR) << "[MClientController] " << "Parse Json Fail";
+			goto _ERROR;
+		}
+		code = value["code"].asString();
+		if (code == "A00000")
+		{
+			m_szSourceID = std::to_string(value["data"].asInt());
+			return TRUE;
+		}
+		else
+		{
+			string msg = value["msg"].asString();
+			msg = std::move(UTF8ToASCII(msg));
+			LOG(ERROR) << "[MClientController] " << "Response Code : " << code << " Msg: " << msg;
+		}
+	_ERROR:
+		return FALSE;
+	}
+	BOOL MClientController::Remove(const string& sourceID)
+	{
+		string code;
+		string context;
+		Json::Reader reader;
+		Json::Value value;
+		Json::Value result;
+		TinyHTTPClient client;
+		client.GetRequest().SetVerbs(TinyHTTPClient::POST);
+		client.GetRequest().Add(TinyHTTPClient::ContentType, "application/x-www-form-urlencoded");
+		client.GetRequest().Add("Sign", "#f93Uc31K24()_@");
+		string body = StringPrintf("id=%s&directorId=%s", sourceID.c_str(), m_szLogID.c_str());
+		body = std::move(ASCIIToUTF8(body));
+		client.GetRequest().SetBody(body);
+		string address = StringPrintf("%s/%s", MShow::MShowApp::GetInstance().AppConfig().GetPrefix().c_str(), "commentary/del");
+		if (!client.Open(address))
+		{
+			LOG(ERROR) << "[MClientController] " << "Open " << address << " Fail";
+			goto _ERROR;
+		}
+		if (!client.GetResponse().ReadAsString(context))
+		{
+			LOG(ERROR) << "[MClientController] " << "Read Json Fail";
+			goto _ERROR;
+		}
+		if (!reader.parse(context, value))
+		{
+			LOG(ERROR) << "[MClientController] " << "Parse Json Fail";
+			goto _ERROR;
+		}
+		code = value["code"].asString();
+		if (code == "A00000")
+		{
+			return TRUE;
+		}
+		else
+		{
+			string msg = value["msg"].asString();
+			msg = std::move(UTF8ToASCII(msg));
+			LOG(ERROR) << "[MClientController] " << "Response Code : " << code << " Msg: " << msg;
+		}
+	_ERROR:
+		return FALSE;
+	}
+
+	void MClientController::OnCommentaryClick(TinyVisual*, EventArgs& args)
+	{
+		Add();
 	}
 
 	void MClientController::OnMicrophoneTestClick(TinyVisual*, EventArgs& args)

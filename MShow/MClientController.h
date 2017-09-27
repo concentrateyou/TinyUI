@@ -40,6 +40,7 @@ namespace MShow
 		void OnEditClick(TinyVisual*, EventArgs& args);
 		void OnSaveClick(TinyVisual*, EventArgs& args);
 		void OnCancelClick(TinyVisual*, EventArgs& args);
+		void OnCommentaryClick(TinyVisual*, EventArgs& args);
 		void OnMicrophoneTestClick(TinyVisual*, EventArgs& args);
 		void OnSpeakerTestClick(TinyVisual*, EventArgs& args);
 		void OnMicrophoneFocus(TinyVisual*, FocusEventArgs& args);
@@ -48,9 +49,13 @@ namespace MShow
 		void OnMessagePump();
 		static VOID CALLBACK OnTimer(PVOID lpParam, BOOLEAN TimerOrWaitFired);
 	private:
+		BOOL Add();//Ìí¼ÓÔ´
+		BOOL Remove(const string& sourceID);//É¾³ýÔ´
+	private:
 		BOOL								m_bBreak;
 		HANDLE								m_hTimer;
 		LONGLONG							m_previousPTS;
+		string								m_szSourceID;
 		string								m_szLogID;
 		string								m_szProgramName;
 		string								m_szProgramID;
@@ -69,6 +74,7 @@ namespace MShow
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onEditClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onSaveClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onCancelClick;
+		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onCommentaryClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMicrophoneTestClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onSpeakerTestClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, FocusEventArgs&)>> m_onSpeakerFocus;

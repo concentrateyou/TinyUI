@@ -122,7 +122,8 @@ namespace MShow
 		body += szName.IsEmpty() ? "" : szName.CSTR();
 		body += "&fullMode=true";
 		client.GetRequest().SetBody(body);
-		if (!client.Open("http://10.23.84.150/api/director/list"))
+		string address = StringPrintf("%s/%s", MShow::MShowApp::GetInstance().AppConfig().GetPrefix().c_str(), "list");
+		if (!client.Open(address))
 		{
 			TRACE("[MSearchController][GetPrograms] Open Fail\n");
 			LOG(ERROR) << "[MSearchController][GetPrograms] " << "Open Fail";

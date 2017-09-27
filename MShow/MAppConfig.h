@@ -9,6 +9,7 @@ namespace MShow
 		MAppConfig();
 		~MAppConfig();
 	public:
+		string GetPrefix();//前端服务器器接口前缀
 		string GetSaveFile();
 		vector<string>& GetIPList();
 	private:

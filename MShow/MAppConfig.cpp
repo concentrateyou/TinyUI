@@ -30,6 +30,10 @@ namespace MShow
 	{
 		return GetValue("Audio", "SaveFile");
 	}
+	string MAppConfig::GetPrefix()
+	{
+		return GetValue("Server", "Prefix");
+	}
 	vector<string>& MAppConfig::GetIPList()
 	{
 		string val = GetValue("Server", "IP");

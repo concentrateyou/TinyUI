@@ -196,6 +196,7 @@ namespace TinyUI
 		CHAR*		STR() const;
 		const CHAR*	CSTR() const;
 		wstring		ToWString() const;
+		string		ToUTF8() const;
 		static TinyString _cdecl Format(const CHAR* s, ...);
 		static INT __cdecl A2W(CHAR* mbstr, const WCHAR* wcstr, size_t count);
 		static INT __cdecl W2A(WCHAR* wcstr, const CHAR* mbstr, size_t count);

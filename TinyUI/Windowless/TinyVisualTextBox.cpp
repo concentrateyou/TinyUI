@@ -507,7 +507,7 @@ namespace TinyUI
 			szText.resize(gt.cb);
 #endif
 			m_texthost.m_ts->TxSendMessage(EM_GETTEXTEX, (WPARAM)&gt, (LPARAM)&szText[0], NULL);
-			return szText.c_str();
+			return szText.empty() ? "" : szText.c_str();
 		}
 		BOOL TinyVisualTextBox::SetProperty(const TinyString& name, const TinyString& value)
 		{

@@ -627,8 +627,17 @@ namespace TinyUI
 	}
 	wstring	TinyString::ToWString() const
 	{
+		if (!_Mystr)
+			return wstring();
 		string szText(_Mystr);
 		return StringToWString(szText);
+	}
+	string	TinyString::ToUTF8() const
+	{
+		if (!_Mystr)
+			return string();
+		string szText(_Mystr);
+		return ASCIIToUTF8(szText);
 	}
 	void TinyString::Resize(size_t _Newsize)
 	{
