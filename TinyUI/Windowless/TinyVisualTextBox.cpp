@@ -466,10 +466,23 @@ namespace TinyUI
 			if (m_texthost.m_ts != NULL)
 			{
 				TinyString szTMP = std::move(szText);
-				wstring val = szTMP.ToWString();
-				m_texthost.m_ts->TxSetText(val.c_str());
+				if (!szTMP.IsEmpty())
+				{
+					wstring val = szTMP.ToWString();
+					m_texthost.m_ts->TxSetText(val.c_str());
+				}
 			}
 			TinyVisual::SetText(szText);
+		}
+		void TinyVisualTextBox::SetTextColor(COLORREF color)
+		{
+			m_texthost.SetTextColor(color);
+			TinyVisual::SetTextColor(color);
+		}
+		void TinyVisualTextBox::SetBackgroundColor(COLORREF color)
+		{
+			m_texthost.SetbackgroundColor(color);
+			TinyVisual::SetBackgroundColor(color);
 		}
 		TinyString TinyVisualTextBox::GetText()
 		{

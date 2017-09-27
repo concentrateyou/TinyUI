@@ -83,8 +83,12 @@ namespace MShow
 			if (val != NULL)
 			{
 				m_view.ShowWindow(SW_HIDE);
+				m_view.UpdateWindow();
 				MShow::MShowApp::GetInstance().GetClientView().ShowWindow(SW_NORMAL);
-				MShow::MShowApp::GetInstance().GetClientController().UpdateItem(*val);
+				MShow::MShowApp::GetInstance().GetClientController().SetProgram(val->szProgramName, val->szProgramID);
+				MShow::MShowApp::GetInstance().GetClientController().SetTimes(val->szBeginTime, val->szEndTime);
+				MShow::MShowApp::GetInstance().GetClientController().SetPreview(val->szPreviewURL);
+				MShow::MShowApp::GetInstance().GetClientView().UpdateWindow();
 			}
 		}
 	}

@@ -20,12 +20,14 @@ namespace TinyUI
 			virtual ~TinyVisualTextBox();
 			TinyString RetrieveTag() const OVERRIDE;
 			void SetText(const TinyString& pzText) OVERRIDE;
+			void SetBackgroundColor(COLORREF color) OVERRIDE;
+			void SetTextColor(COLORREF color) OVERRIDE;
 			TinyString GetText();
 			BOOL SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 		public:
 			BOOL SetReadonly(BOOL bReadOnly);
 			BOOL SetMultiline(BOOL bMultiline);
-			BOOL SetPassword(BOOL bPassword, CHAR s);
+			BOOL SetPassword(BOOL bPassword, CHAR s);	
 			BOOL ShowScrollBar(INT bar, BOOL fShow);
 			UINT GetTextMode();
 			BOOL SetTextMode(UINT fMode);

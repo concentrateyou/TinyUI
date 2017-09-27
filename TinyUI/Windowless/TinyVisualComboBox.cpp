@@ -17,7 +17,10 @@ namespace TinyUI
 			m_popupWND(this),
 			m_cy(0)
 		{
-
+			ZeroMemory(&m_images, sizeof(m_images));
+			ZeroMemory(&m_arraws, sizeof(m_arraws));
+			m_onPopupActive.Reset(new Delegate<void(ActiveEventArgs&)>(this, &TinyVisualComboBox::OnPopupActive));
+			m_popupWND.EVENT_ACTIVE += m_onPopupActive;
 		}
 		TinyVisualComboBox::TinyVisualComboBox(TinyVisual* spvisParent, TinyVisualDocument* vtree)
 			:TinyVisual(spvisParent, vtree),
@@ -152,7 +155,8 @@ namespace TinyUI
 		}
 		HRESULT	TinyVisualComboBox::OnInitialize()
 		{
-			m_popupWND.Create(m_document->GetVisualHWND()->Handle(), "D:\\Develop\\TinyUI\\TinyUI\\dropdown.xml");
+			string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\dropdown.xml");
+			m_popupWND.Create(m_document->GetVisualHWND()->Handle(), szFile.c_str());
 			m_popupWND.UpdateWindow();
 			return TinyVisual::OnInitialize();
 		}
@@ -214,9 +218,10 @@ namespace TinyUI
 			m_dwArrawFlag = m_bActive ? DOWN : NORMAL;
 			if (!m_bActive)
 			{
-				ShowWindow(m_popupWND, SW_HIDE);
-				TinyRectangle s = m_document->GetWindowRect(this);
-				m_document->Redraw(&s);
+				TRACE("WA_INACTIVE\n");
+				m_popupWND.ShowWindow(SW_HIDE);
+				m_popupWND.UpdateWindow();
+				m_document->Invalidate();
 			}
 		}
 		//////////////////////////////////////////////////////////////////////////

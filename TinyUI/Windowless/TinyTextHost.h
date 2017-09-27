@@ -28,6 +28,9 @@ namespace TinyUI
 			BOOL Initialize(TinyVisualTextBox* spvis);
 			BOOL UpdateView();
 			BOOL UpdateFormat();
+			BOOL SetbackgroundColor(COLORREF cf);
+			BOOL SetTextColor(COLORREF cf);
+			BOOL SetEnable(BOOL bEnable);
 			BOOL SetReadonly(BOOL fReadOnly);
 			BOOL SetMultiline(BOOL fMultiline);
 			BOOL SetPassword(BOOL fPassword, CHAR s);
@@ -84,11 +87,12 @@ namespace TinyUI
 			HINSTANCE					m_hInstance;
 			TinyVisualTextBox*			m_spvis;
 			TinySize					m_extent;
+			COLORREF					m_backgroundColor;
 			LONG						m_logpixelsx;
 			LONG						m_logpixelsy;
 			LONG						m_limit;
-			CHARFORMATW					m_cf;
-			PARAFORMAT					m_pf;
+			CHARFORMAT2W				m_cf;
+			PARAFORMAT2					m_pf;
 			TinyRectangle				m_rectangle;
 			DWORD						m_dwStyle;
 			CHAR						m_password;

@@ -79,6 +79,7 @@ namespace MShow
 		if (!m_clientView.Create(NULL, szFile.c_str()))
 			return FALSE;
 		m_clientView.ShowWindow(SW_HIDE);
+		m_clientView.UpdateWindow();
 		if (!m_clientCRTL.Initialize())
 			return FALSE;
 		return TRUE;

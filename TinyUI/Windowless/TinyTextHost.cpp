@@ -61,11 +61,45 @@ namespace TinyUI
 						m_ts->OnTxInPlaceDeactivate();
 						m_ts->OnTxUIDeactivate();
 						m_ts->TxSendMessage(WM_KILLFOCUS, 0, 0, 0);
+
 						return TRUE;
 					}
 				}
 			}
 			return FALSE;
+		}
+		BOOL TinyTextHost::SetbackgroundColor(COLORREF cf)
+		{
+			ASSERT(m_ts || m_spvis);
+			m_cf.dwEffects &= ~CFE_AUTOCOLOR;
+			m_cf.crBackColor = cf;
+			if (FAILED(m_ts->TxSendMessage(EM_SETCHARFORMAT, 0, (LPARAM)&m_cf, 0)))
+				return FALSE;
+			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE, TXTBIT_CHARFORMATCHANGE)))
+				return FALSE;
+			return TRUE;
+		}
+		BOOL TinyTextHost::SetTextColor(COLORREF cf)
+		{
+			ASSERT(m_ts || m_spvis);
+			m_cf.dwEffects &= ~CFE_AUTOCOLOR;
+			m_cf.crTextColor = cf;
+			if (FAILED(m_ts->TxSendMessage(EM_SETCHARFORMAT, 0, (LPARAM)&m_cf, 0)))
+				return FALSE;
+			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE, TXTBIT_CHARFORMATCHANGE)))
+				return FALSE;
+			return TRUE;
+		}
+		BOOL TinyTextHost::SetEnable(BOOL bEnable)
+		{
+			m_cf.dwEffects |= CFE_DISABLED;
+			if (!bEnable)
+			{
+				m_cf.dwEffects &= ~CFE_DISABLED;
+			}
+			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE, TXTBIT_CHARFORMATCHANGE)))
+				return FALSE;
+			return TRUE;
 		}
 		BOOL TinyTextHost::UpdateFormat()
 		{
@@ -76,7 +110,7 @@ namespace TinyUI
 			ReleaseDC(m_spvis->Handle(), hDC);
 			LOGFONT lf;
 			GetObject(m_spvis->m_hFONT, sizeof(LOGFONT), &lf);
-			m_cf.cbSize = sizeof(CHARFORMATW);
+			m_cf.cbSize = sizeof(CHARFORMAT2W);
 			m_cf.yHeight = lf.lfHeight * LY_PER_INCH / m_logpixelsy;
 			m_cf.yOffset = 0;
 			m_cf.crTextColor = GetSysColor(COLOR_WINDOWTEXT);
@@ -98,8 +132,8 @@ namespace TinyUI
 #else
 			MultiByteToWideChar(CP_ACP, 0, lf.lfFaceName, LF_FACESIZE, m_cf.szFaceName, LF_FACESIZE);
 #endif
-			ZeroMemory(&m_pf, sizeof(PARAFORMAT));
-			m_pf.cbSize = sizeof(PARAFORMAT);
+			ZeroMemory(&m_pf, sizeof(PARAFORMAT2));
+			m_pf.cbSize = sizeof(PARAFORMAT2);
 			m_pf.dwMask = PFM_ALL;
 			m_pf.wAlignment = PFA_LEFT;
 			m_pf.cTabCount = 1;
@@ -108,7 +142,9 @@ namespace TinyUI
 				return FALSE;
 			if (FAILED(m_ts->TxSendMessage(EM_SETPARAFORMAT, 0, (LPARAM)&m_pf, 0)))
 				return FALSE;
-			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE | TXTBIT_PARAFORMATCHANGE, TRUE)))
+			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE, TXTBIT_CHARFORMATCHANGE)))
+				return FALSE;
+			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_PARAFORMATCHANGE, TXTBIT_PARAFORMATCHANGE)))
 				return FALSE;
 			return TRUE;
 		}
@@ -465,7 +501,7 @@ namespace TinyUI
 
 		HRESULT TinyTextHost::TxGetBackStyle(TXTBACKSTYLE *pstyle)
 		{
-			*pstyle = TXTBACK_OPAQUE;
+			*pstyle = TXTBACK_TRANSPARENT;
 			return S_OK;
 		}
 
