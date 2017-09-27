@@ -34,6 +34,7 @@ namespace MShow
 		BOOL	SetPreview(const string& szPreviewURL);
 	private:
 		void InitializeUI();
+		void OnSettingClick(TinyVisual*, EventArgs& args);
 		void OnMinimumClick(TinyVisual*, EventArgs& args);
 		void OnCloseClick(TinyVisual*, EventArgs& args);
 		void OnEditClick(TinyVisual*, EventArgs& args);
@@ -61,6 +62,7 @@ namespace MShow
 		SpeakTest							m_speakTest;
 		MicrophoneTest						m_microphoneTest;
 		TinyScopedPtr<MPreviewController>	m_preview;
+		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onSettingClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMinimumClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onCloseClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onEditClick;

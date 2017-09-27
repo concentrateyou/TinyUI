@@ -28,11 +28,18 @@
         <textbox name="txtSearch" position="10,10" size="450,20" font-family="微软雅黑" font-weight="400" font-size="8,14">
         </textbox>
       </panel>
-      <button name="btnSearch" tooltip="Min" position="550,12" size="90,36" text="搜索" text-align="center|vcenter" text-color="255,255,255" font-family="Arial" font-weight="400" font-size="8,14"
+      <button name="btnSearch" tooltip="Min" position="550,12" size="90,36" text="搜索" text-align="center|vcenter" text-color="255,255,255" font-family="微软雅黑" font-weight="400" font-size="8,18"
              image-normal="blue_normal"
              image-highlight="blue_highlight"
              image-down="blue_down">
       </button>
+    </panel>
+    <panel position="30,160" size="760,400">
+      <list name="programs" position="0,0" size="760,400">
+      </list>
+      <animation name="loading" position="180,0" size="400,300" visible="false" image="loading">
+      </animation>
+      <label name="lblMsg" position="0,0" size="760,100" font-family="微软雅黑" font-weight="400" font-size="12,28"  text-align="center|vcenter"></label>
     </panel>
   </panel>
 </window>

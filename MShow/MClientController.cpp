@@ -121,6 +121,12 @@ namespace MShow
 		{
 			visual->SetVisible(FALSE);
 		}
+		visual = m_view.GetDocument()->GetVisualByName("btnSetting");
+		if (visual != NULL)
+		{
+			m_onSettingClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MClientController::OnSettingClick));
+			visual->EVENT_CLICK += m_onSettingClick;
+		}
 		visual = m_view.GetDocument()->GetVisualByName("sysmin");
 		if (visual != NULL)
 		{
@@ -216,6 +222,16 @@ namespace MShow
 	void MClientController::OnCloseClick(TinyVisual*, EventArgs& args)
 	{
 		SendMessage(m_view.Handle(), WM_CLOSE, NULL, NULL);
+	}
+
+	void MClientController::OnSettingClick(TinyVisual*, EventArgs& args)
+	{
+		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("setting");
+		if (visual != NULL)
+		{
+			visual->SetVisible(!visual->IsVisible());
+			m_view.Invalidate();
+		}
 	}
 
 	void MClientController::OnEditClick(TinyVisual*, EventArgs& args)
