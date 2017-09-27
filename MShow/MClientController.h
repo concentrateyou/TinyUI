@@ -51,6 +51,7 @@ namespace MShow
 	private:
 		BOOL Add();//Ìí¼ÓÔ´
 		BOOL Remove(const string& sourceID);//É¾³ýÔ´
+		void Close();
 	private:
 		BOOL								m_bBreak;
 		HANDLE								m_hTimer;

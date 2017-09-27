@@ -42,18 +42,8 @@ namespace MShow
 
 	BOOL MClientController::Uninitialize()
 	{
-		if (m_hTimer != NULL)
-		{
-			TinyApplication::GetInstance()->GetTimers().Unregister(m_hTimer);
-			m_hTimer = NULL;
-		}
-		if (m_preview != NULL)
-		{
-			m_preview->Close();
-			m_preview.Reset(NULL);
-		}
-		m_audioDSP.Stop();
-		m_audioDSP.Close();
+		Close();
+		m_preview.Reset(NULL);
 		return TRUE;
 	}
 
@@ -94,7 +84,6 @@ namespace MShow
 		m_hTimer = TinyApplication::GetInstance()->GetTimers().Register(&MClientController::OnTimer, this, 1000, 0);
 		return m_hTimer != NULL;
 	}
-
 
 	VOID CALLBACK MClientController::OnTimer(PVOID lpParam, BOOLEAN TimerOrWaitFired)
 	{
@@ -231,8 +220,15 @@ namespace MShow
 
 	void MClientController::OnCloseClick(TinyVisual*, EventArgs& args)
 	{
-		Remove(m_szSourceID);
-		SendMessage(m_view.Handle(), WM_CLOSE, NULL, NULL);
+		if (this->Remove(m_szSourceID))
+		{
+			m_szSourceID.clear();
+		}
+		this->Close();
+		m_view.ShowWindow(SW_HIDE);
+		m_view.UpdateWindow();
+		MShow::MShowApp::GetInstance().GetSearchView().ShowWindow(SW_NORMAL);
+		MShow::MShowApp::GetInstance().GetSearchView().UpdateWindow();
 	}
 
 	void MClientController::OnSettingClick(TinyVisual*, EventArgs& args)
@@ -360,12 +356,12 @@ namespace MShow
 		if (code == "A00000")
 		{
 			m_szSourceID = std::to_string(value["data"].asInt());
+			LOG(INFO) << "[MClientController] " << "Add SourceID :" << m_szSourceID << " OK";
 			return TRUE;
 		}
 		else
 		{
 			string msg = value["msg"].asString();
-			msg = std::move(UTF8ToASCII(msg));
 			LOG(ERROR) << "[MClientController] " << "Response Code : " << code << " Msg: " << msg;
 		}
 	_ERROR:
@@ -373,6 +369,8 @@ namespace MShow
 	}
 	BOOL MClientController::Remove(const string& sourceID)
 	{
+		if (sourceID.empty())
+			return FALSE;
 		string code;
 		string context;
 		Json::Reader reader;
@@ -404,6 +402,7 @@ namespace MShow
 		code = value["code"].asString();
 		if (code == "A00000")
 		{
+			LOG(INFO) << "[MClientController] " << "Remove SourceID :" << m_szSourceID << " OK";
 			return TRUE;
 		}
 		else
@@ -414,6 +413,21 @@ namespace MShow
 		}
 	_ERROR:
 		return FALSE;
+	}
+
+	void MClientController::Close()
+	{
+		if (m_hTimer != NULL)
+		{
+			TinyApplication::GetInstance()->GetTimers().Unregister(m_hTimer);
+			m_hTimer = NULL;
+		}
+		m_audioDSP.Stop();
+		m_audioDSP.Close();
+		if (m_preview != NULL)
+		{
+			m_preview->Close();
+		}
 	}
 
 	void MClientController::OnCommentaryClick(TinyVisual*, EventArgs& args)

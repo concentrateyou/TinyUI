@@ -50,21 +50,27 @@ namespace MShow
 		m_hBitmap = ::CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&m_pvBits), NULL, 0);
 		return m_hBitmap != NULL;
 	_ERROR:
-		if (m_player != NULL)
-		{
-			m_player->Close();
-		}
+		Close();
 		return FALSE;
 	}
 
 	BOOL MPreviewController::Close()
 	{
+		BOOL bRes = FALSE;
 		if (m_player != NULL)
 		{
-			m_player->Close();
+			bRes = m_player->Close();
 		}
 		SAFE_DELETE_OBJECT(m_hBitmap);
-		return TRUE;
+		if (bRes)
+		{
+			LOG(INFO) << "[MPreviewController] " << "Player Close OK";
+		}
+		else
+		{
+			LOG(INFO) << "[MPreviewController] " << "Player Close Fail";
+		}
+		return bRes;
 	}
 
 	MPreviewView& MPreviewController::GetView()
