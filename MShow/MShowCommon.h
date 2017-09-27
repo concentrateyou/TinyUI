@@ -43,6 +43,7 @@ using namespace Decode;
 
 typedef struct tagSEARCH_ITEM
 {
+	string	szLogID;
 	string	szProgramName;
 	string	szProgramID;
 	string	szPreviewURL;

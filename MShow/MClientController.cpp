@@ -54,10 +54,11 @@ namespace MShow
 		return TRUE;
 	}
 
-	void MClientController::SetProgram(const string& szProgramName, const string& szProgramID)
+	void MClientController::SetProgram(const string& szProgramName, const string& szProgramID, const string& szLogID)
 	{
 		m_szProgramID = std::move(szProgramID);
 		m_szProgramName = std::move(szProgramName);
+		m_szLogID = std::move(szLogID);
 		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("lblName");
 		if (visual != NULL)
 		{

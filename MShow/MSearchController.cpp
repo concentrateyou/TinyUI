@@ -85,7 +85,7 @@ namespace MShow
 				m_view.ShowWindow(SW_HIDE);
 				m_view.UpdateWindow();
 				MShow::MShowApp::GetInstance().GetClientView().ShowWindow(SW_NORMAL);
-				MShow::MShowApp::GetInstance().GetClientController().SetProgram(val->szProgramName, val->szProgramID);
+				MShow::MShowApp::GetInstance().GetClientController().SetProgram(val->szProgramName, val->szProgramID, val->szLogID);
 				MShow::MShowApp::GetInstance().GetClientController().SetTimes(val->szBeginTime, val->szEndTime);
 				MShow::MShowApp::GetInstance().GetClientController().SetPreview(val->szPreviewURL);
 				MShow::MShowApp::GetInstance().GetClientView().UpdateWindow();
@@ -127,6 +127,7 @@ namespace MShow
 			TRACE("[MSearchController][GetPrograms] Open Fail\n");
 			LOG(ERROR) << "[MSearchController][GetPrograms] " << "Open Fail";
 			lblMsg->SetVisible(TRUE);
+			lblMsg->SetTextColor(RGB(255, 0, 0));
 			lblMsg->SetText("http://10.23.84.150:7777/api/director/list 打开失败");
 			goto _ERROR;
 		}
@@ -135,6 +136,7 @@ namespace MShow
 			TRACE("[MSearchController][GetPrograms] Get Response Fail\n");
 			LOG(ERROR) << "[MSearchController][GetPrograms] " << "Get Response Fail";
 			lblMsg->SetVisible(TRUE);
+			lblMsg->SetTextColor(RGB(255, 0, 0));
 			lblMsg->SetText("http://10.23.84.150:7777/api/director/list 读取数据失败");
 			goto _ERROR;
 		}
@@ -143,6 +145,7 @@ namespace MShow
 			TRACE("[MSearchController][GetPrograms] Parse Json Fail\n");
 			LOG(ERROR) << "[MSearchController][GetPrograms] " << "Parse Json Fail";
 			lblMsg->SetVisible(TRUE);
+			lblMsg->SetTextColor(RGB(255, 0, 0));
 			lblMsg->SetText("http://10.23.84.150:7777/api/director/list Json解析失败");
 			goto _ERROR;
 		}
@@ -164,6 +167,7 @@ namespace MShow
 				if (listitem != NULL)
 				{
 					SEARCH_ITEM* ps = new SEARCH_ITEM();
+					ps->szLogID = std::move(val["id"].asString());
 					ps->szBeginTime = std::move(val["startPlayTime"].asString());
 					ps->szEndTime = std::move(val["stopPlayTime"].asString());
 					ps->szPreviewURL = std::move(val["previewStreamUrl"].asString());

@@ -471,6 +471,10 @@ namespace TinyUI
 					wstring val = szTMP.ToWString();
 					m_texthost.m_ts->TxSetText(val.c_str());
 				}
+				else
+				{
+					m_texthost.m_ts->TxSetText(L"");
+				}
 			}
 			TinyVisual::SetText(szText);
 		}

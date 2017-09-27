@@ -29,7 +29,7 @@ namespace MShow
 		virtual ~MClientController();
 		BOOL	Initialize();
 		BOOL	Uninitialize();
-		void	SetProgram(const string& szProgramName, const string& szProgramID);
+		void	SetProgram(const string& szProgramName, const string& szProgramID, const string& szLogID);
 		void	SetTimes(const string& szTime1, const string& szTime2);
 		BOOL	SetPreview(const string& szPreviewURL);
 	private:
@@ -51,6 +51,7 @@ namespace MShow
 		BOOL								m_bBreak;
 		HANDLE								m_hTimer;
 		LONGLONG							m_previousPTS;
+		string								m_szLogID;
 		string								m_szProgramName;
 		string								m_szProgramID;
 		string								m_szPreviewURL;
