@@ -13,15 +13,19 @@ namespace DXFramework
 		DX2D();
 		~DX2D();
 		BOOL Initialize(HWND hWND, INT cx, INT cy);
+		BOOL Initialize(HDC hDC, INT cx, INT cy);
 		BOOL BeginDraw();
 		BOOL EndDraw();
 		BOOL Resize(INT cx, INT cy);
-		ID2D1HwndRenderTarget* GetCanvas() const;
+		ID2D1RenderTarget* GetCanvas() const;
 		HWND GetHWND() const;
+		HDC  GetDC() const;
 	private:
 		HWND								m_hWND;
+		HDC									m_hDC;
 		TinyComPtr<ID2D1Factory>			m_factory;
-		TinyComPtr<ID2D1HwndRenderTarget>	m_renderTarget;
+		TinyComPtr<ID2D1HwndRenderTarget>	m_hwndRenderTarget;
+		TinyComPtr<ID2D1DCRenderTarget>		m_dcRenderTarget;
 	};
 }
 

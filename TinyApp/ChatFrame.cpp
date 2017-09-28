@@ -55,26 +55,26 @@ HICON ChatFrame::RetrieveIcon()
 
 LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-	bHandled = FALSE;
-	m_client.GetRequest().SetVerbs(TinyHTTPClient::GET);
-	//http://jyyunlou7.oss.qiyi.storage:8080/v1/AUTH_becf1c9cf362414992517833e5128e4e/20170921-00/yunpan/20170921/f7/9e/e733fb4c74c149dfba78cd4f53ce2b61.jpg
-	//http://scimg.jb51.net/allimg/130523/2-1305231414312R.jpg
-	if (m_client.Open("http://scimg.jb51.net/allimg/130523/2-1305231414312R.jpg"))
-	{
-		TinyImage image;
-		CHAR* ps = NULL;
-		INT iRes = m_client.GetResponse().ReadAsBinary(ps);
-		image.Open((BYTE*)ps, iRes);
-		image.Save("D:\\test.bmp");
-		/*string val = m_client[TinyHTTPClient::ContentLength];
-		INT size = std::stoi(val);
-		CHAR* ps = NULL;
-		INT iRes = m_client.Read(ps, size);
-		TinyImage image;
-		image.Open((BYTE*)ps, iRes);
-		image.Save("D:\\test.bmp");*/
-		//INT a = 0;
-	}
+	//bHandled = FALSE;
+	//m_client.GetRequest().SetVerbs(TinyHTTPClient::GET);
+	////http://jyyunlou7.oss.qiyi.storage:8080/v1/AUTH_becf1c9cf362414992517833e5128e4e/20170921-00/yunpan/20170921/f7/9e/e733fb4c74c149dfba78cd4f53ce2b61.jpg
+	////http://scimg.jb51.net/allimg/130523/2-1305231414312R.jpg
+	//if (m_client.Open("http://scimg.jb51.net/allimg/130523/2-1305231414312R.jpg"))
+	//{
+	//	TinyImage image;
+	//	CHAR* ps = NULL;
+	//	INT iRes = m_client.GetResponse().ReadAsBinary(ps);
+	//	image.Open((BYTE*)ps, iRes);
+	//	image.Save("D:\\test.bmp");
+	//	/*string val = m_client[TinyHTTPClient::ContentLength];
+	//	INT size = std::stoi(val);
+	//	CHAR* ps = NULL;
+	//	INT iRes = m_client.Read(ps, size);
+	//	TinyImage image;
+	//	image.Open((BYTE*)ps, iRes);
+	//	image.Save("D:\\test.bmp");*/
+	//	//INT a = 0;
+	//}
 	/*TinyPerformanceTimer timeQPC;
 	timeQPC.BeginTime();
 	CHAR* ps = NULL;
