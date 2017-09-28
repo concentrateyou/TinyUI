@@ -138,25 +138,30 @@ namespace TinyUI
 		_Mysize(0),
 		_Mystr(NULL)
 	{
-		//TRACE("调用构造函数TinyString(): %d\n", this);
+		_Mystr = new CHAR[_Mysize + 1];
+		_Mystr[_Mysize] = '\0';
 	}
 	TinyString::TinyString(size_t size)
 		:_Myres(size),
 		_Mysize(size),
 		_Mystr(NULL)
 	{
-		_Mystr = new CHAR[_Mysize];
-		//TRACE("调用构造函数TinyString(INT size): %d\n", this);
+		_Mystr = new CHAR[_Mysize + 1];
+		_Mystr[_Mysize] = '\0';
 	}
 	TinyString::TinyString(const CHAR* s)
 		: _Myres(0),
 		_Mysize(0),
 		_Mystr(NULL)
 	{
-		//TRACE("调用构造函数TinyString(const CHAR* s): %d\n", this);
 		if (s != NULL)
 		{
 			Assign(s, strlen(s));
+		}
+		else
+		{
+			_Mystr = new CHAR[_Mysize + 1];
+			_Mystr[_Mysize] = '\0';
 		}
 	}
 	TinyString::TinyString(const TinyString& s, size_t pos, size_t size)
@@ -164,7 +169,6 @@ namespace TinyUI
 		_Mysize(0),
 		_Mystr(NULL)
 	{
-		//TRACE("调用构造函数TinyString(const TinyString& s, size_t pos, size_t size): %d\n", this);
 		Assign(s, pos, size);
 	}
 	TinyString::TinyString(const TinyString& s)
@@ -172,12 +176,18 @@ namespace TinyUI
 		_Mysize(0),
 		_Mystr(NULL)
 	{
-		//TRACE("调用拷贝构造函数TinyString(const TinyString& s): %d\n", this);
-		Assign(s, 0, s.GetSize());
+		if (s._Mysize == 0)
+		{
+			_Mystr = new CHAR[_Mysize + 1];
+			_Mystr[_Mysize] = '\0';
+		}
+		else
+		{
+			Assign(s, 0, s.GetSize());
+		}
 	}
 	TinyString::TinyString(TinyString&& s)
 	{
-		//TRACE("调用移动构造函数TinyString(TinyString&& s): %d\n", this);
 		this->_Mystr = s._Mystr;
 		this->_Mysize = s._Mysize;
 		this->_Myres = s._Myres;
@@ -187,7 +197,6 @@ namespace TinyUI
 	}
 	TinyString::~TinyString()
 	{
-		//TRACE("调用析构函数~TinyString: %d\n", this);
 		SAFE_DELETE_ARRAY(this->_Mystr);
 		this->_Myres = this->_Mysize = 0;
 	}
@@ -231,7 +240,7 @@ namespace TinyUI
 			}
 			else//拷贝内存
 			{
-				if (s)
+				if (s != NULL)
 				{
 					memcpy(this->_Mystr + this->_Mysize, s, _Newsize);
 				}
@@ -314,17 +323,14 @@ namespace TinyUI
 	}
 	TinyString& TinyString::operator = (const TinyString& str)
 	{
-		//TRACE("调用赋值构造函数TinyString::operator = (const TinyString& str)\n");
 		return Assign(str, 0, str.GetSize());
 	}
 	TinyString& TinyString::operator = (const CHAR* s)
 	{
-		//TRACE("调用赋值构造函数TinyString::operator = (const CHAR* s)\n");
 		return Assign(s);
 	}
 	TinyString& TinyString::operator = (CHAR s)
 	{
-		//TRACE("调用赋值构造函数TinyString::operator = (CHAR s)\n");
 		return Assign(&s);
 	}
 
@@ -424,9 +430,10 @@ namespace TinyUI
 	{
 		if (str.GetSize() <= pos)
 		{
-			this->_Mystr = NULL;
 			this->_Mysize = 0;
 			this->_Myres = 0;
+			this->_Mystr = new CHAR[_Mysize + 1];
+			this->_Mystr[this->_Mysize] = '\0';
 		}
 		else
 		{

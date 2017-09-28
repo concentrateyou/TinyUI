@@ -26,14 +26,14 @@ public:
 	void OnInitialize() OVERRIDE;
 	void OnUninitialize() OVERRIDE;
 private:
-	void OnMinimumClick(EventArgs& args);
-	void OnCloseClick(EventArgs& args);
-	void OnButtonClick(EventArgs& args);
+	void OnMinimumClick(TinyVisual*, EventArgs& args);
+	void OnCloseClick(TinyVisual*, EventArgs& args);
+	void OnButtonClick(TinyVisual*, EventArgs& args);
 	void OnSelectChanged(TinyVisualOption* ps);
 private:
 	TinyScopedPtr<Delegate<void(TinyVisualOption*)>> m_onSelectChanged;
-	TinyScopedPtr<Delegate<void(EventArgs&)>> m_onMinimumClick;
-	TinyScopedPtr<Delegate<void(EventArgs&)>> m_onCloseClick;
-	TinyScopedPtr<Delegate<void(EventArgs&)>> m_onButtonClick;
+	TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>> m_onMinimumClick;
+	TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>> m_onCloseClick;
+	TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>> m_onButtonClick;
 };
 

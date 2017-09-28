@@ -19,13 +19,13 @@ void SkinWindow::OnInitialize()
 	TinyVisual* visual = GetDocument()->GetVisualByName("sysmin");
 	if (visual != NULL)
 	{
-		m_onMinimumClick.Reset(new Delegate<void(EventArgs&)>(this, &SkinWindow::OnMinimumClick));
+		m_onMinimumClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &SkinWindow::OnMinimumClick));
 		visual->EVENT_CLICK += m_onMinimumClick;
 	}
 	visual = GetDocument()->GetVisualByName("sysclose");
 	if (visual != NULL)
 	{
-		m_onCloseClick.Reset(new Delegate<void(EventArgs&)>(this, &SkinWindow::OnCloseClick));
+		m_onCloseClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &SkinWindow::OnCloseClick));
 		visual->EVENT_CLICK += m_onCloseClick;
 	}
 	visual = GetDocument()->GetVisualByName("audio");
@@ -50,7 +50,7 @@ void SkinWindow::OnInitialize()
 	visual = GetDocument()->GetVisualByName("test");
 	if (visual != NULL)
 	{
-		m_onButtonClick.Reset(new Delegate<void(EventArgs&)>(this, &SkinWindow::OnButtonClick));
+		m_onButtonClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &SkinWindow::OnButtonClick));
 		visual->EVENT_CLICK += m_onButtonClick;
 	}
 }
@@ -79,18 +79,18 @@ void SkinWindow::OnUninitialize()
 	visual = GetDocument()->GetVisualByName("test");
 	if (visual != NULL)
 	{
-		m_onButtonClick.Reset(new Delegate<void(EventArgs&)>(this, &SkinWindow::OnButtonClick));
+		m_onButtonClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &SkinWindow::OnButtonClick));
 		visual->EVENT_CLICK -= m_onButtonClick;
 	}
 }
 
-void SkinWindow::OnMinimumClick(EventArgs& args)
+void SkinWindow::OnMinimumClick(TinyVisual*, EventArgs& args)
 {
 	GetDocument()->ReleaseCapture();//必须释放捕获
 	SendMessage(m_hWND, WM_SYSCOMMAND, SC_MINIMIZE, NULL);
 }
 
-void SkinWindow::OnCloseClick(EventArgs& args)
+void SkinWindow::OnCloseClick(TinyVisual*, EventArgs& args)
 {
 	SendMessage(m_hWND, WM_CLOSE, NULL, NULL);
 }
@@ -98,7 +98,7 @@ void SkinWindow::OnSelectChanged(TinyVisualOption* ps)
 {
 	TRACE("选中: %s\n", ps->GetText().CSTR());
 }
-void SkinWindow::OnButtonClick(EventArgs& args)
+void SkinWindow::OnButtonClick(TinyVisual*, EventArgs& args)
 {
 	/*TinyVisualRichText* txtURL = static_cast<TinyVisualRichText*>(GetDocument()->GetVisualByName("txtURL"));
 	if (txtURL != NULL)

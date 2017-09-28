@@ -96,7 +96,7 @@ namespace MShow
 		m_clientView.DestroyWindow();
 		m_clientCRTL.Uninitialize();
 		m_searchCTRL.Uninitialize();
-		if (!TinyApplication::GetInstance()->RemoveMessageLoop()) 
+		if (!TinyApplication::GetInstance()->RemoveMessageLoop())
 			return FALSE;
 		if (!TinyApplication::GetInstance()->Uninitialize())
 			return FALSE;
@@ -212,6 +212,10 @@ INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
+
+	TinyString str("1000000000000000");
+	str.Resize(10);
+
 	WSADATA   wsd;
 	WSAStartup(MAKEWORD(2, 2), &wsd);
 	MFStartup(MF_VERSION);
