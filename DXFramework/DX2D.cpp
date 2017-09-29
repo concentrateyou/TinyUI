@@ -49,7 +49,7 @@ namespace DXFramework
 		hRes = m_factory->CreateDCRenderTarget(&D2D1::RenderTargetProperties(), &m_dcRenderTarget);
 		if (hRes != S_OK)
 		{
-			LOG(ERROR) << "DX2D CreateHwndRenderTarget Fail\n";
+			LOG(ERROR) << "DX2D CreateDCRenderTarget Fail\n";
 			return FALSE;
 		}
 		return m_dcRenderTarget->BindDC(hDC, TinyRectangle(0, 0, cx, cy));

@@ -5,7 +5,9 @@ namespace DXFramework
 {
 	DX11RenderView::DX11RenderView(DX11& dx11)
 		:m_dx11(dx11),
-		m_handle(NULL)
+		m_handle(NULL),
+		m_bMap(FALSE),
+		m_bSync(FALSE)
 	{
 	}
 
@@ -75,6 +77,7 @@ namespace DXFramework
 			if (hRes != S_OK)
 				return FALSE;
 		}
+		m_bMap = bMap;
 		return TRUE;
 	}
 	BOOL DX11RenderView::Create(INT cx, INT cy, BOOL bMap, BOOL bSync)
@@ -154,6 +157,8 @@ namespace DXFramework
 		hRes = m_dx11.GetD3D()->CreateDepthStencilView(m_depth2D, &depthViewDesc, &m_depthView);
 		if (hRes != S_OK)
 			return FALSE;
+		m_bMap = bMap;
+		m_bSync = bSync;
 		return TRUE;
 	}
 	BOOL DX11RenderView::Resize()
@@ -168,7 +173,7 @@ namespace DXFramework
 		HRESULT hRes = m_dx11.GetSwap()->ResizeBuffers(2, 0, 0, DXGI_FORMAT_B8G8R8A8_UNORM, 0);
 		if (hRes != S_OK)
 			return FALSE;
-		return Create();
+		return Create(m_bMap);
 	}
 	BOOL DX11RenderView::Resize(INT cx, INT cy)
 	{
@@ -179,7 +184,7 @@ namespace DXFramework
 		if (m_render2D != NULL)
 		{
 			m_render2D.Release();
-			return Create(cx, cy);
+			return Create(cx, cy, m_bMap, m_bSync);
 		}
 		return FALSE;
 	}
@@ -203,7 +208,7 @@ namespace DXFramework
 		if (m_copy2D != NULL)
 		{
 			D3D11_MAPPED_SUBRESOURCE ms = { 0 };
-			if (SUCCEEDED(m_dx11.GetImmediateContext()->Map(m_copy2D, 0, D3D11_MAP_READ, 0, &ms)))
+			if (SUCCEEDED(m_dx11.GetImmediateContext()->Map(m_copy2D, 0, D3D11_MAP_READ, D3D11_MAP_FLAG_DO_NOT_WAIT, &ms)))
 			{
 				dwSize = ms.RowPitch * m_size.cy;
 				return static_cast<BYTE*>(ms.pData);

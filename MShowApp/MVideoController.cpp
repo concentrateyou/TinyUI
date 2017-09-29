@@ -45,7 +45,9 @@ namespace MShow
 	//////////////////////////////////////////////////////////////////////////
 	MVideoController::MVideoController(MVideoView& view)
 		:m_view(view),
-		m_pVideo(NULL)
+		m_pVideo(NULL),
+		m_dwSize(0),
+		m_bPusher(FALSE)
 	{
 		m_onLButtonDBClick.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MVideoController::OnLButtonDBClick));
 		m_onRButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MVideoController::OnRButtonDown));
@@ -87,7 +89,7 @@ namespace MShow
 		if (!m_player || !m_player->Open(m_view.Handle(), pzURL))
 			goto _ERROR;
 		size = m_player->GetSize();
-		if (!m_video2D.Create(m_graphics.GetDX11(), size, TRUE, TRUE))
+		if (!m_video2D.Create(m_graphics.GetDX11(), size, TRUE, FALSE))
 			goto _ERROR;
 		m_view.GetClientRect(&rectangle);
 		m_video2D.SetScale(rectangle.Size());
@@ -145,15 +147,12 @@ namespace MShow
 
 	void MVideoController::OnVideoCopy(BYTE* bits, LONG size)
 	{
+		TinyPerformanceTimer timeQPC;
+		timeQPC.BeginTime();
 		if (m_player != NULL)
 		{
 			TinySize videoSize = m_player->GetSize();
-			m_video2D.Lock(0, 250);
-			if (!m_video2D.Copy(m_graphics.GetDX11(), NULL, bits, size))
-			{
-				m_video2D.Unlock(0);
-			}
-			else
+			if (m_video2D.Copy(m_graphics.GetDX11(), NULL, bits, size))
 			{
 				m_graphics.GetDX11().SetRenderTexture2D(NULL);
 				m_graphics.GetDX11().GetRender2D()->BeginDraw();
@@ -161,16 +160,37 @@ namespace MShow
 				m_graphics.GetDX11().AllowBlend(FALSE, blendFactor);
 				m_graphics.DrawImage(&m_video2D, 1.0F, 1.0F);
 				m_graphics.GetDX11().GetRender2D()->EndDraw();
-				m_video2D.Unlock(0);
+				MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Enter();
+				MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Render();
+				if (m_bPusher)
+				{
+					TinyAutoLock lock(m_lock);
+					BYTE* data = MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetRenderView().Map(m_dwSize);
+					if (data != NULL && m_dwSize > 0)
+					{
+						if (!m_data)
+						{
+							m_data.Reset(new BYTE[m_dwSize]);
+						}
+						if (m_data != NULL)
+						{
+							memcpy_s(m_data, m_dwSize, data, m_dwSize);
+						}
+					}
+					MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetRenderView().Unmap();
+				}
+				MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Leave();
 			}
 		}
+		timeQPC.EndTime();
+		TRACE("Cost:%lld\n", timeQPC.GetMillisconds());
 	}
 
 	void MVideoController::OnVideoRender()
 	{
+		m_event.SetEvent();
 		m_graphics.Flush();
 		m_graphics.Present();
-		m_event.SetEvent();
 	}
 
 	void MVideoController::OnAdd()
@@ -237,6 +257,37 @@ namespace MShow
 				preview->Bring(m_pVideo, TRUE);
 			}
 		}
+	}
+
+	void MVideoController::SetPusher(BOOL bPusher)
+	{
+		m_bPusher = bPusher;
+		TinyAutoLock lock(m_lock);
+		if (!m_bPusher)
+		{
+			m_data.Reset(NULL);
+			m_dwSize = 0;
+		}
+	}
+
+	void MVideoController::Lock()
+	{
+		m_lock.Lock();
+	}
+
+	void MVideoController::Unlock()
+	{
+		m_lock.Unlock();
+	}
+
+	BYTE*	MVideoController::GetPointer()
+	{
+		return m_data;
+	}
+
+	DWORD	MVideoController::GetSize()
+	{
+		return m_dwSize;
 	}
 
 	HANDLE MVideoController::GetEvent()

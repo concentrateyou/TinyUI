@@ -26,14 +26,17 @@ namespace MShow
 		HANDLE		GetHandle();
 		void		SetVideoFPS(INT	videoFPS);
 		INT			GetVideoFPS() const;
+		void		Render();
 	public:
+		void		Enter();
+		void		Leave();
 		BOOL		Add(DX11Element2D* ps);
 		BOOL		Remove(DX11Element2D* ps);
 		BOOL		Move(DX11Element2D* ps, BOOL bUp);
 		BOOL		Bring(DX11Element2D* ps, BOOL bTop);
 		BOOL		Find(DX11Element2D* ps);
 		BOOL		Lock(DWORD dwMS);
-		DWORD		Draw();
+		void		Draw();
 	public:
 		BOOL		Submit();
 		BOOL		Close(DWORD dwMS) OVERRIDE;
@@ -52,7 +55,6 @@ namespace MShow
 		void	OnMessagePump();
 		void	GetEvents(vector<HANDLE>&handles);
 	private:
-
 		DX11Element2D*	HitTest(const TinyPoint& pos);//м╪ф╛сеох
 	private:
 		BOOL							m_bBreak;

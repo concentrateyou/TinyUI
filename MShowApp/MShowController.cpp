@@ -169,6 +169,17 @@ namespace MShow
 	{
 		m_pVideoCTRL = pCTRL;
 		m_audioTask.SetVideoController(pCTRL);
+		for (INT i = 0;i < 6;i++)
+		{
+			if (m_videos[i] == pCTRL)
+			{
+				m_pVideoCTRL->SetPusher(TRUE);
+			}
+			else
+			{
+				m_videos[i]->SetPusher(FALSE);
+			}
+		}
 	}
 	MVideoController* MShowController::GetCurrentCTRL()
 	{
@@ -179,8 +190,6 @@ namespace MShow
 		MVideoController* pCTRL = GetVideoController(0);
 		if (pCTRL != NULL && m_previewCTRL != NULL && m_playCTRL != NULL)
 		{
-			/*	if (m_shadowCTRL->IsActive())
-					m_shadowCTRL->Close(INFINITE);*/
 			m_playCTRL->StopPush();
 			if (m_pusher.IsActive())
 				m_pusher.Close(INFINITE);
@@ -194,8 +203,6 @@ namespace MShow
 			m_audioTask.SetVideoController(pCTRL);
 			m_audioTask.Submit(128);
 			m_playCTRL->StartPush();
-			//m_shadowCTRL->Submit();
-
 		}
 	}
 	void MShowController::OnToggle(void*, INT)

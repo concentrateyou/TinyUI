@@ -21,7 +21,7 @@ namespace MShow
 	BOOL MPlayController::SetPulgSize(const TinySize& size)
 	{
 		m_pulgSize = size;
-		return m_renderView.Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), TRUE, FALSE);
+		return m_renderView.Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), TRUE, TRUE);
 	}
 
 	TinySize MPlayController::GetPulgSize() const
@@ -93,32 +93,59 @@ namespace MShow
 		return TRUE;
 	}
 
+	INT g_count = 0;
+
 	void MPlayController::OnTimer()
 	{
 		while (m_clock.GetBaseTime() == -1);
 		m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
-		SampleTag sampleTag;
-		ZeroMemory(&sampleTag, sizeof(sampleTag));
-		m_graphics.Enter();
-		DWORD dwSize = 0;
-		BYTE* bits = m_renderView.Map(dwSize);
-		if (bits != NULL)
+		MVideoController* pCTRL = MShow::MShowApp::GetInstance().GetController().GetCurrentCTRL();
+		if (pCTRL != NULL)
 		{
-			sampleTag.size = dwSize;
-			if (m_videoQueue.GetAllocSize() == 0)
+			pCTRL->Lock();
+			SampleTag sampleTag;
+			ZeroMemory(&sampleTag, sizeof(sampleTag));
+			BYTE* ps = pCTRL->GetPointer();
+			sampleTag.size = pCTRL->GetSize();
+			if (sampleTag.size > 0)
 			{
-				INT count = MAX_VIDEO_QUEUE_SIZE / sampleTag.size + 1;
-				m_videoQueue.Initialize(count, sampleTag.size + 4);
+				if (m_videoQueue.GetAllocSize() == 0)
+				{
+					INT count = MAX_VIDEO_QUEUE_SIZE / sampleTag.size + 1;
+					m_videoQueue.Initialize(count, sampleTag.size + 4);
+				}
+				sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
+				memcpy_s(sampleTag.bits + 4, sampleTag.size, ps, sampleTag.size);
+				g_count++;
+				sampleTag.timestamp = g_count * 40;
+				m_videoQueue.Push(sampleTag);
 			}
-			sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
-			memcpy_s(sampleTag.bits + 4, sampleTag.size, bits, sampleTag.size);
-			m_renderView.Unmap();
-			sampleTag.timestamp = m_clock.GetVideoPTS() - m_clock.GetBaseTime();
-			m_videoQueue.Push(sampleTag);
-
+			pCTRL->Unlock();
 		}
-		m_graphics.Leave();
-
+		//while (m_clock.GetBaseTime() == -1);
+		//m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
+		//m_graphics.Present();
+		//m_graphics.Enter();
+		//SampleTag sampleTag;
+		//ZeroMemory(&sampleTag, sizeof(sampleTag));
+		//DWORD dwSize = 0;
+		//BYTE* bits = m_renderView.Map(dwSize);
+		//if (bits != NULL)
+		//{
+		//	sampleTag.size = dwSize;
+		//	if (m_videoQueue.GetAllocSize() == 0)
+		//	{
+		//		INT count = MAX_VIDEO_QUEUE_SIZE / sampleTag.size + 1;
+		//		m_videoQueue.Initialize(count, sampleTag.size + 4);
+		//	}
+		//	sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
+		//	memcpy_s(sampleTag.bits + 4, sampleTag.size, bits, sampleTag.size);
+		//	m_renderView.Unmap();
+		//	g_count++;
+		//	sampleTag.timestamp = g_count * 40; //m_clock.GetVideoPTS() - m_clock.GetBaseTime();
+		//	m_videoQueue.Push(sampleTag);
+		//}
+		//m_graphics.Leave();
 	}
 
 	void MPlayController::OnMessagePump()
@@ -128,27 +155,23 @@ namespace MShow
 		{
 			if (m_bBreak)
 				break;
-			BOOL bRes = MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Lock(INFINITE);
+			Sleep(1000);
+			/*BOOL bRes = MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Lock(INFINITE);
 			if (bRes)
 			{
 				m_graphics.Enter();
 				m_graphics.GetDX11().SetRenderTexture2D(&m_renderView);
 				m_graphics.GetDX11().GetRender2D()->BeginDraw();
-				m_video2D.Lock(0, 250);
 				m_graphics.DrawImage(&m_video2D, (FLOAT)((FLOAT)m_pulgSize.cx / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cx)), (FLOAT)((FLOAT)m_pulgSize.cy / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cy)));
-				m_video2D.Unlock(0);
 				m_graphics.GetDX11().GetRender2D()->EndDraw();
 				m_graphics.GetDX11().SetRenderTexture2D(NULL);
 				m_graphics.GetDX11().GetRender2D()->BeginDraw();
 				FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 				m_graphics.GetDX11().AllowBlend(FALSE, blendFactor);
-				m_video2D.Lock(0, 250);
 				m_graphics.DrawImage(&m_video2D, 1.0F, 1.0F);
-				m_video2D.Unlock(0);
 				m_graphics.GetDX11().GetRender2D()->EndDraw();
-				m_graphics.Present();
 				m_graphics.Leave();
-			}
+			}*/
 		}
 	}
 }

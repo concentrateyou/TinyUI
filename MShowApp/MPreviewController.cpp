@@ -73,7 +73,14 @@ namespace MShow
 		m_popup.AppendMenu(MF_STRING, IDM_REMOVE, TEXT("ÒÆ³ý"));
 		return TRUE;
 	}
-
+	void MPreviewController::Enter()
+	{
+		m_graphics.GetDX11().Enter();
+	}
+	void MPreviewController::Leave()
+	{
+		m_graphics.GetDX11().Leave();
+	}
 	BOOL MPreviewController::Add(DX11Element2D* ps)
 	{
 		BOOL bRes = FALSE;
@@ -310,7 +317,7 @@ namespace MShow
 	BOOL MPreviewController::SetPulgSize(const TinySize& size)
 	{
 		m_pulgSize = size;
-		return m_renderView.Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), FALSE, TRUE);
+		return m_renderView.Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), TRUE, FALSE);
 	}
 
 	HANDLE	MPreviewController::GetHandle()
@@ -332,12 +339,9 @@ namespace MShow
 	{
 		return m_videoFPS;
 	}
-
-	DWORD MPreviewController::Draw()
+	void MPreviewController::Render()
 	{
-		m_timeQPC.BeginTime();
 		m_graphics.GetDX11().SetRenderTexture2D(&m_renderView);
-		m_renderView.Lock(0, 250);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();
 		TinyArray<DX11Element2D*> images;
 		for (INT i = m_array.GetSize() - 1;i >= 0;i--)
@@ -354,9 +358,7 @@ namespace MShow
 				{
 					m_graphics.GetDX11().AllowBlend(FALSE, NULL);
 					m_graphics.GetDX11().AllowDepth(TRUE);
-					image->Lock(0, 250);
 					m_graphics.DrawImage(image, (FLOAT)((FLOAT)m_pulgSize.cx / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cx)), (FLOAT)((FLOAT)m_pulgSize.cy / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cy)));
-					image->Unlock(0);
 				}
 			}
 		}
@@ -373,7 +375,6 @@ namespace MShow
 			}
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
-		m_renderView.Unlock(0);
 		//////////////////////////////////////////////////////////////////////////
 		m_graphics.GetDX11().SetRenderTexture2D(NULL);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();
@@ -388,9 +389,7 @@ namespace MShow
 				{
 					m_graphics.GetDX11().AllowBlend(FALSE, NULL);
 					m_graphics.GetDX11().AllowDepth(TRUE);
-					image->Lock(0, 250);
 					m_graphics.DrawImage(image);
-					image->Unlock(0);
 				}
 			}
 			if (p2D == m_current)
@@ -434,9 +433,12 @@ namespace MShow
 			}
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
+	}
+
+	void MPreviewController::Draw()
+	{
+		m_graphics.Flush();
 		m_graphics.Present();
-		m_timeQPC.EndTime();
-		return static_cast<DWORD>(m_timeQPC.GetMillisconds());
 	}
 
 	void MPreviewController::GetEvents(vector<HANDLE>& handles)
@@ -481,17 +483,12 @@ namespace MShow
 			{
 				break;
 			}
-			m_graphics.Enter();
-			this->Draw();
-			m_graphics.Leave();
-			m_event.SetEvent();
-			/*if (hRes == WAIT_OBJECT_0)
+			if (hRes == WAIT_OBJECT_0)
 			{
 				m_graphics.Enter();
 				this->Draw();
 				m_graphics.Leave();
-				m_event.SetEvent();
-			}*/
+			}
 		}
 	}
 }
