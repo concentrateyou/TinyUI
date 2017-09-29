@@ -57,6 +57,7 @@ namespace MShow
 		m_popup.EVENT_CLICK += m_onMenuClick;
 		m_onVolume.Reset(new Delegate<void(DWORD)>(this, &MVideoController::OnVolume));
 		m_event.CreateEvent();
+		m_signal.CreateEvent();
 	}
 
 	MVideoController::~MVideoController()
@@ -66,6 +67,7 @@ namespace MShow
 		m_popup.EVENT_CLICK -= m_onMenuClick;
 		m_popup.DestroyMenu();
 		m_event.Close();
+		m_signal.Close();
 	}
 
 	BOOL MVideoController::Initialize()
@@ -147,8 +149,6 @@ namespace MShow
 
 	void MVideoController::OnVideoCopy(BYTE* bits, LONG size)
 	{
-		TinyPerformanceTimer timeQPC;
-		timeQPC.BeginTime();
 		if (m_player != NULL)
 		{
 			TinySize videoSize = m_player->GetSize();
@@ -179,11 +179,10 @@ namespace MShow
 					}
 					MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetRenderView().Unmap();
 				}
+				m_signal.SetEvent();
 				MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Leave();
 			}
 		}
-		timeQPC.EndTime();
-		TRACE("Cost:%lld\n", timeQPC.GetMillisconds());
 	}
 
 	void MVideoController::OnVideoRender()

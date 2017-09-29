@@ -51,6 +51,7 @@ namespace MShow
 		return FALSE;
 	}
 
+
 	void MRTMPPusher::OnMessagePump()
 	{
 		MSampleQueue& videos = MShow::MShowApp::GetInstance().GetController().GetVideoEncoder().GetSamples();

@@ -26,6 +26,8 @@ namespace MShow
 		return TinyTaskBase::Submit(BindCallback(&MVideoEncodeTask::OnMessagePump, this));
 	}
 
+	DWORD g_prevVideo = 0;
+
 	void MVideoEncodeTask::OnMessagePump()
 	{
 		MPlayController* pCTRL = MShow::MShowApp::GetInstance().GetController().GetPlayController();
@@ -52,7 +54,6 @@ namespace MShow
 				ZeroMemory(&sample, sizeof(sample));
 				if (m_encoder.Encode(sampleTag, bo, so, sample.mediaTag))
 				{
-					sample.mediaTag.dwTime = sampleTag.timestamp;
 					sample.size = so;
 					sample.bits = new BYTE[so];
 					memcpy(sample.bits, bo, so);

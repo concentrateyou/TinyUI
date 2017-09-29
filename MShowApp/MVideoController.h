@@ -63,6 +63,8 @@ namespace MShow
 		void	OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnVolume(DWORD volume);
 	public:
+		TinyEvent					m_signal;
+	public:
 		Event<void(BYTE*, LONG)> EVENT_AUDIO;
 	private:
 		BOOL						m_bPusher;
@@ -70,6 +72,7 @@ namespace MShow
 		TinyLock					m_lock;
 		TinyMenu					m_popup;
 		TinyEvent					m_event;
+		
 		MVideoElement*				m_pVideo;
 		MVideoView&					m_view;
 		DX11Graphics2D				m_graphics;
