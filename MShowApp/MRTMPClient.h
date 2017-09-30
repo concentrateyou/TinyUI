@@ -27,7 +27,7 @@ namespace MShow
 		BOOL	IsConnected();
 		BOOL	IsTimedout();
 		BOOL	SendMetadata(INT cx, INT cy, INT frameRate, INT videoRate, const WAVEFORMATEX& wfx, INT audioRate);
-		BOOL	SendSPP(const vector<BYTE>& pps, const vector<BYTE>& sps, DWORD timestamp);
+		BOOL	SendSPP(const vector<BYTE>& pps, const vector<BYTE>& sps);
 		BOOL	SendAAC(BYTE* bits, LONG size);
 		BOOL	SendVideo(DWORD dwFrameType, BYTE* bits, LONG size, DWORD timestamp);
 		BOOL	SendAudio(BYTE* bits, LONG size, DWORD timestamp);

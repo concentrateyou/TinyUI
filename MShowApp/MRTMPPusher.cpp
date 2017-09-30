@@ -98,7 +98,7 @@ namespace MShow
 				m_client.SendMetadata(pulgSize.cx, pulgSize.cy, video.GetVideoFPS(), video.GetVideoRate(), audio.GetFormat(), audio.GetAudioRate());
 				vector<BYTE>& sps = video.GetQSV().GetSPS();
 				vector<BYTE>& pps = video.GetQSV().GetPPS();
-				m_client.SendSPP(pps, sps, sample.mediaTag.dwTime);
+				m_client.SendSPP(pps, sps);
 			}
 			m_client.SendVideo(sample.mediaTag.dwFlag, sample.bits, sample.size, sample.mediaTag.dwTime);
 		}

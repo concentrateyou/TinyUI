@@ -34,6 +34,7 @@ namespace Decode
 		BOOL ParseMPEG4(FLV_TAG_VIDEO* video, BYTE* data, INT size, FLV_BLOCK& block);
 		BOOL ParseNALUS(FLV_TAG_VIDEO* video, BYTE* data, INT size, FLV_BLOCK& block);
 	private:
+		BOOL					m_bAVC;
 		BOOL					m_bNetwork;
 		BOOL					m_bAudio;
 		BOOL					m_bVideo;

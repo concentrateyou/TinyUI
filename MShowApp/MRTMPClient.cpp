@@ -120,7 +120,7 @@ namespace MShow
 		SAFE_FREE(packet);
 		return TRUE;
 	}
-	BOOL MRTMPClient::SendSPP(const vector<BYTE>& pps, const vector<BYTE>& sps, DWORD timestamp)
+	BOOL MRTMPClient::SendSPP(const vector<BYTE>& pps, const vector<BYTE>& sps)
 	{
 		if (!m_pRTMP)
 			return FALSE;
@@ -157,7 +157,7 @@ namespace MShow
 		packet->m_nBodySize = i;
 		packet->m_nChannel = STREAM_CHANNEL_VIDEO;
 		packet->m_hasAbsTimestamp = 0;
-		packet->m_nTimeStamp = timestamp;
+		packet->m_nTimeStamp = 0;
 		packet->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
 		packet->m_nInfoField2 = m_pRTMP->m_stream_id;
 		RTMP_SendPacket(m_pRTMP, packet, TRUE);
