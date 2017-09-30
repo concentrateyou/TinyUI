@@ -80,58 +80,37 @@ namespace MShow
 		return FALSE;
 	}
 
-	BOOL MPlayController::StartPush()
-	{
-		m_timer.SetCallback(1000 / m_videoFPS, BindCallback(&MPlayController::OnTimer, this));
-		return TRUE;
-	}
-
-	BOOL MPlayController::StopPush()
-	{
-		m_timer.Close();
-		Sleep(100);
-		return TRUE;
-	}
-
-	void MPlayController::OnTimer()
-	{
-
-	}
-
-	//LONG g_count = 0;
-
 	void MPlayController::OnMessagePump()
 	{
-
 		for (;;)
 		{
 			if (m_bBreak)
 				break;
-			while (m_clock.GetBaseTime() == -1);
-			m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
 			MVideoController* pCTRL = MShow::MShowApp::GetInstance().GetController().GetCurrentCTRL();
 			if (pCTRL != NULL)
 			{
-				pCTRL->m_signal.Lock(INFINITE);
-				SampleTag sampleTag;
-				ZeroMemory(&sampleTag, sizeof(sampleTag));
-				pCTRL->Lock();
-				BYTE* ps = pCTRL->GetPointer();
-				sampleTag.size = pCTRL->GetSize();
-				if (sampleTag.size > 0)
+				while (m_clock.GetBaseTime() == -1);
+				m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
+				if (pCTRL->m_signal.Lock(1000))
 				{
-					if (m_videoQueue.GetAllocSize() == 0)
+					SampleTag sampleTag;
+					ZeroMemory(&sampleTag, sizeof(sampleTag));
+					pCTRL->Lock();
+					BYTE* ps = pCTRL->GetPointer();
+					sampleTag.size = pCTRL->GetSize();
+					if (sampleTag.size > 0)
 					{
-						INT count = MAX_VIDEO_QUEUE_SIZE / sampleTag.size + 1;
-						m_videoQueue.Initialize(count, sampleTag.size + 4);
+						if (m_videoQueue.GetAllocSize() == 0)
+						{
+							INT count = MAX_VIDEO_QUEUE_SIZE / sampleTag.size + 1;
+							m_videoQueue.Initialize(count, sampleTag.size + 4);
+						}
+						sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
+						memcpy_s(sampleTag.bits + 4, sampleTag.size, ps, sampleTag.size);
+						m_videoQueue.Push(sampleTag);
 					}
-					sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
-					memcpy_s(sampleTag.bits + 4, sampleTag.size, ps, sampleTag.size);
-					//++g_count;
-					//sampleTag.timestamp = g_count * 40;
-					m_videoQueue.Push(sampleTag);
+					pCTRL->Unlock();
 				}
-				pCTRL->Unlock();
 			}
 		}
 	}

@@ -20,8 +20,6 @@ namespace MShow
 		BOOL	Initialize();
 		BOOL	Submit();
 		BOOL	Close(DWORD dwMS) OVERRIDE;
-		BOOL	StartPush();
-		BOOL	StopPush();
 	public:
 		BOOL				SetPulgSize(const TinySize& size);
 		TinySize			GetPulgSize() const;
@@ -31,7 +29,6 @@ namespace MShow
 		MPacketAllocQueue&	GetVideoQueue();
 	private:
 		void	OnMessagePump();
-		void	OnTimer();
 	private:
 		BOOL				m_bBreak;
 		INT					m_videoFPS;

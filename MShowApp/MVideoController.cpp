@@ -49,6 +49,7 @@ namespace MShow
 		m_dwSize(0),
 		m_bPusher(FALSE)
 	{
+		m_index = 0;
 		m_onLButtonDBClick.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MVideoController::OnLButtonDBClick));
 		m_onRButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MVideoController::OnRButtonDown));
 		m_view.EVENT_LDBCLICK += m_onLButtonDBClick;
@@ -164,10 +165,10 @@ namespace MShow
 				MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Render();
 				if (m_bPusher)
 				{
-					TinyAutoLock lock(m_lock);
 					BYTE* data = MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetRenderView().Map(m_dwSize);
 					if (data != NULL && m_dwSize > 0)
 					{
+						TinyAutoLock lock(m_lock);
 						if (!m_data)
 						{
 							m_data.Reset(new BYTE[m_dwSize]);
@@ -179,7 +180,6 @@ namespace MShow
 					}
 					MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetRenderView().Unmap();
 				}
-				m_signal.SetEvent();
 				MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Leave();
 			}
 		}
@@ -190,6 +190,7 @@ namespace MShow
 		m_event.SetEvent();
 		m_graphics.Flush();
 		m_graphics.Present();
+		//m_signal.SetEvent();
 	}
 
 	void MVideoController::OnAdd()
@@ -261,12 +262,6 @@ namespace MShow
 	void MVideoController::SetPusher(BOOL bPusher)
 	{
 		m_bPusher = bPusher;
-		TinyAutoLock lock(m_lock);
-		if (!m_bPusher)
-		{
-			m_data.Reset(NULL);
-			m_dwSize = 0;
-		}
 	}
 
 	void MVideoController::Lock()

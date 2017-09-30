@@ -30,6 +30,13 @@ namespace MShow
 		return TinyTaskBase::Close(dwMS);
 	}
 
+	/*timeQPC.EndTime();
+	if (m_bPusher)
+	{
+		TRACE("%d ---- OnVideoCopy : %lld\n", m_index, timeQPC.GetMillisconds());
+	}*/
+	//TinyPerformanceTimer g_time;
+
 	void MVideoRenderTask::OnMessagePump()
 	{
 		TinyPerformanceTimer timeQPC;

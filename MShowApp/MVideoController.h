@@ -64,6 +64,7 @@ namespace MShow
 		void	OnVolume(DWORD volume);
 	public:
 		TinyEvent					m_signal;
+		INT							m_index;
 	public:
 		Event<void(BYTE*, LONG)> EVENT_AUDIO;
 	private:
@@ -71,8 +72,7 @@ namespace MShow
 		DWORD						m_dwSize;
 		TinyLock					m_lock;
 		TinyMenu					m_popup;
-		TinyEvent					m_event;
-		
+		TinyEvent					m_event;	
 		MVideoElement*				m_pVideo;
 		MVideoView&					m_view;
 		DX11Graphics2D				m_graphics;
