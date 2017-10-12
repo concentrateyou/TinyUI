@@ -19,8 +19,9 @@ namespace MShow
 		m_bTracking(FALSE),
 		m_bPopup(FALSE),
 		m_bBreak(FALSE),
-		m_renderView(m_graphics.GetDX11()),
-		m_videoFPS(25)
+		m_currentView(0),
+		m_videoFPS(25),
+		m_dwSize(0)
 	{
 		m_onLButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonDown));
 		m_onLButtonUp.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonUp));
@@ -37,10 +38,18 @@ namespace MShow
 		m_view.EVENT_SETCURSOR += m_onSetCursor;
 		m_popup.EVENT_CLICK += m_onMenuClick;
 		m_event.CreateEvent();
+		for (INT i = 0;i < 6;i++)
+		{
+			m_renderView[i] = new DX11RenderView(m_graphics.GetDX11());
+		}
 	}
 
 	MPreviewController::~MPreviewController()
 	{
+		for (INT i = 0;i < 6;i++)
+		{
+			SAFE_DELETE(m_renderView[i]);
+		}
 		m_view.EVENT_LBUTTONDOWN -= m_onLButtonDown;
 		m_view.EVENT_LBUTTONUP -= m_onLButtonUp;
 		m_view.EVENT_RBUTTONDOWN -= m_onRButtonDown;
@@ -292,11 +301,6 @@ namespace MShow
 		return m_view;
 	}
 
-	DX11RenderView&	MPreviewController::GetRenderView()
-	{
-		return m_renderView;
-	}
-
 	DX11Graphics2D&	MPreviewController::Graphics()
 	{
 		return m_graphics;
@@ -317,12 +321,12 @@ namespace MShow
 	BOOL MPreviewController::SetPulgSize(const TinySize& size)
 	{
 		m_pulgSize = size;
-		return m_renderView.Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), TRUE, FALSE);
-	}
-
-	HANDLE	MPreviewController::GetHandle()
-	{
-		return m_renderView.GetHandle();
+		for (INT i = 0;i < 6;i++)
+		{
+			if (!m_renderView[i]->Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), TRUE, FALSE))
+				return FALSE;
+		}
+		return TRUE;
 	}
 
 	TinySize MPreviewController::GetPulgSize() const
@@ -339,9 +343,26 @@ namespace MShow
 	{
 		return m_videoFPS;
 	}
+
+	BYTE* MPreviewController::GetPointer()
+	{
+		return m_bits;
+	}
+
+	DWORD MPreviewController::GetSize()
+	{
+		return m_dwSize;
+	}
+
+	DX11RenderView* MPreviewController::GetCopyView()
+	{
+		DWORD currentCopy = (m_currentView == 0) ? 5 : m_currentView - 1;
+		return m_renderView[currentCopy];
+	}
+
 	void MPreviewController::Render()
 	{
-		m_graphics.GetDX11().SetRenderTexture2D(&m_renderView);
+		m_graphics.GetDX11().SetRenderTexture2D(m_renderView[m_currentView]);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();
 		TinyArray<DX11Element2D*> images;
 		for (INT i = m_array.GetSize() - 1;i >= 0;i--)
@@ -433,6 +454,29 @@ namespace MShow
 			}
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
+
+		if (m_currentView == 5)
+			m_currentView = 0;
+		else
+			m_currentView++;
+
+		DX11RenderView* pView = GetCopyView();
+		if (pView != NULL)
+		{
+			BYTE* bits = pView->Map(m_dwSize);
+			if (bits != NULL && m_dwSize > 0)
+			{
+				if (!m_bits)
+				{
+					m_bits.Reset(new BYTE[m_dwSize]);
+				}
+				if (m_bits != NULL)
+				{
+					memcpy_s(m_bits, m_dwSize, bits, m_dwSize);
+				}
+			}
+			pView->Unmap();
+		}
 	}
 
 	void MPreviewController::Draw()

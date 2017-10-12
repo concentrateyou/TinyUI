@@ -56,15 +56,14 @@ namespace MShow
 		m_view.GetClientRect(&rectangle);
 		if (!m_graphics.Initialize(m_view.Handle(), rectangle.Size(), TRUE))
 			return FALSE;
-		if (!m_video2D.Load(m_graphics.GetDX11(), MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetHandle()))
-			return FALSE;
+		/*if (!m_video2D.Load(m_graphics.GetDX11(), MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetHandle()))
+			return FALSE;*/
 		return TRUE;
 	}
 
 	BOOL MPlayController::Submit()
 	{
 		m_bBreak = FALSE;
-
 		return TinyTaskBase::Submit(BindCallback(&MPlayController::OnMessagePump, this));
 	}
 
@@ -74,7 +73,7 @@ namespace MShow
 		Sleep(100);
 		if (TinyTaskBase::Close(dwMS))
 		{
-			m_video2D.Destory();
+			//m_video2D.Destory();
 			return TRUE;
 		}
 		return FALSE;
@@ -93,11 +92,11 @@ namespace MShow
 				m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
 				if (pCTRL->m_signal.Lock(1000))
 				{
+					MPreviewController* pCTRLP = MShow::MShowApp::GetInstance().GetController().GetPreviewController();
 					SampleTag sampleTag;
 					ZeroMemory(&sampleTag, sizeof(sampleTag));
-					pCTRL->Lock();
-					BYTE* ps = pCTRL->GetPointer();
-					sampleTag.size = pCTRL->GetSize();
+					BYTE* ps = pCTRLP->GetPointer();
+					sampleTag.size = pCTRLP->GetSize();
 					if (sampleTag.size > 0)
 					{
 						if (m_videoQueue.GetAllocSize() == 0)
@@ -109,7 +108,6 @@ namespace MShow
 						memcpy_s(sampleTag.bits + 4, sampleTag.size, ps, sampleTag.size);
 						m_videoQueue.Push(sampleTag);
 					}
-					pCTRL->Unlock();
 				}
 			}
 		}

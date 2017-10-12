@@ -23,26 +23,27 @@ namespace MShow
 		BOOL		Initialize();
 		BOOL		SetPulgSize(const TinySize& size);
 		TinySize	GetPulgSize() const;
-		HANDLE		GetHandle();
 		void		SetVideoFPS(INT	videoFPS);
 		INT			GetVideoFPS() const;
 		void		Render();
+		BYTE*		GetPointer();
+		DWORD		GetSize();
+		DX11RenderView* GetCopyView();
 	public:
 		void		Enter();
 		void		Leave();
+		void		Draw();
 		BOOL		Add(DX11Element2D* ps);
 		BOOL		Remove(DX11Element2D* ps);
 		BOOL		Move(DX11Element2D* ps, BOOL bUp);
 		BOOL		Bring(DX11Element2D* ps, BOOL bTop);
 		BOOL		Find(DX11Element2D* ps);
 		BOOL		Lock(DWORD dwMS);
-		void		Draw();
 	public:
 		BOOL		Submit();
 		BOOL		Close(DWORD dwMS) OVERRIDE;
 	public:
 		MPreviewView&	GetView();
-		DX11RenderView&	GetRenderView();
 		DX11Graphics2D&	Graphics();
 	private:
 		void	OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -60,6 +61,8 @@ namespace MShow
 		BOOL							m_bBreak;
 		BOOL							m_bTracking;
 		BOOL							m_bPopup;
+		DWORD							m_dwSize;
+		INT								m_currentView;
 		INT								m_videoFPS;
 		TinySize						m_pulgSize;
 		TinyMenu						m_popup;
@@ -68,10 +71,11 @@ namespace MShow
 		MPreviewView&					m_view;
 		DX11Graphics2D					m_graphics;
 		DX11Image2D						m_handles[8];
-		DX11RenderView					m_renderView;
+		DX11RenderView*					m_renderView[6];
 		TinyPerformanceTimer			m_timeQPC;
 		TinyArray<DX11Element2D*>		m_array;
 		TinyArray<HANDLE>				m_events;
+		TinyScopedArray<BYTE>			m_bits;
 	private:
 		TinyScopedPtr<Delegate<void(void*, INT)>>				   m_onMenuClick;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonDown;

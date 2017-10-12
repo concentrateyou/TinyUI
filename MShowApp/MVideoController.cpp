@@ -45,9 +45,7 @@ namespace MShow
 	//////////////////////////////////////////////////////////////////////////
 	MVideoController::MVideoController(MVideoView& view)
 		:m_view(view),
-		m_pVideo(NULL),
-		m_dwSize(0),
-		m_bPusher(FALSE)
+		m_pVideo(NULL)
 	{
 		m_index = 0;
 		m_onLButtonDBClick.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MVideoController::OnLButtonDBClick));
@@ -148,8 +146,11 @@ namespace MShow
 		EVENT_AUDIO(bits, size);
 	}
 
+	TinyPerformanceTimer g_time;
+
 	void MVideoController::OnVideoCopy(BYTE* bits, LONG size)
 	{
+		g_time.BeginTime();
 		if (m_player != NULL)
 		{
 			TinySize videoSize = m_player->GetSize();
@@ -165,23 +166,29 @@ namespace MShow
 				MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Render();
 				if (m_bPusher)
 				{
-					BYTE* data = MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetRenderView().Map(m_dwSize);
+					BYTE* data = MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetCopyView()->Map(m_dwSize);
 					if (data != NULL && m_dwSize > 0)
 					{
-						TinyAutoLock lock(m_lock);
 						if (!m_data)
 						{
 							m_data.Reset(new BYTE[m_dwSize]);
 						}
 						if (m_data != NULL)
 						{
+							TinyAutoLock lock(m_lock);
 							memcpy_s(m_data, m_dwSize, data, m_dwSize);
 						}
 					}
-					MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetRenderView().Unmap();
+					MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetCopyView()->Unmap();
+					m_signal.SetEvent();
 				}
 				MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Leave();
 			}
+		}
+		g_time.EndTime();
+		if (g_time.GetMillisconds() >= 15)
+		{
+			TRACE("Cost:%lld\n", g_time.GetMillisconds());
 		}
 	}
 
@@ -190,7 +197,6 @@ namespace MShow
 		m_event.SetEvent();
 		m_graphics.Flush();
 		m_graphics.Present();
-		//m_signal.SetEvent();
 	}
 
 	void MVideoController::OnAdd()
