@@ -19,8 +19,8 @@ namespace MShow
 		m_bTracking(FALSE),
 		m_bPopup(FALSE),
 		m_bBreak(FALSE),
-		m_currentView(0),
 		m_videoFPS(25),
+		m_renderView(m_graphics.GetDX11()),
 		m_dwSize(0)
 	{
 		m_onLButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonDown));
@@ -38,18 +38,11 @@ namespace MShow
 		m_view.EVENT_SETCURSOR += m_onSetCursor;
 		m_popup.EVENT_CLICK += m_onMenuClick;
 		m_event.CreateEvent();
-		for (INT i = 0;i < 6;i++)
-		{
-			m_renderView[i] = new DX11RenderView(m_graphics.GetDX11());
-		}
+		m_copy.CreateEvent();
 	}
 
 	MPreviewController::~MPreviewController()
 	{
-		for (INT i = 0;i < 6;i++)
-		{
-			SAFE_DELETE(m_renderView[i]);
-		}
 		m_view.EVENT_LBUTTONDOWN -= m_onLButtonDown;
 		m_view.EVENT_LBUTTONUP -= m_onLButtonUp;
 		m_view.EVENT_RBUTTONDOWN -= m_onRButtonDown;
@@ -309,8 +302,8 @@ namespace MShow
 	BOOL MPreviewController::Submit()
 	{
 		m_bBreak = FALSE;
-		m_copyTask.Submit(BindCallback(&MPreviewController::OnMessagePump2, this));
-		return TinyTaskBase::Submit(BindCallback(&MPreviewController::OnMessagePump1, this));
+		m_task.Submit(BindCallback(&MPreviewController::OnMessagePump1, this));
+		return TinyTaskBase::Submit(BindCallback(&MPreviewController::OnMessagePump, this));
 	}
 
 	BOOL MPreviewController::Close(DWORD dwMS)
@@ -322,12 +315,7 @@ namespace MShow
 	BOOL MPreviewController::SetPulgSize(const TinySize& size)
 	{
 		m_pulgSize = size;
-		for (INT i = 0;i < 6;i++)
-		{
-			if (!m_renderView[i]->Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), TRUE, FALSE))
-				return FALSE;
-		}
-		return TRUE;
+		return m_renderView.Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), TRUE, FALSE);
 	}
 
 	TinySize MPreviewController::GetPulgSize() const
@@ -355,15 +343,9 @@ namespace MShow
 		return m_dwSize;
 	}
 
-	DX11RenderView* MPreviewController::GetCopyView()
-	{
-		DWORD currentCopy = (m_currentView == 0) ? 5 : m_currentView - 1;
-		return m_renderView[currentCopy];
-	}
-
 	void MPreviewController::Render()
 	{
-		m_graphics.GetDX11().SetRenderTexture2D(m_renderView[m_currentView]);
+		m_graphics.GetDX11().SetRenderTexture2D(&m_renderView);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();
 		TinyArray<DX11Element2D*> images;
 		for (INT i = m_array.GetSize() - 1;i >= 0;i--)
@@ -455,37 +437,11 @@ namespace MShow
 			}
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
-
-		if (m_currentView == 5)
-			m_currentView = 0;
-		else
-			m_currentView++;
 	}
 
-	void MPreviewController::Copy()
+	void MPreviewController::SetCopy()
 	{
-		DX11RenderView* pView = GetCopyView();
-		if (pView != NULL)
-		{
-			BYTE* bits = pView->Map(m_dwSize);
-			if (bits != NULL && m_dwSize > 0)
-			{
-				if (!m_bits)
-				{
-					m_bits.Reset(new BYTE[m_dwSize]);
-				}
-				if (m_bits != NULL)
-				{
-					memcpy_s(m_bits, m_dwSize, bits, m_dwSize);
-				}
-			}
-			pView->Unmap();
-		}
-		MVideoController* pCTRL = MShow::MShowApp::GetInstance().GetController().GetCurrentCTRL();
-		if (pCTRL != NULL)
-		{
-			pCTRL->m_signal.SetEvent();
-		}
+		m_copy.SetEvent();
 	}
 
 	void MPreviewController::Draw()
@@ -493,7 +449,7 @@ namespace MShow
 		m_graphics.Present();
 	}
 
-	void MPreviewController::GetRenderEvents(vector<HANDLE>& handles)
+	void MPreviewController::GetEvents(vector<HANDLE>& handles)
 	{
 		handles.clear();
 		for (INT i = 0;i < m_array.GetSize();i++)
@@ -502,21 +458,7 @@ namespace MShow
 			if (p2D->IsKindOf(RUNTIME_CLASS(MVideoElement)))
 			{
 				MVideoElement* ps = static_cast<MVideoElement*>(p2D);
-				handles.push_back(ps->GetController().GetRenderEvent());
-			}
-		}
-	}
-
-	void MPreviewController::GetCopyEvents(vector<HANDLE>&handles)
-	{
-		handles.clear();
-		for (INT i = 0;i < m_array.GetSize();i++)
-		{
-			DX11Element2D* p2D = m_array[i];
-			if (p2D->IsKindOf(RUNTIME_CLASS(MVideoElement)))
-			{
-				MVideoElement* ps = static_cast<MVideoElement*>(p2D);
-				handles.push_back(ps->GetController().GetCopyEvent());
+				handles.push_back(ps->GetController().GetEvent());
 			}
 		}
 	}
@@ -537,27 +479,31 @@ namespace MShow
 				}
 				break;
 			}
-			vector<HANDLE> handles;
-			GetRenderEvents(handles);
-			if (handles.size() == 0)
+			if (m_copy.Lock(INFINITE))
 			{
-				Sleep(25);
-				continue;
-			}
-			HRESULT hRes = WaitForMultipleObjects(handles.size(), &handles[0], FALSE, 1000);
-			if (hRes == WAIT_FAILED || hRes == WAIT_ABANDONED)
-			{
-				break;
-			}
-			if (hRes == WAIT_OBJECT_0)
-			{
-				m_graphics.Enter();
-				this->Draw();
-				m_graphics.Leave();
+				BYTE* bits = m_renderView.Map(m_dwSize);
+				if (bits != NULL && m_dwSize > 0)
+				{
+					if (!m_bits)
+					{
+						m_bits.Reset(new BYTE[m_dwSize]);
+					}
+					if (m_bits != NULL)
+					{
+						memcpy_s(m_bits, m_dwSize, bits, m_dwSize);
+						MVideoController* pCTRL = MShow::MShowApp::GetInstance().GetController().GetCurrentCTRL();
+						if (pCTRL)
+						{
+							pCTRL->m_signal.SetEvent();
+						}
+					}
+				}
+				m_renderView.Unmap();
 			}
 		}
 	}
-	void MPreviewController::OnMessagePump2()
+
+	void MPreviewController::OnMessagePump()
 	{
 		for (;;)
 		{
@@ -574,7 +520,7 @@ namespace MShow
 				break;
 			}
 			vector<HANDLE> handles;
-			GetCopyEvents(handles);
+			GetEvents(handles);
 			if (handles.size() == 0)
 			{
 				Sleep(25);
@@ -587,7 +533,7 @@ namespace MShow
 			}
 			if (hRes == WAIT_OBJECT_0)
 			{
-				this->Copy();
+				this->Draw();
 			}
 		}
 	}

@@ -34,7 +34,7 @@ namespace MShow
 		friend class MShowController;
 		DISALLOW_COPY_AND_ASSIGN(MVideoController)
 	public:
-		MVideoController(MVideoView& view);
+		MVideoController(MVideoView& view, INT index);
 		virtual ~MVideoController();
 		BOOL			Initialize();
 		BOOL			Open(LPCSTR pzURL);
@@ -43,12 +43,11 @@ namespace MShow
 		TinyString		GetURL() const;
 		WAVEFORMATEX*	GetFormat();
 		DX11Element2D*	GetElement();
-		HANDLE			GetRenderEvent();
-		HANDLE			GetCopyEvent();
+		HANDLE			GetEvent();
 		void			AddElement();
-		void			SetPusher(BOOL bPusher);
 		void			Lock();
 		void			Unlock();
+		void			SetPusher();
 		BYTE*			GetPointer();
 		DWORD			GetSize();
 	private:
@@ -65,22 +64,22 @@ namespace MShow
 		void	OnVolume(DWORD volume);
 	public:
 		TinyEvent					m_signal;
-		INT							m_index;
+		TinyEvent					m_copy;
 	public:
 		Event<void(BYTE*, LONG)> EVENT_AUDIO;
 	private:
-		BOOL						m_bPusher;
+		INT							m_index;
 		DWORD						m_dwSize;
 		TinyLock					m_lock;
 		TinyMenu					m_popup;
-		TinyEvent					m_renderEvent;	
-		TinyEvent					m_copyEvent;
+		TinyEvent					m_event;
 		MVideoElement*				m_pVideo;
 		MVideoView&					m_view;
 		DX11Graphics2D				m_graphics;
 		DX11Image2D					m_video2D;
 		TinyScopedPtr<MFLVPlayer>	m_player;
 		TinyScopedPtr<BYTE>			m_data;
+		TinyPerformanceTimer		m_timeQPC;
 	private:
 		TinyScopedPtr<Delegate<void(DWORD)>>						m_onVolume;
 		TinyScopedPtr<Delegate<void(void*, INT)>>					m_onMenuClick;

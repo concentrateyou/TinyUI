@@ -43,10 +43,9 @@ namespace MShow
 		m_playCTRL->SetVideoFPS(25);
 		for (UINT i = 0;i < 6;i++)
 		{
-			m_videos[i].Reset(new MVideoController(m_window.m_videoViews[i]));
+			m_videos[i].Reset(new MVideoController(m_window.m_videoViews[i], i));
 			if (!m_videos[i])
 				return FALSE;
-			m_videos[i]->m_index = i;
 			if (!m_videos[i]->Initialize())
 				return FALSE;
 			m_window.m_volumeViews[i].EVENT_VOLUME += m_videos[i]->m_onVolume;
@@ -154,16 +153,11 @@ namespace MShow
 	void MShowController::SetCurrentCTRL(MVideoController* pCTRL)
 	{
 		m_pVideoCTRL = pCTRL;
-		for (INT i = 0;i < 6;i++)
+		if (m_pVideoCTRL != NULL)
 		{
-			if (m_videos[i] == pCTRL)
-			{
-				m_pVideoCTRL->SetPusher(TRUE);
-			}
-			else
-			{
-				m_videos[i]->SetPusher(FALSE);
-			}
+			m_previewCTRL->Render();
+			m_previewCTRL->SetCopy();
+			m_pVideoCTRL->SetPusher();
 		}
 		m_audioTask.SetVideoController(pCTRL);
 	}

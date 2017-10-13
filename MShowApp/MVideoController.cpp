@@ -43,11 +43,11 @@ namespace MShow
 		return m_address;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	MVideoController::MVideoController(MVideoView& view)
+	MVideoController::MVideoController(MVideoView& view, INT index)
 		:m_view(view),
+		m_index(index),
 		m_pVideo(NULL)
 	{
-		m_index = 0;
 		m_onLButtonDBClick.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MVideoController::OnLButtonDBClick));
 		m_onRButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MVideoController::OnRButtonDown));
 		m_view.EVENT_LDBCLICK += m_onLButtonDBClick;
@@ -55,8 +55,8 @@ namespace MShow
 		m_onMenuClick.Reset(new Delegate<void(void*, INT)>(this, &MVideoController::OnMenuClick));
 		m_popup.EVENT_CLICK += m_onMenuClick;
 		m_onVolume.Reset(new Delegate<void(DWORD)>(this, &MVideoController::OnVolume));
-		m_renderEvent.CreateEvent();
-		m_copyEvent.CreateEvent();
+		m_event.CreateEvent();
+		m_copy.CreateEvent();
 		m_signal.CreateEvent();
 	}
 
@@ -66,8 +66,7 @@ namespace MShow
 		m_view.EVENT_RBUTTONDOWN -= m_onRButtonDown;
 		m_popup.EVENT_CLICK -= m_onMenuClick;
 		m_popup.DestroyMenu();
-		m_renderEvent.Close();
-		m_copyEvent.Close();
+		m_event.Close();
 		m_signal.Close();
 	}
 
@@ -148,11 +147,9 @@ namespace MShow
 		EVENT_AUDIO(bits, size);
 	}
 
-	TinyPerformanceTimer g_time;
-
 	void MVideoController::OnVideoCopy(BYTE* bits, LONG size)
 	{
-		g_time.BeginTime();
+		m_timeQPC.BeginTime();
 		if (m_player != NULL)
 		{
 			TinySize videoSize = m_player->GetSize();
@@ -164,22 +161,36 @@ namespace MShow
 				m_graphics.GetDX11().AllowBlend(FALSE, blendFactor);
 				m_graphics.DrawImage(&m_video2D, 1.0F, 1.0F);
 				m_graphics.GetDX11().GetRender2D()->EndDraw();
-				MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Enter();
-				MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Render();
-				MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Leave();
-				m_copyEvent.SetEvent();
+				MVideoController* pCTRL = MShow::MShowApp::GetInstance().GetController().GetCurrentCTRL();
+				if (!pCTRL)
+				{
+					if (m_index == 0)//默认第1个
+					{
+						MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Render();
+						MShow::MShowApp::GetInstance().GetController().GetPreviewController()->SetCopy();
+					}
+				}
+				else
+				{
+					if (pCTRL == this)
+					{
+						MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Render();
+						MShow::MShowApp::GetInstance().GetController().GetPreviewController()->SetCopy();
+					}
+				}
 			}
 		}
-		g_time.EndTime();
-		if (g_time.GetMillisconds() >= 20)
+		m_timeQPC.EndTime();
+		if (m_timeQPC.GetMillisconds() >= 40)
 		{
-			TRACE("URL:%s, Cost:%lld\n", m_player->GetURL().CSTR(), g_time.GetMillisconds());
+			TRACE("URL:%s, Cost:%lld\n", m_player->GetURL().CSTR(), m_timeQPC.GetMillisconds());
 		}
 	}
 
 	void MVideoController::OnVideoRender()
 	{
-		m_renderEvent.SetEvent();
+		m_event.SetEvent();
+		m_graphics.Flush();
 		m_graphics.Present();
 	}
 
@@ -249,17 +260,9 @@ namespace MShow
 		}
 	}
 
-	void MVideoController::SetPusher(BOOL bPusher)
+	void MVideoController::SetPusher()
 	{
-		m_bPusher = bPusher;
-		if (m_bPusher)
-		{
-			m_signal.SetEvent();
-		}
-		else
-		{
-			m_signal.ResetEvent();
-		}
+		m_signal.SetEvent();
 	}
 
 	void MVideoController::Lock()
@@ -282,14 +285,9 @@ namespace MShow
 		return m_dwSize;
 	}
 
-	HANDLE MVideoController::GetRenderEvent()
+	HANDLE MVideoController::GetEvent()
 	{
-		return m_renderEvent.Handle();
-	}
-
-	HANDLE MVideoController::GetCopyEvent()
-	{
-		return m_copyEvent.Handle();
+		return m_event.Handle();
 	}
 
 	void MVideoController::OnMenuClick(void*, INT wID)

@@ -26,14 +26,13 @@ namespace MShow
 		void		SetVideoFPS(INT	videoFPS);
 		INT			GetVideoFPS() const;
 		void		Render();
-		void		Copy();
 		BYTE*		GetPointer();
 		DWORD		GetSize();
-		DX11RenderView* GetCopyView();
 	public:
 		void		Enter();
 		void		Leave();
 		void		Draw();
+		void		SetCopy();
 		BOOL		Add(DX11Element2D* ps);
 		BOOL		Remove(DX11Element2D* ps);
 		BOOL		Move(DX11Element2D* ps, BOOL bUp);
@@ -54,10 +53,9 @@ namespace MShow
 		void	OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnMenuClick(void*, INT wID);
+		void	OnMessagePump();
 		void	OnMessagePump1();
-		void	OnMessagePump2();
-		void	GetRenderEvents(vector<HANDLE>&handles);
-		void	GetCopyEvents(vector<HANDLE>&handles);
+		void	GetEvents(vector<HANDLE>&handles);
 	private:
 		DX11Element2D*	HitTest(const TinyPoint& pos);//м╪ф╛сеох
 	private:
@@ -65,21 +63,21 @@ namespace MShow
 		BOOL							m_bTracking;
 		BOOL							m_bPopup;
 		DWORD							m_dwSize;
-		INT								m_currentView;
 		INT								m_videoFPS;
 		TinySize						m_pulgSize;
 		TinyMenu						m_popup;
+		TinyEvent						m_copy;
 		TinyEvent						m_event;
 		DX11Element2D*					m_current;
 		MPreviewView&					m_view;
 		DX11Graphics2D					m_graphics;
 		DX11Image2D						m_handles[8];
-		DX11RenderView*					m_renderView[6];
+		DX11RenderView					m_renderView;
 		TinyPerformanceTimer			m_timeQPC;
 		TinyArray<DX11Element2D*>		m_array;
 		TinyArray<HANDLE>				m_events;
 		TinyScopedArray<BYTE>			m_bits;
-		TinyTaskBase					m_copyTask;
+		TinyTaskBase					m_task;
 	private:
 		TinyScopedPtr<Delegate<void(void*, INT)>>				   m_onMenuClick;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonDown;

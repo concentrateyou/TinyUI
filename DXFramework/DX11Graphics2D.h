@@ -15,7 +15,7 @@ namespace DXFramework
 	public:
 		DX11Graphics2D();
 		virtual ~DX11Graphics2D();
-		BOOL	Initialize(HWND hWND, const TinySize& size, BOOL bMultithread = FALSE);
+		BOOL	Initialize(HWND hWND, const TinySize& size, BOOL bMultithread = TRUE);
 		void	Present();
 		void	Flush();
 		BOOL    Resize(const TinySize& size);

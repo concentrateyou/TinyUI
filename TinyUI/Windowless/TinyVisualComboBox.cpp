@@ -218,7 +218,6 @@ namespace TinyUI
 			m_dwArrawFlag = m_bActive ? DOWN : NORMAL;
 			if (!m_bActive)
 			{
-				TRACE("WA_INACTIVE\n");
 				m_popupWND.ShowWindow(SW_HIDE);
 				m_popupWND.UpdateWindow();
 				m_document->Invalidate();
