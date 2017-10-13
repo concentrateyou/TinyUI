@@ -155,8 +155,6 @@ namespace MShow
 		m_pVideoCTRL = pCTRL;
 		if (m_pVideoCTRL != NULL)
 		{
-			m_previewCTRL->Render();
-			m_previewCTRL->SetCopy();
 			m_pVideoCTRL->SetPusher();
 		}
 		m_audioTask.SetVideoController(pCTRL);

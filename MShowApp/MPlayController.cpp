@@ -92,7 +92,7 @@ namespace MShow
 				m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
 				if (pCTRL->m_signal.Lock(1000))
 				{
-					MPreviewController* pCTRLP = MShow::MShowApp::GetInstance().GetController().GetPreviewController();
+					/*MPreviewController* pCTRLP = MShow::MShowApp::GetInstance().GetController().GetPreviewController();
 					SampleTag sampleTag;
 					ZeroMemory(&sampleTag, sizeof(sampleTag));
 					BYTE* ps = pCTRLP->GetPointer();
@@ -107,7 +107,7 @@ namespace MShow
 						sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
 						memcpy_s(sampleTag.bits + 4, sampleTag.size, ps, sampleTag.size);
 						m_videoQueue.Push(sampleTag);
-					}
+					}*/
 				}
 			}
 		}

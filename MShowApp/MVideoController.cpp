@@ -147,6 +147,14 @@ namespace MShow
 		EVENT_AUDIO(bits, size);
 	}
 
+	/*TinyPerformanceTimer time;
+	time.BeginTime();
+	time.EndTime();
+	if (time.GetMillisconds() >= 10)
+	{
+		TRACE("Render :%lld\n", time.GetMillisconds());
+	}*/
+
 	void MVideoController::OnVideoCopy(BYTE* bits, LONG size)
 	{
 		m_timeQPC.BeginTime();
@@ -181,16 +189,15 @@ namespace MShow
 			}
 		}
 		m_timeQPC.EndTime();
-		if (m_timeQPC.GetMillisconds() >= 40)
+		if (m_timeQPC.GetMillisconds() >= 15)
 		{
-			TRACE("URL:%s, Cost:%lld\n", m_player->GetURL().CSTR(), m_timeQPC.GetMillisconds());
+			TRACE("Render :%lld\n", m_timeQPC.GetMillisconds());
 		}
 	}
 
 	void MVideoController::OnVideoRender()
 	{
 		m_event.SetEvent();
-		m_graphics.Flush();
 		m_graphics.Present();
 	}
 

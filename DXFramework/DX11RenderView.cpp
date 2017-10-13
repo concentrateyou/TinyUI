@@ -208,7 +208,7 @@ namespace DXFramework
 		if (m_copy2D != NULL)
 		{
 			D3D11_MAPPED_SUBRESOURCE ms = { 0 };
-			if (SUCCEEDED(m_dx11.GetImmediateContext()->Map(m_copy2D, 0, D3D11_MAP_READ, D3D11_MAP_FLAG_DO_NOT_WAIT, &ms)))
+			if (SUCCEEDED(m_dx11.GetImmediateContext()->Map(m_copy2D, 0, D3D11_MAP_READ, 0, &ms)))
 			{
 				dwSize = ms.RowPitch * m_size.cy;
 				return static_cast<BYTE*>(ms.pData);
