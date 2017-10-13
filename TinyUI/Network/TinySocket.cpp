@@ -345,14 +345,11 @@ namespace TinyUI
 					{
 						goto OVERLAPPED_ERROR;
 					}
-					else
-					{
-						if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEINWAITTHREAD | WT_EXECUTEONLYONCE))
-						{
-							errorCode = GetLastError();
-							goto OVERLAPPED_ERROR;
-						}
-					}
+				}
+				if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEONLYONCE))
+				{
+					errorCode = GetLastError();
+					goto OVERLAPPED_ERROR;
 				}
 			}
 			return TRUE;
@@ -446,14 +443,11 @@ namespace TinyUI
 					{
 						goto OVERLAPPED_ERROR;
 					}
-					else
-					{
-						if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEINWAITTHREAD | WT_EXECUTEONLYONCE))
-						{
-							errorCode = GetLastError();
-							goto OVERLAPPED_ERROR;
-						}
-					}
+				}
+				if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEONLYONCE))
+				{
+					errorCode = GetLastError();
+					goto OVERLAPPED_ERROR;
 				}
 			}
 			return TRUE;
@@ -514,7 +508,7 @@ namespace TinyUI
 						goto OVERLAPPED_ERROR;
 					}
 				}
-				if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEINWAITTHREAD | WT_EXECUTEONLYONCE))
+				if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEONLYONCE))
 				{
 					errorCode = GetLastError();
 					goto OVERLAPPED_ERROR;
@@ -573,7 +567,7 @@ namespace TinyUI
 						goto OVERLAPPED_ERROR;
 					}
 				}
-				if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEINWAITTHREAD | WT_EXECUTEONLYONCE))
+				if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEONLYONCE))
 				{
 					errorCode = GetLastError();
 					goto OVERLAPPED_ERROR;
@@ -633,7 +627,7 @@ namespace TinyUI
 						goto OVERLAPPED_ERROR;
 					}
 				}
-				if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEINWAITTHREAD | WT_EXECUTEONLYONCE))
+				if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEONLYONCE))
 				{
 					errorCode = GetLastError();
 					goto OVERLAPPED_ERROR;
@@ -702,7 +696,7 @@ namespace TinyUI
 						goto OVERLAPPED_ERROR;
 					}
 				}
-				if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEINWAITTHREAD | WT_EXECUTEONLYONCE))
+				if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEONLYONCE))
 				{
 					errorCode = GetLastError();
 					goto OVERLAPPED_ERROR;
@@ -763,7 +757,7 @@ namespace TinyUI
 						goto OVERLAPPED_ERROR;
 					}
 				}
-				if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEINWAITTHREAD | WT_EXECUTEONLYONCE))
+				if (!RegisterWaitForSingleObject(&context->Result->AsyncHandle, context->hEvent, TinySocket::AsyncCallback, context, INFINITE, WT_EXECUTEONLYONCE))
 				{
 					errorCode = GetLastError();
 					goto OVERLAPPED_ERROR;
@@ -822,10 +816,16 @@ namespace TinyUI
 			if (context)
 			{
 				AsyncResult* result = static_cast<AsyncResult*>(context->Result.Ptr());
-				UnregisterWait(result->AsyncHandle);
-				if (context->hEvent != INVALID_HANDLE_VALUE)
+				ASSERT(result);
+				if (result->AsyncHandle != NULL)
+				{
+					UnregisterWait(result->AsyncHandle);
+					result->AsyncHandle = NULL;
+				}
+				if (context->hEvent != INVALID_HANDLE_VALUE && context->hEvent != NULL)
 				{
 					WSACloseEvent(context->hEvent);
+					context->hEvent = INVALID_HANDLE_VALUE;
 				}
 				switch (context->OP)
 				{

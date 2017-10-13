@@ -55,7 +55,8 @@ namespace MShow
 		m_onMenuClick.Reset(new Delegate<void(void*, INT)>(this, &MVideoController::OnMenuClick));
 		m_popup.EVENT_CLICK += m_onMenuClick;
 		m_onVolume.Reset(new Delegate<void(DWORD)>(this, &MVideoController::OnVolume));
-		m_event.CreateEvent();
+		m_renderEvent.CreateEvent();
+		m_copyEvent.CreateEvent();
 		m_signal.CreateEvent();
 	}
 
@@ -65,7 +66,8 @@ namespace MShow
 		m_view.EVENT_RBUTTONDOWN -= m_onRButtonDown;
 		m_popup.EVENT_CLICK -= m_onMenuClick;
 		m_popup.DestroyMenu();
-		m_event.Close();
+		m_renderEvent.Close();
+		m_copyEvent.Close();
 		m_signal.Close();
 	}
 
@@ -164,38 +166,20 @@ namespace MShow
 				m_graphics.GetDX11().GetRender2D()->EndDraw();
 				MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Enter();
 				MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Render();
-				if (m_bPusher)
-				{
-					BYTE* data = MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetCopyView()->Map(m_dwSize);
-					if (data != NULL && m_dwSize > 0)
-					{
-						if (!m_data)
-						{
-							m_data.Reset(new BYTE[m_dwSize]);
-						}
-						if (m_data != NULL)
-						{
-							TinyAutoLock lock(m_lock);
-							memcpy_s(m_data, m_dwSize, data, m_dwSize);
-						}
-					}
-					MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetCopyView()->Unmap();
-					m_signal.SetEvent();
-				}
 				MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Leave();
+				m_copyEvent.SetEvent();
 			}
 		}
 		g_time.EndTime();
-		if (g_time.GetMillisconds() >= 15)
+		if (g_time.GetMillisconds() >= 20)
 		{
-			TRACE("Cost:%lld\n", g_time.GetMillisconds());
+			TRACE("URL:%s, Cost:%lld\n", m_player->GetURL().CSTR(), g_time.GetMillisconds());
 		}
 	}
 
 	void MVideoController::OnVideoRender()
 	{
-		m_event.SetEvent();
-		m_graphics.Flush();
+		m_renderEvent.SetEvent();
 		m_graphics.Present();
 	}
 
@@ -268,6 +252,14 @@ namespace MShow
 	void MVideoController::SetPusher(BOOL bPusher)
 	{
 		m_bPusher = bPusher;
+		if (m_bPusher)
+		{
+			m_signal.SetEvent();
+		}
+		else
+		{
+			m_signal.ResetEvent();
+		}
 	}
 
 	void MVideoController::Lock()
@@ -290,9 +282,14 @@ namespace MShow
 		return m_dwSize;
 	}
 
-	HANDLE MVideoController::GetEvent()
+	HANDLE MVideoController::GetRenderEvent()
 	{
-		return m_event.Handle();
+		return m_renderEvent.Handle();
+	}
+
+	HANDLE MVideoController::GetCopyEvent()
+	{
+		return m_copyEvent.Handle();
 	}
 
 	void MVideoController::OnMenuClick(void*, INT wID)

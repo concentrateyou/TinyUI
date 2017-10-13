@@ -34,12 +34,10 @@ namespace MShow
 	{
 		return GetValue("Server", "Prefix");
 	}
-	vector<string>& MAppConfig::GetIPList()
+	string MAppConfig::GetIP()
 	{
 		string val = GetValue("Server", "IP");
-		m_ips.clear();
-		SplitString(val,',',&m_ips);
-		return m_ips;
+		return val;
 	}
 	string MAppConfig::GetValue(LPCSTR pzApp, LPCSTR pzKey)
 	{

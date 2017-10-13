@@ -12,9 +12,11 @@ namespace MShow
 		:m_view(view),
 		m_hTimer(NULL),
 		m_bBreak(FALSE),
+		m_bCommentarying(FALSE),
+		m_bPause(FALSE),
 		m_previousPTS(0)
 	{
-
+		m_event.CreateEvent();
 	}
 
 	MClientController::~MClientController()
@@ -150,11 +152,23 @@ namespace MShow
 			m_onCancelClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MClientController::OnCancelClick));
 			visual->EVENT_CLICK += m_onCancelClick;
 		}
-		visual = m_view.GetDocument()->GetVisualByName("btnCommentary");
+		visual = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
 		if (visual != NULL)
 		{
-			m_onCommentaryClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MClientController::OnCommentaryClick));
-			visual->EVENT_CLICK += m_onCommentaryClick;
+			m_onStartCommentaryClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MClientController::OnStartCommentaryClick));
+			visual->EVENT_CLICK += m_onStartCommentaryClick;
+		}
+		visual = m_view.GetDocument()->GetVisualByName("btnPauseCommentary");
+		if (visual != NULL)
+		{
+			m_onPauseCommentaryClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MClientController::OnPauseCommentaryClick));
+			visual->EVENT_CLICK += m_onPauseCommentaryClick;
+		}
+		visual = m_view.GetDocument()->GetVisualByName("btnStopCommentary");
+		if (visual != NULL)
+		{
+			m_onStopCommentaryClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MClientController::OnStopCommentaryClick));
+			visual->EVENT_CLICK += m_onStopCommentaryClick;
 		}
 		visual = m_view.GetDocument()->GetVisualByName("previewWND");
 		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualNative)))
@@ -357,6 +371,7 @@ namespace MShow
 		{
 			m_szSourceID = std::to_string(value["data"].asInt());
 			LOG(INFO) << "[MClientController] " << "Add SourceID :" << m_szSourceID << " OK";
+			TRACE("Add SourceID:%s   OK\n", m_szSourceID.c_str());
 			return TRUE;
 		}
 		else
@@ -402,6 +417,98 @@ namespace MShow
 		code = value["code"].asString();
 		if (code == "A00000")
 		{
+			TRACE("Remove SourceID:%s   OK\n", m_szSourceID.c_str());
+			LOG(INFO) << "[MClientController] " << "Remove SourceID :" << m_szSourceID << " OK";
+			return TRUE;
+		}
+		else
+		{
+			string msg = value["msg"].asString();
+			msg = std::move(UTF8ToASCII(msg));
+			LOG(ERROR) << "[MClientController] " << "Response Code : " << code << " Msg: " << msg;
+		}
+	_ERROR:
+		return FALSE;
+	}
+
+	BOOL MClientController::GetPreviewURL(string& szURL)
+	{
+		string code;
+		string context;
+		Json::Reader reader;
+		Json::Value value;
+		Json::Value result;
+		TinyHTTPClient client;
+		string address = StringPrintf("http://YW-A2980-D.iqiyi.pps:8001/querycommentaryPURL?PID=%s&ID=%s", m_szProgramID.c_str(), m_szSourceID.c_str());
+		if (!client.Open(address))
+		{
+			LOG(ERROR) << "[MClientController] " << "Open " << address << " Fail";
+			goto _ERROR;
+		}
+		if (!client.GetResponse().ReadAsString(context))
+		{
+			LOG(ERROR) << "[MClientController] " << "Read Json Fail";
+			goto _ERROR;
+		}
+		if (!reader.parse(context, value))
+		{
+			LOG(ERROR) << "[MClientController] " << "Parse Json Fail";
+			goto _ERROR;
+		}
+		code = value["error_code"].asString();
+		if (code == "A00000")
+		{
+			szURL = value["result"].asString();
+			TRACE("URL :%s\n", szURL.c_str());
+			LOG(INFO) << "[MClientController] " << "GetPreviewURL :" << szURL << " OK";
+			return TRUE;
+		}
+		else
+		{
+			string msg = value["error_msg"].asString();
+			LOG(ERROR) << "[MClientController] " << "Response Code : " << code << " Msg: " << msg;
+		}
+		return TRUE;
+	_ERROR:
+		return FALSE;
+	}
+
+	BOOL MClientController::UpdatePreviewURL(const string& sourceID, const string& sURL)
+	{
+		if (sourceID.empty() || sURL.empty())
+			return FALSE;
+		string code;
+		string context;
+		Json::Reader reader;
+		Json::Value value;
+		Json::Value result;
+		TinyHTTPClient client;
+		client.GetRequest().SetVerbs(TinyHTTPClient::POST);
+		client.GetRequest().Add(TinyHTTPClient::ContentType, "application/x-www-form-urlencoded");
+		client.GetRequest().Add("Sign", "#f93Uc31K24()_@");
+		string body = StringPrintf("id=%s&programId=%s&directorId=%s&streamUrl=&s", sourceID.c_str(), m_szProgramID.c_str(), m_szLogID.c_str(), sURL.c_str());
+		body = std::move(ASCIIToUTF8(body));
+		client.GetRequest().SetBody(body);
+		string address = StringPrintf("%s/%s", MShow::MShowApp::GetInstance().AppConfig().GetPrefix().c_str(), "commentary/edit");
+		if (!client.Open(address))
+		{
+			LOG(ERROR) << "[MClientController] " << "Open " << address << " Fail";
+			goto _ERROR;
+		}
+		if (!client.GetResponse().ReadAsString(context))
+		{
+			LOG(ERROR) << "[MClientController] " << "Read Json Fail";
+			goto _ERROR;
+		}
+		if (!reader.parse(context, value))
+		{
+			LOG(ERROR) << "[MClientController] " << "Parse Json Fail";
+			goto _ERROR;
+		}
+		code = value["code"].asString();
+		if (code == "A00000")
+		{
+			TRACE("Remove SourceID:%s   OK\n", m_szSourceID.c_str());
 			LOG(INFO) << "[MClientController] " << "Remove SourceID :" << m_szSourceID << " OK";
 			return TRUE;
 		}
@@ -427,12 +534,178 @@ namespace MShow
 		if (m_preview != NULL)
 		{
 			m_preview->Close();
+			Sleep(100);
 		}
 	}
 
-	void MClientController::OnCommentaryClick(TinyVisual*, EventArgs& args)
+	BOOL MClientController::StartCommentary()
 	{
-		Add();
+		//获取音频预览流
+		if (!GetPreviewURL(m_szURL) || m_szURL.empty())
+			return FALSE;
+		//启动SDK发送数据
+		if (m_task.IsActive())
+		{
+			m_bBreak = TRUE;
+			m_task.Close(1000);
+		}
+		m_bBreak = FALSE;
+		if (!m_task.Submit(BindCallback(&MClientController::OnMessagePump, this)))
+			return FALSE;
+		string szIP = MShowApp::GetInstance().AppConfig().GetIP();
+		m_audioSDK.Reset(new AudioSdk(szIP, 6090, std::stoi(m_szSourceID)));
+		if (m_audioSDK != NULL)
+		{
+			if (m_audioSDK->init(44100, 2, 16) == 0)
+			{
+				LOG(INFO) << "AudioSDK init OK" << endl;
+				CLSID speakerCLSID = GetSpeakCLSID();
+				if (IsEqualGUID(speakerCLSID, GUID_NULL))
+				{
+					LOG(ERROR) << "GetSpeakCLSID is null" << endl;
+				}
+				CLSID microphoneCLSID = GetMicrophoneCLSID();
+				if (IsEqualGUID(microphoneCLSID, GUID_NULL))
+				{
+					LOG(ERROR) << "GetMicrophoneCLSID is null" << endl;
+				}
+				m_audioDSP.Close();
+				if (m_audioDSP.Open(microphoneCLSID, speakerCLSID))
+				{
+					m_audioDSP.Stop();
+					m_audioDSP.Start();
+				}
+			}
+			else
+			{
+				LOG(ERROR) << "AudioSDK init Fail" << endl;
+			}
+		}
+		//通知Web更新
+		if (!UpdatePreviewURL(m_szSourceID, m_szURL))
+			return FALSE;
+		return TRUE;
+	}
+
+	BOOL MClientController::StopCommentary()
+	{
+		if (m_task.IsActive())
+		{
+			m_bBreak = TRUE;
+			m_task.Close(1000);
+		}
+		m_audioDSP.Stop();
+		m_audioDSP.Close();
+		if (m_audioSDK != NULL)
+		{
+			m_audioSDK->release();
+		}
+		m_audioSDK.Reset(NULL);
+		return TRUE;
+	}
+
+	CLSID MClientController::GetSpeakCLSID()
+	{
+		CLSID clsid = GUID_NULL;
+		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("speaker");
+		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
+		{
+			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
+			TinyVisualOption* option = val->GetSelected();
+			if (option != NULL)
+			{
+				wstring szGUID = option->GetValue().ToWString();
+				CLSIDFromString(&szGUID[0], &clsid);
+				return clsid;
+			}
+		}
+		return clsid;
+	}
+	CLSID MClientController::GetMicrophoneCLSID()
+	{
+		CLSID clsid = GUID_NULL;
+		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("microphone");
+		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
+		{
+			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
+			TinyVisualOption* option = val->GetSelected();
+			if (option != NULL)
+			{
+				wstring szGUID = option->GetValue().ToWString();
+				CLSIDFromString(&szGUID[0], &clsid);
+				return clsid;
+			}
+		}
+		return clsid;
+	}
+
+	void MClientController::OnStartCommentaryClick(TinyVisual*, EventArgs& args)
+	{
+		if (Add())
+		{
+			StartCommentary();
+			m_bCommentarying = TRUE;
+			TinyVisual* spvis = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
+			if (spvis != NULL)
+			{
+				spvis->SetVisible(FALSE);
+			}
+			spvis = m_view.GetDocument()->GetVisualByName("btnPauseCommentary");
+			if (spvis != NULL)
+			{
+				spvis->SetVisible(TRUE);
+			}
+			spvis = m_view.GetDocument()->GetVisualByName("btnStopCommentary");
+			if (spvis != NULL)
+			{
+				spvis->SetVisible(TRUE);
+			}
+			m_view.Invalidate();
+		}
+	}
+
+	void MClientController::OnPauseCommentaryClick(TinyVisual*, EventArgs& args)
+	{
+		m_bPause = !m_bPause;
+		TinyVisual* spvis = m_view.GetDocument()->GetVisualByName("btnPauseCommentary");
+		if (spvis != NULL)
+		{
+			spvis->SetText(m_bPause ? "播放" : "停止");
+		}
+		m_view.Invalidate();
+		if (m_bPause)
+		{
+			m_audioDSP.Stop();
+		}
+		else
+		{
+			m_audioDSP.Start();
+		}
+	}
+
+	void MClientController::OnStopCommentaryClick(TinyVisual*, EventArgs& args)
+	{
+		if (Remove(m_szSourceID))
+		{
+			StopCommentary();
+			m_bCommentarying = FALSE;
+			TinyVisual* spvis = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
+			if (spvis != NULL)
+			{
+				spvis->SetVisible(TRUE);
+			}
+			spvis = m_view.GetDocument()->GetVisualByName("btnPauseCommentary");
+			if (spvis != NULL)
+			{
+				spvis->SetVisible(FALSE);
+			}
+			spvis = m_view.GetDocument()->GetVisualByName("btnStopCommentary");
+			if (spvis != NULL)
+			{
+				spvis->SetVisible(FALSE);
+			}
+			m_view.Invalidate();
+		}
 	}
 
 	void MClientController::OnMicrophoneTestClick(TinyVisual*, EventArgs& args)
@@ -525,12 +798,30 @@ namespace MShow
 			sample.timestamp = currentPTS;
 			memcpy(sample.bits + 4, bits, size);
 			m_audioQueue.Push(sample);
-			//m_event.SetEvent();
+			m_event.SetEvent();
 		}
 	}
 
 	void MClientController::OnMessagePump()
 	{
-
+		for (;;)
+		{
+			if (m_bBreak)
+				break;
+			if (m_event.Lock(1000))
+			{
+				if (m_audioSDK != NULL)
+				{
+					AUDIO_SAMPLE sample = { 0 };
+					BOOL bRes = m_audioQueue.Pop(sample);
+					if (bRes && sample.size > 0)
+					{
+						LOG(INFO) << "Timestamp: " << sample.timestamp;
+						m_audioSDK->audio_encode_send(sample.bits + 4, static_cast<INT32>(sample.timestamp));
+					}
+					m_audioQueue.Free(sample.bits);
+				}
+			}
+		}
 	}
 }

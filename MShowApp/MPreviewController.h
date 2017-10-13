@@ -26,6 +26,7 @@ namespace MShow
 		void		SetVideoFPS(INT	videoFPS);
 		INT			GetVideoFPS() const;
 		void		Render();
+		void		Copy();
 		BYTE*		GetPointer();
 		DWORD		GetSize();
 		DX11RenderView* GetCopyView();
@@ -53,8 +54,10 @@ namespace MShow
 		void	OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnMenuClick(void*, INT wID);
-		void	OnMessagePump();
-		void	GetEvents(vector<HANDLE>&handles);
+		void	OnMessagePump1();
+		void	OnMessagePump2();
+		void	GetRenderEvents(vector<HANDLE>&handles);
+		void	GetCopyEvents(vector<HANDLE>&handles);
 	private:
 		DX11Element2D*	HitTest(const TinyPoint& pos);//м╪ф╛сеох
 	private:
@@ -76,6 +79,7 @@ namespace MShow
 		TinyArray<DX11Element2D*>		m_array;
 		TinyArray<HANDLE>				m_events;
 		TinyScopedArray<BYTE>			m_bits;
+		TinyTaskBase					m_copyTask;
 	private:
 		TinyScopedPtr<Delegate<void(void*, INT)>>				   m_onMenuClick;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonDown;

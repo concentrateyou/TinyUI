@@ -40,7 +40,9 @@ namespace MShow
 		void OnEditClick(TinyVisual*, EventArgs& args);
 		void OnSaveClick(TinyVisual*, EventArgs& args);
 		void OnCancelClick(TinyVisual*, EventArgs& args);
-		void OnCommentaryClick(TinyVisual*, EventArgs& args);
+		void OnStartCommentaryClick(TinyVisual*, EventArgs& args);
+		void OnPauseCommentaryClick(TinyVisual*, EventArgs& args);
+		void OnStopCommentaryClick(TinyVisual*, EventArgs& args);
 		void OnMicrophoneTestClick(TinyVisual*, EventArgs& args);
 		void OnSpeakerTestClick(TinyVisual*, EventArgs& args);
 		void OnMicrophoneFocus(TinyVisual*, FocusEventArgs& args);
@@ -49,25 +51,36 @@ namespace MShow
 		void OnMessagePump();
 		static VOID CALLBACK OnTimer(PVOID lpParam, BOOLEAN TimerOrWaitFired);
 	private:
-		BOOL Add();//添加源
-		BOOL Remove(const string& sourceID);//删除源
-		void Close();
+		BOOL	Add();//添加源
+		BOOL	Remove(const string& sourceID);//删除源
+		BOOL	UpdatePreviewURL(const string& sourceID, const string& strURL);
+		BOOL	GetPreviewURL(string& szURL);
+		void	Close();
+		BOOL	StartCommentary();
+		BOOL	StopCommentary();
+		CLSID	GetSpeakCLSID();
+		CLSID	GetMicrophoneCLSID();
 	private:
+		BOOL								m_bPause;
+		BOOL								m_bCommentarying;
 		BOOL								m_bBreak;
 		HANDLE								m_hTimer;
 		LONGLONG							m_previousPTS;
+		string								m_szURL;//预览流地址
 		string								m_szSourceID;
 		string								m_szLogID;
 		string								m_szProgramName;
 		string								m_szProgramID;
 		string								m_szPreviewURL;
 		string								m_szName;//源名称
+		TinyEvent							m_event;
 		MClientWindow&						m_view;
+		SpeakTest							m_speakTest;
+		MicrophoneTest						m_microphoneTest;
 		MAudioDSP							m_audioDSP;
 		TinyScopedPtr<AudioSdk>				m_audioSDK;
 		MAudioQueue							m_audioQueue;
-		SpeakTest							m_speakTest;
-		MicrophoneTest						m_microphoneTest;
+		TinyTaskBase						m_task;
 		TinyScopedPtr<MPreviewController>	m_preview;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onSettingClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMinimumClick;
@@ -75,7 +88,9 @@ namespace MShow
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onEditClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onSaveClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onCancelClick;
-		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onCommentaryClick;
+		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onStartCommentaryClick;
+		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onStopCommentaryClick;
+		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onPauseCommentaryClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMicrophoneTestClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onSpeakerTestClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, FocusEventArgs&)>> m_onSpeakerFocus;

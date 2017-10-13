@@ -150,6 +150,7 @@ namespace MShow
 			lblMsg->SetText("http://10.23.84.150:7777/api/director/list Json½âÎöÊ§°Ü");
 			goto _ERROR;
 		}
+
 		list->RemoveAll(TRUE);
 		result = value["data"]["result"];
 		TRACE("[MSearchController][GetPrograms] Program Count:%d\n", result.size());

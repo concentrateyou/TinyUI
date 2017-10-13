@@ -285,7 +285,23 @@ namespace TinyUI
 				AddressList list;
 				if (!dns.Resolver(szHOST, sSCHEME, list))
 					return FALSE;
-				m_endpoint.FromIPAddress(list[0].address(), szPORT.empty() ? list[0].port() : static_cast<SHORT>(std::stoi(szPORT)));
+				if (list.size() > 1)
+				{
+					INT index = 0;
+					for (INT i = 0; i < list.size();i++)
+					{
+						if (list[i].address().IsIPv4())
+						{
+							index = i;
+							break;
+						}
+					}
+					m_endpoint.FromIPAddress(list[index].address(), szPORT.empty() ? list[index].port() : static_cast<SHORT>(std::stoi(szPORT)));
+				}
+				else
+				{
+					m_endpoint.FromIPAddress(list[0].address(), szPORT.empty() ? list[0].port() : static_cast<SHORT>(std::stoi(szPORT)));
+				}
 			}
 			else
 			{

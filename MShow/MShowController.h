@@ -50,6 +50,7 @@ namespace MShow
 	private:
 		BOOL					m_bError;
 		BOOL					m_bBreak;
+		INT						m_sourceID;
 		LONGLONG				m_previousPTS;
 		TinyLock				m_lock;
 		MShowWindow&			m_window;

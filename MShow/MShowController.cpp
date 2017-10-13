@@ -132,12 +132,12 @@ namespace MShow
 		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
 		{
 			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
-			vector<string> ips = MShowApp::GetInstance().AppConfig().GetIPList();
+			/*vector<string> ips = MShowApp::GetInstance().AppConfig().GetIP();
 			for (INT i = 0;i < ips.size();i++)
 			{
 				val->AddOption(ips[i].c_str(), ips[i].c_str());
 			}
-			val->SetSelected(0);
+			val->SetSelected(0);*/
 		}
 
 
@@ -321,7 +321,7 @@ namespace MShow
 				m_bBreak = FALSE;
 				if (m_task.Submit(BindCallback(&MShowController::OnMessagePump, this)))
 				{
-					m_audioSDK.Reset(new AudioSdk(ip, 6090));
+					m_audioSDK.Reset(new AudioSdk(ip, 6090, m_sourceID));
 					if (m_audioSDK != NULL)
 					{
 						if (m_audioSDK->init(44100, 2, 16) == 0)

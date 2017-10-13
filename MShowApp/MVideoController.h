@@ -43,7 +43,8 @@ namespace MShow
 		TinyString		GetURL() const;
 		WAVEFORMATEX*	GetFormat();
 		DX11Element2D*	GetElement();
-		HANDLE			GetEvent();
+		HANDLE			GetRenderEvent();
+		HANDLE			GetCopyEvent();
 		void			AddElement();
 		void			SetPusher(BOOL bPusher);
 		void			Lock();
@@ -72,7 +73,8 @@ namespace MShow
 		DWORD						m_dwSize;
 		TinyLock					m_lock;
 		TinyMenu					m_popup;
-		TinyEvent					m_event;	
+		TinyEvent					m_renderEvent;	
+		TinyEvent					m_copyEvent;
 		MVideoElement*				m_pVideo;
 		MVideoView&					m_view;
 		DX11Graphics2D				m_graphics;
