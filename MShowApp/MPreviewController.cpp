@@ -38,7 +38,6 @@ namespace MShow
 		m_view.EVENT_SETCURSOR += m_onSetCursor;
 		m_popup.EVENT_CLICK += m_onMenuClick;
 		m_event.CreateEvent();
-		m_copy.CreateEvent();
 	}
 
 	MPreviewController::~MPreviewController()
@@ -302,7 +301,6 @@ namespace MShow
 	BOOL MPreviewController::Submit()
 	{
 		m_bBreak = FALSE;
-		m_task.Submit(BindCallback(&MPreviewController::OnMessagePump1, this));
 		return TinyTaskBase::Submit(BindCallback(&MPreviewController::OnMessagePump, this));
 	}
 
@@ -345,6 +343,7 @@ namespace MShow
 
 	void MPreviewController::Render()
 	{
+		m_graphics.Enter();
 		m_graphics.GetDX11().SetRenderTexture2D(&m_renderView);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();
 		TinyArray<DX11Element2D*> images;
@@ -437,11 +436,21 @@ namespace MShow
 			}
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
-	}
-
-	void MPreviewController::SetCopy()
-	{
-		m_copy.SetEvent();
+		m_graphics.Leave();
+		//¿½±´Êý¾Ý
+		BYTE* bits = m_renderView.Map(m_dwSize);
+		if (bits != NULL)
+		{
+			if (!m_bits)
+			{
+				m_bits.Reset(new BYTE[m_dwSize]);
+			}
+			if (m_bits != NULL)
+			{
+				memcpy_s(m_bits, m_dwSize, bits, m_dwSize);
+			}
+		}
+		m_renderView.Unmap();
 	}
 
 	void MPreviewController::Draw()
@@ -459,46 +468,6 @@ namespace MShow
 			{
 				MVideoElement* ps = static_cast<MVideoElement*>(p2D);
 				handles.push_back(ps->GetController().GetEvent());
-			}
-		}
-	}
-
-	void MPreviewController::OnMessagePump1()
-	{
-		for (;;)
-		{
-			if (m_bBreak)
-			{
-				for (INT i = 0; i < 8; ++i)
-				{
-					m_handles[i].Destory();
-				}
-				for (INT i = 0;i < m_array.GetSize();i++)
-				{
-					m_array[i]->Deallocate(m_graphics.GetDX11());
-				}
-				break;
-			}
-			if (m_copy.Lock(INFINITE))
-			{
-				BYTE* bits = m_renderView.Map(m_dwSize);
-				if (bits != NULL && m_dwSize > 0)
-				{
-					if (!m_bits)
-					{
-						m_bits.Reset(new BYTE[m_dwSize]);
-					}
-					if (m_bits != NULL)
-					{
-						memcpy_s(m_bits, m_dwSize, bits, m_dwSize);
-						MVideoController* pCTRL = MShow::MShowApp::GetInstance().GetController().GetCurrentCTRL();
-						if (pCTRL)
-						{
-							pCTRL->m_signal.SetEvent();
-						}
-					}
-				}
-				m_renderView.Unmap();
 			}
 		}
 	}

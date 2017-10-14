@@ -36,8 +36,8 @@ namespace MShow
 		TinyTimer			m_timer;
 		MPlayView&			m_view;
 		MClock&				m_clock;
-		DX11RenderView		m_renderView;
-		DX11Graphics2D		m_graphics;
+		//DX11RenderView		m_renderView;
+		//DX11Graphics2D		m_graphics;
 		DX11Image2D			m_video2D;
 		MPacketAllocQueue	m_videoQueue;
 	};

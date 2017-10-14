@@ -32,7 +32,6 @@ namespace MShow
 		void		Enter();
 		void		Leave();
 		void		Draw();
-		void		SetCopy();
 		BOOL		Add(DX11Element2D* ps);
 		BOOL		Remove(DX11Element2D* ps);
 		BOOL		Move(DX11Element2D* ps, BOOL bUp);
@@ -54,7 +53,6 @@ namespace MShow
 		void	OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnMenuClick(void*, INT wID);
 		void	OnMessagePump();
-		void	OnMessagePump1();
 		void	GetEvents(vector<HANDLE>&handles);
 	private:
 		DX11Element2D*	HitTest(const TinyPoint& pos);//м╪ф╛сеох
@@ -66,7 +64,6 @@ namespace MShow
 		INT								m_videoFPS;
 		TinySize						m_pulgSize;
 		TinyMenu						m_popup;
-		TinyEvent						m_copy;
 		TinyEvent						m_event;
 		DX11Element2D*					m_current;
 		MPreviewView&					m_view;

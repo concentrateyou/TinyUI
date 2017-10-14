@@ -147,14 +147,6 @@ namespace MShow
 		EVENT_AUDIO(bits, size);
 	}
 
-	/*TinyPerformanceTimer time;
-	time.BeginTime();
-	time.EndTime();
-	if (time.GetMillisconds() >= 10)
-	{
-		TRACE("Render :%lld\n", time.GetMillisconds());
-	}*/
-
 	void MVideoController::OnVideoCopy(BYTE* bits, LONG size)
 	{
 		m_timeQPC.BeginTime();
@@ -175,7 +167,6 @@ namespace MShow
 					if (m_index == 0)//默认第1个
 					{
 						MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Render();
-						MShow::MShowApp::GetInstance().GetController().GetPreviewController()->SetCopy();
 					}
 				}
 				else
@@ -183,7 +174,6 @@ namespace MShow
 					if (pCTRL == this)
 					{
 						MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Render();
-						MShow::MShowApp::GetInstance().GetController().GetPreviewController()->SetCopy();
 					}
 				}
 			}

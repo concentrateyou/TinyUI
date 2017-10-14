@@ -8,7 +8,7 @@ namespace MShow
 	MPlayController::MPlayController(MPlayView& view, MClock& clock)
 		:m_view(view),
 		m_clock(clock),
-		m_renderView(m_graphics.GetDX11()),
+		//m_renderView(m_graphics.GetDX11()),
 		m_bBreak(FALSE)
 	{
 
@@ -21,7 +21,8 @@ namespace MShow
 	BOOL MPlayController::SetPulgSize(const TinySize& size)
 	{
 		m_pulgSize = size;
-		return m_renderView.Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), TRUE, TRUE);
+		return TRUE;
+		//return m_renderView.Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), TRUE, TRUE);
 	}
 
 	TinySize MPlayController::GetPulgSize() const
@@ -54,8 +55,8 @@ namespace MShow
 	{
 		TinyRectangle rectangle;
 		m_view.GetClientRect(&rectangle);
-		if (!m_graphics.Initialize(m_view.Handle(), rectangle.Size(), TRUE))
-			return FALSE;
+		/*if (!m_graphics.Initialize(m_view.Handle(), rectangle.Size(), FALSE))
+			return FALSE;*/
 		/*if (!m_video2D.Load(m_graphics.GetDX11(), MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetHandle()))
 			return FALSE;*/
 		return TRUE;
