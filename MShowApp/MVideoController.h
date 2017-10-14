@@ -47,7 +47,6 @@ namespace MShow
 		void			AddElement();
 		void			Lock();
 		void			Unlock();
-		void			SetPusher();
 		BYTE*			GetPointer();
 		DWORD			GetSize();
 	private:

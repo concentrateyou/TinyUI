@@ -1,6 +1,8 @@
 #pragma once
 #include "MShowCommon.h"
+#include "MClock.h"
 #include "MPreviewView.h"
+#include "MPacketQueue.h"
 #include "Control/TinyMenu.h"
 using namespace TinyUI;
 
@@ -18,7 +20,7 @@ namespace MShow
 		friend class MRTMPEncoder;
 		DISALLOW_COPY_AND_ASSIGN(MPreviewController)
 	public:
-		MPreviewController(MPreviewView& view);
+		MPreviewController(MPreviewView& view, MClock& clock);
 		virtual ~MPreviewController();
 		BOOL		Initialize();
 		BOOL		SetPulgSize(const TinySize& size);
@@ -26,12 +28,13 @@ namespace MShow
 		void		SetVideoFPS(INT	videoFPS);
 		INT			GetVideoFPS() const;
 		void		Render();
+		void		Draw();
 		BYTE*		GetPointer();
 		DWORD		GetSize();
+		MPacketAllocQueue&	GetVideoQueue();
 	public:
 		void		Enter();
 		void		Leave();
-		void		Draw();
 		BOOL		Add(DX11Element2D* ps);
 		BOOL		Remove(DX11Element2D* ps);
 		BOOL		Move(DX11Element2D* ps, BOOL bUp);
@@ -66,7 +69,9 @@ namespace MShow
 		TinyMenu						m_popup;
 		TinyEvent						m_event;
 		DX11Element2D*					m_current;
+		MClock&							m_clock;
 		MPreviewView&					m_view;
+		MPacketAllocQueue				m_videoQueue;
 		DX11Graphics2D					m_graphics;
 		DX11Image2D						m_handles[8];
 		DX11RenderView					m_renderView;
@@ -74,7 +79,6 @@ namespace MShow
 		TinyArray<DX11Element2D*>		m_array;
 		TinyArray<HANDLE>				m_events;
 		TinyScopedArray<BYTE>			m_bits;
-		TinyTaskBase					m_task;
 	private:
 		TinyScopedPtr<Delegate<void(void*, INT)>>				   m_onMenuClick;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonDown;

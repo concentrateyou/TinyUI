@@ -74,7 +74,7 @@ namespace MShow
 	{
 		TinyRectangle rectangle;
 		m_view.GetClientRect(&rectangle);
-		if (!m_graphics.Initialize(m_view.Handle(), rectangle.Size()))
+		if (!m_graphics.Initialize(m_view.Handle(), rectangle.Size(), FALSE))
 			return FALSE;
 		m_popup.CreatePopupMenu();
 		m_popup.AppendMenu(MF_STRING, 1, TEXT("添加"));
@@ -149,10 +149,9 @@ namespace MShow
 
 	void MVideoController::OnVideoCopy(BYTE* bits, LONG size)
 	{
-		m_timeQPC.BeginTime();
 		if (m_player != NULL)
 		{
-			TinySize videoSize = m_player->GetSize();
+			TinySize videoSize = m_player->GetSize();	
 			if (m_video2D.Copy(m_graphics.GetDX11(), NULL, bits, size))
 			{
 				m_graphics.GetDX11().SetRenderTexture2D(NULL);
@@ -161,33 +160,15 @@ namespace MShow
 				m_graphics.GetDX11().AllowBlend(FALSE, blendFactor);
 				m_graphics.DrawImage(&m_video2D, 1.0F, 1.0F);
 				m_graphics.GetDX11().GetRender2D()->EndDraw();
-				MVideoController* pCTRL = MShow::MShowApp::GetInstance().GetController().GetCurrentCTRL();
-				if (!pCTRL)
-				{
-					if (m_index == 0)//默认第1个
-					{
-						MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Render();
-					}
-				}
-				else
-				{
-					if (pCTRL == this)
-					{
-						MShow::MShowApp::GetInstance().GetController().GetPreviewController()->Render();
-					}
-				}
+				m_event.SetEvent();
 			}
-		}
-		m_timeQPC.EndTime();
-		if (m_timeQPC.GetMillisconds() >= 15)
-		{
-			TRACE("Render :%lld\n", m_timeQPC.GetMillisconds());
 		}
 	}
 
 	void MVideoController::OnVideoRender()
 	{
-		m_event.SetEvent();
+		MPreviewController* preview = MShowApp::GetInstance().GetController().GetPreviewController();
+		preview->Draw();
 		m_graphics.Present();
 	}
 
@@ -255,11 +236,6 @@ namespace MShow
 				preview->Bring(m_pVideo, TRUE);
 			}
 		}
-	}
-
-	void MVideoController::SetPusher()
-	{
-		m_signal.SetEvent();
 	}
 
 	void MVideoController::Lock()

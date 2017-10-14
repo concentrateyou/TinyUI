@@ -57,8 +57,8 @@ namespace MShow
 		m_view.GetClientRect(&rectangle);
 		/*if (!m_graphics.Initialize(m_view.Handle(), rectangle.Size(), FALSE))
 			return FALSE;*/
-		/*if (!m_video2D.Load(m_graphics.GetDX11(), MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetHandle()))
-			return FALSE;*/
+			/*if (!m_video2D.Load(m_graphics.GetDX11(), MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetHandle()))
+				return FALSE;*/
 		return TRUE;
 	}
 
@@ -86,31 +86,32 @@ namespace MShow
 		{
 			if (m_bBreak)
 				break;
-			MVideoController* pCTRL = MShow::MShowApp::GetInstance().GetController().GetCurrentCTRL();
-			if (pCTRL != NULL)
-			{
-				while (m_clock.GetBaseTime() == -1);
-				m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
-				if (pCTRL->m_signal.Lock(1000))
-				{
-					/*MPreviewController* pCTRLP = MShow::MShowApp::GetInstance().GetController().GetPreviewController();
-					SampleTag sampleTag;
-					ZeroMemory(&sampleTag, sizeof(sampleTag));
-					BYTE* ps = pCTRLP->GetPointer();
-					sampleTag.size = pCTRLP->GetSize();
-					if (sampleTag.size > 0)
-					{
-						if (m_videoQueue.GetAllocSize() == 0)
-						{
-							INT count = MAX_VIDEO_QUEUE_SIZE / sampleTag.size + 1;
-							m_videoQueue.Initialize(count, sampleTag.size + 4);
-						}
-						sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
-						memcpy_s(sampleTag.bits + 4, sampleTag.size, ps, sampleTag.size);
-						m_videoQueue.Push(sampleTag);
-					}*/
-				}
-			}
+			Sleep(10000);
+			//MVideoController* pCTRL = MShow::MShowApp::GetInstance().GetController().GetCurrentCTRL();
+			//if (pCTRL != NULL)
+			//{
+			//	while (m_clock.GetBaseTime() == -1);
+			//	m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
+			//	if (pCTRL->m_signal.Lock(INFINITE))
+			//	{
+			//		MPreviewController* pCTRLP = MShow::MShowApp::GetInstance().GetController().GetPreviewController();
+			//		SampleTag sampleTag;
+			//		ZeroMemory(&sampleTag, sizeof(sampleTag));
+			//		BYTE* ps = pCTRLP->GetPointer();
+			//		sampleTag.size = pCTRLP->GetSize();
+			//		if (sampleTag.size > 0)
+			//		{
+			//			if (m_videoQueue.GetAllocSize() == 0)
+			//			{
+			//				INT count = MAX_VIDEO_QUEUE_SIZE / sampleTag.size + 1;
+			//				m_videoQueue.Initialize(count, sampleTag.size + 4);
+			//			}
+			//			sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
+			//			memcpy_s(sampleTag.bits + 4, sampleTag.size, ps, sampleTag.size);
+			//			m_videoQueue.Push(sampleTag);
+			//		}
+			//	}
+			//}
 		}
 	}
 }

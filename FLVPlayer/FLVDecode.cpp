@@ -31,7 +31,7 @@ namespace FLVPlayer
 	{
 		//if (m_reader.OpenURL("rtmp://live.hkstv.hk.lxdns.com/live/hks"))
 		//if(m_reader.OpenURL("rtmp://10.121.86.127/live/test_mshow"))
-		if (m_reader.OpenURL("http://10.5.17.136:1191/6706395323"))
+		if (m_reader.OpenURL("rtmp://10.10.13.98/live/lb_junlvjuchang_720p"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);

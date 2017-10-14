@@ -13,13 +13,14 @@ namespace MShow
 #define IDM_MOVEBOTTPM	103
 #define IDM_REMOVE		104
 
-	MPreviewController::MPreviewController(MPreviewView& view)
+	MPreviewController::MPreviewController(MPreviewView& view, MClock& clock)
 		:m_view(view),
 		m_current(NULL),
 		m_bTracking(FALSE),
 		m_bPopup(FALSE),
 		m_bBreak(FALSE),
 		m_videoFPS(25),
+		m_clock(clock),
 		m_renderView(m_graphics.GetDX11()),
 		m_dwSize(0)
 	{
@@ -341,9 +342,13 @@ namespace MShow
 		return m_dwSize;
 	}
 
+	MPacketAllocQueue&	MPreviewController::GetVideoQueue()
+	{
+		return m_videoQueue;
+	}
+
 	void MPreviewController::Render()
 	{
-		m_graphics.Enter();
 		m_graphics.GetDX11().SetRenderTexture2D(&m_renderView);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();
 		TinyArray<DX11Element2D*> images;
@@ -436,21 +441,32 @@ namespace MShow
 			}
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
-		m_graphics.Leave();
-		//拷贝数据
-		BYTE* bits = m_renderView.Map(m_dwSize);
-		if (bits != NULL)
+		MVideoController* pCTRL = MShowApp::GetInstance().GetController().GetCurrentCTRL();
+		if (pCTRL != NULL)
 		{
-			if (!m_bits)
+			while (m_clock.GetBaseTime() == -1);
+			m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
+			//拷贝数据
+			BYTE* bits = m_renderView.Map(m_dwSize);
+			if (bits != NULL)
 			{
-				m_bits.Reset(new BYTE[m_dwSize]);
-			}
-			if (m_bits != NULL)
-			{
-				memcpy_s(m_bits, m_dwSize, bits, m_dwSize);
+				SampleTag sampleTag;
+				ZeroMemory(&sampleTag, sizeof(sampleTag));
+				sampleTag.size = m_dwSize;
+				if (sampleTag.size > 0)
+				{
+					if (m_videoQueue.GetAllocSize() == 0)
+					{
+						INT count = MAX_VIDEO_QUEUE_SIZE / sampleTag.size + 1;
+						m_videoQueue.Initialize(count, sampleTag.size + 4);
+					}
+					sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
+					memcpy_s(sampleTag.bits + 4, sampleTag.size, bits, sampleTag.size);
+					m_videoQueue.Push(sampleTag);
+					m_renderView.Unmap();
+				}
 			}
 		}
-		m_renderView.Unmap();
 	}
 
 	void MPreviewController::Draw()
@@ -495,15 +511,12 @@ namespace MShow
 				Sleep(25);
 				continue;
 			}
-			HRESULT hRes = WaitForMultipleObjects(handles.size(), &handles[0], FALSE, 1000);
+			HRESULT hRes = WaitForSingleObject(handles[0], INFINITE);
 			if (hRes == WAIT_FAILED || hRes == WAIT_ABANDONED)
 			{
 				break;
 			}
-			if (hRes == WAIT_OBJECT_0)
-			{
-				this->Draw();
-			}
+			this->Render();
 		}
 	}
 }
