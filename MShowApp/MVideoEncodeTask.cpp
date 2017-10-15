@@ -28,7 +28,6 @@ namespace MShow
 
 	void MVideoEncodeTask::OnMessagePump()
 	{
-		TinyPerformanceTimer timeQPC;
 		MPreviewController* pCTRL = MShow::MShowApp::GetInstance().GetController().GetPreviewController();
 		if (pCTRL != NULL)
 		{
@@ -53,9 +52,6 @@ namespace MShow
 				ZeroMemory(&sample, sizeof(sample));
 				if (m_encoder.Encode(sampleTag, bo, so, sample.mediaTag))
 				{
-					timeQPC.EndTime();
-					TRACE("Cost:%lld\n", timeQPC.GetMillisconds());
-					timeQPC.BeginTime();
 					sample.size = so;
 					sample.bits = new BYTE[so];
 					memcpy(sample.bits, bo, so);

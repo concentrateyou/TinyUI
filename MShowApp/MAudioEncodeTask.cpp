@@ -93,7 +93,8 @@ namespace MShow
 		}
 		if (m_clock.GetBaseTime() != -1)
 		{
-			if (m_clock.GetVideoPTS() != -1)
+			//正在推流编码数据
+			if (m_clock.GetVideoPTS() != -1 && MShow::MShowApp::GetInstance().GetController().IsPushing())
 			{
 				BYTE* output = new BYTE[size];
 				if (m_queueMix.GetSize() > 0)

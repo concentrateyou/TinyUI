@@ -23,18 +23,17 @@ namespace MShow
 		BOOL	Initialize();
 		void	Uninitialize();
 		MPreviewController* GetPreviewController();
-		//MPlayController*	GetPlayController();
-		MVideoController*	GetVideoController(UINT i);
-		MImageController*	GetImageController(UINT i);
 		MAudioEncodeTask&	GetAudioEncoder();
 		MVideoEncodeTask&	GetVideoEncoder();
 		MRTMPPusher&		GetPusher();
-		void				SetCurrentCTRL(MVideoController* pCTRL);
 		MVideoController*	GetCurrentCTRL();
+		void				SetCurrentCTRL(MVideoController* pCTRL);
+		BOOL				IsPushing() const;
 	private:
 		void OnPusher(void*, INT);
 		void OnToggle(void*, INT);
 	private:
+		BOOL				m_bPushing;
 		TinyLock			m_lock;
 		MClock				m_clock;
 		MShowWindow&		m_window;
@@ -46,7 +45,6 @@ namespace MShow
 		TinyScopedPtr<MImageController>		m_images[6];
 		TinyScopedPtr<MAudioController>		m_audios[6];
 		TinyScopedPtr<MPreviewController>	m_previewCTRL;
-		//TinyScopedPtr<MPlayController>		m_playCTRL;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onToggleClick;
 		TinyScopedPtr<Delegate<void(void*, INT)>>	m_onPusherClick;
 	};

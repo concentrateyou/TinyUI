@@ -12,7 +12,8 @@ namespace MShow
 		:m_window(window),
 		m_audioTask(m_pusher, m_clock),
 		m_videoTask(m_pusher, m_clock),
-		m_pVideoCTRL(NULL)
+		m_pVideoCTRL(NULL),
+		m_bPushing(FALSE)
 	{
 
 	}
@@ -34,13 +35,6 @@ namespace MShow
 			return FALSE;
 		m_previewCTRL->SetVideoFPS(25);
 		m_previewCTRL->SetPulgSize(TinySize(1280, 720));
-		/*m_playCTRL.Reset(new MPlayController(m_window.m_playView, m_clock));
-		if (!m_playCTRL)
-			return FALSE;
-		if (!m_playCTRL->Initialize())
-			return FALSE;
-		m_playCTRL->SetPulgSize(TinySize(1280, 720));
-		m_playCTRL->SetVideoFPS(25);*/
 		for (UINT i = 0;i < 6;i++)
 		{
 			m_videos[i].Reset(new MVideoController(m_window.m_videoViews[i], i));
@@ -60,9 +54,7 @@ namespace MShow
 			if (!m_audios[i]->Initialize())
 				return FALSE;
 		}
-		BOOL bRes = m_previewCTRL->Submit();
-		//bRes = m_playCTRL->Submit();
-		return bRes;
+		return m_previewCTRL->Submit();
 	}
 
 	void MShowController::Uninitialize()
@@ -93,11 +85,6 @@ namespace MShow
 			m_previewCTRL->Close(INFINITE);
 			m_previewCTRL.Reset(NULL);
 		}
-		/*if (m_playCTRL != NULL && m_playCTRL->IsActive())
-		{
-			m_playCTRL->Close(INFINITE);
-			m_playCTRL.Reset(NULL);
-		}*/
 		if (m_audioTask.IsActive())
 		{
 			m_audioTask.Close(INFINITE);
@@ -115,25 +102,6 @@ namespace MShow
 	MPreviewController* MShowController::GetPreviewController()
 	{
 		return m_previewCTRL;
-	}
-
-	//MPlayController*	MShowController::GetPlayController()
-	//{
-	//	return m_playCTRL;
-	//}
-
-	MVideoController*	MShowController::GetVideoController(UINT i)
-	{
-		if (i < 0 || i > 5)
-			return NULL;
-		return m_videos[i];
-	}
-
-	MImageController* MShowController::GetImageController(UINT i)
-	{
-		if (i < 0 || i > 5)
-			return NULL;
-		return m_images[i];
 	}
 
 	MAudioEncodeTask& MShowController::GetAudioEncoder()
@@ -159,20 +127,39 @@ namespace MShow
 	{
 		return m_pVideoCTRL;
 	}
+	BOOL MShowController::IsPushing() const
+	{
+		return m_bPushing;
+	}
 	void MShowController::OnPusher(void*, INT)
 	{
-		if (m_previewCTRL != NULL)
+		ASSERT(m_previewCTRL);
+
+		if (m_bPushing)
 		{
+			m_bPushing = FALSE;
 			if (m_pusher.IsActive())
+			{
 				m_pusher.Close(INFINITE);
+			}
 			if (m_audioTask.IsActive())
+			{
 				m_audioTask.Close(INFINITE);
+			}
 			if (m_videoTask.IsActive())
+			{
 				m_videoTask.Close(INFINITE);
+			}
+		}
+		else
+		{
 			if (m_pusher.Connect())
+			{
 				m_pusher.Submit();
+			}
 			m_videoTask.Submit(m_previewCTRL->GetPulgSize(), 25, 1000);
 			m_audioTask.Submit(128);
+			m_bPushing = TRUE;
 		}
 	}
 	void MShowController::OnToggle(void*, INT)

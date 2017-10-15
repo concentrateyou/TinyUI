@@ -156,9 +156,9 @@ namespace MShow
 	}
 	BOOL MPreviewController::Find(DX11Element2D* ps)
 	{
-		m_graphics.GetDX11().Enter();
+		m_graphics.Enter();
 		BOOL bRes = m_array.Lookup(ps) >= 0;
-		m_graphics.GetDX11().Leave();
+		m_graphics.Leave();
 		return bRes;
 	}
 	BOOL MPreviewController::Lock(DWORD dwMS)
@@ -441,8 +441,12 @@ namespace MShow
 			}
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
+		m_graphics.Present();
+		TinyPerformanceTimer timeQPC;
+		timeQPC.BeginTime();
+		//Map数据
 		MVideoController* pCTRL = MShowApp::GetInstance().GetController().GetCurrentCTRL();
-		if (pCTRL != NULL)
+		if (pCTRL != NULL && MShowApp::GetInstance().GetController().IsPushing())
 		{
 			while (m_clock.GetBaseTime() == -1);
 			m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
@@ -467,11 +471,8 @@ namespace MShow
 				}
 			}
 		}
-	}
-
-	void MPreviewController::Draw()
-	{
-		m_graphics.Present();
+		timeQPC.EndTime();
+		TRACE("Map Cost:%lld\n", timeQPC.GetMillisconds());
 	}
 
 	void MPreviewController::GetEvents(vector<HANDLE>& handles)
@@ -508,7 +509,7 @@ namespace MShow
 			GetEvents(handles);
 			if (handles.size() == 0)
 			{
-				Sleep(25);
+				Sleep(10);
 				continue;
 			}
 			HRESULT hRes = WaitForSingleObject(handles[0], INFINITE);

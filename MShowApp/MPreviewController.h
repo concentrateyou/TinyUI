@@ -28,7 +28,6 @@ namespace MShow
 		void		SetVideoFPS(INT	videoFPS);
 		INT			GetVideoFPS() const;
 		void		Render();
-		void		Draw();
 		BYTE*		GetPointer();
 		DWORD		GetSize();
 		MPacketAllocQueue&	GetVideoQueue();

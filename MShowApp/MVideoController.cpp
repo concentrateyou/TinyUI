@@ -151,7 +151,7 @@ namespace MShow
 	{
 		if (m_player != NULL)
 		{
-			TinySize videoSize = m_player->GetSize();	
+			TinySize videoSize = m_player->GetSize();
 			if (m_video2D.Copy(m_graphics.GetDX11(), NULL, bits, size))
 			{
 				m_graphics.GetDX11().SetRenderTexture2D(NULL);
@@ -167,8 +167,6 @@ namespace MShow
 
 	void MVideoController::OnVideoRender()
 	{
-		MPreviewController* preview = MShowApp::GetInstance().GetController().GetPreviewController();
-		preview->Draw();
 		m_graphics.Present();
 	}
 
@@ -191,11 +189,11 @@ namespace MShow
 	}
 	void MVideoController::OnRemove()
 	{
-		MPreviewController* preview = MShowApp::GetInstance().GetController().GetPreviewController();
-		if (preview != NULL && m_pVideo != NULL)
+		MPreviewController* pCTRL = MShowApp::GetInstance().GetController().GetPreviewController();
+		if (pCTRL != NULL && m_pVideo != NULL)
 		{
-			preview->Remove(m_pVideo);
-			m_pVideo->Deallocate(preview->Graphics().GetDX11());
+			pCTRL->Remove(m_pVideo);
+			m_pVideo->Deallocate(pCTRL->Graphics().GetDX11());
 			SAFE_DELETE(m_pVideo);
 		}
 		this->Close();
@@ -218,44 +216,24 @@ namespace MShow
 
 	void MVideoController::AddElement()
 	{
-		MPreviewController* preview = MShowApp::GetInstance().GetController().GetPreviewController();
-		if (preview != NULL)
+		MPreviewController* pCTRL = MShowApp::GetInstance().GetController().GetPreviewController();
+		if (pCTRL != NULL)
 		{
 			if (m_pVideo == NULL)
 			{
 				m_pVideo = new MVideoElement(*this);
-				if (m_pVideo->Allocate(preview->Graphics().GetDX11()))
+				if (m_pVideo->Allocate(pCTRL->Graphics().GetDX11()))
 				{
-					preview->Add(m_pVideo);
-					preview->Bring(m_pVideo, TRUE);
+					pCTRL->Add(m_pVideo);
+					pCTRL->Bring(m_pVideo, TRUE);
 				}
 			}
 			else
 			{
-				preview->Add(m_pVideo);
-				preview->Bring(m_pVideo, TRUE);
+				pCTRL->Add(m_pVideo);
+				pCTRL->Bring(m_pVideo, TRUE);
 			}
 		}
-	}
-
-	void MVideoController::Lock()
-	{
-		m_lock.Lock();
-	}
-
-	void MVideoController::Unlock()
-	{
-		m_lock.Unlock();
-	}
-
-	BYTE*	MVideoController::GetPointer()
-	{
-		return m_data;
-	}
-
-	DWORD	MVideoController::GetSize()
-	{
-		return m_dwSize;
 	}
 
 	HANDLE MVideoController::GetEvent()

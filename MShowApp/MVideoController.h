@@ -45,10 +45,6 @@ namespace MShow
 		DX11Element2D*	GetElement();
 		HANDLE			GetEvent();
 		void			AddElement();
-		void			Lock();
-		void			Unlock();
-		BYTE*			GetPointer();
-		DWORD			GetSize();
 	private:
 		void	OnAdd();
 		void	OnRemove();
@@ -65,11 +61,9 @@ namespace MShow
 		TinyEvent					m_signal;
 		TinyEvent					m_copy;
 	public:
-		Event<void(BYTE*, LONG)> EVENT_AUDIO;
+		Event<void(BYTE*, LONG)>	EVENT_AUDIO;
 	private:
 		INT							m_index;
-		DWORD						m_dwSize;
-		TinyLock					m_lock;
 		TinyMenu					m_popup;
 		TinyEvent					m_event;
 		MVideoElement*				m_pVideo;
@@ -77,7 +71,6 @@ namespace MShow
 		DX11Graphics2D				m_graphics;
 		DX11Image2D					m_video2D;
 		TinyScopedPtr<MFLVPlayer>	m_player;
-		TinyScopedPtr<BYTE>			m_data;
 		TinyPerformanceTimer		m_timeQPC;
 	private:
 		TinyScopedPtr<Delegate<void(DWORD)>>						m_onVolume;
