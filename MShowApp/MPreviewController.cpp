@@ -22,7 +22,7 @@ namespace MShow
 		m_videoFPS(25),
 		m_clock(clock),
 		m_renderView(m_graphics.GetDX11()),
-		m_dwSize(0)
+		m_handle(NULL)
 	{
 		m_onLButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonDown));
 		m_onLButtonUp.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonUp));
@@ -332,16 +332,6 @@ namespace MShow
 		return m_videoFPS;
 	}
 
-	BYTE* MPreviewController::GetPointer()
-	{
-		return m_bits;
-	}
-
-	DWORD MPreviewController::GetSize()
-	{
-		return m_dwSize;
-	}
-
 	MPacketAllocQueue&	MPreviewController::GetVideoQueue()
 	{
 		return m_videoQueue;
@@ -442,37 +432,40 @@ namespace MShow
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
 		m_graphics.Present();
-		TinyPerformanceTimer timeQPC;
-		timeQPC.BeginTime();
-		//Map数据
-		MVideoController* pCTRL = MShowApp::GetInstance().GetController().GetCurrentCTRL();
-		if (pCTRL != NULL && MShowApp::GetInstance().GetController().IsPushing())
+
+		if (MShowApp::GetInstance().GetController().IsPushing())
 		{
-			while (m_clock.GetBaseTime() == -1);
-			m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());//设置视频流时间
-			//拷贝数据
-			BYTE* bits = m_renderView.Map(m_dwSize);
-			if (bits != NULL)
+			MVideoController* pCTRL = MShowApp::GetInstance().GetController().GetCurrentCTRL();
+			if (pCTRL != NULL)
 			{
-				SampleTag sampleTag;
-				ZeroMemory(&sampleTag, sizeof(sampleTag));
-				sampleTag.size = m_dwSize;
-				if (sampleTag.size > 0)
+				while (m_clock.GetBaseTime() == -1);
+				m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());
+				//网络不稳定
+				if (m_videoQueue.GetCount() <= 5)
 				{
-					if (m_videoQueue.GetAllocSize() == 0)
+					DWORD dwSize = 0;
+					BYTE* bits = m_renderView.Map(dwSize);
+					if (bits != NULL)
 					{
-						INT count = MAX_VIDEO_QUEUE_SIZE / sampleTag.size + 1;
-						m_videoQueue.Initialize(count, sampleTag.size + 4);
+						SampleTag sampleTag;
+						ZeroMemory(&sampleTag, sizeof(sampleTag));
+						sampleTag.size = dwSize;
+						if (sampleTag.size > 0)
+						{
+							if (m_videoQueue.GetAllocSize() == 0)
+							{
+								INT count = MAX_VIDEO_QUEUE_SIZE / sampleTag.size + 1;
+								m_videoQueue.Initialize(count, sampleTag.size + 4);
+							}
+							sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
+							memcpy_s(sampleTag.bits + 4, sampleTag.size, bits, sampleTag.size);
+							m_videoQueue.Push(sampleTag);
+							m_renderView.Unmap();
+						}
 					}
-					sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
-					memcpy_s(sampleTag.bits + 4, sampleTag.size, bits, sampleTag.size);
-					m_videoQueue.Push(sampleTag);
-					m_renderView.Unmap();
 				}
 			}
 		}
-		timeQPC.EndTime();
-		TRACE("Map Cost:%lld\n", timeQPC.GetMillisconds());
 	}
 
 	void MPreviewController::GetEvents(vector<HANDLE>& handles)
@@ -505,19 +498,26 @@ namespace MShow
 				}
 				break;
 			}
-			vector<HANDLE> handles;
-			GetEvents(handles);
-			if (handles.size() == 0)
+			if (m_array.GetSize() == 0)
 			{
 				Sleep(10);
 				continue;
 			}
-			HRESULT hRes = WaitForSingleObject(handles[0], INFINITE);
-			if (hRes == WAIT_FAILED || hRes == WAIT_ABANDONED)
+			DX11Element2D* p2D = m_array[0];
+			if (p2D->IsKindOf(RUNTIME_CLASS(MVideoElement)))
 			{
-				break;
+				MVideoElement* ps = static_cast<MVideoElement*>(p2D);
+				m_handle = ps->GetController().GetEvent();
 			}
-			this->Render();
+			if (m_handle != NULL)
+			{
+				HRESULT hRes = WaitForSingleObject(m_handle, INFINITE);
+				if (hRes == WAIT_FAILED || hRes == WAIT_ABANDONED)
+				{
+					break;
+				}
+				this->Render();
+			}
 		}
 	}
 }

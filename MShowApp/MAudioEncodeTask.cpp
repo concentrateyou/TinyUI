@@ -91,32 +91,39 @@ namespace MShow
 		{
 			m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
 		}
-		if (m_clock.GetBaseTime() != -1)
+		if (m_clock.GetBaseTime() != -1 && m_clock.GetVideoPTS() != -1)
 		{
-			//正在推流编码数据
-			if (m_clock.GetVideoPTS() != -1 && MShow::MShowApp::GetInstance().GetController().IsPushing())
+			MPacketAllocQueue& videoQueue = MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetVideoQueue();
+			if (MShow::MShowApp::GetInstance().GetController().IsPushing())
 			{
-				BYTE* output = new BYTE[size];
-				if (m_queueMix.GetSize() > 0)
+				if (videoQueue.GetCount() > 5)
 				{
-					SampleTag sampleTag = { 0 };
-					if (m_queueMix.Pop(sampleTag))
-					{
-						AudioMixer::Mix(bits, sampleTag.bits, size, output);
-					}
+					
 				}
 				else
 				{
-					memcpy_s(output, size, bits, size);
+					BYTE* output = new BYTE[size];
+					if (m_queueMix.GetSize() > 0)
+					{
+						SampleTag sampleTag = { 0 };
+						if (m_queueMix.Pop(sampleTag))
+						{
+							AudioMixer::Mix(bits, sampleTag.bits, size, output);
+						}
+					}
+					else
+					{
+						memcpy_s(output, size, bits, size);
+					}
+					SampleTag sampleTag;
+					ZeroMemory(&sampleTag, sizeof(sampleTag));
+					sampleTag.bits = output;
+					sampleTag.size = size;
+					m_clock.SetAudioPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());
+					sampleTag.timestamp = m_clock.GetAudioPTS() - m_clock.GetBaseTime();
+					m_queue.Push(sampleTag);
+					m_event.SetEvent();
 				}
-				SampleTag sampleTag;
-				ZeroMemory(&sampleTag, sizeof(sampleTag));
-				sampleTag.bits = output;
-				sampleTag.size = size;
-				m_clock.SetAudioPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());
-				sampleTag.timestamp = m_clock.GetAudioPTS() - m_clock.GetBaseTime();
-				m_queue.Push(sampleTag);
-				m_event.SetEvent();
 			}
 		}
 	}

@@ -27,9 +27,6 @@ namespace MShow
 		TinySize	GetPulgSize() const;
 		void		SetVideoFPS(INT	videoFPS);
 		INT			GetVideoFPS() const;
-		void		Render();
-		BYTE*		GetPointer();
-		DWORD		GetSize();
 		MPacketAllocQueue&	GetVideoQueue();
 	public:
 		void		Enter();
@@ -56,13 +53,14 @@ namespace MShow
 		void	OnMenuClick(void*, INT wID);
 		void	OnMessagePump();
 		void	GetEvents(vector<HANDLE>&handles);
+		void	Render();
 	private:
 		DX11Element2D*	HitTest(const TinyPoint& pos);//м╪ф╛сеох
 	private:
 		BOOL							m_bBreak;
 		BOOL							m_bTracking;
+		HANDLE							m_handle;
 		BOOL							m_bPopup;
-		DWORD							m_dwSize;
 		INT								m_videoFPS;
 		TinySize						m_pulgSize;
 		TinyMenu						m_popup;
