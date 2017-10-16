@@ -460,6 +460,10 @@ namespace MShow
 							memcpy_s(sampleTag.bits + 4, sampleTag.size, bits, sampleTag.size);
 							m_renderView.Unmap();
 							m_timeQPC.EndTime();
+							if (m_timeQPC.GetMillisconds() >= 30)
+							{
+								TRACE("Cost:%lld\n", m_timeQPC.GetMillisconds());
+							}
 							m_videoQueue.Push(sampleTag);
 						}
 					}

@@ -38,26 +38,28 @@ namespace MShow
 			{
 				if (m_bBreak)
 					break;
-				ZeroMemory(&sampleTag, sizeof(sampleTag));
-				BOOL bRes = queue.Pop(sampleTag);
-				if (!bRes || sampleTag.size <= 0)
+				if (MShow::MShowApp::GetInstance().GetController().IsPushing())
 				{
-					Sleep(10);
-					continue;
+					ZeroMemory(&sampleTag, sizeof(sampleTag));
+					BOOL bRes = queue.Pop(sampleTag);
+					if (!bRes || sampleTag.size <= 0)
+					{
+						continue;
+					}
+					sampleTag.sampleDTS = sampleTag.samplePTS = (m_videoINC++) * 90000 / m_videoFPS;
+					ZeroMemory(&sample, sizeof(sample));
+					BYTE* bo = NULL;
+					LONG  so = 0;
+					ZeroMemory(&sample, sizeof(sample));
+					if (m_encoder.Encode(sampleTag, bo, so, sample.mediaTag))
+					{
+						sample.size = so;
+						sample.bits = new BYTE[so];
+						memcpy(sample.bits, bo, so);
+						m_samples.Push(sample);
+					}
+					queue.Free(sampleTag.bits);
 				}
-				sampleTag.sampleDTS = sampleTag.samplePTS = (m_videoINC++) * 90000 / m_videoFPS;
-				ZeroMemory(&sample, sizeof(sample));
-				BYTE* bo = NULL;
-				LONG  so = 0;
-				ZeroMemory(&sample, sizeof(sample));
-				if (m_encoder.Encode(sampleTag, bo, so, sample.mediaTag))
-				{
-					sample.size = so;
-					sample.bits = new BYTE[so];
-					memcpy(sample.bits, bo, so);
-					m_samples.Push(sample);
-				}
-				queue.Free(sampleTag.bits);
 			}
 		}
 	}

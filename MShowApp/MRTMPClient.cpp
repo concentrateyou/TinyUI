@@ -116,7 +116,10 @@ namespace MShow
 		packet->m_nTimeStamp = 0;
 		packet->m_hasAbsTimestamp = 0;
 		packet->m_nInfoField2 = m_pRTMP->m_stream_id;
-		RTMP_SendPacket(m_pRTMP, packet, TRUE);
+		if (RTMP_IsConnected(m_pRTMP))
+		{
+			RTMP_SendPacket(m_pRTMP, packet, TRUE);
+		}
 		SAFE_FREE(packet);
 		return TRUE;
 	}
@@ -160,7 +163,10 @@ namespace MShow
 		packet->m_nTimeStamp = 0;
 		packet->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
 		packet->m_nInfoField2 = m_pRTMP->m_stream_id;
-		RTMP_SendPacket(m_pRTMP, packet, TRUE);
+		if (RTMP_IsConnected(m_pRTMP))
+		{
+			RTMP_SendPacket(m_pRTMP, packet, TRUE);
+		}
 		SAFE_FREE(packet);
 		return TRUE;
 	}
@@ -186,7 +192,10 @@ namespace MShow
 		packet->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
 		packet->m_hasAbsTimestamp = 0;
 		packet->m_nTimeStamp = 0;
-		RTMP_SendPacket(m_pRTMP, packet, TRUE);
+		if (RTMP_IsConnected(m_pRTMP))
+		{
+			RTMP_SendPacket(m_pRTMP, packet, TRUE);
+		}
 		SAFE_FREE(packet);
 		return TRUE;
 
@@ -216,7 +225,10 @@ namespace MShow
 		packet->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
 		packet->m_hasAbsTimestamp = 0;
 		packet->m_nTimeStamp = timestamp;
-		RTMP_SendPacket(m_pRTMP, packet, TRUE);
+		if (RTMP_IsConnected(m_pRTMP))
+		{
+			RTMP_SendPacket(m_pRTMP, packet, TRUE);
+		}
 		SAFE_FREE(packet);
 		return TRUE;
 	}
@@ -238,12 +250,12 @@ namespace MShow
 			break;
 		}
 		RTMPPacket* packet = NULL;
-		BYTE* body = NULL;
+		CHAR* body = NULL;
 		packet = (RTMPPacket*)malloc(RTMP_HEAD_SIZE + size + 9);
 		memset(packet, 0, RTMP_HEAD_SIZE);
 		packet->m_body = (CHAR*)packet + RTMP_HEAD_SIZE;
 		packet->m_nBodySize = size + 9;
-		body = (BYTE*)packet->m_body;
+		body = (CHAR*)packet->m_body;
 		memset(body, 0, size + 9);
 		body[0] = dwFrameType;
 		body[1] = 0x01;// AVC NALU  
@@ -261,7 +273,10 @@ namespace MShow
 		packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
 		packet->m_hasAbsTimestamp = 0;
 		packet->m_nTimeStamp = timestamp;
-		RTMP_SendPacket(m_pRTMP, packet, TRUE);
+		if (RTMP_IsConnected(m_pRTMP))
+		{
+			RTMP_SendPacket(m_pRTMP, packet, TRUE);
+		}
 		SAFE_FREE(packet);
 		return TRUE;
 	}

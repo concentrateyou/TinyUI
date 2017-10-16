@@ -51,7 +51,6 @@ namespace MShow
 		return FALSE;
 	}
 
-
 	void MRTMPPusher::OnMessagePump()
 	{
 		MSampleQueue& videos = MShow::MShowApp::GetInstance().GetController().GetVideoEncoder().GetSamples();
@@ -70,6 +69,7 @@ namespace MShow
 					ZeroMemory(&video, sizeof(video));
 					if (videos.Pop(video))
 					{
+						TRACE("Video TS: %d\n",video.mediaTag.dwTime);
 						Publish(video);
 					}
 				}

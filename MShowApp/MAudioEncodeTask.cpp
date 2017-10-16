@@ -60,8 +60,6 @@ namespace MShow
 					ZeroMemory(&sample, sizeof(sample));
 					if (m_aac.Encode(sampleTag.bits, sampleTag.size, bo, so, sample.mediaTag))
 					{
-						//TRACE("Audio timestamp:%lld\n", sampleTag.timestamp);
-						//sample.mediaTag.dwTime = sampleTag.timestamp;
 						sample.size = so;
 						sample.bits = new BYTE[so];
 						memcpy(sample.bits, bo, so);
@@ -94,32 +92,34 @@ namespace MShow
 		}
 		if (m_clock.GetBaseTime() != -1)
 		{
-			MPacketAllocQueue& videoQueue = MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetVideoQueue();
 			if (MShow::MShowApp::GetInstance().GetController().IsPushing())
 			{
-				if (videoQueue.GetCount() <= 5)
+				MVideoController* pCTRL = MShowApp::GetInstance().GetController().GetCurrentCTRL();
+				if (pCTRL != NULL)
 				{
-					BYTE* output = new BYTE[size];
-					if (m_queueMix.GetSize() > 0)
+					MPacketAllocQueue& videoQueue = MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetVideoQueue();
+					if (videoQueue.GetCount() <= 5)
 					{
-						SampleTag sampleTag = { 0 };
-						if (m_queueMix.Pop(sampleTag))
+						BYTE* output = new BYTE[size];
+						if (m_queueMix.GetSize() > 0)
 						{
-							AudioMixer::Mix(bits, sampleTag.bits, size, output);
+							SampleTag sampleTag = { 0 };
+							if (m_queueMix.Pop(sampleTag))
+							{
+								AudioMixer::Mix(bits, sampleTag.bits, size, output);
+							}
 						}
+						else
+						{
+							memcpy_s(output, size, bits, size);
+						}
+						SampleTag sampleTag;
+						ZeroMemory(&sampleTag, sizeof(sampleTag));
+						sampleTag.bits = output;
+						sampleTag.size = size;
+						m_queue.Push(sampleTag);
+						m_event.SetEvent();
 					}
-					else
-					{
-						memcpy_s(output, size, bits, size);
-					}
-					SampleTag sampleTag;
-					ZeroMemory(&sampleTag, sizeof(sampleTag));
-					sampleTag.bits = output;
-					sampleTag.size = size;
-					/*m_clock.SetAudioPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());
-					sampleTag.timestamp = m_clock.GetAudioPTS() - m_clock.GetBaseTime();*/
-					m_queue.Push(sampleTag);
-					m_event.SetEvent();
 				}
 			}
 		}
@@ -157,14 +157,14 @@ namespace MShow
 	{
 		if (m_pVideoCTRL != pCTRL)
 		{
+			if (m_pVideoCTRL != NULL)
+			{
+				m_pVideoCTRL->EVENT_AUDIO -= m_onAudio;
+			}
 			if (pCTRL != NULL)
 			{
 				pCTRL->AddElement();
 				pCTRL->EVENT_AUDIO += m_onAudio;
-			}
-			if (m_pVideoCTRL != NULL)
-			{
-				m_pVideoCTRL->EVENT_AUDIO -= m_onAudio;
 			}
 			m_pVideoCTRL = pCTRL;
 		}
