@@ -30,6 +30,7 @@ namespace TinyUI
 			virtual BOOL Stop();
 			virtual BOOL Reset();
 			virtual BOOL Close();
+			BOOL IsCapturing() const;
 			WAVEFORMATEX* GetFormat() const;
 		public:
 			void EnableAGC(BOOL bAllow);

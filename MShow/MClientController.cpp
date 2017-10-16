@@ -431,7 +431,7 @@ namespace MShow
 		return FALSE;
 	}
 
-	BOOL MClientController::GetPreviewURL(string& szURL)
+	BOOL MClientController::GetPreviewURL(string& szURL, INT& iAudio)
 	{
 		string code;
 		string context;
@@ -459,9 +459,17 @@ namespace MShow
 		if (code == "A00000")
 		{
 			szURL = value["result"].asString();
-			TRACE("URL :%s\n", szURL.c_str());
-			LOG(INFO) << "[MClientController] " << "GetPreviewURL :" << szURL << " OK";
-			return TRUE;
+			vector<string> vals;
+			SplitString(szURL, ';', &vals);
+			if (vals.size() == 2)
+			{
+				szURL = vals[0];
+				iAudio = std::stoi(vals[1]);
+				TRACE("URL :%s, PORT:%d\n", szURL.c_str(), iAudio);
+				LOG(INFO) << "[MClientController] " << "GetPreviewURL :" << vals[0] << " PORT: " << iAudio << " OK";
+				return TRUE;
+			}
+
 		}
 		else
 		{
@@ -541,7 +549,8 @@ namespace MShow
 	BOOL MClientController::StartCommentary()
 	{
 		//获取音频预览流
-		if (!GetPreviewURL(m_szURL) || m_szURL.empty())
+		INT iAudio = 0;
+		if (!GetPreviewURL(m_szURL, iAudio) || m_szURL.empty())
 			return FALSE;
 		//启动SDK发送数据
 		if (m_task.IsActive())
@@ -553,7 +562,7 @@ namespace MShow
 		if (!m_task.Submit(BindCallback(&MClientController::OnMessagePump, this)))
 			return FALSE;
 		string szIP = MShowApp::GetInstance().AppConfig().GetIP();
-		m_audioSDK.Reset(new AudioSdk(szIP, 6090, std::stoi(m_szSourceID)));
+		m_audioSDK.Reset(new AudioSdk(szIP, iAudio, std::stoi(m_szSourceID)));
 		if (m_audioSDK != NULL)
 		{
 			if (m_audioSDK->init(44100, 2, 16) == 0)
@@ -816,8 +825,11 @@ namespace MShow
 					BOOL bRes = m_audioQueue.Pop(sample);
 					if (bRes && sample.size > 0)
 					{
-						LOG(INFO) << "Timestamp: " << sample.timestamp;
-						m_audioSDK->audio_encode_send(sample.bits + 4, static_cast<INT32>(sample.timestamp));
+						//LOG(INFO) << "Timestamp: " << sample.timestamp;
+						if (m_audioSDK->audio_encode_send(sample.bits + 4, static_cast<INT32>(sample.timestamp)) == 0)
+						{
+							LOG(INFO) << "audio_encode_send OK";
+						}
 					}
 					m_audioQueue.Free(sample.bits);
 				}

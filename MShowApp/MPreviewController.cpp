@@ -339,6 +339,7 @@ namespace MShow
 
 	void MPreviewController::Render()
 	{
+		m_timeQPC.BeginTime();
 		m_graphics.GetDX11().SetRenderTexture2D(&m_renderView);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();
 		TinyArray<DX11Element2D*> images;
@@ -438,8 +439,6 @@ namespace MShow
 			MVideoController* pCTRL = MShowApp::GetInstance().GetController().GetCurrentCTRL();
 			if (pCTRL != NULL)
 			{
-				while (m_clock.GetBaseTime() == -1);
-				m_clock.SetVideoPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());
 				//ÍøÂç²»ÎÈ¶¨
 				if (m_videoQueue.GetCount() <= 5)
 				{
@@ -459,8 +458,9 @@ namespace MShow
 							}
 							sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
 							memcpy_s(sampleTag.bits + 4, sampleTag.size, bits, sampleTag.size);
-							m_videoQueue.Push(sampleTag);
 							m_renderView.Unmap();
+							m_timeQPC.EndTime();
+							m_videoQueue.Push(sampleTag);
 						}
 					}
 				}

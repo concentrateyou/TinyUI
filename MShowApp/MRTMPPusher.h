@@ -16,7 +16,7 @@ namespace MShow
 	public:
 		MRTMPPusher();
 		virtual ~MRTMPPusher();
-		BOOL Connect(const TinyString& szURL = "rtmp://101.227.14.238:1935/liveugc/rqy_opj4nkbi?auth_code=ryg1poob", DWORD dwRate = 25);
+		BOOL Connect(const TinyString& szURL = "rtmp://10.121.86.127/live/test_mshow", DWORD dwRate = 25);
 		BOOL Disconnect();
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;

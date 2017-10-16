@@ -174,7 +174,6 @@ namespace MShow
 	}
 	BOOL MAudioDSP::Stop()
 	{
-		m_timer.Close();
 		if (!m_audioDSP.Stop())
 		{
 			LOG(ERROR) << "AudioDSP Stop Fail";
@@ -185,6 +184,7 @@ namespace MShow
 	}
 	BOOL MAudioDSP::Close()
 	{
+		m_timer.Close();
 		m_resampler.Close();
 		if (!m_audioDSP.Close())
 		{
@@ -206,14 +206,25 @@ namespace MShow
 	void MAudioDSP::OnTimer()
 	{
 		TinyAutoLock lock(m_lock);
-		if (m_buffer.GetSize() >= 4096)
+		if (m_audioDSP.IsCapturing())
 		{
-			memcpy(m_bits, m_buffer.GetPointer(), 4096);
-			m_buffer.Remove(0, 4096);
-			if (m_waveFile != NULL)
+			if (m_buffer.GetSize() >= 4096)
 			{
-				m_waveFile.Write(m_bits, 4096);
+				memcpy(m_bits, m_buffer.GetPointer(), 4096);
+				m_buffer.Remove(0, 4096);
+				if (m_waveFile != NULL)
+				{
+					m_waveFile.Write(m_bits, 4096);
+				}
+				if (!m_callback.IsNull())
+				{
+					m_callback(m_bits, 4096);
+				}
 			}
+		}
+		else
+		{
+			ZeroMemory(m_bits, 4096);
 			if (!m_callback.IsNull())
 			{
 				m_callback(m_bits, 4096);

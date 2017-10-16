@@ -60,7 +60,8 @@ namespace MShow
 					ZeroMemory(&sample, sizeof(sample));
 					if (m_aac.Encode(sampleTag.bits, sampleTag.size, bo, so, sample.mediaTag))
 					{
-						sample.mediaTag.dwTime = sampleTag.timestamp;
+						//TRACE("Audio timestamp:%lld\n", sampleTag.timestamp);
+						//sample.mediaTag.dwTime = sampleTag.timestamp;
 						sample.size = so;
 						sample.bits = new BYTE[so];
 						memcpy(sample.bits, bo, so);
@@ -91,16 +92,12 @@ namespace MShow
 		{
 			m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
 		}
-		if (m_clock.GetBaseTime() != -1 && m_clock.GetVideoPTS() != -1)
+		if (m_clock.GetBaseTime() != -1)
 		{
 			MPacketAllocQueue& videoQueue = MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetVideoQueue();
 			if (MShow::MShowApp::GetInstance().GetController().IsPushing())
 			{
-				if (videoQueue.GetCount() > 5)
-				{
-					
-				}
-				else
+				if (videoQueue.GetCount() <= 5)
 				{
 					BYTE* output = new BYTE[size];
 					if (m_queueMix.GetSize() > 0)
@@ -119,8 +116,8 @@ namespace MShow
 					ZeroMemory(&sampleTag, sizeof(sampleTag));
 					sampleTag.bits = output;
 					sampleTag.size = size;
-					m_clock.SetAudioPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());
-					sampleTag.timestamp = m_clock.GetAudioPTS() - m_clock.GetBaseTime();
+					/*m_clock.SetAudioPTS(MShow::MShowApp::GetInstance().GetQPCTimeMS());
+					sampleTag.timestamp = m_clock.GetAudioPTS() - m_clock.GetBaseTime();*/
 					m_queue.Push(sampleTag);
 					m_event.SetEvent();
 				}

@@ -182,6 +182,7 @@ namespace TinyUI
 				return FALSE;
 			}
 			m_dmo.Release();
+			m_bCapturing = FALSE;
 			return TRUE;
 		}
 		void TinyAudioDSPCapture::EnableAGC(BOOL bAllow)
@@ -200,6 +201,10 @@ namespace TinyUI
 		WAVEFORMATEX* TinyAudioDSPCapture::GetFormat() const
 		{
 			return reinterpret_cast<WAVEFORMATEX*>(m_waveFMT.Ptr());
+		}
+		BOOL TinyAudioDSPCapture::IsCapturing() const
+		{
+			return m_bCapturing;
 		}
 		void TinyAudioDSPCapture::OnMessagePump()
 		{
