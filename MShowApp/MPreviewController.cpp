@@ -488,6 +488,7 @@ namespace MShow
 
 	void MPreviewController::OnMessagePump()
 	{
+		SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
 		for (;;)
 		{
 			if (m_bBreak)

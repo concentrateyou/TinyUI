@@ -61,6 +61,8 @@ namespace MShow
 		RTMP_Init(m_pRTMP);
 		if (!RTMP_SetupURL(m_pRTMP, szURL.STR()))
 			return FALSE;
+		RTMP_LogSetLevel(RTMP_LOGINFO);
+		RTMP_LogSetOutput(stderr);
 		RTMP_EnableWrite(m_pRTMP);
 		RTMP_SetBufferMS(m_pRTMP, 60 * 1000);
 		if (!RTMP_Connect(m_pRTMP, NULL))
@@ -118,7 +120,7 @@ namespace MShow
 		packet->m_nInfoField2 = m_pRTMP->m_stream_id;
 		if (RTMP_IsConnected(m_pRTMP))
 		{
-			RTMP_SendPacket(m_pRTMP, packet, TRUE);
+			RTMP_SendPacket(m_pRTMP, packet, FALSE);
 		}
 		SAFE_FREE(packet);
 		return TRUE;
@@ -165,7 +167,7 @@ namespace MShow
 		packet->m_nInfoField2 = m_pRTMP->m_stream_id;
 		if (RTMP_IsConnected(m_pRTMP))
 		{
-			RTMP_SendPacket(m_pRTMP, packet, TRUE);
+			RTMP_SendPacket(m_pRTMP, packet, FALSE);
 		}
 		SAFE_FREE(packet);
 		return TRUE;
@@ -194,7 +196,7 @@ namespace MShow
 		packet->m_nTimeStamp = 0;
 		if (RTMP_IsConnected(m_pRTMP))
 		{
-			RTMP_SendPacket(m_pRTMP, packet, TRUE);
+			RTMP_SendPacket(m_pRTMP, packet, FALSE);
 		}
 		SAFE_FREE(packet);
 		return TRUE;
@@ -227,7 +229,7 @@ namespace MShow
 		packet->m_nTimeStamp = timestamp;
 		if (RTMP_IsConnected(m_pRTMP))
 		{
-			RTMP_SendPacket(m_pRTMP, packet, TRUE);
+			RTMP_SendPacket(m_pRTMP, packet, FALSE);
 		}
 		SAFE_FREE(packet);
 		return TRUE;
@@ -241,13 +243,16 @@ namespace MShow
 		switch (bits[2])
 		{
 		case 0x00:
+		{
 			bits += 4;
 			size -= 4;
-			break;
+		}
+		break;
 		case 0x01:
-			bits += 3;
-			size -= 3;
-			break;
+		{
+
+		}
+		break;
 		}
 		RTMPPacket* packet = NULL;
 		CHAR* body = NULL;
@@ -267,15 +272,15 @@ namespace MShow
 		body[7] = (size >> 8) & 0xFF;
 		body[8] = (size) & 0xFF;
 		memcpy(&body[9], bits, size);
+		packet->m_hasAbsTimestamp = 0;
 		packet->m_packetType = RTMP_PACKET_TYPE_VIDEO;
 		packet->m_nInfoField2 = m_pRTMP->m_stream_id;
 		packet->m_nChannel = STREAM_CHANNEL_VIDEO;
 		packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
-		packet->m_hasAbsTimestamp = 0;
-		packet->m_nTimeStamp = timestamp;
+		packet->m_nTimeStamp = timestamp & 0xFFFFFF;
 		if (RTMP_IsConnected(m_pRTMP))
 		{
-			RTMP_SendPacket(m_pRTMP, packet, TRUE);
+			RTMP_SendPacket(m_pRTMP, packet, FALSE);
 		}
 		SAFE_FREE(packet);
 		return TRUE;
