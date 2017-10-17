@@ -28,6 +28,7 @@ namespace Decode
 	SAVC(mp4a);
 	//////////////////////////////////////////////////////////////////////////
 	FLVWriter::FLVWriter()
+		:m_dwPreviousSize(0)
 	{
 
 	}
@@ -37,7 +38,7 @@ namespace Decode
 	}
 	BOOL FLVWriter::Create(LPCSTR pzFile)
 	{
-		HRESULT hRes = SHCreateStreamOnFileA(pzFile, STGM_CREATE | STGM_FAILIFTHERE, &m_stream);
+		HRESULT hRes = SHCreateStreamOnFile(pzFile, STGM_CREATE | STGM_WRITE, &m_stream);
 		if (hRes != S_OK)
 			return FALSE;
 		FLV_HEADER header = { 0 };
@@ -71,18 +72,26 @@ namespace Decode
 		pBEGIN = AMF_EncodeNamedNumber(pBEGIN, pEND, &av_audiodatarate, script.audiodatarate); //¿‡À∆128kb/s
 		pBEGIN = AMF_EncodeNamedNumber(pBEGIN, pEND, &av_audiosamplerate, script.audiosamplerate);
 		pBEGIN = AMF_EncodeNamedNumber(pBEGIN, pEND, &av_audiosamplesize, script.audiosamplesize);
-		pBEGIN = AMF_EncodeNamedNumber(pBEGIN, pEND, &av_audiochannels, script.audiochannels);
 		pBEGIN = AMF_EncodeNamedBoolean(pBEGIN, pEND, &av_stereo, static_cast<INT>(script.audiochannels) == 2);
 		*pBEGIN++ = 0;
 		*pBEGIN++ = 0;
 		*pBEGIN++ = AMF_OBJECT_END;
-		DWORD size = pBEGIN - bits;
-		memcpy(tag.size, &size, sizeof(tag.size));
+		DWORD dwSize = pBEGIN - bits;
+		tag.size[0] = dwSize >> 16 & 0xFF;
+		tag.size[1] = dwSize >> 8 & 0xFF;
+		tag.size[2] = dwSize & 0xFF;
 		tag.type = FLV_SCRIPT;
 		ULONG ls = 0;
 		HRESULT hRes = m_stream->Write(&tag, sizeof(tag), &ls);
 		if (hRes != S_OK || ls != sizeof(tag))
 			return FALSE;
+		hRes = m_stream->Write(bits, dwSize, &ls);
+		if (hRes != S_OK || ls != dwSize)
+			return FALSE;
+		hRes = m_stream->Write(&m_dwPreviousSize, sizeof(m_dwPreviousSize), &ls);
+		if (hRes != S_OK || ls != sizeof(m_dwPreviousSize))
+			return FALSE;
+		m_dwPreviousSize = dwSize + sizeof(FLV_TAG_HEADER);
 		return TRUE;
 	}
 	BOOL FLVWriter::WriteAudioTag(FLV_PACKET& packet, BYTE* bits, LONG size)
@@ -115,6 +124,10 @@ namespace Decode
 		hRes = m_stream->Write(bits, size, &ls);
 		if (hRes != S_OK || ls != size)
 			return FALSE;
+		hRes = m_stream->Write(&m_dwPreviousSize, sizeof(m_dwPreviousSize), &ls);
+		if (hRes != S_OK || ls != sizeof(m_dwPreviousSize))
+			return FALSE;
+		m_dwPreviousSize = dwSize + sizeof(FLV_TAG_HEADER);
 		return TRUE;
 	}
 	BOOL FLVWriter::WriteVideoTag(FLV_PACKET& packet, BYTE* bits, LONG size)
@@ -152,7 +165,60 @@ namespace Decode
 		hRes = m_stream->Write(bits, size, &ls);
 		if (hRes != S_OK || ls != size)
 			return FALSE;
+		hRes = m_stream->Write(&m_dwPreviousSize, sizeof(m_dwPreviousSize), &ls);
+		if (hRes != S_OK || ls != sizeof(m_dwPreviousSize))
+			return FALSE;
+		m_dwPreviousSize = dwSize + sizeof(FLV_TAG_HEADER);
 		return TRUE;
+	}
+
+	BOOL FLVWriter::WriteAACASC(BYTE* bits, LONG size)
+	{
+		FLV_PACKET audio = { 0 };
+		audio.bitsPerSample = 3;
+		audio.samplesPerSec = 1;
+		audio.channel = 1;
+		audio.codeID = FLV_CODECID_AAC;
+		audio.packetType = 0;//AAC Sequence header
+		return WriteAudioTag(audio, bits, size);
+	}
+
+	BOOL FLVWriter::WriteAACRaw(BYTE* bits, LONG size, LONGLONG timestamp)
+	{
+		FLV_PACKET audio = { 0 };
+		audio.bitsPerSample = 3;
+		audio.samplesPerSec = 1;
+		audio.channel = 1;
+		audio.codeID = FLV_CODECID_AAC;
+		audio.packetType = 1;//AAC Raw
+		audio.dts = timestamp;
+		audio.pts = timestamp;
+		return WriteAudioTag(audio, bits, size);
+	}
+
+	BOOL FLVWriter::WriteH264AVC(BYTE* bits, LONG size)
+	{
+		FLV_PACKET video = { 0 };
+		video.codeID = FLV_CODECID_H264;
+		video.codeType = 1;
+		video.packetType = 0;//AVC sequence header
+		return WriteVideoTag(video, bits, size);
+	}
+
+	BOOL FLVWriter::WriteH264NALU(BYTE frameType, BYTE* bits, LONG size, LONGLONG pts, LONGLONG dts)
+	{
+		FLV_PACKET video = { 0 };
+		video.codeID = FLV_CODECID_H264;
+		video.codeType = frameType;
+		video.packetType = 1;//AVC NALU
+		video.dts = dts;
+		video.pts = pts;
+		TinyScopedArray<BYTE> data(new BYTE[size + 8]);
+		INT* ps = reinterpret_cast<INT*>(data.Ptr());
+		*ps++ = static_cast<INT>(size);
+		*ps++ = H264StartCode;
+		memcpy(data + 8, bits, size);
+		return WriteVideoTag(video, data, size + 8);
 	}
 	BOOL FLVWriter::Close()
 	{

@@ -183,11 +183,12 @@ namespace MShow
 		//	bRes = RTMP_SendPacket(m_pRTMP, &packet, FALSE) == 0;
 		//}
 		//RTMPPacket_Free(&packet);
-		FLV_PACKET video = { 0 };
-		video.codeID = FLV_CODECID_H264;
-		video.codeType = 0;
-		video.packetType = FLV_AVCDecoderConfigurationRecord;
-		m_writer.WriteVideoTag(video, bits, size);
+
+		vector<BYTE> data;
+		data.resize(sps.size() + pps.size());
+		memcpy(&data[0], &sps[0], sps.size());
+		memcpy(&data[sps.size()], &pps[0], pps.size());
+		m_writer.WriteH264AVC(&data[0], data.size());
 
 		return TRUE;
 	}
@@ -217,12 +218,7 @@ namespace MShow
 		//}
 		//RTMPPacket_Free(&packet);
 
-		FLV_PACKET audio = { 0 };
-		audio.bitsPerSample = 44100;
-		audio.channel = 2;
-		audio.codeID = FLV_CODECID_AAC;
-		audio.packetType = FLV_AudioSpecificConfig;
-		m_writer.WriteAudioTag(audio, bits, size);
+		m_writer.WriteAACASC(bits, size);
 
 		return TRUE;
 
@@ -257,12 +253,7 @@ namespace MShow
 		//}
 		//RTMPPacket_Free(&packet);
 
-		FLV_PACKET audio = { 0 };
-		audio.bitsPerSample = 44100;
-		audio.channel = 2;
-		audio.codeID = FLV_CODECID_AAC;
-		audio.packetType = FLV_AACRaw;
-		m_writer.WriteAudioTag(audio, bits, size);
+		m_writer.WriteAACRaw(bits, size, timestamp);
 
 		return TRUE;
 	}
@@ -315,12 +306,7 @@ namespace MShow
 		//	bRes = RTMP_SendPacket(m_pRTMP, &packet, FALSE) == 0;
 		//}
 		//RTMPPacket_Free(&packet);
-
-		FLV_PACKET video = { 0 };
-		video.codeID = FLV_CODECID_H264;
-		video.codeType = dwFrameType;
-		video.packetType = FLV_NALU;
-		m_writer.WriteVideoTag(video, bits, size);
+		m_writer.WriteH264NALU(dwFrameType == 0x17 ? 1 : 2, bits, size, timestamp, timestamp);
 
 		return TRUE;
 	}

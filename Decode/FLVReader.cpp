@@ -13,8 +13,8 @@ namespace Decode
 		m_minusOne(0),
 		m_offset(0),
 		m_timestamp(0),
-		m_basePTS(-1),
-		m_bAVC(FALSE)
+		m_count(0),
+		m_basePTS(-1)
 	{
 
 	}
@@ -171,6 +171,10 @@ namespace Decode
 				m_timestamp = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
 				if (m_timestamp > 0)
 				{
+					if (m_count == 1 && m_basePTS == -1)
+					{
+						m_basePTS = m_timestamp;
+					}
 					if (m_basePTS != -1)
 					{
 						m_timestamp -= m_basePTS;
@@ -183,12 +187,12 @@ namespace Decode
 				m_timestamp = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
 				if (m_timestamp > 0)
 				{
-					if (m_bAVC)
+					if (m_count == 1 && m_basePTS == -1)
 					{
-						if (m_basePTS == -1)
-						{
-							m_basePTS = m_timestamp;
-						}
+						m_basePTS = m_timestamp;
+					}
+					if (m_basePTS != -1)
+					{
 						m_timestamp -= m_basePTS;
 					}
 				}
@@ -257,8 +261,8 @@ namespace Decode
 		size -= 1;
 		if (aacPacketType == 0)
 		{
-			block.dts = m_basePTS == -1 ? 0 : m_timestamp;
-			block.pts = m_basePTS == -1 ? 0 : m_timestamp;
+			block.dts = 0;
+			block.pts = 0;
 			block.audio.bitsPerSample = audio->bitsPerSample;
 			block.audio.channel = audio->channel;
 			block.audio.codeID = FLV_CODECID_AAC;
@@ -269,8 +273,8 @@ namespace Decode
 		}
 		if (aacPacketType == 1)
 		{
-			block.dts = m_basePTS == -1 ? 0 : m_timestamp;
-			block.pts = m_basePTS == -1 ? 0 : m_timestamp;
+			block.dts = m_timestamp;
+			block.pts = m_timestamp;
 			block.audio.bitsPerSample = audio->bitsPerSample;
 			block.audio.channel = audio->channel;
 			block.audio.codeID = FLV_CODECID_AAC;
@@ -278,6 +282,7 @@ namespace Decode
 			block.audio.size = size;
 			block.audio.data = new BYTE[size];
 			memcpy(block.audio.data, bits, size);
+			m_count++;
 		}
 		return TRUE;
 	}
@@ -326,15 +331,14 @@ namespace Decode
 				buffer.Add(bits, s);
 				bits += s;
 			}
-			block.dts = m_basePTS == -1 ? 0 : m_timestamp;
-			block.pts = m_basePTS == -1 ? 0 : m_timestamp;
+			block.dts = 0;
+			block.pts = 0;
 			block.video.codeID = video->codeID;
 			block.video.codeType = video->codeType;
 			block.video.packetType = FLV_AVCDecoderConfigurationRecord;
 			block.video.size = buffer.GetSize();
 			block.video.data = new BYTE[block.video.size];
 			memcpy(block.video.data, buffer.GetPointer(), block.video.size);
-			m_bAVC = TRUE;
 		}
 		if (aacPacketType == 1)
 		{
@@ -396,11 +400,12 @@ namespace Decode
 				block.video.codeID = video->codeID;
 				block.video.codeType = video->codeType;
 				block.video.packetType = FLV_NALU;
-				block.dts = m_basePTS == -1 ? 0 : m_timestamp;
-				block.pts = m_basePTS == -1 ? 0 : (block.dts + block.video.cts);
+				block.dts = m_timestamp;
+				block.pts = (block.dts + block.video.cts);
 				break;
 			}
 		}
+		m_count++;
 		return TRUE;
 	}
 	BOOL FLVReader::ParseScript(BYTE* data, INT size, FLV_SCRIPTDATA& script)
@@ -507,7 +512,6 @@ namespace Decode
 	}
 	BOOL FLVReader::Close()
 	{
-		m_bAVC = FALSE;
 		m_bNetwork = FALSE;
 		m_bAudio = FALSE;
 		m_bVideo = FALSE;

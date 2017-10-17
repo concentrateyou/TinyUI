@@ -55,6 +55,11 @@ namespace MShow
 	{
 		MSampleQueue& videos = MShow::MShowApp::GetInstance().GetController().GetVideoEncoder().GetSamples();
 		MSampleQueue& audios = MShow::MShowApp::GetInstance().GetController().GetAudioEncoder().GetSamples();
+
+		MAudioEncodeTask& audio1 = MShowApp::GetInstance().GetController().GetAudioEncoder();
+		MVideoEncodeTask& video1 = MShowApp::GetInstance().GetController().GetVideoEncoder();
+		TinySize pulgSize = video1.GetSize();
+		m_client.SendMetadata(pulgSize.cx, pulgSize.cy, video1.GetVideoFPS(), video1.GetVideoRate(), audio1.GetFormat(), audio1.GetAudioRate());
 		Sample video, audio;
 		for (;;)
 		{
@@ -94,8 +99,6 @@ namespace MShow
 			{
 				MAudioEncodeTask& audio = MShowApp::GetInstance().GetController().GetAudioEncoder();
 				MVideoEncodeTask& video = MShowApp::GetInstance().GetController().GetVideoEncoder();
-				TinySize pulgSize = video.GetSize();
-				m_client.SendMetadata(pulgSize.cx, pulgSize.cy, video.GetVideoFPS(), video.GetVideoRate(), audio.GetFormat(), audio.GetAudioRate());
 				vector<BYTE>& sps = video.GetQSV().GetSPS();
 				vector<BYTE>& pps = video.GetQSV().GetPPS();
 				m_client.SendSPP(pps, sps);

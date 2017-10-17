@@ -3,6 +3,7 @@
 #include "IO/TinyTaskBase.h"
 #include "Common/TinyTime.h"
 #include "FLVReader.h"
+#include "FLVWriter.h"
 #include "PacketQueue.h"
 #include "QSVDecoder.h"
 using namespace Decode;
@@ -113,6 +114,7 @@ namespace FLVPlayer
 		HWND						m_hWND;
 		TinySize					m_size;
 		FLVReader					m_reader;
+		FLVWriter					m_writer;
 		TinyLock					m_lock1;
 		TinyLock					m_lock2;
 		TinyEvent					m_close;

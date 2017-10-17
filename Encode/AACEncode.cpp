@@ -86,10 +86,11 @@ namespace Encode
 		INT s = faacEncEncode(m_aac, (int32_t*)bi, m_inputSamples, m_bits, m_maxOutputBytes);
 		if (s > 0)
 		{
+			m_dwINC++;
 			ZeroMemory(&tag, sizeof(tag));
 			tag.PTS = m_dwPTS;
 			tag.DTS = m_dwPTS;
-			tag.INC = m_dwINC++;
+			tag.INC = m_dwINC;
 			tag.dwType = 1;
 			tag.dwTime = static_cast<DWORD>(tag.INC * tag.PTS);
 			tag.dwFlag = 0;

@@ -19,11 +19,16 @@ namespace Decode
 		virtual ~FLVWriter();
 		BOOL Create(LPCSTR pzFile);
 		BOOL WriteScriptTag(FLV_SCRIPTDATA& script);
-		BOOL WriteAudioTag(FLV_PACKET& packet, BYTE* bits, LONG size);
-		BOOL WriteVideoTag(FLV_PACKET& packet, BYTE* bits, LONG size);
+		BOOL WriteAACASC(BYTE* bits, LONG size);
+		BOOL WriteAACRaw(BYTE* bits, LONG size, LONGLONG timestamp);
+		BOOL WriteH264AVC(BYTE* bits, LONG size);
+		BOOL WriteH264NALU(BYTE frameType, BYTE* bits, LONG size, LONGLONG pts, LONGLONG dts);
 		BOOL Close();
 	private:
+		DWORD					m_dwPreviousSize;
 		TinyComPtr<IStream>		m_stream;
+		BOOL WriteAudioTag(FLV_PACKET& packet, BYTE* bits, LONG size);
+		BOOL WriteVideoTag(FLV_PACKET& packet, BYTE* bits, LONG size);
 	};
 }
 
