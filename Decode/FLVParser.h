@@ -41,7 +41,7 @@ namespace Decode
 		BOOL							m_bVideo;
 		BYTE							m_minusOne;
 		FILE*							m_hFile;
-		LONGLONG						m_dts;
+		LONGLONG						m_timestamp;
 		LONG							m_index;
 		LONG							m_duration;
 		FILE*							m_h264File;

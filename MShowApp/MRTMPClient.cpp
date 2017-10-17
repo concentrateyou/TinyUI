@@ -111,7 +111,7 @@ namespace MShow
 		*body++ = AMF_OBJECT_END;
 		packet->m_nBodySize = body - packet->m_body;
 		packet->m_packetType = RTMP_PACKET_TYPE_INFO;
-		packet->m_nChannel = STREAM_CHANNEL_METADATA;
+		packet->m_nChannel = 0x04;
 		packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
 		packet->m_nTimeStamp = 0;
 		packet->m_hasAbsTimestamp = 0;
@@ -132,25 +132,29 @@ namespace MShow
 		RTMPPacket* packet = NULL;
 		BYTE* body = NULL;
 		packet = (RTMPPacket *)malloc(RTMP_HEAD_SIZE + 1024);
-		memset(packet, 0, RTMP_HEAD_SIZE);
+		memset(packet, 0, RTMP_HEAD_SIZE + 1024);
 		packet->m_body = (CHAR*)packet + RTMP_HEAD_SIZE;
 		body = (BYTE*)packet->m_body;
 		INT  i = 0;
 		body[i++] = 0x17;
 		body[i++] = 0x00;
+
 		body[i++] = 0x00;
 		body[i++] = 0x00;
 		body[i++] = 0x00;
+		//AVCDecoderConfigurationRecord
 		body[i++] = 0x01;
 		body[i++] = sps[1];
 		body[i++] = sps[2];
 		body[i++] = sps[3];
 		body[i++] = 0xFF;
+		//sps
 		body[i++] = 0xE1;
 		body[i++] = (sps.size() >> 8) & 0xFF;
 		body[i++] = sps.size() & 0xFF;
 		memcpy(&body[i], &sps[0], sps.size());
 		i += sps.size();
+		//pps
 		body[i++] = 0x01;
 		body[i++] = (pps.size() >> 8) & 0xFF;
 		body[i++] = (pps.size()) & 0xFF;
@@ -158,14 +162,14 @@ namespace MShow
 		i += pps.size();
 		packet->m_packetType = RTMP_PACKET_TYPE_VIDEO;
 		packet->m_nBodySize = i;
-		packet->m_nChannel = STREAM_CHANNEL_VIDEO;
+		packet->m_nChannel = 0x04;
 		packet->m_hasAbsTimestamp = 0;
 		packet->m_nTimeStamp = 0;
 		packet->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
 		packet->m_nInfoField2 = m_pRTMP->m_stream_id;
 		if (RTMP_IsConnected(m_pRTMP))
 		{
-			RTMP_SendPacket(m_pRTMP, packet, TRUE);
+			RTMP_SendPacket(m_pRTMP, packet, FALSE);
 		}
 		SAFE_FREE(packet);
 		return TRUE;
@@ -188,7 +192,7 @@ namespace MShow
 		memcpy(&body[2], bits, size);
 		packet->m_packetType = RTMP_PACKET_TYPE_AUDIO;
 		packet->m_nInfoField2 = m_pRTMP->m_stream_id;
-		packet->m_nChannel = STREAM_CHANNEL_AUDIO;
+		packet->m_nChannel = 0x04;
 		packet->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
 		packet->m_hasAbsTimestamp = 0;
 		packet->m_nTimeStamp = 0;
@@ -221,7 +225,7 @@ namespace MShow
 		memcpy(&body[2], bits, size);
 		packet->m_packetType = RTMP_PACKET_TYPE_AUDIO;
 		packet->m_nInfoField2 = m_pRTMP->m_stream_id;
-		packet->m_nChannel = STREAM_CHANNEL_AUDIO;
+		packet->m_nChannel = 0x04;
 		packet->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
 		packet->m_hasAbsTimestamp = 0;
 		packet->m_nTimeStamp = timestamp;
@@ -269,7 +273,7 @@ namespace MShow
 		memcpy(&body[9], bits, size);
 		packet->m_packetType = RTMP_PACKET_TYPE_VIDEO;
 		packet->m_nInfoField2 = m_pRTMP->m_stream_id;
-		packet->m_nChannel = STREAM_CHANNEL_VIDEO;
+		packet->m_nChannel = 0x04;
 		packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
 		packet->m_hasAbsTimestamp = 0;
 		packet->m_nTimeStamp = timestamp;

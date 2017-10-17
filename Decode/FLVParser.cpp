@@ -10,7 +10,7 @@ namespace Decode
 		m_minusOne(4),
 		m_bAudio(FALSE),
 		m_bVideo(FALSE),
-		m_dts(0),
+		m_timestamp(0),
 		m_index(0),
 		m_h264File(NULL)
 	{
@@ -243,8 +243,8 @@ namespace Decode
 				bits += s;
 			}
 			FLV_PACKET packet;
-			packet.dts = m_dts;
-			packet.pts = m_dts + cts;
+			packet.dts = m_timestamp;
+			packet.pts = m_timestamp + cts;
 			packet.codeID = video->codeID;
 			packet.codeType = video->codeType;
 			packet.packetType = FLV_AVCDecoderConfigurationRecord;
@@ -280,8 +280,8 @@ namespace Decode
 				packet.codeID = video->codeID;
 				packet.codeType = video->codeType;
 				packet.packetType = FLV_NALU;
-				packet.dts = m_dts;
-				packet.pts = m_dts + *cts;
+				packet.dts = m_timestamp;
+				packet.pts = m_timestamp + *cts;
 				EVENT_VIDEO(val, sizeofNALU + 4, &packet);
 				bits += sizeofNALU;
 				offset += sizeofNALU;
@@ -299,8 +299,8 @@ namespace Decode
 				packet.codeID = video->codeID;
 				packet.codeType = video->codeType;
 				packet.packetType = FLV_NALU;
-				packet.dts = m_dts;
-				packet.pts = m_dts + *cts;
+				packet.dts = m_timestamp;
+				packet.pts = m_timestamp + *cts;
 				EVENT_VIDEO(val, sizeofNALU + 4, &packet);
 				bits += sizeofNALU;
 				offset += sizeofNALU;
@@ -317,8 +317,8 @@ namespace Decode
 				packet.codeID = video->codeID;
 				packet.codeType = video->codeType;
 				packet.packetType = FLV_NALU;
-				packet.dts = m_dts;
-				packet.pts = m_dts + *cts;
+				packet.dts = m_timestamp;
+				packet.pts = m_timestamp + *cts;
 				EVENT_VIDEO(val, sizeofNALU + 4, &packet);
 				bits += sizeofNALU;
 				offset += sizeofNALU;
@@ -335,8 +335,8 @@ namespace Decode
 				packet.codeID = video->codeID;
 				packet.codeType = video->codeType;
 				packet.packetType = FLV_NALU;
-				packet.dts = m_dts;
-				packet.pts = m_dts + *cts;
+				packet.dts = m_timestamp;
+				packet.pts = m_timestamp + *cts;
 				EVENT_VIDEO(val, sizeofNALU + 4, &packet);
 				bits += sizeofNALU;
 				offset += sizeofNALU;
@@ -355,8 +355,8 @@ namespace Decode
 		FLV_PACKET packet = { 0 };
 		if (aacPacketType == 0)
 		{
-			packet.dts = m_dts;
-			packet.pts = m_dts;
+			packet.dts = m_timestamp;
+			packet.pts = m_timestamp;
 			packet.bitsPerSample = audio->bitsPerSample;
 			packet.channel = audio->channel;
 			packet.codeID = FLV_CODECID_AAC;
@@ -365,8 +365,8 @@ namespace Decode
 		}
 		if (aacPacketType == 1)
 		{
-			packet.dts = m_dts;
-			packet.pts = m_dts;
+			packet.dts = m_timestamp;
+			packet.pts = m_timestamp;
 			packet.bitsPerSample = audio->bitsPerSample;
 			packet.channel = audio->channel;
 			packet.codeID = FLV_CODECID_AAC;
@@ -383,8 +383,6 @@ namespace Decode
 	{
 		return TRUE;
 	};
-
-	LONG g_tagSize = 0;
 
 	BOOL FLVParser::Parse()
 	{
@@ -406,12 +404,6 @@ namespace Decode
 			if (fread(&tag, sizeof(FLV_TAG_HEADER), 1, m_hFile) <= 0)
 				break;
 			INT size = ToINT24(tag.size);
-			if (tagSize != (g_tagSize))
-			{
-				TRACE("g_tagSize != tag.size : %d, %d\n", tagSize, g_tagSize + 11);
-			}
-			g_tagSize = size + 11;
-
 			if (size > 0)
 			{
 				TinyScopedArray<BYTE> data(new BYTE[size]);
@@ -421,14 +413,14 @@ namespace Decode
 				{
 				case FLV_AUDIO:
 				{
-					m_dts = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
+					m_timestamp = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
 					if (!ParseAudio(data, size))
 						return FALSE;
 				}
 				break;
 				case FLV_VIDEO:
 				{
-					m_dts = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
+					m_timestamp = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
 					if (!ParseVideo(data, size))
 						return FALSE;
 				}
