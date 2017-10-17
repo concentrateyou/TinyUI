@@ -89,7 +89,7 @@ namespace MShow
 		RTMPPacket* packet = NULL;
 		CHAR* body = NULL;
 		packet = (RTMPPacket *)malloc(RTMP_HEAD_SIZE + 1024);
-		memset(packet, 0, RTMP_HEAD_SIZE);
+		memset(packet, 0, RTMP_HEAD_SIZE + 1024);
 		packet->m_body = (CHAR*)packet + RTMP_HEAD_SIZE;
 		body = (CHAR*)packet->m_body;
 		CHAR* ebody = body + 1024;
@@ -113,17 +113,18 @@ namespace MShow
 		*body++ = AMF_OBJECT_END;
 		packet->m_nBodySize = body - packet->m_body;
 		packet->m_packetType = RTMP_PACKET_TYPE_INFO;
-		packet->m_nChannel = 0x04;
-		packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
+		packet->m_nChannel = STREAM_CHANNEL_METADATA;
+		packet->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
 		packet->m_nTimeStamp = 0;
 		packet->m_hasAbsTimestamp = 0;
 		packet->m_nInfoField2 = m_pRTMP->m_stream_id;
+		BOOL bRes = FALSE;
 		if (RTMP_IsConnected(m_pRTMP))
 		{
-			RTMP_SendPacket(m_pRTMP, packet, FALSE);
+			bRes = RTMP_SendPacket(m_pRTMP, packet, FALSE) == 0;
 		}
 		SAFE_FREE(packet);
-		return TRUE;
+		return bRes;
 	}
 	BOOL MRTMPClient::SendSPP(const vector<BYTE>& pps, const vector<BYTE>& sps)
 	{
@@ -169,12 +170,13 @@ namespace MShow
 		packet->m_nTimeStamp = 0;
 		packet->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
 		packet->m_nInfoField2 = m_pRTMP->m_stream_id;
+		BOOL bRes = FALSE;
 		if (RTMP_IsConnected(m_pRTMP))
 		{
-			RTMP_SendPacket(m_pRTMP, packet, FALSE);
+			bRes = RTMP_SendPacket(m_pRTMP, packet, FALSE) == 0;
 		}
 		SAFE_FREE(packet);
-		return TRUE;
+		return bRes;
 	}
 	BOOL MRTMPClient::SendAAC(BYTE* bits, LONG size)
 	{
@@ -185,7 +187,7 @@ namespace MShow
 		RTMPPacket* packet = NULL;
 		BYTE* body = NULL;
 		packet = (RTMPPacket*)malloc(RTMP_HEAD_SIZE + size + 2);
-		memset(packet, 0, RTMP_HEAD_SIZE);
+		memset(packet, 0, RTMP_HEAD_SIZE + size + 2);
 		packet->m_body = (CHAR*)packet + RTMP_HEAD_SIZE;
 		packet->m_nBodySize = size + 2;
 		body = (BYTE*)packet->m_body;
@@ -198,12 +200,13 @@ namespace MShow
 		packet->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
 		packet->m_hasAbsTimestamp = 0;
 		packet->m_nTimeStamp = 0;
+		BOOL bRes = FALSE;
 		if (RTMP_IsConnected(m_pRTMP))
 		{
-			RTMP_SendPacket(m_pRTMP, packet, FALSE);
+			bRes = RTMP_SendPacket(m_pRTMP, packet, FALSE) == 0;
 		}
 		SAFE_FREE(packet);
-		return TRUE;
+		return bRes;
 
 	}
 	BOOL MRTMPClient::SendAudio(BYTE* bits, LONG size, DWORD timestamp)
@@ -218,7 +221,7 @@ namespace MShow
 		RTMPPacket* packet = NULL;
 		BYTE* body = NULL;
 		packet = (RTMPPacket*)malloc(RTMP_HEAD_SIZE + size + 2);
-		memset(packet, 0, RTMP_HEAD_SIZE);
+		memset(packet, 0, RTMP_HEAD_SIZE + size + 2);
 		packet->m_body = (CHAR*)packet + RTMP_HEAD_SIZE;
 		packet->m_nBodySize = size + 2;
 		body = (BYTE*)packet->m_body;
@@ -228,15 +231,16 @@ namespace MShow
 		packet->m_packetType = RTMP_PACKET_TYPE_AUDIO;
 		packet->m_nInfoField2 = m_pRTMP->m_stream_id;
 		packet->m_nChannel = 0x04;
-		packet->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
+		packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
 		packet->m_hasAbsTimestamp = 0;
 		packet->m_nTimeStamp = timestamp;
+		BOOL bRes = FALSE;
 		if (RTMP_IsConnected(m_pRTMP))
 		{
-			RTMP_SendPacket(m_pRTMP, packet, FALSE);
+			bRes = RTMP_SendPacket(m_pRTMP, packet, FALSE) == 0;
 		}
 		SAFE_FREE(packet);
-		return TRUE;
+		return bRes;
 	}
 	BOOL MRTMPClient::SendVideo(DWORD dwFrameType, BYTE* bits, LONG size, DWORD timestamp)
 	{
@@ -254,14 +258,15 @@ namespace MShow
 		break;
 		case 0x01:
 		{
-
+			bits += 3;
+			size -= 3;
 		}
 		break;
 		}
 		RTMPPacket* packet = NULL;
 		CHAR* body = NULL;
 		packet = (RTMPPacket*)malloc(RTMP_HEAD_SIZE + size + 9);
-		memset(packet, 0, RTMP_HEAD_SIZE);
+		memset(packet, 0, RTMP_HEAD_SIZE + size + 9);
 		packet->m_body = (CHAR*)packet + RTMP_HEAD_SIZE;
 		packet->m_nBodySize = size + 9;
 		body = (CHAR*)packet->m_body;
@@ -281,13 +286,14 @@ namespace MShow
 		packet->m_nInfoField2 = m_pRTMP->m_stream_id;
 		packet->m_nChannel = 0x04;
 		packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
-		packet->m_nTimeStamp = timestamp & 0xFFFFFF;
+		packet->m_nTimeStamp = timestamp;
+		BOOL bRes = FALSE;
 		if (RTMP_IsConnected(m_pRTMP))
 		{
-			RTMP_SendPacket(m_pRTMP, packet, FALSE);
+			bRes = RTMP_SendPacket(m_pRTMP, packet, FALSE) == 0;
 		}
 		SAFE_FREE(packet);
-		return TRUE;
+		return bRes;
 	}
 
 	BOOL MRTMPClient::IsConnected()

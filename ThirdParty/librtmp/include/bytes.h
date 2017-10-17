@@ -29,7 +29,7 @@
 #include <stdint.h>
 
 #ifdef _WIN32
-/* Windows is little endian only */
+ /* Windows is little endian only */
 #define __LITTLE_ENDIAN 1234
 #define __BIG_ENDIAN    4321
 #define __BYTE_ORDER __LITTLE_ENDIAN
@@ -55,7 +55,7 @@ typedef unsigned char uint8_t;
 
 #endif /* !_WIN32 */
 
-/* define default endianness */
+ /* define default endianness */
 #ifndef __LITTLE_ENDIAN
 #define __LITTLE_ENDIAN	1234
 #endif

@@ -28,7 +28,7 @@
 #include <ws2tcpip.h>
 
 #ifdef _MSC_VER	/* MSVC */
-//#define snprintf _snprintf
+ //#define snprintf _snprintf
 #define strcasecmp _stricmp
 #define strncasecmp _strnicmp
 //#define vsnprintf _vsnprintf
