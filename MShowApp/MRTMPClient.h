@@ -1,5 +1,6 @@
 #pragma once
 #include "MShowCommon.h"
+#include "FLVWriter.h"
 extern "C"
 {
 #include "rtmp.h"
@@ -34,6 +35,7 @@ namespace MShow
 		DWORD	GetTime();
 	private:
 		RTMP*	m_pRTMP;
+		Decode::FLVWriter	m_writer;
 	};
 }
 
