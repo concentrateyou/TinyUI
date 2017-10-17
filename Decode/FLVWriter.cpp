@@ -89,14 +89,14 @@ namespace Decode
 	{
 		FLV_TAG_HEADER tag = { 0 };
 		tag.type = FLV_AUDIO;
-		tag.timestamp[0] = packet.dts >> 16 & 0xFF;
-		tag.timestamp[1] = packet.dts >> 8 & 0xFF;
-		tag.timestamp[2] = packet.dts & 0xFF;
-		tag.timestampex = packet.dts >> 24 & 0xFF;
 		DWORD dwSize = size + 2;
 		tag.size[0] = dwSize >> 16 & 0xFF;
 		tag.size[1] = dwSize >> 8 & 0xFF;
 		tag.size[2] = dwSize & 0xFF;
+		tag.timestamp[0] = packet.dts >> 16 & 0xFF;
+		tag.timestamp[1] = packet.dts >> 8 & 0xFF;
+		tag.timestamp[2] = packet.dts & 0xFF;
+		tag.timestampex = packet.dts >> 24 & 0xFF;
 		ULONG ls = 0;
 		HRESULT hRes = m_stream->Write(&tag, sizeof(tag), &ls);
 		if (hRes != S_OK || ls != sizeof(tag))
@@ -121,14 +121,14 @@ namespace Decode
 	{
 		FLV_TAG_HEADER tag = { 0 };
 		tag.type = FLV_AUDIO;
-		tag.timestamp[0] = packet.dts >> 16 & 0xFF;
-		tag.timestamp[1] = packet.dts >> 8 & 0xFF;
-		tag.timestamp[2] = packet.dts & 0xFF;
-		tag.timestampex = packet.dts >> 24 & 0xFF;
 		DWORD dwSize = size + 5;
 		tag.size[0] = dwSize >> 16 & 0xFF;
 		tag.size[1] = dwSize >> 8 & 0xFF;
 		tag.size[2] = dwSize & 0xFF;
+		tag.timestamp[0] = packet.dts >> 16 & 0xFF;
+		tag.timestamp[1] = packet.dts >> 8 & 0xFF;
+		tag.timestamp[2] = packet.dts & 0xFF;
+		tag.timestampex = packet.dts >> 24 & 0xFF;
 		ULONG ls = 0;
 		HRESULT hRes = m_stream->Write(&tag, sizeof(tag), &ls);
 		if (hRes != S_OK || ls != sizeof(tag))

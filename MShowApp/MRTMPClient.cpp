@@ -86,12 +86,10 @@ namespace MShow
 			return FALSE;
 		if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
 			return FALSE;
-		RTMPPacket* packet = NULL;
-		CHAR* body = NULL;
-		packet = (RTMPPacket *)malloc(RTMP_HEAD_SIZE + 1024);
-		memset(packet, 0, RTMP_HEAD_SIZE + 1024);
-		packet->m_body = (CHAR*)packet + RTMP_HEAD_SIZE;
-		body = (CHAR*)packet->m_body;
+		RTMPPacket packet;
+		RTMPPacket_Alloc(&packet, 1024);
+		RTMPPacket_Reset(&packet);
+		CHAR* body = packet.m_body;
 		CHAR* ebody = body + 1024;
 		body = AMF_EncodeString(body, ebody, &av_setDataFrame);
 		body = AMF_EncodeString(body, ebody, &av_onMetaData);
@@ -111,19 +109,17 @@ namespace MShow
 		*body++ = 0;
 		*body++ = 0;
 		*body++ = AMF_OBJECT_END;
-		packet->m_nBodySize = body - packet->m_body;
-		packet->m_packetType = RTMP_PACKET_TYPE_INFO;
-		packet->m_nChannel = STREAM_CHANNEL_METADATA;
-		packet->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
-		packet->m_nTimeStamp = 0;
-		packet->m_hasAbsTimestamp = 0;
-		packet->m_nInfoField2 = m_pRTMP->m_stream_id;
+		packet.m_nBodySize = body - packet.m_body;
+		packet.m_packetType = RTMP_PACKET_TYPE_INFO;
+		packet.m_nChannel = STREAM_CHANNEL_METADATA;
+		packet.m_headerType = RTMP_PACKET_SIZE_MEDIUM;
+		packet.m_nInfoField2 = m_pRTMP->m_stream_id;
 		BOOL bRes = FALSE;
 		if (RTMP_IsConnected(m_pRTMP))
 		{
-			bRes = RTMP_SendPacket(m_pRTMP, packet, FALSE) == 0;
+			bRes = RTMP_SendPacket(m_pRTMP, &packet, FALSE) == 0;
 		}
-		SAFE_FREE(packet);
+		RTMPPacket_Free(&packet);
 		return bRes;
 	}
 	BOOL MRTMPClient::SendSPP(const vector<BYTE>& pps, const vector<BYTE>& sps)
@@ -132,16 +128,14 @@ namespace MShow
 			return FALSE;
 		if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
 			return FALSE;
-		RTMPPacket* packet = NULL;
-		BYTE* body = NULL;
-		packet = (RTMPPacket *)malloc(RTMP_HEAD_SIZE + 1024);
-		memset(packet, 0, RTMP_HEAD_SIZE + 1024);
-		packet->m_body = (CHAR*)packet + RTMP_HEAD_SIZE;
-		body = (BYTE*)packet->m_body;
+		RTMPPacket packet;
+		RTMPPacket_Alloc(&packet, 1024);
+		RTMPPacket_Reset(&packet);
+		memset(packet.m_body, 0, 1024);
+		BYTE* body = (BYTE*)packet.m_body;
 		INT  i = 0;
 		body[i++] = 0x17;
 		body[i++] = 0x00;
-
 		body[i++] = 0x00;
 		body[i++] = 0x00;
 		body[i++] = 0x00;
@@ -163,19 +157,17 @@ namespace MShow
 		body[i++] = (pps.size()) & 0xFF;
 		memcpy(&body[i], &pps[0], pps.size());
 		i += pps.size();
-		packet->m_packetType = RTMP_PACKET_TYPE_VIDEO;
-		packet->m_nBodySize = i;
-		packet->m_nChannel = 0x04;
-		packet->m_hasAbsTimestamp = 0;
-		packet->m_nTimeStamp = 0;
-		packet->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
-		packet->m_nInfoField2 = m_pRTMP->m_stream_id;
+		packet.m_nBodySize = i;
+		packet.m_packetType = RTMP_PACKET_TYPE_VIDEO;
+		packet.m_nChannel = STREAM_CHANNEL_VIDEO;
+		packet.m_headerType = RTMP_PACKET_SIZE_MEDIUM;
+		packet.m_nInfoField2 = m_pRTMP->m_stream_id;
 		BOOL bRes = FALSE;
 		if (RTMP_IsConnected(m_pRTMP))
 		{
-			bRes = RTMP_SendPacket(m_pRTMP, packet, FALSE) == 0;
+			bRes = RTMP_SendPacket(m_pRTMP, &packet, FALSE) == 0;
 		}
-		SAFE_FREE(packet);
+		RTMPPacket_Free(&packet);
 		return bRes;
 	}
 	BOOL MRTMPClient::SendAAC(BYTE* bits, LONG size)
@@ -184,28 +176,25 @@ namespace MShow
 			return FALSE;
 		if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
 			return FALSE;
-		RTMPPacket* packet = NULL;
-		BYTE* body = NULL;
-		packet = (RTMPPacket*)malloc(RTMP_HEAD_SIZE + size + 2);
-		memset(packet, 0, RTMP_HEAD_SIZE + size + 2);
-		packet->m_body = (CHAR*)packet + RTMP_HEAD_SIZE;
-		packet->m_nBodySize = size + 2;
-		body = (BYTE*)packet->m_body;
+		RTMPPacket packet;
+		RTMPPacket_Alloc(&packet, size + 2);
+		RTMPPacket_Reset(&packet);
+		memset(packet.m_body, 0, size + 2);
+		packet.m_nBodySize = size + 2;
+		BYTE* body = (BYTE*)packet.m_body;
 		body[0] = 0xAF;
 		body[1] = 0x00;//AAC信息
 		memcpy(&body[2], bits, size);
-		packet->m_packetType = RTMP_PACKET_TYPE_AUDIO;
-		packet->m_nInfoField2 = m_pRTMP->m_stream_id;
-		packet->m_nChannel = 0x04;
-		packet->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
-		packet->m_hasAbsTimestamp = 0;
-		packet->m_nTimeStamp = 0;
+		packet.m_packetType = RTMP_PACKET_TYPE_AUDIO;
+		packet.m_nInfoField2 = m_pRTMP->m_stream_id;
+		packet.m_nChannel = STREAM_CHANNEL_AUDIO;
+		packet.m_headerType = RTMP_PACKET_SIZE_MEDIUM;
 		BOOL bRes = FALSE;
 		if (RTMP_IsConnected(m_pRTMP))
 		{
-			bRes = RTMP_SendPacket(m_pRTMP, packet, FALSE) == 0;
+			bRes = RTMP_SendPacket(m_pRTMP, &packet, FALSE) == 0;
 		}
-		SAFE_FREE(packet);
+		RTMPPacket_Free(&packet);
 		return bRes;
 
 	}
@@ -218,28 +207,26 @@ namespace MShow
 		//去掉ADTS头
 		bits += 7;
 		size -= 7;
-		RTMPPacket* packet = NULL;
-		BYTE* body = NULL;
-		packet = (RTMPPacket*)malloc(RTMP_HEAD_SIZE + size + 2);
-		memset(packet, 0, RTMP_HEAD_SIZE + size + 2);
-		packet->m_body = (CHAR*)packet + RTMP_HEAD_SIZE;
-		packet->m_nBodySize = size + 2;
-		body = (BYTE*)packet->m_body;
+		RTMPPacket packet;
+		RTMPPacket_Alloc(&packet, size + 2);
+		RTMPPacket_Reset(&packet);
+		memset(packet.m_body, 0, size + 2);
+		packet.m_nBodySize = size + 2;
+		BYTE* body = (BYTE*)packet.m_body;
 		body[0] = 0xAF;
 		body[1] = 0x01;//原始数据
 		memcpy(&body[2], bits, size);
-		packet->m_packetType = RTMP_PACKET_TYPE_AUDIO;
-		packet->m_nInfoField2 = m_pRTMP->m_stream_id;
-		packet->m_nChannel = 0x04;
-		packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
-		packet->m_hasAbsTimestamp = 0;
-		packet->m_nTimeStamp = timestamp;
+		packet.m_packetType = RTMP_PACKET_TYPE_AUDIO;
+		packet.m_nInfoField2 = m_pRTMP->m_stream_id;
+		packet.m_nChannel = STREAM_CHANNEL_AUDIO;
+		packet.m_headerType = RTMP_PACKET_SIZE_LARGE;
+		packet.m_nTimeStamp = timestamp;
 		BOOL bRes = FALSE;
 		if (RTMP_IsConnected(m_pRTMP))
 		{
-			bRes = RTMP_SendPacket(m_pRTMP, packet, FALSE) == 0;
+			bRes = RTMP_SendPacket(m_pRTMP, &packet, FALSE) == 0;
 		}
-		SAFE_FREE(packet);
+		RTMPPacket_Free(&packet);
 		return bRes;
 	}
 	BOOL MRTMPClient::SendVideo(DWORD dwFrameType, BYTE* bits, LONG size, DWORD timestamp)
@@ -263,13 +250,12 @@ namespace MShow
 		}
 		break;
 		}
-		RTMPPacket* packet = NULL;
-		CHAR* body = NULL;
-		packet = (RTMPPacket*)malloc(RTMP_HEAD_SIZE + size + 9);
-		memset(packet, 0, RTMP_HEAD_SIZE + size + 9);
-		packet->m_body = (CHAR*)packet + RTMP_HEAD_SIZE;
-		packet->m_nBodySize = size + 9;
-		body = (CHAR*)packet->m_body;
+		RTMPPacket packet;
+		RTMPPacket_Alloc(&packet, size + 9);
+		RTMPPacket_Reset(&packet);
+		memset(packet.m_body, 0, size + 9);
+		packet.m_nBodySize = size + 9;
+		CHAR* body = (CHAR*)packet.m_body;
 		memset(body, 0, size + 9);
 		body[0] = dwFrameType;
 		body[1] = 0x01;// AVC NALU  
@@ -281,18 +267,17 @@ namespace MShow
 		body[7] = (size >> 8) & 0xFF;
 		body[8] = (size) & 0xFF;
 		memcpy(&body[9], bits, size);
-		packet->m_hasAbsTimestamp = 0;
-		packet->m_packetType = RTMP_PACKET_TYPE_VIDEO;
-		packet->m_nInfoField2 = m_pRTMP->m_stream_id;
-		packet->m_nChannel = 0x04;
-		packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
-		packet->m_nTimeStamp = timestamp;
+		packet.m_packetType = RTMP_PACKET_TYPE_VIDEO;
+		packet.m_nInfoField2 = m_pRTMP->m_stream_id;
+		packet.m_nChannel = STREAM_CHANNEL_VIDEO;
+		packet.m_headerType = RTMP_PACKET_SIZE_LARGE;
+		packet.m_nTimeStamp = timestamp;
 		BOOL bRes = FALSE;
 		if (RTMP_IsConnected(m_pRTMP))
 		{
-			bRes = RTMP_SendPacket(m_pRTMP, packet, FALSE) == 0;
+			bRes = RTMP_SendPacket(m_pRTMP, &packet, FALSE) == 0;
 		}
-		SAFE_FREE(packet);
+		RTMPPacket_Free(&packet);
 		return bRes;
 	}
 
