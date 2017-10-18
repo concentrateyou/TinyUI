@@ -9,7 +9,7 @@ namespace Decode
 {
 #define SAVC(x)    static const AVal av_##x = AVC(#x)
 	/// <summary>
-	/// FLV目前支持支AAC+H264
+	/// FLV目前只支持AAC+H264
 	/// </summary>
 	class FLVWriter
 	{

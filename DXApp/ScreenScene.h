@@ -24,7 +24,7 @@ namespace DXApp
 		BYTE*			m_bits;
 		HBITMAP			m_hBitmap;
 		TinyRectangle	m_snapshot;
-		DX11Duplicator	m_duplicator;
+		//DX11Duplicator	m_duplicator;
 		TinyScopedPtr<TinyMemDC> m_memDC;
 	};
 }

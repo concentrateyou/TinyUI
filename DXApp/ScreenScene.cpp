@@ -26,7 +26,7 @@ namespace DXApp
 		{
 			if (IsWindows8OrGreater())
 			{
-				UINT count = m_duplicator.GetOutputs(dx11);
+				/*UINT count = m_duplicator.GetOutputs(dx11);
 				if (count > 0 &&
 					m_duplicator.Initialize(dx11, 0))
 				{
@@ -34,7 +34,7 @@ namespace DXApp
 					{
 						return TRUE;
 					}
-				}
+				}*/
 			}
 			else
 			{
@@ -71,7 +71,7 @@ namespace DXApp
 	{
 		if (IsWindows8OrGreater())
 		{
-			m_duplicator.AcquireNextFrame(dx11, 100);
+			//m_duplicator.AcquireNextFrame(dx11, 100);
 		}
 		else
 		{
