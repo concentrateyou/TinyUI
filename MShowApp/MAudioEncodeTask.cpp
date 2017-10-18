@@ -19,7 +19,6 @@ namespace MShow
 	{
 		m_onAudio.Reset(new Delegate<void(BYTE*, LONG)>(this, &MAudioEncodeTask::OnAudio));
 		m_onAudioMix.Reset(new Delegate<void(BYTE*, LONG)>(this, &MAudioEncodeTask::OnAudioMix));
-		m_event.CreateEvent();
 	}
 
 	MAudioEncodeTask::~MAudioEncodeTask()
@@ -43,37 +42,16 @@ namespace MShow
 
 	void MAudioEncodeTask::OnMessagePump()
 	{
-		Sample sample;
-		SampleTag sampleTag;
 		for (;;)
 		{
 			if (m_bBreak)
 				break;
-			if (m_event.Lock(INFINITE))
-			{
-				ZeroMemory(&sampleTag, sizeof(sampleTag));
-				BOOL bRes = m_queue.Pop(sampleTag);
-				if (bRes && sampleTag.size > 0)
-				{
-					BYTE* bo = NULL;
-					LONG  so = 0;
-					ZeroMemory(&sample, sizeof(sample));
-					if (m_aac.Encode(sampleTag.bits, sampleTag.size, bo, so, sample.mediaTag))
-					{
-						sample.size = so;
-						sample.bits = new BYTE[so];
-						memcpy(sample.bits, bo, so);
-						m_samples.Push(sample);
-					}
-				}
-				SAFE_DELETE_ARRAY(sampleTag.bits);
-			}
+			Sleep(10000);
 		}
 	}
 
 	BOOL MAudioEncodeTask::Close(DWORD dwMS)
 	{
-		m_event.SetEvent();
 		m_bBreak = TRUE;
 		if (TinyTaskBase::Close(dwMS))
 		{
@@ -100,7 +78,7 @@ namespace MShow
 					MPacketAllocQueue& videoQueue = MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetVideoQueue();
 					if (videoQueue.GetCount() <= 5)
 					{
-						BYTE* output = new BYTE[size];
+						TinyScopedArray<BYTE> output(new BYTE[size]);
 						if (m_queueMix.GetSize() > 0)
 						{
 							SampleTag sampleTag = { 0 };
@@ -117,8 +95,17 @@ namespace MShow
 						ZeroMemory(&sampleTag, sizeof(sampleTag));
 						sampleTag.bits = output;
 						sampleTag.size = size;
-						m_queue.Push(sampleTag);
-						m_event.SetEvent();
+						Sample sample;
+						BYTE* bo = NULL;
+						LONG  so = 0;
+						ZeroMemory(&sample, sizeof(sample));
+						if (m_aac.Encode(sampleTag.bits, sampleTag.size, bo, so, sample.mediaTag))
+						{
+							sample.size = so;
+							sample.bits = new BYTE[so];
+							memcpy(sample.bits, bo, so);
+							m_samples.Push(sample);
+						}
 					}
 				}
 			}

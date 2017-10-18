@@ -6,7 +6,8 @@ namespace Encode
 	AACEncode::AACEncode()
 		:m_inputSamples(0),
 		m_maxOutputBytes(0),
-		m_dwPTS(0),
+		m_timestamp(0),
+		m_fPTS(0),
 		m_dwINC(0)
 	{
 	}
@@ -36,11 +37,6 @@ namespace Encode
 		return m_maxOutputBytes;
 	}
 
-	DWORD AACEncode::GetFPS() const
-	{
-		return m_dwPTS;
-	}
-
 	BOOL AACEncode::Open(const WAVEFORMATEX& waveFMT, INT audioRate)
 	{
 		Close();
@@ -49,7 +45,7 @@ namespace Encode
 		if (!m_aac)
 			return FALSE;
 		//AAC固定1024
-		m_dwPTS = AAC_TIMEBASE * AAC_TIMEDEN / waveFMT.nSamplesPerSec;//播放一帧时间
+		m_fPTS = AAC_TIMEBASE * AAC_TIMEDEN / static_cast<FLOAT>(waveFMT.nSamplesPerSec);//播放一帧时间
 		m_config = faacEncGetCurrentConfiguration(m_aac);
 		switch (waveFMT.wBitsPerSample)
 		{
@@ -87,12 +83,13 @@ namespace Encode
 		if (s > 0)
 		{
 			m_dwINC++;
+			m_timestamp += m_fPTS;
 			ZeroMemory(&tag, sizeof(tag));
-			tag.PTS = m_dwPTS;
-			tag.DTS = m_dwPTS;
+			tag.PTS = static_cast<LONGLONG>(m_fPTS);
+			tag.DTS = tag.PTS;
 			tag.INC = m_dwINC;
 			tag.dwType = 1;
-			tag.dwTime = static_cast<DWORD>(tag.INC * tag.PTS);
+			tag.dwTime = static_cast<DWORD>(m_timestamp);
 			tag.dwFlag = 0;
 			bo = m_bits;
 			so = s;

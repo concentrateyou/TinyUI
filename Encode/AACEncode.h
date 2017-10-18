@@ -15,7 +15,7 @@ using namespace TinyUI::Media;
 
 namespace Encode
 {
-#define  AAC_TIMEBASE 1024
+#define  AAC_TIMEBASE 1024.0
 #define  AAC_TIMEDEN  1000
 	class AACEncode
 	{
@@ -29,14 +29,14 @@ namespace Encode
 		void	Close();
 		BOOL	GetSpecificInfo(vector<BYTE>& info);
 		DWORD	GetOutputBytes() const;
-		DWORD	GetFPS() const;
 	private:
 		faacEncHandle			m_aac;
 		faacEncConfigurationPtr	m_config;
 		DWORD					m_inputSamples;
 		DWORD					m_maxOutputBytes;
 		DWORD					m_dwINC;
-		DWORD					m_dwPTS;
+		DOUBLE					m_timestamp;
+		FLOAT					m_fPTS;
 		WAVEFORMATEX			m_waveFMT;
 		TinyScopedArray<BYTE>	m_bits;
 	};
