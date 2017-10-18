@@ -21,7 +21,7 @@ namespace Decode
 		BOOL WriteScriptTag(FLV_SCRIPTDATA& script);
 		BOOL WriteAACASC(BYTE* bits, LONG size);
 		BOOL WriteAACRaw(BYTE* bits, LONG size, LONGLONG timestamp);
-		BOOL WriteH264AVC(BYTE* bits, LONG size);
+		BOOL WriteH264AVC(const vector<BYTE>& sps, const vector<BYTE>& pps);
 		BOOL WriteH264NALU(BYTE frameType, BYTE* bits, LONG size, LONGLONG pts, LONGLONG dts);
 		BOOL Close();
 	private:

@@ -183,12 +183,7 @@ namespace MShow
 		//	bRes = RTMP_SendPacket(m_pRTMP, &packet, FALSE) == 0;
 		//}
 		//RTMPPacket_Free(&packet);
-
-		vector<BYTE> data;
-		data.resize(sps.size() + pps.size());
-		memcpy(&data[0], &sps[0], sps.size());
-		memcpy(&data[sps.size()], &pps[0], pps.size());
-		m_writer.WriteH264AVC(&data[0], data.size());
+		m_writer.WriteH264AVC(sps, pps);
 
 		return TRUE;
 	}

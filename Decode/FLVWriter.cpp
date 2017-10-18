@@ -56,6 +56,11 @@ namespace Decode
 	}
 	BOOL FLVWriter::WriteScriptTag(FLV_SCRIPTDATA& script)
 	{
+		ULONG ls = 0;
+		DWORD dwPreviousSize = ntohl(m_dwPreviousSize);
+		HRESULT hRes = m_stream->Write(&dwPreviousSize, sizeof(dwPreviousSize), &ls);
+		if (hRes != S_OK || ls != sizeof(dwPreviousSize))
+			return FALSE;
 		FLV_TAG_HEADER tag = { 0 };
 		CHAR bits[2048];
 		char *pBEGIN = bits;
@@ -81,21 +86,22 @@ namespace Decode
 		tag.size[1] = dwSize >> 8 & 0xFF;
 		tag.size[2] = dwSize & 0xFF;
 		tag.type = FLV_SCRIPT;
-		ULONG ls = 0;
-		HRESULT hRes = m_stream->Write(&tag, sizeof(tag), &ls);
+		hRes = m_stream->Write(&tag, sizeof(tag), &ls);
 		if (hRes != S_OK || ls != sizeof(tag))
 			return FALSE;
 		hRes = m_stream->Write(bits, dwSize, &ls);
 		if (hRes != S_OK || ls != dwSize)
-			return FALSE;
-		hRes = m_stream->Write(&m_dwPreviousSize, sizeof(m_dwPreviousSize), &ls);
-		if (hRes != S_OK || ls != sizeof(m_dwPreviousSize))
 			return FALSE;
 		m_dwPreviousSize = dwSize + sizeof(FLV_TAG_HEADER);
 		return TRUE;
 	}
 	BOOL FLVWriter::WriteAudioTag(FLV_PACKET& packet, BYTE* bits, LONG size)
 	{
+		ULONG ls = 0;
+		DWORD dwPreviousSize = ntohl(m_dwPreviousSize);
+		HRESULT hRes = m_stream->Write(&dwPreviousSize, sizeof(dwPreviousSize), &ls);
+		if (hRes != S_OK || ls != sizeof(dwPreviousSize))
+			return FALSE;
 		FLV_TAG_HEADER tag = { 0 };
 		tag.type = FLV_AUDIO;
 		DWORD dwSize = size + 2;
@@ -106,8 +112,7 @@ namespace Decode
 		tag.timestamp[1] = packet.dts >> 8 & 0xFF;
 		tag.timestamp[2] = packet.dts & 0xFF;
 		tag.timestampex = packet.dts >> 24 & 0xFF;
-		ULONG ls = 0;
-		HRESULT hRes = m_stream->Write(&tag, sizeof(tag), &ls);
+		hRes = m_stream->Write(&tag, sizeof(tag), &ls);
 		if (hRes != S_OK || ls != sizeof(tag))
 			return FALSE;
 		FLV_TAG_AUDIO audio = { 0 };
@@ -115,7 +120,7 @@ namespace Decode
 		audio.channel = packet.channel;
 		audio.codeID = packet.codeID;
 		audio.samplesPerSec = packet.samplesPerSec;
-		hRes = m_stream->Write(&tag, sizeof(audio), &ls);
+		hRes = m_stream->Write(&audio, sizeof(audio), &ls);
 		if (hRes != S_OK || ls != sizeof(audio))
 			return FALSE;
 		hRes = m_stream->Write(&packet.packetType, sizeof(packet.packetType), &ls);
@@ -124,16 +129,18 @@ namespace Decode
 		hRes = m_stream->Write(bits, size, &ls);
 		if (hRes != S_OK || ls != size)
 			return FALSE;
-		hRes = m_stream->Write(&m_dwPreviousSize, sizeof(m_dwPreviousSize), &ls);
-		if (hRes != S_OK || ls != sizeof(m_dwPreviousSize))
-			return FALSE;
 		m_dwPreviousSize = dwSize + sizeof(FLV_TAG_HEADER);
 		return TRUE;
 	}
 	BOOL FLVWriter::WriteVideoTag(FLV_PACKET& packet, BYTE* bits, LONG size)
 	{
+		ULONG ls = 0;
+		DWORD dwPreviousSize = ntohl(m_dwPreviousSize);
+		HRESULT hRes = m_stream->Write(&dwPreviousSize, sizeof(dwPreviousSize), &ls);
+		if (hRes != S_OK || ls != sizeof(dwPreviousSize))
+			return FALSE;
 		FLV_TAG_HEADER tag = { 0 };
-		tag.type = FLV_AUDIO;
+		tag.type = FLV_VIDEO;
 		DWORD dwSize = size + 5;
 		tag.size[0] = dwSize >> 16 & 0xFF;
 		tag.size[1] = dwSize >> 8 & 0xFF;
@@ -142,14 +149,13 @@ namespace Decode
 		tag.timestamp[1] = packet.dts >> 8 & 0xFF;
 		tag.timestamp[2] = packet.dts & 0xFF;
 		tag.timestampex = packet.dts >> 24 & 0xFF;
-		ULONG ls = 0;
-		HRESULT hRes = m_stream->Write(&tag, sizeof(tag), &ls);
+		hRes = m_stream->Write(&tag, sizeof(tag), &ls);
 		if (hRes != S_OK || ls != sizeof(tag))
 			return FALSE;
 		FLV_TAG_VIDEO video = { 0 };
 		video.codeID = packet.codeID;
 		video.codeType = packet.codeType;
-		hRes = m_stream->Write(&tag, sizeof(video), &ls);
+		hRes = m_stream->Write(&video, sizeof(video), &ls);
 		if (hRes != S_OK || ls != sizeof(video))
 			return FALSE;
 		hRes = m_stream->Write(&packet.packetType, sizeof(packet.packetType), &ls);
@@ -160,13 +166,10 @@ namespace Decode
 		cts[1] = (packet.pts - packet.dts) >> 8 & 0xFF;
 		cts[2] = (packet.pts - packet.dts) & 0xFF;
 		hRes = m_stream->Write(cts, 3, &ls);
-		if (hRes != S_OK || ls != sizeof(packet.packetType))
+		if (hRes != S_OK || ls != sizeof(cts))
 			return FALSE;
 		hRes = m_stream->Write(bits, size, &ls);
 		if (hRes != S_OK || ls != size)
-			return FALSE;
-		hRes = m_stream->Write(&m_dwPreviousSize, sizeof(m_dwPreviousSize), &ls);
-		if (hRes != S_OK || ls != sizeof(m_dwPreviousSize))
 			return FALSE;
 		m_dwPreviousSize = dwSize + sizeof(FLV_TAG_HEADER);
 		return TRUE;
@@ -196,13 +199,35 @@ namespace Decode
 		return WriteAudioTag(audio, bits, size);
 	}
 
-	BOOL FLVWriter::WriteH264AVC(BYTE* bits, LONG size)
+	BOOL FLVWriter::WriteH264AVC(const vector<BYTE>& sps, const vector<BYTE>& pps)
 	{
 		FLV_PACKET video = { 0 };
 		video.codeID = FLV_CODECID_H264;
 		video.codeType = 1;
 		video.packetType = 0;//AVC sequence header
-		return WriteVideoTag(video, bits, size);
+		vector<BYTE> bits;
+		bits.push_back(0x01);
+		bits.push_back(sps[0]);
+		bits.push_back(sps[1]);
+		bits.push_back(sps[2]);
+		bits.push_back(0xFF);
+		bits.push_back(0xE1);
+		INT size = sps.size();
+		bits.push_back((size >> 8) & 0xFF);
+		bits.push_back(size & 0xFF);
+		for (INT i = 0;i < size;i++)
+		{
+			bits.push_back(sps[i]);
+		}
+		bits.push_back(1);
+		size = pps.size();
+		bits.push_back((size >> 8) & 0xFF);
+		bits.push_back(size & 0xFF);
+		for (INT i = 0;i < size;i++)
+		{
+			bits.push_back(pps[i]);
+		}
+		return WriteVideoTag(video, &bits[0], bits.size());
 	}
 
 	BOOL FLVWriter::WriteH264NALU(BYTE frameType, BYTE* bits, LONG size, LONGLONG pts, LONGLONG dts)
@@ -213,12 +238,13 @@ namespace Decode
 		video.packetType = 1;//AVC NALU
 		video.dts = dts;
 		video.pts = pts;
-		TinyScopedArray<BYTE> data(new BYTE[size + 8]);
-		INT* ps = reinterpret_cast<INT*>(data.Ptr());
-		*ps++ = static_cast<INT>(size);
-		*ps++ = H264StartCode;
-		memcpy(data + 8, bits, size);
-		return WriteVideoTag(video, data, size + 8);
+		vector<BYTE> data;
+		data.push_back((size >> 24) & 0xFF);
+		data.push_back((size >> 16) & 0xFF);
+		data.push_back((size >> 8) & 0xFF);
+		data.push_back(size & 0xFF);
+		data.insert(data.end(), bits, bits + size);
+		return WriteVideoTag(video, &data[0], data.size());
 	}
 	BOOL FLVWriter::Close()
 	{
