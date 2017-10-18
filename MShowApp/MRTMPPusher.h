@@ -6,6 +6,8 @@
 namespace MShow
 {
 	class MRTMPEncoder;
+	class MAudioEncodeTask;
+	class MVideoEncodeTask;
 	/// <summary>
 	/// RTMPÍÆÁ÷
 	/// </summary>
@@ -23,7 +25,7 @@ namespace MShow
 		TinyString GetURL() const;
 	private:
 		void OnMessagePump();
-		void Publish(Sample& sample);
+		void Publish(MAudioEncodeTask* pAudioTask, MVideoEncodeTask* pVideoTask ,Sample& sample);
 	private:
 		BOOL			m_bClose;
 		DWORD			m_dwRate;

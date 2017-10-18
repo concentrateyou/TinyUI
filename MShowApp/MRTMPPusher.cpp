@@ -53,54 +53,53 @@ namespace MShow
 
 	void MRTMPPusher::OnMessagePump()
 	{
-		MSampleQueue& videos = MShow::MShowApp::GetInstance().GetController().GetVideoEncoder().GetSamples();
-		MSampleQueue& audios = MShow::MShowApp::GetInstance().GetController().GetAudioEncoder().GetSamples();
-
-		MAudioEncodeTask& audio1 = MShowApp::GetInstance().GetController().GetAudioEncoder();
-		MVideoEncodeTask& video1 = MShowApp::GetInstance().GetController().GetVideoEncoder();
-		TinySize pulgSize = video1.GetSize();
-		m_client.SendMetadata(pulgSize.cx, pulgSize.cy, video1.GetVideoFPS(), video1.GetVideoRate(), audio1.GetFormat(), audio1.GetAudioRate());
-		Sample video, audio;
+		MSampleQueue& videoSamples = MShow::MShowApp::GetInstance().GetController().GetVideoEncoder().GetSamples();
+		MSampleQueue& audioSamples = MShow::MShowApp::GetInstance().GetController().GetAudioEncoder().GetSamples();
+		MAudioEncodeTask& audioTask = MShowApp::GetInstance().GetController().GetAudioEncoder();
+		MVideoEncodeTask& videoTask = MShowApp::GetInstance().GetController().GetVideoEncoder();
+		//发送媒体信息
+		TinySize pulgSize = videoTask.GetSize();
+		m_client.SendMetadata(pulgSize.cx, pulgSize.cy, videoTask.GetVideoFPS(), videoTask.GetVideoRate(), audioTask.GetFormat(), audioTask.GetAudioRate());
+		Sample videoSample, audioSample;
 		for (;;)
 		{
 			if (m_bClose)
 				break;
-			if (videos.GetSize() > 0 && audios.GetSize() > 0)
+			if (videoSamples.GetSize() > 0 && audioSamples.GetSize() > 0)
 			{
-				LONGLONG videoTS = videos.GetMinimumTimeStamp();
-				LONGLONG audioTS = audios.GetMinimumTimeStamp();
+				LONGLONG videoTS = videoSamples.GetMinimumTimeStamp();
+				LONGLONG audioTS = audioSamples.GetMinimumTimeStamp();
 				if (audioTS > videoTS)
 				{
-					ZeroMemory(&video, sizeof(video));
-					if (videos.Pop(video))
+					ZeroMemory(&videoSample, sizeof(videoSample));
+					if (videoSamples.Pop(videoSample))
 					{
-						TRACE("Video TS: %d\n", video.mediaTag.dwTime);
-						Publish(video);
+						Publish(&audioTask, &videoTask, videoSample);
 					}
 				}
 				else
 				{
-					ZeroMemory(&audio, sizeof(audio));
-					if (audios.Pop(audio))
+					ZeroMemory(&audioSample, sizeof(audioSample));
+					if (audioSamples.Pop(audioSample))
 					{
-						Publish(audio);
+						Publish(&audioTask, &videoTask, audioSample);
 					}
 				}
 			}
 		}
 	}
-	void MRTMPPusher::Publish(Sample& sample)
+	void MRTMPPusher::Publish(MAudioEncodeTask* pAudioTask, MVideoEncodeTask* pVideoTask, Sample& sample)
 	{
+		ASSERT(pAudioTask);
+		ASSERT(pVideoTask);
 		switch (sample.mediaTag.dwType)
 		{
 		case 0://Video
 		{
 			if (sample.mediaTag.INC == 1)
 			{
-				MAudioEncodeTask& audio = MShowApp::GetInstance().GetController().GetAudioEncoder();
-				MVideoEncodeTask& video = MShowApp::GetInstance().GetController().GetVideoEncoder();
-				vector<BYTE>& sps = video.GetQSV().GetSPS();
-				vector<BYTE>& pps = video.GetQSV().GetPPS();
+				vector<BYTE>& sps = pVideoTask->GetQSV().GetSPS();
+				vector<BYTE>& pps = pVideoTask->GetQSV().GetPPS();
 				m_client.SendSPP(pps, sps);
 			}
 			m_client.SendVideo(sample.mediaTag.dwFlag, sample.bits, sample.size, sample.mediaTag.dwTime);
@@ -110,9 +109,8 @@ namespace MShow
 		{
 			if (sample.mediaTag.INC == 1)
 			{
-				MAudioEncodeTask& encoder = MShowApp::GetInstance().GetController().GetAudioEncoder();
 				vector<BYTE> info;
-				encoder.GetAAC().GetSpecificInfo(info);
+				pAudioTask->GetAAC().GetSpecificInfo(info);
 				m_client.SendAAC(&info[0], info.size());
 			}
 			m_client.SendAudio(sample.bits, sample.size, sample.mediaTag.dwTime);
