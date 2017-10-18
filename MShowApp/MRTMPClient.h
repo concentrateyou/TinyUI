@@ -8,6 +8,7 @@ extern "C"
 #include "log.h"
 }
 #pragma comment(lib,"librtmp.lib")
+using namespace Decode;
 
 #define STREAM_CHANNEL_METADATA  0x03  
 #define STREAM_CHANNEL_VIDEO     0x04  
@@ -34,8 +35,17 @@ namespace MShow
 		BOOL	SendAACRaw(BYTE* bits, LONG size, DWORD timestamp);
 		DWORD	GetTime();
 	private:
-		RTMP*	m_pRTMP;
-		Decode::FLVWriter	m_writer;
+		BOOL	BuildScript(const FLV_SCRIPTDATA& script, TinyBufferArray<BYTE>& buffer);
+		BOOL	BuildH264AVC(const vector<BYTE>& pps, const vector<BYTE>& sps, TinyBufferArray<BYTE>& buffer);
+		BOOL	BuildAACASC(BYTE* bits, LONG size, TinyBufferArray<BYTE>& buffer);
+		BOOL	BuildH264NALU(DWORD dwFrameType, BYTE* bits, LONG size, DWORD timestamp, TinyBufferArray<BYTE>& buffer);
+		BOOL	BuildAACRaw(BYTE* bits, LONG size, DWORD timestamp, TinyBufferArray<BYTE>& buffer);
+		BOOL	BuildAudioTag(FLV_PACKET& packet, BYTE* bits, LONG size, TinyBufferArray<BYTE>& buffer);
+		BOOL	BuildVideoTag(FLV_PACKET& packet, BYTE* bits, LONG size, TinyBufferArray<BYTE>& buffer);
+	private:
+		DWORD		m_dwPreviousSize;
+		RTMP*		m_pRTMP;
+		FLVWriter	m_writer;
 	};
 }
 
