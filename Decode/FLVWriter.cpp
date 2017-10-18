@@ -63,8 +63,8 @@ namespace Decode
 			return FALSE;
 		FLV_TAG_HEADER tag = { 0 };
 		CHAR bits[2048];
-		char *pBEGIN = bits;
-		char *pEND = bits + sizeof(bits);
+		CHAR *pBEGIN = bits;
+		CHAR *pEND = bits + sizeof(bits);
 		pBEGIN = AMF_EncodeString(pBEGIN, pEND, &av_onMetaData);
 		*pBEGIN++ = AMF_OBJECT;
 		pBEGIN = AMF_EncodeNamedNumber(pBEGIN, pEND, &av_duration, script.duration);

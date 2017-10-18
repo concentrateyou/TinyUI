@@ -28,7 +28,8 @@ namespace MShow
 
 	MRTMPClient::MRTMPClient()
 		:m_pRTMP(NULL),
-		m_dwPreviousSize(0)
+		m_dwPreviousSize(0),
+		m_hFile(NULL)
 	{
 
 	}
@@ -41,6 +42,11 @@ namespace MShow
 			RTMP_Free(m_pRTMP);
 			m_pRTMP = NULL;
 		}
+		if (m_hFile != NULL)
+		{
+			fclose(m_hFile);
+			m_hFile = NULL;
+		}
 	}
 
 	DWORD MRTMPClient::GetTime()
@@ -50,8 +56,6 @@ namespace MShow
 
 	BOOL MRTMPClient::Connect(const TinyString& szURL)
 	{
-		m_writer.Create("D:\\test1.flv");
-
 		if (m_pRTMP != NULL)
 		{
 			RTMP_Close(m_pRTMP);
@@ -72,7 +76,7 @@ namespace MShow
 			return FALSE;
 		if (!RTMP_ConnectStream(m_pRTMP, 0))
 			return FALSE;
-	
+		fopen_s(&m_hFile, "D:\\test1.flv", "wb+");
 		return TRUE;
 	}
 
@@ -81,14 +85,21 @@ namespace MShow
 		if (!m_pRTMP)
 			return FALSE;
 		RTMP_Close(m_pRTMP);
-
-		m_writer.Close();
+		if (m_hFile != NULL)
+		{
+			fclose(m_hFile);
+			m_hFile = NULL;
+		}
 		return TRUE;
 	}
 
 	BOOL MRTMPClient::SendMetadata(INT cx, INT cy, INT framerate, INT videoRate, const WAVEFORMATEX& wfx, INT audioRate)
 	{
-
+		if (!m_pRTMP)
+			return FALSE;
+		if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
+			return FALSE;
+		TinyBufferArray<BYTE> buffer;
 		FLV_SCRIPTDATA script;
 		script.duration = 0.0;
 		script.filesize = 0.0;
@@ -99,67 +110,57 @@ namespace MShow
 		script.audiosamplerate = static_cast<double>(audioRate);
 		script.audiosamplerate = static_cast<double>(wfx.nSamplesPerSec);
 		script.audiochannels = static_cast<double>(wfx.nChannels);
-		m_writer.WriteScriptTag(script);
-
-		if (!m_pRTMP)
-			return FALSE;
-		if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
-			return FALSE;
-		TinyBufferArray<BYTE> buffer;
 		BuildScript(script, buffer);
+		fwrite(buffer.GetPointer(), buffer.GetSize(), 1, m_hFile);
 		RTMP_Write(m_pRTMP, reinterpret_cast<CHAR*>(buffer.GetPointer()), buffer.GetSize());
 		return TRUE;
 	}
 	BOOL MRTMPClient::SendH264AVC(const vector<BYTE>& pps, const vector<BYTE>& sps)
 	{
-		m_writer.WriteH264AVC(sps, pps);
-
 		if (!m_pRTMP)
 			return FALSE;
 		if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
 			return FALSE;
 		TinyBufferArray<BYTE> buffer;
 		BuildH264AVC(pps, sps, buffer);
+		fwrite(buffer.GetPointer(), buffer.GetSize(), 1, m_hFile);
 		RTMP_Write(m_pRTMP, reinterpret_cast<CHAR*>(buffer.GetPointer()), buffer.GetSize());
 		return TRUE;
 	}
 	BOOL MRTMPClient::SendAACASC(BYTE* bits, LONG size)
 	{
-		m_writer.WriteAACASC(bits, size);
-
 		if (!m_pRTMP)
 			return FALSE;
 		if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
 			return FALSE;
 		TinyBufferArray<BYTE> buffer;
 		BuildAACASC(bits, size, buffer);
+		fwrite(buffer.GetPointer(), buffer.GetSize(), 1, m_hFile);
 		RTMP_Write(m_pRTMP, reinterpret_cast<CHAR*>(buffer.GetPointer()), buffer.GetSize());
 		return TRUE;
 
 	}
 	BOOL MRTMPClient::SendAACRaw(BYTE* bits, LONG size, DWORD timestamp)
 	{
-		m_writer.WriteAACRaw(bits, size, timestamp);
-
 		if (!m_pRTMP)
 			return FALSE;
 		if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
 			return FALSE;
 		TinyBufferArray<BYTE> buffer;
 		BuildAACRaw(bits, size, timestamp, buffer);
+		fwrite(buffer.GetPointer(), buffer.GetSize(), 1, m_hFile);
 		RTMP_Write(m_pRTMP, reinterpret_cast<CHAR*>(buffer.GetPointer()), buffer.GetSize());
 		return TRUE;
 	}
 	BOOL MRTMPClient::SendH264NALU(DWORD dwFrameType, BYTE* bits, LONG size, DWORD timestamp)
 	{
-		m_writer.WriteH264NALU(dwFrameType == 0x17 ? 1 : 2, bits, size, timestamp, timestamp);
-
 		if (!m_pRTMP)
 			return FALSE;
 		if (!RTMP_IsConnected(m_pRTMP) || RTMP_IsTimedout(m_pRTMP))
 			return FALSE;
 		TinyBufferArray<BYTE> buffer;
 		BuildH264NALU(dwFrameType, bits, size, timestamp, buffer);
+		fwrite(buffer.GetPointer(), buffer.GetSize(), 1, m_hFile);
 		RTMP_Write(m_pRTMP, reinterpret_cast<CHAR*>(buffer.GetPointer()), buffer.GetSize());
 		return TRUE;
 	}
@@ -186,10 +187,16 @@ namespace MShow
 			return FALSE;
 		return TRUE;
 	}
-
 	BOOL MRTMPClient::BuildScript(const FLV_SCRIPTDATA& script, TinyBufferArray<BYTE>& buffer)
 	{
-		ULONG ls = 0;
+		FLV_HEADER header = { 0 };
+		header.signature[0] = 'F';
+		header.signature[1] = 'L';
+		header.signature[2] = 'V';
+		header.streamType = 0x01 | 0x04;
+		header.version = 0;
+		header.offset[3] = 9;
+		buffer.Add(reinterpret_cast<BYTE*>(&header), sizeof(header));
 		DWORD dwPreviousSize = ntohl(m_dwPreviousSize);
 		buffer.Add(reinterpret_cast<BYTE*>(&dwPreviousSize), sizeof(dwPreviousSize));
 		FLV_TAG_HEADER tag = { 0 };
@@ -221,16 +228,6 @@ namespace MShow
 		buffer.Add(reinterpret_cast<BYTE*>(bits), dwSize);
 		m_dwPreviousSize = dwSize + sizeof(FLV_TAG_HEADER);
 		return TRUE;
-	}
-	BOOL MRTMPClient::BuildAACASC(BYTE* bits, LONG size, TinyBufferArray<BYTE>& buffer)
-	{
-		FLV_PACKET audio = { 0 };
-		audio.bitsPerSample = 3;
-		audio.samplesPerSec = 1;
-		audio.channel = 1;
-		audio.codeID = FLV_CODECID_AAC;
-		audio.packetType = 0;//AAC Sequence header
-		return BuildAudioTag(audio, bits, size, buffer);
 	}
 	BOOL MRTMPClient::BuildH264AVC(const vector<BYTE>& pps, const vector<BYTE>& sps, TinyBufferArray<BYTE>& buffer)
 	{
@@ -278,6 +275,16 @@ namespace MShow
 		data.insert(data.end(), bits, bits + size);
 		return BuildVideoTag(video, &data[0], data.size(), buffer);
 	}
+	BOOL MRTMPClient::BuildAACASC(BYTE* bits, LONG size, TinyBufferArray<BYTE>& buffer)
+	{
+		FLV_PACKET audio = { 0 };
+		audio.bitsPerSample = 3;
+		audio.samplesPerSec = 1;
+		audio.channel = 1;
+		audio.codeID = FLV_CODECID_AAC;
+		audio.packetType = 0;//AAC Sequence header
+		return BuildAudioTag(audio, bits, size, buffer);
+	}
 	BOOL MRTMPClient::BuildAACRaw(BYTE* bits, LONG size, DWORD timestamp, TinyBufferArray<BYTE>& buffer)
 	{
 		FLV_PACKET audio = { 0 };
@@ -293,7 +300,6 @@ namespace MShow
 
 	BOOL MRTMPClient::BuildAudioTag(FLV_PACKET& packet, BYTE* bits, LONG size, TinyBufferArray<BYTE>& buffer)
 	{
-		ULONG ls = 0;
 		DWORD dwPreviousSize = ntohl(m_dwPreviousSize);
 		buffer.Add(reinterpret_cast<BYTE*>(&dwPreviousSize), sizeof(dwPreviousSize));
 		FLV_TAG_HEADER tag = { 0 };
@@ -320,7 +326,6 @@ namespace MShow
 	}
 	BOOL MRTMPClient::BuildVideoTag(FLV_PACKET& packet, BYTE* bits, LONG size, TinyBufferArray<BYTE>& buffer)
 	{
-		ULONG ls = 0;
 		DWORD dwPreviousSize = ntohl(m_dwPreviousSize);
 		buffer.Add(reinterpret_cast<BYTE*>(&dwPreviousSize), sizeof(dwPreviousSize));
 		FLV_TAG_HEADER tag = { 0 };

@@ -45,7 +45,7 @@ namespace MShow
 	private:
 		DWORD		m_dwPreviousSize;
 		RTMP*		m_pRTMP;
-		FLVWriter	m_writer;
+		FILE*		m_hFile;
 	};
 }
 
