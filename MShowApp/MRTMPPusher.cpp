@@ -100,9 +100,9 @@ namespace MShow
 			{
 				vector<BYTE>& sps = pVideoTask->GetQSV().GetSPS();
 				vector<BYTE>& pps = pVideoTask->GetQSV().GetPPS();
-				m_client.SendSPP(pps, sps);
+				m_client.SendH264AVC(pps, sps);
 			}
-			m_client.SendVideo(sample.mediaTag.dwFlag, sample.bits, sample.size, sample.mediaTag.dwTime);
+			m_client.SendH264NALU(sample.mediaTag.dwFlag, sample.bits, sample.size, sample.mediaTag.dwTime);
 		}
 		break;
 		case 1://Audio
@@ -111,9 +111,9 @@ namespace MShow
 			{
 				vector<BYTE> info;
 				pAudioTask->GetAAC().GetSpecificInfo(info);
-				m_client.SendAAC(&info[0], info.size());
+				m_client.SendAACASC(&info[0], info.size());
 			}
-			m_client.SendAudio(sample.bits, sample.size, sample.mediaTag.dwTime);
+			m_client.SendAACRaw(sample.bits, sample.size, sample.mediaTag.dwTime);
 		}
 		break;
 		}

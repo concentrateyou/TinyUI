@@ -137,7 +137,7 @@ namespace MShow
 
 		return TRUE;
 	}
-	BOOL MRTMPClient::SendSPP(const vector<BYTE>& pps, const vector<BYTE>& sps)
+	BOOL MRTMPClient::SendH264AVC(const vector<BYTE>& pps, const vector<BYTE>& sps)
 	{
 		//if (!m_pRTMP)
 		//	return FALSE;
@@ -187,7 +187,7 @@ namespace MShow
 
 		return TRUE;
 	}
-	BOOL MRTMPClient::SendAAC(BYTE* bits, LONG size)
+	BOOL MRTMPClient::SendAACASC(BYTE* bits, LONG size)
 	{
 		//if (!m_pRTMP)
 		//	return FALSE;
@@ -218,7 +218,7 @@ namespace MShow
 		return TRUE;
 
 	}
-	BOOL MRTMPClient::SendAudio(BYTE* bits, LONG size, DWORD timestamp)
+	BOOL MRTMPClient::SendAACRaw(BYTE* bits, LONG size, DWORD timestamp)
 	{
 		//if (!m_pRTMP)
 		//	return FALSE;
@@ -252,7 +252,7 @@ namespace MShow
 
 		return TRUE;
 	}
-	BOOL MRTMPClient::SendVideo(DWORD dwFrameType, BYTE* bits, LONG size, DWORD timestamp)
+	BOOL MRTMPClient::SendH264NALU(DWORD dwFrameType, BYTE* bits, LONG size, DWORD timestamp)
 	{
 		//if (!m_pRTMP)
 		//	return FALSE;
