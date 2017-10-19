@@ -28,8 +28,7 @@ namespace MShow
 
 	MRTMPClient::MRTMPClient()
 		:m_pRTMP(NULL),
-		m_dwPreviousSize(0),
-		m_hFile(NULL)
+		m_dwPreviousSize(0)
 	{
 
 	}
@@ -42,11 +41,7 @@ namespace MShow
 			RTMP_Free(m_pRTMP);
 			m_pRTMP = NULL;
 		}
-		if (m_hFile != NULL)
-		{
-			fclose(m_hFile);
-			m_hFile = NULL;
-		}
+		m_writer.Close();
 	}
 
 	DWORD MRTMPClient::GetTime()
@@ -76,7 +71,9 @@ namespace MShow
 			return FALSE;
 		if (!RTMP_ConnectStream(m_pRTMP, 0))
 			return FALSE;
-		fopen_s(&m_hFile, "D:\\test1.flv", "wb+");
+
+		m_writer.Create("D:\\test1.flv");
+
 		return TRUE;
 	}
 
@@ -85,15 +82,11 @@ namespace MShow
 		if (!m_pRTMP)
 			return FALSE;
 		RTMP_Close(m_pRTMP);
-		if (m_hFile != NULL)
-		{
-			fclose(m_hFile);
-			m_hFile = NULL;
-		}
+		m_writer.Close();
 		return TRUE;
 	}
 
-	BOOL MRTMPClient::SendMetadata(INT cx, INT cy, INT framerate, INT videoRate, const WAVEFORMATEX& wfx, INT audioRate)
+	BOOL MRTMPClient::SendScript(INT cx, INT cy, INT framerate, INT videoRate, const WAVEFORMATEX& wfx, INT audioRate)
 	{
 		if (!m_pRTMP)
 			return FALSE;
@@ -107,12 +100,14 @@ namespace MShow
 		script.height = static_cast<double>(cy);
 		script.videodatarate = static_cast<double>(videoRate);
 		script.framerate = static_cast<double>(framerate);
-		script.audiosamplerate = static_cast<double>(audioRate);
+		script.audiodatarate = static_cast<double>(audioRate);
 		script.audiosamplerate = static_cast<double>(wfx.nSamplesPerSec);
 		script.audiochannels = static_cast<double>(wfx.nChannels);
 		BuildScript(script, buffer);
-		fwrite(buffer.GetPointer(), buffer.GetSize(), 1, m_hFile);
 		RTMP_Write(m_pRTMP, reinterpret_cast<CHAR*>(buffer.GetPointer()), buffer.GetSize());
+
+		m_writer.WriteScriptTag(script);
+
 		return TRUE;
 	}
 	BOOL MRTMPClient::SendH264AVC(const vector<BYTE>& pps, const vector<BYTE>& sps)
@@ -123,8 +118,10 @@ namespace MShow
 			return FALSE;
 		TinyBufferArray<BYTE> buffer;
 		BuildH264AVC(pps, sps, buffer);
-		fwrite(buffer.GetPointer(), buffer.GetSize(), 1, m_hFile);
 		RTMP_Write(m_pRTMP, reinterpret_cast<CHAR*>(buffer.GetPointer()), buffer.GetSize());
+
+		m_writer.WriteH264AVC(sps, pps);
+
 		return TRUE;
 	}
 	BOOL MRTMPClient::SendAACASC(BYTE* bits, LONG size)
@@ -135,8 +132,10 @@ namespace MShow
 			return FALSE;
 		TinyBufferArray<BYTE> buffer;
 		BuildAACASC(bits, size, buffer);
-		fwrite(buffer.GetPointer(), buffer.GetSize(), 1, m_hFile);
 		RTMP_Write(m_pRTMP, reinterpret_cast<CHAR*>(buffer.GetPointer()), buffer.GetSize());
+
+		m_writer.WriteAACASC(bits, size);
+
 		return TRUE;
 
 	}
@@ -148,8 +147,10 @@ namespace MShow
 			return FALSE;
 		TinyBufferArray<BYTE> buffer;
 		BuildAACRaw(bits, size, timestamp, buffer);
-		fwrite(buffer.GetPointer(), buffer.GetSize(), 1, m_hFile);
 		RTMP_Write(m_pRTMP, reinterpret_cast<CHAR*>(buffer.GetPointer()), buffer.GetSize());
+
+		m_writer.WriteAACRaw(bits, size, timestamp);
+
 		return TRUE;
 	}
 	BOOL MRTMPClient::SendH264NALU(DWORD dwFrameType, BYTE* bits, LONG size, DWORD timestamp)
@@ -160,8 +161,10 @@ namespace MShow
 			return FALSE;
 		TinyBufferArray<BYTE> buffer;
 		BuildH264NALU(dwFrameType, bits, size, timestamp, buffer);
-		fwrite(buffer.GetPointer(), buffer.GetSize(), 1, m_hFile);
 		RTMP_Write(m_pRTMP, reinterpret_cast<CHAR*>(buffer.GetPointer()), buffer.GetSize());
+
+		m_writer.WriteH264NALU(dwFrameType == 0x17 ? 1 : 2, bits, size, timestamp, timestamp);
+
 		return TRUE;
 	}
 
@@ -189,16 +192,6 @@ namespace MShow
 	}
 	BOOL MRTMPClient::BuildScript(const FLV_SCRIPTDATA& script, TinyBufferArray<BYTE>& buffer)
 	{
-		FLV_HEADER header = { 0 };
-		header.signature[0] = 'F';
-		header.signature[1] = 'L';
-		header.signature[2] = 'V';
-		header.streamType = 0x01 | 0x04;
-		header.version = 0;
-		header.offset[3] = 9;
-		buffer.Add(reinterpret_cast<BYTE*>(&header), sizeof(header));
-		DWORD dwPreviousSize = ntohl(m_dwPreviousSize);
-		buffer.Add(reinterpret_cast<BYTE*>(&dwPreviousSize), sizeof(dwPreviousSize));
 		FLV_TAG_HEADER tag = { 0 };
 		CHAR bits[2048];
 		CHAR *pBEGIN = bits;
@@ -227,6 +220,8 @@ namespace MShow
 		buffer.Add(reinterpret_cast<BYTE*>(&tag), sizeof(tag));
 		buffer.Add(reinterpret_cast<BYTE*>(bits), dwSize);
 		m_dwPreviousSize = dwSize + sizeof(FLV_TAG_HEADER);
+		DWORD dwPreviousSize = ntohl(m_dwPreviousSize);
+		buffer.Add(reinterpret_cast<BYTE*>(&dwPreviousSize), sizeof(dwPreviousSize));
 		return TRUE;
 	}
 	BOOL MRTMPClient::BuildH264AVC(const vector<BYTE>& pps, const vector<BYTE>& sps, TinyBufferArray<BYTE>& buffer)
@@ -295,13 +290,14 @@ namespace MShow
 		audio.packetType = 1;//AAC Raw
 		audio.dts = timestamp;
 		audio.pts = timestamp;
+		//»•µÙADTS
+		bits += 7;
+		size -= 7;
 		return BuildAudioTag(audio, bits, size, buffer);
 	}
 
 	BOOL MRTMPClient::BuildAudioTag(FLV_PACKET& packet, BYTE* bits, LONG size, TinyBufferArray<BYTE>& buffer)
 	{
-		DWORD dwPreviousSize = ntohl(m_dwPreviousSize);
-		buffer.Add(reinterpret_cast<BYTE*>(&dwPreviousSize), sizeof(dwPreviousSize));
 		FLV_TAG_HEADER tag = { 0 };
 		tag.type = FLV_AUDIO;
 		DWORD dwSize = size + 2;
@@ -322,12 +318,12 @@ namespace MShow
 		buffer.Add(&packet.packetType, sizeof(packet.packetType));
 		buffer.Add(bits, size);
 		m_dwPreviousSize = dwSize + sizeof(FLV_TAG_HEADER);
+		DWORD dwPreviousSize = ntohl(m_dwPreviousSize);
+		buffer.Add(reinterpret_cast<BYTE*>(&dwPreviousSize), sizeof(dwPreviousSize));
 		return TRUE;
 	}
 	BOOL MRTMPClient::BuildVideoTag(FLV_PACKET& packet, BYTE* bits, LONG size, TinyBufferArray<BYTE>& buffer)
 	{
-		DWORD dwPreviousSize = ntohl(m_dwPreviousSize);
-		buffer.Add(reinterpret_cast<BYTE*>(&dwPreviousSize), sizeof(dwPreviousSize));
 		FLV_TAG_HEADER tag = { 0 };
 		tag.type = FLV_VIDEO;
 		DWORD dwSize = size + 5;
@@ -351,6 +347,8 @@ namespace MShow
 		buffer.Add(cts, 3);
 		buffer.Add(bits, size);
 		m_dwPreviousSize = dwSize + sizeof(FLV_TAG_HEADER);
+		DWORD dwPreviousSize = ntohl(m_dwPreviousSize);
+		buffer.Add(reinterpret_cast<BYTE*>(&dwPreviousSize), sizeof(dwPreviousSize));
 		return TRUE;
 	}
 }

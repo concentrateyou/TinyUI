@@ -9,6 +9,7 @@ namespace MShow
 
 	MRTMPPusher::MRTMPPusher()
 		:m_bClose(FALSE),
+		m_bAVSC(FALSE),
 		m_dwReconnect(0)
 	{
 	}
@@ -20,7 +21,7 @@ namespace MShow
 	BOOL MRTMPPusher::Connect(const TinyString& szURL, DWORD dwRate)
 	{
 		m_dwRate = dwRate;
-		if (m_client.Connect(szURL))
+		if (m_pusher.Connect(szURL))
 		{
 			m_szURL = szURL;
 			return TRUE;
@@ -30,7 +31,7 @@ namespace MShow
 
 	BOOL MRTMPPusher::Disconnect()
 	{
-		return m_client.Disconnect();
+		return m_pusher.Disconnect();
 	}
 
 	BOOL MRTMPPusher::Submit()
@@ -45,7 +46,7 @@ namespace MShow
 		m_dwReconnect = 0;
 		if (TinyTaskBase::Close(dwMS))
 		{
-			m_client.Disconnect();
+			m_pusher.Disconnect();
 			return TRUE;
 		}
 		return FALSE;
@@ -59,7 +60,7 @@ namespace MShow
 		MVideoEncodeTask& videoTask = MShowApp::GetInstance().GetController().GetVideoEncoder();
 		//发送媒体信息
 		TinySize pulgSize = videoTask.GetSize();
-		m_client.SendMetadata(pulgSize.cx, pulgSize.cy, videoTask.GetVideoFPS(), videoTask.GetVideoRate(), audioTask.GetFormat(), audioTask.GetAudioRate());
+		m_pusher.SendScript(pulgSize.cx, pulgSize.cy, videoTask.GetVideoFPS(), videoTask.GetVideoRate(), audioTask.GetFormat(), audioTask.GetAudioRate());
 		Sample videoSample, audioSample;
 		for (;;)
 		{
@@ -67,6 +68,16 @@ namespace MShow
 				break;
 			if (videoSamples.GetSize() > 0 && audioSamples.GetSize() > 0)
 			{
+				if (!m_bAVSC)
+				{
+					vector<BYTE> info;
+					audioTask.GetAAC().GetSpecificInfo(info);
+					m_pusher.SendAACASC(&info[0], info.size());
+					vector<BYTE>& sps = videoTask.GetQSV().GetSPS();
+					vector<BYTE>& pps = videoTask.GetQSV().GetPPS();
+					m_pusher.SendH264AVC(pps, sps);
+					m_bAVSC = TRUE;
+				}
 				LONGLONG videoTS = videoSamples.GetMinimumTimeStamp();
 				LONGLONG audioTS = audioSamples.GetMinimumTimeStamp();
 				if (audioTS > videoTS)
@@ -74,50 +85,21 @@ namespace MShow
 					ZeroMemory(&videoSample, sizeof(videoSample));
 					if (videoSamples.Pop(videoSample))
 					{
-						Publish(&audioTask, &videoTask, videoSample);
+						m_pusher.SendH264NALU(videoSample.mediaTag.dwFlag, videoSample.bits, videoSample.size, videoSample.mediaTag.dwTime);
 					}
+					SAFE_DELETE_ARRAY(videoSample.bits);
 				}
 				else
 				{
 					ZeroMemory(&audioSample, sizeof(audioSample));
 					if (audioSamples.Pop(audioSample))
 					{
-						Publish(&audioTask, &videoTask, audioSample);
+						m_pusher.SendAACRaw(audioSample.bits, audioSample.size, audioSample.mediaTag.dwTime);
 					}
+					SAFE_DELETE_ARRAY(audioSample.bits);
 				}
 			}
 		}
-	}
-	void MRTMPPusher::Publish(MAudioEncodeTask* pAudioTask, MVideoEncodeTask* pVideoTask, Sample& sample)
-	{
-		ASSERT(pAudioTask);
-		ASSERT(pVideoTask);
-		switch (sample.mediaTag.dwType)
-		{
-		case 0://Video
-		{
-			if (sample.mediaTag.INC == 1)
-			{
-				vector<BYTE>& sps = pVideoTask->GetQSV().GetSPS();
-				vector<BYTE>& pps = pVideoTask->GetQSV().GetPPS();
-				m_client.SendH264AVC(pps, sps);
-			}
-			m_client.SendH264NALU(sample.mediaTag.dwFlag, sample.bits, sample.size, sample.mediaTag.dwTime);
-		}
-		break;
-		case 1://Audio
-		{
-			if (sample.mediaTag.INC == 1)
-			{
-				vector<BYTE> info;
-				pAudioTask->GetAAC().GetSpecificInfo(info);
-				m_client.SendAACASC(&info[0], info.size());
-			}
-			m_client.SendAACRaw(sample.bits, sample.size, sample.mediaTag.dwTime);
-		}
-		break;
-		}
-		SAFE_DELETE_ARRAY(sample.bits);
 	}
 	TinyString MRTMPPusher::GetURL() const
 	{

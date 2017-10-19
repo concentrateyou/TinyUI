@@ -25,12 +25,12 @@ namespace MShow
 		TinyString GetURL() const;
 	private:
 		void OnMessagePump();
-		void Publish(MAudioEncodeTask* pAudioTask, MVideoEncodeTask* pVideoTask ,Sample& sample);
 	private:
 		BOOL			m_bClose;
+		BOOL			m_bAVSC;
 		DWORD			m_dwRate;
 		DWORD			m_dwReconnect;
-		MRTMPClient		m_client;
+		MRTMPClient		m_pusher;
 		TinyString		m_szURL;
 	};
 }

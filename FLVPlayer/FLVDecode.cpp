@@ -38,7 +38,7 @@ namespace FLVPlayer
 		//m_writer.WriteScriptTag(script);
 		//m_writer.Close();
 
-		if (m_reader.OpenFile("D:\\test1.flv"))
+		if (m_reader.OpenFile("D:\\7.flv"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);
@@ -121,10 +121,6 @@ namespace FLVPlayer
 				{
 					if (block.video.packetType == FLV_AVCDecoderConfigurationRecord)
 					{
-						//if (!m_qsv.Open(block.video.data, block.video.size))
-						//{
-						//	goto _ERROR;
-						//}
 						if (!m_x264->Initialize(m_size, m_size))
 						{
 							goto _ERROR;

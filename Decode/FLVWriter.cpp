@@ -52,15 +52,16 @@ namespace Decode
 		hRes = m_stream->Write(&header, sizeof(header), &ls);
 		if (hRes != S_OK || ls != sizeof(header))
 			return FALSE;
+		//Tag 0
+		DWORD dwPreviousSize = ntohl(m_dwPreviousSize);
+		hRes = m_stream->Write(&dwPreviousSize, sizeof(dwPreviousSize), &ls);
+		if (hRes != S_OK || ls != sizeof(dwPreviousSize))
+			return FALSE;
 		return TRUE;
 	}
 	BOOL FLVWriter::WriteScriptTag(FLV_SCRIPTDATA& script)
 	{
 		ULONG ls = 0;
-		DWORD dwPreviousSize = ntohl(m_dwPreviousSize);
-		HRESULT hRes = m_stream->Write(&dwPreviousSize, sizeof(dwPreviousSize), &ls);
-		if (hRes != S_OK || ls != sizeof(dwPreviousSize))
-			return FALSE;
 		FLV_TAG_HEADER tag = { 0 };
 		CHAR bits[2048];
 		CHAR *pBEGIN = bits;
@@ -86,22 +87,22 @@ namespace Decode
 		tag.size[1] = dwSize >> 8 & 0xFF;
 		tag.size[2] = dwSize & 0xFF;
 		tag.type = FLV_SCRIPT;
-		hRes = m_stream->Write(&tag, sizeof(tag), &ls);
+		HRESULT hRes = m_stream->Write(&tag, sizeof(tag), &ls);
 		if (hRes != S_OK || ls != sizeof(tag))
 			return FALSE;
 		hRes = m_stream->Write(bits, dwSize, &ls);
 		if (hRes != S_OK || ls != dwSize)
 			return FALSE;
-		m_dwPreviousSize = dwSize + sizeof(FLV_TAG_HEADER);
+		m_dwPreviousSize = sizeof(FLV_TAG_HEADER) + dwSize;
+		DWORD dwPreviousSize = ntohl(m_dwPreviousSize);
+		hRes = m_stream->Write(&dwPreviousSize, sizeof(dwPreviousSize), &ls);
+		if (hRes != S_OK || ls != sizeof(dwPreviousSize))
+			return FALSE;
 		return TRUE;
 	}
 	BOOL FLVWriter::WriteAudioTag(FLV_PACKET& packet, BYTE* bits, LONG size)
 	{
 		ULONG ls = 0;
-		DWORD dwPreviousSize = ntohl(m_dwPreviousSize);
-		HRESULT hRes = m_stream->Write(&dwPreviousSize, sizeof(dwPreviousSize), &ls);
-		if (hRes != S_OK || ls != sizeof(dwPreviousSize))
-			return FALSE;
 		FLV_TAG_HEADER tag = { 0 };
 		tag.type = FLV_AUDIO;
 		DWORD dwSize = size + 2;
@@ -112,7 +113,7 @@ namespace Decode
 		tag.timestamp[1] = packet.dts >> 8 & 0xFF;
 		tag.timestamp[2] = packet.dts & 0xFF;
 		tag.timestampex = packet.dts >> 24 & 0xFF;
-		hRes = m_stream->Write(&tag, sizeof(tag), &ls);
+		HRESULT hRes = m_stream->Write(&tag, sizeof(tag), &ls);
 		if (hRes != S_OK || ls != sizeof(tag))
 			return FALSE;
 		FLV_TAG_AUDIO audio = { 0 };
@@ -129,16 +130,16 @@ namespace Decode
 		hRes = m_stream->Write(bits, size, &ls);
 		if (hRes != S_OK || ls != size)
 			return FALSE;
-		m_dwPreviousSize = dwSize + sizeof(FLV_TAG_HEADER);
+		m_dwPreviousSize = sizeof(FLV_TAG_HEADER) + dwSize;
+		DWORD dwPreviousSize = ntohl(m_dwPreviousSize);
+		hRes = m_stream->Write(&dwPreviousSize, sizeof(dwPreviousSize), &ls);
+		if (hRes != S_OK || ls != sizeof(dwPreviousSize))
+			return FALSE;
 		return TRUE;
 	}
 	BOOL FLVWriter::WriteVideoTag(FLV_PACKET& packet, BYTE* bits, LONG size)
 	{
 		ULONG ls = 0;
-		DWORD dwPreviousSize = ntohl(m_dwPreviousSize);
-		HRESULT hRes = m_stream->Write(&dwPreviousSize, sizeof(dwPreviousSize), &ls);
-		if (hRes != S_OK || ls != sizeof(dwPreviousSize))
-			return FALSE;
 		FLV_TAG_HEADER tag = { 0 };
 		tag.type = FLV_VIDEO;
 		DWORD dwSize = size + 5;
@@ -149,7 +150,7 @@ namespace Decode
 		tag.timestamp[1] = packet.dts >> 8 & 0xFF;
 		tag.timestamp[2] = packet.dts & 0xFF;
 		tag.timestampex = packet.dts >> 24 & 0xFF;
-		hRes = m_stream->Write(&tag, sizeof(tag), &ls);
+		HRESULT hRes = m_stream->Write(&tag, sizeof(tag), &ls);
 		if (hRes != S_OK || ls != sizeof(tag))
 			return FALSE;
 		FLV_TAG_VIDEO video = { 0 };
@@ -171,7 +172,11 @@ namespace Decode
 		hRes = m_stream->Write(bits, size, &ls);
 		if (hRes != S_OK || ls != size)
 			return FALSE;
-		m_dwPreviousSize = dwSize + sizeof(FLV_TAG_HEADER);
+		m_dwPreviousSize = sizeof(FLV_TAG_HEADER) + dwSize;
+		DWORD dwPreviousSize = ntohl(m_dwPreviousSize);
+		hRes = m_stream->Write(&dwPreviousSize, sizeof(dwPreviousSize), &ls);
+		if (hRes != S_OK || ls != sizeof(dwPreviousSize))
+			return FALSE;
 		return TRUE;
 	}
 
@@ -196,6 +201,9 @@ namespace Decode
 		audio.packetType = 1;//AAC Raw
 		audio.dts = timestamp;
 		audio.pts = timestamp;
+		//»•µÙADTS
+		bits += 7;
+		size -= 7;
 		return WriteAudioTag(audio, bits, size);
 	}
 

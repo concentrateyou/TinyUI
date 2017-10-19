@@ -28,7 +28,7 @@ namespace MShow
 		BOOL	Reconnect();
 		BOOL	IsConnected();
 		BOOL	IsTimedout();
-		BOOL	SendMetadata(INT cx, INT cy, INT frameRate, INT videoRate, const WAVEFORMATEX& wfx, INT audioRate);
+		BOOL	SendScript(INT cx, INT cy, INT frameRate, INT videoRate, const WAVEFORMATEX& wfx, INT audioRate);
 		BOOL	SendH264AVC(const vector<BYTE>& pps, const vector<BYTE>& sps);
 		BOOL	SendAACASC(BYTE* bits, LONG size);
 		BOOL	SendH264NALU(DWORD dwFrameType, BYTE* bits, LONG size, DWORD timestamp);
@@ -45,7 +45,7 @@ namespace MShow
 	private:
 		DWORD		m_dwPreviousSize;
 		RTMP*		m_pRTMP;
-		FILE*		m_hFile;
+		FLVWriter	m_writer;
 	};
 }
 
