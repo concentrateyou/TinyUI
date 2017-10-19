@@ -80,7 +80,7 @@ namespace MShow
 			}
 			m_audios[i].Reset(NULL);
 		}
-		if (m_previewCTRL != NULL && m_previewCTRL->IsActive())
+		if (m_previewCTRL != NULL)
 		{
 			m_previewCTRL->Close(INFINITE);
 			m_previewCTRL.Reset(NULL);

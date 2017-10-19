@@ -21,8 +21,7 @@ namespace MShow
 		m_bBreak(FALSE),
 		m_videoFPS(25),
 		m_clock(clock),
-		m_renderView(m_graphics.GetDX11()),
-		m_handle(NULL)
+		m_render(0)
 	{
 		m_onLButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonDown));
 		m_onLButtonUp.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonUp));
@@ -39,6 +38,8 @@ namespace MShow
 		m_view.EVENT_SETCURSOR += m_onSetCursor;
 		m_popup.EVENT_CLICK += m_onMenuClick;
 		m_event.CreateEvent();
+		m_renderViews[0] = new DX11RenderView(m_graphics.GetDX11());
+		m_renderViews[1] = new DX11RenderView(m_graphics.GetDX11());
 	}
 
 	MPreviewController::~MPreviewController()
@@ -49,6 +50,8 @@ namespace MShow
 		m_view.EVENT_MOUSEMOVE -= m_onMouseMove;
 		m_view.EVENT_MOUSELEAVE -= m_onMouseLeave;
 		m_view.EVENT_SETCURSOR -= m_onSetCursor;
+		SAFE_DELETE(m_renderViews[0]);
+		SAFE_DELETE(m_renderViews[1]);
 	}
 
 	BOOL MPreviewController::Initialize()
@@ -161,9 +164,39 @@ namespace MShow
 		m_graphics.Leave();
 		return bRes;
 	}
-	BOOL MPreviewController::Lock(DWORD dwMS)
+	void MPreviewController::PushSample()
 	{
-		return m_event.Lock(dwMS);
+		if (MShowApp::GetInstance().GetController().IsPushing())
+		{
+			MVideoController* pCTRL = MShowApp::GetInstance().GetController().GetCurrentCTRL();
+			if (pCTRL != NULL)
+			{
+				//网络不稳定
+				if (m_videoQueue.GetCount() <= 5)
+				{
+					DWORD dwSize = 0;
+					BYTE* bits = m_renderViews[m_render]->Map(dwSize);
+					if (bits != NULL)
+					{
+						SampleTag sampleTag;
+						ZeroMemory(&sampleTag, sizeof(sampleTag));
+						sampleTag.size = dwSize;
+						if (sampleTag.size > 0)
+						{
+							if (m_videoQueue.GetAllocSize() == 0)
+							{
+								INT count = MAX_VIDEO_QUEUE_SIZE / sampleTag.size + 1;
+								m_videoQueue.Initialize(count, sampleTag.size + 4);
+							}
+							sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
+							memcpy_s(sampleTag.bits + 4, sampleTag.size, bits, sampleTag.size);
+							m_renderViews[m_render]->Unmap();
+							m_videoQueue.Push(sampleTag);
+						}
+					}
+				}
+			}
+		}
 	}
 	DX11Element2D* MPreviewController::HitTest(const TinyPoint& pos)
 	{
@@ -302,19 +335,29 @@ namespace MShow
 	BOOL MPreviewController::Submit()
 	{
 		m_bBreak = FALSE;
-		return TinyTaskBase::Submit(BindCallback(&MPreviewController::OnMessagePump, this));
+		BOOL bRes = TRUE;
+		bRes &= m_tasks[1].Submit(BindCallback(&MPreviewController::OnMessagePump1, this));
+		bRes &= m_tasks[0].Submit(BindCallback(&MPreviewController::OnMessagePump2, this));
+		return bRes;
 	}
 
 	BOOL MPreviewController::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
-		return TinyTaskBase::Close(dwMS);
+		m_event.SetEvent();
+		BOOL bRes = TRUE;
+		bRes &= m_tasks[0].Close(dwMS);
+		bRes &= m_tasks[1].Close(dwMS);
+		return bRes;
 	}
 
 	BOOL MPreviewController::SetPulgSize(const TinySize& size)
 	{
 		m_pulgSize = size;
-		return m_renderView.Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), TRUE, FALSE);
+		BOOL bRes = TRUE;
+		bRes &= m_renderViews[0]->Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), TRUE, FALSE);
+		bRes &= m_renderViews[1]->Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), TRUE, FALSE);
+		return bRes;
 	}
 
 	TinySize MPreviewController::GetPulgSize() const
@@ -339,8 +382,7 @@ namespace MShow
 
 	void MPreviewController::Render()
 	{
-		m_timeQPC.BeginTime();
-		m_graphics.GetDX11().SetRenderTexture2D(&m_renderView);
+		m_graphics.GetDX11().SetRenderTexture2D(m_renderViews[m_render]);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();
 		TinyArray<DX11Element2D*> images;
 		for (INT i = m_array.GetSize() - 1;i >= 0;i--)
@@ -374,6 +416,8 @@ namespace MShow
 			}
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
+		m_render = (m_render == 0) ? 1 : 0;
+		m_event.SetEvent();
 		//////////////////////////////////////////////////////////////////////////
 		m_graphics.GetDX11().SetRenderTexture2D(NULL);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();
@@ -433,62 +477,13 @@ namespace MShow
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
 		m_graphics.Present();
-
-		if (MShowApp::GetInstance().GetController().IsPushing())
-		{
-			MVideoController* pCTRL = MShowApp::GetInstance().GetController().GetCurrentCTRL();
-			if (pCTRL != NULL)
-			{
-				//网络不稳定
-				if (m_videoQueue.GetCount() <= 5)
-				{
-					DWORD dwSize = 0;
-					BYTE* bits = m_renderView.Map(dwSize);
-					if (bits != NULL)
-					{
-						SampleTag sampleTag;
-						ZeroMemory(&sampleTag, sizeof(sampleTag));
-						sampleTag.size = dwSize;
-						if (sampleTag.size > 0)
-						{
-							if (m_videoQueue.GetAllocSize() == 0)
-							{
-								INT count = MAX_VIDEO_QUEUE_SIZE / sampleTag.size + 1;
-								m_videoQueue.Initialize(count, sampleTag.size + 4);
-							}
-							sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
-							memcpy_s(sampleTag.bits + 4, sampleTag.size, bits, sampleTag.size);
-							m_renderView.Unmap();
-							m_timeQPC.EndTime();
-							if (m_timeQPC.GetMillisconds() >= 30)
-							{
-								TRACE("Cost:%lld\n", m_timeQPC.GetMillisconds());
-							}
-							m_videoQueue.Push(sampleTag);
-						}
-					}
-				}
-			}
-		}
 	}
 
-	void MPreviewController::GetEvents(vector<HANDLE>& handles)
-	{
-		handles.clear();
-		for (INT i = 0;i < m_array.GetSize();i++)
-		{
-			DX11Element2D* p2D = m_array[i];
-			if (p2D->IsKindOf(RUNTIME_CLASS(MVideoElement)))
-			{
-				MVideoElement* ps = static_cast<MVideoElement*>(p2D);
-				handles.push_back(ps->GetController().GetEvent());
-			}
-		}
-	}
 
-	void MPreviewController::OnMessagePump()
+	void MPreviewController::OnMessagePump1()
 	{
 		SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
+		TinyPerformanceTimer timeQPC;
 		for (;;)
 		{
 			if (m_bBreak)
@@ -508,20 +503,48 @@ namespace MShow
 				Sleep(10);
 				continue;
 			}
+			m_graphics.Enter();
+			HANDLE	handle = NULL;
 			DX11Element2D* p2D = m_array[0];
 			if (p2D->IsKindOf(RUNTIME_CLASS(MVideoElement)))
 			{
 				MVideoElement* ps = static_cast<MVideoElement*>(p2D);
-				m_handle = ps->GetController().GetEvent();
+				handle = ps->GetController().GetEvent();
 			}
-			if (m_handle != NULL)
+			m_graphics.Leave();
+			if (handle != NULL)
 			{
-				HRESULT hRes = WaitForSingleObject(m_handle, INFINITE);
+				HRESULT hRes = WaitForSingleObject(handle, INFINITE);
 				if (hRes == WAIT_FAILED || hRes == WAIT_ABANDONED)
 				{
 					break;
 				}
+				timeQPC.BeginTime();
 				this->Render();
+				timeQPC.EndTime();
+				TRACE("Render:%lld\n", timeQPC.GetMillisconds());
+			}
+		}
+	}
+	void MPreviewController::OnMessagePump2()
+	{
+		SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
+		TinyPerformanceTimer timeQPC;
+		for (;;)
+		{
+			if (m_bBreak)
+			{
+				break;
+			}
+			if (m_event.Lock(INFINITE))
+			{
+				timeQPC.BeginTime();
+				PushSample();
+				timeQPC.EndTime();
+				if (timeQPC.GetMillisconds() >= 20)
+				{
+					TRACE("Copy:%lld\n", timeQPC.GetMillisconds());
+				}
 			}
 		}
 	}

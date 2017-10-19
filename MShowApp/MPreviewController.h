@@ -12,7 +12,7 @@ namespace MShow
 	/// <summary>
 	/// ‘§¿¿
 	/// </summary>
-	class MPreviewController : public TinyTaskBase
+	class MPreviewController
 	{
 		friend class MShowController;
 		friend class MVideoController;
@@ -36,10 +36,10 @@ namespace MShow
 		BOOL		Move(DX11Element2D* ps, BOOL bUp);
 		BOOL		Bring(DX11Element2D* ps, BOOL bTop);
 		BOOL		Find(DX11Element2D* ps);
-		BOOL		Lock(DWORD dwMS);
+		void		PushSample();
 	public:
 		BOOL		Submit();
-		BOOL		Close(DWORD dwMS) OVERRIDE;
+		BOOL		Close(DWORD dwMS);
 	public:
 		MPreviewView&	GetView();
 		DX11Graphics2D&	Graphics();
@@ -51,16 +51,16 @@ namespace MShow
 		void	OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		void	OnMenuClick(void*, INT wID);
-		void	OnMessagePump();
-		void	GetEvents(vector<HANDLE>&handles);
 		void	Render();
 	private:
+		void	OnMessagePump1();
+		void	OnMessagePump2();
 		DX11Element2D*	HitTest(const TinyPoint& pos);//Õº∆¨”≈œ»
 	private:
 		BOOL							m_bBreak;
 		BOOL							m_bTracking;
-		HANDLE							m_handle;
 		BOOL							m_bPopup;
+		INT								m_render;
 		INT								m_videoFPS;
 		TinySize						m_pulgSize;
 		TinyMenu						m_popup;
@@ -71,11 +71,10 @@ namespace MShow
 		MPacketAllocQueue				m_videoQueue;
 		DX11Graphics2D					m_graphics;
 		DX11Image2D						m_handles[8];
-		DX11RenderView					m_renderView;
+		DX11RenderView*					m_renderViews[2];
 		TinyPerformanceTimer			m_timeQPC;
 		TinyArray<DX11Element2D*>		m_array;
-		TinyArray<HANDLE>				m_events;
-		TinyScopedArray<BYTE>			m_bits;
+		TinyTaskBase					m_tasks[2];
 	private:
 		TinyScopedPtr<Delegate<void(void*, INT)>>				   m_onMenuClick;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonDown;
