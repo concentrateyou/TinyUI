@@ -60,8 +60,10 @@ namespace MShow
 		BOOL							m_bBreak;
 		BOOL							m_bTracking;
 		BOOL							m_bPopup;
-		INT								m_render;
+		INT								m_previousRender;
+		INT								m_currentRender;
 		INT								m_videoFPS;
+		LONGLONG						m_currentQPC;
 		TinySize						m_pulgSize;
 		TinyMenu						m_popup;
 		TinyEvent						m_event;
@@ -71,7 +73,7 @@ namespace MShow
 		MPacketAllocQueue				m_videoQueue;
 		DX11Graphics2D					m_graphics;
 		DX11Image2D						m_handles[8];
-		DX11RenderView*					m_renderViews[3];
+		DX11RenderView*					m_renderViews[5];
 		TinyPerformanceTimer			m_timeQPC;
 		TinyArray<DX11Element2D*>		m_array;
 		TinyTaskBase					m_tasks[2];

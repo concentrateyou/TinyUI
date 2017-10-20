@@ -54,10 +54,10 @@ namespace MShow
 					if (m_encoder.Encode(sampleTag, bo, so, sample.mediaTag))
 					{
 						INT sampleTime = sample.mediaTag.dwTime;
-						sampleTime -= 80;//
+						sampleTime -= 160;
 						if (sampleTime > 0)
 						{
-							sample.mediaTag.dwTime -= 80;
+							sample.mediaTag.dwTime -= 160;
 							sample.size = so;
 							sample.bits = new BYTE[so];
 							memcpy(sample.bits, bo, so);

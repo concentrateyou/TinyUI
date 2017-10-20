@@ -21,7 +21,9 @@ namespace MShow
 		m_bBreak(FALSE),
 		m_videoFPS(25),
 		m_clock(clock),
-		m_render(0)
+		m_currentQPC(0),
+		m_currentRender(0),
+		m_previousRender(0)
 	{
 		m_onLButtonDown.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonDown));
 		m_onLButtonUp.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MPreviewController::OnLButtonUp));
@@ -169,7 +171,7 @@ namespace MShow
 		return bRes;
 	}
 
-	LONGLONG g_currentQPC = 0;
+
 
 	void MPreviewController::PushSample()
 	{
@@ -179,12 +181,10 @@ namespace MShow
 			if (pCTRL != NULL)
 			{
 				//ÍøÂç²»ÎÈ¶¨
-				if (m_videoQueue.GetCount() <= 5)
+				if (m_videoQueue.GetCount() <= 15)
 				{
-					INT render = m_render;
-					render = (render == ARRAYSIZE(m_renderViews)) ? 0 : render;
 					DWORD dwSize = 0;
-					BYTE* bits = m_renderViews[render]->Map(dwSize);
+					BYTE* bits = m_renderViews[m_previousRender]->Map(dwSize);
 					if (bits != NULL)
 					{
 						SampleTag sampleTag;
@@ -199,15 +199,12 @@ namespace MShow
 							}
 							sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
 							memcpy_s(sampleTag.bits + 4, sampleTag.size, bits, sampleTag.size);
-							m_renderViews[render]->Unmap();
+							m_renderViews[m_previousRender]->Unmap();
 							m_videoQueue.Push(sampleTag);
 							LONGLONG currentQPC = MShowApp::GetInstance().GetQPCTimeMS();
-							if ((currentQPC - g_currentQPC) >= 30)
+							if ((currentQPC - m_currentQPC) >= 25)
 							{
-								//TRACE("Cost:%lld\n", (currentQPC - g_currentQPC));
-								/*sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
-								memcpy_s(sampleTag.bits + 4, sampleTag.size, bits, sampleTag.size);
-								m_videoQueue.Push(sampleTag);*/
+								TRACE("Cost:%lld\n", (currentQPC - m_currentQPC));
 							}
 						}
 					}
@@ -401,8 +398,8 @@ namespace MShow
 
 	void MPreviewController::Render()
 	{
-		g_currentQPC = MShowApp::GetInstance().GetQPCTimeMS();
-		m_graphics.GetDX11().SetRenderTexture2D(m_renderViews[m_render]);
+		m_currentQPC = MShowApp::GetInstance().GetQPCTimeMS();
+		m_graphics.GetDX11().SetRenderTexture2D(m_renderViews[m_currentRender]);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();
 		TinyArray<DX11Element2D*> images;
 		for (INT i = m_array.GetSize() - 1;i >= 0;i--)
@@ -436,8 +433,9 @@ namespace MShow
 			}
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
-		m_render++;
-		m_render = (m_render == ARRAYSIZE(m_renderViews)) ? 0 : m_render;
+		m_previousRender = m_currentRender;
+		m_currentRender++;
+		m_currentRender = (m_currentRender == ARRAYSIZE(m_renderViews)) ? 0 : m_currentRender;
 		m_event.SetEvent();
 		//////////////////////////////////////////////////////////////////////////
 		m_graphics.GetDX11().SetRenderTexture2D(NULL);

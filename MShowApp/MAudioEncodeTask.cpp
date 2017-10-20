@@ -76,7 +76,7 @@ namespace MShow
 				if (pCTRL != NULL)
 				{
 					MPacketAllocQueue& videoQueue = MShow::MShowApp::GetInstance().GetController().GetPreviewController()->GetVideoQueue();
-					if (videoQueue.GetCount() <= 5)
+					if (videoQueue.GetCount() <= 15)
 					{
 						TinyScopedArray<BYTE> output(new BYTE[size]);
 						if (m_queueMix.GetSize() > 0)
