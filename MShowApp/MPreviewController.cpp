@@ -38,8 +38,10 @@ namespace MShow
 		m_view.EVENT_SETCURSOR += m_onSetCursor;
 		m_popup.EVENT_CLICK += m_onMenuClick;
 		m_event.CreateEvent();
-		m_renderViews[0] = new DX11RenderView(m_graphics.GetDX11());
-		m_renderViews[1] = new DX11RenderView(m_graphics.GetDX11());
+		for (INT i = 0;i < ARRAYSIZE(m_renderViews);i++)
+		{
+			m_renderViews[i] = new DX11RenderView(m_graphics.GetDX11());
+		}
 	}
 
 	MPreviewController::~MPreviewController()
@@ -50,8 +52,10 @@ namespace MShow
 		m_view.EVENT_MOUSEMOVE -= m_onMouseMove;
 		m_view.EVENT_MOUSELEAVE -= m_onMouseLeave;
 		m_view.EVENT_SETCURSOR -= m_onSetCursor;
-		SAFE_DELETE(m_renderViews[0]);
-		SAFE_DELETE(m_renderViews[1]);
+		for (INT i = 0;i < ARRAYSIZE(m_renderViews);i++)
+		{
+			SAFE_DELETE(m_renderViews[i]);
+		}
 	}
 
 	BOOL MPreviewController::Initialize()
@@ -164,6 +168,9 @@ namespace MShow
 		m_graphics.Leave();
 		return bRes;
 	}
+
+	LONGLONG g_currentQPC = 0;
+
 	void MPreviewController::PushSample()
 	{
 		if (MShowApp::GetInstance().GetController().IsPushing())
@@ -174,8 +181,10 @@ namespace MShow
 				//ÍøÂç²»ÎÈ¶¨
 				if (m_videoQueue.GetCount() <= 5)
 				{
+					INT render = (m_render + 1);
+					render = (render == ARRAYSIZE(m_renderViews)) ? 0 : render;
 					DWORD dwSize = 0;
-					BYTE* bits = m_renderViews[m_render]->Map(dwSize);
+					BYTE* bits = m_renderViews[render]->Map(dwSize);
 					if (bits != NULL)
 					{
 						SampleTag sampleTag;
@@ -190,8 +199,13 @@ namespace MShow
 							}
 							sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
 							memcpy_s(sampleTag.bits + 4, sampleTag.size, bits, sampleTag.size);
-							m_renderViews[m_render]->Unmap();
+							m_renderViews[render]->Unmap();
 							m_videoQueue.Push(sampleTag);
+							LONGLONG currentQPC = MShowApp::GetInstance().GetQPCTimeMS();
+							if ((currentQPC - g_currentQPC) >= 20)
+							{
+								TRACE("Cost:%lld\n", currentQPC - g_currentQPC);
+							}
 						}
 					}
 				}
@@ -355,8 +369,10 @@ namespace MShow
 	{
 		m_pulgSize = size;
 		BOOL bRes = TRUE;
-		bRes &= m_renderViews[0]->Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), TRUE, FALSE);
-		bRes &= m_renderViews[1]->Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), TRUE, FALSE);
+		for (INT i = 0;i < ARRAYSIZE(m_renderViews);i++)
+		{
+			bRes &= m_renderViews[i]->Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), TRUE, FALSE);
+		}
 		return bRes;
 	}
 
@@ -382,6 +398,7 @@ namespace MShow
 
 	void MPreviewController::Render()
 	{
+		g_currentQPC = MShowApp::GetInstance().GetQPCTimeMS();
 		m_graphics.GetDX11().SetRenderTexture2D(m_renderViews[m_render]);
 		m_graphics.GetDX11().GetRender2D()->BeginDraw();
 		TinyArray<DX11Element2D*> images;
@@ -416,7 +433,8 @@ namespace MShow
 			}
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
-		m_render = (m_render == 0) ? 1 : 0;
+		m_render++;
+		m_render = (m_render == ARRAYSIZE(m_renderViews)) ? 0 : m_render;
 		m_event.SetEvent();
 		//////////////////////////////////////////////////////////////////////////
 		m_graphics.GetDX11().SetRenderTexture2D(NULL);
@@ -479,11 +497,9 @@ namespace MShow
 		m_graphics.Present();
 	}
 
-
 	void MPreviewController::OnMessagePump1()
 	{
 		SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
-		TinyPerformanceTimer timeQPC;
 		for (;;)
 		{
 			if (m_bBreak)
@@ -503,8 +519,8 @@ namespace MShow
 				Sleep(10);
 				continue;
 			}
+			HANDLE handle = NULL;
 			m_graphics.Enter();
-			HANDLE	handle = NULL;
 			DX11Element2D* p2D = m_array[0];
 			if (p2D->IsKindOf(RUNTIME_CLASS(MVideoElement)))
 			{
@@ -519,17 +535,13 @@ namespace MShow
 				{
 					break;
 				}
-				timeQPC.BeginTime();
 				this->Render();
-				timeQPC.EndTime();
-				TRACE("Render:%lld\n", timeQPC.GetMillisconds());
 			}
 		}
 	}
 	void MPreviewController::OnMessagePump2()
 	{
 		SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
-		TinyPerformanceTimer timeQPC;
 		for (;;)
 		{
 			if (m_bBreak)
@@ -538,13 +550,7 @@ namespace MShow
 			}
 			if (m_event.Lock(INFINITE))
 			{
-				timeQPC.BeginTime();
-				PushSample();
-				timeQPC.EndTime();
-				if (timeQPC.GetMillisconds() >= 20)
-				{
-					TRACE("Copy:%lld\n", timeQPC.GetMillisconds());
-				}
+				this->PushSample();
 			}
 		}
 	}
