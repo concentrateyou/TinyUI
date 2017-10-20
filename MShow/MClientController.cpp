@@ -10,7 +10,7 @@ namespace MShow
 {
 	MClientController::MClientController(MClientWindow& view)
 		:m_view(view),
-		m_hTimer(NULL),
+		m_hTimer1(NULL),
 		m_bBreak(FALSE),
 		m_bCommentarying(FALSE),
 		m_bPause(FALSE),
@@ -78,16 +78,16 @@ namespace MShow
 	BOOL MClientController::SetPreview(const string& szPreviewURL)
 	{
 		m_szPreviewURL = std::move(szPreviewURL);
-		if (m_hTimer != NULL)
+		if (m_hTimer1 != NULL)
 		{
-			TinyApplication::GetInstance()->GetTimers().Unregister(m_hTimer);
-			m_hTimer = NULL;
+			TinyApplication::GetInstance()->GetTimers().Unregister(m_hTimer1);
+			m_hTimer1 = NULL;
 		}
-		m_hTimer = TinyApplication::GetInstance()->GetTimers().Register(&MClientController::OnTimer, this, 1000, 0);
-		return m_hTimer != NULL;
+		m_hTimer1 = TinyApplication::GetInstance()->GetTimers().Register(&MClientController::OnTimer1, this, 1000, 0);
+		return m_hTimer1 != NULL;
 	}
 
-	VOID CALLBACK MClientController::OnTimer(PVOID lpParam, BOOLEAN TimerOrWaitFired)
+	VOID CALLBACK MClientController::OnTimer1(PVOID lpParam, BOOLEAN TimerOrWaitFired)
 	{
 		MClientController* pCTRL = static_cast<MClientController*>(lpParam);
 		ASSERT(pCTRL);
@@ -107,6 +107,64 @@ namespace MShow
 			LOG(ERROR) << "[SetPreview] " << "Open Preview :" << pCTRL->m_szPreviewURL << " Fail";
 		}
 		pCTRL->m_view.Invalidate();
+	}
+	VOID CALLBACK MClientController::OnTimer2(PVOID lpParam, BOOLEAN TimerOrWaitFired)
+	{
+		MClientController* pCTRL = static_cast<MClientController*>(lpParam);
+		ASSERT(pCTRL);
+		INT count = 0;
+		if (pCTRL->Query(pCTRL->m_szSourceID, count) && count == 0)
+		{
+			if (MessageBox(NULL, "当前客户端连接被移除", "警告", MB_OK))
+			{
+				pCTRL->Close();
+			}
+		}
+	}
+
+	BOOL MClientController::Query(const string& sourceID, INT& count)
+	{
+		string code;
+		string context;
+		Json::Reader reader;
+		Json::Value value;
+		Json::Value result;
+		TinyHTTPClient client;
+		client.GetRequest().SetVerbs(TinyHTTPClient::GET);
+		client.GetRequest().Add(TinyHTTPClient::ContentType, "application/x-www-form-urlencoded");
+		client.GetRequest().Add("Sign", "#f93Uc31K24()_@");
+		string address = StringPrintf("%s/%s?id=%s&programId=%s&directorId=%s", MShow::MShowApp::GetInstance().AppConfig().GetPrefix().c_str(), "commentary/list", sourceID.c_str(), m_szProgramID.c_str(), m_szLogID.c_str());
+		if (!client.Open(address))
+		{
+			LOG(ERROR) << "[MClientController] " << "Open " << address << " Fail";
+			goto _ERROR;
+		}
+		if (!client.GetResponse().ReadAsString(context))
+		{
+			LOG(ERROR) << "[MClientController] " << "Read Json Fail";
+			goto _ERROR;
+		}
+		if (!reader.parse(context, value))
+		{
+			LOG(ERROR) << "[MClientController] " << "Parse Json Fail";
+			goto _ERROR;
+		}
+		code = value["code"].asString();
+		if (code == "A00000")
+		{
+			count = value["data"].size();
+			TRACE("List SourceID:%s   OK\n", m_szSourceID.c_str());
+			LOG(INFO) << "[MClientController] " << "List SourceID :" << m_szSourceID << " OK";
+			return TRUE;
+		}
+		else
+		{
+			string msg = value["msg"].asString();
+			msg = std::move(UTF8ToASCII(msg));
+			LOG(ERROR) << "[MClientController] " << "Response Code : " << code << " Msg: " << msg;
+		}
+	_ERROR:
+		return FALSE;
 	}
 
 	void MClientController::InitializeUI()
@@ -234,11 +292,9 @@ namespace MShow
 
 	void MClientController::OnCloseClick(TinyVisual*, EventArgs& args)
 	{
-		if (this->Remove(m_szSourceID))
-		{
-			m_szSourceID.clear();
-		}
+		this->Disconnect(m_szSourceID);
 		this->Close();
+		m_szSourceID.clear();
 		m_view.ShowWindow(SW_HIDE);
 		m_view.UpdateWindow();
 		MShow::MShowApp::GetInstance().GetSearchView().ShowWindow(SW_NORMAL);
@@ -333,7 +389,7 @@ namespace MShow
 		m_view.Invalidate();
 	}
 
-	BOOL MClientController::Add()
+	BOOL MClientController::Connect()
 	{
 		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
 		ASSERT(pTextBox);
@@ -377,54 +433,6 @@ namespace MShow
 		else
 		{
 			string msg = value["msg"].asString();
-			LOG(ERROR) << "[MClientController] " << "Response Code : " << code << " Msg: " << msg;
-		}
-	_ERROR:
-		return FALSE;
-	}
-	BOOL MClientController::Remove(const string& sourceID)
-	{
-		if (sourceID.empty())
-			return FALSE;
-		string code;
-		string context;
-		Json::Reader reader;
-		Json::Value value;
-		Json::Value result;
-		TinyHTTPClient client;
-		client.GetRequest().SetVerbs(TinyHTTPClient::POST);
-		client.GetRequest().Add(TinyHTTPClient::ContentType, "application/x-www-form-urlencoded");
-		client.GetRequest().Add("Sign", "#f93Uc31K24()_@");
-		string body = StringPrintf("id=%s&directorId=%s", sourceID.c_str(), m_szLogID.c_str());
-		body = std::move(ASCIIToUTF8(body));
-		client.GetRequest().SetBody(body);
-		string address = StringPrintf("%s/%s", MShow::MShowApp::GetInstance().AppConfig().GetPrefix().c_str(), "commentary/del");
-		if (!client.Open(address))
-		{
-			LOG(ERROR) << "[MClientController] " << "Open " << address << " Fail";
-			goto _ERROR;
-		}
-		if (!client.GetResponse().ReadAsString(context))
-		{
-			LOG(ERROR) << "[MClientController] " << "Read Json Fail";
-			goto _ERROR;
-		}
-		if (!reader.parse(context, value))
-		{
-			LOG(ERROR) << "[MClientController] " << "Parse Json Fail";
-			goto _ERROR;
-		}
-		code = value["code"].asString();
-		if (code == "A00000")
-		{
-			TRACE("Remove SourceID:%s   OK\n", m_szSourceID.c_str());
-			LOG(INFO) << "[MClientController] " << "Remove SourceID :" << m_szSourceID << " OK";
-			return TRUE;
-		}
-		else
-		{
-			string msg = value["msg"].asString();
-			msg = std::move(UTF8ToASCII(msg));
 			LOG(ERROR) << "[MClientController] " << "Response Code : " << code << " Msg: " << msg;
 		}
 	_ERROR:
@@ -481,6 +489,54 @@ namespace MShow
 		return FALSE;
 	}
 
+	BOOL MClientController::Disconnect(const string& sourceID)
+	{
+		if (sourceID.empty())
+			return FALSE;
+		string code;
+		string context;
+		Json::Reader reader;
+		Json::Value value;
+		Json::Value result;
+		TinyHTTPClient client;
+		client.GetRequest().SetVerbs(TinyHTTPClient::POST);
+		client.GetRequest().Add(TinyHTTPClient::ContentType, "application/x-www-form-urlencoded");
+		client.GetRequest().Add("Sign", "#f93Uc31K24()_@");
+		string body = StringPrintf("id=%s&programId=%s&directorId=%s&status=2", sourceID.c_str(), m_szProgramID.c_str(), m_szLogID.c_str());//断开
+		body = std::move(ASCIIToUTF8(body));
+		client.GetRequest().SetBody(body);
+		string address = StringPrintf("%s/%s", MShow::MShowApp::GetInstance().AppConfig().GetPrefix().c_str(), "commentary/edit");
+		if (!client.Open(address))
+		{
+			LOG(ERROR) << "[MClientController] " << "Open " << address << " Fail";
+			goto _ERROR;
+		}
+		if (!client.GetResponse().ReadAsString(context))
+		{
+			LOG(ERROR) << "[MClientController] " << "Read Json Fail";
+			goto _ERROR;
+		}
+		if (!reader.parse(context, value))
+		{
+			LOG(ERROR) << "[MClientController] " << "Parse Json Fail";
+			goto _ERROR;
+		}
+		code = value["code"].asString();
+		if (code == "A00000")
+		{
+			TRACE("Disconnect SourceID:%s   OK\n", m_szSourceID.c_str());
+			LOG(INFO) << "[MClientController] " << "Disconnect SourceID :" << m_szSourceID << " OK";
+			return TRUE;
+		}
+		else
+		{
+			string msg = value["msg"].asString();
+			msg = std::move(UTF8ToASCII(msg));
+			LOG(ERROR) << "[MClientController] " << "Response Code : " << code << " Msg: " << msg;
+		}
+	_ERROR:
+		return FALSE;
+	}
 	BOOL MClientController::UpdatePreviewURL(const string& sourceID, const string& sURL)
 	{
 		if (sourceID.empty() || sURL.empty())
@@ -516,8 +572,8 @@ namespace MShow
 		code = value["code"].asString();
 		if (code == "A00000")
 		{
-			TRACE("Remove SourceID:%s   OK\n", m_szSourceID.c_str());
-			LOG(INFO) << "[MClientController] " << "Remove SourceID :" << m_szSourceID << " OK";
+			TRACE("Update SourceID:%s   OK\n", m_szSourceID.c_str());
+			LOG(INFO) << "[MClientController] " << "Update SourceID :" << m_szSourceID << " OK";
 			return TRUE;
 		}
 		else
@@ -532,13 +588,26 @@ namespace MShow
 
 	void MClientController::Close()
 	{
-		if (m_hTimer != NULL)
+		if (m_hTimer1 != NULL)
 		{
-			TinyApplication::GetInstance()->GetTimers().Unregister(m_hTimer);
-			m_hTimer = NULL;
+			TinyApplication::GetInstance()->GetTimers().Unregister(m_hTimer1);
+			m_hTimer1 = NULL;
 		}
+		if (m_hTimer2 != NULL)
+		{
+			TinyApplication::GetInstance()->GetTimers().Unregister(m_hTimer2);
+			m_hTimer2 = NULL;
+		}
+		//关闭采集
 		m_audioDSP.Stop();
 		m_audioDSP.Close();
+		//释放SDK
+		if (m_audioSDK != NULL)
+		{
+			m_audioSDK->release();
+		}
+		m_audioSDK.Reset(NULL);
+		//关闭预览流
 		if (m_preview != NULL)
 		{
 			m_preview->Close();
@@ -593,7 +662,14 @@ namespace MShow
 		//通知Web更新
 		if (!UpdatePreviewURL(m_szSourceID, m_szURL))
 			return FALSE;
-		return TRUE;
+		//开始查询服务端状态
+		if (m_hTimer2 != NULL)
+		{
+			TinyApplication::GetInstance()->GetTimers().Unregister(m_hTimer2);
+			m_hTimer2 = NULL;
+		}
+		m_hTimer2 = TinyApplication::GetInstance()->GetTimers().Register(&MClientController::OnTimer2, this, 2000, 2000);
+		return m_hTimer2 != NULL;
 	}
 
 	BOOL MClientController::StopCommentary()
@@ -603,8 +679,10 @@ namespace MShow
 			m_bBreak = TRUE;
 			m_task.Close(1000);
 		}
+		//停止采集
 		m_audioDSP.Stop();
 		m_audioDSP.Close();
+		//释放SDK
 		if (m_audioSDK != NULL)
 		{
 			m_audioSDK->release();
@@ -650,7 +728,7 @@ namespace MShow
 
 	void MClientController::OnStartCommentaryClick(TinyVisual*, EventArgs& args)
 	{
-		if (Add())
+		if (Connect())
 		{
 			StartCommentary();
 			m_bCommentarying = TRUE;
@@ -694,7 +772,7 @@ namespace MShow
 
 	void MClientController::OnStopCommentaryClick(TinyVisual*, EventArgs& args)
 	{
-		if (Remove(m_szSourceID))
+		if (Disconnect(m_szSourceID))
 		{
 			StopCommentary();
 			m_bCommentarying = FALSE;

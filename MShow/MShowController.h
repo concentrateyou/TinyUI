@@ -28,7 +28,6 @@ namespace MShow
 		~MShowController();
 		BOOL	Initialize();
 		void	Uninitialize();
-		MAppConfig& AppConfig();
 		MPreviewController* GetPreviewController();
 	private:
 		void InitializeUI();

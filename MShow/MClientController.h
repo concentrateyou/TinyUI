@@ -33,26 +33,29 @@ namespace MShow
 		void	SetTimes(const string& szTime1, const string& szTime2);
 		BOOL	SetPreview(const string& szPreviewURL);
 	private:
-		void InitializeUI();
-		void OnSettingClick(TinyVisual*, EventArgs& args);
-		void OnMinimumClick(TinyVisual*, EventArgs& args);
-		void OnCloseClick(TinyVisual*, EventArgs& args);
-		void OnEditClick(TinyVisual*, EventArgs& args);
-		void OnSaveClick(TinyVisual*, EventArgs& args);
-		void OnCancelClick(TinyVisual*, EventArgs& args);
-		void OnStartCommentaryClick(TinyVisual*, EventArgs& args);
-		void OnPauseCommentaryClick(TinyVisual*, EventArgs& args);
-		void OnStopCommentaryClick(TinyVisual*, EventArgs& args);
-		void OnMicrophoneTestClick(TinyVisual*, EventArgs& args);
-		void OnSpeakerTestClick(TinyVisual*, EventArgs& args);
-		void OnMicrophoneFocus(TinyVisual*, FocusEventArgs& args);
-		void OnSpeakerFocus(TinyVisual*, FocusEventArgs& args);
-		void OnAudioDSP(BYTE* bits, LONG size);
-		void OnMessagePump();
-		static VOID CALLBACK OnTimer(PVOID lpParam, BOOLEAN TimerOrWaitFired);
+		void	InitializeUI();
+		void	OnSettingClick(TinyVisual*, EventArgs& args);
+		void	OnMinimumClick(TinyVisual*, EventArgs& args);
+		void	OnCloseClick(TinyVisual*, EventArgs& args);
+		void	OnEditClick(TinyVisual*, EventArgs& args);
+		void	OnSaveClick(TinyVisual*, EventArgs& args);
+		void	OnCancelClick(TinyVisual*, EventArgs& args);
+		void	OnStartCommentaryClick(TinyVisual*, EventArgs& args);
+		void	OnPauseCommentaryClick(TinyVisual*, EventArgs& args);
+		void	OnStopCommentaryClick(TinyVisual*, EventArgs& args);
+		void	OnMicrophoneTestClick(TinyVisual*, EventArgs& args);
+		void	OnSpeakerTestClick(TinyVisual*, EventArgs& args);
+		void	OnMicrophoneFocus(TinyVisual*, FocusEventArgs& args);
+		void	OnSpeakerFocus(TinyVisual*, FocusEventArgs& args);
+		void	OnAudioDSP(BYTE* bits, LONG size);
+		void	OnMessagePump();
+		BOOL	Query(const string& sourceID, INT& count);
 	private:
-		BOOL	Add();//添加源
-		BOOL	Remove(const string& sourceID);//删除源
+		static VOID CALLBACK OnTimer1(PVOID lpParam, BOOLEAN TimerOrWaitFired);
+		static VOID CALLBACK OnTimer2(PVOID lpParam, BOOLEAN TimerOrWaitFired);
+	private:
+		BOOL	Connect();//添加源
+		BOOL	Disconnect(const string& sourceID);
 		BOOL	UpdatePreviewURL(const string& sourceID, const string& strURL);
 		BOOL	GetPreviewURL(string& szURL, INT& iAudio);
 		void	Close();
@@ -64,7 +67,8 @@ namespace MShow
 		BOOL								m_bPause;
 		BOOL								m_bCommentarying;
 		BOOL								m_bBreak;
-		HANDLE								m_hTimer;
+		HANDLE								m_hTimer1;
+		HANDLE								m_hTimer2;
 		LONGLONG							m_previousPTS;
 		string								m_szURL;//预览流地址
 		string								m_szSourceID;
