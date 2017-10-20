@@ -88,6 +88,7 @@ namespace MShow
 						m_pusher.SendH264NALU(videoSample.mediaTag.dwFlag, videoSample.bits, videoSample.size, videoSample.mediaTag.dwTime);
 					}
 					SAFE_DELETE_ARRAY(videoSample.bits);
+					
 				}
 				else
 				{
@@ -97,6 +98,7 @@ namespace MShow
 						m_pusher.SendAACRaw(audioSample.bits, audioSample.size, audioSample.mediaTag.dwTime);
 					}
 					SAFE_DELETE_ARRAY(audioSample.bits);
+					
 				}
 			}
 		}
