@@ -93,18 +93,16 @@ namespace MShow
 		{
 			ASSERT(size == m_videoSize.cx * m_videoSize.cy * 4);
 			memcpy(m_pvBits, bits, size);
-		}
-	}
-	void MPreviewController::OnVideoRender()
-	{
-		if (m_hBitmap != NULL)
-		{
 			RECT rectangle = { 0 };
 			::GetWindowRect(m_view.Handle(), &rectangle);
 			TinyUI::TinyWindowDC wdc(m_view.Handle());
 			TinyUI::TinyMemDC mdc(wdc, m_hBitmap);
-			::SetStretchBltMode(wdc, HALFTONE);
+			::SetStretchBltMode(wdc, COLORONCOLOR);
 			::StretchBlt(wdc, 0, 0, TO_CX(rectangle), TO_CY(rectangle), mdc, 0, 0, m_videoSize.cx, m_videoSize.cy, SRCCOPY);
 		}
+	}
+	void MPreviewController::OnVideoRender()
+	{
+	
 	}
 }

@@ -267,7 +267,6 @@ namespace DXFramework
 				m_dx11.GetImmediateContext()->CopyResource(m_copy2D, m_render2D);
 			}
 		}
-		m_dx11.GetImmediateContext()->ClearState();
 	}
 	BOOL DX11RenderView::SaveAs(const CHAR* pzName, D3DX11_IMAGE_FILE_FORMAT format)
 	{
