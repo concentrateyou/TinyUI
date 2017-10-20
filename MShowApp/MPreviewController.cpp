@@ -181,7 +181,7 @@ namespace MShow
 				//ÍøÂç²»ÎÈ¶¨
 				if (m_videoQueue.GetCount() <= 5)
 				{
-					INT render = (m_render + 1);
+					INT render = m_render;
 					render = (render == ARRAYSIZE(m_renderViews)) ? 0 : render;
 					DWORD dwSize = 0;
 					BYTE* bits = m_renderViews[render]->Map(dwSize);
@@ -202,9 +202,12 @@ namespace MShow
 							m_renderViews[render]->Unmap();
 							m_videoQueue.Push(sampleTag);
 							LONGLONG currentQPC = MShowApp::GetInstance().GetQPCTimeMS();
-							if ((currentQPC - g_currentQPC) >= 20)
+							if ((currentQPC - g_currentQPC) >= 30)
 							{
-								TRACE("Cost:%lld\n", currentQPC - g_currentQPC);
+								//TRACE("Cost:%lld\n", (currentQPC - g_currentQPC));
+								/*sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
+								memcpy_s(sampleTag.bits + 4, sampleTag.size, bits, sampleTag.size);
+								m_videoQueue.Push(sampleTag);*/
 							}
 						}
 					}

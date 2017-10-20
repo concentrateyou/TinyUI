@@ -53,10 +53,16 @@ namespace MShow
 					ZeroMemory(&sample, sizeof(sample));
 					if (m_encoder.Encode(sampleTag, bo, so, sample.mediaTag))
 					{
-						sample.size = so;
-						sample.bits = new BYTE[so];
-						memcpy(sample.bits, bo, so);
-						m_samples.Push(sample);
+						INT sampleTime = sample.mediaTag.dwTime;
+						sampleTime -= 80;//
+						if (sampleTime > 0)
+						{
+							sample.mediaTag.dwTime -= 80;
+							sample.size = so;
+							sample.bits = new BYTE[so];
+							memcpy(sample.bits, bo, so);
+							m_samples.Push(sample);
+						}
 					}
 					queue.Free(sampleTag.bits);
 				}
