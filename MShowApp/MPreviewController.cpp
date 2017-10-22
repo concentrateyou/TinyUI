@@ -433,8 +433,8 @@ namespace MShow
 			}
 		}
 		m_graphics.GetDX11().GetRender2D()->EndDraw();
+		//////////////////////////////////////////////////////////////////////////
 		m_previousRender = (m_currentRender + ARRAYSIZE(m_renderViews) / 2) % ARRAYSIZE(m_renderViews);
-		//TRACE("previous:%d, current:%d\n", m_previousRender, m_currentRender);
 		m_currentRender++;
 		m_currentRender = m_currentRender % ARRAYSIZE(m_renderViews);
 		m_event.SetEvent();

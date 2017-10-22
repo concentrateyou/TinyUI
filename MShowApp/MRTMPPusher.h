@@ -20,7 +20,7 @@ namespace MShow
 		virtual ~MRTMPPusher();
 		//rtmp://10.121.86.127/live/test_mshow
 		//BOOL Connect(const TinyString& szURL = "rtmp://101.227.14.238:1935/liveugc/rqy_mi1lrjbc?auth_code=gkrai2gy", DWORD dwRate = 25);
-		BOOL Connect(const TinyString& szURL = "rtmp://101.227.14.238:1935/liveugc/rqy_55z541ma?auth_code=4xlhx0r1", DWORD dwRate = 25);
+		BOOL Connect(const TinyString& szURL = "rtmp://101.227.14.238:1935/liveugc/rqy_sqckfdih?auth_code=qchak5ls", DWORD dwRate = 25);
 		BOOL Disconnect();
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;

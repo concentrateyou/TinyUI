@@ -67,3 +67,4 @@
 *.aac
 *.rar
 /ThirdParty/jsoncpp/lib/pkgconfig
+/MShowApp/x64/Debug

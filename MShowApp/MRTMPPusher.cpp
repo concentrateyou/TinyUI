@@ -66,41 +66,41 @@ namespace MShow
 		{
 			if (m_bClose)
 				break;
-			if (videoSamples.GetSize() > 0 && audioSamples.GetSize() > 0)
+			if (videoSamples.GetSize() <= 0 || audioSamples.GetSize() <= 0)
 			{
-				if (!m_bAVSC)
+				Sleep(15);
+				continue;
+			}
+			if (!m_bAVSC)
+			{
+				vector<BYTE> info;
+				audioTask.GetAAC().GetSpecificInfo(info);
+				m_pusher.SendAACASC(&info[0], info.size());
+				vector<BYTE>& sps = videoTask.GetQSV().GetSPS();
+				vector<BYTE>& pps = videoTask.GetQSV().GetPPS();
+				m_pusher.SendH264AVC(pps, sps);
+				m_bAVSC = TRUE;
+			}
+			LONGLONG videoTS = videoSamples.GetMinimumTimeStamp();
+			LONGLONG audioTS = audioSamples.GetMinimumTimeStamp();
+			if (audioTS > videoTS)
+			{
+				ZeroMemory(&videoSample, sizeof(videoSample));
+				if (videoSamples.Pop(videoSample))
 				{
-					vector<BYTE> info;
-					audioTask.GetAAC().GetSpecificInfo(info);
-					m_pusher.SendAACASC(&info[0], info.size());
-					vector<BYTE>& sps = videoTask.GetQSV().GetSPS();
-					vector<BYTE>& pps = videoTask.GetQSV().GetPPS();
-					m_pusher.SendH264AVC(pps, sps);
-					m_bAVSC = TRUE;
+					m_pusher.SendH264NALU(videoSample.mediaTag.dwFlag, videoSample.bits, videoSample.size, videoSample.mediaTag.dwTime);
 				}
-				//TRACE("videoSamples:%d, audioSamples:%d\n", videoSamples.GetCount(), audioSamples.GetCount());
-				LONGLONG videoTS = videoSamples.GetMinimumTimeStamp();
-				LONGLONG audioTS = audioSamples.GetMinimumTimeStamp();
-				if (audioTS > videoTS)
-				{
-					ZeroMemory(&videoSample, sizeof(videoSample));
-					if (videoSamples.Pop(videoSample))
-					{
-						m_pusher.SendH264NALU(videoSample.mediaTag.dwFlag, videoSample.bits, videoSample.size, videoSample.mediaTag.dwTime);
-					}
-					SAFE_DELETE_ARRAY(videoSample.bits);
+				SAFE_DELETE_ARRAY(videoSample.bits);
 
-				}
-				else
+			}
+			else
+			{
+				ZeroMemory(&audioSample, sizeof(audioSample));
+				if (audioSamples.Pop(audioSample))
 				{
-					ZeroMemory(&audioSample, sizeof(audioSample));
-					if (audioSamples.Pop(audioSample))
-					{
-						m_pusher.SendAACRaw(audioSample.bits, audioSample.size, audioSample.mediaTag.dwTime);
-					}
-					SAFE_DELETE_ARRAY(audioSample.bits);
-
+					m_pusher.SendAACRaw(audioSample.bits, audioSample.size, audioSample.mediaTag.dwTime);
 				}
+				SAFE_DELETE_ARRAY(audioSample.bits);
 			}
 		}
 	}
