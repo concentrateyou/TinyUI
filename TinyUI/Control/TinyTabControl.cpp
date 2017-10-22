@@ -213,7 +213,7 @@ namespace TinyUI
 	{
 		EVENT_SELCHANGE(this);
 	}
-	HRESULT TinyTabControl::OnNotifyReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT TinyTabControl::OnNotifyReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		BOOL bPrevent = FALSE;
 		switch (((LPNMHDR)lParam)->code)

@@ -307,7 +307,7 @@ namespace TinyUI
 		HRESULT	TinyVisual::SendMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes)
 		{
 			ASSERT(m_document->Handle());
-			return ::SendMessage(m_document->Handle(), uMsg, wParam, lParam);
+			return static_cast<HRESULT>(::SendMessage(m_document->Handle(), uMsg, wParam, lParam));
 		}
 		BOOL TinyVisual::Invalidate()
 		{

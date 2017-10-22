@@ -97,7 +97,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\TinyUI;..\ThirdParty\vld\x86;..\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\TinyUI;..\Debug</AdditionalLibraryDirectories>
       <AdditionalDependencies>d3d10_1.lib;d3d11.lib;dxgi.lib;DXCapture.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

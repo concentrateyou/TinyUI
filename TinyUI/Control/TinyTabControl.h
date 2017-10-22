@@ -17,7 +17,7 @@ namespace TinyUI
 		virtual DWORD RetrieveStyle();
 		virtual DWORD RetrieveExStyle();
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
-		HRESULT OnNotifyReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+		LRESULT OnNotifyReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		HIMAGELIST GetImageList() const;
 		HIMAGELIST SetImageList(HIMAGELIST hImageList);
 		INT GetItemCount() const;

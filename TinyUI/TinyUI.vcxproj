@@ -82,7 +82,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_WINSOCK_DEPRECATED_NO_WARNINGS;STB_IMAGE_IMPLEMENTATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>$(MYSQLSDK_DIR)include;$(DXSDK_DIR)\Include;..\ThirdParty\sqlite;..\ThirdParty\vld;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MYSQLSDK_DIR)include;$(DXSDK_DIR)\Include;..\ThirdParty\sqlite;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -94,7 +94,7 @@
       </AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(MYSQLSDK_DIR)Lib;$(DXSDK_DIR)\Lib\x86;..\ThirdParty\sqlite;..\ThirdParty\vld\x86;..\ThirdParty\xaudio2\lib\x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(MYSQLSDK_DIR)Lib;$(DXSDK_DIR)\Lib\x86;..\ThirdParty\sqlite</AdditionalLibraryDirectories>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -107,7 +107,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_WIN64;_DEBUG;_LIB;_WINSOCK_DEPRECATED_NO_WARNINGS;STB_IMAGE_IMPLEMENTATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>$(MYSQLSDK_DIR)include;..\ThirdParty\sqlite;..\ThirdParty\vld;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MYSQLSDK_DIR)include;$(DXSDK_DIR)\Include;..\ThirdParty\sqlite;..\ThirdParty\vld;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -119,7 +119,7 @@
       </AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(MYSQLSDK_DIR)Lib;..\ThirdParty\sqlite;..\ThirdParty\vld\x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(MYSQLSDK_DIR)Lib;$(DXSDK_DIR)\Lib\x64;..\ThirdParty\sqlite</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

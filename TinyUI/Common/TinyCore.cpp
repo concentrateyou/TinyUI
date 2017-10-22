@@ -237,7 +237,7 @@ namespace TinyUI
 				{
 					for (UINT v = 0; v < s; v++)
 					{
-						__asm { pause };
+						//__asm { pause };
 					}
 					if (*m_lock == 0 && InterlockedCompareExchange(m_lock, 0, value))
 					{

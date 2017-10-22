@@ -88,12 +88,12 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(DXSDK_DIR)\Include;$(INTELMEDIASDKROOT)include;..\TinyUI;..\Decode;..\IntelQSV;..\DXFramework;..\ThirdParty\libfaad\include;..\ThirdParty\mpg123\include;..\ThirdParty\librtmp\include;..\ThirdParty\ffmpeg\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DXSDK_DIR)\Include;$(INTELMEDIASDKROOT)include;..\TinyUI;..\Decode;..\IntelQSV;..\DXFramework;..\ThirdParty\ffmpeg\include;..\ThirdParty\libfaad\include;..\ThirdParty\mpg123\include;..\ThirdParty\librtmp\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\Debug;..\ThirdParty\mpg123\lib;..\ThirdParty\ffmpeg\lib;..\ThirdParty\libfaad\lib;..\ThirdParty\librtmp\lib;..\ThirdParty\vld\x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\ThirdParty\mpg123\lib\x86;..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\libfaad\lib\x86;..\ThirdParty\librtmp\lib\x86;..\Debug</AdditionalLibraryDirectories>
       <AdditionalDependencies>TinyUI.lib;Decode.lib;dwmapi.lib;dxva2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -104,7 +104,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\Decode;..\ThirdParty\libfaad\include;..\ThirdParty\ffmpeg\include;..\ThirdParty\mpg123\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\Decode;..\ThirdParty\ffmpeg\$(Platform)\include;..\ThirdParty\libfaad\include;..\ThirdParty\mpg123\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

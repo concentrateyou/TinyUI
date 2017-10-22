@@ -83,7 +83,7 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>..\TinyUI;..\Debug;..\ThirdParty\mpg123\lib;..\ThirdParty\libfaad\lib;..\ThirdParty\ffmpeg\lib;..\ThirdParty\librtmp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\TinyUI;..\Debug;..\ThirdParty\mpg123\lib\x86;..\ThirdParty\libfaad\lib\x86;..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\librtmp\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libfaad.lib;librtmp.lib;libmpg123.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
