@@ -154,9 +154,9 @@ namespace TinyUI
 			DWORD		dwType;
 			DWORD		dwFlag;
 			DWORD		dwTime;
-			LONGLONG	INC;
-			LONGLONG	PTS;
-			LONGLONG	DTS;
+			INT64		INC;
+			INT64		PTS;
+			INT64		DTS;
 		}MediaTag;
 
 		typedef struct tagSample
@@ -168,13 +168,13 @@ namespace TinyUI
 
 		typedef struct tagSampleTag
 		{
-			LONGLONG	sample;
-			LONGLONG	sampleDTS;
-			LONGLONG	samplePTS;
-			LONGLONG	timestamp;
-			BYTE		sampleType;
-			BYTE*		bits;
-			LONG		size;
+			INT64	sample;
+			INT64	sampleDTS;
+			INT64	samplePTS;
+			INT64	timestamp;
+			BYTE	sampleType;
+			BYTE*	bits;
+			LONG	size;
 		}SampleTag;
 	};
 }

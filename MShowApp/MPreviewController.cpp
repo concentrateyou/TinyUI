@@ -201,7 +201,7 @@ namespace MShow
 							memcpy_s(sampleTag.bits + 4, sampleTag.size, bits, sampleTag.size);
 							m_renderViews[m_previousRender]->Unmap();
 							m_videoQueue.Push(sampleTag);
-							LONGLONG currentQPC = MShowApp::GetInstance().GetQPCTimeMS();
+							QWORD currentQPC = MShowApp::GetInstance().GetQPCTimeMS();
 							if ((currentQPC - m_currentQPC) >= 25)
 							{
 								TRACE("Cost:%lld\n", (currentQPC - m_currentQPC));

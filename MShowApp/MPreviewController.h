@@ -63,7 +63,7 @@ namespace MShow
 		INT								m_previousRender;
 		INT								m_currentRender;
 		INT								m_videoFPS;
-		LONGLONG						m_currentQPC;
+		QWORD							m_currentQPC;
 		TinySize						m_pulgSize;
 		TinyMenu						m_popup;
 		TinyEvent						m_event;

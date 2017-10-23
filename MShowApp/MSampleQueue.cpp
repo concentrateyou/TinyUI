@@ -11,25 +11,25 @@ namespace MShow
 	MSampleQueue::~MSampleQueue()
 	{
 	}
-	LONGLONG MSampleQueue::GetMinimumTimeStamp()
+	INT64 MSampleQueue::GetMinimumTimeStamp()
 	{
 		TinyAutoLock lock(m_lock);
 		if (m_list.GetSize() > 0)
 		{
 			ITERATOR s = m_list.First();
 			Sample& value = m_list.GetAt(s);
-			return static_cast<LONGLONG>(value.mediaTag.dwTime);
+			return static_cast<INT64>(value.mediaTag.dwTime);
 		}
 		return -1;
 	}
-	LONGLONG MSampleQueue::GetMaximumTimeStamp()
+	INT64 MSampleQueue::GetMaximumTimeStamp()
 	{
 		TinyAutoLock lock(m_lock);
 		if (m_list.GetSize() > 0)
 		{
 			ITERATOR s = m_list.Last();
 			Sample& value = m_list.GetAt(s);
-			return static_cast<LONGLONG>(value.mediaTag.dwTime);
+			return static_cast<INT64>(value.mediaTag.dwTime);
 		}
 		return -1;
 	}

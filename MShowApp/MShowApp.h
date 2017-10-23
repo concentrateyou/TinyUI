@@ -23,7 +23,6 @@ namespace MShow
 		BOOL				SleepNS(QWORD qwNSTime);
 	public:
 		static MShowApp&	GetInstance() throw();
-		void OnTimer();
 	private:
 		MShowWindow			m_window;
 		MShowController		m_controller;

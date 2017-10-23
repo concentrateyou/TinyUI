@@ -66,7 +66,6 @@ namespace MShow
 		{
 			if (m_bClose)
 				break;
-			TRACE("videos:%d, audios:%d\n", videoSamples.GetCount(), audioSamples.GetCount());
 			if (videoSamples.GetCount() <= 0 || audioSamples.GetCount() <= 0)
 			{
 				Sleep(15);

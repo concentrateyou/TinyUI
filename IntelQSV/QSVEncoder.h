@@ -42,7 +42,7 @@ namespace QSV
 		void DeleteAllocator();
 		INT GetFreeVPPSurfaceIndex();
 		INT GetFreeVideoSurfaceIndex();
-		void LoadRGB32(mfxFrameSurface1* pIN, const BYTE* bits, LONG size, LONGLONG timestamp);
+		void LoadRGB32(mfxFrameSurface1* pIN, const BYTE* bits, LONG size, INT64 timestamp);
 	private:
 		DWORD								m_dwINC;
 		mfxIMPL								m_mfxImpl;

@@ -44,7 +44,7 @@ namespace MShow
 	}
 	//////////////////////////////////////////////////////////////////////////
 	LARGE_INTEGER g_clockFreq;
-	__declspec(thread) LONGLONG g_lastQPCTime = 0;
+	__declspec(thread) QWORD g_lastQPCTime = 0;
 	//////////////////////////////////////////////////////////////////////////
 	MShowApp::MShowApp()
 		:m_searchCTRL(m_searchView),
@@ -191,12 +191,12 @@ namespace MShow
 		}
 	}
 
-	void MShowApp::SetCurrentAudioTS(LONGLONG ts)
+	void MShowApp::SetCurrentAudioTS(QWORD ts)
 	{
 		TinyAutoLock lock(m_lock);
 		m_audioTS = ts;
 	}
-	LONGLONG MShowApp::GetCurrentAudioTS()
+	QWORD MShowApp::GetCurrentAudioTS()
 	{
 		return m_audioTS;
 	}

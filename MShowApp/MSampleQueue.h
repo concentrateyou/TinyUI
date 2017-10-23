@@ -12,8 +12,8 @@ namespace MShow
 	public:
 		MSampleQueue();
 		~MSampleQueue();
-		LONGLONG GetMinimumTimeStamp();
-		LONGLONG GetMaximumTimeStamp();
+		INT64 GetMinimumTimeStamp();
+		INT64 GetMaximumTimeStamp();
 		BOOL Push(Sample& sample);
 		BOOL Pop(Sample& sample);
 		BOOL IsEmpty();

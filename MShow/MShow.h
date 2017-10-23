@@ -27,15 +27,15 @@ namespace MShow
 		QWORD				GetQPCTimeMS();
 		QWORD				GetQPCTime100NS();
 		BOOL				SleepNS(QWORD qwNSTime);
-		void				SetCurrentAudioTS(LONGLONG ts);
-		LONGLONG			GetCurrentAudioTS();
+		void				SetCurrentAudioTS(QWORD ts);
+		QWORD				GetCurrentAudioTS();
 		string				GetDefaultPath();
 		MAppConfig&			AppConfig();
 	public:
 		static MShowApp&	GetInstance() throw();
 	private:
-		LONGLONG			m_audioTS;
 		string				m_szPath;
+		QWORD				m_audioTS;
 		TinyLock			m_lock;
 		MSearchWindow		m_searchView;
 		MSearchController	m_searchCTRL;
