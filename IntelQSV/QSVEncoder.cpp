@@ -390,7 +390,6 @@ namespace QSV
 				if (status == MFX_ERR_NONE)
 				{
 					m_dwINC++;
-					TRACE("PTS:%lld,   DTS:%lld,   samplePTS:%lld\n", m_mfxResidial.TimeStamp, m_mfxResidial.DecodeTimeStamp, tag.samplePTS);
 					memcpy(m_streamBits[1], m_mfxResidial.Data + m_mfxResidial.DataOffset, m_mfxResidial.DataLength);
 					bo = m_streamBits[1];
 					so = m_mfxResidial.DataLength;

@@ -10,15 +10,15 @@ namespace DXFramework
 		virtual ~DX11RenderView();
 		DX11&		GetDX11();
 		TinySize	GetSize() const;
-		BOOL		Create(BOOL bMap = FALSE);
-		BOOL		Create(INT cx, INT cy, BOOL bMap = TRUE, BOOL bSync = FALSE);
+		BOOL		Create();
+		BOOL		Create(INT cx, INT cy, BOOL bSync = FALSE);
 		BOOL		Resize();
 		BOOL		Resize(INT cx, INT cy);
 		void		BeginDraw();
 		void		EndDraw();
 		BOOL		SaveAs(const CHAR* pzName, D3DX11_IMAGE_FILE_FORMAT format);
 		BYTE*		Map(DWORD& dwSize);
-		void		Unmap();
+		BOOL		Unmap();
 		HANDLE		GetHandle() const;
 		BOOL		Lock(UINT64 acqKey, DWORD dwMS);
 		BOOL		Unlock(UINT64 relKey);

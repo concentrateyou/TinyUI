@@ -22,7 +22,7 @@ namespace DXFramework
 	{
 		return m_size;
 	}
-	BOOL DX11RenderView::Create(BOOL bMap)
+	BOOL DX11RenderView::Create()
 	{
 		if (!m_dx11.IsValid())
 			return FALSE;
@@ -61,26 +61,22 @@ namespace DXFramework
 		hRes = m_dx11.GetD3D()->CreateDepthStencilView(m_depth2D, &depthViewDesc, &m_depthView);
 		if (hRes != S_OK)
 			return FALSE;
-		if (bMap)
-		{
-			ZeroMemory(&desc, sizeof(desc));
-			desc.Width = m_size.cx;
-			desc.Height = m_size.cy;
-			desc.MipLevels = 1;
-			desc.ArraySize = 1;
-			desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-			desc.SampleDesc.Count = 1;
-			desc.SampleDesc.Quality = 0;
-			desc.Usage = D3D11_USAGE_STAGING;
-			desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-			hRes = m_dx11.GetD3D()->CreateTexture2D(&desc, NULL, &m_copy2D);
-			if (hRes != S_OK)
-				return FALSE;
-		}
-		m_bMap = bMap;
+		ZeroMemory(&desc, sizeof(desc));
+		desc.Width = m_size.cx;
+		desc.Height = m_size.cy;
+		desc.MipLevels = 1;
+		desc.ArraySize = 1;
+		desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		desc.SampleDesc.Count = 1;
+		desc.SampleDesc.Quality = 0;
+		desc.Usage = D3D11_USAGE_STAGING;
+		desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+		hRes = m_dx11.GetD3D()->CreateTexture2D(&desc, NULL, &m_copy2D);
+		if (hRes != S_OK)
+			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11RenderView::Create(INT cx, INT cy, BOOL bMap, BOOL bSync)
+	BOOL DX11RenderView::Create(INT cx, INT cy, BOOL bSync)
 	{
 		if (!m_dx11.IsValid())
 			return FALSE;
@@ -117,22 +113,19 @@ namespace DXFramework
 			if (hRes != S_OK)
 				return FALSE;
 		}
-		if (bMap)
-		{
-			ZeroMemory(&desc, sizeof(desc));
-			desc.Width = m_size.cx;
-			desc.Height = m_size.cy;
-			desc.MipLevels = 1;
-			desc.ArraySize = 1;
-			desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-			desc.SampleDesc.Count = 1;
-			desc.SampleDesc.Quality = 0;
-			desc.Usage = D3D11_USAGE_STAGING;
-			desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-			hRes = m_dx11.GetD3D()->CreateTexture2D(&desc, NULL, &m_copy2D);
-			if (hRes != S_OK)
-				return FALSE;
-		}
+		ZeroMemory(&desc, sizeof(desc));
+		desc.Width = m_size.cx;
+		desc.Height = m_size.cy;
+		desc.MipLevels = 1;
+		desc.ArraySize = 1;
+		desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		desc.SampleDesc.Count = 1;
+		desc.SampleDesc.Quality = 0;
+		desc.Usage = D3D11_USAGE_STAGING;
+		desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+		hRes = m_dx11.GetD3D()->CreateTexture2D(&desc, NULL, &m_copy2D);
+		if (hRes != S_OK)
+			return FALSE;
 		D3D11_TEXTURE2D_DESC depthDesc;
 		ZeroMemory(&depthDesc, sizeof(depthDesc));
 		depthDesc.Width = m_size.cx;
@@ -157,7 +150,6 @@ namespace DXFramework
 		hRes = m_dx11.GetD3D()->CreateDepthStencilView(m_depth2D, &depthViewDesc, &m_depthView);
 		if (hRes != S_OK)
 			return FALSE;
-		m_bMap = bMap;
 		m_bSync = bSync;
 		return TRUE;
 	}
@@ -173,7 +165,7 @@ namespace DXFramework
 		HRESULT hRes = m_dx11.GetSwap()->ResizeBuffers(2, 0, 0, DXGI_FORMAT_B8G8R8A8_UNORM, 0);
 		if (hRes != S_OK)
 			return FALSE;
-		return Create(m_bMap);
+		return Create();
 	}
 	BOOL DX11RenderView::Resize(INT cx, INT cy)
 	{
@@ -184,7 +176,7 @@ namespace DXFramework
 		if (m_render2D != NULL)
 		{
 			m_render2D.Release();
-			return Create(cx, cy, m_bMap, m_bSync);
+			return Create(cx, cy, m_bSync);
 		}
 		return FALSE;
 	}
@@ -204,9 +196,10 @@ namespace DXFramework
 	{
 		if (!m_dx11.IsValid())
 			return NULL;
-		dwSize = 0;
-		if (m_copy2D != NULL)
+		if (m_render2D != NULL && m_copy2D != NULL)
 		{
+			m_dx11.GetImmediateContext()->CopyResource(m_copy2D, m_render2D);
+			dwSize = 0;
 			D3D11_MAPPED_SUBRESOURCE ms = { 0 };
 			if (SUCCEEDED(m_dx11.GetImmediateContext()->Map(m_copy2D, 0, D3D11_MAP_READ, 0, &ms)))
 			{
@@ -216,12 +209,16 @@ namespace DXFramework
 		}
 		return NULL;
 	}
-	void DX11RenderView::Unmap()
+	BOOL DX11RenderView::Unmap()
 	{
-		if (m_copy2D != NULL)
+		if (!m_dx11.IsValid())
+			return FALSE;
+		if (m_render2D != NULL && m_copy2D != NULL)
 		{
 			m_dx11.GetImmediateContext()->Unmap(m_copy2D, 0);
+			return TRUE;
 		}
+		return FALSE;
 	}
 
 	HANDLE	DX11RenderView::GetHandle() const
@@ -260,13 +257,7 @@ namespace DXFramework
 	}
 	void DX11RenderView::EndDraw()
 	{
-		if (m_dx11.IsValid())
-		{
-			if (m_render2D != NULL && m_copy2D != NULL)
-			{
-				m_dx11.GetImmediateContext()->CopyResource(m_copy2D, m_render2D);
-			}
-		}
+		//TODO
 	}
 	BOOL DX11RenderView::SaveAs(const CHAR* pzName, D3DX11_IMAGE_FILE_FORMAT format)
 	{
