@@ -195,5 +195,6 @@
     <Xml Include="resource.xml" />
     <Xml Include="dropdown.xml" />
     <Xml Include="search.xml" />
+    <Xml Include="client.xml" />
   </ItemGroup>
 </Project>

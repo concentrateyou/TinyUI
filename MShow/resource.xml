@@ -28,6 +28,10 @@
     <add name="sysbtn_close_hover" value="skin\system\sysbtn_close_hover.png"></add>
     <add name="sysbtn_close_down" value="skin\system\sysbtn_close_down.png"></add>
 
+    <add name="setting_normal" value="skin\system\setting_normal.png"></add>
+    <add name="setting_hover" value="skin\system\setting_hover.png"></add>
+    <add name="setting_down" value="skin\system\setting_down.png"></add>
+
     <add name="combobox_normal" value="skin\combobox\combobox_normal.png"></add>
     <add name="combobox_push" value="skin\combobox\combobox_push.png"></add>
     <add name="combobox_hover" value="skin\combobox\combobox_hover.png"></add>
@@ -52,7 +56,7 @@
     <add name="blue_down" value="skin\button\blue_down.png"></add>
     <add name="blue_highlight" value="skin\button\blue_highlight.png"></add>
 
-    <add name="loading" value="skin\button\loading.gif"></add>
-    
+    <add name="loading" value="skin\animate\loading.gif"></add>
+
   </image>
 </context>

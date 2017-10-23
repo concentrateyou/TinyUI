@@ -82,15 +82,69 @@ namespace MShow
 			SEARCH_ITEM* val = static_cast<SEARCH_ITEM*>(ps->GetItemData());
 			if (val != NULL)
 			{
-				m_view.ShowWindow(SW_HIDE);
-				m_view.UpdateWindow();
-				MShow::MShowApp::GetInstance().GetClientView().ShowWindow(SW_NORMAL);
-				MShow::MShowApp::GetInstance().GetClientController().SetProgram(val->szProgramName, val->szProgramID, val->szLogID);
-				MShow::MShowApp::GetInstance().GetClientController().SetTimes(val->szBeginTime, val->szEndTime);
-				MShow::MShowApp::GetInstance().GetClientController().SetPreview(val->szPreviewURL);
-				MShow::MShowApp::GetInstance().GetClientView().UpdateWindow();
+				INT count = 0;
+				if (Query(string(), val->szProgramID, val->szLogID, count))
+				{
+					if (count < 9)
+					{
+						m_view.ShowWindow(SW_HIDE);
+						m_view.UpdateWindow();
+						MShow::MShowApp::GetInstance().GetClientView().ShowWindow(SW_NORMAL);
+						MShow::MShowApp::GetInstance().GetClientController().SetProgram(val->szProgramName, val->szProgramID, val->szLogID);
+						MShow::MShowApp::GetInstance().GetClientController().SetTimes(val->szBeginTime, val->szEndTime);
+						MShow::MShowApp::GetInstance().GetClientController().SetPreview(val->szPreviewURL);
+						MShow::MShowApp::GetInstance().GetClientView().UpdateWindow();
+					}
+					else
+					{
+						MessageBox(NULL, "连接超出上限，添加失败!", "提示", MB_OK);
+					}
+				}
 			}
 		}
+	}
+
+	BOOL MSearchController::Query(const string& sourceID, const string& programID, const string& logID, INT& count)
+	{
+		string code;
+		string context;
+		Json::Reader reader;
+		Json::Value value;
+		Json::Value result;
+		TinyHTTPClient client;
+		client.GetRequest().SetVerbs(TinyHTTPClient::GET);
+		client.GetRequest().Add(TinyHTTPClient::ContentType, "application/x-www-form-urlencoded");
+		client.GetRequest().Add("Sign", "#f93Uc31K24()_@");
+		string address = StringPrintf("%s/%s?id=%s&programId=%s&directorId=%s", MShow::MShowApp::GetInstance().AppConfig().GetPrefix().c_str(), "commentary/list", sourceID.c_str(), programID.c_str(), logID.c_str());
+		if (!client.Open(address))
+		{
+			LOG(ERROR) << "[MClientController] " << "Open " << address << " Fail";
+			goto _ERROR;
+		}
+		if (!client.GetResponse().ReadAsString(context))
+		{
+			LOG(ERROR) << "[MClientController] " << "Read Json Fail";
+			goto _ERROR;
+		}
+		if (!reader.parse(context, value))
+		{
+			LOG(ERROR) << "[MClientController] " << "Parse Json Fail";
+			goto _ERROR;
+		}
+		code = value["code"].asString();
+		if (code == "A00000")
+		{
+			count = value["data"].size();
+			return TRUE;
+		}
+		else
+		{
+			string msg = value["msg"].asString();
+			msg = std::move(UTF8ToASCII(msg));
+			LOG(ERROR) << "[MClientController] " << "Response Code : " << code << " Msg: " << msg;
+		}
+	_ERROR:
+		return FALSE;
 	}
 
 	void MSearchController::OnMessagePump()

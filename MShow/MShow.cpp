@@ -72,6 +72,8 @@ namespace MShow
 		string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\search.xml");
 		if (!m_searchView.Create(NULL, szFile.c_str()))
 			return FALSE;
+		m_searchView.ShowWindow(SW_SHOW);
+		m_searchView.UpdateWindow();
 		if (!m_searchCTRL.Initialize())
 			return FALSE;
 		szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\client.xml");
@@ -91,10 +93,10 @@ namespace MShow
 	}
 	BOOL MShowApp::Uninitialize()
 	{
-		m_searchView.DestroyWindow();
-		m_clientView.DestroyWindow();
 		m_clientCRTL.Uninitialize();
+		m_clientView.DestroyWindow();
 		m_searchCTRL.Uninitialize();
+		m_searchView.DestroyWindow();
 		if (!TinyApplication::GetInstance()->RemoveMessageLoop())
 			return FALSE;
 		if (!TinyApplication::GetInstance()->Uninitialize())

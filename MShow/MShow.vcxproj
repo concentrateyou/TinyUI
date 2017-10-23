@@ -230,6 +230,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Xml Include="client.xml" />
     <Xml Include="dropdown.xml" />
     <Xml Include="main.xml" />
     <Xml Include="resource.xml" />

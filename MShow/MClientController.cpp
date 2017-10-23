@@ -95,10 +95,20 @@ namespace MShow
 		if (pCTRL->m_preview->Open(pCTRL->m_szPreviewURL.c_str()))
 		{
 			LOG(INFO) << "[SetPreview] " << "Open Preview :" << pCTRL->m_szPreviewURL << " OK";
+			TinyVisual* visual = pCTRL->m_view.GetDocument()->GetVisualByName("btnStartCommentary");
+			if (visual != NULL)
+			{
+				visual->SetVisible(TRUE);
+			}
 		}
 		else
 		{
-			TinyVisual* visual = pCTRL->m_view.GetDocument()->GetVisualByName("lblError");
+			TinyVisual* visual = pCTRL->m_view.GetDocument()->GetVisualByName("btnStartCommentary");
+			if (visual != NULL)
+			{
+				visual->SetVisible(FALSE);
+			}
+			visual = pCTRL->m_view.GetDocument()->GetVisualByName("lblError");
 			if (visual != NULL)
 			{
 				visual->SetVisible(TRUE);

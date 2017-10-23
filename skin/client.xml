@@ -3,6 +3,11 @@
   <syscaption name ="syscaption" position="0,0" size="1000,27" background-image="syscaption">
     <label name="title" position="10,0" size="60,27" text="MShow工具" text-align="left|vcenter" text-color="255,255,255" >
     </label>
+    <button name="btnSetting" tooltip="setting" position="910,0" size="30,27"
+           image-normal="setting_normal"
+           image-highlight="setting_hover"
+           image-down="setting_down">
+    </button>
     <button name="sysmin" tooltip="Min" position="940,0" size="30,27"
             image-normal="sysbtn_min_normal"
             image-highlight="sysbtn_min_hover"
@@ -22,10 +27,20 @@
     <label name="lblTime2" position="675,103" size="80,23" text="结束时间: " text-align="left|top" font-family="微软雅黑" font-size="7,17" text-color="64,64,64" ></label>
     <label name="lblBeginTime" position="755,80" size="280,23" text="开始时间: " text-align="left|top" font-family="微软雅黑" font-size="7,17" text-color="64,64,64" ></label>
     <label name="lblEndTime" position="755,103" size="280,23" text="结束时间: " text-align="left|top" font-family="微软雅黑" font-size="7,17" text-color="64,64,64" ></label>
-    <button name="btnCommentary" position="675,344" size="90,36" text="开始解说" text-align="center|vcenter" text-color="255,255,255" font-family="微软雅黑" font-weight="400" font-size="8,18"
+    <button name="btnStartCommentary" position="675,344" size="90,36" text="开始解说" text-align="center|vcenter" text-color="255,255,255" font-family="微软雅黑" font-weight="400" font-size="8,18"
          image-normal="blue_normal"
          image-highlight="blue_highlight"
          image-down="blue_down">
+    </button>
+     <button name="btnPauseCommentary" position="675,344" size="90,36" text="暂停" text-align="center|vcenter" text-color="255,255,255" font-family="微软雅黑" font-weight="400" font-size="8,18"
+         image-normal="blue_normal"
+         image-highlight="blue_highlight"
+         image-down="blue_down" visible="false">
+    </button>
+     <button name="btnStopCommentary" position="775,344" size="90,36" text="停止解说" text-align="center|vcenter" text-color="255,255,255" font-family="微软雅黑" font-weight="400" font-size="8,18"
+         image-normal="blue_normal"
+         image-highlight="blue_highlight"
+         image-down="blue_down" visible="false">
     </button>
   </panel>
   <panel position="0,427" size="1000,120" background-image="panel">
@@ -56,7 +71,7 @@
     </panel>
   </panel>
   <panel position="0,547" size="1000,183" background-image="panel">
-    <panel position="20,0" size="1000,163">
+    <panel position="20,0" size="1000,163" name="setting" visible="false">
       <label text="麦克风:" position="5,5" size="40,28" text-color="0,0,0" text-align="left|vcenter">
       </label>
       <combobox name="microphone" position="50,5" size="180,28" text-align="left|vcenter" text-color="0,0,0"

@@ -24,6 +24,7 @@ namespace MShow
 		void OnItemClick(TinyVisual*, MouseEventArgs& args);
 		void GetPrograms();
 		void OnMessagePump();
+		BOOL Query(const string& sourceID, const string& programID, const string& logID, INT& count);
 	private:
 		MSearchWindow&				m_view;
 		TinyTaskBase				m_task;
