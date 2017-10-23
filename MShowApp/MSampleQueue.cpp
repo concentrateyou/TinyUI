@@ -13,6 +13,7 @@ namespace MShow
 	}
 	LONGLONG MSampleQueue::GetMinimumTimeStamp()
 	{
+		TinyAutoLock lock(m_lock);
 		if (m_list.GetSize() > 0)
 		{
 			ITERATOR s = m_list.First();
@@ -23,6 +24,7 @@ namespace MShow
 	}
 	LONGLONG MSampleQueue::GetMaximumTimeStamp()
 	{
+		TinyAutoLock lock(m_lock);
 		if (m_list.GetSize() > 0)
 		{
 			ITERATOR s = m_list.Last();

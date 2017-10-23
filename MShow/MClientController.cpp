@@ -125,10 +125,8 @@ namespace MShow
 		INT count = 0;
 		if (pCTRL->Query(pCTRL->m_szSourceID, count) && count == 0)
 		{
-			if (MessageBox(NULL, "当前客户端连接被移除", "警告", MB_OK))
-			{
-				pCTRL->Close();
-			}
+			pCTRL->StopCommentary();
+			MessageBox(NULL, "当前客户端连接被移除", "警告", MB_OK);
 		}
 	}
 
@@ -371,6 +369,7 @@ namespace MShow
 			pTextBox->SetEnable(FALSE);
 		}
 		m_view.Invalidate();
+		UpdateName(m_szSourceID, m_szName);
 	}
 	void MClientController::OnCancelClick(TinyVisual*, EventArgs& args)
 	{
@@ -547,6 +546,54 @@ namespace MShow
 	_ERROR:
 		return FALSE;
 	}
+	BOOL MClientController::UpdateName(const string& sourceID, const string& sName)
+	{
+		if (sourceID.empty() || sName.empty())
+			return FALSE;
+		string code;
+		string context;
+		Json::Reader reader;
+		Json::Value value;
+		Json::Value result;
+		TinyHTTPClient client;
+		client.GetRequest().SetVerbs(TinyHTTPClient::POST);
+		client.GetRequest().Add(TinyHTTPClient::ContentType, "application/x-www-form-urlencoded");
+		client.GetRequest().Add("Sign", "#f93Uc31K24()_@");
+		string body = StringPrintf("id=%s&programId=%s&directorId=%s&name=%s", sourceID.c_str(), m_szProgramID.c_str(), m_szLogID.c_str(), sName.c_str());
+		body = std::move(ASCIIToUTF8(body));
+		client.GetRequest().SetBody(body);
+		string address = StringPrintf("%s/%s", MShow::MShowApp::GetInstance().AppConfig().GetPrefix().c_str(), "commentary/edit");
+		if (!client.Open(address))
+		{
+			LOG(ERROR) << "[MClientController] " << "Open " << address << " Fail";
+			goto _ERROR;
+		}
+		if (!client.GetResponse().ReadAsString(context))
+		{
+			LOG(ERROR) << "[MClientController] " << "Read Json Fail";
+			goto _ERROR;
+		}
+		if (!reader.parse(context, value))
+		{
+			LOG(ERROR) << "[MClientController] " << "Parse Json Fail";
+			goto _ERROR;
+		}
+		code = value["code"].asString();
+		if (code == "A00000")
+		{
+			TRACE("Update SourceID:%s   OK\n", m_szSourceID.c_str());
+			LOG(INFO) << "[MClientController] " << "Update SourceID :" << m_szSourceID << " OK";
+			return TRUE;
+		}
+		else
+		{
+			string msg = value["msg"].asString();
+			msg = std::move(UTF8ToASCII(msg));
+			LOG(ERROR) << "[MClientController] " << "Response Code : " << code << " Msg: " << msg;
+		}
+	_ERROR:
+		return FALSE;
+	}
 	BOOL MClientController::UpdatePreviewURL(const string& sourceID, const string& sURL)
 	{
 		if (sourceID.empty() || sURL.empty())
@@ -560,7 +607,7 @@ namespace MShow
 		client.GetRequest().SetVerbs(TinyHTTPClient::POST);
 		client.GetRequest().Add(TinyHTTPClient::ContentType, "application/x-www-form-urlencoded");
 		client.GetRequest().Add("Sign", "#f93Uc31K24()_@");
-		string body = StringPrintf("id=%s&programId=%s&directorId=%s&streamUrl=&s", sourceID.c_str(), m_szProgramID.c_str(), m_szLogID.c_str(), sURL.c_str());
+		string body = StringPrintf("id=%s&programId=%s&directorId=%s&streamUrl=%s", sourceID.c_str(), m_szProgramID.c_str(), m_szLogID.c_str(), sURL.c_str());
 		body = std::move(ASCIIToUTF8(body));
 		client.GetRequest().SetBody(body);
 		string address = StringPrintf("%s/%s", MShow::MShowApp::GetInstance().AppConfig().GetPrefix().c_str(), "commentary/edit");
@@ -624,65 +671,92 @@ namespace MShow
 			Sleep(100);
 		}
 	}
-
 	BOOL MClientController::StartCommentary()
 	{
+		m_bBreak = FALSE;
+		string szIP = MShowApp::GetInstance().AppConfig().GetIP();
 		//获取音频预览流
 		INT iAudio = 0;
 		if (!GetPreviewURL(m_szURL, iAudio) || m_szURL.empty())
-			return FALSE;
+		{
+			goto _ERROR;
+		}
 		//启动SDK发送数据
 		if (m_task.IsActive())
 		{
 			m_bBreak = TRUE;
 			m_task.Close(1000);
 		}
-		m_bBreak = FALSE;
 		if (!m_task.Submit(BindCallback(&MClientController::OnMessagePump, this)))
-			return FALSE;
-		string szIP = MShowApp::GetInstance().AppConfig().GetIP();
+		{
+			goto _ERROR;
+		}
 		m_audioSDK.Reset(new AudioSdk(szIP, iAudio, std::stoi(m_szSourceID)));
 		if (m_audioSDK != NULL)
 		{
-			if (m_audioSDK->init(44100, 2, 16) == 0)
-			{
-				LOG(INFO) << "AudioSDK init OK" << endl;
-				CLSID speakerCLSID = GetSpeakCLSID();
-				if (IsEqualGUID(speakerCLSID, GUID_NULL))
-				{
-					LOG(ERROR) << "GetSpeakCLSID is null" << endl;
-				}
-				CLSID microphoneCLSID = GetMicrophoneCLSID();
-				if (IsEqualGUID(microphoneCLSID, GUID_NULL))
-				{
-					LOG(ERROR) << "GetMicrophoneCLSID is null" << endl;
-				}
-				m_audioDSP.Close();
-				if (m_audioDSP.Open(microphoneCLSID, speakerCLSID))
-				{
-					m_audioDSP.Stop();
-					m_audioDSP.Start();
-				}
-			}
-			else
+			if (m_audioSDK->init(44100, 2, 16) != 0)
 			{
 				LOG(ERROR) << "AudioSDK init Fail" << endl;
+				goto _ERROR;
+			}
+			LOG(INFO) << "AudioSDK init OK" << endl;
+			CLSID speakerCLSID = GetSpeakCLSID();
+			if (IsEqualGUID(speakerCLSID, GUID_NULL))
+			{
+				LOG(ERROR) << "GetSpeakCLSID is null" << endl;
+			}
+			CLSID microphoneCLSID = GetMicrophoneCLSID();
+			if (IsEqualGUID(microphoneCLSID, GUID_NULL))
+			{
+				LOG(ERROR) << "GetMicrophoneCLSID is null" << endl;
+			}
+			m_audioDSP.Close();
+			if (m_audioDSP.Open(microphoneCLSID, speakerCLSID))
+			{
+				m_audioDSP.Stop();
+				m_audioDSP.Start();
 			}
 		}
 		//通知Web更新
 		if (!UpdatePreviewURL(m_szSourceID, m_szURL))
-			return FALSE;
-		//开始查询服务端状态
+		{
+			goto _ERROR;
+		}
+		//开始Timer
 		if (m_hTimer2 != NULL)
 		{
 			TinyApplication::GetInstance()->GetTimers().Unregister(m_hTimer2);
 			m_hTimer2 = NULL;
 		}
 		m_hTimer2 = TinyApplication::GetInstance()->GetTimers().Register(&MClientController::OnTimer2, this, 2000, 2000);
-		return m_hTimer2 != NULL;
+		if (!m_hTimer2)
+		{
+			goto _ERROR;
+		}
+		//更新UI
+		m_bCommentarying = TRUE;
+		TinyVisual* spvis = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
+		if (spvis != NULL)
+		{
+			spvis->SetVisible(FALSE);
+		}
+		spvis = m_view.GetDocument()->GetVisualByName("btnPauseCommentary");
+		if (spvis != NULL)
+		{
+			spvis->SetVisible(TRUE);
+		}
+		spvis = m_view.GetDocument()->GetVisualByName("btnStopCommentary");
+		if (spvis != NULL)
+		{
+			spvis->SetVisible(TRUE);
+		}
+		m_view.Invalidate();
+		return TRUE;
+	_ERROR:
+		StopCommentary();
+		return FALSE;
 	}
-
-	BOOL MClientController::StopCommentary()
+	void MClientController::StopCommentary()
 	{
 		if (m_task.IsActive())
 		{
@@ -698,7 +772,30 @@ namespace MShow
 			m_audioSDK->release();
 		}
 		m_audioSDK.Reset(NULL);
-		return TRUE;
+		//停止Timer
+		if (m_hTimer2 != NULL)
+		{
+			TinyApplication::GetInstance()->GetTimers().Unregister(m_hTimer2);
+			m_hTimer2 = NULL;
+		}
+		//更新UI
+		m_bCommentarying = FALSE;
+		TinyVisual* spvis = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
+		if (spvis != NULL)
+		{
+			spvis->SetVisible(TRUE);
+		}
+		spvis = m_view.GetDocument()->GetVisualByName("btnPauseCommentary");
+		if (spvis != NULL)
+		{
+			spvis->SetVisible(FALSE);
+		}
+		spvis = m_view.GetDocument()->GetVisualByName("btnStopCommentary");
+		if (spvis != NULL)
+		{
+			spvis->SetVisible(FALSE);
+		}
+		m_view.Invalidate();
 	}
 
 	CLSID MClientController::GetSpeakCLSID()
@@ -741,23 +838,6 @@ namespace MShow
 		if (Connect())
 		{
 			StartCommentary();
-			m_bCommentarying = TRUE;
-			TinyVisual* spvis = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
-			if (spvis != NULL)
-			{
-				spvis->SetVisible(FALSE);
-			}
-			spvis = m_view.GetDocument()->GetVisualByName("btnPauseCommentary");
-			if (spvis != NULL)
-			{
-				spvis->SetVisible(TRUE);
-			}
-			spvis = m_view.GetDocument()->GetVisualByName("btnStopCommentary");
-			if (spvis != NULL)
-			{
-				spvis->SetVisible(TRUE);
-			}
-			m_view.Invalidate();
 		}
 	}
 
@@ -785,23 +865,6 @@ namespace MShow
 		if (Disconnect(m_szSourceID))
 		{
 			StopCommentary();
-			m_bCommentarying = FALSE;
-			TinyVisual* spvis = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
-			if (spvis != NULL)
-			{
-				spvis->SetVisible(TRUE);
-			}
-			spvis = m_view.GetDocument()->GetVisualByName("btnPauseCommentary");
-			if (spvis != NULL)
-			{
-				spvis->SetVisible(FALSE);
-			}
-			spvis = m_view.GetDocument()->GetVisualByName("btnStopCommentary");
-			if (spvis != NULL)
-			{
-				spvis->SetVisible(FALSE);
-			}
-			m_view.Invalidate();
 		}
 	}
 

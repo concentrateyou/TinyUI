@@ -120,8 +120,11 @@ namespace MShow
 	}
 	void MShowController::SetCurrentCTRL(MVideoController* pCTRL)
 	{
+		ASSERT(m_previewCTRL);
+		m_previewCTRL->Enter();
 		m_pVideoCTRL = pCTRL;
 		m_audioTask.SetVideoController(m_pVideoCTRL);
+		m_previewCTRL->Leave();
 	}
 	MVideoController* MShowController::GetCurrentCTRL()
 	{

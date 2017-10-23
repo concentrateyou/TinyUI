@@ -409,7 +409,7 @@ namespace TinyUI
 		ASSERT(hTimer);
 		if (!m_handle)
 			return FALSE;
-		return DeleteTimerQueueTimer(m_handle, hTimer, INVALID_HANDLE_VALUE);
+		return DeleteTimerQueueTimer(m_handle, hTimer, NULL);
 	}
 	void TinyTimerQueue::Destory()
 	{

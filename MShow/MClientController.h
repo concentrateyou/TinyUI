@@ -57,10 +57,11 @@ namespace MShow
 		BOOL	Connect();//ÃÌº”‘¥
 		BOOL	Disconnect(const string& sourceID);
 		BOOL	UpdatePreviewURL(const string& sourceID, const string& strURL);
+		BOOL	UpdateName(const string& sourceID, const string& strName);
 		BOOL	GetPreviewURL(string& szURL, INT& iAudio);
 		void	Close();
 		BOOL	StartCommentary();
-		BOOL	StopCommentary();
+		void	StopCommentary();
 		CLSID	GetSpeakCLSID();
 		CLSID	GetMicrophoneCLSID();
 	private:

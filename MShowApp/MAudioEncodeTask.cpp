@@ -148,12 +148,12 @@ namespace MShow
 			{
 				m_pVideoCTRL->EVENT_AUDIO -= m_onAudio;
 			}
-			if (pCTRL != NULL)
-			{
-				pCTRL->AddElement();
-				pCTRL->EVENT_AUDIO += m_onAudio;
-			}
 			m_pVideoCTRL = pCTRL;
+			if (m_pVideoCTRL != NULL)
+			{
+				m_pVideoCTRL->AddElement();
+				m_pVideoCTRL->EVENT_AUDIO += m_onAudio;
+			}
 		}
 	}
 	void MAudioEncodeTask::SetAudioController(MAudioController* pCTRL)
