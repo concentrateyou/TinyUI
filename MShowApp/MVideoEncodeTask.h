@@ -34,7 +34,7 @@ namespace MShow
 	private:
 		MRTMPPusher&			m_pusher;
 		BOOL					m_bBreak;
-		LONG					m_videoINC;
+		INT64					m_videoINC;
 		INT						m_videoFPS;
 		INT						m_videoRate;
 		TinySize				m_pulgSize;

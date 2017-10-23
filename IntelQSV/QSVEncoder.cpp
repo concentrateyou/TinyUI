@@ -390,6 +390,7 @@ namespace QSV
 				if (status == MFX_ERR_NONE)
 				{
 					m_dwINC++;
+					TRACE("PTS:%lld,   DTS:%lld,   samplePTS:%lld\n", m_mfxResidial.TimeStamp, m_mfxResidial.DecodeTimeStamp, tag.samplePTS);
 					memcpy(m_streamBits[1], m_mfxResidial.Data + m_mfxResidial.DataOffset, m_mfxResidial.DataLength);
 					bo = m_streamBits[1];
 					so = m_mfxResidial.DataLength;
@@ -398,7 +399,8 @@ namespace QSV
 					mediaTag.INC = m_dwINC;
 					mediaTag.dwType = 0;
 					mediaTag.dwFlag = m_mfxResidial.FrameType & (MFX_FRAMETYPE_I | MFX_FRAMETYPE_IDR) ? 0x17 : 0x27;
-					mediaTag.dwTime = static_cast<DWORD>(mediaTag.DTS > 0 ? mediaTag.DTS * 1000 / 90000 : 0);
+					INT64 time64 = mediaTag.DTS > 0 ? mediaTag.DTS * 1000u / 90000u : 0;
+					mediaTag.dwTime = static_cast<DWORD>(time64);
 					m_mfxResidial.DataLength = 0;
 				}
 				return status;

@@ -46,7 +46,7 @@ namespace MShow
 					{
 						continue;
 					}
-					sampleTag.sampleDTS = sampleTag.samplePTS = (m_videoINC++) * 90000 / m_videoFPS;
+					sampleTag.sampleDTS = sampleTag.samplePTS = (m_videoINC++) * 90000u / m_videoFPS;
 					ZeroMemory(&sample, sizeof(sample));
 					BYTE* bo = NULL;
 					LONG  so = 0;
