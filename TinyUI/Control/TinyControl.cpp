@@ -516,6 +516,16 @@ namespace TinyUI
 		}
 		return TRUE;
 	}
+	BOOL TinyControl::SetShanow(BOOL bFlag)
+	{
+		ASSERT(::IsWindow(m_hWND));
+		DWORD dwStyle = ::GetClassLong(m_hWND, GCL_STYLE);
+		if (bFlag)
+			dwStyle |= CS_DROPSHADOW;
+		else
+			dwStyle &= ~CS_DROPSHADOW;
+		return ::SetClassLong(m_hWND, GCL_STYLE, dwStyle);
+	}
 	BOOL TinyControl::SetSize(INT cx, INT cy) throw()
 	{
 		ASSERT(::IsWindow(m_hWND));

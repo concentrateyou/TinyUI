@@ -47,8 +47,7 @@ namespace MShow
 	__declspec(thread) LONGLONG g_lastQPCTime = 0;
 	//////////////////////////////////////////////////////////////////////////
 	MShowApp::MShowApp()
-		:m_controller(m_window),
-		m_searchCTRL(m_searchView),
+		:m_searchCTRL(m_searchView),
 		m_clientCRTL(m_clientView),
 		m_audioTS(0)
 	{

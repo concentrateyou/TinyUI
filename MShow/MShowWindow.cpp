@@ -14,6 +14,15 @@ namespace MShow
 	MShowWindow::~MShowWindow()
 	{
 	}
+	LPCSTR MShowWindow::RetrieveClassName()
+	{
+		return TEXT("MShowWindow");
+	}
+
+	LPCSTR MShowWindow::RetrieveTitle()
+	{
+		return TEXT("MShowWindow");
+	}
 
 	void MShowWindow::OnInitialize()
 	{

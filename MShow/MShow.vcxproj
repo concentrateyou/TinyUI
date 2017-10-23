@@ -171,8 +171,6 @@
     <ClInclude Include="MSearchWindow.h" />
     <ClInclude Include="MShow.h" />
     <ClInclude Include="MShowCommon.h" />
-    <ClInclude Include="MShowController.h" />
-    <ClInclude Include="MShowWindow.h" />
     <ClInclude Include="MVideoRenderTask.h" />
     <ClInclude Include="MVideoTask.h" />
     <ClInclude Include="Resource.h" />
@@ -198,8 +196,6 @@
     <ClCompile Include="MSearchWindow.cpp" />
     <ClCompile Include="MShow.cpp" />
     <ClCompile Include="MShowCommon.cpp" />
-    <ClCompile Include="MShowController.cpp" />
-    <ClCompile Include="MShowWindow.cpp" />
     <ClCompile Include="MVideoRenderTask.cpp" />
     <ClCompile Include="MVideoTask.cpp" />
     <ClCompile Include="stdafx.cpp">

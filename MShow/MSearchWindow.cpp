@@ -7,10 +7,20 @@ namespace MShow
 
 	MSearchWindow::MSearchWindow()
 	{
-
 	}
+
 	MSearchWindow::~MSearchWindow()
 	{
+	}
+
+	LPCSTR MSearchWindow::RetrieveClassName()
+	{
+		return TEXT("MSearchWindow");
+	}
+
+	LPCSTR MSearchWindow::RetrieveTitle()
+	{
+		return TEXT("MSearchWindow");
 	}
 
 	void MSearchWindow::OnInitialize()

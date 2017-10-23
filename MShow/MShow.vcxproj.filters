@@ -57,12 +57,6 @@
     <ClInclude Include="MShowCommon.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MShowWindow.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MShowController.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="MAppConfig.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -126,12 +120,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MShowCommon.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MShowWindow.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MShowController.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MAppConfig.cpp">

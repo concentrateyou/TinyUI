@@ -19,6 +19,8 @@ namespace MShow
 	public:
 		MShowWindow();
 		virtual ~MShowWindow();
+		LPCSTR RetrieveClassName() OVERRIDE;
+		LPCSTR RetrieveTitle() OVERRIDE;
 	public:
 		void OnInitialize() OVERRIDE;
 		void OnUninitialize() OVERRIDE;

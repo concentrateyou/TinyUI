@@ -37,8 +37,6 @@ namespace MShow
 		LONGLONG			m_audioTS;
 		string				m_szPath;
 		TinyLock			m_lock;
-		MShowWindow			m_window;
-		MShowController		m_controller;
 		MSearchWindow		m_searchView;
 		MSearchController	m_searchCTRL;
 		MClientWindow		m_clientView;

@@ -27,6 +27,7 @@ namespace TinyUI
 		DWORD	RetrieveExStyle() OVERRIDE;
 		virtual BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy, BOOL bHook = TRUE);
 	public:
+		BOOL	SetShanow(BOOL bFlag);
 		BOOL	SetSize(INT cx, INT cy) throw();
 		BOOL	SetPosition(INT x, INT y) throw();
 		BOOL	SetSize(const TinySize& size) throw();
