@@ -39,6 +39,11 @@ namespace MShow
 		string val = GetValue("Server", "IP");
 		return val;
 	}
+	string MAppConfig::GetDispatch()
+	{
+		string val = GetValue("Server", "Dispatch");
+		return val;
+	}
 	string MAppConfig::GetValue(LPCSTR pzApp, LPCSTR pzKey)
 	{
 		string value;

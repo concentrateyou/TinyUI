@@ -114,7 +114,8 @@ namespace TinyUI
 			BOOL			Open(const string& szURL);
 			void			Close();
 			void			SetTimeout(DWORD dwTO);
-			INT				Read(CHAR*& data, INT size);
+			INT				ReadSome(CHAR*& bits);
+			INT				Read(CHAR*& bits, INT size);
 			INT				GetErrorCode() const;
 			HTTPRequest&	GetRequest();
 			HTTPResponse&	GetResponse();
@@ -124,6 +125,7 @@ namespace TinyUI
 			void OnHandleRequest(INT, AsyncResult*);
 			void OnHandleResponse(INT, AsyncResult*);
 			void OnHandleReceive(INT, AsyncResult*);
+			void OnHandleReceiveSome(INT, AsyncResult*);
 			void OnHandleError(INT);
 		private:
 			BOOL					m_bClose;

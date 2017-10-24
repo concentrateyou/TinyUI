@@ -371,7 +371,7 @@ namespace MShow
 		BOOL bRes = TRUE;
 		for (INT i = 0;i < ARRAYSIZE(m_renderViews);i++)
 		{
-			bRes &= m_renderViews[i]->Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), TRUE, FALSE);
+			bRes &= m_renderViews[i]->Create(static_cast<INT>(m_pulgSize.cx), static_cast<INT>(m_pulgSize.cy), FALSE);
 		}
 		return bRes;
 	}

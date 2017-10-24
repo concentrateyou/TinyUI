@@ -92,6 +92,16 @@ namespace TinyUI
 		{
 			if (!this->Contains(TinyHTTPClient::ContentLength))
 			{
+				if (this->GetAttribute(TinyHTTPClient::TransferEncoding) == "chunked")//开始解析TransferEncoding
+				{
+					if (m_context.GetSize() == 0)
+					{
+						CHAR* ps = NULL;
+						INT size = m_client.ReadSome(ps);
+						if (!ParseTransferEncoding(ps))
+							return FALSE;
+					}
+				}
 				val.resize(m_context.GetSize());
 				memcpy(&val[0], m_context.GetPointer(), m_context.GetSize());
 				return TRUE;
@@ -184,9 +194,10 @@ namespace TinyUI
 				if (*line == '\r' && *(line + 1) == '\n')//应答头解析完成
 				{
 					line += 2;
-					if (this->Contains(TinyHTTPClient::TransferEncoding))//开始解析TransferEncoding
+					if (this->GetAttribute(TinyHTTPClient::TransferEncoding) == "chunked")//开始解析TransferEncoding
 					{
-						if (this->GetAttribute(TinyHTTPClient::TransferEncoding) == "chunked")//目前只处理分块
+						INT offset = line - s;
+						if (offset < size)
 						{
 							if (!ParseTransferEncoding(line))
 								return FALSE;
@@ -259,6 +270,7 @@ namespace TinyUI
 		{
 			m_wait.CreateEvent();
 			m_raw.Reset(new CHAR[DEFAULT_HTTP_BUFFER_SIZE]);
+			memset(m_raw, 0, DEFAULT_HTTP_BUFFER_SIZE);
 		}
 		TinyHTTPClient::~TinyHTTPClient()
 		{
@@ -331,7 +343,25 @@ namespace TinyUI
 			m_socket.Shutdown();
 			m_socket.Close();
 		}
-		INT TinyHTTPClient::Read(CHAR*& data, INT size)
+		INT	TinyHTTPClient::ReadSome(CHAR*& bits)
+		{
+			m_errorCode = S_OK;
+			m_size = 0;
+			if (m_raw != NULL)
+			{
+				if (!m_socket.BeginReceive(m_raw, DEFAULT_HTTP_BUFFER_SIZE, 0, BindCallback(&TinyHTTPClient::OnHandleReceiveSome, this), this))
+				{
+					OnHandleError(GetLastError());
+				}
+				if (m_wait.Lock(INFINITE) && m_errorCode == S_OK)
+				{
+					bits = m_raw;
+					return m_size;
+				}
+			}
+			return -1;
+		}
+		INT TinyHTTPClient::Read(CHAR*& bits, INT size)
 		{
 			m_errorCode = S_OK;
 			m_offset = 0;
@@ -342,13 +372,14 @@ namespace TinyUI
 			}
 			if (m_raw != NULL)
 			{
+				memset(m_raw, 0, m_size);
 				if (!m_socket.BeginReceive(m_raw, size, 0, BindCallback(&TinyHTTPClient::OnHandleReceive, this), this))
 				{
 					OnHandleError(GetLastError());
 				}
 				if (m_wait.Lock(INFINITE) && m_errorCode == S_OK)
 				{
-					data = m_raw;
+					bits = m_raw;
 					return m_size;
 				}
 			}
@@ -439,6 +470,22 @@ namespace TinyUI
 							OnHandleError(GetLastError());
 						}
 					}
+				}
+			}
+		}
+		void TinyHTTPClient::OnHandleReceiveSome(INT errorCode, AsyncResult* result)
+		{
+			if (errorCode != 0)
+			{
+				OnHandleError(errorCode);
+			}
+			else
+			{
+				DWORD dwRes = m_socket.EndReceive(result);
+				if (dwRes > 0)
+				{
+					m_size = dwRes;
+					m_wait.SetEvent();
 				}
 			}
 		}

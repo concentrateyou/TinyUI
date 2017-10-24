@@ -28,11 +28,11 @@ namespace MShow
 		m_preview.Reset(new MPreviewController(m_view.m_previewView));
 		if (!m_preview)
 			return FALSE;
-		if (!m_preview->Initialize())
+		/*if (!m_preview->Initialize())
 		{
 			LOG(ERROR) << "Preview Initialize Fail";
 			return FALSE;
-		}
+		}*/
 		if (!m_audioDSP.Initialize(BindCallback(&MClientController::OnAudioDSP, this)))
 		{
 			LOG(ERROR) << "AudioDSP Initialize Fail";
@@ -144,7 +144,7 @@ namespace MShow
 		string address = StringPrintf("%s/%s?id=%s&programId=%s&directorId=%s", MShow::MShowApp::GetInstance().AppConfig().GetPrefix().c_str(), "commentary/list", sourceID.c_str(), m_szProgramID.c_str(), m_szLogID.c_str());
 		if (!client.Open(address))
 		{
-			LOG(ERROR) << "[MClientController] " << "Open " << address << " Fail";
+			LOG(ERROR) << "[MClientController] " << "Open " << address << " " << client.GetResponse().GetGetStatusMsg();
 			goto _ERROR;
 		}
 		if (!client.GetResponse().ReadAsString(context))
@@ -418,7 +418,7 @@ namespace MShow
 		string address = StringPrintf("%s/%s", MShow::MShowApp::GetInstance().AppConfig().GetPrefix().c_str(), "commentary/add");
 		if (!client.Open(address))
 		{
-			LOG(ERROR) << "[MClientController] " << "Open " << address << " Fail";
+			LOG(ERROR) << "[MClientController] " << "Open " << address << " " << client.GetResponse().GetGetStatusMsg();
 			goto _ERROR;
 		}
 		if (!client.GetResponse().ReadAsString(context))
@@ -448,7 +448,7 @@ namespace MShow
 		return FALSE;
 	}
 
-	BOOL MClientController::GetPreviewURL(string& szURL, INT& iAudio)
+	BOOL MClientController::GetPreviewURL(string& szURL, INT& iAudio, string& szIP)
 	{
 		string code;
 		string context;
@@ -456,10 +456,11 @@ namespace MShow
 		Json::Value value;
 		Json::Value result;
 		TinyHTTPClient client;
-		string address = StringPrintf("http://YW-A2980-D.iqiyi.pps:8001/querycommentaryPURL?PID=%s&ID=%s", m_szProgramID.c_str(), m_szSourceID.c_str());
+		client.GetRequest().SetVerbs(TinyHTTPClient::GET);
+		string address = StringPrintf("http://%s:8001/querycommentaryPURL?PID=%s&ID=%s", MShow::MShowApp::GetInstance().AppConfig().GetDispatch().c_str(), m_szProgramID.c_str(), m_szSourceID.c_str());
 		if (!client.Open(address))
 		{
-			LOG(ERROR) << "[MClientController] " << "Open " << address << " Fail";
+			LOG(ERROR) << "[MClientController] " << "Open " << address << " " << client.GetResponse().GetGetStatusMsg();
 			goto _ERROR;
 		}
 		if (!client.GetResponse().ReadAsString(context))
@@ -478,12 +479,13 @@ namespace MShow
 			szURL = value["result"].asString();
 			vector<string> vals;
 			SplitString(szURL, ';', &vals);
-			if (vals.size() == 2)
+			if (vals.size() == 3)
 			{
 				szURL = vals[0];
 				iAudio = std::stoi(vals[1]);
+				szIP = vals[2];
 				TRACE("URL :%s, PORT:%d\n", szURL.c_str(), iAudio);
-				LOG(INFO) << "[MClientController] " << "GetPreviewURL :" << vals[0] << " PORT: " << iAudio << " OK";
+				LOG(INFO) << "[MClientController] " << "GetPreviewURL :" << vals[0] << " PORT: " << iAudio << " IP:" << szIP << " OK";
 				return TRUE;
 			}
 
@@ -517,7 +519,7 @@ namespace MShow
 		string address = StringPrintf("%s/%s", MShow::MShowApp::GetInstance().AppConfig().GetPrefix().c_str(), "commentary/edit");
 		if (!client.Open(address))
 		{
-			LOG(ERROR) << "[MClientController] " << "Open " << address << " Fail";
+			LOG(ERROR) << "[MClientController] " << "Open " << address << " " << client.GetResponse().GetGetStatusMsg();
 			goto _ERROR;
 		}
 		if (!client.GetResponse().ReadAsString(context))
@@ -565,7 +567,7 @@ namespace MShow
 		string address = StringPrintf("%s/%s", MShow::MShowApp::GetInstance().AppConfig().GetPrefix().c_str(), "commentary/edit");
 		if (!client.Open(address))
 		{
-			LOG(ERROR) << "[MClientController] " << "Open " << address << " Fail";
+			LOG(ERROR) << "[MClientController] " << "Open " << address << " " << client.GetResponse().GetGetStatusMsg();
 			goto _ERROR;
 		}
 		if (!client.GetResponse().ReadAsString(context))
@@ -613,7 +615,7 @@ namespace MShow
 		string address = StringPrintf("%s/%s", MShow::MShowApp::GetInstance().AppConfig().GetPrefix().c_str(), "commentary/edit");
 		if (!client.Open(address))
 		{
-			LOG(ERROR) << "[MClientController] " << "Open " << address << " Fail";
+			LOG(ERROR) << "[MClientController] " << "Open " << address << " " << client.GetResponse().GetGetStatusMsg();
 			goto _ERROR;
 		}
 		if (!client.GetResponse().ReadAsString(context))
@@ -674,10 +676,10 @@ namespace MShow
 	BOOL MClientController::StartCommentary()
 	{
 		m_bBreak = FALSE;
-		string szIP = MShowApp::GetInstance().AppConfig().GetIP();
 		//»ñÈ¡ÒôÆµÔ¤ÀÀÁ÷
+		string szIP;
 		INT iAudio = 0;
-		if (!GetPreviewURL(m_szURL, iAudio) || m_szURL.empty())
+		if (!GetPreviewURL(m_szURL, iAudio, szIP) || m_szURL.empty())
 		{
 			goto _ERROR;
 		}

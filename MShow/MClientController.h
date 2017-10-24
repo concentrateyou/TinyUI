@@ -58,7 +58,7 @@ namespace MShow
 		BOOL	Disconnect(const string& sourceID);
 		BOOL	UpdatePreviewURL(const string& sourceID, const string& strURL);
 		BOOL	UpdateName(const string& sourceID, const string& strName);
-		BOOL	GetPreviewURL(string& szURL, INT& iAudio);
+		BOOL	GetPreviewURL(string& szURL, INT& iAudio, string& szIP);
 		void	Close();
 		BOOL	StartCommentary();
 		void	StopCommentary();
