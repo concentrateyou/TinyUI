@@ -29,22 +29,27 @@ namespace DXFramework
 		m_camera.UpdatePosition();
 		return TRUE;
 	}
+
 	void DX11Graphics2D::Present()
 	{
 		m_dx11.Present();
 	}
+
 	void DX11Graphics2D::Flush()
 	{
 		m_dx11.Flush();
 	}
+
 	BOOL DX11Graphics2D::Resize(const TinySize& size)
 	{
 		return m_dx11.ResizeView(size.cx, size.cy);
 	}
+
 	DX11& DX11Graphics2D::GetDX11()
 	{
 		return m_dx11;
 	}
+
 	BOOL DX11Graphics2D::DrawImage(DX11Image2D* ps, FLOAT ratioX, FLOAT ratioY)
 	{
 		ASSERT(ps);
@@ -62,10 +67,12 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
+
 	void DX11Graphics2D::Enter()
 	{
 		m_dx11.Enter();
 	}
+
 	void DX11Graphics2D::Leave()
 	{
 		m_dx11.Leave();

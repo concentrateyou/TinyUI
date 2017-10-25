@@ -28,17 +28,17 @@ namespace MShow
 		m_preview.Reset(new MPreviewController(m_view.m_previewView));
 		if (!m_preview)
 			return FALSE;
-		if (!m_preview->Initialize())
-		{
-			LOG(ERROR) << "Preview Initialize Fail";
-			return FALSE;
-		}
 		if (!m_audioDSP.Initialize(BindCallback(&MClientController::OnAudioDSP, this)))
 		{
 			LOG(ERROR) << "AudioDSP Initialize Fail";
 			return FALSE;
 		}
 		InitializeUI();
+		if (!m_preview->Initialize())
+		{
+			LOG(ERROR) << "Preview Initialize Fail";
+			return FALSE;
+		}
 		return TRUE;
 	}
 
