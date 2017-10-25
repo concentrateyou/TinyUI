@@ -133,6 +133,16 @@ namespace TinyUI
 		{
 			if (!this->Contains(TinyHTTPClient::ContentLength))
 			{
+				if (this->GetAttribute(TinyHTTPClient::TransferEncoding) == "chunked")//开始解析TransferEncoding
+				{
+					if (m_context.GetSize() == 0)
+					{
+						CHAR* ps = NULL;
+						INT size = m_client.ReadSome(ps);
+						if (!ParseTransferEncoding(ps))
+							return FALSE;
+					}
+				}
 				ps = m_context.GetPointer();
 				return m_context.GetSize();
 			}
@@ -326,7 +336,7 @@ namespace TinyUI
 				m_socket.SetTimeout(FALSE, m_timeout);
 				this->BuildRequest();
 				m_socket.BeginConnect(m_endpoint, BindCallback(&TinyHTTPClient::OnHandleConnect, this), this);
-				if (m_wait.Lock(INFINITE))
+				if (m_wait.Lock(10000))//默认10秒超时
 				{
 					if (m_errorCode == S_OK && m_reponse.GetStatusCode() == 200)
 						return TRUE;
@@ -353,7 +363,7 @@ namespace TinyUI
 				{
 					OnHandleError(GetLastError());
 				}
-				if (m_wait.Lock(INFINITE) && m_errorCode == S_OK)
+				if (m_wait.Lock(10000) && m_errorCode == S_OK)
 				{
 					bits = m_raw;
 					return m_size;
@@ -377,7 +387,7 @@ namespace TinyUI
 				{
 					OnHandleError(GetLastError());
 				}
-				if (m_wait.Lock(INFINITE) && m_errorCode == S_OK)
+				if (m_wait.Lock(10000) && m_errorCode == S_OK)
 				{
 					bits = m_raw;
 					return m_size;

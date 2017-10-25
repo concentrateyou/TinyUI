@@ -1,5 +1,6 @@
 #include "..\stdafx.h"
 #include "TinySoundCapture.h"
+#include "TinyWASAPIAudio.h"
 
 namespace TinyUI
 {
@@ -31,7 +32,15 @@ namespace TinyUI
 				device.Guid = *pzGUID;
 				device.Description = pzDesc;
 				device.Module = pzModule;
-				ps->push_back(device);
+				BOOL bIsMA = FALSE;
+				if (TinyWASAPIAudio::IsMicrophone(device.Guid, bIsMA) && bIsMA)
+				{
+					ps->push_back(device);
+				}
+				if (TinyWASAPIAudio::IsMicrophoneArray(device.Guid, bIsMA) && bIsMA)
+				{
+					ps->push_back(device);
+				}
 			}
 			return TRUE;
 		}

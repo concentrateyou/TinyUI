@@ -101,6 +101,5 @@ namespace MShow
 		TinyScopedPtr<Delegate<void(TinyVisual*, FocusEventArgs&)>> m_onSpeakerFocus;
 		TinyScopedPtr<Delegate<void(TinyVisual*, FocusEventArgs&)>> m_onMicrophoneFocus;
 	};
-
 }
 

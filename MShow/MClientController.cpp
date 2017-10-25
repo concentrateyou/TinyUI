@@ -28,11 +28,11 @@ namespace MShow
 		m_preview.Reset(new MPreviewController(m_view.m_previewView));
 		if (!m_preview)
 			return FALSE;
-		/*if (!m_preview->Initialize())
+		if (!m_preview->Initialize())
 		{
 			LOG(ERROR) << "Preview Initialize Fail";
 			return FALSE;
-		}*/
+		}
 		if (!m_audioDSP.Initialize(BindCallback(&MClientController::OnAudioDSP, this)))
 		{
 			LOG(ERROR) << "AudioDSP Initialize Fail";
@@ -488,7 +488,6 @@ namespace MShow
 				LOG(INFO) << "[MClientController] " << "GetPreviewURL :" << vals[0] << " PORT: " << iAudio << " IP:" << szIP << " OK";
 				return TRUE;
 			}
-
 		}
 		else
 		{
@@ -837,6 +836,16 @@ namespace MShow
 
 	void MClientController::OnStartCommentaryClick(TinyVisual*, EventArgs& args)
 	{
+		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("microphone");
+		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
+		{
+			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
+			if (val->GetOptions().GetSize() == 0)
+			{
+				MessageBox(NULL, "没有检测到麦克风设备", "提示", MB_OK);
+				return;
+			}
+		}
 		if (Connect())
 		{
 			StartCommentary();
@@ -881,21 +890,28 @@ namespace MShow
 		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
 		{
 			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
-			TinyVisualOption* option = val->GetSelected();
-			if (option != NULL)
+			if (val->GetOptions().GetSize() == 0)
 			{
-				wstring szGUID = option->GetValue().ToWString();
-				CLSID clsid;
-				CLSIDFromString(&szGUID[0], &clsid);
-				WAVEFORMATEX w;
-				w.cbSize = 0;
-				w.nChannels = 2;
-				w.nSamplesPerSec = 44100;
-				w.wBitsPerSample = 16;
-				w.nBlockAlign = (w.wBitsPerSample * w.nChannels) / 8;
-				w.nAvgBytesPerSec = w.nSamplesPerSec * w.nBlockAlign;
-				w.wFormatTag = WAVE_FORMAT_PCM;
-				m_microphoneTest.Invoke(clsid, val->GetDocument()->GetVisualHWND()->Handle());
+				MessageBox(NULL, "没有检测到麦克风设备!", "提示", MB_OK);
+			}
+			else
+			{
+				TinyVisualOption* option = val->GetSelected();
+				if (option != NULL)
+				{
+					wstring szGUID = option->GetValue().ToWString();
+					CLSID clsid;
+					CLSIDFromString(&szGUID[0], &clsid);
+					WAVEFORMATEX w;
+					w.cbSize = 0;
+					w.nChannels = 2;
+					w.nSamplesPerSec = 44100;
+					w.wBitsPerSample = 16;
+					w.nBlockAlign = (w.wBitsPerSample * w.nChannels) / 8;
+					w.nAvgBytesPerSec = w.nSamplesPerSec * w.nBlockAlign;
+					w.wFormatTag = WAVE_FORMAT_PCM;
+					m_microphoneTest.Invoke(clsid, val->GetDocument()->GetVisualHWND()->Handle());
+				}
 			}
 		}
 	}
@@ -911,14 +927,21 @@ namespace MShow
 		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
 		{
 			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
-			TinyVisualOption* option = val->GetSelected();
-			if (option != NULL)
+			if (val->GetOptions().GetSize() == 0)
 			{
-				wstring szGUID = option->GetValue().ToWString();
-				CLSID clsid;
-				CLSIDFromString(&szGUID[0], &clsid);
-				string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\SoundTest.wav");
-				m_speakTest.Invoke(szFile.c_str(), clsid, val->GetDocument()->GetVisualHWND()->Handle());
+				MessageBox(NULL, "没有检测到播放设备!", "提示", MB_OK);
+			}
+			else
+			{
+				TinyVisualOption* option = val->GetSelected();
+				if (option != NULL)
+				{
+					wstring szGUID = option->GetValue().ToWString();
+					CLSID clsid;
+					CLSIDFromString(&szGUID[0], &clsid);
+					string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\SoundTest.wav");
+					m_speakTest.Invoke(szFile.c_str(), clsid, val->GetDocument()->GetVisualHWND()->Handle());
+				}
 			}
 		}
 	}
