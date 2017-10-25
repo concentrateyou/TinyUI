@@ -94,7 +94,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>TinyUI.lib;DXFramework.lib;DShowCapture.lib;Decode.lib;Encode.lib;libmfx_d.lib;dxva2.lib;dwmapi.lib;d3d9.lib;d3d11.lib;dxgi.lib;jsoncpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>TinyUI.lib;DXFramework.lib;DShowCapture.lib;Decode.lib;Encode.lib;libmfx_d.lib;dxva2.lib;dwmapi.lib;d3d9.lib;d3d11.lib;dxgi.lib;D2D1.lib;jsoncpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\Debug;$(BOOST_DIR)\stage\lib;$(DXSDK_DIR)\Lib\x86;$(INTELMEDIASDKROOT)lib\$(Platform);..\ThirdParty\mpg123\lib\x86;..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\libfaad\lib\x86;..\ThirdParty\librtmp\lib\x86;..\ThirdParty\x264\libs\32bit;..\ThirdParty\libfaac\lib\x86;..\ThirdParty\sdk\lib;..\ThirdParty\sqlite;..\ThirdParty\jsoncpp\lib\x86</AdditionalLibraryDirectories>
     </Link>
     <ProjectReference>
@@ -113,6 +113,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>D2d1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -218,6 +219,9 @@
     </ProjectReference>
     <ProjectReference Include="..\DShowCapture\DShowCapture.vcxproj">
       <Project>{b8f16b34-e13e-4757-b09a-792046bcc2d3}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\DXFramework\DXFramework.vcxproj">
+      <Project>{e5bf40dd-f8a0-4fb9-b27b-051c447a5c2b}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Encode\Encode.vcxproj">
       <Project>{4b386eb4-e529-4c67-9733-7684de8defdc}</Project>
