@@ -85,6 +85,26 @@ namespace TinyUI
 		{
 			return m_options;
 		}
+		void TinyVisualComboBox::Remove(const TinyString& szValue)
+		{
+			for (INT i = 0;i < m_options.GetSize();i++)
+			{
+				if (m_options[i]->GetValue() == szValue)
+				{
+					m_popupWND.GetDocument()->Destory(m_options[i]);
+					m_options.RemoveAt(i);
+					break;
+				}
+			}
+		}
+		void TinyVisualComboBox::RemoveAll()
+		{
+			for (INT i = 0;i < m_options.GetSize();i++)
+			{
+				m_popupWND.GetDocument()->Destory(m_options[i]);
+			}
+			m_options.RemoveAll();
+		}
 		BOOL TinyVisualComboBox::SetProperty(const TinyString& name, const TinyString& value)
 		{
 			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGENORMAL.STR()) == 0)

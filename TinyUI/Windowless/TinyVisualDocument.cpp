@@ -901,6 +901,8 @@ namespace TinyUI
 				m_document->UnlinkVisual(spvis, &(spvis->m_spvisParent->m_spvisChild));
 			}
 			spvis->OnDestory();
+			if (spvis->m_spvisParent != NULL)
+				spvis->m_spvisParent->m_dwCount--;
 			SAFE_DELETE(spvis);
 			return TRUE;
 		}

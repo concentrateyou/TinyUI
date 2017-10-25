@@ -86,7 +86,46 @@ namespace MShow
 		m_hTimer1 = TinyApplication::GetInstance()->GetTimers().Register(&MClientController::OnTimer1, this, 1000, 0);
 		return m_hTimer1 != NULL;
 	}
-
+	void MClientController::UpdateMicrophones()
+	{
+		vector<CAPTUREDEVICE> captures;
+		TinySoundCapture::Enumerate(captures);
+		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("microphone");
+		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
+		{
+			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
+			val->RemoveAll();
+			for (INT i = 0;i < captures.size();i++)
+			{
+				wstring szGUID;
+				szGUID.resize(39);
+				::StringFromGUID2(captures[i].Guid, &szGUID[0], 39);
+				string sz = WStringToString(szGUID);
+				val->AddOption(sz.c_str(), captures[i].Description.c_str());
+			}
+			val->SetSelected(0);
+		}
+	}
+	void MClientController::UpdateSpeakers()
+	{
+		vector<PLAYDEVICE> renders;
+		TinySoundPlayer::Enumerate(renders);
+		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("speaker");
+		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
+		{
+			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
+			val->RemoveAll();
+			for (INT i = 0;i < renders.size();i++)
+			{
+				wstring szGUID;
+				szGUID.resize(39);
+				::StringFromGUID2(renders[i].Guid, &szGUID[0], 39);
+				string sz = WStringToString(szGUID);
+				val->AddOption(sz.c_str(), renders[i].Description.c_str());
+			}
+			val->SetSelected(0);
+		}
+	}
 	VOID CALLBACK MClientController::OnTimer1(PVOID lpParam, BOOLEAN TimerOrWaitFired)
 	{
 		MClientController* pCTRL = static_cast<MClientController*>(lpParam);
@@ -1002,6 +1041,7 @@ namespace MShow
 					if (bRes && sample.size > 0)
 					{
 						//LOG(INFO) << "Timestamp: " << sample.timestamp;
+						TRACE("Send:%lld\n", sample.timestamp);
 						if (m_audioSDK->audio_encode_send(sample.bits + 4, static_cast<INT32>(sample.timestamp)) == 0)
 						{
 							LOG(INFO) << "audio_encode_send OK";

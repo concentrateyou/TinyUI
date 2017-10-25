@@ -29,6 +29,8 @@ namespace TinyUI
 			BOOL SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 		public:
 			TinyVisualOption* AddOption(const TinyString& szValue, const TinyString& szText);
+			void Remove(const TinyString& szValue);
+			void RemoveAll();
 			TinyArray<TinyVisualOption*>& GetOptions();
 			void SetStyleImage(StyleImage type, LPCSTR pzFile);
 			void SetArrowImage(StyleImage type, LPCSTR pzFile);

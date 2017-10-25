@@ -32,6 +32,8 @@ namespace MShow
 		void	SetProgram(const string& szProgramName, const string& szProgramID, const string& szLogID);
 		void	SetTimes(const string& szTime1, const string& szTime2);
 		BOOL	SetPreview(const string& szPreviewURL);
+		void	UpdateMicrophones();
+		void	UpdateSpeakers();
 	private:
 		void	InitializeUI();
 		void	OnSettingClick(TinyVisual*, EventArgs& args);
