@@ -1,5 +1,5 @@
 #include "../stdafx.h"
-#include "TinyVisualHWND.h"
+#include "TinyVisualDlg.h"
 #include "../Render/TinyTransform.h"
 #include "../Render/TinyCanvas.h"
 
@@ -7,9 +7,9 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		IMPLEMENT_DYNAMIC(TinyVisualHWND, TinyControl);
+		IMPLEMENT_DYNAMIC(TinyVisualDlg, TinyDialog);
 
-		TinyVisualHWND::TinyVisualHWND()
+		TinyVisualDlg::TinyVisualDlg()
 			:m_document(NULL),
 			m_visualDC(NULL),
 			m_bMouseTracking(FALSE),
@@ -17,40 +17,39 @@ namespace TinyUI
 		{
 
 		}
-		TinyVisualHWND::~TinyVisualHWND()
+		TinyVisualDlg::~TinyVisualDlg()
 		{
 
 		}
-		BOOL TinyVisualHWND::Create(HWND hParent, LPCSTR pzFile)
+		BOOL TinyVisualDlg::Create(HWND hParent, WORD wInteger, LPCSTR pzFile)
 		{
-			if (!TinyControl::Create(hParent, 0, 0, 0, 0, FALSE))
+			if (!TinyDialog::Create(hParent, wInteger))
 				return FALSE;
 			if (!this->BuildResource(pzFile))
 				return FALSE;
 			return TRUE;
 		}
-		DWORD TinyVisualHWND::RetrieveStyle()
+		BOOL TinyVisualDlg::Create(HWND hParent, LPCTSTR lpTemplateName, LPCSTR pzFile)
 		{
-			return (WS_POPUP | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
-		}
-		DWORD TinyVisualHWND::RetrieveExStyle()
-		{
-			return (WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_OVERLAPPEDWINDOW);
-		}
-		LPCSTR TinyVisualHWND::RetrieveClassName()
-		{
-			return TEXT("TinyVisualHWND");
-		}
-		LPCSTR TinyVisualHWND::RetrieveTitle()
-		{
-			return TEXT("TinyVisualHWND");
-		}
-		HICON TinyVisualHWND::RetrieveIcon()
-		{
-			return NULL;
+			if (!TinyDialog::Create(hParent, lpTemplateName))
+				return FALSE;
+			if (!this->BuildResource(pzFile))
+				return FALSE;
+			return TRUE;
 		}
 
-		BOOL TinyVisualHWND::BuildResource(const TinyString& szFile)
+		INT_PTR TinyVisualDlg::DoModal(HWND hParent, WORD wInteger, LPCSTR pzFile)
+		{
+			m_szResource = pzFile;
+			return TinyDialog::DoModal(hParent, wInteger);
+		}
+		INT_PTR TinyVisualDlg::DoModal(HWND hParent, LPCTSTR lpTemplateName, LPCSTR pzFile)
+		{
+			m_szResource = pzFile;
+			return TinyDialog::DoModal(hParent, lpTemplateName);
+		}
+
+		BOOL TinyVisualDlg::BuildResource(const TinyString& szFile)
 		{
 			if (!m_document || !PathFileExists(szFile.CSTR()))
 				return FALSE;
@@ -66,40 +65,40 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		TinyVisualDocument*	TinyVisualHWND::GetDocument()
+		TinyVisualDocument*	TinyVisualDlg::GetDocument()
 		{
 			return m_document;
 		}
-		BOOL TinyVisualHWND::Initialize()
+		BOOL TinyVisualDlg::Initialize()
 		{
 			m_visualDC.Reset(new TinyVisualDC(m_hWND));
 			if (!m_visualDC)
 				return FALSE;
-			m_document.Reset(new TinyVisualDocument(this));
-			if (!m_document)
-				return FALSE;
+			//m_document.Reset(new TinyVisualDocument(this));
+			/*if (!m_document)
+				return FALSE;*/
 			return TRUE;
 		}
-		void TinyVisualHWND::Uninitialize()
+		void TinyVisualDlg::Uninitialize()
 		{
 			if (m_document != NULL)
 				m_document->Uninitialize();
 			m_document.Reset(NULL);
 			m_visualDC.Reset(NULL);
 		}
-		BOOL TinyVisualHWND::AddFilter(TinyVisualFilter* ps)
+		BOOL TinyVisualDlg::AddFilter(TinyVisualFilter* ps)
 		{
 			return m_mFilters.Add(ps);
 		}
-		BOOL TinyVisualHWND::RemoveFilter(TinyVisualFilter* ps)
+		BOOL TinyVisualDlg::RemoveFilter(TinyVisualFilter* ps)
 		{
 			return m_mFilters.Remove(ps);
 		}
-		void TinyVisualHWND::AllowTracking(BOOL bAllow)
+		void TinyVisualDlg::AllowTracking(BOOL bAllow)
 		{
 			m_bAllowTracking = bAllow;
 		}
-		BOOL TinyVisualHWND::ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
+		BOOL TinyVisualDlg::ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
 		{
 			for (INT i = m_mFilters.GetSize() - 1; i >= 0; i--)
 			{
@@ -109,25 +108,25 @@ namespace TinyUI
 					return TRUE;
 				}
 			}
-			return TinyControl::ProcessWindowMessage(hWnd, uMsg, wParam, lParam, lResult);
+			return TinyDialog::ProcessWindowMessage(hWnd, uMsg, wParam, lParam, lResult);
 		}
 
-		LRESULT TinyVisualHWND::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			ASSERT(m_document);
 			bHandled = FALSE;
 			PAINTSTRUCT ps = { 0 };
 			HDC hDC = BeginPaint(m_hWND, &ps);
-			m_document->Draw(m_visualDC, ps.rcPaint);
+			//m_document->Draw(m_visualDC, ps.rcPaint);
 			EndPaint(m_hWND, &ps);
 			return FALSE;
 		}
-		LRESULT TinyVisualHWND::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = TRUE;
 			return TRUE;
 		}
-		LRESULT TinyVisualHWND::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			ASSERT(m_visualDC && m_document);
 			bHandled = FALSE;
@@ -138,34 +137,34 @@ namespace TinyUI
 			::RedrawWindow(m_hWND, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
 			return FALSE;
 		}
-		LRESULT TinyVisualHWND::OnMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			return FALSE;
 		}
 
-		LRESULT TinyVisualHWND::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			PostQuitMessage(0);//退出应用程序
 			return FALSE;
 		}
 
-		LRESULT TinyVisualHWND::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			if (!Initialize())
 				PostQuitMessage(0);//直接退出
 			return FALSE;
 		}
-		LRESULT TinyVisualHWND::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			OnUninitialize();
 			Uninitialize();
 			return FALSE;
 		}
-		LRESULT TinyVisualHWND::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			if (m_bAllowTracking)
@@ -185,7 +184,7 @@ namespace TinyUI
 			bHandled = IsMsgHandled();
 			return lRes;
 		}
-		LRESULT TinyVisualHWND::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			if (m_bAllowTracking)
@@ -197,7 +196,7 @@ namespace TinyUI
 			bHandled = IsMsgHandled();
 			return lRes;
 		}
-		LRESULT TinyVisualHWND::OnMouseWheel(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnMouseWheel(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -206,7 +205,7 @@ namespace TinyUI
 			bHandled = IsMsgHandled();
 			return lRes;
 		}
-		LRESULT TinyVisualHWND::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -214,7 +213,7 @@ namespace TinyUI
 			bHandled = IsMsgHandled();
 			return lRes;
 		}
-		LRESULT TinyVisualHWND::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -222,7 +221,7 @@ namespace TinyUI
 			bHandled = IsMsgHandled();
 			return lRes;
 		}
-		LRESULT TinyVisualHWND::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -230,7 +229,7 @@ namespace TinyUI
 			bHandled = IsMsgHandled();
 			return lRes;
 		}
-		LRESULT TinyVisualHWND::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -238,7 +237,7 @@ namespace TinyUI
 			bHandled = IsMsgHandled();
 			return lRes;
 		}
-		LRESULT TinyVisualHWND::OnRButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnRButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -246,7 +245,7 @@ namespace TinyUI
 			bHandled = IsMsgHandled();
 			return lRes;
 		}
-		LRESULT TinyVisualHWND::OnRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -254,7 +253,7 @@ namespace TinyUI
 			bHandled = IsMsgHandled();
 			return lRes;
 		}
-		LRESULT TinyVisualHWND::OnMButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnMButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -262,7 +261,7 @@ namespace TinyUI
 			bHandled = IsMsgHandled();
 			return lRes;
 		}
-		LRESULT TinyVisualHWND::OnMButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnMButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -270,7 +269,7 @@ namespace TinyUI
 			bHandled = IsMsgHandled();
 			return lRes;
 		}
-		LRESULT TinyVisualHWND::OnMButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnMButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -278,49 +277,49 @@ namespace TinyUI
 			bHandled = IsMsgHandled();
 			return lRes;
 		}
-		LRESULT TinyVisualHWND::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			LRESULT lRes = m_document->OnKeyDown(static_cast<DWORD>(wParam), LOWORD(lParam), HIWORD(lParam));
 			bHandled = IsMsgHandled();
 			return lRes;
 		}
-		LRESULT TinyVisualHWND::OnKeyUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnKeyUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			LRESULT lRes = m_document->OnKeyUp(static_cast<DWORD>(wParam), LOWORD(lParam), HIWORD(lParam));
 			bHandled = IsMsgHandled();
 			return lRes;
 		}
-		LRESULT TinyVisualHWND::OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			LRESULT lRes = m_document->OnChar(static_cast<DWORD>(wParam), LOWORD(lParam), HIWORD(lParam));
 			bHandled = IsMsgHandled();
 			return lRes;
 		}
-		LRESULT TinyVisualHWND::OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			LRESULT lRes = m_document->OnSetCursor(reinterpret_cast<HWND>(wParam), LOWORD(lParam), HIWORD(lParam));
 			bHandled = IsMsgHandled();
 			return lRes;
 		}
-		LRESULT TinyVisualHWND::OnSetFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnSetFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			LRESULT lRes = m_document->OnSetFocus(reinterpret_cast<HWND>(wParam));
 			bHandled = IsMsgHandled();
 			return lRes;
 		}
-		LRESULT TinyVisualHWND::OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			LRESULT lRes = m_document->OnKillFocus(reinterpret_cast<HWND>(wParam));
 			bHandled = IsMsgHandled();
 			return lRes;
 		}
-		LRESULT TinyVisualHWND::OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = TRUE;
 			if (static_cast<BOOL>(wParam))
@@ -333,7 +332,7 @@ namespace TinyUI
 			}
 			return TRUE;
 		}
-		LRESULT TinyVisualHWND::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			ASSERT(m_document);
 			bHandled = TRUE;
@@ -365,7 +364,7 @@ namespace TinyUI
 				return HTCAPTION;
 			return HTCLIENT;
 		}
-		LRESULT TinyVisualHWND::OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualDlg::OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			ASSERT(m_document);
 			bHandled = TRUE;

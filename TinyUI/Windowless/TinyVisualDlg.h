@@ -1,5 +1,6 @@
 #pragma once
 #include "../Control/TinyControl.h"
+#include "../Common/TinyDialog.h"
 #include "../Render/TinyImage.h"
 #include "TinyVisualDocument.h"
 #include "TinyVisualUtility.h"
@@ -8,29 +9,26 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		class TinyVisualHWND : public TinyControl
+		class TinyVisualDlg : public TinyDialog
 		{
 			friend class TinyVisualDocument;
-			DECLARE_DYNAMIC(TinyVisualHWND)
+			DECLARE_DYNAMIC(TinyVisualDlg)
 		public:
-			TinyVisualHWND();
-			virtual ~TinyVisualHWND();
-			BOOL Create(HWND hParent, LPCSTR pzFile);
-			DWORD RetrieveStyle() OVERRIDE;
-			DWORD RetrieveExStyle() OVERRIDE;
-			LPCSTR RetrieveClassName() OVERRIDE;
-			LPCSTR RetrieveTitle() OVERRIDE;
-			HICON RetrieveIcon() OVERRIDE;
+			TinyVisualDlg();
+			virtual ~TinyVisualDlg();
+			BOOL Create(HWND hParent, WORD wInteger, LPCSTR pzFile);
+			BOOL Create(HWND hParent, LPCTSTR lpTemplateName, LPCSTR pzFile);
+			INT_PTR DoModal(HWND hParent, WORD wInteger, LPCSTR pzFile);
+			INT_PTR DoModal(HWND hParent, LPCTSTR lpTemplateName, LPCSTR pzFile);
 		public:
+			TinyVisualDocument*	GetDocument();
 			BOOL BuildResource(const TinyString& resource);
 			BOOL AddFilter(TinyVisualFilter* ps);
 			BOOL RemoveFilter(TinyVisualFilter* ps);
 			void AllowTracking(BOOL bAllow);
-			TinyVisualDocument*	GetDocument();
 			virtual void OnInitialize() = 0;
 			virtual void OnUninitialize() = 0;
 		public:
-			//ÏûÏ¢
 			BOOL ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult) OVERRIDE;
 			LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
@@ -57,10 +55,8 @@ namespace TinyUI
 			LRESULT OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnSetFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-			//NC
 			LRESULT OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-			//Other
 			LRESULT OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		private:
 			BOOL Initialize();

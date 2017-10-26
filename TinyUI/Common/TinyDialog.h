@@ -66,6 +66,7 @@ namespace TinyUI
 			MESSAGE_HANDLER(WM_CLOSE, OnClose)
 			MESSAGE_HANDLER(WM_SIZE, OnSize)
 			MESSAGE_HANDLER(WM_MOVE, OnMove)
+			MESSAGE_HANDLER(WM_INITDIALOG,OnInitDialog)
 			MESSAGE_HANDLER(WM_SETCURSOR, OnSetCursor)
 			MESSAGE_HANDLER(WM_NCMOUSEMOVE, OnNCMouseMove)
 			MESSAGE_HANDLER(WM_NCMOUSEHOVER, OnNCMouseHover)
@@ -120,6 +121,7 @@ namespace TinyUI
 			MESSAGE_HANDLER(WM_WINDOWPOSCHANGED, OnWindowPosChanged)
 			MESSAGE_HANDLER(WM_SYSCOMMAND, OnSysCommand)
 		END_MSG_MAP()
+		virtual LRESULT OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnPrintClient(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -203,6 +205,7 @@ namespace TinyUI
 		HFONT	GetFont() const;
 		void	SetDefaultFont();
 	public:
+		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_INITDIALOG;
 		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_CREATE;
 		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_DESTORY;
 		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_SIZE;

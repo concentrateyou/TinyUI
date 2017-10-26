@@ -242,7 +242,12 @@ namespace TinyUI
 	{
 
 	}
-
+	LRESULT TinyDialog::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		EVENT_INITDIALOG(uMsg, wParam, lParam, bHandled);
+		return FALSE;
+	}
 	LRESULT TinyDialog::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;

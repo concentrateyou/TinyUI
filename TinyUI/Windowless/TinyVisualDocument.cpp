@@ -17,6 +17,7 @@ namespace TinyUI
 		{
 			ASSERT(m_pWindow);
 		}
+
 		TinyVisualDocument::~TinyVisualDocument()
 		{
 

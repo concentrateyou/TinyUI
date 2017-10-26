@@ -30,7 +30,7 @@ namespace TinyUI
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualDocument)
 		public:
 			TinyVisualDocument(TinyVisualHWND* pv);
-			~TinyVisualDocument();
+			virtual ~TinyVisualDocument();
 			virtual BOOL	Initialize(TinyVisualBuilder* builder);
 			virtual void	Uninitialize();
 		public:
