@@ -400,14 +400,13 @@ namespace TinyUI
 	}
 	BOOL TinyTimerQueue::Change(HANDLE hTimer, WORD dueTime, DWORD period)
 	{
-		if (!m_handle)
+		if (!m_handle || !hTimer)
 			return FALSE;
 		return ChangeTimerQueueTimer(m_handle, hTimer, dueTime, period);
 	}
 	BOOL TinyTimerQueue::Unregister(HANDLE hTimer)
 	{
-		ASSERT(hTimer);
-		if (!m_handle)
+		if (!m_handle || !hTimer)
 			return FALSE;
 		return DeleteTimerQueueTimer(m_handle, hTimer, NULL);
 	}

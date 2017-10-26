@@ -62,6 +62,11 @@ namespace TinyUI
 				{
 					delay = 40;
 				}
+				if (m_hTimer != NULL)
+				{
+					TinyApplication::GetInstance()->GetTimers().Unregister(m_hTimer);
+					m_hTimer = NULL;
+				}
 				m_hTimer = TinyApplication::GetInstance()->GetTimers().Register(&TinyVisualAnimation::OnTimer, this, delay, 1);
 				return m_hTimer != NULL;
 			}

@@ -3,6 +3,7 @@
 #include "FLVReader.h"
 #include "RTMPStream.h"
 #include "HTTPStream.h"
+#include "Common/TinyLogging.h"
 
 namespace Decode
 {
@@ -169,6 +170,7 @@ namespace Decode
 			if (tag.type == FLV_AUDIO)
 			{
 				m_timestamp = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
+				LOG(INFO) << "Block: " << m_timestamp;
 				if (m_timestamp > 0)
 				{
 					if (m_count == 1 && m_basePTS == -1)

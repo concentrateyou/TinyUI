@@ -451,7 +451,15 @@ namespace MShow
 		client.GetRequest().Add(TinyHTTPClient::ContentType, "application/x-www-form-urlencoded");
 		client.GetRequest().Add("Sign", "#f93Uc31K24()_@");
 		TinyString szName = pTextBox->GetText();
-		string body = StringPrintf("name=%s&programId=%s&directorId=%s&streamUrl=", szName.CSTR(), m_szProgramID.c_str(), m_szLogID.c_str());
+		string body;
+		if (szName.GetSize() == 0)
+		{
+			body = StringPrintf("programId=%s&directorId=%s", m_szProgramID.c_str(), m_szLogID.c_str());
+		}
+		else
+		{
+			body = StringPrintf("name=%s&programId=%s&directorId=%s", szName.CSTR(), m_szProgramID.c_str(), m_szLogID.c_str());
+		}
 		body = std::move(ASCIIToUTF8(body));
 		client.GetRequest().SetBody(body);
 		string address = StringPrintf("%s/%s", MShow::MShowApp::GetInstance().AppConfig().GetPrefix().c_str(), "commentary/add");
@@ -1005,7 +1013,6 @@ namespace MShow
 	{
 		if (size == 4096)
 		{
-			//m_audioAnalyser.Process(m_window.m_analyserBAR.Handle(), bits, size);
 			LONGLONG currentPTS = MShow::MShowApp::GetInstance().GetCurrentAudioTS() + m_preview->GetBasePTS();
 			if (m_previousPTS != currentPTS)
 			{
@@ -1032,7 +1039,7 @@ namespace MShow
 		{
 			if (m_bBreak)
 				break;
-			if (m_event.Lock(1000))
+			if (m_event.Lock(2500))
 			{
 				if (m_audioSDK != NULL)
 				{
@@ -1040,15 +1047,21 @@ namespace MShow
 					BOOL bRes = m_audioQueue.Pop(sample);
 					if (bRes && sample.size > 0)
 					{
-						//LOG(INFO) << "Timestamp: " << sample.timestamp;
-						TRACE("Send:%lld\n", sample.timestamp);
 						if (m_audioSDK->audio_encode_send(sample.bits + 4, static_cast<INT32>(sample.timestamp)) == 0)
 						{
-							LOG(INFO) << "audio_encode_send OK";
+							LOG(INFO) << "Timestamp: " << sample.timestamp << " OK";
+						}
+						else
+						{
+							LOG(INFO) << "Timestamp: " << sample.timestamp << " FAIL";
 						}
 					}
 					m_audioQueue.Free(sample.bits);
 				}
+			}
+			else
+			{
+				LOG(ERROR) << "OnMessagePump Timeout";
 			}
 		}
 	}
