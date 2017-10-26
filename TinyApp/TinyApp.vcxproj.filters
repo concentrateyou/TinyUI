@@ -57,6 +57,9 @@
     <ClInclude Include="SkinWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="ChatDlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -90,6 +93,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="SkinWindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatDlg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -173,6 +173,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioDSP.h" />
+    <ClInclude Include="ChatDlg.h" />
     <ClInclude Include="ChatFrame.h" />
     <ClInclude Include="MediaTest.h" />
     <ClInclude Include="MFFrame.h" />
@@ -188,6 +189,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AudioDSP.cpp" />
+    <ClCompile Include="ChatDlg.cpp" />
     <ClCompile Include="ChatFrame.cpp" />
     <ClCompile Include="MediaTest.cpp" />
     <ClCompile Include="MFFrame.cpp" />
