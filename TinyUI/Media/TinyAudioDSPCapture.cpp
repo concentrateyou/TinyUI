@@ -1,5 +1,6 @@
 #include "../stdafx.h"
 #include "TinyAudioDSPCapture.h"
+#include "../Common/TinyLogging.h"
 
 namespace TinyUI
 {
@@ -238,6 +239,7 @@ namespace TinyUI
 					hRes = m_dmo->ProcessOutput(0, 1, &m_dmoBuffer, &dwStatus);
 					if (FAILED(hRes) && hRes != WMAAECMA_E_NO_ACTIVE_RENDER_STREAM)
 					{
+						LOG(ERROR) << "DMP ProcessOutput:" << hRes << " FAIL";
 						bCapturing = FALSE;
 						m_bCapturing = FALSE;
 						break;
