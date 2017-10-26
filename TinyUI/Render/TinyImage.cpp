@@ -1,6 +1,7 @@
 #include "../stdafx.h"
 #include "TinyImage.h"
 #include "../Network/TinyHTTPClient.h"
+#include "../Common/TinyLogging.h"
 using namespace TinyUI::Network;
 
 namespace TinyUI
@@ -154,7 +155,12 @@ namespace TinyUI
 				INT iRes = client.GetResponse().ReadAsBinary(ps);
 				if (iRes > 0 && ps != NULL)
 				{
+					LOG(ERROR) << "Open Image: " << pzFile << " OK";
 					return Open((BYTE*)ps, iRes);
+				}
+				else
+				{
+					LOG(ERROR) << "Open Image: " << iRes << " FAIL";
 				}
 			}
 		}

@@ -39,6 +39,34 @@ namespace TinyUI
 		log += TEXT(L"debug.log");
 		return log;
 	}
+
+	string GetDefaultDumpFile()
+	{
+		CHAR module[MAX_PATH];
+		GetModuleFileName(NULL, module, MAX_PATH);
+		string log(module);
+		string::size_type backslash = log.rfind('\\', log.size());
+		if (backslash != string::npos)
+		{
+			log.erase(backslash + 1);
+		}
+		log += TEXT("debug.dmp");
+		return log;
+	}
+	wstring GetDefaultDumpFileW()
+	{
+		WCHAR module[MAX_PATH];
+		GetModuleFileNameW(NULL, module, MAX_PATH);
+		wstring log(module);
+		wstring::size_type backslash = log.rfind('\\', log.size());
+		if (backslash != wstring::npos)
+		{
+			log.erase(backslash + 1);
+		}
+		log += TEXT(L"debug.dmp");
+		return log;
+	}
+
 	BOOL InitializeLogFile(LPCSTR pzFile)
 	{
 		if (g_logFile != NULL && g_logFile != INVALID_HANDLE_VALUE)
@@ -256,21 +284,15 @@ namespace TinyUI
 		m_stream << GetTickCount() << ':';
 		m_stream << ":" << name << "(" << line << ")] ";
 		m_messageOffset = static_cast<size_t>(m_stream.tellp());
-		string logFile = GetDefaultLogFile();
+		string logFile = GetDefaultDumpFile();
 		m_hFile = CreateFile(logFile.c_str(), GENERIC_WRITE,
 			FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
 			OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 		if (!m_hFile || m_hFile == INVALID_HANDLE_VALUE)
 		{
-#if _DEBUG
-			m_hFile = CreateFile(TEXT(".\\debug.log"), GENERIC_WRITE,
-				FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
-				OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-#else
 			m_hFile = CreateFile(TEXT(".\\debug.dmp"), GENERIC_WRITE,
 				FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
 				OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-#endif
 			if (!m_hFile || m_hFile == INVALID_HANDLE_VALUE)
 			{
 				m_hFile = NULL;
@@ -282,20 +304,6 @@ namespace TinyUI
 	}
 	void LogException::WriteLog(PEXCEPTION_POINTERS ps)
 	{
-#if _DEBUG
-		StackTrace trace(ps);
-		m_stream << std::endl;
-		trace.OutputToStream(&m_stream);
-		m_stream << std::endl;
-		string newline(m_stream.str());
-		SetFilePointer(m_hFile, 0, 0, SEEK_END);
-		DWORD num_written;
-		WriteFile(m_hFile,
-			static_cast<const void*>(newline.c_str()),
-			static_cast<DWORD>(newline.length()),
-			&num_written,
-			NULL);
-#else
 		MINIDUMP_EXCEPTION_INFORMATION mei;
 		mei.ThreadId = GetCurrentThreadId();
 		mei.ExceptionPointers = ps;
@@ -307,7 +315,32 @@ namespace TinyUI
 			MiniDumpWithThreadInfo |
 			MiniDumpWithUnloadedModules);
 		MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), m_hFile, mdt, &mei, NULL, NULL);
-#endif
+//#if _DEBUG
+//		StackTrace trace(ps);
+//		m_stream << std::endl;
+//		trace.OutputToStream(&m_stream);
+//		m_stream << std::endl;
+//		string newline(m_stream.str());
+//		SetFilePointer(m_hFile, 0, 0, SEEK_END);
+//		DWORD num_written;
+//		WriteFile(m_hFile,
+//			static_cast<const void*>(newline.c_str()),
+//			static_cast<DWORD>(newline.length()),
+//			&num_written,
+//			NULL);
+//#else
+//		MINIDUMP_EXCEPTION_INFORMATION mei;
+//		mei.ThreadId = GetCurrentThreadId();
+//		mei.ExceptionPointers = ps;
+//		mei.ClientPointers = FALSE;
+//		MINIDUMP_TYPE mdt = (MINIDUMP_TYPE)(MiniDumpWithPrivateReadWriteMemory |
+//			MiniDumpWithDataSegs |
+//			MiniDumpWithHandleData |
+//			MiniDumpWithFullMemoryInfo |
+//			MiniDumpWithThreadInfo |
+//			MiniDumpWithUnloadedModules);
+//		MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), m_hFile, mdt, &mei, NULL, NULL);
+//#endif
 	}
 	LogException::~LogException()
 	{

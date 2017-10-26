@@ -56,6 +56,10 @@ namespace MShow
 			}
 			LONG systemMS = static_cast<LONG>(MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime());
 			INT delay = static_cast<INT>(sampleTag.samplePTS - systemMS);
+			if (delay > 100)
+			{
+				LOG(INFO) << "Video delay:" << delay << " samplePTS:" << sampleTag.samplePTS << " systemMS:" << systemMS;
+			}
 			if (timer.Wait(delay, 1000))
 			{
 				if (!m_renderCB.IsNull())

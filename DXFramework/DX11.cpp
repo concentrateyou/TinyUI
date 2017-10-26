@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "DX11.h"
 #include "DX11RenderView.h"
+#include "Common/TinyLogging.h"
 
 namespace DXFramework
 {
@@ -128,7 +129,24 @@ namespace DXFramework
 				return FALSE;
 			m_multithread->SetMultithreadProtected(TRUE);
 		}
+		m_size.cx = cx;
+		m_size.cy = cy;
+		m_bMultithread = bMultithread;
 		return TRUE;
+	}
+	void DX11::Uninitialize()
+	{
+		m_background2D.Reset(NULL);
+		m_multithread.Release();
+		m_disableDepthState.Release();
+		m_enableDepthState.Release();
+		m_disableBlendState.Release();
+		m_enableBlendState.Release();
+		m_rasterizerState.Release();
+		m_immediateContext.Release();
+		m_swap.Release();
+		m_d3d.Release();
+		m_render2D = NULL;
 	}
 	BOOL DX11::ResizeView(INT cx, INT cy)
 	{
@@ -166,7 +184,16 @@ namespace DXFramework
 	{
 		if (IsValid())
 		{
-			m_swap->Present(0, 0);
+			HRESULT hRes = m_swap->Present(0, 0);
+			if (FAILED(hRes))
+			{
+				if (hRes == DXGI_ERROR_DEVICE_REMOVED || hRes == DXGI_ERROR_DEVICE_RESET)
+				{
+					LOG(ERROR) << "Present:" << "DXGI_ERROR_DEVICE_REMOVED or DXGI_ERROR_DEVICE_RESET";
+					Uninitialize();
+					Initialize(m_hWND, m_size.cx, m_size.cy, m_bMultithread);
+				}
+			}
 		}
 	}
 	void DX11::Flush()

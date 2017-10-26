@@ -12,6 +12,7 @@ namespace DXFramework
 		DX11();
 		~DX11();
 		BOOL Initialize(HWND hWND, INT cx, INT cy, BOOL bMultithread = FALSE);
+		void Uninitialize();
 		BOOL ResizeView(INT cx = 0, INT cy = 0);
 		BOOL SetViewport(const TinyPoint& pos, const TinySize& size);
 		void AllowBlend(BOOL bAllow, FLOAT blendFactor[4]);
@@ -35,6 +36,7 @@ namespace DXFramework
 		HWND								m_hWND;
 		DX11RenderView*						m_render2D;
 		XMMATRIX							m_matrixs[3];
+		TinySize							m_size;
 		TinyLock							m_synchronize;
 		TinyComPtr<ID3D11Device>			m_d3d;
 		TinyComPtr<IDXGISwapChain>			m_swap;

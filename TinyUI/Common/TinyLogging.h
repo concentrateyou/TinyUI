@@ -11,6 +11,7 @@
 
 namespace TinyUI
 {
+	string GetDefaultDumpFile();
 	/// <summary>
 	/// Symbolиообнд
 	/// </summary>
