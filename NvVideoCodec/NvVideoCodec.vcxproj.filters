@@ -33,6 +33,9 @@
     <ClInclude Include="..\..\..\Program Files (x86)\Video_Codec_SDK_8.0.14\Samples\common\inc\NvHWEncoder.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="NvCommon.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -45,6 +48,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Program Files (x86)\Video_Codec_SDK_8.0.14\Samples\common\src\NvHWEncoder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Program Files (x86)\Video_Codec_SDK_8.0.14\Samples\common\src\dynlink_cuda.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="NvCommon.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

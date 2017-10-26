@@ -1,10 +1,8 @@
 #pragma once
-#include "../Samples/common/inc/dynlink_cuda.h"
-#include "../Samples/common/inc/NvHWEncoder.h"
+#include "NvCommon.h"
 
-namespace NVIDIA 
+namespace NVIDIA
 {
-
 	/// <summary>
 	/// N¿¨½âÂë
 	/// </summary>
@@ -12,8 +10,7 @@ namespace NVIDIA
 	{
 	public:
 		NvDecoder();
-		~NvDecoder();
-	
+		virtual ~NvDecoder();
 	};
 }
 
