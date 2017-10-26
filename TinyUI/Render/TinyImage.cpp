@@ -155,7 +155,7 @@ namespace TinyUI
 				INT iRes = client.GetResponse().ReadAsBinary(ps);
 				if (iRes > 0 && ps != NULL)
 				{
-					LOG(ERROR) << "Open Image: " << pzFile << " OK";
+					LOG(INFO) << "Open Image: " << pzFile << " OK";
 					return Open((BYTE*)ps, iRes);
 				}
 				else

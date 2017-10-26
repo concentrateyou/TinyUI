@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "HTTPStream.h"
+#include "Common/TinyLogging.h"
 
 namespace Decode
 {
@@ -68,6 +69,10 @@ namespace Decode
 		if (size > 0)
 		{
 			memcpy(pv, bits, size);
+		}
+		if (size == 0)
+		{
+			LOG(INFO) << "HTTPStream Read 0 ";
 		}
 		*pcbRead = static_cast<ULONG>(size);
 		return S_OK;

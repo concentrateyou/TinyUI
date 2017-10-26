@@ -92,7 +92,7 @@ namespace MShow
 				if (timer.Wait(delay, 1000))
 				{
 					MShow::MShowApp::GetInstance().SetCurrentAudioTS(tag.samplePTS);
-					m_audio.Fill(tag.bits + 4, tag.size, INFINITE);
+					m_audio.Fill(tag.bits + 4, tag.size, 1000);
 				}
 			}
 			else
@@ -102,7 +102,7 @@ namespace MShow
 					m_callback(tag.bits + 4, tag.size);
 				}
 				MShow::MShowApp::GetInstance().SetCurrentAudioTS(tag.samplePTS);
-				m_audio.Fill(tag.bits + 4, tag.size, INFINITE);
+				m_audio.Fill(tag.bits + 4, tag.size, 1000);
 			}
 			m_task.GetAudioQueue().Free(tag.bits);
 		}

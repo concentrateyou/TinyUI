@@ -1049,11 +1049,11 @@ namespace MShow
 					{
 						if (m_audioSDK->audio_encode_send(sample.bits + 4, static_cast<INT32>(sample.timestamp)) == 0)
 						{
-							LOG(INFO) << "Timestamp: " << sample.timestamp << " OK";
+							//LOG(INFO) << "Timestamp: " << sample.timestamp << " OK";
 						}
 						else
 						{
-							LOG(INFO) << "Timestamp: " << sample.timestamp << " FAIL";
+							//LOG(INFO) << "Timestamp: " << sample.timestamp << " FAIL";
 						}
 					}
 					m_audioQueue.Free(sample.bits);

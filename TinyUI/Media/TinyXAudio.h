@@ -48,8 +48,8 @@ namespace TinyUI
 			STDMETHOD_(void, OnLoopEnd)(void*);
 			STDMETHOD_(void, OnVoiceError)(void*, HRESULT);
 		private:
-			TinyEvent	m_event;
-			Closure		m_callback;
+			HANDLE						m_handle;
+			Closure						m_callback;
 		};
 		/// <summary>
 		/// “Ù∆µ≤•∑≈

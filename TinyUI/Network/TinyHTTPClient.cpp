@@ -1,5 +1,6 @@
 #include "../stdafx.h"
 #include "TinyHTTPClient.h"
+#include "../Common/TinyLogging.h"
 #include "TinyDNS.h"
 #include <process.h>
 #include <algorithm>
@@ -501,6 +502,7 @@ namespace TinyUI
 		}
 		void TinyHTTPClient::OnHandleError(INT errorCode)
 		{
+			LOG(ERROR) << "TinyHTTPClient Error:" << errorCode;
 			m_errorCode = errorCode;
 			m_wait.SetEvent();
 			this->Close();

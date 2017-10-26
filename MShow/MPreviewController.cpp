@@ -30,7 +30,7 @@ namespace MShow
 			LOG(ERROR) << "[MPreviewController] " << "DX11Graphics2D Initialize FAIL";
 			return FALSE;
 		}
-		LOG(ERROR) << "[MPreviewController] " << "DX11Graphics2D Initialize OK";
+		LOG(INFO) << "[MPreviewController] " << "DX11Graphics2D Initialize OK";
 		return TRUE;
 	}
 

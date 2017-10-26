@@ -1,18 +1,25 @@
 #include "../stdafx.h"
 #include "TinyXAudio.h"
 #include "../Common/TinyTime.h"
+#include "../Common/TinyLogging.h"
 
 namespace TinyUI
 {
 	namespace Media
 	{
 		VoiceCallback::VoiceCallback()
+			:m_handle(NULL)
 		{
-			m_event.CreateEvent(FALSE, FALSE, NULL, NULL);
+#if (_WIN32_WINNT >= _WIN32_WINNT_VISTA)
+			m_handle = CreateEventEx(NULL, NULL, 0, EVENT_MODIFY_STATE | SYNCHRONIZE);
+#else
+			m_handle = CreateEvent(NULL, FALSE, FALSE, NULL);
+#endif
 		}
 		VoiceCallback::~VoiceCallback()
 		{
-
+			CloseHandle(m_handle);
+			m_handle = NULL;
 		}
 		void VoiceCallback::SetCallback(Closure&& callback)
 		{
@@ -36,17 +43,22 @@ namespace TinyUI
 		}
 		void VoiceCallback::OnBufferEnd(void* ps)
 		{
-			m_event.SetEvent();
+			SetEvent(m_handle);
 		}
 		void VoiceCallback::OnLoopEnd(void* ps)
 		{
 		}
-		void VoiceCallback::OnVoiceError(void*, HRESULT)
+		void VoiceCallback::OnVoiceError(void*, HRESULT hRes)
 		{
+			LOG(ERROR) << "OnVoiceError:" << hRes;
 		}
 		BOOL VoiceCallback::Lock(DWORD dwMS)
 		{
-			return m_event.Lock(dwMS);
+			DWORD dwRet = ::WaitForSingleObjectEx(m_handle, dwMS, TRUE);
+			if (dwRet == WAIT_OBJECT_0 || dwRet == WAIT_ABANDONED)
+				return TRUE;
+			else
+				return FALSE;
 		}
 		//////////////////////////////////////////////////////////////////////////
 		TinyXAudio::TinyXAudio()
@@ -116,15 +128,26 @@ namespace TinyUI
 				m_pSourceVoice->GetState(&state);
 				if (state.BuffersQueued < (MAX_BUFFER_COUNT - 1))
 					break;
-				m_voiceCallback.Lock(INFINITE);
+				if (m_voiceCallback.Lock(dwMS))
+				{
+					LOG(ERROR) << "[TinyXAudio] Fill Wait " << dwMS;
+				}
+				else
+				{
+					LOG(ERROR) << "[TinyXAudio] Fill Wait Timeout";
+				}
 			}
 			memcpy_s(m_array[m_dwIndex], size, bits, size);
 			XAUDIO2_BUFFER buffer = { 0 };
 			buffer.pContext = &m_voiceCallback;
 			buffer.pAudioData = m_array[m_dwIndex];
 			buffer.AudioBytes = size;
-			if (FAILED(m_pSourceVoice->SubmitSourceBuffer(&buffer)))
+			HRESULT hRes = m_pSourceVoice->SubmitSourceBuffer(&buffer);
+			if (FAILED(hRes))
+			{
+				LOG(ERROR) << "[TinyXAudio] SubmitSourceBuffer:" << hRes;
 				return FALSE;
+			}
 			m_dwIndex++;
 			m_dwIndex %= MAX_BUFFER_COUNT;
 			return TRUE;
