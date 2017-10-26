@@ -82,8 +82,11 @@ namespace TinyUI
 				return FALSE;
 #if (_WIN32_WINNT >= 0x0602 /*_WIN32_WINNT_WIN8*/) && defined(_DEBUG)
 			XAUDIO2_DEBUG_CONFIGURATION debug = { 0 };
+			debug.LogFileline = TRUE;
+			debug.LogFunctionName = TRUE;
+			debug.LogThreadID = TRUE;
+			debug.LogTiming = TRUE;
 			debug.TraceMask = XAUDIO2_LOG_ERRORS | XAUDIO2_LOG_WARNINGS;
-			debug.BreakMask = XAUDIO2_LOG_ERRORS;
 			m_audio->SetDebugConfiguration(&debug, 0);
 #endif
 			hRes = m_audio->CreateMasteringVoice(&m_pMasteringVoice);
@@ -99,6 +102,8 @@ namespace TinyUI
 				if (!m_array[i])
 					goto _ERROR;
 			}
+			m_waveFMT.Reset(new BYTE[sizeof(WAVEFORMATEX) + pFMT->cbSize]);
+			memcpy(m_waveFMT, (BYTE*)pFMT, sizeof(WAVEFORMATEX) + pFMT->cbSize);
 			return TRUE;
 		_ERROR:
 			Close();
@@ -128,14 +133,7 @@ namespace TinyUI
 				m_pSourceVoice->GetState(&state);
 				if (state.BuffersQueued < (MAX_BUFFER_COUNT - 1))
 					break;
-				if (m_voiceCallback.Lock(dwMS))
-				{
-					LOG(ERROR) << "[TinyXAudio] Fill Wait " << dwMS;
-				}
-				else
-				{
-					LOG(ERROR) << "[TinyXAudio] Fill Wait Timeout";
-				}
+				m_voiceCallback.Lock(dwMS);
 			}
 			memcpy_s(m_array[m_dwIndex], size, bits, size);
 			XAUDIO2_BUFFER buffer = { 0 };
@@ -199,6 +197,11 @@ namespace TinyUI
 			}
 			m_audio.Release();
 			return TRUE;
+		}
+		BOOL TinyXAudio::Reset()
+		{
+			Close();
+			return Open(reinterpret_cast<WAVEFORMATEX*>(m_waveFMT.Ptr()));
 		}
 	};
 }
