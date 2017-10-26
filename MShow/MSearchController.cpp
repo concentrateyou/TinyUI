@@ -156,9 +156,6 @@ namespace MShow
 
 	void MSearchController::GetPrograms()
 	{
-		int * p = NULL;
-		*p = 1;
-
 		TinyVisual* lblMsg = static_cast<TinyVisualAnimation*>(m_view.GetDocument()->GetVisualByName("lblMsg"));
 		ASSERT(lblMsg);
 		TinyVisualList* list = static_cast<TinyVisualList*>(m_view.GetDocument()->GetVisualByName("programs"));

@@ -26,7 +26,11 @@ namespace MShow
 		TinyRectangle rectangle;
 		GetClientRect(m_view.Handle(), &rectangle);
 		if (!m_graphics.Initialize(m_view.Handle(), rectangle.Size(), FALSE))
+		{
+			LOG(ERROR) << "[MPreviewController] " << "DX11Graphics2D Initialize FAIL";
 			return FALSE;
+		}
+		LOG(ERROR) << "[MPreviewController] " << "DX11Graphics2D Initialize OK";
 		return TRUE;
 	}
 
@@ -39,11 +43,19 @@ namespace MShow
 		if (!m_player)
 			goto _ERROR;
 		if (!m_player->Open(m_view.Handle(), pzURL))
+		{
+			LOG(ERROR) << "[MPreviewController] " << "Open FAIL";
 			goto _ERROR;
+		}
+		LOG(INFO) << "[MPreviewController] " << "Player Open OK";
 		size = m_player->GetSize();
 		m_video2D.Destory();
 		if (!m_video2D.Create(m_graphics.GetDX11(), size, TRUE, FALSE))
+		{
+			LOG(ERROR) << "[MPreviewController] " << "Video2D Create FAIL";
 			goto _ERROR;
+		}
+		LOG(INFO) << "[MPreviewController] " << "Video2D Create OK";
 		m_video2D.SetScale(rectangle.Size());
 		return TRUE;
 	_ERROR:
