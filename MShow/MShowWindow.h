@@ -12,7 +12,7 @@ namespace MShow
 	/// <summary>
 	/// Ö÷´°¿ÚUI
 	/// </summary>
-	class MShowWindow : public TinyVisualHWND
+	class MShowWindow : public TinyVisualFrame
 	{
 		friend class MShowController;
 		DECLARE_DYNAMIC(MShowWindow)
