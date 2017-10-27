@@ -1,7 +1,7 @@
 #pragma once
 #include "Common/TinyModule.h"
 #include "Common/TinyDialog.h"
-#include "Windowless/TinyVisualHWND.h"
+#include "Windowless/TinyVisualFrame.h"
 #include "Control/TinyComboBox.h"
 #include "Control/TinyButton.h"
 #include "Control/TinyLabel.h"
@@ -9,6 +9,7 @@
 #include "Control/TinyLabel.h"
 #include "Control/TinyRichTextBox.h"
 #include "Control/TinyScrollBar.h"
+#include "Windowless/TinyVisualWND.h"
 #include "Network/TinyHTTPRequest.h"
 #include "Network/TinyHTTPResponse.h"
 #include "WavePlayer.h"
@@ -20,9 +21,10 @@
 #pragma comment(lib,"sapi.lib")
 
 using namespace TinyUI;
+using namespace TinyUI::Windowless;
 using namespace TinyUI::Network;
 
-class ChatDlg : public TinyDialog
+class ChatDlg : public TinyVisualWND
 {
 public:
 	ChatDlg();

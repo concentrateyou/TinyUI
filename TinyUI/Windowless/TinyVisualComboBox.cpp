@@ -282,7 +282,7 @@ namespace TinyUI
 		}
 		HRESULT TinyVisualOption::OnLButtonUp(const TinyPoint& pos, DWORD dwFlags)
 		{
-			TinyVisualHWND* pHWND = m_document->GetVisualHWND();
+			TinyVisualFrame* pHWND = m_document->GetVisualHWND();
 			if (pHWND->IsKindOf(RUNTIME_CLASS(TinyVisualComboBoxHWND)))
 			{
 				TinyVisualComboBoxHWND*	ps = static_cast<TinyVisualComboBoxHWND*>(pHWND);

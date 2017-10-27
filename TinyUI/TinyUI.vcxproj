@@ -291,7 +291,6 @@
     <ClInclude Include="Windowless\TinyTextHost.h" />
     <ClInclude Include="Windowless\TinyVisualAnimation.h" />
     <ClInclude Include="Windowless\TinyVisualCaption.h" />
-    <ClInclude Include="Windowless\TinyVisualDlg.h" />
     <ClInclude Include="Windowless\TinyVisualList.h" />
     <ClInclude Include="Windowless\TinyVisualNative.h" />
     <ClInclude Include="Windowless\TinyVisualPanel.h" />
@@ -308,8 +307,9 @@
     <ClInclude Include="Windowless\TinyVisualManage.h" />
     <ClInclude Include="Windowless\TinyVisual.h" />
     <ClInclude Include="Windowless\TinyVisualEvent.h" />
-    <ClInclude Include="Windowless\TinyVisualHWND.h" />
+    <ClInclude Include="Windowless\TinyVisualFrame.h" />
     <ClInclude Include="Windowless\TinyVisualDocument.h" />
+    <ClInclude Include="Windowless\TinyVisualWND.h" />
     <ClInclude Include="XML\tinystr.h" />
     <ClInclude Include="XML\tinyxml.h" />
     <ClInclude Include="XML\TinyXMLParse.h" />
@@ -437,8 +437,7 @@
     <ClCompile Include="Windowless\TinyTextHost.cpp" />
     <ClCompile Include="Windowless\TinyVisualAnimation.cpp" />
     <ClCompile Include="Windowless\TinyVisualCaption.cpp" />
-    <ClCompile Include="Windowless\TinyVisualDlg.cpp" />
-    <ClCompile Include="Windowless\TinyVisualHWND.cpp" />
+    <ClCompile Include="Windowless\TinyVisualFrame.cpp" />
     <ClCompile Include="Windowless\TinyVisualList.cpp" />
     <ClCompile Include="Windowless\TinyVisualNative.cpp" />
     <ClCompile Include="Windowless\TinyVisualPanel.cpp" />
@@ -456,6 +455,7 @@
     <ClCompile Include="Windowless\TinyVisual.cpp" />
     <ClCompile Include="Windowless\TinyVisualEvent.cpp" />
     <ClCompile Include="Windowless\TinyVisualDocument.cpp" />
+    <ClCompile Include="Windowless\TinyVisualWND.cpp" />
     <ClCompile Include="XML\tinystr.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>

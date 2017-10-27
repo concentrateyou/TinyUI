@@ -1,6 +1,6 @@
 #pragma once
 #include "Common/TinyModule.h"
-#include "Windowless/TinyVisualHWND.h"
+#include "Windowless/TinyVisualFrame.h"
 #include "Control/TinyComboBox.h"
 #include "Control/TinyButton.h"
 #include "Control/TinyLabel.h"
@@ -10,6 +10,7 @@
 #include "Control/TinyScrollBar.h"
 #include "Network/TinyHTTPRequest.h"
 #include "Network/TinyHTTPResponse.h"
+#include "Windowless/TinyVisualWND.h"
 #include "WavePlayer.h"
 #include "AudioDSP.h"
 #include <sapi.h>
@@ -19,9 +20,10 @@
 #pragma comment(lib,"sapi.lib")
 
 using namespace TinyUI;
+using namespace TinyUI::Windowless;
 using namespace TinyUI::Network;
 
-class ChatFrame : public TinyControl
+class ChatFrame : public TinyVisualWND
 {
 public:
 	ChatFrame();
@@ -32,7 +34,6 @@ public:
 	LPCSTR RetrieveClassName() OVERRIDE;
 	LPCSTR RetrieveTitle() OVERRIDE;
 	HICON RetrieveIcon() OVERRIDE;
-	BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 	//ÊÂ¼þ
 	LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;

@@ -90,9 +90,7 @@ namespace TinyUI
 	}
 	BOOL TinyWindow::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
 	{
-		BOOL result = FALSE;
-		result = m_thunk.Initialize(NULL, NULL);
-		if (result == FALSE)
+		if (!m_thunk.Initialize(NULL, NULL))
 		{
 			SetLastError(ERROR_OUTOFMEMORY);
 			return FALSE;
@@ -161,10 +159,10 @@ namespace TinyUI
 	HWND TinyWindow::UnsubclassWindow(BOOL bForce /* = FALSE */)
 	{
 		ASSERT(m_hWND != NULL);
-		WNDPROC pOurProc = m_thunk.GetWNDPROC();
+		WNDPROC hProc = m_thunk.GetWNDPROC();
 		WNDPROC pActiveProc = (WNDPROC)::GetWindowLongPtr(m_hWND, GWLP_WNDPROC);
 		HWND hWND = NULL;
-		if (bForce || pOurProc == pActiveProc)
+		if (bForce || hProc == pActiveProc)
 		{
 			if (!::SetWindowLongPtr(m_hWND, GWLP_WNDPROC, (LONG_PTR)m_hPrimaryProc))
 				return NULL;
@@ -205,30 +203,10 @@ namespace TinyUI
 			TinyMsg msg(_this->m_hWND, uMsg, wParam, lParam);
 			const TinyMsg* pOldMsg = _this->m_pCurrentMsg;
 			_this->m_pCurrentMsg = &msg;
-			////添加和移除筛选器
-			//switch (msg.message)
-			//{
-			//case WM_CREATE:
-			//{
-			//	TinyMessageLoop* pLoop = TinyApplication::GetInstance()->GetMessageLoop();
-			//	ASSERT(pLoop != NULL);
-			//	pLoop->AddMessageFilter(_this);
-			//}
-			//break;
-			//case WM_DESTROY:
-			//{
-			//	TinyMessageLoop* pLoop = TinyApplication::GetInstance()->GetMessageLoop();
-			//	ASSERT(pLoop != NULL);
-			//	pLoop->RemoveMessageFilter(_this);
-			//}
-			//break;
-			//default:
-			//	break;
-			//}
 			LRESULT lRes = 0;
-			BOOL bRet = _this->ProcessWindowMessage(_this->m_hWND, uMsg, wParam, lParam, lRes);
+			BOOL bRes = _this->ProcessWindowMessage(_this->m_hWND, uMsg, wParam, lParam, lRes);
 			ASSERT(_this->m_pCurrentMsg == &msg);
-			if (!bRet)//如果没有设置Handle,调用CallWindowProc处理
+			if (!bRes)//如果没有设置Handle,调用CallWindowProc处理
 			{
 				if (uMsg != WM_NCDESTROY)
 				{

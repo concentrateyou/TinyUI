@@ -7,7 +7,7 @@
 #include "ChatFrame.h"
 #include "ChatDlg.h"
 #include "MFFrame.h"
-#include "Windowless/TinyVisualHWND.h"
+#include "Windowless/TinyVisualFrame.h"
 #include "Windowless/TinyVisualTextBox.h"
 #include "Render/TinyDDraw.h"
 #include "Media/TinyWASAPIAudioCapture.h"
@@ -126,8 +126,9 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	//uiImpl.UpdateWindow();
 	//uiImpl.Create(NULL, 10, 10, 100, 100);
 	//uiImpl.CenterWindow(NULL, { 800,600 });
-	ChatDlg uiImpl;
-	uiImpl.DoModal(GetActiveWindow(), IDD_DIALOG1);
+	ChatFrame uiImpl;
+	uiImpl.Create(NULL, 10, 10, 500, 500);
+	uiImpl.UpdateWindow();
 	INT loopRes = theLoop.MessageLoop();
 	TinyApplication::GetInstance()->RemoveMessageLoop();
 	TinyApplication::GetInstance()->Uninitialize();

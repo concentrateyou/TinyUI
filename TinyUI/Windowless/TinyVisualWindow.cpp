@@ -2,7 +2,7 @@
 #include "../Common/TinyString.h"
 #include "TinyVisualCommon.h"
 #include "TinyVisualManage.h"
-#include "TinyVisualHWND.h"
+#include "TinyVisualFrame.h"
 
 namespace TinyUI
 {

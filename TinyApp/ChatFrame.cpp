@@ -17,10 +17,6 @@ LRESULT ChatFrame::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	return FALSE;
 }
 
-BOOL ChatFrame::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
-{
-	return TinyControl::Create(hParent, x, y, cx, cy, FALSE);
-}
 DWORD ChatFrame::RetrieveStyle()
 {
 	return (WS_VISIBLE | WS_OVERLAPPEDWINDOW);

@@ -294,7 +294,7 @@ namespace TinyUI
 	/************************************************************************/
 	/* TinyFileDialog                                                        */
 	/************************************************************************/
-	IMPLEMENT_DYNAMIC(TinyFileDialog, TinyDialogBase);
+	IMPLEMENT_DYNAMIC(TinyFileDialog, TinyDialog);
 	BOOL TinyFileDialog::IsReadOnly() const
 	{
 		return m_ofn.Flags & OFN_READONLY ? TRUE : FALSE;

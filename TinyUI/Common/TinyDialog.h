@@ -12,16 +12,14 @@ namespace TinyUI
 	/// <summary>
 	/// 对话框基类
 	/// </summary>
-	class TinyDialogBase : public TinyHandleHWND
+	class TinyDialog : public TinyHandleHWND
 	{
-		DECLARE_DYNAMIC(TinyDialogBase)
+		DECLARE_DYNAMIC(TinyDialog)
 	protected:
 		TinyLoopThunk	m_thunk;// Thunk类
 		INT_PTR			m_iDlgResult;
 		BOOL			m_bModal;
 		DLGPROC			m_hPrimaryProc;//原始对话框过程
-		WORD			m_wInteger;
-		LPCTSTR			m_pTemplateName;
 	protected:
 		virtual void PreSubclassDialog();
 		virtual BOOL PreTranslateMessage(MSG* pMsg);
@@ -31,13 +29,14 @@ namespace TinyUI
 		static INT_PTR CALLBACK BeginLoop(HWND hWND, UINT uMsg, WPARAM wParam, LPARAM lParam);
 		static INT_PTR CALLBACK EndLoop(HWND hWND, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	public:
-		TinyDialogBase();
-		virtual ~TinyDialogBase();
+		TinyDialog();
+		virtual ~TinyDialog();
 		virtual BOOL Create(HWND hParent, WORD wInteger);
 		virtual BOOL Create(HWND hParent, LPCTSTR lpTemplateName);
 		virtual INT_PTR DoModal(HWND hParent = ::GetActiveWindow(), WORD wInteger = 0);
 		virtual INT_PTR DoModal(HWND hParent = ::GetActiveWindow(), LPCTSTR lpTemplateName = NULL);
 		BOOL SubclassDialog(HWND hWND);
+		HWND UnsubclassDialog();
 		LRESULT DefWindowProc();
 		BOOL MapDialogRect(LPRECT lpRect);
 		BOOL EndDialog();
@@ -49,179 +48,6 @@ namespace TinyUI
 		void NextDlgCtrl() const;
 		void PrevDlgCtrl() const;
 		void GotoDlgCtrl(HWND hWND);
-	};
-	/// <summary>
-	/// 对话框
-	/// </summary>
-	class TinyDialog : public TinyDialogBase
-	{
-		DECLARE_DYNAMIC(TinyDialog)
-	public:
-		TinyDialog();
-		virtual ~TinyDialog();
-	public:
-		BEGIN_MSG_MAP(TinyDialog, TinyDialogBase)
-			MESSAGE_HANDLER(WM_CREATE, OnCreate)
-			MESSAGE_HANDLER(WM_DESTROY, OnDestory)
-			MESSAGE_HANDLER(WM_CLOSE, OnClose)
-			MESSAGE_HANDLER(WM_SIZE, OnSize)
-			MESSAGE_HANDLER(WM_MOVE, OnMove)
-			MESSAGE_HANDLER(WM_INITDIALOG,OnInitDialog)
-			MESSAGE_HANDLER(WM_SETCURSOR, OnSetCursor)
-			MESSAGE_HANDLER(WM_NCMOUSEMOVE, OnNCMouseMove)
-			MESSAGE_HANDLER(WM_NCMOUSEHOVER, OnNCMouseHover)
-			MESSAGE_HANDLER(WM_NCMOUSELEAVE, OnNCMouseLeave)
-			MESSAGE_HANDLER(WM_NCHITTEST, OnNCHitTest)
-			MESSAGE_HANDLER(WM_NCPAINT, OnNCPaint)
-			MESSAGE_HANDLER(WM_NCLBUTTONDOWN, OnNCLButtonDown)
-			MESSAGE_HANDLER(WM_NCLBUTTONUP, OnNCLButtonUp)
-			MESSAGE_HANDLER(WM_NCLBUTTONDBLCLK, OnNCLButtonDBClick)
-			MESSAGE_HANDLER(WM_NCRBUTTONDOWN, OnNCRButtonDown)
-			MESSAGE_HANDLER(WM_NCRBUTTONUP, OnNCRButtonUp)
-			MESSAGE_HANDLER(WM_NCRBUTTONDBLCLK, OnNCRButtonDBClick)
-			MESSAGE_HANDLER(WM_NCACTIVATE, OnNCActivate)
-			MESSAGE_HANDLER(WM_NCCALCSIZE, OnNCCalcSize)
-			MESSAGE_HANDLER(WM_PRINTCLIENT, OnPrintClient)
-			MESSAGE_HANDLER(WM_PAINT, OnPaint)
-			MESSAGE_HANDLER(WM_ERASEBKGND, OnErasebkgnd)
-			MESSAGE_HANDLER(WM_MOUSEMOVE, OnMouseMove)
-			MESSAGE_HANDLER(WM_MOUSELEAVE, OnMouseLeave)
-			MESSAGE_HANDLER(WM_MOUSEWHEEL, OnMouseWheel)
-			MESSAGE_HANDLER(WM_LBUTTONDOWN, OnLButtonDown)
-			MESSAGE_HANDLER(WM_LBUTTONUP, OnLButtonUp)
-			MESSAGE_HANDLER(WM_LBUTTONDBLCLK, OnLButtonDBClick)
-			MESSAGE_HANDLER(WM_RBUTTONDOWN, OnRButtonDown)
-			MESSAGE_HANDLER(WM_RBUTTONUP, OnRButtonUp)
-			MESSAGE_HANDLER(WM_MBUTTONDOWN, OnMButtonDown)
-			MESSAGE_HANDLER(WM_MBUTTONUP, OnMButtonUp)
-			MESSAGE_HANDLER(WM_RBUTTONDBLCLK, OnRButtonDBClick)
-			MESSAGE_HANDLER(WM_MOUSEHOVER, OnMouseHover)
-			MESSAGE_HANDLER(WM_ACTIVATE, OnActivate)
-			MESSAGE_HANDLER(WM_TIMER, OnTimer)
-			MESSAGE_HANDLER(WM_COMMAND, OnCommand)
-			MESSAGE_HANDLER(WM_NOTIFY, OnNotify)
-			MESSAGE_HANDLER(WM_COMMANDREFLECT, OnCommandReflect)
-			MESSAGE_HANDLER(WM_NOTIFYREFLECT, OnNotifyReflect)
-			MESSAGE_HANDLER(WM_DRAWITEMREFLECT, OnDrawItemReflect)
-			MESSAGE_HANDLER(WM_MEASUREITEMREFLECT, OnMeasureItemReflect)
-			MESSAGE_HANDLER(WM_DELETEITEMREFLECT, OnDeleteItemReflect)
-			MESSAGE_HANDLER(WM_KEYDOWN, OnKeyDown)
-			MESSAGE_HANDLER(WM_KEYUP, OnKeyUp)
-			MESSAGE_HANDLER(WM_CHAR, OnChar)
-			MESSAGE_HANDLER(WM_PASTE, OnPaste)
-			MESSAGE_HANDLER(WM_CUT, OnCut)
-			MESSAGE_HANDLER(WM_CLEAR, OnClear)
-			MESSAGE_HANDLER(WM_SETFOCUS, OnSetFocus)
-			MESSAGE_HANDLER(WM_KILLFOCUS, OnKillFocus)
-			MESSAGE_HANDLER(WM_GETMINMAXINFO, OnGetMinMaxInfo)
-			MESSAGE_HANDLER(WM_CONTEXTMENU, OnContextMenu)
-			MESSAGE_HANDLER(WM_INITMENUPOPUP, OnIniMenuPopup)
-			MESSAGE_HANDLER(WM_INITMENU, OnIniMenu)
-			MESSAGE_HANDLER(WM_WINDOWPOSCHANGING, OnWindowPosChanging)
-			MESSAGE_HANDLER(WM_WINDOWPOSCHANGED, OnWindowPosChanged)
-			MESSAGE_HANDLER(WM_SYSCOMMAND, OnSysCommand)
-		END_MSG_MAP()
-		virtual LRESULT OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnPrintClient(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnNCMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnNCMouseHover(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnNCMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnNCPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnNCLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnNCLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnNCLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnNCRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnNCRButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnNCRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnNCActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnMouseWheel(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnMouseHover(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnRButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnMButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnMButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnMButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnTimer(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnCommandReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnNotifyReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnNotify(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnDeleteItemReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnDrawItemReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnMeasureItem(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnMeasureItemReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnKeyUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnPaste(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnCut(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnClear(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnSetFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnContextMenu(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnIniMenuPopup(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnIniMenu(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnWindowPosChanging(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnWindowPosChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-	public:
-		BOOL	SetSize(INT cx, INT cy) throw();
-		BOOL	SetPosition(INT x, INT y) throw();
-		BOOL	SetSize(const TinySize& size) throw();
-		BOOL	SetPosition(const TinyPoint& pos) throw();
-		BOOL	ShowWindow(INT nCmdShow) throw();
-		BOOL	UpdateWindow() throw();
-		BOOL	GetWindowRect(LPRECT lprect);
-		BOOL	GetClientRect(LPRECT lprect);
-		DWORD	GetStyle() const;
-		DWORD	GetExStyle() const;
-		BOOL	ModifyStyle(DWORD dwRemove, DWORD dwAdd, UINT nFlags = 0) throw();
-		BOOL	ModifyStyleEx(DWORD dwRemove, DWORD dwAdd, UINT nFlags = 0) throw();
-		void	CenterWindow(HWND parent, SIZE pref) throw();
-		BOOL	Invalidate();
-		BOOL	ClientToScreen(LPPOINT lpPoint) const throw();
-		BOOL	ClientToScreen(LPRECT lpRect) const throw();
-		BOOL	ScreenToClient(LPPOINT lpPoint) const throw();
-		BOOL	ScreenToClient(LPRECT lpRect) const throw();
-		void	SetFont(HFONT hFont, BOOL bRedraw);
-		HFONT	GetFont() const;
-		void	SetDefaultFont();
-	public:
-		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_INITDIALOG;
-		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_CREATE;
-		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_DESTORY;
-		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_SIZE;
-		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_LBUTTONDOWN;
-		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_LBUTTONUP;
-		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_LDBCLICK;
-		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_MOUSEMOVE;
-		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_MOUSELEAVE;
-		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_RBUTTONDOWN;
-		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_RBUTTONUP;
-		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_RDBCLICK;
-		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_SETCURSOR;
-		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_POSCHANGING;
-		Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_POSCHANGED;
-	protected:
-		TinyMenu*	m_pMenu;
 	};
 }
 

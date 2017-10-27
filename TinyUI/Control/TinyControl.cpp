@@ -33,7 +33,6 @@ namespace TinyUI
 	};
 	BOOL TinyControl::Create(HWND hParent, INT x, INT y, INT cx, INT cy, BOOL bHook)
 	{
-		BOOL bRes = FALSE;
 		if (bHook)
 		{
 			m_hhk = SetWindowsHookEx(WH_CBT, CbtFilterHook, TinyApplication::GetInstance()->Handle(), GetCurrentThreadId());
