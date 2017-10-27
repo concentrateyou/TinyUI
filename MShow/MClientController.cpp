@@ -155,8 +155,23 @@ namespace MShow
 			}
 			LOG(ERROR) << "[SetPreview] " << "Open Preview :" << pCTRL->m_szPreviewURL << " Fail";
 		}
+		//更新名称
+		if (pCTRL->m_szName.empty())
+		{
+			INT count = 0;
+			if (pCTRL->Query(string(), count))
+			{
+				pCTRL->m_szName = StringPrintf("解说信号源%d", count + 1);
+				TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(pCTRL->m_view.GetDocument()->GetVisualByName("txtName"));
+				if (pTextBox != NULL)
+				{
+					pTextBox->SetText(pCTRL->m_szName.c_str());
+				}
+			}
+		}
 		pCTRL->m_view.Invalidate();
 	}
+
 	VOID CALLBACK MClientController::OnTimer2(PVOID lpParam, BOOLEAN TimerOrWaitFired)
 	{
 		MClientController* pCTRL = static_cast<MClientController*>(lpParam);
@@ -164,8 +179,21 @@ namespace MShow
 		INT count = 0;
 		if (pCTRL->Query(pCTRL->m_szSourceID, count) && count == 0)
 		{
-			pCTRL->StopCommentary();
-			MessageBox(NULL, "当前客户端连接被移除", "警告", MB_OK);
+			//停止Timer
+			if (pCTRL->m_hTimer2 != NULL)
+			{
+				TinyApplication::GetInstance()->GetTimers().Unregister(pCTRL->m_hTimer2);
+				pCTRL->m_hTimer2 = NULL;
+			}
+			if (MessageBox(NULL, "当前客户端连接被移除", "警告", MB_OK) == IDOK)
+			{
+				pCTRL->Disconnect(pCTRL->m_szSourceID);
+				pCTRL->Close();
+				pCTRL->m_view.ShowWindow(SW_HIDE);
+				pCTRL->m_view.UpdateWindow();
+				MShow::MShowApp::GetInstance().GetSearchView().ShowWindow(SW_NORMAL);
+				MShow::MShowApp::GetInstance().GetSearchView().UpdateWindow();
+			}
 		}
 	}
 
@@ -180,7 +208,15 @@ namespace MShow
 		client.GetRequest().SetVerbs(TinyHTTPClient::GET);
 		client.GetRequest().Add(TinyHTTPClient::ContentType, "application/x-www-form-urlencoded");
 		client.GetRequest().Add("Sign", "#f93Uc31K24()_@");
-		string address = StringPrintf("%s/%s?id=%s&programId=%s&directorId=%s", MShow::MShowApp::GetInstance().AppConfig().GetPrefix().c_str(), "commentary/list", sourceID.c_str(), m_szProgramID.c_str(), m_szLogID.c_str());
+		string address;
+		if (sourceID.empty())
+		{
+			address = StringPrintf("%s/%s?programId=%s&directorId=%s", MShow::MShowApp::GetInstance().AppConfig().GetPrefix().c_str(), "commentary/list", m_szProgramID.c_str(), m_szLogID.c_str());
+		}
+		else
+		{
+			address = StringPrintf("%s/%s?id=%s&programId=%s&directorId=%s", MShow::MShowApp::GetInstance().AppConfig().GetPrefix().c_str(), "commentary/list", sourceID.c_str(), m_szProgramID.c_str(), m_szLogID.c_str());
+		}
 		if (!client.Open(address))
 		{
 			LOG(ERROR) << "[MClientController] " << "Open " << address << " " << client.GetResponse().GetGetStatusMsg();
@@ -329,6 +365,7 @@ namespace MShow
 			m_onSpeakerFocus.Reset(new Delegate<void(TinyVisual*, FocusEventArgs&)>(this, &MClientController::OnSpeakerFocus));
 			visual->EVENT_FOCUS += m_onSpeakerFocus;
 		}
+		m_view.Invalidate();
 	}
 
 	void MClientController::OnMinimumClick(TinyVisual*, EventArgs& args)
@@ -341,7 +378,6 @@ namespace MShow
 	{
 		this->Disconnect(m_szSourceID);
 		this->Close();
-		m_szSourceID.clear();
 		m_view.ShowWindow(SW_HIDE);
 		m_view.UpdateWindow();
 		MShow::MShowApp::GetInstance().GetSearchView().ShowWindow(SW_NORMAL);
@@ -489,6 +525,7 @@ namespace MShow
 		else
 		{
 			string msg = value["msg"].asString();
+			msg = std::move(UTF8ToASCII(msg));
 			LOG(ERROR) << "[MClientController] " << "Response Code : " << code << " Msg: " << msg;
 		}
 	_ERROR:
@@ -539,6 +576,7 @@ namespace MShow
 		else
 		{
 			string msg = value["error_msg"].asString();
+			msg = std::move(UTF8ToASCII(msg));
 			LOG(ERROR) << "[MClientController] " << "Response Code : " << code << " Msg: " << msg;
 		}
 		return TRUE;
@@ -598,6 +636,7 @@ namespace MShow
 	{
 		if (sourceID.empty() || sName.empty())
 			return FALSE;
+
 		string code;
 		string context;
 		Json::Reader reader;
@@ -718,6 +757,10 @@ namespace MShow
 			m_preview->Close();
 			Sleep(100);
 		}
+		m_szSourceID.clear();
+		m_szProgramID.clear();
+		m_szName.clear();
+		m_szLogID.clear();
 	}
 	BOOL MClientController::StartCommentary()
 	{
@@ -920,9 +963,12 @@ namespace MShow
 
 	void MClientController::OnStopCommentaryClick(TinyVisual*, EventArgs& args)
 	{
-		if (Disconnect(m_szSourceID))
+		if (MessageBox(NULL, "停止后停止推流，是否需要停止", "警告", MB_OKCANCEL) == IDOK)
 		{
-			StopCommentary();
+			if (Disconnect(m_szSourceID))
+			{
+				StopCommentary();
+			}
 		}
 	}
 
@@ -1049,11 +1095,11 @@ namespace MShow
 					{
 						if (m_audioSDK->audio_encode_send(sample.bits + 4, static_cast<INT32>(sample.timestamp)) == 0)
 						{
-							//LOG(INFO) << "Timestamp: " << sample.timestamp << " OK";
+							LOG(INFO) << "Timestamp: " << sample.timestamp << " OK";
 						}
 						else
 						{
-							//LOG(INFO) << "Timestamp: " << sample.timestamp << " FAIL";
+							LOG(INFO) << "Timestamp: " << sample.timestamp << " FAIL";
 						}
 					}
 					m_audioQueue.Free(sample.bits);

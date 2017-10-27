@@ -74,13 +74,13 @@ namespace MShow
 			return FALSE;
 		m_searchView.ShowWindow(SW_SHOW);
 		m_searchView.UpdateWindow();
-		if (!m_searchCTRL.Initialize())
-			return FALSE;
 		szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\client.xml");
 		if (!m_clientView.Create(NULL, szFile.c_str()))
 			return FALSE;
 		m_clientView.ShowWindow(SW_HIDE);
 		m_clientView.UpdateWindow();
+		if (!m_searchCTRL.Initialize())
+			return FALSE;
 		if (!m_clientCRTL.Initialize())
 			return FALSE;
 		return TRUE;

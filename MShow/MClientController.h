@@ -56,16 +56,16 @@ namespace MShow
 		static VOID CALLBACK OnTimer1(PVOID lpParam, BOOLEAN TimerOrWaitFired);
 		static VOID CALLBACK OnTimer2(PVOID lpParam, BOOLEAN TimerOrWaitFired);
 	private:
-		BOOL	Connect();//添加源
-		BOOL	Disconnect(const string& sourceID);
-		BOOL	UpdatePreviewURL(const string& sourceID, const string& strURL);
-		BOOL	UpdateName(const string& sourceID, const string& strName);
-		BOOL	GetPreviewURL(string& szURL, INT& iAudio, string& szIP);
-		void	Close();
-		BOOL	StartCommentary();
-		void	StopCommentary();
-		CLSID	GetSpeakCLSID();
-		CLSID	GetMicrophoneCLSID();
+		BOOL		Connect();//添加源
+		BOOL		Disconnect(const string& sourceID);
+		BOOL		UpdatePreviewURL(const string& sourceID, const string& strURL);
+		BOOL		UpdateName(const string& sourceID, const string& strName);
+		BOOL		GetPreviewURL(string& szURL, INT& iAudio, string& szIP);
+		void		Close();
+		BOOL		StartCommentary();
+		void		StopCommentary();
+		CLSID		GetSpeakCLSID();
+		CLSID		GetMicrophoneCLSID();
 	private:
 		BOOL								m_bPause;
 		BOOL								m_bCommentarying;
