@@ -84,6 +84,12 @@
     <ClInclude Include="DX11PerformanceCounter.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="DX9.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX9Texture2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -150,6 +156,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DX11PerformanceCounter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX9.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX9Texture2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

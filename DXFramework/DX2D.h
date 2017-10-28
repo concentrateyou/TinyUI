@@ -11,7 +11,7 @@ namespace DXFramework
 		DISALLOW_COPY_AND_ASSIGN(DX2D)
 	public:
 		DX2D();
-		~DX2D();
+		virtual ~DX2D();
 		BOOL Initialize(HWND hWND, INT cx, INT cy);
 		BOOL Initialize(HDC hDC, INT cx, INT cy);
 		BOOL BeginDraw();

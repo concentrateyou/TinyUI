@@ -10,21 +10,21 @@ namespace DXFramework
 		DISALLOW_COPY_AND_ASSIGN(DX11)
 	public:
 		DX11();
-		~DX11();
+		virtual ~DX11();
 		BOOL Initialize(HWND hWND, INT cx, INT cy, BOOL bMultithread = FALSE);
 		void Uninitialize();
 		BOOL ResizeView(INT cx = 0, INT cy = 0);
 		BOOL SetViewport(const TinyPoint& pos, const TinySize& size);
-		void AllowBlend(BOOL bAllow, FLOAT blendFactor[4]);
-		void AllowDepth(BOOL bAllow);
-		void SetRenderTexture2D(DX11RenderView* render2D);
-		void SetMatrixs(const TinySize& size);
-		void Present();
-		void Flush();
+		BOOL AllowBlend(BOOL bAllow, FLOAT blendFactor[4]);
+		BOOL AllowDepth(BOOL bAllow);
+		BOOL Present();
+		BOOL Flush();
 		void Enter();
 		void Leave();
+		void SetRenderTexture2D(DX11RenderView* render2D);
+		void SetMatrixs(const TinySize& size);
 		HWND					GetHWND() const;
-		BOOL					IsValid() const;
+		BOOL					IsEmpty() const;
 		ID3D11Device*			GetD3D() const;
 		IDXGISwapChain*			GetSwap() const;
 		ID3D11DeviceContext*	GetImmediateContext() const;

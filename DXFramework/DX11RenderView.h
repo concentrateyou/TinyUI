@@ -14,8 +14,8 @@ namespace DXFramework
 		BOOL		Create(INT cx, INT cy, BOOL bSync = FALSE);
 		BOOL		Resize();
 		BOOL		Resize(INT cx, INT cy);
-		void		BeginDraw();
-		void		EndDraw();
+		BOOL		BeginDraw();
+		BOOL		EndDraw();
 		BOOL		SaveAs(const CHAR* pzName, D3DX11_IMAGE_FILE_FORMAT format);
 		BYTE*		Map(DWORD& dwSize);
 		BOOL		Unmap();

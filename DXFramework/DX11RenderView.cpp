@@ -24,7 +24,7 @@ namespace DXFramework
 	}
 	BOOL DX11RenderView::Create()
 	{
-		if (!m_dx11.IsValid())
+		if (m_dx11.IsEmpty())
 			return FALSE;
 		m_render2D.Release();
 		HRESULT hRes = m_dx11.GetSwap()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_render2D);
@@ -78,7 +78,7 @@ namespace DXFramework
 	}
 	BOOL DX11RenderView::Create(INT cx, INT cy, BOOL bSync)
 	{
-		if (!m_dx11.IsValid())
+		if (m_dx11.IsEmpty())
 			return FALSE;
 		m_size.cx = cx;
 		m_size.cy = cy;
@@ -155,7 +155,7 @@ namespace DXFramework
 	}
 	BOOL DX11RenderView::Resize()
 	{
-		if (!m_dx11.IsValid())
+		if (m_dx11.IsEmpty())
 			return FALSE;
 		m_renderView.Release();
 		m_depth2D.Release();
@@ -194,7 +194,7 @@ namespace DXFramework
 	}
 	BYTE* DX11RenderView::Map(DWORD& dwSize)
 	{
-		if (!m_dx11.IsValid())
+		if (m_dx11.IsEmpty())
 			return NULL;
 		if (m_render2D != NULL && m_copy2D != NULL)
 		{
@@ -211,7 +211,7 @@ namespace DXFramework
 	}
 	BOOL DX11RenderView::Unmap()
 	{
-		if (!m_dx11.IsValid())
+		if (m_dx11.IsEmpty())
 			return FALSE;
 		if (m_render2D != NULL && m_copy2D != NULL)
 		{
@@ -243,25 +243,25 @@ namespace DXFramework
 			return TRUE;
 		return FALSE;
 	}
-	void DX11RenderView::BeginDraw()
+	BOOL DX11RenderView::BeginDraw()
 	{
-		if (m_dx11.IsValid())
-		{
-			m_dx11.GetImmediateContext()->OMSetRenderTargets(1, &m_renderView, m_depthView);
-			m_dx11.SetViewport(TinyPoint(0, 0), m_size);
-			m_dx11.SetMatrixs(m_size);
-			FLOAT color[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
-			m_dx11.GetImmediateContext()->ClearRenderTargetView(m_renderView, color);
-			m_dx11.GetImmediateContext()->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH, 1.0F, 0);
-		}
+		if (m_dx11.IsEmpty())
+			return FALSE;
+		m_dx11.GetImmediateContext()->OMSetRenderTargets(1, &m_renderView, m_depthView);
+		m_dx11.SetViewport(TinyPoint(0, 0), m_size);
+		m_dx11.SetMatrixs(m_size);
+		FLOAT color[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
+		m_dx11.GetImmediateContext()->ClearRenderTargetView(m_renderView, color);
+		m_dx11.GetImmediateContext()->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH, 1.0F, 0);
+		return TRUE;
 	}
-	void DX11RenderView::EndDraw()
+	BOOL DX11RenderView::EndDraw()
 	{
-		//TODO
+		return TRUE;
 	}
 	BOOL DX11RenderView::SaveAs(const CHAR* pzName, D3DX11_IMAGE_FILE_FORMAT format)
 	{
-		if (!m_dx11.IsValid())
+		if (m_dx11.IsEmpty())
 			return FALSE;
 		wstring ws = StringToWString(pzName);
 		if (m_render2D != NULL)

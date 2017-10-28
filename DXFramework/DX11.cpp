@@ -150,7 +150,7 @@ namespace DXFramework
 	}
 	BOOL DX11::ResizeView(INT cx, INT cy)
 	{
-		if (!IsValid())
+		if (IsEmpty())
 			return FALSE;
 		if (!m_background2D->Resize())
 			return FALSE;
@@ -158,12 +158,16 @@ namespace DXFramework
 		this->SetMatrixs(m_background2D->GetSize());
 		return TRUE;
 	}
-	void DX11::AllowBlend(BOOL bAllow, FLOAT blendFactor[4])
+	BOOL DX11::AllowBlend(BOOL bAllow, FLOAT blendFactor[4])
 	{
+		if (IsEmpty())
+			return FALSE;
 		m_immediateContext->OMSetBlendState(bAllow ? m_enableBlendState : m_disableBlendState, blendFactor, 0xFFFFFFFF);
 	}
-	void DX11::AllowDepth(BOOL bAllow)
+	BOOL DX11::AllowDepth(BOOL bAllow)
 	{
+		if (IsEmpty())
+			return FALSE;
 		m_immediateContext->OMSetDepthStencilState(bAllow ? m_enableDepthState : m_disableDepthState, 1);
 	}
 	void DX11::SetRenderTexture2D(DX11RenderView* render2D)
@@ -180,28 +184,19 @@ namespace DXFramework
 			}
 		}
 	}
-	void DX11::Present()
+	BOOL DX11::Present()
 	{
-		if (IsValid())
-		{
-			HRESULT hRes = m_swap->Present(0, 0);
-			if (FAILED(hRes))
-			{
-				if (hRes == DXGI_ERROR_DEVICE_REMOVED || hRes == DXGI_ERROR_DEVICE_RESET)
-				{
-					LOG(ERROR) << "Present:" << "DXGI_ERROR_DEVICE_REMOVED or DXGI_ERROR_DEVICE_RESET";
-					Uninitialize();
-					Initialize(m_hWND, m_size.cx, m_size.cy, m_bMultithread);
-				}
-			}
-		}
+		if (IsEmpty())
+			return FALSE;
+		HRESULT hRes = m_swap->Present(0, 0);
+		return SUCCEEDED(hRes);
 	}
-	void DX11::Flush()
+	BOOL DX11::Flush()
 	{
-		if (m_immediateContext != NULL)
-		{
-			m_immediateContext->Flush();
-		}
+		if (IsEmpty())
+			return FALSE;
+		m_immediateContext->Flush();
+		return TRUE;
 	}
 	void DX11::Enter()
 	{
@@ -231,11 +226,11 @@ namespace DXFramework
 			m_synchronize.Unlock();
 		}
 	}
-	BOOL DX11::IsValid() const
+	BOOL DX11::IsEmpty() const
 	{
-		if (m_immediateContext != NULL &&
-			m_swap != NULL &&
-			m_d3d != NULL)
+		if (m_immediateContext == NULL ||
+			m_swap == NULL ||
+			m_d3d == NULL)
 			return TRUE;
 		return FALSE;
 	}
@@ -277,7 +272,7 @@ namespace DXFramework
 	}
 	BOOL DX11::SetViewport(const TinyPoint& pos, const TinySize& size)
 	{
-		if (!m_immediateContext)
+		if (IsEmpty())
 			return FALSE;
 		D3D11_VIEWPORT viewport;
 		viewport.TopLeftX = static_cast<FLOAT>(pos.x);
