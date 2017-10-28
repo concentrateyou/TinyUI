@@ -148,6 +148,7 @@ namespace TinyUI
 				MESSAGE_HANDLER(WM_CONTEXTMENU, OnContextMenu)
 				MESSAGE_HANDLER(WM_INITMENUPOPUP, OnIniMenuPopup)
 				MESSAGE_HANDLER(WM_INITMENU, OnIniMenu)
+				MESSAGE_HANDLER(WM_INITDIALOG,OnInitDialog)
 				MESSAGE_HANDLER(WM_WINDOWPOSCHANGING, OnWindowPosChanging)
 				MESSAGE_HANDLER(WM_WINDOWPOSCHANGED, OnWindowPosChanged)
 				MESSAGE_HANDLER(WM_SYSCOMMAND, OnSysCommand)
@@ -209,6 +210,7 @@ namespace TinyUI
 			virtual LRESULT OnContextMenu(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 			virtual LRESULT OnIniMenuPopup(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 			virtual LRESULT OnIniMenu(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+			virtual LRESULT OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 			virtual LRESULT OnWindowPosChanging(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 			virtual LRESULT OnWindowPosChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 			virtual LRESULT OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

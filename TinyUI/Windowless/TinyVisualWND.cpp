@@ -679,6 +679,11 @@ namespace TinyUI
 			bHandled = FALSE;
 			return FALSE;
 		}
+		LRESULT TinyVisualWND::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			return FALSE;
+		}
 		LRESULT TinyVisualWND::OnWindowPosChanging(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;

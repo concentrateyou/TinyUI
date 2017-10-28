@@ -20,13 +20,36 @@ namespace TinyUI
 		{
 
 		}
-		BOOL TinyVisualFrame::Create(HWND hParent, LPCSTR pzFile)
+		BOOL TinyVisualFrame::Create(HWND hParent, LPCSTR pszFile)
 		{
+			m_szSkinFile = pszFile;
 			if (!TinyVisualWND::Create(hParent, 0, 0, 0, 0))
 				return FALSE;
-			if (!this->BuildResource(pzFile))
+			return TRUE;
+		}
+		BOOL TinyVisualFrame::Create(HWND hParent, LPCTSTR lpTemplateName, LPCSTR pszFile)
+		{
+			m_szSkinFile = pszFile;
+			if (!TinyVisualWND::Create(hParent, lpTemplateName))
 				return FALSE;
 			return TRUE;
+		}
+		BOOL TinyVisualFrame::Create(HWND hParent, WORD wInteger, LPCSTR pszFile)
+		{
+			m_szSkinFile = pszFile;
+			if (!TinyVisualWND::Create(hParent, wInteger))
+				return FALSE;
+			return TRUE;
+		}
+		INT_PTR TinyVisualFrame::DoModal(HWND hParent, WORD wInteger, LPCSTR pszFile)
+		{
+			m_szSkinFile = pszFile;
+			return TinyVisualWND::DoModal(hParent, wInteger);
+		}
+		INT_PTR TinyVisualFrame::DoModal(HWND hParent, LPCTSTR lpTemplateName, LPCSTR pszFile)
+		{
+			m_szSkinFile = pszFile;
+			return TinyVisualWND::DoModal(hParent, lpTemplateName);
 		}
 		DWORD TinyVisualFrame::RetrieveStyle()
 		{
@@ -48,34 +71,25 @@ namespace TinyUI
 		{
 			return NULL;
 		}
-		BOOL TinyVisualFrame::BuildResource(const TinyString& szFile)
-		{
-			if (!m_document || !PathFileExists(szFile.CSTR()))
-				return FALSE;
-			m_szResource = szFile;
-			if (m_builder.LoadFile(m_szResource.CSTR()))
-			{
-				if (m_document->Initialize(&m_builder))
-				{
-					this->OnInitialize();
-					m_document->Redraw();
-					return TRUE;
-				}
-			}
-			return FALSE;
-		}
 		TinyVisualDocument*	TinyVisualFrame::GetDocument()
 		{
 			return m_document;
 		}
 		BOOL TinyVisualFrame::Initialize()
 		{
+			if (!PathFileExists(m_szSkinFile.CSTR()))
+				return FALSE;
 			m_visualDC.Reset(new TinyVisualDC(m_hWND));
 			if (!m_visualDC)
 				return FALSE;
 			m_document.Reset(new TinyVisualDocument(this));
 			if (!m_document)
 				return FALSE;
+			if (!m_builder.LoadFile(m_szSkinFile.CSTR()))
+				return FALSE;
+			if (!m_document->Initialize(&m_builder))
+				return FALSE;
+			this->OnInitialize();
 			return TRUE;
 		}
 		void TinyVisualFrame::Uninitialize()
@@ -160,6 +174,13 @@ namespace TinyUI
 			bHandled = FALSE;
 			OnUninitialize();
 			Uninitialize();
+			return FALSE;
+		}
+		LRESULT TinyVisualFrame::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			if (!Initialize())
+				PostQuitMessage(0);//Ö±½ÓÍË³ö
 			return FALSE;
 		}
 		LRESULT TinyVisualFrame::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

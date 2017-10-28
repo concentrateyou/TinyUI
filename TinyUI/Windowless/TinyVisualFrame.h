@@ -18,14 +18,17 @@ namespace TinyUI
 		public:
 			TinyVisualFrame();
 			virtual ~TinyVisualFrame();
-			BOOL Create(HWND hParent, LPCSTR pzFile);
+			BOOL Create(HWND hParent, LPCSTR pszFile);
+			BOOL Create(HWND hParent, LPCTSTR lpTemplateName, LPCSTR pszFile);
+			BOOL Create(HWND hParent, WORD wInteger, LPCSTR pszFile);
+			INT_PTR DoModal(HWND hParent, WORD wInteger, LPCSTR pszFile);
+			INT_PTR DoModal(HWND hParent, LPCTSTR lpTemplateName, LPCSTR pszFile);
 			LPCSTR	RetrieveClassName() OVERRIDE;
 			LPCSTR	RetrieveTitle() OVERRIDE;
 			HICON	RetrieveIcon() OVERRIDE;
 			DWORD	RetrieveStyle() OVERRIDE;
 			DWORD	RetrieveExStyle() OVERRIDE;
 		public:
-			BOOL BuildResource(const TinyString& resource);
 			BOOL AddFilter(TinyVisualFilter* ps);
 			BOOL RemoveFilter(TinyVisualFilter* ps);
 			void AllowTracking(BOOL bAllow);
@@ -42,6 +45,7 @@ namespace TinyUI
 			LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+			LRESULT OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnMouseWheel(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
@@ -72,7 +76,7 @@ namespace TinyUI
 			BOOL								m_bAllowTracking;
 			BOOL								m_bMouseTracking;
 			TinySize							m_size;
-			TinyString							m_szResource;
+			TinyString							m_szSkinFile;//资源文件
 			TinyVisualFilters					m_mFilters;
 			TinyVisualBuilder					m_builder;
 			TinyScopedPtr<TinyVisualDC>			m_visualDC;
