@@ -32,7 +32,7 @@ namespace MShow
 
 	void MVideoRenderTask::OnMessagePump()
 	{
-		TinyTimer timer;
+		TinyPerformanceTimer timer;
 		SampleTag sampleTag = { 0 };
 		for (;;)
 		{

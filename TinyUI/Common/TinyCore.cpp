@@ -419,12 +419,12 @@ namespace TinyUI
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	TinyTimer::TinyTimer()
+	TinyPerformanceTimer::TinyPerformanceTimer()
 		:m_timerID(NULL)
 	{
 		m_event.CreateEvent();
 	}
-	BOOL TinyTimer::SetCallback(INT delay, Closure&& callback)
+	BOOL TinyPerformanceTimer::SetCallback(INT delay, Closure&& callback)
 	{
 		m_event.Close();
 		m_event.CreateEvent();
@@ -438,10 +438,10 @@ namespace TinyUI
 			timeKillEvent(m_timerID);
 			m_timerID = 0;
 		}
-		m_timerID = static_cast<UINT>(timeSetEvent(delay, 1, &TinyTimer::TimerCallback, reinterpret_cast<DWORD_PTR>(this), TIME_PERIODIC));
+		m_timerID = static_cast<UINT>(timeSetEvent(delay, 1, &TinyPerformanceTimer::TimerCallback, reinterpret_cast<DWORD_PTR>(this), TIME_PERIODIC));
 		return m_timerID != 0;
 	}
-	BOOL TinyTimer::Wait(INT delay, DWORD dwMilliseconds)
+	BOOL TinyPerformanceTimer::Wait(INT delay, DWORD dwMilliseconds)
 	{
 		if (delay <= 0)
 			return TRUE;
@@ -459,7 +459,7 @@ namespace TinyUI
 		}
 		return FALSE;
 	}
-	void TinyTimer::Close()
+	void TinyPerformanceTimer::Close()
 	{
 		m_event.Close();
 		if (m_timerID != NULL)
@@ -468,13 +468,13 @@ namespace TinyUI
 			m_timerID = NULL;
 		}
 	}
-	TinyTimer::~TinyTimer()
+	TinyPerformanceTimer::~TinyPerformanceTimer()
 	{
 		Close();
 	}
-	void CALLBACK TinyTimer::TimerCallback(UINT uTimerID, UINT  uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2)
+	void CALLBACK TinyPerformanceTimer::TimerCallback(UINT uTimerID, UINT  uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2)
 	{
-		TinyTimer* pThis = reinterpret_cast<TinyTimer*>(dwUser);
+		TinyPerformanceTimer* pThis = reinterpret_cast<TinyPerformanceTimer*>(dwUser);
 		if (pThis != NULL)
 		{
 			if (!pThis->m_callback.IsNull())

@@ -6,9 +6,11 @@
 #include "MShow.h"
 #include "RTMPReader.h"
 #include "resource.h"
+#include "CrashRpt.h"
 #include <math.h>
 #include <algorithm>
 using namespace std;
+#pragma comment(lib,"CrashRpt1403.lib");
 
 namespace MShow
 {
@@ -206,11 +208,39 @@ namespace MShow
 	}
 }
 
-LONG __stdcall ExceptionFilter(EXCEPTION_POINTERS *pExcPointer)
+BOOL WINAPI CrashCallback(LPVOID /*lpvState*/)
 {
-	LogException log(GetDefaultDumpFile().c_str(), 0);
-	log.WriteLog(pExcPointer);
-	return EXCEPTION_EXECUTE_HANDLER;
+	return TRUE;
+}
+
+BOOL BuildCrash()
+{
+	CR_INSTALL_INFO info;
+	memset(&info, 0, sizeof(CR_INSTALL_INFO));
+	info.cb = sizeof(CR_INSTALL_INFO);
+	info.pszAppName = _T("MShow");
+	info.pszAppVersion = _T("1.0.0");
+	string dir = GetDefaultDumpDir();
+	info.pszErrorReportSaveDir = dir.c_str();
+	info.pfnCrashCallback = CrashCallback;
+	info.dwFlags |= CR_INST_ALL_POSSIBLE_HANDLERS;
+	info.dwFlags |= CR_INST_DONT_SEND_REPORT;
+	info.uMiniDumpType = (MINIDUMP_TYPE)(MiniDumpWithDataSegs |
+		MiniDumpWithHandleData |
+		MiniDumpWithIndirectlyReferencedMemory |
+		MiniDumpWithFullMemoryInfo |
+		MiniDumpWithThreadInfo |
+		MiniDumpWithUnloadedModules
+		);
+	INT iResult = crInstall(&info);
+	if (iResult != 0)
+	{
+		TCHAR szErrorMsg[512] = _T("");
+		crGetLastErrorMsg(szErrorMsg, 512);
+		_tprintf_s(_T("%s\n"), szErrorMsg);
+		return FALSE;
+	}
+	return TRUE;
 }
 
 INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
@@ -218,7 +248,13 @@ INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	_In_ LPTSTR    lpCmdLine,
 	_In_ INT       nCmdShow)
 {
-	SetUnhandledExceptionFilter(ExceptionFilter);
+	DeleteLogFile();
+
+	if (!BuildCrash())
+	{
+		LOG(ERROR) << "BuildCrash FAIL";
+		return FALSE;
+	}
 
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
@@ -233,5 +269,6 @@ INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	OleUninitialize();
 	MFShutdown();
 	WSACleanup();
+	crUninstall();
 	return iRes;
 }

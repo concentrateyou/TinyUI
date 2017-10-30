@@ -71,7 +71,7 @@ LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHand
 	//	image.Save("D:\\test.bmp");*/
 	//	//INT a = 0;
 	//}
-	/*TinyPerformanceTimer timeQPC;
+	/*TinyPerformanceTime timeQPC;
 	timeQPC.BeginTime();
 	CHAR* ps = NULL;
 	BOOL bRes = m_client.Open("http://10.110.48.109:4330/67067630233");

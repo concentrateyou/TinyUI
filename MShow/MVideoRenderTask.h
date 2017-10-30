@@ -25,7 +25,7 @@ namespace MShow
 		MVideoTask& m_task;
 		Closure		m_renderCB;
 		TinyUI::Callback<void(BYTE*, LONG)> m_copyCB;
-		TinyPerformanceTimer m_timeQPC;
+		TinyPerformanceTime m_timeQPC;
 	};
 }
 

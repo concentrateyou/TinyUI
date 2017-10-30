@@ -74,7 +74,7 @@ namespace MShow
 		DX11Graphics2D					m_graphics;
 		DX11Image2D						m_handles[8];
 		DX11RenderView*					m_renderViews[6];
-		TinyPerformanceTimer			m_timeQPC;
+		TinyPerformanceTime			m_timeQPC;
 		TinyArray<DX11Element2D*>		m_array;
 		TinyTaskBase					m_tasks[2];
 	private:

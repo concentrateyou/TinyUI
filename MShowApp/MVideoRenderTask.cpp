@@ -32,8 +32,8 @@ namespace MShow
 
 	void MVideoRenderTask::OnMessagePump()
 	{
-		TinyPerformanceTimer timeQPC;
-		TinyTimer timer;
+		TinyPerformanceTime		timeQPC;
+		TinyPerformanceTimer	timer;
 		SampleTag sampleTag = { 0 };
 		for (;;)
 		{

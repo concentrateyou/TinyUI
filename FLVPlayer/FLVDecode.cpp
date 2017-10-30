@@ -190,7 +190,7 @@ namespace FLVPlayer
 	}
 	void FLVAudioRender::OnMessagePump()
 	{
-		TinyTimer timer;
+		TinyPerformanceTimer timer;
 		DWORD	dwOffset = 0;
 		for (;;)
 		{
@@ -280,7 +280,7 @@ namespace FLVPlayer
 	}
 	void FLVVideoRender::OnMessagePump()
 	{
-		TinyTimer timer;
+		TinyPerformanceTimer timer;
 		for (;;)
 		{
 			if (m_close.Lock(0))

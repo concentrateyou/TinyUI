@@ -48,8 +48,8 @@ namespace MShow
 		MShadowView&			m_view;
 		MPacketQueue			m_queue;
 		MPacketAllocQueue		m_videoQueue;
-		TinyTimer				m_timer;
-		TinyPerformanceTimer	m_timeQPC;
+		TinyPerformanceTimer	m_timer;
+		TinyPerformanceTime		m_timeQPC;
 		DX11					m_dx11;
 		DX11Texture2D			m_image2D;
 		DX11Texture2D			m_copy2D;

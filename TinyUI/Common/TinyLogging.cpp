@@ -13,6 +13,19 @@ namespace TinyUI
 	IO::TinyFile g_logFile;
 	string g_log;
 
+	string GetDefaultDumpDir()
+	{
+		CHAR module[MAX_PATH];
+		GetModuleFileName(NULL, module, MAX_PATH);
+		string log(module);
+		string::size_type backslash = log.rfind('\\', log.size());
+		if (backslash != wstring::npos)
+		{
+			log.erase(backslash + 1);
+		}
+		log += TEXT("\\Dump");
+		return log;
+	}
 	string GetDefaultLogFile()
 	{
 		CHAR module[MAX_PATH];
@@ -82,6 +95,10 @@ namespace TinyUI
 	BOOL CloseLogFile()
 	{
 		return g_logFile.Close();
+	}
+	BOOL DeleteLogFile()
+	{
+		return DeleteFile(g_log.c_str());
 	}
 	BOOL SetLogFile(LPCSTR pzFile)
 	{
@@ -315,32 +332,32 @@ namespace TinyUI
 			MiniDumpWithThreadInfo |
 			MiniDumpWithUnloadedModules);
 		MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), m_hFile, mdt, &mei, NULL, NULL);
-//#if _DEBUG
-//		StackTrace trace(ps);
-//		m_stream << std::endl;
-//		trace.OutputToStream(&m_stream);
-//		m_stream << std::endl;
-//		string newline(m_stream.str());
-//		SetFilePointer(m_hFile, 0, 0, SEEK_END);
-//		DWORD num_written;
-//		WriteFile(m_hFile,
-//			static_cast<const void*>(newline.c_str()),
-//			static_cast<DWORD>(newline.length()),
-//			&num_written,
-//			NULL);
-//#else
-//		MINIDUMP_EXCEPTION_INFORMATION mei;
-//		mei.ThreadId = GetCurrentThreadId();
-//		mei.ExceptionPointers = ps;
-//		mei.ClientPointers = FALSE;
-//		MINIDUMP_TYPE mdt = (MINIDUMP_TYPE)(MiniDumpWithPrivateReadWriteMemory |
-//			MiniDumpWithDataSegs |
-//			MiniDumpWithHandleData |
-//			MiniDumpWithFullMemoryInfo |
-//			MiniDumpWithThreadInfo |
-//			MiniDumpWithUnloadedModules);
-//		MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), m_hFile, mdt, &mei, NULL, NULL);
-//#endif
+		//#if _DEBUG
+		//		StackTrace trace(ps);
+		//		m_stream << std::endl;
+		//		trace.OutputToStream(&m_stream);
+		//		m_stream << std::endl;
+		//		string newline(m_stream.str());
+		//		SetFilePointer(m_hFile, 0, 0, SEEK_END);
+		//		DWORD num_written;
+		//		WriteFile(m_hFile,
+		//			static_cast<const void*>(newline.c_str()),
+		//			static_cast<DWORD>(newline.length()),
+		//			&num_written,
+		//			NULL);
+		//#else
+		//		MINIDUMP_EXCEPTION_INFORMATION mei;
+		//		mei.ThreadId = GetCurrentThreadId();
+		//		mei.ExceptionPointers = ps;
+		//		mei.ClientPointers = FALSE;
+		//		MINIDUMP_TYPE mdt = (MINIDUMP_TYPE)(MiniDumpWithPrivateReadWriteMemory |
+		//			MiniDumpWithDataSegs |
+		//			MiniDumpWithHandleData |
+		//			MiniDumpWithFullMemoryInfo |
+		//			MiniDumpWithThreadInfo |
+		//			MiniDumpWithUnloadedModules);
+		//		MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), m_hFile, mdt, &mei, NULL, NULL);
+		//#endif
 	}
 	LogException::~LogException()
 	{

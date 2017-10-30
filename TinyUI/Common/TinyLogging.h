@@ -11,7 +11,11 @@
 
 namespace TinyUI
 {
-	string GetDefaultDumpFile();
+	string GetDefaultDumpDir();
+	string	GetDefaultLogFile();
+	wstring GetDefaultLogFileW();
+	string	GetDefaultDumpFile();
+	wstring GetDefaultDumpFileW();
 	/// <summary>
 	/// Symbol…œœ¬Œƒ
 	/// </summary>
@@ -99,6 +103,7 @@ namespace TinyUI
 
 	BOOL SetLogFile(LPCSTR pzFile);
 	BOOL CloseLogFile();
+	BOOL DeleteLogFile();
 
 #define LOG(severity) \
 	LogMessage(LOG_##severity).stream()

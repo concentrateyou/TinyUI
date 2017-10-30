@@ -56,7 +56,7 @@ namespace DXApp
 		DX11Graphics2D					m_graphics;
 		TinyScopedPtr<DX11RenderView>	m_renderView;
 		TinyEvent						m_close;
-		TinyPerformanceTimer			m_timer;
+		TinyPerformanceTime			m_timer;
 		TinyArray<DX11Element2D*>		m_scenes;
 		DX11Element2D*					m_lastElement;
 		DX11Image2D						m_handles[8];

@@ -102,7 +102,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	//	if (size == 0)
 	//		break;
 	//	tag.size = size;
-	//	TinyPerformanceTimer timer;
+	//	TinyPerformanceTime timer;
 	//	timer.BeginTime();
 	//	BYTE* bo = NULL;
 	//	/*LONG  so = 0;

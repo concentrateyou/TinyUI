@@ -27,7 +27,7 @@ namespace DXApp
 		LONGLONG			Encode();
 		void				OnMessagePump();
 	private:
-		TinyPerformanceTimer			m_timer;
+		TinyPerformanceTime			m_timer;
 		TinyEvent						m_close;
 		DWORD							m_dwFPS;
 		DWORD							m_dwVideoRate;

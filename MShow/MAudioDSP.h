@@ -33,7 +33,7 @@ namespace MShow
 		TinyAudioDSPCapture			m_audioDSP;
 		TinyMFResampler				m_resampler;
 		TinyBufferArray<BYTE>		m_buffer;
-		TinyTimer					m_timer;
+		TinyPerformanceTimer		m_timer;
 		TinyWaveFile				m_waveFile;
 		WAVEFORMATEX				m_waveFMTI;
 		WAVEFORMATEX				m_waveFMTO;

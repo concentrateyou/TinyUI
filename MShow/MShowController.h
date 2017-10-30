@@ -55,7 +55,7 @@ namespace MShow
 		MShowWindow&			m_window;
 		MAudioDSP				m_audioDSP;
 		AudioAnalyser			m_audioAnalyser;
-		TinyPerformanceTimer	m_timeQPC;
+		TinyPerformanceTime		m_timeQPC;
 		TinyScopedPtr<AudioSdk>	m_audioSDK;
 		MAudioQueue				m_audioQueue;
 		TinyTaskBase			m_task;

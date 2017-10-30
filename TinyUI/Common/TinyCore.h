@@ -209,12 +209,12 @@ namespace TinyUI
 	/// <summary>
 	/// 高性能定时器
 	/// </summary>
-	class TinyTimer
+	class TinyPerformanceTimer
 	{
-		DISALLOW_COPY_AND_ASSIGN(TinyTimer)
+		DISALLOW_COPY_AND_ASSIGN(TinyPerformanceTimer)
 	public:
-		TinyTimer();
-		~TinyTimer();
+		TinyPerformanceTimer();
+		~TinyPerformanceTimer();
 		BOOL SetCallback(INT delay, Closure&& callback);
 		BOOL Wait(INT delay, DWORD dwMilliseconds);
 		void Close();

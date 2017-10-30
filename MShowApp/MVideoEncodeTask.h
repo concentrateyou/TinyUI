@@ -42,7 +42,7 @@ namespace MShow
 		QSVEncoder				m_encoder;
 		MSampleQueue			m_samples;
 		MPacketQueue			m_queue;
-		TinyPerformanceTimer	m_timeQPC;
+		TinyPerformanceTime	m_timeQPC;
 	};
 }
 

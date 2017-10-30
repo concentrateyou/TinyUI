@@ -53,7 +53,7 @@ namespace FLVPlayer
 		TinyEvent				m_close;
 		TinySoundPlayer			m_player;
 		FLVVAudioTask&			m_decode;
-		TinyPerformanceTimer	m_timer;
+		TinyPerformanceTime	m_timer;
 	};
 
 	class FLVVideoTask : public TinyTaskBase
@@ -89,7 +89,7 @@ namespace FLVPlayer
 		LONGLONG				m_wPTS;
 		TinyEvent				m_close;
 		FLVVideoTask&			m_decode;
-		TinyPerformanceTimer	m_timer;
+		TinyPerformanceTime	m_timer;
 	};
 
 	class FLVDecode : public TinyTaskBase

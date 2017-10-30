@@ -23,7 +23,7 @@ private:
 	TinyAudioDSPCapture		m_audioDSP;
 	TinyMFResampler			m_resampler;
 	TinyBufferArray<BYTE>	m_buffer;
-	TinyPerformanceTimer	m_timeQPC;
+	TinyPerformanceTime	m_timeQPC;
 	TinyTimer				m_timer;
 	BYTE					m_data[4096];
 };

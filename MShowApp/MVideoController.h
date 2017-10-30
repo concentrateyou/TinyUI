@@ -71,7 +71,7 @@ namespace MShow
 		DX11Graphics2D				m_graphics;
 		DX11Image2D					m_video2D;
 		TinyScopedPtr<MFLVPlayer>	m_player;
-		TinyPerformanceTimer		m_timeQPC;
+		TinyPerformanceTime		m_timeQPC;
 	private:
 		TinyScopedPtr<Delegate<void(DWORD)>>						m_onVolume;
 		TinyScopedPtr<Delegate<void(void*, INT)>>					m_onMenuClick;

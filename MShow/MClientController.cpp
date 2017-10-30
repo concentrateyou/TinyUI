@@ -130,6 +130,11 @@ namespace MShow
 	{
 		MClientController* pCTRL = static_cast<MClientController*>(lpParam);
 		ASSERT(pCTRL);
+		if (pCTRL->m_hTimer1 != NULL)
+		{
+			TinyApplication::GetInstance()->GetTimers().Unregister(pCTRL->m_hTimer1);
+			pCTRL->m_hTimer1 = NULL;
+		}
 		pCTRL->m_preview->Close();
 		if (pCTRL->m_preview->Open(pCTRL->m_szPreviewURL.c_str()))
 		{

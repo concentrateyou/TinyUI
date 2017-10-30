@@ -1323,7 +1323,7 @@ namespace TinyUI
 		return _ts;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	TinyPerformanceTimer::TinyPerformanceTimer()
+	TinyPerformanceTime::TinyPerformanceTime()
 		:m_dwTick(0),
 		m_dwTimerMask(0),
 		m_lastTime(0),
@@ -1331,11 +1331,11 @@ namespace TinyUI
 	{
 		QueryPerformanceFrequency(&m_lFrequency);
 	}
-	TinyPerformanceTimer::~TinyPerformanceTimer()
+	TinyPerformanceTime::~TinyPerformanceTime()
 	{
 
 	}
-	void TinyPerformanceTimer::BeginTime()
+	void TinyPerformanceTime::BeginTime()
 	{
 		m_dwTimerMask = 1;
 		DWORD dwProcessMask = 0;
@@ -1360,7 +1360,7 @@ namespace TinyUI
 		SetThreadAffinityMask(hHandle, oldMask);
 	}
 
-	void TinyPerformanceTimer::EndTime()
+	void TinyPerformanceTime::EndTime()
 	{
 		HANDLE hHandle = GetCurrentThread();
 		DWORD oldMask = SetThreadAffinityMask(hHandle, m_dwTimerMask);
@@ -1380,12 +1380,12 @@ namespace TinyUI
 		m_lastTime = elapseTime;
 	}
 
-	LONGLONG TinyPerformanceTimer::GetMicroseconds()
+	LONGLONG TinyPerformanceTime::GetMicroseconds()
 	{
 		LONGLONG ticks = (1000000 * m_lastTime / m_lFrequency.QuadPart);
 		return ticks;
 	}
-	LONGLONG TinyPerformanceTimer::GetMillisconds()
+	LONGLONG TinyPerformanceTime::GetMillisconds()
 	{
 		LONGLONG ticks = (1000 * m_lastTime / m_lFrequency.QuadPart);
 		return ticks;

@@ -148,9 +148,9 @@ namespace DXApp
 		INT cy = HIWORD(lParam);
 		if (cx > 0 && cy > 0)
 		{
-			m_graphics.Lock();
+			//m_graphics.Lock();
 			m_graphics.Resize(TinySize(cx, cy));
-			m_graphics.Unlock();
+			//m_graphics.Unlock();
 		}
 	}
 
@@ -255,59 +255,59 @@ namespace DXApp
 
 	BOOL RenderTask::Add(DX11Element2D* element)
 	{
-		m_graphics.Lock();
+		//m_graphics.Lock();
 		BOOL bRes = m_scenes.Add(element);
-		m_graphics.Unlock();
+		//m_graphics.Unlock();
 		return bRes;
 	}
 	void RenderTask::Remove(DX11Element2D* element)
 	{
-		m_graphics.Lock();
+		//m_graphics.Lock();
 		m_scenes.Remove(element);
-		m_graphics.Unlock();
+		//m_graphics.Unlock();
 	}
 
 	void RenderTask::BringToTop(DX11Element2D* element)
 	{
-		m_graphics.Lock();
+		//m_graphics.Lock();
 		if (m_scenes.Lookup(element) >= 0)
 		{
 			m_scenes.Remove(element);
 			m_scenes.Insert(0, element);
 		}
-		m_graphics.Unlock();
+		//m_graphics.Unlock();
 	}
 	void RenderTask::BringToBottom(DX11Element2D* element)
 	{
-		m_graphics.Lock();
+		//m_graphics.Lock();
 		if (m_scenes.Lookup(element) >= 0)
 		{
 			m_scenes.Remove(element);
 			m_scenes.Add(element);
 		}
-		m_graphics.Unlock();
+		//m_graphics.Unlock();
 	}
 	void RenderTask::MoveUp(DX11Element2D* element)
 	{
-		m_graphics.Lock();
+		//m_graphics.Lock();
 		INT index = m_scenes.Lookup(element);
 		if (index > 0)
 		{
 			m_scenes.Remove(element);
 			m_scenes.Insert(index - 1, element);
 		}
-		m_graphics.Unlock();
+		//m_graphics.Unlock();
 	}
 	void RenderTask::MoveDown(DX11Element2D* element)
 	{
-		m_graphics.Lock();
+		//m_graphics.Lock();
 		INT index = m_scenes.Lookup(element);
 		if (index >= 0 && index < m_scenes.GetSize() - 1)
 		{
 			m_scenes.Remove(element);
 			m_scenes.Insert(index + 1, element);
 		}
-		m_graphics.Unlock();
+		//m_graphics.Unlock();
 	}
 	DX11Element2D* RenderTask::HitTest(const TinyPoint& pos)
 	{
@@ -323,11 +323,11 @@ namespace DXApp
 
 	void RenderTask::SetPulgSize(const XMFLOAT2& size)
 	{
-		m_graphics.Lock();
+		//m_graphics.Lock();
 		m_pulgSize = size;
 		m_renderView.Reset(new DX11RenderView(m_graphics.GetDX11()));
 		m_renderView->Create(static_cast<INT>(m_pulgSize.x), static_cast<INT>(m_pulgSize.y));
-		m_graphics.Unlock();
+		//m_graphics.Unlock();
 	}
 
 	FILE* g_hFile = NULL;
@@ -364,9 +364,9 @@ namespace DXApp
 
 	BOOL RenderTask::Contain(DX11Element2D* element)
 	{
-		m_graphics.Lock();
+		//m_graphics.Lock();
 		BOOL bRes = m_scenes.Lookup(element) >= 0;
-		m_graphics.Unlock();
+		//m_graphics.Unlock();
 		return bRes;
 	}
 	void RenderTask::OnMessagePump()
@@ -388,9 +388,9 @@ namespace DXApp
 				}
 				break;
 			}
-			m_graphics.Lock();
+			//m_graphics.Lock();
 			dwTime = this->Render();
-			m_graphics.Unlock();
+			//m_graphics.Unlock();
 		}
 	}
 }

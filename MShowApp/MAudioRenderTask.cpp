@@ -83,7 +83,7 @@ namespace MShow
 			{
 				m_bInitialize = TRUE;
 				m_timeQPC.BeginTime();
-				TinyTimer timer;
+				TinyPerformanceTimer timer;
 				if (!m_audio.Open(m_task.GetFormat()))
 					break;
 				m_audio.Start();

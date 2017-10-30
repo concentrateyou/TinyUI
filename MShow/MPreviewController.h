@@ -33,7 +33,7 @@ namespace MShow
 	private:
 		TinySize					m_videoSize;
 		TinySize					m_viewSize;
-		TinyPerformanceTimer		m_timeQPC;
+		TinyPerformanceTime		m_timeQPC;
 		DX11Graphics2D				m_graphics;
 		DX11Image2D					m_video2D;
 		MPreviewView&				m_view;

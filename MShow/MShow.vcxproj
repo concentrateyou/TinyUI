@@ -88,14 +88,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(INTELMEDIASDKROOT)include;$(DXSDK_DIR)\Include;$(BOOST_DIR);..\TinyUI;..\Encode;..\Decode;..\DXFramework;..\DShowCapture;..\IntelQSV;..\ThirdParty\ffmpeg\include;..\ThirdParty\libfaad\include;..\ThirdParty\mpg123\include;..\ThirdParty\librtmp\include;..\ThirdParty\x264;..\ThirdParty\vld;..\ThirdParty\libfaac\include;..\ThirdParty\sdk\include;..\ThirdParty\jsoncpp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(INTELMEDIASDKROOT)include;$(DXSDK_DIR)\Include;$(BOOST_DIR);..\TinyUI;..\Encode;..\Decode;..\DXFramework;..\DShowCapture;..\IntelQSV;..\ThirdParty\ffmpeg\include;..\ThirdParty\libfaad\include;..\ThirdParty\mpg123\include;..\ThirdParty\librtmp\include;..\ThirdParty\x264;..\ThirdParty\vld;..\ThirdParty\libfaac\include;..\ThirdParty\sdk\include;..\ThirdParty\jsoncpp\include;..\ThirdParty\crashrpt\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>TinyUI.lib;DXFramework.lib;DShowCapture.lib;Decode.lib;Encode.lib;libmfx_d.lib;dxva2.lib;dwmapi.lib;d3d9.lib;d3d11.lib;dxgi.lib;D2D1.lib;jsoncpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\Debug;$(BOOST_DIR)\stage\lib;$(DXSDK_DIR)\Lib\x86;$(INTELMEDIASDKROOT)lib\$(Platform);..\ThirdParty\mpg123\lib\x86;..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\libfaad\lib\x86;..\ThirdParty\librtmp\lib\x86;..\ThirdParty\x264\libs\32bit;..\ThirdParty\libfaac\lib\x86;..\ThirdParty\sdk\lib;..\ThirdParty\sqlite;..\ThirdParty\jsoncpp\lib\x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\Debug;$(BOOST_DIR)\stage\lib;$(DXSDK_DIR)\Lib\x86;$(INTELMEDIASDKROOT)lib\$(Platform);..\ThirdParty\mpg123\lib\x86;..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\libfaad\lib\x86;..\ThirdParty\librtmp\lib\x86;..\ThirdParty\x264\libs\32bit;..\ThirdParty\libfaac\lib\x86;..\ThirdParty\sdk\lib;..\ThirdParty\sqlite;..\ThirdParty\jsoncpp\lib\x86;..\ThirdParty\crashrpt\lib</AdditionalLibraryDirectories>
     </Link>
     <ProjectReference>
       <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>

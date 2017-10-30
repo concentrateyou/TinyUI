@@ -67,7 +67,7 @@ namespace DXApp
 	void VideoEncode::OnMessagePump()
 	{
 		LONGLONG time = 0;
-		TinyPerformanceTimer timer;
+		TinyPerformanceTime timer;
 		for (;;)
 		{
 			DWORD s = 1000 / m_dwFPS;

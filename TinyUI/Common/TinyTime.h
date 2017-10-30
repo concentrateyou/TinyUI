@@ -331,12 +331,12 @@ namespace TinyUI
 	/// <summary>
 	/// 高精度计数器
 	/// </summary>
-	class TinyPerformanceTimer
+	class TinyPerformanceTime
 	{
-		DISALLOW_COPY_AND_ASSIGN(TinyPerformanceTimer)
+		DISALLOW_COPY_AND_ASSIGN(TinyPerformanceTime)
 	public:
-		TinyPerformanceTimer();
-		~TinyPerformanceTimer();
+		TinyPerformanceTime();
+		~TinyPerformanceTime();
 		LONGLONG GetMillisconds();
 		LONGLONG GetMicroseconds();
 		void BeginTime();
