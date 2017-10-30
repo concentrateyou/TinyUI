@@ -27,11 +27,9 @@ namespace TinyUI
 		}
 		BOOL TinyTaskBase::SetPriority(DWORD dwPriority)
 		{
-			if (m_hTask != NULL)
-			{
-				return SetThreadPriority(m_hTask, dwPriority);
-			}
-			return FALSE;
+			if (!m_hTask)
+				return FALSE;
+			return SetThreadPriority(m_hTask, dwPriority);
 		}
 		BOOL TinyTaskBase::Submit(Closure&& callback)
 		{
@@ -72,15 +70,30 @@ namespace TinyUI
 
 		BOOL TinyTaskBase::IsActive() const
 		{
-			if (m_hTask != NULL)
-			{
-				DWORD code = 0;
-				GetExitCodeThread(m_hTask, &code);
-				return code == STILL_ACTIVE;
-			}
-			return FALSE;
+			if (!m_hTask)
+				return FALSE;
+			DWORD code = 0;
+			GetExitCodeThread(m_hTask, &code);
+			return code == STILL_ACTIVE;
 		}
-
+		DWORD TinyTaskBase::Suspend()
+		{
+			if (!m_hTask)
+				return FALSE;
+			return SuspendThread(m_hTask);
+		}
+		DWORD TinyTaskBase::Resume()
+		{
+			if (!m_hTask)
+				return FALSE;
+			return ResumeThread(m_hTask);
+		}
+		BOOL TinyTaskBase::Terminate(DWORD dwExit)
+		{
+			if (!m_hTask)
+				return FALSE;
+			return TerminateThread(m_hTask, dwExit);
+		}
 		DWORD WINAPI TinyTaskBase::Callback(LPVOID ps)
 		{
 			try

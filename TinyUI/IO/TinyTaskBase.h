@@ -23,6 +23,9 @@ namespace TinyUI
 			HANDLE	Handle() const;
 			BOOL	IsActive() const;
 			BOOL	SetPriority(DWORD dwPriority);
+			DWORD	Suspend();
+			DWORD   Resume();
+			BOOL	Terminate(DWORD dwExit);
 			virtual BOOL Submit(Closure&& callback);
 			virtual BOOL Close(DWORD dwMS);
 		private:

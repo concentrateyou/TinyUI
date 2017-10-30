@@ -129,7 +129,8 @@ namespace TinyUI
 				m_pSourceVoice->GetState(&state);
 				if (state.BuffersQueued < (MAX_BUFFER_COUNT - 1))
 					break;
-				m_voiceCallback.Lock(dwMS);
+				BOOL bRes = m_voiceCallback.Lock(dwMS);
+				ASSERT(bRes);
 			}
 			memcpy_s(m_array[m_dwIndex], size, bits, size);
 			XAUDIO2_BUFFER buffer = { 0 };

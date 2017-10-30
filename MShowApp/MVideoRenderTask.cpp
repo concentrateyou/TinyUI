@@ -32,8 +32,7 @@ namespace MShow
 
 	void MVideoRenderTask::OnMessagePump()
 	{
-		TinyPerformanceTime		timeQPC;
-		TinyPerformanceTimer	timer;
+		TinyPerformanceTimer timer;
 		SampleTag sampleTag = { 0 };
 		for (;;)
 		{
@@ -57,6 +56,7 @@ namespace MShow
 			}
 			LONG systemMS = static_cast<LONG>(MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime());
 			INT delay = static_cast<INT>(sampleTag.samplePTS - systemMS);
+			TRACE("Video Delay:%d\n", delay);
 			if (timer.Wait(delay, 1000))
 			{
 				if (!m_renderCB.IsNull())

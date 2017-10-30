@@ -95,12 +95,12 @@ namespace MShow
 				LONG delay = static_cast<LONG>(tag.samplePTS - ms);
 				if (timer.Wait(delay, 1000))
 				{
-					m_audio.Fill(tag.bits + 4, tag.size, INFINITE);
+					m_audio.Fill(tag.bits + 4, tag.size, 1000);
 				}
 			}
 			else
 			{
-				m_audio.Fill(tag.bits + 4, tag.size, INFINITE);
+				m_audio.Fill(tag.bits + 4, tag.size, 1000);
 			}
 			if (!m_callback.IsNull())
 			{
