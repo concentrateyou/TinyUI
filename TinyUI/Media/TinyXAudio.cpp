@@ -10,11 +10,7 @@ namespace TinyUI
 		VoiceCallback::VoiceCallback()
 			:m_handle(NULL)
 		{
-#if (_WIN32_WINNT >= _WIN32_WINNT_VISTA)
-			m_handle = CreateEventEx(NULL, NULL, 0, EVENT_MODIFY_STATE | SYNCHRONIZE);
-#else
 			m_handle = CreateEvent(NULL, FALSE, FALSE, NULL);
-#endif
 		}
 		VoiceCallback::~VoiceCallback()
 		{
@@ -50,11 +46,11 @@ namespace TinyUI
 		}
 		void VoiceCallback::OnVoiceError(void*, HRESULT hRes)
 		{
-			LOG(ERROR) << "OnVoiceError:" << hRes;
+
 		}
 		BOOL VoiceCallback::Lock(DWORD dwMS)
 		{
-			DWORD dwRet = ::WaitForSingleObjectEx(m_handle, dwMS, TRUE);
+			DWORD dwRet = ::WaitForSingleObject(m_handle, dwMS);
 			if (dwRet == WAIT_OBJECT_0 || dwRet == WAIT_ABANDONED)
 				return TRUE;
 			else
@@ -143,7 +139,7 @@ namespace TinyUI
 			HRESULT hRes = m_pSourceVoice->SubmitSourceBuffer(&buffer);
 			if (FAILED(hRes))
 			{
-				LOG(ERROR) << "[TinyXAudio] SubmitSourceBuffer:" << hRes;
+				m_dwIndex = 0;
 				return FALSE;
 			}
 			m_dwIndex++;

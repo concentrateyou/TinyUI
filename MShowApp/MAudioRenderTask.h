@@ -28,7 +28,6 @@ namespace MShow
 		MClock&					m_clock;
 		MAudioTask&				m_task;
 		TinyXAudio				m_audio;
-		TinyPerformanceTime	m_timeQPC;
 		TinyUI::Callback<void(BYTE*, LONG)> m_callback;
 	};
 }
