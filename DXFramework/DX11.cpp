@@ -246,7 +246,7 @@ namespace DXFramework
 	{
 		return m_immediateContext;
 	}
-	IDXGISwapChain*	DX11::GetSwap() const
+	IDXGISwapChain*	DX11::GetSwapChain() const
 	{
 		return m_swap;
 	}

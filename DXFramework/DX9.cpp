@@ -50,21 +50,24 @@ namespace DXFramework
 		hRes = m_d3dd9->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 		if (hRes != S_OK)
 			return FALSE;
-		return TRUE;
-	}
-	BOOL DX9::Render()
-	{
-		if (IsEmpty())
+		hRes = m_d3dd9->SetRenderState(D3DRS_ZENABLE, TRUE);
+		if (hRes != S_OK)
+			return FALSE;
+		hRes = m_d3dd9->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+		if (hRes != S_OK)
+			return FALSE;
+		hRes = m_d3dd9->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+		if (hRes != S_OK)
+			return FALSE;
+		hRes = m_d3dd9->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+		if (hRes != S_OK)
+			return FALSE;
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+		if (hRes != S_OK)
 			return FALSE;
 		return TRUE;
-		//HRESULT hRes =  m_d3dd9->BeginScene();
-		//if (hRes != S_OK)
-		//	return FALSE;
-		//hRes = m_d3dd9->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_COLORVALUE(0.0F, 1.0F, 0.0F, 1.0F), 1.0F, 0);
-		//if (hRes != S_OK)
-		//	return FALSE;
-		//hRes = m_d3dd9->EndScene();
 	}
+
 	BOOL DX9::Present()
 	{
 		if (IsEmpty())
@@ -86,5 +89,17 @@ namespace DXFramework
 	IDirect3DDevice9*	DX9::GetD3D() const
 	{
 		return m_d3dd9;
+	}
+	void DX9::SetMatrixs(const TinySize& size)
+	{
+		FLOAT fov = (FLOAT)D3DX_PI / 4.0F;
+		FLOAT aspect = (FLOAT)size.cx / (FLOAT)size.cy;
+		m_matrixs[0] = XMMatrixPerspectiveFovLH(fov, aspect, 1000.0F, 0.1F);//View
+		m_matrixs[1] = XMMatrixIdentity();
+		m_matrixs[2] = XMMatrixOrthographicLH((FLOAT)size.cx, (FLOAT)size.cy, 1000.0F, 0.1F);//Project
+	}
+	XMMATRIX* DX9::GetMatrixs()
+	{
+		return m_matrixs;
 	}
 }

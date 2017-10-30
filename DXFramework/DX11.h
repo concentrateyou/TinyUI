@@ -26,7 +26,7 @@ namespace DXFramework
 		HWND					GetHWND() const;
 		BOOL					IsEmpty() const;
 		ID3D11Device*			GetD3D() const;
-		IDXGISwapChain*			GetSwap() const;
+		IDXGISwapChain*			GetSwapChain() const;
 		ID3D11DeviceContext*	GetImmediateContext() const;
 		DX11RenderView*			GetRender2D() const;
 		XMMATRIX*				GetMatrixs();

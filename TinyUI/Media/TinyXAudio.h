@@ -71,8 +71,8 @@ namespace TinyUI
 			BOOL Close();
 		private:
 			DWORD								m_dwIndex;
-			TinyScopedArray<BYTE>				m_waveFMT;
 			Closure								m_callback;
+			TinyScopedArray<BYTE>				m_waveFMT;
 			TinyScopedArray<BYTE>				m_array[MAX_BUFFER_COUNT];
 			TinyComPtr<IXAudio2>				m_audio;
 			IXAudio2MasteringVoice*				m_pMasteringVoice;

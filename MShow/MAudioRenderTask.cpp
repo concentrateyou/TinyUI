@@ -79,14 +79,15 @@ namespace MShow
 			while (m_clock.GetBasePTS() == -1);
 			if (!m_bInitialize)
 			{
-				m_bInitialize = TRUE;
+				TinyPerformanceTime	timeQPC;
 				TinyPerformanceTimer timer;
-				m_timeQPC.BeginTime();
+				timeQPC.BeginTime();
 				if (!m_audio.Open(m_task.GetFormat()))
 					break;
+				m_bInitialize = TRUE;
 				m_audio.Start();
-				m_timeQPC.EndTime();
-				m_clock.AddBaseTime(static_cast<DWORD>(m_timeQPC.GetMillisconds()));
+				timeQPC.EndTime();
+				m_clock.AddBaseTime(static_cast<DWORD>(timeQPC.GetMillisconds()));
 				LONGLONG ms = MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime();
 				LONG delay = static_cast<LONG>(tag.samplePTS - ms);
 				if (timer.Wait(delay, 1000))

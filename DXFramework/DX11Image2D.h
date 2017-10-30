@@ -19,9 +19,12 @@ namespace DXFramework
 	public:
 		DX11Image2D();
 		virtual ~DX11Image2D();
+		DX11Texture2D* GetTexture2D();
+		BOOL Transform(DX11& dx11, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F);
 		BOOL Create(DX11& dx11, ID3D11Texture2D* texture2D);
 		BOOL Create(DX11& dx11, const TinySize& size, BYTE* bits, BOOL bReadonly);//Map/Unmap
 		BOOL Create(DX11& dx11, const TinySize& size, BOOL bShared, BOOL bSync = FALSE);//UpdateSubResource
+		void Destory();
 		BOOL BitBlt(DX11& dx11, const BYTE* bits, LONG size, LONG linesize);//RGB32
 		BOOL BitBlt(DX11& dx11, const TinyRectangle& dst, HBITMAP hBitmapSrc, const TinyPoint& src);
 		BOOL BitBlt(DX11& dx11, const TinyRectangle& dst, HDC hDCSrc, const TinyPoint& src);
@@ -41,10 +44,8 @@ namespace DXFramework
 		BOOL Lock(UINT64 acqKey, DWORD dwMS);
 		BOOL Unlock(UINT64 relKey);
 		BOOL IsEmpty() const;
-		BOOL Update(DX11& dx11, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F);
-		DX11Texture2D* GetTexture2D();
-		void Destory();
 	public:
+		virtual INT	GetVertexCount() const;
 		virtual INT	GetIndexCount() const;
 	public:
 		BOOL Allocate(DX11& dx11) OVERRIDE;

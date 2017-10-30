@@ -242,7 +242,7 @@ namespace DXFramework
 		D3D11_BUFFER_DESC	indexBufferDesc = { 0 };
 		D3D11_SUBRESOURCE_DATA	vertexData = { 0 };
 		D3D11_SUBRESOURCE_DATA	indexData = { 0 };
-		INT vertexCount = GetIndexCount();
+		INT vertexCount = GetVertexCount();
 		INT indexCount = GetIndexCount();
 		TinyScopedArray<VERTEXTYPE> vertices(new VERTEXTYPE[vertexCount]);
 		TinyScopedArray<ULONG> indices(new ULONG[indexCount]);
@@ -277,7 +277,7 @@ namespace DXFramework
 		m_vertices.Reset(new VERTEXTYPE[vertexCount]);
 		return TRUE;
 	}
-	BOOL DX11Image2D::Update(DX11& dx11, FLOAT ratioX, FLOAT ratioY)
+	BOOL DX11Image2D::Transform(DX11& dx11, FLOAT ratioX, FLOAT ratioY)
 	{
 		FLOAT left = 0.0F;
 		FLOAT right = 0.0F;
@@ -294,7 +294,7 @@ namespace DXFramework
 		right = left + scale.x;
 		top = (FLOAT)(size.y / 2) - pos.y;
 		bottom = top - scale.y;
-		INT vertexCount = GetIndexCount();
+		INT vertexCount = GetVertexCount();
 		m_vertices[0].position = XMFLOAT3(left, top, 0.0F);
 		m_vertices[0].texture = XMFLOAT2(0.0F, 0.0F);
 		m_vertices[1].position = XMFLOAT3(right, bottom, 0.0F);
@@ -343,7 +343,10 @@ namespace DXFramework
 		dx11.GetImmediateContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		return TRUE;
 	}
-
+	INT	DX11Image2D::GetVertexCount() const
+	{
+		return 6;
+	}
 	INT DX11Image2D::GetIndexCount() const
 	{
 		return 6;

@@ -57,7 +57,7 @@ namespace DXFramework
 			return FALSE;
 		if (ps->IsEmpty())
 			return FALSE;
-		if (!ps->Update(m_dx11, ratioX, ratioY))
+		if (!ps->Transform(m_dx11, ratioX, ratioY))
 			return FALSE;
 		if (ps->Process(m_dx11))
 		{

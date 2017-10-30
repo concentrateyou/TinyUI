@@ -14,6 +14,7 @@ namespace TinyUI
 	}
 	TinyControl::~TinyControl()
 	{
+
 	}
 	LRESULT CALLBACK TinyControl::CbtFilterHook(INT code, WPARAM wParam, LPARAM lParam)
 	{
@@ -81,6 +82,7 @@ namespace TinyUI
 	LRESULT TinyControl::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		UnregisterClass(RetrieveClassName(), TinyApplication::GetInstance()->Handle());
 		EVENT_DESTORY(uMsg, wParam, lParam, bHandled);
 		return FALSE;
 	}

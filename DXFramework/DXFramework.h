@@ -29,6 +29,19 @@ using namespace std;
 
 namespace DXFramework
 {
+	enum TrackerHit
+	{
+		hitNothing = -1,
+		hitTopLeft = 0,
+		hitTopRight = 1,
+		hitBottomRight = 2,
+		hitBottomLeft = 3,
+		hitTop = 4,
+		hitRight = 5,
+		hitBottom = 6,
+		hitLeft = 7,
+		hitMiddle = 8
+	};
 
 	enum D3DX11_IMAGE_FILE_FORMAT
 	{

@@ -98,7 +98,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib\x86;..\TinyUI;..\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d11.lib;D3DX11.lib;d3d9.lib;dxgi.lib;D2D1.lib;TinyUI.lib</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;D3DX11.lib;d3d9.lib;d3dx9.lib;dxgi.lib;D2D1.lib;TinyUI.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -181,6 +181,8 @@
     <ClInclude Include="DX11Font2D.h" />
     <ClInclude Include="DX11Graphics2D.h" />
     <ClInclude Include="DX11Image2D.h" />
+    <ClInclude Include="DX9Element2D.h" />
+    <ClInclude Include="DX9Image2D.h" />
     <ClInclude Include="DX11Element2D.h" />
     <ClInclude Include="DX11PerformanceCounter.h" />
     <ClInclude Include="DX11Rectangle2D.h" />
@@ -190,6 +192,8 @@
     <ClInclude Include="DX11TransparentShader.h" />
     <ClInclude Include="DX2D.h" />
     <ClInclude Include="DX9.h" />
+    <ClInclude Include="DX9Graphics2D.h" />
+    <ClInclude Include="DX9RenderView.h" />
     <ClInclude Include="DX9Texture2D.h" />
     <ClInclude Include="DXCamera.h" />
     <ClInclude Include="DXFramework.h" />
@@ -207,6 +211,8 @@
     <ClCompile Include="DX11Graphics2D.cpp" />
     <ClCompile Include="DX11Image2D.cpp" />
     <ClCompile Include="DX11CaptureTask.cpp" />
+    <ClCompile Include="DX9Element2D.cpp" />
+    <ClCompile Include="DX9Image2D.cpp" />
     <ClCompile Include="DX11Element2D.cpp" />
     <ClCompile Include="DX11PerformanceCounter.cpp" />
     <ClCompile Include="DX11Rectangle2D.cpp" />
@@ -216,6 +222,8 @@
     <ClCompile Include="DX11TransparentShader.cpp" />
     <ClCompile Include="DX2D.cpp" />
     <ClCompile Include="DX9.cpp" />
+    <ClCompile Include="DX9Graphics2D.cpp" />
+    <ClCompile Include="DX9RenderView.cpp" />
     <ClCompile Include="DX9Texture2D.cpp" />
     <ClCompile Include="DXCamera.cpp" />
     <ClCompile Include="DXFramework.cpp" />

@@ -6,7 +6,6 @@ namespace DXFramework
 	DX11RenderView::DX11RenderView(DX11& dx11)
 		:m_dx11(dx11),
 		m_handle(NULL),
-		m_bMap(FALSE),
 		m_bSync(FALSE)
 	{
 	}
@@ -27,7 +26,7 @@ namespace DXFramework
 		if (m_dx11.IsEmpty())
 			return FALSE;
 		m_render2D.Release();
-		HRESULT hRes = m_dx11.GetSwap()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_render2D);
+		HRESULT hRes = m_dx11.GetSwapChain()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_render2D);
 		if (hRes != S_OK)
 			return FALSE;
 		hRes = m_dx11.GetD3D()->CreateRenderTargetView(m_render2D, NULL, &m_renderView);
@@ -162,7 +161,7 @@ namespace DXFramework
 		m_depthView.Release();
 		LPVOID val = NULL;
 		m_dx11.GetImmediateContext()->OMSetRenderTargets(1, (ID3D11RenderTargetView**)&val, NULL);
-		HRESULT hRes = m_dx11.GetSwap()->ResizeBuffers(2, 0, 0, DXGI_FORMAT_B8G8R8A8_UNORM, 0);
+		HRESULT hRes = m_dx11.GetSwapChain()->ResizeBuffers(2, 0, 0, DXGI_FORMAT_B8G8R8A8_UNORM, 0);
 		if (hRes != S_OK)
 			return FALSE;
 		return Create();
@@ -275,7 +274,7 @@ namespace DXFramework
 		else
 		{
 			TinyComPtr<ID3D11Texture2D> texture2D;
-			HRESULT hRes = m_dx11.GetSwap()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&texture2D);
+			HRESULT hRes = m_dx11.GetSwapChain()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&texture2D);
 			if (hRes != S_OK)
 				return FALSE;
 			hRes = SaveWICTextureToFile(m_dx11.GetImmediateContext(), texture2D, GetWICCodec(format), ws.c_str());

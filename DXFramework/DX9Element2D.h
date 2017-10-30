@@ -1,21 +1,20 @@
 #pragma once
 #include "DXFramework.h"
-#include "DX11Texture2D.h"
-#include "DX11TextureShader.h"
+#include "DX9Texture2D.h"
 #include "Render/TinyRectTracker.h"
 using namespace TinyUI;
 
 namespace DXFramework
 {
 	/// <summary>
-	/// DX11ÔªËØ
+	/// DX9ÔªËØ
 	/// </summary>
-	class DX11Element2D : public TinyObject, public TinyRectTracker
+	class DX9Element2D : public TinyObject, public TinyRectTracker
 	{
-		DECLARE_DYNAMIC(DX11Element2D)
+		DECLARE_DYNAMIC(DX9Element2D)
 	public:
-		DX11Element2D();
-		virtual ~DX11Element2D();
+		DX9Element2D();
+		virtual ~DX9Element2D();
 	public:
 		TinyString GetName() const;
 		TinyPoint GetPosition() const;
@@ -27,9 +26,9 @@ namespace DXFramework
 		void	SetName(const TinyString& name);
 		BOOL	PtInRect(const TinyPoint& pos);
 	public:
-		virtual BOOL Allocate(DX11& dx11) = 0;
-		virtual BOOL Process(DX11& dx11) = 0;
-		virtual void Deallocate(DX11& dx11) = 0;
+		virtual BOOL Allocate(DX9& dx9) = 0;
+		virtual BOOL Process(DX9& dx9) = 0;
+		virtual void Deallocate(DX9& dx9) = 0;
 	public:
 		TinyString		m_name;
 		TinySize		m_size;

@@ -26,7 +26,6 @@ namespace DXFramework
 		ID3D11RenderTargetView* GetRTView() const;
 		ID3D11DepthStencilView* GetDSView() const;
 	protected:
-		BOOL								m_bMap;
 		BOOL								m_bSync;
 		HANDLE								m_handle;
 		FLOAT								m_aspect;//±ÈÀý
