@@ -13,10 +13,12 @@ namespace DXFramework
 	public:
 		DX9Graphics2D();
 		virtual ~DX9Graphics2D();
+		DX9&	GetDX9();
+		void	Present();
 		BOOL	Initialize(HWND hWND, const TinySize& size);
+		BOOL	DrawImage(DX9Image2D* ps, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F);
 	private:
-		DX9					m_dx9;
-		DXCamera			m_camera;
+		DX9		m_dx9;
 	};
 }
 

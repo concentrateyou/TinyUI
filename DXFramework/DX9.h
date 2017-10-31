@@ -13,7 +13,7 @@ namespace DXFramework
 		virtual ~DX9();
 		BOOL		Initialize(HWND hWND, INT cx, INT cy);
 		BOOL		Present();
-		XMMATRIX*	GetMatrixs();
+		D3DXMATRIX*	GetMatrixs();
 		void		SetMatrixs(const TinySize& size);
 	public:
 		HWND				GetHWND() const;
@@ -21,7 +21,7 @@ namespace DXFramework
 		IDirect3DDevice9*	GetD3D() const;
 	private:
 		HWND							m_hWND;
-		XMMATRIX						m_matrixs[3];
+		D3DXMATRIX						m_matrixs[3];
 		D3DVIEWPORT9					m_viewPort;
 		TinyComPtr<IDirect3D9Ex>		m_d3d9;
 		TinyComPtr<IDirect3DDevice9>	m_d3dd9;

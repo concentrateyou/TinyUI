@@ -53,9 +53,9 @@ namespace DXFramework
 	BOOL DX11Graphics2D::DrawImage(DX11Image2D* ps, FLOAT ratioX, FLOAT ratioY)
 	{
 		ASSERT(ps);
-		if (!m_dx11.GetRender2D())
-			return FALSE;
 		if (ps->IsEmpty())
+			return FALSE;
+		if (!m_dx11.GetRender2D())
 			return FALSE;
 		if (!ps->Transform(m_dx11, ratioX, ratioY))
 			return FALSE;
