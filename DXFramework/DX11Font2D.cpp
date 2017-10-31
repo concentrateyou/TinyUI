@@ -108,14 +108,14 @@ namespace DXFramework
 			{
 				sizeF.Height = static_cast<Gdiplus::REAL>(s.Height());
 			}
-			return DX11Image2D::Create(dx11, TinySize((INT)sizeF.Width, (INT)sizeF.Height), TRUE);
+			return DX11Image2D::Create(dx11, (INT)sizeF.Width, (INT)sizeF.Height, TRUE);
 		}
 		return FALSE;
 	}
 	BOOL DX11Font2D::ClearContext()
 	{
 		HDC hDC = NULL;
-		if (!m_texture.GetDC(FALSE, hDC))
+		if (!DX11Texture2D::GetDC(FALSE, hDC))
 			return FALSE;
 		Graphics g(hDC);
 		g.SetTextRenderingHint(Gdiplus::TextRenderingHintAntiAlias);
@@ -125,15 +125,16 @@ namespace DXFramework
 		color.SetFromCOLORREF(m_bkColor);
 		g.Clear(color);
 		g.ReleaseHDC(hDC);
-		if (!m_texture.ReleaseDC())
+		if (!DX11Texture2D::ReleaseDC())
 			return FALSE;
 		return TRUE;
 	}
 	BOOL DX11Font2D::DrawString(DX11& dx11, const TinyString& str, const RectF& rectF, const StringFormat* format)
 	{
-		ASSERT(m_texture.IsEmpty());
+		if (DX11Texture2D::IsEmpty())
+			return FALSE;
 		HDC hDC = NULL;
-		if (!m_texture.GetDC(FALSE, hDC))
+		if (!DX11Texture2D::GetDC(FALSE, hDC))
 			return FALSE;
 		Graphics g(hDC);
 		g.SetTextRenderingHint(Gdiplus::TextRenderingHintAntiAlias);
@@ -149,7 +150,7 @@ namespace DXFramework
 		Gdiplus::Font font(hDC, &lf);
 		g.DrawString(ws.c_str(), -1, &font, rectF, format, &textBrush);
 		g.ReleaseHDC(hDC);
-		if (!m_texture.ReleaseDC())
+		if (!DX11Texture2D::ReleaseDC())
 			return FALSE;
 		return TRUE;
 	}

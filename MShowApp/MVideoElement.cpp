@@ -31,7 +31,12 @@ namespace MShow
 		HANDLE handle = m_controller.GetHandle();
 		if (!handle)
 			return FALSE;
-		return this->Load(dx11, handle);
+		if (this->Load(dx11, handle))
+		{
+			TinyRectangle s;
+			::GetClientRect(dx11.GetHWND(), &s);
+			this->SetScale(s.Size());
+		}
 	}
 
 	BOOL MVideoElement::Process(DX11& dx11)

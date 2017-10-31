@@ -6,7 +6,7 @@ using namespace TinyUI;
 
 namespace DXFramework
 {
-	class DX9Image2D : public DX9Element2D
+	class DX9Image2D : public DX9Element2D, public DX9Texture2D
 	{
 		struct VERTEXTYPE
 		{
@@ -18,8 +18,7 @@ namespace DXFramework
 	public:
 		DX9Image2D();
 		virtual ~DX9Image2D();
-		BOOL IsEmpty() const;
-		BOOL Transform(DX9& dx8, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F);
+		BOOL Translate(DX9& dx8, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F);
 	public:
 		virtual INT	GetVertexCount() const;
 	public:
@@ -29,7 +28,6 @@ namespace DXFramework
 	private:
 		BOOL Initialize(DX9& dx9);
 	protected:
-		DX9Texture2D						m_texture;
 		TinyComPtr<IDirect3DVertexBuffer9>	m_vertexBuffer;
 		TinyScopedArray<VERTEXTYPE>			m_vertices;
 	};

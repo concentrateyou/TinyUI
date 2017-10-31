@@ -50,7 +50,7 @@ namespace MShow
 		if (!m_image.Open(pzFile))
 			goto _ERROR;
 		size = m_image.GetSize();
-		if (!m_image2D.Create(m_graphics.GetDX11(), size, TRUE))
+		if (!m_image2D.Create(m_graphics.GetDX11(), size.cx, size.cy, FALSE))
 			goto _ERROR;
 		m_view.GetClientRect(&rectangle);
 		m_image2D.SetScale(rectangle.Size());
@@ -88,12 +88,7 @@ namespace MShow
 
 	HANDLE MImageController::GetHandle()
 	{
-		DX11Texture2D* ps = m_image2D.GetTexture2D();
-		if (ps && !ps->IsEmpty())
-		{
-			return ps->GetHandle();
-		}
-		return NULL;
+		return m_image2D.GetHandle();
 	}
 
 	void MImageController::OnAdd()

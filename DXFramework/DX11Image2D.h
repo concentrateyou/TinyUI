@@ -7,7 +7,7 @@ using namespace TinyUI;
 
 namespace DXFramework
 {
-	class DX11Image2D : public DX11Element2D
+	class DX11Image2D : public DX11Element2D, public DX11Texture2D
 	{
 		struct VERTEXTYPE
 		{
@@ -19,31 +19,21 @@ namespace DXFramework
 	public:
 		DX11Image2D();
 		virtual ~DX11Image2D();
-		DX11Texture2D* GetTexture2D();
-		BOOL Transform(DX11& dx11, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F);
-		BOOL Create(DX11& dx11, ID3D11Texture2D* texture2D);
-		BOOL Create(DX11& dx11, const TinySize& size, BYTE* bits, BOOL bReadonly);//Map/Unmap
-		BOOL Create(DX11& dx11, const TinySize& size, BOOL bShared, BOOL bSync = FALSE);//UpdateSubResource
-		void Destory();
-		BOOL BitBlt(DX11& dx11, const BYTE* bits, LONG size, LONG linesize);//RGB32
+		BOOL Translate(DX11& dx11, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F);
+	public:
+		BOOL Create(DX11& dx11, ID3D11Texture2D* texture2D) OVERRIDE;
+		BOOL Create(DX11& dx11, INT cx, INT cy, const BYTE* bits, BOOL bReadoly) OVERRIDE;
+		BOOL Create(DX11& dx11, INT cx, INT cy, BOOL bMutex = FALSE) OVERRIDE;
+		BOOL Load(DX11& dx11, const BYTE* bits, LONG dwSize) OVERRIDE;
+		BOOL Load(DX11& dx11, HANDLE hResource) OVERRIDE;
+		BOOL Load(DX11& dx11, const CHAR* pzFile) OVERRIDE;
+		void Destory() OVERRIDE;
+	public:
+		BOOL Copy(DX11& dx11, D3D11_BOX* ps, const BYTE* bits, LONG size);
+		BOOL Copy(DX11& dx11, const BYTE* bits, LONG size, UINT stride);
+		BOOL BitBlt(DX11& dx11, const BYTE* bits, LONG size, LONG linesize);
 		BOOL BitBlt(DX11& dx11, const TinyRectangle& dst, HBITMAP hBitmapSrc, const TinyPoint& src);
 		BOOL BitBlt(DX11& dx11, const TinyRectangle& dst, HDC hDCSrc, const TinyPoint& src);
-		BOOL Copy(DX11& dx11, ID3D11Texture2D* texture2D);
-		BOOL Copy(DX11& dx11, DX11Texture2D* texture2D);
-		BOOL Copy(DX11& dx11, DX11Image2D* image2D);
-		BOOL Copy(DX11& dx11, const BYTE* bits, LONG size, UINT stride);
-		BOOL Copy(DX11& dx11, D3D11_BOX* ps, const BYTE* bits, LONG size);
-		BOOL SaveAs(DX11& dx11, const CHAR* pzName);
-		BOOL GetDC(BOOL discard, HDC& hDC);
-		BOOL ReleaseDC();
-		BOOL Map(DX11& dx11, BYTE *&lpData, UINT &pitch, BOOL bReadoly = FALSE);
-		void Unmap(DX11& dx11);
-		BOOL Load(DX11& dx11, HANDLE hResource);
-		BOOL Load(DX11& dx11, const CHAR* pzFile);
-		BOOL Load(DX11& dx11, const BYTE* bits, DWORD dwSize);
-		BOOL Lock(UINT64 acqKey, DWORD dwMS);
-		BOOL Unlock(UINT64 relKey);
-		BOOL IsEmpty() const;
 	public:
 		virtual INT	GetVertexCount() const;
 		virtual INT	GetIndexCount() const;
@@ -54,7 +44,6 @@ namespace DXFramework
 	private:
 		BOOL Initialize(DX11& dx11);
 	protected:
-		DX11Texture2D				m_texture;
 		TinyComPtr<ID3D11Buffer>	m_vertexBuffer;
 		TinyComPtr<ID3D11Buffer>	m_indexBuffer;
 		TinyScopedArray<VERTEXTYPE> m_vertices;

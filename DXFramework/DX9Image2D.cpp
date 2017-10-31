@@ -37,11 +37,7 @@ namespace DXFramework
 		m_vertices.Reset(new VERTEXTYPE[vertexCount]);
 		return TRUE;
 	}
-	BOOL DX9Image2D::IsEmpty() const
-	{
-		return m_texture.IsEmpty();
-	}
-	BOOL DX9Image2D::Transform(DX9& dx9, FLOAT ratioX, FLOAT ratioY)
+	BOOL DX9Image2D::Translate(DX9& dx9, FLOAT ratioX, FLOAT ratioY)
 	{
 		FLOAT left = 0.0F;
 		FLOAT right = 0.0F;

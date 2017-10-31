@@ -220,7 +220,7 @@ namespace DXFramework
 				TinyPoint pos = m_image.GetPosition();
 				TinySize scale = m_image.GetScale();
 				m_image.Destory();
-				if (!m_image.Create(*m_pDX11, pCaptureDATA->Size, NULL, FALSE))
+				if (!m_image.Create(*m_pDX11, pCaptureDATA->Size.cx, pCaptureDATA->Size.cy, NULL, FALSE))
 				{
 					TRACE("BeginCapture m_image.Create-FAIL\n");
 					return FALSE;

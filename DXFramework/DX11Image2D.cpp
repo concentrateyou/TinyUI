@@ -15,227 +15,7 @@ namespace DXFramework
 	{
 
 	}
-	BOOL DX11Image2D::Create(DX11& dx11, ID3D11Texture2D* texture2D)
-	{
-		if (!Initialize(dx11))
-			return FALSE;
-		if (m_texture.Create(dx11, texture2D))
-		{
-			SetSize(m_texture.GetSize());
-			SetScale(m_size);
-			return TRUE;
-		}
-		return FALSE;
-	}
-	BOOL DX11Image2D::Create(DX11& dx11, const TinySize& size, BYTE* bits, BOOL bReadonly)
-	{
-		if (!Initialize(dx11))
-			return FALSE;
-		if (m_texture.Create(dx11, size.cx, size.cy, bits, bReadonly))
-		{
-			SetSize(m_texture.GetSize());
-			SetScale(m_size);
-			return TRUE;
-		}
-		return FALSE;
-	}
-	BOOL DX11Image2D::Create(DX11& dx11, const TinySize& size, BOOL bShared, BOOL bSync)
-	{
-		if (!Initialize(dx11))
-			return FALSE;
-		if (m_texture.Create(dx11, size.cx, size.cy, bShared, bSync))
-		{
-			SetSize(m_texture.GetSize());
-			SetScale(m_size);
-			return TRUE;
-		}
-		return FALSE;
-	}
-	void DX11Image2D::Destory()
-	{
-		m_vertexBuffer.Release();
-		m_indexBuffer.Release();
-		m_texture.Destory();
-	}
-	BOOL DX11Image2D::BitBlt(DX11& dx11, const BYTE* bits, LONG size, LONG linesize)
-	{
-		if (!bits || m_texture.IsEmpty() || size != (m_size.cx * m_size.cy * 4))
-			return FALSE;
-		HDC hDC = NULL;
-		if (!m_texture.GetDC(FALSE, hDC))
-			return FALSE;
-		LONG _linesize = m_size.cx * 4;
-		BITMAPINFO bmi = { 0 };
-		bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-		bmi.bmiHeader.biWidth = m_size.cx;
-		bmi.bmiHeader.biHeight = m_size.cy;
-		bmi.bmiHeader.biPlanes = 1;
-		bmi.bmiHeader.biBitCount = 32;
-		bmi.bmiHeader.biCompression = BI_RGB;
-		bmi.bmiHeader.biSizeImage = _linesize * m_size.cy;
-		BYTE* pBits = NULL;
-		HBITMAP hBitmap = ::CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pBits), NULL, 0);
-		INT rowcopy = (_linesize < linesize) ? _linesize : linesize;
-		if (linesize == rowcopy)
-		{
-			memcpy(pBits, bits, rowcopy * m_size.cy);
-		}
-		else
-		{
-			for (INT y = 0; y < m_size.cy; y++)
-			{
-				memcpy(pBits + (UINT)y * _linesize, bits + (UINT)y * linesize, rowcopy);
-			}
-		}
-		TinyUI::TinyMemDC mdc(hDC, hBitmap);
-		::BitBlt(hDC, 0, 0, m_size.cx, m_size.cy, mdc, 0, 0, SRCCOPY);
-		SAFE_DELETE_OBJECT(hBitmap);
-		return m_texture.ReleaseDC();
-	}
 
-	BOOL DX11Image2D::BitBlt(DX11& dx11, const TinyRectangle& dst, HBITMAP hBitmapSrc, const TinyPoint& src)
-	{
-		if (m_texture.IsEmpty())
-			return FALSE;
-		HDC hDC = NULL;
-		if (!m_texture.GetDC(TRUE, hDC))
-			return FALSE;
-		TinyUI::TinyMemDC mdc(hDC, hBitmapSrc);
-		::BitBlt(hDC, dst.left, dst.top, dst.Width(), dst.Height(), mdc, src.x, src.y, SRCCOPY | CAPTUREBLT);
-		return m_texture.ReleaseDC();
-	}
-	BOOL DX11Image2D::BitBlt(DX11& dx11, const TinyRectangle& dst, HDC hDCSrc, const TinyPoint& src)
-	{
-		if (m_texture.IsEmpty())
-			return FALSE;
-		HDC hDC = NULL;
-		if (!m_texture.GetDC(TRUE, hDC))
-			return FALSE;
-		::BitBlt(hDC, dst.left, dst.top, dst.Width(), dst.Height(), hDCSrc, src.x, src.y, SRCCOPY | CAPTUREBLT);
-		return m_texture.ReleaseDC();
-	}
-	BOOL DX11Image2D::Copy(DX11& dx11, ID3D11Texture2D* texture2D)
-	{
-		if (!texture2D)
-			return FALSE;
-		return m_texture.Copy(dx11, texture2D);
-	}
-	BOOL DX11Image2D::Copy(DX11& dx11, DX11Texture2D* texture2D)
-	{
-		if (!texture2D)
-			return FALSE;
-		return Copy(dx11, texture2D->GetTexture2D());
-	}
-
-	BOOL DX11Image2D::Copy(DX11& dx11, DX11Image2D* image2D)
-	{
-		if (!image2D)
-			return FALSE;
-		return Copy(dx11, image2D->GetTexture2D());
-	}
-
-	BOOL DX11Image2D::Map(DX11& dx11, BYTE *&lpData, UINT &pitch, BOOL bReadoly)
-	{
-		return m_texture.Map(dx11, lpData, pitch, bReadoly);
-	}
-	void DX11Image2D::Unmap(DX11& dx11)
-	{
-		m_texture.Unmap(dx11);
-	}
-	BOOL DX11Image2D::Copy(DX11& dx11, D3D11_BOX* ps, const BYTE* bits, LONG size)
-	{
-		if (m_texture.IsEmpty() || !bits || size <= 0)
-			return FALSE;
-		return m_texture.Copy(dx11, ps, bits, size, m_size.cx * 4, m_size.cx * m_size.cy * 4);
-	}
-	BOOL DX11Image2D::Copy(DX11& dx11, const BYTE* bits, LONG size, UINT stride)
-	{
-		if (m_texture.IsEmpty() || !bits || size <= 0)
-			return FALSE;
-		BYTE* bitso = NULL;
-		UINT linesize = 0;
-		UINT rowcopy = (stride < linesize) ? stride : linesize;
-		if (m_texture.Map(dx11, bitso, linesize))
-		{
-			UINT rowcopy = (stride < linesize) ? stride : linesize;
-			if (linesize == rowcopy)
-			{
-				memcpy(bitso, bits, linesize * m_size.cy);
-			}
-			else
-			{
-				for (INT y = 0; y < m_size.cy; y++)
-				{
-					memcpy(bitso + (UINT)y * linesize, bits + (UINT)y * stride, rowcopy);
-				}
-			}
-			m_texture.Unmap(dx11);
-			return TRUE;
-		}
-		return FALSE;
-	}
-	BOOL DX11Image2D::SaveAs(DX11& dx11, const CHAR* pzName)
-	{
-		return m_texture.SaveAs(dx11, pzName, PNG);
-	}
-	BOOL DX11Image2D::GetDC(BOOL discard, HDC& hDC)
-	{
-		return m_texture.GetDC(discard, hDC);
-	}
-	BOOL DX11Image2D::ReleaseDC()
-	{
-		return m_texture.ReleaseDC();
-	}
-	BOOL DX11Image2D::Load(DX11& dx11, HANDLE hResource)
-	{
-		if (!hResource)
-			return FALSE;
-		if (!Initialize(dx11))
-			return FALSE;
-		if (m_texture.Load(dx11, hResource))
-		{
-			SetSize(m_texture.GetSize());
-			TinyRectangle s = { 0 };
-			GetClientRect(dx11.GetHWND(), &s);
-			SetScale(s.Size());
-			return TRUE;
-		}
-		return FALSE;
-	}
-	BOOL DX11Image2D::Load(DX11& dx11, const CHAR* pzFile)
-	{
-		if (!pzFile)
-			return FALSE;
-		if (!Initialize(dx11))
-			return FALSE;
-		if (m_texture.Load(dx11, pzFile))
-		{
-			SetSize(m_texture.GetSize());
-			SetScale(m_size);
-			return TRUE;
-		}
-		return FALSE;
-	}
-	BOOL DX11Image2D::Load(DX11& dx11, const BYTE* bits, DWORD dwSize)
-	{
-		if (!Initialize(dx11))
-			return FALSE;
-		if (m_texture.Load(dx11, bits, dwSize))
-		{
-			SetSize(m_texture.GetSize());
-			SetScale(m_size);
-			return TRUE;
-		}
-		return FALSE;
-	}
-	BOOL DX11Image2D::Lock(UINT64 acqKey, DWORD dwMS)
-	{
-		return m_texture.Lock(acqKey, dwMS);
-	}
-	BOOL DX11Image2D::Unlock(UINT64 relKey)
-	{
-		return m_texture.Unlock(relKey);
-	}
 	BOOL DX11Image2D::Initialize(DX11& dx11)
 	{
 		D3D11_BUFFER_DESC	vertexBufferDesc = { 0 };
@@ -277,7 +57,7 @@ namespace DXFramework
 		m_vertices.Reset(new VERTEXTYPE[vertexCount]);
 		return TRUE;
 	}
-	BOOL DX11Image2D::Transform(DX11& dx11, FLOAT ratioX, FLOAT ratioY)
+	BOOL DX11Image2D::Translate(DX11& dx11, FLOAT ratioX, FLOAT ratioY)
 	{
 		FLOAT left = 0.0F;
 		FLOAT right = 0.0F;
@@ -316,6 +96,199 @@ namespace DXFramework
 		return TRUE;
 	}
 
+	BOOL DX11Image2D::Create(DX11& dx11, ID3D11Texture2D* texture2D)
+	{
+		if (!Initialize(dx11))
+			return FALSE;
+		if (DX11Texture2D::Create(dx11, texture2D))
+		{
+			D3D11_TEXTURE2D_DESC desc;
+			m_texture2D->GetDesc(&desc);
+			TinySize size(desc.Width, desc.Height);
+			SetSize(size);
+			SetScale(size);
+			return TRUE;
+		}
+		return FALSE;
+	}
+
+	BOOL DX11Image2D::Create(DX11& dx11, INT cx, INT cy, const BYTE* bits, BOOL bReadoly)
+	{
+		if (!Initialize(dx11))
+			return FALSE;
+		if (DX11Texture2D::Create(dx11, cx, cy, bits, bReadoly))
+		{
+			D3D11_TEXTURE2D_DESC desc;
+			m_texture2D->GetDesc(&desc);
+			TinySize size(desc.Width, desc.Height);
+			SetSize(size);
+			SetScale(size);
+			return TRUE;
+		}
+		return FALSE;
+	}
+
+	BOOL DX11Image2D::Create(DX11& dx11, INT cx, INT cy, BOOL bMutex /*= FALSE*/)
+	{
+		if (!Initialize(dx11))
+			return FALSE;
+		if (DX11Texture2D::Create(dx11, cx, cy, bMutex))
+		{
+			D3D11_TEXTURE2D_DESC desc;
+			m_texture2D->GetDesc(&desc);
+			TinySize size(desc.Width, desc.Height);
+			SetSize(size);
+			SetScale(size);
+			return TRUE;
+		}
+		return FALSE;
+	}
+
+	BOOL DX11Image2D::Load(DX11& dx11, const BYTE* bits, LONG size)
+	{
+		if (!Initialize(dx11))
+			return FALSE;
+		if (DX11Texture2D::Load(dx11, bits, size))
+		{
+			D3D11_TEXTURE2D_DESC desc;
+			m_texture2D->GetDesc(&desc);
+			TinySize size1(desc.Width, desc.Height);
+			SetSize(size1);
+			SetScale(size1);
+			return TRUE;
+		}
+		return FALSE;
+	}
+
+	BOOL DX11Image2D::Load(DX11& dx11, HANDLE hResource)
+	{
+		if (!hResource)
+			return FALSE;
+		if (!Initialize(dx11))
+			return FALSE;
+		if (DX11Texture2D::Load(dx11, hResource))
+		{
+			D3D11_TEXTURE2D_DESC desc;
+			m_texture2D->GetDesc(&desc);
+			TinySize size(desc.Width, desc.Height);
+			SetSize(size);
+			SetScale(size);
+			return TRUE;
+		}
+	}
+
+	BOOL DX11Image2D::Load(DX11& dx11, const CHAR* pzFile)
+	{
+		if (!PathFileExists(pzFile))
+			return FALSE;
+		if (!Initialize(dx11))
+			return FALSE;
+		if (DX11Texture2D::Load(dx11, pzFile))
+		{
+			D3D11_TEXTURE2D_DESC desc;
+			m_texture2D->GetDesc(&desc);
+			TinySize size(desc.Width, desc.Height);
+			SetSize(size);
+			SetScale(size);
+			return TRUE;
+		}
+	}
+
+	void DX11Image2D::Destory()
+	{
+		m_vertexBuffer.Release();
+		m_indexBuffer.Release();
+		DX11Texture2D::Destory();
+	}
+
+	BOOL DX11Image2D::BitBlt(DX11& dx11, const BYTE* bits, LONG size, LONG linesize)
+	{
+		if (!bits || DX11Texture2D::IsEmpty() || size != (m_size.cx * m_size.cy * 4))
+			return FALSE;
+		HDC hDC = NULL;
+		if (!DX11Texture2D::GetDC(FALSE, hDC))
+			return FALSE;
+		LONG _linesize = m_size.cx * 4;
+		BITMAPINFO bmi = { 0 };
+		bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+		bmi.bmiHeader.biWidth = m_size.cx;
+		bmi.bmiHeader.biHeight = m_size.cy;
+		bmi.bmiHeader.biPlanes = 1;
+		bmi.bmiHeader.biBitCount = 32;
+		bmi.bmiHeader.biCompression = BI_RGB;
+		bmi.bmiHeader.biSizeImage = _linesize * m_size.cy;
+		BYTE* pBits = NULL;
+		HBITMAP hBitmap = ::CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pBits), NULL, 0);
+		INT rowcopy = (_linesize < linesize) ? _linesize : linesize;
+		if (linesize == rowcopy)
+		{
+			memcpy(pBits, bits, rowcopy * m_size.cy);
+		}
+		else
+		{
+			for (INT y = 0; y < m_size.cy; y++)
+			{
+				memcpy(pBits + (UINT)y * _linesize, bits + (UINT)y * linesize, rowcopy);
+			}
+		}
+		TinyUI::TinyMemDC mdc(hDC, hBitmap);
+		::BitBlt(hDC, 0, 0, m_size.cx, m_size.cy, mdc, 0, 0, SRCCOPY);
+		SAFE_DELETE_OBJECT(hBitmap);
+		return DX11Texture2D::ReleaseDC();
+	}
+	BOOL DX11Image2D::BitBlt(DX11& dx11, const TinyRectangle& dst, HBITMAP hBitmapSrc, const TinyPoint& src)
+	{
+		if (DX11Texture2D::IsEmpty())
+			return FALSE;
+		HDC hDC = NULL;
+		if (!DX11Texture2D::GetDC(TRUE, hDC))
+			return FALSE;
+		TinyUI::TinyMemDC mdc(hDC, hBitmapSrc);
+		::BitBlt(hDC, dst.left, dst.top, dst.Width(), dst.Height(), mdc, src.x, src.y, SRCCOPY | CAPTUREBLT);
+		return DX11Texture2D::ReleaseDC();
+	}
+	BOOL DX11Image2D::BitBlt(DX11& dx11, const TinyRectangle& dst, HDC hDCSrc, const TinyPoint& src)
+	{
+		if (DX11Texture2D::IsEmpty())
+			return FALSE;
+		HDC hDC = NULL;
+		if (!DX11Texture2D::GetDC(TRUE, hDC))
+			return FALSE;
+		::BitBlt(hDC, dst.left, dst.top, dst.Width(), dst.Height(), hDCSrc, src.x, src.y, SRCCOPY | CAPTUREBLT);
+		return DX11Texture2D::ReleaseDC();
+	}
+	BOOL DX11Image2D::Copy(DX11& dx11, D3D11_BOX* ps, const BYTE* bits, LONG size)
+	{
+		if (DX11Texture2D::IsEmpty() || !bits || size <= 0)
+			return FALSE;
+		return DX11Texture2D::Copy(dx11, ps, bits, size, m_size.cx * 4, m_size.cx * m_size.cy * 4);
+	}
+	BOOL DX11Image2D::Copy(DX11& dx11, const BYTE* bits, LONG size, UINT stride)
+	{
+		if (DX11Texture2D::IsEmpty() || !bits || size <= 0)
+			return FALSE;
+		BYTE* bitso = NULL;
+		UINT linesize = 0;
+		UINT rowcopy = (stride < linesize) ? stride : linesize;
+		if (DX11Texture2D::Map(dx11, bitso, linesize))
+		{
+			UINT rowcopy = (stride < linesize) ? stride : linesize;
+			if (linesize == rowcopy)
+			{
+				memcpy(bitso, bits, linesize * m_size.cy);
+			}
+			else
+			{
+				for (INT y = 0; y < m_size.cy; y++)
+				{
+					memcpy(bitso + (UINT)y * linesize, bits + (UINT)y * stride, rowcopy);
+				}
+			}
+			DX11Texture2D::Unmap(dx11);
+			return TRUE;
+		}
+		return FALSE;
+	}
 	BOOL DX11Image2D::Allocate(DX11& dx11)
 	{
 		return TRUE;
@@ -324,15 +297,6 @@ namespace DXFramework
 	void DX11Image2D::Deallocate(DX11& dx11)
 	{
 
-	}
-
-	DX11Texture2D* DX11Image2D::GetTexture2D()
-	{
-		return &m_texture;
-	}
-	BOOL DX11Image2D::IsEmpty() const
-	{
-		return m_texture.IsEmpty();
 	}
 	BOOL DX11Image2D::Process(DX11& dx11)
 	{

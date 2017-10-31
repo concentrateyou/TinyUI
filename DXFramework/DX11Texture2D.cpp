@@ -22,8 +22,11 @@ namespace DXFramework
 	DX11Texture2D::~DX11Texture2D()
 	{
 	}
-
-	BOOL DX11Texture2D::Create(DX11& dx11, INT cx, INT cy, BOOL bShared, BOOL bSync)
+	DX11Texture2D::operator ID3D11Texture2D*() const
+	{
+		return m_texture2D;
+	}
+	BOOL DX11Texture2D::Create(DX11& dx11, INT cx, INT cy, BOOL bMutex)
 	{
 		m_texture2D.Release();
 		m_resourceView.Release();
@@ -37,7 +40,7 @@ namespace DXFramework
 		textureDesc.SampleDesc.Count = 1;
 		textureDesc.SampleDesc.Quality = 0;
 		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
-		textureDesc.MiscFlags = bShared ? (bSync ? D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX : D3D11_RESOURCE_MISC_SHARED) | D3D11_RESOURCE_MISC_GDI_COMPATIBLE : D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
+		textureDesc.MiscFlags = (bMutex ? D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX : D3D11_RESOURCE_MISC_SHARED) | D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
 		textureDesc.Usage = D3D11_USAGE_DEFAULT;//GPU¿ìËÙ¶ÁÐ´
 		HRESULT hRes = dx11.GetD3D()->CreateTexture2D(&textureDesc, NULL, &m_texture2D);
 		if (hRes != S_OK)
@@ -52,18 +55,15 @@ namespace DXFramework
 		hRes = dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &dsrvd, &m_resourceView);
 		if (hRes != S_OK)
 			return FALSE;
-		if (bShared)
+		TinyComPtr<IDXGIResource> resource;
+		if (FAILED(hRes = m_texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&resource)))
+			return FALSE;
+		if (FAILED(hRes = resource->GetSharedHandle(&m_handle)))
+			return FALSE;
+		if (bMutex)
 		{
-			TinyComPtr<IDXGIResource> resource;
-			if (FAILED(hRes = m_texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&resource)))
+			if (FAILED(hRes = resource->QueryInterface(__uuidof(IDXGIKeyedMutex), (void**)&m_mutex)))
 				return FALSE;
-			if (FAILED(hRes = resource->GetSharedHandle(&m_handle)))
-				return FALSE;
-			if (bSync)
-			{
-				if (FAILED(hRes = resource->QueryInterface(__uuidof(IDXGIKeyedMutex), (void**)&m_mutex)))
-					return FALSE;
-			}
 		}
 		return TRUE;
 	}
@@ -267,14 +267,14 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11Texture2D::Load(DX11& dx11, const BYTE* bits, DWORD dwSize)
+	BOOL DX11Texture2D::Load(DX11& dx11, const BYTE* bits, LONG size)
 	{
 		ASSERT(bits);
 		m_texture2D.Release();
 		m_resourceView.Release();
 		HRESULT hRes = S_OK;
 		TinyComPtr<ID3D11Resource> resource;
-		if (!CreateWICTextureFromMemory(dx11.GetD3D(), bits, dwSize, &resource, &m_resourceView))
+		if (!CreateWICTextureFromMemory(dx11.GetD3D(), bits, size, &resource, &m_resourceView))
 			return FALSE;
 		if (FAILED(hRes = resource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&m_texture2D)))
 			return FALSE;
@@ -306,13 +306,6 @@ namespace DXFramework
 	ID3D11ShaderResourceView* DX11Texture2D::GetSRView() const
 	{
 		return m_resourceView;
-	}
-	TinySize DX11Texture2D::GetSize()
-	{
-		ASSERT(m_texture2D);
-		D3D11_TEXTURE2D_DESC desc;
-		m_texture2D->GetDesc(&desc);
-		return TinySize(desc.Width, desc.Height);
 	}
 	BOOL DX11Texture2D::IsEmpty() const
 	{
