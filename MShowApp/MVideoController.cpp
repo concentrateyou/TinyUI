@@ -74,7 +74,7 @@ namespace MShow
 	{
 		TinyRectangle rectangle;
 		m_view.GetClientRect(&rectangle);
-		if (!m_graphics.Initialize(m_view.Handle(), rectangle.Size(), FALSE))
+		if (!m_graphics.Initialize(m_view.Handle(), rectangle.Size()))
 			return FALSE;
 		m_popup.CreatePopupMenu();
 		m_popup.AppendMenu(MF_STRING, 1, TEXT("添加"));

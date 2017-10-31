@@ -15,7 +15,22 @@ namespace DXFramework
 	{
 
 	}
-	BOOL DX11::Initialize(HWND hWND, INT cx, INT cy, BOOL bMultithread)
+	BOOL DX11::EnumAdapters(vector<IDXGIAdapter*>& adapters)
+	{
+		TinyComPtr<IDXGIFactory> factory;
+		HRESULT hRes = CreateDXGIFactory(__uuidof(IDXGIFactory), reinterpret_cast<void**>(&factory));
+		if (hRes != S_OK)
+			return FALSE;
+		IDXGIAdapter* adapter;
+		UINT index = 0;
+		while (factory->EnumAdapters(index, &adapter) != DXGI_ERROR_NOT_FOUND)
+		{
+			adapters.push_back(adapter);
+			++index;
+		}
+		return TRUE;
+	}
+	BOOL DX11::Initialize(HWND hWND, INT cx, INT cy, IDXGIAdapter* pAdapter)
 	{
 		m_hWND = hWND;
 		DXGI_SWAP_CHAIN_DESC swapDesc;
@@ -48,7 +63,7 @@ namespace DXFramework
 		dwFlag |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 		D3D_FEATURE_LEVEL level = D3D_FEATURE_LEVEL_9_3;
-		hRes = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, dwFlag, levels, sizeof(levels) / sizeof(D3D_FEATURE_LEVEL), D3D11_SDK_VERSION, &swapDesc, &m_swap, &m_d3d, &level, &m_immediateContext);
+		hRes = D3D11CreateDeviceAndSwapChain(pAdapter, D3D_DRIVER_TYPE_HARDWARE, NULL, dwFlag, levels, sizeof(levels) / sizeof(D3D_FEATURE_LEVEL), D3D11_SDK_VERSION, &swapDesc, &m_swap, &m_d3d, &level, &m_immediateContext);
 		if (hRes != S_OK)
 			return FALSE;
 		m_background2D.Reset(new DX11RenderView(*this));
@@ -122,22 +137,17 @@ namespace DXFramework
 		hRes = m_d3d->CreateBlendState(&blenddesc, &m_disableBlendState);
 		if (hRes != S_OK)
 			return FALSE;
-		if (bMultithread)
-		{
-			hRes = m_d3d->QueryInterface(__uuidof(ID3D10Multithread), (void**)&m_multithread);
-			if (hRes != S_OK)
-				return FALSE;
-			m_multithread->SetMultithreadProtected(TRUE);
-		}
+		D3D11_FEATURE_DATA_THREADING option = { 0 };
+		hRes = m_d3d->CheckFeatureSupport(D3D11_FEATURE_THREADING, reinterpret_cast<void*>(&option), sizeof(option));
+		if (hRes != S_OK)
+			return FALSE;
 		m_size.cx = cx;
 		m_size.cy = cy;
-		m_bMultithread = bMultithread;
 		return TRUE;
 	}
 	void DX11::Uninitialize()
 	{
 		m_background2D.Reset(NULL);
-		m_multithread.Release();
 		m_disableDepthState.Release();
 		m_enableDepthState.Release();
 		m_disableBlendState.Release();
@@ -197,34 +207,6 @@ namespace DXFramework
 			return FALSE;
 		m_immediateContext->Flush();
 		return TRUE;
-	}
-	void DX11::Enter()
-	{
-		if (m_multithread != NULL)
-		{
-			if (m_multithread->GetMultithreadProtected())
-			{
-				m_multithread->Enter();
-			}
-		}
-		else
-		{
-			m_synchronize.Lock();
-		}
-	}
-	void DX11::Leave()
-	{
-		if (m_multithread != NULL)
-		{
-			if (m_multithread->GetMultithreadProtected())
-			{
-				m_multithread->Leave();
-			}
-		}
-		else
-		{
-			m_synchronize.Unlock();
-		}
 	}
 	BOOL DX11::IsEmpty() const
 	{

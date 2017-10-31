@@ -64,7 +64,7 @@ namespace MShow
 	{
 		TinyRectangle s;
 		m_view.GetClientRect(&s);
-		if (!m_graphics.Initialize(m_view.Handle(), s.Size(), TRUE))
+		if (!m_graphics.Initialize(m_view.Handle(), s.Size()))
 			return FALSE;
 		string box;
 		box.resize(MAX_PATH);
@@ -86,11 +86,11 @@ namespace MShow
 	}
 	void MPreviewController::Enter()
 	{
-		m_graphics.GetDX11().Enter();
+		m_graphics.GetDX11().Lock();
 	}
 	void MPreviewController::Leave()
 	{
-		m_graphics.GetDX11().Leave();
+		m_graphics.GetDX11().Unlock();
 	}
 	BOOL MPreviewController::Add(DX11Element2D* ps)
 	{

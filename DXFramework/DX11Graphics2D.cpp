@@ -11,9 +11,9 @@ namespace DXFramework
 	{
 	}
 
-	BOOL DX11Graphics2D::Initialize(HWND hWND, const TinySize& size, BOOL bMultithread)
+	BOOL DX11Graphics2D::Initialize(HWND hWND, const TinySize& size)
 	{
-		if (!m_dx11.Initialize(hWND, size.cx, size.cy, bMultithread))
+		if (!m_dx11.Initialize(hWND, size.cx, size.cy, NULL))
 			return FALSE;
 		string str;
 		str.resize(MAX_PATH);
@@ -70,11 +70,11 @@ namespace DXFramework
 
 	void DX11Graphics2D::Enter()
 	{
-		m_dx11.Enter();
+		m_dx11.Lock();
 	}
 
 	void DX11Graphics2D::Leave()
 	{
-		m_dx11.Leave();
+		m_dx11.Unlock();
 	}
 }

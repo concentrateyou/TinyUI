@@ -251,7 +251,7 @@ namespace DXFramework
 		m_dx11.SetMatrixs(m_size);
 		FLOAT color[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
 		m_dx11.GetImmediateContext()->ClearRenderTargetView(m_renderView, color);
-		m_dx11.GetImmediateContext()->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH, 1.0F, 0);
+		m_dx11.GetImmediateContext()->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH| D3D11_CLEAR_STENCIL, 1.0F, 0);
 		return TRUE;
 	}
 	BOOL DX11RenderView::EndDraw()
