@@ -42,7 +42,7 @@ namespace MShow
 			BOOL bRes = m_task.GetVideoQueue().Pop(sampleTag);
 			if (!bRes || sampleTag.size <= 0)
 			{
-				Sleep(25);
+				Sleep(15);
 				continue;
 			}
 			if (sampleTag.samplePTS == m_clock.GetBasePTS())
@@ -56,7 +56,6 @@ namespace MShow
 			}
 			LONG systemMS = static_cast<LONG>(MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime());
 			INT delay = static_cast<INT>(sampleTag.samplePTS - systemMS);
-			TRACE("Video Delay:%d\n", delay);
 			if (timer.Wait(delay, 1000))
 			{
 				if (!m_renderCB.IsNull())

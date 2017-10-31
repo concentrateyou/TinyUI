@@ -59,6 +59,12 @@ namespace MShow
 		{
 			visual->SetText(szProgramName.c_str());
 		}
+		visual = m_view.GetDocument()->GetVisualByName("lblError");
+		if (visual != NULL)
+		{
+			visual->SetVisible(FALSE);
+			visual->SetText("");
+		}
 		m_view.Invalidate();
 	}
 	void MClientController::SetTimes(const string& szTime1, const string& szTime2)

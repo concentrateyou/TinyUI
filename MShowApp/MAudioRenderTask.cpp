@@ -61,8 +61,9 @@ namespace MShow
 	void MAudioRenderTask::OnMessagePump()
 	{
 		CoInitializeEx(NULL, COINIT_MULTITHREADED);
-		SampleTag tag;
-		ZeroMemory(&tag, sizeof(tag));
+		TinyPerformanceTimer timer;
+		TinyPerformanceTime	 timeQPC;
+		SampleTag tag = { 0 };
 		for (;;)
 		{
 			if (m_bBreak)
@@ -82,9 +83,7 @@ namespace MShow
 			if (!m_bInitialize)
 			{
 				m_bInitialize = TRUE;
-				TinyPerformanceTime	timeQPC;
 				timeQPC.BeginTime();
-				TinyPerformanceTimer timer;
 				if (!m_audio.Open(m_task.GetFormat()))
 					break;
 				m_audio.Start();
@@ -95,12 +94,12 @@ namespace MShow
 				LONG delay = static_cast<LONG>(tag.samplePTS - ms);
 				if (timer.Wait(delay, 1000))
 				{
-					m_audio.Fill(tag.bits + 4, tag.size, 1000);
+					m_audio.Play(tag.bits + 4, tag.size, 1000);
 				}
 			}
 			else
 			{
-				m_audio.Fill(tag.bits + 4, tag.size, 1000);
+				m_audio.Play(tag.bits + 4, tag.size, 1000);
 			}
 			if (!m_callback.IsNull())
 			{
