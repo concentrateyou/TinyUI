@@ -1,7 +1,7 @@
 #pragma once
 #include "DXFramework.h"
 #include "DX9.h"
-#include "DXCamera.h"
+#include "DX9Image2D.h"
 
 namespace DXFramework
 {

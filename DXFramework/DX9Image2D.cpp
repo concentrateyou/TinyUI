@@ -37,6 +37,10 @@ namespace DXFramework
 		m_vertices.Reset(new VERTEXTYPE[vertexCount]);
 		return TRUE;
 	}
+	BOOL DX9Image2D::IsEmpty() const
+	{
+		return m_texture.IsEmpty();
+	}
 	BOOL DX9Image2D::Transform(DX9& dx9, FLOAT ratioX, FLOAT ratioY)
 	{
 		FLOAT left = 0.0F;
@@ -66,7 +70,8 @@ namespace DXFramework
 		m_vertices[4].texture = XMFLOAT2(1.0F, 0.0F);
 		m_vertices[5].position = XMFLOAT4(right, bottom, 1.0F, 1.0F);
 		m_vertices[5].texture = XMFLOAT2(1.0F, 1.0F);
-		hRes = m_vertexBuffer->Lock(0, 0, &bits, 0);
+		BYTE* bits = NULL;
+		HRESULT hRes = m_vertexBuffer->Lock(0, 0, reinterpret_cast<void**>(&bits), 0);
 		if (hRes != S_OK)
 			return FALSE;
 		memcpy(bits, m_vertices.Ptr(), (sizeof(VERTEXTYPE) * vertexCount));
@@ -89,8 +94,8 @@ namespace DXFramework
 	{
 		if (dx9.IsEmpty())
 			return FALSE;
-		m_dx9.GetD3D()->SetStreamSource(0, m_vertexBuffer, 0, sizeof(VERTEXTYPE));
-		m_dx9.GetD3D()->SetRenderState(D3DRS_LIGHTING, FALSE);
+		dx9.GetD3D()->SetStreamSource(0, m_vertexBuffer, 0, sizeof(VERTEXTYPE));
+		dx9.GetD3D()->SetRenderState(D3DRS_LIGHTING, FALSE);
 		D3DXMATRIX* ms = dx9.GetMatrixs();
 		dx9.GetD3D()->SetTransform(D3DTS_VIEW, &ms[1]);
 		dx9.GetD3D()->SetTransform(D3DTS_WORLD, &ms[1]);

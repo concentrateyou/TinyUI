@@ -45,4 +45,8 @@ namespace DXFramework
 		}
 		return TRUE;
 	}
+	BOOL DX9Texture2D::IsEmpty() const
+	{
+		return m_texture2D == NULL;
+	}
 }
