@@ -61,8 +61,8 @@ namespace TinyUI
 			virtual ~TinyXAudio();
 			void SetCallback(Closure&& callback);
 			BOOL Open(const WAVEFORMATEX* pFMT);
-			BOOL Fill(BYTE* bits, LONG size);
-			BOOL Fill(BYTE* bits, LONG size, DWORD dwMS);
+			BOOL Play(BYTE* bits, LONG size);
+			BOOL Play(BYTE* bits, LONG size, DWORD dwMS);
 			BOOL SetVolume(DWORD dwVolume);
 			BOOL SetChannelVolumes(UINT channels, DWORD dwVolume);
 			BOOL Start();

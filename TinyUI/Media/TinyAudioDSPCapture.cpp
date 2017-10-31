@@ -207,7 +207,6 @@ namespace TinyUI
 		{
 			return m_bCapturing;
 		}
-		INT count = 0;
 		void TinyAudioDSPCapture::OnMessagePump()
 		{
 			WAVEFORMATEX* pFMT = GetFormat();
@@ -238,12 +237,9 @@ namespace TinyUI
 						break;
 					m_dmoBuffer.dwStatus = 0;
 					hRes = m_dmo->ProcessOutput(0, 1, &m_dmoBuffer, &dwStatus);
-					if (count == 300)
-					{
-						hRes = AUDCLNT_E_DEVICE_INVALIDATED;
-					}
 					if (FAILED(hRes) && hRes != WMAAECMA_E_NO_ACTIVE_RENDER_STREAM)
 					{
+						TRACE("DMP ProcessOutput FAIL\n");
 						LOG(ERROR) << "DMP ProcessOutput:" << hRes << " FAIL";
 						bCapturing = FALSE;
 						m_bCapturing = FALSE;
@@ -258,7 +254,6 @@ namespace TinyUI
 						OnDataAvailable(data, cbProduced, this);
 					}
 					mediaBuffer->SetLength(0);
-					count++;
 				} while (DMO_OUTPUT_DATA_BUFFERF_INCOMPLETE & dwStatus);
 			}
 			LOG(ERROR) << "OnMessagePump EXIT";

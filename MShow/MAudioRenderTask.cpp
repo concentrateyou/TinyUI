@@ -60,6 +60,8 @@ namespace MShow
 	void MAudioRenderTask::OnMessagePump()
 	{
 		CoInitializeEx(NULL, COINIT_MULTITHREADED);
+		TinyPerformanceTime	 timeQPC;
+		TinyPerformanceTimer timer;
 		SampleTag tag = { 0 };
 		for (;;)
 		{
@@ -79,21 +81,21 @@ namespace MShow
 			while (m_clock.GetBasePTS() == -1);
 			if (!m_bInitialize)
 			{
-				TinyPerformanceTime	timeQPC;
-				TinyPerformanceTimer timer;
 				timeQPC.BeginTime();
 				if (!m_audio.Open(m_task.GetFormat()))
 					break;
 				m_bInitialize = TRUE;
 				m_audio.Start();
+				
 				timeQPC.EndTime();
 				m_clock.AddBaseTime(static_cast<DWORD>(timeQPC.GetMillisconds()));
 				LONGLONG ms = MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime();
 				LONG delay = static_cast<LONG>(tag.samplePTS - ms);
+				
 				if (timer.Wait(delay, 1000))
 				{
 					MShow::MShowApp::GetInstance().SetCurrentAudioTS(tag.samplePTS);
-					m_audio.Fill(tag.bits + 4, tag.size, INFINITE);
+					m_audio.Play(tag.bits + 4, tag.size, 1000);
 				}
 			}
 			else
@@ -103,7 +105,7 @@ namespace MShow
 					m_callback(tag.bits + 4, tag.size);
 				}
 				MShow::MShowApp::GetInstance().SetCurrentAudioTS(tag.samplePTS);
-				m_audio.Fill(tag.bits + 4, tag.size, INFINITE);
+				m_audio.Play(tag.bits + 4, tag.size, 1000);
 			}
 			m_task.GetAudioQueue().Free(tag.bits);
 		}

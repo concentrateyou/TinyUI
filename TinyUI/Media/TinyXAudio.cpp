@@ -105,7 +105,7 @@ namespace TinyUI
 			Close();
 			return FALSE;
 		}
-		BOOL TinyXAudio::Fill(BYTE* bits, LONG size)
+		BOOL TinyXAudio::Play(BYTE* bits, LONG size)
 		{
 			if (!m_pSourceVoice)
 				return FALSE;
@@ -118,7 +118,7 @@ namespace TinyUI
 				return FALSE;
 			return TRUE;
 		}
-		BOOL TinyXAudio::Fill(BYTE* bits, LONG size, DWORD dwMS)
+		BOOL TinyXAudio::Play(BYTE* bits, LONG size, DWORD dwMS)
 		{
 			ASSERT(size <= MAX_STREAM_BUFFER_SIZE);
 			if (!m_pSourceVoice)

@@ -25,7 +25,7 @@ namespace MShow
 	{
 		TinyRectangle rectangle;
 		GetClientRect(m_view.Handle(), &rectangle);
-		if (!m_graphics.Initialize(m_view.Handle(), rectangle.Size(), FALSE))
+		if (!m_graphics.Initialize(m_view.Handle(), rectangle.Size()))
 		{
 			LOG(ERROR) << "[MPreviewController] " << "DX11Graphics2D Initialize FAIL";
 			return FALSE;
