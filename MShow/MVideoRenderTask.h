@@ -21,11 +21,11 @@ namespace MShow
 		void OnMessagePump();
 	private:
 		BOOL		m_bBreak;
+		Closure		m_renderCB;
 		MClock&		m_clock;
 		MVideoTask& m_task;
-		Closure		m_renderCB;
-		TinyUI::Callback<void(BYTE*, LONG)> m_copyCB;
 		TinyPerformanceTime m_timeQPC;
+		TinyUI::Callback<void(BYTE*, LONG)> m_copyCB;
 	};
 }
 

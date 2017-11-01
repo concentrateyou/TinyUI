@@ -30,76 +30,76 @@
     <ClInclude Include="DXCamera.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DX11.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11TextureShader.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11CaptureTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11Graphics2D.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="DXInput.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11ColorShader.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11Texture2D.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11Duplicator.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="WICTexture.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DX11DuplicatorTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="DX2D.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11Image2D.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11Rectangle2D.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11Font2D.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11RenderView.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11TransparentShader.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11PerformanceCounter.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DX9.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DX9Texture2D.h">
+    <ClInclude Include="DX9Element2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DX9Graphics2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="DX9Image2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
     <ClInclude Include="DX9RenderView.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DX9Image2D.h">
+    <ClInclude Include="DX9Texture2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11CaptureTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11ColorShader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Duplicator.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11DuplicatorTask.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DX11Element2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DX9Element2D.h">
+    <ClInclude Include="DX11Font2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Graphics2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Image2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11PerformanceCounter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Rectangle2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11RenderView.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Texture2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11TextureShader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11TransparentShader.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -116,76 +116,76 @@
     <ClCompile Include="DXCamera.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DX11.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11TextureShader.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11CaptureTask.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11Graphics2D.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="DXInput.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11ColorShader.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11Texture2D.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11Duplicator.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="WICTexture.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DX11DuplicatorTask.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="DX2D.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11Image2D.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11Rectangle2D.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11Font2D.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11RenderView.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11TransparentShader.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11PerformanceCounter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DX9.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DX9Texture2D.cpp">
+    <ClCompile Include="DX9Element2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DX9Graphics2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="DX9Image2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
     <ClCompile Include="DX9RenderView.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DX9Image2D.cpp">
+    <ClCompile Include="DX9Texture2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11CaptureTask.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11ColorShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Duplicator.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11DuplicatorTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DX11Element2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DX9Element2D.cpp">
+    <ClCompile Include="DX11Font2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Graphics2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Image2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11PerformanceCounter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Rectangle2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11RenderView.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Texture2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11TextureShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11TransparentShader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

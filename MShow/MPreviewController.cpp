@@ -25,20 +25,18 @@ namespace MShow
 	{
 		TinyRectangle rectangle;
 		GetClientRect(m_view.Handle(), &rectangle);
-		if (!m_graphics.Initialize(m_view.Handle(), rectangle.Size()))
+		if (!m_d2d.Initialize(m_view.Handle(), rectangle.Size().cx, rectangle.Size().cy))
 		{
-			LOG(ERROR) << "[MPreviewController] " << "DX11Graphics2D Initialize FAIL";
+			LOG(ERROR) << "[MPreviewController] " << "D2D Initialize FAIL";
 			return FALSE;
 		}
-		LOG(INFO) << "[MPreviewController] " << "DX11Graphics2D Initialize OK";
+		LOG(INFO) << "[MPreviewController] " << "D2D Initialize OK";
 		return TRUE;
 	}
 
 	BOOL MPreviewController::Open(LPCSTR pzURL)
 	{
 		TinySize size;
-		TinyRectangle rectangle;
-		GetClientRect(m_view.Handle(), &rectangle);
 		m_player.Reset(new MFLVPlayer(BindCallback(&MPreviewController::OnAudio, this), BindCallback(&MPreviewController::OnVideoCopy, this), BindCallback(&MPreviewController::OnVideoRender, this)));
 		if (!m_player)
 			goto _ERROR;
@@ -49,14 +47,14 @@ namespace MShow
 		}
 		LOG(INFO) << "[MPreviewController] " << "Player Open OK";
 		size = m_player->GetSize();
-		m_video2D.Destory();
-		if (!m_video2D.Create(m_graphics.GetDX11(), size.cx, size.cy, FALSE))
+		m_bitmap.Release();
+		HRESULT hRes = m_d2d.GetCanvas()->CreateBitmap(D2D1::SizeU(size.cx, size.cy), D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)), &m_bitmap);
+		if (FAILED(hRes))
 		{
-			LOG(ERROR) << "[MPreviewController] " << "Video2D Create FAIL";
+			LOG(ERROR) << "[MPreviewController] " << "Open CreateBitmap FAIL";
 			goto _ERROR;
 		}
-		LOG(INFO) << "[MPreviewController] " << "Video2D Create OK";
-		m_video2D.SetScale(rectangle.Size());
+		LOG(INFO) << "[MPreviewController] " << "Open CreateBitmap OK";
 		return TRUE;
 	_ERROR:
 		Close();
@@ -69,7 +67,7 @@ namespace MShow
 		{
 			m_player->Close();
 		}
-		m_video2D.Destory();
+		m_bitmap.Release();
 		LOG(INFO) << "[MPreviewController] " << "Player Close OK";
 		return TRUE;
 	}
@@ -93,19 +91,13 @@ namespace MShow
 		if (bits != NULL && size > 0)
 		{
 			TinySize videoSize = m_player->GetSize();
-			if (m_video2D.Copy(m_graphics.GetDX11(), NULL, bits, size))
-			{
-				m_graphics.GetDX11().SetRenderTexture2D(NULL);
-				m_graphics.GetDX11().GetRender2D()->BeginDraw();
-				FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-				m_graphics.GetDX11().AllowBlend(FALSE, blendFactor);
-				m_graphics.DrawImage(&m_video2D, 1.0F, 1.0F);
-				m_graphics.GetDX11().GetRender2D()->EndDraw();
-			}
+			m_bitmap->CopyFromMemory(NULL, bits, videoSize.cx * 4);
+			m_d2d.BeginDraw();
+			m_d2d.GetCanvas()->DrawBitmap(m_bitmap);
 		}
 	}
 	void MPreviewController::OnVideoRender()
 	{
-		m_graphics.Present();
+		m_d2d.EndDraw();
 	}
 }

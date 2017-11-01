@@ -3,8 +3,7 @@
 #include "MPreviewView.h"
 #include "MFLVPlayer.h"
 #include "Control/TinyMenu.h"
-#include "DX11Graphics2D.h"
-#include "DX11Image2D.h"
+#include "DX2D.h"
 using namespace DXFramework;
 using namespace TinyUI;
 
@@ -33,9 +32,9 @@ namespace MShow
 	private:
 		TinySize					m_videoSize;
 		TinySize					m_viewSize;
-		TinyPerformanceTime		m_timeQPC;
-		DX11Graphics2D				m_graphics;
-		DX11Image2D					m_video2D;
+		TinyPerformanceTime			m_timeQPC;
+		DX2D						m_d2d;
+		TinyComPtr<ID2D1Bitmap>		m_bitmap;
 		MPreviewView&				m_view;
 		TinyScopedPtr<MFLVPlayer>	m_player;
 	};

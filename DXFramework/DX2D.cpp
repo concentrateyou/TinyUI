@@ -60,16 +60,16 @@ namespace DXFramework
 		{
 			if (m_hwndRenderTarget->CheckWindowState() & D2D1_WINDOW_STATE_OCCLUDED)
 				return FALSE;
+			m_hwndRenderTarget->BeginDraw();
 			m_hwndRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
 			m_hwndRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Black));
-			m_hwndRenderTarget->BeginDraw();
 			return TRUE;
 		}
 		if (m_dcRenderTarget != NULL)
 		{
+			m_dcRenderTarget->BeginDraw();
 			m_dcRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
 			m_dcRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Black));
-			m_dcRenderTarget->BeginDraw();
 			return TRUE;
 		}
 		return FALSE;

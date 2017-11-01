@@ -17,11 +17,14 @@
 #include <sphelper.h>
 #include "Media/TinyXAudio.h"
 #include "Network/TinyHTTPClient.h"
+#include "DX2D.h"
+#include "WICTexture.h"
 #pragma comment(lib,"sapi.lib")
 
 using namespace TinyUI;
 using namespace TinyUI::Windowless;
 using namespace TinyUI::Network;
+using namespace DXFramework;
 
 class ChatFrame : public TinyVisualWND
 {
@@ -47,6 +50,8 @@ public:
 	LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 private:
 	TinyHTTPClient	m_client;
+	DX2D			m_d2d;
+	TinyComPtr<ID2D1Bitmap> m_bitmap;
 	//TinyScopedArray<BYTE>	m_bits;
 	//Media::TinyXAudio	m_audio;
 	//TinyWaveFile		m_waveFile;
