@@ -88,16 +88,23 @@ namespace MShow
 
 	void MPreviewController::OnVideoCopy(BYTE* bits, LONG size)
 	{
-		if (bits != NULL && size > 0)
+		if (m_bitmap != NULL && bits != NULL && size > 0)
 		{
-			TinySize videoSize = m_player->GetSize();
-			m_bitmap->CopyFromMemory(NULL, bits, videoSize.cx * 4);
+			UINT s = m_player->GetSize().cx * 4;
+			HRESULT hRes = m_bitmap->CopyFromMemory(NULL, bits, s);
+			if (hRes != S_OK)
+			{
+				LOG(ERROR) << "[MPreviewController] " << "CopyFromMemory FAIL";
+			}
 			m_d2d.BeginDraw();
 			m_d2d.GetCanvas()->DrawBitmap(m_bitmap);
 		}
 	}
 	void MPreviewController::OnVideoRender()
 	{
-		m_d2d.EndDraw();
+		if (!m_d2d.EndDraw())
+		{
+			LOG(ERROR) << "[MPreviewController] " << "EndDraw FAIL";
+		}
 	}
 }
