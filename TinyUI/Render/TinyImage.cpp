@@ -172,12 +172,9 @@ namespace TinyUI
 	}
 	BOOL TinyImage::Open(BYTE* bits, DWORD size)
 	{
-		for (INT i = 0; i < m_images.GetSize(); i++)
-		{
-			SAFE_DELETE_OBJECT(m_images[i].hBitmap);
-		}
-		if (!bits)
+		if (!bits || size <= 0)
 			return S_FALSE;
+		Close();
 		INT comp = 0;
 		BYTE* pData = stbi_load_from_memory_ex(bits, size, &m_cx, &m_cy, &comp, 4, &m_count);
 		if (!pData)
@@ -269,6 +266,8 @@ namespace TinyUI
 
 	BOOL TinyImage::OpenFile(LPCSTR pzFile)
 	{
+		if (!pzFile)
+			return FALSE;
 		Close();
 		FILE* pFile = NULL;
 		if (fopen_s(&pFile, pzFile, "rb") || !pFile)

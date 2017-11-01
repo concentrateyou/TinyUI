@@ -220,19 +220,23 @@ namespace MShow
 			{
 				Json::Value val = result[i];
 				string programName = val["programName"].asString();
-				string imgUrl = val["imgUrl"].asString();
-				TinyVisualListItem* listitem = list->Add(programName.c_str(), imgUrl.c_str());
-				if (listitem != NULL)
+				if (!programName.empty())
 				{
-					SEARCH_ITEM* ps = new SEARCH_ITEM();
-					ps->szLogID = std::move(val["id"].asString());
-					ps->szBeginTime = std::move(val["startPlayTime"].asString());
-					ps->szEndTime = std::move(val["stopPlayTime"].asString());
-					ps->szPreviewURL = std::move(val["previewStreamUrl"].asString());
-					ps->szProgramName = std::move(val["programName"].asString());
-					ps->szProgramID = std::move(val["programQipuId"].asString());
-					listitem->SetItemData(ps);
-					listitem->EVENT_MOUSEDBCLICK += m_onItemClick;
+					programName = UTF8ToASCII(programName);
+					string imgUrl = val["imgUrl"].asString();
+					TinyVisualListItem* listitem = list->Add(programName.c_str(), imgUrl.c_str());
+					if (listitem != NULL)
+					{
+						SEARCH_ITEM* ps = new SEARCH_ITEM();
+						ps->szLogID = std::move(val["id"].asString());
+						ps->szBeginTime = std::move(val["startPlayTime"].asString());
+						ps->szEndTime = std::move(val["stopPlayTime"].asString());
+						ps->szPreviewURL = std::move(val["previewStreamUrl"].asString());
+						ps->szProgramName = std::move(val["programName"].asString());
+						ps->szProgramID = std::move(val["programQipuId"].asString());
+						listitem->SetItemData(ps);
+						listitem->EVENT_MOUSEDBCLICK += m_onItemClick;
+					}
 				}
 			}
 		}

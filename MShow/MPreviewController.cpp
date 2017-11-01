@@ -96,12 +96,12 @@ namespace MShow
 			{
 				LOG(ERROR) << "[MPreviewController] " << "CopyFromMemory FAIL";
 			}
-			m_d2d.BeginDraw();
-			m_d2d.GetCanvas()->DrawBitmap(m_bitmap);
 		}
 	}
 	void MPreviewController::OnVideoRender()
 	{
+		m_d2d.BeginDraw();
+		m_d2d.GetCanvas()->DrawBitmap(m_bitmap);
 		if (!m_d2d.EndDraw())
 		{
 			LOG(ERROR) << "[MPreviewController] " << "EndDraw FAIL";
