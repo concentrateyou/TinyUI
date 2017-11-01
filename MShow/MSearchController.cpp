@@ -232,7 +232,7 @@ namespace MShow
 						ps->szBeginTime = std::move(val["startPlayTime"].asString());
 						ps->szEndTime = std::move(val["stopPlayTime"].asString());
 						ps->szPreviewURL = std::move(val["previewStreamUrl"].asString());
-						ps->szProgramName = std::move(val["programName"].asString());
+						ps->szProgramName = std::move(programName);
 						ps->szProgramID = std::move(val["programQipuId"].asString());
 						listitem->SetItemData(ps);
 						listitem->EVENT_MOUSEDBCLICK += m_onItemClick;

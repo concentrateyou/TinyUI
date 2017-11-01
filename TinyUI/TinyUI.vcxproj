@@ -288,6 +288,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Render\TinyCanvas.h" />
+    <ClInclude Include="Windowless\TinyShadow.h" />
     <ClInclude Include="Windowless\TinyTextHost.h" />
     <ClInclude Include="Windowless\TinyVisualAnimation.h" />
     <ClInclude Include="Windowless\TinyVisualCaption.h" />
@@ -434,6 +435,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Render\TinyCanvas.cpp" />
+    <ClCompile Include="Windowless\TinyShadow.cpp" />
     <ClCompile Include="Windowless\TinyTextHost.cpp" />
     <ClCompile Include="Windowless\TinyVisualAnimation.cpp" />
     <ClCompile Include="Windowless\TinyVisualCaption.cpp" />

@@ -172,6 +172,7 @@ namespace MShow
 			INT count = 0;
 			if (pCTRL->Query(string(), count))
 			{
+				TRACE("Query Count:%d\n", count);
 				pCTRL->m_szName = StringPrintf("解说信号源%d", count + 1);
 				TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(pCTRL->m_view.GetDocument()->GetVisualByName("txtName"));
 				if (pTextBox != NULL)
@@ -881,8 +882,14 @@ namespace MShow
 			m_hTimer2 = NULL;
 		}
 		//更新UI
+		m_bPause = FALSE;
+		TinyVisual* spvis = m_view.GetDocument()->GetVisualByName("btnPauseCommentary");
+		if (spvis != NULL)
+		{
+			spvis->SetText(m_bPause ? "播放" : "停止");
+		}
 		m_bCommentarying = FALSE;
-		TinyVisual* spvis = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
+		spvis = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
 		if (spvis != NULL)
 		{
 			spvis->SetVisible(TRUE);

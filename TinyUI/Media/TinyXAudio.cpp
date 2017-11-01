@@ -130,7 +130,10 @@ namespace TinyUI
 				if (state.BuffersQueued < (MAX_BUFFER_COUNT - 1))
 					break;
 				BOOL bRes = m_voiceCallback.Lock(dwMS);
-				ASSERT(bRes);
+				if (!bRes)
+				{
+					LOG(ERROR) << "Audio Play Timeout";
+				}
 			}
 			memcpy_s(m_array[m_dwIndex], size, bits, size);
 			XAUDIO2_BUFFER buffer = { 0 };
