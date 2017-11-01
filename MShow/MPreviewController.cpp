@@ -67,7 +67,7 @@ namespace MShow
 	{
 		if (m_player != NULL)
 		{
-			m_player->Close();;
+			m_player->Close();
 		}
 		m_video2D.Destory();
 		LOG(INFO) << "[MPreviewController] " << "Player Close OK";

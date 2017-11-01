@@ -35,19 +35,19 @@ namespace Decode
 		TinyString szURL = pzURL;
 		if (szURL.IndexOf("http://") != -1)
 		{
-			HTTPStream* ps = new HTTPStream();
-			m_stream = (IStream *)ps;
+			m_stream.Attach(new HTTPStream());
 			if (!m_stream)
 				return FALSE;
+			HTTPStream* ps = static_cast<HTTPStream*>(m_stream.Ptr());
 			if (!ps->Open(pzURL))
 				return FALSE;
 		}
 		if (szURL.IndexOf("rtmp://") != -1)
 		{
-			RTMPStream* ps = new RTMPStream();
-			m_stream = (IStream *)ps;
+			m_stream.Attach(new RTMPStream());
 			if (!m_stream)
 				return FALSE;
+			RTMPStream* ps = static_cast<RTMPStream*>(m_stream.Ptr());
 			if (!ps->Open(pzURL))
 				return FALSE;
 		}
