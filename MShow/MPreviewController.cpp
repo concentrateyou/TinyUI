@@ -50,7 +50,7 @@ namespace MShow
 		LOG(INFO) << "[MPreviewController] " << "Player Open OK";
 		size = m_player->GetSize();
 		m_video2D.Destory();
-		if (!m_video2D.Create(m_graphics.GetDX11(), size, TRUE, FALSE))
+		if (!m_video2D.Create(m_graphics.GetDX11(), size.cx, size.cy, FALSE))
 		{
 			LOG(ERROR) << "[MPreviewController] " << "Video2D Create FAIL";
 			goto _ERROR;
