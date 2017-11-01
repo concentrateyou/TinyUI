@@ -18,6 +18,7 @@ namespace MShow
 		virtual ~MSearchWindow();
 		LPCSTR RetrieveClassName() OVERRIDE;
 		LPCSTR RetrieveTitle() OVERRIDE;
+		HICON RetrieveIcon() OVERRIDE;
 	public:
 		void OnInitialize() OVERRIDE;
 		void OnUninitialize() OVERRIDE;

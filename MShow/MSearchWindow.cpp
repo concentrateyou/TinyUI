@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "MSearchWindow.h"
+#include "resource.h"
 
 namespace MShow
 {
@@ -23,9 +24,14 @@ namespace MShow
 		return TEXT("MSearchWindow");
 	}
 
+	HICON MSearchWindow::RetrieveIcon()
+	{
+		return LoadIcon(TinyApplication::GetInstance()->Handle(), MAKEINTRESOURCE(IDI_MSHOW));
+	}
+
 	void MSearchWindow::OnInitialize()
 	{
-		
+
 	}
 
 	void MSearchWindow::OnUninitialize()

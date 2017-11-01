@@ -211,7 +211,6 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="MShow.ico" />
-    <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Decode\Decode.vcxproj">
