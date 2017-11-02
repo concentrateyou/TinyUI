@@ -51,7 +51,6 @@ HICON ChatFrame::RetrieveIcon()
 
 LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-	m_shadow.Create(m_hWND, m_hWND);
 	//bHandled = FALSE;
 	//m_client.GetRequest().SetVerbs(TinyHTTPClient::GET);
 	////http://jyyunlou7.oss.qiyi.storage:8080/v1/AUTH_becf1c9cf362414992517833e5128e4e/20170921-00/yunpan/20170921/f7/9e/e733fb4c74c149dfba78cd4f53ce2b61.jpg
@@ -146,6 +145,11 @@ LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHand
 	//POINT pos = { 0,0 };
 	//UpdateLayeredWindow(m_hWND, hDC, &pos, &size, memDC, &pos, 0, &blendFunction, 2);
 	//ReleaseDC(NULL, hDC);
+	TinyRectangle s;
+	GetClientRect(&s);
+	m_graphics2D.Initialize(m_hWND, s.Size());
+	m_image2D.Load(m_graphics2D.GetDX9(), "D:\\image.jpg");
+	m_task.Submit(BindCallback(&ChatFrame::OnMessagePump, this));
 	return FALSE;
 }
 
@@ -200,4 +204,13 @@ LRESULT ChatFrame::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bH
 {
 	bHandled = FALSE;
 	return FALSE;
+}
+
+void ChatFrame::OnMessagePump()
+{
+	for (;;)
+	{
+		m_graphics2D.DrawImage(m_image2D, 10, 10);
+		m_graphics2D.Present();
+	}
 }

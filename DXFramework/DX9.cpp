@@ -1,11 +1,13 @@
 #include "stdafx.h"
 #include "DX9.h"
+#include "DX9RenderView.h"
 #include "Common/TinyLogging.h"
 
 namespace DXFramework
 {
 	DX9::DX9()
-		:m_hWND(NULL)
+		:m_hWND(NULL),
+		m_render2D(NULL)
 	{
 
 	}
@@ -65,6 +67,15 @@ namespace DXFramework
 		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 		if (hRes != S_OK)
 			return FALSE;
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+		if (hRes != S_OK)
+			return FALSE;
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+		if (hRes != S_OK)
+			return FALSE;
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+		if (hRes != S_OK)
+			return FALSE;
 		return TRUE;
 	}
 
@@ -94,12 +105,30 @@ namespace DXFramework
 	{
 		FLOAT fov = (FLOAT)D3DX_PI / 4.0F;
 		FLOAT aspect = (FLOAT)size.cx / (FLOAT)size.cy;
-		D3DXMatrixPerspectiveFovLH(&m_matrixs[0], fov, aspect, 1000.0F, 0.1F);
-		D3DXMatrixIdentity(&m_matrixs[1]);
-		D3DXMatrixOrthoLH(&m_matrixs[2], (FLOAT)size.cx, (FLOAT)size.cy, 1000.0F, 0.1F);
+		D3DXMatrixPerspectiveFovLH(&m_matrixs[0], fov, aspect, 1000.0F, 0.1F);//Projection
+		D3DXMatrixLookAtLH(&m_matrixs[1], &D3DXVECTOR3(0.0F, 0.0F, -10.0F), &D3DXVECTOR3(0.0F, 0.0F, 0.0F), &D3DXVECTOR3(0.0F, 1.0F, 0.0F));//View
+		D3DXMatrixIdentity(&m_matrixs[2]);
 	}
 	D3DXMATRIX* DX9::GetMatrixs()
 	{
 		return m_matrixs;
+	}
+	DX9RenderView* DX9::GetRender2D() const
+	{
+		return m_render2D;
+	}
+	void DX9::SetRenderTexture2D(DX9RenderView* render2D)
+	{
+		if (render2D == NULL)
+		{
+			m_render2D = m_background2D;
+		}
+		else
+		{
+			if (m_render2D != render2D)
+			{
+				m_render2D = render2D;
+			}
+		}
 	}
 }

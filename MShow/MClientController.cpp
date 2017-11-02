@@ -166,21 +166,6 @@ namespace MShow
 			}
 			LOG(ERROR) << "[SetPreview] " << "Open Preview :" << pCTRL->m_szPreviewURL << " Fail";
 		}
-		//更新名称
-		if (pCTRL->m_szName.empty())
-		{
-			INT count = 0;
-			if (pCTRL->Query(string(), count))
-			{
-				TRACE("Query Count:%d\n", count);
-				pCTRL->m_szName = StringPrintf("解说信号源%d", count + 1);
-				TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(pCTRL->m_view.GetDocument()->GetVisualByName("txtName"));
-				if (pTextBox != NULL)
-				{
-					pTextBox->SetText(pCTRL->m_szName.c_str());
-				}
-			}
-		}
 		pCTRL->m_view.Invalidate();
 	}
 

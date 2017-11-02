@@ -19,10 +19,6 @@ namespace TinyUI
 		BOOL Create(HWND hParent, HWND hOwner);
 		LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	public:
-		void SetShadowColor(COLORREF clrInner, COLORREF clrOuter, BYTE alpha);
-		void SetShadowDimensions(const RECT& rcSides, UINT uCornerRadius);
-		void TrackWindow();
-	public:
 		LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	private:
 		void Draw(HDC hDC);

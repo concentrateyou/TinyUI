@@ -19,7 +19,6 @@ namespace DXFramework
 		DX11Texture2D(ID3D11Texture2D* texture2D);
 		virtual ~DX11Texture2D();
 	public:
-
 		virtual BOOL Create(DX11& dx11, ID3D11Texture2D* texture2D);
 		virtual BOOL Create(DX11& dx11, INT cx, INT cy, const BYTE* bits, BOOL bReadoly);
 		virtual BOOL Create(DX11& dx11, INT cx, INT cy, BOOL bMutex = FALSE);

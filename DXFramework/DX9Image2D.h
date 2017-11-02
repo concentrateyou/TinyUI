@@ -10,8 +10,8 @@ namespace DXFramework
 	{
 		struct VERTEXTYPE
 		{
-			XMFLOAT4 position;
-			XMFLOAT2 texture;
+			FLOAT x, y, z, rhw;
+			FLOAT u, v;
 		};
 		DECLARE_DYNAMIC(DX9Image2D)
 		DISALLOW_COPY_AND_ASSIGN(DX9Image2D)
@@ -29,7 +29,6 @@ namespace DXFramework
 		BOOL Initialize(DX9& dx9);
 	protected:
 		TinyComPtr<IDirect3DVertexBuffer9>	m_vertexBuffer;
-		TinyScopedArray<VERTEXTYPE>			m_vertices;
 	};
 }
 

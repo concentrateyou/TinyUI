@@ -50,6 +50,10 @@ public:
 	LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 private:
-	TinyShadow		m_shadow;
+	void OnMessagePump();
+private:
+	DX9Graphics2D	m_graphics2D;
+	DX9Image2D		m_image2D;
+	TinyTaskBase	m_task;
 };
 

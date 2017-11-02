@@ -33,6 +33,9 @@ namespace DXFramework
 		hRes = m_dx9.GetD3D()->SetFVF(D3DFVF_XYZRHW | D3DFVF_TEX1);
 		if (hRes != S_OK)
 			return FALSE;
+		hRes = m_dx9.GetD3D()->SetRenderState(D3DRS_LIGHTING, FALSE);
+		if (hRes != S_OK)
+			return FALSE;
 		return TRUE;
 	}
 	BOOL DX9RenderView::EndDraw()
