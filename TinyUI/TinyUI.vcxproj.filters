@@ -507,8 +507,8 @@
     <ClInclude Include="Windowless\TinyVisualFrame.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
-    <ClInclude Include="Windowless\TinyShadow.h">
-      <Filter>头文件\Windowless</Filter>
+    <ClInclude Include="Control\TinyShadow.h">
+      <Filter>头文件\Control</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -935,8 +935,8 @@
     <ClCompile Include="Windowless\TinyVisualFrame.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
-    <ClCompile Include="Windowless\TinyShadow.cpp">
-      <Filter>源文件\Windowless</Filter>
+    <ClCompile Include="Control\TinyShadow.cpp">
+      <Filter>源文件\Control</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

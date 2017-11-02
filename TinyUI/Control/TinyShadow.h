@@ -1,5 +1,5 @@
 #pragma once
-#include "../Control/TinyControl.h"
+#include "TinyControl.h"
 
 namespace TinyUI
 {
@@ -16,14 +16,15 @@ namespace TinyUI
 		LPCSTR RetrieveTitle() OVERRIDE;
 		DWORD RetrieveStyle() OVERRIDE;
 		DWORD RetrieveExStyle() OVERRIDE;
-		virtual BOOL Create(HWND hParent, HWND hOwner, INT x, INT y, INT cx, INT cy);
+		BOOL Create(HWND hParent, HWND hOwner);
+		LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	public:
 		void SetShadowColor(COLORREF clrInner, COLORREF clrOuter, BYTE alpha);
 		void SetShadowDimensions(const RECT& rcSides, UINT uCornerRadius);
+		void TrackWindow();
 	public:
 		LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	private:
-		BOOL			m_bAlphaSupported;
 		BYTE			m_cAlpha;
 		TinyRectangle	m_rcSides;
 		UINT			m_uRadius;

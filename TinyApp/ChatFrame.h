@@ -19,6 +19,7 @@
 #include "Network/TinyHTTPClient.h"
 #include "DX2D.h"
 #include "WICTexture.h"
+#include "Control/TinyShadow.h"
 #pragma comment(lib,"sapi.lib")
 
 using namespace TinyUI;
@@ -49,15 +50,6 @@ public:
 	LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 private:
-	TinyHTTPClient	m_client;
-	DX2D			m_d2d;
-	TinyComPtr<ID2D1Bitmap> m_bitmap;
-	//TinyScopedArray<BYTE>	m_bits;
-	//Media::TinyXAudio	m_audio;
-	//TinyWaveFile		m_waveFile;
-	//Network::TinyHTTPRequest	m_request;
-	//TinyLabel	m_analyserBAR;
-	//AudioDSP	m_audioDSP;
-	//WavePlayer m_wavePlayer;
+	TinyShadow		m_shadow;
 };
 

@@ -19,7 +19,7 @@ LRESULT ChatFrame::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 
 DWORD ChatFrame::RetrieveStyle()
 {
-	return (WS_VISIBLE | WS_OVERLAPPEDWINDOW);
+	return (WS_VISIBLE | WS_POPUP);
 }
 
 DWORD ChatFrame::RetrieveExStyle()
@@ -51,10 +51,7 @@ HICON ChatFrame::RetrieveIcon()
 
 LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-	TinyRectangle s;
-	::GetClientRect(m_hWND, &s);
-	m_d2d.Initialize(m_hWND, s.Size().cx, s.Size().cy);
-	DXFramework::CreateD2DBitmapFromFile(L"D:\\back.png", m_d2d.GetCanvas(), &m_bitmap);
+	m_shadow.Create(m_hWND, m_hWND);
 	//bHandled = FALSE;
 	//m_client.GetRequest().SetVerbs(TinyHTTPClient::GET);
 	////http://jyyunlou7.oss.qiyi.storage:8080/v1/AUTH_becf1c9cf362414992517833e5128e4e/20170921-00/yunpan/20170921/f7/9e/e733fb4c74c149dfba78cd4f53ce2b61.jpg
@@ -165,11 +162,6 @@ LRESULT ChatFrame::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	bHandled = FALSE;
 	PAINTSTRUCT ps = { 0 };
 	HDC hDC = BeginPaint(m_hWND, &ps);
-	m_d2d.BeginDraw();
-	D2D1_RECT_F rectF = { 0,0,100,100 };
-	D2D1_RECT_F sourceF = { 0,0,100,100 };
-	m_d2d.GetCanvas()->DrawBitmap(m_bitmap, rectF,1.0F, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, sourceF);
-	m_d2d.EndDraw();
 	EndPaint(m_hWND, &ps);
 	return FALSE;
 }

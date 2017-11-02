@@ -56,7 +56,6 @@ namespace TinyUI
 		HPALETTE	SelectPalette(TinyPalette* pPalette, BOOL bForceBackground);
 		UINT		RealizePalette();
 		void		UpdateColors();
-
 		COLORREF GetBkColor() const;
 		INT GetBkMode() const;
 		INT GetPolyFillMode() const;
