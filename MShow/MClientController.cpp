@@ -969,11 +969,8 @@ namespace MShow
 			spvis->SetText(m_bPause ? "²¥·Å" : "Í£Ö¹");
 		}
 		m_view.Invalidate();
-		if (m_bPause)
-		{
-			m_audioDSP.Stop();
-		}
-		else
+		m_audioDSP.Stop();
+		if (!m_bPause)
 		{
 			m_audioDSP.Start();
 		}
