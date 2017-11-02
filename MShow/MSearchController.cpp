@@ -224,7 +224,19 @@ namespace MShow
 				{
 					programName = UTF8ToASCII(programName);
 					string imgUrl = val["imgUrl"].asString();
-					TinyVisualListItem* listitem = list->Add(programName.c_str(), imgUrl.c_str());
+					TinyVisualListItem* listitem = NULL;
+					if (imgUrl.empty())
+					{
+						listitem = list->Add(programName.c_str());
+						if (listitem != NULL)
+						{
+							listitem->SetBackgroundImage("logo");
+						}
+					}
+					else
+					{
+						listitem = list->Add(programName.c_str(), imgUrl.c_str());
+					}
 					if (listitem != NULL)
 					{
 						SEARCH_ITEM* ps = new SEARCH_ITEM();
