@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<window name="mshow" text="MShow工具" position="100,100" size="1000,730" minsize="1000,730" maxsize="1000,730">
-  <syscaption name ="syscaption" position="0,0" size="1000,27" background-image="syscaption">
+<window name="mshow" text="MShow工具" position="100,100" size="1000,730" minsize="1000,730" maxsize="1000,730" border-color="192,192,192" border-width="1">
+  <syscaption name ="syscaption" position="1,1" size="998,26" background-image="syscaption">
     <label name="title" position="10,0" size="60,27" text="MShow工具" text-align="left|vcenter" text-color="255,255,255" >
     </label>
     <button name="btnSetting" tooltip="setting" position="910,0" size="30,27"
@@ -19,7 +19,7 @@
             image-down="sysbtn_close_down">
     </button>
   </syscaption>
-  <panel position="0,27" size="1000,400" background-image="panel">
+  <panel position="1,27" size="998,400" background-image="panel">
     <nativewindow name="previewWND" position="25,20" size="640,360">
     </nativewindow>
     <label name="lblName"  position="675,20" size="360,60" text-align="left|top" font-family="微软雅黑" font-weight="400" font-size="12,24" text-color="0,153,255" ></label>
@@ -43,7 +43,7 @@
         image-down="blue_down" visible="false">
     </button>
   </panel>
-  <panel position="0,427" size="1000,120" background-image="panel">
+  <panel position="1,427" size="998,120" background-image="panel">
     <label name="lblError" position="25,0" size="400,30" text-align="left|top" font-family="微软雅黑" font-weight="400" font-size="7,18" text-color="255,0,0" ></label>
     <label position="25,30" size="100,30" text="信号源名称" text-align="left|top" font-family="微软雅黑" font-size="7,20" text-color="64,64,64"></label>
     <panel position="25,60" size="500,30"
@@ -70,8 +70,8 @@
       </button>
     </panel>
   </panel>
-  <panel position="0,547" size="1000,183" background-image="panel">
-    <panel position="20,0" size="1000,163" name="setting" visible="false">
+  <panel position="1,546" size="998,183" background-image="panel">
+    <panel position="20,0" size="979,173" name="setting" visible="false">
       <label text="麦克风:" position="5,5" size="40,28" text-color="0,0,0" text-align="left|vcenter">
       </label>
       <combobox name="microphone" position="50,5" size="180,28" text-align="left|vcenter" text-color="0,0,0"

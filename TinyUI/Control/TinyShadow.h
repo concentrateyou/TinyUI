@@ -25,11 +25,6 @@ namespace TinyUI
 	public:
 		LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	private:
-		BYTE			m_cAlpha;
-		TinyRectangle	m_rcSides;
-		UINT			m_uRadius;
-		HWND			m_hOwner;
-		COLORREF		m_clrShadowInner;
-		COLORREF		m_clrShadowOuter;
+		void Draw(HDC hDC);
 	};
 }

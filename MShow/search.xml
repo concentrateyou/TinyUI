@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<window name="msearch" text="奇妙导播台" position="100,100" size="818,730" minsize="818,730" maxsize="818,730">
-  <syscaption name ="syscaption" position="0,0" size="818,27" background-image="syscaption">
-    <label name="title" position="10,0" size="60,27" text="奇妙导播台" text-align="left|vcenter" text-color="255,255,255" >
+<window name="msearch" text="奇妙导播台" position="100,100" size="818,730" minsize="818,730" maxsize="818,730" border-color="192,192,192" border-width="1">
+  <syscaption name ="syscaption" position="1,1" size="816,26" background-image="syscaption">
+    <label name="title" position="10,0" size="60,26" text="奇妙导播台" text-align="left|vcenter" text-color="255,255,255" >
     </label>
-    <button name="sysmin" tooltip="Min" position="758,0" size="30,27"
+    <button name="sysmin" tooltip="Min" position="756,0" size="30,27"
             image-normal="sysbtn_min_normal"
             image-highlight="sysbtn_min_hover"
             image-down="sysbtn_min_down">
     </button>
-    <button name="sysclose" tooltip="Close" position="788,0" size="30,27"
+    <button name="sysclose" tooltip="Close" position="786,0" size="30,27"
             image-normal="sysbtn_close_normal"
             image-highlight="sysbtn_close_hover"
             image-down="sysbtn_close_down">
     </button>
   </syscaption>
-  <panel position="0,27" size="818,703" background-color="255,255,255">
-    <panel position="0,40" size="818,40">
+  <panel position="1,27" size="816,702" background-color="255,255,255">
+    <panel position="0,40" size="816,40">
       <label text="奇妙导播台" text-align="right|vcenter" font-family="Arial" font-weight="500" font-size="18,36" text-color="0,153,255" position="0,0" size="450,36">
       </label>
       <label text="赛事解说" text-align="left|bottom" font-family="Arial" font-weight="400" font-size="8,16" text-color="0,153,255" position="460,0" size="409,36">
