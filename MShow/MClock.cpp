@@ -4,8 +4,8 @@
 namespace MShow
 {
 	MClock::MClock()
-		:m_baseTime(-1),
-		m_basePTS(-1)
+		:m_baseTime(INVALID_TIME),
+		m_basePTS(INVALID_TIME)
 	{
 	}
 

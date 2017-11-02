@@ -4,10 +4,10 @@
 namespace MShow
 {
 	MClock::MClock()
-		:m_baseTime(-1),
-		m_basePTS(-1),
-		m_videoPTS(-1),
-		m_audioPTS(-1),
+		:m_baseTime(INVALID_TIME),
+		m_basePTS(INVALID_TIME),
+		m_videoPTS(INVALID_TIME),
+		m_audioPTS(INVALID_TIME),
 		m_audioDelay(0),
 		m_videoDelay(0)
 	{

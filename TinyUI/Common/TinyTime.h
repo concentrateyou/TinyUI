@@ -8,8 +8,11 @@ struct tagDBTIMESTAMP;
 typedef tagDBTIMESTAMP DBTIMESTAMP;
 #endif
 
+#define INVALID_TIME  -1
+
 namespace TinyUI
 {
+
 	const INT maxTimeBufferSize = 128;
 	const LONG maxDaysInSpan = 3615897L;
 	extern SELECTANY const TCHAR * const szInvalidDateTime = _T("Invalid DateTime");

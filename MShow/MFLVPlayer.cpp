@@ -70,8 +70,8 @@ namespace MShow
 			bRes &= m_audioRenderTask.Close(INFINITE);
 		if (m_audioTask.IsActive())
 			bRes &= m_audioTask.Close(INFINITE);
-		m_clock.SetBasePTS(-1);
-		m_clock.SetBaseTime(-1);
+		m_clock.SetBasePTS(INVALID_TIME);
+		m_clock.SetBaseTime(INVALID_TIME);
 		Sleep(100);
 		return bRes;
 	}
