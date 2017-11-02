@@ -210,11 +210,11 @@ namespace DXFramework
 	}
 	BOOL DX11::IsEmpty() const
 	{
-		if (m_immediateContext == NULL ||
-			m_swap == NULL ||
-			m_d3d == NULL)
-			return TRUE;
-		return FALSE;
+		if (m_immediateContext != NULL &&
+			m_swap != NULL &&
+			m_d3d != NULL)
+			return FALSE;
+		return TRUE;
 	}
 	TinySize DX11::GetSize() const
 	{

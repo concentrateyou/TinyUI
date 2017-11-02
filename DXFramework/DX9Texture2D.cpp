@@ -10,20 +10,26 @@ namespace DXFramework
 	DX9Texture2D::~DX9Texture2D()
 	{
 	}
-	BOOL DX9Texture2D::Load(DX9& dx9, const CHAR* pzFile)
+	BOOL DX9Texture2D::Load(DX9& dx9, const CHAR* pzFile, TinySize& texture2DSize)
 	{
 		m_texture2D.Release();
-		HRESULT hRes = D3DXCreateTextureFromFile(dx9.GetD3D(), pzFile, &m_texture2D);
+		D3DXIMAGE_INFO sINFO;
+		HRESULT hRes = D3DXCreateTextureFromFileEx(dx9.GetD3D(), pzFile, 0, 0, 0, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, D3DX_FILTER_LINEAR, D3DX_FILTER_LINEAR, 0, &sINFO, NULL, &m_texture2D);
 		if (hRes != S_OK)
 			return FALSE;
+		texture2DSize.cx = sINFO.Width;
+		texture2DSize.cy = sINFO.Height;
 		return TRUE;
 	}
-	BOOL DX9Texture2D::Load(DX9& dx9, const BYTE* bits, LONG size)
+	BOOL DX9Texture2D::Load(DX9& dx9, const BYTE* bits, LONG size, TinySize& texture2DSize)
 	{
 		m_texture2D.Release();
-		HRESULT hRes = D3DXCreateTextureFromFileInMemory(dx9.GetD3D(), static_cast<LPCVOID>(bits), static_cast<UINT>(size), &m_texture2D);
+		D3DXIMAGE_INFO sINFO;
+		HRESULT hRes = D3DXCreateTextureFromFileInMemoryEx(dx9.GetD3D(), static_cast<LPCVOID>(bits), static_cast<UINT>(size), 0, 0, 0, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, D3DX_FILTER_LINEAR, D3DX_FILTER_LINEAR, 0, &sINFO, NULL, &m_texture2D);
 		if (hRes != S_OK)
 			return FALSE;
+		texture2DSize.cx = sINFO.Width;
+		texture2DSize.cy = sINFO.Height;
 		return TRUE;
 	}
 	BOOL DX9Texture2D::Create(DX9& dx9, INT cx, INT cy, const BYTE* bits)

@@ -25,7 +25,6 @@ namespace DXFramework
 	{
 		if (m_dx11.IsEmpty())
 			return FALSE;
-		m_render2D.Release();
 		HRESULT hRes = m_dx11.GetSwapChain()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_render2D);
 		if (hRes != S_OK)
 			return FALSE;
@@ -152,32 +151,31 @@ namespace DXFramework
 		m_bSync = bSync;
 		return TRUE;
 	}
+	void DX11RenderView::Destory()
+	{
+		m_render2D.Release();
+		m_renderView.Release();
+		m_depth2D.Release();
+		m_depthView.Release();
+		m_copy2D.Release();
+		m_mutex.Release();
+	}
 	BOOL DX11RenderView::Resize()
 	{
 		if (m_dx11.IsEmpty())
 			return FALSE;
-		m_renderView.Release();
-		m_depth2D.Release();
-		m_depthView.Release();
-		LPVOID val = NULL;
-		m_dx11.GetImmediateContext()->OMSetRenderTargets(1, (ID3D11RenderTargetView**)&val, NULL);
+		LPVOID ps = NULL;
+		m_dx11.GetImmediateContext()->OMSetRenderTargets(1, (ID3D11RenderTargetView**)&ps, NULL);
 		HRESULT hRes = m_dx11.GetSwapChain()->ResizeBuffers(2, 0, 0, DXGI_FORMAT_B8G8R8A8_UNORM, 0);
 		if (hRes != S_OK)
 			return FALSE;
+		Destory();
 		return Create();
 	}
 	BOOL DX11RenderView::Resize(INT cx, INT cy)
 	{
-		m_copy2D.Release();
-		m_renderView.Release();
-		m_depth2D.Release();
-		m_depthView.Release();
-		if (m_render2D != NULL)
-		{
-			m_render2D.Release();
-			return Create(cx, cy, m_bSync);
-		}
-		return FALSE;
+		Destory();
+		return Create(cx, cy, m_bSync);
 	}
 	ID3D11RenderTargetView* DX11RenderView::GetRTView() const
 	{
@@ -251,7 +249,7 @@ namespace DXFramework
 		m_dx11.SetMatrixs(m_size);
 		FLOAT color[4] = { 0.0F, 0.0F, 0.0F, 1.0F };
 		m_dx11.GetImmediateContext()->ClearRenderTargetView(m_renderView, color);
-		m_dx11.GetImmediateContext()->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH| D3D11_CLEAR_STENCIL, 1.0F, 0);
+		m_dx11.GetImmediateContext()->ClearDepthStencilView(m_depthView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0F, 0);
 		return TRUE;
 	}
 	BOOL DX11RenderView::EndDraw()

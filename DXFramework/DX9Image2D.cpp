@@ -23,7 +23,7 @@ namespace DXFramework
 		TinyScopedArray<VERTEXTYPE> vertices(new VERTEXTYPE[vertexCount]);
 		ZeroMemory(vertices.Ptr(), (sizeof(VERTEXTYPE) * vertexCount));
 		//´´½¨¶¥µã»º³å
-		HRESULT hRes = dx9.GetD3D()->CreateVertexBuffer(vertexCount, D3DUSAGE_WRITEONLY, D3DFVF_XYZRHW | D3DFVF_TEX1, D3DPOOL_MANAGED, &m_vertexBuffer, NULL);
+		HRESULT hRes = dx9.GetD3D()->CreateVertexBuffer(sizeof(VERTEXTYPE) * vertexCount, D3DUSAGE_WRITEONLY, D3DFVF_XYZRHW | D3DFVF_TEX1, D3DPOOL_DEFAULT, &m_vertexBuffer, NULL);
 		if (hRes != S_OK)
 			return FALSE;
 		void* bits = NULL;
@@ -61,6 +61,43 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
+
+	BOOL DX9Image2D::Load(DX9& dx9, const CHAR* pzFile)
+	{
+		if (!Initialize(dx9))
+			return FALSE;
+		TinySize texture2DSize;
+		if (!DX9Texture2D::Load(dx9, pzFile, texture2DSize))
+			return FALSE;
+		SetSize(texture2DSize);
+		SetScale(texture2DSize);
+		return TRUE;
+	}
+
+	BOOL DX9Image2D::Load(DX9& dx9, const BYTE* bits, LONG size)
+	{
+		if (!Initialize(dx9))
+			return FALSE;
+		TinySize texture2DSize;
+		if (!DX9Texture2D::Load(dx9, bits, size, texture2DSize))
+			return FALSE;
+		SetSize(texture2DSize);
+		SetScale(texture2DSize);
+		return TRUE;
+	}
+
+	BOOL DX9Image2D::Create(DX9& dx9, INT cx, INT cy, const BYTE* bits)
+	{
+		if (!Initialize(dx9))
+			return FALSE;
+		if (!DX9Texture2D::Create(dx9, cx, cy, bits))
+			return FALSE;
+		TinySize size(cx, cy);
+		SetSize(size);
+		SetScale(size);
+		return TRUE;
+	}
+
 	INT	DX9Image2D::GetVertexCount() const
 	{
 		return 6;
@@ -75,6 +112,7 @@ namespace DXFramework
 		if (dx9.IsEmpty())
 			return FALSE;
 		D3DXMATRIX* ms = dx9.GetMatrixs();
+		dx9.GetD3D()->SetTexture(0, static_cast<IDirect3DBaseTexture9*>(m_texture2D.Ptr()));
 		dx9.GetD3D()->SetTransform(D3DTS_PROJECTION, &ms[0]);
 		dx9.GetD3D()->SetTransform(D3DTS_VIEW, &ms[1]);
 		dx9.GetD3D()->SetTransform(D3DTS_WORLD, &ms[2]);
@@ -83,10 +121,8 @@ namespace DXFramework
 		return TRUE;
 	}
 
-
 	void DX9Image2D::Deallocate(DX9& dx9)
 	{
 
 	}
-
 }

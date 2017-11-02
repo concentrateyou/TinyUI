@@ -12,6 +12,7 @@ namespace DXFramework
 		TinySize	GetSize() const;
 		BOOL		Create();
 		BOOL		Create(INT cx, INT cy, BOOL bSync = FALSE);
+		void		Destory();
 		BOOL		Resize();
 		BOOL		Resize(INT cx, INT cy);
 		BOOL		BeginDraw();
@@ -28,7 +29,6 @@ namespace DXFramework
 	protected:
 		BOOL								m_bSync;
 		HANDLE								m_handle;
-		FLOAT								m_aspect;//±ÈÀý
 		DX11&								m_dx11;
 		TinySize							m_size;
 		TinyComPtr<IDXGIKeyedMutex>			m_mutex;

@@ -19,7 +19,9 @@
 #include "Network/TinyHTTPClient.h"
 #include "DX2D.h"
 #include "WICTexture.h"
-#include "Control/TinyShadow.h"
+#include "DX9Graphics2D.h"
+#include "DX9Image2D.h"
+#include "DX9RenderView.h"
 #pragma comment(lib,"sapi.lib")
 
 using namespace TinyUI;

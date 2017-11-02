@@ -10,6 +10,7 @@ namespace DXFramework
 	/// </summary>
 	class DX9Graphics2D
 	{
+		DISALLOW_COPY_AND_ASSIGN(DX9Graphics2D)
 	public:
 		DX9Graphics2D();
 		virtual ~DX9Graphics2D();

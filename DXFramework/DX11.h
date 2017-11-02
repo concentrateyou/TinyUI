@@ -11,17 +11,17 @@ namespace DXFramework
 	public:
 		DX11();
 		virtual ~DX11();
-		BOOL EnumAdapters(vector<IDXGIAdapter*>& adapters);
-		BOOL Initialize(HWND hWND, INT cx, INT cy, IDXGIAdapter* pAdapter = NULL);
-		void Uninitialize();
-		BOOL ResizeView(INT cx = 0, INT cy = 0);
-		BOOL SetViewport(const TinyPoint& pos, const TinySize& size);
-		BOOL AllowBlend(BOOL bAllow, FLOAT blendFactor[4]);
-		BOOL AllowDepth(BOOL bAllow);
-		BOOL Present();
-		BOOL Flush();
-		void SetRenderTexture2D(DX11RenderView* render2D);
-		void SetMatrixs(const TinySize& size);
+		BOOL					EnumAdapters(vector<IDXGIAdapter*>& adapters);
+		BOOL					Initialize(HWND hWND, INT cx, INT cy, IDXGIAdapter* pAdapter = NULL);
+		void					Uninitialize();
+		BOOL					ResizeView(INT cx = 0, INT cy = 0);
+		BOOL					SetViewport(const TinyPoint& pos, const TinySize& size);
+		BOOL					AllowBlend(BOOL bAllow, FLOAT blendFactor[4]);
+		BOOL					AllowDepth(BOOL bAllow);
+		BOOL					Present();
+		BOOL					Flush();
+		void					SetRenderTexture2D(DX11RenderView* render2D);
+		void					SetMatrixs(const TinySize& size);
 		HWND					GetHWND() const;
 		BOOL					IsEmpty() const;
 		ID3D11Device*			GetD3D() const;

@@ -18,10 +18,11 @@ namespace DXFramework
 	BOOL DX9::Initialize(HWND hWND, INT cx, INT cy)
 	{
 		m_hWND = hWND;
-		HRESULT hRes = Direct3DCreate9Ex(D3D_SDK_VERSION, &m_d3d9);
-		if (hRes != S_OK)
+		m_d3d9.Attach(Direct3DCreate9(D3D_SDK_VERSION));
+		if (m_d3d9 == NULL)
 			return FALSE;
-		D3DPRESENT_PARAMETERS d3dpp = { 0 };
+		D3DPRESENT_PARAMETERS d3dpp;
+		ZeroMemory(&d3dpp, sizeof(d3dpp));
 		d3dpp.BackBufferWidth = cx;
 		d3dpp.BackBufferHeight = cy;
 		d3dpp.BackBufferFormat = D3DFMT_A8R8G8B8;
@@ -30,13 +31,13 @@ namespace DXFramework
 		d3dpp.MultiSampleQuality = 0;
 		d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 		d3dpp.hDeviceWindow = hWND;
-		d3dpp.Windowed = FALSE;
+		d3dpp.Windowed = TRUE;
 		d3dpp.EnableAutoDepthStencil = TRUE;
 		d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
 		d3dpp.Flags = 0;
 		d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 		d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-		hRes = m_d3d9->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWND, D3DCREATE_HARDWARE_VERTEXPROCESSING, &d3dpp, &m_d3dd9);
+		HRESULT hRes = m_d3d9->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWND, D3DCREATE_HARDWARE_VERTEXPROCESSING, &d3dpp, &m_d3dd9);
 		if (hRes != S_OK)
 			return FALSE;
 		ZeroMemory(&m_viewPort, sizeof(m_viewPort));
@@ -76,6 +77,9 @@ namespace DXFramework
 		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
 		if (hRes != S_OK)
 			return FALSE;
+		m_background2D.Reset(new DX9RenderView(*this));
+		if (!m_background2D->Create())
+			return FALSE;
 		return TRUE;
 	}
 
@@ -86,6 +90,30 @@ namespace DXFramework
 		HRESULT hRes = m_d3dd9->Present(NULL, NULL, NULL, NULL);
 		return SUCCEEDED(hRes);
 	}
+	BOOL DX9::ResizeView(INT cx, INT cy)
+	{
+		if (IsEmpty())
+			return FALSE;
+		if (!m_background2D->Resize())
+			return FALSE;
+		this->SetViewport(TinyPoint(0, 0), m_background2D->GetSize());
+		this->SetMatrixs(m_background2D->GetSize());
+		return TRUE;
+	}
+	BOOL DX9::SetViewport(const TinyPoint& pos, const TinySize& size)
+	{
+		if (IsEmpty())
+			return FALSE;
+		D3DVIEWPORT9 viewport;
+		viewport.X = pos.x;
+		viewport.Y = pos.y;
+		viewport.Width = size.cx;
+		viewport.Height = size.cy;
+		viewport.MinZ = 0.0F;
+		viewport.MaxZ = 1.0F;
+		m_d3dd9->SetViewport(&viewport);
+		return TRUE;
+	}
 	HWND DX9::GetHWND() const
 	{
 		return m_hWND;
@@ -94,8 +122,8 @@ namespace DXFramework
 	{
 		if (m_d3d9 != NULL &&
 			m_d3dd9 != NULL)
-			return TRUE;
-		return FALSE;
+			return FALSE;
+		return TRUE;
 	}
 	IDirect3DDevice9*	DX9::GetD3D() const
 	{
