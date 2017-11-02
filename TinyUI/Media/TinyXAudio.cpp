@@ -73,6 +73,7 @@ namespace TinyUI
 		}
 		BOOL TinyXAudio::Open(const WAVEFORMATEX* pFMT)
 		{
+			Close();
 			HRESULT hRes = XAudio2Create(&m_audio, 0, XAUDIO2_DEFAULT_PROCESSOR);
 			if (hRes != S_OK)
 				return FALSE;
@@ -166,6 +167,7 @@ namespace TinyUI
 		}
 		BOOL TinyXAudio::Start()
 		{
+			Stop();
 			if (!m_pSourceVoice)
 				return FALSE;
 			m_pSourceVoice->FlushSourceBuffers();

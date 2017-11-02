@@ -51,7 +51,15 @@ namespace MShow
 		if (m_x264.Initialize(s, s))
 		{
 			bRes = m_x264.Open(bits, size);
+			if (!bRes)
+			{
+				LOG(ERROR) << "x264 Open FAIL";
+			}
 			m_bBreak = !bRes;
+		}
+		else
+		{
+			LOG(ERROR) << "x264 Initialize FAIL";
 		}
 		m_task.EVENT_AVCDCR -= m_onAVCDC;
 	}

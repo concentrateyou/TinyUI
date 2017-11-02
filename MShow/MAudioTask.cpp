@@ -55,6 +55,10 @@ namespace MShow
 		{
 			bRes = TRUE;
 		}
+		else
+		{
+			LOG(ERROR) << "AAC Open FAIL";
+		}
 		m_bBreak = !bRes;
 		m_task.EVENT_ASC -= m_onASC;
 	}

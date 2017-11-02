@@ -83,15 +83,16 @@ namespace MShow
 			{
 				timeQPC.BeginTime();
 				if (!m_audio.Open(m_task.GetFormat()))
+				{
+					LOG(ERROR) << "Audio Open FAIL";
 					break;
+				}
 				m_bInitialize = TRUE;
 				m_audio.Start();
-				
 				timeQPC.EndTime();
 				m_clock.AddBaseTime(static_cast<DWORD>(timeQPC.GetMillisconds()));
 				LONGLONG ms = MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime();
 				LONG delay = static_cast<LONG>(tag.samplePTS - ms);
-				
 				if (timer.Wait(delay, 1000))
 				{
 					MShow::MShowApp::GetInstance().SetCurrentAudioTS(tag.samplePTS);
