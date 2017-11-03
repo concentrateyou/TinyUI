@@ -518,7 +518,7 @@ namespace MShow
 			}
 			if (m_array.GetSize() == 0)
 			{
-				Sleep(10);
+				Sleep(5);
 				continue;
 			}
 			HANDLE handle = NULL;

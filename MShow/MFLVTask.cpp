@@ -90,18 +90,20 @@ namespace MShow
 		{
 			if (m_bBreak)
 				break;
-			INT size = m_audioQueue.GetSize() + m_videoQueue.GetSize();
-			if (size > MAX_QUEUE_SIZE)
-			{
-				Sleep(10);
-				continue;
-			}
+			//¶ÁÈ¡Ò»¸öTag
 			ZeroMemory(&block, sizeof(block));
 			if (!m_reader.ReadBlock(block))
 			{
 				TRACE("ReadBlock FAIL\n");
+				LOG(ERROR) << "ReadBlock FAIL";
 				ReleaseBlock(block);
 				return FALSE;
+			}
+			INT size = m_audioQueue.GetSize() + m_videoQueue.GetSize();
+			if (size > MAX_QUEUE_SIZE)
+			{
+				ReleaseBlock(block);
+				continue;
 			}
 			if (block.type == FLV_AUDIO)
 			{
@@ -114,6 +116,7 @@ namespace MShow
 						if (!bRes)
 						{
 							TRACE("ReadBlock FAIL\n");
+							LOG(ERROR) << "ReadBlock FAIL";
 							ReleaseBlock(block);
 							return FALSE;
 						}
@@ -148,6 +151,7 @@ namespace MShow
 						if (!bRes)
 						{
 							TRACE("ReadBlock FAIL\n");
+							LOG(ERROR) << "ReadBlock FAIL";
 							ReleaseBlock(block);
 							return FALSE;
 						}

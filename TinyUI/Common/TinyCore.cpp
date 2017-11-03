@@ -441,7 +441,7 @@ namespace TinyUI
 		m_timerID = static_cast<UINT>(timeSetEvent(delay, 1, &TinyPerformanceTimer::TimerCallback, reinterpret_cast<DWORD_PTR>(this), TIME_PERIODIC));
 		return m_timerID != 0;
 	}
-	BOOL TinyPerformanceTimer::Wait(INT delay, DWORD dwMilliseconds)
+	BOOL TinyPerformanceTimer::Waiting(INT delay, DWORD dwMilliseconds)
 	{
 		if (delay <= 0)
 			return TRUE;

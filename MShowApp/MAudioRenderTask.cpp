@@ -29,13 +29,12 @@ namespace MShow
 	BOOL MAudioRenderTask::Initialize()
 	{
 		m_bBreak = FALSE;
-		m_audio.Close();
 		return TRUE;
 	}
 
-	BOOL MAudioRenderTask::SetVolume(DWORD volume)
+	BOOL MAudioRenderTask::SetVolume(DWORD dwVolume)
 	{
-		return m_audio.SetVolume(volume);
+		return m_audio.SetVolume(dwVolume);
 	}
 
 	BOOL MAudioRenderTask::Submit()
@@ -61,16 +60,15 @@ namespace MShow
 	void MAudioRenderTask::OnMessagePump()
 	{
 		CoInitializeEx(NULL, COINIT_MULTITHREADED);
-		TinyPerformanceTimer timer;
 		TinyPerformanceTime	 timeQPC;
+		TinyPerformanceTimer timer;
 		SampleTag tag = { 0 };
 		for (;;)
 		{
 			if (m_bBreak)
 				break;
 			ZeroMemory(&tag, sizeof(tag));
-			BOOL bRes = m_task.GetAudioQueue().Pop(tag);
-			if (!bRes || tag.size <= 0)
+			if (!m_task.GetAudioQueue().Pop(tag))
 			{
 				Sleep(15);
 				continue;
@@ -79,31 +77,34 @@ namespace MShow
 			{
 				m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
 			}
-			while (m_clock.GetBasePTS() == -1);
+			while (m_clock.GetBasePTS() == INVALID_TIME);
 			if (!m_bInitialize)
 			{
-				m_bInitialize = TRUE;
 				timeQPC.BeginTime();
 				if (!m_audio.Open(m_task.GetFormat()))
+				{
+					TRACE("Audio Open FAIL");
+					LOG(ERROR) << "Audio Open FAIL";
 					break;
+				}
+				m_bInitialize = TRUE;
 				m_audio.Start();
-				m_audio.SetVolume(0);
 				timeQPC.EndTime();
 				m_clock.AddBaseTime(static_cast<DWORD>(timeQPC.GetMillisconds()));
 				LONGLONG ms = MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime();
 				LONG delay = static_cast<LONG>(tag.samplePTS - ms);
-				if (timer.Wait(delay, 1000))
+				if (timer.Waiting(delay, 1000))
 				{
-					m_audio.Play(tag.bits + 4, tag.size, 1000);
+					m_audio.Play(tag.bits + 4, tag.size, 5000);
 				}
 			}
 			else
 			{
-				m_audio.Play(tag.bits + 4, tag.size, 1000);
-			}
-			if (!m_callback.IsNull())
-			{
-				m_callback(tag.bits + 4, tag.size);
+				if (!m_callback.IsNull())
+				{
+					m_callback(tag.bits + 4, tag.size);
+				}
+				m_audio.Play(tag.bits + 4, tag.size, 5000);
 			}
 			m_task.GetAudioQueue().Free(tag.bits);
 		}

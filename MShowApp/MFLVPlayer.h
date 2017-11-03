@@ -23,6 +23,7 @@ namespace MShow
 		DWORD			GetRate() const;
 		TinyString		GetURL() const;
 		WAVEFORMATEX*	GetFormat();
+		LONGLONG		GetBasePTS();
 	private:
 		DWORD							m_dwRate;
 		TinyString						m_szURL;

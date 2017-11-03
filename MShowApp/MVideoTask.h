@@ -20,8 +20,9 @@ namespace MShow
 		void OnMessagePump();
 		void OnAVCDC(BYTE* bits, LONG size, BOOL&);
 	private:
+		FILE*						m_hFile;
 		BOOL						m_bBreak;
-		QSV::QSVDecoder				m_qsv;
+		x264Decode					m_x264;
 		MClock&						m_clock;
 		MFLVTask&					m_task;
 		MPacketAllocQueue			m_videoQueue;

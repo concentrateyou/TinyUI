@@ -68,10 +68,9 @@ namespace MShow
 			if (m_bBreak)
 				break;
 			ZeroMemory(&tag, sizeof(tag));
-			BOOL bRes = m_task.GetAudioQueue().Pop(tag);
-			if (!bRes || tag.size <= 0)
+			if (!m_task.GetAudioQueue().Pop(tag))
 			{
-				Sleep(10);
+				Sleep(15);
 				continue;
 			}
 			if (tag.samplePTS == m_clock.GetBasePTS())
@@ -84,6 +83,7 @@ namespace MShow
 				timeQPC.BeginTime();
 				if (!m_audio.Open(m_task.GetFormat()))
 				{
+					TRACE("Audio Open FAIL");
 					LOG(ERROR) << "Audio Open FAIL";
 					break;
 				}
@@ -93,7 +93,7 @@ namespace MShow
 				m_clock.AddBaseTime(static_cast<DWORD>(timeQPC.GetMillisconds()));
 				LONGLONG ms = MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime();
 				LONG delay = static_cast<LONG>(tag.samplePTS - ms);
-				if (timer.Wait(delay, 1000))
+				if (timer.Waiting(delay, 1000))
 				{
 					MShow::MShowApp::GetInstance().SetCurrentAudioTS(tag.samplePTS);
 					m_audio.Play(tag.bits + 4, tag.size, 5000);

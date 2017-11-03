@@ -45,6 +45,7 @@ namespace Decode
 	private:
 		LONG					m_cRef;
 		TinyHTTPClient			m_client;
+		//FILE*					m_hFile;
 	};
 }
 

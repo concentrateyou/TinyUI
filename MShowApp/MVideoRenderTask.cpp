@@ -32,6 +32,8 @@ namespace MShow
 
 	void MVideoRenderTask::OnMessagePump()
 	{
+		BOOL rendering = FALSE;
+		TinyPerformanceTime	 timeQPC;
 		TinyPerformanceTimer timer;
 		SampleTag sampleTag = { 0 };
 		for (;;)
@@ -39,24 +41,28 @@ namespace MShow
 			if (m_bBreak)
 				break;
 			ZeroMemory(&sampleTag, sizeof(sampleTag));
-			BOOL bRes = m_task.GetVideoQueue().Pop(sampleTag);
-			if (!bRes || sampleTag.size <= 0)
+			if (!m_task.GetVideoQueue().Pop(sampleTag))
 			{
-				Sleep(15);
+				timer.Waiting(40, 1000);
+				if (rendering)
+				{
+					m_clock.AddBaseTime(40);
+				}
 				continue;
 			}
 			if (sampleTag.samplePTS == m_clock.GetBasePTS())
 			{
 				m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
 			}
-			while (m_clock.GetBasePTS() == -1);
+			while (m_clock.GetBasePTS() == INVALID_TIME);
+			rendering = TRUE;
 			if (!m_copyCB.IsNull())
 			{
 				m_copyCB(sampleTag.bits + 4, sampleTag.size);
 			}
 			LONG systemMS = static_cast<LONG>(MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime());
 			INT delay = static_cast<INT>(sampleTag.samplePTS - systemMS);
-			if (timer.Wait(delay, 1000))
+			if (timer.Waiting(delay, 1000))
 			{
 				if (!m_renderCB.IsNull())
 				{

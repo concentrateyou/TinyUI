@@ -45,6 +45,7 @@ namespace Decode
 		FLV_TAG_VIDEO			m_videoTag;
 		FLV_SCRIPTDATA			m_script;
 		TinyComPtr<IStream>		m_stream;
+		
 	};
 }
 

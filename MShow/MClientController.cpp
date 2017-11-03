@@ -101,7 +101,7 @@ namespace MShow
 		{
 			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
 			val->RemoveAll();
-			for (INT i = 0;i < captures.size();i++)
+			for (size_t i = 0;i < captures.size();i++)
 			{
 				wstring szGUID;
 				szGUID.resize(39);
@@ -121,7 +121,7 @@ namespace MShow
 		{
 			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
 			val->RemoveAll();
-			for (INT i = 0;i < renders.size();i++)
+			for (size_t i = 0;i < renders.size();i++)
 			{
 				wstring szGUID;
 				szGUID.resize(39);
@@ -320,7 +320,7 @@ namespace MShow
 		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
 		{
 			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
-			for (INT i = 0;i < captures.size();i++)
+			for (size_t i = 0;i < captures.size();i++)
 			{
 				wstring szGUID;
 				szGUID.resize(39);
@@ -336,7 +336,7 @@ namespace MShow
 		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
 		{
 			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
-			for (INT i = 0;i < renders.size();i++)
+			for (size_t i = 0;i < renders.size();i++)
 			{
 				wstring szGUID;
 				szGUID.resize(39);
@@ -623,7 +623,8 @@ namespace MShow
 		else
 		{
 			string msg = value["msg"].asString();
-			msg = std::move(UTF8ToASCII(msg));
+			if (!msg.empty())
+				msg = std::move(UTF8ToASCII(msg));
 			LOG(ERROR) << "[MClientController] " << "Response Code : " << code << " Msg: " << msg;
 		}
 	_ERROR:
@@ -672,7 +673,8 @@ namespace MShow
 		else
 		{
 			string msg = value["msg"].asString();
-			msg = std::move(UTF8ToASCII(msg));
+			if (!msg.empty())
+				msg = std::move(UTF8ToASCII(msg));
 			LOG(ERROR) << "[MClientController] " << "Response Code : " << code << " Msg: " << msg;
 		}
 	_ERROR:
@@ -816,7 +818,7 @@ namespace MShow
 			TinyApplication::GetInstance()->GetTimers().Unregister(m_hTimer2);
 			m_hTimer2 = NULL;
 		}
-		m_hTimer2 = TinyApplication::GetInstance()->GetTimers().Register(&MClientController::OnTimer2, this, 2000, 2000);
+		m_hTimer2 = TinyApplication::GetInstance()->GetTimers().Register(&MClientController::OnTimer2, this, 3000, 3000);
 		if (!m_hTimer2)
 		{
 			goto _ERROR;

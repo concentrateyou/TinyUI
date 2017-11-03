@@ -113,7 +113,7 @@ namespace MShow
 		vector<TinyWASAPIAudio::Name> renders;
 		TinyWASAPIAudio::GetDevices(eRender, renders);
 		TinyWASAPIAudio::Name capture;
-		for (INT i = 0;i < captures.size();i++)
+		for (size_t i = 0;i < captures.size();i++)
 		{
 			BOOL IsMA = FALSE;
 			TinyWASAPIAudio::IsMicrophoneArray(captures[i], IsMA);

@@ -216,7 +216,7 @@ namespace MShow
 			list->SetVisible(TRUE);
 			list->GetVScrollBar()->SetVisible(FALSE);
 			lblMsg->SetVisible(FALSE);
-			for (INT i = 0;i < result.size();i++)
+			for (size_t i = 0;i < result.size();i++)
 			{
 				Json::Value val = result[i];
 				string programName = val["programName"].asString();

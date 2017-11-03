@@ -17,7 +17,7 @@ namespace Decode
 		m_count(0),
 		m_basePTS(-1)
 	{
-
+		
 	}
 	FLVReader::~FLVReader()
 	{
@@ -183,7 +183,7 @@ namespace Decode
 				}
 				return ParseAudio(data, size, block);
 			}
-			if (tag.type == FLV_VIDEO)
+			else if (tag.type == FLV_VIDEO)
 			{
 				m_timestamp = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
 				if (m_timestamp > 0)
@@ -198,6 +198,10 @@ namespace Decode
 					}
 				}
 				return ParseVideo(data, size, block);
+			}
+			else
+			{
+				INT a = 0;
 			}
 		}
 		return FALSE;

@@ -76,16 +76,17 @@ namespace TinyUI
 		VOID CALLBACK TinyVisualAnimation::OnTimer(PVOID lpParam, BOOLEAN TimerOrWaitFired)
 		{
 			TinyVisualAnimation* spvis = static_cast<TinyVisualAnimation*>(lpParam);
-			ASSERT(spvis);
-			ASSERT(spvis->m_hTimer != NULL);
-			spvis->m_index = ((spvis->m_index + 1) == spvis->m_animation->GetCount()) ? 0 : (spvis->m_index + 1);
-			INT delay = spvis->m_animation->GetDelay(spvis->m_index);
-			if (delay <= 0)
+			if (spvis->m_hTimer != NULL)
 			{
-				delay = 40;
+				spvis->m_index = ((spvis->m_index + 1) == spvis->m_animation->GetCount()) ? 0 : (spvis->m_index + 1);
+				INT delay = spvis->m_animation->GetDelay(spvis->m_index);
+				if (delay <= 0)
+				{
+					delay = 40;
+				}
+				TinyApplication::GetInstance()->GetTimers().Change(spvis->m_hTimer, delay, 1);
+				spvis->Invalidate();
 			}
-			TinyApplication::GetInstance()->GetTimers().Change(spvis->m_hTimer, delay, 1);
-			spvis->Invalidate();
 		}
 
 		BOOL TinyVisualAnimation::EndAnimate()

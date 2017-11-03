@@ -95,5 +95,10 @@ namespace MShow
 	{
 		return m_audioTask.GetFormat();
 	}
+
+	LONGLONG MFLVPlayer::GetBasePTS()
+	{
+		return m_task.GetBasePTS();
+	}
 }
 

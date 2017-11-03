@@ -111,34 +111,24 @@ namespace TinyUI
 		public:
 			TinyHTTPClient();
 			~TinyHTTPClient();
+			BOOL			IsEmpty() const;
 			BOOL			Open(const string& szURL);
 			void			Close();
-			void			SetTimeout(DWORD dwTO);
-			INT				ReadSome(CHAR*& bits);
+			INT				Write(CHAR* bits, INT size);
 			INT				Read(CHAR*& bits, INT size);
-			INT				GetErrorCode() const;
+			INT				ReadSome(CHAR*& bits);
 			HTTPRequest&	GetRequest();
 			HTTPResponse&	GetResponse();
 		private:
 			void BuildRequest();
-			void OnHandleConnect(INT, AsyncResult*);
-			void OnHandleRequest(INT, AsyncResult*);
-			void OnHandleResponse(INT, AsyncResult*);
-			void OnHandleReceive(INT, AsyncResult*);
-			void OnHandleReceiveSome(INT, AsyncResult*);
-			void OnHandleError(INT);
 		private:
-			BOOL					m_bClose;
-			INT						m_offset;
 			INT						m_timeout;
-			INT						m_errorCode;
-			INT						m_size;
-			TinyEvent				m_wait;
 			TinyURL					m_szURL;
-			TinySocket				m_socket;
+			SOCKET					m_socket;
 			IPEndPoint				m_endpoint;
 			HTTPRequest				m_request;
 			HTTPResponse			m_reponse;
+			LONG					m_size;
 			TinyScopedArray<CHAR>	m_raw;
 			TinyBufferArray<CHAR>	m_requests;
 		};

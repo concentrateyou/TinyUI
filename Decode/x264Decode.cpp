@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "x264Decode.h"
+#include "Common/TinyLogging.h"
 
 namespace Decode
 {
@@ -72,12 +73,14 @@ namespace Decode
 		memcpy(m_context->extradata, metadata, m_context->extradata_size);
 		if (avcodec_open2(m_context, m_codec, NULL) != 0)
 			goto H264_ERROR;
+		/*m_hFile = fopen("D:\\test.264", "wb");
+		fwrite(metadata, 1, size, m_hFile);*/
 		return TRUE;
 	H264_ERROR:
 		Close();
 		return FALSE;
 	}
-	
+
 	BOOL x264Decode::Decode(SampleTag& tag, BYTE*& bo, LONG& so)
 	{
 		if (!m_context || !m_sws)
@@ -95,9 +98,17 @@ namespace Decode
 		{
 			iRes = avcodec_receive_frame(m_context, m_pYUV420);
 			if (iRes == AVERROR(EAGAIN) || iRes == AVERROR_EOF)
+			{
+				TRACE("x264 Decode FAIL\n");
+				LOG(ERROR) << "x264 Decode FAIL";
+				//fwrite(tag.bits, 1, tag.size, m_hFile);
 				break;
+			}
 			else if (iRes < 0)
 			{
+				TRACE("x264 Decode FAIL\n");
+				LOG(ERROR) << "x264 Decode FAIL";
+				//fwrite(tag.bits, 1, tag.size, m_hFile);
 				goto _ERROR;
 			}
 			INT cy = sws_scale(m_sws, m_pYUV420->data, m_pYUV420->linesize, 0, m_srcsize.cy, m_pRGB32->data, m_pRGB32->linesize);
@@ -113,6 +124,8 @@ namespace Decode
 	}
 	BOOL x264Decode::Close()
 	{
+		/*if (m_hFile != NULL)
+			fclose(m_hFile);*/
 		m_srcsize.Empty();
 		m_dstsize.Empty();
 		if (m_context != NULL)

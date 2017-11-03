@@ -31,7 +31,7 @@ namespace MShow
 			memcpy(&tag, &sampleTag, sizeof(Media::SampleTag));
 			m_list.RemoveAt(s);
 			m_size -= tag.size;
-			return TRUE;
+			return (tag.size > 0);
 		}
 		return FALSE;
 	}
@@ -114,7 +114,7 @@ namespace MShow
 			memcpy(&tag, &sampleTag, sizeof(Media::SampleTag));
 			m_list.RemoveAt(s);
 			m_size -= tag.size;
-			return TRUE;
+			return (tag.size > 0);
 		}
 		return FALSE;
 	}

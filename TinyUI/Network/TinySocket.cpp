@@ -133,27 +133,27 @@ namespace TinyUI
 		{
 			ASSERT(m_socket != INVALID_SOCKET);
 			INT size = sizeof(bAllow);
-			return SetOption(SOL_SOCKET, SO_KEEPALIVE, (const CHAR*)bAllow, size);
+			return SetOption(SOL_SOCKET, SO_KEEPALIVE, (const CHAR*)&bAllow, size);
 		}
 		BOOL TinySocket::GetKeepAlive(BOOL& bAllow)
 		{
 			ASSERT(m_socket != INVALID_SOCKET);
 			bAllow = FALSE;
 			INT size = sizeof(bAllow);
-			return GetOption(SOL_SOCKET, SO_KEEPALIVE, (CHAR*)bAllow, size);
+			return GetOption(SOL_SOCKET, SO_KEEPALIVE, (CHAR*)&bAllow, size);
 		}
 		BOOL TinySocket::SetDelay(BOOL bAllow)
 		{
 			ASSERT(m_socket != INVALID_SOCKET);
 			INT size = sizeof(bAllow);
-			return SetOption(IPPROTO_TCP, TCP_NODELAY, (const CHAR*)bAllow, size);
+			return SetOption(IPPROTO_TCP, TCP_NODELAY, (const CHAR*)&bAllow, size);
 		}
 		BOOL TinySocket::GetDelay(BOOL& bAllow)
 		{
 			ASSERT(m_socket != INVALID_SOCKET);
 			bAllow = FALSE;
 			INT size = sizeof(bAllow);
-			return GetOption(IPPROTO_TCP, TCP_NODELAY, (CHAR*)bAllow, size);
+			return GetOption(IPPROTO_TCP, TCP_NODELAY, (CHAR*)&bAllow, size);
 		}
 		BOOL TinySocket::Available(INT& argp)
 		{

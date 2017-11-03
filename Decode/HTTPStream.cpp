@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "HTTPStream.h"
 #include "Common/TinyLogging.h"
+#include "Common/TinyTime.h"
 
 namespace Decode
 {
@@ -16,11 +17,13 @@ namespace Decode
 
 	BOOL HTTPStream::Open(LPCSTR pzURL)
 	{
+		//m_hFile = fopen("D:\\test.flv", "wb");
 		return m_client.Open(pzURL);
 	}
 
 	BOOL HTTPStream::Close()
 	{
+		//fclose(m_hFile);
 		m_client.Close();
 		return TRUE;
 	}
@@ -69,6 +72,7 @@ namespace Decode
 		if (size > 0)
 		{
 			memcpy(pv, bits, size);
+			//fwrite(bits, 1, size, m_hFile);
 		}
 		if (size <= 0)
 		{

@@ -44,7 +44,6 @@ namespace MShow
 
 	void MVideoTask::OnAVCDC(BYTE* bits, LONG size, BOOL& bRes)
 	{
-		TRACE("Video OnAVCDC\n");
 		bRes = FALSE;
 		FLV_SCRIPTDATA& script = m_task.GetScript();
 		TinySize s(static_cast<LONG>(script.width), static_cast<LONG>(script.height));
@@ -76,14 +75,13 @@ namespace MShow
 			INT size = m_videoQueue.GetSize();
 			if (size > MAX_VIDEO_QUEUE_SIZE)
 			{
-				Sleep(10);
+				Sleep(15);
 				continue;
 			}
 			ZeroMemory(&sampleTag, sizeof(sampleTag));
-			BOOL bRes = m_task.GetVideoQueue().Pop(sampleTag);
-			if (!bRes || sampleTag.size <= 0)
+			if (!m_task.GetVideoQueue().Pop(sampleTag))
 			{
-				Sleep(10);
+				Sleep(15);
 				continue;
 			}
 			BYTE* bo = NULL;
@@ -104,10 +102,6 @@ namespace MShow
 					m_clock.SetBasePTS(sampleTag.samplePTS);
 				}
 				m_videoQueue.Push(sampleTag);
-			}
-			else
-			{
-				TRACE("x264 Decode FAIL\n");
 			}
 		}
 		m_videoQueue.RemoveAll();

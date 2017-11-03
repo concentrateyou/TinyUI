@@ -20,6 +20,7 @@ namespace MShow
 		void OnMessagePump();
 		void OnAVCDC(BYTE* bits, LONG size, BOOL&);
 	private:
+		FILE*						m_hFile;
 		BOOL						m_bBreak;
 		x264Decode					m_x264;
 		MClock&						m_clock;

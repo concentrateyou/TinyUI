@@ -17,7 +17,7 @@ namespace MShow
 		MAudioRenderTask(MAudioTask& task, MClock& clock, TinyUI::Callback<void(BYTE*, LONG)>&& callback);
 		virtual ~MAudioRenderTask();
 		BOOL Initialize();
-		BOOL SetVolume(DWORD volume);
+		BOOL SetVolume(DWORD dwVolume);
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
 	private:

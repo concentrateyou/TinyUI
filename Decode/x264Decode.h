@@ -60,6 +60,7 @@ namespace Decode
 		AVCodec*				m_codec;
 		AVCodecContext*			m_context;
 		TinyScopedArray<BYTE>	m_bits;
+		//FILE*					m_hFile;
 	};
 }
 
