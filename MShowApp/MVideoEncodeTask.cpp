@@ -41,8 +41,7 @@ namespace MShow
 				if (MShow::MShowApp::GetInstance().GetController().IsPushing())
 				{
 					ZeroMemory(&sampleTag, sizeof(sampleTag));
-					BOOL bRes = queue.Pop(sampleTag);
-					if (!bRes || sampleTag.size <= 0)
+					if (!queue.Pop(sampleTag))
 					{
 						continue;
 					}
