@@ -18,9 +18,19 @@ namespace Decode
 	{
 		Close();
 	}
-
+	void log_callback(void*, int level, const char* format, va_list va)
+	{
+		if (level <= AV_LOG_ERROR)
+		{
+			char buf[1024] = { 0 };
+			int r = ::vsnprintf(buf, 1024, format, va);
+			TRACE("Error:%s\n", buf);
+		}
+	}
 	BOOL x264Decode::Initialize(const TinySize& srcsize, const TinySize& dstsize)
 	{
+		av_log_set_level(AV_LOG_ERROR);
+		av_log_set_callback(log_callback);
 		avcodec_register_all();
 		av_init_packet(&m_packet);
 		m_srcsize = srcsize;
@@ -43,7 +53,6 @@ namespace Decode
 	_ERROR:
 		Close();
 		return FALSE;
-
 	}
 	BOOL x264Decode::Open(BYTE* metadata, LONG size)
 	{
@@ -68,6 +77,7 @@ namespace Decode
 		Close();
 		return FALSE;
 	}
+	
 	BOOL x264Decode::Decode(SampleTag& tag, BYTE*& bo, LONG& so)
 	{
 		if (!m_context || !m_sws)

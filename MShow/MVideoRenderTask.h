@@ -20,6 +20,7 @@ namespace MShow
 	private:
 		void OnMessagePump();
 	private:
+		BOOL		m_bInitialize;
 		BOOL		m_bBreak;
 		Closure		m_renderCB;
 		MClock&		m_clock;

@@ -93,12 +93,13 @@ namespace MShow
 			INT size = m_audioQueue.GetSize() + m_videoQueue.GetSize();
 			if (size > MAX_QUEUE_SIZE)
 			{
-				Sleep(15);
+				Sleep(10);
 				continue;
 			}
 			ZeroMemory(&block, sizeof(block));
 			if (!m_reader.ReadBlock(block))
 			{
+				TRACE("ReadBlock FAIL\n");
 				ReleaseBlock(block);
 				return FALSE;
 			}
@@ -112,6 +113,7 @@ namespace MShow
 						EVENT_ASC(block.audio.data, block.audio.size, block.audio.bitsPerSample == 0 ? 8 : 16, bRes);
 						if (!bRes)
 						{
+							TRACE("ReadBlock FAIL\n");
 							ReleaseBlock(block);
 							return FALSE;
 						}
@@ -145,6 +147,7 @@ namespace MShow
 						EVENT_AVCDCR(block.video.data, block.video.size, bRes);
 						if (!bRes)
 						{
+							TRACE("ReadBlock FAIL\n");
 							ReleaseBlock(block);
 							return FALSE;
 						}

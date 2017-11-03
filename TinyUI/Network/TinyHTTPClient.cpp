@@ -337,10 +337,14 @@ namespace TinyUI
 				m_socket.SetTimeout(FALSE, m_timeout);
 				this->BuildRequest();
 				m_socket.BeginConnect(m_endpoint, BindCallback(&TinyHTTPClient::OnHandleConnect, this), this);
-				if (m_wait.Lock(10000))//默认10秒超时
+				if (m_wait.Lock(8000))//默认8秒超时
 				{
 					if (m_errorCode == S_OK && m_reponse.GetStatusCode() == 200)
 						return TRUE;
+				}
+				else
+				{
+					LOG(ERROR) << "HTTPClient Connect Timeout";
 				}
 			}
 			return FALSE;
@@ -364,10 +368,17 @@ namespace TinyUI
 				{
 					OnHandleError(GetLastError());
 				}
-				if (m_wait.Lock(10000) && m_errorCode == S_OK)
+				if (m_wait.Lock(8000))
 				{
-					bits = m_raw;
-					return m_size;
+					if (m_errorCode == S_OK)
+					{
+						bits = m_raw;
+						return m_size;
+					}
+				}
+				else
+				{
+					LOG(ERROR) << "HTTPClient BeginReceive Timeout";
 				}
 			}
 			return -1;
@@ -388,10 +399,17 @@ namespace TinyUI
 				{
 					OnHandleError(GetLastError());
 				}
-				if (m_wait.Lock(10000) && m_errorCode == S_OK)
+				if (m_wait.Lock(8000))
 				{
-					bits = m_raw;
-					return m_size;
+					if (m_errorCode == S_OK)
+					{
+						bits = m_raw;
+						return m_size;
+					}
+				}
+				else
+				{
+					LOG(ERROR) << "HTTPClient BeginReceive Timeout";
 				}
 			}
 			return -1;
@@ -502,6 +520,7 @@ namespace TinyUI
 		}
 		void TinyHTTPClient::OnHandleError(INT errorCode)
 		{
+			TRACE("OnHandleError:%d\n", errorCode);
 			LOG(ERROR) << "TinyHTTPClient Error:" << errorCode;
 			m_errorCode = errorCode;
 			m_wait.SetEvent();

@@ -71,14 +71,14 @@ namespace MShow
 			BOOL bRes = m_task.GetAudioQueue().Pop(tag);
 			if (!bRes || tag.size <= 0)
 			{
-				Sleep(15);
+				Sleep(10);
 				continue;
 			}
 			if (tag.samplePTS == m_clock.GetBasePTS())
 			{
 				m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
 			}
-			while (m_clock.GetBasePTS() == -1);
+			while (m_clock.GetBasePTS() == INVALID_TIME);
 			if (!m_bInitialize)
 			{
 				timeQPC.BeginTime();

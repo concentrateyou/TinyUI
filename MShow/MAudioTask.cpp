@@ -49,6 +49,7 @@ namespace MShow
 
 	void MAudioTask::OnASC(BYTE* bits, LONG size, WORD wBitsPerSample, BOOL& bRes)
 	{
+		TRACE("Audio OnASC\n");
 		bRes = FALSE;
 		m_aac.Close();
 		if (m_aac.Open(bits, size, wBitsPerSample))
@@ -73,21 +74,21 @@ namespace MShow
 			INT size = m_audioQueue.GetSize();
 			if (size > MAX_AUDIO_QUEUE_SIZE)
 			{
-				Sleep(15);
+				Sleep(10);
 				continue;
 			}
 			ZeroMemory(&sampleTag, sizeof(sampleTag));
 			BOOL bRes = m_task.GetAudioQueue().Pop(sampleTag);
 			if (!bRes || sampleTag.size <= 0)
 			{
-				Sleep(15);
+				Sleep(10);
 				continue;
 			}
 			BYTE* bo = NULL;
 			LONG  so = 0;
 			if (m_aac.Decode(sampleTag, bo, so))
 			{
-				if (m_clock.GetBasePTS() == -1)
+				if (m_clock.GetBasePTS() == INVALID_TIME)
 				{
 					m_clock.SetBasePTS(sampleTag.samplePTS);
 				}

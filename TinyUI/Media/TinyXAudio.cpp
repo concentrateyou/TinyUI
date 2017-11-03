@@ -103,6 +103,7 @@ namespace TinyUI
 			memcpy(m_waveFMT, (BYTE*)pFMT, sizeof(WAVEFORMATEX) + pFMT->cbSize);
 			return TRUE;
 		_ERROR:
+			LOG(ERROR) << "XAudio Open FAIL   " << hRes;
 			Close();
 			return FALSE;
 		}
@@ -133,7 +134,7 @@ namespace TinyUI
 				BOOL bRes = m_voiceCallback.Lock(dwMS);
 				if (!bRes)
 				{
-					LOG(ERROR) << "Audio Play Timeout";
+					LOG(ERROR) << "XAudio Play Timeout";
 				}
 			}
 			memcpy_s(m_array[m_dwIndex], size, bits, size);

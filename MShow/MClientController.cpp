@@ -162,7 +162,7 @@ namespace MShow
 			if (visual != NULL)
 			{
 				visual->SetVisible(TRUE);
-				visual->SetText(StringPrintf("Open %s Error!", pCTRL->m_szPreviewURL.c_str()).c_str());
+				visual->SetText("Ô¤ÀÀÁ÷´ò¿ªÊ§°Ü!");
 			}
 			LOG(ERROR) << "[SetPreview] " << "Open Preview :" << pCTRL->m_szPreviewURL << " Fail";
 		}

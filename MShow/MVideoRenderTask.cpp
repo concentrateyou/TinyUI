@@ -9,7 +9,8 @@ namespace MShow
 		m_clock(clock),
 		m_copyCB(std::move(copyCB)),
 		m_renderCB(std::move(renderCB)),
-		m_bBreak(FALSE)
+		m_bBreak(FALSE),
+		m_bInitialize(FALSE)
 	{
 
 	}
@@ -43,20 +44,26 @@ namespace MShow
 			BOOL bRes = m_task.GetVideoQueue().Pop(sampleTag);
 			if (!bRes || sampleTag.size <= 0)
 			{
-				Sleep(15);
+				Sleep(10);
+				if (m_bInitialize)
+				{
+					m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
+				}
 				continue;
 			}
 			if (sampleTag.samplePTS == m_clock.GetBasePTS())
 			{
 				m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
 			}
-			while (m_clock.GetBasePTS() == -1);
+			while (m_clock.GetBasePTS() == INVALID_TIME);
+			m_bInitialize = TRUE;
 			if (!m_copyCB.IsNull())
 			{
 				m_copyCB(sampleTag.bits + 4, sampleTag.size);
 			}
 			LONG systemMS = static_cast<LONG>(MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime());
 			INT delay = static_cast<INT>(sampleTag.samplePTS - systemMS);
+			TRACE("delay:%d - PTS:%lld - systemMS:%d\n", delay, sampleTag.samplePTS, systemMS);
 			if (timer.Wait(delay, 1000))
 			{
 				if (!m_renderCB.IsNull())
