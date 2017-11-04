@@ -11,6 +11,7 @@ namespace TinyUI
 		}
 		BOOL TinyDNS::Resolver(const string& host, const string& service, AddressList& list, INT addressFamily)
 		{
+			list.clear();
 			ADDRINFO* ai = NULL;
 			ADDRINFO hints = { 0 };
 			hints.ai_family = addressFamily;

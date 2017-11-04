@@ -124,7 +124,7 @@ namespace TinyUI
 		private:
 			INT						m_timeout;
 			TinyURL					m_szURL;
-			SOCKET					m_socket;
+			TinySocket				m_socket;
 			IPEndPoint				m_endpoint;
 			HTTPRequest				m_request;
 			HTTPResponse			m_reponse;

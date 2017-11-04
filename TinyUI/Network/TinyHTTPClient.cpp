@@ -275,7 +275,6 @@ namespace TinyUI
 		TinyHTTPClient::TinyHTTPClient()
 			:m_timeout(20000),
 			m_reponse(*this),
-			m_socket(INVALID_SOCKET),
 			m_size(DEFAULT_HTTP_BUFFER_SIZE)
 		{
 			m_raw.Reset(new CHAR[m_size]);
@@ -295,20 +294,14 @@ namespace TinyUI
 		}
 		BOOL TinyHTTPClient::IsEmpty() const
 		{
-			return (m_socket == NULL) || (m_socket == INVALID_SOCKET);
+			return m_socket.IsEmpty();
 		}
 		BOOL TinyHTTPClient::Open(const string& szURL)
 		{
 			if (!m_szURL.ParseURL(szURL.c_str(), szURL.size()))
 				return FALSE;
-			size_t size = 0;
+			INT size = 0;
 			SOCKADDR s = { 0 };
-			ULONG iMode = 1;
-			timeval val;
-			val.tv_sec = 5;//5秒超时
-			val.tv_usec = 0;
-			fd_set set;
-			FD_ZERO(&set);
 			string szHOST = m_szURL.GetComponent(TinyURL::HOST);
 			string szPORT = m_szURL.GetComponent(TinyURL::PORT);
 			string sSCHEME = m_szURL.GetComponent(TinyURL::SCHEME);
@@ -341,92 +334,65 @@ namespace TinyUI
 				m_endpoint.FromIPAddress(IPAddress(szHOST), szPORT.empty() ? (strcasecmp(sSCHEME.c_str(), HTTP) == 0 ? 80 : 443) : static_cast<SHORT>(std::stoi(szPORT)));
 			}
 			this->BuildRequest();
-			m_socket = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-			if (m_socket == INVALID_SOCKET)
+			if (!m_socket.Open(AF_INET, SOCK_STREAM, IPPROTO_TCP))
 			{
-				LOG(ERROR) << "socket == INVALID_SOCKET";
+				LOG(ERROR) << "socket Open:" << WSAGetLastError();
 				goto _ERROR;
 			}
-
-
-
-			BOOL bAllow = TRUE;
-			INT iRes = setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, (const CHAR*)&bAllow, sizeof(bAllow));
-			if (iRes != 0)
+			if (!m_socket.SetDelay(FALSE))
 			{
-				LOG(ERROR) << "setsockopt TCP_NODELAY:" << WSAGetLastError();
+				LOG(ERROR) << "socket SetNoDelay:" << WSAGetLastError();
 				goto _ERROR;
 			}
-			INT buffer = 512 * 1024;
-			iRes = ::setsockopt(m_socket, SOL_SOCKET, SO_RCVBUF, (const CHAR*)&buffer, sizeof(buffer));
-			if (iRes != 0)
+			size = 512 * 1024;
+			if (!m_socket.SetOption(SOL_SOCKET, SO_RCVBUF, (const CHAR*)&size, sizeof(size)))
 			{
 				LOG(ERROR) << "setsockopt SO_RCVBUF:" << WSAGetLastError();
 				goto _ERROR;
 			}
-			iRes = ::setsockopt(m_socket, SOL_SOCKET, SO_SNDBUF, (const CHAR*)&buffer, sizeof(buffer));
-			if (iRes != 0)
+			size = 512 * 1024;
+			if (!m_socket.SetOption(SOL_SOCKET, SO_SNDBUF, (const CHAR*)&size, sizeof(size)))
 			{
-				LOG(ERROR) << "setsockopt SO_SNDBUF:" << WSAGetLastError();
+				LOG(ERROR) << "socket SO_SNDBUF:" << WSAGetLastError();
 				goto _ERROR;
 			}
-			iRes = ::setsockopt(m_socket, SOL_SOCKET, SO_RCVTIMEO, (CHAR *)&m_timeout, sizeof(m_timeout));
-			if (iRes != 0)
+			if (!m_socket.SetTimeout(TRUE, m_timeout))
 			{
-				LOG(ERROR) << "setsockopt SO_RCVTIMEO:" << WSAGetLastError();
+				LOG(ERROR) << "socket SetTimeout:" << WSAGetLastError();
 				goto _ERROR;
 			}
-			iRes = ::setsockopt(m_socket, SOL_SOCKET, SO_SNDTIMEO, (CHAR *)&m_timeout, sizeof(m_timeout));
-			if (iRes != 0)
+			if (!m_socket.SetTimeout(FALSE, m_timeout))
 			{
-				LOG(ERROR) << "setsockopt SO_SNDTIMEO:" << WSAGetLastError();
+				LOG(ERROR) << "socket SetTimeout:" << WSAGetLastError();
 				goto _ERROR;
 			}
-			if (!m_endpoint.ToSOCKADDR(&s, &size))
+			if (!m_endpoint.ToSOCKADDR(&s, reinterpret_cast<size_t*>(&size)))
 			{
 				LOG(ERROR) << "ToSOCKADDR FAIL";
 				goto _ERROR;
 			}
-			iRes = ::ioctlsocket(m_socket, FIONBIO, &iMode);//设置异步模式
-			if (iRes != 0)
-			{
-				LOG(ERROR) << "ioctlsocket FIONBIO Mode = 1:" << WSAGetLastError();
-				goto _ERROR;
-			}
-			if (::connect(m_socket, (LPSOCKADDR)&s, sizeof(s)) == 0)
+			if (!m_socket.Connect(m_endpoint, 5))
 			{
 				LOG(ERROR) << "socket connect:" << WSAGetLastError();
 				goto _ERROR;
 			}
-			iMode = 0;
-			iRes = ioctlsocket(m_socket, FIONBIO, &iMode); //设置阻塞模式
-			if (iRes != 0)
+			INT iRes = this->Write(m_requests.GetPointer(), m_requests.GetSize());
+			if (iRes == SOCKET_ERROR || iRes != m_requests.GetSize())
 			{
-				LOG(ERROR) << "ioctlsocket FIONBIO Mode = 0:" << WSAGetLastError();
+				LOG(ERROR) << "socket send:" << GetLastError();
 				goto _ERROR;
 			}
-			FD_SET(m_socket, &set);
-			select(0, NULL, &set, NULL, &val);
-			if (FD_ISSET(m_socket, &set))
+			ZeroMemory(m_raw, DEFAULT_HTTP_BUFFER_SIZE);
+			CHAR* bits = NULL;
+			iRes = this->ReadSome(bits);
+			if (iRes == SOCKET_ERROR)
 			{
-				iRes = this->Write(m_requests.GetPointer(), m_requests.GetSize());
-				if (iRes == SOCKET_ERROR || iRes != m_requests.GetSize())
-				{
-					LOG(ERROR) << "socket send:" << GetLastError();
-					goto _ERROR;
-				}
-				ZeroMemory(m_raw, DEFAULT_HTTP_BUFFER_SIZE);
-				CHAR* bits = NULL;
-				iRes = this->ReadSome(bits);
-				if (iRes == SOCKET_ERROR)
-				{
-					LOG(ERROR) << "socket recv:" << GetLastError();
-					goto _ERROR;
-				}
-				if (m_reponse.ParseResponse(bits, iRes) && m_reponse.GetStatusCode() == 200)
-				{
-					return TRUE;
-				}
+				LOG(ERROR) << "socket recv:" << GetLastError();
+				goto _ERROR;
+			}
+			if (m_reponse.ParseResponse(bits, iRes) && m_reponse.GetStatusCode() == 200)
+			{
+				return TRUE;
 			}
 		_ERROR:
 			Close();
@@ -439,7 +405,7 @@ namespace TinyUI
 			{
 				if (value >= size)
 					break;
-				INT iRes = ::send(m_socket, bits + value, size - value, 0);
+				INT iRes = m_socket.Send(bits + value, size - value, 0);
 				if (iRes == SOCKET_ERROR)
 				{
 					LOG(ERROR) << "[TinyHTTPClient] Write FAIL:" << WSAGetLastError();
@@ -462,7 +428,7 @@ namespace TinyUI
 			{
 				if (value >= size)
 					break;
-				INT iRes = ::recv(m_socket, m_raw + value, size - value, 0);
+				INT iRes = m_socket.Receive(m_raw + value, size - value, 0);
 				if (iRes == SOCKET_ERROR)
 				{
 					LOG(ERROR) << "[TinyHTTPClient] Read FAIL:" << WSAGetLastError();
@@ -477,7 +443,7 @@ namespace TinyUI
 		INT TinyHTTPClient::ReadSome(CHAR*& bits)
 		{
 			ZeroMemory(m_raw, m_size);
-			INT iRes = ::recv(m_socket, m_raw, m_size, 0);
+			INT iRes = m_socket.Receive(m_raw, m_size, 0);
 			if (iRes == SOCKET_ERROR)
 			{
 				LOG(ERROR) << "[TinyHTTPClient] ReadSome FAIL:" << WSAGetLastError();
@@ -489,12 +455,7 @@ namespace TinyUI
 		}
 		void TinyHTTPClient::Close()
 		{
-			if (m_socket != NULL && m_socket != INVALID_SOCKET)
-			{
-				::shutdown(m_socket, SD_BOTH);
-				::closesocket(m_socket);
-			}
-			m_socket = INVALID_SOCKET;
+			m_socket.Close();
 		}
 		void TinyHTTPClient::BuildRequest()
 		{

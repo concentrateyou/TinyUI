@@ -88,6 +88,9 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	CoInitializeEx(NULL, COINIT_MULTITHREADED);
 	LoadSeDebugPrivilege();
 
+	TinyHTTPClient client;
+	client.Open("http://www.bai.com");
+
 	//QSV::QSVEncoder encoder;
 	//encoder.Open({ 1280,720 }, { 1280,720 });
 	//FILE *hFile1 = fopen("D:\\output.rgb4", "rb");

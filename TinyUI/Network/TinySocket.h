@@ -71,7 +71,7 @@ namespace TinyUI
 			TinySocket(TinyIOServer* ioserver = NULL);
 			virtual ~TinySocket();
 			TinyIOServer* GetIOServer() const;
-			BOOL	IsValid() const;
+			BOOL	IsEmpty() const;
 			BOOL	IsConnect() const;
 			BOOL	Open(INT addressFamily = AF_INET, INT socketType = SOCK_STREAM, INT protocolType = IPPROTO_TCP);
 			BOOL	SetKeepAlive(BOOL bAllow);
@@ -86,9 +86,10 @@ namespace TinyUI
 			INT		GetLastError();
 		public:
 			TinySocket* Accept();
+			BOOL	Poll(INT micros, INT mode);//read = 0,write = 1,error = 2
 			BOOL	Bind(const IPEndPoint& endpoint);
 			BOOL	Listen(DWORD backlog = SOMAXCONN);
-			BOOL	Connect(const IPEndPoint& endpoint);
+			BOOL	Connect(const IPEndPoint& endpoint, DWORD dwS);
 			INT		Receive(CHAR* data, DWORD dwSize, DWORD dwFlag = 0);
 			INT		Send(CHAR* data, DWORD dwSize, DWORD dwFlag = 0);
 			INT		ReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, IPEndPoint& endpoint);
@@ -115,15 +116,14 @@ namespace TinyUI
 		private:
 			static void CALLBACK AsyncCallback(PVOID pThis, BOOLEAN b);
 		protected:
+			INT					m_addressFamily;
+			INT					m_socketType;
+			INT					m_protocolType;
+			BOOL				m_connect;
 			TinyIOServer*		m_ioserver;
 			LPFN_DISCONNECTEX	m_disconnectex;
 			LPFN_CONNECTEX		m_connectex;
 			LPFN_ACCEPTEX		m_acceptex;
-			INT					m_addressFamily;
-			INT					m_socketType;
-			INT					m_protocolType;
-			DWORD				m_dwMode;
-			BOOL				m_connect;
 			TinyLock			m_synclock;
 		};
 	}
