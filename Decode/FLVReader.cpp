@@ -17,7 +17,7 @@ namespace Decode
 		m_count(0),
 		m_basePTS(-1)
 	{
-		
+
 	}
 	FLVReader::~FLVReader()
 	{
@@ -39,6 +39,7 @@ namespace Decode
 			if (!m_stream)
 				return FALSE;
 			HTTPStream* ps = static_cast<HTTPStream*>(m_stream.Ptr());
+			ps->SetErrorCallback(BindCallback(&FLVReader::OnError, this));
 			if (!ps->Open(pzURL))
 				return FALSE;
 		}
@@ -198,10 +199,6 @@ namespace Decode
 					}
 				}
 				return ParseVideo(data, size, block);
-			}
-			else
-			{
-				INT a = 0;
 			}
 		}
 		return FALSE;
@@ -531,6 +528,17 @@ namespace Decode
 	LONGLONG FLVReader::GetBasePTS()
 	{
 		return m_basePTS;
+	}
+	void FLVReader::OnError(INT iError)
+	{
+		if (!m_errorCallback.IsNull())
+		{
+			m_errorCallback(iError);
+		}
+	}
+	void FLVReader::SetErrorCallback(Callback<void(INT)>&& callback)
+	{
+		m_errorCallback = std::move(callback);
 	}
 }
 

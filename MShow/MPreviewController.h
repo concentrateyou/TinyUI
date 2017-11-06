@@ -29,10 +29,13 @@ namespace MShow
 		void			OnAudio(BYTE* bits, LONG size);
 		void			OnVideoCopy(BYTE* bits, LONG size);
 		void			OnVideoRender();
+		void			OnTry();
+		void			OnError(INT);
 	private:
 		TinySize					m_videoSize;
 		TinySize					m_viewSize;
 		TinyPerformanceTime			m_timeQPC;
+		TinyTaskTimer				m_timer;
 		DX2D						m_d2d;
 		TinyComPtr<ID2D1Bitmap>		m_bitmap;
 		MPreviewView&				m_view;

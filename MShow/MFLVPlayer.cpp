@@ -9,9 +9,10 @@ namespace MShow
 		m_audioRenderTask(m_audioTask, m_clock),
 		m_videoTask(m_task, m_clock),
 		m_videoRenderTask(m_videoTask, m_clock, std::move(videoCopyCB), std::move(videoRenderCB)),
-		m_dwRate(25)
+		m_dwRate(25),
+		m_bBreak(FALSE)
 	{
-
+		
 	}
 
 	MFLVPlayer::MFLVPlayer(Callback<void(BYTE*, LONG)>&& audioCB, Callback<void(BYTE*, LONG)>&& videoCopyCB, Closure&& videoRenderCB)
@@ -20,15 +21,21 @@ namespace MShow
 		m_audioRenderTask(m_audioTask, m_clock, std::move(audioCB)),
 		m_videoTask(m_task, m_clock),
 		m_videoRenderTask(m_videoTask, m_clock, std::move(videoCopyCB), std::move(videoRenderCB)),
-		m_dwRate(25)
+		m_dwRate(25),
+		m_bBreak(FALSE)
 	{
+		
 	}
 
 	MFLVPlayer::~MFLVPlayer()
 	{
-	}
 
-	BOOL MFLVPlayer::Open(HWND hWND, LPCSTR pzURL)
+	}
+	void MFLVPlayer::SetErrorCallback(TinyUI::Callback<void(INT)>&& callback)
+	{
+		m_task.SetErrorCallback(std::move(callback));
+	}
+	BOOL MFLVPlayer::Open(LPCSTR pzURL)
 	{
 		m_szURL = pzURL;
 		if (!m_task.Initialize(m_szURL.STR()))

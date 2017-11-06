@@ -17,15 +17,17 @@ namespace Decode
 
 	BOOL HTTPStream::Open(LPCSTR pzURL)
 	{
-		//m_hFile = fopen("D:\\test.flv", "wb");
 		return m_client.Open(pzURL);
 	}
 
 	BOOL HTTPStream::Close()
 	{
-		//fclose(m_hFile);
 		m_client.Close();
 		return TRUE;
+	}
+	void HTTPStream::SetErrorCallback(Callback<void(INT)>&& callback)
+	{
+		m_client.SetErrorCallback(std::move(callback));
 	}
 
 	STDMETHODIMP HTTPStream::QueryInterface(REFIID riid, void **ppvObj)
@@ -56,7 +58,6 @@ namespace Decode
 		delete this;
 		return NOERROR;
 	}
-
 	STDMETHODIMP HTTPStream::Read(VOID *pv, ULONG cb, ULONG *pcbRead)
 	{
 		if (!pv)
@@ -66,20 +67,16 @@ namespace Decode
 		{
 			pcbRead = &cbRead;
 		}
+		HRESULT hRes = S_OK;
 		INT size = 0;
 		CHAR* bits = NULL;
-		size = (ULONG)m_client.Read(bits, cb);
+		size = m_client.Read(bits, cb);
 		if (size > 0)
 		{
 			memcpy(pv, bits, size);
-			//fwrite(bits, 1, size, m_hFile);
-		}
-		if (size <= 0)
-		{
-			TRACE("HTTPStream Read:%d\n", size);
 		}
 		*pcbRead = static_cast<ULONG>(size);
-		return S_OK;
+		return hRes;
 	}
 
 	STDMETHODIMP HTTPStream::Write(const void *pv, ULONG cb, ULONG *pcbWritten)

@@ -182,7 +182,10 @@ namespace MShow
 		}
 		return TRUE;
 	}
-
+	void MFLVTask::SetErrorCallback(TinyUI::Callback<void(INT)>&& callback)
+	{
+		m_reader.SetErrorCallback(std::move(callback));
+	}
 	MFLVTask::~MFLVTask()
 	{
 	}

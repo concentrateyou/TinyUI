@@ -215,6 +215,8 @@ namespace TinyUI
 	public:
 		TinyPerformanceTimer();
 		~TinyPerformanceTimer();
+		BOOL Create(BOOL bManualReset = TRUE, LPCSTR pszName = NULL);
+		BOOL Open(LPCSTR pszName);
 		BOOL SetCallback(INT delay, Closure&& callback);
 		BOOL Waiting(INT delay, DWORD dwMilliseconds);
 		void Close();
@@ -224,6 +226,45 @@ namespace TinyUI
 		TinyEvent	m_event;
 	private:
 		static void CALLBACK TimerCallback(UINT uTimerID, UINT  uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2);
+	};
+	/// <summary>
+	/// 无窗口定时器
+	/// </summary>
+	class TinyWaitableTimer
+	{
+		DISALLOW_COPY_AND_ASSIGN(TinyWaitableTimer)
+	public:
+		TinyWaitableTimer();
+		~TinyWaitableTimer();
+		BOOL Create(BOOL bManualReset, LPCSTR pszName);
+		BOOL Open(LPCSTR pszName);
+		BOOL SetCallback(LONG due, LONG period, Closure&& callback);
+		BOOL Waiting(LONG due);
+		void Close();
+	private:
+		static void CALLBACK TimerCallback(LPVOID lpArgToCompletionRoutine, DWORD  dwTimerLowValue, DWORD  dwTimerHighValue);
+	private:
+		BOOL			m_bBreak;
+		HANDLE			m_hTimer;
+		Closure			m_callback;
+	};
+	/// <summary>
+	/// Win32定时器(需要线程消息循环)
+	/// </summary>
+	class TinyTimer
+	{
+		DISALLOW_COPY_AND_ASSIGN(TinyTimer)
+	public:
+		TinyTimer();
+		~TinyTimer();
+		BOOL SetCallback(UINT elapse, Closure&& callback);
+		void Close();
+	private:
+		static void CALLBACK TimerCallback(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD  dwTime);
+	private:
+		UINT_PTR	m_timerID;
+		Closure		m_callback;
+		static TinySimpleMap<UINT_PTR, TinyTimer*> m_map;
 	};
 	/// <summary>
 	/// Library封装 

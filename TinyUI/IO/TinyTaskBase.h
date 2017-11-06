@@ -17,6 +17,7 @@ namespace TinyUI
 		/// </summary>
 		class TinyTaskBase
 		{
+			DISALLOW_COPY_AND_ASSIGN(TinyTaskBase)
 		public:
 			TinyTaskBase();
 			virtual ~TinyTaskBase();
@@ -34,6 +35,26 @@ namespace TinyUI
 			DWORD		m_dwTaskID;
 			HANDLE		m_hTask;
 			Closure		m_callback;
+		};
+		/// <summary>
+		/// ¶¨Ê±Æ÷
+		/// </summary>
+		class TinyTaskTimer
+		{
+			DISALLOW_COPY_AND_ASSIGN(TinyTaskTimer)
+		public:
+			TinyTaskTimer();
+			~TinyTaskTimer();
+			BOOL SetCallback(LONG delay, Closure&& callback);
+			void Close();
+		private:
+			void OnMessagePump();
+		public:
+			BOOL				m_bBreak;
+			LONG				m_delay;
+			Closure				m_callback;
+			TinyTaskBase		m_task;
+			TinyWaitableTimer	m_timer;
 		};
 	};
 }

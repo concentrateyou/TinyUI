@@ -40,7 +40,8 @@ namespace MShow
 		m_player.Reset(new MFLVPlayer(BindCallback(&MPreviewController::OnAudio, this), BindCallback(&MPreviewController::OnVideoCopy, this), BindCallback(&MPreviewController::OnVideoRender, this)));
 		if (!m_player)
 			goto _ERROR;
-		if (!m_player->Open(m_view.Handle(), pzURL))
+		m_player->SetErrorCallback(BindCallback(&MPreviewController::OnError, this));
+		if (!m_player->Open(pzURL))
 		{
 			LOG(ERROR) << "[MPreviewController] " << "Open FAIL";
 			goto _ERROR;
@@ -70,6 +71,37 @@ namespace MShow
 		m_bitmap.Release();
 		LOG(INFO) << "[MPreviewController] " << "Player Close OK";
 		return TRUE;
+	}
+
+	void MPreviewController::OnError(INT iError)
+	{
+		switch (iError)
+		{
+		case WSAENETDOWN:
+		case WSAENETUNREACH:
+		case WSAENETRESET:
+		case WSAECONNABORTED:
+		case WSAECONNRESET:
+		{
+			m_timer.SetCallback(5000, BindCallback(&MPreviewController::OnTry, this));//Ã¿¸ô5ÃëÖØÊÔ
+			TRACE("On Error:%d\n", iError);
+		}
+		break;
+		}
+	}
+	void MPreviewController::OnTry()
+	{
+		BOOL bRes = this->Close();
+		TRACE("OnTry Close:%d\n", bRes);
+		if (this->Open(m_player->GetURL().CSTR()))
+		{
+			TRACE("OnTry Open OK\n");
+			m_timer.Close();
+		}
+		else
+		{
+			TRACE("OnTry Open FAIL\n");
+		}
 	}
 
 	MPreviewView& MPreviewController::GetView()

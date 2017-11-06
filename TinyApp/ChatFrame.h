@@ -53,9 +53,11 @@ public:
 	LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 private:
 	void OnMessagePump();
+	void OnTimerPump();
 private:
 	DX9Graphics2D	m_graphics2D;
 	DX9Image2D		m_image2D;
 	TinyTaskBase	m_task;
+	TinyTimer		m_timer;
 };
 

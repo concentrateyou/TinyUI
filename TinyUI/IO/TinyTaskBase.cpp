@@ -47,7 +47,7 @@ namespace TinyUI
 			BOOL bRes = FALSE;
 			if (m_hTask != NULL)
 			{
-				HRESULT hRes = WaitForSingleObject(m_hTask, dwMS);
+				HRESULT hRes = WaitForSingleObjectEx(m_hTask, dwMS, TRUE);
 				if (hRes == WAIT_TIMEOUT)
 				{
 					bRes = FALSE;
@@ -109,6 +109,57 @@ namespace TinyUI
 				throw(e);
 			}
 			return FALSE;
+		}
+		//////////////////////////////////////////////////////////////////////////
+		TinyTaskTimer::TinyTaskTimer()
+			:m_delay(0),
+			m_bBreak(FALSE)
+		{
+
+		}
+		TinyTaskTimer::~TinyTaskTimer()
+		{
+
+		}
+		BOOL TinyTaskTimer::SetCallback(LONG delay, Closure&& callback)
+		{
+			m_delay = delay;
+			m_callback = std::move(callback);
+			if (m_timer.Create(TRUE, NULL))
+			{
+				m_bBreak = FALSE;
+				return m_task.Submit(BindCallback(&TinyTaskTimer::OnMessagePump, this));
+			}
+			return FALSE;
+		}
+		void TinyTaskTimer::Close()
+		{
+			m_bBreak = TRUE;
+			m_timer.Close();
+			TRACE("TinyTaskTimer Close OK\n");
+		}
+		void TinyTaskTimer::OnMessagePump()
+		{
+			for (;;)
+			{
+				TRACE("TinyTaskTimer Begin Waiting\n");
+				m_timer.Waiting(m_delay);
+				TRACE("TinyTaskTimer End Waiting\n");
+				if (!m_bBreak)
+				{
+					if (!m_callback.IsNull())
+					{
+						m_callback();
+					}
+				}
+				if (m_bBreak)
+				{
+					TRACE("TinyTaskTimer Break = TRUE\n");
+					break;
+				}
+				TRACE("TinyTaskTimer Continue\n");
+			}
+			TRACE("TinyTaskTimer OnMessagePump\n");
 		}
 	}
 }

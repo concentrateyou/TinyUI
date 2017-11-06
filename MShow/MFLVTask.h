@@ -15,6 +15,7 @@ namespace MShow
 	public:
 		MFLVTask(MClock& clock);
 		virtual ~MFLVTask();
+		void SetErrorCallback(TinyUI::Callback<void(INT)>&& callback);
 		BOOL Initialize(LPCSTR pzURL);
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;

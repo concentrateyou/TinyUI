@@ -796,7 +796,9 @@ private:\
 	void TinyScopedArray<T>::Reset(T* ps) throw()
 	{
 		if (ps != m_myP)
-			delete[] m_myP;
+		{
+			SAFE_DELETE_ARRAY(m_myP);
+		}
 		m_myP = ps;
 	}
 	template<class T>

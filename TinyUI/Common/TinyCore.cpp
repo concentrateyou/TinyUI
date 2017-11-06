@@ -426,18 +426,11 @@ namespace TinyUI
 	}
 	BOOL TinyPerformanceTimer::SetCallback(INT delay, Closure&& callback)
 	{
-		m_event.Close();
-		m_event.CreateEvent();
 		if (delay <= 0)
-		{
 			return TRUE;
-		}
+		this->Close();
+		m_event.CreateEvent();
 		m_callback = std::move(callback);
-		if (m_timerID != NULL)
-		{
-			timeKillEvent(m_timerID);
-			m_timerID = 0;
-		}
 		m_timerID = static_cast<UINT>(timeSetEvent(delay, 1, &TinyPerformanceTimer::TimerCallback, reinterpret_cast<DWORD_PTR>(this), TIME_PERIODIC));
 		return m_timerID != 0;
 	}
@@ -445,10 +438,10 @@ namespace TinyUI
 	{
 		if (delay <= 0)
 			return TRUE;
-		if (m_timerID != NULL)
+		if (m_timerID != 0)
 		{
 			timeKillEvent(m_timerID);
-			m_timerID = NULL;
+			m_timerID = 0;
 		}
 		m_timerID = static_cast<UINT>(timeSetEvent(delay, 1, reinterpret_cast<LPTIMECALLBACK>(m_event.Handle()), NULL, TIME_CALLBACK_EVENT_SET));
 		if (m_timerID != NULL)
@@ -462,10 +455,10 @@ namespace TinyUI
 	void TinyPerformanceTimer::Close()
 	{
 		m_event.Close();
-		if (m_timerID != NULL)
+		if (m_timerID != 0)
 		{
 			timeKillEvent(m_timerID);
-			m_timerID = NULL;
+			m_timerID = 0;
 		}
 	}
 	TinyPerformanceTimer::~TinyPerformanceTimer()
@@ -481,6 +474,122 @@ namespace TinyUI
 			{
 				pThis->m_callback();
 			}
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
+	TinyWaitableTimer::TinyWaitableTimer()
+		:m_hTimer(NULL),
+		m_bBreak(FALSE)
+	{
+
+	}
+	TinyWaitableTimer::~TinyWaitableTimer()
+	{
+
+	}
+	BOOL TinyWaitableTimer::Create(BOOL bManualReset, LPCSTR pszName)
+	{
+		this->Close();
+		m_hTimer = CreateWaitableTimer(NULL, bManualReset, pszName);
+		return m_hTimer != NULL;
+	}
+	BOOL TinyWaitableTimer::Open(LPCSTR pszName)
+	{
+		this->Close();
+		m_hTimer = OpenWaitableTimer(EVENT_ALL_ACCESS, TRUE, pszName);
+		return m_hTimer != NULL;
+	}
+	BOOL TinyWaitableTimer::SetCallback(LONG due, LONG period, Closure&& callback)
+	{
+		m_callback = std::move(callback);
+		if (m_hTimer != NULL)
+		{
+			LARGE_INTEGER lElapse;
+			lElapse.QuadPart = -((INT)(due) * 10000);
+			return SetWaitableTimer(m_hTimer, &lElapse, period, TinyWaitableTimer::TimerCallback, this, FALSE);
+		}
+		return FALSE;
+	}
+	BOOL TinyWaitableTimer::Waiting(LONG due)
+	{
+		if (m_hTimer != NULL)
+		{
+			LARGE_INTEGER lElapse;
+			lElapse.QuadPart = -((INT)(due) * 10000);
+			if (SetWaitableTimer(m_hTimer, &lElapse, 0, NULL, NULL, FALSE))
+			{
+				TRACE("WaitForSingleObject - Begin\n");
+				HRESULT hRes = WaitForSingleObjectEx(m_hTimer, INFINITE,TRUE);
+				TRACE("WaitForSingleObject - End\n");
+				if (hRes == WAIT_OBJECT_0)
+				{
+					return TRUE;
+				}
+				else
+				{
+					INT a = 0;
+				}
+			}
+		}
+		return FALSE;
+	}
+	void TinyWaitableTimer::Close()
+	{
+		if (m_hTimer != NULL)
+		{
+			CancelWaitableTimer(m_hTimer);
+			LARGE_INTEGER lElapse;
+			lElapse.QuadPart = 0;
+			SetWaitableTimer(m_hTimer, &lElapse, 0, NULL, NULL, FALSE);
+			CloseHandle(m_hTimer);
+			m_hTimer = NULL;
+		}
+	}
+	void CALLBACK TinyWaitableTimer::TimerCallback(LPVOID lpArgToCompletionRoutine, DWORD  dwTimerLowValue, DWORD  dwTimerHighValue)
+	{
+		TinyWaitableTimer* timer = static_cast<TinyWaitableTimer*>(lpArgToCompletionRoutine);
+		if (timer != NULL)
+		{
+			timer->m_callback();
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
+	TinySimpleMap<UINT_PTR, TinyTimer*> TinyTimer::m_map;
+	TinyTimer::TinyTimer()
+		:m_timerID(0)
+	{
+
+	}
+	TinyTimer::~TinyTimer()
+	{
+
+	}
+	BOOL TinyTimer::SetCallback(UINT elapse, Closure&& callback)
+	{
+		this->Close();
+		m_callback = std::move(callback);
+		m_timerID = ::SetTimer(NULL, 0, elapse, TinyTimer::TimerCallback);
+		if (m_timerID != 0)
+		{
+			return m_map.Add(m_timerID, this);
+		}
+		return FALSE;
+	}
+	void TinyTimer::Close()
+	{
+		if (m_timerID != 0)
+		{
+			KillTimer(NULL, m_timerID);
+			m_timerID = 0;
+		}
+		m_map.Remove(m_timerID);
+	}
+	void CALLBACK TinyTimer::TimerCallback(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD  dwTime)
+	{
+		TinyTimer* timer = *(TinyTimer::m_map.Lookup(idEvent));
+		if (timer != NULL)
+		{
+			timer->m_callback();
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////

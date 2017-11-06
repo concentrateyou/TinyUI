@@ -145,6 +145,7 @@ LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHand
 	//POINT pos = { 0,0 };
 	//UpdateLayeredWindow(m_hWND, hDC, &pos, &size, memDC, &pos, 0, &blendFunction, 2);
 	//ReleaseDC(NULL, hDC);
+
 	TinyRectangle s;
 	GetClientRect(&s);
 	BOOL bRes = m_graphics2D.Initialize(m_hWND, s.Size());

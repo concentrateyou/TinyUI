@@ -284,6 +284,10 @@ namespace TinyUI
 		{
 			this->Close();
 		}
+		void TinyHTTPClient::SetErrorCallback(Callback<void(INT)>&& callback)
+		{
+			m_socket.SetErrorCallback(std::move(callback));
+		}
 		HTTPRequest& TinyHTTPClient::GetRequest()
 		{
 			return m_request;
@@ -431,7 +435,6 @@ namespace TinyUI
 				INT iRes = m_socket.Receive(m_raw + value, size - value, 0);
 				if (iRes == SOCKET_ERROR)
 				{
-					LOG(ERROR) << "[TinyHTTPClient] Read FAIL:" << WSAGetLastError();
 					bits = NULL;
 					return iRes;
 				}
@@ -446,7 +449,6 @@ namespace TinyUI
 			INT iRes = m_socket.Receive(m_raw, m_size, 0);
 			if (iRes == SOCKET_ERROR)
 			{
-				LOG(ERROR) << "[TinyHTTPClient] ReadSome FAIL:" << WSAGetLastError();
 				bits = NULL;
 				return iRes;
 			}

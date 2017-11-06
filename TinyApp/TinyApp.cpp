@@ -70,7 +70,6 @@ BOOL LoadSeDebugPrivilege()
 	return TRUE;
 }
 
-
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -87,9 +86,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	HRESULT hRes = OleInitialize(NULL);
 	CoInitializeEx(NULL, COINIT_MULTITHREADED);
 	LoadSeDebugPrivilege();
-
-	TinyHTTPClient client;
-	client.Open("http://www.bai.com");
 
 	//QSV::QSVEncoder encoder;
 	//encoder.Open({ 1280,720 }, { 1280,720 });

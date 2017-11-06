@@ -183,7 +183,7 @@ namespace TinyUI
 		}
 		else
 		{
-			Assign(s, 0, s.GetSize());
+			Assign(s, 0, s._Mysize);
 		}
 	}
 	TinyString::TinyString(TinyString&& s)
@@ -252,7 +252,7 @@ namespace TinyUI
 	}
 	TinyString& TinyString::Append(const TinyString& str, size_t pos, size_t size)
 	{
-		size_t _Num = str.GetSize() - pos;
+		size_t _Num = str._Mysize - pos;
 		if (_Num < size)
 			size = _Num;
 		if (0 < size)
@@ -293,11 +293,11 @@ namespace TinyUI
 	}
 	TinyString& TinyString::Append(const TinyString& str)
 	{
-		return Append(str, 0, str.GetSize());
+		return Append(str, 0, str._Mysize);
 	}
 	TinyString& TinyString::operator += (const TinyString& str)
 	{
-		return Append(str, 0, str.GetSize());
+		return Append(str, 0, str._Mysize);
 	}
 	TinyString& TinyString::operator += (const CHAR* s)
 	{
@@ -323,7 +323,7 @@ namespace TinyUI
 	}
 	TinyString& TinyString::operator = (const TinyString& str)
 	{
-		return Assign(str, 0, str.GetSize());
+		return Assign(str, 0, str._Mysize);
 	}
 	TinyString& TinyString::operator = (const CHAR* s)
 	{
@@ -436,7 +436,7 @@ namespace TinyUI
 	}
 	TinyString& TinyString::Assign(const TinyString& str, size_t pos, size_t size)
 	{
-		if (str.GetSize() <= pos)
+		if (str._Mysize <= pos)
 		{
 			this->_Mysize = 0;
 			this->_Myres = 0;
@@ -445,7 +445,7 @@ namespace TinyUI
 		}
 		else
 		{
-			size_t _Num = str.GetSize() - pos;
+			size_t _Num = str._Mysize - pos;
 			if (size < _Num)
 				_Num = size;
 			if (this == &str)//substring
@@ -562,12 +562,12 @@ namespace TinyUI
 	}
 	TinyString& TinyString::Insert(size_t pos, const TinyString& str)
 	{
-		return Insert(pos, str, 0, str.GetSize());
+		return Insert(pos, str, 0, str._Mysize);
 	}
 	TinyString& TinyString::Insert(size_t pos, const TinyString& str, size_t subpos, size_t subsize)
 	{
-		ASSERT(this->_Mysize >= pos && str.GetSize() >= subpos);
-		size_t _Num = str.GetSize() - subpos;
+		ASSERT(this->_Mysize >= pos && str._Mysize >= subpos);
+		size_t _Num = str._Mysize - subpos;
 		if (_Num < subsize)
 			subsize = _Num;
 		if (0 < subsize)
@@ -682,7 +682,7 @@ namespace TinyUI
 	}
 	INT	TinyString::IndexOf(const TinyString& str, size_t pos) const
 	{
-		return IndexOf(str.STR(), pos, str.GetSize());
+		return IndexOf(str.STR(), pos, str._Mysize);
 	}
 	INT	TinyString::IndexOf(const CHAR* s, size_t pos, size_t size) const
 	{
@@ -717,7 +717,7 @@ namespace TinyUI
 	}
 	INT	TinyString::LastIndexOf(const TinyString& str, size_t pos) const
 	{
-		return LastIndexOf(str.STR(), pos, str.GetSize());
+		return LastIndexOf(str.STR(), pos, str._Mysize);
 	}
 	INT	TinyString::LastIndexOf(const CHAR* s, size_t pos, size_t size) const
 	{
@@ -790,7 +790,7 @@ namespace TinyUI
 	void TinyString::Split(char sep, TinyArray<TinyString>& strs) const
 	{
 		size_t last = 0;
-		size_t size = this->GetSize();
+		size_t size = this->_Mysize;
 		for (size_t i = 0; i <= size; ++i)
 		{
 			if (i == size || this->_Mystr[i] == sep)
@@ -816,7 +816,7 @@ namespace TinyUI
 	}
 	TinyString	TinyString::Trim(const TinyString& str) const
 	{
-		return Trim(str.STR(), str.GetSize());
+		return Trim(str.STR(), str._Mysize);
 	}
 	TinyString	TinyString::Trim(const CHAR* s, size_t size) const
 	{
@@ -920,14 +920,14 @@ namespace TinyUI
 	}
 	TinyString&	TinyString::Replace(size_t pos, size_t size, const TinyString& str)
 	{
-		return Replace(pos, size, str, 0, str.GetSize());
+		return Replace(pos, size, str, 0, str._Mysize);
 	}
 	TinyString& TinyString::Replace(size_t pos, size_t size, const TinyString& str, size_t subpos, size_t subsize)
 	{
-		ASSERT(this->_Mysize >= pos || str.GetSize() > subpos);
+		ASSERT(this->_Mysize >= pos || str._Mysize > subpos);
 		if (this->_Mysize - pos < size)
 			size = this->_Mysize - pos;
-		size_t _Num = str.GetSize() - subpos;
+		size_t _Num = str._Mysize - subpos;
 		if (_Num < subsize)
 			subsize = _Num;
 		size_t _Nm = this->_Mysize - size - pos;

@@ -23,6 +23,7 @@ namespace Decode
 		DWORD		Seek(LONG offset, DWORD dwFlag);
 		BOOL		Close();
 		LONGLONG	GetBasePTS();
+		void		SetErrorCallback(Callback<void(INT)>&& callback);
 	private:
 		BOOL ParseScript(BYTE* data, INT size, FLV_SCRIPTDATA& script);
 		BOOL ParseVideo(BYTE* data, INT size, FLV_BLOCK& block);
@@ -33,6 +34,7 @@ namespace Decode
 		BOOL ParseH264(FLV_TAG_VIDEO* video, BYTE* data, INT size, FLV_BLOCK& block);
 		BOOL ParseMPEG4(FLV_TAG_VIDEO* video, BYTE* data, INT size, FLV_BLOCK& block);
 		BOOL ParseNALUS(FLV_TAG_VIDEO* video, BYTE* data, INT size, FLV_BLOCK& block);
+		void OnError(INT iError);
 	private:
 		BOOL					m_bNetwork;
 		BOOL					m_bAudio;
@@ -45,7 +47,7 @@ namespace Decode
 		FLV_TAG_VIDEO			m_videoTag;
 		FLV_SCRIPTDATA			m_script;
 		TinyComPtr<IStream>		m_stream;
-		
+		Callback<void(INT)>		m_errorCallback;
 	};
 }
 

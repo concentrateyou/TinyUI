@@ -16,7 +16,7 @@ namespace MShow
 		MFLVPlayer(Callback<void(BYTE*, LONG)>&& videoCopyCB, Closure&& videoRenderCB);
 		MFLVPlayer(Callback<void(BYTE*, LONG)>&& audioCB, Callback<void(BYTE*, LONG)>&& videoCopyCB, Closure&& videoRenderCB);
 		virtual ~MFLVPlayer();
-		BOOL			Open(HWND hWND, LPCSTR pzURL);
+		BOOL			Open(LPCSTR pzURL);
 		BOOL			Close();
 		BOOL			SetVolume(DWORD volume);
 		TinySize		GetSize() const;
@@ -24,7 +24,9 @@ namespace MShow
 		TinyString		GetURL() const;
 		WAVEFORMATEX*	GetFormat();
 		LONGLONG		GetBasePTS();
+		void			SetErrorCallback(TinyUI::Callback<void(INT)>&& callback);
 	private:
+		BOOL							m_bBreak;
 		DWORD							m_dwRate;
 		TinyString						m_szURL;
 		TinySize						m_size;
