@@ -21,13 +21,23 @@ namespace DXFramework
 		m_d3d9.Attach(Direct3DCreate9(D3D_SDK_VERSION));
 		if (m_d3d9 == NULL)
 			return FALSE;
+		D3DDISPLAYMODE displayMode;
+		HRESULT hRes = m_d3d9->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &displayMode);
+		D3DMULTISAMPLE_TYPE multiType = D3DMULTISAMPLE_NONE;
+		if (m_d3d9->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT,
+			D3DDEVTYPE_HAL, displayMode.Format, TRUE,
+			D3DMULTISAMPLE_4_SAMPLES,
+			NULL) == D3D_OK)
+		{
+			multiType = D3DMULTISAMPLE_4_SAMPLES;
+		}
 		D3DPRESENT_PARAMETERS d3dpp;
 		ZeroMemory(&d3dpp, sizeof(d3dpp));
 		d3dpp.BackBufferWidth = cx;
 		d3dpp.BackBufferHeight = cy;
-		d3dpp.BackBufferFormat = D3DFMT_A8R8G8B8;
+		d3dpp.BackBufferFormat = displayMode.Format;
 		d3dpp.BackBufferCount = 1;
-		d3dpp.MultiSampleType = D3DMULTISAMPLE_NONE;
+		d3dpp.MultiSampleType = multiType;
 		d3dpp.MultiSampleQuality = 0;
 		d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 		d3dpp.hDeviceWindow = hWND;
@@ -37,7 +47,7 @@ namespace DXFramework
 		d3dpp.Flags = 0;
 		d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 		d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-		HRESULT hRes = m_d3d9->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWND, D3DCREATE_HARDWARE_VERTEXPROCESSING, &d3dpp, &m_d3dd9);
+		hRes = m_d3d9->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWND, D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_PUREDEVICE, &d3dpp, &m_d3dd9);
 		if (hRes != S_OK)
 			return FALSE;
 		ZeroMemory(&m_viewPort, sizeof(m_viewPort));
@@ -65,18 +75,18 @@ namespace DXFramework
 		hRes = m_d3dd9->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 		if (hRes != S_OK)
 			return FALSE;
-		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-		if (hRes != S_OK)
-			return FALSE;
-		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
-		if (hRes != S_OK)
-			return FALSE;
-		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-		if (hRes != S_OK)
-			return FALSE;
-		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
-		if (hRes != S_OK)
-			return FALSE;
+		//hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+		//if (hRes != S_OK)
+		//	return FALSE;
+		//hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+		//if (hRes != S_OK)
+		//	return FALSE;
+		//hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+		//if (hRes != S_OK)
+		//	return FALSE;
+		//hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+		//if (hRes != S_OK)
+		//	return FALSE;
 		m_background2D.Reset(new DX9RenderView(*this));
 		if (!m_background2D->Create())
 			return FALSE;

@@ -19,6 +19,7 @@ namespace DXFramework
 
 	BOOL DX9Image2D::Initialize(DX9& dx9)
 	{
+		m_vertexBuffer.Release();
 		INT vertexCount = GetVertexCount();
 		TinyScopedArray<VERTEXTYPE> vertices(new VERTEXTYPE[vertexCount]);
 		ZeroMemory(vertices.Ptr(), (sizeof(VERTEXTYPE) * vertexCount));
@@ -117,6 +118,7 @@ namespace DXFramework
 		dx9.GetD3D()->SetTransform(D3DTS_VIEW, &ms[1]);
 		dx9.GetD3D()->SetTransform(D3DTS_WORLD, &ms[2]);
 		dx9.GetD3D()->SetStreamSource(0, m_vertexBuffer, 0, sizeof(VERTEXTYPE));
+		dx9.GetD3D()->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
 		dx9.GetD3D()->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
 		return TRUE;
 	}

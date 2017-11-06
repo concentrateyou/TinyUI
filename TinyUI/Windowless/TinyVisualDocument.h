@@ -39,7 +39,7 @@ namespace TinyUI
 			BOOL Destory(TinyVisual* spvis);
 		public:
 			HWND				Handle() const;
-			TinyVisualFrame*		GetVisualHWND() const;
+			TinyVisualFrame*	GetVisualHWND() const;
 			TinyVisualDC*		GetVisualDC() const;
 			TinyVisual*			GetVisual(TinyVisual* spvis, UINT cmd) const;
 			TinyVisual*			SetParent(TinyVisual* spvis, TinyVisual* spvisNewParent);

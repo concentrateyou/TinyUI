@@ -61,6 +61,7 @@ namespace MShow
 	}
 	BOOL MShowApp::Initialize(HINSTANCE hInstance, LPTSTR  lpCmdLine, INT nCmdShow, LPCTSTR lpTableName)
 	{
+		avcodec_register_all();
 		QueryPerformanceFrequency(&g_clockFreq);
 		LoadSeDebugPrivilege();
 		UNREFERENCED_PARAMETER(lpCmdLine);

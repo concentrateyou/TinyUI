@@ -256,10 +256,12 @@ namespace TinyUI
 		}
 		BOOL TinyVisualResource::Add(TinyImage* image)
 		{
+			TinyAutoLock lock(m_lock);
 			return m_images1.Add(image);
 		}
 		TinyImage* TinyVisualResource::Add(const TinyString& szName, const TinyString& szFile)
 		{
+			TinyAutoLock lock(m_lock);
 			TinyImage** value = m_images2.GetValue(szName);
 			if (value != NULL)
 			{
@@ -283,6 +285,7 @@ namespace TinyUI
 		}
 		void TinyVisualResource::Remove(const TinyString& szName)
 		{
+			TinyAutoLock lock(m_lock);
 			TinyImage** value = m_images2.GetValue(szName);
 			if (value != NULL)
 			{
@@ -293,18 +296,7 @@ namespace TinyUI
 		}
 		void TinyVisualResource::Remove(TinyImage* image)
 		{
-			ITERATOR pos = m_images2.First();
-			while (pos != NULL)
-			{
-				TinyImage** value = m_images2.GetValueAt(pos);
-				if (value != NULL && *value == image)
-				{
-					(*value)->Close();
-					SAFE_DELETE(*value);
-					break;
-				}
-				pos = m_images2.Next(pos);
-			}
+			TinyAutoLock lock(m_lock);
 			for (INT i = 0;i < m_images1.GetSize();i++)
 			{
 				if (m_images1[i] == image)
@@ -318,6 +310,7 @@ namespace TinyUI
 		}
 		void TinyVisualResource::RemoveAll()
 		{
+			TinyAutoLock lock(m_lock);
 			ITERATOR pos = m_images2.First();
 			while (pos != NULL)
 			{
@@ -340,6 +333,7 @@ namespace TinyUI
 		}
 		TinyImage* TinyVisualResource::operator[](const TinyString& szName)
 		{
+			TinyAutoLock lock(m_lock);
 			TinyImage** value = m_images2.GetValue(szName);
 			if (value != NULL)
 				return *value;

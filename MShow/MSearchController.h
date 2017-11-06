@@ -26,6 +26,7 @@ namespace MShow
 		void OnMessagePump();
 		BOOL Query(const string& sourceID, const string& programID, const string& logID, INT& count);
 	private:
+		TinyLock					m_lock;
 		MSearchWindow&				m_view;
 		TinyTaskBase				m_task;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMinimumClick;

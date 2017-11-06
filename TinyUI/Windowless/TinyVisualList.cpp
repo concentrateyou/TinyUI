@@ -284,8 +284,7 @@ namespace TinyUI
 		}
 		void TinyVisualList::RemoveAll(BOOL del)
 		{
-			m_iNewPos = 0;
-			m_dwCount = 1;
+			m_iNewPos = 0;	
 			if (m_pVScrollbar != NULL)
 			{
 				m_pVScrollbar->SetVisible(FALSE);

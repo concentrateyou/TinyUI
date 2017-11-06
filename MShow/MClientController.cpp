@@ -418,6 +418,17 @@ namespace MShow
 	}
 	void MClientController::OnSaveClick(TinyVisual*, EventArgs& args)
 	{
+		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
+		if (pTextBox != NULL)
+		{
+			if (pTextBox->GetText().IsEmpty())
+			{
+				MessageBox(NULL, "解说名不能为空!", "提示", MB_OK);
+				return;
+			}
+			m_szName = pTextBox->GetText().CSTR();
+			pTextBox->SetEnable(FALSE);
+		}
 		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnEdit");
 		if (visual != NULL)
 		{
@@ -433,12 +444,6 @@ namespace MShow
 		if (visual != NULL)
 		{
 			visual->SetVisible(FALSE);
-		}
-		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
-		if (pTextBox != NULL)
-		{
-			m_szName = pTextBox->GetText().CSTR();
-			pTextBox->SetEnable(FALSE);
 		}
 		m_view.Invalidate();
 		UpdateName(m_szSourceID, m_szName);
@@ -940,6 +945,12 @@ namespace MShow
 				MessageBox(NULL, "没有检测到麦克风设备", "提示", MB_OK);
 				return;
 			}
+		}
+		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
+		if (pTextBox->GetText().IsEmpty())
+		{
+			MessageBox(NULL, "请输入解说名", "提示", MB_OK);
+			return;
 		}
 		if (Connect())
 		{

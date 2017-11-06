@@ -60,9 +60,12 @@ namespace MShow
 
 	void MSearchController::OnSearchClick(TinyVisual*, EventArgs& args)
 	{
-		TinyVisual* lblMsg = static_cast<TinyVisualAnimation*>(m_view.GetDocument()->GetVisualByName("lblMsg"));
-		ASSERT(lblMsg);
-		lblMsg->SetVisible(FALSE);
+		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnSearch");
+		ASSERT(visual);
+		visual->SetEnable(FALSE);
+		visual = static_cast<TinyVisualAnimation*>(m_view.GetDocument()->GetVisualByName("lblMsg"));
+		ASSERT(visual);
+		visual->SetVisible(FALSE);
 		TinyVisualAnimation* loading = static_cast<TinyVisualAnimation*>(m_view.GetDocument()->GetVisualByName("loading"));
 		ASSERT(loading);
 		loading->SetVisible(TRUE);
@@ -197,6 +200,7 @@ namespace MShow
 			lblMsg->SetText("http://10.23.84.150:7777/api/director/list 读取数据失败");
 			goto _ERROR;
 		}
+		LOG(INFO) << "[MSearchController][GetPrograms] Context:" << context;
 		if (!reader.parse(context, value))
 		{
 			TRACE("[MSearchController][GetPrograms] Parse Json Fail\n");
@@ -206,7 +210,6 @@ namespace MShow
 			lblMsg->SetText("http://10.23.84.150:7777/api/director/list Json解析失败");
 			goto _ERROR;
 		}
-
 		list->RemoveAll(TRUE);
 		result = value["data"]["result"];
 		TRACE("[MSearchController][GetPrograms] Program Count:%d\n", result.size());
@@ -262,6 +265,9 @@ namespace MShow
 	_ERROR:
 		loading->EndAnimate();
 		loading->SetVisible(FALSE);
+		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnSearch");
+		ASSERT(visual);
+		visual->SetEnable(TRUE);
 		m_view.Invalidate();
 	};
 }

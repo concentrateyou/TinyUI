@@ -11,7 +11,6 @@ namespace Decode
 		m_sws(NULL),
 		m_pRGB32(NULL)
 	{
-		avcodec_register_all();
 		ZeroMemory(&m_packet, sizeof(m_packet));
 	}
 
