@@ -175,7 +175,7 @@ namespace TinyUI
 		TinyWaiter();
 		~TinyWaiter();
 	public:
-		BOOL IsValid() const;
+		BOOL IsEmpty() const;
 		BOOL RegisterOnce(HANDLE handle, DWORD dwMS, Callback<void(BOOLEAN)>&& callback);
 		BOOL Register(HANDLE handle, DWORD dwMS, Callback<void(BOOLEAN)>&& callback);
 		BOOL Unregister();
@@ -215,13 +215,13 @@ namespace TinyUI
 	public:
 		TinyPerformanceTimer();
 		~TinyPerformanceTimer();
-		BOOL Create(BOOL bManualReset = TRUE, LPCSTR pszName = NULL);
-		BOOL Open(LPCSTR pszName);
 		BOOL SetCallback(INT delay, Closure&& callback);
 		BOOL Waiting(INT delay, DWORD dwMilliseconds);
 		void Close();
 	private:
-		UINT		m_timerID;
+		void CloseTimer();
+	private:
+		MMRESULT 	m_timerID;
 		Closure		m_callback;
 		TinyEvent	m_event;
 	private:
@@ -236,10 +236,11 @@ namespace TinyUI
 	public:
 		TinyWaitableTimer();
 		~TinyWaitableTimer();
-		BOOL Create(BOOL bManualReset, LPCSTR pszName);
+		BOOL Create(BOOL bManualReset = TRUE, LPCSTR pszName = NULL);
 		BOOL Open(LPCSTR pszName);
-		BOOL SetCallback(LONG due, LONG period, Closure&& callback);
-		BOOL Waiting(LONG due);
+		BOOL SetCallback(LONG due, Closure&& callback);
+		BOOL SetWaiting(LONG due);
+		BOOL Waiting();
 		void Close();
 	private:
 		static void CALLBACK TimerCallback(LPVOID lpArgToCompletionRoutine, DWORD  dwTimerLowValue, DWORD  dwTimerHighValue);

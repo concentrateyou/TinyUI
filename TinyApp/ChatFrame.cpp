@@ -19,12 +19,14 @@ LRESULT ChatFrame::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 
 DWORD ChatFrame::RetrieveStyle()
 {
-	return (WS_VISIBLE | WS_POPUP);
+	//return (WS_VISIBLE | WS_POPUP);
+	return (WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_OVERLAPPEDWINDOW | WS_CAPTION);
 }
 
 DWORD ChatFrame::RetrieveExStyle()
 {
-	return (WS_EX_TOPMOST);
+	//return (WS_EX_TOPMOST);
+	return (WS_EX_LEFT | WS_EX_RIGHTSCROLLBAR);
 }
 
 LPCSTR ChatFrame::RetrieveClassName()
@@ -41,13 +43,6 @@ HICON ChatFrame::RetrieveIcon()
 {
 	return NULL;
 }
-
-//void ChatFrame::OnFinish()
-//{
-//	LONG size = 0;
-//	m_waveFile.Read(m_bits, 4096, &size);
-//	m_audio.Fill(m_bits, size);
-//}
 
 LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
@@ -145,19 +140,19 @@ LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHand
 	//POINT pos = { 0,0 };
 	//UpdateLayeredWindow(m_hWND, hDC, &pos, &size, memDC, &pos, 0, &blendFunction, 2);
 	//ReleaseDC(NULL, hDC);
-
-	TinyRectangle s;
-	GetClientRect(&s);
-	BOOL bRes = m_graphics2D.Initialize(m_hWND, s.Size());
-	bRes = m_image2D.Load(m_graphics2D.GetDX9(), "D:\\image.jpg");
-	m_task.Submit(BindCallback(&ChatFrame::OnMessagePump, this));
+	//TinyRectangle s;
+	//GetClientRect(&s);
+	//BOOL bRes = m_graphics2D.Initialize(m_hWND, s.Size());
+	//bRes = m_image2D.Load(m_graphics2D.GetDX9(), "D:\\image.jpg");
+	//m_task.Submit(BindCallback(&ChatFrame::OnMessagePump, this));
+	m_timer.SetCallback(1000, BindCallback(&ChatFrame::OnMessagePump, this));
 	return FALSE;
 }
 
 LRESULT ChatFrame::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-
+	m_timer.Close();
 	//SAFE_DELETE(m_capture);
 	return FALSE;
 }
@@ -206,12 +201,15 @@ LRESULT ChatFrame::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bH
 	bHandled = FALSE;
 	return FALSE;
 }
-
+INT g_count = 0;
 void ChatFrame::OnMessagePump()
 {
-	m_graphics2D.GetDX9().SetRenderTexture2D(NULL);
+	//SleepEx(1000, TRUE);
+	TRACE("OnMessagePump:%d\n", g_count);
+	g_count++;
+	/*m_graphics2D.GetDX9().SetRenderTexture2D(NULL);
 	m_graphics2D.GetDX9().GetRender2D()->BeginDraw();
 	m_graphics2D.DrawImage(&m_image2D);
 	m_graphics2D.GetDX9().GetRender2D()->EndDraw();
-	m_graphics2D.Present();
+	m_graphics2D.Present();*/
 }

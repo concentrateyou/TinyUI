@@ -126,7 +126,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	//uiImpl.Create(NULL, 10, 10, 100, 100);
 	//uiImpl.CenterWindow(NULL, { 800,600 });
 	ChatFrame uiImpl;
-	uiImpl.Create(NULL, 400, 400, 800, 800);
+	uiImpl.Create(NULL, 100, 100, 600, 600);
 	uiImpl.UpdateWindow();
 	INT loopRes = theLoop.MessageLoop();
 	TinyApplication::GetInstance()->RemoveMessageLoop();

@@ -331,9 +331,9 @@ namespace TinyUI
 	{
 
 	}
-	BOOL TinyWaiter::IsValid() const
+	BOOL TinyWaiter::IsEmpty() const
 	{
-		return m_hWaitHandle != NULL;
+		return m_hWaitHandle == NULL;
 	}
 	BOOL TinyWaiter::RegisterOnce(HANDLE handle, DWORD dwMS, Callback<void(BOOLEAN)>&& callback)
 	{
@@ -345,7 +345,7 @@ namespace TinyUI
 	}
 	BOOL TinyWaiter::Register(HANDLE handle, DWORD dwMS, DWORD dwFlag, Callback<void(BOOLEAN)>&& callback)
 	{
-		if (IsValid())
+		if (IsEmpty())
 			return FALSE;
 		if (RegisterWaitForSingleObject(&m_hWaitHandle, handle, &TinyWaiter::WaitOrTimerCallback, this, dwMS, dwFlag))
 		{
@@ -357,12 +357,9 @@ namespace TinyUI
 	}
 	BOOL TinyWaiter::Unregister()
 	{
-		if (UnregisterWait(m_hWaitHandle))
-		{
-			m_hWaitHandle = NULL;
-			return TRUE;
-		}
-		return FALSE;
+		BOOL bRes = UnregisterWait(m_hWaitHandle);
+		m_hWaitHandle = NULL;
+		return bRes;
 	}
 	void CALLBACK TinyWaiter::WaitOrTimerCallback(PVOID pThis, BOOLEAN b)
 	{
@@ -428,22 +425,17 @@ namespace TinyUI
 	{
 		if (delay <= 0)
 			return TRUE;
-		this->Close();
-		m_event.CreateEvent();
 		m_callback = std::move(callback);
-		m_timerID = static_cast<UINT>(timeSetEvent(delay, 1, &TinyPerformanceTimer::TimerCallback, reinterpret_cast<DWORD_PTR>(this), TIME_PERIODIC));
-		return m_timerID != 0;
+		CloseTimer();
+		m_timerID = timeSetEvent(delay, 1, &TinyPerformanceTimer::TimerCallback, reinterpret_cast<DWORD_PTR>(this), TIME_PERIODIC);
+		return m_timerID != NULL;
 	}
 	BOOL TinyPerformanceTimer::Waiting(INT delay, DWORD dwMilliseconds)
 	{
 		if (delay <= 0)
 			return TRUE;
-		if (m_timerID != 0)
-		{
-			timeKillEvent(m_timerID);
-			m_timerID = 0;
-		}
-		m_timerID = static_cast<UINT>(timeSetEvent(delay, 1, reinterpret_cast<LPTIMECALLBACK>(m_event.Handle()), NULL, TIME_CALLBACK_EVENT_SET));
+		CloseTimer();
+		m_timerID = timeSetEvent(delay, 1, reinterpret_cast<LPTIMECALLBACK>(m_event.Handle()), NULL, TIME_CALLBACK_EVENT_SET);
 		if (m_timerID != NULL)
 		{
 			DWORD dwRes = WaitForSingleObject(m_event, dwMilliseconds);
@@ -455,25 +447,26 @@ namespace TinyUI
 	void TinyPerformanceTimer::Close()
 	{
 		m_event.Close();
-		if (m_timerID != 0)
-		{
-			timeKillEvent(m_timerID);
-			m_timerID = 0;
-		}
+
 	}
 	TinyPerformanceTimer::~TinyPerformanceTimer()
 	{
 		Close();
 	}
+	void TinyPerformanceTimer::CloseTimer()
+	{
+		if (m_timerID != NULL)
+		{
+			timeKillEvent(m_timerID);
+			m_timerID = NULL;
+		}
+	}
 	void CALLBACK TinyPerformanceTimer::TimerCallback(UINT uTimerID, UINT  uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2)
 	{
 		TinyPerformanceTimer* pThis = reinterpret_cast<TinyPerformanceTimer*>(dwUser);
-		if (pThis != NULL)
+		if (pThis != NULL && !pThis->m_callback.IsNull())
 		{
-			if (!pThis->m_callback.IsNull())
-			{
-				pThis->m_callback();
-			}
+			pThis->m_callback();
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -499,37 +492,33 @@ namespace TinyUI
 		m_hTimer = OpenWaitableTimer(EVENT_ALL_ACCESS, TRUE, pszName);
 		return m_hTimer != NULL;
 	}
-	BOOL TinyWaitableTimer::SetCallback(LONG due, LONG period, Closure&& callback)
+	BOOL TinyWaitableTimer::SetCallback(LONG due, Closure&& callback)
 	{
 		m_callback = std::move(callback);
 		if (m_hTimer != NULL)
 		{
 			LARGE_INTEGER lElapse;
 			lElapse.QuadPart = -((INT)(due) * 10000);
-			return SetWaitableTimer(m_hTimer, &lElapse, period, TinyWaitableTimer::TimerCallback, this, FALSE);
+			return SetWaitableTimer(m_hTimer, &lElapse, 0, TinyWaitableTimer::TimerCallback, this, FALSE);
 		}
 		return FALSE;
 	}
-	BOOL TinyWaitableTimer::Waiting(LONG due)
+	BOOL TinyWaitableTimer::SetWaiting(LONG due)
 	{
 		if (m_hTimer != NULL)
 		{
 			LARGE_INTEGER lElapse;
 			lElapse.QuadPart = -((INT)(due) * 10000);
-			if (SetWaitableTimer(m_hTimer, &lElapse, 0, NULL, NULL, FALSE))
-			{
-				TRACE("WaitForSingleObject - Begin\n");
-				HRESULT hRes = WaitForSingleObjectEx(m_hTimer, INFINITE,TRUE);
-				TRACE("WaitForSingleObject - End\n");
-				if (hRes == WAIT_OBJECT_0)
-				{
-					return TRUE;
-				}
-				else
-				{
-					INT a = 0;
-				}
-			}
+			return SetWaitableTimer(m_hTimer, &lElapse, 0, NULL, this, FALSE);
+		}
+		return FALSE;
+	}
+	BOOL TinyWaitableTimer::Waiting()
+	{
+		if (m_hTimer != NULL)
+		{
+			if (WaitForSingleObjectEx(m_hTimer, INFINITE, TRUE) == WAIT_OBJECT_0)
+				return TRUE;
 		}
 		return FALSE;
 	}
@@ -540,17 +529,17 @@ namespace TinyUI
 			CancelWaitableTimer(m_hTimer);
 			LARGE_INTEGER lElapse;
 			lElapse.QuadPart = 0;
-			SetWaitableTimer(m_hTimer, &lElapse, 0, NULL, NULL, FALSE);
+			SetWaitableTimer(m_hTimer, &lElapse, 0, TinyWaitableTimer::TimerCallback, this, FALSE);
 			CloseHandle(m_hTimer);
 			m_hTimer = NULL;
 		}
 	}
 	void CALLBACK TinyWaitableTimer::TimerCallback(LPVOID lpArgToCompletionRoutine, DWORD  dwTimerLowValue, DWORD  dwTimerHighValue)
 	{
-		TinyWaitableTimer* timer = static_cast<TinyWaitableTimer*>(lpArgToCompletionRoutine);
-		if (timer != NULL)
+		TinyWaitableTimer* pThis = static_cast<TinyWaitableTimer*>(lpArgToCompletionRoutine);
+		if (pThis != NULL && !pThis->m_callback.IsNull())
 		{
-			timer->m_callback();
+			pThis->m_callback();
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -566,7 +555,7 @@ namespace TinyUI
 	}
 	BOOL TinyTimer::SetCallback(UINT elapse, Closure&& callback)
 	{
-		this->Close();
+		Close();
 		m_callback = std::move(callback);
 		m_timerID = ::SetTimer(NULL, 0, elapse, TinyTimer::TimerCallback);
 		if (m_timerID != 0)
@@ -586,10 +575,10 @@ namespace TinyUI
 	}
 	void CALLBACK TinyTimer::TimerCallback(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD  dwTime)
 	{
-		TinyTimer* timer = *(TinyTimer::m_map.Lookup(idEvent));
-		if (timer != NULL)
+		TinyTimer* pThis = *(TinyTimer::m_map.Lookup(idEvent));
+		if (pThis != NULL && !pThis->m_callback.IsNull())
 		{
-			timer->m_callback();
+			pThis->m_callback();
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////

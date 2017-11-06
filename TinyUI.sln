@@ -35,8 +35,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MShowApp", "MShowApp\MShowA
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MShow", "MShow\MShow.vcxproj", "{F90AB27E-33B7-48D6-8CAC-267605FD9E93}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NvVideoCodec", "NvVideoCodec\NvVideoCodec.vcxproj", "{7C670C07-5218-4B1C-AA71-48B44FE7E05D}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_MBCS|Win32 = Debug_MBCS|Win32
@@ -371,26 +369,6 @@ Global
 		{F90AB27E-33B7-48D6-8CAC-267605FD9E93}.Release|Win32.Build.0 = Release|Win32
 		{F90AB27E-33B7-48D6-8CAC-267605FD9E93}.Release|x64.ActiveCfg = Release|x64
 		{F90AB27E-33B7-48D6-8CAC-267605FD9E93}.Release|x64.Build.0 = Release|x64
-		{7C670C07-5218-4B1C-AA71-48B44FE7E05D}.Debug_MBCS|Win32.ActiveCfg = Debug|Win32
-		{7C670C07-5218-4B1C-AA71-48B44FE7E05D}.Debug_MBCS|Win32.Build.0 = Debug|Win32
-		{7C670C07-5218-4B1C-AA71-48B44FE7E05D}.Debug_MBCS|x64.ActiveCfg = Debug|x64
-		{7C670C07-5218-4B1C-AA71-48B44FE7E05D}.Debug_MBCS|x64.Build.0 = Debug|x64
-		{7C670C07-5218-4B1C-AA71-48B44FE7E05D}.Debug|Win32.ActiveCfg = Debug|Win32
-		{7C670C07-5218-4B1C-AA71-48B44FE7E05D}.Debug|Win32.Build.0 = Debug|Win32
-		{7C670C07-5218-4B1C-AA71-48B44FE7E05D}.Debug|x64.ActiveCfg = Debug|x64
-		{7C670C07-5218-4B1C-AA71-48B44FE7E05D}.Debug|x64.Build.0 = Debug|x64
-		{7C670C07-5218-4B1C-AA71-48B44FE7E05D}.Release_MBCS|Win32.ActiveCfg = Release|Win32
-		{7C670C07-5218-4B1C-AA71-48B44FE7E05D}.Release_MBCS|Win32.Build.0 = Release|Win32
-		{7C670C07-5218-4B1C-AA71-48B44FE7E05D}.Release_MBCS|x64.ActiveCfg = Release|x64
-		{7C670C07-5218-4B1C-AA71-48B44FE7E05D}.Release_MBCS|x64.Build.0 = Release|x64
-		{7C670C07-5218-4B1C-AA71-48B44FE7E05D}.Release_MT|Win32.ActiveCfg = Release|Win32
-		{7C670C07-5218-4B1C-AA71-48B44FE7E05D}.Release_MT|Win32.Build.0 = Release|Win32
-		{7C670C07-5218-4B1C-AA71-48B44FE7E05D}.Release_MT|x64.ActiveCfg = Release|x64
-		{7C670C07-5218-4B1C-AA71-48B44FE7E05D}.Release_MT|x64.Build.0 = Release|x64
-		{7C670C07-5218-4B1C-AA71-48B44FE7E05D}.Release|Win32.ActiveCfg = Release|Win32
-		{7C670C07-5218-4B1C-AA71-48B44FE7E05D}.Release|Win32.Build.0 = Release|Win32
-		{7C670C07-5218-4B1C-AA71-48B44FE7E05D}.Release|x64.ActiveCfg = Release|x64
-		{7C670C07-5218-4B1C-AA71-48B44FE7E05D}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

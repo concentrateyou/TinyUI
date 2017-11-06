@@ -125,10 +125,13 @@ namespace TinyUI
 		{
 			m_delay = delay;
 			m_callback = std::move(callback);
-			if (m_timer.Create(TRUE, NULL))
+			if (m_timer.Create(NULL))
 			{
 				m_bBreak = FALSE;
-				return m_task.Submit(BindCallback(&TinyTaskTimer::OnMessagePump, this));
+				if (m_task.Submit(BindCallback(&TinyTaskTimer::OnMessagePump, this)))
+				{
+					return m_timer.SetWaiting(delay);
+				}
 			}
 			return FALSE;
 		}
@@ -136,30 +139,24 @@ namespace TinyUI
 		{
 			m_bBreak = TRUE;
 			m_timer.Close();
-			TRACE("TinyTaskTimer Close OK\n");
+			m_task.Close(INFINITE);
 		}
 		void TinyTaskTimer::OnMessagePump()
 		{
 			for (;;)
 			{
-				TRACE("TinyTaskTimer Begin Waiting\n");
-				m_timer.Waiting(m_delay);
-				TRACE("TinyTaskTimer End Waiting\n");
-				if (!m_bBreak)
+				if (m_bBreak)
+					break;
+				if (m_timer.Waiting())
 				{
 					if (!m_callback.IsNull())
 					{
 						m_callback();
 					}
+					m_timer.SetWaiting(m_delay);
 				}
-				if (m_bBreak)
-				{
-					TRACE("TinyTaskTimer Break = TRUE\n");
-					break;
-				}
-				TRACE("TinyTaskTimer Continue\n");
 			}
-			TRACE("TinyTaskTimer OnMessagePump\n");
+			TRACE("EXIT\n");
 		}
 	}
 }
