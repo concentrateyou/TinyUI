@@ -10,7 +10,6 @@ namespace MShow
 {
 	MClientController::MClientController(MClientWindow& view)
 		:m_view(view),
-		m_hTimer1(NULL),
 		m_bBreak(FALSE),
 		m_bCommentarying(FALSE),
 		m_bPause(FALSE),
@@ -84,13 +83,8 @@ namespace MShow
 	BOOL MClientController::SetPreview(const string& szPreviewURL)
 	{
 		m_szPreviewURL = std::move(szPreviewURL);
-		if (m_hTimer1 != NULL)
-		{
-			TinyApplication::GetInstance()->GetTimers().Unregister(m_hTimer1);
-			m_hTimer1 = NULL;
-		}
-		m_hTimer1 = TinyApplication::GetInstance()->GetTimers().Register(&MClientController::OnTimer1, this, 1000, 0);
-		return m_hTimer1 != NULL;
+		m_timerPreview.Close();
+		return m_timerPreview.SetCallback(1500, BindCallback(&MClientController::OnTimerPreview, this));
 	}
 	void MClientController::UpdateMicrophones()
 	{
@@ -132,62 +126,54 @@ namespace MShow
 			val->SetSelected(0);
 		}
 	}
-	VOID CALLBACK MClientController::OnTimer1(PVOID lpParam, BOOLEAN TimerOrWaitFired)
+	void MClientController::OnTimerPreview()
 	{
-		MClientController* pCTRL = static_cast<MClientController*>(lpParam);
-		ASSERT(pCTRL);
-		if (pCTRL->m_hTimer1 != NULL)
+		m_timerPreview.Close();
+		if (m_preview != NULL)
 		{
-			TinyApplication::GetInstance()->GetTimers().Unregister(pCTRL->m_hTimer1);
-			pCTRL->m_hTimer1 = NULL;
-		}
-		pCTRL->m_preview->Close();
-		if (pCTRL->m_preview->Open(pCTRL->m_szPreviewURL.c_str()))
-		{
-			LOG(INFO) << "[SetPreview] " << "Open Preview :" << pCTRL->m_szPreviewURL << " OK";
-			TinyVisual* visual = pCTRL->m_view.GetDocument()->GetVisualByName("btnStartCommentary");
-			if (visual != NULL)
+			m_preview->Close();
+			if (m_preview->Open(m_szPreviewURL.c_str()))
 			{
-				visual->SetVisible(TRUE);
+				LOG(INFO) << "[SetPreview] " << "Open Preview :" << m_szPreviewURL << " OK";
+				TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
+				if (visual != NULL)
+				{
+					visual->SetVisible(TRUE);
+				}
+			}
+			else
+			{
+				TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
+				if (visual != NULL)
+				{
+					visual->SetVisible(FALSE);
+				}
+				visual = m_view.GetDocument()->GetVisualByName("lblError");
+				if (visual != NULL)
+				{
+					visual->SetVisible(TRUE);
+					visual->SetText("预览流打开失败!");
+				}
+				LOG(ERROR) << "[SetPreview] " << "Open Preview :" << m_szPreviewURL << " Fail";
 			}
 		}
-		else
-		{
-			TinyVisual* visual = pCTRL->m_view.GetDocument()->GetVisualByName("btnStartCommentary");
-			if (visual != NULL)
-			{
-				visual->SetVisible(FALSE);
-			}
-			visual = pCTRL->m_view.GetDocument()->GetVisualByName("lblError");
-			if (visual != NULL)
-			{
-				visual->SetVisible(TRUE);
-				visual->SetText("预览流打开失败!");
-			}
-			LOG(ERROR) << "[SetPreview] " << "Open Preview :" << pCTRL->m_szPreviewURL << " Fail";
-		}
-		pCTRL->m_view.Invalidate();
+		m_view.Invalidate();
 	}
 
-	VOID CALLBACK MClientController::OnTimer2(PVOID lpParam, BOOLEAN TimerOrWaitFired)
+	void MClientController::OnTimerStatus()
 	{
-		MClientController* pCTRL = static_cast<MClientController*>(lpParam);
-		ASSERT(pCTRL);
 		INT count = 0;
-		if (pCTRL->Query(pCTRL->m_szSourceID, count) && count == 0)
+		if (this->Query(m_szSourceID, count) && count == 0)
 		{
 			//停止Timer
-			if (pCTRL->m_hTimer2 != NULL)
-			{
-				TinyApplication::GetInstance()->GetTimers().Unregister(pCTRL->m_hTimer2);
-				pCTRL->m_hTimer2 = NULL;
-			}
+			m_timerStatus.Close();
 			if (MessageBox(NULL, "当前客户端连接被移除", "警告", MB_OK) == IDOK)
 			{
-				pCTRL->Disconnect(pCTRL->m_szSourceID);
-				pCTRL->Close();
-				pCTRL->m_view.ShowWindow(SW_HIDE);
-				pCTRL->m_view.UpdateWindow();
+				Disconnect(m_szSourceID);
+				StopCommentary();
+				Close();
+				m_view.ShowWindow(SW_HIDE);
+				m_view.UpdateWindow();
 				MShow::MShowApp::GetInstance().GetSearchView().ShowWindow(SW_NORMAL);
 				MShow::MShowApp::GetInstance().GetSearchView().UpdateWindow();
 			}
@@ -736,30 +722,19 @@ namespace MShow
 
 	void MClientController::Close()
 	{
-		if (m_hTimer1 != NULL)
+		//更新UI 
+		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
+		if (pTextBox != NULL)
 		{
-			TinyApplication::GetInstance()->GetTimers().Unregister(m_hTimer1);
-			m_hTimer1 = NULL;
+			pTextBox->SetText("");
 		}
-		if (m_hTimer2 != NULL)
-		{
-			TinyApplication::GetInstance()->GetTimers().Unregister(m_hTimer2);
-			m_hTimer2 = NULL;
-		}
-		//关闭采集
-		m_audioDSP.Stop();
-		m_audioDSP.Close();
-		//释放SDK
-		if (m_audioSDK != NULL)
-		{
-			m_audioSDK->release();
-		}
-		m_audioSDK.Reset(NULL);
-		//关闭预览流
+		//停止解说
+		StopCommentary();
+		//关闭预览
+		m_timerPreview.Close();
 		if (m_preview != NULL)
 		{
 			m_preview->Close();
-			Sleep(100);
 		}
 		m_szSourceID.clear();
 		m_szProgramID.clear();
@@ -818,13 +793,7 @@ namespace MShow
 			goto _ERROR;
 		}
 		//开始Timer
-		if (m_hTimer2 != NULL)
-		{
-			TinyApplication::GetInstance()->GetTimers().Unregister(m_hTimer2);
-			m_hTimer2 = NULL;
-		}
-		m_hTimer2 = TinyApplication::GetInstance()->GetTimers().Register(&MClientController::OnTimer2, this, 3000, 3000);
-		if (!m_hTimer2)
+		if (!m_timerStatus.SetCallback(3000, BindCallback(&MClientController::OnTimerStatus, this)))
 		{
 			goto _ERROR;
 		}
@@ -868,11 +837,7 @@ namespace MShow
 		}
 		m_audioSDK.Reset(NULL);
 		//停止Timer
-		if (m_hTimer2 != NULL)
-		{
-			TinyApplication::GetInstance()->GetTimers().Unregister(m_hTimer2);
-			m_hTimer2 = NULL;
-		}
+		m_timerStatus.Close();
 		//更新UI
 		m_bPause = FALSE;
 		TinyVisual* spvis = m_view.GetDocument()->GetVisualByName("btnPauseCommentary");
@@ -1070,7 +1035,7 @@ namespace MShow
 
 	void MClientController::OnAudioDSP(BYTE* bits, LONG size)
 	{
-		if (size == 4096)
+		if (size == 4096 && m_preview != NULL)
 		{
 			LONGLONG currentPTS = MShow::MShowApp::GetInstance().GetCurrentAudioTS() + m_preview->GetBasePTS();
 			if (m_previousPTS != currentPTS)

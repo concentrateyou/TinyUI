@@ -447,10 +447,11 @@ namespace TinyUI
 	void TinyPerformanceTimer::Close()
 	{
 		m_event.Close();
-
+		CloseTimer();
 	}
 	TinyPerformanceTimer::~TinyPerformanceTimer()
 	{
+		
 		Close();
 	}
 	void TinyPerformanceTimer::CloseTimer()

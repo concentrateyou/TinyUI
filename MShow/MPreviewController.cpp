@@ -109,8 +109,10 @@ namespace MShow
 	}
 	LONGLONG MPreviewController::GetBasePTS()
 	{
-		ASSERT(m_player);
-		return m_player->GetBasePTS();
+		if (m_player != NULL)
+			return m_player->GetBasePTS();
+		LOG(ERROR) << "[MPreviewController] " << "GetBasePTS NULL";
+		return  0;
 	}
 	BOOL MPreviewController::CreateBitmap(const TinySize& size)
 	{

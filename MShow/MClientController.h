@@ -53,8 +53,8 @@ namespace MShow
 		void	OnMessagePump();
 		BOOL	Query(const string& sourceID, INT& count);
 	private:
-		static VOID CALLBACK OnTimer1(PVOID lpParam, BOOLEAN TimerOrWaitFired);
-		static VOID CALLBACK OnTimer2(PVOID lpParam, BOOLEAN TimerOrWaitFired);
+		void	OnTimerPreview();
+		void	OnTimerStatus();
 	private:
 		BOOL		Connect();//添加源
 		BOOL		Disconnect(const string& sourceID);
@@ -70,8 +70,8 @@ namespace MShow
 		BOOL								m_bPause;
 		BOOL								m_bCommentarying;
 		BOOL								m_bBreak;
-		HANDLE								m_hTimer1;
-		HANDLE								m_hTimer2;
+		TinyTaskTimer						m_timerPreview;//预览流延迟加载
+		TinyTaskTimer						m_timerStatus;//检测解说状态
 		LONGLONG							m_previousPTS;
 		string								m_szURL;//预览流地址
 		string								m_szSourceID;
