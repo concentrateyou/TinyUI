@@ -83,8 +83,36 @@ namespace MShow
 	BOOL MClientController::SetPreview(const string& szPreviewURL)
 	{
 		m_szPreviewURL = std::move(szPreviewURL);
-		m_timerPreview.Close();
-		return m_timerPreview.SetCallback(1500, BindCallback(&MClientController::OnTimerPreview, this));
+		if (m_preview != NULL)
+		{
+			m_preview->Close();
+			if (m_preview->Open(m_szPreviewURL.c_str()))
+			{
+				LOG(INFO) << "[SetPreview] " << "Open Preview :" << m_szPreviewURL << " OK";
+				TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
+				if (visual != NULL)
+				{
+					visual->SetVisible(TRUE);
+				}
+			}
+			else
+			{
+				TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
+				if (visual != NULL)
+				{
+					visual->SetVisible(FALSE);
+				}
+				visual = m_view.GetDocument()->GetVisualByName("lblError");
+				if (visual != NULL)
+				{
+					visual->SetVisible(TRUE);
+					visual->SetText("预览流打开失败!");
+				}
+				LOG(ERROR) << "[SetPreview] " << "Open Preview :" << m_szPreviewURL << " Fail";
+			}
+		}
+		m_view.Invalidate();
+		return TRUE;
 	}
 	void MClientController::UpdateMicrophones()
 	{
@@ -125,39 +153,6 @@ namespace MShow
 			}
 			val->SetSelected(0);
 		}
-	}
-	void MClientController::OnTimerPreview()
-	{
-		m_timerPreview.Close();
-		if (m_preview != NULL)
-		{
-			m_preview->Close();
-			if (m_preview->Open(m_szPreviewURL.c_str()))
-			{
-				LOG(INFO) << "[SetPreview] " << "Open Preview :" << m_szPreviewURL << " OK";
-				TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
-				if (visual != NULL)
-				{
-					visual->SetVisible(TRUE);
-				}
-			}
-			else
-			{
-				TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
-				if (visual != NULL)
-				{
-					visual->SetVisible(FALSE);
-				}
-				visual = m_view.GetDocument()->GetVisualByName("lblError");
-				if (visual != NULL)
-				{
-					visual->SetVisible(TRUE);
-					visual->SetText("预览流打开失败!");
-				}
-				LOG(ERROR) << "[SetPreview] " << "Open Preview :" << m_szPreviewURL << " Fail";
-			}
-		}
-		m_view.Invalidate();
 	}
 
 	void MClientController::OnTimerStatus()
@@ -723,15 +718,31 @@ namespace MShow
 	void MClientController::Close()
 	{
 		//更新UI 
+		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnEdit");
+		if (visual != NULL)
+		{
+			visual->SetVisible(TRUE);
+			m_view.GetDocument()->SetFocus(visual);
+		}
+		visual = m_view.GetDocument()->GetVisualByName("btnSave");
+		if (visual != NULL)
+		{
+			visual->SetVisible(FALSE);
+		}
+		visual = m_view.GetDocument()->GetVisualByName("btnCancel");
+		if (visual != NULL)
+		{
+			visual->SetVisible(FALSE);
+		}
 		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
 		if (pTextBox != NULL)
 		{
 			pTextBox->SetText("");
+			pTextBox->SetEnable(FALSE);
 		}
 		//停止解说
 		StopCommentary();
 		//关闭预览
-		m_timerPreview.Close();
 		if (m_preview != NULL)
 		{
 			m_preview->Close();

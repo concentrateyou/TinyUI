@@ -53,7 +53,6 @@ namespace MShow
 		void	OnMessagePump();
 		BOOL	Query(const string& sourceID, INT& count);
 	private:
-		void	OnTimerPreview();
 		void	OnTimerStatus();
 	private:
 		BOOL		Connect();//添加源
@@ -70,7 +69,6 @@ namespace MShow
 		BOOL								m_bPause;
 		BOOL								m_bCommentarying;
 		BOOL								m_bBreak;
-		TinyTaskTimer						m_timerPreview;//预览流延迟加载
 		TinyTaskTimer						m_timerStatus;//检测解说状态
 		LONGLONG							m_previousPTS;
 		string								m_szURL;//预览流地址

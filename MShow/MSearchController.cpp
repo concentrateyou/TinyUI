@@ -90,14 +90,14 @@ namespace MShow
 				{
 					if (count < 9)
 					{
+						MShow::MShowApp::GetInstance().GetClientController().UpdateMicrophones();
+						MShow::MShowApp::GetInstance().GetClientController().UpdateSpeakers();
+						MShow::MShowApp::GetInstance().GetClientController().SetProgram(val->szProgramName, val->szProgramID, val->szLogID);
+						MShow::MShowApp::GetInstance().GetClientController().SetTimes(val->szBeginTime, val->szEndTime);
+						MShow::MShowApp::GetInstance().GetClientController().SetPreview(val->szPreviewURL);
 						m_view.ShowWindow(SW_HIDE);
 						m_view.UpdateWindow();
 						MShow::MShowApp::GetInstance().GetClientView().ShowWindow(SW_NORMAL);
-						MShow::MShowApp::GetInstance().GetClientController().SetProgram(val->szProgramName, val->szProgramID, val->szLogID);
-						MShow::MShowApp::GetInstance().GetClientController().UpdateMicrophones();
-						MShow::MShowApp::GetInstance().GetClientController().UpdateSpeakers();
-						MShow::MShowApp::GetInstance().GetClientController().SetTimes(val->szBeginTime, val->szEndTime);
-						MShow::MShowApp::GetInstance().GetClientController().SetPreview(val->szPreviewURL);
 						MShow::MShowApp::GetInstance().GetClientView().UpdateWindow();
 					}
 					else

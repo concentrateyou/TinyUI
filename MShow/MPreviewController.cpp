@@ -63,7 +63,6 @@ namespace MShow
 		{
 			m_player->Close();
 		}
-		m_player.Reset(NULL);
 		m_bitmap.Release();
 		LOG(INFO) << "[MPreviewController] " << "Player Close OK";
 		return TRUE;
@@ -167,7 +166,6 @@ namespace MShow
 					}
 				}
 			}
-
 		}
 	}
 }
