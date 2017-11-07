@@ -65,10 +65,16 @@ namespace TinyUI
 			INT index2 = GetDeviceIndex(eCapture, captureGUID);
 			LONG index = static_cast<ULONG>(index1 << 16) + static_cast<ULONG>(0x0000FFFF & index2);
 			if (!SetVTI4Property(propertyStore, MFPKEY_WMAAECMA_DEVICE_INDEXES, index))
+			{
+				LOG(ERROR) << "[TinyAudioDSPCapture] SetVTI4Property FAIL";
 				return FALSE;
+			}
 			hRes = MoInitMediaType(&m_mediaType, sizeof(WAVEFORMATEX));
 			if (hRes != S_OK)
+			{
+				LOG(ERROR) << "[TinyAudioDSPCapture] MoInitMediaType:" << hRes;
 				return FALSE;
+			}
 			m_mediaType.majortype = MEDIATYPE_Audio;
 			m_mediaType.subtype = MEDIASUBTYPE_PCM;
 			m_mediaType.lSampleSize = 0;
@@ -80,7 +86,10 @@ namespace TinyUI
 			hRes = m_dmo->SetOutputType(0, &m_mediaType, 0);
 			MoFreeMediaType(&m_mediaType);
 			if (hRes != S_OK)
+			{
+				LOG(ERROR) << "[TinyAudioDSPCapture] DMO SetOutputType:" << hRes;
 				return FALSE;
+			}
 			if (pFMT != NULL)
 			{
 				m_waveFMT.Reset(new BYTE[sizeof(WAVEFORMATEX) + pFMT->cbSize]);
@@ -100,7 +109,8 @@ namespace TinyUI
 			if (hRes != S_OK)
 				return FALSE;
 			AEC_SYSTEM_MODE mode = SINGLE_CHANNEL_AEC;
-			if (captureName.type() == KSNODETYPE_MICROPHONE_ARRAY)
+			if (captureName.type() == KSNODETYPE_MICROPHONE_ARRAY ||
+				captureName.type() == KSNODETYPE_PROCESSING_MICROPHONE_ARRAY)
 			{
 				mode = OPTIBEAM_ARRAY_AND_AEC;
 			}
@@ -121,7 +131,10 @@ namespace TinyUI
 				return FALSE;
 			hRes = MoInitMediaType(&m_mediaType, sizeof(WAVEFORMATEX));
 			if (hRes != S_OK)
+			{
+				LOG(ERROR) << "[TinyAudioDSPCapture] MoInitMediaType:" << hRes;
 				return FALSE;
+			}
 			m_mediaType.majortype = MEDIATYPE_Audio;
 			m_mediaType.subtype = MEDIASUBTYPE_PCM;
 			m_mediaType.lSampleSize = 0;
@@ -133,7 +146,10 @@ namespace TinyUI
 			hRes = m_dmo->SetOutputType(0, &m_mediaType, 0);
 			MoFreeMediaType(&m_mediaType);
 			if (hRes != S_OK)
+			{
+				LOG(ERROR) << "[TinyAudioDSPCapture] DMO SetOutputType:" << hRes;
 				return FALSE;
+			}
 			if (pFMT != NULL)
 			{
 				m_waveFMT.Reset(new BYTE[sizeof(WAVEFORMATEX) + pFMT->cbSize]);
@@ -148,7 +164,10 @@ namespace TinyUI
 			{
 				hRes = m_dmo->AllocateStreamingResources();
 				if (hRes != S_OK)
+				{
+					LOG(ERROR) << "[TinyAudioDSPCapture] DMO AllocateStreamingResources:" << hRes;
 					return FALSE;
+				}
 			}
 			m_audioStop.ResetEvent();
 			m_task.Close(INFINITE);
@@ -164,7 +183,10 @@ namespace TinyUI
 			{
 				hRes = m_dmo->FreeStreamingResources();
 				if (hRes != S_OK)
+				{
+					LOG(ERROR) << "[TinyAudioDSPCapture] DMO FreeStreamingResources:" << hRes;
 					return FALSE;
+				}
 			}
 			m_audioStop.SetEvent();
 			m_task.Close(INFINITE);
