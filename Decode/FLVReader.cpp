@@ -171,7 +171,7 @@ namespace Decode
 			if (tag.type == FLV_AUDIO)
 			{
 				m_timestamp = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
-				LOG(ERROR) << "[FLVReader] Audio: " << m_timestamp;
+				LOG(INFO) << "[FLVReader] Audio: " << m_timestamp;
 				if (m_timestamp > 0)
 				{
 					if (m_count == 1 && m_basePTS == -1)

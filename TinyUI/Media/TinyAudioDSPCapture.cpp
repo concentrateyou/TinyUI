@@ -47,7 +47,7 @@ namespace TinyUI
 				return FALSE;
 			BOOL IsMA = FALSE;
 			AEC_SYSTEM_MODE mode = SINGLE_CHANNEL_AEC;
-			if (!IsMicrophone(eCapture, captureGUID, IsMA))
+			if (!IsMicrophoneArray(eCapture, captureGUID, IsMA))
 				return FALSE;
 			if (IsMA)
 				mode = OPTIBEAM_ARRAY_AND_AEC;

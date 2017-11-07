@@ -51,6 +51,9 @@ namespace TinyUI
 			static BOOL IsMicrophone(const Name& name, BOOL& IsMA);
 			static BOOL IsMicrophone(EDataFlow dataFlow, const string& name, BOOL& IsMA);
 			static BOOL IsMicrophone(EDataFlow dataFlow, const GUID& guid, BOOL& IsMA);
+			static BOOL IsMicrophoneArray(EDataFlow dataFlow, const string& name, BOOL& IsMA);
+			static BOOL IsMicrophoneArray(const Name& name, BOOL& IsMA);
+			static BOOL IsMicrophoneArray(EDataFlow dataFlow, const GUID& guid, BOOL& IsMA);
 			static BOOL GetDevices(EDataFlow dataFlow, vector<Name>& names);
 			static INT  GetDeviceIndex(EDataFlow dataFlow, const Name& name);
 			static INT  GetDeviceIndex(EDataFlow dataFlow, const GUID& guid);

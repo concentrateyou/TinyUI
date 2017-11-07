@@ -854,7 +854,7 @@ namespace MShow
 		TinyVisual* spvis = m_view.GetDocument()->GetVisualByName("btnPauseCommentary");
 		if (spvis != NULL)
 		{
-			spvis->SetText(m_bPause ? "²¥·Å" : "Í£Ö¹");
+			spvis->SetText(m_bPause ? "²¥·Å" : "ÔÝÍ£");
 		}
 		m_bCommentarying = FALSE;
 		spvis = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
@@ -940,7 +940,7 @@ namespace MShow
 		TinyVisual* spvis = m_view.GetDocument()->GetVisualByName("btnPauseCommentary");
 		if (spvis != NULL)
 		{
-			spvis->SetText(m_bPause ? "²¥·Å" : "Í£Ö¹");
+			spvis->SetText(m_bPause ? "²¥·Å" : "ÔÝÍ£");
 		}
 		m_view.Invalidate();
 		m_audioDSP.Stop();
@@ -1046,25 +1046,32 @@ namespace MShow
 
 	void MClientController::OnAudioDSP(BYTE* bits, LONG size)
 	{
-		if (size == 4096 && m_preview != NULL)
+		if (m_preview != NULL)
 		{
-			LONGLONG currentPTS = MShow::MShowApp::GetInstance().GetCurrentAudioTS() + m_preview->GetBasePTS();
-			if (m_previousPTS != currentPTS)
+			if (size == 4096)
 			{
-				m_previousPTS = currentPTS;
+				LONGLONG currentPTS = MShow::MShowApp::GetInstance().GetCurrentAudioTS() + m_preview->GetBasePTS();
+				if (m_previousPTS != currentPTS)
+				{
+					m_previousPTS = currentPTS;
+				}
+				if (m_audioQueue.GetAllocSize() == 0)
+				{
+					INT count = 5;
+					m_audioQueue.Initialize(count, size + 4);
+				}
+				AUDIO_SAMPLE sample = { 0 };
+				sample.size = size;
+				sample.bits = static_cast<BYTE*>(m_audioQueue.Alloc());
+				sample.timestamp = currentPTS;
+				memcpy(sample.bits + 4, bits, size);
+				m_audioQueue.Push(sample);
+				m_event.SetEvent();
 			}
-			if (m_audioQueue.GetAllocSize() == 0)
-			{
-				INT count = 5;
-				m_audioQueue.Initialize(count, size + 4);
-			}
-			AUDIO_SAMPLE sample = { 0 };
-			sample.size = size;
-			sample.bits = static_cast<BYTE*>(m_audioQueue.Alloc());
-			sample.timestamp = currentPTS;
-			memcpy(sample.bits + 4, bits, size);
-			m_audioQueue.Push(sample);
-			m_event.SetEvent();
+		}
+		else
+		{
+			LOG(ERROR) << "Preview NULL";
 		}
 	}
 
