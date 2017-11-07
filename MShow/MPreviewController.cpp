@@ -93,14 +93,17 @@ namespace MShow
 	{
 		BOOL bRes = this->Close();
 		TRACE("OnTry Close:%d\n", bRes);
+		LOG(INFO) << "OnTry Close:" << bRes;
 		if (this->Open(m_player->GetURL().CSTR()))
 		{
 			TRACE("OnTry Open OK\n");
+			LOG(INFO) << "OnTry Open OK";
 			m_timer.Close();
 		}
 		else
 		{
 			TRACE("OnTry Open FAIL\n");
+			LOG(ERROR) << "OnTry Open FAIL";
 		}
 	}
 

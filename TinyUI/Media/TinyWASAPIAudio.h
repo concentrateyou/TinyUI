@@ -48,12 +48,9 @@ namespace TinyUI
 			TinyWASAPIAudio();
 			virtual ~TinyWASAPIAudio();
 		public:
-			static BOOL IsMicrophoneArray(const string& name, BOOL& IsMA);
-			static BOOL IsMicrophoneArray(const GUID& guid, BOOL& IsMA);
-			static BOOL IsMicrophoneArray(const Name& name, BOOL& IsMA);
-			static BOOL IsMicrophone(const string& name, BOOL& IsMA);
-			static BOOL IsMicrophone(const GUID& guid, BOOL& IsMA);
 			static BOOL IsMicrophone(const Name& name, BOOL& IsMA);
+			static BOOL IsMicrophone(EDataFlow dataFlow, const string& name, BOOL& IsMA);
+			static BOOL IsMicrophone(EDataFlow dataFlow, const GUID& guid, BOOL& IsMA);
 			static BOOL GetDevices(EDataFlow dataFlow, vector<Name>& names);
 			static INT  GetDeviceIndex(EDataFlow dataFlow, const Name& name);
 			static INT  GetDeviceIndex(EDataFlow dataFlow, const GUID& guid);

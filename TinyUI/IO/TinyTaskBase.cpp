@@ -1,6 +1,7 @@
 #include "../stdafx.h"
 #include <process.h>
 #include "../Common/TinyUtility.h"
+#include "../Common/TinyLogging.h"
 #include "TinyTaskBase.h"
 
 
@@ -140,6 +141,7 @@ namespace TinyUI
 			m_bBreak = TRUE;
 			m_timer.Close();
 			m_task.Close(INFINITE);
+			LOG(INFO) << "TinyTaskTimer Close OK";
 		}
 		void TinyTaskTimer::OnMessagePump()
 		{
@@ -157,6 +159,7 @@ namespace TinyUI
 				}
 			}
 			TRACE("EXIT\n");
+			LOG(INFO) << "TinyTaskTimer EXIT";
 		}
 	}
 }

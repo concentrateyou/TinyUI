@@ -97,6 +97,10 @@ namespace DXFramework
 				m_dcRenderTarget.Release();
 			}
 		}
+		if (hRes != S_OK)
+		{
+			LOG(ERROR) << "[DX2D] EndDraw:" << hRes;
+		}
 		return hRes == S_OK;
 	}
 	BOOL DX2D::Resize(INT cx, INT cy)

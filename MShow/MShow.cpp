@@ -224,14 +224,25 @@ BOOL BuildCrash()
 	string dir = GetDefaultDumpDir();
 	info.pszErrorReportSaveDir = dir.c_str();
 	info.pfnCrashCallback = CrashCallback;
-	info.dwFlags |= CR_INST_ALL_POSSIBLE_HANDLERS;
+	info.dwFlags |= CR_INST_ALL_POSSIBLE_HANDLERS |
+		CR_INST_CRT_EXCEPTION_HANDLERS |
+		CR_INST_AUTO_THREAD_HANDLERS |
+		CR_INST_SEND_QUEUED_REPORTS;
 	info.dwFlags |= CR_INST_DONT_SEND_REPORT;
 	info.uMiniDumpType = (MINIDUMP_TYPE)(MiniDumpWithDataSegs |
+		MiniDumpWithFullMemory |
 		MiniDumpWithHandleData |
+		MiniDumpFilterMemory |
+		MiniDumpScanMemory |
+		MiniDumpWithUnloadedModules |
 		MiniDumpWithIndirectlyReferencedMemory |
+		MiniDumpFilterModulePaths |
+		MiniDumpWithProcessThreadData |
+		MiniDumpWithPrivateReadWriteMemory |
+		MiniDumpWithoutOptionalData |
 		MiniDumpWithFullMemoryInfo |
 		MiniDumpWithThreadInfo |
-		MiniDumpWithUnloadedModules
+		MiniDumpWithCodeSegs
 		);
 	INT iResult = crInstall(&info);
 	if (iResult != 0)

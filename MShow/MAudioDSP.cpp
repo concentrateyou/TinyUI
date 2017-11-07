@@ -116,12 +116,6 @@ namespace MShow
 		for (size_t i = 0;i < captures.size();i++)
 		{
 			BOOL IsMA = FALSE;
-			TinyWASAPIAudio::IsMicrophoneArray(captures[i], IsMA);
-			if (IsMA)
-			{
-				capture = captures[i];
-				break;
-			}
 			TinyWASAPIAudio::IsMicrophone(captures[i], IsMA);
 			if (IsMA)
 			{

@@ -33,11 +33,7 @@ namespace TinyUI
 				device.Description = pzDesc;
 				device.Module = pzModule;
 				BOOL bIsMA = FALSE;
-				if (TinyWASAPIAudio::IsMicrophone(device.Guid, bIsMA) && bIsMA)
-				{
-					ps->push_back(device);
-				}
-				if (TinyWASAPIAudio::IsMicrophoneArray(device.Guid, bIsMA) && bIsMA)
+				if (TinyWASAPIAudio::IsMicrophone(eCapture, device.Guid, bIsMA) && bIsMA)
 				{
 					ps->push_back(device);
 				}
