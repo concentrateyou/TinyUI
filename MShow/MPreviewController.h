@@ -26,6 +26,7 @@ namespace MShow
 		MPreviewView&	GetView();
 		LONGLONG		GetBasePTS();
 	private:
+		BOOL			CreateBitmap(const TinySize& size);
 		void			OnAudio(BYTE* bits, LONG size);
 		void			OnVideoCopy(BYTE* bits, LONG size);
 		void			OnVideoRender();

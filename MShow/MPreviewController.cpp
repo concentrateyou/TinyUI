@@ -36,7 +36,6 @@ namespace MShow
 
 	BOOL MPreviewController::Open(LPCSTR pzURL)
 	{
-		TinySize size;
 		m_player.Reset(new MFLVPlayer(BindCallback(&MPreviewController::OnAudio, this), BindCallback(&MPreviewController::OnVideoCopy, this), BindCallback(&MPreviewController::OnVideoRender, this)));
 		if (!m_player)
 			goto _ERROR;
@@ -47,15 +46,11 @@ namespace MShow
 			goto _ERROR;
 		}
 		LOG(INFO) << "[MPreviewController] " << "Player Open OK";
-		size = m_player->GetSize();
-		m_bitmap.Release();
-		HRESULT hRes = m_d2d.GetCanvas()->CreateBitmap(D2D1::SizeU(size.cx, size.cy), D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)), &m_bitmap);
-		if (FAILED(hRes))
+		if (!CreateBitmap(m_player->GetSize()))
 		{
-			LOG(ERROR) << "[MPreviewController] " << "Open CreateBitmap FAIL";
+			LOG(ERROR) << "[MPreviewController] " << "CreateBitmap FAIL";
 			goto _ERROR;
 		}
-		LOG(INFO) << "[MPreviewController] " << "Open CreateBitmap OK";
 		return TRUE;
 	_ERROR:
 		Close();
@@ -68,6 +63,7 @@ namespace MShow
 		{
 			m_player->Close();
 		}
+		m_player.Reset(NULL);
 		m_bitmap.Release();
 		LOG(INFO) << "[MPreviewController] " << "Player Close OK";
 		return TRUE;
@@ -116,6 +112,18 @@ namespace MShow
 		ASSERT(m_player);
 		return m_player->GetBasePTS();
 	}
+	BOOL MPreviewController::CreateBitmap(const TinySize& size)
+	{
+		m_bitmap.Release();
+		HRESULT hRes = m_d2d.GetCanvas()->CreateBitmap(D2D1::SizeU(size.cx, size.cy), D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)), &m_bitmap);
+		if (FAILED(hRes))
+		{
+			LOG(ERROR) << "[MPreviewController] " << "CreateBitmap FAIL";
+			return FALSE;
+		}
+		LOG(INFO) << "[MPreviewController] " << "CreateBitmap OK";
+		return TRUE;
+	}
 	void MPreviewController::OnAudio(BYTE* bits, LONG size)
 	{
 
@@ -135,11 +143,29 @@ namespace MShow
 	}
 	void MPreviewController::OnVideoRender()
 	{
-		m_d2d.BeginDraw();
-		m_d2d.GetCanvas()->DrawBitmap(m_bitmap);
-		if (!m_d2d.EndDraw())
+		HRESULT hRes = S_OK;
+		if (m_d2d.BeginDraw())
 		{
-			LOG(ERROR) << "[MPreviewController] " << "EndDraw FAIL";
+			m_d2d.GetCanvas()->DrawBitmap(m_bitmap);
+			if (!m_d2d.EndDraw(hRes))
+			{
+				LOG(ERROR) << "[MPreviewController] EndDraw FAIL: " << hRes;
+			}
+			else
+			{
+				if (hRes == D2DERR_RECREATE_TARGET)
+				{
+					if (CreateBitmap(m_player->GetSize()))
+					{
+						LOG(INFO) << "[MPreviewController] OnVideoRender - CreateBitmap OK";
+					}
+					else
+					{
+						LOG(ERROR) << "[MPreviewController] OnVideoRender - CreateBitmap FAIL";
+					}
+				}
+			}
+
 		}
 	}
 }
