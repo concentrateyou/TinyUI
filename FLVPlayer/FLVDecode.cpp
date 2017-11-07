@@ -226,7 +226,7 @@ namespace FLVPlayer
 				m_player.Play();
 				DWORD dwMS = timeGetTime() - m_decode.m_decode.m_baseTime;
 				INT offset = tag.samplePTS - dwMS;
-				if (timer.Wait(offset, 1000))
+				if (timer.Waiting(offset, 1000))
 				{
 					if (tag.size != 4096)
 					{
@@ -296,7 +296,7 @@ namespace FLVPlayer
 			while (m_decode.m_decode.m_baseTime == -1);
 			DWORD dwMS = timeGetTime() - m_decode.m_decode.m_baseTime;
 			INT offset = tag.samplePTS - dwMS;
-			if (timer.Wait(offset, 1000))
+			if (timer.Waiting(offset, 1000))
 			{
 				OnRender(tag.bits, tag.size);
 			}

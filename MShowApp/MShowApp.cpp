@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "MShowApp.h"
-#include "RTMPReader.h"
 #include "resource.h"
 #include <math.h>
 #include <algorithm>

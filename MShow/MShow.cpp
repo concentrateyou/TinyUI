@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include "resource.h"
 #include "MShow.h"
-#include "RTMPReader.h"
 #include "resource.h"
 #include "CrashRpt.h"
 #include <math.h>

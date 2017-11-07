@@ -151,7 +151,6 @@
     <ClInclude Include="MP3Task.h" />
     <ClInclude Include="x264Decode.h" />
     <ClInclude Include="MPG123Decode.h" />
-    <ClInclude Include="RTMPReader.h" />
     <ClInclude Include="RTMPStream.h" />
     <ClInclude Include="FLVParser.h" />
     <ClInclude Include="stdafx.h" />
@@ -169,7 +168,6 @@
     <ClCompile Include="MP3Task.cpp" />
     <ClCompile Include="x264Decode.cpp" />
     <ClCompile Include="MPG123Decode.cpp" />
-    <ClCompile Include="RTMPReader.cpp" />
     <ClCompile Include="RTMPStream.cpp" />
     <ClCompile Include="FLVParser.cpp" />
     <ClCompile Include="stdafx.cpp">

@@ -45,9 +45,6 @@
     <ClInclude Include="FLVWriter.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="RTMPReader.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="x264Decode.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -90,9 +87,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="FLVWriter.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="RTMPReader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="x264Decode.cpp">
