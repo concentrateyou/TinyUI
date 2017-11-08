@@ -75,19 +75,41 @@ namespace DXFramework
 	{
 		if (m_dx9.IsEmpty())
 			return FALSE;
-		m_dx9.GetD3D()->SetRenderTarget(0, m_render2D);
-		HRESULT hRes = m_dx9.GetD3D()->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL, D3DCOLOR_XRGB(255, 0, 0, 0), 1.0F, 0);
+		HRESULT hRes = m_dx9.GetD3D()->SetRenderTarget(0, m_render2D);
 		if (hRes != S_OK)
+		{
+			TRACE("[BeginDraw] SetRenderTarget:%d\n", hRes);
+			LOG(ERROR) << "[BeginDraw] SetRenderTarget::" << hRes;
 			return FALSE;
+		}
+		hRes = m_dx9.GetD3D()->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL, D3DCOLOR_XRGB(0, 0, 0, 255), 1.0F, 0);
+		if (hRes != S_OK)
+		{
+			TRACE("[BeginDraw] Clear:%d\n", hRes);
+			LOG(ERROR) << "[BeginDraw] Clear:" << hRes;
+			return FALSE;
+		}
 		hRes = m_dx9.GetD3D()->BeginScene();
 		if (hRes != S_OK)
+		{
+			TRACE("[BeginDraw] BeginScene:%d\n", hRes);
+			LOG(ERROR) << "[BeginDraw] BeginScene::" << hRes;
 			return FALSE;
+		}
 		hRes = m_dx9.GetD3D()->SetFVF(D3DFVF_XYZRHW | D3DFVF_TEX1);
 		if (hRes != S_OK)
+		{
+			TRACE("[BeginDraw] SetFVF:%d\n", hRes);
+			LOG(ERROR) << "[BeginDraw] SetFVF::" << hRes;
 			return FALSE;
+		}
 		hRes = m_dx9.GetD3D()->SetRenderState(D3DRS_LIGHTING, FALSE);
 		if (hRes != S_OK)
+		{
+			TRACE("[BeginDraw] SetRenderState:%d\n", hRes);
+			LOG(ERROR) << "[BeginDraw] SetRenderState::" << hRes;
 			return FALSE;
+		}
 		return TRUE;
 	}
 	BOOL DX9RenderView::EndDraw()
@@ -96,7 +118,11 @@ namespace DXFramework
 			return FALSE;
 		HRESULT hRes = m_dx9.GetD3D()->EndScene();
 		if (hRes != S_OK)
+		{
+			TRACE("[EndDraw] EndScene:%d\n", hRes);
+			LOG(ERROR) << "[EndDraw] EndScene::" << hRes;
 			return FALSE;
+		}
 		return TRUE;
 	}
 }

@@ -89,6 +89,7 @@ namespace MShow
 				}
 				m_bInitialize = TRUE;
 				m_audio.Start();
+				m_audio.SetVolume(0);
 				timeQPC.EndTime();
 				m_clock.AddBaseTime(static_cast<DWORD>(timeQPC.GetMillisconds()));
 				LONGLONG ms = MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime();

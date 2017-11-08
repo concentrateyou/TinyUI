@@ -294,7 +294,6 @@ namespace FLVPlayer
 			{
 				OnRender(tag.bits, tag.size);
 			}
-			//Sleep(offset < 0 ? 0 : offset);
 			SAFE_DELETE_ARRAY(tag.bits);
 		}
 	}
@@ -306,30 +305,6 @@ namespace FLVPlayer
 		m_graphics.DrawImage(&m_image);
 		m_graphics.GetDX9().GetRender2D()->EndDraw();
 		m_graphics.Present();
-		//ASSERT(size == m_decode.m_decode.m_size.cx *  m_decode.m_decode.m_size.cy * 4);
-		//HDC hDC = GetDC(m_decode.m_decode.m_hWND);
-		//if (hDC != NULL)
-		//{
-		//	BITMAPINFO bmi = { 0 };
-		//	bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-		//	bmi.bmiHeader.biWidth = m_decode.m_decode.m_size.cx;
-		//	bmi.bmiHeader.biHeight = -m_decode.m_decode.m_size.cy;
-		//	bmi.bmiHeader.biPlanes = 1;
-		//	bmi.bmiHeader.biBitCount = 32;
-		//	bmi.bmiHeader.biCompression = BI_RGB;
-		//	bmi.bmiHeader.biSizeImage = m_decode.m_decode.m_size.cx *  m_decode.m_decode.m_size.cy * 4;
-		//	BYTE* pvBits = NULL;
-		//	HBITMAP hBitmap = ::CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pvBits), NULL, 0);
-		//	if (hBitmap != NULL)
-		//	{
-		//		memcpy(pvBits, bits, size);
-		//		TinyMemDC dc(hDC, hBitmap);
-		//		TinyRectangle src = { 0,0, m_decode.m_decode.m_size.cx, m_decode.m_decode.m_size.cy };
-		//		dc.Render(src, src, FALSE);
-		//		SAFE_DELETE_OBJECT(hBitmap);
-		//	}
-		//	ReleaseDC(m_decode.m_decode.m_hWND, hDC);
-		//}
 	}
 	//////////////////////////////////////////////////////////////////////////
 	FLVVideoTask::FLVVideoTask(FLVDecode& decode)

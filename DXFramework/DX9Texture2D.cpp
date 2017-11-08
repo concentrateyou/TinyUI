@@ -37,17 +37,28 @@ namespace DXFramework
 		Destory();
 		HRESULT hRes = dx9.GetD3D()->CreateTexture(cx, cy, 1, D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_texture2D, NULL);
 		if (hRes != S_OK)
+		{
+			TRACE("DX9Texture2D CreateTexture:%d\n", hRes);
 			return FALSE;
+		}
 		if (bits != NULL)
 		{
 			D3DLOCKED_RECT lockRect = { 0 };
 			hRes = m_texture2D->LockRect(0, &lockRect, NULL, D3DLOCK_DISCARD);
 			if (hRes != S_OK)
+			{
+				TRACE("[Create] LockRect:%d\n", hRes);
+				LOG(ERROR) << "[Create] LockRect::" << hRes;
 				return FALSE;
+			}
 			memcpy(lockRect.pBits, bits, cx * cy * 4);
 			hRes = m_texture2D->UnlockRect(0);
 			if (hRes != S_OK)
+			{
+				TRACE("[Create] UnlockRect:%d\n", hRes);
+				LOG(ERROR) << "[Create] UnlockRect::" << hRes;
 				return FALSE;
+			}
 		}
 		return TRUE;
 	}
@@ -72,7 +83,11 @@ namespace DXFramework
 		D3DLOCKED_RECT lockRect = { 0 };
 		HRESULT hRes = m_texture2D->LockRect(0, &lockRect, NULL, D3DLOCK_DISCARD);
 		if (hRes != S_OK)
+		{
+			TRACE("[Copy] LockRect:%d\n", hRes);
+			LOG(ERROR) << "[Copy] LockRect::" << hRes;
 			return FALSE;
+		}
 		D3DSURFACE_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
 		m_texture2D->GetLevelDesc(0, &desc);
@@ -80,7 +95,11 @@ namespace DXFramework
 		memcpy(lockRect.pBits, bits, size);
 		hRes = m_texture2D->UnlockRect(0);
 		if (hRes != S_OK)
+		{
+			TRACE("[Copy] UnlockRect:%d\n", hRes);
+			LOG(ERROR) << "[Copy] UnlockRect::" << hRes;
 			return FALSE;
+		}
 		return TRUE;
 	}
 	BOOL DX9Texture2D::IsEmpty() const

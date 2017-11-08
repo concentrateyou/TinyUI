@@ -7,7 +7,8 @@ namespace DXFramework
 {
 	DX9::DX9()
 		:m_hWND(NULL),
-		m_render2D(NULL)
+		m_render2D(NULL),
+		m_status(S_OK)
 	{
 
 	}
@@ -18,6 +19,8 @@ namespace DXFramework
 	BOOL DX9::Initialize(HWND hWND, INT cx, INT cy)
 	{
 		m_hWND = hWND;
+		m_size.cx = cx;
+		m_size.cy = cy;
 		m_d3d9.Attach(Direct3DCreate9(D3D_SDK_VERSION));
 		if (m_d3d9 == NULL)
 			return FALSE;
@@ -49,7 +52,11 @@ namespace DXFramework
 		d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 		hRes = m_d3d9->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWND, D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_PUREDEVICE, &d3dpp, &m_d3dd9);
 		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] CreateDevice:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] CreateDevice:" << hRes;
 			return FALSE;
+		}
 		ZeroMemory(&m_viewPort, sizeof(m_viewPort));
 		m_viewPort.X = 0;
 		m_viewPort.Y = 0;
@@ -59,46 +66,210 @@ namespace DXFramework
 		m_viewPort.MaxZ = 1.0F;
 		hRes = m_d3dd9->SetViewport(&m_viewPort);
 		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetViewport:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetViewport:" << hRes;
 			return FALSE;
+		}
 		hRes = m_d3dd9->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetRenderState D3DRS_CULLMODE:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetRenderState D3DRS_CULLMODE:" << hRes;
 			return FALSE;
+		}
 		hRes = m_d3dd9->SetRenderState(D3DRS_ZENABLE, TRUE);
 		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetRenderState D3DRS_ZENABLE:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetRenderState D3DRS_ZENABLE:" << hRes;
 			return FALSE;
+		}
 		hRes = m_d3dd9->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetRenderState D3DRS_ALPHABLENDENABLE:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetRenderState D3DRS_ALPHABLENDENABLE:" << hRes;
 			return FALSE;
+		}
 		hRes = m_d3dd9->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetRenderState D3DRS_SRCBLEND:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetRenderState D3DRS_SRCBLEND:" << hRes;
 			return FALSE;
+		}
 		hRes = m_d3dd9->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetRenderState D3DRS_DESTBLEND:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetRenderState D3DRS_DESTBLEND:" << hRes;
 			return FALSE;
-		//hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-		//if (hRes != S_OK)
-		//	return FALSE;
-		//hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
-		//if (hRes != S_OK)
-		//	return FALSE;
-		//hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-		//if (hRes != S_OK)
-		//	return FALSE;
-		//hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
-		//if (hRes != S_OK)
-		//	return FALSE;
+		}
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetRenderState D3DTSS_ALPHAOP:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetRenderState D3DTSS_ALPHAOP:" << hRes;
+			return FALSE;
+		}
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetRenderState D3DTSS_COLOROP:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetRenderState D3DTSS_COLOROP:" << hRes;
+			return FALSE;
+		}
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetRenderState D3DTSS_COLORARG1:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetRenderState D3DTSS_COLORARG1:" << hRes;
+			return FALSE;
+		}
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetRenderState D3DTSS_COLORARG2:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetRenderState D3DTSS_COLORARG2:" << hRes;
+			return FALSE;
+		}
 		m_background2D.Reset(new DX9RenderView(*this));
 		if (!m_background2D->Create())
 			return FALSE;
 		return TRUE;
 	}
-
+	BOOL DX9::Reset()
+	{
+		D3DDISPLAYMODE displayMode;
+		HRESULT hRes = m_d3d9->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &displayMode);
+		D3DMULTISAMPLE_TYPE multiType = D3DMULTISAMPLE_NONE;
+		if (m_d3d9->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT,
+			D3DDEVTYPE_HAL, displayMode.Format, TRUE,
+			D3DMULTISAMPLE_4_SAMPLES,
+			NULL) == D3D_OK)
+		{
+			multiType = D3DMULTISAMPLE_4_SAMPLES;
+		}
+		D3DPRESENT_PARAMETERS d3dpp;
+		ZeroMemory(&d3dpp, sizeof(d3dpp));
+		d3dpp.BackBufferWidth = m_size.cx;
+		d3dpp.BackBufferHeight = m_size.cy;
+		d3dpp.BackBufferFormat = displayMode.Format;
+		d3dpp.BackBufferCount = 1;
+		d3dpp.MultiSampleType = multiType;
+		d3dpp.MultiSampleQuality = 0;
+		d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+		d3dpp.hDeviceWindow = m_hWND;
+		d3dpp.Windowed = TRUE;
+		d3dpp.EnableAutoDepthStencil = TRUE;
+		d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
+		d3dpp.Flags = 0;
+		d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+		d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] CreateDevice:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] CreateDevice:" << hRes;
+			return FALSE;
+		}
+		ZeroMemory(&m_viewPort, sizeof(m_viewPort));
+		m_viewPort.X = 0;
+		m_viewPort.Y = 0;
+		m_viewPort.Width = m_size.cx;
+		m_viewPort.Height = m_size.cy;
+		m_viewPort.MinZ = 0.0F;
+		m_viewPort.MaxZ = 1.0F;
+		hRes = m_d3dd9->SetViewport(&m_viewPort);
+		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetViewport:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetViewport:" << hRes;
+			return FALSE;
+		}
+		hRes = m_d3dd9->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetRenderState D3DRS_CULLMODE:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetRenderState D3DRS_CULLMODE:" << hRes;
+			return FALSE;
+		}
+		hRes = m_d3dd9->SetRenderState(D3DRS_ZENABLE, TRUE);
+		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetRenderState D3DRS_ZENABLE:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetRenderState D3DRS_ZENABLE:" << hRes;
+			return FALSE;
+		}
+		hRes = m_d3dd9->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetRenderState D3DRS_ALPHABLENDENABLE:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetRenderState D3DRS_ALPHABLENDENABLE:" << hRes;
+			return FALSE;
+		}
+		hRes = m_d3dd9->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetRenderState D3DRS_SRCBLEND:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetRenderState D3DRS_SRCBLEND:" << hRes;
+			return FALSE;
+		}
+		hRes = m_d3dd9->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetRenderState D3DRS_DESTBLEND:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetRenderState D3DRS_DESTBLEND:" << hRes;
+			return FALSE;
+		}
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetRenderState D3DTSS_ALPHAOP:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetRenderState D3DTSS_ALPHAOP:" << hRes;
+			return FALSE;
+		}
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetRenderState D3DTSS_COLOROP:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetRenderState D3DTSS_COLOROP:" << hRes;
+			return FALSE;
+		}
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetRenderState D3DTSS_COLORARG1:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetRenderState D3DTSS_COLORARG1:" << hRes;
+			return FALSE;
+		}
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetRenderState D3DTSS_COLORARG2:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetRenderState D3DTSS_COLORARG2:" << hRes;
+			return FALSE;
+		}
+		m_background2D.Reset(new DX9RenderView(*this));
+		if (!m_background2D->Create())
+			return FALSE;
+	}
 	BOOL DX9::Present()
 	{
 		if (IsEmpty())
 			return FALSE;
 		HRESULT hRes = m_d3dd9->Present(NULL, NULL, NULL, NULL);
-		return SUCCEEDED(hRes);
+		if (hRes != S_OK)
+		{
+			TRACE("[Present] Present:%d\n", hRes);
+			LOG(ERROR) << "[Present] Present:" << hRes;
+			if (hRes == D3DERR_DEVICELOST)
+			{
+				m_status = D3DERR_DEVICELOST;
+			}
+			return FALSE;
+		}
+		return TRUE;
 	}
 	BOOL DX9::ResizeView(INT cx, INT cy)
 	{
@@ -121,7 +292,13 @@ namespace DXFramework
 		viewport.Height = size.cy;
 		viewport.MinZ = 0.0F;
 		viewport.MaxZ = 1.0F;
-		m_d3dd9->SetViewport(&viewport);
+		HRESULT hRes = m_d3dd9->SetViewport(&viewport);
+		if (hRes != S_OK)
+		{
+			TRACE("[SetViewport] SetViewport:%d\n", hRes);
+			LOG(ERROR) << "[SetViewport] SetViewport:" << hRes;
+			return FALSE;
+		}
 		return TRUE;
 	}
 	HWND DX9::GetHWND() const

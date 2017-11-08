@@ -59,12 +59,18 @@ namespace DXFramework
 		BYTE* bits = NULL;
 		HRESULT hRes = m_vertexBuffer->Lock(0, 0, reinterpret_cast<void**>(&bits), 0);
 		if (hRes != S_OK)
+		{
+			TRACE("Translate Lock:%d\n", hRes);
 			return FALSE;
+		}
 		INT vertexCount = GetVertexCount();
 		memcpy(bits, vertexs, (sizeof(VERTEXTYPE) * vertexCount));
 		hRes = m_vertexBuffer->Unlock();
 		if (hRes != S_OK)
+		{
+			TRACE("Translate Unlock:%d\n", hRes);
 			return FALSE;
+		}
 		return TRUE;
 	}
 
@@ -118,13 +124,55 @@ namespace DXFramework
 		if (dx9.IsEmpty())
 			return FALSE;
 		D3DXMATRIX* ms = dx9.GetMatrixs();
-		dx9.GetD3D()->SetTexture(0, static_cast<IDirect3DBaseTexture9*>(m_texture2D.Ptr()));
-		dx9.GetD3D()->SetTransform(D3DTS_PROJECTION, &ms[0]);
-		dx9.GetD3D()->SetTransform(D3DTS_VIEW, &ms[1]);
-		dx9.GetD3D()->SetTransform(D3DTS_WORLD, &ms[2]);
-		dx9.GetD3D()->SetStreamSource(0, m_vertexBuffer, 0, sizeof(VERTEXTYPE));
-		dx9.GetD3D()->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
-		dx9.GetD3D()->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+		HRESULT hRes = dx9.GetD3D()->SetTexture(0, static_cast<IDirect3DBaseTexture9*>(m_texture2D.Ptr()));
+		if (hRes != S_OK)
+		{
+			TRACE("[Process] SetTexture:%d\n", hRes);
+			LOG(ERROR) << "[Process] SetTexture:" << hRes;
+			return FALSE;
+		}
+		hRes = dx9.GetD3D()->SetTransform(D3DTS_PROJECTION, &ms[0]);
+		if (hRes != S_OK)
+		{
+			TRACE("[Process] SetTransform D3DTS_PROJECTION:%d\n", hRes);
+			LOG(ERROR) << "[Process] SetTransform D3DTS_PROJECTION:" << hRes;
+			return FALSE;
+		}
+		hRes = dx9.GetD3D()->SetTransform(D3DTS_VIEW, &ms[1]);
+		if (hRes != S_OK)
+		{
+			TRACE("[Process] SetTransform D3DTS_VIEW:%d\n", hRes);
+			LOG(ERROR) << "[Process] SetTransform D3DTS_VIEW:" << hRes;
+			return FALSE;
+		}
+		hRes = dx9.GetD3D()->SetTransform(D3DTS_WORLD, &ms[2]);
+		if (hRes != S_OK)
+		{
+			TRACE("[Process] SetTransform D3DTS_WORLD:%d\n", hRes);
+			LOG(ERROR) << "[Process] SetTransform D3DTS_WORLD:" << hRes;
+			return FALSE;
+		}
+		hRes = dx9.GetD3D()->SetStreamSource(0, m_vertexBuffer, 0, sizeof(VERTEXTYPE));
+		if (hRes != S_OK)
+		{
+			TRACE("[Process] SetStreamSource:%d\n", hRes);
+			LOG(ERROR) << "[Process] SetStreamSource:" << hRes;
+			return FALSE;
+		}
+		hRes = dx9.GetD3D()->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+		if (hRes != S_OK)
+		{
+			TRACE("[Process] SetSamplerState:%d\n", hRes);
+			LOG(ERROR) << "[Process] SetSamplerState:" << hRes;
+			return FALSE;
+		}
+		hRes = dx9.GetD3D()->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+		if (hRes != S_OK)
+		{
+			TRACE("[Process] DrawPrimitive:%d\n", hRes);
+			LOG(ERROR) << "[Process] DrawPrimitive:" << hRes;
+			return FALSE;
+		}
 		return TRUE;
 	}
 
