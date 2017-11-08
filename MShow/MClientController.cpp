@@ -183,6 +183,7 @@ namespace MShow
 		Json::Value value;
 		Json::Value result;
 		TinyHTTPClient client;
+		client.SetTimeout(3000);
 		client.GetRequest().SetVerbs(TinyHTTPClient::GET);
 		client.GetRequest().Add(TinyHTTPClient::ContentType, "application/x-www-form-urlencoded");
 		client.GetRequest().Add("Sign", "#f93Uc31K24()_@");
@@ -466,6 +467,7 @@ namespace MShow
 		Json::Value value;
 		Json::Value result;
 		TinyHTTPClient client;
+		client.SetTimeout(3000);
 		client.GetRequest().SetVerbs(TinyHTTPClient::POST);
 		client.GetRequest().Add(TinyHTTPClient::ContentType, "application/x-www-form-urlencoded");
 		client.GetRequest().Add("Sign", "#f93Uc31K24()_@");
@@ -523,6 +525,7 @@ namespace MShow
 		Json::Value value;
 		Json::Value result;
 		TinyHTTPClient client;
+		client.SetTimeout(3000);
 		client.GetRequest().SetVerbs(TinyHTTPClient::GET);
 		string address = StringPrintf("http://%s:8001/querycommentaryPURL?PID=%s&ID=%s", MShow::MShowApp::GetInstance().AppConfig().GetDispatch().c_str(), m_szProgramID.c_str(), m_szSourceID.c_str());
 		if (!client.Open(address))
@@ -577,6 +580,7 @@ namespace MShow
 		Json::Value value;
 		Json::Value result;
 		TinyHTTPClient client;
+		client.SetTimeout(3000);
 		client.GetRequest().SetVerbs(TinyHTTPClient::POST);
 		client.GetRequest().Add(TinyHTTPClient::ContentType, "application/x-www-form-urlencoded");
 		client.GetRequest().Add("Sign", "#f93Uc31K24()_@");
@@ -627,6 +631,7 @@ namespace MShow
 		Json::Value value;
 		Json::Value result;
 		TinyHTTPClient client;
+		client.SetTimeout(3000);
 		client.GetRequest().SetVerbs(TinyHTTPClient::POST);
 		client.GetRequest().Add(TinyHTTPClient::ContentType, "application/x-www-form-urlencoded");
 		client.GetRequest().Add("Sign", "#f93Uc31K24()_@");
@@ -676,6 +681,7 @@ namespace MShow
 		Json::Value value;
 		Json::Value result;
 		TinyHTTPClient client;
+		client.SetTimeout(3000);
 		client.GetRequest().SetVerbs(TinyHTTPClient::POST);
 		client.GetRequest().Add(TinyHTTPClient::ContentType, "application/x-www-form-urlencoded");
 		client.GetRequest().Add("Sign", "#f93Uc31K24()_@");

@@ -111,6 +111,7 @@ namespace TinyUI
 		public:
 			TinyHTTPClient();
 			~TinyHTTPClient();
+			void			SetTimeout(INT timeout);
 			void			SetErrorCallback(Callback<void(INT)>&& callback);
 			BOOL			IsEmpty() const;
 			BOOL			Open(const string& szURL);

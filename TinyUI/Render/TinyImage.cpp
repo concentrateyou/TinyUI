@@ -148,6 +148,7 @@ namespace TinyUI
 		if (PathIsURL(pzFile))
 		{
 			TinyHTTPClient client;
+			client.SetTimeout(5000);
 			client.GetRequest().SetVerbs(TinyHTTPClient::GET);
 			if (client.Open(pzFile))
 			{

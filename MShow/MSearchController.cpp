@@ -117,6 +117,7 @@ namespace MShow
 		Json::Value value;
 		Json::Value result;
 		TinyHTTPClient client;
+		client.SetTimeout(3000);
 		client.GetRequest().SetVerbs(TinyHTTPClient::GET);
 		client.GetRequest().Add(TinyHTTPClient::ContentType, "application/x-www-form-urlencoded");
 		client.GetRequest().Add("Sign", "#f93Uc31K24()_@");
@@ -172,6 +173,7 @@ namespace MShow
 		Json::Value value;
 		Json::Value result;
 		TinyHTTPClient client;
+		client.SetTimeout(3000);
 		client.GetRequest().SetVerbs(TinyHTTPClient::POST);
 		client.GetRequest().Add(TinyHTTPClient::ContentType, "application/x-www-form-urlencoded");
 		client.GetRequest().Add("Sign", "#f93Uc31K24()_@");
