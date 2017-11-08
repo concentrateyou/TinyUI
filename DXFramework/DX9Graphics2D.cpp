@@ -11,13 +11,21 @@ namespace DXFramework
 	{
 
 	}
+	BOOL DX9Graphics2D::IsActive() const
+	{
+		return m_dx9.IsActive();
+	}
 	DX9& DX9Graphics2D::GetDX9()
 	{
 		return m_dx9;
 	}
-	void DX9Graphics2D::Present()
+	BOOL DX9Graphics2D::Reset()
 	{
-		m_dx9.Present();
+		return m_dx9.Reset();
+	}
+	BOOL DX9Graphics2D::Present()
+	{
+		return m_dx9.Present();
 	}
 	BOOL DX9Graphics2D::Initialize(HWND hWND, const TinySize& size)
 	{

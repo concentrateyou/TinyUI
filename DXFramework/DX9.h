@@ -23,12 +23,14 @@ namespace DXFramework
 		void				SetRenderTexture2D(DX9RenderView* render2D);
 		DX9RenderView*		GetRender2D() const;
 		BOOL				Reset();
+		BOOL				CheckReset();
 	public:
 		HWND				GetHWND() const;
+		BOOL				IsActive() const;
 		BOOL				IsEmpty() const;
 		IDirect3DDevice9*	GetD3D() const;
 	private:
-		HRESULT							m_status;
+		BOOL							m_bActive;
 		HWND							m_hWND;
 		D3DXMATRIX						m_matrixs[3];
 		D3DVIEWPORT9					m_viewPort;

@@ -8,7 +8,7 @@ namespace DXFramework
 	DX9::DX9()
 		:m_hWND(NULL),
 		m_render2D(NULL),
-		m_status(S_OK)
+		m_bActive(FALSE)
 	{
 
 	}
@@ -21,6 +21,7 @@ namespace DXFramework
 		m_hWND = hWND;
 		m_size.cx = cx;
 		m_size.cy = cy;
+		m_d3d9.Release();
 		m_d3d9.Attach(Direct3DCreate9(D3D_SDK_VERSION));
 		if (m_d3d9 == NULL)
 			return FALSE;
@@ -50,6 +51,7 @@ namespace DXFramework
 		d3dpp.Flags = 0;
 		d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 		d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+		m_d3dd9.Release();
 		hRes = m_d3d9->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWND, D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_PUREDEVICE, &d3dpp, &m_d3dd9);
 		if (hRes != S_OK)
 		{
@@ -137,6 +139,7 @@ namespace DXFramework
 		m_background2D.Reset(new DX9RenderView(*this));
 		if (!m_background2D->Create())
 			return FALSE;
+		m_bActive = TRUE;
 		return TRUE;
 	}
 	BOOL DX9::Reset()
@@ -167,6 +170,8 @@ namespace DXFramework
 		d3dpp.Flags = 0;
 		d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 		d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+		m_d3dd9.Release();
+		hRes = m_d3d9->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hWND, D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_PUREDEVICE, &d3dpp, &m_d3dd9);
 		if (hRes != S_OK)
 		{
 			TRACE("[Initialize] CreateDevice:%d\n", hRes);
@@ -253,6 +258,23 @@ namespace DXFramework
 		m_background2D.Reset(new DX9RenderView(*this));
 		if (!m_background2D->Create())
 			return FALSE;
+		m_bActive = TRUE;
+		return TRUE;
+	}
+	BOOL DX9::CheckReset()
+	{
+		if (IsEmpty())
+			return FALSE;
+		HRESULT hRes = m_d3dd9->TestCooperativeLevel();
+		if (hRes == D3DERR_DEVICELOST)
+		{
+			return FALSE;
+		}
+		if (hRes == D3DERR_DEVICENOTRESET)
+		{
+			return TRUE;
+		}
+		return FALSE;
 	}
 	BOOL DX9::Present()
 	{
@@ -265,7 +287,7 @@ namespace DXFramework
 			LOG(ERROR) << "[Present] Present:" << hRes;
 			if (hRes == D3DERR_DEVICELOST)
 			{
-				m_status = D3DERR_DEVICELOST;
+				m_bActive = FALSE;
 			}
 			return FALSE;
 		}
@@ -277,6 +299,8 @@ namespace DXFramework
 			return FALSE;
 		if (!m_background2D->Resize())
 			return FALSE;
+		m_size.cx = cx;
+		m_size.cy = cy;
 		this->SetViewport(TinyPoint(0, 0), m_background2D->GetSize());
 		this->SetMatrixs(m_background2D->GetSize());
 		return TRUE;
@@ -311,6 +335,10 @@ namespace DXFramework
 			m_d3dd9 != NULL)
 			return FALSE;
 		return TRUE;
+	}
+	BOOL DX9::IsActive() const
+	{
+		return m_bActive;
 	}
 	IDirect3DDevice9*	DX9::GetD3D() const
 	{

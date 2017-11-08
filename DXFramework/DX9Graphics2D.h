@@ -15,7 +15,9 @@ namespace DXFramework
 		DX9Graphics2D();
 		virtual ~DX9Graphics2D();
 		DX9&	GetDX9();
-		void	Present();
+		BOOL	IsActive() const;
+		BOOL	Reset();
+		BOOL	Present();
 		BOOL	Initialize(HWND hWND, const TinySize& size);
 		BOOL	DrawImage(DX9Image2D* ps, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F);
 	private:

@@ -29,7 +29,7 @@ namespace FLVPlayer
 	}
 	BOOL FLVDecode::Submit()
 	{
-		if (m_reader.OpenFile("D:\\7.flv"))
+		if (m_reader.OpenFile("D:\\\Media\\7.flv"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);
@@ -299,12 +299,26 @@ namespace FLVPlayer
 	}
 	void FLVVideoRender::OnRender(BYTE* bits, LONG size)
 	{
-		m_image.Copy(bits, size);
-		m_graphics.GetDX9().SetRenderTexture2D(NULL);
-		m_graphics.GetDX9().GetRender2D()->BeginDraw();
-		m_graphics.DrawImage(&m_image);
-		m_graphics.GetDX9().GetRender2D()->EndDraw();
-		m_graphics.Present();
+		if (!m_graphics.IsActive())
+		{
+			if (m_graphics.GetDX9().CheckReset())
+			{
+				if (m_graphics.Reset())
+				{
+					m_image.Destory();
+					m_image.Create(m_graphics.GetDX9(), m_decode.m_decode.m_size.cx, m_decode.m_decode.m_size.cy, NULL);
+				}
+			}
+		}
+		else
+		{
+			m_image.Copy(bits, size);
+			m_graphics.GetDX9().SetRenderTexture2D(NULL);
+			m_graphics.GetDX9().GetRender2D()->BeginDraw();
+			m_graphics.DrawImage(&m_image);
+			m_graphics.GetDX9().GetRender2D()->EndDraw();
+			m_graphics.Present();
+		}
 	}
 	//////////////////////////////////////////////////////////////////////////
 	FLVVideoTask::FLVVideoTask(FLVDecode& decode)
