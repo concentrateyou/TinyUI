@@ -6,10 +6,14 @@
 #include "FLVWriter.h"
 #include "PacketQueue.h"
 #include "QSVDecoder.h"
+#include "DX9Graphics2D.h"
+#include "DX9Image2D.h"
+#include "DX9RenderView.h"
 using namespace Decode;
 using namespace TinyUI;
 using namespace TinyUI::IO;
 using namespace TinyUI::Media;
+using namespace DXFramework;
 
 namespace FLVPlayer
 {
@@ -53,7 +57,7 @@ namespace FLVPlayer
 		TinyEvent				m_close;
 		TinySoundPlayer			m_player;
 		FLVVAudioTask&			m_decode;
-		TinyPerformanceTime	m_timer;
+		TinyPerformanceTime		m_time;
 	};
 
 	class FLVVideoTask : public TinyTaskBase
@@ -89,7 +93,9 @@ namespace FLVPlayer
 		LONGLONG				m_wPTS;
 		TinyEvent				m_close;
 		FLVVideoTask&			m_decode;
-		TinyPerformanceTime	m_timer;
+		TinyPerformanceTime		m_time;
+		DX9Graphics2D			m_graphics;
+		DX9Image2D				m_image;
 	};
 
 	class FLVDecode : public TinyTaskBase
@@ -122,7 +128,6 @@ namespace FLVPlayer
 		PacketQueue					m_videoQueue;
 		TinyScopedPtr<x264Decode>	m_x264;
 		TinyScopedPtr<AACDecode>	m_aac;
-		//QSV::QSVDecoder				m_qsv;
 		FLVAudioRender				m_audioRender;
 		FLVVideoRender				m_videoRender;
 		FLVVideoTask				m_videoTask;

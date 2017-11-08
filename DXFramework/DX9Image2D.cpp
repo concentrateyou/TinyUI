@@ -37,20 +37,25 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
+	//https://msdn.microsoft.com/en-us/library/windows/desktop/bb219690(v=vs.85).aspx
 	BOOL DX9Image2D::Translate(DX9& dx9, FLOAT ratioX, FLOAT ratioY)
 	{
 		D3DXVECTOR2 scale(static_cast<FLOAT>(GetScale().cx) * ratioX, static_cast<FLOAT>(GetScale().cy) * ratioY);
 		D3DXVECTOR2 pos(static_cast<FLOAT>(GetPosition().x) * ratioX, static_cast<FLOAT>(GetPosition().y) * ratioY);
 		VERTEXTYPE vertexs[] =
 		{
-			{ pos.x,pos.y + scale.y,1,1,0,1 },
-			{ pos.x,pos.y,1,1,0,0 },
-			{ pos.x + scale.x,pos.y,1,1,1,0 },
-			{ pos.x,pos.y + scale.y,1,1,0,1 },
-			{ pos.x + scale.x,pos.y,1,1,1,0 },
-			{ pos.x + scale.x,pos.y + scale.y,1,1,1,1 }
+			{ static_cast<FLOAT>(pos.x),static_cast<FLOAT>(pos.y + scale.y),1.0F,1.0F,0.0F,1.0F },
+			{ static_cast<FLOAT>(pos.x),static_cast<FLOAT>(pos.y),1.0F,1.0F,0.0F,0.0F },
+			{ static_cast<FLOAT>(pos.x + scale.x),static_cast<FLOAT>(pos.y),1.0F,1.0,1.0F,0.0F },
+			{ static_cast<FLOAT>(pos.x),static_cast<FLOAT>(pos.y + scale.y),1.0F,1.0F,0.0F,1.0F },
+			{ static_cast<FLOAT>(pos.x + scale.x),static_cast<FLOAT>(pos.y),1.0F,1.0F,1.0F,0.0F },
+			{ static_cast<FLOAT>(pos.x + scale.x),static_cast<FLOAT>(pos.y + scale.y),1.0F,1.0F,1.0F,1.0F }
 		};
-
+		for (INT i = 0; i < 6; i++)
+		{
+			vertexs[i].x -= 0.5F;
+			vertexs[i].y -= 0.5F;
+		}
 		BYTE* bits = NULL;
 		HRESULT hRes = m_vertexBuffer->Lock(0, 0, reinterpret_cast<void**>(&bits), 0);
 		if (hRes != S_OK)

@@ -29,15 +29,6 @@ namespace FLVPlayer
 	}
 	BOOL FLVDecode::Submit()
 	{
-		//if (m_reader.OpenURL("rtmp://live.hkstv.hk.lxdns.com/live/hks"))
-		//if(m_reader.OpenURL("rtmp://10.121.86.127/live/test_mshow"))
-		//if (m_reader.OpenURL("rtmp://10.10.13.98/live/lb_junlvjuchang_720p"))
-		/*if (m_reader.OpenFile("D:\\test1.flv"))*/
-		//m_writer.Create("D:\\test1.flv");
-		//FLV_SCRIPTDATA script;
-		//m_writer.WriteScriptTag(script);
-		//m_writer.Close();
-
 		if (m_reader.OpenFile("D:\\7.flv"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
@@ -83,7 +74,7 @@ namespace FLVPlayer
 			{
 				break;
 			}
-			TRACE("TS:%lld\n",block.dts);
+			TRACE("TS:%lld\n", block.dts);
 			if (block.type == FLV_AUDIO)
 			{
 				if (block.audio.codeID == FLV_CODECID_AAC)
@@ -207,7 +198,7 @@ namespace FLVPlayer
 			while (m_decode.m_decode.m_baseTime == -1);
 			if (!m_bInitialize)
 			{
-				m_timer.BeginTime();
+				m_time.BeginTime();
 				m_bInitialize = TRUE;
 				if (!m_player.SetFormat(m_decode.m_decode.m_aac->GetFormat(), tag.size * 3))
 					break;
@@ -219,9 +210,9 @@ namespace FLVPlayer
 				vals[2].dwOffset = tag.size * 3 - 1;
 				vals[2].hEventNotify = m_events[2];
 				m_player.SetNotifys(3, vals);
-				m_timer.EndTime();
+				m_time.EndTime();
 				m_decode.m_decode.m_lockTime.Lock();
-				m_decode.m_decode.m_baseTime += m_timer.GetMillisconds();
+				m_decode.m_decode.m_baseTime += m_time.GetMillisconds();
 				m_decode.m_decode.m_lockTime.Unlock();
 				m_player.Play();
 				DWORD dwMS = timeGetTime() - m_decode.m_decode.m_baseTime;
@@ -233,7 +224,6 @@ namespace FLVPlayer
 						m_player.Fill(tag.bits, tag.size, dwOffset);
 					}
 				}
-				//Sleep(offset < 0 ? 0 : offset);
 			}
 			else
 			{
@@ -271,6 +261,10 @@ namespace FLVPlayer
 	}
 	BOOL FLVVideoRender::Submit()
 	{
+		TinyRectangle rectangle;
+		GetClientRect(m_decode.m_decode.m_hWND, &rectangle);
+		BOOL bRes = m_graphics.Initialize(m_decode.m_decode.m_hWND, rectangle.Size());
+		bRes = m_image.Create(m_graphics.GetDX9(), m_decode.m_decode.m_size.cx, m_decode.m_decode.m_size.cy, NULL);
 		return TinyTaskBase::Submit(BindCallback(&FLVVideoRender::OnMessagePump, this));
 	}
 	BOOL FLVVideoRender::Close(DWORD dwMS)
@@ -306,30 +300,36 @@ namespace FLVPlayer
 	}
 	void FLVVideoRender::OnRender(BYTE* bits, LONG size)
 	{
-		ASSERT(size == m_decode.m_decode.m_size.cx *  m_decode.m_decode.m_size.cy * 4);
-		HDC hDC = GetDC(m_decode.m_decode.m_hWND);
-		if (hDC != NULL)
-		{
-			BITMAPINFO bmi = { 0 };
-			bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-			bmi.bmiHeader.biWidth = m_decode.m_decode.m_size.cx;
-			bmi.bmiHeader.biHeight = -m_decode.m_decode.m_size.cy;
-			bmi.bmiHeader.biPlanes = 1;
-			bmi.bmiHeader.biBitCount = 32;
-			bmi.bmiHeader.biCompression = BI_RGB;
-			bmi.bmiHeader.biSizeImage = m_decode.m_decode.m_size.cx *  m_decode.m_decode.m_size.cy * 4;
-			BYTE* pvBits = NULL;
-			HBITMAP hBitmap = ::CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pvBits), NULL, 0);
-			if (hBitmap != NULL)
-			{
-				memcpy(pvBits, bits, size);
-				TinyMemDC dc(hDC, hBitmap);
-				TinyRectangle src = { 0,0, m_decode.m_decode.m_size.cx, m_decode.m_decode.m_size.cy };
-				dc.Render(src, src, FALSE);
-				SAFE_DELETE_OBJECT(hBitmap);
-			}
-			ReleaseDC(m_decode.m_decode.m_hWND, hDC);
-		}
+		m_image.Copy(bits, size);
+		m_graphics.GetDX9().SetRenderTexture2D(NULL);
+		m_graphics.GetDX9().GetRender2D()->BeginDraw();
+		m_graphics.DrawImage(&m_image);
+		m_graphics.GetDX9().GetRender2D()->EndDraw();
+		m_graphics.Present();
+		//ASSERT(size == m_decode.m_decode.m_size.cx *  m_decode.m_decode.m_size.cy * 4);
+		//HDC hDC = GetDC(m_decode.m_decode.m_hWND);
+		//if (hDC != NULL)
+		//{
+		//	BITMAPINFO bmi = { 0 };
+		//	bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+		//	bmi.bmiHeader.biWidth = m_decode.m_decode.m_size.cx;
+		//	bmi.bmiHeader.biHeight = -m_decode.m_decode.m_size.cy;
+		//	bmi.bmiHeader.biPlanes = 1;
+		//	bmi.bmiHeader.biBitCount = 32;
+		//	bmi.bmiHeader.biCompression = BI_RGB;
+		//	bmi.bmiHeader.biSizeImage = m_decode.m_decode.m_size.cx *  m_decode.m_decode.m_size.cy * 4;
+		//	BYTE* pvBits = NULL;
+		//	HBITMAP hBitmap = ::CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pvBits), NULL, 0);
+		//	if (hBitmap != NULL)
+		//	{
+		//		memcpy(pvBits, bits, size);
+		//		TinyMemDC dc(hDC, hBitmap);
+		//		TinyRectangle src = { 0,0, m_decode.m_decode.m_size.cx, m_decode.m_decode.m_size.cy };
+		//		dc.Render(src, src, FALSE);
+		//		SAFE_DELETE_OBJECT(hBitmap);
+		//	}
+		//	ReleaseDC(m_decode.m_decode.m_hWND, hDC);
+		//}
 	}
 	//////////////////////////////////////////////////////////////////////////
 	FLVVideoTask::FLVVideoTask(FLVDecode& decode)

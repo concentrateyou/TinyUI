@@ -218,7 +218,7 @@ namespace MShow
 		}
 		else
 		{
-			TRACE("Not Capturing\n");
+			m_buffer.Clear();
 			ZeroMemory(m_bits, 4096);
 			if (!m_callback.IsNull())
 			{
