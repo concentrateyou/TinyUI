@@ -375,20 +375,20 @@ namespace TinyUI
 	LRESULT TinyControl::OnIniMenuPopup(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		TinyHandleHMENU** pps = TinyApplication::GetInstance()->GetMapHMENU().Lookup(reinterpret_cast<HMENU>(wParam));
+		TinyHandleHMENU* pps = TinyHandleHMENU::Find(reinterpret_cast<HMENU>(wParam));
 		if (pps != NULL)
 		{
-			m_pMenu = static_cast<TinyMenu*>(*pps);
+			m_pMenu = static_cast<TinyMenu*>(pps);
 		}
 		return FALSE;
 	}
 	LRESULT TinyControl::OnIniMenu(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		TinyHandleHMENU** pps = TinyApplication::GetInstance()->GetMapHMENU().Lookup(reinterpret_cast<HMENU>(wParam));
+		TinyHandleHMENU* pps = TinyHandleHMENU::Find(reinterpret_cast<HMENU>(wParam));
 		if (pps != NULL)
 		{
-			m_pMenu = static_cast<TinyMenu*>(*pps);
+			m_pMenu = static_cast<TinyMenu*>(pps);
 		}
 		return FALSE;
 	}

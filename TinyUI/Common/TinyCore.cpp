@@ -575,7 +575,7 @@ namespace TinyUI
 	}
 	void CALLBACK TinyTimer::TimerCallback(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD  dwTime)
 	{
-		TinyTimer* pThis = *(TinyTimer::m_map.Lookup(idEvent));
+		TinyTimer* pThis = *(TinyTimer::m_map.Find(idEvent));
 		if (pThis != NULL && !pThis->m_callback.IsNull())
 		{
 			pThis->m_callback();

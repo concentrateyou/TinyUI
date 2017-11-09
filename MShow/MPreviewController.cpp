@@ -48,10 +48,7 @@ namespace MShow
 		}
 		LOG(INFO) << "[MPreviewController] " << "Player Open OK";
 		size = m_player->GetSize();
-		m_image.Reset(new DX9Image2D());
-		if (!m_image)
-			return FALSE;
-		if (!m_image->Create(m_graphics.GetDX9(), size.cx, size.cy, NULL))
+		if (!m_image.Create(m_graphics.GetDX9(), size.cx, size.cy, NULL))
 		{
 			LOG(ERROR) << "[MPreviewController] " << "Create Image FAIL";
 			goto _ERROR;
@@ -68,11 +65,7 @@ namespace MShow
 		{
 			m_player->Close();
 		}
-		if (m_image != NULL)
-		{
-			m_image->Destory();
-		}
-		m_image.Reset(NULL);
+		m_image.Destory();
 		LOG(INFO) << "[MPreviewController] " << "Player Close OK";
 		return TRUE;
 	}
@@ -136,56 +129,38 @@ namespace MShow
 			{
 				if (m_graphics.Reset())
 				{
-					if (m_image != NULL)
+					m_image.Destory();
+					TinySize videoSize = m_player->GetSize();
+					if (!m_image.Create(m_graphics.GetDX9(), videoSize.cx, videoSize.cy, NULL))
 					{
-						m_image->Destory();
-						TinySize videoSize = m_player->GetSize();
-						if (!m_image->Create(m_graphics.GetDX9(), videoSize.cx, videoSize.cy, NULL))
-						{
-							LOG(ERROR) << "[MPreviewController] [OnDraw]" << " Create FAIL";
-							return FALSE;
-						}
-					}
-					else
-					{
-						m_image.Reset(new DX9Image2D());
-						if (!m_image)
-							return FALSE;
-						TinySize videoSize = m_player->GetSize();
-						if (!m_image->Create(m_graphics.GetDX9(), videoSize.cx, videoSize.cy, NULL))
-						{
-							LOG(ERROR) << "[MPreviewController] [OnDraw]" << " Create FAIL";
-							return FALSE;
-						}
+						LOG(ERROR) << "[MPreviewController] [OnDraw]" << " Create FAIL";
+						return FALSE;
 					}
 				}
 			}
 		}
 		else
 		{
-			if (m_image != NULL)
+			if (!m_image.Copy(bits, size))
 			{
-				if (!m_image->Copy(bits, size))
-				{
-					LOG(ERROR) << "[MPreviewController] [OnDraw]" << " Copy FAIL";
-					return FALSE;
-				}
-				m_graphics.GetDX9().SetRenderTexture2D(NULL);
-				if (!m_graphics.GetDX9().GetRender2D()->BeginDraw())
-				{
-					LOG(ERROR) << "[MPreviewController] [OnDraw]" << "BeginDraw FAIL";
-					return FALSE;
-				}
-				if (!m_graphics.DrawImage(m_image))
-				{
-					LOG(ERROR) << "[MPreviewController] [OnDraw]" << "DrawImage FAIL";
-					return FALSE;
-				}
-				if (!m_graphics.GetDX9().GetRender2D()->EndDraw())
-				{
-					LOG(ERROR) << "[MPreviewController] [OnDraw]" << "EndDraw FAIL";
-					return FALSE;
-				}
+				LOG(ERROR) << "[MPreviewController] [OnDraw]" << " Copy FAIL";
+				return FALSE;
+			}
+			m_graphics.GetDX9().SetRenderTexture2D(NULL);
+			if (!m_graphics.GetDX9().GetRender2D()->BeginDraw())
+			{
+				LOG(ERROR) << "[MPreviewController] [OnDraw]" << "BeginDraw FAIL";
+				return FALSE;
+			}
+			if (!m_graphics.DrawImage(&m_image))
+			{
+				LOG(ERROR) << "[MPreviewController] [OnDraw]" << "DrawImage FAIL";
+				return FALSE;
+			}
+			if (!m_graphics.GetDX9().GetRender2D()->EndDraw())
+			{
+				LOG(ERROR) << "[MPreviewController] [OnDraw]" << "EndDraw FAIL";
+				return FALSE;
 			}
 		}
 		return TRUE;

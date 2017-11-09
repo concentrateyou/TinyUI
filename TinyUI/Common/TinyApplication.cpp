@@ -24,7 +24,7 @@ namespace TinyUI
 	{
 		TinyAutoLock lock(m_lock);
 		ASSERT(pMsgLoop != NULL);
-		ASSERT(m_msgLoops.Lookup(::GetCurrentThreadId()) == NULL);
+		ASSERT(m_msgLoops.Find(::GetCurrentThreadId()) == NULL);
 		BOOL bRet = m_msgLoops.Add(::GetCurrentThreadId(), pMsgLoop) != NULL;
 		return bRet;
 	}
@@ -38,7 +38,7 @@ namespace TinyUI
 	TinyMessageLoop* TinyApplication::GetMessageLoop(DWORD dwThreadID)
 	{
 		TinyAutoLock lock(m_lock);
-		TinyMessageLoop* ps = *m_msgLoops.Lookup(dwThreadID);
+		TinyMessageLoop* ps = *m_msgLoops.Find(dwThreadID);
 		return ps;
 	}
 	TinyTimerQueue&	 TinyApplication::GetTimers()
@@ -78,47 +78,6 @@ namespace TinyUI
 		m_timers.Destory();
 		OleUninitialize();
 		return TRUE;
-	}
-
-	TinyHandleMap<HWND, TinyHandleHWND*>& TinyApplication::GetMapHWND()
-	{
-		return m_MapHWND;
-	}
-	TinyHandleMap<HMENU, TinyHandleHMENU*>& TinyApplication::GetMapHMENU()
-	{
-		return m_MapHMENU;
-	}
-	TinyHandleMap<HDC, TinyHandleHDC*>&	TinyApplication::GetMapHDC()
-	{
-		return m_MapHDC;
-	}
-	TinyHandleMap<HBITMAP, TinyHandleHBITMAP*>&	TinyApplication::GetMapHBITMAP()
-	{
-		return m_MapHBITMAP;
-	}
-	TinyHandleMap<HFONT, TinyHandleHFONT*>&	TinyApplication::GetMapHFONT()
-	{
-		return m_MapHFONT;
-	}
-	TinyHandleMap<HPEN, TinyHandleHPEN*>& TinyApplication::GetMapHPEN()
-	{
-		return m_MapHPEN;
-	}
-	TinyHandleMap<HBRUSH, TinyHandleHBRUSH*>& TinyApplication::GetMapHBRUSH()
-	{
-		return m_MapHBRUSH;
-	}
-	TinyHandleMap<HPALETTE, TinyHandleHPALETTE*>& TinyApplication::GetMapHPALETTE()
-	{
-		return m_MapHPALETTE;
-	}
-	TinyHandleMap<HRGN, TinyHandleHRGN*>& TinyApplication::GetMapHRGN()
-	{
-		return m_MapHRGN;
-	}
-	TinyHandleMap<HIMAGELIST, TinyHandleHIMAGELIST*>& TinyApplication::GetMapHIMAGELIST()
-	{
-		return m_MapHIMAGELIST;
 	}
 	TinyApplication::~TinyApplication()
 	{

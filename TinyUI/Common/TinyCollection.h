@@ -48,8 +48,8 @@ namespace TinyUI
 		INT  FindValue(const V& myValue) const;
 		K&	 GetKeyAt(INT index);
 		V&	 GetValueAt(INT index);
-		V*	 Lookup(const K& key) const;
-		V*	 Lookup(K& key);
+		V*	 Find(const K& key) const;
+		V*	 Find(K& key);
 		V&	 operator[](const K& myKey) const;
 		V&	 operator[](K& myKey);
 	private:
@@ -135,7 +135,7 @@ namespace TinyUI
 		return -1;
 	}
 	template<class K, class V>
-	V* TinySimpleMap<K, V>::Lookup(const K& key) const
+	V* TinySimpleMap<K, V>::Find(const K& key) const
 	{
 		INT index = FindKey(key);
 		if (index < 0)
@@ -145,7 +145,7 @@ namespace TinyUI
 		return &m_myValue[index];
 	}
 	template<class K, class V>
-	V* TinySimpleMap<K, V>::Lookup(K& key)
+	V* TinySimpleMap<K, V>::Find(K& key)
 	{
 		INT index = FindKey(key);
 		if (index < 0)

@@ -36,7 +36,7 @@ namespace MShow
 		void			OnError(INT);
 	private:
 		DX9Graphics2D				m_graphics;
-		TinyScopedPtr<DX9Image2D>	m_image;
+		DX9Image2D					m_image;
 		TinySize					m_videoSize;
 		TinySize					m_viewSize;
 		TinyPerformanceTime			m_timeQPC;
