@@ -3,7 +3,9 @@
 #include "MPreviewView.h"
 #include "MFLVPlayer.h"
 #include "Control/TinyMenu.h"
-#include "DX2D.h"
+#include "DX9Graphics2D.h"
+#include "DX9Image2D.h"
+#include "DX9RenderView.h"
 using namespace DXFramework;
 using namespace TinyUI;
 
@@ -26,7 +28,7 @@ namespace MShow
 		MPreviewView&	GetView();
 		LONGLONG		GetBasePTS();
 	private:
-		BOOL			CreateBitmap(const TinySize& size);
+		BOOL			OnDraw(BYTE* bits, LONG size);
 		void			OnAudio(BYTE* bits, LONG size);
 		void			OnVideoCopy(BYTE* bits, LONG size);
 		void			OnVideoRender();
@@ -37,7 +39,8 @@ namespace MShow
 		TinySize					m_viewSize;
 		TinyPerformanceTime			m_timeQPC;
 		TinyTaskTimer				m_timer;
-		DX2D						m_d2d;
+		DX9Graphics2D				m_graphics;
+		DX9Image2D					m_image;
 		TinyComPtr<ID2D1Bitmap>		m_bitmap;
 		MPreviewView&				m_view;
 		TinyScopedPtr<MFLVPlayer>	m_player;

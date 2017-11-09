@@ -25,17 +25,18 @@ namespace MShow
 	{
 		TinyRectangle rectangle;
 		GetClientRect(m_view.Handle(), &rectangle);
-		if (!m_d2d.Initialize(m_view.Handle(), rectangle.Size().cx, rectangle.Size().cy))
+		if (!m_graphics.Initialize(m_view.Handle(), rectangle.Size()))
 		{
-			LOG(ERROR) << "[MPreviewController] " << "D2D Initialize FAIL";
+			LOG(ERROR) << "[MPreviewController] " << "DX9Graphics2D Initialize FAIL";
 			return FALSE;
 		}
-		LOG(INFO) << "[MPreviewController] " << "D2D Initialize OK";
+		LOG(INFO) << "[MPreviewController] " << "DX9Graphics2D Initialize OK";
 		return TRUE;
 	}
 
 	BOOL MPreviewController::Open(LPCSTR pzURL)
 	{
+		TinySize size;
 		m_player.Reset(new MFLVPlayer(BindCallback(&MPreviewController::OnAudio, this), BindCallback(&MPreviewController::OnVideoCopy, this), BindCallback(&MPreviewController::OnVideoRender, this)));
 		if (!m_player)
 			goto _ERROR;
@@ -46,9 +47,10 @@ namespace MShow
 			goto _ERROR;
 		}
 		LOG(INFO) << "[MPreviewController] " << "Player Open OK";
-		if (!CreateBitmap(m_player->GetSize()))
+		size = m_player->GetSize();
+		if (!m_image.Create(m_graphics.GetDX9(), size.cx, size.cy, NULL))
 		{
-			LOG(ERROR) << "[MPreviewController] " << "CreateBitmap FAIL";
+			LOG(ERROR) << "[MPreviewController] " << "Create Image FAIL";
 			goto _ERROR;
 		}
 		return TRUE;
@@ -63,7 +65,7 @@ namespace MShow
 		{
 			m_player->Close();
 		}
-		m_bitmap.Release();
+		m_image.Destory();
 		LOG(INFO) << "[MPreviewController] " << "Player Close OK";
 		return TRUE;
 	}
@@ -113,59 +115,62 @@ namespace MShow
 		LOG(ERROR) << "[MPreviewController] " << "GetBasePTS NULL";
 		return  0;
 	}
-	BOOL MPreviewController::CreateBitmap(const TinySize& size)
-	{
-		m_bitmap.Release();
-		HRESULT hRes = m_d2d.GetCanvas()->CreateBitmap(D2D1::SizeU(size.cx, size.cy), D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)), &m_bitmap);
-		if (FAILED(hRes))
-		{
-			LOG(ERROR) << "[MPreviewController] " << "CreateBitmap FAIL";
-			return FALSE;
-		}
-		LOG(INFO) << "[MPreviewController] " << "CreateBitmap OK";
-		return TRUE;
-	}
 	void MPreviewController::OnAudio(BYTE* bits, LONG size)
 	{
 
 	}
-
-	void MPreviewController::OnVideoCopy(BYTE* bits, LONG size)
+	BOOL MPreviewController::OnDraw(BYTE* bits, LONG size)
 	{
-		if (m_bitmap != NULL && bits != NULL && size > 0)
+		if (bits == NULL || size <= 0)
+			return FALSE;
+		if (!m_graphics.IsActive())
 		{
-			UINT s = m_player->GetSize().cx * 4;
-			HRESULT hRes = m_bitmap->CopyFromMemory(NULL, bits, s);
-			if (hRes != S_OK)
+			if (m_graphics.GetDX9().CheckReset())
 			{
-				LOG(ERROR) << "[MPreviewController] " << "CopyFromMemory FAIL";
-			}
-		}
-	}
-	void MPreviewController::OnVideoRender()
-	{
-		HRESULT hRes = S_OK;
-		if (m_d2d.BeginDraw())
-		{
-			m_d2d.GetCanvas()->DrawBitmap(m_bitmap);
-			if (!m_d2d.EndDraw(hRes))
-			{
-				LOG(ERROR) << "[MPreviewController] EndDraw FAIL: " << hRes;
-			}
-			else
-			{
-				if (hRes == D2DERR_RECREATE_TARGET)
+				if (m_graphics.Reset())
 				{
-					if (CreateBitmap(m_player->GetSize()))
+					m_image.Destory();
+					TinySize videoSize = m_player->GetSize();
+					if (!m_image.Create(m_graphics.GetDX9(), videoSize.cx, videoSize.cy, NULL))
 					{
-						LOG(INFO) << "[MPreviewController] OnVideoRender - CreateBitmap OK";
-					}
-					else
-					{
-						LOG(ERROR) << "[MPreviewController] OnVideoRender - CreateBitmap FAIL";
+						LOG(ERROR) << "[MPreviewController] [OnDraw]" << " Create FAIL";
+						return FALSE;
 					}
 				}
 			}
 		}
+		else
+		{
+			if (!m_image.Copy(bits, size))
+			{
+				LOG(ERROR) << "[MPreviewController] [OnDraw]" << " Copy FAIL";
+				return FALSE;
+			}
+			m_graphics.GetDX9().SetRenderTexture2D(NULL);
+			if (!m_graphics.GetDX9().GetRender2D()->BeginDraw())
+			{
+				LOG(ERROR) << "[MPreviewController] [OnDraw]" << "BeginDraw FAIL";
+				return FALSE;
+			}
+			if (!m_graphics.DrawImage(&m_image))
+			{
+				LOG(ERROR) << "[MPreviewController] [OnDraw]" << "DrawImage FAIL";
+				return FALSE;
+			}
+			if (!m_graphics.GetDX9().GetRender2D()->EndDraw())
+			{
+				LOG(ERROR) << "[MPreviewController] [OnDraw]" << "EndDraw FAIL";
+				return FALSE;
+			}
+		}
+		return TRUE;
+	}
+	void MPreviewController::OnVideoCopy(BYTE* bits, LONG size)
+	{
+		OnDraw(bits, size);
+	}
+	void MPreviewController::OnVideoRender()
+	{
+		m_graphics.Present();
 	}
 }
