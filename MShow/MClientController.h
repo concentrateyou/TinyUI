@@ -78,7 +78,6 @@ namespace MShow
 		string								m_szProgramID;
 		string								m_szPreviewURL;
 		string								m_szName;//Ô´Ãû³Æ
-		TinyEvent							m_event;
 		MClientWindow&						m_view;
 		SpeakTest							m_speakTest;
 		MicrophoneTest						m_microphoneTest;
@@ -86,6 +85,7 @@ namespace MShow
 		TinyScopedPtr<AudioSdk>				m_audioSDK;
 		MAudioQueue							m_audioQueue;
 		TinyTaskBase						m_task;
+		TinyEvent							m_event;
 		TinyScopedPtr<MPreviewController>	m_preview;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onSettingClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMinimumClick;

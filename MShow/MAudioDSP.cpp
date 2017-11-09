@@ -65,6 +65,7 @@ namespace MShow
 				LOG(ERROR) << "[MAudioDSP] Create Wave File: " << szFile << " Fail";
 			}
 		}
+		m_timer.SetCallback(23, BindCallback(&MAudioDSP::OnTimer, this));
 		LOG(INFO) << "[MAudioDSP] Open OK";
 		return TRUE;
 	}
@@ -101,6 +102,7 @@ namespace MShow
 				LOG(ERROR) << "[MAudioDSP] Create Wave File: " << szFile << " Fail";
 			}
 		}
+		m_timer.SetCallback(23, BindCallback(&MAudioDSP::OnTimer, this));
 		LOG(INFO) << "[MAudioDSP] Open OK";
 		return TRUE;
 	}
@@ -152,6 +154,7 @@ namespace MShow
 				LOG(ERROR) << "[MAudioDSP] Create Wave File: " << szFile << " Fail";
 			}
 		}
+		m_timer.SetCallback(23, BindCallback(&MAudioDSP::OnTimer, this));
 		LOG(INFO) << "[MAudioDSP] Open OK";
 		return TRUE;
 	}
@@ -162,7 +165,6 @@ namespace MShow
 			LOG(ERROR) << "AudioDSP Start Fail";
 			return FALSE;
 		}
-		m_timer.SetCallback(23, BindCallback(&MAudioDSP::OnTimer, this));
 		LOG(INFO) << "AudioDSP Start OK";
 		return TRUE;
 	}
@@ -178,13 +180,13 @@ namespace MShow
 	}
 	BOOL MAudioDSP::Close()
 	{
-		m_timer.Close();
 		m_resampler.Close();
 		if (!m_audioDSP.Close())
 		{
 			LOG(ERROR) << "AudioDSP Close Fail";
 			return FALSE;
 		}
+		m_timer.Close();
 		LOG(INFO) << "AudioDSP Close OK";
 		return TRUE;
 	}

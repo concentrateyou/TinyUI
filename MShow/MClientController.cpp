@@ -44,7 +44,6 @@ namespace MShow
 	BOOL MClientController::Uninitialize()
 	{
 		Close();
-		m_preview.Reset(NULL);
 		return TRUE;
 	}
 
@@ -624,7 +623,6 @@ namespace MShow
 	{
 		if (sourceID.empty() || sName.empty())
 			return FALSE;
-
 		string code;
 		string context;
 		Json::Reader reader;
@@ -723,28 +721,31 @@ namespace MShow
 
 	void MClientController::Close()
 	{
-		//更新UI 
-		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnEdit");
-		if (visual != NULL)
+		if (m_view.GetDocument() != NULL)
 		{
-			visual->SetVisible(TRUE);
-			m_view.GetDocument()->SetFocus(visual);
-		}
-		visual = m_view.GetDocument()->GetVisualByName("btnSave");
-		if (visual != NULL)
-		{
-			visual->SetVisible(FALSE);
-		}
-		visual = m_view.GetDocument()->GetVisualByName("btnCancel");
-		if (visual != NULL)
-		{
-			visual->SetVisible(FALSE);
-		}
-		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
-		if (pTextBox != NULL)
-		{
-			pTextBox->SetText("");
-			pTextBox->SetEnable(FALSE);
+			//更新UI 
+			TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnEdit");
+			if (visual != NULL)
+			{
+				visual->SetVisible(TRUE);
+				m_view.GetDocument()->SetFocus(visual);
+			}
+			visual = m_view.GetDocument()->GetVisualByName("btnSave");
+			if (visual != NULL)
+			{
+				visual->SetVisible(FALSE);
+			}
+			visual = m_view.GetDocument()->GetVisualByName("btnCancel");
+			if (visual != NULL)
+			{
+				visual->SetVisible(FALSE);
+			}
+			TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
+			if (pTextBox != NULL)
+			{
+				pTextBox->SetText("");
+				pTextBox->SetEnable(FALSE);
+			}
 		}
 		//停止解说
 		StopCommentary();
@@ -857,26 +858,29 @@ namespace MShow
 		m_timerStatus.Close();
 		//更新UI
 		m_bPause = FALSE;
-		TinyVisual* spvis = m_view.GetDocument()->GetVisualByName("btnPauseCommentary");
-		if (spvis != NULL)
+		if (m_view.GetDocument() != NULL)
 		{
-			spvis->SetText(m_bPause ? "播放" : "暂停");
-		}
-		m_bCommentarying = FALSE;
-		spvis = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
-		if (spvis != NULL)
-		{
-			spvis->SetVisible(TRUE);
-		}
-		spvis = m_view.GetDocument()->GetVisualByName("btnPauseCommentary");
-		if (spvis != NULL)
-		{
-			spvis->SetVisible(FALSE);
-		}
-		spvis = m_view.GetDocument()->GetVisualByName("btnStopCommentary");
-		if (spvis != NULL)
-		{
-			spvis->SetVisible(FALSE);
+			TinyVisual* spvis = m_view.GetDocument()->GetVisualByName("btnPauseCommentary");
+			if (spvis != NULL)
+			{
+				spvis->SetText(m_bPause ? "播放" : "暂停");
+			}
+			m_bCommentarying = FALSE;
+			spvis = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
+			if (spvis != NULL)
+			{
+				spvis->SetVisible(TRUE);
+			}
+			spvis = m_view.GetDocument()->GetVisualByName("btnPauseCommentary");
+			if (spvis != NULL)
+			{
+				spvis->SetVisible(FALSE);
+			}
+			spvis = m_view.GetDocument()->GetVisualByName("btnStopCommentary");
+			if (spvis != NULL)
+			{
+				spvis->SetVisible(FALSE);
+			}
 		}
 		m_view.Invalidate();
 	}
@@ -1050,8 +1054,13 @@ namespace MShow
 		}
 	}
 
+	TinyPerformanceTime g_timeQPC1;
+
 	void MClientController::OnAudioDSP(BYTE* bits, LONG size)
 	{
+		g_timeQPC1.EndTime();
+		LOG(INFO) << "OnAudioDSP:" << g_timeQPC1.GetMillisconds();
+		g_timeQPC1.BeginTime();
 		if (m_preview != NULL)
 		{
 			if (size == 4096)
@@ -1081,35 +1090,37 @@ namespace MShow
 		}
 	}
 
+	TinyPerformanceTime g_timeQPC;
+
 	void MClientController::OnMessagePump()
 	{
 		for (;;)
 		{
 			if (m_bBreak)
 				break;
-			if (m_event.Lock(2500))
+			if (m_event.Lock(1000))
 			{
 				if (m_audioSDK != NULL)
 				{
 					AUDIO_SAMPLE sample = { 0 };
+					INT count = m_audioQueue.GetCount();
 					BOOL bRes = m_audioQueue.Pop(sample);
 					if (bRes && sample.size > 0)
 					{
+						g_timeQPC.BeginTime();
 						if (m_audioSDK->audio_encode_send(sample.bits + 4, static_cast<INT32>(sample.timestamp)) == 0)
 						{
-							LOG(INFO) << "Timestamp: " << sample.timestamp << " OK";
+
 						}
 						else
 						{
 							LOG(INFO) << "Timestamp: " << sample.timestamp << " FAIL";
 						}
+						g_timeQPC.EndTime();
+						LOG(INFO) << "audio_encode_send:" << g_timeQPC.GetMillisconds() << " Count:" << (count - 1);
 					}
 					m_audioQueue.Free(sample.bits);
 				}
-			}
-			else
-			{
-				LOG(ERROR) << "OnMessagePump Timeout";
 			}
 		}
 	}

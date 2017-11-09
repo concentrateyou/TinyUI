@@ -451,7 +451,6 @@ namespace TinyUI
 	}
 	TinyPerformanceTimer::~TinyPerformanceTimer()
 	{
-		
 		Close();
 	}
 	void TinyPerformanceTimer::CloseTimer()
