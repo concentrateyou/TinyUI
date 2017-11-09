@@ -274,9 +274,13 @@ INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	WSAStartup(MAKEWORD(2, 2), &wsd);
 	MFStartup(MF_VERSION);
 	OleInitialize(NULL);
-	MShow::MShowApp& app = MShow::MShowApp::GetInstance();
-	app.Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_MSHOW));
-	INT iRes = app.Run();
+
+	//确保MShowApp先释放
+	TinyApplication* app = TinyApplication::GetInstance();
+
+	MShow::MShowApp& showApp = MShow::MShowApp::GetInstance();
+	showApp.Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_MSHOW));
+	INT iRes = showApp.Run();
 	OleUninitialize();
 	MFShutdown();
 	WSACleanup();

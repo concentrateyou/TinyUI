@@ -1053,13 +1053,13 @@ namespace MShow
 		}
 	}
 
-	TinyPerformanceTime g_timeQPC1;
+
 
 	void MClientController::OnAudioDSP(BYTE* bits, LONG size)
 	{
-		g_timeQPC1.EndTime();
-		LOG(INFO) << "OnAudioDSP:" << g_timeQPC1.GetMillisconds();
-		g_timeQPC1.BeginTime();
+		m_timeQPC.EndTime();
+		LOG(INFO) << "OnAudioDSP:" << m_timeQPC.GetMillisconds();
+		m_timeQPC.BeginTime();
 		if (m_preview != NULL)
 		{
 			if (size == 4096)
@@ -1105,13 +1105,13 @@ namespace MShow
 					Sleep(1);
 					continue;
 				}
-				g_timeQPC.BeginTime();
+				m_timeQPC1.BeginTime();
 				if (m_audioSDK->audio_encode_send(sample.bits + 4, static_cast<INT32>(sample.timestamp)) != 0)
 				{
 					LOG(INFO) << "Timestamp: " << sample.timestamp << " FAIL";
 				}
-				g_timeQPC.EndTime();
-				LOG(INFO) << "audio_encode_send:" << g_timeQPC.GetMillisconds() << " Count:" << (count - 1);
+				m_timeQPC1.EndTime();
+				LOG(INFO) << "audio_encode_send:" << m_timeQPC1.GetMillisconds() << " Count:" << (count - 1);
 				m_audioQueue.Free(sample.bits);
 			}
 		}
