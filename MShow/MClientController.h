@@ -85,7 +85,6 @@ namespace MShow
 		TinyScopedPtr<AudioSdk>				m_audioSDK;
 		MAudioQueue							m_audioQueue;
 		TinyTaskBase						m_task;
-		TinyEvent							m_event;
 		TinyScopedPtr<MPreviewController>	m_preview;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onSettingClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMinimumClick;

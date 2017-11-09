@@ -55,7 +55,7 @@ namespace MShow
 			memcpy(&tag, &sampleTag, sizeof(AUDIO_SAMPLE));
 			m_list.RemoveAt(s);
 			m_size -= tag.size;
-			return TRUE;
+			return tag.size > 0;
 		}
 		return FALSE;
 	}

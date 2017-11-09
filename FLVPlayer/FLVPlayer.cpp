@@ -41,6 +41,40 @@ BOOL LoadSeDebugPrivilege()
 	return TRUE;
 }
 
+class A
+{
+public:
+	A()
+	{
+
+	}
+
+	~A()
+	{
+		TRACE("~A");
+	}
+};
+
+class B
+{
+public:
+	B()
+	{
+
+	}
+
+	static B& GetInstance()
+	{
+		static B b;
+		return b;
+	}
+
+	~B()
+	{
+		TRACE("~B");
+	}
+};
+
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -68,5 +102,9 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	OleUninitialize();
 	WSACleanup();
+
+	B& b = B::GetInstance();
+	A a;
+
 	return loopRes;
 };

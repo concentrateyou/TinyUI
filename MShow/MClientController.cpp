@@ -15,7 +15,6 @@ namespace MShow
 		m_bPause(FALSE),
 		m_previousPTS(0)
 	{
-		m_event.CreateEvent();
 	}
 
 	MClientController::~MClientController()
@@ -1081,7 +1080,6 @@ namespace MShow
 				sample.timestamp = currentPTS;
 				memcpy(sample.bits + 4, bits, size);
 				m_audioQueue.Push(sample);
-				m_event.SetEvent();
 			}
 		}
 		else
@@ -1098,29 +1096,23 @@ namespace MShow
 		{
 			if (m_bBreak)
 				break;
-			if (m_event.Lock(1000))
+			if (m_audioSDK != NULL)
 			{
-				if (m_audioSDK != NULL)
+				AUDIO_SAMPLE sample = { 0 };
+				INT count = m_audioQueue.GetCount();
+				if (!m_audioQueue.Pop(sample))
 				{
-					AUDIO_SAMPLE sample = { 0 };
-					INT count = m_audioQueue.GetCount();
-					BOOL bRes = m_audioQueue.Pop(sample);
-					if (bRes && sample.size > 0)
-					{
-						g_timeQPC.BeginTime();
-						if (m_audioSDK->audio_encode_send(sample.bits + 4, static_cast<INT32>(sample.timestamp)) == 0)
-						{
-
-						}
-						else
-						{
-							LOG(INFO) << "Timestamp: " << sample.timestamp << " FAIL";
-						}
-						g_timeQPC.EndTime();
-						LOG(INFO) << "audio_encode_send:" << g_timeQPC.GetMillisconds() << " Count:" << (count - 1);
-					}
-					m_audioQueue.Free(sample.bits);
+					Sleep(1);
+					continue;
 				}
+				g_timeQPC.BeginTime();
+				if (m_audioSDK->audio_encode_send(sample.bits + 4, static_cast<INT32>(sample.timestamp)) != 0)
+				{
+					LOG(INFO) << "Timestamp: " << sample.timestamp << " FAIL";
+				}
+				g_timeQPC.EndTime();
+				LOG(INFO) << "audio_encode_send:" << g_timeQPC.GetMillisconds() << " Count:" << (count - 1);
+				m_audioQueue.Free(sample.bits);
 			}
 		}
 	}

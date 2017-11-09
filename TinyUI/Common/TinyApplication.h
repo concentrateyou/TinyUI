@@ -20,14 +20,7 @@ namespace TinyUI
 	/// </summary>
 	class TinyApplication : public TinyLock
 	{
-	private:
-		INT					m_iCmdShow;
-		HINSTANCE			m_hInstance;
-		LPTSTR				m_hCmdLine;
-		HACCEL				m_hAccTable;
-		ULONG_PTR			m_token;
-		WSADATA				m_wsd;
-		TinyTimerQueue		m_timers;
+
 	private:
 		TinyApplication();
 	protected:
@@ -55,9 +48,6 @@ namespace TinyUI
 		TinyHandleMap<HRGN, TinyHandleHRGN*>&				GetMapHRGN();
 		TinyHandleMap<HIMAGELIST, TinyHandleHIMAGELIST*>&	GetMapHIMAGELIST();
 	private:
-		TinyLock										m_lock;
-		TinySimpleMap<DWORD, TinyMessageLoop*>			m_msgLoops;
-	private:
 		TinyHandleMap<HWND, TinyHandleHWND*>			m_MapHWND;
 		TinyHandleMap<HMENU, TinyHandleHMENU*>			m_MapHMENU;
 		TinyHandleMap<HDC, TinyHandleHDC*>				m_MapHDC;
@@ -68,6 +58,16 @@ namespace TinyUI
 		TinyHandleMap<HPALETTE, TinyHandleHPALETTE*>	m_MapHPALETTE;
 		TinyHandleMap<HRGN, TinyHandleHRGN*>			m_MapHRGN;
 		TinyHandleMap<HIMAGELIST, TinyHandleHIMAGELIST*>m_MapHIMAGELIST;
+	private:
+		INT												m_iCmdShow;
+		HINSTANCE										m_hInstance;
+		LPTSTR											m_hCmdLine;
+		HACCEL											m_hAccTable;
+		ULONG_PTR										m_token;
+		WSADATA											m_wsd;
+		TinyTimerQueue									m_timers;
+		TinyLock										m_lock;
+		TinySimpleMap<DWORD, TinyMessageLoop*>			m_msgLoops;
 	};
 	//////////////////////////////////////////////////////////////////////////
 	LONG WINAPI TOP_LEVEL_EXCEPTION_FILTER(struct _EXCEPTION_POINTERS *pExp);

@@ -35,13 +35,12 @@ namespace MShow
 		void			OnTry();
 		void			OnError(INT);
 	private:
+		DX9Graphics2D				m_graphics;
+		TinyScopedPtr<DX9Image2D>	m_image;
 		TinySize					m_videoSize;
 		TinySize					m_viewSize;
 		TinyPerformanceTime			m_timeQPC;
-		TinyTaskTimer				m_timer;
-		DX9Graphics2D				m_graphics;
-		DX9Image2D					m_image;
-		TinyComPtr<ID2D1Bitmap>		m_bitmap;
+		TinyTaskTimer				m_timer;		
 		MPreviewView&				m_view;
 		TinyScopedPtr<MFLVPlayer>	m_player;
 	};
