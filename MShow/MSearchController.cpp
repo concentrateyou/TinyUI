@@ -103,7 +103,7 @@ namespace MShow
 					}
 					else
 					{
-						MessageBox(NULL, "连接超出上限，添加失败!", "提示", MB_OK);
+						MessageBox(m_view.Handle(), "连接超出上限，添加失败!", "提示", MB_OK);
 					}
 				}
 			}
