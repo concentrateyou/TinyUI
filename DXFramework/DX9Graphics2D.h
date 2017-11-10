@@ -15,16 +15,17 @@ namespace DXFramework
 		DX9Graphics2D();
 		virtual ~DX9Graphics2D();
 		DX9&	GetDX9();
-		BOOL	IsActive() const;
 		BOOL	Reset();
 		BOOL	Present();
 		BOOL	Initialize(HWND hWND, const TinySize& size);
 		BOOL	DrawImage(DX9Image2D* ps, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F);
+		BOOL	DrawString(LPCSTR pzText, INT Count, LPRECT pRect, DWORD Format, D3DCOLOR Color);
 		void	SetRenderView(DX9RenderView* render2D);
 		void	Enter();
 		void	Leave();
 	public:
-		DX9RenderView*		GetRenderView() const;
+		BOOL			IsActive() const;
+		DX9RenderView*	GetRenderView() const;
 	private:
 		DX9		m_dx9;
 	};

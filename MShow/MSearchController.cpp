@@ -39,6 +39,7 @@ namespace MShow
 			visual->EVENT_CLICK += m_onSearchClick;
 		}
 		m_onItemClick.Reset(new Delegate<void(TinyVisual*, MouseEventArgs&)>(this, &MSearchController::OnItemClick));
+		OnSearchClick(NULL, EventArgs());
 		return TRUE;
 	}
 

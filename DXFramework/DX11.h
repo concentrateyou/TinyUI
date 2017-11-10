@@ -22,6 +22,7 @@ namespace DXFramework
 		BOOL					Present();
 		BOOL					Flush();
 		void					SetMatrixs(const TinySize& size);
+	public:
 		HWND					GetHWND() const;
 		BOOL					IsEmpty() const;
 		ID3D11Device*			GetD3D() const;

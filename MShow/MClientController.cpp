@@ -509,6 +509,7 @@ namespace MShow
 		{
 			string msg = value["msg"].asString();
 			msg = std::move(UTF8ToASCII(msg));
+			MessageBox(NULL, msg.c_str(), "提示!", MB_OK);
 			LOG(ERROR) << "[MClientController] " << "Response Code : " << code << " Msg: " << msg;
 		}
 	_ERROR:
@@ -568,12 +569,14 @@ namespace MShow
 		return FALSE;
 	}
 
-	BOOL MClientController::Disconnect(const string& sourceID)
+	BOOL MClientController::Disconnect(const string& sourceID, BOOL del)
 	{
 		if (sourceID.empty())
 			return FALSE;
 		string code;
 		string context;
+		string body;
+		string address;
 		Json::Reader reader;
 		Json::Value value;
 		Json::Value result;
@@ -582,10 +585,18 @@ namespace MShow
 		client.GetRequest().SetVerbs(TinyHTTPClient::POST);
 		client.GetRequest().Add(TinyHTTPClient::ContentType, "application/x-www-form-urlencoded");
 		client.GetRequest().Add("Sign", "#f93Uc31K24()_@");
-		string body = StringPrintf("id=%s&programId=%s&directorId=%s&status=2", sourceID.c_str(), m_szProgramID.c_str(), m_szLogID.c_str());//断开
+		if (del)
+		{
+			body = StringPrintf("id=%s&directorId=%s", sourceID.c_str(), m_szLogID.c_str());//断开
+			address = StringPrintf("%s/%s", MShow::MShowApp::GetInstance().AppConfig().GetPrefix().c_str(), "commentary/del");
+		}
+		else
+		{
+			body = StringPrintf("id=%s&programId=%s&directorId=%s&status=2", sourceID.c_str(), m_szProgramID.c_str(), m_szLogID.c_str());//断开
+			address = StringPrintf("%s/%s", MShow::MShowApp::GetInstance().AppConfig().GetPrefix().c_str(), "commentary/edit");
+		}
 		body = std::move(ASCIIToUTF8(body));
 		client.GetRequest().SetBody(body);
-		string address = StringPrintf("%s/%s", MShow::MShowApp::GetInstance().AppConfig().GetPrefix().c_str(), "commentary/edit");
 		if (!client.Open(address))
 		{
 			LOG(ERROR) << "[MClientController] " << "Open " << address << " " << client.GetResponse().GetGetStatusMsg();
@@ -835,6 +846,7 @@ namespace MShow
 		return TRUE;
 	_ERROR:
 		StopCommentary();
+		Disconnect(m_szSourceID, TRUE);
 		return FALSE;
 	}
 	void MClientController::StopCommentary()

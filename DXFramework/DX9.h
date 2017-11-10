@@ -27,6 +27,7 @@ namespace DXFramework
 		BOOL				IsActive() const;
 		BOOL				IsEmpty() const;
 		IDirect3DDevice9*	GetD3D() const;
+		TinySize			GetSize() const;
 	private:
 		void				SetRenderView(DX9RenderView* render2D);
 		DX9RenderView*		GetRenderView() const;

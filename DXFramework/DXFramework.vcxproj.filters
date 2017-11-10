@@ -102,6 +102,9 @@
     <ClInclude Include="DX11TransparentShader.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="DX9Font2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -186,6 +189,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DX11TransparentShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX9Font2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

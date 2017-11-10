@@ -46,6 +46,10 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
+	BOOL DX9Graphics2D::DrawString(LPCSTR pzText, INT Count, LPRECT pRect, DWORD Format, D3DCOLOR Color)
+	{
+		return TRUE;
+	}
 	void DX9Graphics2D::SetRenderView(DX9RenderView* render2D)
 	{
 		m_dx9.SetRenderView(render2D);
@@ -53,5 +57,13 @@ namespace DXFramework
 	DX9RenderView*	DX9Graphics2D::GetRenderView() const
 	{
 		return m_dx9.GetRenderView();
+	}
+	void DX9Graphics2D::Enter()
+	{
+		m_dx9.Lock();
+	}
+	void DX9Graphics2D::Leave()
+	{
+		m_dx9.Unlock();
 	}
 }

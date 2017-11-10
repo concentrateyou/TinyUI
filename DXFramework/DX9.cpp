@@ -336,6 +336,10 @@ namespace DXFramework
 	{
 		return m_d3dd9;
 	}
+	TinySize DX9::GetSize() const
+	{
+		return m_size;
+	}
 	void DX9::SetMatrixs(const TinySize& size)
 	{
 		FLOAT fov = (FLOAT)D3DX_PI / 4.0F;

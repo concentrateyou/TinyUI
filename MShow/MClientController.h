@@ -56,7 +56,7 @@ namespace MShow
 		void	OnTimerStatus();
 	private:
 		BOOL		Connect();//ÃÌº”‘¥
-		BOOL		Disconnect(const string& sourceID);
+		BOOL		Disconnect(const string& sourceID,BOOL del = FALSE);
 		BOOL		UpdatePreviewURL(const string& sourceID, const string& strURL);
 		BOOL		UpdateName(const string& sourceID, const string& strName);
 		BOOL		GetPreviewURL(string& szURL, INT& iAudio, string& szIP);
