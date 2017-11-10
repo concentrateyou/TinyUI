@@ -6,86 +6,6 @@
 namespace TinyUI
 {
 	/// <summary>
-	/// ¾ä±úÓ³ÉäÀà
-	/// </summary>
-	template<class T = HANDLE, class V = void*>
-	class TinyHandleMap
-	{
-		DISALLOW_COPY_AND_ASSIGN(TinyHandleMap)
-	public:
-		TinyHandleMap();
-		~TinyHandleMap();
-		V* Find(T& _key);
-		V* Find(const T& _key);
-		V* operator[](T& _key);
-		V* operator[](const T& _key);
-		void Add(const T& _key, const V& _value);
-		void Remove(const T& _key);
-		void RemoveAll();
-		INT GetSize() const;
-	private:
-		TinyLock			m_lock;
-		TinySimpleMap<T, V> m_handleMap;
-	};
-	template<class T, class V>
-	TinyHandleMap<T, V>::TinyHandleMap()
-	{
-
-	}
-	template<class T, class V>
-	TinyHandleMap<T, V>::~TinyHandleMap()
-	{
-		this->RemoveAll();
-	}
-	template<class T, class V>
-	V* TinyHandleMap<T, V>::Find(T& _key)
-	{
-		TinyAutoLock lock(m_lock);
-		return m_handleMap.Find(_key);
-	}
-	template<class T, class V>
-	V* TinyHandleMap<T, V>::Find(const T& _key)
-	{
-		TinyAutoLock lock(m_lock);
-		return m_handleMap.Find(_key);
-	}
-	template<class T, class V>
-	V* TinyHandleMap<T, V>::operator[](T& _key)
-	{
-		TinyAutoLock lock(m_lock);
-		return m_handleMap.GetValue(_key);
-	}
-	template<class T, class V>
-	V* TinyHandleMap<T, V>::operator[](const T& _key)
-	{
-		TinyAutoLock lock(m_lock);
-		return m_handleMap.GetValue(_key);
-	}
-	template<class T, class V>
-	void TinyHandleMap<T, V>::Add(const T& _key, const V& _value)
-	{
-		TinyAutoLock lock(m_lock);
-		m_handleMap.Add(_key, _value);
-	}
-	template<class T, class V>
-	void TinyHandleMap<T, V>::Remove(const T& _key)
-	{
-		TinyAutoLock lock(m_lock);
-		m_handleMap.Remove(_key);
-	}
-	template<class T, class V>
-	void TinyHandleMap<T, V>::RemoveAll()
-	{
-		TinyAutoLock lock(m_lock);
-		m_handleMap.RemoveAll();
-	}
-	template<class T, class V>
-	INT TinyHandleMap<T, V>::GetSize() const
-	{
-		TinyAutoLock lock(m_lock);
-		return m_handleMap.GetSize();
-	}
-	/// <summary>
 	/// ´°¿Ú¾ä±úÀà
 	/// </summary>
 	class TinyHandleHWND :public TinyWindowMsg, public TinyMessageFilter, public TinyObject
@@ -100,9 +20,9 @@ namespace TinyUI
 		BOOL operator!=(const TinyHandleHWND& obj) const;
 		BOOL Attach(HWND hWND);
 		HWND Detach();
-		static TinyHandleHWND* Find(HWND hWND);
+		static TinyHandleHWND* Lookup(HWND hWND);
 	private:
-		static TinyHandleMap<HWND, TinyHandleHWND*> m_map;
+		static TinyPointerMap m_map;
 	public:
 		HWND m_hWND;
 	};
@@ -121,9 +41,9 @@ namespace TinyUI
 		BOOL operator!=(const TinyHandleHMENU& obj) const;
 		BOOL Attach(HMENU hMENU);
 		HMENU Detach();
-		static TinyHandleHMENU* Find(HMENU hMENU);
+		static TinyHandleHMENU* Lookup(HMENU hMENU);
 	private:
-		static TinyHandleMap<HMENU, TinyHandleHMENU*> m_map;
+		static TinyPointerMap m_map;
 	public:
 		HMENU m_hMENU;
 	};
@@ -142,9 +62,9 @@ namespace TinyUI
 		BOOL operator!=(const TinyHandleHDC& obj) const;
 		BOOL Attach(HDC hDC);
 		HDC Detach();
-		static TinyHandleHDC* Find(HDC hDC);
+		static TinyHandleHDC* Lookup(HDC hDC);
 	private:
-		static TinyHandleMap<HDC, TinyHandleHDC*> m_map;
+		static TinyPointerMap m_map;
 	public:
 		HDC m_hDC;
 	};
@@ -163,9 +83,9 @@ namespace TinyUI
 		BOOL operator!=(const TinyHandleHBITMAP& obj) const;
 		BOOL Attach(HBITMAP hBITMAP);
 		HBITMAP Detach();
-		static TinyHandleHBITMAP* Find(HBITMAP hBITMAP);
+		static TinyHandleHBITMAP* Lookup(HBITMAP hBITMAP);
 	private:
-		static TinyHandleMap<HBITMAP, TinyHandleHBITMAP*> m_map;
+		static TinyPointerMap m_map;
 	public:
 		HBITMAP m_hBITMAP;
 	};
@@ -184,9 +104,9 @@ namespace TinyUI
 		BOOL operator!=(const TinyHandleHFONT& obj) const;
 		BOOL Attach(HFONT hFONT);
 		HFONT Detach();
-		static TinyHandleHFONT* Find(HFONT hFONT);
+		static TinyHandleHFONT* Lookup(HFONT hFONT);
 	private:
-		static TinyHandleMap<HFONT, TinyHandleHFONT*> m_map;
+		static TinyPointerMap m_map;
 	public:
 		HFONT m_hFONT;
 	};
@@ -205,9 +125,9 @@ namespace TinyUI
 		BOOL operator!=(const TinyHandleHPEN& obj) const;
 		BOOL Attach(HPEN hPEN);
 		HPEN Detach();
-		static TinyHandleHPEN* Find(HPEN hPEN);
+		static TinyHandleHPEN* Lookup(HPEN hPEN);
 	private:
-		static TinyHandleMap<HPEN, TinyHandleHPEN*> m_map;
+		static TinyPointerMap m_map;
 	public:
 		HPEN m_hPEN;
 	};
@@ -226,9 +146,9 @@ namespace TinyUI
 		BOOL operator!=(const TinyHandleHBRUSH& obj) const;
 		BOOL Attach(HBRUSH hBRUSH);
 		HBRUSH Detach();
-		static TinyHandleHBRUSH* Find(HBRUSH hBRUSH);
+		static TinyHandleHBRUSH* Lookup(HBRUSH hBRUSH);
 	private:
-		static TinyHandleMap<HBRUSH, TinyHandleHBRUSH*> m_map;
+		static TinyPointerMap m_map;
 	public:
 		HBRUSH m_hBRUSH;
 	};
@@ -247,9 +167,9 @@ namespace TinyUI
 		BOOL operator!=(const TinyHandleHPALETTE& obj) const;
 		BOOL Attach(HPALETTE hPALETTE);
 		HPALETTE Detach();
-		static TinyHandleHPALETTE* Find(HPALETTE hPALETTE);
+		static TinyHandleHPALETTE* Lookup(HPALETTE hPALETTE);
 	private:
-		static TinyHandleMap<HPALETTE, TinyHandleHPALETTE*> m_map;
+		static TinyPointerMap m_map;
 	public:
 		HPALETTE m_hPALETTE;
 	};
@@ -268,9 +188,9 @@ namespace TinyUI
 		BOOL operator!=(const TinyHandleHRGN& obj) const;
 		BOOL Attach(HRGN hHRGN);
 		HRGN Detach();
-		static TinyHandleHRGN* Find(HRGN hHRGN);
+		static TinyHandleHRGN* Lookup(HRGN hHRGN);
 	private:
-		static TinyHandleMap<HRGN, TinyHandleHRGN*> m_map;
+		static TinyPointerMap m_map;
 	public:
 		HRGN m_hHRGN;
 	};
@@ -289,9 +209,9 @@ namespace TinyUI
 		BOOL operator!=(const TinyHandleHIMAGELIST& obj) const;
 		BOOL Attach(HIMAGELIST hIMAGELIST);
 		HIMAGELIST Detach();
-		static TinyHandleHIMAGELIST* Find(HIMAGELIST hIMAGELIST);
+		static TinyHandleHIMAGELIST* Lookup(HIMAGELIST hIMAGELIST);
 	private:
-		static TinyHandleMap<HIMAGELIST, TinyHandleHIMAGELIST*> m_map;
+		static TinyPointerMap m_map;
 	public:
 		HIMAGELIST m_hIMAGELIST;
 	};

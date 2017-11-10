@@ -10,8 +10,8 @@ namespace TinyUI
 		TinyFixedAllocNoSync::TinyFixedAllocNoSync()
 			:m_pNodeFree(NULL),
 			m_pBlocks(NULL),
-			m_cbElement(0),
-			m_count(0)
+			m_allocSize(0),
+			m_blockSize(0)
 		{
 		}
 
@@ -21,19 +21,19 @@ namespace TinyUI
 		}
 		UINT TinyFixedAllocNoSync::GetAllocSize()
 		{
-			return m_cbElement;
+			return m_allocSize;
 		}
-		void TinyFixedAllocNoSync::Initialize(UINT nBlockSize, UINT nAllocSize)
+		void TinyFixedAllocNoSync::Initialize(UINT blockSize, UINT allocSize)
 		{
-			ASSERT(nAllocSize >= sizeof(TinyNode));
+			ASSERT(allocSize >= sizeof(TinyNode));
 
-			if (nAllocSize < sizeof(TinyNode))
-				nAllocSize = sizeof(TinyNode);
-			if (nBlockSize <= 1)
-				nBlockSize = 3;
+			if (allocSize < sizeof(TinyNode))
+				allocSize = sizeof(TinyNode);
+			if (blockSize <= 1)
+				blockSize = 3;
 
-			m_cbElement = nAllocSize;
-			m_count = nBlockSize;
+			m_allocSize = allocSize;
+			m_blockSize = blockSize;
 			m_pNodeFree = NULL;
 			m_pBlocks = NULL;
 		}
@@ -42,18 +42,18 @@ namespace TinyUI
 			m_pBlocks->Destory();
 			m_pBlocks = NULL;
 			m_pNodeFree = NULL;
-			m_count = 0;
-			m_cbElement = 0;
+			m_blockSize = 0;
+			m_allocSize = 0;
 		}
 
 		void* TinyFixedAllocNoSync::Alloc()
 		{
 			if (m_pNodeFree == NULL)
 			{
-				TinyPlex* pNewBlock = TinyPlex::Create(m_pBlocks, m_count, m_cbElement);
+				TinyPlex* pNewBlock = TinyPlex::Create(m_pBlocks, m_blockSize, m_allocSize);
 				TinyNode* pNode = (TinyNode*)pNewBlock->data();
-				(BYTE*&)pNode += (m_cbElement * m_count) - m_cbElement;
-				for (INT i = m_count - 1; i >= 0; i--, (BYTE*&)pNode -= m_cbElement)
+				(BYTE*&)pNode += (m_allocSize * m_blockSize) - m_allocSize;
+				for (INT i = m_blockSize - 1; i >= 0; i--, (BYTE*&)pNode -= m_allocSize)
 				{
 					pNode->pNext = m_pNodeFree;
 					m_pNodeFree = pNode;

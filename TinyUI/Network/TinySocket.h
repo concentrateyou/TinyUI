@@ -32,7 +32,7 @@ namespace TinyUI
 			static BOOL GetDisconnectEx(SOCKET socket, LPFN_DISCONNECTEX* target);
 		protected:
 			SOCKET	m_socket;
-			static  TinyPointerMap	m_socketMap;
+			static  TinyPointerMap	m_map;
 		};
 		class TinyIOServer;
 		/// <summary>

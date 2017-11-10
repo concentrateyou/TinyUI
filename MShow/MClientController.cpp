@@ -160,7 +160,7 @@ namespace MShow
 		{
 			//停止Timer
 			m_timerStatus.Close();
-			if (MessageBox(NULL, "当前客户端连接被移除", "警告", MB_OK) == IDOK)
+			if (MessageBox(m_view.Handle(), "当前客户端连接被移除", "警告", MB_OK) == IDOK)
 			{
 				Disconnect(m_szSourceID);
 				StopCommentary();
@@ -403,7 +403,7 @@ namespace MShow
 		{
 			if (pTextBox->GetText().IsEmpty())
 			{
-				MessageBox(NULL, "解说名不能为空!", "提示", MB_OK);
+				MessageBox(m_view.Handle(), "解说名不能为空!", "提示", MB_OK);
 				return;
 			}
 			m_szName = pTextBox->GetText().CSTR();
@@ -509,7 +509,7 @@ namespace MShow
 		{
 			string msg = value["msg"].asString();
 			msg = std::move(UTF8ToASCII(msg));
-			MessageBox(NULL, msg.c_str(), "提示!", MB_OK);
+			MessageBox(m_view.Handle(), msg.c_str(), "提示!", MB_OK);
 			LOG(ERROR) << "[MClientController] " << "Response Code : " << code << " Msg: " << msg;
 		}
 	_ERROR:
@@ -939,14 +939,14 @@ namespace MShow
 			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
 			if (val->GetOptions().GetSize() == 0)
 			{
-				MessageBox(NULL, "没有检测到麦克风设备", "提示", MB_OK);
+				MessageBox(m_view.Handle(), "没有检测到麦克风设备", "提示", MB_OK);
 				return;
 			}
 		}
 		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
 		if (pTextBox->GetText().IsEmpty())
 		{
-			MessageBox(NULL, "请输入解说名", "提示", MB_OK);
+			MessageBox(m_view.Handle(), "请输入解说名", "提示", MB_OK);
 			return;
 		}
 		if (Connect())
@@ -973,7 +973,7 @@ namespace MShow
 
 	void MClientController::OnStopCommentaryClick(TinyVisual*, EventArgs& args)
 	{
-		if (MessageBox(NULL, "停止后停止推流，是否需要停止", "警告", MB_OKCANCEL) == IDOK)
+		if (MessageBox(m_view.Handle(), "停止后停止推流，是否需要停止", "警告", MB_OKCANCEL) == IDOK)
 		{
 			if (Disconnect(m_szSourceID))
 			{
@@ -995,7 +995,7 @@ namespace MShow
 			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
 			if (val->GetOptions().GetSize() == 0)
 			{
-				MessageBox(NULL, "没有检测到麦克风设备!", "提示", MB_OK);
+				MessageBox(m_view.Handle(), "没有检测到麦克风设备!", "提示", MB_OK);
 			}
 			else
 			{
@@ -1032,7 +1032,7 @@ namespace MShow
 			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
 			if (val->GetOptions().GetSize() == 0)
 			{
-				MessageBox(NULL, "没有检测到播放设备!", "提示", MB_OK);
+				MessageBox(m_view.Handle(), "没有检测到播放设备!", "提示", MB_OK);
 			}
 			else
 			{

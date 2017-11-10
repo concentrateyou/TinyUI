@@ -4,8 +4,6 @@
 
 namespace TinyUI
 {
-
-
 	IMPLEMENT_DYNAMIC(TinyHandleHWND, TinyObject);
 
 	TinyHandleHWND::TinyHandleHWND()
@@ -40,8 +38,7 @@ namespace TinyUI
 			return FALSE;
 		}
 		m_hWND = hWND;
-		TinyHandleHWND* ps = this;
-		m_map.Add(m_hWND, this);
+		m_map.Add(reinterpret_cast<UINT_PTR>(m_hWND), reinterpret_cast<UINT_PTR>(this));
 		return TRUE;
 	}
 	HWND TinyHandleHWND::Detach()
@@ -49,16 +46,19 @@ namespace TinyUI
 		HWND hWND = m_hWND;
 		if (hWND != NULL)
 		{
-			m_map.Remove(m_hWND);
+			m_map.Remove(reinterpret_cast<UINT_PTR>(m_hWND));
 		}
 		m_hWND = NULL;
 		return hWND;
 	}
-	TinyHandleHWND* TinyHandleHWND::Find(HWND hWND)
+	TinyHandleHWND* TinyHandleHWND::Lookup(HWND hWND)
 	{
-		return *m_map.Find(hWND);
+		UINT_PTR val = 0;
+		if (!m_map.Lookup(reinterpret_cast<UINT_PTR>(hWND), val))
+			return NULL;
+		return reinterpret_cast<TinyHandleHWND*>(val);
 	}
-	TinyHandleMap<HWND, TinyHandleHWND*> TinyHandleHWND::m_map;
+	TinyPointerMap TinyHandleHWND::m_map;
 	//////////////////////////////////////////////////////////////////////////
 	IMPLEMENT_DYNAMIC(TinyHandleHMENU, TinyObject);
 	TinyHandleHMENU::TinyHandleHMENU()
@@ -93,8 +93,7 @@ namespace TinyUI
 			return FALSE;
 		}
 		m_hMENU = hMENU;
-		TinyHandleHMENU* ps = this;
-		m_map.Add(m_hMENU, ps);
+		m_map.Add(reinterpret_cast<UINT_PTR>(hMENU), reinterpret_cast<UINT_PTR>(this));
 		return TRUE;
 	}
 	HMENU TinyHandleHMENU::Detach()
@@ -102,16 +101,19 @@ namespace TinyUI
 		HMENU hMENU = m_hMENU;
 		if (hMENU != NULL)
 		{
-			m_map.Remove(m_hMENU);
+			m_map.Remove(reinterpret_cast<UINT_PTR>(m_hMENU));
 		}
 		m_hMENU = NULL;
 		return hMENU;
 	}
-	TinyHandleHMENU* TinyHandleHMENU::Find(HMENU hMENU)
+	TinyHandleHMENU* TinyHandleHMENU::Lookup(HMENU hMENU)
 	{
-		return *m_map.Find(hMENU);
+		UINT_PTR val = 0;
+		if (!m_map.Lookup(reinterpret_cast<UINT_PTR>(hMENU), val))
+			return NULL;
+		return reinterpret_cast<TinyHandleHMENU*>(val);
 	}
-	TinyHandleMap<HMENU, TinyHandleHMENU*> TinyHandleHMENU::m_map;
+	TinyPointerMap TinyHandleHMENU::m_map;
 	//////////////////////////////////////////////////////////////////////////
 	IMPLEMENT_DYNAMIC(TinyHandleHDC, TinyObject);
 	TinyHandleHDC::TinyHandleHDC()
@@ -144,8 +146,7 @@ namespace TinyUI
 		if (!hDC)
 			return FALSE;
 		m_hDC = hDC;
-		TinyHandleHDC* ps = this;
-		m_map.Add(m_hDC, ps);
+		m_map.Add(reinterpret_cast<UINT_PTR>(hDC), reinterpret_cast<UINT_PTR>(this));
 		return TRUE;
 	}
 	HDC TinyHandleHDC::Detach()
@@ -153,16 +154,19 @@ namespace TinyUI
 		HDC hDC = m_hDC;
 		if (hDC != NULL)
 		{
-			m_map.Remove(m_hDC);
+			m_map.Remove(reinterpret_cast<UINT_PTR>(m_hDC));
 		}
 		m_hDC = NULL;
 		return hDC;
 	}
-	TinyHandleHDC* TinyHandleHDC::Find(HDC hDC)
+	TinyHandleHDC* TinyHandleHDC::Lookup(HDC hDC)
 	{
-		return *m_map.Find(hDC);
+		UINT_PTR val = 0;
+		if (!m_map.Lookup(reinterpret_cast<UINT_PTR>(hDC), val))
+			return NULL;
+		return reinterpret_cast<TinyHandleHDC*>(val);
 	}
-	TinyHandleMap<HDC, TinyHandleHDC*> TinyHandleHDC::m_map;
+	TinyPointerMap TinyHandleHDC::m_map;
 	//////////////////////////////////////////////////////////////////////////
 	IMPLEMENT_DYNAMIC(TinyHandleHBITMAP, TinyObject)
 		TinyHandleHBITMAP::TinyHandleHBITMAP()
@@ -195,8 +199,7 @@ namespace TinyUI
 		if (!hBITMAP)
 			return FALSE;
 		m_hBITMAP = hBITMAP;
-		TinyHandleHBITMAP* ps = this;
-		m_map.Add(m_hBITMAP, ps);
+		m_map.Add(reinterpret_cast<UINT_PTR>(hBITMAP), reinterpret_cast<UINT_PTR>(this));
 		return TRUE;
 	}
 	HBITMAP TinyHandleHBITMAP::Detach()
@@ -204,21 +207,19 @@ namespace TinyUI
 		HBITMAP hBITMAP = m_hBITMAP;
 		if (hBITMAP != NULL)
 		{
-			m_map.Remove(m_hBITMAP);
+			m_map.Remove(reinterpret_cast<UINT_PTR>(m_hBITMAP));
 		}
 		m_hBITMAP = NULL;
 		return hBITMAP;
 	}
-	TinyHandleHBITMAP* TinyHandleHBITMAP::Find(HBITMAP hBITMAP)
+	TinyHandleHBITMAP* TinyHandleHBITMAP::Lookup(HBITMAP hBITMAP)
 	{
-		TinyHandleHBITMAP** ps = m_map.Find(hBITMAP);
-		if (ps != NULL)
-		{
-			return *ps;
-		}
-		return NULL;
+		UINT_PTR val = 0;
+		if (!m_map.Lookup(reinterpret_cast<UINT_PTR>(hBITMAP), val))
+			return NULL;
+		return reinterpret_cast<TinyHandleHBITMAP*>(val);
 	}
-	TinyHandleMap<HBITMAP, TinyHandleHBITMAP*> TinyHandleHBITMAP::m_map;
+	TinyPointerMap TinyHandleHBITMAP::m_map;
 	//////////////////////////////////////////////////////////////////////////
 	IMPLEMENT_DYNAMIC(TinyHandleHFONT, TinyObject);
 	TinyHandleHFONT::TinyHandleHFONT()
@@ -251,8 +252,7 @@ namespace TinyUI
 		if (!hFONT)
 			return FALSE;
 		m_hFONT = hFONT;
-		TinyHandleHFONT* ps = this;
-		m_map.Add(m_hFONT, ps);
+		m_map.Add(reinterpret_cast<UINT_PTR>(hFONT), reinterpret_cast<UINT_PTR>(this));
 		return TRUE;
 	}
 	HFONT TinyHandleHFONT::Detach()
@@ -260,16 +260,19 @@ namespace TinyUI
 		HFONT hFONT = m_hFONT;
 		if (hFONT != NULL)
 		{
-			m_map.Remove(m_hFONT);
+			m_map.Remove(reinterpret_cast<UINT_PTR>(m_hFONT));
 		}
 		m_hFONT = NULL;
 		return hFONT;
 	}
-	TinyHandleHFONT* TinyHandleHFONT::Find(HFONT hFONT)
+	TinyHandleHFONT* TinyHandleHFONT::Lookup(HFONT hFONT)
 	{
-		return *m_map.Find(hFONT);
+		UINT_PTR val = 0;
+		if (!m_map.Lookup(reinterpret_cast<UINT_PTR>(hFONT), val))
+			return NULL;
+		return reinterpret_cast<TinyHandleHFONT*>(val);
 	}
-	TinyHandleMap<HFONT, TinyHandleHFONT*> TinyHandleHFONT::m_map;
+	TinyPointerMap TinyHandleHFONT::m_map;
 	//////////////////////////////////////////////////////////////////////////
 	IMPLEMENT_DYNAMIC(TinyHandleHPEN, TinyObject);
 	TinyHandleHPEN::TinyHandleHPEN()
@@ -302,8 +305,7 @@ namespace TinyUI
 		if (!hPEN)
 			return FALSE;
 		m_hPEN = hPEN;
-		TinyHandleHPEN* ps = this;
-		m_map.Add(hPEN, ps);
+		m_map.Add(reinterpret_cast<UINT_PTR>(hPEN), reinterpret_cast<UINT_PTR>(this));
 		return TRUE;
 	}
 	HPEN TinyHandleHPEN::Detach()
@@ -311,21 +313,19 @@ namespace TinyUI
 		HPEN hPEN = m_hPEN;
 		if (hPEN != NULL)
 		{
-			m_map.Remove(m_hPEN);
+			m_map.Remove(reinterpret_cast<UINT_PTR>(m_hPEN));
 		}
 		m_hPEN = NULL;
 		return hPEN;
 	}
-	TinyHandleHPEN* TinyHandleHPEN::Find(HPEN hPEN)
+	TinyHandleHPEN* TinyHandleHPEN::Lookup(HPEN hPEN)
 	{
-		TinyHandleHPEN** ps = m_map.Find(hPEN);
-		if (ps != NULL)
-		{
-			return *ps;
-		}
-		return NULL;
+		UINT_PTR val = 0;
+		if (!m_map.Lookup(reinterpret_cast<UINT_PTR>(hPEN), val))
+			return NULL;
+		return reinterpret_cast<TinyHandleHPEN*>(val);
 	}
-	TinyHandleMap<HPEN, TinyHandleHPEN*> TinyHandleHPEN::m_map;
+	TinyPointerMap TinyHandleHPEN::m_map;
 	//////////////////////////////////////////////////////////////////////////
 	IMPLEMENT_DYNAMIC(TinyHandleHBRUSH, TinyObject);
 	TinyHandleHBRUSH::TinyHandleHBRUSH()
@@ -358,8 +358,7 @@ namespace TinyUI
 		if (!hBRUSH)
 			return FALSE;
 		m_hBRUSH = hBRUSH;
-		TinyHandleHBRUSH* ps = this;
-		m_map.Add(hBRUSH, ps);
+		m_map.Add(reinterpret_cast<UINT_PTR>(hBRUSH), reinterpret_cast<UINT_PTR>(this));
 		return TRUE;
 	}
 	HBRUSH TinyHandleHBRUSH::Detach()
@@ -367,21 +366,19 @@ namespace TinyUI
 		HBRUSH hBRUSH = m_hBRUSH;
 		if (hBRUSH != NULL)
 		{
-			m_map.Remove(hBRUSH);
+			m_map.Remove(reinterpret_cast<UINT_PTR>(hBRUSH));
 		}
 		m_hBRUSH = NULL;
 		return hBRUSH;
 	}
-	TinyHandleHBRUSH* TinyHandleHBRUSH::Find(HBRUSH hBRUSH)
+	TinyHandleHBRUSH* TinyHandleHBRUSH::Lookup(HBRUSH hBRUSH)
 	{
-		TinyHandleHBRUSH** ps = m_map.Find(hBRUSH);
-		if (ps != NULL)
-		{
-			return *ps;
-		}
-		return NULL;
+		UINT_PTR val = 0;
+		if (!m_map.Lookup(reinterpret_cast<UINT_PTR>(hBRUSH), val))
+			return NULL;
+		return reinterpret_cast<TinyHandleHBRUSH*>(val);
 	}
-	TinyHandleMap<HBRUSH, TinyHandleHBRUSH*> TinyHandleHBRUSH::m_map;
+	TinyPointerMap TinyHandleHBRUSH::m_map;
 	//////////////////////////////////////////////////////////////////////////
 	IMPLEMENT_DYNAMIC(TinyHandleHPALETTE, TinyObject);
 	TinyHandleHPALETTE::TinyHandleHPALETTE()
@@ -414,8 +411,7 @@ namespace TinyUI
 		if (!hPALETTE)
 			return FALSE;
 		m_hPALETTE = hPALETTE;
-		TinyHandleHPALETTE* ps = this;
-		m_map.Add(hPALETTE, ps);
+		m_map.Add(reinterpret_cast<UINT_PTR>(hPALETTE), reinterpret_cast<UINT_PTR>(this));
 		return TRUE;
 	}
 	HPALETTE TinyHandleHPALETTE::Detach()
@@ -423,21 +419,19 @@ namespace TinyUI
 		HPALETTE hPALETTE = m_hPALETTE;
 		if (hPALETTE != NULL)
 		{
-			m_map.Remove(hPALETTE);
+			m_map.Remove(reinterpret_cast<UINT_PTR>(hPALETTE));
 		}
 		m_hPALETTE = NULL;
 		return hPALETTE;
 	}
-	TinyHandleHPALETTE* TinyHandleHPALETTE::Find(HPALETTE hPALETTE)
+	TinyHandleHPALETTE* TinyHandleHPALETTE::Lookup(HPALETTE hPALETTE)
 	{
-		TinyHandleHPALETTE** ps = m_map.Find(hPALETTE);
-		if (ps != NULL)
-		{
-			return *ps;
-		}
-		return NULL;
+		UINT_PTR val = 0;
+		if (!m_map.Lookup(reinterpret_cast<UINT_PTR>(hPALETTE), val))
+			return NULL;
+		return reinterpret_cast<TinyHandleHPALETTE*>(val);
 	}
-	TinyHandleMap<HPALETTE, TinyHandleHPALETTE*> TinyHandleHPALETTE::m_map;
+	TinyPointerMap TinyHandleHPALETTE::m_map;
 	//////////////////////////////////////////////////////////////////////////
 	IMPLEMENT_DYNAMIC(TinyHandleHRGN, TinyObject);
 	TinyHandleHRGN::TinyHandleHRGN()
@@ -470,8 +464,7 @@ namespace TinyUI
 		if (!hHRGN)
 			return FALSE;
 		m_hHRGN = hHRGN;
-		TinyHandleHRGN* ps = this;
-		TinyHandleHRGN::m_map.Add(m_hHRGN, ps);
+		m_map.Add(reinterpret_cast<UINT_PTR>(hHRGN), reinterpret_cast<UINT_PTR>(this));
 		return TRUE;
 	}
 	HRGN TinyHandleHRGN::Detach()
@@ -479,21 +472,19 @@ namespace TinyUI
 		HRGN hHRGN = m_hHRGN;
 		if (hHRGN != NULL)
 		{
-			TinyHandleHRGN::m_map.Remove(hHRGN);
+			m_map.Remove(reinterpret_cast<UINT_PTR>(hHRGN));
 		}
 		m_hHRGN = NULL;
 		return hHRGN;
 	}
-	TinyHandleHRGN* TinyHandleHRGN::Find(HRGN hRGN)
+	TinyHandleHRGN* TinyHandleHRGN::Lookup(HRGN hRGN)
 	{
-		TinyHandleHRGN** ps = m_map.Find(hRGN);
-		if (ps != NULL)
-		{
-			return *ps;
-		}
-		return NULL;
+		UINT_PTR val = 0;
+		if (!m_map.Lookup(reinterpret_cast<UINT_PTR>(hRGN), val))
+			return NULL;
+		return reinterpret_cast<TinyHandleHRGN*>(val);
 	}
-	TinyHandleMap<HRGN, TinyHandleHRGN*> TinyHandleHRGN::m_map;
+	TinyPointerMap TinyHandleHRGN::m_map;
 	//////////////////////////////////////////////////////////////////////////
 	IMPLEMENT_DYNAMIC(TinyHandleHIMAGELIST, TinyObject);
 	TinyHandleHIMAGELIST::TinyHandleHIMAGELIST()
@@ -526,8 +517,7 @@ namespace TinyUI
 		if (!hIMAGELIST)
 			return FALSE;
 		m_hIMAGELIST = hIMAGELIST;
-		TinyHandleHIMAGELIST* ps = this;
-		m_map.Add(m_hIMAGELIST, ps);
+		m_map.Add(reinterpret_cast<UINT_PTR>(hIMAGELIST), reinterpret_cast<UINT_PTR>(this));
 		return TRUE;
 	}
 	HIMAGELIST TinyHandleHIMAGELIST::Detach()
@@ -535,19 +525,17 @@ namespace TinyUI
 		HIMAGELIST hIMAGELIST = m_hIMAGELIST;
 		if (hIMAGELIST != NULL)
 		{
-			m_map.Remove(hIMAGELIST);
+			m_map.Remove(reinterpret_cast<UINT_PTR>(hIMAGELIST));
 		}
 		m_hIMAGELIST = NULL;
 		return hIMAGELIST;
 	}
-	TinyHandleHIMAGELIST* TinyHandleHIMAGELIST::Find(HIMAGELIST hIMAGELIST)
+	TinyHandleHIMAGELIST* TinyHandleHIMAGELIST::Lookup(HIMAGELIST hIMAGELIST)
 	{
-		TinyHandleHIMAGELIST** ps = m_map.Find(hIMAGELIST);
-		if (ps != NULL)
-		{
-			return *ps;
-		}
-		return NULL;
+		UINT_PTR val = 0;
+		if (!m_map.Lookup(reinterpret_cast<UINT_PTR>(hIMAGELIST), val))
+			return NULL;
+		return reinterpret_cast<TinyHandleHIMAGELIST*>(val);
 	}
-	TinyHandleMap<HIMAGELIST, TinyHandleHIMAGELIST*> TinyHandleHIMAGELIST::m_map;
+	TinyPointerMap TinyHandleHIMAGELIST::m_map;
 }

@@ -1239,10 +1239,16 @@ private:\
 	INLINE UINT WINAPI TinyHashKey(K key)
 	{
 #pragma warning(suppress: 4302) 
+#pragma warning(suppress: 4311)
 		ldiv_t HashVal = ldiv((long)(K)key, 127773);
 		HashVal.rem = 16807 * HashVal.rem - 2836 * HashVal.quot;
 		if (HashVal.rem < 0)
 			HashVal.rem += 2147483647;
 		return ((UINT)HashVal.rem);
 	};
+	template<>
+	INLINE UINT WINAPI TinyHashKey<__int64>(__int64 key)
+	{
+		return (TinyHashKey<DWORD>((DWORD)(key & 0xffffffffUL)) ^ TinyHashKey<DWORD>((DWORD)(key >> 32)));
+	}
 };

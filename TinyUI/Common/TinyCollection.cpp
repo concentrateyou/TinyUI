@@ -92,10 +92,10 @@ namespace TinyUI
 
 	//////////////////////////////////////////////////////////////////////////
 	TinyPointerMap::TinyPointerMap()
-		:m_dwBlockSize(10),
-		m_dwHashSize(17),
-		m_dwCount(0),
-		m_ppHashTable(NULL),
+		:m_blockSize(10),
+		m_size(17),
+		m_count(0),
+		m_ppTable(NULL),
 		m_pFreeList(NULL),
 		m_pBlocks(NULL)
 	{
@@ -107,28 +107,28 @@ namespace TinyUI
 	}
 	DWORD TinyPointerMap::GetSize() const
 	{
-		return m_dwCount;
+		return m_count;
 	}
 	BOOL TinyPointerMap::IsEmpty() const
 	{
-		return m_dwCount == 0;
+		return m_count == 0;
 	}
-	void TinyPointerMap::Initialize(DWORD dwHashSize)
+	void TinyPointerMap::Initialize(UINT size)
 	{
-		SAFE_DELETE_ARRAY(m_ppHashTable);
-		m_ppHashTable = new TinyNode*[dwHashSize];
-		memset(m_ppHashTable, 0, sizeof(TinyNode*) * dwHashSize);
-		m_dwHashSize = dwHashSize;
+		SAFE_DELETE_ARRAY(m_ppTable);
+		m_ppTable = new TinyNode*[size];
+		memset(m_ppTable, 0, sizeof(TinyNode*) * size);
+		m_size = size;
 	}
 	TinyPointerMap::TinyNode* TinyPointerMap::New(UINT_PTR key, UINT_PTR value)
 	{
 		if (m_pFreeList == NULL)
 		{
-			TinyPlex* pPlex = TinyPlex::Create(m_pBlocks, m_dwBlockSize, sizeof(TinyNode));
+			TinyPlex* pPlex = TinyPlex::Create(m_pBlocks, m_blockSize, sizeof(TinyNode));
 			if (pPlex == NULL) return NULL;
 			TinyNode* ps = static_cast<TinyNode*>(pPlex->data());
-			ps += m_dwBlockSize - 1;
-			for (INT_PTR iBlock = m_dwBlockSize - 1; iBlock >= 0; iBlock--)
+			ps += m_blockSize - 1;
+			for (INT_PTR iBlock = m_blockSize - 1; iBlock >= 0; iBlock--)
 			{
 				ps->m_pNext = m_pFreeList;
 				m_pFreeList = ps;
@@ -140,14 +140,14 @@ namespace TinyUI
 		pNew->m_key = key;
 		pNew->m_value = value;
 		m_pFreeList = m_pFreeList->m_pNext;
-		m_dwCount++;
+		m_count++;
 		return pNew;
 	}
 	void TinyPointerMap::Delete(TinyNode* ps)
 	{
 		ps->m_pNext = m_pFreeList;
 		m_pFreeList = ps;
-		m_dwCount--;
+		m_count--;
 	}
 	BOOL TinyPointerMap::Add(UINT_PTR key, UINT_PTR value)
 	{
@@ -156,26 +156,26 @@ namespace TinyUI
 		TinyNode* ps = NULL;
 		if ((ps = Lookup(key, index, hash)) == NULL)
 		{
-			if (!m_ppHashTable)
+			if (!m_ppTable)
 			{
-				Initialize(m_dwHashSize);
+				Initialize(m_size);
 			}
 			ps = New();
 			ps->m_key = key;
 			ps->m_value = value;
-			ps->m_pNext = m_ppHashTable[index];
-			m_ppHashTable[index] = ps;
+			ps->m_pNext = m_ppTable[index];
+			m_ppTable[index] = ps;
 			return TRUE;
 		}
 		return FALSE;
 	}
 	BOOL TinyPointerMap::Remove(UINT_PTR key)
 	{
-		if (!m_ppHashTable)
+		if (!m_ppTable)
 			return FALSE;
 		TinyNode** ppPrev = NULL;
-		UINT index = TinyHashKey<UINT_PTR>(key) % m_dwHashSize;
-		ppPrev = &m_ppHashTable[index];
+		UINT index = TinyHashKey<UINT_PTR>(key) % m_size;
+		ppPrev = &m_ppTable[index];
 		TinyNode* ps = NULL;
 		for (ps = *ppPrev; ps != NULL; ps = ps->m_pNext)
 		{
@@ -191,8 +191,8 @@ namespace TinyUI
 	}
 	void TinyPointerMap::RemoveAll()
 	{
-		SAFE_DELETE_ARRAY(m_ppHashTable);
-		m_dwCount = 0;
+		SAFE_DELETE_ARRAY(m_ppTable);
+		m_count = 0;
 		m_pFreeList = NULL;
 		m_pBlocks->Destory();
 		m_pBlocks = NULL;
@@ -210,10 +210,10 @@ namespace TinyUI
 	TinyPointerMap::TinyNode* TinyPointerMap::Lookup(UINT_PTR key, UINT& index, UINT_PTR& hash) const
 	{
 		hash = TinyHashKey<UINT_PTR>(key);
-		index = hash % m_dwHashSize;
-		if (!m_ppHashTable) return NULL;
+		index = hash % m_size;
+		if (!m_ppTable) return NULL;
 		TinyNode* ps = NULL;
-		for (ps = m_ppHashTable[index]; ps != NULL; ps = ps->m_pNext)
+		for (ps = m_ppTable[index]; ps != NULL; ps = ps->m_pNext)
 		{
 			if (ps->m_key == key)
 			{
@@ -229,14 +229,14 @@ namespace TinyUI
 		TinyNode* ps = NULL;
 		if ((ps = Lookup(key, index, hash)) == NULL)
 		{
-			if (!m_ppHashTable)
+			if (!m_ppTable)
 			{
-				Initialize(m_dwHashSize);
+				Initialize(m_size);
 			}
 			ps = New();
 			ps->m_key = key;
-			ps->m_pNext = m_ppHashTable[index];
-			m_ppHashTable[index] = ps;
+			ps->m_pNext = m_ppTable[index];
+			m_ppTable[index] = ps;
 		}
 		return ps->m_value;
 	}

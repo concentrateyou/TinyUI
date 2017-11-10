@@ -139,7 +139,7 @@ namespace TinyUI
 	}
 	TinyImageList* PASCAL TinyImageList::GetDragImage(LPPOINT lpPoint, LPPOINT lpPointHotSpot)
 	{
-		return (TinyImageList*)TinyImageList::Find(::ImageList_GetDragImage(lpPoint, lpPointHotSpot));
+		return (TinyImageList*)TinyImageList::Lookup(::ImageList_GetDragImage(lpPoint, lpPointHotSpot));
 	}
 	BOOL PASCAL TinyImageList::DragEnter(HWND pWndLock, TinyPoint point)
 	{

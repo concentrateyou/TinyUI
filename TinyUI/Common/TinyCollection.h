@@ -1653,15 +1653,15 @@ namespace TinyUI
 		UINT_PTR&	operator[](UINT_PTR key);
 		void		SetAt(UINT_PTR key, UINT_PTR value);
 	private:
-		void		Initialize(DWORD dwhHashSize);
+		void		Initialize(UINT dwSize);
 		TinyNode*	New(UINT_PTR key = 0, UINT_PTR value = 0);
 		void		Delete(TinyNode* ps);
 		TinyNode*	Lookup(UINT_PTR key, UINT& index, UINT_PTR& hash) const;
 	private:
-		DWORD		m_dwBlockSize;
-		DWORD		m_dwCount;
-		DWORD       m_dwHashSize;
-		TinyNode**	m_ppHashTable;
+		UINT		m_size;
+		INT_PTR		m_blockSize;
+		INT_PTR		m_count;
+		TinyNode**	m_ppTable;
 		TinyNode*	m_pFreeList;
 		TinyPlex*	m_pBlocks;
 	};

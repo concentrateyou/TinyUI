@@ -375,7 +375,7 @@ namespace TinyUI
 	LRESULT TinyControl::OnIniMenuPopup(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		TinyHandleHMENU* pps = TinyHandleHMENU::Find(reinterpret_cast<HMENU>(wParam));
+		TinyHandleHMENU* pps = TinyHandleHMENU::Lookup(reinterpret_cast<HMENU>(wParam));
 		if (pps != NULL)
 		{
 			m_pMenu = static_cast<TinyMenu*>(pps);
@@ -385,7 +385,7 @@ namespace TinyUI
 	LRESULT TinyControl::OnIniMenu(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		TinyHandleHMENU* pps = TinyHandleHMENU::Find(reinterpret_cast<HMENU>(wParam));
+		TinyHandleHMENU* pps = TinyHandleHMENU::Lookup(reinterpret_cast<HMENU>(wParam));
 		if (pps != NULL)
 		{
 			m_pMenu = static_cast<TinyMenu*>(pps);
