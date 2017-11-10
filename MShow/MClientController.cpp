@@ -104,13 +104,41 @@ namespace MShow
 				if (visual != NULL)
 				{
 					visual->SetVisible(TRUE);
-					visual->SetText("预览流打开失败!");
+					visual->SetText("预览流打开失败 正在重试.....");
 				}
 				LOG(ERROR) << "[SetPreview] " << "Open Preview :" << m_szPreviewURL << " Fail";
+				m_timer.SetCallback(5000, BindCallback(&MClientController::OnTry, this));//每隔5秒重试
 			}
 		}
 		m_view.Invalidate();
 		return TRUE;
+	}
+	void MClientController::OnTry()
+	{
+		if (m_preview != NULL)
+		{
+			BOOL bRes = m_preview->Close();
+			TRACE("[MClientController] OnTry Close:%d\n", bRes);
+			LOG(INFO) << "[MClientController] OnTry Close:" << bRes;
+			if (m_preview->Open(m_szPreviewURL.c_str()))
+			{
+				TRACE("[MClientController] OnTry Open OK\n");
+				LOG(INFO) << "[MClientController] OnTry Open OK";
+				m_timer.Close();
+				TinyVisual* visual = m_view.GetDocument()->GetVisualByName("lblError");
+				if (visual != NULL)
+				{
+					visual->SetVisible(FALSE);
+					visual->SetText("");
+				}
+				m_view.Invalidate();
+			}
+			else
+			{
+				TRACE("[MClientController] OnTry Open FAIL\n");
+				LOG(ERROR) << "[MClientController] OnTry Open FAIL";
+			}
+		}
 	}
 	void MClientController::UpdateMicrophones()
 	{
@@ -357,6 +385,7 @@ namespace MShow
 		this->Close();
 		m_view.ShowWindow(SW_HIDE);
 		m_view.UpdateWindow();
+		MShow::MShowApp::GetInstance().GetSearchController().Refresh();
 		MShow::MShowApp::GetInstance().GetSearchView().ShowWindow(SW_NORMAL);
 		MShow::MShowApp::GetInstance().GetSearchView().UpdateWindow();
 	}
@@ -764,6 +793,7 @@ namespace MShow
 		{
 			m_preview->Close();
 		}
+		m_timer.Close();
 		m_szSourceID.clear();
 		m_szProgramID.clear();
 		m_szName.clear();

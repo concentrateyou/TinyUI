@@ -160,6 +160,10 @@ namespace TinyUI
 					CHAR* pValue = NULL;
 					INT remainder = size - m_context.GetSize();
 					INT iRes = m_client.Read(pValue, remainder);
+					if (iRes <= 0)
+					{
+						return -1;
+					}
 					m_context.Add(pValue, iRes);
 					ps = m_context.GetPointer();
 					return size;
@@ -442,6 +446,11 @@ namespace TinyUI
 					bits = NULL;
 					return iRes;
 				}
+				if (iRes == 0)//对方关闭Socket连接
+				{
+					bits = NULL;
+					return -1;
+				}
 				value += iRes;
 			}
 			bits = m_raw;
@@ -455,6 +464,11 @@ namespace TinyUI
 			{
 				bits = NULL;
 				return iRes;
+			}
+			if (iRes == 0)//对方关闭Socket连接
+			{
+				bits = NULL;
+				return -1;
 			}
 			bits = m_raw;
 			return iRes;

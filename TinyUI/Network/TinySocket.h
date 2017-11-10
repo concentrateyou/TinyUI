@@ -5,6 +5,7 @@ namespace TinyUI
 {
 	namespace Network
 	{
+#define  WSAREMOTECLOSE         (WSABASEERR + 1111)
 		/// <summary>
 		/// Ì×½Ó×Ö¾ä±ú
 		/// </summary>

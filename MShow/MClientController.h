@@ -54,6 +54,7 @@ namespace MShow
 		BOOL	Query(const string& sourceID, INT& count);
 	private:
 		void	OnTimerStatus();
+		void	OnTry();
 	private:
 		BOOL		Connect();//ÃÌº”‘¥
 		BOOL		Disconnect(const string& sourceID,BOOL del = FALSE);
@@ -85,6 +86,7 @@ namespace MShow
 		TinyScopedPtr<AudioSdk>				m_audioSDK;
 		MAudioQueue							m_audioQueue;
 		TinyTaskBase						m_task;
+		TinyTaskTimer						m_timer;
 		TinyPerformanceTime					m_timeQPC;
 		TinyPerformanceTime					m_timeQPC1;
 		TinyScopedPtr<MPreviewController>	m_preview;

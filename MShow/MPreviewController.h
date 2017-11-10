@@ -27,6 +27,7 @@ namespace MShow
 		BOOL			Close();
 		MPreviewView&	GetView();
 		LONGLONG		GetBasePTS();
+		MFLVPlayer*		GetPlayer();
 	private:
 		BOOL			OnDraw(BYTE* bits, LONG size);
 		void			OnAudio(BYTE* bits, LONG size);

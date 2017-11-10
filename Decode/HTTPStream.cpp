@@ -71,6 +71,10 @@ namespace Decode
 		INT size = 0;
 		CHAR* bits = NULL;
 		size = m_client.Read(bits, cb);
+		if (size <= 0)
+		{
+			hRes = E_FAIL;
+		}
 		if (size > 0)
 		{
 			memcpy(pv, bits, size);

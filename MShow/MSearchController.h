@@ -17,6 +17,7 @@ namespace MShow
 		virtual ~MSearchController();
 		BOOL	Initialize();
 		BOOL	Uninitialize();
+		void	Refresh();
 	private:
 		void OnMinimumClick(TinyVisual*, EventArgs& args);
 		void OnCloseClick(TinyVisual*, EventArgs& args);

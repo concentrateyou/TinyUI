@@ -81,7 +81,8 @@ namespace MShow
 		case WSAECONNRESET:
 		{
 			m_timer.SetCallback(5000, BindCallback(&MPreviewController::OnTry, this));//√ø∏Ù5√Î÷ÿ ‘
-			TRACE("On Error:%d\n", iError);
+			TRACE("[MPreviewController] OnError:%d\n", iError);
+			LOG(ERROR) << "[MPreviewController] OnError:" << iError;
 		}
 		break;
 		}
@@ -89,12 +90,12 @@ namespace MShow
 	void MPreviewController::OnTry()
 	{
 		BOOL bRes = this->Close();
-		TRACE("OnTry Close:%d\n", bRes);
-		LOG(INFO) << "OnTry Close:" << bRes;
+		TRACE("[MPreviewController] OnTry Close:%d\n", bRes);
+		LOG(INFO) << "[MPreviewController] OnTry Close:" << bRes;
 		if (this->Open(m_player->GetURL().CSTR()))
 		{
-			TRACE("OnTry Open OK\n");
-			LOG(INFO) << "OnTry Open OK";
+			TRACE("[MPreviewController] OnTry Open OK\n");
+			LOG(INFO) << "[MPreviewController] OnTry Open OK";
 			m_timer.Close();
 		}
 		else
@@ -114,6 +115,10 @@ namespace MShow
 			return m_player->GetBasePTS();
 		LOG(ERROR) << "[MPreviewController] " << "GetBasePTS NULL";
 		return  0;
+	}
+	MFLVPlayer*	 MPreviewController::GetPlayer()
+	{
+		return m_player;
 	}
 	void MPreviewController::OnAudio(BYTE* bits, LONG size)
 	{

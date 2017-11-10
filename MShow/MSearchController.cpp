@@ -39,7 +39,7 @@ namespace MShow
 			visual->EVENT_CLICK += m_onSearchClick;
 		}
 		m_onItemClick.Reset(new Delegate<void(TinyVisual*, MouseEventArgs&)>(this, &MSearchController::OnItemClick));
-		OnSearchClick(NULL, EventArgs());
+		Refresh();
 		return TRUE;
 	}
 
@@ -47,7 +47,10 @@ namespace MShow
 	{
 		return FALSE;
 	}
-
+	void MSearchController::Refresh()
+	{
+		OnSearchClick(NULL, EventArgs());
+	}
 	void MSearchController::OnMinimumClick(TinyVisual*, EventArgs& args)
 	{
 		m_view.GetDocument()->ReleaseCapture();//±ØÐëÊÍ·Å²¶»ñ
@@ -181,7 +184,7 @@ namespace MShow
 		TinyString szName = search->GetText();
 		string body;
 		body += "pname=";
-		body += szName.IsEmpty() ? "" : szName.CSTR();
+		body += szName.IsEmpty() ? "" : ASCIIToUTF8(szName.CSTR()).c_str();
 		body += "&fullMode=true";
 		client.GetRequest().SetBody(body);
 		string address = StringPrintf("%s/%s", MShow::MShowApp::GetInstance().AppConfig().GetPrefix().c_str(), "list");

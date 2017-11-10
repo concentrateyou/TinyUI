@@ -371,6 +371,14 @@ namespace TinyUI
 				}
 				LOG(ERROR) << "[Receive] recv:" << iError;
 			}
+			if (iRes == 0)
+			{
+				if (!m_errorCallback.IsNull())
+				{
+					m_errorCallback(WSAREMOTECLOSE);
+				}
+				LOG(ERROR) << "[Receive] recv 0";
+			}
 			return iRes;
 		}
 		INT	 TinySocket::Send(CHAR* data, DWORD dwSize, DWORD dwFlag)
