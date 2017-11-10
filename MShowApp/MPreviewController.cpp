@@ -399,8 +399,8 @@ namespace MShow
 	void MPreviewController::Render()
 	{
 		m_currentQPC = MShowApp::GetInstance().GetQPCTimeMS();
-		m_graphics.GetDX11().SetRenderTexture2D(m_renderViews[m_currentRender]);
-		m_graphics.GetDX11().GetRender2D()->BeginDraw();
+		m_graphics.SetRenderView(m_renderViews[m_currentRender]);
+		m_graphics.GetRenderView()->BeginDraw();
 		TinyArray<DX11Element2D*> images;
 		for (INT i = m_array.GetSize() - 1;i >= 0;i--)
 		{
@@ -432,15 +432,15 @@ namespace MShow
 				m_graphics.DrawImage(image, (FLOAT)((FLOAT)m_pulgSize.cx / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cx)), (FLOAT)((FLOAT)m_pulgSize.cy / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cy)));
 			}
 		}
-		m_graphics.GetDX11().GetRender2D()->EndDraw();
+		m_graphics.GetRenderView()->EndDraw();
 		//////////////////////////////////////////////////////////////////////////
 		m_previousRender = (m_currentRender + ARRAYSIZE(m_renderViews) / 2) % ARRAYSIZE(m_renderViews);
 		m_currentRender++;
 		m_currentRender = m_currentRender % ARRAYSIZE(m_renderViews);
 		m_event.SetEvent();
 		//////////////////////////////////////////////////////////////////////////
-		m_graphics.GetDX11().SetRenderTexture2D(NULL);
-		m_graphics.GetDX11().GetRender2D()->BeginDraw();
+		m_graphics.SetRenderView(NULL);
+		m_graphics.GetRenderView()->BeginDraw();
 		INT index = -1;
 		for (INT i = m_array.GetSize() - 1;i >= 0;i--)
 		{
@@ -495,7 +495,7 @@ namespace MShow
 				}
 			}
 		}
-		m_graphics.GetDX11().GetRender2D()->EndDraw();
+		m_graphics.GetRenderView()->EndDraw();
 		m_graphics.Present();
 	}
 

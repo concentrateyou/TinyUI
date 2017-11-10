@@ -150,12 +150,12 @@ namespace MShow
 			if (m_video2D.Copy(m_graphics.GetDX11(), NULL, bits, size))
 			{
 				m_event.SetEvent();
-				m_graphics.GetDX11().SetRenderTexture2D(NULL);
-				m_graphics.GetDX11().GetRender2D()->BeginDraw();
+				m_graphics.SetRenderView(NULL);
+				m_graphics.GetRenderView()->BeginDraw();
 				FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 				m_graphics.GetDX11().AllowBlend(FALSE, blendFactor);
 				m_graphics.DrawImage(&m_video2D, 1.0F, 1.0F);
-				m_graphics.GetDX11().GetRender2D()->EndDraw();
+				m_graphics.GetRenderView()->EndDraw();
 			}
 		}
 	}

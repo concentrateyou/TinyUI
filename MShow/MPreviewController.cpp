@@ -125,7 +125,8 @@ namespace MShow
 			return FALSE;
 		if (!m_graphics.IsActive())
 		{
-			if (m_graphics.GetDX9().CheckReset())
+			HRESULT hRes = S_OK;
+			if (m_graphics.GetDX9().CheckReason(D3DERR_DEVICENOTRESET))
 			{
 				if (m_graphics.Reset())
 				{
@@ -146,8 +147,8 @@ namespace MShow
 				LOG(ERROR) << "[MPreviewController] [OnDraw]" << " Copy FAIL";
 				return FALSE;
 			}
-			m_graphics.GetDX9().SetRenderTexture2D(NULL);
-			if (!m_graphics.GetDX9().GetRender2D()->BeginDraw())
+			m_graphics.SetRenderView(NULL);
+			if (!m_graphics.GetRenderView()->BeginDraw())
 			{
 				LOG(ERROR) << "[MPreviewController] [OnDraw]" << "BeginDraw FAIL";
 				return FALSE;
@@ -157,7 +158,7 @@ namespace MShow
 				LOG(ERROR) << "[MPreviewController] [OnDraw]" << "DrawImage FAIL";
 				return FALSE;
 			}
-			if (!m_graphics.GetDX9().GetRender2D()->EndDraw())
+			if (!m_graphics.GetRenderView()->EndDraw())
 			{
 				LOG(ERROR) << "[MPreviewController] [OnDraw]" << "EndDraw FAIL";
 				return FALSE;

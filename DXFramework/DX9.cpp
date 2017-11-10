@@ -261,20 +261,12 @@ namespace DXFramework
 		m_bActive = TRUE;
 		return TRUE;
 	}
-	BOOL DX9::CheckReset()
+	BOOL DX9::CheckReason(HRESULT val)
 	{
 		if (IsEmpty())
 			return FALSE;
 		HRESULT hRes = m_d3dd9->TestCooperativeLevel();
-		if (hRes == D3DERR_DEVICELOST)
-		{
-			return FALSE;
-		}
-		if (hRes == D3DERR_DEVICENOTRESET)
-		{
-			return TRUE;
-		}
-		return FALSE;
+		return val == hRes;
 	}
 	BOOL DX9::Present()
 	{
@@ -356,11 +348,11 @@ namespace DXFramework
 	{
 		return m_matrixs;
 	}
-	DX9RenderView* DX9::GetRender2D() const
+	DX9RenderView* DX9::GetRenderView() const
 	{
 		return m_render2D;
 	}
-	void DX9::SetRenderTexture2D(DX9RenderView* render2D)
+	void DX9::SetRenderView(DX9RenderView* render2D)
 	{
 		if (render2D == NULL)
 		{

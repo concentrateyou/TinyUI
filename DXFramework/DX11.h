@@ -7,6 +7,7 @@ namespace DXFramework
 
 	class DX11 : public TinyLock
 	{
+		friend class DX11Graphics2D;
 		DISALLOW_COPY_AND_ASSIGN(DX11)
 	public:
 		DX11();
@@ -20,16 +21,17 @@ namespace DXFramework
 		BOOL					AllowDepth(BOOL bAllow);
 		BOOL					Present();
 		BOOL					Flush();
-		void					SetRenderTexture2D(DX11RenderView* render2D);
 		void					SetMatrixs(const TinySize& size);
 		HWND					GetHWND() const;
 		BOOL					IsEmpty() const;
 		ID3D11Device*			GetD3D() const;
 		IDXGISwapChain*			GetSwapChain() const;
 		ID3D11DeviceContext*	GetImmediateContext() const;
-		DX11RenderView*			GetRender2D() const;
 		XMMATRIX*				GetMatrixs();
 		TinySize				GetSize() const;
+	private:
+		void					SetRenderView(DX11RenderView* render2D);
+		DX11RenderView*			GetRenderView() const;
 	private:
 		HWND								m_hWND;
 		DX11RenderView*						m_render2D;

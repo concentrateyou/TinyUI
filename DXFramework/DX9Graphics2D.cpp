@@ -46,4 +46,12 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
+	void DX9Graphics2D::SetRenderView(DX9RenderView* render2D)
+	{
+		m_dx9.SetRenderView(render2D);
+	}
+	DX9RenderView*	DX9Graphics2D::GetRenderView() const
+	{
+		return m_dx9.GetRenderView();
+	}
 }

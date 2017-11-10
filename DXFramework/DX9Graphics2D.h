@@ -20,6 +20,11 @@ namespace DXFramework
 		BOOL	Present();
 		BOOL	Initialize(HWND hWND, const TinySize& size);
 		BOOL	DrawImage(DX9Image2D* ps, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F);
+		void	SetRenderView(DX9RenderView* render2D);
+		void	Enter();
+		void	Leave();
+	public:
+		DX9RenderView*		GetRenderView() const;
 	private:
 		DX9		m_dx9;
 	};

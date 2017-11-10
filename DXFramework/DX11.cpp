@@ -180,7 +180,7 @@ namespace DXFramework
 			return FALSE;
 		m_immediateContext->OMSetDepthStencilState(bAllow ? m_enableDepthState : m_disableDepthState, 1);
 	}
-	void DX11::SetRenderTexture2D(DX11RenderView* render2D)
+	void DX11::SetRenderView(DX11RenderView* render2D)
 	{
 		if (render2D == NULL)
 		{
@@ -232,7 +232,7 @@ namespace DXFramework
 	{
 		return m_swap;
 	}
-	DX11RenderView* DX11::GetRender2D() const
+	DX11RenderView* DX11::GetRenderView() const
 	{
 		return m_render2D;
 	}

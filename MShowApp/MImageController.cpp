@@ -124,10 +124,10 @@ namespace MShow
 		TinySize imageSize = m_image.GetSize();
 		if (m_image2D.Copy(m_graphics.GetDX11(), NULL, bits, size))
 		{
-			m_graphics.GetDX11().SetRenderTexture2D(NULL);
-			m_graphics.GetDX11().GetRender2D()->BeginDraw();
+			m_graphics.SetRenderView(NULL);
+			m_graphics.GetRenderView()->BeginDraw();
 			m_graphics.DrawImage(&m_image2D, 1.0F, 1.0F);
-			m_graphics.GetDX11().GetRender2D()->EndDraw();
+			m_graphics.GetRenderView()->EndDraw();
 			m_graphics.Flush();
 			m_graphics.Present();
 		}

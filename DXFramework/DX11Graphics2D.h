@@ -23,6 +23,8 @@ namespace DXFramework
 		BOOL	DrawImage(DX11Image2D* ps, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F);
 		void	Enter();
 		void	Leave();
+		void	SetRenderView(DX11RenderView* render2D);
+		DX11RenderView*		GetRenderView() const;
 	private:
 		DX11					m_dx11;
 		DXCamera				m_camera;

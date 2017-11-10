@@ -9,7 +9,7 @@ namespace DXFramework
 
 	class DX9 : public TinyLock
 	{
-		friend class DX9RenderView;
+		friend class DX9Graphics2D;
 		DISALLOW_COPY_AND_ASSIGN(DX9)
 	public:
 		DX9();
@@ -20,15 +20,16 @@ namespace DXFramework
 		BOOL				SetViewport(const TinyPoint& pos, const TinySize& size);
 		D3DXMATRIX*			GetMatrixs();
 		void				SetMatrixs(const TinySize& size);
-		void				SetRenderTexture2D(DX9RenderView* render2D);
-		DX9RenderView*		GetRender2D() const;
 		BOOL				Reset();
-		BOOL				CheckReset();
+		BOOL				CheckReason(HRESULT hRes);//获得设备移除原因
 	public:
 		HWND				GetHWND() const;
 		BOOL				IsActive() const;
 		BOOL				IsEmpty() const;
 		IDirect3DDevice9*	GetD3D() const;
+	private:
+		void				SetRenderView(DX9RenderView* render2D);
+		DX9RenderView*		GetRenderView() const;
 	private:
 		BOOL							m_bActive;
 		HWND							m_hWND;

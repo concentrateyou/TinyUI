@@ -55,7 +55,7 @@ namespace DXFramework
 		ASSERT(ps);
 		if (ps->IsEmpty())
 			return FALSE;
-		if (!m_dx11.GetRender2D())
+		if (!m_dx11.GetRenderView())
 			return FALSE;
 		if (!ps->Translate(m_dx11, ratioX, ratioY))
 			return FALSE;
@@ -67,7 +67,14 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
-
+	void DX11Graphics2D::SetRenderView(DX11RenderView* render2D)
+	{
+		m_dx11.SetRenderView(render2D);
+	}
+	DX11RenderView*	DX11Graphics2D::GetRenderView() const
+	{
+		return m_dx11.GetRenderView();
+	}
 	void DX11Graphics2D::Enter()
 	{
 		m_dx11.Lock();
