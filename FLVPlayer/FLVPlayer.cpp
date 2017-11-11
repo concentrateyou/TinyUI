@@ -41,86 +41,6 @@ BOOL LoadSeDebugPrivilege()
 	return TRUE;
 }
 
-class A
-{
-public:
-	A()
-	{
-		TRACE("A");
-	}
-	~A()
-	{
-		TRACE("~A");
-	}
-};
-
-class B
-{
-public:
-	B()
-	{
-		TRACE("B");
-	}
-	~B()
-	{
-		TRACE("~B");
-	}
-};
-
-
-class Application
-{
-public:
-	Application()
-	{
-
-	}
-	BOOL Initialize()
-	{
-		return TRUE;
-	}
-	static Application& GetInstance()
-	{
-		static Application b;
-		return b;
-	}
-
-	~Application()
-	{
-		TRACE("~Application");
-	}
-
-private:
-	A a;
-	B b;
-};
-
-class MShowApp
-{
-public:
-	MShowApp()
-	{
-
-	}
-
-	static MShowApp& GetInstance()
-	{
-		static MShowApp c;
-		return c;
-	}
-
-	BOOL Initialize()
-	{
-		
-		return TRUE;
-	}
-
-	~MShowApp()
-	{
-		TRACE("~MShowApp");
-	}
-};
-
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -148,13 +68,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	OleUninitialize();
 	WSACleanup();
-
-
-	MShowApp& app = MShowApp::GetInstance();
-	app.Initialize();
-
-	Application& app1 = Application::GetInstance();
-	app1.Initialize();
 
 	return loopRes;
 };

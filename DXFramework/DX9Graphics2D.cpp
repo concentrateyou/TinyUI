@@ -35,7 +35,8 @@ namespace DXFramework
 	}
 	BOOL DX9Graphics2D::DrawImage(DX9Image2D* ps, FLOAT ratioX, FLOAT ratioY)
 	{
-		ASSERT(ps);
+		if (!ps)
+			return FALSE;
 		if (ps->IsEmpty())
 			return FALSE;
 		if (!ps->Translate(m_dx9, ratioX, ratioY))
@@ -46,9 +47,11 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
-	BOOL DX9Graphics2D::DrawString(LPCSTR pzText, INT Count, LPRECT pRect, DWORD Format, D3DCOLOR Color)
+	BOOL DX9Graphics2D::DrawString(DX9Font2D* ps, LPCSTR pzText, INT count, LPRECT pRect, DWORD dwFormat, D3DCOLOR color)
 	{
-		return TRUE;
+		if (!ps)
+			return FALSE;
+		return ps->DrawString(m_dx9, pzText, count, pRect, dwFormat, color);
 	}
 	void DX9Graphics2D::SetRenderView(DX9RenderView* render2D)
 	{

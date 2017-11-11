@@ -265,6 +265,7 @@ namespace FLVPlayer
 		GetClientRect(m_decode.m_decode.m_hWND, &rectangle);
 		BOOL bRes = m_graphics.Initialize(m_decode.m_decode.m_hWND, rectangle.Size());
 		bRes = m_image.Create(m_graphics.GetDX9(), m_decode.m_decode.m_size.cx, m_decode.m_decode.m_size.cy, NULL);
+		m_font2D.Load(m_graphics.GetDX9(), (HFONT)GetStockObject(DEFAULT_GUI_FONT));
 		return TinyTaskBase::Submit(BindCallback(&FLVVideoRender::OnMessagePump, this));
 	}
 	BOOL FLVVideoRender::Close(DWORD dwMS)
@@ -301,7 +302,7 @@ namespace FLVPlayer
 	{
 		if (!m_graphics.IsActive())
 		{
-			if (m_graphics.GetDX9().CheckReset())
+			if (m_graphics.GetDX9().CheckReason(D3DERR_DEVICENOTRESET))
 			{
 				if (m_graphics.Reset())
 				{
@@ -313,10 +314,12 @@ namespace FLVPlayer
 		else
 		{
 			m_image.Copy(bits, size);
-			m_graphics.GetDX9().SetRenderTexture2D(NULL);
-			m_graphics.GetDX9().GetRender2D()->BeginDraw();
+			m_graphics.SetRenderView(NULL);
+			m_graphics.GetRenderView()->BeginDraw();
+			string val("ABC");
+			m_graphics.DrawString(&m_font2D, val.c_str(), val.size(), NULL, DT_CENTER, D3DCOLOR_XRGB(255, 255, 0));
 			m_graphics.DrawImage(&m_image);
-			m_graphics.GetDX9().GetRender2D()->EndDraw();
+			m_graphics.GetRenderView()->EndDraw();
 			m_graphics.Present();
 		}
 	}

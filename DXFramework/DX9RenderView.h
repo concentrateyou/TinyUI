@@ -16,6 +16,7 @@ namespace DXFramework
 		void		Destory();
 		BOOL		Resize();
 		BOOL		Resize(INT cx, INT cy);
+	public:
 		IDirect3DSurface9*		GetSurface() const;
 	public:
 		BOOL		BeginDraw();

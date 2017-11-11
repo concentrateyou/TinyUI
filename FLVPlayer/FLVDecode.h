@@ -96,6 +96,7 @@ namespace FLVPlayer
 		TinyPerformanceTime		m_time;
 		DX9Graphics2D			m_graphics;
 		DX9Image2D				m_image;
+		DX9Font2D				m_font2D;
 	};
 
 	class FLVDecode : public TinyTaskBase
