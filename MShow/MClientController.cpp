@@ -13,7 +13,7 @@ namespace MShow
 		m_bBreak(FALSE),
 		m_bCommentarying(FALSE),
 		m_bPause(FALSE),
-		m_previousPTS(0)
+		m_previousPTS(-1)
 	{
 	}
 
@@ -915,6 +915,8 @@ namespace MShow
 		//¸üÐÂUI
 		m_bPause = FALSE;
 		m_szName.clear();
+		m_szSourceID.clear();
+		m_szURL.clear();
 		if (m_view.GetDocument() != NULL)
 		{
 			TinyVisual* spvis = m_view.GetDocument()->GetVisualByName("btnPauseCommentary");
@@ -1126,18 +1128,22 @@ namespace MShow
 				if (m_previousPTS != currentPTS)
 				{
 					m_previousPTS = currentPTS;
+					if (m_audioQueue.GetAllocSize() == 0)
+					{
+						INT count = 5;
+						m_audioQueue.Initialize(count, size + 4);
+					}
+					AUDIO_SAMPLE sample = { 0 };
+					sample.size = size;
+					sample.bits = static_cast<BYTE*>(m_audioQueue.Alloc());
+					sample.timestamp = currentPTS;
+					memcpy(sample.bits + 4, bits, size);
+					m_audioQueue.Push(sample);
 				}
-				if (m_audioQueue.GetAllocSize() == 0)
+				else
 				{
-					INT count = 5;
-					m_audioQueue.Initialize(count, size + 4);
+					LOG(ERROR) << "OnAudioDSP Timestamp Same:" << m_previousPTS;
 				}
-				AUDIO_SAMPLE sample = { 0 };
-				sample.size = size;
-				sample.bits = static_cast<BYTE*>(m_audioQueue.Alloc());
-				sample.timestamp = currentPTS;
-				memcpy(sample.bits + 4, bits, size);
-				m_audioQueue.Push(sample);
 			}
 		}
 		else
