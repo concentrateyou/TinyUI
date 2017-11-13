@@ -25,11 +25,13 @@ namespace MShow
 		void OnItemClick(TinyVisual*, MouseEventArgs& args);
 		void GetPrograms();
 		void OnMessagePump();
+		void OnDestory(UINT, WPARAM, LPARAM, BOOL&);
 		BOOL Query(const string& sourceID, const string& programID, const string& logID, INT& count);
 	private:
 		TinyLock					m_lock;
 		MSearchWindow&				m_view;
 		TinyTaskBase				m_task;
+		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>>	m_onDestory;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMinimumClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onCloseClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onSearchClick;

@@ -535,7 +535,10 @@ namespace MShow
 		if (code == "A00000")
 		{
 			m_szSourceID = std::to_string(value["data"].asInt());
-			m_szName = StringPrintf("解说信号源%s", m_szSourceID.c_str());
+			if (m_szName.empty())
+			{
+				m_szName = StringPrintf("解说信号源%s", m_szSourceID.c_str());
+			}
 			TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
 			if (pTextBox != NULL)
 			{
@@ -812,7 +815,6 @@ namespace MShow
 	}
 	BOOL MClientController::StartCommentary()
 	{
-		TRACE("Name:%s\n", m_szName.c_str());
 		m_bBreak = FALSE;
 		//获取音频预览流
 		string szIP;

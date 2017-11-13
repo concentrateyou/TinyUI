@@ -20,6 +20,8 @@ namespace MShow
 
 	BOOL MSearchController::Initialize()
 	{
+		m_onDestory.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MSearchController::OnDestory));
+		m_view.EVENT_DESTORY += m_onDestory;
 		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("sysmin");
 		if (visual != NULL)
 		{
@@ -43,9 +45,24 @@ namespace MShow
 		return TRUE;
 	}
 
+	void MSearchController::OnDestory(UINT, WPARAM, LPARAM, BOOL&)
+	{
+		TinyVisualAnimation* loading = static_cast<TinyVisualAnimation*>(m_view.GetDocument()->GetVisualByName("loading"));
+		if (loading != NULL)
+		{
+			loading->EndAnimate();
+		}
+		if (m_task.IsActive())
+		{
+			m_task.Close(INFINITE);
+		}
+		Sleep(100);
+	}
+
 	BOOL MSearchController::Uninitialize()
 	{
-		return FALSE;
+		m_view.EVENT_DESTORY -= m_onDestory;
+		return TRUE;
 	}
 	void MSearchController::Refresh()
 	{

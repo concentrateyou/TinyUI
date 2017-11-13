@@ -165,23 +165,26 @@ namespace TinyUI
 		LRESULT TinyVisualFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
+			BOOL bRes = TinyVisualWND::OnCreate(uMsg, wParam, lParam, bHandled);
 			if (!Initialize())
 				PostQuitMessage(0);//直接退出
-			return FALSE;
+			return bRes;
 		}
 		LRESULT TinyVisualFrame::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
+			BOOL bRes = TinyVisualWND::OnDestory(uMsg, wParam, lParam, bHandled);
 			OnUninitialize();
 			Uninitialize();
-			return FALSE;
+			return bRes;
 		}
 		LRESULT TinyVisualFrame::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
+			BOOL bRes = TinyVisualWND::OnInitDialog(uMsg, wParam, lParam, bHandled);
 			if (!Initialize())
 				PostQuitMessage(0);//直接退出
-			return FALSE;
+			return bRes;
 		}
 		LRESULT TinyVisualFrame::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
