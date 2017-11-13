@@ -107,7 +107,7 @@ namespace MShow
 					visual->SetText("预览流打开失败 正在重试.....");
 				}
 				LOG(ERROR) << "[SetPreview] " << "Open Preview :" << m_szPreviewURL << " Fail";
-				m_timer.SetCallback(5000, BindCallback(&MClientController::OnTry, this));//每隔5秒重试
+				m_timer.SetCallback(3000, BindCallback(&MClientController::OnTry, this));//每隔3秒重试
 			}
 		}
 		m_view.Invalidate();
@@ -125,7 +125,12 @@ namespace MShow
 				TRACE("[MClientController] OnTry Open OK\n");
 				LOG(INFO) << "[MClientController] OnTry Open OK";
 				m_timer.Close();
-				TinyVisual* visual = m_view.GetDocument()->GetVisualByName("lblError");
+				TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
+				if (visual != NULL)
+				{
+					visual->SetVisible(TRUE);
+				}
+				visual = m_view.GetDocument()->GetVisualByName("lblError");
 				if (visual != NULL)
 				{
 					visual->SetVisible(FALSE);
@@ -530,6 +535,12 @@ namespace MShow
 		if (code == "A00000")
 		{
 			m_szSourceID = std::to_string(value["data"].asInt());
+			m_szName = StringPrintf("解说信号源%s", m_szSourceID.c_str());
+			TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
+			if (pTextBox != NULL)
+			{
+				pTextBox->SetText(m_szName.c_str());
+			}
 			LOG(INFO) << "[MClientController] " << "Add SourceID :" << m_szSourceID << " OK";
 			TRACE("Add SourceID:%s   OK\n", m_szSourceID.c_str());
 			return TRUE;
@@ -972,12 +983,6 @@ namespace MShow
 				MessageBox(m_view.Handle(), "没有检测到麦克风设备", "提示", MB_OK);
 				return;
 			}
-		}
-		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
-		if (pTextBox->GetText().IsEmpty())
-		{
-			MessageBox(m_view.Handle(), "请输入解说名", "提示", MB_OK);
-			return;
 		}
 		if (Connect())
 		{
