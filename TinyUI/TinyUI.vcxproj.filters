@@ -510,6 +510,9 @@
     <ClInclude Include="Control\TinyShadow.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
+    <ClInclude Include="Render\TinyRenderTarget.h">
+      <Filter>头文件\Render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -937,6 +940,9 @@
     </ClCompile>
     <ClCompile Include="Control\TinyShadow.cpp">
       <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\TinyRenderTarget.cpp">
+      <Filter>源文件\Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

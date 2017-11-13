@@ -283,6 +283,7 @@
     <ClInclude Include="Render\TinyGDI.h" />
     <ClInclude Include="Render\TinyImage.h" />
     <ClInclude Include="Render\TinyRectTracker.h" />
+    <ClInclude Include="Render\TinyRenderTarget.h" />
     <ClInclude Include="Render\TinyTheme.h" />
     <ClInclude Include="Render\TinyTransform.h" />
     <ClInclude Include="resource.h" />
@@ -427,6 +428,7 @@
     <ClCompile Include="Render\TinyGDI.cpp" />
     <ClCompile Include="Render\TinyImage.cpp" />
     <ClCompile Include="Render\TinyRectTracker.cpp" />
+    <ClCompile Include="Render\TinyRenderTarget.cpp" />
     <ClCompile Include="Render\TinyTheme.cpp" />
     <ClCompile Include="Render\TinyTransform.cpp" />
     <ClCompile Include="stdafx.cpp">
