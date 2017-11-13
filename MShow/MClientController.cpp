@@ -911,6 +911,7 @@ namespace MShow
 		m_timerStatus.Close();
 		//¸üÐÂUI
 		m_bPause = FALSE;
+		m_szName.clear();
 		if (m_view.GetDocument() != NULL)
 		{
 			TinyVisual* spvis = m_view.GetDocument()->GetVisualByName("btnPauseCommentary");
@@ -933,6 +934,12 @@ namespace MShow
 			if (spvis != NULL)
 			{
 				spvis->SetVisible(FALSE);
+			}
+			TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
+			if (pTextBox != NULL)
+			{
+				pTextBox->SetEnable(FALSE);
+				pTextBox->SetText("");
 			}
 		}
 		m_view.Invalidate();
