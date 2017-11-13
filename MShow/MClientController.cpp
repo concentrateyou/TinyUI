@@ -812,21 +812,12 @@ namespace MShow
 	}
 	BOOL MClientController::StartCommentary()
 	{
+		TRACE("Name:%s\n", m_szName.c_str());
 		m_bBreak = FALSE;
 		//获取音频预览流
 		string szIP;
 		INT iAudio = 0;
 		if (!GetPreviewURL(m_szURL, iAudio, szIP) || m_szURL.empty())
-		{
-			goto _ERROR;
-		}
-		//启动SDK发送数据
-		if (m_task.IsActive())
-		{
-			m_bBreak = TRUE;
-			m_task.Close(1000);
-		}
-		if (!m_task.Submit(BindCallback(&MClientController::OnMessagePump, this)))
 		{
 			goto _ERROR;
 		}
@@ -855,6 +846,16 @@ namespace MShow
 				m_audioDSP.Stop();
 				m_audioDSP.Start();
 			}
+		}
+		//启动SDK发送数据
+		if (m_task.IsActive())
+		{
+			m_bBreak = TRUE;
+			m_task.Close(1000);
+		}
+		if (!m_task.Submit(BindCallback(&MClientController::OnMessagePump, this)))
+		{
+			goto _ERROR;
 		}
 		//通知Web更新
 		if (!UpdatePreviewURL(m_szSourceID, m_szURL))
