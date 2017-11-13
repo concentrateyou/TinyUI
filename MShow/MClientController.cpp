@@ -200,6 +200,7 @@ namespace MShow
 				Close();
 				m_view.ShowWindow(SW_HIDE);
 				m_view.UpdateWindow();
+				MShow::MShowApp::GetInstance().GetSearchController().Refresh();
 				MShow::MShowApp::GetInstance().GetSearchView().ShowWindow(SW_NORMAL);
 				MShow::MShowApp::GetInstance().GetSearchView().UpdateWindow();
 			}
