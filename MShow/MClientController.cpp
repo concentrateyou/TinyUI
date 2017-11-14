@@ -1120,12 +1120,17 @@ namespace MShow
 		g_timeQPC1.EndTime();
 		LOG(INFO) << "OnAudio Cost: " << g_timeQPC1.GetMillisconds();
 		g_timeQPC1.BeginTime();
-		if (!m_audioDSP.IsEmpty())
+		if (m_audioDSP.IsEmpty())
+		{
+			m_audioQueue.RemoveAll();
+		}
+		else
 		{
 			LONGLONG currentPTS = MShow::MShowApp::GetInstance().GetCurrentAudioTS();
 			LOG(INFO) << "OnAudio Timestamp: " << currentPTS;
 			MAudioQueue& audioQueue = m_audioDSP.GetAudioQueue();
 			AUDIO_SAMPLE sample = { 0 };
+			LOG(INFO) << "AudioQueue Count:" << audioQueue.GetCount();
 			if (audioQueue.Pop(sample))
 			{
 				ASSERT(AAC_SIZE == sample.size);
@@ -1163,8 +1168,9 @@ namespace MShow
 				}
 				else
 				{
-					LOG(ERROR) << "AudioQueue Pop FAIL";
-					TRACE("AudioQueue Pop FAIL\n");
+					m_audioQueue.RemoveAll();
+					LOG(ERROR) << "AudioQueue Pop FAIL Clear All Buffer";
+					TRACE("AudioQueue Pop FAIL Clear All Buffer\n");
 				}
 			}
 			audioQueue.Free(sample.bits);
