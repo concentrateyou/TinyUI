@@ -42,6 +42,11 @@ namespace MShow
 		return m_aac.GetFormat();
 	}
 
+	LONGLONG MAudioTask::GetBasePTS()
+	{
+		return m_task.GetBasePTS();
+	}
+
 	MPacketAllocQueue& MAudioTask::GetAudioQueue()
 	{
 		return m_audioQueue;

@@ -14,9 +14,8 @@ namespace MShow
 	{
 	}
 
-	BOOL MAudioDSP::Initialize(Callback<void(BYTE*, LONG)>&& callback)
+	BOOL MAudioDSP::Initialize()
 	{
-		m_callback = std::move(callback);
 		m_audioDSP.Initialize(BindCallback(&MAudioDSP::OnDSP, this));
 		ZeroMemory(&m_waveFMTI, sizeof(m_waveFMTI));
 		m_waveFMTI.cbSize = 0;
@@ -65,7 +64,6 @@ namespace MShow
 				LOG(ERROR) << "[MAudioDSP] Create Wave File: " << szFile << " Fail";
 			}
 		}
-		m_timer.SetCallback(23, BindCallback(&MAudioDSP::OnTimer, this));
 		LOG(INFO) << "[MAudioDSP] Open OK";
 		return TRUE;
 	}
@@ -102,7 +100,6 @@ namespace MShow
 				LOG(ERROR) << "[MAudioDSP] Create Wave File: " << szFile << " Fail";
 			}
 		}
-		m_timer.SetCallback(23, BindCallback(&MAudioDSP::OnTimer, this));
 		LOG(INFO) << "[MAudioDSP] Open OK";
 		return TRUE;
 	}
@@ -154,7 +151,6 @@ namespace MShow
 				LOG(ERROR) << "[MAudioDSP] Create Wave File: " << szFile << " Fail";
 			}
 		}
-		m_timer.SetCallback(23, BindCallback(&MAudioDSP::OnTimer, this));
 		LOG(INFO) << "[MAudioDSP] Open OK";
 		return TRUE;
 	}
@@ -186,46 +182,42 @@ namespace MShow
 			LOG(ERROR) << "AudioDSP Close Fail";
 			return FALSE;
 		}
-		m_timer.Close();
 		LOG(INFO) << "AudioDSP Close OK";
 		return TRUE;
+	}
+	MAudioQueue& MAudioDSP::GetAudioQueue()
+	{
+		return m_audioQueue;
+	}
+	BOOL MAudioDSP::IsCapturing() const
+	{
+		return m_audioDSP.IsCapturing();
+	}
+	BOOL MAudioDSP::IsEmpty()
+	{
+		return m_audioDSP.IsEmpty();
 	}
 	void MAudioDSP::OnDSP(BYTE* bits, LONG size, LPVOID lpParameter)
 	{
 		m_resampler.Resample(bits, size);
 	}
+
 	void MAudioDSP::OnAudio(BYTE* bits, LONG size, LPVOID lpParameter)
 	{
-		TinyAutoLock lock(m_lock);
 		m_buffer.Add(bits, size);
-	}
-	void MAudioDSP::OnTimer()
-	{
-		TinyAutoLock lock(m_lock);
-		if (m_audioDSP.IsCapturing())
+		if (m_buffer.GetSize() >= AAC_SIZE)
 		{
-			if (m_buffer.GetSize() >= 4096)
+			if (m_audioQueue.GetAllocSize() == 0)
 			{
-				memcpy(m_bits, m_buffer.GetPointer(), 4096);
-				m_buffer.Remove(0, 4096);
-				if (m_waveFile != NULL)
-				{
-					m_waveFile.Write(m_bits, 4096);
-				}
-				if (!m_callback.IsNull())
-				{
-					m_callback(m_bits, 4096);
-				}
+				INT count = 5;
+				m_audioQueue.Initialize(count, AAC_SIZE + 4);
 			}
-		}
-		else
-		{
-			m_buffer.Clear();
-			ZeroMemory(m_bits, 4096);
-			if (!m_callback.IsNull())
-			{
-				m_callback(m_bits, 4096);
-			}
+			AUDIO_SAMPLE sample = { 0 };
+			sample.size = AAC_SIZE;
+			sample.bits = static_cast<BYTE*>(m_audioQueue.Alloc());
+			memcpy_s(sample.bits + 4, AAC_SIZE, m_buffer.GetPointer(), AAC_SIZE);
+			m_buffer.Remove(0, AAC_SIZE);
+			m_audioQueue.Push(sample);
 		}
 	}
 }

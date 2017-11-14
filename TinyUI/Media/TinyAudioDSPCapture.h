@@ -30,6 +30,7 @@ namespace TinyUI
 			virtual BOOL Stop();
 			virtual BOOL Reset();
 			virtual BOOL Close();
+			BOOL IsEmpty();
 			BOOL IsCapturing() const;
 			WAVEFORMATEX* GetFormat() const;
 		public:

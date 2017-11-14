@@ -24,13 +24,13 @@ namespace MShow
 		virtual ~MPreviewController();
 		BOOL			Initialize();
 		BOOL			Open(LPCSTR pzURL);
+		BOOL			Open(LPCSTR pzURL, Callback<void(BYTE*, LONG)>&& audioCB);
 		BOOL			Close();
 		MPreviewView&	GetView();
 		LONGLONG		GetBasePTS();
 		MFLVPlayer*		GetPlayer();
 	private:
 		BOOL			OnDraw(BYTE* bits, LONG size);
-		void			OnAudio(BYTE* bits, LONG size);
 		void			OnVideoCopy(BYTE* bits, LONG size);
 		void			OnVideoRender();
 		void			OnTry();

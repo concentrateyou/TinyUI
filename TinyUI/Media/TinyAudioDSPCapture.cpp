@@ -36,44 +36,68 @@ namespace TinyUI
 		}
 		BOOL TinyAudioDSPCapture::Open(const GUID& speakGUID, const GUID& captureGUID, WAVEFORMATEX* pFMT)
 		{
+			TinyComPtr<IPropertyStore> propertyStore;
+			INT index1 = GetDeviceIndex(eRender, speakGUID);
+			INT index2 = GetDeviceIndex(eCapture, captureGUID);
+			LONG index = static_cast<ULONG>(index1 << 16) + static_cast<ULONG>(0x0000FFFF & index2);
 			if (!SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS))
 				return FALSE;
 			HRESULT hRes = CoCreateInstance(CLSID_CWMAudioAEC, NULL, CLSCTX_INPROC_SERVER, __uuidof(IMediaObject), (void**)&m_dmo);
 			if (hRes != S_OK)
-				return FALSE;
-			TinyComPtr<IPropertyStore> propertyStore;
+			{
+				LOG(ERROR) << "[TinyAudioDSPCapture] Open CoCreateInstance FAIL";
+				goto _ERROR;
+			}
 			hRes = m_dmo->QueryInterface(IID_IPropertyStore, reinterpret_cast<void**>(&propertyStore));
 			if (hRes != S_OK)
-				return FALSE;
+			{
+				LOG(ERROR) << "[TinyAudioDSPCapture] Open QueryInterface propertyStore FAIL";
+				goto _ERROR;
+			}
 			BOOL IsMA = FALSE;
 			AEC_SYSTEM_MODE mode = SINGLE_CHANNEL_AEC;
 			if (!IsMicrophoneArray(eCapture, captureGUID, IsMA))
-				return FALSE;
+			{
+				LOG(ERROR) << "[TinyAudioDSPCapture] Open IsMicrophoneArray False";
+				goto _ERROR;
+			}
 			if (IsMA)
 				mode = OPTIBEAM_ARRAY_AND_AEC;
 			if (!SetVTI4Property(propertyStore, MFPKEY_WMAAECMA_SYSTEM_MODE, mode))
-				return FALSE;
+			{
+				LOG(ERROR) << "[TinyAudioDSPCapture] Open Set MFPKEY_WMAAECMA_SYSTEM_MODE FAIL";
+				goto _ERROR;
+			}
 			if (!SetBOOLProperty(propertyStore, MFPKEY_WMAAECMA_FEATURE_MODE, VARIANT_TRUE))
-				return FALSE;
+			{
+				LOG(ERROR) << "[TinyAudioDSPCapture] Open Set MFPKEY_WMAAECMA_FEATURE_MODE FAIL";
+				goto _ERROR;
+			}
 			if (!SetBOOLProperty(propertyStore, MFPKEY_WMAAECMA_FEATR_AGC, m_bEnableAGC ? VARIANT_TRUE : VARIANT_FALSE))
-				return FALSE;
+			{
+				LOG(ERROR) << "[TinyAudioDSPCapture] Open Set MFPKEY_WMAAECMA_FEATR_AGC FAIL";
+				goto _ERROR;
+			}
 			if (!SetVTI4Property(propertyStore, MFPKEY_WMAAECMA_FEATR_NS, m_bEnableNS ? 1 : 0))
-				return FALSE;
+			{
+				LOG(ERROR) << "[TinyAudioDSPCapture] Open Set MFPKEY_WMAAECMA_FEATR_NS FAIL";
+				goto _ERROR;
+			}
 			if (!SetVTI4Property(propertyStore, MFPKEY_WMAAECMA_FEATR_VAD, m_vadMode))
-				return FALSE;
-			INT index1 = GetDeviceIndex(eRender, speakGUID);
-			INT index2 = GetDeviceIndex(eCapture, captureGUID);
-			LONG index = static_cast<ULONG>(index1 << 16) + static_cast<ULONG>(0x0000FFFF & index2);
+			{
+				LOG(ERROR) << "[TinyAudioDSPCapture] Open Set MFPKEY_WMAAECMA_FEATR_VAD FAIL";
+				goto _ERROR;
+			}
 			if (!SetVTI4Property(propertyStore, MFPKEY_WMAAECMA_DEVICE_INDEXES, index))
 			{
-				LOG(ERROR) << "[TinyAudioDSPCapture] SetVTI4Property FAIL";
-				return FALSE;
+				LOG(ERROR) << "[TinyAudioDSPCapture] Open Set MFPKEY_WMAAECMA_DEVICE_INDEXES FAIL";
+				goto _ERROR;
 			}
 			hRes = MoInitMediaType(&m_mediaType, sizeof(WAVEFORMATEX));
 			if (hRes != S_OK)
 			{
 				LOG(ERROR) << "[TinyAudioDSPCapture] MoInitMediaType:" << hRes;
-				return FALSE;
+				goto _ERROR;
 			}
 			m_mediaType.majortype = MEDIATYPE_Audio;
 			m_mediaType.subtype = MEDIASUBTYPE_PCM;
@@ -88,7 +112,7 @@ namespace TinyUI
 			if (hRes != S_OK)
 			{
 				LOG(ERROR) << "[TinyAudioDSPCapture] DMO SetOutputType:" << hRes;
-				return FALSE;
+				goto _ERROR;
 			}
 			if (pFMT != NULL)
 			{
@@ -96,44 +120,71 @@ namespace TinyUI
 				memcpy(m_waveFMT, (BYTE*)pFMT, sizeof(WAVEFORMATEX) + pFMT->cbSize);
 			}
 			return TRUE;
+		_ERROR:
+			m_dmo.Release();
+			return FALSE;
 		}
 		BOOL TinyAudioDSPCapture::Open(const Name& speakName, const Name& captureName, WAVEFORMATEX* pFMT)
 		{
+			AEC_SYSTEM_MODE mode = SINGLE_CHANNEL_AEC;
+			INT index1 = GetDeviceIndex(eRender, speakName);
+			INT index2 = GetDeviceIndex(eCapture, captureName);;
+			LONG index = static_cast<ULONG>(index1 << 16) + static_cast<ULONG>(0x0000FFFF & index2);
+			TinyComPtr<IPropertyStore> propertyStore;
 			if (!SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS))
 				return FALSE;
 			HRESULT hRes = CoCreateInstance(CLSID_CWMAudioAEC, NULL, CLSCTX_INPROC_SERVER, __uuidof(IMediaObject), (void**)&m_dmo);
 			if (hRes != S_OK)
-				return FALSE;
-			TinyComPtr<IPropertyStore> propertyStore;
+			{
+				LOG(ERROR) << "[TinyAudioDSPCapture] Open CoCreateInstance FAIL";
+				goto _ERROR;
+			}
 			hRes = m_dmo->QueryInterface(IID_IPropertyStore, reinterpret_cast<void**>(&propertyStore));
 			if (hRes != S_OK)
-				return FALSE;
-			AEC_SYSTEM_MODE mode = SINGLE_CHANNEL_AEC;
+			{
+				LOG(ERROR) << "[TinyAudioDSPCapture] Open QueryInterface propertyStore FAIL";
+				goto _ERROR;
+			}
 			if (captureName.type() == KSNODETYPE_MICROPHONE_ARRAY ||
 				captureName.type() == KSNODETYPE_PROCESSING_MICROPHONE_ARRAY)
 			{
 				mode = OPTIBEAM_ARRAY_AND_AEC;
 			}
 			if (!SetVTI4Property(propertyStore, MFPKEY_WMAAECMA_SYSTEM_MODE, mode))
-				return FALSE;
+			{
+				LOG(ERROR) << "[TinyAudioDSPCapture] Open Set MFPKEY_WMAAECMA_SYSTEM_MODE FAIL";
+				goto _ERROR;
+			}
 			if (!SetBOOLProperty(propertyStore, MFPKEY_WMAAECMA_FEATURE_MODE, VARIANT_TRUE))
-				return FALSE;
+			{
+				LOG(ERROR) << "[TinyAudioDSPCapture] Open Set MFPKEY_WMAAECMA_FEATURE_MODE FAIL";
+				goto _ERROR;
+			}
 			if (!SetBOOLProperty(propertyStore, MFPKEY_WMAAECMA_FEATR_AGC, m_bEnableAGC ? VARIANT_TRUE : VARIANT_FALSE))
-				return FALSE;
+			{
+				LOG(ERROR) << "[TinyAudioDSPCapture] Open Set MFPKEY_WMAAECMA_FEATR_AGC FAIL";
+				goto _ERROR;
+			}
 			if (!SetVTI4Property(propertyStore, MFPKEY_WMAAECMA_FEATR_NS, m_bEnableNS ? 1 : 0))
-				return FALSE;
+			{
+				LOG(ERROR) << "[TinyAudioDSPCapture] Open Set MFPKEY_WMAAECMA_FEATR_NS FAIL";
+				goto _ERROR;
+			}
 			if (!SetVTI4Property(propertyStore, MFPKEY_WMAAECMA_FEATR_VAD, m_vadMode))
-				return FALSE;
-			INT index1 = GetDeviceIndex(eRender, speakName);
-			INT index2 = GetDeviceIndex(eCapture, captureName);;
-			LONG index = static_cast<ULONG>(index1 << 16) + static_cast<ULONG>(0x0000FFFF & index2);
+			{
+				LOG(ERROR) << "[TinyAudioDSPCapture] Open Set MFPKEY_WMAAECMA_FEATR_VAD FAIL";
+				goto _ERROR;
+			}
 			if (!SetVTI4Property(propertyStore, MFPKEY_WMAAECMA_DEVICE_INDEXES, index))
-				return FALSE;
+			{
+				LOG(ERROR) << "[TinyAudioDSPCapture] Open Set MFPKEY_WMAAECMA_DEVICE_INDEXES FAIL";
+				goto _ERROR;
+			}
 			hRes = MoInitMediaType(&m_mediaType, sizeof(WAVEFORMATEX));
 			if (hRes != S_OK)
 			{
 				LOG(ERROR) << "[TinyAudioDSPCapture] MoInitMediaType:" << hRes;
-				return FALSE;
+				goto _ERROR;
 			}
 			m_mediaType.majortype = MEDIATYPE_Audio;
 			m_mediaType.subtype = MEDIASUBTYPE_PCM;
@@ -148,7 +199,7 @@ namespace TinyUI
 			if (hRes != S_OK)
 			{
 				LOG(ERROR) << "[TinyAudioDSPCapture] DMO SetOutputType:" << hRes;
-				return FALSE;
+				goto _ERROR;
 			}
 			if (pFMT != NULL)
 			{
@@ -156,6 +207,9 @@ namespace TinyUI
 				memcpy(m_waveFMT, (BYTE*)pFMT, sizeof(WAVEFORMATEX) + pFMT->cbSize);
 			}
 			return TRUE;
+		_ERROR:
+			m_dmo.Release();
+			return FALSE;
 		}
 		BOOL TinyAudioDSPCapture::Start()
 		{
@@ -179,7 +233,7 @@ namespace TinyUI
 		BOOL TinyAudioDSPCapture::Stop()
 		{
 			HRESULT hRes = S_OK;
-			if (m_dmo)
+			if (m_dmo != NULL)
 			{
 				hRes = m_dmo->FreeStreamingResources();
 				if (hRes != S_OK)
@@ -228,6 +282,10 @@ namespace TinyUI
 		BOOL TinyAudioDSPCapture::IsCapturing() const
 		{
 			return m_bCapturing;
+		}
+		BOOL TinyAudioDSPCapture::IsEmpty()
+		{
+			return m_dmo == NULL;
 		}
 		void TinyAudioDSPCapture::OnMessagePump()
 		{

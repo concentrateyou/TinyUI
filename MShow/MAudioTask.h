@@ -18,6 +18,7 @@ namespace MShow
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
 		WAVEFORMATEX* GetFormat();
+		LONGLONG	GetBasePTS();
 	public:
 		MPacketAllocQueue&	GetAudioQueue();
 	private:

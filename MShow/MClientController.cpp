@@ -26,7 +26,7 @@ namespace MShow
 		m_preview.Reset(new MPreviewController(m_view.m_previewView));
 		if (!m_preview)
 			return FALSE;
-		if (!m_audioDSP.Initialize(BindCallback(&MClientController::OnAudioDSP, this)))
+		if (!m_audioDSP.Initialize())
 		{
 			LOG(ERROR) << "AudioDSP Initialize Fail";
 			return FALSE;
@@ -84,7 +84,7 @@ namespace MShow
 		if (m_preview != NULL)
 		{
 			m_preview->Close();
-			if (m_preview->Open(m_szPreviewURL.c_str()))
+			if (m_preview->Open(m_szPreviewURL.c_str(), BindCallback(&MClientController::OnAudio, this)))
 			{
 				LOG(INFO) << "[SetPreview] " << "Open Preview :" << m_szPreviewURL << " OK";
 				TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
@@ -120,7 +120,7 @@ namespace MShow
 			BOOL bRes = m_preview->Close();
 			TRACE("[MClientController] OnTry Close:%d\n", bRes);
 			LOG(INFO) << "[MClientController] OnTry Close:" << bRes;
-			if (m_preview->Open(m_szPreviewURL.c_str()))
+			if (m_preview->Open(m_szPreviewURL.c_str(), BindCallback(&MClientController::OnAudio, this)))
 			{
 				TRACE("[MClientController] OnTry Open OK\n");
 				LOG(INFO) << "[MClientController] OnTry Open OK";
@@ -1113,42 +1113,61 @@ namespace MShow
 		}
 	}
 
+	TinyPerformanceTime g_timeQPC1;
 
-
-	void MClientController::OnAudioDSP(BYTE* bits, LONG size)
+	void MClientController::OnAudio(BYTE* bits, LONG size)
 	{
-		m_timeQPC.EndTime();
-		LOG(INFO) << "OnAudioDSP:" << m_timeQPC.GetMillisconds();
-		m_timeQPC.BeginTime();
-		if (m_preview != NULL)
+		g_timeQPC1.EndTime();
+		LOG(INFO) << "OnAudio Cost: " << g_timeQPC1.GetMillisconds();
+		g_timeQPC1.BeginTime();
+		if (!m_audioDSP.IsEmpty())
 		{
-			if (size == 4096)
+			LONGLONG currentPTS = MShow::MShowApp::GetInstance().GetCurrentAudioTS();
+			LOG(INFO) << "OnAudio Timestamp: " << currentPTS;
+			MAudioQueue& audioQueue = m_audioDSP.GetAudioQueue();
+			AUDIO_SAMPLE sample = { 0 };
+			if (audioQueue.Pop(sample))
 			{
-				LONGLONG currentPTS = MShow::MShowApp::GetInstance().GetCurrentAudioTS() + m_preview->GetBasePTS();
-				if (m_previousPTS != currentPTS)
+				ASSERT(AAC_SIZE == sample.size);
+				if (m_audioQueue.GetAllocSize() == 0)
 				{
-					m_previousPTS = currentPTS;
+					INT count = 5;
+					m_audioQueue.Initialize(count, sample.size + 4);
+				}
+				AUDIO_SAMPLE audioSample = { 0 };
+				audioSample.size = sample.size;
+				audioSample.bits = static_cast<BYTE*>(m_audioQueue.Alloc());
+				audioSample.timestamp = currentPTS;
+				memcpy(audioSample.bits + 4, sample.bits + 4, sample.size);
+				m_audioQueue.Push(audioSample);
+			}
+			else
+			{
+				if (!m_audioDSP.IsCapturing())
+				{
 					if (m_audioQueue.GetAllocSize() == 0)
 					{
 						INT count = 5;
-						m_audioQueue.Initialize(count, size + 4);
+						m_audioQueue.Initialize(count, AAC_SIZE + 4);
 					}
-					AUDIO_SAMPLE sample = { 0 };
-					sample.size = size;
-					sample.bits = static_cast<BYTE*>(m_audioQueue.Alloc());
-					sample.timestamp = currentPTS;
-					memcpy(sample.bits + 4, bits, size);
-					m_audioQueue.Push(sample);
+					AUDIO_SAMPLE audioSample = { 0 };
+					audioSample.size = AAC_SIZE;
+					audioSample.bits = static_cast<BYTE*>(m_audioQueue.Alloc());
+					audioSample.timestamp = currentPTS;
+					BYTE arrays[AAC_SIZE];
+					ZeroMemory(arrays, AAC_SIZE);
+					memcpy(audioSample.bits + 4, arrays, AAC_SIZE);
+					m_audioQueue.Push(audioSample);
+					LOG(INFO) << "AudioQueue Push Empty";
+					TRACE("AudioQueue Push Empty\n");
 				}
 				else
 				{
-					LOG(ERROR) << "OnAudioDSP Timestamp Same:" << m_previousPTS;
+					LOG(ERROR) << "AudioQueue Pop FAIL";
+					TRACE("AudioQueue Pop FAIL\n");
 				}
 			}
-		}
-		else
-		{
-			LOG(ERROR) << "Preview NULL";
+			audioQueue.Free(sample.bits);
 		}
 	}
 

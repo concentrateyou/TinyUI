@@ -49,9 +49,9 @@ namespace MShow
 		void	OnSpeakerTestClick(TinyVisual*, EventArgs& args);
 		void	OnMicrophoneFocus(TinyVisual*, FocusEventArgs& args);
 		void	OnSpeakerFocus(TinyVisual*, FocusEventArgs& args);
-		void	OnAudioDSP(BYTE* bits, LONG size);
 		void	OnMessagePump();
 		BOOL	Query(const string& sourceID, INT& count);
+		void	OnAudio(BYTE* bits, LONG size);
 	private:
 		void	OnTimerStatus();
 		void	OnTry();
@@ -82,9 +82,9 @@ namespace MShow
 		MClientWindow&						m_view;
 		SpeakTest							m_speakTest;
 		MicrophoneTest						m_microphoneTest;
+		MAudioQueue							m_audioQueue;
 		MAudioDSP							m_audioDSP;
 		TinyScopedPtr<AudioSdk>				m_audioSDK;
-		MAudioQueue							m_audioQueue;
 		TinyTaskBase						m_task;
 		TinyTaskTimer						m_timer;
 		TinyPerformanceTime					m_timeQPC;

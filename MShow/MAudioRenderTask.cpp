@@ -95,17 +95,21 @@ namespace MShow
 				LONG delay = static_cast<LONG>(tag.samplePTS - ms);
 				if (timer.Waiting(delay, 1000))
 				{
-					MShow::MShowApp::GetInstance().SetCurrentAudioTS(tag.samplePTS);
+					MShow::MShowApp::GetInstance().SetCurrentAudioTS(static_cast<LONGLONG>(tag.samplePTS) + m_task.GetBasePTS());
+					if (!m_callback.IsNull())
+					{
+						m_callback(tag.bits + 4, tag.size);
+					}
 					m_audio.Play(tag.bits + 4, tag.size, 5000);
 				}
 			}
 			else
 			{
+				MShow::MShowApp::GetInstance().SetCurrentAudioTS(static_cast<LONGLONG>(tag.samplePTS) + m_task.GetBasePTS());
 				if (!m_callback.IsNull())
 				{
 					m_callback(tag.bits + 4, tag.size);
 				}
-				MShow::MShowApp::GetInstance().SetCurrentAudioTS(tag.samplePTS);
 				m_audio.Play(tag.bits + 4, tag.size, 5000);
 			}
 			m_task.GetAudioQueue().Free(tag.bits);
