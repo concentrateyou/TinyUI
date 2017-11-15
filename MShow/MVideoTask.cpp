@@ -37,6 +37,11 @@ namespace MShow
 		return FALSE;
 	}
 
+	TinySize MVideoTask::GetVideoSize()
+	{
+		return m_task.GetVideoSize();
+	}
+
 	MPacketAllocQueue& MVideoTask::GetVideoQueue()
 	{
 		return m_videoQueue;

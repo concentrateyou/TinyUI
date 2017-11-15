@@ -3,28 +3,28 @@
 
 namespace MShow
 {
-	MFLVPlayer::MFLVPlayer(Callback<void(BYTE*, LONG)>&& videoCopyCB, Closure&& videoRenderCB)
+	MFLVPlayer::MFLVPlayer()
 		:m_task(m_clock),
 		m_audioTask(m_task, m_clock),
 		m_audioRenderTask(m_audioTask, m_clock),
 		m_videoTask(m_task, m_clock),
-		m_videoRenderTask(m_videoTask, m_clock, std::move(videoCopyCB), std::move(videoRenderCB)),
+		m_videoRenderTask(m_videoTask, m_clock),
 		m_dwRate(25),
 		m_bBreak(FALSE)
 	{
-		
+
 	}
 
-	MFLVPlayer::MFLVPlayer(Callback<void(BYTE*, LONG)>&& audioCB, Callback<void(BYTE*, LONG)>&& videoCopyCB, Closure&& videoRenderCB)
+	MFLVPlayer::MFLVPlayer(Callback<void(BYTE*, LONG)>&& audioCB)
 		:m_task(m_clock),
 		m_audioTask(m_task, m_clock),
 		m_audioRenderTask(m_audioTask, m_clock, std::move(audioCB)),
 		m_videoTask(m_task, m_clock),
-		m_videoRenderTask(m_videoTask, m_clock, std::move(videoCopyCB), std::move(videoRenderCB)),
+		m_videoRenderTask(m_videoTask, m_clock),
 		m_dwRate(25),
 		m_bBreak(FALSE)
 	{
-		
+
 	}
 
 	MFLVPlayer::~MFLVPlayer()
@@ -35,22 +35,24 @@ namespace MShow
 	{
 		m_task.SetErrorCallback(std::move(callback));
 	}
-	BOOL MFLVPlayer::Open(LPCSTR pzURL)
+	BOOL MFLVPlayer::Open(HWND hWND, LPCSTR pzURL)
 	{
 		m_szURL = pzURL;
 		if (!m_task.Initialize(m_szURL.STR()))
 			return FALSE;
 		if (!m_audioRenderTask.Initialize())
 			return FALSE;
-		if (!m_task.Submit())
-			return FALSE;
 		if (!m_videoTask.Submit())
+			return FALSE;
+		if (!m_videoRenderTask.Initialize(hWND))
 			return FALSE;
 		if (!m_videoRenderTask.Submit())
 			return FALSE;
 		if (!m_audioTask.Submit())
 			return FALSE;
 		if (!m_audioRenderTask.Submit())
+			return FALSE;
+		if (!m_task.Submit())
 			return FALSE;
 		FLV_SCRIPTDATA s = m_task.GetScript();
 		m_size.cx = static_cast<LONG>(s.width);

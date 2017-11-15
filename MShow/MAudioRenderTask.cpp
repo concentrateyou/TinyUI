@@ -47,10 +47,10 @@ namespace MShow
 	BOOL MAudioRenderTask::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
+		m_bInitialize = FALSE;
 		if (TinyTaskBase::Close(dwMS))
 		{
 			m_audio.Close();
-			m_bInitialize = FALSE;
 			return TRUE;
 		}
 		return FALSE;
@@ -114,6 +114,7 @@ namespace MShow
 			}
 			m_task.GetAudioQueue().Free(tag.bits);
 		}
+		m_bInitialize = FALSE;
 		CoUninitialize();
 	}
 }

@@ -32,11 +32,6 @@ namespace MShow
 			return FALSE;
 		}
 		InitializeUI();
-		if (!m_preview->Initialize())
-		{
-			LOG(ERROR) << "Preview Initialize Fail";
-			return FALSE;
-		}
 		return TRUE;
 	}
 

@@ -13,8 +13,9 @@ namespace MShow
 	public:
 		MVideoTask(MFLVTask& task, MClock& clock);
 		virtual ~MVideoTask();
-		BOOL Submit();
-		BOOL Close(DWORD dwMS) OVERRIDE;
+		BOOL		Submit();
+		BOOL		Close(DWORD dwMS) OVERRIDE;
+		TinySize	GetVideoSize();
 		MPacketAllocQueue& GetVideoQueue();
 	private:
 		void OnMessagePump();

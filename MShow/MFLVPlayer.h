@@ -13,10 +13,10 @@ namespace MShow
 	{
 		DISALLOW_COPY_AND_ASSIGN(MFLVPlayer)
 	public:
-		MFLVPlayer(Callback<void(BYTE*, LONG)>&& videoCopyCB, Closure&& videoRenderCB);
-		MFLVPlayer(Callback<void(BYTE*, LONG)>&& audioCB, Callback<void(BYTE*, LONG)>&& videoCopyCB, Closure&& videoRenderCB);
+		MFLVPlayer();
+		MFLVPlayer(Callback<void(BYTE*, LONG)>&& audioCB);
 		virtual ~MFLVPlayer();
-		BOOL			Open(LPCSTR pzURL);
+		BOOL			Open(HWND hWND, LPCSTR pzURL);
 		BOOL			Close();
 		BOOL			SetVolume(DWORD volume);
 		TinySize		GetSize() const;

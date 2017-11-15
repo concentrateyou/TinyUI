@@ -2,6 +2,11 @@
 #include "MShowCommon.h"
 #include "MAudioTask.h"
 #include "MVideoTask.h"
+#include "DX9Graphics2D.h"
+#include "DX9Image2D.h"
+#include "DX9RenderView.h"
+using namespace DXFramework;
+using namespace TinyUI;
 
 namespace MShow
 {
@@ -13,19 +18,24 @@ namespace MShow
 	{
 		DISALLOW_COPY_AND_ASSIGN(MVideoRenderTask)
 	public:
-		MVideoRenderTask(MVideoTask& task, MClock& clock, TinyUI::Callback<void(BYTE*, LONG)>&& copyCB, Closure&& renderCB);
+		MVideoRenderTask(MVideoTask& task, MClock& clock);
 		virtual ~MVideoRenderTask();
+		BOOL Initialize(HWND hWND);
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
 	private:
 		void OnMessagePump();
+		BOOL OnCopy(BYTE* bits, LONG size);
 	private:
-		BOOL		m_bBreak;
-		Closure		m_renderCB;
-		MClock&		m_clock;
-		MVideoTask& m_task;
+		HWND				m_hWND;
+		BOOL				m_bInitialize;
+		BOOL				m_bBreak;
+		TinySize			m_videoSize;
+		MClock&				m_clock;
+		MVideoTask&			m_task;
+		DX9Graphics2D		m_graphics;
+		DX9Image2D			m_image;
 		TinyPerformanceTime m_timeQPC;
-		TinyUI::Callback<void(BYTE*, LONG)> m_copyCB;
 	};
 }
 

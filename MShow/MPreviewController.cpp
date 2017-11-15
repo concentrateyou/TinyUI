@@ -21,37 +21,19 @@ namespace MShow
 
 	}
 
-	BOOL MPreviewController::Initialize()
-	{
-		TinyRectangle rectangle;
-		GetClientRect(m_view.Handle(), &rectangle);
-		if (!m_graphics.Initialize(m_view.Handle(), rectangle.Size()))
-		{
-			LOG(ERROR) << "[MPreviewController] " << "DX9Graphics2D Initialize FAIL";
-			return FALSE;
-		}
-		LOG(INFO) << "[MPreviewController] " << "DX9Graphics2D Initialize OK";
-		return TRUE;
-	}
 	BOOL MPreviewController::Open(LPCSTR pzURL)
 	{
 		TinySize size;
-		m_player.Reset(new MFLVPlayer(BindCallback(&MPreviewController::OnVideoCopy, this), BindCallback(&MPreviewController::OnVideoRender, this)));
+		m_player.Reset(new MFLVPlayer());
 		if (!m_player)
 			goto _ERROR;
 		m_player->SetErrorCallback(BindCallback(&MPreviewController::OnError, this));
-		if (!m_player->Open(pzURL))
+		if (!m_player->Open(m_view.Handle(), pzURL))
 		{
 			LOG(ERROR) << "[MPreviewController] " << "Open FAIL";
 			goto _ERROR;
 		}
 		LOG(INFO) << "[MPreviewController] " << "Player Open OK";
-		size = m_player->GetSize();
-		if (!m_image.Create(m_graphics.GetDX9(), size.cx, size.cy, NULL))
-		{
-			LOG(ERROR) << "[MPreviewController] " << "Create Image FAIL";
-			goto _ERROR;
-		}
 		return TRUE;
 	_ERROR:
 		Close();
@@ -61,22 +43,16 @@ namespace MShow
 	BOOL MPreviewController::Open(LPCSTR pzURL, Callback<void(BYTE*, LONG)>&& audioCB)
 	{
 		TinySize size;
-		m_player.Reset(new MFLVPlayer(std::move(audioCB), BindCallback(&MPreviewController::OnVideoCopy, this), BindCallback(&MPreviewController::OnVideoRender, this)));
+		m_player.Reset(new MFLVPlayer(std::move(audioCB)));
 		if (!m_player)
 			goto _ERROR;
 		m_player->SetErrorCallback(BindCallback(&MPreviewController::OnError, this));
-		if (!m_player->Open(pzURL))
+		if (!m_player->Open(m_view.Handle(), pzURL))
 		{
 			LOG(ERROR) << "[MPreviewController] " << "Open FAIL";
 			goto _ERROR;
 		}
 		LOG(INFO) << "[MPreviewController] " << "Player Open OK";
-		size = m_player->GetSize();
-		if (!m_image.Create(m_graphics.GetDX9(), size.cx, size.cy, NULL))
-		{
-			LOG(ERROR) << "[MPreviewController] " << "Create Image FAIL";
-			goto _ERROR;
-		}
 		return TRUE;
 	_ERROR:
 		Close();
@@ -89,7 +65,6 @@ namespace MShow
 		{
 			m_player->Close();
 		}
-		m_image.Destory();
 		LOG(INFO) << "[MPreviewController] " << "Player Close OK";
 		return TRUE;
 	}
@@ -143,61 +118,5 @@ namespace MShow
 	MFLVPlayer*	 MPreviewController::GetPlayer()
 	{
 		return m_player;
-	}
-
-	BOOL MPreviewController::OnDraw(BYTE* bits, LONG size)
-	{
-		if (bits == NULL || size <= 0)
-			return FALSE;
-		if (!m_graphics.IsActive())
-		{
-			HRESULT hRes = S_OK;
-			if (m_graphics.GetDX9().CheckReason(D3DERR_DEVICENOTRESET))
-			{
-				if (m_graphics.Reset())
-				{
-					m_image.Destory();
-					TinySize videoSize = m_player->GetSize();
-					if (!m_image.Create(m_graphics.GetDX9(), videoSize.cx, videoSize.cy, NULL))
-					{
-						LOG(ERROR) << "[MPreviewController] [OnDraw]" << " Create FAIL";
-						return FALSE;
-					}
-				}
-			}
-		}
-		else
-		{
-			if (!m_image.Copy(bits, size))
-			{
-				LOG(ERROR) << "[MPreviewController] [OnDraw]" << " Copy FAIL";
-				return FALSE;
-			}
-			m_graphics.SetRenderView(NULL);
-			if (!m_graphics.GetRenderView()->BeginDraw())
-			{
-				LOG(ERROR) << "[MPreviewController] [OnDraw]" << "BeginDraw FAIL";
-				return FALSE;
-			}
-			if (!m_graphics.DrawImage(&m_image))
-			{
-				LOG(ERROR) << "[MPreviewController] [OnDraw]" << "DrawImage FAIL";
-				return FALSE;
-			}
-			if (!m_graphics.GetRenderView()->EndDraw())
-			{
-				LOG(ERROR) << "[MPreviewController] [OnDraw]" << "EndDraw FAIL";
-				return FALSE;
-			}
-		}
-		return TRUE;
-	}
-	void MPreviewController::OnVideoCopy(BYTE* bits, LONG size)
-	{
-		OnDraw(bits, size);
-	}
-	void MPreviewController::OnVideoRender()
-	{
-		m_graphics.Present();
 	}
 }

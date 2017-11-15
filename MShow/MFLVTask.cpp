@@ -63,10 +63,21 @@ namespace MShow
 	{
 		return m_script;
 	}
+
 	LONGLONG MFLVTask::GetBasePTS()
 	{
 		return m_reader.GetBasePTS();
 	}
+
+	TinySize MFLVTask::GetVideoSize()
+	{
+		FLV_SCRIPTDATA s = m_reader.GetScript();
+		TinySize size;
+		size.cx = static_cast<LONG>(s.width);
+		size.cy = static_cast<LONG>(s.height);
+		return size;
+	}
+
 	MPacketQueue& MFLVTask::GetAudioQueue()
 	{
 		return m_audioQueue;

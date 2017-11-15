@@ -3,9 +3,6 @@
 #include "MPreviewView.h"
 #include "MFLVPlayer.h"
 #include "Control/TinyMenu.h"
-#include "DX9Graphics2D.h"
-#include "DX9Image2D.h"
-#include "DX9RenderView.h"
 using namespace DXFramework;
 using namespace TinyUI;
 
@@ -22,7 +19,6 @@ namespace MShow
 	public:
 		MPreviewController(MPreviewView& view);
 		virtual ~MPreviewController();
-		BOOL			Initialize();
 		BOOL			Open(LPCSTR pzURL);
 		BOOL			Open(LPCSTR pzURL, Callback<void(BYTE*, LONG)>&& audioCB);
 		BOOL			Close();
@@ -30,17 +26,9 @@ namespace MShow
 		LONGLONG		GetBasePTS();
 		MFLVPlayer*		GetPlayer();
 	private:
-		BOOL			OnDraw(BYTE* bits, LONG size);
-		void			OnVideoCopy(BYTE* bits, LONG size);
-		void			OnVideoRender();
 		void			OnTry();
 		void			OnError(INT);
 	private:
-		DX9Graphics2D				m_graphics;
-		DX9Image2D					m_image;
-		TinySize					m_videoSize;
-		TinySize					m_viewSize;
-		TinyPerformanceTime			m_timeQPC;
 		TinyTaskTimer				m_timer;		
 		MPreviewView&				m_view;
 		TinyScopedPtr<MFLVPlayer>	m_player;
