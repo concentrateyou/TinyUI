@@ -12,6 +12,7 @@ namespace TinyUI
 {
 	namespace IO
 	{
+#define WM_MSGQUEUE_EXIT (WM_USER + 0x001)
 		/// <summary>
 		/// 线程基类
 		/// </summary>
@@ -22,6 +23,7 @@ namespace TinyUI
 			TinyTaskBase();
 			virtual ~TinyTaskBase();
 			HANDLE	Handle() const;
+			DWORD	GetTaskID() const;
 			BOOL	IsActive() const;
 			BOOL	SetPriority(DWORD dwPriority);
 			DWORD	Suspend();
@@ -55,6 +57,24 @@ namespace TinyUI
 			Closure				m_callback;
 			TinyTaskBase		m_task;
 			TinyWaitableTimer	m_timer;
+		};
+		/// <summary>
+		/// 消息队列
+		/// </summary>
+		class TinyMsgQueue
+		{
+			DISALLOW_COPY_AND_ASSIGN(TinyMsgQueue)
+		public:
+			TinyMsgQueue();
+			~TinyMsgQueue();
+			BOOL SetCallback(Callback<void(UINT, WPARAM, LPARAM)>&& callback);
+			BOOL PostMsg(MSG& msg);
+			BOOL Close();
+		private:
+			void OnMessagePump();
+		private:
+			TinyTaskBase							m_task;
+			Callback<void(UINT, WPARAM, LPARAM)>	m_callback;
 		};
 	};
 }

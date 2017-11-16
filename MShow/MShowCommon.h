@@ -50,3 +50,7 @@ typedef struct tagSEARCH_ITEM
 	string	szBeginTime;
 	string	szEndTime;
 }SEARCH_ITEM;
+
+#define  WM_FLV_PARSE_FAIL			(WM_USER + 0x0010)
+#define  WM_VIDEO_X264_DECODE_FAIL	(WM_USER + 0x0011)
+#define  WM_AUDIO_AAC_DECODE_FAIL	(WM_USER + 0x0012)

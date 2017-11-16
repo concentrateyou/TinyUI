@@ -13,23 +13,24 @@ namespace MShow
 	{
 		DISALLOW_COPY_AND_ASSIGN(MAudioTask)
 	public:
-		MAudioTask(MFLVTask& task, MClock& clock);
+		MAudioTask(MFLVTask& task, MClock& clock, TinyMsgQueue& queue);
 		virtual ~MAudioTask();
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
-		WAVEFORMATEX* GetFormat();
-		LONGLONG	GetBasePTS();
+		WAVEFORMATEX*	GetFormat();
+		LONGLONG		GetBasePTS();
 	public:
-		MPacketAllocQueue&	GetAudioQueue();
+		MPacketQueue&	GetAudioQueue();
 	private:
 		void OnMessagePump();
 		void OnASC(BYTE* bits, LONG size, WORD wBitsPerSample, BOOL& bRes);
 	private:
 		BOOL						m_bBreak;
 		AACDecode					m_aac;
+		TinyMsgQueue&				m_msgqueue;
 		MClock&						m_clock;
 		MFLVTask&					m_task;
-		MPacketAllocQueue			m_audioQueue;
+		MPacketQueue				m_audioQueue;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG, WORD, BOOL&)>>	m_onASC;
 	};
 }

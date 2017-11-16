@@ -3,9 +3,10 @@
 
 namespace MShow
 {
-	MAudioTask::MAudioTask(MFLVTask& task, MClock& clock)
+	MAudioTask::MAudioTask(MFLVTask& task, MClock& clock, TinyMsgQueue& queue)
 		:m_task(task),
 		m_clock(clock),
+		m_msgqueue(queue),
 		m_bBreak(FALSE)
 	{
 		m_onASC.Reset(new Delegate<void(BYTE*, LONG, WORD, BOOL&)>(this, &MAudioTask::OnASC));
@@ -47,7 +48,7 @@ namespace MShow
 		return m_task.GetBasePTS();
 	}
 
-	MPacketAllocQueue& MAudioTask::GetAudioQueue()
+	MPacketQueue& MAudioTask::GetAudioQueue()
 	{
 		return m_audioQueue;
 	}
@@ -95,14 +96,9 @@ namespace MShow
 				{
 					m_clock.SetBasePTS(sampleTag.samplePTS);
 				}
-				if (m_audioQueue.GetAllocSize() == 0)
-				{
-					INT count = MAX_AUDIO_QUEUE_SIZE / so + 1;
-					m_audioQueue.Initialize(count, so + 4);
-				}
 				sampleTag.size = so;
-				sampleTag.bits = static_cast<BYTE*>(m_audioQueue.Alloc());
-				memcpy_s(sampleTag.bits + 4, sampleTag.size, bo, so);
+				sampleTag.bits = new BYTE[so];
+				memcpy_s(sampleTag.bits, sampleTag.size, bo, so);
 				m_audioQueue.Push(sampleTag);
 			}
 		}

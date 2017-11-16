@@ -18,7 +18,7 @@ namespace MShow
 	{
 		DISALLOW_COPY_AND_ASSIGN(MVideoRenderTask)
 	public:
-		MVideoRenderTask(MVideoTask& task, MClock& clock);
+		MVideoRenderTask(MVideoTask& task, MClock& clock, TinyMsgQueue& queue);
 		virtual ~MVideoRenderTask();
 		BOOL Initialize(HWND hWND);
 		BOOL Submit();
@@ -31,6 +31,7 @@ namespace MShow
 		BOOL				m_bInitialize;
 		BOOL				m_bBreak;
 		TinySize			m_videoSize;
+		TinyMsgQueue&		m_msgqueue;
 		MClock&				m_clock;
 		MVideoTask&			m_task;
 		DX9Graphics2D		m_graphics;

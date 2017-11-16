@@ -9,11 +9,12 @@ namespace MShow
 		SAFE_DELETE_ARRAY(block.video.data);
 	}
 	//////////////////////////////////////////////////////////////////////////
-	MFLVTask::MFLVTask(MClock& clock)
+	MFLVTask::MFLVTask(MClock& clock, TinyMsgQueue& queue)
 		:m_bFI(FALSE),
 		m_bBreak(FALSE),
 		m_sample(0),
-		m_clock(clock)
+		m_clock(clock),
+		m_msgqueue(queue)
 	{
 		ZeroMemory(&m_script, sizeof(m_script));
 	}
@@ -108,6 +109,9 @@ namespace MShow
 				TRACE("ReadBlock FAIL\n");
 				LOG(ERROR) << "ReadBlock FAIL";
 				ReleaseBlock(block);
+				MSG msg = { 0 };
+				msg.message = WM_FLV_PARSE_FAIL;
+				m_msgqueue.PostMsg(msg);
 				return FALSE;
 			}
 			INT size = m_audioQueue.GetSize() + m_videoQueue.GetSize();
@@ -129,6 +133,9 @@ namespace MShow
 							TRACE("ReadBlock FAIL\n");
 							LOG(ERROR) << "ReadBlock FAIL";
 							ReleaseBlock(block);
+							MSG msg = { 0 };
+							msg.message = WM_FLV_PARSE_FAIL;
+							m_msgqueue.PostMsg(msg);
 							return FALSE;
 						}
 						ReleaseBlock(block);
@@ -164,6 +171,9 @@ namespace MShow
 							TRACE("ReadBlock FAIL\n");
 							LOG(ERROR) << "ReadBlock FAIL";
 							ReleaseBlock(block);
+							MSG msg = { 0 };
+							msg.message = WM_FLV_PARSE_FAIL;
+							m_msgqueue.PostMsg(msg);
 							return FALSE;
 						}
 						ReleaseBlock(block);

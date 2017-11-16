@@ -3,9 +3,10 @@
 
 namespace MShow
 {
-	MVideoTask::MVideoTask(MFLVTask& task, MClock& clock)
+	MVideoTask::MVideoTask(MFLVTask& task, MClock& clock, TinyMsgQueue& queue)
 		:m_task(task),
 		m_clock(clock),
+		m_msgqueue(queue),
 		m_bBreak(FALSE)
 	{
 		m_onAVCDC.Reset(new Delegate<void(BYTE*, LONG, BOOL&)>(this, &MVideoTask::OnAVCDC));
@@ -42,7 +43,7 @@ namespace MShow
 		return m_task.GetVideoSize();
 	}
 
-	MPacketAllocQueue& MVideoTask::GetVideoQueue()
+	MPacketQueue& MVideoTask::GetVideoQueue()
 	{
 		return m_videoQueue;
 	}
@@ -93,20 +94,23 @@ namespace MShow
 			LONG  so = 0;
 			if (m_x264.Decode(sampleTag, bo, so))
 			{
-				if (m_videoQueue.GetAllocSize() == 0)
-				{
-					INT count = MAX_VIDEO_QUEUE_SIZE / so + 1;
-					m_videoQueue.Initialize(count, so + 4);
-				}
 				sampleTag.sampleDTS = sampleTag.samplePTS = m_x264.GetYUV420()->pts;
 				sampleTag.size = so;
-				sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
-				memcpy(sampleTag.bits + 4, bo, so);
+				sampleTag.bits = new BYTE[so];
+				memcpy(sampleTag.bits, bo, so);
 				if (m_clock.GetBasePTS() == INVALID_TIME)
 				{
 					m_clock.SetBasePTS(sampleTag.samplePTS);
 				}
 				m_videoQueue.Push(sampleTag);
+			}
+			else
+			{
+				m_x264.Reset();
+				MSG msg = { 0 };
+				msg.message = WM_VIDEO_X264_DECODE_FAIL;
+				m_msgqueue.PostMsg(msg);
+				m_bBreak = TRUE;
 			}
 		}
 		m_videoQueue.RemoveAll();

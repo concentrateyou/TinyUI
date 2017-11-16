@@ -5,9 +5,10 @@
 
 namespace MShow
 {
-	MVideoRenderTask::MVideoRenderTask(MVideoTask& task, MClock& clock)
+	MVideoRenderTask::MVideoRenderTask(MVideoTask& task, MClock& clock, TinyMsgQueue& queue)
 		:m_task(task),
 		m_clock(clock),
+		m_msgqueue(queue),
 		m_bBreak(FALSE),
 		m_bInitialize(FALSE),
 		m_hWND(NULL)
@@ -109,6 +110,8 @@ namespace MShow
 			if (sampleTag.samplePTS == m_clock.GetBasePTS())
 			{
 				m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
+				TRACE("MVideoRenderTask BaseTime:%lld\n", m_clock.GetBaseTime());
+				TRACE("MVideoRenderTask samplePTS:%lld\n", sampleTag.samplePTS);
 			}
 			while (m_clock.GetBasePTS() == INVALID_TIME);
 			rendering = TRUE;
@@ -121,14 +124,15 @@ namespace MShow
 				}
 				m_bInitialize = TRUE;
 			}
-			OnCopy(sampleTag.bits + 4, sampleTag.size);
+			OnCopy(sampleTag.bits, sampleTag.size);
 			LONG systemMS = static_cast<LONG>(MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime());
 			INT delay = static_cast<INT>(sampleTag.samplePTS - systemMS);
-			if (timer.Waiting(delay, 1000))
+			TRACE("Delay:%d\n", delay);
+			if (timer.Waiting(delay, 100))
 			{
 				m_graphics.Present();
 			}
-			m_task.GetVideoQueue().Free(sampleTag.bits);
+			SAFE_DELETE_ARRAY(sampleTag.bits);
 		}
 		m_bInitialize = FALSE;
 	}

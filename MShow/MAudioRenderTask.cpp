@@ -4,20 +4,22 @@
 
 namespace MShow
 {
-	MAudioRenderTask::MAudioRenderTask(MAudioTask& task, MClock& clock)
-		:m_bInitialize(FALSE),
-		m_bBreak(FALSE),
-		m_task(task),
-		m_clock(clock)
-	{
-
-	}
-
-	MAudioRenderTask::MAudioRenderTask(MAudioTask& task, MClock& clock, TinyUI::Callback<void(BYTE*, LONG)>&& callback)
+	MAudioRenderTask::MAudioRenderTask(MAudioTask& task, MClock& clock, TinyMsgQueue& queue)
 		:m_bInitialize(FALSE),
 		m_bBreak(FALSE),
 		m_task(task),
 		m_clock(clock),
+		m_msgqueue(queue)
+	{
+
+	}
+
+	MAudioRenderTask::MAudioRenderTask(MAudioTask& task, MClock& clock, TinyMsgQueue& queue, TinyUI::Callback<void(BYTE*, LONG)>&& callback)
+		:m_bInitialize(FALSE),
+		m_bBreak(FALSE),
+		m_task(task),
+		m_clock(clock),
+		m_msgqueue(queue),
 		m_callback(std::move(callback))
 	{
 	}
@@ -76,6 +78,8 @@ namespace MShow
 			if (tag.samplePTS == m_clock.GetBasePTS())
 			{
 				m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
+				TRACE("MAudioRenderTask BaseTime:%lld\n", m_clock.GetBaseTime());
+				TRACE("MAudioRenderTask samplePTS:%lld\n", tag.samplePTS);
 			}
 			while (m_clock.GetBasePTS() == INVALID_TIME);
 			if (!m_bInitialize)
@@ -88,7 +92,12 @@ namespace MShow
 					break;
 				}
 				m_bInitialize = TRUE;
-				m_audio.Start();
+				if (!m_audio.Start())
+				{
+					TRACE("Audio Start FAIL");
+					LOG(ERROR) << "Audio Start FAIL";
+					break;
+				}
 				timeQPC.EndTime();
 				m_clock.AddBaseTime(static_cast<DWORD>(timeQPC.GetMillisconds()));
 				LONGLONG ms = MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime();
@@ -98,9 +107,9 @@ namespace MShow
 					MShow::MShowApp::GetInstance().SetCurrentAudioTS(static_cast<LONGLONG>(tag.samplePTS) + m_task.GetBasePTS());
 					if (!m_callback.IsNull())
 					{
-						m_callback(tag.bits + 4, tag.size);
+						m_callback(tag.bits, tag.size);
 					}
-					m_audio.Play(tag.bits + 4, tag.size, 5000);
+					m_audio.Play(tag.bits, tag.size, 5000);
 				}
 			}
 			else
@@ -108,11 +117,11 @@ namespace MShow
 				MShow::MShowApp::GetInstance().SetCurrentAudioTS(static_cast<LONGLONG>(tag.samplePTS) + m_task.GetBasePTS());
 				if (!m_callback.IsNull())
 				{
-					m_callback(tag.bits + 4, tag.size);
+					m_callback(tag.bits, tag.size);
 				}
-				m_audio.Play(tag.bits + 4, tag.size, 5000);
+				m_audio.Play(tag.bits, tag.size, 5000);
 			}
-			m_task.GetAudioQueue().Free(tag.bits);
+			SAFE_DELETE_ARRAY(tag.bits);
 		}
 		m_bInitialize = FALSE;
 		CoUninitialize();

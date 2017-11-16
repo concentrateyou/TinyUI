@@ -26,6 +26,10 @@ namespace TinyUI
 		{
 			return m_hTask;
 		}
+		DWORD	TinyTaskBase::GetTaskID() const
+		{
+			return m_dwTaskID;
+		}
 		BOOL TinyTaskBase::SetPriority(DWORD dwPriority)
 		{
 			if (!m_hTask)
@@ -136,6 +140,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
+
 		void TinyTaskTimer::Close()
 		{
 			m_bBreak = TRUE;
@@ -160,6 +165,44 @@ namespace TinyUI
 			}
 			TRACE("EXIT\n");
 			LOG(INFO) << "TinyTaskTimer EXIT";
+		}
+		//////////////////////////////////////////////////////////////////////////
+		TinyMsgQueue::TinyMsgQueue()
+		{
+
+		}
+		TinyMsgQueue::~TinyMsgQueue()
+		{
+
+		}
+		BOOL TinyMsgQueue::SetCallback(Callback<void(UINT, WPARAM, LPARAM)>&& callback)
+		{
+			m_callback = std::move(callback);
+			return m_task.Submit(BindCallback(&TinyMsgQueue::OnMessagePump, this));
+		}
+		BOOL TinyMsgQueue::Close()
+		{
+			PostThreadMessage(m_task.GetTaskID(), WM_MSGQUEUE_EXIT, NULL, NULL);
+			return m_task.Close(INFINITE);
+		}
+		BOOL TinyMsgQueue::PostMsg(MSG& msg)
+		{
+			return PostThreadMessage(m_task.GetTaskID(), msg.message, msg.wParam, msg.lParam);
+		}
+		void TinyMsgQueue::OnMessagePump()
+		{
+			MSG msg = { 0 };
+			for (;;)
+			{
+				if (!GetMessage(&msg, NULL, 0, 0))
+					break;
+				if (msg.message == WM_MSGQUEUE_EXIT)
+					break;
+				if (!m_callback.IsNull())
+				{
+					m_callback(msg.message, msg.wParam, msg.lParam);
+				}
+			}
 		}
 	}
 }

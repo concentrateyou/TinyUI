@@ -171,7 +171,6 @@ namespace Decode
 			if (tag.type == FLV_AUDIO)
 			{
 				m_timestamp = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
-				//LOG(INFO) << "[FLVReader] Audio: " << m_timestamp;
 				if (m_timestamp > 0)
 				{
 					if (m_count == 1 && m_basePTS == -1)
@@ -521,6 +520,7 @@ namespace Decode
 		m_minusOne = 0;
 		m_offset = 0;
 		m_timestamp = 0;
+		m_count = 0;
 		m_basePTS = -1;
 		m_stream.Release();
 		ZeroMemory(&m_script, sizeof(m_script));

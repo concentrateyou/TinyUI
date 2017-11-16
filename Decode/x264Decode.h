@@ -17,23 +17,7 @@ extern "C"
 #pragma comment(lib, "avformat.lib")
 #pragma comment(lib, "avutil.lib")
 #pragma comment(lib, "swscale.lib")
-//#define DEBUG_FFMPEG 0
-//#if DEBUG_FFMPEG
-//#pragma comment(lib, "libavcodecd.lib")
-//#pragma comment(lib, "libavdeviced.lib")
-//#pragma comment(lib, "libpostprocd.lib")
-//#pragma comment(lib, "libavfilterd.lib")
-//#pragma comment(lib, "libavformatd.lib")
-//#pragma comment(lib, "libavutild.lib")
-//#pragma comment(lib, "libswscaled.lib")
-//#else
-//#pragma comment(lib, "avcodec.lib")
-//#pragma comment(lib, "avdevice.lib")
-//#pragma comment(lib, "avfilter.lib")
-//#pragma comment(lib, "avformat.lib")
-//#pragma comment(lib, "avutil.lib")
-//#pragma comment(lib, "swscale.lib")
-//#endif
+
 using namespace TinyUI;
 
 namespace Decode
@@ -48,6 +32,7 @@ namespace Decode
 		BOOL Open(BYTE* metadata, LONG size);
 		BOOL Decode(SampleTag& tag, BYTE*& bo, LONG& so);
 		BOOL Close();
+		BOOL Reset();
 		AVFrame* GetYUV420() const;
 		AVFrame* GetRGB32() const;
 	private:
@@ -60,7 +45,6 @@ namespace Decode
 		AVCodec*				m_codec;
 		AVCodecContext*			m_context;
 		TinyScopedArray<BYTE>	m_bits;
-		//FILE*					m_hFile;
 	};
 }
 

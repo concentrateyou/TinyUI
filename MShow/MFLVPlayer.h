@@ -26,10 +26,14 @@ namespace MShow
 		LONGLONG		GetBasePTS();
 		void			SetErrorCallback(TinyUI::Callback<void(INT)>&& callback);
 	private:
+		void			OnMessage(UINT, WPARAM, LPARAM);
+	private:
 		BOOL							m_bBreak;
 		DWORD							m_dwRate;
+		HWND							m_hWND;
 		TinyString						m_szURL;
 		TinySize						m_size;
+		TinyMsgQueue					m_msgqueue;
 		MClock							m_clock;
 		MFLVTask						m_task;
 		MAudioTask						m_audioTask;

@@ -72,8 +72,6 @@ namespace Decode
 		memcpy(m_context->extradata, metadata, m_context->extradata_size);
 		if (avcodec_open2(m_context, m_codec, NULL) != 0)
 			goto H264_ERROR;
-		/*m_hFile = fopen("D:\\test.264", "wb");
-		fwrite(metadata, 1, size, m_hFile);*/
 		return TRUE;
 	H264_ERROR:
 		Close();
@@ -98,16 +96,18 @@ namespace Decode
 			iRes = avcodec_receive_frame(m_context, m_pYUV420);
 			if (iRes == AVERROR(EAGAIN) || iRes == AVERROR_EOF)
 			{
+				if (iRes == AVERROR_EOF)
+				{
+					avcodec_flush_buffers(m_context);
+				}
 				TRACE("x264 Decode FAIL\n");
 				LOG(ERROR) << "x264 Decode FAIL";
-				//fwrite(tag.bits, 1, tag.size, m_hFile);
 				break;
 			}
 			else if (iRes < 0)
 			{
 				TRACE("x264 Decode FAIL\n");
 				LOG(ERROR) << "x264 Decode FAIL";
-				//fwrite(tag.bits, 1, tag.size, m_hFile);
 				goto _ERROR;
 			}
 			INT cy = sws_scale(m_sws, m_pYUV420->data, m_pYUV420->linesize, 0, m_srcsize.cy, m_pRGB32->data, m_pRGB32->linesize);
@@ -123,8 +123,6 @@ namespace Decode
 	}
 	BOOL x264Decode::Close()
 	{
-		/*if (m_hFile != NULL)
-			fclose(m_hFile);*/
 		m_srcsize.Empty();
 		m_dstsize.Empty();
 		if (m_context != NULL)
@@ -156,6 +154,15 @@ namespace Decode
 		}
 		m_bits.Reset(NULL);
 		return TRUE;
+	}
+	BOOL x264Decode::Reset()
+	{
+		if (m_context != NULL)
+		{
+			avcodec_flush_buffers(m_context);
+			return TRUE;
+		}
+		return FALSE;
 	}
 	AVFrame* x264Decode::GetYUV420() const
 	{

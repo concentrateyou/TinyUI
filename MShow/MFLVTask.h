@@ -13,7 +13,7 @@ namespace MShow
 	{
 		DISALLOW_COPY_AND_ASSIGN(MFLVTask)
 	public:
-		MFLVTask(MClock& clock);
+		MFLVTask(MClock& clock, TinyMsgQueue& queue);
 		virtual ~MFLVTask();
 		void SetErrorCallback(TinyUI::Callback<void(INT)>&& callback);
 		BOOL Initialize(LPCSTR pzURL);
@@ -36,6 +36,7 @@ namespace MShow
 		LONGLONG		m_sample;
 		FLVReader		m_reader;
 		FLV_SCRIPTDATA	m_script;
+		TinyMsgQueue&	m_msgqueue;
 		MClock&			m_clock;
 		MPacketQueue	m_audioQueue;
 		MPacketQueue	m_videoQueue;
