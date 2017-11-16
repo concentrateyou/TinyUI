@@ -26,7 +26,7 @@ namespace MShow
 		m_preview.Reset(new MPreviewController(m_view.m_previewView));
 		if (!m_preview)
 			return FALSE;
-		if (!m_audioDSP.Initialize())
+		if (!m_audioDSP.Initialize(BindCallback(&MClientController::OnAudio, this)))
 		{
 			LOG(ERROR) << "AudioDSP Initialize Fail";
 			return FALSE;
@@ -79,7 +79,7 @@ namespace MShow
 		if (m_preview != NULL)
 		{
 			m_preview->Close();
-			if (m_preview->Open(m_szPreviewURL.c_str(), BindCallback(&MClientController::OnAudio, this)))
+			if (m_preview->Open(m_szPreviewURL.c_str()))
 			{
 				LOG(INFO) << "[SetPreview] " << "Open Preview :" << m_szPreviewURL << " OK";
 				TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
@@ -102,7 +102,7 @@ namespace MShow
 					visual->SetText("预览流打开失败 正在重试.....");
 				}
 				LOG(ERROR) << "[SetPreview] " << "Open Preview :" << m_szPreviewURL << " Fail";
-				m_timer.SetCallback(3000, BindCallback(&MClientController::OnTry, this));//每隔3秒重试
+				m_taskTimer.SetCallback(3000, BindCallback(&MClientController::OnTry, this));//每隔3秒重试
 			}
 		}
 		m_view.Invalidate();
@@ -115,11 +115,11 @@ namespace MShow
 			BOOL bRes = m_preview->Close();
 			TRACE("[MClientController] OnTry Close:%d\n", bRes);
 			LOG(INFO) << "[MClientController] OnTry Close:" << bRes;
-			if (m_preview->Open(m_szPreviewURL.c_str(), BindCallback(&MClientController::OnAudio, this)))
+			if (m_preview->Open(m_szPreviewURL.c_str()))
 			{
 				TRACE("[MClientController] OnTry Open OK\n");
 				LOG(INFO) << "[MClientController] OnTry Open OK";
-				m_timer.Close();
+				m_taskTimer.Close();
 				TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
 				if (visual != NULL)
 				{
@@ -803,7 +803,7 @@ namespace MShow
 		{
 			m_preview->Close();
 		}
-		m_timer.Close();
+		m_taskTimer.Close();
 		m_szSourceID.clear();
 		m_szProgramID.clear();
 		m_szName.clear();
@@ -1108,67 +1108,37 @@ namespace MShow
 		}
 	}
 
-	TinyPerformanceTime g_timeQPC1;
-
 	void MClientController::OnAudio(BYTE* bits, LONG size)
 	{
-		g_timeQPC1.EndTime();
-		LOG(INFO) << "OnAudio Cost: " << g_timeQPC1.GetMillisconds();
-		g_timeQPC1.BeginTime();
-		if (m_audioDSP.IsEmpty())
+		if (m_preview != NULL)
 		{
-			m_audioQueue.RemoveAll();
-		}
-		else
-		{
-			LONGLONG currentPTS = MShow::MShowApp::GetInstance().GetCurrentAudioTS();
-			LOG(INFO) << "OnAudio Timestamp: " << currentPTS;
-			MAudioQueue& audioQueue = m_audioDSP.GetAudioQueue();
-			AUDIO_SAMPLE sample = { 0 };
-			LOG(INFO) << "AudioQueue Count:" << audioQueue.GetCount();
-			if (audioQueue.Pop(sample))
+			if (size == 4096)
 			{
-				ASSERT(AAC_SIZE == sample.size);
-				if (m_audioQueue.GetAllocSize() == 0)
+				LONGLONG currentPTS = MShow::MShowApp::GetInstance().GetCurrentAudioTS();
+				if (m_previousPTS != currentPTS)
 				{
-					INT count = 5;
-					m_audioQueue.Initialize(count, sample.size + 4);
-				}
-				AUDIO_SAMPLE audioSample = { 0 };
-				audioSample.size = sample.size;
-				audioSample.bits = static_cast<BYTE*>(m_audioQueue.Alloc());
-				audioSample.timestamp = currentPTS;
-				memcpy(audioSample.bits + 4, sample.bits + 4, sample.size);
-				m_audioQueue.Push(audioSample);
-			}
-			else
-			{
-				if (!m_audioDSP.IsCapturing())
-				{
-					if (m_audioQueue.GetAllocSize() == 0)
-					{
-						INT count = 5;
-						m_audioQueue.Initialize(count, AAC_SIZE + 4);
-					}
-					AUDIO_SAMPLE audioSample = { 0 };
-					audioSample.size = AAC_SIZE;
-					audioSample.bits = static_cast<BYTE*>(m_audioQueue.Alloc());
-					audioSample.timestamp = currentPTS;
-					BYTE arrays[AAC_SIZE];
-					ZeroMemory(arrays, AAC_SIZE);
-					memcpy(audioSample.bits + 4, arrays, AAC_SIZE);
-					m_audioQueue.Push(audioSample);
-					LOG(INFO) << "AudioQueue Push Empty";
-					TRACE("AudioQueue Push Empty\n");
+					m_previousPTS = currentPTS;
 				}
 				else
 				{
-					m_audioQueue.RemoveAll();
-					LOG(ERROR) << "AudioQueue Pop FAIL Clear All Buffer";
-					TRACE("AudioQueue Pop FAIL Clear All Buffer\n");
+					TRACE("OnAudio Timestamp repeat:%lld\n", currentPTS);
 				}
+				if (m_audioQueue.GetAllocSize() == 0)
+				{
+					INT count = 5;
+					m_audioQueue.Initialize(count, size + 4);
+				}
+				AUDIO_SAMPLE sample = { 0 };
+				sample.size = size;
+				sample.bits = static_cast<BYTE*>(m_audioQueue.Alloc());
+				sample.timestamp = currentPTS;
+				memcpy(sample.bits + 4, bits, size);
+				m_audioQueue.Push(sample);
 			}
-			audioQueue.Free(sample.bits);
+		}
+		else
+		{
+			LOG(ERROR) << "Preview NULL";
 		}
 	}
 
@@ -1189,13 +1159,13 @@ namespace MShow
 					Sleep(1);
 					continue;
 				}
-				m_timeQPC1.BeginTime();
+				m_timeQPC.BeginTime();
 				if (m_audioSDK->audio_encode_send(sample.bits + 4, static_cast<INT32>(sample.timestamp)) != 0)
 				{
 					LOG(INFO) << "Timestamp: " << sample.timestamp << " FAIL";
 				}
-				m_timeQPC1.EndTime();
-				LOG(INFO) << "audio_encode_send:" << m_timeQPC1.GetMillisconds() << " Count:" << (count - 1);
+				m_timeQPC.EndTime();
+				LOG(INFO) << "audio_encode_send:" << m_timeQPC.GetMillisconds() << " Count:" << (count - 1);
 				m_audioQueue.Free(sample.bits);
 			}
 		}

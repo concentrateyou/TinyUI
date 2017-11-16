@@ -20,28 +20,29 @@ namespace MShow
 	public:
 		MAudioDSP();
 		~MAudioDSP();
-		BOOL Initialize();
+		BOOL Initialize(Callback<void(BYTE*, LONG)>&& callback);
 		BOOL Open();
 		BOOL Open(const TinyWASAPIAudio::Name& capture, const TinyWASAPIAudio::Name& speaker);
 		BOOL Open(const GUID& capture, const GUID& speaker);
 		BOOL Start();
 		BOOL Stop();
 		BOOL Close();
-		MAudioQueue& GetAudioQueue();
 		BOOL IsCapturing() const;
 		BOOL IsEmpty();
 	private:
 		void OnDSP(BYTE* bits, LONG size, LPVOID lpParameter);
 		void OnAudio(BYTE* bits, LONG size, LPVOID lpParameter);
+		void OnTimer();
 	private:
 		BYTE						m_bits[4096];
+		TinyLock					m_lock;
 		TinyAudioDSPCapture			m_audioDSP;
 		TinyMFResampler				m_resampler;
 		TinyBufferArray<BYTE>		m_buffer;
-		MAudioQueue					m_audioQueue;
-		TinyWaveFile				m_waveFile;
+		TinyPerformanceTimer		m_timer;
 		WAVEFORMATEX				m_waveFMTI;
 		WAVEFORMATEX				m_waveFMTO;
+		Callback<void(BYTE*, LONG)>	m_callback;
 	};
 }
 

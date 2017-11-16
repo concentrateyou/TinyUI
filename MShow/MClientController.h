@@ -51,13 +51,13 @@ namespace MShow
 		void	OnSpeakerFocus(TinyVisual*, FocusEventArgs& args);
 		void	OnMessagePump();
 		BOOL	Query(const string& sourceID, INT& count);
-		void	OnAudio(BYTE* bits, LONG size);
 	private:
+		void	OnAudio(BYTE* bits, LONG size);
 		void	OnTimerStatus();
 		void	OnTry();
 	private:
 		BOOL		Connect();//ÃÌº”‘¥
-		BOOL		Disconnect(const string& sourceID,BOOL del = FALSE);
+		BOOL		Disconnect(const string& sourceID, BOOL del = FALSE);
 		BOOL		UpdatePreviewURL(const string& sourceID, const string& strURL);
 		BOOL		UpdateName(const string& sourceID, const string& strName);
 		BOOL		GetPreviewURL(string& szURL, INT& iAudio, string& szIP);
@@ -86,9 +86,8 @@ namespace MShow
 		MAudioDSP							m_audioDSP;
 		TinyScopedPtr<AudioSdk>				m_audioSDK;
 		TinyTaskBase						m_task;
-		TinyTaskTimer						m_timer;
+		TinyTaskTimer						m_taskTimer;
 		TinyPerformanceTime					m_timeQPC;
-		TinyPerformanceTime					m_timeQPC1;
 		TinyScopedPtr<MPreviewController>	m_preview;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onSettingClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMinimumClick;
