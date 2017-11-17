@@ -50,6 +50,7 @@ namespace MShow
 		void	OnMicrophoneFocus(TinyVisual*, FocusEventArgs& args);
 		void	OnSpeakerFocus(TinyVisual*, FocusEventArgs& args);
 		void	OnMessagePump();
+		//void	OnMessagePump1();
 		BOOL	Query(const string& sourceID, INT& count);
 	private:
 		void	OnAudio(BYTE* bits, LONG size);
@@ -70,6 +71,7 @@ namespace MShow
 		BOOL								m_bPause;
 		BOOL								m_bCommentarying;
 		BOOL								m_bBreak;
+		BOOL								m_bBreak1;
 		TinyTaskTimer						m_timerStatus;//¼ì²â½âËµ×´Ì¬
 		LONGLONG							m_previousPTS;
 		string								m_szURL;//Ô¤ÀÀÁ÷µØÖ·
@@ -83,9 +85,12 @@ namespace MShow
 		SpeakTest							m_speakTest;
 		MicrophoneTest						m_microphoneTest;
 		MAudioQueue							m_audioQueue;
+		//MPacketQueue						m_audioPackets;
 		MAudioDSP							m_audioDSP;
+		//TinyXAudio						m_audio;
 		TinyScopedPtr<AudioSdk>				m_audioSDK;
 		TinyTaskBase						m_task;
+		//TinyTaskBase						m_playTask;
 		TinyTaskTimer						m_taskTimer;
 		TinyPerformanceTime					m_timeQPC;
 		TinyScopedPtr<MPreviewController>	m_preview;

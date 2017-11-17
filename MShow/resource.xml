@@ -57,6 +57,7 @@
     <add name="blue_highlight" value="skin\button\blue_highlight.png"></add>
 
     <add name="loading" value="skin\animate\loading.gif"></add>
+    <add name="logo" value="skin\common\logo.jpg"></add>
 
   </image>
 </context>

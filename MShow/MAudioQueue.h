@@ -22,6 +22,7 @@ namespace MShow
 		void Free(void* p);
 		BOOL Push(AUDIO_SAMPLE& tag);
 		BOOL Pop(AUDIO_SAMPLE& tag);
+		BOOL Pop(AUDIO_SAMPLE& tag, INT& count);
 		BOOL IsEmpty();
 		LONG GetSize();
 		DWORD GetCount();

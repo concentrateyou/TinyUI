@@ -93,6 +93,7 @@ namespace MShow
 					LOG(ERROR) << "Audio Open FAIL";
 					break;
 				}
+				m_audio.SetVolume(0);
 				m_bInitialize = TRUE;
 				if (!m_audio.Start())
 				{

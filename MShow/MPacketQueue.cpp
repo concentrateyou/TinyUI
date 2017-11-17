@@ -35,6 +35,22 @@ namespace MShow
 		}
 		return FALSE;
 	}
+	BOOL MPacketQueue::Pop(SampleTag& tag, INT& count)
+	{
+		TinyAutoLock lock(m_lock);
+		count = 0;
+		if (m_list.GetSize() > 0)
+		{
+			ITERATOR s = m_list.First();
+			Media::SampleTag& sampleTag = m_list.GetAt(s);
+			memcpy(&tag, &sampleTag, sizeof(Media::SampleTag));
+			m_list.RemoveAt(s);
+			count = m_list.GetSize();
+			m_size -= tag.size;
+			return (tag.size > 0);
+		}
+		return FALSE;
+	}
 	BOOL MPacketQueue::IsEmpty()
 	{
 		return m_list.IsEmpty();

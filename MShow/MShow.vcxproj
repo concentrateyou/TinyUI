@@ -23,6 +23,7 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>MShow</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>MShow</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -71,6 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <TargetName>LiveCommentary</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -96,6 +98,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>TinyUI.lib;DXFramework.lib;DShowCapture.lib;Decode.lib;Encode.lib;libmfx_d.lib;dxva2.lib;dwmapi.lib;d3d9.lib;d3d11.lib;dxgi.lib;D2D1.lib;jsoncpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\Debug;$(BOOST_DIR)\stage\lib;$(DXSDK_DIR)\Lib\x86;$(INTELMEDIASDKROOT)lib\$(Platform);..\ThirdParty\mpg123\lib\x86;..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\libfaad\lib\x86;..\ThirdParty\librtmp\lib\x86;..\ThirdParty\x264\libs\32bit;..\ThirdParty\libfaac\lib\x86;..\ThirdParty\sdk\lib;..\ThirdParty\sqlite;..\ThirdParty\jsoncpp\lib\x86;..\ThirdParty\crashrpt\lib</AdditionalLibraryDirectories>
+      <OutputFile>$(OutDir)LiveCommentary$(TargetExt)</OutputFile>
     </Link>
     <ProjectReference>
       <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>

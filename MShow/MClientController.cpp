@@ -11,6 +11,7 @@ namespace MShow
 	MClientController::MClientController(MClientWindow& view)
 		:m_view(view),
 		m_bBreak(FALSE),
+		m_bBreak1(FALSE),
 		m_bCommentarying(FALSE),
 		m_bPause(FALSE),
 		m_previousPTS(-1)
@@ -811,6 +812,17 @@ namespace MShow
 	}
 	BOOL MClientController::StartCommentary()
 	{
+		/*WAVEFORMATEX m_waveFMTO;
+		ZeroMemory(&m_waveFMTO, sizeof(m_waveFMTO));
+		m_waveFMTO.cbSize = 0;
+		m_waveFMTO.wFormatTag = WAVE_FORMAT_PCM;
+		m_waveFMTO.nChannels = 2;
+		m_waveFMTO.nSamplesPerSec = 44100;
+		m_waveFMTO.wBitsPerSample = 16;
+		m_waveFMTO.nBlockAlign = 4;
+		m_waveFMTO.nAvgBytesPerSec = 176400;
+		m_audio.Open(&m_waveFMTO);
+		m_audio.Start();*/
 		m_bBreak = FALSE;
 		//获取音频预览流
 		string szIP;
@@ -845,6 +857,15 @@ namespace MShow
 				m_audioDSP.Start();
 			}
 		}
+	/*	if (m_playTask.IsActive())
+		{
+			m_bBreak1 = TRUE;
+			m_playTask.Close(1000);
+		}
+		if (!m_playTask.Submit(BindCallback(&MClientController::OnMessagePump1, this)))
+		{
+			goto _ERROR;
+		}*/
 		//启动SDK发送数据
 		if (m_task.IsActive())
 		{
@@ -891,6 +912,8 @@ namespace MShow
 	}
 	void MClientController::StopCommentary()
 	{
+		/*m_audio.Stop();
+		m_audio.Close();*/
 		if (m_task.IsActive())
 		{
 			m_bBreak = TRUE;
@@ -1144,8 +1167,29 @@ namespace MShow
 
 	TinyPerformanceTime g_timeQPC;
 
+	/*void MClientController::OnMessagePump1()
+	{
+		INT count = 0;
+		for (;;)
+		{
+			if (m_bBreak)
+				break;
+			SampleTag tag = { 0 };
+			if (!m_audioPackets.Pop(tag, count))
+			{
+				Sleep(1);
+				continue;
+			}
+			LOG(INFO) << "AudioDSP Play:" << count;
+			TRACE("AudioDSP Play:%d\n", count);
+			m_audio.Play(tag.bits, tag.size, 5000);
+			SAFE_DELETE_ARRAY(tag.bits);
+		}
+	}*/
+
 	void MClientController::OnMessagePump()
 	{
+		INT count = 0;
 		for (;;)
 		{
 			if (m_bBreak)
@@ -1153,19 +1197,24 @@ namespace MShow
 			if (m_audioSDK != NULL)
 			{
 				AUDIO_SAMPLE sample = { 0 };
-				INT count = m_audioQueue.GetCount();
-				if (!m_audioQueue.Pop(sample))
+				if (!m_audioQueue.Pop(sample, count))
 				{
 					Sleep(1);
 					continue;
 				}
 				m_timeQPC.BeginTime();
+				SampleTag tag;
+				tag.bits = new BYTE[sample.size];
+				tag.size = sample.size;
+				memcpy(tag.bits, sample.bits + 4, tag.size);
+				//m_audioPackets.Push(tag);
 				if (m_audioSDK->audio_encode_send(sample.bits + 4, static_cast<INT32>(sample.timestamp)) != 0)
 				{
 					LOG(INFO) << "Timestamp: " << sample.timestamp << " FAIL";
 				}
 				m_timeQPC.EndTime();
-				LOG(INFO) << "audio_encode_send:" << m_timeQPC.GetMillisconds() << " Count:" << (count - 1);
+				LOG(INFO) << "audio_encode_send:" << m_timeQPC.GetMillisconds() << " Count:" << count;
+				TRACE("audio_encode_send:%lld, Count:%d\n", m_timeQPC.GetMillisconds(), count);
 				m_audioQueue.Free(sample.bits);
 			}
 		}
