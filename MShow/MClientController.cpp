@@ -857,16 +857,16 @@ namespace MShow
 				m_audioDSP.Start();
 			}
 		}
-	/*	if (m_playTask.IsActive())
-		{
-			m_bBreak1 = TRUE;
-			m_playTask.Close(1000);
-		}
-		if (!m_playTask.Submit(BindCallback(&MClientController::OnMessagePump1, this)))
-		{
-			goto _ERROR;
-		}*/
-		//启动SDK发送数据
+		/*	if (m_playTask.IsActive())
+			{
+				m_bBreak1 = TRUE;
+				m_playTask.Close(1000);
+			}
+			if (!m_playTask.Submit(BindCallback(&MClientController::OnMessagePump1, this)))
+			{
+				goto _ERROR;
+			}*/
+			//启动SDK发送数据
 		if (m_task.IsActive())
 		{
 			m_bBreak = TRUE;
@@ -1207,14 +1207,14 @@ namespace MShow
 				tag.bits = new BYTE[sample.size];
 				tag.size = sample.size;
 				memcpy(tag.bits, sample.bits + 4, tag.size);
-				//m_audioPackets.Push(tag);
+
 				if (m_audioSDK->audio_encode_send(sample.bits + 4, static_cast<INT32>(sample.timestamp)) != 0)
 				{
 					LOG(INFO) << "Timestamp: " << sample.timestamp << " FAIL";
 				}
 				m_timeQPC.EndTime();
-				LOG(INFO) << "audio_encode_send:" << m_timeQPC.GetMillisconds() << " Count:" << count;
-				TRACE("audio_encode_send:%lld, Count:%d\n", m_timeQPC.GetMillisconds(), count);
+				LOG(INFO) << "audio_encode_send:" << m_timeQPC.GetMillisconds() << " Count:" << count << " Timestamp:" << sample.timestamp;
+				TRACE("audio_encode_send:%lld, Count:%d, Timestamp:%lld\n", m_timeQPC.GetMillisconds(), count, sample.timestamp);
 				m_audioQueue.Free(sample.bits);
 			}
 		}
