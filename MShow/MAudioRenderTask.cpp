@@ -93,14 +93,13 @@ namespace MShow
 					LOG(ERROR) << "Audio Open FAIL";
 					break;
 				}
-				m_audio.SetVolume(0);
-				m_bInitialize = TRUE;
 				if (!m_audio.Start())
 				{
 					TRACE("Audio Start FAIL");
 					LOG(ERROR) << "Audio Start FAIL";
 					break;
 				}
+				m_bInitialize = TRUE;
 				timeQPC.EndTime();
 				m_clock.AddBaseTime(static_cast<DWORD>(timeQPC.GetMillisconds()));
 				LONGLONG ms = MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime();
