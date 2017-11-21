@@ -183,5 +183,47 @@ namespace TinyUI
 		{
 			return m_dwSize;
 		}
+		//////////////////////////////////////////////////////////////////////////
+		TinySoundCaptureAEC::TinySoundCaptureAEC()
+		{
+
+		}
+		TinySoundCaptureAEC::~TinySoundCaptureAEC()
+		{
+
+		}
+		BOOL TinySoundCaptureAEC::Open(LPGUID captureGUID, LPGUID renderGUID, const WAVEFORMATEX* pFMT, DWORD dwSize)
+		{
+			DSCEFFECTDESC dsceds[2];
+			ZeroMemory(&dsceds[0], sizeof(DSCEFFECTDESC));
+			dsceds[0].dwSize = sizeof(DSCEFFECTDESC);
+			dsceds[0].dwFlags = DSCFX_LOCSOFTWARE;
+			dsceds[0].guidDSCFXClass = GUID_DSCFX_CLASS_AEC;
+			dsceds[0].guidDSCFXInstance = GUID_DSCFX_MS_AEC;
+			ZeroMemory(&dsceds[1], sizeof(DSCEFFECTDESC));
+			dsceds[1].dwSize = sizeof(DSCEFFECTDESC);
+			dsceds[1].dwFlags = DSCFX_LOCSOFTWARE;
+			dsceds[1].guidDSCFXClass = GUID_DSCFX_CLASS_NS;
+			dsceds[1].guidDSCFXInstance = GUID_DSCFX_MS_NS;
+			DSCBUFFERDESC dscbdesc = { 0 };
+			dscbdesc.dwSize = sizeof(DSCBUFFERDESC);
+			dscbdesc.dwFlags = DSCBCAPS_CTRLFX;
+			dscbdesc.dwBufferBytes = dwSize;
+			dscbdesc.dwReserved = 0;
+			dscbdesc.lpwfxFormat = const_cast<WAVEFORMATEX*>(pFMT);
+			dscbdesc.dwFXCount = 2;
+			dscbdesc.lpDSCFXDesc = dsceds;
+			DSBUFFERDESC dsbdesc;
+			memset(&dsbdesc, 0, sizeof(DSBUFFERDESC));
+			dsbdesc.dwSize = sizeof(DSBUFFERDESC);
+			dsbdesc.dwFlags = DSBCAPS_CTRLPAN | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLFREQUENCY | DSBCAPS_GLOBALFOCUS;
+			dsbdesc.dwBufferBytes = dwSize;
+			dsbdesc.lpwfxFormat = const_cast<WAVEFORMATEX*>(pFMT);
+			HRESULT hRes = DirectSoundFullDuplexCreate8(captureGUID, renderGUID, &dscbdesc, &dsbdesc, GetDesktopWindow(), DSSCL_PRIORITY, &m_dsduplex, &m_dscb8, &m_dsb8, NULL);
+			if (hRes != S_OK)
+				return FALSE;
+
+			return TRUE;
+		}
 	}
 }

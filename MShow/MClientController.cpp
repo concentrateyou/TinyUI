@@ -1167,26 +1167,6 @@ namespace MShow
 
 	TinyPerformanceTime g_timeQPC;
 
-	/*void MClientController::OnMessagePump1()
-	{
-		INT count = 0;
-		for (;;)
-		{
-			if (m_bBreak)
-				break;
-			SampleTag tag = { 0 };
-			if (!m_audioPackets.Pop(tag, count))
-			{
-				Sleep(1);
-				continue;
-			}
-			LOG(INFO) << "AudioDSP Play:" << count;
-			TRACE("AudioDSP Play:%d\n", count);
-			m_audio.Play(tag.bits, tag.size, 5000);
-			SAFE_DELETE_ARRAY(tag.bits);
-		}
-	}*/
-
 	void MClientController::OnMessagePump()
 	{
 		INT count = 0;
@@ -1203,11 +1183,6 @@ namespace MShow
 					continue;
 				}
 				m_timeQPC.BeginTime();
-				SampleTag tag;
-				tag.bits = new BYTE[sample.size];
-				tag.size = sample.size;
-				memcpy(tag.bits, sample.bits + 4, tag.size);
-
 				if (m_audioSDK->audio_encode_send(sample.bits + 4, static_cast<INT32>(sample.timestamp)) != 0)
 				{
 					LOG(INFO) << "Timestamp: " << sample.timestamp << " FAIL";

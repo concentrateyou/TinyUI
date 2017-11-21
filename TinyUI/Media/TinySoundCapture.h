@@ -22,6 +22,7 @@ namespace TinyUI
 		/// </summary>
 		class TinySoundCapture
 		{
+			DISALLOW_COPY_AND_ASSIGN(TinySoundCapture)
 		public:
 			TinySoundCapture();
 			virtual ~TinySoundCapture();
@@ -63,6 +64,21 @@ namespace TinyUI
 			TinyScopedArray<BYTE>					m_bits;
 			TinyScopedArray<BYTE>					m_waveFMT;
 			TinyComPtr<IDirectSoundCapture8>		m_dsc8;
+			TinyComPtr<IDirectSoundCaptureBuffer8>	m_dscb8;
+		};
+		/// <summary>
+		/// DirectSound∆Ù”√AEC“Ù∆µ≤∂ªÒ
+		/// </summary>
+		class TinySoundCaptureAEC
+		{
+			DISALLOW_COPY_AND_ASSIGN(TinySoundCaptureAEC)
+		public:
+			TinySoundCaptureAEC();
+			virtual ~TinySoundCaptureAEC();
+			BOOL	Open(LPGUID captureGUID, LPGUID renderGUID, const  WAVEFORMATEX* pFMT, DWORD dwSize);
+		private:
+			TinyComPtr<IDirectSoundFullDuplex>		m_dsduplex;
+			TinyComPtr<IDirectSoundBuffer8>			m_dsb8;
 			TinyComPtr<IDirectSoundCaptureBuffer8>	m_dscb8;
 		};
 	}
