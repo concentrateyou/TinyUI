@@ -23,13 +23,8 @@ namespace MShow
 		BOOL			Open(LPCSTR pzURL, Callback<void(BYTE*, LONG)>&& audioCB);
 		BOOL			Close();
 		MPreviewView&	GetView();
-		LONGLONG		GetBasePTS();
 		MFLVPlayer*		GetPlayer();
-	private:
-		void			OnTry();
-		void			OnError(INT);
-	private:
-		TinyTaskTimer				m_timer;		
+	private:		
 		MPreviewView&				m_view;
 		TinyScopedPtr<MFLVPlayer>	m_player;
 	};

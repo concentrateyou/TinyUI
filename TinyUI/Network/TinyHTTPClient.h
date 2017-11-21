@@ -45,17 +45,17 @@ namespace TinyUI
 			BOOL	ReadAsString(string& val);
 			INT		ReadAsBinary(CHAR*& ps);
 		private:
-			CHAR* ReadLine(CHAR* s);
-			BOOL ParseTransferEncoding(CHAR* line);
-			BOOL ParseAttribute(CHAR* ps1, CHAR* ps2);
-			BOOL ParseResponse(CHAR* s, INT size);
-			BOOL ParseStatusLine(CHAR* ps1, CHAR* ps2);
+			CHAR*	ReadLine(CHAR* s);
+			BOOL	ParseTransferEncoding(CHAR* line);
+			BOOL	ParseAttribute(CHAR* ps1, CHAR* ps2);
+			BOOL	ParseResponse(CHAR* s, INT size);
+			BOOL	ParseStatusLine(CHAR* ps1, CHAR* ps2);
 		private:
 			INT						m_statusCode;
 			string					m_version;//版本
 			string					m_statusMsg;//状态信息
-			TinyBufferArray<CHAR>	m_context;
 			TinyHTTPClient&			m_client;
+			TinyBufferArray<CHAR>	m_context;
 		};
 		/// <summary>
 		/// HTTP客户端
@@ -112,7 +112,7 @@ namespace TinyUI
 			TinyHTTPClient();
 			~TinyHTTPClient();
 			void			SetTimeout(INT timeout);
-			void			SetErrorCallback(Callback<void(INT)>&& callback);
+			void			SetErrorCallback(ErrorCallback&& callback);
 			BOOL			IsEmpty() const;
 			BOOL			Open(const string& szURL);
 			void			Close();
@@ -125,12 +125,12 @@ namespace TinyUI
 			void BuildRequest();
 		private:
 			INT						m_timeout;
+			LONG					m_size;
 			TinyURL					m_szURL;
 			TinySocket				m_socket;
 			IPEndPoint				m_endpoint;
 			HTTPRequest				m_request;
 			HTTPResponse			m_reponse;
-			LONG					m_size;
 			TinyScopedArray<CHAR>	m_raw;
 			TinyBufferArray<CHAR>	m_requests;
 		};

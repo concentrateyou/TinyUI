@@ -19,12 +19,12 @@ namespace MShow
 		ZeroMemory(&m_script, sizeof(m_script));
 	}
 
-	BOOL MFLVTask::Initialize(LPCSTR pzURL)
+	BOOL MFLVTask::Initialize(LPCSTR pzURL, ErrorCallback&& callback)
 	{
 		TinyString szName = pzURL;
 		if (szName.IndexOf("rtmp://") != -1 || szName.IndexOf("http://") != -1)
 		{
-			if (!m_reader.OpenURL(pzURL))
+			if (!m_reader.OpenURL(pzURL, std::move(callback)))
 				return FALSE;
 		}
 		else
@@ -202,10 +202,6 @@ namespace MShow
 			}
 		}
 		return TRUE;
-	}
-	void MFLVTask::SetErrorCallback(TinyUI::Callback<void(INT)>&& callback)
-	{
-		m_reader.SetErrorCallback(std::move(callback));
 	}
 	MFLVTask::~MFLVTask()
 	{

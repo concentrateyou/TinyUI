@@ -40,7 +40,7 @@ namespace Decode
 	public:
 		HTTPStream();
 		virtual~HTTPStream();
-		void SetErrorCallback(Callback<void(INT)>&& callback);
+		void SetErrorCallback(ErrorCallback&& callback);
 		BOOL Open(LPCSTR pzURL = "http://10.110.48.109:42948/6703234523&type=http&flashId=flv");
 		BOOL Close();
 	private:

@@ -4,6 +4,7 @@
 #include "Common/TinyCollection.h"
 #include "Common/TinyCallback.h"
 #include "Common/TinyEvent.h"
+#include "Network/TinyHTTPClient.h"
 #include "Render/TinyGDI.h"
 #include "IO/TinyTaskBase.h"
 #include "IO/TinyIO.h"

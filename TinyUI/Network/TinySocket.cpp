@@ -242,9 +242,9 @@ namespace TinyUI
 			if (::bind(m_socket, &s, size) == SOCKET_ERROR)
 			{
 				INT iError = WSAGetLastError();
-				if (!m_errorCallback.IsNull())
+				if (!m_callback.IsNull())
 				{
-					m_errorCallback(iError);
+					m_callback(iError);
 				}
 				LOG(ERROR) << "[Bind] bind:" << iError;
 				return FALSE;
@@ -257,9 +257,9 @@ namespace TinyUI
 			if (::listen(m_socket, SOMAXCONN) == SOCKET_ERROR)
 			{
 				INT iError = WSAGetLastError();
-				if (!m_errorCallback.IsNull())
+				if (!m_callback.IsNull())
 				{
-					m_errorCallback(iError);
+					m_callback(iError);
 				}
 				LOG(ERROR) << "[Listen] listen:" << iError;
 				return FALSE;
@@ -286,9 +286,9 @@ namespace TinyUI
 			else
 			{
 				INT iError = WSAGetLastError();
-				if (!m_errorCallback.IsNull())
+				if (!m_callback.IsNull())
 				{
-					m_errorCallback(iError);
+					m_callback(iError);
 				}
 			}
 			return NULL;
@@ -312,9 +312,9 @@ namespace TinyUI
 			if (!this->SetBlocking(FALSE))
 			{
 				INT iError = WSAGetLastError();
-				if (!m_errorCallback.IsNull())
+				if (!m_callback.IsNull())
 				{
-					m_errorCallback(iError);
+					m_callback(iError);
 				}
 				LOG(ERROR) << "[Connect] SetBlocking(FALSE):" << iError;
 				goto _ERROR;
@@ -322,9 +322,9 @@ namespace TinyUI
 			if (::connect(m_socket, &si, size) == NO_ERROR)
 			{
 				INT iError = WSAGetLastError();
-				if (!m_errorCallback.IsNull())
+				if (!m_callback.IsNull())
 				{
-					m_errorCallback(iError);
+					m_callback(iError);
 				}
 				LOG(ERROR) << "[Connect] connect = 0:" << iError;
 				goto _ERROR;
@@ -332,9 +332,9 @@ namespace TinyUI
 			if (!this->SetBlocking(TRUE))
 			{
 				INT iError = WSAGetLastError();
-				if (!m_errorCallback.IsNull())
+				if (!m_callback.IsNull())
 				{
-					m_errorCallback(iError);
+					m_callback(iError);
 				}
 				LOG(ERROR) << "[Connect] SetBlocking(TRUE):" << iError;
 				goto _ERROR;
@@ -342,9 +342,9 @@ namespace TinyUI
 			if (::select(0, NULL, &set, NULL, &val) == SOCKET_ERROR)
 			{
 				INT iError = WSAGetLastError();
-				if (!m_errorCallback.IsNull())
+				if (!m_callback.IsNull())
 				{
-					m_errorCallback(iError);
+					m_callback(iError);
 				}
 				LOG(ERROR) << "[Connect] select:" << iError;
 				goto _ERROR;
@@ -365,17 +365,17 @@ namespace TinyUI
 			if (iRes == SOCKET_ERROR)
 			{
 				INT iError = WSAGetLastError();
-				if (!m_errorCallback.IsNull())
+				if (!m_callback.IsNull())
 				{
-					m_errorCallback(iError);
+					m_callback(iError);
 				}
 				LOG(ERROR) << "[Receive] recv:" << iError;
 			}
 			if (iRes == 0)
 			{
-				if (!m_errorCallback.IsNull())
+				if (!m_callback.IsNull())
 				{
-					m_errorCallback(WSAREMOTECLOSE);
+					m_callback(WSAREMOTECLOSE);
 				}
 				LOG(ERROR) << "[Receive] recv 0";
 			}
@@ -388,9 +388,9 @@ namespace TinyUI
 			if (iRes == SOCKET_ERROR)
 			{
 				INT iError = WSAGetLastError();
-				if (!m_errorCallback.IsNull())
+				if (!m_callback.IsNull())
 				{
-					m_errorCallback(iError);
+					m_callback(iError);
 				}
 				LOG(ERROR) << "[Send] send:" << iError;
 			}
@@ -406,9 +406,9 @@ namespace TinyUI
 			if (iRes == SOCKET_ERROR)
 			{
 				INT iError = WSAGetLastError();
-				if (!m_errorCallback.IsNull())
+				if (!m_callback.IsNull())
 				{
-					m_errorCallback(iError);
+					m_callback(iError);
 				}
 				LOG(ERROR) << "[ReceiveFrom] recvfrom:" << iError;
 			}
@@ -424,9 +424,9 @@ namespace TinyUI
 			if (iRes == SOCKET_ERROR)
 			{
 				INT iError = WSAGetLastError();
-				if (!m_errorCallback.IsNull())
+				if (!m_callback.IsNull())
 				{
-					m_errorCallback(iError);
+					m_callback(iError);
 				}
 				LOG(ERROR) << "[SendTo] sendto:" << iError;
 			}
@@ -943,9 +943,9 @@ namespace TinyUI
 		{
 			return m_connect;
 		}
-		void TinySocket::SetErrorCallback(Callback<void(INT)>&& callback)
+		void TinySocket::SetErrorCallback(ErrorCallback&& callback)
 		{
-			m_errorCallback = std::move(callback);
+			m_callback = std::move(callback);
 		}
 		void TinySocket::Close()
 		{

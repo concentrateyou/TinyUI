@@ -112,9 +112,10 @@ namespace TinyUI
 			BOOL	BeginReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback&& callback, LPVOID arg);
 			DWORD	EndReceiveFrom(AsyncResult* result, IPEndPoint& endpoint);
 		public:
-			void	SetErrorCallback(Callback<void(INT)>&& callback);
 			virtual void Close();
 			virtual BOOL Shutdown(INT how = SD_BOTH);
+		public:
+			void	SetErrorCallback(ErrorCallback&& callback);
 		private:
 			static void CALLBACK AsyncCallback(PVOID pThis, BOOLEAN b);
 		protected:
@@ -122,7 +123,7 @@ namespace TinyUI
 			INT					m_addressFamily;
 			INT					m_socketType;
 			INT					m_protocolType;
-			Callback<void(INT)>	m_errorCallback;
+			ErrorCallback		m_callback;
 			TinyIOServer*		m_ioserver;
 			LPFN_DISCONNECTEX	m_disconnectex;
 			LPFN_CONNECTEX		m_connectex;

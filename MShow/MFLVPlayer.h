@@ -24,9 +24,10 @@ namespace MShow
 		TinyString		GetURL() const;
 		WAVEFORMATEX*	GetFormat();
 		LONGLONG		GetBasePTS();
-		void			SetErrorCallback(TinyUI::Callback<void(INT)>&& callback);
 	private:
 		void			OnMessage(UINT, WPARAM, LPARAM);
+		void			OnError(INT iError);
+		void			OnTry();
 	private:
 		BOOL							m_bBreak;
 		DWORD							m_dwRate;
@@ -34,6 +35,7 @@ namespace MShow
 		TinyString						m_szURL;
 		TinySize						m_size;
 		TinyMsgQueue					m_msgqueue;
+		TinyTaskTimer					m_timer;
 		MClock							m_clock;
 		MFLVTask						m_task;
 		MAudioTask						m_audioTask;

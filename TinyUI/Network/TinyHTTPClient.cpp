@@ -292,7 +292,7 @@ namespace TinyUI
 		{
 			m_timeout = timeout;
 		}
-		void TinyHTTPClient::SetErrorCallback(Callback<void(INT)>&& callback)
+		void TinyHTTPClient::SetErrorCallback(ErrorCallback&& callback)
 		{
 			m_socket.SetErrorCallback(std::move(callback));
 		}

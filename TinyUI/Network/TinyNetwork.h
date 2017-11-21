@@ -152,6 +152,7 @@ namespace TinyUI
 			HANDLE	AsyncHandle;
 		};
 		using CompleteCallback = Callback<void(INT, AsyncResult*)>;
+		using ErrorCallback = Callback<void(INT)>;
 		/// <summary>
 		/// OVERLAPPEDÕÿ’πΩ·ππ
 		/// </summary>

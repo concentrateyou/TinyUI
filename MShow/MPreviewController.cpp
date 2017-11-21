@@ -27,7 +27,6 @@ namespace MShow
 		m_player.Reset(new MFLVPlayer());
 		if (!m_player)
 			goto _ERROR;
-		m_player->SetErrorCallback(BindCallback(&MPreviewController::OnError, this));
 		if (!m_player->Open(m_view.Handle(), pzURL))
 		{
 			LOG(ERROR) << "[MPreviewController] " << "Open FAIL";
@@ -46,7 +45,6 @@ namespace MShow
 		m_player.Reset(new MFLVPlayer(std::move(audioCB)));
 		if (!m_player)
 			goto _ERROR;
-		m_player->SetErrorCallback(BindCallback(&MPreviewController::OnError, this));
 		if (!m_player->Open(m_view.Handle(), pzURL))
 		{
 			LOG(ERROR) << "[MPreviewController] " << "Open FAIL";
@@ -69,52 +67,11 @@ namespace MShow
 		return TRUE;
 	}
 
-	void MPreviewController::OnError(INT iError)
-	{
-		switch (iError)
-		{
-		case WSAENETDOWN:
-		case WSAENETUNREACH:
-		case WSAENETRESET:
-		case WSAECONNABORTED:
-		case WSAECONNRESET:
-		{
-			m_timer.SetCallback(5000, BindCallback(&MPreviewController::OnTry, this));//Ã¿¸ô5ÃëÖØÊÔ
-			TRACE("[MPreviewController] OnError:%d\n", iError);
-			LOG(ERROR) << "[MPreviewController] OnError:" << iError;
-		}
-		break;
-		}
-	}
-	void MPreviewController::OnTry()
-	{
-		BOOL bRes = this->Close();
-		TRACE("[MPreviewController] OnTry Close:%d\n", bRes);
-		LOG(INFO) << "[MPreviewController] OnTry Close:" << bRes;
-		if (this->Open(m_player->GetURL().CSTR()))
-		{
-			TRACE("[MPreviewController] OnTry Open OK\n");
-			LOG(INFO) << "[MPreviewController] OnTry Open OK";
-			m_timer.Close();
-		}
-		else
-		{
-			TRACE("OnTry Open FAIL\n");
-			LOG(ERROR) << "OnTry Open FAIL";
-		}
-	}
-
 	MPreviewView& MPreviewController::GetView()
 	{
 		return m_view;
 	}
-	LONGLONG MPreviewController::GetBasePTS()
-	{
-		if (m_player != NULL)
-			return m_player->GetBasePTS();
-		LOG(ERROR) << "[MPreviewController] " << "GetBasePTS NULL";
-		return  0;
-	}
+
 	MFLVPlayer*	 MPreviewController::GetPlayer()
 	{
 		return m_player;

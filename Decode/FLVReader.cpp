@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "amf.h"
 #include "FLVReader.h"
-#include "RTMPStream.h"
-#include "HTTPStream.h"
 #include "Common/TinyLogging.h"
 
 namespace Decode
@@ -27,7 +25,7 @@ namespace Decode
 	{
 		return m_script;
 	}
-	BOOL FLVReader::OpenURL(LPCSTR pzURL)
+	BOOL FLVReader::OpenURL(LPCSTR pzURL, ErrorCallback&& callback)
 	{
 		if (!pzURL)
 			return FALSE;
@@ -39,7 +37,7 @@ namespace Decode
 			if (!m_stream)
 				return FALSE;
 			HTTPStream* ps = static_cast<HTTPStream*>(m_stream.Ptr());
-			ps->SetErrorCallback(BindCallback(&FLVReader::OnError, this));
+			ps->SetErrorCallback(std::move(callback));
 			if (!ps->Open(pzURL))
 				return FALSE;
 		}
@@ -529,17 +527,6 @@ namespace Decode
 	LONGLONG FLVReader::GetBasePTS()
 	{
 		return m_basePTS;
-	}
-	void FLVReader::OnError(INT iError)
-	{
-		if (!m_errorCallback.IsNull())
-		{
-			m_errorCallback(iError);
-		}
-	}
-	void FLVReader::SetErrorCallback(Callback<void(INT)>&& callback)
-	{
-		m_errorCallback = std::move(callback);
 	}
 }
 

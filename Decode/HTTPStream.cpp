@@ -25,7 +25,7 @@ namespace Decode
 		m_client.Close();
 		return TRUE;
 	}
-	void HTTPStream::SetErrorCallback(Callback<void(INT)>&& callback)
+	void HTTPStream::SetErrorCallback(ErrorCallback&& callback)
 	{
 		m_client.SetErrorCallback(std::move(callback));
 	}

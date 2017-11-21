@@ -15,10 +15,9 @@ namespace MShow
 	public:
 		MFLVTask(MClock& clock, TinyMsgQueue& queue);
 		virtual ~MFLVTask();
-		void SetErrorCallback(TinyUI::Callback<void(INT)>&& callback);
-		BOOL Initialize(LPCSTR pzURL);
-		BOOL Submit();
-		BOOL Close(DWORD dwMS) OVERRIDE;
+		BOOL			Initialize(LPCSTR pzURL, ErrorCallback&& callback);
+		BOOL			Submit();
+		BOOL			Close(DWORD dwMS) OVERRIDE;
 		MPacketQueue&	GetAudioQueue();
 		MPacketQueue&	GetVideoQueue();
 		FLV_SCRIPTDATA&	GetScript();
@@ -28,8 +27,8 @@ namespace MShow
 		Event<void(BYTE*, LONG, WORD, BOOL&)>	EVENT_ASC;
 		Event<void(BYTE*, LONG, BOOL&)>			EVENT_AVCDCR;
 	private:
-		void	OnMessagePump();
-		BOOL	Invoke(SampleTag& tag, FLV_BLOCK& block);
+		void			OnMessagePump();
+		BOOL			Invoke(SampleTag& tag, FLV_BLOCK& block);
 	private:
 		BOOL			m_bFI;
 		BOOL			m_bBreak;

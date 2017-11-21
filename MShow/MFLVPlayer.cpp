@@ -32,16 +32,11 @@ namespace MShow
 		m_msgqueue.Close();
 	}
 
-	void MFLVPlayer::SetErrorCallback(TinyUI::Callback<void(INT)>&& callback)
-	{
-		m_task.SetErrorCallback(std::move(callback));
-	}
-
 	BOOL MFLVPlayer::Open(HWND hWND, LPCSTR pzURL)
 	{
 		m_hWND = hWND;
 		m_szURL = pzURL;
-		if (!m_task.Initialize(m_szURL.STR()))
+		if (!m_task.Initialize(m_szURL.STR(), BindCallback(&MFLVPlayer::OnError, this)))
 			return FALSE;
 		if (!m_audioRenderTask.Initialize())
 			return FALSE;
@@ -98,31 +93,66 @@ namespace MShow
 		{
 			TRACE("WM_FLV_PARSE_FAIL");
 			this->Close();
-			if (!this->Open(m_hWND, m_szURL.CSTR()))
-			{
-				TRACE("WM_FLV_PARSE_FAIL Reopen FAIL\n");
-				LOG(ERROR) << "WM_FLV_PARSE_FAIL Reopen FAIL";
-			}
-			else
+			if (this->Open(m_hWND, m_szURL.CSTR()))
 			{
 				TRACE("WM_FLV_PARSE_FAIL Reopen OK\n");
 				LOG(INFO) << "WM_FLV_PARSE_FAIL Reopen OK";
+			}
+			else
+			{
+				TRACE("WM_FLV_PARSE_FAIL Reopen FAIL\n");
+				LOG(ERROR) << "WM_FLV_PARSE_FAIL Reopen FAIL";
 			}
 		}
 		if (msg == WM_VIDEO_X264_DECODE_FAIL)
 		{
 			TRACE("WM_VIDEO_X264_DECODE_FAIL\n");
 			this->Close();
-			if (!this->Open(m_hWND, m_szURL.CSTR()))
-			{
-				TRACE("WM_VIDEO_X264_DECODE_FAIL Reopen FAIL\n");
-				LOG(ERROR) << "WM_VIDEO_X264_DECODE_FAIL Reopen FAIL";
-			}
-			else
+			if (this->Open(m_hWND, m_szURL.CSTR()))
 			{
 				TRACE("WM_VIDEO_X264_DECODE_FAIL Reopen OK\n");
 				LOG(INFO) << "WM_VIDEO_X264_DECODE_FAIL Reopen OK";
 			}
+			else
+			{
+				TRACE("WM_VIDEO_X264_DECODE_FAIL Reopen FAIL\n");
+				LOG(ERROR) << "WM_VIDEO_X264_DECODE_FAIL Reopen FAIL";
+			}
+		}
+	}
+
+	void MFLVPlayer::OnError(INT iError)
+	{
+		switch (iError)
+		{
+		case WSAETIMEDOUT:
+		case WSAENETDOWN:
+		case WSAENETUNREACH:
+		case WSAENETRESET:
+		case WSAECONNABORTED:
+		case WSAECONNRESET:
+		{
+			m_timer.SetCallback(5000, BindCallback(&MFLVPlayer::OnTry, this));//Ã¿¸ô5ÃëÖØÊÔ
+			TRACE("[MFLVPlayer] OnError:%d\n", iError);
+			LOG(ERROR) << "[MFLVPlayer] OnError:" << iError;
+		}
+		break;
+		}
+	}
+
+	void MFLVPlayer::OnTry()
+	{
+		this->Close();
+		if (this->Open(m_hWND, m_szURL.CSTR()))
+		{
+			TRACE("[MFLVPlayer] OnTry Open OK\n");
+			LOG(INFO) << "[MFLVPlayer] OnTry Open OK";
+			m_timer.Close();
+		}
+		else
+		{
+			TRACE("OnTry Open FAIL\n");
+			LOG(ERROR) << "OnTry Open FAIL";
 		}
 	}
 
