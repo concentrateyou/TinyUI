@@ -36,7 +36,8 @@ namespace TinyUI
 		}
 		BOOL TinyHandleSOCKET::Attach(SOCKET socket)
 		{
-			if (socket == INVALID_SOCKET)
+			if (socket == INVALID_SOCKET ||
+				socket == NULL)
 				return FALSE;
 			m_socket = socket;
 			TinyPointerMap& map = TinyHandleSOCKET::m_map;
@@ -46,7 +47,7 @@ namespace TinyUI
 		SOCKET TinyHandleSOCKET::Detach()
 		{
 			SOCKET socket = m_socket;
-			if (socket != INVALID_SOCKET)
+			if (socket != INVALID_SOCKET && socket != NULL)
 			{
 				TinyPointerMap& map = TinyHandleSOCKET::m_map;
 				map.Remove(static_cast<UINT_PTR>(socket));
@@ -118,7 +119,8 @@ namespace TinyUI
 			m_socketType = socketType;
 			m_protocolType = protocolType;
 			m_socket = WSASocket(addressFamily, socketType, protocolType, NULL, 0, WSA_FLAG_OVERLAPPED);
-			if (m_socket == INVALID_SOCKET)
+			if (m_socket == INVALID_SOCKET ||
+				m_socket == NULL)
 				return FALSE;
 			BOOL allow = TRUE;
 			if (!SetOption(SOL_SOCKET, SO_REUSEADDR, (const CHAR*)&allow, sizeof(allow)))
@@ -133,27 +135,27 @@ namespace TinyUI
 		}
 		BOOL TinySocket::SetKeepAlive(BOOL bAllow)
 		{
-			ASSERT(m_socket != INVALID_SOCKET);
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
 			INT size = sizeof(bAllow);
 			return SetOption(SOL_SOCKET, SO_KEEPALIVE, (const CHAR*)&bAllow, size);
 		}
 		BOOL TinySocket::GetKeepAlive(BOOL& bAllow)
 		{
-			ASSERT(m_socket != INVALID_SOCKET);
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
 			bAllow = FALSE;
 			INT size = sizeof(bAllow);
 			return GetOption(SOL_SOCKET, SO_KEEPALIVE, (CHAR*)&bAllow, size);
 		}
 		BOOL TinySocket::SetDelay(BOOL bAllow)
 		{
-			ASSERT(m_socket != INVALID_SOCKET);
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
 			bAllow = !bAllow;
 			INT size = sizeof(bAllow);
 			return SetOption(IPPROTO_TCP, TCP_NODELAY, (const CHAR*)&bAllow, size);
 		}
 		BOOL TinySocket::GetDelay(BOOL& bAllow)
 		{
-			ASSERT(m_socket != INVALID_SOCKET);
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
 			bAllow = FALSE;
 			INT size = sizeof(bAllow);
 			if (GetOption(IPPROTO_TCP, TCP_NODELAY, (CHAR*)&bAllow, size))
@@ -165,31 +167,31 @@ namespace TinyUI
 		}
 		BOOL TinySocket::Available(INT& argp)
 		{
-			ASSERT(m_socket != INVALID_SOCKET);
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
 			return ioctlsocket(m_socket, FIONREAD, (ULONG*)&argp) == NO_ERROR;
 		}
 		BOOL TinySocket::SetBlocking(BOOL bAllow)
 		{
-			ASSERT(m_socket != INVALID_SOCKET);
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
 			bAllow = !bAllow;
 			//0 ×èÈû 1 ·Ç×èÈû
 			return ioctlsocket(m_socket, FIONBIO, (ULONG*)&bAllow) == NO_ERROR;
 		}
 		BOOL TinySocket::GetTimeout(BOOL bRecv, DWORD& dwTime)
 		{
-			ASSERT(m_socket != INVALID_SOCKET);
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
 			INT size = sizeof(dwTime);
 			return GetOption(SOL_SOCKET, bRecv ? SO_RCVTIMEO : SO_SNDTIMEO, (CHAR *)&dwTime, size);
 		}
 		BOOL TinySocket::SetTimeout(BOOL bRecv, DWORD dwTime)
 		{
-			ASSERT(m_socket != INVALID_SOCKET);
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
 			INT size = sizeof(dwTime);
 			return SetOption(SOL_SOCKET, bRecv ? SO_RCVTIMEO : SO_SNDTIMEO, (CHAR *)&dwTime, size);
 		}
 		BOOL TinySocket::Duplicate(DWORD processID, WSAPROTOCOL_INFO& s)
 		{
-			ASSERT(m_socket != INVALID_SOCKET);
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
 			return WSADuplicateSocket(m_socket, processID, &s) != S_OK;
 		}
 		INT TinySocket::GetLastError()
@@ -210,7 +212,7 @@ namespace TinyUI
 		}
 		BOOL TinySocket::Poll(INT micros, INT mode)
 		{
-			ASSERT(m_socket != INVALID_SOCKET);
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
 			FD_SET set;
 			FD_ZERO(&set);
 			FD_SET(m_socket, &set);
@@ -234,7 +236,7 @@ namespace TinyUI
 		}
 		BOOL TinySocket::Bind(const IPEndPoint& endpoint)
 		{
-			ASSERT(m_socket != INVALID_SOCKET);
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
 			SOCKADDR s = { 0 };
 			size_t size = 0;
 			if (!endpoint.ToSOCKADDR(&s, &size))
@@ -253,7 +255,7 @@ namespace TinyUI
 		}
 		BOOL TinySocket::Listen(DWORD backlog)
 		{
-			ASSERT(m_socket != INVALID_SOCKET);
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
 			if (::listen(m_socket, SOMAXCONN) == SOCKET_ERROR)
 			{
 				INT iError = WSAGetLastError();
@@ -268,11 +270,11 @@ namespace TinyUI
 		}
 		TinySocket* TinySocket::Accept()
 		{
-			ASSERT(m_socket != INVALID_SOCKET);
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
 			SOCKADDR_IN sa = { 0 };
 			INT size = sizeof(SOCKADDR_IN);
 			SOCKET s = accept(m_socket, (SOCKADDR*)&sa, &size);
-			if (s != INVALID_SOCKET)
+			if (s != INVALID_SOCKET && s != NULL)
 			{
 				TinySocket* socket = new TinySocket();
 				if (!socket || !socket->Attach(s))
@@ -295,7 +297,7 @@ namespace TinyUI
 		}
 		BOOL TinySocket::Connect(const IPEndPoint& endpoint, DWORD dwS)
 		{
-			ASSERT(m_socket != INVALID_SOCKET);
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
 			SOCKADDR si = { 0 };
 			size_t size = 0;
 			TIMEVAL val;
@@ -360,7 +362,7 @@ namespace TinyUI
 		}
 		INT  TinySocket::Receive(CHAR* data, DWORD dwSize, DWORD dwFlag)
 		{
-			ASSERT(m_socket != INVALID_SOCKET);
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
 			INT iRes = ::recv(m_socket, data, dwSize, dwFlag);
 			if (iRes == SOCKET_ERROR)
 			{
@@ -383,7 +385,7 @@ namespace TinyUI
 		}
 		INT	 TinySocket::Send(CHAR* data, DWORD dwSize, DWORD dwFlag)
 		{
-			ASSERT(m_socket != INVALID_SOCKET);
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
 			INT iRes = ::send(m_socket, data, dwSize, dwFlag);
 			if (iRes == SOCKET_ERROR)
 			{
@@ -398,7 +400,7 @@ namespace TinyUI
 		}
 		INT	TinySocket::ReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, IPEndPoint& endpoint)
 		{
-			ASSERT(m_socket != INVALID_SOCKET);
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
 			SOCKADDR si = { 0 };
 			INT size = 0;
 			INT iRes = ::recvfrom(m_socket, data, dwSize, dwFlags, (SOCKADDR*)&si, &size);
@@ -416,7 +418,7 @@ namespace TinyUI
 		}
 		INT	 TinySocket::SendTo(CHAR* data, DWORD dwSize, DWORD dwFlag, IPEndPoint& endpoint)
 		{
-			ASSERT(m_socket != INVALID_SOCKET);
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
 			SOCKADDR si = { 0 };
 			INT size = 0;
 			INT iRes = ::sendto(m_socket, data, dwSize, dwFlag, (SOCKADDR*)&si, sizeof(si));
@@ -448,7 +450,7 @@ namespace TinyUI
 		//////////////////////////////////////////////////////////////////////////
 		BOOL TinySocket::BeginAccept(CompleteCallback&& callback, LPVOID arg)
 		{
-			ASSERT(m_socket != INVALID_SOCKET);
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
 			TinyAutoLock lock(m_synclock);
 			INT errorCode = ERROR_SUCCESS;
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
@@ -524,7 +526,7 @@ namespace TinyUI
 		}
 		TinySocket* TinySocket::EndAccept(AsyncResult* result)
 		{
-			ASSERT(m_socket != INVALID_SOCKET);
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
 			AcceptAsyncResult* accept = static_cast<AcceptAsyncResult*>(result);
 			return accept->AcceptSocket;
 		}
@@ -625,7 +627,7 @@ namespace TinyUI
 		}
 		BOOL TinySocket::BeginDisconnect(CompleteCallback&& callback, LPVOID arg)
 		{
-			ASSERT(m_socket != INVALID_SOCKET);
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
 			TinyAutoLock lock(m_synclock);
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
@@ -689,7 +691,7 @@ namespace TinyUI
 		}
 		BOOL TinySocket::BeginReceive(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback&& callback, LPVOID arg)
 		{
-			ASSERT(m_socket != INVALID_SOCKET);
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
 			TinyAutoLock lock(m_synclock);
 			DWORD errorCode = ERROR_SUCCESS;
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
@@ -749,7 +751,7 @@ namespace TinyUI
 		}
 		BOOL TinySocket::BeginSend(CHAR* data, DWORD dwSize, DWORD dwFlag, CompleteCallback&& callback, LPVOID arg)
 		{
-			ASSERT(m_socket != INVALID_SOCKET);
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
 			TinyAutoLock lock(m_synclock);
 			INT errorCode = ERROR_SUCCESS;
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
@@ -809,7 +811,7 @@ namespace TinyUI
 		}
 		BOOL TinySocket::BeginSendTo(CHAR* data, DWORD dwSize, DWORD dwFlags, IPEndPoint& endpoint, CompleteCallback&& callback, LPVOID arg)
 		{
-			ASSERT(m_socket != INVALID_SOCKET);
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
 			TinyAutoLock lock(m_synclock);
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
@@ -878,7 +880,7 @@ namespace TinyUI
 		}
 		BOOL TinySocket::BeginReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback&& callback, LPVOID arg)
 		{
-			ASSERT(m_socket != INVALID_SOCKET);
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
 			TinyAutoLock lock(m_synclock);
 			INT errorCode = ERROR_SUCCESS;
 			PER_IO_CONTEXT* context = new PER_IO_CONTEXT();
@@ -951,7 +953,8 @@ namespace TinyUI
 		{
 			m_connect = FALSE;
 			SOCKET socket = Detach();
-			if (socket != INVALID_SOCKET)
+			if (socket != INVALID_SOCKET &&
+				socket != NULL)
 			{
 				::closesocket(socket);
 				m_disconnectex = NULL;
@@ -962,6 +965,7 @@ namespace TinyUI
 		BOOL TinySocket::Shutdown(INT how)
 		{
 			if (m_socket != INVALID_SOCKET &&
+				m_socket != NULL &&
 				::shutdown(m_socket, how) == NO_ERROR)
 			{
 				m_disconnectex = NULL;

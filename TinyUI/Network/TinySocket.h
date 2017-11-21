@@ -112,8 +112,11 @@ namespace TinyUI
 			BOOL	BeginReceiveFrom(CHAR* data, DWORD dwSize, DWORD dwFlags, CompleteCallback&& callback, LPVOID arg);
 			DWORD	EndReceiveFrom(AsyncResult* result, IPEndPoint& endpoint);
 		public:
+			/// <summary>
+			/// https://msdn.microsoft.com/en-us/library/windows/desktop/ms738547(v=vs.85).aspx
+			/// </summary>
 			virtual void Close();
-			virtual BOOL Shutdown(INT how = SD_BOTH);
+			virtual BOOL Shutdown(INT how = SD_SEND);
 		public:
 			void	SetErrorCallback(ErrorCallback&& callback);
 		private:
