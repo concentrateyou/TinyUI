@@ -277,7 +277,7 @@ namespace TinyUI
 				TinyImage* image = new TinyImage();
 				if (image != NULL && image->Open(szNewFile.c_str()))
 				{
-					ASSERT(m_images2.Add(szName, image));
+					m_images2.Add(szName, image);
 					return image;
 				}
 			}
@@ -393,6 +393,7 @@ namespace TinyUI
 					{
 						szValue = UTF8ToASCII(pFA->Value());
 					}
+					TRACE("Name:%s\n",szName.c_str());
 					if (!szName.empty() && !szValue.empty())
 					{
 						TinyVisualResource::GetInstance().Add(szName.c_str(), szValue.c_str());

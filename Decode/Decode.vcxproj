@@ -77,14 +77,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\ThirdParty\ffmpeg\include;..\ThirdParty\mpg123\include;..\ThirdParty\libfaad\include;..\ThirdParty\librtmp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\ThirdParty\ffmpeg\include;..\ThirdParty\libfaad\include;..\ThirdParty\librtmp\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>..\TinyUI;..\Debug;..\ThirdParty\mpg123\lib\x86;..\ThirdParty\libfaad\lib\x86;..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\librtmp\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libfaad.lib;librtmp.lib;libmpg123.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\TinyUI;..\Debug;..\ThirdParty\libfaad\lib\x86;..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\librtmp\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libfaad.lib;librtmp.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -113,7 +113,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\ThirdParty\ffmpeg\include;..\ThirdParty\mpg123\include;..\ThirdParty\libfaad\include;..\ThirdParty\librtmp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\ThirdParty\ffmpeg\include;..\ThirdParty\libfaad\include;..\ThirdParty\librtmp\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -121,8 +121,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>..\TinyUI;..\ThirdParty\mpg123\lib\x86;..\ThirdParty\libfaad\lib\x86;..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\librtmp\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libfaad.lib;librtmp.lib;libmpg123.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\TinyUI;..\ThirdParty\libfaad\lib\x86;..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\librtmp\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libfaad.lib;librtmp.lib</AdditionalDependencies>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -156,9 +156,7 @@
     <ClInclude Include="FLVReader.h" />
     <ClInclude Include="FLVWriter.h" />
     <ClInclude Include="HTTPStream.h" />
-    <ClInclude Include="MP3Task.h" />
     <ClInclude Include="x264Decode.h" />
-    <ClInclude Include="MPG123Decode.h" />
     <ClInclude Include="RTMPStream.h" />
     <ClInclude Include="FLVParser.h" />
     <ClInclude Include="stdafx.h" />
@@ -173,9 +171,7 @@
     <ClCompile Include="FLVReader.cpp" />
     <ClCompile Include="FLVWriter.cpp" />
     <ClCompile Include="HTTPStream.cpp" />
-    <ClCompile Include="MP3Task.cpp" />
     <ClCompile Include="x264Decode.cpp" />
-    <ClCompile Include="MPG123Decode.cpp" />
     <ClCompile Include="RTMPStream.cpp" />
     <ClCompile Include="FLVParser.cpp" />
     <ClCompile Include="stdafx.cpp">
