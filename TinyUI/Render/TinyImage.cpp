@@ -6,13 +6,18 @@ using namespace TinyUI::Network;
 
 namespace TinyUI
 {
-	extern "C"
-	{
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 		extern unsigned char *stbi_load_ex(char const *filename, int *x, int *y, int *channels_in_file, int desired_channels, int* count);
 		extern unsigned char *stbi_load_from_memory_ex(unsigned char const *buffer, int len, int *x, int *y, int *channels_in_file, int desired_channels, int* count);
 		extern unsigned char *stbi_load_from_file_ex(FILE *f, int *x, int *y, int *channels_in_file, int desired_channels, int* count);
 		extern void	stbi_image_free(void *retval_from_stbi_load);
-	};
+
+#ifdef __cplusplus
+	}
+#endif
 
 	BOOL WINAPI SaveBitmapToFile(HBITMAP hBitmap, LPCTSTR lpFileName)
 	{

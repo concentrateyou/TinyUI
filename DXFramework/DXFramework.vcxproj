@@ -100,6 +100,9 @@
       <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib\x86;..\TinyUI;..\Debug</AdditionalLibraryDirectories>
       <AdditionalDependencies>d3d11.lib;D3DX11.lib;d3d9.lib;d3dx9.lib;dxgi.lib;D2D1.lib;TinyUI.lib</AdditionalDependencies>
     </Lib>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -123,13 +126,13 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;DXFRAMEWORK_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\DShowCapture</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(DXSDK_DIR)\Include;..\TinyUI;..\DShowCapture</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -140,9 +143,12 @@
       <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\TinyUI;..\Release</AdditionalLibraryDirectories>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>..\TinyUI;..\Release</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d11.lib;d3d9.lib;dxgi.lib;D3DCompiler.lib;TinyUI.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib\x86;..\TinyUI;..\Release</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d11.lib;D3DX11.lib;d3d9.lib;D3dx9.lib;dxgi.lib;D3DCompiler.lib;TinyUI.lib</AdditionalDependencies>
     </Lib>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

@@ -69,3 +69,5 @@
 /ThirdParty/jsoncpp/lib/pkgconfig
 /MShowApp/x64/Debug
 /NvVideoCodec/Debug
+/MShow/Release
+/DWMDetour/Release/DWMDetour.tlog
