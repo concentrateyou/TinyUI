@@ -77,7 +77,7 @@ namespace TinyUI
 				return FALSE;
 			ZeroMemory(&dbdesc, sizeof(dbdesc));
 			dbdesc.dwSize = sizeof(dbdesc);
-			dbdesc.dwFlags = DSBCAPS_STATIC | DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLPOSITIONNOTIFY | DSBCAPS_GETCURRENTPOSITION2;
+			dbdesc.dwFlags = DSBCAPS_STATIC | DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLPOSITIONNOTIFY;
 			dbdesc.dwBufferBytes = dwSize;
 			dbdesc.lpwfxFormat = reinterpret_cast<WAVEFORMATEX*>(m_waveFMT.Ptr());
 			TinyComPtr<IDirectSoundBuffer> dsb;
@@ -209,9 +209,9 @@ namespace TinyUI
 			return TRUE;
 		}
 
-		BOOL TinySoundPlayer::IsValid() const
+		BOOL TinySoundPlayer::IsEmpty() const
 		{
-			return m_sound != NULL && m_secondaryDSB != NULL && m_primaryDSB != NULL;
+			return (m_sound == NULL || m_secondaryDSB == NULL || m_primaryDSB == NULL);
 		}
 
 		DWORD TinySoundPlayer::GetSize() const

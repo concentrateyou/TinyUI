@@ -25,6 +25,7 @@ namespace TinyUI
 			virtual ~TinySoundPlayer();
 		public:
 			static BOOL	Enumerate(std::vector<PLAYDEVICE>& devices);
+			BOOL	IsEmpty() const;
 			BOOL	Open(const GUID& guid, HWND hWND);
 			BOOL	Open(HWND hWND);
 			BOOL	SetNotifys(DWORD dwSize, LPCDSBPOSITIONNOTIFY pNotify);
@@ -41,7 +42,6 @@ namespace TinyUI
 			BOOL	GetPlan(LONG& plan);
 			BOOL	Stop();
 			BOOL	Close();
-			BOOL	IsValid() const;
 			/// <summary>
 			/// ª∫≥Â¥Û–°
 			/// </summary>
