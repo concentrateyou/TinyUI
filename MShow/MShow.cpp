@@ -254,6 +254,8 @@ BOOL BuildCrash()
 	return TRUE;
 }
 
+HMODULE g_hXAudio = NULL;
+
 INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPTSTR    lpCmdLine,
@@ -275,12 +277,34 @@ INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	MFStartup(MF_VERSION);
 	OleInitialize(NULL);
 
+
+	g_hXAudio = LoadLibrary("XAudioD2_7.DLL");
+	if (g_hXAudio != NULL)
+	{
+		TRACE("Load XAudioD2_7.dll OK\n");
+		LOG(INFO) << "Load XAudioD2_7.dll OK";
+	}
+	else
+	{
+		TRACE("Load XAudioD2_7.dll FAIL\n");
+		LOG(ERROR) << "Load XAudioD2_7.dll FAIL";
+	}
+
 	//确保MShowApp先释放
 	TinyApplication* app = TinyApplication::GetInstance();
 
 	MShow::MShowApp& showApp = MShow::MShowApp::GetInstance();
 	showApp.Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_MSHOW));
 	INT iRes = showApp.Run();
+
+	if (g_hXAudio != NULL)
+	{
+		FreeLibrary(g_hXAudio);
+		TRACE("Free XAudioD2_7.dll OK\n");
+		LOG(INFO) << "Load XAudioD2_7.dll OK";
+	}
+	g_hXAudio = NULL;
+
 	OleUninitialize();
 	MFShutdown();
 	WSACleanup();

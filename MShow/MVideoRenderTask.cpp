@@ -131,6 +131,11 @@ namespace MShow
 			OnCopy(sampleTag.bits, sampleTag.size);
 			LONG systemMS = static_cast<LONG>(MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime());
 			INT delay = static_cast<INT>(sampleTag.samplePTS - systemMS);
+			if (delay >= 50)
+			{
+				TRACE("Video Delay:%d\n", delay);
+				LOG(INFO) << "Video Delay:" << delay;
+			}
 			if (timer.Waiting(delay, 100))
 			{
 				m_graphics.Present();
