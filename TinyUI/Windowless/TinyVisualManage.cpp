@@ -393,7 +393,6 @@ namespace TinyUI
 					{
 						szValue = UTF8ToASCII(pFA->Value());
 					}
-					TRACE("Name:%s\n",szName.c_str());
 					if (!szName.empty() && !szValue.empty())
 					{
 						TinyVisualResource::GetInstance().Add(szName.c_str(), szValue.c_str());
