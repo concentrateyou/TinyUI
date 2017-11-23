@@ -40,9 +40,10 @@ namespace MShow
 			return FALSE;
 		if (!m_audioRenderTask.Initialize())
 			return FALSE;
-		if (!m_videoTask.Submit())
-			return FALSE;
 		if (!m_videoRenderTask.Initialize(hWND))
+			return FALSE;
+
+		if (!m_videoTask.Submit())
 			return FALSE;
 		if (!m_videoRenderTask.Submit())
 			return FALSE;
@@ -69,14 +70,19 @@ namespace MShow
 		BOOL bRes = TRUE;
 		if (m_task.IsActive())
 			bRes &= m_task.Close(INFINITE);
+		LOG(INFO) << "MFLVTask Close:" << bRes;
 		if (m_videoRenderTask.IsActive())
 			bRes &= m_videoRenderTask.Close(INFINITE);
+		LOG(INFO) << "MVideoRenderTask Close:" << bRes;
 		if (m_videoTask.IsActive())
 			bRes &= m_videoTask.Close(INFINITE);
+		LOG(INFO) << "MVideoTask Close:" << bRes;
 		if (m_audioRenderTask.IsActive())
 			bRes &= m_audioRenderTask.Close(INFINITE);
+		LOG(INFO) << "MAudioRenderTask Close:" << bRes;
 		if (m_audioTask.IsActive())
 			bRes &= m_audioTask.Close(INFINITE);
+		LOG(INFO) << "MAudioRenderTask Close:" << bRes;
 		m_audioTask.GetAudioQueue().RemoveAll();
 		m_videoTask.GetVideoQueue().RemoveAll();
 		m_task.GetVideoQueue().RemoveAll();

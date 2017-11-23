@@ -38,8 +38,12 @@ namespace MShow
 	{
 		m_bBreak = TRUE;
 		m_bInitialize = FALSE;
-		m_image.Destory();
-		return TinyTaskBase::Close(dwMS);
+		if (TinyTaskBase::Close(dwMS))
+		{
+			m_image.Destory();
+			return TRUE;
+		}
+		return FALSE;
 	}
 
 	BOOL MVideoRenderTask::OnCopy(BYTE* bits, LONG size)

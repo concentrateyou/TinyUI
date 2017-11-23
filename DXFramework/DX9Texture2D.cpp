@@ -64,8 +64,6 @@ namespace DXFramework
 	}
 	void DX9Texture2D::Destory()
 	{
-		TRACE("[DX9Texture2D] Destory\n");
-		LOG(INFO) << "[DX9Texture2D] Destory";
 		m_texture2D.Release();
 	}
 	BOOL DX9Texture2D::SaveAs(const CHAR* pzFile, D3DXIMAGE_FILEFORMAT dxgi)
@@ -82,8 +80,6 @@ namespace DXFramework
 			return FALSE;
 		if (!bits)
 			return FALSE;
-		TRACE("[DX9Texture2D] Copy\n");
-		LOG(INFO) << "[DX9Texture2D] Copy";
 		D3DLOCKED_RECT lockRect = { 0 };
 		HRESULT hRes = m_texture2D->LockRect(0, &lockRect, NULL, D3DLOCK_DISCARD);
 		if (hRes != S_OK)
