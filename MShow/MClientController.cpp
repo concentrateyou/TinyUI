@@ -189,11 +189,11 @@ namespace MShow
 		{
 			//停止Timer
 			m_timerStatus.Close();
+			Disconnect(m_szSourceID);
+			StopCommentary();
+			Close();
 			if (MessageBox(m_view.Handle(), "当前客户端连接被移除", "警告", MB_OK) == IDOK)
 			{
-				Disconnect(m_szSourceID);
-				StopCommentary();
-				Close();
 				m_view.ShowWindow(SW_HIDE);
 				m_view.UpdateWindow();
 				MShow::MShowApp::GetInstance().GetSearchController().Refresh();
