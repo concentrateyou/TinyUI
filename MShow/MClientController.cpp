@@ -812,17 +812,6 @@ namespace MShow
 	}
 	BOOL MClientController::StartCommentary()
 	{
-		/*WAVEFORMATEX m_waveFMTO;
-		ZeroMemory(&m_waveFMTO, sizeof(m_waveFMTO));
-		m_waveFMTO.cbSize = 0;
-		m_waveFMTO.wFormatTag = WAVE_FORMAT_PCM;
-		m_waveFMTO.nChannels = 2;
-		m_waveFMTO.nSamplesPerSec = 44100;
-		m_waveFMTO.wBitsPerSample = 16;
-		m_waveFMTO.nBlockAlign = 4;
-		m_waveFMTO.nAvgBytesPerSec = 176400;
-		m_audio.Open(&m_waveFMTO);
-		m_audio.Start();*/
 		m_bBreak = FALSE;
 		//获取音频预览流
 		string szIP;
@@ -857,16 +846,7 @@ namespace MShow
 				m_audioDSP.Start();
 			}
 		}
-		/*	if (m_playTask.IsActive())
-			{
-				m_bBreak1 = TRUE;
-				m_playTask.Close(1000);
-			}
-			if (!m_playTask.Submit(BindCallback(&MClientController::OnMessagePump1, this)))
-			{
-				goto _ERROR;
-			}*/
-			//启动SDK发送数据
+		//启动SDK发送数据
 		if (m_task.IsActive())
 		{
 			m_bBreak = TRUE;
@@ -882,7 +862,7 @@ namespace MShow
 			goto _ERROR;
 		}
 		//开始Timer
-		if (!m_timerStatus.SetCallback(3000, BindCallback(&MClientController::OnTimerStatus, this)))
+		if (!m_timerStatus.SetCallback(1000, BindCallback(&MClientController::OnTimerStatus, this)))
 		{
 			goto _ERROR;
 		}
@@ -912,8 +892,6 @@ namespace MShow
 	}
 	void MClientController::StopCommentary()
 	{
-		/*m_audio.Stop();
-		m_audio.Close();*/
 		if (m_task.IsActive())
 		{
 			m_bBreak = TRUE;

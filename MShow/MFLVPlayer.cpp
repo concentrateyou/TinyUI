@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "MFLVPlayer.h"
+#include "MShow.h"
 
 namespace MShow
 {
@@ -89,7 +90,8 @@ namespace MShow
 		m_task.GetAudioQueue().RemoveAll();
 		m_clock.SetBasePTS(INVALID_TIME);
 		m_clock.SetBaseTime(INVALID_TIME);
-		Sleep(100);
+		MShow::MShowApp::GetInstance().SetCurrentAudioTS(0);
+		Sleep(300);
 		return bRes;
 	}
 
