@@ -75,6 +75,11 @@ namespace TinyUI
 			hRes = m_primaryDSB->SetFormat(reinterpret_cast<WAVEFORMATEX*>(m_waveFMT.Ptr()));
 			if (hRes != S_OK)
 				return FALSE;
+			DSBCAPS dsbcaps = { 0 };
+			dsbcaps.dwSize = sizeof(DSBCAPS);
+			hRes = m_primaryDSB->GetCaps(&dsbcaps);
+			if (hRes != S_OK)
+				return FALSE;
 			ZeroMemory(&dbdesc, sizeof(dbdesc));
 			dbdesc.dwSize = sizeof(dbdesc);
 			dbdesc.dwFlags = DSBCAPS_STATIC | DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLPOSITIONNOTIFY;

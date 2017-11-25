@@ -12,7 +12,7 @@ namespace Decode
 	/// <summary>
 	/// MP3解码成PCM并按AAC编码4096输出
 	/// </summary>
-	class MP3Task : public TinyTaskBase
+	/*class MP3Task : public TinyTaskBase
 	{
 		DISALLOW_COPY_AND_ASSIGN(MP3Task)
 	public:
@@ -32,7 +32,7 @@ namespace Decode
 		TinyMP3File				m_reader;
 		WAVEFORMATEX			m_waveFMT;
 		TinyBufferArray<BYTE>	m_residial;
-	};
+	};*/
 }
 
 

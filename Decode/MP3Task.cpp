@@ -3,7 +3,7 @@
 
 namespace Decode
 {
-	MP3Task::MP3Task()
+	/*MP3Task::MP3Task()
 		:m_bBreak(FALSE)
 	{
 		ZeroMemory(&m_waveFMT, sizeof(m_waveFMT));
@@ -80,5 +80,5 @@ namespace Decode
 			}
 			m_residial.Add(bits, size);
 		}
-	}
+	}*/
 }

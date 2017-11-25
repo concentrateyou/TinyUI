@@ -22,6 +22,8 @@ namespace MShow
 		MPacketQueue&	GetVideoQueue();
 		FLV_SCRIPTDATA&	GetScript();
 		LONGLONG		GetBasePTS();
+	private:
+		void OnError(INT iError);
 	public:
 		Event<void(BYTE*, LONG, WORD, BOOL&)>	EVENT_ASC;
 		Event<void(BYTE*, LONG, BOOL&)>			EVENT_AVCDCR;

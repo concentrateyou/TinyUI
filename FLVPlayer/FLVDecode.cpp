@@ -29,7 +29,8 @@ namespace FLVPlayer
 	}
 	BOOL FLVDecode::Submit()
 	{
-		if (m_reader.OpenFile("D:\\Media\\7.flv"))
+		//if (m_reader.OpenFile("D:\\Media\\1.flv"))
+		if (m_reader.OpenURL("rtmp://10.10.13.99/live/lb_qipashuo_720p", BindCallback(&FLVDecode::OnError, this)))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);
@@ -43,6 +44,10 @@ namespace FLVPlayer
 			}
 		}
 		return FALSE;
+	}
+	void FLVDecode::OnError(INT iError)
+	{
+
 	}
 	BOOL FLVDecode::Close(DWORD dwMS)
 	{
@@ -74,7 +79,6 @@ namespace FLVPlayer
 			{
 				break;
 			}
-			TRACE("TS:%lld\n", block.dts);
 			if (block.type == FLV_AUDIO)
 			{
 				if (block.audio.codeID == FLV_CODECID_AAC)
@@ -214,22 +218,22 @@ namespace FLVPlayer
 				m_decode.m_decode.m_lockTime.Lock();
 				m_decode.m_decode.m_baseTime += m_time.GetMillisconds();
 				m_decode.m_decode.m_lockTime.Unlock();
-				m_player.Play();
 				DWORD dwMS = timeGetTime() - m_decode.m_decode.m_baseTime;
 				INT offset = tag.samplePTS - dwMS;
 				if (timer.Waiting(offset, 1000))
 				{
-					if (tag.size != 4096)
-					{
-						m_player.Fill(tag.bits, tag.size, dwOffset);
-					}
+					m_player.Fill(tag.bits, tag.size, dwOffset);
 				}
+				m_player.Play();
 			}
 			else
 			{
 				m_player.Fill(tag.bits, tag.size, dwOffset);
-				SAFE_DELETE_ARRAY(tag.bits);
 			}
+			SAFE_DELETE_ARRAY(tag.bits);
+			DWORD dwMS = timeGetTime() - m_decode.m_decode.m_baseTime;
+			INT offset = tag.samplePTS - dwMS;
+			TRACE("Audio Delay:%d\n", offset);
 			HANDLE handles[3] = { m_events[0],m_events[1],m_events[2] };
 			HRESULT hRes = WaitForMultipleObjects(3, handles, FALSE, INFINITE);
 			switch (hRes)

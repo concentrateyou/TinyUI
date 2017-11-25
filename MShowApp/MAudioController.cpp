@@ -18,12 +18,12 @@ namespace MShow
 		m_onMenuClick.Reset(new Delegate<void(void*, INT)>(this, &MAudioController::OnMenuClick));
 		m_popup.EVENT_CLICK += m_onMenuClick;
 		m_onAudio.Reset(new Delegate<void(BYTE*, LONG)>(this, &MAudioController::OnAudio));
-		m_task.EVENT_AUDIO += m_onAudio;
+		//m_task.EVENT_AUDIO += m_onAudio;
 	}
 
 	MAudioController::~MAudioController()
 	{
-		m_task.EVENT_AUDIO -= m_onAudio;
+		///m_task.EVENT_AUDIO -= m_onAudio;
 		m_view.EVENT_LDBCLICK -= m_onLButtonDBClick;
 		m_view.EVENT_RBUTTONDOWN -= m_onRButtonDown;
 		m_popup.EVENT_CLICK -= m_onMenuClick;
@@ -82,7 +82,7 @@ namespace MShow
 		if (!m_szFile.IsEmpty())
 		{
 			MShow::MShowApp::GetInstance().GetController().GetAudioEncoder().SetAudioController(this);
-			m_task.Submit(m_szFile.STR());
+			//m_task.Submit(m_szFile.STR());
 		}
 	}
 

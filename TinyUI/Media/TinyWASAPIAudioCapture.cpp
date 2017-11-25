@@ -108,9 +108,6 @@ namespace TinyUI
 			hRes = m_audioClient->GetService(__uuidof(IAudioClock), (void**)&m_audioClock);
 			if (hRes != S_OK)
 				goto MMERROR;
-			hRes = m_audioSession->RegisterAudioSessionNotification(this);
-			if (hRes != S_OK)
-				goto MMERROR;
 			return TRUE;
 		MMERROR:
 			if (pFMT && bFlag)
@@ -188,10 +185,6 @@ namespace TinyUI
 		}
 		BOOL TinyWASAPIAudioCapture::Close()
 		{
-			if (m_audioSession != NULL)
-			{
-				m_audioSession->UnregisterAudioSessionNotification(this);
-			}
 			if (m_bCapturing && !Stop())
 			{
 				m_audioVolume.Release();

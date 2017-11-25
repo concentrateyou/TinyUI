@@ -113,6 +113,7 @@ namespace FLVPlayer
 	private:
 		void	OnMessagePump();
 		void	OnQSV(BYTE* bits, LONG size, INT pts);
+		void	OnError(INT iError);
 	private:
 		BOOL						m_bFirstI;
 		TinyLock					m_lockTime;

@@ -10,7 +10,7 @@ namespace TinyUI
 		VoiceCallback::VoiceCallback()
 			:m_handle(NULL)
 		{
-			m_handle = CreateEventEx(NULL, NULL, FALSE, EVENT_MODIFY_STATE | SYNCHRONIZE);
+			m_handle = CreateEvent(NULL, FALSE, FALSE, NULL);
 		}
 		VoiceCallback::~VoiceCallback()
 		{

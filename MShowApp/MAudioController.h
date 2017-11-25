@@ -37,7 +37,7 @@ namespace MShow
 		TinyString		m_szFile;
 		TinyMenu		m_popup;
 		MAudioView&		m_view;
-		MP3Task			m_task;
+		//MP3Task			m_task;
 	private:
 		TinyScopedPtr<Delegate<void(BYTE*, LONG)>>					m_onAudio;
 		TinyScopedPtr<Delegate<void(void*, INT)>>					m_onMenuClick;
