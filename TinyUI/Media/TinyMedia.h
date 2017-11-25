@@ -116,8 +116,15 @@ namespace TinyUI
 			virtual ~AudioObserver();
 		};
 		//////////////////////////////////////////////////////////////////////////
-		class AudioDeviceListener : public TinyReference<AudioDeviceListener>, public IMMNotificationClient
+		using AudioClientCallback = Callback<void(LPCWSTR, DWORD)>;
+
+		class AudioClientListener : public TinyReference<AudioClientListener>, public IMMNotificationClient
 		{
+			DISALLOW_COPY_AND_ASSIGN(AudioClientListener)
+		public:
+			AudioClientListener();
+			virtual ~AudioClientListener();
+			BOOL Initialize(AudioClientCallback&& callback);
 		public:
 			HRESULT STDMETHODCALLTYPE OnDeviceStateChanged(_In_ LPCWSTR pwstrDeviceId, _In_ DWORD dwNewState) OVERRIDE;
 			HRESULT STDMETHODCALLTYPE OnDeviceAdded(_In_ LPCWSTR pwstrDeviceId) OVERRIDE;
@@ -127,6 +134,9 @@ namespace TinyUI
 			HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject) OVERRIDE;
 			ULONG STDMETHODCALLTYPE AddRef(void) OVERRIDE;
 			ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
+		private:
+			AudioClientCallback				m_callback;
+			TinyComPtr<IMMDeviceEnumerator>	m_enumerator;
 		};
 		//////////////////////////////////////////////////////////////////////////
 		//https://msdn.microsoft.com/en-us/library/dd376684(v=vs.85).aspx

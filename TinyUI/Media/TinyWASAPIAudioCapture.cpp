@@ -50,7 +50,7 @@ namespace TinyUI
 			if (hRes != S_OK)
 				goto MMERROR;
 			if (!(state & DEVICE_STATE_ACTIVE))
-				return FALSE;
+				goto MMERROR;
 			hRes = mmDevice->Activate(__uuidof(IAudioClient), CLSCTX_INPROC_SERVER, NULL, (void**)&m_audioClient);
 			if (hRes != S_OK)
 				goto MMERROR;
@@ -106,6 +106,9 @@ namespace TinyUI
 			if (hRes != S_OK)
 				goto MMERROR;
 			hRes = m_audioClient->GetService(__uuidof(IAudioClock), (void**)&m_audioClock);
+			if (hRes != S_OK)
+				goto MMERROR;
+			hRes = m_audioSession->RegisterAudioSessionNotification(this);
 			if (hRes != S_OK)
 				goto MMERROR;
 			return TRUE;
@@ -185,6 +188,10 @@ namespace TinyUI
 		}
 		BOOL TinyWASAPIAudioCapture::Close()
 		{
+			if (m_audioSession != NULL)
+			{
+				m_audioSession->UnregisterAudioSessionNotification(this);
+			}
 			if (m_bCapturing && !Stop())
 			{
 				m_audioVolume.Release();

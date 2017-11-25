@@ -49,6 +49,7 @@ namespace TinyUI
 			TinyEvent							m_sampleReady;
 			TinyEvent							m_audioStop;
 			IO::TinyTaskBase					m_task;
+			AudioSessionEvents					m_sessionEvents;
 			TinyScopedArray<BYTE>				m_waveFMT;
 			TinyComPtr<IAudioClient>			m_audioClient;
 			TinyComPtr<IAudioClient>			m_audioClientLB;

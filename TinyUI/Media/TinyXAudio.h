@@ -65,6 +65,8 @@ namespace TinyUI
 			BOOL Play(BYTE* bits, LONG size, DWORD dwMS);
 			BOOL SetVolume(DWORD dwVolume);
 			BOOL SetChannelVolumes(UINT channels, DWORD dwVolume);
+			BOOL Suspend();
+			BOOL Resume();
 			BOOL Start();
 			BOOL Stop();
 			BOOL Reset();
@@ -76,7 +78,7 @@ namespace TinyUI
 			TinyScopedArray<BYTE>				m_array[MAX_BUFFER_COUNT];
 			TinyComPtr<IXAudio2>				m_audio;
 			IXAudio2MasteringVoice*				m_pMasteringVoice;
-			IXAudio2SourceVoice*				m_pSourceVoice;
+			IXAudio2SourceVoice*				m_pSVoice;
 			VoiceCallback						m_voiceCallback;
 		};
 	}

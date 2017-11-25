@@ -38,27 +38,74 @@ namespace TinyUI
 
 		}
 		//////////////////////////////////////////////////////////////////////////
-		HRESULT STDMETHODCALLTYPE AudioDeviceListener::OnDeviceStateChanged(_In_ LPCWSTR pwstrDeviceId, _In_ DWORD dwNewState)
+		AudioClientListener::AudioClientListener()
 		{
+
+		}
+		AudioClientListener::~AudioClientListener()
+		{
+			if (m_enumerator != NULL)
+			{
+				m_enumerator->UnregisterEndpointNotificationCallback(this);
+			}
+			m_enumerator.Release();
+		}
+		BOOL AudioClientListener::Initialize(AudioClientCallback&& callback)
+		{
+			m_callback = std::move(callback);
+			HRESULT hRes = m_enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER);
+			if (hRes != S_OK)
+			{
+				if (hRes != CO_E_NOTINITIALIZED)
+					return FALSE;
+				hRes = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+				if (SUCCEEDED(hRes))
+					hRes = m_enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER);
+			}
+			hRes = m_enumerator->RegisterEndpointNotificationCallback(this);
+			return hRes == S_OK;
+		}
+		HRESULT STDMETHODCALLTYPE AudioClientListener::OnDeviceStateChanged(_In_ LPCWSTR pwstrDeviceId, _In_ DWORD dwNewState)
+		{
+			if (!m_callback.IsNull())
+			{
+				m_callback(pwstrDeviceId, 0);
+			}
 			return S_OK;
 		}
-		HRESULT STDMETHODCALLTYPE AudioDeviceListener::OnDeviceAdded(_In_ LPCWSTR pwstrDeviceId)
+		HRESULT STDMETHODCALLTYPE AudioClientListener::OnDeviceAdded(_In_ LPCWSTR pwstrDeviceId)
 		{
+			if (!m_callback.IsNull())
+			{
+				m_callback(pwstrDeviceId, 1);
+			}
 			return S_OK;
 		}
-		HRESULT STDMETHODCALLTYPE AudioDeviceListener::OnDeviceRemoved(_In_ LPCWSTR pwstrDeviceId)
+		HRESULT STDMETHODCALLTYPE AudioClientListener::OnDeviceRemoved(_In_ LPCWSTR pwstrDeviceId)
 		{
+			if (!m_callback.IsNull())
+			{
+				m_callback(pwstrDeviceId, 2);
+			}
 			return S_OK;
 		}
-		HRESULT STDMETHODCALLTYPE AudioDeviceListener::OnDefaultDeviceChanged(_In_ EDataFlow flow, _In_ ERole role, _In_ LPCWSTR pwstrDefaultDeviceId)
+		HRESULT STDMETHODCALLTYPE AudioClientListener::OnDefaultDeviceChanged(_In_ EDataFlow flow, _In_ ERole role, _In_ LPCWSTR pwstrDefaultDeviceId)
 		{
+			if (!m_callback.IsNull())
+			{
+				m_callback(pwstrDefaultDeviceId, 3);
+			}
 			return S_OK;
 		}
-		HRESULT STDMETHODCALLTYPE AudioDeviceListener::OnPropertyValueChanged(_In_ LPCWSTR pwstrDeviceId, _In_ const PROPERTYKEY key)
+		HRESULT STDMETHODCALLTYPE AudioClientListener::OnPropertyValueChanged(_In_ LPCWSTR pwstrDeviceId, _In_ const PROPERTYKEY key)
 		{
+			if (!m_callback.IsNull())
+			{
+				m_callback(pwstrDeviceId, 4);
+			}
 			return S_OK;
 		}
-		HRESULT STDMETHODCALLTYPE AudioDeviceListener::QueryInterface(REFIID riid, void **ppvObject)
+		HRESULT STDMETHODCALLTYPE AudioClientListener::QueryInterface(REFIID riid, void **ppvObject)
 		{
 			if (IsEqualIID(riid, __uuidof(IMMNotificationClient)) || IsEqualIID(riid, IID_IUnknown))
 			{
@@ -72,15 +119,15 @@ namespace TinyUI
 			AddRef();
 			return NOERROR;
 		}
-		ULONG STDMETHODCALLTYPE AudioDeviceListener::AddRef(void)
+		ULONG STDMETHODCALLTYPE AudioClientListener::AddRef(void)
 		{
-			TinyReference < AudioDeviceListener >::AddRef();
-			return TinyReference < AudioDeviceListener >::GetReference();
+			TinyReference < AudioClientListener >::AddRef();
+			return TinyReference < AudioClientListener >::GetReference();
 		}
-		ULONG STDMETHODCALLTYPE AudioDeviceListener::Release(void)
+		ULONG STDMETHODCALLTYPE AudioClientListener::Release(void)
 		{
-			TinyReference < AudioDeviceListener >::Release();
-			return TinyReference < AudioDeviceListener >::GetReference();
+			TinyReference < AudioClientListener >::Release();
+			return TinyReference < AudioClientListener >::GetReference();
 		}
 		//////////////////////////////////////////////////////////////////////////
 		MediaBuffer::MediaBuffer(DWORD dwMaxSize)
