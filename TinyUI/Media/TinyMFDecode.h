@@ -17,6 +17,8 @@ namespace TinyUI
 			virtual ~TinyMFDecode();
 			virtual void OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter);
 		public:
+			static BOOL EnumMF();
+		public:
 			BOOL Open(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType, Callback<void(BYTE*, LONG, LPVOID)>&& callback);
 			BOOL Decode(const BYTE* bits, DWORD size);
 			BOOL Close();

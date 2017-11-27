@@ -38,10 +38,10 @@ namespace MF
 		static BOOL GetDeviceParams(const MFVideoCapture::Name& device, vector<MFVideoCaptureParam>& params);
 		static BOOL GetDeviceSource(const MFVideoCapture::Name& device, IMFMediaSource** source);
 	protected:
-		BOOL										m_bCapturing;
+		BOOL											m_bCapturing;
+		TinyComPtr<IMFSourceReader>						m_reader;
+		TinyComPtr<IMFMediaSource>						m_source;
 		TinyScopedReferencePtr<MFVideoReaderCallback>	m_readerCB;
-		TinyComPtr<IMFSourceReader>					m_reader;
-		TinyComPtr<IMFMediaSource>					m_source;
-		Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_receiveCB;
+		Callback<void(BYTE*, LONG, FLOAT, LPVOID)>		m_receiveCB;
 	};
 }

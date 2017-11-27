@@ -28,20 +28,20 @@ namespace MF
 		BOOL	Initialize(const Name& name);
 		BOOL	Initialize(const Name& name, Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& receiveCB);
 		void	Uninitialize();
+		void	OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter) OVERRIDE;
 	public:
 		virtual BOOL Allocate(const MFAudioCaptureParam& param);
 		virtual void Deallocate();
-		void	OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter) OVERRIDE;
 	public:
 		static BOOL GetFormat(const GUID& guid, VideoPixelFormat* format);
 		static BOOL GetDevices(vector<MFAudioCapture::Name>& names);
 		static BOOL GetDeviceParams(const MFAudioCapture::Name& device, vector<MFAudioCaptureParam>& params);
 		static BOOL GetDeviceSource(const MFAudioCapture::Name& device, IMFMediaSource** source);
 	protected:
-		BOOL										m_bCapturing;
+		BOOL											m_bCapturing;
+		TinyComPtr<IMFSourceReader>						m_reader;
+		TinyComPtr<IMFMediaSource>						m_source;
 		TinyScopedReferencePtr<MFAudioReaderCallback>	m_readerCB;
-		TinyComPtr<IMFSourceReader>					m_reader;
-		TinyComPtr<IMFMediaSource>					m_source;
-		Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_receiveCB;
+		Callback<void(BYTE*, LONG, FLOAT, LPVOID)>		m_receiveCB;
 	};
 }

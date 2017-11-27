@@ -87,6 +87,8 @@ namespace MShow
 	}
 	BOOL MicrophoneTest::Invoke(const GUID& clsid, HWND hWND)
 	{
+		if (m_capturing)
+			return TRUE;
 		m_capture.Close();
 		m_player.Close();
 		WAVEFORMATEX waveFMT = { 0 };
@@ -156,6 +158,7 @@ namespace MShow
 	}
 	BOOL MicrophoneTest::Shutdown()
 	{
+		m_capturing = FALSE;
 		m_events[3].SetEvent();
 		if (m_task.Close(INFINITE))
 		{

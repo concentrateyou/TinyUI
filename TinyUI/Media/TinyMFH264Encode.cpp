@@ -50,7 +50,7 @@ namespace TinyUI
 			hRes = outputType->SetGUID(MF_MT_MAJOR_TYPE, MFVideoFormat_H264);
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = outputType->SetUINT32(MF_MT_AVG_BITRATE, MFVideoInterlaceMode::MFVideoInterlace_Progressive);
+			hRes = outputType->SetUINT32(MF_MT_AVG_BITRATE, 240000);
 			if (hRes != S_OK)
 				return FALSE;
 			hRes = MFSetAttributeSize(outputType, MF_MT_FRAME_SIZE, size.cx, size.cy);
@@ -62,6 +62,9 @@ namespace TinyUI
 			hRes = outputType->SetUINT32(MF_MT_INTERLACE_MODE, MFVideoInterlaceMode::MFVideoInterlace_Progressive);
 			if (hRes != S_OK)
 				return FALSE;
+			hRes = outputType->SetUINT32(MF_MT_ALL_SAMPLES_INDEPENDENT, TRUE);
+			if (hRes != S_OK)
+				return FALSE;
 			hRes = outputType->SetUINT32(MF_MT_MPEG2_LEVEL, (UINT32)-1);
 			if (hRes != S_OK)
 				return FALSE;
@@ -71,7 +74,7 @@ namespace TinyUI
 			hRes = MFSetAttributeRatio(outputType, MF_MT_PIXEL_ASPECT_RATIO, 1, 1);
 			if (hRes != S_OK)
 				return FALSE;
-			return TinyMFEncode::Open(CLSID_CMP3DecMediaObject, inputType, outputType, std::move(callback));
+			return TinyMFEncode::Open(CLSID_CMSH264EncoderMFT, inputType, outputType, std::move(callback));
 		}
 	};
 }

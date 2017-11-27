@@ -79,6 +79,11 @@ namespace QSV
 
 #define MFX_FOURCC_IMC3 (MFX_MAKEFOURCC('I','M','C','3')) // This line should be moved into mfxstructures.h in new API version
 
+	DEFINE_GUID(CLSID_MF_INTEL_H264EncFilter, // Intel Quick Sync Encoder
+		0x4be8d3c0, 0x0515, 0x4a37, 0xad, 0x55, 0xe4, 0xba, 0xe1, 0x9a, 0xf4, 0x71);
+	DEFINE_GUID(CLSID_MF_INTEL_H264DecFilter, // Intel Quick Sync Decoder
+		0x45e5ce07, 0x5ac7, 0x4509, 0x94, 0xe9, 0x62, 0xdb, 0x27, 0xcf, 0x8f, 0x96);
+
 	D3DFORMAT ConvertMfxFourccToD3dFormat(mfxU32 fourcc);
 
 	const struct
