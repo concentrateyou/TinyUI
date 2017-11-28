@@ -390,6 +390,7 @@ namespace MShow
 		MShow::MShowApp::GetInstance().GetSearchController().Refresh();
 		MShow::MShowApp::GetInstance().GetSearchView().ShowWindow(SW_NORMAL);
 		MShow::MShowApp::GetInstance().GetSearchView().UpdateWindow();
+		LOG(INFO) << "OnCloseClick OK";
 	}
 
 	void MClientController::OnSettingClick(TinyVisual*, EventArgs& args)
