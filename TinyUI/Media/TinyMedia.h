@@ -3,6 +3,8 @@
 #include "../Common/TinyString.h"
 #include "../Common/TinyCallback.h"
 #include "../Common/TinyCore.h"
+#include <KS.h>
+#include <Codecapi.h>
 #include <objbase.h>
 #include <mmreg.h>
 #include <mmsystem.h>
@@ -46,6 +48,7 @@ namespace TinyUI
 #define DEFAULT_CAPTURE_AUDCLNT_STREAMFLAGS (AUDCLNT_STREAMFLAGS_LOOPBACK | AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST)
 		const REFERENCE_TIME MFTIMES_PER_SEC = 10000000;
 		const REFERENCE_TIME MFTIMES_PER_MS = 10000;
+
 		enum ChannelLayout
 		{
 			CHANNEL_UNKNOWN,
@@ -92,6 +95,8 @@ namespace TinyUI
 			}
 			return (ChannelLayout)pFMT->nChannels;
 		}
+		BOOL WINAPI IsAsyncMFT(IMFTransform *pMFT, BOOL& bIsAsync);
+
 		class TinyScopedAvrt
 		{
 			DISALLOW_COPY_AND_ASSIGN(TinyScopedAvrt)

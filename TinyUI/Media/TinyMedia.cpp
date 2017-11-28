@@ -199,6 +199,24 @@ namespace TinyUI
 			return TinyReference < MediaBuffer >::GetReference();
 		}
 		//////////////////////////////////////////////////////////////////////////
+		BOOL WINAPI IsAsyncMFT(IMFTransform *pMFT, BOOL& bIsAsync)
+		{
+			if (!pMFT)
+				return E_POINTER;
+			IMFAttributes *pAttributes = NULL;
+			bIsAsync = FALSE;
+			UINT32 isAsync = 0;
+			HRESULT hRes = S_OK;
+			hRes = pMFT->GetAttributes(&pAttributes);
+			if (SUCCEEDED(hRes))
+			{
+				hRes = pAttributes->GetUINT32(MF_TRANSFORM_ASYNC, &isAsync);
+				bIsAsync = !!isAsync;
+				return TRUE;
+			}
+			return FALSE;
+		}
+		//////////////////////////////////////////////////////////////////////////
 		BOOL WINAPI GetAudioOutputType(REFCLSID clsid, IMFMediaType* inputType, const WAVEFORMATEX* pMFT, IMFMediaType** ppMediaType)
 		{
 			TinyComPtr<IUnknown> unknow;

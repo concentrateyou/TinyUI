@@ -8,6 +8,7 @@ namespace TinyUI
 	namespace Media
 	{
 		TinyMFDecode::TinyMFDecode()
+			:m_bIsAsyncMFT(FALSE)
 		{
 
 		}
@@ -90,6 +91,9 @@ namespace TinyUI
 			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_transform->GetOutputStreamInfo(0, &m_outputInfo);
+			if (hRes != S_OK)
+				return FALSE;
+			hRes = IsAsyncMFT(m_transform, m_bIsAsyncMFT);
 			if (hRes != S_OK)
 				return FALSE;
 			return TRUE;

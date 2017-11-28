@@ -257,9 +257,11 @@
     <ClInclude Include="IO\TinyWin32TaskPool.h" />
     <ClInclude Include="Media\TinyMFAACDecode.h" />
     <ClInclude Include="Media\TinyMFAACEncode.h" />
+    <ClInclude Include="Media\TinyMFAsyncCallback.h" />
     <ClInclude Include="Media\TinyMFDecode.h" />
     <ClInclude Include="Media\TinyMFH264Decode.h" />
     <ClInclude Include="Media\TinyMFH264Encode.h" />
+    <ClInclude Include="Media\TinyMFIntelQSVDecode.h" />
     <ClInclude Include="Media\TinyMFMP3Decode.h" />
     <ClInclude Include="Media\TinyMFMP3Encode.h" />
     <ClInclude Include="Media\TinyMP3File.h" />
@@ -401,9 +403,11 @@
     <ClCompile Include="IO\TinyWin32TaskPool.cpp" />
     <ClCompile Include="Media\TinyMFAACDecode.cpp" />
     <ClCompile Include="Media\TinyMFAACEncode.cpp" />
+    <ClCompile Include="Media\TinyMFAsyncCallback.cpp" />
     <ClCompile Include="Media\TinyMFDecode.cpp" />
     <ClCompile Include="Media\TinyMFH264Decode.cpp" />
     <ClCompile Include="Media\TinyMFH264Encode.cpp" />
+    <ClCompile Include="Media\TinyMFIntelQSVDecode.cpp" />
     <ClCompile Include="Media\TinyMFMP3Decode.cpp" />
     <ClCompile Include="Media\TinyMFMP3Encode.cpp" />
     <ClCompile Include="Media\TinyMP3File.cpp" />

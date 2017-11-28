@@ -513,6 +513,12 @@
     <ClInclude Include="Render\TinyRenderTarget.h">
       <Filter>头文件\Render</Filter>
     </ClInclude>
+    <ClInclude Include="Media\TinyMFIntelQSVDecode.h">
+      <Filter>头文件\Media</Filter>
+    </ClInclude>
+    <ClInclude Include="Media\TinyMFAsyncCallback.h">
+      <Filter>头文件\Media</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -943,6 +949,12 @@
     </ClCompile>
     <ClCompile Include="Render\TinyRenderTarget.cpp">
       <Filter>源文件\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\TinyMFIntelQSVDecode.cpp">
+      <Filter>源文件\Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Media\TinyMFAsyncCallback.cpp">
+      <Filter>源文件\Media</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
