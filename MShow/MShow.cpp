@@ -254,19 +254,22 @@ BOOL BuildCrash()
 	return TRUE;
 }
 
+void handlenew()
+{
+	LOG(ERROR) << "Alloc Memery FAIL";
+}
+
 INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPTSTR    lpCmdLine,
 	_In_ INT       nCmdShow)
 {
-	DeleteLogFile();
-
 	if (!BuildCrash())
 	{
 		LOG(ERROR) << "BuildCrash FAIL";
 		return FALSE;
 	}
-
+	
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
@@ -274,6 +277,7 @@ INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	WSAStartup(MAKEWORD(2, 2), &wsd);
 	MFStartup(MF_VERSION);
 	OleInitialize(NULL);
+	set_new_handler(handlenew);
 
 	//确保MShowApp先释放
 	TinyApplication* app = TinyApplication::GetInstance();

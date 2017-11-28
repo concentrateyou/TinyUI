@@ -125,6 +125,8 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	//uiImpl.UpdateWindow();
 	//uiImpl.Create(NULL, 10, 10, 100, 100);
 	//uiImpl.CenterWindow(NULL, { 800,600 });
+
+
 	ChatFrame uiImpl;
 	uiImpl.Create(NULL, 100, 100, 600, 600);
 	uiImpl.UpdateWindow();

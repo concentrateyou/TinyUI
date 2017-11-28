@@ -22,7 +22,7 @@ BOOL AudioDSP::Initialize()
 	for (INT i = 0;i < captureNames.size();i++)
 	{
 		BOOL IsMA = FALSE;
-		TinyWASAPIAudio::IsMicrophone(eCapture, captureNames[i], IsMA);
+		TinyWASAPIAudio::IsMicrophone(captureNames[i], IsMA);
 		if (IsMA)
 		{
 			captureName = captureNames[i];

@@ -15,7 +15,7 @@ namespace TinyUI
 			TinyMFIntelQSVDecode();
 			virtual ~TinyMFIntelQSVDecode();
 		public:
-			BOOL Open(Callback<void(BYTE*, LONG, LPVOID)>&& callback);
+			BOOL Open(const TinySize& size, DWORD dwFrameRate, Callback<void(BYTE*, LONG, LPVOID)>&& callback);
 		};
 	};
 }

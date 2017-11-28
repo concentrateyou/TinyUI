@@ -14,6 +14,7 @@ namespace TinyUI
 	ULONGLONG RandUInteger64();
 	ULONGLONG RandGenerator(ULONGLONG range);
 	string GenerateGUID();
+	string GUIDToString(const GUID& guid);
 
 	static inline INT FLS(INT x)
 	{

@@ -3,6 +3,7 @@
 #include "../Common/TinyString.h"
 #include "../Common/TinyCallback.h"
 #include "../Common/TinyCore.h"
+#include "../Render/TinyGDI.h"
 #include <KS.h>
 #include <Codecapi.h>
 #include <objbase.h>

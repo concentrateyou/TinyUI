@@ -36,20 +36,8 @@ namespace TinyUI
 		{
 			log.erase(backslash + 1);
 		}
-		log += TEXT("debug.log");
-		return log;
-	}
-	wstring GetDefaultLogFileW()
-	{
-		WCHAR module[MAX_PATH];
-		GetModuleFileNameW(NULL, module, MAX_PATH);
-		wstring log(module);
-		wstring::size_type backslash = log.rfind('\\', log.size());
-		if (backslash != wstring::npos)
-		{
-			log.erase(backslash + 1);
-		}
-		log += TEXT(L"debug.log");
+		log += std::move(GetCurrentTimeAsString());
+		log += TEXT(".log");
 		return log;
 	}
 
@@ -104,6 +92,18 @@ namespace TinyUI
 	{
 		g_log = pzFile;
 		return InitializeLogFile(pzFile);
+	}
+	string	GetCurrentTimeAsString()
+	{
+		SYSTEMTIME st = { 0 };
+		GetLocalTime(&st);
+		return StringPrintf("%d%02d%02d %02d-%02d-%02d",
+			st.wYear,
+			st.wMonth,
+			st.wDay,
+			st.wHour,
+			st.wMinute,
+			st.wSecond);
 	}
 	//////////////////////////////////////////////////////////////////////////
 	SymbolContext::SymbolContext() : m_error(ERROR_SUCCESS)

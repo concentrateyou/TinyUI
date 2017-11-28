@@ -1,5 +1,6 @@
 #include "../stdafx.h"
 #include "TinyMFIntelQSVDecode.h"
+#include "../Common/TinyUtility.h"
 #include <algorithm>
 #include <limits>
 
@@ -16,15 +17,63 @@ namespace TinyUI
 		{
 
 		}
-		BOOL TinyMFIntelQSVDecode::Open(Callback<void(BYTE*, LONG, LPVOID)>&& callback)
+		BOOL TinyMFIntelQSVDecode::Open(const TinySize& size, DWORD dwFrameRate, Callback<void(BYTE*, LONG, LPVOID)>&& callback)
 		{
 			HRESULT hRes = S_OK;
 			TinyComPtr<IMFMediaType> inputType;
 			hRes = MFCreateMediaType(&inputType);
 			if (hRes != S_OK)
 				return FALSE;
+			hRes = inputType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Video);
+			if (hRes != S_OK)
+				return FALSE;
+			hRes = inputType->SetGUID(MF_MT_SUBTYPE, MFVideoFormat_H264);
+			if (hRes != S_OK)
+				return FALSE;
+			//hRes = inputType->SetUINT32(MF_MT_ALL_SAMPLES_INDEPENDENT, FALSE);
+			//if (hRes != S_OK)
+			//	return FALSE;
+			hRes = inputType->SetUINT32(MF_MT_FIXED_SIZE_SAMPLES, FALSE);
+			if (hRes != S_OK)
+				return FALSE;
+			hRes = inputType->SetUINT32(MF_MT_INTERLACE_MODE, MFVideoInterlace_Progressive);
+			if (hRes != S_OK)
+				return FALSE;
+			hRes = MFSetAttributeSize(inputType, MF_MT_FRAME_SIZE, size.cx, size.cy);
+			if (hRes != S_OK)
+				return FALSE;
+			hRes = MFSetAttributeRatio(inputType, MF_MT_FRAME_RATE, dwFrameRate, 1);
+			if (hRes != S_OK)
+				return FALSE;
+			hRes = MFSetAttributeRatio(inputType, MF_MT_PIXEL_ASPECT_RATIO, 1, 1);
+			if (hRes != S_OK)
+				return FALSE;
 			TinyComPtr<IMFMediaType> outputType;
 			hRes = MFCreateMediaType(&outputType);
+			if (hRes != S_OK)
+				return FALSE;
+			hRes = outputType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Video);
+			if (hRes != S_OK)
+				return FALSE;
+			hRes = outputType->SetGUID(MF_MT_SUBTYPE, MFVideoFormat_NV12);
+			if (hRes != S_OK)
+				return FALSE;
+			//hRes = outputType->SetUINT32(MF_MT_ALL_SAMPLES_INDEPENDENT, TRUE);
+			//if (hRes != S_OK)
+			//	return FALSE;
+			hRes = outputType->SetUINT32(MF_MT_FIXED_SIZE_SAMPLES, TRUE);
+			if (hRes != S_OK)
+				return FALSE;
+			hRes = outputType->SetUINT32(MF_MT_INTERLACE_MODE, MFVideoInterlace_Progressive);
+			if (hRes != S_OK)
+				return FALSE;
+			hRes = MFSetAttributeSize(outputType, MF_MT_FRAME_SIZE, size.cx, size.cy);
+			if (hRes != S_OK)
+				return FALSE;
+			hRes = MFSetAttributeRatio(outputType, MF_MT_FRAME_RATE, dwFrameRate, 1);
+			if (hRes != S_OK)
+				return FALSE;
+			hRes = MFSetAttributeRatio(outputType, MF_MT_PIXEL_ASPECT_RATIO, 1, 1);
 			if (hRes != S_OK)
 				return FALSE;
 			return TinyMFDecode::Open(CLSID_MF_INTEL_H264DecFilter, inputType, outputType, std::move(callback));

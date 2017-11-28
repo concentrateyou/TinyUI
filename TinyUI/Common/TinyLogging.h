@@ -13,9 +13,9 @@ namespace TinyUI
 {
 	string GetDefaultDumpDir();
 	string	GetDefaultLogFile();
-	wstring GetDefaultLogFileW();
 	string	GetDefaultDumpFile();
 	wstring GetDefaultDumpFileW();
+	string	GetCurrentTimeAsString();
 	/// <summary>
 	/// SymbolÉÏÏÂÎÄ
 	/// </summary>

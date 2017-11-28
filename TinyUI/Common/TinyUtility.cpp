@@ -65,5 +65,15 @@ namespace TinyUI
 		}
 		return string();
 	}
-
+	string GUIDToString(const GUID& guid)
+	{
+		const INT GUIDSize = 39;
+		wstring val;
+		val.resize(GUIDSize);
+		if (StringFromGUID2(guid, &val[0], GUIDSize) == GUIDSize)
+		{
+			return WStringToString(val);
+		}
+		return string();
+	}
 }

@@ -22,6 +22,7 @@
 #include "DX9Graphics2D.h"
 #include "DX9Image2D.h"
 #include "DX9RenderView.h"
+#include "Media/TinyMFIntelQSVDecode.h"
 #pragma comment(lib,"sapi.lib")
 
 using namespace TinyUI;
@@ -54,10 +55,14 @@ public:
 private:
 	void OnMessagePump();
 	void OnTimerPump();
+	void OnData(BYTE* bits, LONG size, LPVOID ps);
 private:
-	DX9Graphics2D		m_graphics2D;
-	DX9Image2D			m_image2D;
-	TinyTaskBase		m_task;
-	TinyTaskTimer		m_timer;
+	DX9Graphics2D			m_graphics2D;
+	DX9Image2D				m_image2D;
+	TinyTaskBase			m_task;
+	TinyTaskTimer			m_timer;
+	TinyMFIntelQSVDecode	m_qsv;
+	
+
 };
 

@@ -73,7 +73,12 @@ namespace Decode
 		INT size = ToINT24(tag.size);
 		if (size > 0)
 		{
-			TinyScopedArray<BYTE> data(new BYTE[size]);
+			TinyScopedArray<BYTE> data(new(std::nothrow) BYTE[size]);
+			if (!data)
+			{
+				LOG(ERROR) << "[FLVReader] OpenURL new size:" << size;
+				return FALSE;
+			}
 			hRes = m_stream->Read(data, size, &ls);
 			if (hRes != S_OK || ls <= 0)
 				return FALSE;
@@ -118,7 +123,12 @@ namespace Decode
 		INT size = ToINT24(tag.size);
 		if (size > 0)
 		{
-			TinyScopedArray<BYTE> data(new BYTE[size]);
+			TinyScopedArray<BYTE> data(new(std::nothrow) BYTE[size]);
+			if (!data)
+			{
+				LOG(ERROR) << "[FLVReader] OpenFile new size:" << size;
+				return FALSE;
+			}
 			hRes = m_stream->Read(data, size, &ls);
 			if (hRes != S_OK || ls <= 0)
 				return FALSE;
@@ -162,7 +172,12 @@ namespace Decode
 		if (size > 0)
 		{
 			block.type = tag.type;
-			TinyScopedArray<BYTE> data(new BYTE[size]);
+			TinyScopedArray<BYTE> data(new(std::nothrow) BYTE[size]);
+			if (!data)
+			{
+				LOG(ERROR) << "[FLVReader] ReadBlock new size:" << size;
+				return FALSE;
+			}
 			hRes = m_stream->Read(data, size, &ls);
 			if (hRes != S_OK || ls <= 0)
 				return FALSE;
@@ -268,8 +283,16 @@ namespace Decode
 			block.audio.codeID = FLV_CODECID_AAC;
 			block.audio.packetType = FLV_AudioSpecificConfig;
 			block.audio.size = size;
-			block.audio.data = new BYTE[size];
-			memcpy(block.audio.data, bits, size);
+			block.audio.data = new(std::nothrow) BYTE[size];
+			if (!block.audio.data)
+			{
+				block.audio.size = 0;
+				LOG(ERROR) << "[FLVReader] [ParseAAC] new size:" << size;
+			}
+			else
+			{
+				memcpy(block.audio.data, bits, size);
+			}
 		}
 		if (aacPacketType == 1)
 		{
@@ -280,8 +303,16 @@ namespace Decode
 			block.audio.codeID = FLV_CODECID_AAC;
 			block.audio.packetType = FLV_AACRaw;
 			block.audio.size = size;
-			block.audio.data = new BYTE[size];
-			memcpy(block.audio.data, bits, size);
+			block.audio.data = new(std::nothrow) BYTE[size];
+			if (!block.audio.data)
+			{
+				block.audio.size = 0;
+				LOG(ERROR) << "[FLVReader] [ParseAAC] new size:" << size;
+			}
+			else
+			{
+				memcpy(block.audio.data, bits, size);
+			}
 			m_count++;
 		}
 		return TRUE;
@@ -337,8 +368,16 @@ namespace Decode
 			block.video.codeType = video->codeType;
 			block.video.packetType = FLV_AVCDecoderConfigurationRecord;
 			block.video.size = buffer.GetSize();
-			block.video.data = new BYTE[block.video.size];
-			memcpy(block.video.data, buffer.GetPointer(), block.video.size);
+			block.video.data = new (std::nothrow) BYTE[block.video.size];
+			if (!block.video.data)
+			{
+				block.video.size = 0;
+				LOG(ERROR) << "[FLVReader] [ParseH264] new size:" << block.video.size;
+			}
+			else
+			{
+				memcpy(block.video.data, buffer.GetPointer(), block.video.size);
+			}
 		}
 		if (aacPacketType == 1)
 		{
@@ -395,8 +434,16 @@ namespace Decode
 			if (offsetNALU >= size)
 			{
 				block.video.size = size;
-				block.video.data = new BYTE[block.video.size];
-				memcpy(block.video.data, data, size);
+				block.video.data = new(std::nothrow) BYTE[block.video.size];
+				if (!block.video.data)
+				{
+					block.video.size = 0;
+					LOG(ERROR) << "[FLVReader] [ParseNALUS] new size:" << block.video.size;
+				}
+				else
+				{
+					memcpy(block.video.data, data, size);
+				}
 				block.video.codeID = video->codeID;
 				block.video.codeType = video->codeType;
 				block.video.packetType = FLV_NALU;
