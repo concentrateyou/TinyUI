@@ -102,6 +102,7 @@ namespace MShow
 		{
 			TRACE("WM_FLV_PARSE_FAIL");
 			this->Close();
+			Sleep(1000);
 			if (this->Open(m_hWND, m_szURL.CSTR()))
 			{
 				TRACE("WM_FLV_PARSE_FAIL Reopen OK\n");
@@ -117,6 +118,7 @@ namespace MShow
 		{
 			TRACE("WM_VIDEO_X264_DECODE_FAIL\n");
 			this->Close();
+			Sleep(1000);
 			if (this->Open(m_hWND, m_szURL.CSTR()))
 			{
 				TRACE("WM_VIDEO_X264_DECODE_FAIL Reopen OK\n");

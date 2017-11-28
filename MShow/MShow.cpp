@@ -196,6 +196,10 @@ namespace MShow
 	void MShowApp::SetCurrentAudioTS(QWORD ts)
 	{
 		TinyAutoLock lock(m_lock);
+		if (ts < m_audioTS)
+		{
+			LOG(ERROR) << "[SetCurrentAudioTS] AudioTS Error:" << m_audioTS;
+		}
 		m_audioTS = ts;
 	}
 	QWORD MShowApp::GetCurrentAudioTS()
@@ -271,7 +275,7 @@ INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		LOG(ERROR) << "BuildCrash FAIL";
 		return FALSE;
 	}
-	
+
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 

@@ -106,6 +106,8 @@ namespace MShow
 				ZeroMemory(&sampleTag, sizeof(sampleTag));
 				if (!m_task.GetVideoQueue().Pop(sampleTag))
 				{
+					MShow::MShowApp::GetInstance().SetCurrentAudioTS(0);
+					LOG(INFO) << "[MVideoRenderTask] SetCurrentAudioTS 0";
 					TRACE("Waiting 40\n");
 					LOG(INFO) << "Waiting 40";
 					timer.Waiting(40, 1000);
