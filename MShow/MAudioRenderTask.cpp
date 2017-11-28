@@ -74,6 +74,11 @@ namespace MShow
 				ZeroMemory(&tag, sizeof(tag));
 				if (!m_task.GetAudioQueue().Pop(tag))
 				{
+					MShow::MShowApp::GetInstance().SetCurrentAudioTS(0);
+					LOG(INFO) << "[MAudioRenderTask] SetCurrentAudioTS 0";
+					LOG(ERROR) << "[MAudioRenderTask] No Audio Sleep(15)";
+					TRACE("[MAudioRenderTask] No Audio Sleep(15)\n");
+					LOG(ERROR) << "[MAudioRenderTask] No Audio Sleep(15)";
 					Sleep(15);
 					continue;
 				}
