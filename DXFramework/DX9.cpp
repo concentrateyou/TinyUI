@@ -171,7 +171,7 @@ namespace DXFramework
 		d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 		d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 		m_d3dd9.Release();
-		hRes = m_d3d9->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hWND, D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_PUREDEVICE, &d3dpp, &m_d3dd9);
+		hRes = m_d3d9->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hWND, D3DCREATE_HARDWARE_VERTEXPROCESSING, &d3dpp, &m_d3dd9);
 		if (hRes != S_OK)
 		{
 			TRACE("[Initialize] CreateDevice:%d\n", hRes);

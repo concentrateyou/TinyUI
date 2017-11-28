@@ -264,6 +264,8 @@ INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	_In_ LPTSTR    lpCmdLine,
 	_In_ INT       nCmdShow)
 {
+	LOG(INFO) << "LiveCommentary Current Process " << GetCurrentProcessId();
+
 	if (!BuildCrash())
 	{
 		LOG(ERROR) << "BuildCrash FAIL";

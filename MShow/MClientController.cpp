@@ -852,9 +852,11 @@ namespace MShow
 	}
 	BOOL MClientController::StartCommentary()
 	{
+		TinyPerformanceTime timeQPC;
 		try
 		{
 			m_bBreak = FALSE;
+			timeQPC.BeginTime();
 			//获取音频预览流
 			string szIP;
 			INT iAudio = 0;
@@ -862,14 +864,21 @@ namespace MShow
 			{
 				goto _ERROR;
 			}
+			timeQPC.EndTime();
+			LOG(INFO) << "[MClientController] GetPreviewURL Cost:" << timeQPC.GetMillisconds();
+			timeQPC.BeginTime();
 			m_audioSDK.Reset(new AudioSdk(szIP, iAudio, std::stoi(m_szSourceID)));
 			if (m_audioSDK != NULL)
 			{
 				if (m_audioSDK->init(44100, 2, 16) != 0)
 				{
+					timeQPC.EndTime();
+					LOG(INFO) << "[MClientController] AudioSDK Cost:" << timeQPC.GetMillisconds();
 					LOG(ERROR) << "AudioSDK init Fail" << endl;
 					goto _ERROR;
 				}
+				timeQPC.EndTime();
+				LOG(INFO) << "[MClientController] AudioSDK Cost:" << timeQPC.GetMillisconds();
 				LOG(INFO) << "AudioSDK init OK" << endl;
 				CLSID speakerCLSID = GetSpeakCLSID();
 				if (IsEqualGUID(speakerCLSID, GUID_NULL))
@@ -881,28 +890,37 @@ namespace MShow
 				{
 					LOG(ERROR) << "GetMicrophoneCLSID is null" << endl;
 				}
+				timeQPC.BeginTime();
 				m_audioDSP.Close();
 				if (m_audioDSP.Open(microphoneCLSID, speakerCLSID))
 				{
 					m_audioDSP.Stop();
 					m_audioDSP.Start();
 				}
+				timeQPC.EndTime();
+				LOG(INFO) << "[MClientController] AudioDSP Cost:" << timeQPC.GetMillisconds();
 			}
+			timeQPC.BeginTime();
 			//启动SDK发送数据
 			if (m_task.IsActive())
 			{
 				m_bBreak = TRUE;
 				m_task.Close(1000);
 			}
+			timeQPC.EndTime();
+			LOG(INFO) << "[MClientController] AudioSDK Task Close Cost:" << timeQPC.GetMillisconds();
 			if (!m_task.Submit(BindCallback(&MClientController::OnMessagePump, this)))
 			{
 				goto _ERROR;
 			}
+			timeQPC.BeginTime();
 			//通知Web更新
 			if (!UpdatePreviewURL(m_szSourceID, m_szURL))
 			{
 				goto _ERROR;
 			}
+			timeQPC.EndTime();
+			LOG(INFO) << "[MClientController] UpdatePreviewURL Cost:" << timeQPC.GetMillisconds();
 			//开始Timer
 			if (!m_timerStatus.SetCallback(1000, BindCallback(&MClientController::OnTimerStatus, this)))
 			{

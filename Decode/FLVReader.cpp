@@ -13,7 +13,8 @@ namespace Decode
 		m_offset(0),
 		m_timestamp(0),
 		m_count(0),
-		m_basePTS(-1)
+		m_basePTS(-1),
+		m_audioTimestamp(0)
 	{
 
 	}
@@ -184,6 +185,10 @@ namespace Decode
 			if (tag.type == FLV_AUDIO)
 			{
 				m_timestamp = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
+				if (m_audioTimestamp >= m_timestamp)
+				{
+					LOG(ERROR) << "[FLVReader] ReadBlock Audio Audio Preview Timestamp:" << m_audioTimestamp << "Audio Current Timestamp:" << m_timestamp;
+				}
 				if (m_timestamp > 0)
 				{
 					if (m_count == 1 && m_basePTS == -1)
@@ -195,6 +200,7 @@ namespace Decode
 						m_timestamp -= m_basePTS;
 					}
 				}
+				m_audioTimestamp = m_timestamp;
 				return ParseAudio(data, size, block);
 			}
 			else if (tag.type == FLV_VIDEO)

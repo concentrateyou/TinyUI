@@ -101,6 +101,7 @@ namespace MShow
 					sampleTag.bits = new(std::nothrow) BYTE[so];
 					if (!sampleTag.bits)
 					{
+						sampleTag.size = 0;
 						LOG(ERROR) << "[MVideoTask] new size:" << so;
 					}
 					else

@@ -69,6 +69,8 @@ namespace MShow
 	BOOL MFLVPlayer::Close()
 	{
 		BOOL bRes = TRUE;
+		MShow::MShowApp::GetInstance().SetCurrentAudioTS(0);
+		LOG(INFO) << "[MFLVPlayer] Close SetCurrentAudioTS 0";
 		if (m_task.IsActive())
 			bRes &= m_task.Close(INFINITE);
 		LOG(INFO) << "MFLVTask Close:" << bRes;
@@ -90,7 +92,6 @@ namespace MShow
 		m_task.GetAudioQueue().RemoveAll();
 		m_clock.SetBasePTS(INVALID_TIME);
 		m_clock.SetBaseTime(INVALID_TIME);
-		MShow::MShowApp::GetInstance().SetCurrentAudioTS(0);
 		Sleep(300);
 		return bRes;
 	}

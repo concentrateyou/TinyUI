@@ -44,6 +44,7 @@ namespace Decode
 		ULONGLONG				m_offset;
 		LONGLONG				m_basePTS;
 		LONGLONG				m_timestamp;
+		LONGLONG				m_audioTimestamp;
 		FLV_TAG_VIDEO			m_videoTag;
 		FLV_SCRIPTDATA			m_script;
 		TinyComPtr<IStream>		m_stream;
