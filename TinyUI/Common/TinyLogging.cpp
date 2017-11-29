@@ -1,6 +1,7 @@
 #include "../stdafx.h"
 #include "TinyLogging.h"
 #include "../IO/TinyIO.h"
+#include "../Common/TinyUtility.h"
 #include <algorithm>
 #include <cstring>
 #include <ctime>
@@ -37,7 +38,7 @@ namespace TinyUI
 			log.erase(backslash + 1);
 		}
 		log += std::move(GetCurrentTimeAsString());
-		log += TEXT(".log");
+		log += StringPrintf("-%d.log", GetCurrentProcessId());
 		return log;
 	}
 
