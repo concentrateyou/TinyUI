@@ -80,7 +80,7 @@ namespace Decode
 				LOG(ERROR) << "[FLVReader] too bit size:" << size;
 				return FALSE;
 			}
-			TinyScopedArray<BYTE> data(new (std::nothrow) BYTE[size]);
+			TinyScopedArray<BYTE> data(new BYTE[size]);
 			if (!data)
 			{
 				LOG(ERROR) << "[FLVReader] OpenURL new size:" << size;
@@ -136,7 +136,7 @@ namespace Decode
 				LOG(ERROR) << "[FLVReader] too bit size:" << size;
 				return FALSE;
 			}
-			TinyScopedArray<BYTE> data(new (std::nothrow) BYTE[size]);
+			TinyScopedArray<BYTE> data(new BYTE[size]);
 			if (!data)
 			{
 				LOG(ERROR) << "[FLVReader] OpenFile new size:" << size;
@@ -190,7 +190,7 @@ namespace Decode
 				LOG(ERROR) << "[FLVReader] too bit size:" << size;
 				return FALSE;
 			}
-			TinyScopedArray<BYTE> data(new(std::nothrow) BYTE[size]);
+			TinyScopedArray<BYTE> data(new BYTE[size]);
 			if (!data)
 			{
 				LOG(ERROR) << "[FLVReader] ReadBlock new size:" << size;
@@ -311,7 +311,7 @@ namespace Decode
 				LOG(ERROR) << "[FLVReader] too bit size:" << size;
 				return FALSE;
 			}
-			block.audio.data = new(std::nothrow) BYTE[size];
+			block.audio.data = new BYTE[size];
 			if (!block.audio.data)
 			{
 				block.audio.size = 0;
@@ -336,7 +336,7 @@ namespace Decode
 				LOG(ERROR) << "[FLVReader] too bit size:" << size;
 				return FALSE;
 			}
-			block.audio.data = new(std::nothrow) BYTE[size];
+			block.audio.data = new BYTE[size];
 			if (!block.audio.data)
 			{
 				block.audio.size = 0;
@@ -406,7 +406,7 @@ namespace Decode
 				LOG(ERROR) << "[FLVReader] too bit size:" << block.video.size;
 				return FALSE;
 			}
-			block.video.data = new (std::nothrow) BYTE[block.video.size];
+			block.video.data = new BYTE[block.video.size];
 			if (!block.video.data)
 			{
 				block.video.size = 0;
@@ -478,7 +478,7 @@ namespace Decode
 					LOG(ERROR) << "[FLVReader] too big size:" << size;
 					return FALSE;
 				}
-				block.video.data = new(std::nothrow) BYTE[block.video.size];
+				block.video.data = new BYTE[block.video.size];
 				memcpy(block.video.data, data, size);
 				block.video.codeID = video->codeID;
 				block.video.codeType = video->codeType;

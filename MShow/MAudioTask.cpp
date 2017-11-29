@@ -98,7 +98,7 @@ namespace MShow
 					m_clock.SetBasePTS(sampleTag.samplePTS);
 				}
 				sampleTag.size = so;
-				sampleTag.bits = new(std::nothrow) BYTE[so];
+				sampleTag.bits = new BYTE[so];
 				if (!sampleTag.bits)
 				{
 					sampleTag.size = 0;
