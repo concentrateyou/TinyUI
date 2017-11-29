@@ -55,6 +55,8 @@ namespace TinyUI
 
 		BOOL TinyVisualButton::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
+			if (!m_document)
+				return FALSE;
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			canvas.SetFont(m_hFONT);
@@ -101,42 +103,57 @@ namespace TinyUI
 
 		HRESULT	TinyVisualButton::OnLButtonDown(const TinyPoint& pos, DWORD dwFlags)
 		{
-			m_dwFlag = DOWN;
-			TinyRectangle s = m_document->GetWindowRect(this);
-			m_document->Redraw(&s);
-			m_document->SetCapture(this);
+			if (m_document != NULL)
+			{
+				m_dwFlag = DOWN;
+				TinyRectangle s = m_document->GetWindowRect(this);
+				m_document->Redraw(&s);
+				m_document->SetCapture(this);
+			}
 			return TinyVisual::OnLButtonDown(pos, dwFlags);
 		}
 		HRESULT	TinyVisualButton::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)
 		{
-			m_dwFlag = dwFlags & MK_LBUTTON ? DOWN : HIGHLIGHT;
-			TinyRectangle s = m_document->GetWindowRect(this);
-			m_document->Redraw(&s);
+			if (m_document != NULL)
+			{
+				m_dwFlag = dwFlags & MK_LBUTTON ? DOWN : HIGHLIGHT;
+				TinyRectangle s = m_document->GetWindowRect(this);
+				m_document->Redraw(&s);
+			}
 			return TinyVisual::OnMouseMove(pos, dwFlags);
 		}
 		HRESULT TinyVisualButton::OnMouseLeave()
 		{
-			m_dwFlag = NORMAL;
-			TinyRectangle s = m_document->GetWindowRect(this);
-			m_document->Redraw(&s);
-			m_document->ReleaseCapture();
+			if (m_document != NULL)
+			{
+				m_dwFlag = NORMAL;
+				TinyRectangle s = m_document->GetWindowRect(this);
+				m_document->Redraw(&s);
+				m_document->ReleaseCapture();
+			}
 			return TinyVisual::OnMouseLeave();
 		}
 		HRESULT	TinyVisualButton::OnLButtonUp(const TinyPoint& pos, DWORD dwFlags)
 		{
-			m_dwFlag = NORMAL;
-			TinyRectangle s = m_document->GetWindowRect(this);
-			m_document->Redraw(&s);
-			m_document->SetCapture(NULL);
-			EVENT_CLICK(this, EventArgs());
+			if (m_document != NULL)
+			{
+				m_dwFlag = NORMAL;
+				TinyRectangle s = m_document->GetWindowRect(this);
+				m_document->Redraw(&s);
+				m_document->SetCapture(NULL);
+				EVENT_CLICK(this, EventArgs());
+			}
 			return TinyVisual::OnLButtonUp(pos, dwFlags);
 		}
 		HRESULT	TinyVisualButton::OnLButtonDBClick(const TinyPoint& pos, DWORD dwFlags)
 		{
-			m_dwFlag = DOWN;
-			TinyRectangle s = m_document->GetWindowRect(this);
-			m_document->Redraw(&s);
-			EVENT_DBCLICK(this, EventArgs());
+			if (m_document != NULL)
+			{
+				m_dwFlag = DOWN;
+				TinyRectangle s = m_document->GetWindowRect(this);
+				m_document->Redraw(&s);
+				EVENT_DBCLICK(this, EventArgs());
+			}
 			return TinyVisual::OnLButtonDown(pos, dwFlags);
 		}
 	}

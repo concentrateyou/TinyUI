@@ -35,6 +35,7 @@ namespace TinyUI
 		}
 		BOOL TinyVisualBuilder::BuildDocument(TinyVisualDocument* document)
 		{
+			ASSERT(document);
 			TiXmlElement *pXML = m_doc.RootElement();
 			TinyVisual* spvis = document->GetParent(NULL);
 			if (spvis == NULL)

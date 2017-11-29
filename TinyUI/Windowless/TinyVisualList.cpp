@@ -51,7 +51,8 @@ namespace TinyUI
 
 		BOOL TinyVisualListItem::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
-			ASSERT(m_document || m_document->GetVisualHWND());
+			if (!m_document)
+				return FALSE;
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			if (!m_backgroundColor.IsEmpty())
@@ -146,49 +147,57 @@ namespace TinyUI
 
 		HRESULT	TinyVisualList::OnMouseEnter()
 		{
-			m_document->SetFocus(m_pVScrollbar);
+			if (m_document != NULL)
+			{
+				m_document->SetFocus(m_pVScrollbar);
+			}
 			return TinyVisual::OnMouseEnter();
 		}
 
 		BOOL TinyVisualList::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
-			ASSERT(m_document || m_document->GetVisualHWND());
-			TinyClipCanvas canvas(hDC, this, rcPaint);
-			TinyRectangle clip = m_document->GetWindowRect(this);
-			if (!m_backgroundColor.IsEmpty())
+			if (m_document != NULL)
 			{
-				TinyBrush brush;
-				brush.CreateBrush(m_backgroundColor);
-				canvas.SetBrush(brush);
-				canvas.FillRectangle(clip);
-			}
-			if (m_backgroundImage != NULL && !m_backgroundImage->IsEmpty())
-			{
-				if (!m_backgroundCenter.IsRectEmpty())
+				TinyClipCanvas canvas(hDC, this, rcPaint);
+				TinyRectangle clip = m_document->GetWindowRect(this);
+				if (!m_backgroundColor.IsEmpty())
 				{
-					canvas.DrawImage(*m_backgroundImage, clip, m_backgroundImage->GetRectangle(), m_backgroundCenter);
+					TinyBrush brush;
+					brush.CreateBrush(m_backgroundColor);
+					canvas.SetBrush(brush);
+					canvas.FillRectangle(clip);
 				}
-				else
+				if (m_backgroundImage != NULL && !m_backgroundImage->IsEmpty())
 				{
-					canvas.DrawImage(*m_backgroundImage, clip, 0, 0, m_backgroundImage->GetSize().cx, m_backgroundImage->GetSize().cy);
+					if (!m_backgroundCenter.IsRectEmpty())
+					{
+						canvas.DrawImage(*m_backgroundImage, clip, m_backgroundImage->GetRectangle(), m_backgroundCenter);
+					}
+					else
+					{
+						canvas.DrawImage(*m_backgroundImage, clip, 0, 0, m_backgroundImage->GetSize().cx, m_backgroundImage->GetSize().cy);
+					}
 				}
-			}
-			if (!m_borderColor.IsEmpty() && m_borderThickness != -1)
-			{
-				TinyPen pen;
-				pen.CreatePen(m_borderStyle, m_borderThickness, m_borderColor);
-				canvas.SetBrush((HBRUSH)GetStockObject(NULL_BRUSH));
-				canvas.SetPen(pen);
-				canvas.DrawRectangle(clip);
+				if (!m_borderColor.IsEmpty() && m_borderThickness != -1)
+				{
+					TinyPen pen;
+					pen.CreatePen(m_borderStyle, m_borderThickness, m_borderColor);
+					canvas.SetBrush((HBRUSH)GetStockObject(NULL_BRUSH));
+					canvas.SetPen(pen);
+					canvas.DrawRectangle(clip);
+				}
 			}
 			return TRUE;
 		}
 
 		void TinyVisualList::OnPosChange(BOOL bVer, INT code, INT iOldPos, INT iNewPos)
 		{
-			AdjustLayout(0, iOldPos - iNewPos);
-			m_iNewPos = iNewPos;
-			m_document->Redraw();
+			if (m_document != NULL)
+			{
+				AdjustLayout(0, iOldPos - iNewPos);
+				m_iNewPos = iNewPos;
+				m_document->Redraw();
+			}
 		}
 
 		TinyVisualVScrollBar* TinyVisualList::GetVScrollBar()
@@ -219,6 +228,8 @@ namespace TinyUI
 		}
 		TinyVisualListItem* TinyVisualList::Add(const TinyString& text)
 		{
+			if (!m_document)
+				return NULL;
 			TinyVisualListItem* ps = static_cast<TinyVisualListItem*>(m_document->Create(TinyVisualTag::LISTITEM, this));
 			if (ps != NULL)
 			{
@@ -249,6 +260,8 @@ namespace TinyUI
 		}
 		TinyVisualListItem* TinyVisualList::Add(const TinyString& text, const TinyString& imageURL)
 		{
+			if (!m_document)
+				return NULL;
 			TinyVisualListItem* ps = static_cast<TinyVisualListItem*>(m_document->Create(TinyVisualTag::LISTITEM, this));
 			if (ps != NULL)
 			{
@@ -284,31 +297,34 @@ namespace TinyUI
 		}
 		void TinyVisualList::RemoveAll(BOOL del)
 		{
-			m_iNewPos = 0;	
-			if (m_pVScrollbar != NULL)
+			if (m_document != NULL)
 			{
-				m_pVScrollbar->SetVisible(FALSE);
-				m_pVScrollbar->SetScrollInfo(0, 0, 0, 0, FALSE);
-			}
-			TinyVisual* spvis = m_document->GetVisual(this, CMD_CHILD);
-			spvis = m_document->GetVisual(spvis, CMD_LAST);
-			while (spvis != NULL)
-			{
-				TinyVisual* spvisT = spvis;
-				spvis = m_document->GetVisual(spvis, CMD_PREV);
-				if (spvisT->IsKindOf(RUNTIME_CLASS(TinyVisualListItem)))
+				m_iNewPos = 0;
+				if (m_pVScrollbar != NULL)
 				{
-					TinyVisualListItem* pItem = static_cast<TinyVisualListItem*>(spvisT);
-					if (del)
-					{
-						LPVOID ps = pItem->GetItemData();
-						SAFE_DELETE(ps);
-					}
-					TinyVisualResource::GetInstance().Remove(pItem->GetBackgroundImage());
-					m_document->Destory(spvisT);
+					m_pVScrollbar->SetVisible(FALSE);
+					m_pVScrollbar->SetScrollInfo(0, 0, 0, 0, FALSE);
 				}
+				TinyVisual* spvis = m_document->GetVisual(this, CMD_CHILD);
+				spvis = m_document->GetVisual(spvis, CMD_LAST);
+				while (spvis != NULL)
+				{
+					TinyVisual* spvisT = spvis;
+					spvis = m_document->GetVisual(spvis, CMD_PREV);
+					if (spvisT->IsKindOf(RUNTIME_CLASS(TinyVisualListItem)))
+					{
+						TinyVisualListItem* pItem = static_cast<TinyVisualListItem*>(spvisT);
+						if (del)
+						{
+							LPVOID ps = pItem->GetItemData();
+							SAFE_DELETE(ps);
+						}
+						TinyVisualResource::GetInstance().Remove(pItem->GetBackgroundImage());
+						m_document->Destory(spvisT);
+					}
+				}
+				Invalidate();
 			}
-			Invalidate();
 		}
 	}
 }

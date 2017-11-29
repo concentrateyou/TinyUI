@@ -97,6 +97,8 @@ namespace TinyUI
 		}
 		BOOL TinyVisualHScrollBar::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
+			if (!m_document)
+				return FALSE;
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			canvas.SetFont((HFONT)GetStockObject(DEFAULT_GUI_FONT));
 			TinyRectangle clip = m_document->GetWindowRect(this);
@@ -105,84 +107,97 @@ namespace TinyUI
 		}
 		HRESULT	TinyVisualHScrollBar::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)
 		{
-			if (dwFlags & MK_LBUTTON)
+			if (m_document != NULL)
 			{
-				if (m_si.iHitTest == HTSCROLL_THUMB)
+				if (dwFlags & MK_LBUTTON)
 				{
-					SCROLLBARCALC si = { 0 };
-					TinySize size = m_rectangle.Size();
-					ScrollCalculate(&si, size);
-					ScrollTrackThumb(pos, &si);
+					if (m_si.iHitTest == HTSCROLL_THUMB)
+					{
+						SCROLLBARCALC si = { 0 };
+						TinySize size = m_rectangle.Size();
+						ScrollCalculate(&si, size);
+						ScrollTrackThumb(pos, &si);
+						TinyRectangle s = m_document->GetWindowRect(this);
+						m_document->Invalidate(&s);
+						return TinyVisual::OnMouseMove(pos, dwFlags);
+					}
+				}
+				INT iHitTest = ScrollHitTest(pos);
+				if (m_si.iHitTest != iHitTest)
+				{
+					m_si.iHitTest = iHitTest;
 					TinyRectangle s = m_document->GetWindowRect(this);
 					m_document->Invalidate(&s);
-					return TinyVisual::OnMouseMove(pos, dwFlags);
 				}
-			}
-			INT iHitTest = ScrollHitTest(pos);
-			if (m_si.iHitTest != iHitTest)
-			{
-				m_si.iHitTest = iHitTest;
-				TinyRectangle s = m_document->GetWindowRect(this);
-				m_document->Invalidate(&s);
 			}
 			return TinyVisual::OnMouseMove(pos, dwFlags);
 		}
 		HRESULT	TinyVisualHScrollBar::OnMouseWheel(const TinyPoint& pos, SHORT zDelta, DWORD dwFlags)
 		{
-			zDelta = zDelta / 10;
-			INT iNewPos = m_si.iPos;
-			if (zDelta > 0)
+			if (m_document != NULL)
 			{
-				iNewPos = (m_si.iPos - abs(zDelta)) > m_si.iMin ? m_si.iPos - abs(zDelta) : m_si.iMin;
+				zDelta = zDelta / 10;
+				INT iNewPos = m_si.iPos;
+				if (zDelta > 0)
+				{
+					iNewPos = (m_si.iPos - abs(zDelta)) > m_si.iMin ? m_si.iPos - abs(zDelta) : m_si.iMin;
+				}
+				else
+				{
+					iNewPos = (m_si.iPos + abs(zDelta)) < (m_si.iMax - m_si.iPage + 1) ? m_si.iPos + abs(zDelta) : (m_si.iMax - m_si.iPage + 1);
+				}
+				if (iNewPos != m_si.iPos)
+				{
+					INT iOldPos = m_si.iPos;
+					m_si.iPos = iNewPos;
+					EVENT_PosChange(FALSE, zDelta > 0 ? SB_LINEDOWN : SB_LINEUP, iOldPos, iNewPos);
+				}
+				TinyRectangle s = m_document->GetWindowRect(this);
+				m_document->Invalidate(&s);
 			}
-			else
-			{
-				iNewPos = (m_si.iPos + abs(zDelta)) < (m_si.iMax - m_si.iPage + 1) ? m_si.iPos + abs(zDelta) : (m_si.iMax - m_si.iPage + 1);
-			}
-			if (iNewPos != m_si.iPos)
-			{
-				INT iOldPos = m_si.iPos;
-				m_si.iPos = iNewPos;
-				EVENT_PosChange(FALSE, zDelta > 0 ? SB_LINEDOWN : SB_LINEUP, iOldPos, iNewPos);
-			}
-			TinyRectangle s = m_document->GetWindowRect(this);
-			m_document->Invalidate(&s);
-			return FALSE;
+			return TinyVisual::OnMouseWheel(pos, zDelta, dwFlags);
 		}
 		HRESULT	TinyVisualHScrollBar::OnMouseLeave()
 		{
-			m_si.iHitTest = HTSCROLL_NONE;
-			m_si.iHitTestPress = HTSCROLL_NONE;
-			TinyRectangle s = m_document->GetWindowRect(this);
-			m_document->Invalidate(&s);
+			if (m_document != NULL)
+			{
+				m_si.iHitTest = HTSCROLL_NONE;
+				m_si.iHitTestPress = HTSCROLL_NONE;
+				TinyRectangle s = m_document->GetWindowRect(this);
+				m_document->Invalidate(&s);
+			}
 			return TinyVisual::OnMouseLeave();
 		}
 		HRESULT	TinyVisualHScrollBar::OnLButtonDown(const TinyPoint& pos, DWORD dwFlags)
 		{
-			INT iHitTest = ScrollHitTest(pos);
-			switch (iHitTest)
+			if (m_document != NULL)
 			{
-			case HTSCROLL_LINEDOWN:
-				m_si.iHitTestPress = HTSCROLL_LINEDOWN;
-				break;
-			case HTSCROLL_LINEUP:
-				m_si.iHitTestPress = HTSCROLL_LINEUP;
-				break;
-			case HTSCROLL_THUMB:
-				SCROLLBARCALC si = { 0 };
-				TinySize size = m_rectangle.Size();
-				ScrollCalculate(&si, size);
-				m_si.iThumbOffset = pos.x - si.thumbRectangle.left;
-				break;
+				INT iHitTest = ScrollHitTest(pos);
+				switch (iHitTest)
+				{
+				case HTSCROLL_LINEDOWN:
+					m_si.iHitTestPress = HTSCROLL_LINEDOWN;
+					break;
+				case HTSCROLL_LINEUP:
+					m_si.iHitTestPress = HTSCROLL_LINEUP;
+					break;
+				case HTSCROLL_THUMB:
+					SCROLLBARCALC si = { 0 };
+					TinySize size = m_rectangle.Size();
+					ScrollCalculate(&si, size);
+					m_si.iThumbOffset = pos.x - si.thumbRectangle.left;
+					break;
+				}
+				m_si.iHitTest = iHitTest;
+				TinyRectangle s = m_document->GetWindowRect(this);
+				m_document->Invalidate(&s);
+				m_document->SetCapture(this);
 			}
-			m_si.iHitTest = iHitTest;
-			TinyRectangle s = m_document->GetWindowRect(this);
-			m_document->Invalidate(&s);
-			m_document->SetCapture(this);
 			return TinyVisual::OnLButtonDown(pos, dwFlags);
 		}
 		HRESULT	TinyVisualHScrollBar::OnLButtonUp(const TinyPoint& pos, DWORD dwFlags)
 		{
+
 			INT iNewPos = m_si.iPos;
 			INT code = 0;
 			switch (m_si.iHitTest)
@@ -214,12 +229,15 @@ namespace TinyUI
 				m_si.iPos = iNewPos;
 				EVENT_PosChange(FALSE, code, iPos, iNewPos);
 			}
-			TinyRectangle s = m_document->GetWindowRect(this);
-			m_document->Invalidate(&s);
-			m_si.iHitTest = HTSCROLL_NONE;
-			m_si.iHitTestPress = HTSCROLL_NONE;
-			m_si.iThumbOffset = 0;
-			m_document->ReleaseCapture();
+			if (m_document != NULL)
+			{
+				TinyRectangle s = m_document->GetWindowRect(this);
+				m_document->Invalidate(&s);
+				m_si.iHitTest = HTSCROLL_NONE;
+				m_si.iHitTestPress = HTSCROLL_NONE;
+				m_si.iThumbOffset = 0;
+				m_document->ReleaseCapture();
+			}
 			return TinyVisual::OnLButtonUp(pos, dwFlags);
 		}
 		INT	TinyVisualHScrollBar::ScrollHitTest(const TinyPoint& pt)
@@ -587,8 +605,11 @@ namespace TinyUI
 					TinySize size = m_rectangle.Size();
 					ScrollCalculate(&si, size);
 					ScrollTrackThumb(pos, &si);
-					TinyRectangle s = m_document->GetWindowRect(this);
-					m_document->Invalidate(&s);
+					if (m_document != NULL)
+					{
+						TinyRectangle s = m_document->GetWindowRect(this);
+						m_document->Invalidate(&s);
+					}
 					return TinyVisual::OnMouseMove(pos, dwFlags);
 				}
 			}
@@ -596,8 +617,11 @@ namespace TinyUI
 			if (m_si.iHitTest != iHitTest)
 			{
 				m_si.iHitTest = iHitTest;
-				TinyRectangle s = m_document->GetWindowRect(this);
-				m_document->Invalidate(&s);
+				if (m_document != NULL)
+				{
+					TinyRectangle s = m_document->GetWindowRect(this);
+					m_document->Invalidate(&s);
+				}
 			}
 			return TinyVisual::OnMouseMove(pos, dwFlags);
 		}
@@ -619,9 +643,12 @@ namespace TinyUI
 				m_si.iPos = iNewPos;
 				EVENT_PosChange(TRUE, zDelta > 0 ? SB_LINEDOWN : SB_LINEUP, iOldPos, iNewPos);
 			}
-			TinyRectangle s = m_document->GetWindowRect(this);
-			m_document->Invalidate(&s);
-			return FALSE;
+			if (m_document != NULL)
+			{
+				TinyRectangle s = m_document->GetWindowRect(this);
+				m_document->Invalidate(&s);
+			}
+			return TinyVisual::OnMouseWheel(pos, zDelta, dwFlags);
 		}
 		HRESULT	TinyVisualVScrollBar::OnMouseEnter()
 		{
@@ -632,8 +659,11 @@ namespace TinyUI
 		{
 			m_si.iHitTest = HTSCROLL_NONE;
 			m_si.iHitTestPress = HTSCROLL_NONE;
-			TinyRectangle s = m_document->GetWindowRect(this);
-			m_document->Invalidate(&s);
+			if (m_document != NULL)
+			{
+				TinyRectangle s = m_document->GetWindowRect(this);
+				m_document->Invalidate(&s);
+			}
 			return TinyVisual::OnMouseLeave();
 		}
 		HRESULT	TinyVisualVScrollBar::OnLButtonDown(const TinyPoint& pos, DWORD dwFlags)
@@ -655,8 +685,11 @@ namespace TinyUI
 				break;
 			}
 			m_si.iHitTest = iHitTest;
-			TinyRectangle s = m_document->GetWindowRect(this);
-			m_document->Invalidate(&s);
+			if (m_document != NULL)
+			{
+				TinyRectangle s = m_document->GetWindowRect(this);
+				m_document->Invalidate(&s);
+			}
 			m_document->SetCapture(this);
 			return TinyVisual::OnLButtonDown(pos, dwFlags);
 		}
@@ -693,12 +726,15 @@ namespace TinyUI
 				m_si.iPos = iNewPos;
 				EVENT_PosChange(TRUE, code, iPos, iNewPos);
 			}
-			TinyRectangle s = m_document->GetWindowRect(this);
-			m_document->Invalidate(&s);
-			m_si.iHitTest = HTSCROLL_NONE;
-			m_si.iHitTestPress = HTSCROLL_NONE;
-			m_si.iThumbOffset = 0;
-			m_document->ReleaseCapture();
+			if (m_document != NULL)
+			{
+				TinyRectangle s = m_document->GetWindowRect(this);
+				m_document->Invalidate(&s);
+				m_si.iHitTest = HTSCROLL_NONE;
+				m_si.iHitTestPress = HTSCROLL_NONE;
+				m_si.iThumbOffset = 0;
+				m_document->ReleaseCapture();
+			}
 			return TinyVisual::OnLButtonUp(pos, dwFlags);
 		}
 		INT	TinyVisualVScrollBar::ScrollHitTest(const TinyPoint& pt)
@@ -923,7 +959,7 @@ namespace TinyUI
 			{
 				m_si.iPos = m_si.iMin = m_si.iMax = m_si.iMin = 0;
 			}
-			if (fRedraw)
+			if (fRedraw && m_document != NULL)
 			{
 				TinyRectangle s = m_document->GetWindowRect(this);
 				m_document->Invalidate(&s);
@@ -934,7 +970,7 @@ namespace TinyUI
 			iPos = iPos < m_si.iMin ? m_si.iMin : iPos;
 			iPos = iPos > (m_si.iMax - m_si.iPage) ? (m_si.iMax - m_si.iPage + 1) : iPos;
 			m_si.iPos = iPos;
-			if (fRedraw)
+			if (fRedraw && m_document != NULL)
 			{
 				TinyRectangle s = m_document->GetWindowRect(this);
 				m_document->Invalidate(&s);

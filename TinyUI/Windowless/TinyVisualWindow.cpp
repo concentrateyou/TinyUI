@@ -54,7 +54,8 @@ namespace TinyUI
 		}
 		BOOL TinyVisualWindow::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
-			ASSERT(m_document || m_document->GetVisualHWND());
+			if (!m_document)
+				return FALSE;
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			if (!m_backgroundColor.IsEmpty())

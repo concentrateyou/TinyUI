@@ -125,12 +125,14 @@ namespace TinyUI
 		}
 		LRESULT TinyVisualFrame::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
-			ASSERT(m_document);
 			bHandled = FALSE;
-			PAINTSTRUCT ps = { 0 };
-			HDC hDC = BeginPaint(m_hWND, &ps);
-			m_document->Draw(m_visualDC, ps.rcPaint);
-			EndPaint(m_hWND, &ps);
+			if (m_document != NULL)
+			{
+				PAINTSTRUCT ps = { 0 };
+				HDC hDC = BeginPaint(m_hWND, &ps);
+				m_document->Draw(m_visualDC, ps.rcPaint);
+				EndPaint(m_hWND, &ps);
+			}
 			return FALSE;
 		}
 		LRESULT TinyVisualFrame::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -140,13 +142,15 @@ namespace TinyUI
 		}
 		LRESULT TinyVisualFrame::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
-			ASSERT(m_visualDC && m_document);
 			bHandled = FALSE;
-			m_size.cx = LOWORD(lParam);
-			m_size.cy = HIWORD(lParam);
-			m_visualDC->SetSize(m_size.cx, m_size.cy);
-			m_document->OnSize(m_size);
-			::RedrawWindow(m_hWND, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+			if (m_visualDC != NULL && m_document != NULL)
+			{
+				m_size.cx = LOWORD(lParam);
+				m_size.cy = HIWORD(lParam);
+				m_visualDC->SetSize(m_size.cx, m_size.cy);
+				m_document->OnSize(m_size);
+				::RedrawWindow(m_hWND, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+			}
 			return FALSE;
 		}
 		LRESULT TinyVisualFrame::OnMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -428,65 +432,69 @@ namespace TinyUI
 		}
 		LRESULT TinyVisualFrame::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
-			ASSERT(m_document);
 			bHandled = TRUE;
-			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			TinyRectangle rectangle;
-			this->GetWindowRect(rectangle);
-			if (!rectangle.PtInRect(pos))
-				return HTNOWHERE;
-			INT cx = GetSystemMetrics(SM_CXBORDER);
-			INT cy = GetSystemMetrics(SM_CYBORDER);
-			if (pos.x >= rectangle.left && pos.x <= (rectangle.left + cx) && pos.y >= rectangle.top && pos.y <= (rectangle.top + cy))
-				return HTTOPLEFT;
-			if (pos.x >= rectangle.left && pos.x <= (rectangle.left + cx) && pos.y > (rectangle.top + cy) && pos.y < (rectangle.bottom - cy))
-				return HTLEFT;
-			if (pos.x >= rectangle.left && pos.x <= (rectangle.left + cx) && pos.y >= (rectangle.bottom - cy) && pos.y <= rectangle.bottom)
-				return HTBOTTOMLEFT;
-			if (pos.x > (rectangle.left + cx) && pos.x < (rectangle.right - cx) && pos.y >= rectangle.top && pos.y <= (rectangle.top + cy))
-				return HTTOP;
-			if (pos.x >= (rectangle.right - cx) && pos.x <= rectangle.right && pos.y >= rectangle.top && pos.y <= (rectangle.top + cy))
-				return HTTOPRIGHT;
-			if (pos.x >= (rectangle.right - cx) && pos.x <= rectangle.right && pos.y > (rectangle.top + cy) && pos.y < (rectangle.bottom - cy))
-				return HTRIGHT;
-			if (pos.x >= (rectangle.right - cx) && pos.x <= rectangle.right && pos.y >= (rectangle.bottom - cy) && pos.y <= rectangle.bottom)
-				return HTBOTTOMRIGHT;
-			if (pos.x > (rectangle.left + cx) && pos.x < (rectangle.right - cx) && pos.y >= (rectangle.bottom - cy) && pos.y <= rectangle.bottom)
-				return HTBOTTOM;
-			::ScreenToClient(m_hWND, &pos);
-			if (m_document->GetParent(NULL) == m_document->GetVisualByPos(pos.x, pos.y))
-				return HTCAPTION;
+			if (m_document != NULL)
+			{
+				TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+				TinyRectangle rectangle;
+				this->GetWindowRect(rectangle);
+				if (!rectangle.PtInRect(pos))
+					return HTNOWHERE;
+				INT cx = GetSystemMetrics(SM_CXBORDER);
+				INT cy = GetSystemMetrics(SM_CYBORDER);
+				if (pos.x >= rectangle.left && pos.x <= (rectangle.left + cx) && pos.y >= rectangle.top && pos.y <= (rectangle.top + cy))
+					return HTTOPLEFT;
+				if (pos.x >= rectangle.left && pos.x <= (rectangle.left + cx) && pos.y > (rectangle.top + cy) && pos.y < (rectangle.bottom - cy))
+					return HTLEFT;
+				if (pos.x >= rectangle.left && pos.x <= (rectangle.left + cx) && pos.y >= (rectangle.bottom - cy) && pos.y <= rectangle.bottom)
+					return HTBOTTOMLEFT;
+				if (pos.x > (rectangle.left + cx) && pos.x < (rectangle.right - cx) && pos.y >= rectangle.top && pos.y <= (rectangle.top + cy))
+					return HTTOP;
+				if (pos.x >= (rectangle.right - cx) && pos.x <= rectangle.right && pos.y >= rectangle.top && pos.y <= (rectangle.top + cy))
+					return HTTOPRIGHT;
+				if (pos.x >= (rectangle.right - cx) && pos.x <= rectangle.right && pos.y > (rectangle.top + cy) && pos.y < (rectangle.bottom - cy))
+					return HTRIGHT;
+				if (pos.x >= (rectangle.right - cx) && pos.x <= rectangle.right && pos.y >= (rectangle.bottom - cy) && pos.y <= rectangle.bottom)
+					return HTBOTTOMRIGHT;
+				if (pos.x > (rectangle.left + cx) && pos.x < (rectangle.right - cx) && pos.y >= (rectangle.bottom - cy) && pos.y <= rectangle.bottom)
+					return HTBOTTOM;
+				::ScreenToClient(m_hWND, &pos);
+				if (m_document->GetParent(NULL) == m_document->GetVisualByPos(pos.x, pos.y))
+					return HTCAPTION;
+			}
 			return HTCLIENT;
 		}
 		LRESULT TinyVisualFrame::OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
-			ASSERT(m_document);
 			bHandled = TRUE;
-			MINMAXINFO* ps = (MINMAXINFO*)lParam;
-			TinyVisual* spvis = m_document->GetParent(NULL);
-			ASSERT(spvis);
-			TinySize minSize = spvis->GetMinimumSize();
-			if (!minSize.IsEmpty())
+			if (m_document != NULL)
 			{
-				ps->ptMinTrackSize.x = minSize.cx;
-				ps->ptMinTrackSize.y = minSize.cy;
+				MINMAXINFO* ps = (MINMAXINFO*)lParam;
+				TinyVisual* spvis = m_document->GetParent(NULL);
+				ASSERT(spvis);
+				TinySize minSize = spvis->GetMinimumSize();
+				if (!minSize.IsEmpty())
+				{
+					ps->ptMinTrackSize.x = minSize.cx;
+					ps->ptMinTrackSize.y = minSize.cy;
+				}
+				TinySize maxSize = spvis->GetMaximumSize();
+				if (!maxSize.IsEmpty())
+				{
+					ps->ptMaxTrackSize.x = maxSize.cx;
+					ps->ptMaxTrackSize.y = maxSize.cy;
+				}
+				else
+				{
+					MONITORINFO mi = { 0 };
+					mi.cbSize = sizeof(MONITORINFO);
+					GetMonitorInfo(MonitorFromWindow(m_hWND, MONITOR_DEFAULTTONEAREST), &mi);
+					ps->ptMaxTrackSize.x = abs(mi.rcWork.right - mi.rcWork.left);
+					ps->ptMaxTrackSize.y = abs(mi.rcWork.bottom - mi.rcWork.top);
+				}
+				ps->ptMaxPosition.x = 0;
+				ps->ptMaxPosition.y = 0;
 			}
-			TinySize maxSize = spvis->GetMaximumSize();
-			if (!maxSize.IsEmpty())
-			{
-				ps->ptMaxTrackSize.x = maxSize.cx;
-				ps->ptMaxTrackSize.y = maxSize.cy;
-			}
-			else
-			{
-				MONITORINFO mi = { 0 };
-				mi.cbSize = sizeof(MONITORINFO);
-				GetMonitorInfo(MonitorFromWindow(m_hWND, MONITOR_DEFAULTTONEAREST), &mi);
-				ps->ptMaxTrackSize.x = abs(mi.rcWork.right - mi.rcWork.left);
-				ps->ptMaxTrackSize.y = abs(mi.rcWork.bottom - mi.rcWork.top);
-			}
-			ps->ptMaxPosition.x = 0;
-			ps->ptMaxPosition.y = 0;
 			return TRUE;
 		}
 	}

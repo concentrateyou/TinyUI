@@ -566,12 +566,16 @@ namespace TinyUI
 		}
 		HRESULT TinyVisualTextBox::OnCreate()
 		{
-			m_document->GetVisualHWND()->AddFilter(this);
+			if (m_document != NULL)
+			{
+				m_document->GetVisualHWND()->AddFilter(this);
+			}
 			m_texthost.Initialize(this);
 			return S_OK;
 		}
 		HRESULT TinyVisualTextBox::OnInitialize()
 		{
+			ASSERT(m_document);
 			TinySize size = this->GetSize();
 			m_hscroll = static_cast<TinyVisualHScrollBar*>(m_document->Create(0, size.cy - 12, size.cx, 12, TinyVisualTag::HSCROLLBAR, this));
 			m_onPosChange.Reset(new Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualTextBox::OnPosChange));

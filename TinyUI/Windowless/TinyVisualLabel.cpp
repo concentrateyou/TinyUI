@@ -29,6 +29,8 @@ namespace TinyUI
 
 		BOOL TinyVisualLabel::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
+			if (!m_document)
+				return FALSE;
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			if (!m_backgroundColor.IsEmpty())

@@ -50,11 +50,14 @@ namespace TinyUI
 
 		void TinyVisualComboBoxHWND::OnUninitialize()
 		{
-			if (m_pVScrollbar != NULL)
+			if (m_document != NULL)
 			{
-				m_pVScrollbar->EVENT_PosChange -= m_onPosChange;
-				m_document->Destory(m_pVScrollbar);
-				m_pVScrollbar = NULL;
+				if (m_pVScrollbar != NULL)
+				{
+					m_pVScrollbar->EVENT_PosChange -= m_onPosChange;
+					m_document->Destory(m_pVScrollbar);
+					m_pVScrollbar = NULL;
+				}
 			}
 		}
 		BOOL TinyVisualComboBoxHWND::IsPopup()
@@ -84,6 +87,8 @@ namespace TinyUI
 		}
 		BOOL TinyVisualComboBoxHWND::SetPosition(const TinyPoint& pos, const TinySize& size)
 		{
+			if (!m_document)
+				return FALSE;
 			BOOL bRes = ::SetWindowPos(m_hWND, HWND_TOPMOST, pos.x, pos.y, size.cx, size.cy, SWP_NOACTIVATE | SWP_SHOWWINDOW);
 			::UpdateWindow(m_hWND);
 			::SetActiveWindow(m_hWND);
@@ -168,9 +173,12 @@ namespace TinyUI
 
 		void TinyVisualComboBoxHWND::OnPosChange(BOOL bVer, INT code, INT iOldPos, INT iNewPos)
 		{
-			AdjustLayout(0, iOldPos - iNewPos);
-			m_iNewPos = iNewPos;
-			m_document->Redraw();
+			if (m_document != NULL)
+			{
+				AdjustLayout(0, iOldPos - iNewPos);
+				m_iNewPos = iNewPos;
+				m_document->Redraw();
+			}
 		}
 		void TinyVisualComboBoxHWND::AdjustLayout(INT dx, INT dy)
 		{

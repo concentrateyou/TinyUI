@@ -34,21 +34,27 @@ namespace TinyUI
 
 		BOOL TinyVisualCaption::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
-			ASSERT(m_document || m_document->GetVisualHWND());
-			TinyClipCanvas canvas(hDC, this, rcPaint);
-			TinyRectangle clip = m_document->GetWindowRect(this);
-			if (m_backgroundImage != NULL && !m_backgroundImage->IsEmpty())
+			if (m_document && m_document->GetVisualHWND())
 			{
-				canvas.DrawImage(*m_backgroundImage, clip, 0, 0, m_backgroundImage->GetSize().cx, m_backgroundImage->GetSize().cy);
+				TinyClipCanvas canvas(hDC, this, rcPaint);
+				TinyRectangle clip = m_document->GetWindowRect(this);
+				if (m_backgroundImage != NULL && !m_backgroundImage->IsEmpty())
+				{
+					canvas.DrawImage(*m_backgroundImage, clip, 0, 0, m_backgroundImage->GetSize().cx, m_backgroundImage->GetSize().cy);
+				}
+				return TRUE;
 			}
-			return TRUE;
+			return FALSE;
 		}
 
 		HRESULT	TinyVisualCaption::OnLButtonDown(const TinyPoint& pos, DWORD dwFlags)
 		{
-			HWND hWND = m_document->GetVisualHWND()->Handle();
-			::SendMessage(hWND, WM_SYSCOMMAND, SC_MOVE | HTCAPTION, 0);
-			::SendMessage(hWND, WM_LBUTTONUP, dwFlags, MAKELPARAM(pos.x, pos.y));
+			if (m_document != NULL)
+			{
+				HWND hWND = m_document->GetVisualHWND()->Handle();
+				::SendMessage(hWND, WM_SYSCOMMAND, SC_MOVE | HTCAPTION, 0);
+				::SendMessage(hWND, WM_LBUTTONUP, dwFlags, MAKELPARAM(pos.x, pos.y));
+			}
 			return TinyVisual::OnLButtonDown(pos, dwFlags);
 		}
 		HRESULT	TinyVisualCaption::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)
