@@ -70,6 +70,7 @@ namespace MShow
 			if (m_bBreak)
 				break;
 			ZeroMemory(&tag, sizeof(tag));
+			LOG(INFO) << "[MAudioRenderTask] Queue Size:" << m_task.GetAudioQueue().GetSize() << " Count:" << m_task.GetAudioQueue().GetCount();
 			if (!m_task.GetAudioQueue().Pop(tag))
 			{
 				MShow::MShowApp::GetInstance().SetCurrentAudioTS(0);

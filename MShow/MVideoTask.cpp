@@ -84,6 +84,7 @@ namespace MShow
 				Sleep(15);
 				continue;
 			}
+			LOG(INFO) << "[MVideoTask] Queue Size:" << m_task.GetVideoQueue().GetSize() << " Count:" << m_task.GetVideoQueue().GetCount();
 			ZeroMemory(&sampleTag, sizeof(sampleTag));
 			if (!m_task.GetVideoQueue().Pop(sampleTag))
 			{

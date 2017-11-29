@@ -9,6 +9,7 @@
 
 namespace Decode
 {
+#define MAX_TAG_SIZE (1920 * 1080 * 4)
 	/// <summary>
 	/// FLV¶ÁÈ¡Æ÷
 	/// </summary>

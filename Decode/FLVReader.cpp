@@ -75,7 +75,12 @@ namespace Decode
 		if (size > 0)
 		{
 			LOG(INFO) << __LINE__ << " Tag Size:" << size;
-			TinyScopedArray<BYTE> data(new(std::nothrow) BYTE[size]);
+			if (size > MAX_TAG_SIZE)
+			{
+				LOG(ERROR) << "[FLVReader] too bit size:" << size;
+				return FALSE;
+			}
+			TinyScopedArray<BYTE> data(new (std::nothrow) BYTE[size]);
 			if (!data)
 			{
 				LOG(ERROR) << "[FLVReader] OpenURL new size:" << size;
@@ -126,6 +131,11 @@ namespace Decode
 		if (size > 0)
 		{
 			LOG(INFO) << __LINE__ << " Tag Size:" << size;
+			if (size > MAX_TAG_SIZE)
+			{
+				LOG(ERROR) << "[FLVReader] too bit size:" << size;
+				return FALSE;
+			}
 			TinyScopedArray<BYTE> data(new (std::nothrow) BYTE[size]);
 			if (!data)
 			{
@@ -175,6 +185,11 @@ namespace Decode
 		if (size > 0)
 		{
 			block.type = tag.type;
+			if (size > MAX_TAG_SIZE)
+			{
+				LOG(ERROR) << "[FLVReader] too bit size:" << size;
+				return FALSE;
+			}
 			TinyScopedArray<BYTE> data(new(std::nothrow) BYTE[size]);
 			if (!data)
 			{
@@ -291,6 +306,11 @@ namespace Decode
 			block.audio.codeID = FLV_CODECID_AAC;
 			block.audio.packetType = FLV_AudioSpecificConfig;
 			block.audio.size = size;
+			if (size > MAX_TAG_SIZE)
+			{
+				LOG(ERROR) << "[FLVReader] too bit size:" << size;
+				return FALSE;
+			}
 			block.audio.data = new(std::nothrow) BYTE[size];
 			if (!block.audio.data)
 			{
@@ -311,6 +331,11 @@ namespace Decode
 			block.audio.codeID = FLV_CODECID_AAC;
 			block.audio.packetType = FLV_AACRaw;
 			block.audio.size = size;
+			if (size > MAX_TAG_SIZE)
+			{
+				LOG(ERROR) << "[FLVReader] too bit size:" << size;
+				return FALSE;
+			}
 			block.audio.data = new(std::nothrow) BYTE[size];
 			if (!block.audio.data)
 			{
@@ -376,6 +401,11 @@ namespace Decode
 			block.video.codeType = video->codeType;
 			block.video.packetType = FLV_AVCDecoderConfigurationRecord;
 			block.video.size = buffer.GetSize();
+			if (block.video.size > MAX_TAG_SIZE)
+			{
+				LOG(ERROR) << "[FLVReader] too bit size:" << block.video.size;
+				return FALSE;
+			}
 			block.video.data = new (std::nothrow) BYTE[block.video.size];
 			if (!block.video.data)
 			{
@@ -442,16 +472,14 @@ namespace Decode
 			if (offsetNALU >= size)
 			{
 				block.video.size = size;
-				block.video.data = new(std::nothrow) BYTE[block.video.size];
-				if (!block.video.data)
+				if (size > MAX_TAG_SIZE)
 				{
 					block.video.size = 0;
-					LOG(ERROR) << "[FLVReader] [ParseNALUS] new size:" << block.video.size;
+					LOG(ERROR) << "[FLVReader] too big size:" << size;
+					return FALSE;
 				}
-				else
-				{
-					memcpy(block.video.data, data, size);
-				}
+				block.video.data = new(std::nothrow) BYTE[block.video.size];
+				memcpy(block.video.data, data, size);
 				block.video.codeID = video->codeID;
 				block.video.codeType = video->codeType;
 				block.video.packetType = FLV_NALU;

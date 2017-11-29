@@ -101,6 +101,7 @@ namespace MShow
 		{
 			if (m_bBreak)
 				break;
+			LOG(INFO) << "[MVideoRenderTask] Queue Size:" << m_task.GetVideoQueue().GetSize() << " Count:" << m_task.GetVideoQueue().GetCount();
 			ZeroMemory(&sampleTag, sizeof(sampleTag));
 			if (!m_task.GetVideoQueue().Pop(sampleTag))
 			{
