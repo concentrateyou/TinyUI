@@ -10,8 +10,11 @@ namespace TinyUI
 	{
 		IMPLEMENT_DYNCREATE(TinyVisualButton, TinyVisual);
 
+#define BUTTONSTATE(ps)   (ps->m_buttonState)
+
 		TinyVisualButton::TinyVisualButton()
-			:m_dwFlag(NORMAL)
+			:m_dwFlag(NORMAL),
+			m_buttonState(0)
 		{
 
 		}
@@ -105,10 +108,12 @@ namespace TinyUI
 		{
 			if (m_document != NULL)
 			{
+				BUTTONSTATE(this) |= BST_MOUSE;
+				m_document->SetCapture(this);
 				m_dwFlag = DOWN;
 				TinyRectangle s = m_document->GetWindowRect(this);
 				m_document->Redraw(&s);
-				m_document->SetCapture(this);
+
 			}
 			return TinyVisual::OnLButtonDown(pos, dwFlags);
 		}
@@ -116,6 +121,10 @@ namespace TinyUI
 		{
 			if (m_document != NULL)
 			{
+				if (!(BUTTONSTATE(this) & BST_MOUSE))
+				{
+					return TinyVisual::OnMouseMove(pos, dwFlags);
+				}
 				m_dwFlag = dwFlags & MK_LBUTTON ? DOWN : HIGHLIGHT;
 				TinyRectangle s = m_document->GetWindowRect(this);
 				m_document->Redraw(&s);
