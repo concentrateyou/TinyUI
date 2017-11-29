@@ -71,52 +71,45 @@ namespace MShow
 
 	void MAudioTask::OnMessagePump()
 	{
-		try
+		SampleTag sampleTag = { 0 };
+		for (;;)
 		{
-			SampleTag sampleTag = { 0 };
-			for (;;)
+			if (m_bBreak)
+				break;
+			INT size = m_audioQueue.GetSize();
+			if (size > MAX_AUDIO_QUEUE_SIZE)
 			{
-				if (m_bBreak)
-					break;
-				INT size = m_audioQueue.GetSize();
-				if (size > MAX_AUDIO_QUEUE_SIZE)
+				Sleep(15);
+				continue;
+			}
+			ZeroMemory(&sampleTag, sizeof(sampleTag));
+			if (!m_task.GetAudioQueue().Pop(sampleTag))
+			{
+				Sleep(15);
+				continue;
+			}
+			BYTE* bo = NULL;
+			LONG  so = 0;
+			if (m_aac.Decode(sampleTag, bo, so))
+			{
+				if (m_clock.GetBasePTS() == INVALID_TIME)
 				{
-					Sleep(15);
-					continue;
+					m_clock.SetBasePTS(sampleTag.samplePTS);
 				}
-				ZeroMemory(&sampleTag, sizeof(sampleTag));
-				if (!m_task.GetAudioQueue().Pop(sampleTag))
+				sampleTag.size = so;
+				sampleTag.bits = new(std::nothrow) BYTE[so];
+				if (!sampleTag.bits)
 				{
-					Sleep(15);
-					continue;
+					sampleTag.size = 0;
+					LOG(ERROR) << "[MAudioTask] new size:" << so;
 				}
-				BYTE* bo = NULL;
-				LONG  so = 0;
-				if (m_aac.Decode(sampleTag, bo, so))
+				else
 				{
-					if (m_clock.GetBasePTS() == INVALID_TIME)
-					{
-						m_clock.SetBasePTS(sampleTag.samplePTS);
-					}
-					sampleTag.size = so;
-					sampleTag.bits = new(std::nothrow) BYTE[so];
-					if (!sampleTag.bits)
-					{
-						sampleTag.size = 0;
-						LOG(ERROR) << "[MAudioTask] new size:" << so;
-					}
-					else
-					{
-						memcpy_s(sampleTag.bits, sampleTag.size, bo, so);
-						m_audioQueue.Push(sampleTag);
-					}
+					memcpy_s(sampleTag.bits, sampleTag.size, bo, so);
+					m_audioQueue.Push(sampleTag);
 				}
 			}
-			m_audioQueue.RemoveAll();
 		}
-		catch (...)
-		{
-			LOG(ERROR) << "[MAudioTask] exception";
-		}
+		m_audioQueue.RemoveAll();
 	}
 }

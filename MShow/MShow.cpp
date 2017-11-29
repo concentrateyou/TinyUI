@@ -141,7 +141,6 @@ namespace MShow
 	{
 		LARGE_INTEGER currentTime;
 		QueryPerformanceCounter(&currentTime);
-		ASSERT(currentTime.QuadPart >= g_lastQPCTime);
 		g_lastQPCTime = currentTime.QuadPart;
 		DOUBLE timeVal = DOUBLE(currentTime.QuadPart);
 		timeVal *= 1000000000.0;
@@ -153,7 +152,6 @@ namespace MShow
 	{
 		LARGE_INTEGER currentTime;
 		QueryPerformanceCounter(&currentTime);
-		ASSERT(currentTime.QuadPart >= g_lastQPCTime);
 		g_lastQPCTime = currentTime.QuadPart;
 		QWORD timeVal = currentTime.QuadPart;
 		timeVal *= 1000;
@@ -165,7 +163,6 @@ namespace MShow
 	{
 		LARGE_INTEGER currentTime;
 		QueryPerformanceCounter(&currentTime);
-		ASSERT(currentTime.QuadPart >= g_lastQPCTime);
 		g_lastQPCTime = currentTime.QuadPart;
 		DOUBLE timeVal = DOUBLE(currentTime.QuadPart);
 		timeVal *= 10000000.0;
@@ -263,6 +260,26 @@ void handlenew()
 	LOG(ERROR) << "Alloc Memery FAIL";
 }
 
+LONG WINAPI OnCrashHandler(LPEXCEPTION_POINTERS ps)
+{
+	if (ps->ExceptionRecord->ExceptionCode != DBG_PRINTEXCEPTION_C)
+	{
+		StackTrace trace(ps);
+		LOG(ERROR) << "[OnCrashHandler]: " << trace.ToString();
+	}
+	return EXCEPTION_EXECUTE_HANDLER;
+}
+
+LONG WINAPI OnVectoredHandler(struct _EXCEPTION_POINTERS *ps)
+{
+	if (ps->ExceptionRecord->ExceptionCode != DBG_PRINTEXCEPTION_C)
+	{
+		StackTrace trace(ps);
+		LOG(ERROR) << "[OnVectoredHandler]: " << trace.ToString();
+	}
+	return EXCEPTION_CONTINUE_SEARCH;
+}
+
 INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPTSTR    lpCmdLine,
@@ -275,16 +292,15 @@ INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		LOG(ERROR) << "BuildCrash FAIL";
 		return FALSE;
 	}
-
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
-
 	WSADATA   wsd;
 	WSAStartup(MAKEWORD(2, 2), &wsd);
 	MFStartup(MF_VERSION);
 	OleInitialize(NULL);
 	set_new_handler(handlenew);
-
+	AddVectoredExceptionHandler(1, OnVectoredHandler);
+	SetUnhandledExceptionFilter(OnCrashHandler);
 	//确保MShowApp先释放
 	TinyApplication* app = TinyApplication::GetInstance();
 

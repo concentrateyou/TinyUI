@@ -5,13 +5,12 @@ namespace TinyUI
 {
 	void __cdecl Trace(LPCTSTR lpszFormat, ...)
 	{
-		TCHAR szBuffer[512];
+		TCHAR szBuffer[4096];
 		va_list args;
 		va_start(args, lpszFormat);
-		INT iRes = _vstprintf_s(szBuffer, _countof(szBuffer), lpszFormat, args);
-		ASSERT(iRes >= 0);
-		OutputDebugString(szBuffer);
+		_vstprintf_s(szBuffer, _countof(szBuffer), lpszFormat, args);
 		va_end(args);
+		::OutputDebugString(szBuffer);
 	}
 	//////////////////////////////////////////////////////////////////////////
 	INLINE BOOL operator==(const NullType&, const NullType&)

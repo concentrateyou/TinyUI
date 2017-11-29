@@ -74,6 +74,7 @@ namespace Decode
 		INT size = ToINT24(tag.size);
 		if (size > 0)
 		{
+			LOG(INFO) << __LINE__ << " Tag Size:" << size;
 			TinyScopedArray<BYTE> data(new(std::nothrow) BYTE[size]);
 			if (!data)
 			{
@@ -124,7 +125,8 @@ namespace Decode
 		INT size = ToINT24(tag.size);
 		if (size > 0)
 		{
-			TinyScopedArray<BYTE> data(new(std::nothrow) BYTE[size]);
+			LOG(INFO) << __LINE__ << " Tag Size:" << size;
+			TinyScopedArray<BYTE> data(new (std::nothrow) BYTE[size]);
 			if (!data)
 			{
 				LOG(ERROR) << "[FLVReader] OpenFile new size:" << size;

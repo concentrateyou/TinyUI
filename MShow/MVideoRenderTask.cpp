@@ -94,66 +94,59 @@ namespace MShow
 	}
 	void MVideoRenderTask::OnMessagePump()
 	{
-		try
+		BOOL bRendering = FALSE;
+		TinyPerformanceTimer timer;
+		SampleTag sampleTag = { 0 };
+		for (;;)
 		{
-			BOOL bRendering = FALSE;
-			TinyPerformanceTimer timer;
-			SampleTag sampleTag = { 0 };
-			for (;;)
+			if (m_bBreak)
+				break;
+			ZeroMemory(&sampleTag, sizeof(sampleTag));
+			if (!m_task.GetVideoQueue().Pop(sampleTag))
 			{
-				if (m_bBreak)
-					break;
-				ZeroMemory(&sampleTag, sizeof(sampleTag));
-				if (!m_task.GetVideoQueue().Pop(sampleTag))
+				TRACE("[MVideoRenderTask] Waiting 40\n");
+				LOG(INFO) << "[MVideoRenderTask] Waiting 40";
+				timer.Waiting(40, 1000);
+				if (bRendering)
 				{
-					TRACE("Waiting 40\n");
-					LOG(INFO) << "Waiting 40";
-					timer.Waiting(40, 1000);
-					if (bRendering)
-					{
-						m_clock.AddBaseTime(40);
-					}
-					continue;
+					m_clock.AddBaseTime(40);
 				}
-				if (sampleTag.samplePTS == m_clock.GetBasePTS())
-				{
-					m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
-					TRACE("MVideoRenderTask BaseTime:%lld\n", m_clock.GetBaseTime());
-					TRACE("MVideoRenderTask samplePTS:%lld\n", sampleTag.samplePTS);
-					LOG(INFO) << "MVideoRenderTask BaseTime:" << m_clock.GetBaseTime();
-					LOG(INFO) << "MVideoRenderTask samplePTS:" << sampleTag.samplePTS;
-				}
-				while (m_clock.GetBasePTS() == INVALID_TIME);
-				bRendering = TRUE;
-				if (!m_bInitialize)
-				{
-					m_videoSize = m_task.GetVideoSize();
-					if (!m_image.Create(m_graphics.GetDX9(), m_videoSize.cx, m_videoSize.cy, NULL))
-					{
-						LOG(ERROR) << "Image2D Create FAIL";
-					}
-					m_bInitialize = TRUE;
-				}
-				OnCopy(sampleTag.bits, sampleTag.size);
-				LONG systemMS = static_cast<LONG>(MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime());
-				INT delay = static_cast<INT>(sampleTag.samplePTS - systemMS);
-				if (delay >= 50)
-				{
-					TRACE("Video Delay:%d\n", delay);
-					LOG(INFO) << "Video Delay:" << delay;
-				}
-				if (timer.Waiting(delay, 100))
-				{
-					m_graphics.Present();
-				}
-				SAFE_DELETE_ARRAY(sampleTag.bits);
+				continue;
 			}
-			m_task.GetVideoQueue().RemoveAll();
-			m_bInitialize = FALSE;
+			if (sampleTag.samplePTS == m_clock.GetBasePTS())
+			{
+				m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
+				TRACE("MVideoRenderTask BaseTime:%lld\n", m_clock.GetBaseTime());
+				TRACE("MVideoRenderTask samplePTS:%lld\n", sampleTag.samplePTS);
+				LOG(INFO) << "MVideoRenderTask BaseTime:" << m_clock.GetBaseTime();
+				LOG(INFO) << "MVideoRenderTask samplePTS:" << sampleTag.samplePTS;
+			}
+			while (m_clock.GetBasePTS() == INVALID_TIME);
+			bRendering = TRUE;
+			if (!m_bInitialize)
+			{
+				m_videoSize = m_task.GetVideoSize();
+				if (!m_image.Create(m_graphics.GetDX9(), m_videoSize.cx, m_videoSize.cy, NULL))
+				{
+					LOG(ERROR) << "Image2D Create FAIL";
+				}
+				m_bInitialize = TRUE;
+			}
+			OnCopy(sampleTag.bits, sampleTag.size);
+			LONG systemMS = static_cast<LONG>(MShow::MShowApp::GetInstance().GetQPCTimeMS() - m_clock.GetBaseTime());
+			INT delay = static_cast<INT>(sampleTag.samplePTS - systemMS);
+			if (delay >= 50)
+			{
+				TRACE("Video Delay:%d\n", delay);
+				LOG(INFO) << "Video Delay:" << delay;
+			}
+			if (timer.Waiting(delay, 100))
+			{
+				m_graphics.Present();
+			}
+			SAFE_DELETE_ARRAY(sampleTag.bits);
 		}
-		catch (...)
-		{
-			LOG(ERROR) << "[MVideoRenderTask] exception";
-		}
+		m_task.GetVideoQueue().RemoveAll();
+		m_bInitialize = FALSE;
 	}
 }

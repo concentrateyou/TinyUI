@@ -27,34 +27,34 @@ namespace MShow
 	public:
 		MClientController(MClientWindow& view);
 		virtual ~MClientController();
-		BOOL	Initialize();
-		BOOL	Uninitialize();
-		void	SetProgram(const string& szProgramName, const string& szProgramID, const string& szLogID);
-		void	SetTimes(const string& szTime1, const string& szTime2);
-		BOOL	SetPreview(const string& szPreviewURL);
-		void	UpdateMicrophones();
-		void	UpdateSpeakers();
+		BOOL		Initialize();
+		BOOL		Uninitialize();
+		void		SetProgram(const string& szProgramName, const string& szProgramID, const string& szLogID);
+		void		SetTimes(const string& szTime1, const string& szTime2);
+		BOOL		SetPreview(const string& szPreviewURL);
+		void		UpdateMicrophones();
+		void		UpdateSpeakers();
 	private:
-		void	InitializeUI();
-		void	OnSettingClick(TinyVisual*, EventArgs& args);
-		void	OnMinimumClick(TinyVisual*, EventArgs& args);
-		void	OnCloseClick(TinyVisual*, EventArgs& args);
-		void	OnEditClick(TinyVisual*, EventArgs& args);
-		void	OnSaveClick(TinyVisual*, EventArgs& args);
-		void	OnCancelClick(TinyVisual*, EventArgs& args);
-		void	OnStartCommentaryClick(TinyVisual*, EventArgs& args);
-		void	OnPauseCommentaryClick(TinyVisual*, EventArgs& args);
-		void	OnStopCommentaryClick(TinyVisual*, EventArgs& args);
-		void	OnMicrophoneTestClick(TinyVisual*, EventArgs& args);
-		void	OnSpeakerTestClick(TinyVisual*, EventArgs& args);
-		void	OnMicrophoneFocus(TinyVisual*, FocusEventArgs& args);
-		void	OnSpeakerFocus(TinyVisual*, FocusEventArgs& args);
-		void	OnMessagePump();
-		BOOL	Query(const string& sourceID, INT& count);
+		void		InitializeUI();
+		void		OnSettingClick(TinyVisual*, EventArgs& args);
+		void		OnMinimumClick(TinyVisual*, EventArgs& args);
+		void		OnCloseClick(TinyVisual*, EventArgs& args);
+		void		OnEditClick(TinyVisual*, EventArgs& args);
+		void		OnSaveClick(TinyVisual*, EventArgs& args);
+		void		OnCancelClick(TinyVisual*, EventArgs& args);
+		void		OnStartCommentaryClick(TinyVisual*, EventArgs& args);
+		void		OnPauseCommentaryClick(TinyVisual*, EventArgs& args);
+		void		OnStopCommentaryClick(TinyVisual*, EventArgs& args);
+		void		OnMicrophoneTestClick(TinyVisual*, EventArgs& args);
+		void		OnSpeakerTestClick(TinyVisual*, EventArgs& args);
+		void		OnMicrophoneFocus(TinyVisual*, FocusEventArgs& args);
+		void		OnSpeakerFocus(TinyVisual*, FocusEventArgs& args);
+		void		OnMessagePump();
+		BOOL		Query(const string& sourceID, INT& count);
 	private:
-		void	OnAudio(BYTE* bits, LONG size);
-		void	OnTimerStatus();
-		void	OnTry();
+		void		OnAudio(BYTE* bits, LONG size);
+		void		OnTimerStatus();
+		void		OnTry();
 	private:
 		BOOL		Connect();//ÃÌº”‘¥
 		BOOL		Disconnect(const string& sourceID, BOOL del = FALSE);

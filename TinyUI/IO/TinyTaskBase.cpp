@@ -101,17 +101,10 @@ namespace TinyUI
 		}
 		DWORD WINAPI TinyTaskBase::Callback(LPVOID ps)
 		{
-			try
+			TinyTaskBase* pTask = reinterpret_cast<TinyTaskBase*>(ps);
+			if (pTask != NULL)
 			{
-				TinyTaskBase* pTask = reinterpret_cast<TinyTaskBase*>(ps);
-				if (pTask != NULL)
-				{
-					pTask->m_callback();
-				}
-			}
-			catch (std::exception* e)
-			{
-				throw(e);
+				pTask->m_callback();
 			}
 			return FALSE;
 		}

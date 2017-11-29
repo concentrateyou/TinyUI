@@ -615,8 +615,10 @@ namespace TinyUI
 					if (m_spvisLastMouse != spvis)
 					{
 						spvis->OnMouseEnter();
-						if (m_spvisLastMouse)
+						if (m_spvisLastMouse != NULL)
+						{
 							m_spvisLastMouse->OnMouseLeave();
+						}
 						m_spvisLastMouse = spvis;
 					}
 					TinyPoint pt = pos;
@@ -637,8 +639,10 @@ namespace TinyUI
 		}
 		HRESULT	TinyVisualDocument::OnMouseLeave()
 		{
-			if (m_spvisLastMouse)
+			if (m_spvisLastMouse != NULL)
+			{
 				m_spvisLastMouse->OnMouseLeave();
+			}
 			return FALSE;
 		}
 		HRESULT TinyVisualDocument::OnLButtonDown(const TinyPoint& pos, DWORD dwFlags)

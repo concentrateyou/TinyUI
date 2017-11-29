@@ -189,157 +189,229 @@ namespace TinyUI
 		LRESULT TinyVisualFrame::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			if (m_bAllowTracking)
+			if (m_document != NULL)
 			{
-				if (!m_bMouseTracking)
+				if (m_bAllowTracking)
 				{
-					TRACKMOUSEEVENT tme;
-					tme.cbSize = sizeof(tme);
-					tme.hwndTrack = m_hWND;
-					tme.dwFlags = TME_LEAVE;
-					tme.dwHoverTime = 10;
-					m_bMouseTracking = _TrackMouseEvent(&tme);
+					if (!m_bMouseTracking)
+					{
+						TRACKMOUSEEVENT tme;
+						tme.cbSize = sizeof(tme);
+						tme.hwndTrack = m_hWND;
+						tme.dwFlags = TME_LEAVE;
+						tme.dwHoverTime = 10;
+						m_bMouseTracking = _TrackMouseEvent(&tme);
+					}
 				}
+				TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+				LRESULT lRes = m_document->OnMouseMove(pos, static_cast<DWORD>(wParam));
+				bHandled = IsMsgHandled();
+				return lRes;
 			}
-			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			LRESULT lRes = m_document->OnMouseMove(pos, static_cast<DWORD>(wParam));
-			bHandled = IsMsgHandled();
-			return lRes;
+			return FALSE;
 		}
 		LRESULT TinyVisualFrame::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			if (m_bAllowTracking)
+			if (m_document != NULL)
 			{
-				if (m_bMouseTracking)
-					m_bMouseTracking = FALSE;
+				if (m_bAllowTracking)
+				{
+					if (m_bMouseTracking)
+						m_bMouseTracking = FALSE;
+				}
+				LRESULT lRes = m_document->OnMouseLeave();
+				bHandled = IsMsgHandled();
+				return lRes;
 			}
-			LRESULT lRes = m_document->OnMouseLeave();
-			bHandled = IsMsgHandled();
-			return lRes;
+			return FALSE;
 		}
 		LRESULT TinyVisualFrame::OnMouseWheel(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			::ScreenToClient(m_hWND, &pos);
-			LRESULT lRes = m_document->OnMouseWheel(pos, GET_WHEEL_DELTA_WPARAM(wParam), GET_KEYSTATE_WPARAM(wParam));
-			bHandled = IsMsgHandled();
-			return lRes;
+			if (m_document != NULL)
+			{
+				TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+				::ScreenToClient(m_hWND, &pos);
+				LRESULT lRes = m_document->OnMouseWheel(pos, GET_WHEEL_DELTA_WPARAM(wParam), GET_KEYSTATE_WPARAM(wParam));
+				bHandled = IsMsgHandled();
+				return lRes;
+			}
+			return FALSE;
 		}
 		LRESULT TinyVisualFrame::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			LRESULT lRes = m_document->OnLButtonDown(pos, static_cast<DWORD>(wParam));
-			bHandled = IsMsgHandled();
-			return lRes;
+			if (m_document != NULL)
+			{
+				TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+				LRESULT lRes = m_document->OnLButtonDown(pos, static_cast<DWORD>(wParam));
+				bHandled = IsMsgHandled();
+				return lRes;
+			}
+			return FALSE;
 		}
 		LRESULT TinyVisualFrame::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			LRESULT lRes = m_document->OnLButtonUp(pos, static_cast<DWORD>(wParam));
-			bHandled = IsMsgHandled();
-			return lRes;
+			if (m_document != NULL)
+			{
+				TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+				LRESULT lRes = m_document->OnLButtonUp(pos, static_cast<DWORD>(wParam));
+				bHandled = IsMsgHandled();
+				return lRes;
+			}
+			return FALSE;
 		}
 		LRESULT TinyVisualFrame::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			LRESULT lRes = m_document->OnLButtonDBClick(pos, static_cast<DWORD>(wParam));
-			bHandled = IsMsgHandled();
-			return lRes;
+			if (m_document != NULL)
+			{
+				TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+				LRESULT lRes = m_document->OnLButtonDBClick(pos, static_cast<DWORD>(wParam));
+				bHandled = IsMsgHandled();
+				return lRes;
+			}
+			return FALSE;
 		}
 		LRESULT TinyVisualFrame::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			LRESULT lRes = m_document->OnRButtonDown(pos, static_cast<DWORD>(wParam));
-			bHandled = IsMsgHandled();
-			return lRes;
+			if (m_document != NULL)
+			{
+				TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+				LRESULT lRes = m_document->OnRButtonDown(pos, static_cast<DWORD>(wParam));
+				bHandled = IsMsgHandled();
+				return lRes;
+			}
+			return FALSE;
 		}
 		LRESULT TinyVisualFrame::OnRButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			LRESULT lRes = m_document->OnRButtonUp(pos, static_cast<DWORD>(wParam));
-			bHandled = IsMsgHandled();
-			return lRes;
+			if (m_document != NULL)
+			{
+				TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+				LRESULT lRes = m_document->OnRButtonUp(pos, static_cast<DWORD>(wParam));
+				bHandled = IsMsgHandled();
+				return lRes;
+			}
+			return FALSE;
 		}
 		LRESULT TinyVisualFrame::OnRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			LRESULT lRes = m_document->OnRButtonDBClick(pos, static_cast<DWORD>(wParam));
-			bHandled = IsMsgHandled();
-			return lRes;
+			if (m_document != NULL)
+			{
+				TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+				LRESULT lRes = m_document->OnRButtonDBClick(pos, static_cast<DWORD>(wParam));
+				bHandled = IsMsgHandled();
+				return lRes;
+			}
+			return FALSE;
 		}
 		LRESULT TinyVisualFrame::OnMButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			LRESULT lRes = m_document->OnMButtonDown(pos, static_cast<DWORD>(wParam));
-			bHandled = IsMsgHandled();
-			return lRes;
+			if (m_document != NULL)
+			{
+				TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+				LRESULT lRes = m_document->OnMButtonDown(pos, static_cast<DWORD>(wParam));
+				bHandled = IsMsgHandled();
+				return lRes;
+			}
+			return FALSE;
 		}
 		LRESULT TinyVisualFrame::OnMButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			LRESULT lRes = m_document->OnMButtonUp(pos, static_cast<DWORD>(wParam));
-			bHandled = IsMsgHandled();
-			return lRes;
+			if (m_document != NULL)
+			{
+				TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+				LRESULT lRes = m_document->OnMButtonUp(pos, static_cast<DWORD>(wParam));
+				bHandled = IsMsgHandled();
+				return lRes;
+			}
+			return FALSE;
 		}
 		LRESULT TinyVisualFrame::OnMButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			LRESULT lRes = m_document->OnMButtonDBClick(pos, static_cast<DWORD>(wParam));
-			bHandled = IsMsgHandled();
-			return lRes;
+			if (m_document != NULL)
+			{
+				TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+				LRESULT lRes = m_document->OnMButtonDBClick(pos, static_cast<DWORD>(wParam));
+				bHandled = IsMsgHandled();
+				return lRes;
+			}
+			return FALSE;
 		}
 		LRESULT TinyVisualFrame::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			LRESULT lRes = m_document->OnKeyDown(static_cast<DWORD>(wParam), LOWORD(lParam), HIWORD(lParam));
-			bHandled = IsMsgHandled();
-			return lRes;
+			if (m_document != NULL)
+			{
+				LRESULT lRes = m_document->OnKeyDown(static_cast<DWORD>(wParam), LOWORD(lParam), HIWORD(lParam));
+				bHandled = IsMsgHandled();
+				return lRes;
+			}
+			return FALSE;
 		}
 		LRESULT TinyVisualFrame::OnKeyUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			LRESULT lRes = m_document->OnKeyUp(static_cast<DWORD>(wParam), LOWORD(lParam), HIWORD(lParam));
-			bHandled = IsMsgHandled();
-			return lRes;
+			if (m_document != NULL)
+			{
+				LRESULT lRes = m_document->OnKeyUp(static_cast<DWORD>(wParam), LOWORD(lParam), HIWORD(lParam));
+				bHandled = IsMsgHandled();
+				return lRes;
+			}
+			return FALSE;
 		}
 		LRESULT TinyVisualFrame::OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			LRESULT lRes = m_document->OnChar(static_cast<DWORD>(wParam), LOWORD(lParam), HIWORD(lParam));
-			bHandled = IsMsgHandled();
-			return lRes;
+			if (m_document != NULL)
+			{
+				LRESULT lRes = m_document->OnChar(static_cast<DWORD>(wParam), LOWORD(lParam), HIWORD(lParam));
+				bHandled = IsMsgHandled();
+				return lRes;
+			}
+			return FALSE;
 		}
 		LRESULT TinyVisualFrame::OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			LRESULT lRes = m_document->OnSetCursor(reinterpret_cast<HWND>(wParam), LOWORD(lParam), HIWORD(lParam));
-			bHandled = IsMsgHandled();
-			return lRes;
+			if (m_document != NULL)
+			{
+				LRESULT lRes = m_document->OnSetCursor(reinterpret_cast<HWND>(wParam), LOWORD(lParam), HIWORD(lParam));
+				bHandled = IsMsgHandled();
+				return lRes;
+			}
+			return FALSE;
 		}
 		LRESULT TinyVisualFrame::OnSetFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			LRESULT lRes = m_document->OnSetFocus(reinterpret_cast<HWND>(wParam));
-			bHandled = IsMsgHandled();
-			return lRes;
+			if (m_document != NULL)
+			{
+				LRESULT lRes = m_document->OnSetFocus(reinterpret_cast<HWND>(wParam));
+				bHandled = IsMsgHandled();
+				return lRes;
+			}
+			return FALSE;
 		}
 		LRESULT TinyVisualFrame::OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			LRESULT lRes = m_document->OnKillFocus(reinterpret_cast<HWND>(wParam));
-			bHandled = IsMsgHandled();
-			return lRes;
+			if (m_document != NULL)
+			{
+				LRESULT lRes = m_document->OnKillFocus(reinterpret_cast<HWND>(wParam));
+				bHandled = IsMsgHandled();
+				return lRes;
+			}
+			return FALSE;
 		}
 		LRESULT TinyVisualFrame::OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{

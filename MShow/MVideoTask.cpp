@@ -73,61 +73,54 @@ namespace MShow
 
 	void MVideoTask::OnMessagePump()
 	{
-		try
+		SampleTag sampleTag = { 0 };
+		for (;;)
 		{
-			SampleTag sampleTag = { 0 };
-			for (;;)
+			if (m_bBreak)
+				break;
+			INT size = m_videoQueue.GetSize();
+			if (size > MAX_VIDEO_QUEUE_SIZE)
 			{
-				if (m_bBreak)
-					break;
-				INT size = m_videoQueue.GetSize();
-				if (size > MAX_VIDEO_QUEUE_SIZE)
+				Sleep(15);
+				continue;
+			}
+			ZeroMemory(&sampleTag, sizeof(sampleTag));
+			if (!m_task.GetVideoQueue().Pop(sampleTag))
+			{
+				Sleep(15);
+				continue;
+			}
+			BYTE* bo = NULL;
+			LONG  so = 0;
+			if (m_x264.Decode(sampleTag, bo, so))
+			{
+				sampleTag.sampleDTS = sampleTag.samplePTS = m_x264.GetYUV420()->pts;
+				sampleTag.size = so;
+				sampleTag.bits = new(std::nothrow) BYTE[so];
+				if (!sampleTag.bits)
 				{
-					Sleep(15);
-					continue;
-				}
-				ZeroMemory(&sampleTag, sizeof(sampleTag));
-				if (!m_task.GetVideoQueue().Pop(sampleTag))
-				{
-					Sleep(15);
-					continue;
-				}
-				BYTE* bo = NULL;
-				LONG  so = 0;
-				if (m_x264.Decode(sampleTag, bo, so))
-				{
-					sampleTag.sampleDTS = sampleTag.samplePTS = m_x264.GetYUV420()->pts;
-					sampleTag.size = so;
-					sampleTag.bits = new(std::nothrow) BYTE[so];
-					if (!sampleTag.bits)
-					{
-						sampleTag.size = 0;
-						LOG(ERROR) << "[MVideoTask] new size:" << so;
-					}
-					else
-					{
-						memcpy(sampleTag.bits, bo, so);
-						if (m_clock.GetBasePTS() == INVALID_TIME)
-						{
-							m_clock.SetBasePTS(sampleTag.samplePTS);
-						}
-						m_videoQueue.Push(sampleTag);
-					}
+					sampleTag.size = 0;
+					LOG(ERROR) << "[MVideoTask] new size:" << so;
 				}
 				else
 				{
-					m_x264.Reset();
-					MSG msg = { 0 };
-					msg.message = WM_VIDEO_X264_DECODE_FAIL;
-					m_msgqueue.PostMsg(msg);
-					m_bBreak = TRUE;
+					memcpy(sampleTag.bits, bo, so);
+					if (m_clock.GetBasePTS() == INVALID_TIME)
+					{
+						m_clock.SetBasePTS(sampleTag.samplePTS);
+					}
+					m_videoQueue.Push(sampleTag);
 				}
 			}
-			m_videoQueue.RemoveAll();
+			else
+			{
+				m_x264.Reset();
+				MSG msg = { 0 };
+				msg.message = WM_VIDEO_X264_DECODE_FAIL;
+				m_msgqueue.PostMsg(msg);
+				m_bBreak = TRUE;
+			}
 		}
-		catch (...)
-		{
-			LOG(ERROR) << "[MVideoTask] exception";
-		}
+		m_videoQueue.RemoveAll();
 	}
 }
