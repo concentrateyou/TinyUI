@@ -35,6 +35,7 @@ namespace MShow
 		void OnTimer();
 	private:
 		BYTE						m_bits[4096];
+		FLOAT						m_maxSamples[2];
 		TinyLock					m_lock;
 		TinyAudioDSPCapture			m_audioDSP;
 		TinyMFResampler				m_resampler;

@@ -84,10 +84,10 @@ namespace MShow
 			if (tag.samplePTS == m_clock.GetBasePTS())
 			{
 				m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
-				TRACE("MAudioRenderTask BaseTime:%lld\n", m_clock.GetBaseTime());
-				TRACE("MAudioRenderTask samplePTS:%lld\n", tag.samplePTS);
-				LOG(INFO) << "MAudioRenderTask BaseTime:" << m_clock.GetBaseTime();
-				LOG(INFO) << "MAudioRenderTask samplePTS:" << tag.samplePTS;
+				TRACE("[MAudioRenderTask] BaseTime:%lld\n", m_clock.GetBaseTime());
+				TRACE("[MAudioRenderTask] samplePTS:%lld\n", tag.samplePTS);
+				LOG(INFO) << "[MAudioRenderTask] BaseTime:" << m_clock.GetBaseTime();
+				LOG(INFO) << "[MAudioRenderTask] samplePTS:" << tag.samplePTS;
 			}
 			while (m_clock.GetBasePTS() == INVALID_TIME);
 			if (!m_bInitialize)

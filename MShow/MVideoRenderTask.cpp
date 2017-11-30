@@ -117,10 +117,10 @@ namespace MShow
 			if (sampleTag.samplePTS == m_clock.GetBasePTS())
 			{
 				m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
-				TRACE("MVideoRenderTask BaseTime:%lld\n", m_clock.GetBaseTime());
-				TRACE("MVideoRenderTask samplePTS:%lld\n", sampleTag.samplePTS);
-				LOG(INFO) << "MVideoRenderTask BaseTime:" << m_clock.GetBaseTime();
-				LOG(INFO) << "MVideoRenderTask samplePTS:" << sampleTag.samplePTS;
+				TRACE("[MVideoRenderTask] BaseTime:%lld\n", m_clock.GetBaseTime());
+				TRACE("[MVideoRenderTask] samplePTS:%lld\n", sampleTag.samplePTS);
+				LOG(INFO) << "[MVideoRenderTask] BaseTime:" << m_clock.GetBaseTime();
+				LOG(INFO) << "[MVideoRenderTask] samplePTS:" << sampleTag.samplePTS;
 			}
 			while (m_clock.GetBasePTS() == INVALID_TIME);
 			bRendering = TRUE;
@@ -138,8 +138,8 @@ namespace MShow
 			INT delay = static_cast<INT>(sampleTag.samplePTS - systemMS);
 			if (delay >= 50)
 			{
-				TRACE("Video Delay:%d\n", delay);
-				LOG(INFO) << "Video Delay:" << delay;
+				TRACE("Video Delay:%d  samplePTS:%lld systemMS:%d \n", delay, sampleTag.samplePTS, systemMS);
+				LOG(INFO) << "Video Delay:" << delay << " samplePTS:" << sampleTag.samplePTS << " systemMS:" << systemMS;
 			}
 			if (timer.Waiting(delay, 100))
 			{

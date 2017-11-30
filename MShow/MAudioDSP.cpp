@@ -179,6 +179,15 @@ namespace MShow
 	{
 		TinyAutoLock lock(m_lock);
 		m_buffer.Add(bits, size);
+		/*for (INT index = 0;index < size;index += 2)
+		{
+			for (INT channel = 0; channel < 2; channel++)
+			{
+				FLOAT value = abs(bits[index + channel]);
+				m_maxSamples[channel] = max(m_maxSamples[channel], value);
+			}
+		}
+		TRACE("Audio L:%f, R:%f\n", m_maxSamples[0], m_maxSamples[1]);*/
 	}
 
 	void MAudioDSP::OnTimer()

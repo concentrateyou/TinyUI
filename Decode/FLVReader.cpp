@@ -204,7 +204,7 @@ namespace Decode
 				m_timestamp = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
 				if (m_audioTimestamp >= m_timestamp)
 				{
-					LOG(ERROR) << "[FLVReader] ReadBlock Audio Audio Preview Timestamp:" << m_audioTimestamp << "Audio Current Timestamp:" << m_timestamp;
+					LOG(ERROR) << "[FLVReader] ReadBlock Audio Audio Preview Timestamp:" << m_audioTimestamp << " Audio Current Timestamp:" << m_timestamp;
 				}
 				if (m_timestamp > 0)
 				{
@@ -216,6 +216,10 @@ namespace Decode
 					{
 						m_timestamp -= m_basePTS;
 					}
+				}
+				if (m_timestamp > 1000 * 60)
+				{
+					LOG(ERROR) << "Audio Timestamp too big:" << m_timestamp;
 				}
 				m_audioTimestamp = m_timestamp;
 				return ParseAudio(data, size, block);
