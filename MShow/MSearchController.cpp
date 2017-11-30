@@ -220,7 +220,7 @@ namespace MShow
 			LOG(ERROR) << "[MSearchController][GetPrograms] " << "Get Response Fail";
 			lblMsg->SetVisible(TRUE);
 			lblMsg->SetTextColor(RGB(255, 0, 0));
-			lblMsg->SetText("http://10.23.84.150:7777/api/director/list 读取数据失败");
+			lblMsg->SetText(StringPrintf("%s 读取数据失败", address.c_str()).c_str());
 			goto _ERROR;
 		}
 		LOG(INFO) << "[MSearchController][GetPrograms] Context:" << context;
@@ -230,7 +230,7 @@ namespace MShow
 			LOG(ERROR) << "[MSearchController][GetPrograms] " << "Parse Json Fail";
 			lblMsg->SetVisible(TRUE);
 			lblMsg->SetTextColor(RGB(255, 0, 0));
-			lblMsg->SetText("http://10.23.84.150:7777/api/director/list Json解析失败");
+			lblMsg->SetText(StringPrintf("%s Json解析失败", address.c_str()).c_str());
 			goto _ERROR;
 		}
 		list->RemoveAll(TRUE);
