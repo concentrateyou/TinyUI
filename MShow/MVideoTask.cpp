@@ -93,6 +93,7 @@ namespace MShow
 			}
 			BYTE* bo = NULL;
 			LONG  so = 0;
+			LONGLONG prevPTS = sampleTag.samplePTS;
 			if (m_x264.Decode(sampleTag, bo, so))
 			{
 				sampleTag.sampleDTS = sampleTag.samplePTS = m_x264.GetYUV420()->pts;
@@ -108,6 +109,7 @@ namespace MShow
 					memcpy(sampleTag.bits, bo, so);
 					if (m_clock.GetBasePTS() == INVALID_TIME)
 					{
+						LOG(INFO) << "[MVideoTask] SetBasePTS:" << sampleTag.samplePTS << " prevPTS:" << prevPTS;
 						m_clock.SetBasePTS(sampleTag.samplePTS);
 					}
 					m_videoQueue.Push(sampleTag);

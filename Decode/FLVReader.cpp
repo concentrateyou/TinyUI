@@ -12,9 +12,9 @@ namespace Decode
 		m_minusOne(0),
 		m_offset(0),
 		m_timestamp(0),
+		m_audioTimestamp(0),
 		m_count(0),
-		m_basePTS(-1),
-		m_audioTimestamp(0)
+		m_basePTS(-1)
 	{
 
 	}
@@ -597,6 +597,7 @@ namespace Decode
 		m_minusOne = 0;
 		m_offset = 0;
 		m_timestamp = 0;
+		m_audioTimestamp = 0;
 		m_count = 0;
 		m_basePTS = -1;
 		m_stream.Release();
