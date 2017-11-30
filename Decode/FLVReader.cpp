@@ -336,16 +336,12 @@ namespace Decode
 				LOG(ERROR) << "[FLVReader] too bit size:" << size;
 				return FALSE;
 			}
-			block.audio.data = new BYTE[size];
-			if (!block.audio.data)
-			{
-				block.audio.size = 0;
-				LOG(ERROR) << "[FLVReader] [ParseAAC] new size:" << size;
-			}
 			else
 			{
-				memcpy(block.audio.data, bits, size);
+				LOG(INFO) << "[FLVReader] ParseAAC size:" << size;
 			}
+			block.audio.data = new BYTE[size];
+			memcpy(block.audio.data, bits, size);
 			m_count++;
 		}
 		return TRUE;
@@ -406,16 +402,12 @@ namespace Decode
 				LOG(ERROR) << "[FLVReader] too bit size:" << block.video.size;
 				return FALSE;
 			}
-			block.video.data = new BYTE[block.video.size];
-			if (!block.video.data)
-			{
-				block.video.size = 0;
-				LOG(ERROR) << "[FLVReader] [ParseH264] new size:" << block.video.size;
-			}
 			else
 			{
-				memcpy(block.video.data, buffer.GetPointer(), block.video.size);
+				LOG(ERROR) << "[FLVReader] [ParseH264] size:" << block.video.size;
 			}
+			block.video.data = new BYTE[block.video.size];
+			memcpy(block.video.data, buffer.GetPointer(), block.video.size);
 		}
 		if (aacPacketType == 1)
 		{

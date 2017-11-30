@@ -70,8 +70,8 @@ namespace TinyUI
 			//Other
 			LRESULT OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		private:
-			BOOL Initialize();
-			void Uninitialize();
+			BOOL	Initialize();
+			void	Uninitialize();
 		protected:
 			BOOL								m_bAllowTracking;
 			BOOL								m_bMouseTracking;

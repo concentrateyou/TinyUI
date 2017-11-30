@@ -643,6 +643,7 @@ namespace TinyUI
 			{
 				m_spvisLastMouse->OnMouseLeave();
 			}
+			m_spvisLastMouse = NULL;
 			return FALSE;
 		}
 		HRESULT TinyVisualDocument::OnLButtonDown(const TinyPoint& pos, DWORD dwFlags)

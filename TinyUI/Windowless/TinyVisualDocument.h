@@ -34,9 +34,9 @@ namespace TinyUI
 			virtual BOOL	Initialize(TinyVisualBuilder* builder);
 			virtual void	Uninitialize();
 		public:
-			TinyVisual*	 Create(INT x, INT y, INT cx, INT cy, const TinyString& tag, TinyVisual* spvisParent);
-			TinyVisual*	 Create(const TinyString& tag, TinyVisual* spvisParent);
-			BOOL Destory(TinyVisual* spvis);
+			TinyVisual*		Create(INT x, INT y, INT cx, INT cy, const TinyString& tag, TinyVisual* spvisParent);
+			TinyVisual*		Create(const TinyString& tag, TinyVisual* spvisParent);
+			BOOL			Destory(TinyVisual* spvis);
 		public:
 			HWND				Handle() const;
 			TinyVisualFrame*	GetVisualHWND() const;
@@ -114,7 +114,7 @@ namespace TinyUI
 			TinyVisual*							m_spvisFocus;
 			TinyVisual*							m_spvisActive;
 			TinyVisual*							m_spvisLastMouse;//当前鼠标所在的元素
-			TinyVisualFrame*						m_pWindow;
+			TinyVisualFrame*					m_pWindow;
 			TinyScopedPtr<TinyVisualBuilder>	m_parse;
 			TinyScopedPtr<TinyVisualFactory>	m_vs;
 		public:

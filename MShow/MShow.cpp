@@ -280,6 +280,25 @@ LONG WINAPI OnVectoredHandler(struct _EXCEPTION_POINTERS *ps)
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 
+void DisableSetUnhandledExceptionFilter()
+{
+	void *addr = (void*)GetProcAddress(LoadLibrary(_T("kernel32.dll")),"SetUnhandledExceptionFilter");
+	if (addr)
+	{
+		BYTE code[16];
+		INT size = 0;
+		code[size++] = 0x33;
+		code[size++] = 0xC0;
+		code[size++] = 0xC2;
+		code[size++] = 0x04;
+		code[size++] = 0x00;
+		DWORD dwOldFlag, dwTempFlag;
+		VirtualProtect(addr, size, PAGE_READWRITE, &dwOldFlag);
+		WriteProcessMemory(GetCurrentProcess(), addr, code, size, NULL);
+		VirtualProtect(addr, size, dwOldFlag, &dwTempFlag);
+	}
+}
+
 INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPTSTR    lpCmdLine,
@@ -301,6 +320,9 @@ INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	set_new_handler(handlenew);
 	AddVectoredExceptionHandler(1, OnVectoredHandler);
 	SetUnhandledExceptionFilter(OnCrashHandler);
+#if !defined(_DEBUG)
+	DisableSetUnhandledExceptionFilter();
+#endif
 	//确保MShowApp先释放
 	TinyApplication* app = TinyApplication::GetInstance();
 
