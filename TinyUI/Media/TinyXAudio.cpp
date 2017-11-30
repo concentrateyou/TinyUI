@@ -67,7 +67,7 @@ namespace TinyUI
 		//////////////////////////////////////////////////////////////////////////
 		TinyXAudio::TinyXAudio()
 			:m_pMasteringVoice(NULL),
-			m_pSVoice(NULL),
+			m_pSourceVoice(NULL),
 			m_dwIndex(0)
 		{
 		}
@@ -105,7 +105,7 @@ namespace TinyUI
 				LOG(ERROR) << "[XAudio] [Open] CreateMasteringVoice:" << hRes;
 				goto _ERROR;
 			}
-			hRes = m_audio->CreateSourceVoice(&m_pSVoice, pFMT, 0, XAUDIO2_DEFAULT_FREQ_RATIO, &m_voiceCallback);
+			hRes = m_audio->CreateSourceVoice(&m_pSourceVoice, pFMT, 0, XAUDIO2_DEFAULT_FREQ_RATIO, &m_voiceCallback);
 			if (hRes != S_OK)
 			{
 				LOG(ERROR) << "[XAudio] [Open] CreateSourceVoice:" << hRes;
@@ -128,79 +128,87 @@ namespace TinyUI
 		}
 		BOOL TinyXAudio::Play(BYTE* bits, LONG size)
 		{
-			if (!m_pSVoice)
-				return FALSE;
-			XAUDIO2_BUFFER buffer = { 0 };
-			buffer.pContext = &m_voiceCallback;
-			buffer.pAudioData = bits;
-			buffer.AudioBytes = size;
-			buffer.Flags = XAUDIO2_END_OF_STREAM;
-			HRESULT hRes = m_pSVoice->SubmitSourceBuffer(&buffer, NULL);
-			if (FAILED(hRes))
+			if (m_pSourceVoice != NULL)
 			{
-				LOG(ERROR) << "[XAudio] [Play] SubmitSourceBuffer:" << hRes;
-				return FALSE;
+				XAUDIO2_BUFFER buffer = { 0 };
+				buffer.pContext = &m_voiceCallback;
+				buffer.pAudioData = bits;
+				buffer.AudioBytes = size;
+				buffer.Flags = XAUDIO2_END_OF_STREAM;
+				HRESULT hRes = m_pSourceVoice->SubmitSourceBuffer(&buffer, NULL);
+				if (FAILED(hRes))
+				{
+					LOG(ERROR) << "[XAudio] [Play] SubmitSourceBuffer:" << hRes;
+					return FALSE;
+				}
+				return TRUE;
 			}
-			return TRUE;
+			return FALSE;
 		}
 		BOOL TinyXAudio::Play(BYTE* bits, LONG size, DWORD dwMS)
 		{
 			ASSERT(size <= MAX_STREAM_BUFFER_SIZE);
-			if (!m_pSVoice)
-				return FALSE;
-			XAUDIO2_VOICE_STATE state;
-			for (;; )
+			if (m_pSourceVoice != NULL)
 			{
-				m_pSVoice->GetState(&state);
-				if (state.BuffersQueued < (MAX_BUFFER_COUNT - 1))
-					break;
-				BOOL bRes = m_voiceCallback.Lock(dwMS);
-				if (!bRes)
+				XAUDIO2_VOICE_STATE state;
+				for (;; )
 				{
-					LOG(ERROR) << "[TinyXAudio] [Play] Timeout";
+					m_pSourceVoice->GetState(&state);
+					if (state.BuffersQueued < (MAX_BUFFER_COUNT - 1))
+						break;
+					BOOL bRes = m_voiceCallback.Lock(dwMS);
+					if (!bRes)
+					{
+						LOG(ERROR) << "[TinyXAudio] [Play] Timeout";
+					}
 				}
+				memcpy_s(m_array[m_dwIndex], size, bits, size);
+				XAUDIO2_BUFFER buffer = { 0 };
+				buffer.pContext = &m_voiceCallback;
+				buffer.pAudioData = m_array[m_dwIndex];
+				buffer.AudioBytes = size;
+				HRESULT hRes = m_pSourceVoice->SubmitSourceBuffer(&buffer);
+				if (FAILED(hRes))
+				{
+					LOG(ERROR) << "[TinyXAudio] [Play] SubmitSourceBuffer:" << hRes;
+					m_dwIndex = 0;
+					return FALSE;
+				}
+				m_dwIndex++;
+				m_dwIndex %= MAX_BUFFER_COUNT;
+				return TRUE;
 			}
-			memcpy_s(m_array[m_dwIndex], size, bits, size);
-			XAUDIO2_BUFFER buffer = { 0 };
-			buffer.pContext = &m_voiceCallback;
-			buffer.pAudioData = m_array[m_dwIndex];
-			buffer.AudioBytes = size;
-			HRESULT hRes = m_pSVoice->SubmitSourceBuffer(&buffer);
-			if (FAILED(hRes))
-			{
-				LOG(ERROR) << "[TinyXAudio] [Play] SubmitSourceBuffer:" << hRes;
-				m_dwIndex = 0;
-				return FALSE;
-			}
-			m_dwIndex++;
-			m_dwIndex %= MAX_BUFFER_COUNT;
-			return TRUE;
+			return FALSE;
 		}
 		BOOL TinyXAudio::SetVolume(DWORD dwVolume)
 		{
-			if (!m_pSVoice)
-				return FALSE;
-			FLOAT val = dwVolume / 100.0F;
-			HRESULT hRes = m_pSVoice->SetVolume(val);
-			if (FAILED(hRes))
+			if (m_pSourceVoice != NULL)
 			{
-				LOG(ERROR) << "[TinyXAudio] [SetVolume] SetVolume:" << hRes;
-				return FALSE;
+				FLOAT val = dwVolume / 100.0F;
+				HRESULT hRes = m_pSourceVoice->SetVolume(val);
+				if (FAILED(hRes))
+				{
+					LOG(ERROR) << "[TinyXAudio] [SetVolume] SetVolume:" << hRes;
+					return FALSE;
+				}
+				return TRUE;
 			}
-			return TRUE;
+			return FALSE;
 		}
 		BOOL TinyXAudio::SetChannelVolumes(UINT channels, DWORD dwVolume)
 		{
-			if (!m_pSVoice)
-				return FALSE;
-			FLOAT val = dwVolume / 100.0F;
-			HRESULT hRes = m_pSVoice->SetChannelVolumes(channels, &val);
-			if (FAILED(hRes))
+			if (m_pSourceVoice != NULL)
 			{
-				LOG(ERROR) << "[TinyXAudio] [SetChannelVolumes] SetChannelVolumes:" << hRes;
-				return FALSE;
+				FLOAT val = dwVolume / 100.0F;
+				HRESULT hRes = m_pSourceVoice->SetChannelVolumes(channels, &val);
+				if (FAILED(hRes))
+				{
+					LOG(ERROR) << "[TinyXAudio] [SetChannelVolumes] SetChannelVolumes:" << hRes;
+					return FALSE;
+				}
+				return TRUE;
 			}
-			return TRUE;
+			return FALSE;
 		}
 		BOOL TinyXAudio::Suspend()
 		{
@@ -224,33 +232,37 @@ namespace TinyUI
 		BOOL TinyXAudio::Start()
 		{
 			Stop();
-			if (!m_pSVoice)
-				return FALSE;
-			HRESULT hRes = m_pSVoice->Start(0, XAUDIO2_COMMIT_NOW);
-			if (FAILED(hRes))
+			if (m_pSourceVoice != NULL)
 			{
-				LOG(ERROR) << "[TinyXAudio] [Start] Start:" << hRes;
-				return FALSE;
+				HRESULT hRes = m_pSourceVoice->Start(0, XAUDIO2_COMMIT_NOW);
+				if (FAILED(hRes))
+				{
+					LOG(ERROR) << "[TinyXAudio] [Start] Start:" << hRes;
+					return FALSE;
+				}
+				return TRUE;
 			}
-			return TRUE;
+			return FALSE;
 		}
 		BOOL TinyXAudio::Stop()
 		{
 			m_dwIndex = 0;
-			if (!m_pSVoice)
-				return FALSE;
-			HRESULT hRes = m_pSVoice->Stop();
-			if (FAILED(hRes))
+			if (m_pSourceVoice != NULL)
 			{
-				LOG(ERROR) << "[TinyXAudio] [Stop] Stop:" << hRes;
-				return FALSE;
+				HRESULT hRes = m_pSourceVoice->Stop();
+				if (FAILED(hRes))
+				{
+					LOG(ERROR) << "[TinyXAudio] [Stop] Stop:" << hRes;
+					return FALSE;
+				}
+				hRes = m_pSourceVoice->FlushSourceBuffers();
+				if (FAILED(hRes))
+				{
+					LOG(ERROR) << "[TinyXAudio] [Stop] FlushSourceBuffers:" << hRes;
+				}
+				return TRUE;
 			}
-			hRes = m_pSVoice->FlushSourceBuffers();
-			if (FAILED(hRes))
-			{
-				LOG(ERROR) << "[TinyXAudio] [Stop] FlushSourceBuffers:" << hRes;
-			}
-			return TRUE;
+			return FALSE;
 		}
 		BOOL TinyXAudio::Close()
 		{
@@ -261,11 +273,10 @@ namespace TinyUI
 				m_pMasteringVoice->DestroyVoice();
 				m_pMasteringVoice = NULL;
 			}
-			if (m_pSVoice != NULL)
+			if (m_pSourceVoice != NULL)
 			{
-				bRes = this->Stop();
-				m_pSVoice->DestroyVoice();
-				m_pSVoice = NULL;
+				m_pSourceVoice->DestroyVoice();
+				m_pSourceVoice = NULL;
 			}
 			m_audio.Release();
 			return bRes;

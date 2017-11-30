@@ -217,10 +217,7 @@ namespace Decode
 						m_timestamp -= m_basePTS;
 					}
 				}
-				if (m_timestamp > 1000 * 60)
-				{
-					LOG(ERROR) << "Audio Timestamp too big:" << m_timestamp;
-				}
+				LOG(INFO) << "[ReadBlock] Audio Timestamp:" << m_timestamp << " BasePTS:" << m_basePTS;
 				m_audioTimestamp = m_timestamp;
 				return ParseAudio(data, size, block);
 			}
@@ -238,6 +235,7 @@ namespace Decode
 						m_timestamp -= m_basePTS;
 					}
 				}
+				LOG(INFO) << "[ReadBlock] Video Timestamp:" << m_timestamp << " BasePTS:" << m_basePTS;;
 				return ParseVideo(data, size, block);
 			}
 		}
@@ -602,6 +600,11 @@ namespace Decode
 		m_basePTS = -1;
 		m_stream.Release();
 		ZeroMemory(&m_script, sizeof(m_script));
+		LOG(INFO) << "\n";
+		LOG(INFO) << "\n";
+		LOG(INFO) << "\n";
+		LOG(INFO) << "\n";
+		LOG(INFO) << "\n";
 		return TRUE;
 	}
 	LONGLONG FLVReader::GetBasePTS()

@@ -78,7 +78,7 @@ namespace TinyUI
 			TinyScopedArray<BYTE>				m_array[MAX_BUFFER_COUNT];
 			TinyComPtr<IXAudio2>				m_audio;
 			IXAudio2MasteringVoice*				m_pMasteringVoice;
-			IXAudio2SourceVoice*				m_pSVoice;
+			IXAudio2SourceVoice*				m_pSourceVoice;
 			VoiceCallback						m_voiceCallback;
 		};
 	}
