@@ -1,7 +1,5 @@
 #pragma once
 #include "resource.h"
-#include "MShowWindow.h"
-#include "MShowController.h"
 #include "MSearchWindow.h"
 #include "MSearchController.h"
 #include "MClientWindow.h"

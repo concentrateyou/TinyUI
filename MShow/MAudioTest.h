@@ -1,5 +1,4 @@
 #pragma once
-#include "MShowWindow.h"
 #include "MAudioDSP.h"
 #include "AudioAnalyser.h"
 #include "audiosdk.h"

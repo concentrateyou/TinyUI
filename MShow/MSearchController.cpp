@@ -211,7 +211,7 @@ namespace MShow
 			LOG(ERROR) << "[MSearchController][GetPrograms] " << "Open Fail";
 			lblMsg->SetVisible(TRUE);
 			lblMsg->SetTextColor(RGB(255, 0, 0));
-			lblMsg->SetText("http://10.23.84.150:7777/api/director/list 打开失败");
+			lblMsg->SetText(StringPrintf("%s 打开失败", address.c_str()).c_str());
 			goto _ERROR;
 		}
 		if (!client.GetResponse().ReadAsString(context))

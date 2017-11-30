@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "MAudioDSP.h"
-#include "MShowController.h"
 #include "MShow.h"
 
 namespace MShow
