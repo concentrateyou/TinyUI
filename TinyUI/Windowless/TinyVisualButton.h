@@ -5,6 +5,12 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
+#define BST_INCLICK         0x0010
+#define BST_CAPTURED        0x0020
+#define BST_MOUSE           0x0040
+#define BST_DONTCLICK       0x0080
+#define BST_INBMCLICK       0x0100
+
 		class TinyVisualButton;
 		/// <summary>
 		/// ÏµÍ³°´Å¥
@@ -30,6 +36,7 @@ namespace TinyUI
 			HRESULT	OnMouseMove(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
 			HRESULT	OnLButtonUp(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
 		private:
+			UINT		m_buttonState;
 			StyleImage	m_dwFlag;
 			TinyImage*	m_images[StyleImage::COUNT];
 		};
