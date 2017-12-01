@@ -42,6 +42,7 @@ namespace MShow
 	BOOL MAudioRenderTask::Submit()
 	{
 		m_bBreak = FALSE;
+		m_bInitialize = FALSE;
 		m_audio.Close();
 		return TinyTaskBase::Submit(BindCallback(&MAudioRenderTask::OnMessagePump, this));
 	}
@@ -49,13 +50,10 @@ namespace MShow
 	BOOL MAudioRenderTask::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
+		BOOL bRes = TinyTaskBase::Close(dwMS);
 		m_bInitialize = FALSE;
-		if (TinyTaskBase::Close(dwMS))
-		{
-			m_audio.Close();
-			return TRUE;
-		}
-		return FALSE;
+		m_audio.Close();
+		return bRes;
 	}
 
 

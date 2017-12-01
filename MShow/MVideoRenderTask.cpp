@@ -31,19 +31,18 @@ namespace MShow
 	BOOL MVideoRenderTask::Submit()
 	{
 		m_bBreak = FALSE;
+		m_bInitialize = FALSE;
+		m_image.Destory();
 		return TinyTaskBase::Submit(BindCallback(&MVideoRenderTask::OnMessagePump, this));
 	}
 
 	BOOL MVideoRenderTask::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
+		BOOL bRes = TinyTaskBase::Close(dwMS);
 		m_bInitialize = FALSE;
-		if (TinyTaskBase::Close(dwMS))
-		{
-			m_image.Destory();
-			return TRUE;
-		}
-		return FALSE;
+		m_image.Destory();
+		return bRes;
 	}
 
 	BOOL MVideoRenderTask::OnCopy(BYTE* bits, LONG size)
@@ -101,12 +100,12 @@ namespace MShow
 		{
 			if (m_bBreak)
 				break;
-			LOG(INFO) << "[MVideoRenderTask] Queue Size:" << m_task.GetVideoQueue().GetSize() << " Count:" << m_task.GetVideoQueue().GetCount();
+			//LOG(INFO) << "[MVideoRenderTask] Queue Size:" << m_task.GetVideoQueue().GetSize() << " Count:" << m_task.GetVideoQueue().GetCount();
 			ZeroMemory(&sampleTag, sizeof(sampleTag));
 			if (!m_task.GetVideoQueue().Pop(sampleTag))
 			{
-				TRACE("[MVideoRenderTask] Waiting 40\n");
-				LOG(INFO) << "[MVideoRenderTask] Waiting 40";
+				//TRACE("[MVideoRenderTask] Waiting 40\n");
+				//LOG(INFO) << "[MVideoRenderTask] Waiting 40";
 				timer.Waiting(40, 1000);
 				if (bRendering)
 				{
@@ -117,10 +116,10 @@ namespace MShow
 			if (sampleTag.samplePTS == m_clock.GetBasePTS())
 			{
 				m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
-				TRACE("[MVideoRenderTask] BaseTime:%lld\n", m_clock.GetBaseTime());
-				TRACE("[MVideoRenderTask] samplePTS:%lld\n", sampleTag.samplePTS);
-				LOG(INFO) << "[MVideoRenderTask] BaseTime:" << m_clock.GetBaseTime();
-				LOG(INFO) << "[MVideoRenderTask] samplePTS:" << sampleTag.samplePTS;
+				//TRACE("[MVideoRenderTask] BaseTime:%lld\n", m_clock.GetBaseTime());
+				//TRACE("[MVideoRenderTask] samplePTS:%lld\n", sampleTag.samplePTS);
+				//LOG(INFO) << "[MVideoRenderTask] BaseTime:" << m_clock.GetBaseTime();
+				//LOG(INFO) << "[MVideoRenderTask] samplePTS:" << sampleTag.samplePTS;
 			}
 			while (m_clock.GetBasePTS() == INVALID_TIME);
 			bRendering = TRUE;

@@ -30,6 +30,7 @@ namespace Decode
 	{
 		if (!pzURL)
 			return FALSE;
+		this->Close();
 		m_bNetwork = TRUE;
 		TinyString szURL = pzURL;
 		if (szURL.IndexOf("http://") != -1)
@@ -99,6 +100,9 @@ namespace Decode
 	}
 	BOOL FLVReader::OpenFile(LPCSTR pzFile)
 	{
+		if (!pzFile)
+			return FALSE;
+		this->Close();
 		m_bNetwork = FALSE;
 		HRESULT hRes = SHCreateStreamOnFileA(pzFile, STGM_READ | STGM_FAILIFTHERE, &m_stream);
 		if (hRes != S_OK)
@@ -217,7 +221,7 @@ namespace Decode
 						m_timestamp -= m_basePTS;
 					}
 				}
-				LOG(INFO) << "[ReadBlock] Audio Timestamp:" << m_timestamp << " BasePTS:" << m_basePTS;
+				LOG(INFO) << "[ReadBlock] Audio Timestamp:" << m_timestamp << " BasePTS:" << m_basePTS << " Count:" << m_count;;
 				m_audioTimestamp = m_timestamp;
 				return ParseAudio(data, size, block);
 			}
@@ -235,7 +239,7 @@ namespace Decode
 						m_timestamp -= m_basePTS;
 					}
 				}
-				LOG(INFO) << "[ReadBlock] Video Timestamp:" << m_timestamp << " BasePTS:" << m_basePTS;;
+				LOG(INFO) << "[ReadBlock] Video Timestamp:" << m_timestamp << " BasePTS:" << m_basePTS << " Count:" << m_count;
 				return ParseVideo(data, size, block);
 			}
 		}
@@ -340,7 +344,7 @@ namespace Decode
 			}
 			else
 			{
-				LOG(INFO) << "[FLVReader] ParseAAC size:" << size;
+				//LOG(INFO) << "[FLVReader] ParseAAC size:" << size;
 			}
 			block.audio.data = new BYTE[size];
 			memcpy(block.audio.data, bits, size);
@@ -406,7 +410,7 @@ namespace Decode
 			}
 			else
 			{
-				LOG(ERROR) << "[FLVReader] [ParseH264] size:" << block.video.size;
+				//LOG(ERROR) << "[FLVReader] [ParseH264] size:" << block.video.size;
 			}
 			block.video.data = new BYTE[block.video.size];
 			memcpy(block.video.data, buffer.GetPointer(), block.video.size);
@@ -600,11 +604,6 @@ namespace Decode
 		m_basePTS = -1;
 		m_stream.Release();
 		ZeroMemory(&m_script, sizeof(m_script));
-		LOG(INFO) << "\n";
-		LOG(INFO) << "\n";
-		LOG(INFO) << "\n";
-		LOG(INFO) << "\n";
-		LOG(INFO) << "\n";
 		return TRUE;
 	}
 	LONGLONG FLVReader::GetBasePTS()

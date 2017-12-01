@@ -43,7 +43,6 @@ namespace MShow
 			return FALSE;
 		if (!m_videoRenderTask.Initialize(hWND))
 			return FALSE;
-
 		if (!m_videoTask.Submit())
 			return FALSE;
 		if (!m_videoRenderTask.Submit())
@@ -102,7 +101,7 @@ namespace MShow
 		{
 			TRACE("WM_FLV_PARSE_FAIL");
 			this->Close();
-			Sleep(1000);
+			LOG(INFO) << "[OnMessage] Close OK\n\n\n\n\n";
 			if (this->Open(m_hWND, m_szURL.CSTR()))
 			{
 				TRACE("WM_FLV_PARSE_FAIL Reopen OK\n");
@@ -118,7 +117,7 @@ namespace MShow
 		{
 			TRACE("WM_VIDEO_X264_DECODE_FAIL\n");
 			this->Close();
-			Sleep(1000);
+			LOG(INFO) << "[OnMessage] Close OK\n\n\n\n\n";
 			if (this->Open(m_hWND, m_szURL.CSTR()))
 			{
 				TRACE("WM_VIDEO_X264_DECODE_FAIL Reopen OK\n");

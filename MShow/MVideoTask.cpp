@@ -21,6 +21,8 @@ namespace MShow
 	BOOL MVideoTask::Submit()
 	{
 		m_bBreak = FALSE;
+		m_x264.Close();
+		m_videoQueue.RemoveAll();
 		m_task.EVENT_AVCDCR += m_onAVCDC;
 		return TinyTaskBase::Submit(BindCallback(&MVideoTask::OnMessagePump, this));
 	}
@@ -28,14 +30,10 @@ namespace MShow
 	BOOL MVideoTask::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
-		if (TinyTaskBase::Close(dwMS))
-		{
-			m_x264.Close();
-			m_task.GetVideoQueue().RemoveAll();
-			m_videoQueue.RemoveAll();
-			return TRUE;
-		}
-		return FALSE;
+		BOOL bRes = TinyTaskBase::Close(dwMS);
+		m_x264.Close();
+		m_videoQueue.RemoveAll();
+		return bRes;
 	}
 
 	TinySize MVideoTask::GetVideoSize()

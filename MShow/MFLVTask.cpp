@@ -40,24 +40,21 @@ namespace MShow
 
 	BOOL MFLVTask::Submit()
 	{
-		m_sample = 0;
-		m_bFI = FALSE;
 		m_bBreak = FALSE;
+		m_bFI = FALSE;
+		m_sample = 0;
 		return TinyTaskBase::Submit(BindCallback(&MFLVTask::OnMessagePump, this));
 	}
 
 	BOOL MFLVTask::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
-		if (TinyTaskBase::Close(INFINITE))
-		{
-			m_reader.Close();
-			m_bFI = FALSE;
-			m_sample = 0;
-			ZeroMemory(&m_script, sizeof(m_script));
-			return TRUE;
-		}
-		return FALSE;
+		BOOL bRes = TinyTaskBase::Close(dwMS);
+		m_reader.Close();
+		m_bFI = FALSE;
+		m_sample = 0;
+		ZeroMemory(&m_script, sizeof(m_script));
+		return bRes;
 	}
 
 	FLV_SCRIPTDATA&	MFLVTask::GetScript()

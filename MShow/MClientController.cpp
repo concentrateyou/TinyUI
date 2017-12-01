@@ -115,7 +115,7 @@ namespace MShow
 		{
 			BOOL bRes = m_preview->Close();
 			TRACE("[MClientController] OnTry Close:%d\n", bRes);
-			LOG(INFO) << "[MClientController] OnTry Close:" << bRes;
+			LOG(INFO) << "[MClientController] OnTry Close:" << bRes << "\n\n\n\n\n";
 			if (m_preview->Open(m_szPreviewURL.c_str()))
 			{
 				TRACE("[MClientController] OnTry Open OK\n");
