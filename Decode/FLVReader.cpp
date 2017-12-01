@@ -344,7 +344,7 @@ namespace Decode
 			}
 			else
 			{
-				//LOG(INFO) << "[FLVReader] ParseAAC size:" << size;
+				LOG(INFO) << "[FLVReader] ParseAAC size:" << size;
 			}
 			block.audio.data = new BYTE[size];
 			memcpy(block.audio.data, bits, size);
@@ -410,7 +410,7 @@ namespace Decode
 			}
 			else
 			{
-				//LOG(ERROR) << "[FLVReader] [ParseH264] size:" << block.video.size;
+				LOG(ERROR) << "[FLVReader] [ParseH264] size:" << block.video.size;
 			}
 			block.video.data = new BYTE[block.video.size];
 			memcpy(block.video.data, buffer.GetPointer(), block.video.size);
