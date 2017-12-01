@@ -173,12 +173,14 @@ namespace DXFramework
 		if (IsEmpty())
 			return FALSE;
 		m_immediateContext->OMSetBlendState(bAllow ? m_enableBlendState : m_disableBlendState, blendFactor, 0xFFFFFFFF);
+		return TRUE;
 	}
 	BOOL DX11::AllowDepth(BOOL bAllow)
 	{
 		if (IsEmpty())
 			return FALSE;
 		m_immediateContext->OMSetDepthStencilState(bAllow ? m_enableDepthState : m_disableDepthState, 1);
+		return TRUE;
 	}
 	void DX11::SetRenderView(DX11RenderView* render2D)
 	{

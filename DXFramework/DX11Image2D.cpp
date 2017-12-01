@@ -175,6 +175,7 @@ namespace DXFramework
 			SetScale(size);
 			return TRUE;
 		}
+		return FALSE;
 	}
 
 	BOOL DX11Image2D::Load(DX11& dx11, const CHAR* pzFile)
@@ -192,6 +193,7 @@ namespace DXFramework
 			SetScale(size);
 			return TRUE;
 		}
+		return FALSE;
 	}
 
 	void DX11Image2D::Destory()

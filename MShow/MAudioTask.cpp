@@ -81,7 +81,7 @@ namespace MShow
 				continue;
 			}
 			ZeroMemory(&sampleTag, sizeof(sampleTag));
-			//LOG(INFO) << "[MAudioTask] Queue Size:" << m_task.GetAudioQueue().GetSize() << " Count:" << m_task.GetAudioQueue().GetCount();
+			LOG(INFO) << "[MAudioTask] Queue Size:" << m_task.GetAudioQueue().GetSize() << " Count:" << m_task.GetAudioQueue().GetCount();
 			if (!m_task.GetAudioQueue().Pop(sampleTag))
 			{
 				Sleep(15);

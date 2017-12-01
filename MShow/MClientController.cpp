@@ -1200,7 +1200,7 @@ namespace MShow
 				}
 				m_timeQPC.EndTime();
 				LOG(INFO) << "audio_encode_send:" << m_timeQPC.GetMillisconds() << " Count:" << count << " Timestamp:" << sample.timestamp;
-				TRACE("audio_encode_send:%lld, Count:%d, Timestamp:%lld\n", m_timeQPC.GetMillisconds(), count, sample.timestamp);
+				//TRACE("audio_encode_send:%lld, Count:%d, Timestamp:%lld\n", m_timeQPC.GetMillisconds(), count, sample.timestamp);
 				m_audioQueue.Free(sample.bits);
 			}
 		}
