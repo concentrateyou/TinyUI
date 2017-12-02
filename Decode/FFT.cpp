@@ -21,22 +21,28 @@ namespace Decode
 		m_imags.Reset(new FLOAT[sampleSize]);
 		if (!m_imags)
 			return FALSE;
+		ZeroMemory(m_imags, sampleSize);
 		m_reals.Reset(new FLOAT[sampleSize]);
 		if (!m_reals)
 			return FALSE;
+		ZeroMemory(m_reals, sampleSize);
 		INT ss2 = sampleSize >> 1;
 		m_mags.Reset(new FLOAT[ss2]);
 		if (!m_mags)
 			return FALSE;
+		ZeroMemory(m_mags, sampleSize);
 		m_bitReverses.Reset(new INT[sampleSize]);
 		if (!m_bitReverses)
 			return FALSE;
+		ZeroMemory(m_bitReverses, sampleSize);
 		m_sintable.Reset(new FLOAT[ss2 * m_iterations]);
 		if (!m_sintable)
 			return FALSE;
+		ZeroMemory(m_sintable, ss2 * m_iterations);
 		m_costable.Reset(new FLOAT[ss2 * m_iterations]);
 		if (!m_costable)
 			return FALSE;
+		ZeroMemory(m_costable, ss2 * m_iterations);
 		INT k = 0;
 		INT x = 0;
 		for (INT i = 1; i <= m_iterations; i++)
@@ -112,12 +118,17 @@ namespace Decode
 				m_imags[val] = imag;
 			}
 		}
-		m_mags[0] = (FLOAT)sqrt(m_reals[0] * m_reals[0] + m_imags[0] * m_imags[0]) / (FLOAT)m_sampleSize;
+		ss2 = m_sampleSize >> 1;
+		for (INT i = 1; i < ss2; i++)
+		{
+			m_mags[i] = (10.0F * log((FLOAT)sqrt(m_reals[i] * m_reals[i] + m_imags[i] * m_imags[i])));
+		}
+		/*m_mags[0] = (FLOAT)sqrt(m_reals[0] * m_reals[0] + m_imags[0] * m_imags[0]) / (FLOAT)m_sampleSize;
 		ss2 = m_sampleSize >> 1;
 		for (INT i = 1; i < ss2; i++)
 		{
 			m_mags[i] = (2.0F * (FLOAT)sqrt(m_reals[i] * m_reals[i] + m_imags[i] * m_imags[i])) / (FLOAT)m_sampleSize;
-		}
+		}*/
 		return m_mags;
 	}
 	INT	FFT::ReverseBits(INT index, INT size)

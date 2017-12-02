@@ -7,6 +7,7 @@
 #include "MAudioDSP.h"
 #include "Common/TinyTime.h"
 #include "Common/TinyCore.h"
+#include "FFT.h"
 using namespace TinyUI;
 using namespace TinyUI::Media;
 
@@ -35,7 +36,8 @@ namespace MShow
 		void OnTimer();
 	private:
 		BYTE						m_bits[4096];
-		FLOAT						m_samples[1024];
+		FLOAT						m_samples[2048];
+		FFT							m_audioFFT;
 		TinyLock					m_lock;
 		TinyAudioDSPCapture			m_audioDSP;
 		TinyMFResampler				m_resampler;

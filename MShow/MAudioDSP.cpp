@@ -119,6 +119,8 @@ namespace MShow
 		m_waveFMTO.nBlockAlign = 4;
 		m_waveFMTO.nAvgBytesPerSec = 176400;
 		LOG(INFO) << "MAudioDSP Initialize OK" << endl;
+	/*	if (!m_audioFFT.Initialize(2048))
+			return FALSE;*/
 		return TRUE;
 	}
 	BOOL MAudioDSP::Open(const TinyWASAPIAudio::Name& capture, const TinyWASAPIAudio::Name& speaker)
@@ -264,27 +266,6 @@ namespace MShow
 	{
 		TinyAutoLock lock(m_lock);
 		m_buffer.Add(bits, size);
-		/*FLOAT* inputs = new FLOAT[size / 2];
-		INT j = 0;
-		for (INT i = 0; i < size; i += 2)
-		{
-			inputs[j++] = (FLOAT)ToINT16(bits + i);
-		}
-
-		INT iterationsO = 0;
-		FLOAT* res = FFTDB(inputs, size / 2, iterationsO);
-		FLOAT kk = 0.0F;
-		for (INT i = 0;i < iterationsO;i++)
-		{
-			kk += res[i];
-		}
-		if (kk < 0)
-		{
-			kk = 0;
-		}
-		SAFE_DELETE_ARRAY(inputs);
-		SAFE_DELETE_ARRAY(res);
-		TRACE("KK:%f\n", kk);*/
 	}
 
 	void MAudioDSP::OnTimer()
@@ -300,6 +281,24 @@ namespace MShow
 				{
 					m_callback(m_bits, 4096);
 				}
+				/*INT k = 0;
+				for (INT i = 0; i < 4096;i += 2)
+				{
+					m_samples[k] = ToINT16(m_bits + i);
+					k++;
+				}
+				FLOAT* wFFT = m_audioFFT.Calculate(m_samples, 2048);
+				FLOAT kk = 0;
+				for (INT i = 0;i < 1024;i++)
+				{
+					kk += wFFT[i];
+				}
+				kk /= 1024.0F;
+				if (kk < 0)
+				{
+					kk = 0;
+				}
+				TRACE("Value:%f\n", kk);*/
 			}
 		}
 		else
