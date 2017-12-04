@@ -119,16 +119,10 @@ namespace Decode
 			}
 		}
 		ss2 = m_sampleSize >> 1;
-		for (INT i = 1; i < ss2; i++)
+		for (INT i = 0; i < ss2; i++)
 		{
-			m_mags[i] = (10.0F * log((FLOAT)sqrt(m_reals[i] * m_reals[i] + m_imags[i] * m_imags[i])));
+			m_mags[i] = 20.0 * log10((FLOAT)(sqrt((m_reals[i] * m_reals[i]) + (m_imags[i] * m_imags[i]))));//¼ÆËã·Ö±´
 		}
-		/*m_mags[0] = (FLOAT)sqrt(m_reals[0] * m_reals[0] + m_imags[0] * m_imags[0]) / (FLOAT)m_sampleSize;
-		ss2 = m_sampleSize >> 1;
-		for (INT i = 1; i < ss2; i++)
-		{
-			m_mags[i] = (2.0F * (FLOAT)sqrt(m_reals[i] * m_reals[i] + m_imags[i] * m_imags[i])) / (FLOAT)m_sampleSize;
-		}*/
 		return m_mags;
 	}
 	INT	FFT::ReverseBits(INT index, INT size)

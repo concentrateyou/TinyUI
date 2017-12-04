@@ -14,14 +14,16 @@ using namespace TinyUI::Media;
 namespace MShow
 {
 #define AAC_SIZE 4096
-
+	/// <summary>
+	/// “Ù∆µDSP≤…ºØ
+	/// </summary>
 	class MAudioDSP
 	{
 		DISALLOW_COPY_AND_ASSIGN(MAudioDSP)
 	public:
 		MAudioDSP();
 		~MAudioDSP();
-		BOOL Initialize(Callback<void(BYTE*, LONG)>&& callback);
+		BOOL Initialize(Callback<void(BYTE*, LONG, INT)>&& callback);
 		BOOL Open();
 		BOOL Open(const TinyWASAPIAudio::Name& capture, const TinyWASAPIAudio::Name& speaker);
 		BOOL Open(const GUID& capture, const GUID& speaker);
@@ -35,17 +37,17 @@ namespace MShow
 		void OnAudio(BYTE* bits, LONG size, LPVOID lpParameter);
 		void OnTimer();
 	private:
-		BYTE						m_bits[4096];
-		FLOAT						m_samples[2048];
-		FFT							m_audioFFT;
-		TinyLock					m_lock;
-		TinyAudioDSPCapture			m_audioDSP;
-		TinyMFResampler				m_resampler;
-		TinyBufferArray<BYTE>		m_buffer;
-		TinyPerformanceTimer		m_timer;
-		WAVEFORMATEX				m_waveFMTI;
-		WAVEFORMATEX				m_waveFMTO;
-		Callback<void(BYTE*, LONG)>	m_callback;
+		BYTE								m_bits[4096];
+		FLOAT								m_samples[2048];
+		FFT									m_audioFFT;
+		TinyLock							m_lock;
+		TinyAudioDSPCapture					m_audioDSP;
+		TinyMFResampler						m_resampler;
+		TinyBufferArray<BYTE>				m_buffer;
+		TinyPerformanceTimer				m_timer;
+		WAVEFORMATEX						m_waveFMTI;
+		WAVEFORMATEX						m_waveFMTO;
+		Callback<void(BYTE*, LONG, INT)>	m_callback;
 	};
 }
 

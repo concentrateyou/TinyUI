@@ -111,6 +111,9 @@
     <ClInclude Include="MClientWindow.h">
       <Filter>头文件\Client</Filter>
     </ClInclude>
+    <ClInclude Include="MAudioDB.h">
+      <Filter>头文件\Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -175,6 +178,9 @@
     </ClCompile>
     <ClCompile Include="MClientWindow.cpp">
       <Filter>源文件\Client</Filter>
+    </ClCompile>
+    <ClCompile Include="MAudioDB.cpp">
+      <Filter>源文件\Audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -52,7 +52,7 @@ namespace MShow
 		void		OnMessagePump();
 		BOOL		Query(const string& sourceID, INT& count);
 	private:
-		void		OnAudio(BYTE* bits, LONG size);
+		void		OnAudio(BYTE* bits, LONG size, INT db);
 		void		OnTimerStatus();
 		void		OnTry();
 	private:

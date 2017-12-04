@@ -12,7 +12,7 @@ namespace TinyUI
 			m_bEnableNS(FALSE),
 			m_vadMode(AEC_VAD_DISABLED)
 		{
-			m_audioStop.CreateEvent(FALSE, FALSE, NULL, NULL);
+			m_audioStop.CreateEvent(FALSE, TRUE, NULL, NULL);
 		}
 		TinyAudioDSPCapture::~TinyAudioDSPCapture()
 		{
@@ -119,6 +119,15 @@ namespace TinyUI
 				m_waveFMT.Reset(new BYTE[sizeof(WAVEFORMATEX) + pFMT->cbSize]);
 				memcpy(m_waveFMT, (BYTE*)pFMT, sizeof(WAVEFORMATEX) + pFMT->cbSize);
 			}
+			if (m_dmo != NULL)
+			{
+				hRes = m_dmo->AllocateStreamingResources();
+				if (hRes != S_OK)
+				{
+					LOG(ERROR) << "[TinyAudioDSPCapture] DMO AllocateStreamingResources:" << hRes;
+					return FALSE;
+				}
+			}
 			return TRUE;
 		_ERROR:
 			m_dmo.Release();
@@ -206,14 +215,6 @@ namespace TinyUI
 				m_waveFMT.Reset(new BYTE[sizeof(WAVEFORMATEX) + pFMT->cbSize]);
 				memcpy(m_waveFMT, (BYTE*)pFMT, sizeof(WAVEFORMATEX) + pFMT->cbSize);
 			}
-			return TRUE;
-		_ERROR:
-			m_dmo.Release();
-			return FALSE;
-		}
-		BOOL TinyAudioDSPCapture::Start()
-		{
-			HRESULT hRes = S_OK;
 			if (m_dmo != NULL)
 			{
 				hRes = m_dmo->AllocateStreamingResources();
@@ -223,8 +224,16 @@ namespace TinyUI
 					return FALSE;
 				}
 			}
-			m_audioStop.ResetEvent();
+			return TRUE;
+		_ERROR:
+			m_dmo.Release();
+			return FALSE;
+		}
+		BOOL TinyAudioDSPCapture::Start()
+		{
+			m_audioStop.SetEvent();
 			m_task.Close(INFINITE);
+			m_audioStop.ResetEvent();
 			if (!m_task.Submit(BindCallback(&TinyAudioDSPCapture::OnMessagePump, this)))
 				return FALSE;
 			m_bCapturing = TRUE;
@@ -232,18 +241,9 @@ namespace TinyUI
 		}
 		BOOL TinyAudioDSPCapture::Stop()
 		{
-			HRESULT hRes = S_OK;
-			if (m_dmo != NULL)
-			{
-				hRes = m_dmo->FreeStreamingResources();
-				if (hRes != S_OK)
-				{
-					LOG(ERROR) << "[TinyAudioDSPCapture] DMO FreeStreamingResources:" << hRes;
-					return FALSE;
-				}
-			}
 			m_audioStop.SetEvent();
 			m_task.Close(INFINITE);
+			m_audioStop.ResetEvent();
 			m_bCapturing = FALSE;
 			return TRUE;
 		}
@@ -253,14 +253,24 @@ namespace TinyUI
 		}
 		BOOL TinyAudioDSPCapture::Close()
 		{
-			if (m_bCapturing && !Stop())
+			if (m_bCapturing)
 			{
-				m_dmo.Release();
-				return FALSE;
+				this->Stop();
 			}
+			HRESULT hRes = S_OK;
+			if (m_dmo != NULL)
+			{
+				hRes = m_dmo->FreeStreamingResources();
+				if (hRes != S_OK)
+				{
+					LOG(ERROR) << "[TinyAudioDSPCapture] DMO FreeStreamingResources:" << hRes;
+					goto _ERROR;
+				}
+			}
+		_ERROR:
 			m_dmo.Release();
 			m_bCapturing = FALSE;
-			return TRUE;
+			return hRes == S_OK;
 		}
 		void TinyAudioDSPCapture::EnableAGC(BOOL bAllow)
 		{
@@ -304,6 +314,7 @@ namespace TinyUI
 				case WAIT_ABANDONED:
 				case WAIT_OBJECT_0:
 					bCapturing = FALSE;
+					break;
 				case WAIT_TIMEOUT:
 					break;
 				default:
@@ -336,6 +347,7 @@ namespace TinyUI
 					mediaBuffer->SetLength(0);
 				} while (DMO_OUTPUT_DATA_BUFFERF_INCOMPLETE & dwStatus);
 			}
+			TRACE("OnMessagePump EXIT\n");
 			LOG(INFO) << "OnMessagePump EXIT";
 		}
 		BOOL TinyAudioDSPCapture::SetVTI4Property(IPropertyStore* ptrPS, REFPROPERTYKEY key, LONG value)

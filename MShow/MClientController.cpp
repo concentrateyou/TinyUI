@@ -3,6 +3,7 @@
 #include "MPreviewController.h"
 #include "Network/TinyHTTPClient.h"
 #include "MShow.h"
+#include "MAudioDB.h"
 using namespace TinyUI::Network;
 using namespace TinyUI::Windowless;
 
@@ -243,7 +244,7 @@ namespace MShow
 		if (code == "A00000")
 		{
 			count = value["data"].size();
-			TRACE("List SourceID:%s   OK\n", m_szSourceID.c_str());
+			//TRACE("List SourceID:%s   OK\n", m_szSourceID.c_str());
 			LOG(INFO) << "[MClientController] " << "List SourceID :" << m_szSourceID << " OK";
 			return TRUE;
 		}
@@ -657,7 +658,7 @@ namespace MShow
 		code = value["code"].asString();
 		if (code == "A00000")
 		{
-			TRACE("Disconnect SourceID:%s   OK\n", m_szSourceID.c_str());
+			//TRACE("Disconnect SourceID:%s   OK\n", m_szSourceID.c_str());
 			LOG(INFO) << "[MClientController] " << "Disconnect SourceID :" << m_szSourceID << " OK";
 			return TRUE;
 		}
@@ -814,7 +815,6 @@ namespace MShow
 	}
 	BOOL MClientController::StartCommentary()
 	{
-	
 		TinyPerformanceTime timeQPC;
 		m_bBreak = FALSE;
 		timeQPC.BeginTime();
@@ -866,7 +866,7 @@ namespace MShow
 		if (m_task.IsActive())
 		{
 			m_bBreak = TRUE;
-			m_task.Close(1000);
+			m_task.Close(INFINITE);
 		}
 		timeQPC.EndTime();
 		LOG(INFO) << "[MClientController] AudioSDK Task Close Cost:" << timeQPC.GetMillisconds();
@@ -913,13 +913,13 @@ namespace MShow
 	}
 	void MClientController::StopCommentary()
 	{
+		//停止发送线程
 		if (m_task.IsActive())
 		{
 			m_bBreak = TRUE;
-			m_task.Close(1000);
+			m_task.Close(INFINITE);
 		}
 		//停止采集
-		m_audioDSP.Stop();
 		m_audioDSP.Close();
 		//释放SDK
 		if (m_audioSDK != NULL)
@@ -939,7 +939,7 @@ namespace MShow
 			TinyVisual* spvis = m_view.GetDocument()->GetVisualByName("btnPauseCommentary");
 			if (spvis != NULL)
 			{
-				spvis->SetText(m_bPause ? "播放" : "暂停");
+				spvis->SetText(m_bPause ? "继续" : "暂停");
 			}
 			m_bCommentarying = FALSE;
 			spvis = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
@@ -1017,6 +1017,13 @@ namespace MShow
 		if (Connect())
 		{
 			StartCommentary();
+			MAudioDB* audiodb = static_cast<MAudioDB*>(m_view.GetDocument()->GetVisualByName("microphoneDB"));
+			if (audiodb != NULL)
+			{
+				audiodb->SetDB(0);
+				audiodb->SetVisible(TRUE);
+				audiodb->Invalidate();
+			}
 		}
 	}
 
@@ -1026,14 +1033,20 @@ namespace MShow
 		TinyVisual* spvis = m_view.GetDocument()->GetVisualByName("btnPauseCommentary");
 		if (spvis != NULL)
 		{
-			spvis->SetText(m_bPause ? "播放" : "暂停");
+			spvis->SetText(m_bPause ? "继续" : "暂停");
 		}
-		m_view.Invalidate();
 		m_audioDSP.Stop();
 		if (!m_bPause)
 		{
 			m_audioDSP.Start();
 		}
+		MAudioDB* audiodb = static_cast<MAudioDB*>(m_view.GetDocument()->GetVisualByName("microphoneDB"));
+		if (audiodb != NULL)
+		{
+			audiodb->SetDB(0);
+			audiodb->SetVisible(TRUE);
+		}
+		m_view.Invalidate();
 	}
 
 	void MClientController::OnStopCommentaryClick(TinyVisual*, EventArgs& args)
@@ -1043,6 +1056,13 @@ namespace MShow
 			if (Disconnect(m_szSourceID))
 			{
 				StopCommentary();
+				MAudioDB* audiodb = static_cast<MAudioDB*>(m_view.GetDocument()->GetVisualByName("microphoneDB"));
+				if (audiodb != NULL)
+				{
+					audiodb->SetDB(0);
+					audiodb->SetVisible(FALSE);
+					audiodb->Invalidate();
+				}
 			}
 		}
 	}
@@ -1130,7 +1150,7 @@ namespace MShow
 		}
 	}
 
-	void MClientController::OnAudio(BYTE* bits, LONG size)
+	void MClientController::OnAudio(BYTE* bits, LONG size, INT db)
 	{
 		if (m_preview != NULL)
 		{
@@ -1143,7 +1163,7 @@ namespace MShow
 				}
 				else
 				{
-					TRACE("OnAudio Timestamp repeat:%lld\n", currentPTS);
+					LOG(INFO) << "OnAudio Timestamp repeat:" << currentPTS;
 				}
 				if (m_audioQueue.GetAllocSize() == 0)
 				{
@@ -1156,6 +1176,15 @@ namespace MShow
 				sample.timestamp = currentPTS;
 				memcpy(sample.bits + 4, bits, size);
 				m_audioQueue.Push(sample);
+				if (m_view.GetDocument() != NULL && db > 0)
+				{
+					MAudioDB* audiodb = static_cast<MAudioDB*>(m_view.GetDocument()->GetVisualByName("microphoneDB"));
+					if (audiodb != NULL && audiodb->IsVisible())
+					{
+						audiodb->SetDB(db);
+						audiodb->Invalidate();
+					}
+				}
 			}
 		}
 		else
@@ -1165,17 +1194,6 @@ namespace MShow
 	}
 
 	TinyPerformanceTime g_timeQPC;
-
-	INT ExceptionFilter(LPEXCEPTION_POINTERS ps)
-	{
-		StackTrace trace(ps);
-		LOG(ERROR) << "ExceptionFilter" << trace.ToString();
-		if (ps->ExceptionRecord->ExceptionCode == EXCEPTION_ACCESS_VIOLATION)
-		{
-			return EXCEPTION_EXECUTE_HANDLER;
-		}
-		else return EXCEPTION_CONTINUE_SEARCH;//不处理这个异常
-	}
 
 	void MClientController::OnMessagePump()
 	{
@@ -1200,7 +1218,7 @@ namespace MShow
 				}
 				m_timeQPC.EndTime();
 				LOG(INFO) << "audio_encode_send:" << m_timeQPC.GetMillisconds() << " Count:" << count << " Timestamp:" << sample.timestamp;
-				//TRACE("audio_encode_send:%lld, Count:%d, Timestamp:%lld\n", m_timeQPC.GetMillisconds(), count, sample.timestamp);
+				TRACE("audio_encode_send:%lld, Count:%d, Timestamp:%lld\n", m_timeQPC.GetMillisconds(), count, sample.timestamp);
 				m_audioQueue.Free(sample.bits);
 			}
 		}

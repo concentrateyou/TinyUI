@@ -4,89 +4,6 @@
 
 namespace MShow
 {
-	/*INT BitReverse(INT index, INT size)
-	{
-		INT j2;
-		INT j1 = index;
-		INT k = 0;
-		for (INT i = 1; i <= size; i++)
-		{
-			j2 = j1 / 2;
-			k = 2 * k + j1 - 2 * j2;
-			j1 = j2;
-		}
-		return k;
-	};
-	FLOAT* FFTDB(FLOAT* bits, INT size, INT& iterationsO)
-	{
-		INT iterations = (INT)(log(size) / log(2));
-		INT iterations1 = iterations - 1;
-		INT iterations2 = size / 2;
-		FLOAT* reals = new FLOAT[size];
-		FLOAT* imags = new FLOAT[size];
-		FLOAT* decibel = new FLOAT[iterations2];
-		iterationsO = iterations1;
-		FLOAT tr = 0.0F;
-		FLOAT ti = 0.0F;
-		FLOAT p = 0.0F;
-		FLOAT arg = 0.0F;
-		FLOAT c = 0.0F;
-		FLOAT s = 0.0F;
-		for (INT i = 0; i < size; i++)
-		{
-			reals[i] = bits[i];
-			imags[i] = 0.0F;
-		}
-		INT k = 0;
-		for (INT l = 1; l <= iterations; l++)
-		{
-			while (k < size)
-			{
-				for (INT i = 1; i <= iterations2; i++)
-				{
-					p = BitReverse(k >> iterations1, iterations);
-					arg = 6.283185F * p / size;
-					c = (FLOAT)cos(arg);
-					s = (FLOAT)sin(arg);
-					tr = reals[k + iterations2] * c + imags[k + iterations2] * s;
-					ti = imags[k + iterations2] * c - reals[k + iterations2] * s;
-					reals[k + iterations2] = reals[k] - tr;
-					imags[k + iterations2] = imags[k] - ti;
-					reals[k] += tr;
-					imags[k] += ti;
-					k++;
-				}
-				k += iterations2;
-			}
-			k = 0;
-			iterations1--;
-			iterations2 = iterations2 / 2;
-		}
-		k = 0;
-		INT r;
-		while (k < size)
-		{
-			r = BitReverse(k, iterations);
-			if (r > k)
-			{
-				tr = reals[k];
-				ti = imags[k];
-				reals[k] = reals[r];
-				imags[k] = imags[r];
-				reals[r] = tr;
-				imags[r] = ti;
-			}
-			k++;
-		}
-		for (INT i = 0; i < size / 2; i++)
-		{
-			decibel[i] = 10.0 * log10((FLOAT)(sqrt((reals[i] * reals[i]) + (imags[i] * imags[i]))));
-		}
-		SAFE_DELETE_ARRAY(reals);
-		SAFE_DELETE_ARRAY(imags);
-		return decibel;
-	}*/
-
 
 	//////////////////////////////////////////////////////////////////////////
 	MAudioDSP::MAudioDSP()
@@ -98,7 +15,7 @@ namespace MShow
 	{
 	}
 
-	BOOL MAudioDSP::Initialize(Callback<void(BYTE*, LONG)>&& callback)
+	BOOL MAudioDSP::Initialize(Callback<void(BYTE*, LONG, INT)>&& callback)
 	{
 		m_callback = std::move(callback);
 		m_audioDSP.Initialize(BindCallback(&MAudioDSP::OnDSP, this));
@@ -119,8 +36,8 @@ namespace MShow
 		m_waveFMTO.nBlockAlign = 4;
 		m_waveFMTO.nAvgBytesPerSec = 176400;
 		LOG(INFO) << "MAudioDSP Initialize OK" << endl;
-	/*	if (!m_audioFFT.Initialize(2048))
-			return FALSE;*/
+		if (!m_audioFFT.Initialize(2048))
+			return FALSE;
 		return TRUE;
 	}
 	BOOL MAudioDSP::Open(const TinyWASAPIAudio::Name& capture, const TinyWASAPIAudio::Name& speaker)
@@ -277,28 +194,27 @@ namespace MShow
 			{
 				memcpy(m_bits, m_buffer.GetPointer(), 4096);
 				m_buffer.Remove(0, 4096);
-				if (!m_callback.IsNull())
+				//
+				INT16* paudio = reinterpret_cast<INT16*>(m_bits);
+				for (INT i = 0;i < 2048;i++)
 				{
-					m_callback(m_bits, 4096);
-				}
-				/*INT k = 0;
-				for (INT i = 0; i < 4096;i += 2)
-				{
-					m_samples[k] = ToINT16(m_bits + i);
-					k++;
+					m_samples[i] = paudio[i];
 				}
 				FLOAT* wFFT = m_audioFFT.Calculate(m_samples, 2048);
-				FLOAT kk = 0;
+				FLOAT db = 0.0F;//计算平均分贝值
 				for (INT i = 0;i < 1024;i++)
 				{
-					kk += wFFT[i];
+					db += wFFT[i];
 				}
-				kk /= 1024.0F;
-				if (kk < 0)
+				db /= 1024.0F;
+				if (db < 0.0F)
+					db = 0.0F;
+				if (db > 100.0F)
+					db = 100.0F;
+				if (!m_callback.IsNull())
 				{
-					kk = 0;
+					m_callback(m_bits, 4096, static_cast<INT>(db));
 				}
-				TRACE("Value:%f\n", kk);*/
 			}
 		}
 		else
@@ -307,7 +223,7 @@ namespace MShow
 			ZeroMemory(m_bits, 4096);
 			if (!m_callback.IsNull())
 			{
-				m_callback(m_bits, 4096);
+				m_callback(m_bits, 4096, 0);
 			}
 		}
 	}

@@ -4,6 +4,8 @@
 #include "MSearchController.h"
 #include "MClientWindow.h"
 #include "MClientController.h"
+#include "Windowless/TinyVisualManage.h"
+
 using namespace TinyUI;
 
 namespace MShow

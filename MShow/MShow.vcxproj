@@ -170,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MAppConfig.h" />
+    <ClInclude Include="MAudioDB.h" />
     <ClInclude Include="MAudioDSP.h" />
     <ClInclude Include="MAudioQueue.h" />
     <ClInclude Include="MAudioRenderTask.h" />
@@ -195,6 +196,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MAppConfig.cpp" />
+    <ClCompile Include="MAudioDB.cpp" />
     <ClCompile Include="MAudioDSP.cpp" />
     <ClCompile Include="MAudioQueue.cpp" />
     <ClCompile Include="MAudioRenderTask.cpp" />

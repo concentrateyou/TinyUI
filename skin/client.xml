@@ -27,10 +27,13 @@
     <label name="lblTime2" position="675,103" size="80,23" text="结束时间: " text-align="left|top" font-family="微软雅黑" font-size="7,17" text-color="64,64,64" ></label>
     <label name="lblBeginTime" position="755,80" size="280,23" text="开始时间: " text-align="left|top" font-family="微软雅黑" font-size="7,17" text-color="64,64,64" ></label>
     <label name="lblEndTime" position="755,103" size="280,23" text="结束时间: " text-align="left|top" font-family="微软雅黑" font-size="7,17" text-color="64,64,64" ></label>
+	<audiodb name="microphoneDB" position="675,320" size="50,16" visible="false">
+	</audiodb>
     <button name="btnStartCommentary" position="675,344" size="90,36" text="开始解说" text-align="center|vcenter" text-color="255,255,255" font-family="微软雅黑" font-weight="400" font-size="8,18"
          image-normal="blue_normal"
          image-highlight="blue_highlight"
-         image-down="blue_down" visible="false">
+         image-down="blue_down" 
+		 visible="false">
     </button>
     <button name="btnPauseCommentary" position="675,344" size="90,36" text="暂停" text-align="center|vcenter" text-color="255,255,255" font-family="微软雅黑" font-weight="400" font-size="8,18"
         image-normal="blue_normal"
