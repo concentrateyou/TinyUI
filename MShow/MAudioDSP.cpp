@@ -194,7 +194,6 @@ namespace MShow
 			{
 				memcpy(m_bits, m_buffer.GetPointer(), 4096);
 				m_buffer.Remove(0, 4096);
-				//
 				INT16* paudio = reinterpret_cast<INT16*>(m_bits);
 				for (INT i = 0;i < 2048;i++)
 				{

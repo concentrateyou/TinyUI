@@ -74,7 +74,7 @@ namespace MShow
 				MShow::MShowApp::GetInstance().SetCurrentAudioTS(0);
 				LOG(INFO) << "[MAudioRenderTask] SetCurrentAudioTS 0";
 				LOG(ERROR) << "[MAudioRenderTask] No Audio Sleep(15)";
-				/*TRACE("[MAudioRenderTask] No Audio Sleep(15)\n");*/
+				TRACE("[MAudioRenderTask] No Audio Sleep(15)\n");
 				LOG(ERROR) << "[MAudioRenderTask] No Audio Sleep(15)";
 				Sleep(15);
 				continue;
@@ -82,8 +82,8 @@ namespace MShow
 			if (tag.samplePTS == m_clock.GetBasePTS())
 			{
 				m_clock.SetBaseTime(MShow::MShowApp::GetInstance().GetQPCTimeMS());
-				/*TRACE("[MAudioRenderTask] BaseTime:%lld\n", m_clock.GetBaseTime());
-				TRACE("[MAudioRenderTask] samplePTS:%lld\n", tag.samplePTS);*/
+				TRACE("[MAudioRenderTask] BaseTime:%lld\n", m_clock.GetBaseTime());
+				TRACE("[MAudioRenderTask] samplePTS:%lld\n", tag.samplePTS);
 				LOG(INFO) << "[MAudioRenderTask] BaseTime:" << m_clock.GetBaseTime();
 				LOG(INFO) << "[MAudioRenderTask] samplePTS:" << tag.samplePTS;
 			}
@@ -93,13 +93,13 @@ namespace MShow
 				timeQPC.BeginTime();
 				if (!m_audio.Open(m_task.GetFormat()))
 				{
-					//TRACE("Audio Open FAIL");
+					TRACE("Audio Open FAIL");
 					LOG(ERROR) << "Audio Open FAIL";
 					break;
 				}
 				if (!m_audio.Start())
 				{
-					//TRACE("Audio Start FAIL");
+					TRACE("Audio Start FAIL");
 					LOG(ERROR) << "Audio Start FAIL";
 					break;
 				}
