@@ -33,7 +33,7 @@ namespace TinyUI
 			BOOL IsPopup();
 		public:
 			BOOL SetPosition(const TinyPoint& pos, const TinySize& size);
-			void SetSelected(TinyVisualOption* spvis,BOOL bFlag);
+			void SetSelected(TinyVisualOption* spvis);
 			TinyVisualOption* GetSelected();
 		public:
 			Event<void(ActiveEventArgs&)>	EVENT_ACTIVE;

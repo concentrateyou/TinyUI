@@ -1098,6 +1098,7 @@ namespace MShow
 					w.nBlockAlign = (w.wBitsPerSample * w.nChannels) / 8;
 					w.nAvgBytesPerSec = w.nSamplesPerSec * w.nBlockAlign;
 					w.wFormatTag = WAVE_FORMAT_PCM;
+					m_microphoneTest.Shutdown();
 					m_microphoneTest.Invoke(clsid, val->GetDocument()->GetVisualHWND()->Handle());
 				}
 			}

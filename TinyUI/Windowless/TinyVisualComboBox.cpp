@@ -51,15 +51,15 @@ namespace TinyUI
 		{
 			m_arraws[(INT)type] = TinyVisualResource::GetInstance()[pzName];
 		}
-		void TinyVisualComboBox::SetSelected(TinyVisualOption* spvis, BOOL bFlag)
+		void TinyVisualComboBox::SetSelected(TinyVisualOption* spvis)
 		{
-			m_popupWND.SetSelected(spvis, bFlag);
+			m_popupWND.SetSelected(spvis);
 		}
-		void TinyVisualComboBox::SetSelected(INT index, BOOL bFlag)
+		void TinyVisualComboBox::SetSelected(INT index)
 		{
 			if (index < m_options.GetSize() && index >= 0)
 			{
-				m_popupWND.SetSelected(m_options[index], bFlag);
+				m_popupWND.SetSelected(m_options[index]);
 			}
 		}
 		TinyVisualOption* TinyVisualComboBox::GetSelected()
@@ -108,6 +108,7 @@ namespace TinyUI
 				m_popupWND.GetDocument()->Destory(m_options[i]);
 			}
 			m_options.RemoveAll();
+			m_popupWND.SetSelected(NULL);
 		}
 		BOOL TinyVisualComboBox::SetProperty(const TinyString& name, const TinyString& value)
 		{
@@ -312,7 +313,7 @@ namespace TinyUI
 				{
 					TinyVisualComboBoxHWND*	ps = static_cast<TinyVisualComboBoxHWND*>(pHWND);
 					::ShowWindow(ps->Handle(), SW_HIDE);
-					ps->SetSelected(this, TRUE);
+					ps->SetSelected(this);
 				}
 			}
 			return TinyVisual::OnLButtonUp(pos, dwFlags);
@@ -356,6 +357,7 @@ namespace TinyUI
 		{
 			if (!m_document)
 				return FALSE;
+			TRACE("Draw Option:%s\n", this->m_szText.CSTR());
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			canvas.SetFont(m_hFONT);

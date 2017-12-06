@@ -34,8 +34,8 @@ namespace TinyUI
 			TinyArray<TinyVisualOption*>& GetOptions();
 			void SetStyleImage(StyleImage type, LPCSTR pzFile);
 			void SetArrowImage(StyleImage type, LPCSTR pzFile);
-			void SetSelected(TinyVisualOption* spvis, BOOL bFlag = TRUE);
-			void SetSelected(INT index, BOOL bFlag = TRUE);
+			void SetSelected(TinyVisualOption* spvis);
+			void SetSelected(INT index);
 			TinyVisualOption* GetSelected();
 		public:
 			Event<void(TinyVisualOption*)>	EVENT_SELECTCHANGED;

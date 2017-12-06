@@ -88,6 +88,7 @@ namespace TinyUI
 			/// </summary>
 			virtual void Close();
 			virtual BOOL Shutdown(INT how = SD_SEND);
+			virtual void OnError(INT iError);
 		public:
 			void	SetErrorCallback(ErrorCallback&& callback);
 		private:

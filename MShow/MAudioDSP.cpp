@@ -7,6 +7,7 @@ namespace MShow
 
 	//////////////////////////////////////////////////////////////////////////
 	MAudioDSP::MAudioDSP()
+		:m_bAllowDB(TRUE)
 	{
 	}
 
@@ -166,11 +167,15 @@ namespace MShow
 		LOG(INFO) << "AudioDSP Close OK";
 		return TRUE;
 	}
+	void MAudioDSP::AllowDB(BOOL bAllowDB)
+	{
+		m_bAllowDB = bAllowDB;
+	}
 	BOOL MAudioDSP::IsCapturing() const
 	{
 		return m_audioDSP.IsCapturing();
 	}
-	BOOL MAudioDSP::IsEmpty()
+	BOOL MAudioDSP::IsEmpty() const
 	{
 		return m_audioDSP.IsEmpty();
 	}
@@ -194,25 +199,35 @@ namespace MShow
 			{
 				memcpy(m_bits, m_buffer.GetPointer(), 4096);
 				m_buffer.Remove(0, 4096);
-				INT16* paudio = reinterpret_cast<INT16*>(m_bits);
-				for (INT i = 0;i < 2048;i++)
+				if (m_bAllowDB)
 				{
-					m_samples[i] = paudio[i];
+					INT16* paudio = reinterpret_cast<INT16*>(m_bits);
+					for (INT i = 0;i < 2048;i++)
+					{
+						m_samples[i] = paudio[i];
+					}
+					FLOAT* wFFT = m_audioFFT.Calculate(m_samples, 2048);
+					FLOAT db = 0.0F;//计算平均分贝值
+					for (INT i = 0;i < 1024;i++)
+					{
+						db += wFFT[i];
+					}
+					db /= 1024.0F;
+					if (db < 0.0F)
+						db = 0.0F;
+					if (db > 100.0F)
+						db = 100.0F;
+					if (!m_callback.IsNull())
+					{
+						m_callback(m_bits, 4096, static_cast<INT>(db));
+					}
 				}
-				FLOAT* wFFT = m_audioFFT.Calculate(m_samples, 2048);
-				FLOAT db = 0.0F;//计算平均分贝值
-				for (INT i = 0;i < 1024;i++)
+				else
 				{
-					db += wFFT[i];
-				}
-				db /= 1024.0F;
-				if (db < 0.0F)
-					db = 0.0F;
-				if (db > 100.0F)
-					db = 100.0F;
-				if (!m_callback.IsNull())
-				{
-					m_callback(m_bits, 4096, static_cast<INT>(db));
+					if (!m_callback.IsNull())
+					{
+						m_callback(m_bits, 4096, 0);
+					}
 				}
 			}
 		}

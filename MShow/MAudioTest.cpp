@@ -72,14 +72,10 @@ namespace MShow
 	}
 	//////////////////////////////////////////////////////////////////////////
 	MicrophoneTest::MicrophoneTest()
-		:m_capturing(FALSE),
-		m_bFirst(FALSE),
-		m_dwPlayOffset(0)
+		:m_bCapturing(FALSE),
+		m_bBreak(FALSE)
 	{
-		m_events[0].CreateEvent();
-		m_events[1].CreateEvent();
-		m_events[2].CreateEvent();
-		m_events[3].CreateEvent();
+
 	}
 	MicrophoneTest::~MicrophoneTest()
 	{
@@ -87,10 +83,8 @@ namespace MShow
 	}
 	BOOL MicrophoneTest::Invoke(const GUID& clsid, HWND hWND)
 	{
-		if (m_capturing)
+		if (m_bCapturing)
 			return TRUE;
-		m_capture.Close();
-		m_player.Close();
 		WAVEFORMATEX waveFMT = { 0 };
 		waveFMT.cbSize = 0;
 		waveFMT.nChannels = 2;
@@ -99,121 +93,85 @@ namespace MShow
 		waveFMT.wFormatTag = WAVE_FORMAT_PCM;
 		waveFMT.nBlockAlign = 4;
 		waveFMT.nAvgBytesPerSec = 176400;
-		if (!m_capture.Open(clsid))
+		m_audio.Close();
+		if (!m_audio.Open(&waveFMT))
 		{
-			LOG(ERROR) << "[MicrophoneTest] Capture Open Fail";
-			goto _ERROR;
+			LOG(ERROR) << "[MicrophoneTest] Invoke Audio Open FAIL\n";
+			return FALSE;
 		}
-		if (!m_capture.SetFormat(&waveFMT, 4096 * 2))
+		vector<PLAYDEVICE> devices;
+		TinySoundPlayer::Enumerate(devices);
+		if (devices.size() <= 0)
 		{
-			LOG(ERROR) << "[MicrophoneTest] Capture SetFormat Fail";
-			goto _ERROR;
+			LOG(ERROR) << "[MicrophoneTest] Invoke Enumerate Audio FAIL\n";
+			return FALSE;
 		}
-		DSBPOSITIONNOTIFY vals[2];
-		vals[0].dwOffset = 4096 * 1 - 1;
-		vals[0].hEventNotify = m_events[0];
-		vals[1].dwOffset = 4096 * 2 - 1;
-		vals[1].hEventNotify = m_events[1];
-		if (!m_capture.SetNotifys(2, vals))
+		m_audioDSP.AllowDB(FALSE);
+		if (!m_audioDSP.Initialize(BindCallback(&MicrophoneTest::OnAudioCapture, this)))
 		{
-			LOG(ERROR) << "[MicrophoneTest] Capture SetNotifys Fail";
-			goto _ERROR;
+			LOG(ERROR) << "[MicrophoneTest] Invoke AudioDSP Initialize FAIL\n";
+			return FALSE;
 		}
-
-		if (!m_player.Open(hWND))
+		if (!m_audioDSP.Open(clsid, devices[0].Guid))
 		{
-			LOG(ERROR) << "[MicrophoneTest] Player Open Fail";
-			goto _ERROR;
+			LOG(ERROR) << "[MicrophoneTest] Invoke AudioDSP Open FAIL\n";
+			return FALSE;
 		}
-		if (!m_player.SetFormat(&waveFMT, 4096 * 2))
+		m_bBreak = FALSE;
+		if (!m_task.Submit(BindCallback(&MicrophoneTest::OnMessagePump, this)))
 		{
-			LOG(ERROR) << "[MicrophoneTest] Player Open Fail";
-			goto _ERROR;
+			LOG(ERROR) << "[MicrophoneTest] Invoke Submit FAIL\n";
+			return FALSE;
 		}
-		DSBPOSITIONNOTIFY vals1[1];
-		vals1[0].dwOffset = 4096 * 2 - 1;
-		vals1[0].hEventNotify = m_events[2];
-		if (!m_player.SetNotifys(1, vals1))
-		{
-			LOG(ERROR) << "[MicrophoneTest] Player SetNotifys Fail";
-			goto _ERROR;
-		}
-		if (!m_player.Play())
-		{
-			LOG(ERROR) << "[MicrophoneTest] Player Play Fail";
-			goto _ERROR;
-		}
-		if (!m_capture.Start())
-		{
-			LOG(ERROR) << "[MicrophoneTest] Capture Start Fail";
-			goto _ERROR;
-		}
-		m_capturing = m_task.Submit(BindCallback(&MicrophoneTest::OnMessagePump, this));
-		LOG(INFO) << "[MicrophoneTest] Invoke OK";
+		m_audio.Start();
+		m_audioDSP.Stop();
+		m_audioDSP.Start();
 		return TRUE;
-	_ERROR:
-		m_player.Close();
-		m_capture.Close();
-		return FALSE;
 	}
 	BOOL MicrophoneTest::Shutdown()
 	{
-		m_capturing = FALSE;
-		m_events[3].SetEvent();
-		if (m_task.Close(INFINITE))
-		{
-			m_capture.Stop();
-			m_capture.Close();
-			m_player.Stop();
-			m_player.Close();
-			return TRUE;
-		}
-		return FALSE;
+		m_audio.Close();
+		m_audioDSP.Stop();
+		m_audioDSP.Close();
+		m_bBreak = TRUE;
+		m_task.Close(INFINITE);
+		m_queue.RemoveAll();
+		m_bCapturing = FALSE;
+		return TRUE;
 	}
 	void MicrophoneTest::OnMessagePump()
 	{
+		SampleTag sampleTag;
 		for (;;)
 		{
-			HANDLE handles[4] = { m_events[0],m_events[1],m_events[2],m_events[3] };
-			HRESULT hRes = WaitForMultipleObjects(4, handles, FALSE, INFINITE);
-			if (hRes == (WAIT_OBJECT_0 + 3))
+			if (m_bBreak)
 				break;
-			switch (hRes)
+			ZeroMemory(&sampleTag, sizeof(sampleTag));
+			if (!m_queue.Pop(sampleTag))
 			{
-			case WAIT_OBJECT_0:
-			case WAIT_OBJECT_0 + 1:
-			{
-				OnAudioCapture();
-				if (!m_bFirst)
-				{
-					m_bFirst = TRUE;
-					OnAudioPlay();
-				}
+				Sleep(5);
+				continue;
 			}
-			break;
-			case WAIT_OBJECT_0 + 2:
-			{
-				OnAudioPlay();
-			}
-			break;
-			}
+			m_audio.Play(sampleTag.bits + 4, sampleTag.size, 5000);
+			m_queue.Free(sampleTag.bits);
 		}
 	}
-	void MicrophoneTest::OnAudioCapture()
+	void MicrophoneTest::OnAudioCapture(BYTE* bits, LONG size, INT db)
 	{
-		BYTE* ps = NULL;
-		LONG size = 0;
-		if (m_capture.GetBuffer(ps, size, 0))
+		SampleTag sampleTag;
+		ZeroMemory(&sampleTag, sizeof(sampleTag));
+		if (size == 4096)
 		{
-			m_buffer.Add(ps, size);
-		}
-	}
-	void MicrophoneTest::OnAudioPlay()
-	{
-		if (m_buffer.GetSize() >= 8192)
-		{
-			m_player.Fill(m_buffer.GetPointer(), 8192, 0);
-			m_buffer.Remove(0, 8192);
+
+			if (m_queue.GetAllocSize() == 0)
+			{
+				INT count = MAX_AUDIO_QUEUE_SIZE / size + 1;
+				m_queue.Initialize(count, size + 4);
+			}
+			sampleTag.size = size;
+			sampleTag.bits = static_cast<BYTE*>(m_queue.Alloc());
+			memcpy(sampleTag.bits + 4, bits, size);
+			m_queue.Push(sampleTag);
 		}
 	}
 }

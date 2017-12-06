@@ -59,12 +59,13 @@ namespace TinyUI
 					m_pVScrollbar = NULL;
 				}
 			}
+			m_spvisCurrent = NULL;
 		}
 		BOOL TinyVisualComboBoxHWND::IsPopup()
 		{
 			return IsWindowVisible(m_hWND);
 		}
-		void TinyVisualComboBoxHWND::SetSelected(TinyVisualOption* spvis, BOOL bFlag)
+		void TinyVisualComboBoxHWND::SetSelected(TinyVisualOption* spvis)
 		{
 			if (m_spvisCurrent != spvis)
 			{
@@ -77,7 +78,10 @@ namespace TinyUI
 				{
 					m_spvisCurrent->SetSelected(TRUE);
 				}
-				m_pOwner->SetText(spvis->GetText());
+				if (spvis != NULL)
+				{
+					m_pOwner->SetText(spvis->GetText());
+				}
 				m_pOwner->EVENT_SELECTCHANGED(m_spvisCurrent);
 			}
 		}

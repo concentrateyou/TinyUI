@@ -936,14 +936,15 @@ namespace TinyUI
 			if (!spvis) return;
 			TinyString className = spvis->RetrieveTag();
 			TinyString name = spvis->GetName();
+			TinyString text = spvis->GetText();
 			TinyString str;
 			for (INT i = 0; i < deep; i++)
 			{
 				str += "-";
 			}
-			str += "Tag:%s,Name:%s,Rectangle(%d,%d,%d,%d)\n";
+			str += "Tag:%s,Name:%s,Text:%s,Rectangle(%d,%d,%d,%d)\n";
 			TinyRectangle bounds = GetWindowRect(spvis);
-			TRACE(str.STR(), className.STR(), name.STR(), bounds.left, bounds.top, bounds.right, bounds.bottom);
+			TRACE(str.STR(), className.STR(), name.STR(), text.STR(), bounds.left, bounds.top, bounds.right, bounds.bottom);
 			TinyVisual* ps = spvis->m_spvisChild;
 			while (ps)
 			{

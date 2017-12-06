@@ -1,9 +1,8 @@
 #pragma once
 #include "MAudioDSP.h"
-#include "AudioAnalyser.h"
-#include "audiosdk.h"
 #include "MAudioQueue.h"
 #include "MAppConfig.h"
+#include "MPacketQueue.h"
 
 namespace MShow
 {
@@ -40,17 +39,14 @@ namespace MShow
 		BOOL Shutdown();
 	private:
 		void OnMessagePump();
-		void OnAudioCapture();
-		void OnAudioPlay();
+		void OnAudioCapture(BYTE*, LONG, INT);
 	private:
-		BOOL					m_bFirst;
-		BOOL					m_capturing;
-		DWORD					m_dwPlayOffset;
-		TinyEvent				m_events[4];
-		TinySoundCapture		m_capture;
-		TinySoundPlayer			m_player;
+		BOOL					m_bBreak;
+		BOOL					m_bCapturing;
+		TinyXAudio				m_audio;
+		MAudioDSP				m_audioDSP;
 		TinyTaskBase			m_task;
-		TinyBufferArray<BYTE>	m_buffer;
+		MPacketAllocQueue		m_queue;
 	};
 }
 

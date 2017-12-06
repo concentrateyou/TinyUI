@@ -31,7 +31,8 @@ namespace MShow
 		BOOL Stop();
 		BOOL Close();
 		BOOL IsCapturing() const;
-		BOOL IsEmpty();
+		BOOL IsEmpty() const;
+		void AllowDB(BOOL bAllowDB);
 	private:
 		void OnDSP(BYTE* bits, LONG size, LPVOID lpParameter);
 		void OnAudio(BYTE* bits, LONG size, LPVOID lpParameter);
@@ -40,6 +41,7 @@ namespace MShow
 		BYTE								m_bits[4096];
 		FLOAT								m_samples[2048];
 		FFT									m_audioFFT;
+		BOOL								m_bAllowDB;
 		TinyLock							m_lock;
 		TinyAudioDSPCapture					m_audioDSP;
 		TinyMFResampler						m_resampler;

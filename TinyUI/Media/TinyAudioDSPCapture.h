@@ -24,23 +24,24 @@ namespace TinyUI
 		public:
 			virtual	void Initialize();
 			virtual	void Initialize(Callback<void(BYTE*, LONG, LPVOID)>&& callback);
-			virtual BOOL Open(const Name& speakName,const Name& captureName, WAVEFORMATEX* pFMT);
+			virtual BOOL Open(const Name& speakName, const Name& captureName, WAVEFORMATEX* pFMT);
 			virtual BOOL Open(const GUID& speakGUID, const GUID& captureGUID, WAVEFORMATEX* pFMT);
 			virtual BOOL Start();
 			virtual BOOL Stop();
 			virtual BOOL Reset();
 			virtual BOOL Close();
-			BOOL IsEmpty();
-			BOOL IsCapturing() const;
-			WAVEFORMATEX* GetFormat() const;
 		public:
-			void EnableAGC(BOOL bAllow);
-			void EnableNS(BOOL bAllow);
-			void SetVADMode(AEC_VAD_MODE mode);//不支持Kinect audio
+			BOOL			IsEmpty() const;
+			BOOL			IsCapturing() const;
+			WAVEFORMATEX*	GetFormat() const;
+		public:
+			void	EnableAGC(BOOL bAllow);
+			void	EnableNS(BOOL bAllow);
+			void	SetVADMode(AEC_VAD_MODE mode);//不支持Kinect audio
 		private:
-			void OnMessagePump();
-			BOOL SetVTI4Property(IPropertyStore* ptrPS, REFPROPERTYKEY key, LONG value);
-			BOOL SetBOOLProperty(IPropertyStore* ptrPS, REFPROPERTYKEY key, VARIANT_BOOL value);
+			void	OnMessagePump();
+			BOOL	SetVTI4Property(IPropertyStore* ptrPS, REFPROPERTYKEY key, LONG value);
+			BOOL	SetBOOLProperty(IPropertyStore* ptrPS, REFPROPERTYKEY key, VARIANT_BOOL value);
 		private:
 			BOOL						m_bEnableAGC;
 			BOOL						m_bEnableNS;

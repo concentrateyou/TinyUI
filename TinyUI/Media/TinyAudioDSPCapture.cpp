@@ -293,7 +293,7 @@ namespace TinyUI
 		{
 			return m_bCapturing;
 		}
-		BOOL TinyAudioDSPCapture::IsEmpty()
+		BOOL TinyAudioDSPCapture::IsEmpty() const
 		{
 			return m_dmo == NULL;
 		}
