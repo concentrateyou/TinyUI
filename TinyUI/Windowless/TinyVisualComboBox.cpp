@@ -71,7 +71,7 @@ namespace TinyUI
 			if (m_popupWND.GetDocument() != NULL)
 			{
 				TinyVisual* spvisParent = m_popupWND.GetDocument()->GetParent(NULL);
-				TinyVisualOption* spvis = static_cast<TinyVisualOption*>(m_popupWND.GetDocument()->Create(0, spvisParent->GetChildCount() * DEFAULT_OPTION_HEIGHT, TO_CX(m_rectangle), DEFAULT_OPTION_HEIGHT, TinyVisualTag::OPTION, spvisParent));
+				TinyVisualOption* spvis = static_cast<TinyVisualOption*>(m_popupWND.GetDocument()->Create(0, m_options.GetSize() * DEFAULT_OPTION_HEIGHT, TO_CX(m_rectangle), DEFAULT_OPTION_HEIGHT, TinyVisualTag::OPTION, spvisParent));
 				if (spvis != NULL)
 				{
 					spvis->SetValue(szValue.CSTR());
@@ -357,7 +357,6 @@ namespace TinyUI
 		{
 			if (!m_document)
 				return FALSE;
-			TRACE("Draw Option:%s\n", this->m_szText.CSTR());
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			canvas.SetFont(m_hFONT);
