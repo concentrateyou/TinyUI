@@ -130,12 +130,12 @@ namespace MShow
 	}
 	BOOL MicrophoneTest::Shutdown()
 	{
-		m_audio.Close();
 		m_audioDSP.Stop();
 		m_audioDSP.Close();
 		m_bBreak = TRUE;
 		m_task.Close(INFINITE);
 		m_queue.RemoveAll();
+		m_audio.Close();
 		m_bCapturing = FALSE;
 		return TRUE;
 	}

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<window name="msearch" text="奇妙导播台" position="100,100" size="818,730" minsize="818,730" maxsize="818,730" border-color="192,192,192" border-width="1">
+<window name="msearch" text="奇妙导播台" position="100,100" size="818,680" minsize="818,680" maxsize="818,680" border-color="192,192,192" border-width="1">
   <syscaption name ="syscaption" position="1,1" size="816,26" background-image="syscaption">
     <label name="title" position="10,0" size="60,26" text="奇妙导播台" text-align="left|vcenter" text-color="255,255,255" >
     </label>
@@ -14,7 +14,7 @@
             image-down="sysbtn_close_down">
     </button>
   </syscaption>
-  <panel position="1,27" size="816,702" background-color="255,255,255">
+  <panel position="1,27" size="816,652" background-color="255,255,255">
     <panel position="0,40" size="816,40">
       <label text="奇妙导播台" text-align="right|vcenter" font-family="Arial" font-weight="500" font-size="18,36" text-color="0,153,255" position="0,0" size="450,36">
       </label>

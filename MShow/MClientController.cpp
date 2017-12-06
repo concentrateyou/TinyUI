@@ -799,6 +799,11 @@ namespace MShow
 				pTextBox->SetText("");
 				pTextBox->SetEnable(FALSE);
 			}
+			visual = m_view.GetDocument()->GetVisualByName("setting");
+			if (visual != NULL)
+			{
+				visual->SetVisible(FALSE);
+			}
 		}
 		//Õ£÷πΩ‚Àµ
 		StopCommentary();
