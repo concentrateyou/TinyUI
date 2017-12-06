@@ -83,8 +83,16 @@ namespace MShow
 	}
 	BOOL MicrophoneTest::Invoke(const GUID& clsid, HWND hWND)
 	{
+		CoInitializeEx(NULL, COINIT_MULTITHREADED);
+		BOOL bRes = InvokeInternal(clsid, hWND);
+		CoUninitialize();
+		return bRes;
+	}
+	BOOL MicrophoneTest::InvokeInternal(const GUID& clsid, HWND hWND)
+	{
 		if (m_bCapturing)
 			return TRUE;
+		this->Shutdown();
 		WAVEFORMATEX waveFMT = { 0 };
 		waveFMT.cbSize = 0;
 		waveFMT.nChannels = 2;
@@ -93,7 +101,6 @@ namespace MShow
 		waveFMT.wFormatTag = WAVE_FORMAT_PCM;
 		waveFMT.nBlockAlign = 4;
 		waveFMT.nAvgBytesPerSec = 176400;
-		m_audio.Close();
 		if (!m_audio.Open(&waveFMT))
 		{
 			LOG(ERROR) << "[MicrophoneTest] Invoke Audio Open FAIL\n";
@@ -124,7 +131,6 @@ namespace MShow
 			return FALSE;
 		}
 		m_audio.Start();
-		m_audioDSP.Stop();
 		m_audioDSP.Start();
 		return TRUE;
 	}

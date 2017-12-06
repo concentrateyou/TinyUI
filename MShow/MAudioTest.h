@@ -38,6 +38,8 @@ namespace MShow
 		BOOL Invoke(const GUID& guid, HWND hWND);
 		BOOL Shutdown();
 	private:
+		BOOL InvokeInternal(const GUID& guid, HWND hWND);
+	private:
 		void OnMessagePump();
 		void OnAudioCapture(BYTE*, LONG, INT);
 	private:
