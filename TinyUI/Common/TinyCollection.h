@@ -1628,40 +1628,35 @@ namespace TinyUI
 	{
 		DISALLOW_COPY_AND_ASSIGN(TinyPointerMap)
 	protected:
-		class TinyNode : public __ITERATOR
+		struct TinyNode : public __ITERATOR
 		{
-		public:
-			TinyNode(UINT_PTR key = 0, UINT_PTR value = 0)
-				:m_pNext(NULL),
-				m_key(key),
-				m_value(value)
-			{
-			}
 			TinyNode*	m_pNext;
-			UINT_PTR	m_key;
-			UINT_PTR	m_value;
+			LPVOID		m_key;
+			LPVOID		m_value;
 		};
 	public:
 		TinyPointerMap();
-		~TinyPointerMap();
+		virtual ~TinyPointerMap();
+	public:
 		DWORD		GetSize() const;
 		BOOL		IsEmpty() const;
-		BOOL		Add(UINT_PTR key, UINT_PTR value);
-		BOOL		Remove(UINT_PTR key);
+		BOOL		Add(LPVOID key, LPVOID value);
+		BOOL		Remove(LPVOID key);
 		void		RemoveAll();
-		BOOL		Lookup(UINT_PTR key, UINT_PTR& value) const;
-		UINT_PTR&	operator[](UINT_PTR key);
-		void		SetAt(UINT_PTR key, UINT_PTR value);
+		BOOL		Lookup(LPVOID key, LPVOID& value) const;
+		LPVOID&		operator[](LPVOID key);
+		void		SetAt(LPVOID key, LPVOID value);
 	private:
 		void		Initialize(UINT dwSize);
-		TinyNode*	New(UINT_PTR key = 0, UINT_PTR value = 0);
+		TinyNode*	New();
 		void		Delete(TinyNode* ps);
-		TinyNode*	Lookup(UINT_PTR key, UINT& index, UINT_PTR& hash) const;
+		TinyNode*	Lookup(LPVOID key, UINT& index, UINT& hash) const;
+		UINT		HashKey(void* key) const;
 	private:
 		UINT		m_size;
 		INT_PTR		m_blockSize;
 		INT_PTR		m_count;
-		TinyNode**	m_ppTable;
+		TinyNode**	m_pTable;
 		TinyNode*	m_pFreeList;
 		TinyPlex*	m_pBlocks;
 	};

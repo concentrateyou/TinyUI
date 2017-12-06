@@ -19,7 +19,14 @@ namespace TinyUI
 	{
 		BOOL  GetExtensionPtr(SOCKET socket, GUID guid, void** target);
 		DWORD GetErrorCode(SOCKET socket, LPOVERLAPPED ps);
-		BOOL GetIPAddressFromSOCKADDR(const SOCKADDR* address, INT addresssize, const BYTE** addressdata, size_t* datasize, USHORT* port);;
+		BOOL GetIPAddressFromSOCKADDR(const SOCKADDR* address, INT addresssize, const BYTE** addressdata, size_t* datasize, USHORT* port);
+		enum AddressFamily
+		{
+			ADDRESS_FAMILY_UNSPECIFIED,   // AF_UNSPEC
+			ADDRESS_FAMILY_IPV4,          // AF_INET
+			ADDRESS_FAMILY_IPV6,          // AF_INET6
+			ADDRESS_FAMILY_LAST = ADDRESS_FAMILY_IPV6
+		};
 		/// <summary>
 		/// IP地址
 		/// </summary>
@@ -75,6 +82,8 @@ namespace TinyUI
 			std::vector<BYTE> m_address;
 		};
 		using IPAddressList = std::vector<IPAddress>;
+		AddressFamily GetAddressFamily(const IPAddress& address);
+		INT ConvertAddressFamily(AddressFamily addressFamily);
 		/// <summary>
 		/// 网络终结点
 		/// </summary>
@@ -138,7 +147,6 @@ namespace TinyUI
 			std::vector<IPEndPoint> m_endpoints;
 			std::string				m_canonical;
 		};
-
 		/// <summary>
 		/// 异步模型
 		/// </summary>
@@ -167,6 +175,35 @@ namespace TinyUI
 			LONG_PTR							Context;
 			TinyScopedReferencePtr<AsyncResult>	Result;
 			CompleteCallback					Complete;
+		};
+		/// <summary>
+		/// 套接字句柄
+		/// </summary>
+		class TinyHandleSOCKET
+		{
+			DISALLOW_COPY_AND_ASSIGN(TinyHandleSOCKET)
+		public:
+			TinyHandleSOCKET();
+			~TinyHandleSOCKET();
+		public:
+			operator SOCKET() const;
+			SOCKET Handle() const;
+			BOOL operator == (const TinyHandleSOCKET& obj) const;
+			BOOL operator != (const TinyHandleSOCKET& obj) const;
+			BOOL Attach(SOCKET socket);
+			SOCKET Detach();
+			TinyHandleSOCKET* Lookup(SOCKET socket);
+		public:
+			BOOL SetOption(INT level, INT opt, const CHAR* optval, INT size);
+			BOOL GetOption(INT level, INT opt, CHAR* optval, INT& size);
+		public:
+			static BOOL GetAcceptEx(SOCKET socket, LPFN_ACCEPTEX* target);
+			static BOOL GetConnectEx(SOCKET socket, LPFN_CONNECTEX* target);
+			static BOOL GetAcceptExSockaddrs(SOCKET socket, LPFN_GETACCEPTEXSOCKADDRS* target);
+			static BOOL GetDisconnectEx(SOCKET socket, LPFN_DISCONNECTEX* target);
+		protected:
+			SOCKET	m_socket;
+			static  TinyPointerMap	m_map;
 		};
 	}
 }

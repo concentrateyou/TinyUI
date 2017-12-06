@@ -362,7 +362,6 @@ namespace TinyUI
 				LOG(ERROR) << "setsockopt SO_RCVBUF:" << WSAGetLastError();
 				goto _ERROR;
 			}
-			size = 512 * 1024;
 			if (!m_socket.SetOption(SOL_SOCKET, SO_SNDBUF, (const CHAR*)&size, sizeof(size)))
 			{
 				LOG(ERROR) << "socket SO_SNDBUF:" << WSAGetLastError();

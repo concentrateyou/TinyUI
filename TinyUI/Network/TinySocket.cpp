@@ -41,7 +41,7 @@ namespace TinyUI
 				return FALSE;
 			m_socket = socket;
 			TinyPointerMap& map = TinyHandleSOCKET::m_map;
-			map.Add(static_cast<UINT_PTR>(socket), reinterpret_cast<UINT_PTR>(this));
+			map.Add(reinterpret_cast<LPVOID>(socket), static_cast<LPVOID>(this));
 			return TRUE;
 		}
 		SOCKET TinyHandleSOCKET::Detach()
@@ -50,7 +50,7 @@ namespace TinyUI
 			if (socket != INVALID_SOCKET && socket != NULL)
 			{
 				TinyPointerMap& map = TinyHandleSOCKET::m_map;
-				map.Remove(static_cast<UINT_PTR>(socket));
+				map.Remove(reinterpret_cast<LPVOID>(socket));
 			}
 			m_socket = INVALID_SOCKET;
 			return socket;
@@ -58,8 +58,8 @@ namespace TinyUI
 		TinyHandleSOCKET* TinyHandleSOCKET::Lookup(SOCKET socket)
 		{
 			TinyPointerMap& map = TinyHandleSOCKET::m_map;
-			UINT_PTR val = 0;
-			if (!map.Lookup(static_cast<UINT_PTR>(socket), val))
+			LPVOID val = 0;
+			if (!map.Lookup(reinterpret_cast<LPVOID>(socket), val))
 				return NULL;
 			return reinterpret_cast<TinyHandleSOCKET*>(val);
 		}

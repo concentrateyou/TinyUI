@@ -41,7 +41,7 @@ namespace TinyUI
 				return FALSE;
 			m_hNET = hNET;
 			TinyPointerMap& map = TinyInternet::m_sessionMap;
-			map.Add((UINT_PTR)m_hNET, (UINT_PTR)this);
+			map.Add(static_cast<LPVOID>(m_hNET), static_cast<LPVOID>(this));
 			return TRUE;
 		}
 		HINTERNET TinyInternet::Detach()
@@ -50,7 +50,7 @@ namespace TinyUI
 			if (hNET != NULL)
 			{
 				TinyPointerMap& map = TinyInternet::m_sessionMap;
-				map.Remove((UINT_PTR)hNET);
+				map.Remove(static_cast<LPVOID>(hNET));
 			}
 			m_hNET = NULL;
 			return hNET;
@@ -67,8 +67,8 @@ namespace TinyUI
 		TinyInternet* TinyInternet::Lookup(HINTERNET hNET)
 		{
 			TinyPointerMap& map = TinyInternet::m_sessionMap;
-			UINT_PTR val = 0;
-			if (!map.Lookup((UINT_PTR)hNET, val))
+			LPVOID val = 0;
+			if (!map.Lookup(static_cast<LPVOID>(hNET), val))
 				return NULL;
 			return reinterpret_cast<TinyInternet*>(val);
 		}

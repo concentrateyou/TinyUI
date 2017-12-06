@@ -81,9 +81,6 @@
     <ClInclude Include="stdafx.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -518,6 +515,15 @@
     </ClInclude>
     <ClInclude Include="Media\TinyMFAsyncCallback.h">
       <Filter>头文件\Media</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\TinyUDPSocket.h">
+      <Filter>头文件\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\TinyTCPSocket.h">
+      <Filter>头文件\Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -955,6 +961,12 @@
     </ClCompile>
     <ClCompile Include="Media\TinyMFAsyncCallback.cpp">
       <Filter>源文件\Media</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\TinyUDPSocket.cpp">
+      <Filter>源文件\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\TinyTCPSocket.cpp">
+      <Filter>源文件\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
