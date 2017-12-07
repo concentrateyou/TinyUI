@@ -273,6 +273,7 @@ namespace MShow
 						ps->szProgramName = std::move(programName);
 						ps->szProgramID = std::move(val["programQipuId"].asString());
 						listitem->SetItemData(ps);
+						listitem->SetCursor("hand");
 						listitem->EVENT_MOUSEDBCLICK += m_onItemClick;
 					}
 				}

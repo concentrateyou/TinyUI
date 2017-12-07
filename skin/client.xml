@@ -32,17 +32,22 @@
     <button name="btnStartCommentary" position="675,344" size="90,36" text="开始解说" text-align="center|vcenter" text-color="255,255,255" font-family="微软雅黑" font-weight="400" font-size="8,18"
          image-normal="blue_normal"
          image-highlight="blue_highlight"
-         image-down="blue_down" visible="false">
+         image-down="blue_down" visible="false"
+         cursor="hand">
     </button>
     <button name="btnPauseCommentary" position="675,344" size="90,36" text="暂停" text-align="center|vcenter" text-color="255,255,255" font-family="微软雅黑" font-weight="400" font-size="8,18"
         image-normal="blue_normal"
         image-highlight="blue_highlight"
-        image-down="blue_down" visible="false">
+        image-down="blue_down" 
+        visible="false"
+        cursor="hand">
     </button>
     <button name="btnStopCommentary" position="775,344" size="90,36" text="停止解说" text-align="center|vcenter" text-color="255,255,255" font-family="微软雅黑" font-weight="400" font-size="8,18"
         image-normal="blue_normal"
         image-highlight="blue_highlight"
-        image-down="blue_down" visible="false">
+        image-down="blue_down" 
+        visible="false"
+        cursor="hand">
     </button>
   </panel>
   <panel position="1,427" size="998,100" background-image="panel">
@@ -58,17 +63,22 @@
       <button name="btnEdit" position="10,3" size="80,23" text="编辑" text-align="center|vcenter" text-color="0,0,0"
              image-normal="btn_normal"
              image-highlight="btn_highlight"
-             image-down="btn_down">
+             image-down="btn_down"
+             cursor="hand">
       </button>
       <button name="btnSave" position="10,3" size="80,23" text="保存" text-align="center|vcenter" text-color="0,0,0"
            image-normal="btn_normal"
            image-highlight="btn_highlight"
-           image-down="btn_down" visible="false">
+           image-down="btn_down" 
+           visible="false"
+           cursor="hand">
       </button>
       <button name="btnCancel" position="100,3" size="80,23" text="取消" text-align="center|vcenter" text-color="0,0,0"
            image-normal="btn_normal"
            image-highlight="btn_highlight"
-           image-down="btn_down" visible="false">
+           image-down="btn_down" 
+           visible="false"
+           cursor="hand">
       </button>
     </panel>
   </panel>
@@ -91,7 +101,8 @@
       <button name="btnMicrophoneTest" position="5,68" size="80,23" text="麦克风测试" text-align="center|vcenter" text-color="0,0,0"
           image-normal="btn_normal"
           image-highlight="btn_highlight"
-          image-down="btn_down">
+          image-down="btn_down"
+          cursor="hand">
       </button>
 	  <audiodb name="microphoneTestDB" position="90,72" size="50,16">
 	  </audiodb>
@@ -112,7 +123,8 @@
       <button name="btnSpeakerTest" position="260,68" size="80,23" text="播放测试声音" text-align="center|vcenter" text-color="0,0,0"
           image-normal="btn_normal"
           image-highlight="btn_highlight"
-          image-down="btn_down">
+          image-down="btn_down"
+          cursor="hand">
       </button>
     </panel>
   </panel>

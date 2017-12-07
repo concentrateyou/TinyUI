@@ -21,6 +21,7 @@ namespace TinyUI
 		const TinyString TinyVisualProperty::SIZE = TEXT("size");
 		const TinyString TinyVisualProperty::VISIBLE = TEXT("visible");
 		const TinyString TinyVisualProperty::ENABLE = TEXT("enable");
+		const TinyString TinyVisualProperty::CURSOR = TEXT("cursor");
 
 		const TinyString TinyVisualProperty::BACKGROUNDIMAGE = TEXT("background-image");
 		const TinyString TinyVisualProperty::BACKGROUNDCOLOR = TEXT("background-color");
@@ -70,7 +71,74 @@ namespace TinyUI
 		const TinyString TinyVisualProperty::SCROLLBARGROOVE = TEXT("scrollbar-groove");
 		const TinyString TinyVisualProperty::SCROLLBARNORMAL = TEXT("scrollbar-normal");
 		const TinyString TinyVisualProperty::SCROLLBARHIGHLIGHT = TEXT("scrollbar-highlight");
-
+		//////////////////////////////////////////////////////////////////////////
+		const TinyString TinyVisualCursor::AUTO = TEXT("auto");
+		const TinyString TinyVisualCursor::HAND = TEXT("hand");
+		const TinyString TinyVisualCursor::TEXT = TEXT("text");
+		const TinyString TinyVisualCursor::MOVE = TEXT("move");
+		const TinyString TinyVisualCursor::POINTER = TEXT("pointer");
+		const TinyString TinyVisualCursor::WAIT = TEXT("wait");
+		const TinyString TinyVisualCursor::HELP = TEXT("help");;
+		const TinyString TinyVisualCursor::ERESIZE = TEXT("e-resize");;
+		const TinyString TinyVisualCursor::NERESIZE = TEXT("ne-resize");
+		const TinyString TinyVisualCursor::NWRESIZE = TEXT("nw-resize");
+		const TinyString TinyVisualCursor::NRESIZE = TEXT("n-resize");
+		const TinyString TinyVisualCursor::SERESIZE = TEXT("se-resize");
+		const TinyString TinyVisualCursor::SWRESIZE = TEXT("sw-resize");
+		const TinyString TinyVisualCursor::SRESIZE = TEXT("s-resize");
+		const TinyString TinyVisualCursor::WRESIZE = TEXT("w-resize");
+		LPSTR CursorFromString(TinyString& str)
+		{
+			if (str == TinyVisualCursor::HAND)
+			{
+				return IDC_HAND;
+			}
+			if (str == TinyVisualCursor::WAIT)
+			{
+				return IDC_WAIT;
+			}
+			if (str == TinyVisualCursor::HELP)
+			{
+				return IDC_HELP;
+			}
+			if (str == TinyVisualCursor::MOVE)
+			{
+				return IDC_CROSS;
+			}
+			if (str == TinyVisualCursor::ERESIZE)
+			{
+				return IDC_SIZEWE;
+			}
+			if (str == TinyVisualCursor::WRESIZE)
+			{
+				return IDC_SIZEWE;
+			}
+			if (str == TinyVisualCursor::SRESIZE)
+			{
+				return IDC_SIZENS;
+			}
+			if (str == TinyVisualCursor::NRESIZE)
+			{
+				return IDC_SIZENS;
+			}
+			if (str == TinyVisualCursor::NERESIZE)
+			{
+				return IDC_SIZENESW;
+			}
+			if (str == TinyVisualCursor::NWRESIZE)
+			{
+				return IDC_SIZENWSE;
+			}
+			if (str == TinyVisualCursor::SERESIZE)
+			{
+				return IDC_SIZENWSE;
+			}
+			if (str == TinyVisualCursor::SWRESIZE)
+			{
+				return IDC_SIZENESW;
+			}
+			return IDC_ARROW;
+		}
 		//////////////////////////////////////////////////////////////////////////
 		const TinyString TinyVisualTag::WINDOW = TEXT("window");
 		const TinyString TinyVisualTag::CONTEXT = TEXT("context");

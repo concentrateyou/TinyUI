@@ -79,8 +79,9 @@ namespace TinyUI
 			virtual ~TinyVisual();
 			virtual TinyString	RetrieveTag() const;
 			virtual void		SetName(const TinyString& pzName);
-			virtual void		SetToolTip(const TinyString& pzTitle);
-			virtual void		SetText(const TinyString& pzText);
+			virtual void		SetCursor(const TinyString& szCursor);
+			virtual void		SetToolTip(const TinyString& szTitle);
+			virtual void		SetText(const TinyString& szText);
 			virtual void		SetPosition(const TinyPoint& pos);
 			virtual void		SetSize(const TinySize& size);
 			virtual void		SetMaximumSize(const TinySize& size);
@@ -157,6 +158,7 @@ namespace TinyUI
 			TinyString			m_szName;
 			TinyString			m_szText;
 			TinyString			m_szToolTip;
+			TinyString			m_szCursor;
 			TinySize			m_maximumSize;//元素的最大像素大小
 			TinySize			m_minimumSize;//元素的最小像素大小
 			TinyRectangle		m_rectangle;//相对于父元素区域

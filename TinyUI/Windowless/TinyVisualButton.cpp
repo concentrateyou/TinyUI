@@ -24,6 +24,7 @@ namespace TinyUI
 		{
 			ZeroMemory(&m_images, sizeof(m_images));
 		}
+
 		TinyVisualButton::~TinyVisualButton()
 		{
 

@@ -31,7 +31,8 @@
       <button name="btnSearch" tooltip="Min" position="550,12" size="90,36" text="搜索" text-align="center|vcenter" text-color="255,255,255" font-family="微软雅黑" font-weight="400" font-size="8,18"
              image-normal="blue_normal"
              image-highlight="blue_highlight"
-             image-down="blue_down">
+             image-down="blue_down"
+             cursor="hand">
       </button>
     </panel>
     <panel position="30,160" size="760,400">

@@ -30,6 +30,7 @@ namespace TinyUI
 			::GetObject(reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)), sizeof(LOGFONT), &lf);
 			lf.lfCharSet = GB2312_CHARSET;
 			m_hFONT = CreateFontIndirect(&lf);
+			m_szCursor = TinyVisualCursor::AUTO;
 		}
 		TinyVisual::TinyVisual(TinyVisual* spvisParent, TinyVisualDocument* document)
 			:m_spvisParent(spvisParent),
@@ -52,6 +53,7 @@ namespace TinyUI
 			::GetObject(reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)), sizeof(LOGFONT), &lf);
 			lf.lfCharSet = GB2312_CHARSET;
 			m_hFONT = CreateFontIndirect(&lf);
+			m_szCursor = TinyVisualCursor::AUTO;
 		}
 		TinyVisual::~TinyVisual()
 		{
@@ -61,9 +63,9 @@ namespace TinyUI
 		{
 			return m_document != NULL ? m_document->Handle() : NULL;
 		}
-		void TinyVisual::SetText(const TinyString& pzText)
+		void TinyVisual::SetText(const TinyString& szText)
 		{
-			m_szText = std::move(pzText);
+			m_szText = std::move(szText);
 		}
 		TinyString	TinyVisual::GetText() const
 		{
@@ -81,9 +83,13 @@ namespace TinyUI
 		{
 			return m_szName;
 		}
-		void TinyVisual::SetToolTip(const TinyString& pzTitle)
+		void TinyVisual::SetCursor(const TinyString& szCursor)
 		{
-			m_szToolTip = std::move(pzTitle);
+			m_szCursor = std::move(szCursor);
+		}
+		void TinyVisual::SetToolTip(const TinyString& szTitle)
+		{
+			m_szToolTip = std::move(szTitle);
 		}
 		TinyString	TinyVisual::GetToolTip() const
 		{
@@ -447,6 +453,15 @@ namespace TinyUI
 		}
 		HRESULT	 TinyVisual::OnSetCursor(HWND hWND, DWORD dwHitTest, DWORD dwMessage)
 		{
+			if (m_szCursor != TinyVisualCursor::AUTO)
+			{
+				if (m_document != NULL)
+				{
+					m_document->GetVisualHWND()->SetMsgHandled(TRUE);
+					::SetCursor(LoadCursor(NULL, CursorFromString(m_szCursor)));
+					return TRUE;
+				}
+			}
 			return FALSE;
 		}
 		TinyString TinyVisual::GetProperty(const TinyString& name)
@@ -472,6 +487,11 @@ namespace TinyUI
 			if (strcasecmp(name.STR(), TinyVisualProperty::TEXT.STR()) == 0)
 			{
 				this->SetText(value.STR());
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::CURSOR.STR()) == 0)
+			{
+				this->SetCursor(value.STR());
 				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::BACKGROUNDIMAGE.STR()) == 0)

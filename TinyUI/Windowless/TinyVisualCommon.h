@@ -32,6 +32,7 @@ namespace TinyUI
 			static const TinyString SIZE;
 			static const TinyString VISIBLE;
 			static const TinyString ENABLE;
+			static const TinyString CURSOR;
 			static const TinyString BACKGROUNDIMAGE;
 			static const TinyString BACKGROUNDCOLOR;
 			static const TinyString BACKGROUNDCENTER;
@@ -112,6 +113,29 @@ namespace TinyUI
 			static const TinyString IMAGE;
 			static const TinyString ADD;
 		};
+		/// <summary>
+		/// π‚±Í
+		/// </summary>
+		class TinyVisualCursor
+		{
+		public:
+			static const TinyString AUTO;
+			static const TinyString HAND;
+			static const TinyString TEXT;
+			static const TinyString MOVE;
+			static const TinyString POINTER;
+			static const TinyString WAIT;
+			static const TinyString HELP;
+			static const TinyString ERESIZE;
+			static const TinyString NERESIZE;
+			static const TinyString NWRESIZE;
+			static const TinyString NRESIZE;
+			static const TinyString SERESIZE;
+			static const TinyString SWRESIZE;
+			static const TinyString SRESIZE;
+			static const TinyString WRESIZE;
+		};
+		LPSTR CursorFromString(TinyString& str);
 		/// <summary>
 		/// ª∫¥ÊDC
 		/// </summary>
