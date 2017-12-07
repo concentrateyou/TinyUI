@@ -3,6 +3,7 @@
 #include "MAudioQueue.h"
 #include "MAppConfig.h"
 #include "MPacketQueue.h"
+#include "MClientWindow.h"
 
 namespace MShow
 {
@@ -16,11 +17,10 @@ namespace MShow
 		SpeakTest();
 		~SpeakTest();
 		BOOL Invoke(const TinyString& szFile, const GUID& guid, HWND hWND);
-		BOOL Shutdown();
 	private:
 		void OnMessagePump();
 	private:
-		BOOL				m_playing;
+		BOOL				m_bPlaying;
 		TinyEvent			m_events[1];
 		TinySoundPlayer		m_player;
 		TinyWaveFile		m_waveFile;
@@ -33,10 +33,9 @@ namespace MShow
 	{
 		DISALLOW_COPY_AND_ASSIGN(MicrophoneTest)
 	public:
-		MicrophoneTest();
+		MicrophoneTest(MClientWindow& view);
 		~MicrophoneTest();
 		BOOL Invoke(const GUID& guid, HWND hWND);
-		BOOL Shutdown();
 	private:
 		BOOL InvokeInternal(const GUID& guid, HWND hWND);
 	private:
@@ -45,6 +44,7 @@ namespace MShow
 	private:
 		BOOL					m_bBreak;
 		BOOL					m_bCapturing;
+		MClientWindow&			m_view;
 		TinyXAudio				m_audio;
 		MAudioDSP				m_audioDSP;
 		TinyTaskBase			m_task;

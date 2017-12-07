@@ -1,10 +1,11 @@
 #include "stdafx.h"
 #include "MAudioTest.h"
+#include "MAudioDB.h"
 
 namespace MShow
 {
 	SpeakTest::SpeakTest()
-		:m_playing(FALSE)
+		:m_bPlaying(FALSE)
 	{
 		m_events[0].CreateEvent();
 	}
@@ -14,8 +15,10 @@ namespace MShow
 	}
 	BOOL SpeakTest::Invoke(const TinyString& szFile, const GUID& clsid, HWND hWND)
 	{
-		if (m_playing)
+		if (m_bPlaying)
 			return TRUE;
+		if (m_task.IsActive())
+			return FALSE;
 		m_waveFile.Close();
 		m_player.Close();
 		if (!m_waveFile.Open(szFile.STR()))
@@ -43,17 +46,8 @@ namespace MShow
 		m_waveFile.Read(bits, m_waveFile.GetSize(), &size);
 		m_player.Fill(bits, size, 0);
 		m_player.Play(0);
-		m_playing = m_task.Submit(BindCallback(&SpeakTest::OnMessagePump, this));
+		m_bPlaying = m_task.Submit(BindCallback(&SpeakTest::OnMessagePump, this));
 		LOG(INFO) << "[SpeakTest] Invoke OK";
-		return TRUE;
-	}
-	BOOL SpeakTest::Shutdown()
-	{
-		m_player.Stop();
-		m_player.Close();
-		m_waveFile.Close();
-		m_task.Close(INFINITE);
-		m_playing = FALSE;
 		return TRUE;
 	}
 	void SpeakTest::OnMessagePump()
@@ -65,15 +59,21 @@ namespace MShow
 			if (hRes == WAIT_OBJECT_0)
 			{
 				LOG(INFO) << "[SpeakTest] Play Finish";
-				m_playing = FALSE;
+				m_bPlaying = FALSE;
 				break;
 			}
 		}
+		m_player.Stop();
+		m_player.Close();
+		m_waveFile.Close();
+		m_bPlaying = FALSE;
+		LOG(INFO) << "[SpeakTest] OnMessagePump Finish\n";
 	}
 	//////////////////////////////////////////////////////////////////////////
-	MicrophoneTest::MicrophoneTest()
+	MicrophoneTest::MicrophoneTest(MClientWindow& view)
 		:m_bCapturing(FALSE),
-		m_bBreak(FALSE)
+		m_bBreak(FALSE),
+		m_view(view)
 	{
 
 	}
@@ -83,6 +83,10 @@ namespace MShow
 	}
 	BOOL MicrophoneTest::Invoke(const GUID& clsid, HWND hWND)
 	{
+		if (m_bCapturing)
+			return FALSE;
+		if (m_task.IsActive())
+			return FALSE;
 		CoInitializeEx(NULL, COINIT_MULTITHREADED);
 		BOOL bRes = InvokeInternal(clsid, hWND);
 		CoUninitialize();
@@ -90,9 +94,6 @@ namespace MShow
 	}
 	BOOL MicrophoneTest::InvokeInternal(const GUID& clsid, HWND hWND)
 	{
-		if (m_bCapturing)
-			return TRUE;
-		this->Shutdown();
 		WAVEFORMATEX waveFMT = { 0 };
 		waveFMT.cbSize = 0;
 		waveFMT.nChannels = 2;
@@ -113,7 +114,6 @@ namespace MShow
 			LOG(ERROR) << "[MicrophoneTest] Invoke Enumerate Audio FAIL\n";
 			return FALSE;
 		}
-		m_audioDSP.AllowDB(FALSE);
 		if (!m_audioDSP.Initialize(BindCallback(&MicrophoneTest::OnAudioCapture, this)))
 		{
 			LOG(ERROR) << "[MicrophoneTest] Invoke AudioDSP Initialize FAIL\n";
@@ -134,20 +134,10 @@ namespace MShow
 		m_audioDSP.Start();
 		return TRUE;
 	}
-	BOOL MicrophoneTest::Shutdown()
-	{
-		m_audioDSP.Stop();
-		m_audioDSP.Close();
-		m_bBreak = TRUE;
-		m_task.Close(INFINITE);
-		m_queue.RemoveAll();
-		m_audio.Close();
-		m_bCapturing = FALSE;
-		return TRUE;
-	}
 	void MicrophoneTest::OnMessagePump()
 	{
 		SampleTag sampleTag;
+		DWORD dwTime = timeGetTime();
 		for (;;)
 		{
 			if (m_bBreak)
@@ -160,7 +150,27 @@ namespace MShow
 			}
 			m_audio.Play(sampleTag.bits + 4, sampleTag.size, 5000);
 			m_queue.Free(sampleTag.bits);
+			//10Ãë
+			if ((timeGetTime() - dwTime) >= 10 * 1000)
+			{
+				m_bBreak = TRUE;
+			}
 		}
+		m_audioDSP.Stop();
+		m_audioDSP.Close();
+		m_queue.RemoveAll();
+		m_audio.Close();
+		if (m_view.GetDocument() != NULL)
+		{
+			MAudioDB* audiodb = static_cast<MAudioDB*>(m_view.GetDocument()->GetVisualByName("microphoneTestDB"));
+			if (audiodb != NULL && audiodb->IsVisible())
+			{
+				audiodb->SetDB(0);
+				audiodb->Invalidate();
+			}
+		}
+		m_bCapturing = FALSE;
+		LOG(INFO) << "[MicrophoneTest] OnMessagePump Finish\n";
 	}
 	void MicrophoneTest::OnAudioCapture(BYTE* bits, LONG size, INT db)
 	{
@@ -168,7 +178,6 @@ namespace MShow
 		ZeroMemory(&sampleTag, sizeof(sampleTag));
 		if (size == 4096)
 		{
-
 			if (m_queue.GetAllocSize() == 0)
 			{
 				INT count = MAX_AUDIO_QUEUE_SIZE / size + 1;
@@ -178,6 +187,15 @@ namespace MShow
 			sampleTag.bits = static_cast<BYTE*>(m_queue.Alloc());
 			memcpy(sampleTag.bits + 4, bits, size);
 			m_queue.Push(sampleTag);
+			if (m_view.GetDocument() != NULL && db > 0)
+			{
+				MAudioDB* audiodb = static_cast<MAudioDB*>(m_view.GetDocument()->GetVisualByName("microphoneTestDB"));
+				if (audiodb != NULL && audiodb->IsVisible())
+				{
+					audiodb->SetDB(db);
+					audiodb->Invalidate();
+				}
+			}
 		}
 	}
 }

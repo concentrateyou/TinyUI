@@ -15,7 +15,8 @@ namespace MShow
 		m_bBreak1(FALSE),
 		m_bCommentarying(FALSE),
 		m_bPause(FALSE),
-		m_previousPTS(-1)
+		m_previousPTS(-1),
+		m_microphoneTest(view)
 	{
 	}
 
@@ -1103,7 +1104,6 @@ namespace MShow
 					w.nBlockAlign = (w.wBitsPerSample * w.nChannels) / 8;
 					w.nAvgBytesPerSec = w.nSamplesPerSec * w.nBlockAlign;
 					w.wFormatTag = WAVE_FORMAT_PCM;
-					m_microphoneTest.Shutdown();
 					m_microphoneTest.Invoke(clsid, val->GetDocument()->GetVisualHWND()->Handle());
 				}
 			}
@@ -1144,7 +1144,7 @@ namespace MShow
 	{
 		if (!args.IsFocus())
 		{
-			m_microphoneTest.Shutdown();
+			//m_microphoneTest.Shutdown();
 		}
 	}
 
@@ -1152,7 +1152,7 @@ namespace MShow
 	{
 		if (!args.IsFocus())
 		{
-			m_speakTest.Shutdown();
+			//m_speakTest.Shutdown();
 		}
 	}
 
