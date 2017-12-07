@@ -68,15 +68,12 @@ namespace TinyUI
 			Context* pThis = reinterpret_cast<Context*>(ps);
 			if (pThis != NULL)
 			{
-				if (!time)
+				if (pThis->m_currentFD == FD_CONNECT)
 				{
-					if (pThis->m_currentFD == FD_CONNECT)
-					{
-						pThis->m_this->ConnectCallback();
-					}
+					pThis->m_this->ConnectCallback(pThis, time);
 				}
-
 			}
+			SAFE_DELETE(pThis);
 		}
 		BOOL TinyTCPSocket::Connect(const IPEndPoint& endpoint, DWORD dwMS, CompletionCallback&& callback)
 		{
@@ -89,32 +86,17 @@ namespace TinyUI
 			}
 			if (m_socket != INVALID_SOCKET && m_socket != NULL)
 			{
-				INT iRes = S_OK;
-				Context* connext = new Context();
-				connext->m_callback = std::move(callback);
-				connext->m_currentFD = FD_CONNECT;
-				connext->m_this = this;
-				if (!RegisterWaitForSingleObject(&m_handle, m_event, TinyTCPSocket::WaitOrTimerCallback, static_cast<LPVOID>(connext), dwMS, WT_EXECUTEINWAITTHREAD | WT_EXECUTEONLYONCE))
+				if (SetAsyncEventSelect(FD_CONNECT, dwMS, std::move(callback)))
 				{
-					iRes = GetLastError();
-					OnError(iRes);
-					goto _ERROR;
-				}
-				iRes = WSAEventSelect(m_socket, m_event, FD_CONNECT);
-				if (iRes != NO_ERROR)
-				{
-					iRes = WSAGetLastError();
-					OnError(iRes);
-					goto _ERROR;
-				}
-				iRes = WSAConnect(m_socket, &si, size, NULL, NULL, NULL, NULL);
-				if (iRes != NO_ERROR)
-				{
-					iRes = WSAGetLastError();
-					if (iRes != WSAEWOULDBLOCK)
+					iRes = WSAConnect(m_socket, &si, size, NULL, NULL, NULL, NULL);
+					if (iRes != NO_ERROR)
 					{
-						OnError(iRes);
-						goto _ERROR;
+						iRes = WSAGetLastError();
+						if (iRes != WSAEWOULDBLOCK)
+						{
+							OnError(iRes);
+							goto _ERROR;
+						}
 					}
 				}
 				return TRUE;
@@ -123,9 +105,11 @@ namespace TinyUI
 			UnsetAsyncEventSelect();
 			return FALSE;
 		}
-		void TinyTCPSocket::ConnectCallback()
+		void TinyTCPSocket::ConnectCallback(Context* context, BOOL time)
 		{
-			if (m_socket != NULL && m_socket != INVALID_SOCKET)
+			if (context != NULL &&
+				m_socket != NULL &&
+				m_socket != INVALID_SOCKET)
 			{
 				WSANETWORKEVENTS events = { 0 };
 				events.lNetworkEvents = FD_CONNECT;
@@ -140,17 +124,41 @@ namespace TinyUI
 				else
 				{
 					iError = events.iErrorCode[FD_CONNECT_BIT];
-					OnError(iError);
-					goto _ERROR;
+					if (iError != 0)
+					{
+						OnError(iError);
+						goto _ERROR;
+					}
 				}
-
+				context->m_callback(time);
 			}
 		_ERROR:
 			UnsetAsyncEventSelect();
 		}
-		void TinyTCPSocket::SetAsyncEventSelect(INT bits)
+		BOOL TinyTCPSocket::SetAsyncEventSelect(INT bits, DWORD dwMS, CompletionCallback&& callback)
 		{
-
+			INT iRes = 0;
+			Context* connext = new Context();
+			connext->m_callback = std::move(callback);
+			connext->m_currentFD = bits;
+			connext->m_this = this;
+			if (!RegisterWaitForSingleObject(&m_handle, m_event, TinyTCPSocket::WaitOrTimerCallback, static_cast<LPVOID>(connext), dwMS, WT_EXECUTEINWAITTHREAD | WT_EXECUTEONLYONCE))
+			{
+				iRes = GetLastError();
+				OnError(iRes);
+				goto _ERROR;
+			}
+			iRes = WSAEventSelect(m_socket, m_event, bits);
+			if (iRes != NO_ERROR)
+			{
+				iRes = WSAGetLastError();
+				OnError(iRes);
+				goto _ERROR;
+			}
+			return TRUE;
+		_ERROR:
+			UnsetAsyncEventSelect();
+			return FALSE;
 		}
 		void TinyTCPSocket::UnsetAsyncEventSelect()
 		{

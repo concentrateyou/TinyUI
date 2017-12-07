@@ -10,7 +10,14 @@ namespace TinyUI
 		/// </summary>
 		class TinyTCPSocket : public TinyHandleSOCKET
 		{
-			DISALLOW_COPY_AND_ASSIGN(TinyTCPSocket)
+			DISALLOW_COPY_AND_ASSIGN(TinyTCPSocket);
+			class Context
+			{
+			public:
+				INT					m_currentFD;
+				TinyTCPSocket*		m_this;
+				CompletionCallback	m_callback;
+			};
 		public:
 			TinyTCPSocket();
 			virtual ~TinyTCPSocket();
@@ -22,20 +29,14 @@ namespace TinyUI
 		public:
 			virtual void OnError(INT iError);
 		private:
-			void SetAsyncEventSelect(INT iFD);
+			BOOL SetAsyncEventSelect(INT iFD, DWORD dwMS, CompletionCallback&& callback);
 			void UnsetAsyncEventSelect();
-			void ConnectCallback();
+			void ConnectCallback(Context* ps, BOOL time);
 			static void CALLBACK WaitOrTimerCallback(void* ps, BOOLEAN time);
 		private:
 			HANDLE		m_handle;
 			HANDLE		m_event;
-			class Context
-			{
-			public:
-				INT					m_currentFD;
-				TinyTCPSocket*		m_this;
-				CompletionCallback	m_callback;
-			};
+
 		};
 	}
 }
