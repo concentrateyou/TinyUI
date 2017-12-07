@@ -222,6 +222,33 @@ namespace TinyUI
 			}
 			return TinyVisual::OnLButtonDown(pos, dwFlags);
 		}
+		HRESULT TinyVisualComboBox::OnLButtonDBClick(const TinyPoint& pos, DWORD dwFlags)
+		{
+			if (m_document != NULL)
+			{
+				m_dwFlag = PUSH;
+				TinyRectangle s = m_document->GetWindowRect(this);
+				m_document->Redraw(&s);
+				m_document->ReleaseCapture();
+				TinyPoint screenPos = m_document->GetScreenPos(this);
+				screenPos.Offset(2, s.Height() - 1);
+				TinyVisual* spvis = m_popupWND.GetDocument()->GetParent(NULL);
+				DWORD dwCount = m_options.GetSize();
+				if (dwCount > 0)
+				{
+					TinyRectangle rectangle = spvis->GetRectangle();
+					TinySize size = rectangle.Size();
+					if (size.cy == 0)
+					{
+						size.cy = dwCount * DEFAULT_OPTION_HEIGHT;
+						spvis->SetSize(size);
+					}
+					rectangle = spvis->GetRectangle();
+					m_popupWND.SetPosition(screenPos, rectangle.Size());
+				}
+			}
+			return TinyVisual::OnLButtonDBClick(pos, dwFlags);
+		}
 		HRESULT	TinyVisualComboBox::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)
 		{
 			if (m_document != NULL)

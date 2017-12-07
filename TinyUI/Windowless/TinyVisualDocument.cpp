@@ -25,6 +25,10 @@ namespace TinyUI
 		BOOL TinyVisualDocument::Destory(TinyVisual* spvis)
 		{
 			ASSERT(m_vs);
+			if (spvis == m_spvisLastMouse)
+			{
+				m_spvisLastMouse = NULL;
+			}
 			return m_vs->Destory(spvis);
 		}
 		BOOL TinyVisualDocument::Initialize(TinyVisualBuilder* builder)
@@ -39,6 +43,7 @@ namespace TinyUI
 		void TinyVisualDocument::Uninitialize()
 		{
 			Destory(m_spvisWindow);
+			m_spvisLastMouse = NULL;
 		}
 		TinyVisualFrame*	TinyVisualDocument::GetVisualHWND() const
 		{

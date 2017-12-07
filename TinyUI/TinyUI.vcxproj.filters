@@ -974,9 +974,4 @@
       <Filter>资源文件</Filter>
     </ResourceCompile>
   </ItemGroup>
-  <ItemGroup>
-    <Xml Include="dropdown.xml" />
-    <Xml Include="main.xml" />
-    <Xml Include="resource.xml" />
-  </ItemGroup>
 </Project>
