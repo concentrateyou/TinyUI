@@ -9,6 +9,8 @@ using namespace TinyUI::Windowless;
 
 namespace MShow
 {
+	const TinyString defaultText = TEXT("请填写信号源名称,如不填开始解说后自动生成");
+
 	MClientController::MClientController(MClientWindow& view)
 		:m_view(view),
 		m_bBreak(FALSE),
@@ -374,6 +376,13 @@ namespace MShow
 			m_onSpeakerFocus.Reset(new Delegate<void(TinyVisual*, FocusEventArgs&)>(this, &MClientController::OnSpeakerFocus));
 			visual->EVENT_FOCUS += m_onSpeakerFocus;
 		}
+		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
+		if (pTextBox != NULL)
+		{
+			pTextBox->SetTextColor(RGB(153, 153, 153));
+			pTextBox->SetText(defaultText);
+			pTextBox->SetEnable(FALSE);
+		}
 		m_view.Invalidate();
 	}
 
@@ -426,6 +435,11 @@ namespace MShow
 		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
 		if (pTextBox != NULL)
 		{
+			if (pTextBox->GetText() == defaultText)
+			{
+				pTextBox->SetText("");
+			}
+			pTextBox->SetTextColor(RGB(0, 0, 0));
 			pTextBox->SetEnable(TRUE);
 		}
 		m_view.Invalidate();
@@ -483,7 +497,16 @@ namespace MShow
 		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
 		if (pTextBox != NULL)
 		{
-			pTextBox->SetText(m_szName.c_str());
+			if (pTextBox->GetText().IsEmpty() || m_szName.empty())
+			{
+				pTextBox->SetTextColor(RGB(153, 153, 153));
+				pTextBox->SetText(defaultText);
+			}
+			else
+			{
+				pTextBox->SetTextColor(RGB(0, 0, 0));
+				pTextBox->SetText(m_szName.c_str());
+			}
 			pTextBox->SetEnable(FALSE);
 		}
 		m_view.Invalidate();
@@ -542,6 +565,7 @@ namespace MShow
 			TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
 			if (pTextBox != NULL)
 			{
+				pTextBox->SetTextColor(RGB(0, 0, 0));
 				pTextBox->SetText(m_szName.c_str());
 			}
 			LOG(INFO) << "[MClientController] " << "Add SourceID :" << m_szSourceID << " OK";
@@ -797,7 +821,8 @@ namespace MShow
 			TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
 			if (pTextBox != NULL)
 			{
-				pTextBox->SetText("");
+				pTextBox->SetTextColor(RGB(153, 153, 153));
+				pTextBox->SetText(defaultText);
 				pTextBox->SetEnable(FALSE);
 			}
 			visual = m_view.GetDocument()->GetVisualByName("setting");
@@ -968,8 +993,9 @@ namespace MShow
 			TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
 			if (pTextBox != NULL)
 			{
+				pTextBox->SetTextColor(RGB(153, 153, 153));
+				pTextBox->SetText(defaultText);
 				pTextBox->SetEnable(FALSE);
-				pTextBox->SetText("");
 			}
 		}
 		m_view.Invalidate();
