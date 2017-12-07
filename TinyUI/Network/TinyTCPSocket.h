@@ -22,11 +22,20 @@ namespace TinyUI
 		public:
 			virtual void OnError(INT iError);
 		private:
-			static void CALLBACK WaitOrTimeCallback(void* ps, BOOLEAN time);
+			void SetAsyncEventSelect(INT iFD);
+			void UnsetAsyncEventSelect();
+			void ConnectCallback();
+			static void CALLBACK WaitOrTimerCallback(void* ps, BOOLEAN time);
 		private:
 			HANDLE		m_handle;
-			OVERLAPPED	m_readIO;
-			OVERLAPPED	m_writeIO;
+			HANDLE		m_event;
+			class Context
+			{
+			public:
+				INT					m_currentFD;
+				TinyTCPSocket*		m_this;
+				CompletionCallback	m_callback;
+			};
 		};
 	}
 }

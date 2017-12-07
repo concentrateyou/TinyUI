@@ -247,7 +247,6 @@ namespace MShow
 		if (code == "A00000")
 		{
 			count = value["data"].size();
-			//TRACE("List SourceID:%s   OK\n", m_szSourceID.c_str());
 			LOG(INFO) << "[MClientController] " << "List SourceID :" << m_szSourceID << " OK";
 			return TRUE;
 		}
@@ -497,10 +496,18 @@ namespace MShow
 		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
 		if (pTextBox != NULL)
 		{
-			if (pTextBox->GetText().IsEmpty() || m_szName.empty())
+			if (pTextBox->GetText().IsEmpty())
 			{
-				pTextBox->SetTextColor(RGB(153, 153, 153));
-				pTextBox->SetText(defaultText);
+				if (m_szName.empty())
+				{
+					pTextBox->SetTextColor(RGB(153, 153, 153));
+					pTextBox->SetText(defaultText);
+				}
+				else
+				{
+					pTextBox->SetTextColor(RGB(0, 0, 0));
+					pTextBox->SetText(m_szName.c_str());
+				}
 			}
 			else
 			{
@@ -528,7 +535,7 @@ namespace MShow
 		client.GetRequest().Add("Sign", "#f93Uc31K24()_@");
 		TinyString szName = pTextBox->GetText();
 		string body;
-		if (szName.GetSize() == 0)
+		if (szName.GetSize() == 0 || szName == defaultText)
 		{
 			body = StringPrintf("programId=%s&directorId=%s", m_szProgramID.c_str(), m_szLogID.c_str());
 		}
@@ -558,7 +565,7 @@ namespace MShow
 		if (code == "A00000")
 		{
 			m_szSourceID = std::to_string(value["data"].asInt());
-			if (m_szName.empty())
+			if (m_szName.empty() || defaultText.Compare(m_szName) == 0)
 			{
 				m_szName = StringPrintf("解说信号源%s", m_szSourceID.c_str());
 			}
@@ -683,7 +690,6 @@ namespace MShow
 		code = value["code"].asString();
 		if (code == "A00000")
 		{
-			//TRACE("Disconnect SourceID:%s   OK\n", m_szSourceID.c_str());
 			LOG(INFO) << "[MClientController] " << "Disconnect SourceID :" << m_szSourceID << " OK";
 			return TRUE;
 		}
