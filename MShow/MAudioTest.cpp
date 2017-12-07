@@ -13,6 +13,16 @@ namespace MShow
 	{
 
 	}
+	void SpeakTest::Shutdown()
+	{
+		if (m_task.IsActive())
+		{
+			m_events[0].SetEvent();
+			m_task.Close(INFINITE);
+		}
+		m_events[0].ResetEvent();
+		LOG(INFO) << "[SpeakTest] Shutdown OK";
+	}
 	BOOL SpeakTest::Invoke(const TinyString& szFile, const GUID& clsid, HWND hWND)
 	{
 		if (m_bPlaying)
@@ -80,6 +90,15 @@ namespace MShow
 	MicrophoneTest::~MicrophoneTest()
 	{
 
+	}
+	void MicrophoneTest::Shutdown()
+	{
+		if (m_task.IsActive())
+		{
+			m_bBreak = TRUE;
+			m_task.Close(INFINITE);
+		}
+		LOG(INFO) << "[MicrophoneTest] Shutdown OK";
 	}
 	BOOL MicrophoneTest::Invoke(const GUID& clsid, HWND hWND)
 	{
@@ -163,7 +182,7 @@ namespace MShow
 		if (m_view.GetDocument() != NULL)
 		{
 			MAudioDB* audiodb = static_cast<MAudioDB*>(m_view.GetDocument()->GetVisualByName("microphoneTestDB"));
-			if (audiodb != NULL && audiodb->IsVisible())
+			if (audiodb != NULL)
 			{
 				audiodb->SetDB(0);
 				audiodb->Invalidate();

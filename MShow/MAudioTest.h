@@ -17,6 +17,7 @@ namespace MShow
 		SpeakTest();
 		~SpeakTest();
 		BOOL Invoke(const TinyString& szFile, const GUID& guid, HWND hWND);
+		void Shutdown();
 	private:
 		void OnMessagePump();
 	private:
@@ -36,6 +37,7 @@ namespace MShow
 		MicrophoneTest(MClientWindow& view);
 		~MicrophoneTest();
 		BOOL Invoke(const GUID& guid, HWND hWND);
+		void Shutdown();
 	private:
 		BOOL InvokeInternal(const GUID& guid, HWND hWND);
 	private:

@@ -814,6 +814,8 @@ namespace MShow
 			m_preview->Close();
 		}
 		m_taskTimer.Close();
+		m_microphoneTest.Shutdown();
+		m_speakTest.Shutdown();
 		m_szSourceID.clear();
 		m_szProgramID.clear();
 		m_szName.clear();
