@@ -959,7 +959,7 @@ namespace TinyUI
 					UnregisterWait(result->AsyncHandle);
 					result->AsyncHandle = NULL;
 				}
-				if (context->hEvent != INVALID_HANDLE_VALUE && context->hEvent != NULL)
+				if (context->hEvent != NULL && context->hEvent != INVALID_HANDLE_VALUE)
 				{
 					WSACloseEvent(context->hEvent);
 					context->hEvent = INVALID_HANDLE_VALUE;

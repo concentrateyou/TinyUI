@@ -7,17 +7,6 @@ namespace TinyUI
 {
 	namespace Network
 	{
-#define OP_UNKNOW		0x00
-#define OP_ACCEPT		0x01
-#define OP_RECV			0x02
-#define OP_RECVFROM		0x03
-#define OP_SEND			0x04
-#define OP_SENDTO		0x05
-#define OP_CONNECT		0x06
-#define OP_DISCONNECT	0x07
-#define OP_ERROR		0x08
-#define OP_QUIT			0x09
-
 #define MAX_BUFFER_SIZE   4096
 
 		class TinyIOTask : public IO::TinyTaskBase

@@ -27,6 +27,16 @@ namespace TinyUI
 			ADDRESS_FAMILY_IPV6,          // AF_INET6
 			ADDRESS_FAMILY_LAST = ADDRESS_FAMILY_IPV6
 		};
+#define OP_UNKNOW		0x00
+#define OP_ACCEPT		0x01
+#define OP_RECV			0x02
+#define OP_RECVFROM		0x03
+#define OP_SEND			0x04
+#define OP_SENDTO		0x05
+#define OP_CONNECT		0x06
+#define OP_DISCONNECT	0x07
+#define OP_ERROR		0x08
+#define OP_QUIT			0x09
 		/// <summary>
 		/// IP地址
 		/// </summary>
@@ -160,7 +170,7 @@ namespace TinyUI
 			HANDLE	AsyncHandle;
 		};
 		using CompleteCallback = Callback<void(INT, AsyncResult*)>;
-		using CompletionCallback = Callback<void(INT)>;
+		using CompletionCallback = Callback<void(INT, INT)>;
 		using ErrorCallback = Callback<void(INT)>;
 		/// <summary>
 		/// OVERLAPPED拓展结构

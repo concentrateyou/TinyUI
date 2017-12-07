@@ -10,11 +10,12 @@ namespace TinyUI
 		/// </summary>
 		class TinyTCPSocket : public TinyHandleSOCKET
 		{
-			DISALLOW_COPY_AND_ASSIGN(TinyTCPSocket);
+			DISALLOW_COPY_AND_ASSIGN(TinyTCPSocket)
+		private:
 			class Context
 			{
 			public:
-				INT					m_currentFD;
+				INT					m_op;
 				TinyTCPSocket*		m_this;
 				CompletionCallback	m_callback;
 			};
@@ -25,18 +26,22 @@ namespace TinyUI
 			BOOL Open(AddressFamily addressFamily);
 			BOOL Close();
 			BOOL IsEmpty() const;
-			BOOL Connect(const IPEndPoint& endpoint, DWORD dwMS, CompletionCallback&& callback);
+			BOOL ConnectAsync(const IPEndPoint& endpoint, DWORD dwMS, CompletionCallback&& callback);
+			BOOL ReceiveAsync(CHAR* data, DWORD dwSize, DWORD dwFlags, CompletionCallback&& callback);
 		public:
 			virtual void OnError(INT iError);
 		private:
-			BOOL SetAsyncEventSelect(INT iFD, DWORD dwMS, CompletionCallback&& callback);
-			void UnsetAsyncEventSelect();
-			void ConnectCallback(Context* ps, BOOL time);
+			BOOL SetAsyncEventSelect(INT op, INT bits, DWORD dwMS, HANDLE hEvent, CompletionCallback&& callback);
+			void UnsetAsyncEventSelect(HANDLE hEvent);
+			void ConnectCallback(Context* context, BOOL time);
+			void ReceiveCallback(Context* context);
 			static void CALLBACK WaitOrTimerCallback(void* ps, BOOLEAN time);
 		private:
 			HANDLE		m_handle;
-			HANDLE		m_event;
-
+			WSABUF		m_readBuffer;
+			WSABUF		m_writeBuffer;
+			OVERLAPPED  m_readIO;
+			OVERLAPPED	m_writeIO;
 		};
 	}
 }
