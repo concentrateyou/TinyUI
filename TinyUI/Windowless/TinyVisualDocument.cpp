@@ -363,6 +363,10 @@ namespace TinyUI
 		}
 		BOOL TinyVisualDocument::ReleaseCapture()
 		{
+			if (m_spvisCapture != NULL)
+			{
+				m_spvisCapture->OnCapture(FALSE);
+			}
 			m_spvisCapture = NULL;
 			return ::ReleaseCapture();
 		}
