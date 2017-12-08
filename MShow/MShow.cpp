@@ -302,11 +302,26 @@ void DisableSetUnhandledExceptionFilter()
 	}
 }
 
+BOOL CheckInstance()
+{
+	HANDLE hMutex = ::CreateMutex(NULL, TRUE, "LiveCommentary");
+	if (!hMutex)
+		return FALSE;
+	if (GetLastError() == ERROR_ALREADY_EXISTS)
+		return FALSE;
+	return TRUE;
+}
+
+
 INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPTSTR    lpCmdLine,
 	_In_ INT       nCmdShow)
 {
+	if (!CheckInstance())
+		return FALSE;
+
+
 	LOG(INFO) << "LiveCommentary Current Process " << GetCurrentProcessId();
 
 	if (!BuildCrash())
@@ -337,5 +352,6 @@ INT APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	MFShutdown();
 	WSACleanup();
 	crUninstall();
+
 	return iRes;
 }
