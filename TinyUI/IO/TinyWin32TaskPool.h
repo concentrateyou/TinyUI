@@ -29,10 +29,10 @@ namespace TinyUI
 			void		SetTimer(PTP_TIMER pTimer, DWORD msDelay, DWORD msPeriod);
 			void		WaitTimer(PTP_TIMER pTimer, BOOL fCancelPendingCallbacks);
 			void		CloseTimer(PTP_TIMER pTimer);
-			PTP_WAIT	SubmitWaitItem(PVOID pv, PTP_WAIT_CALLBACK cb, HANDLE handle, DWORD msDelay);
-			void		SetWaitItem(PTP_WAIT pWaitItem, HANDLE handle, DWORD msDelay);
-			void		WaitForWaitItem(PTP_WAIT pWaitItem, BOOL fCancelPendingCallbacks);
-			void		CloseWaitItem(PTP_WAIT pWaitItem);
+			PTP_WAIT	SubmitWait(PVOID pv, PTP_WAIT_CALLBACK cb, HANDLE handle, DWORD msDelay);
+			void		SetWait(PTP_WAIT pWait, HANDLE handle, DWORD msDelay);
+			void		Wait(PTP_WAIT pWait, BOOL fCancelPendingCallbacks);
+			void		CloseWait(PTP_WAIT pWait);
 			void		CancelPending();
 			void		Close();
 		private:
@@ -92,7 +92,7 @@ namespace TinyUI
 		private:
 			static void NTAPI WaitCallback(PTP_CALLBACK_INSTANCE Instance, PVOID  Context, PTP_WAIT Wait, TP_WAIT_RESULT WaitResult);
 		protected:
-			PTP_WAIT				m_waitItem;
+			PTP_WAIT				m_wait;
 			TinyWin32TaskPool*		m_pTaskPool;
 			Closure					m_callback;
 		};

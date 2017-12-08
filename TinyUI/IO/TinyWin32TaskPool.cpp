@@ -12,6 +12,10 @@ namespace TinyUI
 		{
 			memset(&m_cbe, 0, sizeof(m_cbe));
 		}
+		TinyWin32TaskPool::~TinyWin32TaskPool()
+		{
+			Close();
+		}
 		BOOL TinyWin32TaskPool::Initialize(DWORD dwMin, DWORD dwMax)
 		{
 			InitializeThreadpoolEnvironment(&m_cbe);
@@ -94,10 +98,10 @@ namespace TinyUI
 				pTimer = NULL;
 			}
 		}
-		PTP_WAIT TinyWin32TaskPool::SubmitWaitItem(PVOID pv, PTP_WAIT_CALLBACK cb, HANDLE handle, DWORD msDelay)
+		PTP_WAIT TinyWin32TaskPool::SubmitWait(PVOID pv, PTP_WAIT_CALLBACK cb, HANDLE handle, DWORD msDelay)
 		{
-			PTP_WAIT pWaitItem = NULL;
-			if ((pWaitItem = CreateThreadpoolWait(cb, pv, &m_cbe)) != NULL)
+			PTP_WAIT pWait = NULL;
+			if ((pWait = CreateThreadpoolWait(cb, pv, &m_cbe)) != NULL)
 			{
 				if (msDelay != INFINITE)
 				{
@@ -106,18 +110,18 @@ namespace TinyUI
 					time.QuadPart = static_cast<ULONGLONG>(-static_cast<LONGLONG>(msDelay)* (1 * 10 * 1000));
 					timeout.dwHighDateTime = time.HighPart;
 					timeout.dwLowDateTime = time.LowPart;
-					SetThreadpoolWait(pWaitItem, handle, &timeout);
+					SetThreadpoolWait(pWait, handle, &timeout);
 				}
 				else
 				{
-					SetThreadpoolWait(pWaitItem, handle, NULL);
+					SetThreadpoolWait(pWait, handle, NULL);
 				}
 			}
-			return pWaitItem;
+			return pWait;
 		}
-		void TinyWin32TaskPool::SetWaitItem(PTP_WAIT pWaitItem, HANDLE handle, DWORD msDelay)
+		void TinyWin32TaskPool::SetWait(PTP_WAIT pWait, HANDLE handle, DWORD msDelay)
 		{
-			if (pWaitItem != NULL)
+			if (pWait != NULL)
 			{
 				if (msDelay != INFINITE)
 				{
@@ -126,27 +130,27 @@ namespace TinyUI
 					time.QuadPart = static_cast<ULONGLONG>(-static_cast<LONGLONG>(msDelay)* (1 * 10 * 1000));
 					timeout.dwHighDateTime = time.HighPart;
 					timeout.dwLowDateTime = time.LowPart;
-					SetThreadpoolWait(pWaitItem, handle, &timeout);
+					SetThreadpoolWait(pWait, handle, &timeout);
 				}
 				else
 				{
-					SetThreadpoolWait(pWaitItem, handle, NULL);
+					SetThreadpoolWait(pWait, handle, NULL);
 				}
 			}
 		}
-		void TinyWin32TaskPool::WaitForWaitItem(PTP_WAIT pWaitItem, BOOL fCancelPendingCallbacks)
+		void TinyWin32TaskPool::Wait(PTP_WAIT pWait, BOOL fCancelPendingCallbacks)
 		{
-			if (pWaitItem != NULL)
+			if (pWait != NULL)
 			{
-				WaitForThreadpoolWaitCallbacks(pWaitItem, fCancelPendingCallbacks);
+				WaitForThreadpoolWaitCallbacks(pWait, fCancelPendingCallbacks);
 			}
 		}
-		void TinyWin32TaskPool::CloseWaitItem(PTP_WAIT pWaitItem)
+		void TinyWin32TaskPool::CloseWait(PTP_WAIT pWait)
 		{
-			if (pWaitItem != NULL)
+			if (pWait != NULL)
 			{
-				CloseThreadpoolWait(pWaitItem);
-				pWaitItem = NULL;
+				CloseThreadpoolWait(pWait);
+				pWait = NULL;
 			}
 		}
 		void TinyWin32TaskPool::CancelPending()
@@ -170,10 +174,6 @@ namespace TinyUI
 				CloseThreadpool(m_pPool);
 				m_pPool = NULL;
 			}
-		}
-		TinyWin32TaskPool::~TinyWin32TaskPool()
-		{
-			Close();
 		}
 		//////////////////////////////////////////////////////////////////////////
 		TinyWin32Task::TinyWin32Task(TinyWin32TaskPool* pTaskPool)
@@ -297,7 +297,7 @@ namespace TinyUI
 		//////////////////////////////////////////////////////////////////////////
 		TinyWin32Waiter::TinyWin32Waiter(TinyWin32TaskPool* pTaskPool)
 			:m_pTaskPool(pTaskPool),
-			m_waitItem(NULL)
+			m_wait(NULL)
 		{
 
 		}
@@ -309,26 +309,26 @@ namespace TinyUI
 		{
 			if (m_pTaskPool != NULL)
 			{
-				if (m_waitItem != NULL)
+				if (m_wait != NULL)
 				{
-					m_pTaskPool->SetWaitItem(m_waitItem, handle, dwDelay);
+					m_pTaskPool->SetWait(m_wait, handle, dwDelay);
 					return TRUE;
 				}
 				else
 				{
 					m_callback = std::move(callback);
-					m_waitItem = m_pTaskPool->SubmitWaitItem(this, TinyWin32Waiter::WaitCallback, handle, dwDelay);
-					return m_waitItem != NULL;
+					m_wait = m_pTaskPool->SubmitWait(this, TinyWin32Waiter::WaitCallback, handle, dwDelay);
+					return m_wait != NULL;
 				}
 			}
 			return FALSE;
 		}
 		BOOL TinyWin32Waiter::Close()
 		{
-			if (m_pTaskPool != NULL && m_waitItem != NULL)
+			if (m_pTaskPool != NULL && m_wait != NULL)
 			{
-				m_pTaskPool->CloseWaitItem(m_waitItem);
-				m_waitItem = NULL;
+				m_pTaskPool->CloseWait(m_wait);
+				m_wait = NULL;
 				return TRUE;
 			}
 			return FALSE;
@@ -336,7 +336,7 @@ namespace TinyUI
 		void NTAPI TinyWin32Waiter::WaitCallback(PTP_CALLBACK_INSTANCE Instance, PVOID  Context, PTP_WAIT Wait, TP_WAIT_RESULT WaitResult)
 		{
 			TinyWin32Waiter* pThis = reinterpret_cast<TinyWin32Waiter*>(Context);
-			if (pThis->m_waitItem == Wait)
+			if (pThis->m_wait == Wait)
 			{
 				if (!pThis->m_callback.IsNull())
 				{
