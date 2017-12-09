@@ -79,7 +79,7 @@ namespace TinyUI
 	BOOL TinyEvent::Lock(DWORD dwTimeout)
 	{
 		ASSERT(m_hEvent != NULL);
-		DWORD dwRet = ::WaitForSingleObjectEx(m_hEvent, dwTimeout, TRUE);
+		DWORD dwRet = ::WaitForSingleObject(m_hEvent, dwTimeout);
 		if (dwRet == WAIT_OBJECT_0 || dwRet == WAIT_ABANDONED)
 			return TRUE;
 		else
@@ -517,8 +517,8 @@ namespace TinyUI
 	{
 		if (m_hTimer != NULL)
 		{
-			if (WaitForSingleObjectEx(m_hTimer, INFINITE, TRUE) == WAIT_OBJECT_0)
-				return TRUE;
+			HRESULT hRes = WaitForSingleObjectEx(m_hTimer, INFINITE, TRUE);
+			return (hRes == WAIT_OBJECT_0);
 		}
 		return FALSE;
 	}

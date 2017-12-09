@@ -24,13 +24,13 @@ namespace MShow
 		m_x264.Close();
 		m_videoQueue.RemoveAll();
 		m_task.EVENT_AVCDCR += m_onAVCDC;
-		return TinyTaskBase::Submit(BindCallback(&MVideoTask::OnMessagePump, this));
+		return TinyTask::Submit(BindCallback(&MVideoTask::OnMessagePump, this));
 	}
 
 	BOOL MVideoTask::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
-		BOOL bRes = TinyTaskBase::Close(dwMS);
+		BOOL bRes = TinyTask::Close(dwMS);
 		m_x264.Close();
 		m_videoQueue.RemoveAll();
 		return bRes;

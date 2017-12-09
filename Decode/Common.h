@@ -6,7 +6,7 @@
 #include "Common/TinyEvent.h"
 #include "Network/TinyHTTPClient.h"
 #include "Render/TinyGDI.h"
-#include "IO/TinyTaskBase.h"
+#include "IO/TinyTask.h"
 #include "IO/TinyIO.h"
 #include "Media/TinyMedia.h"
 using namespace TinyUI;

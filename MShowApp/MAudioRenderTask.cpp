@@ -41,13 +41,13 @@ namespace MShow
 	{
 		m_bBreak = FALSE;
 		m_audio.Close();
-		return TinyTaskBase::Submit(BindCallback(&MAudioRenderTask::OnMessagePump, this));
+		return TinyTask::Submit(BindCallback(&MAudioRenderTask::OnMessagePump, this));
 	}
 
 	BOOL MAudioRenderTask::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
-		if (TinyTaskBase::Close(dwMS))
+		if (TinyTask::Close(dwMS))
 		{
 			m_audio.Close();
 			m_bInitialize = FALSE;

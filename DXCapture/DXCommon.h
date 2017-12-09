@@ -9,7 +9,7 @@
 #include "Common/TinyTime.h"
 #include "Common/TinyString.h"
 #include "Render/TinyGDI.h"
-#include "IO/TinyTaskBase.h"
+#include "IO/TinyTask.h"
 #include "IO/TinySharedMemory.h"
 
 using namespace TinyUI;

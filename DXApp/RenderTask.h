@@ -15,7 +15,7 @@ namespace DXApp
 {
 	class DXWindow;
 
-	class RenderTask : public TinyTaskBase, public GraphicsObserver
+	class RenderTask : public TinyTask, public GraphicsObserver
 	{
 	public:
 		RenderTask();

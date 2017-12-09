@@ -15,7 +15,7 @@ namespace MShow
 	/// <summary>
 	///  ”∆µ±‡¬Î
 	/// </summary>
-	class MVideoEncodeTask : public TinyTaskBase
+	class MVideoEncodeTask : public TinyTask
 	{
 		DISALLOW_COPY_AND_ASSIGN(MVideoEncodeTask)
 	public:

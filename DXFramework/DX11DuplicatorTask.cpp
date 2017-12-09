@@ -15,12 +15,12 @@ namespace DXFramework
 	}
 	BOOL DX11DuplicatorTask::Submit()
 	{
-		return TinyTaskBase::Submit(BindCallback(&DX11DuplicatorTask::OnMessagePump, this));
+		return TinyTask::Submit(BindCallback(&DX11DuplicatorTask::OnMessagePump, this));
 	}
 	BOOL DX11DuplicatorTask::Close(DWORD dwMS)
 	{
 		m_close.SetEvent();
-		return TinyTaskBase::Close(dwMS);
+		return TinyTask::Close(dwMS);
 	}
 	void DX11DuplicatorTask::OnMessagePump()
 	{

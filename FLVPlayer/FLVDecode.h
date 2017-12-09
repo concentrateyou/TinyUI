@@ -1,6 +1,6 @@
 #pragma once
 #include "Media/TinySoundPlayer.h"
-#include "IO/TinyTaskBase.h"
+#include "IO/TinyTask.h"
 #include "Common/TinyTime.h"
 #include "FLVReader.h"
 #include "FLVWriter.h"
@@ -23,7 +23,7 @@ namespace FLVPlayer
 
 	class FLVDecode;
 
-	class FLVVAudioTask : public TinyTaskBase
+	class FLVVAudioTask : public TinyTask
 	{
 	public:
 		FLVVAudioTask(FLVDecode& decode);
@@ -39,7 +39,7 @@ namespace FLVPlayer
 		FLVDecode&	m_decode;
 	};
 
-	class FLVAudioRender : public TinyTaskBase
+	class FLVAudioRender : public TinyTask
 	{
 	public:
 		FLVAudioRender(FLVVAudioTask& decode);
@@ -60,7 +60,7 @@ namespace FLVPlayer
 		TinyPerformanceTime		m_time;
 	};
 
-	class FLVVideoTask : public TinyTaskBase
+	class FLVVideoTask : public TinyTask
 	{
 	public:
 		FLVVideoTask(FLVDecode& decode);
@@ -77,7 +77,7 @@ namespace FLVPlayer
 		FLVDecode&	m_decode;
 	};
 
-	class FLVVideoRender : public TinyTaskBase
+	class FLVVideoRender : public TinyTask
 	{
 	public:
 		FLVVideoRender(FLVVideoTask& decode);
@@ -99,7 +99,7 @@ namespace FLVPlayer
 		DX9Font2D				m_font2D;
 	};
 
-	class FLVDecode : public TinyTaskBase
+	class FLVDecode : public TinyTask
 	{
 		friend class FLVAudioRender;
 		friend class FLVVideoRender;

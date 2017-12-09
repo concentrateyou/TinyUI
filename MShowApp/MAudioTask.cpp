@@ -21,13 +21,13 @@ namespace MShow
 	{
 		m_bBreak = FALSE;
 		m_task.EVENT_ASC += m_onASC;
-		return TinyTaskBase::Submit(BindCallback(&MAudioTask::OnMessagePump, this));
+		return TinyTask::Submit(BindCallback(&MAudioTask::OnMessagePump, this));
 	}
 
 	BOOL MAudioTask::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
-		if (TinyTaskBase::Close(dwMS))
+		if (TinyTask::Close(dwMS))
 		{
 			m_aac.Close();
 			m_task.GetAudioQueue().RemoveAll();

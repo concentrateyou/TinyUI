@@ -30,7 +30,7 @@ namespace MShow
 	private:
 		TinyLock					m_lock;
 		MSearchWindow&				m_view;
-		TinyTaskBase				m_task;
+		TinyTask					m_task;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>>	m_onDestory;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMinimumClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onCloseClick;

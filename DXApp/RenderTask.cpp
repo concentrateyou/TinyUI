@@ -78,13 +78,13 @@ namespace DXApp
 	BOOL RenderTask::Close(DWORD dwMs)
 	{
 		m_close.SetEvent();
-		return TinyTaskBase::Close(dwMs);
+		return TinyTask::Close(dwMs);
 	}
 
 	BOOL RenderTask::Submit()
 	{
 		m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
-		return TinyTaskBase::Submit(BindCallback(&RenderTask::OnMessagePump, this));
+		return TinyTask::Submit(BindCallback(&RenderTask::OnMessagePump, this));
 	}
 
 

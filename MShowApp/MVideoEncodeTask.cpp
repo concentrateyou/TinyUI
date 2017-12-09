@@ -23,7 +23,7 @@ namespace MShow
 		m_videoFPS = videoFPS;
 		if (!m_encoder.Open(m_pulgSize, m_pulgSize, m_videoRate, m_videoFPS))
 			return FALSE;
-		return TinyTaskBase::Submit(BindCallback(&MVideoEncodeTask::OnMessagePump, this));
+		return TinyTask::Submit(BindCallback(&MVideoEncodeTask::OnMessagePump, this));
 	}
 
 	void MVideoEncodeTask::OnMessagePump()
@@ -72,7 +72,7 @@ namespace MShow
 	BOOL MVideoEncodeTask::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
-		if (TinyTaskBase::Close(dwMS))
+		if (TinyTask::Close(dwMS))
 		{
 			m_encoder.Close();
 			m_samples.RemoveAll();

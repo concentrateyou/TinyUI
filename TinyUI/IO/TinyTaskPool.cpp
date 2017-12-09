@@ -56,7 +56,7 @@ namespace TinyUI
 		TinyTaskPool::TinyTaskPool(DWORD dwConcurrent)
 			: m_dwConcurrent(dwConcurrent)
 		{
-			m_tasks.Reset(new TinyTaskBase[m_dwConcurrent]);
+			m_tasks.Reset(new TinyTask[m_dwConcurrent]);
 			for (DWORD i = 0;i < dwConcurrent;i++)
 			{
 				m_tasks[i].Submit(BindCallback(&TinyTaskPool::OnMessagePump, this));

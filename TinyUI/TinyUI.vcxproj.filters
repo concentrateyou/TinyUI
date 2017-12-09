@@ -321,9 +321,6 @@
     <ClInclude Include="IO\TinyRingQueue.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
-    <ClInclude Include="IO\TinyTaskBase.h">
-      <Filter>头文件\IO</Filter>
-    </ClInclude>
     <ClInclude Include="Media\TinyWASAPIAudioCapture.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
@@ -518,6 +515,9 @@
     </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\TinyTask.h">
+      <Filter>头文件\IO</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -770,9 +770,6 @@
     <ClCompile Include="IO\TinyRingQueue.cpp">
       <Filter>源文件\IO</Filter>
     </ClCompile>
-    <ClCompile Include="IO\TinyTaskBase.cpp">
-      <Filter>源文件\IO</Filter>
-    </ClCompile>
     <ClCompile Include="Media\TinyWASAPIAudioCapture.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
@@ -955,6 +952,9 @@
     </ClCompile>
     <ClCompile Include="Media\TinyMFAsyncCallback.cpp">
       <Filter>源文件\Media</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\TinyTask.cpp">
+      <Filter>源文件\IO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

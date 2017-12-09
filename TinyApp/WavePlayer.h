@@ -1,5 +1,5 @@
 #pragma once
-#include "IO/TinyTaskBase.h"
+#include "IO/TinyTask.h"
 #include "Media/TinyWave.h"
 #include "Media/TinySoundPlayer.h"
 #include "AudioAnalyser.h"
@@ -7,7 +7,7 @@ using namespace TinyUI;
 using namespace TinyUI::Media;
 using namespace TinyUI::IO;
 
-class WavePlayer : public TinyTaskBase
+class WavePlayer : public TinyTask
 {
 public:
 	WavePlayer();

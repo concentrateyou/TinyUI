@@ -42,13 +42,13 @@ namespace DXApp
 	}
 	BOOL VideoEncode::Submit()
 	{
-		return TinyTaskBase::Submit(BindCallback(&VideoEncode::OnMessagePump, this));
+		return TinyTask::Submit(BindCallback(&VideoEncode::OnMessagePump, this));
 	}
 
 	BOOL VideoEncode::Close(DWORD dwMs)
 	{
 		m_close.SetEvent();
-		BOOL bRes = TinyTaskBase::Close(dwMs);
+		BOOL bRes = TinyTask::Close(dwMs);
 		m_x264.Close();
 		return bRes;
 	}

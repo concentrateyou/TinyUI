@@ -33,13 +33,13 @@ namespace MShow
 		m_bBreak = FALSE;
 		m_bInitialize = FALSE;
 		m_image.Destory();
-		return TinyTaskBase::Submit(BindCallback(&MVideoRenderTask::OnMessagePump, this));
+		return TinyTask::Submit(BindCallback(&MVideoRenderTask::OnMessagePump, this));
 	}
 
 	BOOL MVideoRenderTask::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
-		BOOL bRes = TinyTaskBase::Close(dwMS);
+		BOOL bRes = TinyTask::Close(dwMS);
 		m_bInitialize = FALSE;
 		m_image.Destory();
 		return bRes;

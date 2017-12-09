@@ -6,7 +6,7 @@
 #include "Common/TinyCallback.h"
 #include "Common/TinyTime.h"
 #include "IO/TinyIO.h"
-#include "IO/TinyTaskBase.h"
+#include "IO/TinyTask.h"
 #include "IO/TinyRingBuffer.h"
 #include "IO/TinyFixedAlloc.h"
 #include "Media/TinyMedia.h"

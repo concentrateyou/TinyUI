@@ -37,14 +37,14 @@ namespace MShow
 	BOOL MRTMPPusher::Submit()
 	{
 		m_bClose = FALSE;
-		return TinyTaskBase::Submit(BindCallback(&MRTMPPusher::OnMessagePump, this));
+		return TinyTask::Submit(BindCallback(&MRTMPPusher::OnMessagePump, this));
 	}
 
 	BOOL MRTMPPusher::Close(DWORD dwMS)
 	{
 		m_bClose = TRUE;
 		m_dwReconnect = 0;
-		if (TinyTaskBase::Close(dwMS))
+		if (TinyTask::Close(dwMS))
 		{
 			m_pusher.Disconnect();
 			return TRUE;

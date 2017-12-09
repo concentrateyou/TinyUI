@@ -25,12 +25,12 @@ namespace TinyUI
 			context->OP = OP_QUIT;
 			PostQueuedCompletionStatus(m_pIOCP->Handle(), 0, 0, NULL);
 			m_close.SetEvent();
-			return TinyTaskBase::Close(dwMs);
+			return TinyTask::Close(dwMs);
 		}
 		BOOL TinyIOTask::Submit()
 		{
 			m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
-			return TinyTaskBase::Submit(std::forward<Closure>(BindCallback(&TinyIOTask::OnMessagePump, this)));
+			return TinyTask::Submit(std::forward<Closure>(BindCallback(&TinyIOTask::OnMessagePump, this)));
 		}
 		void TinyIOTask::OnMessagePump()
 		{

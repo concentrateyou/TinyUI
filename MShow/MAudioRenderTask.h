@@ -9,7 +9,7 @@ namespace MShow
 	/// <summary>
 	/// ≤•∑≈“Ù∆µœﬂ≥Ã
 	/// </summary>
-	class MAudioRenderTask : public TinyTaskBase
+	class MAudioRenderTask : public TinyTask
 	{
 		DISALLOW_COPY_AND_ASSIGN(MAudioRenderTask)
 	public:

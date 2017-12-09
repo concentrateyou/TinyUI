@@ -33,7 +33,7 @@ BOOL WavePlayer::Submit(HWND hWND)
 	vals[2].hEventNotify = m_events[2];
 	m_player.SetNotifys(3, vals);
 	m_analyser.Initialize();
-	return TinyTaskBase::Submit(BindCallback(&WavePlayer::OnMessagePump, this));
+	return TinyTask::Submit(BindCallback(&WavePlayer::OnMessagePump, this));
 }
 
 void WavePlayer::OnMessagePump()
@@ -71,5 +71,5 @@ BOOL WavePlayer::Close(DWORD dwMS)
 {
 	m_player.Close();
 	m_waveFile.Close();
-	return TinyTaskBase::Close(dwMS);
+	return TinyTask::Close(dwMS);
 }

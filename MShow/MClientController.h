@@ -86,7 +86,7 @@ namespace MShow
 		MAudioQueue							m_audioQueue;
 		MAudioDSP							m_audioDSP;
 		TinyScopedPtr<AudioSdk>				m_audioSDK;
-		TinyTaskBase						m_task;
+		TinyTask							m_task;
 		TinyTaskTimer						m_taskTimer;
 		TinyPerformanceTime					m_timeQPC;
 		TinyScopedPtr<MPreviewController>	m_preview;

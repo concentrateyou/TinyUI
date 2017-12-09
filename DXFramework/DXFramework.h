@@ -19,7 +19,7 @@
 #include "Control/TinyControl.h"
 #include "Common/TinyString.h"
 #include "IO/TinySharedMemory.h"
-#include "IO/TinyTaskBase.h"
+#include "IO/TinyTask.h"
 #include "IO/TinyRingQueue.h"
 #include "Render/TinyGDI.h"
 #pragma comment(lib,"Dwmapi.lib")

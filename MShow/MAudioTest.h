@@ -25,7 +25,7 @@ namespace MShow
 		TinyEvent			m_events[1];
 		TinySoundPlayer		m_player;
 		TinyWaveFile		m_waveFile;
-		TinyTaskBase		m_task;
+		TinyTask			m_task;
 	};
 	/// <summary>
 	/// Âó¿Ë·ç²âÊÔ
@@ -49,7 +49,7 @@ namespace MShow
 		MClientWindow&			m_view;
 		TinyXAudio				m_audio;
 		MAudioDSP				m_audioDSP;
-		TinyTaskBase			m_task;
+		TinyTask				m_task;
 		MPacketAllocQueue		m_queue;
 	};
 }

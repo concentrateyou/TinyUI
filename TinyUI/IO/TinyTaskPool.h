@@ -1,5 +1,5 @@
 #pragma once
-#include "TinyTaskBase.h"
+#include "TinyTask.h"
 #include "TinyThread.h"
 #include <map>
 #include <concurrent_queue.h>
@@ -58,7 +58,7 @@ namespace TinyUI
 		private:
 			DWORD m_dwConcurrent;
 			concurrency::concurrent_queue<TaskItem*> m_taskItems;
-			TinyScopedArray<TinyTaskBase> m_tasks;
+			TinyScopedArray<TinyTask> m_tasks;
 		};
 	};
 }

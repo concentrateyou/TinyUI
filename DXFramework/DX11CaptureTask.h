@@ -6,7 +6,7 @@ using namespace TinyUI::IO;
 
 namespace DXFramework
 {
-	class DX11CaptureTask : public TinyTaskBase
+	class DX11CaptureTask : public TinyTask
 	{
 	public:
 		DX11CaptureTask(DX11* pDX11, DX11Image2D& image);

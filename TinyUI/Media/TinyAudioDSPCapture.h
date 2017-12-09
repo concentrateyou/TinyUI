@@ -1,6 +1,6 @@
 #pragma once
 #include "TinyWASAPIAudio.h"
-#include "../IO/TinyTaskBase.h"
+#include "../IO/TinyTask.h"
 #include <dmort.h>
 #pragma comment(lib,"msdmo.lib")
 
@@ -51,7 +51,7 @@ namespace TinyUI
 			DMO_MEDIA_TYPE				m_mediaType;
 			DMO_OUTPUT_DATA_BUFFER		m_dmoBuffer;
 			TinyScopedArray<BYTE>		m_waveFMT;
-			IO::TinyTaskBase			m_task;
+			IO::TinyTask			m_task;
 			TinyComPtr<IMediaObject>	m_dmo;
 			Callback<void(BYTE*, LONG, LPVOID)>	m_callback;
 		};

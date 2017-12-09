@@ -59,7 +59,7 @@ private:
 private:
 	DX9Graphics2D			m_graphics2D;
 	DX9Image2D				m_image2D;
-	TinyTaskBase			m_task;
+	TinyTask			m_task;
 	TinyTaskTimer			m_timer;
 	TinyMFIntelQSVDecode	m_qsv;
 	

@@ -43,13 +43,13 @@ namespace MShow
 		m_bBreak = FALSE;
 		m_bFI = FALSE;
 		m_sample = 0;
-		return TinyTaskBase::Submit(BindCallback(&MFLVTask::OnMessagePump, this));
+		return TinyTask::Submit(BindCallback(&MFLVTask::OnMessagePump, this));
 	}
 
 	BOOL MFLVTask::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
-		BOOL bRes = TinyTaskBase::Close(dwMS);
+		BOOL bRes = TinyTask::Close(dwMS);
 		m_reader.Close();
 		m_bFI = FALSE;
 		m_sample = 0;

@@ -1,5 +1,5 @@
 #pragma once
-#include "IO/TinyTaskBase.h"
+#include "IO/TinyTask.h"
 #include "IO/TinyRingQueue.h"
 #include "IO/TinyIO.h"
 #include "DShowCommon.h"
@@ -7,7 +7,7 @@
 using namespace TinyUI;
 using namespace TinyUI::IO;
 
-class RenderTask : public TinyTaskBase
+class RenderTask : public TinyTask
 {
 public:
 	RenderTask(HWND hWND, DShow::VideoCapture* pVideo, const DShow::VideoCaptureParam& videpParam);

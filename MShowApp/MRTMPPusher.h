@@ -11,7 +11,7 @@ namespace MShow
 	/// <summary>
 	/// RTMPÍÆÁ÷
 	/// </summary>
-	class MRTMPPusher : public TinyTaskBase
+	class MRTMPPusher : public TinyTask
 	{
 		friend class MRTMPEncoder;
 		DISALLOW_COPY_AND_ASSIGN(MRTMPPusher)

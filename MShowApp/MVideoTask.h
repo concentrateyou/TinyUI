@@ -7,7 +7,7 @@ namespace MShow
 	/// <summary>
 	/// 视频解码线程
 	/// </summary>
-	class MVideoTask : public TinyTaskBase
+	class MVideoTask : public TinyTask
 	{
 		DISALLOW_COPY_AND_ASSIGN(MVideoTask)
 	public:

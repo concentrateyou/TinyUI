@@ -1,7 +1,7 @@
 #pragma once
 #include "TinyNetwork.h"
 #include "TinySocket.h"
-#include "../IO/TinyTaskBase.h"
+#include "../IO/TinyTask.h"
 
 namespace TinyUI
 {
@@ -9,7 +9,7 @@ namespace TinyUI
 	{
 #define MAX_BUFFER_SIZE   4096
 
-		class TinyIOTask : public IO::TinyTaskBase
+		class TinyIOTask : public IO::TinyTask
 		{
 			DISALLOW_COPY_AND_ASSIGN(TinyIOTask)
 		public:
