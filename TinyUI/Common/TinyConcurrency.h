@@ -1,31 +1,11 @@
 #pragma once
 #include "../Common/TinyCollection.h"
-#include <thread>
-#include <future> 
 
 namespace TinyUI
 {
 	template<class _Ty >
-	class TinyFuture
-	{
-		DISALLOW_COPY_AND_ASSIGN(TinyFuture)
-	public:
-		TinyFuture();
-		TinyFuture(TinyFuture&& _Other);
-		TinyFuture& operator=(TinyFuture&& _Right);
-		~TinyFuture();
-	};
+	class TinyFuture;
 	template<class _Ty >
-	class TinyPromise
-	{
-		DISALLOW_COPY_AND_ASSIGN(TinyPromise)
-	};
-	/// <summary>
-	/// 线程安全队列
-	/// </summary>
-	class TinyConcurrencyQueue
-	{
-
-	};
+	class TinyPromise;
 }
 

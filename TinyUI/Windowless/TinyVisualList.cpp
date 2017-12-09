@@ -196,7 +196,7 @@ namespace TinyUI
 			{
 				AdjustLayout(0, iOldPos - iNewPos);
 				m_iNewPos = iNewPos;
-				m_document->Redraw();
+				m_document->Invalidate();
 			}
 		}
 

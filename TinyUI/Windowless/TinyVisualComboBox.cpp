@@ -11,7 +11,7 @@ namespace TinyUI
 		IMPLEMENT_DYNCREATE(TinyVisualComboBox, TinyVisual);
 
 		TinyVisualComboBox::TinyVisualComboBox()
-			: m_dwFlag(NORMAL),
+			: m_dwStyle(NORMAL),
 			m_dwArrawFlag(NORMAL),
 			m_bActive(FALSE),
 			m_popupWND(this),
@@ -24,7 +24,7 @@ namespace TinyUI
 		}
 		TinyVisualComboBox::TinyVisualComboBox(TinyVisual* spvisParent, TinyVisualDocument* vtree)
 			:TinyVisual(spvisParent, vtree),
-			m_dwFlag(NORMAL),
+			m_dwStyle(NORMAL),
 			m_dwArrawFlag(NORMAL),
 			m_bActive(FALSE),
 			m_popupWND(this),
@@ -162,7 +162,7 @@ namespace TinyUI
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			canvas.SetFont(m_hFONT);
 			canvas.SetTextColor(m_textColor);
-			TinyImage* image = m_images[m_dwFlag];
+			TinyImage* image = m_images[m_dwStyle];
 			if (image != NULL && !image->IsEmpty())
 			{
 				TinyRectangle srcPaint = image->GetRectangle();
@@ -199,9 +199,12 @@ namespace TinyUI
 		{
 			if (m_document != NULL)
 			{
-				m_dwFlag = PUSH;
 				TinyRectangle s = m_document->GetWindowRect(this);
-				m_document->Redraw(&s);
+				if (m_dwStyle != PUSH)
+				{
+					m_dwStyle = PUSH;
+					m_document->Invalidate(&s);
+				}
 				m_document->ReleaseCapture();
 				TinyPoint screenPos = m_document->GetScreenPos(this);
 				screenPos.Offset(2, s.Height() - 1);
@@ -226,9 +229,12 @@ namespace TinyUI
 		{
 			if (m_document != NULL)
 			{
-				m_dwFlag = PUSH;
 				TinyRectangle s = m_document->GetWindowRect(this);
-				m_document->Redraw(&s);
+				if (m_dwStyle != PUSH)
+				{
+					m_dwStyle = PUSH;
+					m_document->Invalidate(&s);
+				}
 				m_document->ReleaseCapture();
 				TinyPoint screenPos = m_document->GetScreenPos(this);
 				screenPos.Offset(2, s.Height() - 1);
@@ -253,9 +259,13 @@ namespace TinyUI
 		{
 			if (m_document != NULL)
 			{
-				m_dwFlag = m_bActive ? PUSH : (dwFlags & MK_LBUTTON ? DOWN : HIGHLIGHT);
-				TinyRectangle s = m_document->GetWindowRect(this);
-				m_document->Redraw(&s);
+				StyleImage style = m_bActive ? PUSH : (dwFlags & MK_LBUTTON ? DOWN : HIGHLIGHT);
+				if (m_dwStyle != style)
+				{
+					m_dwStyle = style;
+					TinyRectangle s = m_document->GetWindowRect(this);
+					m_document->Invalidate(&s);
+				}
 			}
 			return TinyVisual::OnMouseMove(pos, dwFlags);
 		}
@@ -263,9 +273,13 @@ namespace TinyUI
 		{
 			if (m_document != NULL)
 			{
-				m_dwFlag = m_bActive ? PUSH : NORMAL;
-				TinyRectangle s = m_document->GetWindowRect(this);
-				m_document->Redraw(&s);
+				StyleImage style = m_bActive ? PUSH : NORMAL;
+				if (m_dwStyle != style)
+				{
+					m_dwStyle = m_bActive ? PUSH : NORMAL;
+					TinyRectangle s = m_document->GetWindowRect(this);
+					m_document->Invalidate(&s);
+				}
 			}
 			return TinyVisual::OnMouseLeave();
 		}
@@ -273,10 +287,17 @@ namespace TinyUI
 		{
 			if (m_document != NULL)
 			{
-				m_dwFlag = PUSH;
 				TinyRectangle s = m_document->GetWindowRect(this);
-				m_document->Redraw(&s);
-				EVENT_CLICK(this, EventArgs());
+				if (m_dwStyle != PUSH)
+				{
+					m_dwStyle = PUSH;
+					m_document->Invalidate(&s);
+				}
+				TinyPoint point = m_document->VisualToClient(this, pos);
+				if (s.PtInRect(point))
+				{
+					EVENT_CLICK(this, EventArgs());
+				}
 			}
 			return TinyVisual::OnLButtonUp(pos, dwFlags);
 		}
@@ -290,8 +311,8 @@ namespace TinyUI
 				{
 					m_popupWND.ShowWindow(SW_HIDE);
 					m_popupWND.UpdateWindow();
-					m_document->Invalidate();
 				}
+				this->Invalidate();
 			}
 		}
 		//////////////////////////////////////////////////////////////////////////

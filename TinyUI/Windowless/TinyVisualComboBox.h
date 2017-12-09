@@ -53,7 +53,7 @@ namespace TinyUI
 		private:
 			INT						m_cy;
 			BOOL					m_bActive;
-			StyleImage				m_dwFlag;
+			StyleImage				m_dwStyle;
 			StyleImage				m_dwArrawFlag;
 			TinyImage*				m_images[StyleImage::COUNT];
 			TinyImage*				m_arraws[StyleImage::COUNT];

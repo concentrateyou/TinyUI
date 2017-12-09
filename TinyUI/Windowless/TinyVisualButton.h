@@ -36,8 +36,7 @@ namespace TinyUI
 			HRESULT	OnMouseMove(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
 			HRESULT	OnLButtonUp(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
 		private:
-			UINT		m_buttonState;
-			StyleImage	m_dwFlag;
+			StyleImage	m_dwStyle;
 			TinyImage*	m_images[StyleImage::COUNT];
 		};
 	}

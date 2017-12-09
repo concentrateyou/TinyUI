@@ -10,17 +10,14 @@ namespace TinyUI
 	{
 		IMPLEMENT_DYNCREATE(TinyVisualButton, TinyVisual);
 
-#define BUTTONSTATE(ps)   (ps->m_buttonState)
-
 		TinyVisualButton::TinyVisualButton()
-			:m_dwFlag(NORMAL),
-			m_buttonState(0)
+			:m_dwStyle(NORMAL)
 		{
 
 		}
 		TinyVisualButton::TinyVisualButton(TinyVisual* spvisParent, TinyVisualDocument* vtree)
 			: TinyVisual(spvisParent, vtree),
-			m_dwFlag(NORMAL)
+			m_dwStyle(NORMAL)
 		{
 			ZeroMemory(&m_images, sizeof(m_images));
 		}
@@ -92,12 +89,12 @@ namespace TinyUI
 					canvas.DrawImage(*m_backgroundImage, clip, srcRect, srcCenter);
 				}
 			}
-			TinyImage* image = m_images[m_dwFlag];
+			TinyImage* image = m_images[m_dwStyle];
 			if (image != NULL && !image->IsEmpty())
 			{
 				canvas.DrawImage(*image, clip, 0, 0, image->GetSize().cx, image->GetSize().cy);
 			}
-			if (m_dwFlag == DOWN)
+			if (m_dwStyle == DOWN)
 			{
 				clip.OffsetRect(1, 1);
 			}
@@ -109,12 +106,12 @@ namespace TinyUI
 		{
 			if (m_document != NULL)
 			{
-				BUTTONSTATE(this) |= BST_MOUSE;
 				m_document->SetCapture(this);
-				m_dwFlag = DOWN;
-				TinyRectangle s = m_document->GetWindowRect(this);
-				m_document->Redraw(&s);
-
+				if (m_dwStyle != DOWN)
+				{
+					m_dwStyle = DOWN;
+					this->Invalidate();
+				}
 			}
 			return TinyVisual::OnLButtonDown(pos, dwFlags);
 		}
@@ -122,13 +119,12 @@ namespace TinyUI
 		{
 			if (m_document != NULL)
 			{
-				if (!(BUTTONSTATE(this) & BST_MOUSE))
+				StyleImage newStyle = dwFlags & MK_LBUTTON ? DOWN : HIGHLIGHT;
+				if (newStyle != m_dwStyle)
 				{
-					return TinyVisual::OnMouseMove(pos, dwFlags);
+					m_dwStyle = newStyle;
+					this->Invalidate();
 				}
-				m_dwFlag = dwFlags & MK_LBUTTON ? DOWN : HIGHLIGHT;
-				TinyRectangle s = m_document->GetWindowRect(this);
-				m_document->Redraw(&s);
 			}
 			return TinyVisual::OnMouseMove(pos, dwFlags);
 		}
@@ -136,9 +132,11 @@ namespace TinyUI
 		{
 			if (m_document != NULL)
 			{
-				m_dwFlag = NORMAL;
-				TinyRectangle s = m_document->GetWindowRect(this);
-				m_document->Redraw(&s);
+				if (m_dwStyle != NORMAL)
+				{
+					m_dwStyle = NORMAL;
+					this->Invalidate();
+				}
 				m_document->ReleaseCapture();
 			}
 			return TinyVisual::OnMouseLeave();
@@ -147,11 +145,18 @@ namespace TinyUI
 		{
 			if (m_document != NULL)
 			{
-				m_dwFlag = NORMAL;
-				TinyRectangle s = m_document->GetWindowRect(this);
-				m_document->Redraw(&s);
+				if (m_dwStyle != NORMAL)
+				{
+					m_dwStyle = NORMAL;
+					this->Invalidate();
+				}
 				m_document->SetCapture(NULL);
-				EVENT_CLICK(this, EventArgs());
+				TinyRectangle s = m_document->GetWindowRect(this);
+				TinyPoint point = m_document->VisualToClient(this, pos);
+				if (s.PtInRect(point))
+				{
+					EVENT_CLICK(this, EventArgs());
+				}
 			}
 			return TinyVisual::OnLButtonUp(pos, dwFlags);
 		}
@@ -159,12 +164,19 @@ namespace TinyUI
 		{
 			if (m_document != NULL)
 			{
-				m_dwFlag = DOWN;
+				if (m_dwStyle != DOWN)
+				{
+					m_dwStyle = DOWN;
+					this->Invalidate();
+				}
 				TinyRectangle s = m_document->GetWindowRect(this);
-				m_document->Redraw(&s);
-				EVENT_DBCLICK(this, EventArgs());
+				TinyPoint point = m_document->VisualToClient(this, pos);
+				if (s.PtInRect(point))
+				{
+					EVENT_CLICK(this, EventArgs());
+				}
 			}
-			return TinyVisual::OnLButtonDown(pos, dwFlags);
+			return TinyVisual::OnLButtonDBClick(pos, dwFlags);
 		}
 	}
 }

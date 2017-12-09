@@ -57,6 +57,7 @@ namespace TinyUI
 			TinyVisual*			SetFocus(TinyVisual* spvis);
 			TinyVisual*			SetActive(TinyVisual* spvis);
 			TinyVisual*			GetActive() const;
+			TinyPoint			VisualToClient(const TinyVisual* spvis, const TinyPoint& pos);
 			TinyPoint			GetWindowPos(const TinyVisual* spvis);
 			TinyRectangle		GetWindowRect(const TinyVisual* spvis);
 			TinyPoint			GetScreenPos(const TinyVisual* spvis);
@@ -83,7 +84,8 @@ namespace TinyUI
 			HRESULT				OnSetFocus(HWND hWND);
 			HRESULT				OnKillFocus(HWND hWND);
 		private:
-			void				ConvertToVisualPos(TinyVisual* spvis, TinyPoint& pos);//相对于原生窗口的坐标转换到元素坐标
+			void				ConvertToClientPos(const TinyVisual* spvis, TinyPoint& pos);//把元素坐标转化为窗口坐标
+			void				ConvertToVisualPos(const TinyVisual* spvis, TinyPoint& pos);//相对于原生窗口的坐标转换到元素坐标
 			TinyVisual*			GetVisualByName1(TinyVisual* spvis, const TinyString& name);
 			TinyVisual*			GetVisualByName2(TinyVisual* spvis, const TinyString& name);
 			TinyVisual*			GetVisualByPos1(TinyVisual* spvis, INT x, INT y);

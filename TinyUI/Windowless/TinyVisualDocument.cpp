@@ -289,14 +289,25 @@ namespace TinyUI
 		{
 			return GetVisualByPos1(m_spvisWindow, x, y);
 		}
-		void TinyVisualDocument::ConvertToVisualPos(TinyVisual* spvis, TinyPoint& pos)
+		void TinyVisualDocument::ConvertToVisualPos(const TinyVisual* spvis, TinyPoint& pos)
 		{
 			ASSERT(m_pWindow && spvis);
-			TinyVisual* pv = spvis;
+			const TinyVisual* pv = spvis;
 			while (pv != NULL)
 			{
 				TinyPoint pvPos = pv->GetPosition();
 				pos.Offset(-pvPos.x, -pvPos.y);
+				pv = pv->m_spvisParent;
+			}
+		}
+		void TinyVisualDocument::ConvertToClientPos(const TinyVisual* spvis, TinyPoint& pos)
+		{
+			ASSERT(m_pWindow && spvis);
+			const TinyVisual* pv = spvis;
+			while (pv != NULL)
+			{
+				TinyPoint pvPos = pv->GetPosition();
+				pos.Offset(pvPos.x, pvPos.y);
 				pv = pv->m_spvisParent;
 			}
 		}
@@ -421,6 +432,12 @@ namespace TinyUI
 		TinyVisual* TinyVisualDocument::GetActive() const
 		{
 			return m_spvisActive;
+		}
+		TinyPoint TinyVisualDocument::VisualToClient(const TinyVisual* spvis, const TinyPoint& pos)
+		{
+			TinyPoint point = pos;
+			ConvertToClientPos(spvis, point);
+			return point;
 		}
 		TinyPoint TinyVisualDocument::GetWindowPos(const TinyVisual* spvis)
 		{

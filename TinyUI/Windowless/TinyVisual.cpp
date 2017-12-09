@@ -453,13 +453,20 @@ namespace TinyUI
 		}
 		HRESULT	 TinyVisual::OnSetCursor(HWND hWND, DWORD dwHitTest, DWORD dwMessage)
 		{
+			POINT pos;
+			GetCursorPos(&pos);
+			ScreenToClient(hWND, &pos);
 			if (m_szCursor != TinyVisualCursor::AUTO)
 			{
 				if (m_document != NULL)
 				{
-					m_document->GetVisualHWND()->SetMsgHandled(TRUE);
-					::SetCursor(LoadCursor(NULL, CursorFromString(m_szCursor)));
-					return TRUE;
+					TinyRectangle s = m_document->GetWindowRect(this);
+					if (s.PtInRect(pos))
+					{
+						m_document->GetVisualHWND()->SetMsgHandled(TRUE);
+						::SetCursor(LoadCursor(NULL, CursorFromString(m_szCursor)));
+						return TRUE;
+					}
 				}
 			}
 			return FALSE;
