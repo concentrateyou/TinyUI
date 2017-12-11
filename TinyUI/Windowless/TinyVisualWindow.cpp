@@ -58,6 +58,19 @@ namespace TinyUI
 				return FALSE;
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			TinyRectangle clip = m_document->GetWindowRect(this);
+			if (m_backgroundImage != NULL && !m_backgroundImage->IsEmpty())
+			{
+				TinyRectangle srcRect = m_backgroundImage->GetRectangle();
+				TinyRectangle srcCenter = GetBackgroundCenter();
+				if (srcCenter.IsRectEmpty())
+				{
+					canvas.DrawImage(*m_backgroundImage, clip, srcRect);
+				}
+				else
+				{
+					canvas.DrawImage(*m_backgroundImage, clip, srcRect, srcCenter);
+				}
+			}
 			if (!m_backgroundColor.IsEmpty())
 			{
 				TinyBrush brush;
@@ -73,19 +86,6 @@ namespace TinyUI
 				HPEN hOldPen = canvas.SetPen(pen);
 				canvas.DrawRectangle(clip);
 				canvas.SetPen(hOldPen);
-			}
-			if (m_backgroundImage != NULL && !m_backgroundImage->IsEmpty())
-			{
-				TinyRectangle srcRect = m_backgroundImage->GetRectangle();
-				TinyRectangle srcCenter = GetBackgroundCenter();
-				if (srcCenter.IsRectEmpty())
-				{
-					canvas.DrawImage(*m_backgroundImage, clip, srcRect);
-				}
-				else
-				{
-					canvas.DrawImage(*m_backgroundImage, clip, srcRect, srcCenter);
-				}
 			}
 			return TRUE;
 		}

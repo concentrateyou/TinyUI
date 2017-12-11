@@ -370,12 +370,18 @@ namespace TinyUI
 	BOOL TinyCanvas::DrawRectangle(const RECT& rect)
 	{
 		if (!m_hDC) return FALSE;
-		return Rectangle(m_hDC, rect.left, rect.top, rect.right, rect.bottom);
+		HGDIOBJ hOld = ::SelectObject(m_hDC, GetStockObject(NULL_BRUSH));
+		BOOL bRes = ::Rectangle(m_hDC, rect.left, rect.top, rect.right, rect.bottom);
+		::SelectObject(m_hDC, hOld);
+		return bRes;
 	}
 	BOOL TinyCanvas::DrawRectangle(INT x, INT y, INT cx, INT cy)
 	{
 		if (!m_hDC) return FALSE;
-		return Rectangle(m_hDC, x, y, x + cx, y + cy);
+		HGDIOBJ hOld = ::SelectObject(m_hDC, GetStockObject(NULL_BRUSH));
+		BOOL bRes = ::Rectangle(m_hDC, x, y, x + cx, y + cy);
+		::SelectObject(m_hDC, hOld);
+		return bRes;
 	}
 	BOOL TinyCanvas::DrawBeziers(POINT* pts, INT size)
 	{

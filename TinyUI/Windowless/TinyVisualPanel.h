@@ -22,6 +22,18 @@ namespace TinyUI
 		protected:
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 		};
+		/// <summary>
+		/// 栈面板-水平和垂直
+		/// </summary>
+		class TinyVisualStackPanel : public TinyVisualPanel
+		{
+			friend class TinyVisualDocument;
+			DECLARE_DYNCREATE(TinyVisualStackPanel)
+			DISALLOW_COPY_AND_ASSIGN(TinyVisualStackPanel)
+		protected:
+			TinyVisualStackPanel();
+			TinyVisualStackPanel(TinyVisual* spvisParent, TinyVisualDocument* vtree);
+		};
 	}
 }
 
