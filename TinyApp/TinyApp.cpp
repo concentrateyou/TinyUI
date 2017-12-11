@@ -87,51 +87,19 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	CoInitializeEx(NULL, COINIT_MULTITHREADED);
 	LoadSeDebugPrivilege();
 
-	//QSV::QSVEncoder encoder;
-	//encoder.Open({ 1280,720 }, { 1280,720 });
-	//FILE *hFile1 = fopen("D:\\output.rgb4", "rb");
-	//FILE *hFile2 = fopen("D:\\test2.h264", "wb+");
-	//BYTE* pArray = new BYTE[1024 * 1024 * 5];
-	//LONG offset = 0;
-	//for (;;)
-	//{
-	//	SampleTag tag;
-	//	tag.bits = pArray;
-	//	LONG size = fread(pArray, 1, 1280 * 720 * 4, hFile1);
-	//	if (size == 0)
-	//		break;
-	//	tag.size = size;
-	//	TinyPerformanceTime timer;
-	//	timer.BeginTime();
-	//	BYTE* bo = NULL;
-	//	/*LONG  so = 0;
-	//	encoder.Encode(tag, bo, so);
-	//	if (so > 0)
-	//	{
-	//		timer.EndTime();
-	//		TRACE("Time:%lld\n", timer.GetMillisconds());
-	//		fwrite(bo, 1, so, hFile2);
-	//	}*/
-	//}
-	//fclose(hFile1);
-	//fclose(hFile2);
-	//TinyVisualResource::GetInstance().LoadResource("D:\\Develop\\TinyUI\\TinyUI\\resource.xml");
+	TinyVisualResource::GetInstance().Load("skin\\resource.xml");
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
-	TinyMessageLoop theLoop;
-	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	//SkinWindow uiImpl;
-	//uiImpl.Create(NULL, "D:\\Develop\\TinyUI\\TinyUI\\main.xml");
-	//uiImpl.UpdateWindow();
-	//uiImpl.Create(NULL, 10, 10, 100, 100);
-	//uiImpl.CenterWindow(NULL, { 800,600 });
-
-
-	ChatFrame uiImpl;
-	uiImpl.Create(NULL, 100, 100, 600, 600);
-	uiImpl.UpdateWindow();
-	INT loopRes = theLoop.MessageLoop();
-	TinyApplication::GetInstance()->RemoveMessageLoop();
+	//TinyMessageLoop theLoop;
+	/*TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
+	*/
+	SkinWindow uiImpl;
+	string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\demo.xml");
+	if (!uiImpl.DoModal(NULL, MAKEINTRESOURCE(IDD_DIALOG1), szFile.c_str()))
+		return FALSE;
+	INT loopRes = 0;
+	//INT loopRes = theLoop.MessageLoop();
+	//TinyApplication::GetInstance()->RemoveMessageLoop();
 	TinyApplication::GetInstance()->Uninitialize();
 
 	OleUninitialize();

@@ -13,7 +13,7 @@ namespace TinyUI
 	};
 	/// <summary>
 	/// https://stackoverflow.com/questions/23797681/c-static-variable-in-lib-does-not-initialize
-	/// 必须启用链接依赖项输入
+	/// 必须启用库依赖项输入
 	/// </summary>
 	struct TinyRuntimeClass
 	{

@@ -22,18 +22,9 @@ class SkinWindow : public TinyVisualFrame
 public:
 	SkinWindow();
 	virtual ~SkinWindow();
-public:
+
 	void OnInitialize() OVERRIDE;
 	void OnUninitialize() OVERRIDE;
-private:
-	void OnMinimumClick(TinyVisual*, EventArgs& args);
-	void OnCloseClick(TinyVisual*, EventArgs& args);
-	void OnButtonClick(TinyVisual*, EventArgs& args);
-	void OnSelectChanged(TinyVisualOption* ps);
-private:
-	TinyScopedPtr<Delegate<void(TinyVisualOption*)>> m_onSelectChanged;
-	TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>> m_onMinimumClick;
-	TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>> m_onCloseClick;
-	TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>> m_onButtonClick;
+
 };
 

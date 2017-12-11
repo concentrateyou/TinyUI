@@ -99,10 +99,13 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib\x86;$(INTELMEDIASDKROOT)\lib\$(Platform);$(PROTOBUF_DIR)\lib;..\ThirdParty\mpg123\lib\x86;..\ThirdParty\ffmpeg\lib\x86;..\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxgi.lib;dxguid.lib;d3d10_1.lib;d3d11.lib;ddraw.lib;DShowCapture.lib;DXFramework.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib\x86;$(INTELMEDIASDKROOT)\lib\$(Platform);$(PROTOBUF_DIR)\lib;..\ThirdParty\mpg123\lib\x86;..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\libfaac\lib\x86;..\ThirdParty\x264\libs\32bit;..\ThirdParty\librtmp\lib\x86;..\ThirdParty\libfaad\lib\x86;..\ThirdParty\jsoncpp\lib\x86;..\ThirdParty\sqlite;..\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>TinyUI.lib;DXFramework.lib;DShowCapture.lib;Decode.lib;Encode.lib;libmfx_d.lib;dxva2.lib;dwmapi.lib;d3d9.lib;d3d11.lib;dxgi.lib;D2D1.lib;jsoncpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -227,6 +230,9 @@
     </ProjectReference>
     <ProjectReference Include="..\DXFramework\DXFramework.vcxproj">
       <Project>{e5bf40dd-f8a0-4fb9-b27b-051c447a5c2b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Encode\Encode.vcxproj">
+      <Project>{4b386eb4-e529-4c67-9733-7684de8defdc}</Project>
     </ProjectReference>
     <ProjectReference Include="..\IntelQSV\IntelQSV.vcxproj">
       <Project>{681511e3-1b32-43c5-89f4-18a20c1590c9}</Project>
