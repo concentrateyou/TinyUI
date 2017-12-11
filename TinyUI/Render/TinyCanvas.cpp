@@ -285,7 +285,8 @@ namespace TinyUI
 
 	BOOL TinyCanvas::DrawLine(INT sx, INT sy, INT dx, INT dy)
 	{
-		if (!m_hDC) return FALSE;
+		if (!m_hDC)
+			return FALSE;
 		POINT ps;
 		if (MoveToEx(m_hDC, sx, sy, &ps))
 			return LineTo(m_hDC, dx, dy);
@@ -301,7 +302,8 @@ namespace TinyUI
 	}
 	BOOL TinyCanvas::DrawLines(POINT* pts, INT size)
 	{
-		if (!m_hDC) return FALSE;
+		if (!m_hDC)
+			return FALSE;
 		return Polyline(m_hDC, pts, size);
 	}
 	BOOL TinyCanvas::DrawPolygon(POINT* pts, INT size)
@@ -311,7 +313,8 @@ namespace TinyUI
 	}
 	BOOL TinyCanvas::DrawArc(INT x, INT y, INT radius, FLOAT startAngle, FLOAT sweepAngle)
 	{
-		if (!m_hDC) return FALSE;
+		if (!m_hDC)
+			return FALSE;
 		POINT pt;
 		INT x1 = GDI_ROUND(x + cos(startAngle * M_PI / 180) * radius);
 		INT y1 = GDI_ROUND(y - sin(startAngle * M_PI / 180) * radius);
@@ -323,7 +326,8 @@ namespace TinyUI
 	}
 	BOOL TinyCanvas::DrawArc(INT x, INT y, INT cx, INT cy, FLOAT startAngle, FLOAT sweepAngle)
 	{
-		if (!m_hDC) return FALSE;
+		if (!m_hDC)
+			return FALSE;
 		INT x1, x2, y1, y2;
 		DOUBLE tancx1 = cy / tan(startAngle * M_PI / 180);
 		DOUBLE tancy1 = cx * tan(startAngle * M_PI / 180);
@@ -340,7 +344,8 @@ namespace TinyUI
 	}
 	BOOL TinyCanvas::DrawPie(INT x, INT y, INT radius, FLOAT startAngle, FLOAT sweepAngle)
 	{
-		if (!m_hDC) return FALSE;
+		if (!m_hDC)
+			return FALSE;
 		INT x1 = GDI_ROUND(x + cos(startAngle * M_PI / 180) * radius);
 		INT y1 = GDI_ROUND(y - sin(startAngle * M_PI / 180) * radius);
 		INT x2 = GDI_ROUND(x + cos((startAngle + sweepAngle) * M_PI / 180) * radius);
@@ -352,7 +357,8 @@ namespace TinyUI
 	}
 	BOOL TinyCanvas::DrawPie(INT x, INT y, INT cx, INT cy, FLOAT startAngle, FLOAT sweepAngle)
 	{
-		if (!m_hDC) return FALSE;
+		if (!m_hDC)
+			return FALSE;
 		INT x1, x2, y1, y2;
 		DOUBLE tancx1 = cy / tan(startAngle * M_PI / 180);
 		DOUBLE tancy1 = cx * tan(startAngle * M_PI / 180);
@@ -369,7 +375,8 @@ namespace TinyUI
 	}
 	BOOL TinyCanvas::DrawRectangle(const RECT& rect)
 	{
-		if (!m_hDC) return FALSE;
+		if (!m_hDC)
+			return FALSE;
 		HGDIOBJ hOld = ::SelectObject(m_hDC, GetStockObject(NULL_BRUSH));
 		BOOL bRes = ::Rectangle(m_hDC, rect.left, rect.top, rect.right, rect.bottom);
 		::SelectObject(m_hDC, hOld);
@@ -377,7 +384,8 @@ namespace TinyUI
 	}
 	BOOL TinyCanvas::DrawRectangle(INT x, INT y, INT cx, INT cy)
 	{
-		if (!m_hDC) return FALSE;
+		if (!m_hDC)
+			return FALSE;
 		HGDIOBJ hOld = ::SelectObject(m_hDC, GetStockObject(NULL_BRUSH));
 		BOOL bRes = ::Rectangle(m_hDC, x, y, x + cx, y + cy);
 		::SelectObject(m_hDC, hOld);
@@ -385,17 +393,20 @@ namespace TinyUI
 	}
 	BOOL TinyCanvas::DrawBeziers(POINT* pts, INT size)
 	{
-		if (!m_hDC) return FALSE;
+		if (!m_hDC)
+			return FALSE;
 		return PolyBezier(m_hDC, pts, size);
 	}
 	BOOL TinyCanvas::DrawEllipse(const RECT& rect)
 	{
-		if (!m_hDC) return FALSE;
+		if (!m_hDC)
+			return FALSE;
 		return Ellipse(m_hDC, rect.left, rect.top, rect.right, rect.bottom);
 	}
 	BOOL TinyCanvas::DrawEllipse(INT x, INT y, INT cx, INT cy)
 	{
-		if (!m_hDC) return FALSE;
+		if (!m_hDC)
+			return FALSE;
 		return Ellipse(m_hDC, x, y, x + cx, y + cy);
 	}
 	BOOL TinyCanvas::FillPie(INT x, INT y, INT cx, INT cy, FLOAT startAngle, FLOAT sweepAngle)
@@ -412,12 +423,14 @@ namespace TinyUI
 	}
 	BOOL TinyCanvas::FillPolygon(POINT* pts, INT size)
 	{
-		if (!m_hDC) return FALSE;
+		if (!m_hDC)
+			return FALSE;
 		return Polygon(m_hDC, pts, size);
 	}
 	BOOL TinyCanvas::FillEllipse(INT x, INT y, INT cx, INT cy)
 	{
-		if (!m_hDC) return FALSE;
+		if (!m_hDC)
+			return FALSE;
 		return Ellipse(m_hDC, x, y, x + cx, y + cy);
 	}
 	BOOL TinyCanvas::FillEllipse(const RECT& rect)
@@ -427,18 +440,41 @@ namespace TinyUI
 	}
 	BOOL TinyCanvas::FillRectangle(const RECT& rect)
 	{
-		if (!m_hDC) return FALSE;
+		if (!m_hDC)
+			return FALSE;
 		return PatBlt(m_hDC, rect.left, rect.top, abs(rect.right - rect.left), abs(rect.bottom - rect.top), PATCOPY);
 	}
 	BOOL TinyCanvas::FillRectangle(INT x, INT y, INT cx, INT cy)
 	{
-		if (!m_hDC) return FALSE;
+		if (!m_hDC)
+			return FALSE;
 		return PatBlt(m_hDC, x, y, cx, cy, PATCOPY);
 	}
 	BOOL TinyCanvas::FillRegion(HRGN hRgn)
 	{
-		if (!m_hDC || !hRgn) return FALSE;
+		if (!m_hDC || !hRgn)
+			return FALSE;
 		return PaintRgn(m_hDC, hRgn);
+	}
+	BOOL TinyCanvas::GradientFill(LPCRECT lpRect, COLORREF crFrom, COLORREF crTo, BOOL bHorz)
+	{
+		if (!m_hDC)
+			return FALSE;
+		TRIVERTEX vert[2];
+		vert[0].x = lpRect->left;
+		vert[0].y = lpRect->top;
+		vert[0].Red = (COLOR16)(GetRValue(crFrom) << 8);
+		vert[0].Green = (COLOR16)(GetGValue(crFrom) << 8);
+		vert[0].Blue = (COLOR16)(GetBValue(crFrom) << 8);
+		vert[0].Alpha = 0x0000;
+		vert[1].x = lpRect->right;
+		vert[1].y = lpRect->bottom;
+		vert[1].Red = (COLOR16)(GetRValue(crTo) << 8);
+		vert[1].Green = (COLOR16)(GetGValue(crTo) << 8);
+		vert[1].Blue = (COLOR16)(GetBValue(crTo) << 8);
+		vert[1].Alpha = 0x0000;
+		GRADIENT_RECT gRect = { 0, 1 };
+		return ::GradientFill(m_hDC, vert, 2, &gRect, 1, bHorz ? GRADIENT_FILL_RECT_H : GRADIENT_FILL_RECT_V);
 	}
 	BOOL TinyCanvas::SetClip(const RECT& rect)
 	{

@@ -217,6 +217,10 @@ namespace TinyUI
 		/// </summary>
 		BOOL FillRegion(HRGN hRgn);
 		/// <summary>
+		/// 梯度绘制
+		/// </summary>
+		BOOL GradientFill(LPCRECT lpRect, COLORREF crFrom, COLORREF crTo, BOOL bHorz);
+		/// <summary>
 		/// 设置裁剪区域
 		/// </summary>
 		BOOL SetClip(const RECT& rect);
