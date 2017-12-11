@@ -6,6 +6,8 @@
 #include <windows.h>
 #include <vector>
 #include <atlbase.h>
+#include <Richedit.h>
+#include <RichOle.h>
 using namespace std;
 
 static const GUID  CLSID_Smiley =

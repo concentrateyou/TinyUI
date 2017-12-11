@@ -350,27 +350,27 @@ namespace TinyUI
 		{
 			return m_spvisCapture;
 		}
-		TinyVisual*	TinyVisualDocument::SetCapture(TinyVisual* pNew)
+		TinyVisual*	TinyVisualDocument::SetCapture(TinyVisual* spvisNew)
 		{
 			ASSERT(m_pWindow);
-			TinyVisual* pv = m_spvisCapture;
-			if (pNew != pv)
+			TinyVisual* spvisOld = m_spvisCapture;
+			if (spvisNew != spvisOld)
 			{
-				if (m_spvisCapture)
+				if (spvisOld != NULL)
 				{
-					m_spvisCapture->OnCapture(FALSE);
+					spvisOld->OnCapture(FALSE);
 				}
-				m_spvisCapture = pNew;
-				if (m_spvisCapture)
+				m_spvisCapture = spvisNew;
+				if (m_spvisCapture != NULL)
 				{
 					m_spvisCapture->OnCapture(TRUE);
 				}
 			}
 			if (::GetCapture() != m_pWindow->Handle())
 			{
-				::SetCapture(pNew != NULL ? m_pWindow->Handle() : NULL);
+				::SetCapture(spvisNew != NULL ? m_pWindow->Handle() : NULL);
 			}
-			return pv;
+			return spvisOld;
 		}
 		BOOL TinyVisualDocument::ReleaseCapture()
 		{
@@ -385,49 +385,49 @@ namespace TinyUI
 		{
 			return m_spvisFocus;
 		}
-		TinyVisual*	TinyVisualDocument::SetFocus(TinyVisual* pNew)
+		TinyVisual*	TinyVisualDocument::SetFocus(TinyVisual* spvisNew)
 		{
 			ASSERT(m_pWindow);
-			TinyVisual* spvis = m_spvisFocus;
-			if (pNew != spvis)
+			TinyVisual* spvisOld = m_spvisFocus;
+			if (spvisNew != spvisOld)
 			{
-				if (m_spvisFocus)
+				if (spvisOld != NULL)
 				{
-					m_spvisFocus->OnFocus(FALSE);
+					spvisOld->OnFocus(FALSE);
 				}
-				m_spvisFocus = pNew;
-				if (m_spvisFocus)
+				m_spvisFocus = spvisNew;
+				if (m_spvisFocus != NULL)
 				{
 					m_spvisFocus->OnFocus(TRUE);
 				}
 			}
 			if (::GetFocus() != m_pWindow->Handle())
 			{
-				::SetFocus(pNew != NULL ? m_pWindow->Handle() : NULL);
+				::SetFocus(spvisNew != NULL ? m_pWindow->Handle() : NULL);
 			}
-			return spvis;
+			return spvisOld;
 		}
-		TinyVisual*	TinyVisualDocument::SetActive(TinyVisual* pNew)
+		TinyVisual*	TinyVisualDocument::SetActive(TinyVisual* spvisNew)
 		{
 			ASSERT(m_pWindow);
-			TinyVisual* spvis = m_spvisActive;
-			if (pNew != spvis)
+			TinyVisual* spvisOld = m_spvisActive;
+			if (spvisNew != spvisOld)
 			{
-				if (m_spvisActive)
+				if (spvisOld != NULL)
 				{
-					m_spvisActive->OnActive(FALSE);
+					spvisOld->OnActive(FALSE);
 				}
-				m_spvisFocus = pNew;
-				if (m_spvisActive)
+				m_spvisFocus = spvisNew;
+				if (m_spvisActive != NULL)
 				{
 					m_spvisActive->OnActive(TRUE);
 				}
 			}
 			if (::GetActiveWindow() != m_pWindow->Handle())
 			{
-				::SetActiveWindow(pNew != NULL ? m_pWindow->Handle() : NULL);
+				::SetActiveWindow(spvisNew != NULL ? m_pWindow->Handle() : NULL);
 			}
-			return spvis;
+			return spvisOld;
 		}
 		TinyVisual* TinyVisualDocument::GetActive() const
 		{
