@@ -80,6 +80,9 @@ namespace TinyUI
 			static const TinyString ALIGNMENT;
 			static const TinyString VALUE;
 			static const TinyString OPTIONHIGHLIGHT;
+
+			static const TinyString SHADOWIMAGE;
+			static const TinyString SHADOWBOX;
 		};
 		/// <summary>
 		/// Tag³£Á¿

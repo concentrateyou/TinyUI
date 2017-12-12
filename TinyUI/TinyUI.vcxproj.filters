@@ -519,6 +519,9 @@
     <ClInclude Include="IO\TinyTask.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualShadow.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -955,6 +958,9 @@
     </ClCompile>
     <ClCompile Include="IO\TinyTask.cpp">
       <Filter>源文件\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualShadow.cpp">
+      <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -20,6 +20,7 @@ namespace TinyUI
 			void SetPosition(const TinyPoint& pos) OVERRIDE;
 			void SetText(const TinyString& pzText) OVERRIDE;
 		public:
+			BOOL SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 			TinyString RetrieveTag() const OVERRIDE;
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 		};

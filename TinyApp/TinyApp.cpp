@@ -90,16 +90,17 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyVisualResource::GetInstance().Load("skin\\resource.xml");
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
-	//TinyMessageLoop theLoop;
-	/*TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	*/
+	TinyMessageLoop theLoop;
+	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
 	SkinWindow uiImpl;
 	string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\demo.xml");
-	if (!uiImpl.DoModal(NULL, MAKEINTRESOURCE(IDD_DIALOG1), szFile.c_str()))
-		return FALSE;
-	INT loopRes = 0;
-	//INT loopRes = theLoop.MessageLoop();
-	//TinyApplication::GetInstance()->RemoveMessageLoop();
+	uiImpl.Create(NULL, szFile.c_str());
+	uiImpl.UpdateWindow();
+	//string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\demo.xml");
+	//if (!uiImpl.DoModal(NULL, MAKEINTRESOURCE(IDD_DIALOG1), szFile.c_str()))
+	//	return FALSE;
+	INT loopRes = theLoop.MessageLoop();
+	TinyApplication::GetInstance()->RemoveMessageLoop();
 	TinyApplication::GetInstance()->Uninitialize();
 
 	OleUninitialize();

@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<window name="mshow" text="MShow工具" position="100,100" size="1000,680" minsize="1000,680" maxsize="1000,680" border-color="192,192,192" border-width="1" background-image="panel">
-  <syscaption name ="syscaption" position="1,1" size="998,26" background-image="syscaption">
+<window name="mshow" text="MShow工具"
+        position="100,100"
+        size="1000,680"
+        minsize="1000,680"
+        maxsize="1000,680"
+        background-image="panel"
+        shadow-image="shadow"
+        shadow-box="8,8,8,8">
+  <syscaption name ="syscaption" position="0,0" size="1000,27" background-image="syscaption">
     <label name="title" position="10,0" size="60,27" text="MShow工具" text-align="left|vcenter" text-color="255,255,255" >
     </label>
     <button name="btnSetting" tooltip="setting" position="910,0" size="30,27"
@@ -19,7 +26,7 @@
             image-down="sysbtn_close_down">
     </button>
   </syscaption>
-  <panel position="1,27" size="998,400">
+  <panel position="0,27" size="1000,400">
     <nativewindow name="previewWND" position="25,20" size="640,360">
     </nativewindow>
     <label name="lblName"  position="675,20" size="360,60" text-align="left|top" font-family="微软雅黑" font-weight="400" font-size="12,24" text-color="0,153,255" ></label>
@@ -27,8 +34,8 @@
     <label name="lblTime2" position="675,103" size="80,23" text="结束时间: " text-align="left|top" font-family="微软雅黑" font-size="7,17" text-color="64,64,64" ></label>
     <label name="lblBeginTime" position="755,80" size="280,23" text="开始时间: " text-align="left|top" font-family="微软雅黑" font-size="7,17" text-color="64,64,64" ></label>
     <label name="lblEndTime" position="755,103" size="280,23" text="结束时间: " text-align="left|top" font-family="微软雅黑" font-size="7,17" text-color="64,64,64" ></label>
-	<audiodb name="microphoneDB" position="675,320" size="50,16" visible="false">
-	</audiodb>
+    <audiodb name="microphoneDB" position="675,320" size="50,16" visible="false">
+    </audiodb>
     <button name="btnStartCommentary" position="675,344" size="90,36" text="开始解说" text-align="center|vcenter" text-color="255,255,255" font-family="微软雅黑" font-weight="400" font-size="8,18"
          image-normal="blue_normal"
          image-highlight="blue_highlight"
@@ -38,19 +45,19 @@
     <button name="btnPauseCommentary" position="675,344" size="90,36" text="暂停" text-align="center|vcenter" text-color="255,255,255" font-family="微软雅黑" font-weight="400" font-size="8,18"
         image-normal="blue_normal"
         image-highlight="blue_highlight"
-        image-down="blue_down" 
+        image-down="blue_down"
         visible="false"
         cursor="hand">
     </button>
     <button name="btnStopCommentary" position="775,344" size="90,36" text="停止解说" text-align="center|vcenter" text-color="255,255,255" font-family="微软雅黑" font-weight="400" font-size="8,18"
         image-normal="blue_normal"
         image-highlight="blue_highlight"
-        image-down="blue_down" 
+        image-down="blue_down"
         visible="false"
         cursor="hand">
     </button>
   </panel>
-  <panel position="1,427" size="998,100">
+  <panel position="0,427" size="1000,100">
     <label name="lblError" position="25,0" size="400,30" text-align="left|top" font-family="微软雅黑" font-weight="400" font-size="7,18" text-color="255,0,0" ></label>
     <label position="25,30" size="100,30" text="信号源名称" text-align="left|top" font-family="微软雅黑" font-size="7,20" text-color="64,64,64"></label>
     <panel position="25,60" size="500,30"
@@ -69,20 +76,20 @@
       <button name="btnSave" position="10,3" size="80,23" text="保存" text-align="center|vcenter" text-color="0,0,0"
            image-normal="btn_normal"
            image-highlight="btn_highlight"
-           image-down="btn_down" 
+           image-down="btn_down"
            visible="false"
            cursor="hand">
       </button>
       <button name="btnCancel" position="100,3" size="80,23" text="取消" text-align="center|vcenter" text-color="0,0,0"
            image-normal="btn_normal"
            image-highlight="btn_highlight"
-           image-down="btn_down" 
+           image-down="btn_down"
            visible="false"
            cursor="hand">
       </button>
     </panel>
   </panel>
-  <panel position="1,526" size="998,152">
+  <panel position="0,526" size="1000,153">
     <panel position="20,0" size="979,148" name="setting" visible="false">
       <label text="麦克风:" position="5,5" size="40,28" text-color="0,0,0" text-align="left|vcenter">
       </label>
@@ -104,8 +111,8 @@
           image-down="btn_down"
           cursor="hand">
       </button>
-	  <audiodb name="microphoneTestDB" position="90,72" size="50,16">
-	  </audiodb>
+      <audiodb name="microphoneTestDB" position="90,72" size="50,16">
+      </audiodb>
       <label text="扬声器:" position="260,5" size="40,28" text-color="0,0,0" text-align="left|vcenter">
       </label>
       <combobox name="speaker" position="308,5" size="180,28" text-align="left|vcenter" text-color="0,0,0"

@@ -24,21 +24,21 @@ namespace TinyUI
 		}
 		BOOL TinyVisualDocument::Destory(TinyVisual* spvis)
 		{
-			ASSERT(m_vs);
+			ASSERT(m_factory);
 			if (spvis == m_spvisLastMouse)
 				m_spvisLastMouse = NULL;
 			if (spvis == m_spvisCapture)
 				m_spvisCapture = NULL;
 			if (spvis == m_spvisFocus)
 				m_spvisFocus = NULL;
-			return m_vs->Destory(spvis);
+			return m_factory->Destory(spvis);
 		}
 		BOOL TinyVisualDocument::Initialize(TinyVisualBuilder* builder)
 		{
 			if (!builder)
 				return FALSE;
-			m_vs.Reset(new TinyVisualFactory(this));
-			if (!m_vs)
+			m_factory.Reset(new TinyVisualFactory(this));
+			if (!m_factory)
 				return FALSE;
 			return builder->BuildDocument(this);
 		}
@@ -518,21 +518,21 @@ namespace TinyUI
 		}
 		TinyVisual*	 TinyVisualDocument::Create(const TinyString& tag, TinyVisual* spvisParent)
 		{
-			ASSERT(m_vs);
+			ASSERT(m_factory);
 			TinyString classSTR = TinyVisualResource::GetInstance().GetClassName(tag);
 			if (!classSTR.IsEmpty())
 			{
-				return m_vs->Create(classSTR, spvisParent);
+				return m_factory->Create(classSTR, spvisParent);
 			}
 			return NULL;
 		}
 		TinyVisual*	 TinyVisualDocument::Create(INT x, INT y, INT cx, INT cy, const TinyString& tag, TinyVisual* spvisParent)
 		{
-			ASSERT(m_vs);
+			ASSERT(m_factory);
 			TinyString classSTR = TinyVisualResource::GetInstance().GetClassName(tag);
 			if (!classSTR.IsEmpty())
 			{
-				return m_vs->Create(x, y, cx, cy, classSTR, spvisParent);
+				return m_factory->Create(x, y, cx, cy, classSTR, spvisParent);
 			}
 			return NULL;
 		}

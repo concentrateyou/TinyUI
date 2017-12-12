@@ -3,6 +3,7 @@
 #include "TinyVisualWND.h"
 #include "TinyVisualDocument.h"
 #include "TinyVisualUtility.h"
+#include "TinyVisualShadow.h"
 
 namespace TinyUI
 {
@@ -32,6 +33,7 @@ namespace TinyUI
 			BOOL AddFilter(TinyVisualFilter* ps);
 			BOOL RemoveFilter(TinyVisualFilter* ps);
 			void AllowTracking(BOOL bAllow);
+			TinyVisualShadow&	GetShadow();
 			TinyVisualDocument*	GetDocument();
 			virtual void OnInitialize() = 0;
 			virtual void OnUninitialize() = 0;
@@ -64,6 +66,8 @@ namespace TinyUI
 			LRESULT OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnSetFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+			LRESULT OnShowWindow(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+			LRESULT OnExitSizeMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			//NC
 			LRESULT OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
@@ -81,6 +85,7 @@ namespace TinyUI
 			TinyVisualBuilder					m_builder;
 			TinyScopedPtr<TinyVisualDC>			m_visualDC;
 			TinyScopedPtr<TinyVisualDocument>	m_document;
+			TinyVisualShadow					m_shadow;
 		};
 	}
 }

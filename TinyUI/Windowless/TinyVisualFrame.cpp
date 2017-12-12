@@ -90,7 +90,21 @@ namespace TinyUI
 			if (!m_document->Initialize(&m_builder))
 				return FALSE;
 			this->OnInitialize();
-			return TRUE;
+			if (m_shadow.Create(m_hWND, CW_USEDEFAULT, 0, 0, 0))
+			{
+				LONG style = GetWindowLong(m_hWND, GWL_STYLE);
+				if (!(WS_VISIBLE & style) || (WS_MAXIMIZE | WS_MINIMIZE) & style)
+				{
+					m_shadow.ShowWindow(SW_HIDE);
+				}
+				else
+				{
+					m_shadow.ShowWindow(SW_SHOW);
+					m_shadow.DrawShadow();
+				}
+				return TRUE;
+			}
+			return FALSE;
 		}
 		void TinyVisualFrame::Uninitialize()
 		{
@@ -98,6 +112,7 @@ namespace TinyUI
 				m_document->Uninitialize();
 			m_document.Reset(NULL);
 			m_visualDC.Reset(NULL);
+			m_shadow.DestroyWindow();
 		}
 		BOOL TinyVisualFrame::AddFilter(TinyVisualFilter* ps)
 		{
@@ -110,6 +125,10 @@ namespace TinyUI
 		void TinyVisualFrame::AllowTracking(BOOL bAllow)
 		{
 			m_bAllowTracking = bAllow;
+		}
+		TinyVisualShadow& TinyVisualFrame::GetShadow()
+		{
+			return m_shadow;
 		}
 		BOOL TinyVisualFrame::ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
 		{
@@ -133,6 +152,10 @@ namespace TinyUI
 				m_document->Draw(m_visualDC, ps.rcPaint);
 				EndPaint(m_hWND, &ps);
 			}
+			if (IsWindowVisible(m_hWND))
+			{
+				m_shadow.DrawShadow();
+			}
 			return FALSE;
 		}
 		LRESULT TinyVisualFrame::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -143,19 +166,43 @@ namespace TinyUI
 		LRESULT TinyVisualFrame::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
+			m_size.cx = LOWORD(lParam);
+			m_size.cy = HIWORD(lParam);
 			if (m_visualDC != NULL && m_document != NULL)
 			{
-				m_size.cx = LOWORD(lParam);
-				m_size.cy = HIWORD(lParam);
 				m_visualDC->SetSize(m_size.cx, m_size.cy);
 				m_document->OnSize(m_size);
 				::RedrawWindow(m_hWND, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+			}
+			if (IsWindowVisible(m_hWND))
+			{
+				TinyRectangle box = m_shadow.GetShadowBox();
+				TinyRectangle rectangle;
+				GetWindowRect(&rectangle);
+				rectangle.left -= box.left;
+				rectangle.top -= box.top;
+				rectangle.right += box.right;
+				rectangle.bottom += box.bottom;
+				::SetWindowPos(m_shadow.Handle(), NULL, 0, 0, TO_CX(rectangle), TO_CY(rectangle), SWP_NOMOVE | SWP_NOZORDER | SWP_SHOWWINDOW);
+				m_shadow.DrawShadow();
 			}
 			return FALSE;
 		}
 		LRESULT TinyVisualFrame::OnMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
+			if (IsWindowVisible(m_hWND))
+			{
+				TinyRectangle box = m_shadow.GetShadowBox();
+				TinyRectangle rectangle;
+				GetWindowRect(&rectangle);
+				rectangle.left -= box.left;
+				rectangle.top -= box.top;
+				rectangle.right += box.right;
+				rectangle.bottom += box.bottom;
+				::SetWindowPos(m_shadow.Handle(), NULL, rectangle.left, rectangle.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_SHOWWINDOW);
+				m_shadow.DrawShadow();
+			}
 			return FALSE;
 		}
 
@@ -415,6 +462,18 @@ namespace TinyUI
 				bHandled = IsMsgHandled();
 				return lRes;
 			}
+			return FALSE;
+		}
+		LRESULT TinyVisualFrame::OnShowWindow(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			::ShowWindow(m_shadow, !wParam ? SW_HIDE : SW_SHOWNA);
+			return FALSE;
+		}
+		LRESULT TinyVisualFrame::OnExitSizeMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			m_shadow.DrawShadow();
 			return FALSE;
 		}
 		LRESULT TinyVisualFrame::OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

@@ -71,6 +71,10 @@ namespace TinyUI
 		const TinyString TinyVisualProperty::SCROLLBARGROOVE = TEXT("scrollbar-groove");
 		const TinyString TinyVisualProperty::SCROLLBARNORMAL = TEXT("scrollbar-normal");
 		const TinyString TinyVisualProperty::SCROLLBARHIGHLIGHT = TEXT("scrollbar-highlight");
+
+		const TinyString TinyVisualProperty::SHADOWIMAGE = TEXT("shadow-image");
+		const TinyString TinyVisualProperty::SHADOWBOX = TEXT("shadow-box");
+
 		//////////////////////////////////////////////////////////////////////////
 		const TinyString TinyVisualCursor::AUTO = TEXT("auto");
 		const TinyString TinyVisualCursor::HAND = TEXT("hand");

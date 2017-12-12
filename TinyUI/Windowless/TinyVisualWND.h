@@ -148,10 +148,12 @@ namespace TinyUI
 				MESSAGE_HANDLER(WM_CONTEXTMENU, OnContextMenu)
 				MESSAGE_HANDLER(WM_INITMENUPOPUP, OnIniMenuPopup)
 				MESSAGE_HANDLER(WM_INITMENU, OnIniMenu)
-				MESSAGE_HANDLER(WM_INITDIALOG,OnInitDialog)
+				MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
 				MESSAGE_HANDLER(WM_WINDOWPOSCHANGING, OnWindowPosChanging)
 				MESSAGE_HANDLER(WM_WINDOWPOSCHANGED, OnWindowPosChanged)
 				MESSAGE_HANDLER(WM_SYSCOMMAND, OnSysCommand)
+				MESSAGE_HANDLER(WM_SHOWWINDOW, OnShowWindow)
+				MESSAGE_HANDLER(WM_EXITSIZEMOVE,OnExitSizeMove)
 			END_MSG_MAP()
 			virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 			virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -214,6 +216,8 @@ namespace TinyUI
 			virtual LRESULT OnWindowPosChanging(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 			virtual LRESULT OnWindowPosChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 			virtual LRESULT OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+			virtual LRESULT OnShowWindow(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+			virtual LRESULT OnExitSizeMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		public:
 			Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_CREATE;
 			Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_DESTORY;

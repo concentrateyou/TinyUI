@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window name="mshow"
+        text="奇妙导播台"
+        position="100,100"
+        size="1000,680"
+        minsize="1000,680"
+        maxsize="1000,680"
+        background-image="panel"
+        shadow-image="shadow"
+        shadow-box="8,8,8,8">
+</window>

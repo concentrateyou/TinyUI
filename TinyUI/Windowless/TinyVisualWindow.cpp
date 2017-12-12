@@ -48,6 +48,27 @@ namespace TinyUI
 			TinyVisual::SetText(pzText);
 		}
 
+		BOOL TinyVisualWindow::SetProperty(const TinyString& name, const TinyString& value)
+		{
+			if (strcasecmp(name.STR(), TinyVisualProperty::SHADOWIMAGE.STR()) == 0)
+			{
+				if (m_document != NULL && m_document->GetVisualHWND() != NULL)
+				{
+					m_document->GetVisualHWND()->GetShadow().SetShadow(TinyVisualResource::GetInstance()[value]);
+				}
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::SHADOWBOX.STR()) == 0)
+			{
+				if (m_document != NULL && m_document->GetVisualHWND() != NULL)
+				{
+					m_document->GetVisualHWND()->GetShadow().SetShadowBox(TinyVisualBuilder::GetRectangle(value));
+				}
+				return TRUE;
+			}
+			return TinyVisual::SetProperty(name, value);
+		}
+
 		TinyString TinyVisualWindow::RetrieveTag() const
 		{
 			return TinyVisualTag::WINDOW;

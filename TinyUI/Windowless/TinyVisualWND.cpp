@@ -701,6 +701,16 @@ namespace TinyUI
 			bHandled = FALSE;
 			return FALSE;
 		}
+		LRESULT TinyVisualWND::OnShowWindow(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			return FALSE;
+		}
+		LRESULT TinyVisualWND::OnExitSizeMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			return FALSE;
+		}
 		BOOL TinyVisualWND::ShowWindow(INT nCmdShow) throw()
 		{
 			ASSERT(::IsWindow(m_hWND));

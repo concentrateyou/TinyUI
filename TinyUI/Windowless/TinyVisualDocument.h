@@ -118,7 +118,7 @@ namespace TinyUI
 			TinyVisual*							m_spvisLastMouse;//当前鼠标所在的元素
 			TinyVisualFrame*					m_pWindow;
 			TinyScopedPtr<TinyVisualBuilder>	m_parse;
-			TinyScopedPtr<TinyVisualFactory>	m_vs;
+			TinyScopedPtr<TinyVisualFactory>	m_factory;
 		public:
 #ifdef _DEBUG
 			void			Dump();
