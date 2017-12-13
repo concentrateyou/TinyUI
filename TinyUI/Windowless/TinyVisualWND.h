@@ -98,6 +98,8 @@ namespace TinyUI
 				MESSAGE_HANDLER(WM_CLOSE, OnClose)
 				MESSAGE_HANDLER(WM_SIZE, OnSize)
 				MESSAGE_HANDLER(WM_MOVE, OnMove)
+				MESSAGE_HANDLER(WM_MOVING,OnMoving)
+				MESSAGE_HANDLER(WM_SIZING,OnSizing)
 				MESSAGE_HANDLER(WM_SETCURSOR, OnSetCursor)
 				MESSAGE_HANDLER(WM_NCMOUSEMOVE, OnNCMouseMove)
 				MESSAGE_HANDLER(WM_NCMOUSEHOVER, OnNCMouseHover)
@@ -172,7 +174,9 @@ namespace TinyUI
 			virtual LRESULT OnNCRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 			virtual LRESULT OnNCActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 			virtual LRESULT OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+			virtual LRESULT OnSizing(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 			virtual LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+			virtual LRESULT OnMoving(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 			virtual LRESULT OnMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 			virtual LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 			virtual LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

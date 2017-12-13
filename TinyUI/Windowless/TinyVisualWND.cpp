@@ -500,6 +500,16 @@ namespace TinyUI
 			EVENT_SIZE(uMsg, wParam, lParam, bHandled);
 			return FALSE;
 		}
+		LRESULT TinyVisualWND::OnSizing(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			return FALSE;
+		}
+		LRESULT TinyVisualWND::OnMoving(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			return FALSE;
+		}
 		LRESULT TinyVisualWND::OnMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;

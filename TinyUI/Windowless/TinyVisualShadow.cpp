@@ -34,12 +34,25 @@ namespace TinyUI
 
 		DWORD TinyVisualShadow::RetrieveStyle()
 		{
-			return (WS_VISIBLE | WS_POPUP);
+			return (WS_VISIBLE | WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
 		}
 
 		DWORD TinyVisualShadow::RetrieveExStyle()
 		{
 			return (WS_EX_LAYERED | WS_EX_TRANSPARENT);
+		}
+		LRESULT TinyVisualShadow::OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = TRUE;
+			if (static_cast<BOOL>(wParam))
+			{
+				NCCALCSIZE_PARAMS* ps = reinterpret_cast<NCCALCSIZE_PARAMS*>(lParam);
+				ps->rgrc[0].left = ps->lppos->x < 0 ? 0 : ps->lppos->x;
+				ps->rgrc[0].top = ps->lppos->y < 0 ? 0 : ps->lppos->y;
+				ps->rgrc[0].bottom = ps->rgrc[0].top + ps->lppos->cy;
+				ps->rgrc[0].right = ps->rgrc[0].left + ps->lppos->cx;
+			}
+			return TRUE;
 		}
 		BOOL TinyVisualShadow::SetShadow(TinyImage* image)
 		{
@@ -62,6 +75,7 @@ namespace TinyUI
 		{
 			if (!m_hWND || !m_image || m_image->IsEmpty())
 				return FALSE;
+
 			TinyRectangle windowRect;
 			::GetWindowRect(m_hWND, &windowRect);
 			TinyWindowDC windowDC(m_hWND);

@@ -21,6 +21,8 @@ namespace TinyUI
 			DWORD RetrieveStyle() OVERRIDE;
 			DWORD RetrieveExStyle() OVERRIDE;
 		public:
+			LRESULT OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+		public:
 			BOOL SetShadow(TinyImage* image);
 			TinyRectangle GetShadowBox() const;
 			void SetShadowBox(const TinyRectangle& box);
