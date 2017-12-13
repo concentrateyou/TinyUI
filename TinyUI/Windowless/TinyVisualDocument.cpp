@@ -475,12 +475,17 @@ namespace TinyUI
 		}
 		void TinyVisualDocument::Draw(TinyVisualDC* ps, const RECT& rcPaint)
 		{
-			TinyRectangle clipBox;
-			::GetClipBox(ps->GetMemDC(), &clipBox);
-			if (::IntersectRect(&clipBox, &clipBox, &rcPaint))
+			if (ps != NULL)
 			{
-				this->Draw(m_spvisWindow, ps->GetMemDC(), clipBox);
-				ps->Render(clipBox);
+				INT iRes = SaveDC(ps->m_hDC);
+				TinyRectangle clipBox;
+				::GetClipBox(ps->GetMemDC(), &clipBox);
+				if (::IntersectRect(&clipBox, &clipBox, &rcPaint))
+				{
+					this->Draw(m_spvisWindow, ps->GetMemDC(), clipBox);
+					ps->Render(clipBox);
+				}
+				RestoreDC(ps->m_hDC, iRes);
 			}
 		}
 		void TinyVisualDocument::Draw(TinyVisual* spvis, HDC hDC, const RECT& rcPaint)

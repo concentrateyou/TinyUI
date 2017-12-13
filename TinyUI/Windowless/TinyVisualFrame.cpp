@@ -511,6 +511,11 @@ namespace TinyUI
 		LRESULT TinyVisualFrame::OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
+			if (wParam == SC_CLOSE)
+			{
+				SendMessage(m_hWND, WM_CLOSE, NULL, NULL);
+				return FALSE;
+			}
 			if (m_shadow != NULL)
 			{
 				//最小化最大化不需要阴影
@@ -524,6 +529,7 @@ namespace TinyUI
 					m_shadow.ShowWindow(SW_SHOW);
 					m_shadow.DrawShadow();
 				}
+
 			}
 			return FALSE;
 		}
