@@ -11,6 +11,9 @@ namespace TinyUI
 		m_token(0)
 	{
 	}
+	/// <summary>
+	/// C++11 编译器保证(如果指令逻辑进入一个未被初始化的声明变量，所有并发执行应当等待完成该变量完成初始化)
+	/// </summary>
 	TinyApplication* TinyApplication::GetInstance() throw()
 	{
 		static TinyApplication instance;
