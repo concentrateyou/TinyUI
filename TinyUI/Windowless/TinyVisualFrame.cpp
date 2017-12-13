@@ -519,7 +519,7 @@ namespace TinyUI
 					m_shadow.ShowWindow(SW_HIDE);
 					m_shadow.DrawShadow();
 				}
-				if (wParam == SC_RESTORE)
+				if (wParam == SC_RESTORE && !IsZoomed(m_hWND))
 				{
 					m_shadow.ShowWindow(SW_SHOW);
 					m_shadow.DrawShadow();

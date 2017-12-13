@@ -58,6 +58,7 @@
 
     <add name="loading" value="skin\animate\loading.gif"></add>
     <add name="logo" value="skin\common\logo.jpg"></add>
+	<add name="shadow" value="skin\common\shadow_bkg.png"></add>
 
   </image>
 </context>
