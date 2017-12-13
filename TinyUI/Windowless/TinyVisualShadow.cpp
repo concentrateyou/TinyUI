@@ -34,12 +34,17 @@ namespace TinyUI
 
 		DWORD TinyVisualShadow::RetrieveStyle()
 		{
-			return (WS_VISIBLE | WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
+			return (WS_VISIBLE | WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_MINIMIZEBOX);
 		}
 
 		DWORD TinyVisualShadow::RetrieveExStyle()
 		{
-			return (WS_EX_LAYERED | WS_EX_TRANSPARENT);
+			return (WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW);
+		}
+		LRESULT TinyVisualShadow::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = TRUE;
+			return TRUE;
 		}
 		LRESULT TinyVisualShadow::OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{

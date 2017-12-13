@@ -21,6 +21,7 @@ namespace TinyUI
 			DWORD RetrieveStyle() OVERRIDE;
 			DWORD RetrieveExStyle() OVERRIDE;
 		public:
+			LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		public:
 			BOOL SetShadow(TinyImage* image);
