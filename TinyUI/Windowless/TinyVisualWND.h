@@ -155,6 +155,7 @@ namespace TinyUI
 				MESSAGE_HANDLER(WM_WINDOWPOSCHANGED, OnWindowPosChanged)
 				MESSAGE_HANDLER(WM_SYSCOMMAND, OnSysCommand)
 				MESSAGE_HANDLER(WM_SHOWWINDOW, OnShowWindow)
+				MESSAGE_HANDLER(WM_ENTERSIZEMOVE, OnEnterSizeMove)
 				MESSAGE_HANDLER(WM_EXITSIZEMOVE,OnExitSizeMove)
 			END_MSG_MAP()
 			virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -221,6 +222,7 @@ namespace TinyUI
 			virtual LRESULT OnWindowPosChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 			virtual LRESULT OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 			virtual LRESULT OnShowWindow(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+			virtual LRESULT OnEnterSizeMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 			virtual LRESULT OnExitSizeMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		public:
 			Event<void(UINT, WPARAM, LPARAM, BOOL&)> EVENT_CREATE;

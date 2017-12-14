@@ -716,6 +716,11 @@ namespace TinyUI
 			bHandled = FALSE;
 			return FALSE;
 		}
+		LRESULT TinyVisualWND::OnEnterSizeMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			return FALSE;
+		}
 		LRESULT TinyVisualWND::OnExitSizeMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
