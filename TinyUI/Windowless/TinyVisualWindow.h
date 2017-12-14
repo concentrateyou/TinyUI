@@ -16,12 +16,12 @@ namespace TinyUI
 			TinyVisualWindow(TinyVisual* spvisParent, TinyVisualDocument* document);
 		public:
 			virtual ~TinyVisualWindow();
+			TinyString RetrieveTag() const OVERRIDE;
+			BOOL SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 			void OnSizeChange(const TinySize&, const TinySize&) OVERRIDE;
 			void SetPosition(const TinyPoint& pos) OVERRIDE;
 			void SetText(const TinyString& pzText) OVERRIDE;
 		public:
-			BOOL SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
-			TinyString RetrieveTag() const OVERRIDE;
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 		};
 	}

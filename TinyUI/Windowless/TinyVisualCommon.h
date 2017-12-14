@@ -41,6 +41,8 @@ namespace TinyUI
 			static const TinyString BORDERWIDTH;
 			static const TinyString BORDERCOLOR;
 			static const TinyString BORDERSTYLE;
+			static const TinyString BORDERIMAGE;
+			static const TinyString BORDERCENTER;
 
 			static const TinyString	FONTFAMILY;
 			static const TinyString	FONTSIZE;
@@ -112,6 +114,8 @@ namespace TinyUI
 			static const TinyString TEXTBOX;
 			static const TinyString STRETCH;
 			static const TinyString NATIVEWINDOW;
+			static const TinyString MENUITEM;
+
 			static const TinyString CONTEXT;
 			static const TinyString IMAGE;
 			static const TinyString ADD;

@@ -2,7 +2,7 @@
 #include "SkinWindow.h"
 
 
-IMPLEMENT_DYNAMIC(SkinWindow, TinyVisualFrame)
+IMPLEMENT_DYNAMIC(SkinWindow, TinyVisualWindowless)
 SkinWindow::SkinWindow()
 {
 	

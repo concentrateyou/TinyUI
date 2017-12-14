@@ -59,6 +59,8 @@ namespace TinyUI
 			TinyPoint			GetBackgroundPosition() const;
 			TinyColor			GetBackgroundColor() const;
 			TinyColor			GetBorderColor() const;
+			TinyImage*			GetBorderImage();
+			TinyRectangle		GetBorderCenter() const;
 			INT					GetBorderThickness() const;
 			INT					GetBorderStyle() const;
 			HRGN				GetClip() const;
@@ -101,6 +103,9 @@ namespace TinyUI
 			virtual void		SetBorderColor(COLORREF color);
 			virtual void		SetBorderThickness(INT cx);
 			virtual void		SetBorderStyle(INT style);
+			virtual void		SetBorderImage(const TinyString& szName);
+			virtual void		SetBorderImage(TinyImage* image);
+			virtual void		SetBorderCenter(const TinyRectangle& center);
 		protected:
 			virtual BOOL		OnDraw(HDC hDC, const RECT& clip);
 			virtual HRESULT		OnCreate();
@@ -170,6 +175,8 @@ namespace TinyUI
 			INT					m_borderThickness;//±ß¿òºñ¶È
 			TinyColor			m_borderColor;//±ß¿òÑÕÉ«
 			INT					m_borderStyle;//±ß¿òÑùÊ½
+			TinyImage*			m_borderImage;
+			TinyRectangle		m_borderCenter;
 			TinyColor 			m_textColor;
 			UINT				m_textAlign;
 			BOOL				m_visible;

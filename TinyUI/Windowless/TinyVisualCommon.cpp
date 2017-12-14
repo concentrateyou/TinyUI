@@ -32,6 +32,8 @@ namespace TinyUI
 		const TinyString TinyVisualProperty::BORDERWIDTH = TEXT("border-width");
 		const TinyString TinyVisualProperty::BORDERCOLOR = TEXT("border-color");
 		const TinyString TinyVisualProperty::BORDERSTYLE = TEXT("border-style");
+		const TinyString TinyVisualProperty::BORDERIMAGE = TEXT("border-image");
+		const TinyString TinyVisualProperty::BORDERCENTER = TEXT("border-center");
 
 		const TinyString TinyVisualProperty::FONTFAMILY = TEXT("font-family");
 		const TinyString TinyVisualProperty::FONTSIZE = TEXT("font-size");
@@ -169,6 +171,7 @@ namespace TinyUI
 		const TinyString TinyVisualTag::TEXTBOX = TEXT("textbox");
 		const TinyString TinyVisualTag::STRETCH = TEXT("stretch");
 		const TinyString TinyVisualTag::NATIVEWINDOW = TEXT("nativewindow");
+		const TinyString TinyVisualTag::MENUITEM = TEXT("menuitem");
 		//////////////////////////////////////////////////////////////////////////
 		TinyVisualDC::TinyVisualDC(HWND hWND)
 			:m_hWND(hWND),

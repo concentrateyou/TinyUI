@@ -16,7 +16,7 @@ using namespace TinyUI;
 using namespace TinyUI::Windowless;
 using namespace Gdiplus;
 
-class SkinWindow : public TinyVisualFrame
+class SkinWindow : public TinyVisualWindowless
 {
 	DECLARE_DYNAMIC(SkinWindow)
 public:

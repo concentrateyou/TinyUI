@@ -79,6 +79,27 @@ namespace TinyUI
 				return FALSE;
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			TinyRectangle clip = m_document->GetWindowRect(this);
+			if (m_borderImage != NULL && !m_borderImage->IsEmpty())
+			{
+				TinyRectangle srcRect = m_borderImage->GetRectangle();
+				TinyRectangle srcCenter = GetBorderCenter();
+				if (srcCenter.IsRectEmpty())
+				{
+					canvas.DrawImage(*m_borderImage, clip, srcRect);
+				}
+				else
+				{
+					canvas.DrawImage(*m_borderImage, clip, srcRect, srcCenter);
+				}
+			}
+			if (!m_borderColor.IsEmpty() && m_borderThickness != -1)
+			{
+				TinyPen pen;
+				pen.CreatePen(m_borderStyle, m_borderThickness, m_borderColor);
+				HPEN hOldPen = canvas.SetPen(pen);
+				canvas.DrawRectangle(clip);
+				canvas.SetPen(hOldPen);
+			}
 			if (m_backgroundImage != NULL && !m_backgroundImage->IsEmpty())
 			{
 				TinyRectangle srcRect = m_backgroundImage->GetRectangle();
@@ -99,15 +120,7 @@ namespace TinyUI
 				HBRUSH hOldBrush = canvas.SetBrush(brush);
 				canvas.FillRectangle(clip);
 				canvas.SetBrush(hOldBrush);
-			}
-			if (!m_borderColor.IsEmpty() && m_borderThickness != -1)
-			{
-				TinyPen pen;
-				pen.CreatePen(m_borderStyle, m_borderThickness, m_borderColor);
-				HPEN hOldPen = canvas.SetPen(pen);
-				canvas.DrawRectangle(clip);
-				canvas.SetPen(hOldPen);
-			}
+			}	
 			return TRUE;
 		}
 	}

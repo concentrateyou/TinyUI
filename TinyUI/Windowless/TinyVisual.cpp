@@ -24,6 +24,7 @@ namespace TinyUI
 			m_borderThickness(-1),
 			m_borderStyle(PS_SOLID),
 			m_backgroundImage(NULL),
+			m_borderImage(NULL),
 			m_dwCount(0)
 		{
 			LOGFONT lf;
@@ -46,8 +47,9 @@ namespace TinyUI
 			m_textColor(RGB(255, 255, 255)),
 			m_borderThickness(-1),
 			m_borderStyle(-1),
-			m_dwCount(0),
-			m_backgroundImage(NULL)
+			m_backgroundImage(NULL),
+			m_borderImage(NULL),
+			m_dwCount(0)
 		{
 			LOGFONT lf;
 			::GetObject(reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)), sizeof(LOGFONT), &lf);
@@ -149,6 +151,14 @@ namespace TinyUI
 		{
 			return m_borderStyle;
 		}
+		TinyImage* TinyVisual::GetBorderImage()
+		{
+			return m_borderImage;
+		}
+		TinyRectangle TinyVisual::GetBorderCenter() const
+		{
+			return m_borderCenter;
+		}
 		BOOL TinyVisual::IsVisible() const
 		{
 			return m_visible;
@@ -246,6 +256,22 @@ namespace TinyUI
 		void TinyVisual::SetBorderStyle(INT style)
 		{
 			m_borderStyle = style;
+		}
+		void TinyVisual::SetBorderImage(const TinyString& szName)
+		{
+			m_borderImage = TinyVisualResource::GetInstance()[szName];
+		}
+		void TinyVisual::SetBorderImage(TinyImage* image)
+		{
+			m_borderImage = image;
+			if (m_borderImage != NULL)
+			{
+				TinyVisualResource::GetInstance().Add(m_borderImage);
+			}
+		}
+		void TinyVisual::SetBorderCenter(const TinyRectangle& center)
+		{
+			m_borderCenter = center;
 		}
 		TinyPoint TinyVisual::GetPosition() const
 		{
@@ -546,6 +572,16 @@ namespace TinyUI
 				if (strcasecmp(value.STR(), "dot") == 0)
 					val = PS_DOT;
 				this->SetBorderStyle(val);
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::BORDERIMAGE.STR()) == 0)
+			{
+				this->SetBorderImage(value.STR());
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualProperty::BORDERCENTER.STR()) == 0)
+			{
+				this->SetBorderCenter(TinyVisualBuilder::GetRectangle(value));
 				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::TOOLTIP.STR()) == 0)

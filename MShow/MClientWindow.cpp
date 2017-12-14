@@ -6,7 +6,7 @@ using namespace TinyUI::Media;
 
 namespace MShow
 {
-	IMPLEMENT_DYNAMIC(MClientWindow, TinyVisualHWND);
+	IMPLEMENT_DYNAMIC(MClientWindow, TinyVisualWindowless);
 
 	MClientWindow::MClientWindow()
 	{

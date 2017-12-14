@@ -14,6 +14,8 @@ namespace TinyUI
 			friend class TinyVisualDocument;
 			DECLARE_DYNAMIC(TinyVisualMessageBox)
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualMessageBox)
+		public:
+			TinyVisualMessageBox();
 		};
 	}
 }

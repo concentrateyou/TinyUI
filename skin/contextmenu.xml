@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window name="contextmenu"
+        background-image="menu_bkg"
+        background-center="7,7,143,24"
+		border-image="menu_bkg_board"
+		border-center="5,5,136,66">
+</window>

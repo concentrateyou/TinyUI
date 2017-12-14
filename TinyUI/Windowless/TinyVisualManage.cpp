@@ -227,6 +227,7 @@ namespace TinyUI
 			Register(TinyVisualTag::LIST, CLASS_NAME(TinyVisualList));
 			Register(TinyVisualTag::LISTITEM, CLASS_NAME(TinyVisualListItem));
 			Register(TinyVisualTag::ANIMATION, CLASS_NAME(TinyVisualAnimation));
+			Register(TinyVisualTag::PANEL, CLASS_NAME(TinyVisualPanel));
 		}
 		TinyVisualResource::~TinyVisualResource()
 		{

@@ -7,5 +7,6 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
+		IMPLEMENT_DYNAMIC(TinyVisualMessageBox, TinyVisualWindowless);
 	}
 }

@@ -4,7 +4,7 @@
 
 namespace MShow
 {
-	IMPLEMENT_DYNAMIC(MSearchWindow, TinyVisualHWND);
+	IMPLEMENT_DYNAMIC(MSearchWindow, TinyVisualWindowless);
 
 	MSearchWindow::MSearchWindow()
 	{

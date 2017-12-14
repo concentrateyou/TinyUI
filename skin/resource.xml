@@ -56,6 +56,15 @@
     <add name="blue_down" value="skin\button\blue_down.png"></add>
     <add name="blue_highlight" value="skin\button\blue_highlight.png"></add>
 
+	<add name="menu_bkg" value="skin\menu\menu_bkg.png"></add>
+	<add name="menu_bkg_board" value="skin\menu\menu_bkg_board.png"></add>
+	<add name="close_highlight" value="skin\menu\close_highlight.png"></add>
+	<add name="close_normal" value="skin\menu\close_normal.png"></add>
+	<add name="menu_arrow" value="skin\menu\menu_arrow.png"></add>
+	<add name="menu_check" value="skin\menu\menu_check.png"></add>
+	<add name="menu_cutling" value="skin\menu\menu_cutling.png"></add>
+	<add name="menu_highlight" value="skin\menu\menu_highlight.png"></add>
+	
     <add name="loading" value="skin\animate\loading.gif"></add>
     <add name="logo" value="skin\common\logo.jpg"></add>
 	<add name="shadow" value="skin\common\shadow_bkg.png"></add>

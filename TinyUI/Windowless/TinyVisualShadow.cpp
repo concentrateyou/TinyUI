@@ -42,35 +42,6 @@ namespace TinyUI
 			return (WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW);
 		}
 
-		LRESULT TinyVisualShadow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-		{
-			bHandled = FALSE;
-			return FALSE;
-		}
-		LRESULT TinyVisualShadow::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-		{
-			bHandled = FALSE;
-			return FALSE;
-		}
-
-		LRESULT TinyVisualShadow::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-		{
-			bHandled = TRUE;
-			return TRUE;
-		}
-		LRESULT TinyVisualShadow::OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-		{
-			bHandled = TRUE;
-			if (static_cast<BOOL>(wParam))
-			{
-				NCCALCSIZE_PARAMS* ps = reinterpret_cast<NCCALCSIZE_PARAMS*>(lParam);
-				ps->rgrc[0].left = ps->lppos->x < 0 ? 0 : ps->lppos->x;
-				ps->rgrc[0].top = ps->lppos->y < 0 ? 0 : ps->lppos->y;
-				ps->rgrc[0].bottom = ps->rgrc[0].top + ps->lppos->cy;
-				ps->rgrc[0].right = ps->rgrc[0].left + ps->lppos->cx;
-			}
-			return TRUE;
-		}
 		BOOL TinyVisualShadow::SetShadow(TinyImage* image)
 		{
 			if (image != NULL && !image->IsEmpty())
