@@ -62,10 +62,14 @@ namespace TinyUI
 					m_hMemDC = NULL;
 				}
 				m_hMemDC = ::CreateCompatibleDC(m_hDC);
-				ASSERT(m_hMemDC);
-				m_hBitmap = ::CreateCompatibleBitmap(m_hDC, m_size.cx, m_size.cy);
-				ASSERT(m_hBitmap);
-				m_hOldBitmap = (HBITMAP)::SelectObject(m_hMemDC, m_hBitmap);
+				if (m_hMemDC != NULL)
+				{
+					m_hBitmap = ::CreateCompatibleBitmap(m_hDC, m_size.cx, m_size.cy);
+				}
+				if (m_hBitmap != NULL)
+				{
+					m_hOldBitmap = (HBITMAP)::SelectObject(m_hMemDC, m_hBitmap);
+				}
 			}
 		}
 		void ShadowDC::EndDraw()
@@ -132,7 +136,6 @@ namespace TinyUI
 		LRESULT TinyVisualShadow::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = TRUE;
-
 			return TRUE;
 		}
 		LRESULT TinyVisualShadow::OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
