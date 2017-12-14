@@ -471,7 +471,7 @@ namespace TinyUI
 		BOOL TinyVisualDocument::Redraw(RECT *lprcUpdate, HRGN hrgnUpdate)
 		{
 			ASSERT(m_pWindow);
-			return ::RedrawWindow(m_pWindow->Handle(), lprcUpdate, hrgnUpdate, RDW_INVALIDATE | RDW_UPDATENOW);
+			return ::RedrawWindow(m_pWindow->Handle(), lprcUpdate, hrgnUpdate, RDW_INVALIDATE);
 		}
 		void TinyVisualDocument::Draw(TinyVisualDC* ps, const RECT& rcPaint)
 		{

@@ -160,7 +160,7 @@ namespace TinyUI
 				{
 					m_visualDC->SetSize(m_size.cx, m_size.cy);
 					m_document->OnSize(m_size);
-					::RedrawWindow(m_hWND, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+					::RedrawWindow(m_hWND, NULL, NULL, RDW_INVALIDATE);
 				}
 			}
 			if (m_shadow != NULL)
