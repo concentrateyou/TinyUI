@@ -195,7 +195,7 @@ namespace TinyUI
 				{
 					if (m_hOldBitmap != NULL)
 					{
-						SelectObject(m_hMemDC, m_hOldBitmap);
+						::SelectObject(m_hMemDC, m_hOldBitmap);
 						m_hOldBitmap = NULL;
 					}
 					::DeleteDC(m_hMemDC);

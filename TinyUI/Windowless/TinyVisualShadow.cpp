@@ -55,14 +55,16 @@ namespace TinyUI
 				{
 					if (m_hOldBitmap != NULL)
 					{
-						SelectObject(m_hMemDC, m_hOldBitmap);
+						::SelectObject(m_hMemDC, m_hOldBitmap);
 						m_hOldBitmap = NULL;
 					}
 					::DeleteDC(m_hMemDC);
 					m_hMemDC = NULL;
 				}
 				m_hMemDC = ::CreateCompatibleDC(m_hDC);
+				ASSERT(m_hMemDC);
 				m_hBitmap = ::CreateCompatibleBitmap(m_hDC, m_size.cx, m_size.cy);
+				ASSERT(m_hBitmap);
 				m_hOldBitmap = (HBITMAP)::SelectObject(m_hMemDC, m_hBitmap);
 			}
 		}
