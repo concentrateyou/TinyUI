@@ -1263,14 +1263,16 @@ namespace TinyUI
 #pragma region TinyMemDC
 	IMPLEMENT_DYNAMIC(TinyMemDC, TinyDC);
 	TinyMemDC::TinyMemDC(HDC hDC, INT cx, INT cy)
-		:m_hDestDC(hDC), m_hOldBitmap(NULL)
+		:m_hDestDC(hDC),
+		m_hBitmap(NULL),
+		m_hOldBitmap(NULL)
 	{
 		m_size.cx = cx;
 		m_size.cy = cy;
 		if (Attach(::CreateCompatibleDC(hDC)))
 		{
-			m_bitmap = ::CreateCompatibleBitmap(hDC, cx, cy);
-			m_hOldBitmap = (HBITMAP)::SelectObject(m_hDC, m_bitmap);
+			m_hBitmap = ::CreateCompatibleBitmap(hDC, cx, cy);
+			m_hOldBitmap = (HBITMAP)::SelectObject(m_hDC, m_hBitmap);
 		}
 	}
 	TinyMemDC::TinyMemDC(HDC hDC, HBITMAP hBitmap)
@@ -1287,14 +1289,16 @@ namespace TinyUI
 		}
 	}
 	TinyMemDC::TinyMemDC(TinyDC& dc, INT cx, INT cy)
-		:m_hDestDC(dc), m_hOldBitmap(NULL)
+		:m_hDestDC(dc),
+		m_hBitmap(NULL),
+		m_hOldBitmap(NULL)
 	{
 		m_size.cx = cx;
 		m_size.cy = cy;
 		if (Attach(::CreateCompatibleDC(dc)))
 		{
-			m_bitmap = ::CreateCompatibleBitmap(dc, cx, cy);
-			m_hOldBitmap = (HBITMAP)::SelectObject(m_hDC, m_bitmap);
+			m_hBitmap = ::CreateCompatibleBitmap(dc, cx, cy);
+			m_hOldBitmap = (HBITMAP)::SelectObject(m_hDC, m_hBitmap);
 		}
 	}
 
@@ -1500,7 +1504,7 @@ namespace TinyUI
 	}
 	TinyMemDC::~TinyMemDC()
 	{
-		SAFE_DELETE_OBJECT(m_bitmap);
+		SAFE_DELETE_OBJECT(m_hBitmap);
 		if (m_hDC != NULL)
 		{
 			::SelectObject(m_hDC, m_hOldBitmap);

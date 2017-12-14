@@ -173,8 +173,8 @@ namespace TinyUI
 		TinyVisualDC::TinyVisualDC(HWND hWND)
 			:m_hWND(hWND),
 			m_hMemDC(NULL),
-			m_hMemBitmap(NULL),
-			m_OldBitmap(NULL)
+			m_hBitmap(NULL),
+			m_hOldBitmap(NULL)
 		{
 			ASSERT(m_hWND);
 			HDC hDC = ::GetDC(m_hWND);
@@ -190,13 +190,13 @@ namespace TinyUI
 			ASSERT(m_hWND);
 			if (m_hDC != NULL)
 			{
-				SAFE_DELETE_OBJECT(m_hMemBitmap);
+				SAFE_DELETE_OBJECT(m_hBitmap);
 				if (m_hMemDC != NULL)
 				{
-					if (m_OldBitmap != NULL)
+					if (m_hOldBitmap != NULL)
 					{
-						SelectObject(m_hMemDC, m_OldBitmap);
-						m_OldBitmap = NULL;
+						SelectObject(m_hMemDC, m_hOldBitmap);
+						m_hOldBitmap = NULL;
 					}
 					::DeleteDC(m_hMemDC);
 					m_hMemDC = NULL;
@@ -212,20 +212,20 @@ namespace TinyUI
 			{
 				m_size.cx = cx;
 				m_size.cy = cy;
-				SAFE_DELETE_OBJECT(m_hMemBitmap);
+				SAFE_DELETE_OBJECT(m_hBitmap);
 				if (m_hMemDC != NULL)
 				{
-					if (m_OldBitmap != NULL)
+					if (m_hOldBitmap != NULL)
 					{
-						SelectObject(m_hMemDC, m_OldBitmap);
-						m_OldBitmap = NULL;
+						SelectObject(m_hMemDC, m_hOldBitmap);
+						m_hOldBitmap = NULL;
 					}
 					::DeleteDC(m_hMemDC);
 					m_hMemDC = NULL;
 				}
 				m_hMemDC = ::CreateCompatibleDC(m_hDC);
-				m_hMemBitmap = ::CreateCompatibleBitmap(m_hDC, m_size.cx, m_size.cy);
-				m_OldBitmap = (HBITMAP)::SelectObject(m_hMemDC, m_hMemBitmap);
+				m_hBitmap = ::CreateCompatibleBitmap(m_hDC, m_size.cx, m_size.cy);
+				m_hOldBitmap = (HBITMAP)::SelectObject(m_hMemDC, m_hBitmap);
 			}
 		}
 		HDC	 TinyVisualDC::GetMemDC() const
@@ -234,17 +234,17 @@ namespace TinyUI
 		}
 		BOOL TinyVisualDC::Render(const RECT& s)
 		{
-			if (!m_hMemDC || !m_hMemBitmap) return FALSE;
+			if (!m_hMemDC || !m_hBitmap) return FALSE;
 			return ::BitBlt(m_hDC, s.left, s.top, TO_CX(s), TO_CY(s), m_hMemDC, s.left, s.top, SRCCOPY);
 		}
 		BOOL TinyVisualDC::Render(const RECT& s, INT x, INT y)
 		{
-			if (!m_hMemDC || !m_hMemBitmap) return FALSE;
+			if (!m_hMemDC || !m_hBitmap) return FALSE;
 			return ::BitBlt(m_hDC, s.left, s.top, TO_CX(s), TO_CY(s), m_hMemDC, x, y, SRCCOPY);
 		}
 		BOOL TinyVisualDC::RenderLayer(const RECT& s)
 		{
-			if (!m_hMemDC || !m_hMemBitmap) return FALSE;
+			if (!m_hMemDC || !m_hBitmap) return FALSE;
 			if (::BitBlt(m_hDC, s.left, s.top, TO_CX(s), TO_CY(s), m_hMemDC, s.left, s.top, SRCCOPY))
 			{
 				HDC hScreenDC = GetDC(NULL);
@@ -265,7 +265,7 @@ namespace TinyUI
 		}
 		BOOL TinyVisualDC::RenderLayer(const RECT& s, INT x, INT y)
 		{
-			if (!m_hMemDC || !m_hMemBitmap) return FALSE;
+			if (!m_hMemDC || !m_hBitmap) return FALSE;
 			if (::BitBlt(m_hDC, s.left, s.top, TO_CX(s), TO_CY(s), m_hMemDC, x, y, SRCCOPY))
 			{
 				HDC hScreenDC = GetDC(NULL);

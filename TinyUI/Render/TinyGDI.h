@@ -373,7 +373,7 @@ namespace TinyUI
 	private:
 		SIZE		m_size;
 		HDC			m_hDestDC;
-		HBITMAP		m_bitmap;
+		HBITMAP		m_hBitmap;
 		HBITMAP		m_hOldBitmap;
 	};
 	/// <summary>

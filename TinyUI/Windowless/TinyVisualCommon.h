@@ -146,7 +146,7 @@ namespace TinyUI
 		{
 		public:
 			TinyVisualDC(HWND hWND);
-			~TinyVisualDC();
+			virtual ~TinyVisualDC();
 			void SetSize(INT cx, INT cy);
 			HDC	 GetMemDC() const;
 			BOOL Render(const RECT& s);
@@ -155,10 +155,10 @@ namespace TinyUI
 			BOOL RenderLayer(const RECT& s, INT x, INT y);
 		protected:
 			HWND		m_hWND;
-			TinySize	m_size;
 			HDC			m_hMemDC;
-			HBITMAP		m_hMemBitmap;
-			HBITMAP		m_OldBitmap;
+			HBITMAP		m_hBitmap;
+			HBITMAP		m_hOldBitmap;
+			TinySize	m_size;
 		};
 	}
 }
