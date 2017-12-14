@@ -190,10 +190,6 @@ namespace TinyUI
 				INT x = m_pos.x - box.left;
 				INT y = m_pos.y - box.top;
 				::SetWindowPos(m_shadow.Handle(), NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
-				if (IsWindowVisible(m_hWND))
-				{
-					m_shadow.DrawShadow();
-				}
 			}
 			return FALSE;
 		}

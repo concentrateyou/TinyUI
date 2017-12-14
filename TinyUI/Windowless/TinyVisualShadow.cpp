@@ -7,83 +7,6 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		ShadowDC::ShadowDC(HWND hWND)
-			:m_hWND(hWND),
-			m_hMemDC(NULL),
-			m_hBitmap(NULL),
-			m_hOldBitmap(NULL)
-		{
-			ASSERT(m_hWND);
-			HDC hDC = ::GetWindowDC(m_hWND);
-			Attach(hDC);
-			SetGraphicsMode(hDC, GM_ADVANCED);
-			SetBkMode(hDC, TRANSPARENT);
-		}
-		ShadowDC::~ShadowDC()
-		{
-			ASSERT(m_hWND);
-			if (m_hDC != NULL)
-			{
-				SAFE_DELETE_OBJECT(m_hBitmap);
-				if (m_hMemDC != NULL)
-				{
-					if (m_hOldBitmap != NULL)
-					{
-						SelectObject(m_hMemDC, m_hOldBitmap);
-						m_hOldBitmap = NULL;
-					}
-					::DeleteDC(m_hMemDC);
-					m_hMemDC = NULL;
-				}
-				HDC hDC = Detach();
-				::ReleaseDC(m_hWND, hDC);
-			}
-		}
-		void ShadowDC::BeginDraw(const TinySize& size)
-		{
-			BeginDraw(size.cx, size.cy);
-		}
-		void ShadowDC::BeginDraw(INT cx, INT cy)
-		{
-			ASSERT(m_hDC);
-			if (m_size.cx != cx || m_size.cy != cy)
-			{
-				m_size.cx = cx;
-				m_size.cy = cy;
-				SAFE_DELETE_OBJECT(m_hBitmap);
-				if (m_hMemDC != NULL)
-				{
-					if (m_hOldBitmap != NULL)
-					{
-						::SelectObject(m_hMemDC, m_hOldBitmap);
-						m_hOldBitmap = NULL;
-					}
-					::DeleteDC(m_hMemDC);
-					m_hMemDC = NULL;
-				}
-				m_hMemDC = ::CreateCompatibleDC(m_hDC);
-				if (m_hMemDC != NULL)
-				{
-					m_hBitmap = ::CreateCompatibleBitmap(m_hDC, m_size.cx, m_size.cy);
-				}
-				if (m_hBitmap != NULL)
-				{
-					m_hOldBitmap = (HBITMAP)::SelectObject(m_hMemDC, m_hBitmap);
-				}
-			}
-		}
-		void ShadowDC::EndDraw()
-		{
-			if (m_hMemDC != NULL && m_hOldBitmap != NULL)
-			{
-				::SelectObject(m_hMemDC, m_hOldBitmap);
-			}
-		}
-		HDC	 ShadowDC::GetMemDC() const
-		{
-			return m_hMemDC;
-		}
-		//////////////////////////////////////////////////////////////////////////
 		TinyVisualShadow::TinyVisualShadow()
 			:m_image(NULL)
 		{
@@ -122,14 +45,11 @@ namespace TinyUI
 		LRESULT TinyVisualShadow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
-			m_shadowDC.Reset(new ShadowDC(m_hWND));
-			ASSERT(m_shadowDC);
 			return FALSE;
 		}
 		LRESULT TinyVisualShadow::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
-			m_shadowDC.Reset(NULL);
 			return FALSE;
 		}
 
@@ -170,15 +90,27 @@ namespace TinyUI
 		}
 		BOOL TinyVisualShadow::DrawShadow()
 		{
-			if (!m_hWND || !m_shadowDC)
-				return FALSE;
-			if (!m_image || m_image->IsEmpty())
+			if (!m_hWND || !m_image || m_image->IsEmpty())
 				return FALSE;
 			TinyRectangle windowRect;
 			::GetWindowRect(m_hWND, &windowRect);
-			m_shadowDC->BeginDraw(windowRect.Size());
+			TinyWindowDC windowDC(m_hWND);
+			HDC hMemDC = ::CreateCompatibleDC(windowDC);
+			if (!hMemDC)
+				return FALSE;
+			HBITMAP hBitmap = ::CreateCompatibleBitmap(windowDC, windowRect.Width(), windowRect.Height());
+			if (!hBitmap)
+			{
+				if (hMemDC != NULL)
+				{
+					::DeleteDC(hMemDC);
+					hMemDC = NULL;
+				}
+				return FALSE;
+			}
+			HBITMAP hOldBitmap = (HBITMAP)::SelectObject(hMemDC, hBitmap);
 			BLENDFUNCTION bs = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
-			TinyMemDC memDC(m_shadowDC->GetMemDC(), m_image->GetHBITMAP(0));
+			TinyMemDC memDC(hMemDC, m_image->GetHBITMAP(0));
 			TinyRectangle dst;
 			dst.SetRect(0, 0, windowRect.Width(), windowRect.Height());
 			TinyRectangle dstCenter = dst;
@@ -196,9 +128,14 @@ namespace TinyUI
 			TinyPoint pos;
 			TinyPoint dstPos = windowRect.Position();
 			TinySize  dstSize = windowRect.Size();
-			::UpdateLayeredWindow(m_hWND, m_shadowDC->Handle(), &dstPos, &dstSize, m_shadowDC->GetMemDC(), &pos, 0, &bs, 2);
-			m_shadowDC->EndDraw();
-			return TRUE;
+			BOOL bRes = ::UpdateLayeredWindow(m_hWND, windowDC, &dstPos, &dstSize, hMemDC, &pos, 0, &bs, 2);
+			::SelectObject(hMemDC, hOldBitmap);
+			::DeleteDC(hMemDC);
+			::DeleteObject(hBitmap);
+			hMemDC = NULL;
+			hBitmap = NULL;
+			hOldBitmap = NULL;
+			return bRes;
 		}
 	}
 }

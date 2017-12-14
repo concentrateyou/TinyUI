@@ -6,23 +6,6 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		class ShadowDC : public TinyHandleHDC
-		{
-			DISALLOW_COPY_AND_ASSIGN(ShadowDC)
-		public:
-			ShadowDC(HWND hWND);
-			virtual ~ShadowDC();
-			void BeginDraw(INT cx, INT cy);
-			void BeginDraw(const TinySize& size);
-			void EndDraw();
-			HDC	 GetMemDC() const;
-		protected:
-			HWND		m_hWND;
-			HDC			m_hMemDC;
-			HBITMAP		m_hBitmap;
-			HBITMAP		m_hOldBitmap;
-			TinySize	m_size;
-		};
 		/// <summary>
 		/// ±êÌâÀ¸ÈÝÆ÷¿Ø¼þ
 		/// </summary>
@@ -50,7 +33,6 @@ namespace TinyUI
 		private:
 			TinyImage*				m_image;
 			TinyRectangle			m_box;
-			TinyScopedPtr<ShadowDC>	m_shadowDC;
 		};
 	}
 }
