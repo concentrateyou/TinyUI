@@ -1,5 +1,5 @@
 #include "../stdafx.h"
-#include "TinyVisualFrame.h"
+#include "TinyVisualWindowless.h"
 #include "TinyVisualWindow.h"
 #include "TinyVisualDocument.h"
 #include "TinyVisualComboBox.h"
@@ -8,7 +8,7 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		TinyVisualDocument::TinyVisualDocument(TinyVisualFrame* pWindow)
+		TinyVisualDocument::TinyVisualDocument(TinyVisualWindowless* pWindow)
 			:m_spvisWindow(NULL),
 			m_spvisCapture(NULL),
 			m_spvisFocus(NULL),
@@ -49,7 +49,7 @@ namespace TinyUI
 			m_spvisLastMouse = NULL;
 			Destory(m_spvisWindow);
 		}
-		TinyVisualFrame*	TinyVisualDocument::GetVisualHWND() const
+		TinyVisualWindowless*	TinyVisualDocument::GetVisualHWND() const
 		{
 			return m_pWindow;
 		}

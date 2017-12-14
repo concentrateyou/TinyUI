@@ -1,5 +1,5 @@
 #include "../stdafx.h"
-#include "TinyVisualFrame.h"
+#include "TinyVisualWindowless.h"
 #include "TinyVisualManage.h"
 #include "TinyVisualDocument.h"
 #include "TinyVisualTextBox.h"

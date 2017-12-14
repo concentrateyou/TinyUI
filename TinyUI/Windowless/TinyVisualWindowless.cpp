@@ -1,5 +1,5 @@
 #include "../stdafx.h"
-#include "TinyVisualFrame.h"
+#include "TinyVisualWindowless.h"
 #include "../Render/TinyTransform.h"
 #include "../Render/TinyCanvas.h"
 
@@ -7,8 +7,8 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		IMPLEMENT_DYNAMIC(TinyVisualFrame, TinyVisualWND);
-		TinyVisualFrame::TinyVisualFrame()
+		IMPLEMENT_DYNAMIC(TinyVisualWindowless, TinyVisualWND);
+		TinyVisualWindowless::TinyVisualWindowless()
 			:m_document(NULL),
 			m_visualDC(NULL),
 			m_bMouseTracking(FALSE),
@@ -16,66 +16,66 @@ namespace TinyUI
 		{
 
 		}
-		TinyVisualFrame::~TinyVisualFrame()
+		TinyVisualWindowless::~TinyVisualWindowless()
 		{
 
 		}
-		BOOL TinyVisualFrame::Create(HWND hParent, LPCSTR pszFile)
+		BOOL TinyVisualWindowless::Create(HWND hParent, LPCSTR pszFile)
 		{
 			m_szSkinFile = pszFile;
 			if (!TinyVisualWND::Create(hParent, 0, 0, 0, 0))
 				return FALSE;
 			return TRUE;
 		}
-		BOOL TinyVisualFrame::Create(HWND hParent, LPCTSTR lpTemplateName, LPCSTR pszFile)
+		BOOL TinyVisualWindowless::Create(HWND hParent, LPCTSTR lpTemplateName, LPCSTR pszFile)
 		{
 			m_szSkinFile = pszFile;
 			if (!TinyVisualWND::Create(hParent, lpTemplateName))
 				return FALSE;
 			return TRUE;
 		}
-		BOOL TinyVisualFrame::Create(HWND hParent, WORD wInteger, LPCSTR pszFile)
+		BOOL TinyVisualWindowless::Create(HWND hParent, WORD wInteger, LPCSTR pszFile)
 		{
 			m_szSkinFile = pszFile;
 			if (!TinyVisualWND::Create(hParent, wInteger))
 				return FALSE;
 			return TRUE;
 		}
-		INT_PTR TinyVisualFrame::DoModal(HWND hParent, WORD wInteger, LPCSTR pszFile)
+		INT_PTR TinyVisualWindowless::DoModal(HWND hParent, WORD wInteger, LPCSTR pszFile)
 		{
 			m_szSkinFile = pszFile;
 			return TinyVisualWND::DoModal(hParent, wInteger);
 		}
-		INT_PTR TinyVisualFrame::DoModal(HWND hParent, LPCTSTR lpTemplateName, LPCSTR pszFile)
+		INT_PTR TinyVisualWindowless::DoModal(HWND hParent, LPCTSTR lpTemplateName, LPCSTR pszFile)
 		{
 			m_szSkinFile = pszFile;
 			return TinyVisualWND::DoModal(hParent, lpTemplateName);
 		}
-		DWORD TinyVisualFrame::RetrieveStyle()
+		DWORD TinyVisualWindowless::RetrieveStyle()
 		{
 			return (WS_POPUP | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_MINIMIZEBOX);
 		}
-		DWORD TinyVisualFrame::RetrieveExStyle()
+		DWORD TinyVisualWindowless::RetrieveExStyle()
 		{
 			return (WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_OVERLAPPEDWINDOW);
 		}
-		LPCSTR TinyVisualFrame::RetrieveClassName()
+		LPCSTR TinyVisualWindowless::RetrieveClassName()
 		{
 			return TEXT("TinyVisualHWND");
 		}
-		LPCSTR TinyVisualFrame::RetrieveTitle()
+		LPCSTR TinyVisualWindowless::RetrieveTitle()
 		{
 			return TEXT("TinyVisualHWND");
 		}
-		HICON TinyVisualFrame::RetrieveIcon()
+		HICON TinyVisualWindowless::RetrieveIcon()
 		{
 			return NULL;
 		}
-		TinyVisualDocument*	TinyVisualFrame::GetDocument()
+		TinyVisualDocument*	TinyVisualWindowless::GetDocument()
 		{
 			return m_document;
 		}
-		BOOL TinyVisualFrame::Initialize()
+		BOOL TinyVisualWindowless::Initialize()
 		{
 			if (!PathFileExists(m_szSkinFile.CSTR()))
 				return FALSE;
@@ -92,7 +92,7 @@ namespace TinyUI
 			this->OnInitialize();
 			return m_shadow.Create(m_hWND, 0, 0, 0, 0);
 		}
-		void TinyVisualFrame::Uninitialize()
+		void TinyVisualWindowless::Uninitialize()
 		{
 			if (m_document != NULL)
 				m_document->Uninitialize();
@@ -100,23 +100,23 @@ namespace TinyUI
 			m_visualDC.Reset(NULL);
 			m_shadow.DestroyWindow();
 		}
-		BOOL TinyVisualFrame::AddFilter(TinyVisualFilter* ps)
+		BOOL TinyVisualWindowless::AddFilter(TinyVisualFilter* ps)
 		{
 			return m_mFilters.Add(ps);
 		}
-		BOOL TinyVisualFrame::RemoveFilter(TinyVisualFilter* ps)
+		BOOL TinyVisualWindowless::RemoveFilter(TinyVisualFilter* ps)
 		{
 			return m_mFilters.Remove(ps);
 		}
-		void TinyVisualFrame::AllowTracking(BOOL bAllow)
+		void TinyVisualWindowless::AllowTracking(BOOL bAllow)
 		{
 			m_bAllowTracking = bAllow;
 		}
-		TinyVisualShadow& TinyVisualFrame::GetShadow()
+		TinyVisualShadow& TinyVisualWindowless::GetShadow()
 		{
 			return m_shadow;
 		}
-		BOOL TinyVisualFrame::ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
+		BOOL TinyVisualWindowless::ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
 		{
 			for (INT i = m_mFilters.GetSize() - 1; i >= 0; i--)
 			{
@@ -128,7 +128,7 @@ namespace TinyUI
 			}
 			return TinyVisualWND::ProcessWindowMessage(hWnd, uMsg, wParam, lParam, lResult);
 		}
-		LRESULT TinyVisualFrame::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			if (m_document != NULL)
@@ -144,12 +144,12 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		LRESULT TinyVisualFrame::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = TRUE;
 			return TRUE;
 		}
-		LRESULT TinyVisualFrame::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			if (lParam != NULL)
@@ -176,7 +176,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		LRESULT TinyVisualFrame::OnMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			if (lParam != NULL)
@@ -194,14 +194,14 @@ namespace TinyUI
 			return FALSE;
 		}
 
-		LRESULT TinyVisualFrame::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			PostQuitMessage(0);//退出应用程序
 			return FALSE;
 		}
 
-		LRESULT TinyVisualFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			BOOL bRes = TinyVisualWND::OnCreate(uMsg, wParam, lParam, bHandled);
@@ -209,7 +209,7 @@ namespace TinyUI
 				PostQuitMessage(0);//直接退出
 			return bRes;
 		}
-		LRESULT TinyVisualFrame::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			BOOL bRes = TinyVisualWND::OnDestory(uMsg, wParam, lParam, bHandled);
@@ -217,7 +217,7 @@ namespace TinyUI
 			Uninitialize();
 			return bRes;
 		}
-		LRESULT TinyVisualFrame::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			BOOL bRes = TinyVisualWND::OnInitDialog(uMsg, wParam, lParam, bHandled);
@@ -225,7 +225,7 @@ namespace TinyUI
 				PostQuitMessage(0);//直接退出
 			return bRes;
 		}
-		LRESULT TinyVisualFrame::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			if (m_document != NULL)
@@ -249,7 +249,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		LRESULT TinyVisualFrame::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			if (m_document != NULL)
@@ -265,7 +265,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		LRESULT TinyVisualFrame::OnMouseWheel(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnMouseWheel(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			if (m_document != NULL)
@@ -278,7 +278,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		LRESULT TinyVisualFrame::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			if (m_document != NULL)
@@ -290,7 +290,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		LRESULT TinyVisualFrame::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			if (m_document != NULL)
@@ -302,7 +302,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		LRESULT TinyVisualFrame::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			if (m_document != NULL)
@@ -314,7 +314,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		LRESULT TinyVisualFrame::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			if (m_document != NULL)
@@ -326,7 +326,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		LRESULT TinyVisualFrame::OnRButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnRButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			if (m_document != NULL)
@@ -338,7 +338,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		LRESULT TinyVisualFrame::OnRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			if (m_document != NULL)
@@ -350,7 +350,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		LRESULT TinyVisualFrame::OnMButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnMButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			if (m_document != NULL)
@@ -362,7 +362,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		LRESULT TinyVisualFrame::OnMButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnMButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			if (m_document != NULL)
@@ -374,7 +374,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		LRESULT TinyVisualFrame::OnMButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnMButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			if (m_document != NULL)
@@ -386,7 +386,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		LRESULT TinyVisualFrame::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			if (m_document != NULL)
@@ -397,7 +397,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		LRESULT TinyVisualFrame::OnKeyUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnKeyUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			if (m_document != NULL)
@@ -408,7 +408,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		LRESULT TinyVisualFrame::OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			if (m_document != NULL)
@@ -419,7 +419,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		LRESULT TinyVisualFrame::OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			if (m_document != NULL)
@@ -430,7 +430,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		LRESULT TinyVisualFrame::OnSetFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnSetFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			if (m_document != NULL)
@@ -441,7 +441,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		LRESULT TinyVisualFrame::OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
 			if (m_document != NULL)
@@ -452,7 +452,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		LRESULT TinyVisualFrame::OnShowWindow(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnShowWindow(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			if (m_shadow != NULL)
@@ -461,7 +461,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		LRESULT TinyVisualFrame::OnExitSizeMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnExitSizeMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			if (IsWindowVisible(m_hWND))
@@ -470,7 +470,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		LRESULT TinyVisualFrame::OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			if (wParam == SC_CLOSE)
@@ -495,7 +495,7 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		LRESULT TinyVisualFrame::OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = TRUE;
 			if (static_cast<BOOL>(wParam))
@@ -508,7 +508,7 @@ namespace TinyUI
 			}
 			return TRUE;
 		}
-		LRESULT TinyVisualFrame::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = TRUE;
 			if (m_document != NULL)
@@ -542,7 +542,7 @@ namespace TinyUI
 			}
 			return HTCLIENT;
 		}
-		LRESULT TinyVisualFrame::OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualWindowless::OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = TRUE;
 			if (m_document != NULL)

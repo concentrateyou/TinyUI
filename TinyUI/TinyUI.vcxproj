@@ -301,7 +301,9 @@
     <ClInclude Include="Windowless\TinyTextHost.h" />
     <ClInclude Include="Windowless\TinyVisualAnimation.h" />
     <ClInclude Include="Windowless\TinyVisualCaption.h" />
+    <ClInclude Include="Windowless\TinyVisualContextMenu.h" />
     <ClInclude Include="Windowless\TinyVisualList.h" />
+    <ClInclude Include="Windowless\TinyVisualMessageBox.h" />
     <ClInclude Include="Windowless\TinyVisualNative.h" />
     <ClInclude Include="Windowless\TinyVisualPanel.h" />
     <ClInclude Include="Windowless\TinyVisualShadow.h" />
@@ -318,7 +320,7 @@
     <ClInclude Include="Windowless\TinyVisualManage.h" />
     <ClInclude Include="Windowless\TinyVisual.h" />
     <ClInclude Include="Windowless\TinyVisualEvent.h" />
-    <ClInclude Include="Windowless\TinyVisualFrame.h" />
+    <ClInclude Include="Windowless\TinyVisualWindowless.h" />
     <ClInclude Include="Windowless\TinyVisualDocument.h" />
     <ClInclude Include="Windowless\TinyVisualWND.h" />
     <ClInclude Include="XML\tinystr.h" />
@@ -452,8 +454,10 @@
     <ClCompile Include="Windowless\TinyTextHost.cpp" />
     <ClCompile Include="Windowless\TinyVisualAnimation.cpp" />
     <ClCompile Include="Windowless\TinyVisualCaption.cpp" />
-    <ClCompile Include="Windowless\TinyVisualFrame.cpp" />
+    <ClCompile Include="Windowless\TinyVisualContextMenu.cpp" />
+    <ClCompile Include="Windowless\TinyVisualWindowless.cpp" />
     <ClCompile Include="Windowless\TinyVisualList.cpp" />
+    <ClCompile Include="Windowless\TinyVisualMessageBox.cpp" />
     <ClCompile Include="Windowless\TinyVisualNative.cpp" />
     <ClCompile Include="Windowless\TinyVisualPanel.cpp" />
     <ClCompile Include="Windowless\TinyVisualShadow.cpp" />

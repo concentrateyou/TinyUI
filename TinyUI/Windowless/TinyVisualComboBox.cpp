@@ -356,7 +356,7 @@ namespace TinyUI
 		{
 			if (m_document != NULL)
 			{
-				TinyVisualFrame* pHWND = m_document->GetVisualHWND();
+				TinyVisualWindowless* pHWND = m_document->GetVisualHWND();
 				if (pHWND->IsKindOf(RUNTIME_CLASS(TinyVisualComboBoxHWND)))
 				{
 					TinyVisualComboBoxHWND*	ps = static_cast<TinyVisualComboBoxHWND*>(pHWND);

@@ -18,7 +18,7 @@ namespace TinyUI
 #define NOZORDER        0x0004
 #define NOREDRAW        
 		class TinyVisual;
-		class TinyVisualFrame;
+		class TinyVisualWindowless;
 		/// <summary>
 		/// 可视化文档
 		/// </summary>
@@ -26,10 +26,10 @@ namespace TinyUI
 		{
 			friend class TinyVisualBuilder;
 			friend class TinyVisualFactory;
-			friend class TinyVisualFrame;
+			friend class TinyVisualWindowless;
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualDocument)
 		public:
-			TinyVisualDocument(TinyVisualFrame* pv);
+			TinyVisualDocument(TinyVisualWindowless* pv);
 			virtual ~TinyVisualDocument();
 			virtual BOOL	Initialize(TinyVisualBuilder* builder);
 			virtual void	Uninitialize();
@@ -39,7 +39,7 @@ namespace TinyUI
 			BOOL			Destory(TinyVisual* spvis);
 		public:
 			HWND				Handle() const;
-			TinyVisualFrame*	GetVisualHWND() const;
+			TinyVisualWindowless*	GetVisualHWND() const;
 			TinyVisualDC*		GetVisualDC() const;
 			TinyVisual*			GetVisual(TinyVisual* spvis, UINT cmd) const;
 			TinyVisual*			SetParent(TinyVisual* spvis, TinyVisual* spvisNewParent);
@@ -116,7 +116,7 @@ namespace TinyUI
 			TinyVisual*							m_spvisFocus;
 			TinyVisual*							m_spvisActive;
 			TinyVisual*							m_spvisLastMouse;//当前鼠标所在的元素
-			TinyVisualFrame*					m_pWindow;
+			TinyVisualWindowless*					m_pWindow;
 			TinyScopedPtr<TinyVisualBuilder>	m_parse;
 			TinyScopedPtr<TinyVisualFactory>	m_factory;
 		public:

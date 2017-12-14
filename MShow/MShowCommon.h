@@ -16,7 +16,7 @@
 #include "Control/TinyControl.h"
 #include "Control/TinyTabControl.h"
 #include "Control/TinyButton.h"
-#include "Windowless/TinyVisualFrame.h"
+#include "Windowless/TinyVisualWindowless.h"
 #include "Windowless/TinyVisualDocument.h"
 #include "Windowless/TinyVisualNative.h"
 #include "Windowless/TinyVisualComboBox.h"

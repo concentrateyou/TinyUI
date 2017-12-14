@@ -9,7 +9,7 @@ namespace MShow
 	/// <summary>
 	/// Ö÷´°¿ÚUI
 	/// </summary>
-	class MSearchWindow : public TinyVisualFrame
+	class MSearchWindow : public TinyVisualWindowless
 	{
 		friend class MSearchController;
 		DECLARE_DYNAMIC(MSearchWindow)

@@ -12,13 +12,13 @@ namespace TinyUI
 		/// <summary>
 		/// ´°¿Ú¿ò¼ÜÀà
 		/// </summary>
-		class TinyVisualFrame : public TinyVisualWND
+		class TinyVisualWindowless : public TinyVisualWND
 		{
 			friend class TinyVisualDocument;
-			DECLARE_DYNAMIC(TinyVisualFrame)
+			DECLARE_DYNAMIC(TinyVisualWindowless)
 		public:
-			TinyVisualFrame();
-			virtual ~TinyVisualFrame();
+			TinyVisualWindowless();
+			virtual ~TinyVisualWindowless();
 			BOOL Create(HWND hParent, LPCSTR pszFile);
 			BOOL Create(HWND hParent, LPCTSTR lpTemplateName, LPCSTR pszFile);
 			BOOL Create(HWND hParent, WORD wInteger, LPCSTR pszFile);

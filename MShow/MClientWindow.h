@@ -12,7 +12,7 @@ namespace MShow
 	/// <summary>
 	/// ¿Í»§¶ËUI
 	/// </summary>
-	class MClientWindow : public TinyVisualFrame
+	class MClientWindow : public TinyVisualWindowless
 	{
 		friend class MClientController;
 		DECLARE_DYNAMIC(MClientWindow)

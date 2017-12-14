@@ -1,7 +1,7 @@
 #pragma once
 #pragma once
 #include "Common/TinyModule.h"
-#include "Windowless/TinyVisualFrame.h"
+#include "Windowless/TinyVisualWindowless.h"
 #include "Control/TinyComboBox.h"
 #include "Control/TinyButton.h"
 #include "Control/TinyLabel.h"

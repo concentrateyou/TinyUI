@@ -1,0 +1,22 @@
+#pragma once
+#include "TinyVisual.h"
+#include "TinyVisualWindowless.h"
+
+namespace TinyUI
+{
+	namespace Windowless
+	{
+		/// <summary>
+		/// ÏûÏ¢¿ò
+		/// </summary>
+		class TinyVisualMessageBox : public TinyVisualWindowless
+		{
+			friend class TinyVisualDocument;
+			DECLARE_DYNAMIC(TinyVisualMessageBox)
+			DISALLOW_COPY_AND_ASSIGN(TinyVisualMessageBox)
+		};
+	}
+}
+
+
+

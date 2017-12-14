@@ -8,7 +8,7 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		IMPLEMENT_DYNAMIC(TinyVisualComboBoxHWND, TinyVisualFrame);
+		IMPLEMENT_DYNAMIC(TinyVisualComboBoxHWND, TinyVisualWindowless);
 
 		TinyVisualComboBoxHWND::TinyVisualComboBoxHWND(TinyVisualComboBox* pOwner)
 			:m_pOwner(pOwner),
@@ -142,7 +142,7 @@ namespace TinyUI
 		LRESULT TinyVisualComboBoxHWND::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
-			return TinyVisualFrame::OnCreate(uMsg, wParam, lParam, bHandled);
+			return TinyVisualWindowless::OnCreate(uMsg, wParam, lParam, bHandled);
 		}
 
 		LRESULT TinyVisualComboBoxHWND::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -154,7 +154,7 @@ namespace TinyUI
 		LRESULT TinyVisualComboBoxHWND::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
-			return TinyVisualFrame::OnDestory(uMsg, wParam, lParam, bHandled);
+			return TinyVisualWindowless::OnDestory(uMsg, wParam, lParam, bHandled);
 		}
 
 		LRESULT TinyVisualComboBoxHWND::OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -172,7 +172,7 @@ namespace TinyUI
 			{
 				EVENT_ACTIVE(ActiveEventArgs(TRUE));
 			}
-			return TinyVisualFrame::OnActivate(uMsg, wParam, lParam, bHandled);
+			return TinyVisualWindowless::OnActivate(uMsg, wParam, lParam, bHandled);
 		}
 
 		void TinyVisualComboBoxHWND::OnPosChange(BOOL bVer, INT code, INT iOldPos, INT iNewPos)

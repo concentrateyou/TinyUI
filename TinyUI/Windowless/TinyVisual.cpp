@@ -1,7 +1,7 @@
 #include "../stdafx.h"
 #include "TinyVisual.h"
 #include "TinyVisualDocument.h"
-#include "TinyVisualFrame.h"
+#include "TinyVisualWindowless.h"
 
 namespace TinyUI
 {

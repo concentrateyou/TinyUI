@@ -7,7 +7,7 @@
 #include "ChatFrame.h"
 #include "ChatDlg.h"
 #include "MFFrame.h"
-#include "Windowless/TinyVisualFrame.h"
+#include "Windowless/TinyVisualWindowless.h"
 #include "Windowless/TinyVisualTextBox.h"
 #include "Render/TinyDDraw.h"
 #include "Media/TinyWASAPIAudioCapture.h"

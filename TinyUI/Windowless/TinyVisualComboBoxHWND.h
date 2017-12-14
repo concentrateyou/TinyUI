@@ -1,7 +1,7 @@
 #pragma once
 #include "../Control/TinyControl.h"
 #include "../Render/TinyImage.h"
-#include "TinyVisualFrame.h"
+#include "TinyVisualWindowless.h"
 #include "TinyVisualDocument.h"
 #include "TinyVisualScrollBar.h"
 #include "TinyVisualManage.h"
@@ -15,7 +15,7 @@ namespace TinyUI
 		/// <summary>
 		/// ComboBoxÏÂÀ­¿ò
 		/// </summary>
-		class TinyVisualComboBoxHWND : public TinyVisualFrame
+		class TinyVisualComboBoxHWND : public TinyVisualWindowless
 		{
 			DECLARE_DYNCREATE(TinyVisualComboBoxHWND)
 			friend class TinyVisualOption;

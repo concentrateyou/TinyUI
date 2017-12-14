@@ -498,9 +498,6 @@
     <ClInclude Include="Windowless\TinyVisualWND.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
-    <ClInclude Include="Windowless\TinyVisualFrame.h">
-      <Filter>头文件\Windowless</Filter>
-    </ClInclude>
     <ClInclude Include="Control\TinyShadow.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
@@ -520,6 +517,15 @@
       <Filter>头文件\IO</Filter>
     </ClInclude>
     <ClInclude Include="Windowless\TinyVisualShadow.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualMessageBox.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualContextMenu.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualWindowless.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
   </ItemGroup>
@@ -941,9 +947,6 @@
     <ClCompile Include="Windowless\TinyVisualWND.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
-    <ClCompile Include="Windowless\TinyVisualFrame.cpp">
-      <Filter>源文件\Windowless</Filter>
-    </ClCompile>
     <ClCompile Include="Control\TinyShadow.cpp">
       <Filter>源文件\Control</Filter>
     </ClCompile>
@@ -960,6 +963,15 @@
       <Filter>源文件\IO</Filter>
     </ClCompile>
     <ClCompile Include="Windowless\TinyVisualShadow.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualContextMenu.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualMessageBox.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualWindowless.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>
