@@ -16,6 +16,7 @@ namespace MShow
 		MFLVPlayer();
 		MFLVPlayer(Callback<void(BYTE*, LONG)>&& audioCB);
 		virtual ~MFLVPlayer();
+		BOOL			IsPlaying() const;
 		BOOL			Open(HWND hWND, LPCSTR pzURL);
 		BOOL			Close();
 		BOOL			SetVolume(DWORD volume);
@@ -30,6 +31,7 @@ namespace MShow
 		void			OnTry();
 	private:
 		BOOL							m_bBreak;
+		BOOL							m_bPlaying;
 		DWORD							m_dwRate;
 		HWND							m_hWND;
 		TinyString						m_szURL;

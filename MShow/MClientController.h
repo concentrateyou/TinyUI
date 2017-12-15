@@ -47,14 +47,13 @@ namespace MShow
 		void		OnStopCommentaryClick(TinyVisual*, EventArgs& args);
 		void		OnMicrophoneTestClick(TinyVisual*, EventArgs& args);
 		void		OnSpeakerTestClick(TinyVisual*, EventArgs& args);
-		void		OnMicrophoneFocus(TinyVisual*, FocusEventArgs& args);
-		void		OnSpeakerFocus(TinyVisual*, FocusEventArgs& args);
 		void		OnMessagePump();
 		BOOL		Query(const string& sourceID, INT& count);
 	private:
 		void		OnAudio(BYTE* bits, LONG size, INT db);
 		void		OnTimerStatus();
 		void		OnTry();
+		void		OnMessage(UINT, WPARAM, LPARAM);
 	private:
 		BOOL		Connect();//ÃÌº”‘¥
 		BOOL		Disconnect(const string& sourceID, BOOL del = FALSE);
@@ -90,6 +89,7 @@ namespace MShow
 		TinyTaskTimer						m_taskTimer;
 		TinyPerformanceTime					m_timeQPC;
 		TinyScopedPtr<MPreviewController>	m_preview;
+		TinyMsgQueue						m_msgqueue;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onSettingClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMinimumClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onCloseClick;

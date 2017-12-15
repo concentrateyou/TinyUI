@@ -20,10 +20,12 @@ namespace MShow
 		m_previousPTS(-1),
 		m_microphoneTest(view)
 	{
+
 	}
 
 	MClientController::~MClientController()
 	{
+		m_msgqueue.Close();
 	}
 
 	BOOL MClientController::Initialize()
@@ -37,6 +39,7 @@ namespace MShow
 			return FALSE;
 		}
 		InitializeUI();
+		m_msgqueue.SetCallback(BindCallback(&MClientController::OnMessage, this));
 		return TRUE;
 	}
 
@@ -107,6 +110,7 @@ namespace MShow
 					visual->SetText("预览流打开失败 正在重试.....");
 				}
 				LOG(ERROR) << "[SetPreview] " << "Open Preview :" << m_szPreviewURL << " Fail";
+				m_taskTimer.Close();
 				m_taskTimer.SetCallback(3000, BindCallback(&MClientController::OnTry, this));//每隔3秒重试
 			}
 		}
@@ -115,16 +119,19 @@ namespace MShow
 	}
 	void MClientController::OnTry()
 	{
-		if (m_preview != NULL)
+		if (m_preview != NULL && !m_preview->IsPlaying())
 		{
 			BOOL bRes = m_preview->Close();
 			TRACE("[MClientController] OnTry Close:%d\n", bRes);
 			LOG(INFO) << "[MClientController] OnTry Close:" << bRes << "\n\n\n\n\n";
 			if (m_preview->Open(m_szPreviewURL.c_str()))
 			{
+				MSG msg = { 0 };
+				msg.message = WM_PLAY_RESUME;
+				m_msgqueue.PostMsg(msg);
+
 				TRACE("[MClientController] OnTry Open OK\n");
 				LOG(INFO) << "[MClientController] OnTry Open OK";
-				m_taskTimer.Close();
 				TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
 				if (visual != NULL)
 				{
@@ -143,6 +150,15 @@ namespace MShow
 				TRACE("[MClientController] OnTry Open FAIL\n");
 				LOG(ERROR) << "[MClientController] OnTry Open FAIL";
 			}
+		}
+	}
+	void MClientController::OnMessage(UINT msg, WPARAM, LPARAM)
+	{
+		if (msg == WM_PLAY_RESUME)
+		{
+			TRACE("[MClientController] WM_PLAY_RESUME Close Timer\n");
+			LOG(INFO) << "[MClientController] WM_PLAY_RESUME Close Timer";
+			m_taskTimer.Close();
 		}
 	}
 	void MClientController::UpdateMicrophones()
@@ -364,16 +380,12 @@ namespace MShow
 		{
 			m_onMicrophoneTestClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MClientController::OnMicrophoneTestClick));
 			visual->EVENT_CLICK += m_onMicrophoneTestClick;
-			m_onMicrophoneFocus.Reset(new Delegate<void(TinyVisual*, FocusEventArgs&)>(this, &MClientController::OnMicrophoneFocus));
-			visual->EVENT_FOCUS += m_onMicrophoneFocus;
 		}
 		visual = m_view.GetDocument()->GetVisualByName("btnSpeakerTest");
 		if (visual != NULL)
 		{
 			m_onSpeakerTestClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MClientController::OnSpeakerTestClick));
 			visual->EVENT_CLICK += m_onSpeakerTestClick;
-			m_onSpeakerFocus.Reset(new Delegate<void(TinyVisual*, FocusEventArgs&)>(this, &MClientController::OnSpeakerFocus));
-			visual->EVENT_FOCUS += m_onSpeakerFocus;
 		}
 		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
 		if (pTextBox != NULL)
@@ -1171,22 +1183,6 @@ namespace MShow
 					m_speakTest.Invoke(szFile.c_str(), clsid, val->GetDocument()->GetVisualHWND()->Handle());
 				}
 			}
-		}
-	}
-
-	void MClientController::OnMicrophoneFocus(TinyVisual*, FocusEventArgs& args)
-	{
-		if (!args.IsFocus())
-		{
-			//m_microphoneTest.Shutdown();
-		}
-	}
-
-	void MClientController::OnSpeakerFocus(TinyVisual*, FocusEventArgs& args)
-	{
-		if (!args.IsFocus())
-		{
-			//m_speakTest.Shutdown();
 		}
 	}
 

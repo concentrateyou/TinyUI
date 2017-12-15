@@ -382,7 +382,7 @@ namespace TinyUI
 				LOG(ERROR) << "ToSOCKADDR FAIL";
 				goto _ERROR;
 			}
-			if (!m_socket.Connect(m_endpoint, 5))
+			if (!m_socket.Connect(m_endpoint, 3))//Á¬½Ó3Ãë³¬Ê±
 			{
 				LOG(ERROR) << "socket connect:" << WSAGetLastError();
 				goto _ERROR;

@@ -21,6 +21,13 @@ namespace MShow
 
 	}
 
+	BOOL MPreviewController::IsPlaying() const
+	{
+		if (m_player != NULL)
+			return m_player->IsPlaying();
+		return FALSE;
+	}
+
 	BOOL MPreviewController::Open(LPCSTR pzURL)
 	{
 		TinySize size;

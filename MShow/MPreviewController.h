@@ -19,6 +19,7 @@ namespace MShow
 	public:
 		MPreviewController(MPreviewView& view);
 		virtual ~MPreviewController();
+		BOOL			IsPlaying() const;
 		BOOL			Open(LPCSTR pzURL);
 		BOOL			Open(LPCSTR pzURL, Callback<void(BYTE*, LONG)>&& audioCB);
 		BOOL			Close();

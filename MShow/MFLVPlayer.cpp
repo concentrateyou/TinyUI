@@ -11,7 +11,8 @@ namespace MShow
 		m_videoTask(m_task, m_clock, m_msgqueue),
 		m_videoRenderTask(m_videoTask, m_clock, m_msgqueue),
 		m_dwRate(25),
-		m_bBreak(FALSE)
+		m_bBreak(FALSE),
+		m_bPlaying(FALSE)
 	{
 		m_msgqueue.SetCallback(BindCallback(&MFLVPlayer::OnMessage, this));
 	}
@@ -23,7 +24,8 @@ namespace MShow
 		m_videoTask(m_task, m_clock, m_msgqueue),
 		m_videoRenderTask(m_videoTask, m_clock, m_msgqueue),
 		m_dwRate(25),
-		m_bBreak(FALSE)
+		m_bBreak(FALSE),
+		m_bPlaying(FALSE)
 	{
 		m_msgqueue.SetCallback(BindCallback(&MFLVPlayer::OnMessage, this));
 	}
@@ -32,7 +34,10 @@ namespace MShow
 	{
 		m_msgqueue.Close();
 	}
-
+	BOOL MFLVPlayer::IsPlaying() const
+	{
+		return m_bPlaying;
+	}
 	BOOL MFLVPlayer::Open(HWND hWND, LPCSTR pzURL)
 	{
 		m_hWND = hWND;
@@ -129,6 +134,12 @@ namespace MShow
 				LOG(ERROR) << "WM_VIDEO_X264_DECODE_FAIL Reopen FAIL";
 			}
 		}
+		if (msg == WM_PLAY_RESUME)
+		{
+			TRACE("[MFLVPlayer] WM_PLAY_RESUME Close Timer\n");
+			LOG(INFO) << "[MFLVPlayer] WM_PLAY_RESUME Close Timer";
+			m_timer.Close();
+		}
 	}
 
 	void MFLVPlayer::OnError(INT iError)
@@ -142,6 +153,7 @@ namespace MShow
 		case WSAECONNABORTED:
 		case WSAECONNRESET:
 		{
+			m_timer.Close();
 			m_timer.SetCallback(5000, BindCallback(&MFLVPlayer::OnTry, this));//Ã¿¸ô5ÃëÖØÊÔ
 			TRACE("[MFLVPlayer] OnError:%d\n", iError);
 			LOG(ERROR) << "[MFLVPlayer] OnError:" << iError;
@@ -152,17 +164,22 @@ namespace MShow
 
 	void MFLVPlayer::OnTry()
 	{
-		this->Close();
-		if (this->Open(m_hWND, m_szURL.CSTR()))
+		if (!this->IsPlaying())
 		{
-			TRACE("[MFLVPlayer] OnTry Open OK\n");
-			LOG(INFO) << "[MFLVPlayer] OnTry Open OK";
-			m_timer.Close();
-		}
-		else
-		{
-			TRACE("OnTry Open FAIL\n");
-			LOG(ERROR) << "OnTry Open FAIL";
+			this->Close();
+			if (this->Open(m_hWND, m_szURL.CSTR()))
+			{
+				TRACE("[MFLVPlayer] OnTry Open OK\n");
+				LOG(INFO) << "[MFLVPlayer] OnTry Open OK";
+				MSG msg = { 0 };
+				msg.message = WM_PLAY_RESUME;
+				m_msgqueue.PostMsg(msg);
+			}
+			else
+			{
+				TRACE("OnTry Open FAIL\n");
+				LOG(ERROR) << "OnTry Open FAIL";
+			}
 		}
 	}
 
