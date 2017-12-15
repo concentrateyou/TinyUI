@@ -82,6 +82,7 @@ namespace TinyUI
 		BOOL TinyVisualContextMenu::Popup(const TinyPoint& pos)
 		{
 			this->SetPosition(pos);
+			this->SetSize({ 400,400 });
 			DrawContext();
 			return TRUE;
 		}

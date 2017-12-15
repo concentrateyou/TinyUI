@@ -152,7 +152,6 @@
   <ItemGroup>
     <ClInclude Include="AACEncode.h" />
     <ClInclude Include="AudioMixer.h" />
-    <ClInclude Include="FLVEncode.h" />
     <ClInclude Include="I420Converter.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -161,7 +160,6 @@
   <ItemGroup>
     <ClCompile Include="AACEncode.cpp" />
     <ClCompile Include="AudioMixer.cpp" />
-    <ClCompile Include="FLVEncode.cpp" />
     <ClCompile Include="I420Converter.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
