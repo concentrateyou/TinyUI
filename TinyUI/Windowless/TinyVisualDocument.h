@@ -63,6 +63,7 @@ namespace TinyUI
 			TinyPoint			GetScreenPos(const TinyVisual* spvis);
 			BOOL				Invalidate(RECT* lpRect = NULL);
 			BOOL				Redraw(RECT *lprcUpdate = NULL, HRGN hrgnUpdate = NULL);
+			void				Draw(TinyVisualDC* ps, const RECT& rcPaint);
 		public:
 			HRESULT				OnSize(const TinySize& size);
 			HRESULT				OnMouseLeave();
@@ -83,7 +84,7 @@ namespace TinyUI
 			HRESULT				OnSetCursor(HWND hWND, DWORD dwHitTest, DWORD dwMessage);
 			HRESULT				OnSetFocus(HWND hWND);
 			HRESULT				OnKillFocus(HWND hWND);
-		private:
+		protected:
 			void				ConvertToClientPos(const TinyVisual* spvis, TinyPoint& pos);//把元素坐标转化为窗口坐标
 			void				ConvertToVisualPos(const TinyVisual* spvis, TinyPoint& pos);//相对于原生窗口的坐标转换到元素坐标
 			TinyVisual*			GetVisualByName1(TinyVisual* spvis, const TinyString& name);
@@ -93,7 +94,6 @@ namespace TinyUI
 			void				LinkVisual(TinyVisual* spvis, TinyVisual* spvisInsert, TinyVisual**pspvisFirst);
 			void				UnlinkVisual(TinyVisual* spvisUnlink, TinyVisual** pspvisFirst);
 			TinyVisual*			GetPrevVisual(TinyVisual* spvisList, TinyVisual* spvisFind) const;
-			void				Draw(TinyVisualDC* ps, const RECT& rcPaint);
 			void				Draw(TinyVisual* spvis, HDC hDC, const RECT& rcPaint);
 		private:
 			class TinyVisualFactory
@@ -116,7 +116,7 @@ namespace TinyUI
 			TinyVisual*							m_spvisFocus;
 			TinyVisual*							m_spvisActive;
 			TinyVisual*							m_spvisLastMouse;//当前鼠标所在的元素
-			TinyVisualWindowless*					m_pWindow;
+			TinyVisualWindowless*				m_pWindow;
 			TinyScopedPtr<TinyVisualBuilder>	m_parse;
 			TinyScopedPtr<TinyVisualFactory>	m_factory;
 		public:

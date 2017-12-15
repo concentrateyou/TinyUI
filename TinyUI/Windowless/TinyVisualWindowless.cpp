@@ -161,7 +161,7 @@ namespace TinyUI
 					m_visualDC->SetSize(m_size.cx, m_size.cy);
 					m_document->OnSize(m_size);
 					::RedrawWindow(m_hWND, NULL, NULL, RDW_INVALIDATE);
-				}
+				}	
 			}
 			if (m_shadow != NULL)
 			{
@@ -182,7 +182,7 @@ namespace TinyUI
 			if (lParam != NULL)
 			{
 				m_pos.x = LOWORD(lParam);
-				m_pos.y = HIWORD(lParam);
+				m_pos.y = HIWORD(lParam);	
 			}
 			if (m_shadow != NULL)
 			{
@@ -491,7 +491,6 @@ namespace TinyUI
 					m_shadow.ShowWindow(SW_SHOW);
 					m_shadow.DrawShadow();
 				}
-
 			}
 			return FALSE;
 		}

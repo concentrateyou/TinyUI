@@ -46,6 +46,8 @@ namespace TinyUI
 			LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		private:
+			BOOL DrawContext();
+		private:
 			TinyArray<TinyVisualMenuItem*>	m_items;
 		};
 	}
