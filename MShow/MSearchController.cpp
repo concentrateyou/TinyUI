@@ -261,7 +261,7 @@ namespace MShow
 					}
 					else
 					{
-						listitem = list->Add(programName.c_str(), imgUrl.c_str());
+						listitem = list->Add(programName.c_str(), imgUrl.c_str(),"logo");
 					}
 					if (listitem != NULL)
 					{

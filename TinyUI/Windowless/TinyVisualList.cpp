@@ -258,7 +258,7 @@ namespace TinyUI
 			}
 			return NULL;
 		}
-		TinyVisualListItem* TinyVisualList::Add(const TinyString& text, const TinyString& imageURL)
+		TinyVisualListItem* TinyVisualList::Add(const TinyString& text, const TinyString& imageURL,const TinyString& defaultImage)
 		{
 			if (!m_document)
 				return NULL;
@@ -269,6 +269,10 @@ namespace TinyUI
 				if (image && image->Open(imageURL.CSTR()))
 				{
 					ps->SetBackgroundImage(image);
+				}
+				else
+				{
+					ps->SetBackgroundImage(defaultImage);
 				}
 				INT row = (m_dwCount - 2) / m_count;//去掉滚动条
 				INT column = (m_dwCount - 2) % m_count;//去掉滚动条
