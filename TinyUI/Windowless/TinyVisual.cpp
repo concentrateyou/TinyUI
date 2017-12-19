@@ -489,11 +489,12 @@ namespace TinyUI
 					TinyRectangle s = m_document->GetWindowRect(this);
 					if (s.PtInRect(pos))
 					{
-						m_document->GetVisualHWND()->SetMsgHandled(TRUE);
+						m_document->GetVisualHWND().SetMsgHandled(TRUE);
 						::SetCursor(LoadCursor(NULL, CursorFromString(m_szCursor)));
 						return TRUE;
 					}
 				}
+
 			}
 			return FALSE;
 		}

@@ -52,13 +52,11 @@ namespace TinyUI
 		{
 			if (!m_hWND || !m_visualDC)
 				return FALSE;
-			if (!m_document)
-				return FALSE;
 			TinyRectangle windowRect;
 			::GetWindowRect(m_hWND, &windowRect);
 			TinyRectangle rectangle = windowRect;
 			rectangle.OffsetRect(-rectangle.left, -rectangle.top);
-			m_document->Draw(m_visualDC, rectangle);
+			m_document.Draw(m_visualDC, rectangle);
 			TinyPoint pos;
 			TinyPoint dstPos = windowRect.Position();
 			TinySize  dstSize = windowRect.Size();

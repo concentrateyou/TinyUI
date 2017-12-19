@@ -33,8 +33,8 @@ namespace TinyUI
 			BOOL AddFilter(TinyVisualFilter* ps);
 			BOOL RemoveFilter(TinyVisualFilter* ps);
 			void AllowTracking(BOOL bAllow);
+			TinyVisualDocument&	GetDocument();
 			TinyVisualShadow*	GetShadow();
-			TinyVisualDocument*	GetDocument();
 			virtual void OnInitialize() = 0;
 			virtual void OnUninitialize() = 0;
 		public:
@@ -85,8 +85,8 @@ namespace TinyUI
 			TinyString							m_szSkinFile;//资源文件
 			TinyVisualFilters					m_mFilters;
 			TinyVisualBuilder					m_builder;
+			TinyVisualDocument					m_document;
 			TinyScopedPtr<TinyVisualDC>			m_visualDC;
-			TinyScopedPtr<TinyVisualDocument>	m_document;
 			TinyScopedPtr<TinyVisualShadow>	    m_shadow;
 		};
 	}

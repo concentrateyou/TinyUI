@@ -63,9 +63,9 @@ namespace TinyUI
 			static void BuildContext(const TiXmlNode* pXMLNode);
 			static void BuildImage(const TiXmlNode* pXMLNode);
 		private:
-			TinyLock		m_lock;
-			string			m_szPath;
-			TiXmlDocument	m_doc;
+			string							m_szPath;
+			TinyLock						m_lock;
+			TiXmlDocument					m_doc;
 			TinyArray<TinyImage*>			m_images1;//¶¯Ì¬
 			TinyMap<TinyString, TinyImage*> m_images2;//¾²Ì¬
 			TinyMap<TinyString, TinyString>	m_types;

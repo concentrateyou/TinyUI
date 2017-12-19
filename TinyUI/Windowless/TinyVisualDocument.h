@@ -29,7 +29,7 @@ namespace TinyUI
 			friend class TinyVisualWindowless;
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualDocument)
 		public:
-			TinyVisualDocument(TinyVisualWindowless* pv);
+			TinyVisualDocument(TinyVisualWindowless& window);
 			virtual ~TinyVisualDocument();
 			virtual BOOL	Initialize(TinyVisualBuilder* builder);
 			virtual void	Uninitialize();
@@ -38,63 +38,63 @@ namespace TinyUI
 			TinyVisual*		Create(const TinyString& tag, TinyVisual* spvisParent);
 			BOOL			Destory(TinyVisual* spvis);
 		public:
-			HWND				Handle() const;
-			TinyVisualWindowless*	GetVisualHWND() const;
-			TinyVisualDC*		GetVisualDC() const;
-			TinyVisual*			GetVisual(TinyVisual* spvis, UINT cmd) const;
-			TinyVisual*			SetParent(TinyVisual* spvis, TinyVisual* spvisNewParent);
-			TinyVisual*			GetParent(TinyVisual* spvis) const;
-			BOOL				IsChild(TinyVisual* spvisParent, TinyVisual* spvis) const;
-			BOOL				IsVisible(TinyVisual* spvis) const;
-			BOOL				IsEnable(TinyVisual* spvis) const;
-			BOOL				IsActive(TinyVisual* spvis) const;
-			TinyVisual*			GetVisualByName(const TinyString& name);
-			TinyVisual*			GetVisualByPos(INT x, INT y);
-			TinyVisual*			GetCapture() const;
-			TinyVisual*			SetCapture(TinyVisual* spvis);
-			BOOL				ReleaseCapture();
-			TinyVisual*			GetFocus() const;
-			TinyVisual*			SetFocus(TinyVisual* spvis);
-			TinyVisual*			SetActive(TinyVisual* spvis);
-			TinyVisual*			GetActive() const;
-			TinyPoint			VisualToClient(const TinyVisual* spvis, const TinyPoint& pos);
-			TinyPoint			GetWindowPos(const TinyVisual* spvis);
-			TinyRectangle		GetWindowRect(const TinyVisual* spvis);
-			TinyPoint			GetScreenPos(const TinyVisual* spvis);
-			BOOL				Invalidate(RECT* lpRect = NULL);
-			BOOL				Redraw(RECT *lprcUpdate = NULL, HRGN hrgnUpdate = NULL);
-			void				Draw(TinyVisualDC* ps, const RECT& rcPaint);
+			HWND					Handle() const;
+			TinyVisualDC*			GetVisualDC() const;
+			TinyVisualWindowless&	GetVisualHWND();
+			TinyVisual*				GetVisual(TinyVisual* spvis, UINT cmd) const;
+			TinyVisual*				SetParent(TinyVisual* spvis, TinyVisual* spvisNewParent);
+			TinyVisual*				GetParent(TinyVisual* spvis) const;
+			BOOL					IsChild(TinyVisual* spvisParent, TinyVisual* spvis) const;
+			BOOL					IsVisible(TinyVisual* spvis) const;
+			BOOL					IsEnable(TinyVisual* spvis) const;
+			BOOL					IsActive(TinyVisual* spvis) const;
+			TinyVisual*				GetVisualByName(const TinyString& name);
+			TinyVisual*				GetVisualByPos(INT x, INT y);
+			TinyVisual*				GetCapture() const;
+			TinyVisual*				SetCapture(TinyVisual* spvis);
+			BOOL					ReleaseCapture();
+			TinyVisual*				GetFocus() const;
+			TinyVisual*				SetFocus(TinyVisual* spvis);
+			TinyVisual*				SetActive(TinyVisual* spvis);
+			TinyVisual*				GetActive() const;
+			TinyPoint				VisualToClient(const TinyVisual* spvis, const TinyPoint& pos);
+			TinyPoint				GetWindowPos(const TinyVisual* spvis);
+			TinyRectangle			GetWindowRect(const TinyVisual* spvis);
+			TinyPoint				GetScreenPos(const TinyVisual* spvis);
+			BOOL					Invalidate(RECT* lpRect = NULL);
+			BOOL					Redraw(RECT *lprcUpdate = NULL, HRGN hrgnUpdate = NULL);
+			void					Draw(TinyVisualDC* ps, const RECT& rcPaint);
 		public:
-			HRESULT				OnSize(const TinySize& size);
-			HRESULT				OnMouseLeave();
-			HRESULT				OnMouseMove(const TinyPoint& pos, DWORD dwFlags);
-			HRESULT				OnMouseWheel(const TinyPoint& pos, SHORT zDelta, DWORD dwFlags);
-			HRESULT				OnLButtonDown(const TinyPoint& pos, DWORD dwFlags);
-			HRESULT				OnLButtonUp(const TinyPoint& pos, DWORD dwFlags);
-			HRESULT				OnLButtonDBClick(const TinyPoint& pos, DWORD dwFlags);
-			HRESULT				OnRButtonDown(const TinyPoint& pos, DWORD dwFlags);
-			HRESULT				OnRButtonUp(const TinyPoint& pos, DWORD dwFlags);
-			HRESULT				OnRButtonDBClick(const TinyPoint& pos, DWORD dwFlags);
-			HRESULT				OnMButtonDown(const TinyPoint& pos, DWORD dwFlags);
-			HRESULT				OnMButtonUp(const TinyPoint& pos, DWORD dwFlags);
-			HRESULT				OnMButtonDBClick(const TinyPoint& pos, DWORD dwFlags);
-			HRESULT				OnKeyDown(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
-			HRESULT				OnKeyUp(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
-			LRESULT				OnChar(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
-			HRESULT				OnSetCursor(HWND hWND, DWORD dwHitTest, DWORD dwMessage);
-			HRESULT				OnSetFocus(HWND hWND);
-			HRESULT				OnKillFocus(HWND hWND);
+			HRESULT					OnSize(const TinySize& size);
+			HRESULT					OnMouseLeave();
+			HRESULT					OnMouseMove(const TinyPoint& pos, DWORD dwFlags);
+			HRESULT					OnMouseWheel(const TinyPoint& pos, SHORT zDelta, DWORD dwFlags);
+			HRESULT					OnLButtonDown(const TinyPoint& pos, DWORD dwFlags);
+			HRESULT					OnLButtonUp(const TinyPoint& pos, DWORD dwFlags);
+			HRESULT					OnLButtonDBClick(const TinyPoint& pos, DWORD dwFlags);
+			HRESULT					OnRButtonDown(const TinyPoint& pos, DWORD dwFlags);
+			HRESULT					OnRButtonUp(const TinyPoint& pos, DWORD dwFlags);
+			HRESULT					OnRButtonDBClick(const TinyPoint& pos, DWORD dwFlags);
+			HRESULT					OnMButtonDown(const TinyPoint& pos, DWORD dwFlags);
+			HRESULT					OnMButtonUp(const TinyPoint& pos, DWORD dwFlags);
+			HRESULT					OnMButtonDBClick(const TinyPoint& pos, DWORD dwFlags);
+			HRESULT					OnKeyDown(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
+			HRESULT					OnKeyUp(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
+			LRESULT					OnChar(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
+			HRESULT					OnSetCursor(HWND hWND, DWORD dwHitTest, DWORD dwMessage);
+			HRESULT					OnSetFocus(HWND hWND);
+			HRESULT					OnKillFocus(HWND hWND);
 		protected:
-			void				ConvertToClientPos(const TinyVisual* spvis, TinyPoint& pos);//把元素坐标转化为窗口坐标
-			void				ConvertToVisualPos(const TinyVisual* spvis, TinyPoint& pos);//相对于原生窗口的坐标转换到元素坐标
-			TinyVisual*			GetVisualByName1(TinyVisual* spvis, const TinyString& name);
-			TinyVisual*			GetVisualByName2(TinyVisual* spvis, const TinyString& name);
-			TinyVisual*			GetVisualByPos1(TinyVisual* spvis, INT x, INT y);
-			TinyVisual*			GetVisualByPos2(TinyVisual* spvis, INT x, INT y);
-			void				LinkVisual(TinyVisual* spvis, TinyVisual* spvisInsert, TinyVisual**pspvisFirst);
-			void				UnlinkVisual(TinyVisual* spvisUnlink, TinyVisual** pspvisFirst);
-			TinyVisual*			GetPrevVisual(TinyVisual* spvisList, TinyVisual* spvisFind) const;
-			void				Draw(TinyVisual* spvis, HDC hDC, const RECT& rcPaint);
+			void					ConvertToClientPos(const TinyVisual* spvis, TinyPoint& pos);//把元素坐标转化为窗口坐标
+			void					ConvertToVisualPos(const TinyVisual* spvis, TinyPoint& pos);//相对于原生窗口的坐标转换到元素坐标
+			TinyVisual*				GetVisualByName1(TinyVisual* spvis, const TinyString& name);
+			TinyVisual*				GetVisualByName2(TinyVisual* spvis, const TinyString& name);
+			TinyVisual*				GetVisualByPos1(TinyVisual* spvis, INT x, INT y);
+			TinyVisual*				GetVisualByPos2(TinyVisual* spvis, INT x, INT y);
+			void					LinkVisual(TinyVisual* spvis, TinyVisual* spvisInsert, TinyVisual**pspvisFirst);
+			void					UnlinkVisual(TinyVisual* spvisUnlink, TinyVisual** pspvisFirst);
+			TinyVisual*				GetPrevVisual(TinyVisual* spvisList, TinyVisual* spvisFind) const;
+			void					Draw(TinyVisual* spvis, HDC hDC, const RECT& rcPaint);
 		private:
 			class TinyVisualFactory
 			{
@@ -102,13 +102,13 @@ namespace TinyUI
 				friend class TinyVisualDocument;
 				DISALLOW_COPY_AND_ASSIGN(TinyVisualFactory)
 			private:
-				TinyVisualFactory(TinyVisualDocument* document);
+				TinyVisualFactory(TinyVisualDocument& document);
 			public:
 				TinyVisual*		Create(const TinyString& className, TinyVisual* spvisParent);
 				TinyVisual*		Create(INT x, INT y, INT cx, INT cy, const TinyString& className, TinyVisual* spvisParent);
 				BOOL			Destory(TinyVisual* spvis);
 			private:
-				TinyVisualDocument* m_document;
+				TinyVisualDocument& m_document;
 			};
 		protected:
 			TinyVisual*							m_spvisWindow;//根节点
@@ -116,9 +116,8 @@ namespace TinyUI
 			TinyVisual*							m_spvisFocus;
 			TinyVisual*							m_spvisActive;
 			TinyVisual*							m_spvisLastMouse;//当前鼠标所在的元素
-			TinyVisualWindowless*				m_pWindow;
-			TinyScopedPtr<TinyVisualBuilder>	m_parse;
-			TinyScopedPtr<TinyVisualFactory>	m_factory;
+			TinyVisualWindowless&				m_window;
+			TinyVisualFactory					m_factory;
 		public:
 #ifdef _DEBUG
 			void			Dump();

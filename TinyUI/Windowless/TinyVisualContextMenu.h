@@ -33,6 +33,8 @@ namespace TinyUI
 			TinyVisualContextMenu(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:
 			TinyString RetrieveTag() const OVERRIDE;
+		public:
+			 
 		private:
 			TinyArray<TinyVisualMenuItem*>	m_items;
 		};

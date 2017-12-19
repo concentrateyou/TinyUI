@@ -26,6 +26,7 @@ namespace TinyUI
 
 		void TinyVisualWindow::OnSizeChange(const TinySize& oldsize, const TinySize& newsize)
 		{
+			ASSERT(m_document);
 			TinyVisual* spvis = m_spvisChild;
 			while (spvis != NULL && spvis->IsVisible())
 			{
@@ -43,8 +44,8 @@ namespace TinyUI
 
 		void TinyVisualWindow::SetText(const TinyString& pzText)
 		{
-			ASSERT(m_document || m_document->GetVisualHWND());
-			::SetWindowText(m_document->GetVisualHWND()->Handle(), pzText.CSTR());
+			ASSERT(m_document);
+			::SetWindowText(m_document->GetVisualHWND().Handle(), pzText.CSTR());
 			TinyVisual::SetText(pzText);
 		}
 
@@ -52,9 +53,9 @@ namespace TinyUI
 		{
 			if (strcasecmp(name.STR(), TinyVisualProperty::SHADOWIMAGE.STR()) == 0)
 			{
-				if (m_document != NULL && m_document->GetVisualHWND() != NULL)
+				if (m_document != NULL)
 				{
-					TinyVisualShadow* shadow = m_document->GetVisualHWND()->GetShadow();
+					TinyVisualShadow* shadow = m_document->GetVisualHWND().GetShadow();
 					if (shadow != NULL)
 					{
 						shadow->SetShadow(TinyVisualResource::GetInstance()[value]);
@@ -64,9 +65,9 @@ namespace TinyUI
 			}
 			if (strcasecmp(name.STR(), TinyVisualProperty::SHADOWBOX.STR()) == 0)
 			{
-				if (m_document != NULL && m_document->GetVisualHWND() != NULL)
+				if (m_document != NULL)
 				{
-					TinyVisualShadow* shadow = m_document->GetVisualHWND()->GetShadow();
+					TinyVisualShadow* shadow = m_document->GetVisualHWND().GetShadow();
 					ASSERT(shadow);
 					shadow->SetShadowBox(TinyVisualBuilder::GetRectangle(value));
 				}
@@ -81,8 +82,7 @@ namespace TinyUI
 		}
 		BOOL TinyVisualWindow::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
-			if (!m_document)
-				return FALSE;
+			ASSERT(m_document);
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			if (m_borderImage != NULL && !m_borderImage->IsEmpty())
@@ -126,7 +126,7 @@ namespace TinyUI
 				HBRUSH hOldBrush = canvas.SetBrush(brush);
 				canvas.FillRectangle(clip);
 				canvas.SetBrush(hOldBrush);
-			}	
+			}
 			return TRUE;
 		}
 	}

@@ -49,12 +49,10 @@ namespace TinyUI
 
 		HRESULT	TinyVisualCaption::OnLButtonDown(const TinyPoint& pos, DWORD dwFlags)
 		{
-			if (m_document != NULL)
-			{
-				HWND hWND = m_document->GetVisualHWND()->Handle();
-				::SendMessage(hWND, WM_SYSCOMMAND, SC_MOVE | HTCAPTION, 0);
-				::SendMessage(hWND, WM_LBUTTONUP, dwFlags, MAKELPARAM(pos.x, pos.y));
-			}
+			ASSERT(m_document);
+			HWND hWND = m_document->GetVisualHWND().Handle();
+			::SendMessage(hWND, WM_SYSCOMMAND, SC_MOVE | HTCAPTION, 0);
+			::SendMessage(hWND, WM_LBUTTONUP, dwFlags, MAKELPARAM(pos.x, pos.y));
 			return TinyVisual::OnLButtonDown(pos, dwFlags);
 		}
 		HRESULT	TinyVisualCaption::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)

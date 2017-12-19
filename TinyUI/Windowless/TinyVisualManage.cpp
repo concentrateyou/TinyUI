@@ -56,7 +56,7 @@ namespace TinyUI
 			TinySize size = document->GetParent(NULL)->GetSize();
 			RECT windowBounds;
 			RECT centerBounds = { 0 };
-			HMONITOR monitor = MonitorFromWindow(document->GetVisualHWND()->Handle(), MONITOR_DEFAULTTONEAREST);
+			HMONITOR monitor = MonitorFromWindow(document->GetVisualHWND().Handle(), MONITOR_DEFAULTTONEAREST);
 			if (monitor != NULL)
 			{
 				MONITORINFO mi = { 0 };
@@ -68,7 +68,7 @@ namespace TinyUI
 			windowBounds.right = windowBounds.left + size.cx;
 			windowBounds.top = centerBounds.top + (centerBounds.bottom - centerBounds.top - size.cy) / 2;
 			windowBounds.bottom = windowBounds.top + size.cy;
-			return SetWindowPos(document->GetVisualHWND()->Handle(), 0, windowBounds.left, windowBounds.top,
+			return SetWindowPos(document->GetVisualHWND().Handle(), 0, windowBounds.left, windowBounds.top,
 				windowBounds.right - windowBounds.left,
 				windowBounds.bottom - windowBounds.top,
 				SWP_NOACTIVATE | SWP_NOZORDER);

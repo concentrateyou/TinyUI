@@ -9,7 +9,7 @@ namespace TinyUI
 	{
 		IMPLEMENT_DYNAMIC(TinyVisualWindowless, TinyVisualWND);
 		TinyVisualWindowless::TinyVisualWindowless()
-			:m_document(NULL),
+			:m_document(*this),
 			m_visualDC(NULL),
 			m_bMouseTracking(FALSE),
 			m_bAllowTracking(TRUE)
@@ -71,7 +71,7 @@ namespace TinyUI
 		{
 			return NULL;
 		}
-		TinyVisualDocument*	TinyVisualWindowless::GetDocument()
+		TinyVisualDocument&	TinyVisualWindowless::GetDocument()
 		{
 			return m_document;
 		}
@@ -81,9 +81,6 @@ namespace TinyUI
 				return FALSE;
 			m_visualDC.Reset(new TinyVisualDC(m_hWND));
 			if (!m_visualDC)
-				return FALSE;
-			m_document.Reset(new TinyVisualDocument(this));
-			if (!m_document)
 				return FALSE;
 			//创建阴影窗口
 			if (!(RetrieveExStyle() & WS_EX_LAYERED))
@@ -95,20 +92,18 @@ namespace TinyUI
 			}
 			if (!m_builder.LoadFile(m_szSkinFile.CSTR()))
 				return FALSE;
-			if (!m_document->Initialize(&m_builder))
+			if (!m_document.Initialize(&m_builder))
 				return FALSE;
 			this->OnInitialize();
 			return TRUE;
 		}
 		void TinyVisualWindowless::Uninitialize()
 		{
-			if (m_document != NULL)
-				m_document->Uninitialize();
-			m_document.Reset(NULL);
 			m_visualDC.Reset(NULL);
 			if (m_shadow != NULL)
 				m_shadow->DestroyWindow();
 			m_shadow.Reset(NULL);
+			m_document.Uninitialize();
 		}
 		BOOL TinyVisualWindowless::AddFilter(TinyVisualFilter* ps)
 		{
@@ -141,13 +136,10 @@ namespace TinyUI
 		LRESULT TinyVisualWindowless::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
-			if (m_document != NULL)
-			{
-				PAINTSTRUCT ps = { 0 };
-				HDC hDC = BeginPaint(m_hWND, &ps);
-				m_document->Draw(m_visualDC, ps.rcPaint);
-				EndPaint(m_hWND, &ps);
-			}
+			PAINTSTRUCT ps = { 0 };
+			HDC hDC = BeginPaint(m_hWND, &ps);
+			m_document.Draw(m_visualDC, ps.rcPaint);
+			EndPaint(m_hWND, &ps);
 			if (IsWindowVisible(m_hWND))
 			{
 				if (m_shadow != NULL)
@@ -167,10 +159,10 @@ namespace TinyUI
 			{
 				m_size.cx = LOWORD(lParam);
 				m_size.cy = HIWORD(lParam);
-				if (m_visualDC != NULL && m_document != NULL)
+				if (m_visualDC != NULL)
 				{
 					m_visualDC->SetSize(m_size.cx, m_size.cy);
-					m_document->OnSize(m_size);
+					m_document.OnSize(m_size);
 					::RedrawWindow(m_hWND, NULL, NULL, RDW_INVALIDATE);
 				}
 			}
@@ -239,229 +231,160 @@ namespace TinyUI
 		LRESULT TinyVisualWindowless::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			if (m_document != NULL)
+			if (m_bAllowTracking)
 			{
-				if (m_bAllowTracking)
+				if (!m_bMouseTracking)
 				{
-					if (!m_bMouseTracking)
-					{
-						TRACKMOUSEEVENT tme;
-						tme.cbSize = sizeof(tme);
-						tme.hwndTrack = m_hWND;
-						tme.dwFlags = TME_LEAVE;
-						tme.dwHoverTime = 10;
-						m_bMouseTracking = _TrackMouseEvent(&tme);
-					}
+					TRACKMOUSEEVENT tme;
+					tme.cbSize = sizeof(tme);
+					tme.hwndTrack = m_hWND;
+					tme.dwFlags = TME_LEAVE;
+					tme.dwHoverTime = 10;
+					m_bMouseTracking = _TrackMouseEvent(&tme);
 				}
-				TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-				LRESULT lRes = m_document->OnMouseMove(pos, static_cast<DWORD>(wParam));
-				bHandled = IsMsgHandled();
-				return lRes;
 			}
-			return FALSE;
+			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			LRESULT lRes = m_document.OnMouseMove(pos, static_cast<DWORD>(wParam));
+			bHandled = IsMsgHandled();
+			return lRes;
 		}
 		LRESULT TinyVisualWindowless::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			if (m_document != NULL)
+			if (m_bAllowTracking)
 			{
-				if (m_bAllowTracking)
-				{
-					if (m_bMouseTracking)
-						m_bMouseTracking = FALSE;
-				}
-				LRESULT lRes = m_document->OnMouseLeave();
-				bHandled = IsMsgHandled();
-				return lRes;
+				if (m_bMouseTracking)
+					m_bMouseTracking = FALSE;
 			}
-			return FALSE;
+			LRESULT lRes = m_document.OnMouseLeave();
+			bHandled = IsMsgHandled();
+			return lRes;
 		}
 		LRESULT TinyVisualWindowless::OnMouseWheel(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			if (m_document != NULL)
-			{
-				TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-				::ScreenToClient(m_hWND, &pos);
-				LRESULT lRes = m_document->OnMouseWheel(pos, GET_WHEEL_DELTA_WPARAM(wParam), GET_KEYSTATE_WPARAM(wParam));
-				bHandled = IsMsgHandled();
-				return lRes;
-			}
+			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			::ScreenToClient(m_hWND, &pos);
+			LRESULT lRes = m_document.OnMouseWheel(pos, GET_WHEEL_DELTA_WPARAM(wParam), GET_KEYSTATE_WPARAM(wParam));
+			bHandled = IsMsgHandled();
+			return lRes;
 			return FALSE;
 		}
 		LRESULT TinyVisualWindowless::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			if (m_document != NULL)
-			{
-				TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-				LRESULT lRes = m_document->OnLButtonDown(pos, static_cast<DWORD>(wParam));
-				bHandled = IsMsgHandled();
-				return lRes;
-			}
-			return FALSE;
+			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			LRESULT lRes = m_document.OnLButtonDown(pos, static_cast<DWORD>(wParam));
+			bHandled = IsMsgHandled();
+			return lRes;
 		}
 		LRESULT TinyVisualWindowless::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			if (m_document != NULL)
-			{
-				TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-				LRESULT lRes = m_document->OnLButtonUp(pos, static_cast<DWORD>(wParam));
-				bHandled = IsMsgHandled();
-				return lRes;
-			}
-			return FALSE;
+			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			LRESULT lRes = m_document.OnLButtonUp(pos, static_cast<DWORD>(wParam));
+			bHandled = IsMsgHandled();
+			return lRes;
 		}
 		LRESULT TinyVisualWindowless::OnLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			if (m_document != NULL)
-			{
-				TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-				LRESULT lRes = m_document->OnLButtonDBClick(pos, static_cast<DWORD>(wParam));
-				bHandled = IsMsgHandled();
-				return lRes;
-			}
-			return FALSE;
+			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			LRESULT lRes = m_document.OnLButtonDBClick(pos, static_cast<DWORD>(wParam));
+			bHandled = IsMsgHandled();
+			return lRes;
 		}
 		LRESULT TinyVisualWindowless::OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			if (m_document != NULL)
-			{
-				TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-				LRESULT lRes = m_document->OnRButtonDown(pos, static_cast<DWORD>(wParam));
-				bHandled = IsMsgHandled();
-				return lRes;
-			}
-			return FALSE;
+			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			LRESULT lRes = m_document.OnRButtonDown(pos, static_cast<DWORD>(wParam));
+			bHandled = IsMsgHandled();
+			return lRes;
 		}
 		LRESULT TinyVisualWindowless::OnRButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			if (m_document != NULL)
-			{
-				TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-				LRESULT lRes = m_document->OnRButtonUp(pos, static_cast<DWORD>(wParam));
-				bHandled = IsMsgHandled();
-				return lRes;
-			}
-			return FALSE;
+			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			LRESULT lRes = m_document.OnRButtonUp(pos, static_cast<DWORD>(wParam));
+			bHandled = IsMsgHandled();
+			return lRes;
 		}
 		LRESULT TinyVisualWindowless::OnRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			if (m_document != NULL)
-			{
-				TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-				LRESULT lRes = m_document->OnRButtonDBClick(pos, static_cast<DWORD>(wParam));
-				bHandled = IsMsgHandled();
-				return lRes;
-			}
+			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			LRESULT lRes = m_document.OnRButtonDBClick(pos, static_cast<DWORD>(wParam));
+			bHandled = IsMsgHandled();
+			return lRes;
 			return FALSE;
 		}
 		LRESULT TinyVisualWindowless::OnMButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			if (m_document != NULL)
-			{
-				TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-				LRESULT lRes = m_document->OnMButtonDown(pos, static_cast<DWORD>(wParam));
-				bHandled = IsMsgHandled();
-				return lRes;
-			}
-			return FALSE;
+			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			LRESULT lRes = m_document.OnMButtonDown(pos, static_cast<DWORD>(wParam));
+			bHandled = IsMsgHandled();
+			return lRes;
 		}
 		LRESULT TinyVisualWindowless::OnMButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			if (m_document != NULL)
-			{
-				TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-				LRESULT lRes = m_document->OnMButtonUp(pos, static_cast<DWORD>(wParam));
-				bHandled = IsMsgHandled();
-				return lRes;
-			}
+			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			LRESULT lRes = m_document.OnMButtonUp(pos, static_cast<DWORD>(wParam));
+			bHandled = IsMsgHandled();
+			return lRes;
 			return FALSE;
 		}
 		LRESULT TinyVisualWindowless::OnMButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			if (m_document != NULL)
-			{
-				TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-				LRESULT lRes = m_document->OnMButtonDBClick(pos, static_cast<DWORD>(wParam));
-				bHandled = IsMsgHandled();
-				return lRes;
-			}
-			return FALSE;
+			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			LRESULT lRes = m_document.OnMButtonDBClick(pos, static_cast<DWORD>(wParam));
+			bHandled = IsMsgHandled();
+			return lRes;
 		}
 		LRESULT TinyVisualWindowless::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			if (m_document != NULL)
-			{
-				LRESULT lRes = m_document->OnKeyDown(static_cast<DWORD>(wParam), LOWORD(lParam), HIWORD(lParam));
-				bHandled = IsMsgHandled();
-				return lRes;
-			}
-			return FALSE;
+			LRESULT lRes = m_document.OnKeyDown(static_cast<DWORD>(wParam), LOWORD(lParam), HIWORD(lParam));
+			bHandled = IsMsgHandled();
+			return lRes;
 		}
 		LRESULT TinyVisualWindowless::OnKeyUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			if (m_document != NULL)
-			{
-				LRESULT lRes = m_document->OnKeyUp(static_cast<DWORD>(wParam), LOWORD(lParam), HIWORD(lParam));
-				bHandled = IsMsgHandled();
-				return lRes;
-			}
-			return FALSE;
+			LRESULT lRes = m_document.OnKeyUp(static_cast<DWORD>(wParam), LOWORD(lParam), HIWORD(lParam));
+			bHandled = IsMsgHandled();
+			return lRes;
 		}
 		LRESULT TinyVisualWindowless::OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			if (m_document != NULL)
-			{
-				LRESULT lRes = m_document->OnChar(static_cast<DWORD>(wParam), LOWORD(lParam), HIWORD(lParam));
-				bHandled = IsMsgHandled();
-				return lRes;
-			}
-			return FALSE;
+			LRESULT lRes = m_document.OnChar(static_cast<DWORD>(wParam), LOWORD(lParam), HIWORD(lParam));
+			bHandled = IsMsgHandled();
+			return lRes;
 		}
 		LRESULT TinyVisualWindowless::OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			if (m_document != NULL)
-			{
-				LRESULT lRes = m_document->OnSetCursor(reinterpret_cast<HWND>(wParam), LOWORD(lParam), HIWORD(lParam));
-				bHandled = IsMsgHandled();
-				return lRes;
-			}
-			return FALSE;
+			LRESULT lRes = m_document.OnSetCursor(reinterpret_cast<HWND>(wParam), LOWORD(lParam), HIWORD(lParam));
+			bHandled = IsMsgHandled();
+			return lRes;
 		}
 		LRESULT TinyVisualWindowless::OnSetFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			if (m_document != NULL)
-			{
-				LRESULT lRes = m_document->OnSetFocus(reinterpret_cast<HWND>(wParam));
-				bHandled = IsMsgHandled();
-				return lRes;
-			}
-			return FALSE;
+			LRESULT lRes = m_document.OnSetFocus(reinterpret_cast<HWND>(wParam));
+			bHandled = IsMsgHandled();
+			return lRes;
 		}
 		LRESULT TinyVisualWindowless::OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			SetMsgHandled(FALSE);
-			if (m_document != NULL)
-			{
-				LRESULT lRes = m_document->OnKillFocus(reinterpret_cast<HWND>(wParam));
-				bHandled = IsMsgHandled();
-				return lRes;
-			}
-			return FALSE;
+			LRESULT lRes = m_document.OnKillFocus(reinterpret_cast<HWND>(wParam));
+			bHandled = IsMsgHandled();
+			return lRes;
 		}
 		LRESULT TinyVisualWindowless::OnShowWindow(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
@@ -527,68 +450,62 @@ namespace TinyUI
 		LRESULT TinyVisualWindowless::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = TRUE;
-			if (m_document != NULL)
-			{
-				TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-				TinyRectangle rectangle;
-				this->GetWindowRect(rectangle);
-				if (!rectangle.PtInRect(pos))
-					return HTNOWHERE;
-				INT cx = GetSystemMetrics(SM_CXBORDER);
-				INT cy = GetSystemMetrics(SM_CYBORDER);
-				if (pos.x >= rectangle.left && pos.x <= (rectangle.left + cx) && pos.y >= rectangle.top && pos.y <= (rectangle.top + cy))
-					return HTTOPLEFT;
-				if (pos.x >= rectangle.left && pos.x <= (rectangle.left + cx) && pos.y > (rectangle.top + cy) && pos.y < (rectangle.bottom - cy))
-					return HTLEFT;
-				if (pos.x >= rectangle.left && pos.x <= (rectangle.left + cx) && pos.y >= (rectangle.bottom - cy) && pos.y <= rectangle.bottom)
-					return HTBOTTOMLEFT;
-				if (pos.x > (rectangle.left + cx) && pos.x < (rectangle.right - cx) && pos.y >= rectangle.top && pos.y <= (rectangle.top + cy))
-					return HTTOP;
-				if (pos.x >= (rectangle.right - cx) && pos.x <= rectangle.right && pos.y >= rectangle.top && pos.y <= (rectangle.top + cy))
-					return HTTOPRIGHT;
-				if (pos.x >= (rectangle.right - cx) && pos.x <= rectangle.right && pos.y > (rectangle.top + cy) && pos.y < (rectangle.bottom - cy))
-					return HTRIGHT;
-				if (pos.x >= (rectangle.right - cx) && pos.x <= rectangle.right && pos.y >= (rectangle.bottom - cy) && pos.y <= rectangle.bottom)
-					return HTBOTTOMRIGHT;
-				if (pos.x > (rectangle.left + cx) && pos.x < (rectangle.right - cx) && pos.y >= (rectangle.bottom - cy) && pos.y <= rectangle.bottom)
-					return HTBOTTOM;
-				::ScreenToClient(m_hWND, &pos);
-				if (m_document->GetParent(NULL) == m_document->GetVisualByPos(pos.x, pos.y))
-					return HTCAPTION;
-			}
+			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			TinyRectangle rectangle;
+			this->GetWindowRect(rectangle);
+			if (!rectangle.PtInRect(pos))
+				return HTNOWHERE;
+			INT cx = GetSystemMetrics(SM_CXBORDER);
+			INT cy = GetSystemMetrics(SM_CYBORDER);
+			if (pos.x >= rectangle.left && pos.x <= (rectangle.left + cx) && pos.y >= rectangle.top && pos.y <= (rectangle.top + cy))
+				return HTTOPLEFT;
+			if (pos.x >= rectangle.left && pos.x <= (rectangle.left + cx) && pos.y > (rectangle.top + cy) && pos.y < (rectangle.bottom - cy))
+				return HTLEFT;
+			if (pos.x >= rectangle.left && pos.x <= (rectangle.left + cx) && pos.y >= (rectangle.bottom - cy) && pos.y <= rectangle.bottom)
+				return HTBOTTOMLEFT;
+			if (pos.x > (rectangle.left + cx) && pos.x < (rectangle.right - cx) && pos.y >= rectangle.top && pos.y <= (rectangle.top + cy))
+				return HTTOP;
+			if (pos.x >= (rectangle.right - cx) && pos.x <= rectangle.right && pos.y >= rectangle.top && pos.y <= (rectangle.top + cy))
+				return HTTOPRIGHT;
+			if (pos.x >= (rectangle.right - cx) && pos.x <= rectangle.right && pos.y > (rectangle.top + cy) && pos.y < (rectangle.bottom - cy))
+				return HTRIGHT;
+			if (pos.x >= (rectangle.right - cx) && pos.x <= rectangle.right && pos.y >= (rectangle.bottom - cy) && pos.y <= rectangle.bottom)
+				return HTBOTTOMRIGHT;
+			if (pos.x > (rectangle.left + cx) && pos.x < (rectangle.right - cx) && pos.y >= (rectangle.bottom - cy) && pos.y <= rectangle.bottom)
+				return HTBOTTOM;
+			::ScreenToClient(m_hWND, &pos);
+			if (m_document.GetParent(NULL) == m_document.GetVisualByPos(pos.x, pos.y))
+				return HTCAPTION;
 			return HTCLIENT;
 		}
 		LRESULT TinyVisualWindowless::OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = TRUE;
-			if (m_document != NULL)
+			MINMAXINFO* ps = (MINMAXINFO*)lParam;
+			TinyVisual* spvis = m_document.GetParent(NULL);
+			ASSERT(spvis);
+			TinySize minSize = spvis->GetMinimumSize();
+			if (!minSize.IsEmpty())
 			{
-				MINMAXINFO* ps = (MINMAXINFO*)lParam;
-				TinyVisual* spvis = m_document->GetParent(NULL);
-				ASSERT(spvis);
-				TinySize minSize = spvis->GetMinimumSize();
-				if (!minSize.IsEmpty())
-				{
-					ps->ptMinTrackSize.x = minSize.cx;
-					ps->ptMinTrackSize.y = minSize.cy;
-				}
-				TinySize maxSize = spvis->GetMaximumSize();
-				if (!maxSize.IsEmpty())
-				{
-					ps->ptMaxTrackSize.x = maxSize.cx;
-					ps->ptMaxTrackSize.y = maxSize.cy;
-				}
-				else
-				{
-					MONITORINFO mi = { 0 };
-					mi.cbSize = sizeof(MONITORINFO);
-					GetMonitorInfo(MonitorFromWindow(m_hWND, MONITOR_DEFAULTTONEAREST), &mi);
-					ps->ptMaxTrackSize.x = abs(mi.rcWork.right - mi.rcWork.left);
-					ps->ptMaxTrackSize.y = abs(mi.rcWork.bottom - mi.rcWork.top);
-				}
-				ps->ptMaxPosition.x = 0;
-				ps->ptMaxPosition.y = 0;
+				ps->ptMinTrackSize.x = minSize.cx;
+				ps->ptMinTrackSize.y = minSize.cy;
 			}
+			TinySize maxSize = spvis->GetMaximumSize();
+			if (!maxSize.IsEmpty())
+			{
+				ps->ptMaxTrackSize.x = maxSize.cx;
+				ps->ptMaxTrackSize.y = maxSize.cy;
+			}
+			else
+			{
+				MONITORINFO mi = { 0 };
+				mi.cbSize = sizeof(MONITORINFO);
+				GetMonitorInfo(MonitorFromWindow(m_hWND, MONITOR_DEFAULTTONEAREST), &mi);
+				ps->ptMaxTrackSize.x = abs(mi.rcWork.right - mi.rcWork.left);
+				ps->ptMaxTrackSize.y = abs(mi.rcWork.bottom - mi.rcWork.top);
+			}
+			ps->ptMaxPosition.x = 0;
+			ps->ptMaxPosition.y = 0;
 			return TRUE;
 		}
 	}

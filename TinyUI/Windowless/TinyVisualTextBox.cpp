@@ -358,65 +358,73 @@ namespace TinyUI
 
 		HRESULT TinyVisualTextBox::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)
 		{
+			ASSERT(m_document);
 			ASSERT(m_texthost.m_ts);
-			const MSG* pMsg = m_document->GetVisualHWND()->GetCurrentMessage();
+			const MSG* pMsg = m_document->GetVisualHWND().GetCurrentMessage();
 			LRESULT lRes = FALSE;
-			m_document->GetVisualHWND()->SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
+			m_document->GetVisualHWND().SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
 			return lRes;
 		}
 		HRESULT TinyVisualTextBox::OnMouseWheel(const TinyPoint& pos, SHORT zDelta, DWORD dwFlags)
 		{
+			ASSERT(m_document);
 			ASSERT(m_texthost.m_ts);
-			const MSG* pMsg = m_document->GetVisualHWND()->GetCurrentMessage();
+			const MSG* pMsg = m_document->GetVisualHWND().GetCurrentMessage();
 			LRESULT lRes = FALSE;
-			m_document->GetVisualHWND()->SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
+			m_document->GetVisualHWND().SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
 			return lRes;
 		}
 		HRESULT TinyVisualTextBox::OnLButtonDown(const TinyPoint& pos, DWORD dwFlags)
 		{
+			ASSERT(m_document);
 			ASSERT(m_texthost.m_ts);
 			m_document->SetFocus(this);
-			const MSG* pMsg = m_document->GetVisualHWND()->GetCurrentMessage();
+			const MSG* pMsg = m_document->GetVisualHWND().GetCurrentMessage();
 			LRESULT lRes = FALSE;
-			m_document->GetVisualHWND()->SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
+			m_document->GetVisualHWND().SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
 			return lRes;
 		}
 		HRESULT TinyVisualTextBox::OnLButtonUp(const TinyPoint& pos, DWORD dwFlags)
 		{
+			ASSERT(m_document);
 			ASSERT(m_texthost.m_ts);
-			const MSG* pMsg = m_document->GetVisualHWND()->GetCurrentMessage();
+			const MSG* pMsg = m_document->GetVisualHWND().GetCurrentMessage();
 			LRESULT lRes = FALSE;
-			m_document->GetVisualHWND()->SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
+			m_document->GetVisualHWND().SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
 			return lRes;
 		}
 		HRESULT TinyVisualTextBox::OnKeyDown(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags)
 		{
+			ASSERT(m_document);
 			ASSERT(m_texthost.m_ts);
-			const MSG* pMsg = m_document->GetVisualHWND()->GetCurrentMessage();
+			const MSG* pMsg = m_document->GetVisualHWND().GetCurrentMessage();
 			LRESULT lRes = FALSE;
-			m_document->GetVisualHWND()->SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
+			m_document->GetVisualHWND().SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
 			return lRes;
 		}
 		HRESULT TinyVisualTextBox::OnKeyUp(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags)
 		{
+			ASSERT(m_document);
 			ASSERT(m_texthost.m_ts);
-			const MSG* pMsg = m_document->GetVisualHWND()->GetCurrentMessage();
+			const MSG* pMsg = m_document->GetVisualHWND().GetCurrentMessage();
 			LRESULT lRes = FALSE;
-			m_document->GetVisualHWND()->SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
+			m_document->GetVisualHWND().SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
 			return lRes;
 		}
 		HRESULT TinyVisualTextBox::OnChar(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags)
 		{
+			ASSERT(m_document);
 			ASSERT(m_texthost.m_ts);
-			const MSG* pMsg = m_document->GetVisualHWND()->GetCurrentMessage();
+			const MSG* pMsg = m_document->GetVisualHWND().GetCurrentMessage();
 			LRESULT lRes = FALSE;
-			m_document->GetVisualHWND()->SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
+			m_document->GetVisualHWND().SetMsgHandled(m_texthost.m_ts->TxSendMessage(pMsg->message, pMsg->wParam, pMsg->lParam, &lRes) == S_OK);
 			return lRes;
 		}
 		HRESULT TinyVisualTextBox::OnSetCursor(HWND hWND, DWORD dwHitTest, DWORD dwMessage)
 		{
+			ASSERT(m_document);
 			ASSERT(m_texthost.m_ts);
-			m_document->GetVisualHWND()->SetMsgHandled(TRUE);
+			m_document->GetVisualHWND().SetMsgHandled(TRUE);
 			POINT pos;
 			GetCursorPos(&pos);
 			::ScreenToClient(hWND, &pos);
@@ -568,7 +576,7 @@ namespace TinyUI
 		{
 			if (m_document != NULL)
 			{
-				m_document->GetVisualHWND()->AddFilter(this);
+				m_document->GetVisualHWND().AddFilter(this);
 			}
 			m_texthost.Initialize(this);
 			return S_OK;
@@ -595,9 +603,10 @@ namespace TinyUI
 		}
 		HRESULT TinyVisualTextBox::OnDestory()
 		{
+			ASSERT(m_document);
 			m_hscroll->EVENT_PosChange -= m_onPosChange;
 			m_vscroll->EVENT_PosChange -= m_onPosChange;
-			m_document->GetVisualHWND()->RemoveFilter(this);
+			m_document->GetVisualHWND().RemoveFilter(this);
 			return S_OK;
 		}
 		void TinyVisualTextBox::OnPosChange(BOOL bVer, INT code, INT iOldPos, INT iNewPos)

@@ -179,14 +179,11 @@ namespace MShow
 		m_audioDSP.Close();
 		m_queue.RemoveAll();
 		m_audio.Close();
-		if (m_view.GetDocument() != NULL)
+		MAudioDB* audiodb = static_cast<MAudioDB*>(m_view.GetDocument().GetVisualByName("microphoneTestDB"));
+		if (audiodb != NULL)
 		{
-			MAudioDB* audiodb = static_cast<MAudioDB*>(m_view.GetDocument()->GetVisualByName("microphoneTestDB"));
-			if (audiodb != NULL)
-			{
-				audiodb->SetDB(0);
-				audiodb->Invalidate();
-			}
+			audiodb->SetDB(0);
+			audiodb->Invalidate();
 		}
 		m_bCapturing = FALSE;
 		LOG(INFO) << "[MicrophoneTest] OnMessagePump Finish\n";
@@ -206,9 +203,9 @@ namespace MShow
 			sampleTag.bits = static_cast<BYTE*>(m_queue.Alloc());
 			memcpy(sampleTag.bits + 4, bits, size);
 			m_queue.Push(sampleTag);
-			if (m_view.GetDocument() != NULL && db > 0)
+			if (db > 0)
 			{
-				MAudioDB* audiodb = static_cast<MAudioDB*>(m_view.GetDocument()->GetVisualByName("microphoneTestDB"));
+				MAudioDB* audiodb = static_cast<MAudioDB*>(m_view.GetDocument().GetVisualByName("microphoneTestDB"));
 				if (audiodb != NULL && audiodb->IsVisible())
 				{
 					audiodb->SetDB(db);

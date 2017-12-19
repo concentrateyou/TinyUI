@@ -68,22 +68,18 @@ namespace TinyUI
 		}
 		TinyVisualOption* TinyVisualComboBox::AddOption(const TinyString& szValue, const TinyString& szText)
 		{
-			if (m_popupWND.GetDocument() != NULL)
+			TinyVisual* spvisParent = m_popupWND.GetDocument().GetParent(NULL);
+			TinyVisualOption* spvis = static_cast<TinyVisualOption*>(m_popupWND.GetDocument().Create(0, m_options.GetSize() * DEFAULT_OPTION_HEIGHT, TO_CX(m_rectangle), DEFAULT_OPTION_HEIGHT, TinyVisualTag::OPTION, spvisParent));
+			if (spvis != NULL)
 			{
-				TinyVisual* spvisParent = m_popupWND.GetDocument()->GetParent(NULL);
-				TinyVisualOption* spvis = static_cast<TinyVisualOption*>(m_popupWND.GetDocument()->Create(0, m_options.GetSize() * DEFAULT_OPTION_HEIGHT, TO_CX(m_rectangle), DEFAULT_OPTION_HEIGHT, TinyVisualTag::OPTION, spvisParent));
-				if (spvis != NULL)
-				{
-					spvis->SetValue(szValue.CSTR());
-					spvis->SetText(szText.CSTR());
-					spvis->SetTextAlian(DT_LEFT | DT_SINGLELINE | DT_VCENTER);
-					spvis->SetHighlightImage("ComboBoxList_highlight");
-					spvis->SetTextColor(RGB(0, 0, 0));
-					m_options.Add(spvis);
-				}
-				return spvis;
+				spvis->SetValue(szValue.CSTR());
+				spvis->SetText(szText.CSTR());
+				spvis->SetTextAlian(DT_LEFT | DT_SINGLELINE | DT_VCENTER);
+				spvis->SetHighlightImage("ComboBoxList_highlight");
+				spvis->SetTextColor(RGB(0, 0, 0));
+				m_options.Add(spvis);
 			}
-			return NULL;
+			return spvis;
 		}
 		TinyArray<TinyVisualOption*>& TinyVisualComboBox::GetOptions()
 		{
@@ -95,7 +91,7 @@ namespace TinyUI
 			{
 				if (m_options[i]->GetValue() == szValue)
 				{
-					m_popupWND.GetDocument()->Destory(m_options[i]);
+					m_popupWND.GetDocument().Destory(m_options[i]);
 					m_options.RemoveAt(i);
 					break;
 				}
@@ -105,7 +101,7 @@ namespace TinyUI
 		{
 			for (INT i = 0;i < m_options.GetSize();i++)
 			{
-				m_popupWND.GetDocument()->Destory(m_options[i]);
+				m_popupWND.GetDocument().Destory(m_options[i]);
 			}
 			m_options.RemoveAll();
 			m_popupWND.SetSelected(NULL);
@@ -185,7 +181,7 @@ namespace TinyUI
 			if (!m_document)
 				return FALSE;
 			string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\dropdown.xml");
-			m_popupWND.Create(m_document->GetVisualHWND()->Handle(), szFile.c_str());
+			m_popupWND.Create(m_document->GetVisualHWND().Handle(), szFile.c_str());
 			m_popupWND.UpdateWindow();
 			return TinyVisual::OnInitialize();
 		}
@@ -197,123 +193,109 @@ namespace TinyUI
 
 		HRESULT	TinyVisualComboBox::OnLButtonDown(const TinyPoint& pos, DWORD dwFlags)
 		{
-			if (m_document != NULL)
+			ASSERT(m_document);
+			if (m_dwStyle != PUSH)
 			{
-				TinyRectangle s = m_document->GetWindowRect(this);
-				if (m_dwStyle != PUSH)
+				m_dwStyle = PUSH;
+				this->Invalidate();
+			}
+			m_document->ReleaseCapture();
+			TinyRectangle s = m_document->GetWindowRect(this);
+			TinyPoint screenPos = m_document->GetScreenPos(this);
+			screenPos.Offset(2, s.Height() - 1);
+			TinyVisual* spvis = m_popupWND.GetDocument().GetParent(NULL);
+			DWORD dwCount = m_options.GetSize();
+			if (dwCount > 0)
+			{
+				TinyRectangle rectangle = spvis->GetRectangle();
+				TinySize size = rectangle.Size();
+				if (size.cy == 0)
 				{
-					m_dwStyle = PUSH;
-					m_document->Invalidate(&s);
+					size.cy = dwCount * DEFAULT_OPTION_HEIGHT;
+					spvis->SetSize(size);
 				}
-				m_document->ReleaseCapture();
-				TinyPoint screenPos = m_document->GetScreenPos(this);
-				screenPos.Offset(2, s.Height() - 1);
-				TinyVisual* spvis = m_popupWND.GetDocument()->GetParent(NULL);
-				DWORD dwCount = m_options.GetSize();
-				if (dwCount > 0)
-				{
-					TinyRectangle rectangle = spvis->GetRectangle();
-					TinySize size = rectangle.Size();
-					if (size.cy == 0)
-					{
-						size.cy = dwCount * DEFAULT_OPTION_HEIGHT;
-						spvis->SetSize(size);
-					}
-					rectangle = spvis->GetRectangle();
-					m_popupWND.SetPosition(screenPos, rectangle.Size());
-				}
+				rectangle = spvis->GetRectangle();
+				m_popupWND.SetPosition(screenPos, rectangle.Size());
 			}
 			return TinyVisual::OnLButtonDown(pos, dwFlags);
 		}
 		HRESULT TinyVisualComboBox::OnLButtonDBClick(const TinyPoint& pos, DWORD dwFlags)
 		{
-			if (m_document != NULL)
+			ASSERT(m_document);
+			if (m_dwStyle != PUSH)
 			{
-				TinyRectangle s = m_document->GetWindowRect(this);
-				if (m_dwStyle != PUSH)
+				m_dwStyle = PUSH;
+				this->Invalidate();
+			}
+			m_document->ReleaseCapture();
+			TinyRectangle s = m_document->GetWindowRect(this);
+			TinyPoint screenPos = m_document->GetScreenPos(this);
+			screenPos.Offset(2, s.Height() - 1);
+			TinyVisual* spvis = m_popupWND.GetDocument().GetParent(NULL);
+			DWORD dwCount = m_options.GetSize();
+			if (dwCount > 0)
+			{
+				TinyRectangle rectangle = spvis->GetRectangle();
+				TinySize size = rectangle.Size();
+				if (size.cy == 0)
 				{
-					m_dwStyle = PUSH;
-					m_document->Invalidate(&s);
+					size.cy = dwCount * DEFAULT_OPTION_HEIGHT;
+					spvis->SetSize(size);
 				}
-				m_document->ReleaseCapture();
-				TinyPoint screenPos = m_document->GetScreenPos(this);
-				screenPos.Offset(2, s.Height() - 1);
-				TinyVisual* spvis = m_popupWND.GetDocument()->GetParent(NULL);
-				DWORD dwCount = m_options.GetSize();
-				if (dwCount > 0)
-				{
-					TinyRectangle rectangle = spvis->GetRectangle();
-					TinySize size = rectangle.Size();
-					if (size.cy == 0)
-					{
-						size.cy = dwCount * DEFAULT_OPTION_HEIGHT;
-						spvis->SetSize(size);
-					}
-					rectangle = spvis->GetRectangle();
-					m_popupWND.SetPosition(screenPos, rectangle.Size());
-				}
+				rectangle = spvis->GetRectangle();
+				m_popupWND.SetPosition(screenPos, rectangle.Size());
 			}
 			return TinyVisual::OnLButtonDBClick(pos, dwFlags);
 		}
 		HRESULT	TinyVisualComboBox::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)
 		{
-			if (m_document != NULL)
+			ASSERT(m_document);
+			StyleImage style = m_bActive ? PUSH : (dwFlags & MK_LBUTTON ? DOWN : HIGHLIGHT);
+			if (m_dwStyle != style)
 			{
-				StyleImage style = m_bActive ? PUSH : (dwFlags & MK_LBUTTON ? DOWN : HIGHLIGHT);
-				if (m_dwStyle != style)
-				{
-					m_dwStyle = style;
-					TinyRectangle s = m_document->GetWindowRect(this);
-					m_document->Invalidate(&s);
-				}
+				m_dwStyle = style;
+				this->Invalidate();
 			}
 			return TinyVisual::OnMouseMove(pos, dwFlags);
 		}
 		HRESULT TinyVisualComboBox::OnMouseLeave()
 		{
-			if (m_document != NULL)
+			ASSERT(m_document);
+			StyleImage style = m_bActive ? PUSH : NORMAL;
+			if (m_dwStyle != style)
 			{
-				StyleImage style = m_bActive ? PUSH : NORMAL;
-				if (m_dwStyle != style)
-				{
-					m_dwStyle = m_bActive ? PUSH : NORMAL;
-					TinyRectangle s = m_document->GetWindowRect(this);
-					m_document->Invalidate(&s);
-				}
+				m_dwStyle = m_bActive ? PUSH : NORMAL;
+				this->Invalidate();
 			}
 			return TinyVisual::OnMouseLeave();
 		}
 		HRESULT	TinyVisualComboBox::OnLButtonUp(const TinyPoint& pos, DWORD dwFlags)
 		{
-			if (m_document != NULL)
+			ASSERT(m_document);
+			if (m_dwStyle != PUSH)
 			{
-				TinyRectangle s = m_document->GetWindowRect(this);
-				if (m_dwStyle != PUSH)
-				{
-					m_dwStyle = PUSH;
-					m_document->Invalidate(&s);
-				}
-				TinyPoint point = m_document->VisualToClient(this, pos);
-				if (s.PtInRect(point))
-				{
-					EVENT_CLICK(this, EventArgs());
-				}
+				m_dwStyle = PUSH;
+				this->Invalidate();
+			}
+			TinyRectangle s = m_document->GetWindowRect(this);
+			TinyPoint point = m_document->VisualToClient(this, pos);
+			if (s.PtInRect(point))
+			{
+				EVENT_CLICK(this, EventArgs());
 			}
 			return TinyVisual::OnLButtonUp(pos, dwFlags);
 		}
 		void TinyVisualComboBox::OnPopupActive(ActiveEventArgs& args)
 		{
-			if (m_document != NULL)
+			ASSERT(m_document);
+			m_bActive = args.IsActive();
+			m_dwArrawFlag = m_bActive ? DOWN : NORMAL;
+			if (!m_bActive)
 			{
-				m_bActive = args.IsActive();
-				m_dwArrawFlag = m_bActive ? DOWN : NORMAL;
-				if (!m_bActive)
-				{
-					m_popupWND.ShowWindow(SW_HIDE);
-					m_popupWND.UpdateWindow();
-				}
-				this->Invalidate();
+				m_popupWND.ShowWindow(SW_HIDE);
+				m_popupWND.UpdateWindow();
 			}
+			this->Invalidate();
 		}
 		//////////////////////////////////////////////////////////////////////////
 		IMPLEMENT_DYNCREATE(TinyVisualOption, TinyVisual);
@@ -348,21 +330,20 @@ namespace TinyUI
 
 		HRESULT TinyVisualOption::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)
 		{
+			ASSERT(m_document);
 			m_dwFlag = HIGHLIGHT;
 			m_document->Redraw();
 			return TinyVisual::OnMouseMove(pos, dwFlags);
 		}
 		HRESULT TinyVisualOption::OnLButtonUp(const TinyPoint& pos, DWORD dwFlags)
 		{
-			if (m_document != NULL)
+			ASSERT(m_document);
+			TinyVisualWindowless& window = m_document->GetVisualHWND();
+			if (window.IsKindOf(RUNTIME_CLASS(TinyVisualComboBoxHWND)))
 			{
-				TinyVisualWindowless* pHWND = m_document->GetVisualHWND();
-				if (pHWND->IsKindOf(RUNTIME_CLASS(TinyVisualComboBoxHWND)))
-				{
-					TinyVisualComboBoxHWND*	ps = static_cast<TinyVisualComboBoxHWND*>(pHWND);
-					::ShowWindow(ps->Handle(), SW_HIDE);
-					ps->SetSelected(this);
-				}
+				TinyVisualComboBoxHWND&	ps = static_cast<TinyVisualComboBoxHWND&>(window);
+				::ShowWindow(ps.Handle(), SW_HIDE);
+				ps.SetSelected(this);
 			}
 			return TinyVisual::OnLButtonUp(pos, dwFlags);
 		}
@@ -403,8 +384,7 @@ namespace TinyUI
 		}
 		BOOL TinyVisualOption::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
-			if (!m_document)
-				return FALSE;
+			ASSERT(m_document);
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			canvas.SetFont(m_hFONT);

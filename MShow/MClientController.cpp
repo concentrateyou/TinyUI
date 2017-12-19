@@ -54,12 +54,12 @@ namespace MShow
 		m_szProgramID = std::move(szProgramID);
 		m_szProgramName = std::move(szProgramName);
 		m_szLogID = std::move(szLogID);
-		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("lblName");
+		TinyVisual* visual = m_view.GetDocument().GetVisualByName("lblName");
 		if (visual != NULL)
 		{
 			visual->SetText(szProgramName.c_str());
 		}
-		visual = m_view.GetDocument()->GetVisualByName("lblError");
+		visual = m_view.GetDocument().GetVisualByName("lblError");
 		if (visual != NULL)
 		{
 			visual->SetVisible(FALSE);
@@ -69,12 +69,12 @@ namespace MShow
 	}
 	void MClientController::SetTimes(const string& szTime1, const string& szTime2)
 	{
-		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("lblBeginTime");
+		TinyVisual* visual = m_view.GetDocument().GetVisualByName("lblBeginTime");
 		if (visual != NULL)
 		{
 			visual->SetText(szTime1.c_str());
 		}
-		visual = m_view.GetDocument()->GetVisualByName("lblEndTime");
+		visual = m_view.GetDocument().GetVisualByName("lblEndTime");
 		if (visual != NULL)
 		{
 			visual->SetText(szTime2.c_str());
@@ -90,7 +90,7 @@ namespace MShow
 			if (m_preview->Open(m_szPreviewURL.c_str()))
 			{
 				LOG(INFO) << "[SetPreview] " << "Open Preview :" << m_szPreviewURL << " OK";
-				TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
+				TinyVisual* visual = m_view.GetDocument().GetVisualByName("btnStartCommentary");
 				if (visual != NULL)
 				{
 					visual->SetVisible(TRUE);
@@ -98,12 +98,12 @@ namespace MShow
 			}
 			else
 			{
-				TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
+				TinyVisual* visual = m_view.GetDocument().GetVisualByName("btnStartCommentary");
 				if (visual != NULL)
 				{
 					visual->SetVisible(FALSE);
 				}
-				visual = m_view.GetDocument()->GetVisualByName("lblError");
+				visual = m_view.GetDocument().GetVisualByName("lblError");
 				if (visual != NULL)
 				{
 					visual->SetVisible(TRUE);
@@ -132,12 +132,12 @@ namespace MShow
 
 				TRACE("[MClientController] OnTry Open OK\n");
 				LOG(INFO) << "[MClientController] OnTry Open OK";
-				TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
+				TinyVisual* visual = m_view.GetDocument().GetVisualByName("btnStartCommentary");
 				if (visual != NULL)
 				{
 					visual->SetVisible(TRUE);
 				}
-				visual = m_view.GetDocument()->GetVisualByName("lblError");
+				visual = m_view.GetDocument().GetVisualByName("lblError");
 				if (visual != NULL)
 				{
 					visual->SetVisible(FALSE);
@@ -165,7 +165,7 @@ namespace MShow
 	{
 		vector<CAPTUREDEVICE> captures;
 		TinySoundCapture::Enumerate(captures);
-		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("microphone");
+		TinyVisual* visual = m_view.GetDocument().GetVisualByName("microphone");
 		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
 		{
 			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
@@ -185,7 +185,7 @@ namespace MShow
 	{
 		vector<PLAYDEVICE> renders;
 		TinySoundPlayer::Enumerate(renders);
-		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("speaker");
+		TinyVisual* visual = m_view.GetDocument().GetVisualByName("speaker");
 		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
 		{
 			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
@@ -278,66 +278,66 @@ namespace MShow
 
 	void MClientController::InitializeUI()
 	{
-		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("lblError");
+		TinyVisual* visual = m_view.GetDocument().GetVisualByName("lblError");
 		if (visual != NULL)
 		{
 			visual->SetVisible(FALSE);
 		}
-		visual = m_view.GetDocument()->GetVisualByName("btnSetting");
+		visual = m_view.GetDocument().GetVisualByName("btnSetting");
 		if (visual != NULL)
 		{
 			m_onSettingClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MClientController::OnSettingClick));
 			visual->EVENT_CLICK += m_onSettingClick;
 		}
-		visual = m_view.GetDocument()->GetVisualByName("sysmin");
+		visual = m_view.GetDocument().GetVisualByName("sysmin");
 		if (visual != NULL)
 		{
 			m_onMinimumClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MClientController::OnMinimumClick));
 			visual->EVENT_CLICK += m_onMinimumClick;
 		}
-		visual = m_view.GetDocument()->GetVisualByName("sysclose");
+		visual = m_view.GetDocument().GetVisualByName("sysclose");
 		if (visual != NULL)
 		{
 			m_onCloseClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MClientController::OnCloseClick));
 			visual->EVENT_CLICK += m_onCloseClick;
 		}
-		visual = m_view.GetDocument()->GetVisualByName("btnEdit");
+		visual = m_view.GetDocument().GetVisualByName("btnEdit");
 		if (visual != NULL)
 		{
 			m_onEditClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MClientController::OnEditClick));
 			visual->EVENT_CLICK += m_onEditClick;
 		}
-		visual = m_view.GetDocument()->GetVisualByName("btnSave");
+		visual = m_view.GetDocument().GetVisualByName("btnSave");
 		if (visual != NULL)
 		{
 			m_onSaveClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MClientController::OnSaveClick));
 			visual->EVENT_CLICK += m_onSaveClick;
 		}
-		visual = m_view.GetDocument()->GetVisualByName("btnCancel");
+		visual = m_view.GetDocument().GetVisualByName("btnCancel");
 		if (visual != NULL)
 		{
 			m_onCancelClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MClientController::OnCancelClick));
 			visual->EVENT_CLICK += m_onCancelClick;
 		}
-		visual = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
+		visual = m_view.GetDocument().GetVisualByName("btnStartCommentary");
 		if (visual != NULL)
 		{
 			m_onStartCommentaryClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MClientController::OnStartCommentaryClick));
 			visual->EVENT_CLICK += m_onStartCommentaryClick;
 		}
-		visual = m_view.GetDocument()->GetVisualByName("btnPauseCommentary");
+		visual = m_view.GetDocument().GetVisualByName("btnPauseCommentary");
 		if (visual != NULL)
 		{
 			m_onPauseCommentaryClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MClientController::OnPauseCommentaryClick));
 			visual->EVENT_CLICK += m_onPauseCommentaryClick;
 		}
-		visual = m_view.GetDocument()->GetVisualByName("btnStopCommentary");
+		visual = m_view.GetDocument().GetVisualByName("btnStopCommentary");
 		if (visual != NULL)
 		{
 			m_onStopCommentaryClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MClientController::OnStopCommentaryClick));
 			visual->EVENT_CLICK += m_onStopCommentaryClick;
 		}
-		visual = m_view.GetDocument()->GetVisualByName("previewWND");
+		visual = m_view.GetDocument().GetVisualByName("previewWND");
 		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualNative)))
 		{
 			TinyVisualNative* val = static_cast<TinyVisualNative*>(visual);
@@ -345,7 +345,7 @@ namespace MShow
 		}
 		vector<CAPTUREDEVICE> captures;
 		TinySoundCapture::Enumerate(captures);
-		visual = m_view.GetDocument()->GetVisualByName("microphone");
+		visual = m_view.GetDocument().GetVisualByName("microphone");
 		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
 		{
 			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
@@ -361,7 +361,7 @@ namespace MShow
 		}
 		vector<PLAYDEVICE> renders;
 		TinySoundPlayer::Enumerate(renders);
-		visual = m_view.GetDocument()->GetVisualByName("speaker");
+		visual = m_view.GetDocument().GetVisualByName("speaker");
 		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
 		{
 			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
@@ -375,19 +375,19 @@ namespace MShow
 			}
 			val->SetSelected(0);
 		}
-		visual = m_view.GetDocument()->GetVisualByName("btnMicrophoneTest");
+		visual = m_view.GetDocument().GetVisualByName("btnMicrophoneTest");
 		if (visual != NULL)
 		{
 			m_onMicrophoneTestClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MClientController::OnMicrophoneTestClick));
 			visual->EVENT_CLICK += m_onMicrophoneTestClick;
 		}
-		visual = m_view.GetDocument()->GetVisualByName("btnSpeakerTest");
+		visual = m_view.GetDocument().GetVisualByName("btnSpeakerTest");
 		if (visual != NULL)
 		{
 			m_onSpeakerTestClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MClientController::OnSpeakerTestClick));
 			visual->EVENT_CLICK += m_onSpeakerTestClick;
 		}
-		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
+		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument().GetVisualByName("txtName"));
 		if (pTextBox != NULL)
 		{
 			pTextBox->SetTextColor(RGB(153, 153, 153));
@@ -399,7 +399,7 @@ namespace MShow
 
 	void MClientController::OnMinimumClick(TinyVisual*, EventArgs& args)
 	{
-		m_view.GetDocument()->ReleaseCapture();//必须释放捕获
+		m_view.GetDocument().ReleaseCapture();//必须释放捕获
 		SendMessage(m_view.Handle(), WM_SYSCOMMAND, SC_MINIMIZE, NULL);
 	}
 
@@ -417,7 +417,7 @@ namespace MShow
 
 	void MClientController::OnSettingClick(TinyVisual*, EventArgs& args)
 	{
-		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("setting");
+		TinyVisual* visual = m_view.GetDocument().GetVisualByName("setting");
 		if (visual != NULL)
 		{
 			visual->SetVisible(!visual->IsVisible());
@@ -427,23 +427,23 @@ namespace MShow
 
 	void MClientController::OnEditClick(TinyVisual*, EventArgs& args)
 	{
-		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnEdit");
+		TinyVisual* visual = m_view.GetDocument().GetVisualByName("btnEdit");
 		if (visual != NULL)
 		{
 			visual->SetVisible(FALSE);
 		}
-		visual = m_view.GetDocument()->GetVisualByName("btnSave");
+		visual = m_view.GetDocument().GetVisualByName("btnSave");
 		if (visual != NULL)
 		{
 			visual->SetVisible(TRUE);
-			m_view.GetDocument()->SetFocus(visual);
+			m_view.GetDocument().SetFocus(visual);
 		}
-		visual = m_view.GetDocument()->GetVisualByName("btnCancel");
+		visual = m_view.GetDocument().GetVisualByName("btnCancel");
 		if (visual != NULL)
 		{
 			visual->SetVisible(TRUE);
 		}
-		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
+		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument().GetVisualByName("txtName"));
 		if (pTextBox != NULL)
 		{
 			if (pTextBox->GetText() == defaultText)
@@ -457,7 +457,7 @@ namespace MShow
 	}
 	void MClientController::OnSaveClick(TinyVisual*, EventArgs& args)
 	{
-		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
+		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument().GetVisualByName("txtName"));
 		if (pTextBox != NULL)
 		{
 			if (pTextBox->GetText().IsEmpty())
@@ -468,18 +468,18 @@ namespace MShow
 			m_szName = pTextBox->GetText().CSTR();
 			pTextBox->SetEnable(FALSE);
 		}
-		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnEdit");
+		TinyVisual* visual = m_view.GetDocument().GetVisualByName("btnEdit");
 		if (visual != NULL)
 		{
 			visual->SetVisible(TRUE);
-			m_view.GetDocument()->SetFocus(visual);
+			m_view.GetDocument().SetFocus(visual);
 		}
-		visual = m_view.GetDocument()->GetVisualByName("btnSave");
+		visual = m_view.GetDocument().GetVisualByName("btnSave");
 		if (visual != NULL)
 		{
 			visual->SetVisible(FALSE);
 		}
-		visual = m_view.GetDocument()->GetVisualByName("btnCancel");
+		visual = m_view.GetDocument().GetVisualByName("btnCancel");
 		if (visual != NULL)
 		{
 			visual->SetVisible(FALSE);
@@ -489,23 +489,23 @@ namespace MShow
 	}
 	void MClientController::OnCancelClick(TinyVisual*, EventArgs& args)
 	{
-		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnEdit");
+		TinyVisual* visual = m_view.GetDocument().GetVisualByName("btnEdit");
 		if (visual != NULL)
 		{
 			visual->SetVisible(TRUE);
-			m_view.GetDocument()->SetFocus(visual);
+			m_view.GetDocument().SetFocus(visual);
 		}
-		visual = m_view.GetDocument()->GetVisualByName("btnSave");
+		visual = m_view.GetDocument().GetVisualByName("btnSave");
 		if (visual != NULL)
 		{
 			visual->SetVisible(FALSE);
 		}
-		visual = m_view.GetDocument()->GetVisualByName("btnCancel");
+		visual = m_view.GetDocument().GetVisualByName("btnCancel");
 		if (visual != NULL)
 		{
 			visual->SetVisible(FALSE);
 		}
-		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
+		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument().GetVisualByName("txtName"));
 		if (pTextBox != NULL)
 		{
 			if (pTextBox->GetText().IsEmpty())
@@ -533,7 +533,7 @@ namespace MShow
 
 	BOOL MClientController::Connect()
 	{
-		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
+		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument().GetVisualByName("txtName"));
 		ASSERT(pTextBox);
 		string code;
 		string context;
@@ -581,7 +581,7 @@ namespace MShow
 			{
 				m_szName = StringPrintf("解说信号源%s", m_szSourceID.c_str());
 			}
-			TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
+			TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument().GetVisualByName("txtName"));
 			if (pTextBox != NULL)
 			{
 				pTextBox->SetTextColor(RGB(0, 0, 0));
@@ -817,37 +817,34 @@ namespace MShow
 
 	void MClientController::Close()
 	{
-		if (m_view.GetDocument() != NULL)
+		//更新UI 
+		TinyVisual* visual = m_view.GetDocument().GetVisualByName("btnEdit");
+		if (visual != NULL)
 		{
-			//更新UI 
-			TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnEdit");
-			if (visual != NULL)
-			{
-				visual->SetVisible(TRUE);
-				m_view.GetDocument()->SetFocus(visual);
-			}
-			visual = m_view.GetDocument()->GetVisualByName("btnSave");
-			if (visual != NULL)
-			{
-				visual->SetVisible(FALSE);
-			}
-			visual = m_view.GetDocument()->GetVisualByName("btnCancel");
-			if (visual != NULL)
-			{
-				visual->SetVisible(FALSE);
-			}
-			TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
-			if (pTextBox != NULL)
-			{
-				pTextBox->SetTextColor(RGB(153, 153, 153));
-				pTextBox->SetText(defaultText);
-				pTextBox->SetEnable(FALSE);
-			}
-			visual = m_view.GetDocument()->GetVisualByName("setting");
-			if (visual != NULL)
-			{
-				visual->SetVisible(FALSE);
-			}
+			visual->SetVisible(TRUE);
+			m_view.GetDocument().SetFocus(visual);
+		}
+		visual = m_view.GetDocument().GetVisualByName("btnSave");
+		if (visual != NULL)
+		{
+			visual->SetVisible(FALSE);
+		}
+		visual = m_view.GetDocument().GetVisualByName("btnCancel");
+		if (visual != NULL)
+		{
+			visual->SetVisible(FALSE);
+		}
+		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument().GetVisualByName("txtName"));
+		if (pTextBox != NULL)
+		{
+			pTextBox->SetTextColor(RGB(153, 153, 153));
+			pTextBox->SetText(defaultText);
+			pTextBox->SetEnable(FALSE);
+		}
+		visual = m_view.GetDocument().GetVisualByName("setting");
+		if (visual != NULL)
+		{
+			visual->SetVisible(FALSE);
 		}
 		//停止解说
 		StopCommentary();
@@ -940,17 +937,17 @@ namespace MShow
 		}
 		//更新UI
 		m_bCommentarying = TRUE;
-		TinyVisual* spvis = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
+		TinyVisual* spvis = m_view.GetDocument().GetVisualByName("btnStartCommentary");
 		if (spvis != NULL)
 		{
 			spvis->SetVisible(FALSE);
 		}
-		spvis = m_view.GetDocument()->GetVisualByName("btnPauseCommentary");
+		spvis = m_view.GetDocument().GetVisualByName("btnPauseCommentary");
 		if (spvis != NULL)
 		{
 			spvis->SetVisible(TRUE);
 		}
-		spvis = m_view.GetDocument()->GetVisualByName("btnStopCommentary");
+		spvis = m_view.GetDocument().GetVisualByName("btnStopCommentary");
 		if (spvis != NULL)
 		{
 			spvis->SetVisible(TRUE);
@@ -985,36 +982,33 @@ namespace MShow
 		m_szName.clear();
 		m_szSourceID.clear();
 		m_szURL.clear();
-		if (m_view.GetDocument() != NULL)
+		TinyVisual* spvis = m_view.GetDocument().GetVisualByName("btnPauseCommentary");
+		if (spvis != NULL)
 		{
-			TinyVisual* spvis = m_view.GetDocument()->GetVisualByName("btnPauseCommentary");
-			if (spvis != NULL)
-			{
-				spvis->SetText(m_bPause ? "继续" : "暂停");
-			}
-			m_bCommentarying = FALSE;
-			spvis = m_view.GetDocument()->GetVisualByName("btnStartCommentary");
-			if (spvis != NULL)
-			{
-				spvis->SetVisible(TRUE);
-			}
-			spvis = m_view.GetDocument()->GetVisualByName("btnPauseCommentary");
-			if (spvis != NULL)
-			{
-				spvis->SetVisible(FALSE);
-			}
-			spvis = m_view.GetDocument()->GetVisualByName("btnStopCommentary");
-			if (spvis != NULL)
-			{
-				spvis->SetVisible(FALSE);
-			}
-			TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtName"));
-			if (pTextBox != NULL)
-			{
-				pTextBox->SetTextColor(RGB(153, 153, 153));
-				pTextBox->SetText(defaultText);
-				pTextBox->SetEnable(FALSE);
-			}
+			spvis->SetText(m_bPause ? "继续" : "暂停");
+		}
+		m_bCommentarying = FALSE;
+		spvis = m_view.GetDocument().GetVisualByName("btnStartCommentary");
+		if (spvis != NULL)
+		{
+			spvis->SetVisible(TRUE);
+		}
+		spvis = m_view.GetDocument().GetVisualByName("btnPauseCommentary");
+		if (spvis != NULL)
+		{
+			spvis->SetVisible(FALSE);
+		}
+		spvis = m_view.GetDocument().GetVisualByName("btnStopCommentary");
+		if (spvis != NULL)
+		{
+			spvis->SetVisible(FALSE);
+		}
+		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument().GetVisualByName("txtName"));
+		if (pTextBox != NULL)
+		{
+			pTextBox->SetTextColor(RGB(153, 153, 153));
+			pTextBox->SetText(defaultText);
+			pTextBox->SetEnable(FALSE);
 		}
 		m_view.Invalidate();
 	}
@@ -1022,7 +1016,7 @@ namespace MShow
 	CLSID MClientController::GetSpeakCLSID()
 	{
 		CLSID clsid = GUID_NULL;
-		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("speaker");
+		TinyVisual* visual = m_view.GetDocument().GetVisualByName("speaker");
 		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
 		{
 			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
@@ -1039,7 +1033,7 @@ namespace MShow
 	CLSID MClientController::GetMicrophoneCLSID()
 	{
 		CLSID clsid = GUID_NULL;
-		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("microphone");
+		TinyVisual* visual = m_view.GetDocument().GetVisualByName("microphone");
 		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
 		{
 			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
@@ -1056,7 +1050,7 @@ namespace MShow
 
 	void MClientController::OnStartCommentaryClick(TinyVisual*, EventArgs& args)
 	{
-		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("microphone");
+		TinyVisual* visual = m_view.GetDocument().GetVisualByName("microphone");
 		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
 		{
 			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
@@ -1069,7 +1063,7 @@ namespace MShow
 		if (Connect())
 		{
 			StartCommentary();
-			MAudioDB* audiodb = static_cast<MAudioDB*>(m_view.GetDocument()->GetVisualByName("microphoneDB"));
+			MAudioDB* audiodb = static_cast<MAudioDB*>(m_view.GetDocument().GetVisualByName("microphoneDB"));
 			if (audiodb != NULL)
 			{
 				audiodb->SetDB(0);
@@ -1082,7 +1076,7 @@ namespace MShow
 	void MClientController::OnPauseCommentaryClick(TinyVisual*, EventArgs& args)
 	{
 		m_bPause = !m_bPause;
-		TinyVisual* spvis = m_view.GetDocument()->GetVisualByName("btnPauseCommentary");
+		TinyVisual* spvis = m_view.GetDocument().GetVisualByName("btnPauseCommentary");
 		if (spvis != NULL)
 		{
 			spvis->SetText(m_bPause ? "继续" : "暂停");
@@ -1092,7 +1086,7 @@ namespace MShow
 		{
 			m_audioDSP.Start();
 		}
-		MAudioDB* audiodb = static_cast<MAudioDB*>(m_view.GetDocument()->GetVisualByName("microphoneDB"));
+		MAudioDB* audiodb = static_cast<MAudioDB*>(m_view.GetDocument().GetVisualByName("microphoneDB"));
 		if (audiodb != NULL)
 		{
 			audiodb->SetDB(0);
@@ -1108,7 +1102,7 @@ namespace MShow
 			if (Disconnect(m_szSourceID))
 			{
 				StopCommentary();
-				MAudioDB* audiodb = static_cast<MAudioDB*>(m_view.GetDocument()->GetVisualByName("microphoneDB"));
+				MAudioDB* audiodb = static_cast<MAudioDB*>(m_view.GetDocument().GetVisualByName("microphoneDB"));
 				if (audiodb != NULL)
 				{
 					audiodb->SetDB(0);
@@ -1121,22 +1115,22 @@ namespace MShow
 
 	void MClientController::OnMicrophoneTestClick(TinyVisual*, EventArgs& args)
 	{
-		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnMicrophoneTest");
+		TinyVisual* visual = m_view.GetDocument().GetVisualByName("btnMicrophoneTest");
 		if (visual != NULL)
 		{
-			m_view.GetDocument()->SetFocus(visual);
+			m_view.GetDocument().SetFocus(visual);
 		}
-		visual = m_view.GetDocument()->GetVisualByName("microphone");
+		visual = m_view.GetDocument().GetVisualByName("microphone");
 		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
 		{
-			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
-			if (val->GetOptions().GetSize() == 0)
+			TinyVisualComboBox* spvis = static_cast<TinyVisualComboBox*>(visual);
+			if (spvis->GetOptions().GetSize() == 0)
 			{
 				MessageBox(m_view.Handle(), "没有检测到麦克风设备!", "提示", MB_OK);
 			}
 			else
 			{
-				TinyVisualOption* option = val->GetSelected();
+				TinyVisualOption* option = spvis->GetSelected();
 				if (option != NULL)
 				{
 					wstring szGUID = option->GetValue().ToWString();
@@ -1150,7 +1144,7 @@ namespace MShow
 					w.nBlockAlign = (w.wBitsPerSample * w.nChannels) / 8;
 					w.nAvgBytesPerSec = w.nSamplesPerSec * w.nBlockAlign;
 					w.wFormatTag = WAVE_FORMAT_PCM;
-					m_microphoneTest.Invoke(clsid, val->GetDocument()->GetVisualHWND()->Handle());
+					m_microphoneTest.Invoke(clsid, spvis->GetDocument()->GetVisualHWND().Handle());
 				}
 			}
 		}
@@ -1158,29 +1152,29 @@ namespace MShow
 
 	void MClientController::OnSpeakerTestClick(TinyVisual*, EventArgs& args)
 	{
-		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnSpeakerTest");
+		TinyVisual* visual = m_view.GetDocument().GetVisualByName("btnSpeakerTest");
 		if (visual != NULL)
 		{
-			m_view.GetDocument()->SetFocus(visual);
+			m_view.GetDocument().SetFocus(visual);
 		}
-		visual = m_view.GetDocument()->GetVisualByName("speaker");
+		visual = m_view.GetDocument().GetVisualByName("speaker");
 		if (visual != NULL && visual->IsKindOf(RUNTIME_CLASS(TinyVisualComboBox)))
 		{
-			TinyVisualComboBox* val = static_cast<TinyVisualComboBox*>(visual);
-			if (val->GetOptions().GetSize() == 0)
+			TinyVisualComboBox* spvis = static_cast<TinyVisualComboBox*>(visual);
+			if (spvis->GetOptions().GetSize() == 0)
 			{
 				MessageBox(m_view.Handle(), "没有检测到播放设备!", "提示", MB_OK);
 			}
 			else
 			{
-				TinyVisualOption* option = val->GetSelected();
+				TinyVisualOption* option = spvis->GetSelected();
 				if (option != NULL)
 				{
 					wstring szGUID = option->GetValue().ToWString();
 					CLSID clsid;
 					CLSIDFromString(&szGUID[0], &clsid);
 					string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\SoundTest.wav");
-					m_speakTest.Invoke(szFile.c_str(), clsid, val->GetDocument()->GetVisualHWND()->Handle());
+					m_speakTest.Invoke(szFile.c_str(), clsid, spvis->GetDocument()->GetVisualHWND().Handle());
 				}
 			}
 		}
@@ -1212,9 +1206,9 @@ namespace MShow
 				sample.timestamp = currentPTS;
 				memcpy(sample.bits + 4, bits, size);
 				m_audioQueue.Push(sample);
-				if (m_view.GetDocument() != NULL && db > 0)
+				if (db > 0)
 				{
-					MAudioDB* audiodb = static_cast<MAudioDB*>(m_view.GetDocument()->GetVisualByName("microphoneDB"));
+					MAudioDB* audiodb = static_cast<MAudioDB*>(m_view.GetDocument().GetVisualByName("microphoneDB"));
 					if (audiodb != NULL && audiodb->IsVisible())
 					{
 						audiodb->SetDB(db);

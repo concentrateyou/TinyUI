@@ -40,7 +40,7 @@ namespace TinyUI
 			DISALLOW_COPY_AND_ASSIGN(TinyVisual)
 		protected:
 			TinyVisual();
-			TinyVisual(TinyVisual* spvisParent, TinyVisualDocument* vtree);
+			TinyVisual(TinyVisual* spvisParent, TinyVisualDocument* document);
 		public:
 			HWND				Handle() const;
 			TinyString			GetText() const;

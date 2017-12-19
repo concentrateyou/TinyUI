@@ -22,19 +22,19 @@ namespace MShow
 	{
 		m_onDestory.Reset(new Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>(this, &MSearchController::OnDestory));
 		m_view.EVENT_DESTORY += m_onDestory;
-		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("sysmin");
+		TinyVisual* visual = m_view.GetDocument().GetVisualByName("sysmin");
 		if (visual != NULL)
 		{
 			m_onMinimumClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MSearchController::OnMinimumClick));
 			visual->EVENT_CLICK += m_onMinimumClick;
 		}
-		visual = m_view.GetDocument()->GetVisualByName("sysclose");
+		visual = m_view.GetDocument().GetVisualByName("sysclose");
 		if (visual != NULL)
 		{
 			m_onCloseClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MSearchController::OnCloseClick));
 			visual->EVENT_CLICK += m_onCloseClick;
 		}
-		visual = m_view.GetDocument()->GetVisualByName("btnSearch");
+		visual = m_view.GetDocument().GetVisualByName("btnSearch");
 		if (visual != NULL)
 		{
 			m_onSearchClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MSearchController::OnSearchClick));
@@ -47,7 +47,7 @@ namespace MShow
 
 	void MSearchController::OnDestory(UINT, WPARAM, LPARAM, BOOL&)
 	{
-		TinyVisualAnimation* loading = static_cast<TinyVisualAnimation*>(m_view.GetDocument()->GetVisualByName("loading"));
+		TinyVisualAnimation* loading = static_cast<TinyVisualAnimation*>(m_view.GetDocument().GetVisualByName("loading"));
 		if (loading != NULL)
 		{
 			loading->EndAnimate();
@@ -70,7 +70,7 @@ namespace MShow
 	}
 	void MSearchController::OnMinimumClick(TinyVisual*, EventArgs& args)
 	{
-		m_view.GetDocument()->ReleaseCapture();//必须释放捕获
+		m_view.GetDocument().ReleaseCapture();//必须释放捕获
 		SendMessage(m_view.Handle(), WM_SYSCOMMAND, SC_MINIMIZE, NULL);
 	}
 
@@ -81,17 +81,17 @@ namespace MShow
 
 	void MSearchController::OnSearchClick(TinyVisual*, EventArgs& args)
 	{
-		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnSearch");
+		TinyVisual* visual = m_view.GetDocument().GetVisualByName("btnSearch");
 		ASSERT(visual);
 		visual->SetEnable(FALSE);
-		visual = static_cast<TinyVisualAnimation*>(m_view.GetDocument()->GetVisualByName("lblMsg"));
+		visual = static_cast<TinyVisualAnimation*>(m_view.GetDocument().GetVisualByName("lblMsg"));
 		ASSERT(visual);
 		visual->SetVisible(FALSE);
-		TinyVisualAnimation* loading = static_cast<TinyVisualAnimation*>(m_view.GetDocument()->GetVisualByName("loading"));
+		TinyVisualAnimation* loading = static_cast<TinyVisualAnimation*>(m_view.GetDocument().GetVisualByName("loading"));
 		ASSERT(loading);
 		loading->SetVisible(TRUE);
 		loading->BeginAnimate();
-		TinyVisualList* list = static_cast<TinyVisualList*>(m_view.GetDocument()->GetVisualByName("programs"));
+		TinyVisualList* list = static_cast<TinyVisualList*>(m_view.GetDocument().GetVisualByName("programs"));
 		ASSERT(list);
 		list->SetVisible(FALSE);
 		m_view.Invalidate();
@@ -181,13 +181,13 @@ namespace MShow
 
 	void MSearchController::GetPrograms()
 	{
-		TinyVisual* lblMsg = static_cast<TinyVisualAnimation*>(m_view.GetDocument()->GetVisualByName("lblMsg"));
+		TinyVisual* lblMsg = static_cast<TinyVisualAnimation*>(m_view.GetDocument().GetVisualByName("lblMsg"));
 		ASSERT(lblMsg);
-		TinyVisualList* list = static_cast<TinyVisualList*>(m_view.GetDocument()->GetVisualByName("programs"));
+		TinyVisualList* list = static_cast<TinyVisualList*>(m_view.GetDocument().GetVisualByName("programs"));
 		ASSERT(list);
-		TinyVisualTextBox* search = static_cast<TinyVisualTextBox*>(m_view.GetDocument()->GetVisualByName("txtSearch"));
+		TinyVisualTextBox* search = static_cast<TinyVisualTextBox*>(m_view.GetDocument().GetVisualByName("txtSearch"));
 		ASSERT(search);
-		TinyVisualAnimation* loading = static_cast<TinyVisualAnimation*>(m_view.GetDocument()->GetVisualByName("loading"));
+		TinyVisualAnimation* loading = static_cast<TinyVisualAnimation*>(m_view.GetDocument().GetVisualByName("loading"));
 		ASSERT(loading);
 		string context;
 		Json::Reader reader;
@@ -289,7 +289,7 @@ namespace MShow
 	_ERROR:
 		loading->EndAnimate();
 		loading->SetVisible(FALSE);
-		TinyVisual* visual = m_view.GetDocument()->GetVisualByName("btnSearch");
+		TinyVisual* visual = m_view.GetDocument().GetVisualByName("btnSearch");
 		ASSERT(visual);
 		visual->SetEnable(TRUE);
 		m_view.Invalidate();
