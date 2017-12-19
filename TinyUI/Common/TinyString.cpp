@@ -164,6 +164,21 @@ namespace TinyUI
 			_Mystr[_Mysize] = '\0';
 		}
 	}
+	TinyString::TinyString(const string& s)
+		:_Myres(0),
+		_Mysize(0),
+		_Mystr(NULL)
+	{
+		if (!s.empty())
+		{
+			Assign(s);
+		}
+		else
+		{
+			_Mystr = new CHAR[_Mysize + 1];
+			_Mystr[_Mysize] = '\0';
+		}
+	}
 	TinyString::TinyString(const TinyString& s, size_t pos, size_t size)
 		:_Myres(0),
 		_Mysize(0),
@@ -333,7 +348,10 @@ namespace TinyUI
 	{
 		return Assign(&s);
 	}
-
+	BOOL TinyString::operator==(const TinyString& str) const
+	{
+		return this->Compare(str) == 0;
+	}
 	BOOL TinyString::operator == (const TinyString& str)
 	{
 		return this->Compare(str) == 0;
@@ -343,12 +361,19 @@ namespace TinyUI
 	{
 		return strcmp(this->_Mystr, s) == 0;
 	}
-
+	BOOL TinyString::operator==(const CHAR* s) const
+	{
+		return strcmp(this->_Mystr, s) == 0;
+	}
 	BOOL TinyString::operator == (TinyString& str)
 	{
 		return this->Compare(str) == 0;
 	}
 	BOOL TinyString::operator == (const string& str)
+	{
+		return this->Compare(str) == 0;
+	}
+	BOOL TinyString::operator==(const string& str) const
 	{
 		return this->Compare(str) == 0;
 	}
@@ -392,6 +417,10 @@ namespace TinyUI
 	{
 		ASSERT(s);
 		return Assign(s, strlen(s));
+	}
+	TinyString& TinyString::Assign(const string& s)
+	{
+		return Assign(s.c_str(), s.size());
 	}
 	TinyString& TinyString::Assign(const CHAR* s, size_t _Newsize)
 	{

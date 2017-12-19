@@ -1,26 +1,15 @@
 #pragma once
 #include "../Control/TinyControl.h"
 #include "../Render/TinyImage.h"
-#include "TinyVisual.h"
 
 namespace TinyUI
 {
 	namespace Windowless
 	{
-		class TinyVisualConst
-		{
-		public:
-			static const TinyString LEFT;
-			static const TinyString TOP;
-			static const TinyString RIGHT;
-			static const TinyString BOTTOM;
-			static const TinyString CENTER;
-			static const TinyString STRETCH;
-		};
 		/// <summary>
 		/// 元素属性常量
 		/// </summary>
-		class TinyVisualProperty
+		class TinyVisualPropertyConst
 		{
 		public:
 			static const TinyString NAME;
@@ -89,7 +78,7 @@ namespace TinyUI
 		/// <summary>
 		/// Tag常量
 		/// </summary>
-		class TinyVisualTag
+		class TinyVisualTagConst
 		{
 		public:
 			static const TinyString WINDOW;
@@ -116,7 +105,6 @@ namespace TinyUI
 			static const TinyString NATIVEWINDOW;
 			static const TinyString MENUITEM;
 			static const TinyString CONTEXTMENU;
-
 			static const TinyString CONTEXT;
 			static const TinyString IMAGE;
 			static const TinyString ADD;
@@ -164,6 +152,21 @@ namespace TinyUI
 			HBITMAP		m_hBitmap;
 			HBITMAP		m_hOldBitmap;
 			TinySize	m_size;
+		};
+		/// <summary>
+		/// 属性
+		/// </summary>
+		class TinyVisualProperty
+		{
+		public:
+			TinyVisualProperty(const TinyString& name, const TinyString& value);
+			TinyVisualProperty(const TinyVisualProperty&);
+			void operator=(const TinyVisualProperty&);
+			const TinyString& name() const;
+			const TinyString& value() const;
+		private:
+			TinyString	m_name;
+			TinyString	m_value;
 		};
 	}
 }

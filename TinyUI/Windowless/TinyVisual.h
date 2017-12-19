@@ -1,10 +1,12 @@
 #pragma once
+#include "../Common/TinyCollection.h"
 #include "../Common/TinyString.h"
 #include "../Common/TinyEvent.h"
 #include "../Render/TinyCanvas.h"
-#include "../XML//tinyxml.h"
+#include "TinyVisualCommon.h"
 #include "TinyVisualEvent.h"
 #include "TinyVisualUtility.h"
+#include "../XML//tinyxml.h"
 
 namespace TinyUI
 {
@@ -134,7 +136,7 @@ namespace TinyUI
 		public:
 			virtual BOOL		SetProperty(const TinyString& name, const TinyString& value);
 			TinyString			GetProperty(const TinyString& name);
-			BOOL				IsProperty(const TinyString& name);
+			BOOL				HasProperty(const TinyString& name);
 		public:
 			Event<void(TinyVisual*, EventArgs&)>		EVENT_CREATE;
 			Event<void(TinyVisual*, EventArgs&)>		EVENT_DESTORY;
@@ -183,7 +185,7 @@ namespace TinyUI
 			BOOL				m_enable;
 			HRGN				m_hrgnClip;
 			HFONT				m_hFONT;
-			TinyMap<TinyString, TinyString>	m_propertys;// Ù–‘Map
+			TinyLinkList<TinyVisualProperty> m_propertys;
 		};
 	}
 }

@@ -51,7 +51,7 @@ namespace TinyUI
 
 		BOOL TinyVisualWindow::SetProperty(const TinyString& name, const TinyString& value)
 		{
-			if (strcasecmp(name.STR(), TinyVisualProperty::SHADOWIMAGE.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::SHADOWIMAGE.STR()) == 0)
 			{
 				if (m_document != NULL)
 				{
@@ -63,7 +63,7 @@ namespace TinyUI
 				}
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::SHADOWBOX.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::SHADOWBOX.STR()) == 0)
 			{
 				if (m_document != NULL)
 				{
@@ -78,7 +78,7 @@ namespace TinyUI
 
 		TinyString TinyVisualWindow::RetrieveTag() const
 		{
-			return TinyVisualTag::WINDOW;
+			return TinyVisualTagConst::WINDOW;
 		}
 		BOOL TinyVisualWindow::OnDraw(HDC hDC, const RECT& rcPaint)
 		{

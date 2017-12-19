@@ -500,70 +500,85 @@ namespace TinyUI
 		}
 		TinyString TinyVisual::GetProperty(const TinyString& name)
 		{
-			auto val = m_propertys.GetValue(name);
-			if (val != NULL)
+			ITERATOR pos = m_propertys.First();
+			while (pos != NULL)
 			{
-				return *val;
+				TinyVisualProperty& value = m_propertys.GetAt(pos);
+				if (value.name() == name)
+				{
+					return value.value();
+				}
+				pos = m_propertys.Next(pos);
 			}
 			return TinyString();
 		}
-		BOOL TinyVisual::IsProperty(const TinyString& name)
+		BOOL TinyVisual::HasProperty(const TinyString& name)
 		{
-			return m_propertys.Contain(name);
+			ITERATOR pos = m_propertys.First();
+			while (pos != NULL)
+			{
+				TinyVisualProperty& value = m_propertys.GetAt(pos);
+				if (value.name() == name)
+				{
+					return TRUE;
+				}
+				pos = m_propertys.Next(pos);
+			}
+			return FALSE;
 		}
 		BOOL TinyVisual::SetProperty(const TinyString& name, const TinyString& value)
 		{
-			if (strcasecmp(name.STR(), TinyVisualProperty::NAME.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::NAME.STR()) == 0)
 			{
 				this->SetName(value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::TEXT.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::TEXT.STR()) == 0)
 			{
 				this->SetText(value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::CURSOR.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::CURSOR.STR()) == 0)
 			{
 				this->SetCursor(value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::BACKGROUNDIMAGE.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::BACKGROUNDIMAGE.STR()) == 0)
 			{
 				this->SetBackgroundImage(value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::BACKGROUNDCOLOR.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::BACKGROUNDCOLOR.STR()) == 0)
 			{
 				this->SetBackgroundColor(TinyVisualBuilder::GetColor(value));
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::BACKGROUNDCENTER.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::BACKGROUNDCENTER.STR()) == 0)
 			{
 				this->SetBackgroundCenter(TinyVisualBuilder::GetRectangle(value));
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::BACKGROUNDSIZE.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::BACKGROUNDSIZE.STR()) == 0)
 			{
 				this->SetBackgroundSize(TinyVisualBuilder::GetSize(value));
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::BACKGROUNDPOSITION.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::BACKGROUNDPOSITION.STR()) == 0)
 			{
 				this->SetBackgroundPosition(TinyVisualBuilder::GetPosition(value));
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::BORDERCOLOR.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::BORDERCOLOR.STR()) == 0)
 			{
 				this->SetBorderColor(TinyVisualBuilder::GetColor(value));
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::BORDERWIDTH.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::BORDERWIDTH.STR()) == 0)
 			{
 				this->SetBorderThickness(TinyVisualBuilder::GetInt32(value));
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::BORDERSTYLE.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::BORDERSTYLE.STR()) == 0)
 			{
 				INT val = PS_SOLID;
 				if (strcasecmp(value.STR(), "solid") == 0)
@@ -575,70 +590,70 @@ namespace TinyUI
 				this->SetBorderStyle(val);
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::BORDERIMAGE.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::BORDERIMAGE.STR()) == 0)
 			{
 				this->SetBorderImage(value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::BORDERCENTER.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::BORDERCENTER.STR()) == 0)
 			{
 				this->SetBorderCenter(TinyVisualBuilder::GetRectangle(value));
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::TOOLTIP.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::TOOLTIP.STR()) == 0)
 			{
 				this->SetToolTip(value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::ENABLE.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::ENABLE.STR()) == 0)
 			{
 				this->SetEnable(TinyVisualBuilder::GetBool(value));
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::VISIBLE.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::VISIBLE.STR()) == 0)
 			{
 				this->SetVisible(TinyVisualBuilder::GetBool(value));
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::POSITION.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::POSITION.STR()) == 0)
 			{
 				this->SetPosition(TinyVisualBuilder::GetPosition(value));
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::SIZE.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::SIZE.STR()) == 0)
 			{
 				this->SetSize(TinyVisualBuilder::GetSize(value));
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::MAXSIZE.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::MAXSIZE.STR()) == 0)
 			{
 				TinySize maxsize = TinyVisualBuilder::GetSize(value);
 				this->SetMaximumSize(maxsize);
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::MINSIZE.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::MINSIZE.STR()) == 0)
 			{
 				TinySize minsize = TinyVisualBuilder::GetSize(value);
 				this->SetMinimumSize(minsize);
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::MINSIZE.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::MINSIZE.STR()) == 0)
 			{
 				TinySize minsize = TinyVisualBuilder::GetSize(value);
 				this->SetMinimumSize(minsize);
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::TEXTCOLOR.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::TEXTCOLOR.STR()) == 0)
 			{
 				this->SetTextColor(TinyVisualBuilder::GetColor(value));
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::TEXTALIGN.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::TEXTALIGN.STR()) == 0)
 			{
 				this->SetTextAlian(TinyVisualBuilder::GetAlign(value));
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::FONTFAMILY.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::FONTFAMILY.STR()) == 0)
 			{
 				LOGFONT lf;
 				::GetObject(m_hFONT, sizeof(LOGFONT), &lf);
@@ -648,7 +663,7 @@ namespace TinyUI
 				m_hFONT = CreateFontIndirect(&lf);
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::FONTWEIGHT.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::FONTWEIGHT.STR()) == 0)
 			{
 				LOGFONT lf;
 				::GetObject(m_hFONT, sizeof(LOGFONT), &lf);
@@ -658,7 +673,7 @@ namespace TinyUI
 				m_hFONT = CreateFontIndirect(&lf);
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::FONTSIZE.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::FONTSIZE.STR()) == 0)
 			{
 				LOGFONT lf;
 				::GetObject(m_hFONT, sizeof(LOGFONT), &lf);
@@ -670,7 +685,7 @@ namespace TinyUI
 				m_hFONT = CreateFontIndirect(&lf);
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::FONTSTYLE.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::FONTSTYLE.STR()) == 0)
 			{
 				LOGFONT lf;
 				::GetObject(m_hFONT, sizeof(LOGFONT), &lf);
@@ -686,7 +701,7 @@ namespace TinyUI
 				m_hFONT = CreateFontIndirect(&lf);
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::TEXTDECORATION.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::TEXTDECORATION.STR()) == 0)
 			{
 				LOGFONT lf;
 				::GetObject(m_hFONT, sizeof(LOGFONT), &lf);

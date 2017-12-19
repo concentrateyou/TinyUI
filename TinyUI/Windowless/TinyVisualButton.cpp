@@ -28,7 +28,7 @@ namespace TinyUI
 		}
 		TinyString TinyVisualButton::RetrieveTag() const
 		{
-			return TinyVisualTag::BUTTON;
+			return TinyVisualTagConst::BUTTON;
 		}
 		void TinyVisualButton::SetStyleImage(StyleImage type, LPCSTR pzName)
 		{
@@ -36,17 +36,17 @@ namespace TinyUI
 		}
 		BOOL TinyVisualButton::SetProperty(const TinyString& name, const TinyString& value)
 		{
-			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGENORMAL.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::IMAGENORMAL.STR()) == 0)
 			{
 				this->SetStyleImage(NORMAL, value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGEHIGHLIGHT.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::IMAGEHIGHLIGHT.STR()) == 0)
 			{
 				this->SetStyleImage(HIGHLIGHT, value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGEDOWN.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::IMAGEDOWN.STR()) == 0)
 			{
 				this->SetStyleImage(DOWN, value.STR());
 				return TRUE;
@@ -56,8 +56,7 @@ namespace TinyUI
 
 		BOOL TinyVisualButton::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
-			if (!m_document)
-				return FALSE;
+			ASSERT(m_document);
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			canvas.SetFont(m_hFONT);

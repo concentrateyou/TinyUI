@@ -57,7 +57,7 @@ namespace TinyUI
 		}
 		TinyString TinyVisualNative::RetrieveTag() const
 		{
-			return TinyVisualTag::NATIVEWINDOW;
+			return TinyVisualTagConst::NATIVEWINDOW;
 		}
 		BOOL TinyVisualNative::SetProperty(const TinyString& name, const TinyString& value)
 		{

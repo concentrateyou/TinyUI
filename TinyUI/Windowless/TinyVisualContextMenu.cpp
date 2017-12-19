@@ -20,7 +20,7 @@ namespace TinyUI
 
 		TinyUI::TinyString TinyVisualMenuItem::RetrieveTag() const
 		{
-			return TinyVisualTag::MENUITEM;
+			return TinyVisualTagConst::MENUITEM;
 		}
 		//////////////////////////////////////////////////////////////////////////
 		IMPLEMENT_DYNAMIC(TinyVisualContextMenu, TinyVisual);
@@ -36,7 +36,7 @@ namespace TinyUI
 
 		TinyUI::TinyString TinyVisualContextMenu::RetrieveTag() const
 		{
-			return TinyVisualTag::CONTEXTMENU;
+			return TinyVisualTagConst::CONTEXTMENU;
 		}
 	}
 }

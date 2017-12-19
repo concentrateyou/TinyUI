@@ -26,51 +26,51 @@ namespace TinyUI
 		}
 		TinyString TinyVisualHScrollBar::RetrieveTag() const
 		{
-			return TinyVisualTag::HSCROLLBAR;
+			return TinyVisualTagConst::HSCROLLBAR;
 		}
 		BOOL TinyVisualHScrollBar::SetProperty(const TinyString& name, const TinyString& value)
 		{
-			if (strcasecmp(name.STR(), TinyVisualProperty::ARROW1NORMAL.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::ARROW1NORMAL.STR()) == 0)
 			{
 				this->SetStyleImage(ARROW1NORMAL, value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::ARROW1HIGHLIGHT.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::ARROW1HIGHLIGHT.STR()) == 0)
 			{
 				this->SetStyleImage(ARROW1HIGHLIGHT, value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::ARROW1DOWN.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::ARROW1DOWN.STR()) == 0)
 			{
 				this->SetStyleImage(ARROW1DOWN, value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::ARROW2NORMAL.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::ARROW2NORMAL.STR()) == 0)
 			{
 				this->SetStyleImage(ARROW2NORMAL, value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::ARROW2HIGHLIGHT.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::ARROW2HIGHLIGHT.STR()) == 0)
 			{
 				this->SetStyleImage(ARROW2HIGHLIGHT, value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::ARROW2DOWN.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::ARROW2DOWN.STR()) == 0)
 			{
 				this->SetStyleImage(ARROW2DOWN, value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::SCROLLBARGROOVE.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::SCROLLBARGROOVE.STR()) == 0)
 			{
 				this->SetStyleImage(SCROLLBARGROOVE, value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::SCROLLBARNORMAL.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::SCROLLBARNORMAL.STR()) == 0)
 			{
 				this->SetStyleImage(SCROLLBARNORMAL, value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::SCROLLBARHIGHLIGHT.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::SCROLLBARHIGHLIGHT.STR()) == 0)
 			{
 				this->SetStyleImage(SCROLLBARHIGHLIGHT, value.STR());
 				return TRUE;
@@ -528,51 +528,51 @@ namespace TinyUI
 		}
 		TinyString TinyVisualVScrollBar::RetrieveTag() const
 		{
-			return TinyVisualTag::VSCROLLBAR;
+			return TinyVisualTagConst::VSCROLLBAR;
 		}
 		BOOL TinyVisualVScrollBar::SetProperty(const TinyString& name, const TinyString& value)
 		{
-			if (strcasecmp(name.STR(), TinyVisualProperty::ARROW1NORMAL.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::ARROW1NORMAL.STR()) == 0)
 			{
 				this->SetStyleImage(ARROW1NORMAL, value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::ARROW1HIGHLIGHT.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::ARROW1HIGHLIGHT.STR()) == 0)
 			{
 				this->SetStyleImage(ARROW1HIGHLIGHT, value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::ARROW1DOWN.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::ARROW1DOWN.STR()) == 0)
 			{
 				this->SetStyleImage(ARROW1DOWN, value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::ARROW2NORMAL.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::ARROW2NORMAL.STR()) == 0)
 			{
 				this->SetStyleImage(ARROW2NORMAL, value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::ARROW2HIGHLIGHT.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::ARROW2HIGHLIGHT.STR()) == 0)
 			{
 				this->SetStyleImage(ARROW2HIGHLIGHT, value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::ARROW2DOWN.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::ARROW2DOWN.STR()) == 0)
 			{
 				this->SetStyleImage(ARROW2DOWN, value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::SCROLLBARGROOVE.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::SCROLLBARGROOVE.STR()) == 0)
 			{
 				this->SetStyleImage(SCROLLBARGROOVE, value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::SCROLLBARNORMAL.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::SCROLLBARNORMAL.STR()) == 0)
 			{
 				this->SetStyleImage(SCROLLBARNORMAL, value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::SCROLLBARHIGHLIGHT.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::SCROLLBARHIGHLIGHT.STR()) == 0)
 			{
 				this->SetStyleImage(SCROLLBARHIGHLIGHT, value.STR());
 				return TRUE;
@@ -581,6 +581,7 @@ namespace TinyUI
 		}
 		BOOL TinyVisualVScrollBar::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
+			ASSERT(m_document);
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			canvas.SetFont((HFONT)GetStockObject(DEFAULT_GUI_FONT));
 			TinyRectangle clip = m_document->GetWindowRect(this);

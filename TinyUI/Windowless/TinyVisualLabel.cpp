@@ -24,13 +24,12 @@ namespace TinyUI
 		}
 		TinyString TinyVisualLabel::RetrieveTag() const
 		{
-			return TinyVisualTag::LABEL;
+			return TinyVisualTagConst::LABEL;
 		}
 
 		BOOL TinyVisualLabel::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
-			if (!m_document)
-				return FALSE;
+			ASSERT(m_document);
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			if (!m_backgroundColor.IsEmpty())

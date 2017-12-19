@@ -25,12 +25,12 @@ namespace TinyUI
 		}
 		TinyString TinyVisualAnimation::RetrieveTag() const
 		{
-			return TinyVisualTag::ANIMATION;
+			return TinyVisualTagConst::ANIMATION;
 		}
 
 		BOOL TinyVisualAnimation::SetProperty(const TinyString& name, const TinyString& value)
 		{
-			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGE.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::IMAGE.STR()) == 0)
 			{
 				this->SetAnimateImage(value.STR());
 				return TRUE;
@@ -104,6 +104,7 @@ namespace TinyUI
 
 		BOOL TinyVisualAnimation::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
+			ASSERT(m_document);
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			if (m_animation != NULL && !m_animation->IsEmpty())

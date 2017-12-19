@@ -466,7 +466,7 @@ namespace TinyUI
 		}
 		TinyString TinyVisualTextBox::RetrieveTag() const
 		{
-			return TinyVisualTag::TEXTBOX;
+			return TinyVisualTagConst::TEXTBOX;
 		}
 
 		void TinyVisualTextBox::SetText(const TinyString& szText)
@@ -519,7 +519,7 @@ namespace TinyUI
 		}
 		BOOL TinyVisualTextBox::SetProperty(const TinyString& name, const TinyString& value)
 		{
-			if (strcasecmp(name.STR(), TinyVisualProperty::MULTILINE.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::MULTILINE.STR()) == 0)
 			{
 				if (TinyVisualBuilder::GetBool(value))
 				{
@@ -535,7 +535,7 @@ namespace TinyUI
 				}
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::READONLY.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::READONLY.STR()) == 0)
 			{
 				this->SetReadonly(TinyVisualBuilder::GetBool(value));
 				return TRUE;
@@ -585,11 +585,11 @@ namespace TinyUI
 		{
 			ASSERT(m_document);
 			TinySize size = this->GetSize();
-			m_hscroll = static_cast<TinyVisualHScrollBar*>(m_document->Create(0, size.cy - 12, size.cx, 12, TinyVisualTag::HSCROLLBAR, this));
+			m_hscroll = static_cast<TinyVisualHScrollBar*>(m_document->Create(0, size.cy - 12, size.cx, 12, TinyVisualTagConst::HSCROLLBAR, this));
 			m_onPosChange.Reset(new Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualTextBox::OnPosChange));
 			m_hscroll->EVENT_PosChange += m_onPosChange;
 			m_hscroll->SetVisible(FALSE);
-			m_vscroll = static_cast<TinyVisualVScrollBar*>(m_document->Create(size.cx - 12, 0, 12, size.cy, TinyVisualTag::VSCROLLBAR, this));
+			m_vscroll = static_cast<TinyVisualVScrollBar*>(m_document->Create(size.cx - 12, 0, 12, size.cy, TinyVisualTagConst::VSCROLLBAR, this));
 			m_vscroll->EVENT_PosChange += m_onPosChange;
 			m_vscroll->SetVisible(FALSE);
 			m_texthost.SetRectangle(GetWindowRect());

@@ -25,7 +25,7 @@ namespace TinyUI
 		}
 		TinyString TinyVisualCaption::RetrieveTag() const
 		{
-			return TinyVisualTag::SYSCAPTION;
+			return TinyVisualTagConst::SYSCAPTION;
 		}
 		void TinyVisualCaption::OnSizeChange(const TinySize& oldsize, const TinySize& newsize)
 		{
@@ -34,17 +34,14 @@ namespace TinyUI
 
 		BOOL TinyVisualCaption::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
-			if (m_document && m_document->GetVisualHWND())
+			ASSERT(m_document);
+			TinyClipCanvas canvas(hDC, this, rcPaint);
+			TinyRectangle clip = m_document->GetWindowRect(this);
+			if (m_backgroundImage != NULL && !m_backgroundImage->IsEmpty())
 			{
-				TinyClipCanvas canvas(hDC, this, rcPaint);
-				TinyRectangle clip = m_document->GetWindowRect(this);
-				if (m_backgroundImage != NULL && !m_backgroundImage->IsEmpty())
-				{
-					canvas.DrawImage(*m_backgroundImage, clip, 0, 0, m_backgroundImage->GetSize().cx, m_backgroundImage->GetSize().cy);
-				}
-				return TRUE;
+				canvas.DrawImage(*m_backgroundImage, clip, 0, 0, m_backgroundImage->GetSize().cx, m_backgroundImage->GetSize().cy);
 			}
-			return FALSE;
+			return TRUE;
 		}
 
 		HRESULT	TinyVisualCaption::OnLButtonDown(const TinyPoint& pos, DWORD dwFlags)

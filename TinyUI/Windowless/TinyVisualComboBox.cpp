@@ -41,7 +41,7 @@ namespace TinyUI
 		}
 		TinyString TinyVisualComboBox::RetrieveTag() const
 		{
-			return TinyVisualTag::COMBOBOX;
+			return TinyVisualTagConst::COMBOBOX;
 		}
 		void TinyVisualComboBox::SetStyleImage(StyleImage type, LPCSTR pzName)
 		{
@@ -69,7 +69,7 @@ namespace TinyUI
 		TinyVisualOption* TinyVisualComboBox::AddOption(const TinyString& szValue, const TinyString& szText)
 		{
 			TinyVisual* spvisParent = m_popupWND.GetDocument().GetParent(NULL);
-			TinyVisualOption* spvis = static_cast<TinyVisualOption*>(m_popupWND.GetDocument().Create(0, m_options.GetSize() * DEFAULT_OPTION_HEIGHT, TO_CX(m_rectangle), DEFAULT_OPTION_HEIGHT, TinyVisualTag::OPTION, spvisParent));
+			TinyVisualOption* spvis = static_cast<TinyVisualOption*>(m_popupWND.GetDocument().Create(0, m_options.GetSize() * DEFAULT_OPTION_HEIGHT, TO_CX(m_rectangle), DEFAULT_OPTION_HEIGHT, TinyVisualTagConst::OPTION, spvisParent));
 			if (spvis != NULL)
 			{
 				spvis->SetValue(szValue.CSTR());
@@ -108,42 +108,42 @@ namespace TinyUI
 		}
 		BOOL TinyVisualComboBox::SetProperty(const TinyString& name, const TinyString& value)
 		{
-			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGENORMAL.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::IMAGENORMAL.STR()) == 0)
 			{
 				this->SetStyleImage(NORMAL, value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGEHIGHLIGHT.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::IMAGEHIGHLIGHT.STR()) == 0)
 			{
 				this->SetStyleImage(HIGHLIGHT, value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGEPUSH.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::IMAGEPUSH.STR()) == 0)
 			{
 				this->SetStyleImage(PUSH, value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::IMAGEDOWN.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::IMAGEDOWN.STR()) == 0)
 			{
 				this->SetStyleImage(DOWN, value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::ARROWNORMAL.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::ARROWNORMAL.STR()) == 0)
 			{
 				this->SetArrowImage(NORMAL, value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::ARROWHIGHLIGHT.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::ARROWHIGHLIGHT.STR()) == 0)
 			{
 				this->SetArrowImage(HIGHLIGHT, value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::ARROWDOWN.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::ARROWDOWN.STR()) == 0)
 			{
 				this->SetArrowImage(DOWN, value.STR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::ARROWPUSH.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::ARROWPUSH.STR()) == 0)
 			{
 				this->SetArrowImage(PUSH, value.STR());
 				return TRUE;
@@ -152,8 +152,7 @@ namespace TinyUI
 		}
 		BOOL TinyVisualComboBox::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
-			if (!m_document)
-				return FALSE;
+			ASSERT(m_document);
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			canvas.SetFont(m_hFONT);
@@ -318,7 +317,7 @@ namespace TinyUI
 		}
 		TinyString TinyVisualOption::RetrieveTag() const
 		{
-			return TinyVisualTag::OPTION;
+			return TinyVisualTagConst::OPTION;
 		}
 
 		HRESULT TinyVisualOption::OnMouseLeave()
@@ -349,12 +348,12 @@ namespace TinyUI
 		}
 		BOOL TinyVisualOption::SetProperty(const TinyString& name, const TinyString& value)
 		{
-			if (strcasecmp(name.STR(), TinyVisualProperty::VALUE.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::VALUE.STR()) == 0)
 			{
 				SetValue(value.CSTR());
 				return TRUE;
 			}
-			if (strcasecmp(name.STR(), TinyVisualProperty::OPTIONHIGHLIGHT.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::OPTIONHIGHLIGHT.STR()) == 0)
 			{
 				SetHighlightImage(value.CSTR());
 				return TRUE;

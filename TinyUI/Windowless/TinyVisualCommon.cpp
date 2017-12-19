@@ -5,77 +5,70 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		const TinyString TinyVisualConst::LEFT = "left";
-		const TinyString TinyVisualConst::TOP = "top";
-		const TinyString TinyVisualConst::RIGHT = "right";
-		const TinyString TinyVisualConst::BOTTOM = "bottom";
-		const TinyString TinyVisualConst::CENTER = "center";
-		const TinyString TinyVisualConst::STRETCH = "stretch";
-		//////////////////////////////////////////////////////////////////////////
-		const TinyString TinyVisualProperty::NAME = TEXT("name");
-		const TinyString TinyVisualProperty::TEXT = TEXT("text");
-		const TinyString TinyVisualProperty::TOOLTIP = TEXT("tooltip");
-		const TinyString TinyVisualProperty::MAXSIZE = TEXT("maxsize");
-		const TinyString TinyVisualProperty::MINSIZE = TEXT("minsize");
-		const TinyString TinyVisualProperty::POSITION = TEXT("position");
-		const TinyString TinyVisualProperty::SIZE = TEXT("size");
-		const TinyString TinyVisualProperty::VISIBLE = TEXT("visible");
-		const TinyString TinyVisualProperty::ENABLE = TEXT("enable");
-		const TinyString TinyVisualProperty::CURSOR = TEXT("cursor");
+		const TinyString TinyVisualPropertyConst::NAME = TEXT("name");
+		const TinyString TinyVisualPropertyConst::TEXT = TEXT("text");
+		const TinyString TinyVisualPropertyConst::TOOLTIP = TEXT("tooltip");
+		const TinyString TinyVisualPropertyConst::MAXSIZE = TEXT("maxsize");
+		const TinyString TinyVisualPropertyConst::MINSIZE = TEXT("minsize");
+		const TinyString TinyVisualPropertyConst::POSITION = TEXT("position");
+		const TinyString TinyVisualPropertyConst::SIZE = TEXT("size");
+		const TinyString TinyVisualPropertyConst::VISIBLE = TEXT("visible");
+		const TinyString TinyVisualPropertyConst::ENABLE = TEXT("enable");
+		const TinyString TinyVisualPropertyConst::CURSOR = TEXT("cursor");
 
-		const TinyString TinyVisualProperty::BACKGROUNDIMAGE = TEXT("background-image");
-		const TinyString TinyVisualProperty::BACKGROUNDCOLOR = TEXT("background-color");
-		const TinyString TinyVisualProperty::BACKGROUNDCENTER = TEXT("background-center");
-		const TinyString TinyVisualProperty::BACKGROUNDSIZE = TEXT("background-size");
-		const TinyString TinyVisualProperty::BACKGROUNDPOSITION = TEXT("background-position");
+		const TinyString TinyVisualPropertyConst::BACKGROUNDIMAGE = TEXT("background-image");
+		const TinyString TinyVisualPropertyConst::BACKGROUNDCOLOR = TEXT("background-color");
+		const TinyString TinyVisualPropertyConst::BACKGROUNDCENTER = TEXT("background-center");
+		const TinyString TinyVisualPropertyConst::BACKGROUNDSIZE = TEXT("background-size");
+		const TinyString TinyVisualPropertyConst::BACKGROUNDPOSITION = TEXT("background-position");
 
-		const TinyString TinyVisualProperty::BORDERWIDTH = TEXT("border-width");
-		const TinyString TinyVisualProperty::BORDERCOLOR = TEXT("border-color");
-		const TinyString TinyVisualProperty::BORDERSTYLE = TEXT("border-style");
-		const TinyString TinyVisualProperty::BORDERIMAGE = TEXT("border-image");
-		const TinyString TinyVisualProperty::BORDERCENTER = TEXT("border-center");
+		const TinyString TinyVisualPropertyConst::BORDERWIDTH = TEXT("border-width");
+		const TinyString TinyVisualPropertyConst::BORDERCOLOR = TEXT("border-color");
+		const TinyString TinyVisualPropertyConst::BORDERSTYLE = TEXT("border-style");
+		const TinyString TinyVisualPropertyConst::BORDERIMAGE = TEXT("border-image");
+		const TinyString TinyVisualPropertyConst::BORDERCENTER = TEXT("border-center");
 
-		const TinyString TinyVisualProperty::FONTFAMILY = TEXT("font-family");
-		const TinyString TinyVisualProperty::FONTSIZE = TEXT("font-size");
-		const TinyString TinyVisualProperty::FONTWEIGHT = TEXT("font-weight");
-		const TinyString TinyVisualProperty::FONTSTYLE = TEXT("font-style");
+		const TinyString TinyVisualPropertyConst::FONTFAMILY = TEXT("font-family");
+		const TinyString TinyVisualPropertyConst::FONTSIZE = TEXT("font-size");
+		const TinyString TinyVisualPropertyConst::FONTWEIGHT = TEXT("font-weight");
+		const TinyString TinyVisualPropertyConst::FONTSTYLE = TEXT("font-style");
 
-		const TinyString TinyVisualProperty::TEXTCOLOR = TEXT("text-color");
-		const TinyString TinyVisualProperty::TEXTALIGN = TEXT("text-align");
-		const TinyString TinyVisualProperty::TEXTDECORATION = TEXT("text-decoration");
-		const TinyString TinyVisualProperty::MULTILINE = TEXT("multiline");
-		const TinyString TinyVisualProperty::READONLY = TEXT("readonly");
+		const TinyString TinyVisualPropertyConst::TEXTCOLOR = TEXT("text-color");
+		const TinyString TinyVisualPropertyConst::TEXTALIGN = TEXT("text-align");
+		const TinyString TinyVisualPropertyConst::TEXTDECORATION = TEXT("text-decoration");
+		const TinyString TinyVisualPropertyConst::MULTILINE = TEXT("multiline");
+		const TinyString TinyVisualPropertyConst::READONLY = TEXT("readonly");
 
-		const TinyString TinyVisualProperty::ALIGNMENT = TEXT("alignment");
-		const TinyString TinyVisualProperty::VALUE = TEXT("value");
-		const TinyString TinyVisualProperty::OPTIONHIGHLIGHT = TEXT("highlight");
+		const TinyString TinyVisualPropertyConst::ALIGNMENT = TEXT("alignment");
+		const TinyString TinyVisualPropertyConst::VALUE = TEXT("value");
+		const TinyString TinyVisualPropertyConst::OPTIONHIGHLIGHT = TEXT("highlight");
 
-		const TinyString TinyVisualProperty::IMAGENORMAL = TEXT("image-normal");
-		const TinyString TinyVisualProperty::IMAGEHIGHLIGHT = TEXT("image-highlight");
-		const TinyString TinyVisualProperty::IMAGEDOWN = TEXT("image-down");
-		const TinyString TinyVisualProperty::IMAGEPUSH = TEXT("image-push");
+		const TinyString TinyVisualPropertyConst::IMAGENORMAL = TEXT("image-normal");
+		const TinyString TinyVisualPropertyConst::IMAGEHIGHLIGHT = TEXT("image-highlight");
+		const TinyString TinyVisualPropertyConst::IMAGEDOWN = TEXT("image-down");
+		const TinyString TinyVisualPropertyConst::IMAGEPUSH = TEXT("image-push");
 
-		const TinyString TinyVisualProperty::IMAGE = TEXT("image");
+		const TinyString TinyVisualPropertyConst::IMAGE = TEXT("image");
 
-		const TinyString TinyVisualProperty::ARROWNORMAL = TEXT("arrow-normal");
-		const TinyString TinyVisualProperty::ARROWDOWN = TEXT("arrow-down");
-		const TinyString TinyVisualProperty::ARROWHIGHLIGHT = TEXT("arrow-highlight");
-		const TinyString TinyVisualProperty::ARROWPUSH = TEXT("arrow-push");
+		const TinyString TinyVisualPropertyConst::ARROWNORMAL = TEXT("arrow-normal");
+		const TinyString TinyVisualPropertyConst::ARROWDOWN = TEXT("arrow-down");
+		const TinyString TinyVisualPropertyConst::ARROWHIGHLIGHT = TEXT("arrow-highlight");
+		const TinyString TinyVisualPropertyConst::ARROWPUSH = TEXT("arrow-push");
 
-		const TinyString TinyVisualProperty::ARROW1NORMAL = TEXT("arrow1-normal");
-		const TinyString TinyVisualProperty::ARROW1HIGHLIGHT = TEXT("arrow1-highlight");
-		const TinyString TinyVisualProperty::ARROW1DOWN = TEXT("arrow1-down");
+		const TinyString TinyVisualPropertyConst::ARROW1NORMAL = TEXT("arrow1-normal");
+		const TinyString TinyVisualPropertyConst::ARROW1HIGHLIGHT = TEXT("arrow1-highlight");
+		const TinyString TinyVisualPropertyConst::ARROW1DOWN = TEXT("arrow1-down");
 
-		const TinyString TinyVisualProperty::ARROW2NORMAL = TEXT("arrow2-normal");
-		const TinyString TinyVisualProperty::ARROW2HIGHLIGHT = TEXT("arrow2-highlight");
-		const TinyString TinyVisualProperty::ARROW2DOWN = TEXT("arrow2-down");
+		const TinyString TinyVisualPropertyConst::ARROW2NORMAL = TEXT("arrow2-normal");
+		const TinyString TinyVisualPropertyConst::ARROW2HIGHLIGHT = TEXT("arrow2-highlight");
+		const TinyString TinyVisualPropertyConst::ARROW2DOWN = TEXT("arrow2-down");
 
-		const TinyString TinyVisualProperty::SCROLLBARGROOVE = TEXT("scrollbar-groove");
-		const TinyString TinyVisualProperty::SCROLLBARNORMAL = TEXT("scrollbar-normal");
-		const TinyString TinyVisualProperty::SCROLLBARHIGHLIGHT = TEXT("scrollbar-highlight");
+		const TinyString TinyVisualPropertyConst::SCROLLBARGROOVE = TEXT("scrollbar-groove");
+		const TinyString TinyVisualPropertyConst::SCROLLBARNORMAL = TEXT("scrollbar-normal");
+		const TinyString TinyVisualPropertyConst::SCROLLBARHIGHLIGHT = TEXT("scrollbar-highlight");
 
-		const TinyString TinyVisualProperty::SHADOWIMAGE = TEXT("shadow-image");
-		const TinyString TinyVisualProperty::SHADOWBOX = TEXT("shadow-box");
+		const TinyString TinyVisualPropertyConst::SHADOWIMAGE = TEXT("shadow-image");
+		const TinyString TinyVisualPropertyConst::SHADOWBOX = TEXT("shadow-box");
 
 		//////////////////////////////////////////////////////////////////////////
 		const TinyString TinyVisualCursor::AUTO = TEXT("auto");
@@ -146,33 +139,33 @@ namespace TinyUI
 			return IDC_ARROW;
 		}
 		//////////////////////////////////////////////////////////////////////////
-		const TinyString TinyVisualTag::WINDOW = TEXT("window");
-		const TinyString TinyVisualTag::CONTEXT = TEXT("context");
-		const TinyString TinyVisualTag::IMAGE = TEXT("image");
-		const TinyString TinyVisualTag::ADD = TEXT("add");
-		const TinyString TinyVisualTag::SYSCAPTION = TEXT("syscaption");
-		const TinyString TinyVisualTag::BUTTON = TEXT("button");
-		const TinyString TinyVisualTag::PANEL = TEXT("panel");
-		const TinyString TinyVisualTag::LIST = TEXT("list");
-		const TinyString TinyVisualTag::LISTITEM = TEXT("listitem");
-		const TinyString TinyVisualTag::LABEL = TEXT("label");
-		const TinyString TinyVisualTag::ANIMATION = TEXT("animation");
-		const TinyString TinyVisualTag::TAB = TEXT("tab");
-		const TinyString TinyVisualTag::STACKPANEL = TEXT("stackpanel");
-		const TinyString TinyVisualTag::HBOXLAYOUT = TEXT("hboxlayout");
-		const TinyString TinyVisualTag::VBOXLAYOUT = TEXT("vboxlayout");
-		const TinyString TinyVisualTag::LISTBOX = TEXT("listbox");
-		const TinyString TinyVisualTag::TOOLBAR = TEXT("toolbar");
-		const TinyString TinyVisualTag::TREEVIEW = TEXT("treeview");
-		const TinyString TinyVisualTag::HSCROLLBAR = TEXT("hscrollbar");
-		const TinyString TinyVisualTag::VSCROLLBAR = TEXT("vscrollbar");
-		const TinyString TinyVisualTag::COMBOBOX = TEXT("combobox");
-		const TinyString TinyVisualTag::OPTION = TEXT("option");
-		const TinyString TinyVisualTag::TEXTBOX = TEXT("textbox");
-		const TinyString TinyVisualTag::STRETCH = TEXT("stretch");
-		const TinyString TinyVisualTag::NATIVEWINDOW = TEXT("nativewindow");
-		const TinyString TinyVisualTag::MENUITEM = TEXT("menuitem");
-		const TinyString TinyVisualTag::CONTEXTMENU = TEXT("contextmenu");
+		const TinyString TinyVisualTagConst::WINDOW = TEXT("window");
+		const TinyString TinyVisualTagConst::CONTEXT = TEXT("context");
+		const TinyString TinyVisualTagConst::IMAGE = TEXT("image");
+		const TinyString TinyVisualTagConst::ADD = TEXT("add");
+		const TinyString TinyVisualTagConst::SYSCAPTION = TEXT("syscaption");
+		const TinyString TinyVisualTagConst::BUTTON = TEXT("button");
+		const TinyString TinyVisualTagConst::PANEL = TEXT("panel");
+		const TinyString TinyVisualTagConst::LIST = TEXT("list");
+		const TinyString TinyVisualTagConst::LISTITEM = TEXT("listitem");
+		const TinyString TinyVisualTagConst::LABEL = TEXT("label");
+		const TinyString TinyVisualTagConst::ANIMATION = TEXT("animation");
+		const TinyString TinyVisualTagConst::TAB = TEXT("tab");
+		const TinyString TinyVisualTagConst::STACKPANEL = TEXT("stackpanel");
+		const TinyString TinyVisualTagConst::HBOXLAYOUT = TEXT("hboxlayout");
+		const TinyString TinyVisualTagConst::VBOXLAYOUT = TEXT("vboxlayout");
+		const TinyString TinyVisualTagConst::LISTBOX = TEXT("listbox");
+		const TinyString TinyVisualTagConst::TOOLBAR = TEXT("toolbar");
+		const TinyString TinyVisualTagConst::TREEVIEW = TEXT("treeview");
+		const TinyString TinyVisualTagConst::HSCROLLBAR = TEXT("hscrollbar");
+		const TinyString TinyVisualTagConst::VSCROLLBAR = TEXT("vscrollbar");
+		const TinyString TinyVisualTagConst::COMBOBOX = TEXT("combobox");
+		const TinyString TinyVisualTagConst::OPTION = TEXT("option");
+		const TinyString TinyVisualTagConst::TEXTBOX = TEXT("textbox");
+		const TinyString TinyVisualTagConst::STRETCH = TEXT("stretch");
+		const TinyString TinyVisualTagConst::NATIVEWINDOW = TEXT("nativewindow");
+		const TinyString TinyVisualTagConst::MENUITEM = TEXT("menuitem");
+		const TinyString TinyVisualTagConst::CONTEXTMENU = TEXT("contextmenu");
 		//////////////////////////////////////////////////////////////////////////
 		TinyVisualDC::TinyVisualDC(HWND hWND)
 			:m_hWND(hWND),
@@ -287,6 +280,32 @@ namespace TinyUI
 				return TRUE;
 			}
 			return FALSE;
+		}
+		//////////////////////////////////////////////////////////////////////////
+		TinyVisualProperty::TinyVisualProperty(const TinyString& name, const TinyString& value)
+			:m_name(std::move(name)),
+			m_value(std::move(value))
+		{
+
+		}
+		TinyVisualProperty::TinyVisualProperty(const TinyVisualProperty& other)
+			: m_name(std::move(other.name())),
+			m_value(std::move(other.value()))
+		{
+
+		}
+		void TinyVisualProperty::operator=(const TinyVisualProperty& other)
+		{
+			m_name = std::move(other.name());
+			m_value = std::move(other.value());
+		}
+		const TinyString& TinyVisualProperty::name() const
+		{
+			return m_name;
+		}
+		const TinyString& TinyVisualProperty::value() const
+		{
+			return m_value;
 		}
 	}
 }

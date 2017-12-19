@@ -129,11 +129,13 @@ namespace TinyUI
 		TinyString(const CHAR* s);
 		TinyString(const TinyString& s);
 		TinyString(const TinyString& s, size_t pos, size_t size);
+		TinyString(const string& s);
 		~TinyString();
 	public:
 		TinyString& Assign(const CHAR* s);
 		TinyString& Assign(const CHAR* s, size_t size);
 		TinyString& Assign(const TinyString& str, size_t pos, size_t size);
+		TinyString& Assign(const string& s);
 		TinyString&	Append(const CHAR* s);
 		TinyString&	Append(const CHAR* s, size_t size);
 		TinyString& Append(const TinyString& str, size_t pos, size_t size);
@@ -146,10 +148,13 @@ namespace TinyUI
 		TinyString& operator= (const CHAR* s);
 		TinyString& operator= (CHAR s);
 		BOOL		operator==(const TinyString& str);
+		BOOL		operator==(const TinyString& str) const;
 		BOOL		operator==(const CHAR* s);
+		BOOL		operator==(const CHAR* s) const;
 		BOOL		operator==(TinyString& str);
 		BOOL		operator==(CHAR* s);
 		BOOL		operator==(const string& str);
+		BOOL		operator==(const string& str) const;
 		BOOL		operator==(string& str);
 		BOOL		operator!=(const TinyString& str);
 		BOOL		operator!=(const CHAR* s);

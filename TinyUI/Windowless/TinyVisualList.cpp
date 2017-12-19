@@ -26,7 +26,7 @@ namespace TinyUI
 
 		TinyString TinyVisualListItem::RetrieveTag() const
 		{
-			return TinyVisualTag::LISTITEM;
+			return TinyVisualTagConst::LISTITEM;
 		}
 
 		void TinyVisualListItem::SetItemData(LPVOID data)
@@ -51,8 +51,7 @@ namespace TinyUI
 
 		BOOL TinyVisualListItem::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
-			if (!m_document)
-				return FALSE;
+			ASSERT(m_document);
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			if (!m_backgroundColor.IsEmpty())
@@ -126,7 +125,7 @@ namespace TinyUI
 		HRESULT TinyVisualList::OnInitialize()
 		{
 			m_onPosChange.Reset(new Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualList::OnPosChange));
-			m_pVScrollbar = static_cast<TinyVisualVScrollBar*>(m_document->Create(TO_CX(m_rectangle) - 12, 0, 12, TO_CY(m_rectangle), TinyVisualTag::VSCROLLBAR, this));
+			m_pVScrollbar = static_cast<TinyVisualVScrollBar*>(m_document->Create(TO_CX(m_rectangle) - 12, 0, 12, TO_CY(m_rectangle), TinyVisualTagConst::VSCROLLBAR, this));
 			if (m_pVScrollbar != NULL)
 			{
 				m_pVScrollbar->EVENT_PosChange += m_onPosChange;
@@ -142,7 +141,7 @@ namespace TinyUI
 
 		TinyString TinyVisualList::RetrieveTag() const
 		{
-			return TinyVisualTag::LIST;
+			return TinyVisualTagConst::LIST;
 		}
 
 		HRESULT	TinyVisualList::OnMouseEnter()
@@ -230,7 +229,7 @@ namespace TinyUI
 		{
 			if (!m_document)
 				return NULL;
-			TinyVisualListItem* ps = static_cast<TinyVisualListItem*>(m_document->Create(TinyVisualTag::LISTITEM, this));
+			TinyVisualListItem* ps = static_cast<TinyVisualListItem*>(m_document->Create(TinyVisualTagConst::LISTITEM, this));
 			if (ps != NULL)
 			{
 				INT row = (m_dwCount - 2) / m_count;//È¥µô¹ö¶¯Ìõ
@@ -262,7 +261,7 @@ namespace TinyUI
 		{
 			if (!m_document)
 				return NULL;
-			TinyVisualListItem* ps = static_cast<TinyVisualListItem*>(m_document->Create(TinyVisualTag::LISTITEM, this));
+			TinyVisualListItem* ps = static_cast<TinyVisualListItem*>(m_document->Create(TinyVisualTagConst::LISTITEM, this));
 			if (ps != NULL)
 			{
 				TinyImage* image = new TinyImage();

@@ -54,64 +54,6 @@ namespace TinyUI
 		private:
 			TinyArray<TinyVisualFilter*> m_array;
 		};
-		/// <summary>
-		///  Ù–‘
-		/// </summary>
-		template<class T>
-		class TinyAttribute
-		{
-		public:
-			TinyAttribute()
-				:m_value(NULL)
-			{
-
-			}
-			~TinyAttribute()
-			{
-				if (m_value != NULL)
-					m_value->~T();
-				SAFE_FREE(m_value);
-			}
-			void SetAttribute(const T& myT)
-			{
-				m_value = (T*)malloc(sizeof(T));
-				if (m_value != NULL)
-				{
-#pragma push_macro("new")
-#undef new
-					::new(m_value) TinyPlaceNew<T>(myT);
-#pragma pop_macro("new")
-				}
-			}
-			void SetAttribute(T&& myT)
-			{
-				m_value = (T*)malloc(sizeof(T));
-				if (m_value != NULL)
-				{
-#pragma push_macro("new")
-#undef new
-					::new(m_value) TinyPlaceNew<T>(std::move(myT));
-#pragma pop_macro("new")
-				}
-
-			}
-			void SetNull()
-			{
-				if (m_value != NULL)
-					m_value->~T();
-				SAFE_FREE(m_value);
-			}
-			BOOL IsNull() const
-			{
-				return m_value == NULL;
-			}
-			operator T*() const
-			{
-				return m_value;
-			}
-		private:
-			T*	m_value;
-		};
 	}
 }
 

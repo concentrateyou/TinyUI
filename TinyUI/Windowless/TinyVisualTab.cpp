@@ -24,11 +24,12 @@ namespace TinyUI
 		}
 		TinyString TinyVisualTab::RetrieveTag() const
 		{
-			return TinyVisualTag::TAB;
+			return TinyVisualTagConst::TAB;
 		}
 
 		BOOL TinyVisualTab::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
+			ASSERT(m_document);
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			return TRUE;
 		}

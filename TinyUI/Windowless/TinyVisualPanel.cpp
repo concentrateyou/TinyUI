@@ -26,12 +26,12 @@ namespace TinyUI
 
 		TinyString TinyVisualPanel::RetrieveTag() const
 		{
-			return TinyVisualTag::PANEL;
+			return TinyVisualTagConst::PANEL;
 		}
 
 		BOOL TinyVisualPanel::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
-			ASSERT(m_document || m_document->GetVisualHWND());
+			ASSERT(m_document);
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			if (m_backgroundImage != NULL && !m_backgroundImage->IsEmpty())
