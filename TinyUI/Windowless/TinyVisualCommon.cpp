@@ -172,6 +172,7 @@ namespace TinyUI
 		const TinyString TinyVisualTag::STRETCH = TEXT("stretch");
 		const TinyString TinyVisualTag::NATIVEWINDOW = TEXT("nativewindow");
 		const TinyString TinyVisualTag::MENUITEM = TEXT("menuitem");
+		const TinyString TinyVisualTag::CONTEXTMENU = TEXT("contextmenu");
 		//////////////////////////////////////////////////////////////////////////
 		TinyVisualDC::TinyVisualDC(HWND hWND)
 			:m_hWND(hWND),

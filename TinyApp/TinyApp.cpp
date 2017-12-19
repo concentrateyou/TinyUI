@@ -29,7 +29,7 @@
 #include "SkinWindow.h"
 #include "Media/TinyWave.h"
 #include "FLVParser.h"
-#include "Windowless/TinyVisualContextMenu.h"
+#include "Windowless/TinyVisualLayeredWindow.h"
 #include "Media/TinySoundCapture.h"
 #include "QSVEncoder.h"
 #include <fstream>
@@ -92,10 +92,10 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	TinyVisualContextMenu uiImpl;
+	TinyVisualLayeredWindow uiImpl;
 	string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\contextmenu.xml");
 	uiImpl.Create(NULL, szFile.c_str());
-	uiImpl.Popup({ 300,100 });
+	uiImpl.Update();
 	INT loopRes = theLoop.MessageLoop();
 	TinyApplication::GetInstance()->RemoveMessageLoop();
 	TinyApplication::GetInstance()->Uninitialize();

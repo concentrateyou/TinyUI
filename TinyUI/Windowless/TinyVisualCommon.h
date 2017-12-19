@@ -115,6 +115,7 @@ namespace TinyUI
 			static const TinyString STRETCH;
 			static const TinyString NATIVEWINDOW;
 			static const TinyString MENUITEM;
+			static const TinyString CONTEXTMENU;
 
 			static const TinyString CONTEXT;
 			static const TinyString IMAGE;

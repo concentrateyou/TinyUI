@@ -33,7 +33,7 @@ namespace TinyUI
 			BOOL AddFilter(TinyVisualFilter* ps);
 			BOOL RemoveFilter(TinyVisualFilter* ps);
 			void AllowTracking(BOOL bAllow);
-			TinyVisualShadow&	GetShadow();
+			TinyVisualShadow*	GetShadow();
 			TinyVisualDocument*	GetDocument();
 			virtual void OnInitialize() = 0;
 			virtual void OnUninitialize() = 0;
@@ -87,7 +87,7 @@ namespace TinyUI
 			TinyVisualBuilder					m_builder;
 			TinyScopedPtr<TinyVisualDC>			m_visualDC;
 			TinyScopedPtr<TinyVisualDocument>	m_document;
-			TinyVisualShadow					m_shadow;
+			TinyScopedPtr<TinyVisualShadow>	    m_shadow;
 		};
 	}
 }

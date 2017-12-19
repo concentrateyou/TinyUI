@@ -19,34 +19,20 @@ namespace TinyUI
 			TinyVisualMenuItem(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:
 			TinyString RetrieveTag() const OVERRIDE;
-
 		};
 		/// <summary>
 		/// 可视化上下文菜单
 		/// </summary>
-		class TinyVisualContextMenu : public TinyVisualWindowless
+		class TinyVisualContextMenu : public TinyVisual
 		{
 			friend class TinyVisualDocument;
 			DECLARE_DYNAMIC(TinyVisualContextMenu)
-		public:
+			DISALLOW_COPY_AND_ASSIGN(TinyVisualContextMenu)
+		protected:
 			TinyVisualContextMenu();
-			virtual ~TinyVisualContextMenu();
-			LPCSTR RetrieveClassName() OVERRIDE;
-			LPCSTR RetrieveTitle() OVERRIDE;
-			HICON RetrieveIcon() OVERRIDE;
-			DWORD RetrieveStyle() OVERRIDE;
-			DWORD RetrieveExStyle() OVERRIDE;
-			void OnInitialize() OVERRIDE;
-			void OnUninitialize() OVERRIDE;
+			TinyVisualContextMenu(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:
-			BOOL Popup(const TinyPoint& pos);
-			BOOL IsPopup();
-			BOOL Unpopup();
-		public:
-			LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-			LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-		private:
-			BOOL DrawContext();
+			TinyString RetrieveTag() const OVERRIDE;
 		private:
 			TinyArray<TinyVisualMenuItem*>	m_items;
 		};

@@ -54,7 +54,11 @@ namespace TinyUI
 			{
 				if (m_document != NULL && m_document->GetVisualHWND() != NULL)
 				{
-					m_document->GetVisualHWND()->GetShadow().SetShadow(TinyVisualResource::GetInstance()[value]);
+					TinyVisualShadow* shadow = m_document->GetVisualHWND()->GetShadow();
+					if (shadow != NULL)
+					{
+						shadow->SetShadow(TinyVisualResource::GetInstance()[value]);
+					}
 				}
 				return TRUE;
 			}
@@ -62,7 +66,9 @@ namespace TinyUI
 			{
 				if (m_document != NULL && m_document->GetVisualHWND() != NULL)
 				{
-					m_document->GetVisualHWND()->GetShadow().SetShadowBox(TinyVisualBuilder::GetRectangle(value));
+					TinyVisualShadow* shadow = m_document->GetVisualHWND()->GetShadow();
+					ASSERT(shadow);
+					shadow->SetShadowBox(TinyVisualBuilder::GetRectangle(value));
 				}
 				return TRUE;
 			}

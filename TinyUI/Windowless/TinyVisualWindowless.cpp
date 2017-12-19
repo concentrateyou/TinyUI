@@ -85,12 +85,21 @@ namespace TinyUI
 			m_document.Reset(new TinyVisualDocument(this));
 			if (!m_document)
 				return FALSE;
+			//创建阴影窗口
+			if (!(RetrieveExStyle() & WS_EX_LAYERED))
+			{
+				m_shadow.Reset(new TinyVisualShadow());
+				ASSERT(m_shadow);
+				m_shadow->Create(m_hWND, 0, 0, 0, 0);
+			}
+			if (!m_shadow || !m_shadow->Handle())
+				return FALSE;
 			if (!m_builder.LoadFile(m_szSkinFile.CSTR()))
 				return FALSE;
 			if (!m_document->Initialize(&m_builder))
 				return FALSE;
 			this->OnInitialize();
-			return m_shadow.Create(m_hWND, 0, 0, 0, 0);
+			return TRUE;
 		}
 		void TinyVisualWindowless::Uninitialize()
 		{
@@ -98,7 +107,9 @@ namespace TinyUI
 				m_document->Uninitialize();
 			m_document.Reset(NULL);
 			m_visualDC.Reset(NULL);
-			m_shadow.DestroyWindow();
+			if (m_shadow != NULL)
+				m_shadow->DestroyWindow();
+			m_shadow.Reset(NULL);
 		}
 		BOOL TinyVisualWindowless::AddFilter(TinyVisualFilter* ps)
 		{
@@ -112,7 +123,7 @@ namespace TinyUI
 		{
 			m_bAllowTracking = bAllow;
 		}
-		TinyVisualShadow& TinyVisualWindowless::GetShadow()
+		TinyVisualShadow* TinyVisualWindowless::GetShadow()
 		{
 			return m_shadow;
 		}
@@ -140,7 +151,8 @@ namespace TinyUI
 			}
 			if (IsWindowVisible(m_hWND))
 			{
-				m_shadow.DrawShadow();
+				if (m_shadow != NULL)
+					m_shadow->DrawShadow();
 			}
 			return FALSE;
 		}
@@ -161,17 +173,18 @@ namespace TinyUI
 					m_visualDC->SetSize(m_size.cx, m_size.cy);
 					m_document->OnSize(m_size);
 					::RedrawWindow(m_hWND, NULL, NULL, RDW_INVALIDATE);
-				}	
+				}
 			}
 			if (m_shadow != NULL)
 			{
-				TinyRectangle box = m_shadow.GetShadowBox();
+				ASSERT(m_shadow->Handle());
+				TinyRectangle box = m_shadow->GetShadowBox();
 				INT cx = m_size.cx + box.left + box.right;
 				INT cy = m_size.cy + box.top + box.bottom;
-				::SetWindowPos(m_shadow.Handle(), NULL, 0, 0, cx, cy, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+				::SetWindowPos(m_shadow->Handle(), NULL, 0, 0, cx, cy, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
 				if (IsWindowVisible(m_hWND))
 				{
-					m_shadow.DrawShadow();
+					m_shadow->DrawShadow();
 				}
 			}
 			return FALSE;
@@ -182,25 +195,24 @@ namespace TinyUI
 			if (lParam != NULL)
 			{
 				m_pos.x = LOWORD(lParam);
-				m_pos.y = HIWORD(lParam);	
+				m_pos.y = HIWORD(lParam);
 			}
 			if (m_shadow != NULL)
 			{
-				TinyRectangle box = m_shadow.GetShadowBox();
+				ASSERT(m_shadow->Handle());
+				TinyRectangle box = m_shadow->GetShadowBox();
 				INT x = m_pos.x - box.left;
 				INT y = m_pos.y - box.top;
-				::SetWindowPos(m_shadow.Handle(), NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+				::SetWindowPos(m_shadow->Handle(), NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 			}
 			return FALSE;
 		}
-
 		LRESULT TinyVisualWindowless::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			PostQuitMessage(0);//退出应用程序
 			return FALSE;
 		}
-
 		LRESULT TinyVisualWindowless::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
@@ -457,17 +469,23 @@ namespace TinyUI
 			bHandled = FALSE;
 			if (m_shadow != NULL)
 			{
-				::ShowWindow(m_shadow, !wParam ? SW_HIDE : SW_SHOWNA);
+				ASSERT(m_shadow->Handle());
+				::ShowWindow(m_shadow->Handle(), !wParam ? SW_HIDE : SW_SHOWNA);
 			}
 			return FALSE;
 		}
 		LRESULT TinyVisualWindowless::OnExitSizeMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
-			if (IsWindowVisible(m_hWND))
+			if (m_shadow != NULL)
 			{
-				m_shadow.DrawShadow();
+				ASSERT(m_shadow->Handle());
+				if (IsWindowVisible(m_hWND))
+				{
+					m_shadow->DrawShadow();
+				}
 			}
+
 			return FALSE;
 		}
 		LRESULT TinyVisualWindowless::OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -483,13 +501,13 @@ namespace TinyUI
 				//最小化最大化不需要阴影
 				if (wParam == SC_MINIMIZE || wParam == SC_MAXIMIZE)
 				{
-					m_shadow.ShowWindow(SW_HIDE);
-					m_shadow.DrawShadow();
+					m_shadow->ShowWindow(SW_HIDE);
+					m_shadow->DrawShadow();
 				}
 				if (wParam == SC_RESTORE && !IsZoomed(m_hWND))
 				{
-					m_shadow.ShowWindow(SW_SHOW);
-					m_shadow.DrawShadow();
+					m_shadow->ShowWindow(SW_SHOW);
+					m_shadow->DrawShadow();
 				}
 			}
 			return FALSE;
