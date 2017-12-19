@@ -90,10 +90,9 @@ namespace TinyUI
 			{
 				m_shadow.Reset(new TinyVisualShadow());
 				ASSERT(m_shadow);
-				m_shadow->Create(m_hWND, 0, 0, 0, 0);
+				if (!m_shadow->Create(m_hWND, 0, 0, 0, 0))
+					return FALSE;
 			}
-			if (!m_shadow || !m_shadow->Handle())
-				return FALSE;
 			if (!m_builder.LoadFile(m_szSkinFile.CSTR()))
 				return FALSE;
 			if (!m_document->Initialize(&m_builder))
