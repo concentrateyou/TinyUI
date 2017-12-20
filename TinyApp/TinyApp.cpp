@@ -9,6 +9,7 @@
 #include "MFFrame.h"
 #include "Windowless/TinyVisualWindowless.h"
 #include "Windowless/TinyVisualTextBox.h"
+#include "Windowless/TinyVisualContextMenu.h"
 #include "Render/TinyDDraw.h"
 #include "Media/TinyWASAPIAudioCapture.h"
 #include "Media/TinyWASAPIAudioRender.h"
@@ -95,6 +96,10 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyVisualLayeredWindow uiImpl;
 	string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\contextmenu.xml");
 	uiImpl.Create(NULL, szFile.c_str());
+	TinyVisualContextMenu* contextmenu = (TinyVisualContextMenu*)uiImpl.GetDocument().GetVisualByName("menu1");
+	contextmenu->Add("Test1");
+	contextmenu->Add("Test2");
+	contextmenu->Add("Test3");
 	uiImpl.Update();
 	INT loopRes = theLoop.MessageLoop();
 	TinyApplication::GetInstance()->RemoveMessageLoop();

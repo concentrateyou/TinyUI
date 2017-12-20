@@ -61,7 +61,8 @@ namespace TinyUI
 			TinyPoint dstPos = windowRect.Position();
 			TinySize  dstSize = windowRect.Size();
 			BLENDFUNCTION bs = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
-			return ::UpdateLayeredWindow(m_hWND, m_visualDC->Handle(), &dstPos, &dstSize, m_visualDC->GetMemDC(), &pos, 0, &bs, 2);
+			BOOL bRes = ::UpdateLayeredWindow(m_hWND, m_visualDC->Handle(), &dstPos, &dstSize, m_visualDC->GetMemDC(), &pos, 0, &bs, 2);
+			return bRes;
 		}
 	}
 }
