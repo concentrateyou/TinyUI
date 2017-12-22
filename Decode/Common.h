@@ -20,6 +20,15 @@ namespace Decode
 #define TYPE_ONCAPTIONINFO 3
 #define TYPE_UNKNOWN 9
 
+#define TS_FEC_PACKET_SIZE 204
+#define TS_DVHS_PACKET_SIZE 192
+#define TS_PACKET_SIZE 188
+#define TS_MAX_PACKET_SIZE 204
+
+#define PES_START_SIZE  6
+#define PES_HEADER_SIZE 9
+#define MAX_PES_HEADER_SIZE (9 + 255)
+
 	INT ToINT32(BYTE val[4]);
 	INT ToINT24(BYTE val[3]);
 	INT ToINT16(BYTE val[2]);
@@ -239,4 +248,16 @@ namespace Decode
 			}script;
 		};
 	}FLV_BLOCK;
+	//////////////////////////////////////////////////////////////////////////
+	typedef struct tagTS_PACKEG_HEADER
+	{
+		BYTE Syncbyte;
+		BYTE TransportErrorIndicator;
+		BYTE PayloadUnitStartIndicator;
+		BYTE TransportPriority;
+		SHORT PID;
+		BYTE TransportScramblingControl;
+		BYTE AdaptationFieldControl;
+		BYTE ContinuityCounter;
+	}TS_PACKEG_HEADER;
 }

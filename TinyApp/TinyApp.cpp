@@ -30,6 +30,7 @@
 #include "SkinWindow.h"
 #include "Media/TinyWave.h"
 #include "FLVParser.h"
+#include "TSReader.h"
 #include "Windowless/TinyVisualLayeredWindow.h"
 #include "Media/TinySoundCapture.h"
 #include "QSVEncoder.h"
@@ -87,6 +88,9 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	HRESULT hRes = OleInitialize(NULL);
 	CoInitializeEx(NULL, COINIT_MULTITHREADED);
 	LoadSeDebugPrivilege();
+
+	TSReader reader;
+	reader.OpenFile("D:\\1.ts");
 
 	TinyVisualResource::GetInstance().Load("skin\\resource.xml");
 	::DefWindowProc(NULL, 0, 0, 0L);

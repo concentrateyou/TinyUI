@@ -57,6 +57,12 @@
     <ClInclude Include="AudioAnalyser.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="TSWriter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TSReader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -93,6 +99,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="AudioAnalyser.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TSReader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TSWriter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
