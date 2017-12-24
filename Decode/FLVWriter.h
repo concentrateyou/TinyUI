@@ -1,8 +1,8 @@
 #pragma once
 #include "Common.h"
-#include "AACDecode.h"
+#include "AACDecoder.h"
 #include "MPG123Decode.h"
-#include "x264Decode.h"
+#include "x264Decoder.h"
 #include <vector>
 
 namespace Decode

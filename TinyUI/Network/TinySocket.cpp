@@ -188,6 +188,18 @@ namespace TinyUI
 			INT size = sizeof(dwTime);
 			return SetOption(SOL_SOCKET, bRecv ? SO_RCVTIMEO : SO_SNDTIMEO, (CHAR *)&dwTime, size);
 		}
+		BOOL TinySocket::GetBufferSize(BOOL bRecv, DWORD& dwSize)
+		{
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
+			INT size = sizeof(dwSize);
+			return GetOption(SOL_SOCKET, bRecv ? SO_RCVBUF : SO_SNDBUF, (CHAR *)&dwSize, size);
+		}
+		BOOL TinySocket::SetBufferSize(BOOL bRecv, DWORD dwSize)
+		{
+			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);
+			INT size = sizeof(dwSize);
+			return GetOption(SOL_SOCKET, bRecv ? SO_RCVBUF : SO_SNDBUF, (CHAR *)&dwSize, size);
+		}
 		BOOL TinySocket::Duplicate(DWORD processID, WSAPROTOCOL_INFO& s)
 		{
 			ASSERT(m_socket != INVALID_SOCKET && m_socket != NULL);

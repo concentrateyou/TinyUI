@@ -98,7 +98,7 @@ namespace TinyUI
 					if (m_context.GetSize() == 0)
 					{
 						CHAR* ps = NULL;
-						INT size = m_client.ReadSome(ps);
+						INT size = m_client.Read(ps);
 						if (!ParseTransferEncoding(ps))
 							return FALSE;
 					}
@@ -139,7 +139,7 @@ namespace TinyUI
 					if (m_context.GetSize() == 0)
 					{
 						CHAR* ps = NULL;
-						INT size = m_client.ReadSome(ps);
+						INT size = m_client.Read(ps);
 						if (!ParseTransferEncoding(ps))
 							return FALSE;
 					}
@@ -395,7 +395,7 @@ namespace TinyUI
 			}
 			ZeroMemory(m_raw, DEFAULT_HTTP_BUFFER_SIZE);
 			CHAR* bits = NULL;
-			iRes = this->ReadSome(bits);
+			iRes = this->Read(bits);
 			if (iRes == SOCKET_ERROR)
 			{
 				LOG(ERROR) << "socket recv:" << GetLastError();
@@ -455,7 +455,7 @@ namespace TinyUI
 			bits = m_raw;
 			return value;
 		}
-		INT TinyHTTPClient::ReadSome(CHAR*& bits)
+		INT TinyHTTPClient::Read(CHAR*& bits)
 		{
 			ZeroMemory(m_raw, m_size);
 			INT iRes = m_socket.Receive(m_raw, m_size, 0);

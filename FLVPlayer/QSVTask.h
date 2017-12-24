@@ -5,7 +5,7 @@
 #include "FLVReader.h"
 #include "PacketQueue.h"
 #include "QSV.h"
-#include "x264Decode.h"
+#include "x264Decoder.h"
 #include "DX11Graphics2D.h"
 
 using namespace Decode;
@@ -16,7 +16,7 @@ using namespace DXFramework;
 
 namespace FLVPlayer
 {
-	class QSVTask : public TinyTaskBase
+	class QSVTask : public TinyTask
 	{
 	public:
 		QSVTask();
@@ -36,7 +36,7 @@ namespace FLVPlayer
 		DX11Graphics2D					m_graphics;
 		DX11Image2D						m_video2D;
 		QSV								m_qsv;
-		x264Decode						m_x264;
+		x264Decoder						m_x264;
 		AVFrame*						m_pNV12;
 		TinyScopedPtr<BYTE>				m_bits;
 		TinyBufferArray<BYTE>			m_buffer;

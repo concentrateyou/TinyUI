@@ -5,12 +5,12 @@ using namespace TinyUI;
 
 namespace Decode
 {
-	class AC3Decode
+	class AC3Decoder
 	{
-		DISALLOW_COPY_AND_ASSIGN(AC3Decode)
+		DISALLOW_COPY_AND_ASSIGN(AC3Decoder)
 	public:
-		AC3Decode();
-		virtual ~AC3Decode();
+		AC3Decoder();
+		virtual ~AC3Decoder();
 	};
 
 }

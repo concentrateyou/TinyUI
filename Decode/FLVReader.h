@@ -2,9 +2,9 @@
 #include "Common.h"
 #include "RTMPStream.h"
 #include "HTTPStream.h"
-#include "AACDecode.h"
+#include "AACDecoder.h"
 #include "MPG123Decode.h"
-#include "x264Decode.h"
+#include "x264Decoder.h"
 #include <vector>
 
 namespace Decode

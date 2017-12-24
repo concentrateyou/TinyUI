@@ -1,7 +1,5 @@
 #include "stdafx.h"
 #include "FLVDecode.h"
-#include "Network/TinyHTTPRequest.h"
-#include "Network/TinyHTTPResponse.h"
 using namespace TinyUI::Network;
 
 namespace FLVPlayer
@@ -18,8 +16,8 @@ namespace FLVPlayer
 		m_basePTS(-1),
 		m_bFirstI(FALSE)
 	{
-		m_aac.Reset(new AACDecode());
-		m_x264.Reset(new x264Decode());
+		m_aac.Reset(new AACDecoder());
+		m_x264.Reset(new x264Decoder());
 		m_close.CreateEvent(FALSE, FALSE, NULL, NULL);
 	}
 

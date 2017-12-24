@@ -278,7 +278,6 @@ namespace Decode
 				INT64 ProgramClockReferenceBase;
 				SHORT ProgramClockReferenceExtension;
 				INT64 OriginalProgramClockReference_base;
-				SHORT ProgramClockReferenceExtension;
 				BYTE SpliceCountdown;
 				BYTE TransportPrivateDataLength;
 				std::vector<BYTE> TransportPrivateData;

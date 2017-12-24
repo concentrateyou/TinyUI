@@ -1,10 +1,10 @@
 #include "stdafx.h"
-#include "x264Decode.h"
+#include "x264Decoder.h"
 #include "Common/TinyLogging.h"
 
 namespace Decode
 {
-	x264Decode::x264Decode()
+	x264Decoder::x264Decoder()
 		:m_pYUV420(NULL),
 		m_context(NULL),
 		m_codec(NULL),
@@ -14,7 +14,7 @@ namespace Decode
 		ZeroMemory(&m_packet, sizeof(m_packet));
 	}
 
-	x264Decode::~x264Decode()
+	x264Decoder::~x264Decoder()
 	{
 		Close();
 	}
@@ -27,7 +27,7 @@ namespace Decode
 			TRACE("Error:%s\n", buf);
 		}
 	}
-	BOOL x264Decode::Initialize(const TinySize& srcsize, const TinySize& dstsize)
+	BOOL x264Decoder::Initialize(const TinySize& srcsize, const TinySize& dstsize)
 	{
 		av_log_set_level(AV_LOG_ERROR);
 		av_log_set_callback(log_callback);
@@ -54,7 +54,7 @@ namespace Decode
 		Close();
 		return FALSE;
 	}
-	BOOL x264Decode::Open(BYTE* metadata, LONG size)
+	BOOL x264Decoder::Open(BYTE* metadata, LONG size)
 	{
 		m_codec = avcodec_find_decoder(AV_CODEC_ID_H264);
 		if (!m_codec)
@@ -78,7 +78,7 @@ namespace Decode
 		return FALSE;
 	}
 
-	BOOL x264Decode::Decode(SampleTag& tag, BYTE*& bo, LONG& so)
+	BOOL x264Decoder::Decode(SampleTag& tag, BYTE*& bo, LONG& so)
 	{
 		if (!m_context || !m_sws)
 			return FALSE;
@@ -121,7 +121,7 @@ namespace Decode
 		av_packet_unref(&m_packet);
 		return iRes == 0;
 	}
-	BOOL x264Decode::Close()
+	BOOL x264Decoder::Close()
 	{
 		m_srcsize.Empty();
 		m_dstsize.Empty();
@@ -155,7 +155,7 @@ namespace Decode
 		m_bits.Reset(NULL);
 		return TRUE;
 	}
-	BOOL x264Decode::Reset()
+	BOOL x264Decoder::Reset()
 	{
 		if (m_context != NULL)
 		{
@@ -164,11 +164,11 @@ namespace Decode
 		}
 		return FALSE;
 	}
-	AVFrame* x264Decode::GetYUV420() const
+	AVFrame* x264Decoder::GetYUV420() const
 	{
 		return m_pYUV420;
 	}
-	AVFrame* x264Decode::GetRGB32() const
+	AVFrame* x264Decoder::GetRGB32() const
 	{
 		return m_pRGB32;
 	}

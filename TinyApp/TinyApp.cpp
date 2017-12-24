@@ -22,8 +22,6 @@
 #include "MPG123Decode.h"
 #include "FLVParser.h"
 #include "Media/TinyMP3File.h"
-#include "Network/TinyHTTPRequest.h"
-#include "Network/TinyHTTPResponse.h"
 #include "Network/TinyURL.h"
 #include "Network/TinyDNS.h"
 #include "Common/TinySignal.h"
@@ -89,8 +87,26 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	CoInitializeEx(NULL, COINIT_MULTITHREADED);
 	LoadSeDebugPrivilege();
 
-	TSReader reader;
-	reader.OpenFile("D:\\1.ts");
+	/*TinyHTTPClient client;
+	client.SetTimeout(3000);
+	client.GetRequest().SetVerbs(TinyHTTPClient::POST);
+	client.GetRequest().Add(TinyHTTPClient::ContentType, "application/x-www-form-urlencoded");
+	client.GetRequest().Add("Sign", "#f93Uc31K24()_@");
+	string context;
+	string body;
+	body += "pname=";
+	body += "&fullMode=true";
+	client.GetRequest().SetBody(body);
+	string address = "http://119.188.147.25/director/list";
+	if (client.Open(address))
+	{
+		if (client.GetResponse().ReadAsString(context))
+		{
+
+		}
+	}*/
+	
+
 
 	TinyVisualResource::GetInstance().Load("skin\\resource.xml");
 	::DefWindowProc(NULL, 0, 0, 0L);

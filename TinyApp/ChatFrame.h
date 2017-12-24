@@ -8,8 +8,6 @@
 #include "Control/TinyLabel.h"
 #include "Control/TinyRichTextBox.h"
 #include "Control/TinyScrollBar.h"
-#include "Network/TinyHTTPRequest.h"
-#include "Network/TinyHTTPResponse.h"
 #include "Windowless/TinyVisualWND.h"
 #include "WavePlayer.h"
 #include "AudioDSP.h"

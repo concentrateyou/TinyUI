@@ -22,12 +22,12 @@ using namespace TinyUI;
 
 namespace Decode
 {
-	class x264Decode
+	class x264Decoder
 	{
-		DISALLOW_COPY_AND_ASSIGN(x264Decode)
+		DISALLOW_COPY_AND_ASSIGN(x264Decoder)
 	public:
-		x264Decode();
-		virtual ~x264Decode();
+		x264Decoder();
+		virtual ~x264Decoder();
 		BOOL Initialize(const TinySize& srcsize, const TinySize& dstsize);
 		BOOL Open(BYTE* metadata, LONG size);
 		BOOL Decode(SampleTag& tag, BYTE*& bo, LONG& so);

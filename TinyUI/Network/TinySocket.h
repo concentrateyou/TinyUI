@@ -53,6 +53,8 @@ namespace TinyUI
 			BOOL	SetBlocking(BOOL bAllow);
 			BOOL	GetTimeout(BOOL bRecv, DWORD& dwTime);
 			BOOL	SetTimeout(BOOL bRecv, DWORD dwTime);
+			BOOL	GetBufferSize(BOOL bRecv, DWORD& dwSize);
+			BOOL	SetBufferSize(BOOL bRecv, DWORD dwSize);
 			BOOL	Duplicate(DWORD processID, WSAPROTOCOL_INFO& s);
 			BOOL	Available(INT& argp);
 			INT		GetLastError();

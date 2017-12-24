@@ -118,11 +118,11 @@ namespace TinyUI
 			void			Close();
 			INT				Write(CHAR* bits, INT size);
 			INT				Read(CHAR*& bits, INT size);
-			INT				ReadSome(CHAR*& bits);
+			INT				Read(CHAR*& bits);
 			HTTPRequest&	GetRequest();
 			HTTPResponse&	GetResponse();
 		private:
-			void BuildRequest();
+			void			BuildRequest();
 		private:
 			INT						m_timeout;
 			LONG					m_size;

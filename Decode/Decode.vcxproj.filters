@@ -24,12 +24,6 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="AC3Decode.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="AACDecode.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="FLVParser.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -43,9 +37,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="FLVWriter.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="x264Decode.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="HTTPStream.h">
@@ -63,15 +54,27 @@
     <ClInclude Include="TSReader.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="AACDecoder.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="AC3Decoder.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="x264Decoder.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PNGDecoder.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="JPEGDecoder.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GIFDecoder.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="AC3Decode.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="AACDecode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="FLVParser.cpp">
@@ -89,9 +92,6 @@
     <ClCompile Include="FLVWriter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="x264Decode.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="HTTPStream.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -105,6 +105,24 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="TSWriter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AACDecoder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AC3Decoder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="x264Decoder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PNGDecoder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="JPEGDecoder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GIFDecoder.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
