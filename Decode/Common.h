@@ -260,4 +260,33 @@ namespace Decode
 		BYTE AdaptationFieldControl;
 		BYTE ContinuityCounter;
 	}TS_PACKEG_HEADER;
+	typedef struct tagTS_ADAPTATION
+	{
+		BYTE AdaptationFieldLength;
+		union
+		{
+			struct
+			{
+				BYTE DiscontinuityIndicator;
+				BYTE RandomAccessIndicator;
+				BYTE ElementaryStreamPriorityIndicator;
+				BYTE PCRFlag;
+				BYTE OPCRFlag;
+				BYTE SplicingPointFlag;
+				BYTE TransportPrivateDataFlag;
+				BYTE AdaptationFieldExtensionFlag;
+				INT64 ProgramClockReferenceBase;
+				SHORT ProgramClockReferenceExtension;
+				INT64 OriginalProgramClockReference_base;
+				SHORT ProgramClockReferenceExtension;
+				BYTE SpliceCountdown;
+				BYTE TransportPrivateDataLength;
+				std::vector<BYTE> TransportPrivateData;
+				BYTE AdaptationFieldExtentionLength;
+				BYTE LTWFlag;
+				BYTE PlecewlseRateFlag;
+				BYTE SeamlessSpliceFlag;
+			}AdaptationField;
+		};
+	}TS_ADAPTATION;
 }

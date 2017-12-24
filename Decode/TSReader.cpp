@@ -23,6 +23,8 @@ namespace Decode
 		hRes = m_stream->Read(data, 4, &ls);
 		if (hRes != S_OK || ls != 4)
 			return FALSE;
+		if (data[0] != 0x47)
+			return FALSE;
 		TS_PACKEG_HEADER header = { 0 };
 		header.Syncbyte = data[0];
 		header.TransportErrorIndicator = data[1] & 0x80;
@@ -32,9 +34,10 @@ namespace Decode
 		header.TransportScramblingControl = data[3] & 0xC0;
 		header.AdaptationFieldControl = data[3] & 0x30;
 		header.ContinuityCounter = data[3] & 0x0F;
-		if (header.Syncbyte != 0x47)
-			return FALSE;
+		if (header.AdaptationFieldControl == '10' || header.AdaptationFieldControl == '11')
+		{
 
+		}
 		return TRUE;
 	}
 	BOOL TSReader::Close()
