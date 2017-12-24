@@ -3,6 +3,9 @@
 
 namespace Decode
 {
+	/// <summary>
+	/// GIF½âÂë
+	/// </summary>
 	class GIFDecoder
 	{
 		DISALLOW_COPY_AND_ASSIGN(GIFDecoder)
