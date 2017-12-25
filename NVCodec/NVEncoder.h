@@ -1,8 +1,14 @@
 #pragma once
-class NVEncoder
+#include "NVCodecCommon.h"
+
+namespace NVCodec
 {
-public:
-	NVEncoder();
-	~NVEncoder();
-};
+	class NVEncoder
+	{
+		DISALLOW_COPY_AND_ASSIGN(NVEncoder)
+	public:
+		NVEncoder();
+		virtual ~NVEncoder();
+	};
+}
 

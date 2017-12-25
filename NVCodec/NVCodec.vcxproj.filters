@@ -30,6 +30,9 @@
     <ClInclude Include="NVEncoder.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="NVCodecCommon.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -39,6 +42,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="NVEncoder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="NVCodecCommon.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

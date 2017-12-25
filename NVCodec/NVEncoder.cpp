@@ -1,12 +1,14 @@
 #include "stdafx.h"
 #include "NVEncoder.h"
 
-
-NVEncoder::NVEncoder()
+namespace NVCodec
 {
+	NVEncoder::NVEncoder()
+	{
+	}
+
+	NVEncoder::~NVEncoder()
+	{
+	}
 }
 
-
-NVEncoder::~NVEncoder()
-{
-}
