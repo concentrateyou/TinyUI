@@ -33,6 +33,30 @@
     <ClInclude Include="NVCodecCommon.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="dynlink_cuda.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="dynlink_cuda_cuda.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="dynlink_cuda_d3d.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="dynlink_cuviddec.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="dynlink_nvcuvid.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="dynlink_cudaD3D9.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="NvHWEncoder.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="nvEncodeAPI.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -45,6 +69,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="NVCodecCommon.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="dynlink_cudaD3D9.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="dynlink_nvcuvid.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="dynlink_cuda.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

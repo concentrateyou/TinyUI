@@ -9,6 +9,11 @@ namespace NVCodec
 	public:
 		NVDecoder();
 		virtual ~NVDecoder();
+		BOOL Open(const BYTE* bits, LONG size);
+		BOOL Decode(Media::SampleTag& tag);
+		void Close();
+	private:
+		CUvideodecoder	m_decoder;
 	};
 }
 
