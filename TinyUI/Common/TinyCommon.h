@@ -193,6 +193,28 @@ private:\
 	TypeName() = delete;   \
 	DISALLOW_COPY_AND_ASSIGN(TypeName);
 
+#define DISALLOW_NEW()                                          \
+    private:                                                    \
+        void* operator new(size_t) = delete;                    \
+        void* operator new(size_t, void*) = delete;             \
+    public:
+
+#define DISALLOW_NEW_EXCEPT_PLACEMENT_NEW()                     \
+    public:                                                     \
+        void* operator new(size_t, void* ps) { return ps; }     \
+    private:                                                    \
+        void* operator new(size_t) = delete;                    \
+    public:
+
+#define STATIC_ONLY(Type) \
+    private:              \
+        Type() = delete;  \
+        Type(const Type&) = delete;                             \
+        Type& operator=(const Type&) = delete;                  \
+        void* operator new(size_t) = delete;                    \
+        void* operator new(size_t, void*) = delete;             \
+    public:
+
 	template<typename T, size_t N>
 	char(&ArraySizeHelper(T(&array)[N]))[N];
 #define arraysize(array) (sizeof(ArraySizeHelper(array)))
@@ -939,6 +961,84 @@ private:\
 	void TinyScopedReferencePtr<T>::swap(TinyScopedReferencePtr<T>& s)
 	{
 		swap(&s.m_myP);
+	}
+	/// <summary>
+	/// 引用计数指针
+	/// </summary>
+	template <class T>
+	class TinyAutoReferencePtr
+	{
+		DISALLOW_NEW_EXCEPT_PLACEMENT_NEW()
+	public:
+		TinyAutoReferencePtr();
+		TinyAutoReferencePtr(T* myT);
+		explicit TinyAutoReferencePtr(T& myT);
+		TinyAutoReferencePtr(const TinyAutoReferencePtr& o);
+		~TinyAutoReferencePtr();
+		T& operator*() const;
+		T* operator->() const;
+		BOOL operator!() const;
+	private:
+		inline T* leak() const;
+	private:
+		mutable T* m_myP;
+	};
+	template<class T>
+	TinyAutoReferencePtr<T>::TinyAutoReferencePtr()
+		: m_myP(NULL)
+	{
+
+	}
+	template<class T>
+	TinyAutoReferencePtr<T>::TinyAutoReferencePtr(T* myP)
+		: m_myP(myP)
+	{
+		if (myP != NULL)
+		{
+			myP->AddRef();
+		}
+	}
+	template<class T>
+	TinyAutoReferencePtr<T>::TinyAutoReferencePtr(T& myT)
+		: m_myP(&myT)
+	{
+		m_myP->AddRef();
+	}
+	template<class T>
+	TinyAutoReferencePtr<T>::~TinyAutoReferencePtr()
+	{
+		if (m_myP != NULL)
+		{
+			m_myP->Release();
+		}
+	}
+	template<class T>
+	TinyAutoReferencePtr<T>::TinyAutoReferencePtr(const TinyAutoReferencePtr& o)
+		: m_myP(o.leak())
+	{
+
+	}
+	template <typename T>
+	inline T* TinyAutoReferencePtr<T>::leak() const
+	{
+		T* myP = m_myP;
+		m_myP = NULL;
+		return myP;
+	}
+	template <typename T>
+	T& TinyAutoReferencePtr<T>::operator*() const
+	{
+		return *m_myP;
+	}
+	template <typename T>
+	T* TinyAutoReferencePtr<T>::operator->() const
+	{
+		return m_myP;
+	}
+	template <typename T>
+	BOOL TinyAutoReferencePtr<T>::operator!() const
+	{
+		return !m_myP;
 	}
 	/// <summary>
 	/// COM智能指针
