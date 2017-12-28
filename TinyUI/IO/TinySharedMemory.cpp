@@ -33,6 +33,38 @@ namespace TinyUI
 				return 0;
 			return info.RegionSize - (static_cast<char*>(address) - static_cast<char*>(info.AllocationBase));
 		}
+		typedef enum _SECTION_INFORMATION_CLASS
+		{
+			SectionBasicInformation,
+		} SECTION_INFORMATION_CLASS;
+		typedef ULONG(__stdcall* NtQuerySectionType)(
+			HANDLE SectionHandle,
+			SECTION_INFORMATION_CLASS SectionInformationClass,
+			PVOID SectionInformation,
+			ULONG SectionInformationLength,
+			PULONG ResultLength);
+		typedef struct _SECTION_BASIC_INFORMATION
+		{
+			PVOID BaseAddress;
+			ULONG Attributes;
+			LARGE_INTEGER Size;
+		} SECTION_BASIC_INFORMATION, *PSECTION_BASIC_INFORMATION;
+		BOOL IsSectionSafeToMap(HANDLE handle)
+		{
+			static NtQuerySectionType nqst;
+			if (!nqst)
+			{
+				nqst = reinterpret_cast<NtQuerySectionType>(::GetProcAddress(::GetModuleHandle("ntdll.dll"), "NtQuerySection"));
+				if (!nqst)
+					return FALSE;
+			}
+			SECTION_BASIC_INFORMATION sbi = {};
+			ULONG status = nqst(handle, SectionBasicInformation, &sbi, sizeof(sbi), nullptr);
+			if (status)
+				return FALSE;
+			return (sbi.Attributes & SEC_IMAGE) != SEC_IMAGE;
+		}
+		//////////////////////////////////////////////////////////////////////////
 		TinySharedMemory::TinySharedMemory()
 			:m_hFileMap(NULL),
 			m_bReadonly(FALSE),

@@ -6,8 +6,11 @@
 namespace Decode
 {
 	HTTPStream::HTTPStream()
-		:m_cRef(1)
+		:m_cRef(1),
+		m_size(DEFAULT_HTTP_BUFFER_SIZE)
 	{
+		m_raw.Reset(new CHAR[m_size]);
+		ZeroMemory(m_raw, m_size);
 	}
 
 	HTTPStream::~HTTPStream()
@@ -67,17 +70,21 @@ namespace Decode
 		{
 			pcbRead = &cbRead;
 		}
+		if (cb > DEFAULT_HTTP_BUFFER_SIZE)
+		{
+			m_size = cb;
+			m_raw.Reset(new CHAR[m_size]);
+		}
 		HRESULT hRes = S_OK;
 		INT size = 0;
-		CHAR* bits = NULL;
-		size = m_client.Read(bits, cb);
+		size = m_client.Read(m_raw, cb);
 		if (size <= 0)
 		{
 			hRes = E_FAIL;
 		}
 		if (size > 0)
 		{
-			memcpy(pv, bits, size);
+			memcpy(pv, m_raw, size);
 		}
 		*pcbRead = static_cast<ULONG>(size);
 		return hRes;

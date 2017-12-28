@@ -23,6 +23,7 @@ namespace NVCodec
 		cuResult = cuvidInit(0);
 		if (cuResult != CUDA_SUCCESS)
 			goto _ERROR;
+
 		return TRUE;
 	_ERROR:
 		return FALSE;

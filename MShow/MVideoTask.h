@@ -22,7 +22,7 @@ namespace MShow
 		void OnAVCDC(BYTE* bits, LONG size, BOOL&);
 	private:
 		BOOL						m_bBreak;
-		x264Decode					m_x264;
+		x264Decoder					m_x264;
 		TinyMsgQueue&				m_msgqueue;
 		MClock&						m_clock;
 		MFLVTask&					m_task;

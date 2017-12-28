@@ -87,28 +87,22 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	CoInitializeEx(NULL, COINIT_MULTITHREADED);
 	LoadSeDebugPrivilege();
 
-	/*TinyHTTPClient client;
+	TinyHTTPClient client;
 	client.SetTimeout(3000);
 	client.GetRequest().SetVerbs(TinyHTTPClient::POST);
 	client.GetRequest().Add(TinyHTTPClient::ContentType, "application/x-www-form-urlencoded");
 	client.GetRequest().Add("Sign", "#f93Uc31K24()_@");
-	string context;
 	string body;
 	body += "pname=";
 	body += "&fullMode=true";
 	client.GetRequest().SetBody(body);
-	string address = "http://119.188.147.25/director/list";
-	if (client.Open(address))
+	string address = "http://123.129.210.151/api/director/list";
+	if (!client.Open(address))
 	{
-		if (client.GetResponse().ReadAsString(context))
-		{
 
-		}
-	}*/
-	
+	}
 
-
-	TinyVisualResource::GetInstance().Load("skin\\resource.xml");
+	/*TinyVisualResource::GetInstance().Load("skin\\resource.xml");
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
@@ -120,14 +114,14 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	contextmenu->Add("Test1");
 	contextmenu->Add("Test2");
 	contextmenu->Add("Test3");
-	uiImpl.Update();
-	INT loopRes = theLoop.MessageLoop();
+	uiImpl.Update();*/
+	/*INT loopRes = theLoop.MessageLoop();
 	TinyApplication::GetInstance()->RemoveMessageLoop();
-	TinyApplication::GetInstance()->Uninitialize();
+	TinyApplication::GetInstance()->Uninitialize();*/
 
 	OleUninitialize();
 	MFShutdown();
 	WSACleanup();
 
-	return loopRes;
+	return 0;
 };

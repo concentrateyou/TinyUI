@@ -68,9 +68,11 @@ namespace TinyUI
 		//////////////////////////////////////////////////////////////////////////
 		HTTPResponse::HTTPResponse(TinyHTTPClient& client)
 			:m_statusCode(0),
-			m_client(client)
+			m_client(client),
+			m_size(DEFAULT_HTTP_BUFFER_SIZE)
 		{
-
+			m_raw.Reset(new CHAR[m_size]);
+			ZeroMemory(m_raw, m_size);
 		}
 		HTTPResponse::~HTTPResponse()
 		{
@@ -97,9 +99,8 @@ namespace TinyUI
 				{
 					if (m_context.GetSize() == 0)
 					{
-						CHAR* ps = NULL;
-						INT size = m_client.Read(ps);
-						if (!ParseTransferEncoding(ps))
+						INT size = m_client.ReadSome(m_raw, DEFAULT_HTTP_BUFFER_SIZE);
+						if (!ParseTransferEncoding(m_raw))
 							return FALSE;
 					}
 				}
@@ -138,8 +139,7 @@ namespace TinyUI
 				{
 					if (m_context.GetSize() == 0)
 					{
-						CHAR* ps = NULL;
-						INT size = m_client.Read(ps);
+						INT size = m_client.ReadSome(m_raw, DEFAULT_HTTP_BUFFER_SIZE);
 						if (!ParseTransferEncoding(ps))
 							return FALSE;
 					}
@@ -196,11 +196,18 @@ namespace TinyUI
 			return TRUE;
 		}
 
-		BOOL HTTPResponse::ParseResponse(CHAR* s, INT size)
+		BOOL HTTPResponse::ParseResponse()
 		{
 			m_context.Clear();
-			CHAR* line = ReadLine(s);
-			if (!ParseStatusLine(s, line - 2))
+			INT size = m_client.ReadSome(m_raw, DEFAULT_HTTP_BUFFER_SIZE);
+			if (size == SOCKET_ERROR)
+			{
+				LOG(ERROR) << "socket recv:" << GetLastError();
+				return FALSE;
+			}
+			CHAR* bits = m_raw;
+			CHAR* line = ReadLine(bits);
+			if (!ParseStatusLine(bits, line - 2))
 				return FALSE;
 			while (line != NULL)
 			{
@@ -211,7 +218,7 @@ namespace TinyUI
 					line += 2;
 					if (this->GetAttribute(TinyHTTPClient::TransferEncoding) == "chunked")//开始解析TransferEncoding
 					{
-						INT offset = line - s;
+						INT offset = line - bits;
 						if (offset < size)
 						{
 							if (!ParseTransferEncoding(line))
@@ -220,7 +227,7 @@ namespace TinyUI
 					}
 					else
 					{
-						INT offset = line - s;
+						INT offset = line - bits;
 						m_context.Add(line, size - offset);//保存剩余数据
 					}
 					break;
@@ -278,11 +285,8 @@ namespace TinyUI
 		//////////////////////////////////////////////////////////////////////////
 		TinyHTTPClient::TinyHTTPClient()
 			:m_timeout(20000),
-			m_reponse(*this),
-			m_size(DEFAULT_HTTP_BUFFER_SIZE)
+			m_reponse(*this)
 		{
-			m_raw.Reset(new CHAR[m_size]);
-			ZeroMemory(m_raw, m_size);
 		}
 		TinyHTTPClient::~TinyHTTPClient()
 		{
@@ -393,15 +397,7 @@ namespace TinyUI
 				LOG(ERROR) << "socket send:" << GetLastError();
 				goto _ERROR;
 			}
-			ZeroMemory(m_raw, DEFAULT_HTTP_BUFFER_SIZE);
-			CHAR* bits = NULL;
-			iRes = this->Read(bits);
-			if (iRes == SOCKET_ERROR)
-			{
-				LOG(ERROR) << "socket recv:" << GetLastError();
-				goto _ERROR;
-			}
-			if (m_reponse.ParseResponse(bits, iRes) && m_reponse.GetStatusCode() == 200)
+			if (m_reponse.ParseResponse() && m_reponse.GetStatusCode() == 200)
 			{
 				return TRUE;
 			}
@@ -426,51 +422,35 @@ namespace TinyUI
 			}
 			return value;
 		}
-		INT	TinyHTTPClient::Read(CHAR*& bits, INT size)
+		INT TinyHTTPClient::ReadSome(CHAR* bits, INT size)
 		{
-			if (size > m_size)
+			INT iRes = m_socket.Receive(bits, size, 0);
+			if (iRes == 0)//对方关闭Socket连接
 			{
-				m_size = size;
-				m_raw.Reset(new CHAR[m_size]);
-				ZeroMemory(m_raw, m_size);
+				return -1;
 			}
+			return iRes;
+		}
+		INT	TinyHTTPClient::Read(CHAR* bits, INT size)
+		{
+			CHAR* ps = bits;
 			INT value = 0;
 			for (;;)
 			{
 				if (value >= size)
 					break;
-				INT iRes = m_socket.Receive(m_raw + value, size - value, 0);
+				INT iRes = m_socket.Receive(ps + value, size - value, 0);
 				if (iRes == SOCKET_ERROR)
 				{
-					bits = NULL;
 					return iRes;
 				}
 				if (iRes == 0)//对方关闭Socket连接
 				{
-					bits = NULL;
 					return -1;
 				}
 				value += iRes;
 			}
-			bits = m_raw;
 			return value;
-		}
-		INT TinyHTTPClient::Read(CHAR*& bits)
-		{
-			ZeroMemory(m_raw, m_size);
-			INT iRes = m_socket.Receive(m_raw, m_size, 0);
-			if (iRes == SOCKET_ERROR)
-			{
-				bits = NULL;
-				return iRes;
-			}
-			if (iRes == 0)//对方关闭Socket连接
-			{
-				bits = NULL;
-				return -1;
-			}
-			bits = m_raw;
-			return iRes;
 		}
 		void TinyHTTPClient::Close()
 		{
