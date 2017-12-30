@@ -48,18 +48,24 @@ namespace TinyUI
 			INT									m_size;
 			TinyScopedReferencePtr<IOBuffer>	m_base;
 		};
-		class GrowableIOBuffer : public IOBuffer
+		/// <summary>
+		/// ÍøÂç»º³å
+		/// </summary>
+		class NetworkIOBuffer : public IOBuffer
 		{
 		public:
-			GrowableIOBuffer();
+			NetworkIOBuffer();
 			void SetCapacity(INT capacity);
 			INT capacity() const;
 			void SetOffset(INT offset);
 			INT offset() const;
+			void SetReceive(INT receive);
+			INT  receive() const;
 			INT RemainingCapacity();
 			CHAR* StartOfBuffer();
 		protected:
-			virtual ~GrowableIOBuffer();
+			virtual ~NetworkIOBuffer();
+			INT									m_receive;
 			INT									m_capacity;
 			INT									m_offset;
 			std::unique_ptr<CHAR, FreeDeleter>	m_readIO;
@@ -113,7 +119,7 @@ namespace TinyUI
 			string					m_statusMsg;//×´Ì¬ÐÅÏ¢
 			TinyHTTPClient&			m_client;
 			TinyBufferArray<CHAR>	m_context;
-			TinyScopedReferencePtr<GrowableIOBuffer> m_growIO;
+			TinyScopedReferencePtr<NetworkIOBuffer> m_growIO;
 		};
 		/// <summary>
 		/// HTTP¿Í»§¶Ë

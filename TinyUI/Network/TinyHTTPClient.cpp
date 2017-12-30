@@ -92,13 +92,14 @@ namespace TinyUI
 			m_data = NULL;
 		}
 		//////////////////////////////////////////////////////////////////////////
-		GrowableIOBuffer::GrowableIOBuffer()
+		NetworkIOBuffer::NetworkIOBuffer()
 			:m_capacity(0),
-			m_offset(0)
+			m_offset(0),
+			m_receive(0)
 		{
 
 		}
-		void GrowableIOBuffer::SetCapacity(INT capacity)
+		void NetworkIOBuffer::SetCapacity(INT capacity)
 		{
 			m_readIO.reset(static_cast<CHAR*>(realloc(m_readIO.release(), capacity)));
 			m_capacity = capacity;
@@ -112,28 +113,36 @@ namespace TinyUI
 				ZeroMemory(m_data, m_capacity - m_offset);
 			}
 		}
-		INT GrowableIOBuffer::capacity() const
+		INT NetworkIOBuffer::capacity() const
 		{
 			return m_capacity;
 		}
-		void GrowableIOBuffer::SetOffset(INT offset)
+		void NetworkIOBuffer::SetOffset(INT offset)
 		{
 			m_offset = offset;
 			m_data = m_readIO.get() + offset;
 		}
-		INT GrowableIOBuffer::offset() const
+		INT NetworkIOBuffer::offset() const
 		{
 			return m_offset;
 		}
-		INT GrowableIOBuffer::RemainingCapacity()
+		void NetworkIOBuffer::SetReceive(INT receive)
+		{
+			m_receive = receive;
+		}
+		INT  NetworkIOBuffer::receive() const
+		{
+			return m_receive;
+		}
+		INT NetworkIOBuffer::RemainingCapacity()
 		{
 			return m_capacity - m_offset;
 		}
-		CHAR* GrowableIOBuffer::StartOfBuffer()
+		CHAR* NetworkIOBuffer::StartOfBuffer()
 		{
 			return m_readIO.get();
 		}
-		GrowableIOBuffer::~GrowableIOBuffer()
+		NetworkIOBuffer::~NetworkIOBuffer()
 		{
 			m_data = NULL;
 		}
@@ -181,7 +190,7 @@ namespace TinyUI
 			:m_statusCode(0),
 			m_client(client)
 		{
-			m_growIO = new GrowableIOBuffer();
+			m_growIO = new NetworkIOBuffer();
 		}
 		HTTPResponse::~HTTPResponse()
 		{
@@ -228,6 +237,7 @@ namespace TinyUI
 					INT iRes = m_client.Read(buffer, size);
 					if (iRes == SOCKET_ERROR || iRes != size)
 						return FALSE;
+					m_growIO->SetReceive(m_growIO->receive() + iRes);
 					m_context.Add(buffer, iRes);
 					val.resize(m_context.GetSize());
 					memcpy_s(&val[0], m_context.GetSize(), m_context.GetPointer(), m_context.GetSize());
@@ -266,6 +276,7 @@ namespace TinyUI
 					INT iRes = m_client.Read(buffer, size);
 					if (iRes == SOCKET_ERROR || iRes != size)
 						return -1;
+					m_growIO->SetReceive(m_growIO->receive() + iRes);
 					m_context.Add(buffer, iRes);
 					bits = m_context.GetPointer();
 					return length;
@@ -291,6 +302,14 @@ namespace TinyUI
 				INT remaining = m_growIO->RemainingCapacity();
 				if (remaining >= chunksize)
 				{
+					INT size = m_growIO->receive() - m_growIO->offset();
+					if (size < chunksize)
+					{
+						INT iRes = m_client.Read(m_growIO->data(), size - chunksize);
+						if (iRes == SOCKET_ERROR && iRes != (size - chunksize))
+							return FALSE;
+						m_growIO->SetReceive(m_growIO->receive() + iRes);
+					}
 					m_context.Add(line2, chunksize);//获得Body数据
 					m_growIO->SetOffset(m_growIO->offset() + chunksize);
 				}
@@ -300,6 +319,7 @@ namespace TinyUI
 					INT iRes = m_client.Read(m_growIO->data(), m_growIO->RemainingCapacity());
 					if (iRes == SOCKET_ERROR && iRes != m_growIO->RemainingCapacity())
 						return FALSE;
+					m_growIO->SetReceive(m_growIO->receive() + iRes);
 					m_context.Add(m_growIO->data(), chunksize - remaining);
 					m_growIO->SetOffset(m_growIO->offset() + (chunksize - remaining));
 				}
@@ -405,6 +425,7 @@ namespace TinyUI
 					iRes = m_client.ReadSome(m_growIO->data(), m_growIO->RemainingCapacity());
 					if (iRes == SOCKET_ERROR)
 						return FALSE;
+					m_growIO->SetReceive(m_growIO->receive() + iRes);
 				}
 				if (!FindLine(iRes))
 				{
@@ -598,7 +619,7 @@ namespace TinyUI
 			string szHOST = m_szURL.GetComponent(TinyURL::HOST);
 			string szPORT = m_szURL.GetComponent(TinyURL::PORT);
 			m_request.Add(TinyHTTPClient::Host, szPORT.empty() ? szHOST : StringPrintf("%s:%s", szHOST.c_str(), szPORT.c_str()));
-			if (!m_request.GetBodySize() != 0)
+			if (m_request.GetBodySize() != 0)
 			{
 				m_request.Add(TinyHTTPClient::ContentLength, std::to_string(m_request.GetBodySize()));
 			}
