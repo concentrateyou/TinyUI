@@ -302,11 +302,11 @@ namespace TinyUI
 				INT remaining = m_growIO->RemainingCapacity();
 				if (remaining >= chunksize)
 				{
-					INT size = m_growIO->receive() - m_growIO->offset();
-					if (size < chunksize)
+					INT mores = m_growIO->receive() - m_growIO->offset();
+					if (mores < chunksize)
 					{
-						INT iRes = m_client.Read(m_growIO->data(), size - chunksize);
-						if (iRes == SOCKET_ERROR && iRes != (size - chunksize))
+						INT iRes = m_client.Read(m_growIO->data(), chunksize - mores);
+						if (iRes == SOCKET_ERROR && iRes != (chunksize - mores))
 							return FALSE;
 						m_growIO->SetReceive(m_growIO->receive() + iRes);
 					}
