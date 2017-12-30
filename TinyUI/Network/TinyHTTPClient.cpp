@@ -1,9 +1,7 @@
 #include "../stdafx.h"
 #include "TinyHTTPClient.h"
 #include "../Common/TinyLogging.h"
-#include "TinyDNS.h"
-#include <process.h>
-#include <algorithm>
+
 
 namespace TinyUI
 {
@@ -40,8 +38,109 @@ namespace TinyUI
 		const CHAR TinyHTTPClient::UserAgent[] = "User-Agent";
 		const CHAR TinyHTTPClient::CRLF[] = "\r\n";
 		//////////////////////////////////////////////////////////////////////////
+		IOBuffer::IOBuffer()
+			:m_data(NULL)
+		{
+
+		}
+		IOBuffer::IOBuffer(INT size)
+			: m_data(NULL)
+		{
+			m_data = new CHAR[size];
+		}
+		IOBuffer::IOBuffer(CHAR* data)
+			: m_data(data)
+		{
+
+		}
+		IOBuffer::~IOBuffer()
+		{
+			SAFE_DELETE_ARRAY(m_data);
+		}
+		CHAR* IOBuffer::data() const
+		{
+			return m_data;
+		}
+		//////////////////////////////////////////////////////////////////////////
+		DrainableIOBuffer::DrainableIOBuffer(IOBuffer* base, INT size)
+			:IOBuffer(base->data()),
+			m_base(base),
+			m_size(size),
+			m_offset(0)
+		{
+
+		}
+		void DrainableIOBuffer::SetOffset(INT offset)
+		{
+			m_offset = offset;
+			m_data = m_base->data() + offset;
+		}
+		INT  DrainableIOBuffer::GetOffset() const
+		{
+			return m_offset;
+		}
+		INT  DrainableIOBuffer::GetRemaining() const
+		{
+			return m_size - m_offset;
+		}
+		INT DrainableIOBuffer::size() const
+		{
+			return m_size;
+		}
+		DrainableIOBuffer::~DrainableIOBuffer()
+		{
+			m_data = NULL;
+		}
+		//////////////////////////////////////////////////////////////////////////
+		GrowableIOBuffer::GrowableIOBuffer()
+			:m_capacity(0),
+			m_offset(0)
+		{
+
+		}
+		void GrowableIOBuffer::SetCapacity(INT capacity)
+		{
+			m_readIO.reset(static_cast<CHAR*>(realloc(m_readIO.release(), capacity)));
+			m_capacity = capacity;
+			if (m_offset > capacity)
+			{
+				SetOffset(capacity);
+			}
+			else
+			{
+				SetOffset(m_offset);
+				ZeroMemory(m_data, m_capacity - m_offset);
+			}
+		}
+		INT GrowableIOBuffer::capacity() const
+		{
+			return m_capacity;
+		}
+		void GrowableIOBuffer::SetOffset(INT offset)
+		{
+			m_offset = offset;
+			m_data = m_readIO.get() + offset;
+		}
+		INT GrowableIOBuffer::offset() const
+		{
+			return m_offset;
+		}
+		INT GrowableIOBuffer::RemainingCapacity()
+		{
+			return m_capacity - m_offset;
+		}
+		CHAR* GrowableIOBuffer::StartOfBuffer()
+		{
+			return m_readIO.get();
+		}
+		GrowableIOBuffer::~GrowableIOBuffer()
+		{
+			m_data = NULL;
+		}
+		//////////////////////////////////////////////////////////////////////////
 		HTTPRequest::HTTPRequest()
-			:m_verbs(TinyHTTPClient::GET)
+			:m_verbs(TinyHTTPClient::GET),
+			m_bodySize(0)
 		{
 
 		}
@@ -59,20 +158,30 @@ namespace TinyUI
 		}
 		void HTTPRequest::SetBody(const string& body)
 		{
-			m_body = std::move(body);
+			m_body.Reset(new CHAR[body.size()]);
+			m_bodySize = body.size();
+			memcpy(m_body, &body[0], body.size());
 		}
-		string HTTPRequest::GetBody() const
+		void HTTPRequest::SetBody(const CHAR* bits, LONG size)
+		{
+			m_body.Reset(new CHAR[size]);
+			m_bodySize = size;
+			memcpy(m_body, bits, size);
+		}
+		CHAR* HTTPRequest::GetBody() const
 		{
 			return m_body;
+		}
+		LONG HTTPRequest::GetBodySize() const
+		{
+			return m_bodySize;
 		}
 		//////////////////////////////////////////////////////////////////////////
 		HTTPResponse::HTTPResponse(TinyHTTPClient& client)
 			:m_statusCode(0),
-			m_client(client),
-			m_size(DEFAULT_HTTP_BUFFER_SIZE)
+			m_client(client)
 		{
-			m_raw.Reset(new CHAR[m_size]);
-			ZeroMemory(m_raw, m_size);
+			m_growIO = new GrowableIOBuffer();
 		}
 		HTTPResponse::~HTTPResponse()
 		{
@@ -90,149 +199,132 @@ namespace TinyUI
 		{
 			return m_statusCode;
 		}
-
 		BOOL HTTPResponse::ReadAsString(string& val)
 		{
 			if (!this->Contains(TinyHTTPClient::ContentLength))
 			{
 				if (this->GetAttribute(TinyHTTPClient::TransferEncoding) == "chunked")//开始解析TransferEncoding
 				{
-					if (m_context.GetSize() == 0)
-					{
-						INT size = m_client.ReadSome(m_raw, DEFAULT_HTTP_BUFFER_SIZE);
-						if (!ParseTransferEncoding(m_raw))
-							return FALSE;
-					}
+					if (!ParseTransferEncoding())
+						return FALSE;
+					val.resize(m_context.GetSize());
+					memcpy_s(&val[0], m_context.GetSize(), m_context.GetPointer(), m_context.GetSize());
 				}
-				val.resize(m_context.GetSize());
-				memcpy(&val[0], m_context.GetPointer(), m_context.GetSize());
-				return TRUE;
 			}
 			else
 			{
-				INT size = std::stoi(this->GetAttribute(TinyHTTPClient::ContentLength));
-				if (size == m_context.GetSize())
+				INT length = std::stoi(this->GetAttribute(TinyHTTPClient::ContentLength));
+				if (length > 0)
 				{
-					val.resize(size);
-					memcpy(&val[0], m_context.GetPointer(), size);
-					return TRUE;
-				}
-				if (size > m_context.GetSize())
-				{
-					CHAR* ps = NULL;
-					INT remainder = size - m_context.GetSize();
-					INT iRes = m_client.Read(ps, remainder);
-					val.resize(size);
-					memcpy(&val[0], m_context.GetPointer(), m_context.GetSize());
-					memcpy(&val[0] + m_context.GetSize(), ps, iRes);
-					return TRUE;
+					INT remaining = m_growIO->RemainingCapacity();
+					if (remaining > 0)
+					{
+						m_context.Add(m_growIO->data(), remaining);
+						m_growIO->SetOffset(m_growIO->offset() + remaining);
+					}
+					INT size = length - remaining;
+					TinyScopedPtr<CHAR> buffer(new CHAR[size]);
+					ASSERT(buffer);
+					INT iRes = m_client.Read(buffer, size);
+					if (iRes == SOCKET_ERROR || iRes != size)
+						return FALSE;
+					m_context.Add(buffer, iRes);
+					val.resize(m_context.GetSize());
+					memcpy_s(&val[0], m_context.GetSize(), m_context.GetPointer(), m_context.GetSize());
 				}
 			}
-			return FALSE;
+			return TRUE;
 		}
 
-		INT HTTPResponse::ReadAsBinary(CHAR*& ps)
+		INT HTTPResponse::ReadAsBinary(CHAR*& bits)
 		{
+			m_context.Clear();
 			if (!this->Contains(TinyHTTPClient::ContentLength))
 			{
 				if (this->GetAttribute(TinyHTTPClient::TransferEncoding) == "chunked")//开始解析TransferEncoding
 				{
-					if (m_context.GetSize() == 0)
-					{
-						INT size = m_client.ReadSome(m_raw, DEFAULT_HTTP_BUFFER_SIZE);
-						if (!ParseTransferEncoding(ps))
-							return FALSE;
-					}
+					if (!ParseTransferEncoding())
+						return FALSE;
 				}
-				ps = m_context.GetPointer();
+				bits = m_context.GetPointer();
 				return m_context.GetSize();
 			}
 			else
 			{
-				INT size = std::stoi(this->GetAttribute(TinyHTTPClient::ContentLength));
-				if (size == m_context.GetSize())
+				INT length = std::stoi(this->GetAttribute(TinyHTTPClient::ContentLength));
+				if (length > 0)
 				{
-					ps = m_context.GetPointer();
-					return m_context.GetSize();
-				}
-				if (size > m_context.GetSize())
-				{
-					CHAR* pValue = NULL;
-					INT remainder = size - m_context.GetSize();
-					INT iRes = m_client.Read(pValue, remainder);
-					if (iRes <= 0)
+					INT remaining = m_growIO->RemainingCapacity();
+					if (remaining > 0)
 					{
-						return -1;
+						m_context.Add(m_growIO->data(), remaining);
+						m_growIO->SetOffset(m_growIO->offset() + remaining);
 					}
-					m_context.Add(pValue, iRes);
-					ps = m_context.GetPointer();
-					return size;
+					INT size = length - remaining;
+					TinyScopedPtr<CHAR> buffer(new CHAR[size]);
+					ASSERT(buffer);
+					INT iRes = m_client.Read(buffer, size);
+					if (iRes == SOCKET_ERROR || iRes != size)
+						return -1;
+					m_context.Add(buffer, iRes);
+					bits = m_context.GetPointer();
+					return length;
 				}
 			}
 			return -1;
 		}
 
-		BOOL HTTPResponse::ParseTransferEncoding(CHAR* line)
+		BOOL HTTPResponse::ParseTransferEncoding()
 		{
-			while (line != NULL)
+			for (;;)
 			{
-				CHAR* ps = line;
-				line = ReadLine(ps);
-				INT offset = line - ps - 2;
-				if (offset > 0)
-				{
-					INT chunksize = 0;
-					sscanf(ps, "%x", &chunksize);//16进制转10进制
-					if (chunksize == 0)
-						break;
-					m_context.Add(line, chunksize);//获得Body数据
-					line += chunksize;
+				CHAR* line1 = NULL;
+				CHAR* line2 = NULL;
+				if (!ReadLine(line1, line2))
+					return FALSE;
+				if (*line1 == '\r' && *(line1 + 1) == '\n')
 					continue;
-				}
-				if (offset == 0)
+				INT chunksize = 0;
+				sscanf(line1, "%x", &chunksize);//16进制转10进制
+				if (chunksize == 0)
 					break;
-				return FALSE;
+				INT remaining = m_growIO->RemainingCapacity();
+				if (remaining >= chunksize)
+				{
+					m_context.Add(line2, chunksize);//获得Body数据
+					m_growIO->SetOffset(m_growIO->offset() + chunksize);
+				}
+				else
+				{
+					m_growIO->SetCapacity(m_growIO->capacity() + chunksize - remaining);
+					INT iRes = m_client.Read(m_growIO->data(), m_growIO->RemainingCapacity());
+					if (iRes == SOCKET_ERROR && iRes != m_growIO->RemainingCapacity())
+						return FALSE;
+					m_context.Add(m_growIO->data(), chunksize - remaining);
+					m_growIO->SetOffset(m_growIO->offset() + (chunksize - remaining));
+				}
 			}
 			return TRUE;
 		}
 
 		BOOL HTTPResponse::ParseResponse()
 		{
-			m_context.Clear();
-			INT size = m_client.ReadSome(m_raw, DEFAULT_HTTP_BUFFER_SIZE);
-			if (size == SOCKET_ERROR)
-			{
-				LOG(ERROR) << "socket recv:" << GetLastError();
+			CHAR* line1 = NULL;
+			CHAR* line2 = NULL;
+			if (!ReadLine(line1, line2))
 				return FALSE;
-			}
-			CHAR* bits = m_raw;
-			CHAR* line = ReadLine(bits);
-			if (!ParseStatusLine(bits, line - 2))
+			if (!ParseStatusLine(line1, line2 - 2))
 				return FALSE;
-			while (line != NULL)
+			for (;;)
 			{
-				CHAR* ps = line;
-				line = ReadLine(ps);
-				if (*line == '\r' && *(line + 1) == '\n')//应答头解析完成
+				if (!ReadLine(line1, line2))
+					return FALSE;
+				if (*line1 == '\r' && *(line1 + 1) == '\n')
 				{
-					line += 2;
-					if (this->GetAttribute(TinyHTTPClient::TransferEncoding) == "chunked")//开始解析TransferEncoding
-					{
-						INT offset = line - bits;
-						if (offset < size)
-						{
-							if (!ParseTransferEncoding(line))
-								return FALSE;
-						}
-					}
-					else
-					{
-						INT offset = line - bits;
-						m_context.Add(line, size - offset);//保存剩余数据
-					}
+					m_growIO->SetOffset(m_growIO->offset() - (line2 - line1) + 2);
 					break;
 				}
-				if (!ParseAttribute(ps, line - 2))
+				if (!ParseAttribute(line1, line2 - 2))
 					return FALSE;
 			}
 			return TRUE;
@@ -273,14 +365,58 @@ namespace TinyUI
 			Add(string(ps1, ps3 - ps1), string(ps4, ps2 - ps4));
 			return TRUE;
 		}
-
-		CHAR* HTTPResponse::ReadLine(CHAR* s)
+		BOOL HTTPResponse::FindLine(INT& size)
 		{
-			CHAR* val = s;
-			while (*val++ != '\r');
-			if (*val++ == '\n')
-				return val;
-			return NULL;
+			CHAR* bits = m_growIO->data();
+			if (*bits++ == '\n')
+			{
+				size = bits - m_growIO->data();
+				return TRUE;
+			}
+			if (size == (bits - m_growIO->data()))
+			{
+				return FALSE;
+			}
+			bits = m_growIO->data();
+			while (*bits++ != '\r')
+			{
+				if (size == (bits - m_growIO->data()))
+				{
+					return FALSE;
+				}
+			}
+			if (*bits++ == '\n')
+			{
+				size = bits - m_growIO->data();
+				return TRUE;
+			}
+			return FALSE;
+		}
+		BOOL HTTPResponse::ReadLine(CHAR*& line1, CHAR*& line2)
+		{
+			INT iRes = 0;
+			INT offset = m_growIO->offset();
+			for (;;)
+			{
+				iRes = m_growIO->RemainingCapacity();
+				if (iRes == 0)
+				{
+					m_growIO->SetCapacity(m_growIO->capacity() + DEFALUT_HTTP_HEADER_INITIAL_SIZE);
+					iRes = m_client.ReadSome(m_growIO->data(), m_growIO->RemainingCapacity());
+					if (iRes == SOCKET_ERROR)
+						return FALSE;
+				}
+				if (!FindLine(iRes))
+				{
+					m_growIO->SetOffset(m_growIO->offset() + iRes);
+					continue;
+				}
+				m_growIO->SetOffset(m_growIO->offset() + iRes);
+				line1 = m_growIO->StartOfBuffer() + offset;
+				line2 = m_growIO->StartOfBuffer() + m_growIO->offset();
+				return TRUE;
+			}
+			return FALSE;
 		}
 		//////////////////////////////////////////////////////////////////////////
 		TinyHTTPClient::TinyHTTPClient()
@@ -391,8 +527,8 @@ namespace TinyUI
 				LOG(ERROR) << "socket connect:" << WSAGetLastError();
 				goto _ERROR;
 			}
-			INT iRes = this->Write(m_requests.GetPointer(), m_requests.GetSize());
-			if (iRes == SOCKET_ERROR || iRes != m_requests.GetSize())
+			INT iRes = this->Write(m_requestIO.GetPointer(), m_requestIO.GetSize());
+			if (iRes == SOCKET_ERROR || iRes != m_requestIO.GetSize())
 			{
 				LOG(ERROR) << "socket send:" << GetLastError();
 				goto _ERROR;
@@ -427,7 +563,7 @@ namespace TinyUI
 			INT iRes = m_socket.Receive(bits, size, 0);
 			if (iRes == 0)//对方关闭Socket连接
 			{
-				return -1;
+				return SOCKET_ERROR;
 			}
 			return iRes;
 		}
@@ -446,7 +582,8 @@ namespace TinyUI
 				}
 				if (iRes == 0)//对方关闭Socket连接
 				{
-					return -1;
+					TRACE("DATA:%d\n", value);
+					return SOCKET_ERROR;
 				}
 				value += iRes;
 			}
@@ -461,17 +598,16 @@ namespace TinyUI
 			string szHOST = m_szURL.GetComponent(TinyURL::HOST);
 			string szPORT = m_szURL.GetComponent(TinyURL::PORT);
 			m_request.Add(TinyHTTPClient::Host, szPORT.empty() ? szHOST : StringPrintf("%s:%s", szHOST.c_str(), szPORT.c_str()));
-			string body = m_request.GetBody();
-			if (!body.empty())
+			if (!m_request.GetBodySize() != 0)
 			{
-				m_request.Add(TinyHTTPClient::ContentLength, std::to_string(body.size()));
+				m_request.Add(TinyHTTPClient::ContentLength, std::to_string(m_request.GetBodySize()));
 			}
 			string szFullPath = m_szURL.GetComponent(TinyURL::FULLPATH);
 			string szRequest = StringPrintf("%s %s %s\r\n", m_request.GetVerbs().c_str(), szFullPath.empty() ? "/" : szFullPath.c_str(), TinyHTTPClient::HTTP11);//请求行
 			szRequest += m_request.ToString();
-			szRequest += m_request.GetBody();
-			m_requests.Clear();
-			m_requests.Add(&szRequest[0], szRequest.size());
+			m_requestIO.Clear();
+			m_requestIO.Add(&szRequest[0], szRequest.size());
+			m_requestIO.Add(m_request.GetBody(), m_request.GetBodySize());
 		}
 	}
 }

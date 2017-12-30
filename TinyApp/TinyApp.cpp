@@ -87,21 +87,9 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	CoInitializeEx(NULL, COINIT_MULTITHREADED);
 	LoadSeDebugPrivilege();
 
-	TinyHTTPClient client;
-	client.SetTimeout(3000);
-	client.GetRequest().SetVerbs(TinyHTTPClient::POST);
-	client.GetRequest().Add(TinyHTTPClient::ContentType, "application/x-www-form-urlencoded");
-	client.GetRequest().Add("Sign", "#f93Uc31K24()_@");
-	string body;
-	body += "pname=";
-	body += "&fullMode=true";
-	client.GetRequest().SetBody(body);
-	string address = "http://123.129.210.151/api/director/list";
-	if (!client.Open(address))
-	{
-
-	}
-
+	TinyImage image;
+	image.Open("http://d.lanrentuku.com/down/png/1712/if_christmass_holidays_celebrate/christmass_star_2.png");
+	image.Save("D:\\123.png");
 	/*TinyVisualResource::GetInstance().Load("skin\\resource.xml");
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));

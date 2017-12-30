@@ -13,6 +13,7 @@ using namespace TinyUI::Network;
 
 namespace Decode
 {
+#define DEFAULT_HTTP_BUFFER_SIZE	(1024 * 1024)
 #define MAX_HTTP_BUFFER_SIZE		(2 * 1024 * 1024)
 #define DEFAULT_CACHE_BLOCK_SIZE	(64 * 1024)
 	/// <summary>

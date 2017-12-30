@@ -155,6 +155,7 @@ namespace TinyUI
 			TinyHTTPClient client;
 			client.SetTimeout(5000);
 			client.GetRequest().SetVerbs(TinyHTTPClient::GET);
+			client.GetRequest().Add("Connection", "keep-alive");
 			if (client.Open(pzFile))
 			{
 				CHAR* ps = NULL;

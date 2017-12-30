@@ -82,7 +82,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_WINSOCK_DEPRECATED_NO_WARNINGS;STB_IMAGE_IMPLEMENTATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>$(MYSQLSDK_DIR)include;$(DXSDK_DIR)\Include;..\ThirdParty\sqlite;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MYSQLSDK_DIR)include;$(DXSDK_DIR)\Include;..\ThirdParty\sqlite;..\ThirdParty\zlib\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -94,7 +94,7 @@
       </AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(MYSQLSDK_DIR)Lib;$(DXSDK_DIR)\Lib\x86;..\ThirdParty\sqlite</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(MYSQLSDK_DIR)Lib;$(DXSDK_DIR)\Lib\x86;..\ThirdParty\sqlite;..\ThirdParty\zlib\lib</AdditionalLibraryDirectories>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
