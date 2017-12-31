@@ -63,15 +63,6 @@
     <ClInclude Include="x264Decoder.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="PNGDecoder.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="JPEGDecoder.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="GIFDecoder.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -114,15 +105,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="x264Decoder.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="PNGDecoder.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="JPEGDecoder.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="GIFDecoder.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -5,9 +5,6 @@
 
 namespace DXFramework
 {
-#ifndef WIDTHBYTES
-#define WIDTHBYTES(i)           ((unsigned)((i+31)&(~31))/8) 
-#endif
 	/// <summary>
 	/// 2DŒ∆¿Ì
 	/// </summary>

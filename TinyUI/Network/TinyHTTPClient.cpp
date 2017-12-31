@@ -238,22 +238,22 @@ namespace TinyUI
 						INT remaining = m_networkIO->RemainingCapacity();
 						if (remaining >= (length - size))
 						{
-							INT iRes = m_client.Read(m_networkIO->data(), length - size - remaining);
-							if (iRes == SOCKET_ERROR && iRes != (length - size - remaining))
+							INT iRes = m_client.Read(m_networkIO->data(), length - size);
+							if (iRes == SOCKET_ERROR && iRes != (length - size))
 								return FALSE;
 							m_networkIO->SetReceive(m_networkIO->receive() + iRes);
-							m_context.Add(m_networkIO->data(), length - size);//获得Body数据
-							m_networkIO->SetOffset(m_networkIO->offset() + length - size);
+							m_context.Add(m_networkIO->data(), iRes);//获得Body数据
+							m_networkIO->SetOffset(m_networkIO->offset() + iRes);
 						}
 						else
 						{
 							m_networkIO->SetCapacity(m_networkIO->capacity() + length - size - remaining);
-							INT iRes = m_client.Read(m_networkIO->data(), length - size - remaining);
-							if (iRes == SOCKET_ERROR && iRes != (length - size - remaining))
+							INT iRes = m_client.Read(m_networkIO->data(), m_networkIO->RemainingCapacity());
+							if (iRes == SOCKET_ERROR && iRes != m_networkIO->RemainingCapacity())
 								return FALSE;
 							m_networkIO->SetReceive(m_networkIO->receive() + iRes);
-							m_context.Add(m_networkIO->data(), length - size - remaining);
-							m_networkIO->SetOffset(m_networkIO->offset() + (length - size - remaining));
+							m_context.Add(m_networkIO->data(), iRes);
+							m_networkIO->SetOffset(m_networkIO->offset() + iRes);
 						}
 					}
 					val.resize(m_context.GetSize());
@@ -297,32 +297,32 @@ namespace TinyUI
 						INT remaining = m_networkIO->RemainingCapacity();
 						if (remaining >= (length - size))
 						{
-							INT iRes = m_client.Read(m_networkIO->data(), length - size - remaining);
-							if (iRes == SOCKET_ERROR && iRes != (length - size - remaining))
+							INT iRes = m_client.Read(m_networkIO->data(), length - size);
+							if (iRes == SOCKET_ERROR && iRes != length - size)
 							{
-								LOG(ERROR) << "[HTTPResponse] ReadAsBinary Read size:" << length - size - remaining << " FAIL";
+								LOG(ERROR) << "[HTTPResponse] ReadAsBinary Read size:" << length - size << " FAIL";
 								return -1;
 							}
 							m_networkIO->SetReceive(m_networkIO->receive() + iRes);
-							m_context.Add(m_networkIO->data(), length - size);//获得Body数据
-							m_networkIO->SetOffset(m_networkIO->offset() + length - size);
+							m_context.Add(m_networkIO->data(), iRes);
+							m_networkIO->SetOffset(m_networkIO->offset() + iRes);
 						}
 						else
 						{
-							m_networkIO->SetCapacity(m_networkIO->capacity() + length - size - remaining);
-							INT iRes = m_client.Read(m_networkIO->data(), length - size - remaining);
-							if (iRes == SOCKET_ERROR && iRes != (length - size - remaining))
+							m_networkIO->SetCapacity(m_networkIO->capacity() + (length - size - remaining));
+							INT iRes = m_client.Read(m_networkIO->data(), m_networkIO->RemainingCapacity());
+							if (iRes == SOCKET_ERROR && iRes != m_networkIO->RemainingCapacity())
 							{
 								LOG(ERROR) << "[HTTPResponse] ReadAsBinary Read size:" << length - size - remaining << " FAIL";
 								return -1;
 							}
 							m_networkIO->SetReceive(m_networkIO->receive() + iRes);
-							m_context.Add(m_networkIO->data(), length - size - remaining);
-							m_networkIO->SetOffset(m_networkIO->offset() + (length - size - remaining));
+							m_context.Add(m_networkIO->data(), iRes);
+							m_networkIO->SetOffset(m_networkIO->offset() + iRes);
 						}
 					}
 					bits = m_context.GetPointer();
-					return length;
+					return m_context.GetSize();
 				}
 			}
 			return -1;
@@ -355,28 +355,28 @@ namespace TinyUI
 					INT remaining = m_networkIO->RemainingCapacity();
 					if (remaining >= (chunksize - size))
 					{
-						INT iRes = m_client.Read(m_networkIO->data(), chunksize - size - remaining);
-						if (iRes == SOCKET_ERROR && iRes != (chunksize - size - remaining))
+						INT iRes = m_client.Read(m_networkIO->data(), chunksize - size);
+						if (iRes == SOCKET_ERROR && iRes != (chunksize - size))
 						{
-							LOG(ERROR) << "[HTTPResponse] ParseTransferEncoding Read size:" << chunksize - size - remaining << " FAIL";
+							LOG(ERROR) << "[HTTPResponse] ParseTransferEncoding Read size:" << chunksize - size << " FAIL";
 							return FALSE;
 						}
 						m_networkIO->SetReceive(m_networkIO->receive() + iRes);
-						m_context.Add(line2, chunksize - size);//获得Body数据
-						m_networkIO->SetOffset(m_networkIO->offset() + chunksize - size);
+						m_context.Add(line2, iRes);//获得Body数据
+						m_networkIO->SetOffset(m_networkIO->offset() + iRes);
 					}
 					else
 					{
 						m_networkIO->SetCapacity(m_networkIO->capacity() + chunksize - size - remaining);
-						INT iRes = m_client.Read(m_networkIO->data(), chunksize - size - remaining);
-						if (iRes == SOCKET_ERROR && iRes != (chunksize - size - remaining))
+						INT iRes = m_client.Read(m_networkIO->data(), m_networkIO->RemainingCapacity());
+						if (iRes == SOCKET_ERROR && iRes != m_networkIO->RemainingCapacity())
 						{
-							LOG(ERROR) << "[HTTPResponse] ParseTransferEncoding Read size:" << chunksize - size - remaining << " FAIL";
+							LOG(ERROR) << "[HTTPResponse] ParseTransferEncoding Read size:" << iRes << " FAIL";
 							return FALSE;
 						}
 						m_networkIO->SetReceive(m_networkIO->receive() + iRes);
-						m_context.Add(m_networkIO->data(), chunksize - size - remaining);
-						m_networkIO->SetOffset(m_networkIO->offset() + (chunksize - size - remaining));
+						m_context.Add(m_networkIO->data(), iRes);
+						m_networkIO->SetOffset(m_networkIO->offset() + iRes);
 					}
 				}
 			}
