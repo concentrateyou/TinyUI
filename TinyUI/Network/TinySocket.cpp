@@ -347,6 +347,10 @@ namespace TinyUI
 				m_connect = TRUE;
 				return TRUE;
 			}
+			else
+			{
+				LOG(ERROR) << "[Connect] FD_ISSET Timeout";
+			}
 		_ERROR:
 			this->Close();
 			return FALSE;

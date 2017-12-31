@@ -601,7 +601,6 @@ namespace TinyUI
 			}
 			if (!m_socket.Connect(m_endpoint, 3))//¡¨Ω”3√Î≥¨ ±
 			{
-				LOG(ERROR) << "socket connect:" << WSAGetLastError();
 				goto _ERROR;
 			}
 			INT iRes = this->Write(m_requestIO.GetPointer(), m_requestIO.GetSize());
