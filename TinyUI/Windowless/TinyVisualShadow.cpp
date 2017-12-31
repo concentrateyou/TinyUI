@@ -81,7 +81,7 @@ namespace TinyUI
 			}
 			HBITMAP hOldBitmap = (HBITMAP)::SelectObject(hMemDC, hBitmap);
 			BLENDFUNCTION bs = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
-			TinyMemDC memDC(hMemDC, m_image->GetHBITMAP(0));
+			TinyMemDC memDC(hMemDC, m_image->GetHBITMAP());
 			TinyRectangle dst;
 			dst.SetRect(0, 0, windowRect.Width(), windowRect.Height());
 			TinyRectangle dstCenter = dst;

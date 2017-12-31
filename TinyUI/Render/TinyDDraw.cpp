@@ -60,7 +60,7 @@ namespace TinyUI
 		HDC hMenDC = CreateCompatibleDC(NULL);
 		if (!hMenDC)
 			return FALSE;
-		HGDIOBJ hObj = SelectObject(hMenDC, m_image.GetHBITMAP(0));
+		HGDIOBJ hObj = SelectObject(hMenDC, m_image.GetHBITMAP());
 		HDC hDC = NULL;
 		if ((hRes = m_dds->GetDC(&hDC)) == DD_OK)
 		{
@@ -99,7 +99,7 @@ namespace TinyUI
 		HDC hMenDC = CreateCompatibleDC(NULL);
 		if (!hMenDC)
 			return FALSE;
-		HGDIOBJ hObj = SelectObject(hMenDC, m_image.GetHBITMAP(0));
+		HGDIOBJ hObj = SelectObject(hMenDC, m_image.GetHBITMAP());
 		HDC hDC = NULL;
 		if ((hRes = m_dds->GetDC(&hDC)) == DD_OK)
 		{

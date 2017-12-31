@@ -119,7 +119,7 @@ namespace TinyUI
 			string					m_statusMsg;//状态信息
 			TinyHTTPClient&			m_client;
 			TinyBufferArray<CHAR>	m_context;
-			TinyScopedReferencePtr<NetworkIOBuffer> m_growIO;
+			TinyScopedReferencePtr<NetworkIOBuffer> m_networkIO;
 		};
 		/// <summary>
 		/// HTTP客户端

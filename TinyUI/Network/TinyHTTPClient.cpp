@@ -190,7 +190,7 @@ namespace TinyUI
 			:m_statusCode(0),
 			m_client(client)
 		{
-			m_growIO = new NetworkIOBuffer();
+			m_networkIO = new NetworkIOBuffer();
 		}
 		HTTPResponse::~HTTPResponse()
 		{
@@ -225,20 +225,37 @@ namespace TinyUI
 				INT length = std::stoi(this->GetAttribute(TinyHTTPClient::ContentLength));
 				if (length > 0)
 				{
-					INT remaining = m_growIO->RemainingCapacity();
-					if (remaining > 0)
+					if ((m_networkIO->receive() - m_networkIO->offset()) > length)
 					{
-						m_context.Add(m_growIO->data(), remaining);
-						m_growIO->SetOffset(m_growIO->offset() + remaining);
+						m_context.Add(m_networkIO->data(), length);//获得Body数据
+						m_networkIO->SetOffset(m_networkIO->offset() + length);
 					}
-					INT size = length - remaining;
-					TinyScopedPtr<CHAR> buffer(new CHAR[size]);
-					ASSERT(buffer);
-					INT iRes = m_client.Read(buffer, size);
-					if (iRes == SOCKET_ERROR || iRes != size)
-						return FALSE;
-					m_growIO->SetReceive(m_growIO->receive() + iRes);
-					m_context.Add(buffer, iRes);
+					else
+					{
+						INT size = m_networkIO->receive() - m_networkIO->offset();
+						m_context.Add(m_networkIO->data(), size);
+						m_networkIO->SetOffset(m_networkIO->offset() + size);
+						INT remaining = m_networkIO->RemainingCapacity();
+						if (remaining >= (length - size))
+						{
+							INT iRes = m_client.Read(m_networkIO->data(), length - size - remaining);
+							if (iRes == SOCKET_ERROR && iRes != (length - size - remaining))
+								return FALSE;
+							m_networkIO->SetReceive(m_networkIO->receive() + iRes);
+							m_context.Add(m_networkIO->data(), length - size);//获得Body数据
+							m_networkIO->SetOffset(m_networkIO->offset() + length - size);
+						}
+						else
+						{
+							m_networkIO->SetCapacity(m_networkIO->capacity() + length - size - remaining);
+							INT iRes = m_client.Read(m_networkIO->data(), length - size - remaining);
+							if (iRes == SOCKET_ERROR && iRes != (length - size - remaining))
+								return FALSE;
+							m_networkIO->SetReceive(m_networkIO->receive() + iRes);
+							m_context.Add(m_networkIO->data(), length - size - remaining);
+							m_networkIO->SetOffset(m_networkIO->offset() + (length - size - remaining));
+						}
+					}
 					val.resize(m_context.GetSize());
 					memcpy_s(&val[0], m_context.GetSize(), m_context.GetPointer(), m_context.GetSize());
 				}
@@ -254,7 +271,10 @@ namespace TinyUI
 				if (this->GetAttribute(TinyHTTPClient::TransferEncoding) == "chunked")//开始解析TransferEncoding
 				{
 					if (!ParseTransferEncoding())
-						return FALSE;
+					{
+						LOG(ERROR) << "[HTTPResponse] ReadAsBinary ParseTransferEncoding FAIL";
+						return -1;
+					}
 				}
 				bits = m_context.GetPointer();
 				return m_context.GetSize();
@@ -264,20 +284,43 @@ namespace TinyUI
 				INT length = std::stoi(this->GetAttribute(TinyHTTPClient::ContentLength));
 				if (length > 0)
 				{
-					INT remaining = m_growIO->RemainingCapacity();
-					if (remaining > 0)
+					if ((m_networkIO->receive() - m_networkIO->offset()) > length)
 					{
-						m_context.Add(m_growIO->data(), remaining);
-						m_growIO->SetOffset(m_growIO->offset() + remaining);
+						m_context.Add(m_networkIO->data(), length);//获得Body数据
+						m_networkIO->SetOffset(m_networkIO->offset() + length);
 					}
-					INT size = length - remaining;
-					TinyScopedPtr<CHAR> buffer(new CHAR[size]);
-					ASSERT(buffer);
-					INT iRes = m_client.Read(buffer, size);
-					if (iRes == SOCKET_ERROR || iRes != size)
-						return -1;
-					m_growIO->SetReceive(m_growIO->receive() + iRes);
-					m_context.Add(buffer, iRes);
+					else
+					{
+						INT size = m_networkIO->receive() - m_networkIO->offset();
+						m_context.Add(m_networkIO->data(), size);
+						m_networkIO->SetOffset(m_networkIO->offset() + size);
+						INT remaining = m_networkIO->RemainingCapacity();
+						if (remaining >= (length - size))
+						{
+							INT iRes = m_client.Read(m_networkIO->data(), length - size - remaining);
+							if (iRes == SOCKET_ERROR && iRes != (length - size - remaining))
+							{
+								LOG(ERROR) << "[HTTPResponse] ReadAsBinary Read size:" << length - size - remaining << " FAIL";
+								return -1;
+							}
+							m_networkIO->SetReceive(m_networkIO->receive() + iRes);
+							m_context.Add(m_networkIO->data(), length - size);//获得Body数据
+							m_networkIO->SetOffset(m_networkIO->offset() + length - size);
+						}
+						else
+						{
+							m_networkIO->SetCapacity(m_networkIO->capacity() + length - size - remaining);
+							INT iRes = m_client.Read(m_networkIO->data(), length - size - remaining);
+							if (iRes == SOCKET_ERROR && iRes != (length - size - remaining))
+							{
+								LOG(ERROR) << "[HTTPResponse] ReadAsBinary Read size:" << length - size - remaining << " FAIL";
+								return -1;
+							}
+							m_networkIO->SetReceive(m_networkIO->receive() + iRes);
+							m_context.Add(m_networkIO->data(), length - size - remaining);
+							m_networkIO->SetOffset(m_networkIO->offset() + (length - size - remaining));
+						}
+					}
 					bits = m_context.GetPointer();
 					return length;
 				}
@@ -299,29 +342,42 @@ namespace TinyUI
 				sscanf(line1, "%x", &chunksize);//16进制转10进制
 				if (chunksize == 0)
 					break;
-				INT remaining = m_growIO->RemainingCapacity();
-				if (remaining >= chunksize)
+				if ((m_networkIO->receive() - m_networkIO->offset()) > chunksize)
 				{
-					INT mores = m_growIO->receive() - m_growIO->offset();
-					if (mores < chunksize)
-					{
-						INT iRes = m_client.Read(m_growIO->data(), chunksize - mores);
-						if (iRes == SOCKET_ERROR && iRes != (chunksize - mores))
-							return FALSE;
-						m_growIO->SetReceive(m_growIO->receive() + iRes);
-					}
 					m_context.Add(line2, chunksize);//获得Body数据
-					m_growIO->SetOffset(m_growIO->offset() + chunksize);
+					m_networkIO->SetOffset(m_networkIO->offset() + chunksize);
 				}
 				else
 				{
-					m_growIO->SetCapacity(m_growIO->capacity() + chunksize - remaining);
-					INT iRes = m_client.Read(m_growIO->data(), m_growIO->RemainingCapacity());
-					if (iRes == SOCKET_ERROR && iRes != m_growIO->RemainingCapacity())
-						return FALSE;
-					m_growIO->SetReceive(m_growIO->receive() + iRes);
-					m_context.Add(m_growIO->data(), chunksize - remaining);
-					m_growIO->SetOffset(m_growIO->offset() + (chunksize - remaining));
+					INT size = m_networkIO->receive() - m_networkIO->offset();
+					m_context.Add(line2, size);
+					m_networkIO->SetOffset(m_networkIO->offset() + size);
+					INT remaining = m_networkIO->RemainingCapacity();
+					if (remaining >= (chunksize - size))
+					{
+						INT iRes = m_client.Read(m_networkIO->data(), chunksize - size - remaining);
+						if (iRes == SOCKET_ERROR && iRes != (chunksize - size - remaining))
+						{
+							LOG(ERROR) << "[HTTPResponse] ParseTransferEncoding Read size:" << chunksize - size - remaining << " FAIL";
+							return FALSE;
+						}
+						m_networkIO->SetReceive(m_networkIO->receive() + iRes);
+						m_context.Add(line2, chunksize - size);//获得Body数据
+						m_networkIO->SetOffset(m_networkIO->offset() + chunksize - size);
+					}
+					else
+					{
+						m_networkIO->SetCapacity(m_networkIO->capacity() + chunksize - size - remaining);
+						INT iRes = m_client.Read(m_networkIO->data(), chunksize - size - remaining);
+						if (iRes == SOCKET_ERROR && iRes != (chunksize - size - remaining))
+						{
+							LOG(ERROR) << "[HTTPResponse] ParseTransferEncoding Read size:" << chunksize - size - remaining << " FAIL";
+							return FALSE;
+						}
+						m_networkIO->SetReceive(m_networkIO->receive() + iRes);
+						m_context.Add(m_networkIO->data(), chunksize - size - remaining);
+						m_networkIO->SetOffset(m_networkIO->offset() + (chunksize - size - remaining));
+					}
 				}
 			}
 			return TRUE;
@@ -341,7 +397,7 @@ namespace TinyUI
 					return FALSE;
 				if (*line1 == '\r' && *(line1 + 1) == '\n')
 				{
-					m_growIO->SetOffset(m_growIO->offset() - (line2 - line1) + 2);
+					m_networkIO->SetOffset(m_networkIO->offset() - (line2 - line1) + 2);
 					break;
 				}
 				if (!ParseAttribute(line1, line2 - 2))
@@ -387,27 +443,27 @@ namespace TinyUI
 		}
 		BOOL HTTPResponse::FindLine(INT& size)
 		{
-			CHAR* bits = m_growIO->data();
+			CHAR* bits = m_networkIO->data();
 			if (*bits++ == '\n')
 			{
-				size = bits - m_growIO->data();
+				size = bits - m_networkIO->data();
 				return TRUE;
 			}
-			if (size == (bits - m_growIO->data()))
+			if (size == (bits - m_networkIO->data()))
 			{
 				return FALSE;
 			}
-			bits = m_growIO->data();
+			bits = m_networkIO->data();
 			while (*bits++ != '\r')
 			{
-				if (size == (bits - m_growIO->data()))
+				if (size == (bits - m_networkIO->data()))
 				{
 					return FALSE;
 				}
 			}
 			if (*bits++ == '\n')
 			{
-				size = bits - m_growIO->data();
+				size = bits - m_networkIO->data();
 				return TRUE;
 			}
 			return FALSE;
@@ -415,26 +471,26 @@ namespace TinyUI
 		BOOL HTTPResponse::ReadLine(CHAR*& line1, CHAR*& line2)
 		{
 			INT iRes = 0;
-			INT offset = m_growIO->offset();
+			INT offset = m_networkIO->offset();
 			for (;;)
 			{
-				iRes = m_growIO->RemainingCapacity();
+				iRes = m_networkIO->RemainingCapacity();
 				if (iRes == 0)
 				{
-					m_growIO->SetCapacity(m_growIO->capacity() + DEFALUT_HTTP_HEADER_INITIAL_SIZE);
-					iRes = m_client.ReadSome(m_growIO->data(), m_growIO->RemainingCapacity());
+					m_networkIO->SetCapacity(m_networkIO->capacity() + DEFALUT_HTTP_HEADER_INITIAL_SIZE);
+					iRes = m_client.ReadSome(m_networkIO->data(), m_networkIO->RemainingCapacity());
 					if (iRes == SOCKET_ERROR)
 						return FALSE;
-					m_growIO->SetReceive(m_growIO->receive() + iRes);
+					m_networkIO->SetReceive(m_networkIO->receive() + iRes);
 				}
 				if (!FindLine(iRes))
 				{
-					m_growIO->SetOffset(m_growIO->offset() + iRes);
+					m_networkIO->SetOffset(m_networkIO->offset() + iRes);
 					continue;
 				}
-				m_growIO->SetOffset(m_growIO->offset() + iRes);
-				line1 = m_growIO->StartOfBuffer() + offset;
-				line2 = m_growIO->StartOfBuffer() + m_growIO->offset();
+				m_networkIO->SetOffset(m_networkIO->offset() + iRes);
+				line1 = m_networkIO->StartOfBuffer() + offset;
+				line2 = m_networkIO->StartOfBuffer() + m_networkIO->offset();
 				return TRUE;
 			}
 			return FALSE;

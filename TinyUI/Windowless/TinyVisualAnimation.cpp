@@ -11,8 +11,7 @@ namespace TinyUI
 
 		TinyVisualAnimation::TinyVisualAnimation()
 			:m_hTimer(NULL),
-			m_index(0),
-			m_animation(NULL)
+			m_index(0)
 		{
 		}
 		TinyVisualAnimation::TinyVisualAnimation(TinyVisual* spvisParent, TinyVisualDocument* vtree)
@@ -30,44 +29,45 @@ namespace TinyUI
 
 		BOOL TinyVisualAnimation::SetProperty(const TinyString& name, const TinyString& value)
 		{
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::IMAGE.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::IMAGELIST.STR()) == 0)
 			{
-				this->SetAnimateImage(value.STR());
+				TinyArray<TinyString> szFiles;
+				vector<string> values;
+				SplitString(value.STR(), ',', &values);
+				for (INT i = 0;i < values.size();i++)
+				{
+					szFiles.Add(values[i].c_str());
+				}
+				this->SetAnimateImage(szFiles);
 				return TRUE;
 			}
 			return	TinyVisual::SetProperty(name, value);
 		}
 
-		void TinyVisualAnimation::SetAnimateImage(const TinyString& szName)
+		void TinyVisualAnimation::SetAnimateImage(TinyArray<TinyString>& szFiles)
 		{
-			m_animation = TinyVisualResource::GetInstance()[szName];
+			for (INT i = 0;i < szFiles.GetSize();i++)
+			{
+				m_images.Add(TinyVisualResource::GetInstance()[szFiles[i]]);
+			}
 		}
 
-		void TinyVisualAnimation::SetAnimateImage(TinyImage* image)
+		void TinyVisualAnimation::SetAnimateImage(TinyArray<TinyImage*>& images)
 		{
-			m_animation = image;
-			if (m_animation != NULL)
-			{
-				TinyVisualResource::GetInstance().Add(m_animation);
-			}
+			m_images = images;
 		}
 
 		BOOL TinyVisualAnimation::BeginAnimate()
 		{
 			EndAnimate();
-			if (m_animation != NULL && m_animation->GetCount() > 0)
+			if (m_images.GetSize() > 0)
 			{
-				INT delay = m_animation->GetDelay(m_index);
-				if (delay <= 0)
-				{
-					delay = 40;
-				}
 				if (m_hTimer != NULL)
 				{
 					TinyApplication::GetInstance()->GetTimers().Unregister(m_hTimer);
 					m_hTimer = NULL;
 				}
-				m_hTimer = TinyApplication::GetInstance()->GetTimers().Register(&TinyVisualAnimation::OnTimer, this, delay, 1);
+				m_hTimer = TinyApplication::GetInstance()->GetTimers().Register(&TinyVisualAnimation::OnTimer, this, 40, 1);
 				return m_hTimer != NULL;
 			}
 			return FALSE;
@@ -78,13 +78,8 @@ namespace TinyUI
 			TinyVisualAnimation* spvis = static_cast<TinyVisualAnimation*>(lpParam);
 			if (spvis->m_hTimer != NULL)
 			{
-				spvis->m_index = ((spvis->m_index + 1) == spvis->m_animation->GetCount()) ? 0 : (spvis->m_index + 1);
-				INT delay = spvis->m_animation->GetDelay(spvis->m_index);
-				if (delay <= 0)
-				{
-					delay = 40;
-				}
-				TinyApplication::GetInstance()->GetTimers().Change(spvis->m_hTimer, delay, 1);
+				spvis->m_index = ((spvis->m_index + 1) == spvis->m_images.GetSize()) ? 0 : (spvis->m_index + 1);
+				TinyApplication::GetInstance()->GetTimers().Change(spvis->m_hTimer, 40, 1);
 				spvis->Invalidate();
 			}
 		}
@@ -107,11 +102,9 @@ namespace TinyUI
 			ASSERT(m_document);
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			TinyRectangle clip = m_document->GetWindowRect(this);
-			if (m_animation != NULL && !m_animation->IsEmpty())
-			{
-				TinyRectangle srcRect = m_animation->GetRectangle();
-				canvas.DrawBitmap(m_animation->GetHBITMAP(m_index), clip, srcRect);
-			}
+			ASSERT(m_index >= 0 || m_index < m_images.GetSize());
+			TinyRectangle srcRect = m_images[m_index]->GetRectangle();
+			canvas.DrawBitmap(m_images[m_index]->GetHBITMAP(), clip, srcRect);
 			return TRUE;
 		}
 	}

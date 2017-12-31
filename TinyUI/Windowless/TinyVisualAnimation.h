@@ -22,16 +22,16 @@ namespace TinyUI
 			TinyString RetrieveTag() const OVERRIDE;
 			BOOL SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 		public:
-			virtual void	SetAnimateImage(const TinyString& szName);
-			virtual void	SetAnimateImage(TinyImage* image);
+			virtual void	SetAnimateImage(TinyArray<TinyString>& szFiles);
+			virtual void	SetAnimateImage(TinyArray<TinyImage*>& images);
 			BOOL	BeginAnimate();
 			BOOL	EndAnimate();
 		protected:
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 		private:
-			INT			m_index;
-			HANDLE		m_hTimer;
-			TinyImage*	m_animation;
+			INT						m_index;
+			HANDLE					m_hTimer;
+			TinyArray<TinyImage*>	m_images;
 		};
 	}
 }

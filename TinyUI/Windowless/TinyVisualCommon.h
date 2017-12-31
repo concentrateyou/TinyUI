@@ -50,6 +50,7 @@ namespace TinyUI
 			static const TinyString IMAGEPUSH;
 
 			static const TinyString	IMAGE;
+			static const TinyString	IMAGELIST;
 
 			static const TinyString ARROWNORMAL;
 			static const TinyString ARROWDOWN;

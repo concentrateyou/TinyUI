@@ -4,24 +4,9 @@
 
 namespace TinyUI
 {
-	/// <summary>
-	/// 图片类
-	///     N=#comp     components
-	///       1           grey
-	///       2           grey, alpha
-	///       3           red, green, blue
-	///       4           red, green, blue, alpha
-	/// 只支持24和32位
-	/// </summary>
-	typedef struct tagIMAGE_INFO
-	{
-		HBITMAP hBitmap;
-		BYTE*	Bits;
-		UINT	Delay;
-	}IMAGE_INFO;
-
 	class TinyImage
 	{
+		DISALLOW_COPY_AND_ASSIGN(TinyImage)
 	public:
 		TinyImage();
 		~TinyImage();
@@ -30,21 +15,18 @@ namespace TinyUI
 		BOOL			Open(LPCSTR pz);
 		BOOL			Open(BYTE* p, DWORD size);
 		BOOL			Save(LPCSTR pz);//保存成BMP
-		INT				GetCount() const;
-		INT				GetDelay(INT index);
-		HBITMAP			GetHBITMAP(INT index);
-		BYTE*			GetBits(INT index);
+		HBITMAP			GetHBITMAP();
+		BYTE*			GetBits();
 		TinySize		GetSize();
 		TinyRectangle	GetRectangle();
 		void			Close();
 	private:
 		BOOL			OpenFile(LPCSTR pzFile);
 	protected:
-		INT						m_cx;
-		INT						m_cy;
-		INT						m_count;
-		HBITMAP					m_hBitmap;
-		TinyArray<IMAGE_INFO>	m_images;
+		INT				m_cx;
+		INT				m_cy;
+		BYTE*			m_bits;
+		HBITMAP			m_hBitmap;
 	};
 }
 

@@ -49,6 +49,7 @@ namespace TinyUI
 		const TinyString TinyVisualPropertyConst::IMAGEPUSH = TEXT("image-push");
 
 		const TinyString TinyVisualPropertyConst::IMAGE = TEXT("image");
+		const TinyString TinyVisualPropertyConst::IMAGELIST = TEXT("imagelist");
 
 		const TinyString TinyVisualPropertyConst::ARROWNORMAL = TEXT("arrow-normal");
 		const TinyString TinyVisualPropertyConst::ARROWDOWN = TEXT("arrow-down");

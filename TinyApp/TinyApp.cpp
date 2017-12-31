@@ -88,8 +88,10 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadSeDebugPrivilege();
 
 	TinyImage image;
-	image.Open("http://d.lanrentuku.com/down/png/1712/if_christmass_holidays_celebrate/christmass_star_2.png");
-	image.Save("D:\\123.png");
+	if (image.Open("http://k.sinaimg.cn/n/photo/w2000h1200/20171213/mn-a-fypsqiz5241036.jpg/w1000h500z1l0t0q100df0.jpg")) 
+	{
+		image.Save("D:\\123.bmp");
+	}
 	/*TinyVisualResource::GetInstance().Load("skin\\resource.xml");
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));

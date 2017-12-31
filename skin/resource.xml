@@ -65,7 +65,14 @@
 	<add name="menu_cutling" value="skin\menu\menu_cutling.png"></add>
 	<add name="menu_highlight" value="skin\menu\menu_highlight.png"></add>
 	
-    <add name="loading" value="skin\animate\loading.gif"></add>
+    <add name="1" value="skin\animate\1.png"></add>
+    <add name="2" value="skin\animate\2.png"></add>
+    <add name="3" value="skin\animate\3.png"></add>
+    <add name="4" value="skin\animate\4.png"></add>
+    <add name="5" value="skin\animate\5.png"></add>
+    <add name="6" value="skin\animate\6.png"></add>
+    <add name="7" value="skin\animate\7.png"></add>
+    <add name="8" value="skin\animate\8.png"></add>
     <add name="logo" value="skin\common\logo.jpg"></add>
 	<add name="shadow" value="skin\common\shadow_bkg.png"></add>
 
