@@ -28,14 +28,18 @@ namespace TinyUI
 			BOOL CreateOutputSample(DWORD dwSize);
 			BOOL GetOutputSample(DWORD dwSize);
 		protected:
-			TinyComPtr<IMFTransform>		m_transform;
 			MFT_INPUT_STREAM_INFO			m_inputInfo;
 			MFT_OUTPUT_STREAM_INFO			m_outputInfo;
+			TinyComPtr<IMFTransform>		m_decoder;
 		private:
-			BOOL						m_bIsAsyncMFT;
-			TinyComPtr<IMFSample>		m_inputSample;
-			TinyComPtr<IMFSample>		m_outputSample;
-			Callback<void(BYTE*, LONG, LPVOID)>	 m_callback;
+			BOOL								m_bIsAsync;
+			DWORD								m_dwInputID;
+			DWORD								m_dwOutputID;
+			TinyComPtr<IMFSample>				m_inputSample;
+			TinyComPtr<IMFSample>				m_outputSample;
+			TinyComPtr<IMFMediaEvent>			m_mediaEvent;
+			TinyComPtr<IMFMediaEventGenerator>	m_eventGenerator;
+			Callback<void(BYTE*, LONG, LPVOID)>	m_callback;
 		};
 	};
 }

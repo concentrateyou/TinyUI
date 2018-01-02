@@ -8,6 +8,9 @@ namespace TinyUI
 	namespace Media
 	{
 		TinyMFEncode::TinyMFEncode()
+			:m_bIsAsync(FALSE),
+			m_dwInputID(0),
+			m_dwOutputID(0)
 		{
 
 		}
@@ -17,13 +20,13 @@ namespace TinyUI
 		}
 		BOOL TinyMFEncode::GetInputType(IMFMediaType** mediaType)
 		{
-			ASSERT(m_transform);
-			return SUCCEEDED(m_transform->GetInputCurrentType(0, mediaType));
+			ASSERT(m_encoder);
+			return SUCCEEDED(m_encoder->GetInputCurrentType(m_dwInputID, mediaType));
 		}
 		BOOL TinyMFEncode::GetOutputType(IMFMediaType** mediaType)
 		{
-			ASSERT(m_transform);
-			return SUCCEEDED(m_transform->GetOutputCurrentType(0, mediaType));
+			ASSERT(m_encoder);
+			return SUCCEEDED(m_encoder->GetOutputCurrentType(m_dwOutputID, mediaType));
 		}
 		BOOL TinyMFEncode::Create(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType)
 		{
@@ -32,25 +35,46 @@ namespace TinyUI
 			hRes = unknow.CoCreateInstance(clsID, NULL, CLSCTX_INPROC_SERVER);
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = unknow->QueryInterface(IID_PPV_ARGS(&m_transform));
+			hRes = unknow->QueryInterface(IID_PPV_ARGS(&m_encoder));
 			if (hRes != S_OK)
 				return FALSE;
+			DWORD dwInputStreams = 0;
+			DWORD dwOutputSample = 0;
+			hRes = m_encoder->GetStreamCount(&dwInputStreams, &dwOutputSample);
+			if (hRes != S_OK)
+				return FALSE;
+			if (dwInputStreams == 0 || dwOutputSample == 0)
+				return FALSE;
+			TinyScopedArray<DWORD> dwInputIDs;
+			TinyScopedArray<DWORD> dwOutputIDs;
+			hRes = m_encoder->GetStreamIDs(dwInputStreams, dwInputIDs, dwOutputSample, dwOutputIDs);
+			if (hRes == S_OK)
+			{
+				m_dwInputID = dwInputIDs[0];
+				m_dwOutputID = dwOutputIDs[0];
+			}
+			if (IsAsyncMFT(m_encoder, m_bIsAsync) && m_bIsAsync)
+			{
+				hRes = m_encoder->QueryInterface(&m_eventGenerator);
+				if (hRes != S_OK)
+					return FALSE;
+			}
 			if (inputType != NULL)
 			{
-				hRes = m_transform->SetInputType(0, inputType, 0);
+				hRes = m_encoder->SetInputType(m_dwInputID, inputType, 0);
 				if (hRes != S_OK)
 					return FALSE;
 				if (outputType == NULL)
 				{
 					TinyComPtr<IMFMediaType> mediaType;
 					DWORD dwTypeIndex = 0;
-					while (SUCCEEDED(m_transform->GetOutputAvailableType(0, dwTypeIndex++, &mediaType)))
+					while (SUCCEEDED(m_encoder->GetOutputAvailableType(m_dwInputID, dwTypeIndex++, &mediaType)))
 					{
 						BOOL bResult;
 						hRes = mediaType->Compare(mediaType, MF_ATTRIBUTES_MATCH_OUR_ITEMS, &bResult);
 						if (SUCCEEDED(hRes) && bResult)
 						{
-							hRes = m_transform->SetOutputType(0, mediaType, 0);
+							hRes = m_encoder->SetOutputType(m_dwOutputID, mediaType, 0);
 							if (hRes != S_OK)
 								return FALSE;
 							break;
@@ -59,7 +83,7 @@ namespace TinyUI
 				}
 				else
 				{
-					hRes = m_transform->SetOutputType(0, outputType, 0);
+					hRes = m_encoder->SetOutputType(m_dwOutputID, outputType, 0);
 					if (hRes != S_OK)
 						return FALSE;
 				}
@@ -68,28 +92,28 @@ namespace TinyUI
 			{
 				if (outputType == NULL)
 					return FALSE;
-				hRes = m_transform->SetOutputType(0, outputType, 0);
+				hRes = m_encoder->SetOutputType(m_dwOutputID, outputType, 0);
 				if (hRes != S_OK)
 					return FALSE;
 				TinyComPtr<IMFMediaType> mediaType;
 				DWORD dwTypeIndex = 0;
-				while (SUCCEEDED(m_transform->GetInputAvailableType(0, dwTypeIndex++, &mediaType)))
+				while (SUCCEEDED(m_encoder->GetInputAvailableType(m_dwInputID, dwTypeIndex++, &mediaType)))
 				{
 					BOOL bResult;
 					hRes = mediaType->Compare(mediaType, MF_ATTRIBUTES_MATCH_OUR_ITEMS, &bResult);
 					if (SUCCEEDED(hRes) && bResult)
 					{
-						hRes = m_transform->SetInputType(0, mediaType, 0);
+						hRes = m_encoder->SetInputType(m_dwInputID, mediaType, 0);
 						if (hRes != S_OK)
 							return FALSE;
 						break;
 					}
 				}
 			}
-			hRes = m_transform->GetInputStreamInfo(0, &m_inputInfo);
+			hRes = m_encoder->GetInputStreamInfo(m_dwInputID, &m_inputInfo);
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = m_transform->GetOutputStreamInfo(0, &m_outputInfo);
+			hRes = m_encoder->GetOutputStreamInfo(m_dwOutputID, &m_outputInfo);
 			if (hRes != S_OK)
 				return FALSE;
 			return TRUE;
@@ -100,13 +124,13 @@ namespace TinyUI
 			if (!Create(clsID, inputType, outputType))
 				return FALSE;
 			HRESULT hRes = S_OK;
-			hRes = m_transform->ProcessMessage(MFT_MESSAGE_COMMAND_FLUSH, NULL);
+			hRes = m_encoder->ProcessMessage(MFT_MESSAGE_COMMAND_FLUSH, NULL);
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = m_transform->ProcessMessage(MFT_MESSAGE_NOTIFY_BEGIN_STREAMING, NULL);
+			hRes = m_encoder->ProcessMessage(MFT_MESSAGE_NOTIFY_BEGIN_STREAMING, NULL);
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = m_transform->ProcessMessage(MFT_MESSAGE_NOTIFY_START_OF_STREAM, NULL);
+			hRes = m_encoder->ProcessMessage(MFT_MESSAGE_NOTIFY_START_OF_STREAM, NULL);
 			if (hRes != S_OK)
 				return FALSE;
 			return TRUE;
@@ -234,11 +258,11 @@ namespace TinyUI
 		}
 		BOOL TinyMFEncode::GetOutputSample(DWORD dwSize)
 		{
-			ASSERT(m_transform);
+			ASSERT(m_encoder);
 			for (;;)
 			{
 				DWORD dwFlags = 0;
-				HRESULT hRes = m_transform->GetOutputStatus(&dwFlags);
+				HRESULT hRes = m_encoder->GetOutputStatus(&dwFlags);
 				if (hRes != S_OK)
 					return FALSE;
 				if (dwFlags != MFT_OUTPUT_STATUS_SAMPLE_READY)
@@ -252,7 +276,7 @@ namespace TinyUI
 					samples.pSample = m_outputSample;
 				}
 				DWORD dwStatus;
-				hRes = m_transform->ProcessOutput(0, 1, &samples, &dwStatus);
+				hRes = m_encoder->ProcessOutput(0, 1, &samples, &dwStatus);
 				if (hRes != S_OK)
 				{
 					if (hRes != MF_E_TRANSFORM_NEED_MORE_INPUT)
@@ -283,7 +307,7 @@ namespace TinyUI
 			if (!CreateInputSample(bits, size))
 				return FALSE;
 			TinyComPtr<IMFMediaType> mediaType;
-			HRESULT hRes = m_transform->GetInputCurrentType(0, &mediaType);
+			HRESULT hRes = m_encoder->GetInputCurrentType(m_dwInputID, &mediaType);
 			if (hRes != S_OK)
 				return FALSE;
 			hRes = m_inputSample->SetSampleTime(hnsSampleTime);
@@ -293,28 +317,28 @@ namespace TinyUI
 			if (hRes != S_OK)
 				return FALSE;
 			DWORD dwStatus = 0;
-			hRes = m_transform->GetInputStatus(0, &dwStatus);
+			hRes = m_encoder->GetInputStatus(m_dwInputID, &dwStatus);
 			if (MFT_INPUT_STATUS_ACCEPT_DATA != dwStatus)
 				return TRUE;
-			hRes = m_transform->ProcessInput(0, m_inputSample, 0);
+			hRes = m_encoder->ProcessInput(m_dwInputID, m_inputSample, 0);
 			if (hRes != S_OK)
 				return FALSE;
 			return GetOutputSample(size * 2);
 		}
 		BOOL TinyMFEncode::Close()
 		{
-			if (!m_transform)
+			if (!m_encoder)
 				return FALSE;
-			HRESULT hRes = m_transform->ProcessMessage(MFT_MESSAGE_NOTIFY_END_OF_STREAM, NULL);
+			HRESULT hRes = m_encoder->ProcessMessage(MFT_MESSAGE_NOTIFY_END_OF_STREAM, NULL);
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = m_transform->ProcessMessage(MFT_MESSAGE_COMMAND_DRAIN, NULL);
+			hRes = m_encoder->ProcessMessage(MFT_MESSAGE_COMMAND_DRAIN, NULL);
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = m_transform->ProcessMessage(MFT_MESSAGE_NOTIFY_END_STREAMING, NULL);
+			hRes = m_encoder->ProcessMessage(MFT_MESSAGE_NOTIFY_END_STREAMING, NULL);
 			if (hRes != S_OK)
 				return FALSE;
-			m_transform.Release();
+			m_encoder.Release();
 			return TRUE;
 		}
 

@@ -51,7 +51,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
 	HRESULT hRes = OleInitialize(NULL);
-
+	CoInitializeEx(NULL, COINIT_MULTITHREADED);
 	LoadSeDebugPrivilege();
 
 	::DefWindowProc(NULL, 0, 0, 0L);

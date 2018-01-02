@@ -30,9 +30,9 @@ namespace TinyUI
 			hRes = inputType->SetGUID(MF_MT_SUBTYPE, MFVideoFormat_H264);
 			if (hRes != S_OK)
 				return FALSE;
-			//hRes = inputType->SetUINT32(MF_MT_ALL_SAMPLES_INDEPENDENT, FALSE);
-			//if (hRes != S_OK)
-			//	return FALSE;
+			hRes = inputType->SetUINT32(MF_MT_ALL_SAMPLES_INDEPENDENT, FALSE);
+			if (hRes != S_OK)
+				return FALSE;
 			hRes = inputType->SetUINT32(MF_MT_FIXED_SIZE_SAMPLES, FALSE);
 			if (hRes != S_OK)
 				return FALSE;
@@ -58,9 +58,9 @@ namespace TinyUI
 			hRes = outputType->SetGUID(MF_MT_SUBTYPE, MFVideoFormat_NV12);
 			if (hRes != S_OK)
 				return FALSE;
-			//hRes = outputType->SetUINT32(MF_MT_ALL_SAMPLES_INDEPENDENT, TRUE);
-			//if (hRes != S_OK)
-			//	return FALSE;
+			hRes = outputType->SetUINT32(MF_MT_ALL_SAMPLES_INDEPENDENT, TRUE);
+			if (hRes != S_OK)
+				return FALSE;
 			hRes = outputType->SetUINT32(MF_MT_FIXED_SIZE_SAMPLES, TRUE);
 			if (hRes != S_OK)
 				return FALSE;

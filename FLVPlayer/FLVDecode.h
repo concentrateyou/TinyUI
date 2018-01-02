@@ -9,6 +9,7 @@
 #include "DX9Graphics2D.h"
 #include "DX9Image2D.h"
 #include "DX9RenderView.h"
+#include "Media/TinyMFIntelQSVDecode.h"
 using namespace Decode;
 using namespace TinyUI;
 using namespace TinyUI::IO;
@@ -112,6 +113,7 @@ namespace FLVPlayer
 		BOOL	Close(DWORD dwMs) OVERRIDE;
 	private:
 		void	OnMessagePump();
+		void	OnData(BYTE* bits, LONG size, LPVOID ps);
 		void	OnQSV(BYTE* bits, LONG size, INT pts);
 		void	OnError(INT iError);
 	private:
@@ -134,6 +136,8 @@ namespace FLVPlayer
 		FLVVideoRender				m_videoRender;
 		FLVVideoTask				m_videoTask;
 		FLVVAudioTask				m_audioTask;
+
+		TinyMFIntelQSVDecode		m_decoder;
 	};
 }
 

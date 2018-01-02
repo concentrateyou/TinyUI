@@ -22,19 +22,23 @@ namespace TinyUI
 			BOOL Close();
 			BOOL GetInputType(IMFMediaType** mediaType);
 			BOOL GetOutputType(IMFMediaType** mediaType);
-			
 		private:
 			BOOL Create(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType);
 			BOOL CreateInputSample(const BYTE* bits, DWORD size);
 			BOOL CreateOutputSample(DWORD dwSize);
 			BOOL GetOutputSample(DWORD dwSize);
 		protected:
-			TinyComPtr<IMFTransform>	m_transform;
 			MFT_INPUT_STREAM_INFO		m_inputInfo;
 			MFT_OUTPUT_STREAM_INFO		m_outputInfo;
+			TinyComPtr<IMFTransform>	m_encoder;
 		private:
-			TinyComPtr<IMFSample>		m_inputSample;
-			TinyComPtr<IMFSample>		m_outputSample;
+			BOOL								m_bIsAsync;
+			DWORD								m_dwInputID;
+			DWORD								m_dwOutputID;
+			TinyComPtr<IMFSample>				m_inputSample;
+			TinyComPtr<IMFSample>				m_outputSample;
+			TinyComPtr<IMFMediaEvent>			m_mediaEvent;
+			TinyComPtr<IMFMediaEventGenerator>	m_eventGenerator;
 			Callback<void(BYTE*, LONG, LPVOID)> m_callback;
 		};
 	};

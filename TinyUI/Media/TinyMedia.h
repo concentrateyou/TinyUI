@@ -97,6 +97,7 @@ namespace TinyUI
 			return (ChannelLayout)pFMT->nChannels;
 		}
 		BOOL WINAPI IsAsyncMFT(IMFTransform *pMFT, BOOL& bIsAsync);
+		BOOL WINAPI UnlockAsyncMFT(IMFTransform *pMFT);
 
 		class TinyScopedAvrt
 		{

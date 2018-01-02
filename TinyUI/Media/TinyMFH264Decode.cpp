@@ -21,6 +21,12 @@ namespace TinyUI
 			hRes = MFCreateMediaType(&inputType);
 			if (hRes != S_OK)
 				return FALSE;
+			hRes = inputType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Video);
+			if (hRes != S_OK)
+				return FALSE;
+			hRes = inputType->SetGUID(MF_MT_SUBTYPE, MFVideoFormat_H264);
+			if (hRes != S_OK)
+				return FALSE;
 			TinyComPtr<IMFMediaType> outputType;
 			hRes = MFCreateMediaType(&outputType);
 			if (hRes != S_OK)

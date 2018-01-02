@@ -51,8 +51,8 @@ namespace TinyUI
 			DMO_MEDIA_TYPE				m_mediaType;
 			DMO_OUTPUT_DATA_BUFFER		m_dmoBuffer;
 			TinyScopedArray<BYTE>		m_waveFMT;
-			IO::TinyTask			m_task;
 			TinyComPtr<IMediaObject>	m_dmo;
+			IO::TinyTask				m_task;
 			Callback<void(BYTE*, LONG, LPVOID)>	m_callback;
 		};
 	};

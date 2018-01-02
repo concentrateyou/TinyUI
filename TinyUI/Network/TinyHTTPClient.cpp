@@ -658,7 +658,6 @@ namespace TinyUI
 				}
 				if (iRes == 0)//对方关闭Socket连接
 				{
-					TRACE("DATA:%d\n", value);
 					return SOCKET_ERROR;
 				}
 				value += iRes;

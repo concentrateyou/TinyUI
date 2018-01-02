@@ -28,7 +28,7 @@ namespace FLVPlayer
 	BOOL FLVDecode::Submit()
 	{
 		//if (m_reader.OpenFile("D:\\Media\\1.flv"))
-		if (m_reader.OpenURL("rtmp://10.10.13.99/live/lb_qipashuo_720p", BindCallback(&FLVDecode::OnError, this)))
+		if (m_reader.OpenURL("rtmp://10.10.13.98/live/lb_junlvjuchang_720p", BindCallback(&FLVDecode::OnError, this)))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);
@@ -55,6 +55,11 @@ namespace FLVPlayer
 		m_videoTask.Close(dwMS);
 		m_audioTask.Close(dwMS);
 		return TinyTask::Close(dwMS);
+	}
+
+	void FLVDecode::OnData(BYTE* bits, LONG size, LPVOID ps)
+	{
+
 	}
 
 	void FLVDecode::OnMessagePump()
@@ -114,6 +119,9 @@ namespace FLVPlayer
 				{
 					if (block.video.packetType == FLV_AVCDecoderConfigurationRecord)
 					{
+						CoInitializeEx(NULL, COINIT_MULTITHREADED);
+						m_decoder.Open(m_size, 25, BindCallback(&FLVDecode::OnData, this));
+						BOOL bRes = m_decoder.Decode(block.video.data, block.video.size);
 						if (!m_x264->Initialize(m_size, m_size))
 						{
 							goto _ERROR;
