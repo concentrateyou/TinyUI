@@ -91,6 +91,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	HRESULT hRes = OleInitialize(NULL);
 	LoadSeDebugPrivilege();
+	CoInitialize(NULL);
 
 	FILE* hFile = NULL;
 	fopen_s(&hFile, "D:\\test.264", "rb");
@@ -104,6 +105,8 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	decoder.Open({ 1280,720 }, 25, BindCallback(&OnData));
 	decoder.Decode(bits,size);
 	fclose(hFile);
+
+	CoUninitialize();
 
 	/*TinyVisualResource::GetInstance().Load("skin\\resource.xml");
 	::DefWindowProc(NULL, 0, 0, 0L);

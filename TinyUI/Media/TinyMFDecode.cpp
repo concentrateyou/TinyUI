@@ -48,6 +48,11 @@ namespace TinyUI
 			TinyScopedArray<DWORD> dwInputIDs;
 			TinyScopedArray<DWORD> dwOutputIDs;
 			hRes = m_decoder->GetStreamIDs(dwInputStreams, dwInputIDs, dwOutputSample, dwOutputIDs);
+			if (hRes == MF_E_TRANSFORM_ASYNC_LOCKED)
+			{
+				UnlockAsyncMFT(m_decoder);
+				hRes = m_decoder->GetStreamIDs(dwInputStreams, dwInputIDs, dwOutputSample, dwOutputIDs);
+			}
 			if (hRes == S_OK)
 			{
 				m_dwInputID = dwInputIDs[0];
@@ -57,13 +62,7 @@ namespace TinyUI
 			{
 				hRes = m_decoder->SetInputType(m_dwInputID, inputType, 0);
 				if (hRes != S_OK)
-				{
-					if (hRes == MF_E_TRANSFORM_ASYNC_LOCKED)
-					{
-						UnlockAsyncMFT(m_decoder);
-					}
-					hRes = m_decoder->SetInputType(m_dwInputID, inputType, 0);
-				}
+					return FALSE;
 				if (hRes != S_OK)
 					return FALSE;
 				if (outputType == NULL)
@@ -323,7 +322,10 @@ namespace TinyUI
 				if (m_inputs == 1 && m_sampleQueue.IsEmpty())
 				{
 					InterlockedDecrement(&m_inputs);
-					return SUCCEEDED(m_decoder->ProcessInput(m_dwInputID, m_inputSample, 0));
+					HRESULT hRes = m_decoder->ProcessInput(m_dwInputID, m_inputSample, 0);
+					if (hRes != S_OK)
+						return FALSE;
+					goto _LABEL1;
 				}
 				if (m_sampleQueue.GetSize() > 60)
 				{
@@ -344,7 +346,10 @@ namespace TinyUI
 						if (m_sampleQueue.Pop(&samplePop))
 						{
 							InterlockedDecrement(&m_inputs);
-							return SUCCEEDED(m_decoder->ProcessInput(m_dwInputID, m_inputSample, 0));
+							HRESULT hRes = m_decoder->ProcessInput(m_dwInputID, m_inputSample, 0);
+							if (hRes != S_OK)
+								return FALSE;
+							goto _LABEL1;
 						}
 					}
 				}
@@ -359,6 +364,7 @@ namespace TinyUI
 				if (hRes != S_OK)
 					return FALSE;
 			}
+		_LABEL1:
 			return GetOutputSample(size * 2);
 		}
 		BOOL TinyMFDecode::Close()
