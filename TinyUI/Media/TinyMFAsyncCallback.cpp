@@ -9,8 +9,8 @@ namespace TinyUI
 	{
 		TinyMFAsyncCallback::TinyMFAsyncCallback()
 			:m_pMFT(NULL),
-			m_iCount(0),
-			m_oCount(0)
+			m_inputs(0),
+			m_outputs(0)
 		{
 
 		}
@@ -22,19 +22,19 @@ namespace TinyUI
 		{
 			m_pMFT = pMFT;
 			ASSERT(m_pMFT);
-			HRESULT hRes = m_pMFT->QueryInterface(IID_PPV_ARGS(&m_event));
+			HRESULT hRes = m_pMFT->QueryInterface(IID_PPV_ARGS(&m_eventGenerator));
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = m_event->BeginGetEvent(this, NULL);
+			hRes = m_eventGenerator->BeginGetEvent(this, NULL);
 			if (hRes != S_OK)
 				return FALSE;
 			return TRUE;
 		}
+
 		HRESULT STDMETHODCALLTYPE TinyMFAsyncCallback::GetParameters(__RPC__out DWORD *pdwFlags, __RPC__out DWORD *pdwQueue)
 		{
 			return E_NOTIMPL;
 		}
-
 
 		HRESULT STDMETHODCALLTYPE TinyMFAsyncCallback::Invoke(__RPC__in_opt IMFAsyncResult *pAsyncResult)
 		{
@@ -42,9 +42,9 @@ namespace TinyUI
 			HRESULT hrStatus = S_OK;
 			MediaEventType eventType = MEUnknown;
 			IMFMediaEvent* pMFEvent = NULL;
-			if (m_event != NULL)
+			if (m_eventGenerator != NULL)
 			{
-				hRes = m_event->EndGetEvent(pAsyncResult, &pMFEvent);
+				hRes = m_eventGenerator->EndGetEvent(pAsyncResult, &pMFEvent);
 				if (hRes != S_OK)
 					goto _ERROR;
 				hRes = pMFEvent->GetType(&eventType);
@@ -58,14 +58,14 @@ namespace TinyUI
 					switch (eventType)
 					{
 					case METransformNeedInput:
-						InterlockedIncrement(&m_iCount);
+						InterlockedIncrement(&m_inputs);
 						break;
 					case METransformHaveOutput:
-						InterlockedIncrement(&m_oCount);
+						InterlockedIncrement(&m_outputs);
 						break;
 					}
 				}
-				hRes = m_event->BeginGetEvent(this, NULL);
+				hRes = m_eventGenerator->BeginGetEvent(this, NULL);
 				if (hRes != S_OK)
 					goto _ERROR;
 			}

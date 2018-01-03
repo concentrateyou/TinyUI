@@ -53,12 +53,6 @@ namespace TinyUI
 				m_dwInputID = dwInputIDs[0];
 				m_dwOutputID = dwOutputIDs[0];
 			}
-			if (IsAsyncMFT(m_decoder, m_bIsAsync) && m_bIsAsync)
-			{
-				hRes = m_decoder->QueryInterface(&m_eventGenerator);
-				if (hRes != S_OK)
-					return FALSE;
-			}
 			if (inputType != NULL)
 			{
 				hRes = m_decoder->SetInputType(m_dwInputID, inputType, 0);
@@ -141,6 +135,11 @@ namespace TinyUI
 			hRes = m_decoder->ProcessMessage(MFT_MESSAGE_NOTIFY_START_OF_STREAM, NULL);
 			if (hRes != S_OK)
 				return FALSE;
+			if (IsAsyncMFT(m_decoder, m_bIsAsync) && m_bIsAsync)
+			{
+				if (!this->Initialize(m_decoder))
+					return FALSE;
+			}
 			return TRUE;
 		}
 		BOOL TinyMFDecode::CreateInputSample(const BYTE* bits, DWORD dwSize)
@@ -269,6 +268,12 @@ namespace TinyUI
 			ASSERT(m_decoder);
 			for (;;)
 			{
+				if (m_bIsAsync)
+				{
+					if (m_outputs == 0)
+						return TRUE;
+					InterlockedDecrement(&m_outputs);
+				}
 				DWORD dwFlags = 0;
 				HRESULT hRes = m_decoder->GetOutputStatus(&dwFlags);
 				if (hRes != S_OK)
@@ -311,14 +316,41 @@ namespace TinyUI
 		}
 		BOOL TinyMFDecode::Decode(const BYTE* bits, DWORD size)
 		{
+			if (!CreateInputSample(bits, size))
+				return FALSE;
 			if (m_bIsAsync)
 			{
-
+				if (m_inputs == 1 && m_sampleQueue.IsEmpty())
+				{
+					InterlockedDecrement(&m_inputs);
+					return SUCCEEDED(m_decoder->ProcessInput(m_dwInputID, m_inputSample, 0));
+				}
+				if (m_sampleQueue.GetSize() > 60)
+				{
+					m_sampleQueue.Clear();
+					return FALSE;
+				}
+				IMFSample* sample = DuplicateSample(m_inputSample);
+				if (sample != NULL)
+				{
+					m_sampleQueue.Push(sample);
+					while (m_inputs > 0)
+					{
+						if (m_sampleQueue.IsEmpty())
+						{
+							break;
+						}
+						TinyComPtr<IMFSample> samplePop;
+						if (m_sampleQueue.Pop(&samplePop))
+						{
+							InterlockedDecrement(&m_inputs);
+							return SUCCEEDED(m_decoder->ProcessInput(m_dwInputID, m_inputSample, 0));
+						}
+					}
+				}
 			}
 			else
 			{
-				if (!CreateInputSample(bits, size))
-					return FALSE;
 				DWORD dwStatus = 0;
 				HRESULT hRes = m_decoder->GetInputStatus(m_dwInputID, &dwStatus);
 				if (MFT_INPUT_STATUS_ACCEPT_DATA != dwStatus)
@@ -326,9 +358,8 @@ namespace TinyUI
 				hRes = m_decoder->ProcessInput(m_dwInputID, m_inputSample, 0);
 				if (hRes != S_OK)
 					return FALSE;
-				return GetOutputSample(size * 2);
 			}
-			return FALSE;
+			return GetOutputSample(size * 2);
 		}
 		BOOL TinyMFDecode::Close()
 		{

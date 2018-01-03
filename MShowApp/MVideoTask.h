@@ -22,7 +22,7 @@ namespace MShow
 	private:
 		FILE*						m_hFile;
 		BOOL						m_bBreak;
-		x264Decode					m_x264;
+		x264Decoder					m_x264;
 		MClock&						m_clock;
 		MFLVTask&					m_task;
 		MPacketAllocQueue			m_videoQueue;

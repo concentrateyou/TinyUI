@@ -92,6 +92,19 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	HRESULT hRes = OleInitialize(NULL);
 	LoadSeDebugPrivilege();
 
+	FILE* hFile = NULL;
+	fopen_s(&hFile, "D:\\test.264", "rb");
+	fseek(hFile, 0, SEEK_END);
+	fpos_t size;
+	fgetpos(hFile, &size);
+	fseek(hFile, 0, SEEK_SET);
+	TinyScopedArray<BYTE> bits(new BYTE[size]);
+	fread(bits, size, 1, hFile);
+	TinyMFIntelQSVDecode decoder;
+	decoder.Open({ 1280,720 }, 25, BindCallback(&OnData));
+	decoder.Decode(bits,size);
+	fclose(hFile);
+
 	/*TinyVisualResource::GetInstance().Load("skin\\resource.xml");
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));

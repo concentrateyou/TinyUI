@@ -614,7 +614,7 @@ namespace MShow
 		client.SetTimeout(3000);
 		client.GetRequest().SetVerbs(TinyHTTPClient::GET);
 		client.GetRequest().Add("Authorization", "Basic ZGFvYm90YWk6ZGFvYm90YWkxMjM=");
-		string address = StringPrintf("http://%s:8001/querycommentaryPURL?PID=%s&ID=%s", MShow::MShowApp::GetInstance().AppConfig().GetDispatch().c_str(), m_szProgramID.c_str(), m_szSourceID.c_str());
+		string address = StringPrintf("http://%s/querycommentaryPURL?PID=%s&ID=%s", MShow::MShowApp::GetInstance().AppConfig().GetDispatch().c_str(), m_szProgramID.c_str(), m_szSourceID.c_str());
 		if (!client.Open(address))
 		{
 			LOG(ERROR) << "[MClientController] " << "Open " << address << " " << client.GetResponse().GetGetStatusMsg();

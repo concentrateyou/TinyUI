@@ -1,6 +1,7 @@
 #pragma once
 #include "TinyMedia.h"
 #include "TinyWave.h"
+#include "TinyMFAsyncCallback.h"
 
 namespace TinyUI
 {
@@ -9,7 +10,7 @@ namespace TinyUI
 		/// <summary>
 		/// MFT½âÂë
 		/// </summary>
-		class TinyMFDecode
+		class TinyMFDecode : public TinyMFAsyncCallback
 		{
 			DISALLOW_COPY_AND_ASSIGN(TinyMFDecode)
 		public:
@@ -35,10 +36,10 @@ namespace TinyUI
 			BOOL								m_bIsAsync;
 			DWORD								m_dwInputID;
 			DWORD								m_dwOutputID;
+			MFSampleQueue						m_sampleQueue;
 			TinyComPtr<IMFSample>				m_inputSample;
 			TinyComPtr<IMFSample>				m_outputSample;
 			TinyComPtr<IMFMediaEvent>			m_mediaEvent;
-			TinyComPtr<IMFMediaEventGenerator>	m_eventGenerator;
 			Callback<void(BYTE*, LONG, LPVOID)>	m_callback;
 		};
 	};

@@ -25,7 +25,7 @@ namespace MShow
 		void OnASC(BYTE* bits, LONG size, WORD wBitsPerSample, BOOL& bRes);
 	private:
 		BOOL						m_bBreak;
-		AACDecode					m_aac;
+		AACDecoder					m_aac;
 		MClock&						m_clock;
 		MFLVTask&					m_task;
 		MPacketAllocQueue			m_audioQueue;

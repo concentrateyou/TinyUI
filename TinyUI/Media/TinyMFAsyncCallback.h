@@ -22,11 +22,11 @@ namespace TinyUI
 			HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject) OVERRIDE;
 			ULONG STDMETHODCALLTYPE AddRef(void) OVERRIDE;
 			ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
-		private:
-			LONG								m_iCount;
-			LONG								m_oCount;
+		protected:
+			LONG								m_inputs;
+			LONG								m_outputs;
 			IMFTransform*						m_pMFT;
-			TinyComPtr<IMFMediaEventGenerator>	m_event;
+			TinyComPtr<IMFMediaEventGenerator>	m_eventGenerator;
 		};
 	};
 }

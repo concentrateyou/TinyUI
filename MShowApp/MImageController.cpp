@@ -61,9 +61,10 @@ namespace MShow
 			queue.Unregister(m_handle);
 			m_handle = NULL;
 		}
-		DWORD deDelay = m_image.GetCount() > 1 ? m_image.GetDelay(m_index) : 40;
+		return FALSE;
+		/*DWORD deDelay = m_image.GetCount() > 1 ? m_image.GetDelay(m_index) : 40;
 		m_handle = queue.Register(&MImageController::TimerCallback, this, deDelay, deDelay, WT_EXECUTEINTIMERTHREAD);
-		return m_handle != NULL;
+		return m_handle != NULL;*/
 	_ERROR:
 		m_image2D.Destory();
 		return FALSE;
@@ -182,7 +183,7 @@ namespace MShow
 		MImageController* pThis = reinterpret_cast<MImageController*>(lpParameter);
 		if (pThis && val)
 		{
-			INT count = pThis->m_image.GetCount();
+			/*INT count = pThis->m_image.GetCount();
 			if (count > 1)
 			{
 				TinyApplication::GetInstance()->GetTimers().Change(pThis->m_handle, pThis->m_image.GetDelay(pThis->m_index), pThis->m_image.GetDelay(pThis->m_index));
@@ -196,7 +197,7 @@ namespace MShow
 				BYTE* bits = pThis->m_image.GetBits(0);
 				TinySize size = pThis->m_image.GetSize();
 				pThis->OnImage(bits, size.cx * size.cy * 4);
-			}
+			}*/
 		}
 	}
 

@@ -98,6 +98,7 @@ namespace TinyUI
 		}
 		BOOL WINAPI IsAsyncMFT(IMFTransform *pMFT, BOOL& bIsAsync);
 		BOOL WINAPI UnlockAsyncMFT(IMFTransform *pMFT);
+		IMFSample* WINAPI DuplicateSample(IMFSample* sapmle);
 
 		class TinyScopedAvrt
 		{
@@ -164,6 +165,27 @@ namespace TinyUI
 			DWORD					m_dwSize;
 			DWORD					m_dwMaxSize;
 		};
+		//////////////////////////////////////////////////////////////////////////
+		class MFSampleQueue : public TinyReference<MFSampleQueue>, public IUnknown
+		{
+			class TinyNode;
+		public:
+			MFSampleQueue();
+			virtual ~MFSampleQueue();
+		public:
+			HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject) OVERRIDE;
+			ULONG STDMETHODCALLTYPE AddRef(void) OVERRIDE;
+			ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
+			BOOL	Push(IMFSample*  pSample);
+			BOOL	Pop(IMFSample**  pSample);
+			void	Clear(void);
+			BOOL    IsEmpty(void);
+			DWORD	GetSize();
+		private:
+			TinyLock					m_lock;
+			TinyLinkList<IMFSample*>	m_list;
+		};
+
 		BOOL WINAPI GetAudioOutputType(REFCLSID clsid, IMFMediaType* inputType, const WAVEFORMATEX* pMFT, IMFMediaType** mediaType);
 
 		typedef struct tagMediaTag

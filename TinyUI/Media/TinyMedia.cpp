@@ -229,7 +229,63 @@ namespace TinyUI
 				hRes = attributes->SetUINT32(MF_TRANSFORM_ASYNC_UNLOCK, TRUE);
 			}
 			return SUCCEEDED(hRes);
-
+		}
+		IMFSample* WINAPI DuplicateSample(IMFSample* sapmle)
+		{
+			DWORD size1 = 0;
+			DWORD size2 = 0;
+			BYTE* bits1 = NULL;
+			BYTE* bits2 = NULL;
+			LONGLONG hnsSampleTime = 0;
+			LONGLONG hnsSampleDuration = 0;
+			IMFSample* duplicate = NULL;
+			TinyComPtr<IMFMediaBuffer> buffer1;
+			HRESULT hRes = sapmle->GetBufferByIndex(0, &buffer1);
+			if (hRes != S_OK)
+				return NULL;
+			hRes = buffer1->GetCurrentLength(&size1);
+			if (hRes != S_OK)
+				return NULL;
+			TinyComPtr<IMFMediaBuffer> buffer2;
+			hRes = MFCreateMemoryBuffer(size1, &buffer2);
+			if (hRes != S_OK)
+				return NULL;
+			hRes = buffer2->Lock(&bits2, NULL, NULL);
+			if (hRes == S_OK)
+			{
+				hRes = buffer1->Lock(&bits1, NULL, NULL);
+				if (hRes != S_OK)
+				{
+					buffer2->Unlock();
+				}
+				else
+				{
+					memcpy(bits2, bits1, size1);
+					buffer1->Unlock();
+				}
+			}
+			hRes = buffer2->SetCurrentLength(size1);
+			if (hRes != S_OK)
+				return NULL;
+			hRes = MFCreateSample(&duplicate);
+			if (hRes != S_OK)
+				return NULL;
+			hRes = duplicate->AddBuffer(buffer2);
+			if (hRes != S_OK)
+				return NULL;
+			hRes = sapmle->GetSampleTime(&hnsSampleTime);
+			if (hRes != S_OK)
+				return NULL;
+			hRes = duplicate->SetSampleTime(hnsSampleTime);
+			if (hRes != S_OK)
+				return NULL;
+			hRes = sapmle->GetSampleDuration(&hnsSampleDuration);
+			if (hRes != S_OK)
+				return NULL;
+			hRes = duplicate->SetSampleDuration(hnsSampleDuration);
+			if (hRes != S_OK)
+				return NULL;
+			return duplicate;
 		}
 		//////////////////////////////////////////////////////////////////////////
 		BOOL WINAPI GetAudioOutputType(REFCLSID clsid, IMFMediaType* inputType, const WAVEFORMATEX* pMFT, IMFMediaType** ppMediaType)
@@ -285,6 +341,80 @@ namespace TinyUI
 				}
 			} while (0);
 			return FALSE;
+		}
+		//////////////////////////////////////////////////////////////////////////
+		MFSampleQueue::MFSampleQueue()
+		{
+
+		}
+		MFSampleQueue::~MFSampleQueue()
+		{
+
+		}
+		HRESULT STDMETHODCALLTYPE MFSampleQueue::QueryInterface(REFIID riid, void **ppvObject)
+		{
+			if (IsEqualIID(riid, __uuidof(IUnknown)) || IsEqualIID(riid, IID_IUnknown))
+			{
+				*ppvObject = static_cast<IUnknown*>(this);
+			}
+			else
+			{
+				*ppvObject = NULL;
+				return E_NOINTERFACE;
+			}
+			AddRef();
+			return NOERROR;
+		}
+		ULONG STDMETHODCALLTYPE MFSampleQueue::AddRef(void)
+		{
+			TinyReference < MFSampleQueue >::AddRef();
+			return TinyReference < MFSampleQueue >::GetReference();
+		}
+		ULONG STDMETHODCALLTYPE MFSampleQueue::Release(void)
+		{
+			TinyReference < MFSampleQueue >::Release();
+			return TinyReference < MFSampleQueue >::GetReference();
+		}
+		BOOL MFSampleQueue::Push(IMFSample*  sample)
+		{
+			TinyAutoLock lock(m_lock);
+			if (!sample)
+				return FALSE;
+			sample->AddRef();
+			return m_list.InsertLast(sample) != NULL;
+		}
+		BOOL MFSampleQueue::Pop(IMFSample** ps)
+		{
+			TinyAutoLock lock(m_lock);
+			ITERATOR pos = m_list.First();
+			if (pos != NULL)
+			{
+				IMFSample* sample = m_list.GetAt(pos);
+				*ps = sample;
+				return TRUE;
+			}
+			return FALSE;
+		}
+		void MFSampleQueue::Clear(void)
+		{
+			TinyAutoLock lock(m_lock);
+			ITERATOR pos = m_list.First();
+			while (pos != NULL)
+			{
+				IMFSample* sample = m_list.GetAt(pos);
+				sample->Release();
+				pos = m_list.Next(pos);
+			}
+			m_list.RemoveAll();
+		}
+		DWORD MFSampleQueue::GetSize()
+		{
+			return m_list.GetSize();
+		}
+		BOOL    MFSampleQueue::IsEmpty(void)
+		{
+			TinyAutoLock lock(m_lock);
+			return m_list.IsEmpty();
 		}
 	};
 }
