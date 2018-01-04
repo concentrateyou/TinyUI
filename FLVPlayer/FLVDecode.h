@@ -136,8 +136,7 @@ namespace FLVPlayer
 		FLVVideoRender				m_videoRender;
 		FLVVideoTask				m_videoTask;
 		FLVVAudioTask				m_audioTask;
-
-		TinyMFIntelQSVDecode		m_decoder;
+		TinyScopedPtr<TinyMFIntelQSVDecode> m_decoder;
 	};
 }
 

@@ -64,6 +64,7 @@ namespace FLVPlayer
 
 	void FLVDecode::OnMessagePump()
 	{
+		CoInitialize(NULL);
 		SampleTag tag = { 0 };
 		FLV_BLOCK block = { 0 };
 		for (;;)
@@ -119,14 +120,17 @@ namespace FLVPlayer
 				{
 					if (block.video.packetType == FLV_AVCDecoderConfigurationRecord)
 					{
-						CoInitializeEx(NULL, COINIT_MULTITHREADED);
-						BOOL bRes = m_decoder.Open(m_size, 25);
+						if (!m_decoder)
+						{
+							m_decoder.Reset(new TinyMFIntelQSVDecode());
+						}
+						BOOL bRes = m_decoder->Open(m_size, 25);
 						BYTE* bo = NULL;
 						DWORD so = 0;
 						SampleTag sampleTag;
 						sampleTag.bits = block.video.data;
 						sampleTag.size = block.video.size;
-						bRes = m_decoder.Decode(sampleTag, bo, so);
+						bRes = m_decoder->Decode(sampleTag, bo, so);
 						if (!m_x264->Initialize(m_size, m_size))
 						{
 							goto _ERROR;
@@ -158,7 +162,7 @@ namespace FLVPlayer
 						tag.samplePTS = block.pts;
 						BYTE* bo = NULL;
 						DWORD so = 0;
-						BOOL bRes = m_decoder.Decode(tag, bo, so);
+						BOOL bRes = m_decoder->Decode(tag, bo, so);
 						m_videoQueue.Push(tag);
 					}
 				}
@@ -167,6 +171,7 @@ namespace FLVPlayer
 	_ERROR:
 		SAFE_DELETE_ARRAY(block.audio.data);
 		SAFE_DELETE_ARRAY(block.video.data);
+		CoUninitialize();
 	}
 
 	//////////////////////////////////////////////////////////////////////////

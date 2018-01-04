@@ -474,10 +474,13 @@ namespace TinyUI
 			INT offset = m_networkIO->offset();
 			for (;;)
 			{
-				iRes = m_networkIO->RemainingCapacity();
-				if (iRes == 0)
+				iRes = m_networkIO->receive() - m_networkIO->offset();
+				if (iRes <= 0)
 				{
-					m_networkIO->SetCapacity(m_networkIO->capacity() + DEFALUT_HTTP_HEADER_INITIAL_SIZE);
+					if (m_networkIO->RemainingCapacity() <= 0)
+					{
+						m_networkIO->SetCapacity(m_networkIO->capacity() + DEFALUT_HTTP_HEADER_INITIAL_SIZE);
+					}
 					iRes = m_client.ReadSome(m_networkIO->data(), m_networkIO->RemainingCapacity());
 					if (iRes == SOCKET_ERROR)
 						return FALSE;

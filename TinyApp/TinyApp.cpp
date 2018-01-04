@@ -88,23 +88,42 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadSeDebugPrivilege();
 	CoInitialize(NULL);
 
-	FILE* hFile = NULL;
+
+	//http://10.77.44.136:8001/querycommentaryPURL?PID=6714441623&ID=957
+	TinyHTTPClient client;
+	client.SetTimeout(3000);
+	client.GetRequest().SetVerbs(TinyHTTPClient::GET);
+	client.GetRequest().Add("Authorization", "Basic ZGFvYm90YWk6ZGFvYm90YWkxMjM=");
+	string address = "http://10.77.44.136:8001/querycommentaryPURL?PID=6714441623&ID=957";
+	if (!client.Open(address))
+	{
+		LOG(ERROR) << "[MClientController] " << "Open " << address << " " << client.GetResponse().GetGetStatusMsg();
+	}
+	string context;
+	if (!client.GetResponse().ReadAsString(context))
+	{
+		LOG(ERROR) << "[MClientController] " << "Read Json Fail";
+	}
+
+	/*FILE* hFile = NULL;
 	fopen_s(&hFile, "D:\\test.264", "rb");
-	fseek(hFile, 0, SEEK_END);
-	fpos_t size;
-	fgetpos(hFile, &size);
-	fseek(hFile, 0, SEEK_SET);
-	TinyScopedArray<BYTE> bits(new BYTE[size]);
-	fread(bits, size, 1, hFile);
 	TinyMFIntelQSVDecode decoder;
 	decoder.Open({ 1280,720 }, 25);
-	BYTE* bo = NULL;
-	DWORD so = 0;
-	SampleTag tag = { 0 };
-	tag.bits = bits;
-	tag.size = size;
-	decoder.Decode(tag, bo, so);
-	fclose(hFile);
+	INT pos = 0;
+	TinyScopedArray<BYTE> bits(new BYTE[1024 * 64]);
+	for (;;)
+	{
+		size_t count = fread(bits, 1, 1024 * 64, hFile);
+		if(count == 0)
+			break;
+		BYTE* bo = NULL;
+		DWORD so = 0;
+		SampleTag tag = { 0 };
+		tag.bits = bits;
+		tag.size = count;
+		decoder.Decode(tag, bo, so);
+	}
+	fclose(hFile);*/
 
 	CoUninitialize();
 

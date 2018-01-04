@@ -39,7 +39,7 @@ namespace TinyUI
 		HRESULT STDMETHODCALLTYPE TinyMFAsyncCallback::Invoke(__RPC__in_opt IMFAsyncResult *pAsyncResult)
 		{
 			HRESULT hRes = S_OK;
-			HRESULT hrStatus = S_OK;
+			HRESULT hStatus = S_OK;
 			MediaEventType eventType = MEUnknown;
 			IMFMediaEvent* pMFEvent = NULL;
 			if (m_eventGenerator != NULL)
@@ -50,10 +50,10 @@ namespace TinyUI
 				hRes = pMFEvent->GetType(&eventType);
 				if (hRes != S_OK)
 					goto _ERROR;
-				hRes = pMFEvent->GetStatus(&hrStatus);
+				hRes = pMFEvent->GetStatus(&hStatus);
 				if (hRes != S_OK)
 					goto _ERROR;
-				if (SUCCEEDED(hrStatus))
+				if (SUCCEEDED(hStatus))
 				{
 					switch (eventType)
 					{
