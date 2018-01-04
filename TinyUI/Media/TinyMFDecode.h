@@ -34,6 +34,7 @@ namespace TinyUI
 			DWORD							m_dwInputID;
 			DWORD							m_dwOutputID;
 			DWORD							m_dwSize;
+			TinyLinkList<IMFSample*>		m_samples;
 			TinyScopedArray<BYTE>			m_bits;
 			TinyComPtr<IMFSample>			m_inputSample;
 			TinyComPtr<IMFSample>			m_outputSample;

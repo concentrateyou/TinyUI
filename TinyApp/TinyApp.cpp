@@ -88,24 +88,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadSeDebugPrivilege();
 	CoInitialize(NULL);
 
-
-	//http://10.77.44.136:8001/querycommentaryPURL?PID=6714441623&ID=957
-	TinyHTTPClient client;
-	client.SetTimeout(3000);
-	client.GetRequest().SetVerbs(TinyHTTPClient::GET);
-	client.GetRequest().Add("Authorization", "Basic ZGFvYm90YWk6ZGFvYm90YWkxMjM=");
-	string address = "http://10.77.44.136:8001/querycommentaryPURL?PID=6714441623&ID=957";
-	if (!client.Open(address))
-	{
-		LOG(ERROR) << "[MClientController] " << "Open " << address << " " << client.GetResponse().GetGetStatusMsg();
-	}
-	string context;
-	if (!client.GetResponse().ReadAsString(context))
-	{
-		LOG(ERROR) << "[MClientController] " << "Read Json Fail";
-	}
-
-	/*FILE* hFile = NULL;
+	FILE* hFile = NULL;
 	fopen_s(&hFile, "D:\\test.264", "rb");
 	TinyMFIntelQSVDecode decoder;
 	decoder.Open({ 1280,720 }, 25);
@@ -114,7 +97,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	for (;;)
 	{
 		size_t count = fread(bits, 1, 1024 * 64, hFile);
-		if(count == 0)
+		if (count == 0)
 			break;
 		BYTE* bo = NULL;
 		DWORD so = 0;
@@ -123,7 +106,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 		tag.size = count;
 		decoder.Decode(tag, bo, so);
 	}
-	fclose(hFile);*/
+	fclose(hFile);
 
 	CoUninitialize();
 
