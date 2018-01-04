@@ -63,18 +63,19 @@ BOOL MediaTest::AACToWave(const string& aacFile, const string& waveFile)
 	waveFormat.nAvgBytesPerSec = waveFormat.nSamplesPerSec * waveFormat.nBlockAlign;
 	if (!m_waveFile.Create((LPTSTR)&waveFile[0], &waveFormat))
 		return FALSE;
-	if (!aacdecode.Open(&waveFormat, 192000,TRUE, BindCallback(&MediaTest::OnAACDecode, this)))
-		return FALSE;
+	/*if (!aacdecode.Open(&waveFormat, 192000,TRUE, BindCallback(&MediaTest::OnAACDecode, this)))
+		return FALSE;*/
 
 	BYTE data[1024 * 4];
 	LONG dwNumberOfBytesRead = 0;
 	do
 	{
 		dwNumberOfBytesRead = m_aacFile.Read(data, 1024 * 4);
-		if (!aacdecode.Decode(data, dwNumberOfBytesRead))
+		SampleTag tag = { 0 };
+		/*if (!aacdecode.Decode(data, dwNumberOfBytesRead))
 		{
 			INT a = 0;
-		}
+		}*/
 	} while (dwNumberOfBytesRead > 0);
 
 	aacdecode.Close();

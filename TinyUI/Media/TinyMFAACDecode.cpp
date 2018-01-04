@@ -31,7 +31,7 @@ namespace TinyUI
 
 		}
 
-		BOOL TinyMFAACDecode::Open(const WAVEFORMATEX* pFMT, DWORD dwBitRate, BOOL bADTS, Callback<void(BYTE*, LONG, LPVOID)>&& callback)
+		BOOL TinyMFAACDecode::Open(const WAVEFORMATEX* pFMT, DWORD dwBitRate, BOOL bADTS)
 		{
 			HRESULT hRes = S_OK;
 			TinyComPtr<IMFMediaType> inputType;
@@ -83,7 +83,7 @@ namespace TinyUI
 			hRes = MFInitMediaTypeFromWaveFormatEx(outputType, pFMT, sizeof(WAVEFORMATEX) + pFMT->cbSize);
 			if (hRes != S_OK)
 				return FALSE;
-			return TinyMFDecode::Open(CLSID_CMSAACDecMFT, inputType, outputType, std::move(callback));
+			return TinyMFDecode::Open(CLSID_CMSAACDecMFT, inputType, outputType);
 		}
 	};
 }

@@ -145,7 +145,7 @@ LRESULT ChatFrame::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHand
 	//BOOL bRes = m_graphics2D.Initialize(m_hWND, s.Size());
 	//bRes = m_image2D.Load(m_graphics2D.GetDX9(), "D:\\image.jpg");
 	//m_task.Submit(BindCallback(&ChatFrame::OnMessagePump, this));
-	m_qsv.Open(TinySize(1280, 720), 30, BindCallback(&ChatFrame::OnData, this));
+	m_qsv.Open(TinySize(1280, 720), 30);
 	//m_timer.SetCallback(1000, BindCallback(&ChatFrame::OnMessagePump, this));
 	return FALSE;
 }

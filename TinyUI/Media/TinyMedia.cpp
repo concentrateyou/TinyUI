@@ -274,17 +274,19 @@ namespace TinyUI
 			if (hRes != S_OK)
 				return NULL;
 			hRes = sapmle->GetSampleTime(&hnsSampleTime);
-			if (hRes != S_OK)
-				return NULL;
-			hRes = duplicate->SetSampleTime(hnsSampleTime);
-			if (hRes != S_OK)
-				return NULL;
+			if (hRes == S_OK)
+			{
+				hRes = duplicate->SetSampleTime(hnsSampleTime);
+				if (hRes != S_OK)
+					return NULL;
+			}
 			hRes = sapmle->GetSampleDuration(&hnsSampleDuration);
-			if (hRes != S_OK)
-				return NULL;
-			hRes = duplicate->SetSampleDuration(hnsSampleDuration);
-			if (hRes != S_OK)
-				return NULL;
+			if (hRes == S_OK)
+			{
+				hRes = duplicate->SetSampleDuration(hnsSampleDuration);
+				if (hRes != S_OK)
+					return NULL;
+			}
 			return duplicate;
 		}
 		//////////////////////////////////////////////////////////////////////////

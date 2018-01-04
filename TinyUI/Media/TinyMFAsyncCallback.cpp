@@ -63,6 +63,13 @@ namespace TinyUI
 					case METransformHaveOutput:
 						InterlockedIncrement(&m_outputs);
 						break;
+					case METransformDrainComplete:
+					{
+						hRes = m_pMFT->ProcessMessage(MFT_MESSAGE_COMMAND_FLUSH, 0);
+						if (hRes != S_OK)
+							goto _ERROR;
+					}
+					break;
 					}
 				}
 				hRes = m_eventGenerator->BeginGetEvent(this, NULL);

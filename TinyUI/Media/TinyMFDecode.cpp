@@ -10,7 +10,8 @@ namespace TinyUI
 		TinyMFDecode::TinyMFDecode()
 			:m_bIsAsync(FALSE),
 			m_dwInputID(0),
-			m_dwOutputID(0)
+			m_dwOutputID(0),
+			m_dwSize(0)
 		{
 
 		}
@@ -38,6 +39,11 @@ namespace TinyUI
 			hRes = unknow->QueryInterface(IID_PPV_ARGS(&m_decoder));
 			if (hRes != S_OK)
 				return FALSE;
+			//Òì²½ÐèÒªUnlock
+			if (IsAsyncMFT(m_decoder, m_bIsAsync) && m_bIsAsync)
+			{
+				UnlockAsyncMFT(m_decoder);
+			}
 			DWORD dwInputStreams = 0;
 			DWORD dwOutputSample = 0;
 			hRes = m_decoder->GetStreamCount(&dwInputStreams, &dwOutputSample);
@@ -48,11 +54,6 @@ namespace TinyUI
 			TinyScopedArray<DWORD> dwInputIDs;
 			TinyScopedArray<DWORD> dwOutputIDs;
 			hRes = m_decoder->GetStreamIDs(dwInputStreams, dwInputIDs, dwOutputSample, dwOutputIDs);
-			if (hRes == MF_E_TRANSFORM_ASYNC_LOCKED)
-			{
-				UnlockAsyncMFT(m_decoder);
-				hRes = m_decoder->GetStreamIDs(dwInputStreams, dwInputIDs, dwOutputSample, dwOutputIDs);
-			}
 			if (hRes == S_OK)
 			{
 				m_dwInputID = dwInputIDs[0];
@@ -61,8 +62,6 @@ namespace TinyUI
 			if (inputType != NULL)
 			{
 				hRes = m_decoder->SetInputType(m_dwInputID, inputType, 0);
-				if (hRes != S_OK)
-					return FALSE;
 				if (hRes != S_OK)
 					return FALSE;
 				if (outputType == NULL)
@@ -111,17 +110,10 @@ namespace TinyUI
 					}
 				}
 			}
-			hRes = m_decoder->GetInputStreamInfo(m_dwInputID, &m_inputInfo);
-			if (hRes != S_OK)
-				return FALSE;
-			hRes = m_decoder->GetOutputStreamInfo(m_dwOutputID, &m_outputInfo);
-			if (hRes != S_OK)
-				return FALSE;
 			return TRUE;
 		}
-		BOOL TinyMFDecode::Open(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType, Callback<void(BYTE*, LONG, LPVOID)>&& callback)
+		BOOL TinyMFDecode::Open(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType)
 		{
-			m_callback = std::move(callback);
 			if (!Create(clsID, inputType, outputType))
 				return FALSE;
 			HRESULT hRes = S_OK;
@@ -141,24 +133,27 @@ namespace TinyUI
 			}
 			return TRUE;
 		}
-		BOOL TinyMFDecode::CreateInputSample(const BYTE* bits, DWORD dwSize)
+		BOOL TinyMFDecode::CreateInputSample(const BYTE* bits, DWORD cbSize)
 		{
-			HRESULT hRes = S_OK;
+			MFT_INPUT_STREAM_INFO isi = { 0 };
+			HRESULT hRes = m_decoder->GetInputStreamInfo(m_dwInputID, &isi);
+			if (hRes != S_OK)
+				return FALSE;
 			TinyComPtr<IMFMediaBuffer> buffer;
 			if (!m_inputSample)
 			{
 				hRes = MFCreateSample(&m_inputSample);
 				if (hRes != S_OK)
 					return FALSE;
-				if (m_inputInfo.cbAlignment > 0)
+				if (isi.cbAlignment > 0)
 				{
-					hRes = MFCreateAlignedMemoryBuffer(std::max<DWORD>(m_inputInfo.cbSize, dwSize), m_inputInfo.cbAlignment - 1, &buffer);
+					hRes = MFCreateAlignedMemoryBuffer(std::max<DWORD>(isi.cbSize, cbSize), isi.cbAlignment - 1, &buffer);
 					if (hRes != S_OK)
 						return FALSE;
 				}
 				else
 				{
-					hRes = MFCreateMemoryBuffer(std::max<DWORD>(m_inputInfo.cbSize, dwSize), &buffer);
+					hRes = MFCreateMemoryBuffer(std::max<DWORD>(isi.cbSize, cbSize), &buffer);
 					if (hRes != S_OK)
 						return FALSE;
 				}
@@ -173,20 +168,20 @@ namespace TinyUI
 			hRes = buffer->GetMaxLength(&dwMax);
 			if (hRes != S_OK)
 				return FALSE;
-			if (dwMax < dwSize)
+			if (dwMax < cbSize)
 			{
 				hRes = m_inputSample->RemoveAllBuffers();
 				if (hRes != S_OK)
 					return FALSE;
-				if (m_inputInfo.cbAlignment > 0)
+				if (isi.cbAlignment > 0)
 				{
-					hRes = MFCreateAlignedMemoryBuffer(std::max<DWORD>(m_inputInfo.cbSize, dwSize), m_inputInfo.cbAlignment - 1, &buffer);
+					hRes = MFCreateAlignedMemoryBuffer(std::max<DWORD>(isi.cbSize, cbSize), isi.cbAlignment - 1, &buffer);
 					if (hRes != S_OK)
 						return FALSE;
 				}
 				else
 				{
-					hRes = MFCreateMemoryBuffer(std::max<DWORD>(m_inputInfo.cbSize, dwSize), &buffer);
+					hRes = MFCreateMemoryBuffer(std::max<DWORD>(isi.cbSize, cbSize), &buffer);
 					if (hRes != S_OK)
 						return FALSE;
 				}
@@ -198,33 +193,36 @@ namespace TinyUI
 			hRes = buffer->Lock(&ps, NULL, NULL);
 			if (hRes != S_OK)
 				return FALSE;
-			memcpy(ps, bits, dwSize);
+			memcpy(ps, bits, cbSize);
 			hRes = buffer->Unlock();
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = buffer->SetCurrentLength(dwSize);
+			hRes = buffer->SetCurrentLength(cbSize);
 			if (hRes != S_OK)
 				return FALSE;
 			return TRUE;
 		}
-		BOOL TinyMFDecode::CreateOutputSample(DWORD dwSize)
+		BOOL TinyMFDecode::CreateOutputSample(DWORD cbSize)
 		{
-			HRESULT hRes = S_OK;
+			MFT_OUTPUT_STREAM_INFO osi = { 0 };
+			HRESULT hRes = m_decoder->GetOutputStreamInfo(m_dwOutputID, &osi);
+			if (hRes != S_OK)
+				return FALSE;
 			TinyComPtr<IMFMediaBuffer> buffer;
 			if (!m_outputSample)
 			{
 				hRes = MFCreateSample(&m_outputSample);
 				if (hRes != S_OK)
 					return FALSE;
-				if (m_outputInfo.cbAlignment > 0)
+				if (osi.cbAlignment > 0)
 				{
-					hRes = MFCreateAlignedMemoryBuffer(std::max<DWORD>(m_outputInfo.cbSize, dwSize), m_outputInfo.cbAlignment - 1, &buffer);
+					hRes = MFCreateAlignedMemoryBuffer(std::max<DWORD>(osi.cbSize, cbSize), osi.cbAlignment - 1, &buffer);
 					if (hRes != S_OK)
 						return FALSE;
 				}
 				else
 				{
-					hRes = MFCreateMemoryBuffer(std::max<DWORD>(m_outputInfo.cbSize, dwSize), &buffer);
+					hRes = MFCreateMemoryBuffer(std::max<DWORD>(osi.cbSize, cbSize), &buffer);
 					if (hRes != S_OK)
 						return FALSE;
 				}
@@ -239,20 +237,20 @@ namespace TinyUI
 			hRes = buffer->GetMaxLength(&dwMax);
 			if (hRes != S_OK)
 				return FALSE;
-			if (dwMax < dwSize)
+			if (dwMax < cbSize)
 			{
 				hRes = m_outputSample->RemoveAllBuffers();
 				if (hRes != S_OK)
 					return FALSE;
-				if (m_outputInfo.cbAlignment > 0)
+				if (osi.cbAlignment > 0)
 				{
-					hRes = MFCreateAlignedMemoryBuffer(std::max<DWORD>(m_outputInfo.cbSize, dwSize), m_outputInfo.cbAlignment - 1, &buffer);
+					hRes = MFCreateAlignedMemoryBuffer(std::max<DWORD>(osi.cbSize, cbSize), osi.cbAlignment - 1, &buffer);
 					if (hRes != S_OK)
 						return FALSE;
 				}
 				else
 				{
-					hRes = MFCreateMemoryBuffer(std::max<DWORD>(m_outputInfo.cbSize, dwSize), &buffer);
+					hRes = MFCreateMemoryBuffer(std::max<DWORD>(osi.cbSize, cbSize), &buffer);
 					if (hRes != S_OK)
 						return FALSE;
 				}
@@ -262,27 +260,25 @@ namespace TinyUI
 			}
 			return TRUE;
 		}
-		BOOL TinyMFDecode::GetOutputSample(DWORD dwSize)
+		BOOL TinyMFDecode::GetOutputSample(BYTE*& bo, DWORD& so)
 		{
 			ASSERT(m_decoder);
+			MFT_OUTPUT_STREAM_INFO osi = { 0 };
+			HRESULT hRes = m_decoder->GetOutputStreamInfo(m_dwOutputID, &osi);
+			if (hRes != S_OK)
+				return FALSE;
 			for (;;)
 			{
-				if (m_bIsAsync)
-				{
-					if (m_outputs == 0)
-						return TRUE;
-					InterlockedDecrement(&m_outputs);
-				}
 				DWORD dwFlags = 0;
-				HRESULT hRes = m_decoder->GetOutputStatus(&dwFlags);
+				hRes = m_decoder->GetOutputStatus(&dwFlags);
 				if (hRes != S_OK)
 					return FALSE;
 				if (dwFlags != MFT_OUTPUT_STATUS_SAMPLE_READY)
 					break;
 				MFT_OUTPUT_DATA_BUFFER samples = { 0 };
-				if (!(m_outputInfo.dwFlags & (MFT_OUTPUT_STREAM_PROVIDES_SAMPLES | MFT_OUTPUT_STREAM_CAN_PROVIDE_SAMPLES)))
+				if (!(osi.dwFlags & (MFT_OUTPUT_STREAM_PROVIDES_SAMPLES | MFT_OUTPUT_STREAM_CAN_PROVIDE_SAMPLES)))
 				{
-					if (!CreateOutputSample(dwSize))
+					if (!CreateOutputSample(osi.cbSize))
 						return FALSE;
 					samples.pSample = m_outputSample;
 				}
@@ -298,74 +294,37 @@ namespace TinyUI
 				hRes = samples.pSample->ConvertToContiguousBuffer(&buffer);
 				if (hRes != S_OK)
 					return FALSE;
-				DWORD dwCurrentSize = 0;
-				hRes = buffer->GetCurrentLength(&dwCurrentSize);
+				hRes = buffer->GetCurrentLength(&so);
 				if (hRes != S_OK)
 					return FALSE;
 				BYTE* pBuffer = NULL;
 				hRes = buffer->Lock(&pBuffer, NULL, NULL);
 				if (hRes != S_OK)
 					return FALSE;
-				OnDataAvailable(pBuffer, dwCurrentSize, this);
+				if (so > m_dwSize)
+				{
+					m_bits.Reset(new BYTE[so]);
+					m_dwSize = so;
+				}
+				memcpy_s(m_bits, so, pBuffer, so);
 				hRes = buffer->Unlock();
 				if (hRes != S_OK)
 					return FALSE;
 			}
 			return TRUE;
 		}
-		BOOL TinyMFDecode::Decode(const BYTE* bits, DWORD size)
+		BOOL TinyMFDecode::Decode(SampleTag& tag, BYTE*& bo, DWORD& so)
 		{
-			if (!CreateInputSample(bits, size))
+			if (!CreateInputSample(tag.bits, tag.size))
 				return FALSE;
-			if (m_bIsAsync)
-			{
-				if (m_inputs == 1 && m_sampleQueue.IsEmpty())
-				{
-					InterlockedDecrement(&m_inputs);
-					HRESULT hRes = m_decoder->ProcessInput(m_dwInputID, m_inputSample, 0);
-					if (hRes != S_OK)
-						return FALSE;
-					goto _LABEL1;
-				}
-				if (m_sampleQueue.GetSize() > 60)
-				{
-					m_sampleQueue.Clear();
-					return FALSE;
-				}
-				IMFSample* sample = DuplicateSample(m_inputSample);
-				if (sample != NULL)
-				{
-					m_sampleQueue.Push(sample);
-					while (m_inputs > 0)
-					{
-						if (m_sampleQueue.IsEmpty())
-						{
-							break;
-						}
-						TinyComPtr<IMFSample> samplePop;
-						if (m_sampleQueue.Pop(&samplePop))
-						{
-							InterlockedDecrement(&m_inputs);
-							HRESULT hRes = m_decoder->ProcessInput(m_dwInputID, m_inputSample, 0);
-							if (hRes != S_OK)
-								return FALSE;
-							goto _LABEL1;
-						}
-					}
-				}
-			}
-			else
-			{
-				DWORD dwStatus = 0;
-				HRESULT hRes = m_decoder->GetInputStatus(m_dwInputID, &dwStatus);
-				if (MFT_INPUT_STATUS_ACCEPT_DATA != dwStatus)
-					return TRUE;
-				hRes = m_decoder->ProcessInput(m_dwInputID, m_inputSample, 0);
-				if (hRes != S_OK)
-					return FALSE;
-			}
-		_LABEL1:
-			return GetOutputSample(size * 2);
+			DWORD dwStatus = 0;
+			HRESULT hRes = m_decoder->GetInputStatus(m_dwInputID, &dwStatus);
+			if (MFT_INPUT_STATUS_ACCEPT_DATA != dwStatus)
+				return TRUE;
+			hRes = m_decoder->ProcessInput(m_dwInputID, m_inputSample, 0);
+			if (hRes != S_OK)
+				return FALSE;
+			return GetOutputSample(bo, so);
 		}
 		BOOL TinyMFDecode::Close()
 		{
@@ -382,13 +341,6 @@ namespace TinyUI
 				return FALSE;
 			m_decoder.Release();
 			return TRUE;
-		}
-		void TinyMFDecode::OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
-		{
-			if (!m_callback.IsNull())
-			{
-				m_callback(bits, size, lpParameter);
-			}
 		}
 	};
 }

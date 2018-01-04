@@ -71,11 +71,6 @@ BOOL LoadSeDebugPrivilege()
 	return TRUE;
 }
 
-void OnData(BYTE* bits, LONG size, LPVOID ps)
-{
-
-}
-
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -102,8 +97,13 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyScopedArray<BYTE> bits(new BYTE[size]);
 	fread(bits, size, 1, hFile);
 	TinyMFIntelQSVDecode decoder;
-	decoder.Open({ 1280,720 }, 25, BindCallback(&OnData));
-	decoder.Decode(bits,size);
+	decoder.Open({ 1280,720 }, 25);
+	BYTE* bo = NULL;
+	DWORD so = 0;
+	SampleTag tag = { 0 };
+	tag.bits = bits;
+	tag.size = size;
+	decoder.Decode(tag, bo, so);
 	fclose(hFile);
 
 	CoUninitialize();

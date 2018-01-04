@@ -14,7 +14,7 @@ namespace TinyUI
 		{
 
 		}
-		BOOL TinyMFH264Decode::Open(Callback<void(BYTE*, LONG, LPVOID)>&& callback)
+		BOOL TinyMFH264Decode::Open()
 		{
 			HRESULT hRes = S_OK;
 			TinyComPtr<IMFMediaType> inputType;
@@ -31,7 +31,7 @@ namespace TinyUI
 			hRes = MFCreateMediaType(&outputType);
 			if (hRes != S_OK)
 				return FALSE;
-			return TinyMFDecode::Open(CLSID_CMSH264DecoderMFT, inputType, outputType, std::move(callback));
+			return TinyMFDecode::Open(CLSID_CMSH264DecoderMFT, inputType, outputType);
 		}
 	};
 }

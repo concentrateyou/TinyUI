@@ -15,7 +15,7 @@ namespace TinyUI
 			TinyMFH264Decode();
 			virtual ~TinyMFH264Decode();
 		public:
-			BOOL Open(Callback<void(BYTE*, LONG, LPVOID)>&& callback);
+			BOOL Open();
 		};
 	};
 }

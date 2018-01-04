@@ -120,8 +120,13 @@ namespace FLVPlayer
 					if (block.video.packetType == FLV_AVCDecoderConfigurationRecord)
 					{
 						CoInitializeEx(NULL, COINIT_MULTITHREADED);
-						m_decoder.Open(m_size, 25, BindCallback(&FLVDecode::OnData, this));
-						BOOL bRes = m_decoder.Decode(block.video.data, block.video.size);
+						BOOL bRes = m_decoder.Open(m_size, 25);
+						BYTE* bo = NULL;
+						DWORD so = 0;
+						SampleTag sampleTag;
+						sampleTag.bits = block.video.data;
+						sampleTag.size = block.video.size;
+						bRes = m_decoder.Decode(sampleTag, bo, so);
 						if (!m_x264->Initialize(m_size, m_size))
 						{
 							goto _ERROR;
@@ -151,6 +156,9 @@ namespace FLVPlayer
 						memcpy_s(tag.bits, tag.size, block.video.data, block.video.size);
 						tag.sampleDTS = block.dts;
 						tag.samplePTS = block.pts;
+						BYTE* bo = NULL;
+						DWORD so = 0;
+						BOOL bRes = m_decoder.Decode(tag, bo, so);
 						m_videoQueue.Push(tag);
 					}
 				}
