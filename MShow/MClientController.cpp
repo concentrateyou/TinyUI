@@ -1004,6 +1004,12 @@ namespace MShow
 		{
 			spvis->SetVisible(FALSE);
 		}
+		MAudioDB* audiodb = static_cast<MAudioDB*>(m_view.GetDocument().GetVisualByName("microphoneDB"));
+		if (audiodb != NULL)
+		{
+			audiodb->SetVisible(FALSE);
+			audiodb->SetDB(0);
+		}
 		TinyVisualTextBox* pTextBox = static_cast<TinyVisualTextBox*>(m_view.GetDocument().GetVisualByName("txtName"));
 		if (pTextBox != NULL)
 		{
