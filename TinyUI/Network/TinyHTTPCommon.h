@@ -1,10 +1,12 @@
 #pragma once
 #include "../Common/TinyCommon.h"
 #include "../Common/TinyString.h"
+#include "../IO/TinyIOBuffer.h"
 #include <string>
 #include <memory>
 #include <vector>
 using namespace TinyUI;
+using namespace TinyUI::IO;
 using namespace std;
 
 namespace TinyUI

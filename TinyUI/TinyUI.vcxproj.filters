@@ -531,6 +531,9 @@
     <ClInclude Include="Windowless\TinyVisualLayeredWindow.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
+    <ClInclude Include="IO\TinyIOBuffer.h">
+      <Filter>头文件\IO</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -979,6 +982,9 @@
     </ClCompile>
     <ClCompile Include="Windowless\TinyVisualLayeredWindow.cpp">
       <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\TinyIOBuffer.cpp">
+      <Filter>源文件\IO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

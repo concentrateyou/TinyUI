@@ -88,7 +88,12 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadSeDebugPrivilege();
 	CoInitialize(NULL);
 
-	FILE* hFile = NULL;
+	{
+		TinyScopedPtr<INT,FreeDeleter> data((INT*)malloc(sizeof(INT)));
+		INT a = 0;
+	}
+
+	/*FILE* hFile = NULL;
 	fopen_s(&hFile, "D:\\test.264", "rb");
 	TinyMFIntelQSVDecode decoder;
 	decoder.Open({ 1280,720 }, 25);
@@ -106,7 +111,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 		tag.size = count;
 		decoder.Decode(tag, bo, so);
 	}
-	fclose(hFile);
+	fclose(hFile);*/
 
 	CoUninitialize();
 

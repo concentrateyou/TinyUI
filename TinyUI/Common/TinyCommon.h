@@ -695,10 +695,27 @@ private:\
 	{
 		return _myP;
 	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class T>
+	struct DefaultDeleter
+	{
+		void operator()(T *_Ptr) const _NOEXCEPT
+		{
+			static_assert(0 < sizeof(T), "can't delete an incomplete type");
+			delete _Ptr;
+		}
+	};
+	struct FreeDeleter
+	{
+		void operator()(void* _Ptr) const _NOEXCEPT
+		{
+			free(_Ptr);
+		}
+	};
 	/// <summary>
 	/// 智能指针但不能转让所有权
 	/// </summary>
-	template <class T>
+	template <class T, class Deleter = DefaultDeleter<T>>
 	class TinyScopedPtr
 	{
 		DISALLOW_COPY_AND_ASSIGN(TinyScopedPtr)
@@ -712,52 +729,56 @@ private:\
 		T* operator->() const throw();
 		T* Ptr() const throw();
 	public:
-		T* m_myP;
+		T*		m_myP;
+		Deleter	m_deleter;
 	};
-	template<class T>
-	TinyScopedPtr<T>::TinyScopedPtr(T* ps)
+	template<class T, class Deleter>
+	TinyScopedPtr<T, Deleter>::TinyScopedPtr(T* ps)
 		: m_myP(ps)
 	{
 
 	}
-	template<class T>
-	TinyScopedPtr<T>::~TinyScopedPtr()
+	template<class T, class Deleter>
+	TinyScopedPtr<T, Deleter>::~TinyScopedPtr()
 	{
 		if (m_myP != NULL)
 		{
-			delete m_myP;
+			m_deleter(m_myP);
 			m_myP = NULL;
 		}
 	}
-	template<class T>
-	BOOL TinyScopedPtr<T>::IsEmpty() const throw()
+	template<class T, class Deleter>
+	BOOL TinyScopedPtr<T, Deleter>::IsEmpty() const throw()
 	{
 		return m_myP == NULL;
 	}
-	template<class T>
-	void TinyScopedPtr<T>::Reset(T* ps) throw()
+	template<class T, class Deleter>
+	void TinyScopedPtr<T, Deleter>::Reset(T* ps) throw()
 	{
 		if (ps != m_myP)
-			delete m_myP;
+		{
+			m_deleter(m_myP);
+			m_myP = NULL;
+		}
 		m_myP = ps;
 	}
-	template<class T>
-	T& TinyScopedPtr<T>::operator*() const throw()
+	template<class T, class Deleter>
+	T& TinyScopedPtr<T, Deleter>::operator*() const throw()
 	{
 		return (*m_myP);
 	}
-	template<class T>
-	T* TinyScopedPtr<T>::operator->() const throw()
+	template<class T, class Deleter>
+	T* TinyScopedPtr<T, Deleter>::operator->() const throw()
 	{
 		return m_myP;
 	}
-	template<class T>
-	T* TinyScopedPtr<T>::Ptr() const throw()
+	template<class T, class Deleter>
+	T* TinyScopedPtr<T, Deleter>::Ptr() const throw()
 	{
 		return m_myP;
 	}
-	template<class T>
-	TinyScopedPtr<T>::operator T*() const throw()
+	template<class T, class Deleter>
+	TinyScopedPtr<T, Deleter>::operator T*() const throw()
 	{
 		return m_myP;
 	}

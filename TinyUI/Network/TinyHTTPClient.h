@@ -14,62 +14,7 @@ namespace TinyUI
 #define DEFALUT_HTTP_HEADER_INITIAL_SIZE	4096
 #define DEFALUT_HTTP_HEADER_MAX_SIZE		(4096 * 64)
 
-		struct FreeDeleter
-		{
-			inline void operator()(void* ptr) const
-			{
-				free(ptr);
-			}
-		};
 		class TinyHTTPClient;
-		class IOBuffer : public TinyReference<IOBuffer>
-		{
-		public:
-			IOBuffer();
-			explicit IOBuffer(INT size);
-			CHAR* data() const;
-		protected:
-			friend class TinyReference<IOBuffer>;
-			explicit IOBuffer(CHAR* data);
-			virtual ~IOBuffer();
-			CHAR*	m_data;
-		};
-		class DrainableIOBuffer : public IOBuffer
-		{
-		public:
-			DrainableIOBuffer(IOBuffer* base, INT size);
-			virtual ~DrainableIOBuffer();
-			void	SetOffset(INT offset);
-			INT		GetOffset() const;
-			INT		GetRemaining() const;
-			INT		size() const;
-		private:
-			INT									m_offset;
-			INT									m_size;
-			TinyScopedReferencePtr<IOBuffer>	m_base;
-		};
-		/// <summary>
-		/// ÍøÂç»º³å
-		/// </summary>
-		class NetworkIOBuffer : public IOBuffer
-		{
-		public:
-			NetworkIOBuffer();
-			void SetCapacity(INT capacity);
-			INT capacity() const;
-			void SetOffset(INT offset);
-			INT offset() const;
-			void SetReceive(INT receive);
-			INT  receive() const;
-			INT RemainingCapacity();
-			CHAR* StartOfBuffer();
-		protected:
-			virtual ~NetworkIOBuffer();
-			INT									m_receive;
-			INT									m_capacity;
-			INT									m_offset;
-			std::unique_ptr<CHAR, FreeDeleter>	m_readIO;
-		};
 		/// <summary>
 		/// ÇëÇó
 		/// </summary>
