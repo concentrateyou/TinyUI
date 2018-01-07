@@ -16,12 +16,12 @@ namespace TinyUI
 			~TinyMP3File();
 			MPEGLAYER3WAVEFORMAT* GetFormat();
 			DWORD GetMaxOutputBytes() const;
-			LONG GetSize() const;
+			LONG GetFileSize() const;
 			LONG GetBitRate() const;
 			LONGLONG GetDuration() const;
 			BOOL Create(LPCSTR pzFile, const MPEGLAYER3WAVEFORMAT* pMFT);
 			BOOL Open(LPCSTR pzFile);
-			BOOL Read(BYTE* lpBuffer, LONG nNumberOfBytesToRead, LPLONG lpNumberOfBytesRead, LONGLONG& timestamp);
+			BOOL Read(BYTE*& lpBuffer, LPLONG lpNumberOfBytesRead, LONGLONG& timestamp);
 			BOOL Write(BYTE* lpBuffer, LONG nNumberOfBytesToRead, LONGLONG duration);
 			BOOL ResetFile();
 			BOOL Close();
@@ -33,6 +33,7 @@ namespace TinyUI
 			LONG						m_size;
 			LONGLONG					m_sampleTime;
 			MPEGLAYER3WAVEFORMAT		m_sFMT;
+			TinyBuffer<BYTE>			m_buffer;
 			TinyComPtr<IMFSample>		m_sample;
 			TinyComPtr<IMFSinkWriter>	m_writer;
 			TinyComPtr<IMFSourceReader>	m_reader;

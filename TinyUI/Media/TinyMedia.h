@@ -4,6 +4,7 @@
 #include "../Common/TinyCallback.h"
 #include "../Common/TinyCore.h"
 #include "../Render/TinyGDI.h"
+#include "../IO/TinyIOBuffer.h"
 #include <KS.h>
 #include <Codecapi.h>
 #include <objbase.h>
@@ -37,6 +38,7 @@
 #pragma comment(lib, "mfreadwrite.lib")
 #pragma comment(lib, "mfuuid.lib")
 #pragma comment(lib, "wmcodecdspuuid.lib")
+using namespace TinyUI::IO;
 
 namespace TinyUI
 {

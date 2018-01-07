@@ -22,7 +22,7 @@ namespace TinyUI
 		{
 			return &m_sFMT;
 		}
-		LONG TinyMP3File::GetSize() const
+		LONG TinyMP3File::GetFileSize() const
 		{
 			return m_size;
 		}
@@ -141,7 +141,7 @@ namespace TinyUI
 				return FALSE;
 			return TRUE;
 		}
-		BOOL TinyMP3File::Read(BYTE* lpBuffer, LONG nNumberOfBytesToRead, LPLONG lpNumberOfBytesRead, LONGLONG& timestamp)
+		BOOL TinyMP3File::Read(BYTE*& lpBuffer, LPLONG lpNumberOfBytesRead, LONGLONG& timestamp)
 		{
 			ASSERT(m_reader);
 			DWORD dwStreamIndex = 0;
@@ -156,15 +156,20 @@ namespace TinyUI
 			hRes = sample->ConvertToContiguousBuffer(&mediaBuffer);
 			if (hRes != S_OK)
 				return FALSE;
-			BYTE* pBits = NULL;
+			BYTE* pBuffer = NULL;
 			DWORD dwCurrentLength = 0;
-			hRes = mediaBuffer->Lock(&pBits, NULL, &dwCurrentLength);
+			hRes = mediaBuffer->Lock(&pBuffer, NULL, &dwCurrentLength);
 			if (hRes != S_OK)
 				return FALSE;
-			memcpy(lpBuffer, pBits, dwCurrentLength);
+			if (m_buffer.GetSize() < dwCurrentLength)
+			{
+				m_buffer.Reset(dwCurrentLength);
+			}
+			memcpy(m_buffer, pBuffer, dwCurrentLength);
 			hRes = mediaBuffer->Unlock();
 			if (hRes != S_OK)
 				return FALSE;
+			lpBuffer = m_buffer.Ptr();
 			*lpNumberOfBytesRead = dwCurrentLength;
 			return TRUE;
 		}

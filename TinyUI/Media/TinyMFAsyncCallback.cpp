@@ -59,9 +59,11 @@ namespace TinyUI
 					{
 					case METransformNeedInput:
 						InterlockedIncrement(&m_inputs);
+						OnInvokeInput();
 						break;
 					case METransformHaveOutput:
 						InterlockedIncrement(&m_outputs);
+						OnInvokeOutput();
 						break;
 					case METransformDrainComplete:
 					{

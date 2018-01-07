@@ -19,26 +19,31 @@ namespace TinyUI
 		public:
 			BOOL Open(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType);
 			BOOL Decode(SampleTag& tag, BYTE*& bo, DWORD& so);
+			BOOL Flush();//清空模式清空队列
+			BOOL Drain();//排空模式不接收任何输入
 			BOOL Close();
 			BOOL GetInputType(IMFMediaType** mediaType);
 			BOOL GetOutputType(IMFMediaType** mediaType);
+			void OnInvokeInput() OVERRIDE;
+			void OnInvokeOutput() OVERRIDE;
 		private:
 			BOOL Create(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType);
 			BOOL CreateInputSample(const BYTE* bits, DWORD cbSize);
 			BOOL CreateOutputSample(DWORD cbSize);
-			BOOL GetOutputSample(BYTE*& bo, DWORD& so);
-		protected:
-			TinyComPtr<IMFTransform>		m_decoder;
+			BOOL GetOutputSample(DWORD estimate, BYTE*& bo, DWORD& so);
+			BOOL CreateSample(const BYTE* bits, DWORD cbSize, IMFSample** sample);
+			BOOL CreateSample(DWORD cbSize, IMFSample** sample);
+			BOOL GetOutputSample(DWORD estimate, IMFSample** sample);
 		private:
 			BOOL							m_bIsAsync;
 			DWORD							m_dwInputID;
 			DWORD							m_dwOutputID;
-			DWORD							m_dwSize;
-			TinyLinkList<IMFSample*>		m_samples;
-			TinyScopedArray<BYTE>			m_bits;
+			GrowableIOBuffer				m_io;
+			TinyEvent						m_events[2];
 			TinyComPtr<IMFSample>			m_inputSample;
 			TinyComPtr<IMFSample>			m_outputSample;
 			TinyComPtr<IMFMediaEvent>		m_mediaEvent;
+			TinyComPtr<IMFTransform>		m_decoder;
 		};
 	};
 }

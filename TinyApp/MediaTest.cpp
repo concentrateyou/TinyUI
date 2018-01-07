@@ -63,19 +63,20 @@ BOOL MediaTest::AACToWave(const string& aacFile, const string& waveFile)
 	waveFormat.nAvgBytesPerSec = waveFormat.nSamplesPerSec * waveFormat.nBlockAlign;
 	if (!m_waveFile.Create((LPTSTR)&waveFile[0], &waveFormat))
 		return FALSE;
-	/*if (!aacdecode.Open(&waveFormat, 192000,TRUE, BindCallback(&MediaTest::OnAACDecode, this)))
-		return FALSE;*/
-
+	if (!aacdecode.Open(&waveFormat, 192000, TRUE))
+		return FALSE;
 	BYTE data[1024 * 4];
 	LONG dwNumberOfBytesRead = 0;
 	do
 	{
 		dwNumberOfBytesRead = m_aacFile.Read(data, 1024 * 4);
 		SampleTag tag = { 0 };
-		/*if (!aacdecode.Decode(data, dwNumberOfBytesRead))
+		BYTE* bo = NULL;
+		DWORD so = 0;
+		if (!aacdecode.Decode(tag, bo, so))
 		{
 			INT a = 0;
-		}*/
+		}
 	} while (dwNumberOfBytesRead > 0);
 
 	aacdecode.Close();
@@ -89,9 +90,68 @@ BOOL MediaTest::WaveToMP3(const string& waveFile, const string& mp3File)
 		return FALSE;
 	return TRUE;
 }
-BOOL MediaTest::MP3ToWave(const string& mp3File, const string& waveFile)
+BOOL MediaTest::MP3ToWave(const string& szFileMp3, const string& szFileWave)
 {
+	TinyMFMP3Decode mp3decode;
+	TinyMP3File mp3File;
+	if (!mp3File.Open(szFileMp3.c_str()))
+		return FALSE;
+	MPEGLAYER3WAVEFORMAT* mp3FMT = mp3File.GetFormat();
+	WAVEFORMATEX waveFMT;
+	waveFMT.wFormatTag = WAVE_FORMAT_PCM;
+	waveFMT.cbSize = 0;
+	waveFMT.nChannels = 2;
+	waveFMT.nSamplesPerSec = 44100;
+	waveFMT.wBitsPerSample = 16;
+	waveFMT.nBlockAlign = 4;
+	waveFMT.nAvgBytesPerSec = waveFMT.nSamplesPerSec * waveFMT.nBlockAlign;
+	TinyWaveFile waveFile;
+	if (!waveFile.Create((LPTSTR)szFileWave.c_str(), &waveFMT))
+		return FALSE;
+	if (!mp3decode.Open(mp3FMT, &waveFMT))
+		return FALSE;
+	LONG dwNumberOfBytesRead = 0;
+	LONGLONG time = 0;
+	do
+	{
+		SampleTag tag = { 0 };
+		if (!mp3File.Read(tag.bits, (LPLONG)&dwNumberOfBytesRead, time))
+			return FALSE;
+		tag.size = dwNumberOfBytesRead;
+		BYTE* bo = NULL;
+		DWORD so = 0;
+		if (mp3decode.Decode(tag, bo, so))
+		{
+			waveFile.Write(bo, so);
+		}
+	} while (dwNumberOfBytesRead > 0);
 	return FALSE;
+}
+
+BOOL MediaTest::H264ToI420(const string& h264File, const string& i420File)
+{
+	TinyFile sFile;
+	if (!sFile.Create(i420File.c_str()))
+		return FALSE;
+	Decode::H264Reader reader;
+	reader.Open(h264File.c_str());
+	if (!qsvdecoder.Open({ 1280,720 }, 25))
+		return FALSE;
+	NALU nalu = { 0 };
+	do
+	{
+		reader.ReadNALU(nalu);
+	/*	SampleTag tag = { 0 };
+		tag.bits = nalu.bits;
+		tag.size = nalu.size;
+		BYTE* bo = NULL;
+		DWORD so = 0;
+		if (qsvdecoder.Decode(tag, bo, so))
+		{
+			sFile.Write(bo, so);
+		}*/
+	} while (nalu.size > 0);
+	return TRUE;
 }
 
 void MediaTest::OnAACEncode(BYTE* bits, LONG size, LPVOID)

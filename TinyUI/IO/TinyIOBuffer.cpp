@@ -71,7 +71,7 @@ namespace TinyUI
 		}
 		void NetworkIOBuffer::SetCapacity(INT capacity)
 		{
-			m_readIO.Reset(static_cast<CHAR*>(realloc(m_readIO.Ptr(), capacity)));
+			m_io.Reset(static_cast<CHAR*>(realloc(m_io.Ptr(), capacity)));
 			m_capacity = capacity;
 			if (m_offset > capacity)
 			{
@@ -90,7 +90,7 @@ namespace TinyUI
 		void NetworkIOBuffer::SetOffset(INT offset)
 		{
 			m_offset = offset;
-			m_data = m_readIO.Ptr() + offset;
+			m_data = m_io.Ptr() + offset;
 		}
 		INT NetworkIOBuffer::offset() const
 		{
@@ -110,11 +110,57 @@ namespace TinyUI
 		}
 		CHAR* NetworkIOBuffer::StartOfBuffer()
 		{
-			return m_readIO.Ptr();
+			return m_io.Ptr();
 		}
 		NetworkIOBuffer::~NetworkIOBuffer()
 		{
 			m_data = NULL;
+		}
+		//////////////////////////////////////////////////////////////////////////
+		GrowableIOBuffer::GrowableIOBuffer()
+			:m_capacity(0),
+			m_offset(0)
+		{
+
+		}
+		GrowableIOBuffer::~GrowableIOBuffer()
+		{
+			m_data = NULL;
+		}
+		void GrowableIOBuffer::SetCapacity(INT capacity)
+		{
+			m_io.Reset(static_cast<CHAR*>(realloc(m_io.Release(), capacity)));
+			m_capacity = capacity;
+			if (m_offset > capacity)
+			{
+				SetOffset(capacity);
+			}
+			else
+			{
+				SetOffset(m_offset);
+				ZeroMemory(m_data, m_capacity - m_offset);
+			}
+		}
+		INT GrowableIOBuffer::capacity() const
+		{
+			return m_capacity;
+		}
+		void GrowableIOBuffer::SetOffset(INT offset)
+		{
+			m_offset = offset;
+			m_data = m_io.Ptr() + offset;
+		}
+		INT GrowableIOBuffer::offset() const
+		{
+			return m_offset;
+		}
+		INT GrowableIOBuffer::RemainingCapacity()
+		{
+			return m_capacity - m_offset;
+		}
+		CHAR* GrowableIOBuffer::StartOfBuffer()
+		{
+			return m_io.Ptr();
 		}
 	}
 }

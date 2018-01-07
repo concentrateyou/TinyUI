@@ -32,6 +32,7 @@
 #include "Windowless/TinyVisualLayeredWindow.h"
 #include "Media/TinySoundCapture.h"
 #include "QSVEncoder.h"
+#include "MediaTest.h"
 #include "Media/TinyMFIntelQSVDecode.h"
 #include <fstream>
 
@@ -88,11 +89,9 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadSeDebugPrivilege();
 	CoInitialize(NULL);
 
-	{
-		TinyScopedPtr<INT,FreeDeleter> data((INT*)malloc(sizeof(INT)));
-		INT a = 0;
-	}
-
+	MediaTest test;
+	test.H264ToI420("D:\\Media\\test.264", "D:\\Media\\test.yuv");
+	//test.MP3ToWave("D:\\Media\\李玉刚-刚好遇见你.mp3", "D:\\Media\\李玉刚-刚好遇见你.wav");
 	/*FILE* hFile = NULL;
 	fopen_s(&hFile, "D:\\test.264", "rb");
 	TinyMFIntelQSVDecode decoder;

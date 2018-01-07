@@ -1681,20 +1681,20 @@ namespace TinyUI
 		void	Clear();
 		T&		operator[](INT index);
 	private:
-		T*		m_value;
+		T*		m_myT;
 		INT		m_size;
 		INT		m_alloc_size;
 	};
 	template<class T>
 	TinyBufferArray<T>::TinyBufferArray()
-		:m_value(NULL),
+		:m_myT(NULL),
 		m_size(0),
 		m_alloc_size(0)
 	{
 	}
 	template<class T>
-	TinyBufferArray<T>::TinyBufferArray(T* value, INT size)
-		: m_value(value),
+	TinyBufferArray<T>::TinyBufferArray(T* myT, INT size)
+		: m_myT(myT),
 		m_size(size)
 	{
 
@@ -1707,12 +1707,12 @@ namespace TinyUI
 	template<class T>
 	T*  TinyBufferArray<T>::GetPointer()
 	{
-		return m_value;
+		return m_myT;
 	}
 	template<class T>
 	TinyBufferArray<T>::operator T*()
 	{
-		return m_value;
+		return m_myT;
 	}
 	template<class T>
 	BOOL TinyBufferArray<T>::Add(T* value, INT size)
@@ -1725,15 +1725,15 @@ namespace TinyUI
 			{
 				return FALSE;
 			}
-			myP = (T*)_recalloc(m_value, s, sizeof(T));
+			myP = (T*)_recalloc(m_myT, s, sizeof(T));
 			if (myP == NULL)
 			{
 				return FALSE;
 			}
 			m_alloc_size = s;
-			m_value = myP;
+			m_myT = myP;
 		}
-		memcpy(m_value + m_size, value, sizeof(T) * size);
+		memcpy(m_myT + m_size, value, sizeof(T) * size);
 		m_size += size;
 		return TRUE;
 	}
@@ -1752,19 +1752,19 @@ namespace TinyUI
 			{
 				return FALSE;
 			}
-			myP = (T*)_recalloc(m_value, s, sizeof(T));
+			myP = (T*)_recalloc(m_myT, s, sizeof(T));
 			if (myP == NULL)
 			{
 				return FALSE;
 			}
 			m_alloc_size = s;
-			m_value = myP;
+			m_myT = myP;
 		}
-		memmove_s((void*)(m_value + offset + size),
+		memmove_s((void*)(m_myT + offset + size),
 			(m_size - offset) * sizeof(T),
-			(void*)(m_value + offset),
+			(void*)(m_myT + offset),
 			(m_size - offset) * sizeof(T));
-		memcpy(m_value + offset, value, sizeof(T)*size);
+		memcpy(m_myT + offset, value, sizeof(T)*size);
 		m_size += size;
 		return TRUE;
 	}
@@ -1783,9 +1783,9 @@ namespace TinyUI
 		{
 			return FALSE;
 		}
-		memmove_s((void*)(m_value + start),
+		memmove_s((void*)(m_myT + start),
 			(m_size - end) * sizeof(T),
-			(void*)(m_value + end),
+			(void*)(m_myT + end),
 			(m_size - end) * sizeof(T));
 		m_size -= count;
 		return TRUE;
@@ -1801,22 +1801,22 @@ namespace TinyUI
 			{
 				return FALSE;
 			}
-			myP = (T*)_recalloc(m_value, s, sizeof(T));
+			myP = (T*)_recalloc(m_myT, s, sizeof(T));
 			if (myP == NULL)
 			{
 				return FALSE;
 			}
 			m_alloc_size = s;
-			m_value = myP;
+			m_myT = myP;
 		}
-		memcpy(m_value, value, sizeof(T) * size);
+		memcpy(m_myT, value, sizeof(T) * size);
 		m_size = size;
 		return TRUE;
 	}
 	template<class T>
 	void TinyBufferArray<T>::Clear()
 	{
-		SAFE_DELETE_ARRAY(m_value);
+		SAFE_FREE(m_myT);
 		m_alloc_size = 0;
 		m_size = 0;
 	}
@@ -1825,11 +1825,79 @@ namespace TinyUI
 	{
 		if (index < 0 || index >= m_size)
 			throw("ÎÞÐ§µÄindex");
-		return m_value[index];
+		return m_myT[index];
 	}
 	template<class T>
 	TinyBufferArray<T>::~TinyBufferArray()
 	{
 		Clear();
+	}
+	/// <summary>
+	/// »º³å
+	/// </summary>
+	template <class T>
+	class TinyBuffer
+	{
+		DISALLOW_COPY_AND_ASSIGN(TinyBuffer)
+	public:
+		TinyBuffer();
+		~TinyBuffer();
+		BOOL IsEmpty() const;
+		BOOL Reset(INT size) throw();
+		operator T*() const throw();
+		T* Ptr() const throw();
+		INT GetSize() const;
+	public:
+		T*		m_myP;
+		INT		m_size;
+	};
+	template<class T>
+	TinyBuffer<T>::TinyBuffer()
+		: m_myP(NULL),
+		m_size(0)
+	{
+
+	}
+	template<class T>
+	TinyBuffer<T>::~TinyBuffer()
+	{
+		SAFE_FREE(m_myP);
+		m_size = 0;
+	}
+	template<class T>
+	BOOL TinyBuffer<T>::Reset(INT size) throw()
+	{
+		if (size > m_size)
+		{
+			T* myP = NULL;
+			myP = (T*)_recalloc(m_myP, size, sizeof(T));
+			if (myP == NULL)
+			{
+				return FALSE;
+			}
+			m_myP = myP;
+		}
+		m_size = size;
+		return TRUE;
+	}
+	template<class T>
+	BOOL TinyBuffer<T>::IsEmpty() const
+	{
+		return m_myP == NULL;
+	}
+	template<class T>
+	T* TinyBuffer<T>::Ptr() const throw()
+	{
+		return m_myP;
+	}
+	template<class T>
+	TinyBuffer<T>::operator T*() const throw()
+	{
+		return m_myP;
+	}
+	template<class T>
+	INT TinyBuffer<T>::GetSize() const
+	{
+		return m_size;
 	}
 }

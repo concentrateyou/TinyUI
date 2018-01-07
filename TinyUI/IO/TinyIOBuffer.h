@@ -54,10 +54,30 @@ namespace TinyUI
 			CHAR* StartOfBuffer();
 		protected:
 			virtual ~NetworkIOBuffer();
+		protected:
 			INT									m_receive;
 			INT									m_capacity;
 			INT									m_offset;
-			TinyScopedPtr<CHAR, FreeDeleter>	m_readIO;
+			TinyScopedPtr<CHAR, FreeDeleter>	m_io;
+		};
+		/// <summary>
+		/// ¶¯Ì¬»º³åÇø
+		/// </summary>
+		class GrowableIOBuffer : public IOBuffer
+		{
+		public:
+			GrowableIOBuffer();
+			virtual ~GrowableIOBuffer();
+			void SetCapacity(INT capacity);
+			INT capacity() const;
+			void SetOffset(INT offset);
+			INT offset() const;
+			INT RemainingCapacity();
+			CHAR* StartOfBuffer();
+		protected:
+			INT									m_capacity;
+			INT									m_offset;
+			TinyScopedPtr<CHAR, FreeDeleter>	m_io;
 		};
 	};
 }

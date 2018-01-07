@@ -22,6 +22,8 @@ namespace TinyUI
 			HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject) OVERRIDE;
 			ULONG STDMETHODCALLTYPE AddRef(void) OVERRIDE;
 			ULONG STDMETHODCALLTYPE Release(void) OVERRIDE;
+			virtual void OnInvokeInput() = 0;
+			virtual void OnInvokeOutput() = 0;
 		protected:
 			LONG								m_inputs;
 			LONG								m_outputs;

@@ -14,28 +14,21 @@ namespace TinyUI
 		{
 
 		}
-		BOOL TinyMFMP3Decode::Open(const MPEGLAYER3WAVEFORMAT* pFMT)
+		BOOL TinyMFMP3Decode::Open(const MPEGLAYER3WAVEFORMAT* pMP3FMT, const WAVEFORMATEX* pFMT)
 		{
 			HRESULT hRes = S_OK;
 			TinyComPtr<IMFMediaType> inputType;
 			hRes = MFCreateMediaType(&inputType);
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = MFInitMediaTypeFromWaveFormatEx(inputType, reinterpret_cast<WAVEFORMATEX*>(const_cast<MPEGLAYER3WAVEFORMAT*>(pFMT)), sizeof(MPEGLAYER3WAVEFORMAT));
+			hRes = MFInitMediaTypeFromWaveFormatEx(inputType, reinterpret_cast<WAVEFORMATEX*>(const_cast<MPEGLAYER3WAVEFORMAT*>(pMP3FMT)), sizeof(MPEGLAYER3WAVEFORMAT));
 			if (hRes != S_OK)
 				return FALSE;
 			TinyComPtr<IMFMediaType> outputType;
 			hRes = MFCreateMediaType(&outputType);
 			if (hRes != S_OK)
 				return FALSE;
-			WAVEFORMATEX sMFT = { 0 };
-			sMFT.wFormatTag = WAVE_FORMAT_PCM;
-			sMFT.nChannels = pFMT->wfx.nChannels;
-			sMFT.nSamplesPerSec = pFMT->wfx.nSamplesPerSec;
-			sMFT.wBitsPerSample = 16;
-			sMFT.nBlockAlign = (sMFT.nChannels * sMFT.wBitsPerSample) / 8;
-			sMFT.nAvgBytesPerSec = sMFT.nSamplesPerSec * sMFT.nBlockAlign;
-			hRes = MFInitMediaTypeFromWaveFormatEx(outputType, &sMFT, sizeof(WAVEFORMATEX));
+			hRes = MFInitMediaTypeFromWaveFormatEx(outputType, pFMT, sizeof(WAVEFORMATEX));
 			if (hRes != S_OK)
 				return FALSE;
 			return TinyMFDecode::Open(CLSID_CMP3DecMediaObject, inputType, outputType);
