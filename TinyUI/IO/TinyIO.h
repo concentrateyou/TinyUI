@@ -51,6 +51,7 @@ namespace TinyUI
 			virtual ~TinyFile();
 			operator HANDLE()const;
 			HANDLE Handle() const;
+			BOOL IsEmpty() const;
 			BOOL GetStatus(FileStatus& rStatus) const;
 			virtual BOOL Create(LPCTSTR lpszFileName, DWORD dwFlagsAndAttributes = 0);
 			virtual BOOL Open(LPCTSTR lpszFileName, DWORD dwDesiredAccess = GENERIC_READ, DWORD dwShareMode = FILE_SHARE_READ, DWORD dwFlagsAndAttributes = FILE_ATTRIBUTE_NORMAL);
@@ -58,6 +59,7 @@ namespace TinyUI
 			virtual LPTSTR GetPath() const;
 			virtual BOOL SetSize(ULARGE_INTEGER dwNewLen);
 			virtual DWORD GetType() const;
+			virtual BOOL GetFileInformation(BY_HANDLE_FILE_INFORMATION& info);
 			//////////////////////////////////////////////////////////////////////////
 			ULONGLONG SeekToEnd();
 			ULONGLONG SeekToBegin();

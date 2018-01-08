@@ -13,15 +13,15 @@ namespace TinyUI
 		const HANDLE TinyFile::hFileNull = INVALID_HANDLE_VALUE;
 		IMPLEMENT_DYNAMIC(TinyFile, TinyIO);
 		TinyFile::TinyFile()
+			:m_hFile(INVALID_HANDLE_VALUE)
 		{
-			this->m_hFile = NULL;
 			memset(m_pzFileName, 0, sizeof(TCHAR)*MAX_PATH);
 			memset(m_pzPath, 0, sizeof(TCHAR)*MAX_PATH);
 			memset(m_pzFileTitle, 0, sizeof(TCHAR)*MAX_PATH);
 		}
 		TinyFile::TinyFile(HANDLE hFile)
+			:m_hFile(hFile)
 		{
-			this->m_hFile = hFile;
 			memset(m_pzFileName, 0, sizeof(TCHAR)*MAX_PATH);
 			memset(m_pzPath, 0, sizeof(TCHAR)*MAX_PATH);
 			memset(m_pzFileTitle, 0, sizeof(TCHAR)*MAX_PATH);
@@ -38,9 +38,12 @@ namespace TinyUI
 		{
 			return m_hFile;
 		}
+		BOOL TinyFile::IsEmpty() const
+		{
+			return m_hFile == INVALID_HANDLE_VALUE;
+		}
 		BOOL TinyFile::Create(LPCTSTR lpszFileName, DWORD dwFlagsAndAttributes)
 		{
-			m_hFile = INVALID_HANDLE_VALUE;
 			strcpy_s(m_pzFileName, MAX_PATH, lpszFileName);
 			dwFlagsAndAttributes |= FILE_ATTRIBUTE_NORMAL;
 			HANDLE hFile = CreateFile(lpszFileName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, dwFlagsAndAttributes, NULL);
@@ -53,7 +56,6 @@ namespace TinyUI
 		}
 		BOOL TinyFile::Open(LPCTSTR lpszFileName, DWORD dwDesiredAccess, DWORD dwShareMode, DWORD dwFlagsAndAttributes)
 		{
-			m_hFile = INVALID_HANDLE_VALUE;
 			strcpy_s(m_pzFileName, MAX_PATH, lpszFileName);
 			dwFlagsAndAttributes |= FILE_ATTRIBUTE_NORMAL;
 			HANDLE hFile = CreateFile(lpszFileName, dwDesiredAccess, dwShareMode, NULL, OPEN_ALWAYS, dwFlagsAndAttributes, NULL);
@@ -66,26 +68,32 @@ namespace TinyUI
 		}
 		LPTSTR TinyFile::GetPath() const
 		{
-			ASSERT(m_hFile != INVALID_HANDLE_VALUE);
-			ASSERT(m_pzFileName != NULL);
+			if (!m_pzFileName)
+				return FALSE;
+			if (m_hFile == INVALID_HANDLE_VALUE)
+				return FALSE;
 			DWORD dwRes = ::GetFullPathName(m_pzFileName, MAX_PATH, (LPTSTR)m_pzPath, NULL);
 			return (LPTSTR)m_pzPath;
 		}
 		DWORD TinyFile::GetType() const
 		{
-			ASSERT(m_hFile != INVALID_HANDLE_VALUE);
+			if (m_hFile == INVALID_HANDLE_VALUE)
+				return FALSE;
 			return ::GetFileType(m_hFile);
 		}
 		LPTSTR TinyFile::GetTitle() const
 		{
-			ASSERT(m_hFile != INVALID_HANDLE_VALUE);
-			ASSERT(m_pzFileName != NULL);
+			if (!m_pzFileName)
+				return FALSE;
+			if (m_hFile == INVALID_HANDLE_VALUE)
+				return FALSE;
 			::GetFileTitle(m_pzFileName, (LPTSTR)m_pzFileTitle, MAX_PATH);
 			return (LPTSTR)m_pzFileTitle;
 		}
 		BOOL TinyFile::SetSize(ULARGE_INTEGER newSize)
 		{
-			ASSERT(m_hFile != INVALID_HANDLE_VALUE);
+			if (m_hFile == INVALID_HANDLE_VALUE)
+				return FALSE;
 			DWORD   newPos;
 			if (newSize.HighPart != 0) return FALSE;
 			newPos = SetFilePointer(m_hFile, (LONG)newSize.LowPart, NULL, FILE_BEGIN);
@@ -94,13 +102,20 @@ namespace TinyUI
 		}
 		LONGLONG TinyFile::GetSize() const
 		{
-			ASSERT(m_hFile != INVALID_HANDLE_VALUE);
+			if (m_hFile == INVALID_HANDLE_VALUE)
+				return FALSE;
 			return (LONGLONG)::GetFileSize(m_hFile, NULL);
 		}
-
+		BOOL TinyFile::GetFileInformation(BY_HANDLE_FILE_INFORMATION& info)
+		{
+			if (m_hFile == INVALID_HANDLE_VALUE)
+				return FALSE;
+			return ::GetFileInformationByHandle(m_hFile, &info);
+		}
 		BOOL TinyFile::LockRange(ULONGLONG dwPos, ULONGLONG dwCount)
 		{
-			ASSERT(m_hFile != INVALID_HANDLE_VALUE);
+			if (m_hFile == INVALID_HANDLE_VALUE)
+				return FALSE;
 			ULARGE_INTEGER intPos;
 			ULARGE_INTEGER intCount;
 			intPos.QuadPart = dwPos;
@@ -110,7 +125,8 @@ namespace TinyUI
 
 		BOOL TinyFile::UnlockRange(ULONGLONG dwPos, ULONGLONG dwCount)
 		{
-			ASSERT(m_hFile != INVALID_HANDLE_VALUE);
+			if (m_hFile == INVALID_HANDLE_VALUE)
+				return FALSE;
 			ULARGE_INTEGER intPos;
 			ULARGE_INTEGER intCount;
 			intPos.QuadPart = dwPos;
@@ -180,21 +196,17 @@ namespace TinyUI
 		}
 		BOOL TinyFile::Flush()
 		{
-			if (m_hFile == INVALID_HANDLE_VALUE) return FALSE;
+			if (m_hFile == INVALID_HANDLE_VALUE)
+				return FALSE;
 			return ::FlushFileBuffers(m_hFile);
 		}
 		BOOL TinyFile::Close()
 		{
 			if (m_hFile == INVALID_HANDLE_VALUE)
-			{
 				return FALSE;
-			}
-			BOOL hRes = CloseHandle(m_hFile);
-			if (hRes)
-			{
-				m_hFile = INVALID_HANDLE_VALUE;
-			}
-			return hRes;
+			BOOL bRes = CloseHandle(m_hFile);
+			m_hFile = INVALID_HANDLE_VALUE;
+			return bRes;
 		}
 		BOOL TinyFile::Remove(LPCSTR pzFileName)
 		{
@@ -343,6 +355,8 @@ namespace TinyUI
 		//ms-help://MS.VSCC.v90/MS.MSDNQTR.v90.chs/memory/base/obtaining_a_file_name_from_a_file_handle.htm
 		BOOL TinyFile::GetFileNameFromHandle(HANDLE hFile, LPTSTR pszFilename)
 		{
+			if (!pszFilename || !hFile)
+				return FALSE;
 			BOOL bSuccess = FALSE;
 			HANDLE hFileMap;
 			DWORD dwFileSizeHi = 0;
