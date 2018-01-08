@@ -72,7 +72,6 @@ namespace TinyUI
 			LONGLONG GetSize() const OVERRIDE;
 			//////////////////////////////////////////////////////////////////////////
 			static BOOL PASCAL GetStatus(LPCTSTR lpszFileName, FileStatus& rStatus);
-			static void PASCAL SetStatus(LPCTSTR lpszFileName, const FileStatus& status);
 			static BOOL Exists(LPCSTR pszPath);
 			static BOOL Rename(LPCSTR lpszOldName, LPCTSTR lpszNewName);
 			static BOOL Remove(LPCSTR lpszFileName);

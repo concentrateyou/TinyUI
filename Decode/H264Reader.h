@@ -30,6 +30,7 @@ namespace Decode
 		BOOL	ReadNALU(NALU& nalu);
 		BOOL	Close();
 	private:
+		INT					m_mask;
 		LONG				m_count;
 		GrowableIOBuffer	m_io;
 		TinyComPtr<IStream> m_stream;

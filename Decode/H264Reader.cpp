@@ -15,7 +15,8 @@ namespace Decode
 		return TRUE;
 	}
 	H264Reader::H264Reader()
-		:m_count(0)
+		:m_count(0),
+		m_mask(4)
 	{
 
 	}
@@ -29,14 +30,18 @@ namespace Decode
 		HRESULT hRes = SHCreateStreamOnFileA(pzFile, STGM_READ | STGM_FAILIFTHERE, &m_stream);
 		if (hRes != S_OK)
 			return FALSE;
+		m_io.SetOffset(0);
+		if (m_io.RemainingCapacity() <= 0)
+			m_io.SetCapacity(m_io.capacity() + DEFAULT_H264_BUFFER_SIZE);
 		return TRUE;
 	}
 	BOOL H264Reader::ReadNALU(NALU& nalu)
 	{
 		ULONG ls = 0;
-		BYTE bits[4];
 		HRESULT hRes = S_OK;
 		ZeroMemory(&nalu, sizeof(nalu));
+		BYTE bits[4];
+		ZeroMemory(bits, 4);
 		m_io.SetOffset(0);
 		if (m_io.RemainingCapacity() <= 0)
 			m_io.SetCapacity(m_io.capacity() + DEFAULT_H264_BUFFER_SIZE);
@@ -48,48 +53,50 @@ namespace Decode
 				if (hRes != S_OK || ls <= 0)
 					return FALSE;
 				if (FindStartCode(bits, 3))
+				{
+					m_mask = 0x000001;
 					break;
+				}
 				hRes = m_stream->Read(&bits[3], sizeof(BYTE), &ls);
 				if (hRes != S_OK || ls <= 0)
 					return FALSE;
 				if (FindStartCode(bits, 4))
+				{
+					m_mask = 0x00000001;
 					break;
+				}
 			}
 		}
-		hRes = m_stream->Read(&bits[0], sizeof(BYTE), &ls);
-		if (hRes != S_OK || ls <= 0)
-			return FALSE;
-		if (m_io.RemainingCapacity() <= 0)
-			m_io.SetCapacity(m_io.capacity() + DEFAULT_H264_BUFFER_SIZE);
-		memcpy_s(m_io.data(), 1, &bits[0], 1);
-		m_io.SetOffset(m_io.offset() + 1);
-		nalu.Forbidden = bits[0] & 0x80;
-		nalu.Reference = bits[0] & 0x60;
-		nalu.Type = bits[0] & 0x1F;
+		INT mask = 0;
+		INT index = 3;
 		for (;;)
 		{
-			hRes = m_stream->Read(bits, sizeof(BYTE) * 3, &ls);
+			if (mask & m_mask)
+				break;
+			hRes = m_stream->Read(bits, sizeof(BYTE) * 1, &ls);
 			if (hRes != S_OK || ls <= 0)
 				return FALSE;
-			if (FindStartCode(bits, 3))
-				break;
-			if (m_io.RemainingCapacity() <= 0)
-				m_io.SetCapacity(m_io.capacity() + DEFAULT_H264_BUFFER_SIZE);
-			memcpy_s(m_io.data(), 3, bits, 3);
-			m_io.SetOffset(m_io.offset() + 3);
-			hRes = m_stream->Read(&bits[3], sizeof(BYTE), &ls);
-			if (hRes != S_OK || ls <= 0)
-				return FALSE;
-			if (FindStartCode(bits, 4))
-				break;
+			if (bits[0] != 0x00 && bits[0] != 0x01)
+			{
+				mask = 0;
+				index = 3;
+			}
+			else
+			{
+				mask = (bits[0] & 0xFF) << (index * 8);
+				index--;
+			}
 			if (m_io.RemainingCapacity() <= 0)
 				m_io.SetCapacity(m_io.capacity() + DEFAULT_H264_BUFFER_SIZE);
 			memcpy_s(m_io.data(), 1, bits, 1);
 			m_io.SetOffset(m_io.offset() + 1);
 		}
-		++m_count;
-		nalu.bits = reinterpret_cast<BYTE*>(m_io.StartOfBuffer());
-		nalu.size = m_io.offset();
+		m_count++;
+		nalu.bits = (BYTE*)m_io.StartOfBuffer();
+		nalu.Forbidden = bits[0] & 0x80;
+		nalu.Reference = bits[0] & 0x60;
+		nalu.Type = bits[0] & 0x1F;
+		nalu.size = m_io.offset() - (m_mask == 0x00000001 ? 4 : 3);
 		return TRUE;
 	}
 	BOOL H264Reader::Close()

@@ -20,6 +20,7 @@ BOOL MediaTest::WaveToAAC(const string& waveFile, const string& aacFile)
 	WAVEFORMATEX pcmFMT = *wave.GetFormat();
 	WAVEFORMATEX aacFMT = pcmFMT;
 	aacFMT.nAvgBytesPerSec = 192 * 1000; //BitRate * 1000 /8;
+	TinyMFAACEncode aacencode;
 	if (!aacencode.Open(&aacFMT, BindCallback(&MediaTest::OnAACEncode, this)))
 		return FALSE;
 
@@ -63,6 +64,7 @@ BOOL MediaTest::AACToWave(const string& aacFile, const string& waveFile)
 	waveFormat.nAvgBytesPerSec = waveFormat.nSamplesPerSec * waveFormat.nBlockAlign;
 	if (!m_waveFile.Create((LPTSTR)&waveFile[0], &waveFormat))
 		return FALSE;
+	TinyMFAACDecode aacdecode;
 	if (!aacdecode.Open(&waveFormat, 192000, TRUE))
 		return FALSE;
 	BYTE data[1024 * 4];
@@ -135,22 +137,25 @@ BOOL MediaTest::H264ToI420(const string& h264File, const string& i420File)
 		return FALSE;
 	Decode::H264Reader reader;
 	reader.Open(h264File.c_str());
+	TinyMFIntelQSVDecode qsvdecoder;
 	if (!qsvdecoder.Open({ 1280,720 }, 25))
 		return FALSE;
-	NALU nalu = { 0 };
-	do
-	{
-		reader.ReadNALU(nalu);
-	/*	SampleTag tag = { 0 };
-		tag.bits = nalu.bits;
-		tag.size = nalu.size;
-		BYTE* bo = NULL;
-		DWORD so = 0;
-		if (qsvdecoder.Decode(tag, bo, so))
-		{
-			sFile.Write(bo, so);
-		}*/
-	} while (nalu.size > 0);
+	//NALU nalu = { 0 };
+	//do
+	//{
+	//	reader.ReadNALU(nalu);
+	//	TRACE("Size:%d\n", nalu.size);
+	///*	SampleTag tag = { 0 };
+	//	tag.bits = nalu.bits;
+	//	tag.size = nalu.size;
+	//	BYTE* bo = NULL;
+	//	DWORD so = 0;
+	//	if (qsvdecoder.Decode(tag, bo, so))
+	//	{
+	//		sFile.Write(bo, so);
+	//	}*/
+	//} while (nalu.size > 0);
+	//qsvdecoder.Close();
 	return TRUE;
 }
 

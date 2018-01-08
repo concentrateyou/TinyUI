@@ -33,10 +33,7 @@ private:
 	void OnAACEncode(BYTE*, LONG, LPVOID);
 	void OnAACDecode(BYTE*, LONG, LPVOID);
 private:
-	TinyMFAACEncode aacencode;
-	TinyMFAACDecode aacdecode;
-	TinyMFMP3Encode	mp3encode;
-	TinyMFIntelQSVDecode qsvdecoder;
+	
 	TinyFile m_aacFile;
 	TinyWaveFile m_waveFile;
 	DWORD m_dwhnsSampleDuration;
