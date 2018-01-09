@@ -57,6 +57,21 @@
     <ClInclude Include="nvEncodeAPI.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="cudaModuleMgr.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="dynlink_builtin_types.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="helper_cuda_drvapi.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="drvapi_error_string.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="helper_string.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -78,6 +93,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="dynlink_cuda.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="cudaModuleMgr.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

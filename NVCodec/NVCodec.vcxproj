@@ -75,7 +75,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;INIT_CUDA_D3D9;CUDA_INIT_D3D9;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;INIT_CUDA_D3D9;CUDA_INIT_D3D9;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(DXSDK_DIR)\Include;..\TinyUI</AdditionalIncludeDirectories>
     </ClCompile>
@@ -131,12 +131,17 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cudaModuleMgr.h" />
+    <ClInclude Include="drvapi_error_string.h" />
+    <ClInclude Include="dynlink_builtin_types.h" />
     <ClInclude Include="dynlink_cuda.h" />
     <ClInclude Include="dynlink_cudaD3D9.h" />
     <ClInclude Include="dynlink_cuda_cuda.h" />
     <ClInclude Include="dynlink_cuda_d3d.h" />
     <ClInclude Include="dynlink_cuviddec.h" />
     <ClInclude Include="dynlink_nvcuvid.h" />
+    <ClInclude Include="helper_cuda_drvapi.h" />
+    <ClInclude Include="helper_string.h" />
     <ClInclude Include="NVCodecCommon.h" />
     <ClInclude Include="NVDecoder.h" />
     <ClInclude Include="nvEncodeAPI.h" />
@@ -146,6 +151,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="cudaModuleMgr.cpp" />
     <ClCompile Include="dynlink_cuda.cpp" />
     <ClCompile Include="dynlink_cudaD3D9.cpp" />
     <ClCompile Include="dynlink_nvcuvid.cpp" />

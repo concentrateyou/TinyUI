@@ -12,5 +12,5 @@ using namespace TinyUI::Media;
 
 namespace NVCodec
 {
-
+	BOOL checkCudaCapabilitiesDRV(INT majorV, INT minorV, INT devID);
 }

@@ -13,13 +13,19 @@ namespace NVCodec
 		BOOL Decode(Media::SampleTag& tag);
 		void Close();
 	private:
-		CUVIDPARSERDISPINFO*	m_parserINFO;
-		CUVIDDECODECREATEINFO	m_createINFO;
-		CUVIDEOFORMAT			m_videoFMT;
-		CUvideoctxlock			m_videolock;
-		CUcontext				m_context;
-		CUvideoparser			m_parser;
-		CUvideodecoder			m_decoder;
+		//BOOL InitializeD3D9();
+	private:
+		BOOL							m_bInterop;
+		INT								m_deviceID;
+		CUVIDPARSERDISPINFO*			m_parserINFO;
+		CUVIDDECODECREATEINFO			m_createINFO;
+		CUVIDEOFORMAT					m_videoFMT;
+		CUvideoctxlock					m_videolock;
+		CUcontext						m_context;
+		CUvideoparser					m_parser;
+		CUvideodecoder					m_decoder;
+		TinyComPtr<IDirect3D9>			m_d3d9;
+		TinyComPtr<IDirect3DDevice9>	m_d3dd9;
 	};
 }
 
