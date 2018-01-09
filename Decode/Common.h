@@ -275,40 +275,63 @@ namespace Decode
 	typedef struct tagTS_PACKEG_HEADER
 	{
 		BYTE Syncbyte;
-		BYTE TransportErrorIndicator;
-		BYTE PayloadUnitStartIndicator;
-		BYTE TransportPriority;
-		SHORT PID;
-		BYTE TransportScramblingControl;
-		BYTE AdaptationFieldControl;
-		BYTE ContinuityCounter;
+		BYTE TransportErrorIndicator : 1;
+		BYTE PayloadUnitStartIndicator : 1;
+		BYTE TransportPriority : 1;
+		SHORT PID : 13;
+		BYTE TransportScramblingControl : 2;
+		BYTE AdaptationFieldControl : 2;
+		BYTE ContinuityCounter : 4;
 	}TS_PACKEG_HEADER;
-	typedef struct tagTS_ADAPTATION
+
+	typedef struct tagTS_PACKET_ADAPTATION_FIELD
 	{
-		BYTE AdaptationFieldLength;
-		union
-		{
-			struct
-			{
-				BYTE DiscontinuityIndicator;
-				BYTE RandomAccessIndicator;
-				BYTE ElementaryStreamPriorityIndicator;
-				BYTE PCRFlag;
-				BYTE OPCRFlag;
-				BYTE SplicingPointFlag;
-				BYTE TransportPrivateDataFlag;
-				BYTE AdaptationFieldExtensionFlag;
-				INT64 ProgramClockReferenceBase;
-				SHORT ProgramClockReferenceExtension;
-				INT64 OriginalProgramClockReference_base;
-				BYTE SpliceCountdown;
-				BYTE TransportPrivateDataLength;
-				std::vector<BYTE> TransportPrivateData;
-				BYTE AdaptationFieldExtentionLength;
-				BYTE LTWFlag;
-				BYTE PlecewlseRateFlag;
-				BYTE SeamlessSpliceFlag;
-			}AdaptationField;
-		};
-	}TS_ADAPTATION;
+		BYTE AdaptationFieldLength : 8;
+		BYTE DiscontinuityIndicator : 1;
+		BYTE RandomAccessIndicator : 1;
+		BYTE ElementaryStreamPriorityIndicator : 1;
+		BYTE PCRFlag : 1;
+		BYTE OPCRFlag : 1;
+		BYTE SplicingPointFlag : 1;
+		BYTE TransportPrivateDataFlag : 1;
+		BYTE AdaptationFieldExtensionFlag : 1;
+		UINT64 ProgramClockReferenceBase : 33;
+		USHORT ProgramClockReferenceExtension : 9;
+		UINT64 OriginalProgramClockReferenceBase : 33;
+		USHORT OriginalProgramClockReferenceExtension : 9;
+		BYTE SpliceCountdown;
+		BYTE TransportPrivateDataLength : 8;
+		BYTE AdaptationFieldExtensionLength : 8;
+		BYTE ItwFlag : 1;
+		BYTE PiecewiseRateFlag : 1;
+		BYTE SeamlessSpliceFlag : 1;
+		BYTE ItwValidFlag : 1;
+		USHORT ItwOffset : 15;
+		UINT32 PiecewiseRate : 22;
+		BYTE SpliceType : 8;
+		UINT64 DTSNextAU : 33;//三个部分
+	}TS_PACKET_ADAPTATION_FIELD;
+
+	typedef struct tagTS_PACKET_PROGRAM
+	{
+		USHORT ProgramNumber : 16;
+		BYTE   Reserved : 3;
+		USHORT ProgramPID : 13;
+	}TS_PACKET_PROGRAM;
+
+	typedef struct tagTS_PACKEG_PAT
+	{
+		BYTE TableID;
+		BYTE SectionSyntaxIndicator : 1;
+		BYTE Zero : 1;
+		BYTE Reserved1 : 2;
+		USHORT SectionLength : 12;
+		USHORT TransportStreamID : 16;
+		BYTE Reserved2 : 2;
+		BYTE VersionNumber : 5;
+		BYTE CurrentNextIndicator : 1;
+		BYTE SectionNumber : 8;
+		BYTE LastSectionNumber : 8;
+		UINT32 CRC32;
+	}TS_PACKEG_PAT;
 }

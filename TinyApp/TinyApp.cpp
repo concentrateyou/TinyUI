@@ -89,8 +89,14 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadSeDebugPrivilege();
 	CoInitialize(NULL);
 
-	MediaTest test;
-	test.H264ToI420("D:\\Media\\test.264", "D:\\Media\\test.yuv");
+	TSReader reader;
+	reader.OpenFile("D:\\1.ts");
+	for (;;)
+	{
+		reader.ReadPacket();
+	}
+	//MediaTest test;
+	//test.H264ToI420("D:\\Media\\test.264", "D:\\Media\\test.yuv");
 	//test.MP3ToWave("D:\\Media\\李玉刚-刚好遇见你.mp3", "D:\\Media\\李玉刚-刚好遇见你.wav");
 	/*FILE* hFile = NULL;
 	fopen_s(&hFile, "D:\\test.264", "rb");
