@@ -16,12 +16,13 @@ namespace Decode
 		BOOL	Close();
 		BOOL	ReadPacket();
 	private:
-		INT		ReadAF(TS_PACKET_ADAPTATION_FIELD& myAF, BYTE* bits);
-		INT		ReadPAT(TS_PACKEG_PAT& myPAT, TinyArray<TS_PACKET_PROGRAM>& programs, BYTE* bits);
+		INT		ReadHeader(TS_PACKEG_HEADER& s, BYTE* data);
+		INT		ReadAF(TS_PACKET_ADAPTATION_FIELD& myAF, BYTE* data);
+		INT		ReadPAT(TS_PACKEG_PAT& myPAT, TinyArray<TS_PACKET_PROGRAM>& programs, BYTE* data);
 	private:
-		INT						m_offset;
-		BYTE					m_bits[188];
-		TinyComPtr<IStream>		m_stream;
+		BYTE							m_bits[188];
+		TinyComPtr<IStream>				m_stream;
+		TinyArray<TS_PACKET_PROGRAM>	m_programs;
 	};
 }
 

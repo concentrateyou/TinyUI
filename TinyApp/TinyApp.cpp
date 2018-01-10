@@ -89,8 +89,9 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadSeDebugPrivilege();
 	CoInitialize(NULL);
 
+
 	TSReader reader;
-	reader.OpenFile("D:\\1.ts");
+	reader.OpenFile("D:\\liveencode\\1.ts");
 	for (;;)
 	{
 		reader.ReadPacket();
