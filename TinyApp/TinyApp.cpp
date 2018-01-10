@@ -94,7 +94,8 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	reader.OpenFile("D:\\liveencode\\1.ts");
 	for (;;)
 	{
-		reader.ReadPacket();
+		TS_BLOCK block;
+		reader.ReadBlock(block);
 	}
 	//MediaTest test;
 	//test.H264ToI420("D:\\Media\\test.264", "D:\\Media\\test.yuv");

@@ -29,6 +29,18 @@ namespace Decode
 #define PES_HEADER_SIZE 9
 #define MAX_PES_HEADER_SIZE (9 + 255)
 
+#define TS_STREAM_TYPE_VIDEO_MPEG1     0x01  
+#define TS_STREAM_TYPE_VIDEO_MPEG2     0x02  
+#define TS_STREAM_TYPE_AUDIO_MPEG1     0x03  
+#define TS_STREAM_TYPE_AUDIO_MPEG2     0x04  
+#define TS_STREAM_TYPE_PRIVATE_SECTION 0x05  
+#define TS_STREAM_TYPE_PRIVATE_DATA    0x06  
+#define TS_STREAM_TYPE_AUDIO_AAC       0x0f  
+#define TS_STREAM_TYPE_VIDEO_MPEG4     0x10  
+#define TS_STREAM_TYPE_VIDEO_H264      0x1b  
+#define TS_STREAM_TYPE_AUDIO_AC3       0x81  
+#define TS_STREAM_TYPE_AUDIO_DTS       0x8a 
+
 	INT ToINT32(BYTE val[4]);
 	INT ToINT24(BYTE val[3]);
 	INT ToINT16(BYTE val[2]);
@@ -319,6 +331,15 @@ namespace Decode
 		USHORT ProgramPID : 13;
 	}TS_PACKET_PROGRAM;
 
+	typedef struct tagTS_PACKET_SECTION
+	{
+		BYTE TableID;
+		BYTE SectionSyntaxIndicator : 1;
+		BYTE Zero : 1;
+		BYTE Reserved1 : 2;
+		USHORT SectionLength : 12;
+	}TS_PACKET_SECTION;
+
 	typedef struct tagTS_PACKEG_PAT
 	{
 		BYTE TableID;
@@ -334,4 +355,51 @@ namespace Decode
 		BYTE LastSectionNumber : 8;
 		UINT32 CRC32;
 	}TS_PACKEG_PAT;
+
+	typedef struct tagTS_PACKET_PMT
+	{
+		BYTE TableID;
+		BYTE SectionSyntaxIndicator : 1;
+		BYTE Zero : 1;
+		BYTE Reserved1 : 2;
+		USHORT SectionLength : 12;
+		USHORT ProgramNumber : 16;
+		BYTE Reserved2 : 2;
+		BYTE VersionNumber : 5;
+		BYTE CurrentNextIndicator : 1;
+		BYTE SectionNumber : 8;
+		BYTE LastSectionNumber : 8;
+		BYTE Reserved3 : 3;
+		USHORT PCR_PID : 13;
+		BYTE Reserved4 : 4;
+		USHORT ProgramInfoLength : 12;
+		UINT32 CRC32;
+	}TS_PACKET_PMT;
+
+	typedef struct tagTS_PACKET_STREAM
+	{
+		BYTE StreamType : 8;
+		BYTE Reserved1 : 3;
+		USHORT ElementaryPID : 13;
+		BYTE Reserved2 : 4;
+		USHORT ESInfoLength : 12;
+	}TS_PACKET_STREAM;
+
+	typedef struct tagTS_BLOCK
+	{
+		BYTE  type;
+		union
+		{
+			struct
+			{
+				BYTE*	data;
+				LONG	size;
+			}audio;
+			struct
+			{
+				BYTE*	data;
+				LONG	size;
+			}video;
+		};
+	}TS_BLOCK;
 }
