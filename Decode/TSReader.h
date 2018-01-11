@@ -16,11 +16,14 @@ namespace Decode
 		BOOL	Close();
 		BOOL	ReadBlock(TS_BLOCK& block);
 	private:
-		BOOL	ReadPacket(TS_PACKEG_HEADER& header);
-		INT		ReadSection(TS_PACKET_SECTION& section,BYTE* data);
-		INT		ReadAF(TS_PACKET_ADAPTATION_FIELD& myAF, BYTE* data);
-		INT		ReadPAT(TS_PACKEG_PAT& myPAT, TinyArray<TS_PACKET_PROGRAM>& programs, BYTE* data);
-		INT		ReadPTM(TS_PACKET_PMT& myPTM, TS_BLOCK& block, BYTE* data);
+		BOOL	ReadPacket(TS_PACKEG_HEADER& header, TS_PACKET_SECTION*& ps);
+		INT		ReadSection(TS_PACKET_SECTION& section, BYTE* bits);
+		INT		ReadAF(TS_PACKET_ADAPTATION_FIELD& myAF, BYTE* bits);
+		INT		ReadPAT(TS_PACKET_PAT* pPAT, TinyArray<TS_PACKET_PROGRAM>& programs, BYTE* bits);
+		INT		ReadPTM(TS_PACKET_PMT* pPTM, TinyArray<TS_PACKET_STREAM>& streams, BYTE* bits);
+		INT		ReadPES(BYTE* bits);
+	private:
+		string	ParseDescriptor(BYTE* bits,INT size);
 	private:
 		BYTE							m_bits[188];
 		TinyComPtr<IStream>				m_stream;

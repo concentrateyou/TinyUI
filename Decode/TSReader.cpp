@@ -3,6 +3,7 @@
 
 namespace Decode
 {
+	//////////////////////////////////////////////////////////////////////////
 	TSReader::TSReader()
 	{
 		ZeroMemory(m_bits, 188);
@@ -21,203 +22,190 @@ namespace Decode
 			return FALSE;
 		return TRUE;
 	}
+	BOOL TSReader::ReadBlock(TS_BLOCK& block)
+	{
+		for (;;)
+		{
+			TS_PACKEG_HEADER header;
+			TS_PACKET_SECTION* ps = NULL;
+			INT iRes = ReadPacket(header, ps);
+			SAFE_DELETE(ps);
+			if (iRes < 0)
+				return FALSE;
+		}
+	}
 	INT	TSReader::ReadSection(TS_PACKET_SECTION& section, BYTE* data)
 	{
-
+		INT index = 0;
+		section.TableID = data[index++];
+		section.SectionSyntaxIndicator = data[index] >> 7;
+		section.Zero = data[index] >> 6;
+		section.Reserved1 = data[index] >> 4;
+		section.SectionLength = (data[index] & 0x0F) << 8 | data[index + 1];
+		index += 2;
+		return index;
 	}
 	INT TSReader::ReadAF(TS_PACKET_ADAPTATION_FIELD& myAF, BYTE* data)
 	{
 		INT index = 0;
 		ZeroMemory(&myAF, sizeof(myAF));
 		myAF.AdaptationFieldLength = data[index++];
-		if (myAF.AdaptationFieldLength > 0)
+		myAF.DiscontinuityIndicator = data[index] >> 7;
+		myAF.RandomAccessIndicator = (data[index] >> 6) & 0x1;
+		myAF.ElementaryStreamPriorityIndicator = (data[index] >> 5) & 0x1;
+		myAF.PCRFlag = (data[index] >> 4) & 0x1;
+		myAF.OPCRFlag = (data[index] >> 3) & 0x1;
+		myAF.SplicingPointFlag = (data[index] >> 2) & 0x1;
+		myAF.TransportPrivateDataFlag = (data[index] >> 1) & 0x1;
+		myAF.AdaptationFieldExtensionFlag = data[index] & 0x1;
+		index += 1;
+		if (myAF.PCRFlag == 0x1)
 		{
-			myAF.DiscontinuityIndicator = data[index] >> 7;
-			myAF.RandomAccessIndicator = (data[index] >> 6) & 0x1;
-			myAF.ElementaryStreamPriorityIndicator = (data[index] >> 5) & 0x1;
-			myAF.PCRFlag = (data[index] >> 4) & 0x1;
-			myAF.OPCRFlag = (data[index] >> 3) & 0x1;
-			myAF.SplicingPointFlag = (data[index] >> 2) & 0x1;
-			myAF.TransportPrivateDataFlag = (data[index] >> 1) & 0x1;
-			myAF.AdaptationFieldExtensionFlag = data[index] & 0x1;
-			index += 1;
-			if (myAF.PCRFlag == 0x1)
-			{
-				myAF.ProgramClockReferenceBase = ((UINT64)data[index] << 25) |
-					(data[index + 1] << 17) |
-					(data[index + 2] << 9) |
-					(data[index + 3] << 1) |
-					(data[index + 4] >> 7);
-				myAF.ProgramClockReferenceExtension = ((data[index + 4] & 0x1) << 8) | data[index + 5];
-				index += 6;
-			}
-			if (myAF.OPCRFlag)
-			{
-				myAF.OriginalProgramClockReferenceBase = ((UINT64)data[index] << 25) |
-					(data[index + 1] << 17) |
-					(data[index + 2] << 9) |
-					(data[index + 3] << 1) |
-					(data[index + 4] >> 7);
-				myAF.OriginalProgramClockReferenceExtension = ((data[index + 4] & 0x1) << 8) | data[index + 5];
-				index += 6;
-			}
-			if (myAF.SplicingPointFlag)
-			{
-				myAF.SpliceType = data[index++];
-			}
-			if (myAF.TransportPrivateDataFlag)
-			{
-				myAF.TransportPrivateDataLength = data[index++];
-				//DOTO
-				index += myAF.TransportPrivateDataLength;
+			myAF.ProgramClockReferenceBase = ((UINT64)data[index] << 25) |
+				(data[index + 1] << 17) |
+				(data[index + 2] << 9) |
+				(data[index + 3] << 1) |
+				(data[index + 4] >> 7);
+			myAF.ProgramClockReferenceExtension = ((data[index + 4] & 0x1) << 8) | data[index + 5];
+			index += 6;
+		}
+		if (myAF.OPCRFlag)
+		{
+			myAF.OriginalProgramClockReferenceBase = ((UINT64)data[index] << 25) |
+				(data[index + 1] << 17) |
+				(data[index + 2] << 9) |
+				(data[index + 3] << 1) |
+				(data[index + 4] >> 7);
+			myAF.OriginalProgramClockReferenceExtension = ((data[index + 4] & 0x1) << 8) | data[index + 5];
+			index += 6;
+		}
+		if (myAF.SplicingPointFlag)
+		{
+			myAF.SpliceType = data[index++];
+		}
+		if (myAF.TransportPrivateDataFlag)
+		{
+			myAF.TransportPrivateDataLength = data[index++];
+			//DOTO
+			index += myAF.TransportPrivateDataLength;
 
-			}
-			if (myAF.AdaptationFieldExtensionFlag)
+		}
+		if (myAF.AdaptationFieldExtensionFlag)
+		{
+			myAF.AdaptationFieldExtensionLength = data[index++];
+			myAF.ItwFlag = data[index] >> 7;
+			myAF.PiecewiseRateFlag = (data[index] >> 6) & 0x1;
+			myAF.SeamlessSpliceFlag = (data[index] >> 5) & 0x1;
+			index += 1;
+			if (myAF.ItwFlag)
 			{
-				myAF.AdaptationFieldExtensionLength = data[index++];
-				myAF.ItwFlag = data[index] >> 7;
-				myAF.PiecewiseRateFlag = (data[index] >> 6) & 0x1;
-				myAF.SeamlessSpliceFlag = (data[index] >> 5) & 0x1;
-				index += 1;
-				if (myAF.ItwFlag)
-				{
-					myAF.ItwValidFlag = data[index] >> 7;
-					myAF.ItwOffset = ((data[index] & 0x7F) << 8) | data[index + 1];
-					index += 2;
-				}
-				if (myAF.PiecewiseRateFlag)
-				{
-					myAF.PiecewiseRate = ((data[index] & 0x3F) << 16) | (data[index + 1] << 8) | data[index + 2];
-					index += 3;
-				}
-				if (myAF.SeamlessSpliceFlag)
-				{
-					myAF.SpliceType = data[index] >> 4;
-					myAF.DTSNextAU = (((data[index] >> 1) & 0x7) << 30) |
-						(data[index + 1] << 22) |
-						((data[index + 2] >> 1) << 15) |
-						(data[index + 3] << 8) |
-						(data[index + 4] >> 1);
-				}
+				myAF.ItwValidFlag = data[index] >> 7;
+				myAF.ItwOffset = ((data[index] & 0x7F) << 8) | data[index + 1];
+				index += 2;
+			}
+			if (myAF.PiecewiseRateFlag)
+			{
+				myAF.PiecewiseRate = ((data[index] & 0x3F) << 16) | (data[index + 1] << 8) | data[index + 2];
+				index += 3;
+			}
+			if (myAF.SeamlessSpliceFlag)
+			{
+				myAF.SpliceType = data[index] >> 4;
+				myAF.DTSNextAU = (((data[index] >> 1) & 0x7) << 30) |
+					(data[index + 1] << 22) |
+					((data[index + 2] >> 1) << 15) |
+					(data[index + 3] << 8) |
+					(data[index + 4] >> 1);
 			}
 		}
-		ASSERT(index <= myAF.AdaptationFieldExtensionLength);
-		return (myAF.AdaptationFieldExtensionLength + 1);
+		return (myAF.AdaptationFieldLength + 1);
 	}
-	INT TSReader::ReadPAT(TS_PACKEG_PAT& myPAT, TinyArray<TS_PACKET_PROGRAM>& programs, BYTE* data)
+	INT TSReader::ReadPAT(TS_PACKET_PAT* pPAT, TinyArray<TS_PACKET_PROGRAM>& programs, BYTE* bits)
 	{
 		programs.RemoveAll();
 		INT index = 0;
-		ZeroMemory(&myPAT, sizeof(myPAT));
-		myPAT.TableID = data[index++];
-		myPAT.SectionSyntaxIndicator = data[index] >> 7;
-		myPAT.Zero = data[index] >> 6 & 0x1;
-		myPAT.Reserved1 = data[index] >> 4 & 0x3;
-		myPAT.SectionLength = ((data[index] & 0x0F) << 8) | data[index + 1];
+		pPAT->TransportStreamID = ((bits[index] << 8) | bits[index + 1]);
 		index += 2;
-		myPAT.TransportStreamID = ((data[index] << 8) | data[index + 1]);
-		index += 2;
-		myPAT.Reserved2 = data[index] >> 6;
-		myPAT.VersionNumber = (data[index] >> 1) & 0x1F;
-		myPAT.CurrentNextIndicator = (data[index] << 7) >> 7;
-		myPAT.SectionNumber = data[++index];
-		myPAT.LastSectionNumber = data[++index];
-		INT size = 3 + myPAT.SectionLength;
-		myPAT.CRC32 = (data[size - 4] & 0x000000FF) << 24 | (data[size - 3] & 0x000000FF) << 16 | (data[size - 2] & 0x000000FF) << 8 | (data[size - 1] & 0x000000FF);
+		pPAT->Reserved2 = bits[index] >> 6;
+		pPAT->VersionNumber = (bits[index] >> 1) & 0x1F;
+		pPAT->CurrentNextIndicator = (bits[index] << 7) >> 7;
+		pPAT->SectionNumber = bits[++index];
+		pPAT->LastSectionNumber = bits[++index];
+		INT size = pPAT->SectionLength;
+		pPAT->CRC32 = (bits[size - 4] & 0x000000FF) << 24 | (bits[size - 3] & 0x000000FF) << 16 | (bits[size - 2] & 0x000000FF) << 8 | (bits[size - 1] & 0x000000FF);
 		for (;;)
 		{
 			if (index >= (size - 4))
 				break;
 			index += 1;
 			TS_PACKET_PROGRAM program = { 0 };
-			program.ProgramNumber = data[index] << 8 | data[index + 1];
+			program.ProgramNumber = bits[index] << 8 | bits[index + 1];
 			index += 2;
-			program.Reserved = data[index] >> 5;
-			program.ProgramPID = (data[index] & 0x1F) << 8 | data[index + 1];
+			program.Reserved = bits[index] >> 5;
+			program.ProgramPID = (bits[index] & 0x1F) << 8 | bits[index + 1];
 			index += 2;
 			programs.Add(program);
 		}
 		return (size + 1);
 	}
-	INT	TSReader::ReadPTM(TS_PACKET_PMT& myPTM, TS_BLOCK& block, BYTE* data)
+	INT	TSReader::ReadPTM(TS_PACKET_PMT* pPMT, TinyArray<TS_PACKET_STREAM>& streams, BYTE* bits)
 	{
 		m_streams.RemoveAll();
 		INT index = 0;
-		ZeroMemory(&myPTM, sizeof(myPTM));
-		myPTM.TableID = data[index++];
-		myPTM.SectionSyntaxIndicator = data[index] >> 7;
-		myPTM.Zero = data[index] >> 6;
-		myPTM.Reserved1 = data[index] >> 4;
-		myPTM.SectionLength = (data[index] & 0x0F) << 8 | data[index + 1];
+		pPMT->ProgramNumber = bits[index] << 8 | bits[index + 1];
 		index += 2;
-		myPTM.ProgramNumber = data[index] << 8 | data[index + 1];
-		index += 2;
-		myPTM.Reserved2 = data[index] >> 6;
-		myPTM.VersionNumber = data[index] >> 1 & 0x1F;
-		myPTM.CurrentNextIndicator = (data[index] << 7) >> 7;
-		myPTM.SectionNumber = data[++index];
-		myPTM.LastSectionNumber = data[++index];
+		pPMT->Reserved2 = bits[index] >> 6;
+		pPMT->VersionNumber = bits[index] >> 1 & 0x1F;
+		pPMT->CurrentNextIndicator = (bits[index] << 7) >> 7;
+		pPMT->SectionNumber = bits[++index];
+		pPMT->LastSectionNumber = bits[++index];
 		index += 1;
-		myPTM.Reserved3 = data[index] >> 5;
-		myPTM.PCR_PID = ((data[index] << 8) | data[index + 1]) & 0x1FFF;
+		pPMT->Reserved3 = bits[index] >> 5;
+		pPMT->PCR_PID = ((bits[index] << 8) | bits[index + 1]) & 0x1FFF;
 		index += 2;
-		myPTM.Reserved4 = data[index] >> 4;
-		myPTM.ProgramInfoLength = (data[index] & 0x0F) << 8 | data[index + 1];
+		pPMT->Reserved4 = bits[index] >> 4;
+		pPMT->ProgramInfoLength = (bits[index] & 0x0F) << 8 | bits[index + 1];
 		index += 2;
-		INT size = 3 + myPTM.SectionLength;
-		myPTM.CRC32 = (data[size - 4] & 0x000000FF) << 24 | (data[size - 3] & 0x000000FF) << 16 | (data[size - 2] & 0x000000FF) << 8 | (data[size - 1] & 0x000000FF);
-		index += myPTM.ProgramInfoLength;
+		if (pPMT->ProgramInfoLength > 0)
+		{
+			ParseDescriptor(bits + index, pPMT->ProgramInfoLength);
+		}
+		index += pPMT->ProgramInfoLength;
+		INT size = pPMT->SectionLength;
+		pPMT->CRC32 = (bits[size - 4] & 0x000000FF) << 24 | (bits[size - 3] & 0x000000FF) << 16 | (bits[size - 2] & 0x000000FF) << 8 | (bits[size - 1] & 0x000000FF);
+
 		for (;;)
 		{
 			if (index >= (size - 4))
 				break;
-			index += 1;
 			TS_PACKET_STREAM stream;
-			stream.StreamType = data[index++];
-			stream.Reserved1 = data[index] >> 5;
-			stream.ElementaryPID = ((data[index] << 8) | data[index + 1]) & 0x1FFF;
+			ZeroMemory(&stream, sizeof(stream));
+			stream.StreamType = bits[index++];
+			stream.Reserved1 = bits[index] >> 5;
+			stream.ElementaryPID = ((bits[index] << 8) | bits[index + 1]) & 0x1FFF;
 			index += 2;
-			stream.Reserved2 = data[index] >> 4;
-			stream.ESInfoLength = (data[index] & 0x0F) << 8 | data[index + 1];
+			stream.Reserved2 = bits[index] >> 4;
+			stream.ESInfoLength = (bits[index] & 0x0F) << 8 | bits[index + 1];
 			index += stream.ESInfoLength;
-			m_streams.Add(stream);
+			index += 2;
+			streams.Add(stream);
 		}
 		return (size + 1);
 	}
-	BOOL TSReader::ReadBlock(TS_BLOCK& block)
+	INT	TSReader::ReadPES(BYTE* bits)
 	{
-		for (;;)
-		{
-			TS_PACKEG_HEADER header;
-			INT iRes = ReadPacket(header);
-			if (iRes < 0)
-				return FALSE;
-			if (header.PID >= 0x0010)
-			{
-				for (INT i = 0;i < m_programs.GetSize();i++)
-				{
-					TS_PACKET_PROGRAM& program = m_programs[i];
-					if (program.ProgramPID == header.PID)
-					{
-						if (header.PayloadUnitStartIndicator == 0x01)
-						{
-							TS_PACKET_PMT myPTM;
-							ReadPTM(myPTM, block, m_bits + iRes);
-						}
-					}
-				}
-			}
-		}
+
 	}
-	INT TSReader::ReadPacket(TS_PACKEG_HEADER& header)
+	INT TSReader::ReadPacket(TS_PACKEG_HEADER& header, TS_PACKET_SECTION*& ps)
 	{
 		//TS传输包固定188个字节
+		ZeroMemory(&header, sizeof(header));
 		ULONG ls = 0;
 		HRESULT hRes = S_OK;
 		hRes = m_stream->Read(m_bits, TS_PACKET_SIZE, &ls);
 		if (hRes != S_OK || ls != TS_PACKET_SIZE)
 			return FALSE;
-		INT offset = 0;
+		INT index = 0;
 		header.Syncbyte = m_bits[0];
 		if (header.Syncbyte != 0x47)
 			return FALSE;
@@ -230,35 +218,73 @@ namespace Decode
 		header.TransportScramblingControl = m_bits[3] >> 6;
 		header.AdaptationFieldControl = (m_bits[3] >> 4) & 0x03;
 		header.ContinuityCounter = m_bits[3] & 0x0F;
-		offset += 5;
+		index += 4;
 		if (header.AdaptationFieldControl == 0x2 || header.AdaptationFieldControl == 0x3)
 		{
-			TS_PACKET_ADAPTATION_FIELD myAF = { 0 };
-			INT iRes = ReadAF(myAF, m_bits + offset - 1);
-			offset += iRes;
+			TS_PACKET_ADAPTATION_FIELD myAF;
+			index += ReadAF(myAF, m_bits + index);
 		}
-		if (header.PID == 0x0000)//PAT
+		if (header.AdaptationFieldControl == 0x1 || header.AdaptationFieldControl == 0x3)
 		{
-			if (header.PayloadUnitStartIndicator == 0x01)//存在PSI
+			if (header.PayloadUnitStartIndicator == 0x1)//表示带有pointer_field
 			{
-				TS_PACKEG_PAT myPAT;
-				INT iRes = ReadPAT(myPAT, m_programs, m_bits + offset);
-				offset += iRes;
+				INT pointer = m_bits[index] & 0x0F;//有效载荷的位置
+				index += 1;
+				index += pointer;
+			}
+			if (header.PID == 0x0000)//PAT
+			{
+				TS_PACKET_PAT* pPAT = new TS_PACKET_PAT();
+				pPAT->TableID = m_bits[index++];
+				pPAT->SectionSyntaxIndicator = m_bits[index] >> 7;
+				pPAT->Zero = m_bits[index] >> 6 & 0x1;
+				pPAT->Reserved1 = m_bits[index] >> 4 & 0x3;
+				pPAT->SectionLength = ((m_bits[index] & 0x0F) << 8) | m_bits[index + 1];
+				ASSERT(pPAT->TableID == 0x0);
+				ASSERT(pPAT->SectionSyntaxIndicator);
+				ASSERT(!pPAT->Zero);
+				ps = static_cast<TS_PACKET_SECTION*>(pPAT);
+				index += 2;
+				index += ReadPAT(pPAT, m_programs, m_bits + index);
+			}
+			if (header.PID >= 0x0010)
+			{
+				for (INT i = 0;i < m_streams.GetSize();i++)
+				{
+					TS_PACKET_STREAM& stream = m_streams[i];
+					if (stream.ElementaryPID == header.PID)
+					{
+
+					}
+				}
+				for (INT i = 0;i < m_programs.GetSize();i++)
+				{
+					TS_PACKET_PROGRAM& program = m_programs[i];
+					if (program.ProgramPID == header.PID)
+					{
+						TS_PACKET_PMT* pPMT = new TS_PACKET_PMT();
+						pPMT->TableID = m_bits[index++];
+						pPMT->SectionSyntaxIndicator = m_bits[index] >> 7;
+						pPMT->Zero = m_bits[index] >> 6 & 0x1;
+						pPMT->Reserved1 = m_bits[index] >> 4 & 0x3;
+						pPMT->SectionLength = ((m_bits[index] & 0x0F) << 8) | m_bits[index + 1];
+						ASSERT(pPMT->TableID == 0x2);
+						ASSERT(pPMT->SectionSyntaxIndicator);
+						ASSERT(!pPMT->Zero);
+						ps = static_cast<TS_PACKET_SECTION*>(pPMT);
+						index += 2;
+						index += ReadPTM(pPMT, m_streams, m_bits + index);
+					}
+				}
 			}
 		}
-		if (header.PID == 0x0001)//CAT
-		{
-			//TODO
-		}
-		if (header.PID == 0x0002)//NIT
-		{
-			//TODO
-		}
-		if (header.PID == 0x0003)//TSDT 
-		{
-			//TODO
-		}
-		return offset;
+		return index;
+	}
+	string	TSReader::ParseDescriptor(BYTE* bits, INT size)
+	{
+		string value;
+
+		return value;
 	}
 	BOOL TSReader::Close()
 	{

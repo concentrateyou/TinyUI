@@ -284,6 +284,16 @@ namespace Decode
 		};
 	}FLV_BLOCK;
 	//////////////////////////////////////////////////////////////////////////
+
+	enum TsPIDType
+	{
+		TS_PAT = 0x0,
+		TS_CAT = 0x1,
+		TS_TSDT = 0x2,
+		TS_NULL = 0x1fff,
+		TS_MAX = 0x1fff,
+	};
+
 	typedef struct tagTS_PACKEG_HEADER
 	{
 		BYTE Syncbyte;
@@ -331,22 +341,19 @@ namespace Decode
 		USHORT ProgramPID : 13;
 	}TS_PACKET_PROGRAM;
 
-	typedef struct tagTS_PACKET_SECTION
+	class TS_PACKET_SECTION
 	{
+	public:
 		BYTE TableID;
 		BYTE SectionSyntaxIndicator : 1;
 		BYTE Zero : 1;
 		BYTE Reserved1 : 2;
 		USHORT SectionLength : 12;
-	}TS_PACKET_SECTION;
+	};
 
-	typedef struct tagTS_PACKEG_PAT
+	class TS_PACKET_PAT : public TS_PACKET_SECTION
 	{
-		BYTE TableID;
-		BYTE SectionSyntaxIndicator : 1;
-		BYTE Zero : 1;
-		BYTE Reserved1 : 2;
-		USHORT SectionLength : 12;
+	public:
 		USHORT TransportStreamID : 16;
 		BYTE Reserved2 : 2;
 		BYTE VersionNumber : 5;
@@ -354,15 +361,11 @@ namespace Decode
 		BYTE SectionNumber : 8;
 		BYTE LastSectionNumber : 8;
 		UINT32 CRC32;
-	}TS_PACKEG_PAT;
+	};
 
-	typedef struct tagTS_PACKET_PMT
+	class TS_PACKET_PMT : public TS_PACKET_SECTION
 	{
-		BYTE TableID;
-		BYTE SectionSyntaxIndicator : 1;
-		BYTE Zero : 1;
-		BYTE Reserved1 : 2;
-		USHORT SectionLength : 12;
+	public:
 		USHORT ProgramNumber : 16;
 		BYTE Reserved2 : 2;
 		BYTE VersionNumber : 5;
@@ -374,7 +377,15 @@ namespace Decode
 		BYTE Reserved4 : 4;
 		USHORT ProgramInfoLength : 12;
 		UINT32 CRC32;
-	}TS_PACKET_PMT;
+	};
+
+	class TS_PACKET_DESCRIPTOR
+	{
+	public:
+		BYTE DescriptorTag;
+		BYTE DescriptorLength;
+		CHAR Context[256];
+	};
 
 	typedef struct tagTS_PACKET_STREAM
 	{
