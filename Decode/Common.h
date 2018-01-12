@@ -285,15 +285,6 @@ namespace Decode
 	}FLV_BLOCK;
 	//////////////////////////////////////////////////////////////////////////
 
-	enum TsPIDType
-	{
-		TS_PAT = 0x0,
-		TS_CAT = 0x1,
-		TS_TSDT = 0x2,
-		TS_NULL = 0x1fff,
-		TS_MAX = 0x1fff,
-	};
-
 	typedef struct tagTS_PACKEG_HEADER
 	{
 		BYTE Syncbyte;
@@ -395,6 +386,51 @@ namespace Decode
 		BYTE Reserved2 : 4;
 		USHORT ESInfoLength : 12;
 	}TS_PACKET_STREAM;
+
+	typedef struct tagTS_PACKET_PES
+	{
+		UINT32 StartCodePrefix : 24;
+		BYTE StreamID;
+		USHORT PESPacketLength;
+		BYTE PESScramblingControl : 2;
+		BYTE PESPriority : 1;
+		BYTE DataAlignmentIndicator : 1;
+		BYTE Copyright : 1;
+		BYTE OriginalOrCopy : 1;
+		BYTE PTSDTSFlags : 2;
+		BYTE ESCRFlag : 1;
+		BYTE ESRateFlag : 1;
+		BYTE DSMTrickModeFlag : 1;
+		BYTE AdditionalCopyInfoFlag : 1;
+		BYTE PESCRCFlag : 1;
+		BYTE PESExtensionFlag : 1;
+		BYTE PESHeaderDataLength;
+		BYTE TrickModeControl : 3;
+		BYTE FieldID : 2;
+		BYTE IntraSliceRefresh : 1;
+		BYTE FrequencyTruncation : 2;
+		BYTE RepCntrl : 5;
+		BYTE AdditionalCopyInfo : 7;
+		USHORT PreviousPESPacketCRC;
+		BYTE PESPrivateDataFlag : 1;
+		BYTE PackHeaderFieldFlag : 1;
+		BYTE ProgramPacketSequenceCounterFlag : 1;
+		BYTE PSTDBufferFlag : 1;
+		BYTE PESExtensionFlag2 : 1;
+		BYTE PackFieldLength : 8;
+		BYTE ProgramPacketSequenceCounter : 7;
+		BYTE MPEG1MPEG2Identifier : 1;
+		BYTE OriginalStuffLength : 6;
+		BYTE PSTDBufferScale : 1;
+		USHORT PSTDBufferSize : 13;
+		BYTE PESExtensionFieldLength : 7;
+		BYTE StreamIDExtensionFlag : 1;
+		BYTE StreamIDExtension : 7;
+		UINT64 PTS;
+		UINT64 DTS;
+		UINT64 ESCR;
+		UINT32 ESRate;
+	}TS_PACKET_PES;
 
 	typedef struct tagTS_BLOCK
 	{

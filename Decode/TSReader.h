@@ -17,13 +17,13 @@ namespace Decode
 		BOOL	ReadBlock(TS_BLOCK& block);
 	private:
 		BOOL	ReadPacket(TS_PACKEG_HEADER& header, TS_PACKET_SECTION*& ps);
-		INT		ReadSection(TS_PACKET_SECTION& section, BYTE* bits);
+		BOOL	ReadPES(const TS_PACKET_STREAM& stream, TS_PACKET_PES* pPES, const BYTE* bits);
 		INT		ReadAF(TS_PACKET_ADAPTATION_FIELD& myAF, BYTE* bits);
-		INT		ReadPAT(TS_PACKET_PAT* pPAT, TinyArray<TS_PACKET_PROGRAM>& programs, BYTE* bits);
-		INT		ReadPTM(TS_PACKET_PMT* pPTM, TinyArray<TS_PACKET_STREAM>& streams, BYTE* bits);
-		INT		ReadPES(BYTE* bits);
+		INT		ReadPAT(TS_PACKET_PAT* pPAT, TinyArray<TS_PACKET_PROGRAM>& programs, const BYTE* bits);
+		INT		ReadPTM(TS_PACKET_PMT* pPTM, TinyArray<TS_PACKET_STREAM>& streams, const BYTE* bits);
 	private:
-		string	ParseDescriptor(BYTE* bits,INT size);
+		BOOL	ParseAAC(const BYTE* bits, LONG size);
+		BOOL	ParseH264(const BYTE* bits, LONG size);
 	private:
 		BYTE							m_bits[188];
 		TinyComPtr<IStream>				m_stream;

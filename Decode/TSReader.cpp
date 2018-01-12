@@ -1,8 +1,23 @@
-#include "stdafx.h"
+Ôªø#include "stdafx.h"
 #include "TSReader.h"
 
 namespace Decode
 {
+	INT64 ConvertToTimestamp(INT64 timestamp)
+	{
+		return (((timestamp >> 33) & 0x7) << 30) |
+			(((timestamp >> 17) & 0x7fff) << 15) |
+			(((timestamp >> 1) & 0x7fff) << 0);
+	}
+	const BYTE PROGRAM_STREAM_MAP = 0xBC;
+	const BYTE PADDING_STREAM = 0xBE;
+	const BYTE PRIVATE_STREAM_2 = 0xBF;
+	const BYTE ECM_STREAM = 0xF0;
+	const BYTE EMM_STREAM = 0xF1;
+	const BYTE PROGRAM_STREAM_DIRECTORY = 0xFF;
+	const BYTE DSMCC_STREAM = 0xF2;
+	const BYTE H222_TYPE_E = 0xF8;
+	const BYTE E_STREAM = 0xF8;
 	//////////////////////////////////////////////////////////////////////////
 	TSReader::TSReader()
 	{
@@ -33,17 +48,6 @@ namespace Decode
 			if (iRes < 0)
 				return FALSE;
 		}
-	}
-	INT	TSReader::ReadSection(TS_PACKET_SECTION& section, BYTE* data)
-	{
-		INT index = 0;
-		section.TableID = data[index++];
-		section.SectionSyntaxIndicator = data[index] >> 7;
-		section.Zero = data[index] >> 6;
-		section.Reserved1 = data[index] >> 4;
-		section.SectionLength = (data[index] & 0x0F) << 8 | data[index + 1];
-		index += 2;
-		return index;
 	}
 	INT TSReader::ReadAF(TS_PACKET_ADAPTATION_FIELD& myAF, BYTE* data)
 	{
@@ -120,7 +124,7 @@ namespace Decode
 		}
 		return (myAF.AdaptationFieldLength + 1);
 	}
-	INT TSReader::ReadPAT(TS_PACKET_PAT* pPAT, TinyArray<TS_PACKET_PROGRAM>& programs, BYTE* bits)
+	INT TSReader::ReadPAT(TS_PACKET_PAT* pPAT, TinyArray<TS_PACKET_PROGRAM>& programs, const BYTE* bits)
 	{
 		programs.RemoveAll();
 		INT index = 0;
@@ -148,7 +152,7 @@ namespace Decode
 		}
 		return (size + 1);
 	}
-	INT	TSReader::ReadPTM(TS_PACKET_PMT* pPMT, TinyArray<TS_PACKET_STREAM>& streams, BYTE* bits)
+	INT	TSReader::ReadPTM(TS_PACKET_PMT* pPMT, TinyArray<TS_PACKET_STREAM>& streams, const BYTE* bits)
 	{
 		m_streams.RemoveAll();
 		INT index = 0;
@@ -166,10 +170,6 @@ namespace Decode
 		pPMT->Reserved4 = bits[index] >> 4;
 		pPMT->ProgramInfoLength = (bits[index] & 0x0F) << 8 | bits[index + 1];
 		index += 2;
-		if (pPMT->ProgramInfoLength > 0)
-		{
-			ParseDescriptor(bits + index, pPMT->ProgramInfoLength);
-		}
 		index += pPMT->ProgramInfoLength;
 		INT size = pPMT->SectionLength;
 		pPMT->CRC32 = (bits[size - 4] & 0x000000FF) << 24 | (bits[size - 3] & 0x000000FF) << 16 | (bits[size - 2] & 0x000000FF) << 8 | (bits[size - 1] & 0x000000FF);
@@ -192,13 +192,188 @@ namespace Decode
 		}
 		return (size + 1);
 	}
-	INT	TSReader::ReadPES(BYTE* bits)
+	BOOL TSReader::ReadPES(const TS_PACKET_STREAM& stream, TS_PACKET_PES* pPES, const BYTE* bits)
 	{
-
+		ZeroMemory(pPES, sizeof(TS_PACKET_PES));
+		INT index = 0;
+		pPES->StartCodePrefix = bits[index] << 16 | bits[index + 1] << 8 | bits[index + 2];
+		if (pPES->StartCodePrefix != 0x000001)
+			return FALSE;
+		index += 3;
+		pPES->StreamID = bits[index++];
+		pPES->PESPacketLength = bits[index] << 8 | bits[index + 1];
+		index += 2;
+		if (pPES->StreamID != PROGRAM_STREAM_MAP &&
+			pPES->StreamID != PADDING_STREAM           &&
+			pPES->StreamID != PRIVATE_STREAM_2         &&
+			pPES->StreamID != ECM_STREAM               &&
+			pPES->StreamID != EMM_STREAM               &&
+			pPES->StreamID != PROGRAM_STREAM_DIRECTORY &&
+			pPES->StreamID != DSMCC_STREAM            &&
+			pPES->StreamID != H222_TYPE_E)
+		{
+			pPES->PESScramblingControl = (bits[index] & 0x30) >> 4;
+			pPES->PESPriority = (bits[index] & 0x08) >> 3;
+			pPES->DataAlignmentIndicator = (bits[index] & 0x04) >> 2;
+			pPES->Copyright = (bits[index] & 0x02) >> 1;
+			pPES->OriginalOrCopy = (bits[index] & 0x01);
+			index += 1;
+			pPES->PTSDTSFlags = (bits[index] & 0xc0) >> 6;
+			pPES->ESCRFlag = (bits[index] & 0x20) >> 5;
+			pPES->ESRateFlag = (bits[index] & 0x10) >> 4;
+			pPES->DSMTrickModeFlag = (bits[index] & 0x08) >> 3;
+			pPES->AdditionalCopyInfoFlag = (bits[index] & 0x04) >> 2;
+			pPES->PESCRCFlag = (bits[index] & 0x02) >> 1;
+			pPES->PESExtensionFlag = (bits[index] & 0x01);
+			index += 1;
+			pPES->PESHeaderDataLength = bits[index++];
+			if (pPES->PTSDTSFlags == 0x2)
+			{
+				INT64 timestamp = ((((INT64)bits[index] >> 1) & 0x7) << 30) |
+					(bits[index + 1] << 22) |
+					((bits[index + 2] >> 1) << 15) |
+					(bits[index + 3] << 7) |
+					(bits[index + 4] >> 1);
+				if ((timestamp >> 36 & 0xF) != 0x2)
+					return FALSE;
+				if (((timestamp & 0x1) == 0) ||
+					((timestamp & 0x10000) == 0) ||
+					((timestamp & 0x100000000) == 0))
+					return FALSE;
+				pPES->PTS = (((timestamp >> 33) & 0x7) << 30) | (((timestamp >> 17) & 0x7FFF) << 15) | (((timestamp >> 1) & 0x7FFF) << 0);;
+				pPES->DTS = 0;
+				index += 5;
+			}
+			if (pPES->PTSDTSFlags == 0x3)
+			{
+				INT64 timestamp = ((((INT64)bits[index] >> 1) & 0x7) << 30) |
+					(bits[index + 1] << 22) |
+					((bits[index + 2] >> 1) << 15) |
+					(bits[index + 3] << 7) |
+					(bits[index + 4] >> 1);
+				if ((timestamp >> 36 & 0xF) != 0x2)
+					return FALSE;
+				if (((timestamp & 0x1) == 0) ||
+					((timestamp & 0x10000) == 0) ||
+					((timestamp & 0x100000000) == 0))
+					return FALSE;
+				pPES->PTS = (((timestamp >> 33) & 0x7) << 30) | (((timestamp >> 17) & 0x7FFF) << 15) | (((timestamp >> 1) & 0x7FFF) << 0);
+				index += 5;
+				timestamp = ((((INT64)bits[index] >> 1) & 0x7) << 30) |
+					(bits[index + 1] << 22) |
+					((bits[index + 2] >> 1) << 15) |
+					(bits[index + 3] << 7) |
+					(bits[index + 4] >> 1);
+				if ((timestamp >> 36 & 0xF) != 0x1)
+					return FALSE;
+				if (((timestamp & 0x1) == 0) ||
+					((timestamp & 0x10000) == 0) ||
+					((timestamp & 0x100000000) == 0))
+					return FALSE;
+				pPES->DTS = (((timestamp >> 33) & 0x7) << 30) | (((timestamp >> 17) & 0x7FFF) << 15) | (((timestamp >> 1) & 0x7FFF) << 0);
+				index += 5;
+			}
+			if (pPES->ESCRFlag)
+			{
+				pPES->ESCR = (((UINT64)(bits[index] >> 3) & 0x7) << 30) |
+					(UINT64)((bits[index] & 0x3) << 28) |
+					(UINT64)(bits[index + 1] << 20) |
+					(UINT64)((bits[index + 2] >> 3) << 15) |
+					(UINT64)((bits[index + 2] & 0x03) << 13) |
+					(UINT64)(bits[index + 3] << 5) |
+					(UINT64)(bits[index + 4] >> 3);
+				index += 6;
+			}
+			if (pPES->ESRateFlag)
+			{
+				pPES->ESRate = ((bits[index] & 0x7F) << 15) | (bits[index + 1] << 7) | (bits[index + 2] >> 1);
+				index += 3;
+			}
+			if (pPES->DSMTrickModeFlag)
+			{
+				pPES->TrickModeControl = bits[index] >> 5;
+				if (pPES->TrickModeControl == 0x0 || pPES->TrickModeControl == 0x3)
+				{
+					pPES->FieldID = (bits[index] >> 3) & 0x3;
+					pPES->IntraSliceRefresh = (bits[index] >> 2) & 0x1;
+					pPES->FrequencyTruncation = bits[index] & 0x3;
+				}
+				else if (pPES->TrickModeControl == 0x1 || pPES->TrickModeControl == 0x4)
+				{
+					pPES->RepCntrl = bits[index] & 0x1F;
+				}
+				else if (pPES->TrickModeControl == 0x2)
+				{
+					pPES->FieldID = (bits[index] >> 3) & 0x3;
+				}
+				index += 1;
+			}
+			if (pPES->AdditionalCopyInfoFlag)
+			{
+				pPES->AdditionalCopyInfo = bits[index++] & 0x7F;
+			}
+			if (pPES->PESCRCFlag)
+			{
+				pPES->PreviousPESPacketCRC = (bits[index] << 8) | bits[index + 1];
+				index += 2;
+			}
+			if (pPES->PESExtensionFlag)
+			{
+				pPES->PESPrivateDataFlag = bits[index] >> 7;
+				pPES->PackFieldLength = (bits[index] >> 6) & 0x1;
+				pPES->ProgramPacketSequenceCounterFlag = (bits[index] >> 5) & 0x1;
+				pPES->PSTDBufferFlag = (bits[index] >> 4) & 0x1;
+				pPES->PESExtensionFlag2 = bits[index] & 0x1;
+				index += 1;
+				if (pPES->PESPrivateDataFlag)
+				{
+					index += 16;//16‰Ωç
+				}
+				if (pPES->PackHeaderFieldFlag)
+				{
+					pPES->PackFieldLength = bits[index++];
+					index += pPES->PackFieldLength;
+				}
+				if (pPES->ProgramPacketSequenceCounterFlag)
+				{
+					pPES->ProgramPacketSequenceCounter = bits[index] & 0x7F;
+					pPES->MPEG1MPEG2Identifier = (bits[index + 1] >> 6) & 0x1;
+					pPES->OriginalStuffLength = bits[index + 1] & 0x3F;
+					index += 2;
+				}
+				if (pPES->PSTDBufferFlag)
+				{
+					pPES->PSTDBufferScale = (bits[index] >> 5) & 0x1;
+					pPES->PSTDBufferSize = ((bits[index] & 0x1F) << 8) | bits[index + 1];
+					index += 2;
+				}
+				if (pPES->PESExtensionFlag2)
+				{
+					pPES->PESExtensionFieldLength = bits[index++] & 0x7F;
+					pPES->StreamIDExtensionFlag = bits[index] >> 7;
+					if (pPES->StreamIDExtensionFlag)
+					{
+						pPES->StreamIDExtension = bits[index++] & 0x7F;
+						index += pPES->PESExtensionFieldLength;
+					}
+				}
+			}
+		}
+		index += pPES->PESPacketLength;
+		return TRUE;
 	}
-	INT TSReader::ReadPacket(TS_PACKEG_HEADER& header, TS_PACKET_SECTION*& ps)
+	BOOL TSReader::ParseAAC(const BYTE* bits, LONG size)
 	{
-		//TS¥´ ‰∞¸πÃ∂®188∏ˆ◊÷Ω⁄
+		return TRUE;
+	}
+	BOOL TSReader::ParseH264(const BYTE* bits, LONG size)
+	{
+		return TRUE;
+	}
+
+	BOOL TSReader::ReadPacket(TS_PACKEG_HEADER& header, TS_PACKET_SECTION*& ps)
+	{
+		//TS‰º†ËæìÂåÖÂõ∫ÂÆö188‰∏™Â≠óËäÇ
 		ZeroMemory(&header, sizeof(header));
 		ULONG ls = 0;
 		HRESULT hRes = S_OK;
@@ -210,7 +385,7 @@ namespace Decode
 		if (header.Syncbyte != 0x47)
 			return FALSE;
 		header.TransportErrorIndicator = m_bits[1] >> 7;
-		if (header.TransportErrorIndicator != 0)//–£—È¥ÌŒÛ
+		if (header.TransportErrorIndicator != 0)//Ê†°È™åÈîôËØØ
 			return FALSE;
 		header.PayloadUnitStartIndicator = m_bits[1] >> 6 & 0x01;
 		header.TransportPriority = m_bits[1] >> 5 & 0x01;
@@ -226,9 +401,9 @@ namespace Decode
 		}
 		if (header.AdaptationFieldControl == 0x1 || header.AdaptationFieldControl == 0x3)
 		{
-			if (header.PayloadUnitStartIndicator == 0x1)//±Ì æ¥¯”–pointer_field
+			if (header.PayloadUnitStartIndicator == 0x1)//Ë°®Á§∫Â∏¶Êúâpointer_field
 			{
-				INT pointer = m_bits[index] & 0x0F;//”––ß‘ÿ∫…µƒŒª÷√
+				INT pointer = m_bits[index] & 0x0F;//ÊúâÊïàËΩΩËç∑ÁöÑ‰ΩçÁΩÆ
 				index += 1;
 				index += pointer;
 			}
@@ -254,7 +429,10 @@ namespace Decode
 					TS_PACKET_STREAM& stream = m_streams[i];
 					if (stream.ElementaryPID == header.PID)
 					{
-
+						TS_PACKET_PES myPES;
+						ZeroMemory(&myPES, sizeof(myPES));
+						if (!ReadPES(stream, &myPES, m_bits + index))
+							return FALSE;
 					}
 				}
 				for (INT i = 0;i < m_programs.GetSize();i++)
@@ -279,12 +457,6 @@ namespace Decode
 			}
 		}
 		return index;
-	}
-	string	TSReader::ParseDescriptor(BYTE* bits, INT size)
-	{
-		string value;
-
-		return value;
 	}
 	BOOL TSReader::Close()
 	{
