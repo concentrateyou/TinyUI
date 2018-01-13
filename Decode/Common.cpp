@@ -24,4 +24,67 @@ namespace Decode
 	{
 		return	(INT)(val[0] << 8);
 	}
+	//////////////////////////////////////////////////////////////////////////
+	BOOL TS_PACKET_PROGRAM::operator == (const TS_PACKET_PROGRAM& other)
+	{
+		return ProgramPID == other.ProgramPID;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	ByteQueue::ByteQueue()
+		: m_io(new BYTE[1024]),
+		m_size(1024),
+		m_offset(0),
+		m_remaining(0)
+	{
+	}
+
+	ByteQueue::~ByteQueue()
+	{
+	}
+
+	void ByteQueue::Reset()
+	{
+		m_offset = 0;
+		m_remaining = 0;
+	}
+
+	void ByteQueue::Push(const BYTE* data, INT size)
+	{
+		size_t value = m_remaining + size;
+		if (value > m_size)
+		{
+			size_t newsize = 2 * m_size;
+			while (value > newsize && newsize > m_size)
+				newsize *= 2;
+			std::unique_ptr<BYTE[]> data(new BYTE[newsize]);
+			if (m_remaining > 0)
+				memcpy(data.get(), m_io.get() + m_offset, m_remaining);
+			m_io.reset(data.release());
+			m_size = newsize;
+			m_offset = 0;
+		}
+		else if ((m_offset + m_remaining + size) > m_size)
+		{
+			memmove(m_io.get(), m_io.get() + m_offset, m_remaining);
+			m_offset = 0;
+		}
+		memcpy(m_io.get() + m_offset + m_remaining, data, size);
+		m_remaining += size;
+	}
+
+	void ByteQueue::Peek(const BYTE** data, INT* size) const
+	{
+		*data = (m_io.get() + m_offset);
+		*size = m_remaining;
+	}
+
+	void ByteQueue::Pop(INT count)
+	{
+		m_offset += count;
+		m_remaining -= count;
+		if (m_offset == m_size)
+		{
+			m_offset = 0;
+		}
+	}
 }

@@ -91,7 +91,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 
 	TSReader reader;
-	reader.OpenFile("D:\\liveencode\\1.ts");
+	reader.OpenFile("D:\\1.ts");
 	for (;;)
 	{
 		TS_BLOCK block;

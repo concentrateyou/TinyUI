@@ -8,6 +8,7 @@
 #include "Render/TinyGDI.h"
 #include "IO/TinyTask.h"
 #include "IO/TinyIO.h"
+#include "IO/TinyIOBuffer.h"
 #include "Media/TinyMedia.h"
 using namespace TinyUI;
 using namespace TinyUI::IO;
@@ -284,12 +285,21 @@ namespace Decode
 		};
 	}FLV_BLOCK;
 	//////////////////////////////////////////////////////////////////////////
-
+	//PSI(Program Specific Information)
+	//	–PAT(Program Association Table)节目关联表
+	//	–PMT(Program Map Table)节目映射表
+	//	–CAT(Conditional Access Table)条件接收表
+	//SI(Service Information)
+	//	–NIT(Network Information Table)网络信息表
+	//	–SDT(Service Discription Table)业务描述信息表
+	//	–BAT(Bouquet Association Table)业务群信息表
+	//	–EIT(Event Information Table)节目事件信息表
+	//	–TDT(Time and Data Table) 日期时间表
 	typedef struct tagTS_PACKEG_HEADER
 	{
 		BYTE Syncbyte;
 		BYTE TransportErrorIndicator : 1;
-		BYTE PayloadUnitStartIndicator : 1;
+		BYTE PayloadUnitStartIndicator : 1;//PSI和PES处理
 		BYTE TransportPriority : 1;
 		SHORT PID : 13;
 		BYTE TransportScramblingControl : 2;
@@ -325,12 +335,15 @@ namespace Decode
 		UINT64 DTSNextAU : 33;//三个部分
 	}TS_PACKET_ADAPTATION_FIELD;
 
-	typedef struct tagTS_PACKET_PROGRAM
+	class TS_PACKET_PROGRAM
 	{
+	public:
 		USHORT ProgramNumber : 16;
 		BYTE   Reserved : 3;
 		USHORT ProgramPID : 13;
-	}TS_PACKET_PROGRAM;
+	public:
+		BOOL operator == (const TS_PACKET_PROGRAM& other);
+	};
 
 	class TS_PACKET_SECTION
 	{
@@ -370,26 +383,10 @@ namespace Decode
 		UINT32 CRC32;
 	};
 
-	class TS_PACKET_DESCRIPTOR
-	{
-	public:
-		BYTE DescriptorTag;
-		BYTE DescriptorLength;
-		CHAR Context[256];
-	};
-
-	typedef struct tagTS_PACKET_STREAM
-	{
-		BYTE StreamType : 8;
-		BYTE Reserved1 : 3;
-		USHORT ElementaryPID : 13;
-		BYTE Reserved2 : 4;
-		USHORT ESInfoLength : 12;
-	}TS_PACKET_STREAM;
 
 	typedef struct tagTS_PACKET_PES
 	{
-		UINT32 StartCodePrefix : 24;
+		UINT32 PacketStartCodePrefix : 24;
 		BYTE StreamID;
 		USHORT PESPacketLength;
 		BYTE PESScramblingControl : 2;
@@ -449,4 +446,32 @@ namespace Decode
 			}video;
 		};
 	}TS_BLOCK;
+
+	class TS_PACKET_DESCRIPTOR
+	{
+	public:
+		BYTE DescriptorTag;
+		BYTE DescriptorLength;
+		CHAR Context[256];
+	};
+
+	/// <summary>
+	/// 字节队列
+	/// </summary>
+	class ByteQueue
+	{
+		DISALLOW_COPY_AND_ASSIGN(ByteQueue)
+	public:
+		ByteQueue();
+		~ByteQueue();
+		void Reset();
+		void Push(const BYTE* data, INT size);
+		void Peek(const BYTE** data, INT* size) const;
+		void Pop(INT count);
+	private:
+		INT m_size;
+		INT m_offset;
+		INT m_remaining;
+		std::unique_ptr<BYTE[]> m_io;
+	};
 }
