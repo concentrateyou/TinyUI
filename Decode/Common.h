@@ -9,6 +9,7 @@
 #include "IO/TinyTask.h"
 #include "IO/TinyIO.h"
 #include "IO/TinyIOBuffer.h"
+#include "IO/TinyBitReader.h"
 #include "Media/TinyMedia.h"
 using namespace TinyUI;
 using namespace TinyUI::IO;
@@ -30,6 +31,8 @@ namespace Decode
 #define PES_HEADER_SIZE 9
 #define MAX_PES_HEADER_SIZE (9 + 255)
 
+#define ADTS_HEADER_MIN_SIZE	7
+
 #define TS_STREAM_TYPE_VIDEO_MPEG1     0x01  
 #define TS_STREAM_TYPE_VIDEO_MPEG2     0x02  
 #define TS_STREAM_TYPE_AUDIO_MPEG1     0x03  
@@ -46,6 +49,17 @@ namespace Decode
 	INT ToINT24(BYTE val[3]);
 	INT ToINT16(BYTE val[2]);
 	INT ToINT8(BYTE val[1]);
+
+	BOOL FindStartCode(BYTE* bits, INT size);
+
+	typedef struct tagNALU
+	{
+		BYTE	Forbidden;
+		BYTE	Reference;
+		BYTE	Type;
+		BYTE*	bits;
+		LONG	size;
+	}NALU;
 
 	enum NALUType
 	{
@@ -431,18 +445,20 @@ namespace Decode
 
 	typedef struct tagTS_BLOCK
 	{
-		BYTE  type;
+		BYTE  streamType;
 		union
 		{
 			struct
 			{
 				BYTE*	data;
 				LONG	size;
+				BYTE	type;
 			}audio;
 			struct
 			{
 				BYTE*	data;
 				LONG	size;
+				BYTE	type;
 			}video;
 		};
 	}TS_BLOCK;

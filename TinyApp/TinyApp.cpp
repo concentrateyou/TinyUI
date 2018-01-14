@@ -89,14 +89,34 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadSeDebugPrivilege();
 	CoInitialize(NULL);
 
+	FILE* hFile1 = NULL;
+	fopen_s(&hFile1, "D:\\test.264", "wb+");
+
+	FILE* hFile2 = NULL;
+	fopen_s(&hFile2, "D:\\test.aac", "wb+");
 
 	TSReader reader;
 	reader.OpenFile("D:\\1.ts");
 	for (;;)
 	{
 		TS_BLOCK block;
-		reader.ReadBlock(block);
+		if (!reader.ReadBlock(block))
+		{
+			break;
+		}
+		if (block.streamType == TS_STREAM_TYPE_VIDEO_H264)
+		{
+			fwrite(block.video.data, 1, block.video.size, hFile1);
+		}
+		if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)
+		{
+			fwrite(block.audio.data, 1, block.audio.size, hFile2);
+		}
+		SAFE_DELETE_ARRAY(block.audio.data);
+		SAFE_DELETE_ARRAY(block.video.data);
 	}
+	fclose(hFile1);
+	fclose(hFile2);
 	//MediaTest test;
 	//test.H264ToI420("D:\\Media\\test.264", "D:\\Media\\test.yuv");
 	//test.MP3ToWave("D:\\Media\\李玉刚-刚好遇见你.mp3", "D:\\Media\\李玉刚-刚好遇见你.wav");

@@ -44,6 +44,7 @@ namespace TinyUI
 		{
 		public:
 			NetworkIOBuffer();
+			virtual ~NetworkIOBuffer();
 			void SetCapacity(INT capacity);
 			INT capacity() const;
 			void SetOffset(INT offset);
@@ -52,8 +53,6 @@ namespace TinyUI
 			INT  receive() const;
 			INT RemainingCapacity();
 			CHAR* StartOfBuffer();
-		protected:
-			virtual ~NetworkIOBuffer();
 		protected:
 			INT									m_receive;
 			INT									m_capacity;

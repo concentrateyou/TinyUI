@@ -3,17 +3,7 @@
 
 namespace Decode
 {
-	BOOL FindStartCode(BYTE* bits, INT size)
-	{
-		for (INT i = 0;i < size - 1;i++)
-		{
-			if (bits[i] != 0)
-				return FALSE;
-		}
-		if (bits[size - 1] != 1)
-			return FALSE;
-		return TRUE;
-	}
+	
 	H264Reader::H264Reader()
 		:m_count(0),
 		m_mask(4)

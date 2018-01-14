@@ -24,6 +24,17 @@ namespace Decode
 	{
 		return	(INT)(val[0] << 8);
 	}
+	BOOL FindStartCode(BYTE* bits, INT size)
+	{
+		for (INT i = 0;i < size - 1;i++)
+		{
+			if (bits[i] != 0)
+				return FALSE;
+		}
+		if (bits[size - 1] != 1)
+			return FALSE;
+		return TRUE;
+	}
 	//////////////////////////////////////////////////////////////////////////
 	BOOL TS_PACKET_PROGRAM::operator == (const TS_PACKET_PROGRAM& other)
 	{

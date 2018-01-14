@@ -7,16 +7,6 @@ using namespace TinyUI;
 namespace Decode
 {
 #define DEFAULT_H264_BUFFER_SIZE (1024*8)
-
-	BOOL FindStartCode(BYTE* bits, INT size);
-	typedef struct tagNALU
-	{
-		BYTE	Forbidden;
-		BYTE	Reference;
-		BYTE	Type;
-		BYTE*	bits;
-		LONG	size;
-	}NALU;
 	/// <summary>
 	/// H264∂¡»°IO
 	/// </summary>
