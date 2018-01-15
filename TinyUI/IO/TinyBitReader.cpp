@@ -75,7 +75,7 @@ namespace TinyUI
 
 		UINT32 TinyBitReader::Available() const
 		{
-			return static_cast<UINT32>(8 * m_size + m_remainingBits);
+			return static_cast<UINT32>(8 * (m_size - 1) + m_remainingBits);
 		}
 	}
 }
