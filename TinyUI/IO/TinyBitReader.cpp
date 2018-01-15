@@ -6,12 +6,13 @@ namespace TinyUI
 {
 	namespace IO
 	{
-		TinyBitReader::TinyBitReader(const BYTE* bits, LONG size)
+		TinyBitReader::TinyBitReader(BYTE* bits, LONG size)
 			:m_bits(bits),
 			m_size(size),
-			m_remainingBits(0)
+			m_remainingBits(0),
+			m_currentByte(0)
 		{
-			if (m_size != 0)
+			if (m_size > 0)
 			{
 				m_currentByte = *m_bits;
 				++m_bits;
@@ -25,16 +26,16 @@ namespace TinyUI
 
 		}
 
-		BOOL TinyBitReader::ReadBitsInternal(INT count, UINT64* out)
+		BOOL TinyBitReader::ReadBits(INT count, UINT64* s)
 		{
-			*out = 0;
+			*s = 0;
 			while (m_remainingBits != 0 && count != 0)
 			{
-				INT takeBit = min(m_remainingBits, count);
-				*out <<= takeBit;
-				*out += m_currentByte >> (m_remainingBits - takeBit);
-				count -= takeBit;
-				m_remainingBits -= takeBit;
+				INT take = min(m_remainingBits, count);
+				*s <<= take;
+				*s += (m_currentByte >> (m_remainingBits - take));
+				count -= take;
+				m_remainingBits -= take;
 				m_currentByte &= (1 << m_remainingBits) - 1;
 				if (m_remainingBits == 0)
 				{
@@ -69,7 +70,7 @@ namespace TinyUI
 				}
 			}
 			UINT64 value;
-			return ReadBitsInternal(count, &value);
+			return ReadBits(count, &value);
 		}
 
 		UINT32 TinyBitReader::Available() const

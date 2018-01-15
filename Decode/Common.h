@@ -397,7 +397,6 @@ namespace Decode
 		UINT32 CRC32;
 	};
 
-
 	typedef struct tagTS_PACKET_PES
 	{
 		UINT32 PacketStartCodePrefix : 24;

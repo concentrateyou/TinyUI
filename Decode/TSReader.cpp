@@ -124,10 +124,8 @@ namespace Decode
 		0, 0, 0
 	};
 	TSAACParser::TSAACParser()
-		:m_channel(2),
-		m_samplesPerSec(44100)
 	{
-
+		m_asc.resize(2);
 	}
 	TSAACParser::~TSAACParser()
 	{
@@ -151,12 +149,16 @@ namespace Decode
 		TinyBitReader reader(bits, size);
 		if (bits[0] == 0xFF && (bits[1] & 0xF6) == 0xF0)
 		{
-			reader.SkipBits(18);
-			reader.ReadBits(4, &m_samplesPerSec);
+			BYTE profile = 0;
+			BYTE channel = 0;
+			BYTE samplesPerSec = 0;
+			reader.SkipBits(16);
+			reader.ReadBits(2, &profile);
+			reader.ReadBits(4, &samplesPerSec);
 			reader.SkipBits(1);
-			reader.ReadBits(3, &m_channel);
+			reader.ReadBits(3, &channel);
 			reader.SkipBits(4);
-			m_samplesPerSec = AAC_Sample_Rates[m_samplesPerSec & 0x0F];
+			m_asc[0] &= profile >> 3;
 			return TRUE;
 		}
 		return FALSE;

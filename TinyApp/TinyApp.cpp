@@ -35,6 +35,7 @@
 #include "MediaTest.h"
 #include "Media/TinyMFIntelQSVDecode.h"
 #include <fstream>
+#include "IO/TinyBitWriter.h"
 
 using namespace TinyUI;
 using namespace TinyUI::Network;
@@ -88,6 +89,17 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	HRESULT hRes = OleInitialize(NULL);
 	LoadSeDebugPrivilege();
 	CoInitialize(NULL);
+
+	BYTE bits2[2];
+	TinyBitWriter writer1(bits2, 2);
+	writer1.WriteBits(9, 105);
+	writer1.WriteBits(5, 21);
+	writer1.WriteBits(2, 1);
+	TinyBitReader reader1(bits2, 2);
+	UINT64 val = 0;
+	reader1.ReadBits(9, &val);
+	reader1.ReadBits(5, &val);
+	reader1.ReadBits(2, &val);
 
 	FILE* hFile1 = NULL;
 	fopen_s(&hFile1, "D:\\test.264", "wb+");

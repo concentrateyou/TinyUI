@@ -14,22 +14,21 @@ namespace TinyUI
 		class TinyBitReader
 		{
 		public:
-			TinyBitReader(const BYTE* bits, LONG size);
+			TinyBitReader(BYTE* bits, LONG size);
 			~TinyBitReader();
 			template<typename T>
-			BOOL ReadBits(INT count, T* out)
+			BOOL ReadBits(INT count, T* s)
 			{
 				UINT64 val;
-				BOOL bRes = ReadBitsInternal(count, &val);
-				*out = static_cast<T>(val);
+				BOOL bRes = ReadBits(count, &val);
+				*s = static_cast<T>(val);
 				return bRes;
 			}
+			BOOL ReadBits(INT count, UINT64* s);
 			BOOL SkipBits(INT count);
 			UINT32 Available() const;
 		private:
-			BOOL ReadBitsInternal(INT count, UINT64* out);
-		private:
-			const BYTE*		m_bits;
+			BYTE*			m_bits;
 			LONG			m_size;
 			BYTE			m_currentByte;
 			INT				m_remainingBits;

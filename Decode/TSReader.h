@@ -47,9 +47,7 @@ namespace Decode
 	private:
 		BOOL	ParseADTS(BYTE* bits, INT size);
 	private:
-		INT				m_channel;
-		INT				m_samplesPerSec;
-		vector<BYTE>	m_asc;//AudioSpecificConfig
+		vector<BYTE>		m_asc;//AudioSpecificConfig
 	};
 	//////////////////////////////////////////////////////////////////////////
 	class TS_PACKET_STREAM
