@@ -30,9 +30,8 @@ namespace TinyUI
 		private:
 			BYTE*	m_bits;
 			INT		m_size;
-			INT		m_offsetBits;
+			INT		m_consumeBits;
 			INT		m_remainingBits;
-			BYTE	m_currentByte;
 		};
 	};
 }

@@ -17,13 +17,11 @@ namespace TinyUI
 			return count;
 		}
 
-
 		TinyBitWriter::TinyBitWriter(BYTE *bits, INT size)
 			:m_bits(bits),
 			m_size(size),
 			m_remainingBits(0),
-			m_offsetBits(0),
-			m_currentByte(0)
+			m_consumeBits(0)
 		{
 			ZeroMemory(m_bits, m_size);
 			if (m_size > 0)
@@ -41,40 +39,35 @@ namespace TinyUI
 		{
 			if (m_size <= 0 || value >= (1U << count))
 				return FALSE;
+			value <<= (sizeof(UINT64) * 8 - count);
 			while (m_remainingBits != 0 && count != 0)
 			{
 				BYTE task = min(m_remainingBits, count);
-				INT i = (m_remainingBits - (count > 8 ? 8 : count));
-				BYTE s = 0;
-				if (i >= 0)
+				BYTE s = static_cast<BYTE>(value >> 56);//取高8位
+				s >>= m_consumeBits;
+				*m_bits |= s;
+				m_remainingBits -= task;
+				count -= task;
+				if (m_remainingBits != 0)
 				{
-					s = ((BYTE)value & 0xFF);
-					s <<= i;
+					m_consumeBits = 8 - m_remainingBits;
 				}
 				else
 				{
-					s = ((BYTE)value & 0xFF);
-					s >>= abs(i);
-				}
-				*m_bits += s;
-				m_remainingBits -= task;
-				count -= task;
-				if (m_remainingBits == 0)
-				{
-					if (count > 0 && i >= 0)
+					if (count > 0)
 					{
-						*m_bits >>= count;
+						value <<= 8 - m_consumeBits;
 					}
 					if (m_size != 0)
 					{
 						++m_bits;
 						--m_size;
 						m_remainingBits = 8;
+						m_consumeBits = 0;
 					}
 				}
 			}
 			return TRUE;
-
 		}
 
 		BOOL TinyBitWriter::SkipBits(INT count)
