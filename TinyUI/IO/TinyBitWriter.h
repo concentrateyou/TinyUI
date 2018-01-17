@@ -24,13 +24,15 @@ namespace TinyUI
 		public:
 			TinyBitWriter(BYTE *bits, INT size);
 			~TinyBitWriter();
-			BOOL WriteBits(INT count, UINT32 value);
+			BOOL WriteBits(INT count, UINT64 value);
 			BOOL SkipBits(INT count);
 			UINT32 Available() const;
 		private:
 			BYTE*	m_bits;
 			INT		m_size;
+			INT		m_offsetBits;
 			INT		m_remainingBits;
+			BYTE	m_currentByte;
 		};
 	};
 }

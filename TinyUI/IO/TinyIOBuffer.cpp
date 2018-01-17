@@ -71,7 +71,7 @@ namespace TinyUI
 		}
 		void NetworkIOBuffer::SetCapacity(INT capacity)
 		{
-			m_io.Reset(static_cast<CHAR*>(realloc(m_io.Ptr(), capacity)));
+			m_io.Reset(static_cast<CHAR*>(realloc(m_io.Release(), capacity)));
 			m_capacity = capacity;
 			if (m_offset > capacity)
 			{

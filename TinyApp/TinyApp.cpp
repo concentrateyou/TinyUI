@@ -73,6 +73,11 @@ BOOL LoadSeDebugPrivilege()
 	return TRUE;
 }
 
+void Test(INT(*p)[])
+{
+
+}
+
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -90,24 +95,31 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadSeDebugPrivilege();
 	CoInitialize(NULL);
 
-	UINT32 s1 = 0x00000069;
-	BYTE a1 = 0x00;
-	a1 |= s1 << 24;
+	UINT64 a = 1020U;
+	BYTE* ps = (BYTE*)&a;
 
 	BYTE bits2[5];
 	TinyBitWriter writer1(bits2, 5);
 	writer1.WriteBits(9, 105);
-	writer1.SkipBits(4);
+	writer1.WriteBits(4, 9);
 	writer1.WriteBits(10, 511);
-	writer1.WriteBits(11, 1020);
-	writer1.WriteBits(6, 59);
+	/*writer1.WriteBits(11, 1020);
+	writer1.WriteBits(6, 59);*/
 	TinyBitReader reader1(bits2, 5);
 	UINT64 val = 0;
 	reader1.ReadBits(9, &val);
-	reader1.SkipBits(4);
+	reader1.ReadBits(4, &val);
 	reader1.ReadBits(10, &val);
+	/*reader1.ReadBits(11, &val);
+	reader1.ReadBits(6, &val);*/
+	/*BYTE bits2[2];
+	TinyBitWriter writer1(bits2, 5);
+	writer1.WriteBits(11, 1020);
+	writer1.WriteBits(5, 11);
+	TinyBitReader reader1(bits2, 5);
+	UINT64 val = 0;
 	reader1.ReadBits(11, &val);
-	reader1.ReadBits(6, &val);
+	reader1.ReadBits(5, &val);*/
 
 	FILE* hFile1 = NULL;
 	fopen_s(&hFile1, "D:\\test.264", "wb+");

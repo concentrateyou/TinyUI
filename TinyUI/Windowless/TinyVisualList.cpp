@@ -280,7 +280,7 @@ namespace TinyUI
 				INT y = row * (DEFAULT_LIST_ITEM_HEIGHT + DEFAULT_LIST_ITEM_COLUMN_SPACE);
 				ps->SetPosition(TinyPoint(x, y));
 				ps->SetSize(TinySize(itemCX, DEFAULT_LIST_ITEM_HEIGHT));
-				ps->SetBackgroundSize(TinySize(itemCX, DEFAULT_LIST_ITEM_HEIGHT - 30));
+				ps->SetBackgroundSize(TinySize(120, DEFAULT_LIST_ITEM_HEIGHT - 30));
 				ps->SetText(text);
 				ps->SetTextAlian(DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 				ps->SetTextColor(RGB(64, 64, 64));
