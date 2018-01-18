@@ -101,7 +101,7 @@ namespace TinyUI
 			canvas.SetFont(m_hFONT);
 			canvas.SetTextColor(m_textColor);
 			TinyRectangle rectangle;
-			rectangle.SetRect(TinyPoint(clip.left, clip.bottom - 30), TinySize(120, 30));
+			rectangle.SetRect(TinyPoint(clip.left, clip.bottom - 30), TinySize(128, 28));
 			canvas.DrawString(m_szText, rectangle, m_textAlign);
 			return TRUE;
 		}
@@ -239,7 +239,7 @@ namespace TinyUI
 				INT y = row * (DEFAULT_LIST_ITEM_HEIGHT + DEFAULT_LIST_ITEM_COLUMN_SPACE);
 				ps->SetPosition(TinyPoint(x, y));
 				ps->SetSize(TinySize(itemCX, DEFAULT_LIST_ITEM_HEIGHT));
-				ps->SetBackgroundSize(TinySize(itemCX, DEFAULT_LIST_ITEM_HEIGHT - 30));
+				ps->SetBackgroundSize(TinySize(128, 72));
 				ps->SetText(text);
 				ps->SetTextAlian(DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 				ps->SetTextColor(RGB(64, 64, 64));
@@ -280,7 +280,7 @@ namespace TinyUI
 				INT y = row * (DEFAULT_LIST_ITEM_HEIGHT + DEFAULT_LIST_ITEM_COLUMN_SPACE);
 				ps->SetPosition(TinyPoint(x, y));
 				ps->SetSize(TinySize(itemCX, DEFAULT_LIST_ITEM_HEIGHT));
-				ps->SetBackgroundSize(TinySize(120, DEFAULT_LIST_ITEM_HEIGHT - 30));
+				ps->SetBackgroundSize(TinySize(128, 72));
 				ps->SetText(text);
 				ps->SetTextAlian(DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 				ps->SetTextColor(RGB(64, 64, 64));

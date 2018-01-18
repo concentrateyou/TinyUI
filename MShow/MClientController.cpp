@@ -850,11 +850,11 @@ namespace MShow
 		//Í£Ö¹½âËµ
 		StopCommentary();
 		//¹Ø±ÕÔ¤ÀÀ
+		m_taskTimer.Close();
 		if (m_preview != NULL)
 		{
 			m_preview->Close();
 		}
-		m_taskTimer.Close();
 		m_microphoneTest.Shutdown();
 		m_speakTest.Shutdown();
 		m_szSourceID.clear();

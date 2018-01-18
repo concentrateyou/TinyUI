@@ -540,6 +540,9 @@
     <ClInclude Include="IO\TinyBitWriter.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
+    <ClInclude Include="Network\TinyPing.h">
+      <Filter>头文件\Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -997,6 +1000,9 @@
     </ClCompile>
     <ClCompile Include="IO\TinyBitWriter.cpp">
       <Filter>源文件\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\TinyPing.cpp">
+      <Filter>源文件\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

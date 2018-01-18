@@ -5,7 +5,7 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-#define DEFAULT_LIST_ITEM_HEIGHT		120
+#define DEFAULT_LIST_ITEM_HEIGHT		100
 #define DEFAULT_LIST_ITEM_ROW_SPACE		12
 #define DEFAULT_LIST_ITEM_COLUMN_SPACE	12
 		class TinyVisualVScrollBar;

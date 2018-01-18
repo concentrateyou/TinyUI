@@ -56,8 +56,7 @@ namespace TinyUI
 			BOOL				m_bBreak;
 			LONG				m_delay;
 			Closure				m_callback;
-			TinyTask		m_task;
-			TinyWaitableTimer	m_timer;
+			TinyTask			m_task;
 		};
 		/// <summary>
 		/// 消息队列
