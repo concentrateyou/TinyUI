@@ -124,7 +124,7 @@ namespace TinyUI
 			m_delay = delay;
 			m_callback = std::move(callback);
 			m_bBreak = FALSE;
-			return FALSE;
+			return TRUE;
 		}
 
 		void TinyTaskTimer::Close()

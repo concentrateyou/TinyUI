@@ -87,8 +87,7 @@ namespace TinyUI
 					return (count == 0);
 				}
 			}
-			UINT32 value = 0;
-			return WriteBits(count, value);
+			return WriteBits(count, 0U);
 		}
 
 		UINT32 TinyBitWriter::Available() const

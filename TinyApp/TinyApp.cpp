@@ -93,14 +93,14 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	BYTE bits2[5];
 	TinyBitWriter writer1(bits2, 5);
 	writer1.WriteBits(9, 105);
-	writer1.WriteBits(4, 9);
+	writer1.SkipBits(4);
 	writer1.WriteBits(10, 510);
 	writer1.WriteBits(11, 1020);
 	writer1.WriteBits(6, 59);
 	TinyBitReader reader1(bits2, 5);
 	UINT64 val = 0;
 	reader1.ReadBits(9, &val);
-	reader1.ReadBits(4, &val);
+	reader1.SkipBits(4);
 	reader1.ReadBits(10, &val);
 	reader1.ReadBits(11, &val);
 	reader1.ReadBits(6, &val);
