@@ -101,7 +101,7 @@ namespace TinyUI
 			canvas.SetFont(m_hFONT);
 			canvas.SetTextColor(m_textColor);
 			TinyRectangle rectangle;
-			rectangle.SetRect(TinyPoint(clip.left, clip.bottom - 30), TinySize(clip.Size().cx, 30));
+			rectangle.SetRect(TinyPoint(clip.left, clip.bottom - 30), TinySize(120, 30));
 			canvas.DrawString(m_szText, rectangle, m_textAlign);
 			return TRUE;
 		}
@@ -257,7 +257,7 @@ namespace TinyUI
 			}
 			return NULL;
 		}
-		TinyVisualListItem* TinyVisualList::Add(const TinyString& text, const TinyString& imageURL,const TinyString& defaultImage)
+		TinyVisualListItem* TinyVisualList::Add(const TinyString& text, const TinyString& imageURL, const TinyString& defaultImage)
 		{
 			if (!m_document)
 				return NULL;
