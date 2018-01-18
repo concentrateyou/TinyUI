@@ -37,7 +37,7 @@ namespace MShow
 		TinyString						m_szURL;
 		TinySize						m_size;
 		TinyMsgQueue					m_msgqueue;
-		TinyTaskTimer					m_timer;
+		TinySimpleTaskTimer				m_retryTimer;
 		MClock							m_clock;
 		MFLVTask						m_task;
 		MAudioTask						m_audioTask;

@@ -110,8 +110,8 @@ namespace MShow
 					visual->SetText("预览流打开失败 正在重试.....");
 				}
 				LOG(ERROR) << "[SetPreview] " << "Open Preview :" << m_szPreviewURL << " Fail";
-				m_taskTimer.Close();
-				m_taskTimer.SetCallback(3000, BindCallback(&MClientController::OnTry, this));//每隔3秒重试
+				m_retryTimer.Close();
+				m_retryTimer.SetCallback(3000, BindCallback(&MClientController::OnTry, this));//每隔3秒重试
 			}
 		}
 		m_view.Invalidate();
@@ -158,7 +158,7 @@ namespace MShow
 		{
 			TRACE("[MClientController] WM_PLAY_RESUME Close Timer\n");
 			LOG(INFO) << "[MClientController] WM_PLAY_RESUME Close Timer";
-			m_taskTimer.Close();
+			m_retryTimer.Close();
 		}
 	}
 	void MClientController::UpdateMicrophones()
@@ -850,7 +850,7 @@ namespace MShow
 		//停止解说
 		StopCommentary();
 		//关闭预览
-		m_taskTimer.Close();
+		m_retryTimer.Close();
 		if (m_preview != NULL)
 		{
 			m_preview->Close();

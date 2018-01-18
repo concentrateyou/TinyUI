@@ -109,17 +109,17 @@ namespace TinyUI
 			return FALSE;
 		}
 		//////////////////////////////////////////////////////////////////////////
-		TinyTaskTimer::TinyTaskTimer()
+		TinySimpleTaskTimer::TinySimpleTaskTimer()
 			:m_delay(0),
 			m_bBreak(FALSE)
 		{
 
 		}
-		TinyTaskTimer::~TinyTaskTimer()
+		TinySimpleTaskTimer::~TinySimpleTaskTimer()
 		{
 
 		}
-		BOOL TinyTaskTimer::SetCallback(LONG delay, Closure&& callback)
+		BOOL TinySimpleTaskTimer::SetCallback(LONG delay, Closure&& callback)
 		{
 			m_delay = delay;
 			m_callback = std::move(callback);
@@ -127,13 +127,13 @@ namespace TinyUI
 			return TRUE;
 		}
 
-		void TinyTaskTimer::Close()
+		void TinySimpleTaskTimer::Close()
 		{
 			m_bBreak = TRUE;
 			m_task.Close(INFINITE);
 			LOG(INFO) << "TinyTaskTimer Close OK";
 		}
-		void TinyTaskTimer::OnMessagePump()
+		void TinySimpleTaskTimer::OnMessagePump()
 		{
 			for (;;)
 			{

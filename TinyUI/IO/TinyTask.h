@@ -40,14 +40,14 @@ namespace TinyUI
 			Closure		m_callback;
 		};
 		/// <summary>
-		/// 定时器
+		/// 简单定时任务
 		/// </summary>
-		class TinyTaskTimer
+		class TinySimpleTaskTimer
 		{
-			DISALLOW_COPY_AND_ASSIGN(TinyTaskTimer)
+			DISALLOW_COPY_AND_ASSIGN(TinySimpleTaskTimer)
 		public:
-			TinyTaskTimer();
-			~TinyTaskTimer();
+			TinySimpleTaskTimer();
+			~TinySimpleTaskTimer();
 			BOOL SetCallback(LONG delay, Closure&& callback);
 			void Close();
 		private:

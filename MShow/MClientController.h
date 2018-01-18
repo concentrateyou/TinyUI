@@ -70,7 +70,7 @@ namespace MShow
 		BOOL								m_bCommentarying;
 		BOOL								m_bBreak;
 		BOOL								m_bBreak1;
-		TinyTaskTimer						m_timerStatus;//¼ì²â½âËµ×´Ì¬
+		TinySimpleTaskTimer					m_timerStatus;//¼ì²â½âËµ×´Ì¬
 		LONGLONG							m_previousPTS;
 		string								m_szURL;//Ô¤ÀÀÁ÷µØÖ·
 		string								m_szSourceID;
@@ -86,7 +86,7 @@ namespace MShow
 		MAudioDSP							m_audioDSP;
 		TinyScopedPtr<AudioSdk>				m_audioSDK;
 		TinyTask							m_task;
-		TinyTaskTimer						m_taskTimer;
+		TinySimpleTaskTimer					m_retryTimer;
 		TinyPerformanceTime					m_timeQPC;
 		TinyScopedPtr<MPreviewController>	m_preview;
 		TinyMsgQueue						m_msgqueue;

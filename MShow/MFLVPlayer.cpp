@@ -138,7 +138,7 @@ namespace MShow
 		{
 			TRACE("[MFLVPlayer] WM_PLAY_RESUME Close Timer\n");
 			LOG(INFO) << "[MFLVPlayer] WM_PLAY_RESUME Close Timer";
-			m_timer.Close();
+			m_retryTimer.Close();
 		}
 	}
 
@@ -153,8 +153,8 @@ namespace MShow
 		case WSAECONNABORTED:
 		case WSAECONNRESET:
 		{
-			m_timer.Close();
-			m_timer.SetCallback(5000, BindCallback(&MFLVPlayer::OnTry, this));//每隔5秒重试
+			m_retryTimer.Close();
+			m_retryTimer.SetCallback(5000, BindCallback(&MFLVPlayer::OnTry, this));//每隔5秒重试
 			TRACE("[MFLVPlayer] OnError:%d\n", iError);
 			LOG(ERROR) << "[MFLVPlayer] OnError:" << iError;
 		}
