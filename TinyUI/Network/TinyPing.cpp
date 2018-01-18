@@ -8,6 +8,26 @@ namespace TinyUI
 {
 	namespace Network
 	{
+		const UINT16 PACKET_MAXIMUMS[] =
+		{
+			65535,
+			32000,
+			17914,
+			8166,
+			4352,
+			2002,
+			1492,
+			1006,
+			508,
+			296,
+			68,
+			0,
+		};
+		static const INT IP_HEADER_SIZE = 20;
+		static const INT IPV6_HEADER_SIZE = 40;
+		static const INT ICMP_HEADER_SIZE = 8;
+		static const INT ICMP_PING_TIMEOUT_MILLIS = 10000;
+		//////////////////////////////////////////////////////////////////////////
 		TinyPing::TinyPing()
 			:m_handle(NULL)
 		{
@@ -25,8 +45,8 @@ namespace TinyUI
 		{
 			return (m_handle == NULL || m_handle == INVALID_HANDLE_VALUE);
 		}
-	
-		BOOL TinyPing::Ping(IPAddress& address, WORD wRequestSize, DWORD dwTimeout, BYTE TTL, BOOL allow)
+
+		DWORD TinyPing::Ping(IPAddress& address, WORD wRequestSize, DWORD dwTimeout, BYTE TTL, BOOL allow)
 		{
 			if (IsEmpty())
 				return FALSE;
@@ -49,8 +69,35 @@ namespace TinyUI
 			memset(addrIN, 0, sizeof(struct sockaddr_in));
 			addrIN->sin_family = AF_INET;
 			memcpy(&addrIN->sin_addr, address.address().data(), IPAddress::IPv4AddressSize);
-			DWORD dwRes = IcmpSendEcho(m_handle, addrIN->sin_addr.S_un.S_addr, m_request, wRequestSize, &ipo, m_replay, dwReplaySize, dwTimeout);
-			return dwRes != 0;
+			return IcmpSendEcho(m_handle, addrIN->sin_addr.S_un.S_addr, m_request, wRequestSize, &ipo, m_replay, dwReplaySize, dwTimeout);
+		}
+		BOOL TinyPing::EstimateMTU(IPAddress& address, UINT16* pMTU)
+		{
+			INT headerSize = ICMP_HEADER_SIZE;
+			if (address.IsIPv4())
+			{
+				headerSize += IPV6_HEADER_SIZE;
+			}
+			if (address.IsIPv6())
+			{
+				headerSize += IP_HEADER_SIZE;
+			}
+			for (INT i = 0; PACKET_MAXIMUMS[i + 1] > 0; ++i)
+			{
+				UINT32 size = PACKET_MAXIMUMS[i] - headerSize;
+				DWORD dwRes = Ping(address, size, ICMP_PING_TIMEOUT_MILLIS, 1, FALSE);
+				if (dwRes == 0)
+				{
+					dwRes = GetLastError();
+					if (dwRes == IP_PACKET_TOO_BIG)
+					{
+						*pMTU = PACKET_MAXIMUMS[i];
+						break;
+					}
+					return FALSE;
+				}
+			}
+			return TRUE;
 		}
 	}
 }

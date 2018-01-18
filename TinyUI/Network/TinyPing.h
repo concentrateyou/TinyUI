@@ -14,7 +14,8 @@ namespace TinyUI
 			TinyPing();
 			virtual ~TinyPing();
 			BOOL IsEmpty() const;
-			BOOL Ping(IPAddress& address, WORD wRequestSize, DWORD dwTimeout, BYTE ttl, BOOL allow);
+			DWORD Ping(IPAddress& address, WORD wRequestSize, DWORD dwTimeout, BYTE ttl, BOOL allow);
+			BOOL EstimateMTU(IPAddress& address, UINT16* pMTU);
 		private:
 			HANDLE				m_handle;
 			TinyBuffer<CHAR>	m_request;
