@@ -76,6 +76,16 @@ namespace Decode
 		NALU_TYPE_EOSTREAM = 11,
 		NALU_TYPE_FILL = 12
 	};
+
+	enum SliceType
+	{
+		P = 0,
+		B = 1,
+		I = 2,
+		SP = 3,
+		SI = 4
+	};
+
 	enum NALUPriority
 	{
 		NALU_PRIORITY_DISPOSABLE = 0,
