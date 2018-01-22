@@ -16,25 +16,33 @@ namespace TinyUI
 			}
 			return count;
 		}
-
-		TinyBitWriter::TinyBitWriter(BYTE *bits, INT size)
-			:m_bits(bits),
-			m_size(size),
+		//////////////////////////////////////////////////////////////////////////
+		TinyBitWriter::TinyBitWriter()
+			:m_bits(NULL),
+			m_size(0),
 			m_remainingBits(0),
 			m_consumeBits(0)
 		{
-			ZeroMemory(m_bits, m_size);
-			if (m_size > 0)
-			{
-				m_remainingBits = 8;
-			}
 		}
 
 		TinyBitWriter::~TinyBitWriter()
 		{
 
 		}
-
+		BOOL TinyBitWriter::Initialize(BYTE* bits, LONG size)
+		{
+			if (!bits || size <= 0)
+				return FALSE;
+			m_bits = bits;
+			m_size = size;
+			ZeroMemory(m_bits, m_size);
+			m_consumeBits = 0;
+			if (m_size > 0)
+			{
+				m_remainingBits = 8;
+			}
+			return TRUE;
+		}
 		BOOL TinyBitWriter::WriteBits(INT count, UINT64 value)
 		{
 			if (m_size <= 0 || value >= (1U << count))

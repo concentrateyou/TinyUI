@@ -236,17 +236,19 @@ namespace TinyUI
 	public:
 		TinyWaitableTimer();
 		~TinyWaitableTimer();
+		BOOL IsEmpty() const;
 		BOOL Create(BOOL bManualReset = TRUE, LPCSTR pszName = NULL);
 		BOOL Open(LPCSTR pszName);
 		BOOL SetCallback(LONG due, Closure&& callback);
 		BOOL SetWaiting(LONG due);
 		BOOL Waiting();
+		BOOL Cancel();
 		void Close();
 	private:
 		static void CALLBACK TimerCallback(LPVOID lpArgToCompletionRoutine, DWORD  dwTimerLowValue, DWORD  dwTimerHighValue);
 	private:
 		BOOL			m_bBreak;
-		HANDLE			m_hTimer;
+		HANDLE			m_handle;
 		Closure			m_callback;
 	};
 	/// <summary>

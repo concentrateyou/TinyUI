@@ -1,5 +1,6 @@
 #pragma once
 #include "Common.h"
+#include "H264Parser.h"
 
 namespace Decode
 {
@@ -29,11 +30,8 @@ namespace Decode
 		BYTE	GetStreamType() const OVERRIDE;
 		BOOL	Parse(TS_BLOCK& block) OVERRIDE;
 	private:
-		INT		GetMask();
-		BOOL	ParserH264(TS_BLOCK& block);
-	private:
-		INT				m_mask;
-		vector<BYTE>	m_vsc;//VideoSpecificConfig - AVC
+		H264Parser		m_parser;
+		vector<BYTE>	m_vsc;
 	};
 	//////////////////////////////////////////////////////////////////////////
 	class TSAACParser : public TSParser
@@ -47,7 +45,7 @@ namespace Decode
 	private:
 		BOOL	ParseADTS(BYTE* bits, INT size);
 	private:
-		vector<BYTE>		m_asc;//AudioSpecificConfig
+		vector<BYTE>		m_asc;
 	};
 	//////////////////////////////////////////////////////////////////////////
 	class TS_PACKET_STREAM

@@ -10,6 +10,7 @@
 #include "IO/TinyIO.h"
 #include "IO/TinyIOBuffer.h"
 #include "IO/TinyBitReader.h"
+#include "IO/TinyBitWriter.h"
 #include "Media/TinyMedia.h"
 using namespace TinyUI;
 using namespace TinyUI::IO;
@@ -52,14 +53,12 @@ namespace Decode
 
 	BOOL FindStartCode(BYTE* bits, INT size);
 
-	typedef struct tagNALU
+	typedef struct tagH264NALU
 	{
-		BYTE	Forbidden;
-		BYTE	Reference;
 		BYTE	Type;
-		BYTE*	bits;
-		LONG	size;
-	}NALU;
+		const BYTE*	bits;
+		LONG		size;
+	}H264NALU;
 
 	enum NALUType
 	{
@@ -93,6 +92,72 @@ namespace Decode
 		NALU_PRIORITY_HIGH = 2,
 		NALU_PRIORITY_HIGHEST = 3
 	};
+
+	typedef struct tagH264SPS
+	{
+		INT profile_idc;
+		BOOL constraint_set0_flag;
+		BOOL constraint_set1_flag;
+		BOOL constraint_set2_flag;
+		BOOL constraint_set3_flag;
+		BOOL constraint_set4_flag;
+		BOOL constraint_set5_flag;
+		INT level_idc;
+		INT seq_parameter_set_id;
+		INT chroma_format_idc;
+		BOOL separate_colour_plane_flag;
+		INT bit_depth_luma_minus8;
+		INT bit_depth_chroma_minus8;
+		BOOL qpprime_y_zero_transform_bypass_flag;
+		BOOL seq_scaling_matrix_present_flag;
+		INT scaling_list4x4[6][16];
+		INT scaling_list8x8[6][64];
+		INT log2_max_frame_num_minus4;
+		INT pic_order_cnt_type;
+		INT log2_max_pic_order_cnt_lsb_minus4;
+		BOOL delta_pic_order_always_zero_flag;
+		INT offset_for_non_ref_pic;
+		INT offset_for_top_to_bottom_field;
+		INT num_ref_frames_in_pic_order_cnt_cycle;
+		INT expected_delta_per_pic_order_cnt_cycle;
+		INT offset_for_ref_frame[255];
+		INT max_num_ref_frames;
+		BOOL gaps_in_frame_num_value_allowed_flag;
+		INT pic_width_in_mbs_minus1;
+		INT pic_height_in_map_units_minus1;
+		BOOL frame_mbs_only_flag;
+		BOOL mb_adaptive_frame_field_flag;
+		BOOL direct_8x8_inference_flag;
+		BOOL frame_cropping_flag;
+		INT frame_crop_left_offset;
+		INT frame_crop_right_offset;
+		INT frame_crop_top_offset;
+		INT frame_crop_bottom_offset;
+		BOOL vui_parameters_present_flag;
+		INT sar_width;
+		INT sar_height;
+		BOOL bitstream_restriction_flag;
+		INT max_num_reorder_frames;
+		INT max_dec_frame_buffering;
+		BOOL timing_info_present_flag;
+		INT num_units_in_tick;
+		INT time_scale;
+		BOOL fixed_frame_rate_flag;
+		BOOL nal_hrd_parameters_present_flag;
+		INT cpb_cnt_minus1;
+		INT bit_rate_scale;
+		INT cpb_size_scale;
+		INT bit_rate_value_minus1[32];
+		INT cpb_size_value_minus1[32];
+		BOOL cbr_flag[32];
+		INT initial_cpb_removal_delay_length_minus_1;
+		INT cpb_removal_delay_length_minus1;
+		INT dpb_output_delay_length_minus1;
+		INT time_offset_length;
+		BOOL low_delay_hrd_flag;
+		INT chroma_array_type;
+	}H264SPS;
+
 	//////////////////////////////////////////////////////////////////////////
 	typedef struct tagFLV_HEADER
 	{

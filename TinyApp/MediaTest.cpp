@@ -132,14 +132,14 @@ BOOL MediaTest::MP3ToWave(const string& szFileMp3, const string& szFileWave)
 
 BOOL MediaTest::H264ToI420(const string& h264File, const string& i420File)
 {
-	TinyFile sFile;
+	/*TinyFile sFile;
 	if (!sFile.Create(i420File.c_str()))
 		return FALSE;
 	Decode::H264Reader reader;
 	reader.Open(h264File.c_str());
 	TinyMFIntelQSVDecode qsvdecoder;
 	if (!qsvdecoder.Open({ 1280,720 }, 25))
-		return FALSE;
+		return FALSE;*/
 	//NALU nalu = { 0 };
 	//do
 	//{

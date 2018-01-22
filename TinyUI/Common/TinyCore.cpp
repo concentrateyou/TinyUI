@@ -471,7 +471,7 @@ namespace TinyUI
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinyWaitableTimer::TinyWaitableTimer()
-		:m_hTimer(NULL),
+		:m_handle(NULL),
 		m_bBreak(FALSE)
 	{
 
@@ -480,58 +480,61 @@ namespace TinyUI
 	{
 
 	}
+	BOOL TinyWaitableTimer::IsEmpty() const
+	{
+		return m_handle == NULL;
+	}
 	BOOL TinyWaitableTimer::Create(BOOL bManualReset, LPCSTR pszName)
 	{
-		this->Close();
-		m_hTimer = CreateWaitableTimer(NULL, bManualReset, pszName);
-		return m_hTimer != NULL;
+		Close();
+		m_handle = CreateWaitableTimer(NULL, bManualReset, pszName);
+		return m_handle != NULL;
 	}
 	BOOL TinyWaitableTimer::Open(LPCSTR pszName)
 	{
-		this->Close();
-		m_hTimer = OpenWaitableTimer(EVENT_ALL_ACCESS, TRUE, pszName);
-		return m_hTimer != NULL;
+		Close();
+		m_handle = OpenWaitableTimer(EVENT_ALL_ACCESS, TRUE, pszName);
+		return m_handle != NULL;
 	}
 	BOOL TinyWaitableTimer::SetCallback(LONG due, Closure&& callback)
 	{
 		m_callback = std::move(callback);
-		if (m_hTimer != NULL)
-		{
-			LARGE_INTEGER lElapse;
-			lElapse.QuadPart = -((INT)(due) * 10000);
-			return SetWaitableTimer(m_hTimer, &lElapse, 0, TinyWaitableTimer::TimerCallback, this, FALSE);
-		}
-		return FALSE;
+		if (!m_handle)
+			return FALSE;
+		LARGE_INTEGER lElapse;
+		lElapse.QuadPart = -((INT)(due) * 10000);
+		return SetWaitableTimer(m_handle, &lElapse, 0, TinyWaitableTimer::TimerCallback, this, FALSE);
 	}
 	BOOL TinyWaitableTimer::SetWaiting(LONG due)
 	{
-		if (m_hTimer != NULL)
-		{
-			LARGE_INTEGER lElapse;
-			lElapse.QuadPart = -((INT)(due) * 10000);
-			return SetWaitableTimer(m_hTimer, &lElapse, 0, NULL, this, FALSE);
-		}
-		return FALSE;
+		if (!m_handle)
+			return FALSE;
+		LARGE_INTEGER lElapse;
+		lElapse.QuadPart = -((INT)(due) * 10000);
+		return SetWaitableTimer(m_handle, &lElapse, 0, NULL, this, FALSE);
 	}
 	BOOL TinyWaitableTimer::Waiting()
 	{
-		if (m_hTimer != NULL)
-		{
-			HRESULT hRes = WaitForSingleObjectEx(m_hTimer, INFINITE, TRUE);
-			return (hRes == WAIT_OBJECT_0);
-		}
-		return FALSE;
+		if (!m_handle)
+			return FALSE;
+		return (WaitForSingleObjectEx(m_handle, INFINITE, TRUE) == WAIT_OBJECT_0);
+	}
+	BOOL TinyWaitableTimer::Cancel()
+	{
+		if (!m_handle)
+			return FALSE;
+		return CancelWaitableTimer(m_handle);
 	}
 	void TinyWaitableTimer::Close()
 	{
-		if (m_hTimer != NULL)
+		if (m_handle != NULL)
 		{
-			CancelWaitableTimer(m_hTimer);
+			CancelWaitableTimer(m_handle);
 			LARGE_INTEGER lElapse;
 			lElapse.QuadPart = 0;
-			SetWaitableTimer(m_hTimer, &lElapse, 0, TinyWaitableTimer::TimerCallback, this, FALSE);
-			CloseHandle(m_hTimer);
-			m_hTimer = NULL;
+			SetWaitableTimer(m_handle, &lElapse, 0, TinyWaitableTimer::TimerCallback, this, FALSE);
+			CloseHandle(m_handle);
+			m_handle = NULL;
 		}
 	}
 	void CALLBACK TinyWaitableTimer::TimerCallback(LPVOID lpArgToCompletionRoutine, DWORD  dwTimerLowValue, DWORD  dwTimerHighValue)

@@ -91,36 +91,11 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadSeDebugPrivilege();
 	CoInitialize(NULL);
 
-	//BYTE bits2[5];
-	//TinyBitWriter writer1(bits2, 5);
-	//writer1.WriteBits(9, 105);
-	//writer1.SkipBits(4);
-	//writer1.WriteBits(10, 510);
-	//writer1.WriteBits(11, 1020);
-	//writer1.WriteBits(6, 59);
-	//TinyBitReader reader1(bits2, 5);
-	//UINT64 val = 0;
-	//reader1.ReadBits(9, &val);
-	//reader1.SkipBits(4);
-	//reader1.ReadBits(10, &val);
-	//reader1.ReadBits(11, &val);
-	//reader1.ReadBits(6, &val);
-	/*reader1.ReadBits(11, &val);
-	reader1.ReadBits(6, &val);*/
-	/*BYTE bits2[2];
-	TinyBitWriter writer1(bits2, 5);
-	writer1.WriteBits(11, 1020);
-	writer1.WriteBits(5, 11);
-	TinyBitReader reader1(bits2, 5);
-	UINT64 val = 0;
-	reader1.ReadBits(11, &val);
-	reader1.ReadBits(5, &val);*/
-
 	FILE* hFile1 = NULL;
 	fopen_s(&hFile1, "D:\\test.264", "wb+");
 
-	FILE* hFile2 = NULL;
-	fopen_s(&hFile2, "D:\\test.aac", "wb+");
+	//FILE* hFile2 = NULL;
+	//fopen_s(&hFile2, "D:\\test.aac", "wb+");
 
 	TSReader reader;
 	reader.OpenFile("D:\\1.ts");
@@ -135,15 +110,15 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 		{
 			fwrite(block.video.data, 1, block.video.size, hFile1);
 		}
-		if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)
+	/*	if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)
 		{
 			fwrite(block.audio.data, 1, block.audio.size, hFile2);
-		}
-		SAFE_DELETE_ARRAY(block.audio.data);
+		}*/
+		//SAFE_DELETE_ARRAY(block.audio.data);
 		SAFE_DELETE_ARRAY(block.video.data);
 	}
 	fclose(hFile1);
-	fclose(hFile2);
+	//fclose(hFile2);
 	//MediaTest test;
 	//test.H264ToI420("D:\\Media\\test.264", "D:\\Media\\test.yuv");
 	//test.MP3ToWave("D:\\Media\\李玉刚-刚好遇见你.mp3", "D:\\Media\\李玉刚-刚好遇见你.wav");

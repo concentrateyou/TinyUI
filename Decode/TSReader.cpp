@@ -72,7 +72,6 @@ namespace Decode
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TSH264Parser::TSH264Parser()
-		:m_mask(0)
 	{
 	}
 	TSH264Parser::~TSH264Parser()
@@ -83,39 +82,18 @@ namespace Decode
 	{
 		return TS_STREAM_TYPE_VIDEO_H264;
 	}
-	BOOL TSH264Parser::ParserH264(TS_BLOCK& block)
-	{
-		return TRUE;
-	}
 	BOOL TSH264Parser::Parse(TS_BLOCK& block)
 	{
+		if (m_parser.Parse(data(), size()))
+		{
+
+		}
 		block.video.size = size();
 		block.video.data = new BYTE[block.video.size];
 		memcpy_s(block.video.data, block.video.size, data(), block.video.size);
 		return TRUE;
 	}
 
-	INT TSH264Parser::GetMask()
-	{
-		BYTE* bits = data();
-		for (;;)
-		{
-			if (bits == (data() + size()))
-				break;
-			if (FindStartCode(bits, 3))
-			{
-				m_mask = 3;
-				break;
-			}
-			if (FindStartCode(bits, 4))
-			{
-				m_mask = 4;
-				break;
-			}
-			bits += 4;
-		}
-		return m_mask;
-	}
 	//////////////////////////////////////////////////////////////////////////
 	static INT AAC_Sample_Rates[16] =
 	{
@@ -146,7 +124,8 @@ namespace Decode
 	{
 		if (size < ADTS_HEADER_MIN_SIZE)
 			return FALSE;
-		TinyBitReader reader(bits, size);
+		TinyBitReader reader;
+		reader.Initialize(bits, size);
 		if (bits[0] == 0xFF && (bits[1] & 0xF6) == 0xF0)
 		{
 			BYTE profile = 0;

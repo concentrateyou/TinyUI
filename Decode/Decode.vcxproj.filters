@@ -63,9 +63,6 @@
     <ClInclude Include="x264Decoder.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="H264Reader.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="H264Parser.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -111,9 +108,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="x264Decoder.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="H264Reader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="H264Parser.cpp">

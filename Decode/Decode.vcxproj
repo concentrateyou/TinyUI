@@ -160,7 +160,6 @@
     <ClInclude Include="FLVReader.h" />
     <ClInclude Include="FLVWriter.h" />
     <ClInclude Include="H264Parser.h" />
-    <ClInclude Include="H264Reader.h" />
     <ClInclude Include="HTTPStream.h" />
     <ClInclude Include="TSReader.h" />
     <ClInclude Include="TSWriter.h" />
@@ -179,7 +178,6 @@
     <ClCompile Include="FLVReader.cpp" />
     <ClCompile Include="FLVWriter.cpp" />
     <ClCompile Include="H264Parser.cpp" />
-    <ClCompile Include="H264Reader.cpp" />
     <ClCompile Include="HTTPStream.cpp" />
     <ClCompile Include="TSReader.cpp" />
     <ClCompile Include="TSWriter.cpp" />

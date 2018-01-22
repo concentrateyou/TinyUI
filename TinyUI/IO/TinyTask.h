@@ -73,7 +73,7 @@ namespace TinyUI
 		private:
 			void OnMessagePump();
 		private:
-			TinyTask							m_task;
+			TinyTask								m_task;
 			Callback<void(UINT, WPARAM, LPARAM)>	m_callback;
 		};
 	};

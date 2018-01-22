@@ -14,8 +14,11 @@ namespace TinyUI
 		class TinyBitReader
 		{
 		public:
-			TinyBitReader(BYTE* bits, LONG size);
+			TinyBitReader();
 			~TinyBitReader();
+			BOOL Initialize(const BYTE* bits, LONG size);
+			BOOL ReadUE(INT* s);
+			BOOL ReadSE(INT* s);
 			template<typename T>
 			BOOL ReadBits(INT count, T* s)
 			{
@@ -28,7 +31,7 @@ namespace TinyUI
 			BOOL SkipBits(INT count);
 			UINT32 Available() const;
 		private:
-			BYTE*			m_bits;
+			const BYTE*		m_bits;
 			LONG			m_size;
 			BYTE			m_currentByte;
 			INT				m_remainingBits;

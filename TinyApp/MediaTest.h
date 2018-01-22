@@ -7,12 +7,10 @@
 #include "Media/TinyMFIntelQSVDecode.h"
 #include "Media/TinyMP3File.h"
 #include "Media/TinyMP4File.h"
-#include "H264Reader.h"
 #include "IO/TinyIO.h"
 using namespace TinyUI;
 using namespace TinyUI::Media;
 using namespace TinyUI::IO;
-using namespace Decode;
 
 class MediaTest
 {
