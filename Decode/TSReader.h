@@ -30,8 +30,7 @@ namespace Decode
 		BYTE	GetStreamType() const OVERRIDE;
 		BOOL	Parse(TS_BLOCK& block) OVERRIDE;
 	private:
-		H264Parser		m_parser;
-		vector<BYTE>	m_vsc;
+		H264Parser	m_parser;
 	};
 	//////////////////////////////////////////////////////////////////////////
 	class TSAACParser : public TSParser
@@ -45,7 +44,7 @@ namespace Decode
 	private:
 		BOOL	ParseADTS(BYTE* bits, INT size);
 	private:
-		vector<BYTE>		m_asc;
+		vector<BYTE>	m_asc;
 	};
 	//////////////////////////////////////////////////////////////////////////
 	class TS_PACKET_STREAM

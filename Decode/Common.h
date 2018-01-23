@@ -93,6 +93,81 @@ namespace Decode
 		NALU_PRIORITY_HIGHEST = 3
 	};
 
+	enum VideoCodec
+	{
+		UnknownVideoCodec = 0,
+		CodecH264,
+		CodecVC1,
+		CodecMPEG2,
+		CodecMPEG4,
+		CodecTheora,
+		CodecVP8,
+		CodecVP9,
+		CodecHEVC,
+		VideoCodecMax = CodecHEVC
+	};
+
+	enum  VideoCodecProfile
+	{
+		VIDEO_CODEC_PROFILE_UNKNOWN = -1,
+		VIDEO_CODEC_PROFILE_MIN = VIDEO_CODEC_PROFILE_UNKNOWN,
+		H264PROFILE_MIN = 0,
+		H264PROFILE_BASELINE = H264PROFILE_MIN,
+		H264PROFILE_MAIN = 1,
+		H264PROFILE_EXTENDED = 2,
+		H264PROFILE_HIGH = 3,
+		H264PROFILE_HIGH10PROFILE = 4,
+		H264PROFILE_HIGH422PROFILE = 5,
+		H264PROFILE_HIGH444PREDICTIVEPROFILE = 6,
+		H264PROFILE_SCALABLEBASELINE = 7,
+		H264PROFILE_SCALABLEHIGH = 8,
+		H264PROFILE_STEREOHIGH = 9,
+		H264PROFILE_MULTIVIEWHIGH = 10,
+		H264PROFILE_MAX = H264PROFILE_MULTIVIEWHIGH,
+		VP8PROFILE_MIN = 11,
+		VP8PROFILE_ANY = VP8PROFILE_MIN,
+		VP8PROFILE_MAX = VP8PROFILE_ANY,
+		VP9PROFILE_MIN = 12,
+		VP9PROFILE_PROFILE0 = VP9PROFILE_MIN,
+		VP9PROFILE_PROFILE1 = 13,
+		VP9PROFILE_PROFILE2 = 14,
+		VP9PROFILE_PROFILE3 = 15,
+		VP9PROFILE_MAX = VP9PROFILE_PROFILE3,
+		HEVCPROFILE_MIN = 16,
+		HEVCPROFILE_MAIN = HEVCPROFILE_MIN,
+		HEVCPROFILE_MAIN10 = 17,
+		HEVCPROFILE_MAIN_STILL_PICTURE = 18,
+		HEVCPROFILE_MAX = HEVCPROFILE_MAIN_STILL_PICTURE,
+		VIDEO_CODEC_PROFILE_MAX = HEVCPROFILE_MAX,
+	};
+
+	enum  VideoPixelFormat
+	{
+		PIXEL_FORMAT_UNKNOWN = 0,  // Unknown or unspecified format value.
+		PIXEL_FORMAT_I420 = 1,  // 12bpp YUV planar 1x1 Y, 2x2 UV samples, a.k.a. YU12.
+		PIXEL_FORMAT_YV12 = 2,   // 12bpp YVU planar 1x1 Y, 2x2 VU samples.
+		PIXEL_FORMAT_YV16 = 3,   // 16bpp YVU planar 1x1 Y, 2x1 VU samples.
+		PIXEL_FORMAT_YV12A = 4,  // 20bpp YUVA planar 1x1 Y, 2x2 VU, 1x1 A samples.
+		PIXEL_FORMAT_YV24 = 5,   // 24bpp YUV planar, no subsampling.
+		PIXEL_FORMAT_NV12 = 6,  // 12bpp with Y plane followed by a 2x2 interleaved UV plane.
+		PIXEL_FORMAT_NV21 = 7,  // 12bpp with Y plane followed by a 2x2 interleaved VU plane.
+		PIXEL_FORMAT_UYVY = 8,  // 16bpp interleaved 2x1 U, 1x1 Y, 2x1 V, 1x1 Y samples.
+		PIXEL_FORMAT_YUY2 = 9,  // 16bpp interleaved 1x1 Y, 2x1 U, 1x1 Y, 2x1 V samples.
+		PIXEL_FORMAT_ARGB = 10,   // 32bpp ARGB, 1 plane.
+		PIXEL_FORMAT_XRGB = 11,   // 24bpp XRGB, 1 plane.
+		PIXEL_FORMAT_RGB24 = 12,  // 24bpp BGR, 1 plane.
+		PIXEL_FORMAT_RGB32 = 13,  // 32bpp BGRA, 1 plane.
+		PIXEL_FORMAT_MJPEG = 14,  // MJPEG compressed.
+		PIXEL_FORMAT_MT21 = 15,
+		PIXEL_FORMAT_YUV420P9 = 16,
+		PIXEL_FORMAT_YUV420P10 = 17,
+		PIXEL_FORMAT_YUV422P9 = 18,
+		PIXEL_FORMAT_YUV422P10 = 19,
+		PIXEL_FORMAT_YUV444P9 = 20,
+		PIXEL_FORMAT_YUV444P10 = 21,
+		PIXEL_FORMAT_MAX = PIXEL_FORMAT_YUV444P10,  // Must always be equal to largest entry logged.
+	};
+
 	typedef struct tagH264PPS
 	{
 		INT32 pic_parameter_set_id;
@@ -572,25 +647,5 @@ namespace Decode
 		BYTE DescriptorTag;
 		BYTE DescriptorLength;
 		CHAR Context[256];
-	};
-
-	/// <summary>
-	/// ×Ö½Ú¶ÓÁÐ
-	/// </summary>
-	class ByteQueue
-	{
-		DISALLOW_COPY_AND_ASSIGN(ByteQueue)
-	public:
-		ByteQueue();
-		~ByteQueue();
-		void Reset();
-		void Push(const BYTE* data, INT size);
-		void Peek(const BYTE** data, INT* size) const;
-		void Pop(INT count);
-	private:
-		INT m_size;
-		INT m_offset;
-		INT m_remaining;
-		std::unique_ptr<BYTE[]> m_io;
 	};
 }

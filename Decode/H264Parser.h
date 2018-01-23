@@ -28,11 +28,12 @@ namespace Decode
 		BOOL ParseVUIParameters(H264SPS& sps);
 		BOOL ParsePPSScalingLists(const H264SPS& sps, H264PPS& pps);
 	private:
-		const BYTE*					m_bits;
-		LONG						m_size;
-		LONG						m_count;
-		H264BitReader				m_reader;
-		TinySimpleMap<INT, H264SPS>	m_spsMap;
-		TinySimpleMap<INT, H264PPS>	m_ppsMap;
+		const BYTE*				m_bits;
+		LONG					m_size;
+		LONG					m_count;
+		H264BitReader			m_reader;
+		TinyMap<INT, H264SPS>	m_spsMap;
+		TinyMap<INT, H264PPS>	m_ppsMap;
+		vector<BYTE>			m_avc;
 	};
 }

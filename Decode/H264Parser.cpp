@@ -185,15 +185,15 @@ namespace Decode
 				switch (s.Type)
 				{
 				case NALU_TYPE_AUD://·Ö¸ô·û
-					TRACE("NALU_TYPE_AUD\n");
 					break;
 				case NALU_TYPE_SPS:
-					TRACE("NALU_TYPE_SPS\n");
 					ParseSPS(s.bits + 1, s.size - 1);//Ìô»õ
 					break;
 				case NALU_TYPE_PPS:
-					TRACE("NALU_TYPE_PPS\n");
 					ParsePPS(s.bits + 1, s.size - 1);
+					break;
+				case NALU_TYPE_SLICE:
+				case NALU_TYPE_IDR:
 					break;
 				}
 			}
@@ -354,7 +354,7 @@ namespace Decode
 			if (!ParseVUIParameters(sps))
 				return FALSE;
 		}
-		m_spsMap.Add(sps.seq_parameter_set_id, sps);
+		m_spsMap.SetAt(sps.seq_parameter_set_id, sps);
 		return TRUE;
 	}
 	BOOL H264Parser::ParsePPS(const BYTE* bits, LONG size)
@@ -368,7 +368,7 @@ namespace Decode
 			return FALSE;
 		if (pps.seq_parameter_set_id >= 32)
 			return FALSE;
-		H264SPS* sps = m_spsMap.Find(pps.seq_parameter_set_id);
+		H264SPS* sps = m_spsMap.GetValue(pps.seq_parameter_set_id);
 		if (!sps)
 			return FALSE;
 		if (!m_reader.ReadBits(1, &pps.entropy_coding_mode_flag))
@@ -426,7 +426,7 @@ namespace Decode
 			if (!ReadSE(&pps.second_chroma_qp_index_offset))
 				return FALSE;
 		}
-		m_ppsMap.Add(pps.pic_parameter_set_id, pps);
+		m_ppsMap.SetAt(pps.pic_parameter_set_id, pps);
 		return TRUE;
 	}
 
