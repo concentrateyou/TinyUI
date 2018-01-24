@@ -70,6 +70,10 @@ namespace Decode
 	{
 		return m_io.GetSize();
 	}
+	void TSParser::SetConfig(vector<BYTE>& config)
+	{
+		m_config = std::move(config);
+	}
 	//////////////////////////////////////////////////////////////////////////
 	TSH264Parser::TSH264Parser()
 	{
@@ -93,7 +97,6 @@ namespace Decode
 		memcpy_s(block.video.data, block.video.size, data(), block.video.size);
 		return TRUE;
 	}
-
 	//////////////////////////////////////////////////////////////////////////
 	static INT AAC_Sample_Rates[16] =
 	{

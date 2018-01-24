@@ -11,6 +11,7 @@ namespace Decode
 		virtual ~TSParser();
 		virtual BYTE GetStreamType() const = 0;
 		virtual BOOL Parse(TS_BLOCK& block) = 0;
+		virtual void SetConfig(vector<BYTE>& config);
 		void	SetCapacity(INT capacity);
 		void	Add(BYTE* bits, INT size);
 		void	Reset();
@@ -19,6 +20,7 @@ namespace Decode
 	private:
 		INT						m_capacity;
 		TinyBufferArray<BYTE>	m_io;
+		vector<BYTE>			m_config;
 	};
 	//////////////////////////////////////////////////////////////////////////
 	class TSH264Parser : public TSParser
@@ -30,7 +32,7 @@ namespace Decode
 		BYTE	GetStreamType() const OVERRIDE;
 		BOOL	Parse(TS_BLOCK& block) OVERRIDE;
 	private:
-		H264Parser	m_parser;
+		H264Parser		m_parser;
 	};
 	//////////////////////////////////////////////////////////////////////////
 	class TSAACParser : public TSParser

@@ -278,9 +278,6 @@ namespace Decode
 		BOOL aspect_ratio_info_present_flag;
 		INT32 aspect_ratio_idc;
 	}H264SPS;
-
-
-
 	//////////////////////////////////////////////////////////////////////////
 	typedef struct tagFLV_HEADER
 	{

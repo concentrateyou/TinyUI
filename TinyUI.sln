@@ -37,6 +37,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MShow", "MShow\MShow.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NVCodec", "NVCodec\NVCodec.vcxproj", "{E6D39708-AC6B-48A4-8608-FB50C6030ED3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TSPlayer", "TSPlayer\TSPlayer.vcxproj", "{60847190-BEF2-4317-871C-0DA8D2B9A64A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_MBCS|Win32 = Debug_MBCS|Win32
@@ -391,6 +393,26 @@ Global
 		{E6D39708-AC6B-48A4-8608-FB50C6030ED3}.Release|Win32.Build.0 = Release|Win32
 		{E6D39708-AC6B-48A4-8608-FB50C6030ED3}.Release|x64.ActiveCfg = Release|x64
 		{E6D39708-AC6B-48A4-8608-FB50C6030ED3}.Release|x64.Build.0 = Release|x64
+		{60847190-BEF2-4317-871C-0DA8D2B9A64A}.Debug_MBCS|Win32.ActiveCfg = Debug|Win32
+		{60847190-BEF2-4317-871C-0DA8D2B9A64A}.Debug_MBCS|Win32.Build.0 = Debug|Win32
+		{60847190-BEF2-4317-871C-0DA8D2B9A64A}.Debug_MBCS|x64.ActiveCfg = Debug|x64
+		{60847190-BEF2-4317-871C-0DA8D2B9A64A}.Debug_MBCS|x64.Build.0 = Debug|x64
+		{60847190-BEF2-4317-871C-0DA8D2B9A64A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{60847190-BEF2-4317-871C-0DA8D2B9A64A}.Debug|Win32.Build.0 = Debug|Win32
+		{60847190-BEF2-4317-871C-0DA8D2B9A64A}.Debug|x64.ActiveCfg = Debug|x64
+		{60847190-BEF2-4317-871C-0DA8D2B9A64A}.Debug|x64.Build.0 = Debug|x64
+		{60847190-BEF2-4317-871C-0DA8D2B9A64A}.Release_MBCS|Win32.ActiveCfg = Release|Win32
+		{60847190-BEF2-4317-871C-0DA8D2B9A64A}.Release_MBCS|Win32.Build.0 = Release|Win32
+		{60847190-BEF2-4317-871C-0DA8D2B9A64A}.Release_MBCS|x64.ActiveCfg = Release|x64
+		{60847190-BEF2-4317-871C-0DA8D2B9A64A}.Release_MBCS|x64.Build.0 = Release|x64
+		{60847190-BEF2-4317-871C-0DA8D2B9A64A}.Release_MT|Win32.ActiveCfg = Release|Win32
+		{60847190-BEF2-4317-871C-0DA8D2B9A64A}.Release_MT|Win32.Build.0 = Release|Win32
+		{60847190-BEF2-4317-871C-0DA8D2B9A64A}.Release_MT|x64.ActiveCfg = Release|x64
+		{60847190-BEF2-4317-871C-0DA8D2B9A64A}.Release_MT|x64.Build.0 = Release|x64
+		{60847190-BEF2-4317-871C-0DA8D2B9A64A}.Release|Win32.ActiveCfg = Release|Win32
+		{60847190-BEF2-4317-871C-0DA8D2B9A64A}.Release|Win32.Build.0 = Release|Win32
+		{60847190-BEF2-4317-871C-0DA8D2B9A64A}.Release|x64.ActiveCfg = Release|x64
+		{60847190-BEF2-4317-871C-0DA8D2B9A64A}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
