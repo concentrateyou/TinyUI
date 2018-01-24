@@ -258,10 +258,6 @@ namespace Decode
 		BOOL bitstream_restriction_flag;
 		INT32 max_num_reorder_frames;
 		INT32 max_dec_frame_buffering;
-		BOOL timing_info_present_flag;
-		INT32 num_units_in_tick;
-		INT32 time_scale;
-		BOOL fixed_frame_rate_flag;
 		BOOL nal_hrd_parameters_present_flag;
 		INT32 cpb_cnt_minus1;
 		INT32 bit_rate_scale;
@@ -277,6 +273,19 @@ namespace Decode
 		INT32 chroma_array_type;
 		BOOL aspect_ratio_info_present_flag;
 		INT32 aspect_ratio_idc;
+		BOOL overscan_info_present_flag;
+		BOOL overscan_appropriate_flag;
+		BOOL video_signal_type_present_flag;
+		INT32 video_format;
+		BOOL video_full_range_flag;
+		BOOL colour_description_present_flag;
+		BOOL chroma_loc_info_present_flag;
+		INT32 chroma_sample_loc_type_top_field;
+		INT32 chroma_sample_loc_type_bottom_field;
+		BOOL timing_info_present_flag;
+		INT32 num_units_in_tick;
+		INT32 time_scale;
+		BOOL fixed_frame_rate_flag;
 	}H264SPS;
 	//////////////////////////////////////////////////////////////////////////
 	typedef struct tagFLV_HEADER

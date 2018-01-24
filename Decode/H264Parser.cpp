@@ -132,7 +132,7 @@ namespace Decode
 			}
 		}
 	}
-	VideoCodecProfile ProfileIDCToVideoCodecProfile(INT profileIDC)
+	VideoCodecProfile ProfileIDC2VideoCodecProfile(INT profileIDC)
 	{
 		switch (profileIDC)
 		{
@@ -163,19 +163,22 @@ namespace Decode
 	H264VideoConfig::H264VideoConfig()
 		: m_codec(UnknownVideoCodec),
 		m_profile(VIDEO_CODEC_PROFILE_UNKNOWN),
-		m_pixelFormat(PIXEL_FORMAT_UNKNOWN)
+		m_pixelFormat(PIXEL_FORMAT_UNKNOWN),
+		m_frameRate(0)
 	{
 	}
 	H264VideoConfig::H264VideoConfig(VideoCodec codec,
 		VideoCodecProfile profile,
 		VideoPixelFormat pixelFormat,
-		const TinySize& videoSize,
+		const INT frameRate,
+		const TinySize& codedSize,
 		const TinyRectangle& visibleRect,
 		const TinySize& naturalSize)
 		: m_codec(codec),
 		m_profile(profile),
 		m_pixelFormat(pixelFormat),
-		m_videoSize(videoSize),
+		m_frameRate(frameRate),
+		m_codedSize(codedSize),
 		m_visibleRect(visibleRect),
 		m_naturalSize(naturalSize)
 	{
@@ -186,7 +189,8 @@ namespace Decode
 		return ((m_codec == o.m_codec) &&
 			(m_pixelFormat == o.m_pixelFormat) &&
 			(m_profile == o.m_profile) &&
-			(m_videoSize == o.m_videoSize) &&
+			(m_frameRate == o.m_frameRate) &&
+			(m_codedSize == o.m_codedSize) &&
 			(m_visibleRect == o.m_visibleRect) &&
 			(m_naturalSize == o.m_naturalSize));
 	}
@@ -195,7 +199,8 @@ namespace Decode
 		return ((m_codec != o.m_codec) ||
 			(m_pixelFormat != o.m_pixelFormat) ||
 			(m_profile != o.m_profile) ||
-			(m_videoSize != o.m_videoSize) ||
+			(m_frameRate != o.m_frameRate) ||
+			(m_codedSize != o.m_codedSize) ||
 			(m_visibleRect != o.m_visibleRect) ||
 			(m_naturalSize != o.m_naturalSize));
 	}
@@ -244,6 +249,7 @@ namespace Decode
 			return FALSE;
 		m_bits = bits;
 		m_size = size;
+		INT offset = 0;
 		H264NALU s;
 		ZeroMemory(&s, sizeof(s));
 		for (;;)
@@ -268,6 +274,11 @@ namespace Decode
 					{
 						m_sps.clear();
 						return FALSE;
+					}
+					H264SPS* sps = m_mapsps.GetValue(spsID);
+					if (sps != NULL)
+					{
+						SetVideoConfig(sps);
 					}
 				}
 				break;
@@ -294,6 +305,7 @@ namespace Decode
 				break;
 				}
 			}
+			offset += (index + code);
 			m_bits += (index + code);
 			m_size -= (index + code);
 			s.Type = m_bits[0] & 0x1F;
@@ -528,12 +540,10 @@ namespace Decode
 		m_mappps.SetAt(pps.pic_parameter_set_id, pps);
 		return TRUE;
 	}
-
 	BOOL H264Parser::ParseSliceHeader(const BYTE* bits, LONG size, BYTE code)
 	{
 		return TRUE;
 	}
-
 	BOOL H264Parser::ReadUE(INT* val)
 	{
 		INT count = -1;
@@ -561,7 +571,6 @@ namespace Decode
 		}
 		return TRUE;
 	}
-
 	BOOL H264Parser::ReadSE(INT* val)
 	{
 		INT iUE = 0;
@@ -573,20 +582,20 @@ namespace Decode
 			*val = iUE / 2 + 1;
 		return TRUE;
 	}
-
 	BOOL H264Parser::SetVideoConfig(const H264SPS* sps)
 	{
 		ASSERT(sps);
 		INT sarcx = (sps->sar_width == 0) ? 1 : sps->sar_width;
 		INT sarcy = (sps->sar_height == 0) ? 1 : sps->sar_height;
-		TinySize videoSize(16 * (sps->pic_width_in_mbs_minus1 + 1), 16 * (sps->pic_height_in_map_units_minus1 + 1));
-		if (videoSize.cx > (std::numeric_limits<LONG>::max)() / 1 ||
-			videoSize.cy > (std::numeric_limits<LONG>::max)() / 1)
+
+		TinySize codedSize(16 * (sps->pic_width_in_mbs_minus1 + 1), 16 * (2 - sps->frame_mbs_only_flag) * (sps->pic_height_in_map_units_minus1 + 1));
+		if (codedSize.cx > (std::numeric_limits<LONG>::max)() / 1 ||
+			codedSize.cy > (std::numeric_limits<LONG>::max)() / 1)
 			return FALSE;
 		TinyRectangle visibleRect(sps->frame_crop_left_offset,
 			sps->frame_crop_top_offset,
-			(videoSize.cx - sps->frame_crop_right_offset) - sps->frame_crop_left_offset,
-			(videoSize.cy - sps->frame_crop_bottom_offset) -
+			(codedSize.cx - sps->frame_crop_right_offset) - sps->frame_crop_left_offset,
+			(codedSize.cy - sps->frame_crop_bottom_offset) -
 			sps->frame_crop_top_offset);
 		if (visibleRect.Width() <= 0 || visibleRect.Height() <= 0)
 			return FALSE;
@@ -595,14 +604,14 @@ namespace Decode
 		TinySize naturalSize((visibleRect.Width() * sarcx) / sarcy, visibleRect.Height());
 		if (naturalSize.cx == 0)
 			return FALSE;
-		H264VideoConfig config(CodecH264, ProfileIDCToVideoCodecProfile(sps->profile_idc), PIXEL_FORMAT_YV12, videoSize, visibleRect, naturalSize);
+		INT frameRate = sps->num_units_in_tick > 0 ? sps->time_scale / (sps->num_units_in_tick * 2) : 0;
+		H264VideoConfig config(CodecH264, ProfileIDC2VideoCodecProfile(sps->profile_idc), PIXEL_FORMAT_YV12, frameRate, codedSize, visibleRect, naturalSize);
 		if (m_lastConfig != config)
 		{
 			//TODO
 		}
 		return TRUE;
 	}
-
 	BOOL H264Parser::ParseSPSScalingLists(H264SPS& sps)
 	{
 		BOOL bDefault;
@@ -645,7 +654,6 @@ namespace Decode
 		}
 		return TRUE;
 	}
-
 	BOOL H264Parser::ParseScalingList(INT size, INT* scaling_list, BOOL* bDefault)
 	{
 		INT lastScale = 8;
@@ -672,7 +680,6 @@ namespace Decode
 		}
 		return TRUE;
 	}
-
 	BOOL H264Parser::ParseVUIParameters(H264SPS& sps)
 	{
 		if (!m_reader.ReadBits(1, &sps.aspect_ratio_info_present_flag))
@@ -683,9 +690,9 @@ namespace Decode
 				return FALSE;
 			if (sps.aspect_ratio_idc == 255)
 			{
-				if (!m_reader.ReadBits(8, &sps.sar_width))
+				if (!m_reader.ReadBits(16, &sps.sar_width))
 					return FALSE;
-				if (!m_reader.ReadBits(8, &sps.sar_height))
+				if (!m_reader.ReadBits(16, &sps.sar_height))
 					return FALSE;
 			}
 			else
@@ -697,9 +704,60 @@ namespace Decode
 				sps.sar_height = TableSarHeight[sps.aspect_ratio_idc];
 			}
 		}
+		if (!m_reader.ReadBits(1, &sps.overscan_info_present_flag))
+			return FALSE;
+		if (sps.overscan_info_present_flag)
+		{
+			if (!m_reader.ReadBits(1, &sps.overscan_appropriate_flag))
+				return FALSE;
+		}
+		if (!m_reader.ReadBits(1, &sps.video_signal_type_present_flag))
+			return FALSE;
+		if (sps.video_signal_type_present_flag)
+		{
+			if (!m_reader.ReadBits(3, &sps.video_format))
+				return FALSE;
+			if (!m_reader.ReadBits(1, &sps.video_full_range_flag))
+				return FALSE;
+			if (!m_reader.ReadBits(1, &sps.colour_description_present_flag))
+				return FALSE;
+			if (sps.colour_description_present_flag)
+			{
+				INT32 val = 0;
+				if (!m_reader.ReadBits(24, &val))//ºöÂÔ
+					return FALSE;
+			}
+		}
+		if (!m_reader.ReadBits(1, &sps.chroma_loc_info_present_flag))
+			return FALSE;
+		if (sps.chroma_loc_info_present_flag)
+		{
+			if (!ReadUE(&sps.chroma_sample_loc_type_top_field))
+				return FALSE;
+			if (!ReadUE(&sps.chroma_sample_loc_type_bottom_field))
+				return FALSE;
+		}
+		if (!m_reader.ReadBits(1, &sps.timing_info_present_flag))
+			return FALSE;
+		if (sps.timing_info_present_flag)
+		{
+			INT32 val1 = 0;
+			INT32 val2 = 0;
+			if (!m_reader.ReadBits(16, &val1))
+				return FALSE;
+			if (!m_reader.ReadBits(16, &val2))
+				return FALSE;
+			sps.num_units_in_tick = val1 << 16 | val2;
+			if (!m_reader.ReadBits(16, &val1))
+				return FALSE;
+			if (!m_reader.ReadBits(16, &val2))
+				return FALSE;
+			sps.time_scale = val1 << 16 | val2;
+			if (!m_reader.ReadBits(1, &sps.fixed_frame_rate_flag))
+				return FALSE;
+		}
 		return TRUE;
 	}
-
 	BOOL H264Parser::ParsePPSScalingLists(const H264SPS& sps, H264PPS& pps)
 	{
 		BOOL pic_scaling_list_present_flag;

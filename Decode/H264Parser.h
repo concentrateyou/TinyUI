@@ -15,7 +15,8 @@ namespace Decode
 		H264VideoConfig(VideoCodec codec,
 			VideoCodecProfile profile,
 			VideoPixelFormat format,
-			const TinySize& videoSize,
+			INT frameRate,
+			const TinySize& codedSize,
 			const TinyRectangle& visibleRect,
 			const TinySize& naturalSize);
 		BOOL operator == (const H264VideoConfig& o);
@@ -24,7 +25,8 @@ namespace Decode
 		VideoPixelFormat	m_pixelFormat;
 		VideoCodec			m_codec;
 		VideoCodecProfile	m_profile;
-		TinySize			m_videoSize;
+		INT					m_frameRate;
+		TinySize			m_codedSize;
 		TinySize			m_naturalSize;
 		TinyRectangle		m_visibleRect;
 	};

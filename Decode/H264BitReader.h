@@ -13,20 +13,13 @@ namespace Decode
 		H264BitReader();
 		~H264BitReader();
 		BOOL Initialize(const BYTE* data, off_t size);
-		template<typename T>
-		BOOL ReadBits(INT count, T* s)
-		{
-			INT64 val;
-			BOOL bRes = ReadBits(count, &val);
-			*s = static_cast<T>(val);
-			return bRes;
-		}
-		BOOL ReadBits(INT count, INT64* val);
+		BOOL ReadBits(INT count, INT32* val);//每次读取小于32位可能存在0x03情况
 		off_t Available();
 		BOOL HasRBSP();
-		size_t EmulationPreventionBytes();
+		size_t EmulationPreventionBytes();//获得对齐字节数
 	private:
 		BOOL UpdateCurrentByte();
+		
 	private:
 		const BYTE* m_bits;
 		off_t		m_remainingBytes;

@@ -13,7 +13,7 @@ namespace Decode
 	{
 	}
 
-	H264BitReader::~H264BitReader() 
+	H264BitReader::~H264BitReader()
 	{
 	}
 
@@ -49,7 +49,7 @@ namespace Decode
 		return TRUE;
 	}
 
-	BOOL H264BitReader::ReadBits(INT count, INT64* val)
+	BOOL H264BitReader::ReadBits(INT count, INT32* val)
 	{
 		*val = 0;
 		if (count > 31)
