@@ -17,8 +17,6 @@ namespace TinyUI
 			TinyBitReader();
 			~TinyBitReader();
 			BOOL Initialize(const BYTE* bits, LONG size);
-			BOOL ReadUE(INT* s);
-			BOOL ReadSE(INT* s);
 			template<typename T>
 			BOOL ReadBits(INT count, T* s)
 			{

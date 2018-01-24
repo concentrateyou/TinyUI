@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "H264Parser.h"
+#include <limits>
+#include <algorithm>
+using namespace std;
 
 namespace Decode
 {
@@ -129,7 +132,73 @@ namespace Decode
 			}
 		}
 	}
+	VideoCodecProfile ProfileIDCToVideoCodecProfile(INT profileIDC)
+	{
+		switch (profileIDC)
+		{
+		case H264::ProfileIDCBaseline:
+			return H264PROFILE_BASELINE;
+		case H264::ProfileIDCMain:
+			return H264PROFILE_MAIN;
+		case H264::ProfileIDCHigh:
+			return H264PROFILE_HIGH;
+		case H264::ProfileIDHigh10:
+			return H264PROFILE_HIGH10PROFILE;
+		case H264::ProfileIDHigh422:
+			return H264PROFILE_HIGH422PROFILE;
+		case H264::ProfileIDHigh444Predictive:
+			return H264PROFILE_HIGH444PREDICTIVEPROFILE;
+		case H264::ProfileIDScalableBaseline:
+			return H264PROFILE_SCALABLEBASELINE;
+		case H264::ProfileIDScalableHigh:
+			return H264PROFILE_SCALABLEHIGH;
+		case H264::ProfileIDStereoHigh:
+			return H264PROFILE_STEREOHIGH;
+		case H264::ProfileIDSMultiviewHigh:
+			return H264PROFILE_MULTIVIEWHIGH;
+		}
+		return VIDEO_CODEC_PROFILE_UNKNOWN;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	H264VideoDecoderConfig::H264VideoDecoderConfig()
+		: m_codec(UnknownVideoCodec),
+		m_profile(VIDEO_CODEC_PROFILE_UNKNOWN),
+		m_pixelFormat(PIXEL_FORMAT_UNKNOWN)
+	{
+	}
+	H264VideoDecoderConfig::H264VideoDecoderConfig(VideoCodec codec,
+		VideoCodecProfile profile,
+		VideoPixelFormat pixelFormat,
+		const TinySize& videoSize,
+		const TinyRectangle& visibleRect,
+		const TinySize& naturalSize)
+		: m_codec(codec),
+		m_profile(profile),
+		m_pixelFormat(pixelFormat),
+		m_videoSize(videoSize),
+		m_visibleRect(visibleRect),
+		m_naturalSize(naturalSize)
+	{
 
+	}
+	BOOL H264VideoDecoderConfig::operator == (const H264VideoDecoderConfig& o)
+	{
+		return ((m_codec == o.m_codec) &&
+			(m_pixelFormat == o.m_pixelFormat) &&
+			(m_profile == o.m_profile) &&
+			(m_videoSize == o.m_videoSize) &&
+			(m_visibleRect == o.m_visibleRect) &&
+			(m_naturalSize == o.m_naturalSize));
+	}
+	BOOL H264VideoDecoderConfig::operator != (const H264VideoDecoderConfig& o)
+	{
+		return ((m_codec != o.m_codec) ||
+			(m_pixelFormat != o.m_pixelFormat) ||
+			(m_profile != o.m_profile) ||
+			(m_videoSize != o.m_videoSize) ||
+			(m_visibleRect != o.m_visibleRect) ||
+			(m_naturalSize != o.m_naturalSize));
+	}
 	//////////////////////////////////////////////////////////////////////////
 	H264Parser::H264Parser()
 		:m_bits(NULL),
@@ -141,6 +210,10 @@ namespace Decode
 	H264Parser::~H264Parser()
 	{
 
+	}
+	const H264VideoDecoderConfig& H264Parser::GetVideoDecoderConfig() const
+	{
+		return m_lastConfig;
 	}
 	BOOL H264Parser::FindCode(const BYTE* bits, LONG size, LONG& offset, BYTE& code)
 	{
@@ -187,14 +260,46 @@ namespace Decode
 				case NALU_TYPE_AUD://·Ö¸ô·û
 					break;
 				case NALU_TYPE_SPS:
-					ParseSPS(s.bits + 1, s.size - 1);//Ìô»õ
-					break;
+				{
+					INT spsID = 0;
+					m_sps.resize(s.size - 1);
+					memcpy_s(&m_sps[0], s.size - 1, s.bits + 1, s.size - 1);
+					if (!ParseSPS(s.bits + 1, s.size - 1, code, spsID))
+					{
+						m_sps.clear();
+						return FALSE;
+					}
+					else
+					{
+						H264SPS* sps = m_mapsps.GetValue(spsID);
+						if (sps != NULL)
+						{
+							SetVideoDecoderConfig(sps);
+						}
+					}
+				}
+				break;
 				case NALU_TYPE_PPS:
-					ParsePPS(s.bits + 1, s.size - 1);
-					break;
+				{
+					INT ppsID = 0;
+					m_pps.resize(s.size - 1);
+					memcpy_s(&m_pps[0], s.size - 1, s.bits + 1, s.size - 1);
+					if (!ParsePPS(s.bits + 1, s.size - 1, code, ppsID))
+					{
+						m_pps.clear();
+						return FALSE;
+					}
+				}
+				break;
 				case NALU_TYPE_SLICE:
 				case NALU_TYPE_IDR:
-					break;
+				{
+					if (!ParseSlice(s.bits + 1, s.size - 1, code))
+					{
+						return FALSE;
+					}
+				}
+				break;
 				}
 			}
 			m_bits += (index + code);
@@ -205,7 +310,7 @@ namespace Decode
 		}
 		return TRUE;
 	}
-	BOOL H264Parser::ParseSPS(const BYTE* bits, LONG size)
+	BOOL H264Parser::ParseSPS(const BYTE* bits, LONG size, BYTE code, INT& spsID)
 	{
 		m_reader.Initialize(bits, size);
 		INT value = 0;
@@ -354,10 +459,11 @@ namespace Decode
 			if (!ParseVUIParameters(sps))
 				return FALSE;
 		}
-		m_spsMap.SetAt(sps.seq_parameter_set_id, sps);
+		spsID = sps.seq_parameter_set_id;
+		m_mapsps.SetAt(sps.seq_parameter_set_id, sps);
 		return TRUE;
 	}
-	BOOL H264Parser::ParsePPS(const BYTE* bits, LONG size)
+	BOOL H264Parser::ParsePPS(const BYTE* bits, LONG size, BYTE code, INT& ppsID)
 	{
 		m_reader.Initialize(bits, size);
 		INT value = 0;
@@ -368,7 +474,7 @@ namespace Decode
 			return FALSE;
 		if (pps.seq_parameter_set_id >= 32)
 			return FALSE;
-		H264SPS* sps = m_spsMap.GetValue(pps.seq_parameter_set_id);
+		H264SPS* sps = m_mapsps.GetValue(pps.seq_parameter_set_id);
 		if (!sps)
 			return FALSE;
 		if (!m_reader.ReadBits(1, &pps.entropy_coding_mode_flag))
@@ -426,7 +532,13 @@ namespace Decode
 			if (!ReadSE(&pps.second_chroma_qp_index_offset))
 				return FALSE;
 		}
-		m_ppsMap.SetAt(pps.pic_parameter_set_id, pps);
+		ppsID = pps.pic_parameter_set_id;
+		m_mappps.SetAt(pps.pic_parameter_set_id, pps);
+		return TRUE;
+	}
+
+	BOOL H264Parser::ParseSlice(const BYTE* bits, LONG size, BYTE code)
+	{
 		return TRUE;
 	}
 
@@ -467,6 +579,35 @@ namespace Decode
 			*val = -(iUE / 2);
 		else
 			*val = iUE / 2 + 1;
+		return TRUE;
+	}
+
+	BOOL H264Parser::SetVideoDecoderConfig(const H264SPS* sps)
+	{
+		ASSERT(sps);
+		INT sarcx = (sps->sar_width == 0) ? 1 : sps->sar_width;
+		INT sarcy = (sps->sar_height == 0) ? 1 : sps->sar_height;
+		TinySize videoSize(16 * (sps->pic_width_in_mbs_minus1 + 1), 16 * (sps->pic_height_in_map_units_minus1 + 1));
+		if (videoSize.cx > (std::numeric_limits<LONG>::max)() / 1 ||
+			videoSize.cy > (std::numeric_limits<LONG>::max)() / 1)
+			return FALSE;
+		TinyRectangle visibleRect(sps->frame_crop_left_offset,
+			sps->frame_crop_top_offset,
+			(videoSize.cx - sps->frame_crop_right_offset) - sps->frame_crop_left_offset,
+			(videoSize.cy - sps->frame_crop_bottom_offset) -
+			sps->frame_crop_top_offset);
+		if (visibleRect.Width() <= 0 || visibleRect.Height() <= 0)
+			return FALSE;
+		if (visibleRect.Width() > (std::numeric_limits<INT>::max)() / sarcx)
+			return FALSE;
+		TinySize naturalSize((visibleRect.Width() * sarcx) / sarcy, visibleRect.Height());
+		if (naturalSize.cx == 0)
+			return FALSE;
+		H264VideoDecoderConfig config(CodecH264, ProfileIDCToVideoCodecProfile(sps->profile_idc), PIXEL_FORMAT_YV12, videoSize, visibleRect, naturalSize);
+		if (m_lastConfig != config)
+		{
+			//TODO
+		}
 		return TRUE;
 	}
 

@@ -107,6 +107,25 @@ namespace Decode
 		VideoCodecMax = CodecHEVC
 	};
 
+	namespace H264
+	{
+		enum H264ProfileIDC
+		{
+			ProfileIDCBaseline = 66,
+			ProfileIDCConstrainedBaseline = ProfileIDCBaseline,
+			ProfileIDCMain = 77,
+			ProfileIDScalableBaseline = 83,
+			ProfileIDScalableHigh = 86,
+			ProfileIDCHigh = 100,
+			ProfileIDHigh10 = 110,
+			ProfileIDSMultiviewHigh = 118,
+			ProfileIDHigh422 = 122,
+			ProfileIDStereoHigh = 128,
+			ProfileIDHigh444Predictive = 244,
+		};
+	}
+
+
 	enum  VideoCodecProfile
 	{
 		VIDEO_CODEC_PROFILE_UNKNOWN = -1,

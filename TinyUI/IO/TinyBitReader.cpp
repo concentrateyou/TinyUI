@@ -36,44 +36,6 @@ namespace TinyUI
 			}
 			return TRUE;
 		}
-		BOOL TinyBitReader::ReadSE(INT* s)
-		{
-			INT val = 0;
-			if (!ReadUE(&val))
-				return FALSE;
-			if (val % 2 == 0)
-				*s = -(val / 2);
-			else
-				*s = val / 2 + 1;
-			return TRUE;
-		}
-		BOOL TinyBitReader::ReadUE(INT* s)
-		{
-			INT count = -1;
-			INT val = 0;
-			do
-			{
-				if (!ReadBits(1, &val))
-					return FALSE;
-				count++;
-			} while (val == 0);
-			if (count > 31)
-				return FALSE;
-			*s = (1U << count) - 1U;
-			if (count == 31)
-			{
-				if (!ReadBits(count, &val))
-					return FALSE;
-				return (val == 0) ? TRUE : FALSE;
-			}
-			if (count > 0)
-			{
-				if (!ReadBits(count, &val))
-					return FALSE;
-				*s += val;
-			}
-			return TRUE;
-		}
 		BOOL TinyBitReader::ReadBits(INT count, UINT64* s)
 		{
 			*s = 0;
