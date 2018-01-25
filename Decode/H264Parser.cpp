@@ -184,6 +184,16 @@ namespace Decode
 	{
 
 	}
+	H264VideoConfig::H264VideoConfig(const H264VideoConfig& o)
+	{
+		m_codec = o.m_codec;
+		m_pixelFormat = o.m_pixelFormat;
+		m_profile = o.m_profile;
+		m_frameRate = o.m_frameRate;
+		m_codedSize = o.m_codedSize;
+		m_visibleRect = o.m_visibleRect;
+		m_naturalSize = o.m_naturalSize;
+	}
 	BOOL H264VideoConfig::operator == (const H264VideoConfig& o)
 	{
 		return ((m_codec == o.m_codec) &&
@@ -205,10 +215,8 @@ namespace Decode
 			(m_naturalSize != o.m_naturalSize));
 	}
 	//////////////////////////////////////////////////////////////////////////
-	H264Parser::H264Parser()
-		:m_bits(NULL),
-		m_size(0),
-		m_count(0)
+	H264Parser::H264Parser(ConfigCallback&& callback)
+		:m_callback(std::move(callback))
 	{
 
 	}
@@ -222,6 +230,8 @@ namespace Decode
 	}
 	BOOL H264Parser::FindCode(const BYTE* bits, LONG size, LONG& offset, BYTE& code)
 	{
+		if (size <= 0)
+			return FALSE;
 		LONG remainingBytes = size;
 		while (remainingBytes >= 3)
 		{
@@ -239,29 +249,27 @@ namespace Decode
 			++bits;
 			--remainingBytes;
 		}
-		offset = size - remainingBytes;
+		offset = size;
 		code = 0;
-		return FALSE;
+		return TRUE;
 	}
-	BOOL H264Parser::Parse(const BYTE* bits, LONG size)
+	BOOL H264Parser::Parse(const BYTE* bits, LONG size, H264NALU& sNALU)
 	{
 		if (!bits || size <= 0)
 			return FALSE;
-		m_bits = bits;
-		m_size = size;
-		INT offset = 0;
+		ZeroMemory(&sNALU, sizeof(sNALU));
 		H264NALU s;
 		ZeroMemory(&s, sizeof(s));
 		for (;;)
 		{
 			BYTE code = 0;
-			LONG index = 0;
-			if (!FindCode(m_bits, m_size, index, code))
+			LONG offset = 0;
+			if (!FindCode(bits, size, offset, code))
 				break;
-			if (m_count > 0)
+			if (offset > 0)
 			{
-				s.size = index;
-				switch (s.Type)
+				s.size = offset;
+				switch (s.type)
 				{
 				case NALU_TYPE_AUD://分隔符
 					break;
@@ -275,11 +283,10 @@ namespace Decode
 						m_sps.clear();
 						return FALSE;
 					}
-					H264SPS* sps = m_mapsps.GetValue(spsID);
-					if (sps != NULL)
-					{
-						SetVideoConfig(sps);
-					}
+					H264SPS* sps = m_spsMap.GetValue(spsID);
+					if (!sps)
+						return FALSE;
+					SetVideoConfig(sps, code);
 				}
 				break;
 				case NALU_TYPE_PPS:
@@ -292,11 +299,21 @@ namespace Decode
 						m_pps.clear();
 						return FALSE;
 					}
+					H264PPS* pps = m_ppsMap.GetValue(ppsID);
+					if (!pps)
+						return FALSE;
+					H264SPS* sps = m_spsMap.GetValue(pps->seq_parameter_set_id);
+					if (!sps)
+						return FALSE;
+					SetVideoConfig(sps, code);
 				}
 				break;
 				case NALU_TYPE_SLICE:
 				case NALU_TYPE_IDR:
 				{
+					sNALU.type = s.type;
+					sNALU.bits = s.bits - 4;
+					sNALU.size = s.size + 4;
 					if (!ParseSliceHeader(s.bits + 1, s.size - 1, code))
 					{
 						return FALSE;
@@ -305,13 +322,12 @@ namespace Decode
 				break;
 				}
 			}
-			offset += (index + code);
-			m_bits += (index + code);
-			m_size -= (index + code);
-			s.Type = m_bits[0] & 0x1F;
-			s.bits = m_bits;
-			++m_count;
+			bits += (offset + code);
+			size -= (offset + code);
+			s.type = bits[0] & 0x1F;
+			s.bits = bits;
 		}
+
 		return TRUE;
 	}
 	BOOL H264Parser::ParseSPS(const BYTE* bits, LONG size, BYTE code, INT& spsID)
@@ -464,7 +480,7 @@ namespace Decode
 				return FALSE;
 		}
 		spsID = sps.seq_parameter_set_id;
-		m_mapsps.SetAt(sps.seq_parameter_set_id, sps);
+		m_spsMap.SetAt(sps.seq_parameter_set_id, sps);
 		return TRUE;
 	}
 	BOOL H264Parser::ParsePPS(const BYTE* bits, LONG size, BYTE code, INT& ppsID)
@@ -478,7 +494,7 @@ namespace Decode
 			return FALSE;
 		if (pps.seq_parameter_set_id >= 32)
 			return FALSE;
-		H264SPS* sps = m_mapsps.GetValue(pps.seq_parameter_set_id);
+		H264SPS* sps = m_spsMap.GetValue(pps.seq_parameter_set_id);
 		if (!sps)
 			return FALSE;
 		if (!m_reader.ReadBits(1, &pps.entropy_coding_mode_flag))
@@ -537,11 +553,51 @@ namespace Decode
 				return FALSE;
 		}
 		ppsID = pps.pic_parameter_set_id;
-		m_mappps.SetAt(pps.pic_parameter_set_id, pps);
+		m_ppsMap.SetAt(pps.pic_parameter_set_id, pps);
 		return TRUE;
 	}
 	BOOL H264Parser::ParseSliceHeader(const BYTE* bits, LONG size, BYTE code)
 	{
+		m_reader.Initialize(bits, size);
+		INT first_mb_in_slice = 0;
+		if (!ReadUE(&first_mb_in_slice))
+			return FALSE;
+		INT slice_type = 0;
+		if (!ReadUE(&slice_type))
+			return FALSE;
+		switch (slice_type)
+		{
+		case 0:
+			TRACE("P slice\n");
+			break;
+		case 1:
+			TRACE("B slice\n");
+			break;
+		case 2:
+			TRACE("I slice\n");
+			break;
+		case 3:
+			TRACE("SP slice\n");
+			break;
+		case 4:
+			TRACE("SI slice\n");
+			break;
+		case 5:
+			TRACE("P slice\n");
+			break;
+		case 6:
+			TRACE("B slice\n");
+			break;
+		case 7:
+			TRACE("I slice\n");
+			break;
+		case 8:
+			TRACE("SP slice\n");
+			break;
+		case 9:
+			TRACE("SI slice\n");
+			break;
+		}
 		return TRUE;
 	}
 	BOOL H264Parser::ReadUE(INT* val)
@@ -582,15 +638,13 @@ namespace Decode
 			*val = iUE / 2 + 1;
 		return TRUE;
 	}
-	BOOL H264Parser::SetVideoConfig(const H264SPS* sps)
+	BOOL H264Parser::SetVideoConfig(const H264SPS* sps, BYTE code)
 	{
 		ASSERT(sps);
 		INT sarcx = (sps->sar_width == 0) ? 1 : sps->sar_width;
 		INT sarcy = (sps->sar_height == 0) ? 1 : sps->sar_height;
-
-		TinySize codedSize(16 * (sps->pic_width_in_mbs_minus1 + 1), 16 * (2 - sps->frame_mbs_only_flag) * (sps->pic_height_in_map_units_minus1 + 1));
-		if (codedSize.cx > (std::numeric_limits<LONG>::max)() / 1 ||
-			codedSize.cy > (std::numeric_limits<LONG>::max)() / 1)
+		TinySize codedSize(16 * (sps->pic_width_in_mbs_minus1 + 1), 16 * (sps->pic_height_in_map_units_minus1 + 1));
+		if (codedSize.cx > (std::numeric_limits<LONG>::max)() / 1 || codedSize.cy > (std::numeric_limits<LONG>::max)() / 1)
 			return FALSE;
 		TinyRectangle visibleRect(sps->frame_crop_left_offset,
 			sps->frame_crop_top_offset,
@@ -608,7 +662,38 @@ namespace Decode
 		H264VideoConfig config(CodecH264, ProfileIDC2VideoCodecProfile(sps->profile_idc), PIXEL_FORMAT_YV12, frameRate, codedSize, visibleRect, naturalSize);
 		if (m_lastConfig != config)
 		{
-			//TODO
+			//默认支持单个SPS和PPS
+			if (m_sps.size() > 0 && m_pps.size() > 0)
+			{
+				m_lastConfig = config;
+				if (!m_callback.IsNull())
+				{
+					vector<BYTE> avc;
+					avc.clear();
+					avc.push_back(0x01);
+					avc.push_back(m_sps[0]);
+					avc.push_back(m_sps[1]);
+					avc.push_back(m_sps[2]);
+					avc.push_back(code == 4 ? 0xFF : 0xFE);
+					avc.push_back(0xE1);
+					INT val = m_sps.size();
+					avc.push_back((val >> 8) & 0xFF);
+					avc.push_back(val & 0xFF);
+					for (INT i = 0;i < val;i++)
+					{
+						avc.push_back(m_sps[i]);
+					}
+					avc.push_back(1);
+					val = m_pps.size();
+					avc.push_back((val >> 8) & 0xFF);
+					avc.push_back(val & 0xFF);
+					for (INT i = 0;i < val;i++)
+					{
+						avc.push_back(m_pps[i]);
+					}
+					m_callback(&avc[0], static_cast<LONG>(avc.size()), this);
+				}
+			}
 		}
 		return TRUE;
 	}

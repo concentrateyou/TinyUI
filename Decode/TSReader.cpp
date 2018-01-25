@@ -70,12 +70,9 @@ namespace Decode
 	{
 		return m_io.GetSize();
 	}
-	void TSParser::SetConfig(vector<BYTE>& config)
-	{
-		m_config = std::move(config);
-	}
 	//////////////////////////////////////////////////////////////////////////
-	TSH264Parser::TSH264Parser()
+	TSH264Parser::TSH264Parser(ConfigCallback&& callback)
+		:m_parser(std::move(callback))
 	{
 	}
 	TSH264Parser::~TSH264Parser()
@@ -88,13 +85,16 @@ namespace Decode
 	}
 	BOOL TSH264Parser::Parse(TS_BLOCK& block)
 	{
-		if (m_parser.Parse(data(), size()))
+		H264NALU sNALU;
+		if (m_parser.Parse(data(), size(), sNALU))
 		{
-
+			block.video.size = sNALU.size;
+			block.video.data = new BYTE[block.video.size];
+			memcpy_s(block.video.data, block.video.size, sNALU.bits, block.video.size);
 		}
-		block.video.size = size();
+		/*block.video.size = size();
 		block.video.data = new BYTE[block.video.size];
-		memcpy_s(block.video.data, block.video.size, data(), block.video.size);
+		memcpy_s(block.video.data, block.video.size, data(), block.video.size);*/
 		return TRUE;
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -104,7 +104,8 @@ namespace Decode
 		24000, 22050, 16000, 12000, 11025, 8000, 7350,
 		0, 0, 0
 	};
-	TSAACParser::TSAACParser()
+	TSAACParser::TSAACParser(ConfigCallback&& callback)
+		:m_callback(std::move(callback))
 	{
 		m_asc.resize(2);
 	}
@@ -154,17 +155,17 @@ namespace Decode
 	{
 
 	}
-	TSParser* TS_PACKET_STREAM::GetParser()
+	TSParser* TS_PACKET_STREAM::GetParser(ConfigCallback&& callback)
 	{
 		if (!m_parser)
 		{
 			if (StreamType == TS_STREAM_TYPE_AUDIO_AAC)
 			{
-				m_parser.Reset(new TSAACParser());
+				m_parser.Reset(new TSAACParser(std::move(callback)));
 			}
 			if (StreamType == TS_STREAM_TYPE_VIDEO_H264)
 			{
-				m_parser.Reset(new TSH264Parser());
+				m_parser.Reset(new TSH264Parser(std::move(callback)));
 			}
 		}
 		return m_parser;
@@ -184,6 +185,10 @@ namespace Decode
 
 	TSReader::~TSReader()
 	{
+	}
+	void TSReader::SetConfigCallback(ConfigCallback&& callback)
+	{
+		m_callback = std::move(callback);
 	}
 	BOOL TSReader::OpenFile(LPCSTR pzFile)
 	{
@@ -541,7 +546,7 @@ namespace Decode
 			}
 		}
 		ASSERT(index == myPES.PESHeaderDataLength + 9);
-		TSParser* parser = stream->GetParser();
+		TSParser* parser = stream->GetParser(std::move(m_callback));
 		if (parser != NULL)
 		{
 			INT size = myPES.PESPacketLength - 3 - myPES.PESHeaderDataLength;
@@ -614,7 +619,7 @@ namespace Decode
 							if (stream->Slices >= 1)//处理h264
 							{
 								block.streamType = stream->StreamType;
-								TSParser* parser = stream->GetParser();
+								TSParser* parser = stream->GetParser(std::move(m_callback));
 								if (parser != NULL)
 								{
 									parser->Parse(block);
@@ -628,7 +633,7 @@ namespace Decode
 						}
 						else
 						{
-							TSParser* parser = stream->GetParser();
+							TSParser* parser = stream->GetParser(std::move(m_callback));
 							if (parser != NULL)
 							{
 								INT size = TS_PACKET_SIZE - index;

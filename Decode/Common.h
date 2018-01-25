@@ -55,9 +55,9 @@ namespace Decode
 
 	typedef struct tagH264NALU
 	{
-		BYTE	Type;
 		const BYTE*	bits;
 		LONG		size;
+		BYTE		type;
 	}H264NALU;
 
 	enum NALUType
@@ -287,6 +287,7 @@ namespace Decode
 		INT32 time_scale;
 		BOOL fixed_frame_rate_flag;
 	}H264SPS;
+
 	//////////////////////////////////////////////////////////////////////////
 	typedef struct tagFLV_HEADER
 	{
@@ -673,4 +674,6 @@ namespace Decode
 		BYTE DescriptorLength;
 		CHAR Context[256];
 	};
+
+	typedef Callback<void(const BYTE*, LONG, LPVOID)> ConfigCallback;
 }

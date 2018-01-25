@@ -74,6 +74,74 @@ BOOL LoadSeDebugPrivilege()
 	return TRUE;
 }
 
+class TSDecoder
+{
+public:
+	TSDecoder();
+	virtual ~TSDecoder();
+	BOOL Open(LPCSTR pzFile);
+	void Invoke();
+	void Close();
+	void OnConfigChange(const BYTE* bits, LONG size, LPVOID);
+private:
+	INT			m_count;
+	x264Decoder m_decoder;
+	TSReader	m_reader;
+};
+TSDecoder::TSDecoder()
+	:m_count(0)
+{
+
+}
+TSDecoder::~TSDecoder()
+{
+
+}
+BOOL TSDecoder::Open(LPCSTR pzFile)
+{
+	m_reader.Close();
+	m_reader.SetConfigCallback(BindCallback(&TSDecoder::OnConfigChange, this));
+	m_reader.OpenFile(pzFile);
+	return TRUE;
+}
+
+void TSDecoder::Close()
+{
+	m_reader.Close();
+}
+
+void TSDecoder::OnConfigChange(const BYTE* bits, LONG size, LPVOID)
+{
+	m_decoder.Close();
+	m_decoder.Initialize({ 1280,720 }, { 1280,720 });
+	m_decoder.Open(const_cast<BYTE*>(bits), size);
+}
+
+void TSDecoder::Invoke()
+{
+	for (;;)
+	{
+		TS_BLOCK block = { 0 };
+		m_reader.ReadBlock(block);
+		if (block.streamType == TS_STREAM_TYPE_VIDEO_H264)
+		{
+			SampleTag tag = { 0 };
+			tag.size = block.video.size;
+			tag.bits = new BYTE[tag.size];
+			tag.sampleDTS = 40;
+			tag.samplePTS = 40;
+			memcpy(tag.bits, block.video.data, tag.size);
+			BYTE* bo = NULL;
+			LONG so = 0;
+			m_decoder.Decode(tag, bo, so);
+
+			SAFE_DELETE_ARRAY(tag.bits);
+		}
+		SAFE_DELETE_ARRAY(block.audio.data);
+		SAFE_DELETE_ARRAY(block.video.data);
+	}
+}
+
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -90,15 +158,23 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	HRESULT hRes = OleInitialize(NULL);
 	LoadSeDebugPrivilege();
 	CoInitialize(NULL);
-
-	FILE* hFile1 = NULL;
-	fopen_s(&hFile1, "D:\\test.264", "wb+");
+	avcodec_register_all();
+	/*FILE* hFile1 = NULL;
+	fopen_s(&hFile1, "D:\\test.264", "wb+");*/
 
 	//FILE* hFile2 = NULL;
 	//fopen_s(&hFile2, "D:\\test.aac", "wb+");
 
-	TSReader reader;
-	reader.OpenFile("D:\\1.ts");
+	//FLVParser parser;
+	//parser.Open("D:\\10s.flv");
+	//parser.Parse();
+	//parser.Close();
+
+	TSDecoder decoder;
+	decoder.Open("D:\\1.ts");
+	decoder.Invoke();
+	decoder.Close();
+	/*reader.OpenFile("D:\\1.ts");
 	for (;;)
 	{
 		TS_BLOCK block;
@@ -108,16 +184,13 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 		}
 		if (block.streamType == TS_STREAM_TYPE_VIDEO_H264)
 		{
-			fwrite(block.video.data, 1, block.video.size, hFile1);
+			++count;
+			TRACE("Size:%d\n", block.video.size);
 		}
-	/*	if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)
-		{
-			fwrite(block.audio.data, 1, block.audio.size, hFile2);
-		}*/
-		//SAFE_DELETE_ARRAY(block.audio.data);
+		SAFE_DELETE_ARRAY(block.audio.data);
 		SAFE_DELETE_ARRAY(block.video.data);
-	}
-	fclose(hFile1);
+	}*/
+	//fclose(hFile1);
 	//fclose(hFile2);
 	//MediaTest test;
 	//test.H264ToI420("D:\\Media\\test.264", "D:\\Media\\test.yuv");

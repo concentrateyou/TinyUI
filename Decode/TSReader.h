@@ -11,7 +11,6 @@ namespace Decode
 		virtual ~TSParser();
 		virtual BYTE GetStreamType() const = 0;
 		virtual BOOL Parse(TS_BLOCK& block) = 0;
-		virtual void SetConfig(vector<BYTE>& config);
 		void	SetCapacity(INT capacity);
 		void	Add(BYTE* bits, INT size);
 		void	Reset();
@@ -26,19 +25,19 @@ namespace Decode
 	class TSH264Parser : public TSParser
 	{
 	public:
-		TSH264Parser();
+		TSH264Parser(ConfigCallback&& callback);
 		virtual ~TSH264Parser();
 	public:
 		BYTE	GetStreamType() const OVERRIDE;
 		BOOL	Parse(TS_BLOCK& block) OVERRIDE;
 	private:
-		H264Parser		m_parser;
+		H264Parser	m_parser;
 	};
 	//////////////////////////////////////////////////////////////////////////
 	class TSAACParser : public TSParser
 	{
 	public:
-		TSAACParser();
+		TSAACParser(ConfigCallback&& callback);
 		virtual ~TSAACParser();
 	public:
 		BYTE	GetStreamType() const OVERRIDE;
@@ -47,6 +46,7 @@ namespace Decode
 		BOOL	ParseADTS(BYTE* bits, INT size);
 	private:
 		vector<BYTE>	m_asc;
+		ConfigCallback	m_callback;
 	};
 	//////////////////////////////////////////////////////////////////////////
 	class TS_PACKET_STREAM
@@ -61,7 +61,7 @@ namespace Decode
 	public:
 		TS_PACKET_STREAM();
 		~TS_PACKET_STREAM();
-		TSParser* GetParser();
+		TSParser* GetParser(ConfigCallback&& callback);
 	private:
 		TinyScopedPtr<TSParser>	m_parser;
 	public:
@@ -76,6 +76,7 @@ namespace Decode
 	public:
 		TSReader();
 		virtual ~TSReader();
+		void	SetConfigCallback(ConfigCallback&& callback);
 		BOOL	OpenFile(LPCSTR pzFile);
 		BOOL	Close();
 		BOOL	ReadBlock(TS_BLOCK& block);
@@ -89,6 +90,7 @@ namespace Decode
 		BYTE							m_bits[TS_PACKET_SIZE];
 		INT								m_versionNumber;
 		INT								m_continuityCounter;
+		ConfigCallback					m_callback;
 		TinyComPtr<IStream>				m_stream;
 		TinyArray<TS_PACKET_STREAM*>	m_streams;
 		TinyArray<TS_PACKET_PROGRAM>	m_programs;
