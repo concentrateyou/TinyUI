@@ -187,9 +187,13 @@ namespace Decode
 	TSReader::~TSReader()
 	{
 	}
-	void TSReader::SetConfigCallback(ConfigCallback&& callback)
+	void TSReader::SetVideoConfigCallback(ConfigCallback&& callback)
 	{
-		m_callback = std::move(callback);
+		m_videoCallback = std::move(callback);
+	}
+	void TSReader::SetAudioConfigCallback(ConfigCallback&& callback)
+	{
+		m_audioCallback = std::move(callback);
 	}
 	BOOL TSReader::OpenFile(LPCSTR pzFile)
 	{
@@ -554,7 +558,7 @@ namespace Decode
 			}
 		}
 		ASSERT(index == myPES.PESHeaderDataLength + 9);
-		TSParser* parser = stream->GetParser(std::move(m_callback));
+		TSParser* parser = stream->GetParser(std::move(m_videoCallback));
 		if (parser != NULL)
 		{
 			INT size = myPES.PESPacketLength - 3 - myPES.PESHeaderDataLength;
@@ -629,7 +633,7 @@ namespace Decode
 								block.pts = m_lastPTS;
 								block.dts = m_lastDTS;
 								block.streamType = stream->StreamType;
-								TSParser* parser = stream->GetParser(std::move(m_callback));
+								TSParser* parser = stream->GetParser(std::move(m_videoCallback));
 								if (parser != NULL)
 								{
 									parser->Parse(block);
@@ -643,7 +647,7 @@ namespace Decode
 						}
 						else
 						{
-							TSParser* parser = stream->GetParser(std::move(m_callback));
+							TSParser* parser = stream->GetParser(std::move(m_videoCallback));
 							if (parser != NULL)
 							{
 								INT size = TS_PACKET_SIZE - index;
@@ -678,6 +682,8 @@ namespace Decode
 	}
 	BOOL TSReader::Close()
 	{
+		m_lastPTS = -1;
+		m_lastDTS = -1;
 		for (INT i = 0;i < m_streams.GetSize();i++)
 		{
 			SAFE_DELETE(m_streams[i]);

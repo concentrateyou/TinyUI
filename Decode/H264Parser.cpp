@@ -160,61 +160,6 @@ namespace Decode
 		return VIDEO_CODEC_PROFILE_UNKNOWN;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	H264VideoConfig::H264VideoConfig()
-		: m_codec(UnknownVideoCodec),
-		m_profile(VIDEO_CODEC_PROFILE_UNKNOWN),
-		m_pixelFormat(PIXEL_FORMAT_UNKNOWN),
-		m_frameRate(0)
-	{
-	}
-	H264VideoConfig::H264VideoConfig(VideoCodec codec,
-		VideoCodecProfile profile,
-		VideoPixelFormat pixelFormat,
-		const INT frameRate,
-		const TinySize& codedSize,
-		const TinyRectangle& visibleRect,
-		const TinySize& naturalSize)
-		: m_codec(codec),
-		m_profile(profile),
-		m_pixelFormat(pixelFormat),
-		m_frameRate(frameRate),
-		m_codedSize(codedSize),
-		m_visibleRect(visibleRect),
-		m_naturalSize(naturalSize)
-	{
-
-	}
-	H264VideoConfig::H264VideoConfig(const H264VideoConfig& o)
-	{
-		m_codec = o.m_codec;
-		m_pixelFormat = o.m_pixelFormat;
-		m_profile = o.m_profile;
-		m_frameRate = o.m_frameRate;
-		m_codedSize = o.m_codedSize;
-		m_visibleRect = o.m_visibleRect;
-		m_naturalSize = o.m_naturalSize;
-	}
-	BOOL H264VideoConfig::operator == (const H264VideoConfig& o)
-	{
-		return ((m_codec == o.m_codec) &&
-			(m_pixelFormat == o.m_pixelFormat) &&
-			(m_profile == o.m_profile) &&
-			(m_frameRate == o.m_frameRate) &&
-			(m_codedSize == o.m_codedSize) &&
-			(m_visibleRect == o.m_visibleRect) &&
-			(m_naturalSize == o.m_naturalSize));
-	}
-	BOOL H264VideoConfig::operator != (const H264VideoConfig& o)
-	{
-		return ((m_codec != o.m_codec) ||
-			(m_pixelFormat != o.m_pixelFormat) ||
-			(m_profile != o.m_profile) ||
-			(m_frameRate != o.m_frameRate) ||
-			(m_codedSize != o.m_codedSize) ||
-			(m_visibleRect != o.m_visibleRect) ||
-			(m_naturalSize != o.m_naturalSize));
-	}
-	//////////////////////////////////////////////////////////////////////////
 	H264Parser::H264Parser(ConfigCallback&& callback)
 		:m_callback(std::move(callback))
 	{

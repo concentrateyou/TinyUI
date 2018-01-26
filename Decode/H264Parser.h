@@ -7,30 +7,6 @@ using namespace TinyUI;
 
 namespace Decode
 {
-	class H264VideoConfig
-	{
-	public:
-		H264VideoConfig();
-		H264VideoConfig(VideoCodec codec,
-			VideoCodecProfile profile,
-			VideoPixelFormat format,
-			INT frameRate,
-			const TinySize& codedSize,
-			const TinyRectangle& visibleRect,
-			const TinySize& naturalSize);
-		H264VideoConfig(const H264VideoConfig& o);
-		BOOL operator == (const H264VideoConfig& o);
-		BOOL operator != (const H264VideoConfig& o);
-	private:
-		VideoPixelFormat	m_pixelFormat;
-		VideoCodec			m_codec;
-		VideoCodecProfile	m_profile;
-		INT					m_frameRate;
-		TinySize			m_codedSize;
-		TinySize			m_naturalSize;
-		TinyRectangle		m_visibleRect;
-	};
-
 	/// <summary>
 	/// H264½âÎö
 	/// </summary>

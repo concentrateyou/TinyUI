@@ -108,6 +108,28 @@ namespace Decode
 		VideoCodecMax = CodecHEVC
 	};
 
+	enum AudioCodec
+	{
+		UnknownAudioCodec = 0,
+		CodecAAC = 1,
+		CodecMP3 = 2,
+		CodecPCM = 3,
+		CodecVorbis = 4,
+		CodecFLAC = 5,
+		CodecAMR_NB = 6,
+		CodecAMR_WB = 7,
+		CodecPCM_MULAW = 8,
+		CodecGSM_MS = 9,
+		CodecPCM_S16BE = 10,
+		CodecPCM_S24BE = 11,
+		CodecOpus = 12,
+		CodecEAC3 = 13,
+		CodecPCM_ALAW = 14,
+		CodecALAC = 15,
+		CodecAC3 = 16,
+		kAudioCodecMax = CodecAC3,
+	};
+
 	namespace H264
 	{
 		enum H264ProfileIDC
@@ -681,4 +703,41 @@ namespace Decode
 	};
 
 	typedef Callback<void(const BYTE*, LONG, LPVOID)> ConfigCallback;
+
+	class H264VideoConfig
+	{
+	public:
+		H264VideoConfig();
+		H264VideoConfig(VideoCodec codec,
+			VideoCodecProfile profile,
+			VideoPixelFormat format,
+			INT frameRate,
+			const TinySize& codedSize,
+			const TinyRectangle& visibleRect,
+			const TinySize& naturalSize);
+		H264VideoConfig(const H264VideoConfig& o);
+		BOOL operator == (const H264VideoConfig& o);
+		BOOL operator != (const H264VideoConfig& o);
+	private:
+		VideoPixelFormat	m_pixelFormat;
+		VideoCodec			m_codec;
+		VideoCodecProfile	m_profile;
+		INT					m_frameRate;
+		TinySize			m_codedSize;
+		TinySize			m_naturalSize;
+		TinyRectangle		m_visibleRect;
+	};
+
+	class AACAudioConfig
+	{
+	public:
+		AACAudioConfig();
+		AACAudioConfig(AudioCodec codec, const WAVEFORMAT& waveFMT);
+		AACAudioConfig(const AACAudioConfig& o);
+		BOOL operator == (const AACAudioConfig& o);
+		BOOL operator != (const AACAudioConfig& o);
+	private:
+		AudioCodec		m_codec;
+		WAVEFORMAT		m_waveFMT;
+	};
 }

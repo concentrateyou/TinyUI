@@ -85,7 +85,8 @@ public:
 	void OnConfigChange(const BYTE* bits, LONG size, LPVOID);
 private:
 	INT			m_count;
-	x264Decoder m_decoder;
+	x264Decoder m_x264;
+	AACDecoder	m_aac;
 	TSReader	m_reader;
 };
 TSDecoder::TSDecoder()
@@ -112,9 +113,9 @@ void TSDecoder::Close()
 
 void TSDecoder::OnConfigChange(const BYTE* bits, LONG size, LPVOID)
 {
-	m_decoder.Close();
-	m_decoder.Initialize({ 1280,720 }, { 1280,720 });
-	m_decoder.Open(const_cast<BYTE*>(bits), size);
+	m_x264.Close();
+	m_x264.Initialize({ 1280,720 }, { 1280,720 });
+	m_x264.Open(const_cast<BYTE*>(bits), size);
 }
 
 void TSDecoder::Invoke()
@@ -166,10 +167,10 @@ void TSDecoder::Invoke()
 			memcpy(tag.bits, block.video.data, tag.size);
 			BYTE* bo = NULL;
 			LONG so = 0;
-			INT iRes = m_decoder.Decode(tag, bo, so);
+			INT iRes = m_x264.Decode(tag, bo, so);
 			if (iRes == 0)
 			{
-				tag.sampleDTS = tag.samplePTS = m_decoder.GetYUV420()->pts;
+				tag.sampleDTS = tag.samplePTS = m_x264.GetYUV420()->pts;
 				BITMAPINFOHEADER bi = { 0 };
 				bi.biSize = sizeof(BITMAPINFOHEADER);
 				bi.biWidth = 1280;
@@ -180,6 +181,16 @@ void TSDecoder::Invoke()
 				SaveBitmap(bi, bo, so);
 			}
 			SAFE_DELETE_ARRAY(tag.bits);
+		}
+		if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)
+		{
+			SampleTag tag = { 0 };
+			tag.size = block.audio.size;
+			tag.bits = new BYTE[tag.size];
+			tag.sampleDTS = block.dts;
+			tag.samplePTS = block.pts;
+			memcpy(tag.bits, block.audio.data, tag.size);
+
 		}
 		SAFE_DELETE_ARRAY(block.audio.data);
 		SAFE_DELETE_ARRAY(block.video.data);

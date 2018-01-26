@@ -76,7 +76,8 @@ namespace Decode
 	public:
 		TSReader();
 		virtual ~TSReader();
-		void	SetConfigCallback(ConfigCallback&& callback);
+		void	SetVideoConfigCallback(ConfigCallback&& callback);
+		void	SetAudioConfigCallback(ConfigCallback&& callback);
 		BOOL	OpenFile(LPCSTR pzFile);
 		BOOL	Close();
 		BOOL	ReadBlock(TS_BLOCK& block);
@@ -92,7 +93,8 @@ namespace Decode
 		BYTE							m_bits[TS_PACKET_SIZE];
 		INT								m_versionNumber;
 		INT								m_continuityCounter;
-		ConfigCallback					m_callback;
+		ConfigCallback					m_audioCallback;
+		ConfigCallback					m_videoCallback;
 		TinyComPtr<IStream>				m_stream;
 		TinyArray<TS_PACKET_STREAM*>	m_streams;
 		TinyArray<TS_PACKET_PROGRAM>	m_programs;
