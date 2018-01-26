@@ -57,7 +57,8 @@ namespace Decode
 	{
 		const BYTE*	bits;
 		LONG		size;
-		BYTE		type;
+		BYTE		type;//NALU类型
+		BYTE		sliceType;//帧类型
 	}H264NALU;
 
 	enum NALUType
@@ -244,7 +245,8 @@ namespace Decode
 		BOOL gaps_in_frame_num_value_allowed_flag;
 		INT32 pic_width_in_mbs_minus1;
 		INT32 pic_height_in_map_units_minus1;
-		BOOL frame_mbs_only_flag;
+		BOOL frame_mbs_only_flag;	//frame_mbs_only_flag等于0指明了视频序列的编码图象可能是编码场或编码帧 
+									//frame_mbs_only_flag等于1指明了每个编码视频序列的编码图像都是只含帧宏块的编码帧
 		BOOL mb_adaptive_frame_field_flag;
 		BOOL direct_8x8_inference_flag;
 		BOOL frame_cropping_flag;
@@ -649,7 +651,9 @@ namespace Decode
 
 	typedef struct tagTS_BLOCK
 	{
-		BYTE  streamType;
+		BYTE		streamType;
+		LONGLONG	dts;
+		LONGLONG	pts;
 		union
 		{
 			struct
@@ -663,6 +667,7 @@ namespace Decode
 				BYTE*	data;
 				LONG	size;
 				BYTE	type;
+				BYTE	codeType;
 			}video;
 		};
 	}TS_BLOCK;

@@ -88,13 +88,12 @@ namespace Decode
 		H264NALU sNALU;
 		if (m_parser.Parse(data(), size(), sNALU))
 		{
+			block.video.codeType = sNALU.sliceType;
+			block.video.type = sNALU.type;
 			block.video.size = sNALU.size;
 			block.video.data = new BYTE[block.video.size];
 			memcpy_s(block.video.data, block.video.size, sNALU.bits, block.video.size);
 		}
-		/*block.video.size = size();
-		block.video.data = new BYTE[block.video.size];
-		memcpy_s(block.video.data, block.video.size, data(), block.video.size);*/
 		return TRUE;
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -178,7 +177,9 @@ namespace Decode
 	//////////////////////////////////////////////////////////////////////////
 	TSReader::TSReader()
 		:m_versionNumber(-1),
-		m_continuityCounter(-1)
+		m_continuityCounter(-1),
+		m_lastPTS(-1),
+		m_lastDTS(-1)
 	{
 		ZeroMemory(m_bits, TS_PACKET_SIZE);
 	}
@@ -202,9 +203,9 @@ namespace Decode
 	}
 	BOOL TSReader::ReadBlock(TS_BLOCK& block)
 	{
+		ZeroMemory(&block, sizeof(block));
 		for (;;)
 		{
-			ZeroMemory(&block, sizeof(block));
 			TS_PACKEG_HEADER header;
 			if (!ReadPacket(header, block))
 				return FALSE;
@@ -435,8 +436,11 @@ namespace Decode
 				((bits[index + 2] >> 1) << 15) |
 				(bits[index + 3] << 7) |
 				(bits[index + 4] >> 1);
-			myPES.PTS = (((timestamp >> 33) & 0x7) << 30) | (((timestamp >> 17) & 0x7FFF) << 15) | (((timestamp >> 1) & 0x7FFF) << 0);
+			myPES.PTS = timestamp;
+			myPES.PTS = myPES.PTS > 0 ? myPES.PTS / 90 : myPES.PTS;
 			myPES.DTS = 0;
+			m_lastPTS = myPES.PTS;
+			m_lastDTS = myPES.DTS;
 			index += 5;
 		}
 		if (myPES.PTSDTSFlags == 0x3)
@@ -448,7 +452,8 @@ namespace Decode
 				((bits[index + 2] >> 1) << 15) |
 				(bits[index + 3] << 7) |
 				(bits[index + 4] >> 1);
-			myPES.PTS = (((timestamp >> 33) & 0x7) << 30) | (((timestamp >> 17) & 0x7FFF) << 15) | (((timestamp >> 1) & 0x7FFF) << 0);
+			myPES.PTS = timestamp;
+			myPES.PTS = myPES.PTS > 0 ? myPES.PTS / 90 : myPES.PTS;
 			index += 5;
 			if ((bits[index] >> 4 & 0xF) != 0x1)
 				return FALSE;
@@ -457,7 +462,10 @@ namespace Decode
 				((bits[index + 2] >> 1) << 15) |
 				(bits[index + 3] << 7) |
 				(bits[index + 4] >> 1);
-			myPES.DTS = (((timestamp >> 33) & 0x7) << 30) | (((timestamp >> 17) & 0x7FFF) << 15) | (((timestamp >> 1) & 0x7FFF) << 0);
+			myPES.DTS = timestamp;
+			myPES.DTS = myPES.DTS > 0 ? myPES.DTS / 90 : myPES.DTS;
+			m_lastPTS = myPES.PTS;
+			m_lastDTS = myPES.DTS;
 			index += 5;
 		}
 		if (myPES.ESCRFlag)
@@ -618,6 +626,8 @@ namespace Decode
 						{
 							if (stream->Slices >= 1)//处理h264
 							{
+								block.pts = m_lastPTS;
+								block.dts = m_lastDTS;
 								block.streamType = stream->StreamType;
 								TSParser* parser = stream->GetParser(std::move(m_callback));
 								if (parser != NULL)

@@ -257,12 +257,13 @@ namespace Decode
 	{
 		if (!bits || size <= 0)
 			return FALSE;
+		BYTE mask = 0;
 		ZeroMemory(&sNALU, sizeof(sNALU));
 		H264NALU s;
 		ZeroMemory(&s, sizeof(s));
+		BYTE code = 0;
 		for (;;)
 		{
-			BYTE code = 0;
 			LONG offset = 0;
 			if (!FindCode(bits, size, offset, code))
 				break;
@@ -275,9 +276,10 @@ namespace Decode
 					break;
 				case NALU_TYPE_SPS:
 				{
+					mask = code;
 					INT spsID = 0;
-					m_sps.resize(s.size - 1);
-					memcpy_s(&m_sps[0], s.size - 1, s.bits + 1, s.size - 1);
+					m_sps.resize(s.size + 4);
+					memcpy_s(&m_sps[0], s.size + 4, s.bits - 4, s.size + 4);
 					if (!ParseSPS(s.bits + 1, s.size - 1, code, spsID))
 					{
 						m_sps.clear();
@@ -291,9 +293,10 @@ namespace Decode
 				break;
 				case NALU_TYPE_PPS:
 				{
+					mask = code;
 					INT ppsID = 0;
-					m_pps.resize(s.size - 1);
-					memcpy_s(&m_pps[0], s.size - 1, s.bits + 1, s.size - 1);
+					m_pps.resize(s.size + code);
+					memcpy_s(&m_pps[0], s.size + code, s.bits - code, s.size + code);
 					if (!ParsePPS(s.bits + 1, s.size - 1, code, ppsID))
 					{
 						m_pps.clear();
@@ -312,9 +315,9 @@ namespace Decode
 				case NALU_TYPE_IDR:
 				{
 					sNALU.type = s.type;
-					sNALU.bits = s.bits - 4;
+					sNALU.bits = s.bits - 4;//起始码
 					sNALU.size = s.size + 4;
-					if (!ParseSliceHeader(s.bits + 1, s.size - 1, code))
+					if (!ParseSliceHeader(s.bits + 1, s.size - 1, code, sNALU))
 					{
 						return FALSE;
 					}
@@ -450,10 +453,14 @@ namespace Decode
 			return FALSE;
 		if (!ReadUE(&sps.pic_height_in_map_units_minus1))
 			return FALSE;
+		//frame_mbs_only_flag等于0指明了视频序列的编码图象可能是编码场或编码帧
+		//frame_mbs_only_flag等于1指明了每个编码视频序列的编码图像都是只含帧宏块的编码帧。
 		if (!m_reader.ReadBits(1, &sps.frame_mbs_only_flag))
 			return FALSE;
 		if (!sps.frame_mbs_only_flag)
 		{
+			//mb_adaptive_frame_field_flag等于0表明在一个图像内不能切换使用帧和场宏块
+			//mb_adaptive_frame_field_flag等于1表示在一帧中有可能使用场和帧的切换,当mb_adaptive_frame_field_flag没有设定的时候，应该赋给0.
 			if (!m_reader.ReadBits(1, &sps.mb_adaptive_frame_field_flag))
 				return FALSE;
 		}
@@ -556,7 +563,7 @@ namespace Decode
 		m_ppsMap.SetAt(pps.pic_parameter_set_id, pps);
 		return TRUE;
 	}
-	BOOL H264Parser::ParseSliceHeader(const BYTE* bits, LONG size, BYTE code)
+	BOOL H264Parser::ParseSliceHeader(const BYTE* bits, LONG size, BYTE code, H264NALU& s)
 	{
 		m_reader.Initialize(bits, size);
 		INT first_mb_in_slice = 0;
@@ -565,39 +572,7 @@ namespace Decode
 		INT slice_type = 0;
 		if (!ReadUE(&slice_type))
 			return FALSE;
-		switch (slice_type)
-		{
-		case 0:
-			TRACE("P slice\n");
-			break;
-		case 1:
-			TRACE("B slice\n");
-			break;
-		case 2:
-			TRACE("I slice\n");
-			break;
-		case 3:
-			TRACE("SP slice\n");
-			break;
-		case 4:
-			TRACE("SI slice\n");
-			break;
-		case 5:
-			TRACE("P slice\n");
-			break;
-		case 6:
-			TRACE("B slice\n");
-			break;
-		case 7:
-			TRACE("I slice\n");
-			break;
-		case 8:
-			TRACE("SP slice\n");
-			break;
-		case 9:
-			TRACE("SI slice\n");
-			break;
-		}
+		s.sliceType = static_cast<BYTE>(slice_type);
 		return TRUE;
 	}
 	BOOL H264Parser::ReadUE(INT* val)
@@ -668,30 +643,10 @@ namespace Decode
 				m_lastConfig = config;
 				if (!m_callback.IsNull())
 				{
-					vector<BYTE> avc;
-					avc.clear();
-					avc.push_back(0x01);
-					avc.push_back(m_sps[0]);
-					avc.push_back(m_sps[1]);
-					avc.push_back(m_sps[2]);
-					avc.push_back(code == 4 ? 0xFF : 0xFE);
-					avc.push_back(0xE1);
-					INT val = m_sps.size();
-					avc.push_back((val >> 8) & 0xFF);
-					avc.push_back(val & 0xFF);
-					for (INT i = 0;i < val;i++)
-					{
-						avc.push_back(m_sps[i]);
-					}
-					avc.push_back(1);
-					val = m_pps.size();
-					avc.push_back((val >> 8) & 0xFF);
-					avc.push_back(val & 0xFF);
-					for (INT i = 0;i < val;i++)
-					{
-						avc.push_back(m_pps[i]);
-					}
-					m_callback(&avc[0], static_cast<LONG>(avc.size()), this);
+					TinyBufferArray<BYTE> buffer;
+					buffer.Add(&m_sps[0], m_sps.size());
+					buffer.Add(&m_pps[0], m_pps.size());
+					m_callback(buffer.GetPointer(), buffer.GetSize(), this);
 				}
 			}
 		}

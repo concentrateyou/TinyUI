@@ -50,12 +50,12 @@ namespace TinyUI
 			value <<= (sizeof(UINT64) * 8 - count);
 			while (m_remainingBits != 0 && count != 0)
 			{
-				BYTE task = min(m_remainingBits, count);
+				INT take = min(m_remainingBits, count);
 				BYTE s = static_cast<BYTE>(value >> 56);//取高8位
 				s >>= m_consumeBits;
 				*m_bits |= s;
-				m_remainingBits -= task;
-				count -= task;
+				m_remainingBits -= take;
+				count -= take;
 				if (m_remainingBits != 0)
 				{
 					m_consumeBits = 8 - m_remainingBits;

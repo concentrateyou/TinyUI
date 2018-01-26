@@ -87,6 +87,8 @@ namespace Decode
 		BOOL	ReadPAT(TS_PACKET_PAT& myPAT, TinyArray<TS_PACKET_PROGRAM>& programs, const BYTE* bits);
 		BOOL	ReadPTM(TS_PACKET_PMT& myPTM, TinyArray<TS_PACKET_STREAM*>& streams, const BYTE* bits);
 	private:
+		LONGLONG						m_lastPTS;
+		LONGLONG						m_lastDTS;
 		BYTE							m_bits[TS_PACKET_SIZE];
 		INT								m_versionNumber;
 		INT								m_continuityCounter;

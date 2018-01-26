@@ -46,7 +46,7 @@ namespace Decode
 	private:
 		BOOL ParseSPS(const BYTE* bits, LONG size, BYTE code, INT& spsID);
 		BOOL ParsePPS(const BYTE* bits, LONG size, BYTE code, INT& ppsID);
-		BOOL ParseSliceHeader(const BYTE* bits, LONG size, BYTE code);
+		BOOL ParseSliceHeader(const BYTE* bits, LONG size, BYTE code, H264NALU& s);
 		BOOL ReadUE(INT* val);
 		BOOL ReadSE(INT* val);
 		BOOL ParseSPSScalingLists(H264SPS& sps);

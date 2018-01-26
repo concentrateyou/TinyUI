@@ -30,7 +30,7 @@ namespace Decode
 		virtual ~x264Decoder();
 		BOOL Initialize(const TinySize& srcsize, const TinySize& dstsize);
 		BOOL Open(BYTE* metadata, LONG size);
-		BOOL Decode(SampleTag& tag, BYTE*& bo, LONG& so);
+		INT Decode(SampleTag& tag, BYTE*& bo, LONG& so);
 		BOOL Close();
 		BOOL Reset();
 		AVFrame* GetYUV420() const;

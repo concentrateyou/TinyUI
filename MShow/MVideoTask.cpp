@@ -92,7 +92,7 @@ namespace MShow
 			BYTE* bo = NULL;
 			LONG  so = 0;
 			LONGLONG prevPTS = sampleTag.samplePTS;
-			if (m_x264.Decode(sampleTag, bo, so))
+			if (m_x264.Decode(sampleTag, bo, so) == 0)//FLV½âÂëMORE DATAÈÏÎªÊ§°Ü
 			{
 				sampleTag.sampleDTS = sampleTag.samplePTS = m_x264.GetYUV420()->pts;
 				sampleTag.size = so;

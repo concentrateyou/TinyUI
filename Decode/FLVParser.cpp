@@ -426,8 +426,10 @@ namespace Decode
 				}
 				break;
 				case FLV_SCRIPT:
+				{
 					ParseScript(data, size);
-					break;
+				}
+				break;
 				default:
 					break;
 				}

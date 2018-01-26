@@ -77,11 +77,10 @@ namespace Decode
 		Close();
 		return FALSE;
 	}
-
-	BOOL x264Decoder::Decode(SampleTag& tag, BYTE*& bo, LONG& so)
+	INT x264Decoder::Decode(SampleTag& tag, BYTE*& bo, LONG& so)
 	{
 		if (!m_context || !m_sws)
-			return FALSE;
+			return AVERROR(EINVAL);
 		so = 0;
 		bo = NULL;
 		m_packet.dts = tag.sampleDTS;
@@ -100,8 +99,8 @@ namespace Decode
 				{
 					avcodec_flush_buffers(m_context);
 				}
-				TRACE("x264 Decode FAIL\n");
-				LOG(ERROR) << "x264 Decode FAIL";
+				TRACE("x264 Decode MORE\n");
+				LOG(INFO) << "x264 Decode MORE";
 				break;
 			}
 			else if (iRes < 0)
@@ -119,7 +118,7 @@ namespace Decode
 	_ERROR:
 		SAFE_DELETE_ARRAY(tag.bits);
 		av_packet_unref(&m_packet);
-		return iRes == 0;
+		return iRes;
 	}
 	BOOL x264Decoder::Close()
 	{
