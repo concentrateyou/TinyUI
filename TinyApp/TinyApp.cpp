@@ -82,12 +82,14 @@ public:
 	BOOL Open(LPCSTR pzFile);
 	void Invoke();
 	void Close();
-	void OnConfigChange(const BYTE* bits, LONG size, LPVOID);
+	void OnConfigChange(const BYTE* bits, LONG size, BYTE streamType, LPVOID);
 private:
-	INT			m_count;
-	x264Decoder m_x264;
-	AACDecoder	m_aac;
-	TSReader	m_reader;
+	INT				m_count;
+	x264Decoder		m_x264;
+	AACDecoder		m_aac;
+	TSReader		m_reader;
+	TinyWaveFile	m_waveFile;
+	FILE*			m_aacFile;
 };
 TSDecoder::TSDecoder()
 	:m_count(0)
@@ -108,14 +110,26 @@ BOOL TSDecoder::Open(LPCSTR pzFile)
 
 void TSDecoder::Close()
 {
+	fclose(m_aacFile);
+	m_waveFile.Close();
 	m_reader.Close();
 }
 
-void TSDecoder::OnConfigChange(const BYTE* bits, LONG size, LPVOID)
+void TSDecoder::OnConfigChange(const BYTE* bits, LONG size, BYTE streamType, LPVOID)
 {
-	m_x264.Close();
-	m_x264.Initialize({ 1280,720 }, { 1280,720 });
-	m_x264.Open(const_cast<BYTE*>(bits), size);
+	if (streamType == TS_STREAM_TYPE_VIDEO_H264)
+	{
+		m_x264.Close();
+		m_x264.Initialize({ 1280,720 }, { 1280,720 });
+		m_x264.Open(const_cast<BYTE*>(bits), size);
+	}
+	if (streamType == TS_STREAM_TYPE_AUDIO_AAC)
+	{
+		m_aac.Close();
+		m_aac.Open(const_cast<BYTE*>(bits), size, 16);
+		m_waveFile.Create("D:\\test111.wav", m_aac.GetFormat());
+		//fopen_s(&m_aacFile, "D:\\test111.aac", "wb+");
+	}
 }
 
 void TSDecoder::Invoke()
@@ -123,65 +137,66 @@ void TSDecoder::Invoke()
 	for (;;)
 	{
 		TS_BLOCK block = { 0 };
-		m_reader.ReadBlock(block);
-		if (block.streamType == TS_STREAM_TYPE_VIDEO_H264)
-		{
-			switch (block.video.codeType)
-			{
-			case 0:
-				TRACE("P slice\n");
-				break;
-			case 1:
-				TRACE("B slice\n");
-				break;
-			case 2:
-				TRACE("I slice\n");
-				break;
-			case 3:
-				TRACE("SP slice\n");
-				break;
-			case 4:
-				TRACE("SI slice\n");
-				break;
-			case 5:
-				TRACE("P slice\n");
-				break;
-			case 6:
-				TRACE("B slice\n");
-				break;
-			case 7:
-				TRACE("I slice\n");
-				break;
-			case 8:
-				TRACE("SP slice\n");
-				break;
-			case 9:
-				TRACE("SI slice\n");
-				break;
-			}
-			SampleTag tag = { 0 };
-			tag.size = block.video.size;
-			tag.bits = new BYTE[tag.size];
-			tag.sampleDTS = block.dts;
-			tag.samplePTS = block.pts;
-			memcpy(tag.bits, block.video.data, tag.size);
-			BYTE* bo = NULL;
-			LONG so = 0;
-			INT iRes = m_x264.Decode(tag, bo, so);
-			if (iRes == 0)
-			{
-				tag.sampleDTS = tag.samplePTS = m_x264.GetYUV420()->pts;
-				BITMAPINFOHEADER bi = { 0 };
-				bi.biSize = sizeof(BITMAPINFOHEADER);
-				bi.biWidth = 1280;
-				bi.biHeight = -720;
-				bi.biPlanes = 1;
-				bi.biBitCount = 32;
-				bi.biCompression = BI_RGB;
-				SaveBitmap(bi, bo, so);
-			}
-			SAFE_DELETE_ARRAY(tag.bits);
-		}
+		if (!m_reader.ReadBlock(block))
+			break;
+		//if (block.streamType == TS_STREAM_TYPE_VIDEO_H264)
+		//{
+		//	switch (block.video.codeType)
+		//	{
+		//	case 0:
+		//		TRACE("P slice\n");
+		//		break;
+		//	case 1:
+		//		TRACE("B slice\n");
+		//		break;
+		//	case 2:
+		//		TRACE("I slice\n");
+		//		break;
+		//	case 3:
+		//		TRACE("SP slice\n");
+		//		break;
+		//	case 4:
+		//		TRACE("SI slice\n");
+		//		break;
+		//	case 5:
+		//		TRACE("P slice\n");
+		//		break;
+		//	case 6:
+		//		TRACE("B slice\n");
+		//		break;
+		//	case 7:
+		//		TRACE("I slice\n");
+		//		break;
+		//	case 8:
+		//		TRACE("SP slice\n");
+		//		break;
+		//	case 9:
+		//		TRACE("SI slice\n");
+		//		break;
+		//	}
+		//	SampleTag tag = { 0 };
+		//	tag.size = block.video.size;
+		//	tag.bits = new BYTE[tag.size];
+		//	tag.sampleDTS = block.dts;
+		//	tag.samplePTS = block.pts;
+		//	memcpy(tag.bits, block.video.data, tag.size);
+		//	BYTE* bo = NULL;
+		//	LONG so = 0;
+		//	INT iRes = m_x264.Decode(tag, bo, so);
+		//	if (iRes == 0)
+		//	{
+		//		tag.sampleDTS = tag.samplePTS = m_x264.GetYUV420()->pts;
+		//		BITMAPINFOHEADER bi = { 0 };
+		//		bi.biSize = sizeof(BITMAPINFOHEADER);
+		//		bi.biWidth = 1280;
+		//		bi.biHeight = -720;
+		//		bi.biPlanes = 1;
+		//		bi.biBitCount = 32;
+		//		bi.biCompression = BI_RGB;
+		//		//SaveBitmap(bi, bo, so);
+		//	}
+		//	SAFE_DELETE_ARRAY(tag.bits);
+		//}
 		if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)
 		{
 			SampleTag tag = { 0 };
@@ -191,11 +206,19 @@ void TSDecoder::Invoke()
 			tag.samplePTS = block.pts;
 			memcpy(tag.bits, block.audio.data, tag.size);
 
+			BYTE* bo = NULL;
+			LONG so = 0;
+			if (m_aac.Decode(tag, bo, so))
+			{
+				m_waveFile.Write(bo, so);
+			}
+			SAFE_DELETE_ARRAY(tag.bits);
 		}
 		SAFE_DELETE_ARRAY(block.audio.data);
 		SAFE_DELETE_ARRAY(block.video.data);
 	}
 }
+
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -220,18 +243,42 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	//FILE* hFile2 = NULL;
 	//fopen_s(&hFile2, "D:\\test.aac", "wb+");
 
-	/*FLVReader reader;
+	FLVReader reader;
 	reader.OpenFile("D:\\10s.flv");
 	for (;;)
 	{
 		FLV_BLOCK block = { 0 };
 		BOOL bRes = reader.ReadBlock(block);
+		if (block.type == FLV_AUDIO)
+		{
+			if (block.audio.codeID == FLV_CODECID_AAC)
+			{
+				if (block.audio.packetType == FLV_AudioSpecificConfig)
+				{
+					/*TinyBitReader reader;
+					reader.Initialize(block.audio.data, block.audio.size);
+					INT audioObjectType = 0;
+					reader.ReadBits(5, &audioObjectType);
+					INT samplingFrequencyIndex = 0;
+					reader.ReadBits(4, &samplingFrequencyIndex);
+					INT channelConfiguration = 0;
+					reader.ReadBits(4, &channelConfiguration);
+					INT frameLengthFlag = 0;
+					reader.ReadBits(1, &frameLengthFlag);
+					INT dependsOnCoreCoder = 0;
+					reader.ReadBits(1, &dependsOnCoreCoder);
+					INT extensionFlag = 0;
+					reader.ReadBits(1, &extensionFlag);
+					INT a = 0;*/
+				}
+			}
+		}
 		SAFE_DELETE_ARRAY(block.audio.data);
 		SAFE_DELETE_ARRAY(block.video.data);
 		if (!bRes)
 			break;
 	}
-	reader.Close();*/
+	reader.Close();
 
 	TSDecoder decoder;
 	decoder.Open("D:\\1.ts");

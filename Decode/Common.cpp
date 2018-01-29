@@ -97,27 +97,39 @@ namespace Decode
 	}
 	//////////////////////////////////////////////////////////////////////////
 	AACAudioConfig::AACAudioConfig()
-		:m_codec(CodecAAC)
+		:m_codec(CodecAAC),
+		m_wChannels(0),
+		m_dwSampleRate(0),
+		m_wBitsPerSample(0)
 	{
-		ZeroMemory(&m_waveFMT, sizeof(WAVEFORMAT));
 	}
-	AACAudioConfig::AACAudioConfig(AudioCodec codec, const WAVEFORMAT& waveFMT)
-		: m_codec(codec)
+	AACAudioConfig::AACAudioConfig(AudioCodec codec, WORD wChannels, DWORD dwSampleRate, WORD wBitsPerSample)
+		: m_codec(codec),
+		m_wChannels(wChannels),
+		m_dwSampleRate(dwSampleRate),
+		m_wBitsPerSample(wBitsPerSample)
 	{
-		memcpy(&m_waveFMT, &waveFMT, sizeof(m_waveFMT));
 	}
 	AACAudioConfig::AACAudioConfig(const AACAudioConfig& o)
 		: m_codec(o.m_codec),
-		m_waveFMT(o.m_waveFMT)
+		m_wChannels(o.m_wChannels),
+		m_dwSampleRate(o.m_dwSampleRate),
+		m_wBitsPerSample(o.m_wBitsPerSample)
 	{
 
 	}
 	BOOL AACAudioConfig::operator == (const AACAudioConfig& o)
 	{
-		return TRUE;
+		return (m_codec == o.m_codec) && 
+			(m_wChannels == o.m_wChannels) &&
+			(m_dwSampleRate == o.m_dwSampleRate) && 
+			(m_wBitsPerSample == o.m_wBitsPerSample);
 	}
 	BOOL AACAudioConfig::operator != (const AACAudioConfig& o)
 	{
-		return TRUE;
+		return (m_codec != o.m_codec) || 
+			(m_wChannels != o.m_wChannels) || 
+			(m_dwSampleRate != o.m_dwSampleRate) || 
+			(m_wBitsPerSample != o.m_wBitsPerSample);
 	}
 }

@@ -132,6 +132,7 @@ namespace Decode
 			}
 		}
 	}
+
 	VideoCodecProfile ProfileIDC2VideoCodecProfile(INT profileIDC)
 	{
 		switch (profileIDC)
@@ -160,8 +161,8 @@ namespace Decode
 		return VIDEO_CODEC_PROFILE_UNKNOWN;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	H264Parser::H264Parser(ConfigCallback&& callback)
-		:m_callback(std::move(callback))
+	H264Parser::H264Parser(ConfigCallback& callback)
+		:m_callback(callback)
 	{
 
 	}
@@ -591,7 +592,7 @@ namespace Decode
 					TinyBufferArray<BYTE> buffer;
 					buffer.Add(&m_sps[0], m_sps.size());
 					buffer.Add(&m_pps[0], m_pps.size());
-					m_callback(buffer.GetPointer(), buffer.GetSize(), this);
+					m_callback(buffer.GetPointer(), buffer.GetSize(), TS_STREAM_TYPE_VIDEO_H264, this);
 				}
 			}
 		}

@@ -19,7 +19,6 @@ namespace Decode
 		size_t EmulationPreventionBytes();//获得对齐字节数
 	private:
 		BOOL UpdateCurrentByte();
-		
 	private:
 		const BYTE* m_bits;
 		off_t		m_remainingBytes;

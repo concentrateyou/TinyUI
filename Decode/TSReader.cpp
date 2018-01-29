@@ -29,15 +29,15 @@ namespace Decode
 		}
 		return (crc == 0);
 	}
-	const BYTE PROGRAM_STREAM_MAP = 0xBC;
-	const BYTE PADDING_STREAM = 0xBE;
-	const BYTE PRIVATE_STREAM_2 = 0xBF;
-	const BYTE ECM_STREAM = 0xF0;
-	const BYTE EMM_STREAM = 0xF1;
-	const BYTE PROGRAM_STREAM_DIRECTORY = 0xFF;
-	const BYTE DSMCC_STREAM = 0xF2;
-	const BYTE H222_TYPE_E = 0xF8;
-	const BYTE E_STREAM = 0xF8;
+	static const BYTE PROGRAM_STREAM_MAP = 0xBC;
+	static const BYTE PADDING_STREAM = 0xBE;
+	static const BYTE PRIVATE_STREAM_2 = 0xBF;
+	static const BYTE ECM_STREAM = 0xF0;
+	static const BYTE EMM_STREAM = 0xF1;
+	static const BYTE PROGRAM_STREAM_DIRECTORY = 0xFF;
+	static const BYTE DSMCC_STREAM = 0xF2;
+	static const BYTE H222_TYPE_E = 0xF8;
+	static const BYTE E_STREAM = 0xF8;
 	//////////////////////////////////////////////////////////////////////////
 	TSParser::TSParser()
 		:m_capacity(0)
@@ -71,8 +71,8 @@ namespace Decode
 		return m_io.GetSize();
 	}
 	//////////////////////////////////////////////////////////////////////////
-	TSH264Parser::TSH264Parser(ConfigCallback&& callback)
-		:m_parser(std::move(callback))
+	TSH264Parser::TSH264Parser(ConfigCallback& callback)
+		:m_parser(callback)
 	{
 	}
 	TSH264Parser::~TSH264Parser()
@@ -103,10 +103,10 @@ namespace Decode
 		24000, 22050, 16000, 12000, 11025, 8000, 7350,
 		0, 0, 0
 	};
-	TSAACParser::TSAACParser(ConfigCallback&& callback)
-		:m_callback(std::move(callback))
+	TSAACParser::TSAACParser(ConfigCallback& callback)
+		:m_callback(callback)
 	{
-		m_asc.resize(2);
+
 	}
 	TSAACParser::~TSAACParser()
 	{
@@ -127,22 +127,57 @@ namespace Decode
 	{
 		if (size < ADTS_HEADER_MIN_SIZE)
 			return FALSE;
-		TinyBitReader reader;
-		reader.Initialize(bits, size);
-		if (bits[0] == 0xFF && (bits[1] & 0xF6) == 0xF0)
+		//TinyBitReader reader;
+		INT index = 0;
+		while (index < (size - 1))
 		{
-			BYTE profile = 0;
-			BYTE channel = 0;
-			BYTE samplesPerSec = 0;
-			reader.SkipBits(16);
-			reader.ReadBits(2, &profile);
-			reader.ReadBits(4, &samplesPerSec);
-			reader.SkipBits(1);
-			reader.ReadBits(3, &channel);
-			reader.SkipBits(4);
-			m_asc[0] &= profile >> 3;
-			return TRUE;
+			if (bits[index] == 0xFF && (bits[index + 1] & 0xF6) == 0xF0)
+			{
+				//reader.Initialize(&bits[index], 7);
+				//BYTE profile = 0;
+				//reader.SkipBits(16);
+				//reader.ReadBits(2, &profile);
+				INT val = 0;
+				val |= ((bits[index + 3] & 0x03) << 11);
+				val |= bits[index + 4] << 3;
+				val |= ((bits[index + 5] & 0xe0) >> 5);
+				index += 5;
+				TRACE("AAC Size:%d, profile:%d\n", val, profile);
+			}
+			index += 2;
 		}
+		//if (bits[0] == 0xFF && (bits[1] & 0xF6) == 0xF0)
+		//{
+		//	BYTE profile = 0;
+		//	BYTE channels = 0;
+		//	BYTE samplesPerSec = 0;
+		//	reader.SkipBits(16);
+		//	reader.ReadBits(2, &profile);
+		//	reader.ReadBits(4, &samplesPerSec);
+		//	reader.SkipBits(1);
+		//	reader.ReadBits(3, &channels);
+		//	reader.SkipBits(4);
+		//	INT val = 0;
+		//	val |= ((bits[3] & 0x03) << 11);
+		//	val |= bits[4] << 3;
+		//	val |= ((bits[5] & 0xe0) >> 5);
+
+
+		//	AACAudioConfig config(CodecAAC, static_cast<WORD>(channels), static_cast<DWORD>(samplesPerSec), 16);
+		//	if (config != m_lastConfig)
+		//	{
+		//		m_lastConfig = config;
+		//		if (!m_callback.IsNull())
+		//		{
+		//			vector<BYTE> buffer;
+		//			buffer.resize(2);
+		//			buffer[0] = ((profile + 1) << 3 | ((samplesPerSec & 0xE) >> 1));
+		//			buffer[1] = (((samplesPerSec & 0x1) << 7) | (channels << 3));
+		//			m_callback(&buffer[0], buffer.size(), TS_STREAM_TYPE_AUDIO_AAC, this);
+		//		}
+		//	}
+		//	return TRUE;
+		//}
 		return FALSE;
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -154,17 +189,17 @@ namespace Decode
 	{
 
 	}
-	TSParser* TS_PACKET_STREAM::GetParser(ConfigCallback&& callback)
+	TSParser* TS_PACKET_STREAM::GetParser(ConfigCallback& callback)
 	{
 		if (!m_parser)
 		{
 			if (StreamType == TS_STREAM_TYPE_AUDIO_AAC)
 			{
-				m_parser.Reset(new TSAACParser(std::move(callback)));
+				m_parser.Reset(new TSAACParser(callback));
 			}
 			if (StreamType == TS_STREAM_TYPE_VIDEO_H264)
 			{
-				m_parser.Reset(new TSH264Parser(std::move(callback)));
+				m_parser.Reset(new TSH264Parser(callback));
 			}
 		}
 		return m_parser;
@@ -187,13 +222,9 @@ namespace Decode
 	TSReader::~TSReader()
 	{
 	}
-	void TSReader::SetVideoConfigCallback(ConfigCallback&& callback)
+	void TSReader::SetConfigCallback(ConfigCallback&& callback)
 	{
-		m_videoCallback = std::move(callback);
-	}
-	void TSReader::SetAudioConfigCallback(ConfigCallback&& callback)
-	{
-		m_audioCallback = std::move(callback);
+		m_configCallback = std::move(callback);
 	}
 	BOOL TSReader::OpenFile(LPCSTR pzFile)
 	{
@@ -558,7 +589,7 @@ namespace Decode
 			}
 		}
 		ASSERT(index == myPES.PESHeaderDataLength + 9);
-		TSParser* parser = stream->GetParser(std::move(m_videoCallback));
+		TSParser* parser = stream->GetParser(std::move(m_configCallback));
 		if (parser != NULL)
 		{
 			INT size = myPES.PESPacketLength - 3 - myPES.PESHeaderDataLength;
@@ -633,7 +664,7 @@ namespace Decode
 								block.pts = m_lastPTS;
 								block.dts = m_lastDTS;
 								block.streamType = stream->StreamType;
-								TSParser* parser = stream->GetParser(std::move(m_videoCallback));
+								TSParser* parser = stream->GetParser(std::move(m_configCallback));
 								if (parser != NULL)
 								{
 									parser->Parse(block);
@@ -647,7 +678,7 @@ namespace Decode
 						}
 						else
 						{
-							TSParser* parser = stream->GetParser(std::move(m_videoCallback));
+							TSParser* parser = stream->GetParser(std::move(m_configCallback));
 							if (parser != NULL)
 							{
 								INT size = TS_PACKET_SIZE - index;

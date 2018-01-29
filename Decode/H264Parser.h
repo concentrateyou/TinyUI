@@ -14,7 +14,7 @@ namespace Decode
 	{
 		DISALLOW_COPY_AND_ASSIGN(H264Parser)
 	public:
-		H264Parser(ConfigCallback&& callback);
+		H264Parser(ConfigCallback& callback);
 		virtual ~H264Parser();
 		const H264VideoConfig& GetVideoConfig() const;
 		BOOL Parse(const BYTE* bits, LONG size, H264NALU& nalu);

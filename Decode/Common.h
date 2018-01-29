@@ -702,7 +702,7 @@ namespace Decode
 		CHAR Context[256];
 	};
 
-	typedef Callback<void(const BYTE*, LONG, LPVOID)> ConfigCallback;
+	typedef Callback<void(const BYTE*, LONG, BYTE, LPVOID)> ConfigCallback;
 
 	class H264VideoConfig
 	{
@@ -732,12 +732,14 @@ namespace Decode
 	{
 	public:
 		AACAudioConfig();
-		AACAudioConfig(AudioCodec codec, const WAVEFORMAT& waveFMT);
+		AACAudioConfig(AudioCodec codec, WORD wChannels, DWORD dwSampleRate, WORD wBitsPerSample);
 		AACAudioConfig(const AACAudioConfig& o);
 		BOOL operator == (const AACAudioConfig& o);
 		BOOL operator != (const AACAudioConfig& o);
 	private:
 		AudioCodec		m_codec;
-		WAVEFORMAT		m_waveFMT;
+		WORD			m_wChannels;
+		DWORD			m_dwSampleRate;
+		WORD			m_wBitsPerSample;
 	};
 }
