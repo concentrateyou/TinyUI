@@ -43,8 +43,9 @@ namespace Decode
 	public:
 		BYTE	GetStreamType() const OVERRIDE;
 		BOOL	Parse(TS_BLOCK& block) OVERRIDE;
+		static  void ParseAAC(TS_BLOCK& block, TinyArray<TS_BLOCK_AUDIO>& audios);
 	private:
-		BOOL	ParseADTS(BYTE* bits, INT size);
+		BOOL	ParseADTS(BYTE* bits, LONG size);
 	private:
 		AACAudioConfig	m_lastConfig;
 		ConfigCallback	m_callback;

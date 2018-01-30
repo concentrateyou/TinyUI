@@ -92,7 +92,8 @@ private:
 	FILE*			m_aacFile;
 };
 TSDecoder::TSDecoder()
-	:m_count(0)
+	:m_count(0),
+	m_aacFile(NULL)
 {
 
 }
@@ -110,7 +111,12 @@ BOOL TSDecoder::Open(LPCSTR pzFile)
 
 void TSDecoder::Close()
 {
-	fclose(m_aacFile);
+	if (m_aacFile != NULL)
+	{
+		fclose(m_aacFile);
+		m_aacFile = NULL;
+	}
+
 	m_waveFile.Close();
 	m_reader.Close();
 }
@@ -128,7 +134,6 @@ void TSDecoder::OnConfigChange(const BYTE* bits, LONG size, BYTE streamType, LPV
 		m_aac.Close();
 		m_aac.Open(const_cast<BYTE*>(bits), size, 16);
 		m_waveFile.Create("D:\\test111.wav", m_aac.GetFormat());
-		//fopen_s(&m_aacFile, "D:\\test111.aac", "wb+");
 	}
 }
 
@@ -139,85 +144,37 @@ void TSDecoder::Invoke()
 		TS_BLOCK block = { 0 };
 		if (!m_reader.ReadBlock(block))
 			break;
-		//if (block.streamType == TS_STREAM_TYPE_VIDEO_H264)
-		//{
-		//	switch (block.video.codeType)
-		//	{
-		//	case 0:
-		//		TRACE("P slice\n");
-		//		break;
-		//	case 1:
-		//		TRACE("B slice\n");
-		//		break;
-		//	case 2:
-		//		TRACE("I slice\n");
-		//		break;
-		//	case 3:
-		//		TRACE("SP slice\n");
-		//		break;
-		//	case 4:
-		//		TRACE("SI slice\n");
-		//		break;
-		//	case 5:
-		//		TRACE("P slice\n");
-		//		break;
-		//	case 6:
-		//		TRACE("B slice\n");
-		//		break;
-		//	case 7:
-		//		TRACE("I slice\n");
-		//		break;
-		//	case 8:
-		//		TRACE("SP slice\n");
-		//		break;
-		//	case 9:
-		//		TRACE("SI slice\n");
-		//		break;
-		//	}
-		//	SampleTag tag = { 0 };
-		//	tag.size = block.video.size;
-		//	tag.bits = new BYTE[tag.size];
-		//	tag.sampleDTS = block.dts;
-		//	tag.samplePTS = block.pts;
-		//	memcpy(tag.bits, block.video.data, tag.size);
-		//	BYTE* bo = NULL;
-		//	LONG so = 0;
-		//	INT iRes = m_x264.Decode(tag, bo, so);
-		//	if (iRes == 0)
-		//	{
-		//		tag.sampleDTS = tag.samplePTS = m_x264.GetYUV420()->pts;
-		//		BITMAPINFOHEADER bi = { 0 };
-		//		bi.biSize = sizeof(BITMAPINFOHEADER);
-		//		bi.biWidth = 1280;
-		//		bi.biHeight = -720;
-		//		bi.biPlanes = 1;
-		//		bi.biBitCount = 32;
-		//		bi.biCompression = BI_RGB;
-		//		//SaveBitmap(bi, bo, so);
-		//	}
-		//	SAFE_DELETE_ARRAY(tag.bits);
-		//}
 		if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)
 		{
-			SampleTag tag = { 0 };
-			tag.size = block.audio.size;
-			tag.bits = new BYTE[tag.size];
-			tag.sampleDTS = block.dts;
-			tag.samplePTS = block.pts;
-			memcpy(tag.bits, block.audio.data, tag.size);
-
-			BYTE* bo = NULL;
-			LONG so = 0;
-			if (m_aac.Decode(tag, bo, so))
+			TinyArray<TS_BLOCK_AUDIO> audios;
+			TSAACParser::ParseAAC(block, audios);
+			for (INT i = 0;i < audios.GetSize();i++)
 			{
-				m_waveFile.Write(bo, so);
+				TS_BLOCK_AUDIO& audio = audios[i];
+				SampleTag tag = { 0 };
+				tag.size = audio.size;
+				tag.bits = new BYTE[tag.size];
+				tag.sampleDTS = audio.dts;
+				tag.samplePTS = audio.pts;
+				memcpy(tag.bits, audio.data, tag.size);
+				BYTE* bo = NULL;
+				LONG so = 0;
+				if (m_aac.Decode(tag, bo, so))
+				{
+					m_waveFile.Write(bo, so);
+				}
+				else
+				{
+					INT a = 0;
+				}
+				SAFE_DELETE_ARRAY(tag.bits);
 			}
-			SAFE_DELETE_ARRAY(tag.bits);
 		}
 		SAFE_DELETE_ARRAY(block.audio.data);
 		SAFE_DELETE_ARRAY(block.video.data);
 	}
 }
+
 
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
@@ -237,48 +194,49 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadSeDebugPrivilege();
 	CoInitialize(NULL);
 	avcodec_register_all();
+
 	/*FILE* hFile1 = NULL;
 	fopen_s(&hFile1, "D:\\test.264", "wb+");*/
 
 	//FILE* hFile2 = NULL;
 	//fopen_s(&hFile2, "D:\\test.aac", "wb+");
 
-	FLVReader reader;
-	reader.OpenFile("D:\\10s.flv");
-	for (;;)
-	{
-		FLV_BLOCK block = { 0 };
-		BOOL bRes = reader.ReadBlock(block);
-		if (block.type == FLV_AUDIO)
-		{
-			if (block.audio.codeID == FLV_CODECID_AAC)
-			{
-				if (block.audio.packetType == FLV_AudioSpecificConfig)
-				{
-					/*TinyBitReader reader;
-					reader.Initialize(block.audio.data, block.audio.size);
-					INT audioObjectType = 0;
-					reader.ReadBits(5, &audioObjectType);
-					INT samplingFrequencyIndex = 0;
-					reader.ReadBits(4, &samplingFrequencyIndex);
-					INT channelConfiguration = 0;
-					reader.ReadBits(4, &channelConfiguration);
-					INT frameLengthFlag = 0;
-					reader.ReadBits(1, &frameLengthFlag);
-					INT dependsOnCoreCoder = 0;
-					reader.ReadBits(1, &dependsOnCoreCoder);
-					INT extensionFlag = 0;
-					reader.ReadBits(1, &extensionFlag);
-					INT a = 0;*/
-				}
-			}
-		}
-		SAFE_DELETE_ARRAY(block.audio.data);
-		SAFE_DELETE_ARRAY(block.video.data);
-		if (!bRes)
-			break;
-	}
-	reader.Close();
+	//FLVReader reader;
+	//reader.OpenFile("D:\\10s.flv");
+	//for (;;)
+	//{
+	//	FLV_BLOCK block = { 0 };
+	//	BOOL bRes = reader.ReadBlock(block);
+	//	if (block.type == FLV_AUDIO)
+	//	{
+	//		if (block.audio.codeID == FLV_CODECID_AAC)
+	//		{
+	//			if (block.audio.packetType == FLV_AudioSpecificConfig)
+	//			{
+	//				/*TinyBitReader reader;
+	//				reader.Initialize(block.audio.data, block.audio.size);
+	//				INT audioObjectType = 0;
+	//				reader.ReadBits(5, &audioObjectType);
+	//				INT samplingFrequencyIndex = 0;
+	//				reader.ReadBits(4, &samplingFrequencyIndex);
+	//				INT channelConfiguration = 0;
+	//				reader.ReadBits(4, &channelConfiguration);
+	//				INT frameLengthFlag = 0;
+	//				reader.ReadBits(1, &frameLengthFlag);
+	//				INT dependsOnCoreCoder = 0;
+	//				reader.ReadBits(1, &dependsOnCoreCoder);
+	//				INT extensionFlag = 0;
+	//				reader.ReadBits(1, &extensionFlag);
+	//				INT a = 0;*/
+	//			}
+	//		}
+	//	}
+	//	SAFE_DELETE_ARRAY(block.audio.data);
+	//	SAFE_DELETE_ARRAY(block.video.data);
+	//	if (!bRes)
+	//		break;
+	//}
+	//reader.Close();
 
 	TSDecoder decoder;
 	decoder.Open("D:\\1.ts");

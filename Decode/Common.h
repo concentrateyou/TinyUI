@@ -671,6 +671,15 @@ namespace Decode
 		UINT32 ESRate;
 	}TS_PACKET_PES;
 
+	typedef struct tagTS_BLOCK_AUDIO
+	{
+		LONGLONG	dts;
+		LONGLONG	pts;
+		BYTE*		data;
+		LONG		size;
+		BYTE		type;
+	}TS_BLOCK_AUDIO;
+
 	typedef struct tagTS_BLOCK
 	{
 		BYTE		streamType;

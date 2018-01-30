@@ -123,62 +123,68 @@ namespace Decode
 		memcpy_s(block.audio.data, block.audio.size, data(), block.audio.size);
 		return ParseADTS(block.audio.data, block.audio.size);
 	}
-	BOOL TSAACParser::ParseADTS(BYTE* bits, INT size)
+	BOOL TSAACParser::ParseADTS(BYTE* bits, LONG size)
 	{
-		if (size < ADTS_HEADER_MIN_SIZE)
-			return FALSE;
-		//TinyBitReader reader;
-		INT index = 0;
-		while (index < (size - 1))
+		for (INT i = 0; i < (size - ADTS_HEADER_MIN_SIZE); i++)
 		{
-			if (bits[index] == 0xFF && (bits[index + 1] & 0xF6) == 0xF0)
+			BYTE* ps = &bits[i];
+			if ((ps[0] != 0xFF) || ((ps[1] & 0xF6) != 0xF0))
+				continue;
+			TinyBitReader reader;
+			BYTE profile = 0;
+			BYTE channels = 0;
+			BYTE samplesPerSec = 0;
+			BYTE absent = 0;
+			reader.Initialize(ps, 9);//最多9字节 7+CRC
+			reader.SkipBits(15);
+			reader.ReadBits(1, &absent);
+			reader.ReadBits(2, &profile);
+			reader.ReadBits(4, &samplesPerSec);
+			reader.SkipBits(1);
+			reader.ReadBits(3, &channels);
+			reader.SkipBits(4);
+			AACAudioConfig config(CodecAAC, static_cast<WORD>(channels), static_cast<DWORD>(samplesPerSec), 16);
+			if (config != m_lastConfig)
 			{
-				//reader.Initialize(&bits[index], 7);
-				//BYTE profile = 0;
-				//reader.SkipBits(16);
-				//reader.ReadBits(2, &profile);
-				INT val = 0;
-				val |= ((bits[index + 3] & 0x03) << 11);
-				val |= bits[index + 4] << 3;
-				val |= ((bits[index + 5] & 0xe0) >> 5);
-				index += 5;
-				TRACE("AAC Size:%d, profile:%d\n", val, profile);
+				m_lastConfig = config;
+				if (!m_callback.IsNull())
+				{
+					vector<BYTE> buffer;
+					buffer.resize(2);
+					buffer[0] = ((profile + 1) << 3 | ((samplesPerSec & 0xE) >> 1));
+					buffer[1] = (((samplesPerSec & 0x1) << 7) | (channels << 3));
+					m_callback(&buffer[0], buffer.size(), TS_STREAM_TYPE_AUDIO_AAC, this);
+				}
 			}
-			index += 2;
 		}
-		//if (bits[0] == 0xFF && (bits[1] & 0xF6) == 0xF0)
-		//{
-		//	BYTE profile = 0;
-		//	BYTE channels = 0;
-		//	BYTE samplesPerSec = 0;
-		//	reader.SkipBits(16);
-		//	reader.ReadBits(2, &profile);
-		//	reader.ReadBits(4, &samplesPerSec);
-		//	reader.SkipBits(1);
-		//	reader.ReadBits(3, &channels);
-		//	reader.SkipBits(4);
-		//	INT val = 0;
-		//	val |= ((bits[3] & 0x03) << 11);
-		//	val |= bits[4] << 3;
-		//	val |= ((bits[5] & 0xe0) >> 5);
-
-
-		//	AACAudioConfig config(CodecAAC, static_cast<WORD>(channels), static_cast<DWORD>(samplesPerSec), 16);
-		//	if (config != m_lastConfig)
-		//	{
-		//		m_lastConfig = config;
-		//		if (!m_callback.IsNull())
-		//		{
-		//			vector<BYTE> buffer;
-		//			buffer.resize(2);
-		//			buffer[0] = ((profile + 1) << 3 | ((samplesPerSec & 0xE) >> 1));
-		//			buffer[1] = (((samplesPerSec & 0x1) << 7) | (channels << 3));
-		//			m_callback(&buffer[0], buffer.size(), TS_STREAM_TYPE_AUDIO_AAC, this);
-		//		}
-		//	}
-		//	return TRUE;
-		//}
-		return FALSE;
+		return TRUE;
+	}
+	void TSAACParser::ParseAAC(TS_BLOCK& block, TinyArray<TS_BLOCK_AUDIO>& audios)
+	{
+		FLOAT timestamp = 0.0F;
+		INT index = 0;
+		for (INT i = 0; i < (block.audio.size - ADTS_HEADER_MIN_SIZE); i++)
+		{
+			BYTE* ps = &block.audio.data[i];
+			if ((ps[0] != 0xFF) || ((ps[1] & 0xF6) != 0xF0))
+				continue;
+			TinyBitReader reader;
+			BYTE absent = 0;
+			reader.Initialize(ps, 9);//最多9字节 7+CRC
+			reader.SkipBits(15);
+			reader.ReadBits(1, &absent);
+			INT rawsize = ((static_cast<int>(ps[5]) >> 5) | (static_cast<int>(ps[4]) << 3) | ((static_cast<int>(ps[3]) & 0x3) << 11));
+			if (rawsize < ADTS_HEADER_MIN_SIZE)
+				continue;
+			INT offset = absent == 1 ? 7 : 9;
+			TS_BLOCK_AUDIO audio = { 0 };
+			timestamp = (index++)* (1024.0 * 1000 / 44100);
+			audio.pts = block.pts + timestamp;
+			audio.dts = audio.pts;
+			audio.data = ps + offset;
+			audio.size = rawsize - offset;
+			audios.Add(audio);
+		}
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TS_PACKET_STREAM::TS_PACKET_STREAM()
