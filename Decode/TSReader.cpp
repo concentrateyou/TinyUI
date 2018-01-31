@@ -125,24 +125,39 @@ namespace Decode
 	}
 	BOOL TSAACParser::ParseADTS(BYTE* bits, LONG size)
 	{
+		TRACE("ParseADTS\n");
+		TinyBitReader reader;
 		for (INT i = 0; i < (size - ADTS_HEADER_MIN_SIZE); i++)
 		{
 			BYTE* ps = &bits[i];
 			if ((ps[0] != 0xFF) || ((ps[1] & 0xF6) != 0xF0))
 				continue;
-			TinyBitReader reader;
+			INT rawsize = ((static_cast<int>(ps[5]) >> 5) | (static_cast<int>(ps[4]) << 3) | ((static_cast<int>(ps[3]) & 0x3) << 11));
+			if (rawsize < ADTS_HEADER_MIN_SIZE)
+				continue;
+			INT remaining = size - i;
+			if (remaining < rawsize)
+			{
+				continue;
+			}
+			if ((remaining >= rawsize + 2) && (ps[rawsize] != 0xFF) || ((ps[rawsize + 1] & 0xF6) != 0xF0))
+			{
+				continue;
+			}
+			BYTE layer = 0;
 			BYTE profile = 0;
 			BYTE channels = 0;
 			BYTE samplesPerSec = 0;
-			BYTE absent = 0;
-			reader.Initialize(ps, 9);//最多9字节 7+CRC
-			reader.SkipBits(15);
-			reader.ReadBits(1, &absent);
+			reader.Initialize(ps, 9);
+			reader.SkipBits(13);
+			reader.ReadBits(2, &layer);
+			reader.SkipBits(1);
 			reader.ReadBits(2, &profile);
 			reader.ReadBits(4, &samplesPerSec);
 			reader.SkipBits(1);
 			reader.ReadBits(3, &channels);
-			reader.SkipBits(4);
+			ASSERT(layer == 0);
+			TRACE("profile:%d, channels:%d, samplesPerSec:%d, rawsize:%d, size:%d\n", profile, channels, samplesPerSec, rawsize, size);
 			AACAudioConfig config(CodecAAC, static_cast<WORD>(channels), static_cast<DWORD>(samplesPerSec), 16);
 			if (config != m_lastConfig)
 			{
@@ -163,23 +178,35 @@ namespace Decode
 	{
 		FLOAT timestamp = 0.0F;
 		INT index = 0;
+		TinyBitReader reader;
 		for (INT i = 0; i < (block.audio.size - ADTS_HEADER_MIN_SIZE); i++)
 		{
 			BYTE* ps = &block.audio.data[i];
 			if ((ps[0] != 0xFF) || ((ps[1] & 0xF6) != 0xF0))
 				continue;
-			TinyBitReader reader;
-			BYTE absent = 0;
-			reader.Initialize(ps, 9);//最多9字节 7+CRC
-			reader.SkipBits(15);
-			reader.ReadBits(1, &absent);
 			INT rawsize = ((static_cast<int>(ps[5]) >> 5) | (static_cast<int>(ps[4]) << 3) | ((static_cast<int>(ps[3]) & 0x3) << 11));
 			if (rawsize < ADTS_HEADER_MIN_SIZE)
 				continue;
+			INT remaining = block.audio.size - i;
+			if (remaining < rawsize)
+			{
+				continue;
+			}
+			if ((remaining >= rawsize + 2) && (ps[rawsize] != 0xFF) || ((ps[rawsize + 1] & 0xF6) != 0xF0))
+			{
+				continue;
+			}
+			BYTE layer = 0;
+			BYTE absent = 0;
+			reader.Initialize(ps, 9);//最多9字节 7+CRC
+			reader.SkipBits(13);
+			reader.ReadBits(2, &layer);
+			reader.ReadBits(1, &absent);
+			ASSERT(layer == 0);
 			INT offset = absent == 1 ? 7 : 9;
 			TS_BLOCK_AUDIO audio = { 0 };
 			timestamp = (index++)* (1024.0 * 1000 / 44100);
-			audio.pts = block.pts + timestamp;
+			audio.pts = block.pts + static_cast<LONGLONG>(timestamp);
 			audio.dts = audio.pts;
 			audio.data = ps + offset;
 			audio.size = rawsize - offset;
