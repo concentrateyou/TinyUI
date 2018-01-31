@@ -137,6 +137,9 @@ void TSDecoder::OnConfigChange(const BYTE* bits, LONG size, BYTE streamType, LPV
 	}
 }
 
+INT videos = 0;
+INT audios = 0;
+
 void TSDecoder::Invoke()
 {
 	for (;;)
@@ -150,39 +153,6 @@ void TSDecoder::Invoke()
 		}
 		if (block.streamType == TS_STREAM_TYPE_VIDEO_H264)
 		{
-			/*switch (block.video.codeType)
-			{
-			case 0:
-				TRACE("P slice\n");
-				break;
-			case 1:
-				TRACE("B slice\n");
-				break;
-			case 2:
-				TRACE("I slice\n");
-				break;
-			case 3:
-				TRACE("SP slice\n");
-				break;
-			case 4:
-				TRACE("SI slice\n");
-				break;
-			case 5:
-				TRACE("P slice\n");
-				break;
-			case 6:
-				TRACE("B slice\n");
-				break;
-			case 7:
-				TRACE("I slice\n");
-				break;
-			case 8:
-				TRACE("SP slice\n");
-				break;
-			case 9:
-				TRACE("SI slice\n");
-				break;
-			}*/
 			SampleTag tag = { 0 };
 			tag.size = block.video.size;
 			tag.bits = block.video.data;
@@ -190,36 +160,37 @@ void TSDecoder::Invoke()
 			tag.samplePTS = block.pts;
 			BYTE* bo = NULL;
 			LONG so = 0;
+			TRACE("Video Size:%d\n", tag.size);
 			INT iRes = m_x264.Decode(tag, bo, so);
 			if (iRes == 0)
 			{
-				tag.sampleDTS = tag.samplePTS = m_x264.GetYUV420()->pts;
+				/*tag.sampleDTS = tag.samplePTS = m_x264.GetYUV420()->pts;
 				BITMAPINFOHEADER bi = { 0 };
 				bi.biSize = sizeof(BITMAPINFOHEADER);
 				bi.biWidth = 1280;
 				bi.biHeight = -720;
 				bi.biPlanes = 1;
 				bi.biBitCount = 32;
-				bi.biCompression = BI_RGB;
-				SaveBitmap(bi, bo, so);
+				bi.biCompression = BI_RGB;*/
+				//SaveBitmap(bi, bo, so, StringPrintf("D:\\test\\%s.bmp", GenerateGUID().c_str()).c_str());
 			}
+			++videos;
 		}
 		if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)
 		{
 			SampleTag tag = { 0 };
 			tag.size = block.audio.size;
-			tag.bits = new BYTE[tag.size];
+			tag.bits = block.audio.data;
 			tag.sampleDTS = block.dts;
 			tag.samplePTS = block.pts;
-			memcpy(tag.bits, block.audio.data, tag.size);
 			BYTE* bo = NULL;
 			LONG so = 0;
 			if (m_aac.Decode(tag, bo, so))
 			{
 				m_waveFile.Write(bo, so);
 			}
+			++audios;
 		}
-
 	}
 }
 

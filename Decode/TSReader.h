@@ -43,10 +43,11 @@ namespace Decode
 	public:
 		BYTE	GetStreamType() const OVERRIDE;
 		BOOL	Parse(TS_BLOCK& block) OVERRIDE;
-		static  void ParseAAC(TS_BLOCK& block, TinyLinkList<TS_BLOCK>& audios);
+		static void	ParseAAC(TS_BLOCK& block, TinyLinkList<TS_BLOCK>& audios);
 	private:
 		BOOL	ParseADTS(BYTE* bits, LONG size);
 	private:
+		FLOAT			m_timestamp;
 		AACAudioConfig	m_lastConfig;
 		ConfigCallback	m_callback;
 	};
@@ -60,6 +61,8 @@ namespace Decode
 		BYTE Reserved2 : 4;
 		USHORT ESInfoLength : 12;
 		INT	Slices;
+		LONGLONG PTS;
+		LONGLONG DTS;
 	public:
 		TS_PACKET_STREAM();
 		~TS_PACKET_STREAM();
@@ -88,8 +91,6 @@ namespace Decode
 		BOOL	ReadPAT(TS_PACKET_PAT& myPAT, TinyArray<TS_PACKET_PROGRAM>& programs, const BYTE* bits);
 		BOOL	ReadPTM(TS_PACKET_PMT& myPTM, TinyArray<TS_PACKET_STREAM*>& streams, const BYTE* bits);
 	private:
-		LONGLONG						m_lastPTS;
-		LONGLONG						m_lastDTS;
 		BYTE							m_bits[TS_PACKET_SIZE];
 		INT								m_versionNumber;
 		INT								m_continuityCounter;

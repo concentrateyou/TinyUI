@@ -103,7 +103,6 @@ namespace TSPlayer
 			ZeroMemory(&sampleTag, sizeof(sampleTag));
 			if (!m_task.GetVideoQueue().Pop(sampleTag))
 			{
-				//TRACE("[MVideoRenderTask] Waiting 40\n");
 				timer.Waiting(40, 1000);
 				if (bRendering)
 				{
@@ -129,6 +128,7 @@ namespace TSPlayer
 			OnCopy(sampleTag.bits, sampleTag.size);
 			LONG systemMS = static_cast<LONG>(GetQPCTimeMS() - m_clock.GetBaseTime());
 			INT delay = static_cast<INT>(sampleTag.samplePTS - systemMS);
+			//TRACE("Video Delay:%d\n", delay);
 			if (timer.Waiting(delay, 100))
 			{
 				m_graphics.Present();

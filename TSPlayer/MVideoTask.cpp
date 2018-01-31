@@ -89,7 +89,8 @@ namespace TSPlayer
 			}
 			BYTE* bo = NULL;
 			LONG  so = 0;
-			if (m_x264.Decode(sampleTag, bo, so) == 0)//FLV½âÂëMORE DATAÈÏÎªÊ§°Ü
+			TRACE("Video Size:%d\n", sampleTag.size);
+			if (m_x264.Decode(sampleTag, bo, so) == 0)
 			{
 				sampleTag.sampleDTS = sampleTag.samplePTS = m_x264.GetYUV420()->pts;
 				sampleTag.size = so;
@@ -107,6 +108,10 @@ namespace TSPlayer
 					}
 					m_videoQueue.Push(sampleTag);
 				}
+			}
+			else
+			{
+				INT a = 0;
 			}
 		}
 		m_videoQueue.RemoveAll();

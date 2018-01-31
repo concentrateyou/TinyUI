@@ -104,7 +104,8 @@ namespace Decode
 		0, 0, 0
 	};
 	TSAACParser::TSAACParser(ConfigCallback& callback)
-		:m_callback(callback)
+		:m_callback(callback),
+		m_timestamp(0.0F)
 	{
 
 	}
@@ -174,7 +175,6 @@ namespace Decode
 	}
 	void TSAACParser::ParseAAC(TS_BLOCK& block, TinyLinkList<TS_BLOCK>& audios)
 	{
-		FLOAT timestamp = 0.0F;
 		INT index = 0;
 		TinyBitReader reader;
 		for (INT i = 0; i < (block.audio.size - ADTS_HEADER_MIN_SIZE); i++)
@@ -182,7 +182,7 @@ namespace Decode
 			BYTE* myP = &block.audio.data[i];
 			if ((myP[0] != 0xFF) || ((myP[1] & 0xF6) != 0xF0))
 				continue;
-			INT rawsize = ((static_cast<int>(myP[5]) >> 5) | (static_cast<int>(myP[4]) << 3) | ((static_cast<int>(myP[3]) & 0x3) << 11));
+			INT rawsize = ((static_cast<INT>(myP[5]) >> 5) | (static_cast<INT>(myP[4]) << 3) | ((static_cast<INT>(myP[3]) & 0x3) << 11));
 			if (rawsize < ADTS_HEADER_MIN_SIZE)
 				continue;
 			INT remaining = block.audio.size - i;
@@ -203,8 +203,8 @@ namespace Decode
 			ASSERT(layer == 0);
 			INT offset = absent == 1 ? 7 : 9;
 			TS_BLOCK myAudio = block;
-			timestamp = (index++)* (1024.0 * 1000 / 44100);
-			myAudio.pts = block.pts + static_cast<LONGLONG>(timestamp);
+			static FLOAT AACTimestamp = 1024.0F * 1000 / 44100;
+			myAudio.pts = block.pts + static_cast<LONGLONG>(AACTimestamp);
 			myAudio.dts = myAudio.pts;
 			myAudio.audio.size = rawsize - offset;
 			myAudio.audio.data = new BYTE[myAudio.audio.size];
@@ -215,6 +215,9 @@ namespace Decode
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TS_PACKET_STREAM::TS_PACKET_STREAM()
+		:PTS(-1),
+		DTS(-1),
+		Slices(0)
 	{
 
 	}
@@ -244,9 +247,7 @@ namespace Decode
 	//////////////////////////////////////////////////////////////////////////
 	TSReader::TSReader()
 		:m_versionNumber(-1),
-		m_continuityCounter(-1),
-		m_lastPTS(-1),
-		m_lastDTS(-1)
+		m_continuityCounter(-1)
 	{
 		ZeroMemory(m_bits, TS_PACKET_SIZE);
 	}
@@ -530,8 +531,8 @@ namespace Decode
 				(bits[index + 4] >> 1);
 			myPES.PTS = timestamp > 0 ? timestamp / 90 : timestamp;
 			myPES.DTS = 0;
-			m_lastPTS = myPES.PTS;
-			m_lastDTS = myPES.DTS;
+			stream->PTS = myPES.PTS;
+			stream->DTS = myPES.DTS;
 			index += 5;
 		}
 		if (myPES.PTSDTSFlags == 0x3)
@@ -553,8 +554,8 @@ namespace Decode
 				(bits[index + 3] << 7) |
 				(bits[index + 4] >> 1);
 			myPES.DTS = timestamp > 0 ? timestamp / 90 : timestamp;
-			m_lastPTS = myPES.PTS;
-			m_lastDTS = myPES.DTS;
+			stream->PTS = myPES.PTS;
+			stream->DTS = myPES.DTS;
 			index += 5;
 		}
 		if (myPES.ESCRFlag)
@@ -715,8 +716,8 @@ namespace Decode
 						{
 							if (stream->Slices >= 1)//处理h264
 							{
-								block.pts = m_lastPTS;
-								block.dts = m_lastDTS;
+								block.pts = stream->PTS;
+								block.dts = stream->DTS;
 								block.streamType = stream->StreamType;
 								TSParser* parser = stream->GetParser(std::move(m_configCallback));
 								if (parser != NULL)
@@ -767,8 +768,6 @@ namespace Decode
 	}
 	BOOL TSReader::Close()
 	{
-		m_lastPTS = -1;
-		m_lastDTS = -1;
 		for (INT i = 0;i < m_streams.GetSize();i++)
 		{
 			SAFE_DELETE(m_streams[i]);

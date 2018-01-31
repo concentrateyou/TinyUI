@@ -80,6 +80,9 @@ namespace TSPlayer
 		Invoke(tag, block);
 	}
 
+	INT videos = 0;
+	INT audios = 0;
+
 	BOOL MTSTask::Invoke(SampleTag& tag, TS_BLOCK& block)
 	{
 		for (;;)
@@ -88,26 +91,24 @@ namespace TSPlayer
 				break;
 			ZeroMemory(&block, sizeof(block));
 			if (!m_reader.ReadBlock(block))
+			{
+				ReleaseBlock(block);
 				return FALSE;
+			}
+			if (block.streamType == TS_STREAM_TYPE_VIDEO_H264)
+			{
+				++videos;
+			}
+			if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)
+			{
+				++audios;
+			}
+
 			INT size = m_audioQueue.GetSize() + m_videoQueue.GetSize();
 			if (size > MAX_QUEUE_SIZE)
 			{
 				ReleaseBlock(block);
 				continue;
-			}
-			if (block.streamType == TS_STREAM_TYPE_VIDEO_H264)
-			{
-				ZeroMemory(&tag, sizeof(tag));
-				tag.size = block.video.size;
-				tag.bits = block.video.data;
-				tag.sampleDTS = block.dts;
-				tag.samplePTS = block.pts;
-				m_videoQueue.Push(tag);
-
-				tag.size = block.video.size;
-				tag.bits = new BYTE[tag.size];
-				tag.sampleDTS = block.dts;
-				tag.samplePTS = block.pts;
 			}
 			if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)
 			{
@@ -117,6 +118,15 @@ namespace TSPlayer
 				tag.sampleDTS = block.dts;
 				tag.samplePTS = block.pts;
 				m_audioQueue.Push(tag);
+			}
+			if (block.streamType == TS_STREAM_TYPE_VIDEO_H264)
+			{
+				ZeroMemory(&tag, sizeof(tag));
+				tag.size = block.video.size;
+				tag.bits = block.video.data;
+				tag.sampleDTS = block.dts;
+				tag.samplePTS = block.pts;
+				m_videoQueue.Push(tag);
 			}
 		}
 		return TRUE;

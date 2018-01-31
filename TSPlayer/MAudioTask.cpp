@@ -83,7 +83,6 @@ namespace TSPlayer
 			}
 			BYTE* bo = NULL;
 			LONG  so = 0;
-			LONGLONG prevPTS = sampleTag.samplePTS;
 			if (m_aac.Decode(sampleTag, bo, so))
 			{
 				if (m_clock.GetBasePTS() == INVALID_TIME)
