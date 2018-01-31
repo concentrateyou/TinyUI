@@ -144,30 +144,23 @@ void TSDecoder::Invoke()
 		TS_BLOCK block = { 0 };
 		if (!m_reader.ReadBlock(block))
 			break;
+		if (block.streamType == TS_STREAM_TYPE_VIDEO_H264)
+		{
+			
+		}
 		if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)
 		{
-			TinyArray<TS_BLOCK_AUDIO> audios;
-			TSAACParser::ParseAAC(block, audios);
-			for (INT i = 0;i < audios.GetSize();i++)
+			SampleTag tag = { 0 };
+			tag.size = block.audio.size;
+			tag.bits = new BYTE[tag.size];
+			tag.sampleDTS = block.dts;
+			tag.samplePTS = block.pts;
+			memcpy(tag.bits, block.audio.data, tag.size);
+			BYTE* bo = NULL;
+			LONG so = 0;
+			if (m_aac.Decode(tag, bo, so))
 			{
-				TS_BLOCK_AUDIO& audio = audios[i];
-				SampleTag tag = { 0 };
-				tag.size = audio.size;
-				tag.bits = new BYTE[tag.size];
-				tag.sampleDTS = audio.dts;
-				tag.samplePTS = audio.pts;
-				memcpy(tag.bits, audio.data, tag.size);
-				BYTE* bo = NULL;
-				LONG so = 0;
-				if (m_aac.Decode(tag, bo, so))
-				{
-					m_waveFile.Write(bo, so);
-				}
-				else
-				{
-					INT a = 0;
-				}
-				SAFE_DELETE_ARRAY(tag.bits);
+				m_waveFile.Write(bo, so);
 			}
 		}
 		SAFE_DELETE_ARRAY(block.audio.data);

@@ -30,12 +30,72 @@
     <ClInclude Include="TSPlayer.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MAudioRenderTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MAudioTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MPacketQueue.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MShowCommon.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MVideoRenderTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MVideoTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MClock.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MPreviewView.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MTSTask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MTSPlayer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="TSPlayer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MAudioRenderTask.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MAudioTask.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MPacketQueue.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MShowCommon.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MVideoRenderTask.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MVideoTask.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MClock.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MPreviewView.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MTSTask.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MTSPlayer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

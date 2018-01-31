@@ -125,14 +125,13 @@ namespace Decode
 	}
 	BOOL TSAACParser::ParseADTS(BYTE* bits, LONG size)
 	{
-		TRACE("ParseADTS\n");
 		TinyBitReader reader;
 		for (INT i = 0; i < (size - ADTS_HEADER_MIN_SIZE); i++)
 		{
-			BYTE* ps = &bits[i];
-			if ((ps[0] != 0xFF) || ((ps[1] & 0xF6) != 0xF0))
+			BYTE* myP = &bits[i];
+			if ((myP[0] != 0xFF) || ((myP[1] & 0xF6) != 0xF0))
 				continue;
-			INT rawsize = ((static_cast<int>(ps[5]) >> 5) | (static_cast<int>(ps[4]) << 3) | ((static_cast<int>(ps[3]) & 0x3) << 11));
+			INT rawsize = ((static_cast<int>(myP[5]) >> 5) | (static_cast<int>(myP[4]) << 3) | ((static_cast<int>(myP[3]) & 0x3) << 11));
 			if (rawsize < ADTS_HEADER_MIN_SIZE)
 				continue;
 			INT remaining = size - i;
@@ -140,7 +139,7 @@ namespace Decode
 			{
 				continue;
 			}
-			if ((remaining >= rawsize + 2) && (ps[rawsize] != 0xFF) || ((ps[rawsize + 1] & 0xF6) != 0xF0))
+			if ((remaining >= rawsize + 2) && (myP[rawsize] != 0xFF) || ((myP[rawsize + 1] & 0xF6) != 0xF0))
 			{
 				continue;
 			}
@@ -148,7 +147,7 @@ namespace Decode
 			BYTE profile = 0;
 			BYTE channels = 0;
 			BYTE samplesPerSec = 0;
-			reader.Initialize(ps, 9);
+			reader.Initialize(myP, 9);
 			reader.SkipBits(13);
 			reader.ReadBits(2, &layer);
 			reader.SkipBits(1);
@@ -157,7 +156,6 @@ namespace Decode
 			reader.SkipBits(1);
 			reader.ReadBits(3, &channels);
 			ASSERT(layer == 0);
-			TRACE("profile:%d, channels:%d, samplesPerSec:%d, rawsize:%d, size:%d\n", profile, channels, samplesPerSec, rawsize, size);
 			AACAudioConfig config(CodecAAC, static_cast<WORD>(channels), static_cast<DWORD>(samplesPerSec), 16);
 			if (config != m_lastConfig)
 			{
@@ -174,17 +172,17 @@ namespace Decode
 		}
 		return TRUE;
 	}
-	void TSAACParser::ParseAAC(TS_BLOCK& block, TinyArray<TS_BLOCK_AUDIO>& audios)
+	void TSAACParser::ParseAAC(TS_BLOCK& block, TinyLinkList<TS_BLOCK>& audios)
 	{
 		FLOAT timestamp = 0.0F;
 		INT index = 0;
 		TinyBitReader reader;
 		for (INT i = 0; i < (block.audio.size - ADTS_HEADER_MIN_SIZE); i++)
 		{
-			BYTE* ps = &block.audio.data[i];
-			if ((ps[0] != 0xFF) || ((ps[1] & 0xF6) != 0xF0))
+			BYTE* myP = &block.audio.data[i];
+			if ((myP[0] != 0xFF) || ((myP[1] & 0xF6) != 0xF0))
 				continue;
-			INT rawsize = ((static_cast<int>(ps[5]) >> 5) | (static_cast<int>(ps[4]) << 3) | ((static_cast<int>(ps[3]) & 0x3) << 11));
+			INT rawsize = ((static_cast<int>(myP[5]) >> 5) | (static_cast<int>(myP[4]) << 3) | ((static_cast<int>(myP[3]) & 0x3) << 11));
 			if (rawsize < ADTS_HEADER_MIN_SIZE)
 				continue;
 			INT remaining = block.audio.size - i;
@@ -192,25 +190,25 @@ namespace Decode
 			{
 				continue;
 			}
-			if ((remaining >= rawsize + 2) && (ps[rawsize] != 0xFF) || ((ps[rawsize + 1] & 0xF6) != 0xF0))
+			if ((remaining >= rawsize + 2) && (myP[rawsize] != 0xFF) || ((myP[rawsize + 1] & 0xF6) != 0xF0))
 			{
 				continue;
 			}
 			BYTE layer = 0;
 			BYTE absent = 0;
-			reader.Initialize(ps, 9);//最多9字节 7+CRC
+			reader.Initialize(myP, 9);//最多9字节 7+CRC
 			reader.SkipBits(13);
 			reader.ReadBits(2, &layer);
 			reader.ReadBits(1, &absent);
 			ASSERT(layer == 0);
 			INT offset = absent == 1 ? 7 : 9;
-			TS_BLOCK_AUDIO audio = { 0 };
+			TS_BLOCK audio = block;
 			timestamp = (index++)* (1024.0 * 1000 / 44100);
 			audio.pts = block.pts + static_cast<LONGLONG>(timestamp);
 			audio.dts = audio.pts;
-			audio.data = ps + offset;
-			audio.size = rawsize - offset;
-			audios.Add(audio);
+			audio.audio.data = myP + offset;
+			audio.audio.size = rawsize - offset;
+			audios.InsertLast(audio);
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -274,11 +272,36 @@ namespace Decode
 		ZeroMemory(&block, sizeof(block));
 		for (;;)
 		{
+			if (m_audios.GetSize() > 0)
+			{
+				ITERATOR s = m_audios.First();
+				TS_BLOCK& audio = m_audios.GetAt(s);
+				block = audio;
+				block.audio.size = audio.audio.size;
+				block.audio.data = new BYTE[block.audio.size];
+				memcpy_s(block.audio.data, block.audio.size, audio.audio.data, block.audio.size);
+				m_audios.RemoveAt(s);
+				break;
+			}
 			TS_PACKEG_HEADER header;
 			if (!ReadPacket(header, block))
 				return FALSE;
 			if (block.streamType > 0)
 			{
+				if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)//音频可能包括多帧,视频只有一帧
+				{
+					TSAACParser::ParseAAC(block, m_audios);
+					if (m_audios.GetSize() > 0)
+					{
+						ITERATOR s = m_audios.First();
+						TS_BLOCK& audio = m_audios.GetAt(s);
+						block = audio;
+						block.audio.size = audio.audio.size;
+						block.audio.data = new BYTE[block.audio.size];
+						memcpy_s(block.audio.data, block.audio.size, audio.audio.data, block.audio.size);
+						m_audios.RemoveAt(s);
+					}
+				}
 				break;
 			}
 		}

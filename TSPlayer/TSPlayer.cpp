@@ -3,6 +3,7 @@
 #include "Media/TinySoundPlayer.h"
 #include "IO/TinyTask.h"
 #include "Common/TinyTime.h"
+#include "MPreviewView.h"
 #include "TSReader.h"
 #include "DX9Graphics2D.h"
 #include "DX9Image2D.h"
@@ -11,8 +12,25 @@ using namespace Decode;
 using namespace TinyUI;
 using namespace TinyUI::IO;
 using namespace TinyUI::Media;
+using namespace TSPlayer;
 using namespace DXFramework;
 
+namespace TSPlayer
+{
+	LARGE_INTEGER g_clockFreq;
+	__declspec(thread) QWORD g_lastQPCTime = 0;
+
+	QWORD WINAPI GetQPCTimeMS()
+	{
+		LARGE_INTEGER currentTime;
+		QueryPerformanceCounter(&currentTime);
+		g_lastQPCTime = currentTime.QuadPart;
+		QWORD timeVal = currentTime.QuadPart;
+		timeVal *= 1000;
+		timeVal /= g_clockFreq.QuadPart;
+		return timeVal;
+	};
+}
 
 BOOL LoadSeDebugPrivilege()
 {
@@ -62,6 +80,11 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TSPLAYER));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
+	QueryPerformanceFrequency(&g_clockFreq);
+	TSPlayer::MPreviewView uiImpl;
+	uiImpl.Create(NULL, 50, 50, 800, 600);
+	uiImpl.ShowWindow(nCmdShow);
+	uiImpl.UpdateWindow();
 
 	INT loopRes = theLoop.MessageLoop();
 	TinyApplication::GetInstance()->RemoveMessageLoop();

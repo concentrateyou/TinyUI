@@ -43,7 +43,7 @@ namespace Decode
 	public:
 		BYTE	GetStreamType() const OVERRIDE;
 		BOOL	Parse(TS_BLOCK& block) OVERRIDE;
-		static  void ParseAAC(TS_BLOCK& block, TinyArray<TS_BLOCK_AUDIO>& audios);
+		static  void ParseAAC(TS_BLOCK& block, TinyLinkList<TS_BLOCK>& audios);
 	private:
 		BOOL	ParseADTS(BYTE* bits, LONG size);
 	private:
@@ -94,6 +94,7 @@ namespace Decode
 		INT								m_versionNumber;
 		INT								m_continuityCounter;
 		ConfigCallback					m_configCallback;
+		TinyLinkList<TS_BLOCK>			m_audios;
 		TinyComPtr<IStream>				m_stream;
 		TinyArray<TS_PACKET_STREAM*>	m_streams;
 		TinyArray<TS_PACKET_PROGRAM>	m_programs;
