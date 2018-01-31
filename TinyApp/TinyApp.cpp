@@ -143,10 +143,66 @@ void TSDecoder::Invoke()
 	{
 		TS_BLOCK block = { 0 };
 		if (!m_reader.ReadBlock(block))
+		{
+			SAFE_DELETE_ARRAY(block.audio.data);
+			SAFE_DELETE_ARRAY(block.video.data);
 			break;
+		}
 		if (block.streamType == TS_STREAM_TYPE_VIDEO_H264)
 		{
-			
+			/*switch (block.video.codeType)
+			{
+			case 0:
+				TRACE("P slice\n");
+				break;
+			case 1:
+				TRACE("B slice\n");
+				break;
+			case 2:
+				TRACE("I slice\n");
+				break;
+			case 3:
+				TRACE("SP slice\n");
+				break;
+			case 4:
+				TRACE("SI slice\n");
+				break;
+			case 5:
+				TRACE("P slice\n");
+				break;
+			case 6:
+				TRACE("B slice\n");
+				break;
+			case 7:
+				TRACE("I slice\n");
+				break;
+			case 8:
+				TRACE("SP slice\n");
+				break;
+			case 9:
+				TRACE("SI slice\n");
+				break;
+			}*/
+			SampleTag tag = { 0 };
+			tag.size = block.video.size;
+			tag.bits = block.video.data;
+			tag.sampleDTS = block.dts;
+			tag.samplePTS = block.pts;
+			BYTE* bo = NULL;
+			LONG so = 0;
+			INT iRes = m_x264.Decode(tag, bo, so);
+			if (iRes == 0)
+			{
+				tag.sampleDTS = tag.samplePTS = m_x264.GetYUV420()->pts;
+				BITMAPINFOHEADER bi = { 0 };
+				bi.biSize = sizeof(BITMAPINFOHEADER);
+				bi.biWidth = 1280;
+				bi.biHeight = -720;
+				bi.biPlanes = 1;
+				bi.biBitCount = 32;
+				bi.biCompression = BI_RGB;
+				SaveBitmap(bi, bo, so);
+			}
 		}
 		if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)
 		{
@@ -163,8 +219,7 @@ void TSDecoder::Invoke()
 				m_waveFile.Write(bo, so);
 			}
 		}
-		SAFE_DELETE_ARRAY(block.audio.data);
-		SAFE_DELETE_ARRAY(block.video.data);
+
 	}
 }
 

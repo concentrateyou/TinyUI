@@ -43,18 +43,18 @@ namespace TSPlayer
 		m_szURL = pzURL;
 		if (!m_task.Initialize(m_szURL.STR(), BindCallback(&MTSPlayer::OnError, this)))
 			return FALSE;
-		if (!m_audioRenderTask.Initialize())
-			return FALSE;
+		/*if (!m_audioRenderTask.Initialize())
+			return FALSE;*/
 		if (!m_videoRenderTask.Initialize(hWND))
 			return FALSE;
 		if (!m_videoTask.Submit())
 			return FALSE;
 		if (!m_videoRenderTask.Submit())
 			return FALSE;
-		if (!m_audioTask.Submit())
+		/*if (!m_audioTask.Submit())
 			return FALSE;
 		if (!m_audioRenderTask.Submit())
-			return FALSE;
+			return FALSE;*/
 		if (!m_task.Submit())
 			return FALSE;
 		return TRUE;

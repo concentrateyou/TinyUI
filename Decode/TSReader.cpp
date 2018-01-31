@@ -202,14 +202,16 @@ namespace Decode
 			reader.ReadBits(1, &absent);
 			ASSERT(layer == 0);
 			INT offset = absent == 1 ? 7 : 9;
-			TS_BLOCK audio = block;
+			TS_BLOCK myAudio = block;
 			timestamp = (index++)* (1024.0 * 1000 / 44100);
-			audio.pts = block.pts + static_cast<LONGLONG>(timestamp);
-			audio.dts = audio.pts;
-			audio.audio.data = myP + offset;
-			audio.audio.size = rawsize - offset;
-			audios.InsertLast(audio);
+			myAudio.pts = block.pts + static_cast<LONGLONG>(timestamp);
+			myAudio.dts = myAudio.pts;
+			myAudio.audio.size = rawsize - offset;
+			myAudio.audio.data = new BYTE[myAudio.audio.size];
+			memcpy_s(myAudio.audio.data, myAudio.audio.size, myP + offset, myAudio.audio.size);
+			audios.InsertLast(myAudio);
 		}
+		SAFE_DELETE_ARRAY(block.audio.data);
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TS_PACKET_STREAM::TS_PACKET_STREAM()
@@ -239,7 +241,6 @@ namespace Decode
 	{
 		return ElementaryPID == other.ElementaryPID;
 	}
-	//////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////
 	TSReader::TSReader()
 		:m_versionNumber(-1),
@@ -276,7 +277,7 @@ namespace Decode
 			{
 				ITERATOR s = m_audios.First();
 				TS_BLOCK& audio = m_audios.GetAt(s);
-				block = audio;
+				memcpy_s(&block, sizeof(TS_BLOCK), &audio, sizeof(TS_BLOCK));
 				block.audio.size = audio.audio.size;
 				block.audio.data = new BYTE[block.audio.size];
 				memcpy_s(block.audio.data, block.audio.size, audio.audio.data, block.audio.size);
@@ -295,7 +296,7 @@ namespace Decode
 					{
 						ITERATOR s = m_audios.First();
 						TS_BLOCK& audio = m_audios.GetAt(s);
-						block = audio;
+						memcpy_s(&block, sizeof(TS_BLOCK), &audio, sizeof(TS_BLOCK));
 						block.audio.size = audio.audio.size;
 						block.audio.data = new BYTE[block.audio.size];
 						memcpy_s(block.audio.data, block.audio.size, audio.audio.data, block.audio.size);
@@ -527,8 +528,7 @@ namespace Decode
 				((bits[index + 2] >> 1) << 15) |
 				(bits[index + 3] << 7) |
 				(bits[index + 4] >> 1);
-			myPES.PTS = timestamp;
-			myPES.PTS = myPES.PTS > 0 ? myPES.PTS / 90 : myPES.PTS;
+			myPES.PTS = timestamp > 0 ? timestamp / 90 : timestamp;
 			myPES.DTS = 0;
 			m_lastPTS = myPES.PTS;
 			m_lastDTS = myPES.DTS;
@@ -543,8 +543,7 @@ namespace Decode
 				((bits[index + 2] >> 1) << 15) |
 				(bits[index + 3] << 7) |
 				(bits[index + 4] >> 1);
-			myPES.PTS = timestamp;
-			myPES.PTS = myPES.PTS > 0 ? myPES.PTS / 90 : myPES.PTS;
+			myPES.PTS = timestamp > 0 ? timestamp / 90 : timestamp;
 			index += 5;
 			if ((bits[index] >> 4 & 0xF) != 0x1)
 				return FALSE;
@@ -553,8 +552,7 @@ namespace Decode
 				((bits[index + 2] >> 1) << 15) |
 				(bits[index + 3] << 7) |
 				(bits[index + 4] >> 1);
-			myPES.DTS = timestamp;
-			myPES.DTS = myPES.DTS > 0 ? myPES.DTS / 90 : myPES.DTS;
+			myPES.DTS = timestamp > 0 ? timestamp / 90 : timestamp;
 			m_lastPTS = myPES.PTS;
 			m_lastDTS = myPES.DTS;
 			index += 5;

@@ -76,7 +76,6 @@ namespace TSPlayer
 				continue;
 			}
 			ZeroMemory(&sampleTag, sizeof(sampleTag));
-			LOG(INFO) << "[MAudioTask] Queue Size:" << m_task.GetAudioQueue().GetSize() << " Count:" << m_task.GetAudioQueue().GetCount();
 			if (!m_task.GetAudioQueue().Pop(sampleTag))
 			{
 				Sleep(15);
@@ -89,7 +88,6 @@ namespace TSPlayer
 			{
 				if (m_clock.GetBasePTS() == INVALID_TIME)
 				{
-					LOG(INFO) << "[MAudioTask] SetBasePTS:" << sampleTag.samplePTS << " prevPTS:" << prevPTS;
 					m_clock.SetBasePTS(sampleTag.samplePTS);
 				}
 				sampleTag.size = so;
@@ -97,7 +95,6 @@ namespace TSPlayer
 				if (!sampleTag.bits)
 				{
 					sampleTag.size = 0;
-					LOG(ERROR) << "[MAudioTask] new size:" << so;
 				}
 				else
 				{

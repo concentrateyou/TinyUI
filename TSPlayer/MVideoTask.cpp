@@ -81,7 +81,6 @@ namespace TSPlayer
 				Sleep(15);
 				continue;
 			}
-			LOG(INFO) << "[MVideoTask] Queue Size:" << m_task.GetVideoQueue().GetSize() << " Count:" << m_task.GetVideoQueue().GetCount();
 			ZeroMemory(&sampleTag, sizeof(sampleTag));
 			if (!m_task.GetVideoQueue().Pop(sampleTag))
 			{
@@ -90,7 +89,6 @@ namespace TSPlayer
 			}
 			BYTE* bo = NULL;
 			LONG  so = 0;
-			LONGLONG prevPTS = sampleTag.samplePTS;
 			if (m_x264.Decode(sampleTag, bo, so) == 0)//FLV½âÂëMORE DATAÈÏÎªÊ§°Ü
 			{
 				sampleTag.sampleDTS = sampleTag.samplePTS = m_x264.GetYUV420()->pts;
@@ -99,26 +97,16 @@ namespace TSPlayer
 				if (!sampleTag.bits)
 				{
 					sampleTag.size = 0;
-					LOG(ERROR) << "[MVideoTask] new size:" << so;
 				}
 				else
 				{
 					memcpy(sampleTag.bits, bo, so);
 					if (m_clock.GetBasePTS() == INVALID_TIME)
 					{
-						LOG(INFO) << "[MVideoTask] SetBasePTS:" << sampleTag.samplePTS << " prevPTS:" << prevPTS;
 						m_clock.SetBasePTS(sampleTag.samplePTS);
 					}
 					m_videoQueue.Push(sampleTag);
 				}
-			}
-			else
-			{
-				m_x264.Reset();
-				MSG msg = { 0 };
-				msg.message = WM_VIDEO_X264_DECODE_FAIL;
-				m_msgqueue.PostMsg(msg);
-				m_bBreak = TRUE;
 			}
 		}
 		m_videoQueue.RemoveAll();

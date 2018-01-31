@@ -146,7 +146,7 @@ namespace MShow
 						else
 						{
 							ZeroMemory(&tag, sizeof(tag));
-							tag.size = block.video.size;
+							tag.size = block.audio.size;
 							tag.bits = block.audio.data;
 							tag.sampleDTS = block.dts;
 							tag.samplePTS = block.pts;

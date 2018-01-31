@@ -80,7 +80,9 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TSPLAYER));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
+
 	QueryPerformanceFrequency(&g_clockFreq);
+
 	TSPlayer::MPreviewView uiImpl;
 	uiImpl.Create(NULL, 50, 50, 800, 600);
 	uiImpl.ShowWindow(nCmdShow);

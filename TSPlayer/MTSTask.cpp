@@ -86,18 +86,9 @@ namespace TSPlayer
 		{
 			if (m_bBreak)
 				break;
-			//¶ÁÈ¡Ò»¸öTag
 			ZeroMemory(&block, sizeof(block));
 			if (!m_reader.ReadBlock(block))
-			{
-				TRACE("ReadBlock FAIL\n");
-				LOG(ERROR) << "ReadBlock FAIL";
-				ReleaseBlock(block);
-				MSG msg = { 0 };
-				msg.message = WM_FLV_PARSE_FAIL;
-				m_msgqueue.PostMsg(msg);
 				return FALSE;
-			}
 			INT size = m_audioQueue.GetSize() + m_videoQueue.GetSize();
 			if (size > MAX_QUEUE_SIZE)
 			{
@@ -112,6 +103,11 @@ namespace TSPlayer
 				tag.sampleDTS = block.dts;
 				tag.samplePTS = block.pts;
 				m_videoQueue.Push(tag);
+
+				tag.size = block.video.size;
+				tag.bits = new BYTE[tag.size];
+				tag.sampleDTS = block.dts;
+				tag.samplePTS = block.pts;
 			}
 			if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)
 			{

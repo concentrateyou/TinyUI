@@ -71,20 +71,12 @@ namespace TSPlayer
 			LOG(INFO) << "[MAudioRenderTask] Queue Size:" << m_task.GetAudioQueue().GetSize() << " Count:" << m_task.GetAudioQueue().GetCount();
 			if (!m_task.GetAudioQueue().Pop(tag))
 			{
-				LOG(INFO) << "[MAudioRenderTask] SetCurrentAudioTS 0";
-				LOG(ERROR) << "[MAudioRenderTask] No Audio Sleep(15)";
-				TRACE("[MAudioRenderTask] No Audio Sleep(15)\n");
-				LOG(ERROR) << "[MAudioRenderTask] No Audio Sleep(15)";
 				Sleep(15);
 				continue;
 			}
 			if (tag.samplePTS == m_clock.GetBasePTS())
 			{
 				m_clock.SetBaseTime(GetQPCTimeMS());
-				TRACE("[MAudioRenderTask] BaseTime:%lld\n", m_clock.GetBaseTime());
-				TRACE("[MAudioRenderTask] samplePTS:%lld\n", tag.samplePTS);
-				LOG(INFO) << "[MAudioRenderTask] BaseTime:" << m_clock.GetBaseTime();
-				LOG(INFO) << "[MAudioRenderTask] samplePTS:" << tag.samplePTS;
 			}
 			while (m_clock.GetBasePTS() == INVALID_TIME);
 			if (!m_bInitialize)
@@ -92,14 +84,10 @@ namespace TSPlayer
 				timeQPC.BeginTime();
 				if (!m_audio.Open(m_task.GetFormat()))
 				{
-					TRACE("Audio Open FAIL");
-					LOG(ERROR) << "Audio Open FAIL";
 					break;
 				}
 				if (!m_audio.Start())
 				{
-					TRACE("Audio Start FAIL");
-					LOG(ERROR) << "Audio Start FAIL";
 					break;
 				}
 				m_bInitialize = TRUE;

@@ -103,8 +103,7 @@ namespace TSPlayer
 			ZeroMemory(&sampleTag, sizeof(sampleTag));
 			if (!m_task.GetVideoQueue().Pop(sampleTag))
 			{
-				TRACE("[MVideoRenderTask] Waiting 40\n");
-				LOG(INFO) << "[MVideoRenderTask] Waiting 40";
+				//TRACE("[MVideoRenderTask] Waiting 40\n");
 				timer.Waiting(40, 1000);
 				if (bRendering)
 				{
@@ -115,10 +114,6 @@ namespace TSPlayer
 			if (sampleTag.samplePTS == m_clock.GetBasePTS())
 			{
 				m_clock.SetBaseTime(GetQPCTimeMS());
-				TRACE("[MVideoRenderTask] BaseTime:%lld\n", m_clock.GetBaseTime());
-				TRACE("[MVideoRenderTask] samplePTS:%lld\n", sampleTag.samplePTS);
-				LOG(INFO) << "[MVideoRenderTask] BaseTime:" << m_clock.GetBaseTime();
-				LOG(INFO) << "[MVideoRenderTask] samplePTS:" << sampleTag.samplePTS;
 			}
 			while (m_clock.GetBasePTS() == INVALID_TIME);
 			bRendering = TRUE;
@@ -134,11 +129,6 @@ namespace TSPlayer
 			OnCopy(sampleTag.bits, sampleTag.size);
 			LONG systemMS = static_cast<LONG>(GetQPCTimeMS() - m_clock.GetBaseTime());
 			INT delay = static_cast<INT>(sampleTag.samplePTS - systemMS);
-			if (delay >= 50)
-			{
-				TRACE("Video Delay:%d  samplePTS:%lld systemMS:%d \n", delay, sampleTag.samplePTS, systemMS);
-				LOG(INFO) << "Video Delay:" << delay << " samplePTS:" << sampleTag.samplePTS << " systemMS:" << systemMS;
-			}
 			if (timer.Waiting(delay, 100))
 			{
 				m_graphics.Present();
