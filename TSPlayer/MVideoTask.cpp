@@ -109,10 +109,6 @@ namespace TSPlayer
 					m_videoQueue.Push(sampleTag);
 				}
 			}
-			else
-			{
-				INT a = 0;
-			}
 		}
 		m_videoQueue.RemoveAll();
 	}

@@ -89,6 +89,12 @@ namespace TSPlayer
 		{
 			if (m_bBreak)
 				break;
+			INT size = m_audioQueue.GetSize() + m_videoQueue.GetSize();
+			if (size > MAX_QUEUE_SIZE)
+			{
+				Sleep(15);
+				continue;
+			}
 			ZeroMemory(&block, sizeof(block));
 			if (!m_reader.ReadBlock(block))
 			{
@@ -102,13 +108,6 @@ namespace TSPlayer
 			if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)
 			{
 				++audios;
-			}
-
-			INT size = m_audioQueue.GetSize() + m_videoQueue.GetSize();
-			if (size > MAX_QUEUE_SIZE)
-			{
-				ReleaseBlock(block);
-				continue;
 			}
 			if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)
 			{

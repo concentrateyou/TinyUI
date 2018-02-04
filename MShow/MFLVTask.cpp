@@ -99,6 +99,12 @@ namespace MShow
 		{
 			if (m_bBreak)
 				break;
+			INT size = m_audioQueue.GetSize() + m_videoQueue.GetSize();
+			if (size > MAX_QUEUE_SIZE)
+			{
+				Sleep(15);
+				continue;
+			}
 			//¶ÁÈ¡Ò»¸öTag
 			ZeroMemory(&block, sizeof(block));
 			if (!m_reader.ReadBlock(block))
@@ -110,12 +116,6 @@ namespace MShow
 				msg.message = WM_FLV_PARSE_FAIL;
 				m_msgqueue.PostMsg(msg);
 				return FALSE;
-			}
-			INT size = m_audioQueue.GetSize() + m_videoQueue.GetSize();
-			if (size > MAX_QUEUE_SIZE)
-			{
-				ReleaseBlock(block);
-				continue;
 			}
 			if (block.type == FLV_AUDIO)
 			{
