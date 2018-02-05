@@ -60,7 +60,6 @@ namespace Decode
 		USHORT ElementaryPID : 13;
 		BYTE Reserved2 : 4;
 		USHORT ESInfoLength : 12;
-		INT	Slices;
 		LONGLONG PTS;
 		LONGLONG DTS;
 	public:

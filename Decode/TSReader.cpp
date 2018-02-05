@@ -85,6 +85,7 @@ namespace Decode
 	}
 	BOOL TSH264Parser::Parse(TS_BLOCK& block)
 	{
+		TRACE("H264 PTS:%lld\n", block.pts);
 		H264NALU sNALU;
 		if (m_parser.Parse(data(), size(), sNALU))
 		{
@@ -175,6 +176,8 @@ namespace Decode
 	}
 	void TSAACParser::ParseAAC(TS_BLOCK& block, TinyLinkList<TS_BLOCK>& audios)
 	{
+		TRACE("AAC PTS:%lld\n", block.pts);
+		static FLOAT AACTimestamp = 1024.0F * 1000 / 44100;
 		INT index = 0;
 		TinyBitReader reader;
 		for (INT i = 0; i < (block.audio.size - ADTS_HEADER_MIN_SIZE); i++)
@@ -201,23 +204,22 @@ namespace Decode
 			reader.ReadBits(2, &layer);
 			reader.ReadBits(1, &absent);
 			ASSERT(layer == 0);
-			INT offset = absent == 1 ? 7 : 9;
+			INT offset = (absent == 1 ? 7 : 9);
 			TS_BLOCK myAudio = block;
-			static FLOAT AACTimestamp = 1024.0F * 1000 / 44100;
-			myAudio.pts = block.pts + static_cast<LONGLONG>(AACTimestamp);
+			myAudio.pts = block.pts + (index * static_cast<LONGLONG>(AACTimestamp));
 			myAudio.dts = myAudio.pts;
 			myAudio.audio.size = rawsize - offset;
 			myAudio.audio.data = new BYTE[myAudio.audio.size];
 			memcpy_s(myAudio.audio.data, myAudio.audio.size, myP + offset, myAudio.audio.size);
 			audios.InsertLast(myAudio);
+			index += 1;
 		}
 		SAFE_DELETE_ARRAY(block.audio.data);
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TS_PACKET_STREAM::TS_PACKET_STREAM()
 		:PTS(-1),
-		DTS(-1),
-		Slices(0)
+		DTS(-1)
 	{
 
 	}
@@ -714,22 +716,19 @@ namespace Decode
 					{
 						if (header.PayloadUnitStartIndicator)
 						{
-							if (stream->Slices >= 1)//处理h264
+							block.pts = stream->PTS;
+							block.dts = stream->DTS;
+							block.streamType = stream->StreamType;
+							TSParser* parser = stream->GetParser(std::move(m_configCallback));
+							if (parser != NULL)
 							{
-								block.pts = stream->PTS;
-								block.dts = stream->DTS;
-								block.streamType = stream->StreamType;
-								TSParser* parser = stream->GetParser(std::move(m_configCallback));
-								if (parser != NULL)
-								{
-									parser->Parse(block);
-								}
+								if (!parser->Parse(block))
+									return FALSE;
 							}
 							TS_PACKET_PES myPES;
 							ZeroMemory(&myPES, sizeof(myPES));
 							if (!ReadPES(stream, myPES, block, m_bits + index, index))
 								return FALSE;
-							stream->Slices++;
 						}
 						else
 						{

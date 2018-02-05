@@ -89,7 +89,6 @@ namespace TSPlayer
 			}
 			BYTE* bo = NULL;
 			LONG  so = 0;
-			TRACE("Video Size:%d\n", sampleTag.size);
 			if (m_x264.Decode(sampleTag, bo, so) == 0)
 			{
 				sampleTag.sampleDTS = sampleTag.samplePTS = m_x264.GetYUV420()->pts;

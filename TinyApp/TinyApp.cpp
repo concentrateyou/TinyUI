@@ -160,7 +160,6 @@ void TSDecoder::Invoke()
 			tag.samplePTS = block.pts;
 			BYTE* bo = NULL;
 			LONG so = 0;
-			TRACE("Video Size:%d\n", tag.size);
 			INT iRes = m_x264.Decode(tag, bo, so);
 			if (iRes == 0)
 			{
