@@ -123,6 +123,9 @@ namespace TSPlayer
 				{
 					LOG(ERROR) << "Image2D Create FAIL";
 				}
+				TinyRectangle s;
+				GetClientRect(m_hWND, &s);
+				m_image.SetScale(s.Size());
 				m_bInitialize = TRUE;
 			}
 			OnCopy(sampleTag.bits, sampleTag.size);
