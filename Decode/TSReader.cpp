@@ -120,6 +120,7 @@ namespace Decode
 	}
 	BOOL TSAACParser::Parse(TS_BLOCK& block)
 	{
+		TRACE("AAC PTS:%lld\n", block.pts);
 		block.audio.size = size();
 		block.audio.data = new BYTE[block.audio.size];
 		memcpy_s(block.audio.data, block.audio.size, data(), block.audio.size);
@@ -176,7 +177,6 @@ namespace Decode
 	}
 	void TSAACParser::ParseAAC(TS_BLOCK& block, TinyLinkList<TS_BLOCK>& audios)
 	{
-		TRACE("AAC PTS:%lld\n", block.pts);
 		static FLOAT AACTimestamp = 1024.0F * 1000 / 44100;
 		INT index = 0;
 		TinyBitReader reader;
@@ -249,7 +249,9 @@ namespace Decode
 	//////////////////////////////////////////////////////////////////////////
 	TSReader::TSReader()
 		:m_versionNumber(-1),
-		m_continuityCounter(-1)
+		m_continuityCounter(-1),
+		m_size(0),
+		m_original(NULL)
 	{
 		ZeroMemory(m_bits, TS_PACKET_SIZE);
 	}
@@ -266,7 +268,7 @@ namespace Decode
 		if (!pzFile)
 			return FALSE;
 		this->Close();
-		HRESULT hRes = SHCreateStreamOnFileA(pzFile, STGM_READ | STGM_FAILIFTHERE, &m_stream);
+		HRESULT hRes = SHCreateStreamOnFileA(pzFile, STGM_READ | STGM_FAILIFTHERE, &m_streamIO);
 		if (hRes != S_OK)
 			return FALSE;
 		return TRUE;
@@ -655,17 +657,19 @@ namespace Decode
 			parser->SetCapacity(size);
 			size = TS_PACKET_SIZE - (offset + index);
 			parser->Add((BYTE*)(bits + index), size);
+			m_size += size;
 		}
 		return TRUE;
 	}
 	BOOL TSReader::ReadPacket(TS_PACKEG_HEADER& header, TS_BLOCK& block)
 	{
+		BOOL loading = FALSE;
 		//TS传输包固定188个字节
 		ZeroMemory(&block, sizeof(block));
 		ZeroMemory(&header, sizeof(header));
 		ULONG ls = 0;
 		HRESULT hRes = S_OK;
-		hRes = m_stream->Read(m_bits, TS_PACKET_SIZE, &ls);
+		hRes = m_streamIO->Read(m_bits, TS_PACKET_SIZE, &ls);
 		if (hRes != S_OK || ls != TS_PACKET_SIZE)
 			return FALSE;
 		INT index = 0;
@@ -711,32 +715,42 @@ namespace Decode
 				//PES
 				for (INT i = 0;i < m_streams.GetSize();i++)
 				{
-					TS_PACKET_STREAM* stream = m_streams[i];
-					if (stream->ElementaryPID == header.PID)
+					TS_PACKET_STREAM* current = m_streams[i];
+					if (current->ElementaryPID == header.PID)
 					{
 						if (header.PayloadUnitStartIndicator)
 						{
-							block.pts = stream->PTS;
-							block.dts = stream->DTS;
-							block.streamType = stream->StreamType;
-							TSParser* parser = stream->GetParser(std::move(m_configCallback));
-							if (parser != NULL)
+							if (m_size != 0)
 							{
-								if (!parser->Parse(block))
-									return FALSE;
+								if (m_original != NULL)
+								{
+									block.pts = m_original->PTS;
+									block.dts = m_original->DTS;
+									block.streamType = m_original->StreamType;
+									TSParser* parser = m_original->GetParser(std::move(m_configCallback));
+									if (parser != NULL)
+									{
+										if (!parser->Parse(block))
+											return FALSE;
+									}
+								}
+								m_size = 0;
 							}
 							TS_PACKET_PES myPES;
 							ZeroMemory(&myPES, sizeof(myPES));
-							if (!ReadPES(stream, myPES, block, m_bits + index, index))
+							if (!ReadPES(current, myPES, block, m_bits + index, index))
 								return FALSE;
+							m_original = current;
 						}
 						else
 						{
-							TSParser* parser = stream->GetParser(std::move(m_configCallback));
+							ASSERT(m_original == current);
+							TSParser* parser = current->GetParser(std::move(m_configCallback));
 							if (parser != NULL)
 							{
 								INT size = TS_PACKET_SIZE - index;
 								parser->Add((BYTE*)(m_bits + index), size);
+								m_size += size;
 							}
 						}
 						break;
@@ -767,13 +781,14 @@ namespace Decode
 	}
 	BOOL TSReader::Close()
 	{
+		m_original = NULL;
 		for (INT i = 0;i < m_streams.GetSize();i++)
 		{
 			SAFE_DELETE(m_streams[i]);
 		}
 		m_streams.RemoveAll();
 		m_programs.RemoveAll();
-		m_stream.Release();
+		m_streamIO.Release();
 		m_versionNumber = -1;
 		m_continuityCounter = -1;
 		ZeroMemory(m_bits, TS_PACKET_SIZE);

@@ -189,6 +189,11 @@
     <Image Include="small.ico" />
     <Image Include="TSPlayer.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Decode\Decode.vcxproj">
+      <Project>{2b7dbc16-dc0d-49c6-a0b8-9f26c31aa758}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
