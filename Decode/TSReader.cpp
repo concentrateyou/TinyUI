@@ -217,7 +217,9 @@ namespace Decode
 	//////////////////////////////////////////////////////////////////////////
 	TS_PACKET_STREAM::TS_PACKET_STREAM()
 		:PTS(-1),
-		DTS(-1)
+		DTS(-1),
+		m_basePTS(-1),
+		m_baseDTS(-1)
 	{
 
 	}
@@ -478,7 +480,6 @@ namespace Decode
 			if (index >= (size - 4))
 				break;
 			TS_PACKET_STREAM* stream = new TS_PACKET_STREAM();
-			ZeroMemory(stream, sizeof(TS_PACKET_STREAM));
 			stream->StreamType = bits[index++];
 			stream->Reserved1 = bits[index] >> 5;
 			stream->ElementaryPID = ((bits[index] << 8) | bits[index + 1]) & 0x1FFF;
@@ -532,9 +533,17 @@ namespace Decode
 				(bits[index + 3] << 7) |
 				(bits[index + 4] >> 1);
 			myPES.PTS = timestamp > 0 ? timestamp / 90 : timestamp;
-			myPES.DTS = 0;
-			stream->PTS = myPES.PTS;
-			stream->DTS = myPES.DTS;
+			myPES.DTS = myPES.PTS;
+			if (stream->m_baseDTS == -1)
+			{
+				stream->m_baseDTS = myPES.DTS;
+			}
+			if (stream->m_basePTS == -1)
+			{
+				stream->m_basePTS = myPES.PTS;
+			}
+			stream->PTS = myPES.PTS - stream->m_basePTS;
+			stream->DTS = myPES.DTS - stream->m_baseDTS;
 			index += 5;
 		}
 		if (myPES.PTSDTSFlags == 0x3)
@@ -556,8 +565,16 @@ namespace Decode
 				(bits[index + 3] << 7) |
 				(bits[index + 4] >> 1);
 			myPES.DTS = timestamp > 0 ? timestamp / 90 : timestamp;
-			stream->PTS = myPES.PTS;
-			stream->DTS = myPES.DTS;
+			if (stream->m_baseDTS == -1)
+			{
+				stream->m_baseDTS = myPES.DTS;
+			}
+			if (stream->m_basePTS == -1)
+			{
+				stream->m_basePTS = myPES.PTS;
+			}
+			stream->PTS = myPES.PTS - stream->m_basePTS;
+			stream->DTS = myPES.DTS - stream->m_baseDTS;
 			index += 5;
 		}
 		if (myPES.ESCRFlag)
@@ -649,10 +666,12 @@ namespace Decode
 		TSParser* parser = stream->GetParser(std::move(m_configCallback));
 		if (parser != NULL)
 		{
-			INT size = myPES.PESPacketLength - 3 - myPES.PESHeaderDataLength;
-			ASSERT(size > 0);
 			parser->Reset();
-			parser->SetCapacity(size);
+			INT size = myPES.PESPacketLength - 3 - myPES.PESHeaderDataLength;
+			if (size > 0)
+			{
+				parser->SetCapacity(size);
+			}
 			size = TS_PACKET_SIZE - (offset + index);
 			parser->Add((BYTE*)(bits + index), size);
 			m_size += size;
@@ -661,7 +680,6 @@ namespace Decode
 	}
 	BOOL TSReader::ReadPacket(TS_PACKEG_HEADER& header, TS_BLOCK& block)
 	{
-		BOOL loading = FALSE;
 		//TS传输包固定188个字节
 		ZeroMemory(&block, sizeof(block));
 		ZeroMemory(&header, sizeof(header));

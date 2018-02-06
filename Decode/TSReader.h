@@ -54,12 +54,14 @@ namespace Decode
 	//////////////////////////////////////////////////////////////////////////
 	class TS_PACKET_STREAM
 	{
+		friend class TSReader;
 	public:
 		BYTE StreamType : 8;
 		BYTE Reserved1 : 3;
 		USHORT ElementaryPID : 13;
 		BYTE Reserved2 : 4;
 		USHORT ESInfoLength : 12;
+	public:
 		LONGLONG PTS;
 		LONGLONG DTS;
 	public:
@@ -68,6 +70,8 @@ namespace Decode
 		BOOL operator == (const TS_PACKET_STREAM& other);
 		TSParser* GetParser(ConfigCallback& callback);
 	private:
+		LONGLONG				m_baseDTS;
+		LONGLONG				m_basePTS;
 		TinyScopedPtr<TSParser>	m_parser;
 	};
 	/// <summary>

@@ -544,7 +544,7 @@ namespace Decode
 		BYTE TransportErrorIndicator : 1;
 		BYTE PayloadUnitStartIndicator : 1;//PSI∫ÕPES¥¶¿Ì
 		BYTE TransportPriority : 1;
-		SHORT PID : 13;
+		USHORT PID : 13;
 		BYTE TransportScramblingControl : 2;
 		BYTE AdaptationFieldControl : 2;
 		BYTE ContinuityCounter : 4;

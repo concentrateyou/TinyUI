@@ -111,7 +111,6 @@ namespace TSPlayer
 			}
 			if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)
 			{
-				TRACE("Audio PTS:%lld\n", block.pts);
 				ZeroMemory(&tag, sizeof(tag));
 				tag.size = block.audio.size;
 				tag.bits = block.audio.data;
@@ -121,7 +120,6 @@ namespace TSPlayer
 			}
 			if (block.streamType == TS_STREAM_TYPE_VIDEO_H264)
 			{
-				//TRACE("Video PTS:%lld\n", block.pts);
 				ZeroMemory(&tag, sizeof(tag));
 				tag.size = block.video.size;
 				tag.bits = block.video.data;
