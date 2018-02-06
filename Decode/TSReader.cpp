@@ -85,7 +85,7 @@ namespace Decode
 	}
 	BOOL TSH264Parser::Parse(TS_BLOCK& block)
 	{
-		TRACE("H264 PTS:%lld\n", block.pts);
+		//TRACE("H264 PTS:%lld\n", block.pts);
 		H264NALU sNALU;
 		if (m_parser.Parse(data(), size(), sNALU))
 		{
@@ -104,6 +104,12 @@ namespace Decode
 		24000, 22050, 16000, 12000, 11025, 8000, 7350,
 		0, 0, 0
 	};
+
+	static BOOL IsADTASW(const BYTE* bits)
+	{
+		return (bits[0] == 0xFF) && ((bits[1] & 0xF6) == 0xF0);
+	}
+
 	TSAACParser::TSAACParser(ConfigCallback& callback)
 		:m_callback(callback),
 		m_timestamp(0.0F)
@@ -120,7 +126,7 @@ namespace Decode
 	}
 	BOOL TSAACParser::Parse(TS_BLOCK& block)
 	{
-		TRACE("AAC PTS:%lld\n", block.pts);
+		//TRACE("AAC PTS:%lld\n", block.pts);
 		block.audio.size = size();
 		block.audio.data = new BYTE[block.audio.size];
 		memcpy_s(block.audio.data, block.audio.size, data(), block.audio.size);
@@ -132,20 +138,16 @@ namespace Decode
 		for (INT i = 0; i < (size - ADTS_HEADER_MIN_SIZE); i++)
 		{
 			BYTE* myP = &bits[i];
-			if ((myP[0] != 0xFF) || ((myP[1] & 0xF6) != 0xF0))
+			if (!IsADTASW(myP))
 				continue;
 			INT rawsize = ((static_cast<int>(myP[5]) >> 5) | (static_cast<int>(myP[4]) << 3) | ((static_cast<int>(myP[3]) & 0x3) << 11));
 			if (rawsize < ADTS_HEADER_MIN_SIZE)
 				continue;
 			INT remaining = size - i;
 			if (remaining < rawsize)
-			{
 				continue;
-			}
-			if ((remaining >= rawsize + 2) && (myP[rawsize] != 0xFF) || ((myP[rawsize + 1] & 0xF6) != 0xF0))
-			{
+			if ((remaining >= rawsize + 2) && !IsADTASW(&myP[rawsize]))
 				continue;
-			}
 			BYTE layer = 0;
 			BYTE profile = 0;
 			BYTE channels = 0;
@@ -178,25 +180,21 @@ namespace Decode
 	void TSAACParser::ParseAAC(TS_BLOCK& block, TinyLinkList<TS_BLOCK>& audios)
 	{
 		static FLOAT AACTimestamp = 1024.0F * 1000 / 44100;
-		INT index = 0;
+		FLOAT timestamp = 0.0F;
 		TinyBitReader reader;
 		for (INT i = 0; i < (block.audio.size - ADTS_HEADER_MIN_SIZE); i++)
 		{
 			BYTE* myP = &block.audio.data[i];
-			if ((myP[0] != 0xFF) || ((myP[1] & 0xF6) != 0xF0))
+			if (!IsADTASW(myP))
 				continue;
 			INT rawsize = ((static_cast<INT>(myP[5]) >> 5) | (static_cast<INT>(myP[4]) << 3) | ((static_cast<INT>(myP[3]) & 0x3) << 11));
 			if (rawsize < ADTS_HEADER_MIN_SIZE)
 				continue;
 			INT remaining = block.audio.size - i;
 			if (remaining < rawsize)
-			{
 				continue;
-			}
-			if ((remaining >= rawsize + 2) && (myP[rawsize] != 0xFF) || ((myP[rawsize + 1] & 0xF6) != 0xF0))
-			{
+			if ((remaining >= (rawsize + 2)) && !IsADTASW(&myP[rawsize]))
 				continue;
-			}
 			BYTE layer = 0;
 			BYTE absent = 0;
 			reader.Initialize(myP, 9);//最多9字节 7+CRC
@@ -206,13 +204,13 @@ namespace Decode
 			ASSERT(layer == 0);
 			INT offset = (absent == 1 ? 7 : 9);
 			TS_BLOCK myAudio = block;
-			myAudio.pts = block.pts + (index * static_cast<LONGLONG>(AACTimestamp));
+			myAudio.pts = block.pts + static_cast<LONGLONG>(timestamp);
 			myAudio.dts = myAudio.pts;
 			myAudio.audio.size = rawsize - offset;
 			myAudio.audio.data = new BYTE[myAudio.audio.size];
 			memcpy_s(myAudio.audio.data, myAudio.audio.size, myP + offset, myAudio.audio.size);
 			audios.InsertLast(myAudio);
-			index += 1;
+			timestamp += AACTimestamp;
 		}
 		SAFE_DELETE_ARRAY(block.audio.data);
 	}
