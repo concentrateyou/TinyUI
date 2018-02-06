@@ -268,8 +268,18 @@ namespace Decode
 		if (!pzFile)
 			return FALSE;
 		this->Close();
-		HRESULT hRes = SHCreateStreamOnFileA(pzFile, STGM_READ | STGM_FAILIFTHERE, &m_streamIO);
+		HRESULT hRes = SHCreateStreamOnFileA(pzFile, STGM_READ | STGM_FAILIFTHERE, &m_stream);
 		if (hRes != S_OK)
+			return FALSE;
+		return TRUE;
+	}
+	BOOL TSReader::OpenURL(LPCSTR pzURL)
+	{
+		m_stream.Attach(new HTTPStream());
+		if (!m_stream)
+			return FALSE;
+		HTTPStream* ps = static_cast<HTTPStream*>(m_stream.Ptr());
+		if (!ps->Open(pzURL))
 			return FALSE;
 		return TRUE;
 	}
@@ -685,7 +695,7 @@ namespace Decode
 		ZeroMemory(&header, sizeof(header));
 		ULONG ls = 0;
 		HRESULT hRes = S_OK;
-		hRes = m_streamIO->Read(m_bits, TS_PACKET_SIZE, &ls);
+		hRes = m_stream->Read(m_bits, TS_PACKET_SIZE, &ls);
 		if (hRes != S_OK || ls != TS_PACKET_SIZE)
 			return FALSE;
 		INT index = 0;
@@ -804,7 +814,7 @@ namespace Decode
 		}
 		m_streams.RemoveAll();
 		m_programs.RemoveAll();
-		m_streamIO.Release();
+		m_stream.Release();
 		m_versionNumber = -1;
 		m_continuityCounter = -1;
 		ZeroMemory(m_bits, TS_PACKET_SIZE);

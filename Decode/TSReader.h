@@ -1,6 +1,7 @@
 #pragma once
 #include "Common.h"
 #include "H264Parser.h"
+#include "HTTPStream.h"
 
 namespace Decode
 {
@@ -85,6 +86,7 @@ namespace Decode
 		virtual ~TSReader();
 		void	SetConfigCallback(ConfigCallback&& callback);
 		BOOL	OpenFile(LPCSTR pzFile);
+		BOOL	OpenURL(LPCSTR pzURL);
 		BOOL	Close();
 		BOOL	ReadBlock(TS_BLOCK& block);
 	private:
@@ -101,7 +103,7 @@ namespace Decode
 		ConfigCallback					m_configCallback;
 		TS_PACKET_STREAM*				m_original;
 		TinyLinkList<TS_BLOCK>			m_audios;
-		TinyComPtr<IStream>				m_streamIO;
+		TinyComPtr<IStream>				m_stream;
 		TinyArray<TS_PACKET_STREAM*>	m_streams;
 		TinyArray<TS_PACKET_PROGRAM>	m_programs;
 	};
