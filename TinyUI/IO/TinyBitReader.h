@@ -11,6 +11,9 @@ namespace TinyUI
 {
 	namespace IO
 	{
+		/// <summary>
+		/// Œª∂¡»°
+		/// </summary>
 		class TinyBitReader
 		{
 		public:

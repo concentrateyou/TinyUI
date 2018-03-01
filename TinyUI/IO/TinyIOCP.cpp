@@ -11,7 +11,7 @@ namespace TinyUI
 			m_hIOCP(NULL),
 			m_dwConcurrent(dwConcurrent)
 		{
-			m_hIOCP = ::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, m_dwConcurrent);
+			m_hIOCP = ::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, static_cast<ULONG_PTR>(NULL), m_dwConcurrent);
 			if (m_hIOCP == NULL)
 			{
 				throw error_code(GetLastError(), system_category());

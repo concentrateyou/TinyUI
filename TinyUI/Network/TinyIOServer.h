@@ -20,7 +20,7 @@ namespace TinyUI
 		private:
 			void	OnMessagePump();
 		private:
-			TinyEvent		m_close;
+			BOOL			m_bBreak;
 			IO::TinyIOCP*	m_pIOCP;
 			TinyUI::Closure	m_closure;
 		};
@@ -42,7 +42,7 @@ namespace TinyUI
 		{
 			DISALLOW_COPY_AND_ASSIGN(TinyIOServer)
 		public:
-			explicit TinyIOServer(DWORD dwConcurrency);
+			TinyIOServer(DWORD dwConcurrency);
 			virtual ~TinyIOServer();
 			IO::TinyIOCP* GetIOCP() const;
 			virtual void Run();

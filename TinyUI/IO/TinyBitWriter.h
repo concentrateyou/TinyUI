@@ -12,7 +12,7 @@ namespace TinyUI
 	namespace IO
 	{
 		/// <summary>
-		/// λд
+		/// 位写
 		/// </summary>
 		class TinyBitWriter
 		{

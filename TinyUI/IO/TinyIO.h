@@ -23,7 +23,7 @@ namespace TinyUI
 			BYTE _m_padding;
 			TCHAR m_szFullName[_MAX_PATH];
 		};
-		//虚基类
+		//基类
 		class TinyIO : public TinyObject
 		{
 			DECLARE_DYNAMIC(TinyIO)

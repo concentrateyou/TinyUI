@@ -177,7 +177,13 @@ namespace TinyUI
 			for (;;)
 			{
 				if (!GetMessage(&msg, NULL, 0, 0))
+				{
+					if (!m_callback.IsNull())
+					{
+						m_callback(msg.message, msg.wParam, msg.lParam);
+					}
 					break;
+				}
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 				if (msg.message == WM_MSGQUEUE_EXIT)

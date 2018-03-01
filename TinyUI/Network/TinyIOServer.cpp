@@ -9,7 +9,8 @@ namespace TinyUI
 	namespace Network
 	{
 		TinyIOTask::TinyIOTask(IO::TinyIOCP* ps)
-			:m_pIOCP(ps)
+			:m_pIOCP(ps),
+			m_bBreak(FALSE)
 		{
 
 		}
@@ -24,12 +25,12 @@ namespace TinyUI
 			ZeroMemory(context, sizeof(PER_IO_CONTEXT));
 			context->OP = OP_QUIT;
 			PostQueuedCompletionStatus(m_pIOCP->Handle(), 0, 0, NULL);
-			m_close.SetEvent();
+			m_bBreak = TRUE;
 			return TinyTask::Close(dwMs);
 		}
 		BOOL TinyIOTask::Submit()
 		{
-			m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
+			m_bBreak = FALSE;
 			return TinyTask::Submit(std::forward<Closure>(BindCallback(&TinyIOTask::OnMessagePump, this)));
 		}
 		void TinyIOTask::OnMessagePump()
@@ -39,10 +40,8 @@ namespace TinyUI
 			ULONG_PTR	completionKey = 0;
 			for (;;)
 			{
-				if (m_close.Lock(0))
-				{
+				if (m_bBreak)
 					break;
-				}
 				DWORD dwNumberOfBytesTransferred = 0;
 				LPOVERLAPPED lpOP = NULL;
 				if (!GetQueuedCompletionStatus(m_pIOCP->Handle(), &dwNumberOfBytesTransferred, &completionKey, &lpOP, INFINITE))
