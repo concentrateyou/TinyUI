@@ -11,5 +11,8 @@ namespace Decode
 	MP4Reader::~MP4Reader()
 	{
 	}
-
+	BOOL MP4Reader::OpenFile(LPCSTR pzFile)
+	{
+		return TRUE;
+	}
 }

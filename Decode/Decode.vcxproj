@@ -153,8 +153,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AACDecoder.h" />
+    <ClInclude Include="AACParser.h" />
     <ClInclude Include="AC3Decoder.h" />
     <ClInclude Include="AudioAnalyser.h" />
+    <ClInclude Include="AVCParser.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="FFT.h" />
     <ClInclude Include="FLVReader.h" />
@@ -174,8 +176,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AACDecoder.cpp" />
+    <ClCompile Include="AACParser.cpp" />
     <ClCompile Include="AC3Decoder.cpp" />
     <ClCompile Include="AudioAnalyser.cpp" />
+    <ClCompile Include="AVCParser.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="FFT.cpp" />
     <ClCompile Include="FLVReader.cpp" />

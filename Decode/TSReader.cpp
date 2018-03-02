@@ -104,8 +104,10 @@ namespace Decode
 		24000, 22050, 16000, 12000, 11025, 8000, 7350,
 		0, 0, 0
 	};
-
-	static BOOL IsADTASW(const BYTE* bits)
+	/// <summary>
+	/// 是否ADTS同步头
+	/// </summary>
+	static BOOL IsADTSSyncword(const BYTE* bits)
 	{
 		return (bits[0] == 0xFF) && ((bits[1] & 0xF6) == 0xF0);
 	}
@@ -138,7 +140,7 @@ namespace Decode
 		for (INT i = 0; i < (size - ADTS_HEADER_MIN_SIZE); i++)
 		{
 			BYTE* myP = &bits[i];
-			if (!IsADTASW(myP))
+			if (!IsADTSSyncword(myP))
 				continue;
 			INT rawsize = ((static_cast<int>(myP[5]) >> 5) | (static_cast<int>(myP[4]) << 3) | ((static_cast<int>(myP[3]) & 0x3) << 11));
 			if (rawsize < ADTS_HEADER_MIN_SIZE)
@@ -146,7 +148,7 @@ namespace Decode
 			INT remaining = size - i;
 			if (remaining < rawsize)
 				continue;
-			if ((remaining >= rawsize + 2) && !IsADTASW(&myP[rawsize]))
+			if ((remaining >= rawsize + 2) && !IsADTSSyncword(&myP[rawsize]))
 				continue;
 			BYTE layer = 0;
 			BYTE profile = 0;
@@ -185,7 +187,7 @@ namespace Decode
 		for (INT i = 0; i < (block.audio.size - ADTS_HEADER_MIN_SIZE); i++)
 		{
 			BYTE* myP = &block.audio.data[i];
-			if (!IsADTASW(myP))
+			if (!IsADTSSyncword(myP))
 				continue;
 			INT rawsize = ((static_cast<INT>(myP[5]) >> 5) | (static_cast<INT>(myP[4]) << 3) | ((static_cast<INT>(myP[3]) & 0x3) << 11));
 			if (rawsize < ADTS_HEADER_MIN_SIZE)
@@ -193,7 +195,7 @@ namespace Decode
 			INT remaining = block.audio.size - i;
 			if (remaining < rawsize)
 				continue;
-			if ((remaining >= (rawsize + 2)) && !IsADTASW(&myP[rawsize]))
+			if ((remaining >= (rawsize + 2)) && !IsADTSSyncword(&myP[rawsize]))
 				continue;
 			BYTE layer = 0;
 			BYTE absent = 0;
