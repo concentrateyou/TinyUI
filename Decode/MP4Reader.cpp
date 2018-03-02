@@ -3,6 +3,10 @@
 
 namespace Decode
 {
+	static const INT AACLCObjectType = 2;
+	static const INT AACSBRObjectType = 5;
+	static const INT AACPSObjectType = 29;
+
 	MP4Reader::MP4Reader()
 	{
 	}
@@ -13,6 +17,7 @@ namespace Decode
 	}
 	BOOL MP4Reader::OpenFile(LPCSTR pzFile)
 	{
+
 		return TRUE;
 	}
 }

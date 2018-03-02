@@ -75,12 +75,6 @@
     <ClInclude Include="MP4Writer.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="AACParser.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="AVCParser.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -135,12 +129,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MP4Writer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="AACParser.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="AVCParser.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

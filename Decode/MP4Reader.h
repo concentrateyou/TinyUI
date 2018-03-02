@@ -19,6 +19,7 @@ namespace Decode
 		virtual ~MP4Reader();
 		BOOL		OpenFile(LPCSTR pzFile);
 	private:
+		TinySize				m_size;
 		TinyComPtr<IStream>		m_stream;
 	};
 }
