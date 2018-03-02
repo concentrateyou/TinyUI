@@ -7,6 +7,7 @@ namespace Decode
 {
 	class TSParser
 	{
+		DISALLOW_COPY_AND_ASSIGN(TSParser)
 	public:
 		TSParser();
 		virtual ~TSParser();
@@ -25,6 +26,7 @@ namespace Decode
 	//////////////////////////////////////////////////////////////////////////
 	class TSH264Parser : public TSParser
 	{
+		DISALLOW_COPY_AND_ASSIGN(TSH264Parser)
 	public:
 		TSH264Parser(ConfigCallback& callback);
 		virtual ~TSH264Parser();
@@ -38,6 +40,7 @@ namespace Decode
 	//////////////////////////////////////////////////////////////////////////
 	class TSAACParser : public TSParser
 	{
+		DISALLOW_COPY_AND_ASSIGN(TSAACParser)
 	public:
 		TSAACParser(ConfigCallback& callback);
 		virtual ~TSAACParser();

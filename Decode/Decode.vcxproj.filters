@@ -69,6 +69,12 @@
     <ClInclude Include="H264BitReader.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MP4Reader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MP4Writer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -117,6 +123,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="H264BitReader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MP4Reader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MP4Writer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

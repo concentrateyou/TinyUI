@@ -53,7 +53,7 @@ namespace TinyUI
 		}
 		DWORD TinyVisualWindowless::RetrieveStyle()
 		{
-			return (WS_POPUP | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_MINIMIZEBOX);
+			return (WS_POPUP | WS_VISIBLE | WS_CLIPCHILDREN | WS_MINIMIZEBOX);
 		}
 		DWORD TinyVisualWindowless::RetrieveExStyle()
 		{
