@@ -76,6 +76,7 @@ namespace Decode
 	private:
 		LONGLONG				m_baseDTS;
 		LONGLONG				m_basePTS;
+		INT						m_continuityCounter;
 		TinyScopedPtr<TSParser>	m_parser;
 	};
 	/// <summary>
@@ -98,11 +99,11 @@ namespace Decode
 		BOOL	ReadAF(TS_PACKET_ADAPTATION_FIELD& myAF, const BYTE* bits);
 		BOOL	ReadPAT(TS_PACKET_PAT& myPAT, TinyArray<TS_PACKET_PROGRAM>& programs, const BYTE* bits);
 		BOOL	ReadPTM(TS_PACKET_PMT& myPTM, TinyArray<TS_PACKET_STREAM*>& streams, const BYTE* bits);
+		BOOL	ReadSTD(TS_PACKET_STD& mySTD, const BYTE* bits);
 	private:
 		LONG							m_size;
 		BYTE							m_bits[TS_PACKET_SIZE];
 		INT								m_versionNumber;
-		INT								m_continuityCounter;
 		ConfigCallback					m_configCallback;
 		TS_PACKET_STREAM*				m_original;
 		TinyLinkList<TS_BLOCK>			m_audios;

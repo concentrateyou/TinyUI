@@ -80,9 +80,6 @@ namespace TSPlayer
 		Invoke(tag, block);
 	}
 
-	INT videos = 0;
-	INT audios = 0;
-
 	BOOL MTSTask::Invoke(SampleTag& tag, TS_BLOCK& block)
 	{
 		for (;;)
@@ -100,14 +97,6 @@ namespace TSPlayer
 			{
 				ReleaseBlock(block);
 				return FALSE;
-			}
-			if (block.streamType == TS_STREAM_TYPE_VIDEO_H264)
-			{
-				++videos;
-			}
-			if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)
-			{
-				++audios;
 			}
 			if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)
 			{

@@ -626,6 +626,21 @@ namespace Decode
 		UINT32 CRC32;
 	};
 
+	class TS_PACKET_STD : public TS_PACKET_SECTION
+	{
+	public:
+		USHORT TransportStreamID : 16;
+		BYTE Reserved2 : 2;
+		BYTE VersionNumber : 5;
+		BYTE CurrentNextIndicator : 1;
+		BYTE SectionNumber : 8;
+		BYTE LastSectionNumber : 8;
+		USHORT OriginalNetwordID : 16;
+		BYTE Reserved3;
+		//Loop;
+		UINT32 CRC32;
+	};
+
 	typedef struct tagTS_PACKET_PES
 	{
 		UINT32 PacketStartCodePrefix : 24;

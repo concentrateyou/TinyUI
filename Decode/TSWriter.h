@@ -13,6 +13,10 @@ namespace Decode
 	public:
 		TSWriter();
 		virtual ~TSWriter();
+	public:
+		BOOL WritePAT();
+		BOOL WritePMT();
+		BOOL WritePES();
 	};
 }
 

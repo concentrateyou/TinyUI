@@ -3,7 +3,7 @@
 
 namespace Decode
 {
-	static BOOL IsCRCValid(const BYTE* bits, INT size)
+	static BOOL CheckCRC32(const BYTE* bits, INT size)
 	{
 		UINT32 crc = 0xffffffffu;
 		const UINT32 CrcPoly = 0x4c11db7;
@@ -85,7 +85,6 @@ namespace Decode
 	}
 	BOOL TSH264Parser::Parse(TS_BLOCK& block)
 	{
-		//TRACE("H264 PTS:%lld\n", block.pts);
 		H264NALU sNALU;
 		if (m_parser.Parse(data(), size(), sNALU))
 		{
@@ -221,7 +220,8 @@ namespace Decode
 		:PTS(-1),
 		DTS(-1),
 		m_basePTS(-1),
-		m_baseDTS(-1)
+		m_baseDTS(-1),
+		m_continuityCounter(-1)
 	{
 
 	}
@@ -251,7 +251,6 @@ namespace Decode
 	//////////////////////////////////////////////////////////////////////////
 	TSReader::TSReader()
 		:m_versionNumber(-1),
-		m_continuityCounter(-1),
 		m_size(0),
 		m_original(NULL)
 	{
@@ -403,30 +402,32 @@ namespace Decode
 	{
 		INT index = 0;
 		myPAT.TableID = bits[index++];
+		if (myPAT.TableID != 0x0)
+			return FALSE;
 		myPAT.SectionSyntaxIndicator = bits[index] >> 7;
+		if (myPAT.SectionSyntaxIndicator != 0x1)
+			return FALSE;
 		myPAT.Zero = bits[index] >> 6 & 0x1;
+		if (myPAT.Zero != 0x0)
+			return FALSE;
 		myPAT.Reserved1 = bits[index] >> 4 & 0x3;
 		myPAT.SectionLength = ((bits[index] & 0x0F) << 8) | bits[index + 1];
+		if (myPAT.SectionLength < 5 || myPAT.SectionLength > 1021)
+			return FALSE;
 		index += 2;
 		myPAT.TransportStreamID = ((bits[index] << 8) | bits[index + 1]);
 		index += 2;
 		myPAT.Reserved2 = bits[index] >> 6;
 		myPAT.VersionNumber = (bits[index] >> 1) & 0x1F;
 		myPAT.CurrentNextIndicator = (bits[index] << 7) >> 7;
+		//PAT当前有效无效则忽略
+		if (myPAT.CurrentNextIndicator != 0x1)
+			return TRUE;
 		myPAT.SectionNumber = bits[++index];
 		myPAT.LastSectionNumber = bits[++index];
 		INT size = myPAT.SectionLength;
-		myPAT.CRC32 = (bits[size - 4] & 0x000000FF) << 24 | (bits[size - 3] & 0x000000FF) << 16 | (bits[size - 2] & 0x000000FF) << 8 | (bits[size - 1] & 0x000000FF);
-		if (myPAT.TableID != 0x0)
-			return FALSE;
-		if (myPAT.SectionSyntaxIndicator != 0x1)
-			return FALSE;
-		if (myPAT.Zero != 0x0)
-			return FALSE;
-		if (myPAT.SectionLength >= 1021)
-			return FALSE;
-		//PAT当前有效
-		if (myPAT.CurrentNextIndicator != 0x1)
+		myPAT.CRC32 = (bits[size - 1] & 0x000000FF) << 24 | (bits[size] & 0x000000FF) << 16 | (bits[size + 1] & 0x000000FF) << 8 | (bits[size + 2] & 0x000000FF);
+		if (!CheckCRC32(bits, size + 3))
 			return FALSE;
 		//PAT没有改变
 		if (m_versionNumber == myPAT.VersionNumber)
@@ -450,18 +451,33 @@ namespace Decode
 	{
 		INT index = 0;
 		myPMT.TableID = bits[index++];
+		if (myPMT.TableID != 0x2)
+			return FALSE;
 		myPMT.SectionSyntaxIndicator = bits[index] >> 7;
+		if (myPMT.SectionSyntaxIndicator != 0x1)
+			return FALSE;
 		myPMT.Zero = bits[index] >> 6 & 0x1;
 		myPMT.Reserved1 = bits[index] >> 4 & 0x3;
+		if (myPMT.Zero != 0x0)
+			return FALSE;
 		myPMT.SectionLength = ((bits[index] & 0x0F) << 8) | bits[index + 1];
+		if (myPMT.SectionLength < 5 || myPMT.SectionLength > 1021)
+			return FALSE;
 		index += 2;
 		myPMT.ProgramNumber = bits[index] << 8 | bits[index + 1];
 		index += 2;
 		myPMT.Reserved2 = bits[index] >> 6;
 		myPMT.VersionNumber = bits[index] >> 1 & 0x1F;
 		myPMT.CurrentNextIndicator = (bits[index] << 7) >> 7;
+		//PMT当前有效
+		if (myPMT.CurrentNextIndicator != 0x1)
+			return FALSE;
 		myPMT.SectionNumber = bits[++index];
+		if (myPMT.SectionNumber != 0)
+			return FALSE;
 		myPMT.LastSectionNumber = bits[++index];
+		if (myPMT.LastSectionNumber != 0)
+			return FALSE;
 		index += 1;
 		myPMT.Reserved3 = bits[index] >> 5;
 		myPMT.PCR_PID = ((bits[index] << 8) | bits[index + 1]) & 0x1FFF;
@@ -471,21 +487,8 @@ namespace Decode
 		index += 2;
 		index += myPMT.ProgramInfoLength;
 		INT size = myPMT.SectionLength;
-		myPMT.CRC32 = (bits[size - 4] & 0x000000FF) << 24 | (bits[size - 3] & 0x000000FF) << 16 | (bits[size - 2] & 0x000000FF) << 8 | (bits[size - 1] & 0x000000FF);
-		if (myPMT.TableID != 0x2)
-			return FALSE;
-		if (myPMT.SectionSyntaxIndicator != 0x1)
-			return FALSE;
-		if (myPMT.Zero != 0x0)
-			return FALSE;
-		if (myPMT.SectionLength >= 1021)
-			return FALSE;
-		//PMT当前有效
-		if (myPMT.CurrentNextIndicator != 0x1)
-			return FALSE;
-		if (myPMT.SectionNumber != 0)
-			return FALSE;
-		if (myPMT.LastSectionNumber != 0)
+		myPMT.CRC32 = (bits[myPMT.SectionLength - 1] & 0x000000FF) << 24 | (bits[myPMT.SectionLength] & 0x000000FF) << 16 | (bits[myPMT.SectionLength + 1] & 0x000000FF) << 8 | (bits[myPMT.SectionLength + 2] & 0x000000FF);
+		if (!CheckCRC32(bits, myPMT.SectionLength + 3))
 			return FALSE;
 		for (;;)
 		{
@@ -690,6 +693,37 @@ namespace Decode
 		}
 		return TRUE;
 	}
+	BOOL TSReader::ReadSTD(TS_PACKET_STD& mySTD, const BYTE* bits)
+	{
+		INT index = 0;
+		mySTD.TableID = bits[index++];
+		if ((mySTD.TableID != 0x42) || (mySTD.TableID > 0x46))
+			return FALSE;
+		mySTD.SectionSyntaxIndicator = bits[index] >> 7;
+		if (mySTD.SectionSyntaxIndicator != 0x1)
+			return FALSE;
+		mySTD.Zero = bits[index] >> 6 & 0x1;
+		mySTD.Reserved1 = bits[index] >> 4 & 0x3;
+		mySTD.SectionLength = ((bits[index] & 0x0F) << 8) | bits[index + 1];
+		if (mySTD.SectionLength < 5 || mySTD.SectionLength > 1021)
+			return FALSE;
+		index += 2;
+		mySTD.TransportStreamID = ((bits[index] << 8) | bits[index + 1]);
+		index += 2;
+		mySTD.Reserved2 = bits[index] >> 6;
+		mySTD.VersionNumber = (bits[index] >> 1) & 0x1F;
+		mySTD.CurrentNextIndicator = (bits[index] << 7) >> 7;
+		mySTD.SectionNumber = bits[++index];
+		mySTD.LastSectionNumber = bits[++index];
+		mySTD.OriginalNetwordID = ((bits[index] & 0x0F) << 8) | bits[index + 1];
+		index += 2;
+		mySTD.Reserved3 = bits[++index];
+		INT size = mySTD.SectionLength;
+		mySTD.CRC32 = (bits[size - 1] & 0x000000FF) << 24 | (bits[size] & 0x000000FF) << 16 | (bits[size - 1] & 0x000000FF) << 8 | (bits[size - 2] & 0x000000FF);
+		if (!CheckCRC32(bits, size + 3))//CRC32校验
+			return FALSE;
+		return TRUE;
+	}
 	BOOL TSReader::ReadPacket(TS_PACKEG_HEADER& header, TS_BLOCK& block)
 	{
 		//TS传输包固定188个字节
@@ -714,9 +748,6 @@ namespace Decode
 		header.AdaptationFieldControl = (m_bits[3] >> 4) & 0x03;
 		header.ContinuityCounter = m_bits[3] & 0x0F;
 		index += 4;
-		INT continuityCounter = (m_continuityCounter + 1) % 16;
-		if (m_continuityCounter >= 0 && header.ContinuityCounter != continuityCounter)
-			return FALSE;
 		if (header.AdaptationFieldControl == 0x2 || header.AdaptationFieldControl == 0x3)
 		{
 			TS_PACKET_ADAPTATION_FIELD myAF;
@@ -740,6 +771,18 @@ namespace Decode
 			}
 			if (header.PID >= 0x0010)
 			{
+				if (header.PID == 0x0011)//STD
+				{
+					if (header.PayloadUnitStartIndicator)//表示带有pointer_field
+					{
+						INT pointer = m_bits[index++] & 0x0F;//有效载荷的位置
+						index += pointer;
+					}
+					TS_PACKET_STD mySTD;
+					ZeroMemory(&mySTD, sizeof(mySTD));
+					if (!ReadSTD(mySTD, m_bits + index))
+						return FALSE;
+				}
 				//PES
 				for (INT i = 0;i < m_streams.GetSize();i++)
 				{
@@ -818,7 +861,6 @@ namespace Decode
 		m_programs.RemoveAll();
 		m_stream.Release();
 		m_versionNumber = -1;
-		m_continuityCounter = -1;
 		ZeroMemory(m_bits, TS_PACKET_SIZE);
 		return TRUE;
 	}
