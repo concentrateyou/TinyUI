@@ -40,6 +40,23 @@ namespace Decode
 	{
 		return ProgramPID == other.ProgramPID;
 	}
+	BOOL TS_PACKET_SERVICE_DESCRIPTOR::Parser(const BYTE* bits, LONG size)
+	{
+		return TRUE;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	TS_PACKET_SDT::TS_PACKET_SERVICE::TS_PACKET_SERVICE()
+	{
+
+	}
+	TS_PACKET_SDT::TS_PACKET_SERVICE::~TS_PACKET_SERVICE()
+	{
+		INT size = Descriptors.GetSize();
+		for (INT i = 0;i < size;i++)
+		{
+			SAFE_DELETE(Descriptors[i]);
+		}
+	}
 	//////////////////////////////////////////////////////////////////////////
 	H264VideoConfig::H264VideoConfig()
 		: m_codec(UnknownVideoCodec),
@@ -120,16 +137,16 @@ namespace Decode
 	}
 	BOOL AACAudioConfig::operator == (const AACAudioConfig& o)
 	{
-		return (m_codec == o.m_codec) && 
+		return (m_codec == o.m_codec) &&
 			(m_wChannels == o.m_wChannels) &&
-			(m_dwSampleRate == o.m_dwSampleRate) && 
+			(m_dwSampleRate == o.m_dwSampleRate) &&
 			(m_wBitsPerSample == o.m_wBitsPerSample);
 	}
 	BOOL AACAudioConfig::operator != (const AACAudioConfig& o)
 	{
-		return (m_codec != o.m_codec) || 
-			(m_wChannels != o.m_wChannels) || 
-			(m_dwSampleRate != o.m_dwSampleRate) || 
+		return (m_codec != o.m_codec) ||
+			(m_wChannels != o.m_wChannels) ||
+			(m_dwSampleRate != o.m_dwSampleRate) ||
 			(m_wBitsPerSample != o.m_wBitsPerSample);
 	}
 }

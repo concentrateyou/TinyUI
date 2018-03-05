@@ -127,7 +127,6 @@ namespace Decode
 	}
 	BOOL TSAACParser::Parse(TS_BLOCK& block)
 	{
-		//TRACE("AAC PTS:%lld\n", block.pts);
 		block.audio.size = size();
 		block.audio.data = new BYTE[block.audio.size];
 		memcpy_s(block.audio.data, block.audio.size, data(), block.audio.size);
@@ -693,35 +692,58 @@ namespace Decode
 		}
 		return TRUE;
 	}
-	BOOL TSReader::ReadSTD(TS_PACKET_STD& mySTD, const BYTE* bits)
+	BOOL TSReader::ReadSDT(TS_PACKET_SDT& mySDT, const BYTE* bits)
 	{
 		INT index = 0;
-		mySTD.TableID = bits[index++];
-		if ((mySTD.TableID != 0x42) || (mySTD.TableID > 0x46))
+		mySDT.TableID = bits[index++];
+		if ((mySDT.TableID != 0x42) || (mySDT.TableID > 0x46))
 			return FALSE;
-		mySTD.SectionSyntaxIndicator = bits[index] >> 7;
-		if (mySTD.SectionSyntaxIndicator != 0x1)
+		mySDT.SectionSyntaxIndicator = bits[index] >> 7;
+		if (mySDT.SectionSyntaxIndicator != 0x1)
 			return FALSE;
-		mySTD.Zero = bits[index] >> 6 & 0x1;
-		mySTD.Reserved1 = bits[index] >> 4 & 0x3;
-		mySTD.SectionLength = ((bits[index] & 0x0F) << 8) | bits[index + 1];
-		if (mySTD.SectionLength < 5 || mySTD.SectionLength > 1021)
+		mySDT.Reserved1 = bits[index] >> 6 & 0x1;
+		mySDT.Reserved2 = bits[index] >> 4 & 0x3;
+		mySDT.SectionLength = ((bits[index] & 0x0F) << 8) | bits[index + 1];
+		if (mySDT.SectionLength < 5 || mySDT.SectionLength > 1021)
 			return FALSE;
 		index += 2;
-		mySTD.TransportStreamID = ((bits[index] << 8) | bits[index + 1]);
+		mySDT.TransportStreamID = ((bits[index] << 8) | bits[index + 1]);
 		index += 2;
-		mySTD.Reserved2 = bits[index] >> 6;
-		mySTD.VersionNumber = (bits[index] >> 1) & 0x1F;
-		mySTD.CurrentNextIndicator = (bits[index] << 7) >> 7;
-		mySTD.SectionNumber = bits[++index];
-		mySTD.LastSectionNumber = bits[++index];
-		mySTD.OriginalNetwordID = ((bits[index] & 0x0F) << 8) | bits[index + 1];
+		mySDT.Reserved3 = bits[index] >> 6;
+		mySDT.VersionNumber = (bits[index] >> 1) & 0x1F;
+		mySDT.CurrentNextIndicator = (bits[index] << 7) >> 7;
+		mySDT.SectionNumber = bits[++index];
+		mySDT.LastSectionNumber = bits[++index];
+		index += 1;
+		mySDT.OriginalNetwordID = ((bits[index] & 0x0F) << 8) | bits[index + 1];
 		index += 2;
-		mySTD.Reserved3 = bits[++index];
-		INT size = mySTD.SectionLength;
-		mySTD.CRC32 = (bits[size - 1] & 0x000000FF) << 24 | (bits[size] & 0x000000FF) << 16 | (bits[size - 1] & 0x000000FF) << 8 | (bits[size - 2] & 0x000000FF);
+		mySDT.Reserved4 = bits[++index];
+		INT size = mySDT.SectionLength;
+		mySDT.CRC32 = (bits[size - 1] & 0x000000FF) << 24 | (bits[size] & 0x000000FF) << 16 | (bits[size - 1] & 0x000000FF) << 8 | (bits[size - 2] & 0x000000FF);
 		if (!CheckCRC32(bits, size + 3))//CRC32校验
 			return FALSE;
+		for (INT i = 0;i < size - 4;i++)
+		{
+			TS_PACKET_SDT::TS_PACKET_SERVICE s;
+			s.ServiceID = bits[index] << 8 | bits[index + 1];
+			index += 2;
+			s.Reserved = (bits[index] & 0x1C) >> 2;
+			s.EITScheduleFlag = (bits[index] & 0x02) >> 1;
+			s.EITPresentFollowingFlag = bits[index] & 0x01;
+			index += 1;
+			s.RunningStatus = (bits[index] & 0xe0) >> 5;
+			s.FreeCAMode = (bits[index] & 0x10) >> 4;
+			s.DescriptorsLoopLength = (bits[index] & 0x0F) << 8 | bits[index + 1];
+			index += 2;
+			if (s.DescriptorsLoopLength)
+			{
+				TS_PACKET_DESCRIPTOR* desc = new TS_PACKET_SERVICE_DESCRIPTOR();
+				desc->Parser(bits, s.DescriptorsLoopLength);
+				s.Descriptors.Add(desc);
+			}
+			index += s.DescriptorsLoopLength;
+			mySDT.Services.Add(s);
+		}
 		return TRUE;
 	}
 	BOOL TSReader::ReadPacket(TS_PACKEG_HEADER& header, TS_BLOCK& block)
@@ -778,9 +800,9 @@ namespace Decode
 						INT pointer = m_bits[index++] & 0x0F;//有效载荷的位置
 						index += pointer;
 					}
-					TS_PACKET_STD mySTD;
+					TS_PACKET_SDT mySTD;
 					ZeroMemory(&mySTD, sizeof(mySTD));
-					if (!ReadSTD(mySTD, m_bits + index))
+					if (!ReadSDT(mySTD, m_bits + index))
 						return FALSE;
 				}
 				//PES

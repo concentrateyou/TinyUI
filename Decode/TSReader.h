@@ -99,7 +99,7 @@ namespace Decode
 		BOOL	ReadAF(TS_PACKET_ADAPTATION_FIELD& myAF, const BYTE* bits);
 		BOOL	ReadPAT(TS_PACKET_PAT& myPAT, TinyArray<TS_PACKET_PROGRAM>& programs, const BYTE* bits);
 		BOOL	ReadPTM(TS_PACKET_PMT& myPTM, TinyArray<TS_PACKET_STREAM*>& streams, const BYTE* bits);
-		BOOL	ReadSTD(TS_PACKET_STD& mySTD, const BYTE* bits);
+		BOOL	ReadSDT(TS_PACKET_SDT& mySDT, const BYTE* bits);
 	private:
 		LONG							m_size;
 		BYTE							m_bits[TS_PACKET_SIZE];

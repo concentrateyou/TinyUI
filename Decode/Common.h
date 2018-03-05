@@ -591,7 +591,7 @@ namespace Decode
 	class TS_PACKET_SECTION
 	{
 	public:
-		BYTE TableID;
+		BYTE TableID : 8;
 		BYTE SectionSyntaxIndicator : 1;
 		BYTE Zero : 1;
 		BYTE Reserved1 : 2;
@@ -626,18 +626,59 @@ namespace Decode
 		UINT32 CRC32;
 	};
 
-	class TS_PACKET_STD : public TS_PACKET_SECTION
+	class TS_PACKET_DESCRIPTOR
 	{
 	public:
-		USHORT TransportStreamID : 16;
+		virtual BOOL Parser(const BYTE* bits, LONG size) = 0;
+	public:
+		BYTE DescriptorTag;
+		BYTE DescriptorLength;
+	};
+
+	class TS_PACKET_SERVICE_DESCRIPTOR : public TS_PACKET_DESCRIPTOR
+	{
+	public:
+		BYTE ServiceType;
+		string ProviderName;
+		string ServiceName;
+	public:
+		BOOL Parser(const BYTE* bits, LONG size) OVERRIDE;
+	};
+
+	class TS_PACKET_SDT : public TS_PACKET_SECTION
+	{
+	public:
+		class TS_PACKET_SERVICE
+		{
+		public:
+			USHORT	ServiceID : 16;
+			BYTE	Reserved : 6;
+			BYTE	EITScheduleFlag : 1;
+			BYTE	EITPresentFollowingFlag : 1;
+			BYTE	RunningStatus : 3;
+			BYTE	FreeCAMode : 1;
+			USHORT	DescriptorsLoopLength;
+		public:
+			TS_PACKET_SERVICE();
+			~TS_PACKET_SERVICE();
+		public:
+			TinyArray<TS_PACKET_DESCRIPTOR*> Descriptors;
+		};
+	public:
+		BYTE TableID : 8;
+		BYTE SectionSyntaxIndicator : 1;
+		BYTE Reserved1 : 1;
 		BYTE Reserved2 : 2;
+		USHORT SectionLength : 12;
+		USHORT TransportStreamID : 16;
+		BYTE Reserved3 : 2;
 		BYTE VersionNumber : 5;
 		BYTE CurrentNextIndicator : 1;
 		BYTE SectionNumber : 8;
 		BYTE LastSectionNumber : 8;
 		USHORT OriginalNetwordID : 16;
-		BYTE Reserved3;
-		//Loop;
+		BYTE Reserved4 : 8;
+		TinyArray<TS_PACKET_SERVICE> Services;
 		UINT32 CRC32;
 	};
 
@@ -717,14 +758,6 @@ namespace Decode
 			}video;
 		};
 	}TS_BLOCK;
-
-	class TS_PACKET_DESCRIPTOR
-	{
-	public:
-		BYTE DescriptorTag;
-		BYTE DescriptorLength;
-		CHAR Context[256];
-	};
 
 	typedef Callback<void(const BYTE*, LONG, BYTE, LPVOID)> ConfigCallback;
 
