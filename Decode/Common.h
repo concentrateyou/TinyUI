@@ -626,7 +626,7 @@ namespace Decode
 		UINT32 CRC32;
 	};
 
-	class TS_PACKET_DESCRIPTOR
+	class TS_PACKET_DESCRIPTOR : public TinyReference< TS_PACKET_DESCRIPTOR >
 	{
 	public:
 		virtual BOOL Parser(const BYTE* bits, LONG size) = 0;
@@ -648,7 +648,7 @@ namespace Decode
 	class TS_PACKET_SDT : public TS_PACKET_SECTION
 	{
 	public:
-		class TS_PACKET_SERVICE
+		class TS_PACKET_SERVICE : public TinyReference<TS_PACKET_SERVICE>
 		{
 		public:
 			USHORT	ServiceID : 16;
@@ -659,10 +659,7 @@ namespace Decode
 			BYTE	FreeCAMode : 1;
 			USHORT	DescriptorsLoopLength;
 		public:
-			TS_PACKET_SERVICE();
-			~TS_PACKET_SERVICE();
-		public:
-			TinyArray<TS_PACKET_DESCRIPTOR*> Descriptors;
+			TinyArray<TinyScopedReferencePtr<TS_PACKET_DESCRIPTOR>> Descriptors;
 		};
 	public:
 		BYTE TableID : 8;
@@ -678,7 +675,7 @@ namespace Decode
 		BYTE LastSectionNumber : 8;
 		USHORT OriginalNetwordID : 16;
 		BYTE Reserved4 : 8;
-		TinyArray<TS_PACKET_SERVICE> Services;
+		TinyArray<TinyScopedReferencePtr<TS_PACKET_SERVICE>> Services;
 		UINT32 CRC32;
 	};
 

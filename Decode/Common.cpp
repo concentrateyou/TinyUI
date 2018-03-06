@@ -40,22 +40,26 @@ namespace Decode
 	{
 		return ProgramPID == other.ProgramPID;
 	}
+	//////////////////////////////////////////////////////////////////////////
 	BOOL TS_PACKET_SERVICE_DESCRIPTOR::Parser(const BYTE* bits, LONG size)
 	{
-		return TRUE;
-	}
-	//////////////////////////////////////////////////////////////////////////
-	TS_PACKET_SDT::TS_PACKET_SERVICE::TS_PACKET_SERVICE()
-	{
-
-	}
-	TS_PACKET_SDT::TS_PACKET_SERVICE::~TS_PACKET_SERVICE()
-	{
-		INT size = Descriptors.GetSize();
-		for (INT i = 0;i < size;i++)
-		{
-			SAFE_DELETE(Descriptors[i]);
-		}
+		INT index = 0;
+		ServiceType = bits[index++];
+		INT size1 = bits[index++];
+		if (size1 > size)
+			return FALSE;
+		ProviderName.resize(size1 + 1);
+		ProviderName[size1] = '\0';
+		memcpy_s(&ProviderName[0], size1, &bits[index], size1);
+		index += size1;
+		INT size2 = bits[index++];
+		if (size2 > size)
+			return FALSE;
+		ServiceName.resize(size2 + 1);
+		ServiceName[size2] = '\0';
+		memcpy_s(&ServiceName[0], size2, &bits[index], size2);
+		index += size2;
+		return index <= size;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	H264VideoConfig::H264VideoConfig()

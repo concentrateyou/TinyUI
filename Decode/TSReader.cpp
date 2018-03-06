@@ -3,9 +3,12 @@
 
 namespace Decode
 {
+	/// <summary>
+	/// CRC32检验
+	/// </summary>
 	static BOOL CheckCRC32(const BYTE* bits, INT size)
 	{
-		UINT32 crc = 0xffffffffu;
+		UINT32 crc = 0xFFFFFFFFu;
 		const UINT32 CrcPoly = 0x4c11db7;
 		for (INT k = 0; k < size; k++)
 		{
@@ -722,27 +725,50 @@ namespace Decode
 		mySDT.CRC32 = (bits[size - 1] & 0x000000FF) << 24 | (bits[size] & 0x000000FF) << 16 | (bits[size - 1] & 0x000000FF) << 8 | (bits[size - 2] & 0x000000FF);
 		if (!CheckCRC32(bits, size + 3))//CRC32校验
 			return FALSE;
-		for (INT i = 0;i < size - 4;i++)
+		for (INT i = 0;i < size - 12;)
 		{
-			TS_PACKET_SDT::TS_PACKET_SERVICE s;
-			s.ServiceID = bits[index] << 8 | bits[index + 1];
+			TS_PACKET_SDT::TS_PACKET_SERVICE* ps = new TS_PACKET_SDT::TS_PACKET_SERVICE();
+			if (!ps)
+				return FALSE;
+			mySDT.Services.Add(ps);
+			ps->ServiceID = bits[index] << 8 | bits[index + 1];
 			index += 2;
-			s.Reserved = (bits[index] & 0x1C) >> 2;
-			s.EITScheduleFlag = (bits[index] & 0x02) >> 1;
-			s.EITPresentFollowingFlag = bits[index] & 0x01;
+			ps->Reserved = (bits[index] & 0x1C) >> 2;
+			ps->EITScheduleFlag = (bits[index] & 0x02) >> 1;
+			ps->EITPresentFollowingFlag = bits[index] & 0x01;
 			index += 1;
-			s.RunningStatus = (bits[index] & 0xe0) >> 5;
-			s.FreeCAMode = (bits[index] & 0x10) >> 4;
-			s.DescriptorsLoopLength = (bits[index] & 0x0F) << 8 | bits[index + 1];
+			ps->RunningStatus = (bits[index] & 0xe0) >> 5;
+			ps->FreeCAMode = (bits[index] & 0x10) >> 4;
+			ps->DescriptorsLoopLength = (bits[index] & 0x0F) << 8 | bits[index + 1];
 			index += 2;
-			if (s.DescriptorsLoopLength)
+			INT offset = 0;
+			while (offset < ps->DescriptorsLoopLength)
 			{
-				TS_PACKET_DESCRIPTOR* desc = new TS_PACKET_SERVICE_DESCRIPTOR();
-				desc->Parser(bits, s.DescriptorsLoopLength);
-				s.Descriptors.Add(desc);
+				BYTE descriptorTag = bits[index++];
+				BYTE descriptorSize = bits[index++];
+				offset += (descriptorSize + 2);
+				switch (descriptorTag)
+				{
+				case 0x48:
+				{
+					TS_PACKET_DESCRIPTOR* val = new TS_PACKET_SERVICE_DESCRIPTOR();
+					val->DescriptorTag = descriptorTag;
+					val->DescriptorLength = descriptorSize;
+					if (val->Parser(bits + index, descriptorSize))
+					{
+						ps->Descriptors.Add(val);
+					}
+					else
+					{
+						SAFE_DELETE(val);
+					}
+				}
+				break;
+				}
 			}
-			index += s.DescriptorsLoopLength;
-			mySDT.Services.Add(s);
+			ASSERT(offset == ps->DescriptorsLoopLength);
+			index += ps->DescriptorsLoopLength;
+			i += (offset + 5);
 		}
 		return TRUE;
 	}

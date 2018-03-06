@@ -194,6 +194,46 @@ void TSDecoder::Invoke()
 }
 
 
+class A1
+{
+public:
+	virtual BOOL Parser(const BYTE* bits, LONG size) = 0;
+public:
+	BYTE DescriptorTag;
+	BYTE DescriptorLength;
+};
+
+class A2 : public A1
+{
+public:
+	BYTE ServiceType;
+	string ProviderName;
+	string ServiceName;
+public:
+	BOOL Parser(const BYTE* bits, LONG size) OVERRIDE
+	{
+		return TRUE;
+	}
+};
+
+class A3
+{
+public:
+	A3()
+	{
+
+	}
+	~A3()
+	{
+		for (INT i=0;i<MyArray.GetSize();i++)
+		{
+			SAFE_DELETE(MyArray[i]);
+		}
+		MyArray.RemoveAll();
+	}
+public:
+	TinyArray<A1*> MyArray;
+};
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -213,12 +253,18 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	CoInitialize(NULL);
 	avcodec_register_all();
 
+	A3 a3;
+	A1* a1 = new A2();
+	a3.MyArray.Add(a1);
+	/*TSDecoder decoder;
+	decoder.Open("D:\\10s.ts");
+	decoder.Invoke();
+	decoder.Close();*/
+
 	/*FILE* hFile1 = NULL;
 	fopen_s(&hFile1, "D:\\test.264", "wb+");*/
-
 	//FILE* hFile2 = NULL;
 	//fopen_s(&hFile2, "D:\\test.aac", "wb+");
-
 	//FLVReader reader;
 	//reader.OpenFile("D:\\10s.flv");
 	//for (;;)
@@ -255,11 +301,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	//		break;
 	//}
 	//reader.Close();
-
-	TSDecoder decoder;
-	decoder.Open("D:\\1.ts");
-	decoder.Invoke();
-	decoder.Close();
 	/*reader.OpenFile("D:\\1.ts");
 	for (;;)
 	{
@@ -300,9 +341,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 		decoder.Decode(tag, bo, so);
 	}
 	fclose(hFile);*/
-
-	CoUninitialize();
-
 	/*TinyVisualResource::GetInstance().Load("skin\\resource.xml");
 	::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
@@ -320,6 +358,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->RemoveMessageLoop();
 	TinyApplication::GetInstance()->Uninitialize();*/
 
+	CoUninitialize();
 	OleUninitialize();
 	MFShutdown();
 	WSACleanup();

@@ -9,13 +9,13 @@ using namespace std;
 
 namespace TinyUI
 {
-	void RandBytes(void* output, size_t outputSize);
-	INT RandInteger(INT min, INT max);
-	ULONGLONG RandUInteger64();
-	ULONGLONG RandGenerator(ULONGLONG range);
-	string GenerateGUID();
-	string GUIDToString(const GUID& guid);
-
+	void WINAPI RandBytes(void* output, size_t outputSize);
+	INT WINAPI RandInteger(INT min, INT max);
+	ULONGLONG WINAPI RandUInteger64();
+	ULONGLONG WINAPI RandGenerator(ULONGLONG range);
+	string WINAPI GenerateGUID();
+	string WINAPI GUIDToString(const GUID& guid);
+	UINT32 WINAPI ComputeCRC(const BYTE* bits, UINT32 size);
 	static inline INT FLS(INT x)
 	{
 		INT pos;
@@ -35,5 +35,8 @@ namespace TinyUI
 	{
 		return 1UL << FLS(x - 1);
 	}
+
+
+
 }
 

@@ -23,7 +23,9 @@ namespace Decode
 		TinyBufferArray<BYTE>	m_io;
 		vector<BYTE>			m_config;
 	};
-	//////////////////////////////////////////////////////////////////////////
+	/// <summary>
+	/// TS H264½âÎö
+	/// </summary>
 	class TSH264Parser : public TSParser
 	{
 		DISALLOW_COPY_AND_ASSIGN(TSH264Parser)
@@ -37,7 +39,9 @@ namespace Decode
 		H264Parser		m_parser;
 		ConfigCallback	m_callback;
 	};
-	//////////////////////////////////////////////////////////////////////////
+	/// <summary>
+	/// TS AAC½âÎö
+	/// </summary>
 	class TSAACParser : public TSParser
 	{
 		DISALLOW_COPY_AND_ASSIGN(TSAACParser)
