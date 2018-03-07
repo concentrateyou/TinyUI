@@ -3,6 +3,28 @@
 
 namespace Decode
 {
+	static INT AACSampleRates[16] =
+	{
+		96000, 88200, 64000, 48000, 44100, 32000,
+		24000, 22050, 16000, 12000, 11025, 8000, 7350,
+		0, 0, 0
+	};
+
+	static INT GetSampleRate(const BYTE* adts, LONG size)
+	{
+		if (!adts || size < 2)
+			return -1;
+		TinyBitReader reader;
+		reader.Initialize(adts, size);
+		reader.SkipBits(5);
+		INT samplingFrequencyIndex = 0;
+		reader.ReadBits(4, &samplingFrequencyIndex);
+		if (samplingFrequencyIndex >= 16)
+			return -1;
+		return AACSampleRates[samplingFrequencyIndex];
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	AACDecoder::AACDecoder()
 		:m_handle(NULL)
 	{
@@ -21,12 +43,14 @@ namespace Decode
 		cfg = NeAACDecGetCurrentConfiguration(m_handle);
 		cfg->dontUpSampleImplicitSBR = 1;
 		NeAACDecSetConfiguration(m_handle, cfg);
-		ULONG sampleRate = 0;
+		ULONG sampleRate1 = GetSampleRate(adts, size);
+		ULONG sampleRate2 = 0;
 		BYTE channel = 0;
-		if (NeAACDecInit2(m_handle, adts, size, &sampleRate, &channel) != 0)
+		//AAC-LC <=24000此方法采样率错误
+		if (NeAACDecInit2(m_handle, adts, size, &sampleRate2, &channel) != 0)
 			goto AAC_ERROR;
 		m_sMFT.cbSize = 0;
-		m_sMFT.nSamplesPerSec = sampleRate;
+		m_sMFT.nSamplesPerSec = sampleRate1 <= 24000 ? sampleRate2 / 2 : sampleRate2;
 		m_sMFT.nChannels = channel;
 		m_sMFT.wBitsPerSample = wBitsPerSample;
 		m_sMFT.nBlockAlign = wBitsPerSample * channel / 8;

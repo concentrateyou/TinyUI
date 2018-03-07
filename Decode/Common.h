@@ -34,6 +34,8 @@ namespace Decode
 
 #define ADTS_HEADER_MIN_SIZE	7
 
+#define TS_SYNC_BYTE  0x47
+
 #define TS_STREAM_TYPE_VIDEO_MPEG1     0x01  
 #define TS_STREAM_TYPE_VIDEO_MPEG2     0x02  
 #define TS_STREAM_TYPE_AUDIO_MPEG1     0x03  

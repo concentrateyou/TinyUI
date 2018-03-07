@@ -13,10 +13,13 @@ namespace Decode
 	public:
 		TSWriter();
 		virtual ~TSWriter();
-	public:
+		BOOL Create(LPCSTR pzFile);
+	private:
 		BOOL WritePAT();
 		BOOL WritePMT();
-		BOOL WritePES();
+		BOOL WritePES(BYTE streamType, USHORT elementaryPID);
+	private:
+		TinyComPtr<IStream>				m_stream;
 	};
 }
 

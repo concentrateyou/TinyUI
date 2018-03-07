@@ -99,13 +99,6 @@ namespace Decode
 		}
 		return TRUE;
 	}
-	//////////////////////////////////////////////////////////////////////////
-	static INT AAC_Sample_Rates[16] =
-	{
-		96000, 88200, 64000, 48000, 44100, 32000,
-		24000, 22050, 16000, 12000, 11025, 8000, 7350,
-		0, 0, 0
-	};
 	/// <summary>
 	/// 是否ADTS同步头
 	/// </summary>
@@ -182,7 +175,7 @@ namespace Decode
 	}
 	void TSAACParser::ParseAAC(TS_BLOCK& block, TinyLinkList<TS_BLOCK>& audios)
 	{
-		static FLOAT AACTimestamp = 1024.0F * 1000 / 44100;
+		static FLOAT AACTimestamp = 1024.0F * 1000 / 48000;
 		FLOAT timestamp = 0.0F;
 		TinyBitReader reader;
 		for (INT i = 0; i < (block.audio.size - ADTS_HEADER_MIN_SIZE); i++)
@@ -252,7 +245,8 @@ namespace Decode
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TSReader::TSReader()
-		:m_versionNumber(-1),
+		:m_versionNumberPAT(-1),
+		m_versionNumberPMT(-1),
 		m_size(0),
 		m_original(NULL)
 	{
@@ -432,8 +426,10 @@ namespace Decode
 		if (!CheckCRC32(bits, size + 3))
 			return FALSE;
 		//PAT没有改变
-		if (m_versionNumber == myPAT.VersionNumber)
+		if (m_versionNumberPAT == myPAT.VersionNumber)
 			return TRUE;
+		m_versionNumberPAT = myPAT.VersionNumber;
+		m_programs.RemoveAll();
 		for (;;)
 		{
 			if (index >= (size - 4))
@@ -449,7 +445,7 @@ namespace Decode
 		}
 		return TRUE;
 	}
-	BOOL TSReader::ReadPTM(TS_PACKET_PMT& myPMT, TinyArray<TS_PACKET_STREAM*>& streams, const BYTE* bits)
+	BOOL TSReader::ReadPMT(TS_PACKET_PMT& myPMT, TinyArray<TS_PACKET_STREAM*>& streams, const BYTE* bits)
 	{
 		INT index = 0;
 		myPMT.TableID = bits[index++];
@@ -492,6 +488,14 @@ namespace Decode
 		myPMT.CRC32 = (bits[myPMT.SectionLength - 1] & 0x000000FF) << 24 | (bits[myPMT.SectionLength] & 0x000000FF) << 16 | (bits[myPMT.SectionLength + 1] & 0x000000FF) << 8 | (bits[myPMT.SectionLength + 2] & 0x000000FF);
 		if (!CheckCRC32(bits, myPMT.SectionLength + 3))
 			return FALSE;
+		if (m_versionNumberPMT == myPMT.VersionNumber)
+			return TRUE;
+		m_versionNumberPMT = myPMT.VersionNumber;
+		for (INT i = 0;i < streams.GetSize();i++)
+		{
+			SAFE_DELETE(streams[i]);
+		}
+		streams.RemoveAll();
 		for (;;)
 		{
 			if (index >= (size - 4))
@@ -810,12 +814,10 @@ namespace Decode
 					INT pointer = m_bits[index++] & 0x0F;//有效载荷的位置
 					index += pointer;
 				}
-				m_programs.RemoveAll();
 				TS_PACKET_PAT myPAT;
 				ZeroMemory(&myPAT, sizeof(myPAT));
 				if (!ReadPAT(myPAT, m_programs, m_bits + index))
 					return FALSE;
-				m_versionNumber = myPAT.VersionNumber;
 			}
 			if (header.PID >= 0x0010)
 			{
@@ -886,10 +888,9 @@ namespace Decode
 							INT pointer = m_bits[index++] & 0x0F;//有效载荷的位置
 							index += pointer;
 						}
-						m_streams.RemoveAll();
 						TS_PACKET_PMT myPMT;
 						ZeroMemory(&myPMT, sizeof(myPMT));
-						if (!ReadPTM(myPMT, m_streams, m_bits + index))
+						if (!ReadPMT(myPMT, m_streams, m_bits + index))
 							return FALSE;
 						break;
 					}
@@ -908,7 +909,8 @@ namespace Decode
 		m_streams.RemoveAll();
 		m_programs.RemoveAll();
 		m_stream.Release();
-		m_versionNumber = -1;
+		m_versionNumberPAT = -1;
+		m_versionNumberPMT = -1;
 		ZeroMemory(m_bits, TS_PACKET_SIZE);
 		return TRUE;
 	}

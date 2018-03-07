@@ -903,8 +903,8 @@ namespace TinyUI
 		ITERATOR Add(const K& key, const V& value);
 		BOOL Remove(const K& key);
 		void RemoveAll();
-		ITERATOR Lookup(const K& key);
-		const ITERATOR Lookup(const K& key) const;
+		ITERATOR Find(const K& key);
+		const ITERATOR Find(const K& key) const;
 		ITERATOR SetAt(const K& key, V& value);
 		V* GetValueAt(ITERATOR pos);
 		const K* GetKeyAt(ITERATOR pos) const;
@@ -917,7 +917,7 @@ namespace TinyUI
 		ITERATOR Next(ITERATOR pos) const;
 	private:
 		typename TinyMap<K, V, KTraits, VTraits>::TinyNode* New(const K& key, const V& value);
-		typename TinyMap<K, V, KTraits, VTraits>::TinyNode* Lookup(TinyNode* ps, const K& key);
+		typename TinyMap<K, V, KTraits, VTraits>::TinyNode* Find(TinyNode* ps, const K& key);
 		void RotateL(TinyNode* ps) throw();
 		void RotateR(TinyNode* ps) throw();
 		void Add(TinyNode* ps) throw();
@@ -1004,7 +1004,7 @@ namespace TinyUI
 	template<class K, class V, class KTraits, class VTraits>
 	BOOL TinyMap<K, V, KTraits, VTraits>::Contains(const K& key)
 	{
-		return Lookup(m_pRoot, key) != NULL;
+		return Find(m_pRoot, key) != NULL;
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	BOOL TinyMap<K, V, KTraits, VTraits>::IsNIL(TinyNode *p) const throw()
@@ -1056,7 +1056,7 @@ namespace TinyUI
 	template<class K, class V, class KTraits, class VTraits>
 	BOOL TinyMap<K, V, KTraits, VTraits>::Remove(const K& key)
 	{
-		TinyNode* ps = Lookup(m_pRoot, key);
+		TinyNode* ps = Find(m_pRoot, key);
 		if (ps != NULL)
 		{
 			Remove(ps);
@@ -1077,7 +1077,7 @@ namespace TinyUI
 	template<class K, class V, class KTraits, class VTraits>
 	ITERATOR TinyMap<K, V, KTraits, VTraits>::Add(const K& key, const V& value)
 	{
-		TinyNode* ps = Lookup(m_pRoot, key);
+		TinyNode* ps = Find(m_pRoot, key);
 		if (ps == NULL)
 		{
 			TinyNode* pNew = New(key, value);
@@ -1484,19 +1484,19 @@ namespace TinyUI
 		ps->m_pParent = pTemp;
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	ITERATOR TinyMap<K, V, KTraits, VTraits>::Lookup(const K& key)
+	ITERATOR TinyMap<K, V, KTraits, VTraits>::Find(const K& key)
 	{
 		if (!m_pRoot) return NULL;
-		return Lookup(m_pRoot, key);
+		return Find(m_pRoot, key);
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	const ITERATOR TinyMap<K, V, KTraits, VTraits>::Lookup(const K& key) const
+	const ITERATOR TinyMap<K, V, KTraits, VTraits>::Find(const K& key) const
 	{
 		if (!m_pRoot) return NULL;
-		return Lookup(m_pRoot, key);
+		return Find(m_pRoot, key);
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	typename TinyMap<K, V, KTraits, VTraits>::TinyNode* TinyMap<K, V, KTraits, VTraits>::Lookup(TinyNode* ps, const K& key)
+	typename TinyMap<K, V, KTraits, VTraits>::TinyNode* TinyMap<K, V, KTraits, VTraits>::Find(TinyNode* ps, const K& key)
 	{
 		TinyNode* pKey = NULL;
 		TinyNode* pX = ps;
@@ -1550,7 +1550,7 @@ namespace TinyUI
 	template<class K, class V, class KTraits, class VTraits>
 	V* TinyMap<K, V, KTraits, VTraits>::GetValue(const K& key)
 	{
-		ITERATOR pos = Lookup(key);
+		ITERATOR pos = Find(key);
 		if (!pos) return NULL;
 		return GetValueAt(pos);
 	}
@@ -1573,7 +1573,7 @@ namespace TinyUI
 	template<class K, class V, class KTraits, class VTraits>
 	const V* TinyMap<K, V, KTraits, VTraits>::GetValue(const K& key) const
 	{
-		ITERATOR pos = Lookup(key);
+		ITERATOR pos = Find(key);
 		if (!pos) return NULL;
 		return GetValueAt(pos);
 	}
@@ -1604,12 +1604,12 @@ namespace TinyUI
 	template<class K, class V, class KTraits, class VTraits>
 	ITERATOR TinyMap<K, V, KTraits, VTraits>::operator[](const K& key) const
 	{
-		return Lookup(key);
+		return Find(key);
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	ITERATOR TinyMap<K, V, KTraits, VTraits>::SetAt(const K& key, V& value)
 	{
-		ITERATOR pos = Lookup(key);
+		ITERATOR pos = Find(key);
 		TinyNode* ps = static_cast<TinyNode*>(pos);
 		if (ps != NULL)
 		{
