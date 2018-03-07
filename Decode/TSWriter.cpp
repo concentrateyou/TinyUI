@@ -19,7 +19,25 @@ namespace Decode
 		return TRUE;
 	}
 
-	BOOL TSWriter::WritePAT()
+	BOOL TSWriter::WriteAAC()
+	{
+		return TRUE;
+	}
+	BOOL TSWriter::WriteH264()
+	{
+		return TRUE;
+	}
+
+	BOOL TSWriter::WritePAT(BYTE sPID)
+	{
+		BYTE header[4];
+		header[0] = TS_SYNC_BYTE;
+		header[1] = 0x01;
+		header[2] = sPID & 0xFF;
+		return TRUE;
+	}
+
+	BOOL TSWriter::WritePMT()
 	{
 		return TRUE;
 	}

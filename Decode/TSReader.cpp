@@ -121,6 +121,10 @@ namespace Decode
 	{
 		return TS_STREAM_TYPE_AUDIO_AAC;
 	}
+	const AACAudioConfig& TSAACParser::GetAudioConfig() const
+	{
+		return m_lastConfig;
+	}
 	BOOL TSAACParser::Parse(TS_BLOCK& block)
 	{
 		block.audio.size = size();
@@ -160,6 +164,7 @@ namespace Decode
 			AACAudioConfig config(CodecAAC, static_cast<WORD>(channels), static_cast<DWORD>(samplesPerSec), 16);
 			if (config != m_lastConfig)
 			{
+				ASSERT(samplesPerSec >= 0 && samplesPerSec < 16);
 				m_lastConfig = config;
 				if (!m_callback.IsNull())
 				{
@@ -173,9 +178,8 @@ namespace Decode
 		}
 		return TRUE;
 	}
-	void TSAACParser::ParseAAC(TS_BLOCK& block, TinyLinkList<TS_BLOCK>& audios)
+	void TSAACParser::ParseAAC(TS_BLOCK& block, TinyLinkList<TS_BLOCK>& audios, FLOAT AACTimestamp)
 	{
-		static FLOAT AACTimestamp = 1024.0F * 1000 / 48000;
 		FLOAT timestamp = 0.0F;
 		TinyBitReader reader;
 		for (INT i = 0; i < (block.audio.size - ADTS_HEADER_MIN_SIZE); i++)
@@ -211,12 +215,12 @@ namespace Decode
 		SAFE_DELETE_ARRAY(block.audio.data);
 	}
 	//////////////////////////////////////////////////////////////////////////
-	TS_PACKET_STREAM::TS_PACKET_STREAM()
+	TS_PACKET_STREAM::TS_PACKET_STREAM(ConfigCallback&& callback)
 		:PTS(-1),
 		DTS(-1),
 		m_basePTS(-1),
 		m_baseDTS(-1),
-		m_continuityCounter(-1)
+		m_configCallback(std::move(callback))
 	{
 
 	}
@@ -224,19 +228,14 @@ namespace Decode
 	{
 
 	}
-	TSParser* TS_PACKET_STREAM::GetParser(ConfigCallback& callback)
+	TSParser* TS_PACKET_STREAM::GetParser()
 	{
-		if (!m_parser)
-		{
-			if (StreamType == TS_STREAM_TYPE_AUDIO_AAC)
-			{
-				m_parser.Reset(new TSAACParser(callback));
-			}
-			if (StreamType == TS_STREAM_TYPE_VIDEO_H264)
-			{
-				m_parser.Reset(new TSH264Parser(callback));
-			}
-		}
+		if (m_parser != NULL)
+			return m_parser;
+		if (StreamType == TS_STREAM_TYPE_AUDIO_AAC)
+			m_parser.Reset(new TSAACParser(m_configCallback));
+		if (StreamType == TS_STREAM_TYPE_VIDEO_H264)
+			m_parser.Reset(new TSH264Parser(m_configCallback));
 		return m_parser;
 	}
 	BOOL TS_PACKET_STREAM::operator == (const TS_PACKET_STREAM& other)
@@ -248,7 +247,8 @@ namespace Decode
 		:m_versionNumberPAT(-1),
 		m_versionNumberPMT(-1),
 		m_size(0),
-		m_original(NULL)
+		m_original(NULL),
+		m_audioSR(0.0F)
 	{
 		ZeroMemory(m_bits, TS_PACKET_SIZE);
 	}
@@ -303,7 +303,7 @@ namespace Decode
 			{
 				if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)//音频可能包括多帧,视频只有一帧
 				{
-					TSAACParser::ParseAAC(block, m_audios);
+					TSAACParser::ParseAAC(block, m_audios, m_audioSR);
 					if (m_audios.GetSize() > 0)
 					{
 						ITERATOR s = m_audios.First();
@@ -319,6 +319,21 @@ namespace Decode
 			}
 		}
 		return TRUE;
+	}
+	void TSReader::OnConfigCallback(const BYTE* bits, LONG size, BYTE streamType, LPVOID ps)
+	{
+		if (streamType == TS_STREAM_TYPE_AUDIO_AAC)
+		{
+			TSAACParser* aac = static_cast<TSAACParser*>(ps);
+			if (aac != NULL)
+			{
+				m_audioSR = 1024.0F * 1000 / static_cast<FLOAT>(aac->GetAudioConfig().GetSampleRate());
+			}
+		}
+		if (!m_configCallback.IsNull())
+		{
+			m_configCallback(bits, size, streamType, ps);
+		}
 	}
 	INT TSReader::ReadAF(TS_PACKET_ADAPTATION_FIELD& myAF, const BYTE* bits)
 	{
@@ -445,7 +460,7 @@ namespace Decode
 		}
 		return TRUE;
 	}
-	BOOL TSReader::ReadPMT(TS_PACKET_PMT& myPMT, TinyArray<TS_PACKET_STREAM*>& streams, const BYTE* bits)
+	BOOL TSReader::ReadPMT(TS_PACKET_PMT& myPMT, TinyArray<TinyScopedReferencePtr<TS_PACKET_STREAM>>& streams, const BYTE* bits)
 	{
 		INT index = 0;
 		myPMT.TableID = bits[index++];
@@ -500,7 +515,9 @@ namespace Decode
 		{
 			if (index >= (size - 4))
 				break;
-			TS_PACKET_STREAM* stream = new TS_PACKET_STREAM();
+			TS_PACKET_STREAM* stream = new TS_PACKET_STREAM(BindCallback(&TSReader::OnConfigCallback, this));
+			if (!stream)
+				return FALSE;
 			stream->StreamType = bits[index++];
 			stream->Reserved1 = bits[index] >> 5;
 			stream->ElementaryPID = ((bits[index] << 8) | bits[index + 1]) & 0x1FFF;
@@ -684,7 +701,7 @@ namespace Decode
 			}
 		}
 		ASSERT(index == myPES.PESHeaderDataLength + 9);
-		TSParser* parser = stream->GetParser(std::move(m_configCallback));
+		TSParser* parser = stream->GetParser();
 		if (parser != NULL)
 		{
 			parser->Reset();
@@ -800,6 +817,16 @@ namespace Decode
 		header.AdaptationFieldControl = (m_bits[3] >> 4) & 0x03;
 		header.ContinuityCounter = m_bits[3] & 0x0F;
 		index += 4;
+
+		INT* val = m_continuityCounterMap.GetValue(header.PID);
+		INT continuityCounter = (val == NULL ? -1 : *val);
+		continuityCounter = (continuityCounter + 1) % 16;
+		if (continuityCounter != header.ContinuityCounter)
+		{
+			TRACE("Invalid continuityCounter:%d,PID:%d%n", continuityCounter, header.PID);
+		}
+		m_continuityCounterMap.SetAt(header.PID, continuityCounter);
+
 		if (header.AdaptationFieldControl == 0x2 || header.AdaptationFieldControl == 0x3)
 		{
 			TS_PACKET_ADAPTATION_FIELD myAF;
@@ -836,7 +863,7 @@ namespace Decode
 				//PES
 				for (INT i = 0;i < m_streams.GetSize();i++)
 				{
-					TS_PACKET_STREAM* current = m_streams[i];
+					TS_PACKET_STREAM* current = m_streams[i].Ptr();
 					if (current->ElementaryPID == header.PID)
 					{
 						if (header.PayloadUnitStartIndicator)
@@ -848,7 +875,7 @@ namespace Decode
 									block.pts = m_original->PTS;
 									block.dts = m_original->DTS;
 									block.streamType = m_original->StreamType;
-									TSParser* parser = m_original->GetParser(std::move(m_configCallback));
+									TSParser* parser = m_original->GetParser();
 									if (parser != NULL)
 									{
 										if (!parser->Parse(block))
@@ -866,7 +893,7 @@ namespace Decode
 						else
 						{
 							ASSERT(m_original == current);
-							TSParser* parser = current->GetParser(std::move(m_configCallback));
+							TSParser* parser = current->GetParser();
 							if (parser != NULL)
 							{
 								INT size = TS_PACKET_SIZE - index;
@@ -902,10 +929,7 @@ namespace Decode
 	BOOL TSReader::Close()
 	{
 		m_original = NULL;
-		for (INT i = 0;i < m_streams.GetSize();i++)
-		{
-			SAFE_DELETE(m_streams[i]);
-		}
+		m_continuityCounterMap.RemoveAll();
 		m_streams.RemoveAll();
 		m_programs.RemoveAll();
 		m_stream.Release();

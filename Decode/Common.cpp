@@ -35,6 +35,12 @@ namespace Decode
 			return FALSE;
 		return TRUE;
 	}
+	static INT AACSampleRates[16] =
+	{
+		96000, 88200, 64000, 48000, 44100, 32000,
+		24000, 22050, 16000, 12000, 11025, 8000, 7350,
+		0, 0, 0
+	};
 	//////////////////////////////////////////////////////////////////////////
 	BOOL TS_PACKET_PROGRAM::operator == (const TS_PACKET_PROGRAM& other)
 	{
@@ -152,5 +158,11 @@ namespace Decode
 			(m_wChannels != o.m_wChannels) ||
 			(m_dwSampleRate != o.m_dwSampleRate) ||
 			(m_wBitsPerSample != o.m_wBitsPerSample);
+	}
+
+	DWORD AACAudioConfig::GetSampleRate() const
+	{
+		ASSERT(m_dwSampleRate >= 0 && m_dwSampleRate < 16);
+		return AACSampleRates[m_dwSampleRate];
 	}
 }

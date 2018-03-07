@@ -792,6 +792,7 @@ namespace Decode
 		AACAudioConfig(const AACAudioConfig& o);
 		BOOL operator == (const AACAudioConfig& o);
 		BOOL operator != (const AACAudioConfig& o);
+		DWORD GetSampleRate() const;
 	private:
 		AudioCodec		m_codec;
 		WORD			m_wChannels;

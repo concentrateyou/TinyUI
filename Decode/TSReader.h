@@ -51,7 +51,8 @@ namespace Decode
 	public:
 		BYTE	GetStreamType() const OVERRIDE;
 		BOOL	Parse(TS_BLOCK& block) OVERRIDE;
-		static void	ParseAAC(TS_BLOCK& block, TinyLinkList<TS_BLOCK>& audios);
+		const AACAudioConfig& GetAudioConfig() const;
+		static void	ParseAAC(TS_BLOCK& block, TinyLinkList<TS_BLOCK>& audios, FLOAT AACTimestamp);
 	private:
 		BOOL	ParseADTS(BYTE* bits, LONG size);
 	private:
@@ -60,7 +61,7 @@ namespace Decode
 		ConfigCallback	m_callback;
 	};
 	//////////////////////////////////////////////////////////////////////////
-	class TS_PACKET_STREAM
+	class TS_PACKET_STREAM : public TinyReference< TS_PACKET_STREAM >
 	{
 		friend class TSReader;
 	public:
@@ -73,14 +74,14 @@ namespace Decode
 		LONGLONG PTS;
 		LONGLONG DTS;
 	public:
-		TS_PACKET_STREAM();
+		TS_PACKET_STREAM(ConfigCallback&& callback);
 		~TS_PACKET_STREAM();
 		BOOL operator == (const TS_PACKET_STREAM& other);
-		TSParser* GetParser(ConfigCallback& callback);
+		TSParser* GetParser();
 	private:
 		LONGLONG				m_baseDTS;
 		LONGLONG				m_basePTS;
-		INT						m_continuityCounter;
+		ConfigCallback			m_configCallback;
 		TinyScopedPtr<TSParser>	m_parser;
 	};
 	/// <summary>
@@ -98,23 +99,26 @@ namespace Decode
 		BOOL	Close();
 		BOOL	ReadBlock(TS_BLOCK& block);
 	private:
+		void	OnConfigCallback(const BYTE*, LONG, BYTE, LPVOID);
 		BOOL	ReadPacket(TS_PACKEG_HEADER& header, TS_BLOCK& block);
 		BOOL	ReadPES(TS_PACKET_STREAM* stream, TS_PACKET_PES& myPES, TS_BLOCK& block, const BYTE* bits, INT offset);
 		BOOL	ReadAF(TS_PACKET_ADAPTATION_FIELD& myAF, const BYTE* bits);
 		BOOL	ReadPAT(TS_PACKET_PAT& myPAT, TinyArray<TS_PACKET_PROGRAM>& programs, const BYTE* bits);
-		BOOL	ReadPMT(TS_PACKET_PMT& myPTM, TinyArray<TS_PACKET_STREAM*>& streams, const BYTE* bits);
+		BOOL	ReadPMT(TS_PACKET_PMT& myPTM, TinyArray<TinyScopedReferencePtr<TS_PACKET_STREAM>>& streams, const BYTE* bits);
 		BOOL	ReadSDT(TS_PACKET_SDT& mySDT, const BYTE* bits);
 	private:
 		LONG							m_size;
 		BYTE							m_bits[TS_PACKET_SIZE];
 		INT								m_versionNumberPAT;
 		INT								m_versionNumberPMT;
+		FLOAT							m_audioSR;//“Ù∆µ≤…—˘¬ HZ
 		ConfigCallback					m_configCallback;
 		TS_PACKET_STREAM*				m_original;
 		TinyLinkList<TS_BLOCK>			m_audios;
 		TinyComPtr<IStream>				m_stream;
-		TinyArray<TS_PACKET_STREAM*>	m_streams;
+		TinyMap<USHORT, INT>			m_continuityCounterMap;
 		TinyArray<TS_PACKET_PROGRAM>	m_programs;
+		TinyArray<TinyScopedReferencePtr<TS_PACKET_STREAM>>	m_streams;
 	};
 }
 

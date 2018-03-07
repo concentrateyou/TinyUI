@@ -15,11 +15,13 @@ namespace Decode
 		virtual ~TSWriter();
 		BOOL Create(LPCSTR pzFile);
 	private:
-		BOOL WritePAT();
+		BOOL WriteAAC();
+		BOOL WriteH264();
+		BOOL WritePAT(BYTE sPID);
 		BOOL WritePMT();
 		BOOL WritePES(BYTE streamType, USHORT elementaryPID);
 	private:
-		TinyComPtr<IStream>				m_stream;
+		TinyComPtr<IStream>		m_stream;
 	};
 }
 
