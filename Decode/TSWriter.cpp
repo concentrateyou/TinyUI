@@ -28,12 +28,16 @@ namespace Decode
 		return TRUE;
 	}
 
-	BOOL TSWriter::WritePAT(BYTE sPID)
+	BOOL TSWriter::WritePAT(BYTE sPID, BOOL bPL, BOOL bPCR)
 	{
-		BYTE header[4];
-		header[0] = TS_SYNC_BYTE;
-		header[1] = 0x01;
-		header[2] = sPID & 0xFF;
+		TinyBitWriter writer;
+		writer.Initialize(m_bits, TS_PACKET_SIZE);
+		writer.WriteBits(8, TS_SYNC_BYTE);
+		writer.WriteBits(1, 0);
+		writer.WriteBits(1, bPL ? 1 : 0);
+		writer.WriteBits(1, 0);
+		writer.WriteBits(13, sPID);
+		//writer.WriteBits(2, );
 		return TRUE;
 	}
 

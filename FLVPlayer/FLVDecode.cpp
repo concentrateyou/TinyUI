@@ -28,7 +28,8 @@ namespace FLVPlayer
 	BOOL FLVDecode::Submit()
 	{
 		//if (m_reader.OpenFile("D:\\Media\\1.flv"))
-		if (m_reader.OpenURL("rtmp://10.10.13.98/live/lb_junlvjuchang_720p", BindCallback(&FLVDecode::OnError, this)))
+		/*if (m_reader.OpenURL("rtmp://10.10.13.98/live/lb_junlvjuchang_720p", BindCallback(&FLVDecode::OnError, this)))*/
+		if (m_reader.OpenFile("D:\\Demo\\4.flv"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);
@@ -120,17 +121,11 @@ namespace FLVPlayer
 				{
 					if (block.video.packetType == FLV_AVCDecoderConfigurationRecord)
 					{
-						if (!m_decoder)
-						{
-							m_decoder.Reset(new TinyMFIntelQSVDecode());
-						}
-						BOOL bRes = m_decoder->Open(m_size, 25);
 						BYTE* bo = NULL;
 						DWORD so = 0;
 						SampleTag sampleTag;
 						sampleTag.bits = block.video.data;
 						sampleTag.size = block.video.size;
-						bRes = m_decoder->Decode(sampleTag, bo, so);
 						if (!m_x264->Initialize(m_size, m_size))
 						{
 							goto _ERROR;
@@ -160,9 +155,6 @@ namespace FLVPlayer
 						memcpy_s(tag.bits, tag.size, block.video.data, block.video.size);
 						tag.sampleDTS = block.dts;
 						tag.samplePTS = block.pts;
-						BYTE* bo = NULL;
-						DWORD so = 0;
-						BOOL bRes = m_decoder->Decode(tag, bo, so);
 						m_videoQueue.Push(tag);
 					}
 				}
@@ -411,9 +403,8 @@ namespace FLVPlayer
 				//}
 				BYTE* bo = NULL;
 				LONG  so = 0;
-				if (m_decode.m_x264->Decode(tag, bo, so))
+				if (m_decode.m_x264->Decode(tag, bo, so) == 0)
 				{
-					SAFE_DELETE_ARRAY(tag.bits);
 					tag.bits = new BYTE[so];
 					memcpy(tag.bits, bo, so);
 					tag.size = so;
@@ -424,10 +415,6 @@ namespace FLVPlayer
 						m_decode.m_basePTS = tag.samplePTS;
 					}
 					m_queue.Push(tag);
-				}
-				else
-				{
-					SAFE_DELETE_ARRAY(tag.bits);
 				}
 			}
 		}

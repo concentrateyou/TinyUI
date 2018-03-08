@@ -17,10 +17,11 @@ namespace Decode
 	private:
 		BOOL WriteAAC();
 		BOOL WriteH264();
-		BOOL WritePAT(BYTE sPID);
+		BOOL WritePAT(BYTE sPID, BOOL bPL, BOOL bPCR);
 		BOOL WritePMT();
 		BOOL WritePES(BYTE streamType, USHORT elementaryPID);
 	private:
+		BYTE					m_bits[TS_PACKET_SIZE];
 		TinyComPtr<IStream>		m_stream;
 	};
 }

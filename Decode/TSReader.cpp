@@ -252,7 +252,6 @@ namespace Decode
 	{
 		ZeroMemory(m_bits, TS_PACKET_SIZE);
 	}
-
 	TSReader::~TSReader()
 	{
 	}
@@ -817,7 +816,6 @@ namespace Decode
 		header.AdaptationFieldControl = (m_bits[3] >> 4) & 0x03;
 		header.ContinuityCounter = m_bits[3] & 0x0F;
 		index += 4;
-
 		INT* val = m_continuityCounterMap.GetValue(header.PID);
 		INT continuityCounter = (val == NULL ? -1 : *val);
 		continuityCounter = (continuityCounter + 1) % 16;
@@ -826,7 +824,6 @@ namespace Decode
 			TRACE("Invalid continuityCounter:%d,PID:%d%n", continuityCounter, header.PID);
 		}
 		m_continuityCounterMap.SetAt(header.PID, continuityCounter);
-
 		if (header.AdaptationFieldControl == 0x2 || header.AdaptationFieldControl == 0x3)
 		{
 			TS_PACKET_ADAPTATION_FIELD myAF;

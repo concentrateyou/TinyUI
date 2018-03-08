@@ -93,7 +93,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\ThirdParty\mpg123\lib\x86;..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\libfaad\lib\x86;..\ThirdParty\librtmp\lib\x86;..\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\Debug;$(VLD_DIR)\lib\Win32;..\ThirdParty\mpg123\lib\x86;..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\libfaad\lib\x86;..\ThirdParty\librtmp\lib\x86</AdditionalLibraryDirectories>
       <AdditionalDependencies>TinyUI.lib;Decode.lib;dwmapi.lib;dxva2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

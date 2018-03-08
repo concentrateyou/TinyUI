@@ -85,7 +85,7 @@ namespace Decode
 		TinyScopedPtr<TSParser>	m_parser;
 	};
 	/// <summary>
-	/// TS文件解析
+	/// TS文件解析,目前只支持AAC+H264
 	/// </summary>
 	class TSReader
 	{
