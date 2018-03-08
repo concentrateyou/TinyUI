@@ -60,8 +60,6 @@ namespace TSPlayer
 	void MAudioRenderTask::OnMessagePump()
 	{
 		CoInitializeEx(NULL, COINIT_MULTITHREADED);
-		TinyPerformanceTime	 timeQPC;
-		TinyPerformanceTimer timer;
 		SampleTag tag = { 0 };
 		for (;;)
 		{
@@ -74,14 +72,9 @@ namespace TSPlayer
 				Sleep(15);
 				continue;
 			}
-			if (tag.samplePTS == m_clock.GetBasePTS())
-			{
-				m_clock.SetBaseTime(GetQPCTimeMS());
-			}
-			while (m_clock.GetBasePTS() == INVALID_TIME);
+			m_clock.SetAudioPTS(tag.samplePTS);
 			if (!m_bInitialize)
 			{
-				timeQPC.BeginTime();
 				if (!m_audio.Open(m_task.GetFormat()))
 				{
 					break;
@@ -91,18 +84,11 @@ namespace TSPlayer
 					break;
 				}
 				m_bInitialize = TRUE;
-				timeQPC.EndTime();
-				m_clock.AddBaseTime(static_cast<DWORD>(timeQPC.GetMillisconds()));
-				LONGLONG ms = GetQPCTimeMS() - m_clock.GetBaseTime();
-				LONG delay = static_cast<LONG>(tag.samplePTS - ms);
-				if (timer.Waiting(delay, 1000))
+				if (!m_callback.IsNull())
 				{
-					if (!m_callback.IsNull())
-					{
-						m_callback(tag.bits, tag.size);
-					}
-					m_audio.Play(tag.bits, tag.size, 5000);
+					m_callback(tag.bits, tag.size);
 				}
+				m_audio.Play(tag.bits, tag.size, 5000);
 			}
 			else
 			{
@@ -112,6 +98,7 @@ namespace TSPlayer
 				}
 				m_audio.Play(tag.bits, tag.size, 5000);
 			}
+			m_clock.UnlockVideo();
 			SAFE_DELETE_ARRAY(tag.bits);
 		}
 		m_task.GetAudioQueue().RemoveAll();

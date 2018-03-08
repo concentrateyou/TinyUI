@@ -4,7 +4,7 @@
 namespace TSPlayer
 {
 	/// <summary>
-	/// 相对时间戳
+	/// 相对时间戳,视频同步音频
 	/// </summary>
 	class MClock
 	{
@@ -12,15 +12,13 @@ namespace TSPlayer
 	public:
 		MClock();
 		~MClock();
-		void SetBaseTime(LONGLONG timestamp);
-		void AddBaseTime(LONGLONG dwMS);
-		LONGLONG GetBaseTime() const;
-		LONGLONG GetBasePTS() const;
-		void SetBasePTS(LONGLONG basePTS);
+		void SetAudioPTS(LONGLONG audioPTS);
+		LONGLONG GetAudioPTS();
+		BOOL LockVideo(DWORD dwMS = INFINITE);
+		void UnlockVideo();
 	private:
-		LONGLONG	m_baseTime;
-		LONGLONG	m_basePTS;
-		TinyLock	m_lock;
+		LONGLONG	m_audioPTS;
+		TinyEvent	m_signal;
 	};
 }
 

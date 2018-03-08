@@ -58,6 +58,7 @@ namespace FLVPlayer
 		TinyEvent				m_close;
 		TinySoundPlayer			m_player;
 		FLVVAudioTask&			m_decode;
+		TinyPerformanceTime		m_time;
 	};
 
 	class FLVVideoTask : public TinyTask
@@ -90,8 +91,8 @@ namespace FLVPlayer
 	private:
 		DWORD					m_dwMS;
 		BOOL					m_bFlag;
-		BOOL					m_bBreak;
 		LONGLONG				m_wPTS;
+		TinyEvent				m_close;
 		FLVVideoTask&			m_decode;
 		TinyPerformanceTime		m_time;
 		DX9Graphics2D			m_graphics;
@@ -117,7 +118,8 @@ namespace FLVPlayer
 		void	OnError(INT iError);
 	private:
 		BOOL						m_bFirstI;
-		LONG						m_currentAudioPTS;
+		TinyLock					m_lockTime;
+		LONG						m_baseTime;
 		LONG						m_basePTS;
 		HWND						m_hWND;
 		TinySize					m_size;
@@ -126,7 +128,6 @@ namespace FLVPlayer
 		TinyLock					m_lock1;
 		TinyLock					m_lock2;
 		TinyEvent					m_close;
-		TinyEvent					m_audioEvent;
 		PacketQueue					m_audioQueue;
 		PacketQueue					m_videoQueue;
 		TinyScopedPtr<x264Decoder>	m_x264;

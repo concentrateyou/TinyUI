@@ -88,8 +88,7 @@ namespace TSPlayer
 		m_videoTask.GetVideoQueue().RemoveAll();
 		m_task.GetVideoQueue().RemoveAll();
 		m_task.GetAudioQueue().RemoveAll();
-		m_clock.SetBasePTS(INVALID_TIME);
-		m_clock.SetBaseTime(INVALID_TIME);
+		m_clock.SetAudioPTS(INVALID_TIME);
 		Sleep(300);
 		return bRes;
 	}

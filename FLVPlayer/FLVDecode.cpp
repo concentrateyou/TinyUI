@@ -12,13 +12,13 @@ namespace FLVPlayer
 		m_audioTask(*this),
 		m_audioRender(m_audioTask),
 		m_videoRender(m_videoTask),
-		m_baseTime(-1),
-		m_basePTS(-1),
-		m_bFirstI(FALSE)
+		m_bFirstI(FALSE),
+		m_currentAudioPTS(-1)
 	{
 		m_aac.Reset(new AACDecoder());
 		m_x264.Reset(new x264Decoder());
 		m_close.CreateEvent(FALSE, FALSE, NULL, NULL);
+		m_audioEvent.CreateEvent(FALSE, FALSE, NULL, NULL);
 	}
 
 	FLVDecode::~FLVDecode()
@@ -27,9 +27,7 @@ namespace FLVPlayer
 	}
 	BOOL FLVDecode::Submit()
 	{
-		//if (m_reader.OpenFile("D:\\Media\\1.flv"))
-		/*if (m_reader.OpenURL("rtmp://10.10.13.98/live/lb_junlvjuchang_720p", BindCallback(&FLVDecode::OnError, this)))*/
-		if (m_reader.OpenFile("D:\\Demo\\4.flv"))
+		if (m_reader.OpenFile("D:\\Demo\\9.flv"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);
@@ -205,15 +203,8 @@ namespace FLVPlayer
 			SampleTag tag = m_decode.m_queue.Pop();
 			if (tag.size <= 0)
 				continue;
-			if (tag.samplePTS == m_decode.m_decode.m_basePTS)
-			{
-				TinyAutoLock lock(m_decode.m_decode.m_lockTime);
-				m_decode.m_decode.m_baseTime = timeGetTime();
-			}
-			while (m_decode.m_decode.m_baseTime == -1);
 			if (!m_bInitialize)
 			{
-				m_time.BeginTime();
 				m_bInitialize = TRUE;
 				if (!m_player.SetFormat(m_decode.m_decode.m_aac->GetFormat(), tag.size * 3))
 					break;
@@ -225,26 +216,15 @@ namespace FLVPlayer
 				vals[2].dwOffset = tag.size * 3 - 1;
 				vals[2].hEventNotify = m_events[2];
 				m_player.SetNotifys(3, vals);
-				m_time.EndTime();
-				m_decode.m_decode.m_lockTime.Lock();
-				m_decode.m_decode.m_baseTime += m_time.GetMillisconds();
-				m_decode.m_decode.m_lockTime.Unlock();
-				DWORD dwMS = timeGetTime() - m_decode.m_decode.m_baseTime;
-				INT offset = tag.samplePTS - dwMS;
-				if (timer.Waiting(offset, 1000))
-				{
-					m_player.Fill(tag.bits, tag.size, dwOffset);
-				}
+				m_player.Fill(tag.bits, tag.size, dwOffset);
 				m_player.Play();
 			}
 			else
 			{
 				m_player.Fill(tag.bits, tag.size, dwOffset);
 			}
+			m_decode.m_decode.m_currentAudioPTS = tag.samplePTS;
 			SAFE_DELETE_ARRAY(tag.bits);
-			DWORD dwMS = timeGetTime() - m_decode.m_decode.m_baseTime;
-			INT offset = tag.samplePTS - dwMS;
-			TRACE("Audio Delay:%d\n", offset);
 			HANDLE handles[3] = { m_events[0],m_events[1],m_events[2] };
 			HRESULT hRes = WaitForMultipleObjects(3, handles, FALSE, INFINITE);
 			switch (hRes)
@@ -259,6 +239,7 @@ namespace FLVPlayer
 				dwOffset = m_player.GetSize() / 3 * 2;
 				break;
 			}
+			m_decode.m_decode.m_audioEvent.SetEvent();
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -266,9 +247,9 @@ namespace FLVPlayer
 		:m_decode(decode),
 		m_wPTS(0),
 		m_bFlag(FALSE),
+		m_bBreak(FALSE),
 		m_dwMS(0)
 	{
-		m_close.CreateEvent(FALSE, FALSE, NULL, NULL);
 	}
 	FLVVideoRender::~FLVVideoRender()
 	{
@@ -276,6 +257,7 @@ namespace FLVPlayer
 	}
 	BOOL FLVVideoRender::Submit()
 	{
+		m_bBreak = FALSE;
 		TinyRectangle rectangle;
 		GetClientRect(m_decode.m_decode.m_hWND, &rectangle);
 		BOOL bRes = m_graphics.Initialize(m_decode.m_decode.m_hWND, rectangle.Size());
@@ -285,7 +267,7 @@ namespace FLVPlayer
 	}
 	BOOL FLVVideoRender::Close(DWORD dwMS)
 	{
-		m_close.SetEvent();
+		m_bBreak = TRUE;
 		return TinyTask::Close(dwMS);
 	}
 	void FLVVideoRender::OnMessagePump()
@@ -293,24 +275,23 @@ namespace FLVPlayer
 		TinyPerformanceTimer timer;
 		for (;;)
 		{
-			if (m_close.Lock(0))
+			if (m_bBreak)
 				break;
-			SampleTag tag = m_decode.m_queue.Pop();
-			if (tag.size <= 0)
-				continue;
-			if (tag.samplePTS == m_decode.m_decode.m_basePTS)
+			if (m_decode.m_decode.m_audioEvent.Lock(1000))
 			{
-				TinyAutoLock lock(m_decode.m_decode.m_lockTime);
-				m_decode.m_decode.m_baseTime = timeGetTime();
+				SampleTag tag = m_decode.m_queue.Pop();
+				if (tag.size <= 0)
+					continue;
+				while (m_decode.m_decode.m_currentAudioPTS == -1);
+				INT offset = tag.samplePTS - m_decode.m_decode.m_currentAudioPTS;
+				if (timer.Waiting(offset, 1000))
+				{
+					OnRender(tag.bits, tag.size);
+				}
+				SAFE_DELETE_ARRAY(tag.bits);
 			}
-			while (m_decode.m_decode.m_baseTime == -1);
-			DWORD dwMS = timeGetTime() - m_decode.m_decode.m_baseTime;
-			INT offset = tag.samplePTS - dwMS;
-			if (timer.Waiting(offset, 1000))
-			{
-				OnRender(tag.bits, tag.size);
-			}
-			SAFE_DELETE_ARRAY(tag.bits);
+
+
 		}
 	}
 	void FLVVideoRender::OnRender(BYTE* bits, LONG size)

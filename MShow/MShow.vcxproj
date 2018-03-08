@@ -98,7 +98,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>TinyUI.lib;DXFramework.lib;DShowCapture.lib;Decode.lib;Encode.lib;libmfx_d.lib;dxva2.lib;dwmapi.lib;d3d9.lib;d3d11.lib;dxgi.lib;D2D1.lib;jsoncpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\Debug;$(BOOST_DIR)\stage\lib;$(DXSDK_DIR)\Lib\x86;$(INTELMEDIASDKROOT)lib\$(Platform);..\ThirdParty\mpg123\lib\x86;..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\libfaad\lib\x86;..\ThirdParty\librtmp\lib\x86;..\ThirdParty\x264\libs\32bit;..\ThirdParty\libfaac\lib\x86;..\ThirdParty\sdk\lib\debug;..\ThirdParty\sqlite;..\ThirdParty\jsoncpp\lib\x86;..\ThirdParty\crashrpt\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\Debug;$(BOOST_DIR)\stage\lib;$(DXSDK_DIR)\Lib\x86;$(INTELMEDIASDKROOT)lib\$(Platform);$(VLD_DIR)\lib\Win32;..\ThirdParty\mpg123\lib\x86;..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\libfaad\lib\x86;..\ThirdParty\librtmp\lib\x86;..\ThirdParty\x264\libs\32bit;..\ThirdParty\libfaac\lib\x86;..\ThirdParty\sdk\lib\debug;..\ThirdParty\sqlite;..\ThirdParty\jsoncpp\lib\x86;..\ThirdParty\crashrpt\lib</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)LiveCommentary$(TargetExt)</OutputFile>
     </Link>
     <ProjectReference>

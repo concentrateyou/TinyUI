@@ -101,10 +101,6 @@ namespace TSPlayer
 				else
 				{
 					memcpy(sampleTag.bits, bo, so);
-					if (m_clock.GetBasePTS() == INVALID_TIME)
-					{
-						m_clock.SetBasePTS(sampleTag.samplePTS);
-					}
 					m_videoQueue.Push(sampleTag);
 				}
 			}

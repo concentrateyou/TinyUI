@@ -99,22 +99,13 @@ namespace TSPlayer
 		{
 			if (m_bBreak)
 				break;
+			m_clock.LockVideo(INFINITE);
 			LOG(INFO) << "[MVideoRenderTask] Queue Size:" << m_task.GetVideoQueue().GetSize() << " Count:" << m_task.GetVideoQueue().GetCount();
 			ZeroMemory(&sampleTag, sizeof(sampleTag));
 			if (!m_task.GetVideoQueue().Pop(sampleTag))
 			{
-				timer.Waiting(40, 1000);
-				if (bRendering)
-				{
-					m_clock.AddBaseTime(40);
-				}
 				continue;
 			}
-			if (sampleTag.samplePTS == m_clock.GetBasePTS())
-			{
-				m_clock.SetBaseTime(GetQPCTimeMS());
-			}
-			while (m_clock.GetBasePTS() == INVALID_TIME);
 			bRendering = TRUE;
 			if (!m_bInitialize)
 			{
@@ -129,8 +120,7 @@ namespace TSPlayer
 				m_bInitialize = TRUE;
 			}
 			OnCopy(sampleTag.bits, sampleTag.size);
-			LONG systemMS = static_cast<LONG>(GetQPCTimeMS() - m_clock.GetBaseTime());
-			INT delay = static_cast<INT>(sampleTag.samplePTS - systemMS);
+			INT delay = static_cast<INT>(sampleTag.samplePTS - m_clock.GetAudioPTS());
 			if (timer.Waiting(delay, 100))
 			{
 				m_graphics.Present();
