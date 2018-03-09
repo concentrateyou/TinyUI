@@ -198,19 +198,27 @@ namespace TinyUI
 	{
 		return m_SRW;
 	}
-	void TinySRWLock::Lock(BOOL write)
+	void TinySRWLock::Lock(BOOL bExclusive)
 	{
-		if (write)
+		if (bExclusive)
+		{
 			AcquireSRWLockExclusive(&m_SRW);
+		}
 		else
+		{
 			AcquireSRWLockShared(&m_SRW);
+		}
 	}
-	void TinySRWLock::Unlock(BOOL write)
+	void TinySRWLock::Unlock(BOOL bExclusive)
 	{
-		if (write)
+		if (bExclusive)
+		{
 			ReleaseSRWLockExclusive(&m_SRW);
+		}
 		else
+		{
 			ReleaseSRWLockShared(&m_SRW);
+		}
 	}
 	//////////////////////////////////////////////////////////////////////////
 #ifdef _WIN32

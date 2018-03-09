@@ -60,46 +60,44 @@ namespace TSPlayer
 	void MAudioRenderTask::OnMessagePump()
 	{
 		CoInitializeEx(NULL, COINIT_MULTITHREADED);
-		SampleTag tag = { 0 };
+		SampleTag sampleTag = { 0 };
 		for (;;)
 		{
 			if (m_bBreak)
 				break;
-			ZeroMemory(&tag, sizeof(tag));
+			ZeroMemory(&sampleTag, sizeof(sampleTag));
 			LOG(INFO) << "[MAudioRenderTask] Queue Size:" << m_task.GetAudioQueue().GetSize() << " Count:" << m_task.GetAudioQueue().GetCount();
-			if (!m_task.GetAudioQueue().Pop(tag))
+			if (!m_task.GetAudioQueue().Pop(sampleTag))
 			{
 				Sleep(15);
 				continue;
 			}
-			m_clock.SetAudioPTS(tag.samplePTS);
 			if (!m_bInitialize)
 			{
 				if (!m_audio.Open(m_task.GetFormat()))
 				{
+					LOG(ERROR) << "Audio Open FAIL";
+					SAFE_DELETE_ARRAY(sampleTag.bits);
 					break;
 				}
 				if (!m_audio.Start())
 				{
+					LOG(ERROR) << "Audio Start FAIL";
+					SAFE_DELETE_ARRAY(sampleTag.bits);
 					break;
 				}
 				m_bInitialize = TRUE;
-				if (!m_callback.IsNull())
-				{
-					m_callback(tag.bits, tag.size);
-				}
-				m_audio.Play(tag.bits, tag.size, 5000);
 			}
-			else
+			if (!m_callback.IsNull())
 			{
-				if (!m_callback.IsNull())
-				{
-					m_callback(tag.bits, tag.size);
-				}
-				m_audio.Play(tag.bits, tag.size, 5000);
+				m_callback(sampleTag.bits, sampleTag.size);
 			}
-			m_clock.UnlockVideo();
-			SAFE_DELETE_ARRAY(tag.bits);
+			if (m_clock.GetBaseTime() == INVALID_TIME)
+			{
+				m_clock.SetBaseTime(GetQPCTimeMS());
+			}
+			m_audio.Play(sampleTag.bits, sampleTag.size, 5000);
+			SAFE_DELETE_ARRAY(sampleTag.bits);
 		}
 		m_task.GetAudioQueue().RemoveAll();
 		m_bInitialize = FALSE;

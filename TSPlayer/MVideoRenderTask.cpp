@@ -92,38 +92,50 @@ namespace TSPlayer
 	}
 	void MVideoRenderTask::OnMessagePump()
 	{
-		BOOL bRendering = FALSE;
 		TinyPerformanceTimer timer;
 		SampleTag sampleTag = { 0 };
 		for (;;)
 		{
 			if (m_bBreak)
 				break;
-			m_clock.LockVideo(INFINITE);
 			LOG(INFO) << "[MVideoRenderTask] Queue Size:" << m_task.GetVideoQueue().GetSize() << " Count:" << m_task.GetVideoQueue().GetCount();
 			ZeroMemory(&sampleTag, sizeof(sampleTag));
 			if (!m_task.GetVideoQueue().Pop(sampleTag))
 			{
+				Sleep(15);
 				continue;
 			}
-			bRendering = TRUE;
 			if (!m_bInitialize)
 			{
 				m_videoSize = m_task.GetVideoSize();
 				if (!m_image.Create(m_graphics.GetDX9(), m_videoSize.cx, m_videoSize.cy, NULL))
 				{
 					LOG(ERROR) << "Image2D Create FAIL";
+					SAFE_DELETE_ARRAY(sampleTag.bits);
+					break;
 				}
 				TinyRectangle s;
 				GetClientRect(m_hWND, &s);
 				m_image.SetScale(s.Size());
 				m_bInitialize = TRUE;
 			}
-			OnCopy(sampleTag.bits, sampleTag.size);
-			INT delay = static_cast<INT>(sampleTag.samplePTS - m_clock.GetAudioPTS());
-			if (timer.Waiting(delay, 100))
+
+			if (sampleTag.samplePTS <= 0)
 			{
+				OnCopy(sampleTag.bits, sampleTag.size);
 				m_graphics.Present();
+			}
+			else
+			{
+				OnCopy(sampleTag.bits, sampleTag.size);
+				while (m_clock.GetBaseTime() == INVALID_TIME);
+				INT s = GetQPCTimeMS() - m_clock.GetBaseTime();
+				INT delay = static_cast<INT>(sampleTag.samplePTS - s);
+				TRACE("Delay:%d\n", delay);
+				if (timer.Waiting(delay, 100))
+				{
+					m_graphics.Present();
+				}
 			}
 			SAFE_DELETE_ARRAY(sampleTag.bits);
 		}
