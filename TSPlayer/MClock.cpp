@@ -4,7 +4,7 @@
 namespace TSPlayer
 {
 	MClock::MClock()
-		:m_audioPTS(INVALID_TIME),
+		:m_audioClock(INVALID_TIME),
 		m_baseTime(INVALID_TIME)
 	{
 		m_event.CreateEvent();
@@ -13,9 +13,15 @@ namespace TSPlayer
 	MClock::~MClock()
 	{
 	}
-	void MClock::SetAudioPTS(LONGLONG audioPTS)
+
+	void MClock::SetAudioClock(LONGLONG audioClock)
 	{
-		m_audioPTS = audioPTS;
+		m_audioClock = audioClock;
+	}
+
+	LONGLONG MClock::GetAudioClock()
+	{
+		return m_audioClock;
 	}
 
 	void MClock::SetBaseTime(LONGLONG baseTime)
@@ -26,11 +32,6 @@ namespace TSPlayer
 	LONGLONG MClock::GetBaseTime()
 	{
 		return m_baseTime;
-	}
-
-	LONGLONG MClock::GetAudioPTS()
-	{
-		return m_audioPTS;
 	}
 
 	BOOL MClock::Sleep(DWORD dwMS)
