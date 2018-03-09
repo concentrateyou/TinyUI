@@ -12,15 +12,15 @@ namespace TSPlayer
 	public:
 		MClock();
 		~MClock();
-		void SetAudioClock(LONGLONG audioClock);
-		LONGLONG GetAudioClock();
+		void SetClock(FLOAT clock);
+		FLOAT GetClock();
 		void SetBaseTime(LONGLONG baseTime);
 		LONGLONG GetBaseTime();
 		BOOL Sleep(DWORD dwMS = INFINITE);
 		void Wake();
 	private:
+		FLOAT		m_clock;
 		LONGLONG	m_baseTime;
-		LONGLONG	m_audioClock;
 		TinyEvent	m_event;
 	};
 }
