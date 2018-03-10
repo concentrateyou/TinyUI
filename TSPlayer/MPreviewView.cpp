@@ -50,7 +50,7 @@ namespace TSPlayer
 	LRESULT MPreviewView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		m_player.Open(m_hWND, "D:\\test1.ts");
+		m_player.Open(m_hWND, "D:\\test2.ts");
 		return FALSE;
 	}
 

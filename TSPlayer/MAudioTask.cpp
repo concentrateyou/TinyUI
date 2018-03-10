@@ -85,7 +85,6 @@ namespace TSPlayer
 			LONG  so = 0;
 			if (m_aac.Decode(sampleTag, bo, so))
 			{
-				TRACE("AudioPTS:%lld\n", sampleTag.samplePTS);
 				sampleTag.size = so;
 				sampleTag.bits = new BYTE[so];
 				if (!sampleTag.bits)

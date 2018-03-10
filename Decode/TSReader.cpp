@@ -178,9 +178,9 @@ namespace Decode
 		}
 		return TRUE;
 	}
-	void TSAACParser::ParseAAC(TS_BLOCK& block, TinyLinkList<TS_BLOCK>& audios, FLOAT AACTimestamp)
+	void TSAACParser::ParseAAC(TS_BLOCK& block, TinyLinkList<TS_BLOCK>& audios, DOUBLE AACTimestamp)
 	{
-		FLOAT timestamp = 0.0F;
+		DOUBLE timestamp = 0.0F;
 		TinyBitReader reader;
 		for (INT i = 0; i < (block.audio.size - ADTS_HEADER_MIN_SIZE); i++)
 		{
@@ -204,7 +204,7 @@ namespace Decode
 			ASSERT(layer == 0);
 			INT offset = (absent == 1 ? 7 : 9);
 			TS_BLOCK myAudio = block;
-			myAudio.pts = block.pts + static_cast<LONGLONG>(timestamp);
+			myAudio.pts = block.pts + timestamp;
 			myAudio.dts = myAudio.pts;
 			myAudio.audio.size = rawsize - offset;
 			myAudio.audio.data = new BYTE[myAudio.audio.size];
@@ -324,7 +324,7 @@ namespace Decode
 			TSAACParser* aac = static_cast<TSAACParser*>(ps);
 			if (aac != NULL)
 			{
-				m_audioSR = 1024.0F * 1000 / static_cast<FLOAT>(aac->GetAudioConfig().GetSampleRate());
+				m_audioSR = (1024.0F * 1000 / static_cast<DOUBLE>(aac->GetAudioConfig().GetSampleRate()));
 			}
 		}
 		if (!m_configCallback.IsNull())

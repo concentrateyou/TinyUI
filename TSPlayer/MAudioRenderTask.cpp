@@ -60,7 +60,7 @@ namespace TSPlayer
 	void MAudioRenderTask::OnMessagePump()
 	{
 		CoInitializeEx(NULL, COINIT_MULTITHREADED);
-		static FLOAT AACTime = 1024.0F * 1000 / 44100;
+		static DOUBLE AACTime = 1024.0F * 1000 / 44100;
 		SampleTag sampleTag = { 0 };
 		for (;;)
 		{
@@ -93,12 +93,10 @@ namespace TSPlayer
 			{
 				m_callback(sampleTag.bits, sampleTag.size);
 			}
-			if (m_clock.GetBaseTime() == INVALID_TIME)
-			{
-				m_clock.SetBaseTime(GetQPCTimeMS());
-			}
-			m_clock.SetClock(sampleTag.samplePTS + AACTime);
+			LONGLONG msQPC = GetQPCTimeMS();
+			m_clock.SetClock(sampleTag.samplePTS);
 			m_audio.Play(sampleTag.bits, sampleTag.size, 5000);
+			m_clock.SetClock(m_clock.GetClock() + (GetQPCTimeMS() - msQPC));
 			SAFE_DELETE_ARRAY(sampleTag.bits);
 		}
 		m_task.GetAudioQueue().RemoveAll();

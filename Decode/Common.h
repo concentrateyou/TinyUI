@@ -738,8 +738,8 @@ namespace Decode
 	typedef struct tagTS_BLOCK
 	{
 		BYTE		streamType;
-		LONGLONG	dts;
-		LONGLONG	pts;
+		DOUBLE		dts;
+		DOUBLE		pts;
 		union
 		{
 			struct

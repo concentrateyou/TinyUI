@@ -119,22 +119,12 @@ namespace TSPlayer
 				m_image.SetScale(s.Size());
 				m_bInitialize = TRUE;
 			}
-
-			if (sampleTag.samplePTS <= 0)
+			while (isnan(m_clock.GetClock()));
+			OnCopy(sampleTag.bits, sampleTag.size);
+			INT delay = static_cast<INT>(sampleTag.samplePTS - m_clock.GetClock());
+			if (timer.Waiting(delay, 100))
 			{
-				OnCopy(sampleTag.bits, sampleTag.size);
 				m_graphics.Present();
-			}
-			else
-			{
-				OnCopy(sampleTag.bits, sampleTag.size);
-				while (m_clock.GetBaseTime() == INVALID_TIME);
-				INT delay = static_cast<INT>(sampleTag.samplePTS - m_clock.GetClock());
-				//TRACE("Delay:%d\n", delay);
-				if (timer.Waiting(delay, 100))
-				{
-					m_graphics.Present();
-				}
 			}
 			SAFE_DELETE_ARRAY(sampleTag.bits);
 		}

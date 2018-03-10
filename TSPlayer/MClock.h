@@ -12,14 +12,14 @@ namespace TSPlayer
 	public:
 		MClock();
 		~MClock();
-		void SetClock(FLOAT clock);
-		FLOAT GetClock();
+		void SetClock(DOUBLE clock);
+		DOUBLE GetClock();
 		void SetBaseTime(LONGLONG baseTime);
 		LONGLONG GetBaseTime();
 		BOOL Sleep(DWORD dwMS = INFINITE);
 		void Wake();
 	private:
-		FLOAT		m_clock;
+		DOUBLE		m_clock;
 		LONGLONG	m_baseTime;
 		TinyEvent	m_event;
 	};

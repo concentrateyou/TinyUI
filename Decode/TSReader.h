@@ -52,7 +52,7 @@ namespace Decode
 		BYTE	GetStreamType() const OVERRIDE;
 		BOOL	Parse(TS_BLOCK& block) OVERRIDE;
 		const AACAudioConfig& GetAudioConfig() const;
-		static void	ParseAAC(TS_BLOCK& block, TinyLinkList<TS_BLOCK>& audios, FLOAT AACTimestamp);
+		static void	ParseAAC(TS_BLOCK& block, TinyLinkList<TS_BLOCK>& audios, DOUBLE AACTimestamp);
 	private:
 		BOOL	ParseADTS(BYTE* bits, LONG size);
 	private:
@@ -111,7 +111,7 @@ namespace Decode
 		BYTE							m_bits[TS_PACKET_SIZE];
 		INT								m_versionNumberPAT;
 		INT								m_versionNumberPMT;
-		FLOAT							m_audioSR;//音频采样率HZ
+		DOUBLE							m_audioSR;//音频采样率HZ
 		ConfigCallback					m_configCallback;
 		TS_PACKET_STREAM*				m_original;
 		TinyLinkList<TS_BLOCK>			m_audios;

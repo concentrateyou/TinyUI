@@ -4,7 +4,7 @@
 namespace TSPlayer
 {
 	MClock::MClock()
-		:m_clock(INVALID_TIME),
+		:m_clock(NAN),
 		m_baseTime(INVALID_TIME)
 	{
 		m_event.CreateEvent();
@@ -14,12 +14,12 @@ namespace TSPlayer
 	{
 	}
 
-	void MClock::SetClock(FLOAT clock)
+	void MClock::SetClock(DOUBLE clock)
 	{
 		m_clock = clock;
 	}
 
-	FLOAT MClock::GetClock()
+	DOUBLE MClock::GetClock()
 	{
 		return m_clock;
 	}
