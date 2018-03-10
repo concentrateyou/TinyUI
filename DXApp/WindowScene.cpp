@@ -25,7 +25,7 @@ namespace DXApp
 		Destory();
 		m_hWND = hWND;
 		GetClientRect(m_hWND, &m_snapshot);
-		if (DX11Image2D::Create(dx11, m_snapshot.Size(), NULL, FALSE))
+		if (DX11Image2D::Create(dx11, m_snapshot.Size().cx, m_snapshot.Size().cy, NULL, FALSE))
 		{
 			SAFE_DELETE_OBJECT(m_hBitmap);
 			BITMAPINFO bmi = { 0 };

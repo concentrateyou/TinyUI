@@ -637,13 +637,22 @@ namespace TinyUI
 		ITERATOR InsertLast(const T& value);
 		ITERATOR InsertBefore(ITERATOR pos, const T& value);
 		ITERATOR InsertAfter(ITERATOR pos, const T& value);
-		ITERATOR Lookup(const T& value, ITERATOR pos = NULL) const throw();
+		ITERATOR Find(const T& value, ITERATOR pos = NULL) const throw();
 		ITERATOR First() const;
 		ITERATOR Last() const;
 		ITERATOR Next(ITERATOR pos) const;
 		ITERATOR Prev(ITERATOR pos) const;
+		T& GetNext(ITERATOR& pos);
+		const T& GetNext(ITERATOR& pos) const;
+		T& GetPrev(ITERATOR& pos);
+		const T& GetPrev(ITERATOR& pos) const;
+		T& GetFirst();
+		const T& GetFirst() const;
+		T& GetLast();
+		const T& GetLast() const;
 		T& GetAt(ITERATOR pos);
-		const T& GetAt(ITERATOR pos) const throw();
+		const T& GetAt(ITERATOR pos) const;
+		void SetAt(ITERATOR pos, const T& value);
 		BOOL RemoveAt(ITERATOR pos) throw();
 		void RemoveAll();
 	private:
@@ -678,8 +687,10 @@ namespace TinyUI
 	{
 		if (m_pFreeList == NULL)
 		{
-			TinyPlex* pPlex = TinyPlex::Create(m_pBlocks, m_dwBlockSize, sizeof(TinyNode));
-			if (pPlex == NULL) return NULL;
+			TinyPlex* pPlex = NULL;
+			pPlex = TinyPlex::Create(m_pBlocks, m_dwBlockSize, sizeof(TinyNode));
+			if (pPlex == NULL)
+				return NULL;
 			TinyNode* ps = static_cast<TinyNode*>(pPlex->data());
 			ps += m_dwBlockSize - 1;
 			for (INT_PTR iBlock = m_dwBlockSize - 1; iBlock >= 0; iBlock--)
@@ -691,19 +702,22 @@ namespace TinyUI
 		}
 		TinyNode* pNew = m_pFreeList;
 		m_pFreeList = m_pFreeList->m_pNext;
+		::new(pNew)TinyNode(value);
 		pNew->m_pPrev = pPrev;
 		pNew->m_pNext = pNext;
 		m_dwCount++;
-		::new(pNew)TinyNode(value);
+		ASSERT(m_dwCount > 0);
 		return(pNew);
 	}
 	template<typename T, typename Traits>
 	BOOL TinyLinkList<T, Traits>::Delete(TinyNode* ps)
 	{
-		if (!ps) return FALSE;
+		if (!ps)
+			return FALSE;
 		ps->~TinyNode();
 		ps->m_pNext = m_pFreeList;
 		m_pFreeList = ps;
+		ASSERT(m_dwCount > 0);
 		m_dwCount--;
 		return TRUE;
 	}
@@ -734,37 +748,49 @@ namespace TinyUI
 	{
 		if (pos == NULL)
 			return InsertFirst(value);
-		TinyNode* pOld = static_cast<TinyNode*>(pos);
-		TinyNode* pNew = New(pOld->m_pPrev, pOld, value);
-		if (pOld->m_pPrev != NULL)
-			pOld->m_pPrev->m_pNext = pNew;
+		TinyNode* ps1 = static_cast<TinyNode*>(pos);
+		TinyNode* ps2 = New(ps1->m_pPrev, ps1, value);
+		if (ps1->m_pPrev != NULL)
+		{
+			ps1->m_pPrev->m_pNext = ps2;
+		}
 		else
-			m_pFirst = pNew;
-		pOld->m_pPrev = pNew;
-		return(ITERATOR(pNew));
+		{
+			m_pFirst = ps2;
+		}
+		ps1->m_pPrev = ps2;
+		return(ITERATOR(ps2));
 	}
 	template<typename T, typename Traits>
 	ITERATOR TinyLinkList<T, Traits>::InsertAfter(ITERATOR pos, const T& value)
 	{
 		if (pos == NULL)
 			return InsertLast(value);
-		TinyNode* pOld = static_cast<TinyNode*>(pos);
-		TinyNode* pNew = New(pOld, pOld->m_pNext, value);
-		if (pOld->m_pNext != NULL)
-			pOld->m_pNext->m_pPrev = pNew;
+		TinyNode* ps1 = static_cast<TinyNode*>(pos);
+		TinyNode* ps2 = New(ps1, ps1->m_pNext, value);
+		if (ps1->m_pNext != NULL)
+		{
+			ps1->m_pNext->m_pPrev = ps2;
+		}
 		else
-			m_pLast = pNew;
-		pOld->m_pNext = pNew;
-		return(ITERATOR(pNew));
+		{
+			m_pLast = ps2;
+		}
+		ps1->m_pNext = ps2;
+		return(ITERATOR(ps2));
 	}
 	template<typename T, typename Traits>
-	ITERATOR TinyLinkList<T, Traits>::Lookup(const T& value, ITERATOR pos) const throw()
+	ITERATOR TinyLinkList<T, Traits>::Find(const T& value, ITERATOR pos) const throw()
 	{
 		TinyNode* ps = static_cast<TinyNode*>(pos);
 		if (ps == NULL)
+		{
 			ps = m_pFirst;
+		}
 		else
+		{
 			ps = ps->m_pNext;
+		}
 		for (; ps != NULL; ps = ps->m_pNext)
 		{
 			if (Traits::Compare(ps->m_value, value) == 0)
@@ -773,17 +799,17 @@ namespace TinyUI
 		return(NULL);
 	}
 	template<typename T, typename Traits>
-	ITERATOR TinyLinkList< T, Traits>::First() const
+	ITERATOR TinyLinkList< T, Traits>::First() const throw()
 	{
 		return ITERATOR(m_pFirst);
 	}
 	template<typename T, typename Traits>
-	ITERATOR TinyLinkList< T, Traits>::Last() const
+	ITERATOR TinyLinkList< T, Traits>::Last() const throw()
 	{
 		return ITERATOR(m_pLast);
 	}
 	template<typename T, typename Traits>
-	ITERATOR TinyLinkList< T, Traits>::Next(ITERATOR pos) const
+	ITERATOR TinyLinkList< T, Traits>::Next(ITERATOR pos) const throw()
 	{
 		TinyNode* ps = static_cast<TinyNode*>(pos);
 		if (ps != NULL)
@@ -803,7 +829,63 @@ namespace TinyUI
 		return NULL;
 	}
 	template<typename T, typename Traits>
-	const T& TinyLinkList< T, Traits>::GetAt(ITERATOR pos) const throw()
+	T& TinyLinkList< T, Traits>::GetFirst()
+	{
+		ASSERT(m_pFirst);
+		return(m_pFirst->m_value);
+	}
+	template<typename T, typename Traits>
+	const T& TinyLinkList< T, Traits>::GetFirst() const
+	{
+		ASSERT(m_pFirst);
+		return(m_pFirst->m_value);
+	}
+	template<typename T, typename Traits>
+	T& TinyLinkList< T, Traits>::GetLast()
+	{
+		ASSERT(m_pLast);
+		return(m_pLast->m_value);
+	}
+	template<typename T, typename Traits>
+	const T& TinyLinkList< T, Traits>::GetLast() const
+	{
+		ASSERT(m_pLast);
+		return(m_pLast->m_value);
+	}
+	template<typename T, typename Traits>
+	T& TinyLinkList< T, Traits>::GetNext(ITERATOR& pos)
+	{
+		ASSERT(pos);
+		TinyNode* ps = static_cast<TinyNode*>(pos);
+		pos = ITERATOR(ps->m_pNext);
+		return(ps->m_value);
+	}
+	template<typename T, typename Traits>
+	const T& TinyLinkList< T, Traits>::GetNext(ITERATOR& pos) const
+	{
+		ASSERT(pos);
+		TinyNode* ps = static_cast<TinyNode*>(pos);
+		pos = ITERATOR(ps->m_pNext);
+		return(ps->m_value);
+	}
+	template<typename T, typename Traits>
+	T& TinyLinkList< T, Traits>::GetPrev(ITERATOR& pos)
+	{
+		ASSERT(pos);
+		TinyNode* ps = static_cast<TinyNode*>(pos);
+		pos = ITERATOR(ps->m_pPrev);
+		return(ps->m_value);
+	}
+	template<typename T, typename Traits>
+	const T& TinyLinkList< T, Traits>::GetPrev(ITERATOR& pos) const
+	{
+		ASSERT(pos);
+		TinyNode* ps = static_cast<TinyNode*>(pos);
+		pos = ITERATOR(ps->m_pPrev);
+		return(ps->m_value);
+	}
+	template<typename T, typename Traits>
+	const T& TinyLinkList< T, Traits>::GetAt(ITERATOR pos) const
 	{
 		ASSERT(pos);
 		TinyNode* ps = static_cast<TinyNode*>(pos);
@@ -817,18 +899,34 @@ namespace TinyUI
 		return ps->m_value;
 	}
 	template<typename T, typename Traits>
+	void TinyLinkList< T, Traits>::SetAt(ITERATOR pos, const T& value)
+	{
+		ASSERT(pos);
+		TinyNode* ps = static_cast<TinyNode*>(pos);
+		ps->value = value;
+	}
+	template<typename T, typename Traits>
 	BOOL TinyLinkList< T, Traits>::RemoveAt(ITERATOR pos) throw()
 	{
-		if (!pos) return FALSE;
+		if (pos == NULL)
+			return FALSE;
 		TinyNode* ps = static_cast<TinyNode*>(pos);
 		if (ps == m_pFirst)
+		{
 			m_pFirst = ps->m_pNext;
+		}
 		else
+		{
 			ps->m_pPrev->m_pNext = ps->m_pNext;
+		}
 		if (ps == m_pLast)
+		{
 			m_pLast = ps->m_pPrev;
+		}
 		else
+		{
 			ps->m_pNext->m_pPrev = ps->m_pPrev;
+		}
 		return Delete(ps);
 	}
 	template<typename T, typename Traits>
@@ -860,7 +958,7 @@ namespace TinyUI
 	template<typename T, typename Traits>
 	ITERATOR TinyLinkList< T, Traits>::operator[](const T& value) const
 	{
-		return Lookup(value, NULL);
+		return Find(value, NULL);
 	}
 	/// <summary>
 	/// 红黑树Map 
@@ -869,20 +967,30 @@ namespace TinyUI
 	class TinyMap
 	{
 		DISALLOW_COPY_AND_ASSIGN(TinyMap)
-	protected:
-		class TinyNode : public __ITERATOR
+	public:
+		class TinyPair : public __ITERATOR
 		{
 		public:
-			K			m_key;
-			V			m_value;
+			TinyPair(const K& key, const V& value)
+				:m_key(key),
+				m_value(value)
+			{
+			}
+		public:
+			const K m_key;
+			V m_value;
+		};
+	protected:
+		class TinyNode : public TinyPair
+		{
+		public:
 			BOOL		m_bColor;
 			TinyNode*	m_pLeft;
 			TinyNode*	m_pRight;
 			TinyNode*	m_pParent;
 		public:
 			TinyNode(const K& key, const V& value)
-				:m_key(key),
-				m_value(value),
+				:TinyPair(key, value),
 				m_bColor(FALSE),
 				m_pLeft(NULL),
 				m_pRight(NULL),
@@ -915,6 +1023,12 @@ namespace TinyUI
 		ITERATOR Last() const;
 		ITERATOR Prev(ITERATOR pos) const;
 		ITERATOR Next(ITERATOR pos) const;
+		const TinyPair* GetNext(ITERATOR& pos) const throw();
+		TinyPair* GetNext(ITERATOR& pos) throw();
+		const TinyPair* GetPrev(ITERATOR& pos) const throw();
+		TinyPair* GetPrev(ITERATOR& pos) throw();
+		TinyPair* GetAt(ITERATOR pos) throw();
+		const TinyPair* GetAt(ITERATOR pos) const throw();
 	private:
 		typename TinyMap<K, V, KTraits, VTraits>::TinyNode* New(const K& key, const V& value);
 		typename TinyMap<K, V, KTraits, VTraits>::TinyNode* Find(TinyNode* ps, const K& key);
@@ -1196,47 +1310,48 @@ namespace TinyUI
 	template<class K, class V, class KTraits, class VTraits>
 	void TinyMap<K, V, KTraits, VTraits>::DeletePostOrder(TinyNode* ps) throw()
 	{
-		if (IsNIL(ps) || ps == NULL) return;
-		DeletePostOrder(ps->m_pLeft);
-		DeletePostOrder(ps->m_pRight);
-		Delete(ps);
+		if (ps != NULL && !IsNIL(ps))
+		{
+			DeletePostOrder(ps->m_pLeft);
+			DeletePostOrder(ps->m_pRight);
+			Delete(ps);
+		}
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	typename TinyMap<K, V, KTraits, VTraits>::TinyNode* TinyMap<K, V, KTraits, VTraits>::Minimum(TinyNode* ps) const throw()
 	{
-		if (IsNIL(ps) || ps == NULL)
-			return (NULL);
-		TinyNode* pMin = ps;
-		while (!IsNIL(pMin->m_pLeft))
+		if (ps != NULL && !IsNIL(ps))
 		{
-			pMin = pMin->m_pLeft;
+			TinyNode* pMin = ps;
+			while (!IsNIL(pMin->m_pLeft))
+			{
+				pMin = pMin->m_pLeft;
+			}
+			return pMin;
 		}
-		return pMin;
+		return (NULL);
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	typename TinyMap<K, V, KTraits, VTraits>::TinyNode* TinyMap<K, V, KTraits, VTraits>::Maximum(TinyNode* ps) const throw()
 	{
-		if (IsNIL(ps) || ps == NULL)
-			return (NULL);
-		TinyNode* pMax = ps;
-		while (!IsNIL(pMax->m_pLeft))
+		if (ps != NULL && !IsNIL(ps))
 		{
-			pMax = pMax->m_pLeft;
+			TinyNode* pMax = ps;
+			while (!IsNIL(pMax->m_pLeft))
+			{
+				pMax = pMax->m_pLeft;
+			}
+			return pMax;
 		}
-		return pMax;
+		return (NULL);
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	typename TinyMap<K, V, KTraits, VTraits>::TinyNode* TinyMap<K, V, KTraits, VTraits>::Prev(TinyNode* ps) const throw()
 	{
-		if (ps == NULL)
-		{
-			return(NULL);
-		}
+		if (!ps)
+			return (NULL);
 		if (!IsNIL(ps->m_pLeft))
-		{
 			return(Maximum(ps->m_pLeft));
-		}
-
 		TinyNode* pParent = ps->m_pParent;
 		TinyNode* pLeft = ps;
 		while (!IsNIL(pParent) && (pLeft == pParent->m_pLeft))
@@ -1244,7 +1359,6 @@ namespace TinyUI
 			pLeft = pParent;
 			pParent = pParent->m_pParent;
 		}
-
 		if (IsNIL(pParent))
 		{
 			pParent = NULL;
@@ -1254,14 +1368,10 @@ namespace TinyUI
 	template<class K, class V, class KTraits, class VTraits>
 	typename TinyMap<K, V, KTraits, VTraits>::TinyNode* TinyMap<K, V, KTraits, VTraits>::Next(TinyNode* ps) const throw()
 	{
-		if (ps == NULL)
-		{
+		if (!ps)
 			return (NULL);
-		}
 		if (!IsNIL(ps->m_pRight))
-		{
 			return Minimum(ps->m_pRight);
-		}
 		TinyNode* pParent = ps->m_pParent;
 		TinyNode* pRight = ps;
 		while (!IsNIL(pParent) && (pRight == pParent->m_pRight))
@@ -1279,55 +1389,57 @@ namespace TinyUI
 	template<class K, class V, class KTraits, class VTraits>
 	void TinyMap<K, V, KTraits, VTraits>::Remove(TinyNode* pZ)
 	{
-		if (pZ == NULL) return;
-		TinyNode* pY = NULL;
-		TinyNode* pX = NULL;
-		if (IsNIL(pZ->m_pLeft) || IsNIL(pZ->m_pRight))//左子节点为哨兵
+		if (pZ != NULL)
 		{
-			pY = pZ;//记录后继节点，用着个节点代替删除节点
-		}
-		else
-		{
-			pY = Next(pZ);//获得后继节点
-		}
-		if (!IsNIL(pY->m_pLeft))
-		{
-			pX = pY->m_pLeft;
-		}
-		else
-		{
-			pX = pY->m_pRight;
-		}
+			TinyNode* pY = NULL;
+			TinyNode* pX = NULL;
+			if (IsNIL(pZ->m_pLeft) || IsNIL(pZ->m_pRight))//左子节点为哨兵
+			{
+				pY = pZ;//记录后继节点，用着个节点代替删除节点
+			}
+			else
+			{
+				pY = Next(pZ);//获得后继节点
+			}
+			if (!IsNIL(pY->m_pLeft))
+			{
+				pX = pY->m_pLeft;
+			}
+			else
+			{
+				pX = pY->m_pRight;
+			}
 
-		pX->m_pParent = pY->m_pParent;
+			pX->m_pParent = pY->m_pParent;
 
-		if (IsNIL(pY->m_pParent))
-		{
-			m_pRoot = pX;
-		}
-		else if (pY == pY->m_pParent->m_pLeft)
-		{
-			pY->m_pParent->m_pLeft = pX;
-		}
-		else
-		{
-			pY->m_pParent->m_pRight = pX;
-		}
-		//如果后继是红色，就不需要调整红黑树
-		if (!pY->m_bColor)
-		{
-			RemoveFixup(pX);
-		}
-		if (pY != pZ)
-		{
-			SwapNode(pY, pZ);
-		}
+			if (IsNIL(pY->m_pParent))
+			{
+				m_pRoot = pX;
+			}
+			else if (pY == pY->m_pParent->m_pLeft)
+			{
+				pY->m_pParent->m_pLeft = pX;
+			}
+			else
+			{
+				pY->m_pParent->m_pRight = pX;
+			}
+			//如果后继是红色，就不需要调整红黑树
+			if (!pY->m_bColor)
+			{
+				RemoveFixup(pX);
+			}
+			if (pY != pZ)
+			{
+				SwapNode(pY, pZ);
+			}
 
-		if (m_pRoot != NULL)
-		{
-			SetNIL(&m_pRoot->m_pParent);
+			if (m_pRoot != NULL)
+			{
+				SetNIL(&m_pRoot->m_pParent);
+			}
+			Delete(pZ);
 		}
-		Delete(pZ);
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	void TinyMap<K, V, KTraits, VTraits>::RemoveFixup(TinyNode* ps)
@@ -1486,13 +1598,15 @@ namespace TinyUI
 	template<class K, class V, class KTraits, class VTraits>
 	ITERATOR TinyMap<K, V, KTraits, VTraits>::Find(const K& key)
 	{
-		if (!m_pRoot) return NULL;
+		if (!m_pRoot)
+			return NULL;
 		return Find(m_pRoot, key);
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	const ITERATOR TinyMap<K, V, KTraits, VTraits>::Find(const K& key) const
 	{
-		if (!m_pRoot) return NULL;
+		if (!m_pRoot)
+			return NULL;
 		return Find(m_pRoot, key);
 	}
 	template<class K, class V, class KTraits, class VTraits>
@@ -1542,51 +1656,61 @@ namespace TinyUI
 	template<class K, class V, class KTraits, class VTraits>
 	V* TinyMap<K, V, KTraits, VTraits>::GetValueAt(ITERATOR pos)
 	{
-		if (!pos) return NULL;
+		if (!pos)
+			return NULL;
 		TinyNode* ps = static_cast <TinyNode*>(pos);
-		if (!ps) return NULL;
+		if (!ps)
+			return NULL;
 		return &ps->m_value;
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	V* TinyMap<K, V, KTraits, VTraits>::GetValue(const K& key)
 	{
 		ITERATOR pos = Find(key);
-		if (!pos) return NULL;
+		if (!pos)
+			return NULL;
 		return GetValueAt(pos);
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	const K* TinyMap<K, V, KTraits, VTraits>::GetKeyAt(ITERATOR pos) const
 	{
-		if (!pos) return NULL;
+		if (!pos)
+			return NULL;
 		TinyNode* ps = static_cast <TinyNode*>(pos);
-		if (!ps) return NULL;
+		if (!ps)
+			return NULL;
 		return &ps->m_key;
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	const V* TinyMap<K, V, KTraits, VTraits>::GetValueAt(ITERATOR pos) const
 	{
-		if (!pos) return NULL;
+		if (!pos)
+			return NULL;
 		TinyNode* ps = static_cast <TinyNode*>(pos);
-		if (!ps) return NULL;
+		if (!ps)
+			return NULL;
 		return &ps->m_value;
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	const V* TinyMap<K, V, KTraits, VTraits>::GetValue(const K& key) const
 	{
 		ITERATOR pos = Find(key);
-		if (!pos) return NULL;
+		if (!pos)
+			return NULL;
 		return GetValueAt(pos);
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	ITERATOR TinyMap<K, V, KTraits, VTraits>::First() const
 	{
-		if (!m_pRoot) return NULL;
+		if (!m_pRoot)
+			return NULL;
 		return Prev(m_pRoot);
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	ITERATOR TinyMap<K, V, KTraits, VTraits>::Last() const
 	{
-		if (!m_pRoot) return NULL;
+		if (!m_pRoot)
+			return NULL;
 		return Next(m_pRoot);
 	}
 	template<class K, class V, class KTraits, class VTraits>
@@ -1601,6 +1725,57 @@ namespace TinyUI
 		TinyNode* ps = static_cast<TinyNode*>(pos);
 		return Prev(ps);
 	}
+	template<class K, class V, class KTraits, class VTraits>
+	const typename TinyMap<K, V, KTraits, VTraits>::TinyPair* TinyMap<K, V, KTraits, VTraits>::GetNext(ITERATOR& pos) const throw()
+	{
+		if (!pos)
+			return NULL;
+		TinyNode* ps = static_cast<TinyNode*>(pos);
+		pos = Next(ps);
+		return ps;
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	typename TinyMap<K, V, KTraits, VTraits>::TinyPair* TinyMap<K, V, KTraits, VTraits>::GetNext(ITERATOR& pos) throw()
+	{
+		if (!pos)
+			return NULL;
+		TinyNode* ps = static_cast<TinyNode*>(pos);
+		pos = Next(ps);
+		return ps;
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	const typename TinyMap<K, V, KTraits, VTraits>::TinyPair* TinyMap<K, V, KTraits, VTraits>::GetPrev(ITERATOR& pos) const throw()
+	{
+		if (!pos)
+			return NULL;
+		TinyNode* ps = static_cast<TinyNode*>(pos);
+		pos = Prev(ps);
+		return ps;
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	typename TinyMap<K, V, KTraits, VTraits>::TinyPair* TinyMap<K, V, KTraits, VTraits>::GetPrev(ITERATOR& pos) throw()
+	{
+		if (!pos)
+			return NULL;
+		TinyNode* ps = static_cast<TinyNode*>(pos);
+		pos = Prev(ps);
+		return ps;
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	typename TinyMap<K, V, KTraits, VTraits>::TinyPair* TinyMap<K, V, KTraits, VTraits>::GetAt(ITERATOR pos) throw()
+	{
+		if (!pos)
+			return NULL;
+		return(static_cast<TinyPair*>(pos));
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	const typename TinyMap<K, V, KTraits, VTraits>::TinyPair* TinyMap<K, V, KTraits, VTraits>::GetAt(ITERATOR pos) const throw()
+	{
+		if (!pos)
+			return NULL;
+		return (static_cast<const TinyPair*>(pos));
+	}
+
 	template<class K, class V, class KTraits, class VTraits>
 	ITERATOR TinyMap<K, V, KTraits, VTraits>::operator[](const K& key) const
 	{

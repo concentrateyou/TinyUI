@@ -216,10 +216,8 @@ namespace Decode
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TS_PACKET_STREAM::TS_PACKET_STREAM(ConfigCallback&& callback)
-		:PTS(-1),
-		DTS(-1),
-		m_basePTS(-1),
-		m_baseDTS(-1),
+		:PTS(NAN),
+		DTS(NAN),
 		m_configCallback(std::move(callback))
 	{
 
@@ -569,18 +567,10 @@ namespace Decode
 				((bits[index + 2] >> 1) << 15) |
 				(bits[index + 3] << 7) |
 				(bits[index + 4] >> 1);
-			myPES.PTS = timestamp > 0 ? timestamp / 90 : timestamp;
-			myPES.DTS = myPES.PTS;
-			if (stream->m_baseDTS == -1)
-			{
-				stream->m_baseDTS = myPES.DTS;
-			}
-			if (stream->m_basePTS == -1)
-			{
-				stream->m_basePTS = myPES.PTS;
-			}
-			stream->PTS = myPES.PTS - stream->m_basePTS;
-			stream->DTS = myPES.DTS - stream->m_baseDTS;
+			myPES.PTS = timestamp;
+			myPES.DTS = timestamp;
+			stream->PTS = myPES.PTS > 0 ? myPES.PTS / 90.0F : myPES.PTS;
+			stream->DTS = stream->PTS;
 			index += 5;
 		}
 		if (myPES.PTSDTSFlags == 0x3)
@@ -592,7 +582,7 @@ namespace Decode
 				((bits[index + 2] >> 1) << 15) |
 				(bits[index + 3] << 7) |
 				(bits[index + 4] >> 1);
-			myPES.PTS = timestamp > 0 ? timestamp / 90 : timestamp;
+			myPES.PTS = timestamp;
 			index += 5;
 			if ((bits[index] >> 4 & 0xF) != 0x1)
 				return FALSE;
@@ -601,17 +591,9 @@ namespace Decode
 				((bits[index + 2] >> 1) << 15) |
 				(bits[index + 3] << 7) |
 				(bits[index + 4] >> 1);
-			myPES.DTS = timestamp > 0 ? timestamp / 90 : timestamp;
-			if (stream->m_baseDTS == -1)
-			{
-				stream->m_baseDTS = myPES.DTS;
-			}
-			if (stream->m_basePTS == -1)
-			{
-				stream->m_basePTS = myPES.PTS;
-			}
-			stream->PTS = myPES.PTS - stream->m_basePTS;
-			stream->DTS = myPES.DTS - stream->m_baseDTS;
+			myPES.DTS = timestamp;
+			stream->PTS = myPES.PTS > 0 ? myPES.PTS / 90.0F : myPES.PTS;
+			stream->DTS = myPES.DTS > 0 ? myPES.DTS / 90.0F : myPES.DTS;
 			index += 5;
 		}
 		if (myPES.ESCRFlag)

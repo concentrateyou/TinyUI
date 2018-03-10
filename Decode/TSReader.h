@@ -71,8 +71,8 @@ namespace Decode
 		BYTE Reserved2 : 4;
 		USHORT ESInfoLength : 12;
 	public:
-		LONGLONG PTS;
-		LONGLONG DTS;
+		DOUBLE PTS;
+		DOUBLE DTS;
 	public:
 		TS_PACKET_STREAM(ConfigCallback&& callback);
 		~TS_PACKET_STREAM();

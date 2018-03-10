@@ -94,8 +94,8 @@ namespace DXApp
 
 		if (m_renderView != NULL)
 		{
-			m_graphics.GetDX11().SetRenderTexture2D(m_renderView);
-			m_graphics.GetDX11().GetRender2D()->BeginDraw();
+			m_graphics.SetRenderView(m_renderView);
+			m_graphics.GetRenderView()->BeginDraw();
 			for (INT i = 0;i < m_scenes.GetSize();i++)
 			{
 				DX11Element2D* ps = m_scenes[i];
@@ -105,11 +105,11 @@ namespace DXApp
 					m_graphics.DrawImage(image, (FLOAT)(m_pulgSize.x / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cx)), (FLOAT)(m_pulgSize.y / static_cast<FLOAT>(m_graphics.GetDX11().GetSize().cy)));
 				}
 			}
-			m_graphics.GetDX11().GetRender2D()->EndDraw();
+			m_graphics.GetRenderView()->EndDraw();
 		}
 
-		m_graphics.GetDX11().SetRenderTexture2D(NULL);
-		m_graphics.GetDX11().GetRender2D()->BeginDraw();
+		m_graphics.SetRenderView(NULL);
+		m_graphics.GetRenderView()->BeginDraw();
 		for (INT i = 0;i < m_scenes.GetSize();i++)
 		{
 			DX11Element2D* ps = m_scenes[i];
@@ -134,11 +134,10 @@ namespace DXApp
 				m_graphics.DrawImage(image);
 			}
 		}
-		m_graphics.GetDX11().GetRender2D()->EndDraw();
+		m_graphics.GetRenderView()->EndDraw();
 		m_graphics.Present();
 		m_timer.EndTime();
 		LONGLONG lls = m_timer.GetMillisconds();
-		//TRACE("Cost:%lld\n", lls);
 		return lls;
 	}
 

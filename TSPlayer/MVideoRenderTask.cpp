@@ -130,7 +130,7 @@ namespace TSPlayer
 				OnCopy(sampleTag.bits, sampleTag.size);
 				while (m_clock.GetBaseTime() == INVALID_TIME);
 				INT delay = static_cast<INT>(sampleTag.samplePTS - m_clock.GetClock());
-				TRACE("Delay:%d\n", delay);
+				//TRACE("Delay:%d\n", delay);
 				if (timer.Waiting(delay, 100))
 				{
 					m_graphics.Present();
