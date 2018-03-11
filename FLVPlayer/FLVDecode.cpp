@@ -27,7 +27,7 @@ namespace FLVPlayer
 	}
 	BOOL FLVDecode::Submit()
 	{
-		if (m_reader.OpenFile("D:\\Demo\\9.flv"))
+		if (m_reader.OpenFile("D:\\Media\\4.flv"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);

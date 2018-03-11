@@ -93,7 +93,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib\x86;..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\mpg123\lib\x86;..\ThirdParty\libfaad\lib\x86;..\ThirdParty\librtmp\lib\x86;..\ThirdParty\x264\libs\32bit;..\ThirdParty\libfaac\lib\x86;..\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\Debug;$(VLD_DIR)\lib\Win32;$(DXSDK_DIR)\Lib\x86;..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\mpg123\lib\x86;..\ThirdParty\libfaad\lib\x86;..\ThirdParty\librtmp\lib\x86;..\ThirdParty\x264\libs\32bit;..\ThirdParty\libfaac\lib\x86</AdditionalLibraryDirectories>
       <AdditionalDependencies>TinyUI.lib;DXFramework.lib;DShowCapture.lib;Decode.lib;Encode.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ForceSymbolReferences>
       </ForceSymbolReferences>

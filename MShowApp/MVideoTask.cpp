@@ -87,7 +87,7 @@ namespace MShow
 			}
 			BYTE* bo = NULL;
 			LONG  so = 0;
-			if (m_x264.Decode(sampleTag, bo, so))
+			if (m_x264.Decode(sampleTag, bo, so) == 0)
 			{
 				if (m_videoQueue.GetAllocSize() == 0)
 				{

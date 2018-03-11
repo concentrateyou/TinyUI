@@ -119,8 +119,8 @@ namespace TSPlayer
 				m_image.SetScale(s.Size());
 				m_bInitialize = TRUE;
 			}
-			while (isnan(m_clock.GetClock()));
 			OnCopy(sampleTag.bits, sampleTag.size);
+			while (isnan(m_clock.GetClock()));
 			INT delay = static_cast<INT>(sampleTag.samplePTS - m_clock.GetClock());
 			if (timer.Waiting(delay, 100))
 			{
