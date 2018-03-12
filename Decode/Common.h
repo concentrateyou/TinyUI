@@ -4,6 +4,7 @@
 #include "Common/TinyCollection.h"
 #include "Common/TinyCallback.h"
 #include "Common/TinyEvent.h"
+#include "Common/TinyUtility.h"
 #include "Network/TinyHTTPClient.h"
 #include "Render/TinyGDI.h"
 #include "IO/TinyTask.h"
@@ -26,8 +27,9 @@ namespace Decode
 #define TS_FEC_PACKET_SIZE 204
 #define TS_DVHS_PACKET_SIZE 192
 #define TS_PACKET_SIZE 188
+#define TS_PACKET_PAYLOAD_SIZE 184
+#define TS_PCR_ADAPTATION_SIZE  6
 #define TS_MAX_PACKET_SIZE 204
-
 #define PES_START_SIZE  6
 #define PES_HEADER_SIZE 9
 #define MAX_PES_HEADER_SIZE (9 + 255)
@@ -35,18 +37,19 @@ namespace Decode
 #define ADTS_HEADER_MIN_SIZE	7
 
 #define TS_SYNC_BYTE  0x47
-
-#define TS_STREAM_TYPE_VIDEO_MPEG1     0x01  
-#define TS_STREAM_TYPE_VIDEO_MPEG2     0x02  
-#define TS_STREAM_TYPE_AUDIO_MPEG1     0x03  
-#define TS_STREAM_TYPE_AUDIO_MPEG2     0x04  
-#define TS_STREAM_TYPE_PRIVATE_SECTION 0x05  
-#define TS_STREAM_TYPE_PRIVATE_DATA    0x06  
-#define TS_STREAM_TYPE_AUDIO_AAC       0x0f  
-#define TS_STREAM_TYPE_VIDEO_MPEG4     0x10  
-#define TS_STREAM_TYPE_VIDEO_H264      0x1b  
-#define TS_STREAM_TYPE_AUDIO_AC3       0x81  
-#define TS_STREAM_TYPE_AUDIO_DTS       0x8a 
+#define TS_DEFAULT_STREAM_ID_AUDIO		0xc0;
+#define TS_DEFAULT_STREAM_ID_VIDEO		0xe0;
+#define TS_STREAM_TYPE_VIDEO_MPEG1		0x01  
+#define TS_STREAM_TYPE_VIDEO_MPEG2		0x02  
+#define TS_STREAM_TYPE_AUDIO_MPEG1		0x03  
+#define TS_STREAM_TYPE_AUDIO_MPEG2		0x04  
+#define TS_STREAM_TYPE_PRIVATE_SECTION	0x05  
+#define TS_STREAM_TYPE_PRIVATE_DATA		0x06  
+#define TS_STREAM_TYPE_AUDIO_AAC		0x0f  
+#define TS_STREAM_TYPE_VIDEO_MPEG4		0x10  
+#define TS_STREAM_TYPE_VIDEO_H264		0x1b  
+#define TS_STREAM_TYPE_AUDIO_AC3		0x81  
+#define TS_STREAM_TYPE_AUDIO_DTS		0x8a 
 
 	INT ToINT32(BYTE val[4]);
 	INT ToINT24(BYTE val[3]);
