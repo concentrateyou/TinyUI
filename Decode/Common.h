@@ -795,7 +795,9 @@ namespace Decode
 		AACAudioConfig(const AACAudioConfig& o);
 		BOOL operator == (const AACAudioConfig& o);
 		BOOL operator != (const AACAudioConfig& o);
-		DWORD GetSampleRate() const;
+		WORD	GetFrequencyIndex() const;
+		DWORD	GetSampleRate() const;
+		WORD	GetChannels() const;
 	private:
 		AudioCodec		m_codec;
 		WORD			m_wChannels;

@@ -160,9 +160,19 @@ namespace Decode
 			(m_wBitsPerSample != o.m_wBitsPerSample);
 	}
 
+	WORD AACAudioConfig::GetFrequencyIndex() const
+	{
+		return m_dwSampleRate;
+	}
+
 	DWORD AACAudioConfig::GetSampleRate() const
 	{
 		ASSERT(m_dwSampleRate >= 0 && m_dwSampleRate < 16);
 		return AACSampleRates[m_dwSampleRate];
+	}
+
+	WORD AACAudioConfig::GetChannels() const
+	{
+		return m_wChannels;
 	}
 }

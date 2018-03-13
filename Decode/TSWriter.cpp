@@ -30,7 +30,7 @@ namespace Decode
 		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 		0xFF, 0xFF, 0xFF, 0xFF
 	};
-
+	//////////////////////////////////////////////////////////////////////////
 	TSWriter::Stream::Stream(UINT16 sPID)
 		:m_sPID(sPID),
 		m_continuityCounter(0)
@@ -242,11 +242,9 @@ namespace Decode
 	TSWriter::TSWriter()
 	{
 	}
-
 	TSWriter::~TSWriter()
 	{
 	}
-
 	BOOL TSWriter::Create(LPCSTR pzFile)
 	{
 		HRESULT hRes = SHCreateStreamOnFile(pzFile, STGM_CREATE | STGM_WRITE, &m_stream);
@@ -262,15 +260,46 @@ namespace Decode
 	}
 	BOOL TSWriter::SetAudioStream(UINT32 timescale, BYTE  streamType, UINT16  streamID, UINT16 sPID, const BYTE* descriptor, UINT32 descriptorSize)
 	{
-		m_tsAudio.Reset(new SampleStream(sPID, streamType, streamID, timescale, descriptor, descriptorSize));
-		return m_tsAudio != NULL;
+		m_audio.Reset(new SampleStream(sPID, streamType, streamID, timescale, descriptor, descriptorSize));
+		return m_audio != NULL;
 	}
 	BOOL TSWriter::SetVideoStream(UINT32 timescale, BYTE  streamType, UINT16  streamID, UINT16 sPID, const BYTE* descriptor, UINT32  descriptorSize)
 	{
-		m_tsVideo.Reset(new SampleStream(sPID, streamType, streamID, timescale, descriptor, descriptorSize));
-		return m_tsVideo != NULL;
+		m_video.Reset(new SampleStream(sPID, streamType, streamID, timescale, descriptor, descriptorSize));
+		return m_video != NULL;
 	}
-
+	BOOL TSWriter::WriteH264(const BYTE* raw, LONG size, const vector<BYTE>& sps, const vector<BYTE>& pps, LONGLONG time)
+	{
+		if (!m_video)
+			return FALSE;
+		return TRUE;
+	}
+	BOOL TSWriter::WriteAAC(const BYTE* bits, LONG size, LONGLONG time)
+	{
+		if (!m_audio)
+			return FALSE;
+		m_audio->WritePES(bits, size, time, FALSE, time, FALSE, m_stream);
+		return TRUE;
+	}
+	BOOL TSWriter::WriteAAC(const BYTE* raw, LONG size, AACAudioConfig& config, LONGLONG time)
+	{
+		if (!m_audio)
+			return FALSE;
+		TinyScopedArray<BYTE> bits(new BYTE[7 + size]);
+		if (!bits)
+			return FALSE;
+		//ADTSͷ
+		bits[0] = 0xFF;
+		bits[1] = 0xF1;//MPEG-4 + no CRC
+		bits[2] = (BYTE)(0x40 | (config.GetFrequencyIndex() << 2) | (config.GetChannels() >> 2));//AAC LC
+		bits[3] = (BYTE)(((config.GetChannels() & 0x3) << 6) | ((size + 7) >> 11));
+		bits[4] = ((size + 7) >> 3) & 0xFF;
+		bits[5] = (((size + 7) << 5) & 0xFF) | 0x1F;
+		bits[6] = 0xFC;
+		memcpy_s(bits + 7, size, raw, size);
+		m_audio->WritePES(bits, 7 + size, time, FALSE, time, FALSE, m_stream);
+		return TRUE;
+	}
 	BOOL TSWriter::WritePAT()
 	{
 		if (!m_tsPAT || !m_tsPMT)
@@ -313,58 +342,57 @@ namespace Decode
 		writer.Initialize(m_bits, TS_PACKET_SIZE);
 		UINT32 sectionSize = 13;
 		UINT32 pcrPID = 0;
-		if (m_tsAudio)
+		if (m_audio)
 		{
-			sectionSize += 5 + m_tsAudio->GetDescriptorSize();
-			pcrPID = m_tsAudio->GetPID();
+			sectionSize += 5 + m_audio->GetDescriptorSize();
+			pcrPID = m_audio->GetPID();
 		}
-		if (m_tsVideo)
+		if (m_video)
 		{
-			sectionSize += 5 + m_tsVideo->GetDescriptorSize();
-			pcrPID = m_tsVideo->GetPID();
+			sectionSize += 5 + m_video->GetDescriptorSize();
+			pcrPID = m_video->GetPID();
 		}
-		writer.WriteBits(8, 0);        // pointer
-		writer.WriteBits(8, 2);        // table_id
-		writer.WriteBits(1, 1);        // section_syntax_indicator
-		writer.WriteBits(1, 0);        // '0'
-		writer.WriteBits(2, 3);        // reserved
+		writer.WriteBits(8, 0);			// pointer
+		writer.WriteBits(8, 2);			// table_id
+		writer.WriteBits(1, 1);			// section_syntax_indicator
+		writer.WriteBits(1, 0);			// '0'
+		writer.WriteBits(2, 3);			// reserved
 		writer.WriteBits(12, sectionSize); // section_length
-		writer.WriteBits(16, 1);       // program_number
-		writer.WriteBits(2, 3);        // reserved
-		writer.WriteBits(5, 0);        // version_number
-		writer.WriteBits(1, 1);        // current_next_indicator
-		writer.WriteBits(8, 0);        // section_number
-		writer.WriteBits(8, 0);        // last_section_number
-		writer.WriteBits(3, 7);        // reserved
-		writer.WriteBits(13, pcrPID); // PCD_PID
-		writer.WriteBits(4, 0xF);      // reserved
-		writer.WriteBits(12, 0);       // program_info_length
-		if (m_tsAudio)
+		writer.WriteBits(16, 1);		// program_number
+		writer.WriteBits(2, 3);			// reserved
+		writer.WriteBits(5, 0);			// version_number
+		writer.WriteBits(1, 1);			// current_next_indicator
+		writer.WriteBits(8, 0);			// section_number
+		writer.WriteBits(8, 0);			// last_section_number
+		writer.WriteBits(3, 7);			// reserved
+		writer.WriteBits(13, pcrPID);	// PCD_PID
+		writer.WriteBits(4, 0xF);		// reserved
+		writer.WriteBits(12, 0);		// program_info_length
+		if (m_audio)
 		{
-			writer.WriteBits(8, m_tsAudio->GetType());                // stream_type
-			writer.WriteBits(3, 0x7);                                  // reserved
-			writer.WriteBits(13, m_tsAudio->GetPID());                   // elementary_PID
-			writer.WriteBits(4, 0xF);                                  // reserved
-			writer.WriteBits(12, m_tsAudio->GetDescriptorSize()); // ES_info_length
-			for (UINT32 i = 0; i < m_tsAudio->GetDescriptorSize(); i++)
+			writer.WriteBits(8, m_audio->GetType());					// stream_type
+			writer.WriteBits(3, 0x7);									// reserved
+			writer.WriteBits(13, m_audio->GetPID());					// elementary_PID
+			writer.WriteBits(4, 0xF);									// reserved
+			writer.WriteBits(12, m_audio->GetDescriptorSize());			// ES_info_length
+			for (UINT32 i = 0; i < m_audio->GetDescriptorSize(); i++)
 			{
-				writer.WriteBits(8, m_tsAudio->GetDescriptor()[i]);
+				writer.WriteBits(8, m_audio->GetDescriptor()[i]);
 			}
 		}
-		if (m_tsVideo)
+		if (m_video)
 		{
-			writer.WriteBits(8, m_tsVideo->GetType());                // stream_type
-			writer.WriteBits(0x7, 3);                                  // reserved
-			writer.WriteBits(13, m_tsVideo->GetPID());                   // elementary_PID
-			writer.WriteBits(4, 0xF);                                  // reserved
-			writer.WriteBits(12, m_tsVideo->GetDescriptorSize()); // ES_info_length
-			for (UINT32 i = 0; i < m_tsVideo->GetDescriptorSize(); i++)
+			writer.WriteBits(8, m_video->GetType());					// stream_type
+			writer.WriteBits(0x7, 3);									// reserved
+			writer.WriteBits(13, m_video->GetPID());					// elementary_PID
+			writer.WriteBits(4, 0xF);									// reserved
+			writer.WriteBits(12, m_video->GetDescriptorSize());			// ES_info_length
+			for (UINT32 i = 0; i < m_video->GetDescriptorSize(); i++)
 			{
-				writer.WriteBits(8, m_tsVideo->GetDescriptor()[i]);
+				writer.WriteBits(8, m_video->GetDescriptor()[i]);
 			}
 		}
 		writer.WriteBits(32, ComputeCRC(m_bits + 1, sectionSize - 1)); // CRC
-
 		ULONG ls = 0;
 		HRESULT hRes = m_stream->Write(m_bits, 17, &ls);
 		if (hRes != S_OK || ls != 4)

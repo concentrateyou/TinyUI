@@ -48,6 +48,9 @@ namespace Decode
 		BOOL Create(LPCSTR pzFile);
 		BOOL SetAudioStream(UINT32 timescale, BYTE  streamType, UINT16  streamID, UINT16 sPID, const BYTE* descriptor = NULL, UINT32 descriptorSize = 0);
 		BOOL SetVideoStream(UINT32 timescale, BYTE  streamType, UINT16  streamID, UINT16 sPID, const BYTE* descriptor = NULL, UINT32  descriptorSize = 0);
+		BOOL WriteAAC(const BYTE* raw, LONG size, AACAudioConfig& config, LONGLONG time);
+		BOOL WriteAAC(const BYTE* bits, LONG size, LONGLONG time);
+		BOOL WriteH264(const BYTE* raw, LONG size, const vector<BYTE>& sps, const vector<BYTE>& pps, LONGLONG time);
 	private:
 		BOOL WritePAT();
 		BOOL WritePMT();
@@ -56,8 +59,8 @@ namespace Decode
 		TinyComPtr<IStream>				m_stream;
 		TinyScopedPtr<Stream>			m_tsPMT;
 		TinyScopedPtr<Stream>			m_tsPAT;
-		TinyScopedPtr<SampleStream>		m_tsAudio;
-		TinyScopedPtr<SampleStream>		m_tsVideo;
+		TinyScopedPtr<SampleStream>		m_audio;
+		TinyScopedPtr<SampleStream>		m_video;
 	};
 }
 

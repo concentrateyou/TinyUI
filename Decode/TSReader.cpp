@@ -503,10 +503,6 @@ namespace Decode
 		if (m_versionNumberPMT == myPMT.VersionNumber)
 			return TRUE;
 		m_versionNumberPMT = myPMT.VersionNumber;
-		for (INT i = 0;i < streams.GetSize();i++)
-		{
-			SAFE_DELETE(streams[i]);
-		}
 		streams.RemoveAll();
 		for (;;)
 		{

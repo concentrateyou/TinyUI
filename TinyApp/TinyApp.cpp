@@ -194,47 +194,6 @@ void TSDecoder::Invoke()
 }
 
 
-class A1
-{
-public:
-	virtual BOOL Parser(const BYTE* bits, LONG size) = 0;
-public:
-	BYTE DescriptorTag;
-	BYTE DescriptorLength;
-};
-
-class A2 : public A1
-{
-public:
-	BYTE ServiceType;
-	string ProviderName;
-	string ServiceName;
-public:
-	BOOL Parser(const BYTE* bits, LONG size) OVERRIDE
-	{
-		return TRUE;
-	}
-};
-
-class A3
-{
-public:
-	A3()
-	{
-
-	}
-	~A3()
-	{
-		for (INT i=0;i<MyArray.GetSize();i++)
-		{
-			SAFE_DELETE(MyArray[i]);
-		}
-		MyArray.RemoveAll();
-	}
-public:
-	TinyArray<A1*> MyArray;
-};
-
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -253,9 +212,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	CoInitialize(NULL);
 	avcodec_register_all();
 
-	A3 a3;
-	A1* a1 = new A2();
-	a3.MyArray.Add(a1);
 	/*TSDecoder decoder;
 	decoder.Open("D:\\10s.ts");
 	decoder.Invoke();
