@@ -254,6 +254,7 @@
     <ClInclude Include="IO\TinyIOCP.h" />
     <ClInclude Include="IO\TinyRingQueue.h" />
     <ClInclude Include="IO\TinySharedMemory.h" />
+    <ClInclude Include="IO\TinyStringReader.h" />
     <ClInclude Include="IO\TinyTask.h" />
     <ClInclude Include="IO\TinyTaskPool.h" />
     <ClInclude Include="IO\TinyThread.h" />
@@ -408,6 +409,7 @@
     <ClCompile Include="IO\TinyIOCP.cpp" />
     <ClCompile Include="IO\TinyRingQueue.cpp" />
     <ClCompile Include="IO\TinySharedMemory.cpp" />
+    <ClCompile Include="IO\TinyStringReader.cpp" />
     <ClCompile Include="IO\TinyTask.cpp" />
     <ClCompile Include="IO\TinyTaskPool.cpp" />
     <ClCompile Include="IO\TinyThread.cpp" />

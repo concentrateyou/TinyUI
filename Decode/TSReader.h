@@ -107,6 +107,7 @@ namespace Decode
 		BOOL	ReadPMT(TS_PACKET_PMT& myPTM, TinyArray<TinyScopedReferencePtr<TS_PACKET_STREAM>>& streams, const BYTE* bits);
 		BOOL	ReadSDT(TS_PACKET_SDT& mySDT, const BYTE* bits);
 	private:
+		TinyString						m_szFile;
 		LONG							m_size;
 		BYTE							m_bits[TS_PACKET_SIZE];
 		INT								m_versionNumberPAT;

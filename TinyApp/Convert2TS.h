@@ -8,5 +8,6 @@ class Convert2TS
 public:
 	Convert2TS();
 	~Convert2TS();
+
 };
 

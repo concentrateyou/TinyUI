@@ -12,6 +12,7 @@
 #include "IO/TinyIOBuffer.h"
 #include "IO/TinyBitReader.h"
 #include "IO/TinyBitWriter.h"
+#include "IO/TinyStringReader.h"
 #include "Media/TinyMedia.h"
 using namespace TinyUI;
 using namespace TinyUI::IO;

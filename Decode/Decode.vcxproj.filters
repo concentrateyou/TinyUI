@@ -81,6 +81,9 @@
     <ClInclude Include="TS2FLV.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="HLSReader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -141,6 +144,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="TS2FLV.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="HLSReader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

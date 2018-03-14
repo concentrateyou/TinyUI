@@ -37,6 +37,7 @@
 #include <fstream>
 #include "IO/TinyBitWriter.h"
 #include "Network/TinyPing.h"
+#include "HLSReader.h"
 
 using namespace TinyUI;
 using namespace TinyUI::Network;
@@ -212,14 +213,16 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	CoInitialize(NULL);
 	avcodec_register_all();
 
-	/*TSDecoder decoder;
-	decoder.Open("D:\\10s.ts");
-	decoder.Invoke();
-	decoder.Close();*/
+	HLSReader reader;
+	reader.OpenURL("http://live.hkstv.hk.lxdns.com/live/hks/playlist.m3u8");
 
-	/*FILE* hFile1 = NULL;
-	fopen_s(&hFile1, "D:\\test.264", "wb+");*/
-	//FILE* hFile2 = NULL;
+	//TSDecoder decoder;
+	//decoder.Open("D:\\10s.ts");
+	//decoder.Invoke();
+	//decoder.Close();
+	////FILE* hFile1 = NULL;
+	//fopen_s(&hFile1, "D:\\test.264", "wb+");
+	////FILE* hFile2 = NULL;
 	//fopen_s(&hFile2, "D:\\test.aac", "wb+");
 	//FLVReader reader;
 	//reader.OpenFile("D:\\10s.flv");
@@ -257,62 +260,62 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	//		break;
 	//}
 	//reader.Close();
-	/*reader.OpenFile("D:\\1.ts");
-	for (;;)
-	{
-		TS_BLOCK block;
-		if (!reader.ReadBlock(block))
-		{
-			break;
-		}
-		if (block.streamType == TS_STREAM_TYPE_VIDEO_H264)
-		{
-			++count;
-			TRACE("Size:%d\n", block.video.size);
-		}
-		SAFE_DELETE_ARRAY(block.audio.data);
-		SAFE_DELETE_ARRAY(block.video.data);
-	}*/
-	//fclose(hFile1);
-	//fclose(hFile2);
+	//reader.OpenFile("D:\\1.ts");
+	//for (;;)
+	//{
+	//	TS_BLOCK block;
+	//	if (!reader.ReadBlock(block))
+	//	{
+	//		break;
+	//	}
+	//	if (block.streamType == TS_STREAM_TYPE_VIDEO_H264)
+	//	{
+	//		++count;
+	//		TRACE("Size:%d\n", block.video.size);
+	//	}
+	//	SAFE_DELETE_ARRAY(block.audio.data);
+	//	SAFE_DELETE_ARRAY(block.video.data);
+	//}
+	////fclose(hFile1);
+	////fclose(hFile2);
 	//MediaTest test;
-	//test.H264ToI420("D:\\Media\\test.264", "D:\\Media\\test.yuv");
-	//test.MP3ToWave("D:\\Media\\李玉刚-刚好遇见你.mp3", "D:\\Media\\李玉刚-刚好遇见你.wav");
-	/*FILE* hFile = NULL;
-	fopen_s(&hFile, "D:\\test.264", "rb");
-	TinyMFIntelQSVDecode decoder;
-	decoder.Open({ 1280,720 }, 25);
-	INT pos = 0;
-	TinyScopedArray<BYTE> bits(new BYTE[1024 * 64]);
-	for (;;)
-	{
-		size_t count = fread(bits, 1, 1024 * 64, hFile);
-		if (count == 0)
-			break;
-		BYTE* bo = NULL;
-		DWORD so = 0;
-		SampleTag tag = { 0 };
-		tag.bits = bits;
-		tag.size = count;
-		decoder.Decode(tag, bo, so);
-	}
-	fclose(hFile);*/
-	/*TinyVisualResource::GetInstance().Load("skin\\resource.xml");
-	::DefWindowProc(NULL, 0, 0, 0L);
-	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
-	TinyMessageLoop theLoop;
-	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	TinyVisualLayeredWindow uiImpl;
-	string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\contextmenu.xml");
-	uiImpl.Create(NULL, szFile.c_str());
-	TinyVisualContextMenu* contextmenu = (TinyVisualContextMenu*)uiImpl.GetDocument().GetVisualByName("menu1");
-	contextmenu->Add("Test1");
-	contextmenu->Add("Test2");
-	contextmenu->Add("Test3");
-	uiImpl.Update();*/
-	/*INT loopRes = theLoop.MessageLoop();
-	TinyApplication::GetInstance()->RemoveMessageLoop();
-	TinyApplication::GetInstance()->Uninitialize();*/
+	////test.H264ToI420("D:\\Media\\test.264", "D:\\Media\\test.yuv");
+	////test.MP3ToWave("D:\\Media\\李玉刚-刚好遇见你.mp3", "D:\\Media\\李玉刚-刚好遇见你.wav");
+	//FILE* hFile = NULL;
+	//fopen_s(&hFile, "D:\\test.264", "rb");
+	//TinyMFIntelQSVDecode decoder;
+	//decoder.Open({ 1280,720 }, 25);
+	//INT pos = 0;
+	//TinyScopedArray<BYTE> bits(new BYTE[1024 * 64]);
+	//for (;;)
+	//{
+	//	size_t count = fread(bits, 1, 1024 * 64, hFile);
+	//	if (count == 0)
+	//		break;
+	//	BYTE* bo = NULL;
+	//	DWORD so = 0;
+	//	SampleTag tag = { 0 };
+	//	tag.bits = bits;
+	//	tag.size = count;
+	//	decoder.Decode(tag, bo, so);
+	//}
+	////fclose(hFile);
+	//TinyVisualResource::GetInstance().Load("skin\\resource.xml");
+	//::DefWindowProc(NULL, 0, 0, 0L);
+	//TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
+	//TinyMessageLoop theLoop;
+	//TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
+	//TinyVisualLayeredWindow uiImpl;
+	//string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\contextmenu.xml");
+	//uiImpl.Create(NULL, szFile.c_str());
+	//TinyVisualContextMenu* contextmenu = (TinyVisualContextMenu*)uiImpl.GetDocument().GetVisualByName("menu1");
+	//contextmenu->Add("Test1");
+	//contextmenu->Add("Test2");
+	//contextmenu->Add("Test3");
+	//uiImpl.Update();
+	//INT loopRes = theLoop.MessageLoop();
+	//TinyApplication::GetInstance()->RemoveMessageLoop();
+	//TinyApplication::GetInstance()->Uninitialize();
 
 	CoUninitialize();
 	OleUninitialize();

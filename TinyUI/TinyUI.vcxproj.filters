@@ -543,6 +543,9 @@
     <ClInclude Include="Network\TinyPing.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
+    <ClInclude Include="IO\TinyStringReader.h">
+      <Filter>头文件\IO</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1002,6 +1005,9 @@
       <Filter>源文件\IO</Filter>
     </ClCompile>
     <ClCompile Include="Network\TinyPing.cpp">
+      <Filter>源文件\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\TinyStringReader.cpp">
       <Filter>源文件\Network</Filter>
     </ClCompile>
   </ItemGroup>

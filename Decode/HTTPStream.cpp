@@ -33,6 +33,16 @@ namespace Decode
 		m_client.SetErrorCallback(std::move(callback));
 	}
 
+	HTTPResponse& HTTPStream::GetResponse()
+	{
+		return m_client.GetResponse();
+	}
+
+	HTTPRequest& HTTPStream::GetRequest()
+	{
+		return m_client.GetRequest();
+	}
+
 	STDMETHODIMP HTTPStream::QueryInterface(REFIID riid, void **ppvObj)
 	{
 		if (IsEqualIID(riid, IID_IStream) || IsEqualIID(riid, IID_IUnknown))

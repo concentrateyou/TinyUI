@@ -265,6 +265,7 @@ namespace Decode
 		HRESULT hRes = SHCreateStreamOnFileA(pzFile, STGM_READ | STGM_FAILIFTHERE, &m_stream);
 		if (hRes != S_OK)
 			return FALSE;
+		m_szFile = pzFile;
 		return TRUE;
 	}
 	BOOL TSReader::OpenURL(LPCSTR pzURL)
@@ -275,6 +276,7 @@ namespace Decode
 		HTTPStream* ps = static_cast<HTTPStream*>(m_stream.Ptr());
 		if (!ps->Open(pzURL))
 			return FALSE;
+		m_szFile = pzURL;
 		return TRUE;
 	}
 	BOOL TSReader::ReadBlock(TS_BLOCK& block)
@@ -298,7 +300,7 @@ namespace Decode
 				return FALSE;
 			if (block.streamType > 0)
 			{
-				if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)//音频可能包括多帧,视频只有一帧
+				if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)
 				{
 					TSAACParser::ParseAAC(block, m_audios, m_audioSR);
 					if (m_audios.GetSize() > 0)
