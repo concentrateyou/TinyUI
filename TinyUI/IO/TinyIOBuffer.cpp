@@ -116,6 +116,13 @@ namespace TinyUI
 		{
 			m_data = NULL;
 		}
+		void NetworkIOBuffer::Reset()
+		{
+			m_capacity = 0;
+			m_offset = 0;
+			m_receive = 0;
+			m_io.Reset(NULL);
+		}
 		//////////////////////////////////////////////////////////////////////////
 		GrowableIOBuffer::GrowableIOBuffer()
 			:m_capacity(0),

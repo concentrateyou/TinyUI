@@ -214,8 +214,12 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	avcodec_register_all();
 
 	HLSReader reader;
-	reader.OpenURL("http://live.hkstv.hk.lxdns.com/live/hks/playlist.m3u8");
-
+	reader.Open("http://live.hkstv.hk.lxdns.com/live/hks/playlist.m3u8");
+	for (;;)
+	{
+		reader.ReadSegments();
+		Sleep(1000);
+	}
 	//TSDecoder decoder;
 	//decoder.Open("D:\\10s.ts");
 	//decoder.Invoke();

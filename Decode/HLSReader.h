@@ -1,14 +1,16 @@
 #pragma once
 #include "Common.h"
-#include "FLVReader.h"
-#include "TSWriter.h"
+#include "TSReader.h"
 #include <vector>
 
 using namespace std;
 using namespace TinyUI;
 
+
+
 namespace Decode
 {
+
 	/// <summary>
 	/// HLS解析
 	/// https://tools.ietf.org/html/draft-pantos-http-live-streaming-10
@@ -16,6 +18,7 @@ namespace Decode
 	/// </summary>
 	class HLSReader
 	{
+	public:
 		struct Segment
 		{
 			DOUBLE Time;
@@ -26,17 +29,35 @@ namespace Decode
 	public:
 		HLSReader();
 		virtual ~HLSReader();
-		BOOL OpenURL(LPCSTR pzURL);
+		BOOL Open(LPCSTR pzURL);
+		BOOL ReadSegments();
+		void Close();
 	private:
-		BOOL ParsePlaylist(const string& response);
+		BOOL ParsePlaylist1(const string& response);//第一级解析
+		BOOL ParsePlaylist2(const string& response);//第二级解析
 	private:
-		UINT32				m_duration;
-		LONGLONG			m_sequence;//序号
-		TinyString			m_szURL;
-		TinyArray<string>	m_playlist;//切片列表
-		TinyComPtr<IStream>	m_stream;
+		BOOL					m_bBreak;
+		UINT32					m_duration;
+		LONGLONG				m_numbers[2];//主序号和次序号
+		string					m_szURL;//当前的播放URL
+		TinyLock				m_lock;
+		TinyHTTPClient			m_client;
+		TinyArray<string>		m_playlist;//播放列表
+		TinyLinkList<Segment>	m_segments;//分片列表
 	};
-}
+};
 
+namespace TinyUI
+{
+	template<>
+	class DefaultTraits < Decode::HLSReader::Segment >
+	{
+	public:
+		static INT  Compare(const Decode::HLSReader::Segment& value1, const Decode::HLSReader::Segment& value2)
+		{
+			return (value1.File == value2.File) ? 0 : 1;
+		}
+	};
+};
 
 

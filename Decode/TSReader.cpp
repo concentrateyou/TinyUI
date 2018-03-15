@@ -265,18 +265,19 @@ namespace Decode
 		HRESULT hRes = SHCreateStreamOnFileA(pzFile, STGM_READ | STGM_FAILIFTHERE, &m_stream);
 		if (hRes != S_OK)
 			return FALSE;
-		m_szFile = pzFile;
 		return TRUE;
 	}
 	BOOL TSReader::OpenURL(LPCSTR pzURL)
 	{
+		if (!pzURL)
+			return FALSE;
+		this->Close();
 		m_stream.Attach(new HTTPStream());
 		if (!m_stream)
 			return FALSE;
 		HTTPStream* ps = static_cast<HTTPStream*>(m_stream.Ptr());
 		if (!ps->Open(pzURL))
 			return FALSE;
-		m_szFile = pzURL;
 		return TRUE;
 	}
 	BOOL TSReader::ReadBlock(TS_BLOCK& block)

@@ -10,6 +10,7 @@ namespace Decode
 		m_size(DEFAULT_HTTP_BUFFER_SIZE)
 	{
 		m_raw.Reset(new CHAR[m_size]);
+		ASSERT(m_raw);
 		ZeroMemory(m_raw, m_size);
 	}
 
@@ -84,6 +85,7 @@ namespace Decode
 		{
 			m_size = cb;
 			m_raw.Reset(new CHAR[m_size]);
+			ASSERT(m_raw);
 		}
 		HRESULT hRes = S_OK;
 		INT size = 0;

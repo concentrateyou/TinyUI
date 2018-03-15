@@ -51,6 +51,7 @@ namespace TinyUI
 			string	GetGetStatusMsg() const;
 			BOOL	ReadAsString(string& val);
 			INT		ReadAsBinary(CHAR*& ps);
+			void	Close();
 		private:
 			BOOL	ReadLine(CHAR*& line1, CHAR*& line2);
 			BOOL	FindLine(INT& size);

@@ -53,6 +53,7 @@ namespace TinyUI
 			INT  receive() const;
 			INT RemainingCapacity();
 			CHAR* StartOfBuffer();
+			void Reset();
 		protected:
 			INT									m_receive;
 			INT									m_capacity;

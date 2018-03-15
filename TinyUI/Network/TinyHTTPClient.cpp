@@ -101,6 +101,8 @@ namespace TinyUI
 		}
 		BOOL HTTPResponse::ReadAsString(string& val)
 		{
+			ASSERT(m_networkIO);
+			m_context.Clear();
 			if (!this->Contains(TinyHTTPClient::ContentLength))
 			{
 				if (this->GetAttribute(TinyHTTPClient::TransferEncoding) == "chunked")//¿ªÊ¼½âÎöTransferEncoding
@@ -153,9 +155,9 @@ namespace TinyUI
 			}
 			return TRUE;
 		}
-
 		INT HTTPResponse::ReadAsBinary(CHAR*& bits)
 		{
+			ASSERT(m_networkIO);
 			m_context.Clear();
 			if (!this->Contains(TinyHTTPClient::ContentLength))
 			{
@@ -218,9 +220,9 @@ namespace TinyUI
 			}
 			return -1;
 		}
-
 		BOOL HTTPResponse::ParseTransferEncoding()
 		{
+			ASSERT(m_networkIO);
 			for (;;)
 			{
 				CHAR* line1 = NULL;
@@ -273,9 +275,9 @@ namespace TinyUI
 			}
 			return TRUE;
 		}
-
 		BOOL HTTPResponse::ParseResponse()
 		{
+			ASSERT(m_networkIO);
 			CHAR* line1 = NULL;
 			CHAR* line2 = NULL;
 			if (!ReadLine(line1, line2))
@@ -334,6 +336,7 @@ namespace TinyUI
 		}
 		BOOL HTTPResponse::FindLine(INT& size)
 		{
+			ASSERT(m_networkIO);
 			CHAR* bits = m_networkIO->data();
 			if (*bits++ == '\n')
 			{
@@ -361,6 +364,7 @@ namespace TinyUI
 		}
 		BOOL HTTPResponse::ReadLine(CHAR*& line1, CHAR*& line2)
 		{
+			ASSERT(m_networkIO);
 			INT iRes = 0;
 			INT offset = m_networkIO->offset();
 			for (;;)
@@ -388,6 +392,14 @@ namespace TinyUI
 				return TRUE;
 			}
 			return FALSE;
+		}
+		void HTTPResponse::Close()
+		{
+			this->RemoveAll();
+			if (m_networkIO != NULL)
+			{
+				m_networkIO->Reset();
+			}
 		}
 		//////////////////////////////////////////////////////////////////////////
 		TinyHTTPClient::TinyHTTPClient()
@@ -561,6 +573,9 @@ namespace TinyUI
 		void TinyHTTPClient::Close()
 		{
 			m_socket.Close();
+			m_request.RemoveAll();
+			m_reponse.Close();
+			m_requestIO.Clear();
 		}
 		void TinyHTTPClient::BuildRequest()
 		{

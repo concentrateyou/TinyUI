@@ -655,6 +655,7 @@ namespace TinyUI
 		void SetAt(ITERATOR pos, const T& value);
 		BOOL RemoveAt(ITERATOR pos) throw();
 		void RemoveAll();
+		BOOL Append(const TinyLinkList< T, Traits >* plNew, BOOL bTail = TRUE);
 	private:
 		typename TinyLinkList<T, Traits>::TinyNode* New(TinyNode* pPrev, TinyNode* pNext, const T& value);
 		BOOL Delete(TinyNode* ps);
@@ -944,6 +945,31 @@ namespace TinyUI
 		m_pFreeList = NULL;
 		m_pBlocks->Destory();
 		m_pBlocks = NULL;
+	}
+	template<typename T, typename Traits>
+	BOOL TinyLinkList< T, Traits>::Append(const TinyLinkList< T, Traits >* plNew, BOOL bTail)
+	{
+		if (!plNew)
+			return FALSE;
+		if (bTail)
+		{
+			ITERATOR pos = plNew->First();
+			while (pos != NULL)
+			{
+				T& element = plNew->GetNext(pos);
+				InsertLast(element);
+			}
+		}
+		else
+		{
+			ITERATOR pos = plNew->Last();
+			while (pos != NULL)
+			{
+				T& element = plNew->GetPrev(pos);
+				InsertFirst(element);
+			}
+		}
+		return TRUE;
 	}
 	template<typename T, typename Traits>
 	DWORD TinyLinkList< T, Traits>::GetSize() const

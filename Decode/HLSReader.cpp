@@ -4,32 +4,40 @@
 namespace Decode
 {
 	HLSReader::HLSReader()
-		:m_sequence(-1)
 	{
+		m_numbers[0] = -1;
+		m_numbers[1] = -1;
 	}
-
 	HLSReader::~HLSReader()
 	{
 	}
-
-	BOOL HLSReader::OpenURL(LPCSTR pzURL)
+	BOOL HLSReader::Open(LPCSTR pzURL)
 	{
-		m_stream.Attach(new HTTPStream());
-		if (!m_stream)
-			return FALSE;
-		HTTPStream* ps = static_cast<HTTPStream*>(m_stream.Ptr());
-		if (!ps->Open(pzURL))
+		m_client.Close();
+		if (!m_client.Open(pzURL))
 			return FALSE;
 		string response;
-		if (!ps->GetResponse().ReadAsString(response))
+		if (!m_client.GetResponse().ReadAsString(response))
 			return FALSE;
-		if (!ParsePlaylist(response))
+		if (!ParsePlaylist1(response))
 			return FALSE;
-		m_szURL = pzURL;
+		if (m_playlist.IsEmpty())
+			return FALSE;
+		m_szURL = std::move(m_playlist[0]);//默认取第一个
+		m_client.Close();
+		if (!m_client.Open(m_szURL.c_str()))
+			return FALSE;
+		if (!m_client.GetResponse().ReadAsString(response))
+			return FALSE;
+		if (!ParsePlaylist2(response))
+			return FALSE;
 		return TRUE;
 	}
-
-	BOOL HLSReader::ParsePlaylist(const string& response)
+	void HLSReader::Close()
+	{
+		m_client.Close();
+	}
+	BOOL HLSReader::ParsePlaylist1(const string& response)
 	{
 		TinyStringReader reader(response);
 		CHAR* line1 = NULL;
@@ -60,7 +68,18 @@ namespace Decode
 				}
 				if (strncasecmp(line1, "#EXT-X-MEDIA-SEQUENCE:", 22) == 0)
 				{
-					m_sequence = strtoll(line1 + 22, NULL, 10);
+					LONGLONG s = strtoll(line1 + 22, NULL, 10);
+					if (m_numbers[0] == -1)
+					{
+						m_numbers[0] = s;
+					}
+					else
+					{
+						if ((m_numbers[0] + 1) != s)
+						{
+							//更新
+						}
+					}
 					break;
 				}
 				if (line1[0])
@@ -74,7 +93,92 @@ namespace Decode
 				}
 			} while (0);
 		}
+		return TRUE;
+	}
+	BOOL HLSReader::ParsePlaylist2(const string& response)
+	{
+		TinyStringReader reader(response);
+		CHAR* line1 = NULL;
+		CHAR* line2 = NULL;
+		if (!reader.ReadLine(line1, line2))
+			return FALSE;
+		if (strncasecmp(line1, "#EXTM3U", 7) != 0)
+			return FALSE;
+		BOOL bEXTINF = FALSE;
+		BOOL bUPDATE = FALSE;
+		TinyLinkList<Segment> segments;
+		Segment segment;
+		for (;;)
+		{
+			if (!reader.ReadLine(line1, line2))
+				break;
+			if (strncasecmp(line1, "#EXT-X-ENDLIST", 14) == 0)
+				break;
+			do
+			{
+				if (strncasecmp(line1, "#EXTINF:", 8) == 0)
+				{
+					segment.Time = strtod(line1 + 8, NULL);
+					bEXTINF = TRUE;
+					break;
+				}
+				if (strncasecmp(line1, "#EXT-X-MEDIA-SEQUENCE:", 22) == 0)
+				{
+					LONGLONG s = strtoll(line1 + 22, NULL, 10);
+					if (m_numbers[1] == -1)
+					{
+						m_numbers[1] = s;
+					}
+					else
+					{
+						if ((m_numbers[1] + 1) != s)
+						{
+							bUPDATE = TRUE;
+						}
+						m_numbers[1] = s;
+					}
+					break;
+				}
+				if (line1[0])
+				{
+					if (bEXTINF)//解析第二级
+					{
+						string szURL = m_szURL;
+						string::size_type pos = m_szURL.find_last_of('/');
+						if (pos != string::npos)
+						{
+							szURL = m_szURL.substr(0, pos + 1);
+						}
+						szURL.append(line1, 0, line2 - line1);
+						segment.File = std::move(szURL);
+						segments.InsertLast(segment);
+						bEXTINF = FALSE;
+					}
+					break;
+				}
+			} while (0);
+		}
+		if (bUPDATE)
+		{
+			TinyAutoLock lock(m_lock);
+			m_segments.RemoveAll();
 
+		
+		}
+		return TRUE;
+	}
+	BOOL HLSReader::ReadSegments()
+	{
+		if (m_szURL.empty())
+			return FALSE;
+		m_client.Close();
+		if (!m_client.Open(m_szURL.c_str()))
+			return FALSE;
+		string response;
+		if (!m_client.GetResponse().ReadAsString(response))
+			return FALSE;
+		if (!ParsePlaylist2(response))
+			return FALSE;
 		return TRUE;
 	}
 }
