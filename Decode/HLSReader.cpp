@@ -77,7 +77,7 @@ namespace Decode
 					{
 						if ((m_numbers[0] + 1) != s)
 						{
-							//更新
+							//更新TODO
 						}
 					}
 					break;
@@ -131,7 +131,7 @@ namespace Decode
 					}
 					else
 					{
-						if ((m_numbers[1] + 1) != s)
+						if ((m_numbers[1] + 1) == s)
 						{
 							bUPDATE = TRUE;
 						}
@@ -162,8 +162,7 @@ namespace Decode
 		{
 			TinyAutoLock lock(m_lock);
 			m_segments.RemoveAll();
-
-		
+			m_segments.Append(&segments);//更新当前的切片
 		}
 		return TRUE;
 	}

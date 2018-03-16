@@ -956,7 +956,7 @@ namespace TinyUI
 			ITERATOR pos = plNew->First();
 			while (pos != NULL)
 			{
-				T& element = plNew->GetNext(pos);
+				const T& element = plNew->GetNext(pos);
 				InsertLast(element);
 			}
 		}
@@ -965,7 +965,7 @@ namespace TinyUI
 			ITERATOR pos = plNew->Last();
 			while (pos != NULL)
 			{
-				T& element = plNew->GetPrev(pos);
+				const T& element = plNew->GetPrev(pos);
 				InsertFirst(element);
 			}
 		}
