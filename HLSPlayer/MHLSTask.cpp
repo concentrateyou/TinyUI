@@ -20,26 +20,43 @@ namespace HLSPlayer
 
 	BOOL MHLSTask::Initialize(LPCSTR pzURL, ErrorCallback&& callback)
 	{
-		if (!PathFileExists(pzURL))
+		if (!m_readerHLS.Open(pzURL))
 			return FALSE;
-		if (!m_reader.OpenFile(pzURL))
-			return FALSE;
-		m_reader.SetConfigCallback(BindCallback(&MHLSTask::OnConfigChange, this));
+		//m_timer.SetCallback(5000, BindCallback(&MHLSTask::OnSegments, this));
+		m_readerTS.SetConfigCallback(BindCallback(&MHLSTask::OnConfigChange, this));
 		return TRUE;
 	}
+
+	BOOL bF1 = FALSE;
+	BOOL bF2 = FALSE;
 
 	void MHLSTask::OnConfigChange(const BYTE* bits, LONG size, BYTE streamType, LPVOID)
 	{
 		if (streamType == TS_STREAM_TYPE_VIDEO_H264)
 		{
-			BOOL bRes = FALSE;
-			EVENT_AVCDCR(const_cast<BYTE*>(bits), size, bRes);
+			if (!bF1)
+			{
+				bF1 = TRUE;
+				BOOL bRes = FALSE;
+				EVENT_AVCDCR(const_cast<BYTE*>(bits), size, bRes);
+			}
+
 		}
 		if (streamType == TS_STREAM_TYPE_AUDIO_AAC)
 		{
-			BOOL bRes = FALSE;
-			EVENT_ASC(const_cast<BYTE*>(bits), size, 16, bRes);
+			if (!bF2)
+			{
+				bF2 = TRUE;
+				BOOL bRes = FALSE;
+				EVENT_ASC(const_cast<BYTE*>(bits), size, 16, bRes);
+			}
 		}
+	}
+
+	void MHLSTask::OnSegments()
+	{
+		//Ã¿¸ô2ÃëË¢ÐÂ
+		//m_readerHLS.ReadSegments();
 	}
 
 	BOOL MHLSTask::Submit()
@@ -53,7 +70,9 @@ namespace HLSPlayer
 	{
 		m_bBreak = TRUE;
 		BOOL bRes = TinyTask::Close(dwMS);
-		m_reader.Close();
+		m_timer.Close();
+		m_readerHLS.Close();
+		m_readerTS.Close();
 		m_sample = 0;
 		return bRes;
 	}
@@ -82,39 +101,56 @@ namespace HLSPlayer
 
 	BOOL MHLSTask::Invoke(SampleTag& tag, TS_BLOCK& block)
 	{
+		HLSReader::Segment segment;
 		for (;;)
 		{
 			if (m_bBreak)
 				break;
-			INT size = m_audioQueue.GetSize() + m_videoQueue.GetSize();
-			if (size > MAX_QUEUE_SIZE)
+			ZeroMemory(&segment, sizeof(segment));
+			if (!m_readerHLS.GetSegment(segment))
 			{
 				Sleep(15);
 				continue;
 			}
-			ZeroMemory(&block, sizeof(block));
-			if (!m_reader.ReadBlock(block))
+			m_readerTS.Close();
+			if (!m_readerTS.OpenURL(segment.File.c_str()))
 			{
-				ReleaseBlock(block);
-				return FALSE;
+				TRACE("TS OpenURL:%s FAIL\n", segment.File.c_str());
+				break;
 			}
-			if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)
+			for (;;)
 			{
-				ZeroMemory(&tag, sizeof(tag));
-				tag.size = block.audio.size;
-				tag.bits = block.audio.data;
-				tag.sampleDTS = block.dts;
-				tag.samplePTS = block.pts;
-				m_audioQueue.Push(tag);
-			}
-			if (block.streamType == TS_STREAM_TYPE_VIDEO_H264)
-			{
-				ZeroMemory(&tag, sizeof(tag));
-				tag.size = block.video.size;
-				tag.bits = block.video.data;
-				tag.sampleDTS = block.dts;
-				tag.samplePTS = block.pts;
-				m_videoQueue.Push(tag);
+				INT size = m_audioQueue.GetSize() + m_videoQueue.GetSize();
+				if (size > MAX_QUEUE_SIZE)
+				{
+					Sleep(15);
+					continue;
+				}
+
+				ZeroMemory(&block, sizeof(block));
+				if (!m_readerTS.ReadBlock(block))
+				{
+					ReleaseBlock(block);
+					return FALSE;
+				}
+				if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)
+				{
+					ZeroMemory(&tag, sizeof(tag));
+					tag.size = block.audio.size;
+					tag.bits = block.audio.data;
+					tag.sampleDTS = block.dts;
+					tag.samplePTS = block.pts;
+					m_audioQueue.Push(tag);
+				}
+				if (block.streamType == TS_STREAM_TYPE_VIDEO_H264)
+				{
+					ZeroMemory(&tag, sizeof(tag));
+					tag.size = block.video.size;
+					tag.bits = block.video.data;
+					tag.sampleDTS = block.dts;
+					tag.samplePTS = block.pts;
+					m_videoQueue.Push(tag);
+				}
 			}
 		}
 		return TRUE;

@@ -6,11 +6,8 @@
 using namespace std;
 using namespace TinyUI;
 
-
-
 namespace Decode
 {
-
 	/// <summary>
 	/// HLS解析
 	/// https://tools.ietf.org/html/draft-pantos-http-live-streaming-10
@@ -32,9 +29,10 @@ namespace Decode
 		BOOL Open(LPCSTR pzURL);
 		BOOL ReadSegments();
 		void Close();
+		BOOL GetSegment(Segment& segment);
 	private:
 		BOOL ParsePlaylist1(const string& response);//第一级解析
-		BOOL ParsePlaylist2(const string& response);//第二级解析
+		BOOL ParsePlaylist2(const string& response, BOOL bF = FALSE);//第二级解析
 	private:
 		BOOL					m_bBreak;
 		UINT32					m_duration;

@@ -2,7 +2,7 @@
 #include "MShowCommon.h"
 #include "MPacketQueue.h"
 #include "MClock.h"
-#include "TSReader.h"
+#include "HLSReader.h"
 #include "Network/TinyHTTPClient.h"
 using namespace TinyUI::Network;
 
@@ -28,16 +28,19 @@ namespace HLSPlayer
 		Event<void(BYTE*, LONG, BOOL&)>			EVENT_AVCDCR;
 	private:
 		void			OnMessagePump();
+		void			OnSegments();
 		void			OnConfigChange(const BYTE* bits, LONG size, BYTE streamType, LPVOID);
 		BOOL			Invoke(SampleTag& tag, TS_BLOCK& block);
 	private:
-		BOOL			m_bBreak;
-		LONGLONG		m_sample;
-		TinyMsgQueue&	m_msgqueue;
-		MClock&			m_clock;
-		MPacketQueue	m_audioQueue;
-		MPacketQueue	m_videoQueue;
-		TSReader		m_reader;
+		BOOL				m_bBreak;
+		LONGLONG			m_sample;
+		TinyMsgQueue&		m_msgqueue;
+		MClock&				m_clock;
+		MPacketQueue		m_audioQueue;
+		MPacketQueue		m_videoQueue;
+		HLSReader			m_readerHLS;
+		TSReader			m_readerTS;
+		TinySimpleTaskTimer	m_timer;
 	};
 }
 

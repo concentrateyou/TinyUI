@@ -50,7 +50,7 @@ namespace HLSPlayer
 	LRESULT MPreviewView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		m_player.Open(m_hWND, "D:\\2.ts");
+		m_player.Open(m_hWND, "http://202.69.67.66:443/webcast/bshdlive-pc/playlist.m3u8");
 		return FALSE;
 	}
 

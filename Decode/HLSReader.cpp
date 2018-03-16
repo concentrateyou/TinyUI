@@ -29,13 +29,24 @@ namespace Decode
 			return FALSE;
 		if (!m_client.GetResponse().ReadAsString(response))
 			return FALSE;
-		if (!ParsePlaylist2(response))
+		if (!ParsePlaylist2(response, TRUE))
 			return FALSE;
 		return TRUE;
 	}
 	void HLSReader::Close()
 	{
 		m_client.Close();
+	}
+	BOOL HLSReader::GetSegment(Segment& segment)
+	{
+		TinyAutoLock lock(m_lock);
+		ITERATOR s = m_segments.First();
+		if (s != NULL)
+		{
+			segment = m_segments.GetAt(s);
+			return TRUE;
+		}
+		return FALSE;
 	}
 	BOOL HLSReader::ParsePlaylist1(const string& response)
 	{
@@ -95,7 +106,7 @@ namespace Decode
 		}
 		return TRUE;
 	}
-	BOOL HLSReader::ParsePlaylist2(const string& response)
+	BOOL HLSReader::ParsePlaylist2(const string& response, BOOL bF)
 	{
 		TinyStringReader reader(response);
 		CHAR* line1 = NULL;
@@ -158,11 +169,20 @@ namespace Decode
 				}
 			} while (0);
 		}
-		if (bUPDATE)
+		if (bF)
 		{
 			TinyAutoLock lock(m_lock);
 			m_segments.RemoveAll();
 			m_segments.Append(&segments);//更新当前的切片
+		}
+		else
+		{
+			if (bUPDATE)
+			{
+				TinyAutoLock lock(m_lock);
+				m_segments.RemoveAll();
+				m_segments.Append(&segments);//更新当前的切片
+			}
 		}
 		return TRUE;
 	}
@@ -176,7 +196,7 @@ namespace Decode
 		string response;
 		if (!m_client.GetResponse().ReadAsString(response))
 			return FALSE;
-		if (!ParsePlaylist2(response))
+		if (!ParsePlaylist2(response, FALSE))
 			return FALSE;
 		return TRUE;
 	}

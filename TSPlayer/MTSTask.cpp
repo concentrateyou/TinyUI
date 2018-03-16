@@ -60,7 +60,7 @@ namespace TSPlayer
 
 	TinySize MTSTask::GetVideoSize()
 	{
-		return TinySize(1280, 720);
+		return TinySize(1024, 576);
 	}
 
 	MPacketQueue& MTSTask::GetAudioQueue()

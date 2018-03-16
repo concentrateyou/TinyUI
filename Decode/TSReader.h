@@ -36,6 +36,7 @@ namespace Decode
 		BYTE	GetStreamType() const OVERRIDE;
 		BOOL	Parse(TS_BLOCK& block) OVERRIDE;
 	private:
+		FILE*			m_hFile;
 		H264Parser		m_parser;
 		ConfigCallback	m_callback;
 	};
@@ -101,7 +102,7 @@ namespace Decode
 	private:
 		void	OnConfigCallback(const BYTE*, LONG, BYTE, LPVOID);
 		BOOL	ReadPacket(TS_PACKEG_HEADER& header, TS_BLOCK& block);
-		BOOL	ReadPES(TS_PACKET_STREAM* stream, TS_PACKET_PES& myPES, TS_BLOCK& block, const BYTE* bits, INT offset);
+		BOOL	ReadPES(TS_PACKET_STREAM* stream, TS_PACKET_PES& myPES, const BYTE* bits, INT offset);
 		BOOL	ReadAF(TS_PACKET_ADAPTATION_FIELD& myAF, const BYTE* bits);
 		BOOL	ReadPAT(TS_PACKET_PAT& myPAT, TinyArray<TS_PACKET_PROGRAM>& programs, const BYTE* bits);
 		BOOL	ReadPMT(TS_PACKET_PMT& myPTM, TinyArray<TinyScopedReferencePtr<TS_PACKET_STREAM>>& streams, const BYTE* bits);
