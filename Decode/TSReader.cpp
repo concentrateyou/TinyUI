@@ -75,18 +75,12 @@ namespace Decode
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TSH264Parser::TSH264Parser(ConfigCallback& callback)
-		:m_parser(callback),
-		m_hFile(NULL)
+		:m_parser(callback)
 	{
-		//fopen_s(&m_hFile, "D:\\demo.264", "wb+");
 	}
 	TSH264Parser::~TSH264Parser()
 	{
-	/*	if (m_hFile != NULL)
-		{
-			fclose(m_hFile);
-			m_hFile = NULL;
-		}*/
+
 	}
 	BYTE TSH264Parser::GetStreamType() const
 	{
@@ -94,10 +88,6 @@ namespace Decode
 	}
 	BOOL TSH264Parser::Parse(TS_BLOCK& block)
 	{
-		/*if (m_hFile != NULL)
-		{
-			fwrite(data(), 1, size(), m_hFile);
-		}*/
 		H264NALU sNALU;
 		if (m_parser.Parse(data(), size(), sNALU))
 		{
@@ -279,9 +269,6 @@ namespace Decode
 	}
 	BOOL TSReader::OpenURL(LPCSTR pzURL)
 	{
-		if (!pzURL)
-			return FALSE;
-		this->Close();
 		m_stream.Attach(new HTTPStream());
 		if (!m_stream)
 			return FALSE;
@@ -807,17 +794,17 @@ namespace Decode
 		header.AdaptationFieldControl = (m_bits[3] >> 4) & 0x03;
 		header.ContinuityCounter = m_bits[3] & 0x0F;
 		index += 4;
+		INT continuityCounter = header.ContinuityCounter;
 		INT* val = m_continuityCounterMap.GetValue(header.PID);
 		if (val != NULL)
 		{
-			INT continuityCounter = *val;
+			continuityCounter = *val;
 			continuityCounter = (continuityCounter + 1) % 16;
 			if (continuityCounter != header.ContinuityCounter)
 			{
 				TRACE("Invalid continuityCounter:%d,PID:%d%n", continuityCounter, header.PID);
 			}
 		}
-		INT continuityCounter = header.ContinuityCounter;
 		m_continuityCounterMap.SetAt(header.PID, continuityCounter);
 		if (header.AdaptationFieldControl == 0x2 || header.AdaptationFieldControl == 0x3)
 		{
@@ -864,21 +851,17 @@ namespace Decode
 							{
 								if (m_original != NULL)
 								{
-									if (m_original->PTS != current->PTS || 
-										m_original->DTS != current->DTS)
+									block.pts = m_original->PTS;
+									block.dts = m_original->DTS;
+									block.streamType = m_original->StreamType;
+									TSParser* parser = m_original->GetParser();
+									if (parser != NULL)
 									{
-										block.pts = m_original->PTS;
-										block.dts = m_original->DTS;
-										block.streamType = m_original->StreamType;
-										TSParser* parser = m_original->GetParser();
-										if (parser != NULL)
-										{
-											if (!parser->Parse(block))
-												return FALSE;
-										}
-										m_size = 0;
+										if (!parser->Parse(block))
+											return FALSE;
 									}
 								}
+								m_size = 0;
 							}
 							TS_PACKET_PES myPES;
 							ZeroMemory(&myPES, sizeof(myPES));
@@ -924,7 +907,6 @@ namespace Decode
 	}
 	BOOL TSReader::Close()
 	{
-		m_audioSR = 0.0F;
 		m_original = NULL;
 		m_continuityCounterMap.RemoveAll();
 		m_streams.RemoveAll();

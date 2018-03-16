@@ -276,7 +276,6 @@ namespace Decode
 			s.type = bits[0] & 0x1F;
 			s.bits = bits;
 		}
-
 		return TRUE;
 	}
 	BOOL H264Parser::ParseSPS(const BYTE* bits, LONG size, BYTE code, INT& spsID)

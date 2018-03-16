@@ -1874,6 +1874,7 @@ namespace TinyUI
 		~TinyBufferArray();
 		operator T*();
 		BOOL	SetCapacity(INT alloc_size);
+		INT		GetCapacity() const;
 		INT		GetSize() const;
 		T*		GetPointer();
 		BOOL	Add(T* value, INT size);
@@ -1917,6 +1918,11 @@ namespace TinyUI
 		m_alloc_size = alloc_size;
 		m_myT = myP;
 		return TRUE;
+	}
+	template<class T>
+	INT	TinyBufferArray<T>::GetCapacity() const
+	{
+		return m_alloc_size;
 	}
 	template<class T>
 	INT	 TinyBufferArray<T>::GetSize() const
