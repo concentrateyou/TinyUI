@@ -195,7 +195,7 @@ namespace Decode
 			++bits;
 			--remainingBytes;
 		}
-		offset = size;
+		offset = size - remainingBytes;
 		code = 0;
 		return TRUE;
 	}
