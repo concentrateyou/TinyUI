@@ -1,7 +1,7 @@
 #pragma once
 #include "MShowCommon.h"
 #include "MClock.h"
-#include "MTSTask.h"
+#include "MHLSTask.h"
 
 namespace HLSPlayer
 {
@@ -13,7 +13,7 @@ namespace HLSPlayer
 	{
 		DISALLOW_COPY_AND_ASSIGN(MAudioTask)
 	public:
-		MAudioTask(MTSTask& task, MClock& clock, TinyMsgQueue& queue);
+		MAudioTask(MHLSTask& task, MClock& clock, TinyMsgQueue& queue);
 		virtual ~MAudioTask();
 		BOOL Submit();
 		BOOL Close(DWORD dwMS) OVERRIDE;
@@ -29,7 +29,7 @@ namespace HLSPlayer
 		AACDecoder					m_aac;
 		TinyMsgQueue&				m_msgqueue;
 		MClock&						m_clock;
-		MTSTask&					m_task;
+		MHLSTask&					m_task;
 		MPacketQueue				m_audioQueue;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG, WORD, BOOL&)>>	m_onASC;
 	};

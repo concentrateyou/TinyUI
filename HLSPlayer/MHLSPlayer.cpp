@@ -1,9 +1,9 @@
 #include "stdafx.h"
-#include "MTSPlayer.h"
+#include "MHLSPlayer.h"
 
 namespace HLSPlayer
 {
-	MTSPlayer::MTSPlayer()
+	MHLSPlayer::MHLSPlayer()
 		:m_task(m_clock, m_msgqueue),
 		m_audioTask(m_task, m_clock, m_msgqueue),
 		m_audioRenderTask(m_audioTask, m_clock, m_msgqueue),
@@ -13,10 +13,10 @@ namespace HLSPlayer
 		m_bBreak(FALSE),
 		m_bPlaying(FALSE)
 	{
-		m_msgqueue.SetCallback(BindCallback(&MTSPlayer::OnMessage, this));
+		m_msgqueue.SetCallback(BindCallback(&MHLSPlayer::OnMessage, this));
 	}
 
-	MTSPlayer::MTSPlayer(Callback<void(BYTE*, LONG)>&& audioCB)
+	MHLSPlayer::MHLSPlayer(Callback<void(BYTE*, LONG)>&& audioCB)
 		:m_task(m_clock, m_msgqueue),
 		m_audioTask(m_task, m_clock, m_msgqueue),
 		m_audioRenderTask(m_audioTask, m_clock, m_msgqueue, std::move(audioCB)),
@@ -26,22 +26,22 @@ namespace HLSPlayer
 		m_bBreak(FALSE),
 		m_bPlaying(FALSE)
 	{
-		m_msgqueue.SetCallback(BindCallback(&MTSPlayer::OnMessage, this));
+		m_msgqueue.SetCallback(BindCallback(&MHLSPlayer::OnMessage, this));
 	}
 
-	MTSPlayer::~MTSPlayer()
+	MHLSPlayer::~MHLSPlayer()
 	{
 		m_msgqueue.Close();
 	}
-	BOOL MTSPlayer::IsPlaying() const
+	BOOL MHLSPlayer::IsPlaying() const
 	{
 		return m_bPlaying;
 	}
-	BOOL MTSPlayer::Open(HWND hWND, LPCSTR pzURL)
+	BOOL MHLSPlayer::Open(HWND hWND, LPCSTR pzURL)
 	{
 		m_hWND = hWND;
 		m_szURL = pzURL;
-		if (!m_task.Initialize(m_szURL.STR(), BindCallback(&MTSPlayer::OnError, this)))
+		if (!m_task.Initialize(m_szURL.STR(), BindCallback(&MHLSPlayer::OnError, this)))
 			return FALSE;
 		if (!m_audioRenderTask.Initialize())
 			return FALSE;
@@ -60,12 +60,12 @@ namespace HLSPlayer
 		return TRUE;
 	}
 
-	BOOL MTSPlayer::SetVolume(DWORD volume)
+	BOOL MHLSPlayer::SetVolume(DWORD volume)
 	{
 		return m_audioRenderTask.SetVolume(volume);
 	}
 
-	BOOL MTSPlayer::Close()
+	BOOL MHLSPlayer::Close()
 	{
 		BOOL bRes = TRUE;
 		LOG(INFO) << "[MFLVPlayer] Close SetCurrentAudioTS 0";
@@ -93,7 +93,7 @@ namespace HLSPlayer
 		return bRes;
 	}
 
-	void MTSPlayer::OnMessage(UINT msg, WPARAM wParam, LPARAM lParam)
+	void MHLSPlayer::OnMessage(UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 		if (msg == WM_FLV_PARSE_FAIL)
 		{
@@ -135,7 +135,7 @@ namespace HLSPlayer
 		}
 	}
 
-	void MTSPlayer::OnError(INT iError)
+	void MHLSPlayer::OnError(INT iError)
 	{
 		switch (iError)
 		{
@@ -147,7 +147,7 @@ namespace HLSPlayer
 		case WSAECONNRESET:
 		{
 			m_retryTimer.Close();
-			m_retryTimer.SetCallback(5000, BindCallback(&MTSPlayer::OnTry, this));//每隔5秒重试
+			m_retryTimer.SetCallback(5000, BindCallback(&MHLSPlayer::OnTry, this));//每隔5秒重试
 			TRACE("[MFLVPlayer] OnError:%d\n", iError);
 			LOG(ERROR) << "[MFLVPlayer] OnError:" << iError;
 		}
@@ -155,7 +155,7 @@ namespace HLSPlayer
 		}
 	}
 
-	void MTSPlayer::OnTry()
+	void MHLSPlayer::OnTry()
 	{
 		if (!this->IsPlaying())
 		{
@@ -176,22 +176,22 @@ namespace HLSPlayer
 		}
 	}
 
-	TinySize MTSPlayer::GetSize() const
+	TinySize MHLSPlayer::GetSize() const
 	{
 		return m_size;
 	}
 
-	DWORD MTSPlayer::GetRate() const
+	DWORD MHLSPlayer::GetRate() const
 	{
 		return m_dwRate;
 	}
 
-	TinyString	MTSPlayer::GetURL() const
+	TinyString	MHLSPlayer::GetURL() const
 	{
 		return m_szURL;
 	}
 
-	WAVEFORMATEX* MTSPlayer::GetFormat()
+	WAVEFORMATEX* MHLSPlayer::GetFormat()
 	{
 		return m_audioTask.GetFormat();
 	}

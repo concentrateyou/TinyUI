@@ -3,7 +3,7 @@
 
 namespace HLSPlayer
 {
-	MVideoTask::MVideoTask(MTSTask& task, MClock& clock, TinyMsgQueue& queue)
+	MVideoTask::MVideoTask(MHLSTask& task, MClock& clock, TinyMsgQueue& queue)
 		:m_task(task),
 		m_clock(clock),
 		m_msgqueue(queue),

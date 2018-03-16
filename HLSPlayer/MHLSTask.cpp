@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "MTSTask.h"
+#include "MHLSTask.h"
 
 namespace HLSPlayer
 {
@@ -9,7 +9,7 @@ namespace HLSPlayer
 		SAFE_DELETE_ARRAY(block.video.data);
 	}
 	//////////////////////////////////////////////////////////////////////////
-	MTSTask::MTSTask(MClock& clock, TinyMsgQueue& queue)
+	MHLSTask::MHLSTask(MClock& clock, TinyMsgQueue& queue)
 		:m_bBreak(FALSE),
 		m_sample(0),
 		m_clock(clock),
@@ -18,17 +18,17 @@ namespace HLSPlayer
 
 	}
 
-	BOOL MTSTask::Initialize(LPCSTR pzURL, ErrorCallback&& callback)
+	BOOL MHLSTask::Initialize(LPCSTR pzURL, ErrorCallback&& callback)
 	{
 		if (!PathFileExists(pzURL))
 			return FALSE;
 		if (!m_reader.OpenFile(pzURL))
 			return FALSE;
-		m_reader.SetConfigCallback(BindCallback(&MTSTask::OnConfigChange, this));
+		m_reader.SetConfigCallback(BindCallback(&MHLSTask::OnConfigChange, this));
 		return TRUE;
 	}
 
-	void MTSTask::OnConfigChange(const BYTE* bits, LONG size, BYTE streamType, LPVOID)
+	void MHLSTask::OnConfigChange(const BYTE* bits, LONG size, BYTE streamType, LPVOID)
 	{
 		if (streamType == TS_STREAM_TYPE_VIDEO_H264)
 		{
@@ -42,14 +42,14 @@ namespace HLSPlayer
 		}
 	}
 
-	BOOL MTSTask::Submit()
+	BOOL MHLSTask::Submit()
 	{
 		m_bBreak = FALSE;
 		m_sample = 0;
-		return TinyTask::Submit(BindCallback(&MTSTask::OnMessagePump, this));
+		return TinyTask::Submit(BindCallback(&MHLSTask::OnMessagePump, this));
 	}
 
-	BOOL MTSTask::Close(DWORD dwMS)
+	BOOL MHLSTask::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
 		BOOL bRes = TinyTask::Close(dwMS);
@@ -58,29 +58,29 @@ namespace HLSPlayer
 		return bRes;
 	}
 
-	TinySize MTSTask::GetVideoSize()
+	TinySize MHLSTask::GetVideoSize()
 	{
 		return TinySize(1280, 720);
 	}
 
-	MPacketQueue& MTSTask::GetAudioQueue()
+	MPacketQueue& MHLSTask::GetAudioQueue()
 	{
 		return m_audioQueue;
 	}
 
-	MPacketQueue& MTSTask::GetVideoQueue()
+	MPacketQueue& MHLSTask::GetVideoQueue()
 	{
 		return m_videoQueue;
 	}
 
-	void MTSTask::OnMessagePump()
+	void MHLSTask::OnMessagePump()
 	{
 		SampleTag tag = { 0 };
 		TS_BLOCK block = { 0 };
 		Invoke(tag, block);
 	}
 
-	BOOL MTSTask::Invoke(SampleTag& tag, TS_BLOCK& block)
+	BOOL MHLSTask::Invoke(SampleTag& tag, TS_BLOCK& block)
 	{
 		for (;;)
 		{
@@ -119,7 +119,7 @@ namespace HLSPlayer
 		}
 		return TRUE;
 	}
-	MTSTask::~MTSTask()
+	MHLSTask::~MHLSTask()
 	{
 	}
 }

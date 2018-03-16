@@ -154,8 +154,8 @@
     <ClInclude Include="MPacketQueue.h" />
     <ClInclude Include="MPreviewView.h" />
     <ClInclude Include="MShowCommon.h" />
-    <ClInclude Include="MTSPlayer.h" />
-    <ClInclude Include="MTSTask.h" />
+    <ClInclude Include="MHLSPlayer.h" />
+    <ClInclude Include="MHLSTask.h" />
     <ClInclude Include="MVideoRenderTask.h" />
     <ClInclude Include="MVideoTask.h" />
     <ClInclude Include="Resource.h" />
@@ -171,8 +171,8 @@
     <ClCompile Include="MPacketQueue.cpp" />
     <ClCompile Include="MPreviewView.cpp" />
     <ClCompile Include="MShowCommon.cpp" />
-    <ClCompile Include="MTSPlayer.cpp" />
-    <ClCompile Include="MTSTask.cpp" />
+    <ClCompile Include="MHLSPlayer.cpp" />
+    <ClCompile Include="MHLSTask.cpp" />
     <ClCompile Include="MVideoRenderTask.cpp" />
     <ClCompile Include="MVideoTask.cpp" />
     <ClCompile Include="stdafx.cpp">

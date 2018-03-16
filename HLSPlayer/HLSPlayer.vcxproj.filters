@@ -45,12 +45,6 @@
     <ClInclude Include="MShowCommon.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MTSPlayer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MTSTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="MVideoRenderTask.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -61,6 +55,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="HLSPreviewView.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MHLSPlayer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MHLSTask.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -86,12 +86,6 @@
     <ClCompile Include="MShowCommon.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MTSPlayer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MTSTask.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="MVideoRenderTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -102,6 +96,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="HLSPreviewView.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MHLSPlayer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MHLSTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

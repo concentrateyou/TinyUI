@@ -1,5 +1,5 @@
 #pragma once
-#include "MTSPlayer.h"
+#include "MHLSPlayer.h"
 
 namespace HLSPlayer
 {
@@ -27,7 +27,7 @@ namespace HLSPlayer
 		LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	private:
-		MTSPlayer	m_player;
+		MHLSPlayer	m_player;
 	};
 }
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "MTSTask.h"
+#include "MHLSTask.h"
 #include "x264Decoder.h"
 using namespace Decode;
 
@@ -12,7 +12,7 @@ namespace HLSPlayer
 	{
 		DISALLOW_COPY_AND_ASSIGN(MVideoTask)
 	public:
-		MVideoTask(MTSTask& task, MClock& clock, TinyMsgQueue& queue);
+		MVideoTask(MHLSTask& task, MClock& clock, TinyMsgQueue& queue);
 		virtual ~MVideoTask();
 		BOOL			Submit();
 		BOOL			Close(DWORD dwMS) OVERRIDE;
@@ -26,7 +26,7 @@ namespace HLSPlayer
 		x264Decoder					m_x264;
 		TinyMsgQueue&				m_msgqueue;
 		MClock&						m_clock;
-		MTSTask&					m_task;
+		MHLSTask&					m_task;
 		MPacketQueue				m_videoQueue;
 		TinyScopedPtr<Delegate<void(BYTE*, LONG, BOOL&)>>	m_onAVCDC;
 	};

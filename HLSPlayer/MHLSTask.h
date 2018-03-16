@@ -9,14 +9,14 @@ using namespace TinyUI::Network;
 namespace HLSPlayer
 {
 	/// <summary>
-	/// TS读取线程
+	/// HLS读取线程
 	/// </summary>
-	class MTSTask : public TinyTask
+	class MHLSTask : public TinyTask
 	{
-		DISALLOW_COPY_AND_ASSIGN(MTSTask)
+		DISALLOW_COPY_AND_ASSIGN(MHLSTask)
 	public:
-		MTSTask(MClock& clock, TinyMsgQueue& queue);
-		virtual ~MTSTask();
+		MHLSTask(MClock& clock, TinyMsgQueue& queue);
+		virtual ~MHLSTask();
 		BOOL			Initialize(LPCSTR pzURL, ErrorCallback&& callback);
 		BOOL			Submit();
 		BOOL			Close(DWORD dwMS) OVERRIDE;

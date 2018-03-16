@@ -7,15 +7,15 @@
 namespace HLSPlayer
 {
 	/// <summary>
-	/// TS²¥·ÅÆ÷
+	/// HLS²¥·ÅÆ÷
 	/// </summary>
-	class MTSPlayer
+	class MHLSPlayer
 	{
-		DISALLOW_COPY_AND_ASSIGN(MTSPlayer)
+		DISALLOW_COPY_AND_ASSIGN(MHLSPlayer)
 	public:
-		MTSPlayer();
-		MTSPlayer(Callback<void(BYTE*, LONG)>&& audioCB);
-		virtual ~MTSPlayer();
+		MHLSPlayer();
+		MHLSPlayer(Callback<void(BYTE*, LONG)>&& audioCB);
+		virtual ~MHLSPlayer();
 		BOOL			IsPlaying() const;
 		BOOL			Open(HWND hWND, LPCSTR pzURL);
 		BOOL			Close();
@@ -38,7 +38,7 @@ namespace HLSPlayer
 		TinyMsgQueue					m_msgqueue;
 		TinySimpleTaskTimer				m_retryTimer;
 		MClock							m_clock;
-		MTSTask							m_task;
+		MHLSTask						m_task;
 		MAudioTask						m_audioTask;
 		MVideoTask						m_videoTask;
 		MAudioRenderTask				m_audioRenderTask;

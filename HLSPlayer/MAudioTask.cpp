@@ -3,7 +3,7 @@
 
 namespace HLSPlayer
 {
-	MAudioTask::MAudioTask(MTSTask& task, MClock& clock, TinyMsgQueue& queue)
+	MAudioTask::MAudioTask(MHLSTask& task, MClock& clock, TinyMsgQueue& queue)
 		:m_task(task),
 		m_clock(clock),
 		m_msgqueue(queue),
