@@ -5,23 +5,27 @@
 
 namespace Decode
 {
+	/// <summary>
+	/// TS解析
+	/// </summary>
 	class TSParser
 	{
 		DISALLOW_COPY_AND_ASSIGN(TSParser)
 	public:
 		TSParser();
 		virtual ~TSParser();
-		virtual BYTE GetStreamType() const = 0;
-		virtual BOOL Parse(TS_BLOCK& block) = 0;
+		virtual BYTE		GetStreamType() const = 0;
+		virtual TS_ERROR	Parse(TS_BLOCK& block) = 0;
 		void	SetCapacity(INT capacity);
+		INT		GetCapacity() const;
 		void	Add(BYTE* bits, INT size);
+		void	Remove(INT size);
 		void	Reset();
 		BYTE*	data();
 		INT		size() const;
 	private:
 		INT						m_capacity;
 		TinyBufferArray<BYTE>	m_io;
-		vector<BYTE>			m_config;
 	};
 	/// <summary>
 	/// TS H264解析
@@ -33,8 +37,8 @@ namespace Decode
 		TSH264Parser(ConfigCallback& callback);
 		virtual ~TSH264Parser();
 	public:
-		BYTE	GetStreamType() const OVERRIDE;
-		BOOL	Parse(TS_BLOCK& block) OVERRIDE;
+		BYTE		GetStreamType() const OVERRIDE;
+		TS_ERROR	Parse(TS_BLOCK& block) OVERRIDE;
 	private:
 		FILE*			m_hFile;
 		H264Parser		m_parser;
@@ -50,12 +54,12 @@ namespace Decode
 		TSAACParser(ConfigCallback& callback);
 		virtual ~TSAACParser();
 	public:
-		BYTE	GetStreamType() const OVERRIDE;
-		BOOL	Parse(TS_BLOCK& block) OVERRIDE;
+		BYTE		GetStreamType() const OVERRIDE;
+		TS_ERROR	Parse(TS_BLOCK& block) OVERRIDE;
 		const AACAudioConfig& GetAudioConfig() const;
 		static void	ParseAAC(TS_BLOCK& block, TinyLinkList<TS_BLOCK>& audios, DOUBLE AACTimestamp);
 	private:
-		BOOL	ParseADTS(BYTE* bits, LONG size);
+		BOOL		ParseADTS(BYTE* bits, LONG size);
 	private:
 		FLOAT			m_timestamp;
 		AACAudioConfig	m_lastConfig;
@@ -102,7 +106,7 @@ namespace Decode
 	private:
 		void	OnConfigCallback(const BYTE*, LONG, BYTE, LPVOID);
 		BOOL	ReadPacket(TS_PACKEG_HEADER& header, TS_BLOCK& block);
-		BOOL	ReadPES(TS_PACKET_STREAM* stream, TS_PACKET_PES& myPES, const BYTE* bits, INT offset);
+		BOOL	ReadPES(TS_PACKET_STREAM* stream, TS_PACKET_PES& myPES, const BYTE* bits, INT offset, BOOL bPayloadUnitStartIndicator);
 		BOOL	ReadAF(TS_PACKET_ADAPTATION_FIELD& myAF, const BYTE* bits);
 		BOOL	ReadPAT(TS_PACKET_PAT& myPAT, TinyArray<TS_PACKET_PROGRAM>& programs, const BYTE* bits);
 		BOOL	ReadPMT(TS_PACKET_PMT& myPTM, TinyArray<TinyScopedReferencePtr<TS_PACKET_STREAM>>& streams, const BYTE* bits);
@@ -114,7 +118,7 @@ namespace Decode
 		INT								m_versionNumberPMT;
 		DOUBLE							m_audioSR;//音频采样率HZ
 		ConfigCallback					m_configCallback;
-		TS_PACKET_STREAM*				m_original;
+		TS_PACKET_STREAM*				m_previous;
 		TinyLinkList<TS_BLOCK>			m_audios;
 		TinyComPtr<IStream>				m_stream;
 		TinyMap<USHORT, INT>			m_continuityCounterMap;

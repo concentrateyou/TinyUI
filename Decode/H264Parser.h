@@ -17,9 +17,11 @@ namespace Decode
 		H264Parser(ConfigCallback& callback);
 		virtual ~H264Parser();
 		const H264VideoConfig& GetVideoConfig() const;
-		BOOL Parse(const BYTE* bits, LONG size, H264NALU& nalu);
+		TS_ERROR Parse(const BYTE* bits, LONG size, H264NALU& nalu);
 		static BOOL FindCode(const BYTE* bits, LONG size, LONG& offset, BYTE& code);//获得起始码
+		static BOOL FindAUD(const BYTE* bits, LONG size, LONG& offset, BYTE& code);
 	private:
+		BOOL FindAUDRange(const BYTE* bits, LONG size);
 		BOOL ParseSPS(const BYTE* bits, LONG size, BYTE code, INT& spsID);
 		BOOL ParsePPS(const BYTE* bits, LONG size, BYTE code, INT& ppsID);
 		BOOL ParseSliceHeader(const BYTE* bits, LONG size, BYTE code, H264NALU& s);

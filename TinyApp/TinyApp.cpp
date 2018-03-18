@@ -90,11 +90,13 @@ private:
 	AACDecoder		m_aac;
 	TSReader		m_reader;
 	TinyWaveFile	m_waveFile;
+	FILE*			m_h264File;
 	FILE*			m_aacFile;
 };
 TSDecoder::TSDecoder()
 	:m_count(0),
-	m_aacFile(NULL)
+	m_aacFile(NULL),
+	m_h264File(NULL)
 {
 
 }
@@ -118,6 +120,12 @@ void TSDecoder::Close()
 		m_aacFile = NULL;
 	}
 
+	if (m_h264File != NULL)
+	{
+		fclose(m_h264File);
+		m_h264File = NULL;
+	}
+
 	m_waveFile.Close();
 	m_reader.Close();
 }
@@ -126,15 +134,17 @@ void TSDecoder::OnConfigChange(const BYTE* bits, LONG size, BYTE streamType, LPV
 {
 	if (streamType == TS_STREAM_TYPE_VIDEO_H264)
 	{
+		fopen_s(&m_h264File, "D:\\test111.h264", "wb+");
 		m_x264.Close();
 		m_x264.Initialize({ 1280,720 }, { 1280,720 });
 		m_x264.Open(const_cast<BYTE*>(bits), size);
+		fwrite(bits, sizeof(BYTE), size, m_h264File);
 	}
 	if (streamType == TS_STREAM_TYPE_AUDIO_AAC)
 	{
-		m_aac.Close();
-		m_aac.Open(const_cast<BYTE*>(bits), size, 16);
-		m_waveFile.Create("D:\\test111.wav", m_aac.GetFormat());
+		/*	m_aac.Close();
+			m_aac.Open(const_cast<BYTE*>(bits), size, 16);
+			m_waveFile.Create("D:\\test111.wav", m_aac.GetFormat());*/
 	}
 }
 
@@ -143,9 +153,10 @@ INT audios = 0;
 
 void TSDecoder::Invoke()
 {
+	TS_BLOCK block = { 0 };
 	for (;;)
 	{
-		TS_BLOCK block = { 0 };
+		ZeroMemory(&block, sizeof(block));
 		if (!m_reader.ReadBlock(block))
 		{
 			SAFE_DELETE_ARRAY(block.audio.data);
@@ -154,29 +165,31 @@ void TSDecoder::Invoke()
 		}
 		if (block.streamType == TS_STREAM_TYPE_VIDEO_H264)
 		{
-			SampleTag tag = { 0 };
-			tag.size = block.video.size;
-			tag.bits = block.video.data;
-			tag.sampleDTS = block.dts;
-			tag.samplePTS = block.pts;
-			BYTE* bo = NULL;
-			LONG so = 0;
-			INT iRes = m_x264.Decode(tag, bo, so);
-			if (iRes == 0)
-			{
-				/*tag.sampleDTS = tag.samplePTS = m_x264.GetYUV420()->pts;
-				BITMAPINFOHEADER bi = { 0 };
-				bi.biSize = sizeof(BITMAPINFOHEADER);
-				bi.biWidth = 1280;
-				bi.biHeight = -720;
-				bi.biPlanes = 1;
-				bi.biBitCount = 32;
-				bi.biCompression = BI_RGB;*/
-				//SaveBitmap(bi, bo, so, StringPrintf("D:\\test\\%s.bmp", GenerateGUID().c_str()).c_str());
-			}
+			fwrite(block.video.data, sizeof(BYTE), block.video.size, m_h264File);
+			TRACE("H264 Size:%d\n", block.video.size);
+			//SampleTag tag = { 0 };
+			//tag.size = block.video.size;
+			//tag.bits = block.video.data;
+			//tag.sampleDTS = block.dts;
+			//tag.samplePTS = block.pts;
+			////BYTE* bo = NULL;
+			////LONG so = 0;
+			////INT iRes = m_x264.Decode(tag, bo, so);
+			////if (iRes == 0)
+			////{
+			////	/*tag.sampleDTS = tag.samplePTS = m_x264.GetYUV420()->pts;
+			////	BITMAPINFOHEADER bi = { 0 };
+			////	bi.biSize = sizeof(BITMAPINFOHEADER);
+			////	bi.biWidth = 1280;
+			////	bi.biHeight = -720;
+			////	bi.biPlanes = 1;
+			////	bi.biBitCount = 32;
+			////	bi.biCompression = BI_RGB;*/
+			////	//SaveBitmap(bi, bo, so, StringPrintf("D:\\test\\%s.bmp", GenerateGUID().c_str()).c_str());
+			////}
 			++videos;
 		}
-		if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)
+		/*if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)
 		{
 			SampleTag tag = { 0 };
 			tag.size = block.audio.size;
@@ -190,7 +203,9 @@ void TSDecoder::Invoke()
 				m_waveFile.Write(bo, so);
 			}
 			++audios;
-		}
+		}*/
+		SAFE_DELETE_ARRAY(block.audio.data);
+		SAFE_DELETE_ARRAY(block.video.data);
 	}
 }
 
@@ -213,17 +228,17 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	CoInitialize(NULL);
 	avcodec_register_all();
 
-	HLSReader reader;
-	reader.Open("http://live.hkstv.hk.lxdns.com/live/hks/playlist.m3u8");
-	for (;;)
-	{
-		reader.ReadSegments();
-		Sleep(1000);
-	}
-	//TSDecoder decoder;
-	//decoder.Open("D:\\10s.ts");
-	//decoder.Invoke();
-	//decoder.Close();
+	//HLSReader reader;
+	//reader.Open("http://live.hkstv.hk.lxdns.com/live/hks/playlist.m3u8");
+	//for (;;)
+	//{
+	//	reader.ReadSegments();
+	//	Sleep(1000);
+	//}
+	TSDecoder decoder;
+	decoder.Open("D:\\1.ts");
+	decoder.Invoke();
+	decoder.Close();
 	////FILE* hFile1 = NULL;
 	//fopen_s(&hFile1, "D:\\test.264", "wb+");
 	////FILE* hFile2 = NULL;

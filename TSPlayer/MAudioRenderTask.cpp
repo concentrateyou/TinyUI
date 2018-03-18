@@ -95,6 +95,7 @@ namespace TSPlayer
 			}
 			LONGLONG msQPC = GetQPCTimeMS();
 			m_clock.SetClock(sampleTag.samplePTS);
+			TRACE("AudioPTS:%lld\n", sampleTag.samplePTS);
 			m_audio.Play(sampleTag.bits, sampleTag.size, 5000);
 			m_clock.SetClock(m_clock.GetClock() + (GetQPCTimeMS() - msQPC));
 			SAFE_DELETE_ARRAY(sampleTag.bits);

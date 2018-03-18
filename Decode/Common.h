@@ -52,6 +52,18 @@ namespace Decode
 #define TS_STREAM_TYPE_AUDIO_AC3		0x81  
 #define TS_STREAM_TYPE_AUDIO_DTS		0x8a 
 
+	enum TS_ERROR
+	{
+		TS_ERROR_NONE = 0,
+		TS_ERROR_UNKNOW = -1,
+		TS_ERROR_NULL_PTR = -2,
+		TS_ERROR_INVALID_PARAM = -3,
+		TS_ERROR_SLICE = -9,
+		TS_ERROR_PPS = -10,
+		TS_ERROR_SPS = -11,
+		TS_ERROR_NEED_MORE = -12
+	};
+
 	INT ToINT32(BYTE val[4]);
 	INT ToINT24(BYTE val[3]);
 	INT ToINT16(BYTE val[2]);

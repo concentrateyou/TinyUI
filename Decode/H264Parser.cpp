@@ -174,6 +174,24 @@ namespace Decode
 	{
 		return m_lastConfig;
 	}
+	BOOL H264Parser::FindAUD(const BYTE* bits, LONG size, LONG& offset, BYTE& code)
+	{
+		if (size <= 0)
+			return FALSE;
+		for (;;)
+		{
+			code = 0;
+			offset = 0;
+			if (!FindCode(bits, size, offset, code))
+				return FALSE;
+			if ((offset + code) >= size)
+				return FALSE;
+			if (bits[offset + code] == NALU_TYPE_AUD)
+				break;
+			bits += offset + code;
+		}
+		return TRUE;
+	}
 	BOOL H264Parser::FindCode(const BYTE* bits, LONG size, LONG& offset, BYTE& code)
 	{
 		if (size <= 0)
@@ -197,25 +215,40 @@ namespace Decode
 		}
 		offset = size - remainingBytes;
 		code = 0;
+		return FALSE;
+	}
+	BOOL H264Parser::FindAUDRange(const BYTE* bits, LONG size)
+	{
+		//找到一个AUD
+		LONG pos = 0;
+		BYTE code = 0;
+		if (!FindAUD(bits, size, pos, code))
+			return FALSE;
+		bits += pos + code;
+		size -= pos + code;
+		if (!FindAUD(bits, size, pos, code))
+			return FALSE;
 		return TRUE;
 	}
-	BOOL H264Parser::Parse(const BYTE* bits, LONG size, H264NALU& sNALU)
+	TS_ERROR H264Parser::Parse(const BYTE* bits, LONG size, H264NALU& sNALU)
 	{
 		if (!bits || size <= 0)
-			return FALSE;
+			return TS_ERROR_INVALID_PARAM;
+		if (!FindAUDRange(bits, size))
+			return TS_ERROR_NEED_MORE;
 		BYTE mask = 0;
 		ZeroMemory(&sNALU, sizeof(sNALU));
 		H264NALU s;
 		ZeroMemory(&s, sizeof(s));
-		BYTE code = 0;
 		for (;;)
 		{
-			LONG offset = 0;
-			if (!FindCode(bits, size, offset, code))
+			BYTE code = 0;
+			LONG pos = 0;
+			if (!FindCode(bits, size, pos, code))
 				break;
-			if (offset > 0)
+			if (pos > 0)
 			{
-				s.size = offset;
+				s.size = pos;
 				switch (s.type)
 				{
 				case NALU_TYPE_AUD://分隔符
@@ -229,11 +262,13 @@ namespace Decode
 					if (!ParseSPS(s.bits + 1, s.size - 1, code, spsID))
 					{
 						m_sps.clear();
-						return FALSE;
+						return TS_ERROR_PPS;
 					}
 					H264SPS* sps = m_spsMap.GetValue(spsID);
 					if (!sps)
-						return FALSE;
+					{
+						return TS_ERROR_NULL_PTR;
+					}
 					SetVideoConfig(sps, code);
 				}
 				break;
@@ -246,14 +281,18 @@ namespace Decode
 					if (!ParsePPS(s.bits + 1, s.size - 1, code, ppsID))
 					{
 						m_pps.clear();
-						return FALSE;
+						return TS_ERROR_PPS;
 					}
 					H264PPS* pps = m_ppsMap.GetValue(ppsID);
 					if (!pps)
-						return FALSE;
+					{
+						return TS_ERROR_NULL_PTR;
+					}
 					H264SPS* sps = m_spsMap.GetValue(pps->seq_parameter_set_id);
 					if (!sps)
-						return FALSE;
+					{
+						return TS_ERROR_NULL_PTR;
+					}
 					SetVideoConfig(sps, code);
 				}
 				break;
@@ -265,18 +304,19 @@ namespace Decode
 					sNALU.size = s.size + 4;
 					if (!ParseSliceHeader(s.bits + 1, s.size - 1, code, sNALU))
 					{
-						return FALSE;
+						return TS_ERROR_UNKNOW;
 					}
+					return TS_ERROR_NONE;
 				}
 				break;
 				}
 			}
-			bits += (offset + code);
-			size -= (offset + code);
+			bits += (pos + code);
+			size -= (pos + code);
 			s.type = bits[0] & 0x1F;
 			s.bits = bits;
 		}
-		return TRUE;
+		return TS_ERROR_NONE;
 	}
 	BOOL H264Parser::ParseSPS(const BYTE* bits, LONG size, BYTE code, INT& spsID)
 	{
