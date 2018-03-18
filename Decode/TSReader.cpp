@@ -43,7 +43,6 @@ namespace Decode
 	static const BYTE E_STREAM = 0xF8;
 	//////////////////////////////////////////////////////////////////////////
 	TSParser::TSParser()
-		:m_capacity(0)
 	{
 
 	}
@@ -51,19 +50,8 @@ namespace Decode
 	{
 
 	}
-	void TSParser::SetCapacity(INT capacity)
-	{
-		ASSERT(capacity > 0);
-		m_io.SetCapacity(capacity);
-		m_capacity = capacity;
-	}
-	INT	TSParser::GetCapacity() const
-	{
-		return m_capacity;
-	}
 	void TSParser::Add(BYTE* bits, INT size)
 	{
-		ASSERT((m_io.GetSize() + size) <= m_capacity);
 		m_io.Add(bits, size);
 	}
 	void TSParser::Remove(INT size)
@@ -97,8 +85,12 @@ namespace Decode
 	{
 		return TS_STREAM_TYPE_VIDEO_H264;
 	}
-	TS_ERROR TSH264Parser::Parse(TS_BLOCK& block)
+	TS_ERROR TSH264Parser::Parse(TS_BLOCK& block, Timing& timing)
 	{
+		if (!m_timings.Lookup(timing, NULL))
+		{
+			m_timings.InsertLast(timing);
+		}
 		H264NALU sNALU;
 		TS_ERROR iRes = m_parser.Parse(data(), size(), sNALU);
 		if (iRes != TS_ERROR_NONE)
@@ -107,6 +99,14 @@ namespace Decode
 		}
 		else
 		{
+			ITERATOR s = m_timings.First();
+			if (s != NULL)
+			{
+				Timing& timing = m_timings.GetAt(s);
+				block.pts = timing.PTS;
+				block.dts = timing.DTS;
+				m_timings.RemoveAt(s);
+			}
 			block.video.codeType = sNALU.sliceType;
 			block.video.type = sNALU.type;
 			block.video.size = sNALU.size;
@@ -126,8 +126,7 @@ namespace Decode
 	}
 
 	TSAACParser::TSAACParser(ConfigCallback& callback)
-		:m_callback(callback),
-		m_timestamp(0.0F)
+		:m_callback(callback)
 	{
 
 	}
@@ -143,13 +142,25 @@ namespace Decode
 	{
 		return m_lastConfig;
 	}
-	TS_ERROR TSAACParser::Parse(TS_BLOCK& block)
+	TS_ERROR TSAACParser::Parse(TS_BLOCK& block, Timing& timing)
 	{
+		if (!m_timings.Lookup(timing, NULL))
+		{
+			m_timings.InsertLast(timing);
+		}
 		block.audio.size = size();
 		block.audio.data = new BYTE[block.audio.size];
 		memcpy_s(block.audio.data, block.audio.size, data(), block.audio.size);
 		if (ParseADTS(block.audio.data, block.audio.size))
 		{
+			ITERATOR s = m_timings.First();
+			if (s != NULL)
+			{
+				Timing& timing = m_timings.GetAt(s);
+				block.pts = timing.PTS;
+				block.dts = timing.DTS;
+				m_timings.RemoveAt(s);
+			}
 			this->Remove(block.audio.size);
 			return TS_ERROR_NONE;
 		}
@@ -267,7 +278,6 @@ namespace Decode
 	TSReader::TSReader()
 		:m_versionNumberPAT(-1),
 		m_versionNumberPMT(-1),
-		m_size(0),
 		m_previous(NULL),
 		m_audioSR(0.0F)
 	{
@@ -328,6 +338,10 @@ namespace Decode
 						memcpy_s(&block, sizeof(TS_BLOCK), &audio, sizeof(TS_BLOCK));
 						m_audios.RemoveAt(s);
 					}
+				}
+				if (block.streamType == TS_STREAM_TYPE_VIDEO_H264)
+				{
+					INT a = 0;
 				}
 				break;
 			}
@@ -543,15 +557,15 @@ namespace Decode
 	BOOL TSReader::ReadPES(TS_PACKET_STREAM* stream, TS_PACKET_PES& myPES, const BYTE* bits, INT offset, BOOL bPayloadUnitStartIndicator)
 	{
 		ASSERT(stream);
+		INT index = 0;
 		if (bPayloadUnitStartIndicator)
 		{
-			INT index = 0;
 			myPES.PacketStartCodePrefix = bits[index] << 16 | bits[index + 1] << 8 | bits[index + 2];
 			if (myPES.PacketStartCodePrefix != 0x000001)
 				return FALSE;
 			index += 3;
 			myPES.StreamID = bits[index++];
-			myPES.PESPacketLength = bits[index] << 8 | bits[index + 1];
+			myPES.PESPacketLength = bits[index] << 8 | bits[index + 1];//可以为0
 			index += 2;
 			BOOL bAudio = ((myPES.StreamID & 0xe0) == 0xc0);
 			BOOL bVideo = ((myPES.StreamID & 0xf0) == 0xe0);
@@ -697,25 +711,11 @@ namespace Decode
 				}
 			}
 			ASSERT(index == myPES.PESHeaderDataLength + 9);
-			TSParser* parser = stream->GetParser();
-			if (parser != NULL)
-			{
-				INT capacity = myPES.PESPacketLength - 3 - myPES.PESHeaderDataLength;
-				parser->SetCapacity(capacity + parser->GetCapacity());
-				INT size = TS_PACKET_SIZE - (offset + index);
-				parser->Add((BYTE*)(bits + index), size);
-				m_size += size;
-			}
 		}
-		else
+		TSParser* parser = stream->GetParser();
+		if (parser != NULL)
 		{
-			TSParser* parser = stream->GetParser();
-			if (parser != NULL)
-			{
-				INT size = TS_PACKET_SIZE - offset;
-				parser->Add((BYTE*)(bits), size);
-				m_size += size;
-			}
+			parser->Add((BYTE*)(bits + index), TS_PACKET_SIZE - (offset + index));
 		}
 		return TRUE;
 	}
@@ -872,28 +872,29 @@ namespace Decode
 					TS_PACKET_STREAM* current = m_streams[i].Ptr();
 					if (current->ElementaryPID == header.PID)
 					{
-						TS_PACKET_PES myPES;
-						ZeroMemory(&myPES, sizeof(myPES));
-						if (!ReadPES(current, myPES, m_bits + index, index, header.PayloadUnitStartIndicator))
-							return FALSE;
-						if (m_previous != NULL)
+						if (header.PayloadUnitStartIndicator)
 						{
-							if (header.PayloadUnitStartIndicator)
+							if (m_previous != NULL)
 							{
-								block.pts = m_previous->PTS;
-								block.dts = m_previous->DTS;
 								block.streamType = m_previous->StreamType;
 								TSParser* parser = m_previous->GetParser();
 								if (parser != NULL)
 								{
-									TS_ERROR iRes = parser->Parse(block);
+									Timing timing = { m_previous->PTS,m_previous->DTS };
+									TS_ERROR iRes = parser->Parse(block, timing);
 									if (iRes != TS_ERROR_NONE &&
 										iRes != TS_ERROR_NEED_MORE)
+									{
 										return FALSE;
+									}
 								}
 							}
+							m_previous = current;
 						}
-						m_previous = current;
+						TS_PACKET_PES myPES;
+						ZeroMemory(&myPES, sizeof(myPES));
+						if (!ReadPES(current, myPES, m_bits + index, index, header.PayloadUnitStartIndicator))
+							return FALSE;
 						break;
 					}
 				}

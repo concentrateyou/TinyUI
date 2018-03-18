@@ -5,6 +5,11 @@
 
 namespace Decode
 {
+	struct Timing
+	{
+		DOUBLE PTS;
+		DOUBLE DTS;
+	};
 	/// <summary>
 	/// TS½âÎö
 	/// </summary>
@@ -15,9 +20,7 @@ namespace Decode
 		TSParser();
 		virtual ~TSParser();
 		virtual BYTE		GetStreamType() const = 0;
-		virtual TS_ERROR	Parse(TS_BLOCK& block) = 0;
-		void	SetCapacity(INT capacity);
-		INT		GetCapacity() const;
+		virtual TS_ERROR	Parse(TS_BLOCK& block, Timing& timing) = 0;
 		void	Add(BYTE* bits, INT size);
 		void	Remove(INT size);
 		void	Reset();
@@ -38,11 +41,11 @@ namespace Decode
 		virtual ~TSH264Parser();
 	public:
 		BYTE		GetStreamType() const OVERRIDE;
-		TS_ERROR	Parse(TS_BLOCK& block) OVERRIDE;
+		TS_ERROR	Parse(TS_BLOCK& block, Timing& timing) OVERRIDE;
 	private:
-		FILE*			m_hFile;
-		H264Parser		m_parser;
-		ConfigCallback	m_callback;
+		H264Parser			m_parser;
+		ConfigCallback		m_callback;
+		TinyLinkList<Timing>m_timings;
 	};
 	/// <summary>
 	/// TS AAC½âÎö
@@ -55,15 +58,15 @@ namespace Decode
 		virtual ~TSAACParser();
 	public:
 		BYTE		GetStreamType() const OVERRIDE;
-		TS_ERROR	Parse(TS_BLOCK& block) OVERRIDE;
+		TS_ERROR	Parse(TS_BLOCK& block, Timing& timing) OVERRIDE;
 		const AACAudioConfig& GetAudioConfig() const;
 		static void	ParseAAC(TS_BLOCK& block, TinyLinkList<TS_BLOCK>& audios, DOUBLE AACTimestamp);
 	private:
 		BOOL		ParseADTS(BYTE* bits, LONG size);
 	private:
-		FLOAT			m_timestamp;
-		AACAudioConfig	m_lastConfig;
-		ConfigCallback	m_callback;
+		AACAudioConfig		m_lastConfig;
+		ConfigCallback		m_callback;
+		TinyLinkList<Timing>m_timings;
 	};
 	//////////////////////////////////////////////////////////////////////////
 	class TS_PACKET_STREAM : public TinyReference< TS_PACKET_STREAM >
@@ -84,8 +87,6 @@ namespace Decode
 		BOOL operator == (const TS_PACKET_STREAM& other);
 		TSParser* GetParser();
 	private:
-		LONGLONG				m_baseDTS;
-		LONGLONG				m_basePTS;
 		ConfigCallback			m_configCallback;
 		TinyScopedPtr<TSParser>	m_parser;
 	};
@@ -112,7 +113,6 @@ namespace Decode
 		BOOL	ReadPMT(TS_PACKET_PMT& myPTM, TinyArray<TinyScopedReferencePtr<TS_PACKET_STREAM>>& streams, const BYTE* bits);
 		BOOL	ReadSDT(TS_PACKET_SDT& mySDT, const BYTE* bits);
 	private:
-		LONG							m_size;
 		BYTE							m_bits[TS_PACKET_SIZE];
 		INT								m_versionNumberPAT;
 		INT								m_versionNumberPMT;
@@ -126,5 +126,21 @@ namespace Decode
 		TinyArray<TinyScopedReferencePtr<TS_PACKET_STREAM>>	m_streams;
 	};
 }
+
+namespace TinyUI
+{
+	template<>
+	class DefaultTraits < Decode::Timing >
+	{
+	public:
+		static INT  Compare(const Decode::Timing& value1, const Decode::Timing& value2)
+		{
+			if (value1.PTS == value2.PTS && value1.DTS == value2.DTS)
+				return 0;
+			return 1;
+		}
+	};
+}
+
 
 

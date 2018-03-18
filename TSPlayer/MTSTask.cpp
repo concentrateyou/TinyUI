@@ -115,6 +115,7 @@ namespace TSPlayer
 				tag.bits = block.video.data;
 				tag.sampleDTS = block.dts;
 				tag.samplePTS = block.pts;
+				TRACE("VideoPTS:%f, %f\n", block.pts, block.dts);
 				m_videoQueue.Push(tag);
 			}
 		}

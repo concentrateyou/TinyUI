@@ -630,6 +630,7 @@ namespace TinyUI
 	public:
 		explicit TinyLinkList(DWORD dwSize = 10);
 		~TinyLinkList();
+		TinyLinkList(TinyLinkList&&) throw();
 		ITERATOR operator[](const T& value) const;
 		DWORD	GetSize() const;
 		BOOL	IsEmpty() const;
@@ -637,7 +638,7 @@ namespace TinyUI
 		ITERATOR InsertLast(const T& value);
 		ITERATOR InsertBefore(ITERATOR pos, const T& value);
 		ITERATOR InsertAfter(ITERATOR pos, const T& value);
-		ITERATOR Find(const T& value, ITERATOR pos = NULL) const throw();
+		ITERATOR Lookup(const T& value, ITERATOR pos = NULL) const throw();
 		ITERATOR First() const;
 		ITERATOR Last() const;
 		ITERATOR Next(ITERATOR pos) const;
@@ -781,7 +782,7 @@ namespace TinyUI
 		return(ITERATOR(ps2));
 	}
 	template<typename T, typename Traits>
-	ITERATOR TinyLinkList<T, Traits>::Find(const T& value, ITERATOR pos) const throw()
+	ITERATOR TinyLinkList<T, Traits>::Lookup(const T& value, ITERATOR pos) const throw()
 	{
 		TinyNode* ps = static_cast<TinyNode*>(pos);
 		if (ps == NULL)
@@ -984,7 +985,23 @@ namespace TinyUI
 	template<typename T, typename Traits>
 	ITERATOR TinyLinkList< T, Traits>::operator[](const T& value) const
 	{
-		return Find(value, NULL);
+		return Lookup(value, NULL);
+	}
+	template<typename T, typename Traits>
+	TinyLinkList< T, Traits>::TinyLinkList(TinyLinkList&& other) throw()
+	{
+		this->m_dwBlockSize = other.m_dwBlockSize;
+		this->m_dwCount = other.m_dwCount;
+		this->m_pFirst = other.m_pFirst;
+		this->m_pLast = other.m_pLast;
+		this->m_pFreeList = other.m_pFreeList;
+		this->m_pBlocks = other.m_pBlocks;
+		other.m_dwBlockSize = 0;
+		other.m_dwCount = 0;
+		other.m_pFirst = NULL;
+		other.m_pLast = NULL;
+		other.m_pFreeList = NULL;
+		other.m_pBlocks = NULL;
 	}
 	/// <summary>
 	/// ºìºÚÊ÷Map 
