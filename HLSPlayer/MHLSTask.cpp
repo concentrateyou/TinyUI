@@ -114,12 +114,16 @@ namespace HLSPlayer
 			}
 			m_client.Close();
 			if (!m_client.Open(segment.File.c_str()))
+			{
+				TRACE("TS OpenURL:%s FAIL\n", segment.File.c_str());
 				return FALSE;
+			}
 			CHAR* ps = NULL;
 			INT size = m_client.GetResponse().ReadAsBinary(ps);
+			m_readerTS.Close();
 			if (!m_readerTS.OpenMemory((BYTE*)(ps), size))
 			{
-				TRACE("TS OpenMemory:%s FAIL\n", segment.File.c_str());
+				TRACE("TS OpenMemory FAIL\n");
 				break;
 			}
 			for (;;)
@@ -130,12 +134,11 @@ namespace HLSPlayer
 					Sleep(15);
 					continue;
 				}
-
 				ZeroMemory(&block, sizeof(block));
 				if (!m_readerTS.ReadBlock(block))
 				{
 					ReleaseBlock(block);
-					return FALSE;
+					break;
 				}
 				if (block.streamType == TS_STREAM_TYPE_AUDIO_AAC)
 				{

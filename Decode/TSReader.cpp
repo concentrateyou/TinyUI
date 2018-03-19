@@ -295,20 +295,18 @@ namespace Decode
 		if (!bits || size <= 0)
 			return FALSE;
 		this->Close();
-		HGLOBAL	hMemery = ::GlobalAlloc(GMEM_MOVEABLE, size);
-		if (!hMemery)
+		m_stream.Attach(new TinyMemoryStream());
+		if (!m_stream)
 			return FALSE;
-		LPVOID pImage = ::GlobalLock(hMemery);
-		memcpy_s(pImage, size, bits, size);
-		::GlobalUnlock(hMemery);
-		HRESULT hRes = ::CreateStreamOnHGlobal(hMemery, TRUE, &m_stream);
-		if (hRes != S_OK)
-			return FALSE;
+		TinyMemoryStream* ps = static_cast<TinyMemoryStream*>(m_stream.Ptr());
+		BYTE* s = ps->ReAlloc(size);
+		ps->m_cbData = size;
+		CopyMemory(ps->m_pData, bits, size);
 		return TRUE;
 	}
 	BOOL TSReader::OpenFile(LPCSTR pzFile)
 	{
-		if (!pzFile)
+		if (!PathFileExists(pzFile))
 			return FALSE;
 		this->Close();
 		HRESULT hRes = SHCreateStreamOnFileA(pzFile, STGM_READ | STGM_FAILIFTHERE, &m_stream);
@@ -318,6 +316,9 @@ namespace Decode
 	}
 	BOOL TSReader::OpenURL(LPCSTR pzURL)
 	{
+		if (!PathIsURL(pzURL))
+			return FALSE;
+		this->Close();
 		m_stream.Attach(new HTTPStream());
 		if (!m_stream)
 			return FALSE;
@@ -842,6 +843,10 @@ namespace Decode
 			{
 				TRACE("Invalid continuityCounter:%d,PID:%d%n", continuityCounter, header.PID);
 			}
+		}
+		if (header.PID == 0)
+		{
+			INT a = 0;
 		}
 		m_continuityCounterMap.SetAt(header.PID, continuityCounter);
 		if (header.AdaptationFieldControl == 0x2 || header.AdaptationFieldControl == 0x3)

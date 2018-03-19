@@ -1183,13 +1183,16 @@ namespace TinyUI
 			if (m_pNIL == NULL)
 			{
 				m_pNIL = reinterpret_cast<TinyNode*>(malloc(sizeof(TinyNode)));
+				if (!m_pNIL)
+					return NULL;
 				memset(m_pNIL, 0x00, sizeof(TinyNode));
 				m_pNIL->m_bColor = FALSE;
 				m_pNIL->m_pParent = m_pNIL->m_pLeft = m_pNIL->m_pRight = m_pNIL;
 				m_pRoot = m_pNIL;
 			}
 			TinyPlex* pPlex = TinyPlex::Create(m_pBlocks, m_dwBlockSize, sizeof(TinyNode));
-			if (pPlex == NULL) return NULL;
+			if (!pPlex)
+				return NULL;
 			TinyNode* ps = static_cast<TinyNode*>(pPlex->data());
 			ps += m_dwBlockSize - 1;
 			for (INT_PTR iBlock = m_dwBlockSize - 1; iBlock >= 0; iBlock--)
@@ -1229,7 +1232,7 @@ namespace TinyUI
 		m_pBlocks->Destory();
 		m_pBlocks = NULL;
 		m_pFreeList = NULL;
-		m_pRoot = NULL;
+		m_pRoot = m_pNIL;
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	ITERATOR TinyMap<K, V, KTraits, VTraits>::Add(const K& key, const V& value)

@@ -196,6 +196,7 @@ namespace TinyUI
 			UINT        m_cbData;
 			UINT        m_iSeek;
 		};
+		STDAPI CreateStreamOnMemory(LPBYTE pInit, UINT cbInit, IStream **ppstm);
 	};
 }
 
