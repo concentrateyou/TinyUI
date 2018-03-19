@@ -49,8 +49,9 @@ namespace TSPlayer
 	void MVideoTask::OnAVCDC(BYTE* bits, LONG size, BOOL& bRes)
 	{
 		bRes = FALSE;
-		TinySize s(1024, 576);
+		//TinySize s(1024, 576);
 		//TinySize s(1280, 720);
+		TinySize s(480, 288);
 		m_x264.Close();
 		if (m_x264.Initialize(s, s))
 		{

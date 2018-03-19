@@ -100,6 +100,7 @@ namespace Decode
 		TSReader();
 		virtual ~TSReader();
 		void	SetConfigCallback(ConfigCallback&& callback);
+		BOOL	OpenMemory(const BYTE* bits, LONG size);
 		BOOL	OpenFile(LPCSTR pzFile);
 		BOOL	OpenURL(LPCSTR pzURL);
 		BOOL	Close();

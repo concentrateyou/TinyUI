@@ -290,6 +290,22 @@ namespace Decode
 	{
 		m_configCallback = std::move(callback);
 	}
+	BOOL TSReader::OpenMemory(const BYTE* bits, LONG size)
+	{
+		if (!bits || size <= 0)
+			return FALSE;
+		this->Close();
+		HGLOBAL	hMemery = ::GlobalAlloc(GMEM_MOVEABLE, size);
+		if (!hMemery)
+			return FALSE;
+		LPVOID pImage = ::GlobalLock(hMemery);
+		memcpy_s(pImage, size, bits, size);
+		::GlobalUnlock(hMemery);
+		HRESULT hRes = ::CreateStreamOnHGlobal(hMemery, TRUE, &m_stream);
+		if (hRes != S_OK)
+			return FALSE;
+		return TRUE;
+	}
 	BOOL TSReader::OpenFile(LPCSTR pzFile)
 	{
 		if (!pzFile)
@@ -338,10 +354,6 @@ namespace Decode
 						memcpy_s(&block, sizeof(TS_BLOCK), &audio, sizeof(TS_BLOCK));
 						m_audios.RemoveAt(s);
 					}
-				}
-				if (block.streamType == TS_STREAM_TYPE_VIDEO_H264)
-				{
-					INT a = 0;
 				}
 				break;
 			}

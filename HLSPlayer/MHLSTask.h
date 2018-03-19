@@ -38,6 +38,7 @@ namespace HLSPlayer
 		MClock&				m_clock;
 		MPacketQueue		m_audioQueue;
 		MPacketQueue		m_videoQueue;
+		TinyHTTPClient		m_client;
 		HLSReader			m_readerHLS;
 		TSReader			m_readerTS;
 		TinySimpleTaskTimer	m_timer;

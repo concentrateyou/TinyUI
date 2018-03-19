@@ -22,7 +22,6 @@ namespace HLSPlayer
 	{
 		if (!m_readerHLS.Open(pzURL))
 			return FALSE;
-		//m_timer.SetCallback(5000, BindCallback(&MHLSTask::OnSegments, this));
 		m_readerTS.SetConfigCallback(BindCallback(&MHLSTask::OnConfigChange, this));
 		return TRUE;
 	}
@@ -56,7 +55,7 @@ namespace HLSPlayer
 	void MHLSTask::OnSegments()
 	{
 		//Ã¿¸ô2ÃëË¢ÐÂ
-		//m_readerHLS.ReadSegments();
+		m_readerHLS.ReadSegments();
 	}
 
 	BOOL MHLSTask::Submit()
@@ -79,7 +78,8 @@ namespace HLSPlayer
 
 	TinySize MHLSTask::GetVideoSize()
 	{
-		return TinySize(1280, 720);
+		//return TinySize(1280, 720);
+		return TinySize(480, 288);
 	}
 
 	MPacketQueue& MHLSTask::GetAudioQueue()
@@ -112,10 +112,14 @@ namespace HLSPlayer
 				Sleep(15);
 				continue;
 			}
-			m_readerTS.Close();
-			if (!m_readerTS.OpenURL(segment.File.c_str()))
+			m_client.Close();
+			if (!m_client.Open(segment.File.c_str()))
+				return FALSE;
+			CHAR* ps = NULL;
+			INT size = m_client.GetResponse().ReadAsBinary(ps);
+			if (!m_readerTS.OpenMemory((BYTE*)(ps), size))
 			{
-				TRACE("TS OpenURL:%s FAIL\n", segment.File.c_str());
+				TRACE("TS OpenMemory:%s FAIL\n", segment.File.c_str());
 				break;
 			}
 			for (;;)
