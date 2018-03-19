@@ -22,6 +22,7 @@ namespace HLSPlayer
 	{
 		if (!m_readerHLS.Open(pzURL))
 			return FALSE;
+		m_timer.SetCallback(2000, BindCallback(&MHLSTask::OnSegments, this));
 		m_readerTS.SetConfigCallback(BindCallback(&MHLSTask::OnConfigChange, this));
 		return TRUE;
 	}
@@ -112,7 +113,14 @@ namespace HLSPlayer
 				Sleep(15);
 				continue;
 			}
+			if (m_segment.File == segment.File)
+			{
+				Sleep(15);
+				continue;
+			}
+			m_segment = segment;
 			m_client.Close();
+			TRACE("TS OpenURL:%s\n", segment.File.c_str());
 			if (!m_client.Open(segment.File.c_str()))
 			{
 				TRACE("TS OpenURL:%s FAIL\n", segment.File.c_str());

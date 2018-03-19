@@ -34,6 +34,7 @@ namespace HLSPlayer
 	private:
 		BOOL				m_bBreak;
 		LONGLONG			m_sample;
+		HLSReader::Segment	m_segment;
 		TinyMsgQueue&		m_msgqueue;
 		MClock&				m_clock;
 		MPacketQueue		m_audioQueue;
