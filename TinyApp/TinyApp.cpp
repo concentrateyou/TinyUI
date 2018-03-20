@@ -38,6 +38,7 @@
 #include "IO/TinyBitWriter.h"
 #include "Network/TinyPing.h"
 #include "HLSReader.h"
+#include "GLView.h"
 
 using namespace TinyUI;
 using namespace TinyUI::Network;
@@ -228,113 +229,17 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	CoInitialize(NULL);
 	avcodec_register_all();
 
-	//HLSReader reader;
-	//reader.Open("http://live.hkstv.hk.lxdns.com/live/hks/playlist.m3u8");
-	//for (;;)
-	//{
-	//	reader.ReadSegments();
-	//	Sleep(1000);
-	//}
-	TSDecoder decoder;
-	decoder.Open("D:\\1.ts");
-	decoder.Invoke();
-	decoder.Close();
-	////FILE* hFile1 = NULL;
-	//fopen_s(&hFile1, "D:\\test.264", "wb+");
-	////FILE* hFile2 = NULL;
-	//fopen_s(&hFile2, "D:\\test.aac", "wb+");
-	//FLVReader reader;
-	//reader.OpenFile("D:\\10s.flv");
-	//for (;;)
-	//{
-	//	FLV_BLOCK block = { 0 };
-	//	BOOL bRes = reader.ReadBlock(block);
-	//	if (block.type == FLV_AUDIO)
-	//	{
-	//		if (block.audio.codeID == FLV_CODECID_AAC)
-	//		{
-	//			if (block.audio.packetType == FLV_AudioSpecificConfig)
-	//			{
-	//				/*TinyBitReader reader;
-	//				reader.Initialize(block.audio.data, block.audio.size);
-	//				INT audioObjectType = 0;
-	//				reader.ReadBits(5, &audioObjectType);
-	//				INT samplingFrequencyIndex = 0;
-	//				reader.ReadBits(4, &samplingFrequencyIndex);
-	//				INT channelConfiguration = 0;
-	//				reader.ReadBits(4, &channelConfiguration);
-	//				INT frameLengthFlag = 0;
-	//				reader.ReadBits(1, &frameLengthFlag);
-	//				INT dependsOnCoreCoder = 0;
-	//				reader.ReadBits(1, &dependsOnCoreCoder);
-	//				INT extensionFlag = 0;
-	//				reader.ReadBits(1, &extensionFlag);
-	//				INT a = 0;*/
-	//			}
-	//		}
-	//	}
-	//	SAFE_DELETE_ARRAY(block.audio.data);
-	//	SAFE_DELETE_ARRAY(block.video.data);
-	//	if (!bRes)
-	//		break;
-	//}
-	//reader.Close();
-	//reader.OpenFile("D:\\1.ts");
-	//for (;;)
-	//{
-	//	TS_BLOCK block;
-	//	if (!reader.ReadBlock(block))
-	//	{
-	//		break;
-	//	}
-	//	if (block.streamType == TS_STREAM_TYPE_VIDEO_H264)
-	//	{
-	//		++count;
-	//		TRACE("Size:%d\n", block.video.size);
-	//	}
-	//	SAFE_DELETE_ARRAY(block.audio.data);
-	//	SAFE_DELETE_ARRAY(block.video.data);
-	//}
-	////fclose(hFile1);
-	////fclose(hFile2);
-	//MediaTest test;
-	////test.H264ToI420("D:\\Media\\test.264", "D:\\Media\\test.yuv");
-	////test.MP3ToWave("D:\\Media\\李玉刚-刚好遇见你.mp3", "D:\\Media\\李玉刚-刚好遇见你.wav");
-	//FILE* hFile = NULL;
-	//fopen_s(&hFile, "D:\\test.264", "rb");
-	//TinyMFIntelQSVDecode decoder;
-	//decoder.Open({ 1280,720 }, 25);
-	//INT pos = 0;
-	//TinyScopedArray<BYTE> bits(new BYTE[1024 * 64]);
-	//for (;;)
-	//{
-	//	size_t count = fread(bits, 1, 1024 * 64, hFile);
-	//	if (count == 0)
-	//		break;
-	//	BYTE* bo = NULL;
-	//	DWORD so = 0;
-	//	SampleTag tag = { 0 };
-	//	tag.bits = bits;
-	//	tag.size = count;
-	//	decoder.Decode(tag, bo, so);
-	//}
-	////fclose(hFile);
-	//TinyVisualResource::GetInstance().Load("skin\\resource.xml");
-	//::DefWindowProc(NULL, 0, 0, 0L);
-	//TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
-	//TinyMessageLoop theLoop;
-	//TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	//TinyVisualLayeredWindow uiImpl;
-	//string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\contextmenu.xml");
-	//uiImpl.Create(NULL, szFile.c_str());
-	//TinyVisualContextMenu* contextmenu = (TinyVisualContextMenu*)uiImpl.GetDocument().GetVisualByName("menu1");
-	//contextmenu->Add("Test1");
-	//contextmenu->Add("Test2");
-	//contextmenu->Add("Test3");
-	//uiImpl.Update();
-	//INT loopRes = theLoop.MessageLoop();
-	//TinyApplication::GetInstance()->RemoveMessageLoop();
-	//TinyApplication::GetInstance()->Uninitialize();
+	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
+	TinyMessageLoop theLoop;
+	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
+
+	GLView view;
+	view.Create(NULL, 100, 100, 400, 400);
+	view.UpdateWindow();
+
+	INT loopRes = theLoop.MessageLoop();
+	TinyApplication::GetInstance()->RemoveMessageLoop();
+	TinyApplication::GetInstance()->Uninitialize();
 
 	CoUninitialize();
 	OleUninitialize();
@@ -343,3 +248,111 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	return 0;
 };
+
+//HLSReader reader;
+//reader.Open("http://live.hkstv.hk.lxdns.com/live/hks/playlist.m3u8");
+//for (;;)
+//{
+//	reader.ReadSegments();
+//	Sleep(1000);
+//}
+//TSDecoder decoder;
+//decoder.Open("D:\\1.ts");
+//decoder.Invoke();
+//decoder.Close();
+////FILE* hFile1 = NULL;
+//fopen_s(&hFile1, "D:\\test.264", "wb+");
+////FILE* hFile2 = NULL;
+//fopen_s(&hFile2, "D:\\test.aac", "wb+");
+//FLVReader reader;
+//reader.OpenFile("D:\\10s.flv");
+//for (;;)
+//{
+//	FLV_BLOCK block = { 0 };
+//	BOOL bRes = reader.ReadBlock(block);
+//	if (block.type == FLV_AUDIO)
+//	{
+//		if (block.audio.codeID == FLV_CODECID_AAC)
+//		{
+//			if (block.audio.packetType == FLV_AudioSpecificConfig)
+//			{
+//				/*TinyBitReader reader;
+//				reader.Initialize(block.audio.data, block.audio.size);
+//				INT audioObjectType = 0;
+//				reader.ReadBits(5, &audioObjectType);
+//				INT samplingFrequencyIndex = 0;
+//				reader.ReadBits(4, &samplingFrequencyIndex);
+//				INT channelConfiguration = 0;
+//				reader.ReadBits(4, &channelConfiguration);
+//				INT frameLengthFlag = 0;
+//				reader.ReadBits(1, &frameLengthFlag);
+//				INT dependsOnCoreCoder = 0;
+//				reader.ReadBits(1, &dependsOnCoreCoder);
+//				INT extensionFlag = 0;
+//				reader.ReadBits(1, &extensionFlag);
+//				INT a = 0;*/
+//			}
+//		}
+//	}
+//	SAFE_DELETE_ARRAY(block.audio.data);
+//	SAFE_DELETE_ARRAY(block.video.data);
+//	if (!bRes)
+//		break;
+//}
+//reader.Close();
+//reader.OpenFile("D:\\1.ts");
+//for (;;)
+//{
+//	TS_BLOCK block;
+//	if (!reader.ReadBlock(block))
+//	{
+//		break;
+//	}
+//	if (block.streamType == TS_STREAM_TYPE_VIDEO_H264)
+//	{
+//		++count;
+//		TRACE("Size:%d\n", block.video.size);
+//	}
+//	SAFE_DELETE_ARRAY(block.audio.data);
+//	SAFE_DELETE_ARRAY(block.video.data);
+//}
+////fclose(hFile1);
+////fclose(hFile2);
+//MediaTest test;
+////test.H264ToI420("D:\\Media\\test.264", "D:\\Media\\test.yuv");
+////test.MP3ToWave("D:\\Media\\李玉刚-刚好遇见你.mp3", "D:\\Media\\李玉刚-刚好遇见你.wav");
+//FILE* hFile = NULL;
+//fopen_s(&hFile, "D:\\test.264", "rb");
+//TinyMFIntelQSVDecode decoder;
+//decoder.Open({ 1280,720 }, 25);
+//INT pos = 0;
+//TinyScopedArray<BYTE> bits(new BYTE[1024 * 64]);
+//for (;;)
+//{
+//	size_t count = fread(bits, 1, 1024 * 64, hFile);
+//	if (count == 0)
+//		break;
+//	BYTE* bo = NULL;
+//	DWORD so = 0;
+//	SampleTag tag = { 0 };
+//	tag.bits = bits;
+//	tag.size = count;
+//	decoder.Decode(tag, bo, so);
+//}
+////fclose(hFile);
+//TinyVisualResource::GetInstance().Load("skin\\resource.xml");
+//::DefWindowProc(NULL, 0, 0, 0L);
+//TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
+//TinyMessageLoop theLoop;
+//TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
+//TinyVisualLayeredWindow uiImpl;
+//string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\contextmenu.xml");
+//uiImpl.Create(NULL, szFile.c_str());
+//TinyVisualContextMenu* contextmenu = (TinyVisualContextMenu*)uiImpl.GetDocument().GetVisualByName("menu1");
+//contextmenu->Add("Test1");
+//contextmenu->Add("Test2");
+//contextmenu->Add("Test3");
+//uiImpl.Update();
+//INT loopRes = theLoop.MessageLoop();
+//TinyApplication::GetInstance()->RemoveMessageLoop();
+//TinyApplication::GetInstance()->Uninitialize();

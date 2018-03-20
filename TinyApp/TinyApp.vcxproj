@@ -92,15 +92,15 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_WIN32_WINNT=0x0601;WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\TinySmiley;$(BOOSTDIR);..\DShowCapture;..\MFCapture;$(INTELMEDIASDKROOT)\include;$(PROTOBUF_DIR)\include;$(DXSDK_DIR)\Include;..\DXFramework;..\Decode;..\IntelQSV;..\ThirdParty\ffmpeg\include;..\ThirdParty\libfaad\include;..\ThirdParty\vld;..\ThirdParty\mpg123\include;..\ThirdParty\zlib\include;..\ThirdParty\librtmp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\TinySmiley;$(BOOSTDIR);..\DShowCapture;..\MFCapture;$(INTELMEDIASDKROOT)\include;$(PROTOBUF_DIR)\include;$(DXSDK_DIR)\Include;..\DXFramework;..\GLFramework;..\Decode;..\IntelQSV;..\ThirdParty\ffmpeg\include;..\ThirdParty\libfaad\include;..\ThirdParty\vld;..\ThirdParty\mpg123\include;..\ThirdParty\zlib\include;..\ThirdParty\librtmp\include;..\ThirdParty\opengl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib\x86;$(INTELMEDIASDKROOT)\lib\$(Platform);$(PROTOBUF_DIR)\lib;..\ThirdParty\mpg123\lib\x86;..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\libfaac\lib\x86;..\ThirdParty\x264\libs\32bit;..\ThirdParty\librtmp\lib\x86;..\ThirdParty\libfaad\lib\x86;..\ThirdParty\jsoncpp\lib\x86;..\ThirdParty\sqlite;..\ThirdParty\zlib\lib;..\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>TinyUI.lib;DXFramework.lib;DShowCapture.lib;Decode.lib;Encode.lib;libmfx_d.lib;dxva2.lib;dwmapi.lib;d3d9.lib;d3d11.lib;dxgi.lib;D2D1.lib;jsoncpp.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib\x86;$(INTELMEDIASDKROOT)\lib\$(Platform);$(PROTOBUF_DIR)\lib;..\Debug;..\ThirdParty\mpg123\lib\x86;..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\libfaac\lib\x86;..\ThirdParty\x264\libs\32bit;..\ThirdParty\librtmp\lib\x86;..\ThirdParty\libfaad\lib\x86;..\ThirdParty\jsoncpp\lib\x86;..\ThirdParty\sqlite;..\ThirdParty\zlib\lib;..\ThirdParty\opengl\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>TinyUI.lib;DXFramework.lib;DShowCapture.lib;Decode.lib;Encode.lib;libmfx_d.lib;dxva2.lib;dwmapi.lib;d3d9.lib;d3d11.lib;dxgi.lib;D2D1.lib;jsoncpp.lib;zlib.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <ProjectReference>
@@ -182,6 +182,7 @@
     <ClInclude Include="ChatDlg.h" />
     <ClInclude Include="ChatFrame.h" />
     <ClInclude Include="Convert2TS.h" />
+    <ClInclude Include="GLView.h" />
     <ClInclude Include="MediaTest.h" />
     <ClInclude Include="MFFrame.h" />
     <ClInclude Include="RDPCapture.h" />
@@ -199,6 +200,7 @@
     <ClCompile Include="ChatDlg.cpp" />
     <ClCompile Include="ChatFrame.cpp" />
     <ClCompile Include="Convert2TS.cpp" />
+    <ClCompile Include="GLView.cpp" />
     <ClCompile Include="MediaTest.cpp" />
     <ClCompile Include="MFFrame.cpp" />
     <ClCompile Include="RDPCapture.cpp" />
@@ -235,6 +237,9 @@
     </ProjectReference>
     <ProjectReference Include="..\Encode\Encode.vcxproj">
       <Project>{4b386eb4-e529-4c67-9733-7684de8defdc}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\GLFramework\GLFramework.vcxproj">
+      <Project>{12e7f6bc-fc13-4f6c-b4f2-676cbbba2227}</Project>
     </ProjectReference>
     <ProjectReference Include="..\IntelQSV\IntelQSV.vcxproj">
       <Project>{681511e3-1b32-43c5-89f4-18a20c1590c9}</Project>

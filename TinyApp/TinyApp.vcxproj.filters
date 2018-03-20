@@ -63,6 +63,9 @@
     <ClInclude Include="Convert2TS.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="GLView.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -102,6 +105,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Convert2TS.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GLView.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

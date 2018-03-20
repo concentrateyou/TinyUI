@@ -20,7 +20,6 @@ namespace TinyUI
 	/// </summary>
 	class TinyApplication
 	{
-
 	private:
 		TinyApplication();
 	protected:
