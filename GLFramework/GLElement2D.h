@@ -8,7 +8,7 @@ namespace GLFramework
 		DISALLOW_COPY_AND_ASSIGN(GLElement2D)
 	public:
 		GLElement2D();
-		~GLElement2D();
+		virtual ~GLElement2D();
 	};
 }
 

@@ -77,14 +77,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\ThirdParty\opengl\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalDependencies>TinyUI.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\TinyUI;..\Debug </AdditionalLibraryDirectories>
+      <AdditionalDependencies>TinyUI.lib;freeglut.lib;glew32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\TinyUI;..\ThirdParty\opengl\lib;..\Debug</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

@@ -8,6 +8,8 @@ namespace GLFramework
 		DISALLOW_COPY_AND_ASSIGN(GL)
 	public:
 		GL();
-		~GL();
+		virtual ~GL();
+		BOOL Initialize();
+		BOOL Render();
 	};
 }

@@ -5,5 +5,7 @@
 #include "Common/TinyLogging.h"
 #include "Control/TinyControl.h"
 #include "Common/TinyString.h"
+#include "GL/glut.h"
+#include "GL/freeglut.h"
 using namespace TinyUI;
 using namespace std;
