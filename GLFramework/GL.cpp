@@ -287,6 +287,7 @@ namespace GLFramework
 		glFrontFace(GL_CW);
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
+		m_hWND = hWND;
 		return TRUE;
 	_ERROR:
 		wglMakeCurrent(NULL, NULL);
