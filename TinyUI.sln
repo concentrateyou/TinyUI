@@ -41,6 +41,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TSPlayer", "TSPlayer\TSPlay
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HLSPlayer", "HLSPlayer\HLSPlayer.vcxproj", "{778F9E50-3B28-44AD-A111-E7A75E71D65A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GLFramework", "GLFramework\GLFramework.vcxproj", "{12E7F6BC-FC13-4F6C-B4F2-676CBBBA2227}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_MBCS|Win32 = Debug_MBCS|Win32
@@ -435,6 +437,26 @@ Global
 		{778F9E50-3B28-44AD-A111-E7A75E71D65A}.Release|Win32.Build.0 = Release|Win32
 		{778F9E50-3B28-44AD-A111-E7A75E71D65A}.Release|x64.ActiveCfg = Release|x64
 		{778F9E50-3B28-44AD-A111-E7A75E71D65A}.Release|x64.Build.0 = Release|x64
+		{12E7F6BC-FC13-4F6C-B4F2-676CBBBA2227}.Debug_MBCS|Win32.ActiveCfg = Debug|Win32
+		{12E7F6BC-FC13-4F6C-B4F2-676CBBBA2227}.Debug_MBCS|Win32.Build.0 = Debug|Win32
+		{12E7F6BC-FC13-4F6C-B4F2-676CBBBA2227}.Debug_MBCS|x64.ActiveCfg = Debug|x64
+		{12E7F6BC-FC13-4F6C-B4F2-676CBBBA2227}.Debug_MBCS|x64.Build.0 = Debug|x64
+		{12E7F6BC-FC13-4F6C-B4F2-676CBBBA2227}.Debug|Win32.ActiveCfg = Debug|Win32
+		{12E7F6BC-FC13-4F6C-B4F2-676CBBBA2227}.Debug|Win32.Build.0 = Debug|Win32
+		{12E7F6BC-FC13-4F6C-B4F2-676CBBBA2227}.Debug|x64.ActiveCfg = Debug|x64
+		{12E7F6BC-FC13-4F6C-B4F2-676CBBBA2227}.Debug|x64.Build.0 = Debug|x64
+		{12E7F6BC-FC13-4F6C-B4F2-676CBBBA2227}.Release_MBCS|Win32.ActiveCfg = Release|Win32
+		{12E7F6BC-FC13-4F6C-B4F2-676CBBBA2227}.Release_MBCS|Win32.Build.0 = Release|Win32
+		{12E7F6BC-FC13-4F6C-B4F2-676CBBBA2227}.Release_MBCS|x64.ActiveCfg = Release|x64
+		{12E7F6BC-FC13-4F6C-B4F2-676CBBBA2227}.Release_MBCS|x64.Build.0 = Release|x64
+		{12E7F6BC-FC13-4F6C-B4F2-676CBBBA2227}.Release_MT|Win32.ActiveCfg = Release|Win32
+		{12E7F6BC-FC13-4F6C-B4F2-676CBBBA2227}.Release_MT|Win32.Build.0 = Release|Win32
+		{12E7F6BC-FC13-4F6C-B4F2-676CBBBA2227}.Release_MT|x64.ActiveCfg = Release|x64
+		{12E7F6BC-FC13-4F6C-B4F2-676CBBBA2227}.Release_MT|x64.Build.0 = Release|x64
+		{12E7F6BC-FC13-4F6C-B4F2-676CBBBA2227}.Release|Win32.ActiveCfg = Release|Win32
+		{12E7F6BC-FC13-4F6C-B4F2-676CBBBA2227}.Release|Win32.Build.0 = Release|Win32
+		{12E7F6BC-FC13-4F6C-B4F2-676CBBBA2227}.Release|x64.ActiveCfg = Release|x64
+		{12E7F6BC-FC13-4F6C-B4F2-676CBBBA2227}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
