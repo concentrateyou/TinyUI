@@ -244,6 +244,7 @@
     <ClInclude Include="HDE\pstdint.h" />
     <ClInclude Include="HDE\table32.h" />
     <ClInclude Include="HDE\table64.h" />
+    <ClInclude Include="IO\TinyAsync.h" />
     <ClInclude Include="IO\TinyBitReader.h" />
     <ClInclude Include="IO\TinyBitWriter.h" />
     <ClInclude Include="IO\TinyFixedAlloc.h" />
@@ -399,6 +400,7 @@
     <ClCompile Include="Database\TinySqlite.cpp" />
     <ClCompile Include="HDE\hde32.c" />
     <ClCompile Include="HDE\hde64.c" />
+    <ClCompile Include="IO\TinyAsync.cpp" />
     <ClCompile Include="IO\TinyBitReader.cpp" />
     <ClCompile Include="IO\TinyBitWriter.cpp" />
     <ClCompile Include="IO\TinyFixedAlloc.cpp" />
