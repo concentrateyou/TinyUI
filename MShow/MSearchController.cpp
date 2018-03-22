@@ -52,10 +52,16 @@ namespace MShow
 		{
 			loading->EndAnimate();
 		}
+		TinyVisualList* list = static_cast<TinyVisualList*>(m_view.GetDocument().GetVisualByName("programs"));
+		if (list != NULL)
+		{
+			list->RemoveAll(TRUE);
+		}
 		if (m_task.IsActive())
 		{
 			m_task.Close(INFINITE);
 		}
+		
 		Sleep(100);
 	}
 

@@ -105,7 +105,7 @@ namespace TinyUI
 		}
 		ReturnType operator()(Args... args)
 		{
-			return m_fType(args...);
+			return m_fType(std::forward<Args>(args)...);
 		}
 	private:
 		FunctionType m_fType;
@@ -187,7 +187,7 @@ namespace TinyUI
 		}
 		ReturnType operator()(Args... args)
 		{
-			return ((*m_iType).*m_fType)(args...);
+			return ((*m_iType).*m_fType)(std::forward<Args>(args)...);
 		}
 	private:
 		InstanceType	m_iType;
@@ -294,7 +294,7 @@ namespace TinyUI
 		}
 		ReturnType operator()(Args... args) const
 		{
-			return (*m_fType)(args...);
+			return (*m_fType)(std::forward<Args>(args)...);
 		}
 	private:
 		TinyAutoPtr<FunctorType> m_fType;

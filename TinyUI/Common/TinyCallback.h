@@ -55,7 +55,7 @@ namespace TinyUI
 		static R DoInvoke(InvokerStorageBase* base, Args... args)
 		{
 			InvokerStorage* call = static_cast<InvokerStorage*>(base);
-			return (*call->m_runnable)(args...);
+			return (*call->m_runnable)(std::forward<Args>(args)...);
 		}
 	};
 	template <typename InvokerStorage, typename R, typename T, typename... Args>
@@ -66,7 +66,7 @@ namespace TinyUI
 		static R DoInvoke(InvokerStorageBase* base, Args... args)
 		{
 			InvokerStorage* call = static_cast<InvokerStorage*>(base);
-			return ((call->m_instance)->*call->m_runnable)(args...);
+			return ((call->m_instance)->*call->m_runnable)(std::forward<Args>(args)...);
 		}
 	};
 	template <typename InvokerStorage, typename R, typename T, typename... Args>
@@ -77,7 +77,7 @@ namespace TinyUI
 		static R DoInvoke(InvokerStorageBase* base, Args... args)
 		{
 			InvokerStorage* call = static_cast<InvokerStorage*>(base);
-			return ((call->m_instance)->*call->m_runnable)(args...);
+			return ((call->m_instance)->*call->m_runnable)(std::forward<Args>(args)...);
 		}
 	};
 	template <typename InvokerStorage, typename R, typename T, typename... Args>
@@ -88,7 +88,7 @@ namespace TinyUI
 		static R DoInvoke(InvokerStorageBase* base, Args... args)
 		{
 			InvokerStorage* call = static_cast<InvokerStorage*>(base);
-			return ((call->m_instance)->*call->m_runnable)(args...);
+			return ((call->m_instance)->*call->m_runnable)(std::forward<Args>(args)...);
 		}
 	};
 	template <typename InvokerStorage, typename R, typename T, typename... Args>
@@ -99,7 +99,7 @@ namespace TinyUI
 		static R DoInvoke(InvokerStorageBase* base, Args... args)
 		{
 			InvokerStorage* call = static_cast<InvokerStorage*>(base);
-			return ((call->m_instance)->*call->m_runnable)(args...);
+			return ((call->m_instance)->*call->m_runnable)(std::forward<Args>(args)...);
 		}
 	};
 	//////////////////////////////////////////////////////////////////////
@@ -226,7 +226,7 @@ namespace TinyUI
 		R operator()(Args... args) const
 		{
 			InvokeFunction invoke = reinterpret_cast<InvokeFunction>(m_invoke);
-			return invoke(m_storage.Ptr(), args...);
+			return invoke(m_storage.Ptr(), std::forward<Args>(args)...);
 		}
 	};
 	//////////////////////////////////////////////////////////////////////////

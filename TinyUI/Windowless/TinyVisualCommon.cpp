@@ -295,6 +295,10 @@ namespace TinyUI
 		{
 
 		}
+		TinyVisualProperty::~TinyVisualProperty()
+		{
+
+		}
 		void TinyVisualProperty::operator=(const TinyVisualProperty& other)
 		{
 			m_name = std::move(other.name());

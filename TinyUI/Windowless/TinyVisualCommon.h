@@ -162,6 +162,7 @@ namespace TinyUI
 		public:
 			TinyVisualProperty(const TinyString& name, const TinyString& value);
 			TinyVisualProperty(const TinyVisualProperty&);
+			~TinyVisualProperty();
 			void operator=(const TinyVisualProperty&);
 			const TinyString& name() const;
 			const TinyString& value() const;
