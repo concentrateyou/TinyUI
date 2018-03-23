@@ -913,7 +913,8 @@ namespace TinyUI
 		}
 		BOOL TinyVisualDocument::TinyVisualFactory::Destory(TinyVisual* spvis)
 		{
-			if (!spvis) return FALSE;
+			if (!spvis)
+				return FALSE;
 			TinyVisual* spvisNext = NULL;
 			TinyVisual* spvisChild = NULL;
 			spvisChild = spvis->m_spvisChild;
@@ -929,7 +930,9 @@ namespace TinyUI
 			}
 			spvis->OnDestory();
 			if (spvis->m_spvisParent != NULL)
+			{
 				spvis->m_spvisParent->m_dwCount--;
+			}
 			SAFE_DELETE(spvis);
 			return TRUE;
 		}

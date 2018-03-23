@@ -36,7 +36,7 @@ namespace TinyUI
 				DelegateType* fType = static_cast<DelegateType*>(m_array[i]);
 				if (fType)
 				{
-					(*fType)(args...);
+					(*fType)(std::forward<Args>(args)...);
 				};
 			};
 		};

@@ -26,12 +26,12 @@ namespace TinyUI
 			TinyString RetrieveTag() const OVERRIDE;
 			HRESULT	OnMouseEnter() OVERRIDE;
 		public:
-			void SetItemData(LPVOID data);
-			LPVOID GetItemData() const;
+			void SetItemPtr(LPVOID ps);
+			LPVOID GetItemPtr() const;
 		protected:
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 		private:
-			LPVOID	m_data;//自定义数据
+			LPVOID	m_pointer;//自定义数据
 		};
 		/// <summary>
 		/// 列表控件
@@ -54,7 +54,8 @@ namespace TinyUI
 			void SetColumnCount(INT count);
 			TinyVisualListItem* Add(const TinyString& text);
 			TinyVisualListItem* Add(const TinyString& text, const TinyString& imageURL, const TinyString& defaultImage);
-			void RemoveAll(BOOL del = FALSE);
+			template<class T>
+			void RemoveAll(BOOL del, DefaultDeleter<T>& deleter);
 		protected:
 			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 		private:
@@ -66,6 +67,39 @@ namespace TinyUI
 			TinyVisualVScrollBar*	m_pVScrollbar;
 			TinyScopedPtr<Delegate<void(BOOL, INT, INT, INT)>> m_onPosChange;
 		};
+		template<class T>
+		void TinyVisualList::RemoveAll(BOOL del, DefaultDeleter<T>& deleter)
+		{
+			if (m_document != NULL)
+			{
+				m_iNewPos = 0;
+				if (m_pVScrollbar != NULL)
+				{
+					m_pVScrollbar->SetVisible(FALSE);
+					m_pVScrollbar->SetScrollInfo(0, 0, 0, 0, FALSE);
+				}
+				TinyVisual* spvis = m_document->GetVisual(this, CMD_CHILD);
+				spvis = m_document->GetVisual(spvis, CMD_LAST);
+				while (spvis != NULL)
+				{
+					TinyVisual* spvisT = spvis;
+					spvis = m_document->GetVisual(spvis, CMD_PREV);
+					if (spvisT->IsKindOf(RUNTIME_CLASS(TinyVisualListItem)))
+					{
+						TinyVisualListItem* ps = static_cast<TinyVisualListItem*>(spvisT);
+						if (del)
+						{
+							T* pointer = static_cast<T*>(ps->GetItemPtr());
+							deleter(pointer);
+							ps->SetItemPtr(NULL);
+						}
+						TinyVisualResource::GetInstance().Remove(ps->GetBackgroundImage());
+						m_document->Destory(spvisT);
+					}
+				}
+				Invalidate();
+			}
+		}
 	}
 }
 

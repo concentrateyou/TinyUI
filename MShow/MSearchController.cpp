@@ -55,13 +55,12 @@ namespace MShow
 		TinyVisualList* list = static_cast<TinyVisualList*>(m_view.GetDocument().GetVisualByName("programs"));
 		if (list != NULL)
 		{
-			list->RemoveAll(TRUE);
+			list->RemoveAll(TRUE, DefaultDeleter<SEARCH_ITEM>());
 		}
 		if (m_task.IsActive())
 		{
 			m_task.Close(INFINITE);
 		}
-		
 		Sleep(100);
 	}
 
@@ -109,7 +108,7 @@ namespace MShow
 		if (spvis->IsKindOf(RUNTIME_CLASS(TinyVisualListItem)))
 		{
 			TinyVisualListItem* ps = static_cast<TinyVisualListItem*>(spvis);
-			SEARCH_ITEM* val = static_cast<SEARCH_ITEM*>(ps->GetItemData());
+			SEARCH_ITEM* val = static_cast<SEARCH_ITEM*>(ps->GetItemPtr());
 			if (val != NULL)
 			{
 				INT count = 0;
@@ -239,7 +238,7 @@ namespace MShow
 			lblMsg->SetText(StringPrintf("%s Json½âÎöÊ§°Ü", address.c_str()).c_str());
 			goto _ERROR;
 		}
-		list->RemoveAll(TRUE);
+		list->RemoveAll(TRUE, DefaultDeleter<SEARCH_ITEM>());
 		result = value["data"]["result"];
 		TRACE("[MSearchController][GetPrograms] Program Count:%d\n", result.size());
 		LOG(INFO) << "[MSearchController][GetPrograms] " << "Program Count: " << result.size();
@@ -267,7 +266,7 @@ namespace MShow
 					}
 					else
 					{
-						listitem = list->Add(programName.c_str(), imgUrl.c_str(),"logo");
+						listitem = list->Add(programName.c_str(), imgUrl.c_str(), "logo");
 					}
 					if (listitem != NULL)
 					{
@@ -278,7 +277,7 @@ namespace MShow
 						ps->szPreviewURL = std::move(val["previewStreamUrl"].asString());
 						ps->szProgramName = std::move(programName);
 						ps->szProgramID = std::move(val["programQipuId"].asString());
-						listitem->SetItemData(ps);
+						listitem->SetItemPtr(ps);
 						listitem->SetCursor("hand");
 						listitem->EVENT_MOUSEDBCLICK += m_onItemClick;
 					}

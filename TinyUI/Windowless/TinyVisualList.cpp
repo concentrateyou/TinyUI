@@ -11,11 +11,13 @@ namespace TinyUI
 		IMPLEMENT_DYNCREATE(TinyVisualListItem, TinyVisual);
 
 		TinyVisualListItem::TinyVisualListItem()
+			:m_pointer(NULL)
 		{
 
 		}
 		TinyVisualListItem::TinyVisualListItem(TinyVisual* spvisParent, TinyVisualDocument* vtree)
-			:TinyVisual(spvisParent, vtree)
+			: TinyVisual(spvisParent, vtree),
+			m_pointer(NULL)
 		{
 
 		}
@@ -29,14 +31,14 @@ namespace TinyUI
 			return TinyVisualTagConst::LISTITEM;
 		}
 
-		void TinyVisualListItem::SetItemData(LPVOID data)
+		void TinyVisualListItem::SetItemPtr(LPVOID ps)
 		{
-			m_data = data;
+			m_pointer = ps;
 		}
 
-		LPVOID TinyVisualListItem::GetItemData() const
+		LPVOID TinyVisualListItem::GetItemPtr() const
 		{
-			return m_data;
+			return m_pointer;
 		}
 
 		HRESULT TinyVisualListItem::OnMouseEnter()
@@ -297,37 +299,6 @@ namespace TinyUI
 				return ps;
 			}
 			return NULL;
-		}
-		void TinyVisualList::RemoveAll(BOOL del)
-		{
-			if (m_document != NULL)
-			{
-				m_iNewPos = 0;
-				if (m_pVScrollbar != NULL)
-				{
-					m_pVScrollbar->SetVisible(FALSE);
-					m_pVScrollbar->SetScrollInfo(0, 0, 0, 0, FALSE);
-				}
-				TinyVisual* spvis = m_document->GetVisual(this, CMD_CHILD);
-				spvis = m_document->GetVisual(spvis, CMD_LAST);
-				while (spvis != NULL)
-				{
-					TinyVisual* spvisT = spvis;
-					spvis = m_document->GetVisual(spvis, CMD_PREV);
-					if (spvisT->IsKindOf(RUNTIME_CLASS(TinyVisualListItem)))
-					{
-						TinyVisualListItem* pItem = static_cast<TinyVisualListItem*>(spvisT);
-						if (del)
-						{
-							LPVOID ps = pItem->GetItemData();
-							SAFE_DELETE(ps);
-						}
-						TinyVisualResource::GetInstance().Remove(pItem->GetBackgroundImage());
-						m_document->Destory(spvisT);
-					}
-				}
-				Invalidate();
-			}
 		}
 	}
 }
