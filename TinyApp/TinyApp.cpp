@@ -228,13 +228,13 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadSeDebugPrivilege();
 	CoInitialize(NULL);
 	avcodec_register_all();
-	TinyVisualResource::GetInstance().Load("skin\\resource.xml");
+	//TinyVisualResource::GetInstance().Load("skin\\resource.xml");
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\search.xml");
+	//string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\search.xml");
 	GLView view;
-	view.Create(NULL, szFile.c_str());
+	view.Create(NULL, 100, 100, 500, 500);
 	view.UpdateWindow();
 
 	INT loopRes = theLoop.MessageLoop();

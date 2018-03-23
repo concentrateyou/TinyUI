@@ -36,6 +36,15 @@
     <ClInclude Include="GLElement2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="GLCamera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GLTextureShader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GLRenderView.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -53,5 +62,22 @@
     <ClCompile Include="GLElement2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="GLCamera.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GLTextureShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GLRenderView.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="texture.ps">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="texture.vs">
+      <Filter>资源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>

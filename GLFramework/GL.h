@@ -3,6 +3,10 @@
 
 namespace GLFramework
 {
+	class GLRenderView;
+	/// <summary>
+	/// OpenGL 4.0
+	/// </summary>
 	class GL
 	{
 		DISALLOW_COPY_AND_ASSIGN(GL)
@@ -46,17 +50,23 @@ namespace GLFramework
 	public:
 		GL();
 		virtual ~GL();
-		HWND  GetHWND() const;
-		HGLRC GetContext() const;
-		BOOL Initialize(HWND hWND, INT cx, INT cy);
-		void Uninitialize();
-		BOOL Render();
+		BOOL		IsEmpty() const;
+		BOOL		IsActive() const;
+		HDC			GetDC() const;
+		HWND		GetHWND() const;
+		HGLRC		GetContext() const;
+		BOOL		Initialize(HWND hWND, INT cx, INT cy);
+		void		Uninitialize();
+		void		SetMatrixs(const TinySize& size);
+		XMMATRIX*	GetMatrixs();
 	private:
-		BOOL InitializeExtensions();
-		BOOL GetExtensions();
+		BOOL		InitializeExtensions();
+		BOOL		GetExtensions();
 	private:
-		HDC		m_hDC;
-		HWND	m_hWND;
-		HGLRC	m_context;
+		HDC					m_hDC;
+		HWND				m_hWND;
+		HGLRC				m_context;
+		XMMATRIX			m_matrixs[3];
+		GLRenderView*		m_render2D;
 	};
 }

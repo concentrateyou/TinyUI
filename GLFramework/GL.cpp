@@ -6,7 +6,8 @@ namespace GLFramework
 	GL::GL()
 		:m_hDC(NULL),
 		m_hWND(NULL),
-		m_context(NULL)
+		m_context(NULL),
+		m_render2D(NULL)
 	{
 		wglChoosePixelFormatARB = NULL;
 		wglCreateContextAttribsARB = NULL;
@@ -48,6 +49,19 @@ namespace GLFramework
 
 	GL::~GL()
 	{
+	}
+
+	BOOL GL::IsEmpty() const
+	{
+		return (m_hDC == NULL);
+	}
+	BOOL GL::IsActive() const
+	{
+		return wglGetCurrentContext() == m_context;
+	}
+	HDC	GL::GetDC() const
+	{
+		return m_hDC;
 	}
 
 	HWND GL::GetHWND() const
@@ -268,7 +282,7 @@ namespace GLFramework
 		PIXELFORMATDESCRIPTOR sPFD;
 		ZeroMemory(&sPFD, sizeof(sPFD));
 		sPFD.nSize = sizeof(sPFD);
-		m_hDC = GetDC(m_hWND);
+		m_hDC = ::GetDC(m_hWND);
 		if (!m_hDC)
 			goto _ERROR;
 		if (!wglChoosePixelFormatARB(m_hDC, attribs, NULL, 1, &iFormat, &count))
@@ -282,11 +296,14 @@ namespace GLFramework
 			goto _ERROR;
 		if (!wglMakeCurrent(m_hDC, m_context))
 			goto _ERROR;
-		glClearDepth(1.0F);
+		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_DEPTH_TEST);
-		glFrontFace(GL_CW);
 		glEnable(GL_CULL_FACE);
+		glClearDepth(1.0F);
+		glFrontFace(GL_CW);
 		glCullFace(GL_BACK);
+		SetMatrixs(TinySize(cx, cy));
+		wglSwapIntervalEXT(0);//关闭垂直同步
 		m_hWND = hWND;
 		return TRUE;
 	_ERROR:
@@ -298,7 +315,7 @@ namespace GLFramework
 		}
 		if (m_hDC != NULL)
 		{
-			ReleaseDC(m_hWND, m_hDC);
+			::ReleaseDC(m_hWND, m_hDC);
 			m_hDC = NULL;
 		}
 		return FALSE;
@@ -306,22 +323,29 @@ namespace GLFramework
 
 	void GL::Uninitialize()
 	{
-		if (m_hDC != NULL && m_hWND != NULL)
-		{
-			ReleaseDC(m_hWND, m_hDC);
-			m_hDC = NULL;
-			m_hWND = NULL;
-		}
 		wglMakeCurrent(NULL, NULL);
 		if (m_context != NULL)
 		{
 			wglDeleteContext(m_context);
 			m_context = NULL;
 		}
+		if (m_hDC != NULL && m_hWND != NULL)
+		{
+			ReleaseDC(m_hWND, m_hDC);
+			m_hDC = NULL;
+			m_hWND = NULL;
+		}
 	}
-
-	BOOL GL::Render()
+	void GL::SetMatrixs(const TinySize& size)
 	{
-		return TRUE;
+		FLOAT fov = (FLOAT)D3DX_PI / 4.0F;
+		FLOAT aspect = (FLOAT)size.cx / (FLOAT)size.cy;
+		m_matrixs[0] = XMMatrixPerspectiveFovLH(fov, aspect, 1000.0F, 0.1F);//projection
+		m_matrixs[1] = XMMatrixIdentity();//world
+		m_matrixs[2] = XMMatrixOrthographicLH((FLOAT)size.cx, (FLOAT)size.cy, 1000.0F, 0.1F);//view
+	}
+	XMMATRIX* GL::GetMatrixs()
+	{
+		return m_matrixs;
 	}
 }

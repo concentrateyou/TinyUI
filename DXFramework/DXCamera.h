@@ -5,6 +5,7 @@ namespace DXFramework
 {
 	class DXCamera
 	{
+		DISALLOW_COPY_AND_ASSIGN(DXCamera)
 	public:
 		DXCamera();
 		~DXCamera();
