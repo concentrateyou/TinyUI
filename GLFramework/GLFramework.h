@@ -9,6 +9,7 @@
 #include "GL/wglew.h"
 #include <DirectXMath.h>
 #pragma comment(lib, "opengl32.lib")
+#pragma comment(lib,"Glu32.lib")
 using namespace DirectX;
 using namespace TinyUI;
 using namespace std;
