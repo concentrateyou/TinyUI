@@ -31,7 +31,7 @@ namespace TinyUI
 		BOOL TinyIOTask::Submit()
 		{
 			m_bBreak = FALSE;
-			return TinyTask::Submit(std::forward<Closure>(BindCallback(&TinyIOTask::OnMessagePump, this)));
+			return TinyTask::Submit(BindCallback(&TinyIOTask::OnMessagePump, this));
 		}
 		void TinyIOTask::OnMessagePump()
 		{
