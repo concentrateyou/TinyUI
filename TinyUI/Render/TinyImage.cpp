@@ -128,9 +128,80 @@ namespace TinyUI
 	{
 
 	}
+	TinyImage::TinyImage(const TinyImage& o)
+	{
+		BITMAPINFO bmi;
+		memset(&bmi, 0, sizeof(BITMAPINFO));
+		bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+		bmi.bmiHeader.biWidth = o.m_cx;
+		bmi.bmiHeader.biHeight = -o.m_cy;
+		bmi.bmiHeader.biPlanes = 1;
+		bmi.bmiHeader.biBitCount = 32;
+		bmi.bmiHeader.biCompression = BI_RGB;
+		bmi.bmiHeader.biSizeImage = o.m_cx * o.m_cy * 4;
+		BYTE* bits = NULL;
+		HBITMAP hBitmap = ::CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, (void**)&bits, NULL, 0);
+		if (hBitmap != NULL)
+		{
+			this->Close();
+			m_bits = bits;
+			m_hBitmap = hBitmap;
+			m_cx = o.m_cx;
+			m_cy = o.m_cy;
+			memcpy(m_bits, bits, bmi.bmiHeader.biSizeImage);
+		}
+	}
+	TinyImage::TinyImage(TinyImage&& o)
+		:m_hBitmap(o.m_hBitmap),
+		m_bits(o.m_bits),
+		m_cx(o.m_cx),
+		m_cy(o.m_cy)
+	{
+		o.m_bits = NULL;
+		o.m_hBitmap = NULL;
+		o.m_cx = 0;
+		o.m_cy = 0;
+	}
 	TinyImage::~TinyImage()
 	{
 		Close();
+	}
+	void TinyImage::operator=(const TinyImage& o)
+	{
+		if (&o != this)
+		{
+			BITMAPINFO bmi;
+			memset(&bmi, 0, sizeof(BITMAPINFO));
+			bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+			bmi.bmiHeader.biWidth = o.m_cx;
+			bmi.bmiHeader.biHeight = -o.m_cy;
+			bmi.bmiHeader.biPlanes = 1;
+			bmi.bmiHeader.biBitCount = 32;
+			bmi.bmiHeader.biCompression = BI_RGB;
+			bmi.bmiHeader.biSizeImage = o.m_cx * o.m_cy * 4;
+			BYTE* bits = NULL;
+			HBITMAP hBitmap = ::CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, (void**)&bits, NULL, 0);
+			if (hBitmap != NULL)
+			{
+				this->Close();
+				m_bits = bits;
+				m_hBitmap = hBitmap;
+				m_cx = o.m_cx;
+				m_cy = o.m_cy;
+				memcpy(m_bits, bits, bmi.bmiHeader.biSizeImage);
+			}
+		}
+	}
+	void TinyImage::operator=(TinyImage&& o)
+	{
+		m_bits = o.m_bits;
+		m_cx = o.m_cx;
+		m_cy = o.m_cy;
+		m_hBitmap = o.m_hBitmap;
+		o.m_bits = NULL;
+		o.m_hBitmap = NULL;
+		o.m_cx = 0;
+		o.m_cy = 0;
 	}
 	BOOL TinyImage::IsEmpty() const
 	{
@@ -140,7 +211,9 @@ namespace TinyUI
 	void TinyImage::Close()
 	{
 		SAFE_DELETE_OBJECT(m_hBitmap);
-		m_cx = m_cy = 0;
+		m_bits = NULL;
+		m_cx = 0;
+		m_cy = 0;
 	}
 
 	BOOL TinyImage::Open(LPCSTR pzFile)

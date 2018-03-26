@@ -97,6 +97,20 @@ namespace TinyUI
 		{
 			return m_szToolTip;
 		}
+		void TinyVisual::SetPadding(const TinyRectangle& padding)
+		{
+			if (m_padding != padding)
+			{
+				m_padding = padding;
+			}
+		}
+		void TinyVisual::SetMargin(const TinyRectangle& margin)
+		{
+			if (m_margin != margin)
+			{
+				m_margin = margin;
+			}
+		}
 		void TinyVisual::SetMaximumSize(const TinySize& size)
 		{
 			if (m_maximumSize != size)
@@ -296,6 +310,14 @@ namespace TinyUI
 			{
 				m_rectangle.SetSize(newsize);
 			}
+		}
+		TinyRectangle TinyVisual::GetPadding() const
+		{
+			return m_padding;
+		}
+		TinyRectangle TinyVisual::GetMargin() const
+		{
+			return m_margin;
 		}
 		TinyRectangle TinyVisual::GetRectangle() const
 		{
@@ -623,6 +645,16 @@ namespace TinyUI
 			if (strcasecmp(name.STR(), TinyVisualPropertyConst::SIZE.STR()) == 0)
 			{
 				this->SetSize(TinyVisualBuilder::GetSize(value));
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::PADDING.STR()) == 0)
+			{
+				this->SetPadding(TinyVisualBuilder::GetRectangle(value));
+				return TRUE;
+			}
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::MARGIN.STR()) == 0)
+			{
+				this->SetMargin(TinyVisualBuilder::GetRectangle(value));
 				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualPropertyConst::MAXSIZE.STR()) == 0)

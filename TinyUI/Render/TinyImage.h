@@ -12,9 +12,12 @@ namespace TinyUI
 	/// </summary>
 	class TinyImage
 	{
-		DISALLOW_COPY_AND_ASSIGN(TinyImage)
 	public:
 		TinyImage();
+		TinyImage(const TinyImage&);
+		TinyImage(TinyImage&&);
+		void operator=(const TinyImage&);
+		void operator=(TinyImage&&);
 		virtual ~TinyImage();
 		operator HBITMAP() const;
 		BOOL			IsEmpty() const;

@@ -8,29 +8,19 @@
 #include "Control/TinyLabel.h"
 #include "Control/TinyRichTextBox.h"
 #include "Control/TinyScrollBar.h"
-#include "GL.h"
-using namespace GLFramework;
+using namespace TinyUI;
+using namespace TinyUI::Windowless;
 
-class GLView : public TinyControl
+class GLView : public TinyVisualWindowless
 {
 public:
 	GLView();
 	virtual ~GLView();
-	//5个创建函数
-	DWORD RetrieveStyle() OVERRIDE;
-	DWORD RetrieveExStyle() OVERRIDE;
-	LPCSTR RetrieveClassName() OVERRIDE;
-	LPCSTR RetrieveTitle() OVERRIDE;
-	HICON RetrieveIcon() OVERRIDE;
-	BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
-	//事件
-	LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-	LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-	LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-	LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-	LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-	LRESULT OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-	LRESULT OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-	LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-	LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+public:
+	void OnInitialize() OVERRIDE;
+	void OnUninitialize() OVERRIDE;
+private:
+	void OnCloseClick(TinyVisual*, EventArgs& args);
+private:
+	TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onCloseClick;
 };

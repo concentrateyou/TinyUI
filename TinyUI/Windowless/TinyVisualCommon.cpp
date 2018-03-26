@@ -16,6 +16,9 @@ namespace TinyUI
 		const TinyString TinyVisualPropertyConst::ENABLE = TEXT("enable");
 		const TinyString TinyVisualPropertyConst::CURSOR = TEXT("cursor");
 
+		const TinyString TinyVisualPropertyConst::PADDING = TEXT("padding");
+		const TinyString TinyVisualPropertyConst::MARGIN = TEXT("margin");
+
 		const TinyString TinyVisualPropertyConst::BACKGROUNDIMAGE = TEXT("background-image");
 		const TinyString TinyVisualPropertyConst::BACKGROUNDCOLOR = TEXT("background-color");
 		const TinyString TinyVisualPropertyConst::BACKGROUNDCENTER = TEXT("background-center");

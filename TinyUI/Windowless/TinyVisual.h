@@ -50,6 +50,8 @@ namespace TinyUI
 			TinyString			GetToolTip() const;
 			TinyPoint			GetPosition() const;
 			TinySize			GetSize() const;
+			TinyRectangle		GetPadding() const;
+			TinyRectangle		GetMargin() const;
 			TinySize			GetMaximumSize() const;
 			TinySize			GetMinimumSize() const;
 			TinyRectangle		GetRectangle() const;
@@ -88,6 +90,8 @@ namespace TinyUI
 			virtual void		SetText(const TinyString& szText);
 			virtual void		SetPosition(const TinyPoint& pos);
 			virtual void		SetSize(const TinySize& size);
+			virtual void		SetPadding(const TinyRectangle& padding);
+			virtual void		SetMargin(const TinyRectangle& margin);
 			virtual void		SetMaximumSize(const TinySize& size);
 			virtual void		SetMinimumSize(const TinySize& size);
 			virtual void		SetClip(HRGN hrgnClip);
@@ -168,6 +172,8 @@ namespace TinyUI
 			TinyString			m_szCursor;
 			TinySize			m_maximumSize;//元素的最大像素大小
 			TinySize			m_minimumSize;//元素的最小像素大小
+			TinyRectangle		m_padding;//内边距
+			TinyRectangle		m_margin;//外边距
 			TinyRectangle		m_rectangle;//相对于父元素区域
 			TinyRectangle		m_backgroundCenter;//显示背景图片中心
 			TinyImage*			m_backgroundImage;//背景图片

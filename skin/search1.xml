@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window name="msearch" text="奇妙导播台" position="100,100" size="818,680" minsize="818,680" maxsize="818,680"
+		background-image="panel"
+        shadow-image="shadow"
+        shadow-box="8,8,8,8">
+  <syscaption name ="syscaption" position="0,0" size="818,27" background-image="syscaption">
+    <label name="title" position="10,0" size="60,27" text="奇妙导播台" text-align="left|vcenter" text-color="255,255,255" >
+    </label>
+    <button name="sysmin" tooltip="Min" position="756,0" size="30,27"
+            image-normal="sysbtn_min_normal"
+            image-highlight="sysbtn_min_hover"
+            image-down="sysbtn_min_down">
+    </button>
+    <button name="sysclose" tooltip="Close" position="786,0" size="30,27"
+            image-normal="sysbtn_close_normal"
+            image-highlight="sysbtn_close_hover"
+            image-down="sysbtn_close_down">
+    </button>
+  </syscaption>
+    <panel position="0,40" size="816,40">
+      <label text="奇妙导播台" text-align="right|vcenter" font-family="Arial" font-weight="500" font-size="18,36" text-color="0,153,255" position="0,0" size="450,36">
+      </label>
+      <label text="赛事解说" text-align="left|bottom" font-family="Arial" font-weight="400" font-size="8,16" text-color="0,153,255" position="460,0" size="409,36">
+      </label>
+    </panel>
+    <panel position="50,80" size="700,100">
+      <panel position="40,10" size="500,42"
+           background-image="txt_border"
+           background-center="1,1,77,23">
+        <textbox name="txtSearch" position="10,10" size="450,20" font-family="微软雅黑" font-weight="400" font-size="8,14">
+        </textbox>
+      </panel>
+      <button name="btnSearch" tooltip="Min" position="550,12" size="90,36" text="搜索" text-align="center|vcenter" text-color="255,255,255" font-family="微软雅黑" font-weight="400" font-size="8,18"
+             image-normal="blue_normal"
+             image-highlight="blue_highlight"
+             image-down="blue_down"
+             cursor="hand">
+      </button>
+    </panel>
+    <panel position="30,160" size="760,400">
+      <list name="programs" position="0,0" size="760,400">
+      </list>
+      <animation name="loading" position="330,0" size="28,28" visible="false" imagelist="1,2,3,4,5,6,7,8">
+      </animation>
+      <label name="lblMsg" position="0,0" size="760,100" font-family="微软雅黑" font-weight="400" font-size="12,28"  text-align="center|vcenter"></label>
+    </panel>
+  </panel>
+</window>

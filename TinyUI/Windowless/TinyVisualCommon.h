@@ -19,6 +19,10 @@ namespace TinyUI
 			static const TinyString MINSIZE;
 			static const TinyString POSITION;
 			static const TinyString SIZE;
+
+			static const TinyString PADDING;
+			static const TinyString MARGIN;
+
 			static const TinyString VISIBLE;
 			static const TinyString ENABLE;
 			static const TinyString CURSOR;
