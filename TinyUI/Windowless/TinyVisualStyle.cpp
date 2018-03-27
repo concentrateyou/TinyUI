@@ -28,11 +28,11 @@ namespace TinyUI
 		{
 			m_center = center;
 		}
-		TinyImage* ImageStyle::GetImage()
+		TinyImage* ImageStyle::GetImage() const
 		{
 			return m_image;
 		}
-		TinyRectangle ImageStyle::GetCenter()
+		TinyRectangle ImageStyle::GetCenter() const
 		{
 			return m_center;
 		}
@@ -66,19 +66,19 @@ namespace TinyUI
 		{
 			m_imageStyle = imageStyle;
 		}
-		COLORREF BackgroundStyle::GetColor()
+		COLORREF BackgroundStyle::GetColor() const
 		{
 			return m_color;
 		}
-		TinySize BackgroundStyle::GetSize()
+		TinySize BackgroundStyle::GetSize() const
 		{
 			return m_size;
 		}
-		TinyPoint BackgroundStyle::GetPosition()
+		TinyPoint BackgroundStyle::GetPosition() const
 		{
 			return m_position;
 		}
-		ImageStyle*	BackgroundStyle::GetImageStyle()
+		ImageStyle*	BackgroundStyle::GetImageStyle() const
 		{
 			return m_imageStyle;
 		}
@@ -113,21 +113,25 @@ namespace TinyUI
 		{
 			m_imageStyle = imageStyle;
 		}
-		COLORREF BorderStyle::GetColor()
+		COLORREF BorderStyle::GetColor() const
 		{
 			return m_color;
 		}
-		INT	BorderStyle::GetThickness()
+		INT	BorderStyle::GetThickness() const
 		{
 			return m_thickness;
 		}
-		BorderStyle::Style BorderStyle::GetStyle()
+		BorderStyle::Style BorderStyle::GetStyle() const
 		{
 			return m_style;
 		}
+		ImageStyle*	BorderStyle::GetImageStyle() const
+		{
+			return m_imageStyle;
+		}
 		//////////////////////////////////////////////////////////////////////////
 		BoxStyle::BoxStyle()
-			:m_zIndex(0)
+			:m_zIndex(INT_MAX)
 		{
 
 		}
@@ -163,27 +167,27 @@ namespace TinyUI
 		{
 			m_margin = margin;
 		}
-		TinySize BoxStyle::GetSize()
+		TinySize BoxStyle::GetSize() const
 		{
 			return m_size;
 		}
-		TinySize BoxStyle::GetMaximumSize()
+		TinySize BoxStyle::GetMaximumSize() const
 		{
 			return m_maximumSize;
 		}
-		TinySize BoxStyle::GetMinimumSize()
+		TinySize BoxStyle::GetMinimumSize() const
 		{
 			return m_minimumSize;
 		}
-		TinyRectangle BoxStyle::GetPadding()
+		TinyRectangle BoxStyle::GetPadding() const
 		{
 			return m_padding;
 		}
-		TinyRectangle BoxStyle::GetMargin()
+		TinyRectangle BoxStyle::GetMargin() const
 		{
 			return m_margin;
 		}
-		INT	BoxStyle::GetZIndex()
+		INT	BoxStyle::GetZIndex() const
 		{
 			return m_zIndex;
 		}
@@ -195,7 +199,7 @@ namespace TinyUI
 		}
 		VisualStyle::~VisualStyle()
 		{
-
+			SAFE_DELETE_OBJECT(m_clip);
 		}
 		TinyScopedReferencePtr<VisualStyle> VisualStyle::Create()
 		{
@@ -209,6 +213,32 @@ namespace TinyUI
 		{
 			m_zoom = zoom;
 		}
+		HRGN VisualStyle::GetClip() const
+		{
+			return m_clip;
+		}
+		FLOAT VisualStyle::GetZoom() const
+		{
+			return m_zoom;
+		}
+		//////////////////////////////////////////////////////////////////////////
+		FontStyle::FontStyle()
+			:m_hFONT(NULL)
+		{
+
+		}
+		FontStyle::~FontStyle()
+		{
+			SAFE_DELETE_OBJECT(m_hFONT);
+		}
+		TinyScopedReferencePtr<FontStyle> FontStyle::Create()
+		{
+			return (new FontStyle());
+		}
+		void FontStyle::SetFont(HFONT hFONT)
+		{
+			m_hFONT = hFONT;
+		}
 		//////////////////////////////////////////////////////////////////////////
 		RenderStyle::RenderStyle()
 		{
@@ -218,14 +248,166 @@ namespace TinyUI
 		{
 
 		}
+		void RenderStyle::SetPadding(const TinyRectangle& padding)
+		{
+			if (m_boxStyle != NULL)
+			{
+				m_boxStyle->SetPadding(padding);
+			}
+		}
+		void RenderStyle::SetMargin(const TinyRectangle& margin)
+		{
+			if (m_boxStyle != NULL)
+			{
+				m_boxStyle->SetMargin(margin);
+			}
+		}
+		void RenderStyle::SetMaximumSize(const TinySize& size)
+		{
+			if (m_boxStyle != NULL)
+			{
+				m_boxStyle->SetMaximumSize(size);
+			}
+		}
+		void RenderStyle::SetMinimumSize(const TinySize& size)
+		{
+			if (m_boxStyle != NULL)
+			{
+				m_boxStyle->SetMinimumSize(size);
+			}
+		}
+		void RenderStyle::SetClip(HRGN hrgnClip)
+		{
+			if (m_visualStyle != NULL)
+			{
+				m_visualStyle->SetClip(hrgnClip);
+			}
+		}
+		void RenderStyle::SetZIndex(INT zIndex)
+		{
+			if (m_boxStyle != NULL)
+			{
+				m_boxStyle->SetZIndex(zIndex);
+			}
+		}
+		void RenderStyle::SetFont(HFONT hFONT)
+		{
+			if (m_fontStyle != NULL)
+			{
+				m_fontStyle->SetFont(hFONT);
+			}
+		}
+		void RenderStyle::SetBackgroundColor(COLORREF color)
+		{
+			if (m_backgroundStyle != NULL)
+			{
+				m_backgroundStyle->SetColor(color);
+			}
+		}
+		void RenderStyle::SetBackgroundPosition(const TinyPoint& pos)
+		{
+			if (m_backgroundStyle != NULL)
+			{
+				m_backgroundStyle->SetPosition(pos);
+			}
+		}
+		void RenderStyle::SetBackgroundSize(const TinySize& size)
+		{
+			if (m_backgroundStyle != NULL)
+			{
+				m_backgroundStyle->SetSize(size);
+			}
+		}
+		void RenderStyle::SetBackgroundImage(ImageStyle* image)
+		{
+			if (m_backgroundStyle != NULL)
+			{
+				m_backgroundStyle->SetImageStyle(image);
+			}
+		}
+		void RenderStyle::SetBorderColor(COLORREF color)
+		{
+			if (m_borderStyle != NULL)
+			{
+				m_borderStyle->SetColor(color);
+			}
+		}
+		void RenderStyle::SetBorderThickness(INT thickness)
+		{
+			if (m_borderStyle != NULL)
+			{
+				m_borderStyle->SetThickness(thickness);
+			}
+		}
+		void RenderStyle::SetBorderStyle(BorderStyle::Style style)
+		{
+			if (m_borderStyle != NULL)
+			{
+				m_borderStyle->SetStyle(style);
+			}
+		}
+		void RenderStyle::SetBorderImageStyle(ImageStyle* image)
+		{
+			if (m_borderStyle != NULL)
+			{
+				m_borderStyle->SetImageStyle(image);
+			}
+		}
+
+		TinyRectangle RenderStyle::GetPadding() const
+		{
+			return m_boxStyle->GetPadding();
+		}
+		TinyRectangle RenderStyle::GetMargin() const
+		{
+			return m_boxStyle->GetMargin();
+		}
+		TinySize RenderStyle::GetMaximumSize() const
+		{
+			return m_boxStyle->GetMaximumSize();
+		}
+		TinySize RenderStyle::GetMinimumSize() const
+		{
+			return m_boxStyle->GetMinimumSize();
+		}
+		ImageStyle*	RenderStyle::GetBackgroundImageStyle() const
+		{
+			return m_backgroundStyle->GetImageStyle();
+		}
+		TinySize	RenderStyle::GetBackgroundSize() const
+		{
+			ASSERT(m_backgroundStyle);
+			return m_backgroundStyle->GetSize();
+		}
+		TinyPoint	RenderStyle::GetBackgroundPosition() const
+		{
+			ASSERT(m_backgroundStyle);
+			return m_backgroundStyle->GetPosition();
+		}
+		TinyColor	RenderStyle::GetBackgroundColor() const
+		{
+			ASSERT(m_backgroundStyle);
+			return m_backgroundStyle->GetColor();
+		}
+		TinyColor	RenderStyle::GetBorderColor() const
+		{
+			ASSERT(m_backgroundStyle);
+			return m_backgroundStyle->GetColor();
+		}
+		ImageStyle*	RenderStyle::GetBorderImageStyle() const
+		{
+			return m_borderStyle->GetImageStyle();
+		}
 		TinyScopedReferencePtr<RenderStyle> RenderStyle::Create()
 		{
 			RenderStyle* style = new RenderStyle();
 			if (style != NULL)
 			{
+				style->m_fontStyle = FontStyle::Create();
 				style->m_backgroundStyle = BackgroundStyle::Create();
 				style->m_boxStyle = BoxStyle::Create();
 				style->m_visualStyle = VisualStyle::Create();
+				style->m_borderStyle = BorderStyle::Create();
 			}
 			return style;
 		}

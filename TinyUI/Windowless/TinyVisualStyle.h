@@ -16,8 +16,8 @@ namespace TinyUI
 			static TinyScopedReferencePtr<ImageStyle> Create();
 			void SetImage(TinyImage* image);
 			void SetCenter(const TinyRectangle& center);
-			TinyImage*		GetImage();
-			TinyRectangle	GetCenter();
+			TinyImage*		GetImage() const;
+			TinyRectangle	GetCenter() const;
 		private:
 			ImageStyle();
 		private:
@@ -37,10 +37,10 @@ namespace TinyUI
 			void SetPosition(const TinyPoint& pos);
 			void SetSize(const TinySize& size);
 			void SetImageStyle(ImageStyle* imageStyle);
-			ImageStyle*		GetImageStyle();
-			COLORREF		GetColor();
-			TinySize		GetSize();
-			TinyPoint		GetPosition();
+			ImageStyle*		GetImageStyle() const;
+			COLORREF		GetColor() const;
+			TinySize		GetSize() const;
+			TinyPoint		GetPosition() const;
 		private:
 			BackgroundStyle();
 		private:
@@ -55,6 +55,7 @@ namespace TinyUI
 		/// </summary>
 		class BorderStyle : public TinyReference<BorderStyle>
 		{
+		public:
 			enum Style
 			{
 				NONE, DOTTED, DASHED, SOLID, DOUBLE
@@ -67,9 +68,10 @@ namespace TinyUI
 			void SetThickness(INT thickness);
 			void SetStyle(Style style);
 			void SetImageStyle(ImageStyle* imageStyle);
-			INT			GetThickness();
-			COLORREF	GetColor();
-			Style		GetStyle();
+			INT			GetThickness() const;
+			COLORREF	GetColor() const;
+			Style		GetStyle() const;
+			ImageStyle*	GetImageStyle() const;
 		private:
 			BorderStyle();
 		private:
@@ -93,12 +95,12 @@ namespace TinyUI
 			void SetPadding(const TinyRectangle& padding);
 			void SetMargin(const TinyRectangle& margin);
 			void SetZIndex(INT zIndex);
-			TinySize		GetSize();
-			TinySize		GetMaximumSize();
-			TinySize		GetMinimumSize();
-			TinyRectangle	GetPadding();
-			TinyRectangle	GetMargin();
-			INT				GetZIndex();
+			TinySize		GetSize() const;
+			TinySize		GetMaximumSize() const;
+			TinySize		GetMinimumSize() const;
+			TinyRectangle	GetPadding() const;
+			TinyRectangle	GetMargin() const;
+			INT				GetZIndex() const;
 		private:
 			BoxStyle();
 		private:
@@ -120,11 +122,28 @@ namespace TinyUI
 			static TinyScopedReferencePtr<VisualStyle> Create();
 			void SetClip(HRGN clip);
 			void SetZoom(FLOAT zoom);
+			HRGN	GetClip() const;
+			FLOAT	GetZoom() const;
 		private:
 			VisualStyle();
 		private:
 			HRGN			m_clip;
 			FLOAT			m_zoom;
+		};
+		/// <summary>
+		/// ◊÷ÃÂ
+		/// </summary>
+		class FontStyle : public TinyReference<FontStyle>
+		{
+			DISALLOW_COPY_AND_ASSIGN(FontStyle)
+		public:
+			~FontStyle();
+			static TinyScopedReferencePtr<FontStyle> Create();
+			void SetFont(HFONT hFONT);
+		private:
+			FontStyle();
+		private:
+			HFONT	m_hFONT;
 		};
 		/// <summary>
 		/// ‰÷»æ
@@ -135,9 +154,37 @@ namespace TinyUI
 		public:
 			~RenderStyle();
 			static TinyScopedReferencePtr<RenderStyle> Create();
-		private:
+			void	SetPadding(const TinyRectangle& padding);
+			void	SetMargin(const TinyRectangle& margin);
+			void	SetMaximumSize(const TinySize& size);
+			void	SetMinimumSize(const TinySize& size);
+			void	SetClip(HRGN hrgnClip);
+			void	SetZIndex(INT zIndex);
+			void	SetFont(HFONT hFONT);
+			void	SetBackgroundImage(ImageStyle* image);
+			void	SetBackgroundColor(COLORREF color);
+			void	SetBackgroundPosition(const TinyPoint& pos);
+			void	SetBackgroundSize(const TinySize& size);
+			void	SetBorderColor(COLORREF color);
+			void	SetBorderThickness(INT thickness);
+			void	SetBorderStyle(BorderStyle::Style style);
+			void	SetBorderImageStyle(ImageStyle* image);
+			TinyRectangle		GetPadding() const;
+			TinyRectangle		GetMargin() const;
+			TinySize			GetMaximumSize() const;
+			TinySize			GetMinimumSize() const;
+			ImageStyle*			GetBackgroundImageStyle() const;
+			TinySize			GetBackgroundSize() const;
+			TinyPoint			GetBackgroundPosition() const;
+			TinyColor			GetBackgroundColor() const;
+			TinyColor			GetBorderColor() const;
+			ImageStyle*			GetBorderImageStyle() const;
+
+		protected:
+			TinyScopedReferencePtr<BorderStyle>		m_borderStyle;
 			TinyScopedReferencePtr<BoxStyle>		m_boxStyle;
 			TinyScopedReferencePtr<VisualStyle>		m_visualStyle;
+			TinyScopedReferencePtr<FontStyle>		m_fontStyle;
 			TinyScopedReferencePtr<BackgroundStyle>	m_backgroundStyle;
 		private:
 			RenderStyle();
