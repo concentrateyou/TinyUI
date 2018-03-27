@@ -2472,9 +2472,15 @@ namespace TinyUI
 			::MulDiv(bottom, nMultiplier, nDivisor));
 	}
 #pragma endregion
+	static const COLORREF black = 0xFF000000;
+	static const COLORREF white = 0xFFFFFFFF;
+	static const COLORREF darkGray = 0xFF808080;
+	static const COLORREF gray = 0xFFA0A0A0;
+	static const COLORREF lightGray = 0xFFC0C0C0;
+	static const COLORREF transparent = 0x00000000;
 	//////////////////////////////////////////////////////////////////////////
 	TinyColor::TinyColor()
-		:m_color(-1)
+		:m_color(transparent)
 	{
 	}
 	TinyColor::TinyColor(COLORREF color)
@@ -2486,9 +2492,9 @@ namespace TinyUI
 	{
 		m_color = color;
 	}
-	BOOL TinyColor::IsEmpty()
+	BOOL TinyColor::IsTransparent() const
 	{
-		return m_color == -1;
+		return m_color == transparent;
 	}
 	void TinyColor::operator=(COLORREF color) throw()
 	{

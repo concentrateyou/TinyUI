@@ -98,7 +98,7 @@ namespace TinyUI
 					canvas.DrawImage(*m_borderImage, clip, srcRect, srcCenter);
 				}
 			}
-			if (!m_borderColor.IsEmpty() && m_borderThickness != -1)
+			if (!m_borderColor.IsTransparent() && m_borderThickness != -1)
 			{
 				TinyPen pen;
 				pen.CreatePen(m_borderStyle, m_borderThickness, m_borderColor);
@@ -119,7 +119,7 @@ namespace TinyUI
 					canvas.DrawImage(*m_backgroundImage, clip, srcRect, srcCenter);
 				}
 			}
-			if (!m_backgroundColor.IsEmpty())
+			if (!m_backgroundColor.IsTransparent())
 			{
 				TinyBrush brush;
 				brush.CreateBrush(m_backgroundColor);

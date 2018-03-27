@@ -617,13 +617,14 @@ namespace TinyUI
 	public:
 		TinyColor();
 		TinyColor(COLORREF color);
-		BOOL IsEmpty();
+		BOOL IsTransparent() const;
 		void SetColor(COLORREF color);
+		BYTE R();
 		operator COLORREF() throw();
 		operator COLORREF() const throw();
 		void operator=(COLORREF color) throw();
 	public:
-		INT		m_color;
+		COLORREF m_color;
 	};
 }
 

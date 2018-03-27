@@ -32,14 +32,14 @@ namespace TinyUI
 			ASSERT(m_document);
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			TinyRectangle clip = m_document->GetWindowRect(this);
-			if (!m_backgroundColor.IsEmpty())
+			if (!m_backgroundColor.IsTransparent())
 			{
 				TinyBrush brush;
 				brush.CreateBrush(m_backgroundColor);
 				canvas.SetBrush(brush);
 				canvas.FillRectangle(clip);
 			}
-			if (!m_borderColor.IsEmpty() && m_borderThickness != -1)
+			if (!m_borderColor.IsTransparent() && m_borderThickness != -1)
 			{
 				TinyPen pen;
 				pen.CreatePen(m_borderStyle, m_borderThickness, m_borderColor);
