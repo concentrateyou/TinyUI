@@ -20,6 +20,7 @@ void GLView::OnInitialize()
 		m_onCloseClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &GLView::OnCloseClick));
 		visual->EVENT_CLICK += m_onCloseClick;
 	}
+	m_player.Open("D:\\2.mp4");
 }
 
 void GLView::OnUninitialize()

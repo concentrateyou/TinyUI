@@ -11,7 +11,11 @@ namespace DShow
 	}
 	ScopedMediaType::~ScopedMediaType()
 	{
-		DeleteMediaType(m_mediaType);
+		if (m_mediaType != NULL)
+		{
+			DeleteMediaType(m_mediaType);
+			m_mediaType = NULL;
+		}
 	}
 	AM_MEDIA_TYPE* ScopedMediaType::operator->()
 	{
@@ -23,7 +27,11 @@ namespace DShow
 	}
 	void ScopedMediaType::Release()
 	{
-		::FreeMediaType(*m_mediaType);
+		if (m_mediaType != NULL)
+		{
+			::FreeMediaType(*m_mediaType);
+			m_mediaType = NULL;
+		}
 	}
 	AM_MEDIA_TYPE** ScopedMediaType::Receive()
 	{

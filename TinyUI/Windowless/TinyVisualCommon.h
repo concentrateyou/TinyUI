@@ -98,7 +98,6 @@ namespace TinyUI
 			static const TinyString STACKPANEL;
 			static const TinyString LIST;
 			static const TinyString LISTITEM;
-			static const TinyString STACKPANEL;
 			static const TinyString HBOXLAYOUT;
 			static const TinyString VBOXLAYOUT;
 			static const TinyString LISTBOX;

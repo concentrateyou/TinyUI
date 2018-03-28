@@ -63,6 +63,10 @@ namespace TinyUI
 
 		//////////////////////////////////////////////////////////////////////////
 		IMPLEMENT_DYNCREATE(TinyVisualStackPanel, TinyVisual);
+		TinyVisualStackPanel::TinyVisualStackPanel()
+		{
+
+		}
 		TinyVisualStackPanel::~TinyVisualStackPanel()
 		{
 
@@ -74,11 +78,11 @@ namespace TinyUI
 
 		BOOL TinyVisualStackPanel::SetProperty(const TinyString& name, const TinyString& value)
 		{
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::IMAGENORMAL.STR()) == 0)
+			/*if (strcasecmp(name.STR(), TinyVisualPropertyConst::IMAGENORMAL.STR()) == 0)
 			{
-				this->SetStyleImage(NORMAL, value.STR());
+				
 				return TRUE;
-			}
+			}*/
 			return TinyVisualPanel::SetProperty(name, value);
 		}
 

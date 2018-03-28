@@ -92,7 +92,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_WIN32_WINNT=0x0601;WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\TinySmiley;$(BOOSTDIR);..\DShowCapture;..\MFCapture;$(INTELMEDIASDKROOT)\include;$(PROTOBUF_DIR)\include;$(DXSDK_DIR)\Include;..\DXFramework;..\GLFramework;..\Decode;..\IntelQSV;..\ThirdParty\ffmpeg\include;..\ThirdParty\libfaad\include;..\ThirdParty\vld;..\ThirdParty\mpg123\include;..\ThirdParty\zlib\include;..\ThirdParty\librtmp\include;..\ThirdParty\opengl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\TinySmiley;$(BOOSTDIR);..\DShowCapture;..\MFCapture;$(INTELMEDIASDKROOT)\include;$(PROTOBUF_DIR)\include;$(DXSDK_DIR)\Include;..\DXFramework;..\GLFramework;..\Decode;..\IntelQSV;..\LAVPlayer;..\ThirdParty\ffmpeg\include;..\ThirdParty\libfaad\include;..\ThirdParty\vld;..\ThirdParty\mpg123\include;..\ThirdParty\zlib\include;..\ThirdParty\librtmp\include;..\ThirdParty\opengl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
@@ -243,6 +243,9 @@
     </ProjectReference>
     <ProjectReference Include="..\IntelQSV\IntelQSV.vcxproj">
       <Project>{681511e3-1b32-43c5-89f4-18a20c1590c9}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\LAVPlayer\LAVPlayer.vcxproj">
+      <Project>{e7d1d44c-989a-47c8-a58e-240d8f11e4ea}</Project>
     </ProjectReference>
     <ProjectReference Include="..\MFCapture\MFCapture.vcxproj">
       <Project>{a49d09ee-2163-41b4-9157-92962de7d038}</Project>

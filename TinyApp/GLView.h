@@ -8,8 +8,13 @@
 #include "Control/TinyLabel.h"
 #include "Control/TinyRichTextBox.h"
 #include "Control/TinyScrollBar.h"
+
+#include "LAVPlayer.h"
+
 using namespace TinyUI;
 using namespace TinyUI::Windowless;
+
+using namespace LAV;
 
 class GLView : public TinyVisualWindowless
 {
@@ -23,4 +28,6 @@ private:
 	void OnCloseClick(TinyVisual*, EventArgs& args);
 private:
 	TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onCloseClick;
+private:
+	LAVPlayer m_player;
 };
