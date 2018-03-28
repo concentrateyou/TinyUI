@@ -33,6 +33,10 @@ namespace TinyUI
 		protected:
 			TinyVisualStackPanel();
 			TinyVisualStackPanel(TinyVisual* spvisParent, TinyVisualDocument* vtree);
+		public:
+			virtual ~TinyVisualStackPanel();
+			TinyString RetrieveTag() const OVERRIDE;
+			BOOL SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 		};
 	}
 }

@@ -354,13 +354,13 @@ namespace QSV
 		status = m_qsvd3d->Initialize(hWND, GetIntelAdapter(m_mfxSession));
 		if (MFX_ERR_NONE != status)
 			goto _ERROR;
-		handle = m_qsvd3d->GetHandle(MFX_HANDLE_DIRECT3D_DEVICE_MANAGER9);
+		handle = m_qsvd3d->GetHandle(MFX_HANDLE_D3D9_DEVICE_MANAGER);
 		if (NULL == handle)
 		{
 			status = MFX_ERR_MEMORY_ALLOC;
 			goto _ERROR;
 		}
-		status = m_mfxSession.SetHandle(MFX_HANDLE_DIRECT3D_DEVICE_MANAGER9, handle);
+		status = m_mfxSession.SetHandle(MFX_HANDLE_D3D9_DEVICE_MANAGER, handle);
 		if (MFX_ERR_NONE != status)
 			goto _ERROR;
 		pParams = new QSVD3D9AllocatorParams();
@@ -412,7 +412,7 @@ namespace QSV
 		MSDK_MEMCPY_VAR(m_mfxVppVideoParam.vpp.In, &m_mfxVideoParam.mfx.FrameInfo, sizeof(mfxFrameInfo));
 		MSDK_MEMCPY_VAR(m_mfxVppVideoParam.vpp.Out, &m_mfxVppVideoParam.vpp.In, sizeof(mfxFrameInfo));
 		m_mfxVppVideoParam.vpp.Out.FourCC = MFX_FOURCC_RGB4;
-		m_mfxVppVideoParam.IOPattern = MFX_IOPATTERN_IN_VIDEO_MEMORY | MFX_IOPATTERN_OUT_SYSTEM_MEMORY;
+		m_mfxVppVideoParam.IOPattern = MFX_IOPATTERN_IN_VIDEO_MEMORY | MFX_IOPATTERN_OUT_VIDEO_MEMORY;
 		m_vppDoNotUse.NumAlg = 4;
 		m_vppDoNotUse.AlgList = new mfxU32[m_vppDoNotUse.NumAlg];
 		if (NULL == m_vppDoNotUse.AlgList)
@@ -510,6 +510,7 @@ namespace QSV
 		}
 		m_mfxVideoDECODE.Reset(NULL);
 		DeleteFrames();
+		m_mfxSession.SetHandle(MFX_HANDLE_D3D9_DEVICE_MANAGER, NULL);
 		m_mfxSession.Close();
 		MSDK_SAFE_DELETE_ARRAY(m_vppDoNotUse.AlgList);
 		DeleteAllocator();

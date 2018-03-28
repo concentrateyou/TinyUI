@@ -20,6 +20,8 @@ namespace TinyUI
 			static const TinyString POSITION;
 			static const TinyString SIZE;
 
+			static const TinyString ORIENTATION;
+
 			static const TinyString PADDING;
 			static const TinyString MARGIN;
 
@@ -93,6 +95,7 @@ namespace TinyUI
 			static const TinyString TAB;
 			static const TinyString BUTTON;
 			static const TinyString PANEL;
+			static const TinyString STACKPANEL;
 			static const TinyString LIST;
 			static const TinyString LISTITEM;
 			static const TinyString STACKPANEL;

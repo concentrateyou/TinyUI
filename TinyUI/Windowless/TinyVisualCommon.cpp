@@ -16,6 +16,9 @@ namespace TinyUI
 		const TinyString TinyVisualPropertyConst::ENABLE = TEXT("enable");
 		const TinyString TinyVisualPropertyConst::CURSOR = TEXT("cursor");
 
+
+		const TinyString TinyVisualPropertyConst::ORIENTATION = TEXT("orientation");
+
 		const TinyString TinyVisualPropertyConst::PADDING = TEXT("padding");
 		const TinyString TinyVisualPropertyConst::MARGIN = TEXT("margin");
 
@@ -150,6 +153,7 @@ namespace TinyUI
 		const TinyString TinyVisualTagConst::SYSCAPTION = TEXT("syscaption");
 		const TinyString TinyVisualTagConst::BUTTON = TEXT("button");
 		const TinyString TinyVisualTagConst::PANEL = TEXT("panel");
+		const TinyString TinyVisualTagConst::STACKPANEL = TEXT("stackpanel");
 		const TinyString TinyVisualTagConst::LIST = TEXT("list");
 		const TinyString TinyVisualTagConst::LISTITEM = TEXT("listitem");
 		const TinyString TinyVisualTagConst::LABEL = TEXT("label");

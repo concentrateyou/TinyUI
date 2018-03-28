@@ -77,16 +77,23 @@ namespace QSV
 #define D3DFMT_IMC3 (D3DFORMAT)MAKEFOURCC('I','M','C','3')
 #define D3DFMT_AYUV (D3DFORMAT)MAKEFOURCC('A','Y','U','V')
 
-#define MFX_FOURCC_IMC3 (MFX_MAKEFOURCC('I','M','C','3')) // This line should be moved into mfxstructures.h in new API version
+#define MFX_FOURCC_IMC3 (MFX_MAKEFOURCC('I','M','C','3'))
 
 	D3DFORMAT ConvertMfxFourccToD3dFormat(mfxU32 fourcc);
-
+	BOOL IsSSE41Enabled();
+	BOOL IsAVX2Enabled();
+	extern "C"
+	{
+		void* gpu_memcpy_sse41(void* d, const void* s, size_t _size);
+		void* gpu_memcpy_avx2(void* d, const void* s, size_t size);
+		void* mt_memcpy(void* d, const void* s, size_t size);
+		void* mt_gpu_memcpy(void* d, const void* s, size_t size);
+	}
 	const struct
 	{
 		mfxIMPL impl;
 		mfxU32  adapterID;
-	} implTypes[] =
-	{
+	}implTypes[] = {
 		{ MFX_IMPL_HARDWARE, 0 },
 		{ MFX_IMPL_HARDWARE2, 1 },
 		{ MFX_IMPL_HARDWARE3, 2 },

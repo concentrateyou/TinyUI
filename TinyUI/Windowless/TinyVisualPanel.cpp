@@ -60,5 +60,27 @@ namespace TinyUI
 			}
 			return TRUE;
 		}
+
+		//////////////////////////////////////////////////////////////////////////
+		IMPLEMENT_DYNCREATE(TinyVisualStackPanel, TinyVisual);
+		TinyVisualStackPanel::~TinyVisualStackPanel()
+		{
+
+		}
+		TinyString TinyVisualStackPanel::RetrieveTag() const
+		{
+			return TinyVisualTagConst::PANEL;
+		}
+
+		BOOL TinyVisualStackPanel::SetProperty(const TinyString& name, const TinyString& value)
+		{
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::IMAGENORMAL.STR()) == 0)
+			{
+				this->SetStyleImage(NORMAL, value.STR());
+				return TRUE;
+			}
+			return TinyVisualPanel::SetProperty(name, value);
+		}
+
 	}
 }
