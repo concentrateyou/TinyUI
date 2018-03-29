@@ -725,6 +725,7 @@ private:\
 		BOOL IsEmpty() const throw();
 		void Reset(T* ps = 0) throw();
 		T* Release() throw();
+		T** operator&() throw();
 		operator T*() const throw();
 		T& operator*() const throw();
 		T* operator->() const throw();
@@ -779,6 +780,13 @@ private:\
 	T* TinyScopedPtr<T, Deleter>::operator->() const throw()
 	{
 		return m_myP;
+	}
+	template<class T, class Deleter>
+	T** TinyScopedPtr<T, Deleter>::operator&() throw()
+	{
+		if (m_myP != NULL)
+			return &m_myP;
+		return NULL;
 	}
 	template<class T, class Deleter>
 	T* TinyScopedPtr<T, Deleter>::Ptr() const throw()

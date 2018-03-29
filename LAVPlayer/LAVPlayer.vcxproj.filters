@@ -27,12 +27,36 @@
     <ClInclude Include="LAVPlayer.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="LAVVideoFilter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="LAVAudioFilter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="LAVVideoInputPin.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="LAVAudioInputPin.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="LAVPlayer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="LAVVideoFilter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="LAVAudioFilter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="LAVVideoInputPin.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="LAVAudioInputPin.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

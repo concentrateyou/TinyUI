@@ -144,35 +144,35 @@ namespace LAV
 		hRes = m_asmstream->Count(&streams);
 		if (hRes != S_OK)
 			return FALSE;
-		for (INT i = 0;i < streams;i++)
+		for (DWORD i = 0;i < streams;i++)
 		{
-			hRes = m_asmstream->Enable(i, AMSTREAMSELECTENABLE_ENABLE);
-			if (hRes != S_OK)
-				return FALSE;
 			DWORD dwFlags;
-			WCHAR *wszName = NULL;
+			TinyScopedPtr<WCHAR, ComMemeryDeleter<WCHAR>> wszName;
 			ScopedMediaType mediaType;
 			hRes = m_asmstream->Info(i, mediaType.Receive(), &dwFlags, NULL, NULL, &wszName, NULL, NULL);
 			if (hRes != S_OK)
-			{
-				if (wszName != NULL)
-				{
-					CoTaskMemFree(wszName);
-					wszName = NULL;
-				}
 				return FALSE;
-			}
-			if (wszName != NULL)
+			if (mediaType->majortype == MEDIATYPE_Video)
 			{
-				CoTaskMemFree(wszName);
-				wszName = NULL;
+				hRes = m_asmstream->Enable(i, AMSTREAMSELECTENABLE_ENABLE);//ÆôÓÃÊÓÆµ
+				if (hRes != S_OK)
+					return FALSE;
+				hRes = m_lavFilter->FindPin(L"Video", &m_lavVideoO);
+				if (hRes != S_OK)
+					return FALSE;
+			}
+			if (mediaType->majortype == MEDIATYPE_Audio)
+			{
+				hRes = m_asmstream->Enable(i, AMSTREAMSELECTENABLE_ENABLE);//ÆôÓÃÒôÆµ
+				if (hRes != S_OK)
+					return FALSE;
+				hRes = m_lavFilter->FindPin(L"Audio", &m_lavAudioO);
+				if (hRes != S_OK)
+					return FALSE;
 			}
 		}
 		hRes = m_builder->AddFilter(m_lavFilter, NULL);
 		if (hRes != S_OK)
-			return FALSE;
-		m_lavAudioO = GetPin(m_lavFilter, PINDIR_OUTPUT, GUID_NULL);
-		if (!m_lavAudioO)
 			return FALSE;
 		hRes = m_builder->AddFilter(m_audioFilter, NULL);
 		if (hRes != S_OK)
@@ -192,21 +192,22 @@ namespace LAV
 		m_videoO = GetPin(m_videoFilter, PINDIR_OUTPUT, GUID_NULL);
 		if (!m_videoO)
 			return FALSE;
-		hRes = m_builder->Connect(m_lavAudioO, m_audioI);
-		if (hRes != S_OK)
-			return FALSE;
-		hRes = m_builder->Connect(m_lavAudioO, m_audioI);
-		if (hRes != S_OK)
-			return FALSE;
-		hRes = m_builder->Connect(m_lavAudioO, m_videoI);
-		if (hRes != S_OK)
-			return FALSE;
+		if (m_lavAudioO != NULL)
+		{
+			hRes = m_builder->Connect(m_lavAudioO, m_audioI);
+			if (hRes != S_OK)
+				return FALSE;
+		}
+		if (m_lavVideoO != NULL)
+		{
+			hRes = m_builder->Connect(m_lavVideoO, m_videoI);
+			if (hRes != S_OK)
+				return FALSE;
+		}
 		return TRUE;
 	}
 	BOOL LAVPlayer::Play()
 	{
-
-
 		return TRUE;
 	}
 	void LAVPlayer::Close()
@@ -215,6 +216,12 @@ namespace LAV
 		m_seeking.Release();
 		if (m_builder)
 		{
+			m_builder->Disconnect(m_lavAudioO);
+			m_builder->Disconnect(m_lavVideoO);
+			m_builder->Disconnect(m_audioO);
+			m_builder->Disconnect(m_audioI);
+			m_builder->Disconnect(m_videoO);
+			m_builder->Disconnect(m_videoI);
 			m_builder->RemoveFilter(m_lavFilter);
 			m_builder->RemoveFilter(m_audioFilter);
 			m_builder->RemoveFilter(m_videoFilter);
