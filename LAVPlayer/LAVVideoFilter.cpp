@@ -3,7 +3,8 @@
 
 namespace LAV
 {
-	LAVVideoFilter::LAVVideoFilter()
+	LAVVideoFilter::LAVVideoFilter(FilterObserver* observer)
+		:FilterBase(__uuidof(LAVVideoFilter), observer)
 	{
 		m_inputPin = new LAVVideoInputPin(this, observer);
 	}

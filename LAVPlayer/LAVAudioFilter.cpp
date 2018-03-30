@@ -3,7 +3,8 @@
 
 namespace LAV
 {
-	LAVAudioFilter::LAVAudioFilter()
+	LAVAudioFilter::LAVAudioFilter(FilterObserver* observer)
+		:FilterBase(__uuidof(LAVAudioFilter), observer)
 	{
 		m_inputPin = new LAVAudioInputPin(this, observer);
 	}

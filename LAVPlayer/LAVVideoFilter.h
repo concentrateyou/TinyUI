@@ -1,6 +1,7 @@
 #pragma once
 #include "DShowCommon.h"
 #include "ScopedMediaType.h"
+#include "FilterObserver.h"
 #include "LAVVideoInputPin.h"
 #include <dshow.h>
 #include <uuids.h>
@@ -15,11 +16,11 @@ using namespace DShow;
 namespace LAV
 {
 	class __declspec(uuid("3C6FD87F-B4DF-4811-8C98-CE69163744E0"))
-		class LAVVideoFilter : public FilterBase
+		LAVVideoFilter : public FilterBase
 	{
 		DISALLOW_IMPLICIT_CONSTRUCTORS(LAVVideoFilter)
 	public:
-		LAVVideoFilter();
+		explicit LAVVideoFilter(FilterObserver* observer);
 		virtual ~LAVVideoFilter();
 		INT GetPinCount() OVERRIDE;
 		IPin* GetPin(INT index) OVERRIDE;

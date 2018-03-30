@@ -1,6 +1,9 @@
 #pragma once
 #include "DShowCommon.h"
 #include "ScopedMediaType.h"
+#include "FilterBase.h"
+#include "FilterObserver.h"
+#include "InputPinBase.h"
 #include <dshow.h>
 #include <uuids.h>
 #include <string>
@@ -13,7 +16,7 @@ using namespace DShow;
 
 namespace LAV
 {
-	class LAVVideoInputPin
+	class LAVVideoInputPin : public InputPinBase
 	{
 		DISALLOW_IMPLICIT_CONSTRUCTORS(LAVVideoInputPin)
 	public:

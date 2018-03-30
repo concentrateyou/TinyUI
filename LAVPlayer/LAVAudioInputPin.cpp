@@ -17,7 +17,7 @@ namespace LAV
 			return E_INVALIDARG;
 		return NOERROR;
 	}
-	HRESULT AudioSinkInputPin::GetMediaType(INT position, AM_MEDIA_TYPE* pMediaType)
+	HRESULT LAVAudioInputPin::GetMediaType(INT position, AM_MEDIA_TYPE* pMediaType)
 	{
 		return NOERROR;
 	}

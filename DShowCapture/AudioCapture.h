@@ -24,7 +24,7 @@ namespace DShow
 			string	m_name;
 			string	m_id;
 		};
-		void	OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter) OVERRIDE;
+		void OnFrameReceive( BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter) OVERRIDE;
 	public:
 		AudioCapture();
 		virtual ~AudioCapture();
@@ -45,9 +45,6 @@ namespace DShow
 		static BOOL GetDevices(vector<Name>& names);
 		static BOOL GetDeviceParams(const AudioCapture::Name& device, vector<AudioCaptureParam>& formats);
 		static BOOL GetDeviceFilter(const Name& name, IBaseFilter** filter);
-	private:
-		static BOOL GetPinCategory(IPin* pin, REFGUID category);
-		static TinyComPtr<IPin> GetPin(IBaseFilter* filter, PIN_DIRECTION pin_dir, REFGUID category);
 	private:
 		LONG										m_size;
 		IO::TinyRingBuffer							m_queue;

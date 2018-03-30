@@ -228,48 +228,6 @@ namespace DShow
 			m_builder->Disconnect(m_sinkI);
 		}
 	}
-	BOOL AudioCapture::GetPinCategory(IPin* pPin, REFGUID category)
-	{
-		ASSERT(pPin);
-		BOOL bFlag = FALSE;
-		TinyComPtr<IKsPropertySet> ksProperty;
-		HRESULT hRes = pPin->QueryInterface(&ksProperty);
-		if (SUCCEEDED(hRes))
-		{
-			GUID category1;
-			DWORD dwValue;
-			hRes = ksProperty->Get(AMPROPSETID_Pin, AMPROPERTY_PIN_CATEGORY, NULL, 0, &category1, sizeof(category1), &dwValue);
-			if (SUCCEEDED(hRes) && (dwValue == sizeof(category1)))
-			{
-				bFlag = (category1 == category);
-			}
-		}
-		return bFlag;
-	}
-	TinyComPtr<IPin> AudioCapture::GetPin(IBaseFilter* pFilter, PIN_DIRECTION dest, REFGUID category)
-	{
-		ASSERT(pFilter);
-		TinyComPtr<IPin> pin;
-		TinyComPtr<IEnumPins> enumPins;
-		if (FAILED(pFilter->EnumPins(&enumPins)) || !enumPins)
-		{
-			return pin;
-		}
-		enumPins->Reset();
-		while (enumPins->Next(1, &pin, NULL) == S_OK)
-		{
-			PIN_DIRECTION src = static_cast<PIN_DIRECTION>(-1);
-			if (SUCCEEDED(pin->QueryDirection(&src)) && dest == src)
-			{
-				if (category == GUID_NULL || GetPinCategory(pin, category))
-				{
-					return pin;
-				}
-			}
-			pin.Release();
-		}
-		return pin;
-	}
 	BOOL AudioCapture::GetDevices(vector<Name>& names)
 	{
 		TinyComPtr<ICreateDevEnum> devEnum;

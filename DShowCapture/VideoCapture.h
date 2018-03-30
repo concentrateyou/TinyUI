@@ -53,8 +53,6 @@ namespace DShow
 		static BOOL GetDeviceFilter(const Name& name, IBaseFilter** filter);
 		static BOOL GetMediaType(IPin* pPin, REFGUID subtype, AM_MEDIA_TYPE** ppType);
 	private:
-		static BOOL GetPinCategory(IPin* pin, REFGUID category);
-		static TinyComPtr<IPin> GetPin(IBaseFilter* filter, PIN_DIRECTION pin_dir, REFGUID category);
 		static VideoPixelFormat TranslateMediaSubtypeToPixelFormat(const GUID& subType);
 		void SetAntiFlickerInCaptureFilter();
 	private:

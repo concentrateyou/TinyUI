@@ -45,3 +45,9 @@ HRESULT WINAPI CopyMediaType(AM_MEDIA_TYPE *pmtTarget, const AM_MEDIA_TYPE *pmtS
 void WINAPI FreeMediaType(AM_MEDIA_TYPE& mt);
 void WINAPI DeleteMediaType(AM_MEDIA_TYPE *pmt);
 void WINAPI SaveBitmap(const  BITMAPINFOHEADER& bi, const BYTE* pBits, DWORD dwSize, LPCSTR pzName = NULL);
+
+namespace DShow
+{
+	BOOL WINAPI GetPinCategory(IPin* pin, REFGUID category);
+	TinyComPtr<IPin> WINAPI GetPin(IBaseFilter* filter, PIN_DIRECTION pin_dir, REFGUID category);
+}
