@@ -11,28 +11,90 @@ GLView::~GLView()
 {
 }
 
-
-void GLView::OnInitialize()
+LRESULT GLView::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-	TinyVisual* visual = this->GetDocument().GetVisualByName("sysclose");
-	if (visual != NULL)
-	{
-		m_onCloseClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &GLView::OnCloseClick));
-		visual->EVENT_CLICK += m_onCloseClick;
-	}
-	m_player.Open("D:\\2.mp4");
+	bHandled = FALSE;
+	PostQuitMessage(0);
+	return FALSE;
 }
 
-void GLView::OnUninitialize()
+DWORD GLView::RetrieveStyle()
 {
-	TinyVisual* visual = this->GetDocument().GetVisualByName("sysclose");
-	if (visual != NULL)
-	{
-		visual->EVENT_CLICK -= m_onCloseClick;
-	}
+	return (WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_OVERLAPPEDWINDOW | WS_CAPTION);
 }
 
-void GLView::OnCloseClick(TinyVisual*, EventArgs& args)
+DWORD GLView::RetrieveExStyle()
 {
-	SendMessage(Handle(), WM_CLOSE, NULL, NULL);
+	return (WS_EX_LEFT | WS_EX_RIGHTSCROLLBAR);
+}
+
+LPCSTR GLView::RetrieveClassName()
+{
+	return TEXT("GLView");
+}
+
+LPCSTR GLView::RetrieveTitle()
+{
+	return TEXT("GLView");
+}
+
+HICON GLView::RetrieveIcon()
+{
+	return NULL;
+}
+
+BOOL GLView::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
+{
+	return TinyControl::Create(hParent, x, y, cx, cy, FALSE);
+}
+
+LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	bHandled = FALSE;
+	TinyRectangle s;
+	GetClientRect(&s);
+	m_gl.Initialize(m_hWND, TO_CX(s), TO_CY(s));
+	return FALSE;
+}
+
+LRESULT GLView::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	bHandled = FALSE;
+	return FALSE;
+}
+
+LRESULT GLView::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	bHandled = FALSE;
+	return FALSE;
+}
+
+LRESULT GLView::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	bHandled = FALSE;
+	return FALSE;
+}
+
+LRESULT GLView::OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	bHandled = FALSE;
+	return FALSE;
+}
+
+LRESULT GLView::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	bHandled = FALSE;
+	return FALSE;
+}
+
+LRESULT GLView::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	bHandled = FALSE;
+	return FALSE;
+}
+
+LRESULT GLView::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	bHandled = FALSE;
+	return FALSE;
 }
