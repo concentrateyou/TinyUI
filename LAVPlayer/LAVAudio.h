@@ -8,7 +8,7 @@ namespace LAV
 	{
 		DISALLOW_IMPLICIT_CONSTRUCTORS(LAVAudio)
 	public:
-		LAVAudio(IGraphBuilder* builder,IPin* sourceAudioO);
+		LAVAudio(IGraphBuilder* builder,IPin* lavAudioO);
 		~LAVAudio();
 		BOOL Initialize();
 		void Uninitialize();
@@ -16,7 +16,7 @@ namespace LAV
 	private:
 		BOOL InitializeAudio();
 	private:
-		IPin*									m_sourceAudioO;
+		IPin*									m_lavAudioO;
 		IGraphBuilder*							m_builder;
 		TinyComPtr<IPin>						m_audioO;
 		TinyComPtr<IPin>						m_audioI;

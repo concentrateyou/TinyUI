@@ -21,51 +21,14 @@ namespace LAV
 		hRes = m_builder->QueryInterface(&m_seeking);
 		if (hRes != S_OK)
 			return FALSE;
+		if (!GetFilterByCLSID("{B98D13E7-55DB-4385-A33D-09FD1BA26338}", &m_lavFilter))
+			return FALSE;
+		hRes = m_builder->AddFilter(m_lavFilter, NULL);
+		if (hRes != S_OK)
+			return FALSE;
 		return TRUE;
 	}
 
-	BOOL LAVPlayer::GetFilterByCLSID(const string& clsid, IBaseFilter** ps)
-	{
-		TinyComPtr<ICreateDevEnum> devEnum;
-		HRESULT hRes = devEnum.CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC);
-		if (hRes != S_OK)
-			return FALSE;
-		TinyComPtr<IEnumMoniker> enumMoniker;
-		hRes = devEnum->CreateClassEnumerator(CLSID_LegacyAmFilterCategory, &enumMoniker, 0);
-		if (hRes != S_OK)
-			return FALSE;
-		TinyComPtr<IMoniker> moniker;
-		INT index = 0;
-		while (enumMoniker->Next(1, &moniker, NULL) == S_OK)
-		{
-			TinyComPtr<IPropertyBag> propertyBag;
-			hRes = moniker->BindToStorage(0, 0, IID_IPropertyBag, (void**)&propertyBag);
-			if (hRes != S_OK)
-			{
-				moniker.Release();
-				continue;
-			}
-			ScopedVariant variant;
-			hRes = propertyBag->Read(L"CLSID", &variant, 0);
-			if (hRes != S_OK)
-			{
-				moniker.Release();
-				continue;
-			}
-			string value = std::move(WStringToString(V_BSTR(&variant)));
-			if (value.compare(clsid) == 0)
-			{
-				IBaseFilter* baseFilter = NULL;
-				hRes = moniker->BindToObject(0, 0, IID_IBaseFilter, (void**)&baseFilter);
-				if (SUCCEEDED(hRes) && baseFilter)
-				{
-					*ps = baseFilter;
-					return TRUE;
-				}
-			}
-		}
-		return FALSE;
-	}
 	BOOL LAVPlayer::Open(LPCSTR pzFile)
 	{
 		if (!PathFileExists(pzFile))
@@ -106,6 +69,8 @@ namespace LAV
 				m_video.Reset(new LAVVideo(m_builder, m_lavVideoO));
 				if (!m_video)
 					return FALSE;
+				if (!m_video->Initialize())
+					return FALSE;
 			}
 			if (mediaType->majortype == MEDIATYPE_Audio)
 			{
@@ -118,13 +83,18 @@ namespace LAV
 				m_audio.Reset(new LAVAudio(m_builder, m_lavAudioO));
 				if (!m_audio)
 					return FALSE;
+				if (!m_audio->Initialize())
+					return FALSE;
 			}
 		}
 		return TRUE;
 	}
 	BOOL LAVPlayer::Play()
 	{
-
+		if (m_control != NULL)
+		{
+			m_control->Run();
+		}
 		return TRUE;
 	}
 	void LAVPlayer::Close()

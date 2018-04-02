@@ -8,8 +8,9 @@
 #include "Control/TinyLabel.h"
 #include "Control/TinyRichTextBox.h"
 #include "Control/TinyScrollBar.h"
-#include "GL.h"
-using namespace GLFramework;
+#include "LAVPlayer.h"
+using namespace LAV;
+
 
 class GLView : public TinyControl
 {
@@ -32,7 +33,6 @@ public:
 	LRESULT OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-	LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 private:
-	GL m_gl;
+	LAVPlayer m_player;
 };

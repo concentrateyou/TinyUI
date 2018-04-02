@@ -16,6 +16,7 @@ using namespace DShow;
 
 namespace LAV
 {
+	class LAVVideo;
 	class LAVVideoInputPin : public InputPinBase
 	{
 		DISALLOW_IMPLICIT_CONSTRUCTORS(LAVVideoInputPin)

@@ -234,7 +234,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
 	string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\search1.xml");
 	GLView view;
-	view.Create(NULL, szFile.c_str());
+	view.Create(NULL, 100, 100, 300, 300);
 	view.UpdateWindow();
 
 	INT loopRes = theLoop.MessageLoop();

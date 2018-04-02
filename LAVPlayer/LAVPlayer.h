@@ -30,7 +30,7 @@ namespace LAV
 	/// 基于LAV的全能播放器
 	/// DirectShow Filters(DirectShow Filters)
 	/// </summary>
-	class LAVPlayer : public FilterObserver
+	class LAVPlayer
 	{
 		DISALLOW_COPY_AND_ASSIGN(LAVPlayer)
 	public:
@@ -39,8 +39,6 @@ namespace LAV
 		BOOL Open(LPCSTR pzFile);
 		BOOL Play();
 		void Close();
-	public:
-		static BOOL GetFilterByCLSID(const string& clsid, IBaseFilter** ps);
 	private:
 		BOOL Initialize();
 	private:

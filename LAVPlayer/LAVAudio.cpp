@@ -3,9 +3,9 @@
 
 namespace LAV
 {
-	LAVAudio::LAVAudio(IGraphBuilder* builder, IPin* sourceAudioO)
+	LAVAudio::LAVAudio(IGraphBuilder* builder, IPin* lavVideoO)
 		:m_builder(builder),
-		m_sourceAudioO(sourceAudioO)
+		m_lavAudioO(lavVideoO)
 	{
 	}
 
@@ -19,6 +19,9 @@ namespace LAV
 			return FALSE;
 		m_sinkFilter = new LAVAudioFilter(this);
 		if (!m_sinkFilter)
+			return FALSE;
+		HRESULT hRes = m_builder->AddFilter(m_sinkFilter, NULL);
+		if (hRes != S_OK)
 			return FALSE;
 		m_sinkI = m_sinkFilter->GetPin(0);
 		if (!m_sinkI)
@@ -51,42 +54,11 @@ namespace LAV
 
 	BOOL LAVAudio::InitializeAudio()
 	{
-		TinyComPtr<ICreateDevEnum> devEnum;
-		HRESULT hRes = devEnum.CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC);
+		if (!GetFilterByCLSID("{E8E73B6B-4CB3-44A4-BE99-4F7BCB96E491}", &m_audioFilter))
+			return FALSE;
+		HRESULT hRes = m_builder->AddFilter(m_audioFilter, NULL);
 		if (hRes != S_OK)
 			return FALSE;
-		TinyComPtr<IEnumMoniker> enumMoniker;
-		hRes = devEnum->CreateClassEnumerator(CLSID_LegacyAmFilterCategory, &enumMoniker, 0);
-		if (hRes != S_OK)
-			return FALSE;
-		TinyComPtr<IMoniker> moniker;
-		INT index = 0;
-		while (enumMoniker->Next(1, &moniker, NULL) == S_OK)
-		{
-			TinyComPtr<IPropertyBag> propertyBag;
-			hRes = moniker->BindToStorage(0, 0, IID_IPropertyBag, (void**)&propertyBag);
-			if (hRes != S_OK)
-			{
-				moniker.Release();
-				continue;
-			}
-			ScopedVariant variant;
-			hRes = propertyBag->Read(L"CLSID", &variant, 0);
-			if (hRes != S_OK)
-			{
-				moniker.Release();
-				continue;
-			}
-			string clsid = std::move(WStringToString(V_BSTR(&variant)));
-			if (clsid.compare("{E8E73B6B-4CB3-44A4-BE99-4F7BCB96E491}") == 0)
-			{
-				hRes = moniker->BindToObject(0, 0, IID_IBaseFilter, (void**)&m_audioFilter);
-				if (hRes != S_OK || !m_audioFilter)
-				{
-					return FALSE;
-				}
-			}
-		}
 		return TRUE;
 	}
 

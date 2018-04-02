@@ -51,9 +51,7 @@ BOOL GLView::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
 LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	TinyRectangle s;
-	GetClientRect(&s);
-	m_gl.Initialize(m_hWND, TO_CX(s), TO_CY(s));
+	m_player.Open("D:\\2.mp4");
 	return FALSE;
 }
 
@@ -88,12 +86,6 @@ LRESULT GLView::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHa
 }
 
 LRESULT GLView::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-{
-	bHandled = FALSE;
-	return FALSE;
-}
-
-LRESULT GLView::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
 	return FALSE;
