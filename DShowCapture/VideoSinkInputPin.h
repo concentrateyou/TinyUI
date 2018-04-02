@@ -7,7 +7,7 @@ namespace DShow
 {
 	class VideoSinkInputPin : public InputPinBase
 	{
-		DISALLOW_IMPLICIT_CONSTRUCTORS(VideoSinkInputPin);
+		DISALLOW_IMPLICIT_CONSTRUCTORS(VideoSinkInputPin)
 	public:
 		VideoSinkInputPin(FilterBase* pFilter, FilterObserver* observer);
 		virtual ~VideoSinkInputPin();

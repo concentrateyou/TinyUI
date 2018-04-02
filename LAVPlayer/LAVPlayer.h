@@ -41,6 +41,7 @@ namespace LAV
 		void Close();
 	private:
 		BOOL Initialize();
+		void Uninitialize();
 	private:
 		TinyScopedPtr<LAVAudio>					m_audio;
 		TinyScopedPtr<LAVVideo>					m_video;

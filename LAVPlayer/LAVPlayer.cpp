@@ -9,6 +9,7 @@ namespace LAV
 
 	LAVPlayer::~LAVPlayer()
 	{
+		this->Close();
 	}
 	BOOL LAVPlayer::Initialize()
 	{
@@ -27,6 +28,28 @@ namespace LAV
 		if (hRes != S_OK)
 			return FALSE;
 		return TRUE;
+	}
+
+	void LAVPlayer::Uninitialize()
+	{
+		if (m_builder != NULL)
+		{
+			m_builder->Disconnect(m_lavAudioO);
+			m_builder->Disconnect(m_lavVideoO);
+			m_builder->RemoveFilter(m_lavFilter);
+		}
+		m_control.Release();
+		m_seeking.Release();
+		m_asmstream.Release();
+		m_lavAudioO.Release();
+		m_lavVideoO.Release();
+		m_lavFilter.Release();
+		if (m_audio != NULL)
+			m_audio->Uninitialize();
+		m_audio.Reset(NULL);
+		if (m_video != NULL)
+			m_video->Uninitialize();
+		m_video.Reset(NULL);
 	}
 
 	BOOL LAVPlayer::Open(LPCSTR pzFile)
@@ -72,7 +95,7 @@ namespace LAV
 				if (!m_video->Initialize())
 					return FALSE;
 			}
-			if (mediaType->majortype == MEDIATYPE_Audio)
+			/*if (mediaType->majortype == MEDIATYPE_Audio)
 			{
 				hRes = m_asmstream->Enable(i, AMSTREAMSELECTENABLE_ENABLE);
 				if (hRes != S_OK)
@@ -85,21 +108,24 @@ namespace LAV
 					return FALSE;
 				if (!m_audio->Initialize())
 					return FALSE;
-			}
+			}*/
 		}
 		return TRUE;
 	}
 	BOOL LAVPlayer::Play()
 	{
+		HRESULT hRes = S_OK;
 		if (m_control != NULL)
 		{
-			m_control->Run();
+			hRes = m_control->Run();
 		}
-		return TRUE;
+		return hRes == S_OK;
 	}
 	void LAVPlayer::Close()
 	{
-
+		if (m_control != NULL)
+			m_control->Stop();
+		Uninitialize();
 	}
 }
 

@@ -10,6 +10,7 @@ namespace LAV
 	}
 	LAVVideo::~LAVVideo()
 	{
+
 	}
 	BOOL LAVVideo::Initialize()
 	{
@@ -103,7 +104,6 @@ namespace LAV
 	}
 	void LAVVideo::OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter)
 	{
-
+		Save
 	}
-
 }

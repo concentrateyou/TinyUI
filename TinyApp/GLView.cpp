@@ -52,6 +52,7 @@ LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 {
 	bHandled = FALSE;
 	m_player.Open("D:\\2.mp4");
+	m_player.Play();
 	return FALSE;
 }
 

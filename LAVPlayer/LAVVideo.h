@@ -22,8 +22,8 @@ namespace LAV
 	private:
 		IPin*									m_lavVideoO;
 		IGraphBuilder*							m_builder;
-		TinyComPtr<IPin>						m_videoO;
-		TinyComPtr<IPin>						m_videoI;
+		TinyComPtr<IPin>						m_videoO;//解码输出
+		TinyComPtr<IPin>						m_videoI;//解码输入
 		TinyComPtr<IPin>						m_sinkI;
 		TinyComPtr<IBaseFilter>					m_videoFilter;//视频解码
 		TinyScopedReferencePtr<LAVVideoFilter>	m_sinkFilter;
