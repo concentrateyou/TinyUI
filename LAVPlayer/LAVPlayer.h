@@ -30,6 +30,18 @@ namespace TinyUI
 
 namespace LAV
 {
+	class LAVClock
+	{
+		DISALLOW_COPY_AND_ASSIGN(LAVClock)
+	public:
+		LAVClock();
+		void SetClock(DOUBLE clock);
+		DOUBLE GetClock();
+		QWORD GetQPCTimeMS();
+	private:
+		DOUBLE			m_clock;
+		LARGE_INTEGER	m_clockFreq;
+	};
 	/// <summary>
 	/// https://github.com/Nevcairiel/LAVFilters
 	/// https://msdn.microsoft.com/en-us/library/windows/desktop/dd375655(v=vs.85).aspx
@@ -42,7 +54,7 @@ namespace LAV
 	public:
 		LAVPlayer();
 		~LAVPlayer();
-		BOOL Open(HWND hWND,LPCSTR pzFile);
+		BOOL Open(HWND hWND, LPCSTR pzFile);
 		BOOL Play();
 		void Close();
 		LAVAudio* GetAudio();
@@ -52,8 +64,10 @@ namespace LAV
 		void Uninitialize();
 		void OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter);
 		void OnVideo(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter);
+		BOOL Copy(BYTE* bits, LONG size);
 	private:
 		HWND										m_hWND;
+		LAVClock									m_clock;
 		TinyScopedPtr<LAVAudio>						m_audio;
 		TinyScopedPtr<LAVVideo>						m_video;
 		TinyComPtr<IPin>							m_lavAudioO;
@@ -66,7 +80,6 @@ namespace LAV
 		DX9Graphics2D								m_graphics;
 		DX9Image2D									m_image;
 		TinyXAudio									m_xaudio;
-		TinyPerformanceTime							m_time;
 		TinyPerformanceTimer						m_timer;
 	};
 }

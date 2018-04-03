@@ -85,8 +85,8 @@ namespace DShow
 		hRes = pSample->GetTime(&times, &timee);
 		if (hRes != S_OK)
 			return hRes;
-		FLOAT ts = static_cast<FLOAT>((timee - times) * 1000 / 10000000);
-		m_observer->OnFrameReceive(bits, size, ts, m_observer->m_lpParameter);
+		FLOAT time = timee * 1000.0F / 10000000.0F;
+		m_observer->OnFrameReceive(bits, size, time, m_observer->m_lpParameter);
 		return NOERROR;
 	}
 	HRESULT STDMETHODCALLTYPE InputPinBase::ReceiveMultiple(_In_reads_(nSamples) IMediaSample **pSamples, long nSamples, _Out_ long *nSamplesProcessed)

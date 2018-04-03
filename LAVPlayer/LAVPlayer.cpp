@@ -3,9 +3,36 @@
 
 namespace LAV
 {
+	LAVClock::LAVClock()
+		:m_clock(NAN)
+	{
+		ZeroMemory(&m_clockFreq, sizeof(m_clockFreq));
+		QueryPerformanceFrequency(&m_clockFreq);
+	}
+	void LAVClock::SetClock(DOUBLE clock)
+	{
+		m_clock = clock;
+	}
+
+	DOUBLE LAVClock::GetClock()
+	{
+		return m_clock;
+	}
+	QWORD LAVClock::GetQPCTimeMS()
+	{
+		LARGE_INTEGER currentTime;
+		QueryPerformanceCounter(&currentTime);
+		QWORD timeVal = currentTime.QuadPart;
+		timeVal *= 1000;
+		timeVal /= m_clockFreq.QuadPart;
+		return timeVal;
+	};
+
+	//////////////////////////////////////////////////////////////////////////
 	LAVPlayer::LAVPlayer()
 		:m_hWND(NULL)
 	{
+
 	}
 
 	LAVPlayer::~LAVPlayer()
@@ -148,35 +175,49 @@ namespace LAV
 	}
 	BOOL LAVPlayer::Play()
 	{
-		HRESULT hRes = S_OK;
 		if (m_control != NULL)
-		{
-			hRes = m_control->Run();
-		}
-		return hRes == S_OK;
+			return SUCCEEDED(m_control->Run());
+		return FALSE;
 	}
 	void LAVPlayer::Close()
 	{
+		if (m_control != NULL)
+			m_control->Stop();
 		m_image.Destory();
 		m_xaudio.Stop();
 		m_xaudio.Close();
-		if (m_control != NULL)
-		{
-			m_control->Stop();
-		}
 		Uninitialize();
 	}
-	void LAVPlayer::OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter)
+	void LAVPlayer::OnAudio(BYTE* bits, LONG size, FLOAT time, LPVOID lpParameter)
 	{
+		LONGLONG msQPC = m_clock.GetQPCTimeMS();
+		m_clock.SetClock(static_cast<DOUBLE>(time));
 		m_xaudio.Play(bits, size, 5000);
+		m_clock.SetClock(m_clock.GetClock() + (m_clock.GetQPCTimeMS() - msQPC));
 	}
-	void LAVPlayer::OnVideo(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter)
+	BOOL LAVPlayer::Copy(BYTE* bits, LONG size)
 	{
-		m_image.Copy(bits, size);
-		m_graphics.GetRenderView()->BeginDraw();
-		m_graphics.DrawImage(&m_image);
-		m_graphics.GetRenderView()->EndDraw();
-		m_graphics.Present();
+		if (!m_image.Copy(bits, size))
+			return FALSE;
+		if (!m_graphics.GetRenderView()->BeginDraw())
+			return FALSE;
+		if (!m_graphics.DrawImage(&m_image))
+			return FALSE;
+		if (!m_graphics.GetRenderView()->EndDraw())
+			return FALSE;
+		return TRUE;
+	}
+	void LAVPlayer::OnVideo(BYTE* bits, LONG size, FLOAT time, LPVOID lpParameter)
+	{
+		if (Copy(bits, size))
+		{
+			while (isnan(m_clock.GetClock()));
+			INT delay = static_cast<INT>(time - m_clock.GetClock());
+			if (m_timer.Waiting(delay, 100))
+			{
+				m_graphics.Present();
+			}
+		}
 	}
 }
 

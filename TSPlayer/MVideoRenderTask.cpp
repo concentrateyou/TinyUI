@@ -121,7 +121,6 @@ namespace TSPlayer
 			}
 			OnCopy(sampleTag.bits, sampleTag.size);
 			while (isnan(m_clock.GetClock()));
-			//TRACE("VideoPTS:%lld\n", sampleTag.samplePTS);
 			INT delay = static_cast<INT>(sampleTag.samplePTS - m_clock.GetClock());
 			if (timer.Waiting(delay, 100))
 			{
