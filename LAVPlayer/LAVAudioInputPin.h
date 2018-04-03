@@ -16,6 +16,8 @@ using namespace DShow;
 
 namespace LAV
 {
+	class LAVAudio;
+
 	class LAVAudioInputPin : public InputPinBase
 	{
 		DISALLOW_IMPLICIT_CONSTRUCTORS(LAVAudioInputPin)

@@ -12,13 +12,12 @@ namespace LAV
 		~LAVVideo();
 		BOOL Initialize();
 		void Uninitialize();
-		BOOL GetInputMediaType(AM_MEDIA_TYPE** ppType);
-		BOOL GetOutputMediaType(AM_MEDIA_TYPE** ppType);
+		BOOL GetOutputMediaTypes(TinyArray<ScopedMediaType>& mediaTypes);
 	public:
 		void OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter) OVERRIDE;
 	private:
 		BOOL InitializeVideo();
-		static BOOL GetMediaType(IPin* pPin, AM_MEDIA_TYPE** ppType);
+		static BOOL GetMediaTypes(IPin* pPin, TinyArray<ScopedMediaType>& mediaTypes);
 	private:
 		IPin*									m_lavVideoO;
 		IGraphBuilder*							m_builder;

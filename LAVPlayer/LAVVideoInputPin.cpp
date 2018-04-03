@@ -18,38 +18,39 @@ namespace LAV
 		GUID type = pMediaType->majortype;
 		if (type != MEDIATYPE_Video)
 			return E_INVALIDARG;
-		GUID formatType = pMediaType->formattype;
-		if (formatType != FORMAT_VideoInfo)
-			return E_INVALIDARG;
 		LAVVideo* ps = reinterpret_cast<LAVVideo*>(m_observer);
 		if (ps != NULL)
 		{
-			ScopedMediaType mediaType;
-			if (!ps->GetOutputMediaType(mediaType.Receive()))
+			TinyArray<ScopedMediaType> mediaTypes;
+			if (!ps->GetOutputMediaTypes(mediaTypes))
 				return E_FAIL;
-			if ((mediaType->formattype == FORMAT_VideoInfo2 || mediaType->formattype == FORMAT_VideoInfo) &&
-				mediaType->subtype == MEDIASUBTYPE_RGB32)
+			for (INT i = 0;i < mediaTypes.GetSize();i++)
 			{
-				return NOERROR;
+				AM_MEDIA_TYPE* mediaType = mediaTypes[i].Ptr();
+				if ((mediaType->formattype == FORMAT_VideoInfo2 || mediaType->formattype == FORMAT_VideoInfo) &&
+					mediaType->subtype == MEDIASUBTYPE_RGB32)
+				{
+					return NOERROR;
+				}
 			}
-			return E_FAIL;
 		}
-		return E_INVALIDARG;
+		return E_FAIL;
 	}
 	HRESULT LAVVideoInputPin::GetMediaType(INT position, AM_MEDIA_TYPE* pMediaType)
 	{
 		if (position != 0)
-			return S_FALSE;
+			return E_FAIL;
 		if (pMediaType->cbFormat < sizeof(VIDEOINFOHEADER))
-			return S_FALSE;
+			return E_FAIL;
 		LAVVideo* ps = reinterpret_cast<LAVVideo*>(m_observer);
 		if (ps != NULL)
 		{
-			ScopedMediaType mediaType;
-			if (!ps->GetOutputMediaType(mediaType.Receive()))
+			TinyArray<ScopedMediaType> mediaTypes;
+			if (!ps->GetOutputMediaTypes(mediaTypes))
 				return E_FAIL;
-			if (mediaType->subtype == MEDIASUBTYPE_RGB32)
+			for (INT i = 0;i < mediaTypes.GetSize();i++)
 			{
+				AM_MEDIA_TYPE* mediaType = mediaTypes[i].Ptr();
 				if (mediaType->formattype == FORMAT_VideoInfo2)
 				{
 					VIDEOINFOHEADER2* s = reinterpret_cast<VIDEOINFOHEADER2*>(mediaType->pbFormat);
@@ -77,6 +78,6 @@ namespace LAV
 				return NOERROR;
 			}
 		}
-		return S_FALSE;
+		return E_FAIL;
 	}
 }

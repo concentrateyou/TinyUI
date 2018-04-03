@@ -12,7 +12,11 @@ namespace LAV
 		~LAVAudio();
 		BOOL Initialize();
 		void Uninitialize();
+	public:
+		BOOL GetOutputMediaTypes(TinyArray<ScopedMediaType>& mediaTypes);
 		void OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter) OVERRIDE;
+	public:
+		static BOOL GetMediaTypes(IPin* pPin, TinyArray<ScopedMediaType>& mediaTypes);
 	private:
 		BOOL InitializeAudio();
 	private:

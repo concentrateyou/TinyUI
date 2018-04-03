@@ -95,7 +95,7 @@ namespace LAV
 				if (!m_video->Initialize())
 					return FALSE;
 			}
-			/*if (mediaType->majortype == MEDIATYPE_Audio)
+			if (mediaType->majortype == MEDIATYPE_Audio)
 			{
 				hRes = m_asmstream->Enable(i, AMSTREAMSELECTENABLE_ENABLE);
 				if (hRes != S_OK)
@@ -108,7 +108,7 @@ namespace LAV
 					return FALSE;
 				if (!m_audio->Initialize())
 					return FALSE;
-			}*/
+			}
 		}
 		return TRUE;
 	}

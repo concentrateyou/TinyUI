@@ -32,6 +32,12 @@ namespace LAV
 		m_audioO = GetPin(m_audioFilter, PINDIR_OUTPUT, GUID_NULL);
 		if (!m_audioO)
 			return FALSE;
+		hRes = m_builder->Connect(m_lavAudioO, m_audioI);
+		if (hRes != S_OK)
+			return FALSE;
+		hRes = m_builder->Connect(m_audioO, m_sinkI);
+		if (hRes != S_OK)
+			return FALSE;
 		return TRUE;
 	}
 
@@ -61,10 +67,33 @@ namespace LAV
 			return FALSE;
 		return TRUE;
 	}
-
-	void LAV::LAVAudio::OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter)
+	BOOL LAVAudio::GetOutputMediaTypes(TinyArray<ScopedMediaType>& mediaTypes)
 	{
+		if (!GetMediaTypes(m_audioO, mediaTypes))
+			return FALSE;
+		return TRUE;
+	}
+	BOOL LAVAudio::GetMediaTypes(IPin* pPin, TinyArray<ScopedMediaType>& mediaTypes)
+	{
+		TinyComPtr<IEnumMediaTypes> emts;
+		if (FAILED(pPin->EnumMediaTypes(&emts)))
+			return FALSE;
+		emts->Reset();
+		ULONG cFetched;
+		AM_MEDIA_TYPE* pMediaType = NULL;
+		while (emts->Next(1, &pMediaType, &cFetched) == NOERROR)
+		{
+			if (pMediaType->majortype == MEDIATYPE_Audio)
+			{
+				mediaTypes.Add(ScopedMediaType(pMediaType));
+			}
+		}
+		return TRUE;
+	}
 
+	void LAVAudio::OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter)
+	{
+		TRACE("Audio Time:%f\n", ts);
 	}
 
 }

@@ -55,15 +55,9 @@ namespace LAV
 		m_videoFilter.Release();
 		m_sinkFilter = NULL;
 	}
-	BOOL LAVVideo::GetInputMediaType(AM_MEDIA_TYPE** ppType)
+	BOOL LAVVideo::GetOutputMediaTypes(TinyArray<ScopedMediaType>& mediaTypes)
 	{
-		if (!GetMediaType(m_lavVideoO, ppType))
-			return FALSE;
-		return TRUE;
-	}
-	BOOL LAVVideo::GetOutputMediaType(AM_MEDIA_TYPE** ppType)
-	{
-		if (!GetMediaType(m_videoO, ppType))
+		if (!GetMediaTypes(m_videoO, mediaTypes))
 			return FALSE;
 		return TRUE;
 	}
@@ -76,7 +70,7 @@ namespace LAV
 			return FALSE;
 		return TRUE;
 	}
-	BOOL LAVVideo::GetMediaType(IPin* pPin, AM_MEDIA_TYPE** ppType)
+	BOOL LAVVideo::GetMediaTypes(IPin* pPin, TinyArray<ScopedMediaType>& mediaTypes)
 	{
 		TinyComPtr<IEnumMediaTypes> emts;
 		if (FAILED(pPin->EnumMediaTypes(&emts)))
@@ -88,22 +82,13 @@ namespace LAV
 		{
 			if (pMediaType->majortype == MEDIATYPE_Video)
 			{
-				if (*ppType != NULL)
-				{
-					CopyMediaType(*ppType, pMediaType);
-				}
-				else
-				{
-					*ppType = pMediaType;
-				}
-				return TRUE;
+				mediaTypes.Add(ScopedMediaType(pMediaType));
 			}
-			DeleteMediaType(pMediaType);
 		}
-		return FALSE;
+		return TRUE;
 	}
 	void LAVVideo::OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter)
 	{
-		Save
+		TRACE("Video Time:%f\n", ts);
 	}
 }

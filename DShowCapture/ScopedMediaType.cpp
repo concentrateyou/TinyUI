@@ -4,8 +4,8 @@
 
 namespace DShow
 {
-	ScopedMediaType::ScopedMediaType()
-		:m_mediaType(NULL)
+	ScopedMediaType::ScopedMediaType(AM_MEDIA_TYPE* mediaType)
+		: m_mediaType(mediaType)
 	{
 
 	}
@@ -16,6 +16,11 @@ namespace DShow
 			DeleteMediaType(m_mediaType);
 			m_mediaType = NULL;
 		}
+	}
+	ScopedMediaType::ScopedMediaType(ScopedMediaType&& mediaType)
+		:m_mediaType(mediaType.m_mediaType)
+	{
+		mediaType.m_mediaType = NULL;
 	}
 	AM_MEDIA_TYPE* ScopedMediaType::operator->()
 	{
