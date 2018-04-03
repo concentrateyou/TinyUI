@@ -3,9 +3,15 @@
 #include "LAVVideoFilter.h"
 #include "LAVVideo.h"
 #include "LAVAudio.h"
+#include "DX9Graphics2D.h"
+#include "DX9Image2D.h"
+#include "DX9RenderView.h"
+#include "Media/TinyXAudio.h"
 using namespace std;
 using namespace TinyUI;
 using namespace DShow;
+using namespace DXFramework;
+using namespace TinyUI::Media;
 
 namespace TinyUI
 {
@@ -36,22 +42,32 @@ namespace LAV
 	public:
 		LAVPlayer();
 		~LAVPlayer();
-		BOOL Open(LPCSTR pzFile);
+		BOOL Open(HWND hWND,LPCSTR pzFile);
 		BOOL Play();
 		void Close();
+		LAVAudio* GetAudio();
+		LAVVideo* GetVideo();
 	private:
 		BOOL Initialize();
 		void Uninitialize();
+		void OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter);
+		void OnVideo(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter);
 	private:
-		TinyScopedPtr<LAVAudio>					m_audio;
-		TinyScopedPtr<LAVVideo>					m_video;
-		TinyComPtr<IPin>						m_lavAudioO;
-		TinyComPtr<IPin>						m_lavVideoO;
-		TinyComPtr<IMediaControl>				m_control;
-		TinyComPtr<IMediaSeeking>				m_seeking;
-		TinyComPtr<IAMStreamSelect>				m_asmstream;
-		TinyComPtr<IBaseFilter>					m_lavFilter;//数据源
-		TinyComPtr<IGraphBuilder>				m_builder;
+		HWND										m_hWND;
+		TinyScopedPtr<LAVAudio>						m_audio;
+		TinyScopedPtr<LAVVideo>						m_video;
+		TinyComPtr<IPin>							m_lavAudioO;
+		TinyComPtr<IPin>							m_lavVideoO;
+		TinyComPtr<IMediaControl>					m_control;
+		TinyComPtr<IMediaSeeking>					m_seeking;
+		TinyComPtr<IAMStreamSelect>					m_asmstream;
+		TinyComPtr<IBaseFilter>						m_lavFilter;//数据源
+		TinyComPtr<IGraphBuilder>					m_builder;
+		DX9Graphics2D								m_graphics;
+		DX9Image2D									m_image;
+		TinyXAudio									m_xaudio;
+		TinyPerformanceTime							m_time;
+		TinyPerformanceTimer						m_timer;
 	};
 }
 

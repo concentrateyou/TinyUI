@@ -8,10 +8,11 @@ namespace LAV
 	{
 		DISALLOW_IMPLICIT_CONSTRUCTORS(LAVAudio)
 	public:
-		LAVAudio(IGraphBuilder* builder,IPin* lavAudioO);
+		LAVAudio(IGraphBuilder* builder, IPin* lavAudioO);
 		~LAVAudio();
-		BOOL Initialize();
+		BOOL Initialize(Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& callback);
 		void Uninitialize();
+		BOOL GetMediaType(AM_MEDIA_TYPE* pType);
 	public:
 		BOOL GetOutputMediaTypes(TinyArray<ScopedMediaType>& mediaTypes);
 		void OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter) OVERRIDE;
@@ -20,13 +21,14 @@ namespace LAV
 	private:
 		BOOL InitializeAudio();
 	private:
-		IPin*									m_lavAudioO;
-		IGraphBuilder*							m_builder;
-		TinyComPtr<IPin>						m_audioO;
-		TinyComPtr<IPin>						m_audioI;
-		TinyComPtr<IPin>						m_sinkI;
-		TinyComPtr<IBaseFilter>					m_audioFilter;//“Ù∆µΩ‚¬Î
-		TinyScopedReferencePtr<LAVAudioFilter>	m_sinkFilter;
+		IPin*										m_lavAudioO;
+		IGraphBuilder*								m_builder;
+		TinyComPtr<IPin>							m_audioO;
+		TinyComPtr<IPin>							m_audioI;
+		TinyComPtr<IPin>							m_sinkI;
+		TinyComPtr<IBaseFilter>						m_audioFilter;//“Ù∆µΩ‚¬Î
+		TinyScopedReferencePtr<LAVAudioFilter>		m_sinkFilter;
+		Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_callback;
 	};
 }
 

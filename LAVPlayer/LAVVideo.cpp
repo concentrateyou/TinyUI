@@ -12,7 +12,7 @@ namespace LAV
 	{
 
 	}
-	BOOL LAVVideo::Initialize()
+	BOOL LAVVideo::Initialize(Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& callback)
 	{
 		if (!InitializeVideo())
 			return FALSE;
@@ -37,6 +37,7 @@ namespace LAV
 		hRes = m_builder->Connect(m_videoO, m_sinkI);
 		if (hRes != S_OK)
 			return FALSE;
+		m_callback = std::move(callback);
 		return TRUE;
 	}
 	void LAVVideo::Uninitialize()
@@ -60,6 +61,11 @@ namespace LAV
 		if (!GetMediaTypes(m_videoO, mediaTypes))
 			return FALSE;
 		return TRUE;
+	}
+	BOOL LAVVideo::GetMediaType(AM_MEDIA_TYPE* pType)
+	{
+		HRESULT hRes = m_sinkI->ConnectionMediaType(pType);
+		return hRes == S_OK;
 	}
 	BOOL LAVVideo::InitializeVideo()
 	{
@@ -89,6 +95,9 @@ namespace LAV
 	}
 	void LAVVideo::OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter)
 	{
-		TRACE("Video Time:%f\n", ts);
+		if (!m_callback.IsNull())
+		{
+			m_callback(bits, size, ts, lpParameter);
+		}
 	}
 }

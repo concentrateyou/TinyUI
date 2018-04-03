@@ -5,6 +5,7 @@ namespace DShow
 {
 	class ScopedMediaType
 	{
+		DISALLOW_COPY_AND_ASSIGN(ScopedMediaType)
 	public:
 		ScopedMediaType(AM_MEDIA_TYPE* mediaType = NULL);
 		ScopedMediaType(ScopedMediaType&&);

@@ -13,7 +13,7 @@ namespace LAV
 	{
 	}
 
-	BOOL LAVAudio::Initialize()
+	BOOL LAVAudio::Initialize(Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& callback)
 	{
 		if (!InitializeAudio())
 			return FALSE;
@@ -38,6 +38,7 @@ namespace LAV
 		hRes = m_builder->Connect(m_audioO, m_sinkI);
 		if (hRes != S_OK)
 			return FALSE;
+		m_callback = std::move(callback);
 		return TRUE;
 	}
 
@@ -57,7 +58,11 @@ namespace LAV
 		m_audioFilter.Release();
 		m_sinkFilter = NULL;
 	}
-
+	BOOL LAVAudio::GetMediaType(AM_MEDIA_TYPE* pType)
+	{
+		HRESULT hRes = m_sinkI->ConnectionMediaType(pType);
+		return SUCCEEDED(hRes);
+	}
 	BOOL LAVAudio::InitializeAudio()
 	{
 		if (!GetFilterByCLSID("{E8E73B6B-4CB3-44A4-BE99-4F7BCB96E491}", &m_audioFilter))
@@ -93,7 +98,9 @@ namespace LAV
 
 	void LAVAudio::OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter)
 	{
-		TRACE("Audio Time:%f\n", ts);
+		if (!m_callback.IsNull())
+		{
+			m_callback(bits, size, ts, lpParameter);
+		}
 	}
-
 }

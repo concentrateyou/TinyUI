@@ -18,4 +18,16 @@ using namespace DShow;
 namespace LAV
 {
 	BOOL WINAPI GetFilterByCLSID(const string& clsid, IBaseFilter** ps);
+
+	class LAVAudioParam
+	{
+		DISALLOW_COPY_AND_ASSIGN(LAVAudioParam)
+	public:
+
+	};
+
+	class LAVVideoParam
+	{
+		DISALLOW_COPY_AND_ASSIGN(LAVVideoParam)
+	};
 }

@@ -4,6 +4,7 @@
 namespace LAV
 {
 	LAVPlayer::LAVPlayer()
+		:m_hWND(NULL)
 	{
 	}
 
@@ -51,8 +52,15 @@ namespace LAV
 			m_video->Uninitialize();
 		m_video.Reset(NULL);
 	}
-
-	BOOL LAVPlayer::Open(LPCSTR pzFile)
+	LAVAudio* LAVPlayer::GetAudio()
+	{
+		return m_audio;
+	}
+	LAVVideo* LAVPlayer::GetVideo()
+	{
+		return m_video;
+	}
+	BOOL LAVPlayer::Open(HWND hWND, LPCSTR pzFile)
 	{
 		if (!PathFileExists(pzFile))
 			return FALSE;
@@ -92,8 +100,24 @@ namespace LAV
 				m_video.Reset(new LAVVideo(m_builder, m_lavVideoO));
 				if (!m_video)
 					return FALSE;
-				if (!m_video->Initialize())
+				if (!m_video->Initialize(BindCallback(&LAVPlayer::OnVideo, this)))
 					return FALSE;
+				AM_MEDIA_TYPE mediaType;
+				ZeroMemory(&mediaType, sizeof(mediaType));
+				if (!m_video->GetMediaType(&mediaType))
+					return FALSE;
+				VIDEOINFOHEADER vih = { 0 };
+				memcpy(&vih, mediaType.pbFormat, sizeof(vih));
+				FreeMediaType(mediaType);
+				TinyRectangle s;
+				GetClientRect(hWND, &s);
+				if (!m_graphics.Initialize(hWND, s.Size()))
+					return FALSE;
+				m_graphics.SetRenderView(NULL);
+				m_image.Destory();
+				if (!m_image.Create(m_graphics.GetDX9(), vih.bmiHeader.biWidth, vih.bmiHeader.biHeight, NULL))
+					return FALSE;
+				m_image.SetScale(s.Size());
 			}
 			if (mediaType->majortype == MEDIATYPE_Audio)
 			{
@@ -106,8 +130,18 @@ namespace LAV
 				m_audio.Reset(new LAVAudio(m_builder, m_lavAudioO));
 				if (!m_audio)
 					return FALSE;
-				if (!m_audio->Initialize())
+				if (!m_audio->Initialize(BindCallback(&LAVPlayer::OnAudio, this)))
 					return FALSE;
+				AM_MEDIA_TYPE mediaType;
+				ZeroMemory(&mediaType, sizeof(mediaType));
+				if (!m_audio->GetMediaType(&mediaType))
+					return FALSE;
+				WAVEFORMATEX waveFMT = { 0 };
+				memcpy(&waveFMT, mediaType.pbFormat, sizeof(waveFMT));
+				FreeMediaType(mediaType);
+				if (!m_xaudio.Open(&waveFMT))
+					return FALSE;
+				m_xaudio.Start();
 			}
 		}
 		return TRUE;
@@ -123,9 +157,26 @@ namespace LAV
 	}
 	void LAVPlayer::Close()
 	{
+		m_image.Destory();
+		m_xaudio.Stop();
+		m_xaudio.Close();
 		if (m_control != NULL)
+		{
 			m_control->Stop();
+		}
 		Uninitialize();
+	}
+	void LAVPlayer::OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter)
+	{
+		m_xaudio.Play(bits, size, 5000);
+	}
+	void LAVPlayer::OnVideo(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter)
+	{
+		m_image.Copy(bits, size);
+		m_graphics.GetRenderView()->BeginDraw();
+		m_graphics.DrawImage(&m_image);
+		m_graphics.GetRenderView()->EndDraw();
+		m_graphics.Present();
 	}
 }
 
