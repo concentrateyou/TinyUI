@@ -64,7 +64,7 @@ namespace LAV
 		void Uninitialize();
 		void OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter);
 		void OnVideo(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter);
-		BOOL Copy(BYTE* bits, LONG size);
+		BOOL CopyVideo(BYTE* bits, LONG size);
 	private:
 		HWND										m_hWND;
 		LAVClock									m_clock;

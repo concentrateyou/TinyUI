@@ -195,13 +195,13 @@ namespace LAV
 		m_xaudio.Play(bits, size, 5000);
 		m_clock.SetClock(m_clock.GetClock() + (m_clock.GetQPCTimeMS() - msQPC));
 	}
-	BOOL LAVPlayer::Copy(BYTE* bits, LONG size)
+	BOOL LAVPlayer::CopyVideo(BYTE* bits, LONG size)
 	{
 		if (!m_image.Copy(bits, size))
 			return FALSE;
 		if (!m_graphics.GetRenderView()->BeginDraw())
 			return FALSE;
-		if (!m_graphics.DrawImage(&m_image))
+		if (!m_graphics.DrawImage(&m_image, 1.0, 1.0))
 			return FALSE;
 		if (!m_graphics.GetRenderView()->EndDraw())
 			return FALSE;
@@ -209,7 +209,7 @@ namespace LAV
 	}
 	void LAVPlayer::OnVideo(BYTE* bits, LONG size, FLOAT time, LPVOID lpParameter)
 	{
-		if (Copy(bits, size))
+		if (CopyVideo(bits, size))
 		{
 			while (isnan(m_clock.GetClock()));
 			INT delay = static_cast<INT>(time - m_clock.GetClock());
