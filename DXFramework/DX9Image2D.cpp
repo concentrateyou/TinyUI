@@ -38,24 +38,48 @@ namespace DXFramework
 		return TRUE;
 	}
 	//https://msdn.microsoft.com/en-us/library/windows/desktop/bb219690(v=vs.85).aspx
-	BOOL DX9Image2D::Translate(DX9& dx9, FLOAT ratioX, FLOAT ratioY)
+	BOOL DX9Image2D::Translate(DX9& dx9, FLOAT ratioX, FLOAT ratioY, FLOAT rotate)
 	{
+		INT vertexCount = GetVertexCount();
 		D3DXVECTOR2 scale(static_cast<FLOAT>(GetScale().cx) * ratioX, static_cast<FLOAT>(GetScale().cy) * ratioY);
 		D3DXVECTOR2 pos(static_cast<FLOAT>(GetPosition().x) * ratioX, static_cast<FLOAT>(GetPosition().y) * ratioY);
-		VERTEXTYPE vertexs[] =
+		D3DXVECTOR2 center(pos.x + scale.x / 2, pos.y + scale.y / 2);
+		VERTEXTYPE vertices[] =
 		{
-			{ static_cast<FLOAT>(pos.x),static_cast<FLOAT>(pos.y + scale.y),1.0F,1.0F,0.0F,1.0F },
-			{ static_cast<FLOAT>(pos.x),static_cast<FLOAT>(pos.y),1.0F,1.0F,0.0F,0.0F },
-			{ static_cast<FLOAT>(pos.x + scale.x),static_cast<FLOAT>(pos.y),1.0F,1.0,1.0F,0.0F },
-			{ static_cast<FLOAT>(pos.x),static_cast<FLOAT>(pos.y + scale.y),1.0F,1.0F,0.0F,1.0F },
-			{ static_cast<FLOAT>(pos.x + scale.x),static_cast<FLOAT>(pos.y),1.0F,1.0F,1.0F,0.0F },
-			{ static_cast<FLOAT>(pos.x + scale.x),static_cast<FLOAT>(pos.y + scale.y),1.0F,1.0F,1.0F,1.0F }
+			{ pos.x, pos.y,  0.0F, 1.0F, 0.0F, 0.0F },
+			{ pos.x + scale.x, pos.y,  0.0F, 1.0F, 1.0F, 0.0F },
+			{ pos.x, pos.y + scale.y, 0.0F, 1.0F, 0.0F, 1.0F },
+			{ pos.x + scale.x, pos.y + scale.y, 0.0F, 1.0F, 1.0F, 1.0F },
 		};
-		for (INT i = 0; i < 6; i++)
+		if (rotate)
 		{
-			vertexs[i].x -= 0.5F;
-			vertexs[i].y -= 0.5F;
+			//https://math.stackexchange.com/questions/270194/how-to-find-the-vertices-angle-after-rotation
+			rotate = D3DXToRadian(rotate);
+			D3DXVECTOR2 pos1((pos.x - scale.x) / 2, (pos.y - scale.y) / 2);
+			D3DXVECTOR2 pos2((scale.x - pos.x) / 2, (scale.y - pos.y) / 2);
+			vertices[0].x = pos1.x * cosf(rotate) - pos1.y * sinf(rotate);
+			vertices[0].y = pos1.x * sinf(rotate) + pos1.y * cosf(rotate);
+			vertices[1].x = pos2.x * cosf(rotate) - pos1.y * sinf(rotate);
+			vertices[1].y = pos2.x * sinf(rotate) + pos1.y * cosf(rotate);
+			vertices[2].x = pos1.x * cosf(rotate) - pos2.y * sinf(rotate);
+			vertices[2].y = pos1.x * sinf(rotate) + pos2.y * cosf(rotate);
+			vertices[3].x = pos2.x * cosf(rotate) - pos2.y * sinf(rotate);
+			vertices[3].y = pos2.x * sinf(rotate) + pos2.y * cosf(rotate);
+			vertices[0].x += center.x;
+			vertices[0].y += center.y;
+			vertices[1].x += center.x;
+			vertices[1].y += center.y;
+			vertices[2].x += center.x;
+			vertices[2].y += center.y;
+			vertices[3].x += center.x;
+			vertices[3].y += center.y;
 		}
+		for (INT i = 0; i < vertexCount; i++)
+		{
+			vertices[i].x -= 0.5F;
+			vertices[i].y -= 0.5F;
+		}
+
 		BYTE* bits = NULL;
 		HRESULT hRes = m_vertexBuffer->Lock(0, 0, reinterpret_cast<void**>(&bits), 0);
 		if (hRes != S_OK)
@@ -63,8 +87,7 @@ namespace DXFramework
 			TRACE("Translate Lock:%d\n", hRes);
 			return FALSE;
 		}
-		INT vertexCount = GetVertexCount();
-		memcpy(bits, vertexs, (sizeof(VERTEXTYPE) * vertexCount));
+		memcpy(bits, vertices, (sizeof(VERTEXTYPE) * vertexCount));
 		hRes = m_vertexBuffer->Unlock();
 		if (hRes != S_OK)
 		{
@@ -112,7 +135,7 @@ namespace DXFramework
 
 	INT	DX9Image2D::GetVertexCount() const
 	{
-		return 6;
+		return 4;
 	}
 	BOOL DX9Image2D::Allocate(DX9& dx9)
 	{
@@ -123,33 +146,11 @@ namespace DXFramework
 	{
 		if (dx9.IsEmpty())
 			return FALSE;
-		D3DXMATRIX* ms = dx9.GetMatrixs();
 		HRESULT hRes = dx9.GetD3D()->SetTexture(0, static_cast<IDirect3DBaseTexture9*>(m_texture2D.Ptr()));
 		if (hRes != S_OK)
 		{
 			TRACE("[Process] SetTexture:%d\n", hRes);
 			LOG(ERROR) << "[Process] SetTexture:" << hRes;
-			return FALSE;
-		}
-		hRes = dx9.GetD3D()->SetTransform(D3DTS_PROJECTION, &ms[0]);
-		if (hRes != S_OK)
-		{
-			TRACE("[Process] SetTransform D3DTS_PROJECTION:%d\n", hRes);
-			LOG(ERROR) << "[Process] SetTransform D3DTS_PROJECTION:" << hRes;
-			return FALSE;
-		}
-		hRes = dx9.GetD3D()->SetTransform(D3DTS_VIEW, &ms[1]);
-		if (hRes != S_OK)
-		{
-			TRACE("[Process] SetTransform D3DTS_VIEW:%d\n", hRes);
-			LOG(ERROR) << "[Process] SetTransform D3DTS_VIEW:" << hRes;
-			return FALSE;
-		}
-		hRes = dx9.GetD3D()->SetTransform(D3DTS_WORLD, &ms[2]);
-		if (hRes != S_OK)
-		{
-			TRACE("[Process] SetTransform D3DTS_WORLD:%d\n", hRes);
-			LOG(ERROR) << "[Process] SetTransform D3DTS_WORLD:" << hRes;
 			return FALSE;
 		}
 		hRes = dx9.GetD3D()->SetStreamSource(0, m_vertexBuffer, 0, sizeof(VERTEXTYPE));
@@ -166,7 +167,7 @@ namespace DXFramework
 			LOG(ERROR) << "[Process] SetSamplerState:" << hRes;
 			return FALSE;
 		}
-		hRes = dx9.GetD3D()->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+		hRes = dx9.GetD3D()->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 		if (hRes != S_OK)
 		{
 			TRACE("[Process] DrawPrimitive:%d\n", hRes);

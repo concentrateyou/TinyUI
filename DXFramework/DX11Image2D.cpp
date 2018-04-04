@@ -78,9 +78,9 @@ namespace DXFramework
 		m_vertices[0].position = XMFLOAT3(left, top, 0.0F);
 		m_vertices[0].texture = XMFLOAT2(0.0F, 0.0F);
 		m_vertices[1].position = XMFLOAT3(right, bottom, 0.0F);
-		m_vertices[1].texture = XMFLOAT2(1.0F, 1.0f);
+		m_vertices[1].texture = XMFLOAT2(1.0F, 1.0F);
 		m_vertices[2].position = XMFLOAT3(left, bottom, 0.0F);
-		m_vertices[2].texture = XMFLOAT2(0.0F, 1.0f);
+		m_vertices[2].texture = XMFLOAT2(0.0F, 1.0F);
 		m_vertices[3].position = XMFLOAT3(left, top, 0.0F);
 		m_vertices[3].texture = XMFLOAT2(0.0F, 0.0F);
 		m_vertices[4].position = XMFLOAT3(right, top, 0.0F);

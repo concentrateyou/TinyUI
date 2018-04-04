@@ -183,6 +183,7 @@ namespace LAV
 	{
 		if (m_control != NULL)
 			m_control->Stop();
+		m_clock.SetClock(NAN);
 		m_image.Destory();
 		m_xaudio.Stop();
 		m_xaudio.Close();
@@ -201,7 +202,7 @@ namespace LAV
 			return FALSE;
 		if (!m_graphics.GetRenderView()->BeginDraw())
 			return FALSE;
-		if (!m_graphics.DrawImage(&m_image, 1.0, 1.0))
+		if (!m_graphics.DrawImage(&m_image, 1.0, 1.0, 180))
 			return FALSE;
 		if (!m_graphics.GetRenderView()->EndDraw())
 			return FALSE;
