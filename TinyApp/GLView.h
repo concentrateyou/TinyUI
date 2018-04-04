@@ -10,6 +10,7 @@
 #include "Control/TinyScrollBar.h"
 #include "LAVPlayer.h"
 using namespace LAV;
+using namespace DXFramework;
 
 
 class GLView : public TinyControl
@@ -34,5 +35,7 @@ public:
 	LRESULT OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 private:
-	LAVPlayer m_player;
+	DX9Graphics2D	m_graphics;
+	DX9Image2D		m_image2D;
+	//LAVPlayer m_player;
 };

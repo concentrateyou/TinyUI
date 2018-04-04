@@ -59,20 +59,22 @@ namespace DXFramework
 			LOG(ERROR) << "[Initialize] CreateDevice:" << hRes;
 			return FALSE;
 		}
-		ZeroMemory(&m_viewPort, sizeof(m_viewPort));
-		m_viewPort.X = 0;
-		m_viewPort.Y = 0;
-		m_viewPort.Width = cx;
-		m_viewPort.Height = cy;
-		m_viewPort.MinZ = 0.0F;
-		m_viewPort.MaxZ = 1.0F;
-		hRes = m_d3dd9->SetViewport(&m_viewPort);
+		D3DVIEWPORT9 vp;
+		ZeroMemory(&vp, sizeof(vp));
+		vp.X = 0;
+		vp.Y = 0;
+		vp.Width = cx;
+		vp.Height = cy;
+		vp.MinZ = 0.0F;
+		vp.MaxZ = 1.0F;
+		hRes = m_d3dd9->SetViewport(&vp);
 		if (hRes != S_OK)
 		{
 			TRACE("[Initialize] SetViewport:%d\n", hRes);
 			LOG(ERROR) << "[Initialize] SetViewport:" << hRes;
 			return FALSE;
 		}
+		this->SetMatrixs(m_size);
 		hRes = m_d3dd9->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 		if (hRes != S_OK)
 		{
@@ -178,28 +180,22 @@ namespace DXFramework
 			LOG(ERROR) << "[Initialize] CreateDevice:" << hRes;
 			return FALSE;
 		}
-		ZeroMemory(&m_viewPort, sizeof(m_viewPort));
-		m_viewPort.X = 0;
-		m_viewPort.Y = 0;
-		m_viewPort.Width = m_size.cx;
-		m_viewPort.Height = m_size.cy;
-		m_viewPort.MinZ = 0.0F;
-		m_viewPort.MaxZ = 1.0F;
-		hRes = m_d3dd9->SetViewport(&m_viewPort);
+		D3DVIEWPORT9 vp;
+		ZeroMemory(&vp, sizeof(vp));
+		vp.X = 0;
+		vp.Y = 0;
+		vp.Width = m_size.cx;
+		vp.Height = m_size.cy;
+		vp.MinZ = 0.0F;
+		vp.MaxZ = 1.0F;
+		hRes = m_d3dd9->SetViewport(&vp);
 		if (hRes != S_OK)
 		{
 			TRACE("[Initialize] SetViewport:%d\n", hRes);
 			LOG(ERROR) << "[Initialize] SetViewport:" << hRes;
 			return FALSE;
 		}
-		FLOAT fov = (FLOAT)D3DX_PI / 4.0F;
-		FLOAT aspect = (FLOAT)m_size.cx / (FLOAT)m_size.cy;
-		D3DXMatrixPerspectiveFovLH(&m_matrixs[0], fov, aspect, 1000.0F, 0.1F);//Projection
-		D3DXMatrixLookAtLH(&m_matrixs[1],
-			&D3DXVECTOR3(0.0F, 0.0F, -10.0F),
-			&D3DXVECTOR3(0.0F, 0.0F, 0.0F),
-			&D3DXVECTOR3(0.0F, 1.0F, 0.0F));//View
-		D3DXMatrixIdentity(&m_matrixs[2]);//World
+		this->SetMatrixs(m_size);
 		hRes = m_d3dd9->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 		if (hRes != S_OK)
 		{
@@ -309,14 +305,15 @@ namespace DXFramework
 	{
 		if (IsEmpty())
 			return FALSE;
-		D3DVIEWPORT9 viewport;
-		viewport.X = pos.x;
-		viewport.Y = pos.y;
-		viewport.Width = size.cx;
-		viewport.Height = size.cy;
-		viewport.MinZ = 0.0F;
-		viewport.MaxZ = 1.0F;
-		HRESULT hRes = m_d3dd9->SetViewport(&viewport);
+		D3DVIEWPORT9 vp;
+		ZeroMemory(&vp, sizeof(vp));
+		vp.X = pos.x;
+		vp.Y = pos.y;
+		vp.Width = size.cx;
+		vp.Height = size.cy;
+		vp.MinZ = 0.0F;
+		vp.MaxZ = 1.0F;
+		HRESULT hRes = m_d3dd9->SetViewport(&vp);
 		if (hRes != S_OK)
 		{
 			TRACE("[SetViewport] SetViewport:%d\n", hRes);

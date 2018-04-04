@@ -34,10 +34,9 @@ namespace DXFramework
 	private:
 		BOOL							m_bActive;
 		HWND							m_hWND;
-		D3DXMATRIX						m_matrixs[3];
-		D3DVIEWPORT9					m_viewPort;
-		DX9RenderView*					m_render2D;
 		TinySize						m_size;
+		D3DXMATRIX						m_matrixs[3];
+		DX9RenderView*					m_render2D;
 		TinyComPtr<IDirect3D9>			m_d3d9;
 		TinyComPtr<IDirect3DDevice9>	m_d3dd9;
 		TinyScopedPtr<DX9RenderView>	m_background2D;

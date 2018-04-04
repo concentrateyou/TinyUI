@@ -258,14 +258,14 @@ namespace DXFramework
 	{
 		if (IsEmpty())
 			return FALSE;
-		D3D11_VIEWPORT viewport;
-		viewport.TopLeftX = static_cast<FLOAT>(pos.x);
-		viewport.TopLeftY = static_cast<FLOAT>(pos.y);
-		viewport.Width = static_cast<FLOAT>(size.cx);
-		viewport.Height = static_cast<FLOAT>(size.cy);
-		viewport.MinDepth = 0.0F;
-		viewport.MaxDepth = 1.0F;
-		m_immediateContext->RSSetViewports(1, &viewport);
+		D3D11_VIEWPORT vp;
+		vp.TopLeftX = static_cast<FLOAT>(pos.x);
+		vp.TopLeftY = static_cast<FLOAT>(pos.y);
+		vp.Width = static_cast<FLOAT>(size.cx);
+		vp.Height = static_cast<FLOAT>(size.cy);
+		vp.MinDepth = 0.0F;
+		vp.MaxDepth = 1.0F;
+		m_immediateContext->RSSetViewports(1, &vp);
 		return TRUE;
 	}
 }
