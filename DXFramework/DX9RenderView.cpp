@@ -82,7 +82,7 @@ namespace DXFramework
 			LOG(ERROR) << "[BeginDraw] SetRenderTarget::" << hRes;
 			return FALSE;
 		}
-		hRes = m_dx9.GetD3D()->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL, D3DCOLOR_XRGB(0, 0, 0, 255), 1.0F, 0);
+		hRes = m_dx9.GetD3D()->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0, 255), 1.0F, 0);
 		if (hRes != S_OK)
 		{
 			TRACE("[BeginDraw] Clear:%d\n", hRes);

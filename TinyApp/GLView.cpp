@@ -61,8 +61,11 @@ LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 	m_graphics.DrawImage(&m_image2D, 1.0, 1.0, 0);
 	m_graphics.GetRenderView()->EndDraw();
 	m_graphics.Present();*/
-	m_player.Open(m_hWND, "D:\\2.mp4");
-	m_player.Play();
+	m_player.Open(m_hWND, "D:\\test2.ts");
+	UINT count = 0;
+	m_player.GetTrackCount(count);
+	m_player.ShowProperty(m_hWND);
+	//m_player.Play();
 	return FALSE;
 }
 

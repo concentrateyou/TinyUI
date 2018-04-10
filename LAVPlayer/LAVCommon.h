@@ -3,6 +3,7 @@
 #include "ScopedMediaType.h"
 #include "FilterBase.h"
 #include "FilterObserver.h"
+#include "ITrackInfo.h"
 #include <dshow.h>
 #include <dvdmedia.h>
 #include <uuids.h>
@@ -22,12 +23,20 @@ namespace LAV
 	class LAVAudioParam
 	{
 		DISALLOW_COPY_AND_ASSIGN(LAVAudioParam)
-	public:
-
 	};
 
 	class LAVVideoParam
 	{
 		DISALLOW_COPY_AND_ASSIGN(LAVVideoParam)
+	};
+
+	class ScopedBSTR
+	{
+		DISALLOW_COPY_AND_ASSIGN(ScopedBSTR)
+	public:
+		ScopedBSTR(const CHAR* psText);
+		~ScopedBSTR();
+	private:
+		BSTR	m_bstr;
 	};
 }

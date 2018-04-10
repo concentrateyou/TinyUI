@@ -176,7 +176,15 @@ namespace LAV
 	BOOL LAVPlayer::Play()
 	{
 		if (m_control != NULL)
-			return SUCCEEDED(m_control->Run());
+		{
+			if (SUCCEEDED(m_control->Run()))
+			{
+				m_graphics.GetRenderView()->BeginDraw();
+				m_graphics.GetRenderView()->EndDraw();
+				m_graphics.Present();
+				return TRUE;
+			}
+		}
 		return FALSE;
 	}
 	void LAVPlayer::Close()
@@ -188,6 +196,50 @@ namespace LAV
 		m_xaudio.Stop();
 		m_xaudio.Close();
 		Uninitialize();
+	}
+	BOOL LAVPlayer::GetTrackCount(UINT& count)
+	{
+		if (!m_lavFilter)
+			return FALSE;
+		TinyComPtr<ITrackInfo> info;
+		if (FAILED(m_lavFilter->QueryInterface(__uuidof(ITrackInfo), (void **)&info)))
+			return FALSE;
+		count = info->GetTrackCount();
+		return TRUE;
+	}
+	BOOL LAVPlayer::GetTrackCodecID(UINT index)
+	{
+		if (!m_lavFilter)
+			return FALSE;
+		TinyComPtr<ITrackInfo> info;
+		if (FAILED(m_lavFilter->QueryInterface(__uuidof(ITrackInfo), (void **)&info)))
+			return FALSE;
+		return TRUE;
+	}
+	BOOL LAVPlayer::ShowProperty(HWND hWND)
+	{
+		if (!m_lavFilter)
+			return FALSE;
+		TinyComPtr<ISpecifyPropertyPages> pages;
+		if (FAILED(m_lavFilter->QueryInterface(__uuidof(ISpecifyPropertyPages), (void **)&pages)))
+			return FALSE;
+		CAUUID cauuid;
+		if (FAILED(pages->GetPages(&cauuid)))
+			return FALSE;
+		if (cauuid.cElems > 0)
+		{
+			FILTER_INFO filterInfo;
+			TinyComPtr<IUnknown> unknow;
+			if (SUCCEEDED(m_lavFilter->QueryFilterInfo(&filterInfo)) &&
+				SUCCEEDED(m_lavFilter->QueryInterface(IID_IUnknown, (void **)&unknow)))
+			{
+				OleCreatePropertyFrame(hWND, 0, 0, filterInfo.achName, 1, &unknow, cauuid.cElems, cauuid.pElems, 0, 0, NULL);
+			}
+			CoTaskMemFree(cauuid.pElems);
+			filterInfo.pGraph->Release();
+			return TRUE;
+		}
+		return FALSE;
 	}
 	void LAVPlayer::OnAudio(BYTE* bits, LONG size, FLOAT time, LPVOID lpParameter)
 	{
@@ -214,7 +266,7 @@ namespace LAV
 		{
 			while (isnan(m_clock.GetClock()));
 			INT delay = static_cast<INT>(time - m_clock.GetClock());
-			if (m_timer.Waiting(delay, 100))
+			if (m_timer.Waiting(delay, 80))
 			{
 				m_graphics.Present();
 			}

@@ -92,7 +92,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_WIN32_WINNT=0x0601;WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\TinySmiley;$(BOOSTDIR);..\DShowCapture;..\MFCapture;$(INTELMEDIASDKROOT)\include;$(PROTOBUF_DIR)\include;$(DXSDK_DIR)\Include;..\DXFramework;..\GLFramework;..\Decode;..\IntelQSV;..\LAVPlayer;..\ThirdParty\ffmpeg\include;..\ThirdParty\libfaad\include;..\ThirdParty\vld;..\ThirdParty\mpg123\include;..\ThirdParty\zlib\include;..\ThirdParty\librtmp\include;..\ThirdParty\opengl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\TinySmiley;$(BOOSTDIR);..\DShowCapture;..\MFCapture;$(INTELMEDIASDKROOT)\include;$(PROTOBUF_DIR)\include;$(DXSDK_DIR)\Include;..\DXFramework;..\GLFramework;..\Decode;..\IntelQSV;..\LAVPlayer;..\ThirdParty\ffmpeg\include;..\ThirdParty\libfaad\include;..\ThirdParty\vld;..\ThirdParty\mpg123\include;..\ThirdParty\zlib\include;..\ThirdParty\librtmp\include;..\ThirdParty\opengl\include;..\ThirdParty\lav\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>

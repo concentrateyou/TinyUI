@@ -57,6 +57,9 @@ namespace LAV
 		BOOL Open(HWND hWND, LPCSTR pzFile);
 		BOOL Play();
 		void Close();
+		BOOL GetTrackCount(UINT& count);
+		BOOL GetTrackCodecID(UINT index);
+		BOOL ShowProperty(HWND hWND);
 		LAVAudio* GetAudio();
 		LAVVideo* GetVideo();
 	private:
@@ -68,6 +71,10 @@ namespace LAV
 	private:
 		HWND										m_hWND;
 		LAVClock									m_clock;
+		DX9Graphics2D								m_graphics;
+		DX9Image2D									m_image;
+		TinyXAudio									m_xaudio;
+		TinyPerformanceTimer						m_timer;
 		TinyScopedPtr<LAVAudio>						m_audio;
 		TinyScopedPtr<LAVVideo>						m_video;
 		TinyComPtr<IPin>							m_lavAudioO;
@@ -77,10 +84,6 @@ namespace LAV
 		TinyComPtr<IAMStreamSelect>					m_asmstream;
 		TinyComPtr<IBaseFilter>						m_lavFilter;//สýพÝิด
 		TinyComPtr<IGraphBuilder>					m_builder;
-		DX9Graphics2D								m_graphics;
-		DX9Image2D									m_image;
-		TinyXAudio									m_xaudio;
-		TinyPerformanceTimer						m_timer;
 	};
 }
 

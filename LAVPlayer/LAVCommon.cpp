@@ -45,4 +45,14 @@ namespace LAV
 		}
 		return FALSE;
 	}
+
+	ScopedBSTR::ScopedBSTR(const CHAR* psText)
+		:m_bstr(NULL)
+	{
+
+	}
+	ScopedBSTR::~ScopedBSTR()
+	{
+
+	}
 }
