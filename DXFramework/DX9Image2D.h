@@ -18,7 +18,7 @@ namespace DXFramework
 	public:
 		DX9Image2D();
 		virtual ~DX9Image2D();
-		BOOL Translate(DX9& dx8, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F, FLOAT rotate = NAN);
+		BOOL Translate(DX9& dx8, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F, FLOAT rotate = 0.0F, BOOL bFlipH = FALSE, BOOL bFlipV = FALSE);
 		BOOL Load(DX9& dx9, const CHAR* pzFile);
 		BOOL Load(DX9& dx9, const BYTE* bits, LONG size);
 		BOOL Create(DX9& dx9, INT cx, INT cy, const BYTE* bits) OVERRIDE;

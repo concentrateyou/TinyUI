@@ -58,7 +58,7 @@ LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 	m_image2D.Load(m_graphics.GetDX9(), "D:\\123.bmp");
 	m_image2D.SetScale(s.Size());
 	m_graphics.GetRenderView()->BeginDraw();
-	m_graphics.DrawImage(&m_image2D, 1.0, 1.0, 180.0F);
+	m_graphics.DrawImage(&m_image2D, 1.0, 1.0, 0);
 	m_graphics.GetRenderView()->EndDraw();
 	m_graphics.Present();*/
 	m_player.Open(m_hWND, "D:\\2.mp4");

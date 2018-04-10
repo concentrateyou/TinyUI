@@ -38,7 +38,7 @@ namespace DXFramework
 		return TRUE;
 	}
 	//https://msdn.microsoft.com/en-us/library/windows/desktop/bb219690(v=vs.85).aspx
-	BOOL DX9Image2D::Translate(DX9& dx9, FLOAT ratioX, FLOAT ratioY, FLOAT rotate)
+	BOOL DX9Image2D::Translate(DX9& dx9, FLOAT ratioX, FLOAT ratioY, FLOAT rotate, BOOL bFlipH, BOOL bFlipV)
 	{
 		INT vertexCount = GetVertexCount();
 		D3DXVECTOR2 scale(static_cast<FLOAT>(GetScale().cx) * ratioX, static_cast<FLOAT>(GetScale().cy) * ratioY);
@@ -46,12 +46,13 @@ namespace DXFramework
 		D3DXVECTOR2 center(pos.x + scale.x / 2, pos.y + scale.y / 2);
 		VERTEXTYPE vertices[] =
 		{
-			{ pos.x, pos.y,  0.0F, 1.0F, 0.0F, 0.0F },
-			{ pos.x + scale.x, pos.y,  0.0F, 1.0F, 1.0F, 0.0F },
-			{ pos.x, pos.y + scale.y, 0.0F, 1.0F, 0.0F, 1.0F },
-			{ pos.x + scale.x, pos.y + scale.y, 0.0F, 1.0F, 1.0F, 1.0F },
+			{ pos.x, pos.y,  0.0F, 1.0F,(bFlipH ? -0.0F : 0.0F),(bFlipV ? -0.0F : 0.0F) },
+			{ pos.x + scale.x, pos.y,  0.0F, 1.0F, (bFlipH ? -1.0F : 1.0F),(bFlipV ? -0.0F : 0.0F) },
+			{ pos.x, pos.y + scale.y, 0.0F, 1.0F, (bFlipH ? -0.0F : 0.0F), (bFlipV ? -1.0F : 1.0F) },
+			{ pos.x + scale.x, pos.y + scale.y, 0.0F, 1.0F,(bFlipH ? -1.0F : 1.0F), (bFlipV ? -1.0F : 1.0F) },
 		};
-		if (rotate)
+
+		if (rotate != 0.0F)
 		{
 			//https://math.stackexchange.com/questions/270194/how-to-find-the-vertices-angle-after-rotation
 			rotate = D3DXToRadian(rotate);

@@ -19,7 +19,7 @@ namespace DXFramework
 		BOOL	Reset();
 		BOOL	Present();
 		BOOL	Initialize(HWND hWND, const TinySize& size);
-		BOOL	DrawImage(DX9Image2D* ps, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F, FLOAT rotate = 0.0F);
+		BOOL	DrawImage(DX9Image2D* ps, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F, FLOAT rotate = 0.0F, BOOL bFlipH = FALSE, BOOL bFlipV = FALSE);
 		BOOL	DrawString(DX9Font2D* ps, LPCSTR pzText, INT count, LPRECT pRect, DWORD dwFormat, D3DCOLOR color);
 		void	SetRenderView(DX9RenderView* render2D);
 		void	Enter();

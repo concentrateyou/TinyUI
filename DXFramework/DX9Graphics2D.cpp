@@ -33,13 +33,13 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX9Graphics2D::DrawImage(DX9Image2D* ps, FLOAT ratioX, FLOAT ratioY, FLOAT rotate)
+	BOOL DX9Graphics2D::DrawImage(DX9Image2D* ps, FLOAT ratioX, FLOAT ratioY, FLOAT rotate, BOOL bFlipH, BOOL bFlipV)
 	{
 		if (!ps)
 			return FALSE;
 		if (ps->IsEmpty())
 			return FALSE;
-		if (!ps->Translate(m_dx9, ratioX, ratioY, rotate))
+		if (!ps->Translate(m_dx9, ratioX, ratioY, rotate, bFlipH, bFlipV))
 			return FALSE;
 		if (ps->Process(m_dx9))
 		{

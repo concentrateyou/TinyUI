@@ -202,7 +202,7 @@ namespace LAV
 			return FALSE;
 		if (!m_graphics.GetRenderView()->BeginDraw())
 			return FALSE;
-		if (!m_graphics.DrawImage(&m_image, 1.0, 1.0, 180))
+		if (!m_graphics.DrawImage(&m_image, 1.0F, 1.0F, 0.0F, FALSE, TRUE))
 			return FALSE;
 		if (!m_graphics.GetRenderView()->EndDraw())
 			return FALSE;
