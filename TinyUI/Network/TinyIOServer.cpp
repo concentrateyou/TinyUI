@@ -184,17 +184,11 @@ namespace TinyUI
 			}
 		}
 		//////////////////////////////////////////////////////////////////////////
-		TinyScopedIOTasks::TinyScopedIOTasks(DWORD dwCount, IO::TinyIOCP* ps)
+		TinyScopedIOTasks::TinyScopedIOTasks(IO::TinyIOCP* ps)
 			:m_myP(NULL),
-			m_dwCount(dwCount),
 			m_pIOCP(ps)
 		{
-			m_myP = operator new (dwCount * sizeof(TinyIOTask));
-			TinyIOTask *s = reinterpret_cast<TinyIOTask*>(m_myP);
-			for (DWORD i = 0; i < dwCount; i++)
-			{
-				new (&s[i]) TinyIOTask(ps);
-			}
+
 		}
 		TinyScopedIOTasks::~TinyScopedIOTasks()
 		{
@@ -204,6 +198,20 @@ namespace TinyUI
 				s[i].~TinyIOTask();
 			}
 			SAFE_DELETE(m_myP);
+		}
+		BOOL TinyScopedIOTasks::Initialize(DWORD dwConcurrency)
+		{
+			m_myP = operator new (dwConcurrency * sizeof(TinyIOTask));
+			if (m_myP != NULL)
+			{
+				TinyIOTask *s = reinterpret_cast<TinyIOTask*>(m_myP);
+				for (DWORD i = 0; i < dwConcurrency; i++)
+				{
+					new (&s[i]) TinyIOTask(m_pIOCP);
+				}
+				return TRUE;
+			}
+			return FALSE;
 		}
 		DWORD TinyScopedIOTasks::GetSize() const
 		{
@@ -222,18 +230,23 @@ namespace TinyUI
 			return s + index;
 		}
 		//////////////////////////////////////////////////////////////////////////
-		TinyIOServer::TinyIOServer(DWORD dwConcurrency)
+		TinyIOServer::TinyIOServer()
 		{
-			m_iocp = new IO::TinyIOCP(dwConcurrency);
-			if (!m_iocp)
-				throw exception("Create TinyIOCP Fail");
-			m_tasks.Reset(new TinyScopedIOTasks(dwConcurrency, m_iocp));
-			if (!m_tasks)
-				throw exception("Create TinyScopedIOTasks Fail");
+
 		}
 		TinyIOServer::~TinyIOServer()
 		{
 			Close();
+		}
+		BOOL TinyIOServer::Initialize(DWORD dwConcurrency)
+		{
+			m_iocp = new IO::TinyIOCP(dwConcurrency);
+			if (!m_iocp)
+				return FALSE;
+			m_tasks.Reset(new TinyScopedIOTasks(m_iocp));
+			if (!m_tasks)
+				return FALSE;
+			return m_tasks->Initialize(dwConcurrency);
 		}
 		IO::TinyIOCP*	TinyIOServer::GetIOCP() const
 		{
@@ -241,7 +254,7 @@ namespace TinyUI
 		}
 		void TinyIOServer::Run()
 		{
-			for (DWORD i = 0;i < m_tasks->GetSize();i++)
+			for (DWORD i = 0; i < m_tasks->GetSize(); i++)
 			{
 				TinyIOTask* task = (*m_tasks)[i];
 				task->Submit();
@@ -249,7 +262,7 @@ namespace TinyUI
 		}
 		void TinyIOServer::Close()
 		{
-			for (DWORD i = 0;i < m_tasks->GetSize();i++)
+			for (DWORD i = 0; i < m_tasks->GetSize(); i++)
 			{
 				TinyIOTask* task = (*m_tasks)[i];
 				task->Close(INFINITE);

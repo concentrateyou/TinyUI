@@ -178,63 +178,6 @@ namespace TinyUI
 		//////////////////////////////////////////////////////////////////////////
 		BOOL WINAPI ParseURL(LPCTSTR pstrURL, INTERNET_SCHEME& scheme, TinyString& strServer, TinyString& strObject, INTERNET_PORT& nPort);
 		BOOL WINAPI ParseURLEx(LPCTSTR pstrURL, INTERNET_SCHEME& scheme, TinyString& strServer, TinyString& strObject, INTERNET_PORT& nPort, TinyString& strUsername, TinyString& strPassword, DWORD dwFlags);
-		//////////////////////////////////////////////////////////////////////////
-		/*class TinyAsyncHTTP;
-		typedef struct _InetContext
-		{
-			TinyAsyncHTTP *obj;
-			DWORD dwContext;
-		} InetContext;
-
-		typedef enum _RequestType {
-			GET,
-			POST
-		} RequestType;
-
-		class TinyAsyncHTTP
-		{
-		public:
-			TinyAsyncHTTP();
-			~TinyAsyncHTTP();
-
-			enum {
-				CONTEXT_CONNECT,
-				CONTEXT_REQUESTHANDLE
-			};
-
-			BOOL Connect(
-				string szAddr,
-				unsigned short port = INTERNET_DEFAULT_HTTP_PORT,
-				string szAgent = "AsyncInet",
-				DWORD dwTimeout = 20 * 1000);
-
-			BOOL SendRequest(
-				string szURL,
-				RequestType requestType,
-				string szRequestData,
-				string szReferrer,
-				DWORD dwTimeout = 20 * 1000);
-
-			unsigned long ReadData(
-				PBYTE lpBuffer,
-				DWORD dwSize,
-				DWORD dwTimeout = 20 * 1000);
-
-			void CloseConnection();
-
-			static void WINAPI CallbackFunction(
-				HINTERNET hInternet,
-				DWORD dwContext,
-				DWORD dwInetStatus,
-				LPVOID lpStatusInfo,
-				DWORD dwStatusInfoLength);
-
-		protected:
-			InetContext context;
-			HANDLE hConnectEvent, hRequestOpenEvent, hRequestCompleteEvent;
-			HINTERNET hInetInstance, hInetConnect, hInetRequest;
-
-		};*/
 	}
 }
 

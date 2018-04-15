@@ -109,6 +109,27 @@ namespace TinyUI
 			return FALSE;
 		}
 		//////////////////////////////////////////////////////////////////////////
+		TinyTLS::TinyTLS()
+			:m_dwTlsIndex(0)
+		{
+			if ((m_dwTlsIndex = TlsAlloc()) == TLS_OUT_OF_INDEXES)
+			{
+				throw system_error(GetLastError(), system_category());
+			}
+		}
+		void TinyTLS::SetValue(LPVOID ps)
+		{
+			TlsSetValue(m_dwTlsIndex, ps);
+		}
+		LPVOID TinyTLS::GetValue()
+		{
+			return TlsGetValue(m_dwTlsIndex);
+		}
+		TinyTLS::~TinyTLS()
+		{
+			TlsFree(m_dwTlsIndex);
+		}
+		//////////////////////////////////////////////////////////////////////////
 		TinySimpleTaskTimer::TinySimpleTaskTimer()
 			:m_delay(0),
 			m_bBreak(FALSE)

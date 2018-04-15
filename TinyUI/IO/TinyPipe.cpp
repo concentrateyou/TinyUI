@@ -91,7 +91,6 @@ namespace TinyUI
 				}
 				break;
 			}
-			//BindIoCompletionCallback(m_hFile, );
 			if (ConnectNamedPipe(m_hFile, &m_context))
 				return FALSE;
 			DWORD dwError = GetLastError();

@@ -351,9 +351,6 @@
     <ClInclude Include="IO\TinyTaskPool.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
-    <ClInclude Include="IO\TinyThread.h">
-      <Filter>头文件\IO</Filter>
-    </ClInclude>
     <ClInclude Include="Common\TinyConcurrency.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
@@ -831,9 +828,6 @@
       <Filter>源文件\Network</Filter>
     </ClCompile>
     <ClCompile Include="IO\TinyTaskPool.cpp">
-      <Filter>源文件\IO</Filter>
-    </ClCompile>
-    <ClCompile Include="IO\TinyThread.cpp">
       <Filter>源文件\IO</Filter>
     </ClCompile>
     <ClCompile Include="Common\TinyConcurrency.cpp">

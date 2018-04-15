@@ -40,6 +40,20 @@ namespace TinyUI
 			Closure		m_callback;
 		};
 		/// <summary>
+		/// 线程本地存储
+		/// </summary>
+		class TinyTLS
+		{
+			DISALLOW_COPY_AND_ASSIGN(TinyTLS)
+		public:
+			TinyTLS();
+			~TinyTLS();
+			void	SetValue(LPVOID ps);
+			LPVOID	GetValue();
+		private:
+			DWORD m_dwTlsIndex;
+		};
+		/// <summary>
 		/// 简单定时任务
 		/// </summary>
 		class TinySimpleTaskTimer

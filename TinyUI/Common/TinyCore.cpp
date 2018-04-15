@@ -198,6 +198,19 @@ namespace TinyUI
 	{
 		return m_SRW;
 	}
+	BOOL TinySRWLock::Try(BOOL bExclusive)
+	{
+		BOOL bRes = FALSE;
+		if (bExclusive)
+		{
+			bRes = TryAcquireSRWLockExclusive(&m_SRW);
+		}
+		else
+		{
+			bRes = TryAcquireSRWLockShared(&m_SRW);
+		}
+		return bRes;
+	}
 	void TinySRWLock::Lock(BOOL bExclusive)
 	{
 		if (bExclusive)

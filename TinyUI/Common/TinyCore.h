@@ -105,8 +105,9 @@ namespace TinyUI
 		TinySRWLock();
 		virtual ~TinySRWLock();
 		operator SRWLOCK&();
-		void Lock(BOOL write);
-		void Unlock(BOOL write);
+		BOOL Try(BOOL bExclusive);
+		void Lock(BOOL bExclusive);
+		void Unlock(BOOL bExclusive);
 	private:
 		SRWLOCK	 m_SRW;
 	};

@@ -258,7 +258,6 @@
     <ClInclude Include="IO\TinyStringReader.h" />
     <ClInclude Include="IO\TinyTask.h" />
     <ClInclude Include="IO\TinyTaskPool.h" />
-    <ClInclude Include="IO\TinyThread.h" />
     <ClInclude Include="IO\TinyWin32TaskPool.h" />
     <ClInclude Include="Media\TinyMFAACDecode.h" />
     <ClInclude Include="Media\TinyMFAACEncode.h" />
@@ -415,7 +414,6 @@
     <ClCompile Include="IO\TinyStringReader.cpp" />
     <ClCompile Include="IO\TinyTask.cpp" />
     <ClCompile Include="IO\TinyTaskPool.cpp" />
-    <ClCompile Include="IO\TinyThread.cpp" />
     <ClCompile Include="IO\TinyWin32TaskPool.cpp" />
     <ClCompile Include="Media\TinyMFAACDecode.cpp" />
     <ClCompile Include="Media\TinyMFAACEncode.cpp" />

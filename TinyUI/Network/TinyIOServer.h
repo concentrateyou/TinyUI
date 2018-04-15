@@ -15,8 +15,8 @@ namespace TinyUI
 		public:
 			explicit TinyIOTask(IO::TinyIOCP* ps);
 			virtual	~TinyIOTask();
-			BOOL Close(DWORD dwMs = INFINITE) OVERRIDE;
-			BOOL Submit();
+			BOOL	Close(DWORD dwMs = INFINITE) OVERRIDE;
+			BOOL	Submit();
 		private:
 			void	OnMessagePump();
 		private:
@@ -28,8 +28,9 @@ namespace TinyUI
 		{
 			DISALLOW_COPY_AND_ASSIGN(TinyScopedIOTasks)
 		public:
-			TinyScopedIOTasks(DWORD dwCount, IO::TinyIOCP* ps);
+			TinyScopedIOTasks(IO::TinyIOCP* ps);
 			~TinyScopedIOTasks();
+			BOOL	Initialize(DWORD dwConcurrency);
 			DWORD	GetSize() const;
 			const TinyIOTask*	operator[](INT index) const;
 			TinyIOTask*			operator[](INT index);
@@ -42,8 +43,9 @@ namespace TinyUI
 		{
 			DISALLOW_COPY_AND_ASSIGN(TinyIOServer)
 		public:
-			TinyIOServer(DWORD dwConcurrency);
+			TinyIOServer();
 			virtual ~TinyIOServer();
+			BOOL	Initialize(DWORD dwConcurrency);
 			IO::TinyIOCP* GetIOCP() const;
 			virtual void Run();
 			virtual void Close();
