@@ -97,7 +97,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\librtmp\lib\x86;..\ThirdParty\libfaac\lib\x86;..\ThirdParty\x264\libs\32bit;..\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\librtmp\lib\x86;..\ThirdParty\libfaac\lib\x86;..\ThirdParty\x264\libs\32bit;..\Debug;$(VLD_DIR)\lib\Win32</AdditionalLibraryDirectories>
       <AdditionalDependencies>DXFramework.lib;librtmp.lib;legacy_stdio_definitions.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>

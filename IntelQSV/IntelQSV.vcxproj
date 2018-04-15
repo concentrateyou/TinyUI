@@ -84,7 +84,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(INTELMEDIASDKROOT)lib\$(Platform);..\TinyUI;..\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libmfx_d.lib;dxva2.lib;dwmapi.lib;d3d9.lib;d3d11.lib;dxgi.lib</AdditionalDependencies>
+      <AdditionalDependencies>libmfx.lib;dxva2.lib;dwmapi.lib;d3d9.lib;d3d11.lib;dxgi.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Lib>
   </ItemDefinitionGroup>

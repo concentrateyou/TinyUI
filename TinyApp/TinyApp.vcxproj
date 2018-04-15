@@ -100,7 +100,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib\x86;$(INTELMEDIASDKROOT)\lib\$(Platform);$(PROTOBUF_DIR)\lib;..\Debug;..\ThirdParty\mpg123\lib\x86;..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\libfaac\lib\x86;..\ThirdParty\x264\libs\32bit;..\ThirdParty\librtmp\lib\x86;..\ThirdParty\libfaad\lib\x86;..\ThirdParty\jsoncpp\lib\x86;..\ThirdParty\sqlite;..\ThirdParty\zlib\lib;..\ThirdParty\opengl\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>TinyUI.lib;DXFramework.lib;DShowCapture.lib;Decode.lib;Encode.lib;libmfx_d.lib;dxva2.lib;dwmapi.lib;d3d9.lib;d3d11.lib;dxgi.lib;D2D1.lib;jsoncpp.lib;zlib.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>TinyUI.lib;DXFramework.lib;DShowCapture.lib;Decode.lib;Encode.lib;libmfx.lib;dxva2.lib;dwmapi.lib;d3d9.lib;d3d11.lib;dxgi.lib;D2D1.lib;jsoncpp.lib;zlib.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <ProjectReference>
