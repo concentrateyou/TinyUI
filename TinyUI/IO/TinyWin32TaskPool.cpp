@@ -94,15 +94,13 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		BOOL TinyWin32Task::Close()
+		void TinyWin32Task::Close()
 		{
 			if (m_work != NULL)
 			{
 				CloseThreadpoolWork(m_work);
 				m_work = NULL;
-				return TRUE;
 			}
-			return FALSE;
 		}
 		void TinyWin32Task::WorkCallback(PTP_CALLBACK_INSTANCE Instance, PVOID  Context, PTP_WORK  Work)
 		{
@@ -159,15 +157,13 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		BOOL TinyWin32Timer::Close()
+		void TinyWin32Timer::Close()
 		{
 			if (m_timer != NULL)
 			{
 				CloseThreadpoolTimer(m_timer);
 				m_timer = NULL;
-				return TRUE;
 			}
-			return FALSE;
 		}
 		void NTAPI TinyWin32Timer::TimerCallback(PTP_CALLBACK_INSTANCE Instance, PVOID  Context, PTP_TIMER Timer)
 		{
@@ -215,15 +211,13 @@ namespace TinyUI
 			}
 			return FALSE;
 		}
-		BOOL TinyWin32Waiter::Close()
+		void TinyWin32Waiter::Close()
 		{
 			if (m_wait != NULL)
 			{
 				CloseThreadpoolWait(m_wait);
 				m_wait = NULL;
-				return TRUE;
 			}
-			return FALSE;
 		}
 		void NTAPI TinyWin32Waiter::WaitCallback(PTP_CALLBACK_INSTANCE Instance, PVOID  Context, PTP_WAIT Wait, TP_WAIT_RESULT WaitResult)
 		{

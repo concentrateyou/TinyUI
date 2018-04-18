@@ -43,7 +43,7 @@ namespace TinyUI
 			virtual ~TinyWin32Task();
 			BOOL Submit(Closure&& callback);
 			BOOL Wait(BOOL fCancelPendingCallbacks);
-			BOOL Close();
+			void Close();
 		private:
 			static void NTAPI WorkCallback(PTP_CALLBACK_INSTANCE Instance, PVOID  Context, PTP_WORK  Work);
 		protected:
@@ -62,7 +62,7 @@ namespace TinyUI
 			virtual ~TinyWin32Timer();
 			BOOL Submit(DWORD msDelay, DWORD msPeriod, Closure&& callback);
 			BOOL Wait(BOOL fCancelPendingCallbacks);
-			BOOL Close();
+			void Close();
 		private:
 			static void NTAPI TimerCallback(PTP_CALLBACK_INSTANCE Instance, PVOID  Context, PTP_TIMER Timer);
 		protected:
@@ -80,7 +80,7 @@ namespace TinyUI
 			TinyWin32Waiter(TinyWin32TaskPool* pTaskPool = NULL);
 			virtual ~TinyWin32Waiter();
 			BOOL Submit(HANDLE handle, DWORD msDelay, Closure&& callback);
-			BOOL Close();
+			void Close();
 		private:
 			static void NTAPI WaitCallback(PTP_CALLBACK_INSTANCE Instance, PVOID  Context, PTP_WAIT Wait, TP_WAIT_RESULT WaitResult);
 		protected:

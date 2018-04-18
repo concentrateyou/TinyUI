@@ -9,6 +9,10 @@ namespace TinyUI
 {
 	namespace IO
 	{
+		template <class T>
+		class TinyFuture;
+		template<class T>
+		class TinyPromise;
 	};
 }
 
