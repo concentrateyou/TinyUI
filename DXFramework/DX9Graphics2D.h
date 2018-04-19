@@ -3,6 +3,7 @@
 #include "DX9.h"
 #include "DX9Image2D.h"
 #include "DX9Font2D.h"
+#include "DX9Line2D.h"
 
 namespace DXFramework
 {
@@ -21,6 +22,7 @@ namespace DXFramework
 		BOOL	Initialize(HWND hWND, const TinySize& size);
 		BOOL	DrawImage(DX9Image2D* ps, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F, FLOAT rotate = 0.0F, BOOL bFlipH = FALSE, BOOL bFlipV = FALSE);
 		BOOL	DrawString(DX9Font2D* ps, LPCSTR pzText, INT count, LPRECT pRect, DWORD dwFormat, D3DCOLOR color);
+		BOOL	DrawLine(DX9Line2D* ps, TinyPoint list[4], D3DCOLOR color);
 		void	SetRenderView(DX9RenderView* render2D);
 		void	Enter();
 		void	Leave();

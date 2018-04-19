@@ -203,6 +203,7 @@
     <ClInclude Include="DX2D.h" />
     <ClInclude Include="DX9.h" />
     <ClInclude Include="DX9Graphics2D.h" />
+    <ClInclude Include="DX9Line2D.h" />
     <ClInclude Include="DX9RenderView.h" />
     <ClInclude Include="DX9Texture2D.h" />
     <ClInclude Include="DXCamera.h" />
@@ -234,6 +235,7 @@
     <ClCompile Include="DX2D.cpp" />
     <ClCompile Include="DX9.cpp" />
     <ClCompile Include="DX9Graphics2D.cpp" />
+    <ClCompile Include="DX9Line2D.cpp" />
     <ClCompile Include="DX9RenderView.cpp" />
     <ClCompile Include="DX9Texture2D.cpp" />
     <ClCompile Include="DXCamera.cpp" />
