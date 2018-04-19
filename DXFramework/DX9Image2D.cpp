@@ -162,34 +162,6 @@ namespace DXFramework
 			LOG(ERROR) << "[Process] SetTexture:" << hRes;
 			return FALSE;
 		}
-		hRes = dx9.GetD3D()->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-		if (hRes != S_OK)
-		{
-			TRACE("[Initialize] SetRenderState D3DTSS_ALPHAOP:%d\n", hRes);
-			LOG(ERROR) << "[Initialize] SetRenderState D3DTSS_ALPHAOP:" << hRes;
-			return FALSE;
-		}
-		hRes = dx9.GetD3D()->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
-		if (hRes != S_OK)
-		{
-			TRACE("[Initialize] SetRenderState D3DTSS_COLOROP:%d\n", hRes);
-			LOG(ERROR) << "[Initialize] SetRenderState D3DTSS_COLOROP:" << hRes;
-			return FALSE;
-		}
-		hRes = dx9.GetD3D()->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-		if (hRes != S_OK)
-		{
-			TRACE("[Initialize] SetRenderState D3DTSS_COLORARG1:%d\n", hRes);
-			LOG(ERROR) << "[Initialize] SetRenderState D3DTSS_COLORARG1:" << hRes;
-			return FALSE;
-		}
-		hRes = dx9.GetD3D()->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
-		if (hRes != S_OK)
-		{
-			TRACE("[Initialize] SetRenderState D3DTSS_COLORARG2:%d\n", hRes);
-			LOG(ERROR) << "[Initialize] SetRenderState D3DTSS_COLORARG2:" << hRes;
-			return FALSE;
-		}
 		hRes = dx9.GetD3D()->SetStreamSource(0, m_vertexs, 0, sizeof(VERTEXTYPE));
 		if (hRes != S_OK)
 		{

@@ -33,15 +33,15 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX9Graphics2D::DrawImage(DX9Image2D* ps)
+	BOOL DX9Graphics2D::DrawImage(DX9Image2D* image)
 	{
-		if (!ps)
+		if (!image)
 			return FALSE;
-		if (ps->IsEmpty())
+		if (image->IsEmpty())
 			return FALSE;
-		if (!ps->Translate(m_dx9))
+		if (!image->Translate(m_dx9))
 			return FALSE;
-		if (!ps->Process(m_dx9))
+		if (!image->Process(m_dx9))
 			return FALSE;
 		return TRUE;
 	}

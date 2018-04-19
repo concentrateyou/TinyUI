@@ -124,6 +124,48 @@ namespace DXFramework
 			LOG(ERROR) << "[Initialize] SetRenderState D3DRS_LIGHTING:" << hRes;
 			return FALSE;
 		}
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetTextureStageState D3DTSS_COLORARG1:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetTextureStageState D3DTSS_COLORARG1:" << hRes;
+			return FALSE;
+		}
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetTextureStageState D3DTSS_COLORARG2:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetTextureStageState D3DTSS_COLORARG2:" << hRes;
+			return FALSE;
+		}
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetTextureStageState D3DTSS_COLOROP:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetTextureStageState D3DTSS_COLOROP:" << hRes;
+			return FALSE;
+		}
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetTextureStageState D3DTSS_ALPHAARG1:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetTextureStageState D3DTSS_ALPHAARG1:" << hRes;
+			return FALSE;
+		}
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetTextureStageState D3DTSS_ALPHAARG2:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetTextureStageState D3DTSS_ALPHAARG2:" << hRes;
+			return FALSE;
+		}
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
+		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetTextureStageState D3DTSS_ALPHAOP:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetTextureStageState D3DTSS_ALPHAOP:" << hRes;
+			return FALSE;
+		}
 		m_background2D.Reset(new DX9RenderView(*this));
 		if (!m_background2D->Create())
 			return FALSE;
@@ -215,6 +257,34 @@ namespace DXFramework
 		{
 			TRACE("[Initialize] SetRenderState D3DRS_DESTBLEND:%d\n", hRes);
 			LOG(ERROR) << "[Initialize] SetRenderState D3DRS_DESTBLEND:" << hRes;
+			return FALSE;
+		}
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetTextureStageState D3DTSS_COLORARG1:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetTextureStageState D3DTSS_COLORARG1:" << hRes;
+			return FALSE;
+		}
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetTextureStageState D3DTSS_COLOROP:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetTextureStageState D3DTSS_COLOROP:" << hRes;
+			return FALSE;
+		}
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetTextureStageState D3DTSS_ALPHAARG1:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetTextureStageState D3DTSS_ALPHAARG1:" << hRes;
+			return FALSE;
+		}
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
+		if (hRes != S_OK)
+		{
+			TRACE("[Initialize] SetTextureStageState D3DTSS_ALPHAOP:%d\n", hRes);
+			LOG(ERROR) << "[Initialize] SetTextureStageState D3DTSS_ALPHAOP:" << hRes;
 			return FALSE;
 		}
 		m_background2D.Reset(new DX9RenderView(*this));
