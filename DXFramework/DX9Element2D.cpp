@@ -12,24 +12,19 @@ namespace DXFramework
 	{
 	}
 
-	void DX9Element2D::SetTrackingPosition(const TinyPoint& position)
+	TinyRectangle DX9Element2D::GetViewport() const
 	{
-		m_trackerRect.OffsetRect(position);
-	}
-	TinyPoint DX9Element2D::GetTrackingPosition() const
-	{
-		return m_trackerRect.Position();
-	}
-	void DX9Element2D::SetTrackingSize(const TinySize& scale)
-	{
-		m_trackerRect.SetSize(scale);
+		return m_trackerRect;
 	}
 
-	TinySize DX9Element2D::GetTrackingSize() const
+	void DX9Element2D::SetViewport(const TinyRectangle& s)
 	{
-		return m_trackerRect.Size();
+		m_trackerRect.SetRect(s.Position(), s.Size());
 	}
-
+	void DX9Element2D::SetViewport(const TinyPoint& pos, const TinySize& size)
+	{
+		m_trackerRect.SetRect(pos, size);
+	}
 	BOOL DX9Element2D::PtInRect(const TinyPoint& pos)
 	{
 		return m_trackerRect.PtInRect(pos);

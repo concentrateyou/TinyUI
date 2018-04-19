@@ -18,17 +18,27 @@ namespace DXFramework
 	public:
 		DX9Image2D();
 		virtual ~DX9Image2D();
-		BOOL Translate(DX9& dx8, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F, FLOAT rotate = 0.0F, BOOL bFlipH = FALSE, BOOL bFlipV = FALSE);
+		BOOL Translate(DX9& dx9);
 		BOOL Load(DX9& dx9, const CHAR* pzFile);
 		BOOL Load(DX9& dx9, const BYTE* bits, LONG size);
-		BOOL Create(DX9& dx9, INT cx, INT cy, const BYTE* bits) OVERRIDE;
+		void SetRotate(FLOAT angle);
+		void SetScale(const D3DXVECTOR2& scale);
+		void SetTranslate(const D3DXVECTOR2& pos);
+		void SetFlipH(BOOL bFlag);
+		void SetFlipV(BOOL bFlag);
 	public:
+		BOOL Create(DX9& dx9, INT cx, INT cy, const BYTE* bits) OVERRIDE;
 		BOOL Allocate(DX9& dx9) OVERRIDE;
 		BOOL Process(DX9& dx9) OVERRIDE;
 		void Deallocate(DX9& dx9) OVERRIDE;
 	private:
 		BOOL Initialize(DX9& dx9);
 	protected:
+		BOOL								m_bFlipH;
+		BOOL								m_bFlipV;
+		FLOAT								m_angle;
+		D3DXVECTOR2							m_pos;
+		D3DXVECTOR2							m_scale;
 		TinySize							m_size;
 		TinyComPtr<IDirect3DVertexBuffer9>	m_vertexs;
 	};

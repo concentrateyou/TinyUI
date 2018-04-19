@@ -55,11 +55,15 @@ LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 	GetClientRect(&s);
 	m_graphics.Initialize(m_hWND, s.Size());
 	m_graphics.SetRenderView(NULL);
-	m_image2D.Load(m_graphics.GetDX9(), "D:\\timg.jpg");
-	m_image2D.SetTrackingSize(s.Size());
-	m_image2D.SetTrackingPosition({ 50,50 });
+	m_image2D[0].Load(m_graphics.GetDX9(), "D:\\1.png");
+	m_image2D[0].SetViewport(s);
+
+	m_image2D[1].Load(m_graphics.GetDX9(), "D:\\timg.jpg");
+	m_image2D[1].SetViewport(s);
+
 	m_graphics.GetRenderView()->BeginDraw();
-	m_graphics.DrawImage(&m_image2D, 0.5F, 0.5F);
+	m_graphics.DrawImage(&m_image2D[0]);
+	m_graphics.DrawImage(&m_image2D[1]);
 	m_graphics.GetRenderView()->EndDraw();
 	m_graphics.Present();
 	/*m_player.Open(m_hWND, "D:\\Ñ¸À×ÏÂÔØ\\Ñª¹ÛÒô\\[Ñª¹ÛÒô]The.Bold.the.Corrupt.and.the.Beautiful.2017.BluRay.720p.x264.AC3-CnSCG.mkv");

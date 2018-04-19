@@ -33,7 +33,7 @@ namespace TinyUI
 		void GetModifyPointers(INT nHandle, INT**ppx, INT**ppy, INT* px, INT*py);
 		BOOL TrackHandle(INT nHandle, HWND hWND, const TinyPoint& point);
 		void GetTrueRect(LPRECT lpTrueRect) const;
-	public:
+	protected:
 		INT				m_handleSize;
 		BOOL			m_bErase;
 		BOOL			m_bFinalErase;

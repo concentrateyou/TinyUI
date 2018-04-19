@@ -67,8 +67,8 @@ namespace DXFramework
 		ZeroMemory(&vp, sizeof(vp));
 		UINT count = 1;
 		dx11.GetImmediateContext()->RSGetViewports(&count, &vp);
-		XMFLOAT2 scale(static_cast<FLOAT>(GetTrackingSize().cx) * ratioX, static_cast<FLOAT>(GetTrackingSize().cy) * ratioY);
-		XMFLOAT2 pos(static_cast<FLOAT>(GetTrackingPosition().x) * ratioX, static_cast<FLOAT>(GetTrackingPosition().y) * ratioY);
+		XMFLOAT2 scale(static_cast<FLOAT>(m_trackerRect.Size().cx) * ratioX, static_cast<FLOAT>(m_trackerRect.Size().cy) * ratioY);
+		XMFLOAT2 pos(static_cast<FLOAT>(m_trackerRect.Position().x) * ratioX, static_cast<FLOAT>(m_trackerRect.Position().y) * ratioY);
 		XMFLOAT2 size(vp.Width, vp.Height);
 		left = (FLOAT)((size.x / 2) * -1) + pos.x;
 		right = left + scale.x;
@@ -105,7 +105,7 @@ namespace DXFramework
 			D3D11_TEXTURE2D_DESC desc;
 			m_texture2D->GetDesc(&desc);
 			m_size.SetSize(desc.Width, desc.Height);
-			SetTrackingSize(m_size);
+			SetViewport(TinyPoint(), m_size);
 			return TRUE;
 		}
 		return FALSE;
@@ -120,7 +120,7 @@ namespace DXFramework
 			D3D11_TEXTURE2D_DESC desc;
 			m_texture2D->GetDesc(&desc);
 			m_size.SetSize(desc.Width, desc.Height);
-			SetTrackingSize(m_size);
+			SetViewport(TinyPoint(), m_size);
 			return TRUE;
 		}
 		return FALSE;
@@ -135,7 +135,7 @@ namespace DXFramework
 			D3D11_TEXTURE2D_DESC desc;
 			m_texture2D->GetDesc(&desc);
 			m_size.SetSize(desc.Width, desc.Height);
-			SetTrackingSize(m_size);
+			SetViewport(TinyPoint(), m_size);
 			return TRUE;
 		}
 		return FALSE;
@@ -150,7 +150,7 @@ namespace DXFramework
 			D3D11_TEXTURE2D_DESC desc;
 			m_texture2D->GetDesc(&desc);
 			m_size.SetSize(desc.Width, desc.Height);
-			SetTrackingSize(m_size);
+			SetViewport(TinyPoint(), m_size);
 			return TRUE;
 		}
 		return FALSE;
@@ -167,7 +167,7 @@ namespace DXFramework
 			D3D11_TEXTURE2D_DESC desc;
 			m_texture2D->GetDesc(&desc);
 			m_size.SetSize(desc.Width, desc.Height);
-			SetTrackingSize(m_size);
+			SetViewport(TinyPoint(), m_size);
 			return TRUE;
 		}
 		return FALSE;
@@ -184,7 +184,7 @@ namespace DXFramework
 			D3D11_TEXTURE2D_DESC desc;
 			m_texture2D->GetDesc(&desc);
 			m_size.SetSize(desc.Width, desc.Height);
-			SetTrackingSize(m_size);
+			SetViewport(TinyPoint(), m_size);
 			return TRUE;
 		}
 		return FALSE;

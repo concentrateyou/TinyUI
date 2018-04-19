@@ -12,21 +12,17 @@ namespace DXFramework
 	{
 	}
 
-	void DX11Element2D::SetTrackingPosition(const TinyPoint& position)
+	TinyRectangle DX11Element2D::GetViewport() const
 	{
-		m_trackerRect.SetPosition(position);
+		return m_trackerRect;
 	}
-	TinyPoint DX11Element2D::GetTrackingPosition() const
+	void DX11Element2D::SetViewport(const TinyRectangle& s)
 	{
-		return m_trackerRect.Position();
+		m_trackerRect.SetRect(s.Position(), s.Size());
 	}
-	void DX11Element2D::SetTrackingSize(const TinySize& scale)
+	void DX11Element2D::SetViewport(const TinyPoint& pos, const TinySize& size)
 	{
-		m_trackerRect.SetSize(scale);
-	}
-	TinySize DX11Element2D::GetTrackingSize() const
-	{
-		return m_trackerRect.Size();
+		m_trackerRect.SetRect(pos, size);
 	}
 	BOOL DX11Element2D::PtInRect(const TinyPoint& pos)
 	{
