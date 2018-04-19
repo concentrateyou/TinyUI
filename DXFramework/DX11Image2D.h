@@ -44,8 +44,9 @@ namespace DXFramework
 	private:
 		BOOL Initialize(DX11& dx11);
 	protected:
-		TinyComPtr<ID3D11Buffer>	m_vertexBuffer;
-		TinyComPtr<ID3D11Buffer>	m_indexBuffer;
+		TinySize					m_size;
+		TinyComPtr<ID3D11Buffer>	m_vertexs;
+		TinyComPtr<ID3D11Buffer>	m_indexs;
 		TinyScopedArray<VERTEXTYPE> m_vertices;
 	};
 }

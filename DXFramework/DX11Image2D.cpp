@@ -40,7 +40,7 @@ namespace DXFramework
 		vertexData.pSysMem = vertices.Ptr();
 		vertexData.SysMemPitch = 0;
 		vertexData.SysMemSlicePitch = 0;
-		HRESULT hRes = dx11.GetD3D()->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
+		HRESULT hRes = dx11.GetD3D()->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexs);
 		if (hRes != S_OK)
 			return FALSE;
 		indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -51,7 +51,7 @@ namespace DXFramework
 		indexData.pSysMem = indices.Ptr();
 		indexData.SysMemPitch = 0;
 		indexData.SysMemSlicePitch = 0;
-		hRes = dx11.GetD3D()->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
+		hRes = dx11.GetD3D()->CreateBuffer(&indexBufferDesc, &indexData, &m_indexs);
 		if (hRes != S_OK)
 			return FALSE;
 		m_vertices.Reset(new VERTEXTYPE[vertexCount]);
@@ -67,8 +67,8 @@ namespace DXFramework
 		ZeroMemory(&vp, sizeof(vp));
 		UINT count = 1;
 		dx11.GetImmediateContext()->RSGetViewports(&count, &vp);
-		XMFLOAT2 scale(static_cast<FLOAT>(GetScale().cx) * ratioX, static_cast<FLOAT>(GetScale().cy) * ratioY);
-		XMFLOAT2 pos(static_cast<FLOAT>(GetPosition().x) * ratioX, static_cast<FLOAT>(GetPosition().y) * ratioY);
+		XMFLOAT2 scale(static_cast<FLOAT>(GetTrackingSize().cx) * ratioX, static_cast<FLOAT>(GetTrackingSize().cy) * ratioY);
+		XMFLOAT2 pos(static_cast<FLOAT>(GetTrackingPosition().x) * ratioX, static_cast<FLOAT>(GetTrackingPosition().y) * ratioY);
 		XMFLOAT2 size(vp.Width, vp.Height);
 		left = (FLOAT)((size.x / 2) * -1) + pos.x;
 		right = left + scale.x;
@@ -88,11 +88,11 @@ namespace DXFramework
 		m_vertices[5].position = XMFLOAT3(right, bottom, 0.0F);
 		m_vertices[5].texture = XMFLOAT2(1.0F, 1.0F);
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
-		HRESULT hRes = dx11.GetImmediateContext()->Map(m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		HRESULT hRes = dx11.GetImmediateContext()->Map(m_vertexs, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		if (hRes != S_OK)
 			return FALSE;
 		memcpy(mappedResource.pData, (void*)m_vertices.Ptr(), sizeof(VERTEXTYPE) * vertexCount);
-		dx11.GetImmediateContext()->Unmap(m_vertexBuffer, 0);
+		dx11.GetImmediateContext()->Unmap(m_vertexs, 0);
 		return TRUE;
 	}
 
@@ -104,9 +104,8 @@ namespace DXFramework
 		{
 			D3D11_TEXTURE2D_DESC desc;
 			m_texture2D->GetDesc(&desc);
-			TinySize size(desc.Width, desc.Height);
-			SetSize(size);
-			SetScale(size);
+			m_size.SetSize(desc.Width, desc.Height);
+			SetTrackingSize(m_size);
 			return TRUE;
 		}
 		return FALSE;
@@ -120,9 +119,8 @@ namespace DXFramework
 		{
 			D3D11_TEXTURE2D_DESC desc;
 			m_texture2D->GetDesc(&desc);
-			TinySize size(desc.Width, desc.Height);
-			SetSize(size);
-			SetScale(size);
+			m_size.SetSize(desc.Width, desc.Height);
+			SetTrackingSize(m_size);
 			return TRUE;
 		}
 		return FALSE;
@@ -136,9 +134,8 @@ namespace DXFramework
 		{
 			D3D11_TEXTURE2D_DESC desc;
 			m_texture2D->GetDesc(&desc);
-			TinySize size(desc.Width, desc.Height);
-			SetSize(size);
-			SetScale(size);
+			m_size.SetSize(desc.Width, desc.Height);
+			SetTrackingSize(m_size);
 			return TRUE;
 		}
 		return FALSE;
@@ -152,9 +149,8 @@ namespace DXFramework
 		{
 			D3D11_TEXTURE2D_DESC desc;
 			m_texture2D->GetDesc(&desc);
-			TinySize size1(desc.Width, desc.Height);
-			SetSize(size1);
-			SetScale(size1);
+			m_size.SetSize(desc.Width, desc.Height);
+			SetTrackingSize(m_size);
 			return TRUE;
 		}
 		return FALSE;
@@ -170,9 +166,8 @@ namespace DXFramework
 		{
 			D3D11_TEXTURE2D_DESC desc;
 			m_texture2D->GetDesc(&desc);
-			TinySize size(desc.Width, desc.Height);
-			SetSize(size);
-			SetScale(size);
+			m_size.SetSize(desc.Width, desc.Height);
+			SetTrackingSize(m_size);
 			return TRUE;
 		}
 		return FALSE;
@@ -188,9 +183,8 @@ namespace DXFramework
 		{
 			D3D11_TEXTURE2D_DESC desc;
 			m_texture2D->GetDesc(&desc);
-			TinySize size(desc.Width, desc.Height);
-			SetSize(size);
-			SetScale(size);
+			m_size.SetSize(desc.Width, desc.Height);
+			SetTrackingSize(m_size);
 			return TRUE;
 		}
 		return FALSE;
@@ -198,8 +192,8 @@ namespace DXFramework
 
 	void DX11Image2D::Destory()
 	{
-		m_vertexBuffer.Release();
-		m_indexBuffer.Release();
+		m_vertexs.Release();
+		m_indexs.Release();
 		DX11Texture2D::Destory();
 	}
 
@@ -304,8 +298,8 @@ namespace DXFramework
 	{
 		UINT stride = sizeof(VERTEXTYPE);
 		UINT offset = 0;
-		dx11.GetImmediateContext()->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
-		dx11.GetImmediateContext()->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		dx11.GetImmediateContext()->IASetVertexBuffers(0, 1, &m_vertexs, &stride, &offset);
+		dx11.GetImmediateContext()->IASetIndexBuffer(m_indexs, DXGI_FORMAT_R32_UINT, 0);
 		dx11.GetImmediateContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		return TRUE;
 	}

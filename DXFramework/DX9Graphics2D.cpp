@@ -41,11 +41,9 @@ namespace DXFramework
 			return FALSE;
 		if (!ps->Translate(m_dx9, ratioX, ratioY, rotate, bFlipH, bFlipV))
 			return FALSE;
-		if (ps->Process(m_dx9))
-		{
-			return TRUE;
-		}
-		return FALSE;
+		if (!ps->Process(m_dx9))
+			return FALSE;
+		return TRUE;
 	}
 	BOOL DX9Graphics2D::DrawString(DX9Font2D* ps, LPCSTR pzText, INT count, LPRECT pRect, DWORD dwFormat, D3DCOLOR color)
 	{

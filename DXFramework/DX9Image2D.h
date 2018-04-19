@@ -23,15 +23,14 @@ namespace DXFramework
 		BOOL Load(DX9& dx9, const BYTE* bits, LONG size);
 		BOOL Create(DX9& dx9, INT cx, INT cy, const BYTE* bits) OVERRIDE;
 	public:
-		virtual INT	GetVertexCount() const;
-	public:
 		BOOL Allocate(DX9& dx9) OVERRIDE;
 		BOOL Process(DX9& dx9) OVERRIDE;
 		void Deallocate(DX9& dx9) OVERRIDE;
 	private:
 		BOOL Initialize(DX9& dx9);
 	protected:
-		TinyComPtr<IDirect3DVertexBuffer9>	m_vertexBuffer;
+		TinySize							m_size;
+		TinyComPtr<IDirect3DVertexBuffer9>	m_vertexs;
 	};
 }
 

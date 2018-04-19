@@ -144,7 +144,7 @@ namespace LAV
 				m_image.Destory();
 				if (!m_image.Create(m_graphics.GetDX9(), vih.bmiHeader.biWidth, vih.bmiHeader.biHeight, NULL))
 					return FALSE;
-				m_image.SetScale(s.Size());
+				m_image.SetTrackingSize(s.Size());
 			}
 			if (mediaType->majortype == MEDIATYPE_Audio)
 			{
@@ -333,7 +333,7 @@ namespace LAV
 			return FALSE;
 		if (!m_graphics.GetRenderView()->BeginDraw())
 			return FALSE;
-		if (!m_graphics.DrawImage(&m_image, 1.0F, 1.0F, 0.0F, FALSE, TRUE))
+		if (!m_graphics.DrawImage(&m_image, 0.0F, FALSE, TRUE))
 			return FALSE;
 		if (!m_graphics.GetRenderView()->EndDraw())
 			return FALSE;

@@ -17,22 +17,19 @@ namespace DXFramework
 		DX11Element2D();
 		virtual ~DX11Element2D();
 	public:
-		TinyString GetName() const;
-		TinyPoint GetPosition() const;
-		TinySize GetScale() const;
-		TinySize GetSize() const;
-		void	SetPosition(const TinyPoint& pos);
-		void	SetScale(const TinySize& size);
-		void	SetSize(const TinySize& size);
-		void	SetName(const TinyString& name);
+		TinyString GetElementName() const;
+		TinyPoint GetTrackingPosition() const;
+		TinySize GetTrackingSize() const;
+		void	SetTrackingPosition(const TinyPoint& pos);
+		void	SetTrackingSize(const TinySize& size);
+		void	SetElementName(const TinyString& name);
 		BOOL	PtInRect(const TinyPoint& pos);
 	public:
 		virtual BOOL Allocate(DX11& dx11) = 0;
 		virtual BOOL Process(DX11& dx11) = 0;
 		virtual void Deallocate(DX11& dx11) = 0;
 	public:
-		TinyString		m_name;
-		TinySize		m_size;
+		TinyString		m_szElement;
 	};
 }
 

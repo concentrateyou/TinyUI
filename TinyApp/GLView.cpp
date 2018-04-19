@@ -51,34 +51,36 @@ BOOL GLView::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
 LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	/*TinyRectangle s;
+	TinyRectangle s;
 	GetClientRect(&s);
 	m_graphics.Initialize(m_hWND, s.Size());
 	m_graphics.SetRenderView(NULL);
-	m_image2D.Load(m_graphics.GetDX9(), "D:\\123.bmp");
-	m_image2D.SetScale(s.Size());
+	m_image2D.Load(m_graphics.GetDX9(), "D:\\timg.jpg");
+	m_image2D.SetTrackingSize(s.Size());
+	m_image2D.SetTrackingPosition({ 50,50 });
 	m_graphics.GetRenderView()->BeginDraw();
-	m_graphics.DrawImage(&m_image2D, 1.0, 1.0, 0);
+	m_graphics.DrawImage(&m_image2D, 0.5F, 0.5F);
 	m_graphics.GetRenderView()->EndDraw();
-	m_graphics.Present();*/
-	m_player.Open(m_hWND, "D:\\迅雷下载\\血观音\\[血观音]The.Bold.the.Corrupt.and.the.Beautiful.2017.BluRay.720p.x264.AC3-CnSCG.mkv");
+	m_graphics.Present();
+	/*m_player.Open(m_hWND, "D:\\迅雷下载\\血观音\\[血观音]The.Bold.the.Corrupt.and.the.Beautiful.2017.BluRay.720p.x264.AC3-CnSCG.mkv");
 	LONGLONG s;
 	m_player.GetDuration(s);
 	m_player.SetPosition(s / 2);
-	m_player.Play();
+	m_player.Play();*/
 	return FALSE;
 }
 
 LRESULT GLView::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	m_player.Close();
+	//m_player.Close();
 	return FALSE;
 }
 
 LRESULT GLView::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
+	m_graphics.Present();
 	return FALSE;
 }
 

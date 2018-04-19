@@ -196,8 +196,8 @@ namespace DXFramework
 					return FALSE;
 				}
 				TinyAutoLock lock(*m_pDX11);
-				TinyPoint pos = m_image.GetPosition();
-				TinySize scale = m_image.GetScale();
+				TinyPoint pos = m_image.GetTrackingPosition();
+				TinySize scale = m_image.GetTrackingSize();
 				m_image.Destory();
 				if (!m_image.Load(*m_pDX11, pTextureDATA->TextureHandle))
 				{
@@ -206,19 +206,19 @@ namespace DXFramework
 				}
 				if (!pos.IsEmpty())
 				{
-					m_image.SetPosition(pos);
+					m_image.SetTrackingPosition(pos);
 				}
 				if (!scale.IsEmpty())
 				{
-					m_image.SetScale(scale);
+					m_image.SetTrackingSize(scale);
 				}
 				break;
 			}
 			if (pCaptureDATA->CaptureType == CAPTURETYPE_MEMORYTEXTURE)
 			{
 				TinyAutoLock lock(*m_pDX11);
-				TinyPoint pos = m_image.GetPosition();
-				TinySize scale = m_image.GetScale();
+				TinyPoint pos = m_image.GetTrackingPosition();
+				TinySize scale = m_image.GetTrackingSize();
 				m_image.Destory();
 				if (!m_image.Create(*m_pDX11, pCaptureDATA->Size.cx, pCaptureDATA->Size.cy, NULL, FALSE))
 				{
@@ -227,11 +227,11 @@ namespace DXFramework
 				}
 				if (!pos.IsEmpty())
 				{
-					m_image.SetPosition(pos);
+					m_image.SetTrackingPosition(pos);
 				}
 				if (!scale.IsEmpty())
 				{
-					m_image.SetScale(scale);
+					m_image.SetTrackingSize(scale);
 				}
 				break;
 			}

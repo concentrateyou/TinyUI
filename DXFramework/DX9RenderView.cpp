@@ -96,20 +96,6 @@ namespace DXFramework
 			LOG(ERROR) << "[BeginDraw] BeginScene::" << hRes;
 			return FALSE;
 		}
-		hRes = m_dx9.GetD3D()->SetFVF(D3DFVF_XYZRHW | D3DFVF_TEX1);
-		if (hRes != S_OK)
-		{
-			TRACE("[BeginDraw] SetFVF:%d\n", hRes);
-			LOG(ERROR) << "[BeginDraw] SetFVF::" << hRes;
-			return FALSE;
-		}
-		hRes = m_dx9.GetD3D()->SetRenderState(D3DRS_LIGHTING, FALSE);
-		if (hRes != S_OK)
-		{
-			TRACE("[BeginDraw] SetRenderState:%d\n", hRes);
-			LOG(ERROR) << "[BeginDraw] SetRenderState::" << hRes;
-			return FALSE;
-		}
 		return TRUE;
 	}
 	BOOL DX9RenderView::EndDraw()

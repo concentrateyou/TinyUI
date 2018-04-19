@@ -12,40 +12,34 @@ namespace DXFramework
 	{
 	}
 
-	void DX9Element2D::SetPosition(const TinyPoint& position)
+	void DX9Element2D::SetTrackingPosition(const TinyPoint& position)
 	{
-		m_trackerRect.SetPosition(position);
+		m_trackerRect.OffsetRect(position);
 	}
-	TinyPoint DX9Element2D::GetPosition() const
+	TinyPoint DX9Element2D::GetTrackingPosition() const
 	{
 		return m_trackerRect.Position();
 	}
-	void DX9Element2D::SetScale(const TinySize& scale)
+	void DX9Element2D::SetTrackingSize(const TinySize& scale)
 	{
 		m_trackerRect.SetSize(scale);
 	}
-	void DX9Element2D::SetSize(const TinySize& size)
-	{
-		m_size = size;
-	}
-	TinySize DX9Element2D::GetScale() const
+
+	TinySize DX9Element2D::GetTrackingSize() const
 	{
 		return m_trackerRect.Size();
 	}
-	TinySize DX9Element2D::GetSize() const
-	{
-		return m_size;
-	}
+
 	BOOL DX9Element2D::PtInRect(const TinyPoint& pos)
 	{
 		return m_trackerRect.PtInRect(pos);
 	}
-	void DX9Element2D::SetName(const TinyString& name)
+	void DX9Element2D::SetElementName(const TinyString& name)
 	{
-		m_name = std::move(name);
+		m_szElement = std::move(name);
 	}
-	TinyString DX9Element2D::GetName() const
+	TinyString DX9Element2D::GetElementName() const
 	{
-		return m_name;
+		return m_szElement;
 	}
 }
