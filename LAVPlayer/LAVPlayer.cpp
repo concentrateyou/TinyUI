@@ -108,7 +108,7 @@ namespace LAV
 		hRes = m_asmstream->Count(&streams);
 		if (hRes != S_OK)
 			return FALSE;
-		for (DWORD i = 0;i < streams;i++)
+		for (DWORD i = 0; i < streams; i++)
 		{
 			DWORD dwFlags;
 			TinyScopedPtr<WCHAR, ComMemeryDeleter<WCHAR>> wszName;
@@ -197,6 +197,78 @@ namespace LAV
 		m_xaudio.Close();
 		Uninitialize();
 	}
+	BOOL LAVPlayer::GetDuration(LONGLONG& time)
+	{
+		time = 0;
+		if (!m_lavFilter)
+			return FALSE;
+		TinyComPtr<IMediaSeeking> seeking;
+		if (FAILED(m_lavFilter->QueryInterface(__uuidof(IMediaSeeking), (void **)&seeking)))
+			return FALSE;
+		if (FAILED(seeking->GetDuration(&time)))
+			return FALSE;
+		return TRUE;
+	}
+	BOOL LAVPlayer::GetAvailable(LONGLONG& time1, LONGLONG time2)
+	{
+		time1 = 0;
+		time2 = 0;
+		if (!m_lavFilter)
+			return FALSE;
+		TinyComPtr<IMediaSeeking> seeking;
+		if (FAILED(m_lavFilter->QueryInterface(__uuidof(IMediaSeeking), (void **)&seeking)))
+			return FALSE;
+		if (FAILED(seeking->GetAvailable(&time1, &time2)))
+			return FALSE;
+		return TRUE;
+	}
+	BOOL LAVPlayer::GetPosition(LONGLONG& pos)
+	{
+		pos = 0;
+		if (!m_lavFilter)
+			return FALSE;
+		TinyComPtr<IMediaSeeking> seeking;
+		if (FAILED(m_lavFilter->QueryInterface(__uuidof(IMediaSeeking), (void **)&seeking)))
+			return FALSE;
+		if (FAILED(seeking->GetPositions(&pos, NULL)))
+			return FALSE;
+		return TRUE;
+	}
+	BOOL LAVPlayer::SetPosition(LONGLONG pos)
+	{
+		if (!m_lavFilter)
+			return FALSE;
+		TinyComPtr<IMediaSeeking> seeking;
+		if (FAILED(m_lavFilter->QueryInterface(__uuidof(IMediaSeeking), (void **)&seeking)))
+			return FALSE;
+		if (FAILED(seeking->SetPositions(&pos, AM_SEEKING_AbsolutePositioning, NULL, AM_SEEKING_AbsolutePositioning)))
+			return FALSE;
+		return TRUE;
+	}
+	BOOL LAVPlayer::SetRate(DOUBLE dRate)
+	{
+		if (!m_lavFilter)
+			return FALSE;
+		TinyComPtr<IMediaSeeking> seeking;
+		if (FAILED(m_lavFilter->QueryInterface(__uuidof(IMediaSeeking), (void **)&seeking)))
+			return FALSE;
+		if (FAILED(seeking->SetRate(dRate)))
+			return FALSE;
+		return TRUE;
+	}
+	BOOL LAVPlayer::GetRate(DOUBLE* pdRate)
+	{
+		if (!pdRate)
+			return FALSE;
+		if (!m_lavFilter)
+			return FALSE;
+		TinyComPtr<IMediaSeeking> seeking;
+		if (FAILED(m_lavFilter->QueryInterface(__uuidof(IMediaSeeking), (void **)&seeking)))
+			return FALSE;
+		if (FAILED(seeking->GetRate(pdRate)))
+			return FALSE;
+		return TRUE;
+	}
 	BOOL LAVPlayer::GetTrackCount(UINT& count)
 	{
 		if (!m_lavFilter)
@@ -207,14 +279,21 @@ namespace LAV
 		count = info->GetTrackCount();
 		return TRUE;
 	}
-	BOOL LAVPlayer::GetTrackCodecID(UINT index)
+	BOOL LAVPlayer::GetTrackType(UINT index, TrackType& type)
 	{
 		if (!m_lavFilter)
 			return FALSE;
 		TinyComPtr<ITrackInfo> info;
-		if (FAILED(m_lavFilter->QueryInterface(__uuidof(ITrackInfo), (void **)&info)))
+		HRESULT hRes = m_lavFilter->QueryInterface(__uuidof(ITrackInfo), (void **)&info);
+		if (hRes != S_OK)
 			return FALSE;
-		return TRUE;
+		TrackElement element = { 0 };
+		if (info->GetTrackInfo(index, &element))
+		{
+			type = (TrackType)element.Type;
+			return TRUE;
+		}
+		return FALSE;
 	}
 	BOOL LAVPlayer::ShowProperty(HWND hWND)
 	{
@@ -248,7 +327,7 @@ namespace LAV
 		m_xaudio.Play(bits, size, 5000);
 		m_clock.SetClock(m_clock.GetClock() + (m_clock.GetQPCTimeMS() - msQPC));
 	}
-	BOOL LAVPlayer::CopyVideo(BYTE* bits, LONG size)
+	BOOL LAVPlayer::Copy(BYTE* bits, LONG size)
 	{
 		if (!m_image.Copy(bits, size))
 			return FALSE;
@@ -262,7 +341,7 @@ namespace LAV
 	}
 	void LAVPlayer::OnVideo(BYTE* bits, LONG size, FLOAT time, LPVOID lpParameter)
 	{
-		if (CopyVideo(bits, size))
+		if (Copy(bits, size))
 		{
 			while (isnan(m_clock.GetClock()));
 			INT delay = static_cast<INT>(time - m_clock.GetClock());

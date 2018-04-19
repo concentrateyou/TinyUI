@@ -64,8 +64,15 @@ namespace LAV
 	}
 	BOOL LAVVideo::GetMediaType(AM_MEDIA_TYPE* pType)
 	{
-		HRESULT hRes = m_sinkI->ConnectionMediaType(pType);
-		return hRes == S_OK;
+		if (!m_sinkI)
+			return FALSE;
+		return SUCCEEDED(m_sinkI->ConnectionMediaType(pType));
+	}
+	BOOL LAVVideo::GetVideoSettings(ILAVVideoSettings* settings)
+	{
+		if (!m_videoFilter)
+			return FALSE;
+		return SUCCEEDED(m_videoFilter->QueryInterface(__uuidof(ILAVVideoSettings), (void **)&settings));
 	}
 	BOOL LAVVideo::InitializeVideo()
 	{

@@ -60,8 +60,15 @@ namespace LAV
 	}
 	BOOL LAVAudio::GetMediaType(AM_MEDIA_TYPE* pType)
 	{
-		HRESULT hRes = m_sinkI->ConnectionMediaType(pType);
-		return SUCCEEDED(hRes);
+		if (!m_sinkI)
+			return FALSE;
+		return SUCCEEDED(m_sinkI->ConnectionMediaType(pType));
+	}
+	BOOL LAVAudio::GetAudioSettings(ILAVAudioSettings* settings)
+	{
+		if (!m_audioFilter)
+			return FALSE;
+		return SUCCEEDED(m_audioFilter->QueryInterface(__uuidof(ILAVAudioSettings), (void **)&settings));
 	}
 	BOOL LAVAudio::InitializeAudio()
 	{
@@ -74,6 +81,8 @@ namespace LAV
 	}
 	BOOL LAVAudio::GetOutputMediaTypes(TinyArray<ScopedMediaType>& mediaTypes)
 	{
+		if (!m_audioO)
+			return FALSE;
 		if (!GetMediaTypes(m_audioO, mediaTypes))
 			return FALSE;
 		return TRUE;

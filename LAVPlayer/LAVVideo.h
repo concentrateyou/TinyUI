@@ -1,6 +1,7 @@
 #pragma once
 #include "LAVCommon.h"
 #include "LAVVideoFilter.h"
+#include "LAVVideoSettings.h"
 
 namespace LAV
 {
@@ -14,6 +15,7 @@ namespace LAV
 		void Uninitialize();
 		BOOL GetOutputMediaTypes(TinyArray<ScopedMediaType>& mediaTypes);
 		BOOL GetMediaType(AM_MEDIA_TYPE* pType);
+		BOOL GetVideoSettings(ILAVVideoSettings* settings);
 	public:
 		void OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter) OVERRIDE;
 	private:
@@ -26,6 +28,7 @@ namespace LAV
 		TinyComPtr<IPin>							m_videoI;//解码输入
 		TinyComPtr<IPin>							m_sinkI;
 		TinyComPtr<IBaseFilter>						m_videoFilter;//视频解码
+		TinyComPtr<ILAVVideoSettings>				m_settings;
 		TinyScopedReferencePtr<LAVVideoFilter>		m_sinkFilter;
 		Callback<void(BYTE*, LONG, FLOAT, LPVOID)>	m_callback;
 	};

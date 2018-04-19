@@ -57,8 +57,14 @@ namespace LAV
 		BOOL Open(HWND hWND, LPCSTR pzFile);
 		BOOL Play();
 		void Close();
+		BOOL GetDuration(LONGLONG& time);
+		BOOL GetAvailable(LONGLONG& time1, LONGLONG time2);
+		BOOL GetPosition(LONGLONG& pos);
+		BOOL SetPosition(LONGLONG pos);
+		BOOL SetRate(DOUBLE dRate);
+		BOOL GetRate(DOUBLE* pdRate);
 		BOOL GetTrackCount(UINT& count);
-		BOOL GetTrackCodecID(UINT index);
+		BOOL GetTrackType(UINT index, TrackType& type);
 		BOOL ShowProperty(HWND hWND);
 		LAVAudio* GetAudio();
 		LAVVideo* GetVideo();
@@ -67,7 +73,7 @@ namespace LAV
 		void Uninitialize();
 		void OnAudio(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter);
 		void OnVideo(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter);
-		BOOL CopyVideo(BYTE* bits, LONG size);
+		BOOL Copy(BYTE* bits, LONG size);
 	private:
 		HWND										m_hWND;
 		LAVClock									m_clock;

@@ -61,25 +61,24 @@ LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 	m_graphics.DrawImage(&m_image2D, 1.0, 1.0, 0);
 	m_graphics.GetRenderView()->EndDraw();
 	m_graphics.Present();*/
-	m_player.Open(m_hWND, "D:\\test2.ts");
-	UINT count = 0;
-	m_player.GetTrackCount(count);
-	m_player.ShowProperty(m_hWND);
-	//m_player.Play();
+	m_player.Open(m_hWND, "D:\\Ñ¸À×ÏÂÔØ\\Ñª¹ÛÒô\\[Ñª¹ÛÒô]The.Bold.the.Corrupt.and.the.Beautiful.2017.BluRay.720p.x264.AC3-CnSCG.mkv");
+	LONGLONG s;
+	m_player.GetDuration(s);
+	m_player.SetPosition(s / 2);
+	m_player.Play();
 	return FALSE;
 }
 
 LRESULT GLView::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	//m_player.Close();
+	m_player.Close();
 	return FALSE;
 }
 
 LRESULT GLView::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	//m_graphics.Present();
 	return FALSE;
 }
 

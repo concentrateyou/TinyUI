@@ -1,6 +1,7 @@
 #pragma once
 #include "LAVCommon.h"
 #include "LAVAudioFilter.h"
+#include "LAVAudioSettings.h"
 
 namespace LAV
 {
@@ -13,6 +14,7 @@ namespace LAV
 		BOOL Initialize(Callback<void(BYTE*, LONG, FLOAT, LPVOID)>&& callback);
 		void Uninitialize();
 		BOOL GetMediaType(AM_MEDIA_TYPE* pType);
+		BOOL GetAudioSettings(ILAVAudioSettings* settings);
 	public:
 		BOOL GetOutputMediaTypes(TinyArray<ScopedMediaType>& mediaTypes);
 		void OnFrameReceive(BYTE* bits, LONG size, FLOAT ts, LPVOID lpParameter) OVERRIDE;
