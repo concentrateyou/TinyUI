@@ -138,7 +138,7 @@ namespace DXFramework
 			LOG(ERROR) << "[Initialize] SetTextureStageState D3DTSS_COLORARG2:" << hRes;
 			return FALSE;
 		}
-		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
 		if (hRes != S_OK)
 		{
 			TRACE("[Initialize] SetTextureStageState D3DTSS_COLOROP:%d\n", hRes);
@@ -238,6 +238,7 @@ namespace DXFramework
 			LOG(ERROR) << "[Initialize] SetRenderState D3DRS_ZENABLE:" << hRes;
 			return FALSE;
 		}
+		//¿ªÆôÍ¸Ã÷»ìºÏ
 		hRes = m_d3dd9->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 		if (hRes != S_OK)
 		{

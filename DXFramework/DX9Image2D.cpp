@@ -24,7 +24,7 @@ namespace DXFramework
 	{
 		m_vertexs.Release();
 		//´´½¨¶¥µã»º³å
-		HRESULT hRes = dx9.GetD3D()->CreateVertexBuffer(sizeof(VERTEXTYPE) * 4, D3DUSAGE_WRITEONLY, D3DFVF_XYZRHW | D3DFVF_TEX1, D3DPOOL_DEFAULT, &m_vertexs, NULL);
+		HRESULT hRes = dx9.GetD3D()->CreateVertexBuffer(sizeof(VERTEXTYPE) * 4, D3DUSAGE_WRITEONLY, D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1, D3DPOOL_DEFAULT, &m_vertexs, NULL);
 		if (hRes != S_OK)
 			return FALSE;
 		return TRUE;
@@ -37,10 +37,10 @@ namespace DXFramework
 		D3DXVECTOR2 center(pos.x + size.x / 2, pos.y + size.y / 2);
 		VERTEXTYPE vertices[] =
 		{
-			{ pos.x, pos.y,  0.0F, 1.0F,(m_bFlipH ? -0.0F : 0.0F),(m_bFlipV ? -0.0F : 0.0F) },
-			{ pos.x + size.x, pos.y,  0.0F, 1.0F, (m_bFlipH ? -1.0F : 1.0F),(m_bFlipV ? -0.0F : 0.0F) },
-			{ pos.x, pos.y + size.y, 0.0F, 1.0F, (m_bFlipH ? -0.0F : 0.0F), (m_bFlipV ? -1.0F : 1.0F) },
-			{ pos.x + size.x, pos.y + size.y, 0.0F, 1.0F,(m_bFlipH ? -1.0F : 1.0F), (m_bFlipV ? -1.0F : 1.0F) },
+			{ pos.x, pos.y,  0.0F, 1.0F,0xFFFFFFFF, (m_bFlipH ? -0.0F : 0.0F),(m_bFlipV ? -0.0F : 0.0F) },
+			{ pos.x + size.x, pos.y,  0.0F, 1.0F,0xFFFFFFFF, (m_bFlipH ? -1.0F : 1.0F),(m_bFlipV ? -0.0F : 0.0F) },
+			{ pos.x, pos.y + size.y, 0.0F, 1.0F,0xFFFFFFFF, (m_bFlipH ? -0.0F : 0.0F), (m_bFlipV ? -1.0F : 1.0F) },
+			{ pos.x + size.x, pos.y + size.y, 0.0F, 1.0F,0xFFFFFFFF,(m_bFlipH ? -1.0F : 1.0F), (m_bFlipV ? -1.0F : 1.0F) },
 		};
 		if (m_angle != 0.0F)
 		{
@@ -148,7 +148,7 @@ namespace DXFramework
 	{
 		if (dx9.IsEmpty())
 			return FALSE;
-		HRESULT hRes = dx9.GetD3D()->SetFVF(D3DFVF_XYZRHW | D3DFVF_TEX1);
+		HRESULT hRes = dx9.GetD3D()->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
 		if (hRes != S_OK)
 		{
 			TRACE("[Process] SetFVF:%d\n", hRes);

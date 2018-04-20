@@ -11,6 +11,7 @@ namespace DXFramework
 		struct VERTEXTYPE
 		{
 			FLOAT x, y, z, rhw;
+			DWORD color;
 			FLOAT u, v;
 		};
 		DECLARE_DYNAMIC(DX9Image2D)

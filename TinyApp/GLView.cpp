@@ -57,7 +57,7 @@ LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 	m_graphics.SetRenderView(NULL);
 	m_image2D[0].Load(m_graphics.GetDX9(), "D:\\TransA.png");
 	m_image2D[0].SetViewport(s);
-	m_image2D[1].Load(m_graphics.GetDX9(), "D:\\½¥±ä10.png");
+	m_image2D[1].Load(m_graphics.GetDX9(), "D:\\1.png");
 	m_image2D[1].SetViewport(s);
 
 	m_graphics.GetRenderView()->BeginDraw();
