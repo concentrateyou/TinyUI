@@ -138,7 +138,7 @@ namespace DXFramework
 			LOG(ERROR) << "[Initialize] SetTextureStageState D3DTSS_COLORARG2:" << hRes;
 			return FALSE;
 		}
-		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 		if (hRes != S_OK)
 		{
 			TRACE("[Initialize] SetTextureStageState D3DTSS_COLOROP:%d\n", hRes);
@@ -159,7 +159,7 @@ namespace DXFramework
 			LOG(ERROR) << "[Initialize] SetTextureStageState D3DTSS_ALPHAARG2:" << hRes;
 			return FALSE;
 		}
-		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 		if (hRes != S_OK)
 		{
 			TRACE("[Initialize] SetTextureStageState D3DTSS_ALPHAOP:%d\n", hRes);
@@ -267,7 +267,7 @@ namespace DXFramework
 			LOG(ERROR) << "[Initialize] SetTextureStageState D3DTSS_COLORARG1:" << hRes;
 			return FALSE;
 		}
-		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 		if (hRes != S_OK)
 		{
 			TRACE("[Initialize] SetTextureStageState D3DTSS_COLOROP:%d\n", hRes);
@@ -281,7 +281,7 @@ namespace DXFramework
 			LOG(ERROR) << "[Initialize] SetTextureStageState D3DTSS_ALPHAARG1:" << hRes;
 			return FALSE;
 		}
-		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
+		hRes = m_d3dd9->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 		if (hRes != S_OK)
 		{
 			TRACE("[Initialize] SetTextureStageState D3DTSS_ALPHAOP:%d\n", hRes);
