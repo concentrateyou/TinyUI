@@ -108,6 +108,9 @@
     <ClInclude Include="DX9Line2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="DX9TextureShader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -198,6 +201,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DX9Line2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DX9TextureShader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
