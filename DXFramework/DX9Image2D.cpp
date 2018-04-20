@@ -8,11 +8,8 @@ namespace DXFramework
 	IMPLEMENT_DYNAMIC(DX9Image2D, DX9Element2D);
 
 	DX9Image2D::DX9Image2D()
-		:m_bFlipV(FALSE),
-		m_bFlipH(FALSE),
-		m_angle(0.0F)
 	{
-		m_scale.x = m_scale.y = 1.0F;
+
 	}
 
 	DX9Image2D::~DX9Image2D()
@@ -32,8 +29,8 @@ namespace DXFramework
 	//https://msdn.microsoft.com/en-us/library/windows/desktop/bb219690(v=vs.85).aspx
 	BOOL DX9Image2D::Translate(DX9& dx9)
 	{
-		D3DXVECTOR2 size(static_cast<FLOAT>(m_trackerRect.Size().cx) * m_scale.x, static_cast<FLOAT>(m_trackerRect.Size().cy) * m_scale.y);
-		D3DXVECTOR2 pos(static_cast<FLOAT>(m_trackerRect.Position().x) * m_scale.x, static_cast<FLOAT>(m_trackerRect.Position().y) * m_scale.y);
+		D3DXVECTOR2 size(static_cast<FLOAT>(m_size.x) * m_scale.x, static_cast<FLOAT>(m_size.y) * m_scale.y);
+		D3DXVECTOR2 pos(static_cast<FLOAT>(m_translate.x) * m_scale.x, static_cast<FLOAT>(m_translate.y) * m_scale.y);
 		D3DXVECTOR2 center(pos.x + size.x / 2, pos.y + size.y / 2);
 		VERTEXTYPE vertices[] =
 		{
@@ -91,9 +88,11 @@ namespace DXFramework
 	{
 		if (!Initialize(dx9))
 			return FALSE;
-		if (!DX9Texture2D::Load(dx9, pzFile, m_size))
+		TinySize size;
+		if (!DX9Texture2D::Load(dx9, pzFile, size))
 			return FALSE;
-		SetRectangle(TinyPoint(), m_size);
+		m_size.x = static_cast<FLOAT>(size.cx);
+		m_size.y = static_cast<FLOAT>(size.cy);
 		return TRUE;
 	}
 
@@ -101,9 +100,11 @@ namespace DXFramework
 	{
 		if (!Initialize(dx9))
 			return FALSE;
-		if (!DX9Texture2D::Load(dx9, bits, size, m_size))
+		TinySize sizeT;
+		if (!DX9Texture2D::Load(dx9, bits, size, sizeT))
 			return FALSE;
-		SetRectangle(TinyPoint(), m_size);
+		m_size.x = static_cast<FLOAT>(sizeT.cx);
+		m_size.y = static_cast<FLOAT>(sizeT.cy);
 		return TRUE;
 	}
 
@@ -113,31 +114,11 @@ namespace DXFramework
 			return FALSE;
 		if (!DX9Texture2D::Create(dx9, cx, cy, bits))
 			return FALSE;
-		m_size.SetSize(cx, cy);
-		SetRectangle(TinyPoint(), m_size);
+		m_size.x = static_cast<FLOAT>(cx);
+		m_size.y = static_cast<FLOAT>(cy);
 		return TRUE;
 	}
 
-	void DX9Image2D::SetRotate(FLOAT angle)
-	{
-		m_angle = angle;
-	}
-	void DX9Image2D::SetScale(const D3DXVECTOR2& scale)
-	{
-		m_scale = scale;
-	}
-	void DX9Image2D::SetTranslate(const D3DXVECTOR2& pos)
-	{
-		m_pos = pos;
-	}
-	void DX9Image2D::SetFlipH(BOOL bFlag)
-	{
-		m_bFlipH = bFlag;
-	}
-	void DX9Image2D::SetFlipV(BOOL bFlag)
-	{
-		m_bFlipV = bFlag;
-	}
 
 	BOOL DX9Image2D::Allocate(DX9& dx9)
 	{

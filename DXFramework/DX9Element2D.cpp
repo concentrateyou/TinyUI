@@ -6,29 +6,75 @@ namespace DXFramework
 	IMPLEMENT_DYNAMIC(DX9Element2D, TinyObject);
 
 	DX9Element2D::DX9Element2D()
+		:m_bFlipH(FALSE),
+		m_bFlipV(FALSE),
+		m_angle(0.0F)
 	{
+		m_size.x = m_size.y = 0.0F;
+		m_translate.x = m_translate.y = 0.0F;
+		m_scale.x = m_scale.y = 1.0F;
+
 	}
 	DX9Element2D::~DX9Element2D()
 	{
 	}
 
-	TinyRectangle DX9Element2D::GetRectangle() const
+	FLOAT	DX9Element2D::GetRotate() const
 	{
-		return m_trackerRect;
+		return m_angle;
+	}
+	D3DXVECTOR2	 DX9Element2D::GetSize() const
+	{
+		return m_size;
+	}
+	D3DXVECTOR2	 DX9Element2D::GetScale() const
+	{
+		return m_scale;
 	}
 
-	void DX9Element2D::SetRectangle(const TinyRectangle& s)
+	D3DXVECTOR2	 DX9Element2D::GetTranslate() const
 	{
-		m_trackerRect.SetRect(s.Position(), s.Size());
+		return m_translate;
 	}
-	void DX9Element2D::SetRectangle(const TinyPoint& pos, const TinySize& size)
+
+	BOOL DX9Element2D::IsFlipH() const
 	{
-		m_trackerRect.SetRect(pos, size);
+		return m_bFlipH;
 	}
-	BOOL DX9Element2D::PtInRect(const TinyPoint& pos)
+
+	BOOL DX9Element2D::IsFlipV() const
 	{
-		return m_trackerRect.PtInRect(pos);
+		return m_bFlipV;
 	}
+	void DX9Element2D::SetSize(const D3DXVECTOR2& size)
+	{
+		m_size = size;
+	}
+	void DX9Element2D::SetRotate(FLOAT angle)
+	{
+		m_angle = angle;
+	}
+
+	void DX9Element2D::SetScale(const D3DXVECTOR2& scale)
+	{
+		m_scale = scale;
+	}
+
+	void DX9Element2D::SetTranslate(const D3DXVECTOR2& pos)
+	{
+		m_translate = pos;
+	}
+
+	void DX9Element2D::SetFlipH(BOOL bFlag)
+	{
+		m_bFlipH = bFlag;
+	}
+
+	void DX9Element2D::SetFlipV(BOOL bFlag)
+	{
+		m_bFlipV = bFlag;
+	}
+
 	void DX9Element2D::SetElementName(const TinyString& name)
 	{
 		m_szElement = std::move(name);
