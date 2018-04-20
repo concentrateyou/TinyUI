@@ -18,9 +18,9 @@ namespace DXFramework
 	public:
 		TinyString		GetElementName() const;
 		void			SetElementName(const TinyString& name);
-		TinyRectangle	GetViewport() const;
-		void			SetViewport(const TinyRectangle& s);
-		void			SetViewport(const TinyPoint& pos, const TinySize& size);
+		TinyRectangle	GetRectangle() const;
+		void			SetRectangle(const TinyRectangle& s);
+		void			SetRectangle(const TinyPoint& pos, const TinySize& size);
 		BOOL			PtInRect(const TinyPoint& pos);
 	public:
 		virtual BOOL Allocate(DX9& dx9) = 0;

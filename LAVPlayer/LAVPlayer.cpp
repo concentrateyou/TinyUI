@@ -144,7 +144,7 @@ namespace LAV
 				m_image.Destory();
 				if (!m_image.Create(m_graphics.GetDX9(), vih.bmiHeader.biWidth, vih.bmiHeader.biHeight, NULL))
 					return FALSE;
-				m_image.SetViewport(s);
+				m_image.SetRectangle(s);
 			}
 			if (mediaType->majortype == MEDIATYPE_Audio)
 			{

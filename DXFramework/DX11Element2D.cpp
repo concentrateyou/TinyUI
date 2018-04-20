@@ -12,15 +12,15 @@ namespace DXFramework
 	{
 	}
 
-	TinyRectangle DX11Element2D::GetViewport() const
+	TinyRectangle DX11Element2D::GetRectangle() const
 	{
 		return m_trackerRect;
 	}
-	void DX11Element2D::SetViewport(const TinyRectangle& s)
+	void DX11Element2D::SetRectangle(const TinyRectangle& s)
 	{
 		m_trackerRect.SetRect(s.Position(), s.Size());
 	}
-	void DX11Element2D::SetViewport(const TinyPoint& pos, const TinySize& size)
+	void DX11Element2D::SetRectangle(const TinyPoint& pos, const TinySize& size)
 	{
 		m_trackerRect.SetRect(pos, size);
 	}

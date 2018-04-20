@@ -56,9 +56,9 @@ LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 	m_graphics.Initialize(m_hWND, s.Size());
 	m_graphics.SetRenderView(NULL);
 	m_image2D[0].Load(m_graphics.GetDX9(), "D:\\TransA.png");
-	m_image2D[0].SetViewport(s);
+	m_image2D[0].SetRectangle(s);
 	m_image2D[1].Load(m_graphics.GetDX9(), "D:\\1.png");
-	m_image2D[1].SetViewport(s);
+	m_image2D[1].SetRectangle(s);
 
 	m_graphics.GetRenderView()->BeginDraw();
 	m_graphics.DrawImage(&m_image2D[0]);

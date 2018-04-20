@@ -93,7 +93,7 @@ namespace DXFramework
 			return FALSE;
 		if (!DX9Texture2D::Load(dx9, pzFile, m_size))
 			return FALSE;
-		SetViewport(TinyPoint(), m_size);
+		SetRectangle(TinyPoint(), m_size);
 		return TRUE;
 	}
 
@@ -103,7 +103,7 @@ namespace DXFramework
 			return FALSE;
 		if (!DX9Texture2D::Load(dx9, bits, size, m_size))
 			return FALSE;
-		SetViewport(TinyPoint(), m_size);
+		SetRectangle(TinyPoint(), m_size);
 		return TRUE;
 	}
 
@@ -114,7 +114,7 @@ namespace DXFramework
 		if (!DX9Texture2D::Create(dx9, cx, cy, bits))
 			return FALSE;
 		m_size.SetSize(cx, cy);
-		SetViewport(TinyPoint(), m_size);
+		SetRectangle(TinyPoint(), m_size);
 		return TRUE;
 	}
 

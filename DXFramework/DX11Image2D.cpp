@@ -105,7 +105,7 @@ namespace DXFramework
 			D3D11_TEXTURE2D_DESC desc;
 			m_texture2D->GetDesc(&desc);
 			m_size.SetSize(desc.Width, desc.Height);
-			SetViewport(TinyPoint(), m_size);
+			SetRectangle(TinyPoint(), m_size);
 			return TRUE;
 		}
 		return FALSE;
@@ -120,7 +120,7 @@ namespace DXFramework
 			D3D11_TEXTURE2D_DESC desc;
 			m_texture2D->GetDesc(&desc);
 			m_size.SetSize(desc.Width, desc.Height);
-			SetViewport(TinyPoint(), m_size);
+			SetRectangle(TinyPoint(), m_size);
 			return TRUE;
 		}
 		return FALSE;
@@ -135,7 +135,7 @@ namespace DXFramework
 			D3D11_TEXTURE2D_DESC desc;
 			m_texture2D->GetDesc(&desc);
 			m_size.SetSize(desc.Width, desc.Height);
-			SetViewport(TinyPoint(), m_size);
+			SetRectangle(TinyPoint(), m_size);
 			return TRUE;
 		}
 		return FALSE;
@@ -150,7 +150,7 @@ namespace DXFramework
 			D3D11_TEXTURE2D_DESC desc;
 			m_texture2D->GetDesc(&desc);
 			m_size.SetSize(desc.Width, desc.Height);
-			SetViewport(TinyPoint(), m_size);
+			SetRectangle(TinyPoint(), m_size);
 			return TRUE;
 		}
 		return FALSE;
@@ -167,7 +167,7 @@ namespace DXFramework
 			D3D11_TEXTURE2D_DESC desc;
 			m_texture2D->GetDesc(&desc);
 			m_size.SetSize(desc.Width, desc.Height);
-			SetViewport(TinyPoint(), m_size);
+			SetRectangle(TinyPoint(), m_size);
 			return TRUE;
 		}
 		return FALSE;
@@ -184,7 +184,7 @@ namespace DXFramework
 			D3D11_TEXTURE2D_DESC desc;
 			m_texture2D->GetDesc(&desc);
 			m_size.SetSize(desc.Width, desc.Height);
-			SetViewport(TinyPoint(), m_size);
+			SetRectangle(TinyPoint(), m_size);
 			return TRUE;
 		}
 		return FALSE;
