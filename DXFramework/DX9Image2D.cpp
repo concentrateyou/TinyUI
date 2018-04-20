@@ -27,7 +27,7 @@ namespace DXFramework
 		return TRUE;
 	}
 	//https://msdn.microsoft.com/en-us/library/windows/desktop/bb219690(v=vs.85).aspx
-	BOOL DX9Image2D::Translate(DX9& dx9)
+	BOOL DX9Image2D::Transform(DX9& dx9)
 	{
 		D3DXVECTOR2 size(static_cast<FLOAT>(m_size.x) * m_scale.x, static_cast<FLOAT>(m_size.y) * m_scale.y);
 		D3DXVECTOR2 pos(static_cast<FLOAT>(m_translate.x) * m_scale.x, static_cast<FLOAT>(m_translate.y) * m_scale.y);

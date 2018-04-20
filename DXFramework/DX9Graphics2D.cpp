@@ -39,7 +39,7 @@ namespace DXFramework
 			return FALSE;
 		if (image->IsEmpty())
 			return FALSE;
-		if (!image->Translate(m_dx9))
+		if (!image->Transform(m_dx9))
 			return FALSE;
 		if (!image->Process(m_dx9))
 			return FALSE;

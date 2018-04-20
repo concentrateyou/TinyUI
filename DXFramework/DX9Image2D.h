@@ -19,7 +19,7 @@ namespace DXFramework
 	public:
 		DX9Image2D();
 		virtual ~DX9Image2D();
-		BOOL	Translate(DX9& dx9);
+		BOOL	Transform(DX9& dx9);
 		BOOL	Load(DX9& dx9, const CHAR* pzFile);
 		BOOL	Load(DX9& dx9, const BYTE* bits, LONG size);
 	public:
