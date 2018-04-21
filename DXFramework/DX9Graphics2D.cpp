@@ -35,11 +35,7 @@ namespace DXFramework
 	}
 	BOOL DX9Graphics2D::DrawImage(DX9Image2D* image)
 	{
-		if (!image)
-			return FALSE;
-		if (image->IsEmpty())
-			return FALSE;
-		if (!image->Transform(m_dx9))
+		if (!image || image->IsEmpty())
 			return FALSE;
 		if (!image->Process(m_dx9))
 			return FALSE;

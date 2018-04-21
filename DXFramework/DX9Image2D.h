@@ -19,7 +19,6 @@ namespace DXFramework
 	public:
 		DX9Image2D();
 		virtual ~DX9Image2D();
-		BOOL	Transform(DX9& dx9);
 		BOOL	Load(DX9& dx9, const CHAR* pzFile);
 		BOOL	Load(DX9& dx9, const BYTE* bits, LONG size);
 	public:
@@ -29,6 +28,7 @@ namespace DXFramework
 		void	Deallocate(DX9& dx9) OVERRIDE;
 	private:
 		BOOL	Initialize(DX9& dx9);
+		BOOL	Calculate(DX9& dx9);
 	protected:
 		TinyComPtr<IDirect3DVertexBuffer9>	m_vertexs;
 	};

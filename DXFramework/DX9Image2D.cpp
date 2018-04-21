@@ -27,7 +27,7 @@ namespace DXFramework
 		return TRUE;
 	}
 	//https://msdn.microsoft.com/en-us/library/windows/desktop/bb219690(v=vs.85).aspx
-	BOOL DX9Image2D::Transform(DX9& dx9)
+	BOOL DX9Image2D::Calculate(DX9& dx9)
 	{
 		D3DXVECTOR2 size(static_cast<FLOAT>(m_size.x) * m_scale.x, static_cast<FLOAT>(m_size.y) * m_scale.y);
 		D3DXVECTOR2 pos(static_cast<FLOAT>(m_translate.x) * m_scale.x, static_cast<FLOAT>(m_translate.y) * m_scale.y);
@@ -128,6 +128,8 @@ namespace DXFramework
 	BOOL DX9Image2D::Process(DX9& dx9)
 	{
 		if (dx9.IsEmpty())
+			return FALSE;
+		if (!Calculate(dx9))
 			return FALSE;
 		HRESULT hRes = dx9.GetD3D()->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
 		if (hRes != S_OK)

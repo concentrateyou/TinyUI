@@ -8,7 +8,7 @@ namespace GLFramework
 		DISALLOW_COPY_AND_ASSIGN(GLTextureShader)
 	public:
 		GLTextureShader();
-		~GLTextureShader();
+		virtual ~GLTextureShader();
 	};
 }
 

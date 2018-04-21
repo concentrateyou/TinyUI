@@ -108,7 +108,7 @@
     <ClInclude Include="DX9Line2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DX9TextureShader.h">
+    <ClInclude Include="DX9Shader.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -203,7 +203,7 @@
     <ClCompile Include="DX9Line2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DX9TextureShader.cpp">
+    <ClCompile Include="DX9Shader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
