@@ -549,6 +549,9 @@
     <ClInclude Include="Windowless\TinyVisualStyle.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
+    <ClInclude Include="IO\TinyProcess.h">
+      <Filter>头文件\IO</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1015,6 +1018,9 @@
     </ClCompile>
     <ClCompile Include="Windowless\TinyVisualStyle.cpp">
       <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\TinyProcess.cpp">
+      <Filter>源文件\IO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

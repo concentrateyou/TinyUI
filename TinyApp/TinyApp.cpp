@@ -209,6 +209,28 @@ void TSDecoder::Invoke()
 		SAFE_DELETE_ARRAY(block.video.data);
 	}
 }
+BOOL GetFileName(std::string& value)
+{
+	HKEY hKey = NULL;
+	LSTATUS status = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE\\2c437e0f-7139-58bf-a692-457cda9449d1", 0, KEY_READ | KEY_WRITE | KEY_WOW64_64KEY, &hKey);
+	if (status != ERROR_SUCCESS)
+		return FALSE;
+	CHAR sz[MAX_PATH];
+	DWORD size = MAX_PATH;
+	status = RegQueryValueEx(hKey, "InstallLocation", NULL, NULL, (LPBYTE)sz, &size);
+	if (status != ERROR_SUCCESS)
+		goto _ERROR;
+	value.append(sz);
+	value.append("\\");
+	status = RegQueryValueEx(hKey, "ShortcutName", NULL, NULL, (LPBYTE)sz, &size);
+	if (status != ERROR_SUCCESS)
+		goto _ERROR;
+	value.append(sz);
+	value.append(".exe");
+_ERROR:
+	RegCloseKey(hKey);
+	return status == ERROR_SUCCESS;
+}
 
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
@@ -228,6 +250,10 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadSeDebugPrivilege();
 	CoInitialize(NULL);
 	avcodec_register_all();
+
+	std::string val;
+	GetFileName(val);
+
 	TinyVisualResource::GetInstance().Load("skin\\resource.xml");
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
