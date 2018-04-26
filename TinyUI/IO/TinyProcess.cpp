@@ -28,8 +28,6 @@ namespace TinyUI
 			attr.bInheritHandle = TRUE;
 			if (!CreatePipe(&m_hRIO, &m_hWIO, &attr, 0))
 				return FALSE;
-			//if (!SetHandleInformation(m_hRIO, HANDLE_FLAG_INHERIT, 0))
-			//	return FALSE;
 			return TRUE;
 		}
 		void TinyProcessPipe::CloseInput()

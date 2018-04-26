@@ -256,7 +256,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	std::string val;
 	GetFileName(val);
 
-	TinyProcess process;
+	/*TinyProcess process;
 	TinyProcessPipe ioPipe;
 	ioPipe.Create();
 	TinyProcessPipe errorPipe;
@@ -267,14 +267,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	process.Create(val, args);
 	ioPipe.CloseInput();
 	Sleep(5000);
-	//CHAR value[MAX_PATH];
-	//while (1)
-	//{
-	//	DWORD size = ioPipe.Read(value, MAX_PATH);
-	//	INT a = 0;
-	//}
-	process.Terminate();
-
+	process.Terminate();*/
 
 
 	TinyVisualResource::GetInstance().Load("skin\\resource.xml");
