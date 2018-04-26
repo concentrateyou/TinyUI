@@ -4,6 +4,7 @@
 #include "../Common/TinyCallback.h"
 #include "../Common/TinyEvent.h"
 #include <string>
+#include <vector>
 #include <WinSock2.h>
 #pragma comment(lib,"Ws2_32.lib")
 using namespace std;
@@ -12,6 +13,26 @@ namespace TinyUI
 {
 	namespace IO
 	{
+		/// <summary>
+		/// 進程管道
+		/// </summary>
+		class TinyProcessPipe
+		{
+			DISALLOW_COPY_AND_ASSIGN(TinyProcessPipe)
+		public:
+			TinyProcessPipe();
+			~TinyProcessPipe();
+			BOOL Create();
+			HANDLE GetInput() const;
+			HANDLE GetOutput() const;
+			DWORD Read(void* bits, DWORD size);
+			DWORD Write(const void* bits, DWORD size);
+			void CloseInput();
+			void CloseOutput();
+		private:
+			HANDLE	m_hRIO;
+			HANDLE	m_hWIO;
+		};
 		/// <summary>
 		/// 进程基类
 		/// </summary>
@@ -23,17 +44,16 @@ namespace TinyUI
 			TinyProcess& operator=(TinyProcess&& other);
 			virtual ~TinyProcess();
 			operator HANDLE() const;
-			void SetInput(HANDLE handle);
-			void SetOutput(HANDLE handle);
-			void SetError(HANDLE handle);
 			BOOL IsEmpty() const;
 			DWORD GetPID() const;
 			INT GetPriority() const;
-			BOOL Create(const string& program, string& command);
+			void SetInput(HANDLE handle);
+			void SetOutput(HANDLE handle);
+			void SetError(HANDLE handle);
+			BOOL Create(const string& app, const vector<string>& args);
 			BOOL Open(DWORD dwPID);
-			BOOL Close(DWORD dwMS = INFINITE);
-			BOOL Terminate(UINT exitCode);
-			BOOL WaitForTerminate(UINT exitCode, DWORD dwMS = 60 * 1000);
+			BOOL Wait(DWORD dwMS, DWORD& dwExitCode);//等待進程退出
+			BOOL Terminate(DWORD dwMS = 60 * 1000);
 			TinyProcess Duplicate(HANDLE handle);
 			static TinyProcess Current();
 		private:

@@ -40,6 +40,8 @@
 #include "HLSReader.h"
 #include "GLView.h"
 
+#include "IO/TinyProcess.h"
+
 using namespace TinyUI;
 using namespace TinyUI::Network;
 using namespace TinyUI::Media;
@@ -253,6 +255,27 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	std::string val;
 	GetFileName(val);
+
+	TinyProcess process;
+	TinyProcessPipe ioPipe;
+	ioPipe.Create();
+	TinyProcessPipe errorPipe;
+	errorPipe.Create();
+	vector<string> args;
+	process.SetInput(ioPipe.GetOutput());
+	process.SetOutput(ioPipe.GetInput());
+	process.Create(val, args);
+	ioPipe.CloseInput();
+	Sleep(5000);
+	//CHAR value[MAX_PATH];
+	//while (1)
+	//{
+	//	DWORD size = ioPipe.Read(value, MAX_PATH);
+	//	INT a = 0;
+	//}
+	process.Terminate();
+
+
 
 	TinyVisualResource::GetInstance().Load("skin\\resource.xml");
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
