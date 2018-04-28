@@ -46,7 +46,8 @@ namespace TinyUI
 			operator HANDLE() const;
 			BOOL IsEmpty() const;
 			DWORD GetPID() const;
-			INT GetPriority() const;
+			DWORD GetPriority() const;
+			BOOL IsActive() const;
 			void SetInput(HANDLE handle);
 			void SetOutput(HANDLE handle);
 			void SetError(HANDLE handle);

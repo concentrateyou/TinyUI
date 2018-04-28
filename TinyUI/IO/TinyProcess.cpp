@@ -211,9 +211,18 @@ namespace TinyUI
 			}
 			return bRes;
 		}
-		INT TinyProcess::GetPriority() const
+		DWORD TinyProcess::GetPriority() const
 		{
 			return ::GetPriorityClass(m_hProcess);
+		}
+		BOOL TinyProcess::IsActive() const
+		{
+			if (!m_hProcess)
+				return FALSE;
+			DWORD dw = 0;
+			if (!GetExitCodeProcess(m_hProcess, &dw) || dw != STILL_ACTIVE)
+				return FALSE;
+			return TRUE;
 		}
 	}
 }
