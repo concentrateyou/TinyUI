@@ -51,29 +51,29 @@ BOOL GLView::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
 LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	TinyRectangle s;
-	GetClientRect(&s);
-	m_graphics.Initialize(m_hWND, s.Size());
-	m_graphics.SetRenderView(NULL);
-	m_image2D[0].Load(m_graphics.GetDX9(), "D:\\TransA.png");
-	m_image2D[0].SetScale(D3DXVECTOR2(static_cast<FLOAT>(TO_CX(s)) / m_image2D[0].GetSize().x, static_cast<FLOAT>(TO_CY(s)) / m_image2D[0].GetSize().y));
-	m_image2D[1].Load(m_graphics.GetDX9(), "D:\\1.png");
-	m_image2D[1].SetScale(D3DXVECTOR2(static_cast<FLOAT>(TO_CX(s)) / m_image2D[1].GetSize().x, static_cast<FLOAT>(TO_CY(s)) / m_image2D[1].GetSize().y));
+	////TinyRectangle s;
+	////GetClientRect(&s);
+	////m_graphics.Initialize(m_hWND, s.Size());
+	////m_graphics.SetRenderView(NULL);
+	////m_image2D[0].Load(m_graphics.GetDX9(), "D:\\TransA.png");
+	////m_image2D[0].SetScale(D3DXVECTOR2(static_cast<FLOAT>(TO_CX(s)) / m_image2D[0].GetSize().x, static_cast<FLOAT>(TO_CY(s)) / m_image2D[0].GetSize().y));
+	////m_image2D[1].Load(m_graphics.GetDX9(), "D:\\1.png");
+	////m_image2D[1].SetScale(D3DXVECTOR2(static_cast<FLOAT>(TO_CX(s)) / m_image2D[1].GetSize().x, static_cast<FLOAT>(TO_CY(s)) / m_image2D[1].GetSize().y));
 
-	m_graphics.GetRenderView()->BeginDraw();
-	//m_image2D[0].SetScale(D3DXVECTOR2(0.5F, 0.5F));
-	//m_image2D[0].SetTranslate(D3DXVECTOR2(50.0F, 50.0F));
-	//m_image2D[0].SetRotate(180.0F);
-	m_graphics.DrawImage(&m_image2D[0]);
+	////m_graphics.GetRenderView()->BeginDraw();
+	//////m_image2D[0].SetScale(D3DXVECTOR2(0.5F, 0.5F));
+	//////m_image2D[0].SetTranslate(D3DXVECTOR2(50.0F, 50.0F));
+	//////m_image2D[0].SetRotate(180.0F);
+	////m_graphics.DrawImage(&m_image2D[0]);
 
-	//m_graphics.DrawImage(&m_image2D[1]);
-	m_graphics.GetRenderView()->EndDraw();
-	m_graphics.Present();
-	/*m_player.Open(m_hWND, "D:\\Ñ¸À×ÏÂÔØ\\Ñª¹ÛÒô\\[Ñª¹ÛÒô]The.Bold.the.Corrupt.and.the.Beautiful.2017.BluRay.720p.x264.AC3-CnSCG.mkv");
-	LONGLONG s;
+	//////m_graphics.DrawImage(&m_image2D[1]);
+	////m_graphics.GetRenderView()->EndDraw();
+	////m_graphics.Present();
+	m_player.Open(m_hWND, "D:\\test.flv");
+	/*LONGLONG s;
 	m_player.GetDuration(s);
-	m_player.SetPosition(s / 2);
-	m_player.Play();*/
+	m_player.SetPosition(s / 2);*/
+	m_player.Play();
 	return FALSE;
 }
 
@@ -87,7 +87,7 @@ LRESULT GLView::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandle
 LRESULT GLView::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	m_graphics.Present();
+	//m_graphics.Present();
 	return FALSE;
 }
 

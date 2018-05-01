@@ -16,7 +16,8 @@ namespace FLVPlayer
 		m_currentAudioPTS(-1)
 	{
 		m_aac.Reset(new AACDecoder());
-		m_x264.Reset(new x264Decoder());
+		//m_x264.Reset(new x264Decoder());
+		m_qsv.Reset(new QSVDecoder());
 		m_close.CreateEvent(FALSE, FALSE, NULL, NULL);
 		m_audioEvent.CreateEvent(FALSE, FALSE, NULL, NULL);
 	}
@@ -27,7 +28,7 @@ namespace FLVPlayer
 	}
 	BOOL FLVDecode::Submit()
 	{
-		if (m_reader.OpenFile("D:\\Media\\4.flv"))
+		if (m_reader.OpenFile("D:\\test.flv"))
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);
@@ -124,14 +125,18 @@ namespace FLVPlayer
 						SampleTag sampleTag;
 						sampleTag.bits = block.video.data;
 						sampleTag.size = block.video.size;
-						if (!m_x264->Initialize(m_size, m_size))
+						if (!m_qsv->Open(block.video.data, block.video.size))
 						{
 							goto _ERROR;
 						}
-						if (!m_x264->Open(block.video.data, block.video.size))
-						{
-							goto _ERROR;
-						}
+						/*	if (!m_x264->Initialize(m_size, m_size))
+							{
+								goto _ERROR;
+							}
+							if (!m_x264->Open(block.video.data, block.video.size))
+							{
+								goto _ERROR;
+							}*/
 						SAFE_DELETE_ARRAY(block.audio.data);
 						SAFE_DELETE_ARRAY(block.video.data);
 					}
@@ -349,6 +354,8 @@ namespace FLVPlayer
 		m_queue.Push(tag);
 	}
 
+	TinyPerformanceTime g_time;
+
 	void FLVVideoTask::OnMessagePump()
 	{
 		for (;;)
@@ -366,23 +373,26 @@ namespace FLVPlayer
 			SampleTag tag = m_decode.m_videoQueue.Pop();
 			if (tag.size > 0)
 			{
-				//mfxFrameSurface1* surface1 = NULL;
-				//if (m_decode.m_qsv.Decode(tag, surface1))
-				//{
-				//	QSV::QSVAllocator* pAllocator = m_decode.m_qsv.GetAllocator();
-				//	pAllocator->Lock(pAllocator->pthis, surface1->Data.MemId, &(surface1->Data));
-				//	tag.size = surface1->Info.CropH * surface1->Data.Pitch;
-				//	tag.bits = new BYTE[tag.size];
-				//	memcpy(tag.bits, surface1->Data.B, tag.size);
-				//	pAllocator->Unlock(pAllocator->pthis, surface1->Data.MemId, &(surface1->Data));
-				//	m_decode.m_qsv.UnlockSurface(surface1);
-				//	if (m_decode.m_basePTS == -1)
-				//	{
-				//		m_decode.m_basePTS = tag.samplePTS;
-				//	}
-				//	m_queue.Push(tag);
-				//}
-				BYTE* bo = NULL;
+				mfxFrameSurface1* surface1 = NULL;
+				g_time.BeginTime();
+				if (m_decode.m_qsv->Decode(tag, surface1))
+				{
+					QSV::QSVAllocator* pAllocator = m_decode.m_qsv->GetAllocator();
+					pAllocator->Lock(pAllocator->pthis, surface1->Data.MemId, &(surface1->Data));
+					tag.size = surface1->Info.CropH * surface1->Data.Pitch;
+					tag.bits = new BYTE[tag.size];
+					memcpy(tag.bits, surface1->Data.B, tag.size);
+					pAllocator->Unlock(pAllocator->pthis, surface1->Data.MemId, &(surface1->Data));
+					m_decode.m_qsv->UnlockSurface(surface1);
+					if (m_decode.m_basePTS == -1)
+					{
+						m_decode.m_basePTS = tag.samplePTS;
+					}
+					m_queue.Push(tag);
+				}
+				g_time.EndTime();
+				TRACE("Video Decode:%lld\n", g_time.GetMillisconds());
+				/*BYTE* bo = NULL;
 				LONG  so = 0;
 				if (m_decode.m_x264->Decode(tag, bo, so) == 0)
 				{
@@ -396,7 +406,7 @@ namespace FLVPlayer
 						m_decode.m_basePTS = tag.samplePTS;
 					}
 					m_queue.Push(tag);
-				}
+				}*/
 			}
 		}
 	}

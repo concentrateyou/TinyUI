@@ -66,16 +66,16 @@ namespace MShow
 		m_view.GetClientRect(&s);
 		if (!m_graphics.Initialize(m_view.Handle(), s.Size()))
 			return FALSE;
-		string box;
-		box.resize(MAX_PATH);
-		GetModuleFileName(NULL, &box[0], MAX_PATH);
-		box = box.substr(0, box.find_last_of("\\", string::npos, 1));
-		string vs = box + "\\box.png";
-		ASSERT(PathFileExists(vs.c_str()));
-		for (INT i = 0;i < 8;i++)
-		{
-			m_handles[i].Load(m_graphics.GetDX11(), vs.c_str());
-		}
+		//string box;
+		//box.resize(MAX_PATH);
+		//GetModuleFileName(NULL, &box[0], MAX_PATH);
+		//box = box.substr(0, box.find_last_of("\\", string::npos, 1));
+		//string vs = box + "\\box.png";
+		//ASSERT(PathFileExists(vs.c_str()));
+		//for (INT i = 0;i < 8;i++)
+		//{
+		//	m_handles[i].Load(m_graphics.GetDX11(), vs.c_str());
+		//}
 		m_popup.CreatePopupMenu();
 		m_popup.AppendMenu(MF_STRING, IDM_MOVEUP, TEXT("иорф"));
 		m_popup.AppendMenu(MF_STRING, IDM_MOVEDOWN, TEXT("обрф"));
@@ -490,7 +490,7 @@ namespace MShow
 						image->GetHandleRect((TrackerHit)i, &rectangle);
 						//m_handles[i].SetPosition(rectangle.Position());
 						//m_handles[i].SetScale(rectangle.Size());
-						m_graphics.DrawImage(&m_handles[i]);
+						//m_graphics.DrawImage(&m_handles[i]);
 					}
 				}
 			}
@@ -508,7 +508,7 @@ namespace MShow
 			{
 				for (INT i = 0; i < 8; ++i)
 				{
-					m_handles[i].Destory();
+					//m_handles[i].Destory();
 				}
 				for (INT i = 0;i < m_array.GetSize();i++)
 				{

@@ -30,7 +30,7 @@ namespace MShow
 		m_bBreak = TRUE;
 		if (TinyThread::Close(dwMS))
 		{
-			m_x264.Close();
+			m_qsv.Close();
 			m_task.GetVideoQueue().RemoveAll();
 			m_videoQueue.RemoveAll();
 			return TRUE;
@@ -48,20 +48,13 @@ namespace MShow
 		bRes = FALSE;
 		FLV_SCRIPTDATA& script = m_task.GetScript();
 		TinySize s(static_cast<LONG>(script.width), static_cast<LONG>(script.height));
-		m_x264.Close();
-		if (m_x264.Initialize(s, s))
+		m_qsv.Close();
+		bRes = m_qsv.Open(bits, size);
+		if (!bRes)
 		{
-			bRes = m_x264.Open(bits, size);
-			if (!bRes)
-			{
-				LOG(ERROR) << "x264 Open FAIL";
-			}
-			m_bBreak = !bRes;
+			LOG(ERROR) << "x264 Open FAIL";
 		}
-		else
-		{
-			LOG(ERROR) << "x264 Initialize FAIL";
-		}
+		m_bBreak = !bRes;
 		m_task.EVENT_AVCDCR -= m_onAVCDC;
 	}
 
@@ -85,9 +78,30 @@ namespace MShow
 				Sleep(15);
 				continue;
 			}
-			BYTE* bo = NULL;
+			mfxFrameSurface1* surface1 = NULL;
+			if (m_qsv.Decode(sampleTag, surface1) && sampleTag.size > 0)
+			{
+				QSV::QSVAllocator* pAllocator = m_qsv.GetAllocator();
+				pAllocator->Lock(pAllocator->pthis, surface1->Data.MemId, &(surface1->Data));
+				sampleTag.size = surface1->Info.CropH * surface1->Data.Pitch;
+				if (m_videoQueue.GetAllocSize() == 0)
+				{
+					INT count = MAX_VIDEO_QUEUE_SIZE / sampleTag.size + 1;
+					m_videoQueue.Initialize(count, sampleTag.size + 4);
+				}
+				sampleTag.bits = static_cast<BYTE*>(m_videoQueue.Alloc());
+				memcpy(sampleTag.bits + 4, surface1->Data.B, sampleTag.size);
+				pAllocator->Unlock(pAllocator->pthis, surface1->Data.MemId, &(surface1->Data));
+				m_qsv.UnlockSurface(surface1);
+				if (m_clock.GetBasePTS() == -1)
+				{
+					m_clock.SetBasePTS(sampleTag.samplePTS);
+				}
+				m_videoQueue.Push(sampleTag);
+			}
+			/*BYTE* bo = NULL;
 			LONG  so = 0;
-			if (m_x264.Decode(sampleTag, bo, so) == 0)
+			if (m_qsv.Decode(sampleTag, bo, so) == 0)
 			{
 				if (m_videoQueue.GetAllocSize() == 0)
 				{
@@ -103,7 +117,7 @@ namespace MShow
 					m_clock.SetBasePTS(sampleTag.samplePTS);
 				}
 				m_videoQueue.Push(sampleTag);
-			}
+			}*/
 		}
 		m_videoQueue.RemoveAll();
 	}

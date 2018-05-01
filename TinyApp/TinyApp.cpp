@@ -253,9 +253,9 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	CoInitialize(NULL);
 	avcodec_register_all();
 
-	std::string val;
+	/*std::string val;
 	GetFileName(val);
-
+*/
 	/*TinyProcess process;
 	TinyProcessPipe ioPipe;
 	ioPipe.Create();

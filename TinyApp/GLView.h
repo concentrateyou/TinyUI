@@ -35,7 +35,7 @@ public:
 	LRESULT OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 private:
-	DX9Graphics2D	m_graphics;
-	DX9Image2D		m_image2D[2];
-	//LAVPlayer m_player;
+	/*DX9Graphics2D	m_graphics;
+	DX9Image2D		m_image2D[2];*/
+	LAVPlayer m_player;
 };

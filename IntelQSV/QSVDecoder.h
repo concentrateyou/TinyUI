@@ -3,6 +3,7 @@
 using namespace TinyUI::Media;
 namespace QSV
 {
+#define MSDK_MAX_SURFACES 256
 #define MAX_STREAM_SIZE (1024 * 1024)
 	/// <summary>
 	/// ƒ¨»œ π”√DX9
@@ -48,7 +49,7 @@ namespace QSV
 		TinyScopedPtr<QSVAllocator>			m_allocator;
 		TinyScopedPtr<MFXVideoVPP>			m_mfxVideoVPP;
 		TinyScopedPtr<MFXVideoDECODE>		m_mfxVideoDECODE;
-		volatile LONG						m_locks[256];
+		volatile LONG						m_locks[MSDK_MAX_SURFACES];
 	};
 }
 

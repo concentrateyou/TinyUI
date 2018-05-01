@@ -187,7 +187,7 @@ namespace QSV
 		if (pSurface != NULL)
 		{
 			INT index = -1;
-			for (INT i = 0;i < m_mfxVPPResponse.NumFrameActual;i++)
+			for (INT i = 0; i < m_mfxVPPResponse.NumFrameActual; i++)
 			{
 				if (m_mfxVPPSurfaces[i] == pSurface)
 				{
@@ -207,7 +207,7 @@ namespace QSV
 		if (pSurface != NULL)
 		{
 			INT index = -1;
-			for (INT i = 0;i < m_mfxVPPResponse.NumFrameActual;i++)
+			for (INT i = 0; i < m_mfxVPPResponse.NumFrameActual; i++)
 			{
 				if (m_mfxVPPSurfaces[i] == pSurface)
 				{
@@ -407,6 +407,7 @@ namespace QSV
 		MSDK_ZERO_MEMORY(requestVPP[1]);
 		status = m_mfxVideoDECODE->QueryIOSurf(&m_mfxVideoParam, &request);
 		MSDK_IGNORE_MFX_STS(status, MFX_WRN_PARTIAL_ACCELERATION);
+		MSDK_IGNORE_MFX_STS(status, MFX_WRN_INCOMPATIBLE_VIDEO_PARAM);
 		if (MFX_ERR_NONE != status)
 			goto _ERROR;
 		MSDK_MEMCPY_VAR(m_mfxVppVideoParam.vpp.In, &m_mfxVideoParam.mfx.FrameInfo, sizeof(mfxFrameInfo));

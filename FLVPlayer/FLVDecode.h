@@ -11,6 +11,7 @@
 #include "DX9RenderView.h"
 #include "Media/TinyMFIntelQSVDecode.h"
 using namespace Decode;
+using namespace QSV;
 using namespace TinyUI;
 using namespace TinyUI::IO;
 using namespace TinyUI::Media;
@@ -129,7 +130,8 @@ namespace FLVPlayer
 		TinyEvent					m_audioEvent;
 		PacketQueue					m_audioQueue;
 		PacketQueue					m_videoQueue;
-		TinyScopedPtr<x264Decoder>	m_x264;
+		//TinyScopedPtr<x264Decoder>	m_x264;
+		TinyScopedPtr<QSVDecoder>	m_qsv;
 		TinyScopedPtr<AACDecoder>	m_aac;
 		FLVAudioRender				m_audioRender;
 		FLVVideoRender				m_videoRender;
