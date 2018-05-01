@@ -78,13 +78,13 @@ namespace DXApp
 	BOOL RenderTask::Close(DWORD dwMs)
 	{
 		m_close.SetEvent();
-		return TinyTask::Close(dwMs);
+		return TinyThread::Close(dwMs);
 	}
 
 	BOOL RenderTask::Submit()
 	{
 		m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
-		return TinyTask::Submit(BindCallback(&RenderTask::OnMessagePump, this));
+		return TinyThread::Submit(BindCallback(&RenderTask::OnMessagePump, this));
 	}
 
 
@@ -125,8 +125,8 @@ namespace DXApp
 						{
 							TinyRectangle rectangle;
 							image->GetHandleRect((TrackerHit)i, &rectangle);
-							m_handles[i].SetPosition(rectangle.Position());
-							m_handles[i].SetScale(rectangle.Size());
+							/*m_handles[i].SetPosition(rectangle.Position());
+							m_handles[i].SetScale(rectangle.Size());*/
 							m_graphics.DrawImage(&m_handles[i]);
 						}
 					}

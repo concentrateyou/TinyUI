@@ -32,13 +32,13 @@ namespace HLSPlayer
 		m_bBreak = FALSE;
 		m_bInitialize = FALSE;
 		m_image.Destory();
-		return TinyTask::Submit(BindCallback(&MVideoRenderTask::OnMessagePump, this));
+		return TinyThread::Submit(BindCallback(&MVideoRenderTask::OnMessagePump, this));
 	}
 
 	BOOL MVideoRenderTask::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
-		BOOL bRes = TinyTask::Close(dwMS);
+		BOOL bRes = TinyThread::Close(dwMS);
 		m_bInitialize = FALSE;
 		m_image.Destory();
 		return bRes;
@@ -116,7 +116,7 @@ namespace HLSPlayer
 				}
 				TinyRectangle s;
 				GetClientRect(m_hWND, &s);
-				m_image.SetScale(s.Size());
+				//m_image.SetScale(s.Size());
 				m_bInitialize = TRUE;
 			}
 			OnCopy(sampleTag.bits, sampleTag.size);

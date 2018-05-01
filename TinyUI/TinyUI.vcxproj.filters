@@ -315,9 +315,6 @@
     <ClInclude Include="Render\TinyDDraw.h">
       <Filter>头文件\Render</Filter>
     </ClInclude>
-    <ClInclude Include="IO\TinyWin32TaskPool.h">
-      <Filter>头文件\IO</Filter>
-    </ClInclude>
     <ClInclude Include="IO\TinyRingQueue.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
@@ -347,9 +344,6 @@
     </ClInclude>
     <ClInclude Include="Network\TinyURL.h">
       <Filter>头文件\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="IO\TinyTaskPool.h">
-      <Filter>头文件\IO</Filter>
     </ClInclude>
     <ClInclude Include="Common\TinyConcurrency.h">
       <Filter>头文件\Common</Filter>
@@ -510,9 +504,6 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="IO\TinyTask.h">
-      <Filter>头文件\IO</Filter>
-    </ClInclude>
     <ClInclude Include="Windowless\TinyVisualShadow.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
@@ -550,6 +541,18 @@
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
     <ClInclude Include="IO\TinyProcess.h">
+      <Filter>头文件\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\TinyWin32Threadpool.h">
+      <Filter>头文件\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\TinyThread.h">
+      <Filter>头文件\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\TinyThreadPool.h">
+      <Filter>头文件\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\TinyMsgQueue.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
   </ItemGroup>
@@ -797,9 +800,6 @@
     <ClCompile Include="Render\TinyDDraw.cpp">
       <Filter>源文件\Render</Filter>
     </ClCompile>
-    <ClCompile Include="IO\TinyWin32TaskPool.cpp">
-      <Filter>源文件\IO</Filter>
-    </ClCompile>
     <ClCompile Include="IO\TinyRingQueue.cpp">
       <Filter>源文件\IO</Filter>
     </ClCompile>
@@ -829,9 +829,6 @@
     </ClCompile>
     <ClCompile Include="Network\TinyURL.cpp">
       <Filter>源文件\Network</Filter>
-    </ClCompile>
-    <ClCompile Include="IO\TinyTaskPool.cpp">
-      <Filter>源文件\IO</Filter>
     </ClCompile>
     <ClCompile Include="Common\TinyConcurrency.cpp">
       <Filter>源文件\Common</Filter>
@@ -980,9 +977,6 @@
     <ClCompile Include="Media\TinyMFAsyncCallback.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
-    <ClCompile Include="IO\TinyTask.cpp">
-      <Filter>源文件\IO</Filter>
-    </ClCompile>
     <ClCompile Include="Windowless\TinyVisualShadow.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
@@ -1020,6 +1014,18 @@
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
     <ClCompile Include="IO\TinyProcess.cpp">
+      <Filter>源文件\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\TinyWin32Threadpool.cpp">
+      <Filter>源文件\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\TinyThread.cpp">
+      <Filter>源文件\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\TinyThreadPool.cpp">
+      <Filter>源文件\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\TinyMsgQueue.cpp">
       <Filter>源文件\IO</Filter>
     </ClCompile>
   </ItemGroup>

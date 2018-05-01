@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "HLSPlayer.h"
 #include "Media/TinySoundPlayer.h"
-#include "IO/TinyTask.h"
+#include "IO/TinyThread.h"
 #include "Common/TinyTime.h"
 #include "MPreviewView.h"
 #include "TSReader.h"

@@ -11,7 +11,7 @@ namespace HLSPlayer
 	/// <summary>
 	/// HLS∂¡»°œﬂ≥Ã
 	/// </summary>
-	class MHLSTask : public TinyTask
+	class MHLSTask : public TinyThread
 	{
 		DISALLOW_COPY_AND_ASSIGN(MHLSTask)
 	public:

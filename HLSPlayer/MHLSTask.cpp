@@ -63,13 +63,13 @@ namespace HLSPlayer
 	{
 		m_bBreak = FALSE;
 		m_sample = 0;
-		return TinyTask::Submit(BindCallback(&MHLSTask::OnMessagePump, this));
+		return TinyThread::Submit(BindCallback(&MHLSTask::OnMessagePump, this));
 	}
 
 	BOOL MHLSTask::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
-		BOOL bRes = TinyTask::Close(dwMS);
+		BOOL bRes = TinyThread::Close(dwMS);
 		m_timer.Close();
 		m_readerHLS.Close();
 		m_readerTS.Close();

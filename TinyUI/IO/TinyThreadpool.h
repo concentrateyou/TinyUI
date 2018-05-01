@@ -3,7 +3,7 @@
 #include "../Common/TinyCore.h"
 #include "../Common/TinyCallback.h"
 #include "../Common/TinyEvent.h"
-#include "../IO/TinyTask.h"
+#include "../IO/TinyThread.h"
 
 namespace TinyUI
 {
@@ -12,9 +12,9 @@ namespace TinyUI
 		/// <summary>
 		/// ÈÎÎñ³Ø
 		/// </summary>
-		class TinyTaskPool
+		class TinyThreadpool
 		{
-			DISALLOW_COPY_AND_ASSIGN(TinyTaskPool)
+			DISALLOW_COPY_AND_ASSIGN(TinyThreadpool)
 		public:
 			class TaskItem
 			{
@@ -29,7 +29,7 @@ namespace TinyUI
 				Closure m_complete;
 			};
 		public:
-			TinyTaskPool();
+			TinyThreadpool();
 			BOOL PostTask(void*	context, Closure&& task, Closure&& complete);
 		private:
 			static DWORD CALLBACK TaskItemCallback(void* param);

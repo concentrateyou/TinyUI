@@ -76,7 +76,7 @@ namespace MShow
 		DX11RenderView*					m_renderViews[6];
 		TinyPerformanceTime				m_timeQPC;
 		TinyArray<DX11Element2D*>		m_array;
-		TinyTask					m_tasks[2];
+		TinyThread						m_tasks[2];
 	private:
 		TinyScopedPtr<Delegate<void(void*, INT)>>				   m_onMenuClick;
 		TinyScopedPtr<Delegate<void(UINT, WPARAM, LPARAM, BOOL&)>> m_onLButtonDown;

@@ -9,7 +9,7 @@ namespace HLSPlayer
 	/// <summary>
 	/// “Ù∆µΩ‚¬Îœﬂ≥Ã
 	/// </summary>
-	class MAudioTask : public TinyTask
+	class MAudioTask : public TinyThread
 	{
 		DISALLOW_COPY_AND_ASSIGN(MAudioTask)
 	public:

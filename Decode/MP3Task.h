@@ -2,7 +2,7 @@
 #include "MPG123Decode.h"
 #include "Media/TinyMP3File.h"
 #include "Common/TinyCallback.h"
-#include "IO/TinyTask.h"
+#include "IO/TinyThread.h"
 using namespace TinyUI;
 using namespace TinyUI::IO;
 using namespace TinyUI::Media;

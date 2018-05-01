@@ -7,7 +7,7 @@ using namespace TinyUI::IO;
 
 namespace DXFramework
 {
-	class DX11DuplicatorTask : public TinyTask
+	class DX11DuplicatorTask : public TinyThread
 	{
 	public:
 		DX11DuplicatorTask(DX11& dx11, DX11Image2D& image);

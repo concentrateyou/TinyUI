@@ -26,12 +26,12 @@ namespace TinyUI
 			context->OP = OP_QUIT;
 			PostQueuedCompletionStatus(m_pIOCP->Handle(), 0, 0, NULL);
 			m_bBreak = TRUE;
-			return TinyTask::Close(dwMs);
+			return TinyThread::Close(dwMs);
 		}
 		BOOL TinyIOTask::Submit()
 		{
 			m_bBreak = FALSE;
-			return TinyTask::Submit(BindCallback(&TinyIOTask::OnMessagePump, this));
+			return TinyThread::Submit(BindCallback(&TinyIOTask::OnMessagePump, this));
 		}
 		void TinyIOTask::OnMessagePump()
 		{

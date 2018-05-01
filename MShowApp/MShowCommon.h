@@ -7,7 +7,7 @@
 #include "DX11Graphics2D.h"
 #include "Common/TinyCallback.h"
 #include "IO/TinyIO.h"
-#include "IO/TinyTask.h"
+#include "IO/TinyThread.h"
 #include "IO/TinyRingBuffer.h"
 #include "IO/TinyFixedAlloc.h"
 #include "Control/TinyControl.h"

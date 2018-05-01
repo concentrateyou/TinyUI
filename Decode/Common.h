@@ -7,7 +7,7 @@
 #include "Common/TinyUtility.h"
 #include "Network/TinyHTTPClient.h"
 #include "Render/TinyGDI.h"
-#include "IO/TinyTask.h"
+#include "IO/TinyThread.h"
 #include "IO/TinyIO.h"
 #include "IO/TinyIOBuffer.h"
 #include "IO/TinyBitReader.h"

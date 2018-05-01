@@ -31,7 +31,7 @@ namespace FLVPlayer
 		{
 			m_size.cx = static_cast<LONG>(m_reader.GetScript().width);
 			m_size.cy = static_cast<LONG>(m_reader.GetScript().height);
-			if (TinyTask::Submit(BindCallback(&FLVDecode::OnMessagePump, this)))
+			if (TinyThread::Submit(BindCallback(&FLVDecode::OnMessagePump, this)))
 			{
 				m_audioRender.Submit();
 				m_audioTask.Submit();
@@ -53,7 +53,7 @@ namespace FLVPlayer
 		m_videoRender.Close(dwMS);
 		m_videoTask.Close(dwMS);
 		m_audioTask.Close(dwMS);
-		return TinyTask::Close(dwMS);
+		return TinyThread::Close(dwMS);
 	}
 
 	void FLVDecode::OnData(BYTE* bits, LONG size, LPVOID ps)
@@ -185,12 +185,12 @@ namespace FLVPlayer
 		m_player.Close();
 		if (!m_player.Open(m_decode.m_decode.m_hWND))
 			return FALSE;
-		return TinyTask::Submit(BindCallback(&FLVAudioRender::OnMessagePump, this));
+		return TinyThread::Submit(BindCallback(&FLVAudioRender::OnMessagePump, this));
 	}
 	BOOL FLVAudioRender::Close(DWORD dwMS)
 	{
 		m_close.SetEvent();
-		return TinyTask::Close(dwMS);
+		return TinyThread::Close(dwMS);
 	}
 	void FLVAudioRender::OnMessagePump()
 	{
@@ -263,12 +263,12 @@ namespace FLVPlayer
 		BOOL bRes = m_graphics.Initialize(m_decode.m_decode.m_hWND, rectangle.Size());
 		bRes = m_image.Create(m_graphics.GetDX9(), m_decode.m_decode.m_size.cx, m_decode.m_decode.m_size.cy, NULL);
 		m_font2D.Load(m_graphics.GetDX9(), (HFONT)GetStockObject(DEFAULT_GUI_FONT));
-		return TinyTask::Submit(BindCallback(&FLVVideoRender::OnMessagePump, this));
+		return TinyThread::Submit(BindCallback(&FLVVideoRender::OnMessagePump, this));
 	}
 	BOOL FLVVideoRender::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
-		return TinyTask::Close(dwMS);
+		return TinyThread::Close(dwMS);
 	}
 	void FLVVideoRender::OnMessagePump()
 	{
@@ -332,12 +332,12 @@ namespace FLVPlayer
 	}
 	BOOL FLVVideoTask::Submit()
 	{
-		return TinyTask::Submit(BindCallback(&FLVVideoTask::OnMessagePump, this));
+		return TinyThread::Submit(BindCallback(&FLVVideoTask::OnMessagePump, this));
 	}
 	BOOL FLVVideoTask::Close(DWORD dwMS)
 	{
 		m_close.SetEvent();
-		return TinyTask::Close(dwMS);
+		return TinyThread::Close(dwMS);
 	}
 
 	void FLVVideoTask::OnQSV(Media::SampleTag& tag)
@@ -413,12 +413,12 @@ namespace FLVPlayer
 	}
 	BOOL FLVVAudioTask::Submit()
 	{
-		return TinyTask::Submit(BindCallback(&FLVVAudioTask::OnMessagePump, this));
+		return TinyThread::Submit(BindCallback(&FLVVAudioTask::OnMessagePump, this));
 	}
 	BOOL FLVVAudioTask::Close(DWORD dwMS)
 	{
 		m_close.SetEvent();
-		return TinyTask::Close(dwMS);
+		return TinyThread::Close(dwMS);
 	}
 	void FLVVAudioTask::OnMessagePump()
 	{

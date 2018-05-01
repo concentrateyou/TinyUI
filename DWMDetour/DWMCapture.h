@@ -2,7 +2,7 @@
 #include "Common/TinyLogging.h"
 #include "Common/TinyHook.h"
 #include "IO/TinySharedMemory.h"
-#include "IO/TinyTask.h"
+#include "IO/TinyThread.h"
 #include "IDXGIFactoryDWM.h"
 #include <d3d10_1.h>
 #include <d3d10.h>
@@ -45,7 +45,7 @@ namespace DWM
 		static LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 	private:
 		HWND				m_hWNDD3D;
-		IO::TinyTask	m_task;
+		IO::TinyThread	m_task;
 		HINSTANCE			m_hInstance;
 	public:
 		DWMCaptureDATA					m_captureDATA;

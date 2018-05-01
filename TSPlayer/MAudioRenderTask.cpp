@@ -44,13 +44,13 @@ namespace TSPlayer
 		m_bBreak = FALSE;
 		m_bInitialize = FALSE;
 		m_audio.Close();
-		return TinyTask::Submit(BindCallback(&MAudioRenderTask::OnMessagePump, this));
+		return TinyThread::Submit(BindCallback(&MAudioRenderTask::OnMessagePump, this));
 	}
 
 	BOOL MAudioRenderTask::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
-		BOOL bRes = TinyTask::Close(dwMS);
+		BOOL bRes = TinyThread::Close(dwMS);
 		m_bInitialize = FALSE;
 		m_audio.Close();
 		return bRes;

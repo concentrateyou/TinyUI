@@ -24,13 +24,13 @@ namespace TSPlayer
 		m_aac.Close();
 		m_audioQueue.RemoveAll();
 		m_task.EVENT_ASC += m_onASC;
-		return TinyTask::Submit(BindCallback(&MAudioTask::OnMessagePump, this));
+		return TinyThread::Submit(BindCallback(&MAudioTask::OnMessagePump, this));
 	}
 
 	BOOL MAudioTask::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
-		BOOL bRes = TinyTask::Close(dwMS);
+		BOOL bRes = TinyThread::Close(dwMS);
 		m_aac.Close();
 		m_audioQueue.RemoveAll();
 		return bRes;

@@ -8,7 +8,7 @@ namespace HLSPlayer
 	/// <summary>
 	/// 视频解码线程
 	/// </summary>
-	class MVideoTask : public TinyTask
+	class MVideoTask : public TinyThread
 	{
 		DISALLOW_COPY_AND_ASSIGN(MVideoTask)
 	public:

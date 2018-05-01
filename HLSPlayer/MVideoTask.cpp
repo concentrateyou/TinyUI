@@ -24,13 +24,13 @@ namespace HLSPlayer
 		m_x264.Close();
 		m_videoQueue.RemoveAll();
 		m_task.EVENT_AVCDCR += m_onAVCDC;
-		return TinyTask::Submit(BindCallback(&MVideoTask::OnMessagePump, this));
+		return TinyThread::Submit(BindCallback(&MVideoTask::OnMessagePump, this));
 	}
 
 	BOOL MVideoTask::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
-		BOOL bRes = TinyTask::Close(dwMS);
+		BOOL bRes = TinyThread::Close(dwMS);
 		m_x264.Close();
 		m_videoQueue.RemoveAll();
 		return bRes;

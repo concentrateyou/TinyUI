@@ -11,7 +11,7 @@ namespace MShow
 	/// <summary>
 	/// Ó°×ÓUI¿ØÖÆÆ÷
 	/// </summary>
-	class MShadowController : public TinyTask
+	class MShadowController : public TinyThread
 	{
 		friend class MShowController;
 		friend class MVideoController;

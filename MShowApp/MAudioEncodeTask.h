@@ -14,7 +14,7 @@ namespace MShow
 	/// <summary>
 	/// 采集声卡数据和音频编码
 	/// </summary>
-	class MAudioEncodeTask : public TinyTask
+	class MAudioEncodeTask : public TinyThread
 	{
 		DISALLOW_COPY_AND_ASSIGN(MAudioEncodeTask)
 	public:

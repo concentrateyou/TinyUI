@@ -21,13 +21,13 @@ namespace MShow
 	BOOL MVideoRenderTask::Submit()
 	{
 		m_bBreak = FALSE;
-		return TinyTask::Submit(BindCallback(&MVideoRenderTask::OnMessagePump, this));
+		return TinyThread::Submit(BindCallback(&MVideoRenderTask::OnMessagePump, this));
 	}
 
 	BOOL MVideoRenderTask::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
-		return TinyTask::Close(dwMS);
+		return TinyThread::Close(dwMS);
 	}
 
 	void MVideoRenderTask::OnMessagePump()

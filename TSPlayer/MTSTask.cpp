@@ -46,13 +46,13 @@ namespace TSPlayer
 	{
 		m_bBreak = FALSE;
 		m_sample = 0;
-		return TinyTask::Submit(BindCallback(&MTSTask::OnMessagePump, this));
+		return TinyThread::Submit(BindCallback(&MTSTask::OnMessagePump, this));
 	}
 
 	BOOL MTSTask::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
-		BOOL bRes = TinyTask::Close(dwMS);
+		BOOL bRes = TinyThread::Close(dwMS);
 		m_reader.Close();
 		m_sample = 0;
 		return bRes;

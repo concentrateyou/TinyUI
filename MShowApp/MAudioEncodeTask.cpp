@@ -37,7 +37,7 @@ namespace MShow
 		m_waveFMT.wFormatTag = WAVE_FORMAT_PCM;
 		if (!m_aac.Open(m_waveFMT, audioRate))
 			return FALSE;
-		return TinyTask::Submit(BindCallback(&MAudioEncodeTask::OnMessagePump, this));
+		return TinyThread::Submit(BindCallback(&MAudioEncodeTask::OnMessagePump, this));
 	}
 
 	void MAudioEncodeTask::OnMessagePump()
@@ -53,7 +53,7 @@ namespace MShow
 	BOOL MAudioEncodeTask::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
-		if (TinyTask::Close(dwMS))
+		if (TinyThread::Close(dwMS))
 		{
 			m_aac.Close();
 			m_samples.RemoveAll();

@@ -12,7 +12,7 @@ namespace DXApp
 {
 	class RenderTask;
 
-	class VideoEncode : public TinyTask
+	class VideoEncode : public TinyThread
 	{
 	public:
 		VideoEncode(RenderTask* renderTask);

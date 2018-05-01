@@ -9,7 +9,7 @@ namespace MShow
 	/// <summary>
 	/// RTMP∂¡»°œﬂ≥Ã
 	/// </summary>
-	class MFLVTask : public TinyTask
+	class MFLVTask : public TinyThread
 	{
 		DISALLOW_COPY_AND_ASSIGN(MFLVTask)
 	public:

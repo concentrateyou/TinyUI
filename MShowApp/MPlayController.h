@@ -10,7 +10,7 @@ namespace MShow
 	/// <summary>
 	/// ²¥·Å
 	/// </summary>
-	class MPlayController : public TinyTask
+	class MPlayController : public TinyThread
 	{
 		friend class MShowController;
 		DISALLOW_COPY_AND_ASSIGN(MPlayController)

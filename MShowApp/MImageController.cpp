@@ -53,7 +53,7 @@ namespace MShow
 		if (!m_image2D.Create(m_graphics.GetDX11(), size.cx, size.cy, FALSE))
 			goto _ERROR;
 		m_view.GetClientRect(&rectangle);
-		m_image2D.SetScale(rectangle.Size());
+		//m_image2D.SetScale(rectangle.Size());
 		m_szFile = pzFile;
 		TinyTimerQueue& queue = TinyApplication::GetInstance()->GetTimers();
 		if (m_handle != NULL)

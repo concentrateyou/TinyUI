@@ -11,7 +11,7 @@ namespace TSPlayer
 	/// <summary>
 	/// TS∂¡»°œﬂ≥Ã
 	/// </summary>
-	class MTSTask : public TinyTask
+	class MTSTask : public TinyThread
 	{
 		DISALLOW_COPY_AND_ASSIGN(MTSTask)
 	public:

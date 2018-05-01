@@ -65,14 +65,14 @@ namespace MShow
 	BOOL MPlayController::Submit()
 	{
 		m_bBreak = FALSE;
-		return TinyTask::Submit(BindCallback(&MPlayController::OnMessagePump, this));
+		return TinyThread::Submit(BindCallback(&MPlayController::OnMessagePump, this));
 	}
 
 	BOOL MPlayController::Close(DWORD dwMS)
 	{
 		m_bBreak = TRUE;
 		Sleep(100);
-		if (TinyTask::Close(dwMS))
+		if (TinyThread::Close(dwMS))
 		{
 			//m_video2D.Destory();
 			return TRUE;

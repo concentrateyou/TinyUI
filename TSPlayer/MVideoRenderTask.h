@@ -14,7 +14,7 @@ namespace TSPlayer
 	/// <summary>
 	/// 视频播放线程
 	/// </summary>
-	class MVideoRenderTask : public TinyTask
+	class MVideoRenderTask : public TinyThread
 	{
 		DISALLOW_COPY_AND_ASSIGN(MVideoRenderTask)
 	public:

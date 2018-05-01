@@ -1,6 +1,6 @@
 #pragma once
 #include "Media/TinySoundPlayer.h"
-#include "IO/TinyTask.h"
+#include "IO/TinyThread.h"
 #include "Common/TinyTime.h"
 #include "FLVReader.h"
 #include "PacketQueue.h"
@@ -16,7 +16,7 @@ using namespace DXFramework;
 
 namespace FLVPlayer
 {
-	class QSVTask : public TinyTask
+	class QSVTask : public TinyThread
 	{
 	public:
 		QSVTask();

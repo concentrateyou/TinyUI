@@ -10,7 +10,7 @@ using namespace DShow;
 
 namespace DXApp
 {
-	class PublishTask : public TinyTask
+	class PublishTask : public TinyThread
 	{
 	public:
 		PublishTask(AudioEncode* audioTask, VideoEncode* videoTask);

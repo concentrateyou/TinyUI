@@ -1,7 +1,7 @@
 #pragma once
 #include "Common/TinyCommon.h"
 #include "IO/TinySharedMemory.h"
-#include "IO/TinyTask.h"
+#include "IO/TinyThread.h"
 using namespace TinyUI;
 
 namespace GameDetour
@@ -27,7 +27,7 @@ namespace GameDetour
 	private:
 		static LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 	private:
-		IO::TinyTask	m_task;
+		IO::TinyThread	m_task;
 		HINSTANCE			m_hInstance;
 		HWND				m_hWNDD3D;
 		BOOL				m_bDX8Detour;

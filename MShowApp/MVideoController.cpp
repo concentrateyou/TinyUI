@@ -94,7 +94,7 @@ namespace MShow
 		if (!m_video2D.Create(m_graphics.GetDX11(), size.cx, size.cy, FALSE))
 			goto _ERROR;
 		m_view.GetClientRect(&rectangle);
-		m_video2D.SetScale(rectangle.Size());
+		//m_video2D.SetScale(rectangle.Size());
 		return TRUE;
 	_ERROR:
 		if (m_player != NULL)

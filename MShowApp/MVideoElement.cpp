@@ -35,7 +35,7 @@ namespace MShow
 		{
 			TinyRectangle s;
 			::GetClientRect(dx11.GetHWND(), &s);
-			this->SetScale(s.Size());
+			//this->SetScale(s.Size());
 		}
 	}
 

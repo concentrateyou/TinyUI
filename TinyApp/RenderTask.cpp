@@ -21,12 +21,12 @@ BOOL RenderTask::Submit()
 		return FALSE;
 	m_h264File.Create("D:\\800-600.h264");*/
 	m_close.CreateEvent(FALSE, FALSE, GenerateGUID().c_str(), NULL);
-	return TinyTask::Submit(BindCallback(&RenderTask::OnMessagePump, this));
+	return TinyThread::Submit(BindCallback(&RenderTask::OnMessagePump, this));
 }
 BOOL RenderTask::Close(DWORD dwMS)
 {
 	m_close.SetEvent();
-	return TinyTask::Close(dwMS);
+	return TinyThread::Close(dwMS);
 }
 void RenderTask::OnMessagePump()
 {

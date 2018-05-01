@@ -26,7 +26,7 @@ namespace DXCapture
 		BOOL							m_bTextures;
 		DWORD							m_d3dFormat;
 		DXGI_FORMAT						m_dxgiFormat;
-		IO::TinyTask				m_captureTask;
+		IO::TinyThread					m_captureTask;
 		LPBYTE							m_textures[2];
 		LPVOID							m_captures[NUM_BUFFERS];
 		UINT							m_currentCapture;

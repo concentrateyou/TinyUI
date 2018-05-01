@@ -80,9 +80,9 @@ private:
 	INT64					m_startTime;
 	INT64					m_duration;
 	INT64					m_seek;
-	TinyTask				m_readTask;
-	TinyTask				m_audioTask;
-	TinyTask				m_videoTask;
+	TinyThread				m_readTask;
+	TinyThread				m_audioTask;
+	TinyThread				m_videoTask;
 	AVCodec*				m_audioCodec;
 	AVCodec*				m_videoCodec;
 	AVCodecContext*			m_audioContext;
