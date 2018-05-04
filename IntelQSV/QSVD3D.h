@@ -1,6 +1,5 @@
 #pragma once
 #include "QSVCommon.h"
-#include <dxgi1_2.h>
 
 namespace QSV
 {

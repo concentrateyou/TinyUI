@@ -3,7 +3,6 @@
 using namespace TinyUI::Media;
 namespace QSV
 {
-#define MAX_STREAM_SIZE (1024 * 1024)
 	/// <summary>
 	/// ƒ¨»œ π”√DX9
 	/// </summary>

@@ -3,292 +3,469 @@
 
 namespace QSV
 {
-	QuickSyncDecoder::QuickSyncDecoder(const QSVConfig& config)
-		:m_pVideoParams(NULL),
-		m_config(config),
-		m_bAcceleration(FALSE),
-		m_bUseD3DAlloc(FALSE),
-		m_bUseD3D11Alloc(FALSE),
-		m_assists(0)
+	QuickSyncDecoder::QuickSyncDecoder()
+		:m_bAllowD3D(FALSE),
+		m_bAllowD3D11(FALSE),
+		m_bHDW(FALSE),
+		m_assist(8)
 	{
-
+		MSDK_ZERO_MEMORY(&m_mfxVideoParam, sizeof(m_mfxVideoParam));
 	}
 	QuickSyncDecoder::~QuickSyncDecoder()
 	{
-
+		Close();
 	}
-	mfxStatus QuickSyncDecoder::Initialize(mfxVideoParam* pVideoParams, mfxU32 sPitch)
+	mfxStatus QuickSyncDecoder::InitializeVideoParams(BYTE* bits, LONG size)
 	{
+		MSDK_CHECK_POINTER(m_mfxVideoDECODE, MFX_ERR_NULL_PTR);
 		mfxStatus status = MFX_ERR_NONE;
-		mfxIMPL sIMPL = MFX_IMPL_AUTO_ANY;
-		m_mfxVersion.Major = MIN_REQUIRED_API_VER_MAJOR;
-		m_mfxVersion.Minor = MIN_REQUIRED_API_VER_MINOR;
-		INT adapter = 0;
-		if (sIMPL != MFX_IMPL_SOFTWARE)
+		memset(&m_mfxVideoParam, 0, sizeof(m_mfxVideoParam));
+		m_mfxVideoParam.mfx.CodecId = MFX_CODEC_AVC;
+		memcpy_s(m_mfxResidial.Data, size, bits, size);
+		m_mfxResidial.DataLength += size;
+		status = m_mfxVideoDECODE->DecodeHeader(&m_mfxResidial, &m_mfxVideoParam);
+		if (MFX_ERR_MORE_DATA == status)
 		{
-			adapter = GetIntelAdapter(NULL);
-			if (adapter >= 0)
-			{
-				sIMPL |= MFX_IMPL_VIA_D3D9;
-			}
-			else if (m_config.EnableD3D11)
-			{
-				sIMPL |= MFX_IMPL_VIA_D3D11;
-			}
-			else
-			{
-				LOG(ERROR) << "QsDecoder: Can't create HW decoder, the iGPU is not connected to a screen!\n";
-				status = MFX_ERR_UNSUPPORTED;
-			}
+			mfxU16 oldFlag = m_mfxResidial.DataFlag;
+			m_mfxResidial.DataFlag = MFX_BITSTREAM_COMPLETE_FRAME;
+			status = m_mfxVideoDECODE->DecodeHeader(&m_mfxResidial, &m_mfxVideoParam);
+			m_mfxResidial.DataFlag = oldFlag;
 		}
-		status = InitializeSession(sIMPL);
-		if (MSDK_SUCCEEDED(status) && !m_config.EnableD3D11 && 0 > adapter)
+		if (MFX_ERR_MORE_DATA == status && m_mfxVideoParam.mfx.CodecId == MFX_CODEC_AVC)
 		{
-			LOG(ERROR) << "QsDecoder: can't create HW decoder, the iGPU is not connected to a screen!\n";
-			status = MFX_ERR_UNSUPPORTED;
+			mfxBitstream bs2 = m_mfxResidial;
+			bs2.DataOffset = 0;
+			bs2.Data = new mfxU8[m_mfxResidial.DataLength + 5];
+			memcpy(bs2.Data, m_mfxResidial.Data + m_mfxResidial.DataOffset, m_mfxResidial.DataLength);
+			bs2.MaxLength = bs2.DataLength = m_mfxResidial.DataLength + 5;
+			*((unsigned*)(bs2.Data + bs2.DataLength - 5)) = 0x01000000;
+			bs2.Data[bs2.DataLength - 1] = 1;
+			status = m_mfxVideoDECODE->DecodeHeader(&bs2, &m_mfxVideoParam);
+			SAFE_DELETE_ARRAY(bs2.Data);
 		}
-		return status;
-	}
-	mfxStatus QuickSyncDecoder::InitializeSession(mfxIMPL impl)
-	{
-		if (m_mfxVideoSession != NULL)
-			return MFX_ERR_NONE;
-		m_mfxVideoSession.Reset(new MFXVideoSession());
-		if (m_mfxVideoSession != NULL)
-			return MFX_ERR_MEMORY_ALLOC;
-		mfxStatus status = m_mfxVideoSession->Init(impl, &m_mfxVersion);
-		if (MSDK_FAILED(status))
-		{
-			LOG(ERROR) << "QsDecoder: failed to initialize MSDK session!\n";
-			return status;
-		}
-		m_mfxVideoSession->QueryIMPL(&m_mfxIMPL);
-		m_mfxVideoSession->QueryVersion(&m_mfxVersion);
-		m_bAcceleration = m_mfxIMPL != MFX_IMPL_SOFTWARE;
-		m_bUseD3DAlloc = m_bAcceleration;
-		m_bUseD3D11Alloc = m_bUseD3DAlloc && ((m_mfxIMPL & MFX_IMPL_VIA_D3D11) == MFX_IMPL_VIA_D3D11);
-		m_mfxVideoDECODE.Reset(new  MFXVideoDECODE((mfxSession)*m_mfxVideoSession));
-		if (m_mfxVideoDECODE != NULL)
-			return MFX_ERR_MEMORY_ALLOC;
-#if MFX_D3D11_SUPPORT
-		if (m_bUseD3D11Alloc)
-		{
-			INT adapterID = GetMSDKAdapters(*m_mfxVideoSession);
-			if (NULL == m_device)
-			{
-				m_qsvd3d.Reset(new QSVD3D11());
-				if (m_qsvd3d != NULL)
-					return MFX_ERR_MEMORY_ALLOC;
-				if (MSDK_FAILED(status = m_qsvd3d->Initialize(adapterID)))
-				{
-					LOG(ERROR) << "QsDecoder: D3D11 init have failed!\n";
-					m_qsvd3d.Reset(NULL);
-					return status;
-				}
-			}
-			mfxHDL hdl = m_qsvd3d->GetHandle(MFX_HANDLE_D3D11_DEVICE);
-			status = m_mfxVideoSession->SetHandle(MFX_HANDLE_D3D11_DEVICE, hdl);
-		}
-#endif
-		MSDK_ZERO_MEMORY((void*)&m_locks, sizeof(m_locks));
-		return MFX_ERR_NONE;
-	}
-	mfxStatus QuickSyncDecoder::Decode(mfxBitstream* pI, mfxFrameSurface1*& pO)
-	{
-		return MFX_ERR_NONE;
-	}
-	void QuickSyncDecoder::SetAssists(mfxU16 count)
-	{
-		if (m_assists != count)
-		{
-			m_assists = count;
-			FreeFrames();
-		}
-	}
-	mfxStatus QuickSyncDecoder::AllocFrames(mfxVideoParam* pVideoParams, mfxU32 sPitch)
-	{
-		LOG(INFO) << "QsDecoder: AllocFrames\n";
-		MSDK_CHECK_POINTER(m_mfxVideoDECODE, MFX_ERR_NOT_INITIALIZED);
-		if (m_surfaces)
-			return MFX_ERR_NONE;
-		mfxStatus status = MFX_ERR_NONE;
-		status = CreateAllocator();
-		MSDK_CHECK_NOT_EQUAL(status, MFX_ERR_NONE, status);
-		mfxFrameAllocRequest allocRequest;
-		memset(&allocRequest, 0, sizeof(allocRequest));
-		status = m_mfxVideoDECODE->QueryIOSurf(pVideoParams, &allocRequest);
 		MSDK_IGNORE_MFX_STS(status, MFX_WRN_PARTIAL_ACCELERATION);
-		MSDK_IGNORE_MFX_STS(status, MFX_WRN_INCOMPATIBLE_VIDEO_PARAM);
-		MSDK_CHECK_RESULT_P_RET(status, MFX_ERR_NONE);
-		allocRequest.NumFrameSuggested = (mfxU16)m_assists + allocRequest.NumFrameSuggested;
-		allocRequest.NumFrameMin = allocRequest.NumFrameSuggested;
-		allocRequest.Type = MFX_MEMTYPE_EXTERNAL_FRAME | MFX_MEMTYPE_FROM_DECODE;
-		allocRequest.Type |= (m_bUseD3DAlloc) ? MFX_MEMTYPE_VIDEO_MEMORY_DECODER_TARGET : MFX_MEMTYPE_SYSTEM_MEMORY;
-		memcpy(&allocRequest.Info, &pVideoParams->mfx.FrameInfo, sizeof(mfxFrameInfo));
-		allocRequest.Info.Height = MSDK_ALIGN32(allocRequest.Info.Height);
-		allocRequest.Info.Width = (mfxU16)sPitch;
-		status = m_allocator->Alloc(m_allocator->pthis, &allocRequest, &m_allocResponse);
-		MSDK_CHECK_RESULT_P_RET(status, MFX_ERR_NONE);
-		m_requests = m_allocResponse.NumFrameActual;
-		ASSERT(m_requests == allocRequest.NumFrameSuggested);
-		m_surfaces.Reset(new mfxFrameSurface1[m_requests]);
-		MSDK_CHECK_POINTER(m_surfaces, MFX_ERR_MEMORY_ALLOC);
-		MSDK_ZERO_MEMORY(m_surfaces, sizeof(mfxFrameSurface1) * m_requests);
-		for (mfxU32 i = 0; i < m_requests; ++i)
-		{
-			memcpy(&(m_surfaces[i].Info), &pVideoParams->mfx.FrameInfo, sizeof(mfxFrameInfo));
-			m_surfaces[i].Data.MemId = m_allocResponse.mids[i];
-			m_surfaces[i].Data.Pitch = (mfxU16)sPitch;
-		}
-		return status;
-	}
-	mfxStatus QuickSyncDecoder::FreeFrames()
-	{
-		mfxStatus status = MFX_ERR_NONE;
-		if (m_allocator != NULL && m_allocResponse.NumFrameActual > 0)
-		{
-			status = m_allocator->Free(m_allocator->pthis, &m_allocResponse);
-			memset(&m_allocResponse, 0, sizeof(m_allocResponse));
-		}
-		m_requests = 0;
-		m_surfaces.Reset(NULL);
-		return MFX_ERR_NONE;
-	}
-	mfxStatus QuickSyncDecoder::Reset(mfxVideoParam* pVideoParams, mfxU32 sPitch)
-	{
-		MSDK_CHECK_POINTER(pVideoParams, MFX_ERR_NULL_PTR);
-		MSDK_CHECK_POINTER(m_mfxVideoDECODE, MFX_ERR_NOT_INITIALIZED);
-		mfxStatus status = MFX_ERR_NONE;
-		if (m_allocator != NULL)
-		{
-			status = m_mfxVideoDECODE->Reset(pVideoParams);
-			if (MSDK_FAILED(status))
-			{
-				m_mfxVideoDECODE->Close();
-				FreeFrames();
-			}
-			if (m_surfaces != NULL)
-			{
-				for (INT i = 0; i < m_requests; ++i)
-				{
-					m_surfaces[i].Data.Locked = 0;
-					m_locks[i] = 0;
-				}
-			}
-		}
-		status = AllocFrames(pVideoParams, sPitch);
-		MSDK_CHECK_RESULT_P_RET(status, MFX_ERR_NONE);
-		status = m_mfxVideoDECODE->Init(pVideoParams);
-		switch (status)
-		{
-		case MFX_ERR_NONE:
-			LOG(INFO) << "QsDecoder: decoder Init is successful\n";
-			break;
-		case MFX_WRN_PARTIAL_ACCELERATION:
-			LOG(INFO) << "QsDecoder: decoder Init is successful w/o HW acceleration\n";
-			m_bAcceleration = FALSE;
-			break;
-		case MFX_WRN_INCOMPATIBLE_VIDEO_PARAM:
-			LOG(INFO) << "QsDecoder: decoder Init is successful - wrong video parameters\n";
-			break;
-		default:
-			LOG(ERROR) << "QsDecoder: decoder Init has failed!\n";
-			break;
-		}
-		MSDK_IGNORE_MFX_STS(status, MFX_WRN_INCOMPATIBLE_VIDEO_PARAM);
-		MSDK_IGNORE_MFX_STS(status, MFX_WRN_PARTIAL_ACCELERATION);
-		m_pVideoParams = pVideoParams;
 		return status;
 	}
 	mfxStatus QuickSyncDecoder::CreateAllocator()
 	{
-		if (m_allocator != NULL)
-			return MFX_ERR_NONE;
-		if (!m_pVideoParams)
-			return MFX_ERR_NOT_INITIALIZED;
-		LOG(INFO) << "QuickSyncDecoder: CreateAllocator\n";
-		TinyScopedPtr<mfxAllocatorParams> allocatorParams;
+		MSDK_CHECK_POINTER(m_mfxVideoSession, MFX_ERR_NULL_PTR);
+		MSDK_CHECK_POINTER(m_mfxVideoDECODE, MFX_ERR_NULL_PTR);
 		mfxStatus status = MFX_ERR_NONE;
-		if (m_bUseD3DAlloc)
+		TinyScopedPtr<mfxAllocatorParams> allocatorParams;
+		if (m_bAllowD3D)
 		{
-			m_pVideoParams->IOPattern = MFX_IOPATTERN_OUT_VIDEO_MEMORY | MFX_IOPATTERN_IN_VIDEO_MEMORY;
-			INT adapterID = GetMSDKAdapters(*m_mfxVideoSession);
-			if (m_bUseD3D11Alloc)//Ê¹ÓÃDX11
+			POINT pos = { 0 };
+			HWND hWND = ::WindowFromPoint(pos);
+			if (!hWND)
 			{
-#if MFX_D3D11_SUPPORT
-				ASSERT(m_qsvd3d);
-				MSDK_CHECK_POINTER(m_qsvd3d, MFX_ERR_NULL_PTR);
-				QSVD3D11AllocatorParams* ps = new QSVD3D11AllocatorParams;
-				if (ps != NULL)
-					return MFX_ERR_MEMORY_ALLOC;
-				ps->pDevice = (ID3D11Device*)m_qsvd3d->GetHandle(MFX_HANDLE_D3D11_DEVICE);
-				allocatorParams.Reset(ps);
+				hWND = GetDesktopWindow();
+			}
+			m_mfxVideoParam.IOPattern = MFX_IOPATTERN_OUT_VIDEO_MEMORY | MFX_IOPATTERN_IN_VIDEO_MEMORY;
+			INT adapterID = GetMSDKAdapters(*m_mfxVideoSession);
+			if (adapterID < 0)
+			{
+				status = MFX_ERR_UNSUPPORTED;
+				goto _ERROR;
+			}
+			if (m_bAllowD3D11)
+			{
+#if MFX_D3D11_SUPPORT	
+				m_qsvd3d.Reset(new QSVD3D9());
+				if (!m_qsvd3d)
+				{
+					status = MFX_ERR_MEMORY_ALLOC;
+					goto _ERROR;
+				}
+				status = m_qsvd3d->Initialize((mfxHDL)hWND, adapterID);
+				if (MSDK_FAILED(status))
+					goto _ERROR;
+				mfxHDL hdl = m_qsvd3d->GetHandle(MFX_HANDLE_D3D11_DEVICE);
+				status = m_mfxVideoSession->SetHandle(MFX_HANDLE_D3D11_DEVICE, hdl);
+				if (MSDK_FAILED(status))
+					goto _ERROR;
+				QSVD3D11AllocatorParams* params = new QSVD3D11AllocatorParams();
+				if (!params)
+				{
+					status = MFX_ERR_MEMORY_ALLOC;
+					goto _ERROR;
+				}
+				m_qsvd3d->pDevice = (ID3D11Device*)m_qsvd3d->GetHandle(MFX_HANDLE_D3D11_DEVICE);
+				allocatorParams.Reset(params);
 				m_allocator.Reset(new QSVD3D11Allocator());
-				if (m_allocator != NULL)
-					return MFX_ERR_MEMORY_ALLOC;
+				if (!m_allocator)
+				{
+					status = MFX_ERR_MEMORY_ALLOC;
+					goto _ERROR;
+				}
 #endif
 			}
 			else
 			{
-				m_qsvd3d.Reset(new QSVD3D9());
-				if (m_qsvd3d != NULL)
-					return MFX_ERR_MEMORY_ALLOC;
-				POINT pos = { 0 };
-				HWND hWND = ::WindowFromPoint(pos);
-				if (!hWND)
+				m_qsvd3d.Reset(new QSVD3D11());
+				if (!m_qsvd3d)
 				{
-					hWND = GetDesktopWindow();
+					status = MFX_ERR_MEMORY_ALLOC;
+					goto _ERROR;
 				}
-				if (MSDK_FAILED(status = m_qsvd3d->Initialize(hWND, adapterID)))
-				{
-					LOG(ERROR) << "QsDecoder: D3D9 init have failed!\n";
-					m_qsvd3d.Reset(NULL);
-					return status;
-				}
+				status = m_qsvd3d->Initialize((mfxHDL)hWND, adapterID);
+				if (MSDK_FAILED(status))
+					goto _ERROR;
 				mfxHDL hdl = m_qsvd3d->GetHandle(MFX_HANDLE_D3D9_DEVICE_MANAGER);
 				status = m_mfxVideoSession->SetHandle(MFX_HANDLE_D3D9_DEVICE_MANAGER, hdl);
-				MSDK_CHECK_NOT_EQUAL(status, MFX_ERR_NONE, status);
-				QSVD3D9AllocatorParams* ps = new QSVD3D9AllocatorParams;
-				ps->pManager = (IDirect3DDeviceManager9*)hdl;
-				allocatorParams.Reset(ps);
+				if (MSDK_FAILED(status))
+					goto _ERROR;
+				QSVD3D9AllocatorParams* params = new QSVD3D9AllocatorParams();
+				if (!params)
+				{
+					status = MFX_ERR_MEMORY_ALLOC;
+					goto _ERROR;
+				}
+				params->pManager = (IDirect3DDeviceManager9*)hdl;
+				allocatorParams.Reset(params);
 				m_allocator.Reset(new QSVD3D9Allocator());
-				if (m_allocator != NULL)
-					return MFX_ERR_MEMORY_ALLOC;
+				if (!m_allocator)
+				{
+					status = MFX_ERR_MEMORY_ALLOC;
+					goto _ERROR;
+				}
 			}
 		}
 		else
 		{
-			m_bUseD3DAlloc = FALSE;
-			m_pVideoParams->IOPattern = MFX_IOPATTERN_OUT_SYSTEM_MEMORY | MFX_IOPATTERN_IN_SYSTEM_MEMORY;
+			m_mfxVideoParam.IOPattern = MFX_IOPATTERN_OUT_SYSTEM_MEMORY | MFX_IOPATTERN_IN_SYSTEM_MEMORY;
 			m_allocator.Reset(new QSVMemeryAllocator());
-			if (m_allocator != NULL)
-				return MFX_ERR_MEMORY_ALLOC;
-		}
-		status = m_allocator->Initialize(allocatorParams.Ptr());
-		if (MSDK_SUCCEEDED(status))
-		{
-			status = m_mfxVideoSession->SetFrameAllocator(m_allocator);
-			if (MSDK_FAILED(status))
+			if (!m_allocator)
 			{
-				LOG(ERROR) << "QsDecoder: Session SetFrameAllocator failed!\n";
+				status = MFX_ERR_MEMORY_ALLOC;
+				goto _ERROR;
 			}
 		}
-		else
+		status = m_allocator->Initialize(allocatorParams);
+		if (MSDK_FAILED(status))
+			goto _ERROR;
+		status = m_mfxVideoSession->SetFrameAllocator(m_allocator);
+		if (MSDK_FAILED(status))
+			goto _ERROR;
+		return status;
+	_ERROR:
+		return status;
+	}
+	mfxStatus QuickSyncDecoder::AllocFrames()
+	{
+		MSDK_CHECK_POINTER(m_allocator, MFX_ERR_NULL_PTR);
+		MSDK_CHECK_POINTER(m_mfxVideoSession, MFX_ERR_NULL_PTR);
+		MSDK_CHECK_POINTER(m_mfxVideoDECODE, MFX_ERR_NULL_PTR);
+		mfxFrameAllocRequest allocRequest;
+		MSDK_ZERO_MEMORY(&allocRequest, sizeof(allocRequest));
+		mfxStatus status = m_mfxVideoDECODE->QueryIOSurf(&m_mfxVideoParam, &allocRequest);
+		MSDK_IGNORE_MFX_STS(status, MFX_WRN_PARTIAL_ACCELERATION);
+		MSDK_IGNORE_MFX_STS(status, MFX_WRN_INCOMPATIBLE_VIDEO_PARAM);
+		MSDK_CHECK_RESULT_P_RET(status, MFX_ERR_NONE);
+		allocRequest.NumFrameSuggested = m_assist + allocRequest.NumFrameSuggested;
+		allocRequest.NumFrameMin = allocRequest.NumFrameSuggested;
+		allocRequest.Type = MFX_MEMTYPE_EXTERNAL_FRAME | MFX_MEMTYPE_FROM_DECODE;
+		allocRequest.Type |= (m_bAllowD3D) ? MFX_MEMTYPE_VIDEO_MEMORY_DECODER_TARGET : MFX_MEMTYPE_SYSTEM_MEMORY;
+		memcpy(&allocRequest.Info, &m_mfxVideoParam.mfx.FrameInfo, sizeof(mfxFrameInfo));
+		allocRequest.Info.Width = MSDK_ALIGN32(allocRequest.Info.Width);
+		allocRequest.Info.Height = MSDK_ALIGN32(allocRequest.Info.Height);
+		status = m_allocator->Alloc(m_allocator->pthis, &allocRequest, &m_mfxResponse);
+		MSDK_CHECK_RESULT_P_RET(status, MFX_ERR_NONE);
+		ASSERT(m_mfxResponse.NumFrameActual == allocRequest.NumFrameSuggested);
+		m_mfxSurfaces.Reset(new mfxFrameSurface1[m_mfxResponse.NumFrameActual]);
+		MSDK_CHECK_POINTER(m_mfxSurfaces, MFX_ERR_MEMORY_ALLOC);
+		MSDK_ZERO_MEMORY(m_mfxSurfaces, sizeof(mfxFrameSurface1) * m_mfxResponse.NumFrameActual);
+		for (mfxU32 i = 0; i < m_mfxResponse.NumFrameActual; ++i)
 		{
-			LOG(ERROR) << "QsDecoder: Allocator Init failed!\n";
-			m_allocator.Reset(NULL);
+			memcpy(&(m_mfxSurfaces[i].Info), &m_mfxVideoParam.mfx.FrameInfo, sizeof(mfxFrameInfo));
+			m_mfxSurfaces[i].Data.MemId = m_mfxResponse.mids[i];
+			m_mfxSurfaces[i].Data.Pitch = allocRequest.Info.Width;
 		}
 		return status;
 	}
-	mfxStatus QuickSyncDecoder::DestoryAllocator()
+	void QuickSyncDecoder::FreeFrames()
 	{
 		if (m_allocator != NULL)
+		{
+			m_allocator->Free(m_allocator->pthis, &m_mfxResponse);
+		}
+		MSDK_ZERO_MEMORY(&m_mfxResponse, sizeof(m_mfxResponse));
+		m_mfxSurfaces.Reset(NULL);
+	}
+	void QuickSyncDecoder::DestoryAllocator()
+	{
+		if (m_allocator != NULL)
+		{
 			m_allocator->Close();
+		}
 		m_allocator.Reset(NULL);
 		if (m_qsvd3d != NULL)
+		{
 			m_qsvd3d->Close();
+		}
 		m_qsvd3d.Reset(NULL);
-		return MFX_ERR_NONE;
+	}
+
+	BOOL QuickSyncDecoder::Open(BYTE* bits, LONG size)
+	{
+		m_mfxVersion.Major = MIN_REQUIRED_API_VER_MAJOR;
+		m_mfxVersion.Minor = MIN_REQUIRED_API_VER_MINOR;
+		mfxStatus status = MFX_ERR_UNSUPPORTED;
+		INT adapter = GetIntelAdapter(NULL);
+		if (adapter < 0)
+		{
+			status = MFX_ERR_UNSUPPORTED;
+			goto _ERROR;
+		}
+		m_mfxIMPL |= MFX_IMPL_VIA_D3D9 | MFX_IMPL_AUTO_ANY;
+#if MFX_D3D11_SUPPORT
+		m_mfxIMPL |= MFX_IMPL_VIA_D3D11;
+#endif
+		m_mfxVideoSession.Reset(new MFXVideoSession());
+		if (!m_mfxVideoSession)
+		{
+			status = MFX_ERR_MEMORY_ALLOC;
+			goto _ERROR;
+		}
+		status = m_mfxVideoSession->Init(m_mfxIMPL, &m_mfxVersion);
+		if (MSDK_FAILED(status))
+			goto _ERROR;
+		m_mfxVideoSession->QueryIMPL(&m_mfxIMPL);
+		m_mfxVideoSession->QueryVersion(&m_mfxVersion);
+		m_bHDW = m_mfxIMPL != MFX_IMPL_SOFTWARE;
+		m_bAllowD3D = m_bHDW;
+		m_bAllowD3D11 = m_bAllowD3D && ((m_mfxIMPL & MFX_IMPL_VIA_D3D11) == MFX_IMPL_VIA_D3D11);
+		m_mfxVideoDECODE.Reset(new MFXVideoDECODE((mfxSession)*m_mfxVideoSession));
+		if (!m_mfxVideoDECODE)
+		{
+			status = MFX_ERR_MEMORY_ALLOC;
+			goto _ERROR;
+		}
+		m_streamBits[0].Reset(new BYTE[MAX_STREAM_SIZE]);
+		if (NULL == m_streamBits[0])
+		{
+			status = MFX_ERR_MEMORY_ALLOC;
+			goto _ERROR;
+		}
+		m_streamBits[1].Reset(new BYTE[MAX_STREAM_SIZE]);
+		if (NULL == m_streamBits[1])
+		{
+			status = MFX_ERR_MEMORY_ALLOC;
+			goto _ERROR;
+		}
+		memset(&m_mfxResidial, 0, sizeof(m_mfxResidial));
+		m_mfxResidial.MaxLength = MAX_STREAM_SIZE;
+		m_mfxResidial.Data = m_streamBits[1];
+		if (MSDK_FAILED(status))
+			goto _ERROR;
+		status = CreateAllocator();
+		if (MFX_ERR_NONE != status)
+			goto _ERROR;
+		status = AllocFrames();
+		if (MFX_ERR_NONE != status)
+			goto _ERROR;
+		status = m_mfxVideoDECODE->Init(&m_mfxVideoParam);
+		MSDK_IGNORE_MFX_STS(status, MFX_WRN_PARTIAL_ACCELERATION);
+		if (MFX_ERR_NONE != status)
+			goto _ERROR;
+		status = m_mfxVideoDECODE->GetVideoParam(&m_mfxVideoParam);
+		if (MFX_ERR_NONE != status)
+			goto _ERROR;
+		return status == MFX_ERR_NONE;
+	_ERROR:
+		Close();
+		return FALSE;
+	}
+	void QuickSyncDecoder::Close()
+	{
+		MSDK_ZERO_MEMORY(&m_mfxVideoParam, sizeof(m_mfxVideoParam));
+		if (m_mfxVideoDECODE != NULL)
+		{
+			m_mfxVideoDECODE->Close();
+		}
+		m_mfxVideoDECODE.Reset(NULL);
+		FreeFrames();
+		if (m_mfxVideoSession != NULL)
+		{
+			if (m_bAllowD3D)
+			{
+				if (m_bAllowD3D11)
+				{
+#if MFX_D3D11_SUPPORT	
+					m_mfxSession->SetHandle(MFX_HANDLE_D3D11_DEVICE, NULL);
+#endif
+				}
+				else
+				{
+					m_mfxVideoSession->SetHandle(MFX_HANDLE_D3D9_DEVICE_MANAGER, NULL);
+				}
+			}
+			m_mfxVideoSession->Close();
+		}
+		m_mfxVideoSession.Reset(NULL);
+		DestoryAllocator();
+	}
+	QSVAllocator* QuickSyncDecoder::GetAllocator()
+	{
+		return m_allocator;
+	}
+	BOOL QuickSyncDecoder::Decode(SampleTag& tag, mfxFrameSurface1*& video)
+	{
+		MSDK_CHECK_POINTER(m_mfxVideoDECODE, MFX_ERR_MEMORY_ALLOC);
+		if (tag.size > 0)
+		{
+			m_tags.InsertLast(tag);
+		}
+		LONG residial = 0;
+		mfxBitstream mfxStream;
+		for (;;)
+		{
+			if (residial <= 0)
+			{
+				if (m_tags.GetSize() <= 0)
+				{
+					goto _DATA;
+				}
+				ITERATOR s = m_tags.First();
+				SampleTag& sampleTag = m_tags.GetAt(s);
+				m_tags.RemoveAt(s);
+				memset(&mfxStream, 0, sizeof(mfxStream));
+				mfxStream.TimeStamp = sampleTag.samplePTS;
+				INT32 newsize = sampleTag.size + m_mfxResidial.DataLength;
+				mfxStream.MaxLength = mfxStream.DataLength = (mfxU32)newsize;
+				mfxStream.Data = m_streamBits[0];
+				mfxU8* pData = mfxStream.Data;
+				memcpy(pData, m_mfxResidial.Data, m_mfxResidial.DataLength);
+				pData += m_mfxResidial.DataLength;
+				m_mfxResidial.DataLength = 0;
+				memcpy(pData, sampleTag.bits, sampleTag.size);
+				pData += sampleTag.size;
+				residial += newsize;
+				SAFE_DELETE_ARRAY(sampleTag.bits);
+				mfxStatus status = Process(mfxStream, video);
+				residial -= mfxStream.DataOffset;
+				if (status != MFX_ERR_NONE)
+				{
+					if (status == MFX_ERR_MORE_DATA && residial == 0)
+					{
+						goto _DATA;
+					}
+					return FALSE;
+				}
+				else
+				{
+					m_outputs.InsertLast(video);
+					if (residial == 0)
+					{
+						goto _DATA;
+					}
+				}
+			}
+			else
+			{
+				mfxStatus status = Process(mfxStream, video);
+				residial -= mfxStream.DataOffset;
+				if (status != MFX_ERR_NONE)
+				{
+					if (status == MFX_ERR_MORE_DATA && residial == 0)
+					{
+						goto _DATA;
+					}
+					goto _DATA;
+				}
+				else
+				{
+					m_outputs.InsertLast(video);
+					if (residial == 0)
+					{
+						goto _DATA;
+					}
+				}
+			}
+		}
+	_DATA:
+		if (m_outputs.GetSize() > 0)
+		{
+			ITERATOR s = m_outputs.First();
+			mfxFrameSurface1*& surface = m_outputs.GetAt(s);
+			m_outputs.RemoveAt(s);
+			tag.samplePTS = tag.sampleDTS = surface->Data.TimeStamp;
+			video = surface;
+			return TRUE;
+		}
+		return FALSE;
+	}
+	void QuickSyncDecoder::LockSurface(mfxFrameSurface1* pSurface)
+	{
+		if (pSurface != NULL)
+		{
+			INT index = pSurface - m_mfxSurfaces;
+			if (index >= 0 && index < m_mfxResponse.NumFrameActual)
+			{
+				InterlockedIncrement(&m_locks[index]);
+			}
+		}
+	}
+	void QuickSyncDecoder::UnlockSurface(mfxFrameSurface1* pSurface)
+	{
+		if (pSurface != NULL)
+		{
+			INT index = pSurface - m_mfxSurfaces;
+			if (index >= 0 && index < m_mfxResponse.NumFrameActual)
+			{
+				ASSERT(m_locks[index] > 0);
+				InterlockedDecrement(&m_locks[index]);
+			}
+		}
+	}
+	INT QuickSyncDecoder::GetFreeVideoSurfaceIndex()
+	{
+		for (INT i = 0; i < m_mfxResponse.NumFrameActual; i++)
+		{
+			if (0 == m_mfxSurfaces[i].Data.Locked)
+				return i;
+		}
+		return MFX_ERR_NOT_FOUND;
+	}
+	mfxStatus QuickSyncDecoder::Process(mfxBitstream& stream, mfxFrameSurface1*& video)
+	{
+		video = NULL;
+		mfxStatus status = MFX_ERR_NONE;
+		mfxSyncPoint syncpDECODE = NULL;
+		while (stream.DataLength > 0)
+		{
+			INT index = GetFreeVideoSurfaceIndex();
+			MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index, MFX_ERR_MEMORY_ALLOC);
+			do
+			{
+				status = m_mfxVideoDECODE->DecodeFrameAsync(&stream, &m_mfxSurfaces[index], &video, &syncpDECODE);
+				if (MFX_ERR_MORE_SURFACE == status)
+				{
+					index = GetFreeVideoSurfaceIndex();
+					MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index, MFX_ERR_MEMORY_ALLOC);
+				}
+				if (MFX_WRN_DEVICE_BUSY == status)
+				{
+					Sleep(1);
+				}
+			} while (MFX_WRN_DEVICE_BUSY == status || MFX_ERR_MORE_SURFACE == status);
+			if (MFX_ERR_NONE < status && syncpDECODE)
+			{
+				status = MFX_ERR_NONE;
+			}
+			if (MFX_ERR_NONE == status)
+			{
+				do
+				{
+					status = m_mfxVideoSession->SyncOperation(syncpDECODE, 0xFFFF);
+				} while (status == MFX_WRN_IN_EXECUTION);
+				if (MFX_ERR_NONE == status)
+				{
+					LockSurface(video);
+				}
+				return status;
+			}
+		}
+		return status;
 	}
 }
 

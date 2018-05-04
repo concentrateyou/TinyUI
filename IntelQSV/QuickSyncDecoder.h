@@ -3,6 +3,7 @@
 #include "QSVD3D.h"
 #include "QSVAllocator.h"
 using namespace TinyUI;
+using namespace TinyUI::Media;
 
 namespace QSV
 {
@@ -13,39 +14,42 @@ namespace QSV
 	{
 		DISALLOW_COPY_AND_ASSIGN(QuickSyncDecoder)
 	public:
-		QuickSyncDecoder(const QSVConfig& config);
+		QuickSyncDecoder();
 		~QuickSyncDecoder();
 	public:
-		mfxStatus Initialize(mfxVideoParam* pVideoParams, mfxU32 sPitch);
-		mfxStatus Decode(mfxBitstream* pI, mfxFrameSurface1*& pO);
-		void SetAssists(mfxU16 count);
+		BOOL Open(BYTE* bits, LONG size);
+		BOOL Decode(Media::SampleTag& tag, mfxFrameSurface1*& video);
+		void Close();
+		QSVAllocator* GetAllocator();
+		void LockSurface(mfxFrameSurface1* pSurface);
+		void UnlockSurface(mfxFrameSurface1* pSurface);
 	private:
-		mfxStatus InitializeSession(mfxIMPL impl);
-		mfxStatus Reset(mfxVideoParam* pVideoParams, mfxU32 sPitch);
+		mfxStatus Process(mfxBitstream& stream, mfxFrameSurface1*& video);
+		mfxStatus InitializeVideoParams(BYTE* bits, LONG size);
 		mfxStatus CreateAllocator();
-		mfxStatus DestoryAllocator();
-		mfxStatus AllocFrames(mfxVideoParam* pVideoParams, mfxU32 sPitch);
-		mfxStatus FreeFrames();
+		mfxStatus AllocFrames();
+		void FreeFrames();
+		void DestoryAllocator();
+		INT GetFreeVideoSurfaceIndex();
 	private:
-		BOOL								m_bAcceleration;
-		BOOL								m_bUseD3DAlloc;
-		BOOL								m_bUseD3D11Alloc;
-		mfxU16								m_assists;//¸¨ÖúÖ¡¸öÊý
-		mfxU16								m_requests;
-		mfxVersion							m_mfxVersion;
+		BOOL								m_bHDW;
+		BOOL								m_bAllowD3D;
+		BOOL								m_bAllowD3D11;
+		mfxU16								m_assist;
 		mfxIMPL								m_mfxIMPL;
-		mfxVideoParam*						m_pVideoParams;
-		mfxFrameSurface1*					m_pFrameSurfaces;
-		mfxFrameAllocResponse				m_allocResponse;
-		QSVConfig							m_config;
-		TinyLinkList<mfxFrameSurface1*>		m_queue;
-		TinyScopedArray<mfxFrameSurface1>	m_surfaces;
+		mfxVersion							m_mfxVersion;
+		mfxFrameAllocResponse				m_mfxResponse;
+		mfxVideoParam						m_mfxVideoParam;
+		mfxBitstream						m_mfxResidial;
+		TinyLinkList<SampleTag>				m_tags;
 		TinyScopedPtr<QSVD3D>				m_qsvd3d;
+		TinyScopedPtr<QSVAllocator>			m_allocator;
 		TinyScopedPtr<MFXVideoSession>		m_mfxVideoSession;
 		TinyScopedPtr<MFXVideoDECODE>		m_mfxVideoDECODE;
-		TinyScopedPtr<QSVAllocator>			m_allocator;
+		TinyLinkList<mfxFrameSurface1*>		m_outputs;
+		TinyScopedArray<mfxFrameSurface1>	m_mfxSurfaces;
+		TinyScopedArray<BYTE>				m_streamBits[2];
 		volatile LONG						m_locks[MSDK_MAX_SURFACES];
-		TinyLock							m_lock;
 	};
 }
 

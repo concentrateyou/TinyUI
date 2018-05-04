@@ -8,7 +8,9 @@
 #include <mfxvideo++.h>
 #include <dxgi.h>
 #include <d3d9.h>
-#include <d3d11.h>
+#include "C:\Program Files (x86)\Windows Kits\8.1\Include\um\d3d11.h"
+#include "C:\Program Files (x86)\Windows Kits\8.1\Include\shared\dxgitype.h"
+#include <dxgi1_2.h>
 #include <dxva2api.h>
 #include <vector>
 #include <queue>
@@ -80,6 +82,7 @@ namespace QSV
 #define D3DFMT_AYUV (D3DFORMAT)MAKEFOURCC('A','Y','U','V')
 #define MSDK_MAX_SURFACES 256
 #define MFX_FOURCC_IMC3 (MFX_MAKEFOURCC('I','M','C','3'))
+#define MAX_STREAM_SIZE (1024 * 1024)
 
 	D3DFORMAT ConvertMfxFourccToD3dFormat(mfxU32 fourcc);
 	BOOL IsSSE41Enabled();

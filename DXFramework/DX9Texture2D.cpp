@@ -91,7 +91,6 @@ namespace DXFramework
 		D3DSURFACE_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
 		m_texture2D->GetLevelDesc(0, &desc);
-		ASSERT(desc.Height * lockRect.Pitch == size);
 		memcpy(lockRect.pBits, bits, size);
 		hRes = m_texture2D->UnlockRect(0);
 		if (hRes != S_OK)

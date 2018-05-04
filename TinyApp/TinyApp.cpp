@@ -31,7 +31,6 @@
 #include "TSReader.h"
 #include "Windowless/TinyVisualLayeredWindow.h"
 #include "Media/TinySoundCapture.h"
-#include "QSVEncoder.h"
 #include "MediaTest.h"
 #include "Media/TinyMFIntelQSVDecode.h"
 #include <fstream>

@@ -1,4 +1,6 @@
 #pragma once
+#include "C:\Program Files (x86)\Windows Kits\8.1\Include\shared\dxgitype.h"
+#include "C:\Program Files (x86)\Windows Kits\8.1\Include\shared\dxgi1_2.h"
 #include "Media/TinySoundPlayer.h"
 #include "IO/TinyThread.h"
 #include "Common/TinyTime.h"
@@ -9,7 +11,8 @@
 #include "DX9Graphics2D.h"
 #include "DX9Image2D.h"
 #include "DX9RenderView.h"
-#include "Media/TinyMFIntelQSVDecode.h"
+
+
 using namespace Decode;
 using namespace QSV;
 using namespace TinyUI;
