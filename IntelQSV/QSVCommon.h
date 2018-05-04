@@ -1,5 +1,6 @@
 #pragma once
 #include "Common/TinyCommon.h"
+#include "Common/TinyLogging.h"
 #include "Render/TinyGDI.h"
 #include "Common/TinyCallback.h"
 #include "Media/TinyMedia.h"
@@ -56,7 +57,7 @@ namespace QSV
 #define MSDK_SAFE_DELETE_ARRAY(P)                { delete[] P; P = NULL; }
 #define MSDK_SAFE_RELEASE(P)                     { if (P) { P->Release(); P = NULL; } }
 #define MSDK_INVALID_SURF_IDX					0xFFFF
-#define MSDK_ZERO_MEMORY(VAR)                    {memset(&VAR, 0, sizeof(VAR));}
+#define MSDK_ZERO_MEMORY(P, S)                   { memset(P, 0, S);}
 #define MSDK_MAX(A, B)                           (((A) > (B)) ? (A) : (B))
 #define MSDK_MIN(A, B)                           (((A) < (B)) ? (A) : (B))
 #define MSDK_ALIGN16(value)                      (((value + 15) >> 4) << 4) // round up to a multiple of 16
@@ -66,7 +67,8 @@ namespace QSV
 #define MSDK_MEMCPY_BITSTREAM(bitstream, offset, src, count) memcpy((bitstream).Data + (offset), (src), (count))
 #define MSDK_MEMCPY_BUF(bufptr, offset, maxsize, src, count) memcpy((bufptr)+ (offset), (src), (count))
 #define MSDK_MEMCPY_VAR(dstVarName, src, count) memcpy(&(dstVarName), (src), (count))
-
+#define MIN_REQUIRED_API_VER_MINOR 1
+#define MIN_REQUIRED_API_VER_MAJOR 1
 #define MSDK_MEMCPY(dst, src, count) memcpy(dst, (src), (count))
 #define D3DFMT_NV12 (D3DFORMAT)MAKEFOURCC('N','V','1','2')
 #define D3DFMT_YV12 (D3DFORMAT)MAKEFOURCC('Y','V','1','2')
@@ -76,7 +78,7 @@ namespace QSV
 #define D3DFMT_Y210 (D3DFORMAT)MAKEFOURCC('Y','2','1','0')
 #define D3DFMT_IMC3 (D3DFORMAT)MAKEFOURCC('I','M','C','3')
 #define D3DFMT_AYUV (D3DFORMAT)MAKEFOURCC('A','Y','U','V')
-
+#define MSDK_MAX_SURFACES 256
 #define MFX_FOURCC_IMC3 (MFX_MAKEFOURCC('I','M','C','3'))
 
 	D3DFORMAT ConvertMfxFourccToD3dFormat(mfxU32 fourcc);
@@ -99,7 +101,18 @@ namespace QSV
 		{ MFX_IMPL_HARDWARE3, 2 },
 		{ MFX_IMPL_HARDWARE4, 3 }
 	};
-	mfxU32 GetIntelAdapter(mfxSession session);
-	mfxU16 GetFreeSurfaceIndex(mfxFrameSurface1* pSurfacesPool, mfxU16 nPoolSize);
+	INT		GetMSDKAdapters(mfxSession session);
+	mfxU32	GetIntelAdapter(mfxSession session);
+	mfxU16	GetFreeSurfaceIndex(mfxFrameSurface1* pSurfacesPool, mfxU16 nPoolSize);
+
+	typedef struct tagQSVConfig
+	{
+		BOOL  EnableD3D11;
+		BOOL  EnableDvdDecoding;
+		BOOL  EnableH264;
+		BOOL  EnableMPEG2;
+		BOOL  EnableVC1;
+		BOOL  EnableWMV9;
+	}QSVConfig;
 }
 

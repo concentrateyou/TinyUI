@@ -118,7 +118,7 @@ namespace QSV
 		return 0;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	/*QSVD3D11::QSVD3D11()
+	QSVD3D11::QSVD3D11()
 	{
 	}
 	QSVD3D11::~QSVD3D11()
@@ -180,5 +180,5 @@ namespace QSV
 	void QSVD3D11::Close()
 	{
 		Reset();
-	}*/
+	}
 }

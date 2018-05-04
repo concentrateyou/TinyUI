@@ -254,14 +254,14 @@ namespace QSV
 		status = m_mfxVideoVPP->GetVideoParam(&m_mfxVppVideoParam);
 		if (MFX_ERR_NONE != status)
 			goto _ERROR;
-		MSDK_ZERO_MEMORY(m_mfxCodingOption);
+		MSDK_ZERO_MEMORY(&m_mfxCodingOption, sizeof(m_mfxCodingOption));
 		m_mfxCodingOption.Header.BufferId = MFX_EXTBUFF_CODING_OPTION;
 		m_mfxCodingOption.Header.BufferSz = sizeof(m_mfxCodingOption);
 		m_mfxCodingOption.ViewOutput = MFX_CODINGOPTION_ON;
 		m_encExtParams.push_back((mfxExtBuffer *)&m_mfxCodingOption);
 		m_mfxVideoParam.ExtParam = &m_encExtParams[0];
 		m_mfxVideoParam.NumExtParam = (mfxU16)m_encExtParams.size();
-		MSDK_ZERO_MEMORY(m_mfxCodingOptionSPSPPS);
+		MSDK_ZERO_MEMORY(&m_mfxCodingOptionSPSPPS, sizeof(m_mfxCodingOptionSPSPPS));
 		mfxU8	mfxsps[128];
 		mfxU8	mfxpps[128];
 		m_mfxCodingOptionSPSPPS.Header.BufferId = MFX_EXTBUFF_CODING_OPTION_SPSPPS;
@@ -576,9 +576,9 @@ namespace QSV
 		mfxFrameAllocRequest requestVPP[2];
 		mfxU16 nEncSurfNum = 0;
 		mfxU16 nVppSurfNum = 0;
-		MSDK_ZERO_MEMORY(request);
-		MSDK_ZERO_MEMORY(requestVPP[0]);
-		MSDK_ZERO_MEMORY(requestVPP[1]);
+		MSDK_ZERO_MEMORY(&request, sizeof(request));
+		MSDK_ZERO_MEMORY(&requestVPP[0], sizeof(requestVPP[0]));
+		MSDK_ZERO_MEMORY(&requestVPP[1], sizeof(requestVPP[1]));
 		status = m_mfxVideoENCODE->QueryIOSurf(&m_mfxVideoParam, &request);
 		if (MFX_ERR_NONE != status)
 			goto _ERROR;

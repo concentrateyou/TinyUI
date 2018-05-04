@@ -523,6 +523,7 @@ namespace QSV
 					SAFE_FREE(dxMids);
 				}
 			}
+			SAFE_FREE(response->mids);
 		}
 		return ststus;
 	}
@@ -532,7 +533,7 @@ namespace QSV
 			return MFX_ERR_NULL_PTR;
 		mfxHDLPair *dxmid = (mfxHDLPair*)mid;
 		IDirect3DSurface9 *pSurface = static_cast<IDirect3DSurface9*>(dxmid->first);
-		if (pSurface == 0)
+		if (pSurface == NULL)
 			return MFX_ERR_INVALID_HANDLE;
 		D3DSURFACE_DESC desc;
 		HRESULT hRes = pSurface->GetDesc(&desc);
@@ -720,9 +721,7 @@ namespace QSV
 				{
 					hRes = m_deviceContext->Map(sr.GetStaging(), 0, mapType, mapFlags, &lockedRect);
 					if (S_OK != hRes && DXGI_ERROR_WAS_STILL_DRAWING != hRes)
-					{
-						//TODO
-					}
+						break;
 				} while (DXGI_ERROR_WAS_STILL_DRAWING == hRes);
 			}
 		}

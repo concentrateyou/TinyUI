@@ -14,9 +14,9 @@ namespace QSV
 	}
 	BOOL QSVDecoder::Open(const BYTE* bits, LONG size)
 	{
-		MSDK_ZERO_MEMORY(m_mfxVideoParam);
-		MSDK_ZERO_MEMORY(m_mfxVppVideoParam);
-		MSDK_ZERO_MEMORY(m_vppDoNotUse);
+		MSDK_ZERO_MEMORY(&m_mfxVideoParam, sizeof(m_mfxVideoParam));
+		MSDK_ZERO_MEMORY(&m_mfxVppVideoParam, sizeof(m_mfxVppVideoParam));
+		MSDK_ZERO_MEMORY(&m_vppDoNotUse, sizeof(m_vppDoNotUse));
 		m_vppDoNotUse.Header.BufferId = MFX_EXTBUFF_VPP_DONOTUSE;
 		m_vppDoNotUse.Header.BufferSz = sizeof(m_vppDoNotUse);
 		mfxStatus status = MFX_ERR_NONE;
@@ -380,7 +380,7 @@ namespace QSV
 		SAFE_DELETE(pParams);
 		return status;
 	}
-	void QSVDecoder::DeleteAllocator()
+	void QSVDecoder::DestoryAllocator()
 	{
 		if (m_allocator != NULL)
 		{
@@ -402,9 +402,9 @@ namespace QSV
 		mfxFrameAllocRequest requestVPP[2];
 		mfxU16 nSurfNum = 0;
 		mfxU16 nVppSurfNum = 0;
-		MSDK_ZERO_MEMORY(request);
-		MSDK_ZERO_MEMORY(requestVPP[0]);
-		MSDK_ZERO_MEMORY(requestVPP[1]);
+		MSDK_ZERO_MEMORY(&request, sizeof(request));
+		MSDK_ZERO_MEMORY(&requestVPP[0], sizeof(requestVPP[0]));
+		MSDK_ZERO_MEMORY(&requestVPP[1], sizeof(requestVPP[1]));
 		status = m_mfxVideoDECODE->QueryIOSurf(&m_mfxVideoParam, &request);
 		MSDK_IGNORE_MFX_STS(status, MFX_WRN_PARTIAL_ACCELERATION);
 		MSDK_IGNORE_MFX_STS(status, MFX_WRN_INCOMPATIBLE_VIDEO_PARAM);
@@ -478,7 +478,7 @@ namespace QSV
 	_ERROR:
 		return status;
 	}
-	void QSVDecoder::DeleteFrames()
+	void QSVDecoder::FreeFrames()
 	{
 		if (m_allocator != NULL)
 		{
@@ -510,11 +510,11 @@ namespace QSV
 			m_mfxVideoDECODE->Close();
 		}
 		m_mfxVideoDECODE.Reset(NULL);
-		DeleteFrames();
+		FreeFrames();
 		m_mfxSession.SetHandle(MFX_HANDLE_D3D9_DEVICE_MANAGER, NULL);
 		m_mfxSession.Close();
 		MSDK_SAFE_DELETE_ARRAY(m_vppDoNotUse.AlgList);
-		DeleteAllocator();
+		DestoryAllocator();
 		m_vppExtParams.clear();
 
 	}

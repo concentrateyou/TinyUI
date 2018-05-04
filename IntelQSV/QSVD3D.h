@@ -1,5 +1,6 @@
 #pragma once
 #include "QSVCommon.h"
+#include <dxgi1_2.h>
 
 namespace QSV
 {
@@ -11,7 +12,9 @@ namespace QSV
 		virtual mfxStatus Reset() = 0;
 		virtual void      Close() = 0;
 	};
-
+	/// <summary>
+	/// D3D9
+	/// </summary>
 	class QSVD3D9 : public QSVD3D
 	{
 		DISALLOW_COPY_AND_ASSIGN(QSVD3D9)
@@ -33,8 +36,10 @@ namespace QSV
 		TinyComPtr<IDirect3DDevice9Ex>		m_d3dd9;
 		TinyComPtr<IDirect3DDeviceManager9>	m_manager;
 	};
-
-	/*class QSVD3D11 : public QSVD3D
+	/// <summary>
+	/// D3D11
+	/// </summary>
+	class QSVD3D11 : public QSVD3D
 	{
 		DISALLOW_COPY_AND_ASSIGN(QSVD3D11)
 	public:
@@ -52,7 +57,7 @@ namespace QSV
 		TinyComPtr<IDXGIFactory2>        m_pDXGIFactory;
 		TinyComQIPtr<ID3D11VideoDevice>  m_pDX11VideoDevice;
 		TinyComQIPtr<ID3D11VideoContext> m_pVideoContext;
-	};*/
+	};
 }
 
 

@@ -39,6 +39,12 @@
     <ClInclude Include="QSVEncoder.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="QuickSyncDecoder.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="QuickSyncVPP.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -57,6 +63,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="QSVEncoder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="QuickSyncDecoder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="QuickSyncVPP.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

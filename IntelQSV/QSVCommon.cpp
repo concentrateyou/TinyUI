@@ -65,10 +65,10 @@ namespace QSV
 		{
 			return memcpy(d, s, size);
 		}
-		size_t reminder = size & (regsInLoop * sizeof(__m128i) - 1); 
+		size_t reminder = size & (regsInLoop * sizeof(__m128i) - 1);
 		size_t end = 0;
 
-		__m128i xmm0, xmm1; 
+		__m128i xmm0, xmm1;
 		__m128i* pTrg = (__m128i*)d;
 		__m128i* pTrgEnd = pTrg + ((size - reminder) >> 4);
 		__m128i* pSrc = (__m128i*)s;
@@ -118,7 +118,7 @@ namespace QSV
 		}
 		size_t reminder = size & (regsInLoop * sizeof(__m256i) - 1);
 		size_t end = 0;
-		__m256i ymm0, ymm1, ymm2, ymm3; 
+		__m256i ymm0, ymm1, ymm2, ymm3;
 		__m256i* pTrg = (__m256i*)d;
 		__m256i* pTrgEnd = pTrg + ((size - reminder) >> 5);
 		__m256i* pSrc = (__m256i*)s;
@@ -162,7 +162,7 @@ namespace QSV
 
 	mfxU32 GetIntelAdapter(mfxSession session)
 	{
-		mfxU32  adapterNum = 0;
+		mfxU32  adapters = 0;
 		mfxIMPL impl = MFX_IMPL_SOFTWARE;
 		if (session)
 		{
@@ -182,13 +182,41 @@ namespace QSV
 		{
 			if (implTypes[i].impl == baseImpl)
 			{
-				adapterNum = implTypes[i].adapterID;
+				adapters = implTypes[i].adapterID;
 				break;
 			}
 		}
-		return adapterNum;
+		return adapters;
 	}
+	INT GetMSDKAdapters(mfxSession session)
+	{
+		INT adapters = -1;
+		mfxIMPL impl = MFX_IMPL_SOFTWARE;
+		if (session)
+		{
+			MFXQueryIMPL(session, &impl);
+		}
+		else
+		{
+			mfxSession auxSession;
+			memset(&auxSession, 0, sizeof(auxSession));
 
+			mfxVersion ver = { 1, 1 };
+			MFXInit(MFX_IMPL_HARDWARE_ANY, &ver, &auxSession);
+			MFXQueryIMPL(auxSession, &impl);
+			MFXClose(auxSession);
+		}
+		mfxIMPL baseImpl = MFX_IMPL_BASETYPE(impl);
+		for (mfxU8 i = 0; i < sizeof(implTypes) / sizeof(implTypes[0]); ++i)
+		{
+			if (implTypes[i].impl == baseImpl)
+			{
+				adapters = implTypes[i].adapterID;
+				break;
+			}
+		}
+		return adapters;
+	}
 	mfxU16 GetFreeSurfaceIndex(mfxFrameSurface1* pSurfacesPool, mfxU16 nPoolSize)
 	{
 		if (pSurfacesPool)

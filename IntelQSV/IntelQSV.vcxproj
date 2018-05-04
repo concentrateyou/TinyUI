@@ -77,7 +77,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;DX9_D3D;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(INTELMEDIASDKROOT)include;..\TinyUI</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(INTELMEDIASDKROOT)include;..\TinyUI;..\DShowCapture</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -157,6 +157,8 @@
     <ClInclude Include="QSVD3D.h" />
     <ClInclude Include="QSVDecoder.h" />
     <ClInclude Include="QSVEncoder.h" />
+    <ClInclude Include="QuickSyncDecoder.h" />
+    <ClInclude Include="QuickSyncVPP.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -166,12 +168,19 @@
     <ClCompile Include="QSVD3D.cpp" />
     <ClCompile Include="QSVDecoder.cpp" />
     <ClCompile Include="QSVEncoder.cpp" />
+    <ClCompile Include="QuickSyncDecoder.cpp" />
+    <ClCompile Include="QuickSyncVPP.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DShowCapture\DShowCapture.vcxproj">
+      <Project>{b8f16b34-e13e-4757-b09a-792046bcc2d3}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
