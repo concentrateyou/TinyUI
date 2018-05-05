@@ -412,6 +412,8 @@ namespace QSV
 		MSDK_IGNORE_MFX_STS(status, MFX_WRN_INCOMPATIBLE_VIDEO_PARAM);
 		if (MFX_ERR_NONE != status)
 			goto _ERROR;
+		request.Info.Width = MSDK_ALIGN32(request.Info.Width);
+		request.Info.Height = MSDK_ALIGN32(request.Info.Height);
 		MSDK_MEMCPY_VAR(m_mfxVppVideoParam.vpp.In, &m_mfxVideoParam.mfx.FrameInfo, sizeof(mfxFrameInfo));
 		MSDK_MEMCPY_VAR(m_mfxVppVideoParam.vpp.Out, &m_mfxVppVideoParam.vpp.In, sizeof(mfxFrameInfo));
 		m_mfxVppVideoParam.vpp.Out.FourCC = MFX_FOURCC_RGB4;
@@ -436,6 +438,10 @@ namespace QSV
 		{
 			MSDK_IGNORE_MFX_STS(status, MFX_WRN_PARTIAL_ACCELERATION);
 		}
+		requestVPP[0].Info.Width = MSDK_ALIGN32(requestVPP[0].Info.Width);
+		requestVPP[0].Info.Height = MSDK_ALIGN32(requestVPP[0].Info.Height);
+		requestVPP[1].Info.Width = MSDK_ALIGN32(requestVPP[1].Info.Width);
+		requestVPP[1].Info.Height = MSDK_ALIGN32(requestVPP[1].Info.Height);
 		if ((requestVPP[0].NumFrameSuggested < m_mfxVppVideoParam.AsyncDepth) ||
 			(requestVPP[1].NumFrameSuggested < m_mfxVppVideoParam.AsyncDepth))
 			return MFX_ERR_MEMORY_ALLOC;
