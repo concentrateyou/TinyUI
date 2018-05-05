@@ -138,7 +138,6 @@ namespace QSV
 		DWORD										m_dwUsage;
 		HANDLE										m_hDecoder;
 		HANDLE										m_hProcessor;
-		std::vector<mfxHDLPair**>					m_midsAllocated;
 		TinyComPtr<IDirect3DDeviceManager9>			m_manager;
 		TinyComPtr<IDirectXVideoDecoderService>		m_decoderService;
 		TinyComPtr<IDirectXVideoProcessorService>	m_processorService;
@@ -311,6 +310,7 @@ namespace QSV
 		mfxStatus Deallocate(mfxFrameAllocResponse *response) OVERRIDE;
 	private:
 		TextureSubResource GetResourceFromMID(mfxMemId mid);
+		static  DXGI_FORMAT ConverColortFormat(mfxU32 fourcc);
 	private:
 		typedef std::list <TextureResource>::iterator referenceType;
 		std::list <TextureResource>		m_resourcesByRequest;

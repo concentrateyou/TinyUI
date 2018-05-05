@@ -50,7 +50,7 @@ namespace Decode
 		if (NeAACDecInit2(m_handle, adts, size, &sampleRate2, &channel) != 0)
 			goto AAC_ERROR;
 		m_sMFT.cbSize = 0;
-		m_sMFT.nSamplesPerSec = sampleRate1 <= 24000 ? sampleRate2 / 2 : sampleRate2;
+		m_sMFT.nSamplesPerSec = sampleRate2;//sampleRate1 <= 24000 ? sampleRate2 / 2 : sampleRate2;
 		m_sMFT.nChannels = channel;
 		m_sMFT.wBitsPerSample = wBitsPerSample;
 		m_sMFT.nBlockAlign = wBitsPerSample * channel / 8;

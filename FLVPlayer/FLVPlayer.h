@@ -1,9 +1,8 @@
 #pragma once
+#include "MShowCommon.h"
 #include "resource.h"
-#include <concurrent_queue.h>
-using namespace std;
 
 namespace FLVPlayer
 {
+	QWORD WINAPI GetQPCTimeMS();
 }
-

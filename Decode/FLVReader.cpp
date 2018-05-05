@@ -12,9 +12,7 @@ namespace Decode
 		m_minusOne(0),
 		m_offset(0),
 		m_timestamp(0),
-		m_audioTimestamp(0),
-		m_count(0),
-		m_basePTS(-1)
+		m_count(0)
 	{
 
 	}
@@ -206,40 +204,11 @@ namespace Decode
 			if (tag.type == FLV_AUDIO)
 			{
 				m_timestamp = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
-				if (m_audioTimestamp >= m_timestamp)
-				{
-					LOG(ERROR) << "[FLVReader] ReadBlock Audio Audio Preview Timestamp:" << m_audioTimestamp << " Audio Current Timestamp:" << m_timestamp;
-				}
-				if (m_timestamp > 0)
-				{
-					if (m_count == 1 && m_basePTS == -1)
-					{
-						m_basePTS = m_timestamp;
-					}
-					if (m_basePTS != -1)
-					{
-						m_timestamp -= m_basePTS;
-					}
-				}
-				LOG(INFO) << "[ReadBlock] Audio Timestamp:" << m_timestamp << " BasePTS:" << m_basePTS << " Count:" << m_count;;
-				m_audioTimestamp = m_timestamp;
 				return ParseAudio(data, size, block);
 			}
 			else if (tag.type == FLV_VIDEO)
 			{
 				m_timestamp = static_cast<LONGLONG>(static_cast<UINT32>(ToINT24(tag.timestamp) | (tag.timestampex << 24)));
-				if (m_timestamp > 0)
-				{
-					if (m_count == 1 && m_basePTS == -1)
-					{
-						m_basePTS = m_timestamp;
-					}
-					if (m_basePTS != -1)
-					{
-						m_timestamp -= m_basePTS;
-					}
-				}
-				LOG(INFO) << "[ReadBlock] Video Timestamp:" << m_timestamp << " BasePTS:" << m_basePTS << " Count:" << m_count;
 				return ParseVideo(data, size, block);
 			}
 		}
@@ -599,16 +568,10 @@ namespace Decode
 		m_minusOne = 0;
 		m_offset = 0;
 		m_timestamp = 0;
-		m_audioTimestamp = 0;
 		m_count = 0;
-		m_basePTS = -1;
 		m_stream.Release();
 		ZeroMemory(&m_script, sizeof(m_script));
 		return TRUE;
-	}
-	LONGLONG FLVReader::GetBasePTS()
-	{
-		return m_basePTS;
 	}
 }
 

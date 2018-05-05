@@ -15,7 +15,7 @@ namespace DXFramework
 		virtual BOOL SaveAs(const CHAR* pzFile, D3DXIMAGE_FILEFORMAT dxgi);
 	public:
 		BOOL	IsEmpty() const;
-		BOOL	Copy(BYTE* bits, LONG size);
+		BOOL	Copy(BYTE* bits, INT linesize, INT cy);
 	protected:
 		TinyComPtr<IDirect3DTexture9>	m_texture2D;
 	};

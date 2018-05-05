@@ -25,7 +25,7 @@ namespace QSV
 		void UnlockSurface(mfxFrameSurface1* pSurface);
 	private:
 		mfxStatus Process(mfxBitstream& stream, mfxFrameSurface1*& video);
-		mfxStatus InitializeVideoParams(BYTE* bits, LONG size);
+		mfxStatus InitializeVideoParam(BYTE* bits, LONG size);
 		mfxStatus CreateAllocator();
 		mfxStatus AllocFrames();
 		void FreeFrames();

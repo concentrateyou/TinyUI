@@ -1,15 +1,18 @@
 #pragma once
-#include "Control/TinyControl.h"
-#include "QSVTask.h"
-using namespace TinyUI;
+#include "MShowCommon.h"
+#include "MFLVPlayer.h"
 
 namespace FLVPlayer
 {
-	class QSVView : public TinyControl
+	/// <summary>
+	/// 预览渲染控件
+	/// </summary>
+	class MPreviewView : public TinyControl
 	{
+		DISALLOW_COPY_AND_ASSIGN(MPreviewView)
 	public:
-		QSVView();
-		virtual ~QSVView();
+		MPreviewView();
+		virtual ~MPreviewView();
 		//5个创建函数
 		DWORD RetrieveStyle() OVERRIDE;
 		DWORD RetrieveExStyle() OVERRIDE;
@@ -23,8 +26,10 @@ namespace FLVPlayer
 		LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+		LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	private:
-		QSVTask m_task;
+		MFLVPlayer	m_player;
 	};
 }
+
 

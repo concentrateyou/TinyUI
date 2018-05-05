@@ -262,7 +262,7 @@ namespace QSV
 			{
 				do
 				{
-					status = m_mfxSession.SyncOperation(syncpDECODE, 1000);
+					status = m_mfxSession.SyncOperation(syncpDECODE, 0xFFFF);
 				} while (status == MFX_WRN_IN_EXECUTION);
 				if (MFX_ERR_NONE == status)
 				{
@@ -289,7 +289,7 @@ namespace QSV
 					{
 						do
 						{
-							status = m_mfxSession.SyncOperation(syncpVPP, 1000);
+							status = m_mfxSession.SyncOperation(syncpVPP, 0xFFFF);
 						} while (status == MFX_WRN_IN_EXECUTION);
 						if (status == MFX_ERR_NONE)
 						{
@@ -320,6 +320,8 @@ namespace QSV
 			status = m_mfxVideoDECODE->DecodeHeader(&m_mfxResidial, &m_mfxVideoParam);
 			m_mfxResidial.DataFlag = oldFlag;
 		}
+		m_mfxVideoParam.mfx.FrameInfo.Width = MSDK_ALIGN32(m_mfxVideoParam.mfx.FrameInfo.Width);
+		m_mfxVideoParam.mfx.FrameInfo.Height = MSDK_ALIGN32(m_mfxVideoParam.mfx.FrameInfo.Height);
 		if (m_mfxVideoParam.AsyncDepth == 0)
 		{
 			m_mfxVideoParam.AsyncDepth = 4;

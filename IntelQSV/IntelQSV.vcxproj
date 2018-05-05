@@ -154,6 +154,7 @@
   <ItemGroup>
     <ClInclude Include="QSVAllocator.h" />
     <ClInclude Include="QSVCommon.h" />
+    <ClInclude Include="QSVConverter.h" />
     <ClInclude Include="QSVD3D.h" />
     <ClInclude Include="QSVDecoder.h" />
     <ClInclude Include="QSVEncoder.h" />
@@ -165,6 +166,7 @@
   <ItemGroup>
     <ClCompile Include="QSVAllocator.cpp" />
     <ClCompile Include="QSVCommon.cpp" />
+    <ClCompile Include="QSVConverter.cpp" />
     <ClCompile Include="QSVD3D.cpp" />
     <ClCompile Include="QSVDecoder.cpp" />
     <ClCompile Include="QSVEncoder.cpp" />

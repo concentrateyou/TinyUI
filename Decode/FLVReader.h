@@ -25,7 +25,6 @@ namespace Decode
 		BOOL		ReadBlock(FLV_BLOCK& block);
 		DWORD		Seek(LONG offset, DWORD dwFlag);
 		BOOL		Close();
-		LONGLONG	GetBasePTS();
 	private:
 		BOOL		ParseScript(BYTE* data, INT size, FLV_SCRIPTDATA& script);
 		BOOL		ParseVideo(BYTE* data, INT size, FLV_BLOCK& block);
@@ -43,9 +42,7 @@ namespace Decode
 		BYTE					m_minusOne;
 		LONGLONG				m_count;
 		ULONGLONG				m_offset;
-		LONGLONG				m_basePTS;
 		LONGLONG				m_timestamp;
-		LONGLONG				m_audioTimestamp;
 		FLV_TAG_VIDEO			m_videoTag;
 		FLV_SCRIPTDATA			m_script;
 		TinyComPtr<IStream>		m_stream;

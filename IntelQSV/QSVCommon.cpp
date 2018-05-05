@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "QSVCommon.h"
+#include <ppl.h>
 
 namespace QSV
 {
@@ -54,6 +55,25 @@ namespace QSV
 
 	static BOOL g_SSE4_1_enabled = IsSSE41Enabled();
 	static BOOL g_AVX2_enabled = IsAVX2Enabled();
+
+#define MIN_BUFF_SIZE (1 << 18)
+	typedef void* (*my_memcpy)(void*, const void*, size_t);
+	static void* mt_copy(void* d, const void* s, size_t size, my_memcpy mymemcpy)
+	{
+		MSDK_CHECK_POINTER(d, NULL);
+		MSDK_CHECK_POINTER(s, NULL);
+		if (size < MIN_BUFF_SIZE)
+		{
+			return mymemcpy(d, s, size);
+		}
+		size_t blockSize = (size / 2) & ~31;
+		const size_t offsets[] = { 0, blockSize, size };
+		Concurrency::parallel_for(0, 2, [d, s, &offsets, mymemcpy](int i)
+		{
+			mymemcpy((char*)d + offsets[i], (const char*)s + offsets[i], offsets[i + 1] - offsets[i]);
+		});
+		return d;
+	}
 
 	void* gpu_memcpy_sse41(void* d, const void* s, size_t size)
 	{
@@ -158,6 +178,17 @@ namespace QSV
 			}
 		}
 		return d;
+	}
+
+	void* mt_memcpy(void* d, const void* s, size_t size)
+	{
+		return mt_copy(d, s, size, memcpy);
+	}
+	void* mt_gpu_memcpy(void* d, const void* s, size_t size)
+	{
+		return (g_AVX2_enabled) ?
+			mt_copy(d, s, size, gpu_memcpy_avx2) :
+			mt_copy(d, s, size, gpu_memcpy_sse41);
 	}
 
 	mfxU32 GetIntelAdapter(mfxSession session)

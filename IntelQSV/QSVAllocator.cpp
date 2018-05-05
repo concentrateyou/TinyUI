@@ -9,40 +9,6 @@ namespace QSV
 {
 #define ID_BUFFER MFX_MAKEFOURCC('B','U','F','F')
 #define ID_FRAME  MFX_MAKEFOURCC('F','R','M','E')
-	DXGI_FORMAT ConverColortFormat(mfxU32 fourcc)
-	{
-		switch (fourcc)
-		{
-		case MFX_FOURCC_NV12:
-			return DXGI_FORMAT_NV12;
-
-		case MFX_FOURCC_YUY2:
-			return DXGI_FORMAT_YUY2;
-
-		case MFX_FOURCC_RGB4:
-			return DXGI_FORMAT_B8G8R8A8_UNORM;
-
-		case MFX_FOURCC_P8:
-		case MFX_FOURCC_P8_TEXTURE:
-			return DXGI_FORMAT_P8;
-
-		case MFX_FOURCC_ARGB16:
-		case MFX_FOURCC_ABGR16:
-			return DXGI_FORMAT_R16G16B16A16_UNORM;
-
-		case MFX_FOURCC_P010:
-			return DXGI_FORMAT_P010;
-
-		case MFX_FOURCC_A2RGB10:
-			return DXGI_FORMAT_R10G10B10A2_UNORM;
-
-		case DXGI_FORMAT_AYUV:
-			return DXGI_FORMAT_AYUV;
-
-		default:
-			return DXGI_FORMAT_UNKNOWN;
-		}
-	}
 	template <typename T>
 	struct sequence
 	{
@@ -469,6 +435,7 @@ namespace QSV
 			for (INT i = 0; i < request->NumFrameSuggested; i++)
 			{
 				hRes = videoService->CreateSurface(request->Info.Width, request->Info.Height, 0, d3dFormat, D3DPOOL_DEFAULT, m_dwUsage, dwTarget, (IDirect3DSurface9**)&dxMidPtrs[i]->first, &dxMidPtrs[i]->second);
+				//hRes = videoService->CreateSurface(request->Info.Width, request->Info.Height, 0, d3dFormat, D3DPOOL_DEFAULT, m_dwUsage, dwTarget, (IDirect3DSurface9**)&dxMidPtrs[i]->first, NULL);
 				if (FAILED(hRes))
 				{
 					Deallocate(response);
@@ -490,13 +457,11 @@ namespace QSV
 				DeallocateMids(dxMidPtrs, request->NumFrameSuggested);
 				return MFX_ERR_MEMORY_ALLOC;
 			}
-
 			for (INT i = 0; i < request->NumFrameSuggested; i++)
 			{
 				dxMidPtrs[i]->first = surfaces[i];
 			}
 		}
-		m_midsAllocated.push_back(dxMidPtrs);
 		return MFX_ERR_NONE;
 	}
 	void QSVD3D9Allocator::DeallocateMids(mfxHDLPair** pair, INT size)
@@ -960,6 +925,23 @@ namespace QSV
 		if (!p->bAlloc)
 			return TextureSubResource();
 		return TextureSubResource(p, mid);
+	}
+	DXGI_FORMAT QSVD3D11Allocator::ConverColortFormat(mfxU32 fourcc)
+	{
+		switch (fourcc)
+		{
+		case MFX_FOURCC_NV12:
+			return DXGI_FORMAT_NV12;
+		case MFX_FOURCC_YUY2:
+			return DXGI_FORMAT_YUY2;
+		case MFX_FOURCC_RGB4:
+			return DXGI_FORMAT_B8G8R8A8_UNORM;
+		case MFX_FOURCC_P8:
+		case MFX_FOURCC_P8_TEXTURE:
+			return DXGI_FORMAT_P8;
+		default:
+			return DXGI_FORMAT_UNKNOWN;
+		}
 	}
 	//////////////////////////////////////////////////////////////////////////
 	GeneralAllocator::GeneralAllocator()

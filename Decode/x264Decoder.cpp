@@ -67,6 +67,8 @@ namespace Decode
 		{
 			m_context->flags |= CODEC_FLAG_TRUNCATED;
 		}
+		m_context->err_recognition = 0;
+		m_context->workaround_bugs = FF_BUG_AUTODETECT;
 		m_context->extradata_size = size;
 		m_context->extradata = reinterpret_cast<BYTE*>(av_malloc(m_context->extradata_size));
 		memcpy(m_context->extradata, metadata, m_context->extradata_size);
@@ -113,6 +115,8 @@ namespace Decode
 			ASSERT(cy == m_dstsize.cy);
 			bo = m_pRGB32->data[0];
 			so = m_pRGB32->linesize[0] * cy;
+			tag.linesize = m_pRGB32->linesize[0];
+			tag.cy = cy;
 			goto _ERROR;
 		}
 	_ERROR:

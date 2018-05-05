@@ -74,12 +74,16 @@ namespace DXFramework
 			return FALSE;
 		return SUCCEEDED(D3DXSaveTextureToFile(pzFile, dxgi, m_texture2D, NULL));
 	}
-	BOOL DX9Texture2D::Copy(BYTE* bits, LONG size)
+	BOOL DX9Texture2D::Copy(BYTE* bits, INT linesize, INT cy)
 	{
 		if (IsEmpty())
 			return FALSE;
 		if (!bits)
 			return FALSE;
+		D3DSURFACE_DESC desc;
+		ZeroMemory(&desc, sizeof(desc));
+		m_texture2D->GetLevelDesc(0, &desc);
+		ASSERT(desc.Height == cy);
 		D3DLOCKED_RECT lockRect = { 0 };
 		HRESULT hRes = m_texture2D->LockRect(0, &lockRect, NULL, D3DLOCK_DISCARD);
 		if (hRes != S_OK)
@@ -88,10 +92,10 @@ namespace DXFramework
 			LOG(ERROR) << "[Copy] LockRect::" << hRes;
 			return FALSE;
 		}
-		D3DSURFACE_DESC desc;
-		ZeroMemory(&desc, sizeof(desc));
-		m_texture2D->GetLevelDesc(0, &desc);
-		memcpy(lockRect.pBits, bits, size);
+		for (INT i = 0; i < cy; i++)
+		{
+			memcpy((BYTE*)lockRect.pBits + i* lockRect.Pitch, bits + i * linesize, linesize);
+		}
 		hRes = m_texture2D->UnlockRect(0);
 		if (hRes != S_OK)
 		{
