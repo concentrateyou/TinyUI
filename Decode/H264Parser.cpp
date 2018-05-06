@@ -235,7 +235,7 @@ namespace Decode
 		if (!bits || size <= 0)
 			return TS_ERROR_INVALID_PARAM;
 		if (!FindAUDRange(bits, size))
-			return TS_ERROR_NEED_MORE;
+			return TS_ERROR_NEED_MORE_DATA;
 		BYTE mask = 0;
 		ZeroMemory(&sNALU, sizeof(sNALU));
 		H264NALU s;

@@ -116,14 +116,12 @@ namespace FLVPlayer
 					}
 					else
 					{
-						memcpy(sampleTag.bits, surface1->Data.B, sampleTag.size);
+						io_gpu_memcpy(sampleTag.bits, surface1->Data.B, sampleTag.size);
 						m_videoQueue.Push(sampleTag);
 					}
 				}
 				pAllocator->Unlock(pAllocator->pthis, surface1->Data.MemId, &(surface1->Data));
 				m_qsv.UnlockSurface(surface1);
-
-
 			}
 			//BYTE* bo = NULL;
 			//LONG  so = 0;

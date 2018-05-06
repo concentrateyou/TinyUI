@@ -83,17 +83,10 @@ namespace QSV
 #define MSDK_MAX_SURFACES 256
 #define MFX_FOURCC_IMC3 (MFX_MAKEFOURCC('I','M','C','3'))
 #define MAX_STREAM_SIZE (1024 * 1024)
+#define MAX_INSERT_FRAMES  8;
 
-	D3DFORMAT ConvertMfxFourccToD3dFormat(mfxU32 fourcc);
-	BOOL IsSSE41Enabled();
-	BOOL IsAVX2Enabled();
-	extern "C"
-	{
-		void* gpu_memcpy_sse41(void* d, const void* s, size_t _size);
-		void* gpu_memcpy_avx2(void* d, const void* s, size_t size);
-		void* mt_memcpy(void* d, const void* s, size_t size);
-		void* mt_gpu_memcpy(void* d, const void* s, size_t size);
-	}
+	D3DFORMAT ConvertMFXFourccToD3DFormat(mfxU32 fourcc);
+
 	const struct
 	{
 		mfxIMPL impl;

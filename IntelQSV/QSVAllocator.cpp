@@ -375,7 +375,7 @@ namespace QSV
 		MSDK_CHECK_POINTER(request, MFX_ERR_NULL_PTR);
 		if (request->NumFrameSuggested == 0)
 			return MFX_ERR_UNKNOWN;
-		D3DFORMAT d3dFormat = ConvertMfxFourccToD3dFormat(request->Info.FourCC);
+		D3DFORMAT d3dFormat = ConvertMFXFourccToD3DFormat(request->Info.FourCC);
 		if (d3dFormat == D3DFMT_UNKNOWN)
 			return MFX_ERR_UNSUPPORTED;
 		DWORD  dwTarget = 0;

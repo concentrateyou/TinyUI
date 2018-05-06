@@ -61,7 +61,7 @@ namespace Decode
 		TS_ERROR_SLICE = -9,
 		TS_ERROR_PPS = -10,
 		TS_ERROR_SPS = -11,
-		TS_ERROR_NEED_MORE = -12
+		TS_ERROR_NEED_MORE_DATA = -12
 	};
 
 	INT ToINT32(BYTE val[4]);

@@ -900,7 +900,7 @@ namespace Decode
 									Timing timing = { m_previous->PTS,m_previous->DTS };
 									TS_ERROR iRes = parser->Parse(block, timing);
 									if (iRes != TS_ERROR_NONE &&
-										iRes != TS_ERROR_NEED_MORE)
+										iRes != TS_ERROR_NEED_MORE_DATA)
 									{
 										return FALSE;
 									}

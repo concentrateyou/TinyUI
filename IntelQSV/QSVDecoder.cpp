@@ -322,10 +322,6 @@ namespace QSV
 		}
 		m_mfxVideoParam.mfx.FrameInfo.Width = MSDK_ALIGN32(m_mfxVideoParam.mfx.FrameInfo.Width);
 		m_mfxVideoParam.mfx.FrameInfo.Height = MSDK_ALIGN32(m_mfxVideoParam.mfx.FrameInfo.Height);
-		if (m_mfxVideoParam.AsyncDepth == 0)
-		{
-			m_mfxVideoParam.AsyncDepth = 4;
-		}
 		return status;
 	}
 	mfxStatus QSVDecoder::CreateAllocator()
@@ -402,8 +398,8 @@ namespace QSV
 		mfxStatus status = MFX_ERR_NONE;
 		mfxFrameAllocRequest request;
 		mfxFrameAllocRequest requestVPP[2];
-		mfxU16 nSurfNum = 0;
-		mfxU16 nVppSurfNum = 0;
+		mfxU16 decodes = 0;
+		mfxU16 vpps = 0;
 		MSDK_ZERO_MEMORY(&request, sizeof(request));
 		MSDK_ZERO_MEMORY(&requestVPP[0], sizeof(requestVPP[0]));
 		MSDK_ZERO_MEMORY(&requestVPP[1], sizeof(requestVPP[1]));
@@ -445,39 +441,39 @@ namespace QSV
 		if ((requestVPP[0].NumFrameSuggested < m_mfxVppVideoParam.AsyncDepth) ||
 			(requestVPP[1].NumFrameSuggested < m_mfxVppVideoParam.AsyncDepth))
 			return MFX_ERR_MEMORY_ALLOC;
-		nSurfNum = request.NumFrameSuggested + requestVPP[0].NumFrameSuggested - m_mfxVideoParam.AsyncDepth + 1;
-		nVppSurfNum = requestVPP[1].NumFrameSuggested + 1;
-		request.NumFrameSuggested = request.NumFrameMin = nSurfNum;
+		decodes = request.NumFrameSuggested + requestVPP[0].NumFrameSuggested + 1;
+		vpps = requestVPP[1].NumFrameSuggested + 1;
+		request.NumFrameSuggested = request.NumFrameMin = decodes;
 		request.Type = MFX_MEMTYPE_EXTERNAL_FRAME | MFX_MEMTYPE_FROM_DECODE | MFX_MEMTYPE_FROM_VPPIN | MFX_MEMTYPE_VIDEO_MEMORY_DECODER_TARGET;
 		status = m_allocator->Alloc(m_allocator->pthis, &request, &m_mfxResponse);
 		if (MFX_ERR_NONE != status)
 			goto _ERROR;
 		MSDK_MEMCPY_VAR(requestVPP[1].Info, &(m_mfxVppVideoParam.vpp.Out), sizeof(mfxFrameInfo));
-		requestVPP[1].NumFrameSuggested = requestVPP[1].NumFrameMin = nVppSurfNum;
+		requestVPP[1].NumFrameSuggested = requestVPP[1].NumFrameMin = vpps;
 		status = m_allocator->Alloc(m_allocator->pthis, &requestVPP[1], &m_mfxVPPResponse);
 		if (MFX_ERR_NONE != status)
 			goto _ERROR;
-		nSurfNum = m_mfxResponse.NumFrameActual;
-		m_mfxSurfaces.Reset(new mfxFrameSurface1*[nSurfNum]);
+		decodes = m_mfxResponse.NumFrameActual;
+		m_mfxSurfaces.Reset(new mfxFrameSurface1*[decodes]);
 		if (NULL == m_mfxSurfaces)
 		{
 			status = MFX_ERR_MEMORY_ALLOC;
 			goto _ERROR;
 		}
-		for (INT i = 0; i < nSurfNum; i++)
+		for (INT i = 0; i < decodes; i++)
 		{
 			m_mfxSurfaces[i] = new mfxFrameSurface1();
 			MSDK_MEMCPY_VAR(m_mfxSurfaces[i]->Info, &(request.Info), sizeof(mfxFrameInfo));
 			m_mfxSurfaces[i]->Data.MemId = m_mfxResponse.mids[i];
 		}
-		nVppSurfNum = m_mfxVPPResponse.NumFrameActual;
-		m_mfxVPPSurfaces.Reset(new mfxFrameSurface1*[nVppSurfNum]);
+		vpps = m_mfxVPPResponse.NumFrameActual;
+		m_mfxVPPSurfaces.Reset(new mfxFrameSurface1*[vpps]);
 		if (NULL == m_mfxVPPSurfaces)
 		{
 			status = MFX_ERR_MEMORY_ALLOC;
 			goto _ERROR;
 		}
-		for (INT i = 0; i < nVppSurfNum; i++)
+		for (INT i = 0; i < vpps; i++)
 		{
 			m_mfxVPPSurfaces[i] = new mfxFrameSurface1();
 			MSDK_MEMCPY_VAR(m_mfxVPPSurfaces[i]->Info, &requestVPP[1].Info, sizeof(mfxFrameInfo));
