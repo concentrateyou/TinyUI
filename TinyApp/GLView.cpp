@@ -69,7 +69,7 @@ LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 	//////m_graphics.DrawImage(&m_image2D[1]);
 	////m_graphics.GetRenderView()->EndDraw();
 	////m_graphics.Present();
-	m_player.Open(m_hWND, "D:\\test1.flv");
+	m_player.Open(m_hWND, "D:\\test.flv");
 	/*LONGLONG s;
 	m_player.GetDuration(s);
 	m_player.SetPosition(s / 2);*/

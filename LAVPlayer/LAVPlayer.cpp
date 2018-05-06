@@ -329,7 +329,9 @@ namespace LAV
 	}
 	BOOL LAVPlayer::Copy(BYTE* bits, LONG size)
 	{
-		if (!m_image.Copy(bits, size))
+		INT cy = static_cast<INT>(m_image.GetSize().y);
+		INT linesize = size / cy;
+		if (!m_image.Copy(bits, linesize, cy))
 			return FALSE;
 		if (!m_graphics.GetRenderView()->BeginDraw())
 			return FALSE;
