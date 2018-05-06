@@ -269,14 +269,22 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	process.Terminate();*/
 
 
-	TinyVisualResource::GetInstance().Load("skin\\resource.xml");
+	/*TinyVisualResource::GetInstance().Load("skin\\resource.xml");
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
 	string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\search1.xml");
 	GLView view;
 	view.Create(NULL, 100, 100, 800, 600);
-	view.UpdateWindow();
+	view.UpdateWindow();*/
+	::DefWindowProc(NULL, 0, 0, 0L);
+	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
+	TinyMessageLoop theLoop;
+	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
+	CMainFrame uiImpl;
+	uiImpl.Create(NULL, 50, 50, 800, 800);
+	uiImpl.ShowWindow(nCmdShow);
+	uiImpl.UpdateWindow();
 
 	INT loopRes = theLoop.MessageLoop();
 	TinyApplication::GetInstance()->RemoveMessageLoop();

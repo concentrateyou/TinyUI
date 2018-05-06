@@ -16,6 +16,7 @@ namespace DXFramework
 	public:
 		BOOL	IsEmpty() const;
 		BOOL	Copy(BYTE* bits, INT linesize, INT cy);
+		BOOL	Copy(BYTE* bits, LONG size);
 	protected:
 		TinyComPtr<IDirect3DTexture9>	m_texture2D;
 	};

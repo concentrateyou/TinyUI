@@ -74,6 +74,30 @@ namespace DXFramework
 			return FALSE;
 		return SUCCEEDED(D3DXSaveTextureToFile(pzFile, dxgi, m_texture2D, NULL));
 	}
+	BOOL DX9Texture2D::Copy(BYTE* bits, LONG size)
+	{
+		if (IsEmpty())
+			return FALSE;
+		if (!bits)
+			return FALSE;
+		D3DLOCKED_RECT lockRect = { 0 };
+		HRESULT hRes = m_texture2D->LockRect(0, &lockRect, NULL, D3DLOCK_DISCARD);
+		if (hRes != S_OK)
+		{
+			TRACE("[Copy] LockRect:%d\n", hRes);
+			LOG(ERROR) << "[Copy] LockRect::" << hRes;
+			return FALSE;
+		}
+		memcpy((BYTE*)lockRect.pBits, bits, size);
+		hRes = m_texture2D->UnlockRect(0);
+		if (hRes != S_OK)
+		{
+			TRACE("[Copy] UnlockRect:%d\n", hRes);
+			LOG(ERROR) << "[Copy] UnlockRect::" << hRes;
+			return FALSE;
+		}
+		return TRUE;
+	}
 	BOOL DX9Texture2D::Copy(BYTE* bits, INT linesize, INT cy)
 	{
 		if (IsEmpty())

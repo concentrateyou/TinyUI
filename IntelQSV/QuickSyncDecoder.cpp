@@ -259,7 +259,7 @@ namespace QSV
 				if (m_bAllowD3D11)
 				{
 #if MFX_D3D11_SUPPORT	
-					m_mfxSession->SetHandle(MFX_HANDLE_D3D11_DEVICE, NULL);
+					m_mfxVideoSession->SetHandle(MFX_HANDLE_D3D11_DEVICE, NULL);
 #endif
 				}
 				else
