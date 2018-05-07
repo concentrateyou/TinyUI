@@ -1,8 +1,12 @@
 #include "stdafx.h"
 #include "MVideoTask.h"
+#include "libyuv.h"
+#include "DShowCommon.h"
 
 namespace FLVPlayer
 {
+
+
 	MVideoTask::MVideoTask(MFLVTask& task, MClock& clock, TinyMsgQueue& queue)
 		:m_task(task),
 		m_clock(clock),
@@ -10,12 +14,18 @@ namespace FLVPlayer
 		m_bBreak(FALSE)
 	{
 		m_onAVCDC.Reset(new Delegate<void(BYTE*, LONG, BOOL&)>(this, &MVideoTask::OnAVCDC));
+		fopen_s(&m_hFile, "D:\\123.yuv", "wb");
 	}
 
 
 	MVideoTask::~MVideoTask()
 	{
 		m_task.EVENT_AVCDCR -= m_onAVCDC;
+		if (m_hFile != NULL)
+		{
+			fclose(m_hFile);
+			m_hFile = NULL;
+		}
 	}
 
 	BOOL MVideoTask::Submit()
@@ -52,7 +62,7 @@ namespace FLVPlayer
 	{
 		bRes = FALSE;
 		FLV_SCRIPTDATA& script = m_task.GetScript();
-		TinySize s(static_cast<LONG>(script.width), static_cast<LONG>(script.height));
+		m_size.SetSize(static_cast<LONG>(script.width), static_cast<LONG>(script.height));
 		m_qsv.Close();
 		bRes = m_qsv.Open(bits, size);
 		if (!bRes)
@@ -99,15 +109,19 @@ namespace FLVPlayer
 				continue;
 			}
 			mfxFrameSurface1* surface1 = NULL;
-			if (m_qsv.Decode(sampleTag, surface1))//FLV解码MORE DATA认为失败
+			if (m_qsv.Decode(sampleTag, surface1))
 			{
 				QSV::QSVAllocator* pAllocator = m_qsv.GetAllocator();
 				mfxStatus status = pAllocator->Lock(pAllocator->pthis, surface1->Data.MemId, &(surface1->Data));
 				if (status == MFX_ERR_NONE)
 				{
-					sampleTag.linesize = surface1->Data.Pitch;
-					sampleTag.cy = surface1->Info.CropH;
-					sampleTag.size = surface1->Info.CropH * surface1->Data.Pitch;
+					for (INT i = 0; i < surface1->Info.CropH; i++)
+					{
+						fwrite(surface1->Data.Y + (surface1->Info.CropY * surface1->Data.Pitch + surface1->Info.CropX) + i * surface1->Data.Pitch, 1, surface1->Info.CropW, m_hFile);
+					}
+					/*sampleTag.cy = m_size.cy;
+					sampleTag.linesize = (m_size.cx * 32 + 31) / 32 * 4;
+					sampleTag.size = sampleTag.cy * sampleTag.linesize;
 					sampleTag.bits = new BYTE[sampleTag.size];
 					if (!sampleTag.bits)
 					{
@@ -116,13 +130,38 @@ namespace FLVPlayer
 					}
 					else
 					{
-						io_gpu_memcpy(sampleTag.bits, surface1->Data.B, sampleTag.size);
+						libyuv::NV12ToARGB(surface1->Data.Y, surface1->Data.Pitch, surface1->Data.UV, surface1->Data.Pitch, (BYTE*)sampleTag.bits, sampleTag.linesize, m_size.cx, m_size.cy);
 						m_videoQueue.Push(sampleTag);
-					}
+					}*/
 				}
 				pAllocator->Unlock(pAllocator->pthis, surface1->Data.MemId, &(surface1->Data));
 				m_qsv.UnlockSurface(surface1);
 			}
+			//mfxFrameSurface1* surface1 = NULL;
+			//if (m_qsv.Decode(sampleTag, surface1))//FLV解码MORE DATA认为失败
+			//{
+			//	QSV::QSVAllocator* pAllocator = m_qsv.GetAllocator();
+			//	mfxStatus status = pAllocator->Lock(pAllocator->pthis, surface1->Data.MemId, &(surface1->Data));
+			//	if (status == MFX_ERR_NONE)
+			//	{
+			//		sampleTag.linesize = surface1->Data.Pitch;
+			//		sampleTag.cy = surface1->Info.CropH;
+			//		sampleTag.size = surface1->Info.CropH * surface1->Data.Pitch;
+			//		sampleTag.bits = new BYTE[sampleTag.size];
+			//		if (!sampleTag.bits)
+			//		{
+			//			sampleTag.size = 0;
+			//			LOG(ERROR) << "[MVideoTask] new size:" << sampleTag.size;
+			//		}
+			//		else
+			//		{
+			//			io_gpu_memcpy(sampleTag.bits, surface1->Data.B, sampleTag.size);
+			//			m_videoQueue.Push(sampleTag);
+			//		}
+			//	}
+			//	pAllocator->Unlock(pAllocator->pthis, surface1->Data.MemId, &(surface1->Data));
+			//	m_qsv.UnlockSurface(surface1);
+			//}
 			//BYTE* bo = NULL;
 			//LONG  so = 0;
 			//if (m_x264.Decode(sampleTag, bo, so) == 0)//FLV解码MORE DATA认为失败

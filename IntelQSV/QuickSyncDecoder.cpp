@@ -127,7 +127,7 @@ namespace QSV
 		MSDK_IGNORE_MFX_STS(status, MFX_WRN_PARTIAL_ACCELERATION);
 		MSDK_IGNORE_MFX_STS(status, MFX_WRN_INCOMPATIBLE_VIDEO_PARAM);
 		MSDK_CHECK_RESULT_P_RET(status, MFX_ERR_NONE);
-		allocRequest.NumFrameSuggested = m_mfxVideoParam.AsyncDepth + m_assist + allocRequest.NumFrameSuggested;
+		allocRequest.NumFrameSuggested = m_assist + allocRequest.NumFrameSuggested;
 		allocRequest.NumFrameMin = allocRequest.NumFrameSuggested;
 		allocRequest.Type = MFX_MEMTYPE_EXTERNAL_FRAME | MFX_MEMTYPE_FROM_DECODE;
 		allocRequest.Type |= (m_bAllowD3D) ? MFX_MEMTYPE_VIDEO_MEMORY_DECODER_TARGET : MFX_MEMTYPE_SYSTEM_MEMORY;

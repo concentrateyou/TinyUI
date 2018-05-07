@@ -3,15 +3,53 @@
 
 namespace QSV
 {
-	INT QSVConverter::ConverterNV12ToRGB32(const uint8_t* src_y,
-		int src_stride_y,
-		const uint8_t* src_uv,
-		int src_stride_uv,
-		uint8_t* dst_argb,
-		int dst_stride_argb,
-		int width,
-		int height)
+	QSVConverter::QSVConverter(const TinySize& srcSize, const TinySize& dstSize)
+		:m_sws(NULL),
+		m_nv12(NULL),
+		m_argb(NULL),
+		m_srcSize(srcSize),
+		m_dstSize(dstSize),
+		m_size(0)
 	{
-		return	libyuv::NV12ToARGB(src_y, src_stride_y, src_uv, src_stride_uv, dst_argb, dst_stride_argb, width, height);
+		m_nv12 = av_frame_alloc();
+		m_argb = av_frame_alloc();
+		m_sws = sws_getContext(srcSize.cx, srcSize.cy, AV_PIX_FMT_NV12, dstSize.cx, dstSize.cy, AV_PIX_FMT_ARGB, SWS_BILINEAR, NULL, NULL, NULL);
+	}
+	BOOL QSVConverter::NV12ToARGB(BYTE* Y, INT StrideY, BYTE* UV, INT StrideYV, INT Height, BYTE* out, INT linesize1)
+	{
+		/*if (!m_sws || !bits)
+			return FALSE;
+		av_image_fill_arrays(m_nv12->data, m_nv12->linesize, bits, AV_PIX_FMT_NV12, m_srcSize.cx, m_srcSize.cy, 1);
+		m_size = av_image_get_buffer_size(AV_PIX_FMT_NV12, m_dstSize.cx, m_dstSize.cy, 1);
+		if (m_bits.IsEmpty())
+		{
+			m_bits.Reset(new BYTE[m_size]);
+		}
+		ZeroMemory(m_bits, m_size * sizeof(BYTE));
+		av_image_fill_arrays(m_argb->data, m_argb->linesize, m_bits.Ptr(), AV_PIX_FMT_ARGB, m_dstSize.cx, m_dstSize.cy, 1);*/
+		BYTE * data[2] = { Y, UV };
+		INT linesize[2] = { StrideY, StrideYV };
+		BYTE * outData[1] = { out }; // RGB have one plane 
+		INT outLinesize[1] = { linesize1 }; // RGB32 Stride
+		sws_scale(m_sws, data, linesize, 0, Height, outData, outLinesize);
+		return TRUE;
+	}
+	QSVConverter::~QSVConverter()
+	{
+		if (m_nv12)
+		{
+			av_frame_free(&m_nv12);
+			m_nv12 = NULL;
+		}
+		if (m_argb)
+		{
+			av_frame_free(&m_argb);
+			m_argb = NULL;
+		}
+		if (m_sws)
+		{
+			sws_freeContext(m_sws);
+			m_sws = NULL;
+		}
 	}
 }
