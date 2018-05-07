@@ -115,11 +115,29 @@ namespace FLVPlayer
 				mfxStatus status = pAllocator->Lock(pAllocator->pthis, surface1->Data.MemId, &(surface1->Data));
 				if (status == MFX_ERR_NONE)
 				{
-					for (INT i = 0; i < surface1->Info.CropH; i++)
+					/*for (INT i = 0; i < surface1->Info.CropH; i++)
 					{
 						fwrite(surface1->Data.Y + (surface1->Info.CropY * surface1->Data.Pitch + surface1->Info.CropX) + i * surface1->Data.Pitch, 1, surface1->Info.CropW, m_hFile);
 					}
-					/*sampleTag.cy = m_size.cy;
+					INT h = surface1->Info.CropH / 2;
+					INT w = surface1->Info.CropW;
+					for (INT i = 0; i < h; i++)
+					{
+						for (INT j = 0; j < w; j += 2)
+						{
+							fwrite(surface1->Data.UV + (surface1->Info.CropY * surface1->Data.Pitch / 2 + surface1->Info.CropX) + i * surface1->Data.Pitch + j, 1, 1, m_hFile);
+						}
+					}
+					for (INT i = 0; i < h; i++)
+					{
+						for (INT j = 1; j < w; j += 2)
+						{
+							fwrite(surface1->Data.UV + (surface1->Info.CropY * surface1->Data.Pitch / 2 + surface1->Info.CropX) + i * surface1->Data.Pitch + j, 1, 1, m_hFile);
+						}
+					}*/
+
+
+					sampleTag.cy = m_size.cy;
 					sampleTag.linesize = (m_size.cx * 32 + 31) / 32 * 4;
 					sampleTag.size = sampleTag.cy * sampleTag.linesize;
 					sampleTag.bits = new BYTE[sampleTag.size];
@@ -132,7 +150,7 @@ namespace FLVPlayer
 					{
 						libyuv::NV12ToARGB(surface1->Data.Y, surface1->Data.Pitch, surface1->Data.UV, surface1->Data.Pitch, (BYTE*)sampleTag.bits, sampleTag.linesize, m_size.cx, m_size.cy);
 						m_videoQueue.Push(sampleTag);
-					}*/
+					}
 				}
 				pAllocator->Unlock(pAllocator->pthis, surface1->Data.MemId, &(surface1->Data));
 				m_qsv.UnlockSurface(surface1);
