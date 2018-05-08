@@ -444,10 +444,7 @@ namespace QSV
 			}
 			if (MFX_ERR_NONE == status)
 			{
-				do
-				{
-					status = m_mfxVideoSession->SyncOperation(syncpDECODE, 0xFFFF);
-				} while (status == MFX_WRN_IN_EXECUTION);
+				status = m_mfxVideoSession->SyncOperation(syncpDECODE, 0xFFFF);
 				if (MFX_ERR_NONE == status)
 				{
 					LockSurface(video);

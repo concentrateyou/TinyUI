@@ -150,6 +150,7 @@ namespace FLVPlayer
 						io_gpu_memcpy(sampleTag.bits, surface1->Data.B, sampleTag.size);
 						m_videoQueue.Push(sampleTag);
 					}*/
+					sampleTag.cx = m_size.cx;
 					sampleTag.cy = m_size.cy;
 					sampleTag.linesize = (m_size.cx * 32 + 31) / 32 * 4;
 					sampleTag.size = sampleTag.cy * sampleTag.linesize;
