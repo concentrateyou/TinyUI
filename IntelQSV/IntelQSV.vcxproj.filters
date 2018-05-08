@@ -42,9 +42,6 @@
     <ClInclude Include="QuickSyncDecoder.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="QuickSyncVPP.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="QSVConverter.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -69,9 +66,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="QuickSyncDecoder.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="QuickSyncVPP.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="QSVConverter.cpp">
