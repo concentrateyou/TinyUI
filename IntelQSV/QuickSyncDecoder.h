@@ -24,13 +24,14 @@ namespace QSV
 		void LockSurface(mfxFrameSurface1* pSurface);
 		void UnlockSurface(mfxFrameSurface1* pSurface);
 	private:
+		BOOL IsSurfaceLocked(mfxFrameSurface1* pSurface);
 		mfxStatus Process(mfxBitstream& stream, mfxFrameSurface1*& video);
 		mfxStatus InitializeVideoParam(BYTE* bits, LONG size);
 		mfxStatus CreateAllocator();
 		mfxStatus AllocFrames();
 		void FreeFrames();
 		void DestoryAllocator();
-		INT GetFreeVideoSurfaceIndex();
+		mfxFrameSurface1* FindFreeSurface();
 	private:
 		BOOL								m_bHDW;
 		BOOL								m_bAllowD3D;

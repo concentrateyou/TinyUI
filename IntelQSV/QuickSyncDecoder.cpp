@@ -299,7 +299,7 @@ namespace QSV
 				ITERATOR s = m_tags.First();
 				SampleTag& sampleTag = m_tags.GetAt(s);
 				m_tags.RemoveAt(s);
-				memset(&mfxStream, 0, sizeof(mfxStream));
+				ZeroMemory(&mfxStream, sizeof(mfxStream));
 				mfxStream.TimeStamp = sampleTag.samplePTS;
 				INT32 newsize = sampleTag.size + m_mfxResidial.DataLength;
 				mfxStream.MaxLength = mfxStream.DataLength = (mfxU32)newsize;
@@ -388,14 +388,33 @@ namespace QSV
 			}
 		}
 	}
-	INT QuickSyncDecoder::GetFreeVideoSurfaceIndex()
+	BOOL QuickSyncDecoder::IsSurfaceLocked(mfxFrameSurface1* pSurface)
 	{
-		for (INT i = 0; i < m_mfxResponse.NumFrameActual; i++)
+		if (pSurface != NULL)
 		{
-			if (0 == m_mfxSurfaces[i].Data.Locked)
-				return i;
+			INT index = pSurface - m_mfxSurfaces;
+			if (index >= 0 && index < m_mfxResponse.NumFrameActual)
+			{
+				return  (m_locks[index] > 0 || pSurface->Data.Locked > 0);
+			}
 		}
-		return MFX_ERR_NOT_FOUND;
+		return TRUE;
+	}
+
+	mfxFrameSurface1* QuickSyncDecoder::FindFreeSurface()
+	{
+		for (INT tries = 0; tries < 1000; ++tries)
+		{
+			for (int i = 0; i < m_mfxResponse.NumFrameActual; ++i)
+			{
+				if (!IsSurfaceLocked(m_mfxSurfaces + i))
+				{
+					return m_mfxSurfaces + i;
+				}
+			}
+			Sleep(1);
+		}
+		return NULL;
 	}
 	mfxStatus QuickSyncDecoder::Process(mfxBitstream& stream, mfxFrameSurface1*& video)
 	{
@@ -404,15 +423,15 @@ namespace QSV
 		mfxSyncPoint syncpDECODE = NULL;
 		while (stream.DataLength > 0)
 		{
-			INT index = GetFreeVideoSurfaceIndex();
-			MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index, MFX_ERR_MEMORY_ALLOC);
+			mfxFrameSurface1*surface = FindFreeSurface();
+			MSDK_CHECK_POINTER(surface, MFX_ERR_NOT_ENOUGH_BUFFER);
 			do
 			{
-				status = m_mfxVideoDECODE->DecodeFrameAsync(&stream, &m_mfxSurfaces[index], &video, &syncpDECODE);
+				status = m_mfxVideoDECODE->DecodeFrameAsync(&stream, surface, &video, &syncpDECODE);
 				if (MFX_ERR_MORE_SURFACE == status)
 				{
-					index = GetFreeVideoSurfaceIndex();
-					MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, index, MFX_ERR_MEMORY_ALLOC);
+					surface = FindFreeSurface();
+					MSDK_CHECK_POINTER(surface, MFX_ERR_NOT_ENOUGH_BUFFER);
 				}
 				if (MFX_WRN_DEVICE_BUSY == status)
 				{

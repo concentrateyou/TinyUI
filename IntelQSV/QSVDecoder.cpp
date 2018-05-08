@@ -172,13 +172,17 @@ namespace QSV
 	}
 	INT QSVDecoder::GetFreeVPPSurfaceIndex()
 	{
-		for (INT i = 0; i < m_mfxVPPResponse.NumFrameActual; ++i)
+		for (INT tries = 0; tries < 1000; ++tries)
 		{
-			BOOL locked = m_locks[i] > 0 || (m_mfxVPPSurfaces[i]->Data.Locked > 0);
-			if (!locked)
+			for (INT i = 0; i < m_mfxVPPResponse.NumFrameActual; ++i)
 			{
-				return i;
+				BOOL locked = m_locks[i] > 0 || (m_mfxVPPSurfaces[i]->Data.Locked > 0);
+				if (!locked)
+				{
+					return i;
+				}
 			}
+			Sleep(1);
 		}
 		return MFX_ERR_NOT_FOUND;
 	}
@@ -224,10 +228,17 @@ namespace QSV
 	}
 	INT QSVDecoder::GetFreeVideoSurfaceIndex()
 	{
-		for (INT i = 0; i < m_mfxResponse.NumFrameActual; i++)
+		for (INT tries = 0; tries < 1000; ++tries)
 		{
-			if (0 == m_mfxSurfaces[i]->Data.Locked)
-				return i;
+			for (INT i = 0; i < m_mfxResponse.NumFrameActual; i++)
+			{
+				BOOL locked = m_locks[i] > 0 || (m_mfxSurfaces[i]->Data.Locked > 0);
+				if (!locked)
+				{
+					return i;
+				}
+			}
+			Sleep(1);
 		}
 		return MFX_ERR_NOT_FOUND;
 	}

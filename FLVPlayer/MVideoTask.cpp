@@ -136,10 +136,9 @@ namespace FLVPlayer
 						}
 					}*/
 
-
-					sampleTag.cy = m_size.cy;
-					sampleTag.linesize = (m_size.cx * 32 + 31) / 32 * 4;
-					sampleTag.size = sampleTag.cy * sampleTag.linesize;
+					/*sampleTag.linesize = surface1->Data.Pitch;
+					sampleTag.cy = surface1->Info.CropH;
+					sampleTag.size = surface1->Info.CropH * surface1->Data.Pitch;
 					sampleTag.bits = new BYTE[sampleTag.size];
 					if (!sampleTag.bits)
 					{
@@ -148,9 +147,23 @@ namespace FLVPlayer
 					}
 					else
 					{
-						libyuv::NV12ToARGB(surface1->Data.Y, surface1->Data.Pitch, surface1->Data.UV, surface1->Data.Pitch, (BYTE*)sampleTag.bits, sampleTag.linesize, m_size.cx, m_size.cy);
+						io_gpu_memcpy(sampleTag.bits, surface1->Data.B, sampleTag.size);
 						m_videoQueue.Push(sampleTag);
-					}
+					}*/
+					//sampleTag.cy = m_size.cy;
+					//sampleTag.linesize = (m_size.cx * 32 + 31) / 32 * 4;
+					//sampleTag.size = sampleTag.cy * sampleTag.linesize;
+					//sampleTag.bits = new BYTE[sampleTag.size];
+					//if (!sampleTag.bits)
+					//{
+					//	sampleTag.size = 0;
+					//	LOG(ERROR) << "[MVideoTask] new size:" << sampleTag.size;
+					//}
+					//else
+					//{
+					//	//libyuv::NV12ToARGB(surface1->Data.Y, surface1->Data.Pitch, surface1->Data.UV, surface1->Data.Pitch, (BYTE*)sampleTag.bits, sampleTag.linesize, m_size.cx, m_size.cy);
+					//	m_videoQueue.Push(sampleTag);
+					//}
 				}
 				pAllocator->Unlock(pAllocator->pthis, surface1->Data.MemId, &(surface1->Data));
 				m_qsv.UnlockSurface(surface1);
