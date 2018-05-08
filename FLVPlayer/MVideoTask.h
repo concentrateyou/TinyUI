@@ -27,8 +27,8 @@ namespace FLVPlayer
 		FILE*						m_hFile;
 		BOOL						m_bBreak;
 		TinySize					m_size;
-		QSVDecoder					m_qsv;
-		//QuickSyncDecoder			m_qsv;
+		//QSVDecoder					m_qsv;
+		QuickSyncDecoder			m_qsv;
 		//x264Decoder					m_x264;
 		TinyMsgQueue&				m_msgqueue;
 		MClock&						m_clock;
