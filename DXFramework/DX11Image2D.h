@@ -13,6 +13,7 @@ namespace DXFramework
 		{
 			XMFLOAT3 position;
 			XMFLOAT2 texture;
+			XMFLOAT4 color;
 		};
 		DECLARE_DYNAMIC(DX11Image2D)
 		DISALLOW_COPY_AND_ASSIGN(DX11Image2D)

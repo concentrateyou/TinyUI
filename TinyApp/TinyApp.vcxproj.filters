@@ -30,39 +30,6 @@
     <ClInclude Include="TinyApp.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="RenderTask.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MainFrame.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ChatFrame.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MFFrame.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MediaTest.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="RDPCapture.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="WavePlayer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="AudioDSP.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="SkinWindow.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ChatDlg.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Convert2TS.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="GLView.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -72,39 +39,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="TinyApp.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderTask.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MainFrame.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="ChatFrame.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MFFrame.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MediaTest.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="RDPCapture.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="WavePlayer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="AudioDSP.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="SkinWindow.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="ChatDlg.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Convert2TS.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="GLView.cpp">

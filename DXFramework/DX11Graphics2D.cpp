@@ -42,7 +42,7 @@ namespace DXFramework
 
 	BOOL DX11Graphics2D::Resize(const TinySize& size)
 	{
-		return m_dx11.ResizeView(size.cx, size.cy);
+		return m_dx11.Resize(size.cx, size.cy);
 	}
 
 	DX11& DX11Graphics2D::GetDX11()
@@ -74,14 +74,5 @@ namespace DXFramework
 	DX11RenderView*	DX11Graphics2D::GetRenderView() const
 	{
 		return m_dx11.GetRenderView();
-	}
-	void DX11Graphics2D::Enter()
-	{
-		m_dx11.Lock();
-	}
-
-	void DX11Graphics2D::Leave()
-	{
-		m_dx11.Unlock();
 	}
 }

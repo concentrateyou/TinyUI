@@ -9,6 +9,9 @@
 #include "Control/TinyRichTextBox.h"
 #include "Control/TinyScrollBar.h"
 #include "LAVPlayer.h"
+#include "DX11Image2D.h"
+#include "DX11RenderView.h"
+#include "DX11Graphics2D.h"
 using namespace LAV;
 using namespace DXFramework;
 
@@ -35,7 +38,9 @@ public:
 	LRESULT OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 private:
-	/*DX9Graphics2D	m_graphics;
-	DX9Image2D		m_image2D[2];*/
-	LAVPlayer m_player;
+	DX11Graphics2D	m_graphics;
+	DX11Image2D		m_image2D;
+	///*DX9Graphics2D	m_graphics;
+	//DX9Image2D		m_image2D[2];*/
+	//LAVPlayer m_player;
 };

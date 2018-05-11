@@ -178,34 +178,14 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AudioDSP.h" />
-    <ClInclude Include="ChatDlg.h" />
-    <ClInclude Include="ChatFrame.h" />
-    <ClInclude Include="Convert2TS.h" />
     <ClInclude Include="GLView.h" />
-    <ClInclude Include="MediaTest.h" />
-    <ClInclude Include="MFFrame.h" />
-    <ClInclude Include="RDPCapture.h" />
-    <ClInclude Include="RenderTask.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="SkinWindow.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TinyApp.h" />
-    <ClInclude Include="MainFrame.h" />
-    <ClInclude Include="WavePlayer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AudioDSP.cpp" />
-    <ClCompile Include="ChatDlg.cpp" />
-    <ClCompile Include="ChatFrame.cpp" />
-    <ClCompile Include="Convert2TS.cpp" />
     <ClCompile Include="GLView.cpp" />
-    <ClCompile Include="MediaTest.cpp" />
-    <ClCompile Include="MFFrame.cpp" />
-    <ClCompile Include="RDPCapture.cpp" />
-    <ClCompile Include="RenderTask.cpp" />
-    <ClCompile Include="SkinWindow.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -213,8 +193,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TinyApp.cpp" />
-    <ClCompile Include="MainFrame.cpp" />
-    <ClCompile Include="WavePlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TinyApp.rc" />

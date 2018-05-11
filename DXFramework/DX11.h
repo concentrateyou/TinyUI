@@ -5,7 +5,7 @@ namespace DXFramework
 {
 	class DX11RenderView;
 
-	class DX11 : public TinyLock
+	class DX11
 	{
 		friend class DX11Graphics2D;
 		DISALLOW_COPY_AND_ASSIGN(DX11)
@@ -15,7 +15,7 @@ namespace DXFramework
 		BOOL					EnumAdapters(vector<IDXGIAdapter*>& adapters);
 		BOOL					Initialize(HWND hWND, INT cx, INT cy, IDXGIAdapter* pAdapter = NULL);
 		void					Uninitialize();
-		BOOL					ResizeView(INT cx = 0, INT cy = 0);
+		BOOL					Resize(INT cx = 0, INT cy = 0);
 		BOOL					SetViewport(const TinyPoint& pos, const TinySize& size);
 		BOOL					AllowBlend(BOOL bAllow, FLOAT blendFactor[4]);
 		BOOL					AllowDepth(BOOL bAllow);
@@ -35,9 +35,10 @@ namespace DXFramework
 		DX11RenderView*			GetRenderView() const;
 	private:
 		HWND								m_hWND;
-		DX11RenderView*						m_render2D;
 		XMMATRIX							m_matrixs[3];
 		TinySize							m_size;
+		DX11RenderView*						m_render2D;
+		TinyScopedPtr<DX11RenderView>		m_background2D;
 		TinyComPtr<ID3D11Device>			m_d3d;
 		TinyComPtr<IDXGISwapChain>			m_swap;
 		TinyComPtr<ID3D11DeviceContext>		m_immediateContext;
@@ -46,7 +47,6 @@ namespace DXFramework
 		TinyComPtr<ID3D11BlendState>		m_disableBlendState;
 		TinyComPtr<ID3D11DepthStencilState>	m_enableDepthState;
 		TinyComPtr<ID3D11DepthStencilState>	m_disableDepthState;
-		TinyScopedPtr<DX11RenderView>		m_background2D;
 	};
 }
 

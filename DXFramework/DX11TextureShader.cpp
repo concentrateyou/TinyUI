@@ -12,17 +12,24 @@ namespace DXFramework
 	BOOL DX11TextureShader::Initialize(DX11& dx11, const CHAR* vsFile, const CHAR* psFile)
 	{
 		HRESULT hRes = S_OK;
+		TinyComPtr<ID3D10Blob> errorMsg;
 		TinyComPtr<ID3D10Blob> vertexShaderBuffer;
 		TinyComPtr<ID3D10Blob> pixelShaderBuffer;
-		D3D11_INPUT_ELEMENT_DESC layout[2];
-		D3D11_BUFFER_DESC matrixBufferDesc = { 0 };
+		D3D11_INPUT_ELEMENT_DESC layout[3];
+		D3D11_BUFFER_DESC bufferDesc = { 0 };
 		D3D11_SAMPLER_DESC samplerDesc;
-		hRes = D3DX11CompileFromFile(vsFile, NULL, NULL, "TextureVertexShader", "vs_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &vertexShaderBuffer, NULL, NULL);
+		hRes = D3DX11CompileFromFile(vsFile, NULL, NULL, "TextureVertexShader", "vs_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &vertexShaderBuffer, &errorMsg, NULL);
 		if (hRes != S_OK)
+		{
+			CHAR* error = (CHAR*)errorMsg->GetBufferPointer();
 			return FALSE;
-		hRes = D3DX11CompileFromFile(psFile, NULL, NULL, "TexturePixelShader", "ps_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &pixelShaderBuffer, NULL, NULL);
+		}
+		hRes = D3DX11CompileFromFile(psFile, NULL, NULL, "TexturePixelShader", "ps_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &pixelShaderBuffer, &errorMsg, NULL);
 		if (hRes != S_OK)
+		{
+			CHAR* error = (CHAR*)errorMsg->GetBufferPointer();
 			return FALSE;
+		}
 		hRes = dx11.GetD3D()->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &m_vertexShader);
 		if (hRes != S_OK)
 			return FALSE;
@@ -45,6 +52,14 @@ namespace DXFramework
 		layout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 		layout[1].InstanceDataStepRate = 0;
 
+		layout[2].SemanticName = "COLOR";
+		layout[2].SemanticIndex = 0;
+		layout[2].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		layout[2].InputSlot = 0;
+		layout[2].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+		layout[2].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+		layout[2].InstanceDataStepRate = 0;
+
 		ULONG size = sizeof(layout) / sizeof(layout[0]);
 		hRes = dx11.GetD3D()->CreateInputLayout(layout, size, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), &m_layout);
 		if (hRes != S_OK)
@@ -65,14 +80,13 @@ namespace DXFramework
 		hRes = dx11.GetD3D()->CreateSamplerState(&samplerDesc, &m_sampleState);
 		if (hRes != S_OK)
 			return FALSE;
-
-		matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-		matrixBufferDesc.ByteWidth = sizeof(MATRIXBUFFER);
-		matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		matrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		matrixBufferDesc.MiscFlags = 0;
-		matrixBufferDesc.StructureByteStride = 0;
-		hRes = dx11.GetD3D()->CreateBuffer(&matrixBufferDesc, NULL, &m_matrixBuffer);
+		bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+		bufferDesc.ByteWidth = sizeof(MATRIXBUFFER);
+		bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		bufferDesc.MiscFlags = 0;
+		bufferDesc.StructureByteStride = 0;
+		hRes = dx11.GetD3D()->CreateBuffer(&bufferDesc, NULL, &m_buffer);
 		if (hRes != S_OK)
 			return FALSE;
 		return TRUE;
@@ -83,21 +97,21 @@ namespace DXFramework
 		XMMATRIX viewMatrix1 = XMMatrixTranspose(viewMatrix);
 		XMMATRIX projectionMatrix1 = XMMatrixTranspose(projectionMatrix);
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
-		if (SUCCEEDED(dx11.GetImmediateContext()->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource)))
+		if (SUCCEEDED(dx11.GetImmediateContext()->Map(m_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource)))
 		{
 			MATRIXBUFFER* dataPtr = (MATRIXBUFFER*)mappedResource.pData;
 			dataPtr->world = worldMatrix1;
 			dataPtr->view = viewMatrix1;
 			dataPtr->projection = projectionMatrix1;
-			dx11.GetImmediateContext()->Unmap(m_matrixBuffer, 0);
+			dx11.GetImmediateContext()->Unmap(m_buffer, 0);
 		}
-		dx11.GetImmediateContext()->VSSetConstantBuffers(0, 1, &m_matrixBuffer);
+		dx11.GetImmediateContext()->VSSetConstantBuffers(0, 1, &m_buffer);
 		ID3D11ShaderResourceView* pps = texture->GetSRView();
-		dx11.GetImmediateContext()->PSSetShaderResources(0, 1, &pps);
 		dx11.GetImmediateContext()->IASetInputLayout(m_layout);
 		dx11.GetImmediateContext()->VSSetShader(m_vertexShader, NULL, 0);
 		dx11.GetImmediateContext()->PSSetShader(m_pixelShader, NULL, 0);
 		dx11.GetImmediateContext()->PSSetSamplers(0, 1, &m_sampleState);
+		dx11.GetImmediateContext()->PSSetShaderResources(0, 1, &pps);
 		dx11.GetImmediateContext()->DrawIndexed(indexCount, 0, 0);
 	}
 }

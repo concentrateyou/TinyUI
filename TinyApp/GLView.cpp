@@ -51,6 +51,16 @@ BOOL GLView::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
 LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
+	TinyRectangle s;
+	GetClientRect(&s);
+	m_graphics.Initialize(m_hWND, s.Size());
+	m_graphics.SetRenderView(NULL);
+	m_graphics.GetRenderView()->BeginDraw();
+	m_image2D.Load(m_graphics.GetDX11(), "D:\\timg.jpg");
+	//m_image2D.SetScale(D3DXVECTOR2(static_cast<FLOAT>(TO_CX(s)) / m_image2D.GetSize().x, static_cast<FLOAT>(TO_CY(s)) / m_image2D.GetSize().y));
+	m_graphics.DrawImage(&m_image2D);
+	m_graphics.GetRenderView()->EndDraw();
+	m_graphics.Present();
 	////TinyRectangle s;
 	////GetClientRect(&s);
 	////m_graphics.Initialize(m_hWND, s.Size());
@@ -69,11 +79,11 @@ LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 	//////m_graphics.DrawImage(&m_image2D[1]);
 	////m_graphics.GetRenderView()->EndDraw();
 	////m_graphics.Present();
-	m_player.Open(m_hWND, "D:\\test.flv");
+	//m_player.Open(m_hWND, "D:\\test.flv");
 	/*LONGLONG s;
 	m_player.GetDuration(s);
 	m_player.SetPosition(s / 2);*/
-	m_player.Play();
+	//m_player.Play();
 	return FALSE;
 }
 
@@ -88,6 +98,7 @@ LRESULT GLView::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
 	//m_graphics.Present();
+	m_graphics.Present();
 	return FALSE;
 }
 

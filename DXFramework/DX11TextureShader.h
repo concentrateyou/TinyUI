@@ -14,14 +14,14 @@ namespace DXFramework
 	public:
 		DX11TextureShader();
 		virtual ~DX11TextureShader();
-		BOOL Initialize(DX11& dx11, const CHAR* vsFile, const CHAR* psFile);
-		void Render(DX11& dx11, INT indexCount, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, DX11Texture2D* pTexture);
+		BOOL	Initialize(DX11& dx11, const CHAR* vsFile, const CHAR* psFile);
+		void	Render(DX11& dx11, INT indexCount, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, DX11Texture2D* pTexture);
 	protected:
+		TinyComPtr<ID3D11Buffer>		m_buffer;
 		TinyComPtr<ID3D11VertexShader>	m_vertexShader;
 		TinyComPtr<ID3D11PixelShader>	m_pixelShader;
 		TinyComPtr<ID3D11InputLayout>	m_layout;
 		TinyComPtr<ID3D11SamplerState>	m_sampleState;
-		TinyComPtr<ID3D11Buffer>		m_matrixBuffer;
 	};
 }
 

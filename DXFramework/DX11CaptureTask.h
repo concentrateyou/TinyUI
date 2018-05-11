@@ -32,12 +32,13 @@ namespace DXFramework
 		TinySize				m_size;
 		BOOL					m_bCapturing;
 		DX11*					m_pDX11;
+		TinyLock				m_lock;
+		WNDINFO					m_targetWND;
 		TinyEvent				m_start;
 		TinyEvent				m_stop;
 		TinyEvent				m_ready;
 		TinyEvent				m_exit;
 		TinyEvent				m_close;
-		WNDINFO					m_targetWND;
 		TinyString				m_className;
 		TinyString				m_exeName;
 		TinyString				m_dllName;

@@ -67,6 +67,7 @@ namespace DXFramework
 		if (hRes != S_OK)
 			return FALSE;
 		m_background2D.Reset(new DX11RenderView(*this));
+		ASSERT(m_background2D);
 		if (!m_background2D->Create())
 			return FALSE;
 		this->SetViewport(TinyPoint(0, 0), m_background2D->GetSize());
@@ -158,7 +159,7 @@ namespace DXFramework
 		m_d3d.Release();
 		m_render2D = NULL;
 	}
-	BOOL DX11::ResizeView(INT cx, INT cy)
+	BOOL DX11::Resize(INT cx, INT cy)
 	{
 		if (IsEmpty())
 			return FALSE;

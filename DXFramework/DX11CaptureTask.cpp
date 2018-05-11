@@ -195,7 +195,7 @@ namespace DXFramework
 					TRACE("BeginCapture GetSharedTextureDATA-TextureHandle==NULL-FAIL\n");
 					return FALSE;
 				}
-				TinyAutoLock lock(*m_pDX11);
+				TinyAutoLock lock(m_lock);
 				TinyRectangle vp = m_image.GetRectangle();
 				m_image.Destory();
 				if (!m_image.Load(*m_pDX11, pTextureDATA->TextureHandle))
@@ -208,7 +208,7 @@ namespace DXFramework
 			}
 			if (pCaptureDATA->CaptureType == CAPTURETYPE_MEMORYTEXTURE)
 			{
-				TinyAutoLock lock(*m_pDX11);
+				TinyAutoLock lock(m_lock);
 				TinyRectangle vp = m_image.GetRectangle();
 				m_image.Destory();
 				if (!m_image.Create(*m_pDX11, pCaptureDATA->Size.cx, pCaptureDATA->Size.cy, NULL, FALSE))
