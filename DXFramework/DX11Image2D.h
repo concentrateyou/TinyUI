@@ -23,7 +23,7 @@ namespace DXFramework
 	public:
 		BOOL Create(DX11& dx11, ID3D11Texture2D* texture2D) OVERRIDE;
 		BOOL Create(DX11& dx11, INT cx, INT cy, const BYTE* bits, BOOL bReadoly) OVERRIDE;
-		BOOL Create(DX11& dx11, INT cx, INT cy, BOOL bMutex = FALSE) OVERRIDE;
+		BOOL Create(DX11& dx11, INT cx, INT cy) OVERRIDE;
 		BOOL Load(DX11& dx11, const BYTE* bits, LONG dwSize) OVERRIDE;
 		BOOL Load(DX11& dx11, HANDLE hResource) OVERRIDE;
 		BOOL Load(DX11& dx11, const CHAR* pzFile) OVERRIDE;

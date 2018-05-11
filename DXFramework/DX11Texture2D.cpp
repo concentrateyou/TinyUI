@@ -15,7 +15,6 @@ namespace DXFramework
 		}
 	}
 	DX11Texture2D::DX11Texture2D()
-		:m_handle(FALSE)
 	{
 	}
 
@@ -26,26 +25,26 @@ namespace DXFramework
 	{
 		return m_texture2D;
 	}
-	BOOL DX11Texture2D::Create(DX11& dx11, INT cx, INT cy, BOOL bMutex)
+	BOOL DX11Texture2D::Create(DX11& dx11, INT cx, INT cy)
 	{
 		m_texture2D.Release();
 		m_resourceView.Release();
-		D3D11_TEXTURE2D_DESC textureDesc;
-		ZeroMemory(&textureDesc, sizeof(textureDesc));
-		textureDesc.Width = cx;
-		textureDesc.Height = cy;
-		textureDesc.MipLevels = 1;
-		textureDesc.ArraySize = 1;
-		textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-		textureDesc.SampleDesc.Count = 1;
-		textureDesc.SampleDesc.Quality = 0;
-		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
-		textureDesc.MiscFlags = (bMutex ? D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX : D3D11_RESOURCE_MISC_SHARED) | D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
-		textureDesc.Usage = D3D11_USAGE_DEFAULT;//GPU快速读写
-		HRESULT hRes = dx11.GetD3D()->CreateTexture2D(&textureDesc, NULL, &m_texture2D);
+		D3D11_TEXTURE2D_DESC desc;
+		ZeroMemory(&desc, sizeof(desc));
+		desc.Width = cx;
+		desc.Height = cy;
+		desc.MipLevels = 1;
+		desc.ArraySize = 1;
+		desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		desc.SampleDesc.Count = 1;
+		desc.SampleDesc.Quality = 0;
+		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+		desc.MiscFlags = D3D11_RESOURCE_MISC_SHARED | D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
+		desc.Usage = D3D11_USAGE_DEFAULT;//GPU快速读写
+		HRESULT hRes = dx11.GetD3D()->CreateTexture2D(&desc, NULL, &m_texture2D);
 		if (hRes != S_OK)
 			return FALSE;
-		D3D11_TEXTURE2D_DESC desc;
+		ZeroMemory(&desc, sizeof(desc));
 		m_texture2D->GetDesc(&desc);
 		D3D11_SHADER_RESOURCE_VIEW_DESC dsrvd;
 		::ZeroMemory(&dsrvd, sizeof(dsrvd));
@@ -55,16 +54,6 @@ namespace DXFramework
 		hRes = dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &dsrvd, &m_resourceView);
 		if (hRes != S_OK)
 			return FALSE;
-		TinyComPtr<IDXGIResource> resource;
-		if (FAILED(hRes = m_texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&resource)))
-			return FALSE;
-		if (FAILED(hRes = resource->GetSharedHandle(&m_handle)))
-			return FALSE;
-		if (bMutex)
-		{
-			if (FAILED(hRes = resource->QueryInterface(__uuidof(IDXGIKeyedMutex), (void**)&m_mutex)))
-				return FALSE;
-		}
 		return TRUE;
 	}
 	BOOL  DX11Texture2D::GetDC(BOOL discard, HDC& hDC)
@@ -82,15 +71,16 @@ namespace DXFramework
 	}
 	BOOL DX11Texture2D::ReleaseDC()
 	{
-		if (!m_surface)
-			return FALSE;
-		HRESULT hRes = m_surface->ReleaseDC(NULL);
-		m_surface.Release();
-		return SUCCEEDED(hRes);
+		if (m_surface != NULL)
+		{
+			HRESULT hRes = m_surface->ReleaseDC(NULL);
+			m_surface.Release();
+			return SUCCEEDED(hRes);
+		}
+		return FALSE;
 	}
 	BOOL DX11Texture2D::Map(DX11& dx11, BYTE *&lpData, UINT &pitch, BOOL bReadoly)
 	{
-		HRESULT hRes = S_OK;
 		D3D11_MAPPED_SUBRESOURCE ms = { 0 };
 		if (SUCCEEDED(dx11.GetImmediateContext()->Map(m_texture2D, 0, bReadoly ? D3D11_MAP_READ : D3D11_MAP_WRITE_DISCARD, 0, &ms)))
 		{
@@ -104,10 +94,29 @@ namespace DXFramework
 	{
 		dx11.GetImmediateContext()->Unmap(m_texture2D, 0);
 	}
+	BOOL DX11Texture2D::Create(DX11& dx11, D3D11_TEXTURE2D_DESC& desc)
+	{
+		m_texture2D.Release();
+		m_resourceView.Release();
+		HRESULT hRes = dx11.GetD3D()->CreateTexture2D(&desc, NULL, &m_texture2D);
+		if (hRes != S_OK)
+			return FALSE;
+		D3D11_SHADER_RESOURCE_VIEW_DESC dsrvd;
+		::ZeroMemory(&dsrvd, sizeof(dsrvd));
+		dsrvd.Format = desc.Format;
+		dsrvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		dsrvd.Texture2D.MipLevels = 1;
+		hRes = dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &dsrvd, &m_resourceView);
+		if (hRes != S_OK)
+			return FALSE;
+		return TRUE;
+	}
 	BOOL DX11Texture2D::Create(DX11& dx11, ID3D11Texture2D* texture2D)
 	{
 		if (!texture2D)
 			return FALSE;
+		m_texture2D.Release();
+		m_resourceView.Release();
 		D3D11_TEXTURE2D_DESC desc;
 		texture2D->GetDesc(&desc);
 		HRESULT hRes = dx11.GetD3D()->CreateTexture2D(&desc, NULL, &m_texture2D);
@@ -202,24 +211,7 @@ namespace DXFramework
 		dx11.GetImmediateContext()->UpdateSubresource(m_texture2D, 0, ps, static_cast<const void*>(bits), rowPitch, depthPitch);
 		return TRUE;
 	}
-	BOOL DX11Texture2D::Lock(UINT64 acqKey, DWORD dwMS)
-	{
-		if (!m_mutex)
-			return FALSE;
-		HRESULT hRes = m_mutex->AcquireSync(acqKey, dwMS);
-		if (hRes == WAIT_OBJECT_0)
-			return TRUE;
-		return FALSE;
-	}
-	BOOL DX11Texture2D::Unlock(UINT64 relKey)
-	{
-		if (!m_mutex)
-			return FALSE;
-		HRESULT hRes = m_mutex->ReleaseSync(relKey);
-		if (hRes == WAIT_OBJECT_0)
-			return TRUE;
-		return FALSE;
-	}
+
 	BOOL DX11Texture2D::Load(DX11& dx11, const CHAR* pzFile)
 	{
 		ASSERT(pzFile);
@@ -232,11 +224,6 @@ namespace DXFramework
 		if (hRes != S_OK)
 			return FALSE;
 		if (FAILED(hRes = resource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&m_texture2D)))
-			return FALSE;
-		TinyComPtr<IDXGIResource> dxgiResource;
-		if (FAILED(hRes = m_texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&dxgiResource)))
-			return FALSE;
-		if (FAILED(hRes = dxgiResource->GetSharedHandle(&m_handle)))
 			return FALSE;
 		return TRUE;
 	}
@@ -253,11 +240,6 @@ namespace DXFramework
 			return FALSE;
 		D3D11_TEXTURE2D_DESC desc;
 		m_texture2D->GetDesc(&desc);
-		if (desc.MiscFlags & D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX)
-		{
-			if (FAILED(hRes = resource->QueryInterface(__uuidof(IDXGIKeyedMutex), (void**)&m_mutex)))
-				return FALSE;
-		}
 		D3D11_SHADER_RESOURCE_VIEW_DESC dsrvd;
 		::ZeroMemory(&dsrvd, sizeof(dsrvd));
 		dsrvd.Format = desc.Format;
@@ -278,11 +260,6 @@ namespace DXFramework
 			return FALSE;
 		if (FAILED(hRes = resource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&m_texture2D)))
 			return FALSE;
-		TinyComPtr<IDXGIResource> dxgiResource;
-		if (FAILED(hRes = m_texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&dxgiResource)))
-			return FALSE;
-		if (FAILED(hRes = dxgiResource->GetSharedHandle(&m_handle)))
-			return FALSE;
 		return TRUE;
 	}
 	void DX11Texture2D::Destory()
@@ -290,13 +267,22 @@ namespace DXFramework
 		m_surface.Release();
 		m_resourceView.Release();
 		m_texture2D.Release();
-		m_mutex.Release();
-		m_handle = NULL;
 	}
 
-	HANDLE DX11Texture2D::GetHandle() const
+	HANDLE DX11Texture2D::GetHandle()
 	{
-		return m_handle;
+		HANDLE handle = NULL;
+		do
+		{
+			if (!m_texture2D)
+				break;
+			TinyComPtr<IDXGIResource> resource;
+			if (FAILED(m_texture2D->QueryInterface(__uuidof(IDXGIResource), (void**)&resource)))
+				break;
+			if (FAILED(resource->GetSharedHandle(&handle)))
+				break;
+		} while (0);
+		return handle;
 	}
 
 	ID3D11Texture2D* DX11Texture2D::GetTexture2D() const
@@ -309,6 +295,6 @@ namespace DXFramework
 	}
 	BOOL DX11Texture2D::IsEmpty() const
 	{
-		return m_texture2D == NULL;
+		return (m_texture2D == NULL);
 	}
 }

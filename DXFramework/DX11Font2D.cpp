@@ -108,7 +108,7 @@ namespace DXFramework
 			{
 				sizeF.Height = static_cast<Gdiplus::REAL>(s.Height());
 			}
-			return DX11Image2D::Create(dx11, (INT)sizeF.Width, (INT)sizeF.Height, TRUE);
+			return DX11Image2D::Create(dx11, (INT)sizeF.Width, (INT)sizeF.Height);
 		}
 		return FALSE;
 	}

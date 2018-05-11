@@ -16,35 +16,32 @@ namespace DXFramework
 		DX11Texture2D(ID3D11Texture2D* texture2D);
 		virtual ~DX11Texture2D();
 	public:
+		virtual BOOL Create(DX11& dx11, D3D11_TEXTURE2D_DESC& desc);
 		virtual BOOL Create(DX11& dx11, ID3D11Texture2D* texture2D);
-		virtual BOOL Create(DX11& dx11, INT cx, INT cy, const BYTE* bits, BOOL bReadoly);
-		virtual BOOL Create(DX11& dx11, INT cx, INT cy, BOOL bMutex = FALSE);
-		virtual BOOL SaveAs(DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT dxgi);
+		virtual BOOL Create(DX11& dx11, INT cx, INT cy, const BYTE* bits, BOOL bReadoly);//B8G8R8A8
+		virtual BOOL Create(DX11& dx11, INT cx, INT cy);//B8G8R8A8
 		virtual BOOL Load(DX11& dx11, const BYTE* bits, LONG size);
 		virtual BOOL Load(DX11& dx11, HANDLE hResource);
 		virtual BOOL Load(DX11& dx11, const CHAR* pzFile);
 		virtual BOOL Copy(DX11& dx11, ID3D11Texture2D* texture2D);
 		virtual BOOL Copy(DX11& dx11, DX11Texture2D& texture2D);
 		virtual BOOL Copy(DX11& dx11, D3D11_BOX* ps, const BYTE* bits, LONG size, UINT rowPitch, UINT depthPitch);
-		virtual BOOL Lock(UINT64 acqKey, DWORD dwMS);
-		virtual BOOL Unlock(UINT64 relKey);
+		virtual BOOL SaveAs(DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT dxgi);
 		virtual void Destory();
 	public:
 		operator ID3D11Texture2D*() const;
-		ID3D11Texture2D* GetTexture2D() const;
-		BOOL			GetDC(BOOL discard, HDC& hDC);
-		BOOL			ReleaseDC();
-		BOOL			Map(DX11& dx11, BYTE *&lpData, UINT &pitch, BOOL bReadoly = FALSE);
-		void			Unmap(DX11& dx11);
-		HANDLE			GetHandle() const;
-		BOOL			IsEmpty() const;
-		ID3D11ShaderResourceView* GetSRView() const;
+		ID3D11Texture2D*			GetTexture2D() const;
+		BOOL						GetDC(BOOL discard, HDC& hDC);
+		BOOL						ReleaseDC();
+		BOOL						Map(DX11& dx11, BYTE *&lpData, UINT &pitch, BOOL bReadoly = FALSE);
+		void						Unmap(DX11& dx11);
+		HANDLE						GetHandle();//»ñµÃ¹²Ïí¾ä±ú
+		BOOL						IsEmpty() const;
+		ID3D11ShaderResourceView*	GetSRView() const;
 	protected:
-		HANDLE									m_handle;
 		TinyComPtr<IDXGISurface1>				m_surface;
 		TinyComPtr<ID3D11Texture2D>				m_texture2D;
 		TinyComPtr<ID3D11ShaderResourceView>	m_resourceView;
-		TinyComPtr<IDXGIKeyedMutex>				m_mutex;
 	};
 
 #define CAPTURETYPE_MEMORYTEXTURE   1

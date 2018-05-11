@@ -109,7 +109,7 @@ namespace DXFramework
 		m_immediateContext->RSSetState(m_rasterizerState);
 		D3D11_BLEND_DESC blenddesc;
 		ZeroMemory(&blenddesc, sizeof(blenddesc));
-		for (INT i = 0;i < 8;i++)
+		for (INT i = 0; i < 8; i++)
 		{
 			blenddesc.RenderTarget[i].BlendEnable = TRUE;
 			blenddesc.RenderTarget[i].SrcBlend = D3D11_BLEND_SRC_ALPHA;
@@ -123,7 +123,7 @@ namespace DXFramework
 		hRes = m_d3d->CreateBlendState(&blenddesc, &m_enableBlendState);
 		if (hRes != S_OK)
 			return FALSE;
-		for (INT i = 0;i < 8;i++)
+		for (INT i = 0; i < 8; i++)
 		{
 			blenddesc.RenderTarget[i].BlendEnable = FALSE;
 			blenddesc.RenderTarget[i].SrcBlend = D3D11_BLEND_SRC_ALPHA;
@@ -251,8 +251,8 @@ namespace DXFramework
 		FLOAT fov = (FLOAT)D3DX_PI / 4.0F;
 		FLOAT aspect = (FLOAT)size.cx / (FLOAT)size.cy;
 		m_matrixs[0] = XMMatrixPerspectiveFovLH(fov, aspect, 1000.0F, 0.1F);
-		m_matrixs[1] = XMMatrixIdentity();
-		m_matrixs[2] = XMMatrixOrthographicLH((FLOAT)size.cx, (FLOAT)size.cy, 1000.0F, 0.1F);
+		m_matrixs[1] = XMMatrixIdentity();//WORLD
+		m_matrixs[2] = XMMatrixOrthographicLH((FLOAT)size.cx, (FLOAT)size.cy, 1000.0F, 0.1F);//PROJECTION
 	}
 	BOOL DX11::SetViewport(const TinyPoint& pos, const TinySize& size)
 	{

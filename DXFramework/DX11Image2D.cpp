@@ -126,11 +126,11 @@ namespace DXFramework
 		return FALSE;
 	}
 
-	BOOL DX11Image2D::Create(DX11& dx11, INT cx, INT cy, BOOL bMutex /*= FALSE*/)
+	BOOL DX11Image2D::Create(DX11& dx11, INT cx, INT cy)
 	{
 		if (!Initialize(dx11))
 			return FALSE;
-		if (DX11Texture2D::Create(dx11, cx, cy, bMutex))
+		if (DX11Texture2D::Create(dx11, cx, cy))
 		{
 			D3D11_TEXTURE2D_DESC desc;
 			m_texture2D->GetDesc(&desc);
