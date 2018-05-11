@@ -22,17 +22,15 @@ namespace DXFramework
 		D3D11_BUFFER_DESC	indexBufferDesc = { 0 };
 		D3D11_SUBRESOURCE_DATA	vertexData = { 0 };
 		D3D11_SUBRESOURCE_DATA	indexData = { 0 };
-		INT vertexCount = GetVertexCount();
-		INT indexCount = GetIndexCount();
-		TinyScopedArray<VERTEXTYPE> vertices(new VERTEXTYPE[vertexCount]);
-		TinyScopedArray<ULONG> indices(new ULONG[indexCount]);
-		ZeroMemory(vertices.Ptr(), (sizeof(VERTEXTYPE) * vertexCount));
-		for (INT i = 0; i < indexCount; i++)
+		TinyScopedArray<VERTEXTYPE> vertices(new VERTEXTYPE[6]);
+		TinyScopedArray<ULONG> indices(new ULONG[6]);
+		ZeroMemory(vertices.Ptr(), (sizeof(VERTEXTYPE) * 6));
+		for (INT i = 0; i < 6; i++)
 		{
 			indices[i] = i;
 		}
 		vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-		vertexBufferDesc.ByteWidth = sizeof(VERTEXTYPE) * vertexCount;
+		vertexBufferDesc.ByteWidth = sizeof(VERTEXTYPE) * 6;
 		vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		vertexBufferDesc.MiscFlags = 0;
@@ -44,7 +42,7 @@ namespace DXFramework
 		if (hRes != S_OK)
 			return FALSE;
 		indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		indexBufferDesc.ByteWidth = sizeof(ULONG) * indexCount;
+		indexBufferDesc.ByteWidth = sizeof(ULONG) * 6;
 		indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 		indexBufferDesc.CPUAccessFlags = 0;
 		indexBufferDesc.MiscFlags = 0;
@@ -54,7 +52,7 @@ namespace DXFramework
 		hRes = dx11.GetD3D()->CreateBuffer(&indexBufferDesc, &indexData, &m_indexs);
 		if (hRes != S_OK)
 			return FALSE;
-		m_vertices.Reset(new VERTEXTYPE[vertexCount]);
+		m_vertices.Reset(new VERTEXTYPE[6]);
 		return TRUE;
 	}
 	BOOL DX11Image2D::Translate(DX11& dx11, FLOAT ratioX, FLOAT ratioY)
@@ -74,7 +72,6 @@ namespace DXFramework
 		right = left + scale.x;
 		top = (FLOAT)(size.y / 2) - pos.y;
 		bottom = top - scale.y;
-		INT vertexCount = GetVertexCount();
 		m_vertices[0].position = XMFLOAT3(left, top, 0.0F);
 		m_vertices[0].texture = XMFLOAT2(0.0F, 0.0F);
 		m_vertices[0].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
@@ -97,7 +94,7 @@ namespace DXFramework
 		HRESULT hRes = dx11.GetImmediateContext()->Map(m_vertexs, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		if (hRes != S_OK)
 			return FALSE;
-		memcpy(mappedResource.pData, (void*)m_vertices.Ptr(), sizeof(VERTEXTYPE) * vertexCount);
+		memcpy(mappedResource.pData, (void*)m_vertices.Ptr(), sizeof(VERTEXTYPE) * 6);
 		dx11.GetImmediateContext()->Unmap(m_vertexs, 0);
 		return TRUE;
 	}
@@ -308,13 +305,5 @@ namespace DXFramework
 		dx11.GetImmediateContext()->IASetIndexBuffer(m_indexs, DXGI_FORMAT_R32_UINT, 0);
 		dx11.GetImmediateContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		return TRUE;
-	}
-	INT	DX11Image2D::GetVertexCount() const
-	{
-		return 6;
-	}
-	INT DX11Image2D::GetIndexCount() const
-	{
-		return 6;
 	}
 }

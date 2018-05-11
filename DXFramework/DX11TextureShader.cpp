@@ -9,6 +9,7 @@ namespace DXFramework
 	DX11TextureShader::~DX11TextureShader()
 	{
 	}
+
 	BOOL DX11TextureShader::Initialize(DX11& dx11, const CHAR* vsFile, const CHAR* psFile)
 	{
 		HRESULT hRes = S_OK;
@@ -22,12 +23,14 @@ namespace DXFramework
 		if (hRes != S_OK)
 		{
 			CHAR* error = (CHAR*)errorMsg->GetBufferPointer();
+			LOG(ERROR) << "DX11TextureShader Initialize - TextureVertexShader: " << error;
 			return FALSE;
 		}
 		hRes = D3DX11CompileFromFile(psFile, NULL, NULL, "TexturePixelShader", "ps_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &pixelShaderBuffer, &errorMsg, NULL);
 		if (hRes != S_OK)
 		{
 			CHAR* error = (CHAR*)errorMsg->GetBufferPointer();
+			LOG(ERROR) << "DX11TextureShader Initialize - TexturePixelShader: " << error;
 			return FALSE;
 		}
 		hRes = dx11.GetD3D()->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &m_vertexShader);
@@ -91,8 +94,18 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
-	void DX11TextureShader::Render(DX11& dx11, INT indexCount, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, DX11Texture2D* texture)
+	void DX11TextureShader::Render(DX11& dx11)
 	{
+		dx11.GetImmediateContext()->IASetInputLayout(m_layout);
+		dx11.GetImmediateContext()->VSSetShader(m_vertexShader, NULL, 0);
+		dx11.GetImmediateContext()->PSSetShader(m_pixelShader, NULL, 0);
+		dx11.GetImmediateContext()->PSSetSamplers(0, 1, &m_sampleState);
+		dx11.GetImmediateContext()->DrawIndexed(6, 0, 0);
+	}
+	void DX11TextureShader::SetShaderParameters(DX11& dx11, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, DX11Texture2D* texture2D)
+	{
+		ID3D11ShaderResourceView* spv = texture2D->GetSRView();
+		ASSERT(spv);
 		XMMATRIX worldMatrix1 = XMMatrixTranspose(worldMatrix);
 		XMMATRIX viewMatrix1 = XMMatrixTranspose(viewMatrix);
 		XMMATRIX projectionMatrix1 = XMMatrixTranspose(projectionMatrix);
@@ -106,12 +119,6 @@ namespace DXFramework
 			dx11.GetImmediateContext()->Unmap(m_buffer, 0);
 		}
 		dx11.GetImmediateContext()->VSSetConstantBuffers(0, 1, &m_buffer);
-		ID3D11ShaderResourceView* pps = texture->GetSRView();
-		dx11.GetImmediateContext()->IASetInputLayout(m_layout);
-		dx11.GetImmediateContext()->VSSetShader(m_vertexShader, NULL, 0);
-		dx11.GetImmediateContext()->PSSetShader(m_pixelShader, NULL, 0);
-		dx11.GetImmediateContext()->PSSetSamplers(0, 1, &m_sampleState);
-		dx11.GetImmediateContext()->PSSetShaderResources(0, 1, &pps);
-		dx11.GetImmediateContext()->DrawIndexed(indexCount, 0, 0);
+		dx11.GetImmediateContext()->PSSetShaderResources(0, 1, &spv);
 	}
 }

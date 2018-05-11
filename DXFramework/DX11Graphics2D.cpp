@@ -62,7 +62,8 @@ namespace DXFramework
 		if (ps->Process(m_dx11))
 		{
 			XMMATRIX* ms = m_dx11.GetMatrixs();
-			m_textureShader.Render(m_dx11, ps->GetIndexCount(), ms[1], m_camera.GetView(), ms[2], ps);
+			m_textureShader.SetShaderParameters(m_dx11, ms[1], m_camera.GetView(), ms[2], ps);
+			m_textureShader.Render(m_dx11);
 			return TRUE;
 		}
 		return FALSE;

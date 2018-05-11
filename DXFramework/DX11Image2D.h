@@ -36,9 +36,6 @@ namespace DXFramework
 		BOOL BitBlt(DX11& dx11, const TinyRectangle& dst, HBITMAP hBitmapSrc, const TinyPoint& src);
 		BOOL BitBlt(DX11& dx11, const TinyRectangle& dst, HDC hDCSrc, const TinyPoint& src);
 	public:
-		virtual INT	GetVertexCount() const;
-		virtual INT	GetIndexCount() const;
-	public:
 		BOOL Allocate(DX11& dx11) OVERRIDE;
 		BOOL Process(DX11& dx11) OVERRIDE;
 		void Deallocate(DX11& dx11) OVERRIDE;

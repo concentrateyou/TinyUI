@@ -184,12 +184,12 @@
   <ItemGroup>
     <ClInclude Include="DX11.h" />
     <ClInclude Include="DX11CaptureTask.h" />
-    <ClInclude Include="DX11ColorShader.h" />
     <ClInclude Include="DX11Duplicator.h" />
     <ClInclude Include="DX11DuplicatorTask.h" />
     <ClInclude Include="DX11Font2D.h" />
     <ClInclude Include="DX11Graphics2D.h" />
     <ClInclude Include="DX11Image2D.h" />
+    <ClInclude Include="DX11Shader.h" />
     <ClInclude Include="DX9Element2D.h" />
     <ClInclude Include="DX9Font2D.h" />
     <ClInclude Include="DX9Image2D.h" />
@@ -199,7 +199,6 @@
     <ClInclude Include="DX11RenderView.h" />
     <ClInclude Include="DX11Texture2D.h" />
     <ClInclude Include="DX11TextureShader.h" />
-    <ClInclude Include="DX11TransparentShader.h" />
     <ClInclude Include="DX2D.h" />
     <ClInclude Include="DX9.h" />
     <ClInclude Include="DX9Graphics2D.h" />
@@ -216,13 +215,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX11.cpp" />
-    <ClCompile Include="DX11ColorShader.cpp" />
     <ClCompile Include="DX11Duplicator.cpp" />
     <ClCompile Include="DX11DuplicatorTask.cpp" />
     <ClCompile Include="DX11Font2D.cpp" />
     <ClCompile Include="DX11Graphics2D.cpp" />
     <ClCompile Include="DX11Image2D.cpp" />
     <ClCompile Include="DX11CaptureTask.cpp" />
+    <ClCompile Include="DX11Shader.cpp" />
     <ClCompile Include="DX9Element2D.cpp" />
     <ClCompile Include="DX9Font2D.cpp" />
     <ClCompile Include="DX9Image2D.cpp" />
@@ -232,7 +231,6 @@
     <ClCompile Include="DX11RenderView.cpp" />
     <ClCompile Include="DX11Texture2D.cpp" />
     <ClCompile Include="DX11TextureShader.cpp" />
-    <ClCompile Include="DX11TransparentShader.cpp" />
     <ClCompile Include="DX2D.cpp" />
     <ClCompile Include="DX9.cpp" />
     <ClCompile Include="DX9Graphics2D.cpp" />
