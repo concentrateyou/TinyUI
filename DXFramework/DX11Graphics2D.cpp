@@ -57,8 +57,6 @@ namespace DXFramework
 			return FALSE;
 		if (!m_dx11.GetRenderView())
 			return FALSE;
-		if (!ps->Translate(m_dx11, ratioX, ratioY))
-			return FALSE;
 		if (ps->Process(m_dx11))
 		{
 			XMMATRIX* ms = m_dx11.GetMatrixs();

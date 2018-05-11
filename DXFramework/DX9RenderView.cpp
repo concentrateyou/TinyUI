@@ -67,10 +67,6 @@ namespace DXFramework
 		Destory();
 		return Create(cx, cy);
 	}
-	IDirect3DSurface9*	DX9RenderView::GetSurface() const
-	{
-		return m_render2D;
-	}
 	BOOL DX9RenderView::BeginDraw()
 	{
 		if (m_dx9.IsEmpty())

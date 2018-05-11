@@ -196,27 +196,27 @@ namespace DXFramework
 					return FALSE;
 				}
 				TinyAutoLock lock(m_lock);
-				TinyRectangle vp = m_image.GetRectangle();
+				TinyRectangle vp(0, 0, static_cast<LONG>(m_image.GetSize().x), static_cast<LONG>(m_image.GetSize().y));
 				m_image.Destory();
 				if (!m_image.Load(*m_pDX11, pTextureDATA->TextureHandle))
 				{
 					TRACE("BeginCapture m_image.Load-FAIL\n");
 					return FALSE;
 				}
-				m_image.SetRectangle(vp);
+				m_image.SetSize(XMFLOAT2(static_cast<FLOAT>(vp.Width()), static_cast<FLOAT>(vp.Height())));
 				break;
 			}
 			if (pCaptureDATA->CaptureType == CAPTURETYPE_MEMORYTEXTURE)
 			{
 				TinyAutoLock lock(m_lock);
-				TinyRectangle vp = m_image.GetRectangle();
+				TinyRectangle vp(0, 0, static_cast<LONG>(m_image.GetSize().x), static_cast<LONG>(m_image.GetSize().y));
 				m_image.Destory();
 				if (!m_image.Create(*m_pDX11, pCaptureDATA->Size.cx, pCaptureDATA->Size.cy, NULL, FALSE))
 				{
 					TRACE("BeginCapture m_image.Create-FAIL\n");
 					return FALSE;
 				}
-				m_image.SetRectangle(vp);
+				m_image.SetSize(XMFLOAT2(static_cast<FLOAT>(vp.Width()), static_cast<FLOAT>(vp.Height())));
 				break;
 			}
 		} while (0);

@@ -13,8 +13,8 @@ namespace DXFramework
 		DX11TextureShader();
 		virtual ~DX11TextureShader();
 	public:
-		BOOL Initialize(DX11& dx11, const CHAR* vsFile, const CHAR* psFile) OVERRIDE;
-		void Render(DX11& dx11) OVERRIDE;
+		BOOL	Initialize(DX11& dx11, const CHAR* vsFile, const CHAR* psFile) OVERRIDE;
+		void	Render(DX11& dx11) OVERRIDE;
 	public:
 		void	SetShaderParameters(DX11& dx11, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, DX11Texture2D* texture2D);
 	protected:

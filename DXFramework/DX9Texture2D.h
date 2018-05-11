@@ -5,6 +5,7 @@ namespace DXFramework
 {
 	class DX9Texture2D
 	{
+		DISALLOW_COPY_AND_ASSIGN(DX9Texture2D)
 	public:
 		DX9Texture2D();
 		virtual ~DX9Texture2D();

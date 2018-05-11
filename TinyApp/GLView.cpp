@@ -57,7 +57,8 @@ LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 	m_graphics.SetRenderView(NULL);
 	m_graphics.GetRenderView()->BeginDraw();
 	m_image2D.Load(m_graphics.GetDX11(), "D:\\timg.jpg");
-	//m_image2D.SetScale(D3DXVECTOR2(static_cast<FLOAT>(TO_CX(s)) / m_image2D.GetSize().x, static_cast<FLOAT>(TO_CY(s)) / m_image2D.GetSize().y));
+	m_image2D.SetScale(XMFLOAT2(static_cast<FLOAT>(TO_CX(s)) / m_image2D.GetSize().x / 2, static_cast<FLOAT>(TO_CY(s)) / m_image2D.GetSize().y / 2));
+	m_image2D.SetTranslate(XMFLOAT2(50.0F, 50.0F));
 	m_graphics.DrawImage(&m_image2D);
 	m_graphics.GetRenderView()->EndDraw();
 	m_graphics.Present();

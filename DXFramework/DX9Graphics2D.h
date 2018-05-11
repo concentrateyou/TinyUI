@@ -20,6 +20,7 @@ namespace DXFramework
 		BOOL	Reset();
 		BOOL	Present();
 		BOOL	Initialize(HWND hWND, const TinySize& size);
+	public:
 		BOOL	DrawImage(DX9Image2D* ps);
 		BOOL	DrawString(DX9Font2D* ps, LPCSTR pzText, INT count, LPRECT pRect, DWORD dwFormat, D3DCOLOR color);
 		BOOL	DrawLine(DX9Line2D* ps, TinyPoint list[4], D3DCOLOR color);

@@ -20,7 +20,7 @@ namespace DXFramework
 	public:
 		DX11Image2D();
 		virtual ~DX11Image2D();
-		BOOL Translate(DX11& dx11, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F);
+		
 	public:
 		BOOL Create(DX11& dx11, ID3D11Texture2D* texture2D) OVERRIDE;
 		BOOL Create(DX11& dx11, INT cx, INT cy, const BYTE* bits, BOOL bReadoly) OVERRIDE;
@@ -41,8 +41,9 @@ namespace DXFramework
 		void Deallocate(DX11& dx11) OVERRIDE;
 	private:
 		BOOL Initialize(DX11& dx11);
+		BOOL Calculate(DX11& dx11);
+		
 	protected:
-		TinySize					m_size;
 		TinyComPtr<ID3D11Buffer>	m_vertexs;
 		TinyComPtr<ID3D11Buffer>	m_indexs;
 		TinyScopedArray<VERTEXTYPE> m_vertices;

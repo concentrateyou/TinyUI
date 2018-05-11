@@ -140,7 +140,7 @@ namespace DXFramework
 		g.SetTextRenderingHint(Gdiplus::TextRenderingHintAntiAlias);
 		g.SetCompositingMode(Gdiplus::CompositingModeSourceOver);
 		g.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
-		g.SetClip(RectF(0.0F, 0.0F, static_cast<Gdiplus::REAL>(m_size.cx), static_cast<Gdiplus::REAL>(m_size.cy)));
+		g.SetClip(RectF(0.0F, 0.0F, static_cast<Gdiplus::REAL>(m_size.x), static_cast<Gdiplus::REAL>(m_size.y)));
 		wstring ws = StringToWString(str.STR());
 		LOGFONT lf;
 		CHARFORMAT2LOGFONT(m_cf, lf, m_textColor);
