@@ -25,11 +25,9 @@ namespace DXFramework
 		BOOL Process(DX11& dx11) OVERRIDE;
 	protected:
 		DWORD						m_indexs;
-		DWORD						m_count;
-		XMFLOAT2*					m_points;
+		TinyBuffer<VERTEXTYPE>		m_vertexes;
 		TinyComPtr<ID3D11Buffer>	m_vertexBuffer;
 		TinyComPtr<ID3D11Buffer>	m_indexBuffer;
-		TinyBuffer<VERTEXTYPE>		m_vertices;
 	};
 }
 

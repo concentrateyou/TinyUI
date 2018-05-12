@@ -15,7 +15,6 @@ namespace DXFramework
 	{
 
 	}
-
 	BOOL DX11Image2D::Initialize(DX11& dx11)
 	{
 		TinyScopedArray<VERTEXTYPE> vertices(new VERTEXTYPE[6]);
@@ -103,6 +102,7 @@ namespace DXFramework
 	}
 	BOOL DX11Image2D::Create(DX11& dx11, ID3D11Texture2D* texture2D)
 	{
+		Destory();
 		if (!Initialize(dx11))
 			return FALSE;
 		if (DX11Texture2D::Create(dx11, texture2D))
@@ -117,6 +117,7 @@ namespace DXFramework
 	}
 	BOOL DX11Image2D::Create(DX11& dx11, INT cx, INT cy, const BYTE* bits, BOOL bReadoly)
 	{
+		Destory();
 		if (!Initialize(dx11))
 			return FALSE;
 		if (DX11Texture2D::Create(dx11, cx, cy, bits, bReadoly))
@@ -131,6 +132,7 @@ namespace DXFramework
 	}
 	BOOL DX11Image2D::Create(DX11& dx11, INT cx, INT cy)
 	{
+		Destory();
 		if (!Initialize(dx11))
 			return FALSE;
 		if (DX11Texture2D::Create(dx11, cx, cy))
@@ -145,6 +147,7 @@ namespace DXFramework
 	}
 	BOOL DX11Image2D::Load(DX11& dx11, const BYTE* bits, LONG size)
 	{
+		Destory();
 		if (!Initialize(dx11))
 			return FALSE;
 		if (DX11Texture2D::Load(dx11, bits, size))
@@ -161,6 +164,7 @@ namespace DXFramework
 	{
 		if (!hResource)
 			return FALSE;
+		Destory();
 		if (!Initialize(dx11))
 			return FALSE;
 		if (DX11Texture2D::Load(dx11, hResource))
@@ -177,6 +181,7 @@ namespace DXFramework
 	{
 		if (!PathFileExists(pzFile))
 			return FALSE;
+		Destory();
 		if (!Initialize(dx11))
 			return FALSE;
 		if (DX11Texture2D::Load(dx11, pzFile))
@@ -189,7 +194,6 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
-
 	void DX11Image2D::Destory()
 	{
 		m_vertexs.Release();
@@ -197,7 +201,6 @@ namespace DXFramework
 		m_vertices.Reset(NULL);
 		DX11Texture2D::Destory();
 	}
-
 	BOOL DX11Image2D::BitBlt(DX11& dx11, const BYTE* bits, LONG size, LONG linesize)
 	{
 		TinySize sizeT(static_cast<LONG>(m_size.x), static_cast<LONG>(m_size.y));

@@ -17,18 +17,23 @@ namespace DXFramework
 	public:
 		DX11Rectangle2D();
 		virtual	~DX11Rectangle2D();
+		BOOL SetPrimitiveTopology(DX11& dx11, D3D11_PRIMITIVE_TOPOLOGY topology);
 		BOOL Create(DX11& dx11, XMFLOAT2 points[4], XMFLOAT4 color);
 		void Destory();
+		BOOL SetColor(DX11& dx11, XMFLOAT4 color);
+		BOOL SetPoints(DX11& dx11, XMFLOAT2 points[4]);
+	public:
 		DWORD GetIndexs() const;
-		BOOL SetPrimitiveTopology(DX11& dx11, D3D11_PRIMITIVE_TOPOLOGY topology);
 	public:
 		BOOL Process(DX11& dx11) OVERRIDE;
 	protected:
 		DWORD						m_indexs;
+		XMFLOAT4					m_color;
+		XMFLOAT2					m_points[4];
 		D3D11_PRIMITIVE_TOPOLOGY	m_topology;
 		TinyComPtr<ID3D11Buffer>	m_vertexBuffer;
 		TinyComPtr<ID3D11Buffer>	m_indexBuffer;
-		TinyScopedArray<VERTEXTYPE>	m_vertices;
+		TinyScopedArray<VERTEXTYPE>	m_vertexes;
 	};
 }
 

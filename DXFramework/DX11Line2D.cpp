@@ -17,9 +17,10 @@ namespace DXFramework
 	BOOL DX11Line2D::Create(DX11& dx11, XMFLOAT2* points, DWORD count, XMFLOAT4 color)
 	{
 		Destory();
-		TinyScopedArray<VERTEXTYPE> vertices(new VERTEXTYPE[count]);
-		ASSERT(vertices);
-		ZeroMemory(vertices.Ptr(), (sizeof(VERTEXTYPE) * count));
+		TinyScopedArray<VERTEXTYPE> vertexTypes(new VERTEXTYPE[count]);
+		if (!vertexTypes)
+			return FALSE;
+		ZeroMemory(vertexTypes.Ptr(), (sizeof(VERTEXTYPE) * count));
 		D3D11_BUFFER_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
 		desc.Usage = D3D11_USAGE_DYNAMIC;
@@ -30,24 +31,30 @@ namespace DXFramework
 		desc.StructureByteStride = 0;
 		D3D11_SUBRESOURCE_DATA data;
 		ZeroMemory(&data, sizeof(data));
-		data.pSysMem = vertices.Ptr();
+		data.pSysMem = vertexTypes.Ptr();
 		data.SysMemPitch = 0;
 		data.SysMemSlicePitch = 0;
 		HRESULT hRes = dx11.GetD3D()->CreateBuffer(&desc, &data, &m_vertexBuffer);
 		if (hRes != S_OK)
 			return FALSE;
-		m_vertices.Reset(count);
-		ASSERT(m_vertices);
+		m_vertexes.Reset(count);
+		if (!m_vertexes)
+			return FALSE;
+		D3D11_VIEWPORT vp;
+		ZeroMemory(&vp, sizeof(vp));
+		UINT views = 1;
+		dx11.GetImmediateContext()->RSGetViewports(&views, &vp);
+		XMFLOAT2 center(static_cast<FLOAT>(vp.Width) / 2, static_cast<FLOAT>(vp.Height) / 2);
 		for (INT i = 0; i < count; i++)
 		{
-			m_vertices[i].position = XMFLOAT3(points[i].x - 0.5, points[i].y - 0.5, 0.0F);
-			m_vertices[i].color = color;
+			m_vertexes[i].position = XMFLOAT3(-center.x + points[i].x, center.y - points[i].y, 0.0F);
+			m_vertexes[i].color = color;
 		}
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
 		hRes = dx11.GetImmediateContext()->Map(m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		if (hRes != S_OK)
 			return FALSE;
-		memcpy(mappedResource.pData, (void*)m_vertices.Ptr(), sizeof(VERTEXTYPE) * count);
+		memcpy(mappedResource.pData, (void*)m_vertexes.Ptr(), sizeof(VERTEXTYPE) * count);
 		dx11.GetImmediateContext()->Unmap(m_vertexBuffer, 0);
 		//////////////////////////////////////////////////////////////////////////
 		TinyScopedArray<ULONG> indices(new ULONG[count]);
@@ -77,7 +84,7 @@ namespace DXFramework
 	{
 		m_vertexBuffer.Release();
 		m_indexBuffer.Release();
-		m_vertices.Release();
+		m_vertexes.Release();
 	}
 	DWORD DX11Line2D::GetIndexs() const
 	{
@@ -85,17 +92,18 @@ namespace DXFramework
 	}
 	BOOL DX11Line2D::SetColor(DX11& dx11, XMFLOAT4 color)
 	{
-		UINT count = m_vertices.GetSize();
+		UINT count = m_vertexes.GetSize();
 		for (UINT i = 0; i < count; i++)
 		{
-			m_vertices[i].color = color;
+			m_vertexes[i].color = color;
 		}
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
 		HRESULT hRes = dx11.GetImmediateContext()->Map(m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		if (hRes != S_OK)
 			return FALSE;
-		memcpy(mappedResource.pData, (void*)m_vertices.Ptr(), sizeof(VERTEXTYPE) * count);
+		memcpy(mappedResource.pData, (void*)m_vertexes.Ptr(), sizeof(VERTEXTYPE) * count);
 		dx11.GetImmediateContext()->Unmap(m_vertexBuffer, 0);
+		return TRUE;
 	}
 	BOOL DX11Line2D::Process(DX11& dx11)
 	{

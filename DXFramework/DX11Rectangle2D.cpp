@@ -10,16 +10,16 @@ namespace DXFramework
 		m_topology(D3D_PRIMITIVE_TOPOLOGY_UNDEFINED)
 	{
 	}
-
 	DX11Rectangle2D::~DX11Rectangle2D()
 	{
 	}
 	BOOL DX11Rectangle2D::Create(DX11& dx11, XMFLOAT2 points[4], XMFLOAT4 color)
 	{
 		Destory();
-		TinyScopedArray<VERTEXTYPE> vertices(new VERTEXTYPE[4]);
-		ASSERT(vertices);
-		ZeroMemory(vertices.Ptr(), (sizeof(VERTEXTYPE) * 4));
+		TinyScopedArray<VERTEXTYPE> vertexTypes(new VERTEXTYPE[4]);
+		if (!vertexTypes)
+			return FALSE;
+		ZeroMemory(vertexTypes.Ptr(), (sizeof(VERTEXTYPE) * 4));
 		D3D11_BUFFER_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
 		desc.Usage = D3D11_USAGE_DYNAMIC;
@@ -30,33 +30,80 @@ namespace DXFramework
 		desc.StructureByteStride = 0;
 		D3D11_SUBRESOURCE_DATA data;
 		ZeroMemory(&data, sizeof(data));
-		data.pSysMem = vertices.Ptr();
+		data.pSysMem = vertexTypes.Ptr();
 		data.SysMemPitch = 0;
 		data.SysMemSlicePitch = 0;
 		HRESULT hRes = dx11.GetD3D()->CreateBuffer(&desc, &data, &m_vertexBuffer);
 		if (hRes != S_OK)
 			return FALSE;
-		m_vertices.Reset(new VERTEXTYPE[4]);
-		ASSERT(m_vertices);
+		m_vertexes.Reset(new VERTEXTYPE[4]);
+		if (!m_vertexes)
+			return FALSE;
+		D3D11_VIEWPORT vp;
+		ZeroMemory(&vp, sizeof(vp));
+		UINT count = 1;
+		dx11.GetImmediateContext()->RSGetViewports(&count, &vp);
+		XMFLOAT2 center(static_cast<FLOAT>(vp.Width) / 2, static_cast<FLOAT>(vp.Height) / 2);
 		for (INT i = 0; i < 4; i++)
 		{
-			m_vertices[i].position = XMFLOAT3(points[i].x - 0.5, points[i].y - 0.5, 0.0F);
-			m_vertices[i].color = color;
+			m_vertexes[i].position = XMFLOAT3(-center.x + points[i].x, center.y - points[i].y, 0.0F);
+			m_vertexes[i].color = color;
 		}
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
 		hRes = dx11.GetImmediateContext()->Map(m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		if (hRes != S_OK)
 			return FALSE;
-		memcpy(mappedResource.pData, (void*)m_vertices.Ptr(), sizeof(VERTEXTYPE) * 4);
+		memcpy(mappedResource.pData, (void*)m_vertexes.Ptr(), sizeof(VERTEXTYPE) * 4);
 		dx11.GetImmediateContext()->Unmap(m_vertexBuffer, 0);
 		SetPrimitiveTopology(dx11, m_topology);
+		memcpy(m_points, points, sizeof(XMFLOAT2) * 4);
+		m_color = color;
 		return TRUE;
 	}
 	void DX11Rectangle2D::Destory()
 	{
 		m_vertexBuffer.Release();
 		m_indexBuffer.Release();
-		m_vertices.Reset(NULL);
+		m_vertexes.Reset(NULL);
+	}
+	BOOL DX11Rectangle2D::SetColor(DX11& dx11, XMFLOAT4 color)
+	{
+		if (!m_vertexes)
+			return FALSE;
+		for (INT i = 0; i < 4; i++)
+		{
+			m_vertexes[i].color = color;
+		}
+		D3D11_MAPPED_SUBRESOURCE mappedResource;
+		HRESULT hRes = dx11.GetImmediateContext()->Map(m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		if (hRes != S_OK)
+			return FALSE;
+		memcpy(mappedResource.pData, (void*)m_vertexes.Ptr(), sizeof(VERTEXTYPE) * 4);
+		dx11.GetImmediateContext()->Unmap(m_vertexBuffer, 0);
+		m_color = color;
+		return TRUE;
+	}
+	BOOL DX11Rectangle2D::SetPoints(DX11& dx11, XMFLOAT2 points[4])
+	{
+		if (!m_vertexes)
+			return FALSE;
+		D3D11_VIEWPORT vp;
+		ZeroMemory(&vp, sizeof(vp));
+		UINT count = 1;
+		dx11.GetImmediateContext()->RSGetViewports(&count, &vp);
+		XMFLOAT2 center(static_cast<FLOAT>(vp.Width) / 2, static_cast<FLOAT>(vp.Height) / 2);
+		for (INT i = 0; i < 4; i++)
+		{
+			m_vertexes[i].position = XMFLOAT3(-center.x + points[i].x, center.y - points[i].y, 0.0F);
+		}
+		D3D11_MAPPED_SUBRESOURCE mappedResource;
+		HRESULT hRes = dx11.GetImmediateContext()->Map(m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		if (hRes != S_OK)
+			return FALSE;
+		memcpy(mappedResource.pData, (void*)m_vertexes.Ptr(), sizeof(VERTEXTYPE) * 4);
+		dx11.GetImmediateContext()->Unmap(m_vertexBuffer, 0);
+		memcpy(m_points, points, sizeof(XMFLOAT2) * 4);
+		return TRUE;
 	}
 	DWORD DX11Rectangle2D::GetIndexs() const
 	{
@@ -67,13 +114,12 @@ namespace DXFramework
 		if (m_topology != topology)
 		{
 			m_topology = topology;
-			HRESULT hRes = S_OK;
-			//¾ØÐÎ¿ò
 			if (m_topology == D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP)
 			{
 				m_indexBuffer.Release();
 				TinyScopedArray<ULONG> indices(new ULONG[5]);
-				ASSERT(indices);
+				if (!indices)
+					return FALSE;
 				ZeroMemory(indices.Ptr(), (sizeof(ULONG) * 5));
 				indices[0] = 0;
 				indices[1] = 1;
@@ -92,17 +138,16 @@ namespace DXFramework
 				data.pSysMem = indices.Ptr();
 				data.SysMemPitch = 0;
 				data.SysMemSlicePitch = 0;
-				hRes = dx11.GetD3D()->CreateBuffer(&desc, &data, &m_indexBuffer);
-				if (hRes != S_OK)
+				if (dx11.GetD3D()->CreateBuffer(&desc, &data, &m_indexBuffer) != S_OK)
 					return FALSE;
 				m_indexs = 5;
 			}
-			//ÊµÐÄ¿ò
 			if (m_topology == D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP)
 			{
 				m_indexBuffer.Release();
 				TinyScopedArray<ULONG> indices(new ULONG[6]);
-				ASSERT(indices);
+				if (!indices)
+					return FALSE;
 				ZeroMemory(indices.Ptr(), (sizeof(ULONG) * 6));
 				indices[0] = 0;
 				indices[1] = 1;
@@ -122,8 +167,7 @@ namespace DXFramework
 				data.pSysMem = indices.Ptr();
 				data.SysMemPitch = 0;
 				data.SysMemSlicePitch = 0;
-				hRes = dx11.GetD3D()->CreateBuffer(&desc, &data, &m_indexBuffer);
-				if (hRes != S_OK)
+				if (dx11.GetD3D()->CreateBuffer(&desc, &data, &m_indexBuffer) != S_OK)
 					return FALSE;
 				m_indexs = 6;
 			}
