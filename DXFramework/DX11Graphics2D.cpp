@@ -80,7 +80,7 @@ namespace DXFramework
 		if (line.Process(m_dx11))
 		{
 			XMMATRIX* ms = m_dx11.GetMatrixs();
-			m_colorSharder.SetShaderParameters(m_dx11, ms[1], m_camera.GetView(), ms[2], line.GetCount());
+			m_colorSharder.SetShaderParameters(m_dx11, ms[1], m_camera.GetView(), ms[2], line.GetIndexs());
 			m_colorSharder.Render(m_dx11);
 			return TRUE;
 		}

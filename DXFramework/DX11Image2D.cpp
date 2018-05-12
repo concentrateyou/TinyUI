@@ -18,41 +18,47 @@ namespace DXFramework
 
 	BOOL DX11Image2D::Initialize(DX11& dx11)
 	{
-		D3D11_BUFFER_DESC	vertexBufferDesc = { 0 };
-		D3D11_BUFFER_DESC	indexBufferDesc = { 0 };
-		D3D11_SUBRESOURCE_DATA	vertexData = { 0 };
-		D3D11_SUBRESOURCE_DATA	indexData = { 0 };
 		TinyScopedArray<VERTEXTYPE> vertices(new VERTEXTYPE[6]);
-		TinyScopedArray<ULONG> indices(new ULONG[6]);
+		ASSERT(vertices);
 		ZeroMemory(vertices.Ptr(), (sizeof(VERTEXTYPE) * 6));
+		D3D11_BUFFER_DESC desc;
+		ZeroMemory(&desc, sizeof(desc));
+		desc.Usage = D3D11_USAGE_DYNAMIC;
+		desc.ByteWidth = sizeof(VERTEXTYPE) * 6;
+		desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		desc.MiscFlags = 0;
+		desc.StructureByteStride = 0;
+		D3D11_SUBRESOURCE_DATA	data;
+		ZeroMemory(&data, sizeof(data));
+		data.pSysMem = vertices.Ptr();
+		data.SysMemPitch = 0;
+		data.SysMemSlicePitch = 0;
+		HRESULT hRes = dx11.GetD3D()->CreateBuffer(&desc, &data, &m_vertexs);
+		if (hRes != S_OK)
+			return FALSE;
+		TinyScopedArray<ULONG> indices(new ULONG[6]);
+		ASSERT(indices);
+		ZeroMemory(indices.Ptr(), (sizeof(ULONG) * 6));
 		for (INT i = 0; i < 6; i++)
 		{
 			indices[i] = i;
 		}
-		vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-		vertexBufferDesc.ByteWidth = sizeof(VERTEXTYPE) * 6;
-		vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		vertexBufferDesc.MiscFlags = 0;
-		vertexBufferDesc.StructureByteStride = 0;
-		vertexData.pSysMem = vertices.Ptr();
-		vertexData.SysMemPitch = 0;
-		vertexData.SysMemSlicePitch = 0;
-		HRESULT hRes = dx11.GetD3D()->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexs);
-		if (hRes != S_OK)
-			return FALSE;
-		indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		indexBufferDesc.ByteWidth = sizeof(ULONG) * 6;
-		indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-		indexBufferDesc.CPUAccessFlags = 0;
-		indexBufferDesc.MiscFlags = 0;
-		indexData.pSysMem = indices.Ptr();
-		indexData.SysMemPitch = 0;
-		indexData.SysMemSlicePitch = 0;
-		hRes = dx11.GetD3D()->CreateBuffer(&indexBufferDesc, &indexData, &m_indexs);
+		ZeroMemory(&desc, sizeof(desc));
+		desc.Usage = D3D11_USAGE_DEFAULT;
+		desc.ByteWidth = sizeof(ULONG) * 6;
+		desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+		desc.CPUAccessFlags = 0;
+		desc.MiscFlags = 0;
+		ZeroMemory(&data, sizeof(data));
+		data.pSysMem = indices.Ptr();
+		data.SysMemPitch = 0;
+		data.SysMemSlicePitch = 0;
+		hRes = dx11.GetD3D()->CreateBuffer(&desc, &data, &m_indexs);
 		if (hRes != S_OK)
 			return FALSE;
 		m_vertices.Reset(new VERTEXTYPE[6]);
+		ASSERT(m_vertices);
 		return TRUE;
 	}
 	BOOL DX11Image2D::Calculate(DX11& dx11)

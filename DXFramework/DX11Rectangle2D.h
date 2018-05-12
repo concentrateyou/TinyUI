@@ -1,34 +1,32 @@
 #pragma once
 #include "DX11Element2D.h"
-#include "Render/TinyGDI.h"
+#include "DX11ColorShader.h"
 using namespace TinyUI;
 
 namespace DXFramework
 {
-	class DX11Rectangle2D
+	class DX11Rectangle2D : public DX11Element2D
 	{
 		struct VERTEXTYPE
 		{
 			XMFLOAT3 position;
 			XMFLOAT4 color;
 		};
+		DECLARE_DYNAMIC(DX11Rectangle2D)
+		DISALLOW_COPY_AND_ASSIGN(DX11Rectangle2D)
 	public:
 		DX11Rectangle2D();
-		virtual ~DX11Rectangle2D();
-		BOOL	Create(DX11& dx11);
-		BOOL	SetRectangle(DX11& dx11, const TinyRectangle& rectangle, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F);
-		BOOL	Render(DX11& dx11);
+		virtual	~DX11Rectangle2D();
+		BOOL Create(DX11& dx11, XMFLOAT2 points[4], XMFLOAT4 color);
+		DWORD GetIndexs() const;
+		void SetPrimitiveTopology();
 	public:
-		virtual INT	GetIndexCount() const;
-		virtual void Destory();
-	private:
-		BOOL Initialize(DX11& dx11);
+		BOOL Process(DX11& dx11) OVERRIDE;
 	protected:
-		TinyRectangle				m_rectangle;
+		DWORD						m_indexs;
 		TinyComPtr<ID3D11Buffer>	m_vertexBuffer;
 		TinyComPtr<ID3D11Buffer>	m_indexBuffer;
-		TinyScopedArray<VERTEXTYPE> m_vertices;
+		TinyBuffer<VERTEXTYPE>		m_vertices;
 	};
 }
-
 
