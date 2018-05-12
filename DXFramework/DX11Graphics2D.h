@@ -28,7 +28,6 @@ namespace DXFramework
 		BOOL			DrawLine(DX11Line2D& line);
 		BOOL			DrawRectangle(DX11Rectangle2D& rectangle);
 		BOOL			FillRectangle(DX11Rectangle2D& rectangle);
-		BOOL			DrawString();
 	private:
 		DX11					m_dx11;
 		DXCamera				m_camera;

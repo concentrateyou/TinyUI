@@ -194,6 +194,7 @@
     <ClInclude Include="DX11ImageYUVBT601.h" />
     <ClInclude Include="DX11ImageYUVBT709.h" />
     <ClInclude Include="DX11Line2D.h" />
+    <ClInclude Include="DX11NV12BT601Shader.h" />
     <ClInclude Include="DX11Shader.h" />
     <ClInclude Include="DX11ColorShader.h" />
     <ClInclude Include="DX9Element2D.h" />
@@ -232,6 +233,7 @@
     <ClCompile Include="DX11ImageYUVBT601.cpp" />
     <ClCompile Include="DX11ImageYUVBT709.cpp" />
     <ClCompile Include="DX11Line2D.cpp" />
+    <ClCompile Include="DX11NV12BT601Shader.cpp" />
     <ClCompile Include="DX11Shader.cpp" />
     <ClCompile Include="DX11ColorShader.cpp" />
     <ClCompile Include="DX9Element2D.cpp" />
@@ -278,10 +280,12 @@
   <ItemGroup>
     <None Include="color.ps" />
     <None Include="color.vs" />
+    <None Include="NV12BT709.ps" />
+    <None Include="NV12BT709.vs" />
     <None Include="texture.ps" />
     <None Include="texture.vs" />
-    <None Include="transparent.ps" />
-    <None Include="transparent.vs" />
+    <None Include="NV12BT601.ps" />
+    <None Include="NV12BT601.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

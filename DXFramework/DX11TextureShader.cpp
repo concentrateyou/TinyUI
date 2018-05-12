@@ -104,21 +104,25 @@ namespace DXFramework
 	}
 	void DX11TextureShader::SetShaderParameters(DX11& dx11, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, DX11Texture2D* texture2D)
 	{
-		ID3D11ShaderResourceView* spv = texture2D->GetSRView();
-		ASSERT(spv);
-		XMMATRIX worldMatrix1 = XMMatrixTranspose(worldMatrix);
-		XMMATRIX viewMatrix1 = XMMatrixTranspose(viewMatrix);
-		XMMATRIX projectionMatrix1 = XMMatrixTranspose(projectionMatrix);
-		D3D11_MAPPED_SUBRESOURCE mappedResource;
-		if (SUCCEEDED(dx11.GetImmediateContext()->Map(m_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource)))
+		if (texture2D != NULL)
 		{
-			MATRIXBUFFER* dataPtr = (MATRIXBUFFER*)mappedResource.pData;
-			dataPtr->world = worldMatrix1;
-			dataPtr->view = viewMatrix1;
-			dataPtr->projection = projectionMatrix1;
-			dx11.GetImmediateContext()->Unmap(m_buffer, 0);
+			XMMATRIX worldMatrix1 = XMMatrixTranspose(worldMatrix);
+			XMMATRIX viewMatrix1 = XMMatrixTranspose(viewMatrix);
+			XMMATRIX projectionMatrix1 = XMMatrixTranspose(projectionMatrix);
+			D3D11_MAPPED_SUBRESOURCE mappedResource;
+			if (SUCCEEDED(dx11.GetImmediateContext()->Map(m_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource)))
+			{
+				MATRIXBUFFER* dataPtr = (MATRIXBUFFER*)mappedResource.pData;
+				dataPtr->world = worldMatrix1;
+				dataPtr->view = viewMatrix1;
+				dataPtr->projection = projectionMatrix1;
+				dx11.GetImmediateContext()->Unmap(m_buffer, 0);
+			}
+			dx11.GetImmediateContext()->VSSetConstantBuffers(0, 1, &m_buffer);
+			ID3D11ShaderResourceView* spv = texture2D->GetSRView();
+			ASSERT(spv);
+			dx11.GetImmediateContext()->PSSetShaderResources(0, 1, &spv);
 		}
-		dx11.GetImmediateContext()->VSSetConstantBuffers(0, 1, &m_buffer);
-		dx11.GetImmediateContext()->PSSetShaderResources(0, 1, &spv);
+
 	}
 }

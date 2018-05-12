@@ -17,7 +17,6 @@ namespace DXFramework
 	DX11Texture2D::DX11Texture2D()
 	{
 	}
-
 	DX11Texture2D::~DX11Texture2D()
 	{
 	}
@@ -55,44 +54,6 @@ namespace DXFramework
 		if (hRes != S_OK)
 			return FALSE;
 		return TRUE;
-	}
-	BOOL  DX11Texture2D::GetDC(BOOL discard, HDC& hDC)
-	{
-		if (!m_texture2D)
-			return FALSE;
-		m_surface.Release();
-		HRESULT hRes = m_texture2D->QueryInterface(__uuidof(IDXGISurface1), (void**)&m_surface);
-		if (hRes != S_OK)
-			return FALSE;
-		hRes = m_surface->GetDC(discard, &hDC);
-		if (hRes != S_OK)
-			return FALSE;
-		return TRUE;
-	}
-	BOOL DX11Texture2D::ReleaseDC()
-	{
-		if (m_surface != NULL)
-		{
-			HRESULT hRes = m_surface->ReleaseDC(NULL);
-			m_surface.Release();
-			return SUCCEEDED(hRes);
-		}
-		return FALSE;
-	}
-	BOOL DX11Texture2D::Map(DX11& dx11, BYTE *&lpData, UINT &pitch, BOOL bReadoly)
-	{
-		D3D11_MAPPED_SUBRESOURCE ms = { 0 };
-		if (SUCCEEDED(dx11.GetImmediateContext()->Map(m_texture2D, 0, bReadoly ? D3D11_MAP_READ : D3D11_MAP_WRITE_DISCARD, 0, &ms)))
-		{
-			lpData = (BYTE*)ms.pData;
-			pitch = ms.RowPitch;
-			return TRUE;
-		}
-		return FALSE;
-	}
-	void DX11Texture2D::Unmap(DX11& dx11)
-	{
-		dx11.GetImmediateContext()->Unmap(m_texture2D, 0);
 	}
 	BOOL DX11Texture2D::Create(DX11& dx11, D3D11_TEXTURE2D_DESC& desc)
 	{
@@ -177,6 +138,44 @@ namespace DXFramework
 		}
 		return TRUE;
 	}
+	BOOL  DX11Texture2D::GetDC(BOOL discard, HDC& hDC)
+	{
+		if (!m_texture2D)
+			return FALSE;
+		m_surface.Release();
+		HRESULT hRes = m_texture2D->QueryInterface(__uuidof(IDXGISurface1), (void**)&m_surface);
+		if (hRes != S_OK)
+			return FALSE;
+		hRes = m_surface->GetDC(discard, &hDC);
+		if (hRes != S_OK)
+			return FALSE;
+		return TRUE;
+	}
+	BOOL DX11Texture2D::ReleaseDC()
+	{
+		if (m_surface != NULL)
+		{
+			HRESULT hRes = m_surface->ReleaseDC(NULL);
+			m_surface.Release();
+			return SUCCEEDED(hRes);
+		}
+		return FALSE;
+	}
+	BOOL DX11Texture2D::Map(DX11& dx11, BYTE *&lpData, UINT &pitch, BOOL bReadoly)
+	{
+		D3D11_MAPPED_SUBRESOURCE ms = { 0 };
+		if (SUCCEEDED(dx11.GetImmediateContext()->Map(m_texture2D, 0, bReadoly ? D3D11_MAP_READ : D3D11_MAP_WRITE_DISCARD, 0, &ms)))
+		{
+			lpData = (BYTE*)ms.pData;
+			pitch = ms.RowPitch;
+			return TRUE;
+		}
+		return FALSE;
+	}
+	void DX11Texture2D::Unmap(DX11& dx11)
+	{
+		dx11.GetImmediateContext()->Unmap(m_texture2D, 0);
+	}
 	BOOL DX11Texture2D::SaveAs(DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT format)
 	{
 		ASSERT(m_texture2D);
@@ -195,7 +194,6 @@ namespace DXFramework
 		dx11.GetImmediateContext()->CopyResource(m_texture2D, texture2D);
 		return TRUE;
 	}
-
 	BOOL DX11Texture2D::Copy(DX11& dx11, DX11Texture2D& texture2D)
 	{
 		if (!m_texture2D || texture2D.IsEmpty())
@@ -203,7 +201,6 @@ namespace DXFramework
 		dx11.GetImmediateContext()->CopyResource(m_texture2D, texture2D.GetTexture2D());
 		return TRUE;
 	}
-
 	BOOL DX11Texture2D::Copy(DX11& dx11, D3D11_BOX* ps, const BYTE* bits, LONG size, UINT rowPitch, UINT depthPitch)
 	{
 		if (!m_texture2D || !bits || size <= 0)
@@ -211,7 +208,6 @@ namespace DXFramework
 		dx11.GetImmediateContext()->UpdateSubresource(m_texture2D, 0, ps, static_cast<const void*>(bits), rowPitch, depthPitch);
 		return TRUE;
 	}
-
 	BOOL DX11Texture2D::Load(DX11& dx11, const CHAR* pzFile)
 	{
 		ASSERT(pzFile);
@@ -268,7 +264,6 @@ namespace DXFramework
 		m_resourceView.Release();
 		m_texture2D.Release();
 	}
-
 	HANDLE DX11Texture2D::GetHandle()
 	{
 		HANDLE handle = NULL;
@@ -284,7 +279,6 @@ namespace DXFramework
 		} while (0);
 		return handle;
 	}
-
 	ID3D11Texture2D* DX11Texture2D::GetTexture2D() const
 	{
 		return m_texture2D;
