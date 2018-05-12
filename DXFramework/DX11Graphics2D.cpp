@@ -86,6 +86,34 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
+	BOOL DX11Graphics2D::DrawRectangle(DX11Rectangle2D& rectangle)
+	{
+		if (!m_dx11.GetRenderView())
+			return FALSE;
+		rectangle.SetPrimitiveTopology(m_dx11, D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
+		if (rectangle.Process(m_dx11))
+		{
+			XMMATRIX* ms = m_dx11.GetMatrixs();
+			m_colorSharder.SetShaderParameters(m_dx11, ms[1], m_camera.GetView(), ms[2], rectangle.GetIndexs());
+			m_colorSharder.Render(m_dx11);
+			return TRUE;
+		}
+		return FALSE;
+	}
+	BOOL DX11Graphics2D::FillRectangle(DX11Rectangle2D& rectangle)
+	{
+		if (!m_dx11.GetRenderView())
+			return FALSE;
+		rectangle.SetPrimitiveTopology(m_dx11, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		if (rectangle.Process(m_dx11))
+		{
+			XMMATRIX* ms = m_dx11.GetMatrixs();
+			m_colorSharder.SetShaderParameters(m_dx11, ms[1], m_camera.GetView(), ms[2], rectangle.GetIndexs());
+			m_colorSharder.Render(m_dx11);
+			return TRUE;
+		}
+		return FALSE;
+	}
 	void DX11Graphics2D::SetRenderView(DX11RenderView* render2D)
 	{
 		m_dx11.SetRenderView(render2D);

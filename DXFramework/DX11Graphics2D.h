@@ -3,6 +3,7 @@
 #include "DX11Image2D.h"
 #include "DXCamera.h"
 #include "DX11Line2D.h"
+#include "DX11Rectangle2D.h"
 #include "DX11RenderView.h"
 
 namespace DXFramework
@@ -25,7 +26,8 @@ namespace DXFramework
 	public:
 		BOOL			DrawImage(DX11Image2D& image);
 		BOOL			DrawLine(DX11Line2D& line);
-		BOOL			DrawRectangle();
+		BOOL			DrawRectangle(DX11Rectangle2D& rectangle);
+		BOOL			FillRectangle(DX11Rectangle2D& rectangle);
 		BOOL			DrawString();
 	private:
 		DX11					m_dx11;

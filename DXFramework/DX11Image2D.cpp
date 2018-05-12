@@ -194,6 +194,7 @@ namespace DXFramework
 	{
 		m_vertexs.Release();
 		m_indexs.Release();
+		m_vertices.Reset(NULL);
 		DX11Texture2D::Destory();
 	}
 

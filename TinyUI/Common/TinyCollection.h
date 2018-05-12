@@ -2092,6 +2092,7 @@ namespace TinyUI
 		operator T*() const throw();
 		T* Ptr() const throw();
 		INT GetSize() const;
+		void Release() throw();
 	public:
 		T*		m_myP;
 		INT		m_size;
@@ -2144,5 +2145,11 @@ namespace TinyUI
 	INT TinyBuffer<T>::GetSize() const
 	{
 		return m_size;
+	}
+	template<class T>
+	void TinyBuffer<T>::Release() throw()
+	{
+		SAFE_FREE(m_myP);
+		m_size = 0;
 	}
 }

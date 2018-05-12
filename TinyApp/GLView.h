@@ -11,6 +11,7 @@
 #include "LAVPlayer.h"
 #include "DX11Image2D.h"
 #include "DX11Line2D.h"
+#include "DX11Rectangle2D.h"
 #include "DX11RenderView.h"
 #include "DX11Graphics2D.h"
 using namespace LAV;
@@ -42,6 +43,7 @@ private:
 	DX11Graphics2D	m_graphics;
 	DX11Image2D		m_image2D;
 	DX11Line2D		m_line2D;
+	DX11Rectangle2D	m_rectangle2D;
 	///*DX9Graphics2D	m_graphics;
 	//DX9Image2D		m_image2D[2];*/
 	//LAVPlayer m_player;

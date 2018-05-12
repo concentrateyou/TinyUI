@@ -57,12 +57,20 @@ LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 	m_graphics.SetRenderView(NULL);
 	m_graphics.GetRenderView()->BeginDraw();
 
-	XMFLOAT2 points[2];
+	/*XMFLOAT2 points[4];
 	points[0] = XMFLOAT2(-100.0f, 100.0f);
 	points[1] = XMFLOAT2(100.0f, -100.0f);
-	m_line2D.Create(m_graphics.GetDX11(), points, 2, XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
+	points[2] = XMFLOAT2(0.0f, -50.0f);
+	points[3] = XMFLOAT2(-100.0f, 100.0f);
+	m_line2D.Create(m_graphics.GetDX11(), points, 4, XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));*/
+	XMFLOAT2 points[4];
+	points[0] = XMFLOAT2(-100.0F, 100.0F);
+	points[1] = XMFLOAT2(100.0F, 100.0F);
+	points[2] = XMFLOAT2(100.0F, -100.0F);
+	points[3] = XMFLOAT2(-100.0F, -100.0F);
+	m_rectangle2D.Create(m_graphics.GetDX11(), points, XMFLOAT4(1.0F, 0.0F, 0.0F, 1.0F));
 
-	m_graphics.DrawLine(m_line2D);
+	m_graphics.FillRectangle(m_rectangle2D);
 
 	m_graphics.GetRenderView()->EndDraw();
 	m_graphics.Present();

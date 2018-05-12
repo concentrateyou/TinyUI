@@ -18,11 +18,15 @@ namespace DXFramework
 		DX11Line2D();
 		virtual	~DX11Line2D();
 		BOOL Create(DX11& dx11, XMFLOAT2* points, DWORD count, XMFLOAT4 color);
+		void Destory();
+		BOOL SetColor(DX11& dx11, XMFLOAT4 color);
 		DWORD GetIndexs() const;
 	public:
 		BOOL Process(DX11& dx11) OVERRIDE;
 	protected:
 		DWORD						m_indexs;
+		DWORD						m_count;
+		XMFLOAT2*					m_points;
 		TinyComPtr<ID3D11Buffer>	m_vertexBuffer;
 		TinyComPtr<ID3D11Buffer>	m_indexBuffer;
 		TinyBuffer<VERTEXTYPE>		m_vertices;
