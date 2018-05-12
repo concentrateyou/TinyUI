@@ -284,15 +284,6 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
-	BOOL DX11Image2D::Allocate(DX11& dx11)
-	{
-		return TRUE;
-	}
-
-	void DX11Image2D::Deallocate(DX11& dx11)
-	{
-
-	}
 	BOOL DX11Image2D::Process(DX11& dx11)
 	{
 		if (!Calculate(dx11))

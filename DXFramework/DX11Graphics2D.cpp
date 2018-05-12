@@ -50,18 +50,30 @@ namespace DXFramework
 		return m_dx11;
 	}
 
-	BOOL DX11Graphics2D::DrawImage(DX11Image2D* ps, FLOAT ratioX, FLOAT ratioY)
+	BOOL DX11Graphics2D::DrawImage(DX11Image2D& image)
 	{
-		ASSERT(ps);
-		if (ps->IsEmpty())
-			return FALSE;
 		if (!m_dx11.GetRenderView())
 			return FALSE;
-		if (ps->Process(m_dx11))
+		if (image.IsEmpty())
+			return FALSE;
+		if (image.Process(m_dx11))
 		{
 			XMMATRIX* ms = m_dx11.GetMatrixs();
-			m_textureShader.SetShaderParameters(m_dx11, ms[1], m_camera.GetView(), ms[2], ps);
+			m_textureShader.SetShaderParameters(m_dx11, ms[1], m_camera.GetView(), ms[2], &image);
 			m_textureShader.Render(m_dx11);
+			return TRUE;
+		}
+		return FALSE;
+	}
+	BOOL DX11Graphics2D::DrawLine(DX11Line2D& line)
+	{
+		if (!m_dx11.GetRenderView())
+			return FALSE;
+		if (line.Process(m_dx11))
+		{
+			XMMATRIX* ms = m_dx11.GetMatrixs();
+			m_colorSharder.SetShaderParameters(m_dx11, ms[1], m_camera.GetView(), ms[2], 2);
+			m_colorSharder.Render(m_dx11);
 			return TRUE;
 		}
 		return FALSE;

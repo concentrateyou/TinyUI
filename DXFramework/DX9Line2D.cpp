@@ -30,25 +30,16 @@ namespace DXFramework
 		m_d3dLINE.Release();
 	}
 
-	BOOL DX9Line2D::DrawLine(DX9& dx9, TinyPoint list[4], D3DCOLOR color)
+	BOOL DX9Line2D::DrawLine(DX9& dx9, D3DXVECTOR2 list[4], D3DCOLOR color)
 	{
 		if (dx9.IsEmpty())
 			return FALSE;
 		if (IsEmpty())
 			return FALSE;
-		D3DXVECTOR2 vertexs[4];
-		vertexs[0].x = list[0].x;
-		vertexs[0].y = list[0].y;
-		vertexs[1].x = list[1].x;
-		vertexs[1].y = list[1].y;
-		vertexs[2].x = list[2].x;
-		vertexs[2].y = list[2].x;
-		vertexs[3].x = list[3].x;
-		vertexs[3].y = list[3].x;
 		HRESULT hRes = m_d3dLINE->Begin();
 		if (hRes != S_OK)
 			return FALSE;
-		hRes = m_d3dLINE->Draw(vertexs, 4, color);
+		hRes = m_d3dLINE->Draw(list, 4, color);
 		if (hRes != S_OK)
 			return FALSE;
 		hRes = m_d3dLINE->End();

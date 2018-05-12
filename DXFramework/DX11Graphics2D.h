@@ -2,7 +2,7 @@
 #include "DXFramework.h"
 #include "DX11Image2D.h"
 #include "DXCamera.h"
-#include "DX11Rectangle2D.h"
+#include "DX11Line2D.h"
 #include "DX11RenderView.h"
 
 namespace DXFramework
@@ -20,12 +20,17 @@ namespace DXFramework
 		void			Flush();
 		BOOL			Resize(const TinySize& size);
 		DX11&			GetDX11();
-		BOOL			DrawImage(DX11Image2D* ps, FLOAT ratioX = 1.0F, FLOAT ratioY = 1.0F);
 		void			SetRenderView(DX11RenderView* render2D);
 		DX11RenderView*	GetRenderView() const;
+	public:
+		BOOL			DrawImage(DX11Image2D& image);
+		BOOL			DrawLine(DX11Line2D& line);
+		BOOL			DrawRectangle();
+		BOOL			DrawString();
 	private:
 		DX11					m_dx11;
 		DXCamera				m_camera;
+		DX11ColorShader			m_colorSharder;
 		DX11TextureShader		m_textureShader;
 	};
 }

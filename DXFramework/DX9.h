@@ -7,7 +7,7 @@ namespace DXFramework
 {
 	class DX9RenderView;
 
-	class DX9 : public TinyLock
+	class DX9
 	{
 		friend class DX9Graphics2D;
 		DISALLOW_COPY_AND_ASSIGN(DX9)

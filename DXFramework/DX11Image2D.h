@@ -20,7 +20,6 @@ namespace DXFramework
 	public:
 		DX11Image2D();
 		virtual ~DX11Image2D();
-		
 	public:
 		BOOL Create(DX11& dx11, ID3D11Texture2D* texture2D) OVERRIDE;
 		BOOL Create(DX11& dx11, INT cx, INT cy, const BYTE* bits, BOOL bReadoly) OVERRIDE;
@@ -36,13 +35,10 @@ namespace DXFramework
 		BOOL BitBlt(DX11& dx11, const TinyRectangle& dst, HBITMAP hBitmapSrc, const TinyPoint& src);
 		BOOL BitBlt(DX11& dx11, const TinyRectangle& dst, HDC hDCSrc, const TinyPoint& src);
 	public:
-		BOOL Allocate(DX11& dx11) OVERRIDE;
 		BOOL Process(DX11& dx11) OVERRIDE;
-		void Deallocate(DX11& dx11) OVERRIDE;
 	private:
 		BOOL Initialize(DX11& dx11);
 		BOOL Calculate(DX11& dx11);
-		
 	protected:
 		TinyComPtr<ID3D11Buffer>	m_vertexs;
 		TinyComPtr<ID3D11Buffer>	m_indexs;

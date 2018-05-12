@@ -47,7 +47,7 @@ namespace DXFramework
 			return FALSE;
 		return ps->DrawString(m_dx9, pzText, count, pRect, dwFormat, color);
 	}
-	BOOL DX9Graphics2D::DrawLine(DX9Line2D* ps, TinyPoint list[4], D3DCOLOR color)
+	BOOL DX9Graphics2D::DrawLine(DX9Line2D* ps, D3DXVECTOR2 list[4], D3DCOLOR color)
 	{
 		if (!ps)
 			return FALSE;
@@ -60,13 +60,5 @@ namespace DXFramework
 	DX9RenderView*	DX9Graphics2D::GetRenderView() const
 	{
 		return m_dx9.GetRenderView();
-	}
-	void DX9Graphics2D::Enter()
-	{
-		m_dx9.Lock();
-	}
-	void DX9Graphics2D::Leave()
-	{
-		m_dx9.Unlock();
 	}
 }

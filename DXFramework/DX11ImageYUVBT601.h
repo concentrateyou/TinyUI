@@ -7,12 +7,12 @@ using namespace TinyUI;
 
 namespace DXFramework
 {
-	class DX11ImageNV12 : public DX11Element2D, public DX11Texture2D
+	class DX11ImageYUVBT601 : public DX11Element2D, public DX11Texture2D
 	{
-		DISALLOW_COPY_AND_ASSIGN(DX11ImageNV12)
+		DISALLOW_COPY_AND_ASSIGN(DX11ImageYUVBT601)
 	public:
-		DX11ImageNV12();
-		virtual ~DX11ImageNV12();
+		DX11ImageYUVBT601();
+		virtual ~DX11ImageYUVBT601();
 	};
 }
 
