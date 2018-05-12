@@ -57,39 +57,38 @@ namespace DXFramework
 	}
 	BOOL DX11Image2D::Calculate(DX11& dx11)
 	{
-		FLOAT left = 0.0F;
-		FLOAT right = 0.0F;
-		FLOAT top = 0.0F;
-		FLOAT bottom = 0.0F;
+		m_vertices[0].position = XMFLOAT3(-m_size.x / 2, m_size.y / 2, 0.0F);
+		m_vertices[0].texture = XMFLOAT2(m_bFlipH ? 1.0F : 0.0F, m_bFlipV ? 1.0F : 0.0F);
+		m_vertices[0].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
+		m_vertices[1].position = XMFLOAT3(m_size.x / 2, -m_size.y / 2, 0.0F);
+		m_vertices[1].texture = XMFLOAT2(m_bFlipH ? 0.0F : 1.0F, m_bFlipV ? 0.0F : 1.0F);
+		m_vertices[1].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
+		m_vertices[2].position = XMFLOAT3(-m_size.x / 2, -m_size.y / 2, 0.0F);
+		m_vertices[2].texture = XMFLOAT2(m_bFlipH ? 1.0F : 0.0F, m_bFlipV ? 0.0F : 1.0F);
+		m_vertices[2].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
+		m_vertices[3].position = XMFLOAT3(-m_size.x / 2, m_size.y / 2, 0.0F);
+		m_vertices[3].texture = XMFLOAT2(m_bFlipH ? 1.0F : 0.0F, m_bFlipV ? 1.0F : 0.0F);
+		m_vertices[3].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
+		m_vertices[4].position = XMFLOAT3(m_size.x / 2, m_size.y / 2, 0.0F);
+		m_vertices[4].texture = XMFLOAT2(m_bFlipH ? 0.0F : 1.0F, m_bFlipV ? 1.0F : 0.0F);
+		m_vertices[4].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
+		m_vertices[5].position = XMFLOAT3(m_size.x / 2, -m_size.y / 2, 0.0F);
+		m_vertices[5].texture = XMFLOAT2(m_bFlipH ? 0.0F : 1.0F, m_bFlipV ? 0.0F : 1.0F);
+		m_vertices[5].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
+
 		D3D11_VIEWPORT vp;
 		ZeroMemory(&vp, sizeof(vp));
 		UINT count = 1;
 		dx11.GetImmediateContext()->RSGetViewports(&count, &vp);
 		XMFLOAT2 size(m_size.x * m_scale.x, m_size.y * m_scale.y);
-		XMFLOAT2 pos(m_translate.x, m_translate.y);
 		XMFLOAT2 center(static_cast<FLOAT>(vp.Width) / 2, static_cast<FLOAT>(vp.Height) / 2);
-		left = -center.x + pos.x;
-		right = left + size.x;
-		top = center.y - pos.y;
-		bottom = top - size.y;
-		m_vertices[0].position = XMFLOAT3(left, top, 0.0F);
-		m_vertices[0].texture = XMFLOAT2(0.0F, 0.0F);
-		m_vertices[0].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
-		m_vertices[1].position = XMFLOAT3(right, bottom, 0.0F);
-		m_vertices[1].texture = XMFLOAT2(1.0F, 1.0F);
-		m_vertices[1].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
-		m_vertices[2].position = XMFLOAT3(left, bottom, 0.0F);
-		m_vertices[2].texture = XMFLOAT2(0.0F, 1.0F);
-		m_vertices[2].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
-		m_vertices[3].position = XMFLOAT3(left, top, 0.0F);
-		m_vertices[3].texture = XMFLOAT2(0.0F, 0.0F);
-		m_vertices[3].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
-		m_vertices[4].position = XMFLOAT3(right, top, 0.0F);
-		m_vertices[4].texture = XMFLOAT2(1.0F, 0.0F);
-		m_vertices[4].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
-		m_vertices[5].position = XMFLOAT3(right, bottom, 0.0F);
-		m_vertices[5].texture = XMFLOAT2(1.0F, 1.0F);
-		m_vertices[5].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
+		XMMATRIX scaling = XMMatrixScaling(m_scale.x, m_scale.y, 0.0F);
+		XMMATRIX rotation = XMMatrixRotationZ(((m_angle) * (D3DX_PI / 180.0)));
+		XMMATRIX translation = XMMatrixTranslation(-center.x + size.x / 2 + m_translate.x, center.y - size.y / 2 - m_translate.y, 0.0F);
+		XMMATRIX val = scaling * rotation * translation;
+		XMMATRIX* ms = dx11.GetMatrixs();
+		ms[1] *= val;
+
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
 		HRESULT hRes = dx11.GetImmediateContext()->Map(m_vertexs, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		if (hRes != S_OK)

@@ -60,10 +60,6 @@ namespace DXFramework
 		if (ps->Process(m_dx11))
 		{
 			XMMATRIX* ms = m_dx11.GetMatrixs();
-			XMMATRIX translation = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
-			XMMATRIX rotationZ = XMMatrixRotationZ(90 * D3DX_PI / 180.0);
-			ms[1] = ms[1] * rotationZ;
-
 			m_textureShader.SetShaderParameters(m_dx11, ms[1], m_camera.GetView(), ms[2], ps);
 			m_textureShader.Render(m_dx11);
 			return TRUE;
