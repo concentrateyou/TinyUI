@@ -30,7 +30,7 @@ namespace DXFramework
 		m_d3dLINE.Release();
 	}
 
-	BOOL DX9Line2D::DrawLine(DX9& dx9, D3DXVECTOR2 list[4], D3DCOLOR color)
+	BOOL DX9Line2D::DrawLine(DX9& dx9, D3DXVECTOR2 *pVertexList, DWORD dwVertexListCount, D3DCOLOR color)
 	{
 		if (dx9.IsEmpty())
 			return FALSE;
@@ -39,7 +39,7 @@ namespace DXFramework
 		HRESULT hRes = m_d3dLINE->Begin();
 		if (hRes != S_OK)
 			return FALSE;
-		hRes = m_d3dLINE->Draw(list, 4, color);
+		hRes = m_d3dLINE->Draw(pVertexList, dwVertexListCount, color);
 		if (hRes != S_OK)
 			return FALSE;
 		hRes = m_d3dLINE->End();

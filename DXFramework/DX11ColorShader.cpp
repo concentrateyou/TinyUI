@@ -21,7 +21,6 @@ namespace DXFramework
 		TinyComPtr<ID3D10Blob> pixelShaderBuffer;
 		D3D11_INPUT_ELEMENT_DESC layout[2];
 		D3D11_BUFFER_DESC bufferDesc = { 0 };
-		D3D11_SAMPLER_DESC samplerDesc;
 		hRes = D3DX11CompileFromFile(vsFile, NULL, NULL, "ColorVertexPixelShader", "vs_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &vertexShaderBuffer, &errorMsg, NULL);
 		if (hRes != S_OK)
 		{
@@ -57,25 +56,8 @@ namespace DXFramework
 		layout[1].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
 		layout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 		layout[1].InstanceDataStepRate = 0;
-
 		ULONG size = sizeof(layout) / sizeof(layout[0]);
 		hRes = dx11.GetD3D()->CreateInputLayout(layout, size, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), &m_layout);
-		if (hRes != S_OK)
-			return FALSE;
-		samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
-		samplerDesc.MipLODBias = 0.0F;
-		samplerDesc.MaxAnisotropy = 0;
-		samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-		samplerDesc.BorderColor[0] = 0;
-		samplerDesc.BorderColor[1] = 0;
-		samplerDesc.BorderColor[2] = 0;
-		samplerDesc.BorderColor[3] = 0;
-		samplerDesc.MinLOD = 0;
-		samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-		hRes = dx11.GetD3D()->CreateSamplerState(&samplerDesc, &m_sampleState);
 		if (hRes != S_OK)
 			return FALSE;
 		bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -94,7 +76,6 @@ namespace DXFramework
 		dx11.GetImmediateContext()->IASetInputLayout(m_layout);
 		dx11.GetImmediateContext()->VSSetShader(m_vertexShader, NULL, 0);
 		dx11.GetImmediateContext()->PSSetShader(m_pixelShader, NULL, 0);
-		dx11.GetImmediateContext()->PSSetSamplers(0, 1, &m_sampleState);
 		dx11.GetImmediateContext()->DrawIndexed(m_indexs, 0, 0);
 	}
 	void DX11ColorShader::SetShaderParameters(DX11& dx11, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, UINT indexs)

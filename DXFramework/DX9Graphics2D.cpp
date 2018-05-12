@@ -47,11 +47,11 @@ namespace DXFramework
 			return FALSE;
 		return ps->DrawString(m_dx9, pzText, count, pRect, dwFormat, color);
 	}
-	BOOL DX9Graphics2D::DrawLine(DX9Line2D* ps, D3DXVECTOR2 list[4], D3DCOLOR color)
+	BOOL DX9Graphics2D::DrawLine(DX9Line2D* ps, D3DXVECTOR2 *pVertexList, DWORD dwVertexListCount, D3DCOLOR color)
 	{
 		if (!ps)
 			return FALSE;
-		return ps->DrawLine(m_dx9, list, color);
+		return ps->DrawLine(m_dx9, pVertexList, dwVertexListCount, color);
 	}
 	void DX9Graphics2D::SetRenderView(DX9RenderView* render2D)
 	{

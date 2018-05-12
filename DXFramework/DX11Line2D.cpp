@@ -6,14 +6,14 @@ namespace DXFramework
 	IMPLEMENT_DYNAMIC(DX11Line2D, DX11Element2D);
 
 	DX11Line2D::DX11Line2D()
+		:m_count(0)
 	{
 	}
 
 	DX11Line2D::~DX11Line2D()
 	{
 	}
-
-	BOOL DX11Line2D::Create(DX11& dx11, Line2D* lines, INT count)
+	BOOL DX11Line2D::Create(DX11& dx11, XMFLOAT2* points, DWORD count, XMFLOAT4 color)
 	{
 		D3D11_BUFFER_DESC	vertexBufferDesc = { 0 };
 		D3D11_BUFFER_DESC	indexBufferDesc = { 0 };
@@ -51,15 +51,25 @@ namespace DXFramework
 		hRes = dx11.GetD3D()->CreateBuffer(&indexBufferDesc, &indexData, &m_indexs);
 		if (hRes != S_OK)
 			return FALSE;
-		m_vertices.Reset(new VERTEXTYPE[count]);
+		m_vertices.Reset(count);
 		ASSERT(m_vertices);
 		for (INT i = 0; i < count; i++)
 		{
-			m_vertices[i].position = XMFLOAT3(lines[i].pos.x, lines[i].pos.y, 0.0F);
-			m_vertices[i].texture = XMFLOAT2(0.0F, 0.0F);
-			m_vertices[i].color = lines[i].color;
+			m_vertices[i].position = XMFLOAT3(points[i].x, points[i].y, 0.0F);
+			m_vertices[i].color = color;
 		}
+		D3D11_MAPPED_SUBRESOURCE mappedResource;
+		hRes = dx11.GetImmediateContext()->Map(m_vertexs, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		if (hRes != S_OK)
+			return FALSE;
+		memcpy(mappedResource.pData, (void*)m_vertices.Ptr(), sizeof(VERTEXTYPE) * count);
+		dx11.GetImmediateContext()->Unmap(m_vertexs, 0);
+		m_count = count;
 		return TRUE;
+	}
+	DWORD DX11Line2D::GetCount() const
+	{
+		return m_count;
 	}
 	BOOL DX11Line2D::Process(DX11& dx11)
 	{

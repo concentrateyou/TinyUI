@@ -18,7 +18,7 @@ namespace DXFramework
 		virtual void Destory();
 	public:
 		BOOL		IsEmpty() const;
-		BOOL		DrawLine(DX9& dx9, D3DXVECTOR2 list[4], D3DCOLOR color);
+		BOOL		DrawLine(DX9& dx9, D3DXVECTOR2 *pVertexList, DWORD dwVertexListCount, D3DCOLOR color);
 	private:
 		TinyComPtr<ID3DXLine>	m_d3dLINE;
 	};

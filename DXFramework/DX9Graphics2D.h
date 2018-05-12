@@ -22,7 +22,7 @@ namespace DXFramework
 		BOOL			Initialize(HWND hWND, const TinySize& size);
 	public:
 		BOOL			DrawImage(DX9Image2D* ps);
-		BOOL			DrawLine(DX9Line2D* ps, D3DXVECTOR2 list[4], D3DCOLOR color);
+		BOOL			DrawLine(DX9Line2D* ps, D3DXVECTOR2 *pVertexList, DWORD dwVertexListCount, D3DCOLOR color);
 		BOOL			DrawString(DX9Font2D* ps, LPCSTR pzText, INT count, LPRECT pRect, DWORD dwFormat, D3DCOLOR color);
 	public:
 		BOOL			IsActive() const;

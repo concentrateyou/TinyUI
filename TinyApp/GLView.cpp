@@ -56,12 +56,14 @@ LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 	m_graphics.Initialize(m_hWND, s.Size());
 	m_graphics.SetRenderView(NULL);
 	m_graphics.GetRenderView()->BeginDraw();
-	//m_image2D.Load(m_graphics.GetDX11(), "D:\\timg.jpg");
-	//m_image2D.SetScale(XMFLOAT2(static_cast<FLOAT>(TO_CX(s)) / m_image2D.GetSize().x / 2, static_cast<FLOAT>(TO_CY(s)) / m_image2D.GetSize().y / 2));
-	//m_image2D.SetTranslate(XMFLOAT2(50.0F, 50.0F));
-	//m_image2D.SetRotate(180);
-	//m_image2D.SetFlipV(TRUE);
-	m_graphics.DrawImage(&m_image2D);
+
+	XMFLOAT2 points[2];
+	points[0] = XMFLOAT2(-100.0f, 100.0f);
+	points[1] = XMFLOAT2(100.0f, -100.0f);
+	m_line2D.Create(m_graphics.GetDX11(), points, 2, XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
+
+	m_graphics.DrawLine(m_line2D);
+
 	m_graphics.GetRenderView()->EndDraw();
 	m_graphics.Present();
 	////TinyRectangle s;

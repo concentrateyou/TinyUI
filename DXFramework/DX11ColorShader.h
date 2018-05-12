@@ -20,7 +20,6 @@ namespace DXFramework
 		TinyComPtr<ID3D11VertexShader>	m_vertexShader;
 		TinyComPtr<ID3D11PixelShader>	m_pixelShader;
 		TinyComPtr<ID3D11InputLayout>	m_layout;
-		TinyComPtr<ID3D11SamplerState>	m_sampleState;
 	};
 }
 

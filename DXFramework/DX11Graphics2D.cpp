@@ -25,6 +25,14 @@ namespace DXFramework
 		ASSERT(PathFileExists(ps.c_str()));
 		if (!m_textureShader.Initialize(m_dx11, vs.c_str(), ps.c_str()))
 			return FALSE;
+
+		vs = str + "\\color.vs";
+		ASSERT(PathFileExists(vs.c_str()));
+		ps = str + "\\color.ps";
+		ASSERT(PathFileExists(ps.c_str()));
+		if (!m_colorSharder.Initialize(m_dx11, vs.c_str(), ps.c_str()))
+			return FALSE;
+
 		m_camera.SetPosition(0.0F, 0.0F, -10.0F);
 		m_camera.UpdatePosition();
 		return TRUE;
@@ -72,7 +80,7 @@ namespace DXFramework
 		if (line.Process(m_dx11))
 		{
 			XMMATRIX* ms = m_dx11.GetMatrixs();
-			m_colorSharder.SetShaderParameters(m_dx11, ms[1], m_camera.GetView(), ms[2], 2);
+			m_colorSharder.SetShaderParameters(m_dx11, ms[1], m_camera.GetView(), ms[2], line.GetCount());
 			m_colorSharder.Render(m_dx11);
 			return TRUE;
 		}

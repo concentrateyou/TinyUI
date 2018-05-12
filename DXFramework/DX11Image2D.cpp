@@ -75,7 +75,6 @@ namespace DXFramework
 		m_vertices[5].position = XMFLOAT3(m_size.x / 2, -m_size.y / 2, 0.0F);
 		m_vertices[5].texture = XMFLOAT2(m_bFlipH ? 0.0F : 1.0F, m_bFlipV ? 0.0F : 1.0F);
 		m_vertices[5].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
-
 		D3D11_VIEWPORT vp;
 		ZeroMemory(&vp, sizeof(vp));
 		UINT count = 1;
@@ -88,7 +87,6 @@ namespace DXFramework
 		XMMATRIX val = scaling * rotation * translation;
 		XMMATRIX* ms = dx11.GetMatrixs();
 		ms[1] *= val;
-
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
 		HRESULT hRes = dx11.GetImmediateContext()->Map(m_vertexs, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		if (hRes != S_OK)
