@@ -161,16 +161,9 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
-	BOOL DX11Texture2D::Map(DX11& dx11, BYTE *&lpData, UINT &pitch, BOOL bReadoly)
+	BOOL DX11Texture2D::Map(DX11& dx11, D3D11_MAPPED_SUBRESOURCE& ms, BOOL bReadoly)
 	{
-		D3D11_MAPPED_SUBRESOURCE ms = { 0 };
-		if (SUCCEEDED(dx11.GetImmediateContext()->Map(m_texture2D, 0, bReadoly ? D3D11_MAP_READ : D3D11_MAP_WRITE_DISCARD, 0, &ms)))
-		{
-			lpData = (BYTE*)ms.pData;
-			pitch = ms.RowPitch;
-			return TRUE;
-		}
-		return FALSE;
+		return SUCCEEDED(dx11.GetImmediateContext()->Map(m_texture2D, 0, bReadoly ? D3D11_MAP_READ : D3D11_MAP_WRITE_DISCARD, 0, &ms));
 	}
 	void DX11Texture2D::Unmap(DX11& dx11)
 	{

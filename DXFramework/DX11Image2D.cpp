@@ -271,8 +271,11 @@ namespace DXFramework
 		BYTE* bitso = NULL;
 		UINT linesize = 0;
 		UINT rowcopy = (stride < linesize) ? stride : linesize;
-		if (DX11Texture2D::Map(dx11, bitso, linesize))
+		D3D11_MAPPED_SUBRESOURCE ms;
+		if (DX11Texture2D::Map(dx11, ms))
 		{
+			bitso = static_cast<BYTE*>(ms.pData);
+			linesize = ms.RowPitch;
 			UINT rowcopy = (stride < linesize) ? stride : linesize;
 			if (linesize == rowcopy)
 			{

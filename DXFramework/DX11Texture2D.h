@@ -33,7 +33,7 @@ namespace DXFramework
 		ID3D11Texture2D*			GetTexture2D() const;
 		BOOL						GetDC(BOOL discard, HDC& hDC);
 		BOOL						ReleaseDC();
-		BOOL						Map(DX11& dx11, BYTE *&lpData, UINT &pitch, BOOL bReadoly = FALSE);
+		BOOL						Map(DX11& dx11, D3D11_MAPPED_SUBRESOURCE& ms, BOOL bReadoly = FALSE);
 		void						Unmap(DX11& dx11);
 		HANDLE						GetHandle();//»ñµÃ¹²Ïí¾ä±ú
 		BOOL						IsEmpty() const;
