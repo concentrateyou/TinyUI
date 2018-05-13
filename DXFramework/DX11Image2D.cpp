@@ -10,6 +10,7 @@ namespace DXFramework
 
 	DX11Image2D::DX11Image2D()
 	{
+		ZeroMemory(m_vertexTypes, (sizeof(VERTEXTYPE) * 6));
 	}
 	DX11Image2D::~DX11Image2D()
 	{
@@ -17,9 +18,8 @@ namespace DXFramework
 	}
 	BOOL DX11Image2D::Initialize(DX11& dx11)
 	{
-		TinyScopedArray<VERTEXTYPE> vertices(new VERTEXTYPE[6]);
-		ASSERT(vertices);
-		ZeroMemory(vertices.Ptr(), (sizeof(VERTEXTYPE) * 6));
+		VERTEXTYPE vertexTypes[6];
+		ZeroMemory(vertexTypes, (sizeof(VERTEXTYPE) * 6));
 		D3D11_BUFFER_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
 		desc.Usage = D3D11_USAGE_DYNAMIC;
@@ -30,15 +30,14 @@ namespace DXFramework
 		desc.StructureByteStride = 0;
 		D3D11_SUBRESOURCE_DATA	data;
 		ZeroMemory(&data, sizeof(data));
-		data.pSysMem = vertices.Ptr();
+		data.pSysMem = vertexTypes;
 		data.SysMemPitch = 0;
 		data.SysMemSlicePitch = 0;
-		HRESULT hRes = dx11.GetD3D()->CreateBuffer(&desc, &data, &m_vertexs);
+		HRESULT hRes = dx11.GetD3D()->CreateBuffer(&desc, &data, &m_vertex);
 		if (hRes != S_OK)
 			return FALSE;
-		TinyScopedArray<ULONG> indices(new ULONG[6]);
-		ASSERT(indices);
-		ZeroMemory(indices.Ptr(), (sizeof(ULONG) * 6));
+		ULONG indices[6];
+		ZeroMemory(indices, (sizeof(ULONG) * 6));
 		for (INT i = 0; i < 6; i++)
 		{
 			indices[i] = i;
@@ -50,36 +49,36 @@ namespace DXFramework
 		desc.CPUAccessFlags = 0;
 		desc.MiscFlags = 0;
 		ZeroMemory(&data, sizeof(data));
-		data.pSysMem = indices.Ptr();
+		data.pSysMem = indices;
 		data.SysMemPitch = 0;
 		data.SysMemSlicePitch = 0;
 		hRes = dx11.GetD3D()->CreateBuffer(&desc, &data, &m_indexs);
 		if (hRes != S_OK)
 			return FALSE;
-		m_vertices.Reset(new VERTEXTYPE[6]);
-		ASSERT(m_vertices);
 		return TRUE;
 	}
 	BOOL DX11Image2D::Calculate(DX11& dx11)
 	{
-		m_vertices[0].position = XMFLOAT3(-m_size.x / 2, m_size.y / 2, 0.0F);
-		m_vertices[0].texture = XMFLOAT2(m_bFlipH ? 1.0F : 0.0F, m_bFlipV ? 1.0F : 0.0F);
-		m_vertices[0].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
-		m_vertices[1].position = XMFLOAT3(m_size.x / 2, -m_size.y / 2, 0.0F);
-		m_vertices[1].texture = XMFLOAT2(m_bFlipH ? 0.0F : 1.0F, m_bFlipV ? 0.0F : 1.0F);
-		m_vertices[1].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
-		m_vertices[2].position = XMFLOAT3(-m_size.x / 2, -m_size.y / 2, 0.0F);
-		m_vertices[2].texture = XMFLOAT2(m_bFlipH ? 1.0F : 0.0F, m_bFlipV ? 0.0F : 1.0F);
-		m_vertices[2].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
-		m_vertices[3].position = XMFLOAT3(-m_size.x / 2, m_size.y / 2, 0.0F);
-		m_vertices[3].texture = XMFLOAT2(m_bFlipH ? 1.0F : 0.0F, m_bFlipV ? 1.0F : 0.0F);
-		m_vertices[3].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
-		m_vertices[4].position = XMFLOAT3(m_size.x / 2, m_size.y / 2, 0.0F);
-		m_vertices[4].texture = XMFLOAT2(m_bFlipH ? 0.0F : 1.0F, m_bFlipV ? 1.0F : 0.0F);
-		m_vertices[4].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
-		m_vertices[5].position = XMFLOAT3(m_size.x / 2, -m_size.y / 2, 0.0F);
-		m_vertices[5].texture = XMFLOAT2(m_bFlipH ? 0.0F : 1.0F, m_bFlipV ? 0.0F : 1.0F);
-		m_vertices[5].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
+		if (!m_vertex)
+			return FALSE;
+		m_vertexTypes[0].position = XMFLOAT3(-m_size.x / 2, m_size.y / 2, 0.0F);
+		m_vertexTypes[0].texture = XMFLOAT2(m_bFlipH ? 1.0F : 0.0F, m_bFlipV ? 1.0F : 0.0F);
+		m_vertexTypes[0].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
+		m_vertexTypes[1].position = XMFLOAT3(m_size.x / 2, -m_size.y / 2, 0.0F);
+		m_vertexTypes[1].texture = XMFLOAT2(m_bFlipH ? 0.0F : 1.0F, m_bFlipV ? 0.0F : 1.0F);
+		m_vertexTypes[1].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
+		m_vertexTypes[2].position = XMFLOAT3(-m_size.x / 2, -m_size.y / 2, 0.0F);
+		m_vertexTypes[2].texture = XMFLOAT2(m_bFlipH ? 1.0F : 0.0F, m_bFlipV ? 0.0F : 1.0F);
+		m_vertexTypes[2].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
+		m_vertexTypes[3].position = XMFLOAT3(-m_size.x / 2, m_size.y / 2, 0.0F);
+		m_vertexTypes[3].texture = XMFLOAT2(m_bFlipH ? 1.0F : 0.0F, m_bFlipV ? 1.0F : 0.0F);
+		m_vertexTypes[3].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
+		m_vertexTypes[4].position = XMFLOAT3(m_size.x / 2, m_size.y / 2, 0.0F);
+		m_vertexTypes[4].texture = XMFLOAT2(m_bFlipH ? 0.0F : 1.0F, m_bFlipV ? 1.0F : 0.0F);
+		m_vertexTypes[4].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
+		m_vertexTypes[5].position = XMFLOAT3(m_size.x / 2, -m_size.y / 2, 0.0F);
+		m_vertexTypes[5].texture = XMFLOAT2(m_bFlipH ? 0.0F : 1.0F, m_bFlipV ? 0.0F : 1.0F);
+		m_vertexTypes[5].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
 		D3D11_VIEWPORT vp;
 		ZeroMemory(&vp, sizeof(vp));
 		UINT count = 1;
@@ -93,11 +92,11 @@ namespace DXFramework
 		XMMATRIX* ms = dx11.GetMatrixs();
 		ms[1] *= val;
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
-		HRESULT hRes = dx11.GetImmediateContext()->Map(m_vertexs, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		HRESULT hRes = dx11.GetImmediateContext()->Map(m_vertex, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		if (hRes != S_OK)
 			return FALSE;
-		memcpy(mappedResource.pData, (void*)m_vertices.Ptr(), sizeof(VERTEXTYPE) * 6);
-		dx11.GetImmediateContext()->Unmap(m_vertexs, 0);
+		memcpy(mappedResource.pData, (void*)m_vertexTypes, sizeof(VERTEXTYPE) * 6);
+		dx11.GetImmediateContext()->Unmap(m_vertex, 0);
 		return TRUE;
 	}
 	BOOL DX11Image2D::Create(DX11& dx11, ID3D11Texture2D* texture2D)
@@ -196,9 +195,8 @@ namespace DXFramework
 	}
 	void DX11Image2D::Destory()
 	{
-		m_vertexs.Release();
+		m_vertex.Release();
 		m_indexs.Release();
-		m_vertices.Reset(NULL);
 		DX11Texture2D::Destory();
 	}
 	BOOL DX11Image2D::BitBlt(DX11& dx11, const BYTE* bits, LONG size, LONG linesize)
@@ -292,13 +290,13 @@ namespace DXFramework
 		}
 		return FALSE;
 	}
-	BOOL DX11Image2D::Process(DX11& dx11)
+	BOOL DX11Image2D::DrawImage(DX11& dx11)
 	{
 		if (!Calculate(dx11))
 			return FALSE;
 		UINT stride = sizeof(VERTEXTYPE);
 		UINT offset = 0;
-		dx11.GetImmediateContext()->IASetVertexBuffers(0, 1, &m_vertexs, &stride, &offset);
+		dx11.GetImmediateContext()->IASetVertexBuffers(0, 1, &m_vertex, &stride, &offset);
 		dx11.GetImmediateContext()->IASetIndexBuffer(m_indexs, DXGI_FORMAT_R32_UINT, 0);
 		dx11.GetImmediateContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		return TRUE;

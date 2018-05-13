@@ -28,21 +28,20 @@ namespace DXFramework
 		BOOL Load(DX11& dx11, HANDLE hResource) OVERRIDE;
 		BOOL Load(DX11& dx11, const CHAR* pzFile) OVERRIDE;
 		void Destory() OVERRIDE;
+		BOOL DrawImage(DX11& dx11);
 	public:
 		BOOL Copy(DX11& dx11, D3D11_BOX* ps, const BYTE* bits, LONG size);
 		BOOL Copy(DX11& dx11, const BYTE* bits, LONG size, UINT stride);
 		BOOL BitBlt(DX11& dx11, const BYTE* bits, LONG size, LONG linesize);
 		BOOL BitBlt(DX11& dx11, const TinyRectangle& dst, HBITMAP hBitmapSrc, const TinyPoint& src);
 		BOOL BitBlt(DX11& dx11, const TinyRectangle& dst, HDC hDCSrc, const TinyPoint& src);
-	public:
-		BOOL Process(DX11& dx11) OVERRIDE;
 	private:
 		BOOL Initialize(DX11& dx11);
 		BOOL Calculate(DX11& dx11);
 	protected:
-		TinyComPtr<ID3D11Buffer>	m_vertexs;
+		VERTEXTYPE					m_vertexTypes[6];
+		TinyComPtr<ID3D11Buffer>	m_vertex;
 		TinyComPtr<ID3D11Buffer>	m_indexs;
-		TinyScopedArray<VERTEXTYPE> m_vertices;
 	};
 }
 

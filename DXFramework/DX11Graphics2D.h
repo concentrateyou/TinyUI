@@ -25,9 +25,9 @@ namespace DXFramework
 		DX11RenderView*	GetRenderView() const;
 	public:
 		BOOL			DrawImage(DX11Image2D& image);
-		BOOL			DrawLine(DX11Line2D& line);
-		BOOL			DrawRectangle(DX11Rectangle2D& rectangle);
-		BOOL			FillRectangle(DX11Rectangle2D& rectangle);
+		BOOL			DrawLine(DX11Line2D& line, XMFLOAT2* points, DWORD count, XMFLOAT4 color);
+		BOOL			DrawRectangle(DX11Rectangle2D& rectangle, XMFLOAT2 points[4], UINT count, XMFLOAT4 color);
+		BOOL			FillRectangle(DX11Rectangle2D& rectangle, XMFLOAT2 points[4], UINT count, XMFLOAT4 color);
 	private:
 		DX11					m_dx11;
 		DXCamera				m_camera;

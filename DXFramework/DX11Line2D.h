@@ -17,17 +17,14 @@ namespace DXFramework
 	public:
 		DX11Line2D();
 		virtual	~DX11Line2D();
-		BOOL Create(DX11& dx11, XMFLOAT2* points, DWORD count, XMFLOAT4 color);
-		void Destory();
-		BOOL SetColor(DX11& dx11, XMFLOAT4 color);
-		DWORD GetIndexs() const;
-	public:
-		BOOL Process(DX11& dx11) OVERRIDE;
+		BOOL	Create(DX11& dx11);
+		void	Destory();
+		DWORD	GetIndexs() const;
+		BOOL	DrawLine(DX11& dx11, XMFLOAT2* points, DWORD count, XMFLOAT4 color);
 	protected:
-		DWORD						m_indexs;
-		TinyBuffer<VERTEXTYPE>		m_vertexes;
-		TinyComPtr<ID3D11Buffer>	m_vertexBuffer;
-		TinyComPtr<ID3D11Buffer>	m_indexBuffer;
+		TinyBuffer<VERTEXTYPE>		m_vertexTypes;
+		TinyComPtr<ID3D11Buffer>	m_vertexs;
+		TinyComPtr<ID3D11Buffer>	m_indexs;
 	};
 }
 

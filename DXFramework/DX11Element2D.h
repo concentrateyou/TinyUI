@@ -32,15 +32,13 @@ namespace DXFramework
 		void			SetFlipH(BOOL bFlag);
 		void			SetFlipV(BOOL bFlag);
 	public:
-		virtual BOOL	Process(DX11& dx11) = 0;
-	public:
-		TinyString		m_szElement;
 		BOOL			m_bFlipH;
 		BOOL			m_bFlipV;
 		FLOAT			m_angle;
 		XMFLOAT2		m_size;//元素大小
 		XMFLOAT2		m_scale;//缩放比例
 		XMFLOAT2		m_translate;//平移坐标
+		TinyString		m_szElement;
 	};
 }
 
