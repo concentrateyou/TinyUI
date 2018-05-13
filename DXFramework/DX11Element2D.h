@@ -19,7 +19,7 @@ namespace DXFramework
 	public:
 		TinyString		GetElementName() const;
 		void			SetElementName(const TinyString& name);
-	public:
+	protected:
 		TinyString		m_szElement;
 	};
 }
