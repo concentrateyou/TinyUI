@@ -34,8 +34,6 @@ namespace DXFramework
 		desc.Format = DXGI_FORMAT_R8G8_UNORM;
 		if (!m_textureNV.Create(dx11, desc))
 			return FALSE;
-		m_size.x = static_cast<FLOAT>(cx);
-		m_size.y = static_cast<FLOAT>(cy);
 		return TRUE;
 	}
 	void DX11ImageNV12BT601::Destory()
