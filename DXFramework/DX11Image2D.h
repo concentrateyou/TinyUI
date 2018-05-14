@@ -21,6 +21,7 @@ namespace DXFramework
 		DX11Image2D();
 		virtual ~DX11Image2D();
 	public:
+		BOOL		Create(DX11& dx11, D3D11_TEXTURE2D_DESC& desc) OVERRIDE;
 		BOOL		Create(DX11& dx11, ID3D11Texture2D* texture2D) OVERRIDE;
 		BOOL		Create(DX11& dx11, INT cx, INT cy, const BYTE* bits, BOOL bReadoly) OVERRIDE;
 		BOOL		Create(DX11& dx11, INT cx, INT cy) OVERRIDE;

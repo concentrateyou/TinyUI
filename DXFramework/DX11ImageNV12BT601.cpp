@@ -26,7 +26,7 @@ namespace DXFramework
 		desc.MiscFlags = 0;
 		desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		desc.Usage = D3D11_USAGE_STAGING;
-		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 		if (!m_textureY.Create(dx11, desc))
 			return FALSE;
 		desc.Width = (cx + 1) / 2;
@@ -47,46 +47,55 @@ namespace DXFramework
 	{
 		D3D11_TEXTURE2D_DESC desc;
 		m_textureY.GetTexture2D()->GetDesc(&desc);
-		desc.Width = m_size.x;
-		desc.Height = m_size.y;
-		desc.BindFlags = 0;
-		desc.MiscFlags = 0;
-		desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		desc.Usage = D3D11_USAGE_STAGING;
-		DX11Texture2D staging;
-		if (!staging.Create(dx11, desc))
-			return FALSE;
+		if (m_stagingY.IsEmpty())
+		{	
+			desc.Width = m_size.x;
+			desc.Height = m_size.y;
+			desc.BindFlags = 0;
+			desc.MiscFlags = 0;
+			desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+			desc.Usage = D3D11_USAGE_STAGING;
+			if (!m_stagingY.Create(dx11, desc))
+				return FALSE;
+		}
+		if (m_stagingNV.IsEmpty())
+		{
+			desc.Width = (m_size.x + 1) / 2;
+			desc.Height = (m_size.y + 1) / 2;
+			desc.BindFlags = 0;
+			desc.MiscFlags = 0;
+			desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+			desc.Usage = D3D11_USAGE_STAGING;
+			m_stagingNV.Destory();
+			if (!m_stagingNV.Create(dx11, desc))
+				return FALSE;
+		}
 		D3D11_MAPPED_SUBRESOURCE ms;
 		ZeroMemory(&ms, sizeof(ms));
-		if (staging.Map(dx11, ms))
+		if (m_stagingY.Map(dx11, ms))
 		{
 			BYTE* dst = static_cast<BYTE*>(ms.pData);
-			for (INT i = 0; i < desc.Height; i++)
+			INT x = static_cast<INT>(m_size.x);
+			INT y = static_cast<INT>(m_size.y);
+			for (INT i = 0; i < y; i++)
 			{
 				memcpy(dst + ms.RowPitch*i, pY + strideY*i, strideY);
 			}
-			staging.Unmap(dx11);
-			dx11.GetImmediateContext()->CopySubresourceRegion(m_textureY.GetTexture2D(), 0, desc.Width, desc.Height, 0, staging.GetTexture2D(), 0, NULL);
+			m_stagingY.Unmap(dx11);
+			dx11.GetImmediateContext()->CopySubresourceRegion(m_textureY.GetTexture2D(), 0, x, y, 0, m_stagingY.GetTexture2D(), 0, NULL);
 		}
-		desc.Width = (m_size.x + 1) / 2;
-		desc.Height = (m_size.y + 1) / 2;
-		desc.BindFlags = 0;
-		desc.MiscFlags = 0;
-		desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		desc.Usage = D3D11_USAGE_STAGING;
-		staging.Destory();
-		if (!staging.Create(dx11, desc))
-			return FALSE;
 		ZeroMemory(&ms, sizeof(ms));
-		if (staging.Map(dx11, ms))
+		if (m_stagingNV.Map(dx11, ms))
 		{
 			BYTE* dst = static_cast<BYTE*>(ms.pData);
-			for (INT i = 0; i < desc.Height; i++)
+			INT x = static_cast<INT>((m_size.x + 1) / 2);
+			INT y = static_cast<INT>((m_size.y + 1) / 2);
+			for (INT i = 0; i < y; i++)
 			{
 				memcpy(dst + ms.RowPitch*i, pUV + strideUV*i, strideUV);
 			}
-			staging.Unmap(dx11);
-			dx11.GetImmediateContext()->CopySubresourceRegion(m_textureNV.GetTexture2D(), 0, desc.Width, desc.Height, 0, staging.GetTexture2D(), 0, NULL);
+			m_stagingNV.Unmap(dx11);
+			dx11.GetImmediateContext()->CopySubresourceRegion(m_textureNV.GetTexture2D(), 0, x, y, 0, m_stagingNV.GetTexture2D(), 0, NULL);
 		}
 		return TRUE;
 	}

@@ -99,6 +99,21 @@ namespace DXFramework
 		dx11.GetImmediateContext()->Unmap(m_vertex, 0);
 		return TRUE;
 	}
+	BOOL DX11Image2D::Create(DX11& dx11, D3D11_TEXTURE2D_DESC& desc)
+	{
+		Destory();
+		if (!Initialize(dx11))
+			return FALSE;
+		if (DX11Texture2D::Create(dx11, desc))
+		{
+			D3D11_TEXTURE2D_DESC desc;
+			m_texture2D->GetDesc(&desc);
+			m_size.x = static_cast<FLOAT>(desc.Width);
+			m_size.y = static_cast<FLOAT>(desc.Height);
+			return TRUE;
+		}
+		return FALSE;
+	}
 	BOOL DX11Image2D::Create(DX11& dx11, ID3D11Texture2D* texture2D)
 	{
 		Destory();
