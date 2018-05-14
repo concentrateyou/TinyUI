@@ -190,10 +190,8 @@
     <ClInclude Include="DX11Graphics2D.h" />
     <ClInclude Include="DX11Image2D.h" />
     <ClInclude Include="DX11ImageElement2D.h" />
-    <ClInclude Include="DX11ImageNV12BT601.h" />
-    <ClInclude Include="DX11ImageNV12BT709.h" />
-    <ClInclude Include="DX11ImageYUVBT601.h" />
-    <ClInclude Include="DX11ImageYUVBT709.h" />
+    <ClInclude Include="DX11NV12Video.h" />
+    <ClInclude Include="DX11YUVVideo.h" />
     <ClInclude Include="DX11Line2D.h" />
     <ClInclude Include="DX11NV12BT601Shader.h" />
     <ClInclude Include="DX11Shader.h" />
@@ -230,10 +228,8 @@
     <ClCompile Include="DX11Image2D.cpp" />
     <ClCompile Include="DX11CaptureTask.cpp" />
     <ClCompile Include="DX11ImageElement2D.cpp" />
-    <ClCompile Include="DX11ImageNV12BT601.cpp" />
-    <ClCompile Include="DX11ImageNV12BT709.cpp" />
-    <ClCompile Include="DX11ImageYUVBT601.cpp" />
-    <ClCompile Include="DX11ImageYUVBT709.cpp" />
+    <ClCompile Include="DX11NV12Video.cpp" />
+    <ClCompile Include="DX11YUVVideo.cpp" />
     <ClCompile Include="DX11Line2D.cpp" />
     <ClCompile Include="DX11NV12BT601Shader.cpp" />
     <ClCompile Include="DX11Shader.cpp" />

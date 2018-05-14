@@ -1,20 +1,22 @@
 #include "stdafx.h"
-#include "DX11ImageNV12BT601.h"
+#include "DX11NV12Video.h"
 
 namespace DXFramework
 {
-	DX11ImageNV12BT601::DX11ImageNV12BT601()
+	IMPLEMENT_DYNAMIC(DX11NV12Video, DX11ImageElement2D);
+
+	DX11NV12Video::DX11NV12Video()
 	{
 	}
 
-	DX11ImageNV12BT601::~DX11ImageNV12BT601()
+	DX11NV12Video::~DX11NV12Video()
 	{
 	}
-	BOOL DX11ImageNV12BT601::IsEmpty() const
+	BOOL DX11NV12Video::IsEmpty() const
 	{
 		return m_textureY.IsEmpty() || m_textureNV.IsEmpty();
 	}
-	BOOL DX11ImageNV12BT601::Create(DX11& dx11, INT cx, INT cy)
+	BOOL DX11NV12Video::Create(DX11& dx11, INT cx, INT cy)
 	{
 		Destory();
 		D3D11_TEXTURE2D_DESC desc;
@@ -41,26 +43,26 @@ namespace DXFramework
 		m_size.y = static_cast<FLOAT>(cy);
 		return TRUE;
 	}
-	void DX11ImageNV12BT601::Destory()
+	void DX11NV12Video::Destory()
 	{
 		m_textureY.Destory();
 		m_textureNV.Destory();
 	}
-	BOOL DX11ImageNV12BT601::DrawImage(DX11& dx11)
+	BOOL DX11NV12Video::DrawImage(DX11& dx11)
 	{
 		m_textureY.DrawImage(dx11);
 		m_textureNV.DrawImage(dx11);
 		return TRUE;
 	}
-	DX11Texture2D*	DX11ImageNV12BT601::GetTextureY()
+	DX11Texture2D*	DX11NV12Video::GetTextureY()
 	{
 		return &m_textureY;
 	}
-	DX11Texture2D*	DX11ImageNV12BT601::GetTextureNV()
+	DX11Texture2D*	DX11NV12Video::GetTextureNV()
 	{
 		return &m_textureNV;
 	}
-	BOOL DX11ImageNV12BT601::Copy(DX11& dx11, const BYTE* pY, UINT strideY, const BYTE* pUV, UINT strideUV)
+	BOOL DX11NV12Video::Copy(DX11& dx11, const BYTE* pY, UINT strideY, const BYTE* pUV, UINT strideUV)
 	{
 		D3D11_TEXTURE2D_DESC desc;
 		m_textureY.GetTexture2D()->GetDesc(&desc);

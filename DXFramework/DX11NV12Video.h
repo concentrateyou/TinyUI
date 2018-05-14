@@ -5,12 +5,13 @@ using namespace TinyUI;
 
 namespace DXFramework
 {
-	class DX11ImageNV12BT601 : public DX11ImageElement2D
+	class DX11NV12Video : public DX11ImageElement2D
 	{
-		DISALLOW_COPY_AND_ASSIGN(DX11ImageNV12BT601)
+		DECLARE_DYNAMIC(DX11NV12Video)
+		DISALLOW_COPY_AND_ASSIGN(DX11NV12Video)
 	public:
-		DX11ImageNV12BT601();
-		virtual ~DX11ImageNV12BT601();
+		DX11NV12Video();
+		virtual ~DX11NV12Video();
 		BOOL			IsEmpty() const;
 		BOOL			Create(DX11& dx11, INT cx, INT cy);
 		void			Destory();
