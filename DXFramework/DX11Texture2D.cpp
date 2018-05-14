@@ -62,14 +62,17 @@ namespace DXFramework
 		HRESULT hRes = dx11.GetD3D()->CreateTexture2D(&desc, NULL, &m_texture2D);
 		if (hRes != S_OK)
 			return FALSE;
-		D3D11_SHADER_RESOURCE_VIEW_DESC dsrvd;
-		::ZeroMemory(&dsrvd, sizeof(dsrvd));
-		dsrvd.Format = desc.Format;
-		dsrvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-		dsrvd.Texture2D.MipLevels = 1;
-		hRes = dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &dsrvd, &m_resourceView);
-		if (hRes != S_OK)
-			return FALSE;
+		if (desc.BindFlags & D3D11_BIND_SHADER_RESOURCE)
+		{
+			D3D11_SHADER_RESOURCE_VIEW_DESC dsrvd;
+			::ZeroMemory(&dsrvd, sizeof(dsrvd));
+			dsrvd.Format = desc.Format;
+			dsrvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			dsrvd.Texture2D.MipLevels = 1;
+			hRes = dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &dsrvd, &m_resourceView);
+			if (hRes != S_OK)
+				return FALSE;
+		}
 		return TRUE;
 	}
 	BOOL DX11Texture2D::Create(DX11& dx11, ID3D11Texture2D* texture2D)
@@ -83,34 +86,37 @@ namespace DXFramework
 		HRESULT hRes = dx11.GetD3D()->CreateTexture2D(&desc, NULL, &m_texture2D);
 		if (hRes != S_OK)
 			return FALSE;
-		D3D11_SHADER_RESOURCE_VIEW_DESC dsrvd;
-		::ZeroMemory(&dsrvd, sizeof(dsrvd));
-		dsrvd.Format = desc.Format;
-		dsrvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-		dsrvd.Texture2D.MipLevels = 1;
-		hRes = dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &dsrvd, &m_resourceView);
-		if (hRes != S_OK)
-			return FALSE;
+		if (desc.BindFlags & D3D11_BIND_SHADER_RESOURCE)
+		{
+			D3D11_SHADER_RESOURCE_VIEW_DESC dsrvd;
+			::ZeroMemory(&dsrvd, sizeof(dsrvd));
+			dsrvd.Format = desc.Format;
+			dsrvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			dsrvd.Texture2D.MipLevels = 1;
+			hRes = dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &dsrvd, &m_resourceView);
+			if (hRes != S_OK)
+				return FALSE;
+		}
 		return TRUE;
 	}
 	BOOL DX11Texture2D::Create(DX11& dx11, INT cx, INT cy, const BYTE* bits, BOOL bReadoly)
 	{
 		m_texture2D.Release();
 		m_resourceView.Release();
-		D3D11_TEXTURE2D_DESC textureDesc;
-		ZeroMemory(&textureDesc, sizeof(textureDesc));
-		textureDesc.Width = cx;
-		textureDesc.Height = cy;
-		textureDesc.MipLevels = 1;
-		textureDesc.ArraySize = 1;
-		textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-		textureDesc.SampleDesc.Count = 1;
-		textureDesc.SampleDesc.Quality = 0;
-		textureDesc.BindFlags = bReadoly ? 0 : D3D11_BIND_SHADER_RESOURCE;
-		textureDesc.CPUAccessFlags = bReadoly ? D3D11_CPU_ACCESS_READ : D3D11_CPU_ACCESS_WRITE;
+		D3D11_TEXTURE2D_DESC desc;
+		ZeroMemory(&desc, sizeof(desc));
+		desc.Width = cx;
+		desc.Height = cy;
+		desc.MipLevels = 1;
+		desc.ArraySize = 1;
+		desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		desc.SampleDesc.Count = 1;
+		desc.SampleDesc.Quality = 0;
+		desc.BindFlags = bReadoly ? 0 : D3D11_BIND_SHADER_RESOURCE;
+		desc.CPUAccessFlags = bReadoly ? D3D11_CPU_ACCESS_READ : D3D11_CPU_ACCESS_WRITE;
 		//D3D11_USAGE_DYNAMIC 快速的CPU写和较慢的GPU读 Map/Unmap
 		//D3D11_USAGE_STAGING 读取GPU数据 Map/Unmap
-		textureDesc.Usage = bReadoly ? D3D11_USAGE_STAGING : D3D11_USAGE_DYNAMIC;
+		desc.Usage = bReadoly ? D3D11_USAGE_STAGING : D3D11_USAGE_DYNAMIC;
 		D3D11_SUBRESOURCE_DATA dsd;
 		D3D11_SUBRESOURCE_DATA *lpSRD = NULL;
 		if (bits)
@@ -120,10 +126,10 @@ namespace DXFramework
 			dsd.SysMemSlicePitch = 0;
 			lpSRD = &dsd;
 		}
-		HRESULT hRes = dx11.GetD3D()->CreateTexture2D(&textureDesc, lpSRD, &m_texture2D);
+		HRESULT hRes = dx11.GetD3D()->CreateTexture2D(&desc, lpSRD, &m_texture2D);
 		if (hRes != S_OK)
 			return FALSE;
-		if (!bReadoly)
+		if (desc.BindFlags & D3D11_BIND_SHADER_RESOURCE)
 		{
 			D3D11_TEXTURE2D_DESC desc;
 			m_texture2D->GetDesc(&desc);
@@ -163,7 +169,8 @@ namespace DXFramework
 	}
 	BOOL DX11Texture2D::Map(DX11& dx11, D3D11_MAPPED_SUBRESOURCE& ms, BOOL bReadoly)
 	{
-		return SUCCEEDED(dx11.GetImmediateContext()->Map(m_texture2D, 0, bReadoly ? D3D11_MAP_READ : D3D11_MAP_WRITE_DISCARD, 0, &ms));
+		HRESULT hRes = dx11.GetImmediateContext()->Map(m_texture2D, 0, bReadoly ? D3D11_MAP_READ : D3D11_MAP_WRITE_DISCARD, 0, &ms);
+		return SUCCEEDED(hRes);
 	}
 	void DX11Texture2D::Unmap(DX11& dx11)
 	{
@@ -229,13 +236,16 @@ namespace DXFramework
 			return FALSE;
 		D3D11_TEXTURE2D_DESC desc;
 		m_texture2D->GetDesc(&desc);
-		D3D11_SHADER_RESOURCE_VIEW_DESC dsrvd;
-		::ZeroMemory(&dsrvd, sizeof(dsrvd));
-		dsrvd.Format = desc.Format;
-		dsrvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-		dsrvd.Texture2D.MipLevels = desc.MipLevels;
-		if (FAILED(hRes = dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &dsrvd, &m_resourceView)))
-			return FALSE;
+		if (desc.BindFlags & D3D11_BIND_SHADER_RESOURCE)
+		{
+			D3D11_SHADER_RESOURCE_VIEW_DESC dsrvd;
+			::ZeroMemory(&dsrvd, sizeof(dsrvd));
+			dsrvd.Format = desc.Format;
+			dsrvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			dsrvd.Texture2D.MipLevels = desc.MipLevels;
+			if (FAILED(hRes = dx11.GetD3D()->CreateShaderResourceView(m_texture2D, &dsrvd, &m_resourceView)))
+				return FALSE;
+		}
 		return TRUE;
 	}
 	BOOL DX11Texture2D::Load(DX11& dx11, const BYTE* bits, LONG size)
