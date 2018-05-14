@@ -11,9 +11,13 @@ namespace DXFramework
 	public:
 		DX11ImageNV12BT601();
 		virtual ~DX11ImageNV12BT601();
-		BOOL Create(DX11& dx11, INT cx, INT cy);
-		void Destory();
-		BOOL Copy(DX11& dx11, const BYTE* pY, UINT strideY, const BYTE* pUV, UINT strideUV);
+		BOOL			IsEmpty() const;
+		BOOL			Create(DX11& dx11, INT cx, INT cy);
+		void			Destory();
+		BOOL			DrawImage(DX11& dx11);
+		BOOL			Copy(DX11& dx11, const BYTE* pY, UINT strideY, const BYTE* pUV, UINT strideUV);
+		DX11Texture2D*	GetTextureY();
+		DX11Texture2D*	GetTextureNV();
 	private:
 		DX11Texture2D	m_stagingY;
 		DX11Texture2D	m_stagingNV;

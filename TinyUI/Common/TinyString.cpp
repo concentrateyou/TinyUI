@@ -45,7 +45,7 @@ namespace TinyUI
 		va_end(args);
 		return string(szBuffer, 0, size);
 	}
-	std::string WStringToString(const std::wstring str, const DWORD dwType)
+	std::string WStringToString(const std::wstring& str, const DWORD dwType)
 	{
 		INT size = WideCharToMultiByte(dwType, 0, str.c_str(), -1, NULL, 0, NULL, NULL);
 		CHAR* data = new CHAR[size];
@@ -54,7 +54,7 @@ namespace TinyUI
 		delete[] data;
 		return s;
 	}
-	std::wstring StringToWString(const std::string str, const DWORD dwType)
+	std::wstring StringToWString(const std::string& str, const DWORD dwType)
 	{
 		INT size = MultiByteToWideChar(dwType, 0, str.c_str(), -1, NULL, 0);
 		WCHAR* data = new WCHAR[size];
@@ -63,16 +63,16 @@ namespace TinyUI
 		delete[] data;
 		return s;
 	}
-	std::string WStringToUTF8(const std::wstring str)
+	std::string WStringToUTF8(const std::wstring& str)
 	{
 		return WStringToString(str, CP_UTF8);
 	}
-	std::string ASCIIToUTF8(const std::string str)
+	std::string ASCIIToUTF8(const std::string& str)
 	{
 		std::wstring temp = StringToWString(str, CP_ACP);
 		return WStringToString(temp, CP_UTF8);
 	}
-	std::string UTF8ToASCII(const std::string str)
+	std::string UTF8ToASCII(const std::string& str)
 	{
 		std::wstring temp = StringToWString(str, CP_UTF8);
 		return WStringToString(temp, CP_ACP);

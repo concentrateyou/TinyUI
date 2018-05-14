@@ -435,7 +435,6 @@ namespace QSV
 			for (INT i = 0; i < request->NumFrameSuggested; i++)
 			{
 				hRes = videoService->CreateSurface(request->Info.Width, request->Info.Height, 0, d3dFormat, D3DPOOL_DEFAULT, m_dwUsage, dwTarget, (IDirect3DSurface9**)&dxMidPtrs[i]->first, &dxMidPtrs[i]->second);
-				//hRes = videoService->CreateSurface(request->Info.Width, request->Info.Height, 0, d3dFormat, D3DPOOL_DEFAULT, m_dwUsage, dwTarget, (IDirect3DSurface9**)&dxMidPtrs[i]->first, NULL);
 				if (FAILED(hRes))
 				{
 					Deallocate(response);

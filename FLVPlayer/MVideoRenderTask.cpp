@@ -65,7 +65,6 @@ namespace FLVPlayer
 		}
 		else
 		{
-
 			if (!m_image.Copy(bits, linesize, cy))
 			{
 				LOG(ERROR) << "[MPreviewController] [OnDraw]" << " Copy FAIL";

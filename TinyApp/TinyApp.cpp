@@ -252,6 +252,14 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	CoInitialize(NULL);
 	avcodec_register_all();
 
+
+	std::string str;
+	str.resize(MAX_PATH);
+	GetModuleFileName(NULL, &str[0], MAX_PATH);
+	str = str.substr(0, str.find_last_of("\\", string::npos, 1));
+	str = str.substr(0, str.find_last_of("\\", string::npos, 1));
+	str += "\\xigua-live-assistant\\西瓜视频直播助手.exe";
+
 	/*std::string val;
 	GetFileName(val);
 */

@@ -40,10 +40,11 @@ public:
 	LRESULT OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 private:
-	DX11Graphics2D	m_graphics;
-	DX11Image2D		m_image2D;
-	DX11Line2D		m_line2D;
-	DX11Rectangle2D	m_rectangle2D;
+	DX11Graphics2D		m_graphics;
+	DX11ImageNV12BT601	m_image2D;
+	//DX11Image2D		m_image2D;
+	//DX11Line2D		m_line2D;
+	//DX11Rectangle2D	m_rectangle2D;
 	///*DX9Graphics2D	m_graphics;
 	//DX9Image2D		m_image2D[2];*/
 	//LAVPlayer m_player;

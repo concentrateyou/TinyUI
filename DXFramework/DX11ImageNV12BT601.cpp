@@ -10,7 +10,10 @@ namespace DXFramework
 	DX11ImageNV12BT601::~DX11ImageNV12BT601()
 	{
 	}
-
+	BOOL DX11ImageNV12BT601::IsEmpty() const
+	{
+		return m_textureY.IsEmpty() || m_textureNV.IsEmpty();
+	}
 	BOOL DX11ImageNV12BT601::Create(DX11& dx11, INT cx, INT cy)
 	{
 		Destory();
@@ -43,12 +46,26 @@ namespace DXFramework
 		m_textureY.Destory();
 		m_textureNV.Destory();
 	}
+	BOOL DX11ImageNV12BT601::DrawImage(DX11& dx11)
+	{
+		m_textureY.DrawImage(dx11);
+		m_textureNV.DrawImage(dx11);
+		return TRUE;
+	}
+	DX11Texture2D*	DX11ImageNV12BT601::GetTextureY()
+	{
+		return &m_textureY;
+	}
+	DX11Texture2D*	DX11ImageNV12BT601::GetTextureNV()
+	{
+		return &m_textureNV;
+	}
 	BOOL DX11ImageNV12BT601::Copy(DX11& dx11, const BYTE* pY, UINT strideY, const BYTE* pUV, UINT strideUV)
 	{
 		D3D11_TEXTURE2D_DESC desc;
 		m_textureY.GetTexture2D()->GetDesc(&desc);
 		if (m_stagingY.IsEmpty())
-		{	
+		{
 			desc.Width = m_size.x;
 			desc.Height = m_size.y;
 			desc.BindFlags = 0;

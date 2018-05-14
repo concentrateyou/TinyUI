@@ -35,23 +35,23 @@ namespace TinyUI
 	/// <summary>
 	/// 宽字节字符创到多字节字符串
 	/// </summary>
-	string WStringToString(const wstring str, const DWORD dwType = CP_ACP);
+	string WStringToString(const wstring& str, const DWORD dwType = CP_ACP);
 	/// <summary>
 	/// 多字节字符串打到宽字节字符串
 	/// </summary>
-	wstring StringToWString(const string str, const DWORD dwType = CP_ACP);
+	wstring StringToWString(const string& str, const DWORD dwType = CP_ACP);
 	/// <summary>
 	/// 宽字节字符创到多字节字符串
 	/// </summary>
-	string WStringToUTF8(const wstring str);
+	string WStringToUTF8(const wstring& str);
 	/// <summary>
 	/// ASCII转UTF8
 	/// </summary>
-	string ASCIIToUTF8(const string str);
+	string ASCIIToUTF8(const string& str);
 	/// <summary>
 	/// UTF8转ASCII
 	/// </summary>
-	string UTF8ToASCII(const string str);
+	string UTF8ToASCII(const string& str);
 	/// <summary>
 	/// UTF8转UTF16
 	/// </summary>

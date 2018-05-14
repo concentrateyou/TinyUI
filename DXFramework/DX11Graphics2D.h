@@ -5,6 +5,8 @@
 #include "DX11Line2D.h"
 #include "DX11Rectangle2D.h"
 #include "DX11RenderView.h"
+#include "DX11NV12BT601Shader.h"
+#include "DX11ImageNV12BT601.h"
 
 namespace DXFramework
 {
@@ -24,6 +26,7 @@ namespace DXFramework
 		void			SetRenderView(DX11RenderView* render2D);
 		DX11RenderView*	GetRenderView() const;
 	public:
+		BOOL			DrawImageNV12BT601(DX11ImageNV12BT601& image);
 		BOOL			DrawImage(DX11Image2D& image);
 		BOOL			DrawLine(DX11Line2D& line, XMFLOAT2* points, DWORD count, XMFLOAT4 color);
 		BOOL			DrawRectangle(DX11Rectangle2D& rectangle, XMFLOAT2 points[4], UINT count, XMFLOAT4 color);
@@ -33,6 +36,7 @@ namespace DXFramework
 		DXCamera				m_camera;
 		DX11ColorShader			m_colorSharder;
 		DX11TextureShader		m_textureShader;
+		DX11NV12BT601Shader		m_shaderNV12BT601;
 	};
 }
 
