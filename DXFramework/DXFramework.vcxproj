@@ -190,6 +190,7 @@
     <ClInclude Include="DX11Graphics2D.h" />
     <ClInclude Include="DX11Image2D.h" />
     <ClInclude Include="DX11ImageElement2D.h" />
+    <ClInclude Include="DX11NV12BT709Shader.h" />
     <ClInclude Include="DX11NV12Video.h" />
     <ClInclude Include="DX11YUVVideo.h" />
     <ClInclude Include="DX11Line2D.h" />
@@ -228,6 +229,7 @@
     <ClCompile Include="DX11Image2D.cpp" />
     <ClCompile Include="DX11CaptureTask.cpp" />
     <ClCompile Include="DX11ImageElement2D.cpp" />
+    <ClCompile Include="DX11NV12BT709Shader.cpp" />
     <ClCompile Include="DX11NV12Video.cpp" />
     <ClCompile Include="DX11YUVVideo.cpp" />
     <ClCompile Include="DX11Line2D.cpp" />

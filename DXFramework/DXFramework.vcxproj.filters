@@ -138,6 +138,9 @@
     <ClInclude Include="DX11YUVVideo.h">
       <Filter>头文件\DX11</Filter>
     </ClInclude>
+    <ClInclude Include="DX11NV12BT709Shader.h">
+      <Filter>头文件\DX11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -246,6 +249,9 @@
       <Filter>源文件\DX11</Filter>
     </ClCompile>
     <ClCompile Include="DX11YUVVideo.cpp">
+      <Filter>源文件\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11NV12BT709Shader.cpp">
       <Filter>源文件\DX11</Filter>
     </ClCompile>
   </ItemGroup>

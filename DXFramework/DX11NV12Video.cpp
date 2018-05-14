@@ -70,6 +70,7 @@ namespace DXFramework
 	}
 	BOOL DX11NV12Video::Copy(DX11& dx11, const BYTE* pY, UINT strideY, const BYTE* pUV, UINT strideUV)
 	{
+		//Y
 		D3D11_MAPPED_SUBRESOURCE ms;
 		ZeroMemory(&ms, sizeof(ms));
 		if (!m_textureY.Map(dx11, ms))
@@ -82,6 +83,7 @@ namespace DXFramework
 			memcpy(dst + i * linesize, pY + i * strideY, strideY);
 		}
 		m_textureY.Unmap(dx11);
+		//NV
 		ZeroMemory(&ms, sizeof(ms));
 		if (!m_textureNV.Map(dx11, ms))
 			return FALSE;

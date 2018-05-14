@@ -40,6 +40,13 @@ namespace DXFramework
 		if (!m_shaderNV12BT601.Initialize(m_dx11, vs.c_str(), ps.c_str()))
 			return FALSE;
 
+		vs = str + "\\NV12BT709.vs";
+		ASSERT(PathFileExists(vs.c_str()));
+		ps = str + "\\NV12BT709.ps";
+		ASSERT(PathFileExists(ps.c_str()));
+		if (!m_shaderNV12BT709.Initialize(m_dx11, vs.c_str(), ps.c_str()))
+			return FALSE;
+
 		m_camera.SetPosition(0.0F, 0.0F, -10.0F);
 		m_camera.UpdatePosition();
 		return TRUE;
@@ -76,6 +83,20 @@ namespace DXFramework
 		DX11Texture2D* s[2] = { image.GetTextureY(),image.GetTextureNV() };
 		m_shaderNV12BT601.SetShaderParameters(m_dx11, ms[1], m_camera.GetView(), ms[2], s);
 		m_shaderNV12BT601.Render(m_dx11);
+		return TRUE;
+	}
+	BOOL DX11Graphics2D::DrawImageNV12BT709(DX11NV12Video& image)
+	{
+		if (!m_dx11.GetRenderView())
+			return FALSE;
+		if (image.IsEmpty())
+			return FALSE;
+		if (!image.DrawImage(m_dx11))
+			return FALSE;
+		XMMATRIX* ms = m_dx11.GetMatrixs();
+		DX11Texture2D* s[2] = { image.GetTextureY(),image.GetTextureNV() };
+		m_shaderNV12BT709.SetShaderParameters(m_dx11, ms[1], m_camera.GetView(), ms[2], s);
+		m_shaderNV12BT709.Render(m_dx11);
 		return TRUE;
 	}
 	BOOL DX11Graphics2D::DrawImage(DX11Image2D& image)
