@@ -30,9 +30,6 @@
     <ClInclude Include="NVEncoder.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="NVCodecCommon.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="dynlink_cuda.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -72,6 +69,9 @@
     <ClInclude Include="helper_string.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="NVCodec.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -81,9 +81,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="NVEncoder.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="NVCodecCommon.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="dynlink_cudaD3D9.cpp">
@@ -96,6 +93,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="cudaModuleMgr.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="NVCodec.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

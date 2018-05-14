@@ -142,7 +142,7 @@
     <ClInclude Include="dynlink_nvcuvid.h" />
     <ClInclude Include="helper_cuda_drvapi.h" />
     <ClInclude Include="helper_string.h" />
-    <ClInclude Include="NVCodecCommon.h" />
+    <ClInclude Include="NVCodec.h" />
     <ClInclude Include="NVDecoder.h" />
     <ClInclude Include="nvEncodeAPI.h" />
     <ClInclude Include="NVEncoder.h" />
@@ -155,7 +155,7 @@
     <ClCompile Include="dynlink_cuda.cpp" />
     <ClCompile Include="dynlink_cudaD3D9.cpp" />
     <ClCompile Include="dynlink_nvcuvid.cpp" />
-    <ClCompile Include="NVCodecCommon.cpp" />
+    <ClCompile Include="NVCodec.cpp" />
     <ClCompile Include="NVDecoder.cpp" />
     <ClCompile Include="NVEncoder.cpp" />
     <ClCompile Include="stdafx.cpp">

@@ -1,5 +1,5 @@
 #pragma once
-#include "NVCodecCommon.h"
+#include "NVCodec.h"
 
 namespace NVCodec
 {

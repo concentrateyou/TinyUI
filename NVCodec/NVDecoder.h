@@ -1,8 +1,11 @@
 #pragma once
-#include "NVCodecCommon.h"
+#include "NVCodec.h"
 
 namespace NVCodec
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	class NVDecoder
 	{
 		DISALLOW_COPY_AND_ASSIGN(NVDecoder)
@@ -13,7 +16,10 @@ namespace NVCodec
 		BOOL Decode(Media::SampleTag& tag);
 		void Close();
 	private:
-		//BOOL InitializeD3D9();
+		BOOL InitializeD3D9();
+		static INT CUDAAPI HandleVideoSequence(void *obj, CUVIDEOFORMAT *cuvidfmt);
+		static INT CUDAAPI HandlePictureDecode(void *obj, CUVIDPICPARAMS *cuvidpic);
+		static INT CUDAAPI HandlePictureDisplay(void *obj, CUVIDPARSERDISPINFO *cuviddisp);
 	private:
 		BOOL							m_bInterop;
 		INT								m_deviceID;

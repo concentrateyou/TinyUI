@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "NVCodecCommon.h"
+#include "NVCodec.h"
 
 namespace NVCodec
 {
