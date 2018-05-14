@@ -3,12 +3,17 @@
 
 namespace GLFramework
 {
-	class GLElement2D
+	class GLElement2D :public TinyObject
 	{
-		DISALLOW_COPY_AND_ASSIGN(GLElement2D)
+		DECLARE_DYNAMIC(DX11Element2D)
 	public:
 		GLElement2D();
 		virtual ~GLElement2D();
+	public:
+		TinyString	GetElementName() const;
+		void		SetElementName(const TinyString& name);
+	protected:
+		TinyString	m_szElement;
 	};
 }
 
