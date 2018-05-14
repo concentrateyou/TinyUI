@@ -125,7 +125,7 @@ namespace DXFramework
 		ASSERT(spv1);
 		ID3D11ShaderResourceView* spv2 = textures[1]->GetSRView();
 		ASSERT(spv2);
-		dx11.GetImmediateContext()->PSSetShaderResources(0, 2, &spv1);
-		dx11.GetImmediateContext()->PSSetShaderResources(1, 2, &spv2);
+		dx11.GetImmediateContext()->PSSetShaderResources(0, 1, &spv1);
+		dx11.GetImmediateContext()->PSSetShaderResources(1, 1, &spv2);
 	}
 }

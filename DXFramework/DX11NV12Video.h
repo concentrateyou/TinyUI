@@ -1,12 +1,20 @@
 #pragma once
 #include "DX11Image2D.h"
+#include "IO/TinyIO.h"
 #include "Render/TinyGDI.h"
 using namespace TinyUI;
+using namespace TinyUI::IO;
 
 namespace DXFramework
 {
 	class DX11NV12Video : public DX11ImageElement2D
 	{
+		struct VERTEXTYPE
+		{
+			XMFLOAT3 position;
+			XMFLOAT2 texture;
+			XMFLOAT4 color;
+		};
 		DECLARE_DYNAMIC(DX11NV12Video)
 		DISALLOW_COPY_AND_ASSIGN(DX11NV12Video)
 	public:
@@ -20,10 +28,14 @@ namespace DXFramework
 		DX11Texture2D*	GetTextureY();
 		DX11Texture2D*	GetTextureNV();
 	private:
-		DX11Texture2D	m_stagingY;
-		DX11Texture2D	m_stagingNV;
-		DX11Image2D		m_textureY;
-		DX11Image2D		m_textureNV;
+		BOOL			Initialize(DX11& dx11);
+		BOOL			Calculate(DX11& dx11);
+	private:
+		DX11Texture2D				m_textureY;
+		DX11Texture2D				m_textureNV;
+		VERTEXTYPE					m_vertexTypes[6];
+		TinyComPtr<ID3D11Buffer>	m_vertex;
+		TinyComPtr<ID3D11Buffer>	m_indexs;
 	};
 }
 

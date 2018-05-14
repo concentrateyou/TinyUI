@@ -217,6 +217,8 @@ namespace TinyUI
 			BYTE*	bits;
 			LONG	size;
 			INT		linesize;
+			INT		x;
+			INT		y;
 			INT		cx;
 			INT		cy;
 		}SampleTag;

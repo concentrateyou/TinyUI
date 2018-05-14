@@ -43,49 +43,31 @@ namespace FLVPlayer
 		return bRes;
 	}
 
-	BOOL MVideoRenderTask::OnCopy(BYTE* bits, INT linesize, INT cy)
+	BOOL MVideoRenderTask::OnCopy(SampleTag& tag)
 	{
-		if (bits == NULL || linesize <= 0 || cy <= 0)
+		//const BYTE* pY, UINT strideY, const BYTE* pUV, UINT strideUV
+		BYTE* pY = tag.bits;
+		BYTE* pNV = tag.bits + tag.cy * tag.linesize;
+		if (!m_image.Copy(m_graphics.GetDX11(), pY, tag.linesize, pNV, tag.linesize))
+		{
+			LOG(ERROR) << "[MPreviewController] [OnDraw]" << " Copy FAIL";
 			return FALSE;
-		if (!m_graphics.IsActive())
-		{
-			HRESULT hRes = S_OK;
-			if (m_graphics.GetDX9().CheckReason(D3DERR_DEVICENOTRESET))
-			{
-				if (m_graphics.Reset())
-				{
-					m_image.Destory();
-					if (!m_image.Create(m_graphics.GetDX9(), m_videoSize.cx, m_videoSize.cy, NULL))
-					{
-						LOG(ERROR) << "[MPreviewController] [OnDraw]" << " Create FAIL";
-						return FALSE;
-					}
-				}
-			}
 		}
-		else
+		m_graphics.SetRenderView(NULL);
+		if (!m_graphics.GetRenderView()->BeginDraw())
 		{
-			if (!m_image.Copy(bits, linesize, cy))
-			{
-				LOG(ERROR) << "[MPreviewController] [OnDraw]" << " Copy FAIL";
-				return FALSE;
-			}
-			m_graphics.SetRenderView(NULL);
-			if (!m_graphics.GetRenderView()->BeginDraw())
-			{
-				LOG(ERROR) << "[MPreviewController] [OnDraw]" << "BeginDraw FAIL";
-				return FALSE;
-			}
-			if (!m_graphics.DrawImage(&m_image))
-			{
-				LOG(ERROR) << "[MPreviewController] [OnDraw]" << "DrawImage FAIL";
-				return FALSE;
-			}
-			if (!m_graphics.GetRenderView()->EndDraw())
-			{
-				LOG(ERROR) << "[MPreviewController] [OnDraw]" << "EndDraw FAIL";
-				return FALSE;
-			}
+			LOG(ERROR) << "[MPreviewController] [OnDraw]" << "BeginDraw FAIL";
+			return FALSE;
+		}
+		if (!m_graphics.DrawImageNV12BT601(m_image))
+		{
+			LOG(ERROR) << "[MPreviewController] [OnDraw]" << "DrawImage FAIL";
+			return FALSE;
+		}
+		if (!m_graphics.GetRenderView()->EndDraw())
+		{
+			LOG(ERROR) << "[MPreviewController] [OnDraw]" << "EndDraw FAIL";
+			return FALSE;
 		}
 		return TRUE;
 	}
@@ -108,7 +90,7 @@ namespace FLVPlayer
 			if (!m_bInitialize)
 			{
 				m_videoSize = m_task.GetVideoSize();
-				if (!m_image.Create(m_graphics.GetDX9(), m_videoSize.cx, m_videoSize.cy, NULL))
+				if (!m_image.Create(m_graphics.GetDX11(), m_videoSize.cx, m_videoSize.cy))
 				{
 					LOG(ERROR) << "Image2D Create FAIL";
 					SAFE_DELETE_ARRAY(sampleTag.bits);
@@ -116,10 +98,10 @@ namespace FLVPlayer
 				}
 				RECT s;
 				GetClientRect(m_hWND, &s);
-				m_image.SetScale(D3DXVECTOR2(static_cast<FLOAT>(TO_CX(s)) / m_image.GetSize().x, static_cast<FLOAT>(TO_CY(s)) / m_image.GetSize().y));
+				m_image.SetScale(XMFLOAT2(static_cast<FLOAT>(TO_CX(s)) / m_image.GetSize().x, static_cast<FLOAT>(TO_CY(s)) / m_image.GetSize().y));
 				m_bInitialize = TRUE;
 			}
-			OnCopy(sampleTag.bits, sampleTag.linesize, sampleTag.cy);
+			OnCopy(sampleTag);
 			while (isnan(m_clock.GetClock()));
 			INT delay = static_cast<INT>(sampleTag.samplePTS - m_clock.GetClock());
 			if (timer.Waiting(delay, 100))

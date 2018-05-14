@@ -5,6 +5,11 @@
 #include "DX9Graphics2D.h"
 #include "DX9Image2D.h"
 #include "DX9RenderView.h"
+
+#include "DX11Graphics2D.h"
+#include "DX11NV12Video.h"
+#include "DX11RenderView.h"
+
 using namespace DXFramework;
 using namespace TinyUI;
 
@@ -25,7 +30,7 @@ namespace FLVPlayer
 		BOOL Close(DWORD dwMS) OVERRIDE;
 	private:
 		void OnMessagePump();
-		BOOL OnCopy(BYTE* bits, INT linesize, INT cy);
+		BOOL OnCopy(SampleTag& tag);
 	private:
 		HWND				m_hWND;
 		BOOL				m_bInitialize;
@@ -34,8 +39,10 @@ namespace FLVPlayer
 		TinyMsgQueue&		m_msgqueue;
 		MClock&				m_clock;
 		MVideoTask&			m_task;
-		DX9Graphics2D		m_graphics;
-		DX9Image2D			m_image;
+		DX11Graphics2D		m_graphics;
+		DX11NV12Video		m_image;
+		/*	DX9Graphics2D		m_graphics;
+			DX9Image2D			m_image;*/
 		TinyPerformanceTime m_timeQPC;
 	};
 }

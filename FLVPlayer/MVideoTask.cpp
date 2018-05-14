@@ -5,8 +5,6 @@
 
 namespace FLVPlayer
 {
-
-
 	MVideoTask::MVideoTask(MFLVTask& task, MClock& clock, TinyMsgQueue& queue)
 		:m_task(task),
 		m_clock(clock),
@@ -149,10 +147,12 @@ namespace FLVPlayer
 						io_gpu_memcpy(sampleTag.bits, surface1->Data.B, sampleTag.size);
 						m_videoQueue.Push(sampleTag);
 					}*/
-					sampleTag.cx = m_size.cx;
-					sampleTag.cy = m_size.cy;
-					sampleTag.linesize = (m_size.cx * 32 + 31) / 32 * 4;
-					sampleTag.size = sampleTag.cy * sampleTag.linesize;
+					sampleTag.x = surface1->Info.CropX;
+					sampleTag.y = surface1->Info.CropY;
+					sampleTag.cx = surface1->Info.Width;
+					sampleTag.cy = surface1->Info.Height;
+					sampleTag.linesize = surface1->Data.Pitch;
+					sampleTag.size = sampleTag.linesize * sampleTag.cy * 3 / 2;
 					sampleTag.bits = new BYTE[sampleTag.size];
 					if (!sampleTag.bits)
 					{
@@ -161,7 +161,8 @@ namespace FLVPlayer
 					}
 					else
 					{
-						libyuv::NV12ToARGB(surface1->Data.Y, surface1->Data.Pitch, surface1->Data.UV, surface1->Data.Pitch, (BYTE*)sampleTag.bits, sampleTag.linesize, m_size.cx, m_size.cy);
+						memcpy(sampleTag.bits, surface1->Data.Y, sampleTag.size);
+						//libyuv::NV12ToARGB(surface1->Data.Y, surface1->Data.Pitch, surface1->Data.UV, surface1->Data.Pitch, (BYTE*)sampleTag.bits, sampleTag.linesize, m_size.cx, m_size.cy);
 						m_videoQueue.Push(sampleTag);
 					}
 				}
