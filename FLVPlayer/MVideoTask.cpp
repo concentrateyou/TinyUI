@@ -135,7 +135,6 @@ namespace FLVPlayer
 							fwrite(surface1->Data.UV + (surface1->Info.CropY * surface1->Data.Pitch / 2 + surface1->Info.CropX) + i * surface1->Data.Pitch + j, 1, 1, m_hFile);
 						}
 					}*/
-
 					/*sampleTag.linesize = surface1->Data.Pitch;
 					sampleTag.cy = surface1->Info.CropH;
 					sampleTag.size = surface1->Info.CropH * surface1->Data.Pitch;

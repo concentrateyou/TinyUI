@@ -114,6 +114,9 @@ namespace FLVPlayer
 					SAFE_DELETE_ARRAY(sampleTag.bits);
 					break;
 				}
+				RECT s;
+				GetClientRect(m_hWND, &s);
+				m_image.SetScale(D3DXVECTOR2(static_cast<FLOAT>(TO_CX(s)) / m_image.GetSize().x, static_cast<FLOAT>(TO_CY(s)) / m_image.GetSize().y));
 				m_bInitialize = TRUE;
 			}
 			OnCopy(sampleTag.bits, sampleTag.linesize, sampleTag.cy);
