@@ -140,6 +140,7 @@
     <ClInclude Include="GLElement2D.h" />
     <ClInclude Include="GLFramework.h" />
     <ClInclude Include="GLRenderView.h" />
+    <ClInclude Include="GLShader.h" />
     <ClInclude Include="GLTexture2D.h" />
     <ClInclude Include="GLTextureShader.h" />
     <ClInclude Include="stdafx.h" />
@@ -151,6 +152,7 @@
     <ClCompile Include="GLElement2D.cpp" />
     <ClCompile Include="GLFramework.cpp" />
     <ClCompile Include="GLRenderView.cpp" />
+    <ClCompile Include="GLShader.cpp" />
     <ClCompile Include="GLTexture2D.cpp" />
     <ClCompile Include="GLTextureShader.cpp" />
     <ClCompile Include="stdafx.cpp">

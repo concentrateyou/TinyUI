@@ -5,7 +5,7 @@ namespace GLFramework
 {
 	class GLElement2D :public TinyObject
 	{
-		DECLARE_DYNAMIC(DX11Element2D)
+		DECLARE_DYNAMIC(GLElement2D)
 	public:
 		GLElement2D();
 		virtual ~GLElement2D();

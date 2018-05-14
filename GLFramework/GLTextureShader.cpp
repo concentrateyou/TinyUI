@@ -10,4 +10,15 @@ namespace GLFramework
 	GLTextureShader::~GLTextureShader()
 	{
 	}
+
+	BOOL GLTextureShader::Initialize(GL& gl, const CHAR* vsFile, const CHAR* psFile)
+	{
+		return FALSE;
+	}
+
+	void GLTextureShader::Render(GL& gl)
+	{
+		
+	}
+
 }
