@@ -139,6 +139,9 @@
     <ClInclude Include="GLCamera.h" />
     <ClInclude Include="GLElement2D.h" />
     <ClInclude Include="GLFramework.h" />
+    <ClInclude Include="GLGraphics2D.h" />
+    <ClInclude Include="GLImage2D.h" />
+    <ClInclude Include="GLImageElement2D.h" />
     <ClInclude Include="GLRenderView.h" />
     <ClInclude Include="GLShader.h" />
     <ClInclude Include="GLTexture2D.h" />
@@ -151,6 +154,9 @@
     <ClCompile Include="GLCamera.cpp" />
     <ClCompile Include="GLElement2D.cpp" />
     <ClCompile Include="GLFramework.cpp" />
+    <ClCompile Include="GLGraphics2D.cpp" />
+    <ClCompile Include="GLImage2D.cpp" />
+    <ClCompile Include="GLImageElement2D.cpp" />
     <ClCompile Include="GLRenderView.cpp" />
     <ClCompile Include="GLShader.cpp" />
     <ClCompile Include="GLTexture2D.cpp" />

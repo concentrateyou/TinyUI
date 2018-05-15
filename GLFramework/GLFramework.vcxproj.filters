@@ -48,6 +48,15 @@
     <ClInclude Include="GLShader.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="GLGraphics2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GLImage2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GLImageElement2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -75,6 +84,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="GLShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GLGraphics2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GLImage2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GLImageElement2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
