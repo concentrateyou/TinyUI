@@ -9,8 +9,9 @@ namespace GLFramework
 	{
 		struct VERTEXTYPE
 		{
-			FLOAT x, y, z;
-			FLOAT r, g, b;
+			XMFLOAT3 position;
+			XMFLOAT2 texture;
+			XMFLOAT4 color;
 		};
 		DECLARE_DYNAMIC(GLImage2D)
 		DISALLOW_COPY_AND_ASSIGN(GLImage2D)
@@ -21,11 +22,14 @@ namespace GLFramework
 		BOOL Create(GL& gl, INT cx, INT cy, const BYTE* bits) OVERRIDE;
 		BOOL Load(GL& gl, const BYTE* bits, LONG size) OVERRIDE;
 		BOOL Load(GL& gl, const CHAR* pzFile) OVERRIDE;
-		void Destory() OVERRIDE;
+		void Destory(GL& gl) OVERRIDE;
 	private:
 		BOOL Initialize(GL& gl);
 	private:
 		VERTEXTYPE		m_vertexTypes[6];
 		UINT			m_indices[6];
+		GLuint			m_vertexArrayID;
+		GLuint			m_vertexID;
+		GLuint			m_indexID;
 	};
 }

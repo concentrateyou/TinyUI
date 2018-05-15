@@ -7,6 +7,7 @@ namespace GLFramework
 	GLTexture2D::GLTexture2D()
 		:m_textureID(0)
 	{
+		
 	}
 
 	GLTexture2D::~GLTexture2D()
@@ -50,12 +51,20 @@ namespace GLFramework
 		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, m_image.GetSize().cx, m_image.GetSize().cy, GL_RGBA, GL_UNSIGNED_BYTE, m_image.GetBits());
 		return TRUE;
 	}
-	void GLTexture2D::Destory()
+	void GLTexture2D::Destory(GL& gl)
 	{
 		if (m_textureID != 0)
 		{
 			glDeleteTextures(1, &m_textureID);
 			m_textureID = 0;
 		}
+	}
+	GLTexture2D::operator GLuint() const
+	{
+		return m_textureID;
+	}
+	GLuint	GLTexture2D::GetTexture2D() const
+	{
+		return m_textureID;
 	}
 }

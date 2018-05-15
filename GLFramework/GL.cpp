@@ -76,6 +76,9 @@ namespace GLFramework
 
 	BOOL GL::GetExtensions()
 	{
+		glGetError = (PFNGLGETERRORPROC)wglGetProcAddress("glGetError");
+		if (!glGetError)
+			return FALSE;
 		wglChoosePixelFormatARB = (PFNWGLCHOOSEPIXELFORMATARBPROC)wglGetProcAddress("wglChoosePixelFormatARB");
 		if (!wglChoosePixelFormatARB)
 			return FALSE;

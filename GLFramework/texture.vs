@@ -3,19 +3,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 #version 400
 
-
 /////////////////////
 // INPUT VARIABLES //
 /////////////////////
 in vec3 inputPosition;
 in vec2 inputTexCoord;
-
+in vec4 inputColor;
 
 //////////////////////
 // OUTPUT VARIABLES //
 //////////////////////
 out vec2 texCoord;
-
+out vec4 color;  
 
 ///////////////////////
 // UNIFORM VARIABLES //
@@ -23,7 +22,6 @@ out vec2 texCoord;
 uniform mat4 worldMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Vertex Shader
@@ -35,4 +33,5 @@ void main(void)
 	gl_Position = projectionMatrix * gl_Position;
 
 	texCoord = inputTexCoord;
+	color = inputColor;
 }

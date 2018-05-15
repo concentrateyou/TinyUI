@@ -8,6 +8,7 @@
 // INPUT VARIABLES //
 /////////////////////
 in vec2 texCoord;
+in vec4 color;
 
 
 //////////////////////
@@ -31,5 +32,5 @@ void main(void)
 
 	textureColor = texture(shaderTexture, texCoord);
 
-	outputColor = textureColor;
+	outputColor = textureColor * color;
 }
