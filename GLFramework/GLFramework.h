@@ -18,6 +18,8 @@ using namespace std;
 
 #ifndef D3DX_PI
 #define	D3DX_PI	(3.14159265358979323846)
-#endif 
+#endif        
 
-typedef GLenum(WINAPI * PFNGLGETERRORPROC)();
+#define glClearErrors() while(glGetError());
+
+BOOL GLSuccess();

@@ -13,6 +13,7 @@ namespace GLFramework
 	public:
 		BOOL	Initialize(HWND hWND, const TinySize& size);	
 	private:
+		GL				m_gl;
 		GLCamera		m_camera;
 		GLTextureShader	m_textureShader;
 	};

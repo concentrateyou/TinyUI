@@ -19,15 +19,20 @@ namespace GLFramework
 		TinyFile sFile;
 		if (!sFile.Open((LPCTSTR)vsFile))
 			return FALSE;
+		glClearErrors();
 		LONGLONG size = sFile.GetSize() + 1;
 		TinyScopedArray<CHAR> bits(new CHAR[size]);
 		if (!bits)
 			return FALSE;
 		DWORD dwCount = sFile.Read(bits, size - 1);
-		ASSERT(dwCount != (size - 1));
+		ASSERT(dwCount == (size - 1));
 		bits[dwCount] = '\0';
 		m_vertexShader = glCreateShader(GL_VERTEX_SHADER);
+		if (!GLSuccess() || !m_vertexShader)
+			return FALSE;
 		glShaderSource(m_vertexShader, 1, (const GLchar**)&bits, NULL);
+		if (!GLSuccess())
+			return FALSE;
 		if (!sFile.Open((LPCTSTR)psFile))
 			return FALSE;
 		size = sFile.GetSize() + 1;
@@ -35,12 +40,20 @@ namespace GLFramework
 		if (!bits)
 			return FALSE;
 		dwCount = sFile.Read(bits, size - 1);
-		ASSERT(dwCount != (size - 1));
+		ASSERT(dwCount == (size - 1));
 		bits[dwCount] = '\0';
 		m_fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+		if (!GLSuccess() || !m_fragmentShader)
+			return FALSE;
 		glShaderSource(m_fragmentShader, 1, (const GLchar**)&bits, NULL);
+		if (!GLSuccess())
+			return FALSE;
 		glCompileShader(m_vertexShader);
+		if (!GLSuccess())
+			return FALSE;
 		glCompileShader(m_fragmentShader);
+		if (!GLSuccess())
+			return FALSE;
 		INT status = 0;
 		glGetShaderiv(m_vertexShader, GL_COMPILE_STATUS, &status);
 		if (status != 1)
@@ -65,13 +78,26 @@ namespace GLFramework
 			return FALSE;
 		}
 		m_shaderID = glCreateProgram();
-		ASSERT(m_shaderID);
+		if (!GLSuccess() || !m_shaderID)
+			return FALSE;
 		glAttachShader(m_shaderID, m_vertexShader);
+		if (!GLSuccess())
+			return FALSE;
 		glAttachShader(m_shaderID, m_fragmentShader);
-		glBindAttribLocation(m_shaderID, 0, "inputPosition");
-		glBindAttribLocation(m_shaderID, 1, "inputTexCoord");
-		glBindAttribLocation(m_shaderID, 2, "inputColor");
+		if (!GLSuccess())
+			return FALSE;
+		glBindAttribLocation(m_shaderID, 0, "v_position");
+		if (!GLSuccess())
+			return FALSE;
+		glBindAttribLocation(m_shaderID, 1, "v_texCoord");
+		if (!GLSuccess())
+			return FALSE;
+		glBindAttribLocation(m_shaderID, 2, "v_color");
+		if (!GLSuccess())
+			return FALSE;
 		glLinkProgram(m_shaderID);
+		if (!GLSuccess())
+			return FALSE;
 		glGetProgramiv(m_shaderID, GL_LINK_STATUS, &status);
 		if (status != 1)
 		{
@@ -84,6 +110,9 @@ namespace GLFramework
 			return FALSE;
 		}
 		glUseProgram(m_shaderID);
+		if (!GLSuccess())
+			return FALSE;
+		glClearErrors();
 		return TRUE;
 	}
 

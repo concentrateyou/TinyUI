@@ -171,8 +171,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="texture.ps" />
-    <None Include="texture.vs" />
+    <None Include="gltexture.ps" />
+    <None Include="gltexture.vs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TinyUI\TinyUI.vcxproj">

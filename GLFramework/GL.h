@@ -24,7 +24,7 @@ namespace GLFramework
 		void		SetMatrixs(const TinySize& size);
 		XMMATRIX*	GetMatrixs();
 	private:
-		BOOL		InitializeExtensions();
+		BOOL		LoadWGL();
 	private:
 		HDC					m_hDC;
 		HWND				m_hWND;

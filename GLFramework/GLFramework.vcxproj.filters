@@ -103,10 +103,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="texture.ps">
+    <None Include="gltexture.ps">
       <Filter>资源文件</Filter>
     </None>
-    <None Include="texture.vs">
+    <None Include="gltexture.vs">
       <Filter>资源文件</Filter>
     </None>
   </ItemGroup>

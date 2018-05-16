@@ -9,7 +9,7 @@ namespace GLFramework
 		m_context(NULL),
 		m_render2D(NULL)
 	{
-		
+
 	}
 
 	GL::~GL()
@@ -39,7 +39,7 @@ namespace GLFramework
 		return m_context;
 	}
 
-	BOOL GL::InitializeExtensions()
+	BOOL GL::LoadWGL()
 	{
 		HGLRC context = NULL;
 		BOOL bRes = TRUE;
@@ -96,7 +96,7 @@ namespace GLFramework
 
 	BOOL GL::Initialize(HWND hWND, INT cx, INT cy)
 	{
-		if (!InitializeExtensions())
+		if (!LoadWGL())
 			return FALSE;
 		const INT attribs[] = {
 			WGL_DRAW_TO_WINDOW_ARB,
@@ -147,6 +147,8 @@ namespace GLFramework
 		if (!m_context)
 			goto _ERROR;
 		if (!wglMakeCurrent(m_hDC, m_context))
+			goto _ERROR;
+		if (!gladLoadGL())
 			goto _ERROR;
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_DEPTH_TEST);
