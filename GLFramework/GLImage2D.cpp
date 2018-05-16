@@ -21,26 +21,26 @@ namespace GLFramework
 
 	BOOL GLImage2D::Initialize(GL& gl)
 	{
-		gl.glGenVertexArrays(1, &m_vertexArrayID);
-		gl.glBindVertexArray(m_vertexArrayID);
-		gl.glGenBuffers(1, &m_vertexID);
-		gl.glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
-		gl.glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(VERTEXTYPE), m_vertexTypes, GL_STATIC_DRAW);
-		gl.glEnableVertexAttribArray(0);
-		gl.glEnableVertexAttribArray(1);
-		gl.glEnableVertexAttribArray(2);
-		gl.glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
-		gl.glVertexAttribPointer(0, 3, GL_FLOAT, FALSE, sizeof(VERTEXTYPE), 0);
-		gl.glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
-		gl.glVertexAttribPointer(1, 2, GL_FLOAT, FALSE, sizeof(VERTEXTYPE), (BYTE*)NULL + (3 * sizeof(FLOAT)));
-		gl.glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
-		gl.glVertexAttribPointer(2, 4, GL_FLOAT, FALSE, sizeof(VERTEXTYPE), (BYTE*)NULL + (5 * sizeof(FLOAT)));
+		glGenVertexArrays(1, &m_vertexArrayID);
+		glBindVertexArray(m_vertexArrayID);
+		glGenBuffers(1, &m_vertexID);
+		glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
+		glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(VERTEXTYPE), m_vertexTypes, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
+		glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
+		glVertexAttribPointer(0, 3, GL_FLOAT, FALSE, sizeof(VERTEXTYPE), 0);
+		glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
+		glVertexAttribPointer(1, 2, GL_FLOAT, FALSE, sizeof(VERTEXTYPE), (BYTE*)NULL + (3 * sizeof(FLOAT)));
+		glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
+		glVertexAttribPointer(2, 4, GL_FLOAT, FALSE, sizeof(VERTEXTYPE), (BYTE*)NULL + (5 * sizeof(FLOAT)));
 		return TRUE;
 	}
 
 	BOOL GLImage2D::Create(GL& gl, INT cx, INT cy, const BYTE* bits)
 	{
-		Destory(gl);
+		Destory();
 		if (!Initialize(gl))
 			return FALSE;
 		if (!GLTexture2D::Create(gl, cx, cy, bits))
@@ -52,7 +52,7 @@ namespace GLFramework
 
 	BOOL GLImage2D::Load(GL& gl, const BYTE* bits, LONG size)
 	{
-		Destory(gl);
+		Destory();
 		if (!Initialize(gl))
 			return FALSE;
 		if (!GLTexture2D::Load(gl, bits, size))
@@ -64,7 +64,7 @@ namespace GLFramework
 
 	BOOL GLImage2D::Load(GL& gl, const CHAR* pzFile)
 	{
-		Destory(gl);
+		Destory();
 		if (!Initialize(gl))
 			return FALSE;
 		if (!GLTexture2D::Load(gl, pzFile))
@@ -74,16 +74,16 @@ namespace GLFramework
 		return TRUE;
 	}
 
-	void GLImage2D::Destory(GL& gl)
+	void GLImage2D::Destory()
 	{
-		gl.glDisableVertexAttribArray(0);
-		gl.glDisableVertexAttribArray(1);
-		gl.glBindBuffer(GL_ARRAY_BUFFER, 0);
-		gl.glDeleteBuffers(1, &m_vertexID);
-		gl.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		gl.glDeleteBuffers(1, &m_indexID);
-		gl.glBindVertexArray(0);
-		gl.glDeleteVertexArrays(1, &m_vertexArrayID);
-		Destory(gl);
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glDeleteBuffers(1, &m_vertexID);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		glDeleteBuffers(1, &m_indexID);
+		glBindVertexArray(0);
+		glDeleteVertexArrays(1, &m_vertexArrayID);
+		Destory();
 	}
 }

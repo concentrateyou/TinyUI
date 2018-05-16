@@ -9,42 +9,7 @@ namespace GLFramework
 		m_context(NULL),
 		m_render2D(NULL)
 	{
-		wglChoosePixelFormatARB = NULL;
-		wglCreateContextAttribsARB = NULL;
-		wglSwapIntervalEXT = NULL;
-		glAttachShader = NULL;
-		glBindBuffer = NULL;
-		glBindVertexArray = NULL;
-		glBufferData = NULL;
-		glCompileShader = NULL;
-		glCreateProgram = NULL;
-		glCreateShader = NULL;
-		glDeleteBuffers = NULL;
-		glDeleteProgram = NULL;
-		glDeleteShader = NULL;
-		glDeleteVertexArrays = NULL;
-		glDetachShader = NULL;
-		glEnableVertexAttribArray = NULL;
-		glGenBuffers = NULL;
-		glGenVertexArrays = NULL;
-		glGetAttribLocation = NULL;
-		glGetProgramInfoLog = NULL;
-		glGetProgramiv = NULL;
-		glGetShaderInfoLog = NULL;
-		glGetShaderiv = NULL;
-		glLinkProgram = NULL;
-		glShaderSource = NULL;
-		glUseProgram = NULL;
-		glVertexAttribPointer = NULL;
-		glBindAttribLocation = NULL;
-		glGetUniformLocation = NULL;
-		glUniformMatrix4fv = NULL;
-		glActiveTexture = NULL;
-		glUniform1i = NULL;
-		glGenerateMipmap = NULL;
-		glDisableVertexAttribArray = NULL;
-		glUniform3fv = NULL;
-		glUniform4fv = NULL;
+		
 	}
 
 	GL::~GL()
@@ -74,129 +39,13 @@ namespace GLFramework
 		return m_context;
 	}
 
-	BOOL GL::GetExtensions()
-	{
-		glGetError = (PFNGLGETERRORPROC)wglGetProcAddress("glGetError");
-		if (!glGetError)
-			return FALSE;
-		wglChoosePixelFormatARB = (PFNWGLCHOOSEPIXELFORMATARBPROC)wglGetProcAddress("wglChoosePixelFormatARB");
-		if (!wglChoosePixelFormatARB)
-			return FALSE;
-		wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB");
-		if (!wglCreateContextAttribsARB)
-			return FALSE;
-		wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC)wglGetProcAddress("wglSwapIntervalEXT");
-		if (!wglSwapIntervalEXT)
-			return FALSE;
-		glAttachShader = (PFNGLATTACHSHADERPROC)wglGetProcAddress("glAttachShader");
-		if (!glAttachShader)
-			return FALSE;
-		glBindBuffer = (PFNGLBINDBUFFERPROC)wglGetProcAddress("glBindBuffer");
-		if (!glBindBuffer)
-			return FALSE;
-		glBindVertexArray = (PFNGLBINDVERTEXARRAYPROC)wglGetProcAddress("glBindVertexArray");
-		if (!glBindVertexArray)
-			return FALSE;
-		glBufferData = (PFNGLBUFFERDATAPROC)wglGetProcAddress("glBufferData");
-		if (!glBufferData)
-			return FALSE;
-		glCompileShader = (PFNGLCOMPILESHADERPROC)wglGetProcAddress("glCompileShader");
-		if (!glCompileShader)
-			return FALSE;
-		glCreateProgram = (PFNGLCREATEPROGRAMPROC)wglGetProcAddress("glCreateProgram");
-		if (!glCreateProgram)
-			return FALSE;
-		glCreateShader = (PFNGLCREATESHADERPROC)wglGetProcAddress("glCreateShader");
-		if (!glCreateShader)
-			return FALSE;
-		glDeleteBuffers = (PFNGLDELETEBUFFERSPROC)wglGetProcAddress("glDeleteBuffers");
-		if (!glDeleteBuffers)
-			return FALSE;
-		glDeleteProgram = (PFNGLDELETEPROGRAMPROC)wglGetProcAddress("glDeleteProgram");
-		if (!glDeleteProgram)
-			return FALSE;
-		glDeleteShader = (PFNGLDELETESHADERPROC)wglGetProcAddress("glDeleteShader");
-		if (!glDeleteShader)
-			return FALSE;
-		glDeleteVertexArrays = (PFNGLDELETEVERTEXARRAYSPROC)wglGetProcAddress("glDeleteVertexArrays");
-		if (!glDeleteVertexArrays)
-			return FALSE;
-		glDetachShader = (PFNGLDETACHSHADERPROC)wglGetProcAddress("glDetachShader");
-		if (!glDetachShader)
-			return FALSE;
-		glEnableVertexAttribArray = (PFNGLENABLEVERTEXATTRIBARRAYPROC)wglGetProcAddress("glEnableVertexAttribArray");
-		if (!glEnableVertexAttribArray)
-			return FALSE;
-		glGenBuffers = (PFNGLGENBUFFERSPROC)wglGetProcAddress("glGenBuffers");
-		if (!glGenBuffers)
-			return FALSE;
-		glGenVertexArrays = (PFNGLGENVERTEXARRAYSPROC)wglGetProcAddress("glGenVertexArrays");
-		if (!glGenVertexArrays)
-			return FALSE;
-		glGetAttribLocation = (PFNGLGETATTRIBLOCATIONPROC)wglGetProcAddress("glGetAttribLocation");
-		if (!glGetAttribLocation)
-			return FALSE;
-		glGetProgramInfoLog = (PFNGLGETPROGRAMINFOLOGPROC)wglGetProcAddress("glGetProgramInfoLog");
-		if (!glGetProgramInfoLog)
-			return FALSE;
-		glGetProgramiv = (PFNGLGETPROGRAMIVPROC)wglGetProcAddress("glGetProgramiv");
-		if (!glGetProgramiv)
-			return FALSE;
-		glGetShaderInfoLog = (PFNGLGETSHADERINFOLOGPROC)wglGetProcAddress("glGetShaderInfoLog");
-		if (!glGetShaderInfoLog)
-			return FALSE;
-		glGetShaderiv = (PFNGLGETSHADERIVPROC)wglGetProcAddress("glGetShaderiv");
-		if (!glGetShaderiv)
-			return FALSE;
-		glLinkProgram = (PFNGLLINKPROGRAMPROC)wglGetProcAddress("glLinkProgram");
-		if (!glLinkProgram)
-			return FALSE;
-		glShaderSource = (PFNGLSHADERSOURCEPROC)wglGetProcAddress("glShaderSource");
-		if (!glShaderSource)
-			return FALSE;
-		glUseProgram = (PFNGLUSEPROGRAMPROC)wglGetProcAddress("glUseProgram");
-		if (!glUseProgram)
-			return FALSE;
-		glVertexAttribPointer = (PFNGLVERTEXATTRIBPOINTERPROC)wglGetProcAddress("glVertexAttribPointer");
-		if (!glVertexAttribPointer)
-			return FALSE;
-		glBindAttribLocation = (PFNGLBINDATTRIBLOCATIONPROC)wglGetProcAddress("glBindAttribLocation");
-		if (!glBindAttribLocation)
-			return FALSE;
-		glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC)wglGetProcAddress("glGetUniformLocation");
-		if (!glGetUniformLocation)
-			return FALSE;
-		glUniformMatrix4fv = (PFNGLUNIFORMMATRIX4FVPROC)wglGetProcAddress("glUniformMatrix4fv");
-		if (!glUniformMatrix4fv)
-			return FALSE;
-		glActiveTexture = (PFNGLACTIVETEXTUREPROC)wglGetProcAddress("glActiveTexture");
-		if (!glActiveTexture)
-			return FALSE;
-		glUniform1i = (PFNGLUNIFORM1IPROC)wglGetProcAddress("glUniform1i");
-		if (!glUniform1i)
-			return FALSE;
-		glGenerateMipmap = (PFNGLGENERATEMIPMAPPROC)wglGetProcAddress("glGenerateMipmap");
-		if (!glGenerateMipmap)
-			return FALSE;
-		glDisableVertexAttribArray = (PFNGLDISABLEVERTEXATTRIBARRAYPROC)wglGetProcAddress("glDisableVertexAttribArray");
-		if (!glDisableVertexAttribArray)
-			return FALSE;
-		glUniform3fv = (PFNGLUNIFORM3FVPROC)wglGetProcAddress("glUniform3fv");
-		if (!glUniform3fv)
-			return FALSE;
-		glUniform4fv = (PFNGLUNIFORM4FVPROC)wglGetProcAddress("glUniform4fv");
-		if (!glUniform4fv)
-			return FALSE;
-		return TRUE;
-	}
-
 	BOOL GL::InitializeExtensions()
 	{
+		HGLRC context = NULL;
 		BOOL bRes = TRUE;
 		TinyWindow window;
 		if (!window.Create(NULL, 0, 0, 1, 1))
 			return FALSE;
-		HGLRC context = NULL;
 		TinyClientDC dc(window.Handle());
 		PIXELFORMATDESCRIPTOR sPFD;
 		ZeroMemory(&sPFD, sizeof(sPFD));
@@ -229,7 +78,7 @@ namespace GLFramework
 			bRes = FALSE;
 			goto _ERROR;
 		}
-		if (!GetExtensions())
+		if (!gladLoadWGL(dc))
 		{
 			bRes = FALSE;
 			goto _ERROR;
@@ -310,17 +159,7 @@ namespace GLFramework
 		m_hWND = hWND;
 		return TRUE;
 	_ERROR:
-		wglMakeCurrent(NULL, NULL);
-		if (m_context != NULL)
-		{
-			wglDeleteContext(m_context);
-			m_context = NULL;
-		}
-		if (m_hDC != NULL)
-		{
-			::ReleaseDC(m_hWND, m_hDC);
-			m_hDC = NULL;
-		}
+		Uninitialize();
 		return FALSE;
 	}
 

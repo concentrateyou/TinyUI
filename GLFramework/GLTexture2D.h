@@ -18,7 +18,7 @@ namespace GLFramework
 		virtual BOOL Create(GL& gl, INT cx, INT cy, const BYTE* bits);
 		virtual BOOL Load(GL& gl, const BYTE* bits, LONG size);
 		virtual BOOL Load(GL& gl, const CHAR* pzFile);
-		virtual void Destory(GL& gl);
+		virtual void Destory();
 	public:
 		operator GLuint() const;
 		GLuint	GetTexture2D() const;

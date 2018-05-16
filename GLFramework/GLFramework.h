@@ -5,11 +5,9 @@
 #include "Common/TinyLogging.h"
 #include "Common/TinyObject.h"
 #include "Control/TinyControl.h"
-#include "GL/glew.h"
-#include "GL/wglew.h"
+#include "glad/glad.h"
+#include "glad/glad_wgl.h"
 #include <DirectXMath.h>
-#pragma comment(lib, "opengl32.lib")
-#pragma comment(lib,"Glu32.lib")
 using namespace DirectX;
 using namespace TinyUI;
 using namespace std;

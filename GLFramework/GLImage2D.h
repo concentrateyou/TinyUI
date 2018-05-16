@@ -22,7 +22,7 @@ namespace GLFramework
 		BOOL Create(GL& gl, INT cx, INT cy, const BYTE* bits) OVERRIDE;
 		BOOL Load(GL& gl, const BYTE* bits, LONG size) OVERRIDE;
 		BOOL Load(GL& gl, const CHAR* pzFile) OVERRIDE;
-		void Destory(GL& gl) OVERRIDE;
+		void Destory() OVERRIDE;
 	private:
 		BOOL Initialize(GL& gl);
 	private:
