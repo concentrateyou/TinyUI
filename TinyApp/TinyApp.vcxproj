@@ -92,15 +92,15 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_WIN32_WINNT=0x0601;WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\TinySmiley;$(BOOSTDIR);..\DShowCapture;..\MFCapture;$(INTELMEDIASDKROOT)\include;$(PROTOBUF_DIR)\include;$(DXSDK_DIR)\Include;..\DXFramework;..\GLFramework;..\Decode;..\LAVPlayer;..\ThirdParty\ffmpeg\include;..\ThirdParty\libfaad\include;..\ThirdParty\vld;..\ThirdParty\mpg123\include;..\ThirdParty\zlib\include;..\ThirdParty\librtmp\include;..\ThirdParty\opengl\include;..\ThirdParty\lav\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\TinySmiley;$(BOOSTDIR);..\DShowCapture;..\MFCapture;$(INTELMEDIASDKROOT)\include;$(PROTOBUF_DIR)\include;$(DXSDK_DIR)\Include;..\DXFramework;..\GLFramework;..\Decode;..\LAVPlayer;..\ThirdParty\ffmpeg\include;..\ThirdParty\libfaad\include;..\ThirdParty\vld;..\ThirdParty\mpg123\include;..\ThirdParty\zlib\include;..\ThirdParty\librtmp\include;..\ThirdParty\lav\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib\x86;$(INTELMEDIASDKROOT)\lib\$(Platform);$(PROTOBUF_DIR)\lib;..\Debug;..\ThirdParty\mpg123\lib\x86;..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\libfaac\lib\x86;..\ThirdParty\x264\libs\32bit;..\ThirdParty\librtmp\lib\x86;..\ThirdParty\libfaad\lib\x86;..\ThirdParty\jsoncpp\lib\x86;..\ThirdParty\sqlite;..\ThirdParty\zlib\lib;..\ThirdParty\opengl\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>TinyUI.lib;DXFramework.lib;DShowCapture.lib;Decode.lib;Encode.lib;libmfx.lib;dxva2.lib;dwmapi.lib;d3d9.lib;d3d11.lib;dxgi.lib;D2D1.lib;jsoncpp.lib;zlib.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib\x86;$(INTELMEDIASDKROOT)\lib\$(Platform);$(PROTOBUF_DIR)\lib;..\Debug;..\ThirdParty\mpg123\lib\x86;..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\libfaac\lib\x86;..\ThirdParty\x264\libs\32bit;..\ThirdParty\librtmp\lib\x86;..\ThirdParty\libfaad\lib\x86;..\ThirdParty\jsoncpp\lib\x86;..\ThirdParty\sqlite;..\ThirdParty\zlib\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>TinyUI.lib;DXFramework.lib;DShowCapture.lib;Decode.lib;Encode.lib;libmfx.lib;dxva2.lib;dwmapi.lib;d3d9.lib;d3d11.lib;dxgi.lib;D2D1.lib;jsoncpp.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <ProjectReference>

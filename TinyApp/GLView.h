@@ -14,6 +14,7 @@
 #include "DX11Rectangle2D.h"
 #include "DX11RenderView.h"
 #include "DX11Graphics2D.h"
+#include "DX11NV12Video.h"
 using namespace LAV;
 using namespace DXFramework;
 
@@ -41,7 +42,7 @@ public:
 	LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 private:
 	DX11Graphics2D		m_graphics;
-	DX11ImageNV12BT601	m_image2D;
+	DX11NV12Video		m_image2D;
 	//DX11Image2D		m_image2D;
 	//DX11Line2D		m_line2D;
 	//DX11Rectangle2D	m_rectangle2D;

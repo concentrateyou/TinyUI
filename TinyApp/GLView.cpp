@@ -75,7 +75,7 @@ LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 	//m_rectangle2D.Create(m_graphics.GetDX11());
 
 	//m_graphics.DrawRectangle(m_rectangle2D, points, 4, XMFLOAT4(1.0F, 0.0F, 0.0F, 1.0F));
-	m_graphics.DrawImage(m_image2D);
+	m_graphics.DrawImageNV12BT601(m_image2D);
 
 	m_graphics.GetRenderView()->EndDraw();
 	m_graphics.Present();

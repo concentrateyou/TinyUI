@@ -8,6 +8,7 @@
 #include "glad/glad.h"
 #include "glad/glad_wgl.h"
 #include <DirectXMath.h>
+#pragma comment(lib,"Opengl32.lib")
 using namespace DirectX;
 using namespace TinyUI;
 using namespace std;

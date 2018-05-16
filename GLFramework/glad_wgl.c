@@ -1,5 +1,5 @@
 #include <string.h>
-#include <glad/glad_wgl.h>
+#include "glad/glad_wgl.h"
 
 static void* get_proc(const char *namez);
 
