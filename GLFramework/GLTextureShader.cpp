@@ -1,7 +1,5 @@
 #include "stdafx.h"
 #include "GLTextureShader.h"
-#include "IO/TinyIO.h"
-using namespace TinyUI::IO;
 
 namespace GLFramework
 {

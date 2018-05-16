@@ -29,7 +29,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -83,7 +83,7 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalDependencies>TinyUI.lib;</AdditionalDependencies>
+      <AdditionalDependencies>TinyUI.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\TinyUI;..\Debug</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
@@ -173,6 +173,11 @@
   <ItemGroup>
     <None Include="texture.ps" />
     <None Include="texture.vs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TinyUI\TinyUI.vcxproj">
+      <Project>{58903be2-bb4f-4983-b8b7-905d2db5393d}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

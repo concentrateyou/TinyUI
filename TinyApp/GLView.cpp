@@ -51,8 +51,13 @@ BOOL GLView::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
 LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
+
+
 	TinyRectangle s;
 	GetClientRect(&s);
+
+	m_graphicsGL.Initialize(m_hWND, s.Size());
+
 	m_graphics.Initialize(m_hWND, s.Size());
 	m_graphics.SetRenderView(NULL);
 	m_graphics.GetRenderView()->BeginDraw();
