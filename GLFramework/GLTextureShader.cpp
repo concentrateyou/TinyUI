@@ -116,7 +116,7 @@ namespace GLFramework
 		return TRUE;
 	}
 
-	BOOL GLTextureShader::SetShaderParameters(GL& gl, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix)
+	BOOL GLTextureShader::SetShaderParameters(GL& gl, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, const GLint& textureID)
 	{
 		GLuint lRes = glGetUniformLocation(m_shaderID, "worldMatrix");
 		if (lRes == -1)
@@ -183,6 +183,10 @@ namespace GLFramework
 		matrix[14] = view._43;
 		matrix[15] = view._44;
 		glUniformMatrix4fv(lRes, 1, FALSE, matrix);
+		lRes = glGetUniformLocation(m_shaderID, "shaderTexture");
+		if (lRes == -1)
+			return FALSE;
+		glUniform1i(lRes, textureID);
 		return TRUE;
 	}
 
