@@ -17,10 +17,12 @@
 #include "DX11NV12Video.h"
 
 #include "GLGraphics2D.h"
+#include "GLImage2D.h"
 
 using namespace LAV;
 using namespace DXFramework;
 using namespace GLFramework;
+
 
 
 class GLView : public TinyControl
@@ -45,10 +47,19 @@ public:
 	LRESULT OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 private:
+	void OnTimer();
+	static HHOOK g_hhk;
+	static LRESULT CALLBACK MouseFilterHook(INT code, WPARAM wParam, LPARAM lParam);
+
+private:
 	DX11Graphics2D		m_graphics;
 	DX11NV12Video		m_image2D;
 
 	GLGraphics2D		m_graphicsGL;
+	GLImage2D			m_imageGL;
+
+	//TinyTimer			m_timer;
+
 
 	//DX11Image2D		m_image2D;
 	//DX11Line2D		m_line2D;

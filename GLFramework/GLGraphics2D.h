@@ -12,6 +12,7 @@ namespace GLFramework
 		~GLGraphics2D();
 	public:
 		BOOL	Initialize(HWND hWND, const TinySize& size);	
+		GL&		GetGL();
 	private:
 		GL				m_gl;
 		GLCamera		m_camera;

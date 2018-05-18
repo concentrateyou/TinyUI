@@ -20,40 +20,34 @@ namespace GLFramework
 		if (!sFile.Open((LPCTSTR)vsFile))
 			return FALSE;
 		glClearErrors();
-		LONGLONG size = sFile.GetSize() + 1;
+		UINT size = static_cast<UINT>(sFile.GetSize() + 1);
 		TinyScopedArray<CHAR> bits(new CHAR[size]);
 		if (!bits)
 			return FALSE;
-		DWORD dwCount = sFile.Read(bits, size - 1);
-		ASSERT(dwCount == (size - 1));
-		bits[dwCount] = '\0';
+		UINT count = static_cast<UINT>(sFile.Read(bits, size - 1));
+		ASSERT(count == (size - 1));
+		bits[count] = '\0';
 		m_vertexShader = glCreateShader(GL_VERTEX_SHADER);
-		if (!GLSuccess() || !m_vertexShader)
-			return FALSE;
+		GL_CHECK_ERROR(FALSE);
 		glShaderSource(m_vertexShader, 1, (const GLchar**)&bits, NULL);
-		if (!GLSuccess())
-			return FALSE;
+		GL_CHECK_ERROR(FALSE);
 		if (!sFile.Open((LPCTSTR)psFile))
 			return FALSE;
-		size = sFile.GetSize() + 1;
+		size = static_cast<UINT>(sFile.GetSize() + 1);
 		bits.Reset(new CHAR[size]);
 		if (!bits)
 			return FALSE;
-		dwCount = sFile.Read(bits, size - 1);
-		ASSERT(dwCount == (size - 1));
-		bits[dwCount] = '\0';
+		count = sFile.Read(bits, size - 1);
+		ASSERT(count == (size - 1));
+		bits[count] = '\0';
 		m_fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-		if (!GLSuccess() || !m_fragmentShader)
-			return FALSE;
+		GL_CHECK_ERROR(FALSE);
 		glShaderSource(m_fragmentShader, 1, (const GLchar**)&bits, NULL);
-		if (!GLSuccess())
-			return FALSE;
+		GL_CHECK_ERROR(FALSE);
 		glCompileShader(m_vertexShader);
-		if (!GLSuccess())
-			return FALSE;
+		GL_CHECK_ERROR(FALSE);
 		glCompileShader(m_fragmentShader);
-		if (!GLSuccess())
-			return FALSE;
+		GL_CHECK_ERROR(FALSE);
 		INT status = 0;
 		glGetShaderiv(m_vertexShader, GL_COMPILE_STATUS, &status);
 		if (status != 1)
@@ -78,26 +72,19 @@ namespace GLFramework
 			return FALSE;
 		}
 		m_shaderID = glCreateProgram();
-		if (!GLSuccess() || !m_shaderID)
-			return FALSE;
+		GL_CHECK_ERROR(FALSE);
 		glAttachShader(m_shaderID, m_vertexShader);
-		if (!GLSuccess())
-			return FALSE;
+		GL_CHECK_ERROR(FALSE);
 		glAttachShader(m_shaderID, m_fragmentShader);
-		if (!GLSuccess())
-			return FALSE;
+		GL_CHECK_ERROR(FALSE);
 		glBindAttribLocation(m_shaderID, 0, "v_position");
-		if (!GLSuccess())
-			return FALSE;
+		GL_CHECK_ERROR(FALSE);
 		glBindAttribLocation(m_shaderID, 1, "v_texCoord");
-		if (!GLSuccess())
-			return FALSE;
+		GL_CHECK_ERROR(FALSE);
 		glBindAttribLocation(m_shaderID, 2, "v_color");
-		if (!GLSuccess())
-			return FALSE;
+		GL_CHECK_ERROR(FALSE);
 		glLinkProgram(m_shaderID);
-		if (!GLSuccess())
-			return FALSE;
+		GL_CHECK_ERROR(FALSE);
 		glGetProgramiv(m_shaderID, GL_LINK_STATUS, &status);
 		if (status != 1)
 		{
@@ -110,8 +97,7 @@ namespace GLFramework
 			return FALSE;
 		}
 		glUseProgram(m_shaderID);
-		if (!GLSuccess())
-			return FALSE;
+		GL_CHECK_ERROR(FALSE);
 		glClearErrors();
 		return TRUE;
 	}
@@ -187,11 +173,13 @@ namespace GLFramework
 		if (lRes == -1)
 			return FALSE;
 		glUniform1i(lRes, textureID);
+		GL_CHECK_ERROR(FALSE);
 		return TRUE;
 	}
 
 	void GLTextureShader::Render(GL& gl)
 	{
-
+		UNUSED(gl);
+		//TODO
 	}
 }

@@ -10,7 +10,10 @@ namespace GLFramework
 	GLGraphics2D::~GLGraphics2D()
 	{
 	}
-
+	GL&	GLGraphics2D::GetGL()
+	{
+		return m_gl;
+	}
 	BOOL GLGraphics2D::Initialize(HWND hWND, const TinySize& size)
 	{
 		if (!m_gl.Initialize(hWND, size.cx, size.cy))
