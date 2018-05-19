@@ -21,6 +21,7 @@ namespace GLFramework
 		virtual void Destory();
 	public:
 		operator GLuint() const;
+		BOOL	IsEmpty() const;
 		GLuint	GetTexture2D() const;
 	protected:
 		GLuint		m_textureID;

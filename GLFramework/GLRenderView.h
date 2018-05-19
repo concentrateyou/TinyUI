@@ -11,7 +11,7 @@ namespace GLFramework
 		~GLRenderView();
 		GL&			GetGL();
 		BOOL		Create(INT cx, INT cy);
-		BOOL		Resize(INT cx, INT cy);
+		void		Resize(INT cx, INT cy);
 		void		Destory();
 		BOOL		BeginDraw();
 		BOOL		EndDraw();

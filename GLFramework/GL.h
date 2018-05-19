@@ -21,6 +21,7 @@ namespace GLFramework
 	public:
 		BOOL		Initialize(HWND hWND, INT cx, INT cy);
 		void		Uninitialize();
+		void		Resize(INT cx = 0, INT cy = 0);
 		void		SetMatrixs(const TinySize& size);
 		XMMATRIX*	GetMatrixs();
 	private:

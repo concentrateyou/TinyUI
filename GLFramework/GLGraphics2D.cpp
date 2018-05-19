@@ -29,8 +29,34 @@ namespace GLFramework
 		ASSERT(PathFileExists(ps.c_str()));
 		if (!m_textureShader.Initialize(m_gl, vs.c_str(), ps.c_str()))
 			return FALSE;
-
 		m_camera.SetPosition(0.0F, 0.0F, -10.0F);
+		m_camera.UpdatePosition();
+		return TRUE;
+	}
+
+	BOOL GLGraphics2D::BeginDraw()
+	{
+		glClearColor(0.0F, 0.0F, 0.0F, 1.0F);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		return TRUE;
+	}
+	BOOL GLGraphics2D::EndDraw()
+	{
+		return TRUE;
+	}
+	BOOL GLGraphics2D::Present()
+	{
+		return SwapBuffers(m_gl.GetDC());
+	}
+	BOOL GLGraphics2D::DrawImage(GLImage2D& image)
+	{
+		if (image.IsEmpty())
+			return FALSE;
+		if (!image.DrawImage(m_gl))
+			return FALSE;
+		XMMATRIX* ms = m_gl.GetMatrixs();
+		m_textureShader.SetShaderParameters(m_gl, ms[1], m_camera.GetView(), ms[2], image.GetTexture2D());
+		m_textureShader.Render(m_gl);
 		return TRUE;
 	}
 }

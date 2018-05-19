@@ -41,18 +41,22 @@ namespace GLFramework
 		GL_CHECK_ERROR(FALSE);
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, cx, cy);
 		GL_CHECK_ERROR(FALSE);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBuffers);
+		glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBuffers);
 		GL_CHECK_ERROR(FALSE);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_textureID, 0);
 		GL_CHECK_ERROR(FALSE);
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			return FALSE;
+
 		GLenum drawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
 		glDrawBuffers(1, drawBuffers);
 		GL_CHECK_ERROR(FALSE);
+		glClearErrors();
 		return TRUE;
 	}
-	BOOL GLRenderView::Resize(INT cx, INT cy)
+	void GLRenderView::Resize(INT cx, INT cy)
 	{
-		return TRUE;
+		m_gl.Resize(cx, cy);
 	}
 	void GLRenderView::Destory()
 	{
@@ -60,6 +64,7 @@ namespace GLFramework
 		{
 			glDeleteRenderbuffers(1, &m_depthBuffers);
 		}
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		if (glIsTexture(m_textureID))
@@ -69,8 +74,8 @@ namespace GLFramework
 		if (glIsFramebuffer(m_frameBuffers))
 		{
 			glDeleteFramebuffers(1, &m_frameBuffers);
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 	BOOL GLRenderView::BeginDraw()
 	{

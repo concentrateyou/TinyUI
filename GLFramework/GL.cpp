@@ -150,13 +150,14 @@ namespace GLFramework
 			goto _ERROR;
 		if (!gladLoadGL())
 			goto _ERROR;
+		Resize(cx, cy);
+		glDisable(GL_FOG);
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		glClearDepth(1.0F);
 		glFrontFace(GL_CW);
 		glCullFace(GL_BACK);
-		SetMatrixs(TinySize(cx, cy));
 		wglSwapIntervalEXT(0);//关闭垂直同步
 		m_hWND = hWND;
 		return TRUE;
@@ -179,6 +180,11 @@ namespace GLFramework
 			m_hDC = NULL;
 			m_hWND = NULL;
 		}
+	}
+	void GL::Resize(INT cx, INT cy)
+	{
+		glViewport(0, 0, cx, cy);
+		SetMatrixs(TinySize(cx, cy));
 	}
 	void GL::SetMatrixs(const TinySize& size)
 	{

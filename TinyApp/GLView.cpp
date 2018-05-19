@@ -54,9 +54,13 @@ LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 {
 	bHandled = FALSE;
 
+	TinyRectangle s;
+	GetClientRect(&s);
 	m_graphicsGL.Initialize(m_hWND, s.Size());
-	m_imageGL.Load(m_graphicsGL.GetGL());
-
+	m_imageGL.Load(m_graphicsGL.GetGL(), "D:\\timg.jpg");
+	m_graphicsGL.BeginDraw();
+	m_graphicsGL.DrawImage(m_imageGL);
+	m_graphicsGL.EndDraw();
 	//HWND hWND = (HWND)0x023606CA;
 	//LONG style = GetWindowLong(hWND, GWL_EXSTYLE);//过滤阴影窗口
 	//SetWindowLong(hWND, GWL_EXSTYLE, WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_TRANSPARENT | style);//任务栏不显示
@@ -133,7 +137,8 @@ LRESULT GLView::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
 	//m_graphics.Present();
-	m_graphics.Present();
+	m_graphicsGL.Present();
+	//m_graphics.Present();
 	return FALSE;
 }
 
@@ -173,7 +178,7 @@ void GLView::OnTimer()
 	POINT pos;
 	::GetCursorPos(&pos);
 	if (::PtInRect(&s, pos))
-	{	
+	{
 		HWND hWND_1 = (HWND)0x01E401FA;
 		::ScreenToClient(hWND_1, &pos);
 		if (KEYDOWN(VK_LBUTTON))

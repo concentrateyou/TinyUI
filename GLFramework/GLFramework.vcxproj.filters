@@ -63,13 +63,13 @@
     <ClInclude Include="GLImageElement2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="KHR\khrplatform.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="glad\glad.h">
       <Filter>头文件\glad</Filter>
     </ClInclude>
     <ClInclude Include="glad\glad_wgl.h">
+      <Filter>头文件\glad</Filter>
+    </ClInclude>
+    <ClInclude Include="KHR\khrplatform.h">
       <Filter>头文件\glad</Filter>
     </ClInclude>
   </ItemGroup>

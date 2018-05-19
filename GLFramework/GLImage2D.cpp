@@ -126,10 +126,12 @@ namespace GLFramework
 
 	BOOL GLImage2D::DrawImage(GL& gl)
 	{
+		glClearErrors();
 		glBindVertexArray(m_vertexArrayID);
 		GL_CHECK_ERROR(FALSE);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		GL_CHECK_ERROR(FALSE);
+		glClearErrors();
 		return TRUE;
 	}
 

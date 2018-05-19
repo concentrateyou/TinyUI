@@ -5,7 +5,7 @@
 namespace GLFramework
 {
 	GLTexture2D::GLTexture2D()
-		:m_textureID(0)
+		:m_textureID(NULL)
 	{
 
 	}
@@ -53,13 +53,13 @@ namespace GLFramework
 	}
 	void GLTexture2D::Destory()
 	{
-		if (m_textureID != 0)
+		if (m_textureID != NULL)
 		{
 			if (glIsTexture(m_textureID))
 			{
 				glDeleteTextures(1, &m_textureID);
 			}
-			m_textureID = 0;
+			m_textureID = NULL;
 		}
 	}
 	GLTexture2D::operator GLuint() const
@@ -69,5 +69,9 @@ namespace GLFramework
 	GLuint	GLTexture2D::GetTexture2D() const
 	{
 		return m_textureID;
+	}
+	BOOL GLTexture2D::IsEmpty() const
+	{
+		return m_textureID == NULL;
 	}
 }
