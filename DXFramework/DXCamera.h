@@ -11,7 +11,7 @@ namespace DXFramework
 		~DXCamera();
 		void SetPosition(FLOAT, FLOAT, FLOAT);
 		void SetRotation(FLOAT, FLOAT, FLOAT);
-		void UpdatePosition();
+		void UpdateMatrix();
 		XMFLOAT3 GetPosition();
 		XMFLOAT3 GetRotation();
 		XMMATRIX GetView();

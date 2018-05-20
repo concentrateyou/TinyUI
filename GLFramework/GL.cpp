@@ -348,11 +348,17 @@ namespace GLFramework
 		if (!GetAPI().wglSwapIntervalEXT(0))
 			goto _ERROR;
 		glClearDepth(1.0F);
-		glEnable(GL_TEXTURE_2D);
+		GLenum myerror = glGetError();
+		//glEnable(GL_TEXTURE_2D);
+		//myerror = glGetError();
 		glEnable(GL_DEPTH_TEST); 
+		myerror = glGetError();
 		glFrontFace(GL_CW);
+		myerror = glGetError();
 		glEnable(GL_CULL_FACE);
+		myerror = glGetError();
 		glCullFace(GL_BACK);
+		myerror = glGetError();
 		SetMatrixs(TinySize(cx, cy));
 		return TRUE;
 	_ERROR:

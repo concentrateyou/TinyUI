@@ -48,7 +48,7 @@ namespace DXFramework
 			return FALSE;
 
 		m_camera.SetPosition(0.0F, 0.0F, -10.0F);
-		m_camera.UpdatePosition();
+		m_camera.UpdateMatrix();
 		return TRUE;
 	}
 

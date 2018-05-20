@@ -19,8 +19,7 @@ using namespace std;
 #define	D3DX_PI	(3.14159265358979323846)
 #endif        
 #define glClearErrors() while(glGetError());
-//#define GL_CHECK_ERROR(ERR)  {if(glGetError() != GL_NO_ERROR) return ERR;}
-#define GL_CHECK_ERROR(ERR)  {}
+#define GL_CHECK_ERROR(ERR)  {if(glGetError() != GL_NO_ERROR) return ERR;}
 
 #define WGL_DRAW_TO_WINDOW_ARB         0x2001
 #define WGL_ACCELERATION_ARB           0x2003

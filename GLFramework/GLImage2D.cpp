@@ -35,27 +35,44 @@ namespace GLFramework
 		m_vertexTypes[3].texture = XMFLOAT2(m_bFlipH ? 0.0F : 1.0F, m_bFlipV ? 0.0F : 1.0F);
 		m_vertexTypes[3].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
 		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
+		GLenum myerror = glGetError();
 		GL::GetAPI().glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(VERTEXTYPE), m_vertexTypes, GL_STATIC_DRAW);
+		myerror = glGetError();
 		return TRUE;
 	}
 	BOOL GLImage2D::Initialize(GL& gl)
 	{
 		VERTEXTYPE vertexTypes[4];
 		ZeroMemory(vertexTypes, (sizeof(VERTEXTYPE) * 4));
+		GLenum myerror = glGetError();
 		GL::GetAPI().glGenVertexArrays(1, &m_vertexArrayID);
+		myerror = glGetError();
 		GL::GetAPI().glBindVertexArray(m_vertexArrayID);
+		myerror = glGetError();
 		GL::GetAPI().glGenBuffers(1, &m_vertexID);
+		myerror = glGetError();
 		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
+		myerror = glGetError();
 		GL::GetAPI().glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(VERTEXTYPE), vertexTypes, GL_STATIC_DRAW);
+		myerror = glGetError();
 		GL::GetAPI().glEnableVertexAttribArray(0);
+		myerror = glGetError();
 		GL::GetAPI().glEnableVertexAttribArray(1);
+		myerror = glGetError();
 		GL::GetAPI().glEnableVertexAttribArray(2);
+		myerror = glGetError();
 		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
+		myerror = glGetError();
 		GL::GetAPI().glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(VERTEXTYPE), NULL);
+		myerror = glGetError();
 		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
+		myerror = glGetError();
 		GL::GetAPI().glVertexAttribPointer(1, 2, GL_FLOAT, FALSE, sizeof(VERTEXTYPE), (BYTE*)NULL + (3 * sizeof(FLOAT)));
+		myerror = glGetError();
 		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
+		myerror = glGetError();
 		GL::GetAPI().glVertexAttribPointer(2, 4, GL_FLOAT, FALSE, sizeof(VERTEXTYPE), (BYTE*)NULL + (5 * sizeof(FLOAT)));
+		myerror = glGetError();
 		m_indices[0] = 0;
 		m_indices[1] = 1;
 		m_indices[2] = 3;
@@ -63,8 +80,11 @@ namespace GLFramework
 		m_indices[4] = 2;
 		m_indices[5] = 3;
 		GL::GetAPI().glGenBuffers(1, &m_indexID);
+		myerror = glGetError();
 		GL::GetAPI().glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexID);
+		myerror = glGetError();
 		GL::GetAPI().glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(UINT), m_indices, GL_STATIC_DRAW);
+		myerror = glGetError();
 		return TRUE;
 	}
 
@@ -109,7 +129,9 @@ namespace GLFramework
 		if (!Calculate(gl))
 			return FALSE;
 		GL::GetAPI().glBindVertexArray(m_vertexArrayID);
+		GLenum myerror = glGetError();
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		myerror = glGetError();
 		return TRUE;
 	}
 

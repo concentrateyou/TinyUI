@@ -35,7 +35,7 @@ namespace GLFramework
 	{
 		return XMFLOAT3(m_rotationX, m_rotationY, m_rotationZ);
 	}
-	void GLCamera::UpdatePosition()
+	void GLCamera::UpdateMatrix()
 	{
 		XMFLOAT3 up;
 		XMFLOAT3 position;

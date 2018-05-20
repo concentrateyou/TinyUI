@@ -12,11 +12,11 @@ namespace GLFramework
 
 	GLTextureShader::~GLTextureShader()
 	{
-		GL.GetAPI().glDetachShader(m_shaderID, m_vertexShader);
-		GL.GetAPI().glDetachShader(m_shaderID, m_fragmentShader);
-		GL.GetAPI().glDeleteShader(m_vertexShader);
-		GL.GetAPI().glDeleteShader(m_fragmentShader);
-		GL.GetAPI().glDeleteProgram(m_shaderID);
+		GL::GetAPI().glDetachShader(m_shaderID, m_vertexShader);
+		GL::GetAPI().glDetachShader(m_shaderID, m_fragmentShader);
+		GL::GetAPI().glDeleteShader(m_vertexShader);
+		GL::GetAPI().glDeleteShader(m_fragmentShader);
+		GL::GetAPI().glDeleteProgram(m_shaderID);
 	}
 
 	BOOL GLTextureShader::Initialize(GL& gl, const CHAR* vsFile, const CHAR* psFile)
@@ -34,8 +34,11 @@ namespace GLFramework
 		sFile.Close();
 		bits[count] = '\0';
 		m_vertexShader = GL::GetAPI().glCreateShader(GL_VERTEX_SHADER);
+		GLenum myerror = glGetError();
 		GL::GetAPI().glShaderSource(m_vertexShader, 1, (const CHAR**)&bits, NULL);
+		myerror = glGetError();
 		GL::GetAPI().glCompileShader(m_vertexShader);
+		myerror = glGetError();
 		INT status = 0;
 		GL::GetAPI().glGetShaderiv(m_vertexShader, GL_COMPILE_STATUS, &status);
 		if (status != 1)
@@ -46,7 +49,6 @@ namespace GLFramework
 			TinyScopedArray<CHAR> log(new CHAR[logsize]);
 			GL::GetAPI().glGetShaderInfoLog(m_vertexShader, logsize, NULL, log);
 			LOG(ERROR) << "glCompileShader: " << vsFile << " Error:" << log;
-
 		}
 		//PS
 		if (!sFile.Open((LPCTSTR)psFile))
@@ -60,8 +62,11 @@ namespace GLFramework
 		sFile.Close();
 		bits[count] = '\0';
 		m_fragmentShader = GL::GetAPI().glCreateShader(GL_FRAGMENT_SHADER);
+		myerror = glGetError();
 		GL::GetAPI().glShaderSource(m_fragmentShader, 1, (const CHAR**)&bits, NULL);
+		myerror = glGetError();
 		GL::GetAPI().glCompileShader(m_fragmentShader);
+		myerror = glGetError();
 		GL::GetAPI().glGetShaderiv(m_fragmentShader, GL_COMPILE_STATUS, &status);
 		if (status != 1)
 		{
@@ -74,12 +79,19 @@ namespace GLFramework
 			return FALSE;
 		}
 		m_shaderID = GL::GetAPI().glCreateProgram();
+		myerror = glGetError();
 		GL::GetAPI().glAttachShader(m_shaderID, m_vertexShader);
+		myerror = glGetError();
 		GL::GetAPI().glAttachShader(m_shaderID, m_fragmentShader);
+		myerror = glGetError();
 		GL::GetAPI().glBindAttribLocation(m_shaderID, 0, "v_position");
+		myerror = glGetError();
 		GL::GetAPI().glBindAttribLocation(m_shaderID, 1, "v_texCoord");
+		myerror = glGetError();
 		GL::GetAPI().glBindAttribLocation(m_shaderID, 2, "v_color");
+		myerror = glGetError();
 		GL::GetAPI().glLinkProgram(m_shaderID);
+		myerror = glGetError();
 		GL::GetAPI().glGetProgramiv(m_shaderID, GL_LINK_STATUS, &status);
 		if (status != 1)
 		{
@@ -178,5 +190,7 @@ namespace GLFramework
 	{
 		UNUSED(gl);
 		GL::GetAPI().glUseProgram(m_shaderID);
+		GLenum myerror = glGetError();
+		INT a = 0;
 	}
 }
