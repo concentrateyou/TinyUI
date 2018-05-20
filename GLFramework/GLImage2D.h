@@ -13,6 +13,7 @@ namespace GLFramework
 			XMFLOAT2 texture;
 			XMFLOAT4 color;
 		};
+		DECLARE_DYNAMIC(GLImage2D)
 		DISALLOW_COPY_AND_ASSIGN(GLImage2D)
 	public:
 		GLImage2D();

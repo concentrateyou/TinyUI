@@ -1,16 +1,16 @@
 #include "stdafx.h"
-#include "GLTextureShader.h"
+#include "GLColorShader.h"
 
 namespace GLFramework
 {
-	GLTextureShader::GLTextureShader()
+	GLColorShader::GLColorShader()
 		:m_vertexShader(NULL),
 		m_fragmentShader(NULL),
 		m_shaderID(NULL)
 	{
 	}
 
-	GLTextureShader::~GLTextureShader()
+	GLColorShader::~GLColorShader()
 	{
 		GL::GetAPI().glDetachShader(m_shaderID, m_vertexShader);
 		GL::GetAPI().glDetachShader(m_shaderID, m_fragmentShader);
@@ -19,7 +19,7 @@ namespace GLFramework
 		GL::GetAPI().glDeleteProgram(m_shaderID);
 	}
 
-	BOOL GLTextureShader::Initialize(GL& gl, const CHAR* vsFile, const CHAR* psFile)
+	BOOL GLColorShader::Initialize(GL& gl, const CHAR* vsFile, const CHAR* psFile)
 	{
 		TinyFile sFile;
 		if (!sFile.Open((LPCTSTR)vsFile))
@@ -95,12 +95,12 @@ namespace GLFramework
 		GL_CHECK_ERROR(FALSE);
 		return TRUE;
 	}
-	void GLTextureShader::Render(GL& gl)
+	void GLColorShader::Render(GL& gl)
 	{
 		UNUSED(gl);
 		GL::GetAPI().glUseProgram(m_shaderID);
 	}
-	BOOL GLTextureShader::SetShaderParameters(GL& gl, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix)
+	BOOL GLColorShader::SetShaderParameters(GL& gl, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix)
 	{
 		FLOAT matrix[16];
 		XMFLOAT4X4 view;

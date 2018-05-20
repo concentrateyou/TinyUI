@@ -59,18 +59,16 @@ namespace GLFramework
 	{
 		if (m_textureID != NULL)
 		{
-			if (glIsTexture(m_textureID))
-			{
-				glDeleteTextures(1, &m_textureID);
-			}
+			glDeleteTextures(1, &m_textureID);
 		}
 		m_textureID = NULL;
+		m_image.Close();
 	}
 	GLTexture2D::operator GLuint() const
 	{
 		return m_textureID;
 	}
-	GLuint	GLTexture2D::GetTexture2D() const
+	GLuint	GLTexture2D::GetID() const
 	{
 		return m_textureID;
 	}

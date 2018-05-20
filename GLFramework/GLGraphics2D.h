@@ -14,6 +14,7 @@ namespace GLFramework
 	public:
 		GL&		GetGL();
 		BOOL	Initialize(HWND hWND, INT cx, INT cy);
+		void	Resize(INT cx, INT cy);
 		BOOL	BeginDraw();
 		BOOL	EndDraw();
 		BOOL	DrawImage(GLImage2D& image);

@@ -54,6 +54,9 @@
     <ClInclude Include="GLShader.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="GLColorShader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -89,12 +92,21 @@
     <ClCompile Include="GLShader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="GLColorShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="gltexture.ps">
       <Filter>资源文件</Filter>
     </None>
     <None Include="gltexture.vs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="glcolor.ps">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="glcolor.vs">
       <Filter>资源文件</Filter>
     </None>
   </ItemGroup>

@@ -136,6 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLCamera.h" />
+    <ClInclude Include="GLColorShader.h" />
     <ClInclude Include="GLElement2D.h" />
     <ClInclude Include="GLFramework.h" />
     <ClInclude Include="GLGraphics2D.h" />
@@ -150,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GLCamera.cpp" />
+    <ClCompile Include="GLColorShader.cpp" />
     <ClCompile Include="GLElement2D.cpp" />
     <ClCompile Include="GLFramework.cpp" />
     <ClCompile Include="GLGraphics2D.cpp" />
@@ -167,6 +169,8 @@
     <ClCompile Include="GLTextureShader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="glcolor.ps" />
+    <None Include="glcolor.vs" />
     <None Include="gltexture.ps" />
     <None Include="gltexture.vs" />
   </ItemGroup>

@@ -343,6 +343,15 @@ namespace GLFramework
 		PIXELFORMATDESCRIPTOR sPFD;
 		ZeroMemory(&sPFD, sizeof(sPFD));
 		sPFD.nSize = sizeof(sPFD);
+		sPFD.dwFlags = (PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER);
+		sPFD.iLayerType = PFD_MAIN_PLANE;
+		sPFD.iPixelType = PFD_TYPE_RGBA;
+		sPFD.cColorBits = 32;
+		sPFD.iLayerType = PFD_MAIN_PLANE;
+		sPFD.iPixelType = PFD_TYPE_RGBA;
+		sPFD.cAlphaBits = 8;
+		sPFD.cDepthBits = 24;
+		sPFD.cStencilBits = 8;
 		m_hWND = hWND;
 		m_hDC = ::GetDC(m_hWND);
 		if (!m_hDC)
@@ -357,9 +366,11 @@ namespace GLFramework
 		if (!wglMakeCurrent(m_hDC, m_context))
 			goto _ERROR;
 		glClearDepth(1.0F);
+		glEnable(GL_BLEND);
+		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_DEPTH_TEST);
-		glFrontFace(GL_CW);
 		glEnable(GL_CULL_FACE);
+		glFrontFace(GL_CW);
 		glCullFace(GL_BACK);
 		Resize(cx, cy);
 		GetAPI().wglSwapIntervalEXT(0);//关闭垂直同步
@@ -387,8 +398,13 @@ namespace GLFramework
 	}
 	void GL::Resize(INT cx, INT cy)
 	{
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
 		glViewport(0, 0, cx, cy);
 		SetMatrixs(TinySize(cx, cy));
+		glClearErrors();
 	}
 	void GL::SetMatrixs(const TinySize& size)
 	{

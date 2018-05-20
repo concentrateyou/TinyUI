@@ -55,13 +55,22 @@ LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 	bHandled = FALSE;
 	TinyRectangle s;
 	GetClientRect(&s);
-
 	m_graphics.Initialize(m_hWND, s.Width(), s.Height());
 	m_image.Load(m_graphics.GetGL(), "D:\\timg.jpg");
 	m_graphics.BeginDraw();
 	m_graphics.DrawImage(m_image);
 	m_graphics.EndDraw();
 
+	return FALSE;
+}
+
+LRESULT GLView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	bHandled = FALSE;
+	m_graphics.Resize(LOWORD(lParam), HIWORD(lParam));
+	m_graphics.BeginDraw();
+	m_graphics.DrawImage(m_image);
+	m_graphics.EndDraw();
 	return FALSE;
 }
 

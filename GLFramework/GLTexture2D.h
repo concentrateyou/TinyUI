@@ -4,7 +4,7 @@
 
 namespace GLFramework
 {
-	class GLTexture2D : public GLElement2D
+	class GLTexture2D
 	{
 		DISALLOW_COPY_AND_ASSIGN(GLTexture2D)
 	public:
@@ -17,7 +17,7 @@ namespace GLFramework
 	public:
 		operator GLuint() const;
 		BOOL	IsEmpty() const;
-		GLuint	GetTexture2D() const;
+		GLuint	GetID() const;
 	protected:
 		GLuint		m_textureID;
 		TinyImage	m_image;
