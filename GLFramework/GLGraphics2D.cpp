@@ -18,8 +18,6 @@ namespace GLFramework
 	{
 		if (!m_gl.Initialize(hWND, cx, cy))
 			return FALSE;
-		m_camera.SetPosition(0.0F, 0.0F, -10.0F);
-		m_camera.UpdateView();
 		string str;
 		str.resize(MAX_PATH);
 		GetModuleFileName(NULL, &str[0], MAX_PATH);
@@ -30,6 +28,8 @@ namespace GLFramework
 		ASSERT(PathFileExists(ps.c_str()));
 		if (!m_textureShader.Initialize(m_gl, vs.c_str(), ps.c_str()))
 			return FALSE;
+		m_camera.SetPosition(0.0F, 0.0F, -10.0F);
+		m_camera.UpdateView();
 		return TRUE;
 	}
 

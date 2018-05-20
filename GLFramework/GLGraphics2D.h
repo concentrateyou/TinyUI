@@ -11,9 +11,9 @@ namespace GLFramework
 	public:
 		GLGraphics2D();
 		~GLGraphics2D();
-		BOOL	Initialize(HWND hWND, INT cx, INT cy);
 	public:
 		GL&		GetGL();
+		BOOL	Initialize(HWND hWND, INT cx, INT cy);
 		BOOL	BeginDraw();
 		BOOL	EndDraw();
 		BOOL	DrawImage(GLImage2D& image);

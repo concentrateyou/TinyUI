@@ -301,7 +301,10 @@ namespace GLFramework
 	{
 		return m_context;
 	}
-
+	TinySize GL::GetSize() const
+	{
+		return m_size;
+	}
 	BOOL GL::Initialize(HWND hWND, INT cx, INT cy)
 	{
 		if (!GetAPI().LoadAPI())
@@ -360,7 +363,6 @@ namespace GLFramework
 		glCullFace(GL_BACK);
 		Resize(cx, cy);
 		GetAPI().wglSwapIntervalEXT(0);//关闭垂直同步
-		m_hWND = hWND;
 		return TRUE;
 	_ERROR:
 		Uninitialize();
@@ -378,9 +380,10 @@ namespace GLFramework
 		if (m_hDC != NULL && m_hWND != NULL)
 		{
 			ReleaseDC(m_hWND, m_hDC);
-			m_hDC = NULL;
-			m_hWND = NULL;
 		}
+		m_hDC = NULL;
+		m_hWND = NULL;
+		m_size.cx = m_size.cy = 0;
 	}
 	void GL::Resize(INT cx, INT cy)
 	{
@@ -389,6 +392,7 @@ namespace GLFramework
 	}
 	void GL::SetMatrixs(const TinySize& size)
 	{
+		m_size = size;
 		FLOAT fov = (FLOAT)D3DX_PI / 4.0F;
 		FLOAT aspect = (FLOAT)size.cx / (FLOAT)size.cy;
 		m_matrixs[0] = XMMatrixPerspectiveFovLH(fov, aspect, 1000.0F, 0.1F);//projection

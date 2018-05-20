@@ -64,7 +64,8 @@ namespace GLFramework
 	BOOL GLImage2D::Initialize(GL& gl)
 	{
 		UNUSED(gl);
-		VERTEXTYPE vertices[4];
+		VERTEXTYPE vertexTypes[4];
+		ZeroMemory(vertexTypes, (sizeof(VERTEXTYPE) * 4));
 		GLuint indices[6];
 		indices[0] = 0;
 		indices[1] = 1;
@@ -76,7 +77,7 @@ namespace GLFramework
 		GL::GetAPI().glBindVertexArray(m_vertexArrayID);
 		GL::GetAPI().glGenBuffers(1, &m_vertexID);
 		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
-		GL::GetAPI().glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(VERTEXTYPE), vertices, GL_STATIC_DRAW);
+		GL::GetAPI().glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(VERTEXTYPE), vertexTypes, GL_STATIC_DRAW);
 		GL::GetAPI().glEnableVertexAttribArray(0);
 		GL::GetAPI().glEnableVertexAttribArray(1);
 		GL::GetAPI().glEnableVertexAttribArray(2);
@@ -94,20 +95,27 @@ namespace GLFramework
 
 	BOOL GLImage2D::Calculate(GL& gl)
 	{
-		FLOAT val = 150.0F;
 		VERTEXTYPE vertices[4];
-		vertices[0].position = XMFLOAT3(-1.0f * val, -1.0f * val, 0.0F);
-		vertices[0].texture = XMFLOAT2(0.0F, 1.0F);
+		vertices[0].position = XMFLOAT3(-1.0f * (m_size.x / 2), -1.0f * (m_size.y / 2), 0.0F);
+		vertices[0].texture = XMFLOAT2(m_bFlipH ? 1.0F : 0.0F, m_bFlipV ? 0.0F : 1.0F);
 		vertices[0].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
-		vertices[1].position = XMFLOAT3(-1.0f * val, 1.0f * val, 0.0F);
-		vertices[1].texture = XMFLOAT2(0.0F, 0.0F);
+		vertices[1].position = XMFLOAT3(-1.0f * (m_size.x / 2), 1.0f *  (m_size.y / 2), 0.0F);
+		vertices[1].texture = XMFLOAT2(m_bFlipH ? 1.0F : 0.0F, m_bFlipV ? 1.0F : 0.0F);
 		vertices[1].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
-		vertices[2].position = XMFLOAT3(1.0f * val, 1.0f * val, 0.0F);
-		vertices[2].texture = XMFLOAT2(1.0F, 0.0F);
+		vertices[2].position = XMFLOAT3(1.0f * (m_size.x / 2), 1.0f *  (m_size.y / 2), 0.0F);
+		vertices[2].texture = XMFLOAT2(m_bFlipH ? 0.0F : 1.0F, m_bFlipV ? 1.0F : 0.0F);
 		vertices[2].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
-		vertices[3].position = XMFLOAT3(1.0f * val, -1.0f * val, 0.0F);
-		vertices[3].texture = XMFLOAT2(1.0F, 1.0F);
+		vertices[3].position = XMFLOAT3(1.0f * (m_size.x / 2), -1.0f *  (m_size.y / 2), 0.0F);
+		vertices[3].texture = XMFLOAT2(m_bFlipH ? 0.0F : 1.0F, m_bFlipV ? 0.0F : 1.0F);
 		vertices[3].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
+		XMFLOAT2 size(m_size.x * m_scale.x, m_size.y * m_scale.y);
+		TinySize viewsize = gl.GetSize();
+		XMFLOAT2 center(static_cast<FLOAT>(viewsize.cx) / 2, static_cast<FLOAT>(viewsize.cy) / 2);
+		XMMATRIX scaling = XMMatrixScaling(m_scale.x, m_scale.y, 0.0F);
+		XMMATRIX rotation = XMMatrixRotationZ(((m_angle) * (D3DX_PI / 180.0)));
+		XMMATRIX translation = XMMatrixTranslation(-center.x + size.x / 2 + m_translate.x, center.y - size.y / 2 - m_translate.y, 0.0F);
+		XMMATRIX* ms = gl.GetMatrixs();
+		ms[1] *= scaling * rotation * translation;
 		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
 		GL::GetAPI().glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(VERTEXTYPE), vertices, GL_STATIC_DRAW);
 		return TRUE;
