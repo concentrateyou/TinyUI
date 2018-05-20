@@ -1,5 +1,6 @@
 #pragma once
 #include "GLCamera.h"
+#include "GL.h"
 #include "GLTextureShader.h"
 #include "GLImage2D.h"
 
@@ -12,12 +13,12 @@ namespace GLFramework
 		GLGraphics2D();
 		~GLGraphics2D();
 	public:
-		BOOL	Initialize(HWND hWND, const TinySize& size);	
 		GL&		GetGL();
+	public:
+		BOOL	Initialize(HWND hWND, const TinySize& size);	
 		BOOL	BeginDraw();
 		BOOL	EndDraw();
 		BOOL	DrawImage(GLImage2D& image);
-		BOOL	Present();
 	private:
 		GL				m_gl;
 		GLCamera		m_camera;

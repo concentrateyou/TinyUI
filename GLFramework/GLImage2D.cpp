@@ -34,57 +34,37 @@ namespace GLFramework
 		m_vertexTypes[3].position = XMFLOAT3(m_size.x / 2, -m_size.y / 2, 0.0F);
 		m_vertexTypes[3].texture = XMFLOAT2(m_bFlipH ? 0.0F : 1.0F, m_bFlipV ? 0.0F : 1.0F);
 		m_vertexTypes[3].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
-		glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
-		void *bits = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-		memcpy(bits, m_vertexTypes, sizeof(VERTEXTYPE) * 4);
-		glUnmapBuffer(GL_ARRAY_BUFFER);
+		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
+		GL::GetAPI().glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(VERTEXTYPE), m_vertexTypes, GL_STATIC_DRAW);
 		return TRUE;
 	}
 	BOOL GLImage2D::Initialize(GL& gl)
 	{
 		VERTEXTYPE vertexTypes[4];
 		ZeroMemory(vertexTypes, (sizeof(VERTEXTYPE) * 4));
-		glClearErrors();
-		glGenVertexArrays(1, &m_vertexArrayID);
-		GL_CHECK_ERROR(FALSE);
-		glBindVertexArray(m_vertexArrayID);
-		GL_CHECK_ERROR(FALSE);
-		glGenBuffers(1, &m_vertexID);
-		GL_CHECK_ERROR(FALSE);
-		glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
-		GL_CHECK_ERROR(FALSE);
-		glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(VERTEXTYPE), vertexTypes, GL_STATIC_DRAW);
-		GL_CHECK_ERROR(FALSE);
-		glEnableVertexAttribArray(0);
-		GL_CHECK_ERROR(FALSE);
-		glEnableVertexAttribArray(1);
-		GL_CHECK_ERROR(FALSE);
-		glEnableVertexAttribArray(2);
-		GL_CHECK_ERROR(FALSE);
-		glVertexAttribPointer(0, 3, GL_FLOAT, FALSE, sizeof(VERTEXTYPE), 0);
-		GL_CHECK_ERROR(FALSE);
-		glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
-		GL_CHECK_ERROR(FALSE);
-		glVertexAttribPointer(1, 2, GL_FLOAT, FALSE, sizeof(VERTEXTYPE), (BYTE*)NULL + (3 * sizeof(FLOAT)));
-		GL_CHECK_ERROR(FALSE);
-		glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
-		GL_CHECK_ERROR(FALSE);
-		glVertexAttribPointer(2, 4, GL_FLOAT, FALSE, sizeof(VERTEXTYPE), (BYTE*)NULL + (5 * sizeof(FLOAT)));
-		GL_CHECK_ERROR(FALSE);
+		GL::GetAPI().glGenVertexArrays(1, &m_vertexArrayID);
+		GL::GetAPI().glBindVertexArray(m_vertexArrayID);
+		GL::GetAPI().glGenBuffers(1, &m_vertexID);
+		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
+		GL::GetAPI().glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(VERTEXTYPE), vertexTypes, GL_STATIC_DRAW);
+		GL::GetAPI().glEnableVertexAttribArray(0);
+		GL::GetAPI().glEnableVertexAttribArray(1);
+		GL::GetAPI().glEnableVertexAttribArray(2);
+		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
+		GL::GetAPI().glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(VERTEXTYPE), NULL);
+		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
+		GL::GetAPI().glVertexAttribPointer(1, 2, GL_FLOAT, FALSE, sizeof(VERTEXTYPE), (BYTE*)NULL + (3 * sizeof(FLOAT)));
+		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
+		GL::GetAPI().glVertexAttribPointer(2, 4, GL_FLOAT, FALSE, sizeof(VERTEXTYPE), (BYTE*)NULL + (5 * sizeof(FLOAT)));
 		m_indices[0] = 0;
 		m_indices[1] = 1;
 		m_indices[2] = 3;
 		m_indices[3] = 1;
 		m_indices[4] = 2;
 		m_indices[5] = 3;
-		glGenBuffers(1, &m_indexID);
-		GL_CHECK_ERROR(FALSE);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexID);
-		GL_CHECK_ERROR(FALSE);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexID);
-		GL_CHECK_ERROR(FALSE);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(UINT), m_indices, GL_STATIC_DRAW);
-		GL_CHECK_ERROR(FALSE);
+		GL::GetAPI().glGenBuffers(1, &m_indexID);
+		GL::GetAPI().glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexID);
+		GL::GetAPI().glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(UINT), m_indices, GL_STATIC_DRAW);
 		return TRUE;
 	}
 
@@ -126,26 +106,23 @@ namespace GLFramework
 
 	BOOL GLImage2D::DrawImage(GL& gl)
 	{
-		glClearErrors();
-		glBindVertexArray(m_vertexArrayID);
-		GL_CHECK_ERROR(FALSE);
+		if (!Calculate(gl))
+			return FALSE;
+		GL::GetAPI().glBindVertexArray(m_vertexArrayID);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		GL_CHECK_ERROR(FALSE);
-		glClearErrors();
 		return TRUE;
 	}
 
 	void GLImage2D::Destory()
 	{
 		GLTexture2D::Destory();
-		glClearErrors();
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glDeleteBuffers(1, &m_vertexID);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		glDeleteBuffers(1, &m_indexID);
-		glBindVertexArray(0);
-		glDeleteVertexArrays(1, &m_vertexArrayID);
+		GL::GetAPI().glDisableVertexAttribArray(0);
+		GL::GetAPI().glDisableVertexAttribArray(1);
+		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, 0);
+		GL::GetAPI().glDeleteBuffers(1, &m_vertexID);
+		GL::GetAPI().glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		GL::GetAPI().glDeleteBuffers(1, &m_indexID);
+		GL::GetAPI().glBindVertexArray(0);
+		GL::GetAPI().glDeleteVertexArrays(1, &m_vertexArrayID);
 	}
 }

@@ -15,9 +15,10 @@
 #include "DX11RenderView.h"
 #include "DX11Graphics2D.h"
 #include "DX11NV12Video.h"
-
+//
 #include "GLGraphics2D.h"
-#include "GLImage2D.h"
+//#include "GLImage2D.h"
+#include "GL.h"
 
 using namespace LAV;
 using namespace DXFramework;

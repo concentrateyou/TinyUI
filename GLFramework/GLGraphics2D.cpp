@@ -18,7 +18,6 @@ namespace GLFramework
 	{
 		if (!m_gl.Initialize(hWND, size.cx, size.cy))
 			return FALSE;
-
 		string str;
 		str.resize(MAX_PATH);
 		GetModuleFileName(NULL, &str[0], MAX_PATH);
@@ -40,14 +39,14 @@ namespace GLFramework
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		return TRUE;
 	}
+
 	BOOL GLGraphics2D::EndDraw()
 	{
-		return TRUE;
-	}
-	BOOL GLGraphics2D::Present()
-	{
+		if (m_gl.IsEmpty())
+			return FALSE;
 		return SwapBuffers(m_gl.GetDC());
 	}
+
 	BOOL GLGraphics2D::DrawImage(GLImage2D& image)
 	{
 		if (image.IsEmpty())
@@ -55,7 +54,7 @@ namespace GLFramework
 		if (!image.DrawImage(m_gl))
 			return FALSE;
 		XMMATRIX* ms = m_gl.GetMatrixs();
-		m_textureShader.SetShaderParameters(m_gl, ms[1], m_camera.GetView(), ms[2], image.GetTexture2D());
+		m_textureShader.SetShaderParameters(m_gl, ms[1], m_camera.GetView(), ms[2]);
 		m_textureShader.Render(m_gl);
 		return TRUE;
 	}

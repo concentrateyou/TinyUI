@@ -13,12 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="头文件\glad">
-      <UniqueIdentifier>{070d5ca9-c834-413e-b722-a3897e94b9ce}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="源文件\glad">
-      <UniqueIdentifier>{584a68c7-9810-4715-81fd-4cc9a99d4793}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -36,25 +30,19 @@
     <ClInclude Include="GLFramework.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="GLTexture2D.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="GLElement2D.h">
+    <ClInclude Include="GLGraphics2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="GLCamera.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="GLTextureShader.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="GLRenderView.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="GLShader.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="GLGraphics2D.h">
+    <ClInclude Include="GLTextureShader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GLElement2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="GLImage2D.h">
@@ -63,14 +51,8 @@
     <ClInclude Include="GLImageElement2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="glad\glad.h">
-      <Filter>头文件\glad</Filter>
-    </ClInclude>
-    <ClInclude Include="glad\glad_wgl.h">
-      <Filter>头文件\glad</Filter>
-    </ClInclude>
-    <ClInclude Include="KHR\khrplatform.h">
-      <Filter>头文件\glad</Filter>
+    <ClInclude Include="GLTexture2D.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -83,25 +65,19 @@
     <ClCompile Include="GLFramework.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="GLTexture2D.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="GLElement2D.cpp">
+    <ClCompile Include="GLGraphics2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="GLCamera.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="GLTextureShader.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="GLRenderView.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="GLShader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="GLGraphics2D.cpp">
+    <ClCompile Include="GLTextureShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GLElement2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="GLImage2D.cpp">
@@ -110,11 +86,8 @@
     <ClCompile Include="GLImageElement2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="glad.c">
-      <Filter>源文件\glad</Filter>
-    </ClCompile>
-    <ClCompile Include="glad_wgl.c">
-      <Filter>源文件\glad</Filter>
+    <ClCompile Include="GLTexture2D.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
