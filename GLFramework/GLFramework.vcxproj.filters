@@ -24,39 +24,42 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="GLCamera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
     <ClInclude Include="GL.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="GLFramework.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="GLGraphics2D.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="GLCamera.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="GLShader.h">
+    <ClInclude Include="GLTexture2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="GLTextureShader.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="GLElement2D.h">
+    <ClInclude Include="GLGraphics2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="GLImage2D.h">
+    <ClInclude Include="GLElement2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="GLImageElement2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="GLTexture2D.h">
+    <ClInclude Include="GLImage2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GLShader.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GLCamera.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="GL.cpp">
@@ -65,28 +68,25 @@
     <ClCompile Include="GLFramework.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="GLGraphics2D.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="GLCamera.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="GLShader.cpp">
+    <ClCompile Include="GLTexture2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="GLTextureShader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="GLElement2D.cpp">
+    <ClCompile Include="GLGraphics2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="GLImage2D.cpp">
+    <ClCompile Include="GLElement2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="GLImageElement2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="GLTexture2D.cpp">
+    <ClCompile Include="GLImage2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GLShader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

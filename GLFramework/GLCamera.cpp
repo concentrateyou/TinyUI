@@ -12,30 +12,30 @@ namespace GLFramework
 		m_rotationY = 0.0F;
 		m_rotationZ = 0.0F;
 	}
+
 	GLCamera::~GLCamera()
 	{
+
 	}
+
+
 	void GLCamera::SetPosition(FLOAT x, FLOAT y, FLOAT z)
 	{
 		m_positionX = x;
 		m_positionY = y;
 		m_positionZ = z;
 	}
+
+
 	void GLCamera::SetRotation(FLOAT x, FLOAT y, FLOAT z)
 	{
 		m_rotationX = x;
 		m_rotationY = y;
 		m_rotationZ = z;
 	}
-	XMFLOAT3 GLCamera::GetPosition()
-	{
-		return XMFLOAT3(m_positionX, m_positionY, m_positionZ);
-	}
-	XMFLOAT3 GLCamera::GetRotation()
-	{
-		return XMFLOAT3(m_rotationX, m_rotationY, m_rotationZ);
-	}
-	void GLCamera::UpdateMatrix()
+
+
+	void GLCamera::UpdateView()
 	{
 		XMFLOAT3 up;
 		XMFLOAT3 position;
@@ -68,8 +68,17 @@ namespace GLFramework
 		lookAtVector = XMVectorAdd(positionVector, lookAtVector);
 		m_viewMatrix = XMMatrixLookAtLH(positionVector, lookAtVector, upVector);
 	}
-	XMMATRIX GLCamera::GetView()
+	XMMATRIX GLCamera::GetView() const
 	{
 		return m_viewMatrix;
+	}
+
+	XMFLOAT3 GLCamera::GetPosition() const
+	{
+		return XMFLOAT3(m_positionX, m_positionY, m_positionZ);
+	}
+	XMFLOAT3 GLCamera::GetRotation() const
+	{
+		return XMFLOAT3(m_rotationX, m_rotationY, m_rotationZ);
 	}
 }

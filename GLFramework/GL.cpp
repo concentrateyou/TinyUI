@@ -3,6 +3,7 @@
 
 namespace GLFramework
 {
+
 	BOOL GLAPI::LoadAPI()
 	{
 		BOOL	bRes = TRUE;
@@ -261,17 +262,22 @@ namespace GLFramework
 		}
 		window.DestroyWindow();
 		return bRes;
-	}
-	//////////////////////////////////////////////////////////////////////////
+	};
+
 	GL::GL()
 		:m_hDC(NULL),
 		m_hWND(NULL),
 		m_context(NULL)
 	{
-
 	}
+
 	GL::~GL()
 	{
+	}
+	GLAPI& GL::GetAPI()
+	{
+		static GLAPI api;
+		return api;
 	}
 	BOOL GL::IsEmpty() const
 	{
@@ -285,27 +291,21 @@ namespace GLFramework
 	{
 		return m_hDC;
 	}
+
 	HWND GL::GetHWND() const
 	{
 		return m_hWND;
 	}
+
 	HGLRC GL::GetContext() const
 	{
 		return m_context;
 	}
+
 	BOOL GL::Initialize(HWND hWND, INT cx, INT cy)
 	{
-		INT pixelFormat = 0;
-		UINT count = 0;
-		PIXELFORMATDESCRIPTOR s;
-		ZeroMemory(&s, sizeof(s));
-		s.nSize = sizeof(s);
 		if (!GetAPI().LoadAPI())
-			goto _ERROR;
-		m_hWND = hWND;
-		m_hDC = ::GetDC(hWND);
-		if (!m_hDC)
-			goto _ERROR;
+			return FALSE;
 		const INT attribs[] =
 		{
 			WGL_SUPPORT_OPENGL_ARB,
@@ -328,74 +328,75 @@ namespace GLFramework
 			8,
 			0
 		};
-		const INT contextAttribs[] =
-		{
+		const INT contextAttribs[] = {
 			WGL_CONTEXT_MAJOR_VERSION_ARB,
 			4,
 			WGL_CONTEXT_MINOR_VERSION_ARB,
 			0,
 			0
 		};
-		if (!GetAPI().wglChoosePixelFormatARB(m_hDC, attribs, NULL, 1, &pixelFormat, &count))
+		INT iFormat = 1;
+		UINT count = 0;
+		PIXELFORMATDESCRIPTOR sPFD;
+		ZeroMemory(&sPFD, sizeof(sPFD));
+		sPFD.nSize = sizeof(sPFD);
+		m_hWND = hWND;
+		m_hDC = ::GetDC(m_hWND);
+		if (!m_hDC)
 			goto _ERROR;
-		if (!SetPixelFormat(m_hDC, pixelFormat, &s))
+		if (!GetAPI().wglChoosePixelFormatARB(m_hDC, attribs, NULL, 1, &iFormat, &count))
+			goto _ERROR;
+		if (!SetPixelFormat(m_hDC, iFormat, &sPFD))
 			goto _ERROR;
 		m_context = GetAPI().wglCreateContextAttribsARB(m_hDC, 0, contextAttribs);
 		if (!m_context)
 			goto _ERROR;
 		if (!wglMakeCurrent(m_hDC, m_context))
 			goto _ERROR;
-		if (!GetAPI().wglSwapIntervalEXT(0))
-			goto _ERROR;
 		glClearDepth(1.0F);
-		GLenum myerror = glGetError();
-		//glEnable(GL_TEXTURE_2D);
-		//myerror = glGetError();
-		glEnable(GL_DEPTH_TEST); 
-		myerror = glGetError();
+		glEnable(GL_DEPTH_TEST);
 		glFrontFace(GL_CW);
-		myerror = glGetError();
 		glEnable(GL_CULL_FACE);
-		myerror = glGetError();
 		glCullFace(GL_BACK);
-		myerror = glGetError();
-		SetMatrixs(TinySize(cx, cy));
+		Resize(cx, cy);
+		GetAPI().wglSwapIntervalEXT(0);//关闭垂直同步
+		m_hWND = hWND;
 		return TRUE;
 	_ERROR:
 		Uninitialize();
 		return FALSE;
 	}
+
 	void GL::Uninitialize()
 	{
 		wglMakeCurrent(NULL, NULL);
 		if (m_context != NULL)
 		{
 			wglDeleteContext(m_context);
-			m_context = 0;
+			m_context = NULL;
 		}
 		if (m_hDC != NULL && m_hWND != NULL)
 		{
 			ReleaseDC(m_hWND, m_hDC);
 			m_hDC = NULL;
+			m_hWND = NULL;
 		}
-		m_hWND = NULL;
+	}
+	void GL::Resize(INT cx, INT cy)
+	{
+		glViewport(0, 0, cx, cy);
+		SetMatrixs(TinySize(cx, cy));
 	}
 	void GL::SetMatrixs(const TinySize& size)
 	{
-		glViewport(0, 0, size.cx, size.cy);
 		FLOAT fov = (FLOAT)D3DX_PI / 4.0F;
 		FLOAT aspect = (FLOAT)size.cx / (FLOAT)size.cy;
-		m_matrixs[0] = XMMatrixPerspectiveFovLH(fov, aspect, 1000.0F, 0.1F);
-		m_matrixs[1] = XMMatrixIdentity();//WORLD
-		m_matrixs[2] = XMMatrixOrthographicLH((FLOAT)size.cx, (FLOAT)size.cy, 1000.0F, 0.1F);//PROJECTION
+		m_matrixs[0] = XMMatrixPerspectiveFovLH(fov, aspect, 1000.0F, 0.1F);//projection
+		m_matrixs[1] = XMMatrixIdentity();//world
+		m_matrixs[2] = XMMatrixOrthographicLH((FLOAT)size.cx, (FLOAT)size.cy, 1000.0F, 0.1F);//view
 	}
-	XMMATRIX*	GL::GetMatrixs()
+	XMMATRIX* GL::GetMatrixs()
 	{
 		return m_matrixs;
-	}
-	GLAPI&	GL::GetAPI()
-	{
-		static GLAPI api;
-		return api;
 	}
 }

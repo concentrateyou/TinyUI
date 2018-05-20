@@ -1,14 +1,9 @@
 #pragma once
-#include "GLElement2D.h"
 #include "GL.h"
-#include "Render/TinyImage.h"
-using namespace TinyUI;
+#include "GLElement2D.h"
 
 namespace GLFramework
 {
-	/// <summary>
-	/// OpenGL 2D纹理只支持RGB32
-	/// </summary>
 	class GLTexture2D : public GLElement2D
 	{
 		DISALLOW_COPY_AND_ASSIGN(GLTexture2D)
@@ -28,6 +23,3 @@ namespace GLFramework
 		TinyImage	m_image;
 	};
 }
-
-
-

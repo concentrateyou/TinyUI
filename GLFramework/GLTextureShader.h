@@ -1,5 +1,4 @@
 #pragma once
-#include "GLFramework.h"
 #include "GL.h"
 #include "GLShader.h"
 
@@ -17,9 +16,8 @@ namespace GLFramework
 	public:
 		BOOL SetShaderParameters(GL& gl, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix);
 	private:
-		GLuint	m_vertexShader;
-		GLuint	m_fragmentShader;
-		GLuint	m_shaderID;
+		GLuint m_vertexShader;
+		GLuint m_fragmentShader;
+		GLuint m_shaderID;
 	};
 }
-

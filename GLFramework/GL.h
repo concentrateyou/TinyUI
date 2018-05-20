@@ -3,8 +3,6 @@
 
 namespace GLFramework
 {
-	class GLRenderView;
-
 	class GLAPI
 	{
 	public:
@@ -47,30 +45,30 @@ namespace GLFramework
 	public:
 		BOOL	LoadAPI();
 	};
-	/// <summary>
-	/// OpenGL 4.0
-	/// </summary>
+
 	class GL
 	{
 		DISALLOW_COPY_AND_ASSIGN(GL)
 	public:
 		GL();
-		virtual ~GL();
-		BOOL			IsEmpty() const;
-		BOOL			IsActive() const;
-		HDC				GetDC() const;
-		HWND			GetHWND() const;
-		HGLRC			GetContext() const;
+		~GL();
+		static GLAPI& GetAPI();
 	public:
-		BOOL			Initialize(HWND hWND, INT cx, INT cy);
-		void			Uninitialize();
-		void			SetMatrixs(const TinySize& size);
-		XMMATRIX*		GetMatrixs();
-		static GLAPI&	GetAPI();
+		BOOL		IsEmpty() const;
+		BOOL		IsActive() const;
+		HDC			GetDC() const;
+		HWND		GetHWND() const;
+		HGLRC		GetContext() const;
+	public:
+		BOOL		Initialize(HWND hWND, INT cx, INT cy);
+		void		Uninitialize();
+		void		Resize(INT cx = 0, INT cy = 0);
+		void		SetMatrixs(const TinySize& size);
+		XMMATRIX*	GetMatrixs();
 	private:
-		HDC					m_hDC;
-		HWND				m_hWND;
-		HGLRC				m_context;
-		XMMATRIX			m_matrixs[3];
+		HWND		m_hWND;
+		HDC			m_hDC;
+		HGLRC		m_context;
+		XMMATRIX	m_matrixs[3];
 	};
 }

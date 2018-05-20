@@ -15,10 +15,11 @@
 #include "DX11RenderView.h"
 #include "DX11Graphics2D.h"
 #include "DX11NV12Video.h"
-//
-#include "GLGraphics2D.h"
-//#include "GLImage2D.h"
+
 #include "GL.h"
+#include "GLTexture2D.h"
+#include "GLTextureShader.h"
+#include "GLGraphics2D.h"
 
 using namespace LAV;
 using namespace DXFramework;
@@ -53,11 +54,11 @@ private:
 	static LRESULT CALLBACK MouseFilterHook(INT code, WPARAM wParam, LPARAM lParam);
 
 private:
-	DX11Graphics2D		m_graphics;
-	DX11NV12Video		m_image2D;
+	/*DX11Graphics2D		m_graphics;
+	DX11NV12Video		m_image2D;*/
 
-	GLGraphics2D		m_graphicsGL;
-	GLImage2D			m_imageGL;
+	GLGraphics2D		m_graphics;
+	GLImage2D			m_image;
 
 	//TinyTimer			m_timer;
 

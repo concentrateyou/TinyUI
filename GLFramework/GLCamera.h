@@ -11,19 +11,13 @@ namespace GLFramework
 		~GLCamera();
 		void		SetPosition(FLOAT, FLOAT, FLOAT);
 		void		SetRotation(FLOAT, FLOAT, FLOAT);
-		void		UpdateMatrix();
-		XMFLOAT3	GetPosition();
-		XMFLOAT3	GetRotation();
-		XMMATRIX	GetView();
+		void		UpdateView();
+		XMFLOAT3	GetPosition() const;
+		XMFLOAT3	GetRotation() const;
+		XMMATRIX	GetView() const;
 	private:
-		FLOAT		m_positionX;
-		FLOAT		m_positionY;
-		FLOAT		m_positionZ;
-		FLOAT		m_rotationX;
-		FLOAT		m_rotationY;
-		FLOAT		m_rotationZ;
-		XMMATRIX	m_viewMatrix;
+		FLOAT m_positionX, m_positionY, m_positionZ;
+		FLOAT m_rotationX, m_rotationY, m_rotationZ;
+		XMMATRIX m_viewMatrix;
 	};
 }
-
-

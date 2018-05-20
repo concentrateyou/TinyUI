@@ -56,12 +56,12 @@ LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 	TinyRectangle s;
 	GetClientRect(&s);
 
-	m_graphicsGL.Initialize(m_hWND, s.Size());
-	m_imageGL.Load(m_graphicsGL.GetGL(), "D:\\timg.jpg");
-	m_graphicsGL.BeginDraw();
-	m_graphicsGL.DrawImage(m_imageGL);
-	m_graphicsGL.EndDraw();
-	
+	m_graphics.Initialize(m_hWND, s.Width(), s.Height());
+	m_image.Load(m_graphics.GetGL(), "D:\\timg.jpg");
+	m_graphics.BeginDraw();
+	m_graphics.DrawImage(m_image);
+	m_graphics.EndDraw();
+
 	return FALSE;
 }
 
@@ -75,9 +75,9 @@ LRESULT GLView::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandle
 LRESULT GLView::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
-	m_graphicsGL.BeginDraw();
-	m_graphicsGL.DrawImage(m_imageGL);
-	m_graphicsGL.EndDraw();
+	m_graphics.BeginDraw();
+	m_graphics.DrawImage(m_image);
+	m_graphics.EndDraw();
 	return FALSE;
 }
 

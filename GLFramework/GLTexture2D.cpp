@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "GLTexture2D.h"
 
-
 namespace GLFramework
 {
 	GLTexture2D::GLTexture2D()
@@ -19,12 +18,11 @@ namespace GLFramework
 		GL::GetAPI().glActiveTexture(GL_TEXTURE0);
 		glGenTextures(1, &m_textureID);
 		glBindTexture(GL_TEXTURE_2D, m_textureID);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, cx, cy, 0, GL_RGBA, GL_UNSIGNED_BYTE, bits);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		GL::GetAPI().glGenerateMipmap(GL_TEXTURE_2D);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, cx, cy, 0, GL_RGBA, GL_UNSIGNED_BYTE, bits);
 		return TRUE;
 	}
 	BOOL GLTexture2D::Load(GL& dx11, const BYTE* bits, LONG size)
@@ -34,11 +32,11 @@ namespace GLFramework
 		GL::GetAPI().glActiveTexture(GL_TEXTURE0);
 		glGenTextures(1, &m_textureID);
 		glBindTexture(GL_TEXTURE_2D, m_textureID);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_image.GetSize().cx, m_image.GetSize().cy, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_image.GetBits());
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_image.GetSize().cx, m_image.GetSize().cy, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_image.GetBits());
 		GL::GetAPI().glGenerateMipmap(GL_TEXTURE_2D);
 		return TRUE;
 	}
@@ -49,11 +47,11 @@ namespace GLFramework
 		GL::GetAPI().glActiveTexture(GL_TEXTURE0);
 		glGenTextures(1, &m_textureID);
 		glBindTexture(GL_TEXTURE_2D, m_textureID);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_image.GetSize().cx, m_image.GetSize().cy, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_image.GetBits());
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_image.GetSize().cx, m_image.GetSize().cy, 0, GL_BGRA, GL_UNSIGNED_BYTE, m_image.GetBits());
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	
 		GL::GetAPI().glGenerateMipmap(GL_TEXTURE_2D);
 		return TRUE;
 	}
@@ -65,8 +63,8 @@ namespace GLFramework
 			{
 				glDeleteTextures(1, &m_textureID);
 			}
-			m_textureID = NULL;
 		}
+		m_textureID = NULL;
 	}
 	GLTexture2D::operator GLuint() const
 	{

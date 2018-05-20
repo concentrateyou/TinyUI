@@ -4,9 +4,9 @@
 namespace GLFramework
 {
 	GLTextureShader::GLTextureShader()
-		:m_vertexShader(0),
-		m_fragmentShader(0),
-		m_shaderID(0)
+		:m_vertexShader(NULL),
+		m_fragmentShader(NULL),
+		m_shaderID(NULL)
 	{
 	}
 
@@ -21,7 +21,6 @@ namespace GLFramework
 
 	BOOL GLTextureShader::Initialize(GL& gl, const CHAR* vsFile, const CHAR* psFile)
 	{
-		//VS
 		TinyFile sFile;
 		if (!sFile.Open((LPCTSTR)vsFile))
 			return FALSE;
@@ -34,11 +33,8 @@ namespace GLFramework
 		sFile.Close();
 		bits[count] = '\0';
 		m_vertexShader = GL::GetAPI().glCreateShader(GL_VERTEX_SHADER);
-		GLenum myerror = glGetError();
 		GL::GetAPI().glShaderSource(m_vertexShader, 1, (const CHAR**)&bits, NULL);
-		myerror = glGetError();
 		GL::GetAPI().glCompileShader(m_vertexShader);
-		myerror = glGetError();
 		INT status = 0;
 		GL::GetAPI().glGetShaderiv(m_vertexShader, GL_COMPILE_STATUS, &status);
 		if (status != 1)
@@ -49,8 +45,10 @@ namespace GLFramework
 			TinyScopedArray<CHAR> log(new CHAR[logsize]);
 			GL::GetAPI().glGetShaderInfoLog(m_vertexShader, logsize, NULL, log);
 			LOG(ERROR) << "glCompileShader: " << vsFile << " Error:" << log;
+
 		}
 		//PS
+		sFile.Close();
 		if (!sFile.Open((LPCTSTR)psFile))
 			return FALSE;
 		size = static_cast<UINT>(sFile.GetSize() + 1);
@@ -62,11 +60,8 @@ namespace GLFramework
 		sFile.Close();
 		bits[count] = '\0';
 		m_fragmentShader = GL::GetAPI().glCreateShader(GL_FRAGMENT_SHADER);
-		myerror = glGetError();
 		GL::GetAPI().glShaderSource(m_fragmentShader, 1, (const CHAR**)&bits, NULL);
-		myerror = glGetError();
 		GL::GetAPI().glCompileShader(m_fragmentShader);
-		myerror = glGetError();
 		GL::GetAPI().glGetShaderiv(m_fragmentShader, GL_COMPILE_STATUS, &status);
 		if (status != 1)
 		{
@@ -79,19 +74,12 @@ namespace GLFramework
 			return FALSE;
 		}
 		m_shaderID = GL::GetAPI().glCreateProgram();
-		myerror = glGetError();
 		GL::GetAPI().glAttachShader(m_shaderID, m_vertexShader);
-		myerror = glGetError();
 		GL::GetAPI().glAttachShader(m_shaderID, m_fragmentShader);
-		myerror = glGetError();
 		GL::GetAPI().glBindAttribLocation(m_shaderID, 0, "v_position");
-		myerror = glGetError();
 		GL::GetAPI().glBindAttribLocation(m_shaderID, 1, "v_texCoord");
-		myerror = glGetError();
 		GL::GetAPI().glBindAttribLocation(m_shaderID, 2, "v_color");
-		myerror = glGetError();
 		GL::GetAPI().glLinkProgram(m_shaderID);
-		myerror = glGetError();
 		GL::GetAPI().glGetProgramiv(m_shaderID, GL_LINK_STATUS, &status);
 		if (status != 1)
 		{
@@ -103,9 +91,14 @@ namespace GLFramework
 			LOG(ERROR) << "glLinkProgram Error:" << log;
 			return FALSE;
 		}
+		GL::GetAPI().glUseProgram(m_shaderID);
 		return TRUE;
 	}
-
+	void GLTextureShader::Render(GL& gl)
+	{
+		UNUSED(gl);
+		GL::GetAPI().glUseProgram(m_shaderID);
+	}
 	BOOL GLTextureShader::SetShaderParameters(GL& gl, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix)
 	{
 		FLOAT matrix[16];
@@ -129,10 +122,13 @@ namespace GLFramework
 		matrix[13] = view._42;
 		matrix[14] = view._43;
 		matrix[15] = view._44;
-		GLuint lRes = GL::GetAPI().glGetUniformLocation(m_shaderID, "worldMatrix");
-		if (lRes == -1)
+		GLuint iRes = GL::GetAPI().glGetUniformLocation(m_shaderID, "worldMatrix");
+		if (iRes == -1)
 			return FALSE;
-		GL::GetAPI().glUniformMatrix4fv(lRes, 1, FALSE, matrix);
+		GL::GetAPI().glUniformMatrix4fv(iRes, 1, FALSE, matrix);
+		iRes = GL::GetAPI().glGetUniformLocation(m_shaderID, "viewMatrix");
+		if (iRes == -1)
+			return FALSE;
 		ZeroMemory(matrix, 16 * sizeof(FLOAT));
 		ZeroMemory(&view, sizeof(view));
 		XMStoreFloat4x4(&view, viewMatrix);
@@ -152,10 +148,10 @@ namespace GLFramework
 		matrix[13] = view._42;
 		matrix[14] = view._43;
 		matrix[15] = view._44;
-		lRes = GL::GetAPI().glGetUniformLocation(m_shaderID, "viewMatrix");
-		if (lRes == -1)
+		GL::GetAPI().glUniformMatrix4fv(iRes, 1, FALSE, matrix);
+		iRes = GL::GetAPI().glGetUniformLocation(m_shaderID, "projectionMatrix");
+		if (iRes == -1)
 			return FALSE;
-		GL::GetAPI().glUniformMatrix4fv(lRes, 1, FALSE, matrix);
 		ZeroMemory(matrix, 16 * sizeof(FLOAT));
 		ZeroMemory(&view, sizeof(view));
 		XMStoreFloat4x4(&view, projectionMatrix);
@@ -175,22 +171,11 @@ namespace GLFramework
 		matrix[13] = view._42;
 		matrix[14] = view._43;
 		matrix[15] = view._44;
-		lRes = GL::GetAPI().glGetUniformLocation(m_shaderID, "projectionMatrix");
-		if (lRes == -1)
+		GL::GetAPI().glUniformMatrix4fv(iRes, 1, FALSE, matrix);
+		iRes = GL::GetAPI().glGetUniformLocation(m_shaderID, "shaderTexture");
+		if (iRes == -1)
 			return FALSE;
-		GL::GetAPI().glUniformMatrix4fv(lRes, 1, FALSE, matrix);
-		lRes = GL::GetAPI().glGetUniformLocation(m_shaderID, "shaderTexture");
-		if (lRes == -1)
-			return FALSE;
-		GL::GetAPI().glUniform1i(lRes, 0);
+		GL::GetAPI().glUniform1i(iRes, 0);
 		return TRUE;
-	}
-
-	void GLTextureShader::Render(GL& gl)
-	{
-		UNUSED(gl);
-		GL::GetAPI().glUseProgram(m_shaderID);
-		GLenum myerror = glGetError();
-		INT a = 0;
 	}
 }

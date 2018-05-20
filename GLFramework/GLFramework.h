@@ -5,6 +5,7 @@
 #include "Common/TinyLogging.h"
 #include "Common/TinyObject.h"
 #include "Control/TinyControl.h"
+#include "Render/TinyImage.h"
 #include "IO/TinyIO.h"
 #include <gl/gl.h>
 #include <DirectXMath.h>

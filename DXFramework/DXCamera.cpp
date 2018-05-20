@@ -35,7 +35,7 @@ namespace DXFramework
 	{
 		return XMFLOAT3(m_rotationX, m_rotationY, m_rotationZ);
 	}
-	void DXCamera::UpdateMatrix()
+	void DXCamera::UpdateView()
 	{
 		XMFLOAT3 up;
 		XMFLOAT3 position;
