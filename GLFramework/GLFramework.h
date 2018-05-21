@@ -16,11 +16,21 @@ using namespace TinyUI;
 using namespace TinyUI::IO;
 using namespace std;
 
+static void  CheckGLError()
+{
+	if (glGetError() != GL_NO_ERROR)
+	{
+		string str = StringPrintf("Line:%d, File:%s", __LINE__, __FILE__);
+		MessageBox(NULL, str.c_str(), "Error", MB_OK);
+	}
+}
+
 #ifndef D3DX_PI
 #define	D3DX_PI	(3.14159265358979323846)
 #endif        
 #define glClearErrors() while(glGetError());
-#define GL_CHECK_ERROR(ERR)  {if(glGetError() != GL_NO_ERROR) return ERR;}
+#define GL_CHECK_ERROR(ERR)  { if(glGetError() != GL_NO_ERROR) { CheckGLError(); return ERR;} }
+
 
 #define WGL_DRAW_TO_WINDOW_ARB         0x2001
 #define WGL_ACCELERATION_ARB           0x2003
