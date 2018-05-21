@@ -1,6 +1,7 @@
 #pragma once
 #include "GLImage2D.h"
 #include "GLRectangle2D.h"
+#include "GLLine2D.h"
 #include "GLCamera.h"
 #include "GLColorShader.h"
 #include "GLTextureShader.h"
@@ -23,6 +24,7 @@ namespace GLFramework
 		BOOL	DrawImage(GLImage2D& image);
 		BOOL	DrawRectangle(GLRectangle2D& rectangle, const XMFLOAT2 points[4], const XMFLOAT4& color);
 		BOOL	FillRectangle(GLRectangle2D& rectangle, const XMFLOAT2 points[4], const XMFLOAT4& color);
+		BOOL	DrawLine(GLLine2D& line, const XMFLOAT2* points, DWORD count, const XMFLOAT4& color);
 	private:
 		GL					m_gl;
 		GLCamera			m_camera;

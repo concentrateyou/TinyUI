@@ -99,7 +99,6 @@ namespace GLFramework
 		glDrawElements(GL_LINE_STRIP, 5, GL_UNSIGNED_INT, 0);
 		GL_CHECK_ERROR(FALSE);
 		return TRUE;
-		return TRUE;
 	}
 	BOOL GLRectangle2D::FillRectangle(GL& gl, const XMFLOAT2 points[4], const XMFLOAT4& color)
 	{

@@ -143,6 +143,7 @@
     <ClInclude Include="GLImageElement2D.h" />
     <ClInclude Include="GLImage2D.h" />
     <ClInclude Include="GL.h" />
+    <ClInclude Include="GLLine2D.h" />
     <ClInclude Include="GLRectangle2D.h" />
     <ClInclude Include="GLShader.h" />
     <ClInclude Include="stdafx.h" />
@@ -159,6 +160,7 @@
     <ClCompile Include="GLImageElement2D.cpp" />
     <ClCompile Include="GLImage2D.cpp" />
     <ClCompile Include="GL.cpp" />
+    <ClCompile Include="GLLine2D.cpp" />
     <ClCompile Include="GLRectangle2D.cpp" />
     <ClCompile Include="GLShader.cpp" />
     <ClCompile Include="stdafx.cpp">

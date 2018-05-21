@@ -93,4 +93,13 @@ namespace GLFramework
 		m_colorSharder.Render(m_gl);
 		return TRUE;
 	}
+	BOOL GLGraphics2D::DrawLine(GLLine2D& line, const XMFLOAT2* points, DWORD count, const XMFLOAT4& color)
+	{
+		if (!line.DrawLine(m_gl, points, count, color))
+			return FALSE;
+		XMMATRIX* matrixs = m_gl.GetMatrixs();
+		m_colorSharder.SetShaderParameters(m_gl, matrixs[1], m_camera.GetView(), matrixs[2]);
+		m_colorSharder.Render(m_gl);
+		return TRUE;
+	}
 }

@@ -60,6 +60,9 @@
     <ClInclude Include="GLRectangle2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="GLLine2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -99,6 +102,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="GLRectangle2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GLLine2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
