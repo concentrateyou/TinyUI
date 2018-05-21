@@ -80,7 +80,6 @@ namespace GLFramework
 			GL::GetAPI().glDeleteVertexArrays(1, &m_vertexArrayID);
 			m_vertexArrayID = NULL;
 		}
-		GL_CHECK_ERROR();
 	}
 	BOOL GLRectangle2D::DrawRectangle(GL& gl, const XMFLOAT2 points[4], const XMFLOAT4& color)
 	{

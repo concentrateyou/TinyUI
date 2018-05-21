@@ -3,7 +3,6 @@
 
 namespace GLFramework
 {
-
 	BOOL GLAPI::LoadAPI()
 	{
 		BOOL	bRes = TRUE;
@@ -70,6 +69,18 @@ namespace GLFramework
 		}
 		glBufferData = (PFNGLBUFFERDATAPROC)wglGetProcAddress("glBufferData");
 		if (!glBufferData)
+		{
+			bRes = FALSE;
+			goto _ERROR;
+		}
+		glMapBuffer = (PFNGLMAPBUFFERPROC)wglGetProcAddress("glMapBuffer");
+		if (!glMapBuffer)
+		{
+			bRes = FALSE;
+			goto _ERROR;
+		}
+		glUnmapBuffer = (PFNGLUNMAPBUFFERPROC)wglGetProcAddress("glUnmapBuffer");
+		if (!glUnmapBuffer)
 		{
 			bRes = FALSE;
 			goto _ERROR;
@@ -374,6 +385,7 @@ namespace GLFramework
 		glCullFace(GL_BACK);
 		Resize(cx, cy);
 		GetAPI().wglSwapIntervalEXT(0);//关闭垂直同步
+		GL_CHECK_ERROR(FALSE);
 		return TRUE;
 	_ERROR:
 		Uninitialize();

@@ -59,7 +59,7 @@ private:
 	DX11NV12Video		m_image2D;*/
 
 	GLGraphics2D		m_graphics;
-	//GLImage2D			m_image;
+	GLImage2D			m_image;
 	GLRectangle2D		m_rectangle2D;
 	GLLine2D			m_line2D;
 	//TinyTimer			m_timer;

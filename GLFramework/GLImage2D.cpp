@@ -51,9 +51,6 @@ namespace GLFramework
 	void GLImage2D::Destory()
 	{
 		GLTexture2D::Destory();
-		GL::GetAPI().glDisableVertexAttribArray(0);
-		GL::GetAPI().glDisableVertexAttribArray(1);
-		GL::GetAPI().glDisableVertexAttribArray(2);
 		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, 0);
 		if (m_vertexID != NULL)
 		{
@@ -69,10 +66,9 @@ namespace GLFramework
 		GL::GetAPI().glBindVertexArray(0);
 		if (m_vertexArrayID != NULL)
 		{
-
+			GL::GetAPI().glDeleteVertexArrays(1, &m_vertexArrayID);
+			m_vertexArrayID = NULL;
 		}
-		GL::GetAPI().glDeleteVertexArrays(1, &m_vertexArrayID);
-		GL_CHECK_ERROR();
 	}
 
 	BOOL GLImage2D::Initialize(GL& gl)
@@ -91,7 +87,7 @@ namespace GLFramework
 		GL::GetAPI().glBindVertexArray(m_vertexArrayID);
 		GL::GetAPI().glGenBuffers(1, &m_vertexID);
 		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
-		GL::GetAPI().glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(VERTEXTYPE), vertexTypes, GL_STATIC_DRAW);
+		GL::GetAPI().glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(VERTEXTYPE), vertexTypes, GL_DYNAMIC_DRAW);
 		GL::GetAPI().glEnableVertexAttribArray(0);
 		GL::GetAPI().glEnableVertexAttribArray(1);
 		GL::GetAPI().glEnableVertexAttribArray(2);
@@ -132,7 +128,9 @@ namespace GLFramework
 		XMMATRIX* ms = gl.GetMatrixs();
 		ms[1] *= scaling * rotation * translation;
 		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
-		GL::GetAPI().glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(VERTEXTYPE), vertices, GL_STATIC_DRAW);
+		void* bits = GL::GetAPI().glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+		memcpy_s(bits, 4 * sizeof(VERTEXTYPE), vertices, 4 * sizeof(VERTEXTYPE));
+		GL::GetAPI().glUnmapBuffer(GL_ARRAY_BUFFER);
 		GL_CHECK_ERROR(FALSE);
 		return TRUE;
 	}
@@ -142,6 +140,8 @@ namespace GLFramework
 		if (!Calculate(gl))
 			return FALSE;
 		GL::GetAPI().glBindVertexArray(m_vertexArrayID);
+		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
+		GL::GetAPI().glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexID);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		GL_CHECK_ERROR(FALSE);
 		return TRUE;

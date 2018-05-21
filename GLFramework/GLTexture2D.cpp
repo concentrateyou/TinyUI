@@ -18,11 +18,13 @@ namespace GLFramework
 		GL::GetAPI().glActiveTexture(GL_TEXTURE0);
 		glGenTextures(1, &m_textureID);
 		glBindTexture(GL_TEXTURE_2D, m_textureID);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, cx, cy, 0, GL_RGBA, GL_UNSIGNED_BYTE, bits);
+		GL::GetAPI().glGenerateMipmap(GL_TEXTURE_2D);
+		GL_CHECK_ERROR(FALSE);
 		return TRUE;
 	}
 	BOOL GLTexture2D::Load(GL& dx11, const BYTE* bits, LONG size)
@@ -32,12 +34,13 @@ namespace GLFramework
 		GL::GetAPI().glActiveTexture(GL_TEXTURE0);
 		glGenTextures(1, &m_textureID);
 		glBindTexture(GL_TEXTURE_2D, m_textureID);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_image.GetSize().cx, m_image.GetSize().cy, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_image.GetBits());
 		GL::GetAPI().glGenerateMipmap(GL_TEXTURE_2D);
+		GL_CHECK_ERROR(FALSE);
 		return TRUE;
 	}
 	BOOL GLTexture2D::Load(GL& gl, const CHAR* pzFile)
@@ -48,11 +51,12 @@ namespace GLFramework
 		glGenTextures(1, &m_textureID);
 		glBindTexture(GL_TEXTURE_2D, m_textureID);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_image.GetSize().cx, m_image.GetSize().cy, 0, GL_BGRA, GL_UNSIGNED_BYTE, m_image.GetBits());
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		GL::GetAPI().glGenerateMipmap(GL_TEXTURE_2D);
+		GL_CHECK_ERROR(FALSE);
 		return TRUE;
 	}
 	void GLTexture2D::Destory()

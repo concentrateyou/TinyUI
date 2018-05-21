@@ -37,7 +37,21 @@ using namespace std;
 #define WGL_CONTEXT_MAJOR_VERSION_ARB  0x2091
 #define WGL_CONTEXT_MINOR_VERSION_ARB  0x2092
 #define GL_ARRAY_BUFFER                0x8892
-#define GL_STATIC_DRAW                 0x88E4
+#define GL_READ_ONLY 0x88B8
+#define GL_WRITE_ONLY 0x88B9
+#define GL_READ_WRITE 0x88BA
+#define GL_BUFFER_ACCESS 0x88BB
+#define GL_BUFFER_MAPPED 0x88BC
+#define GL_BUFFER_MAP_POINTER 0x88BD
+#define GL_STREAM_DRAW 0x88E0
+#define GL_STREAM_READ 0x88E1
+#define GL_STREAM_COPY 0x88E2
+#define GL_STATIC_DRAW 0x88E4
+#define GL_STATIC_READ 0x88E5
+#define GL_STATIC_COPY 0x88E6
+#define GL_DYNAMIC_DRAW 0x88E8
+#define GL_DYNAMIC_READ 0x88E9
+#define GL_DYNAMIC_COPY 0x88EA
 #define GL_FRAGMENT_SHADER             0x8B30
 #define GL_VERTEX_SHADER               0x8B31
 #define GL_COMPILE_STATUS              0x8B81
@@ -46,6 +60,12 @@ using namespace std;
 #define GL_TEXTURE0                    0x84C0
 #define GL_BGRA                        0x80E1
 #define GL_ELEMENT_ARRAY_BUFFER        0x8893
+#define GL_CLAMP_TO_EDGE			   0x812F
+#define GL_MIRRORED_REPEAT             0x8370
+#define GL_CLAMP_TO_BORDER			   0x812D
+#define GL_MIRROR_CLAMP_EXT			   0x8742
+#define GL_MIRROR_CLAMP_TO_EDGE_EXT    0x8743
+#define GL_MIRROR_CLAMP_TO_BORDER_EXT  0x8912
 
 typedef BOOL(WINAPI * PFNWGLCHOOSEPIXELFORMATARBPROC) (HDC hdc, const int *piAttribIList, const FLOAT *pfAttribFList, UINT nMaxFormats, int *piFormats, UINT *nNumFormats);
 typedef HGLRC(WINAPI * PFNWGLCREATECONTEXTATTRIBSARBPROC) (HDC hDC, HGLRC hShareContext, const int *attribList);
@@ -83,3 +103,5 @@ typedef void (APIENTRY * PFNGLGENERATEMIPMAPPROC) (GLenum target);
 typedef void (APIENTRY * PFNGLDISABLEVERTEXATTRIBARRAYPROC) (GLuint index);
 typedef void (APIENTRY * PFNGLUNIFORM3FVPROC) (GLint location, GLsizei count, const GLfloat *value);
 typedef void (APIENTRY * PFNGLUNIFORM4FVPROC) (GLint location, GLsizei count, const GLfloat *value);
+typedef void* (APIENTRY * PFNGLMAPBUFFERPROC)(GLenum, GLenum);
+typedef GLboolean(APIENTRY * PFNGLUNMAPBUFFERPROC)(GLenum);
