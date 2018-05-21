@@ -7,13 +7,11 @@
 // INPUT VARIABLES //
 /////////////////////
 in vec3 v_position;
-in vec2 v_texCoord;
 in vec4 v_color;
 
 //////////////////////
 // OUTPUT VARIABLES //
 //////////////////////
-out vec2 texCoord;
 out vec4 color;  
 
 ///////////////////////
@@ -32,6 +30,5 @@ void main(void)
 	gl_Position = viewMatrix * gl_Position;
 	gl_Position = projectionMatrix * gl_Position;
 
-	texCoord = v_texCoord;
 	color = v_color;
 }

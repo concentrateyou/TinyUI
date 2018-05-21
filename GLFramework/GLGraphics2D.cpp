@@ -22,8 +22,10 @@ namespace GLFramework
 	{
 		if (!m_gl.Initialize(hWND, cx, cy))
 			return FALSE;
+
 		m_camera.SetPosition(0.0F, 0.0F, -10.0F);
 		m_camera.UpdateView();
+
 		string str;
 		str.resize(MAX_PATH);
 		GetModuleFileName(NULL, &str[0], MAX_PATH);
@@ -34,6 +36,14 @@ namespace GLFramework
 		ASSERT(PathFileExists(ps.c_str()));
 		if (!m_textureShader.Initialize(m_gl, vs.c_str(), ps.c_str()))
 			return FALSE;
+
+		vs = str + "\\glcolor.vs";
+		ASSERT(PathFileExists(vs.c_str()));
+		ps = str + "\\glcolor.ps";
+		ASSERT(PathFileExists(ps.c_str()));
+		if (!m_colorSharder.Initialize(m_gl, vs.c_str(), ps.c_str()))
+			return FALSE;
+
 		return TRUE;
 	}
 
@@ -63,6 +73,24 @@ namespace GLFramework
 		XMMATRIX* matrixs = m_gl.GetMatrixs();
 		m_textureShader.SetShaderParameters(m_gl, matrixs[1], m_camera.GetView(), matrixs[2]);
 		m_textureShader.Render(m_gl);
+		return TRUE;
+	}
+	BOOL GLGraphics2D::DrawRectangle(GLRectangle2D& rectangle, const XMFLOAT2 points[4], const XMFLOAT4& color)
+	{
+		if (!rectangle.DrawRectangle(m_gl, points, color))
+			return FALSE;
+		XMMATRIX* matrixs = m_gl.GetMatrixs();
+		m_colorSharder.SetShaderParameters(m_gl, matrixs[1], m_camera.GetView(), matrixs[2]);
+		m_colorSharder.Render(m_gl);
+		return TRUE;
+	}
+	BOOL GLGraphics2D::FillRectangle(GLRectangle2D& rectangle, const XMFLOAT2 points[4], const XMFLOAT4& color)
+	{
+		if (!rectangle.FillRectangle(m_gl, points, color))
+			return FALSE;
+		XMMATRIX* matrixs = m_gl.GetMatrixs();
+		m_colorSharder.SetShaderParameters(m_gl, matrixs[1], m_camera.GetView(), matrixs[2]);
+		m_colorSharder.Render(m_gl);
 		return TRUE;
 	}
 }

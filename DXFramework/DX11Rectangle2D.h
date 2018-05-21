@@ -21,8 +21,8 @@ namespace DXFramework
 		void	Destory();
 		DWORD	GetIndexs() const;
 	public:
-		BOOL	DrawRectangle(DX11& dx11, XMFLOAT2 points[4], UINT count, XMFLOAT4 color);
-		BOOL	FillRectangle(DX11& dx11, XMFLOAT2 points[4], UINT count, XMFLOAT4 color);
+		BOOL	DrawRectangle(DX11& dx11, const XMFLOAT2 points[4], const XMFLOAT4& color);
+		BOOL	FillRectangle(DX11& dx11, const XMFLOAT2 points[4], const XMFLOAT4& color);
 	protected:
 		DWORD						m_index;
 		XMFLOAT2					m_points[4];

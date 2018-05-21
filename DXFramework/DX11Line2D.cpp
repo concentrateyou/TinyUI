@@ -27,7 +27,7 @@ namespace DXFramework
 	{
 		return static_cast<DWORD>(m_vertexTypes.GetSize());
 	}
-	BOOL DX11Line2D::DrawLine(DX11& dx11, XMFLOAT2* points, DWORD count, XMFLOAT4 color)
+	BOOL DX11Line2D::DrawLine(DX11& dx11, const XMFLOAT2* points, DWORD count, const XMFLOAT4& color)
 	{
 		if (m_vertexTypes.GetSize() != count)
 		{

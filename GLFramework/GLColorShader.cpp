@@ -9,7 +9,6 @@ namespace GLFramework
 		m_shaderID(NULL)
 	{
 	}
-
 	GLColorShader::~GLColorShader()
 	{
 		GL::GetAPI().glDetachShader(m_shaderID, m_vertexShader);
@@ -18,7 +17,6 @@ namespace GLFramework
 		GL::GetAPI().glDeleteShader(m_fragmentShader);
 		GL::GetAPI().glDeleteProgram(m_shaderID);
 	}
-
 	BOOL GLColorShader::Initialize(GL& gl, const CHAR* vsFile, const CHAR* psFile)
 	{
 		TinyFile sFile;
@@ -77,8 +75,7 @@ namespace GLFramework
 		GL::GetAPI().glAttachShader(m_shaderID, m_vertexShader);
 		GL::GetAPI().glAttachShader(m_shaderID, m_fragmentShader);
 		GL::GetAPI().glBindAttribLocation(m_shaderID, 0, "v_position");
-		GL::GetAPI().glBindAttribLocation(m_shaderID, 1, "v_texCoord");
-		GL::GetAPI().glBindAttribLocation(m_shaderID, 2, "v_color");
+		GL::GetAPI().glBindAttribLocation(m_shaderID, 1, "v_color");
 		GL::GetAPI().glLinkProgram(m_shaderID);
 		GL::GetAPI().glGetProgramiv(m_shaderID, GL_LINK_STATUS, &status);
 		if (status != 1)
@@ -173,10 +170,6 @@ namespace GLFramework
 		matrix[14] = view._43;
 		matrix[15] = view._44;
 		GL::GetAPI().glUniformMatrix4fv(iRes, 1, FALSE, matrix);
-		iRes = GL::GetAPI().glGetUniformLocation(m_shaderID, "shaderTexture");
-		if (iRes == -1)
-			return FALSE;
-		GL::GetAPI().glUniform1i(iRes, 0);
 		GL_CHECK_ERROR(FALSE);
 		return TRUE;
 	}

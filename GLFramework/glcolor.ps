@@ -7,7 +7,6 @@
 /////////////////////
 // INPUT VARIABLES //
 /////////////////////
-in vec2 texCoord;
 in vec4 color;
 
 
@@ -17,20 +16,10 @@ in vec4 color;
 out vec4 outputColor;
 
 
-///////////////////////
-// UNIFORM VARIABLES //
-///////////////////////
-uniform sampler2D shaderTexture;
-
-
 ////////////////////////////////////////////////////////////////////////////////
 // Pixel Shader
 ////////////////////////////////////////////////////////////////////////////////
 void main(void)
 {
-	vec4 textureColor;
-
-	textureColor = texture(shaderTexture, texCoord);
-
-	outputColor = textureColor * color;
+	outputColor = color;
 }

@@ -30,9 +30,9 @@ namespace DXFramework
 		BOOL			DrawImageNV12BT601(DX11NV12Video& image);
 		BOOL			DrawImageNV12BT709(DX11NV12Video& image);
 		BOOL			DrawImage(DX11Image2D& image);
-		BOOL			DrawLine(DX11Line2D& line, XMFLOAT2* points, DWORD count, XMFLOAT4 color);
-		BOOL			DrawRectangle(DX11Rectangle2D& rectangle, XMFLOAT2 points[4], UINT count, XMFLOAT4 color);
-		BOOL			FillRectangle(DX11Rectangle2D& rectangle, XMFLOAT2 points[4], UINT count, XMFLOAT4 color);
+		BOOL			DrawLine(DX11Line2D& line,const XMFLOAT2* points, DWORD count, const XMFLOAT4& color);
+		BOOL			DrawRectangle(DX11Rectangle2D& rectangle, const XMFLOAT2 points[4], const XMFLOAT4& color);
+		BOOL			FillRectangle(DX11Rectangle2D& rectangle, const XMFLOAT2 points[4], const XMFLOAT4& color);
 	private:
 		DX11					m_dx11;
 		DXCamera				m_camera;

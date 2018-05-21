@@ -1,6 +1,8 @@
 #pragma once
 #include "GLImage2D.h"
+#include "GLRectangle2D.h"
 #include "GLCamera.h"
+#include "GLColorShader.h"
 #include "GLTextureShader.h"
 
 namespace GLFramework
@@ -17,10 +19,14 @@ namespace GLFramework
 		void	Resize(INT cx, INT cy);
 		BOOL	BeginDraw();
 		BOOL	EndDraw();
+	public:
 		BOOL	DrawImage(GLImage2D& image);
+		BOOL	DrawRectangle(GLRectangle2D& rectangle, const XMFLOAT2 points[4], const XMFLOAT4& color);
+		BOOL	FillRectangle(GLRectangle2D& rectangle, const XMFLOAT2 points[4], const XMFLOAT4& color);
 	private:
 		GL					m_gl;
 		GLCamera			m_camera;
+		GLColorShader		m_colorSharder;
 		GLTextureShader		m_textureShader;
 	};
 }

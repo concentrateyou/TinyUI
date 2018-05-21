@@ -86,7 +86,7 @@ namespace DXFramework
 		return m_index;
 	}
 
-	BOOL DX11Rectangle2D::DrawRectangle(DX11& dx11, XMFLOAT2 points[4], UINT count, XMFLOAT4 color)
+	BOOL DX11Rectangle2D::DrawRectangle(DX11& dx11, const XMFLOAT2 points[4], const XMFLOAT4& color)
 	{
 		D3D11_VIEWPORT vp;
 		ZeroMemory(&vp, sizeof(vp));
@@ -112,7 +112,7 @@ namespace DXFramework
 		m_index = 6;
 		return TRUE;
 	}
-	BOOL DX11Rectangle2D::FillRectangle(DX11& dx11, XMFLOAT2 points[4], UINT count, XMFLOAT4 color)
+	BOOL DX11Rectangle2D::FillRectangle(DX11& dx11, const XMFLOAT2 points[4], const XMFLOAT4& color)
 	{
 		D3D11_VIEWPORT vp;
 		ZeroMemory(&vp, sizeof(vp));

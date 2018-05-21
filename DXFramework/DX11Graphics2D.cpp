@@ -112,7 +112,7 @@ namespace DXFramework
 		m_textureShader.Render(m_dx11);
 		return TRUE;
 	}
-	BOOL DX11Graphics2D::DrawLine(DX11Line2D& line, XMFLOAT2* points, DWORD count, XMFLOAT4 color)
+	BOOL DX11Graphics2D::DrawLine(DX11Line2D& line, const XMFLOAT2* points, DWORD count,const XMFLOAT4& color)
 	{
 		if (!m_dx11.GetRenderView())
 			return FALSE;
@@ -123,22 +123,22 @@ namespace DXFramework
 		m_colorSharder.Render(m_dx11);
 		return TRUE;
 	}
-	BOOL DX11Graphics2D::DrawRectangle(DX11Rectangle2D& rectangle, XMFLOAT2 points[4], UINT count, XMFLOAT4 color)
+	BOOL DX11Graphics2D::DrawRectangle(DX11Rectangle2D& rectangle, const XMFLOAT2 points[4], const XMFLOAT4& color)
 	{
 		if (!m_dx11.GetRenderView())
 			return FALSE;
-		if (!rectangle.DrawRectangle(m_dx11, points, count, color))
+		if (!rectangle.DrawRectangle(m_dx11, points, color))
 			return FALSE;
 		XMMATRIX* ms = m_dx11.GetMatrixs();
 		m_colorSharder.SetShaderParameters(m_dx11, ms[1], m_camera.GetView(), ms[2], rectangle.GetIndexs());
 		m_colorSharder.Render(m_dx11);
 		return TRUE;
 	}
-	BOOL DX11Graphics2D::FillRectangle(DX11Rectangle2D& rectangle, XMFLOAT2 points[4], UINT count, XMFLOAT4 color)
+	BOOL DX11Graphics2D::FillRectangle(DX11Rectangle2D& rectangle, const XMFLOAT2 points[4], const XMFLOAT4& color)
 	{
 		if (!m_dx11.GetRenderView())
 			return FALSE;
-		if (!rectangle.FillRectangle(m_dx11, points, count, color))
+		if (!rectangle.FillRectangle(m_dx11, points, color))
 			return FALSE;
 		XMMATRIX* ms = m_dx11.GetMatrixs();
 		m_colorSharder.SetShaderParameters(m_dx11, ms[1], m_camera.GetView(), ms[2], rectangle.GetIndexs());
