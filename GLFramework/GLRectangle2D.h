@@ -24,7 +24,7 @@ namespace GLFramework
 	private:
 		GLuint	m_vertexArrayID;
 		GLuint	m_vertexID;
-		GLuint	m_indexID;
+		GLuint	m_indexs[2];
 	};
 }
 

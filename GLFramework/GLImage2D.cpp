@@ -55,10 +55,22 @@ namespace GLFramework
 		GL::GetAPI().glDisableVertexAttribArray(1);
 		GL::GetAPI().glDisableVertexAttribArray(2);
 		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, 0);
-		GL::GetAPI().glDeleteBuffers(1, &m_vertexID);
+		if (m_vertexID != NULL)
+		{
+			GL::GetAPI().glDeleteBuffers(1, &m_vertexID);
+			m_vertexID = NULL;
+		}
 		GL::GetAPI().glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		GL::GetAPI().glDeleteBuffers(1, &m_indexID);
+		if (m_indexID != NULL)
+		{
+			GL::GetAPI().glDeleteBuffers(1, &m_indexID);
+			m_indexID = NULL;
+		}
 		GL::GetAPI().glBindVertexArray(0);
+		if (m_vertexArrayID != NULL)
+		{
+
+		}
 		GL::GetAPI().glDeleteVertexArrays(1, &m_vertexArrayID);
 		GL_CHECK_ERROR();
 	}

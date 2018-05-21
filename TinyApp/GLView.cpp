@@ -64,7 +64,7 @@ LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 	points[1] = XMFLOAT2(200.0F, 100.0F);
 	points[2] = XMFLOAT2(200.0F, 200.0F);
 	points[3] = XMFLOAT2(100.0F, 200.0F);
-	m_graphics.FillRectangle(m_rectangle2D, points, XMFLOAT4(0.5F, 0.0F, 0.0F, 1.0F));
+	m_graphics.DrawRectangle(m_rectangle2D, points, XMFLOAT4(0.5F, 0.0F, 0.0F, 1.0F));
 	m_graphics.EndDraw();
 
 	return FALSE;
@@ -80,7 +80,7 @@ LRESULT GLView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	points[1] = XMFLOAT2(200.0F, 100.0F);
 	points[2] = XMFLOAT2(200.0F, 200.0F);
 	points[3] = XMFLOAT2(100.0F, 200.0F);
-	m_graphics.FillRectangle(m_rectangle2D, points, XMFLOAT4(0.5F, 0.0F, 0.0F, 1.0F));
+	m_graphics.DrawRectangle(m_rectangle2D, points, XMFLOAT4(0.5F, 0.0F, 0.0F, 1.0F));
 	m_graphics.EndDraw();
 	return FALSE;
 }
@@ -101,7 +101,7 @@ LRESULT GLView::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	points[1] = XMFLOAT2(200.0F, 100.0F);
 	points[2] = XMFLOAT2(200.0F, 200.0F);
 	points[3] = XMFLOAT2(100.0F, 200.0F);
-	m_graphics.FillRectangle(m_rectangle2D, points, XMFLOAT4(0.5F, 0.0F, 0.0F, 1.0F));
+	m_graphics.DrawRectangle(m_rectangle2D, points, XMFLOAT4(0.5F, 0.0F, 0.0F, 1.0F));
 	m_graphics.EndDraw();
 	return FALSE;
 }
