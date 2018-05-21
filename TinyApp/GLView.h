@@ -17,8 +17,8 @@
 #include "DX11NV12Video.h"
 
 #include "GL.h"
+#include "GLRectangle2D.h"
 #include "GLTexture2D.h"
-#include "GLTextureShader.h"
 #include "GLGraphics2D.h"
 
 using namespace LAV;
@@ -59,8 +59,8 @@ private:
 	DX11NV12Video		m_image2D;*/
 
 	GLGraphics2D		m_graphics;
-	GLImage2D			m_image;
-
+	//GLImage2D			m_image;
+	GLRectangle2D		m_rectangle2D;
 	//TinyTimer			m_timer;
 
 

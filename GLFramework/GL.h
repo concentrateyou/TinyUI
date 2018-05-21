@@ -59,18 +59,18 @@ namespace GLFramework
 		HDC			GetDC() const;
 		HWND		GetHWND() const;
 		HGLRC		GetContext() const;
-		TinySize	GetSize() const;
+		XMFLOAT2	GetSize() const;
 	public:
 		BOOL		Initialize(HWND hWND, INT cx, INT cy);
 		void		Uninitialize();
 		void		Resize(INT cx, INT cy);
-		void		SetMatrixs(const TinySize& size);
+		void		SetMatrixs(const XMFLOAT2& size);
 		XMMATRIX*	GetMatrixs();
 	private:
 		HWND		m_hWND;
 		HDC			m_hDC;
 		HGLRC		m_context;
-		TinySize	m_size;
+		XMFLOAT2	m_size;
 		XMMATRIX	m_matrixs[3];
 	};
 }

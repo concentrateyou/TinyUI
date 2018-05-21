@@ -24,10 +24,10 @@ namespace GLFramework
 		GLuint indices[6];
 		indices[0] = 0;
 		indices[1] = 1;
-		indices[2] = 3;
-		indices[3] = 1;
-		indices[4] = 2;
-		indices[5] = 3;
+		indices[2] = 2;
+		indices[3] = 2;
+		indices[4] = 3;
+		indices[5] = 0;
 		GL::GetAPI().glGenVertexArrays(1, &m_vertexArrayID);
 		GL::GetAPI().glBindVertexArray(m_vertexArrayID);
 		GL::GetAPI().glGenBuffers(1, &m_vertexID);
@@ -35,13 +35,10 @@ namespace GLFramework
 		GL::GetAPI().glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(VERTEXTYPE), vertexTypes, GL_STATIC_DRAW);
 		GL::GetAPI().glEnableVertexAttribArray(0);
 		GL::GetAPI().glEnableVertexAttribArray(1);
-		GL::GetAPI().glEnableVertexAttribArray(2);
 		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
 		GL::GetAPI().glVertexAttribPointer(0, 3, GL_FLOAT, FALSE, sizeof(VERTEXTYPE), 0);
 		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
-		GL::GetAPI().glVertexAttribPointer(1, 2, GL_FLOAT, FALSE, sizeof(VERTEXTYPE), (BYTE*)NULL + (3 * sizeof(FLOAT)));
-		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
-		GL::GetAPI().glVertexAttribPointer(2, 4, GL_FLOAT, FALSE, sizeof(VERTEXTYPE), (BYTE*)NULL + (5 * sizeof(FLOAT)));
+		GL::GetAPI().glVertexAttribPointer(1, 4, GL_FLOAT, FALSE, sizeof(VERTEXTYPE), (BYTE*)NULL + (3 * sizeof(FLOAT)));
 		GL::GetAPI().glGenBuffers(1, &m_indexID);
 		GL::GetAPI().glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexID);
 		GL::GetAPI().glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(UINT), indices, GL_STATIC_DRAW);
@@ -66,8 +63,8 @@ namespace GLFramework
 	}
 	BOOL GLRectangle2D::FillRectangle(GL& gl, const XMFLOAT2 points[4], const XMFLOAT4& color)
 	{
-		TinySize size = gl.GetSize();
-		XMFLOAT2 center(static_cast<FLOAT>(size.cx) / 2, static_cast<FLOAT>(size.cy) / 2);
+		XMFLOAT2 size = gl.GetSize();
+		XMFLOAT2 center(size.x / 2, size.y / 2);
 		VERTEXTYPE vertices[4];
 		for (INT i = 0; i < 4; i++)
 		{
@@ -76,6 +73,8 @@ namespace GLFramework
 		}
 		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
 		GL::GetAPI().glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(VERTEXTYPE), vertices, GL_STATIC_DRAW);
+		GL::GetAPI().glBindVertexArray(m_vertexArrayID);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		GL_CHECK_ERROR(FALSE);
 		return TRUE;
 	}

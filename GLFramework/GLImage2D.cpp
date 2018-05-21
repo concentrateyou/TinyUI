@@ -53,6 +53,7 @@ namespace GLFramework
 		GLTexture2D::Destory();
 		GL::GetAPI().glDisableVertexAttribArray(0);
 		GL::GetAPI().glDisableVertexAttribArray(1);
+		GL::GetAPI().glDisableVertexAttribArray(2);
 		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, 0);
 		GL::GetAPI().glDeleteBuffers(1, &m_vertexID);
 		GL::GetAPI().glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -111,8 +112,8 @@ namespace GLFramework
 		vertices[3].texture = XMFLOAT2(m_bFlipH ? 0.0F : 1.0F, m_bFlipV ? 0.0F : 1.0F);
 		vertices[3].color = XMFLOAT4(1.0F, 1.0F, 1.0F, 1.0F);
 		XMFLOAT2 size(m_size.x * m_scale.x, m_size.y * m_scale.y);
-		TinySize viewsize = gl.GetSize();
-		XMFLOAT2 center(static_cast<FLOAT>(viewsize.cx) / 2, static_cast<FLOAT>(viewsize.cy) / 2);
+		XMFLOAT2 viewsize = gl.GetSize();
+		XMFLOAT2 center(viewsize.x / 2, viewsize.y / 2);
 		XMMATRIX scaling = XMMatrixScaling(m_scale.x, m_scale.y, 0.0F);
 		XMMATRIX rotation = XMMatrixRotationZ(((m_angle) * (D3DX_PI / 180.0)));
 		XMMATRIX translation = XMMatrixTranslation(-center.x + size.x / 2 + m_translate.x, center.y - size.y / 2 - m_translate.y, 0.0F);

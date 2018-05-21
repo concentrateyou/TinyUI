@@ -301,7 +301,7 @@ namespace GLFramework
 	{
 		return m_context;
 	}
-	TinySize GL::GetSize() const
+	XMFLOAT2 GL::GetSize() const
 	{
 		return m_size;
 	}
@@ -394,7 +394,7 @@ namespace GLFramework
 		}
 		m_hDC = NULL;
 		m_hWND = NULL;
-		m_size.cx = m_size.cy = 0;
+		m_size.x = m_size.y = 0.0F;
 	}
 	void GL::Resize(INT cx, INT cy)
 	{
@@ -403,17 +403,17 @@ namespace GLFramework
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		glViewport(0, 0, cx, cy);
-		SetMatrixs(TinySize(cx, cy));
+		SetMatrixs(XMFLOAT2(cx, cy));
 		glClearErrors();
 	}
-	void GL::SetMatrixs(const TinySize& size)
+	void GL::SetMatrixs(const XMFLOAT2& size)
 	{
 		m_size = size;
 		FLOAT fov = (FLOAT)D3DX_PI / 4.0F;
-		FLOAT aspect = (FLOAT)size.cx / (FLOAT)size.cy;
+		FLOAT aspect = (FLOAT)size.x / (FLOAT)size.y;
 		m_matrixs[0] = XMMatrixPerspectiveFovLH(fov, aspect, 1000.0F, 0.1F);//projection
 		m_matrixs[1] = XMMatrixIdentity();//world
-		m_matrixs[2] = XMMatrixOrthographicLH((FLOAT)size.cx, (FLOAT)size.cy, 1000.0F, 0.1F);//view
+		m_matrixs[2] = XMMatrixOrthographicLH((FLOAT)size.x, (FLOAT)size.y, 1000.0F, 0.1F);//view
 	}
 	XMMATRIX* GL::GetMatrixs()
 	{
