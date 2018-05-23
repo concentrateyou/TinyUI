@@ -18,6 +18,7 @@ namespace GLFramework
 		virtual ~GLRectangle2D();
 		BOOL	Create(GL& gl);
 		void	Destory();
+		UINT	GetIndexs() const;
 	public:
 		BOOL	DrawRectangle(GL& gl, const XMFLOAT2 points[4], const XMFLOAT4& color);
 		BOOL	FillRectangle(GL& gl, const XMFLOAT2 points[4], const XMFLOAT4& color);

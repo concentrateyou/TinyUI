@@ -72,6 +72,8 @@ namespace GLFramework
 		XMMATRIX* matrixs = m_gl.GetMatrixs();
 		m_textureShader.SetShaderParameters(m_gl, matrixs[1], m_camera.GetView(), matrixs[2]);
 		m_textureShader.Render(m_gl);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		GL_CHECK_ERROR(FALSE);
 		return TRUE;
 	}
 	BOOL GLGraphics2D::DrawRectangle(GLRectangle2D& rectangle, const XMFLOAT2 points[4], const XMFLOAT4& color)
@@ -81,6 +83,8 @@ namespace GLFramework
 		XMMATRIX* matrixs = m_gl.GetMatrixs();
 		m_colorSharder.SetShaderParameters(m_gl, matrixs[1], m_camera.GetView(), matrixs[2]);
 		m_colorSharder.Render(m_gl);
+		glDrawElements(GL_LINE_STRIP, 5, GL_UNSIGNED_INT, 0);
+		GL_CHECK_ERROR(FALSE);
 		return TRUE;
 	}
 	BOOL GLGraphics2D::FillRectangle(GLRectangle2D& rectangle, const XMFLOAT2 points[4], const XMFLOAT4& color)
@@ -90,6 +94,8 @@ namespace GLFramework
 		XMMATRIX* matrixs = m_gl.GetMatrixs();
 		m_colorSharder.SetShaderParameters(m_gl, matrixs[1], m_camera.GetView(), matrixs[2]);
 		m_colorSharder.Render(m_gl);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		GL_CHECK_ERROR(FALSE);
 		return TRUE;
 	}
 	BOOL GLGraphics2D::DrawLine(GLLine2D& line, const XMFLOAT2* points, DWORD count, const XMFLOAT4& color)

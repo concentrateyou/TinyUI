@@ -95,10 +95,11 @@ namespace GLFramework
 	void GLColorShader::Render(GL& gl)
 	{
 		UNUSED(gl);
-		GL::GetAPI().glUseProgram(m_shaderID);
 	}
 	BOOL GLColorShader::SetShaderParameters(GL& gl, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix)
 	{
+		GL::GetAPI().glUseProgram(m_shaderID);
+		GL_CHECK_ERROR(FALSE);
 		FLOAT matrix[16];
 		XMFLOAT4X4 view;
 		ZeroMemory(matrix, 16 * sizeof(FLOAT));

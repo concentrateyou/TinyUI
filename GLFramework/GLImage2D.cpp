@@ -142,8 +142,6 @@ namespace GLFramework
 		GL::GetAPI().glBindVertexArray(m_vertexArrayID);
 		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
 		GL::GetAPI().glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexID);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		GL_CHECK_ERROR(FALSE);
 		return TRUE;
 	}
 }

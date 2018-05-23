@@ -95,8 +95,6 @@ namespace GLFramework
 		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
 		GL::GetAPI().glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(VERTEXTYPE), vertices, GL_STATIC_DRAW);
 		GL::GetAPI().glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexs[0]);
-		glDrawElements(GL_LINE_STRIP, 5, GL_UNSIGNED_INT, 0);
-		GL_CHECK_ERROR(FALSE);
 		return TRUE;
 	}
 	BOOL GLRectangle2D::FillRectangle(GL& gl, const XMFLOAT2 points[4], const XMFLOAT4& color)
@@ -113,8 +111,6 @@ namespace GLFramework
 		GL::GetAPI().glBindBuffer(GL_ARRAY_BUFFER, m_vertexID);
 		GL::GetAPI().glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(VERTEXTYPE), vertices, GL_STATIC_DRAW);
 		GL::GetAPI().glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexs[1]);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		GL_CHECK_ERROR(FALSE);
 		return TRUE;
 	}
 }
