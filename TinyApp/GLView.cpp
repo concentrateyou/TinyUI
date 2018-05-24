@@ -55,6 +55,8 @@ LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 	TinyRectangle s;
 	GetClientRect(&s);
 	m_ogl.Initialize(m_hWND, TO_CX(s), TO_CY(s));
+	m_ogl.BeginDraw();
+	m_ogl.EndDraw();
 	//m_graphics.Initialize(m_hWND, s.Width(), s.Height());
 	//m_image.Load(m_graphics.GetGL(), "D:\\timg.jpg");
 	//m_image.SetScale(XMFLOAT2(0.5F, 0.5F));
@@ -76,6 +78,8 @@ LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 LRESULT GLView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
+	m_ogl.BeginDraw();
+	m_ogl.EndDraw();
 	//m_graphics.Resize(LOWORD(lParam), HIWORD(lParam));
 	//m_graphics.BeginDraw();
 	//XMFLOAT2 points[4];

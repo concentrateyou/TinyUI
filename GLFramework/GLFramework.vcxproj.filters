@@ -30,10 +30,10 @@
     <ClInclude Include="include\glad\glad.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="OGL.h">
+    <ClInclude Include="GLFramework.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="GLFramework.h">
+    <ClInclude Include="OpenGL.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -44,13 +44,13 @@
     <ClCompile Include="glad.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="OGL.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="GLFramework.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="glad_wgl.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

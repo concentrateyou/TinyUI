@@ -3,17 +3,23 @@
 
 namespace GLFramework
 {
-	class OGL
+	class OpenGL
 	{
-		DISALLOW_COPY_AND_ASSIGN(OGL)
+		DISALLOW_COPY_AND_ASSIGN(OpenGL)
 	public:
-		OGL();
-		~OGL();
+		OpenGL();
+		~OpenGL();
 	public:
 		BOOL	Initialize(HWND hWND, INT cx, INT cy);
 		void	Uninitialize();
+		BOOL	BeginDraw();
+		BOOL	EndDraw();
 	private:
 		BOOL	GetPixelFormat(INT& index, PIXELFORMATDESCRIPTOR& s);
+	private:
+		HDC		m_hDC;
+		HWND	m_hWND;
+		HGLRC	m_hGLRC;
 	};
 }
 
