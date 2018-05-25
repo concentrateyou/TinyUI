@@ -109,7 +109,7 @@ namespace DXFramework
 		dx11.GetImmediateContext()->IASetVertexBuffers(0, 1, &m_vertex, &stride, &offset);
 		dx11.GetImmediateContext()->IASetIndexBuffer(m_indexs[0], DXGI_FORMAT_R32_UINT, 0);
 		dx11.GetImmediateContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
-		m_index = 6;
+		m_index = 5;
 		return TRUE;
 	}
 	BOOL DX11Rectangle2D::FillRectangle(DX11& dx11, const XMFLOAT2 points[4], const XMFLOAT4& color)
@@ -135,7 +135,7 @@ namespace DXFramework
 		dx11.GetImmediateContext()->IASetVertexBuffers(0, 1, &m_vertex, &stride, &offset);
 		dx11.GetImmediateContext()->IASetIndexBuffer(m_indexs[1], DXGI_FORMAT_R32_UINT, 0);
 		dx11.GetImmediateContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-		m_index = 5;
+		m_index = 6;
 		return TRUE;
 	}
 }
