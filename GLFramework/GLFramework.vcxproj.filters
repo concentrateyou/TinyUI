@@ -33,7 +33,7 @@
     <ClInclude Include="GLFramework.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGL.h">
+    <ClInclude Include="GL.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -50,7 +50,7 @@
     <ClCompile Include="glad_wgl.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="OpenGL.cpp">
+    <ClCompile Include="GL.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

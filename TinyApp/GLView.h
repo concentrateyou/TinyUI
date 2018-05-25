@@ -16,7 +16,7 @@
 #include "DX11Graphics2D.h"
 #include "DX11NV12Video.h"
 
-#include "OpenGL.h"
+#include "GL.h"
 using namespace LAV;
 using namespace DXFramework;
 using namespace GLFramework;
@@ -60,5 +60,5 @@ private:
 	///*DX9Graphics2D	m_graphics;
 	//DX9Image2D		m_image2D[2];*/
 	//LAVPlayer m_player;
-	OpenGL	m_ogl;
+	GL	m_ogl;
 };
