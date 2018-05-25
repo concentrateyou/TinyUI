@@ -16,3 +16,5 @@
 using namespace TinyUI;
 using namespace TinyUI::IO;
 using namespace std;
+
+#define GL_PI    (3.14159265358979323846)

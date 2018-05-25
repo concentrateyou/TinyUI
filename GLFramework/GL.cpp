@@ -93,6 +93,10 @@ namespace GLFramework
 	{
 		return m_size;
 	}
+	glm::mat4* GL::GetMatrixs()
+	{
+		return m_matrixs;
+	}
 	BOOL GL::Initialize(HWND hWND, INT cx, INT cy)
 	{
 		HRESULT bRes = TRUE;
@@ -318,7 +322,12 @@ namespace GLFramework
 	void GL::Resize(INT cx, INT cy)
 	{
 		glViewport(0, 0, cx, cy);
-		m_size.x = cx;
-		m_size.y = cy;
+		m_size.x = static_cast<FLOAT>(cx);
+		m_size.y = static_cast<FLOAT>(cy);
+		FLOAT fov = (FLOAT)GL_PI / 4.0F;
+		FLOAT aspect = m_size.x / m_size.y;
+		m_matrixs[0] = glm::perspective(fov, aspect, 0.1F, 1000.0F);
+		m_matrixs[1] = glm::mat4(1.0F);
+		m_matrixs[2] = glm::ortho(0.0F, m_size.x, m_size.y, 0.0F, 0.1F, 1000.0F);//PROJECTION
 	}
 }

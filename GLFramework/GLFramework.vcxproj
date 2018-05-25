@@ -135,6 +135,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GLCamera.h" />
     <ClInclude Include="GLFramework.h" />
     <ClInclude Include="GLGraphics2D.h" />
     <ClInclude Include="include\glad\glad.h" />
@@ -146,6 +147,7 @@
   <ItemGroup>
     <ClCompile Include="glad.c" />
     <ClCompile Include="glad_wgl.c" />
+    <ClCompile Include="GLCamera.cpp" />
     <ClCompile Include="GLFramework.cpp" />
     <ClCompile Include="GL.cpp" />
     <ClCompile Include="GLGraphics2D.cpp" />

@@ -15,6 +15,7 @@ namespace GLFramework
 		BOOL		IsActive() const;
 		HWND		GetHWND() const;
 		glm::vec2	GetSize() const;
+		glm::mat4*	GetMatrixs();
 	public:
 		BOOL		Initialize(HWND hWND, INT cx, INT cy);
 		void		Uninitialize();
@@ -28,6 +29,7 @@ namespace GLFramework
 		HWND		m_hWND;
 		HGLRC		m_hGLRC;
 		glm::vec2	m_size;
+		glm::mat4	m_matrixs[3];
 	};
 }
 

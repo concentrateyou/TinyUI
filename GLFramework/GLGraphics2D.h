@@ -1,5 +1,6 @@
 #pragma once
 #include "GL.h"
+#include "GLCamera.h"
 
 namespace GLFramework
 {
@@ -15,6 +16,7 @@ namespace GLFramework
 		BOOL		EndDraw();
 	private:
 		GL			m_ogl;
+		GLCamera	m_camera;
 	};
 }
 
