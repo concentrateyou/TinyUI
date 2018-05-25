@@ -14,7 +14,6 @@ namespace DXFramework
 		BOOL					Create(D3D11_TEXTURE2D_DESC& desc);
 		BOOL					Create(INT cx, INT cy);//B8G8R8A8
 		void					Destory();
-		BOOL					Resize();//÷ÿ÷√±≥æ∞¿Î∆¡
 		BOOL					Resize(INT cx, INT cy);
 	public:
 		BOOL					BeginDraw();
@@ -29,6 +28,7 @@ namespace DXFramework
 	public:
 		BOOL					SaveAs(const CHAR* pzName, D3DX11_IMAGE_FILE_FORMAT format);
 	protected:
+		BOOL								m_swap;
 		DX11&								m_dx11;
 		TinySize							m_size;
 		TinyComPtr<ID3D11Texture2D>			m_render2D;

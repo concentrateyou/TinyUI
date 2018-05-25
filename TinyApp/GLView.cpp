@@ -56,17 +56,16 @@ LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 	GetClientRect(&s);
 	m_graphics.Initialize(m_hWND, s.Size());
 	m_rectangle2D.Create(m_graphics.GetDX11());
-	m_image2D.Load(m_graphics.GetDX11(), "D:\\timg.jpg");	
+	m_image2D.Load(m_graphics.GetDX11(), "D:\\timg.jpg");
 	//m_image2D.SetScale(XMFLOAT2(0.2F, 0.2F));
 	m_graphics.GetRenderView()->BeginDraw();
 	XMFLOAT2 points[4];
-	points[0] = XMFLOAT2(300.0F, 300.0F);
-	points[1] = XMFLOAT2(500.0F, 300.0F);
-	points[2] = XMFLOAT2(400.0F, 400.0F);
-	points[3] = XMFLOAT2(300.0F, 500.0F);
+	points[0] = XMFLOAT2(400.0F, 400.0F);
+	points[1] = XMFLOAT2(500.0F, 400.0F);
+	points[2] = XMFLOAT2(500.0F, 500.0F);
+	points[3] = XMFLOAT2(400.0F, 500.0F);
 	m_graphics.DrawImage(m_image2D);
 	m_graphics.FillRectangle(m_rectangle2D, points, XMFLOAT4(0.5F, 0.0F, 0.0F, 1.0F));
-	
 	m_graphics.GetRenderView()->EndDraw();
 
 	return FALSE;
@@ -75,6 +74,17 @@ LRESULT GLView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 LRESULT GLView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
+	m_graphics.Resize(TinySize(LOWORD(lParam), HIWORD(lParam)));
+	m_graphics.GetRenderView()->BeginDraw();
+	XMFLOAT2 points[4];
+	points[0] = XMFLOAT2(400.0F, 400.0F);
+	points[1] = XMFLOAT2(500.0F, 400.0F);
+	points[2] = XMFLOAT2(500.0F, 500.0F);
+	points[3] = XMFLOAT2(400.0F, 500.0F);
+	m_graphics.DrawImage(m_image2D);
+	m_graphics.FillRectangle(m_rectangle2D, points, XMFLOAT4(0.5F, 0.0F, 0.0F, 1.0F));
+	m_graphics.GetRenderView()->EndDraw();
+	Invalidate();
 	return FALSE;
 }
 
@@ -88,6 +98,7 @@ LRESULT GLView::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandle
 LRESULT GLView::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
+	
 	m_graphics.Present();
 	return FALSE;
 }

@@ -163,7 +163,7 @@ namespace DXFramework
 	{
 		if (IsEmpty())
 			return FALSE;
-		if (!m_background2D->Resize())
+		if (!m_background2D->Resize(cx, cy))
 			return FALSE;
 		this->SetViewport(TinyPoint(0, 0), m_background2D->GetSize());
 		this->SetMatrixs(m_background2D->GetSize());

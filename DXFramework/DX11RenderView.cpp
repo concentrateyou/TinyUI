@@ -4,7 +4,8 @@
 namespace DXFramework
 {
 	DX11RenderView::DX11RenderView(DX11& dx11)
-		:m_dx11(dx11)
+		:m_dx11(dx11),
+		m_swap(TRUE)
 	{
 	}
 
@@ -57,6 +58,7 @@ namespace DXFramework
 		hRes = m_dx11.GetD3D()->CreateDepthStencilView(m_depth2D, &depthViewDesc, &m_depthView);
 		if (hRes != S_OK)
 			return FALSE;
+		m_swap = TRUE;
 		return TRUE;
 	}
 	BOOL DX11RenderView::Create(D3D11_TEXTURE2D_DESC& desc)
@@ -95,6 +97,7 @@ namespace DXFramework
 		hRes = m_dx11.GetD3D()->CreateDepthStencilView(m_depth2D, &depthViewDesc, &m_depthView);
 		if (hRes != S_OK)
 			return FALSE;
+		m_swap = FALSE;
 		return TRUE;
 	}
 	BOOL DX11RenderView::Create(INT cx, INT cy)
@@ -145,6 +148,7 @@ namespace DXFramework
 		hRes = m_dx11.GetD3D()->CreateDepthStencilView(m_depth2D, &depthViewDesc, &m_depthView);
 		if (hRes != S_OK)
 			return FALSE;
+		m_swap = FALSE;
 		return TRUE;
 	}
 	void DX11RenderView::Destory()
@@ -154,22 +158,20 @@ namespace DXFramework
 		m_depth2D.Release();
 		m_depthView.Release();
 	}
-	BOOL DX11RenderView::Resize()
+	BOOL DX11RenderView::Resize(INT cx, INT cy)
 	{
 		if (m_dx11.IsEmpty())
 			return FALSE;
-		LPVOID ps = NULL;
-		m_dx11.GetImmediateContext()->OMSetRenderTargets(1, (ID3D11RenderTargetView**)&ps, NULL);
-		HRESULT hRes = m_dx11.GetSwapChain()->ResizeBuffers(2, 0, 0, DXGI_FORMAT_B8G8R8A8_UNORM, 0);
-		if (hRes != S_OK)
-			return FALSE;
 		Destory();
+		if (m_swap)
+		{
+			LPVOID ps = NULL;
+			m_dx11.GetImmediateContext()->OMSetRenderTargets(1, (ID3D11RenderTargetView**)&ps, NULL);
+			HRESULT hRes = m_dx11.GetSwapChain()->ResizeBuffers(2, cx, cy, DXGI_FORMAT_B8G8R8A8_UNORM, 0);
+			if (hRes != S_OK)
+				return FALSE;
+		}
 		return Create();
-	}
-	BOOL DX11RenderView::Resize(INT cx, INT cy)
-	{
-		Destory();
-		return Create(cx, cy);
 	}
 	ID3D11RenderTargetView* DX11RenderView::GetRTView() const
 	{
