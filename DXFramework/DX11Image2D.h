@@ -42,7 +42,7 @@ namespace DXFramework
 	protected:
 		VERTEXTYPE					m_vertexTypes[6];
 		TinyComPtr<ID3D11Buffer>	m_vertex;
-		TinyComPtr<ID3D11Buffer>	m_indexs;
+		TinyComPtr<ID3D11Buffer>	m_index;
 	};
 }
 

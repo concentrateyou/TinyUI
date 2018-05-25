@@ -23,8 +23,8 @@ namespace DXFramework
 		BOOL	DrawLine(DX11& dx11, const XMFLOAT2* points, DWORD count, const XMFLOAT4& color);
 	protected:
 		TinyBuffer<VERTEXTYPE>		m_vertexTypes;
-		TinyComPtr<ID3D11Buffer>	m_vertexs;
-		TinyComPtr<ID3D11Buffer>	m_indexs;
+		TinyComPtr<ID3D11Buffer>	m_vertex;
+		TinyComPtr<ID3D11Buffer>	m_index;
 	};
 }
 

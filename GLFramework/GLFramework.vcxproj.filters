@@ -36,6 +36,9 @@
     <ClInclude Include="GL.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="GLGraphics2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -51,6 +54,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="GL.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GLGraphics2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

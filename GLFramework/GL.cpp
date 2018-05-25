@@ -68,14 +68,31 @@ namespace GLFramework
 
 	GL::GL()
 		:m_hDC(NULL),
+		m_hWND(NULL),
 		m_hGLRC(NULL)
 	{
+		m_size.x = m_size.y = 0.0F;
 	}
-
 	GL::~GL()
 	{
-	}
 
+	}
+	BOOL GL::IsEmpty() const
+	{
+		return (m_hGLRC == NULL);
+	}
+	BOOL GL::IsActive() const
+	{
+		return wglGetCurrentContext() == m_hGLRC;
+	}
+	HWND GL::GetHWND() const
+	{
+		return m_hWND;
+	}
+	glm::vec2 GL::GetSize() const
+	{
+		return m_size;
+	}
 	BOOL GL::Initialize(HWND hWND, INT cx, INT cy)
 	{
 		HRESULT bRes = TRUE;
@@ -98,7 +115,7 @@ namespace GLFramework
 			bRes = FALSE;
 			goto _ERROR;
 		}
-		static const INT pixelAttributes[] =
+		const INT pixelAttributes[] =
 		{
 			WGL_DRAW_TO_WINDOW_ARB,
 			GL_TRUE,
@@ -125,7 +142,7 @@ namespace GLFramework
 			bRes = FALSE;
 			goto _ERROR;
 		}
-		static const INT attributes[] =
+		const INT contextAttributes[] =
 		{
 			WGL_CONTEXT_MAJOR_VERSION_ARB, 4,
 			WGL_CONTEXT_MINOR_VERSION_ARB, 0,
@@ -135,7 +152,7 @@ namespace GLFramework
 			WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
 			0
 		};
-		m_hGLRC = wglCreateContextAttribsARB(m_hDC, 0, attributes);
+		m_hGLRC = wglCreateContextAttribsARB(m_hDC, 0, contextAttributes);
 		if (!m_hGLRC)
 		{
 			TRACE("wglCreateContext FAIL:%lu\n", GetLastError());
@@ -154,7 +171,6 @@ namespace GLFramework
 			LOG(ERROR) << "gladLoadGL FAIL" << GetLastError();
 			goto _ERROR;
 		}
-		GLenum errorcode = glGetError();
 		if (!GLAD_GL_VERSION_2_1)
 		{
 			TRACE("Requires OpenGL version 2.1 or higher\n");
@@ -181,7 +197,7 @@ namespace GLFramework
 			LOG(ERROR) << "OpenGL extension ARB_framebuffer_object is required";
 			return false;
 		}
-		glViewport(0, 0, cx, cy);
+		Resize(cx, cy);
 		if (GLAD_GL_VERSION_3_2 || GLAD_GL_ARB_seamless_cube_map)
 		{
 			glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
@@ -210,6 +226,7 @@ namespace GLFramework
 			m_hDC = NULL;
 		}
 		m_hWND = NULL;
+		m_size.x = m_size.y = 0.0F;
 	}
 	BOOL GL::GetPixelFormat(HDC hDC, INT& index, PIXELFORMATDESCRIPTOR& s)
 	{
@@ -289,14 +306,19 @@ namespace GLFramework
 	}
 	BOOL GL::BeginDraw()
 	{
-		glClearColor(0.5F, 0.0F, 0.0F, 1.0F);
+		glClearColor(0.0F, 0.0F, 0.0F, 1.0F);
 		glClearDepth(1.0F);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		return TRUE;
 	}
 	BOOL GL::EndDraw()
 	{
-		BOOL bRes = SwapBuffers(m_hDC);
-		return bRes;
+		return SwapBuffers(m_hDC);
+	}
+	void GL::Resize(INT cx, INT cy)
+	{
+		glViewport(0, 0, cx, cy);
+		m_size.x = cx;
+		m_size.y = cy;
 	}
 }

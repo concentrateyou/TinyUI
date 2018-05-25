@@ -136,6 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLFramework.h" />
+    <ClInclude Include="GLGraphics2D.h" />
     <ClInclude Include="include\glad\glad.h" />
     <ClInclude Include="include\KHR\khrplatform.h" />
     <ClInclude Include="GL.h" />
@@ -147,6 +148,7 @@
     <ClCompile Include="glad_wgl.c" />
     <ClCompile Include="GLFramework.cpp" />
     <ClCompile Include="GL.cpp" />
+    <ClCompile Include="GLGraphics2D.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

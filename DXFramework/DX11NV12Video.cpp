@@ -56,7 +56,7 @@ namespace DXFramework
 		UINT stride = sizeof(VERTEXTYPE);
 		UINT offset = 0;
 		dx11.GetImmediateContext()->IASetVertexBuffers(0, 1, &m_vertex, &stride, &offset);
-		dx11.GetImmediateContext()->IASetIndexBuffer(m_indexs, DXGI_FORMAT_R32_UINT, 0);
+		dx11.GetImmediateContext()->IASetIndexBuffer(m_index, DXGI_FORMAT_R32_UINT, 0);
 		dx11.GetImmediateContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		return TRUE;
 	}
@@ -133,7 +133,7 @@ namespace DXFramework
 		data.pSysMem = indices;
 		data.SysMemPitch = 0;
 		data.SysMemSlicePitch = 0;
-		hRes = dx11.GetD3D()->CreateBuffer(&desc, &data, &m_indexs);
+		hRes = dx11.GetD3D()->CreateBuffer(&desc, &data, &m_index);
 		if (hRes != S_OK)
 			return FALSE;
 		return TRUE;

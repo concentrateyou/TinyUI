@@ -19,8 +19,8 @@ namespace DXFramework
 	}
 	void DX11Line2D::Destory()
 	{
-		m_vertexs.Release();
-		m_indexs.Release();
+		m_vertex.Release();
+		m_index.Release();
 		m_vertexTypes.Release();
 	}
 	DWORD DX11Line2D::GetIndexs() const
@@ -49,7 +49,7 @@ namespace DXFramework
 			data.pSysMem = m_vertexTypes.Ptr();
 			data.SysMemPitch = 0;
 			data.SysMemSlicePitch = 0;
-			HRESULT hRes = dx11.GetD3D()->CreateBuffer(&desc, &data, &m_vertexs);
+			HRESULT hRes = dx11.GetD3D()->CreateBuffer(&desc, &data, &m_vertex);
 			if (hRes != S_OK)
 				return FALSE;
 			TinyScopedArray<ULONG> indices(new ULONG[count]);
@@ -70,7 +70,7 @@ namespace DXFramework
 			data.pSysMem = indices.Ptr();
 			data.SysMemPitch = 0;
 			data.SysMemSlicePitch = 0;
-			hRes = dx11.GetD3D()->CreateBuffer(&desc, &data, &m_indexs);
+			hRes = dx11.GetD3D()->CreateBuffer(&desc, &data, &m_index);
 			if (hRes != S_OK)
 				return FALSE;
 			return TRUE;
@@ -86,16 +86,16 @@ namespace DXFramework
 			m_vertexTypes[i].color = color;
 		}
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
-		HRESULT hRes = dx11.GetImmediateContext()->Map(m_vertexs, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		HRESULT hRes = dx11.GetImmediateContext()->Map(m_vertex, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		if (hRes != S_OK)
 			return FALSE;
 		memcpy(mappedResource.pData, (void*)m_vertexTypes.Ptr(), sizeof(VERTEXTYPE) * count);
-		dx11.GetImmediateContext()->Unmap(m_vertexs, 0);
+		dx11.GetImmediateContext()->Unmap(m_vertex, 0);
 
 		UINT stride = sizeof(VERTEXTYPE);
 		UINT offset = 0;
-		dx11.GetImmediateContext()->IASetVertexBuffers(0, 1, &m_vertexs, &stride, &offset);
-		dx11.GetImmediateContext()->IASetIndexBuffer(m_indexs, DXGI_FORMAT_R32_UINT, 0);
+		dx11.GetImmediateContext()->IASetVertexBuffers(0, 1, &m_vertex, &stride, &offset);
+		dx11.GetImmediateContext()->IASetIndexBuffer(m_index, DXGI_FORMAT_R32_UINT, 0);
 		dx11.GetImmediateContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
 		return TRUE;
 	}

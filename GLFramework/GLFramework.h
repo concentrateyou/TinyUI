@@ -8,6 +8,9 @@
 #include "Render/TinyImage.h"
 #include "IO/TinyIO.h"
 #include "glad/glad_wgl.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #pragma comment(lib,"opengl32.lib")
 
 using namespace TinyUI;
