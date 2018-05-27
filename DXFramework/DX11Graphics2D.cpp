@@ -82,6 +82,7 @@ namespace DXFramework
 		XMMATRIX* ms = m_dx11.GetMatrixs();
 		DX11Texture2D* s[2] = { image.GetTextureY(),image.GetTextureNV() };
 		m_shaderNV12BT601.SetShaderParameters(m_dx11, ms[1], m_camera.GetView(), ms[2], s);
+		ms[1] = XMMatrixIdentity();
 		m_shaderNV12BT601.Render(m_dx11);
 		return TRUE;
 	}
@@ -96,6 +97,7 @@ namespace DXFramework
 		XMMATRIX* ms = m_dx11.GetMatrixs();
 		DX11Texture2D* s[2] = { image.GetTextureY(),image.GetTextureNV() };
 		m_shaderNV12BT709.SetShaderParameters(m_dx11, ms[1], m_camera.GetView(), ms[2], s);
+		ms[1] = XMMatrixIdentity();
 		m_shaderNV12BT709.Render(m_dx11);
 		return TRUE;
 	}
@@ -109,6 +111,7 @@ namespace DXFramework
 			return FALSE;
 		XMMATRIX* ms = m_dx11.GetMatrixs();
 		m_textureShader.SetShaderParameters(m_dx11, ms[1], m_camera.GetView(), ms[2], &image);
+		ms[1] = XMMatrixIdentity();
 		m_textureShader.Render(m_dx11);
 		return TRUE;
 	}
