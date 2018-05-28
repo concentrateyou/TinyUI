@@ -118,8 +118,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>..\TinyUI;..\Debug;$(DXSDK_DIR)\Lib\x64;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d11.lib;d3d9.lib;dxgi.lib;D2d1.lib;D3DCompiler.lib;TinyUI.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\TinyUI;$(DXSDK_DIR)\Lib\x64;..\Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d11.lib;d3dx11.lib;d3d9.lib;dxgi.lib;D2d1.lib;D3DCompiler.lib;TinyUI.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

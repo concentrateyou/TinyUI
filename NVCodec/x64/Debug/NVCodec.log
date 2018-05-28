@@ -1,0 +1,1136 @@
+﻿  NVEncoder.cpp
+c:\program files (x86)\windows kits\8.1\include\shared\windowsx.h(1233): warning C4005: “GET_X_LPARAM”: 宏重定义
+  d:\develop\tinyui\tinyui\common\tinycommon.h(160): note: 参见“GET_X_LPARAM”的前一个定义
+c:\program files (x86)\windows kits\8.1\include\shared\windowsx.h(1234): warning C4005: “GET_Y_LPARAM”: 宏重定义
+  d:\develop\tinyui\tinyui\common\tinycommon.h(164): note: 参见“GET_Y_LPARAM”的前一个定义
+  NVDecoder.cpp
+c:\program files (x86)\windows kits\8.1\include\shared\windowsx.h(1233): warning C4005: “GET_X_LPARAM”: 宏重定义
+  d:\develop\tinyui\tinyui\common\tinycommon.h(160): note: 参见“GET_X_LPARAM”的前一个定义
+c:\program files (x86)\windows kits\8.1\include\shared\windowsx.h(1234): warning C4005: “GET_Y_LPARAM”: 宏重定义
+  d:\develop\tinyui\tinyui\common\tinycommon.h(164): note: 参见“GET_Y_LPARAM”的前一个定义
+  NVCodec.cpp
+c:\program files (x86)\windows kits\8.1\include\shared\windowsx.h(1233): warning C4005: “GET_X_LPARAM”: 宏重定义
+  d:\develop\tinyui\tinyui\common\tinycommon.h(160): note: 参见“GET_X_LPARAM”的前一个定义
+c:\program files (x86)\windows kits\8.1\include\shared\windowsx.h(1234): warning C4005: “GET_Y_LPARAM”: 宏重定义
+  d:\develop\tinyui\tinyui\common\tinycommon.h(164): note: 参见“GET_Y_LPARAM”的前一个定义
+  dynlink_nvcuvid.cpp
+d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(80): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 1 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(80): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(80): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(80): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(80): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(164): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(164): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(164): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(164): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(164): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(165): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(165): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(165): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(165): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(165): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(166): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(166): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(166): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(166): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(166): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(167): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(167): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(167): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(167): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(167): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(168): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(168): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(168): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(168): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(168): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(169): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(169): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(169): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(169): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(169): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(170): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(170): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(170): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(170): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(170): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(172): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(172): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(172): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(172): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(172): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(173): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(173): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(173): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(173): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(173): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(174): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(174): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(174): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(174): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(174): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(176): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(176): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(176): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(176): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(176): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(177): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(177): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(177): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(177): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(177): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(178): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(178): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(178): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(178): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(178): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(181): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(181): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(181): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(181): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(181): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(182): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(182): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(182): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(182): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(182): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(191): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(191): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(191): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(191): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(191): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(192): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(192): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(192): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(192): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(192): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(193): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(193): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(193): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(193): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(193): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(194): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(194): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(194): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(194): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_nvcuvid.cpp(194): note: 请考虑在格式字符串中使用“%ws”
+  dynlink_cudaD3D9.cpp
+d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(103): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(103): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(103): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(103): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(103): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(104): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(104): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(104): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(104): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(104): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(107): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(107): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(107): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(107): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(107): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(108): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(108): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(108): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(108): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(108): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(109): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(109): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(109): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(109): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(109): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(110): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(110): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(110): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(110): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(110): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(111): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(111): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(111): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(111): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(111): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(112): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(112): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(112): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(112): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(112): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(115): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(115): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(115): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(115): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(115): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(116): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(116): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(116): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(116): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(116): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(118): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(118): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(118): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(118): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(118): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(119): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(119): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(119): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(119): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(119): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(120): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(120): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(120): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(120): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(120): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(121): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(121): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(121): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(121): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(121): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(122): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(122): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(122): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(122): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(122): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(123): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(123): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(123): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(123): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cudad3d9.cpp(123): note: 请考虑在格式字符串中使用“%ws”
+  dynlink_cuda.cpp
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(227): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 1 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(227): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(227): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(227): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(227): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(346): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(346): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(346): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(346): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(346): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(347): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(347): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(347): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(347): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(347): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(350): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(350): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(350): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(350): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(350): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(351): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(351): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(351): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(351): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(351): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(352): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(352): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(352): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(352): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(352): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(353): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(353): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(353): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(353): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(353): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(354): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(354): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(354): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(354): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(354): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(355): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(355): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(355): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(355): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(355): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(358): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(358): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(358): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(358): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(358): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(359): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(359): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(359): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(359): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(359): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(361): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(361): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(361): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(361): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(361): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(362): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(362): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(362): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(362): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(362): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(363): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(363): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(363): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(363): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(363): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(364): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(364): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(364): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(364): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(364): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(365): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(365): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(365): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(365): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(365): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(412): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(412): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(412): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(412): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(412): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(416): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(416): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(416): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(416): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(416): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(424): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(424): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(424): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(424): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(424): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(425): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(425): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(425): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(425): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(425): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(426): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(426): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(426): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(426): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(426): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(427): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(427): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(427): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(427): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(427): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(428): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(428): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(428): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(428): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(428): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(429): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(429): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(429): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(429): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(429): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(430): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(430): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(430): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(430): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(430): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(431): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(431): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(431): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(431): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(431): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(432): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(432): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(432): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(432): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(432): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(433): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(433): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(433): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(433): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(433): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(434): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(434): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(434): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(434): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(434): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(435): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(435): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(435): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(435): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(435): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(436): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(436): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(436): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(436): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(436): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(437): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(437): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(437): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(437): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(437): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(438): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(438): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(438): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(438): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(438): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(439): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(439): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(439): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(439): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(439): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(440): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(440): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(440): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(440): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(440): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(441): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(441): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(441): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(441): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(441): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(442): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(442): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(442): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(442): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(442): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(443): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(443): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(443): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(443): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(443): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(444): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(444): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(444): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(444): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(444): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(445): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(445): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(445): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(445): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(445): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(446): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(446): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(446): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(446): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(446): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(447): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(447): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(447): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(447): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(447): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(448): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(448): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(448): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(448): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(448): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(449): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(449): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(449): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(449): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(449): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(450): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(450): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(450): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(450): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(450): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(451): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(451): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(451): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(451): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(451): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(452): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(452): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(452): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(452): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(452): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(453): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(453): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(453): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(453): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(453): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(454): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(454): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(454): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(454): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(454): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(455): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(455): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(455): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(455): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(455): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(456): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(456): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(456): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(456): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(456): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(457): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(457): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(457): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(457): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(457): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(458): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(458): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(458): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(458): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(458): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(459): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(459): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(459): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(459): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(459): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(460): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(460): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(460): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(460): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(460): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(461): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(461): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(461): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(461): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(461): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(462): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(462): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(462): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(462): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(462): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(463): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(463): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(463): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(463): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(463): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(464): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(464): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(464): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(464): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(464): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(465): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(465): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(465): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(465): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(465): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(466): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(466): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(466): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(466): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(466): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(467): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(467): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(467): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(467): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(467): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(468): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(468): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(468): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(468): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(468): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(469): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(469): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(469): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(469): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(469): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(470): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(470): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(470): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(470): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(470): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(471): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(471): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(471): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(471): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(471): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(472): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(472): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(472): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(472): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(472): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(473): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(473): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(473): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(473): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(473): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(474): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(474): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(474): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(474): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(474): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(475): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(475): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(475): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(475): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(475): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(476): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(476): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(476): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(476): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(476): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(477): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(477): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(477): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(477): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(477): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(482): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(482): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(482): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(482): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(482): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(483): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(483): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(483): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(483): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(483): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(484): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(484): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(484): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(484): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(484): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(485): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(485): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(485): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(485): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(485): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(486): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(486): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(486): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(486): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(486): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(491): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(491): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(491): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(491): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(491): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(492): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(492): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(492): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(492): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(492): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(493): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(493): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(493): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(493): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(493): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(494): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(494): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(494): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(494): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(494): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(495): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(495): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(495): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(495): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(495): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(496): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(496): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(496): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(496): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(496): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(497): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(497): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(497): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(497): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(497): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(498): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(498): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(498): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(498): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(498): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(499): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(499): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(499): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(499): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(499): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(500): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(500): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(500): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(500): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(500): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(501): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(501): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(501): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(501): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(501): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(502): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(502): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(502): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(502): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(502): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(503): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(503): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(503): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(503): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(503): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(504): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(504): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(504): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(504): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(504): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(505): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(505): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(505): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(505): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(505): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(506): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(506): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(506): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(506): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(506): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(507): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(507): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(507): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(507): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(507): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(508): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(508): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(508): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(508): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(508): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(509): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(509): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(509): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(509): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(509): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(510): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(510): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(510): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(510): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(510): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(511): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(511): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(511): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(511): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(511): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(512): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(512): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(512): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(512): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(512): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(513): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(513): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(513): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(513): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(513): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(514): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(514): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(514): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(514): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(514): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(515): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(515): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(515): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(515): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(515): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(516): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(516): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(516): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(516): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(516): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(517): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(517): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(517): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(517): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(517): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(518): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(518): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(518): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(518): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(518): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(519): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(519): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(519): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(519): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(519): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(520): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(520): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(520): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(520): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(520): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(521): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(521): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(521): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(521): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(521): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(522): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(522): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(522): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(522): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(522): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(523): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(523): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(523): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(523): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(523): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(524): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(524): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(524): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(524): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(524): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(525): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(525): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(525): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(525): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(525): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(526): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(526): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(526): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(526): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(526): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(527): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(527): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(527): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(527): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(527): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(528): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(528): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(528): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(528): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(528): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(529): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(529): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(529): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(529): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(529): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(530): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(530): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(530): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(530): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(530): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(534): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(534): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(534): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(534): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(534): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(535): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(535): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(535): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(535): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(535): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(536): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(536): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(536): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(536): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(536): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(537): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(537): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(537): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(537): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(537): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(538): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(538): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(538): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(538): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(538): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(539): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(539): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(539): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(539): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(539): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(540): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(540): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(540): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(540): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(540): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(541): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(541): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(541): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(541): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(541): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(542): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(542): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(542): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(542): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(542): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(543): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(543): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(543): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(543): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(543): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(544): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(544): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(544): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(544): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(544): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(545): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(545): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(545): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(545): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(545): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(546): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(546): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(546): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(546): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(546): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(547): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(547): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(547): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(547): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(547): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(548): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(548): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(548): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(548): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(548): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(549): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(549): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(549): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(549): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(549): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(550): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(550): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(550): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(550): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(550): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(551): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(551): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(551): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(551): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(551): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(552): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(552): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(552): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(552): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(552): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(553): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(553): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(553): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(553): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(553): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(554): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(554): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(554): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(554): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(554): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(555): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(555): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(555): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(555): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(555): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(556): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(556): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(556): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(556): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(556): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(557): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(557): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(557): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(557): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(557): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(558): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(558): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(558): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(558): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(558): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(559): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(559): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(559): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(559): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(559): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(560): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(560): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(560): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(560): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(560): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(561): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(561): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(561): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(561): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(561): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(562): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(562): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(562): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(562): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(562): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(563): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(563): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(563): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(563): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(563): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(564): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(564): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(564): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(564): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(564): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(565): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(565): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(565): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(565): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(565): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(566): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(566): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(566): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(566): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(566): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(567): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(567): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(567): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(567): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(567): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(568): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(568): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(568): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(568): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(568): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(569): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(569): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(569): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(569): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(569): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(570): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(570): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(570): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(570): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(570): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(571): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(571): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(571): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(571): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(571): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(572): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(572): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(572): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(572): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(572): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(573): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(573): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(573): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(573): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(573): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(579): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(579): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(579): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(579): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(579): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(580): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(580): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(580): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(580): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(580): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(585): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(585): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(585): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(585): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(585): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(590): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(590): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(590): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(590): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(590): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(591): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(591): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(591): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(591): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(591): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(593): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(593): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(593): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(593): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(593): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(594): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(594): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(594): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(594): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(594): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(599): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(599): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(599): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(599): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(599): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(603): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(603): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(603): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(603): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(603): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(606): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(606): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(606): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(606): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(606): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(607): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(607): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(607): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(607): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(607): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(608): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(608): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(608): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(608): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(608): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(609): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(609): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(609): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(609): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(609): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(614): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(614): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(614): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(614): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(614): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(615): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(615): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(615): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(615): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(615): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(616): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(616): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(616): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(616): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(616): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(617): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(617): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(617): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(617): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(617): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(618): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(618): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(618): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(618): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(618): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(623): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(623): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(623): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(623): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(623): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(624): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(624): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(624): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(624): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(624): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(625): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(625): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(625): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(625): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(625): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(626): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(626): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(626): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(626): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(626): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(627): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(627): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(627): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(627): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(627): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(628): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(628): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(628): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(628): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(628): note: 请考虑在格式字符串中使用“%ws”
+d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(629): warning C4477: “printf”: 格式字符串“%s”需要类型“char *”的参数，但可变参数 2 拥有了类型“LPCWSTR”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(629): note: 请考虑在格式字符串中使用“%ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(629): note: 请考虑在格式字符串中使用“%lls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(629): note: 请考虑在格式字符串中使用“%Ls”
+  d:\develop\tinyui\nvcodec\dynlink_cuda.cpp(629): note: 请考虑在格式字符串中使用“%ws”
+  cudaModuleMgr.cpp
+d:\develop\tinyui\nvcodec\cudamodulemgr.cpp(159): warning C4477: “printf”: 格式字符串“%08x”需要类型“unsigned int”的参数，但可变参数 1 拥有了类型“std::size_t”
+  d:\develop\tinyui\nvcodec\cudamodulemgr.cpp(159): note: 请考虑在格式字符串中使用“%zx”
+d:\develop\tinyui\nvcodec\cudamodulemgr.cpp(195): warning C4477: “printf”: 格式字符串“%08x”需要类型“unsigned int”的参数，但可变参数 1 拥有了类型“std::size_t”
+  d:\develop\tinyui\nvcodec\cudamodulemgr.cpp(195): note: 请考虑在格式字符串中使用“%zx”
+  正在生成代码...
+dynlink_cuda.obj : warning LNK4006: cuInitD3D9 已在 dynlink_cudaD3D9.obj 中定义；已忽略第二个定义
+dynlink_cuda.obj : warning LNK4006: cuD3D9Begin 已在 dynlink_cudaD3D9.obj 中定义；已忽略第二个定义
+dynlink_cuda.obj : warning LNK4006: cuD3D9End 已在 dynlink_cudaD3D9.obj 中定义；已忽略第二个定义
+dynlink_cuda.obj : warning LNK4006: cuD3D9GetDevice 已在 dynlink_cudaD3D9.obj 中定义；已忽略第二个定义
+dynlink_cuda.obj : warning LNK4006: cuD3D9GetDevices 已在 dynlink_cudaD3D9.obj 中定义；已忽略第二个定义
+dynlink_cuda.obj : warning LNK4006: cuD3D9CtxCreate 已在 dynlink_cudaD3D9.obj 中定义；已忽略第二个定义
+dynlink_cuda.obj : warning LNK4006: cuD3D9CtxCreate_v2 已在 dynlink_cudaD3D9.obj 中定义；已忽略第二个定义
+dynlink_cuda.obj : warning LNK4006: cuD3D9ResourceGetSurfaceDimensions 已在 dynlink_cudaD3D9.obj 中定义；已忽略第二个定义
+dynlink_cuda.obj : warning LNK4006: cuD3D9ResourceGetMappedPointer 已在 dynlink_cudaD3D9.obj 中定义；已忽略第二个定义
+dynlink_cuda.obj : warning LNK4006: cuD3D9ResourceGetMappedArray 已在 dynlink_cudaD3D9.obj 中定义；已忽略第二个定义
+dynlink_cuda.obj : warning LNK4006: cuD3D9ResourceGetMappedSize 已在 dynlink_cudaD3D9.obj 中定义；已忽略第二个定义
+dynlink_cuda.obj : warning LNK4006: cuD3D9ResourceGetMappedPitch 已在 dynlink_cudaD3D9.obj 中定义；已忽略第二个定义
+dynlink_cuda.obj : warning LNK4006: cuD3D9RegisterResource 已在 dynlink_cudaD3D9.obj 中定义；已忽略第二个定义
+dynlink_cuda.obj : warning LNK4006: cuD3D9UnregisterResource 已在 dynlink_cudaD3D9.obj 中定义；已忽略第二个定义
+dynlink_cuda.obj : warning LNK4006: cuD3D9MapResources 已在 dynlink_cudaD3D9.obj 中定义；已忽略第二个定义
+dynlink_cuda.obj : warning LNK4006: cuD3D9UnmapResources 已在 dynlink_cudaD3D9.obj 中定义；已忽略第二个定义
+dynlink_cuda.obj : warning LNK4006: cuD3D9ResourceSetMapFlags 已在 dynlink_cudaD3D9.obj 中定义；已忽略第二个定义
+dynlink_cuda.obj : warning LNK4006: cuGraphicsD3D9RegisterResource 已在 dynlink_cudaD3D9.obj 中定义；已忽略第二个定义
+dynlink_cuda.obj : warning LNK4006: cuGraphicsD3D9RegisterResource_v2 已在 dynlink_cudaD3D9.obj 中定义；已忽略第二个定义
+dynlink_cuda.obj : warning LNK4006: "enum cudaError_enum (__cdecl* cuD3D9GetDirect3DDevice)(struct IDirect3DDevice9 * *)" (?cuD3D9GetDirect3DDevice@@3P6A?AW4cudaError_enum@@PEAPEAUIDirect3DDevice9@@@ZEA) 已在 dynlink_cudaD3D9.obj 中定义；已忽略第二个定义
+dynlink_cuda.obj : warning LNK4006: "enum cudaError_enum (__cdecl* cuD3D9GetDevice_v2)(int *,char const *)" (?cuD3D9GetDevice_v2@@3P6A?AW4cudaError_enum@@PEAHPEBD@ZEA) 已在 dynlink_cudaD3D9.obj 中定义；已忽略第二个定义
+  NVCodec.vcxproj -> D:\Develop\TinyUI\x64\Debug\NVCodec.lib

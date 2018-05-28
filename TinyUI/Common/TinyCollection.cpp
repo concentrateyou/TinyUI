@@ -109,7 +109,7 @@ namespace TinyUI
 	}
 	DWORD TinyPointerMap::GetSize() const
 	{
-		return m_count;
+		return static_cast<DWORD>(m_count);
 	}
 	BOOL TinyPointerMap::IsEmpty() const
 	{
@@ -155,7 +155,7 @@ namespace TinyUI
 	BOOL TinyPointerMap::Add(LPVOID key, LPVOID value)
 	{
 		UINT index = 0;
-		UINT_PTR hash = 0;
+		UINT hash = 0;
 		TinyNode* ps = NULL;
 		if ((ps = Lookup(key, index, hash)) == NULL)
 		{
@@ -202,22 +202,22 @@ namespace TinyUI
 	}
 	BOOL TinyPointerMap::Lookup(LPVOID key, LPVOID& value) const
 	{
-		UINT index = 0;
-		UINT_PTR hash = 0;
-		TinyNode* ps = Lookup(key, index, hash);
+		UINT bucket = 0;
+		UINT hash = 0;
+		TinyNode* ps = Lookup(key, bucket, hash);
 		if (ps == NULL)
 			return FALSE;
 		value = ps->m_value;
 		return TRUE;
 	}
-	TinyPointerMap::TinyNode* TinyPointerMap::Lookup(LPVOID key, UINT& index, UINT& hash) const
+	TinyPointerMap::TinyNode* TinyPointerMap::Lookup(LPVOID key, UINT& bucket, UINT& hash) const
 	{
 		hash = HashKey(key);
-		index = hash % m_size;
+		bucket = hash % m_size;
 		if (m_pTable == NULL)
 			return NULL;
 		TinyNode* ps = NULL;
-		for (ps = m_pTable[index]; ps != NULL; ps = ps->m_pNext)
+		for (ps = m_pTable[bucket]; ps != NULL; ps = ps->m_pNext)
 		{
 			if (ps->m_key == key)
 			{
@@ -228,10 +228,10 @@ namespace TinyUI
 	}
 	LPVOID& TinyPointerMap::operator[](LPVOID key)
 	{
-		UINT index = 0;
-		UINT_PTR hash = 0;
+		UINT bucket = 0;
+		UINT hash = 0;
 		TinyNode* ps = NULL;
-		if ((ps = Lookup(key, index, hash)) == NULL)
+		if ((ps = Lookup(key, bucket, hash)) == NULL)
 		{
 			if (!m_pTable)
 			{
@@ -239,8 +239,8 @@ namespace TinyUI
 			}
 			ps = New();
 			ps->m_key = key;
-			ps->m_pNext = m_pTable[index];
-			m_pTable[index] = ps;
+			ps->m_pNext = m_pTable[bucket];
+			m_pTable[bucket] = ps;
 		}
 		return ps->m_value;
 	}
