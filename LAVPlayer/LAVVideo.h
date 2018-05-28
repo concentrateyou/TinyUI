@@ -1,7 +1,7 @@
 #pragma once
 #include "LAVCommon.h"
+#include "lav/LAVVideoSettings.h"
 #include "LAVVideoFilter.h"
-#include "LAVVideoSettings.h"
 
 namespace LAV
 {

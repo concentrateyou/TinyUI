@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "FLVParser.h"
-#include "amf.h"
 #include "RTMPStream.h"
 
 namespace Decode

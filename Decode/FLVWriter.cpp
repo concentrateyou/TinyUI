@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "amf.h"
+#include "librtmp/amf.h"
 #include "FLVWriter.h"
 #include "RTMPStream.h"
 

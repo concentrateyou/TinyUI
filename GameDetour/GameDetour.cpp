@@ -78,13 +78,13 @@ namespace GameDetour
 		ZeroMemory(&wc, sizeof(wc));
 		wc.style = CS_OWNDC;
 		wc.hInstance = m_hInstance;
-		wc.lpfnWndProc = (WNDPROC)GameCapture::WindowProcedure;
+		wc.lpfnWndProc = (WNDPROC)GameCapture::WindowProc;
 		wc.lpszClassName = D3D_WINDOWCLASS;
 		if (RegisterClass(&wc))
 		{
 			m_hWNDD3D = CreateWindowEx(0,
 				D3D_WINDOWCLASS,
-				TEXT("D3D Caption Window"),
+				TEXT("D3D Window"),
 				WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS,
 				0, 0,
 				1, 1,
@@ -107,7 +107,7 @@ namespace GameDetour
 		}
 	}
 
-	LRESULT CALLBACK GameCapture::WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+	LRESULT CALLBACK GameCapture::WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		switch (message)
 		{

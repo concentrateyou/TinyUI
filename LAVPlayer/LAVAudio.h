@@ -1,7 +1,7 @@
 #pragma once
 #include "LAVCommon.h"
+#include "lav/LAVAudioSettings.h"
 #include "LAVAudioFilter.h"
-#include "LAVAudioSettings.h"
 
 namespace LAV
 {

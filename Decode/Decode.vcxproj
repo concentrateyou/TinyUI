@@ -77,13 +77,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\ThirdParty\ffmpeg\include;..\ThirdParty\libfaad\include;..\ThirdParty\librtmp\include;..\ThirdParty\zlib\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\Dependency\x86\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>..\TinyUI;..\Debug;..\ThirdParty\libfaad\lib\x86;..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\librtmp\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\TinyUI;..\Dependency\x86\lib;..\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libfaad.lib;librtmp.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
@@ -100,7 +100,7 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>..\TinyUI;..\Debug;..\ThirdParty\mpg123\lib;..\ThirdParty\libfaad\lib;..\ThirdParty\ffmpeg\lib;..\ThirdParty\librtmp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\TinyUI;..\Dependency\x64\lib;..\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libfaad.lib;librtmp.lib;libmpg123.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
@@ -113,7 +113,7 @@
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\TinyUI;..\ThirdParty\ffmpeg\include;..\ThirdParty\libfaad\include;..\ThirdParty\librtmp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TinyUI;..\Dependency\x86\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FloatingPointExceptions>true</FloatingPointExceptions>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
@@ -125,7 +125,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>..\TinyUI;..\ThirdParty\libfaad\lib\x86;..\ThirdParty\ffmpeg\lib\x86;..\ThirdParty\librtmp\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\TinyUI;..\Dependency\x86\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libfaad.lib;librtmp.lib</AdditionalDependencies>
     </Lib>
     <ProjectReference>

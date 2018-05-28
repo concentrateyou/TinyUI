@@ -31,7 +31,6 @@ namespace Decode
 	{
 		av_log_set_level(AV_LOG_ERROR);
 		av_log_set_callback(log_callback);
-		avcodec_register_all();
 		av_init_packet(&m_packet);
 		m_srcsize = srcsize;
 		m_dstsize = dstsize;
@@ -62,10 +61,10 @@ namespace Decode
 		m_context = avcodec_alloc_context3(m_codec);
 		if (!m_context)
 			goto H264_ERROR;
-		m_context->flags2 |= CODEC_FLAG2_CHUNKS | CODEC_FLAG2_FAST;
-		if (m_codec->capabilities & CODEC_CAP_TRUNCATED)
+		m_context->flags2 |= AV_CODEC_FLAG2_CHUNKS | AV_CODEC_FLAG2_FAST;
+		if (m_codec->capabilities & AV_CODEC_CAP_TRUNCATED)
 		{
-			m_context->flags |= CODEC_FLAG_TRUNCATED;
+			m_context->flags |= AV_CODEC_FLAG_TRUNCATED;
 		}
 		m_context->err_recognition = 0;
 		m_context->workaround_bugs = FF_BUG_AUTODETECT;

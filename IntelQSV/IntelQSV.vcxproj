@@ -84,7 +84,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(INTELMEDIASDKROOT)lib\$(Platform);..\TinyUI;..\Debug;..\ThirdParty\libyuv\lib;..\ThirdParty\ffmpeg\lib\x86</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libmfx.lib;dxva2.lib;dwmapi.lib;d3d9.lib;d3d11.lib;dxgi.lib;yuv.lib</AdditionalDependencies>
+      <AdditionalDependencies>libmfx.lib;dxva2.lib;dwmapi.lib;d3d9.lib;d3d11.lib;dxgi.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Lib>
   </ItemDefinitionGroup>
@@ -154,7 +154,6 @@
   <ItemGroup>
     <ClInclude Include="QSVAllocator.h" />
     <ClInclude Include="QSVCommon.h" />
-    <ClInclude Include="QSVConverter.h" />
     <ClInclude Include="QSVD3D.h" />
     <ClInclude Include="QSVDecoder.h" />
     <ClInclude Include="QSVEncoder.h" />
@@ -165,7 +164,6 @@
   <ItemGroup>
     <ClCompile Include="QSVAllocator.cpp" />
     <ClCompile Include="QSVCommon.cpp" />
-    <ClCompile Include="QSVConverter.cpp" />
     <ClCompile Include="QSVD3D.cpp" />
     <ClCompile Include="QSVDecoder.cpp" />
     <ClCompile Include="QSVEncoder.cpp" />

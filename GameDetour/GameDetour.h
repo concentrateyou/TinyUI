@@ -10,7 +10,7 @@ namespace GameDetour
 #define TEXTURE_MEMORY          TEXT("Local\\TextureMemory")
 #define D3D_WINDOWCLASS			TEXT("D3DGraphicsCapture")
 #define OPENGL_WINDOWCLASS		TEXT("OpenGLGraphicsCapture")
-#define IQIYI_WINDOW_CLASS      TEXT("QiyiWindowClass")
+#define IQIYI_WINDOW_CLASS      TEXT("GameWindowClass")
 
 	class GameCapture
 	{
@@ -25,7 +25,7 @@ namespace GameDetour
 		void EndCapture();
 		void OnMessagePump();
 	private:
-		static LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+		static LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 	private:
 		IO::TinyThread	m_task;
 		HINSTANCE			m_hInstance;

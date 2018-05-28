@@ -3,7 +3,7 @@
 #include "ScopedMediaType.h"
 #include "FilterBase.h"
 #include "FilterObserver.h"
-#include "ITrackInfo.h"
+#include "lav/ITrackInfo.h"
 #include <dshow.h>
 #include <dvdmedia.h>
 #include <uuids.h>

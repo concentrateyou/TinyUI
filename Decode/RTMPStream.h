@@ -2,7 +2,7 @@
 #include <string>
 #include "IO/TinyIO.h"
 #include "IO/TinyRingBuffer.h"
-#include "rtmp.h"
+#include "librtmp/rtmp.h"
 using namespace std;
 
 namespace Decode
