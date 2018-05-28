@@ -3,6 +3,9 @@
 
 namespace TinyUI
 {
+#pragma push_macro("new")
+#undef new
+#if defined(_M_IX86)
 	inline PVOID WINAPI __AllocThunk(VOID);
 	inline VOID WINAPI __FreeThunk(PVOID ptr);
 #pragma pack(push,1)
@@ -30,12 +33,51 @@ namespace TinyUI
 		{
 			return __AllocThunk();
 		}
-			void operator delete(void* pThunk)
+		void operator delete(void* pThunk)
 		{
 			__FreeThunk(pThunk);
 		}
 	};
 #pragma pack(pop)
+#elif defined(_M_AMD64)
+	inline PVOID WINAPI __AllocThunk(VOID);
+	inline VOID WINAPI __FreeThunk(PVOID ptr);
+#pragma pack(push,2)
+	struct _callthunk
+	{
+		USHORT  RcxMov;
+		ULONG64 RcxImm;
+		USHORT  RaxMov;
+		ULONG64 RaxImm;
+		USHORT  RaxJmp;
+		BOOL Initialize(DWORD_PTR proc, void *pThis)
+		{
+			RcxMov = 0xb948;
+			RcxImm = (ULONG64)pThis;
+			RaxMov = 0xb848;
+			RaxImm = (ULONG64)proc;
+			RaxJmp = 0xe0ff;
+			FlushInstructionCache(GetCurrentProcess(), this, sizeof(_callthunk));
+			return TRUE;
+		}
+		void* GetCodeAddress()
+		{
+			return this;
+		}
+		void* operator new(size_t)
+		{
+			return __AllocThunk();
+		}
+		void operator delete(void* pThunk)
+		{
+			__FreeThunk(pThunk);
+		}
+	};
+#pragma pack(pop)
+#else
+#error Only AMD64 and X86 supported
+#endif
+
 	inline PVOID WINAPI __AllocThunk(VOID)
 	{
 		LPVOID address = VirtualAlloc(0, sizeof(_callthunk), MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
@@ -47,6 +89,8 @@ namespace TinyUI
 		if (!ptr) return;
 		VirtualFree(ptr, 0, MEM_RELEASE);
 	}
+
+
 #pragma pack(push,8)
 	class TinyThunk
 	{
@@ -57,7 +101,6 @@ namespace TinyUI
 		BOOL Initialize(DWORD_PTR proc, void *pThis);
 		void* GetCodeAddress();
 	};
-
 #pragma pack(pop)
 	class TinyLoopThunk
 	{
@@ -66,6 +109,7 @@ namespace TinyUI
 		BOOL Initialize(WNDPROC proc, void* pThis);
 		WNDPROC GetWNDPROC();
 	};
+#pragma pop_macro("new")
 }
 
 
