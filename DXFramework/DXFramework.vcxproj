@@ -192,6 +192,8 @@
     <ClInclude Include="DX11ImageElement2D.h" />
     <ClInclude Include="DX11NV12BT709Shader.h" />
     <ClInclude Include="DX11NV12Video.h" />
+    <ClInclude Include="DX11YUVBT601Shader.h" />
+    <ClInclude Include="DX11YUVBT709Shader.h" />
     <ClInclude Include="DX11YUVVideo.h" />
     <ClInclude Include="DX11Line2D.h" />
     <ClInclude Include="DX11NV12BT601Shader.h" />
@@ -231,6 +233,8 @@
     <ClCompile Include="DX11ImageElement2D.cpp" />
     <ClCompile Include="DX11NV12BT709Shader.cpp" />
     <ClCompile Include="DX11NV12Video.cpp" />
+    <ClCompile Include="DX11YUVBT601Shader.cpp" />
+    <ClCompile Include="DX11YUVBT709Shader.cpp" />
     <ClCompile Include="DX11YUVVideo.cpp" />
     <ClCompile Include="DX11Line2D.cpp" />
     <ClCompile Include="DX11NV12BT601Shader.cpp" />
@@ -286,6 +290,10 @@
     <None Include="texture.vs" />
     <None Include="NV12BT601.ps" />
     <None Include="NV12BT601.vs" />
+    <None Include="YUVBT601.ps" />
+    <None Include="YUVBT601.vs" />
+    <None Include="YUVBT709.ps" />
+    <None Include="YUVBT709.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

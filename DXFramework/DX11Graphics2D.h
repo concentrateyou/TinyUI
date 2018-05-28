@@ -8,6 +8,9 @@
 #include "DX11NV12BT601Shader.h"
 #include "DX11NV12BT709Shader.h"
 #include "DX11NV12Video.h"
+#include "DX11YUVBT601Shader.h"
+#include "DX11YUVBT709Shader.h"
+#include "DX11YUVVideo.h"
 
 namespace DXFramework
 {
@@ -29,8 +32,10 @@ namespace DXFramework
 	public:
 		BOOL			DrawImageNV12BT601(DX11NV12Video& image);
 		BOOL			DrawImageNV12BT709(DX11NV12Video& image);
+		BOOL			DrawImageYUVBT601(DX11YUVVideo& image);
+		BOOL			DrawImageYUVBT709(DX11YUVVideo& image);
 		BOOL			DrawImage(DX11Image2D& image);
-		BOOL			DrawLine(DX11Line2D& line,const XMFLOAT2* points, DWORD count, const XMFLOAT4& color);
+		BOOL			DrawLine(DX11Line2D& line, const XMFLOAT2* points, DWORD count, const XMFLOAT4& color);
 		BOOL			DrawRectangle(DX11Rectangle2D& rectangle, const XMFLOAT2 points[4], const XMFLOAT4& color);
 		BOOL			FillRectangle(DX11Rectangle2D& rectangle, const XMFLOAT2 points[4], const XMFLOAT4& color);
 	private:
@@ -40,6 +45,8 @@ namespace DXFramework
 		DX11TextureShader		m_textureShader;
 		DX11NV12BT601Shader		m_shaderNV12BT601;
 		DX11NV12BT709Shader		m_shaderNV12BT709;
+		DX11YUVBT601Shader		m_shaderYUVBT601;
+		DX11YUVBT709Shader		m_shaderYUVBT709;
 	};
 }
 
