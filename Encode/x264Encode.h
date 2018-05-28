@@ -15,7 +15,7 @@ extern "C"
 #include "libavcodec/avcodec.h"
 #include "libswscale/swscale.h"
 }
-#pragma comment(lib,"libx264.lib")
+#pragma comment(lib,"x264.lib")
 #pragma comment(lib, "avcodec.lib")
 #pragma comment(lib, "avdevice.lib")
 #pragma comment(lib, "avfilter.lib")
