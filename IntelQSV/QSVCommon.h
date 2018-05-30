@@ -16,7 +16,7 @@
 #include <queue>
 #include <list>
 using namespace std;
-using namespace TinyUI;
+using namespace TinyFramework;
 
 namespace QSV
 {

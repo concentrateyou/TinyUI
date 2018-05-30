@@ -2,7 +2,7 @@
 #include "Render/TinyGDI.h"
 #include <string>
 using namespace std;
-using namespace TinyUI;
+using namespace TinyFramework;
 
 namespace DShow
 {

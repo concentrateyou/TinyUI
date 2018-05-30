@@ -14,9 +14,9 @@
 #include "IO/TinyBitWriter.h"
 #include "IO/TinyStringReader.h"
 #include "Media/TinyMedia.h"
-using namespace TinyUI;
-using namespace TinyUI::IO;
-using namespace TinyUI::Media;
+using namespace TinyFramework;
+using namespace TinyFramework::IO;
+using namespace TinyFramework::Media;
 
 namespace Decode
 {

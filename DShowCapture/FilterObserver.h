@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include "Common/TinyCore.h"
-using namespace TinyUI;
+using namespace TinyFramework;
 
 namespace DShow
 {

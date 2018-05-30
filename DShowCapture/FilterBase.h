@@ -4,7 +4,7 @@
 
 namespace DShow
 {
-	class FilterBase : public IBaseFilter, public IAMovieSetup, public TinyUI::TinyReference < FilterBase >
+	class FilterBase : public IBaseFilter, public IAMovieSetup, public TinyFramework::TinyReference < FilterBase >
 	{
 		friend class PinBase;
 		DISALLOW_COPY_AND_ASSIGN(FilterBase)

@@ -4,8 +4,8 @@
 #include "IO/TinyIO.h"
 #include "DShowCommon.h"
 #include "VideoCapture.h"
-using namespace TinyUI;
-using namespace TinyUI::IO;
+using namespace TinyFramework;
+using namespace TinyFramework::IO;
 
 class RenderTask : public TinyThread
 {

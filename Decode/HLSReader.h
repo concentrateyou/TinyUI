@@ -4,7 +4,7 @@
 #include <vector>
 
 using namespace std;
-using namespace TinyUI;
+using namespace TinyFramework;
 
 namespace Decode
 {
@@ -45,7 +45,7 @@ namespace Decode
 	};
 };
 
-namespace TinyUI
+namespace TinyFramework
 {
 	template<>
 	class DefaultTraits < Decode::HLSReader::Segment >

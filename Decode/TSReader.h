@@ -128,7 +128,7 @@ namespace Decode
 	};
 }
 
-namespace TinyUI
+namespace TinyFramework
 {
 	template<>
 	class DefaultTraits < Decode::Timing >

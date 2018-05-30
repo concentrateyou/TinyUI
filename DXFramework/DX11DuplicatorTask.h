@@ -3,7 +3,7 @@
 #include "DX11Texture2D.h"
 #include "DX11Image2D.h"
 #include "DX11Duplicator.h"
-using namespace TinyUI::IO;
+using namespace TinyFramework::IO;
 
 namespace DXFramework
 {

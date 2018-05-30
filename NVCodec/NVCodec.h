@@ -5,9 +5,9 @@
 #include "dynlink_nvcuvid.h" 
 #include "dynlink_cuda.h"   
 #include "dynlink_cudaD3D9.h"
-using namespace TinyUI;
-using namespace TinyUI::IO;
-using namespace TinyUI::Media;
+using namespace TinyFramework;
+using namespace TinyFramework::IO;
+using namespace TinyFramework::Media;
 
 
 namespace NVCodec

@@ -25,8 +25,8 @@ extern "C"
 
 #define SPS_SEP 4
 #define PPS_SEP 4
-using namespace TinyUI;
-using namespace TinyUI::Media;
+using namespace TinyFramework;
+using namespace TinyFramework::Media;
 
 namespace Encode
 {

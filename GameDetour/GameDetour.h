@@ -2,7 +2,7 @@
 #include "Common/TinyCommon.h"
 #include "IO/TinySharedMemory.h"
 #include "IO/TinyThread.h"
-using namespace TinyUI;
+using namespace TinyFramework;
 
 namespace GameDetour
 {

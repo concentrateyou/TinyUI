@@ -3,7 +3,7 @@
 
 namespace DShow
 {
-	class TypeEnumerator : public IEnumMediaTypes, TinyUI::TinyReference < TypeEnumerator >
+	class TypeEnumerator : public IEnumMediaTypes, TinyFramework::TinyReference < TypeEnumerator >
 	{
 		DISALLOW_COPY_AND_ASSIGN(TypeEnumerator)
 	public:
@@ -20,7 +20,7 @@ namespace DShow
 		void FreeAllocatedMediaTypes(ULONG allocated, AM_MEDIA_TYPE** types);
 	private:
 		INT			m_position;
-		TinyUI::TinyScopedReferencePtr<PinBase>	m_pin;
+		TinyFramework::TinyScopedReferencePtr<PinBase>	m_pin;
 	};
 }
 

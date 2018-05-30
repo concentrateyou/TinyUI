@@ -35,7 +35,7 @@
 #pragma comment(lib, "mfuuid.lib")
 #pragma comment(lib, "wmcodecdspuuid.lib")
 
-using namespace TinyUI;
+using namespace TinyFramework;
 
 namespace MF
 {

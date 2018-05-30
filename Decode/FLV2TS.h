@@ -5,7 +5,7 @@
 #include <vector>
 
 using namespace std;
-using namespace TinyUI;
+using namespace TinyFramework;
 
 namespace Decode
 {

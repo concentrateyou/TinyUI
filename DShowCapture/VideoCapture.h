@@ -6,7 +6,7 @@
 #include "VideoSinkFilter.h"
 #include "ScopedMediaType.h"
 using namespace std;
-using namespace TinyUI;
+using namespace TinyFramework;
 
 namespace DShow
 {

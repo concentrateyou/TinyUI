@@ -11,7 +11,7 @@
 #include <vector>
 #include <algorithm>
 using namespace std;
-using namespace TinyUI;
+using namespace TinyFramework;
 using namespace DShow;
 
 namespace LAV

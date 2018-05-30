@@ -10,7 +10,7 @@
 #include "AudioCapture.h"
 #include "RenderTask.h"
 #include "Media/TinyWave.h"
-using namespace TinyUI;
+using namespace TinyFramework;
 
 class CMainFrame : public TinyControl
 {

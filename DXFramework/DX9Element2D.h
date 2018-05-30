@@ -2,7 +2,7 @@
 #include "DXFramework.h"
 #include "DX9Texture2D.h"
 #include "Render/TinyRectTracker.h"
-using namespace TinyUI;
+using namespace TinyFramework;
 
 namespace DXFramework
 {

@@ -1,6 +1,6 @@
 #pragma once
 #include "QSVAllocator.h"
-using namespace TinyUI::Media;
+using namespace TinyFramework::Media;
 namespace QSV
 {
 	/// <summary>

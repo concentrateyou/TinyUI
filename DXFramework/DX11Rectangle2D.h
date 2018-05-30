@@ -1,7 +1,7 @@
 #pragma once
 #include "DX11Element2D.h"
 #include "DX11ColorShader.h"
-using namespace TinyUI;
+using namespace TinyFramework;
 
 namespace DXFramework
 {

@@ -3,7 +3,7 @@
 #include "H264BitReader.h"
 #include <vector>
 using namespace std;
-using namespace TinyUI;
+using namespace TinyFramework;
 
 namespace Decode
 {

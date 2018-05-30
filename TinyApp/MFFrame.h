@@ -14,7 +14,7 @@
 #include <sphelper.h>
 #pragma comment(lib,"sapi.lib")
 
-using namespace TinyUI;
+using namespace TinyFramework;
 
 class MFFrame : public TinyControl
 {

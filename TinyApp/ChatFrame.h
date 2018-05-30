@@ -23,9 +23,9 @@
 #include "Media/TinyMFIntelQSVDecode.h"
 #pragma comment(lib,"sapi.lib")
 
-using namespace TinyUI;
-using namespace TinyUI::Windowless;
-using namespace TinyUI::Network;
+using namespace TinyFramework;
+using namespace TinyFramework::Windowless;
+using namespace TinyFramework::Network;
 using namespace DXFramework;
 
 class ChatFrame : public TinyVisualWND

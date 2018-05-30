@@ -10,8 +10,8 @@ extern "C"
 #include "faaccfg.h"
 }
 #pragma comment(lib,"libfaac.lib")
-using namespace TinyUI;
-using namespace TinyUI::Media;
+using namespace TinyFramework;
+using namespace TinyFramework::Media;
 
 namespace Encode
 {

@@ -12,8 +12,8 @@
 #include "Windowless/TinyVisualComboBox.h"
 #include "Windowless/TinyVisualTextBox.h"
 #include <gdiplus.h>
-using namespace TinyUI;
-using namespace TinyUI::Windowless;
+using namespace TinyFramework;
+using namespace TinyFramework::Windowless;
 using namespace Gdiplus;
 
 class SkinWindow : public TinyVisualWindowless

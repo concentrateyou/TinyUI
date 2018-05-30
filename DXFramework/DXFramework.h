@@ -24,7 +24,7 @@
 #include "Render/TinyGDI.h"
 #pragma comment(lib,"Dwmapi.lib")
 using namespace DirectX;
-using namespace TinyUI;
+using namespace TinyFramework;
 using namespace std;
 
 namespace DXFramework

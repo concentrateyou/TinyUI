@@ -3,9 +3,9 @@
 #include "Media/TinyWave.h"
 #include "Media/TinySoundPlayer.h"
 #include "AudioAnalyser.h"
-using namespace TinyUI;
-using namespace TinyUI::Media;
-using namespace TinyUI::IO;
+using namespace TinyFramework;
+using namespace TinyFramework::Media;
+using namespace TinyFramework::IO;
 
 class WavePlayer : public TinyThread
 {

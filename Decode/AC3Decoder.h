@@ -1,7 +1,7 @@
 #pragma once
 #include "Common.h"
 #include "faad.h"
-using namespace TinyUI;
+using namespace TinyFramework;
 
 namespace Decode
 {

@@ -13,7 +13,7 @@
 #include <vector>
 #include <algorithm>
 using namespace std;
-using namespace TinyUI;
+using namespace TinyFramework;
 
 #define CheckPointer(p,ret) {if((p)==NULL) return (ret);}
 

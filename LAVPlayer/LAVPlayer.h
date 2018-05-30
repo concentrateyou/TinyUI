@@ -8,12 +8,12 @@
 #include "DX9RenderView.h"
 #include "Media/TinyXAudio.h"
 using namespace std;
-using namespace TinyUI;
+using namespace TinyFramework;
 using namespace DShow;
 using namespace DXFramework;
-using namespace TinyUI::Media;
+using namespace TinyFramework::Media;
 
-namespace TinyUI
+namespace TinyFramework
 {
 	template<class T>
 	struct ComMemeryDeleter

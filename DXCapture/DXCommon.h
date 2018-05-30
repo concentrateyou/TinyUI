@@ -12,8 +12,8 @@
 #include "IO/TinyThread.h"
 #include "IO/TinySharedMemory.h"
 
-using namespace TinyUI;
-#pragma comment(lib,"TinyUI.lib")
+using namespace TinyFramework;
+#pragma comment(lib,"TinyFramework.lib")
 
 namespace DXCapture
 {

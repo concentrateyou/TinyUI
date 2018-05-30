@@ -19,8 +19,8 @@ extern "C"
 #pragma comment(lib, "avformat.lib")
 #pragma comment(lib, "avutil.lib")
 #pragma comment(lib, "swscale.lib")
-using namespace TinyUI;
-using namespace TinyUI::Media;
+using namespace TinyFramework;
+using namespace TinyFramework::Media;
 
 namespace Encode
 {

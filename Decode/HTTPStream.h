@@ -7,9 +7,9 @@
 #include "IO/TinyIO.h"
 #include "IO/TinyRingBuffer.h"
 using namespace std;
-using namespace TinyUI;
-using namespace TinyUI::IO;
-using namespace TinyUI::Network;
+using namespace TinyFramework;
+using namespace TinyFramework::IO;
+using namespace TinyFramework::Network;
 
 namespace Decode
 {

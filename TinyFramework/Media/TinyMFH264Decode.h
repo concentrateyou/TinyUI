@@ -1,0 +1,22 @@
+#pragma once
+#include "TinyMFDecode.h"
+
+namespace TinyFramework
+{
+	namespace Media
+	{
+		/// <summary>
+		/// H264½âÂë
+		/// CLSID_CMSH264DecoderMFT
+		/// </summary>
+		class TinyMFH264Decode : public TinyMFDecode
+		{
+			DISALLOW_COPY_AND_ASSIGN(TinyMFH264Decode)
+		public:
+			TinyMFH264Decode();
+			virtual ~TinyMFH264Decode();
+		public:
+			BOOL SetFormat();
+		};
+	};
+}

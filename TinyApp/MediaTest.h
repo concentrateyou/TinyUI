@@ -8,9 +8,9 @@
 #include "Media/TinyMP3File.h"
 #include "Media/TinyMP4File.h"
 #include "IO/TinyIO.h"
-using namespace TinyUI;
-using namespace TinyUI::Media;
-using namespace TinyUI::IO;
+using namespace TinyFramework;
+using namespace TinyFramework::Media;
+using namespace TinyFramework::IO;
 
 class MediaTest
 {

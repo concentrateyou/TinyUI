@@ -2,8 +2,8 @@
 #include "QSVCommon.h"
 #include "QSVD3D.h"
 #include "QSVAllocator.h"
-using namespace TinyUI;
-using namespace TinyUI::Media;
+using namespace TinyFramework;
+using namespace TinyFramework::Media;
 
 namespace QSV
 {

@@ -3,7 +3,7 @@
 #include "DX11Texture2D.h"
 #include "DX11TextureShader.h"
 #include "Render/TinyGDI.h"
-using namespace TinyUI;
+using namespace TinyFramework;
 
 namespace DXFramework
 {

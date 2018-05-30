@@ -4,8 +4,8 @@
 #include "Media/TinyMFResampler.h"
 #include "Common/TinyTime.h"
 #include "Common/TinyCore.h"
-using namespace TinyUI;
-using namespace TinyUI::Media;
+using namespace TinyFramework;
+using namespace TinyFramework::Media;
 
 class AudioDSP
 {

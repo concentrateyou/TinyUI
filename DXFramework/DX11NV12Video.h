@@ -2,8 +2,8 @@
 #include "DX11Image2D.h"
 #include "IO/TinyIO.h"
 #include "Render/TinyGDI.h"
-using namespace TinyUI;
-using namespace TinyUI::IO;
+using namespace TinyFramework;
+using namespace TinyFramework::IO;
 
 namespace DXFramework
 {

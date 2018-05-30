@@ -245,7 +245,7 @@ namespace DXFramework
 				memcpy(pBits + (UINT)y * _linesize, bits + (UINT)y * linesize, rowcopy);
 			}
 		}
-		TinyUI::TinyMemDC mdc(hDC, hBitmap);
+		TinyFramework::TinyMemDC mdc(hDC, hBitmap);
 		::BitBlt(hDC, 0, 0, sizeT.cx, sizeT.cy, mdc, 0, 0, SRCCOPY);
 		SAFE_DELETE_OBJECT(hBitmap);
 		return DX11Texture2D::ReleaseDC();
@@ -257,7 +257,7 @@ namespace DXFramework
 		HDC hDC = NULL;
 		if (!DX11Texture2D::GetDC(TRUE, hDC))
 			return FALSE;
-		TinyUI::TinyMemDC mdc(hDC, hBitmapSrc);
+		TinyFramework::TinyMemDC mdc(hDC, hBitmapSrc);
 		::BitBlt(hDC, dst.left, dst.top, dst.Width(), dst.Height(), mdc, src.x, src.y, SRCCOPY | CAPTUREBLT);
 		return DX11Texture2D::ReleaseDC();
 	}

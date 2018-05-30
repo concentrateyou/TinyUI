@@ -2,7 +2,7 @@
 #include "DX9Element2D.h"
 #include "DX9Texture2D.h"
 #include "Render/TinyGDI.h"
-using namespace TinyUI;
+using namespace TinyFramework;
 
 namespace DXFramework
 {

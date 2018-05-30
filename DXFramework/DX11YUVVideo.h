@@ -1,7 +1,7 @@
 #pragma once
 #include "DX11ImageElement2D.h"
 #include "Render/TinyGDI.h"
-using namespace TinyUI;
+using namespace TinyFramework;
 
 namespace DXFramework
 {

@@ -4,8 +4,8 @@
 #include "Common/TinyEvent.h"
 #include "Render/TinyGDI.h"
 #include "Media/TinyMedia.h"
-using namespace TinyUI;
-using namespace TinyUI::Media;
+using namespace TinyFramework;
+using namespace TinyFramework::Media;
 
 namespace Encode
 {

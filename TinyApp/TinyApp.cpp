@@ -41,9 +41,9 @@
 
 #include "IO/TinyProcess.h"
 
-using namespace TinyUI;
-using namespace TinyUI::Network;
-using namespace TinyUI::Media;
+using namespace TinyFramework;
+using namespace TinyFramework::Network;
+using namespace TinyFramework::Media;
 using namespace Decode;
 
 BOOL LoadSeDebugPrivilege()
