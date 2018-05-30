@@ -1,11 +1,10 @@
 #pragma once
-#pragma once
 #include "TinyMedia.h"
 #include "TinyWave.h"
 #include "TinyMFEncode.h"
 #include "TinyMFDecode.h"
 
-namespace TinyUI
+namespace TinyFramework
 {
 	namespace Media
 	{

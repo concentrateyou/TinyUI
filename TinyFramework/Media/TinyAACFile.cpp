@@ -1,8 +1,9 @@
+#include "../stdafx.h"
 #include "TinyAACFile.h"
 #include "TinyMFAACEncode.h"
 #include <propvarutil.h>
 
-namespace TinyUI
+namespace TinyFramework
 {
 	namespace Media
 	{
