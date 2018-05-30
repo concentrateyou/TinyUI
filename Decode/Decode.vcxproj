@@ -153,6 +153,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AACDecoder.h" />
+    <ClInclude Include="ASCParser.h" />
     <ClInclude Include="AC3Decoder.h" />
     <ClInclude Include="AudioAnalyser.h" />
     <ClInclude Include="Common.h" />
@@ -178,6 +179,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AACDecoder.cpp" />
+    <ClCompile Include="ASCParser.cpp" />
     <ClCompile Include="AC3Decoder.cpp" />
     <ClCompile Include="AudioAnalyser.cpp" />
     <ClCompile Include="Common.cpp" />

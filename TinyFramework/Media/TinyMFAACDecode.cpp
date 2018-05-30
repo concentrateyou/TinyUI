@@ -30,12 +30,14 @@ namespace TinyFramework
 		{
 
 		}
-
-		BOOL TinyMFAACDecode::SetFormat(const WAVEFORMATEX* pFMT, DWORD dwBitRate, BOOL bADTS)
+		BOOL TinyMFAACDecode::Open()
 		{
-			HRESULT hRes = S_OK;
+			return TinyMFDecode::Open(CLSID_CMSAACDecMFT);
+		}
+		BOOL TinyMFAACDecode::SetFormat(const BYTE* asc, LONG ascsize, const WAVEFORMATEX& waveFMT)
+		{
 			TinyComPtr<IMFMediaType> inputType;
-			hRes = MFCreateMediaType(&inputType);
+			HRESULT hRes = MFCreateMediaType(&inputType);
 			if (hRes != S_OK)
 				return FALSE;
 			hRes = inputType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio);
@@ -44,43 +46,34 @@ namespace TinyFramework
 			hRes = inputType->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_AAC);
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = inputType->SetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE, pFMT->wBitsPerSample);
+			hRes = inputType->SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, waveFMT.nSamplesPerSec);
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = inputType->SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, pFMT->nSamplesPerSec);
+			hRes = inputType->SetUINT32(MF_MT_AUDIO_NUM_CHANNELS, waveFMT.nChannels);
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = inputType->SetUINT32(MF_MT_AUDIO_NUM_CHANNELS, pFMT->nChannels);
+			hRes = inputType->SetUINT32(MF_MT_AAC_PAYLOAD_TYPE, 0x1);
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = inputType->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, dwBitRate / 8);
+			hRes = inputType->SetUINT32(MF_MT_AAC_AUDIO_PROFILE_LEVEL_INDICATION, 0xFE);
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = inputType->SetUINT32(MF_MT_AUDIO_BLOCK_ALIGNMENT, 1);
-			if (hRes != S_OK)
-				return FALSE;
-			hRes = inputType->SetUINT32(MF_MT_AAC_PAYLOAD_TYPE, bADTS ? 1 : 0);
-			if (hRes != S_OK)
-				return FALSE;
-			hRes = inputType->SetUINT32(MF_MT_AAC_AUDIO_PROFILE_LEVEL_INDICATION, 0x29);
-			if (hRes != S_OK)
-				return FALSE;
-			BYTE heaac[MF_MT_USER_DATA_SIZE] = { 0 };
-			heaac[0] = bADTS ? 1 : 0;
-			heaac[2] = 0x29;
-			UINT AUDIO_OBJECT_AAC_LC = 2;
-			UINT SAMPLE_FREQUENCY_IDX = GetSRIndex(pFMT->nSamplesPerSec);
-			UINT audioSpecificConfig = (AUDIO_OBJECT_AAC_LC << 11) | (SAMPLE_FREQUENCY_IDX << 7) | (pFMT->nChannels << 3);
-			heaac[MF_MT_USER_DATA_SIZE - 2] = (audioSpecificConfig & 0xFF00) >> 8;;
-			heaac[MF_MT_USER_DATA_SIZE - 1] = audioSpecificConfig & 0x00FF;
-			hRes = inputType->SetBlob(MF_MT_USER_DATA, heaac, MF_MT_USER_DATA_SIZE);
+			const UINT32 size = 4 * sizeof(WORD) + sizeof(DWORD);
+			BYTE blob[size] = { 0 };
+			WORD* w = (WORD*)blob;
+			w[0] = 0x1;
+			w[1] = 0xFE;
+			TinyScopedArray<BYTE> data(new BYTE[size + ascsize]);
+			memcpy(data, blob, size);
+			memcpy(data + size, asc, ascsize);
+			hRes = inputType->SetBlob(MF_MT_USER_DATA, data, size + ascsize);
 			if (hRes != S_OK)
 				return FALSE;
 			TinyComPtr<IMFMediaType> outputType;
 			hRes = MFCreateMediaType(&outputType);
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = MFInitMediaTypeFromWaveFormatEx(outputType, pFMT, sizeof(WAVEFORMATEX) + pFMT->cbSize);
+			hRes = MFInitMediaTypeFromWaveFormatEx(outputType, waveFMT, sizeof(WAVEFORMATEX) + waveFMT->cbSize);
 			if (hRes != S_OK)
 				return FALSE;
 			return TinyMFDecode::SetMediaTypes(inputType, outputType);
