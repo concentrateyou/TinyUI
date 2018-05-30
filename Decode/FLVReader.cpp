@@ -323,6 +323,29 @@ namespace Decode
 	}
 	BOOL FLVReader::ParseMP3(FLV_TAG_AUDIO* audio, BYTE* data, INT size, FLV_BLOCK& block)
 	{
+		BYTE* bits = data;
+		block.dts = 0;
+		block.pts = 0;
+		block.audio.bitsPerSample = audio->bitsPerSample;
+		block.audio.channel = audio->channel;
+		block.audio.codeID = FLV_CODECID_MP3;
+		block.audio.packetType = FLV_MP3Raw;
+		block.audio.size = size;
+		if (size > MAX_TAG_SIZE)
+		{
+			LOG(ERROR) << "[FLVReader] too bit size:" << size;
+			return FALSE;
+		}
+		block.audio.data = new BYTE[size];
+		if (!block.audio.data)
+		{
+			block.audio.size = 0;
+			LOG(ERROR) << "[FLVReader] [ParseMP3] new size:" << size;
+		}
+		else
+		{
+			memcpy(block.audio.data, bits, size);
+		}
 		return TRUE;
 	}
 	BOOL FLVReader::ParsePCM(FLV_TAG_AUDIO* audio, BYTE* data, INT size, FLV_BLOCK& block)

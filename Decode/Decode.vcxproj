@@ -166,6 +166,7 @@
     <ClInclude Include="HTTPStream.h" />
     <ClInclude Include="MP4Reader.h" />
     <ClInclude Include="MP4Writer.h" />
+    <ClInclude Include="MPG123Decode.h" />
     <ClInclude Include="TS2FLV.h" />
     <ClInclude Include="TSReader.h" />
     <ClInclude Include="TSWriter.h" />
@@ -190,6 +191,7 @@
     <ClCompile Include="HTTPStream.cpp" />
     <ClCompile Include="MP4Reader.cpp" />
     <ClCompile Include="MP4Writer.cpp" />
+    <ClCompile Include="MPG123Decode.cpp" />
     <ClCompile Include="TS2FLV.cpp" />
     <ClCompile Include="TSReader.cpp" />
     <ClCompile Include="TSWriter.cpp" />

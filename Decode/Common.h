@@ -411,7 +411,8 @@ namespace Decode
 		FLV_AVCDecoderConfigurationRecord = 0,
 		FLV_NALU = 1,
 		FLV_AudioSpecificConfig = 2,
-		FLV_AACRaw = 3
+		FLV_AACRaw = 3,
+		FLV_MP3Raw = 4
 	};
 
 	enum FLV_TAG_TYPE

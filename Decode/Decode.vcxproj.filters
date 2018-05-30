@@ -84,6 +84,9 @@
     <ClInclude Include="HLSReader.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MPG123Decode.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -147,6 +150,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="HLSReader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MPG123Decode.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
