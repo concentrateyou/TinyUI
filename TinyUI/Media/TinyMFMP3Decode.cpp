@@ -14,7 +14,7 @@ namespace TinyUI
 		{
 
 		}
-		BOOL TinyMFMP3Decode::SetMediaTypes(const MPEGLAYER3WAVEFORMAT* pMP3FMT, const WAVEFORMATEX* pFMT)
+		BOOL TinyMFMP3Decode::SetFormat(const MPEGLAYER3WAVEFORMAT* pMP3FMT, const WAVEFORMATEX* pFMT)
 		{
 			HRESULT hRes = S_OK;
 			TinyComPtr<IMFMediaType> inputType;
