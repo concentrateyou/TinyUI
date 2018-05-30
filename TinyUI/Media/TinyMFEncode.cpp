@@ -20,44 +20,38 @@ namespace TinyUI
 		}
 		BOOL TinyMFEncode::GetInputType(IMFMediaType** mediaType)
 		{
-			ASSERT(m_encoder);
+			if (!m_encoder)
+				return FALSE;
 			return SUCCEEDED(m_encoder->GetInputCurrentType(m_dwInputID, mediaType));
 		}
 		BOOL TinyMFEncode::GetOutputType(IMFMediaType** mediaType)
 		{
-			ASSERT(m_encoder);
+			if (!m_encoder)
+				return FALSE;
 			return SUCCEEDED(m_encoder->GetOutputCurrentType(m_dwOutputID, mediaType));
 		}
-		BOOL TinyMFEncode::Create(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType)
+		void TinyMFEncode::SetCallback(Callback<void(BYTE*, LONG, LPVOID)>&& callback)
 		{
+			m_callback = std::move(callback);
+		}
+		BOOL TinyMFEncode::SetMediaTypes(IMFMediaType* inputType, IMFMediaType* outputType)
+		{
+			if (!m_encoder)
+				return FALSE;
 			HRESULT hRes = S_OK;
-			TinyComPtr<IUnknown> unknow;
-			hRes = unknow.CoCreateInstance(clsID, NULL, CLSCTX_INPROC_SERVER);
+			DWORD streams[2] = { 0 };
+			hRes = m_encoder->GetStreamCount(&streams[0], &streams[1]);
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = unknow->QueryInterface(IID_PPV_ARGS(&m_encoder));
-			if (hRes != S_OK)
-				return FALSE;
-			DWORD dwInputStreams = 0;
-			DWORD dwOutputSample = 0;
-			hRes = m_encoder->GetStreamCount(&dwInputStreams, &dwOutputSample);
-			if (hRes != S_OK)
-				return FALSE;
-			if (dwInputStreams == 0 || dwOutputSample == 0)
+			if (streams[0] == 0 || streams[1] == 0)
 				return FALSE;
 			TinyScopedArray<DWORD> dwInputIDs;
 			TinyScopedArray<DWORD> dwOutputIDs;
-			hRes = m_encoder->GetStreamIDs(dwInputStreams, dwInputIDs, dwOutputSample, dwOutputIDs);
+			hRes = m_encoder->GetStreamIDs(streams[0], dwInputIDs, streams[1], dwOutputIDs);
 			if (hRes == S_OK)
 			{
 				m_dwInputID = dwInputIDs[0];
 				m_dwOutputID = dwOutputIDs[0];
-			}
-			if (IsAsyncMFT(m_encoder, m_bIsAsync) && m_bIsAsync)
-			{
-				hRes = m_encoder->QueryInterface(&m_eventGenerator);
-				if (hRes != S_OK)
-					return FALSE;
 			}
 			if (inputType != NULL)
 			{
@@ -116,14 +110,6 @@ namespace TinyUI
 			hRes = m_encoder->GetOutputStreamInfo(m_dwOutputID, &m_outputInfo);
 			if (hRes != S_OK)
 				return FALSE;
-			return TRUE;
-		}
-		BOOL TinyMFEncode::Open(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType, Callback<void(BYTE*, LONG, LPVOID)>&& callback)
-		{
-			m_callback = std::move(callback);
-			if (!Create(clsID, inputType, outputType))
-				return FALSE;
-			HRESULT hRes = S_OK;
 			hRes = m_encoder->ProcessMessage(MFT_MESSAGE_COMMAND_FLUSH, NULL);
 			if (hRes != S_OK)
 				return FALSE;
@@ -302,6 +288,24 @@ namespace TinyUI
 			}
 			return TRUE;
 		}
+		BOOL TinyMFEncode::Open(const GUID& clsID)
+		{
+			HRESULT hRes = S_OK;
+			TinyComPtr<IUnknown> unknow;
+			hRes = unknow.CoCreateInstance(clsID, NULL, CLSCTX_INPROC_SERVER);
+			if (hRes != S_OK)
+				return FALSE;
+			hRes = unknow->QueryInterface(IID_PPV_ARGS(&m_encoder));
+			if (hRes != S_OK)
+				return FALSE;
+			if (IsAsyncMFT(m_encoder, m_bIsAsync) && m_bIsAsync)
+			{
+				hRes = m_encoder->QueryInterface(&m_eventGenerator);
+				if (hRes != S_OK)
+					return FALSE;
+			}
+			return TRUE;
+		}
 		BOOL TinyMFEncode::Encode(const BYTE* bits, DWORD size, LONGLONG hnsSampleTime, LONGLONG hnsSampleDuration)
 		{
 			if (!CreateInputSample(bits, size))
@@ -341,7 +345,6 @@ namespace TinyUI
 			m_encoder.Release();
 			return TRUE;
 		}
-
 		void TinyMFEncode::OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter)
 		{
 			if (!m_callback.IsNull())

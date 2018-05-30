@@ -25,6 +25,7 @@ namespace TinyUI
 		/// AAC½âÂë
 		/// https://msdn.microsoft.com/en-us/library/windows/desktop/dd742784(v=vs.85).aspx
 		/// https://wiki.multimedia.cx/index.php?title=MPEG-4_Audio#Audio_Specific_Config
+		/// CLSID_CMSAACDecMFT
 		/// </summary>
 		class TinyMFAACDecode : public TinyMFDecode
 		{
@@ -33,7 +34,7 @@ namespace TinyUI
 			TinyMFAACDecode();
 			virtual ~TinyMFAACDecode();
 		public:
-			BOOL Open(const WAVEFORMATEX* pFMT, DWORD dwBitRate, BOOL bADTS);
+			BOOL SetFormat(const WAVEFORMATEX* pFMT, DWORD dwBitRate, BOOL bADTS);
 		};
 	};
 }

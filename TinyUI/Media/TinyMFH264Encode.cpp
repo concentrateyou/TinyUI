@@ -14,7 +14,7 @@ namespace TinyUI
 		{
 
 		}
-		BOOL TinyMFH264Encode::Open(const TinySize& size, DWORD dwFrameRate, DWORD dwBitRate, Callback<void(BYTE*, LONG, LPVOID)>&& callback)
+		BOOL TinyMFH264Encode::SetFormat(const TinySize& size, DWORD dwFrameRate, DWORD dwBitRate)
 		{
 			HRESULT hRes = S_OK;
 			TinyComPtr<IMFMediaType> inputType;
@@ -74,7 +74,7 @@ namespace TinyUI
 			hRes = MFSetAttributeRatio(outputType, MF_MT_PIXEL_ASPECT_RATIO, 1, 1);
 			if (hRes != S_OK)
 				return FALSE;
-			return TinyMFEncode::Open(CLSID_CMSH264EncoderMFT, inputType, outputType, std::move(callback));
+			return TinyMFEncode::SetMediaTypes(inputType, outputType);
 		}
 	};
 }

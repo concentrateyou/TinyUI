@@ -10,6 +10,7 @@ namespace TinyUI
 		/// <summary>
 		/// H264±‡¬Îƒ¨»œ ‰»ÎI420
 		/// https://msdn.microsoft.com/en-us/library/windows/desktop/dd797816(v=vs.85).aspx
+		/// CLSID_CMSH264EncoderMFT
 		/// </summary>
 		class TinyMFH264Encode : public TinyMFEncode
 		{
@@ -18,7 +19,7 @@ namespace TinyUI
 			TinyMFH264Encode();
 			virtual ~TinyMFH264Encode();
 		public:
-			BOOL Open(const TinySize& size, DWORD dwFrameRate, DWORD dwBitRate, Callback<void(BYTE*, LONG, LPVOID)>&& callback);
+			BOOL SetFormat(const TinySize& size, DWORD dwFrameRate, DWORD dwBitRate);
 		};
 	};
 }

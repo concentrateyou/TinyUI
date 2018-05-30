@@ -7,6 +7,7 @@ namespace TinyUI
 	{
 		/// <summary>
 		/// Intel QSV H264½âÂë
+		/// CLSID_MF_INTEL_H264DecFilter
 		/// </summary>
 		class TinyMFIntelQSVDecode : public TinyMFDecode
 		{
@@ -15,7 +16,7 @@ namespace TinyUI
 			TinyMFIntelQSVDecode();
 			virtual ~TinyMFIntelQSVDecode();
 		public:
-			BOOL Open(const TinySize& size, DWORD dwFrameRate);
+			BOOL SetFormat(const TinySize& size, DWORD dwFrameRate);
 		};
 	};
 }

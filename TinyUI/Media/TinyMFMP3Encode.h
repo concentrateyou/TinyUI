@@ -8,6 +8,7 @@ namespace TinyUI
 		/// <summary>
 		/// MP3±àÂë(Window8Ö§³Ö)
 		/// https://msdn.microsoft.com/en-us/library/windows/desktop/hh162907(v=vs.85).aspx
+		/// CLSID_MP3ACMCodecWrapper
 		/// </summary>
 		class TinyMFMP3Encode : public TinyMFEncode
 		{
@@ -16,7 +17,7 @@ namespace TinyUI
 			TinyMFMP3Encode();
 			virtual ~TinyMFMP3Encode();
 		public:
-			BOOL Open(const WAVEFORMATEX* pFMT, DWORD dwBitRate, Callback<void(BYTE*, LONG, LPVOID)>&& callback);
+			BOOL SetFormat(const WAVEFORMATEX* pFMT, DWORD dwBitRate);
 		};
 	};
 }

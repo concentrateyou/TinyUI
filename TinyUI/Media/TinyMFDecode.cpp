@@ -29,7 +29,7 @@ namespace TinyUI
 			ASSERT(m_decoder);
 			return SUCCEEDED(m_decoder->GetOutputCurrentType(m_dwOutputID, mediaType));
 		}
-		BOOL TinyMFDecode::Create(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType)
+		BOOL TinyMFDecode::Open(const GUID& clsID)
 		{
 			HRESULT hRes = S_OK;
 			TinyComPtr<IUnknown> unknow;
@@ -44,21 +44,26 @@ namespace TinyUI
 			{
 				UnlockAsyncMFT(m_decoder);
 			}
-			DWORD dwInputStreams = 0;
-			DWORD dwOutputSample = 0;
-			hRes = m_decoder->GetStreamCount(&dwInputStreams, &dwOutputSample);
+			DWORD streams[2];
+			hRes = m_decoder->GetStreamCount(&streams[0], &streams[1]);
 			if (hRes != S_OK)
 				return FALSE;
-			if (dwInputStreams == 0 || dwOutputSample == 0)
+			if (streams[0] == 0 || streams[1] == 0)
 				return FALSE;
 			TinyScopedArray<DWORD> dwInputIDs;
 			TinyScopedArray<DWORD> dwOutputIDs;
-			hRes = m_decoder->GetStreamIDs(dwInputStreams, dwInputIDs, dwOutputSample, dwOutputIDs);
-			if (hRes == S_OK)
-			{
-				m_dwInputID = dwInputIDs[0];
-				m_dwOutputID = dwOutputIDs[0];
-			}
+			hRes = m_decoder->GetStreamIDs(streams[0], dwInputIDs, streams[1], dwOutputIDs);
+			if (hRes != S_OK)
+				return FALSE;
+			m_dwInputID = dwInputIDs[0];
+			m_dwOutputID = dwOutputIDs[0];
+			return TRUE;
+		}
+		BOOL TinyMFDecode::SetMediaTypes(IMFMediaType* inputType, IMFMediaType* outputType)
+		{
+			if (!m_decoder)
+				return FALSE;
+			HRESULT hRes = S_OK;
 			if (inputType != NULL)
 			{
 				hRes = m_decoder->SetInputType(m_dwInputID, inputType, 0);
@@ -110,13 +115,6 @@ namespace TinyUI
 					}
 				}
 			}
-			return TRUE;
-		}
-		BOOL TinyMFDecode::Open(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType)
-		{
-			if (!Create(clsID, inputType, outputType))
-				return FALSE;
-			HRESULT hRes = S_OK;
 			hRes = m_decoder->ProcessMessage(MFT_MESSAGE_COMMAND_FLUSH, NULL);
 			if (hRes != S_OK)
 				return FALSE;

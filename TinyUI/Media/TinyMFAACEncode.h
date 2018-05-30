@@ -23,6 +23,7 @@ namespace TinyUI
 		/// <summary>
 		/// AAC±àÂë(Window8Ö§³ÖADTS)
 		/// https://msdn.microsoft.com/en-us/library/windows/desktop/dd742785(v=vs.85).aspx
+		/// CLSID_AACMFTEncoder
 		/// </summary>
 		class TinyMFAACEncode : public TinyMFEncode
 		{
@@ -31,7 +32,7 @@ namespace TinyUI
 			TinyMFAACEncode();
 			virtual ~TinyMFAACEncode();
 		public:
-			BOOL Open(const WAVEFORMATEX* pFMT, Callback<void(BYTE*, LONG, LPVOID)>&& callback);
+			BOOL SetFormat(const WAVEFORMATEX* pFMT);
 		};
 	};
 }

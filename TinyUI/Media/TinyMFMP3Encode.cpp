@@ -7,7 +7,7 @@ namespace TinyUI
 {
 	namespace Media
 	{
-		
+
 		TinyMFMP3Encode::TinyMFMP3Encode()
 		{
 		}
@@ -15,7 +15,7 @@ namespace TinyUI
 		{
 
 		}
-		BOOL TinyMFMP3Encode::Open(const WAVEFORMATEX* pFMT, DWORD dwBitRate, Callback<void(BYTE*, LONG, LPVOID)>&& callback)
+		BOOL TinyMFMP3Encode::SetFormat(const WAVEFORMATEX* pFMT, DWORD dwBitRate)
 		{
 			HRESULT hRes = S_OK;
 			TinyComPtr<IMFMediaType> inputType;
@@ -56,7 +56,7 @@ namespace TinyUI
 			hRes = outputType->SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, pFMT->nSamplesPerSec);
 			if (hRes != S_OK)
 				return FALSE;
-			return TinyMFEncode::Open(CLSID_MP3ACMCodecWrapper, inputType, outputType, std::move(callback));
+			return TinyMFEncode::SetMediaTypes(inputType, outputType);
 		}
 	};
 }

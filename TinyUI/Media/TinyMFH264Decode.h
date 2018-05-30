@@ -7,6 +7,7 @@ namespace TinyUI
 	{
 		/// <summary>
 		/// H264½âÂë
+		/// CLSID_CMSH264DecoderMFT
 		/// </summary>
 		class TinyMFH264Decode : public TinyMFDecode
 		{
@@ -15,7 +16,7 @@ namespace TinyUI
 			TinyMFH264Decode();
 			virtual ~TinyMFH264Decode();
 		public:
-			BOOL Open();
+			BOOL SetFormat();
 		};
 	};
 }

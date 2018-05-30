@@ -9,6 +9,7 @@ namespace TinyUI
 	{
 		/// <summary>
 		/// MFT解码
+		/// CLSID_CMP3DecMediaObject
 		/// </summary>
 		class TinyMFDecode : public TinyMFAsyncCallback
 		{
@@ -17,17 +18,17 @@ namespace TinyUI
 			TinyMFDecode();
 			virtual ~TinyMFDecode();
 		public:
-			BOOL Open(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType);
+			BOOL SetMediaTypes(IMFMediaType* inputType, IMFMediaType* outputType);
+			BOOL Open(const GUID& clsID);
 			BOOL Decode(SampleTag& tag, BYTE*& bo, DWORD& so);
+			BOOL Close();
 			BOOL Flush();//清空模式清空队列
 			BOOL Drain();//排空模式不接收任何输入
-			BOOL Close();
 			BOOL GetInputType(IMFMediaType** mediaType);
 			BOOL GetOutputType(IMFMediaType** mediaType);
 			void OnInvokeInput() OVERRIDE;
 			void OnInvokeOutput() OVERRIDE;
 		private:
-			BOOL Create(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType);
 			BOOL CreateInputSample(const BYTE* bits, DWORD cbSize);
 			BOOL CreateOutputSample(DWORD cbSize);
 			BOOL GetOutputSample(DWORD estimate, BYTE*& bo, DWORD& so);

@@ -15,7 +15,7 @@ namespace TinyUI
 
 		}
 
-		BOOL TinyMFAACEncode::Open(const WAVEFORMATEX* pFMT, Callback<void(BYTE*, LONG, LPVOID)>&& callback)
+		BOOL TinyMFAACEncode::SetFormat(const WAVEFORMATEX* pFMT)
 		{
 			HRESULT hRes = S_OK;
 			if (!IsValid(VALID_BITRATES, pFMT->nAvgBytesPerSec))
@@ -76,7 +76,7 @@ namespace TinyUI
 			hRes = outputType->SetUINT32(MF_MT_AAC_AUDIO_PROFILE_LEVEL_INDICATION, 0x29);
 			if (hRes != S_OK)
 				return FALSE;
-			return TinyMFEncode::Open(CLSID_AACMFTEncoder, inputType, outputType, std::move(callback));
+			return TinyMFEncode::SetMediaTypes(inputType, outputType);
 		}
 	};
 }

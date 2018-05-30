@@ -17,13 +17,14 @@ namespace TinyUI
 			virtual ~TinyMFEncode();
 			virtual void OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter);
 		public:
-			BOOL Open(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType, Callback<void(BYTE*, LONG, LPVOID)>&& callback);
+			void SetCallback(Callback<void(BYTE*, LONG, LPVOID)>&& callback);
+			BOOL SetMediaTypes(IMFMediaType* inputType, IMFMediaType* outputType);
+			BOOL Open(const GUID& clsID);
 			BOOL Encode(const BYTE* bits, DWORD size, LONGLONG hnsSampleTime, LONGLONG hnsSampleDuration);
 			BOOL Close();
 			BOOL GetInputType(IMFMediaType** mediaType);
 			BOOL GetOutputType(IMFMediaType** mediaType);
 		private:
-			BOOL Create(const GUID& clsID, IMFMediaType* inputType, IMFMediaType* outputType);
 			BOOL CreateInputSample(const BYTE* bits, DWORD size);
 			BOOL CreateOutputSample(DWORD dwSize);
 			BOOL GetOutputSample(DWORD dwSize);

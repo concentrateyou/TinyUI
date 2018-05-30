@@ -14,7 +14,7 @@ namespace TinyUI
 		{
 
 		}
-		BOOL TinyMFMP3Decode::Open(const MPEGLAYER3WAVEFORMAT* pMP3FMT, const WAVEFORMATEX* pFMT)
+		BOOL TinyMFMP3Decode::SetMediaTypes(const MPEGLAYER3WAVEFORMAT* pMP3FMT, const WAVEFORMATEX* pFMT)
 		{
 			HRESULT hRes = S_OK;
 			TinyComPtr<IMFMediaType> inputType;
@@ -31,7 +31,7 @@ namespace TinyUI
 			hRes = MFInitMediaTypeFromWaveFormatEx(outputType, pFMT, sizeof(WAVEFORMATEX));
 			if (hRes != S_OK)
 				return FALSE;
-			return TinyMFDecode::Open(CLSID_CMP3DecMediaObject, inputType, outputType);
+			return TinyMFDecode::SetMediaTypes(inputType, outputType);
 		}
 	};
 }

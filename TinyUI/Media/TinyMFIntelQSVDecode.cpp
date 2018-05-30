@@ -17,7 +17,7 @@ namespace TinyUI
 		{
 
 		}
-		BOOL TinyMFIntelQSVDecode::Open(const TinySize& size, DWORD dwFrameRate)
+		BOOL TinyMFIntelQSVDecode::SetFormat(const TinySize& size, DWORD dwFrameRate)
 		{
 			HRESULT hRes = S_OK;
 			TinyComPtr<IMFMediaType> inputType;
@@ -76,7 +76,7 @@ namespace TinyUI
 			hRes = MFSetAttributeRatio(outputType, MF_MT_PIXEL_ASPECT_RATIO, 1, 1);
 			if (hRes != S_OK)
 				return FALSE;
-			return TinyMFDecode::Open(CLSID_MF_INTEL_H264DecFilter, inputType, outputType);
+			return TinyMFDecode::SetMediaTypes(inputType, outputType);
 		}
 	};
 }
