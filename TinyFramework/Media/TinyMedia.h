@@ -213,6 +213,7 @@ namespace TinyFramework
 			INT64	sampleDTS;
 			INT64	samplePTS;
 			INT64	timestamp;
+			INT64	duration;
 			BYTE	sampleType;
 			BYTE*	bits;
 			LONG	size;

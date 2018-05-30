@@ -17,6 +17,7 @@ namespace TinyFramework
 			TinyMFMP3Encode();
 			virtual ~TinyMFMP3Encode();
 		public:
+			BOOL Open();
 			BOOL SetFormat(const WAVEFORMATEX* pFMT, DWORD dwBitRate);
 		};
 	};

@@ -627,9 +627,6 @@
     <ClInclude Include="Common\TinyDelegate.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
-    <ClInclude Include="Network\TinyDNS.h">
-      <Filter>头文件\Common</Filter>
-    </ClInclude>
     <ClInclude Include="Common\TinyError.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
@@ -956,6 +953,9 @@
     </ClInclude>
     <ClInclude Include="Render\TinyTheme.h">
       <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\TinyDNS.h">
+      <Filter>头文件\Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

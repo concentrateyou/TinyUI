@@ -15,6 +15,7 @@ namespace TinyFramework
 			TinyMFMP3Decode();
 			virtual ~TinyMFMP3Decode();
 		public:
+			BOOL Open();
 			BOOL SetFormat(const MPEGLAYER3WAVEFORMAT* pMP3FMT,const WAVEFORMATEX* pFMT);
 		};
 	};

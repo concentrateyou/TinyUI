@@ -14,6 +14,10 @@ namespace TinyFramework
 		{
 
 		}
+		BOOL TinyMFMP3Decode::Open()
+		{
+			return TinyMFDecode::Open(CLSID_CMP3DecMediaObject);
+		}
 		BOOL TinyMFMP3Decode::SetFormat(const MPEGLAYER3WAVEFORMAT* pMP3FMT, const WAVEFORMATEX* pFMT)
 		{
 			HRESULT hRes = S_OK;

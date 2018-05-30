@@ -15,23 +15,20 @@ namespace TinyFramework
 		public:
 			TinyMFEncode();
 			virtual ~TinyMFEncode();
-			virtual void OnDataAvailable(BYTE* bits, LONG size, LPVOID lpParameter);
 		public:
-			void SetCallback(Callback<void(BYTE*, LONG, LPVOID)>&& callback);
-			BOOL SetMediaTypes(IMFMediaType* inputType, IMFMediaType* outputType);
-			BOOL Open(const GUID& clsID);
-			BOOL Encode(const BYTE* bits, DWORD size, LONGLONG hnsSampleTime, LONGLONG hnsSampleDuration);
-			BOOL Close();
-			BOOL GetInputType(IMFMediaType** mediaType);
-			BOOL GetOutputType(IMFMediaType** mediaType);
+			BOOL	IsEmpty() const;
+			BOOL	SetMediaTypes(IMFMediaType* inputType, IMFMediaType* outputType);
+			BOOL	Open(const GUID& clsID);
+			BOOL	Encode(SampleTag& tag, BYTE*& bo, DWORD& so);
+			BOOL	Close();
+			BOOL	GetInputType(IMFMediaType** mediaType);
+			BOOL	GetOutputType(IMFMediaType** mediaType);
 		private:
-			BOOL CreateInputSample(const BYTE* bits, DWORD size);
-			BOOL CreateOutputSample(DWORD dwSize);
-			BOOL GetOutputSample(DWORD dwSize);
+			BOOL	CreateInputSample(const BYTE* bits, DWORD size);
+			BOOL	CreateOutputSample(DWORD dwSize);
+			BOOL	GetOutputSample(DWORD dwSize, BYTE*& bo, DWORD& so);
 		protected:
-			MFT_INPUT_STREAM_INFO		m_inputInfo;
-			MFT_OUTPUT_STREAM_INFO		m_outputInfo;
-			TinyComPtr<IMFTransform>	m_encoder;
+			TinyComPtr<IMFTransform>			m_transform;
 		private:
 			BOOL								m_bIsAsync;
 			DWORD								m_dwInputID;
@@ -40,7 +37,7 @@ namespace TinyFramework
 			TinyComPtr<IMFSample>				m_outputSample;
 			TinyComPtr<IMFMediaEvent>			m_mediaEvent;
 			TinyComPtr<IMFMediaEventGenerator>	m_eventGenerator;
-			Callback<void(BYTE*, LONG, LPVOID)> m_callback;
+			GrowableIOBuffer					m_growableIO;
 		};
 	};
 }

@@ -15,6 +15,10 @@ namespace TinyFramework
 		{
 
 		}
+		BOOL TinyMFMP3Encode::Open()
+		{
+			return TinyMFEncode::Open(CLSID_MP3ACMCodecWrapper);
+		}
 		BOOL TinyMFMP3Encode::SetFormat(const WAVEFORMATEX* pFMT, DWORD dwBitRate)
 		{
 			HRESULT hRes = S_OK;

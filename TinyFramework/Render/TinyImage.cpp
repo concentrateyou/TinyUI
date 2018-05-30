@@ -399,6 +399,7 @@ namespace TinyFramework
 		return m_hBitmap;
 	}
 	//////////////////////////////////////////////////////////////////////////
+	static BOOL g_WIC2 = FALSE;
 	IWICImagingFactory* GetImagingFactory()
 	{
 		static INIT_ONCE s_initOnce = INIT_ONCE_STATIC_INIT;

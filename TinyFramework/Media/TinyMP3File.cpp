@@ -240,7 +240,7 @@ namespace TinyFramework
 			m_reader.Release();
 			return TRUE;
 		}
-		void TinyMP3File::FormatConvert(const WAVEFORMATEX* pFMT, DWORD dwBitRate, MPEGLAYER3WAVEFORMAT* pMP3FMT)
+		void TinyMP3File::ConvertFormat(const WAVEFORMATEX* pFMT, DWORD dwBitRate, MPEGLAYER3WAVEFORMAT* pMP3FMT)
 		{
 			ZeroMemory(pMP3FMT, sizeof(MPEGLAYER3WAVEFORMAT));
 			pMP3FMT->wfx.cbSize = MPEGLAYER3_WFX_EXTRA_BYTES;

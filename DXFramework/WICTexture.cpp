@@ -6,7 +6,7 @@
 
 namespace DXFramework
 {
-	BOOL g_WIC2 = FALSE;
+	static BOOL g_WIC2 = FALSE;
 	IWICImagingFactory* GetWIC()
 	{
 		static INIT_ONCE s_initOnce = INIT_ONCE_STATIC_INIT;
