@@ -174,7 +174,7 @@ namespace MF
 		hRes = MFCreateSourceReaderFromMediaSource(source, NULL, &reader);
 		if (hRes != S_OK)
 			goto MFERROR;
-		for (DWORD dwIndex = 0;;dwIndex++)
+		for (DWORD dwIndex = 0;; dwIndex++)
 		{
 			TinyComPtr<IMFMediaType> mediaType;
 			hRes = reader->GetNativeMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_VIDEO_STREAM), dwIndex, &mediaType);
@@ -220,6 +220,37 @@ namespace MF
 		hRes = MFCreateDeviceSource(attributes, source);
 		if (hRes != S_OK)
 			return FALSE;
+		return TRUE;
+	}
+	BOOL MFVideoCapture::GetDeviceActivate(const MFVideoCapture::Name& device, IMFActivate** activate)
+	{
+		TinyComPtr<IMFAttributes> attributes;
+		HRESULT hRes = MFCreateAttributes(&attributes, 1);
+		if (hRes != S_OK)
+			return FALSE;
+		hRes = attributes->SetGUID(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE, MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_VIDCAP_GUID);
+		if (hRes != S_OK)
+			return FALSE;
+		UINT32 count = 0;
+		hRes = MFEnumDeviceSources(attributes, &activate, &count);
+		if (hRes != S_OK)
+			return FALSE;
+		for (UINT32 i = 0; i < count; ++i)
+		{
+			WCHAR* val = NULL;
+			UINT32 size = 0;
+			hRes = activate[i]->GetAllocatedString(MF_DEVSOURCE_ATTRIBUTE_FRIENDLY_NAME, &val, &size);
+			if (FAILED(val))
+			{
+				CoTaskMemFree(val);
+				SAFE_RELEASE(activate[i]);
+				continue;
+			}
+			string name = WStringToString(wstring(val, size));
+			CoTaskMemFree(val);
+			if (name == device.name())
+				break;
+		}
 		return TRUE;
 	}
 	BOOL MFVideoCapture::GetFormat(const GUID& guid, VideoPixelFormat* format)

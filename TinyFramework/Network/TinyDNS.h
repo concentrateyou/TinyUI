@@ -1,5 +1,6 @@
 #pragma once
 #include "TinySocket.h"
+#include <WinDNS.h>
 
 namespace TinyFramework
 {
@@ -13,7 +14,16 @@ namespace TinyFramework
 		public:
 			TinyDNS();
 		public:
-			BOOL Resolver(const string& host, const string& service, AddressList& list, INT addressFamily = AF_UNSPEC);	
+			/// <summary>
+			/// Õ¨≤Ω
+			/// </summary>
+			BOOL Resolver(const string& host, const string& service, AddressList& list, INT addressFamily = AF_UNSPEC);
+			/// <summary>
+			/// “Ï≤Ω
+			/// </summary>
+			BOOL BeginResolver(PCWSTR queryName, PSTR serverIP, PDNS_ADDR_ARRAY dnsServerList);
+		private:
+			static VOID WINAPI QueryCompleteCallback(PVOID Context, PDNS_QUERY_RESULT QueryResults);
 		};
 	}
 }

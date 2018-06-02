@@ -76,4 +76,8 @@ namespace MF
 	};
 	BOOL IsYuvPlanar(VideoPixelFormat format);
 	BOOL IsOpaque(VideoPixelFormat format);
+
+	HRESULT CopyAttribute(IMFAttributes *pSrc, IMFAttributes *pDest, const GUID& key);
+	HRESULT CloneVideoMediaType(IMFMediaType *pSrcMediaType, REFGUID guidSubType, IMFMediaType **ppNewMediaType);
+
 }

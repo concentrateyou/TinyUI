@@ -45,7 +45,7 @@
     <ClInclude Include="MFAudioCaptureParam.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MFDesktopCapture.h">
+    <ClInclude Include="MFCaptureEngine.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -74,7 +74,7 @@
     <ClCompile Include="MFAudioCaptureParam.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MFDesktopCapture.cpp">
+    <ClCompile Include="MFCaptureEngine.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

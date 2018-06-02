@@ -66,4 +66,68 @@ namespace MF
 		}
 		return FALSE;
 	}
+	HRESULT CopyAttribute(IMFAttributes *pSrc, IMFAttributes *pDest, const GUID& key)
+	{
+		PROPVARIANT var;
+		PropVariantInit(&var);
+		HRESULT hRes = pSrc->GetItem(key, &var);
+		if (SUCCEEDED(hRes))
+		{
+			hRes = pDest->SetItem(key, var);
+			PropVariantClear(&var);
+		}
+		return hRes;
+	}
+
+	HRESULT CloneVideoMediaType(IMFMediaType *pSrcMediaType, REFGUID guidSubType, IMFMediaType **ppNewMediaType)
+	{
+		TinyComPtr<IMFMediaType> newMediaType;
+		HRESULT hRes = MFCreateMediaType(&newMediaType);
+		if (FAILED(hRes))
+		{
+			goto _ERROR;
+		}
+
+		hRes = newMediaType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Video);
+		if (FAILED(hRes))
+		{
+			goto _ERROR;
+		}
+
+		hRes = newMediaType->SetGUID(MF_MT_SUBTYPE, guidSubType);
+		if (FAILED(hRes))
+		{
+			goto _ERROR;
+		}
+
+		hRes = CopyAttribute(pSrcMediaType, newMediaType, MF_MT_FRAME_SIZE);
+		if (FAILED(hRes))
+		{
+			goto _ERROR;
+		}
+
+		hRes = CopyAttribute(pSrcMediaType, newMediaType, MF_MT_FRAME_RATE);
+		if (FAILED(hRes))
+		{
+			goto _ERROR;
+		}
+
+		hRes = CopyAttribute(pSrcMediaType, newMediaType, MF_MT_PIXEL_ASPECT_RATIO);
+		if (FAILED(hRes))
+		{
+			goto _ERROR;
+		}
+
+		hRes = CopyAttribute(pSrcMediaType, newMediaType, MF_MT_INTERLACE_MODE);
+		if (FAILED(hRes))
+		{
+			goto _ERROR;
+		}
+		*ppNewMediaType = newMediaType;
+		(*ppNewMediaType)->AddRef();
+	_ERROR:
+		newMediaType.Release();
+		return hRes;
+	}
+
 }

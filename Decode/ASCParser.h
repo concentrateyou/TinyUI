@@ -54,7 +54,7 @@ namespace Decode
 		INT					GetFrequency() const;
 		AACChannelLayout	GetChannelLayout() const;
 	private:
-		BOOL	SkipGASpecificConfig(TinyBitReader* reader) const;
+		BOOL				SkipGASpecificConfig(TinyBitReader* reader) const;
 	private:
 		BYTE				m_audioObjectType;
 		BYTE				m_samplingFrequencyIndex;
