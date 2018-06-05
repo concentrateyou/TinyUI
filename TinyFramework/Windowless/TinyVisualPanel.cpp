@@ -78,11 +78,6 @@ namespace TinyFramework
 
 		BOOL TinyVisualStackPanel::SetProperty(const TinyString& name, const TinyString& value)
 		{
-			/*if (strcasecmp(name.STR(), TinyVisualPropertyConst::IMAGENORMAL.STR()) == 0)
-			{
-				
-				return TRUE;
-			}*/
 			return TinyVisualPanel::SetProperty(name, value);
 		}
 

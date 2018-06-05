@@ -3,13 +3,18 @@
 		background-image="panel"
         shadow-image="shadow"
         shadow-box="8,8,8,8">
-  <syscaption name ="syscaption" position="0,0" size="818,27" background-image="syscaption">
+    <syscaption name ="syscaption" position="0,0" size="818,27" background-image="syscaption">
     <label name="title" position="10,0" size="60,27" text="奇妙导播台" text-align="left|vcenter" text-color="255,255,255" >
     </label>
     <button name="sysmin" tooltip="Min" position="756,0" size="30,27"
             image-normal="sysbtn_min_normal"
             image-highlight="sysbtn_min_hover"
             image-down="sysbtn_min_down">
+    </button>
+	<button name="sysmax" tooltip="Max" position="756,0" size="30,27"
+            image-normal="sysbtn_max_normal"
+            image-highlight="sysbtn_max_hover"
+            image-down="sysbtn_max_down">
     </button>
     <button name="sysclose" tooltip="Close" position="786,0" size="30,27"
             image-normal="sysbtn_close_normal"
@@ -44,5 +49,4 @@
       </animation>
       <label name="lblMsg" position="0,0" size="760,100" font-family="微软雅黑" font-weight="400" font-size="12,28"  text-align="center|vcenter"></label>
     </panel>
-  </panel>
 </window>

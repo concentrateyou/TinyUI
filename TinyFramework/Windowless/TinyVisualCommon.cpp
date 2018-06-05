@@ -319,5 +319,117 @@ namespace TinyFramework
 		{
 			return m_value;
 		}
+		//////////////////////////////////////////////////////////////////////////
+		TinyVisualVariant::TinyVisualVariant()
+			:m_type(VARIANT_TYPE_EMPTY),
+			m_value(NULL),
+			m_size(0)
+		{
+
+		}
+		TinyVisualVariant::~TinyVisualVariant()
+		{
+
+		}
+		BOOL TinyVisualVariant::IsEmpty() const
+		{
+			return VARIANT_TYPE_EMPTY || m_value == NULL;
+		}
+		SIZE* TinyVisualVariant::GetSize()
+		{
+			return ((SIZE*)this->m_value);
+		}
+		RECT* TinyVisualVariant::GetRect()
+		{
+			return ((RECT*)this->m_value);
+		}
+		HFONT TinyVisualVariant::GetFont()
+		{
+			return ((HFONT)this->m_value);
+		}
+		CHAR* TinyVisualVariant::GetString()
+		{
+			return ((CHAR*)this->m_value);
+		}
+
+		BOOL TinyVisualVariant::SetSize(const SIZE* s)
+		{
+			if (!s)
+				return FALSE;
+			Release();
+			this->m_value = malloc(sizeof(SIZE));
+			if (this->m_value != NULL)
+			{
+				this->m_size = sizeof(SIZE);
+				this->m_type = VARIANT_TYPE_SIZE;
+				memcpy_s(this->m_value, this->m_size, s, this->m_size);
+				return TRUE;
+			}
+			return FALSE;
+		}
+		RECT TinyVisualVariant::GetRect(RECT* s)
+		{
+			if (!this->m_value)
+				return FALSE;
+			*s = *((RECT*)this->m_value);
+			return TRUE;
+		}
+		BOOL TinyVisualVariant::SetRect(const RECT* s)
+		{
+			if (!s)
+				return FALSE;
+			Release();
+			this->m_value = malloc(sizeof(RECT));
+			if (this->m_value != NULL)
+			{
+				this->m_size = sizeof(RECT);
+				this->m_type = VARIANT_TYPE_RECT;
+				memcpy_s(this->m_value, this->m_size, s, this->m_size);
+				return TRUE;
+			}
+			return FALSE;
+		}
+		BOOL TinyVisualVariant::SetFont(HFONT s)
+		{
+			if (!s)
+				return FALSE;
+			Release();
+			this->m_value = malloc(sizeof(HFONT));
+			if (this->m_value != NULL)
+			{
+				this->m_size = sizeof(HFONT);
+				this->m_type = VARIANT_TYPE_RECT;
+				memcpy_s(this->m_value, this->m_size, s, this->m_size);
+				return TRUE;
+			}
+			return FALSE;
+		}
+		BOOL TinyVisualVariant::SetString(const string& s)
+		{
+			Release();
+			this->m_value = malloc(s.size() + 1);
+			if (this->m_value != NULL)
+			{
+				this->m_size = s.size() + 1;
+				this->m_type = VARIANT_TYPE_RECT;
+				memcpy_s(this->m_value, this->m_size, &s[0], this->m_size);
+				this->m_type[s.size()] = '\0';
+				return TRUE;
+			}
+			return FALSE;
+		}
+		BOOL TinyVisualVariant::SetString(LPCSTR s)
+		{
+			if (!s)
+				return FALSE;
+			string val(s);
+			return SetString(s);
+		}
+		void TinyVisualVariant::Release()
+		{
+			SAFE_FREE(this->m_value);
+			this->m_size = 0;
+			this->m_type = VARIANT_TYPE_EMPTY;
+		}
 	}
 }

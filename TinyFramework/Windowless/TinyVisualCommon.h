@@ -177,6 +177,50 @@ namespace TinyFramework
 			TinyString	m_name;
 			TinyString	m_value;
 		};
+		enum VARIANT_TYPE
+		{
+			VARIANT_TYPE_EMPTY,
+			VARIANT_TYPE_RECT,
+			VARIANT_TYPE_POINT,
+			VARIANT_TYPE_SIZE,
+			VARIANT_TYPE_OBJECT,
+			VARIANT_TYPE_FONT,
+			VARIANT_TYPE_STRING,
+			VARIANT_TYPE_BYTE,
+			VARIANT_TYPE_CHAR,
+			VARIANT_TYPE_WORD,
+			VARIANT_TYPE_DWORD,
+			VARIANT_TYPE_SHORT,
+			VARIANT_TYPE_UINT,
+			VARIANT_TYPE_UINT32,
+			VARIANT_TYPE_UINT64,
+			VARIANT_TYPE_INT,
+			VARIANT_TYPE_INT32,
+			VARIANT_TYPE_INT64,
+			VARIANT_TYPE_FLOAT,
+			VARIANT_TYPE_DOUBLE,
+		};
+		class TinyVisualVariant
+		{
+		public:
+			TinyVisualVariant();
+			virtual ~TinyVisualVariant();
+			BOOL	IsEmpty() const;
+			SIZE*	GetSize();
+			RECT*	GetRect();
+			HFONT	GetFont();
+			CHAR*	GetString();
+			BOOL	SetSize(const SIZE* s);
+			BOOL	SetRect(const RECT* s);
+			BOOL	SetFont(HFONT s);
+			BOOL	SetString(const string& s);
+			BOOL	SetString(LPCSTR s);
+			void	Release();
+		private:
+			UINT			m_size;
+			void*			m_value;
+			VARIANT_TYPE	m_type;
+		};
 	}
 }
 

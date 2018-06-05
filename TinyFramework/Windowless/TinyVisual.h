@@ -162,8 +162,8 @@ namespace TinyFramework
 		protected:
 			DWORD				m_dwCount;//还是孩子节点个数
 			TinyVisualDocument*	m_document;
-			TinyVisual*			m_spvisNext;//同级下一个兄弟节点
 			TinyVisual*			m_spvisParent;//父节点
+			TinyVisual*			m_spvisNext;//同级下一个兄弟节点
 			TinyVisual*			m_spvisChild;//第一个孩子节点
 			TinyVisual*			m_spvisOwner;//对于Popup窗口使用
 			TinyString			m_szName;
