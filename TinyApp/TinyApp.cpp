@@ -252,31 +252,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	CoInitialize(NULL);
 	avcodec_register_all();
 
-
-	//std::string str;
-	//str.resize(MAX_PATH);
-	//GetModuleFileName(NULL, &str[0], MAX_PATH);
-	//str = str.substr(0, str.find_last_of("\\", string::npos, 1));
-	//str = str.substr(0, str.find_last_of("\\", string::npos, 1));
-	//str += "\\xigua-live-assistant\\西瓜视频直播助手.exe";
-
-	/*std::string val;
-	GetFileName(val);
-*/
-	/*TinyProcess process;
-	TinyProcessPipe ioPipe;
-	ioPipe.Create();
-	TinyProcessPipe errorPipe;
-	errorPipe.Create();
-	vector<string> args;
-	process.SetInput(ioPipe.GetOutput());
-	process.SetOutput(ioPipe.GetInput());
-	process.Create(val, args);
-	ioPipe.CloseInput();
-	Sleep(5000);
-	process.Terminate();*/
-
-
 	TinyVisualResource::GetInstance().Load("skin\\resource.xml");
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
@@ -285,15 +260,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	SkinWindow view;
 	view.Create(NULL,szFile.c_str());
 	view.UpdateWindow();
-	/*::DefWindowProc(NULL, 0, 0, 0L);
-	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
-	TinyMessageLoop theLoop;
-	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	CMainFrame uiImpl;
-	uiImpl.Create(NULL, 50, 50, 800, 800);
-	uiImpl.ShowWindow(nCmdShow);
-	uiImpl.UpdateWindow();*/
-
 	INT loopRes = theLoop.MessageLoop();
 	TinyApplication::GetInstance()->RemoveMessageLoop();
 	TinyApplication::GetInstance()->Uninitialize();
@@ -303,9 +269,8 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	MFShutdown();
 	WSACleanup();
 
-	return 0;
+	return loopRes;
 
-	return 0;
 };
 
 //HLSReader reader;

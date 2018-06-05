@@ -35,7 +35,7 @@ namespace TinyFramework
 			virtual ~TinyMFAACDecode();
 		public:
 			BOOL Open();
-			BOOL SetFormat(const BYTE* asc, LONG ascsize, const WAVEFORMATEX& waveFMT);
+			BOOL SetFormat(const BYTE* asc, LONG ascsize, const WAVEFORMATEX* waveFMT);
 		};
 	};
 }

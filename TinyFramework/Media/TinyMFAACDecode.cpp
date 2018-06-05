@@ -34,7 +34,7 @@ namespace TinyFramework
 		{
 			return TinyMFDecode::Open(CLSID_CMSAACDecMFT);
 		}
-		BOOL TinyMFAACDecode::SetFormat(const BYTE* asc, LONG ascsize, const WAVEFORMATEX& waveFMT)
+		BOOL TinyMFAACDecode::SetFormat(const BYTE* asc, LONG ascsize, const WAVEFORMATEX* waveFMT)
 		{
 			TinyComPtr<IMFMediaType> inputType;
 			HRESULT hRes = MFCreateMediaType(&inputType);
@@ -46,10 +46,10 @@ namespace TinyFramework
 			hRes = inputType->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_AAC);
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = inputType->SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, waveFMT.nSamplesPerSec);
+			hRes = inputType->SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, waveFMT->nSamplesPerSec);
 			if (hRes != S_OK)
 				return FALSE;
-			hRes = inputType->SetUINT32(MF_MT_AUDIO_NUM_CHANNELS, waveFMT.nChannels);
+			hRes = inputType->SetUINT32(MF_MT_AUDIO_NUM_CHANNELS, waveFMT->nChannels);
 			if (hRes != S_OK)
 				return FALSE;
 			hRes = inputType->SetUINT32(MF_MT_AAC_PAYLOAD_TYPE, 0x1);

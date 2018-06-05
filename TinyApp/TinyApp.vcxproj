@@ -102,6 +102,7 @@
       <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib\x86;$(INTELMEDIASDKROOT)\lib\$(Platform);..\Dependency\x86\lib;..\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>TinyFramework.lib;DXFramework.lib;DShowCapture.lib;Decode.lib;Encode.lib;libmfx.lib;dxva2.lib;dwmapi.lib;d3d9.lib;d3d11.lib;dxgi.lib;D2D1.lib;jsoncpp.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
+      <AdditionalOptions>/WHOLEARCHIVE:TinyFramework.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <ProjectReference>
       <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
@@ -211,9 +212,6 @@
     </ProjectReference>
     <ProjectReference Include="..\DShowCapture\DShowCapture.vcxproj">
       <Project>{b8f16b34-e13e-4757-b09a-792046bcc2d3}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\DXFramework\DXFramework.vcxproj">
-      <Project>{e5bf40dd-f8a0-4fb9-b27b-051c447a5c2b}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Encode\Encode.vcxproj">
       <Project>{4b386eb4-e529-4c67-9733-7684de8defdc}</Project>

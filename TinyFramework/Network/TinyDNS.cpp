@@ -36,7 +36,7 @@ namespace TinyFramework
 		BOOL TinyDNS::BeginResolver(PCWSTR queryName, PSTR serverIp, PDNS_ADDR_ARRAY dnsServerList)
 		{
 			DNS_QUERY_REQUEST request;
-			ZeroMemory(request, sizeof(request));
+			ZeroMemory(&request, sizeof(request));
 			request.Version = DNS_QUERY_REQUEST_VERSION1;
 			request.QueryType = DNS_TYPE_A;
 			request.QueryOptions = 0;
@@ -48,6 +48,7 @@ namespace TinyFramework
 			SOCKADDR_STORAGE address;
 			INT size = sizeof(address);
 			WSADATA wsaData;
+			ZeroMemory(&wsaData, sizeof(wsaData));
 			ZeroMemory(dnsServerList, sizeof(*dnsServerList));
 			dwError = WSAStringToAddress(serverIp,
 				AF_INET,
