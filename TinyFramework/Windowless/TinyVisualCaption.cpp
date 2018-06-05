@@ -27,6 +27,7 @@ namespace TinyFramework
 		{
 			return TinyVisualTagConst::SYSCAPTION;
 		}
+
 		void TinyVisualCaption::OnSizeChange(const TinySize& oldsize, const TinySize& newsize)
 		{
 			TinyVisual::OnSizeChange(oldsize, newsize);
@@ -58,7 +59,6 @@ namespace TinyFramework
 		}
 		HRESULT TinyVisualCaption::OnMouseLeave()
 		{
-
 			return TinyVisual::OnMouseLeave();
 		}
 		HRESULT	TinyVisualCaption::OnLButtonUp(const TinyPoint& pos, DWORD dwFlags)

@@ -19,9 +19,9 @@ namespace TinyFramework
 		public:
 			TinyVisualWindowless();
 			virtual ~TinyVisualWindowless();
-			BOOL Create(HWND hParent, LPCSTR pszFile);
-			BOOL Create(HWND hParent, LPCTSTR lpTemplateName, LPCSTR pszFile);
-			BOOL Create(HWND hParent, WORD wInteger, LPCSTR pszFile);
+			BOOL	Create(HWND hParent, LPCSTR pszFile);
+			BOOL	Create(HWND hParent, LPCTSTR lpTemplateName, LPCSTR pszFile);
+			BOOL	Create(HWND hParent, WORD wInteger, LPCSTR pszFile);
 			INT_PTR DoModal(HWND hParent, WORD wInteger, LPCSTR pszFile);
 			INT_PTR DoModal(HWND hParent, LPCTSTR lpTemplateName, LPCSTR pszFile);
 			LPCSTR	RetrieveClassName() OVERRIDE;
@@ -30,16 +30,16 @@ namespace TinyFramework
 			DWORD	RetrieveStyle() OVERRIDE;
 			DWORD	RetrieveExStyle() OVERRIDE;
 		public:
-			BOOL AddFilter(TinyVisualFilter* ps);
-			BOOL RemoveFilter(TinyVisualFilter* ps);
-			void AllowTracking(BOOL bAllow);
+			BOOL	AddFilter(TinyVisualFilter* ps);
+			BOOL	RemoveFilter(TinyVisualFilter* ps);
+			void	AllowTracking(BOOL bAllow);
 			TinyVisualDocument&	GetDocument();
 			TinyVisualShadow*	GetShadow();
 			virtual void OnInitialize() = 0;
 			virtual void OnUninitialize() = 0;
 		public:
 			//ÏûÏ¢
-			BOOL ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult) OVERRIDE;
+			BOOL	ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult) OVERRIDE;
 			LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;

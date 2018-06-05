@@ -174,6 +174,7 @@ namespace TinyFramework
 		const TinyString TinyVisualTagConst::MENUITEM = TEXT("menuitem");
 		const TinyString TinyVisualTagConst::CONTEXTMENU = TEXT("contextmenu");
 		//////////////////////////////////////////////////////////////////////////
+		IMPLEMENT_DYNAMIC(TinyVisualDC, TinyHandleHDC);
 		TinyVisualDC::TinyVisualDC(HWND hWND)
 			:m_hWND(hWND),
 			m_hMemDC(NULL),

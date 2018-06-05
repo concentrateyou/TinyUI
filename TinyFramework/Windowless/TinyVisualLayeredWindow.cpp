@@ -48,7 +48,7 @@ namespace TinyFramework
 		{
 
 		}
-		BOOL TinyVisualLayeredWindow::Update()
+		BOOL TinyVisualLayeredWindow::Draw()
 		{
 			if (!m_hWND || !m_visualDC)
 				return FALSE;

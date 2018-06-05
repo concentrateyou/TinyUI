@@ -15,16 +15,16 @@ namespace TinyFramework
 		public:
 			TinyVisualLayeredWindow();
 			virtual ~TinyVisualLayeredWindow();
-			LPCSTR RetrieveClassName() OVERRIDE;
-			LPCSTR RetrieveTitle() OVERRIDE;
-			HICON RetrieveIcon() OVERRIDE;
-			DWORD RetrieveStyle() OVERRIDE;
-			DWORD RetrieveExStyle() OVERRIDE;
+			LPCSTR	RetrieveClassName() OVERRIDE;
+			LPCSTR	RetrieveTitle() OVERRIDE;
+			HICON	RetrieveIcon() OVERRIDE;
+			DWORD	RetrieveStyle() OVERRIDE;
+			DWORD	RetrieveExStyle() OVERRIDE;
 		public:
-			void OnInitialize() OVERRIDE;
-			void OnUninitialize() OVERRIDE;
+			void	OnInitialize() OVERRIDE;
+			void	OnUninitialize() OVERRIDE;
 		public:
-			BOOL Update();
+			BOOL	Draw();
 		};
 	}
 }

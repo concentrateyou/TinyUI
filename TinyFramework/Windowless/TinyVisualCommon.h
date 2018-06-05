@@ -144,6 +144,7 @@ namespace TinyFramework
 		/// </summary>
 		class TinyVisualDC : public TinyHandleHDC
 		{
+			DECLARE_DYNAMIC(TinyVisualDC)
 		public:
 			TinyVisualDC(HWND hWND);
 			virtual ~TinyVisualDC();

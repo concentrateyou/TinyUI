@@ -475,6 +475,9 @@
     <ClCompile Include="Render\TinyTheme.cpp">
       <Filter>源文件\Control</Filter>
     </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualLayout.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -956,6 +959,9 @@
     </ClInclude>
     <ClInclude Include="Network\TinyDNS.h">
       <Filter>头文件\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualLayout.h">
+      <Filter>头文件\Windowless</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
