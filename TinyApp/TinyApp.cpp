@@ -253,12 +253,12 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	avcodec_register_all();
 
 
-	std::string str;
-	str.resize(MAX_PATH);
-	GetModuleFileName(NULL, &str[0], MAX_PATH);
-	str = str.substr(0, str.find_last_of("\\", string::npos, 1));
-	str = str.substr(0, str.find_last_of("\\", string::npos, 1));
-	str += "\\xigua-live-assistant\\西瓜视频直播助手.exe";
+	//std::string str;
+	//str.resize(MAX_PATH);
+	//GetModuleFileName(NULL, &str[0], MAX_PATH);
+	//str = str.substr(0, str.find_last_of("\\", string::npos, 1));
+	//str = str.substr(0, str.find_last_of("\\", string::npos, 1));
+	//str += "\\xigua-live-assistant\\西瓜视频直播助手.exe";
 
 	/*std::string val;
 	GetFileName(val);
@@ -282,8 +282,8 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
 	string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\search1.xml");
-	GLView view;
-	view.Create(NULL, 100, 100, 800, 600);
+	SkinWindow view;
+	view.Create(NULL,szFile.c_str());
 	view.UpdateWindow();
 	/*::DefWindowProc(NULL, 0, 0, 0L);
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));

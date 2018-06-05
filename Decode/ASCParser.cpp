@@ -85,7 +85,7 @@ namespace Decode
 		case 21:
 		case 22:
 		case 23:
-			SkipGASpecificConfig(reader);
+			SkipGASpecificConfig(&reader);
 			break;
 		}
 		if (m_extensionAudioObjectType != 5 && reader.Available() >= 16)
