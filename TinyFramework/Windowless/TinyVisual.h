@@ -140,7 +140,7 @@ namespace TinyFramework
 		public:
 			virtual BOOL		SetProperty(const TinyString& name, const TinyString& value);
 			TinyString			GetProperty(const TinyString& name);
-			BOOL				HasProperty(const TinyString& name);
+			BOOL				IsPropertyNull(const TinyString& name);
 		public:
 			Event<void(TinyVisual*, EventArgs&)>		EVENT_CREATE;
 			Event<void(TinyVisual*, EventArgs&)>		EVENT_DESTORY;
@@ -166,6 +166,7 @@ namespace TinyFramework
 			TinyVisual*			m_spvisNext;//同级下一个兄弟节点
 			TinyVisual*			m_spvisChild;//第一个孩子节点
 			TinyVisual*			m_spvisOwner;//对于Popup窗口使用
+
 			TinyString			m_szName;
 			TinyString			m_szText;
 			TinyString			m_szToolTip;
@@ -191,6 +192,7 @@ namespace TinyFramework
 			BOOL				m_enable;
 			HRGN				m_hrgnClip;
 			HFONT				m_hFONT;
+
 			TinyLinkList<TinyVisualProperty> m_propertys;
 		};
 	}

@@ -179,7 +179,6 @@ namespace TinyFramework
 			TinyColor			GetBackgroundColor() const;
 			TinyColor			GetBorderColor() const;
 			ImageStyle*			GetBorderImageStyle() const;
-
 		protected:
 			TinyScopedReferencePtr<BorderStyle>		m_borderStyle;
 			TinyScopedReferencePtr<BoxStyle>		m_boxStyle;

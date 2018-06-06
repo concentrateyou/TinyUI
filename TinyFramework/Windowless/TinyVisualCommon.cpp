@@ -319,7 +319,7 @@ namespace TinyFramework
 		{
 			return m_value;
 		}
-		//////////////////////////////////////////////////////////////////////////
+
 		TinyVisualVariant::TinyVisualVariant()
 			:m_type(VARIANT_TYPE_EMPTY),
 			m_value(NULL),
@@ -329,104 +329,331 @@ namespace TinyFramework
 		}
 		TinyVisualVariant::~TinyVisualVariant()
 		{
-
+			Release();
+		}
+		TinyVisualVariant::TinyVisualVariant(const TinyVisualVariant& s)
+		{
+			this->m_value = malloc(s.m_size);
+			if (this->m_value != NULL)
+			{
+				this->m_size = s.m_size;
+				this->m_type = s.m_type;
+				memcpy_s(this->m_value, this->m_size, s.m_value, this->m_size);
+			}
+		}
+		TinyVisualVariant* TinyVisualVariant::operator=(const TinyVisualVariant& s)
+		{
+			if (&s != this)
+			{
+				Release();
+				this->m_value = malloc(s.m_size);
+				if (this->m_value != NULL)
+				{
+					this->m_size = s.m_size;
+					this->m_type = s.m_type;
+					memcpy_s(this->m_value, this->m_size, s.m_value, this->m_size);
+				}
+			}
+			return *this;
+		}
+		TinyVisualVariant::TinyVisualVariant(TinyVisualVariant&& s)
+			:m_size(s.m_size),
+			m_type(s.m_type),
+			m_value(s.m_value)
+		{
+			s.m_value = NULL;
+			s.m_type = VARIANT_TYPE_EMPTY;
+			s.m_size = 0;
 		}
 		BOOL TinyVisualVariant::IsEmpty() const
 		{
 			return VARIANT_TYPE_EMPTY || m_value == NULL;
 		}
-		SIZE* TinyVisualVariant::GetSize()
+		BOOL TinyVisualVariant::GetBool() const
 		{
-			return ((SIZE*)this->m_value);
+			return *((BOOL*)this->m_value);
 		}
-		RECT* TinyVisualVariant::GetRect()
+		INT32 TinyVisualVariant::GetInt32() const
 		{
-			return ((RECT*)this->m_value);
+			return *((INT32*)this->m_value);
 		}
-		HFONT TinyVisualVariant::GetFont()
+		DOUBLE	TinyVisualVariant::GetDouble() const
+		{
+			return *((DOUBLE*)this->m_value);
+		}
+		FLOAT	TinyVisualVariant::GetFloat() const
+		{
+			return *((FLOAT*)this->m_value);
+		}
+		POINT TinyVisualVariant::GetPoint() const
+		{
+			return *((POINT*)this->m_value);
+		}
+		SIZE TinyVisualVariant::GetSize() const
+		{
+			return *((SIZE*)this->m_value);
+		}
+		RECT TinyVisualVariant::GetRect() const
+		{
+			return *((RECT*)this->m_value);
+		}
+		HFONT TinyVisualVariant::GetFont() const
 		{
 			return ((HFONT)this->m_value);
 		}
-		CHAR* TinyVisualVariant::GetString()
+		const CHAR* TinyVisualVariant::GetString() const
 		{
 			return ((CHAR*)this->m_value);
 		}
-
-		BOOL TinyVisualVariant::SetSize(const SIZE* s)
+		COLORREF TinyVisualVariant::GetColor() const
 		{
-			if (!s)
-				return FALSE;
-			Release();
-			this->m_value = malloc(sizeof(SIZE));
+			return *((COLORREF*)this->m_value);
+		}
+		TinyImage* TinyVisualVariant::GetImage()
+		{
+			return ((TinyImage*)this->m_value);
+		}
+		BOOL TinyVisualVariant::SetPoint(const POINT& s)
+		{
 			if (this->m_value != NULL)
 			{
-				this->m_size = sizeof(SIZE);
-				this->m_type = VARIANT_TYPE_SIZE;
-				memcpy_s(this->m_value, this->m_size, s, this->m_size);
-				return TRUE;
+				memcpy_s(this->m_value, this->m_size, (void*)&s, this->m_size);
 			}
-			return FALSE;
-		}
-		RECT TinyVisualVariant::GetRect(RECT* s)
-		{
-			if (!this->m_value)
-				return FALSE;
-			*s = *((RECT*)this->m_value);
+			else
+			{
+				this->m_value = malloc(sizeof(POINT));
+				if (this->m_value != NULL)
+				{
+					this->m_size = sizeof(POINT);
+					this->m_type = VARIANT_TYPE_POINT;
+					memcpy_s(this->m_value, this->m_size, (void*)&s, this->m_size);
+					Release();
+					return TRUE;
+				}
+			}
 			return TRUE;
 		}
-		BOOL TinyVisualVariant::SetRect(const RECT* s)
+		BOOL TinyVisualVariant::SetSize(const SIZE& s)
 		{
-			if (!s)
-				return FALSE;
-			Release();
-			this->m_value = malloc(sizeof(RECT));
 			if (this->m_value != NULL)
 			{
-				this->m_size = sizeof(RECT);
-				this->m_type = VARIANT_TYPE_RECT;
-				memcpy_s(this->m_value, this->m_size, s, this->m_size);
-				return TRUE;
+				memcpy_s(this->m_value, this->m_size, (void*)&s, this->m_size);
 			}
-			return FALSE;
+			else
+			{
+				this->m_value = malloc(sizeof(SIZE));
+				if (!this->m_value)
+					return FALSE;
+				this->m_size = sizeof(SIZE);
+				this->m_type = VARIANT_TYPE_SIZE;
+				memcpy_s(this->m_value, this->m_size, (void*)&s, this->m_size);
+				Release();
+			}
+			return TRUE;
+		}
+		BOOL TinyVisualVariant::SetRect(const RECT& s)
+		{
+			if (this->m_value != NULL)
+			{
+				memcpy_s(this->m_value, this->m_size, (void*)&s, this->m_size);
+			}
+			else
+			{
+				this->m_value = malloc(sizeof(RECT));
+				if (this->m_value != NULL)
+				{
+					this->m_size = sizeof(RECT);
+					this->m_type = VARIANT_TYPE_RECT;
+					memcpy_s(this->m_value, this->m_size, (void*)&s, this->m_size);
+					Release();
+					return TRUE;
+				}
+			}
+			return TRUE;
 		}
 		BOOL TinyVisualVariant::SetFont(HFONT s)
 		{
 			if (!s)
 				return FALSE;
-			Release();
-			this->m_value = malloc(sizeof(HFONT));
 			if (this->m_value != NULL)
 			{
-				this->m_size = sizeof(HFONT);
-				this->m_type = VARIANT_TYPE_RECT;
-				memcpy_s(this->m_value, this->m_size, s, this->m_size);
-				return TRUE;
+				memcpy_s(this->m_value, this->m_size, (void*)&s, this->m_size);
 			}
-			return FALSE;
+			else
+			{
+				this->m_value = malloc(sizeof(HFONT));
+				if (this->m_value != NULL)
+				{
+					this->m_size = sizeof(HFONT);
+					this->m_type = VARIANT_TYPE_FONT;
+					memcpy_s(this->m_value, this->m_size, (void*)&s, this->m_size);
+					Release();
+				}
+			}
+			return TRUE;
+		}
+		BOOL TinyVisualVariant::SetRegion(HRGN s)
+		{
+			if (!s)
+				return FALSE;
+			if (this->m_value != NULL)
+			{
+				memcpy_s(this->m_value, this->m_size, (void*)&s, this->m_size);
+			}
+			else
+			{
+				this->m_value = malloc(sizeof(HRGN));
+				if (this->m_value != NULL)
+				{
+					this->m_size = sizeof(HRGN);
+					this->m_type = VARIANT_TYPE_REGION;
+					memcpy_s(this->m_value, this->m_size, (void*)&s, this->m_size);
+					Release();
+				}
+			}
+			return TRUE;
 		}
 		BOOL TinyVisualVariant::SetString(const string& s)
 		{
-			Release();
-			this->m_value = malloc(s.size() + 1);
 			if (this->m_value != NULL)
 			{
-				this->m_size = s.size() + 1;
-				this->m_type = VARIANT_TYPE_RECT;
-				memcpy_s(this->m_value, this->m_size, &s[0], this->m_size);
-				this->m_type[s.size()] = '\0';
-				return TRUE;
+				if (m_size == s.size())
+				{
+					memcpy_s(this->m_value, this->m_size, (void*)&s[0], this->m_size);
+					return TRUE;
+				}
 			}
-			return FALSE;
+			this->m_value = malloc(sizeof(CHAR)*(s.size() + 1));
+			if (!this->m_value)
+				return FALSE;
+			this->m_size = s.size();
+			this->m_type = VARIANT_TYPE_STRING;
+			memcpy_s(this->m_value, this->m_size, &s[0], this->m_size);
+			this->m_value[s.size()] = '\0';
+			Release();
+			return TRUE;
 		}
-		BOOL TinyVisualVariant::SetString(LPCSTR s)
+		BOOL TinyVisualVariant::SetString(const TinyString& s)
+		{
+			return SetString(s.CSTR());
+		}
+		BOOL TinyVisualVariant::SetString(const CHAR* s)
 		{
 			if (!s)
 				return FALSE;
 			string val(s);
 			return SetString(s);
 		}
+		BOOL TinyVisualVariant::SetColor(COLORREF s)
+		{
+			if (this->m_value != NULL)
+			{
+				memcpy_s(this->m_value, this->m_size, (void*)&s, this->m_size);
+			}
+			else
+			{
+				this->m_value = malloc(sizeof(COLORREF));
+				if (!this->m_value)
+					return FALSE;
+				this->m_size = sizeof(COLORREF);
+				this->m_type = VARIANT_TYPE_COLOR;
+				memcpy_s(this->m_value, this->m_size, (void*)&s, this->m_size);
+				Release();
+			}
+			return TRUE;
+		}
+		BOOL TinyVisualVariant::SetImage(TinyImage&& s)
+		{
+			this->m_value = malloc(sizeof(TinyImage));
+			if (!this->m_value)
+				return FALSE;
+			this->m_size = sizeof(TinyImage);
+			this->m_type = VARIANT_TYPE_IMAGE;
+			Release();
+#pragma push_macro("new")
+#undef new
+			::new(m_value) TinyPlaceNew<TinyImage>(std::move(s));
+#pragma pop_macro("new")
+			return TRUE;
+		}
+		BOOL TinyVisualVariant::SetBool(BOOL s)
+		{
+			if (this->m_value != NULL)
+			{
+				memcpy_s(this->m_value, this->m_size, (void*)&s, this->m_size);
+			}
+			else
+			{
+				this->m_value = malloc(sizeof(BOOL));
+				if (!this->m_value)
+					return FALSE;
+				this->m_size = sizeof(BOOL);
+				this->m_type = VARIANT_TYPE_BOOL;
+				memcpy_s(this->m_value, this->m_size, (void*)&s, this->m_size);
+				Release();
+			}
+			return TRUE;
+		}
+		BOOL TinyVisualVariant::SetInt32(INT32 s)
+		{
+			if (this->m_value != NULL)
+			{
+				memcpy_s(this->m_value, this->m_size, (void*)&s, this->m_size);
+			}
+			else
+			{
+				this->m_value = malloc(sizeof(INT32));
+				if (!this->m_value)
+					return FALSE;
+				this->m_size = sizeof(INT32);
+				this->m_type = VARIANT_TYPE_INT32;
+				memcpy_s(this->m_value, this->m_size, (void*)&s, this->m_size);
+				Release();
+			}
+			return TRUE;
+		}
+		BOOL TinyVisualVariant::SetDouble(DOUBLE s)
+		{
+			if (this->m_value != NULL)
+			{
+				memcpy_s(this->m_value, this->m_size, (void*)&s, this->m_size);
+			}
+			else
+			{
+				this->m_value = malloc(sizeof(DOUBLE));
+				if (!this->m_value)
+					return FALSE;
+				this->m_size = sizeof(DOUBLE);
+				this->m_type = VARIANT_TYPE_DOUBLE;
+				memcpy_s(this->m_value, this->m_size, (void*)&s, this->m_size);
+				Release();
+			}
+			return TRUE;
+		}
+		BOOL TinyVisualVariant::SetFloat(FLOAT s)
+		{
+			if (this->m_value != NULL)
+			{
+				memcpy_s(this->m_value, this->m_size, (void*)&s, this->m_size);
+			}
+			else
+			{
+				this->m_value = malloc(sizeof(FLOAT));
+				if (!this->m_value)
+					return FALSE;
+				this->m_size = sizeof(FLOAT);
+				this->m_type = VARIANT_TYPE_FLOAT;
+				memcpy_s(this->m_value, this->m_size, (void*)&s, this->m_size);
+				Release();
+			}
+			return TRUE;
+		}
 		void TinyVisualVariant::Release()
 		{
+			if (this->m_type == VARIANT_TYPE_IMAGE)
+			{
+
+			}
 			SAFE_FREE(this->m_value);
 			this->m_size = 0;
 			this->m_type = VARIANT_TYPE_EMPTY;

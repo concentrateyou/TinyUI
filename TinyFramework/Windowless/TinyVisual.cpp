@@ -534,7 +534,7 @@ namespace TinyFramework
 			}
 			return TinyString();
 		}
-		BOOL TinyVisual::HasProperty(const TinyString& name)
+		BOOL TinyVisual::IsPropertyNull(const TinyString& name)
 		{
 			ITERATOR pos = m_propertys.First();
 			while (pos != NULL)

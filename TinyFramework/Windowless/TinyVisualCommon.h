@@ -183,43 +183,119 @@ namespace TinyFramework
 			VARIANT_TYPE_RECT,
 			VARIANT_TYPE_POINT,
 			VARIANT_TYPE_SIZE,
-			VARIANT_TYPE_OBJECT,
 			VARIANT_TYPE_FONT,
+			VARIANT_TYPE_REGION,
 			VARIANT_TYPE_STRING,
-			VARIANT_TYPE_BYTE,
-			VARIANT_TYPE_CHAR,
-			VARIANT_TYPE_WORD,
-			VARIANT_TYPE_DWORD,
-			VARIANT_TYPE_SHORT,
-			VARIANT_TYPE_UINT,
-			VARIANT_TYPE_UINT32,
-			VARIANT_TYPE_UINT64,
-			VARIANT_TYPE_INT,
+			VARIANT_TYPE_COLOR,
+			VARIANT_TYPE_IMAGE,
+			VARIANT_TYPE_BOOL,
 			VARIANT_TYPE_INT32,
-			VARIANT_TYPE_INT64,
-			VARIANT_TYPE_FLOAT,
 			VARIANT_TYPE_DOUBLE,
+			VARIANT_TYPE_FLOAT
 		};
+
 		class TinyVisualVariant
 		{
 		public:
 			TinyVisualVariant();
+			TinyVisualVariant(TinyVisualVariant&& s);
+			TinyVisualVariant(const TinyVisualVariant& s);
+			TinyVisualVariant& operator=(const TinyVisualVariant& s);
 			virtual ~TinyVisualVariant();
-			BOOL	IsEmpty() const;
-			SIZE*	GetSize();
-			RECT*	GetRect();
-			HFONT	GetFont();
-			CHAR*	GetString();
-			BOOL	SetSize(const SIZE* s);
-			BOOL	SetRect(const RECT* s);
-			BOOL	SetFont(HFONT s);
-			BOOL	SetString(const string& s);
-			BOOL	SetString(LPCSTR s);
-			void	Release();
+			BOOL		IsEmpty() const;
+			BOOL		GetBool() const;
+			INT32		GetInt32() const;
+			DOUBLE		GetDouble() const;
+			FLOAT		GetFloat() const;
+			POINT		GetPoint() const;
+			SIZE		GetSize() const;
+			RECT		GetRect() const;
+			HFONT		GetFont() const;
+			const CHAR*	GetString() const;
+			COLORREF	GetColor() const;
+			TinyImage*	GetImage();
+			BOOL		SetPoint(const POINT& s);
+			BOOL		SetSize(const SIZE& s);
+			BOOL		SetRect(const RECT& s);
+			BOOL		SetFont(HFONT s);
+			BOOL		SetRegion(HRGN s);
+			BOOL		SetString(const string& s);
+			BOOL		SetString(const TinyString& s);
+			BOOL		SetString(const CHAR* s);
+			BOOL		SetColor(COLORREF s);
+			BOOL		SetImage(TinyImage&& s);
+			BOOL		SetBool(BOOL s);
+			BOOL		SetInt32(INT32 s);
+			BOOL		SetDouble(DOUBLE s);
+			BOOL		SetFloat(FLOAT s);
+			void		Release();
 		private:
 			UINT			m_size;
 			void*			m_value;
 			VARIANT_TYPE	m_type;
+		};
+
+		template<class T>
+		class TinyVisualVariantT
+		{
+		public:
+			TinyVisualVariantT()
+				:m_myP(NULL)
+			{
+
+			}
+			~TinyVisualVariantT()
+			{
+				Release();
+			}
+			BOOL IsEmpty() const
+			{
+				return m_myP == NULL;
+			}
+			TinyVisualVariantT(const TinyVisualVariantT& myT)
+			{
+				T* myP = NULL;
+				myP = (T*)malloc(sizeof(T));
+				if (myP != NULL)
+				{
+#pragma push_macro("new")
+#undef new
+					::new(myP) TinyPlaceNew<T>(myT);
+#pragma pop_macro("new")
+					m_myP = myP;
+				}
+			}
+			TinyVisualVariantT& operator=(const TinyVisualVariantT& myT)
+			{
+				if (&myT != this)
+				{
+					T* myP = NULL;
+					myP = (T*)malloc(sizeof(T));
+					if (myP != NULL)
+					{
+#pragma push_macro("new")
+#undef new
+						::new(myP) TinyPlaceNew<T>(myT);
+#pragma pop_macro("new")
+						Release();
+						m_myP = myP;
+					}
+				}
+				return *this;
+			}
+			TinyVisualVariantT(TinyVisualVariantT&& myT)
+				:m_myP(myT.m_myP)
+			{
+				myT.m_myP = NULL;
+			}
+			void Release()
+			{
+				if (m_myP != NULL)
+					m_myP->~T();
+				SAFE_FREE(m_myP);
+			}
+		protected:
+			T*	m_myP;
 		};
 	}
 }
