@@ -20,7 +20,7 @@ namespace TinyFramework
 			static const TinyString POSITION;
 			static const TinyString SIZE;
 
-			static const TinyString ORIENTATION;
+			static const TinyString LAYOUT;
 
 			static const TinyString PADDING;
 			static const TinyString MARGIN;
@@ -177,6 +177,14 @@ namespace TinyFramework
 			TinyString	m_name;
 			TinyString	m_value;
 		};
+
+		enum VisualLayout
+		{
+			None,
+			Horizontal,
+			Vertical
+		};
+
 		enum VARIANT_TYPE
 		{
 			VARIANT_TYPE_EMPTY,

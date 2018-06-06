@@ -27,14 +27,14 @@ namespace TinyFramework
 		void TinyVisualWindow::OnSizeChange(const TinySize& oldsize, const TinySize& newsize)
 		{
 			ASSERT(m_document);
-			TinyVisual* spvis = m_spvisChild;
-			while (spvis != NULL && spvis->IsVisible())
-			{
-				TinySize size = spvis->GetSize();
-				spvis->SetSize(TinySize(newsize.cx, size.cy));
-				spvis->OnSizeChange(size, spvis->GetSize());
-				spvis = m_document->GetVisual(spvis, CMD_NEXT);
-			}
+			//TinyVisual* spvis = m_spvisChild;
+			//while (spvis != NULL && spvis->IsVisible())
+			//{
+			//	/*TinySize size = spvis->GetSize();
+			//	spvis->SetSize(TinySize(newsize.cx, size.cy));
+			//	spvis->OnSizeChange(size, spvis->GetSize());
+			//	spvis = m_document->GetVisual(spvis, CMD_NEXT);*/
+			//}
 		}
 
 		void TinyVisualWindow::SetPosition(const TinyPoint& pos)

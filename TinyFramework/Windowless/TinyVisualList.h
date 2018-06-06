@@ -23,13 +23,13 @@ namespace TinyFramework
 			TinyVisualListItem(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:
 			virtual ~TinyVisualListItem();
-			TinyString RetrieveTag() const OVERRIDE;
-			HRESULT	OnMouseEnter() OVERRIDE;
+			TinyString	RetrieveTag() const OVERRIDE;
+			HRESULT		OnMouseEnter() OVERRIDE;
 		public:
-			void SetItemPtr(LPVOID ps);
-			LPVOID GetItemPtr() const;
+			void	SetItemPtr(LPVOID ps);
+			LPVOID	GetItemPtr() const;
 		protected:
-			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
+			BOOL	OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 		private:
 			LPVOID	m_pointer;//自定义数据
 		};
@@ -47,11 +47,11 @@ namespace TinyFramework
 			HRESULT OnInitialize() OVERRIDE;
 		public:
 			virtual ~TinyVisualList();
-			TinyString RetrieveTag() const OVERRIDE;
-			HRESULT	OnMouseEnter() OVERRIDE;
+			TinyString	RetrieveTag() const OVERRIDE;
+			HRESULT		OnMouseEnter() OVERRIDE;
 			TinyVisualVScrollBar* GetVScrollBar();
 		public:
-			void SetColumnCount(INT count);
+			void				SetColumnCount(INT count);
 			TinyVisualListItem* Add(const TinyString& text);
 			TinyVisualListItem* Add(const TinyString& text, const TinyString& imageURL, const TinyString& defaultImage);
 			template<class T>

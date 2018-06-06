@@ -18,10 +18,10 @@ namespace TinyFramework
 			TinyVisualCaption(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:
 			virtual ~TinyVisualCaption();
-			TinyString RetrieveTag() const OVERRIDE;
-			void OnSizeChange(const TinySize&, const TinySize&) OVERRIDE;
+			TinyString	RetrieveTag() const OVERRIDE;
+			void		OnSizeChange(const TinySize&, const TinySize&) OVERRIDE;
 		protected:
-			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
+			BOOL	OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT OnMouseLeave() OVERRIDE;
 			HRESULT	OnLButtonDown(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
 			HRESULT	OnMouseMove(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;

@@ -23,17 +23,17 @@ namespace TinyFramework
 		public:
 			TinyVisualComboBoxHWND(TinyVisualComboBox* pOwner);
 			virtual ~TinyVisualComboBoxHWND();
-			DWORD RetrieveStyle() OVERRIDE;
-			DWORD RetrieveExStyle() OVERRIDE;
-			LPCSTR RetrieveClassName() OVERRIDE;
-			LPCSTR RetrieveTitle() OVERRIDE;
-			HICON RetrieveIcon() OVERRIDE;
-			void OnInitialize() OVERRIDE;
-			void OnUninitialize() OVERRIDE;
-			BOOL IsPopup();
+			DWORD	RetrieveStyle() OVERRIDE;
+			DWORD	RetrieveExStyle() OVERRIDE;
+			LPCSTR	RetrieveClassName() OVERRIDE;
+			LPCSTR	RetrieveTitle() OVERRIDE;
+			HICON	RetrieveIcon() OVERRIDE;
+			void	OnInitialize() OVERRIDE;
+			void	OnUninitialize() OVERRIDE;
+			BOOL	IsPopup();
 		public:
-			BOOL SetPosition(const TinyPoint& pos, const TinySize& size);
-			void SetSelected(TinyVisualOption* spvis);
+			BOOL	SetPosition(const TinyPoint& pos, const TinySize& size);
+			void	SetSelected(TinyVisualOption* spvis);
 			TinyVisualOption* GetSelected();
 		public:
 			Event<void(ActiveEventArgs&)>	EVENT_ACTIVE;

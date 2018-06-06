@@ -25,31 +25,31 @@ namespace TinyFramework
 			TinyVisualComboBox(TinyVisual* spvisParent, TinyVisualDocument* document);
 		public:
 			virtual ~TinyVisualComboBox();
-			TinyString RetrieveTag() const OVERRIDE;
-			BOOL SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
+			TinyString	RetrieveTag() const OVERRIDE;
+			BOOL		SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 		public:
 			TinyVisualOption* AddOption(const TinyString& szValue, const TinyString& szText);
-			void Remove(const TinyString& szValue);
-			void RemoveAll();
+			void	Remove(const TinyString& szValue);
+			void	RemoveAll();
 			TinyArray<TinyVisualOption*>& GetOptions();
-			void SetStyleImage(StyleImage type, LPCSTR pzFile);
-			void SetArrowImage(StyleImage type, LPCSTR pzFile);
-			void SetSelected(TinyVisualOption* spvis);
-			void SetSelected(INT index);
+			void	SetStyleImage(StyleImage type, LPCSTR pzFile);
+			void	SetArrowImage(StyleImage type, LPCSTR pzFile);
+			void	SetSelected(TinyVisualOption* spvis);
+			void	SetSelected(INT index);
 			TinyVisualOption* GetSelected();
 		public:
 			Event<void(TinyVisualOption*)>	EVENT_SELECTCHANGED;
 		protected:
-			BOOL	OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
-			HRESULT	OnInitialize() OVERRIDE;
-			HRESULT OnDestory() OVERRIDE;
-			HRESULT	OnLButtonDown(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
-			HRESULT OnLButtonDBClick(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
-			HRESULT OnMouseMove(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
-			HRESULT OnMouseLeave() OVERRIDE;
-			HRESULT	OnLButtonUp(const TinyPoint& pos, DWORD dwFlags);
+			BOOL		OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
+			HRESULT		OnInitialize() OVERRIDE;
+			HRESULT		OnDestory() OVERRIDE;
+			HRESULT		OnLButtonDown(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
+			HRESULT		OnLButtonDBClick(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
+			HRESULT		OnMouseMove(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
+			HRESULT		OnMouseLeave() OVERRIDE;
+			HRESULT		OnLButtonUp(const TinyPoint& pos, DWORD dwFlags);
 		private:
-			void	OnPopupActive(ActiveEventArgs& args);
+			void		OnPopupActive(ActiveEventArgs& args);
 		private:
 			INT						m_cy;
 			BOOL					m_bActive;
@@ -73,20 +73,20 @@ namespace TinyFramework
 			TinyVisualOption();
 			TinyVisualOption(TinyVisual* spvisParent, TinyVisualDocument* document);
 			virtual ~TinyVisualOption();
-			TinyString RetrieveTag() const OVERRIDE;
-			HRESULT OnMouseLeave() OVERRIDE;
-			HRESULT OnMouseMove(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
-			HRESULT OnLButtonUp(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
-			BOOL	SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
+			TinyString	RetrieveTag() const OVERRIDE;
+			HRESULT		OnMouseLeave() OVERRIDE;
+			HRESULT		OnMouseMove(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
+			HRESULT		OnLButtonUp(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
+			BOOL		SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 		public:
-			BOOL IsSelected();
-			void SetSelected(BOOL bFlag);
-			TinyString GetValue() const;
+			BOOL		IsSelected();
+			void		SetSelected(BOOL bFlag);
+			TinyString	GetValue() const;
 		public:
 			virtual void SetValue(LPCSTR pzValue);
 			virtual void SetHighlightImage(LPCSTR pzFile);
 		protected:
-			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
+			BOOL		OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 		private:
 			TinyString	m_szValue;
 			TinyImage*	m_highlight;

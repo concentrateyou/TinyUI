@@ -42,7 +42,7 @@ namespace TinyFramework
 			{
 				if (pXML && !strcasecmp(pXML->Value(), TinyVisualTagConst::WINDOW.STR()))
 				{
-					spvis = document->Create(TinyVisualTagConst::WINDOW, NULL);
+					spvis = document->Create(TinyVisualTagConst::WINDOW, NULL);//根节点元素
 					BuildProperty(pXML, spvis);
 					document->m_spvisWindow = spvis;
 				}
@@ -87,6 +87,16 @@ namespace TinyFramework
 						if (BuildProperty(static_cast<const TiXmlElement*>(pXMLChildNode), spvis))
 						{
 							CreateInstace(pXMLChildNode, spvis, document);
+							//布局容器
+							if (spvis->IsKindOf(RUNTIME_CLASS(TinyVisualPanel)))
+							{
+								TinyVisualPanel* panel = static_cast<TinyVisualPanel*>(spvis);
+								
+							}
+							if (spvis->GetSize().IsEmpty())
+							{
+								spvis->SetSize(spvisParent->GetSize());
+							}
 							spvis->OnInitialize();//初始化完成
 						}
 					}
@@ -160,7 +170,7 @@ namespace TinyFramework
 			UINT sFlag = DT_LEFT | DT_SINGLELINE;
 			TinyArray<TinyString> sps;
 			str.Split('|', sps);
-			for (INT i = 0;i < sps.GetSize();i++)
+			for (INT i = 0; i < sps.GetSize(); i++)
 			{
 				if (strcasecmp(sps[i].STR(), "left") == 0)
 					sFlag |= DT_LEFT;
@@ -301,7 +311,7 @@ namespace TinyFramework
 		void TinyVisualResource::Remove(TinyImage* image)
 		{
 			TinyAutoLock lock(m_lock);
-			for (INT i = 0;i < m_images1.GetSize();i++)
+			for (INT i = 0; i < m_images1.GetSize(); i++)
 			{
 				if (m_images1[i] == image)
 				{
@@ -328,7 +338,7 @@ namespace TinyFramework
 			}
 			m_images2.RemoveAll();
 
-			for (INT i = 0;i < m_images1.GetSize();i++)
+			for (INT i = 0; i < m_images1.GetSize(); i++)
 			{
 				m_images1[i]->Close();
 				SAFE_DELETE(m_images1[i]);

@@ -25,11 +25,17 @@ namespace TinyFramework
 		BOOL TinyVisualDocument::Destory(TinyVisual* spvis)
 		{
 			if (spvis == m_spvisLastMouse)
+			{
 				m_spvisLastMouse = NULL;
+			}
 			if (spvis == m_spvisCapture)
+			{
 				m_spvisCapture = NULL;
+			}
 			if (spvis == m_spvisFocus)
+			{
 				m_spvisFocus = NULL;
+			}
 			return m_factory.Destory(spvis);
 		}
 		BOOL TinyVisualDocument::Initialize(TinyVisualBuilder* builder)
@@ -61,11 +67,9 @@ namespace TinyFramework
 		void TinyVisualDocument::LinkVisual(TinyVisual* spvis, TinyVisual* spvisInsert, TinyVisual**pspvisFirst)
 		{
 			if (pspvisFirst == NULL)
-				return;
+				return ;
 			if (*pspvisFirst == spvis)
-			{
-				return;
-			}
+				return ;
 			if (spvisInsert == PVISUAL_TOP)
 			{
 			LINKTOP:
@@ -90,24 +94,24 @@ namespace TinyFramework
 		}
 		void TinyVisualDocument::UnlinkVisual(TinyVisual* spvisUnlink, TinyVisual** pspvisFirst)
 		{
-			TinyVisual* pv = NULL;
-			pv = *pspvisFirst;
-			if (pv == spvisUnlink)
+			TinyVisual* spvis = NULL;
+			spvis = *pspvisFirst;
+			if (spvis == spvisUnlink)
 			{
 				*pspvisFirst = spvisUnlink->m_spvisNext;
 				spvisUnlink->m_spvisNext = NULL;
 				return;
 			}
-			while (pv != NULL)
+			while (spvis != NULL)
 			{
-				if (pv->m_spvisNext == spvisUnlink)
+				if (spvis->m_spvisNext == spvisUnlink)
 				{
-					pspvisFirst = &pv->m_spvisNext;
+					pspvisFirst = &spvis->m_spvisNext;
 					*pspvisFirst = spvisUnlink->m_spvisNext;
 					spvisUnlink->m_spvisNext = NULL;
 					return;
 				}
-				pv = pv->m_spvisNext;
+				spvis = spvis->m_spvisNext;
 			}
 		}
 		TinyVisual* TinyVisualDocument::GetVisual(TinyVisual* spvis, UINT cmd) const
@@ -124,7 +128,9 @@ namespace TinyFramework
 				}
 			}
 			if (spvis == NULL)
+			{
 				spvis = m_spvisWindow;
+			}
 			TinyVisual* pv = NULL;
 			BOOL fRebase = FALSE;
 			switch (cmd)
@@ -563,7 +569,9 @@ namespace TinyFramework
 				}
 			}
 			if (spvisParent != NULL)
+			{
 				spvisParent->m_dwCount++;
+			}
 			return spvis;
 		}
 		TinyVisual* TinyVisualDocument::TinyVisualFactory::Create(INT x, INT y, INT cx, INT cy, const TinyString& classSTR, TinyVisual* spvisParent)
@@ -603,7 +611,9 @@ namespace TinyFramework
 				}
 			}
 			if (spvisParent != NULL)
+			{
 				spvisParent->m_dwCount++;
+			}
 			return spvis;
 		}
 		HRESULT	TinyVisualDocument::OnSize(const TinySize& size)

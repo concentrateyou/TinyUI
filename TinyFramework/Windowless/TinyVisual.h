@@ -79,8 +79,6 @@ namespace TinyFramework
 			TinyVisualDocument*	GetDocument();
 			DWORD				GetChildCount() const;
 			virtual	HRESULT		SendMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes);
-			virtual void		OnSizeChange(const TinySize&, const TinySize&);
-			virtual void		OnPosChange(const TinyPoint&, const TinyPoint&);
 		public:
 			virtual ~TinyVisual();
 			virtual TinyString	RetrieveTag() const;
@@ -137,6 +135,8 @@ namespace TinyFramework
 			virtual HRESULT		OnFocus(BOOL bFlag);
 			virtual HRESULT		OnCapture(BOOL bFlag);
 			virtual HRESULT		OnActive(BOOL bFlag);
+			virtual void		OnSizeChange(const TinySize&, const TinySize&);
+			virtual void		OnPosChange(const TinyPoint&, const TinyPoint&);
 		public:
 			virtual BOOL		SetProperty(const TinyString& name, const TinyString& value);
 			TinyString			GetProperty(const TinyString& name);

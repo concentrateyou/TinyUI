@@ -1,5 +1,6 @@
 #include "../stdafx.h"
 #include "TinyVisualWindowless.h"
+#include "../Common/TinyLogging.h"
 #include "../Render/TinyTransform.h"
 #include "../Render/TinyCanvas.h"
 
@@ -81,19 +82,31 @@ namespace TinyFramework
 				return FALSE;
 			m_visualDC.Reset(new TinyVisualDC(m_hWND));
 			if (!m_visualDC)
+			{
+				LOG(ERROR) << "Create TinyVisualDC FAIL";
 				return FALSE;
+			}
 			//创建阴影窗口
 			if (!(RetrieveExStyle() & WS_EX_LAYERED))
 			{
 				m_shadow.Reset(new TinyVisualShadow());
 				ASSERT(m_shadow);
 				if (!m_shadow->Create(m_hWND, 0, 0, 0, 0))
+				{
+					LOG(ERROR) << "Create TinyVisualShadow FAIL";
 					return FALSE;
+				}
 			}
 			if (!m_builder.LoadFile(m_szSkinFile.CSTR()))
+			{
+				LOG(ERROR) << "LoadFile Skin FAIl";
 				return FALSE;
+			}
 			if (!m_document.Initialize(&m_builder))
+			{
+				LOG(ERROR) << "Document Initialize FAIl";
 				return FALSE;
+			}
 			this->OnInitialize();
 			return TRUE;
 		}
@@ -101,7 +114,9 @@ namespace TinyFramework
 		{
 			m_visualDC.Reset(NULL);
 			if (m_shadow != NULL)
+			{
 				m_shadow->DestroyWindow();
+			}
 			m_shadow.Reset(NULL);
 			m_document.Uninitialize();
 		}
@@ -143,7 +158,9 @@ namespace TinyFramework
 			if (IsWindowVisible(m_hWND))
 			{
 				if (m_shadow != NULL)
+				{
 					m_shadow->DrawShadow();
+				}
 			}
 			return FALSE;
 		}

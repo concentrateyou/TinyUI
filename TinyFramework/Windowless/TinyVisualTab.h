@@ -6,13 +6,6 @@ namespace TinyFramework
 	namespace Windowless
 	{
 		/// <summary>
-		/// TabÒ³
-		/// </summary>
-		class TinyVisualTabPage : public TinyVisual
-		{
-
-		};
-		/// <summary>
 		/// Tab¿Ø¼þ
 		/// </summary>
 		class TinyVisualTab : public TinyVisual
@@ -25,9 +18,9 @@ namespace TinyFramework
 			TinyVisualTab(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:
 			virtual ~TinyVisualTab();
-			TinyString RetrieveTag() const OVERRIDE;
+			TinyString	RetrieveTag() const OVERRIDE;
 		protected:
-			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
+			BOOL		OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 		};
 	}
 }

@@ -17,7 +17,7 @@ namespace TinyFramework
 		const TinyString TinyVisualPropertyConst::CURSOR = TEXT("cursor");
 
 
-		const TinyString TinyVisualPropertyConst::ORIENTATION = TEXT("orientation");
+		const TinyString TinyVisualPropertyConst::LAYOUT = TEXT("layout");
 
 		const TinyString TinyVisualPropertyConst::PADDING = TEXT("padding");
 		const TinyString TinyVisualPropertyConst::MARGIN = TEXT("margin");
@@ -341,7 +341,7 @@ namespace TinyFramework
 				memcpy_s(this->m_value, this->m_size, s.m_value, this->m_size);
 			}
 		}
-		TinyVisualVariant* TinyVisualVariant::operator=(const TinyVisualVariant& s)
+		TinyVisualVariant& TinyVisualVariant::operator=(const TinyVisualVariant& s)
 		{
 			if (&s != this)
 			{
@@ -529,7 +529,8 @@ namespace TinyFramework
 			this->m_size = s.size();
 			this->m_type = VARIANT_TYPE_STRING;
 			memcpy_s(this->m_value, this->m_size, &s[0], this->m_size);
-			this->m_value[s.size()] = '\0';
+			CHAR* val = (CHAR*)this->m_value;
+			val[s.size()] = '\0';
 			Release();
 			return TRUE;
 		}

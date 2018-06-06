@@ -18,25 +18,13 @@ namespace TinyFramework
 			TinyVisualPanel(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:
 			virtual ~TinyVisualPanel();
-			TinyString RetrieveTag() const OVERRIDE;
+			TinyString		RetrieveTag() const OVERRIDE;
+			BOOL			SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
 		protected:
-			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
-		};
-		/// <summary>
-		/// 栈面板-水平和垂直
-		/// </summary>
-		class TinyVisualStackPanel : public TinyVisualPanel
-		{
-			friend class TinyVisualDocument;
-			DECLARE_DYNCREATE(TinyVisualStackPanel)
-			DISALLOW_COPY_AND_ASSIGN(TinyVisualStackPanel)
-		protected:
-			TinyVisualStackPanel();
-			TinyVisualStackPanel(TinyVisual* spvisParent, TinyVisualDocument* vtree);
-		public:
-			virtual ~TinyVisualStackPanel();
-			TinyString RetrieveTag() const OVERRIDE;
-			BOOL SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
+			BOOL			OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
+			void			OnSizeChange(const TinySize&, const TinySize&) OVERRIDE;
+		private:
+			VisualLayout	m_layout;
 		};
 	}
 }

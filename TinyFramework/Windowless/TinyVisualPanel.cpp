@@ -11,11 +11,13 @@ namespace TinyFramework
 		IMPLEMENT_DYNCREATE(TinyVisualPanel, TinyVisual);
 
 		TinyVisualPanel::TinyVisualPanel()
+			:m_layout(None)
 		{
 
 		}
 		TinyVisualPanel::TinyVisualPanel(TinyVisual* spvisParent, TinyVisualDocument* vtree)
-			:TinyVisual(spvisParent, vtree)
+			: TinyVisual(spvisParent, vtree),
+			m_layout(None)
 		{
 
 		}
@@ -27,6 +29,34 @@ namespace TinyFramework
 		{
 			return TinyVisualTagConst::PANEL;
 		}
+
+		BOOL TinyVisualPanel::SetProperty(const TinyString& name, const TinyString& value)
+		{
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::LAYOUT.STR()) == 0)
+			{
+				if (strcasecmp(value.STR(), "Horizontal"))
+				{
+					m_layout = Horizontal;
+				}
+				if (strcasecmp(value.STR(), "Vertical"))
+				{
+					m_layout = Vertical;
+				}
+				return TRUE;
+			}
+			return TinyVisual::SetProperty(name, value);
+		}
+
+		void TinyVisualPanel::OnSizeChange(const TinySize&, const TinySize&)
+		{
+			TinyVisual* spvis = m_document->GetVisual(this, CMD_CHILD);
+			spvis = m_document->GetVisual(spvis, CMD_LAST);
+			while (spvis != NULL)
+			{
+				spvis = m_document->GetVisual(spvis, CMD_PREV);
+			}
+		}
+
 		BOOL TinyVisualPanel::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
 			ASSERT(m_document);
@@ -60,26 +90,5 @@ namespace TinyFramework
 			}
 			return TRUE;
 		}
-
-		//////////////////////////////////////////////////////////////////////////
-		IMPLEMENT_DYNCREATE(TinyVisualStackPanel, TinyVisual);
-		TinyVisualStackPanel::TinyVisualStackPanel()
-		{
-
-		}
-		TinyVisualStackPanel::~TinyVisualStackPanel()
-		{
-
-		}
-		TinyString TinyVisualStackPanel::RetrieveTag() const
-		{
-			return TinyVisualTagConst::PANEL;
-		}
-
-		BOOL TinyVisualStackPanel::SetProperty(const TinyString& name, const TinyString& value)
-		{
-			return TinyVisualPanel::SetProperty(name, value);
-		}
-
 	}
 }

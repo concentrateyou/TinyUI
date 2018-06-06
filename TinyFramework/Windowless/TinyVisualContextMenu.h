@@ -37,12 +37,12 @@ namespace TinyFramework
 			TinyVisualContextMenu(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:
 			virtual ~TinyVisualContextMenu();
-			TinyString RetrieveTag() const OVERRIDE;
-			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
+			TinyString	RetrieveTag() const OVERRIDE;
+			BOOL		OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 		public:
-			BOOL Add(const TinyString& text, COLORREF color = RGB(0, 0, 0));
-			BOOL Remove(TinyVisualMenuItem* spvis);
-			void RemoveAll();
+			BOOL		Add(const TinyString& text, COLORREF color = RGB(0, 0, 0));
+			BOOL		Remove(TinyVisualMenuItem* spvis);
+			void		RemoveAll();
 		private:
 			TinyArray<TinyVisualMenuItem*>	m_items;
 		};
