@@ -373,9 +373,13 @@ namespace TinyFramework
 		{
 			return *((BOOL*)this->m_value);
 		}
-		INT32 TinyVisualVariant::GetInt32() const
+		INT32 TinyVisualVariant::GetINT32() const
 		{
 			return *((INT32*)this->m_value);
+		}
+		UINT TinyVisualVariant::GetUINT() const
+		{
+			return *((UINT*)this->m_value);
 		}
 		DOUBLE	TinyVisualVariant::GetDouble() const
 		{
@@ -397,9 +401,13 @@ namespace TinyFramework
 		{
 			return *((RECT*)this->m_value);
 		}
-		HFONT TinyVisualVariant::GetFont() const
+		HFONT TinyVisualVariant::GetFONT() const
 		{
 			return ((HFONT)this->m_value);
+		}
+		HRGN TinyVisualVariant::GetRGN() const
+		{
+			return ((HRGN)this->m_value);
 		}
 		const CHAR* TinyVisualVariant::GetString() const
 		{
@@ -471,7 +479,7 @@ namespace TinyFramework
 			}
 			return TRUE;
 		}
-		BOOL TinyVisualVariant::SetFont(HFONT s)
+		BOOL TinyVisualVariant::SetFONT(HFONT s)
 		{
 			if (!s)
 				return FALSE;
@@ -492,7 +500,7 @@ namespace TinyFramework
 			}
 			return TRUE;
 		}
-		BOOL TinyVisualVariant::SetRegion(HRGN s)
+		BOOL TinyVisualVariant::SetRGN(HRGN s)
 		{
 			if (!s)
 				return FALSE;
@@ -595,7 +603,7 @@ namespace TinyFramework
 			}
 			return TRUE;
 		}
-		BOOL TinyVisualVariant::SetInt32(INT32 s)
+		BOOL TinyVisualVariant::SetINT32(INT32 s)
 		{
 			if (this->m_value != NULL)
 			{
@@ -608,6 +616,24 @@ namespace TinyFramework
 					return FALSE;
 				this->m_size = sizeof(INT32);
 				this->m_type = VARIANT_TYPE_INT32;
+				memcpy_s(this->m_value, this->m_size, (void*)&s, this->m_size);
+				Release();
+			}
+			return TRUE;
+		}
+		BOOL TinyVisualVariant::SetUINT(UINT s)
+		{
+			if (this->m_value != NULL)
+			{
+				memcpy_s(this->m_value, this->m_size, (void*)&s, this->m_size);
+			}
+			else
+			{
+				this->m_value = malloc(sizeof(UINT));
+				if (!this->m_value)
+					return FALSE;
+				this->m_size = sizeof(UINT);
+				this->m_type = VARIANT_TYPE_UINT;
 				memcpy_s(this->m_value, this->m_size, (void*)&s, this->m_size);
 				Release();
 			}

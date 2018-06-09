@@ -198,6 +198,7 @@ namespace TinyFramework
 			VARIANT_TYPE_IMAGE,
 			VARIANT_TYPE_BOOL,
 			VARIANT_TYPE_INT32,
+			VARIANT_TYPE_UINT,
 			VARIANT_TYPE_DOUBLE,
 			VARIANT_TYPE_FLOAT
 		};
@@ -212,28 +213,31 @@ namespace TinyFramework
 			virtual ~TinyVisualVariant();
 			BOOL		IsEmpty() const;
 			BOOL		GetBool() const;
-			INT32		GetInt32() const;
+			INT32		GetINT32() const;
+			UINT		GetUINT() const;
 			DOUBLE		GetDouble() const;
 			FLOAT		GetFloat() const;
 			POINT		GetPoint() const;
 			SIZE		GetSize() const;
 			RECT		GetRect() const;
-			HFONT		GetFont() const;
+			HFONT		GetFONT() const;
+			HRGN		GetRGN() const;
 			const CHAR*	GetString() const;
 			COLORREF	GetColor() const;
 			TinyImage*	GetImage();
 			BOOL		SetPoint(const POINT& s);
 			BOOL		SetSize(const SIZE& s);
 			BOOL		SetRect(const RECT& s);
-			BOOL		SetFont(HFONT s);
-			BOOL		SetRegion(HRGN s);
+			BOOL		SetFONT(HFONT s);
+			BOOL		SetRGN(HRGN s);
 			BOOL		SetString(const string& s);
 			BOOL		SetString(const TinyString& s);
 			BOOL		SetString(const CHAR* s);
 			BOOL		SetColor(COLORREF s);
 			BOOL		SetImage(TinyImage&& s);
 			BOOL		SetBool(BOOL s);
-			BOOL		SetInt32(INT32 s);
+			BOOL		SetINT32(INT32 s);
+			BOOL		SetUINT(UINT s);
 			BOOL		SetDouble(DOUBLE s);
 			BOOL		SetFloat(FLOAT s);
 			void		Release();
