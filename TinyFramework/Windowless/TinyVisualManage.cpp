@@ -90,12 +90,11 @@ namespace TinyFramework
 							//布局容器
 							if (spvis->IsKindOf(RUNTIME_CLASS(TinyVisualPanel)))
 							{
-								TinyVisualPanel* panel = static_cast<TinyVisualPanel*>(spvis);
-								
-							}
-							if (spvis->GetSize().IsEmpty())
-							{
-								spvis->SetSize(spvisParent->GetSize());
+								TinySize size = spvisParent->GetSize();
+								TinySize csize = spvis->GetSize();
+								csize.cx = csize.cx == 0 ? size.cx : csize.cx;
+								csize.cy = csize.cy == 0 ? size.cy : csize.cy;
+								spvis->SetSize(csize);
 							}
 							spvis->OnInitialize();//初始化完成
 						}
@@ -199,7 +198,7 @@ namespace TinyFramework
 				return Alignment::BOTTOM;
 			if (strcasecmp(str.STR(), "center") == 0)
 				return Alignment::CENTER;
-			return Alignment::LEFT;
+			return Alignment::NONE;
 		}
 		COLORREF TinyVisualBuilder::GetColor(const TinyString& str)
 		{

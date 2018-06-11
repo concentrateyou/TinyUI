@@ -47,13 +47,49 @@ namespace TinyFramework
 			return TinyVisual::SetProperty(name, value);
 		}
 
-		void TinyVisualPanel::OnSizeChange(const TinySize&, const TinySize&)
+		void TinyVisualPanel::OnSizeChange(const TinySize& _old, const TinySize& _new)
 		{
 			TinyVisual* spvis = m_document->GetVisual(this, CMD_CHILD);
-			spvis = m_document->GetVisual(spvis, CMD_LAST);
+			DWORD count = spvis->GetChildCount();
+			spvis = m_document->GetVisual(spvis, CMD_FIRST);
 			while (spvis != NULL)
 			{
-				spvis = m_document->GetVisual(spvis, CMD_PREV);
+				if (!spvis->IsVisible())
+					continue;
+				if (m_layout == Horizontal)//水平
+				{
+					INT x = 0;
+					TinyPoint position = spvis->GetPosition();
+					if (position.IsEmpty())
+					{
+						TinySize minimumSize = spvis->GetMinimumSize();
+						TinySize maximumSize = spvis->GetMaximumSize();
+						TinySize size = spvis->GetSize();
+						if (size.cx == 0)
+						{
+
+						}
+						else
+						{
+
+						}
+						size.cy = size.cy == 0 ? _new.cy : size.cy;
+						switch (spvis->GetAlignment())
+						{
+						case Alignment::LEFT:
+						{
+							spvis->SetPosition(TinyPoint(x, 0));
+						}
+						break;
+						case Alignment::RIGHT:
+						{
+							spvis->SetPosition(TinyPoint(_new.cx - x, 0));
+						}
+						break;
+						}
+					}
+				}
+				spvis = m_document->GetVisual(spvis, CMD_NEXT);
 			}
 		}
 
@@ -80,7 +116,7 @@ namespace TinyFramework
 				canvas.SetBrush(brush);
 				canvas.FillRectangle(clip);
 			}
-			if (!m_borderColor.IsTransparent() && m_borderThickness != -1)
+			if (!m_borderColor.IsTransparent() && m_borderThickness >= 1)
 			{
 				TinyPen pen;
 				pen.CreatePen(m_borderStyle, m_borderThickness, m_borderColor);

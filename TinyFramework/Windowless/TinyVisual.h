@@ -20,8 +20,9 @@ namespace TinyFramework
 			PUSH = 3,
 			COUNT = PUSH + 1
 		};
-		enum Alignment
+		enum class Alignment
 		{
+			NONE,
 			CENTER,
 			LEFT,
 			RIGHT,
@@ -54,6 +55,7 @@ namespace TinyFramework
 			TinyRectangle		GetMargin() const;
 			TinySize			GetMaximumSize() const;
 			TinySize			GetMinimumSize() const;
+			Alignment			GetAlignment() const;
 			TinyRectangle		GetRectangle() const;
 			TinyRectangle		GetWindowRect()const;
 			TinyRectangle		GetClientRect() const;
@@ -65,7 +67,7 @@ namespace TinyFramework
 			TinyColor			GetBorderColor() const;
 			TinyImage*			GetBorderImage();
 			TinyRectangle		GetBorderCenter() const;
-			INT					GetBorderThickness() const;
+			UINT				GetBorderThickness() const;
 			INT					GetBorderStyle() const;
 			HRGN				GetClip() const;
 			HFONT				GetFont() const;
@@ -92,6 +94,7 @@ namespace TinyFramework
 			virtual void		SetMargin(const TinyRectangle& margin);
 			virtual void		SetMaximumSize(const TinySize& size);
 			virtual void		SetMinimumSize(const TinySize& size);
+			virtual	void		SetAlignment(Alignment alignment);
 			virtual void		SetClip(HRGN hrgnClip);
 			virtual void		SetFont(HFONT hFONT);
 			virtual void		SetVisible(BOOL visible);
@@ -105,13 +108,12 @@ namespace TinyFramework
 			virtual void		SetBackgroundSize(const TinySize& size);
 			virtual void		SetBackgroundPosition(const TinyPoint& pos);
 			virtual void		SetBorderColor(COLORREF color);
-			virtual void		SetBorderThickness(INT cx);
+			virtual void		SetBorderThickness(UINT cx);
 			virtual void		SetBorderStyle(INT style);
 			virtual void		SetBorderImage(const TinyString& szName);
 			virtual void		SetBorderImage(TinyImage* image);
 			virtual void		SetBorderCenter(const TinyRectangle& center);
 		protected:
-			virtual BOOL		OnDraw(HDC hDC, const RECT& clip);
 			virtual HRESULT		OnCreate();
 			virtual HRESULT		OnDestory();
 			virtual HRESULT		OnInitialize();
@@ -137,6 +139,8 @@ namespace TinyFramework
 			virtual HRESULT		OnActive(BOOL bFlag);
 			virtual void		OnSizeChange(const TinySize&, const TinySize&);
 			virtual void		OnPosChange(const TinyPoint&, const TinyPoint&);
+		protected:
+			virtual BOOL		OnDraw(HDC hDC, const RECT& clip);
 		public:
 			virtual BOOL		SetProperty(const TinyString& name, const TinyString& value);
 			TinyString			GetProperty(const TinyString& name);
@@ -176,12 +180,13 @@ namespace TinyFramework
 			TinyRectangle		m_padding;//ÄÚ±ß¾à
 			TinyRectangle		m_margin;//Íâ±ß¾à
 			TinyRectangle		m_rectangle;//Ïà¶ÔÓÚ¸¸ÔªËØÇøÓò
+			Alignment			m_alignment;
 			TinyRectangle		m_backgroundCenter;//ÏÔÊ¾±³¾°Í¼Æ¬ÖÐÐÄ
 			TinyImage*			m_backgroundImage;//±³¾°Í¼Æ¬
 			TinyColor			m_backgroundColor;//±³¾°ÑÕÉ«
 			TinySize			m_backgroundSize;//±³¾°´óÐ¡
 			TinyPoint			m_backgroundPosition;
-			INT					m_borderThickness;//±ß¿òºñ¶È
+			UINT				m_borderThickness;//±ß¿òºñ¶È
 			TinyColor			m_borderColor;//±ß¿òÑÕÉ«
 			INT					m_borderStyle;//±ß¿òÑùÊ½
 			TinyImage*			m_borderImage;
