@@ -52,7 +52,7 @@ namespace TinyFramework
 				}
 			}
 			CreateInstace(pXML, spvis, document);
-			
+			CalculateLayout(spvis, document);
 			spvis->OnInitialize();
 			TinySize size = document->GetParent(NULL)->GetSize();
 			RECT windowBounds;
@@ -92,7 +92,6 @@ namespace TinyFramework
 					}
 				}
 			}
-			CalculateLayout(spvisParent, document);
 		}
 
 		BOOL TinyVisualBuilder::CalculateLayout(TinyVisual* spvisParent, TinyVisualDocument* document)
@@ -107,7 +106,6 @@ namespace TinyFramework
 			spvis = document->GetVisual(spvis, CMD_FIRST);
 			while (spvis != NULL)
 			{
-				TinyString name = spvis->GetName();
 				TinySize sizeT = spvisParent->GetSize();
 				TinySize size = spvis->GetSize();
 				size.cx = size.cx == 0 ? sizeT.cx : size.cx;
@@ -154,6 +152,7 @@ namespace TinyFramework
 				case Alignment::RIGHT:
 					break;
 				}
+				CalculateLayout(spvis, document);
 				spvis = document->GetVisual(spvis, CMD_NEXT);
 			}
 		}
