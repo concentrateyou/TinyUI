@@ -32,6 +32,7 @@ namespace TinyFramework
 			static INT				GetInt32(const TinyString& str);
 		private:
 			static void CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualDocument* ps);
+			static BOOL CalculateLayout(TinyVisual* spvisParent, TinyVisualDocument* document);
 			static BOOL BuildProperty(const TiXmlElement* pXMLNode, TinyVisual* spvis);
 		private:
 			TiXmlDocument	m_doc;

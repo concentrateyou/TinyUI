@@ -34,17 +34,22 @@ namespace TinyFramework
 		{
 			if (strcasecmp(name.STR(), TinyVisualPropertyConst::LAYOUT.STR()) == 0)
 			{
-				if (strcasecmp(value.STR(), "Horizontal"))
+				if (strcasecmp(value.STR(), "Horizontal") == 0)
 				{
 					m_layout = Horizontal;
 				}
-				if (strcasecmp(value.STR(), "Vertical"))
+				if (strcasecmp(value.STR(), "Vertical") == 0)
 				{
 					m_layout = Vertical;
 				}
 				return TRUE;
 			}
 			return TinyVisual::SetProperty(name, value);
+		}
+
+		VisualLayout TinyVisualPanel::GetLayout() const
+		{
+			return m_layout;
 		}
 
 		void TinyVisualPanel::OnSizeChange(const TinySize& _old, const TinySize& _new)

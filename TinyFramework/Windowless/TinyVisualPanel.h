@@ -20,6 +20,7 @@ namespace TinyFramework
 			virtual ~TinyVisualPanel();
 			TinyString		RetrieveTag() const OVERRIDE;
 			BOOL			SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
+			VisualLayout	GetLayout() const;
 		protected:
 			BOOL			OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			void			OnSizeChange(const TinySize&, const TinySize&) OVERRIDE;

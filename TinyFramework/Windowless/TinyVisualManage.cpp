@@ -52,6 +52,7 @@ namespace TinyFramework
 				}
 			}
 			CreateInstace(pXML, spvis, document);
+			
 			spvis->OnInitialize();
 			TinySize size = document->GetParent(NULL)->GetSize();
 			RECT windowBounds;
@@ -87,19 +88,73 @@ namespace TinyFramework
 						if (BuildProperty(static_cast<const TiXmlElement*>(pXMLChildNode), spvis))
 						{
 							CreateInstace(pXMLChildNode, spvis, document);
-							//布局容器
-							if (spvis->IsKindOf(RUNTIME_CLASS(TinyVisualPanel)))
-							{
-								TinySize size = spvisParent->GetSize();
-								TinySize csize = spvis->GetSize();
-								csize.cx = csize.cx == 0 ? size.cx : csize.cx;
-								csize.cy = csize.cy == 0 ? size.cy : csize.cy;
-								spvis->SetSize(csize);
-							}
-							spvis->OnInitialize();//初始化完成
 						}
 					}
 				}
+			}
+			CalculateLayout(spvisParent, document);
+		}
+
+		BOOL TinyVisualBuilder::CalculateLayout(TinyVisual* spvisParent, TinyVisualDocument* document)
+		{
+			if (!document || !spvisParent)
+				return FALSE;
+			TinyPoint pos;
+			DWORD count = spvisParent->GetChildCount();
+			if (count <= 0)
+				return TRUE;
+			TinyVisual* spvis = document->GetVisual(spvisParent, CMD_CHILD);
+			spvis = document->GetVisual(spvis, CMD_FIRST);
+			while (spvis != NULL)
+			{
+				TinyString name = spvis->GetName();
+				TinySize sizeT = spvisParent->GetSize();
+				TinySize size = spvis->GetSize();
+				size.cx = size.cx == 0 ? sizeT.cx : size.cx;
+				size.cy = size.cy == 0 ? sizeT.cy : size.cy;
+				TinyRectangle s = spvis->GetMargin();
+				size.cx = size.cx - (s.left + s.right);
+				size.cy = size.cy - (s.top + s.bottom);
+				TinySize minsize = spvis->GetMinimumSize();
+				if (!minsize.IsEmpty())
+				{
+					size.cx = size.cx < minsize.cx ? minsize.cx : size.cx;
+					size.cy = size.cy < minsize.cy ? minsize.cy : size.cy;
+				}
+				TinySize maxsize = spvis->GetMaximumSize();
+				if (!maxsize.IsEmpty())
+				{
+					size.cx = size.cx > maxsize.cx ? maxsize.cx : size.cx;
+					size.cy = size.cy > maxsize.cy ? maxsize.cy : size.cy;
+				}
+				spvis->SetSize(size);
+				pos.x += s.left;
+				pos.y += s.top;
+				spvis->SetPosition(pos);
+				//如果是布局控件
+				if (spvisParent->IsKindOf(RUNTIME_CLASS(TinyVisualPanel)))
+				{
+					TinyVisualPanel* panel = static_cast<TinyVisualPanel*>(spvisParent);
+					switch (panel->GetLayout())
+					{
+					case VisualLayout::Horizontal:
+						pos.x += size.cx;
+						break;
+					case VisualLayout::Vertical:
+						pos.y += size.cy;
+						break;
+					}
+				}
+				//调整Alignment
+				Alignment alignment = spvis->GetAlignment();
+				switch (alignment)
+				{
+				case Alignment::LEFT:
+					break;
+				case Alignment::RIGHT:
+					break;
+				}
+				spvis = document->GetVisual(spvis, CMD_NEXT);
 			}
 		}
 
