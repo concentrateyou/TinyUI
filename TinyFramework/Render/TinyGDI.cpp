@@ -2273,7 +2273,7 @@ namespace TinyFramework
 	{
 		INT cx = right - left;
 		INT cy = bottom - top;
-		::SetRect(this, pos.x, pos.y, pos.x + cy, pos.y + cy);
+		::SetRect(this, pos.x, pos.y, pos.x + cx, pos.y + cy);
 	}
 	void TinyRectangle::SetRectEmpty() throw()
 	{

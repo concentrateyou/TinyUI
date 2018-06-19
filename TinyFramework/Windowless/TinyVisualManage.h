@@ -22,14 +22,14 @@ namespace TinyFramework
 			~TinyVisualBuilder();
 			BOOL LoadFile(LPCSTR pzFile);
 			BOOL BuildDocument(TinyVisualDocument* ps);
-			static TinySize	 GetSize(const TinyString& str);
-			static TinyPoint GetPosition(const TinyString& str);
-			static TinyRectangle GetRectangle(const TinyString& str);
-			static UINT	 GetAlign(const TinyString& str);
-			static Alignment GetAlignment(const TinyString& str);
-			static COLORREF	 GetColor(const TinyString& str);
-			static BOOL	GetBool(const TinyString& str);
-			static INT	GetInt32(const TinyString& str);
+			static TinySize			GetSize(const TinyString& str);
+			static TinyPoint		GetPosition(const TinyString& str);
+			static TinyRectangle	GetRectangle(const TinyString& str);
+			static UINT				GetAlign(const TinyString& str);
+			static Alignment		GetAlignment(const TinyString& str);
+			static COLORREF			GetColor(const TinyString& str);
+			static BOOL				GetBool(const TinyString& str);
+			static INT				GetInt32(const TinyString& str);
 		private:
 			static void CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualDocument* ps);
 			static BOOL BuildProperty(const TiXmlElement* pXMLNode, TinyVisual* spvis);
@@ -49,16 +49,16 @@ namespace TinyFramework
 			BOOL Load(LPCSTR pzFile);
 			string GetDefaultPath();
 		public:
-			BOOL Add(TinyImage* image);
-			TinyImage* Add(const TinyString& szName, const TinyString& szFile);
-			void Remove(const TinyString& szName);
-			void Remove(TinyImage* image);
-			void RemoveAll();
+			BOOL		Add(TinyImage* image);
+			TinyImage*	Add(const TinyString& szName, const TinyString& szFile);
+			void		Remove(const TinyString& szName);
+			void		Remove(TinyImage* image);
+			void		RemoveAll();
 			TinyImage* operator[](const TinyString& szName);
 		public:
-			BOOL Register(const TinyString& tag, const TinyString& value);
-			void Unregister(const TinyString& tag);
-			TinyString GetClassName(const TinyString& tag);
+			BOOL		Register(const TinyString& tag, const TinyString& value);
+			void		Unregister(const TinyString& tag);
+			TinyString	GetClassName(const TinyString& tag);
 		private:
 			static void BuildContext(const TiXmlNode* pXMLNode);
 			static void BuildImage(const TiXmlNode* pXMLNode);

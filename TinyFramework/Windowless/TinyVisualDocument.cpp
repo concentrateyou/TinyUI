@@ -85,6 +85,10 @@ namespace TinyFramework
 						goto LINKTOP;
 					}
 				}
+				while (spvisInsert->m_spvisNext != NULL)
+				{
+					spvisInsert = spvisInsert->m_spvisNext;
+				}
 				ASSERT(spvis != spvisInsert);
 				ASSERT(spvis != spvisInsert->m_spvisNext);
 				ASSERT(spvis->m_spvisParent == spvisInsert->m_spvisParent);

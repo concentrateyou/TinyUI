@@ -619,7 +619,6 @@ namespace TinyFramework
 		TinyColor(COLORREF color);
 		BOOL IsTransparent() const;
 		void SetColor(COLORREF color);
-		BYTE R();
 		operator COLORREF() throw();
 		operator COLORREF() const throw();
 		void operator=(COLORREF color) throw();
