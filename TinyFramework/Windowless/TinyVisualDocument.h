@@ -104,9 +104,11 @@ namespace TinyFramework
 			private:
 				TinyVisualFactory(TinyVisualDocument& document);
 			public:
-				TinyVisual*		Create(const TinyString& className, TinyVisual* spvisParent);
-				TinyVisual*		Create(INT x, INT y, INT cx, INT cy, const TinyString& className, TinyVisual* spvisParent);
-				BOOL			Destory(TinyVisual* spvis);
+				TinyVisual*			Create(const TinyString& className, TinyVisual* spvisParent);
+				TinyVisual*			Create(INT x, INT y, INT cx, INT cy, const TinyString& className, TinyVisual* spvisParent);
+				BOOL				Destory(TinyVisual* spvis);
+			private:
+				BOOL				DestroyAll(TinyVisual* spvis);
 			private:
 				TinyVisualDocument& m_document;
 			};

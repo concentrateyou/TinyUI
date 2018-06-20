@@ -67,9 +67,9 @@ namespace TinyFramework
 		void TinyVisualDocument::LinkVisual(TinyVisual* spvis, TinyVisual* spvisInsert, TinyVisual**pspvisFirst)
 		{
 			if (pspvisFirst == NULL)
-				return ;
+				return;
 			if (*pspvisFirst == spvis)
-				return ;
+				return;
 			if (spvisInsert == PVISUAL_TOP)
 			{
 			LINKTOP:
@@ -190,7 +190,8 @@ namespace TinyFramework
 		}
 		TinyVisual* TinyVisualDocument::GetParent(TinyVisual* spvis) const
 		{
-			if (!spvis) return m_spvisWindow;
+			if (!spvis)
+				return m_spvisWindow;
 			return spvis->m_spvisParent;
 		}
 		TinyVisual* TinyVisualDocument::SetParent(TinyVisual* spvis, TinyVisual* spvisNewParent)
@@ -925,22 +926,20 @@ namespace TinyFramework
 		{
 
 		}
-		BOOL TinyVisualDocument::TinyVisualFactory::Destory(TinyVisual* spvis)
+		BOOL TinyVisualDocument::TinyVisualFactory::Destory(TinyVisual* spvi)
+		{
+			return DestroyAll(spvi);
+		}
+		BOOL TinyVisualDocument::TinyVisualFactory::DestroyAll(TinyVisual* spvis)
 		{
 			if (!spvis)
 				return FALSE;
-			TinyVisual* spvisNext = NULL;
 			TinyVisual* spvisChild = NULL;
-			spvisChild = spvis->m_spvisChild;
-			while (spvisChild != NULL)
+			while (spvis->m_spvisChild != NULL)
 			{
-				spvisNext = spvisChild->m_spvisNext;
+				spvisChild = spvis->m_spvisChild;
+				m_document.UnlinkVisual(spvisChild, &spvis->m_spvisChild);
 				Destory(spvisChild);
-				spvisChild = spvisNext;
-			}
-			if (spvis->m_spvisParent)
-			{
-				m_document.UnlinkVisual(spvis, &(spvis->m_spvisParent->m_spvisChild));
 			}
 			spvis->OnDestory();
 			if (spvis->m_spvisParent != NULL)
