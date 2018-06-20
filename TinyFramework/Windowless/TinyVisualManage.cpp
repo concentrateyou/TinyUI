@@ -98,15 +98,17 @@ namespace TinyFramework
 		{
 			if (!document || !spvisParent)
 				return FALSE;
-			TinyPoint pos;
 			DWORD count = spvisParent->GetChildCount();
 			if (count <= 0)
 				return TRUE;
+			TinyPoint posL;
+			TinyPoint posR;
+			TinySize sizeT = spvisParent->GetSize();
+			posR.x = sizeT.cx;
 			TinyVisual* spvis = document->GetVisual(spvisParent, CMD_CHILD);
 			spvis = document->GetVisual(spvis, CMD_FIRST);
 			while (spvis != NULL)
 			{
-				TinySize sizeT = spvisParent->GetSize();
 				TinySize size = spvis->GetSize();
 				size.cx = size.cx == 0 ? sizeT.cx : size.cx;
 				size.cy = size.cy == 0 ? sizeT.cy : size.cy;
@@ -126,31 +128,36 @@ namespace TinyFramework
 					size.cy = size.cy > maxsize.cy ? maxsize.cy : size.cy;
 				}
 				spvis->SetSize(size);
-				pos.x += s.left;
-				pos.y += s.top;
-				spvis->SetPosition(pos);
 				//如果是布局控件
 				if (spvisParent->IsKindOf(RUNTIME_CLASS(TinyVisualPanel)))
 				{
 					TinyVisualPanel* panel = static_cast<TinyVisualPanel*>(spvisParent);
-					switch (panel->GetLayout())
+					switch (panel->GetOrientation())
 					{
-					case VisualLayout::Horizontal:
-						pos.x += size.cx;
+					case Orientation::Horizontal:
+					{
+						/*Alignment alignment = panel->GetAlignment();
+						switch (alignment)
+						{
+						case Alignment::RIGHT:
+						{
+							posR.x -= size.cx;
+							posR.x -= (s.left + s.right);
+							posR.y = s.top;
+							spvis->SetPosition(posR);
+						}
 						break;
-					case VisualLayout::Vertical:
-						pos.y += size.cy;
+						case Alignment::LEFT:
+						{
+							posL.x += size.cx;
+							posL.y = s.top;
+							spvis->SetPosition(posL);
+						}
 						break;
+						}*/
 					}
-				}
-				//调整Alignment
-				Alignment alignment = spvis->GetAlignment();
-				switch (alignment)
-				{
-				case Alignment::LEFT:
 					break;
-				case Alignment::RIGHT:
-					break;
+					}
 				}
 				CalculateLayout(spvis, document);
 				spvis = document->GetVisual(spvis, CMD_NEXT);
@@ -240,19 +247,29 @@ namespace TinyFramework
 			}
 			return sFlag;
 		}
-		Alignment TinyVisualBuilder::GetAlignment(const TinyString& str)
+		HorizontalAlignment TinyVisualBuilder::GetHorizontalAlignment(const TinyString& str)
 		{
 			if (strcasecmp(str.STR(), "left") == 0)
-				return Alignment::LEFT;
-			if (strcasecmp(str.STR(), "top") == 0)
-				return Alignment::TOP;
+				return HorizontalAlignment::LEFT;
 			if (strcasecmp(str.STR(), "right") == 0)
-				return Alignment::RIGHT;
-			if (strcasecmp(str.STR(), "bottom") == 0)
-				return Alignment::BOTTOM;
+				return HorizontalAlignment::RIGHT;
 			if (strcasecmp(str.STR(), "center") == 0)
-				return Alignment::CENTER;
-			return Alignment::NONE;
+				return HorizontalAlignment::CENTER;
+			if (strcasecmp(str.STR(), "stretch") == 0)
+				return HorizontalAlignment::STRETCH;
+			return HorizontalAlignment::NONE;
+		}
+		VerticalAlignment TinyVisualBuilder::GetVerticalAlignment(const TinyString& str)
+		{
+			if (strcasecmp(str.STR(), "top") == 0)
+				return VerticalAlignment::TOP;
+			if (strcasecmp(str.STR(), "bottom") == 0)
+				return VerticalAlignment::BOTTOM;
+			if (strcasecmp(str.STR(), "center") == 0)
+				return VerticalAlignment::CENTER;
+			if (strcasecmp(str.STR(), "stretch") == 0)
+				return VerticalAlignment::STRETCH;
+			return VerticalAlignment::NONE;
 		}
 		COLORREF TinyVisualBuilder::GetColor(const TinyString& str)
 		{

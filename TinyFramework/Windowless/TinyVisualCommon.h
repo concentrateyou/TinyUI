@@ -20,7 +20,7 @@ namespace TinyFramework
 			static const TinyString POSITION;
 			static const TinyString SIZE;
 
-			static const TinyString LAYOUT;
+			static const TinyString ORIENTATION;
 
 			static const TinyString PADDING;
 			static const TinyString MARGIN;
@@ -75,7 +75,8 @@ namespace TinyFramework
 			static const TinyString SCROLLBARNORMAL;
 			static const TinyString SCROLLBARHIGHLIGHT;
 
-			static const TinyString ALIGNMENT;
+			static const TinyString HORIZONTALALIGNMENT;
+			static const TinyString VERTICALALIGNMENT;
 			static const TinyString VALUE;
 			static const TinyString OPTIONHIGHLIGHT;
 
@@ -178,11 +179,36 @@ namespace TinyFramework
 			TinyString	m_value;
 		};
 
-		enum VisualLayout
+		enum Orientation
 		{
 			None,
 			Horizontal,
 			Vertical
+		};
+
+		enum StyleImage
+		{
+			NORMAL = 0,
+			HIGHLIGHT = 1,
+			DOWN = 2,
+			PUSH = 3,
+			COUNT = PUSH + 1
+		};
+		enum class HorizontalAlignment
+		{
+			NONE = 0,
+			LEFT = 1,
+			CENTER = 2,
+			RIGHT = 3,
+			STRETCH = 4
+		};
+		enum class VerticalAlignment
+		{
+			NONE = 0,
+			TOP = 1,
+			CENTER = 2,
+			BOTTOM = 3,
+			STRETCH = 4
 		};
 
 		enum VARIANT_TYPE

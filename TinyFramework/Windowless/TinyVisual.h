@@ -12,24 +12,6 @@ namespace TinyFramework
 {
 	namespace Windowless
 	{
-		enum StyleImage
-		{
-			NORMAL = 0,
-			HIGHLIGHT = 1,
-			DOWN = 2,
-			PUSH = 3,
-			COUNT = PUSH + 1
-		};
-		enum class Alignment
-		{
-			NONE,
-			CENTER,
-			LEFT,
-			RIGHT,
-			TOP,
-			BOTTOM,
-			STRETCH
-		};
 		/// <summary>
 		/// 可视化元素基类
 		/// </summary>
@@ -55,7 +37,6 @@ namespace TinyFramework
 			TinyRectangle		GetMargin() const;
 			TinySize			GetMaximumSize() const;
 			TinySize			GetMinimumSize() const;
-			Alignment			GetAlignment() const;
 			TinyRectangle		GetRectangle() const;
 			TinyRectangle		GetWindowRect()const;
 			TinyRectangle		GetClientRect() const;
@@ -94,7 +75,6 @@ namespace TinyFramework
 			virtual void		SetMargin(const TinyRectangle& margin);
 			virtual void		SetMaximumSize(const TinySize& size);
 			virtual void		SetMinimumSize(const TinySize& size);
-			virtual	void		SetAlignment(Alignment alignment);
 			virtual void		SetClip(HRGN hrgnClip);
 			virtual void		SetFont(HFONT hFONT);
 			virtual void		SetVisible(BOOL visible);
@@ -180,7 +160,6 @@ namespace TinyFramework
 			TinyRectangle		m_padding;//内边距
 			TinyRectangle		m_margin;//外边距
 			TinyRectangle		m_rectangle;//相对于父元素区域
-			Alignment			m_alignment;
 			TinyRectangle		m_backgroundCenter;//显示背景图片中心
 			TinyImage*			m_backgroundImage;//背景图片
 			TinyColor			m_backgroundColor;//背景颜色

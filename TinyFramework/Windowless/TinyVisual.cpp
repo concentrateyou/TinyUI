@@ -25,8 +25,7 @@ namespace TinyFramework
 			m_borderStyle(PS_SOLID),
 			m_backgroundImage(NULL),
 			m_borderImage(NULL),
-			m_dwCount(0),
-			m_alignment(Alignment::NONE)
+			m_dwCount(0)
 		{
 			LOGFONT lf;
 			::GetObject(reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)), sizeof(LOGFONT), &lf);
@@ -50,8 +49,7 @@ namespace TinyFramework
 			m_borderStyle(-1),
 			m_backgroundImage(NULL),
 			m_borderImage(NULL),
-			m_dwCount(0),
-			m_alignment(Alignment::NONE)
+			m_dwCount(0)
 		{
 			LOGFONT lf;
 			::GetObject(reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)), sizeof(LOGFONT), &lf);
@@ -134,10 +132,6 @@ namespace TinyFramework
 		TinySize TinyVisual::GetMinimumSize() const
 		{
 			return m_minimumSize;
-		}
-		Alignment TinyVisual::GetAlignment() const
-		{
-			return m_alignment;
 		}
 		TinyImage*	TinyVisual::GetBackgroundImage()
 		{
@@ -348,10 +342,6 @@ namespace TinyFramework
 		DWORD TinyVisual::GetChildCount() const
 		{
 			return m_dwCount;
-		}
-		void TinyVisual::SetAlignment(Alignment alignment)
-		{
-			this->m_alignment = alignment;
 		}
 		void TinyVisual::SetClip(HRGN hrgnClip)
 		{
@@ -574,11 +564,6 @@ namespace TinyFramework
 			if (strcasecmp(name.STR(), TinyVisualPropertyConst::CURSOR.STR()) == 0)
 			{
 				this->SetCursor(value.STR());
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::ALIGNMENT.STR()) == 0)
-			{
-				this->SetAlignment(TinyVisualBuilder::GetAlignment(value));
 				return TRUE;
 			}
 			if (strcasecmp(name.STR(), TinyVisualPropertyConst::BACKGROUNDIMAGE.STR()) == 0)

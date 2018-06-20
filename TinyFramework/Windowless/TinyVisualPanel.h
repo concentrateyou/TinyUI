@@ -18,14 +18,18 @@ namespace TinyFramework
 			TinyVisualPanel(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:
 			virtual ~TinyVisualPanel();
-			TinyString		RetrieveTag() const OVERRIDE;
-			BOOL			SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
-			VisualLayout	GetLayout() const;
+			TinyString			RetrieveTag() const OVERRIDE;
+			BOOL				SetProperty(const TinyString& name, const TinyString& value) OVERRIDE;
+			Orientation			GetOrientation() const;
+			HorizontalAlignment	GetHorizontalAlignment() const;
+			VerticalAlignment	GetVerticalAlignment() const;
 		protected:
 			BOOL			OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			void			OnSizeChange(const TinySize&, const TinySize&) OVERRIDE;
 		private:
-			VisualLayout	m_layout;
+			Orientation				m_orientation;
+			HorizontalAlignment		m_horizontalAlignment;
+			VerticalAlignment		m_verticalAlignment;
 		};
 	}
 }

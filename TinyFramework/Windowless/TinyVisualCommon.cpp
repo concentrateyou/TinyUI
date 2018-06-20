@@ -17,7 +17,7 @@ namespace TinyFramework
 		const TinyString TinyVisualPropertyConst::CURSOR = TEXT("cursor");
 
 
-		const TinyString TinyVisualPropertyConst::LAYOUT = TEXT("layout");
+		const TinyString TinyVisualPropertyConst::ORIENTATION = TEXT("orientation");
 
 		const TinyString TinyVisualPropertyConst::PADDING = TEXT("padding");
 		const TinyString TinyVisualPropertyConst::MARGIN = TEXT("margin");
@@ -45,7 +45,8 @@ namespace TinyFramework
 		const TinyString TinyVisualPropertyConst::MULTILINE = TEXT("multiline");
 		const TinyString TinyVisualPropertyConst::READONLY = TEXT("readonly");
 
-		const TinyString TinyVisualPropertyConst::ALIGNMENT = TEXT("alignment");
+		const TinyString TinyVisualPropertyConst::HORIZONTALALIGNMENT = TEXT("horizontal-alignment");
+		const TinyString TinyVisualPropertyConst::VERTICALALIGNMENT = TEXT("vertical-alignment");
 		const TinyString TinyVisualPropertyConst::VALUE = TEXT("value");
 		const TinyString TinyVisualPropertyConst::OPTIONHIGHLIGHT = TEXT("highlight");
 

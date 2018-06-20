@@ -11,13 +11,13 @@ namespace TinyFramework
 		IMPLEMENT_DYNCREATE(TinyVisualPanel, TinyVisual);
 
 		TinyVisualPanel::TinyVisualPanel()
-			:m_layout(None)
+			:m_orientation(None)
 		{
 
 		}
 		TinyVisualPanel::TinyVisualPanel(TinyVisual* spvisParent, TinyVisualDocument* vtree)
 			: TinyVisual(spvisParent, vtree),
-			m_layout(None)
+			m_orientation(None)
 		{
 
 		}
@@ -32,70 +32,47 @@ namespace TinyFramework
 
 		BOOL TinyVisualPanel::SetProperty(const TinyString& name, const TinyString& value)
 		{
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::LAYOUT.STR()) == 0)
+			if (strcasecmp(name.STR(), TinyVisualPropertyConst::ORIENTATION.STR()) == 0)
 			{
 				if (strcasecmp(value.STR(), "Horizontal") == 0)
 				{
-					m_layout = Horizontal;
+					m_orientation = Horizontal;
 				}
 				if (strcasecmp(value.STR(), "Vertical") == 0)
 				{
-					m_layout = Vertical;
+					m_orientation = Vertical;
+				}
+				if (strcasecmp(name.STR(), TinyVisualPropertyConst::HORIZONTALALIGNMENT.STR()) == 0)
+				{
+					m_horizontalAlignment = TinyVisualBuilder::GetHorizontalAlignment(value);
+				}
+				if (strcasecmp(name.STR(), TinyVisualPropertyConst::VERTICALALIGNMENT.STR()) == 0)
+				{
+					m_verticalAlignment = TinyVisualBuilder::GetVerticalAlignment(value);
 				}
 				return TRUE;
 			}
 			return TinyVisual::SetProperty(name, value);
 		}
 
-		VisualLayout TinyVisualPanel::GetLayout() const
+		Orientation TinyVisualPanel::GetOrientation() const
 		{
-			return m_layout;
+			return m_orientation;
+		}
+
+		HorizontalAlignment	TinyVisualPanel::GetHorizontalAlignment() const
+		{
+			return m_horizontalAlignment;
+		}
+
+		VerticalAlignment	TinyVisualPanel::GetVerticalAlignment() const
+		{
+			return m_verticalAlignment;
 		}
 
 		void TinyVisualPanel::OnSizeChange(const TinySize& _old, const TinySize& _new)
 		{
-			//TinyVisual* spvis = m_document->GetVisual(this, CMD_CHILD);
-			//DWORD count = spvis->GetChildCount();
-			//spvis = m_document->GetVisual(spvis, CMD_FIRST);
-			//while (spvis != NULL)
-			//{
-			//	if (!spvis->IsVisible())
-			//		continue;
-			//	if (m_layout == Horizontal)//水平
-			//	{
-			//		INT x = 0;
-			//		TinyPoint position = spvis->GetPosition();
-			//		if (position.IsEmpty())
-			//		{
-			//			TinySize minimumSize = spvis->GetMinimumSize();
-			//			TinySize maximumSize = spvis->GetMaximumSize();
-			//			TinySize size = spvis->GetSize();
-			//			if (size.cx == 0)
-			//			{
 
-			//			}
-			//			else
-			//			{
-
-			//			}
-			//			size.cy = size.cy == 0 ? _new.cy : size.cy;
-			//			switch (spvis->GetAlignment())
-			//			{
-			//			case Alignment::LEFT:
-			//			{
-			//				spvis->SetPosition(TinyPoint(x, 0));
-			//			}
-			//			break;
-			//			case Alignment::RIGHT:
-			//			{
-			//				spvis->SetPosition(TinyPoint(_new.cx - x, 0));
-			//			}
-			//			break;
-			//			}
-			//		}
-			//	}
-			//	spvis = m_document->GetVisual(spvis, CMD_NEXT);
-			//}
 		}
 
 		BOOL TinyVisualPanel::OnDraw(HDC hDC, const RECT& rcPaint)

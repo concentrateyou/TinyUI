@@ -22,14 +22,15 @@ namespace TinyFramework
 			~TinyVisualBuilder();
 			BOOL LoadFile(LPCSTR pzFile);
 			BOOL BuildDocument(TinyVisualDocument* ps);
-			static TinySize			GetSize(const TinyString& str);
-			static TinyPoint		GetPosition(const TinyString& str);
-			static TinyRectangle	GetRectangle(const TinyString& str);
-			static UINT				GetAlign(const TinyString& str);
-			static Alignment		GetAlignment(const TinyString& str);
-			static COLORREF			GetColor(const TinyString& str);
-			static BOOL				GetBool(const TinyString& str);
-			static INT				GetInt32(const TinyString& str);
+			static TinySize				GetSize(const TinyString& str);
+			static TinyPoint			GetPosition(const TinyString& str);
+			static TinyRectangle		GetRectangle(const TinyString& str);
+			static UINT					GetAlign(const TinyString& str);
+			static HorizontalAlignment	GetHorizontalAlignment(const TinyString& str);
+			static VerticalAlignment	GetVerticalAlignment(const TinyString& str);
+			static COLORREF				GetColor(const TinyString& str);
+			static BOOL					GetBool(const TinyString& str);
+			static INT					GetInt32(const TinyString& str);
 		private:
 			static void CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualDocument* ps);
 			static BOOL CalculateLayout(TinyVisual* spvisParent, TinyVisualDocument* document);
