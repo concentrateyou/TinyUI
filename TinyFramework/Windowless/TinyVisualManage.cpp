@@ -4,17 +4,8 @@
 #include "TinyVisualCommon.h"
 #include "TinyVisualManage.h"
 #include "TinyVisualDocument.h"
+#include "TinyVisualWindowless.h"
 #include "TinyVisualWindow.h"
-#include "TinyVisualLabel.h"
-#include "TinyVisualButton.h"
-#include "TinyVisualCaption.h"
-#include "TinyVisualButton.h"
-#include "TinyVisualScrollBar.h"
-#include "TinyVisualComboBox.h"
-#include "TinyVisualTextBox.h"
-#include "TinyVisualPanel.h"
-#include "TinyVisualNative.h"
-#include "TinyVisualAnimation.h"
 
 namespace TinyFramework
 {
@@ -128,38 +119,38 @@ namespace TinyFramework
 					size.cy = size.cy > maxsize.cy ? maxsize.cy : size.cy;
 				}
 				spvis->SetSize(size);
-				//如果是布局控件
-				if (spvisParent->IsKindOf(RUNTIME_CLASS(TinyVisualPanel)))
-				{
-					TinyVisualPanel* panel = static_cast<TinyVisualPanel*>(spvisParent);
-					switch (panel->GetOrientation())
-					{
-					case Orientation::Horizontal:
-					{
-						/*Alignment alignment = panel->GetAlignment();
-						switch (alignment)
-						{
-						case Alignment::RIGHT:
-						{
-							posR.x -= size.cx;
-							posR.x -= (s.left + s.right);
-							posR.y = s.top;
-							spvis->SetPosition(posR);
-						}
-						break;
-						case Alignment::LEFT:
-						{
-							posL.x += size.cx;
-							posL.y = s.top;
-							spvis->SetPosition(posL);
-						}
-						break;
-						}*/
-					}
-					break;
-					}
-				}
-				CalculateLayout(spvis, document);
+				////如果是布局控件
+				//if (spvisParent->IsKindOf(RUNTIME_CLASS(TinyVisualPanel)))
+				//{
+				//	TinyVisualPanel* panel = static_cast<TinyVisualPanel*>(spvisParent);
+				//	switch (panel->GetOrientation())
+				//	{
+				//	case Orientation::Horizontal:
+				//	{
+				//		/*Alignment alignment = panel->GetAlignment();
+				//		switch (alignment)
+				//		{
+				//		case Alignment::RIGHT:
+				//		{
+				//			posR.x -= size.cx;
+				//			posR.x -= (s.left + s.right);
+				//			posR.y = s.top;
+				//			spvis->SetPosition(posR);
+				//		}
+				//		break;
+				//		case Alignment::LEFT:
+				//		{
+				//			posL.x += size.cx;
+				//			posL.y = s.top;
+				//			spvis->SetPosition(posL);
+				//		}
+				//		break;
+				//		}*/
+				//	}
+				//	break;
+				//	}
+				//}
+				//CalculateLayout(spvis, document);
 				spvis = document->GetVisual(spvis, CMD_NEXT);
 			}
 		}

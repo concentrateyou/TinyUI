@@ -2,7 +2,6 @@
 #include "TinyVisualWindowless.h"
 #include "TinyVisualWindow.h"
 #include "TinyVisualDocument.h"
-#include "TinyVisualComboBox.h"
 
 namespace TinyFramework
 {

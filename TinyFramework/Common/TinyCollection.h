@@ -1856,10 +1856,11 @@ namespace TinyFramework
 			LPVOID		m_value;
 		};
 	public:
-		TinyPointerMap();
+		TinyPointerMap(INT_PTR blockSize = 10);
 		virtual ~TinyPointerMap();
 	public:
-		DWORD		GetSize() const;
+		void		Initialize(UINT hashSize);
+		INT_PTR		GetSize() const;
 		BOOL		IsEmpty() const;
 		BOOL		Add(LPVOID key, LPVOID value);
 		BOOL		Remove(LPVOID key);
@@ -1868,13 +1869,12 @@ namespace TinyFramework
 		LPVOID&		operator[](LPVOID key);
 		void		SetAt(LPVOID key, LPVOID value);
 	private:
-		void		Initialize(UINT dwSize);
 		TinyNode*	New();
 		void		Delete(TinyNode* ps);
 		TinyNode*	Lookup(LPVOID key, UINT& index, UINT& hash) const;
 		UINT		HashKey(void* key) const;
 	private:
-		UINT		m_size;
+		UINT		m_hashSize;
 		INT_PTR		m_blockSize;
 		INT_PTR		m_count;
 		TinyNode**	m_pTable;

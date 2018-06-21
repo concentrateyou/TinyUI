@@ -216,6 +216,45 @@ namespace TinyFramework
 		size_t	_Myres;
 	};
 
+	/// <summary>
+	/// ×Ö·û´®Map
+	/// </summary>
+	class TinyStringMap
+	{
+		DISALLOW_COPY_AND_ASSIGN(TinyStringMap)
+	protected:
+		struct TinyNode : public __ITERATOR
+		{
+			TinyNode*	m_pNext;
+			UINT		m_hashValue;
+			TinyString	m_key;
+			void*		m_value;
+		};
+	public:
+		explicit TinyStringMap(INT_PTR blockSize = 10);
+		virtual ~TinyStringMap();
+		INT_PTR		GetSize() const;
+		BOOL		IsEmpty() const;
+		BOOL		Lookup(LPCTSTR key, void*& rValue) const;
+		void*&		operator[](LPCTSTR key);
+		void		SetAt(LPCTSTR key, void* newValue);
+		BOOL		Remove(LPCTSTR key);
+		void		RemoveAll();
+		void		Initialize(UINT hashSize);
+	private:
+		TinyNode*	New();
+		void		Delete(TinyNode* ps);
+		TinyNode*	Lookup(LPCTSTR key, UINT& index, UINT& hash) const;
+		UINT		HashKey(LPCTSTR key) const;
+	private:
+		UINT		m_hashSize;
+		INT_PTR		m_blockSize;
+		INT_PTR		m_count;
+		TinyNode**	m_pTable;
+		TinyNode*	m_pFreeList;
+		TinyPlex*	m_pBlocks;
+	};
+
 	template<>
 	class DefaultTraits < TinyString >
 	{

@@ -93,34 +93,36 @@ namespace TinyFramework
 		return bRes;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	TinyPointerMap::TinyPointerMap()
-		:m_blockSize(10),
-		m_size(17),
+	TinyPointerMap::TinyPointerMap(INT_PTR blockSize)
+		:m_blockSize(blockSize),
+		m_hashSize(17),
 		m_count(0),
 		m_pTable(NULL),
 		m_pFreeList(NULL),
 		m_pBlocks(NULL)
 	{
-
+		m_blockSize = m_blockSize == 0 ? 10 : m_blockSize;
 	}
 	TinyPointerMap::~TinyPointerMap()
 	{
 		RemoveAll();
 	}
-	DWORD TinyPointerMap::GetSize() const
+	INT_PTR TinyPointerMap::GetSize() const
 	{
-		return static_cast<DWORD>(m_count);
+		return m_count;
 	}
 	BOOL TinyPointerMap::IsEmpty() const
 	{
-		return m_count == 0;
+		return (m_count == 0);
 	}
-	void TinyPointerMap::Initialize(UINT size)
+	void TinyPointerMap::Initialize(UINT hashSize)
 	{
+		if (hashSize == 0)
+			hashSize = 17;
 		SAFE_DELETE_ARRAY(m_pTable);
-		m_pTable = new TinyNode*[size];
-		memset(m_pTable, 0, sizeof(TinyNode*) * size);
-		m_size = size;
+		m_pTable = new TinyNode*[hashSize];
+		memset(m_pTable, 0, sizeof(TinyNode*) * hashSize);
+		m_hashSize = hashSize;
 	}
 	TinyPointerMap::TinyNode* TinyPointerMap::New()
 	{
@@ -161,7 +163,7 @@ namespace TinyFramework
 		{
 			if (m_pTable == NULL)
 			{
-				Initialize(m_size);
+				Initialize(m_hashSize);
 			}
 			ps = New();
 			ps->m_key = key;
@@ -177,8 +179,8 @@ namespace TinyFramework
 		if (!m_pTable)
 			return FALSE;
 		TinyNode** ppPrev = NULL;
-		UINT index = HashKey(key) % m_size;
-		ppPrev = &m_pTable[index];
+		UINT bucket = HashKey(key) % m_hashSize;
+		ppPrev = &m_pTable[bucket];
 		TinyNode* ps = NULL;
 		for (ps = *ppPrev; ps != NULL; ps = ps->m_pNext)
 		{
@@ -204,7 +206,8 @@ namespace TinyFramework
 	{
 		UINT bucket = 0;
 		UINT hash = 0;
-		TinyNode* ps = Lookup(key, bucket, hash);
+		TinyNode* ps = NULL;
+		ps = Lookup(key, bucket, hash);
 		if (ps == NULL)
 			return FALSE;
 		value = ps->m_value;
@@ -213,7 +216,7 @@ namespace TinyFramework
 	TinyPointerMap::TinyNode* TinyPointerMap::Lookup(LPVOID key, UINT& bucket, UINT& hash) const
 	{
 		hash = HashKey(key);
-		bucket = hash % m_size;
+		bucket = hash % m_hashSize;
 		if (m_pTable == NULL)
 			return NULL;
 		TinyNode* ps = NULL;
@@ -235,7 +238,7 @@ namespace TinyFramework
 		{
 			if (!m_pTable)
 			{
-				Initialize(m_size);
+				Initialize(m_hashSize);
 			}
 			ps = New();
 			ps->m_key = key;
