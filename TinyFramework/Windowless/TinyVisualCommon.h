@@ -6,6 +6,15 @@ namespace TinyFramework
 {
 	namespace Windowless
 	{
+#define LY_PER_INCH   1440
+#define HIMETRIC_PER_INCH   2540
+#define MAP_PIX_TO_LOGHIM(x,ppli)   MulDiv(HIMETRIC_PER_INCH, (x), (ppli))
+#define MAP_LOGHIM_TO_PIX(x,ppli)   MulDiv((ppli), (x), HIMETRIC_PER_INCH)
+		LONG HimetricXtoDX(LONG xHimetric, LONG xPerInch);
+		LONG HimetricYtoDY(LONG yHimetric, LONG yPerInch);
+		LONG DXtoHimetricX(LONG dx, LONG xPerInch);
+		LONG DYtoHimetricY(LONG dy, LONG yPerInch);
+
 		/// <summary>
 		/// 元素属性常量
 		/// </summary>

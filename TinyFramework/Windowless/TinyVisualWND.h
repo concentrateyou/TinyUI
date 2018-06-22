@@ -4,7 +4,6 @@
 #include "../Render/TinyTransform.h"
 #include "../Render/TinyCanvas.h"
 #include "TinyVisualDocument.h"
-#include "TinyVisualUtility.h"
 
 namespace TinyFramework
 {

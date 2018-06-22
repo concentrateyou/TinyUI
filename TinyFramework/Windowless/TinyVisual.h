@@ -5,7 +5,6 @@
 #include "../Render/TinyCanvas.h"
 #include "TinyVisualCommon.h"
 #include "TinyVisualEvent.h"
-#include "TinyVisualUtility.h"
 #include "../XML//tinyxml.h"
 
 namespace TinyFramework
@@ -33,23 +32,11 @@ namespace TinyFramework
 			TinyString			GetToolTip() const;
 			TinyPoint			GetPosition() const;
 			TinySize			GetSize() const;
-			TinyRectangle		GetPadding() const;
-			TinyRectangle		GetMargin() const;
 			TinySize			GetMaximumSize() const;
 			TinySize			GetMinimumSize() const;
 			TinyRectangle		GetRectangle() const;
 			TinyRectangle		GetWindowRect()const;
 			TinyRectangle		GetClientRect() const;
-			TinyImage*			GetBackgroundImage();
-			TinyRectangle		GetBackgroundCenter() const;
-			TinySize			GetBackgroundSize() const;
-			TinyPoint			GetBackgroundPosition() const;
-			TinyColor			GetBackgroundColor() const;
-			TinyColor			GetBorderColor() const;
-			TinyImage*			GetBorderImage();
-			TinyRectangle		GetBorderCenter() const;
-			UINT				GetBorderThickness() const;
-			INT					GetBorderStyle() const;
 			HRGN				GetClip() const;
 			HFONT				GetFont() const;
 			BOOL				IsVisible() const;
@@ -57,9 +44,9 @@ namespace TinyFramework
 			BOOL				IsCapture() const;
 			BOOL				IsFocus() const;
 			BOOL				IsActive() const;
-			BOOL				Invalidate();
 		public:
 			TinyVisualDocument*	GetDocument();
+			BOOL				Invalidate();
 			DWORD				GetChildCount() const;
 			virtual	HRESULT		SendMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes);
 		public:
@@ -71,28 +58,12 @@ namespace TinyFramework
 			virtual void		SetText(const TinyString& szText);
 			virtual void		SetPosition(const TinyPoint& pos);
 			virtual void		SetSize(const TinySize& size);
-			virtual void		SetPadding(const TinyRectangle& padding);
-			virtual void		SetMargin(const TinyRectangle& margin);
 			virtual void		SetMaximumSize(const TinySize& size);
 			virtual void		SetMinimumSize(const TinySize& size);
 			virtual void		SetClip(HRGN hrgnClip);
 			virtual void		SetFont(HFONT hFONT);
 			virtual void		SetVisible(BOOL visible);
 			virtual void		SetEnable(BOOL enable);
-			virtual void		SetTextColor(COLORREF color);
-			virtual void		SetTextAlian(UINT align);
-			virtual void		SetBackgroundImage(const TinyString& szName);
-			virtual void		SetBackgroundImage(TinyImage* image);
-			virtual void		SetBackgroundColor(COLORREF color);
-			virtual void		SetBackgroundCenter(const TinyRectangle& center);
-			virtual void		SetBackgroundSize(const TinySize& size);
-			virtual void		SetBackgroundPosition(const TinyPoint& pos);
-			virtual void		SetBorderColor(COLORREF color);
-			virtual void		SetBorderThickness(UINT cx);
-			virtual void		SetBorderStyle(INT style);
-			virtual void		SetBorderImage(const TinyString& szName);
-			virtual void		SetBorderImage(TinyImage* image);
-			virtual void		SetBorderCenter(const TinyRectangle& center);
 		protected:
 			virtual HRESULT		OnCreate();
 			virtual HRESULT		OnDestory();
@@ -117,14 +88,8 @@ namespace TinyFramework
 			virtual HRESULT		OnFocus(BOOL bFlag);
 			virtual HRESULT		OnCapture(BOOL bFlag);
 			virtual HRESULT		OnActive(BOOL bFlag);
-			virtual void		OnSizeChange(const TinySize&, const TinySize&);
-			virtual void		OnPosChange(const TinyPoint&, const TinyPoint&);
 		protected:
 			virtual BOOL		OnDraw(HDC hDC, const RECT& clip);
-		public:
-			virtual BOOL		SetProperty(const TinyString& name, const TinyString& value);
-			TinyString			GetProperty(const TinyString& name);
-			BOOL				IsPropertyNull(const TinyString& name);
 		public:
 			Event<void(TinyVisual*, EventArgs&)>		EVENT_CREATE;
 			Event<void(TinyVisual*, EventArgs&)>		EVENT_DESTORY;
@@ -144,12 +109,12 @@ namespace TinyFramework
 			Event<void(TinyVisual*, CaptureEventArgs&)>	EVENT_CAPTURE;
 			Event<void(TinyVisual*, ActiveEventArgs&)>	EVENT_ACTIVE;
 		protected:
-			DWORD				m_dwCount;//还是孩子节点个数
-			TinyVisualDocument*	m_document;
+			UINT				m_count;//还是孩子节点个数
 			TinyVisual*			m_spvisParent;//父节点
 			TinyVisual*			m_spvisNext;//同级下一个兄弟节点
 			TinyVisual*			m_spvisChild;//第一个孩子节点
 			TinyVisual*			m_spvisOwner;//对于Popup窗口使用
+			TinyVisualDocument*	m_document;
 
 			TinyString			m_szName;
 			TinyString			m_szText;
@@ -157,27 +122,11 @@ namespace TinyFramework
 			TinyString			m_szCursor;
 			TinySize			m_maximumSize;//元素的最大像素大小
 			TinySize			m_minimumSize;//元素的最小像素大小
-			TinyRectangle		m_padding;//内边距
-			TinyRectangle		m_margin;//外边距
 			TinyRectangle		m_rectangle;//相对于父元素区域
-			TinyRectangle		m_backgroundCenter;//显示背景图片中心
-			TinyImage*			m_backgroundImage;//背景图片
-			TinyColor			m_backgroundColor;//背景颜色
-			TinySize			m_backgroundSize;//背景大小
-			TinyPoint			m_backgroundPosition;
-			UINT				m_borderThickness;//边框厚度
-			TinyColor			m_borderColor;//边框颜色
-			INT					m_borderStyle;//边框样式
-			TinyImage*			m_borderImage;
-			TinyRectangle		m_borderCenter;
-			TinyColor 			m_textColor;
-			UINT				m_textAlign;
 			BOOL				m_visible;
 			BOOL				m_enable;
 			HRGN				m_hrgnClip;
 			HFONT				m_hFONT;
-
-			TinyLinkList<TinyVisualProperty> m_propertys;
 		};
 	}
 }

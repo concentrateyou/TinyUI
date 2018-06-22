@@ -31,7 +31,7 @@ namespace TinyFramework
 		public:
 			TinyVisualDocument(TinyVisualWindowless& window);
 			virtual ~TinyVisualDocument();
-			virtual BOOL	Initialize(TinyVisualBuilder* builder);
+			virtual BOOL	Initialize();
 			virtual void	Uninitialize();
 		public:
 			TinyVisual*		Create(INT x, INT y, INT cx, INT cy, const TinyString& tag, TinyVisual* spvisParent);

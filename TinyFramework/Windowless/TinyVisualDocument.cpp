@@ -37,11 +37,9 @@ namespace TinyFramework
 			}
 			return m_factory.Destory(spvis);
 		}
-		BOOL TinyVisualDocument::Initialize(TinyVisualBuilder* builder)
+		BOOL TinyVisualDocument::Initialize()
 		{
-			if (!builder)
-				return FALSE;
-			return builder->BuildDocument(this);
+			return TRUE;
 		}
 		void TinyVisualDocument::Uninitialize()
 		{
@@ -574,7 +572,7 @@ namespace TinyFramework
 			}
 			if (spvisParent != NULL)
 			{
-				spvisParent->m_dwCount++;
+				spvisParent->m_count++;
 			}
 			return spvis;
 		}
@@ -616,7 +614,7 @@ namespace TinyFramework
 			}
 			if (spvisParent != NULL)
 			{
-				spvisParent->m_dwCount++;
+				spvisParent->m_count++;
 			}
 			return spvis;
 		}
@@ -628,7 +626,6 @@ namespace TinyFramework
 				if (oldsize != size)
 				{
 					m_spvisWindow->SetSize(size);
-					m_spvisWindow->OnSizeChange(oldsize, size);
 					Invalidate();
 				}
 			}
@@ -943,7 +940,7 @@ namespace TinyFramework
 			spvis->OnDestory();
 			if (spvis->m_spvisParent != NULL)
 			{
-				spvis->m_spvisParent->m_dwCount--;
+				spvis->m_spvisParent->m_count--;
 			}
 			SAFE_DELETE(spvis);
 			return TRUE;

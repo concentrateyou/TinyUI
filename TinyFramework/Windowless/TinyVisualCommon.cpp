@@ -5,6 +5,23 @@ namespace TinyFramework
 {
 	namespace Windowless
 	{
+		LONG HimetricXtoDX(LONG xHimetric, LONG xPerInch)
+		{
+			return (LONG)MulDiv(xHimetric, xPerInch, HIMETRIC_PER_INCH);
+		}
+		LONG HimetricYtoDY(LONG yHimetric, LONG yPerInch)
+		{
+			return (LONG)MulDiv(yHimetric, yPerInch, HIMETRIC_PER_INCH);
+		}
+		LONG DXtoHimetricX(LONG dx, LONG xPerInch)
+		{
+			return (LONG)MulDiv(dx, HIMETRIC_PER_INCH, xPerInch);
+		}
+		LONG DYtoHimetricY(LONG dy, LONG yPerInch)
+		{
+			return (LONG)MulDiv(dy, HIMETRIC_PER_INCH, yPerInch);
+		}
+
 		const TinyString TinyVisualPropertyConst::NAME = TEXT("name");
 		const TinyString TinyVisualPropertyConst::TEXT = TEXT("text");
 		const TinyString TinyVisualPropertyConst::TOOLTIP = TEXT("tooltip");

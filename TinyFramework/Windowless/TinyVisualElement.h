@@ -6,7 +6,6 @@
 #include "TinyVisual.h"
 #include "TinyVisualCommon.h"
 #include "TinyVisualEvent.h"
-#include "TinyVisualUtility.h"
 
 namespace TinyFramework
 {

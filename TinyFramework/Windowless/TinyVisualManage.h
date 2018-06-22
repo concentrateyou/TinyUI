@@ -11,7 +11,7 @@ namespace TinyFramework
 	namespace Windowless
 	{
 		class TinyVisualDocument;
-		/// <summary>
+		/*/// <summary>
 		/// 可视化元素管理
 		/// </summary>
 		class TinyVisualBuilder
@@ -37,7 +37,7 @@ namespace TinyFramework
 			static BOOL BuildProperty(const TiXmlElement* pXMLNode, TinyVisual* spvis);
 		private:
 			TiXmlDocument	m_doc;
-		};
+		};*/
 		/// <summary>
 		/// 资源管理
 		/// </summary>

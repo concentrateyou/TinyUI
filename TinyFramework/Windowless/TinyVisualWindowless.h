@@ -2,13 +2,51 @@
 #include "../Render/TinyImage.h"
 #include "TinyVisualWND.h"
 #include "TinyVisualDocument.h"
-#include "TinyVisualUtility.h"
 #include "TinyVisualShadow.h"
 
 namespace TinyFramework
 {
 	namespace Windowless
 	{
+		/// <summary>
+		/// 裁剪的DC在当前元素最小的矩形上绘制
+		/// </summary>
+		class TinyClipCanvas : public TinyCanvas
+		{
+		public:
+			TinyClipCanvas(HDC hDC, TinyVisual* spvis, const RECT& rcPaint);
+			virtual ~TinyClipCanvas();
+		private:
+			HRGN	m_hRGN;
+			HRGN	m_hOldRGN;
+		};
+		/// <summary>
+		/// 消息过滤器
+		/// </summary>
+		class NO_VTABLE TinyVisualFilter
+		{
+		public:
+			virtual BOOL OnFilter(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult) = 0;
+		};
+		/// <summary>
+		/// 可视化消息筛选器集合
+		/// </summary>
+		class TinyVisualFilters
+		{
+		public:
+			TinyVisualFilters();
+			~TinyVisualFilters();
+			BOOL Add(TinyVisualFilter* element);
+			BOOL Remove(TinyVisualFilter* element);
+			BOOL RemoveAt(INT index);
+			void RemoveAll();
+			INT  GetSize() const;
+			const TinyVisualFilter* operator[] (INT index) const;
+			TinyVisualFilter* operator[] (INT index);
+			INT Lookup(TinyVisualFilter* element) const;
+		private:
+			TinyArray<TinyVisualFilter*> m_array;
+		};
 		/// <summary>
 		/// 窗口框架类
 		/// </summary>
@@ -80,11 +118,9 @@ namespace TinyFramework
 		protected:
 			BOOL								m_bAllowTracking;
 			BOOL								m_bMouseTracking;
-			TinyPoint							m_pos;
+			TinyPoint							m_position;
 			TinySize							m_size;
-			TinyString							m_szSkinFile;//资源文件
 			TinyVisualFilters					m_mFilters;
-			TinyVisualBuilder					m_builder;
 			TinyVisualDocument					m_document;
 			TinyScopedPtr<TinyVisualDC>			m_visualDC;
 			TinyScopedPtr<TinyVisualShadow>	    m_shadow;

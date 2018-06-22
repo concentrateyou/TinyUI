@@ -11,267 +11,267 @@ namespace TinyFramework
 {
 	namespace Windowless
 	{
-		TinyVisualBuilder::TinyVisualBuilder()
-		{
+		//TinyVisualBuilder::TinyVisualBuilder()
+		//{
 
-		}
-		TinyVisualBuilder::~TinyVisualBuilder()
-		{
+		//}
+		//TinyVisualBuilder::~TinyVisualBuilder()
+		//{
 
-		}
-		BOOL TinyVisualBuilder::LoadFile(LPCSTR pzFile)
-		{
-			ASSERT(pzFile);
-			return m_doc.LoadFile(pzFile, TIXML_ENCODING_UTF8);
-		}
-		BOOL TinyVisualBuilder::BuildDocument(TinyVisualDocument* document)
-		{
-			ASSERT(document);
-			TiXmlElement *pXML = m_doc.RootElement();
-			TinyVisual* spvis = document->GetParent(NULL);
-			if (spvis == NULL)
-			{
-				if (pXML && !strcasecmp(pXML->Value(), TinyVisualTagConst::WINDOW.STR()))
-				{
-					spvis = document->Create(TinyVisualTagConst::WINDOW, NULL);//根节点元素
-					BuildProperty(pXML, spvis);
-					document->m_spvisWindow = spvis;
-				}
-				else
-				{
-					return FALSE;
-				}
-			}
-			CreateInstace(pXML, spvis, document);
-			CalculateLayout(spvis, document);
-			spvis->OnInitialize();
-			TinySize size = document->GetParent(NULL)->GetSize();
-			RECT windowBounds;
-			RECT centerBounds = { 0 };
-			HMONITOR monitor = MonitorFromWindow(document->GetVisualHWND().Handle(), MONITOR_DEFAULTTONEAREST);
-			if (monitor != NULL)
-			{
-				MONITORINFO mi = { 0 };
-				mi.cbSize = sizeof(mi);
-				GetMonitorInfo(monitor, &mi);
-				centerBounds = mi.rcWork;
-			}
-			windowBounds.left = centerBounds.left + (centerBounds.right - centerBounds.left - size.cx) / 2;
-			windowBounds.right = windowBounds.left + size.cx;
-			windowBounds.top = centerBounds.top + (centerBounds.bottom - centerBounds.top - size.cy) / 2;
-			windowBounds.bottom = windowBounds.top + size.cy;
-			return SetWindowPos(document->GetVisualHWND().Handle(), 0, windowBounds.left, windowBounds.top,
-				windowBounds.right - windowBounds.left,
-				windowBounds.bottom - windowBounds.top,
-				SWP_NOACTIVATE | SWP_NOZORDER);
-		}
-		void TinyVisualBuilder::CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualDocument* document)
-		{
-			ASSERT(document && pXMLNode);
-			TinyVisual* spvis = NULL;
-			for (const TiXmlNode* pXMLChildNode = pXMLNode->FirstChild(); pXMLChildNode; pXMLChildNode = pXMLChildNode->NextSibling())
-			{
-				if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT)
-				{
-					spvis = document->Create(pXMLChildNode->Value(), spvisParent);
-					if (spvis != NULL)
-					{
-						if (BuildProperty(static_cast<const TiXmlElement*>(pXMLChildNode), spvis))
-						{
-							CreateInstace(pXMLChildNode, spvis, document);
-						}
-					}
-				}
-			}
-		}
+		//}
+		//BOOL TinyVisualBuilder::LoadFile(LPCSTR pzFile)
+		//{
+		//	ASSERT(pzFile);
+		//	return m_doc.LoadFile(pzFile, TIXML_ENCODING_UTF8);
+		//}
+		//BOOL TinyVisualBuilder::BuildDocument(TinyVisualDocument* document)
+		//{
+		//	ASSERT(document);
+		//	TiXmlElement *pXML = m_doc.RootElement();
+		//	TinyVisual* spvis = document->GetParent(NULL);
+		//	if (spvis == NULL)
+		//	{
+		//		if (pXML && !strcasecmp(pXML->Value(), TinyVisualTagConst::WINDOW.STR()))
+		//		{
+		//			spvis = document->Create(TinyVisualTagConst::WINDOW, NULL);//根节点元素
+		//			BuildProperty(pXML, spvis);
+		//			document->m_spvisWindow = spvis;
+		//		}
+		//		else
+		//		{
+		//			return FALSE;
+		//		}
+		//	}
+		//	CreateInstace(pXML, spvis, document);
+		//	CalculateLayout(spvis, document);
+		//	spvis->OnInitialize();
+		//	TinySize size = document->GetParent(NULL)->GetSize();
+		//	RECT windowBounds;
+		//	RECT centerBounds = { 0 };
+		//	HMONITOR monitor = MonitorFromWindow(document->GetVisualHWND().Handle(), MONITOR_DEFAULTTONEAREST);
+		//	if (monitor != NULL)
+		//	{
+		//		MONITORINFO mi = { 0 };
+		//		mi.cbSize = sizeof(mi);
+		//		GetMonitorInfo(monitor, &mi);
+		//		centerBounds = mi.rcWork;
+		//	}
+		//	windowBounds.left = centerBounds.left + (centerBounds.right - centerBounds.left - size.cx) / 2;
+		//	windowBounds.right = windowBounds.left + size.cx;
+		//	windowBounds.top = centerBounds.top + (centerBounds.bottom - centerBounds.top - size.cy) / 2;
+		//	windowBounds.bottom = windowBounds.top + size.cy;
+		//	return SetWindowPos(document->GetVisualHWND().Handle(), 0, windowBounds.left, windowBounds.top,
+		//		windowBounds.right - windowBounds.left,
+		//		windowBounds.bottom - windowBounds.top,
+		//		SWP_NOACTIVATE | SWP_NOZORDER);
+		//}
+		//void TinyVisualBuilder::CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualDocument* document)
+		//{
+		//	ASSERT(document && pXMLNode);
+		//	TinyVisual* spvis = NULL;
+		//	for (const TiXmlNode* pXMLChildNode = pXMLNode->FirstChild(); pXMLChildNode; pXMLChildNode = pXMLChildNode->NextSibling())
+		//	{
+		//		if (pXMLChildNode->Type() == TiXmlNode::TINYXML_ELEMENT)
+		//		{
+		//			spvis = document->Create(pXMLChildNode->Value(), spvisParent);
+		//			if (spvis != NULL)
+		//			{
+		//				if (BuildProperty(static_cast<const TiXmlElement*>(pXMLChildNode), spvis))
+		//				{
+		//					CreateInstace(pXMLChildNode, spvis, document);
+		//				}
+		//			}
+		//		}
+		//	}
+		//}
 
-		BOOL TinyVisualBuilder::CalculateLayout(TinyVisual* spvisParent, TinyVisualDocument* document)
-		{
-			if (!document || !spvisParent)
-				return FALSE;
-			DWORD count = spvisParent->GetChildCount();
-			if (count <= 0)
-				return TRUE;
-			TinyPoint posL;
-			TinyPoint posR;
-			TinySize sizeT = spvisParent->GetSize();
-			posR.x = sizeT.cx;
-			TinyVisual* spvis = document->GetVisual(spvisParent, CMD_CHILD);
-			spvis = document->GetVisual(spvis, CMD_FIRST);
-			while (spvis != NULL)
-			{
-				TinySize size = spvis->GetSize();
-				size.cx = size.cx == 0 ? sizeT.cx : size.cx;
-				size.cy = size.cy == 0 ? sizeT.cy : size.cy;
-				TinyRectangle s = spvis->GetMargin();
-				size.cx = size.cx - (s.left + s.right);
-				size.cy = size.cy - (s.top + s.bottom);
-				TinySize minsize = spvis->GetMinimumSize();
-				if (!minsize.IsEmpty())
-				{
-					size.cx = size.cx < minsize.cx ? minsize.cx : size.cx;
-					size.cy = size.cy < minsize.cy ? minsize.cy : size.cy;
-				}
-				TinySize maxsize = spvis->GetMaximumSize();
-				if (!maxsize.IsEmpty())
-				{
-					size.cx = size.cx > maxsize.cx ? maxsize.cx : size.cx;
-					size.cy = size.cy > maxsize.cy ? maxsize.cy : size.cy;
-				}
-				spvis->SetSize(size);
-				////如果是布局控件
-				//if (spvisParent->IsKindOf(RUNTIME_CLASS(TinyVisualPanel)))
-				//{
-				//	TinyVisualPanel* panel = static_cast<TinyVisualPanel*>(spvisParent);
-				//	switch (panel->GetOrientation())
-				//	{
-				//	case Orientation::Horizontal:
-				//	{
-				//		/*Alignment alignment = panel->GetAlignment();
-				//		switch (alignment)
-				//		{
-				//		case Alignment::RIGHT:
-				//		{
-				//			posR.x -= size.cx;
-				//			posR.x -= (s.left + s.right);
-				//			posR.y = s.top;
-				//			spvis->SetPosition(posR);
-				//		}
-				//		break;
-				//		case Alignment::LEFT:
-				//		{
-				//			posL.x += size.cx;
-				//			posL.y = s.top;
-				//			spvis->SetPosition(posL);
-				//		}
-				//		break;
-				//		}*/
-				//	}
-				//	break;
-				//	}
-				//}
-				//CalculateLayout(spvis, document);
-				spvis = document->GetVisual(spvis, CMD_NEXT);
-			}
-		}
+		//BOOL TinyVisualBuilder::CalculateLayout(TinyVisual* spvisParent, TinyVisualDocument* document)
+		//{
+		//	if (!document || !spvisParent)
+		//		return FALSE;
+		//	DWORD count = spvisParent->GetChildCount();
+		//	if (count <= 0)
+		//		return TRUE;
+		//	TinyPoint posL;
+		//	TinyPoint posR;
+		//	TinySize sizeT = spvisParent->GetSize();
+		//	posR.x = sizeT.cx;
+		//	TinyVisual* spvis = document->GetVisual(spvisParent, CMD_CHILD);
+		//	spvis = document->GetVisual(spvis, CMD_FIRST);
+		//	while (spvis != NULL)
+		//	{
+		//		TinySize size = spvis->GetSize();
+		//		size.cx = size.cx == 0 ? sizeT.cx : size.cx;
+		//		size.cy = size.cy == 0 ? sizeT.cy : size.cy;
+		//		TinyRectangle s = spvis->GetMargin();
+		//		size.cx = size.cx - (s.left + s.right);
+		//		size.cy = size.cy - (s.top + s.bottom);
+		//		TinySize minsize = spvis->GetMinimumSize();
+		//		if (!minsize.IsEmpty())
+		//		{
+		//			size.cx = size.cx < minsize.cx ? minsize.cx : size.cx;
+		//			size.cy = size.cy < minsize.cy ? minsize.cy : size.cy;
+		//		}
+		//		TinySize maxsize = spvis->GetMaximumSize();
+		//		if (!maxsize.IsEmpty())
+		//		{
+		//			size.cx = size.cx > maxsize.cx ? maxsize.cx : size.cx;
+		//			size.cy = size.cy > maxsize.cy ? maxsize.cy : size.cy;
+		//		}
+		//		spvis->SetSize(size);
+		//		////如果是布局控件
+		//		//if (spvisParent->IsKindOf(RUNTIME_CLASS(TinyVisualPanel)))
+		//		//{
+		//		//	TinyVisualPanel* panel = static_cast<TinyVisualPanel*>(spvisParent);
+		//		//	switch (panel->GetOrientation())
+		//		//	{
+		//		//	case Orientation::Horizontal:
+		//		//	{
+		//		//		/*Alignment alignment = panel->GetAlignment();
+		//		//		switch (alignment)
+		//		//		{
+		//		//		case Alignment::RIGHT:
+		//		//		{
+		//		//			posR.x -= size.cx;
+		//		//			posR.x -= (s.left + s.right);
+		//		//			posR.y = s.top;
+		//		//			spvis->SetPosition(posR);
+		//		//		}
+		//		//		break;
+		//		//		case Alignment::LEFT:
+		//		//		{
+		//		//			posL.x += size.cx;
+		//		//			posL.y = s.top;
+		//		//			spvis->SetPosition(posL);
+		//		//		}
+		//		//		break;
+		//		//		}*/
+		//		//	}
+		//		//	break;
+		//		//	}
+		//		//}
+		//		//CalculateLayout(spvis, document);
+		//		spvis = document->GetVisual(spvis, CMD_NEXT);
+		//	}
+		//}
 
-		BOOL TinyVisualBuilder::BuildProperty(const TiXmlElement* pXMLNode, TinyVisual* spvis)
-		{
-			if (!pXMLNode)
-				return FALSE;
+		//BOOL TinyVisualBuilder::BuildProperty(const TiXmlElement* pXMLNode, TinyVisual* spvis)
+		//{
+		//	if (!pXMLNode)
+		//		return FALSE;
 
-			const TiXmlAttribute* pFA = pXMLNode->FirstAttribute();
-			const TiXmlAttribute* pLA = pXMLNode->LastAttribute();
-			while (pFA != pLA)
-			{
-				string value = UTF8ToASCII(pFA->Value());
-				if (spvis->SetProperty(pFA->Name(), value.c_str()))
-				{
-					spvis->m_propertys.InsertLast(TinyVisualProperty(pFA->Name(), value.c_str()));
-				}
-				pFA = pFA->Next();
-			}
-			string value = UTF8ToASCII(pFA->Value());
-			if (spvis->SetProperty(pFA->Name(), UTF8ToASCII(pFA->Value()).c_str()))
-			{
-				spvis->m_propertys.InsertLast(TinyVisualProperty(pFA->Name(), value.c_str()));
-			}
-			return TRUE;
-		}
-		TinySize TinyVisualBuilder::GetSize(const TinyString& str)
-		{
-			TinyArray<TinyString> sps;
-			str.Split(',', sps);
-			if (sps.GetSize() == 2)
-			{
-				return (TinySize(atoi(sps[0].STR()), atoi(sps[1].STR())));
-			}
-			return TinySize();
-		}
-		TinyPoint TinyVisualBuilder::GetPosition(const TinyString& str)
-		{
-			TinyArray<TinyString> sps;
-			str.Split(',', sps);
-			if (sps.GetSize() == 2)
-			{
-				return (TinyPoint(atoi(sps[0].STR()), atoi(sps[1].STR())));
-			}
-			return TinyPoint();
-		}
-		TinyRectangle TinyVisualBuilder::GetRectangle(const TinyString& str)
-		{
-			TinyArray<TinyString> sps;
-			str.Split(',', sps);
-			if (sps.GetSize() == 4)
-			{
-				return (TinyRectangle(atoi(sps[0].STR()), atoi(sps[1].STR()), atoi(sps[2].STR()), atoi(sps[3].STR())));
-			}
-			return TinyRectangle();
-		}
-		BOOL TinyVisualBuilder::GetBool(const TinyString& str)
-		{
-			return str.Compare("true") == 0;
-		}
-		INT	TinyVisualBuilder::GetInt32(const TinyString& str)
-		{
-			return atoi(str.CSTR());
-		}
-		UINT TinyVisualBuilder::GetAlign(const TinyString& str)
-		{
-			UINT sFlag = DT_LEFT | DT_SINGLELINE;
-			TinyArray<TinyString> sps;
-			str.Split('|', sps);
-			for (INT i = 0; i < sps.GetSize(); i++)
-			{
-				if (strcasecmp(sps[i].STR(), "left") == 0)
-					sFlag |= DT_LEFT;
-				if (strcasecmp(sps[i].STR(), "top") == 0)
-					sFlag |= DT_TOP;
-				if (strcasecmp(sps[i].STR(), "right") == 0)
-					sFlag |= DT_RIGHT;
-				if (strcasecmp(sps[i].STR(), "bottom") == 0)
-					sFlag |= DT_BOTTOM;
-				if (strcasecmp(sps[i].STR(), "center") == 0)
-					sFlag |= DT_CENTER;
-				if (strcasecmp(sps[i].STR(), "vcenter") == 0)
-					sFlag |= DT_VCENTER;
-			}
-			return sFlag;
-		}
-		HorizontalAlignment TinyVisualBuilder::GetHorizontalAlignment(const TinyString& str)
-		{
-			if (strcasecmp(str.STR(), "left") == 0)
-				return HorizontalAlignment::LEFT;
-			if (strcasecmp(str.STR(), "right") == 0)
-				return HorizontalAlignment::RIGHT;
-			if (strcasecmp(str.STR(), "center") == 0)
-				return HorizontalAlignment::CENTER;
-			if (strcasecmp(str.STR(), "stretch") == 0)
-				return HorizontalAlignment::STRETCH;
-			return HorizontalAlignment::NONE;
-		}
-		VerticalAlignment TinyVisualBuilder::GetVerticalAlignment(const TinyString& str)
-		{
-			if (strcasecmp(str.STR(), "top") == 0)
-				return VerticalAlignment::TOP;
-			if (strcasecmp(str.STR(), "bottom") == 0)
-				return VerticalAlignment::BOTTOM;
-			if (strcasecmp(str.STR(), "center") == 0)
-				return VerticalAlignment::CENTER;
-			if (strcasecmp(str.STR(), "stretch") == 0)
-				return VerticalAlignment::STRETCH;
-			return VerticalAlignment::NONE;
-		}
-		COLORREF TinyVisualBuilder::GetColor(const TinyString& str)
-		{
-			TinyArray<TinyString> sps;
-			str.Split(',', sps);
-			if (sps.GetSize() == 3)
-			{
-				return RGB(atoi(sps[0].STR()), atoi(sps[1].STR()), atoi(sps[2].STR()));
-			}
-			return RGB(255, 255, 255);
-		}
+		//	const TiXmlAttribute* pFA = pXMLNode->FirstAttribute();
+		//	const TiXmlAttribute* pLA = pXMLNode->LastAttribute();
+		//	while (pFA != pLA)
+		//	{
+		//		string value = UTF8ToASCII(pFA->Value());
+		//		if (spvis->SetProperty(pFA->Name(), value.c_str()))
+		//		{
+		//			spvis->m_propertys.InsertLast(TinyVisualProperty(pFA->Name(), value.c_str()));
+		//		}
+		//		pFA = pFA->Next();
+		//	}
+		//	string value = UTF8ToASCII(pFA->Value());
+		//	if (spvis->SetProperty(pFA->Name(), UTF8ToASCII(pFA->Value()).c_str()))
+		//	{
+		//		spvis->m_propertys.InsertLast(TinyVisualProperty(pFA->Name(), value.c_str()));
+		//	}
+		//	return TRUE;
+		//}
+		//TinySize TinyVisualBuilder::GetSize(const TinyString& str)
+		//{
+		//	TinyArray<TinyString> sps;
+		//	str.Split(',', sps);
+		//	if (sps.GetSize() == 2)
+		//	{
+		//		return (TinySize(atoi(sps[0].STR()), atoi(sps[1].STR())));
+		//	}
+		//	return TinySize();
+		//}
+		//TinyPoint TinyVisualBuilder::GetPosition(const TinyString& str)
+		//{
+		//	TinyArray<TinyString> sps;
+		//	str.Split(',', sps);
+		//	if (sps.GetSize() == 2)
+		//	{
+		//		return (TinyPoint(atoi(sps[0].STR()), atoi(sps[1].STR())));
+		//	}
+		//	return TinyPoint();
+		//}
+		//TinyRectangle TinyVisualBuilder::GetRectangle(const TinyString& str)
+		//{
+		//	TinyArray<TinyString> sps;
+		//	str.Split(',', sps);
+		//	if (sps.GetSize() == 4)
+		//	{
+		//		return (TinyRectangle(atoi(sps[0].STR()), atoi(sps[1].STR()), atoi(sps[2].STR()), atoi(sps[3].STR())));
+		//	}
+		//	return TinyRectangle();
+		//}
+		//BOOL TinyVisualBuilder::GetBool(const TinyString& str)
+		//{
+		//	return str.Compare("true") == 0;
+		//}
+		//INT	TinyVisualBuilder::GetInt32(const TinyString& str)
+		//{
+		//	return atoi(str.CSTR());
+		//}
+		//UINT TinyVisualBuilder::GetAlign(const TinyString& str)
+		//{
+		//	UINT sFlag = DT_LEFT | DT_SINGLELINE;
+		//	TinyArray<TinyString> sps;
+		//	str.Split('|', sps);
+		//	for (INT i = 0; i < sps.GetSize(); i++)
+		//	{
+		//		if (strcasecmp(sps[i].STR(), "left") == 0)
+		//			sFlag |= DT_LEFT;
+		//		if (strcasecmp(sps[i].STR(), "top") == 0)
+		//			sFlag |= DT_TOP;
+		//		if (strcasecmp(sps[i].STR(), "right") == 0)
+		//			sFlag |= DT_RIGHT;
+		//		if (strcasecmp(sps[i].STR(), "bottom") == 0)
+		//			sFlag |= DT_BOTTOM;
+		//		if (strcasecmp(sps[i].STR(), "center") == 0)
+		//			sFlag |= DT_CENTER;
+		//		if (strcasecmp(sps[i].STR(), "vcenter") == 0)
+		//			sFlag |= DT_VCENTER;
+		//	}
+		//	return sFlag;
+		//}
+		//HorizontalAlignment TinyVisualBuilder::GetHorizontalAlignment(const TinyString& str)
+		//{
+		//	if (strcasecmp(str.STR(), "left") == 0)
+		//		return HorizontalAlignment::LEFT;
+		//	if (strcasecmp(str.STR(), "right") == 0)
+		//		return HorizontalAlignment::RIGHT;
+		//	if (strcasecmp(str.STR(), "center") == 0)
+		//		return HorizontalAlignment::CENTER;
+		//	if (strcasecmp(str.STR(), "stretch") == 0)
+		//		return HorizontalAlignment::STRETCH;
+		//	return HorizontalAlignment::NONE;
+		//}
+		//VerticalAlignment TinyVisualBuilder::GetVerticalAlignment(const TinyString& str)
+		//{
+		//	if (strcasecmp(str.STR(), "top") == 0)
+		//		return VerticalAlignment::TOP;
+		//	if (strcasecmp(str.STR(), "bottom") == 0)
+		//		return VerticalAlignment::BOTTOM;
+		//	if (strcasecmp(str.STR(), "center") == 0)
+		//		return VerticalAlignment::CENTER;
+		//	if (strcasecmp(str.STR(), "stretch") == 0)
+		//		return VerticalAlignment::STRETCH;
+		//	return VerticalAlignment::NONE;
+		//}
+		//COLORREF TinyVisualBuilder::GetColor(const TinyString& str)
+		//{
+		//	TinyArray<TinyString> sps;
+		//	str.Split(',', sps);
+		//	if (sps.GetSize() == 3)
+		//	{
+		//		return RGB(atoi(sps[0].STR()), atoi(sps[1].STR()), atoi(sps[2].STR()));
+		//	}
+		//	return RGB(255, 255, 255);
+		//}
 		//////////////////////////////////////////////////////////////////////////
 		TinyVisualResource::TinyVisualResource()
 		{

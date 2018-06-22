@@ -349,9 +349,6 @@
     <ClCompile Include="Windowless\TinyVisualStyle.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
-    <ClCompile Include="Windowless\TinyVisualUtility.cpp">
-      <Filter>源文件\Windowless</Filter>
-    </ClCompile>
     <ClCompile Include="Windowless\TinyVisualWindow.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
@@ -496,9 +493,6 @@
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
     <ClInclude Include="Windowless\TinyVisualStyle.h">
-      <Filter>头文件\Windowless</Filter>
-    </ClInclude>
-    <ClInclude Include="Windowless\TinyVisualUtility.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
     <ClInclude Include="Windowless\TinyVisualWindow.h">

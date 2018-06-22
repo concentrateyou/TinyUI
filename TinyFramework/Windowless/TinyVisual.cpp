@@ -19,13 +19,7 @@ namespace TinyFramework
 			m_document(NULL),
 			m_visible(TRUE),
 			m_enable(TRUE),
-			m_textAlign(0),
-			m_textColor(RGB(255, 255, 255)),
-			m_borderThickness(-1),
-			m_borderStyle(PS_SOLID),
-			m_backgroundImage(NULL),
-			m_borderImage(NULL),
-			m_dwCount(0)
+			m_count(0)
 		{
 			LOGFONT lf;
 			::GetObject(reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)), sizeof(LOGFONT), &lf);
@@ -43,13 +37,7 @@ namespace TinyFramework
 			m_document(document),
 			m_visible(TRUE),
 			m_enable(TRUE),
-			m_textAlign(0),
-			m_textColor(RGB(255, 255, 255)),
-			m_borderThickness(-1),
-			m_borderStyle(-1),
-			m_backgroundImage(NULL),
-			m_borderImage(NULL),
-			m_dwCount(0)
+			m_count(0)
 		{
 			LOGFONT lf;
 			::GetObject(reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)), sizeof(LOGFONT), &lf);
@@ -97,20 +85,6 @@ namespace TinyFramework
 		{
 			return m_szToolTip;
 		}
-		void TinyVisual::SetPadding(const TinyRectangle& padding)
-		{
-			if (m_padding != padding)
-			{
-				m_padding = padding;
-			}
-		}
-		void TinyVisual::SetMargin(const TinyRectangle& margin)
-		{
-			if (m_margin != margin)
-			{
-				m_margin = margin;
-			}
-		}
 		void TinyVisual::SetMaximumSize(const TinySize& size)
 		{
 			if (m_maximumSize != size)
@@ -132,46 +106,6 @@ namespace TinyFramework
 		TinySize TinyVisual::GetMinimumSize() const
 		{
 			return m_minimumSize;
-		}
-		TinyImage*	TinyVisual::GetBackgroundImage()
-		{
-			return m_backgroundImage;
-		}
-		TinyColor TinyVisual::GetBackgroundColor() const
-		{
-			return m_backgroundColor;
-		}
-		TinyRectangle TinyVisual::GetBackgroundCenter() const
-		{
-			return m_backgroundCenter;
-		}
-		TinySize TinyVisual::GetBackgroundSize() const
-		{
-			return m_backgroundSize;
-		}
-		TinyPoint TinyVisual::GetBackgroundPosition() const
-		{
-			return m_backgroundPosition;
-		}
-		TinyColor TinyVisual::GetBorderColor() const
-		{
-			return m_borderColor;
-		}
-		UINT TinyVisual::GetBorderThickness() const
-		{
-			return m_borderThickness;
-		}
-		INT	TinyVisual::GetBorderStyle() const
-		{
-			return m_borderStyle;
-		}
-		TinyImage* TinyVisual::GetBorderImage()
-		{
-			return m_borderImage;
-		}
-		TinyRectangle TinyVisual::GetBorderCenter() const
-		{
-			return m_borderCenter;
 		}
 		BOOL TinyVisual::IsVisible() const
 		{
@@ -217,76 +151,7 @@ namespace TinyFramework
 				}
 			}
 		}
-		void TinyVisual::SetTextColor(COLORREF color)
-		{
-			if (m_textColor != color)
-			{
-				m_textColor = color;
-			}
-		}
-		void TinyVisual::SetTextAlian(UINT align)
-		{
-			if (m_textAlign != align)
-			{
-				m_textAlign = align;
-			}
-		}
-		void TinyVisual::SetBackgroundImage(const TinyString& szName)
-		{
-			m_backgroundImage = TinyVisualResource::GetInstance()[szName];
-		}
-		void TinyVisual::SetBackgroundImage(TinyImage* image)
-		{
-			m_backgroundImage = image;
-			if (m_backgroundImage != NULL)
-			{
-				TinyVisualResource::GetInstance().Add(m_backgroundImage);
-			}
-		}
-		void TinyVisual::SetBackgroundColor(COLORREF color)
-		{
-			m_backgroundColor = color;
-		}
-		void TinyVisual::SetBackgroundCenter(const TinyRectangle& center)
-		{
-			m_backgroundCenter = center;
-		}
-		void TinyVisual::SetBackgroundSize(const TinySize& size)
-		{
-			m_backgroundSize = size;
-		}
-		void TinyVisual::SetBackgroundPosition(const TinyPoint& pos)
-		{
-			m_backgroundPosition = pos;
-		}
-		void TinyVisual::SetBorderColor(COLORREF color)
-		{
-			m_borderColor = color;
-		}
-		void TinyVisual::SetBorderThickness(UINT cx)
-		{
-			m_borderThickness = cx;
-		}
-		void TinyVisual::SetBorderStyle(INT style)
-		{
-			m_borderStyle = style;
-		}
-		void TinyVisual::SetBorderImage(const TinyString& szName)
-		{
-			m_borderImage = TinyVisualResource::GetInstance()[szName];
-		}
-		void TinyVisual::SetBorderImage(TinyImage* image)
-		{
-			m_borderImage = image;
-			if (m_borderImage != NULL)
-			{
-				TinyVisualResource::GetInstance().Add(m_borderImage);
-			}
-		}
-		void TinyVisual::SetBorderCenter(const TinyRectangle& center)
-		{
-			m_borderCenter = center;
-		}
+
 		TinyPoint TinyVisual::GetPosition() const
 		{
 			return *((TinyPoint*)&m_rectangle);
@@ -309,16 +174,7 @@ namespace TinyFramework
 			if (size != newsize)
 			{
 				m_rectangle.SetSize(newsize);
-				OnSizeChange(size, newsize);
 			}
-		}
-		TinyRectangle TinyVisual::GetPadding() const
-		{
-			return m_padding;
-		}
-		TinyRectangle TinyVisual::GetMargin() const
-		{
-			return m_margin;
 		}
 		TinyRectangle TinyVisual::GetRectangle() const
 		{
@@ -341,7 +197,7 @@ namespace TinyFramework
 		}
 		DWORD TinyVisual::GetChildCount() const
 		{
-			return m_dwCount;
+			return m_count;
 		}
 		void TinyVisual::SetClip(HRGN hrgnClip)
 		{
@@ -369,14 +225,6 @@ namespace TinyFramework
 			ASSERT(m_document);
 			TinyRectangle s = GetWindowRect();
 			return m_document->Invalidate(&s);
-		}
-		void TinyVisual::OnPosChange(const TinyPoint& oldpos, const TinyPoint& newpos)
-		{
-
-		}
-		void TinyVisual::OnSizeChange(const TinySize& oldsize, const TinySize& newsize)
-		{
-
 		}
 		HRESULT	TinyVisual::OnCreate()
 		{
@@ -517,236 +365,6 @@ namespace TinyFramework
 						return TRUE;
 					}
 				}
-
-			}
-			return FALSE;
-		}
-		TinyString TinyVisual::GetProperty(const TinyString& name)
-		{
-			ITERATOR pos = m_propertys.First();
-			while (pos != NULL)
-			{
-				TinyVisualProperty& value = m_propertys.GetAt(pos);
-				if (value.name() == name)
-				{
-					return value.value();
-				}
-				pos = m_propertys.Next(pos);
-			}
-			return TinyString();
-		}
-		BOOL TinyVisual::IsPropertyNull(const TinyString& name)
-		{
-			ITERATOR pos = m_propertys.First();
-			while (pos != NULL)
-			{
-				TinyVisualProperty& value = m_propertys.GetAt(pos);
-				if (value.name() == name)
-				{
-					return TRUE;
-				}
-				pos = m_propertys.Next(pos);
-			}
-			return FALSE;
-		}
-		BOOL TinyVisual::SetProperty(const TinyString& name, const TinyString& value)
-		{
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::NAME.STR()) == 0)
-			{
-				this->SetName(value.STR());
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::TEXT.STR()) == 0)
-			{
-				this->SetText(value.STR());
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::CURSOR.STR()) == 0)
-			{
-				this->SetCursor(value.STR());
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::BACKGROUNDIMAGE.STR()) == 0)
-			{
-				this->SetBackgroundImage(value.STR());
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::BACKGROUNDCOLOR.STR()) == 0)
-			{
-				this->SetBackgroundColor(TinyVisualBuilder::GetColor(value));
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::BACKGROUNDCENTER.STR()) == 0)
-			{
-				this->SetBackgroundCenter(TinyVisualBuilder::GetRectangle(value));
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::BACKGROUNDSIZE.STR()) == 0)
-			{
-				this->SetBackgroundSize(TinyVisualBuilder::GetSize(value));
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::BACKGROUNDPOSITION.STR()) == 0)
-			{
-				this->SetBackgroundPosition(TinyVisualBuilder::GetPosition(value));
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::BORDERCOLOR.STR()) == 0)
-			{
-				this->SetBorderColor(TinyVisualBuilder::GetColor(value));
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::BORDERWIDTH.STR()) == 0)
-			{
-				this->SetBorderThickness(TinyVisualBuilder::GetInt32(value));
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::BORDERSTYLE.STR()) == 0)
-			{
-				INT val = PS_SOLID;
-				if (strcasecmp(value.STR(), "solid") == 0)
-					val = PS_SOLID;
-				if (strcasecmp(value.STR(), "dash") == 0)
-					val = PS_DASH;
-				if (strcasecmp(value.STR(), "dot") == 0)
-					val = PS_DOT;
-				this->SetBorderStyle(val);
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::BORDERIMAGE.STR()) == 0)
-			{
-				this->SetBorderImage(value.STR());
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::BORDERCENTER.STR()) == 0)
-			{
-				this->SetBorderCenter(TinyVisualBuilder::GetRectangle(value));
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::TOOLTIP.STR()) == 0)
-			{
-				this->SetToolTip(value.STR());
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::ENABLE.STR()) == 0)
-			{
-				this->SetEnable(TinyVisualBuilder::GetBool(value));
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::VISIBLE.STR()) == 0)
-			{
-				this->SetVisible(TinyVisualBuilder::GetBool(value));
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::POSITION.STR()) == 0)
-			{
-				this->SetPosition(TinyVisualBuilder::GetPosition(value));
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::SIZE.STR()) == 0)
-			{
-				this->SetSize(TinyVisualBuilder::GetSize(value));
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::PADDING.STR()) == 0)
-			{
-				this->SetPadding(TinyVisualBuilder::GetRectangle(value));
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::MARGIN.STR()) == 0)
-			{
-				this->SetMargin(TinyVisualBuilder::GetRectangle(value));
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::MAXSIZE.STR()) == 0)
-			{
-				TinySize maxsize = TinyVisualBuilder::GetSize(value);
-				this->SetMaximumSize(maxsize);
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::MINSIZE.STR()) == 0)
-			{
-				TinySize minsize = TinyVisualBuilder::GetSize(value);
-				this->SetMinimumSize(minsize);
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::MINSIZE.STR()) == 0)
-			{
-				TinySize minsize = TinyVisualBuilder::GetSize(value);
-				this->SetMinimumSize(minsize);
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::TEXTCOLOR.STR()) == 0)
-			{
-				this->SetTextColor(TinyVisualBuilder::GetColor(value));
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::TEXTALIGN.STR()) == 0)
-			{
-				this->SetTextAlian(TinyVisualBuilder::GetAlign(value));
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::FONTFAMILY.STR()) == 0)
-			{
-				LOGFONT lf;
-				::GetObject(m_hFONT, sizeof(LOGFONT), &lf);
-				lf.lfCharSet = GB2312_CHARSET;
-				strcpy_s(lf.lfFaceName, ARRAYSIZE(lf.lfFaceName), value.STR());
-				SAFE_DELETE_OBJECT(m_hFONT);
-				m_hFONT = CreateFontIndirect(&lf);
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::FONTWEIGHT.STR()) == 0)
-			{
-				LOGFONT lf;
-				::GetObject(m_hFONT, sizeof(LOGFONT), &lf);
-				lf.lfCharSet = GB2312_CHARSET;
-				lf.lfWeight = atoi(value.STR());
-				SAFE_DELETE_OBJECT(m_hFONT);
-				m_hFONT = CreateFontIndirect(&lf);
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::FONTSIZE.STR()) == 0)
-			{
-				LOGFONT lf;
-				::GetObject(m_hFONT, sizeof(LOGFONT), &lf);
-				lf.lfCharSet = GB2312_CHARSET;
-				TinySize size = TinyVisualBuilder::GetSize(value);
-				lf.lfWidth = size.cx;
-				lf.lfHeight = size.cy;
-				SAFE_DELETE_OBJECT(m_hFONT);
-				m_hFONT = CreateFontIndirect(&lf);
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::FONTSTYLE.STR()) == 0)
-			{
-				LOGFONT lf;
-				::GetObject(m_hFONT, sizeof(LOGFONT), &lf);
-				lf.lfCharSet = GB2312_CHARSET;
-				lf.lfItalic = FALSE;
-				if (strcasecmp(value.STR(), "italic") == 0)
-					lf.lfItalic = TRUE;
-				if (strcasecmp(value.STR(), "oblique") == 0)
-					lf.lfItalic = TRUE;
-				if (strcasecmp(value.STR(), "normal") == 0)
-					lf.lfItalic = FALSE;
-				SAFE_DELETE_OBJECT(m_hFONT);
-				m_hFONT = CreateFontIndirect(&lf);
-				return TRUE;
-			}
-			if (strcasecmp(name.STR(), TinyVisualPropertyConst::TEXTDECORATION.STR()) == 0)
-			{
-				LOGFONT lf;
-				::GetObject(m_hFONT, sizeof(LOGFONT), &lf);
-				lf.lfUnderline = FALSE;
-				lf.lfStrikeOut = FALSE;
-				if (strcasecmp(value.STR(), "underline") == 0)
-					lf.lfUnderline = TRUE;
-				if (strcasecmp(value.STR(), "overline") == 0)
-					lf.lfStrikeOut = TRUE;
-				SAFE_DELETE_OBJECT(m_hFONT);
-				m_hFONT = CreateFontIndirect(&lf);
-				return TRUE;
 			}
 			return FALSE;
 		}

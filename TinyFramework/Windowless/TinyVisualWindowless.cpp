@@ -8,6 +8,69 @@ namespace TinyFramework
 {
 	namespace Windowless
 	{
+		TinyClipCanvas::TinyClipCanvas(HDC hDC, TinyVisual* spvis, const RECT& rcPaint)
+			:TinyCanvas(hDC),
+			m_hRGN(NULL),
+			m_hOldRGN(NULL)
+		{
+			ASSERT(spvis);
+			RECT clip = { 0 };
+			::GetClipBox(hDC, &clip);
+			m_hOldRGN = ::CreateRectRgnIndirect(&clip);
+			m_hRGN = ::CreateRectRgnIndirect(&rcPaint);
+			if (spvis->GetClip())
+			{
+				::CombineRgn(m_hRGN, m_hRGN, spvis->GetClip(), RGN_AND);
+			}
+			::ExtSelectClipRgn(m_hDC, m_hRGN, RGN_AND);
+		}
+		TinyClipCanvas::~TinyClipCanvas()
+		{
+			::SelectClipRgn(m_hDC, m_hOldRGN);
+			SAFE_DELETE_OBJECT(m_hOldRGN);
+			SAFE_DELETE_OBJECT(m_hRGN);
+		}
+		//////////////////////////////////////////////////////////////////////////
+		TinyVisualFilters::TinyVisualFilters()
+		{
+
+		}
+		TinyVisualFilters::~TinyVisualFilters()
+		{
+		}
+		BOOL TinyVisualFilters::Add(TinyVisualFilter*  element)
+		{
+			return m_array.Add(element);
+		}
+		BOOL TinyVisualFilters::Remove(TinyVisualFilter* element)
+		{
+			return m_array.Remove(element);
+		}
+		BOOL TinyVisualFilters::RemoveAt(INT index)
+		{
+			return m_array.RemoveAt(index);
+		}
+		void TinyVisualFilters::RemoveAll()
+		{
+			m_array.RemoveAll();
+		}
+		TinyVisualFilter* TinyVisualFilters::operator[](INT index)
+		{
+			return m_array[index];
+		}
+		const TinyVisualFilter* TinyVisualFilters::operator[](INT index) const
+		{
+			return m_array[index];
+		}
+		INT TinyVisualFilters::Lookup(TinyVisualFilter* element) const
+		{
+			return m_array.Lookup(element);
+		}
+		INT  TinyVisualFilters::GetSize() const
+		{
+			return m_array.GetSize();
+		}
+		//////////////////////////////////////////////////////////////////////////
 		IMPLEMENT_DYNAMIC(TinyVisualWindowless, TinyVisualWND);
 		TinyVisualWindowless::TinyVisualWindowless()
 			:m_document(*this),
@@ -23,33 +86,28 @@ namespace TinyFramework
 		}
 		BOOL TinyVisualWindowless::Create(HWND hParent, LPCSTR pszFile)
 		{
-			m_szSkinFile = pszFile;
 			if (!TinyVisualWND::Create(hParent, 0, 0, 0, 0))
 				return FALSE;
 			return TRUE;
 		}
 		BOOL TinyVisualWindowless::Create(HWND hParent, LPCTSTR lpTemplateName, LPCSTR pszFile)
 		{
-			m_szSkinFile = pszFile;
 			if (!TinyVisualWND::Create(hParent, lpTemplateName))
 				return FALSE;
 			return TRUE;
 		}
 		BOOL TinyVisualWindowless::Create(HWND hParent, WORD wInteger, LPCSTR pszFile)
 		{
-			m_szSkinFile = pszFile;
 			if (!TinyVisualWND::Create(hParent, wInteger))
 				return FALSE;
 			return TRUE;
 		}
 		INT_PTR TinyVisualWindowless::DoModal(HWND hParent, WORD wInteger, LPCSTR pszFile)
 		{
-			m_szSkinFile = pszFile;
 			return TinyVisualWND::DoModal(hParent, wInteger);
 		}
 		INT_PTR TinyVisualWindowless::DoModal(HWND hParent, LPCTSTR lpTemplateName, LPCSTR pszFile)
 		{
-			m_szSkinFile = pszFile;
 			return TinyVisualWND::DoModal(hParent, lpTemplateName);
 		}
 		DWORD TinyVisualWindowless::RetrieveStyle()
@@ -78,8 +136,6 @@ namespace TinyFramework
 		}
 		BOOL TinyVisualWindowless::Initialize()
 		{
-			if (!PathFileExists(m_szSkinFile.CSTR()))
-				return FALSE;
 			m_visualDC.Reset(new TinyVisualDC(m_hWND));
 			if (!m_visualDC)
 			{
@@ -97,12 +153,7 @@ namespace TinyFramework
 					return FALSE;
 				}
 			}
-			if (!m_builder.LoadFile(m_szSkinFile.CSTR()))
-			{
-				LOG(ERROR) << "LoadFile Skin FAIl";
-				return FALSE;
-			}
-			if (!m_document.Initialize(&m_builder))
+			if (!m_document.Initialize())
 			{
 				LOG(ERROR) << "Document Initialize FAIl";
 				return FALSE;
@@ -202,15 +253,15 @@ namespace TinyFramework
 			bHandled = FALSE;
 			if (lParam != NULL)
 			{
-				m_pos.x = LOWORD(lParam);
-				m_pos.y = HIWORD(lParam);
+				m_position.x = LOWORD(lParam);
+				m_position.y = HIWORD(lParam);
 			}
 			if (m_shadow != NULL)
 			{
 				ASSERT(m_shadow->Handle());
 				TinyRectangle box = m_shadow->GetShadowBox();
-				INT x = m_pos.x - box.left;
-				INT y = m_pos.y - box.top;
+				INT x = m_position.x - box.left;
+				INT y = m_position.y - box.top;
 				::SetWindowPos(m_shadow->Handle(), NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 			}
 			return FALSE;
