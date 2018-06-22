@@ -26,25 +26,35 @@ namespace TinyFramework
 
 		void TinyVisualWindow::SetPosition(const TinyPoint& pos)
 		{
-			TinyVisual::SetPosition(TinyPoint(0, 0));
+			TinyVisual::SetPosition(pos);
+			ASSERT(m_document);
+			::SetWindowPos(m_document->GetVisualHWND().Handle(), NULL, pos.x, pos.y, 0, 0, SWP_NOACTIVATE | SWP_NOSIZE);
+		}
+
+		void TinyVisualWindow::SetSize(const TinySize& size)
+		{
+			TinyVisual::SetSize(size);
+			ASSERT(m_document);
+			::SetWindowPos(m_document->GetVisualHWND().Handle(), NULL, 0, 0, size.cx, size.cy, SWP_NOACTIVATE | SWP_NOMOVE);
 		}
 
 		void TinyVisualWindow::SetText(const TinyString& pzText)
 		{
+			TinyVisual::SetText(pzText);
 			ASSERT(m_document);
 			::SetWindowText(m_document->GetVisualHWND().Handle(), pzText.CSTR());
-			TinyVisual::SetText(pzText);
 		}
 
 		TinyString TinyVisualWindow::RetrieveTag() const
 		{
-			return TinyVisualTagConst::WINDOW;
+			return TinyVisualTag::WINDOW;
 		}
 		BOOL TinyVisualWindow::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
 			ASSERT(m_document);
-			TinyClipCanvas canvas(hDC, this, rcPaint);
 			TinyRectangle clip = m_document->GetWindowRect(this);
+			TinyClipCanvas canvas(hDC, this, rcPaint);
+
 			return TRUE;
 		}
 	}

@@ -254,13 +254,11 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	TinyStringMap<INT> maps;
 
-	TinyVisualResource::GetInstance().Load("skin\\resource.xml");
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\search1.xml");
 	SkinWindow view;
-	view.Create(NULL, szFile.c_str());
+	view.Create(NULL, "");
 	view.UpdateWindow();
 	INT loopRes = theLoop.MessageLoop();
 	TinyApplication::GetInstance()->RemoveMessageLoop();

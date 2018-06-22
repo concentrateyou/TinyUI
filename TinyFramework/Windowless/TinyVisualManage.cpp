@@ -283,24 +283,7 @@ namespace TinyFramework
 			{
 				m_szPath.erase(backslash + 1);
 			}
-			Register(TinyVisualTagConst::WINDOW, CLASS_NAME(TinyVisualWindow));
-			Register(TinyVisualTagConst::TEXTBOX, CLASS_NAME(TinyVisualTextBox));
-			Register(TinyVisualTagConst::BUTTON, CLASS_NAME(TinyVisualButton));
-			Register(TinyVisualTagConst::LABEL, CLASS_NAME(TinyVisualLabel));
-			Register(TinyVisualTagConst::VSCROLLBAR, CLASS_NAME(TinyVisualVScrollBar));
-			Register(TinyVisualTagConst::HSCROLLBAR, CLASS_NAME(TinyVisualHScrollBar));
-			Register(TinyVisualTagConst::SYSCAPTION, CLASS_NAME(TinyVisualCaption));
-			Register(TinyVisualTagConst::COMBOBOX, CLASS_NAME(TinyVisualComboBox));
-			Register(TinyVisualTagConst::OPTION, CLASS_NAME(TinyVisualOption));
-			Register(TinyVisualTagConst::PANEL, CLASS_NAME(TinyVisualPanel));
-			Register(TinyVisualTagConst::TAB, CLASS_NAME(TinyVisualTagConst));
-			Register(TinyVisualTagConst::NATIVEWINDOW, CLASS_NAME(TinyVisualNative));
-			Register(TinyVisualTagConst::LIST, CLASS_NAME(TinyVisualList));
-			Register(TinyVisualTagConst::LISTITEM, CLASS_NAME(TinyVisualListItem));
-			Register(TinyVisualTagConst::ANIMATION, CLASS_NAME(TinyVisualAnimation));
-			Register(TinyVisualTagConst::PANEL, CLASS_NAME(TinyVisualPanel));
-			Register(TinyVisualTagConst::CONTEXTMENU, CLASS_NAME(TinyVisualContextMenu));
-			Register(TinyVisualTagConst::MENUITEM, CLASS_NAME(TinyVisualMenuItem));
+			Register(TinyVisualTag::WINDOW, CLASS_NAME(TinyVisualWindow));
 		}
 		TinyVisualResource::~TinyVisualResource()
 		{
@@ -317,7 +300,7 @@ namespace TinyFramework
 			if (m_doc.LoadFile(szFile.c_str(), TIXML_ENCODING_UTF8))
 			{
 				TiXmlElement *pXMLNode = m_doc.RootElement();
-				if (pXMLNode && !strcasecmp(pXMLNode->Value(), TinyVisualTagConst::CONTEXT.STR()))
+				if (pXMLNode && !strcasecmp(pXMLNode->Value(), TinyVisualTag::CONTEXT.STR()))
 				{
 					BuildContext(pXMLNode);
 				}
@@ -431,7 +414,7 @@ namespace TinyFramework
 		{
 			for (const TiXmlNode* pXMLChildNode = pXMLNode->FirstChild(); pXMLChildNode; pXMLChildNode = pXMLChildNode->NextSibling())
 			{
-				if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTagConst::IMAGE.STR()))
+				if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::IMAGE.STR()))
 				{
 					BuildImage(pXMLChildNode);
 				}
@@ -441,7 +424,7 @@ namespace TinyFramework
 		{
 			for (const TiXmlNode* pXMLChildNode = pXMLNode->FirstChild(); pXMLChildNode; pXMLChildNode = pXMLChildNode->NextSibling())
 			{
-				if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTagConst::ADD.STR()))
+				if (!strcasecmp(pXMLChildNode->Value(), TinyVisualTag::ADD.STR()))
 				{
 					const TiXmlElement* pXML = static_cast<const TiXmlElement*>(pXMLChildNode);
 					const TiXmlAttribute* pFA = pXML->FirstAttribute();

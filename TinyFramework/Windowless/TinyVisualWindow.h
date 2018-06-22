@@ -7,7 +7,6 @@ namespace TinyFramework
 	{
 		class TinyVisualWindow : public TinyVisual
 		{
-			friend class TinyVisualBuilder;
 			friend class TinyVisualDocument;
 			DECLARE_DYNCREATE(TinyVisualWindow)
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualWindow)
@@ -16,11 +15,12 @@ namespace TinyFramework
 			TinyVisualWindow(TinyVisual* spvisParent, TinyVisualDocument* document);
 		public:
 			virtual ~TinyVisualWindow();
-			TinyString RetrieveTag() const OVERRIDE;
-			void SetPosition(const TinyPoint& pos) OVERRIDE;
-			void SetText(const TinyString& pzText) OVERRIDE;
+			TinyString	RetrieveTag() const OVERRIDE;
+			void		SetPosition(const TinyPoint& pos) OVERRIDE;
+			void		SetSize(const TinySize& size) OVERRIDE;
+			void		SetText(const TinyString& pzText) OVERRIDE;
 		public:
-			BOOL OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
+			BOOL		OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 		};
 	}
 }

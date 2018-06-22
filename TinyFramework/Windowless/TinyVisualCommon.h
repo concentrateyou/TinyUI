@@ -95,7 +95,7 @@ namespace TinyFramework
 		/// <summary>
 		/// Tag³£Á¿
 		/// </summary>
-		class TinyVisualTagConst
+		class TinyVisualTag
 		{
 		public:
 			static const TinyString WINDOW;

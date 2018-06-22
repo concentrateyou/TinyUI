@@ -8,8 +8,8 @@ namespace TinyFramework
 	namespace Windowless
 	{
 		TinyVisualDocument::TinyVisualDocument(TinyVisualWindowless& window)
-			:m_window(window),
-			m_factory(*this),
+			:m_windowless(window),
+			m_visualFactory(*this),
 			m_spvisWindow(NULL),
 			m_spvisCapture(NULL),
 			m_spvisFocus(NULL),
@@ -35,31 +35,37 @@ namespace TinyFramework
 			{
 				m_spvisFocus = NULL;
 			}
-			return m_factory.Destory(spvis);
+			if (spvis == m_spvisActive)
+			{
+				m_spvisActive = NULL;
+			}
+			return m_visualFactory.Destory(spvis);
 		}
 		BOOL TinyVisualDocument::Initialize()
 		{
-			return TRUE;
+			m_spvisWindow = this->Create(TinyVisualTag::WINDOW, NULL);
+			return m_spvisWindow != NULL;
 		}
 		void TinyVisualDocument::Uninitialize()
 		{
 			m_spvisCapture = NULL;
 			m_spvisFocus = NULL;
 			m_spvisLastMouse = NULL;
-			Destory(m_spvisWindow);
+			m_spvisActive = NULL;
+			this->Destory(m_spvisWindow);
 			m_spvisWindow = NULL;
 		}
 		TinyVisualWindowless&	TinyVisualDocument::GetVisualHWND()
 		{
-			return m_window;
+			return m_windowless;
 		}
 		TinyVisualDC*	TinyVisualDocument::GetVisualDC() const
 		{
-			return m_window.m_visualDC;
+			return m_windowless.m_visualDC;
 		}
 		HWND TinyVisualDocument::Handle() const
 		{
-			return  m_window.Handle();
+			return  m_windowless.Handle();
 		}
 		void TinyVisualDocument::LinkVisual(TinyVisual* spvis, TinyVisual* spvisInsert, TinyVisual**pspvisFirst)
 		{
@@ -188,7 +194,9 @@ namespace TinyFramework
 		TinyVisual* TinyVisualDocument::GetParent(TinyVisual* spvis) const
 		{
 			if (!spvis)
+			{
 				return m_spvisWindow;
+			}
 			return spvis->m_spvisParent;
 		}
 		TinyVisual* TinyVisualDocument::SetParent(TinyVisual* spvis, TinyVisual* spvisNewParent)
@@ -369,9 +377,9 @@ namespace TinyFramework
 					m_spvisCapture->OnCapture(TRUE);
 				}
 			}
-			if (::GetCapture() != m_window.Handle())
+			if (::GetCapture() != m_windowless.Handle())
 			{
-				::SetCapture(spvisNew != NULL ? m_window.Handle() : NULL);
+				::SetCapture(spvisNew != NULL ? m_windowless.Handle() : NULL);
 			}
 			return spvisOld;
 		}
@@ -403,9 +411,9 @@ namespace TinyFramework
 					m_spvisFocus->OnFocus(TRUE);
 				}
 			}
-			if (::GetFocus() != m_window.Handle())
+			if (::GetFocus() != m_windowless.Handle())
 			{
-				::SetFocus(spvisNew != NULL ? m_window.Handle() : NULL);
+				::SetFocus(spvisNew != NULL ? m_windowless.Handle() : NULL);
 			}
 			return spvisOld;
 		}
@@ -424,9 +432,9 @@ namespace TinyFramework
 					m_spvisActive->OnActive(TRUE);
 				}
 			}
-			if (::GetActiveWindow() != m_window.Handle())
+			if (::GetActiveWindow() != m_windowless.Handle())
 			{
-				::SetActiveWindow(spvisNew != NULL ? m_window.Handle() : NULL);
+				::SetActiveWindow(spvisNew != NULL ? m_windowless.Handle() : NULL);
 			}
 			return spvisOld;
 		}
@@ -461,16 +469,16 @@ namespace TinyFramework
 		TinyPoint TinyVisualDocument::GetScreenPos(const TinyVisual* spvis)
 		{
 			TinyPoint pos = GetWindowPos(spvis);
-			ClientToScreen(m_window.Handle(), &pos);
+			ClientToScreen(m_windowless.Handle(), &pos);
 			return pos;
 		}
 		BOOL TinyVisualDocument::Invalidate(RECT *lpRect)
 		{
-			return ::InvalidateRect(m_window.Handle(), lpRect, FALSE);
+			return ::InvalidateRect(m_windowless.Handle(), lpRect, FALSE);
 		}
 		BOOL TinyVisualDocument::Redraw(RECT *lprcUpdate, HRGN hrgnUpdate)
 		{
-			return ::RedrawWindow(m_window.Handle(), lprcUpdate, hrgnUpdate, RDW_INVALIDATE);
+			return ::RedrawWindow(m_windowless.Handle(), lprcUpdate, hrgnUpdate, RDW_INVALIDATE);
 		}
 		void TinyVisualDocument::Draw(TinyVisualDC* ps, const RECT& rcPaint)
 		{
@@ -489,7 +497,7 @@ namespace TinyFramework
 		}
 		void TinyVisualDocument::Draw(TinyVisual* spvis, HDC hDC, const RECT& rcPaint)
 		{
-			ASSERT(m_window.m_visualDC);
+			ASSERT(m_windowless.m_visualDC);
 			while (spvis != NULL)
 			{
 				if (spvis->IsVisible())
@@ -525,7 +533,7 @@ namespace TinyFramework
 			TinyString classSTR = TinyVisualResource::GetInstance().GetClassName(tag);
 			if (!classSTR.IsEmpty())
 			{
-				return m_factory.Create(classSTR, spvisParent);
+				return m_visualFactory.Create(classSTR, spvisParent);
 			}
 			return NULL;
 		}
@@ -534,7 +542,7 @@ namespace TinyFramework
 			TinyString classSTR = TinyVisualResource::GetInstance().GetClassName(tag);
 			if (!classSTR.IsEmpty())
 			{
-				return m_factory.Create(x, y, cx, cy, classSTR, spvisParent);
+				return m_visualFactory.Create(x, y, cx, cy, classSTR, spvisParent);
 			}
 			return NULL;
 		}
@@ -950,7 +958,7 @@ namespace TinyFramework
 		{
 			TRACE("Dump-----\n");
 			TinyRectangle rect;
-			m_window.GetWindowRect(rect);
+			m_windowless.GetWindowRect(rect);
 			TRACE("window:%d,%d,%d,%d\n", rect.left, rect.top, rect.right, rect.bottom);
 			INT deep = 0;
 			TinyVisual* spvis = this->GetParent(NULL);

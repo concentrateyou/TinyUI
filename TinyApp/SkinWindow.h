@@ -20,9 +20,9 @@ class SkinWindow : public TinyVisualWindowless
 public:
 	SkinWindow();
 	virtual ~SkinWindow();
-
 	void OnInitialize() OVERRIDE;
 	void OnUninitialize() OVERRIDE;
-	
+private:
+
 };
 
