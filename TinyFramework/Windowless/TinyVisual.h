@@ -68,10 +68,6 @@ namespace TinyFramework
 			virtual HRESULT		OnCreate();
 			virtual HRESULT		OnDestory();
 			virtual HRESULT		OnInitialize();
-			virtual HRESULT		OnMouseMove(const TinyPoint& pos, DWORD dwFlags);
-			virtual HRESULT		OnMouseWheel(const TinyPoint& pos, SHORT zDelta, DWORD dwFlags);
-			virtual HRESULT		OnMouseEnter();
-			virtual HRESULT		OnMouseLeave();
 			virtual HRESULT		OnLButtonDown(const TinyPoint& pos, DWORD dwFlags);
 			virtual HRESULT		OnLButtonUp(const TinyPoint& pos, DWORD dwFlags);
 			virtual HRESULT		OnLButtonDBClick(const TinyPoint& pos, DWORD dwFlags);
@@ -81,6 +77,10 @@ namespace TinyFramework
 			virtual HRESULT		OnMButtonDown(const TinyPoint& pos, DWORD dwFlags);
 			virtual HRESULT		OnMButtonUp(const TinyPoint& pos, DWORD dwFlags);
 			virtual HRESULT		OnMButtonDBClick(const TinyPoint& pos, DWORD dwFlags);
+			virtual HRESULT		OnMouseMove(const TinyPoint& pos, DWORD dwFlags);
+			virtual HRESULT		OnMouseWheel(const TinyPoint& pos, SHORT zDelta, DWORD dwFlags);
+			virtual HRESULT		OnMouseEnter();
+			virtual HRESULT		OnMouseLeave();
 			virtual HRESULT		OnKeyDown(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
 			virtual HRESULT		OnKeyUp(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
 			virtual HRESULT		OnChar(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);
@@ -123,10 +123,10 @@ namespace TinyFramework
 			TinySize			m_maximumSize;//元素的最大像素大小
 			TinySize			m_minimumSize;//元素的最小像素大小
 			TinyRectangle		m_rectangle;//相对于父元素区域
-			BOOL				m_visible;
-			BOOL				m_enable;
 			HRGN				m_hrgnClip;
 			HFONT				m_hFONT;
+			BOOL				m_visible;
+			BOOL				m_enable;
 		};
 	}
 }

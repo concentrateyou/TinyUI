@@ -17,6 +17,12 @@ namespace TinyFramework
 		class TinyVisualElement : public TinyVisual
 		{
 			DECLARE_DYNCREATE(TinyVisualElement)
+		protected:
+			TinyVisualElement();
+			TinyVisualElement(TinyVisual* spvisParent, TinyVisualDocument* document);
+			virtual ~TinyVisualElement();
+		public:
+			
 		};
 	}
 }

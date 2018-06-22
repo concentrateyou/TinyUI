@@ -8,14 +8,14 @@ namespace TinyFramework
 {
 	namespace Windowless
 	{
-		IMPLEMENT_DYNCREATE(TinyVisualWindow, TinyVisual);
+		IMPLEMENT_DYNCREATE(TinyVisualWindow, TinyVisualElement);
 
 		TinyVisualWindow::TinyVisualWindow()
 		{
 
 		}
 		TinyVisualWindow::TinyVisualWindow(TinyVisual* spvisParent, TinyVisualDocument* document)
-			:TinyVisual(spvisParent, document)
+			:TinyVisualElement(spvisParent, document)
 		{
 
 		}
@@ -26,7 +26,7 @@ namespace TinyFramework
 
 		void TinyVisualWindow::SetPosition(const TinyPoint& pos)
 		{
-			TinyVisual::SetPosition(pos);
+			TinyVisual::SetPosition(TinyPoint(0, 0));
 			ASSERT(m_document);
 			::SetWindowPos(m_document->GetVisualHWND().Handle(), NULL, pos.x, pos.y, 0, 0, SWP_NOACTIVATE | SWP_NOSIZE);
 		}
