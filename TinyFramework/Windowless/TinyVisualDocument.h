@@ -24,7 +24,6 @@ namespace TinyFramework
 		/// </summary>
 		class TinyVisualDocument
 		{
-			friend class TinyVisualBuilder;
 			friend class TinyVisualFactory;
 			friend class TinyVisualWindowless;
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualDocument)
@@ -44,22 +43,24 @@ namespace TinyFramework
 			BOOL					IsActive(TinyVisual* spvis) const;
 			HWND					Handle() const;
 			TinyVisualDC*			GetVisualDC() const;
-			TinyVisualWindowless&	GetVisualHWND();
 			TinyVisual*				GetVisual(TinyVisual* spvis, UINT cmd) const;
-			TinyVisual*				SetParent(TinyVisual* spvis, TinyVisual* spvisNewParent);
 			TinyVisual*				GetParent(TinyVisual* spvis) const;
-			TinyVisual*				GetVisualByName(const TinyString& name);
-			TinyVisual*				GetVisualByPos(INT x, INT y);
+			TinyVisualWindowless&	GetVisualHWND();
 			TinyVisual*				GetCapture() const;
-			TinyVisual*				SetCapture(TinyVisual* spvis);
 			TinyVisual*				GetFocus() const;
-			TinyVisual*				SetFocus(TinyVisual* spvis);
-			TinyVisual*				SetActive(TinyVisual* spvis);
 			TinyVisual*				GetActive() const;
-			TinyPoint				VisualToClient(const TinyVisual* spvis, const TinyPoint& pos);
+
 			TinyPoint				GetWindowPos(const TinyVisual* spvis);
 			TinyRectangle			GetWindowRect(const TinyVisual* spvis);
 			TinyPoint				GetScreenPos(const TinyVisual* spvis);
+			TinyVisual*				GetVisualByName(const TinyString& name);
+			TinyVisual*				GetVisualByPos(INT x, INT y);
+			TinyVisual*				SetParent(TinyVisual* spvis, TinyVisual* spvisNewParent);
+			TinyVisual*				SetCapture(TinyVisual* spvis);
+			TinyVisual*				SetFocus(TinyVisual* spvis);
+			TinyVisual*				SetActive(TinyVisual* spvis);
+
+			TinyPoint				VisualToClient(const TinyVisual* spvis, const TinyPoint& pos);
 			BOOL					ReleaseCapture();
 			BOOL					Invalidate(RECT* lpRect = NULL);
 			BOOL					Redraw(RECT *lprcUpdate = NULL, HRGN hrgnUpdate = NULL);
