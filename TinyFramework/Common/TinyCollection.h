@@ -704,7 +704,10 @@ namespace TinyFramework
 		}
 		TinyNode* pNew = m_pFreeList;
 		m_pFreeList = m_pFreeList->m_pNext;
-		::new(pNew)TinyNode(value);
+#pragma push_macro("new")
+#undef new
+		new(pNew) TinyNode(value);
+#pragma pop_macro("new")
 		pNew->m_pPrev = pPrev;
 		pNew->m_pNext = pNext;
 		m_dwCount++;

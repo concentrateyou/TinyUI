@@ -427,6 +427,9 @@
     <ClCompile Include="Windowless\TinyVisualElement.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualShadow.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">

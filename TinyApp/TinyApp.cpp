@@ -8,8 +8,6 @@
 #include "ChatDlg.h"
 #include "MFFrame.h"
 #include "Windowless/TinyVisualWindowless.h"
-#include "Windowless/TinyVisualTextBox.h"
-#include "Windowless/TinyVisualContextMenu.h"
 #include "Render/TinyDDraw.h"
 #include "Media/TinyWASAPIAudioCapture.h"
 #include "Media/TinyWASAPIAudioRender.h"
@@ -29,7 +27,6 @@
 #include "Media/TinyWave.h"
 #include "FLVReader.h"
 #include "TSReader.h"
-#include "Windowless/TinyVisualLayeredWindow.h"
 #include "Media/TinySoundCapture.h"
 #include "MediaTest.h"
 #include "Media/TinyMFIntelQSVDecode.h"
@@ -38,6 +35,9 @@
 #include "Network/TinyPing.h"
 #include "HLSReader.h"
 #include "GLView.h"
+
+#include <unordered_map>
+using namespace std;
 
 #include "IO/TinyProcess.h"
 
@@ -258,7 +258,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
 	string szFile = StringPrintf("%s\%s", TinyVisualResource::GetInstance().GetDefaultPath().c_str(), "skin\\search1.xml");
 	SkinWindow view;
-	view.Create(NULL,szFile.c_str());
+	view.Create(NULL, szFile.c_str());
 	view.UpdateWindow();
 	INT loopRes = theLoop.MessageLoop();
 	TinyApplication::GetInstance()->RemoveMessageLoop();

@@ -219,6 +219,7 @@ namespace TinyFramework
 	/// <summary>
 	/// ×Ö·û´®Map
 	/// </summary>
+	template<class T>
 	class TinyStringMap
 	{
 		DISALLOW_COPY_AND_ASSIGN(TinyStringMap)
@@ -228,21 +229,36 @@ namespace TinyFramework
 			TinyNode*	m_pNext;
 			UINT		m_hashValue;
 			TinyString	m_key;
-			void*		m_value;
+			T			m_value;
+		public:
+			TinyNode(T&& value)
+				:m_value(std::move(value)),
+				m_pNext(NULL)
+			{
+
+			}
+			TinyNode(const T& value)
+				:m_value(value),
+				m_pNext(NULL)
+			{
+
+			}
 		};
 	public:
 		explicit TinyStringMap(INT_PTR blockSize = 10);
 		virtual ~TinyStringMap();
 		INT_PTR		GetSize() const;
 		BOOL		IsEmpty() const;
-		BOOL		Lookup(LPCTSTR key, void*& rValue) const;
-		void*&		operator[](LPCTSTR key);
-		void		SetAt(LPCTSTR key, void* newValue);
+		BOOL		Lookup(LPCTSTR key, T& value) const;
+		T&			operator[](LPCTSTR key);
+		void		SetAt(LPCTSTR key, const T& value);
+		void		SetAt(LPCTSTR key, T&& value);
 		BOOL		Remove(LPCTSTR key);
 		void		RemoveAll();
 		void		Initialize(UINT hashSize);
 	private:
-		TinyNode*	New();
+		TinyNode*	New(const T& value);
+		TinyNode*	New(T&& value);
 		void		Delete(TinyNode* ps);
 		TinyNode*	Lookup(LPCTSTR key, UINT& index, UINT& hash) const;
 		UINT		HashKey(LPCTSTR key) const;
@@ -254,7 +270,230 @@ namespace TinyFramework
 		TinyNode*	m_pFreeList;
 		TinyPlex*	m_pBlocks;
 	};
-
+	template<class T>
+	TinyStringMap<T>::TinyStringMap(INT_PTR blockSize)
+		:m_blockSize(blockSize),
+		m_hashSize(17),
+		m_count(0),
+		m_pTable(NULL),
+		m_pFreeList(NULL),
+		m_pBlocks(NULL)
+	{
+		m_blockSize = m_blockSize == 0 ? 10 : m_blockSize;
+	}
+	template<class T>
+	TinyStringMap<T>::~TinyStringMap()
+	{
+		RemoveAll();
+	}
+	template<class T>
+	INT_PTR	TinyStringMap<T>::GetSize() const
+	{
+		return m_count;
+	}
+	template<class T>
+	BOOL TinyStringMap<T>::IsEmpty() const
+	{
+		return m_count == 0;
+	}
+	template<class T>
+	void TinyStringMap<T>::Initialize(UINT hashSize)
+	{
+		if (hashSize == 0)
+			hashSize = 17;
+		SAFE_DELETE_ARRAY(m_pTable);
+		m_pTable = new TinyNode*[hashSize];
+		memset(m_pTable, 0, sizeof(TinyNode*) * hashSize);
+		m_hashSize = hashSize;
+	}
+	template<class T>
+	UINT TinyStringMap<T>::HashKey(LPCTSTR key) const
+	{
+		//STLËã·¨xfunctional
+		UINT value = 2166136261U;
+		UINT uFirst = 0;
+		UINT uLast = (UINT)_tcslen(key);
+		UINT uStride = 1 + uLast / 10;
+		for (; uFirst < uLast; uFirst += uStride)
+		{
+			value = 16777619U * value ^ (UINT)key[uFirst];
+		}
+		return(value);
+	}
+	template<class T>
+	BOOL TinyStringMap<T>::Lookup(LPCTSTR key, T& value) const
+	{
+		UINT bucket = 0;
+		UINT hash = 0;
+		TinyNode* ps = NULL;
+		ps = Lookup(key, bucket, hash);
+		if (ps == NULL)
+			return FALSE;
+		value = ps->m_value;
+		return TRUE;
+	}
+	template<class T>
+	T& TinyStringMap<T>::operator[](LPCTSTR key)
+	{
+		UINT bucket = 0;
+		UINT hash = 0;
+		TinyNode* ps = NULL;
+		if ((ps = Lookup(key, bucket, hash)) == NULL)
+		{
+			TRACE("bucket:%d\n", bucket);
+			if (m_pTable == NULL)
+			{
+				Initialize(m_hashSize);
+			}
+			ps = New(T());
+			ps->m_hashValue = hash;
+			ps->m_key = key;
+			ps->m_pNext = m_pTable[bucket];
+			m_pTable[bucket] = ps;
+		}
+		else
+		{
+			TRACE("bucket:%d\n", bucket);
+		}
+		return ps->m_value;
+	}
+	template<class T>
+	void TinyStringMap<T>::SetAt(LPCTSTR key, const T& value)
+	{
+		(*this)[key] = value;
+	}
+	template<class T>
+	void TinyStringMap<T>::SetAt(LPCTSTR key, T&& value)
+	{
+		(*this)[key] = value;
+	}
+	template<class T>
+	BOOL TinyStringMap<T>::Remove(LPCTSTR key)
+	{
+		if (m_pTable == NULL)
+			return FALSE;
+		TinyNode** ppPrev = NULL;
+		UINT hash = 0;
+		hash = HashKey(key);
+		ppPrev = &m_pTable[hash % m_hashSize];
+		TinyNode* ps = NULL;
+		for (ps = *ppPrev; ps != NULL; ps = ps->m_pNext)
+		{
+			if ((ps->m_hashValue == hash) && (ps->m_key == key))
+			{
+				*ppPrev = ps->m_pNext;
+				Delete(ps);
+				return TRUE;
+			}
+			ppPrev = &ps->m_pNext;
+		}
+		return FALSE;
+	}
+	template<class T>
+	void TinyStringMap<T>::RemoveAll()
+	{
+		if (m_pTable != NULL)
+		{
+			for (UINT index = 0; index < m_hashSize; index++)
+			{
+				TinyNode* ps = NULL;
+				for (ps = m_pTable[index]; ps != NULL; ps = ps->m_pNext)
+				{
+					ps->~TinyNode();
+				}
+			}
+			SAFE_DELETE_ARRAY(m_pTable);
+		}
+		m_count = 0;
+		m_pFreeList = NULL;
+		m_pBlocks->Destory();
+		m_pBlocks = NULL;
+	}
+	template<class T>
+	typename TinyStringMap<T>::TinyNode* TinyStringMap<T>::New(T&& value)
+	{
+		if (m_pFreeList == NULL)
+		{
+			TinyPlex* pPlex = TinyPlex::Create(m_pBlocks, m_blockSize, sizeof(TinyNode));
+			if (pPlex == NULL)
+				return NULL;
+			TinyNode* ps = static_cast<TinyNode*>(pPlex->data());
+			ps += m_blockSize - 1;
+			for (INT_PTR iBlock = m_blockSize - 1; iBlock >= 0; iBlock--)
+			{
+				ps->m_pNext = m_pFreeList;
+				m_pFreeList = ps;
+				ps--;
+			}
+		}
+		TinyNode* pNew = m_pFreeList;
+		m_pFreeList = m_pFreeList->m_pNext;
+		m_count++;
+		ASSERT(m_count > 0);
+#pragma push_macro("new")
+#undef new
+		new(pNew) TinyNode(std::move(value));
+#pragma pop_macro("new")
+		return pNew;
+	}
+	template<class T>
+	typename TinyStringMap<T>::TinyNode* TinyStringMap<T>::New(const T& value)
+	{
+		if (m_pFreeList == NULL)
+		{
+			TinyPlex* pPlex = TinyPlex::Create(m_pBlocks, m_blockSize, sizeof(TinyNode));
+			if (pPlex == NULL)
+				return NULL;
+			TinyNode* ps = static_cast<TinyNode*>(pPlex->data());
+			ps += m_blockSize - 1;
+			for (INT_PTR iBlock = m_blockSize - 1; iBlock >= 0; iBlock--)
+			{
+				ps->m_pNext = m_pFreeList;
+				m_pFreeList = ps;
+				ps--;
+			}
+		}
+		TinyNode* pNew = m_pFreeList;
+		m_pFreeList = m_pFreeList->m_pNext;
+		m_count++;
+		ASSERT(m_count > 0);
+#pragma push_macro("new")
+#undef new
+		new(pNew) TinyNode(value);
+#pragma pop_macro("new")
+		return pNew;
+	}
+	template<class T>
+	void TinyStringMap<T>::Delete(TinyNode* ps)
+	{
+		ps->~TinyNode();
+		ps->m_pNext = m_pFreeList;
+		m_pFreeList = ps;
+		m_count--;
+		ASSERT(m_count >= 0);
+		if (m_count == 0)
+		{
+			RemoveAll();
+		}
+	}
+	template<class T>
+	typename TinyStringMap<T>::TinyNode* TinyStringMap<T>::Lookup(LPCTSTR key, UINT& bucket, UINT& hash) const
+	{
+		hash = HashKey(key);
+		bucket = hash % m_hashSize;
+		if (m_pTable == NULL)
+			return NULL;
+		TinyNode* ps = NULL;
+		for (ps = m_pTable[bucket]; ps != NULL; ps = ps->m_pNext)
+		{
+			if (ps->m_key == key && ps->m_hashValue == hash)
+			{
+				return ps;
+			}
+		}
+		return NULL;
+	}
+	//////////////////////////////////////////////////////////////////////////
 	template<>
 	class DefaultTraits < TinyString >
 	{

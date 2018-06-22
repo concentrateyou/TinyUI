@@ -9,8 +9,6 @@
 #include "Control/TinyLabel.h"
 #include "Control/TinyRichTextBox.h"
 #include "Control/TinyImageButton.h"
-#include "Windowless/TinyVisualComboBox.h"
-#include "Windowless/TinyVisualTextBox.h"
 #include <gdiplus.h>
 using namespace TinyFramework;
 using namespace TinyFramework::Windowless;

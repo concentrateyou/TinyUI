@@ -454,6 +454,7 @@
     <ClCompile Include="Render\TinyCanvas.cpp" />
     <ClCompile Include="Windowless\TinyVisualElement.cpp" />
     <ClCompile Include="Windowless\TinyVisualManage.cpp" />
+    <ClCompile Include="Windowless\TinyVisualShadow.cpp" />
     <ClCompile Include="Windowless\TinyVisualStyle.cpp" />
     <ClCompile Include="Windowless\TinyVisualWindowless.cpp" />
     <ClCompile Include="Windowless\TinyVisualUtility.cpp" />
