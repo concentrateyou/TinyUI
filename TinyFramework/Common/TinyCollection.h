@@ -494,7 +494,6 @@ namespace TinyFramework
 		m_size = newSize;
 		return TRUE;
 	}
-
 	template<class T>
 	INT	TinyArray<T>::Lookup(const T& myT) const
 	{

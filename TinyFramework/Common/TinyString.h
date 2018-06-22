@@ -340,7 +340,6 @@ namespace TinyFramework
 		TinyNode* ps = NULL;
 		if ((ps = Lookup(key, bucket, hash)) == NULL)
 		{
-			TRACE("bucket:%d\n", bucket);
 			if (m_pTable == NULL)
 			{
 				Initialize(m_hashSize);
@@ -350,10 +349,6 @@ namespace TinyFramework
 			ps->m_key = key;
 			ps->m_pNext = m_pTable[bucket];
 			m_pTable[bucket] = ps;
-		}
-		else
-		{
-			TRACE("bucket:%d\n", bucket);
 		}
 		return ps->m_value;
 	}
