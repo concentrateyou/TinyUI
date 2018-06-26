@@ -9,6 +9,29 @@ namespace TinyFramework
 	namespace Windowless
 	{
 		/// <summary>
+		/// 缓存DC
+		/// </summary>
+		class TinyVisualDC : public TinyHandleHDC
+		{
+			DECLARE_DYNAMIC(TinyVisualDC)
+			DISALLOW_COPY_AND_ASSIGN(TinyVisualDC)
+		public:
+			TinyVisualDC(HWND hWND);
+			virtual ~TinyVisualDC();
+			void SetSize(INT cx, INT cy);
+			HDC	 GetMemDC() const;
+			BOOL Render(const RECT& s);
+			BOOL Render(const RECT& s, INT x, INT y);
+			BOOL RenderLayer(const RECT& s);
+			BOOL RenderLayer(const RECT& s, INT x, INT y);
+		protected:
+			HWND		m_hWND;
+			HDC			m_hMemDC;
+			HBITMAP		m_hBitmap;
+			HBITMAP		m_hOldBitmap;
+			TinySize	m_size;
+		};
+		/// <summary>
 		/// 裁剪的DC在当前元素最小的矩形上绘制
 		/// </summary>
 		class TinyClipCanvas : public TinyCanvas

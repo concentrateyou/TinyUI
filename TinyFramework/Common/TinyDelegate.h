@@ -60,7 +60,7 @@ namespace TinyFramework
 		{
 		}
 		UnaryFunctor(UnaryFunctor&& other)
-			:m_fType(other.m_fType)
+			:m_fType(std::move(other.m_fType))
 		{
 			other.m_fType = NULL;
 		}
@@ -76,7 +76,7 @@ namespace TinyFramework
 		{
 			if (&other != this)
 			{
-				m_fType = other.m_fType;
+				m_fType = std::move(other.m_fType);
 				other.m_fType = NULL;
 			}
 			return *this;
@@ -136,8 +136,8 @@ namespace TinyFramework
 		{
 		}
 		BinaryFunctor(BinaryFunctor&& other)
-			:m_iType(other.m_iType),
-			m_fType(other.m_fType)
+			:m_iType(std::move(other.m_iType)),
+			m_fType(std::move(other.m_fType))
 		{
 			other.m_iType = NULL;
 			other.m_fType = NULL;
@@ -155,8 +155,8 @@ namespace TinyFramework
 		{
 			if (&other != this)
 			{
-				m_fType = other.m_fType;
-				m_iType = other.m_iType;
+				m_fType = std::move(other.m_fType);
+				m_iType = std::move(other.m_iType);
 				other.m_fType = NULL;
 				other.m_iType = NULL;
 			}

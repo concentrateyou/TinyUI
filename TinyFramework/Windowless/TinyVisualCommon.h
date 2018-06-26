@@ -150,28 +150,6 @@ namespace TinyFramework
 		};
 		LPSTR CursorFromString(TinyString& str);
 		/// <summary>
-		/// ª∫¥ÊDC
-		/// </summary>
-		class TinyVisualDC : public TinyHandleHDC
-		{
-			DECLARE_DYNAMIC(TinyVisualDC)
-		public:
-			TinyVisualDC(HWND hWND);
-			virtual ~TinyVisualDC();
-			void SetSize(INT cx, INT cy);
-			HDC	 GetMemDC() const;
-			BOOL Render(const RECT& s);
-			BOOL Render(const RECT& s, INT x, INT y);
-			BOOL RenderLayer(const RECT& s);
-			BOOL RenderLayer(const RECT& s, INT x, INT y);
-		protected:
-			HWND		m_hWND;
-			HDC			m_hMemDC;
-			HBITMAP		m_hBitmap;
-			HBITMAP		m_hOldBitmap;
-			TinySize	m_size;
-		};
-		/// <summary>
 		///  Ù–‘
 		/// </summary>
 		class TinyVisualProperty

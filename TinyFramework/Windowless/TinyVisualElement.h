@@ -22,7 +22,8 @@ namespace TinyFramework
 			TinyVisualElement(TinyVisual* spvisParent, TinyVisualDocument* document);
 			virtual ~TinyVisualElement();
 		public:
-			
+		protected:
+			TinyRectangle	m_padding;
 		};
 	}
 }

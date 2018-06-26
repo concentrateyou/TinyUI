@@ -17,7 +17,9 @@ namespace TinyFramework
 #define NOMOVE          0x0002
 #define NOZORDER        0x0004
 #define NOREDRAW        
+
 		class TinyVisual;
+		class TinyVisualDC;
 		class TinyVisualWindowless;
 		/// <summary>
 		/// 可视化文档

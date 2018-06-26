@@ -8,6 +8,122 @@ namespace TinyFramework
 {
 	namespace Windowless
 	{
+		IMPLEMENT_DYNAMIC(TinyVisualDC, TinyHandleHDC);
+		TinyVisualDC::TinyVisualDC(HWND hWND)
+			:m_hWND(hWND),
+			m_hMemDC(NULL),
+			m_hBitmap(NULL),
+			m_hOldBitmap(NULL)
+		{
+			ASSERT(m_hWND);
+			HDC hDC = ::GetDC(m_hWND);
+			Attach(hDC);
+			SetGraphicsMode(hDC, GM_ADVANCED);
+			SetBkMode(hDC, TRANSPARENT);
+			RECT s = { 0 };
+			GetWindowRect(m_hWND, &s);
+			SetSize(TO_CX(s), TO_CY(s));
+		}
+		TinyVisualDC::~TinyVisualDC()
+		{
+			ASSERT(m_hWND);
+			if (m_hDC != NULL)
+			{
+				SAFE_DELETE_OBJECT(m_hBitmap);
+				if (m_hMemDC != NULL)
+				{
+					if (m_hOldBitmap != NULL)
+					{
+						::SelectObject(m_hMemDC, m_hOldBitmap);
+						m_hOldBitmap = NULL;
+					}
+					::DeleteDC(m_hMemDC);
+					m_hMemDC = NULL;
+				}
+				HDC hDC = Detach();
+				::ReleaseDC(m_hWND, hDC);
+			}
+		}
+		void TinyVisualDC::SetSize(INT cx, INT cy)
+		{
+			ASSERT(m_hDC);
+			if (m_size.cx != cx || m_size.cy != cy)
+			{
+				m_size.cx = cx;
+				m_size.cy = cy;
+				SAFE_DELETE_OBJECT(m_hBitmap);
+				if (m_hMemDC != NULL)
+				{
+					if (m_hOldBitmap != NULL)
+					{
+						SelectObject(m_hMemDC, m_hOldBitmap);
+						m_hOldBitmap = NULL;
+					}
+					::DeleteDC(m_hMemDC);
+					m_hMemDC = NULL;
+				}
+				m_hMemDC = ::CreateCompatibleDC(m_hDC);
+				m_hBitmap = ::CreateCompatibleBitmap(m_hDC, m_size.cx, m_size.cy);
+				m_hOldBitmap = (HBITMAP)::SelectObject(m_hMemDC, m_hBitmap);
+			}
+		}
+		HDC	 TinyVisualDC::GetMemDC() const
+		{
+			return m_hMemDC;
+		}
+		BOOL TinyVisualDC::Render(const RECT& s)
+		{
+			if (!m_hMemDC || !m_hBitmap) return FALSE;
+			return ::BitBlt(m_hDC, s.left, s.top, TO_CX(s), TO_CY(s), m_hMemDC, s.left, s.top, SRCCOPY);
+		}
+		BOOL TinyVisualDC::Render(const RECT& s, INT x, INT y)
+		{
+			if (!m_hMemDC || !m_hBitmap) return FALSE;
+			return ::BitBlt(m_hDC, s.left, s.top, TO_CX(s), TO_CY(s), m_hMemDC, x, y, SRCCOPY);
+		}
+		BOOL TinyVisualDC::RenderLayer(const RECT& s)
+		{
+			if (!m_hMemDC || !m_hBitmap) return FALSE;
+			if (::BitBlt(m_hDC, s.left, s.top, TO_CX(s), TO_CY(s), m_hMemDC, s.left, s.top, SRCCOPY))
+			{
+				HDC hScreenDC = GetDC(NULL);
+				BLENDFUNCTION blendFunction;
+				blendFunction.AlphaFormat = AC_SRC_ALPHA;
+				blendFunction.BlendFlags = 0;
+				blendFunction.BlendOp = AC_SRC_OVER;
+				blendFunction.SourceConstantAlpha = 255;
+				RECT wndRect;
+				::GetWindowRect(m_hWND, &wndRect);
+				POINT ptSrc = { 0,0 };
+				SIZE wndSize = { wndRect.right - wndRect.left,wndRect.bottom - wndRect.top };
+				UpdateLayeredWindow(m_hWND, hScreenDC, &ptSrc, &wndSize, m_hMemDC, &ptSrc, 0, &blendFunction, 2);
+				ReleaseDC(NULL, hScreenDC);
+				return TRUE;
+			}
+			return FALSE;
+		}
+		BOOL TinyVisualDC::RenderLayer(const RECT& s, INT x, INT y)
+		{
+			if (!m_hMemDC || !m_hBitmap) return FALSE;
+			if (::BitBlt(m_hDC, s.left, s.top, TO_CX(s), TO_CY(s), m_hMemDC, x, y, SRCCOPY))
+			{
+				HDC hScreenDC = GetDC(NULL);
+				BLENDFUNCTION blendFunction;
+				blendFunction.AlphaFormat = AC_SRC_ALPHA;
+				blendFunction.BlendFlags = 0;
+				blendFunction.BlendOp = AC_SRC_OVER;
+				blendFunction.SourceConstantAlpha = 255;
+				RECT wndRect;
+				::GetWindowRect(m_hWND, &wndRect);
+				POINT ptSrc = { 0,0 };
+				SIZE wndSize = { wndRect.right - wndRect.left,wndRect.bottom - wndRect.top };
+				UpdateLayeredWindow(m_hWND, hScreenDC, &ptSrc, &wndSize, m_hMemDC, &ptSrc, 0, &blendFunction, 2);
+				ReleaseDC(NULL, hScreenDC);
+				return TRUE;
+			}
+			return FALSE;
+		}
+		//////////////////////////////////////////////////////////////////////////
 		TinyClipCanvas::TinyClipCanvas(HDC hDC, TinyVisual* spvis, const RECT& rcPaint)
 			:TinyCanvas(hDC),
 			m_hRGN(NULL),
