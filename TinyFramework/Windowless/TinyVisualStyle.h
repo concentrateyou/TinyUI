@@ -36,12 +36,12 @@ namespace TinyFramework
 		/// </summary>
 		class BorderStyle
 		{
+			DISALLOW_COPY_AND_ASSIGN(BorderStyle)
 		public:
 			enum Style
 			{
 				NONE, DOTTED, DASHED, SOLID, DOUBLE
 			};
-			DISALLOW_COPY_AND_ASSIGN(BorderStyle)
 		public:
 			BorderStyle();
 			~BorderStyle();
@@ -75,13 +75,11 @@ namespace TinyFramework
 			void			SetMaximumSize(const TinySize& maximumSize);
 			void			SetMinimumSize(const TinySize& minimumSize);
 			void			SetPadding(const TinyRectangle& padding);
-			void			SetMargin(const TinyRectangle& margin);
 			void			SetZIndex(INT zIndex);
 			TinySize		GetSize() const;
 			TinySize		GetMaximumSize() const;
 			TinySize		GetMinimumSize() const;
 			TinyRectangle	GetPadding() const;
-			TinyRectangle	GetMargin() const;
 			INT				GetZIndex() const;
 		private:
 			INT				m_zIndex;
@@ -89,7 +87,6 @@ namespace TinyFramework
 			TinySize		m_maximumSize;
 			TinySize		m_minimumSize;
 			TinyRectangle	m_padding;
-			TinyRectangle	m_margin;
 		};
 		/// <summary>
 		/// ø… ”ªØ
@@ -119,6 +116,7 @@ namespace TinyFramework
 			~FontStyle();
 			void	SetFont(HFONT hFONT);
 			HFONT	GetFont() const;
+			BOOL	IsEmpty() const;
 		private:
 			HFONT	m_hFONT;
 		};

@@ -1,11 +1,11 @@
 #pragma once
-#include "TinyVisualElement.h"
+#include "TinyVisual.h"
 
 namespace TinyFramework
 {
 	namespace Windowless
 	{
-		class TinyVisualWindow : public TinyVisualElement
+		class TinyVisualWindow : public TinyVisual
 		{
 			friend class TinyVisualDocument;
 			DECLARE_DYNCREATE(TinyVisualWindow)

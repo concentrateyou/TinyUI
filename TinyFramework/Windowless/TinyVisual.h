@@ -26,7 +26,6 @@ namespace TinyFramework
 			TinyVisual();
 			TinyVisual(TinyVisual* spvisParent, TinyVisualDocument* document);
 		public:
-			HWND				Handle() const;
 			TinyString			GetText() const;
 			TinyString			GetName() const;
 			TinyString			GetToolTip() const;
@@ -34,7 +33,6 @@ namespace TinyFramework
 			TinySize			GetSize() const;
 			TinySize			GetMaximumSize() const;
 			TinySize			GetMinimumSize() const;
-			TinyRectangle		GetRectangle() const;
 			TinyRectangle		GetWindowRect()const;
 			TinyRectangle		GetClientRect() const;
 			HRGN				GetClip() const;
@@ -123,6 +121,7 @@ namespace TinyFramework
 			TinySize			m_maximumSize;//元素的最大像素大小
 			TinySize			m_minimumSize;//元素的最小像素大小
 			TinyRectangle		m_rectangle;//相对于父元素区域
+			TinyRectangle		m_padding;
 			HRGN				m_hrgnClip;
 			HFONT				m_hFONT;
 			BOOL				m_visible;

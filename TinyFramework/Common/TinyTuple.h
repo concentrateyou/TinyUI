@@ -18,6 +18,11 @@ namespace TinyFramework
 		{
 			TRACE("TinyAny(const ValueType& my)\n");
 		}
+		TinyAny()
+			:m_myP(NULL)
+		{
+			TRACE("TinyAny()\n");
+		}
 		TinyAny(const TinyAny& other)
 			:m_myP(other.m_myP ? other.m_myP->DoClone() : NULL)
 		{
@@ -53,7 +58,7 @@ namespace TinyFramework
 		class AnyBase
 		{
 		public:
-			virtual ~AnyBase(){};
+			virtual ~AnyBase() {};
 			virtual AnyBase* DoClone() const = 0;
 			virtual const type_info& GetType() const = 0;
 		};
@@ -66,6 +71,11 @@ namespace TinyFramework
 				:m_my(my)
 			{
 				TRACE("Any(const ValueType& my)\n");
+			}
+			Any(ValueType&& my)
+				:m_my(std::move(my))
+			{
+				TRACE("Any(ValueType&& my)\n");
 			}
 			virtual ~Any()
 			{

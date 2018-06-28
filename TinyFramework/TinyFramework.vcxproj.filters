@@ -421,9 +421,6 @@
     <ClCompile Include="Windowless\TinyVisualManage.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
-    <ClCompile Include="Windowless\TinyVisualElement.cpp">
-      <Filter>源文件\Windowless</Filter>
-    </ClCompile>
     <ClCompile Include="Windowless\TinyVisualShadow.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
@@ -857,9 +854,6 @@
     </ClInclude>
     <ClInclude Include="Network\TinyDNS.h">
       <Filter>头文件\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="Windowless\TinyVisualElement.h">
-      <Filter>头文件\Windowless</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

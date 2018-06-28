@@ -49,10 +49,6 @@ namespace TinyFramework
 		{
 			SAFE_DELETE_OBJECT(m_hFONT);
 		}
-		HWND TinyVisual::Handle() const
-		{
-			return m_document != NULL ? m_document->Handle() : NULL;
-		}
 		void TinyVisual::SetText(const TinyString& szText)
 		{
 			m_szText = std::move(szText);
@@ -132,9 +128,11 @@ namespace TinyFramework
 			if (m_visible != visible)
 			{
 				m_visible = visible;
-				for (TinyVisual* pv = this->m_spvisChild; pv != NULL; pv = pv->m_spvisNext)
+				TinyVisual* pv = NULL;
+				for (pv = this->m_spvisChild; pv != NULL; pv = pv->m_spvisNext)
 				{
-					if (!pv) continue;;
+					if (!pv)
+						continue;
 					pv->SetVisible(visible);
 				}
 			}
@@ -144,9 +142,11 @@ namespace TinyFramework
 			if (m_enable != enable)
 			{
 				m_enable = enable;
-				for (TinyVisual* pv = this->m_spvisChild; pv != NULL; pv = pv->m_spvisNext)
+				TinyVisual* pv = NULL;
+				for (pv = this->m_spvisChild; pv != NULL; pv = pv->m_spvisNext)
 				{
-					if (!pv) continue;;
+					if (!pv)
+						continue;
 					pv->SetEnable(enable);
 				}
 			}
@@ -175,10 +175,6 @@ namespace TinyFramework
 			{
 				m_rectangle.SetSize(newsize);
 			}
-		}
-		TinyRectangle TinyVisual::GetRectangle() const
-		{
-			return m_rectangle;
 		}
 		TinyRectangle TinyVisual::GetWindowRect()const
 		{

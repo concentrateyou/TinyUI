@@ -1,6 +1,7 @@
 #pragma once
 #include "../Control/TinyControl.h"
 #include "../Render/TinyImage.h"
+#include "../Common/TinyTuple.h"
 
 namespace TinyFramework
 {
@@ -14,7 +15,6 @@ namespace TinyFramework
 		LONG HimetricYtoDY(LONG yHimetric, LONG yPerInch);
 		LONG DXtoHimetricX(LONG dx, LONG xPerInch);
 		LONG DYtoHimetricY(LONG dy, LONG yPerInch);
-
 		/// <summary>
 		/// 元素属性常量
 		/// </summary>
@@ -149,30 +149,12 @@ namespace TinyFramework
 			static const TinyString WRESIZE;
 		};
 		LPSTR CursorFromString(TinyString& str);
-		/// <summary>
-		/// 属性
-		/// </summary>
-		class TinyVisualProperty
-		{
-		public:
-			TinyVisualProperty(const TinyString& name, const TinyString& value);
-			TinyVisualProperty(const TinyVisualProperty&);
-			~TinyVisualProperty();
-			void operator=(const TinyVisualProperty&);
-			const TinyString& name() const;
-			const TinyString& value() const;
-		private:
-			TinyString	m_name;
-			TinyString	m_value;
-		};
-
 		enum Orientation
 		{
 			None,
 			Horizontal,
 			Vertical
 		};
-
 		enum StyleImage
 		{
 			NORMAL = 0,
@@ -197,131 +179,34 @@ namespace TinyFramework
 			BOTTOM = 3,
 			STRETCH = 4
 		};
-
-		enum VARIANT_TYPE
+		//////////////////////////////////////////////////////////////////////////
+		enum class Property
 		{
-			VARIANT_TYPE_EMPTY,
-			VARIANT_TYPE_RECT,
-			VARIANT_TYPE_POINT,
-			VARIANT_TYPE_SIZE,
-			VARIANT_TYPE_FONT,
-			VARIANT_TYPE_REGION,
-			VARIANT_TYPE_STRING,
-			VARIANT_TYPE_COLOR,
-			VARIANT_TYPE_IMAGE,
-			VARIANT_TYPE_BOOL,
-			VARIANT_TYPE_INT32,
-			VARIANT_TYPE_UINT,
-			VARIANT_TYPE_DOUBLE,
-			VARIANT_TYPE_FLOAT
+			NONE,
+			VISIBLE,
+			DISABLE,
+			CLIP,
+			PADDING,
+			SIZE,
+			MAXIMUM_SIZE,
+			MINIMUM_SIZE,
+			TEXT_ALIGN,
+			TEXT_COLOR,
+			TEXT_WRAP,
+			BACKGROUND_COLOR,
+			BACKGROUND_IMAGE,
+			BACKGROUND_POSITION,
+			BACKGROUND_SIZE,
+			BORDER_STYLE,
+			BORDER_COLOR,
+			BORDER_THICKNESS,
+			FONT_SIZE,
+			FONT_STYLE,
+			FONT_WEIGHT,
+			FONT_FAMILY,
+			CURSOR
 		};
-
-		class TinyVisualVariant
-		{
-		public:
-			TinyVisualVariant();
-			TinyVisualVariant(TinyVisualVariant&& s);
-			TinyVisualVariant(const TinyVisualVariant& s);
-			TinyVisualVariant& operator=(const TinyVisualVariant& s);
-			virtual ~TinyVisualVariant();
-			BOOL		IsEmpty() const;
-			BOOL		GetBool() const;
-			INT32		GetINT32() const;
-			UINT		GetUINT() const;
-			DOUBLE		GetDouble() const;
-			FLOAT		GetFloat() const;
-			POINT		GetPoint() const;
-			SIZE		GetSize() const;
-			RECT		GetRect() const;
-			HFONT		GetFONT() const;
-			HRGN		GetRGN() const;
-			const CHAR*	GetString() const;
-			COLORREF	GetColor() const;
-			TinyImage*	GetImage();
-			BOOL		SetPoint(const POINT& s);
-			BOOL		SetSize(const SIZE& s);
-			BOOL		SetRect(const RECT& s);
-			BOOL		SetFONT(HFONT s);
-			BOOL		SetRGN(HRGN s);
-			BOOL		SetString(const string& s);
-			BOOL		SetString(const TinyString& s);
-			BOOL		SetString(const CHAR* s);
-			BOOL		SetColor(COLORREF s);
-			BOOL		SetImage(TinyImage&& s);
-			BOOL		SetBool(BOOL s);
-			BOOL		SetINT32(INT32 s);
-			BOOL		SetUINT(UINT s);
-			BOOL		SetDouble(DOUBLE s);
-			BOOL		SetFloat(FLOAT s);
-			void		Release();
-		private:
-			UINT			m_size;
-			void*			m_value;
-			VARIANT_TYPE	m_type;
-		};
-
-		template<class T>
-		class TinyVisualVariantT
-		{
-		public:
-			TinyVisualVariantT()
-				:m_myP(NULL)
-			{
-
-			}
-			~TinyVisualVariantT()
-			{
-				Release();
-			}
-			BOOL IsEmpty() const
-			{
-				return m_myP == NULL;
-			}
-			TinyVisualVariantT(const TinyVisualVariantT& myT)
-			{
-				T* myP = NULL;
-				myP = (T*)malloc(sizeof(T));
-				if (myP != NULL)
-				{
-#pragma push_macro("new")
-#undef new
-					::new(myP) TinyPlaceNew<T>(myT);
-#pragma pop_macro("new")
-					m_myP = myP;
-				}
-			}
-			TinyVisualVariantT& operator=(const TinyVisualVariantT& myT)
-			{
-				if (&myT != this)
-				{
-					T* myP = NULL;
-					myP = (T*)malloc(sizeof(T));
-					if (myP != NULL)
-					{
-#pragma push_macro("new")
-#undef new
-						::new(myP) TinyPlaceNew<T>(myT);
-#pragma pop_macro("new")
-						Release();
-						m_myP = myP;
-					}
-				}
-				return *this;
-			}
-			TinyVisualVariantT(TinyVisualVariantT&& myT)
-				:m_myP(myT.m_myP)
-			{
-				myT.m_myP = NULL;
-			}
-			void Release()
-			{
-				if (m_myP != NULL)
-					m_myP->~T();
-				SAFE_FREE(m_myP);
-			}
-		protected:
-			T*	m_myP;
-		};
+		//////////////////////////////////////////////////////////////////////////
 	}
 }
 

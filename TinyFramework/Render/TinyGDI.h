@@ -609,22 +609,6 @@ namespace TinyFramework
 
 		static TinyRectangle& Empty();
 	};
-	/// <summary>
-	/// GDIÑÕÉ«
-	/// </summary>
-	class TinyColor
-	{
-	public:
-		TinyColor();
-		TinyColor(COLORREF color);
-		BOOL IsTransparent() const;
-		void SetColor(COLORREF color);
-		operator COLORREF() throw();
-		operator COLORREF() const throw();
-		void operator=(COLORREF color) throw();
-	public:
-		COLORREF m_color;
-	};
 }
 
 

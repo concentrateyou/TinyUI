@@ -8,14 +8,14 @@ namespace TinyFramework
 {
 	namespace Windowless
 	{
-		IMPLEMENT_DYNCREATE(TinyVisualWindow, TinyVisualElement);
+		IMPLEMENT_DYNCREATE(TinyVisualWindow, TinyVisual);
 
 		TinyVisualWindow::TinyVisualWindow()
 		{
 
 		}
 		TinyVisualWindow::TinyVisualWindow(TinyVisual* spvisParent, TinyVisualDocument* document)
-			:TinyVisualElement(spvisParent, document)
+			:TinyVisual(spvisParent, document)
 		{
 
 		}

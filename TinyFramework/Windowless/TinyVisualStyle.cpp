@@ -140,10 +140,6 @@ namespace TinyFramework
 		{
 			m_padding = padding;
 		}
-		void BoxStyle::SetMargin(const TinyRectangle& margin)
-		{
-			m_margin = margin;
-		}
 		TinySize BoxStyle::GetSize() const
 		{
 			return m_size;
@@ -159,10 +155,6 @@ namespace TinyFramework
 		TinyRectangle BoxStyle::GetPadding() const
 		{
 			return m_padding;
-		}
-		TinyRectangle BoxStyle::GetMargin() const
-		{
-			return m_margin;
 		}
 		INT	BoxStyle::GetZIndex() const
 		{
@@ -211,6 +203,10 @@ namespace TinyFramework
 		HFONT FontStyle::GetFont() const
 		{
 			return m_hFONT;
+		}
+		BOOL FontStyle::IsEmpty() const
+		{
+			return m_hFONT == NULL;
 		}
 	}
 }
