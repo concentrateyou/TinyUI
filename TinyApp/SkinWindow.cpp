@@ -15,10 +15,7 @@ SkinWindow::~SkinWindow()
 
 void SkinWindow::OnInitialize()
 {
-	//m_document.GetParent(NULL)->SetMaximumSize(TinySize(800, 800));
-	//m_document.GetParent(NULL)->SetMinimumSize(TinySize(600, 600));
-	//m_document.GetParent(NULL)->SetSize(TinySize(600, 600));
-	//m_document.GetParent(NULL)->SetPosition(TinySize(100, 100));
+	BuildUI();
 }
 
 void SkinWindow::OnUninitialize()
@@ -26,3 +23,15 @@ void SkinWindow::OnUninitialize()
 
 }
 
+BOOL SkinWindow::BuildUI()
+{
+	TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
+	window->SetMinimumSize(TinySize(800, 600));
+	window->SetSize(TinySize(800, 600));
+	window->SetPosition(TinySize(100, 100));
+}
+
+void SkinWindow::Resize(const TinySize& size)
+{
+
+}

@@ -51,10 +51,24 @@ namespace TinyFramework
 		}
 		BOOL TinyVisualWindow::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
-			ASSERT(m_document);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 
+			TinyBrush brush;
+			brush.CreateBrush(m_backgroundColor & 0x00FFFFFF);
+			canvas.SetBrush(brush);
+			canvas.FillRectangle(clip);
+			if (m_backgroundImage != NULL)
+			{
+				if (m_backgroundCenter.IsRectEmpty())
+				{
+					canvas.DrawImage(*m_backgroundImage, clip, m_backgroundRectangle);
+				}
+				else
+				{
+					canvas.DrawImage(*m_backgroundImage, clip, m_backgroundRectangle, m_backgroundCenter);
+				}
+			}
 			return TRUE;
 		}
 	}

@@ -25,14 +25,9 @@ namespace TinyFramework
 
 		}
 
-
-		TinyString TinyVisualWindow::RetrieveTag() const
+		TinyString TinyVisualButton::RetrieveTag() const
 		{
 			return TinyVisualTag::BUTTON;
-		}
-		BOOL TinyVisualWindow::OnDraw(HDC hDC, const RECT& rcPaint)
-		{
-			return TinyVisual::OnDraw(hDC, rcPaint);
 		}
 	}
 }

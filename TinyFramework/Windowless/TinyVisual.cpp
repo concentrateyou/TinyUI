@@ -351,37 +351,6 @@ namespace TinyFramework
 		BOOL	TinyVisual::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
 			ASSERT(m_document);
-			TinyRectangle clip = m_document->GetWindowRect(this);
-			TinyClipCanvas canvas(hDC, this, rcPaint);
-			//绘制背景颜色
-			if (m_backgroundColor != 0x00FFFFFF)
-			{
-				TinyBrush brush;
-				brush.CreateBrush(m_backgroundColor & 0x00FFFFFF);
-				canvas.SetBrush(brush);
-				canvas.FillRectangle(clip);
-			}
-			//绘制背景图片 
-			if (m_backgroundImage != NULL)
-			{
-				if (m_backgroundCenter.IsRectEmpty())
-				{
-					canvas.DrawImage(*m_backgroundImage, clip, m_backgroundRectangle);
-				}
-				else
-				{
-					canvas.DrawImage(*m_backgroundImage, clip, m_backgroundRectangle, m_backgroundCenter);
-				}
-			}
-			//绘制文本
-			if (!m_szText.IsEmpty())
-			{
-				canvas.SetFont(m_hFONT);
-				canvas.SetTextColor(m_textColor);
-				TinyRectangle s = clip;
-				s.InflateRect(m_padding.left, m_padding.top, -m_padding.right, -m_padding.bottom);
-				canvas.DrawString(m_szText, s, m_textAlign);
-			}
 			return TRUE;
 		}
 		HRESULT	TinyVisual::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)

@@ -2,6 +2,7 @@
 #pragma once
 #include "Common/TinyModule.h"
 #include "Windowless/TinyVisualWindowless.h"
+#include "Windowless/TinyVisualWindow.h"
 #include "Control/TinyComboBox.h"
 #include "Control/TinyButton.h"
 #include "Control/TinyLabel.h"
@@ -23,6 +24,7 @@ public:
 	void OnInitialize() OVERRIDE;
 	void OnUninitialize() OVERRIDE;
 private:
-
+	BOOL BuildUI();
+	void Resize(const TinySize& size);
 };
 

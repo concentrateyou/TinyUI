@@ -51,7 +51,6 @@ namespace TinyFramework
 			TinyVisual*				GetCapture() const;
 			TinyVisual*				GetFocus() const;
 			TinyVisual*				GetActive() const;
-
 			TinyPoint				GetWindowPos(const TinyVisual* spvis);
 			TinyRectangle			GetWindowRect(const TinyVisual* spvis);
 			TinyPoint				GetScreenPos(const TinyVisual* spvis);

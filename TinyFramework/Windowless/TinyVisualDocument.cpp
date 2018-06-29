@@ -510,8 +510,11 @@ namespace TinyFramework
 							TinyRectangle clip = GetWindowRect(spvis);
 							if (::IntersectRect(&clip, &clip, &clipAncestor))
 							{
-								spvis->OnDraw(hDC, clip);
-								Draw(spvis->m_spvisChild, hDC, clip);
+								if (spvis->OnDraw(hDC, clip))
+								{
+									Draw(spvis->m_spvisChild, hDC, clip);
+								}
+
 							}
 						}
 					}
@@ -520,8 +523,10 @@ namespace TinyFramework
 						TinyRectangle clip = GetWindowRect(spvis);
 						if (::IntersectRect(&clip, &clip, &rcPaint))
 						{
-							spvis->OnDraw(hDC, clip);
-							Draw(spvis->m_spvisChild, hDC, clip);
+							if (spvis->OnDraw(hDC, clip))
+							{
+								Draw(spvis->m_spvisChild, hDC, clip);
+							}
 						}
 					}
 				}
