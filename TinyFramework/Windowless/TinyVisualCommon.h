@@ -149,64 +149,6 @@ namespace TinyFramework
 			static const TinyString WRESIZE;
 		};
 		LPSTR CursorFromString(TinyString& str);
-		enum Orientation
-		{
-			None,
-			Horizontal,
-			Vertical
-		};
-		enum StyleImage
-		{
-			NORMAL = 0,
-			HIGHLIGHT = 1,
-			DOWN = 2,
-			PUSH = 3,
-			COUNT = PUSH + 1
-		};
-		enum class HorizontalAlignment
-		{
-			NONE = 0,
-			LEFT = 1,
-			CENTER = 2,
-			RIGHT = 3,
-			STRETCH = 4
-		};
-		enum class VerticalAlignment
-		{
-			NONE = 0,
-			TOP = 1,
-			CENTER = 2,
-			BOTTOM = 3,
-			STRETCH = 4
-		};
-		//////////////////////////////////////////////////////////////////////////
-		enum class Property
-		{
-			NONE,
-			VISIBLE,
-			DISABLE,
-			CLIP,
-			PADDING,
-			SIZE,
-			MAXIMUM_SIZE,
-			MINIMUM_SIZE,
-			TEXT_ALIGN,
-			TEXT_COLOR,
-			TEXT_WRAP,
-			BACKGROUND_COLOR,
-			BACKGROUND_IMAGE,
-			BACKGROUND_POSITION,
-			BACKGROUND_SIZE,
-			BORDER_STYLE,
-			BORDER_COLOR,
-			BORDER_THICKNESS,
-			FONT_SIZE,
-			FONT_STYLE,
-			FONT_WEIGHT,
-			FONT_FAMILY,
-			CURSOR
-		};
-		//////////////////////////////////////////////////////////////////////////
 	}
 }
 

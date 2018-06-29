@@ -26,42 +26,62 @@ namespace TinyFramework
 			TinyVisual();
 			TinyVisual(TinyVisual* spvisParent, TinyVisualDocument* document);
 		public:
-			TinyString			GetText() const;
-			TinyString			GetName() const;
-			TinyString			GetToolTip() const;
-			TinyPoint			GetPosition() const;
-			TinySize			GetSize() const;
-			TinySize			GetMaximumSize() const;
-			TinySize			GetMinimumSize() const;
-			TinyRectangle		GetWindowRect()const;
-			TinyRectangle		GetClientRect() const;
-			HRGN				GetClip() const;
-			HFONT				GetFont() const;
+			TinyVisualDocument*	GetDocument();
 			BOOL				IsVisible() const;
 			BOOL				IsEnable() const;
 			BOOL				IsCapture() const;
 			BOOL				IsFocus() const;
 			BOOL				IsActive() const;
 		public:
-			TinyVisualDocument*	GetDocument();
+			UINT				GetChildCount() const;
 			BOOL				Invalidate();
-			DWORD				GetChildCount() const;
 			virtual	HRESULT		SendMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes);
 		public:
 			virtual ~TinyVisual();
 			virtual TinyString	RetrieveTag() const;
-			virtual void		SetName(const TinyString& pzName);
-			virtual void		SetCursor(const TinyString& szCursor);
-			virtual void		SetToolTip(const TinyString& szTitle);
-			virtual void		SetText(const TinyString& szText);
-			virtual void		SetPosition(const TinyPoint& pos);
-			virtual void		SetSize(const TinySize& size);
-			virtual void		SetMaximumSize(const TinySize& size);
-			virtual void		SetMinimumSize(const TinySize& size);
-			virtual void		SetClip(HRGN hrgnClip);
-			virtual void		SetFont(HFONT hFONT);
-			virtual void		SetVisible(BOOL visible);
-			virtual void		SetEnable(BOOL enable);
+		public:
+			virtual void	SetName(const TinyString& pzName);
+			virtual void	SetCursor(const TinyString& szCursor);
+			virtual void	SetToolTip(const TinyString& szTitle);
+			virtual void	SetText(const TinyString& szText);
+			//Box
+			virtual void	SetPosition(const TinyPoint& pos);
+			virtual void	SetSize(const TinySize& size);
+			virtual void	SetMaximumSize(const TinySize& size);
+			virtual void	SetMinimumSize(const TinySize& size);
+			virtual void	SetClip(HRGN hrgnClip);
+			virtual void	SetFont(HFONT hFONT);
+			virtual void	SetVisible(BOOL visible);
+			virtual void	SetEnable(BOOL enable);
+			virtual void	SetPadding(const TinyRectangle& s);
+			//背景
+			virtual void	SetBackgroundImage(TinyImage* image);
+			virtual void	SetBackgroundColor(COLORREF color);
+			virtual void	SetBackgroundRectangle(const TinyRectangle& rectangle);
+			//边框
+			virtual void	SetBorderThickness(const TinyRectangle& thickness);
+			virtual	void	SetBorderColor(COLORREF color);
+			virtual	void	SetBorderStyle(UINT style);
+
+			TinyString		GetText() const;
+			TinyString		GetName() const;
+			TinyString		GetToolTip() const;
+			TinyPoint		GetPosition() const;
+			TinySize		GetSize() const;
+			TinySize		GetMaximumSize() const;
+			TinySize		GetMinimumSize() const;
+			TinyRectangle	GetWindowRect()const;
+			TinyRectangle	GetClientRect() const;
+			TinyRectangle	GetPadding() const;
+			HRGN			GetClip() const;
+			HFONT			GetFont() const;
+			TinyRectangle	GetBackgroundRectangle() const;
+			COLORREF		GetBackgroundColor() const;
+			TinyImage*		GetBackgroundImage() const;
+			TinyRectangle	GetBorderThickness() const;
+			COLORREF		GetBorderColor() const;
+			UINT			GetBorderStyle() const;
+
 		protected:
 			virtual HRESULT		OnCreate();
 			virtual HRESULT		OnDestory();
@@ -86,7 +106,6 @@ namespace TinyFramework
 			virtual HRESULT		OnFocus(BOOL bFlag);
 			virtual HRESULT		OnCapture(BOOL bFlag);
 			virtual HRESULT		OnActive(BOOL bFlag);
-		protected:
 			virtual BOOL		OnDraw(HDC hDC, const RECT& clip);
 		public:
 			Event<void(TinyVisual*, EventArgs&)>		EVENT_CREATE;
@@ -122,6 +141,15 @@ namespace TinyFramework
 			TinySize			m_minimumSize;//元素的最小像素大小
 			TinyRectangle		m_rectangle;//相对于父元素区域
 			TinyRectangle		m_padding;
+			//背景
+			TinyRectangle		m_backgroundRectangle;
+			COLORREF			m_backgroundColor;
+			TinyImage*			m_backgroundImage;
+			//边框
+			TinyRectangle		m_borderThickness;
+			COLORREF			m_borderColor;
+			UINT				m_borderStyle;
+
 			HRGN				m_hrgnClip;
 			HFONT				m_hFONT;
 			BOOL				m_visible;

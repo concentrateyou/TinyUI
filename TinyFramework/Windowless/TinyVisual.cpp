@@ -19,7 +19,8 @@ namespace TinyFramework
 			m_document(NULL),
 			m_visible(TRUE),
 			m_enable(TRUE),
-			m_count(0)
+			m_count(0),
+			m_backgroundImage(NULL)
 		{
 			LOGFONT lf;
 			::GetObject(reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)), sizeof(LOGFONT), &lf);
@@ -37,7 +38,8 @@ namespace TinyFramework
 			m_document(document),
 			m_visible(TRUE),
 			m_enable(TRUE),
-			m_count(0)
+			m_count(0),
+			m_backgroundImage(NULL)
 		{
 			LOGFONT lf;
 			::GetObject(reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)), sizeof(LOGFONT), &lf);
@@ -152,6 +154,55 @@ namespace TinyFramework
 			}
 		}
 
+		void TinyVisual::SetPadding(const TinyRectangle& s)
+		{
+			if (m_padding != s)
+			{
+				m_padding = s;
+			}
+		}
+
+		void TinyVisual::SetBackgroundImage(TinyImage* image)
+		{
+
+		}
+		void TinyVisual::SetBackgroundColor(COLORREF color)
+		{
+			if (m_backgroundColor != color)
+			{
+				m_backgroundColor = color;
+			}
+		}
+		void TinyVisual::SetBackgroundRectangle(const TinyRectangle& rectangle)
+		{
+			if (m_backgroundRectangle != rectangle)
+			{
+				m_backgroundRectangle = rectangle;
+			}
+		}
+
+		void TinyVisual::SetBorderThickness(const TinyRectangle& thickness)
+		{
+			if (m_borderThickness != thickness)
+			{
+				m_borderThickness = thickness;
+			}
+		}
+		void TinyVisual::SetBorderColor(COLORREF color)
+		{
+			if (m_borderColor != color)
+			{
+				m_borderColor = color;
+			}
+		}
+		void TinyVisual::SetBorderStyle(UINT style)
+		{
+			if (m_borderStyle != style)
+			{
+				m_borderStyle = style;
+			}
+		}
+
 		TinyPoint TinyVisual::GetPosition() const
 		{
 			return *((TinyPoint*)&m_rectangle);
@@ -187,11 +238,15 @@ namespace TinyFramework
 			s.OffsetRect(-s.left, -s.top);
 			return s;
 		}
+		TinyRectangle TinyVisual::GetPadding() const
+		{
+			return m_padding;
+		}
 		TinyVisualDocument*	TinyVisual::GetDocument()
 		{
 			return m_document;
 		}
-		DWORD TinyVisual::GetChildCount() const
+		UINT TinyVisual::GetChildCount() const
 		{
 			return m_count;
 		}
@@ -211,6 +266,33 @@ namespace TinyFramework
 		{
 			return m_hFONT;
 		}
+
+		TinyRectangle TinyVisual::GetBackgroundRectangle() const
+		{
+			return m_backgroundRectangle;
+		}
+		COLORREF TinyVisual::GetBackgroundColor() const
+		{
+			return  m_backgroundColor;
+		}
+		TinyImage* TinyVisual::GetBackgroundImage() const
+		{
+			return m_backgroundImage;
+		}
+
+		TinyRectangle TinyVisual::GetBorderThickness() const
+		{
+			return m_borderThickness;
+		}
+		COLORREF TinyVisual::GetBorderColor() const
+		{
+			return m_borderColor;
+		}
+		UINT TinyVisual::GetBorderStyle() const
+		{
+			return m_borderStyle;
+		}
+
 		HRESULT	TinyVisual::SendMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes)
 		{
 			ASSERT(m_document->Handle());
