@@ -11,33 +11,6 @@ namespace TinyFramework
 	namespace Windowless
 	{
 		class TinyVisualDocument;
-		/*/// <summary>
-		/// 可视化元素管理
-		/// </summary>
-		class TinyVisualBuilder
-		{
-			DISALLOW_COPY_AND_ASSIGN(TinyVisualBuilder)
-		public:
-			TinyVisualBuilder();
-			~TinyVisualBuilder();
-			BOOL LoadFile(LPCSTR pzFile);
-			BOOL BuildDocument(TinyVisualDocument* ps);
-			static TinySize				GetSize(const TinyString& str);
-			static TinyPoint			GetPosition(const TinyString& str);
-			static TinyRectangle		GetRectangle(const TinyString& str);
-			static UINT					GetAlign(const TinyString& str);
-			static HorizontalAlignment	GetHorizontalAlignment(const TinyString& str);
-			static VerticalAlignment	GetVerticalAlignment(const TinyString& str);
-			static COLORREF				GetColor(const TinyString& str);
-			static BOOL					GetBool(const TinyString& str);
-			static INT					GetInt32(const TinyString& str);
-		private:
-			static void CreateInstace(const TiXmlNode* pXMLNode, TinyVisual* spvisParent, TinyVisualDocument* ps);
-			static BOOL CalculateLayout(TinyVisual* spvisParent, TinyVisualDocument* document);
-			static BOOL BuildProperty(const TiXmlElement* pXMLNode, TinyVisual* spvis);
-		private:
-			TiXmlDocument	m_doc;
-		};*/
 		/// <summary>
 		/// 资源管理
 		/// </summary>

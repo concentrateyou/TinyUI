@@ -52,6 +52,8 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadSeDebugPrivilege();
 	CoInitialize(NULL);
 
+	TinyVisualResource::GetInstance().Load("skin\\resource.xml");
+
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_BYTEDANCECLIENT));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);

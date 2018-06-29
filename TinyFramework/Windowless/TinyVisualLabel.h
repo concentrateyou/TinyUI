@@ -16,7 +16,6 @@ namespace TinyFramework
 		public:
 			virtual ~TinyVisualLabel();
 			TinyString	RetrieveTag() const OVERRIDE;
-		public:
 			BOOL		OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 		};
 	}
