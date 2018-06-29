@@ -13,7 +13,8 @@ namespace TinyFramework
 			:m_hWND(hWND),
 			m_hMemDC(NULL),
 			m_hBitmap(NULL),
-			m_hOldBitmap(NULL)
+			m_hOldBitmap(NULL),
+			m_bits(NULL)
 		{
 			ASSERT(m_hWND);
 			HDC hDC = ::GetDC(m_hWND);
@@ -63,7 +64,15 @@ namespace TinyFramework
 					m_hMemDC = NULL;
 				}
 				m_hMemDC = ::CreateCompatibleDC(m_hDC);
-				m_hBitmap = ::CreateCompatibleBitmap(m_hDC, m_size.cx, m_size.cy);
+				BITMAPINFO bi = { 0 };
+				bi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+				bi.bmiHeader.biWidth = m_size.cx;
+				bi.bmiHeader.biHeight = m_size.cy;
+				bi.bmiHeader.biPlanes = 1;
+				bi.bmiHeader.biBitCount = 32;
+				bi.bmiHeader.biCompression = BI_RGB;
+				bi.bmiHeader.biSizeImage = m_size.cx * m_size.cy;
+				m_hBitmap = CreateDIBSection(m_hDC, &bi, DIB_RGB_COLORS, (void **)m_bits, NULL, NULL);
 				m_hOldBitmap = (HBITMAP)::SelectObject(m_hMemDC, m_hBitmap);
 			}
 		}
@@ -139,6 +148,8 @@ namespace TinyFramework
 				::CombineRgn(m_hRGN, m_hRGN, spvis->GetClip(), RGN_AND);
 			}
 			::ExtSelectClipRgn(m_hDC, m_hRGN, RGN_AND);
+			SetBrush(((HBRUSH)SelectObject((m_hDC), (HGDIOBJ)(HBRUSH)(NULL_BRUSH))));
+			SetPen(((HPEN)SelectObject((m_hDC), (HGDIOBJ)(HPEN)(NULL_PEN))));
 		}
 		TinyClipCanvas::~TinyClipCanvas()
 		{
@@ -318,6 +329,7 @@ namespace TinyFramework
 		LRESULT TinyVisualWindowless::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
+
 			PAINTSTRUCT ps = { 0 };
 			HDC hDC = BeginPaint(m_hWND, &ps);
 			m_document.Draw(m_visualDC, ps.rcPaint);

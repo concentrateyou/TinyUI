@@ -20,7 +20,10 @@ namespace TinyFramework
 			m_visible(TRUE),
 			m_enable(TRUE),
 			m_count(0),
-			m_backgroundImage(NULL)
+			m_backgroundImage(NULL),
+			m_backgroundColor(DEFAULT_COLOR),
+			m_textColor(DEFAULT_COLOR),
+			m_textAlign(DT_LEFT)
 		{
 			LOGFONT lf;
 			::GetObject(reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)), sizeof(LOGFONT), &lf);
@@ -39,7 +42,10 @@ namespace TinyFramework
 			m_visible(TRUE),
 			m_enable(TRUE),
 			m_count(0),
-			m_backgroundImage(NULL)
+			m_backgroundImage(NULL),
+			m_backgroundColor(DEFAULT_COLOR),
+			m_textColor(DEFAULT_COLOR),
+			m_textAlign(DT_LEFT)
 		{
 			LOGFONT lf;
 			::GetObject(reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)), sizeof(LOGFONT), &lf);
@@ -181,6 +187,14 @@ namespace TinyFramework
 			}
 		}
 
+		void TinyVisual::SetBackgroundCenter(const TinyRectangle& center)
+		{
+			if (m_backgroundCenter != center)
+			{
+				m_backgroundCenter = center;
+			}
+		}
+
 		void TinyVisual::SetBorderThickness(const TinyRectangle& thickness)
 		{
 			if (m_borderThickness != thickness)
@@ -200,6 +214,21 @@ namespace TinyFramework
 			if (m_borderStyle != style)
 			{
 				m_borderStyle = style;
+			}
+		}
+
+		void TinyVisual::SetTextColor(COLORREF color)
+		{
+			if (m_textColor != color)
+			{
+				m_textColor = color;
+			}
+		}
+		void TinyVisual::SetTextAlian(UINT textAlign)
+		{
+			if (m_textAlign != textAlign)
+			{
+				m_textAlign = textAlign;
 			}
 		}
 
@@ -321,7 +350,39 @@ namespace TinyFramework
 		}
 		BOOL	TinyVisual::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
-			return FALSE;
+			ASSERT(m_document);
+			TinyRectangle clip = m_document->GetWindowRect(this);
+			TinyClipCanvas canvas(hDC, this, rcPaint);
+			//ªÊ÷∆±≥æ∞—’…´
+			if (m_backgroundColor != 0x00FFFFFF)
+			{
+				TinyBrush brush;
+				brush.CreateBrush(m_backgroundColor & 0x00FFFFFF);
+				canvas.SetBrush(brush);
+				canvas.FillRectangle(clip);
+			}
+			//ªÊ÷∆±≥æ∞Õº∆¨ 
+			if (m_backgroundImage != NULL)
+			{
+				if (m_backgroundCenter.IsRectEmpty())
+				{
+					canvas.DrawImage(*m_backgroundImage, clip, m_backgroundRectangle);
+				}
+				else
+				{
+					canvas.DrawImage(*m_backgroundImage, clip, m_backgroundRectangle, m_backgroundCenter);
+				}
+			}
+			//ªÊ÷∆Œƒ±æ
+			if (!m_szText.IsEmpty())
+			{
+				canvas.SetFont(m_hFONT);
+				canvas.SetTextColor(m_textColor);
+				TinyRectangle s = clip;
+				s.InflateRect(m_padding.left, m_padding.top, -m_padding.right, -m_padding.bottom);
+				canvas.DrawString(m_szText, s, m_textAlign);
+			}
+			return TRUE;
 		}
 		HRESULT	TinyVisual::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)
 		{

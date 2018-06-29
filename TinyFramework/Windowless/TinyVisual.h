@@ -58,10 +58,14 @@ namespace TinyFramework
 			virtual void	SetBackgroundImage(TinyImage* image);
 			virtual void	SetBackgroundColor(COLORREF color);
 			virtual void	SetBackgroundRectangle(const TinyRectangle& rectangle);
+			virtual void	SetBackgroundCenter(const TinyRectangle& center);
 			//±ß¿ò
 			virtual void	SetBorderThickness(const TinyRectangle& thickness);
 			virtual	void	SetBorderColor(COLORREF color);
 			virtual	void	SetBorderStyle(UINT style);
+			//ÎÄ×Ö
+			virtual void	SetTextColor(COLORREF color);
+			virtual void	SetTextAlian(UINT textAlign);
 
 			TinyString		GetText() const;
 			TinyString		GetName() const;
@@ -70,9 +74,9 @@ namespace TinyFramework
 			TinySize		GetSize() const;
 			TinySize		GetMaximumSize() const;
 			TinySize		GetMinimumSize() const;
+			TinyRectangle	GetPadding() const;
 			TinyRectangle	GetWindowRect()const;
 			TinyRectangle	GetClientRect() const;
-			TinyRectangle	GetPadding() const;
 			HRGN			GetClip() const;
 			HFONT			GetFont() const;
 			TinyRectangle	GetBackgroundRectangle() const;
@@ -143,12 +147,16 @@ namespace TinyFramework
 			TinyRectangle		m_padding;
 			//±³¾°
 			TinyRectangle		m_backgroundRectangle;
+			TinyRectangle		m_backgroundCenter;
 			COLORREF			m_backgroundColor;
 			TinyImage*			m_backgroundImage;
 			//±ß¿ò
 			TinyRectangle		m_borderThickness;
 			COLORREF			m_borderColor;
 			UINT				m_borderStyle;
+
+			COLORREF 			m_textColor;
+			UINT				m_textAlign;
 
 			HRGN				m_hrgnClip;
 			HFONT				m_hFONT;

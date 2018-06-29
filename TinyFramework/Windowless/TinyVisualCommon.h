@@ -15,6 +15,9 @@ namespace TinyFramework
 		LONG HimetricYtoDY(LONG yHimetric, LONG yPerInch);
 		LONG DXtoHimetricX(LONG dx, LONG xPerInch);
 		LONG DYtoHimetricY(LONG dy, LONG yPerInch);
+
+#define DEFAULT_COLOR	0x00FFFFFF
+
 		/// <summary>
 		/// 元素属性常量
 		/// </summary>

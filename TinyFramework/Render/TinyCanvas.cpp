@@ -160,7 +160,7 @@ namespace TinyFramework
 			m_hPEN = hPen;
 			m_hOldPEN = (HPEN)SelectObject(m_hDC, hPen);
 		}
-		return m_hPEN;
+		return m_hOldPEN;
 	}
 	HBRUSH TinyCanvas::SetBrush(HBRUSH hBrush)
 	{
@@ -169,7 +169,7 @@ namespace TinyFramework
 			m_hBRUSH = hBrush;
 			m_hOldBRUSH = (HBRUSH)SelectObject(m_hDC, hBrush);
 		}
-		return m_hBRUSH;
+		return m_hOldBRUSH;
 	}
 	HFONT TinyCanvas::SetFont(HFONT hFont)
 	{
@@ -178,7 +178,7 @@ namespace TinyFramework
 			m_hFONT = hFont;
 			m_hOldFONT = (HFONT)SelectObject(m_hDC, m_hFONT);
 		}
-		return m_hFONT;
+		return m_hOldFONT;
 	}
 	BOOL TinyCanvas::DrawString(const TinyString& str, LPRECT lprc, UINT format)
 	{
