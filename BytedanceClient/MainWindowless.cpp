@@ -98,6 +98,14 @@ namespace Bytedance
 		m_onSettingClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainWindowless::OnSettingClick));
 		m_setting->EVENT_CLICK += m_onSettingClick;
 
+		m_settingMenu.Create(m_hWND, "");
+		m_settingMenu.Add("system_setting1", "系统设置");
+		m_settingMenu.Add("system_setting2", "系统设置");
+		m_settingMenu.Add("system_setting3", "系统设置");
+		m_settingMenu.Add("system_setting4", "系统设置");
+		m_settingMenu.Add("system_setting5", "系统设置");
+
+
 		TinyRectangle s = window->GetClientRect();
 		Resize(s.Width(), s.Height());
 	}
@@ -134,9 +142,11 @@ namespace Bytedance
 		m_document.ReleaseCapture();
 		::SendMessage(m_hWND, WM_SYSCOMMAND, SC_CLOSE, NULL);
 	}
-	void MainWindowless::OnSettingClick(TinyVisual*, EventArgs& args)
+	void MainWindowless::OnSettingClick(TinyVisual* spvis, EventArgs& args)
 	{
-
+		TinyPoint pos = m_document.GetScreenPos(spvis);
+		pos.y += spvis->GetSize().cy;
+		m_settingMenu.Popup(pos);
 	}
 	void MainWindowless::OnRestoreClick(TinyVisual*, EventArgs& args)
 	{

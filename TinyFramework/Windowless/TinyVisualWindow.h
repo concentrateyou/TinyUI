@@ -19,6 +19,7 @@ namespace TinyFramework
 			void		SetPosition(const TinyPoint& pos) OVERRIDE;
 			void		SetSize(const TinySize& size) OVERRIDE;
 			void		SetText(const TinyString& pzText) OVERRIDE;
+			void		SetClip(HRGN hrgnClip) OVERRIDE;
 		public:
 			BOOL		OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 		};

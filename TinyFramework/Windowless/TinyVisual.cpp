@@ -170,7 +170,10 @@ namespace TinyFramework
 
 		void TinyVisual::SetBackgroundImage(TinyImage* image)
 		{
-
+			if (m_backgroundImage != image)
+			{
+				m_backgroundImage = image;
+			}
 		}
 		void TinyVisual::SetBackgroundColor(COLORREF color)
 		{
@@ -308,7 +311,10 @@ namespace TinyFramework
 		{
 			return m_backgroundImage;
 		}
-
+		TinyRectangle TinyVisual::GetBackgroundCenter() const
+		{
+			return m_backgroundCenter;
+		}
 		TinyRectangle TinyVisual::GetBorderThickness() const
 		{
 			return m_borderThickness;

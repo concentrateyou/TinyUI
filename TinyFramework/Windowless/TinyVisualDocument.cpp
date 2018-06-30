@@ -490,7 +490,14 @@ namespace TinyFramework
 				if (::IntersectRect(&clipBox, &clipBox, &rcPaint))
 				{
 					this->Draw(m_spvisWindow, ps->GetMemDC(), clipBox);
-					ps->Render(clipBox);
+					if (m_windowless.RetrieveExStyle() & WS_EX_LAYERED)
+					{
+						ps->RenderLayer();
+					}
+					else
+					{
+						ps->Render(clipBox.left, clipBox.top, clipBox.Width(), clipBox.Height(), clipBox.left, clipBox.top);
+					}
 				}
 				RestoreDC(ps->m_hDC, iRes);
 			}

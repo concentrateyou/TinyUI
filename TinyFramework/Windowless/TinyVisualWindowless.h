@@ -18,12 +18,13 @@ namespace TinyFramework
 		public:
 			TinyVisualDC(HWND hWND);
 			virtual ~TinyVisualDC();
-			void SetSize(INT cx, INT cy);
-			HDC	 GetMemDC() const;
-			BOOL Render(const RECT& s);
-			BOOL Render(const RECT& s, INT x, INT y);
-			BOOL RenderLayer(const RECT& s);
-			BOOL RenderLayer(const RECT& s, INT x, INT y);
+			HDC			GetMemDC() const;
+			void		SetSize(INT cx, INT cy);
+			TinySize	GetSize() const;
+			TinySize	GetTextExtent(LPCSTR lpszString, INT count);
+			BOOL		Render(INT dstX, INT dstY, INT dstCX, INT dstCY, INT srcX, INT srcY);
+			BOOL		Render(INT dstX, INT dstY, INT dstCX, INT dstCY, INT srcX, INT srcY,INT srcCX,INT srcCY);
+			BOOL		RenderLayer();
 		protected:
 			HWND		m_hWND;
 			HDC			m_hMemDC;

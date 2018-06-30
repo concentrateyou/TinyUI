@@ -24,6 +24,7 @@ namespace TinyFramework
 			Register(TinyVisualTag::WINDOW, CLASS_NAME(TinyVisualWindow));
 			Register(TinyVisualTag::BUTTON, CLASS_NAME(TinyVisualButton));
 			Register(TinyVisualTag::LABEL, CLASS_NAME(TinyVisualLabel));
+			Register(TinyVisualTag::MENUITEM, CLASS_NAME(TinyVisualMenuItem));
 		}
 		TinyVisualResource::~TinyVisualResource()
 		{

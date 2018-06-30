@@ -44,16 +44,21 @@ namespace TinyFramework
 			ASSERT(m_document);
 			::SetWindowText(m_document->GetVisualHWND().Handle(), pzText.CSTR());
 		}
-
+		void TinyVisualWindow::SetClip(HRGN hrgnClip)
+		{
+			TinyVisual::SetClip(hrgnClip);
+			ASSERT(m_document);
+			::SetWindowRgn(m_document->GetVisualHWND(), hrgnClip, TRUE);
+		}
 		TinyString TinyVisualWindow::RetrieveTag() const
 		{
 			return TinyVisualTag::WINDOW;
 		}
 		BOOL TinyVisualWindow::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
+			ASSERT(m_document);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			TinyClipCanvas canvas(hDC, this, rcPaint);
-
 			TinyBrush brush;
 			brush.CreateBrush(m_backgroundColor & 0x00FFFFFF);
 			canvas.SetBrush(brush);

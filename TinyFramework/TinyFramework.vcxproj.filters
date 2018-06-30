@@ -292,9 +292,6 @@
     <ClCompile Include="IO\TinyProcess.cpp">
       <Filter>源文件\Common</Filter>
     </ClCompile>
-    <ClCompile Include="Control\TinyShadow.cpp">
-      <Filter>源文件\Control</Filter>
-    </ClCompile>
     <ClCompile Include="IO\TinySharedMemory.cpp">
       <Filter>源文件\IO</Filter>
     </ClCompile>
@@ -428,6 +425,12 @@
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
     <ClCompile Include="Windowless\TinyVisualLabel.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualMenu.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualMenuItem.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>
@@ -726,9 +729,6 @@
     <ClInclude Include="Control\TinyScrollBox.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
-    <ClInclude Include="Control\TinyShadow.h">
-      <Filter>头文件\Control</Filter>
-    </ClInclude>
     <ClInclude Include="Control\TinyTabBox.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
@@ -865,6 +865,12 @@
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
     <ClInclude Include="Windowless\TinyVisualButton.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualMenu.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualMenuItem.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
   </ItemGroup>

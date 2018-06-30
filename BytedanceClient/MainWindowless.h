@@ -4,6 +4,8 @@
 #include "Windowless/TinyVisualWindow.h"
 #include "Windowless/TinyVisualButton.h"
 #include "Windowless/TinyVisualLabel.h"
+#include "Windowless/TinyVisualMenu.h"
+#include "Windowless/TinyVisualMenuItem.h"
 using namespace TinyFramework;
 using namespace TinyFramework::Windowless;
 
@@ -40,6 +42,7 @@ namespace Bytedance
 		TinyVisualButton*	m_restore;
 		TinyVisualButton*	m_close;
 		TinyVisualButton*	m_setting;
+		TinyVisualMenu		m_settingMenu;
 		//ÊÂ¼þ
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMinClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMaxClick;
