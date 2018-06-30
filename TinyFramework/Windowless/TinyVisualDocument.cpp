@@ -639,7 +639,6 @@ namespace TinyFramework
 				if (oldsize != size)
 				{
 					m_spvisWindow->SetSize(size);
-					Invalidate();
 				}
 			}
 			return FALSE;

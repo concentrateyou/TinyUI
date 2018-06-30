@@ -135,9 +135,10 @@ namespace TinyFramework
 		HRESULT	 TinyVisualButton::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)
 		{
 			ASSERT(m_document);
-			if (m_style != ButtonStyle::HOVER)
+			ButtonStyle style = dwFlags & MK_LBUTTON ? ButtonStyle::DOWN : ButtonStyle::HOVER;
+			if (style != m_style)
 			{
-				m_style = ButtonStyle::HOVER;
+				m_style = style;
 				this->Invalidate();
 			}
 			return TinyVisual::OnMouseMove(pos, dwFlags);
