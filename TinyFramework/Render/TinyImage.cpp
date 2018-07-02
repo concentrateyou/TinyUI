@@ -215,7 +215,25 @@ namespace TinyFramework
 		m_cx = 0;
 		m_cy = 0;
 	}
-
+	BOOL TinyImage::Create(HDC hDC, LPCSTR pzText, LPRECT lprc, UINT format)
+	{
+		if (!pzText)
+			return FALSE;
+		TinyRectangle s1;
+		DrawText(hDC, pzText, strlen(pzText), &s1, DT_CALCRECT | format);
+		TinyRectangle s = *lprc;
+		BITMAPINFO bmi;
+		memset(&bmi, 0, sizeof(BITMAPINFO));
+		bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+		bmi.bmiHeader.biWidth = TO_CX(s1);
+		bmi.bmiHeader.biHeight = -TO_CY(s1);
+		bmi.bmiHeader.biPlanes = 1;
+		bmi.bmiHeader.biBitCount = 32;
+		bmi.bmiHeader.biCompression = BI_RGB;
+		bmi.bmiHeader.biSizeImage = TO_CX(s1) * TO_CY(s1) * 4;
+		m_hBitmap = ::CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, (void**)&m_bits, NULL, 0);
+		return m_hBitmap != NULL;
+	}
 	BOOL TinyImage::Open(LPCSTR pzFile)
 	{
 		if (PathIsURL(pzFile))

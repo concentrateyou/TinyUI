@@ -64,19 +64,26 @@ namespace TinyFramework
 			ASSERT(m_document);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			TinyClipCanvas canvas(hDC, this, rcPaint);
-			canvas.SetFont(m_hFONT);
-			canvas.SetTextColor(m_textColor);
 			if (m_bEnter && m_images[0] != NULL && !m_images[0]->IsEmpty())
 			{
 				canvas.DrawImage(*m_images[0], clip, 0, 0, m_images[0]->GetSize().cx, m_images[0]->GetSize().cy);
 			}
 			if (!m_szText.IsEmpty())
 			{
-				SIZE size = m_document->GetVisualDC()->GetTextExtent(m_szText.CSTR(), m_szText.GetSize());
-				clip.left += 40;
-				clip.top += (clip.Height() - size.cy) / 2;
-				clip.bottom -= (clip.Height() - size.cy) / 2;
-				canvas.DrawString(m_szText, clip, m_textAlign);
+				if (m_document->GetVisualHWND().RetrieveExStyle() & WS_EX_LAYERED)
+				{
+
+				}
+				else
+				{
+					canvas.SetFont(m_hFONT);
+					canvas.SetTextColor(m_bEnter ? RGB(255, 255, 255) : RGB(255, 0, 0));
+					SIZE size = TinyVisualDC::GetTextExtent(hDC, m_szText.CSTR(), m_szText.GetSize());
+					clip.left += 40;
+					clip.top += (clip.Height() - size.cy) / 2;
+					clip.bottom -= (clip.Height() - size.cy) / 2;
+					canvas.DrawString(m_szText, clip, m_textAlign);
+				}
 			}
 			return TinyVisual::OnDraw(hDC, rcPaint);
 		}

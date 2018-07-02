@@ -657,6 +657,12 @@ namespace TinyFramework
 		return ::SetTextColor(m_hDC, color);
 	}
 
+	COLORREF TinyCanvas::SetBkColor(COLORREF color)
+	{
+		ASSERT(m_hDC);
+		return ::SetBkColor(m_hDC, color);
+	}
+
 	UINT TinyCanvas::SetTextAlign(UINT align)
 	{
 		ASSERT(m_hDC);

@@ -84,10 +84,10 @@ namespace TinyFramework
 		{
 			return m_hMemDC;
 		}
-		TinySize TinyVisualDC::GetTextExtent(LPCSTR lpszString, INT count)
+		TinySize TinyVisualDC::GetTextExtent(HDC hDC, LPCSTR lpszString, INT count)
 		{
 			TinySize size;
-			GetTextExtentPoint32(m_hDC, lpszString, count, &size);
+			GetTextExtentPoint32(hDC, lpszString, count, &size);
 			return size;
 		}
 		BOOL TinyVisualDC::Render(INT dstX, INT dstY, INT dstCX, INT dstCY, INT srcX, INT srcY)

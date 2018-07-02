@@ -81,6 +81,10 @@ namespace TinyFramework
 		/// </summary>
 		BOOL ResetTransform();
 		/// <summary>
+		/// 设置背景
+		/// </summary>
+		COLORREF SetBkColor(COLORREF color);
+		/// <summary>
 		/// 设置文字颜色
 		/// </summary>
 		COLORREF  SetTextColor(COLORREF color);

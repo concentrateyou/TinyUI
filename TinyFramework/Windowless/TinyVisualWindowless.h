@@ -21,10 +21,11 @@ namespace TinyFramework
 			HDC			GetMemDC() const;
 			void		SetSize(INT cx, INT cy);
 			TinySize	GetSize() const;
-			TinySize	GetTextExtent(LPCSTR lpszString, INT count);
 			BOOL		Render(INT dstX, INT dstY, INT dstCX, INT dstCY, INT srcX, INT srcY);
-			BOOL		Render(INT dstX, INT dstY, INT dstCX, INT dstCY, INT srcX, INT srcY,INT srcCX,INT srcCY);
+			BOOL		Render(INT dstX, INT dstY, INT dstCX, INT dstCY, INT srcX, INT srcY, INT srcCX, INT srcCY);
 			BOOL		RenderLayer();
+		public:
+			static TinySize	GetTextExtent(HDC hDC, LPCSTR lpszString, INT count);
 		protected:
 			HWND		m_hWND;
 			HDC			m_hMemDC;
