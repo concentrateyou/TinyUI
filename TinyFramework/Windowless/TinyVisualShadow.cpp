@@ -99,7 +99,7 @@ namespace TinyFramework
 			TinyPoint pos;
 			TinyPoint dstPos = windowRect.Position();
 			TinySize  dstSize = windowRect.Size();
-			BOOL bRes = ::UpdateLayeredWindow(m_hWND, windowDC, &dstPos, &dstSize, hMemDC, &pos, 0, &bs, 2);
+			BOOL bRes = ::UpdateLayeredWindow(m_hWND, windowDC, &dstPos, &dstSize, hMemDC, &pos, 0, &bs, ULW_ALPHA);
 			::SelectObject(hMemDC, hOldBitmap);
 			::DeleteDC(hMemDC);
 			::DeleteObject(hBitmap);

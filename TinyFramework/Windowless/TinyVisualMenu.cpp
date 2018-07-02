@@ -69,7 +69,6 @@ namespace TinyFramework
 
 		void TinyVisualMenu::OnInitialize()
 		{
-			//::SetLayeredWindowAttributes(m_hWND, RGB(255, 255, 255), 255, LWA_ALPHA | LWA_COLORKEY);
 			TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
 			window->SetBackgroundImage(TinyVisualResource::GetInstance()["menu_bkg"]);
 			window->SetBackgroundRectangle({ 0,0,157,38 });

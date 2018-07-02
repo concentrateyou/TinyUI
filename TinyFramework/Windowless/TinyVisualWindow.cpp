@@ -59,10 +59,17 @@ namespace TinyFramework
 			ASSERT(m_document);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			TinyClipCanvas canvas(hDC, this, rcPaint);
-			TinyBrush brush;
-			brush.CreateBrush(m_backgroundColor & 0x00FFFFFF);
-			canvas.SetBrush(brush);
-			canvas.FillRectangle(clip);
+			if (m_document->GetVisualHWND().RetrieveExStyle() & WS_EX_LAYERED)
+			{
+				canvas.SetBrush((HBRUSH)GetStockObject(NULL_BRUSH));
+			}
+			else
+			{
+				TinyBrush brush;
+				brush.CreateBrush(m_backgroundColor & 0x00FFFFFF);
+				canvas.SetBrush(brush);
+				canvas.FillRectangle(clip);
+			}
 			if (m_backgroundImage != NULL)
 			{
 				if (m_backgroundCenter.IsRectEmpty())
