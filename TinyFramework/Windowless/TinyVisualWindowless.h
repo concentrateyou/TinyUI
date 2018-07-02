@@ -93,13 +93,13 @@ namespace TinyFramework
 			DWORD	RetrieveStyle() OVERRIDE;
 			DWORD	RetrieveExStyle() OVERRIDE;
 		public:
-			BOOL	AddFilter(TinyVisualFilter* ps);
-			BOOL	RemoveFilter(TinyVisualFilter* ps);
-			void	AllowTracking(BOOL bAllow);
+			BOOL				AddFilter(TinyVisualFilter* ps);
+			BOOL				RemoveFilter(TinyVisualFilter* ps);
+			void				AllowTracking(BOOL bAllow);
+			TinyVisualShadow&	GetShadow();
 			TinyVisualDocument&	GetDocument();
-			TinyVisualShadow*	GetShadow();
-			virtual void OnInitialize() = 0;
-			virtual void OnUninitialize() = 0;
+			virtual void		OnInitialize() = 0;
+			virtual void		OnUninitialize() = 0;
 		public:
 			//ÏûÏ¢
 			BOOL	ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult) OVERRIDE;
@@ -140,6 +140,7 @@ namespace TinyFramework
 		private:
 			BOOL	Initialize();
 			void	Uninitialize();
+			void	Draw(RECT *lpRect);
 		protected:
 			BOOL								m_bAllowTracking;
 			BOOL								m_bMouseTracking;
@@ -148,7 +149,7 @@ namespace TinyFramework
 			TinyVisualFilters					m_mFilters;
 			TinyVisualDocument					m_document;
 			TinyScopedPtr<TinyVisualDC>			m_visualDC;
-			TinyScopedPtr<TinyVisualShadow>	    m_shadow;
+			TinyVisualShadow					m_shadow;
 		};
 	}
 }

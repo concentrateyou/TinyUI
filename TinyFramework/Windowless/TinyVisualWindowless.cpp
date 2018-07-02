@@ -256,9 +256,7 @@ namespace TinyFramework
 			//创建阴影窗口
 			if (!(RetrieveExStyle() & WS_EX_LAYERED))
 			{
-				m_shadow.Reset(new TinyVisualShadow());
-				ASSERT(m_shadow);
-				if (!m_shadow->Create(m_hWND, 0, 0, 0, 0))
+				if (!m_shadow.Create(m_hWND, 0, 0, 0, 0))
 				{
 					LOG(ERROR) << "Create TinyVisualShadow FAIL";
 					return FALSE;
@@ -277,10 +275,18 @@ namespace TinyFramework
 			m_visualDC.Reset(NULL);
 			if (m_shadow != NULL)
 			{
-				m_shadow->DestroyWindow();
+				m_shadow.DestroyWindow();
 			}
-			m_shadow.Reset(NULL);
 			m_document.Uninitialize();
+		}
+		void TinyVisualWindowless::Draw(RECT *lpRect)
+		{
+			if (m_visualDC != NULL)
+			{
+				TinyRectangle s;
+				s.SetSize(m_visualDC->GetSize());
+				m_document.Draw(m_visualDC, lpRect == NULL ? s : *lpRect);
+			}
 		}
 		BOOL TinyVisualWindowless::AddFilter(TinyVisualFilter* ps)
 		{
@@ -294,7 +300,7 @@ namespace TinyFramework
 		{
 			m_bAllowTracking = bAllow;
 		}
-		TinyVisualShadow* TinyVisualWindowless::GetShadow()
+		TinyVisualShadow& TinyVisualWindowless::GetShadow()
 		{
 			return m_shadow;
 		}
@@ -321,7 +327,7 @@ namespace TinyFramework
 			{
 				if (m_shadow != NULL)
 				{
-					m_shadow->DrawShadow();
+					m_shadow.DrawShadow();
 				}
 			}
 			return FALSE;
@@ -347,14 +353,13 @@ namespace TinyFramework
 			}
 			if (m_shadow != NULL)
 			{
-				ASSERT(m_shadow->Handle());
-				TinyRectangle box = m_shadow->GetShadowBox();
+				TinyRectangle box = m_shadow.GetShadowRectangle();
 				INT cx = m_size.cx + box.left + box.right;
 				INT cy = m_size.cy + box.top + box.bottom;
-				::SetWindowPos(m_shadow->Handle(), NULL, 0, 0, cx, cy, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+				::SetWindowPos(m_shadow.Handle(), NULL, 0, 0, cx, cy, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
 				if (IsWindowVisible(m_hWND))
 				{
-					m_shadow->DrawShadow();
+					m_shadow.DrawShadow();
 				}
 			}
 			return FALSE;
@@ -369,11 +374,10 @@ namespace TinyFramework
 			}
 			if (m_shadow != NULL)
 			{
-				ASSERT(m_shadow->Handle());
-				TinyRectangle box = m_shadow->GetShadowBox();
+				TinyRectangle box = m_shadow.GetShadowRectangle();
 				INT x = m_position.x - box.left;
 				INT y = m_position.y - box.top;
-				::SetWindowPos(m_shadow->Handle(), NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+				::SetWindowPos(m_shadow.Handle(), NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 			}
 			return FALSE;
 		}
@@ -570,8 +574,7 @@ namespace TinyFramework
 			bHandled = FALSE;
 			if (m_shadow != NULL)
 			{
-				ASSERT(m_shadow->Handle());
-				::ShowWindow(m_shadow->Handle(), !wParam ? SW_HIDE : SW_SHOWNA);
+				::ShowWindow(m_shadow.Handle(), !wParam ? SW_HIDE : SW_SHOWNA);
 			}
 			return FALSE;
 		}
@@ -580,13 +583,11 @@ namespace TinyFramework
 			bHandled = FALSE;
 			if (m_shadow != NULL)
 			{
-				ASSERT(m_shadow->Handle());
 				if (IsWindowVisible(m_hWND))
 				{
-					m_shadow->DrawShadow();
+					m_shadow.DrawShadow();
 				}
 			}
-
 			return FALSE;
 		}
 		LRESULT TinyVisualWindowless::OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -602,13 +603,13 @@ namespace TinyFramework
 				//最小化最大化不需要阴影
 				if (wParam == SC_MINIMIZE || wParam == SC_MAXIMIZE)
 				{
-					m_shadow->ShowWindow(SW_HIDE);
-					m_shadow->DrawShadow();
+					m_shadow.ShowWindow(SW_HIDE);
+					m_shadow.DrawShadow();
 				}
 				if (wParam == SC_RESTORE && !IsZoomed(m_hWND))
 				{
-					m_shadow->ShowWindow(SW_SHOW);
-					m_shadow->DrawShadow();
+					m_shadow.ShowWindow(SW_SHOW);
+					m_shadow.DrawShadow();
 				}
 			}
 			return FALSE;

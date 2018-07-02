@@ -24,7 +24,6 @@ namespace TinyFramework
 			void Remove(const TinyString& name);
 			void Popup(const TinyPoint& pos);
 		private:
-			void Draw();
 			void OnItemClick(TinyVisual*, EventArgs& args);
 		private:
 			UINT		m_offsetX;

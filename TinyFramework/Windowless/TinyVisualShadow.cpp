@@ -51,13 +51,13 @@ namespace TinyFramework
 			}
 			return FALSE;
 		}
-		TinyRectangle TinyVisualShadow::GetShadowBox() const
+		TinyRectangle TinyVisualShadow::GetShadowRectangle() const
 		{
-			return m_box;
+			return m_rectangle;
 		}
-		void TinyVisualShadow::SetShadowBox(const TinyRectangle& box)
+		void TinyVisualShadow::SetShadowRectangle(const TinyRectangle& rectangle)
 		{
-			m_box = box;
+			m_rectangle = rectangle;
 		}
 		BOOL TinyVisualShadow::DrawShadow()
 		{
@@ -85,16 +85,16 @@ namespace TinyFramework
 			TinyRectangle dst;
 			dst.SetRect(0, 0, windowRect.Width(), windowRect.Height());
 			TinyRectangle dstCenter = dst;
-			dstCenter.left += m_box.left;
-			dstCenter.top += m_box.top;
-			dstCenter.right -= m_box.right;
-			dstCenter.bottom -= m_box.bottom;
+			dstCenter.left += m_rectangle.left;
+			dstCenter.top += m_rectangle.top;
+			dstCenter.right -= m_rectangle.right;
+			dstCenter.bottom -= m_rectangle.bottom;
 			TinyRectangle src = m_image->GetRectangle();
 			TinyRectangle srcCenter = src;
-			srcCenter.left += m_box.left;
-			srcCenter.top += m_box.top;
-			srcCenter.right -= m_box.right;
-			srcCenter.bottom -= m_box.bottom;
+			srcCenter.left += m_rectangle.left;
+			srcCenter.top += m_rectangle.top;
+			srcCenter.right -= m_rectangle.right;
+			srcCenter.bottom -= m_rectangle.bottom;
 			memDC.Render(dst, dstCenter, src, srcCenter, TRUE);
 			TinyPoint pos;
 			TinyPoint dstPos = windowRect.Position();

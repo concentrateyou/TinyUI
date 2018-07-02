@@ -92,20 +92,14 @@ namespace TinyFramework
 			TinyVisualMenuItem* s = static_cast<TinyVisualMenuItem*>(spvis);
 			ASSERT(s);
 			s->SetChecked(!s->IsChecked());
-			s->Invalidate();
+			m_document.Invalidate();
 		}
 		void TinyVisualMenu::Popup(const TinyPoint& pos)
 		{
 			TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
 			window->SetPosition(pos);
 			window->SetSize(TinySize(180, m_offsetY));
-			this->Draw();
-		}
-		void TinyVisualMenu::Draw()
-		{
-			TinyRectangle s;
-			s.SetSize(m_visualDC->GetSize());
-			m_document.Draw(m_visualDC, s);
+			m_document.Invalidate();
 		}
 	}
 }

@@ -15,19 +15,19 @@ namespace TinyFramework
 		public:
 			TinyVisualShadow();
 			virtual ~TinyVisualShadow();
-			LPCSTR RetrieveClassName() OVERRIDE;
-			LPCSTR RetrieveTitle() OVERRIDE;
-			HICON RetrieveIcon() OVERRIDE;
-			DWORD RetrieveStyle() OVERRIDE;
-			DWORD RetrieveExStyle() OVERRIDE;
+			LPCSTR	RetrieveClassName() OVERRIDE;
+			LPCSTR	RetrieveTitle() OVERRIDE;
+			HICON	RetrieveIcon() OVERRIDE;
+			DWORD	RetrieveStyle() OVERRIDE;
+			DWORD	RetrieveExStyle() OVERRIDE;
 		public:
-			TinyRectangle GetShadowBox() const;
-			void SetShadowBox(const TinyRectangle& box);
-			BOOL SetShadow(TinyImage* image);
-			BOOL DrawShadow();
+			TinyRectangle GetShadowRectangle() const;
+			void	SetShadowRectangle(const TinyRectangle& rectangle);
+			BOOL	SetShadow(TinyImage* image);
+			BOOL	DrawShadow();
 		private:
 			TinyImage*				m_image;
-			TinyRectangle			m_box;
+			TinyRectangle			m_rectangle;
 		};
 	}
 }

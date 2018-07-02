@@ -66,7 +66,7 @@ namespace TinyFramework
 			else
 			{
 				TinyBrush brush;
-				brush.CreateBrush(m_backgroundColor & 0x00FFFFFF);
+				brush.CreateBrush(m_backgroundColor);
 				canvas.SetBrush(brush);
 				canvas.FillRectangle(clip);
 			}

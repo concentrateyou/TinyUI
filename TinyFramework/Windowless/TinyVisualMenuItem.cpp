@@ -64,14 +64,11 @@ namespace TinyFramework
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			canvas.SetFont(m_hFONT);
 			canvas.SetTextColor(m_textColor);
-			if (m_backgroundColor != DEFAULT_COLOR)
-			{
-				TinyBrush brush;
-				brush.CreateBrush(m_backgroundColor);
-				canvas.SetBrush(brush);
-				canvas.FillRectangle(clip);
-			}
-			if (m_bEnter && m_images[0] != NULL && !m_images[0]->IsEmpty())
+			TinyBrush brush;
+			brush.CreateBrush(m_backgroundColor);
+			canvas.SetBrush(brush);
+			canvas.FillRectangle(clip);
+			if (m_images[0] != NULL && !m_images[0]->IsEmpty())
 			{
 				canvas.DrawImage(*m_images[0], clip, 0, 0, m_images[0]->GetSize().cx, m_images[0]->GetSize().cy);
 			}
