@@ -50,11 +50,11 @@ namespace TinyFramework
 			s->SetChecked(FALSE);
 			s->SetTextColor(0x0000000);
 			s->SetTextAlian(DT_LEFT | DT_VCENTER);
-			s->SetSize(TinySize(180, 25));
+			s->SetSize(TinySize(180, 24));
 			s->SetPosition(TinyPoint(m_offsetX, m_offsetY));
 			s->SetImage(TinyVisualResource::GetInstance()["menu_highlight"], TinyVisualResource::GetInstance()["menu_check"]);
 			s->EVENT_CLICK += m_onItemClick;
-			m_offsetY += 25;
+			m_offsetY += 24;
 			return s;
 		}
 
@@ -92,13 +92,12 @@ namespace TinyFramework
 			TinyVisualMenuItem* s = static_cast<TinyVisualMenuItem*>(spvis);
 			ASSERT(s);
 			s->SetChecked(!s->IsChecked());
-			m_document.Invalidate();
 		}
 		void TinyVisualMenu::Popup(const TinyPoint& pos)
 		{
 			TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
 			window->SetPosition(pos);
-			window->SetSize(TinySize(180, m_offsetY));
+			window->SetSize(TinySize(194, m_offsetY + 7));
 			m_document.Invalidate();
 		}
 	}

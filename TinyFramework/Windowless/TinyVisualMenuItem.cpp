@@ -39,6 +39,7 @@ namespace TinyFramework
 		{
 			ASSERT(m_document);
 			m_bEnter = TRUE;
+			this->Invalidate();
 			return S_OK;
 		}
 		HRESULT	 TinyVisualMenuItem::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)
@@ -50,6 +51,7 @@ namespace TinyFramework
 		{
 			ASSERT(m_document);
 			m_bEnter = FALSE;
+			this->Invalidate();
 			return S_OK;
 		}
 		void TinyVisualMenuItem::SetImage(TinyImage* hl, TinyImage* checked)
@@ -64,11 +66,7 @@ namespace TinyFramework
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			canvas.SetFont(m_hFONT);
 			canvas.SetTextColor(m_textColor);
-			TinyBrush brush;
-			brush.CreateBrush(m_backgroundColor);
-			canvas.SetBrush(brush);
-			canvas.FillRectangle(clip);
-			if (m_images[0] != NULL && !m_images[0]->IsEmpty())
+			if (m_bEnter && m_images[0] != NULL && !m_images[0]->IsEmpty())
 			{
 				canvas.DrawImage(*m_images[0], clip, 0, 0, m_images[0]->GetSize().cx, m_images[0]->GetSize().cy);
 			}
