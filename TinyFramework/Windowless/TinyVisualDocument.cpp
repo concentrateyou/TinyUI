@@ -682,9 +682,6 @@ namespace TinyFramework
 						}
 						m_spvisLastMouse = spvis;
 					}
-
-					TRACE("Mouse Move:%s,  %s   %d %d\n", spvis->RetrieveTag().CSTR(), m_spvisLastMouse != NULL ? m_spvisLastMouse->RetrieveTag().CSTR() : "", pos.x, pos.y);
-
 					TinyPoint pt = pos;
 					ConvertToVisualPos(spvis, pt);
 					return spvis->OnMouseMove(pt, dwFlags);

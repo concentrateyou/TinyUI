@@ -70,14 +70,21 @@ namespace TinyFramework
 			}
 			if (!m_szText.IsEmpty())
 			{
+				canvas.SetFont(m_hFONT);
+				canvas.SetTextColor(m_bEnter ? RGB(255, 255, 255) : RGB(0, 0, 0));
 				if (m_document->GetVisualHWND().RetrieveExStyle() & WS_EX_LAYERED)
 				{
-
+					TinyImage image;
+					if (image.Create(hDC, m_szText.CSTR(), m_textAlign, m_bEnter ? RGB(0, 0, 0) : RGB(255, 255, 255)))
+					{
+						TinyRectangle s;
+						s.SetSize(image.GetSize());
+						s.SetPosition(TinyPoint(clip.left + 40, clip.top));
+						canvas.DrawImage(image, s, 0, 0, image.GetSize().cx, image.GetSize().cy);
+					}
 				}
 				else
 				{
-					canvas.SetFont(m_hFONT);
-					canvas.SetTextColor(m_bEnter ? RGB(255, 255, 255) : RGB(255, 0, 0));
 					SIZE size = TinyVisualDC::GetTextExtent(hDC, m_szText.CSTR(), m_szText.GetSize());
 					clip.left += 40;
 					clip.top += (clip.Height() - size.cy) / 2;

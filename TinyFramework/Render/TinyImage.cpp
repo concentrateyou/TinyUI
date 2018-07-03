@@ -215,24 +215,40 @@ namespace TinyFramework
 		m_cx = 0;
 		m_cy = 0;
 	}
-	BOOL TinyImage::Create(HDC hDC, LPCSTR pzText, LPRECT lprc, UINT format)
+	BOOL TinyImage::Create(HDC hDC, LPCSTR pzText, UINT format, COLORREF color)
 	{
 		if (!pzText)
 			return FALSE;
-		TinyRectangle s1;
-		DrawText(hDC, pzText, strlen(pzText), &s1, DT_CALCRECT | format);
-		TinyRectangle s = *lprc;
+		TinyRectangle s;
+		DrawText(hDC, pzText, strlen(pzText), &s, DT_CALCRECT | format);
+		m_cx = TO_CX(s);
+		m_cy = TO_CY(s);
 		BITMAPINFO bmi;
 		memset(&bmi, 0, sizeof(BITMAPINFO));
 		bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-		bmi.bmiHeader.biWidth = TO_CX(s1);
-		bmi.bmiHeader.biHeight = -TO_CY(s1);
+		bmi.bmiHeader.biWidth = m_cx;
+		bmi.bmiHeader.biHeight = m_cy;
 		bmi.bmiHeader.biPlanes = 1;
 		bmi.bmiHeader.biBitCount = 32;
 		bmi.bmiHeader.biCompression = BI_RGB;
-		bmi.bmiHeader.biSizeImage = TO_CX(s1) * TO_CY(s1) * 4;
 		m_hBitmap = ::CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, (void**)&m_bits, NULL, 0);
-		return m_hBitmap != NULL;
+		if (!m_hBitmap)
+			return FALSE;
+		TinyMemDC memDC(hDC, m_hBitmap);
+		memDC.SelectObject(GetCurrentObject(hDC, OBJ_FONT));
+		memDC.SetBkMode(TRANSPARENT);
+		memDC.SetTextColor(GetTextColor(hDC));
+		memDC.FillSolidRect(s.left, s.top, s.right, s.bottom, color);
+		memDC.DrawText(pzText, strlen(pzText), &s, format);
+		for (INT i = 0; i < m_cx * m_cy; i++)
+		{
+			COLORREF value = RGB(m_bits[i * 4 + 2], m_bits[i * 4 + 1], m_bits[i * 4]);
+			if (value != color)
+			{
+				m_bits[i * 4 + 3] = 255;
+			}
+		}
+		return TRUE;
 	}
 	BOOL TinyImage::Open(LPCSTR pzFile)
 	{

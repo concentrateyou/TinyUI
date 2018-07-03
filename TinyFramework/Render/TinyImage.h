@@ -21,7 +21,7 @@ namespace TinyFramework
 		virtual ~TinyImage();
 		operator HBITMAP() const;
 		BOOL			IsEmpty() const;
-		BOOL			Create(HDC hDC, LPCSTR pzText, LPRECT lprc, UINT format);
+		BOOL			Create(HDC hDC, LPCSTR pzText, UINT format, COLORREF color);
 		BOOL			Open(LPCSTR pz);
 		BOOL			Open(BYTE* p, LONG size);
 		BOOL			Save(LPCSTR pz);//±£´æ³ÉBMP
