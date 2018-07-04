@@ -62,6 +62,7 @@ namespace TinyFramework
 			if (m_document->GetVisualHWND().RetrieveExStyle() & WS_EX_LAYERED)
 			{
 				canvas.SetBrush((HBRUSH)GetStockObject(NULL_BRUSH));
+				canvas.FillRectangle(clip);
 			}
 			else
 			{

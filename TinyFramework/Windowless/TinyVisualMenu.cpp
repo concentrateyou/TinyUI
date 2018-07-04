@@ -95,6 +95,7 @@ namespace TinyFramework
 			window->SetBackgroundCenter({ 7,7,143,24 });
 			m_offsetX = 7;
 			m_offsetY = 7;
+			Unpopup();
 		}
 
 		void TinyVisualMenu::OnUninitialize()

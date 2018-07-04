@@ -73,8 +73,7 @@ namespace TinyFramework
 			ASSERT(m_document);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			TinyClipCanvas canvas(hDC, this, rcPaint);
-			canvas.SetBkColor(TRANSPARENT);
-			if (TestF(MENUITEM_SEPARATOR))
+			/*if (TestF(MENUITEM_SEPARATOR))
 			{
 				if (m_backgroundImage != NULL && !m_backgroundImage->IsEmpty())
 				{
@@ -126,7 +125,7 @@ namespace TinyFramework
 						canvas.DrawString(m_szText, clip, m_textAlign);
 					}
 				}
-			}
+			}*/
 			return TinyVisual::OnDraw(hDC, rcPaint);
 		}
 		void TinyVisualMenuItem::SetSeparator(BOOL bSeparator)

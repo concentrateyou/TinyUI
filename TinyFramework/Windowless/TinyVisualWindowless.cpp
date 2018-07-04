@@ -68,15 +68,21 @@ namespace TinyFramework
 					m_hMemDC = NULL;
 				}
 				m_hMemDC = ::CreateCompatibleDC(m_hDC);
-				BITMAPINFO bi = { 0 };
-				bi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-				bi.bmiHeader.biWidth = m_size.cx;
-				bi.bmiHeader.biHeight = m_size.cy;
-				bi.bmiHeader.biPlanes = 1;
-				bi.bmiHeader.biBitCount = 32;
-				bi.bmiHeader.biCompression = BI_RGB;
-				bi.bmiHeader.biSizeImage = m_size.cx * m_size.cy * 4;
-				m_hBitmap = CreateDIBSection(m_hDC, &bi, DIB_RGB_COLORS, (void **)m_bits, NULL, NULL);
+				if (GetWindowLong(m_hWND, GWL_EXSTYLE) & WS_EX_LAYERED)
+				{
+					BITMAPINFO bi = { 0 };
+					bi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+					bi.bmiHeader.biWidth = m_size.cx;
+					bi.bmiHeader.biHeight = m_size.cy;
+					bi.bmiHeader.biPlanes = 1;
+					bi.bmiHeader.biBitCount = 32;
+					bi.bmiHeader.biCompression = BI_RGB;
+					m_hBitmap = CreateDIBSection(m_hDC, &bi, DIB_RGB_COLORS, (void **)m_bits, NULL, NULL);
+				}
+				else
+				{
+					m_hBitmap = CreateCompatibleBitmap(m_hDC, m_size.cx, m_size.cy);
+				}
 				m_hOldBitmap = (HBITMAP)::SelectObject(m_hMemDC, m_hBitmap);
 			}
 		}
