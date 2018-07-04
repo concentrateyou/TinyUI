@@ -83,11 +83,24 @@ namespace TinyFramework
 			}
 			else
 			{
+				if (m_backgroundImage != NULL)
+				{
+					if (m_backgroundCenter.IsRectEmpty())
+					{
+						canvas.DrawImage(*m_backgroundImage, clip, m_backgroundRectangle);
+					}
+					else
+					{
+						canvas.DrawImage(*m_backgroundImage, clip, m_backgroundRectangle, m_backgroundCenter);
+					}
+				}
 				if (TestF(MENUITEM_HIGHLIGHT))
 				{
 					if (m_images[0] != NULL && !m_images[0]->IsEmpty())
 					{
-						canvas.DrawImage(*m_images[0], clip, 0, 0, m_images[0]->GetSize().cx, m_images[0]->GetSize().cy);
+						TinyRectangle s = clip;
+						s.DeflateRect(1, 1, 1, 1);
+						canvas.DrawImage(*m_images[0], s, 0, 0, m_images[0]->GetSize().cx, m_images[0]->GetSize().cy);
 					}
 				}
 				if (TestF(MENUITEM_CHECKED))

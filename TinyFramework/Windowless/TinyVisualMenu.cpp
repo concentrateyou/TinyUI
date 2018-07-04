@@ -13,8 +13,8 @@ namespace TinyFramework
 		IMPLEMENT_DYNAMIC(TinyVisualMenu, TinyVisualWindowless);
 
 		TinyVisualMenu::TinyVisualMenu()
-			:m_offsetX(7),
-			m_offsetY(7)
+			:m_offsetX(6),
+			m_offsetY(6)
 		{
 			m_onItemClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &TinyVisualMenu::OnItemClick));
 		}
@@ -67,14 +67,16 @@ namespace TinyFramework
 			s->SetChecked(FALSE);
 			s->SetTextColor(0x0000000);
 			s->SetTextAlian(DT_LEFT | DT_VCENTER);
-			s->SetSize(TinySize(180, 24));
+			s->SetSize(TinySize(180, 26));
 			s->SetPosition(TinyPoint(m_offsetX, m_offsetY));
+			s->SetBackgroundImage(TinyVisualResource::GetInstance()["menu_bkg"]);
+			s->SetBackgroundRectangle({ 6,6,145,26 });
 			s->SetImageList(icon,
 				TinyVisualResource::GetInstance()["menu_highlight"],
 				TinyVisualResource::GetInstance()["menu_check"],
 				TinyVisualResource::GetInstance()["menu_arrow"]);
 			s->EVENT_CLICK += m_onItemClick;
-			m_offsetY += 24;
+			m_offsetY += 26;
 			return s;
 		}
 
@@ -92,9 +94,9 @@ namespace TinyFramework
 			TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
 			window->SetBackgroundImage(TinyVisualResource::GetInstance()["menu_bkg"]);
 			window->SetBackgroundRectangle({ 0,0,157,38 });
-			window->SetBackgroundCenter({ 7,7,143,24 });
-			m_offsetX = 7;
-			m_offsetY = 7;
+			window->SetBackgroundCenter({ 6,6,145,26 });
+			m_offsetX = 6;
+			m_offsetY = 6;
 			Unpopup();
 		}
 
@@ -131,7 +133,7 @@ namespace TinyFramework
 		{
 			TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
 			window->SetPosition(pos);
-			window->SetSize(TinySize(194, m_offsetY + 7));
+			window->SetSize(TinySize(192, m_offsetY + 6));
 			SetWindowPos(m_hWND,
 				HWND_TOPMOST,
 				0,

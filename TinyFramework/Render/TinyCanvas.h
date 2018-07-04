@@ -18,6 +18,8 @@ namespace TinyFramework
 #define  HSLMAX			255   
 #define  RGBMAX			255  
 #define HSLUNDEFINED	(HSLMAX*2/3)
+
+	BOOL WINAPI SaveBitmapToFile1(HBITMAP hBitmap, LPCTSTR lpFileName);
 	/// <summary>
 	/// RGBtoHSL
 	/// </summary>

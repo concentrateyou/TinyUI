@@ -7,7 +7,105 @@ namespace TinyFramework
 	{
 		return (INT)floor(val + 0.5);
 	}
+	BOOL WINAPI SaveBitmapToFile1(HBITMAP hBitmap, LPCTSTR lpFileName)
+	{
+		INT iBits;
+		WORD wBitCount = 32;
+		DWORD dwPaletteSize = 0;
+		DWORD dwBmBitsSize = 0;
+		DWORD dwDIBSize = 0;
+		DWORD dwWritten = 0;
+		BITMAP bitmap;
+		BITMAPFILEHEADER bmfHdr;
+		BITMAPINFOHEADER bi;
+		LPBITMAPINFOHEADER lpbi;
+		HANDLE fh = INVALID_HANDLE_VALUE;
+		HGDIOBJ hPal = NULL, hOldPal = NULL;
+		void* bits = NULL;
+		BOOL bResult = FALSE;
+		HDC hDisplayDC = CreateDC(TEXT("DISPLAY"), NULL, NULL, NULL);
+		HDC hDC = ::CreateCompatibleDC(hDisplayDC);
+		if (hDC)
+		{
+			iBits = GetDeviceCaps(hDC, BITSPIXEL) * GetDeviceCaps(hDC, PLANES);
+		}
+		DeleteDC(hDC);
+		DeleteDC(hDisplayDC);
+		if (iBits <= 1)
+			wBitCount = 1;
+		else if (iBits <= 4)
+			wBitCount = 4;
+		else if (iBits <= 8)
+			wBitCount = 8;
+		else if (iBits <= 24)
+			wBitCount = 24;
+		else
+			wBitCount = 32;
+		if (wBitCount <= 8)
+			dwPaletteSize = (1 << wBitCount) * sizeof(RGBQUAD);
+		GetObject(hBitmap, sizeof(BITMAP), (LPSTR)&bitmap);
+		bi.biSize = sizeof(BITMAPINFOHEADER);
+		bi.biWidth = bitmap.bmWidth;
+		bi.biHeight = bitmap.bmHeight;
+		bi.biPlanes = 1;
+		bi.biBitCount = wBitCount;
+		bi.biCompression = BI_RGB;
+		bi.biSizeImage = 0;
+		bi.biXPelsPerMeter = 0;
+		bi.biYPelsPerMeter = 0;
+		bi.biClrUsed = 0;
+		bi.biClrImportant = 0;
+		dwBmBitsSize = ((bitmap.bmWidth * wBitCount + 31) / 32) * 4 * bitmap.bmHeight;
+		bits = malloc(dwBmBitsSize + dwPaletteSize + sizeof(BITMAPINFOHEADER));
+		if (bits == NULL)
+			goto leave;
+		lpbi = (LPBITMAPINFOHEADER)bits;
+		*lpbi = bi;
+		hPal = GetStockObject(DEFAULT_PALETTE);
+		if (hPal)
+		{
+			hDC = ::GetDC(NULL);
+			hOldPal = ::SelectPalette(hDC, (HPALETTE)hPal, FALSE);
+			RealizePalette(hDC);
+		}
+		GetDIBits(hDC, hBitmap, 0, (UINT)bitmap.bmHeight,
+			(LPSTR)lpbi + sizeof(BITMAPINFOHEADER)
+			+ dwPaletteSize,
+			(LPBITMAPINFO)
+			lpbi, DIB_RGB_COLORS);
+		if (hOldPal)
+		{
+			SelectPalette(hDC, (HPALETTE)hOldPal, TRUE);
+			RealizePalette(hDC);
+			::ReleaseDC(NULL, hDC);
+		}
+		fh = CreateFile(lpFileName, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		if (fh == INVALID_HANDLE_VALUE)
+			goto leave;
+		bmfHdr.bfType = 0x4D42; // "BM"
+		dwDIBSize = sizeof(BITMAPFILEHEADER)
+			+ sizeof(BITMAPINFOHEADER)
+			+ dwPaletteSize + dwBmBitsSize;
+		bmfHdr.bfSize = dwDIBSize;
+		bmfHdr.bfReserved1 = 0;
+		bmfHdr.bfReserved2 = 0;
+		bmfHdr.bfOffBits = (DWORD)sizeof(BITMAPFILEHEADER)
+			+ (DWORD)sizeof(BITMAPINFOHEADER)
+			+ dwPaletteSize;
+		WriteFile(fh, (LPSTR)&bmfHdr, sizeof(BITMAPFILEHEADER), &dwWritten, NULL);
+		WriteFile(fh, (LPSTR)lpbi, dwDIBSize, &dwWritten, NULL);
+		bResult = TRUE;
+	leave:
+		if (bits != NULL)
+		{
+			free(bits);
+		}
+		if (fh != INVALID_HANDLE_VALUE)
+			CloseHandle(fh);
 
+		return bResult;
+
+	}
 	RGBQUAD RGBtoHSL(RGBQUAD lRGBColor)
 	{
 		BYTE R, G, B;
@@ -213,7 +311,8 @@ namespace TinyFramework
 		TinyMemDC menDC(m_hDC, image);
 		TinyRectangle src;
 		src.SetRect(srcX, srcY, srcX + srcCX, srcY + srcCY);
-		return menDC.Render(destRect, src, TRUE);
+		BOOL bRes = menDC.Render(destRect, src, TRUE);
+		return bRes;
 	}
 	BOOL TinyCanvas::DrawImage(TinyImage& image, const RECT& destRect, const RECT& srcRect)
 	{

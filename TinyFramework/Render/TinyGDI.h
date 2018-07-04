@@ -370,7 +370,7 @@ namespace TinyFramework
 		BOOL Render(const RECT& dstPaint, const RECT& dstCenter, const RECT& srcPaint, const RECT& srcCenter, BOOL bAlpha);
 		SIZE GetSize() const;
 		virtual ~TinyMemDC();
-	private:
+	public:
 		SIZE		m_size;
 		HDC			m_hDestDC;
 		HBITMAP		m_hBitmap;

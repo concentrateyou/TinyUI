@@ -25,13 +25,15 @@ namespace TinyFramework
 			TinySize	GetSize() const;
 			BOOL		Render(INT dstX, INT dstY, INT dstCX, INT dstCY, INT srcX, INT srcY);
 			BOOL		Render(INT dstX, INT dstY, INT dstCX, INT dstCY, INT srcX, INT srcY, INT srcCX, INT srcCY);
-			BOOL		Update();
+			BOOL		RenderLayer();
+			BOOL		Save(LPCSTR pzFile);
 		public:
 			static TinySize	GetTextExtent(HDC hDC, LPCSTR lpszString, INT count);
 		protected:
 			HWND		m_hWND;
 			HDC			m_hMemDC;
 			HBITMAP		m_hBitmap;
+			BYTE*		m_bits;
 			TinySize	m_size;
 		};
 		/// <summary>

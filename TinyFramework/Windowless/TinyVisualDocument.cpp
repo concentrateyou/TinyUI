@@ -495,6 +495,7 @@ namespace TinyFramework
 			if (canvas != NULL && !canvas->IsEmpty())
 			{
 				HBITMAP hBitmap = (HBITMAP)::SelectObject(canvas->GetCompatibleDC(), canvas->GetCompatibleBitmap());
+				ASSERT(hBitmap);
 				INT iRes = SaveDC(canvas->GetCompatibleDC());
 				TinyRectangle clipBox;
 				::GetClipBox(canvas->GetCompatibleDC(), &clipBox);
@@ -505,13 +506,13 @@ namespace TinyFramework
 				RestoreDC(canvas->GetCompatibleDC(), iRes);
 				if (m_windowless.RetrieveExStyle() & WS_EX_LAYERED)
 				{
-					canvas->Update();
+					canvas->RenderLayer();
 				}
 				else
 				{
 					canvas->Render(clipBox.left, clipBox.top, clipBox.Width(), clipBox.Height(), clipBox.left, clipBox.top);
 				}
-				(HBITMAP)::SelectObject(canvas->GetCompatibleDC(), hBitmap);
+				::SelectObject(canvas->GetCompatibleDC(), hBitmap);
 			}
 		}
 		void TinyVisualDocument::Draw(TinyVisual* spvis, HDC hDC, const RECT& rcPaint)
