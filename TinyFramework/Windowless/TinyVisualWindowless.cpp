@@ -113,8 +113,7 @@ namespace TinyFramework
 		TinyVisualDC::TinyVisualDC(HWND hWND)
 			:m_hWND(hWND),
 			m_hMemDC(NULL),
-			m_hBitmap(NULL),
-			m_bits(NULL)
+			m_hBitmap(NULL)
 		{
 			ASSERT(m_hWND);
 			HDC hDC = ::GetDC(m_hWND);
@@ -172,8 +171,9 @@ namespace TinyFramework
 					bi.bmiHeader.biBitCount = 32;
 					bi.bmiHeader.biCompression = BI_RGB;
 					bi.bmiHeader.biSizeImage = ((m_size.cx * 32 + 31) / 32) * m_size.cy * 4;
-					m_hBitmap = CreateDIBSection(m_hDC, &bi, DIB_RGB_COLORS, (void **)&m_bits, NULL, NULL);
-					ZeroMemory(m_bits, bi.bmiHeader.biSizeImage);
+					BYTE* bits = NULL;
+					m_hBitmap = CreateDIBSection(m_hDC, &bi, DIB_RGB_COLORS, (void **)&bits, NULL, NULL);
+					ZeroMemory(bits, bi.bmiHeader.biSizeImage);
 				}
 				else
 				{

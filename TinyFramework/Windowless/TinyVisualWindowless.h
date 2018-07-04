@@ -32,7 +32,6 @@ namespace TinyFramework
 			HWND		m_hWND;
 			HDC			m_hMemDC;
 			HBITMAP		m_hBitmap;
-			BYTE*		m_bits;
 			TinySize	m_size;
 		};
 		/// <summary>
