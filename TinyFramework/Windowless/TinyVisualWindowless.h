@@ -18,19 +18,20 @@ namespace TinyFramework
 		public:
 			TinyVisualDC(HWND hWND);
 			virtual ~TinyVisualDC();
-			HDC			GetMemDC() const;
+			BOOL		IsEmpty() const;
+			HDC			GetCompatibleDC() const;
+			HBITMAP		GetCompatibleBitmap() const;
 			void		SetSize(INT cx, INT cy);
 			TinySize	GetSize() const;
 			BOOL		Render(INT dstX, INT dstY, INT dstCX, INT dstCY, INT srcX, INT srcY);
 			BOOL		Render(INT dstX, INT dstY, INT dstCX, INT dstCY, INT srcX, INT srcY, INT srcCX, INT srcCY);
-			BOOL		RenderLayer();
+			BOOL		Update();
 		public:
 			static TinySize	GetTextExtent(HDC hDC, LPCSTR lpszString, INT count);
 		protected:
 			HWND		m_hWND;
 			HDC			m_hMemDC;
 			HBITMAP		m_hBitmap;
-			HBITMAP		m_hOldBitmap;
 			BYTE*		m_bits;
 			TinySize	m_size;
 		};
