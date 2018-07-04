@@ -70,7 +70,7 @@ namespace TinyFramework
 			s->SetSize(TinySize(180, 26));
 			s->SetPosition(TinyPoint(m_offsetX, m_offsetY));
 			s->SetBackgroundImage(TinyVisualResource::GetInstance()["menu_bkg"]);
-			s->SetBackgroundRectangle({ 6,6,145,26 });
+			s->SetBackgroundRectangle({ 6,6,151,32 });
 			s->SetImageList(icon,
 				TinyVisualResource::GetInstance()["menu_highlight"],
 				TinyVisualResource::GetInstance()["menu_check"],
@@ -95,7 +95,7 @@ namespace TinyFramework
 			TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
 			window->SetBackgroundImage(TinyVisualResource::GetInstance()["menu_bkg"]);
 			window->SetBackgroundRectangle({ 0,0,157,38 });
-			window->SetBackgroundCenter({ 6,6,145,26 });
+			window->SetBackgroundCenter({ 6,6,151,32 });
 			m_offsetX = 6;
 			m_offsetY = 6;
 			Unpopup();
