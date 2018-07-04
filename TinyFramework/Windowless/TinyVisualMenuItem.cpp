@@ -13,94 +13,121 @@ namespace TinyFramework
 		IMPLEMENT_DYNCREATE(TinyVisualMenuItem, TinyVisual);
 
 		TinyVisualMenuItem::TinyVisualMenuItem()
-			:m_bChecked(FALSE),
+			:m_dwFlag(MENUITEM_NORMAL),
 			m_child(NULL)
 		{
-			m_bEnter = FALSE;
+
 		}
 		TinyVisualMenuItem::TinyVisualMenuItem(TinyVisual* spvisParent, TinyVisualDocument* document)
 			: TinyVisual(spvisParent, document),
-			m_bChecked(FALSE),
+			m_dwFlag(MENUITEM_NORMAL),
 			m_child(NULL)
 		{
-			m_bEnter = FALSE;
+
 		}
 		TinyVisualMenuItem::~TinyVisualMenuItem()
 		{
 
 		}
-
 		TinyString TinyVisualMenuItem::RetrieveTag() const
 		{
 			return TinyVisualTag::MENUITEM;
 		}
-
 		HRESULT	 TinyVisualMenuItem::OnMouseEnter()
 		{
 			ASSERT(m_document);
-			m_bEnter = TRUE;
-			this->Invalidate();
-			return S_OK;
-		}
-		HRESULT	 TinyVisualMenuItem::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)
-		{
-			ASSERT(m_document);
+			SetF(MENUITEM_HIGHLIGHT);
+			Invalidate();
 			return S_OK;
 		}
 		HRESULT	 TinyVisualMenuItem::OnMouseLeave()
 		{
 			ASSERT(m_document);
-			m_bEnter = FALSE;
-			this->Invalidate();
+			ClrF(MENUITEM_HIGHLIGHT);
+			Invalidate();
 			return S_OK;
 		}
-		void TinyVisualMenuItem::SetImage(TinyImage* hl, TinyImage* checked)
+		void TinyVisualMenuItem::SetImageList(TinyImage* icon,
+			TinyImage* highlight,
+			TinyImage* check,
+			TinyImage* arrow)
 		{
-			m_images[0] = hl;
-			m_images[1] = checked;
+			m_images[0] = highlight;
+			m_images[1] = check;
+			m_images[2] = arrow;
+			m_images[3] = icon;
 		}
 		BOOL TinyVisualMenuItem::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
 			ASSERT(m_document);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			TinyClipCanvas canvas(hDC, this, rcPaint);
-			if (m_bEnter && m_images[0] != NULL && !m_images[0]->IsEmpty())
+			if (TestF(MENUITEM_SEPARATOR))
 			{
-				canvas.DrawImage(*m_images[0], clip, 0, 0, m_images[0]->GetSize().cx, m_images[0]->GetSize().cy);
-			}
-			if (!m_szText.IsEmpty())
-			{
-				canvas.SetFont(m_hFONT);
-				canvas.SetTextColor(m_bEnter ? RGB(255, 255, 255) : RGB(0, 0, 0));
-				if (m_document->GetVisualHWND().RetrieveExStyle() & WS_EX_LAYERED)
+				if (m_backgroundImage != NULL && !m_backgroundImage->IsEmpty())
 				{
-					TinyImage image;
-					if (image.Create(hDC, m_szText.CSTR(), m_textAlign, m_bEnter ? RGB(0, 0, 0) : RGB(255, 255, 255)))
+					clip.left += 30;
+					canvas.DrawImage(*m_backgroundImage, clip, m_backgroundRectangle);
+				}
+			}
+			else
+			{
+				if (TestF(MENUITEM_HIGHLIGHT))
+				{
+					if (m_images[0] != NULL && !m_images[0]->IsEmpty())
 					{
-						TinyRectangle s;
-						s.SetSize(image.GetSize());
-						s.SetPosition(TinyPoint(clip.left + 40, clip.top));
-						canvas.DrawImage(image, s, 0, 0, image.GetSize().cx, image.GetSize().cy);
+						canvas.DrawImage(*m_images[0], clip, 0, 0, m_images[0]->GetSize().cx, m_images[0]->GetSize().cy);
 					}
 				}
-				else
+				if (!m_szText.IsEmpty())
 				{
-					SIZE size = TinyVisualDC::GetTextExtent(hDC, m_szText.CSTR(), m_szText.GetSize());
-					clip.left += 40;
-					clip.top += (clip.Height() - size.cy) / 2;
-					clip.bottom -= (clip.Height() - size.cy) / 2;
-					canvas.DrawString(m_szText, clip, m_textAlign);
+					canvas.SetFont(m_hFONT);
+					canvas.SetTextColor(TestF(MENUITEM_HIGHLIGHT) ? RGB(255, 255, 255) : RGB(0, 0, 0));
+					if (m_document->GetVisualHWND().RetrieveExStyle() & WS_EX_LAYERED)
+					{
+						TinyImage textImage;
+						if (textImage.Create(hDC, m_szText.CSTR(), m_textAlign, TestF(MENUITEM_HIGHLIGHT) ? RGB(0, 0, 0) : RGB(255, 255, 255)))
+						{
+							TinyRectangle s;
+							s.SetSize(textImage.GetSize());
+							s.SetPosition(TinyPoint(clip.left + 40, clip.top + (clip.Height() - textImage.GetSize().cy) / 2));
+							canvas.DrawImage(textImage, s, 0, 0, textImage.GetSize().cx, textImage.GetSize().cy);
+						}
+					}
+					else
+					{
+						SIZE size = TinyVisualDC::GetTextExtent(hDC, m_szText.CSTR(), m_szText.GetSize());
+						clip.left += 40;
+						clip.top += (clip.Height() - size.cy) / 2;
+						clip.bottom -= (clip.Height() - size.cy) / 2;
+						canvas.DrawString(m_szText, clip, m_textAlign);
+					}
 				}
 			}
 			return TinyVisual::OnDraw(hDC, rcPaint);
 		}
+		void TinyVisualMenuItem::SetSeparator(BOOL bSeparator)
+		{
+			if (bSeparator)
+				SetF(MENUITEM_SEPARATOR);
+			else
+				ClrF(MENUITEM_SEPARATOR);
+		}
+		BOOL TinyVisualMenuItem::IsSeparator() const
+		{
+			return TestF(MENUITEM_SEPARATOR);
+		}
 		void TinyVisualMenuItem::SetChecked(BOOL bChecked)
 		{
-			m_bChecked = bChecked;
+			if (bChecked)
+				SetF(MENUITEM_CHECKED);
+			else
+				ClrF(MENUITEM_CHECKED);
+			Invalidate();
 		}
 		BOOL TinyVisualMenuItem::IsChecked() const
 		{
-			return m_bChecked;
+			return TestF(MENUITEM_CHECKED);
 		}
 	}
 }

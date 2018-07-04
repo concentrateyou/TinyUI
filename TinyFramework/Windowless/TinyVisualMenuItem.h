@@ -20,16 +20,19 @@ namespace TinyFramework
 			TinyString	RetrieveTag() const OVERRIDE;
 			BOOL		OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT		OnMouseEnter() OVERRIDE;
-			HRESULT		OnMouseMove(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
 			HRESULT		OnMouseLeave() OVERRIDE;
 		public:
-			void		SetImage(TinyImage* hl, TinyImage* checked);
+			void		SetSeparator(BOOL bSeparator);
+			BOOL		IsSeparator() const;
 			void		SetChecked(BOOL bChecked);
 			BOOL		IsChecked() const;
+			void		SetImageList(TinyImage* icon,
+				TinyImage* highlight,
+				TinyImage* check,
+				TinyImage* arrow);
 		private:
-			BOOL			m_bChecked;
-			BOOL			m_bEnter;
-			TinyImage*		m_images[2];
+			DWORD			m_dwFlag;
+			TinyImage*		m_images[4];
 			TinyVisualMenu* m_child;
 		};
 	}

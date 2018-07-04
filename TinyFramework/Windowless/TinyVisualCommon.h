@@ -18,6 +18,15 @@ namespace TinyFramework
 
 #define DEFAULT_COLOR	0x00FFFFFF
 
+#define MENUITEM_NORMAL		0x0000
+#define MENUITEM_HIGHLIGHT	0x0001
+#define MENUITEM_CHECKED	0x0002
+#define MENUITEM_SEPARATOR	0x0004
+
+#define TestF(flag)		((m_dwFlag & flag) != 0)
+#define SetF(flag)		(m_dwFlag |= flag)
+#define ClrF(flag)		(m_dwFlag &= ~flag)
+
 		/// <summary>
 		/// 元素属性常量
 		/// </summary>

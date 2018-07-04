@@ -101,6 +101,7 @@ namespace Bytedance
 		m_settingMenu.Create(m_hWND, "");
 		m_settingMenu.Add("system_setting1", "系统设置");
 		m_settingMenu.Add("system_setting2", "系统设置");
+		m_settingMenu.Add();
 		m_settingMenu.Add("system_setting3", "系统设置");
 		m_settingMenu.Add("system_setting4", "系统设置");
 		m_settingMenu.Add("system_setting5", "系统设置");

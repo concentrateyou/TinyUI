@@ -11,20 +11,23 @@ namespace TinyFramework
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualMenu)
 		public:
 			TinyVisualMenu();
-			~TinyVisualMenu();
-			LPCSTR RetrieveClassName() OVERRIDE;
-			LPCSTR RetrieveTitle() OVERRIDE;
-			DWORD RetrieveStyle() OVERRIDE;
-			DWORD RetrieveExStyle() OVERRIDE;
-			void OnInitialize() OVERRIDE;
-			void OnUninitialize() OVERRIDE;
+			virtual ~TinyVisualMenu();
+			LPCSTR	RetrieveClassName() OVERRIDE;
+			LPCSTR	RetrieveTitle() OVERRIDE;
+			DWORD	RetrieveStyle() OVERRIDE;
+			DWORD	RetrieveExStyle() OVERRIDE;
+		public:
 			LRESULT OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		public:
-			TinyVisual* Add(const TinyString& name, const TinyString& text, TinyImage* image = NULL);
-			void Remove(const TinyString& name);
-			void Popup(const TinyPoint& pos);
+			void	OnInitialize() OVERRIDE;
+			void	OnUninitialize() OVERRIDE;
+		public:
+			TinyVisual* Add();//·Ö¸îÏß
+			TinyVisual* Add(const TinyString& name, const TinyString& text, TinyImage* icon = NULL);
+			void		Remove(const TinyString& name);
+			void		Popup(const TinyPoint& pos);
 		private:
-			void OnItemClick(TinyVisual*, EventArgs& args);
+			void		OnItemClick(TinyVisual*, EventArgs& args);
 		private:
 			UINT		m_offsetX;
 			UINT		m_offsetY;

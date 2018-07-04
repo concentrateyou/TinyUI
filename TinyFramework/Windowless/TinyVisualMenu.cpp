@@ -40,8 +40,26 @@ namespace TinyFramework
 		{
 			return (WS_EX_LAYERED | WS_EX_TOOLWINDOW);
 		}
-
-		TinyVisual* TinyVisualMenu::Add(const TinyString& name, const TinyString& text, TinyImage* image)
+		TinyVisual* TinyVisualMenu::Add()
+		{
+			TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
+			TinyVisualMenuItem* s = static_cast<TinyVisualMenuItem*>(m_document.Create(TinyVisualTag::MENUITEM, window));
+			s->SetEnable(FALSE);
+			s->SetSeparator(TRUE);
+			s->SetSize(TinySize(180, 3));
+			s->SetPosition(TinyPoint(m_offsetX, m_offsetY));
+			s->SetBackgroundImage(TinyVisualResource::GetInstance()["menu_cutling"]);
+			s->SetBackgroundRectangle({ 0,0,50,3 });
+			s->SetBackgroundCenter({ 1,0,49,3 });
+			s->SetImageList(NULL,
+				TinyVisualResource::GetInstance()["menu_highlight"],
+				TinyVisualResource::GetInstance()["menu_check"],
+				TinyVisualResource::GetInstance()["menu_arrow"]);
+			s->EVENT_CLICK += m_onItemClick;
+			m_offsetY += 3;
+			return s;
+		}
+		TinyVisual* TinyVisualMenu::Add(const TinyString& name, const TinyString& text, TinyImage* icon)
 		{
 			TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
 			TinyVisualMenuItem* s = static_cast<TinyVisualMenuItem*>(m_document.Create(TinyVisualTag::MENUITEM, window));
@@ -52,7 +70,10 @@ namespace TinyFramework
 			s->SetTextAlian(DT_LEFT | DT_VCENTER);
 			s->SetSize(TinySize(180, 24));
 			s->SetPosition(TinyPoint(m_offsetX, m_offsetY));
-			s->SetImage(TinyVisualResource::GetInstance()["menu_highlight"], TinyVisualResource::GetInstance()["menu_check"]);
+			s->SetImageList(icon,
+				TinyVisualResource::GetInstance()["menu_highlight"],
+				TinyVisualResource::GetInstance()["menu_check"],
+				TinyVisualResource::GetInstance()["menu_arrow"]);
 			s->EVENT_CLICK += m_onItemClick;
 			m_offsetY += 24;
 			return s;
