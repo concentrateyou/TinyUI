@@ -33,7 +33,7 @@ namespace TinyFramework
 		}
 		DWORD TinyVisualMenu::RetrieveStyle()
 		{
-			return (WS_VISIBLE | WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
+			return (WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
 		}
 
 		DWORD TinyVisualMenu::RetrieveExStyle()
@@ -91,6 +91,7 @@ namespace TinyFramework
 
 		void TinyVisualMenu::OnInitialize()
 		{
+			AllowTracking(TRUE);
 			TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
 			window->SetBackgroundImage(TinyVisualResource::GetInstance()["menu_bkg"]);
 			window->SetBackgroundRectangle({ 0,0,157,38 });
@@ -109,6 +110,12 @@ namespace TinyFramework
 		{
 			return HTCLIENT;
 		}
+		LRESULT TinyVisualMenu::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			Unpopup();
+			return TinyVisualWindowless::OnMouseLeave(uMsg, wParam, lParam, bHandled);
+		}
 		LRESULT TinyVisualMenu::OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
@@ -121,7 +128,7 @@ namespace TinyFramework
 					Unpopup();
 				}
 			}
-			return S_OK;
+			return TinyVisualWindowless::OnActivate(uMsg, wParam, lParam, bHandled);;
 		}
 		void TinyVisualMenu::OnItemClick(TinyVisual*spvis, EventArgs& args)
 		{
@@ -131,17 +138,14 @@ namespace TinyFramework
 		}
 		void TinyVisualMenu::Popup(const TinyPoint& pos)
 		{
-			TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
-			window->SetPosition(pos);
-			window->SetSize(TinySize(192, m_offsetY + 6));
-			SetWindowPos(m_hWND,
-				HWND_TOPMOST,
-				0,
-				0,
-				0,
-				0,
-				SWP_NOSIZE | SWP_NOMOVE | SWP_SHOWWINDOW);
-			m_document.Invalidate();
+			if (!IsPopup())
+			{
+				TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
+				window->SetPosition(pos);
+				window->SetSize(TinySize(192, m_offsetY + 6));
+				::ShowWindow(m_hWND, SW_SHOWDEFAULT);
+				m_document.Invalidate();
+			}
 		}
 		BOOL TinyVisualMenu::IsPopup() const
 		{
@@ -149,13 +153,7 @@ namespace TinyFramework
 		}
 		void TinyVisualMenu::Unpopup()
 		{
-			::SetWindowPos(m_hWND,
-				NULL,
-				0,
-				0,
-				0,
-				0,
-				SWP_HIDEWINDOW | SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
+			::ShowWindow(m_hWND, SW_HIDE);
 		}
 	}
 }

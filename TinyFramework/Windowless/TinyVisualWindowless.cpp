@@ -445,7 +445,9 @@ namespace TinyFramework
 			if (m_bAllowTracking)
 			{
 				if (m_bMouseTracking)
+				{
 					m_bMouseTracking = FALSE;
+				}
 			}
 			LRESULT lRes = m_document.OnMouseLeave();
 			bHandled = IsMsgHandled();
