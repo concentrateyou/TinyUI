@@ -18,6 +18,7 @@ namespace TinyFramework
 			DWORD	RetrieveExStyle() OVERRIDE;
 		public:
 			LRESULT OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+			LRESULT OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		public:
 			void	OnInitialize() OVERRIDE;
 			void	OnUninitialize() OVERRIDE;
@@ -26,6 +27,8 @@ namespace TinyFramework
 			TinyVisual* Add(const TinyString& name, const TinyString& text, TinyImage* icon = NULL);
 			void		Remove(const TinyString& name);
 			void		Popup(const TinyPoint& pos);
+			BOOL		IsPopup() const;
+			void		Unpopup();
 		private:
 			void		OnItemClick(TinyVisual*, EventArgs& args);
 		private:

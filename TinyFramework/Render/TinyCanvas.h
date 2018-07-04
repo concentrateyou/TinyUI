@@ -81,6 +81,10 @@ namespace TinyFramework
 		/// </summary>
 		BOOL ResetTransform();
 		/// <summary>
+		/// 设置背景模式
+		/// </summary>
+		INT SetBkMode(INT mode);
+		/// <summary>
 		/// 设置背景
 		/// </summary>
 		COLORREF SetBkColor(COLORREF color);

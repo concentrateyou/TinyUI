@@ -21,6 +21,7 @@ namespace TinyFramework
 			BOOL		OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT		OnMouseEnter() OVERRIDE;
 			HRESULT		OnMouseLeave() OVERRIDE;
+			HRESULT		OnLButtonUp(const TinyPoint& pos, DWORD dwFlags);
 		public:
 			void		SetSeparator(BOOL bSeparator);
 			BOOL		IsSeparator() const;

@@ -142,11 +142,11 @@ namespace TinyFramework
 	{
 		m_hDC = hDC;
 		m_iSave = SaveDC(m_hDC);
-		BOOL res = GetWorldTransform(m_hDC, &m_matrix);
-		if (!res) return FALSE;
+		if (!GetWorldTransform(m_hDC, &m_matrix))
+			return FALSE;
 		m_hPEN = (HPEN)GetCurrentObject(m_hDC, OBJ_PEN);
 		m_hBRUSH = (HBRUSH)GetCurrentObject(m_hDC, OBJ_BRUSH);
-		SetBkMode(hDC, TRANSPARENT);
+		::SetBkMode(hDC, TRANSPARENT);
 		return TRUE;
 	}
 	HDC TinyCanvas::Handle() const
@@ -655,6 +655,12 @@ namespace TinyFramework
 	{
 		ASSERT(m_hDC);
 		return ::SetTextColor(m_hDC, color);
+	}
+
+	INT TinyCanvas::SetBkMode(INT mode)
+	{
+		ASSERT(m_hDC);
+		return ::SetBkMode(m_hDC, mode);
 	}
 
 	COLORREF TinyCanvas::SetBkColor(COLORREF color)

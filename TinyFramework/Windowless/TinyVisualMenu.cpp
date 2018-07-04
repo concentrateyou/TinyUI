@@ -55,7 +55,6 @@ namespace TinyFramework
 				TinyVisualResource::GetInstance()["menu_highlight"],
 				TinyVisualResource::GetInstance()["menu_check"],
 				TinyVisualResource::GetInstance()["menu_arrow"]);
-			s->EVENT_CLICK += m_onItemClick;
 			m_offsetY += 3;
 			return s;
 		}
@@ -107,7 +106,20 @@ namespace TinyFramework
 		{
 			return HTCLIENT;
 		}
-
+		LRESULT TinyVisualMenu::OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			if (LOWORD(wParam) == WA_INACTIVE)
+			{
+				TinyString className(256);
+				::GetClassName((HWND)lParam, className.STR(), 256);
+				if (!className.Compare("TinyVisualMenu"))
+				{
+					Unpopup();
+				}
+			}
+			return S_OK;
+		}
 		void TinyVisualMenu::OnItemClick(TinyVisual*spvis, EventArgs& args)
 		{
 			TinyVisualMenuItem* s = static_cast<TinyVisualMenuItem*>(spvis);
@@ -119,7 +131,28 @@ namespace TinyFramework
 			TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
 			window->SetPosition(pos);
 			window->SetSize(TinySize(194, m_offsetY + 7));
+			SetWindowPos(m_hWND,
+				HWND_TOPMOST,
+				0,
+				0,
+				0,
+				0,
+				SWP_NOSIZE | SWP_NOMOVE | SWP_SHOWWINDOW);
 			m_document.Invalidate();
+		}
+		BOOL TinyVisualMenu::IsPopup() const
+		{
+			return ::IsWindowVisible(m_hWND);
+		}
+		void TinyVisualMenu::Unpopup()
+		{
+			::SetWindowPos(m_hWND,
+				NULL,
+				0,
+				0,
+				0,
+				0,
+				SWP_HIDEWINDOW | SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
 		}
 	}
 }

@@ -47,6 +47,17 @@ namespace TinyFramework
 			Invalidate();
 			return S_OK;
 		}
+		HRESULT	 TinyVisualMenuItem::OnLButtonUp(const TinyPoint& pos, DWORD dwFlags)
+		{
+			ASSERT(m_document);
+			TinyRectangle s = m_document->GetWindowRect(this);
+			TinyPoint point = m_document->VisualToClient(this, pos);
+			if (s.PtInRect(point))
+			{
+				EVENT_CLICK(this, EventArgs());
+			}
+			return TinyVisual::OnLButtonUp(pos, dwFlags);
+		}
 		void TinyVisualMenuItem::SetImageList(TinyImage* icon,
 			TinyImage* highlight,
 			TinyImage* check,
@@ -62,6 +73,7 @@ namespace TinyFramework
 			ASSERT(m_document);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			TinyClipCanvas canvas(hDC, this, rcPaint);
+			canvas.SetBkColor(TRANSPARENT);
 			if (TestF(MENUITEM_SEPARATOR))
 			{
 				if (m_backgroundImage != NULL && !m_backgroundImage->IsEmpty())
@@ -77,6 +89,17 @@ namespace TinyFramework
 					if (m_images[0] != NULL && !m_images[0]->IsEmpty())
 					{
 						canvas.DrawImage(*m_images[0], clip, 0, 0, m_images[0]->GetSize().cx, m_images[0]->GetSize().cy);
+					}
+				}
+				if (TestF(MENUITEM_CHECKED))
+				{
+					if (m_images[1] != NULL && !m_images[1]->IsEmpty())
+					{
+						TinyRectangle s = clip;
+						s.left += (30 - m_images[1]->GetSize().cx) / 2;
+						s.top += (clip.Height() - m_images[1]->GetSize().cy) / 2;
+						s.SetSize(m_images[1]->GetSize());
+						canvas.DrawImage(*m_images[1], s, 0, 0, m_images[1]->GetSize().cx, m_images[1]->GetSize().cy);
 					}
 				}
 				if (!m_szText.IsEmpty())
