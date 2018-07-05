@@ -77,7 +77,7 @@ namespace TinyFramework
 			{
 				if (m_backgroundImage != NULL && !m_backgroundImage->IsEmpty())
 				{
-					clip.left += 30;
+					clip.left += 32;
 					canvas.DrawImage(*m_backgroundImage, clip, m_backgroundRectangle);
 				}
 			}

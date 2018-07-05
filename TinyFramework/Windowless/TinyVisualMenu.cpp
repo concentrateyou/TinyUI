@@ -108,10 +108,18 @@ namespace TinyFramework
 		{
 			return HTCLIENT;
 		}
+		LRESULT TinyVisualMenu::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			if (GetActiveWindow() != m_hWND)
+			{
+				SetActiveWindow(m_hWND);
+			}
+			return TinyVisualWindowless::OnMouseMove(uMsg, wParam, lParam, bHandled);
+		}
 		LRESULT TinyVisualMenu::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
-			Unpopup();
 			return TinyVisualWindowless::OnMouseLeave(uMsg, wParam, lParam, bHandled);
 		}
 		LRESULT TinyVisualMenu::OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -119,11 +127,44 @@ namespace TinyFramework
 			bHandled = FALSE;
 			if (LOWORD(wParam) == WA_INACTIVE)
 			{
-				TinyString className(256);
-				::GetClassName((HWND)lParam, className.STR(), 256);
-				if (!className.Compare("TinyVisualMenu"))
+				HWND hWND = (HWND)lParam;
+				if (hWND != NULL)
 				{
+					TinyString className(256);
+					::GetClassName(hWND, className.STR(), 256);
+					TRACE("WA_INACTIVE - %s\n", className.CSTR());
+					if (!className.Compare("TinyVisualMenu"))
+					{
+						Unpopup();
+					}
+				}
+			}
+			if (LOWORD(wParam) == WA_CLICKACTIVE)
+			{
+				HWND hWND = (HWND)lParam;
+				if (hWND != NULL)
+				{
+					TinyString className(256);
+					::GetClassName(hWND, className.STR(), 256);
+					TRACE("WA_CLICKACTIVE - %s\n", className.CSTR());
+					/*if (!className.Compare("TinyVisualMenu"))
+					{
 					Unpopup();
+					}*/
+				}
+			}
+			if (LOWORD(wParam) == WA_ACTIVE)
+			{
+				HWND hWND = (HWND)lParam;
+				if (hWND != NULL)
+				{
+					TinyString className(256);
+					::GetClassName(hWND, className.STR(), 256);
+					TRACE("WA_INACTIVE - %s\n", className.CSTR());
+					/*if (!className.Compare("TinyVisualMenu"))
+					{
+						Unpopup();
+					}*/
 				}
 			}
 			return TinyVisualWindowless::OnActivate(uMsg, wParam, lParam, bHandled);;
@@ -141,7 +182,14 @@ namespace TinyFramework
 				TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
 				window->SetPosition(pos);
 				window->SetSize(TinySize(192, m_offsetY + 6));
-				::ShowWindow(m_hWND, SW_SHOWDEFAULT);
+				::SetWindowPos(m_hWND,
+					HWND_TOP,
+					0,
+					0,
+					0,
+					0,
+					SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+				::SetActiveWindow(m_hWND);
 				m_document.Invalidate();
 			}
 		}
@@ -151,7 +199,13 @@ namespace TinyFramework
 		}
 		void TinyVisualMenu::Unpopup()
 		{
-			::ShowWindow(m_hWND, SW_HIDE);
+			::SetWindowPos(m_hWND,
+				NULL,
+				0,
+				0,
+				0,
+				0,
+				SWP_NOMOVE | SWP_NOSIZE | SWP_HIDEWINDOW);
 		}
 	}
 }

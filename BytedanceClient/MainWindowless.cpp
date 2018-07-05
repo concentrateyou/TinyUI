@@ -98,7 +98,7 @@ namespace Bytedance
 		m_onSettingClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainWindowless::OnSettingClick));
 		m_setting->EVENT_CLICK += m_onSettingClick;
 
-		m_settingMenu.Create(m_hWND, "");
+		m_settingMenu.Create(NULL, "");
 		m_settingMenu.Add("system_setting1", "系统设置");
 		m_settingMenu.Add("system_setting2", "系统设置");
 		m_settingMenu.Add();
