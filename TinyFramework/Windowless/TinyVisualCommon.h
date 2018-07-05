@@ -26,7 +26,6 @@ namespace TinyFramework
 #define TestF(flag)		((m_dwFlag & flag) != 0)
 #define SetF(flag)		(m_dwFlag |= flag)
 #define ClrF(flag)		(m_dwFlag &= ~flag)
-
 		/// <summary>
 		/// 元素属性常量
 		/// </summary>

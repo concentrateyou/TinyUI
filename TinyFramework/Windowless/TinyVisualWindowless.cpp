@@ -13,7 +13,8 @@ namespace TinyFramework
 			:m_hWND(hWND),
 			m_hMemDC(NULL),
 			m_hBitmap(NULL),
-			m_bits(NULL)
+			m_bits(NULL),
+			m_hOldBitmap(NULL)
 		{
 			ASSERT(m_hWND);
 			HDC hDC = ::GetWindowDC(m_hWND);
@@ -30,6 +31,11 @@ namespace TinyFramework
 			if (m_hDC != NULL)
 			{
 				SAFE_DELETE_OBJECT(m_hBitmap);
+				if (m_hOldBitmap != NULL)
+				{
+					::SelectObject(m_hMemDC, m_hOldBitmap);
+					m_hOldBitmap = NULL;
+				}
 				if (m_hMemDC != NULL)
 				{
 					::DeleteDC(m_hMemDC);
@@ -55,6 +61,11 @@ namespace TinyFramework
 				m_size.cx = cx;
 				m_size.cy = cy;
 				SAFE_DELETE_OBJECT(m_hBitmap);
+				if (m_hOldBitmap != NULL)
+				{
+					::SelectObject(m_hMemDC, m_hOldBitmap);
+					m_hOldBitmap = NULL;
+				}
 				if (m_hMemDC != NULL)
 				{
 					::DeleteDC(m_hMemDC);
@@ -73,11 +84,19 @@ namespace TinyFramework
 					bi.bmiHeader.biSizeImage = ((m_size.cx * 32 + 31) / 32) * m_size.cy * 4;
 					m_bits = NULL;
 					m_hBitmap = CreateDIBSection(m_hDC, &bi, DIB_RGB_COLORS, (void **)&m_bits, NULL, NULL);
-					ZeroMemory(m_bits, bi.bmiHeader.biSizeImage);
+					if (m_hBitmap != NULL)
+					{
+						m_hOldBitmap = (HBITMAP)::SelectObject(m_hMemDC, m_hBitmap);
+					}
 				}
 				else
 				{
+					m_bits = NULL;
 					m_hBitmap = CreateCompatibleBitmap(m_hDC, m_size.cx, m_size.cy);
+					if (m_hBitmap != NULL)
+					{
+						m_hOldBitmap = (HBITMAP)::SelectObject(m_hMemDC, m_hBitmap);
+					}
 				}
 			}
 		}
@@ -123,6 +142,13 @@ namespace TinyFramework
 		BOOL TinyVisualDC::Save(LPCSTR pzFile)
 		{
 			return SaveBitmapToFile1(m_hBitmap, pzFile);
+		}
+		void TinyVisualDC::Clear()
+		{
+			if (m_bits != NULL)
+			{
+				ZeroMemory(m_bits, ((m_size.cx * 32 + 31) / 32) * m_size.cy * 4);
+			}
 		}
 		//////////////////////////////////////////////////////////////////////////
 		TinyClipCanvas::TinyClipCanvas(HDC hDC, TinyVisual* spvis, const RECT& rcPaint)

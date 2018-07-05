@@ -69,8 +69,6 @@ namespace TinyFramework
 			s->SetTextAlian(DT_LEFT | DT_VCENTER);
 			s->SetSize(TinySize(180, 26));
 			s->SetPosition(TinyPoint(m_offsetX, m_offsetY));
-			s->SetBackgroundImage(TinyVisualResource::GetInstance()["menu_bkg"]);
-			s->SetBackgroundRectangle({ 6,6,151,32 });
 			s->SetImageList(icon,
 				TinyVisualResource::GetInstance()["menu_highlight"],
 				TinyVisualResource::GetInstance()["menu_check"],
