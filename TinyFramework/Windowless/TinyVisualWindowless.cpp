@@ -221,7 +221,8 @@ namespace TinyFramework
 			:m_document(*this),
 			m_visualDC(NULL),
 			m_bMouseTracking(FALSE),
-			m_bAllowTracking(TRUE)
+			m_bAllowTracking(TRUE),
+			m_owner(NULL)
 		{
 
 		}
@@ -265,11 +266,11 @@ namespace TinyFramework
 		}
 		LPCSTR TinyVisualWindowless::RetrieveClassName()
 		{
-			return TEXT("TinyVisualWindowless");
+			return TEXT("VISUALWINDOWLESS");
 		}
 		LPCSTR TinyVisualWindowless::RetrieveTitle()
 		{
-			return TEXT("TinyVisualWindowless");
+			return TEXT("VISUALWINDOWLESS");
 		}
 		HICON TinyVisualWindowless::RetrieveIcon()
 		{
@@ -330,9 +331,17 @@ namespace TinyFramework
 		{
 			return m_mFilters.Remove(ps);
 		}
+		void TinyVisualWindowless::SetOwner(TinyVisualWindowless* windowless)
+		{
+			m_owner = windowless;
+		}
 		void TinyVisualWindowless::AllowTracking(BOOL bAllow)
 		{
 			m_bAllowTracking = bAllow;
+		}
+		TinyVisualWindowless*	TinyVisualWindowless::GetOwner()
+		{
+			return m_owner;
 		}
 		TinyVisualShadow& TinyVisualWindowless::GetShadow()
 		{
@@ -647,6 +656,18 @@ namespace TinyFramework
 					m_shadow.ShowWindow(SW_SHOW);
 					m_shadow.DrawShadow();
 				}
+			}
+			return FALSE;
+		}
+		LRESULT TinyVisualWindowless::OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			if (LOWORD(wParam) == WA_INACTIVE)
+			{
+				HWND hWND = (HWND)lParam;
+				TinyString className(256);
+				::GetClassName(hWND, className.STR(), 256);
+				TRACE("WA_INACTIVE - %s\n", className.CSTR());
 			}
 			return FALSE;
 		}

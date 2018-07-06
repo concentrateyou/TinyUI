@@ -64,7 +64,7 @@ namespace TinyFramework
 			TinyPoint				VisualToClient(const TinyVisual* spvis, const TinyPoint& pos);
 			BOOL					ReleaseCapture();
 			BOOL					Invalidate(RECT* lpRect = NULL);
-			BOOL					Redraw(RECT *lprcUpdate = NULL, HRGN hrgnUpdate = NULL);
+			BOOL					Redraw(RECT *lpRect = NULL);
 			void					Draw(TinyVisualDC* ps, const RECT& rcPaint);
 		public:
 			HRESULT					OnMouseMove(const TinyPoint& pos, DWORD dwFlags);

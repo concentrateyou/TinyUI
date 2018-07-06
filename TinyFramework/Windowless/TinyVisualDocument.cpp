@@ -481,14 +481,14 @@ namespace TinyFramework
 			}
 			return ::InvalidateRect(m_windowless.Handle(), lpRect, FALSE);
 		}
-		BOOL TinyVisualDocument::Redraw(RECT *lprcUpdate, HRGN hrgnUpdate)
+		BOOL TinyVisualDocument::Redraw(RECT *lpRect)
 		{
 			if (m_windowless.RetrieveExStyle() & WS_EX_LAYERED)
 			{
-				m_windowless.Draw(lprcUpdate);
+				m_windowless.Draw(lpRect);
 				return TRUE;
 			}
-			return  ::RedrawWindow(m_windowless.Handle(), lprcUpdate, hrgnUpdate, RDW_INVALIDATE);
+			return  ::RedrawWindow(m_windowless.Handle(), lpRect, NULL, RDW_INVALIDATE);
 		}
 		void TinyVisualDocument::Draw(TinyVisualDC* canvas, const RECT& rcPaint)
 		{
