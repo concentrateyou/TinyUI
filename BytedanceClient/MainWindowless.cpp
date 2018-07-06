@@ -29,6 +29,11 @@ namespace Bytedance
 		m_close->EVENT_CLICK += m_onCloseClick;
 		m_restore->EVENT_CLICK -= m_onRestoreClick;
 		m_setting->EVENT_CLICK -= m_onSettingClick;
+
+		if (m_contextmenu != NULL)
+		{
+			SAFE_DELETE(m_contextmenu);
+		}
 	}
 
 	LRESULT MainWindowless::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -98,18 +103,18 @@ namespace Bytedance
 		m_onSettingClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainWindowless::OnSettingClick));
 		m_setting->EVENT_CLICK += m_onSettingClick;
 
-		m_settingMenu.Create(NULL, "");
-		TinyVisualMenuItem* item = m_settingMenu.Add("system_setting1", "系统设置1");
+		m_contextmenu = new TinyVisualContextMenu();
+		m_contextmenu->Create(NULL, "");
+		TinyVisualMenuItem* item = m_contextmenu->Add("system_setting1", "系统设置1");
 		item->Add("system_setting1-1", "系统设置1-1");
 		item->Add("system_setting1-2", "系统设置1-2");
 		item->Add();
 		item->Add("system_setting1-3", "系统设置1-3");
-		m_settingMenu.Add("system_setting2", "系统设置2");
-		m_settingMenu.Add();
-		m_settingMenu.Add("system_setting3", "系统设置3");
-		m_settingMenu.Add("system_setting4", "系统设置4");
-		m_settingMenu.Add("system_setting5", "系统设置5");
-
+		m_contextmenu->Add("system_setting2", "系统设置2");
+		m_contextmenu->Add();
+		m_contextmenu->Add("system_setting3", "系统设置3");
+		m_contextmenu->Add("system_setting4", "系统设置4");
+		m_contextmenu->Add("system_setting5", "系统设置5");
 
 		TinyRectangle s = window->GetClientRect();
 		Resize(s.Width(), s.Height());
@@ -151,7 +156,7 @@ namespace Bytedance
 	{
 		TinyPoint pos = m_document.GetScreenPos(spvis);
 		pos.y += spvis->GetSize().cy;
-		m_settingMenu.Popup(pos);
+		m_contextmenu->Popup(pos);
 	}
 	void MainWindowless::OnRestoreClick(TinyVisual*, EventArgs& args)
 	{

@@ -42,7 +42,7 @@ namespace Bytedance
 		TinyVisualButton*		m_restore;
 		TinyVisualButton*		m_close;
 		TinyVisualButton*		m_setting;
-		TinyVisualContextMenu*	m_settingMenu;
+		TinyVisualContextMenu*	m_contextmenu;
 		//ÊÂ¼þ
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMinClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMaxClick;
