@@ -15,14 +15,14 @@ namespace TinyFramework
 
 		TinyVisualMenuItem::TinyVisualMenuItem()
 			:m_dwFlag(MENUITEM_NORMAL),
-			m_contextmenu(NULL)
+			m_context(NULL)
 		{
 
 		}
 		TinyVisualMenuItem::TinyVisualMenuItem(TinyVisual* spvisParent, TinyVisualDocument* document)
 			: TinyVisual(spvisParent, document),
 			m_dwFlag(MENUITEM_NORMAL),
-			m_contextmenu(NULL)
+			m_context(NULL)
 		{
 
 		}
@@ -74,23 +74,49 @@ namespace TinyFramework
 			m_images[2] = arrow;
 			m_images[3] = icon;
 		}
-		TinyVisual* TinyVisualMenuItem::Add()
+		TinyVisualMenuItem* TinyVisualMenuItem::Add()
 		{
-			if (!m_contextmenu)
+			if (!m_context)
 			{
-				m_contextmenu = new TinyVisualContextMenu();
-				m_contextmenu->SetOwner(&m_document->GetVisualHWND());
+				m_context = new TinyVisualContextMenu();
+				m_context->Create(NULL, "");
+				m_context->SetOwner(&m_document->GetVisualHWND());
 			}
-			return m_contextmenu->Add();
+			TinyVisualMenuItem* spvis = m_context->Add();
+			UINT count = m_context->GetDocument().GetParent(NULL)->GetChildCount();
+			if (count > 0)
+				SetF(MENUITEM_CHILD);
+			else
+				ClrF(MENUITEM_CHILD);
+			return spvis;
 		}
-		TinyVisual* TinyVisualMenuItem::Add(const TinyString& name, const TinyString& text, TinyImage* icon)
+		TinyVisualMenuItem* TinyVisualMenuItem::Add(const TinyString& name, const TinyString& text, TinyImage* icon)
 		{
-			if (!m_contextmenu)
+			if (!m_context)
 			{
-				m_contextmenu = new TinyVisualContextMenu();
-				m_contextmenu->SetOwner(&m_document->GetVisualHWND());
+				m_context = new TinyVisualContextMenu();
+				m_context->Create(NULL, "");
+				m_context->SetOwner(&m_document->GetVisualHWND());
 			}
-			return m_contextmenu->Add(name, text, icon);
+			TinyVisualMenuItem* spvis = m_context->Add(name, text, icon);
+			UINT count = m_context->GetDocument().GetParent(NULL)->GetChildCount();
+			if (count > 0)
+				SetF(MENUITEM_CHILD);
+			else
+				ClrF(MENUITEM_CHILD);
+			return spvis;
+		}
+		void TinyVisualMenuItem::Remove(const TinyString& name)
+		{
+			if (m_context != NULL)
+			{
+				m_context->Remove(name);
+				UINT count = m_context->GetDocument().GetParent(NULL)->GetChildCount();
+				if (count > 0)
+					SetF(MENUITEM_CHILD);
+				else
+					ClrF(MENUITEM_CHILD);
+			}
 		}
 		BOOL TinyVisualMenuItem::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
@@ -138,6 +164,18 @@ namespace TinyFramework
 						canvas.DrawImage(*m_images[1], s, 0, 0, m_images[1]->GetSize().cx, m_images[1]->GetSize().cy);
 					}
 				}
+				if (TestF(MENUITEM_CHILD))
+				{
+					if (m_images[2] != NULL && !m_images[2]->IsEmpty())
+					{
+						TinyRectangle s = clip;
+						s.right -= (m_images[2]->GetSize().cx) / 2;
+						s.top += (clip.Height() - m_images[2]->GetSize().cy) / 2;
+						s.left = s.right - m_images[2]->GetSize().cx;
+						s.bottom = s.top + m_images[2]->GetSize().cy;
+						canvas.DrawImage(*m_images[2], s, 0, 0, m_images[2]->GetSize().cx, m_images[2]->GetSize().cy);
+					}
+				}
 				if (!m_szText.IsEmpty())
 				{
 					canvas.SetFont(m_hFONT);
@@ -167,7 +205,7 @@ namespace TinyFramework
 		}
 		TinyVisualContextMenu*	TinyVisualMenuItem::GetContextMenu()
 		{
-			return m_contextmenu;
+			return m_context;
 		}
 		void TinyVisualMenuItem::SetSeparator(BOOL bSeparator)
 		{

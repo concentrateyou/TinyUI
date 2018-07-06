@@ -22,6 +22,7 @@ namespace TinyFramework
 #define MENUITEM_HIGHLIGHT	0x0001
 #define MENUITEM_CHECKED	0x0002
 #define MENUITEM_SEPARATOR	0x0004
+#define MENUITEM_CHILD	0x0008
 
 #define TestF(flag)		((m_dwFlag & flag) != 0)
 #define SetF(flag)		(m_dwFlag |= flag)

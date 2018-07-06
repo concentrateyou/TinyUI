@@ -25,11 +25,11 @@ namespace TinyFramework
 		}
 		LPCSTR TinyVisualContextMenu::RetrieveClassName()
 		{
-			return TEXT("VISUALMENU");
+			return TEXT("VISUALCONTEXTMENU");
 		}
 		LPCSTR TinyVisualContextMenu::RetrieveTitle()
 		{
-			return TEXT("VISUALMENU");
+			return TEXT("VISUALCONTEXTMENU");
 		}
 		DWORD TinyVisualContextMenu::RetrieveStyle()
 		{
