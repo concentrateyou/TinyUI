@@ -16,7 +16,9 @@ namespace TinyFramework
 			:m_offsetX(6),
 			m_offsetY(6),
 			m_contextNext(NULL),
-			m_contextPrev(NULL)
+			m_contextPrev(NULL),
+			m_owner(NULL),
+			m_hover(NULL)
 		{
 			m_onItemClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &TinyVisualContextMenu::OnItemClick));
 		}
@@ -41,6 +43,10 @@ namespace TinyFramework
 		DWORD TinyVisualContextMenu::RetrieveExStyle()
 		{
 			return (WS_EX_LAYERED | WS_EX_TOOLWINDOW);
+		}
+		TinyVisual*	TinyVisualContextMenu::GetOwner()
+		{
+			return m_owner;
 		}
 		TinyVisualMenuItem* TinyVisualContextMenu::Add()
 		{
@@ -125,6 +131,15 @@ namespace TinyFramework
 						return lRes;
 					context = context->m_contextNext;
 				}
+				context = m_contextPrev;
+				for (;;)
+				{
+					if (!context)
+						break;
+					if (context->IsPopup())
+						return lRes;
+					context = context->m_contextPrev;
+				}
 				context = m_contextPrev == NULL ? this : m_contextPrev;
 				while (context != NULL)
 				{
@@ -146,15 +161,16 @@ namespace TinyFramework
 			POINT pos = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
 			return TinyVisualWindowless::OnMouseMove(uMsg, wParam, lParam, bHandled);
 		}
+		LRESULT TinyVisualContextMenu::OnMouseHover(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			POINT pos = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+			return TinyVisualWindowless::OnMouseHover(uMsg, wParam, lParam, bHandled);
+		}
 		LRESULT TinyVisualContextMenu::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			return TinyVisualWindowless::OnMouseLeave(uMsg, wParam, lParam, bHandled);
-		}
-		LRESULT TinyVisualContextMenu::OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-		{
-			bHandled = FALSE;
-			return TinyVisualWindowless::OnKillFocus(uMsg, wParam, lParam, bHandled);
 		}
 		LRESULT TinyVisualContextMenu::OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
@@ -171,6 +187,7 @@ namespace TinyFramework
 		{
 			if (!IsPopup())
 			{
+				m_owner = spvis;
 				if (spvis != NULL)
 				{
 					if (spvis->GetDocument()->GetVisualHWND().IsKindOf(RUNTIME_CLASS(TinyVisualContextMenu)))
@@ -194,6 +211,7 @@ namespace TinyFramework
 		void TinyVisualContextMenu::Unpopup()
 		{
 			ShowWindow(SW_HIDE);
+			m_owner = NULL;
 		}
 	}
 }

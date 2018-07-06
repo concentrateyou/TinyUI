@@ -331,17 +331,9 @@ namespace TinyFramework
 		{
 			return m_mFilters.Remove(ps);
 		}
-		void TinyVisualWindowless::SetOwner(TinyVisualWindowless* windowless)
-		{
-			m_owner = windowless;
-		}
 		void TinyVisualWindowless::AllowTracking(BOOL bAllow)
 		{
 			m_bAllowTracking = bAllow;
-		}
-		TinyVisualWindowless*	TinyVisualWindowless::GetOwner()
-		{
-			return m_owner;
 		}
 		TinyVisualShadow& TinyVisualWindowless::GetShadow()
 		{

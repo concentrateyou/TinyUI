@@ -44,9 +44,20 @@ namespace TinyFramework
 		HRESULT	 TinyVisualMenuItem::OnMouseLeave()
 		{
 			ASSERT(m_document);
+			HRESULT hRes = TinyVisual::OnMouseLeave();
+			TinyVisualContextMenu* context = static_cast<TinyVisualContextMenu*>(&m_document->GetVisualHWND());
+			context = context->m_contextNext;
+			if (context != NULL)
+			{
+				context->Unpopup();
+			}
+			else
+			{
+
+			}
 			ClrF(MENUITEM_HIGHLIGHT);
 			Invalidate();
-			return TinyVisual::OnMouseLeave();
+			return hRes;
 		}
 		HRESULT	TinyVisualMenuItem::OnMouseHover(const TinyPoint& pos, DWORD dwFlags)
 		{
@@ -57,6 +68,7 @@ namespace TinyFramework
 				{
 					TinyPoint pos = m_document->GetScreenPos(this);
 					pos.x += this->GetSize().cx;
+					pos.y -= 6;
 					m_context->Popup(this, pos);
 				}
 			}
@@ -67,11 +79,12 @@ namespace TinyFramework
 			ASSERT(m_document);
 			TinyRectangle s = m_document->GetWindowRect(this);
 			TinyPoint point = m_document->VisualToClient(this, pos);
+			HRESULT hRes = TinyVisual::OnLButtonUp(pos, dwFlags);
 			if (s.PtInRect(point))
 			{
 				EVENT_CLICK(this, EventArgs());
 			}
-			return TinyVisual::OnLButtonUp(pos, dwFlags);
+			return hRes;
 		}
 		void TinyVisualMenuItem::SetImageList(TinyImage* icon,
 			TinyImage* highlight,
@@ -89,7 +102,6 @@ namespace TinyFramework
 			{
 				m_context = new TinyVisualContextMenu();
 				m_context->Create(NULL, "");
-				m_context->SetOwner(&m_document->GetVisualHWND());
 			}
 			TinyVisualMenuItem* spvis = m_context->Add();
 			UINT count = m_context->GetDocument().GetParent(NULL)->GetChildCount();
@@ -105,7 +117,6 @@ namespace TinyFramework
 			{
 				m_context = new TinyVisualContextMenu();
 				m_context->Create(NULL, "");
-				m_context->SetOwner(&m_document->GetVisualHWND());
 			}
 			TinyVisualMenuItem* spvis = m_context->Add(name, text, icon);
 			UINT count = m_context->GetDocument().GetParent(NULL)->GetChildCount();
@@ -178,7 +189,7 @@ namespace TinyFramework
 					if (m_images[2] != NULL && !m_images[2]->IsEmpty())
 					{
 						TinyRectangle s = clip;
-						s.right -= (m_images[2]->GetSize().cx) / 2;
+						s.right -= (m_images[2]->GetSize().cx) / 2 + 5;
 						s.top += (clip.Height() - m_images[2]->GetSize().cy) / 2;
 						s.left = s.right - m_images[2]->GetSize().cx;
 						s.bottom = s.top + m_images[2]->GetSize().cy;
