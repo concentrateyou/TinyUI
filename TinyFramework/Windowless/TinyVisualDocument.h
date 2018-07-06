@@ -70,6 +70,7 @@ namespace TinyFramework
 			HRESULT					OnMouseMove(const TinyPoint& pos, DWORD dwFlags);
 			HRESULT					OnMouseWheel(const TinyPoint& pos, SHORT zDelta, DWORD dwFlags);
 			HRESULT					OnMouseLeave();
+			HRESULT					OnMouseHover(const TinyPoint& pos, DWORD dwFlags);
 			HRESULT					OnLButtonDown(const TinyPoint& pos, DWORD dwFlags);
 			HRESULT					OnLButtonUp(const TinyPoint& pos, DWORD dwFlags);
 			HRESULT					OnLButtonDBClick(const TinyPoint& pos, DWORD dwFlags);

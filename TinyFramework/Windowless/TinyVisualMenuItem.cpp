@@ -39,14 +39,19 @@ namespace TinyFramework
 			ASSERT(m_document);
 			SetF(MENUITEM_HIGHLIGHT);
 			Invalidate();
-			return S_OK;
+			return TinyVisual::OnMouseEnter();
 		}
 		HRESULT	 TinyVisualMenuItem::OnMouseLeave()
 		{
 			ASSERT(m_document);
 			ClrF(MENUITEM_HIGHLIGHT);
 			Invalidate();
-			return S_OK;
+			return TinyVisual::OnMouseLeave();
+		}
+		HRESULT	TinyVisualMenuItem::OnMouseHover(const TinyPoint& pos, DWORD dwFlags)
+		{
+			ASSERT(m_document);
+			return TinyVisual::OnMouseHover(pos, dwFlags);
 		}
 		HRESULT	 TinyVisualMenuItem::OnLButtonUp(const TinyPoint& pos, DWORD dwFlags)
 		{

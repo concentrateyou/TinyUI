@@ -464,13 +464,28 @@ namespace TinyFramework
 					TRACKMOUSEEVENT tme;
 					tme.cbSize = sizeof(tme);
 					tme.hwndTrack = m_hWND;
-					tme.dwFlags = TME_LEAVE;
+					tme.dwFlags = TME_LEAVE | TME_HOVER;
 					tme.dwHoverTime = 10;
 					m_bMouseTracking = _TrackMouseEvent(&tme);
 				}
 			}
 			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 			LRESULT lRes = m_document.OnMouseMove(pos, static_cast<DWORD>(wParam));
+			bHandled = IsMsgHandled();
+			return lRes;
+		}
+		LRESULT	TinyVisualWindowless::OnMouseHover(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			SetMsgHandled(FALSE);
+			if (m_bAllowTracking)
+			{
+				if (m_bMouseTracking)
+				{
+					m_bMouseTracking = FALSE;
+				}
+			}
+			TinyPoint pos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			LRESULT lRes = m_document.OnMouseHover(pos, static_cast<DWORD>(wParam));
 			bHandled = IsMsgHandled();
 			return lRes;
 		}

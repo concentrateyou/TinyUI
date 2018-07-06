@@ -719,6 +719,17 @@ namespace TinyFramework
 			m_spvisLastMouse = NULL;
 			return FALSE;
 		}
+		HRESULT	TinyVisualDocument::OnMouseHover(const TinyPoint& pos, DWORD dwFlags)
+		{
+			TinyVisual* spvis = GetVisualByPos(pos.x, pos.y);
+			if (spvis != NULL)
+			{
+				TinyPoint pt = pos;
+				ConvertToVisualPos(spvis, pt);
+				return spvis->OnMouseHover(pt, dwFlags);
+			}
+			return FALSE;
+		}
 		HRESULT TinyVisualDocument::OnLButtonDown(const TinyPoint& pos, DWORD dwFlags)
 		{
 			TinyVisual* spvis = m_spvisCapture;

@@ -145,15 +145,21 @@ namespace TinyFramework
 			ASSERT(s);
 			s->SetChecked(!s->IsChecked());
 		}
-		void TinyVisualContextMenu::Popup(const TinyPoint& pos)
+		void TinyVisualContextMenu::Popup(TinyVisual* spvis)
 		{
 			if (!IsPopup())
 			{
 				TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
-				window->SetPosition(pos);
+				if (spvis != NULL)
+				{
+					SetOwner(&spvis->GetDocument()->GetVisualHWND());
+					TinyPoint pos = spvis->GetDocument()->GetScreenPos(spvis);
+					pos.y += spvis->GetSize().cy;
+					window->SetPosition(pos);
+				}
 				window->SetSize(TinySize(192, m_offsetY + 6));
-				ShowWindow(SW_SHOW);
 				m_document.Redraw();
+				ShowWindow(SW_SHOW);
 			}
 		}
 		BOOL TinyVisualContextMenu::IsPopup() const

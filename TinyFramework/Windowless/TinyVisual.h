@@ -102,6 +102,7 @@ namespace TinyFramework
 			virtual HRESULT		OnMButtonDBClick(const TinyPoint& pos, DWORD dwFlags);
 			virtual HRESULT		OnMouseMove(const TinyPoint& pos, DWORD dwFlags);
 			virtual HRESULT		OnMouseWheel(const TinyPoint& pos, SHORT zDelta, DWORD dwFlags);
+			virtual	HRESULT		OnMouseHover(const TinyPoint& pos, DWORD dwFlags);
 			virtual HRESULT		OnMouseEnter();
 			virtual HRESULT		OnMouseLeave();
 			virtual HRESULT		OnKeyDown(DWORD dwChar, DWORD dwRepCnt, DWORD dwFlags);

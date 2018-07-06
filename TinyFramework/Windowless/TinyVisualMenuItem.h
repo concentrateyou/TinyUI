@@ -20,6 +20,7 @@ namespace TinyFramework
 			TinyString		RetrieveTag() const OVERRIDE;
 			BOOL			OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 			HRESULT			OnMouseEnter() OVERRIDE;
+			HRESULT			OnMouseHover(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
 			HRESULT			OnMouseLeave() OVERRIDE;
 			HRESULT			OnLButtonUp(const TinyPoint& pos, DWORD dwFlags);
 		public:

@@ -32,7 +32,7 @@ namespace TinyFramework
 			TinyVisualMenuItem* Add();//·Ö¸îÏß
 			TinyVisualMenuItem* Add(const TinyString& name, const TinyString& text, TinyImage* icon = NULL);
 			void				Remove(const TinyString& name);
-			void				Popup(const TinyPoint& pos);
+			void				Popup(TinyVisual* spvis);
 			BOOL				IsPopup() const;
 			void				Unpopup();
 		private:

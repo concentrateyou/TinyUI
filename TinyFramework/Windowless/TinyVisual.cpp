@@ -377,6 +377,10 @@ namespace TinyFramework
 			EVENT_MOUSEMOVE(this, MouseEventArgs(button, 0, pos.x, pos.y, zDelta));
 			return FALSE;
 		}
+		HRESULT	 TinyVisual::OnMouseHover(const TinyPoint& pos, DWORD dwFlags)
+		{
+			return FALSE;
+		}
 		HRESULT	TinyVisual::OnMouseEnter()
 		{
 			return FALSE;
