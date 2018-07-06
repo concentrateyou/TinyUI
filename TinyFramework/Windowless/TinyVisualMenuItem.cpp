@@ -51,6 +51,15 @@ namespace TinyFramework
 		HRESULT	TinyVisualMenuItem::OnMouseHover(const TinyPoint& pos, DWORD dwFlags)
 		{
 			ASSERT(m_document);
+			if (m_context != NULL)
+			{
+				if (!m_context->IsPopup())
+				{
+					TinyPoint pos = m_document->GetScreenPos(this);
+					pos.x += this->GetSize().cx;
+					m_context->Popup(this, pos);
+				}
+			}
 			return TinyVisual::OnMouseHover(pos, dwFlags);
 		}
 		HRESULT	 TinyVisualMenuItem::OnLButtonUp(const TinyPoint& pos, DWORD dwFlags)

@@ -154,7 +154,9 @@ namespace Bytedance
 	}
 	void MainWindowless::OnSettingClick(TinyVisual* spvis, EventArgs& args)
 	{
-		m_contextmenu->Popup(spvis);
+		TinyPoint pos = m_document.GetScreenPos(spvis);
+		pos.y += spvis->GetSize().cy;
+		m_contextmenu->Popup(spvis, pos);
 	}
 	void MainWindowless::OnRestoreClick(TinyVisual*, EventArgs& args)
 	{

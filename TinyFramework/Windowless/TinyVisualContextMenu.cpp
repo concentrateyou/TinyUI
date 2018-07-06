@@ -14,7 +14,9 @@ namespace TinyFramework
 
 		TinyVisualContextMenu::TinyVisualContextMenu()
 			:m_offsetX(6),
-			m_offsetY(6)
+			m_offsetY(6),
+			m_contextNext(NULL),
+			m_contextPrev(NULL)
 		{
 			m_onItemClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &TinyVisualContextMenu::OnItemClick));
 		}
@@ -114,7 +116,27 @@ namespace TinyFramework
 			LRESULT lRes = TinyVisualWindowless::OnNCActivate(uMsg, wParam, lParam, bHandled);
 			if ((BOOL)wParam == FALSE)
 			{
-				Unpopup();
+				TinyVisualContextMenu* context = m_contextNext;
+				for (;;)
+				{
+					if (!context)
+						break;
+					if (context->IsPopup())
+						return lRes;
+					context = context->m_contextNext;
+				}
+				context = m_contextPrev == NULL ? this : m_contextPrev;
+				while (context != NULL)
+				{
+					context->Unpopup();
+					context = context->m_contextPrev;
+				}
+				context = m_contextNext == NULL ? this : m_contextNext;
+				while (context != NULL)
+				{
+					context->Unpopup();
+					context = context->m_contextNext;
+				}
 			}
 			return lRes;
 		}
@@ -145,18 +167,21 @@ namespace TinyFramework
 			ASSERT(s);
 			s->SetChecked(!s->IsChecked());
 		}
-		void TinyVisualContextMenu::Popup(TinyVisual* spvis)
+		void TinyVisualContextMenu::Popup(TinyVisual* spvis, const TinyPoint& pos)
 		{
 			if (!IsPopup())
 			{
-				TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
 				if (spvis != NULL)
 				{
-					SetOwner(&spvis->GetDocument()->GetVisualHWND());
-					TinyPoint pos = spvis->GetDocument()->GetScreenPos(spvis);
-					pos.y += spvis->GetSize().cy;
-					window->SetPosition(pos);
+					if (spvis->GetDocument()->GetVisualHWND().IsKindOf(RUNTIME_CLASS(TinyVisualContextMenu)))
+					{
+						TinyVisualContextMenu* context = static_cast<TinyVisualContextMenu*>(&spvis->GetDocument()->GetVisualHWND());
+						context->m_contextNext = this;
+						m_contextPrev = context;
+					}
 				}
+				TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
+				window->SetPosition(pos);
 				window->SetSize(TinySize(192, m_offsetY + 6));
 				m_document.Redraw();
 				ShowWindow(SW_SHOW);

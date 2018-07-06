@@ -32,14 +32,16 @@ namespace TinyFramework
 			TinyVisualMenuItem* Add();//·Ö¸îÏß
 			TinyVisualMenuItem* Add(const TinyString& name, const TinyString& text, TinyImage* icon = NULL);
 			void				Remove(const TinyString& name);
-			void				Popup(TinyVisual* spvis);
+			void				Popup(TinyVisual* spvis, const TinyPoint& pos);
 			BOOL				IsPopup() const;
 			void				Unpopup();
 		private:
 			void				OnItemClick(TinyVisual*, EventArgs& args);
 		private:
-			UINT		m_offsetX;
-			UINT		m_offsetY;
+			UINT					m_offsetX;
+			UINT					m_offsetY;
+			TinyVisualContextMenu*	m_contextNext;
+			TinyVisualContextMenu*	m_contextPrev;
 			TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>> m_onItemClick;
 		};
 	}
