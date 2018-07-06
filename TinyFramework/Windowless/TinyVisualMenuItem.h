@@ -5,7 +5,7 @@ namespace TinyFramework
 {
 	namespace Windowless
 	{
-		class TinyVisualMenu;
+		class TinyVisualContextMenu;
 
 		class TinyVisualMenuItem : public TinyVisual
 		{
@@ -17,24 +17,24 @@ namespace TinyFramework
 			TinyVisualMenuItem(TinyVisual* spvisParent, TinyVisualDocument* document);
 		public:
 			virtual ~TinyVisualMenuItem();
-			TinyString	RetrieveTag() const OVERRIDE;
-			BOOL		OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
-			HRESULT		OnMouseEnter() OVERRIDE;
-			HRESULT		OnMouseLeave() OVERRIDE;
-			HRESULT		OnLButtonUp(const TinyPoint& pos, DWORD dwFlags);
+			TinyString		RetrieveTag() const OVERRIDE;
+			BOOL			OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
+			HRESULT			OnMouseEnter() OVERRIDE;
+			HRESULT			OnMouseLeave() OVERRIDE;
+			HRESULT			OnLButtonUp(const TinyPoint& pos, DWORD dwFlags);
 		public:
-			void		SetSeparator(BOOL bSeparator);
-			BOOL		IsSeparator() const;
-			void		SetChecked(BOOL bChecked);
-			BOOL		IsChecked() const;
-			void		SetImageList(TinyImage* icon,
-				TinyImage* highlight,
-				TinyImage* check,
-				TinyImage* arrow);
+			TinyVisualContextMenu*	GetContextMenu();
+			void			SetSeparator(BOOL bSeparator);
+			BOOL			IsSeparator() const;
+			void			SetChecked(BOOL bChecked);
+			BOOL			IsChecked() const;
+			void			SetImageList(TinyImage* icon, TinyImage* highlight, TinyImage* check, TinyImage* arrow);
+			TinyVisual*		Add();//·Ö¸îÏß
+			TinyVisual*		Add(const TinyString& name, const TinyString& text, TinyImage* icon = NULL);
 		private:
 			DWORD			m_dwFlag;
 			TinyImage*		m_images[4];
-			TinyVisualMenu* m_child;
+			TinyVisualContextMenu* m_contextmenu;
 		};
 	}
 }

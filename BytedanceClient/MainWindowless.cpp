@@ -99,12 +99,16 @@ namespace Bytedance
 		m_setting->EVENT_CLICK += m_onSettingClick;
 
 		m_settingMenu.Create(NULL, "");
-		m_settingMenu.Add("system_setting1", "系统设置");
-		m_settingMenu.Add("system_setting2", "系统设置");
+		TinyVisualMenuItem* item = m_settingMenu.Add("system_setting1", "系统设置1");
+		item->Add("system_setting1-1", "系统设置1-1");
+		item->Add("system_setting1-2", "系统设置1-2");
+		item->Add();
+		item->Add("system_setting1-3", "系统设置1-3");
+		m_settingMenu.Add("system_setting2", "系统设置2");
 		m_settingMenu.Add();
-		m_settingMenu.Add("system_setting3", "系统设置");
-		m_settingMenu.Add("system_setting4", "系统设置");
-		m_settingMenu.Add("system_setting5", "系统设置");
+		m_settingMenu.Add("system_setting3", "系统设置3");
+		m_settingMenu.Add("system_setting4", "系统设置4");
+		m_settingMenu.Add("system_setting5", "系统设置5");
 
 
 		TinyRectangle s = window->GetClientRect();

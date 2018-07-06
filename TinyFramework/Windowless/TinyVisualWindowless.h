@@ -100,8 +100,8 @@ namespace TinyFramework
 		public:
 			BOOL					AddFilter(TinyVisualFilter* ps);
 			BOOL					RemoveFilter(TinyVisualFilter* ps);
-			void					SetOwner(TinyVisualWindowless* windowless);
 			void					AllowTracking(BOOL bAllow);
+			void					SetOwner(TinyVisualWindowless* windowless);
 			TinyVisualWindowless*	GetOwner();
 			TinyVisualShadow&		GetShadow();
 			TinyVisualDocument&		GetDocument();

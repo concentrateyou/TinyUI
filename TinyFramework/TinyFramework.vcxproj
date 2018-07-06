@@ -305,7 +305,7 @@
     <ClInclude Include="Render\TinyCanvas.h" />
     <ClInclude Include="Windowless\TinyVisualButton.h" />
     <ClInclude Include="Windowless\TinyVisualLabel.h" />
-    <ClInclude Include="Windowless\TinyVisualMenu.h" />
+    <ClInclude Include="Windowless\TinyVisualContextMenu.h" />
     <ClInclude Include="Windowless\TinyVisualMenuItem.h" />
     <ClInclude Include="Windowless\TinyVisualShadow.h" />
     <ClInclude Include="Windowless\TinyVisualStyle.h" />
@@ -455,7 +455,7 @@
     <ClCompile Include="Windowless\TinyVisualButton.cpp" />
     <ClCompile Include="Windowless\TinyVisualLabel.cpp" />
     <ClCompile Include="Windowless\TinyVisualManage.cpp" />
-    <ClCompile Include="Windowless\TinyVisualMenu.cpp" />
+    <ClCompile Include="Windowless\TinyVisualContextMenu.cpp" />
     <ClCompile Include="Windowless\TinyVisualMenuItem.cpp" />
     <ClCompile Include="Windowless\TinyVisualShadow.cpp" />
     <ClCompile Include="Windowless\TinyVisualStyle.cpp" />

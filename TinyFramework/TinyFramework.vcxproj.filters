@@ -427,10 +427,10 @@
     <ClCompile Include="Windowless\TinyVisualLabel.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
-    <ClCompile Include="Windowless\TinyVisualMenu.cpp">
+    <ClCompile Include="Windowless\TinyVisualMenuItem.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
-    <ClCompile Include="Windowless\TinyVisualMenuItem.cpp">
+    <ClCompile Include="Windowless\TinyVisualContextMenu.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>
@@ -867,10 +867,10 @@
     <ClInclude Include="Windowless\TinyVisualButton.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
-    <ClInclude Include="Windowless\TinyVisualMenu.h">
+    <ClInclude Include="Windowless\TinyVisualMenuItem.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
-    <ClInclude Include="Windowless\TinyVisualMenuItem.h">
+    <ClInclude Include="Windowless\TinyVisualContextMenu.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
   </ItemGroup>

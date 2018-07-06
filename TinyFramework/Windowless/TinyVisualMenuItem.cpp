@@ -5,6 +5,7 @@
 #include "TinyVisualWindowless.h"
 #include "TinyVisualLabel.h"
 #include "TinyVisualMenuItem.h"
+#include "TinyVisualContextMenu.h"
 
 namespace TinyFramework
 {
@@ -14,14 +15,14 @@ namespace TinyFramework
 
 		TinyVisualMenuItem::TinyVisualMenuItem()
 			:m_dwFlag(MENUITEM_NORMAL),
-			m_child(NULL)
+			m_contextmenu(NULL)
 		{
 
 		}
 		TinyVisualMenuItem::TinyVisualMenuItem(TinyVisual* spvisParent, TinyVisualDocument* document)
 			: TinyVisual(spvisParent, document),
 			m_dwFlag(MENUITEM_NORMAL),
-			m_child(NULL)
+			m_contextmenu(NULL)
 		{
 
 		}
@@ -67,6 +68,24 @@ namespace TinyFramework
 			m_images[1] = check;
 			m_images[2] = arrow;
 			m_images[3] = icon;
+		}
+		TinyVisual* TinyVisualMenuItem::Add()
+		{
+			if (!m_contextmenu)
+			{
+				m_contextmenu = new TinyVisualContextMenu();
+				m_contextmenu->SetOwner(&m_document->GetVisualHWND());
+			}
+			return m_contextmenu->Add();
+		}
+		TinyVisual* TinyVisualMenuItem::Add(const TinyString& name, const TinyString& text, TinyImage* icon)
+		{
+			if (!m_contextmenu)
+			{
+				m_contextmenu = new TinyVisualContextMenu();
+				m_contextmenu->SetOwner(&m_document->GetVisualHWND());
+			}
+			return m_contextmenu->Add(name, text, icon);
 		}
 		BOOL TinyVisualMenuItem::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
@@ -140,6 +159,10 @@ namespace TinyFramework
 				}
 			}
 			return TinyVisual::OnDraw(hDC, rcPaint);
+		}
+		TinyVisualContextMenu*	TinyVisualMenuItem::GetContextMenu()
+		{
+			return m_contextmenu;
 		}
 		void TinyVisualMenuItem::SetSeparator(BOOL bSeparator)
 		{

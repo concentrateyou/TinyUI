@@ -3,44 +3,44 @@
 #include "TinyVisualCommon.h"
 #include "TinyVisualManage.h"
 #include "TinyVisualWindowless.h"
-#include "TinyVisualMenu.h"
+#include "TinyVisualContextMenu.h"
 #include "TinyVisualMenuItem.h"
 
 namespace TinyFramework
 {
 	namespace Windowless
 	{
-		IMPLEMENT_DYNAMIC(TinyVisualMenu, TinyVisualWindowless);
+		IMPLEMENT_DYNAMIC(TinyVisualContextMenu, TinyVisualWindowless);
 
-		TinyVisualMenu::TinyVisualMenu()
+		TinyVisualContextMenu::TinyVisualContextMenu()
 			:m_offsetX(6),
 			m_offsetY(6)
 		{
-			m_onItemClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &TinyVisualMenu::OnItemClick));
+			m_onItemClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &TinyVisualContextMenu::OnItemClick));
 		}
 
-		TinyVisualMenu::~TinyVisualMenu()
+		TinyVisualContextMenu::~TinyVisualContextMenu()
 		{
 			m_onItemClick.Reset(NULL);
 		}
-		LPCSTR TinyVisualMenu::RetrieveClassName()
+		LPCSTR TinyVisualContextMenu::RetrieveClassName()
 		{
 			return TEXT("VISUALMENU");
 		}
-		LPCSTR TinyVisualMenu::RetrieveTitle()
+		LPCSTR TinyVisualContextMenu::RetrieveTitle()
 		{
 			return TEXT("VISUALMENU");
 		}
-		DWORD TinyVisualMenu::RetrieveStyle()
+		DWORD TinyVisualContextMenu::RetrieveStyle()
 		{
 			return (WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
 		}
 
-		DWORD TinyVisualMenu::RetrieveExStyle()
+		DWORD TinyVisualContextMenu::RetrieveExStyle()
 		{
 			return (WS_EX_LAYERED | WS_EX_TOOLWINDOW);
 		}
-		TinyVisual* TinyVisualMenu::Add()
+		TinyVisualMenuItem* TinyVisualContextMenu::Add()
 		{
 			TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
 			TinyVisualMenuItem* s = static_cast<TinyVisualMenuItem*>(m_document.Create(TinyVisualTag::MENUITEM, window));
@@ -58,7 +58,7 @@ namespace TinyFramework
 			m_offsetY += 3;
 			return s;
 		}
-		TinyVisual* TinyVisualMenu::Add(const TinyString& name, const TinyString& text, TinyImage* icon)
+		TinyVisualMenuItem* TinyVisualContextMenu::Add(const TinyString& name, const TinyString& text, TinyImage* icon)
 		{
 			TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
 			TinyVisualMenuItem* s = static_cast<TinyVisualMenuItem*>(m_document.Create(TinyVisualTag::MENUITEM, window));
@@ -78,7 +78,7 @@ namespace TinyFramework
 			return s;
 		}
 
-		void TinyVisualMenu::Remove(const TinyString& name)
+		void TinyVisualContextMenu::Remove(const TinyString& name)
 		{
 			TinyVisual* s = m_document.GetVisualByName(name);
 			if (s != NULL)
@@ -87,7 +87,7 @@ namespace TinyFramework
 			}
 		}
 
-		void TinyVisualMenu::OnInitialize()
+		void TinyVisualContextMenu::OnInitialize()
 		{
 			AllowTracking(TRUE);
 			TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
@@ -99,16 +99,16 @@ namespace TinyFramework
 			Unpopup();
 		}
 
-		void TinyVisualMenu::OnUninitialize()
+		void TinyVisualContextMenu::OnUninitialize()
 		{
 
 		}
 
-		LRESULT TinyVisualMenu::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualContextMenu::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			return HTCLIENT;
 		}
-		LRESULT TinyVisualMenu::OnNCActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualContextMenu::OnNCActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			LRESULT lRes = TinyVisualWindowless::OnNCActivate(uMsg, wParam, lParam, bHandled);
@@ -118,34 +118,34 @@ namespace TinyFramework
 			}
 			return lRes;
 		}
-		LRESULT TinyVisualMenu::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualContextMenu::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			POINT pos = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
 			return TinyVisualWindowless::OnMouseMove(uMsg, wParam, lParam, bHandled);
 		}
-		LRESULT TinyVisualMenu::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualContextMenu::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			return TinyVisualWindowless::OnMouseLeave(uMsg, wParam, lParam, bHandled);
 		}
-		LRESULT TinyVisualMenu::OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualContextMenu::OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			return TinyVisualWindowless::OnKillFocus(uMsg, wParam, lParam, bHandled);
 		}
-		LRESULT TinyVisualMenu::OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		LRESULT TinyVisualContextMenu::OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
 			return TinyVisualWindowless::OnActivate(uMsg, wParam, lParam, bHandled);;
 		}
-		void TinyVisualMenu::OnItemClick(TinyVisual*spvis, EventArgs& args)
+		void TinyVisualContextMenu::OnItemClick(TinyVisual*spvis, EventArgs& args)
 		{
 			TinyVisualMenuItem* s = static_cast<TinyVisualMenuItem*>(spvis);
 			ASSERT(s);
 			s->SetChecked(!s->IsChecked());
 		}
-		void TinyVisualMenu::Popup(const TinyPoint& pos)
+		void TinyVisualContextMenu::Popup(const TinyPoint& pos)
 		{
 			if (!IsPopup())
 			{
@@ -156,11 +156,11 @@ namespace TinyFramework
 				m_document.Redraw();
 			}
 		}
-		BOOL TinyVisualMenu::IsPopup() const
+		BOOL TinyVisualContextMenu::IsPopup() const
 		{
 			return ::IsWindowVisible(m_hWND);
 		}
-		void TinyVisualMenu::Unpopup()
+		void TinyVisualContextMenu::Unpopup()
 		{
 			ShowWindow(SW_HIDE);
 		}

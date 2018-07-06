@@ -662,13 +662,6 @@ namespace TinyFramework
 		LRESULT TinyVisualWindowless::OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
-			if (LOWORD(wParam) == WA_INACTIVE)
-			{
-				HWND hWND = (HWND)lParam;
-				TinyString className(256);
-				::GetClassName(hWND, className.STR(), 256);
-				TRACE("WA_INACTIVE - %s\n", className.CSTR());
-			}
 			return FALSE;
 		}
 		LRESULT TinyVisualWindowless::OnNCCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
