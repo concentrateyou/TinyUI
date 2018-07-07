@@ -19,25 +19,25 @@ namespace TinyFramework
 			TinyVisualHWND();
 			virtual ~TinyVisualHWND();
 		public:
-			virtual LPCSTR RetrieveClassName();
-			virtual LPCSTR RetrieveTitle();
-			virtual HICON RetrieveIcon();
-			virtual DWORD RetrieveStyle();
-			virtual DWORD RetrieveExStyle();
-			virtual BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
-			virtual BOOL Create(HWND hParent, WORD wInteger);
-			virtual BOOL Create(HWND hParent, LPCTSTR lpTemplateName);
-			virtual BOOL DestroyWindow();
-			virtual BOOL PreTranslateMessage(MSG* pMsg);
-			virtual void OnFinalMessage(HWND hWnd);
+			virtual LPCSTR	RetrieveClassName();
+			virtual LPCSTR	RetrieveTitle();
+			virtual HICON	RetrieveIcon();
+			virtual DWORD	RetrieveStyle();
+			virtual DWORD	RetrieveExStyle();
+			virtual BOOL	Create(HWND hParent, INT x, INT y, INT cx, INT cy);
+			virtual BOOL	Create(HWND hParent, WORD wInteger);
+			virtual BOOL	Create(HWND hParent, LPCTSTR lpTemplateName);
+			virtual BOOL	DestroyWindow();
+			virtual BOOL	PreTranslateMessage(MSG* pMsg);
+			virtual void	OnFinalMessage(HWND hWnd);
 			virtual INT_PTR DoModal(HWND hParent = ::GetActiveWindow(), WORD wInteger = 0);
 			virtual INT_PTR DoModal(HWND hParent = ::GetActiveWindow(), LPCTSTR lpTemplateName = NULL);
-			virtual BOOL EndDialog();
-			virtual BOOL EndDialog(INT_PTR m_DlgResult);
-			virtual BOOL EndDialog(HWND hWND, INT_PTR m_DlgResult);
+			virtual BOOL	EndDialog();
+			virtual BOOL	EndDialog(INT_PTR m_DlgResult);
+			virtual BOOL	EndDialog(HWND hWND, INT_PTR m_DlgResult);
 		public:
-			BOOL	IsModal() const throw();
-			BOOL	IsDialog() const throw();
+			BOOL			IsModal() const throw();
+			BOOL			IsDialog() const throw();
 		private:
 			static LRESULT CALLBACK BeginLoopWND(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 			static LRESULT CALLBACK EndLoopWND(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -129,6 +129,7 @@ namespace TinyFramework
 				MESSAGE_HANDLER(WM_RBUTTONDBLCLK, OnRButtonDBClick)
 				MESSAGE_HANDLER(WM_MOUSEHOVER, OnMouseHover)
 				MESSAGE_HANDLER(WM_ACTIVATE, OnActivate)
+				MESSAGE_HANDLER(WM_ACTIVATEAPP, OnActivateAPP)
 				MESSAGE_HANDLER(WM_TIMER, OnTimer)
 				MESSAGE_HANDLER(WM_COMMAND, OnCommand)
 				MESSAGE_HANDLER(WM_NOTIFY, OnNotify)
@@ -196,6 +197,7 @@ namespace TinyFramework
 			virtual LRESULT OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 			virtual LRESULT OnTimer(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 			virtual LRESULT OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+			virtual LRESULT OnActivateAPP(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 			virtual LRESULT OnCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 			virtual LRESULT OnCommandReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 			virtual LRESULT OnNotifyReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

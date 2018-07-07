@@ -32,6 +32,7 @@ namespace Bytedance
 
 		if (m_contextmenu != NULL)
 		{
+			m_contextmenu->DestroyWindow();
 			SAFE_DELETE(m_contextmenu);
 		}
 	}
@@ -104,7 +105,7 @@ namespace Bytedance
 		m_setting->EVENT_CLICK += m_onSettingClick;
 
 		m_contextmenu = new TinyVisualContextMenu();
-		m_contextmenu->Create(NULL, "");
+		m_contextmenu->Create(m_hWND, "");
 		TinyVisualMenuItem* item = m_contextmenu->Add("system_setting1", "系统设置1");
 		item->Add("system_setting1-1", "系统设置1-1");
 		item->Add("system_setting1-2", "系统设置1-2");

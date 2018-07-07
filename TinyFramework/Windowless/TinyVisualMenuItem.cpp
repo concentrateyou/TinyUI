@@ -62,11 +62,15 @@ namespace TinyFramework
 					m_child->Popup(pos);
 				}
 			}
-			/*else
+			else
 			{
 				TinyVisualContextMenu* context = static_cast<TinyVisualContextMenu*>(&m_document->GetVisualHWND());
-				context->Unpopup();
-			}*/
+				for (INT i = 0; i < context->m_contexts.GetSize(); i++)
+				{
+					TinyVisualContextMenu* s = context->m_contexts[i];
+					s->Unpopup();
+				}
+			}
 			return TinyVisual::OnMouseHover(pos, dwFlags);
 		}
 		HRESULT	 TinyVisualMenuItem::OnLButtonUp(const TinyPoint& pos, DWORD dwFlags)
@@ -95,9 +99,9 @@ namespace TinyFramework
 		{
 			if (!m_child)
 			{
-				m_child = new TinyVisualContextMenu();
-				m_child->Create(NULL, "");
 				TinyVisualContextMenu* context = static_cast<TinyVisualContextMenu*>(&m_document->GetVisualHWND());
+				m_child = new TinyVisualContextMenu();
+				m_child->Create(context->m_hWND, "");
 				context->m_contexts.Add(m_child);
 				m_child->m_owner = context;
 			}
@@ -114,9 +118,9 @@ namespace TinyFramework
 		{
 			if (!m_child)
 			{
-				m_child = new TinyVisualContextMenu();
-				m_child->Create(NULL, "");
 				TinyVisualContextMenu* context = static_cast<TinyVisualContextMenu*>(&m_document->GetVisualHWND());
+				m_child = new TinyVisualContextMenu();
+				m_child->Create(context->Handle(), "");
 				context->m_contexts.Add(m_child);
 				m_child->m_owner = context;
 			}
@@ -139,6 +143,15 @@ namespace TinyFramework
 					SetF(MENUITEM_CHILD);
 				else
 					ClrF(MENUITEM_CHILD);
+			}
+		}
+		void TinyVisualMenuItem::RemoveAll()
+		{
+			if (m_child != NULL)
+			{
+				m_child->DestroyWindow();
+				m_child = NULL;
+				ClrF(MENUITEM_CHILD);
 			}
 		}
 		BOOL TinyVisualMenuItem::OnDraw(HDC hDC, const RECT& rcPaint)
@@ -225,6 +238,10 @@ namespace TinyFramework
 				}
 			}
 			return TinyVisual::OnDraw(hDC, rcPaint);
+		}
+		TinyVisualContextMenu*	TinyVisualMenuItem::GetContextMenu()
+		{
+			return m_child;
 		}
 		void TinyVisualMenuItem::SetSeparator(BOOL bSeparator)
 		{

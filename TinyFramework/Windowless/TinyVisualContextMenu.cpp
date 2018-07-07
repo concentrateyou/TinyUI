@@ -63,29 +63,44 @@ namespace TinyFramework
 		TinyVisualMenuItem* TinyVisualContextMenu::Add(const TinyString& name, const TinyString& text, TinyImage* icon)
 		{
 			TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
-			TinyVisualMenuItem* s = static_cast<TinyVisualMenuItem*>(m_document.Create(TinyVisualTag::MENUITEM, window));
-			s->SetName(name);
-			s->SetText(text);
-			s->SetChecked(FALSE);
-			s->SetTextColor(0x0000000);
-			s->SetTextAlian(DT_LEFT | DT_VCENTER);
-			s->SetSize(TinySize(180, 26));
-			s->SetPosition(TinyPoint(m_offsetX, m_offsetY));
-			s->SetImageList(icon,
+			TinyVisualMenuItem* item = static_cast<TinyVisualMenuItem*>(m_document.Create(TinyVisualTag::MENUITEM, window));
+			item->SetName(name);
+			item->SetText(text);
+			item->SetChecked(FALSE);
+			item->SetTextColor(0x0000000);
+			item->SetTextAlian(DT_LEFT | DT_VCENTER);
+			item->SetSize(TinySize(180, 26));
+			item->SetPosition(TinyPoint(m_offsetX, m_offsetY));
+			item->SetImageList(icon,
 				TinyVisualResource::GetInstance()["menu_highlight"],
 				TinyVisualResource::GetInstance()["menu_check"],
 				TinyVisualResource::GetInstance()["menu_arrow"]);
-			s->EVENT_CLICK += m_onItemClick;
+			item->EVENT_CLICK += m_onItemClick;
 			m_offsetY += 26;
-			return s;
+			return item;
 		}
 
 		void TinyVisualContextMenu::Remove(const TinyString& name)
 		{
-			TinyVisual* s = m_document.GetVisualByName(name);
-			if (s != NULL)
+			TinyVisualMenuItem* item = static_cast<TinyVisualMenuItem*>(m_document.GetVisualByName(name));
+			if (item != NULL)
 			{
-				s->EVENT_CLICK -= m_onItemClick;
+				item->EVENT_CLICK -= m_onItemClick;
+				item->RemoveAll();
+				m_document.Destory(item);
+			}
+		}
+
+		void TinyVisualContextMenu::RemoveAll()
+		{
+			TinyVisual* spvis = m_document.GetVisual(NULL, CMD_CHILD);
+			while (spvis != NULL)
+			{
+				TinyVisualMenuItem* item = static_cast<TinyVisualMenuItem*>(spvis);
+				TRACE("RemoveAll : %s \n", spvis->GetText().CSTR());
+				item->EVENT_CLICK -= m_onItemClick;
+				item->RemoveAll();
+				spvis = m_document.GetVisual(spvis, CMD_NEXT);
 			}
 		}
 
@@ -103,7 +118,7 @@ namespace TinyFramework
 
 		void TinyVisualContextMenu::OnUninitialize()
 		{
-
+			RemoveAll();
 		}
 
 		LRESULT TinyVisualContextMenu::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -134,7 +149,6 @@ namespace TinyFramework
 			{
 				CHAR names[256];
 				::GetClassName((HWND)lParam, names, 256);
-				TRACE("WA_INACTIVE-%s\n", names);
 				if (strcasecmp(names, "VISUALCONTEXTMENU") != 0)
 				{
 					TinyVisualContextMenu* context = m_owner == NULL ? this : m_owner;

@@ -494,6 +494,11 @@ namespace TinyFramework
 			bHandled = FALSE;
 			return FALSE;
 		}
+		LRESULT TinyVisualWND::OnActivateAPP(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			return FALSE;
+		}
 		LRESULT TinyVisualWND::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
