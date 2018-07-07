@@ -15,10 +15,7 @@ namespace TinyFramework
 		TinyVisualContextMenu::TinyVisualContextMenu()
 			:m_offsetX(6),
 			m_offsetY(6),
-			m_contextNext(NULL),
-			m_contextPrev(NULL),
-			m_owner(NULL),
-			m_hover(NULL)
+			m_owner(NULL)
 		{
 			m_onItemClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &TinyVisualContextMenu::OnItemClick));
 		}
@@ -44,10 +41,7 @@ namespace TinyFramework
 		{
 			return (WS_EX_LAYERED | WS_EX_TOOLWINDOW);
 		}
-		TinyVisual*	TinyVisualContextMenu::GetOwner()
-		{
-			return m_owner;
-		}
+
 		TinyVisualMenuItem* TinyVisualContextMenu::Add()
 		{
 			TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
@@ -116,45 +110,6 @@ namespace TinyFramework
 		{
 			return HTCLIENT;
 		}
-		LRESULT TinyVisualContextMenu::OnNCActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-		{
-			bHandled = FALSE;
-			LRESULT lRes = TinyVisualWindowless::OnNCActivate(uMsg, wParam, lParam, bHandled);
-			if ((BOOL)wParam == FALSE)
-			{
-				TinyVisualContextMenu* context = m_contextNext;
-				for (;;)
-				{
-					if (!context)
-						break;
-					if (context->IsPopup())
-						return lRes;
-					context = context->m_contextNext;
-				}
-				context = m_contextPrev;
-				for (;;)
-				{
-					if (!context)
-						break;
-					if (context->IsPopup())
-						return lRes;
-					context = context->m_contextPrev;
-				}
-				context = m_contextPrev == NULL ? this : m_contextPrev;
-				while (context != NULL)
-				{
-					context->Unpopup();
-					context = context->m_contextPrev;
-				}
-				context = m_contextNext == NULL ? this : m_contextNext;
-				while (context != NULL)
-				{
-					context->Unpopup();
-					context = context->m_contextNext;
-				}
-			}
-			return lRes;
-		}
 		LRESULT TinyVisualContextMenu::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
@@ -175,6 +130,26 @@ namespace TinyFramework
 		LRESULT TinyVisualContextMenu::OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
+			if (LOWORD(wParam) == WA_INACTIVE)
+			{
+				CHAR names[256];
+				::GetClassName((HWND)lParam, names, 256);
+				TRACE("WA_INACTIVE-%s\n", names);
+				if (strcasecmp(names, "VISUALCONTEXTMENU") != 0)
+				{
+					TinyVisualContextMenu* context = m_owner == NULL ? this : m_owner;
+					for (;;)
+					{
+						if (context->m_owner != NULL)
+						{
+							context = context->m_owner;
+							continue;
+						}
+						context->Unpopup();
+						break;
+					}
+				}
+			}
 			return TinyVisualWindowless::OnActivate(uMsg, wParam, lParam, bHandled);;
 		}
 		void TinyVisualContextMenu::OnItemClick(TinyVisual*spvis, EventArgs& args)
@@ -183,20 +158,10 @@ namespace TinyFramework
 			ASSERT(s);
 			s->SetChecked(!s->IsChecked());
 		}
-		void TinyVisualContextMenu::Popup(TinyVisual* spvis, const TinyPoint& pos)
+		void TinyVisualContextMenu::Popup(const TinyPoint& pos)
 		{
 			if (!IsPopup())
 			{
-				m_owner = spvis;
-				if (spvis != NULL)
-				{
-					if (spvis->GetDocument()->GetVisualHWND().IsKindOf(RUNTIME_CLASS(TinyVisualContextMenu)))
-					{
-						TinyVisualContextMenu* context = static_cast<TinyVisualContextMenu*>(&spvis->GetDocument()->GetVisualHWND());
-						context->m_contextNext = this;
-						m_contextPrev = context;
-					}
-				}
 				TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
 				window->SetPosition(pos);
 				window->SetSize(TinySize(192, m_offsetY + 6));
@@ -210,8 +175,12 @@ namespace TinyFramework
 		}
 		void TinyVisualContextMenu::Unpopup()
 		{
+			for (INT i = 0; i < m_contexts.GetSize(); i++)
+			{
+				TinyVisualContextMenu* s = m_contexts[i];
+				s->Unpopup();
+			}
 			ShowWindow(SW_HIDE);
-			m_owner = NULL;
 		}
 	}
 }

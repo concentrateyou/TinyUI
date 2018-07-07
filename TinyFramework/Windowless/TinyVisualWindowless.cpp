@@ -221,8 +221,7 @@ namespace TinyFramework
 			:m_document(*this),
 			m_visualDC(NULL),
 			m_bMouseTracking(FALSE),
-			m_bAllowTracking(TRUE),
-			m_owner(NULL)
+			m_bAllowTracking(TRUE)
 		{
 
 		}

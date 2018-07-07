@@ -156,7 +156,6 @@ namespace TinyFramework
 			TinyVisualFilters				m_mFilters;
 			TinyVisualDocument				m_document;
 			TinyScopedPtr<TinyVisualDC>		m_visualDC;
-			TinyVisualWindowless*			m_owner;
 			TinyVisualShadow				m_shadow;
 		};
 	}

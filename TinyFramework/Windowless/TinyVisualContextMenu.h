@@ -21,7 +21,6 @@ namespace TinyFramework
 			DWORD				RetrieveExStyle() OVERRIDE;
 		public:
 			LRESULT				OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-			LRESULT				OnNCActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT				OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT				OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT				OnMouseHover(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
@@ -30,22 +29,19 @@ namespace TinyFramework
 			void				OnInitialize() OVERRIDE;
 			void				OnUninitialize() OVERRIDE;
 		public:
-			TinyVisual*			GetOwner();
-			TinyVisualMenuItem* Add();//·Ö¸îÏß
+			TinyVisualMenuItem* Add();
 			TinyVisualMenuItem* Add(const TinyString& name, const TinyString& text, TinyImage* icon = NULL);
 			void				Remove(const TinyString& name);
-			void				Popup(TinyVisual* spvis, const TinyPoint& pos);
+			void				Popup(const TinyPoint& pos);
 			BOOL				IsPopup() const;
 			void				Unpopup();
 		private:
 			void				OnItemClick(TinyVisual*, EventArgs& args);
 		private:
-			UINT					m_offsetX;
-			UINT					m_offsetY;
-			TinyVisual*				m_hover;
-			TinyVisual*				m_owner;
-			TinyVisualContextMenu*	m_contextNext;
-			TinyVisualContextMenu*	m_contextPrev;
+			UINT								m_offsetX;
+			UINT								m_offsetY;
+			TinyVisualContextMenu*				m_owner;
+			TinyArray<TinyVisualContextMenu*>	m_contexts;
 			TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>> m_onItemClick;
 		};
 	}

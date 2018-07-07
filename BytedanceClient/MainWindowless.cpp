@@ -109,7 +109,11 @@ namespace Bytedance
 		item->Add("system_setting1-1", "系统设置1-1");
 		item->Add("system_setting1-2", "系统设置1-2");
 		item->Add();
-		item->Add("system_setting1-3", "系统设置1-3");
+		TinyVisualMenuItem* item1 = item->Add("system_setting1-3", "系统设置1-3");
+		item1->Add("system_setting1-1-1", "系统设置1-1-1");
+		item1->Add("system_setting1-1-2", "系统设置1-1-2");
+		item1->Add();
+		item1->Add("system_setting1-1-3", "系统设置1-1-3");
 		m_contextmenu->Add("system_setting2", "系统设置2");
 		m_contextmenu->Add();
 		m_contextmenu->Add("system_setting3", "系统设置3");
@@ -156,7 +160,7 @@ namespace Bytedance
 	{
 		TinyPoint pos = m_document.GetScreenPos(spvis);
 		pos.y += spvis->GetSize().cy;
-		m_contextmenu->Popup(spvis, pos);
+		m_contextmenu->Popup(pos);
 	}
 	void MainWindowless::OnRestoreClick(TinyVisual*, EventArgs& args)
 	{

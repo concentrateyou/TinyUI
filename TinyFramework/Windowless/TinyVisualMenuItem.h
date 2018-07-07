@@ -24,7 +24,6 @@ namespace TinyFramework
 			HRESULT					OnMouseLeave() OVERRIDE;
 			HRESULT					OnLButtonUp(const TinyPoint& pos, DWORD dwFlags);
 		public:
-			TinyVisualContextMenu*	GetContextMenu();
 			void					SetSeparator(BOOL bSeparator);
 			BOOL					IsSeparator() const;
 			void					SetChecked(BOOL bChecked);
@@ -34,9 +33,9 @@ namespace TinyFramework
 			TinyVisualMenuItem*		Add(const TinyString& name, const TinyString& text, TinyImage* icon = NULL);
 			void					Remove(const TinyString& name);
 		private:
-			DWORD					m_dwFlag;
-			TinyImage*				m_images[4];
-			TinyVisualContextMenu*	m_context;
+			DWORD						m_dwFlag;
+			TinyImage*					m_images[4];
+			TinyVisualContextMenu*		m_child;
 		};
 	}
 }
