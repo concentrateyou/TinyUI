@@ -33,18 +33,7 @@ namespace TinyFramework
 		}
 		void	TinyVisualButton::SetImage(ButtonStyle style, TinyImage* image)
 		{
-			switch (style)
-			{
-			case ButtonStyle::NORMAL:
-				m_images[0] = image;
-				break;
-			case ButtonStyle::DOWN:
-				m_images[1] = image;
-				break;
-			case ButtonStyle::HOVER:
-				m_images[2] = image;
-				break;
-			}
+			m_images[static_cast<BYTE>(style)] = image;
 		}
 		BOOL TinyVisualButton::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
@@ -59,19 +48,7 @@ namespace TinyFramework
 			canvas.SetBrush(brush);
 			canvas.FillRectangle(clip);
 			//ªÊ÷∆Õº∆¨
-			TinyImage* image = NULL;
-			switch (m_style)
-			{
-			case ButtonStyle::NORMAL:
-				image = m_images[0];
-				break;
-			case ButtonStyle::DOWN:
-				image = m_images[1];
-				break;
-			case ButtonStyle::HOVER:
-				image = m_images[2];
-				break;
-			}
+			TinyImage* image = m_images[static_cast<BYTE>(m_style)];
 			if (image != NULL && !image->IsEmpty())
 			{
 				canvas.DrawImage(*image, clip, 0, 0, image->GetSize().cx, image->GetSize().cy);

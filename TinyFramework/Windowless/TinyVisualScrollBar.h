@@ -58,7 +58,7 @@ namespace TinyFramework
 			INT			GetMax() const;
 			void		SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos, BOOL  fRedraw = TRUE);
 			void		SetScrollPos(INT iPos, BOOL  fRedraw = TRUE);
-			void		SetStyleImage(ScrollImageType type, TinyImage* image);
+			void		SetImage(ScrollImageType type, TinyImage* image);
 		public:
 			Event<void(BOOL, INT, INT, INT)> EVENT_POSCHANGE;
 		protected:
@@ -101,7 +101,7 @@ namespace TinyFramework
 			INT			GetMax() const;
 			void		SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos, BOOL  fRedraw = TRUE);
 			void		SetScrollPos(INT iPos, BOOL  fRedraw = TRUE);
-			void		SetStyleImage(ScrollImageType type, TinyImage* image);
+			void		SetImage(ScrollImageType type, TinyImage* image);
 		public:
 			Event<void(BOOL, INT, INT, INT)> EVENT_POSCHANGE;
 		protected:

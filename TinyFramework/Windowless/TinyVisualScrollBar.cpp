@@ -427,7 +427,7 @@ namespace TinyFramework
 		{
 			return m_si.iMax;
 		}
-		void TinyVisualHScrollBar::SetStyleImage(ScrollImageType type, TinyImage* image)
+		void TinyVisualHScrollBar::SetImage(ScrollImageType type, TinyImage* image)
 		{
 			m_images[type] = image;
 		}
@@ -853,7 +853,7 @@ namespace TinyFramework
 		{
 			return m_si.iMax;
 		}
-		void TinyVisualVScrollBar::SetStyleImage(ScrollImageType type, TinyImage* image)
+		void TinyVisualVScrollBar::SetImage(ScrollImageType type, TinyImage* image)
 		{
 			m_images[type] = image;
 		}
