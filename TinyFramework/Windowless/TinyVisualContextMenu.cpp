@@ -97,7 +97,6 @@ namespace TinyFramework
 			while (spvis != NULL)
 			{
 				TinyVisualMenuItem* item = static_cast<TinyVisualMenuItem*>(spvis);
-				TRACE("RemoveAll : %s \n", spvis->GetText().CSTR());
 				item->EVENT_CLICK -= m_onItemClick;
 				item->RemoveAll();
 				spvis = m_document.GetVisual(spvis, CMD_NEXT);
@@ -194,7 +193,10 @@ namespace TinyFramework
 				TinyVisualContextMenu* s = m_contexts[i];
 				s->Unpopup();
 			}
-			ShowWindow(SW_HIDE);
+			if (IsWindow(m_hWND))
+			{
+				ShowWindow(SW_HIDE);
+			}
 		}
 	}
 }
