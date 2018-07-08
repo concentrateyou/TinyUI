@@ -37,11 +37,12 @@ namespace TinyFramework
 #define HTSCROLL_PAGEUP               0x00000004L
 #define HTSCROLL_PAGEDOWN             0x00000005L
 
-#define MENUITEM_NORMAL		0x0000
-#define MENUITEM_HIGHLIGHT	0x0001
-#define MENUITEM_CHECKED	0x0002
-#define MENUITEM_SEPARATOR	0x0004
-#define MENUITEM_CHILD	0x0008
+#define ITEM_NORMAL		0x0000
+#define ITEM_HIGHLIGHT	0x0001
+#define ITEM_CHECKED	0x0002
+#define ITEM_SEPARATOR	0x0004
+#define ITEM_CHILD		0x0008
+
 
 #define TestF(flag)		((m_dwFlag & flag) != 0)
 #define SetF(flag)		(m_dwFlag |= flag)

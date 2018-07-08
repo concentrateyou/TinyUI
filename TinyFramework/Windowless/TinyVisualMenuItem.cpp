@@ -14,14 +14,14 @@ namespace TinyFramework
 		IMPLEMENT_DYNCREATE(TinyVisualMenuItem, TinyVisual);
 
 		TinyVisualMenuItem::TinyVisualMenuItem()
-			:m_dwFlag(MENUITEM_NORMAL),
+			:m_dwFlag(ITEM_NORMAL),
 			m_child(NULL)
 		{
 
 		}
 		TinyVisualMenuItem::TinyVisualMenuItem(TinyVisual* spvisParent, TinyVisualDocument* document)
 			: TinyVisual(spvisParent, document),
-			m_dwFlag(MENUITEM_NORMAL),
+			m_dwFlag(ITEM_NORMAL),
 			m_child(NULL)
 		{
 
@@ -37,7 +37,7 @@ namespace TinyFramework
 		HRESULT	 TinyVisualMenuItem::OnMouseEnter()
 		{
 			ASSERT(m_document);
-			SetF(MENUITEM_HIGHLIGHT);
+			SetF(ITEM_HIGHLIGHT);
 			Invalidate();
 			return TinyVisual::OnMouseEnter();
 		}
@@ -45,7 +45,7 @@ namespace TinyFramework
 		{
 			ASSERT(m_document);
 			HRESULT hRes = TinyVisual::OnMouseLeave();
-			ClrF(MENUITEM_HIGHLIGHT);
+			ClrF(ITEM_HIGHLIGHT);
 			Invalidate();
 			return hRes;
 		}
@@ -81,7 +81,7 @@ namespace TinyFramework
 			HRESULT hRes = TinyVisual::OnLButtonUp(pos, dwFlags);
 			if (s.PtInRect(point))
 			{
-				if (!TestF(MENUITEM_CHILD))
+				if (!TestF(ITEM_CHILD))
 				{
 					EVENT_CLICK(this, EventArgs());
 				}
@@ -112,9 +112,9 @@ namespace TinyFramework
 			ASSERT(spvis);
 			UINT count = m_child->GetDocument().GetParent(NULL)->GetChildCount();
 			if (count > 0)
-				SetF(MENUITEM_CHILD);
+				SetF(ITEM_CHILD);
 			else
-				ClrF(MENUITEM_CHILD);
+				ClrF(ITEM_CHILD);
 			return spvis;
 		}
 		TinyVisualMenuItem* TinyVisualMenuItem::Add(const TinyString& name, const TinyString& text, TinyImage* icon)
@@ -131,9 +131,9 @@ namespace TinyFramework
 			ASSERT(spvis);
 			UINT count = m_child->GetDocument().GetParent(NULL)->GetChildCount();
 			if (count > 0)
-				SetF(MENUITEM_CHILD);
+				SetF(ITEM_CHILD);
 			else
-				ClrF(MENUITEM_CHILD);
+				ClrF(ITEM_CHILD);
 			return spvis;
 		}
 		void TinyVisualMenuItem::Remove(const TinyString& name)
@@ -143,9 +143,9 @@ namespace TinyFramework
 				m_child->Remove(name);
 				UINT count = m_child->GetDocument().GetParent(NULL)->GetChildCount();
 				if (count > 0)
-					SetF(MENUITEM_CHILD);
+					SetF(ITEM_CHILD);
 				else
-					ClrF(MENUITEM_CHILD);
+					ClrF(ITEM_CHILD);
 			}
 		}
 		void TinyVisualMenuItem::RemoveAll()
@@ -154,7 +154,7 @@ namespace TinyFramework
 			{
 				m_child->DestroyWindow();
 				m_child = NULL;
-				ClrF(MENUITEM_CHILD);
+				ClrF(ITEM_CHILD);
 			}
 		}
 		BOOL TinyVisualMenuItem::OnDraw(HDC hDC, const RECT& rcPaint)
@@ -162,7 +162,7 @@ namespace TinyFramework
 			ASSERT(m_document);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			TinyClipCanvas canvas(hDC, this, rcPaint);
-			if (TestF(MENUITEM_SEPARATOR))
+			if (TestF(ITEM_SEPARATOR))
 			{
 				if (m_backgroundImage != NULL && !m_backgroundImage->IsEmpty())
 				{
@@ -183,7 +183,7 @@ namespace TinyFramework
 						canvas.DrawImage(*m_backgroundImage, clip, m_backgroundRectangle, m_backgroundCenter);
 					}
 				}
-				if (TestF(MENUITEM_HIGHLIGHT))
+				if (TestF(ITEM_HIGHLIGHT))
 				{
 					if (m_images[0] != NULL && !m_images[0]->IsEmpty())
 					{
@@ -192,7 +192,7 @@ namespace TinyFramework
 						canvas.DrawImage(*m_images[0], s, 0, 0, m_images[0]->GetSize().cx, m_images[0]->GetSize().cy);
 					}
 				}
-				if (TestF(MENUITEM_CHECKED))
+				if (TestF(ITEM_CHECKED))
 				{
 					if (m_images[1] != NULL && !m_images[1]->IsEmpty())
 					{
@@ -203,7 +203,7 @@ namespace TinyFramework
 						canvas.DrawImage(*m_images[1], s, 0, 0, m_images[1]->GetSize().cx, m_images[1]->GetSize().cy);
 					}
 				}
-				if (TestF(MENUITEM_CHILD))
+				if (TestF(ITEM_CHILD))
 				{
 					if (m_images[2] != NULL && !m_images[2]->IsEmpty())
 					{
@@ -218,11 +218,11 @@ namespace TinyFramework
 				if (!m_szText.IsEmpty())
 				{
 					canvas.SetFont(m_hFONT);
-					canvas.SetTextColor(TestF(MENUITEM_HIGHLIGHT) ? RGB(255, 255, 255) : RGB(0, 0, 0));
+					canvas.SetTextColor(TestF(ITEM_HIGHLIGHT) ? RGB(255, 255, 255) : RGB(0, 0, 0));
 					if (m_document->GetVisualHWND().RetrieveExStyle() & WS_EX_LAYERED)
 					{
 						TinyImage textImage;
-						if (textImage.Create(hDC, m_szText.CSTR(), m_textAlign, TestF(MENUITEM_HIGHLIGHT) ? RGB(0, 0, 0) : RGB(255, 255, 255)))
+						if (textImage.Create(hDC, m_szText.CSTR(), m_textAlign, TestF(ITEM_HIGHLIGHT) ? RGB(0, 0, 0) : RGB(255, 255, 255)))
 						{
 							TinyRectangle s;
 							s.SetSize(textImage.GetSize());
@@ -249,25 +249,25 @@ namespace TinyFramework
 		void TinyVisualMenuItem::SetSeparator(BOOL bSeparator)
 		{
 			if (bSeparator)
-				SetF(MENUITEM_SEPARATOR);
+				SetF(ITEM_SEPARATOR);
 			else
-				ClrF(MENUITEM_SEPARATOR);
+				ClrF(ITEM_SEPARATOR);
 		}
 		BOOL TinyVisualMenuItem::IsSeparator() const
 		{
-			return TestF(MENUITEM_SEPARATOR);
+			return TestF(ITEM_SEPARATOR);
 		}
 		void TinyVisualMenuItem::SetChecked(BOOL bChecked)
 		{
 			if (bChecked)
-				SetF(MENUITEM_CHECKED);
+				SetF(ITEM_CHECKED);
 			else
-				ClrF(MENUITEM_CHECKED);
+				ClrF(ITEM_CHECKED);
 			Invalidate();
 		}
 		BOOL TinyVisualMenuItem::IsChecked() const
 		{
-			return TestF(MENUITEM_CHECKED);
+			return TestF(ITEM_CHECKED);
 		}
 	}
 }

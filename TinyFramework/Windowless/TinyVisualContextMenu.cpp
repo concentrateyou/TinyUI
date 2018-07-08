@@ -124,23 +124,6 @@ namespace TinyFramework
 		{
 			return HTCLIENT;
 		}
-		LRESULT TinyVisualContextMenu::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-		{
-			bHandled = FALSE;
-			POINT pos = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-			return TinyVisualWindowless::OnMouseMove(uMsg, wParam, lParam, bHandled);
-		}
-		LRESULT TinyVisualContextMenu::OnMouseHover(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-		{
-			bHandled = FALSE;
-			POINT pos = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-			return TinyVisualWindowless::OnMouseHover(uMsg, wParam, lParam, bHandled);
-		}
-		LRESULT TinyVisualContextMenu::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-		{
-			bHandled = FALSE;
-			return TinyVisualWindowless::OnMouseLeave(uMsg, wParam, lParam, bHandled);
-		}
 		LRESULT TinyVisualContextMenu::OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
 			bHandled = FALSE;
@@ -188,10 +171,7 @@ namespace TinyFramework
 				window->SetPosition(pos);
 				window->SetSize(TinySize(192, m_offsetY + 6));
 				m_document.Redraw();
-				if (IsWindow(m_hWND))
-				{
-					ShowWindow(SW_SHOW);
-				}
+				::ShowWindow(m_hWND, SW_SHOW);
 			}
 		}
 		BOOL TinyVisualContextMenu::IsPopup() const
@@ -205,10 +185,7 @@ namespace TinyFramework
 				TinyVisualContextMenu* s = m_contexts[i];
 				s->Unpopup();
 			}
-			if (IsWindow(m_hWND))
-			{
-				ShowWindow(SW_HIDE);
-			}
+			::ShowWindow(m_hWND, SW_HIDE);
 		}
 	}
 }

@@ -131,10 +131,15 @@ namespace Bytedance
 		m_combobox->SetPadding({ 5,0,0,0 });
 		m_combobox->SetImage(TinyVisualComboBox::ComboBoxStyle::NORMAL, TinyVisualResource::GetInstance()["combobox_normal"]);
 		m_combobox->SetImage(TinyVisualComboBox::ComboBoxStyle::HOVER, TinyVisualResource::GetInstance()["combobox_hover"]);
-		m_combobox->SetImage(TinyVisualComboBox::ComboBoxStyle::DOWN, TinyVisualResource::GetInstance()["combobox_push"]);
+		m_combobox->SetImage(TinyVisualComboBox::ComboBoxStyle::PUSH, TinyVisualResource::GetInstance()["combobox_push"]);
 		m_combobox->SetImage(TinyVisualComboBox::ComboBoxStyle::ARROWDOWN, TinyVisualResource::GetInstance()["inputbtn_down"]);
 		m_combobox->SetImage(TinyVisualComboBox::ComboBoxStyle::ARROWHOVER, TinyVisualResource::GetInstance()["inputbtn_highlight"]);
 		m_combobox->SetImage(TinyVisualComboBox::ComboBoxStyle::ARROWNORMAL, TinyVisualResource::GetInstance()["inputbtn_normal"]);
+
+		m_combobox->Add("test1", "上海1");
+		m_combobox->Add("test2", "上海2");
+		m_combobox->Add("test3", "上海3");
+		m_combobox->Add("test4", "上海4");
 
 		TinyRectangle s = window->GetClientRect();
 		Resize(s.Width(), s.Height());

@@ -22,7 +22,7 @@ namespace TinyFramework
 			HRESULT					OnMouseEnter() OVERRIDE;
 			HRESULT					OnMouseHover(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
 			HRESULT					OnMouseLeave() OVERRIDE;
-			HRESULT					OnLButtonUp(const TinyPoint& pos, DWORD dwFlags);
+			HRESULT					OnLButtonUp(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
 		public:
 			TinyVisualContextMenu*	GetContextMenu();
 			void					SetSeparator(BOOL bSeparator);

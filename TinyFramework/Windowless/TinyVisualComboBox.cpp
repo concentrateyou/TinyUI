@@ -3,6 +3,8 @@
 #include "TinyVisualCommon.h"
 #include "TinyVisualManage.h"
 #include "TinyVisualWindowless.h"
+#include "TinyVisualComboBoxItem.h"
+#include "TinyVisualComboBoxHWND.h"
 #include "TinyVisualComboBox.h"
 
 namespace TinyFramework
@@ -12,13 +14,15 @@ namespace TinyFramework
 		IMPLEMENT_DYNCREATE(TinyVisualComboBox, TinyVisual);
 
 		TinyVisualComboBox::TinyVisualComboBox()
-			:m_style(ComboBoxStyle::NORMAL)
+			:m_style(ComboBoxStyle::NORMAL),
+			m_comboboxHWND(NULL)
 		{
 
 		}
 		TinyVisualComboBox::TinyVisualComboBox(TinyVisual* spvisParent, TinyVisualDocument* document)
 			: TinyVisual(spvisParent, document),
-			m_style(ComboBoxStyle::NORMAL)
+			m_style(ComboBoxStyle::NORMAL),
+			m_comboboxHWND(NULL)
 		{
 
 		}
@@ -34,6 +38,31 @@ namespace TinyFramework
 		void TinyVisualComboBox::SetImage(ComboBoxStyle style, TinyImage* image)
 		{
 			m_images[static_cast<BYTE>(style)] = image;
+		}
+		TinyVisualComboBoxItem*	TinyVisualComboBox::Add(const TinyString& name, const TinyString& text)
+		{
+			ASSERT(m_document);
+			if (!m_comboboxHWND)
+			{
+				m_comboboxHWND = new TinyVisualComboBoxHWND();
+				m_comboboxHWND->Create(m_document->GetVisualHWND(), "");
+				m_comboboxHWND->m_owner = this;
+			}
+			return m_comboboxHWND->Add(name, text);
+		}
+		void TinyVisualComboBox::Remove(const TinyString& name)
+		{
+			if (m_comboboxHWND != NULL)
+			{
+				m_comboboxHWND->Remove(name);
+			}
+		}
+		void TinyVisualComboBox::RemoveAll()
+		{
+			if (m_comboboxHWND != NULL)
+			{
+				m_comboboxHWND->RemoveAll();
+			}
 		}
 		BOOL TinyVisualComboBox::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
@@ -78,32 +107,10 @@ namespace TinyFramework
 			}
 			return FALSE;
 		}
-		HRESULT	 TinyVisualComboBox::OnLButtonDBClick(const TinyPoint& pos, DWORD dwFlags)
-		{
-			ASSERT(m_document);
-			if (m_style != ComboBoxStyle::DOWN)
-			{
-				m_style = ComboBoxStyle::DOWN;
-				this->Invalidate();
-			}
-			TinyRectangle s = m_document->GetWindowRect(this);
-			TinyPoint point = m_document->VisualToClient(this, pos);
-			if (s.PtInRect(point))
-			{
-				EVENT_CLICK(this, EventArgs());
-			}
-			return TinyVisual::OnLButtonDBClick(pos, dwFlags);
-
-		}
-		HRESULT	 TinyVisualComboBox::OnLButtonDown(const TinyPoint& pos, DWORD dwFlags)
+		HRESULT	TinyVisualComboBox::OnLButtonDown(const TinyPoint& pos, DWORD dwFlags)
 		{
 			ASSERT(m_document);
 			m_document->SetCapture(this);
-			if (m_style != ComboBoxStyle::DOWN)
-			{
-				m_style = ComboBoxStyle::DOWN;
-				this->Invalidate();
-			}
 			return TinyVisual::OnLButtonDown(pos, dwFlags);
 		}
 		HRESULT	 TinyVisualComboBox::OnLButtonUp(const TinyPoint& pos, DWORD dwFlags)
@@ -115,18 +122,12 @@ namespace TinyFramework
 			TinyPoint point = m_document->VisualToClient(this, pos);
 			if (s.PtInRect(point))
 			{
-				if (m_style != ComboBoxStyle::HOVER)
+				if (m_comboboxHWND != NULL)
 				{
-					m_style = ComboBoxStyle::HOVER;
-					this->Invalidate();
-				}
-				EVENT_CLICK(this, EventArgs());
-			}
-			else
-			{
-				if (m_style != ComboBoxStyle::NORMAL)
-				{
-					m_style = ComboBoxStyle::NORMAL;
+					TinyPoint pos = m_document->GetScreenPos(this);
+					pos.y += GetSize().cy;
+					m_comboboxHWND->Popup(pos);
+					m_style = ComboBoxStyle::PUSH;
 					this->Invalidate();
 				}
 			}
@@ -135,23 +136,12 @@ namespace TinyFramework
 		HRESULT	 TinyVisualComboBox::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)
 		{
 			ASSERT(m_document);
-			ComboBoxStyle style = dwFlags & MK_LBUTTON ? ComboBoxStyle::DOWN : ComboBoxStyle::HOVER;
-			if (style != m_style)
-			{
-				m_style = style;
-				this->Invalidate();
-			}
 			return TinyVisual::OnMouseMove(pos, dwFlags);
 		}
 		HRESULT	 TinyVisualComboBox::OnMouseLeave()
 		{
 			ASSERT(m_document);
 			m_document->ReleaseCapture();
-			if (m_style != ComboBoxStyle::NORMAL)
-			{
-				m_style = ComboBoxStyle::NORMAL;
-				this->Invalidate();
-			}
 			return TinyVisual::OnMouseLeave();
 		}
 	}
