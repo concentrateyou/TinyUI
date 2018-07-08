@@ -52,7 +52,7 @@ namespace TinyFramework
 			if (image != NULL && !image->IsEmpty())
 			{
 				TinyRectangle center = image->GetCenter();
-				if (center.IsRectNull())
+				if (center.IsRectEmpty())
 					canvas.DrawImage(*image, clip, 0, 0, image->GetSize().cx, image->GetSize().cy);
 				else
 					canvas.DrawImage(*image, clip, { 0, 0, image->GetSize().cx, image->GetSize().cy }, center);
@@ -66,7 +66,7 @@ namespace TinyFramework
 				s.left = s.right - image->GetSize().cx;
 				s.bottom = s.top + image->GetSize().cy;
 				TinyRectangle center = image->GetCenter();
-				if (center.IsRectNull())
+				if (center.IsRectEmpty())
 					canvas.DrawImage(*image, s, 0, 0, image->GetSize().cx, image->GetSize().cy);
 				else
 					canvas.DrawImage(*image, s, { 0, 0, image->GetSize().cx, image->GetSize().cy }, center);

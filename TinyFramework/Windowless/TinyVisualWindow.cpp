@@ -73,7 +73,7 @@ namespace TinyFramework
 			}
 			if (m_backgroundImage != NULL)
 			{
-				if (m_backgroundCenter.IsRectNull())
+				if (m_backgroundCenter.IsRectEmpty())
 				{
 					canvas.DrawImage(*m_backgroundImage, clip, m_backgroundRectangle);
 				}
