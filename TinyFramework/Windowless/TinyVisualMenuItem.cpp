@@ -174,7 +174,7 @@ namespace TinyFramework
 			{
 				if (m_backgroundImage != NULL)
 				{
-					if (m_backgroundCenter.IsRectEmpty())
+					if (m_backgroundCenter.IsRectNull())
 					{
 						canvas.DrawImage(*m_backgroundImage, clip, m_backgroundRectangle);
 					}
@@ -226,14 +226,14 @@ namespace TinyFramework
 						{
 							TinyRectangle s;
 							s.SetSize(textImage.GetSize());
-							s.SetPosition(TinyPoint(clip.left + 40, clip.top + (clip.Height() - textImage.GetSize().cy) / 2));
+							s.SetPosition(TinyPoint(clip.left + m_padding.left, clip.top + (clip.Height() - textImage.GetSize().cy) / 2));
 							canvas.DrawImage(textImage, s, 0, 0, textImage.GetSize().cx, textImage.GetSize().cy);
 						}
 					}
 					else
 					{
 						SIZE size = TinyVisualDC::GetTextExtent(hDC, m_szText.CSTR(), m_szText.GetSize());
-						clip.left += 40;
+						clip.left += m_padding.left;
 						clip.top += (clip.Height() - size.cy) / 2;
 						clip.bottom -= (clip.Height() - size.cy) / 2;
 						canvas.DrawString(m_szText, clip, m_textAlign);

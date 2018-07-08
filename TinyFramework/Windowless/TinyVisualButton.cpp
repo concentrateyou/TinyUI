@@ -42,20 +42,22 @@ namespace TinyFramework
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			canvas.SetFont(m_hFONT);
 			canvas.SetTextColor(m_textColor);
-			//ªÊ÷∆±≥æ∞
 			TinyBrush brush;
 			brush.CreateBrush(m_backgroundColor);
 			canvas.SetBrush(brush);
 			canvas.FillRectangle(clip);
-			//ªÊ÷∆Õº∆¨
 			TinyImage* image = m_images[static_cast<BYTE>(m_style)];
 			if (image != NULL && !image->IsEmpty())
 			{
-				canvas.DrawImage(*image, clip, 0, 0, image->GetSize().cx, image->GetSize().cy);
+				TinyRectangle center = image->GetCenter();
+				if (center.IsRectNull())
+					canvas.DrawImage(*image, clip, 0, 0, image->GetSize().cx, image->GetSize().cy);
+				else
+					canvas.DrawImage(*image, clip, { 0, 0, image->GetSize().cx, image->GetSize().cy }, center);
 			}
-			//ªÊ÷∆Œƒ◊÷
 			if (!m_szText.IsEmpty())
 			{
+				clip.DeflateRect(m_padding);
 				if (m_style == ButtonStyle::DOWN)
 				{
 					clip.OffsetRect(1, 1);

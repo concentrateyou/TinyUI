@@ -207,7 +207,10 @@ namespace TinyFramework
 	{
 		return m_hBitmap == NULL;
 	}
-
+	void TinyImage::SetCenter(const TinyRectangle& s)
+	{
+		m_center = s;
+	}
 	void TinyImage::Close()
 	{
 		SAFE_DELETE_OBJECT(m_hBitmap);
@@ -408,23 +411,27 @@ namespace TinyFramework
 		return FALSE;
 	}
 
-	TinySize TinyImage::GetSize()
+	TinySize TinyImage::GetSize() const
 	{
 		return TinySize(m_cx, m_cy);
 	}
-	TinyRectangle TinyImage::GetRectangle()
+	TinyRectangle TinyImage::GetRectangle() const
 	{
 		return TinyRectangle(0, 0, m_cx, m_cy);
+	}
+	TinyRectangle TinyImage::GetCenter() const
+	{
+		return m_center;
 	}
 	BOOL TinyImage::Save(LPCSTR pz)
 	{
 		return SaveBitmapToFile(m_hBitmap, pz);
 	}
-	HBITMAP	TinyImage::GetHBITMAP()
+	HBITMAP	TinyImage::GetHBITMAP() const
 	{
 		return m_hBitmap;
 	}
-	BYTE* TinyImage::GetBits()
+	BYTE* TinyImage::GetBits() const
 	{
 		return m_bits;
 	}

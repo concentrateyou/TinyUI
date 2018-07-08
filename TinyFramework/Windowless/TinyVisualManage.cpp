@@ -27,6 +27,8 @@ namespace TinyFramework
 			Register(TinyVisualTag::HSCROLLBAR, CLASS_NAME(TinyVisualHScrollBar));
 			Register(TinyVisualTag::VSCROLLBAR, CLASS_NAME(TinyVisualVScrollBar));
 			Register(TinyVisualTag::PANEL, CLASS_NAME(TinyVisualPanel));
+			Register(TinyVisualTag::COMBOBOX, CLASS_NAME(TinyVisualComboBox));
+			Register(TinyVisualTag::COMBOBOXITEM, CLASS_NAME(TinyVisualComboBoxItem));
 			Register(TinyVisualTag::MENUITEM, CLASS_NAME(TinyVisualMenuItem));
 		}
 		TinyVisualResource::~TinyVisualResource()

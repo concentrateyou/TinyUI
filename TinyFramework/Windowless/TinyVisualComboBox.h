@@ -35,7 +35,7 @@ namespace TinyFramework
 		public:
 			void		SetImage(ComboBoxStyle style, TinyImage* image);
 		private:
-			TinyImage*		m_images[6];
+			TinyImage*		m_images[static_cast<BYTE>(ComboBoxStyle::ARROWHOVER) + 1];
 			ComboBoxStyle	m_style;
 		};
 	}

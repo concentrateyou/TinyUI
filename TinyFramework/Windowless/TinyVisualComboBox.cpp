@@ -12,11 +12,13 @@ namespace TinyFramework
 		IMPLEMENT_DYNCREATE(TinyVisualComboBox, TinyVisual);
 
 		TinyVisualComboBox::TinyVisualComboBox()
+			:m_style(ComboBoxStyle::NORMAL)
 		{
 
 		}
 		TinyVisualComboBox::TinyVisualComboBox(TinyVisual* spvisParent, TinyVisualDocument* document)
-			:TinyVisual(spvisParent, document)
+			: TinyVisual(spvisParent, document),
+			m_style(ComboBoxStyle::NORMAL)
 		{
 
 		}
@@ -40,21 +42,38 @@ namespace TinyFramework
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			canvas.SetFont(m_hFONT);
 			canvas.SetTextColor(m_textColor);
+
 			TinyBrush brush;
 			brush.CreateBrush(m_backgroundColor);
 			canvas.SetBrush(brush);
 			canvas.FillRectangle(clip);
+
 			TinyImage* image = m_images[static_cast<BYTE>(m_style)];
 			if (image != NULL && !image->IsEmpty())
 			{
-				canvas.DrawImage(*image, clip, 0, 0, image->GetSize().cx, image->GetSize().cy);
+				TinyRectangle center = image->GetCenter();
+				if (center.IsRectNull())
+					canvas.DrawImage(*image, clip, 0, 0, image->GetSize().cx, image->GetSize().cy);
+				else
+					canvas.DrawImage(*image, clip, { 0, 0, image->GetSize().cx, image->GetSize().cy }, center);
+			}
+			image = m_images[static_cast<BYTE>(m_style) + 3];
+			if (image != NULL && !image->IsEmpty())
+			{
+				TinyRectangle s = clip;
+				s.right -= (image->GetSize().cx) / 2;
+				s.top += (clip.Height() - image->GetSize().cy) / 2;
+				s.left = s.right - image->GetSize().cx;
+				s.bottom = s.top + image->GetSize().cy;
+				TinyRectangle center = image->GetCenter();
+				if (center.IsRectNull())
+					canvas.DrawImage(*image, s, 0, 0, image->GetSize().cx, image->GetSize().cy);
+				else
+					canvas.DrawImage(*image, s, { 0, 0, image->GetSize().cx, image->GetSize().cy }, center);
 			}
 			if (!m_szText.IsEmpty())
 			{
-				if (m_style == ComboBoxStyle::DOWN)
-				{
-					clip.OffsetRect(1, 1);
-				}
+				clip.DeflateRect(m_padding);
 				canvas.DrawString(m_szText, clip, m_textAlign);
 			}
 			return FALSE;

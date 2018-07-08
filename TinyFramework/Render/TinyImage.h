@@ -21,14 +21,16 @@ namespace TinyFramework
 		virtual ~TinyImage();
 		operator HBITMAP() const;
 		BOOL			IsEmpty() const;
+		HBITMAP			GetHBITMAP() const;
+		BYTE*			GetBits() const;
+		TinySize		GetSize() const;
+		TinyRectangle	GetRectangle() const;
+		TinyRectangle	GetCenter() const;
 		BOOL			Create(HDC hDC, LPCSTR pzText, UINT format, COLORREF color);
 		BOOL			Open(LPCSTR pz);
 		BOOL			Open(BYTE* p, LONG size);
 		BOOL			Save(LPCSTR pz);//±£¥Ê≥…BMP
-		HBITMAP			GetHBITMAP();
-		BYTE*			GetBits();
-		TinySize		GetSize();
-		TinyRectangle	GetRectangle();
+		void			SetCenter(const TinyRectangle& s);
 		void			Close();
 	private:
 		BOOL			OpenFile(LPCSTR pzFile);
@@ -37,6 +39,7 @@ namespace TinyFramework
 		INT				m_cy;
 		BYTE*			m_bits;
 		HBITMAP			m_hBitmap;
+		TinyRectangle	m_center;
 	};
 	/// <summary>
 	/// Œ¢»ÌWICΩ‚¬Î

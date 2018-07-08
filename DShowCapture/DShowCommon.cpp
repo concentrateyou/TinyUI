@@ -172,7 +172,7 @@ HBITMAP WINAPI CopyScreenToBitmap(LPRECT lpRect, BYTE *pData, BITMAPINFO *pHeade
 	int         nX, nY, nX2, nY2;
 	int         nWidth, nHeight;
 	int         xScrn, yScrn;
-	if (IsRectEmpty(lpRect))
+	if (IsRectNull(lpRect))
 		return NULL;
 	hScrDC = CreateDC(TEXT("DISPLAY"), NULL, NULL, NULL);
 	hMemDC = CreateCompatibleDC(hScrDC);

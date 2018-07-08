@@ -121,6 +121,21 @@ namespace Bytedance
 		m_contextmenu->Add("system_setting4", "系统设置4");
 		m_contextmenu->Add("system_setting5", "系统设置5");*/
 
+		m_combobox = static_cast<TinyVisualComboBox*>(m_document.Create(TinyVisualTag::COMBOBOX, window));
+		ASSERT(m_combobox);
+		m_combobox->SetName("Combobox");
+		m_combobox->SetText("测试");
+		m_combobox->SetTextColor(RGB(0, 0, 0));
+		m_combobox->SetTextAlian(DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+		m_combobox->SetSize(TinySize(129, 28));
+		m_combobox->SetPadding({ 5,0,0,0 });
+		m_combobox->SetImage(TinyVisualComboBox::ComboBoxStyle::NORMAL, TinyVisualResource::GetInstance()["combobox_normal"]);
+		m_combobox->SetImage(TinyVisualComboBox::ComboBoxStyle::HOVER, TinyVisualResource::GetInstance()["combobox_hover"]);
+		m_combobox->SetImage(TinyVisualComboBox::ComboBoxStyle::DOWN, TinyVisualResource::GetInstance()["combobox_push"]);
+		m_combobox->SetImage(TinyVisualComboBox::ComboBoxStyle::ARROWDOWN, TinyVisualResource::GetInstance()["inputbtn_down"]);
+		m_combobox->SetImage(TinyVisualComboBox::ComboBoxStyle::ARROWHOVER, TinyVisualResource::GetInstance()["inputbtn_highlight"]);
+		m_combobox->SetImage(TinyVisualComboBox::ComboBoxStyle::ARROWNORMAL, TinyVisualResource::GetInstance()["inputbtn_normal"]);
+
 		TinyRectangle s = window->GetClientRect();
 		Resize(s.Width(), s.Height());
 	}

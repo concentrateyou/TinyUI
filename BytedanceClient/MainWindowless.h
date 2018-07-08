@@ -6,6 +6,7 @@
 #include "Windowless/TinyVisualLabel.h"
 #include "Windowless/TinyVisualContextMenu.h"
 #include "Windowless/TinyVisualMenuItem.h"
+#include "Windowless/TinyVisualComboBox.h"
 using namespace TinyFramework;
 using namespace TinyFramework::Windowless;
 
@@ -44,7 +45,7 @@ namespace Bytedance
 		TinyVisualButton*		m_close;
 		TinyVisualButton*		m_setting;
 		TinyVisualLabel*		m_title;
-		
+		TinyVisualComboBox*		m_combobox;
 		//ÊÂ¼þ
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMinClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMaxClick;
