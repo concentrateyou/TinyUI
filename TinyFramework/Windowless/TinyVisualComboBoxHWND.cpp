@@ -12,14 +12,15 @@ namespace TinyFramework
 		TinyVisualComboBoxHWND::TinyVisualComboBoxHWND()
 			:m_offsetX(3),
 			m_offsetY(3),
-			m_owner(NULL)
+			m_owner(NULL),
+			m_current(NULL)
 		{
-
+			m_onItemClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &TinyVisualComboBoxHWND::OnItemClick));
 		}
 
 		TinyVisualComboBoxHWND::~TinyVisualComboBoxHWND()
 		{
-
+			m_onItemClick.Reset(NULL);
 		}
 		LPCSTR TinyVisualComboBoxHWND::RetrieveClassName()
 		{
@@ -73,6 +74,16 @@ namespace TinyFramework
 			}
 			return TinyVisualWindowless::OnActivate(uMsg, wParam, lParam, bHandled);;
 		}
+		LRESULT	TinyVisualComboBoxHWND::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+		{
+			bHandled = FALSE;
+			if (m_current != NULL)
+			{
+				TinyVisualComboBoxItem* current = static_cast<TinyVisualComboBoxItem*>(m_current);
+				current->m_dwFlag &= ~ITEM_HIGHLIGHT;
+			}
+			return TinyVisualWindowless::OnMouseMove(uMsg, wParam, lParam, bHandled);
+		}
 		TinyVisualComboBoxItem*	TinyVisualComboBoxHWND::Add(const TinyString& name, const TinyString& text)
 		{
 			TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
@@ -80,10 +91,11 @@ namespace TinyFramework
 			item->SetName(name);
 			item->SetText(text);
 			item->SetTextColor(0x0000000);
-			item->SetTextAlian(DT_LEFT | DT_VCENTER);
+			item->SetTextAlian(DT_CENTER | DT_VCENTER);
 			item->SetSize(TinySize(180, 26));
 			item->SetPosition(TinyPoint(m_offsetX, m_offsetY));
 			item->SetImage(TinyVisualResource::GetInstance()["ComboBoxList_highlight"]);
+			item->EVENT_CLICK += m_onItemClick;
 			m_offsetY += 26;
 			return item;
 		}
@@ -92,6 +104,7 @@ namespace TinyFramework
 			TinyVisualComboBoxItem* item = static_cast<TinyVisualComboBoxItem*>(m_document.GetVisualByName(name));
 			if (item != NULL)
 			{
+				item->EVENT_CLICK -= m_onItemClick;
 				m_document.Destory(item);
 			}
 		}
@@ -123,6 +136,19 @@ namespace TinyFramework
 		void	TinyVisualComboBoxHWND::Unpopup()
 		{
 			::ShowWindow(m_hWND, SW_HIDE);
+		}
+		void	TinyVisualComboBoxHWND::OnItemClick(TinyVisual*spvis, EventArgs& args)
+		{
+			if (m_current != spvis)
+			{
+				m_current = spvis;
+				EVENT_SELECTCHANGED(m_current, args);
+				if (m_owner != NULL)
+				{
+					m_owner->SetText(m_current->GetText());
+				}
+				Unpopup();
+			}
 		}
 	}
 }

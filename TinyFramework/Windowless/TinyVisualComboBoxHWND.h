@@ -15,6 +15,7 @@ namespace TinyFramework
 
 		class TinyVisualComboBoxHWND : public TinyVisualWindowless
 		{
+			friend class TinyVisualComboBoxItem;
 			friend class TinyVisualComboBox;
 			friend class TinyVisualComboBoxHWND;
 			DECLARE_DYNAMIC(TinyVisualComboBoxHWND)
@@ -32,6 +33,7 @@ namespace TinyFramework
 		public:
 			LRESULT					OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 			LRESULT					OnNCActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+			LRESULT					OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		public:
 			TinyVisualComboBoxItem*	Add(const TinyString& name, const TinyString& text);
 			void					Remove(const TinyString& name);
@@ -39,10 +41,16 @@ namespace TinyFramework
 			void					Popup(const TinyPoint& pos);
 			BOOL					IsPopup() const;
 			void					Unpopup();
+		public:
+			Event<void(TinyVisual*, EventArgs&)>	EVENT_SELECTCHANGED;
+		private:
+			void					OnItemClick(TinyVisual*spvis, EventArgs& args);
 		private:
 			UINT					m_offsetX;
 			UINT					m_offsetY;
 			TinyVisualComboBox*		m_owner;
+			TinyVisual*				m_current;
+			TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>> m_onItemClick;
 		};
 	}
 }

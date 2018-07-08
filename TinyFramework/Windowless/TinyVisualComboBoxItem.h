@@ -7,6 +7,8 @@ namespace TinyFramework
 	{
 		class TinyVisualComboBoxItem : public TinyVisual
 		{
+			friend class TinyVisualComboBoxHWND;
+			friend class TinyVisualComboBox;
 			friend class TinyVisualDocument;
 			DECLARE_DYNCREATE(TinyVisualComboBoxItem)
 			DISALLOW_COPY_AND_ASSIGN(TinyVisualComboBoxItem)

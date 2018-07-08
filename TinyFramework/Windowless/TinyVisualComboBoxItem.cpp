@@ -65,6 +65,7 @@ namespace TinyFramework
 		}
 		BOOL TinyVisualComboBoxItem::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
+			ASSERT(m_document);
 			TinyRectangle clip = m_document->GetWindowRect(this);
 			TinyClipCanvas canvas(hDC, this, rcPaint);
 			if (m_backgroundImage != NULL)

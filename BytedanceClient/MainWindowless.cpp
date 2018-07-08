@@ -124,7 +124,6 @@ namespace Bytedance
 		m_combobox = static_cast<TinyVisualComboBox*>(m_document.Create(TinyVisualTag::COMBOBOX, window));
 		ASSERT(m_combobox);
 		m_combobox->SetName("Combobox");
-		m_combobox->SetText("测试");
 		m_combobox->SetTextColor(RGB(0, 0, 0));
 		m_combobox->SetTextAlian(DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 		m_combobox->SetSize(TinySize(129, 28));
@@ -138,7 +137,8 @@ namespace Bytedance
 
 		m_combobox->Add("test1", "上海1");
 		m_combobox->Add("test2", "上海2");
-		m_combobox->Add("test3", "上海3");
+		TinyVisualComboBoxItem* item = m_combobox->Add("test3", "上海3");
+		m_combobox->SetSelected(item);
 		m_combobox->Add("test4", "上海4");
 
 		TinyRectangle s = window->GetClientRect();

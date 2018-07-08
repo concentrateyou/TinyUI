@@ -34,6 +34,7 @@ namespace TinyFramework
 		void	TinyVisualButton::SetImage(ButtonStyle style, TinyImage* image)
 		{
 			m_images[static_cast<BYTE>(style)] = image;
+			Invalidate();
 		}
 		BOOL TinyVisualButton::OnDraw(HDC hDC, const RECT& rcPaint)
 		{

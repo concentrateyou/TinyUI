@@ -38,6 +38,23 @@ namespace TinyFramework
 		void TinyVisualComboBox::SetImage(ComboBoxStyle style, TinyImage* image)
 		{
 			m_images[static_cast<BYTE>(style)] = image;
+			Invalidate();
+		}
+		void TinyVisualComboBox::SetSelected(TinyVisualComboBoxItem* item)
+		{
+			if (m_comboboxHWND != NULL)
+			{
+				m_comboboxHWND->m_current = item;
+				m_comboboxHWND->Invalidate();
+				SetText(item != NULL ? item->GetText() : "");
+				Invalidate();
+			}
+		}
+		TinyVisualComboBoxItem*	TinyVisualComboBox::GetSelected()
+		{
+			if (m_comboboxHWND != NULL)
+				return static_cast<TinyVisualComboBoxItem*>(m_comboboxHWND->m_current);
+			return NULL;
 		}
 		TinyVisualComboBoxItem*	TinyVisualComboBox::Add(const TinyString& name, const TinyString& text)
 		{
@@ -107,31 +124,79 @@ namespace TinyFramework
 			}
 			return FALSE;
 		}
-		HRESULT	TinyVisualComboBox::OnLButtonDown(const TinyPoint& pos, DWORD dwFlags)
+		HRESULT	TinyVisualComboBox::OnLButtonDBClick(const TinyPoint& pos, DWORD dwFlags)
 		{
 			ASSERT(m_document);
 			m_document->SetCapture(this);
-			return TinyVisual::OnLButtonDown(pos, dwFlags);
-		}
-		HRESULT	 TinyVisualComboBox::OnLButtonUp(const TinyPoint& pos, DWORD dwFlags)
-		{
-			ASSERT(m_document);
-			m_document->SetCapture(NULL);
-			BOOL bRes = TinyVisual::OnLButtonUp(pos, dwFlags);
+			BOOL bRes = TinyVisual::OnLButtonDBClick(pos, dwFlags);
 			TinyRectangle s = m_document->GetWindowRect(this);
 			TinyPoint point = m_document->VisualToClient(this, pos);
 			if (s.PtInRect(point))
 			{
 				if (m_comboboxHWND != NULL)
 				{
-					TinyPoint pos = m_document->GetScreenPos(this);
-					pos.y += GetSize().cy;
-					m_comboboxHWND->Popup(pos);
-					m_style = ComboBoxStyle::PUSH;
-					this->Invalidate();
+					if (m_comboboxHWND->IsPopup())
+					{
+						m_comboboxHWND->Unpopup();
+						m_style = ComboBoxStyle::NORMAL;
+						this->Invalidate();
+					}
+					else
+					{
+						TinyPoint pos = m_document->GetScreenPos(this);
+						pos.y += GetSize().cy;
+						if (m_comboboxHWND->m_current != NULL)
+						{
+							TinyVisualComboBoxItem* current = static_cast<TinyVisualComboBoxItem*>(m_comboboxHWND->m_current);
+							current->m_dwFlag |= ITEM_HIGHLIGHT;
+						}
+						m_comboboxHWND->Popup(pos);
+						m_style = ComboBoxStyle::PUSH;
+						this->Invalidate();
+					}
 				}
 			}
 			return bRes;
+		}
+		HRESULT	TinyVisualComboBox::OnLButtonDown(const TinyPoint& pos, DWORD dwFlags)
+		{
+			ASSERT(m_document);
+			m_document->SetCapture(this);
+			BOOL bRes = TinyVisual::OnLButtonDown(pos, dwFlags);
+			TinyRectangle s = m_document->GetWindowRect(this);
+			TinyPoint point = m_document->VisualToClient(this, pos);
+			if (s.PtInRect(point))
+			{
+				if (m_comboboxHWND != NULL)
+				{
+					if (m_comboboxHWND->IsPopup())
+					{
+						m_comboboxHWND->Unpopup();
+						m_style = ComboBoxStyle::NORMAL;
+						this->Invalidate();
+					}
+					else
+					{
+						TinyPoint pos = m_document->GetScreenPos(this);
+						pos.y += GetSize().cy;
+						if (m_comboboxHWND->m_current != NULL)
+						{
+							TinyVisualComboBoxItem* current = static_cast<TinyVisualComboBoxItem*>(m_comboboxHWND->m_current);
+							current->m_dwFlag |= ITEM_HIGHLIGHT;
+						}
+						m_comboboxHWND->Popup(pos);
+						m_style = ComboBoxStyle::PUSH;
+						this->Invalidate();
+					}
+				}
+			}
+			return bRes;
+		}
+		HRESULT	 TinyVisualComboBox::OnLButtonUp(const TinyPoint& pos, DWORD dwFlags)
+		{
+			ASSERT(m_document);
+			m_document->SetCapture(NULL);
+			return TinyVisual::OnLButtonUp(pos, dwFlags);
 		}
 		HRESULT	 TinyVisualComboBox::OnMouseMove(const TinyPoint& pos, DWORD dwFlags)
 		{
