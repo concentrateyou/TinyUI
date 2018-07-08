@@ -119,17 +119,25 @@ namespace TinyFramework
 		{
 			ASSERT(m_document);
 			m_document->SetCapture(NULL);
-			if (m_style != ButtonStyle::NORMAL)
-			{
-				m_style = ButtonStyle::NORMAL;
-				this->Invalidate();
-			}
 			BOOL bRes = TinyVisual::OnLButtonUp(pos, dwFlags);
 			TinyRectangle s = m_document->GetWindowRect(this);
 			TinyPoint point = m_document->VisualToClient(this, pos);
 			if (s.PtInRect(point))
 			{
+				if (m_style != ButtonStyle::HOVER)
+				{
+					m_style = ButtonStyle::HOVER;
+					this->Invalidate();
+				}
 				EVENT_CLICK(this, EventArgs());
+			}
+			else
+			{
+				if (m_style != ButtonStyle::NORMAL)
+				{
+					m_style = ButtonStyle::NORMAL;
+					this->Invalidate();
+				}
 			}
 			return bRes;
 		}
