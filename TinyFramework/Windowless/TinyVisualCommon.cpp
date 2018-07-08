@@ -185,6 +185,7 @@ namespace TinyFramework
 		const TinyString TinyVisualTag::HSCROLLBAR = TEXT("hscrollbar");
 		const TinyString TinyVisualTag::VSCROLLBAR = TEXT("vscrollbar");
 		const TinyString TinyVisualTag::COMBOBOX = TEXT("combobox");
+		const TinyString TinyVisualTag::COMBOBOXITEM = TEXT("comboboxitem");
 		const TinyString TinyVisualTag::OPTION = TEXT("option");
 		const TinyString TinyVisualTag::TEXTBOX = TEXT("textbox");
 		const TinyString TinyVisualTag::STRETCH = TEXT("stretch");

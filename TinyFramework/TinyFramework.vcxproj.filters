@@ -436,6 +436,18 @@
     <ClCompile Include="Windowless\TinyVisualScrollBar.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualPanel.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualComboBox.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualComboBoxHWND.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualComboBoxItem.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -877,6 +889,18 @@
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
     <ClInclude Include="Windowless\TinyVisualScrollBar.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualPanel.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualComboBox.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualComboBoxHWND.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualComboBoxItem.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
   </ItemGroup>

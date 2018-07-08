@@ -188,7 +188,10 @@ namespace TinyFramework
 				window->SetPosition(pos);
 				window->SetSize(TinySize(192, m_offsetY + 6));
 				m_document.Redraw();
-				ShowWindow(SW_SHOW);
+				if (IsWindow(m_hWND))
+				{
+					ShowWindow(SW_SHOW);
+				}
 			}
 		}
 		BOOL TinyVisualContextMenu::IsPopup() const

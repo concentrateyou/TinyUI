@@ -5,16 +5,16 @@ namespace TinyFramework
 {
 	namespace Windowless
 	{
-		class TinyVisualLabel : public TinyVisual
+		class TinyVisualPanel : public TinyVisual
 		{
 			friend class TinyVisualDocument;
-			DECLARE_DYNCREATE(TinyVisualLabel)
-			DISALLOW_COPY_AND_ASSIGN(TinyVisualLabel)
+			DECLARE_DYNCREATE(TinyVisualPanel)
+			DISALLOW_COPY_AND_ASSIGN(TinyVisualPanel)
 		protected:
-			TinyVisualLabel();
-			TinyVisualLabel(TinyVisual* spvisParent, TinyVisualDocument* document);
+			TinyVisualPanel();
+			TinyVisualPanel(TinyVisual* spvisParent, TinyVisualDocument* document);
 		public:
-			virtual ~TinyVisualLabel();
+			virtual ~TinyVisualPanel();
 			TinyString	RetrieveTag() const OVERRIDE;
 			BOOL		OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
 		};

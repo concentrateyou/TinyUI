@@ -17,6 +17,9 @@ namespace TinyFramework
 			virtual ~TinyVisualComboBox();
 			TinyString	RetrieveTag() const OVERRIDE;
 			BOOL		OnDraw(HDC hDC, const RECT& rcPaint) OVERRIDE;
+
+		private:
+
 		};
 	}
 }

@@ -3,33 +3,33 @@
 #include "TinyVisualCommon.h"
 #include "TinyVisualManage.h"
 #include "TinyVisualWindowless.h"
-#include "TinyVisualLabel.h"
+#include "TinyVisualPanel.h"
 
 namespace TinyFramework
 {
 	namespace Windowless
 	{
-		IMPLEMENT_DYNCREATE(TinyVisualLabel, TinyVisual);
+		IMPLEMENT_DYNCREATE(TinyVisualPanel, TinyVisual);
 
-		TinyVisualLabel::TinyVisualLabel()
+		TinyVisualPanel::TinyVisualPanel()
 		{
 
 		}
-		TinyVisualLabel::TinyVisualLabel(TinyVisual* spvisParent, TinyVisualDocument* document)
+		TinyVisualPanel::TinyVisualPanel(TinyVisual* spvisParent, TinyVisualDocument* document)
 			:TinyVisual(spvisParent, document)
 		{
 
 		}
-		TinyVisualLabel::~TinyVisualLabel()
+		TinyVisualPanel::~TinyVisualPanel()
 		{
 
 		}
 		
-		TinyString TinyVisualLabel::RetrieveTag() const
+		TinyString TinyVisualPanel::RetrieveTag() const
 		{
-			return TinyVisualTag::LABEL;
+			return TinyVisualTag::PANEL;
 		}
-		BOOL TinyVisualLabel::OnDraw(HDC hDC, const RECT& rcPaint)
+		BOOL TinyVisualPanel::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
 			return TinyVisual::OnDraw(hDC, rcPaint);
 		}

@@ -147,6 +147,7 @@ namespace TinyFramework
 			static const TinyString HSCROLLBAR;
 			static const TinyString VSCROLLBAR;
 			static const TinyString COMBOBOX;
+			static const TinyString COMBOBOXITEM;
 			static const TinyString OPTION;
 			static const TinyString TEXTBOX;
 			static const TinyString STRETCH;

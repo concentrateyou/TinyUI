@@ -304,9 +304,13 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Render\TinyCanvas.h" />
     <ClInclude Include="Windowless\TinyVisualButton.h" />
+    <ClInclude Include="Windowless\TinyVisualComboBox.h" />
+    <ClInclude Include="Windowless\TinyVisualComboBoxHWND.h" />
+    <ClInclude Include="Windowless\TinyVisualComboBoxItem.h" />
     <ClInclude Include="Windowless\TinyVisualLabel.h" />
     <ClInclude Include="Windowless\TinyVisualContextMenu.h" />
     <ClInclude Include="Windowless\TinyVisualMenuItem.h" />
+    <ClInclude Include="Windowless\TinyVisualPanel.h" />
     <ClInclude Include="Windowless\TinyVisualScrollBar.h" />
     <ClInclude Include="Windowless\TinyVisualShadow.h" />
     <ClInclude Include="Windowless\TinyVisualStyle.h" />
@@ -454,10 +458,14 @@
     </ClCompile>
     <ClCompile Include="Render\TinyCanvas.cpp" />
     <ClCompile Include="Windowless\TinyVisualButton.cpp" />
+    <ClCompile Include="Windowless\TinyVisualComboBox.cpp" />
+    <ClCompile Include="Windowless\TinyVisualComboBoxHWND.cpp" />
+    <ClCompile Include="Windowless\TinyVisualComboBoxItem.cpp" />
     <ClCompile Include="Windowless\TinyVisualLabel.cpp" />
     <ClCompile Include="Windowless\TinyVisualManage.cpp" />
     <ClCompile Include="Windowless\TinyVisualContextMenu.cpp" />
     <ClCompile Include="Windowless\TinyVisualMenuItem.cpp" />
+    <ClCompile Include="Windowless\TinyVisualPanel.cpp" />
     <ClCompile Include="Windowless\TinyVisualScrollBar.cpp" />
     <ClCompile Include="Windowless\TinyVisualShadow.cpp" />
     <ClCompile Include="Windowless\TinyVisualStyle.cpp" />
