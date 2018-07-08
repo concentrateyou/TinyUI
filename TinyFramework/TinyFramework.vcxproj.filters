@@ -433,6 +433,9 @@
     <ClCompile Include="Windowless\TinyVisualContextMenu.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualScrollBar.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -871,6 +874,9 @@
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
     <ClInclude Include="Windowless\TinyVisualContextMenu.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualScrollBar.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
   </ItemGroup>

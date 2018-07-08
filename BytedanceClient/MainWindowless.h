@@ -37,12 +37,15 @@ namespace Bytedance
 		void OnSettingClick(TinyVisual*, EventArgs& args);
 	private:
 		//UI元素
+		//标题栏
 		TinyVisualButton*		m_min;
 		TinyVisualButton*		m_max;
 		TinyVisualButton*		m_restore;
 		TinyVisualButton*		m_close;
 		TinyVisualButton*		m_setting;
-		TinyVisualContextMenu*	m_contextmenu;
+		TinyVisualLabel*		m_title;
+
+		//TinyVisualContextMenu*	m_contextmenu;
 		//事件
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMinClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMaxClick;
