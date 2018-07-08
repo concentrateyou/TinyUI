@@ -168,8 +168,17 @@ namespace TinyFramework
 		void TinyVisualContextMenu::OnItemClick(TinyVisual*spvis, EventArgs& args)
 		{
 			TinyVisualMenuItem* s = static_cast<TinyVisualMenuItem*>(spvis);
-			ASSERT(s);
-			s->SetChecked(!s->IsChecked());
+			TinyVisualContextMenu* context = m_owner == NULL ? this : m_owner;
+			for (;;)
+			{
+				if (context->m_owner != NULL)
+				{
+					context = context->m_owner;
+					continue;
+				}
+				context->Unpopup();
+				break;
+			}
 		}
 		void TinyVisualContextMenu::Popup(const TinyPoint& pos)
 		{

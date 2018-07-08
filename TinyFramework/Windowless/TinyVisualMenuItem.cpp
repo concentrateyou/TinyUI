@@ -81,7 +81,10 @@ namespace TinyFramework
 			HRESULT hRes = TinyVisual::OnLButtonUp(pos, dwFlags);
 			if (s.PtInRect(point))
 			{
-				EVENT_CLICK(this, EventArgs());
+				if (!TestF(MENUITEM_CHILD))
+				{
+					EVENT_CLICK(this, EventArgs());
+				}
 			}
 			return hRes;
 		}
