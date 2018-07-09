@@ -50,7 +50,6 @@ namespace TinyFramework
 			window->SetBackgroundCenter({ 3,3,66,53 });
 			m_offsetX = 3;
 			m_offsetY = 3;
-
 			m_scrollbar = static_cast<TinyVisualVScrollBar*>(m_document.Create(TinyVisualTag::VSCROLLBAR, window));
 			ASSERT(m_scrollbar);
 			m_scrollbar->SetVisible(FALSE);

@@ -15,14 +15,16 @@ namespace TinyFramework
 
 		TinyVisualComboBox::TinyVisualComboBox()
 			:m_style(ComboBoxStyle::NORMAL),
-			m_comboboxHWND(NULL)
+			m_comboboxHWND(NULL),
+			m_itemsize(125, 26)
 		{
 
 		}
 		TinyVisualComboBox::TinyVisualComboBox(TinyVisual* spvisParent, TinyVisualDocument* document)
 			: TinyVisual(spvisParent, document),
 			m_style(ComboBoxStyle::NORMAL),
-			m_comboboxHWND(NULL)
+			m_comboboxHWND(NULL),
+			m_itemsize(125, 26)
 		{
 
 		}
@@ -40,6 +42,14 @@ namespace TinyFramework
 			m_images[static_cast<BYTE>(style)] = image;
 			Invalidate();
 		}
+		void TinyVisualComboBox::SetItemSize(const TinySize& itemsize)
+		{
+			m_itemsize = itemsize;
+			if (m_comboboxHWND != NULL)
+			{
+				m_comboboxHWND->Invalidate();
+			}
+		}
 		void TinyVisualComboBox::SetSelected(TinyVisualComboBoxItem* item)
 		{
 			if (m_comboboxHWND != NULL)
@@ -49,6 +59,10 @@ namespace TinyFramework
 				SetText(item != NULL ? item->GetText() : "");
 				Invalidate();
 			}
+		}
+		TinySize TinyVisualComboBox::GetItemSize() const
+		{
+			return m_itemsize;
 		}
 		TinyVisualComboBoxItem*	TinyVisualComboBox::GetSelected()
 		{

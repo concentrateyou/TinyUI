@@ -45,20 +45,21 @@ namespace TinyFramework
 		TinyVisualMenuItem* TinyVisualContextMenu::Add()
 		{
 			TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
-			TinyVisualMenuItem* s = static_cast<TinyVisualMenuItem*>(m_document.Create(TinyVisualTag::MENUITEM, window));
-			s->SetEnable(FALSE);
-			s->SetSeparator(TRUE);
-			s->SetSize(TinySize(180, 3));
-			s->SetPosition(TinyPoint(m_offsetX, m_offsetY));
-			s->SetBackgroundImage(TinyVisualResource::GetInstance()["menu_cutling"]);
-			s->SetBackgroundRectangle({ 0,0,50,3 });
-			s->SetBackgroundCenter({ 1,0,49,3 });
-			s->SetImageList(NULL,
+			TinyVisualMenuItem* item = static_cast<TinyVisualMenuItem*>(m_document.Create(TinyVisualTag::MENUITEM, window));
+			item->SetEnable(FALSE);
+			item->SetSeparator(TRUE);
+			item->SetPadding({ 32,0,0,0 });
+			item->SetSize(TinySize(180, 3));
+			item->SetPosition(TinyPoint(m_offsetX, m_offsetY));
+			item->SetBackgroundImage(TinyVisualResource::GetInstance()["menu_cutling"]);
+			item->SetBackgroundRectangle({ 0,0,50,3 });
+			item->SetBackgroundCenter({ 1,0,49,3 });
+			item->SetImageList(NULL,
 				TinyVisualResource::GetInstance()["menu_highlight"],
 				TinyVisualResource::GetInstance()["menu_check"],
 				TinyVisualResource::GetInstance()["menu_arrow"]);
 			m_offsetY += 3;
-			return s;
+			return item;
 		}
 		TinyVisualMenuItem* TinyVisualContextMenu::Add(const TinyString& name, const TinyString& text, TinyImage* icon)
 		{
@@ -69,6 +70,7 @@ namespace TinyFramework
 			item->SetChecked(FALSE);
 			item->SetTextColor(0x0000000);
 			item->SetTextAlian(DT_LEFT | DT_VCENTER);
+			item->SetPadding({ 30,0,0,0 });
 			item->SetSize(TinySize(180, 26));
 			item->SetPosition(TinyPoint(m_offsetX, m_offsetY));
 			item->SetImageList(icon,

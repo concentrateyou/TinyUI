@@ -166,7 +166,7 @@ namespace TinyFramework
 			{
 				if (m_backgroundImage != NULL && !m_backgroundImage->IsEmpty())
 				{
-					clip.left += 32;
+					clip.left += m_padding.left;
 					canvas.DrawImage(*m_backgroundImage, clip, m_backgroundRectangle);
 				}
 			}
@@ -197,7 +197,7 @@ namespace TinyFramework
 					if (m_images[1] != NULL && !m_images[1]->IsEmpty())
 					{
 						TinyRectangle s = clip;
-						s.left += (30 - m_images[1]->GetSize().cx) / 2;
+						s.left += (m_padding.left - m_images[1]->GetSize().cx) / 2;
 						s.top += (clip.Height() - m_images[1]->GetSize().cy) / 2;
 						s.SetSize(m_images[1]->GetSize());
 						canvas.DrawImage(*m_images[1], s, 0, 0, m_images[1]->GetSize().cx, m_images[1]->GetSize().cy);

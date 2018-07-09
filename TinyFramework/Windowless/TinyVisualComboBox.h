@@ -37,6 +37,8 @@ namespace TinyFramework
 			HRESULT		OnMouseMove(const TinyPoint& pos, DWORD dwFlags) OVERRIDE;
 			HRESULT		OnMouseLeave() OVERRIDE;
 		public:
+			TinySize				GetItemSize() const;
+			void					SetItemSize(const TinySize& itemsize);
 			void					SetSelected(TinyVisualComboBoxItem* item);
 			TinyVisualComboBoxItem*	GetSelected();
 			TinyVisualComboBoxItem*	Add(const TinyString& name, const TinyString& text);
@@ -45,6 +47,7 @@ namespace TinyFramework
 		public:
 			void					SetImage(ComboBoxStyle style, TinyImage* image);
 		private:
+			TinySize				m_itemsize;
 			TinyImage*				m_images[static_cast<BYTE>(ComboBoxStyle::ARROWHOVER) + 1];
 			ComboBoxStyle			m_style;
 			TinyVisualComboBoxHWND* m_comboboxHWND;
