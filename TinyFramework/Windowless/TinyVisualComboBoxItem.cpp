@@ -109,7 +109,11 @@ namespace TinyFramework
 					clip.left += m_padding.left;
 					clip.top += (clip.Height() - size.cy) / 2;
 					clip.bottom -= (clip.Height() - size.cy) / 2;
-					canvas.DrawString(m_szText, clip, m_textAlign);
+
+					TinyRectangle s1 = rcPaint;
+					s1.DeflateRect(3, 3, 3, 3);
+					TinyClipCanvas canvas1(hDC, this, s1);
+					canvas1.DrawString(m_szText, clip, m_textAlign);
 				}
 			}
 			return TinyVisual::OnDraw(hDC, rcPaint);

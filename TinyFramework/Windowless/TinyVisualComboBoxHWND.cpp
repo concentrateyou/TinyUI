@@ -39,7 +39,7 @@ namespace TinyFramework
 
 		DWORD TinyVisualComboBoxHWND::RetrieveExStyle()
 		{
-			return (WS_EX_LAYERED | WS_EX_TOOLWINDOW);
+			return (WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_TOOLWINDOW);
 		}
 
 		void TinyVisualComboBoxHWND::OnInitialize()
@@ -116,7 +116,7 @@ namespace TinyFramework
 			item->SetText(text);
 			item->SetTextColor(0x0000000);
 			item->SetPadding({ 5,0,0,0 });
-			item->SetTextAlian(DT_CENTER | DT_VCENTER);
+			item->SetTextAlian(DT_LEFT | DT_VCENTER);
 			item->SetSize(m_itemsize);
 			item->SetPosition(TinyPoint(0, m_count * m_itemsize.cy));
 			item->SetImage(TinyVisualResource::GetInstance()["ComboBoxList_highlight"]);

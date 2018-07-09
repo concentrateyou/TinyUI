@@ -158,7 +158,7 @@ namespace TinyFramework
 		{
 			ASSERT(spvis);
 			RECT clip = { 0 };
-			::GetClipBox(hDC, &clip);
+			::GetClipBox(m_hDC, &clip);
 			m_hOldRGN = ::CreateRectRgnIndirect(&clip);
 			m_hRGN = ::CreateRectRgnIndirect(&rcPaint);
 			if (spvis->GetClip())
