@@ -218,7 +218,7 @@ namespace TinyFramework
 		m_cx = 0;
 		m_cy = 0;
 	}
-	BOOL TinyImage::Create(HDC hDC, LPCSTR pzText, UINT format, COLORREF color)
+	BOOL TinyImage::Create(HDC hDC, LPCSTR pzText, UINT format, COLORREF color, const TinySize& clip)
 	{
 		if (!pzText)
 			return FALSE;
@@ -243,12 +243,20 @@ namespace TinyFramework
 		memDC.SetTextColor(GetTextColor(hDC));
 		memDC.FillSolidRect(s.left, s.top, s.right, s.bottom, color);
 		memDC.DrawText(pzText, strlen(pzText), &s, format);
-		for (INT i = 0; i < m_cx * m_cy; i++)
+		INT linesize = ((((32 * m_cx) + 31) / 32) * 4);
+		for (INT y = 0; y < m_cy; ++y)
 		{
-			COLORREF value = RGB(m_bits[i * 4 + 2], m_bits[i * 4 + 1], m_bits[i * 4]);
-			if (value != color)
+			for (INT x = 0; x < m_cx; ++x)
 			{
-				m_bits[i * 4 + 3] = 255;
+				BYTE* dst = m_bits + y * linesize + x * 4;
+				BYTE b = *dst++;
+				BYTE g = *dst++;
+				BYTE r = *dst++;
+				COLORREF value = RGB(r, g, b);
+				if (value != color)
+				{
+					*dst = 255;
+				}
 			}
 		}
 		return TRUE;

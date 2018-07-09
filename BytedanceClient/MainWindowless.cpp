@@ -117,6 +117,8 @@ namespace Bytedance
 		TinyVisualComboBoxItem* item = m_combobox->Add("test3", "上海3");
 		m_combobox->SetSelected(item);
 		m_combobox->Add("test4", "上海4");
+		m_combobox->Add("test5", "上海5");
+
 
 		//m_scrollbar = static_cast<TinyVisualVScrollBar*>(m_document.Create(TinyVisualTag::VSCROLLBAR, window));
 		//m_scrollbar->SetImage(ARROW1NORMAL, TinyVisualResource::GetInstance()["vscrollbar_arrow_up_normal"]);

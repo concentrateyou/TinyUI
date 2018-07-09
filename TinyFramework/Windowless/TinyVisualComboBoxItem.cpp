@@ -95,7 +95,13 @@ namespace TinyFramework
 				if (m_document->GetVisualHWND().RetrieveExStyle() & WS_EX_LAYERED)
 				{
 					TinyImage textImage;
-					if (textImage.Create(hDC, m_szText.CSTR(), m_textAlign, TestF(ITEM_HIGHLIGHT) ? RGB(0, 0, 0) : RGB(255, 255, 255)))
+					TRACE("text:%s, cy:%d , %d\n", m_szText.CSTR(), clip.top, clip.bottom);
+
+					/*TinyRectangle s1;
+					DrawText(hDC, m_szText.CSTR(), strlen(m_szText), &s1, DT_CALCRECT | m_textAlign);
+					TinySize size = s1.Size();
+					INT cy = 80 - (clip.top + TO_CY(clip) / 2);*/
+					if (textImage.Create(hDC, m_szText.CSTR(), m_textAlign, TestF(ITEM_HIGHLIGHT) ? RGB(0, 0, 0) : RGB(255, 255, 255), clip.Size()))
 					{
 						TinyRectangle s;
 						s.SetSize(textImage.GetSize());
