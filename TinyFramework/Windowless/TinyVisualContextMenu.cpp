@@ -124,6 +124,7 @@ namespace TinyFramework
 
 		LRESULT TinyVisualContextMenu::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 		{
+			bHandled = TRUE;
 			return HTCLIENT;
 		}
 		LRESULT TinyVisualContextMenu::OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

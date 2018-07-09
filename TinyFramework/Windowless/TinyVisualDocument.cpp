@@ -981,6 +981,10 @@ namespace TinyFramework
 		{
 			if (!spvis)
 				return FALSE;
+			if (spvis->m_spvisParent != NULL)
+			{
+				m_document.UnlinkVisual(spvis, &(spvis->m_spvisParent->m_spvisChild));
+			}
 			TinyVisual* spvisChild = NULL;
 			while (spvis->m_spvisChild != NULL)
 			{

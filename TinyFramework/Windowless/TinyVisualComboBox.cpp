@@ -47,7 +47,7 @@ namespace TinyFramework
 			m_itemsize = itemsize;
 			if (m_comboboxHWND != NULL)
 			{
-				m_comboboxHWND->Invalidate();
+				m_comboboxHWND->SetItemSize(itemsize);
 			}
 		}
 		void TinyVisualComboBox::SetSelected(TinyVisualComboBoxItem* item)
@@ -78,7 +78,6 @@ namespace TinyFramework
 				m_comboboxHWND = new TinyVisualComboBoxHWND();
 				m_comboboxHWND->Create(m_document->GetVisualHWND(), "");
 				m_comboboxHWND->m_owner = this;
-				m_comboboxHWND->m_document.GetParent(NULL)->SetMinimumSize(TinySize(180, 100));
 			}
 			return m_comboboxHWND->Add(name, text);
 		}
@@ -165,7 +164,7 @@ namespace TinyFramework
 							TinyVisualComboBoxItem* current = static_cast<TinyVisualComboBoxItem*>(m_comboboxHWND->m_current);
 							current->m_dwFlag |= ITEM_HIGHLIGHT;
 						}
-						m_comboboxHWND->Popup(pos);
+						m_comboboxHWND->Popup(pos, 80);
 						m_style = ComboBoxStyle::PUSH;
 						this->Invalidate();
 					}
@@ -199,7 +198,7 @@ namespace TinyFramework
 							TinyVisualComboBoxItem* current = static_cast<TinyVisualComboBoxItem*>(m_comboboxHWND->m_current);
 							current->m_dwFlag |= ITEM_HIGHLIGHT;
 						}
-						m_comboboxHWND->Popup(pos);
+						m_comboboxHWND->Popup(pos, 80);
 						m_style = ComboBoxStyle::PUSH;
 						this->Invalidate();
 					}
