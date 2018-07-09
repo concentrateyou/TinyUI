@@ -66,21 +66,7 @@ namespace TinyFramework
 
 		void TinyVisualComboBoxHWND::OnUninitialize()
 		{
-			//TinyVisual* spvis = m_document.GetVisual(NULL, CMD_CHILD);
-			//while (spvis != NULL)
-			//{
-			//	TinyVisual* spvis1 = spvis;
-			//	if (spvis->IsKindOf(RUNTIME_CLASS(TinyVisualComboBoxItem)))
-			//	{
-			//		spvis1 = m_document.GetVisual(spvis, CMD_NEXT);
-			//		m_document.Destory(spvis);
-			//	}
-			//	spvis = m_document.GetVisual(spvis1, CMD_NEXT);
-			//}
-
-
 			m_scrollbar->EVENT_POSCHANGE -= m_onPosChange;
-			m_document.Destory(m_scrollbar);
 			m_current = NULL;
 		}
 
@@ -165,7 +151,22 @@ namespace TinyFramework
 			{
 				TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
 				window->SetPosition(pos);
-				window->SetSize(TinySize(m_itemsize.cx, m_itemsize.cy * m_count));
+				if (cy > m_itemsize.cy * m_count)
+				{
+					AdjustItems(m_itemsize.cx);
+					window->SetSize(TinySize(m_itemsize.cx, m_itemsize.cy * m_count));
+					m_scrollbar->SetVisible(FALSE);
+				}
+				else
+				{
+					AdjustItems(m_itemsize.cx - 12);
+					window->SetSize(TinySize(m_itemsize.cx, cy));
+					m_scrollbar->SetVisible(TRUE);
+					m_scrollbar->SetPosition(TinyPoint(m_itemsize.cx - 12, 0));
+					m_scrollbar->SetSize(TinySize(12, cy));
+					m_scrollbar->SetScrollInfo(0, m_itemsize.cy * (m_count + 1) - cy, m_itemsize.cy, m_iPos);
+					m_document.SetFocus(m_scrollbar);
+				}
 				m_document.Redraw();
 				::ShowWindow(m_hWND, SW_SHOW);
 			}
@@ -208,7 +209,7 @@ namespace TinyFramework
 					size.cx = cx;
 					spvis->SetSize(size);
 				}
-				spvis = m_document.GetVisual(spvis, CMD_PREV);
+				spvis = m_document.GetVisual(spvis, CMD_NEXT);
 			}
 		}
 		void TinyVisualComboBoxHWND::AdjustLayout(INT dx, INT dy)
@@ -225,7 +226,7 @@ namespace TinyFramework
 					spvis->SetPosition(s.Position());
 					spvis->SetSize(s.Size());
 				}
-				spvis = m_document.GetVisual(spvis, CMD_PREV);
+				spvis = m_document.GetVisual(spvis, CMD_NEXT);
 			}
 		}
 	}
