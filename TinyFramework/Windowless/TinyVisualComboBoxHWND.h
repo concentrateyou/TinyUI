@@ -44,13 +44,17 @@ namespace TinyFramework
 		public:
 			Event<void(TinyVisual*, EventArgs&)>	EVENT_SELECTCHANGED;
 		private:
+			void					OnPosChange(BOOL bVer, INT code, INT iOldPos, INT iNewPos);
 			void					OnItemClick(TinyVisual*spvis, EventArgs& args);
 		private:
 			UINT					m_offsetX;
 			UINT					m_offsetY;
+			UINT					m_iPos;
 			TinyVisualComboBox*		m_owner;
 			TinyVisual*				m_current;
-			TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>> m_onItemClick;
+			TinyVisualVScrollBar*	m_scrollbar;
+			TinyScopedPtr<Delegate<void(BOOL, INT, INT, INT)>>		m_onPosChange;
+			TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>	m_onItemClick;
 		};
 	}
 }

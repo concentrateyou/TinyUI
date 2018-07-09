@@ -25,7 +25,7 @@ namespace TinyFramework
 			string GetDefaultPath();
 		public:
 			BOOL		Add(TinyImage* image);
-			TinyImage*	Add(const TinyString& szName, const TinyString& szFile);
+			TinyImage*	Add(const TinyString& szName, const TinyString& szFile, const TinyRectangle& center);
 			void		Remove(const TinyString& szName);
 			void		Remove(TinyImage* image);
 			void		RemoveAll();
@@ -37,6 +37,7 @@ namespace TinyFramework
 		private:
 			static void BuildContext(const TiXmlNode* pXMLNode);
 			static void BuildImage(const TiXmlNode* pXMLNode);
+			static TinyRectangle GetRectangle(const TinyString& str);
 		private:
 			string							m_szPath;
 			TinyLock						m_lock;

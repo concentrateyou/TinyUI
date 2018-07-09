@@ -63,7 +63,7 @@ namespace TinyFramework
 			TinyAutoLock lock(m_lock);
 			return m_images1.Add(image);
 		}
-		TinyImage* TinyVisualResource::Add(const TinyString& szName, const TinyString& szFile)
+		TinyImage* TinyVisualResource::Add(const TinyString& szName, const TinyString& szFile, const TinyRectangle& center)
 		{
 			TinyAutoLock lock(m_lock);
 			TinyImage** value = m_images2.GetValue(szName);
@@ -81,6 +81,7 @@ namespace TinyFramework
 				TinyImage* image = new TinyImage();
 				if (image != NULL && image->Open(szNewFile.c_str()))
 				{
+					image->SetCenter(center);
 					m_images2.Add(szName, image);
 					return image;
 				}
@@ -156,6 +157,16 @@ namespace TinyFramework
 			TinyString* val = m_types.GetValue(tag);
 			return val != NULL ? *val : TinyString();
 		}
+		TinyRectangle TinyVisualResource::GetRectangle(const TinyString& str)
+		{
+			TinyArray<TinyString> sps;
+			str.Split(',', sps);
+			if (sps.GetSize() == 4)
+			{
+				return (TinyRectangle(atoi(sps[0].STR()), atoi(sps[1].STR()), atoi(sps[2].STR()), atoi(sps[3].STR())));
+			}
+			return TinyRectangle();
+		}
 		void TinyVisualResource::BuildContext(const TiXmlNode* pXMLNode)
 		{
 			for (const TiXmlNode* pXMLChildNode = pXMLNode->FirstChild(); pXMLChildNode; pXMLChildNode = pXMLChildNode->NextSibling())
@@ -166,6 +177,7 @@ namespace TinyFramework
 				}
 			}
 		}
+
 		void TinyVisualResource::BuildImage(const TiXmlNode* pXMLNode)
 		{
 			for (const TiXmlNode* pXMLChildNode = pXMLNode->FirstChild(); pXMLChildNode; pXMLChildNode = pXMLChildNode->NextSibling())
@@ -176,16 +188,21 @@ namespace TinyFramework
 					const TiXmlAttribute* pFA = pXML->FirstAttribute();
 					const TiXmlAttribute* pLA = pXML->LastAttribute();
 					string szName;
-					string szValue;
+					string szFile;
+					string szCenter;
 					while (pFA != pLA)
 					{
 						if (!strcasecmp(pFA->Name(), "name"))
 						{
 							szName = UTF8ToASCII(pFA->Value());
 						}
-						if (!strcasecmp(pFA->Name(), "value"))
+						if (!strcasecmp(pFA->Name(), "file"))
 						{
-							szValue = UTF8ToASCII(pFA->Value());
+							szFile = UTF8ToASCII(pFA->Value());
+						}
+						if (!strcasecmp(pFA->Name(), "center"))
+						{
+							szCenter = UTF8ToASCII(pFA->Value());
 						}
 						pFA = pFA->Next();
 					}
@@ -193,13 +210,17 @@ namespace TinyFramework
 					{
 						szName = UTF8ToASCII(pFA->Value());
 					}
-					if (!strcasecmp(pFA->Name(), "value"))
+					if (!strcasecmp(pFA->Name(), "file"))
 					{
-						szValue = UTF8ToASCII(pFA->Value());
+						szFile = UTF8ToASCII(pFA->Value());
 					}
-					if (!szName.empty() && !szValue.empty())
+					if (!strcasecmp(pFA->Name(), "center"))
 					{
-						TinyVisualResource::GetInstance().Add(szName.c_str(), szValue.c_str());
+						szCenter = UTF8ToASCII(pFA->Value());
+					}
+					if (!szName.empty() && !szFile.empty())
+					{
+						TinyVisualResource::GetInstance().Add(szName.c_str(), szFile.c_str(), GetRectangle(szCenter.c_str()));
 					}
 				}
 			}

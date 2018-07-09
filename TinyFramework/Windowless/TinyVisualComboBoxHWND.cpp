@@ -12,9 +12,11 @@ namespace TinyFramework
 		TinyVisualComboBoxHWND::TinyVisualComboBoxHWND()
 			:m_offsetX(3),
 			m_offsetY(3),
+			m_iPos(0),
 			m_owner(NULL),
 			m_current(NULL)
 		{
+			m_onPosChange.Reset(new Delegate<void(BOOL, INT, INT, INT)>(this, &TinyVisualComboBoxHWND::OnPosChange));
 			m_onItemClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &TinyVisualComboBoxHWND::OnItemClick));
 		}
 
@@ -48,6 +50,19 @@ namespace TinyFramework
 			window->SetBackgroundCenter({ 3,3,66,53 });
 			m_offsetX = 3;
 			m_offsetY = 3;
+
+			m_scrollbar = static_cast<TinyVisualVScrollBar*>(m_document.Create(TinyVisualTag::VSCROLLBAR, window));
+			ASSERT(m_scrollbar);
+			m_scrollbar->SetVisible(FALSE);
+			m_scrollbar->SetImage(ARROW1NORMAL, TinyVisualResource::GetInstance()["vscrollbar_arrow_up_normal"]);
+			m_scrollbar->SetImage(ARROW1HIGHLIGHT, TinyVisualResource::GetInstance()["vscrollbar_arrow_up_hover"]);
+			m_scrollbar->SetImage(ARROW1DOWN, TinyVisualResource::GetInstance()["vscrollbar_arrow_up_press"]);
+			m_scrollbar->SetImage(ARROW2NORMAL, TinyVisualResource::GetInstance()["vscrollbar_arrow_down_normal"]);
+			m_scrollbar->SetImage(ARROW2HIGHLIGHT, TinyVisualResource::GetInstance()["vscrollbar_arrow_down_hover"]);
+			m_scrollbar->SetImage(ARROW2DOWN, TinyVisualResource::GetInstance()["vscrollbar_arrow_down_normal"]);
+			m_scrollbar->SetImage(SCROLLBARGROOVE, TinyVisualResource::GetInstance()["vscrollbar_groove"]);
+			m_scrollbar->SetImage(SCROLLBARNORMAL, TinyVisualResource::GetInstance()["vscrollbar_normal"]);
+			m_scrollbar->SetImage(SCROLLBARHIGHLIGHT, TinyVisualResource::GetInstance()["vscrollbar_hover"]);
 			Unpopup();
 		}
 
@@ -118,7 +133,7 @@ namespace TinyFramework
 				spvis = m_document.GetVisual(spvis, CMD_NEXT);
 			}
 		}
-		void	TinyVisualComboBoxHWND::Popup(const TinyPoint& pos)
+		void TinyVisualComboBoxHWND::Popup(const TinyPoint& pos)
 		{
 			if (!IsPopup())
 			{
@@ -129,15 +144,21 @@ namespace TinyFramework
 				::ShowWindow(m_hWND, SW_SHOW);
 			}
 		}
-		BOOL	TinyVisualComboBoxHWND::IsPopup() const
+		BOOL TinyVisualComboBoxHWND::IsPopup() const
 		{
 			return ::IsWindowVisible(m_hWND);
 		}
-		void	TinyVisualComboBoxHWND::Unpopup()
+		void TinyVisualComboBoxHWND::Unpopup()
 		{
 			::ShowWindow(m_hWND, SW_HIDE);
 		}
-		void	TinyVisualComboBoxHWND::OnItemClick(TinyVisual*spvis, EventArgs& args)
+		void TinyVisualComboBoxHWND::OnPosChange(BOOL bVer, INT code, INT iOldPos, INT iNewPos)
+		{
+			//AdjustLayout(0, iOldPos - iNewPos);
+			m_iPos = iNewPos;
+			m_document.Redraw();
+		}
+		void TinyVisualComboBoxHWND::OnItemClick(TinyVisual*spvis, EventArgs& args)
 		{
 			if (m_current != spvis)
 			{
@@ -147,8 +168,8 @@ namespace TinyFramework
 				{
 					m_owner->SetText(m_current->GetText());
 				}
-				Unpopup();
 			}
+			Unpopup();
 		}
 	}
 }

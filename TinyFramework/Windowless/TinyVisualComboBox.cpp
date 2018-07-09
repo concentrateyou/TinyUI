@@ -64,6 +64,7 @@ namespace TinyFramework
 				m_comboboxHWND = new TinyVisualComboBoxHWND();
 				m_comboboxHWND->Create(m_document->GetVisualHWND(), "");
 				m_comboboxHWND->m_owner = this;
+				m_comboboxHWND->m_document.GetParent(NULL)->SetMinimumSize(TinySize(180, 100));
 			}
 			return m_comboboxHWND->Add(name, text);
 		}

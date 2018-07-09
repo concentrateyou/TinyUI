@@ -26,6 +26,9 @@ namespace TinyFramework
 			TinyVisual();
 			TinyVisual(TinyVisual* spvisParent, TinyVisualDocument* document);
 		public:
+			virtual ~TinyVisual();
+			virtual TinyString	RetrieveTag() const;
+		public:
 			TinyVisualDocument*	GetDocument();
 			BOOL				IsVisible() const;
 			BOOL				IsEnable() const;
@@ -36,56 +39,52 @@ namespace TinyFramework
 			UINT				GetChildCount() const;
 			BOOL				Invalidate();
 			virtual	HRESULT		SendMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes);
-		public:
-			virtual ~TinyVisual();
-			virtual TinyString	RetrieveTag() const;
-		public:
-			virtual void	SetName(const TinyString& pzName);
-			virtual void	SetCursor(const TinyString& szCursor);
-			virtual void	SetToolTip(const TinyString& szTitle);
-			virtual void	SetText(const TinyString& szText);
+			virtual void		SetName(const TinyString& pzName);
+			virtual void		SetCursor(const TinyString& szCursor);
+			virtual void		SetToolTip(const TinyString& szTitle);
+			virtual void		SetText(const TinyString& szText);
 			//Box
-			virtual void	SetPosition(const TinyPoint& pos);
-			virtual void	SetSize(const TinySize& size);
-			virtual void	SetMaximumSize(const TinySize& size);
-			virtual void	SetMinimumSize(const TinySize& size);
-			virtual void	SetClip(HRGN hrgnClip);
-			virtual void	SetFont(HFONT hFONT);
-			virtual void	SetVisible(BOOL visible);
-			virtual void	SetEnable(BOOL enable);
-			virtual void	SetPadding(const TinyRectangle& s);
+			virtual void		SetPosition(const TinyPoint& pos);
+			virtual void		SetSize(const TinySize& size);
+			virtual void		SetMaximumSize(const TinySize& size);
+			virtual void		SetMinimumSize(const TinySize& size);
+			virtual void		SetClip(HRGN hrgnClip);
+			virtual void		SetFont(HFONT hFONT);
+			virtual void		SetVisible(BOOL visible);
+			virtual void		SetEnable(BOOL enable);
+			virtual void		SetPadding(const TinyRectangle& s);
 			//±³¾°
-			virtual void	SetBackgroundImage(TinyImage* image);
-			virtual void	SetBackgroundColor(COLORREF color);
-			virtual void	SetBackgroundRectangle(const TinyRectangle& rectangle);
-			virtual void	SetBackgroundCenter(const TinyRectangle& center);
+			virtual void		SetBackgroundImage(TinyImage* image);
+			virtual void		SetBackgroundColor(COLORREF color);
+			virtual void		SetBackgroundRectangle(const TinyRectangle& rectangle);
+			virtual void		SetBackgroundCenter(const TinyRectangle& center);
 			//±ß¿ò
-			virtual void	SetBorderThickness(const TinyRectangle& thickness);
-			virtual	void	SetBorderColor(COLORREF color);
-			virtual	void	SetBorderStyle(UINT style);
+			virtual void		SetBorderThickness(const TinyRectangle& thickness);
+			virtual	void		SetBorderColor(COLORREF color);
+			virtual	void		SetBorderStyle(UINT style);
 			//ÎÄ×Ö
-			virtual void	SetTextColor(COLORREF color);
-			virtual void	SetTextAlian(UINT textAlign);
+			virtual void		SetTextColor(COLORREF color);
+			virtual void		SetTextAlian(UINT textAlign);
 
-			TinyString		GetText() const;
-			TinyString		GetName() const;
-			TinyString		GetToolTip() const;
-			TinyPoint		GetPosition() const;
-			TinySize		GetSize() const;
-			TinySize		GetMaximumSize() const;
-			TinySize		GetMinimumSize() const;
-			TinyRectangle	GetPadding() const;
-			TinyRectangle	GetWindowRect()const;
-			TinyRectangle	GetClientRect() const;
-			HRGN			GetClip() const;
-			HFONT			GetFont() const;
-			TinyRectangle	GetBackgroundRectangle() const;
-			COLORREF		GetBackgroundColor() const;
-			TinyImage*		GetBackgroundImage() const;
-			TinyRectangle	GetBackgroundCenter() const;
-			TinyRectangle	GetBorderThickness() const;
-			COLORREF		GetBorderColor() const;
-			UINT			GetBorderStyle() const;
+			TinyString			GetText() const;
+			TinyString			GetName() const;
+			TinyString			GetToolTip() const;
+			TinyPoint			GetPosition() const;
+			TinySize			GetSize() const;
+			TinySize			GetMaximumSize() const;
+			TinySize			GetMinimumSize() const;
+			TinyRectangle		GetPadding() const;
+			TinyRectangle		GetWindowRect()const;
+			TinyRectangle		GetClientRect() const;
+			HRGN				GetClip() const;
+			HFONT				GetFont() const;
+			TinyRectangle		GetBackgroundRectangle() const;
+			COLORREF			GetBackgroundColor() const;
+			TinyImage*			GetBackgroundImage() const;
+			TinyRectangle		GetBackgroundCenter() const;
+			TinyRectangle		GetBorderThickness() const;
+			COLORREF			GetBorderColor() const;
+			UINT				GetBorderStyle() const;
 
 		protected:
 			virtual HRESULT		OnCreate();

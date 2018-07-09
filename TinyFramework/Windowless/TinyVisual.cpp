@@ -165,6 +165,7 @@ namespace TinyFramework
 			if (m_padding != s)
 			{
 				m_padding = s;
+				Invalidate();
 			}
 		}
 
@@ -173,6 +174,7 @@ namespace TinyFramework
 			if (m_backgroundImage != image)
 			{
 				m_backgroundImage = image;
+				Invalidate();
 			}
 		}
 		void TinyVisual::SetBackgroundColor(COLORREF color)
@@ -180,6 +182,7 @@ namespace TinyFramework
 			if (m_backgroundColor != color)
 			{
 				m_backgroundColor = color;
+				Invalidate();
 			}
 		}
 		void TinyVisual::SetBackgroundRectangle(const TinyRectangle& rectangle)
@@ -187,6 +190,7 @@ namespace TinyFramework
 			if (m_backgroundRectangle != rectangle)
 			{
 				m_backgroundRectangle = rectangle;
+				Invalidate();
 			}
 		}
 
@@ -195,6 +199,7 @@ namespace TinyFramework
 			if (m_backgroundCenter != center)
 			{
 				m_backgroundCenter = center;
+				Invalidate();
 			}
 		}
 
@@ -203,6 +208,7 @@ namespace TinyFramework
 			if (m_borderThickness != thickness)
 			{
 				m_borderThickness = thickness;
+				Invalidate();
 			}
 		}
 		void TinyVisual::SetBorderColor(COLORREF color)
@@ -210,6 +216,7 @@ namespace TinyFramework
 			if (m_borderColor != color)
 			{
 				m_borderColor = color;
+				Invalidate();
 			}
 		}
 		void TinyVisual::SetBorderStyle(UINT style)
@@ -217,6 +224,7 @@ namespace TinyFramework
 			if (m_borderStyle != style)
 			{
 				m_borderStyle = style;
+				Invalidate();
 			}
 		}
 
@@ -225,6 +233,7 @@ namespace TinyFramework
 			if (m_textColor != color)
 			{
 				m_textColor = color;
+				Invalidate();
 			}
 		}
 		void TinyVisual::SetTextAlian(UINT textAlign)
@@ -232,6 +241,7 @@ namespace TinyFramework
 			if (m_textAlign != textAlign)
 			{
 				m_textAlign = textAlign;
+				Invalidate();
 			}
 		}
 

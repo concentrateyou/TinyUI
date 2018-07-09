@@ -29,12 +29,6 @@ namespace Bytedance
 		m_close->EVENT_CLICK += m_onCloseClick;
 		m_restore->EVENT_CLICK -= m_onRestoreClick;
 		m_setting->EVENT_CLICK -= m_onSettingClick;
-
-		/*if (m_contextmenu != NULL)
-		{
-			m_contextmenu->DestroyWindow();
-			SAFE_DELETE(m_contextmenu);
-		}*/
 	}
 
 	LRESULT MainWindowless::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -104,23 +98,6 @@ namespace Bytedance
 		m_onSettingClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainWindowless::OnSettingClick));
 		m_setting->EVENT_CLICK += m_onSettingClick;
 
-		/*m_contextmenu = new TinyVisualContextMenu();
-		m_contextmenu->Create(m_hWND, "");
-		TinyVisualMenuItem* item = m_contextmenu->Add("system_setting1", "系统设置1");
-		item->Add("system_setting1-1", "系统设置1-1");
-		item->Add("system_setting1-2", "系统设置1-2");
-		item->Add();
-		TinyVisualMenuItem* item1 = item->Add("system_setting1-3", "系统设置1-3");
-		item1->Add("system_setting1-1-1", "系统设置1-1-1");
-		item1->Add("system_setting1-1-2", "系统设置1-1-2");
-		item1->Add();
-		item1->Add("system_setting1-1-3", "系统设置1-1-3");
-		m_contextmenu->Add("system_setting2", "系统设置2");
-		m_contextmenu->Add();
-		m_contextmenu->Add("system_setting3", "系统设置3");
-		m_contextmenu->Add("system_setting4", "系统设置4");
-		m_contextmenu->Add("system_setting5", "系统设置5");*/
-
 		m_combobox = static_cast<TinyVisualComboBox*>(m_document.Create(TinyVisualTag::COMBOBOX, window));
 		ASSERT(m_combobox);
 		m_combobox->SetName("Combobox");
@@ -140,6 +117,20 @@ namespace Bytedance
 		TinyVisualComboBoxItem* item = m_combobox->Add("test3", "上海3");
 		m_combobox->SetSelected(item);
 		m_combobox->Add("test4", "上海4");
+
+		//m_scrollbar = static_cast<TinyVisualVScrollBar*>(m_document.Create(TinyVisualTag::VSCROLLBAR, window));
+		//m_scrollbar->SetImage(ARROW1NORMAL, TinyVisualResource::GetInstance()["vscrollbar_arrow_up_normal"]);
+		//m_scrollbar->SetImage(ARROW1HIGHLIGHT, TinyVisualResource::GetInstance()["vscrollbar_arrow_up_hover"]);
+		//m_scrollbar->SetImage(ARROW1DOWN, TinyVisualResource::GetInstance()["vscrollbar_arrow_up_press"]);
+		//m_scrollbar->SetImage(ARROW2NORMAL, TinyVisualResource::GetInstance()["vscrollbar_arrow_down_normal"]);
+		//m_scrollbar->SetImage(ARROW2HIGHLIGHT, TinyVisualResource::GetInstance()["vscrollbar_arrow_down_hover"]);
+		//m_scrollbar->SetImage(ARROW2DOWN, TinyVisualResource::GetInstance()["vscrollbar_arrow_down_normal"]);
+		//m_scrollbar->SetImage(SCROLLBARGROOVE, TinyVisualResource::GetInstance()["vscrollbar_groove"]);
+		//m_scrollbar->SetImage(SCROLLBARNORMAL, TinyVisualResource::GetInstance()["vscrollbar_normal"]);
+		//m_scrollbar->SetImage(SCROLLBARHIGHLIGHT, TinyVisualResource::GetInstance()["vscrollbar_hover"]);
+		//m_scrollbar->SetPosition(TinyPoint(300, 100));
+		//m_scrollbar->SetScrollInfo(0, 300, 100, 0);
+		//m_scrollbar->SetSize(TinySize(12, 200));
 
 		TinyRectangle s = window->GetClientRect();
 		Resize(s.Width(), s.Height());
@@ -181,7 +172,6 @@ namespace Bytedance
 	{
 		TinyPoint pos = m_document.GetScreenPos(spvis);
 		pos.y += spvis->GetSize().cy;
-		//m_contextmenu->Popup(pos);
 	}
 	void MainWindowless::OnRestoreClick(TinyVisual*, EventArgs& args)
 	{
