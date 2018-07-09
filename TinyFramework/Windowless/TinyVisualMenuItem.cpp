@@ -222,7 +222,7 @@ namespace TinyFramework
 					if (m_document->GetVisualHWND().RetrieveExStyle() & WS_EX_LAYERED)
 					{
 						TinyImage textImage;
-						if (textImage.Create(hDC, m_szText.CSTR(), m_textAlign, TestF(ITEM_HIGHLIGHT) ? RGB(0, 0, 0) : RGB(255, 255, 255), clip.Size()))
+						if (textImage.Create(hDC, m_szText.CSTR(), m_textAlign, TestF(ITEM_HIGHLIGHT) ? RGB(0, 0, 0) : RGB(255, 255, 255)))
 						{
 							TinyRectangle s;
 							s.SetSize(textImage.GetSize());

@@ -218,7 +218,7 @@ namespace TinyFramework
 		m_cx = 0;
 		m_cy = 0;
 	}
-	BOOL TinyImage::Create(HDC hDC, LPCSTR pzText, UINT format, COLORREF color, const TinySize& clip)
+	BOOL TinyImage::Create(HDC hDC, LPCSTR pzText, UINT format, COLORREF color)
 	{
 		if (!pzText)
 			return FALSE;

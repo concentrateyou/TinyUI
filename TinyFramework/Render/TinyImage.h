@@ -26,7 +26,7 @@ namespace TinyFramework
 		TinySize		GetSize() const;
 		TinyRectangle	GetRectangle() const;
 		TinyRectangle	GetCenter() const;
-		BOOL			Create(HDC hDC, LPCSTR pzText, UINT format, COLORREF color, const TinySize& clip);
+		BOOL			Create(HDC hDC, LPCSTR pzText, UINT format, COLORREF color);
 		BOOL			Open(LPCSTR pz);
 		BOOL			Open(BYTE* p, LONG size);
 		BOOL			Save(LPCSTR pz);//±£´æ³ÉBMP
