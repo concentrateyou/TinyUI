@@ -28,7 +28,9 @@ namespace TinyFramework
 			:m_hInstance(NULL),
 			m_password('*'),
 			m_dwStyle(0),
-			m_limit(-1)
+			m_limit(-1),
+			m_bTransparent(TRUE),
+			m_bAllowBeep(FALSE)
 		{
 
 		}
@@ -78,8 +80,8 @@ namespace TinyFramework
 		{
 			ASSERT(m_ts || m_spvis);
 			m_cf.dwEffects &= ~CFE_AUTOCOLOR;
-			m_cf.crBackColor = cf;
-			if (FAILED(m_ts->TxSendMessage(EM_SETCHARFORMAT, 0, (LPARAM)&m_cf, 0)))
+			m_cf.crBackColor = cf & 0x00FFFFFF;
+			if (FAILED(m_ts->TxSendMessage(EM_SETCHARFORMAT, SCF_DEFAULT, (LPARAM)&m_cf, 0)))
 				return FALSE;
 			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE, TXTBIT_CHARFORMATCHANGE)))
 				return FALSE;
@@ -89,8 +91,8 @@ namespace TinyFramework
 		{
 			ASSERT(m_ts || m_spvis);
 			m_cf.dwEffects &= ~CFE_AUTOCOLOR;
-			m_cf.crTextColor = cf;
-			if (FAILED(m_ts->TxSendMessage(EM_SETCHARFORMAT, 0, (LPARAM)&m_cf, 0)))
+			m_cf.crTextColor = cf & 0x00FFFFFF;
+			if (FAILED(m_ts->TxSendMessage(EM_SETCHARFORMAT, SCF_DEFAULT, (LPARAM)&m_cf, 0)))
 				return FALSE;
 			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE, TXTBIT_CHARFORMATCHANGE)))
 				return FALSE;
@@ -98,7 +100,8 @@ namespace TinyFramework
 		}
 		BOOL TinyTextHost::SetTransparent(BOOL bTransparent)
 		{
-			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_BACKSTYLECHANGE, bTransparent ? TXTBIT_BACKSTYLECHANGE : 0)))
+			m_bTransparent = bTransparent;
+			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_BACKSTYLECHANGE, 0)))
 				return FALSE;
 			return TRUE;
 		}
@@ -122,7 +125,7 @@ namespace TinyFramework
 			m_cf.yHeight = lf.lfHeight * LY_PER_INCH / m_logpixelsy;
 			m_cf.yOffset = 0;
 			m_cf.crTextColor = cf;
-			m_cf.dwEffects = CFM_EFFECTS | CFE_AUTOBACKCOLOR;
+			m_cf.dwEffects = CFM_EFFECTS | CFE_AUTOCOLOR;
 			m_cf.dwEffects &= ~(CFE_PROTECTED | CFE_LINK);
 			if (lf.lfWeight < FW_BOLD)
 				m_cf.dwEffects &= ~CFE_BOLD;
@@ -132,7 +135,7 @@ namespace TinyFramework
 				m_cf.dwEffects &= ~CFE_UNDERLINE;
 			if (!lf.lfStrikeOut)
 				m_cf.dwEffects &= ~CFE_STRIKEOUT;
-			m_cf.dwMask = CFM_ALL | CFM_BACKCOLOR;
+			m_cf.dwMask = CFM_ALL;
 			m_cf.bCharSet = lf.lfCharSet;
 			m_cf.bPitchAndFamily = lf.lfPitchAndFamily;
 #ifdef UNICODE
@@ -203,6 +206,11 @@ namespace TinyFramework
 		{
 			m_limit = limit;
 			return m_ts->OnTxPropertyBitsChange(TXTBIT_MAXLENGTHCHANGE, TXTBIT_MAXLENGTHCHANGE) == S_OK;
+		}
+		BOOL TinyTextHost::AllowBeep(BOOL fBeep)
+		{
+			m_bAllowBeep = fBeep;
+			return m_ts->OnTxPropertyBitsChange(TXTBIT_ALLOWBEEP, fBeep ? TXTBIT_ALLOWBEEP : 0) == S_OK;
 		}
 		BOOL TinyTextHost::SetRectangle(const TinyRectangle& rectangle)
 		{
@@ -308,19 +316,19 @@ namespace TinyFramework
 			}
 			break;
 			}
-			m_rectangle = m_spvis->GetWindowRect();
+			TinyRectangle rectangle = m_spvis->GetWindowRect();
 			if (m_spvis->m_vscroll->IsVisible() && !m_spvis->m_hscroll->IsVisible())
 			{
-				m_rectangle.right -= m_spvis->m_vscroll->GetSize().cx;
+				rectangle.right -= m_spvis->m_vscroll->GetSize().cx;
 			}
 			if (!m_spvis->m_vscroll->IsVisible() && m_spvis->m_hscroll->IsVisible())
 			{
-				m_rectangle.bottom -= m_spvis->m_hscroll->GetSize().cy;
+				rectangle.bottom -= m_spvis->m_hscroll->GetSize().cy;
 			}
 			if (m_spvis->m_vscroll->IsVisible() && m_spvis->m_hscroll->IsVisible())
 			{
-				m_rectangle.right -= m_spvis->m_vscroll->GetSize().cx;
-				m_rectangle.bottom -= m_spvis->m_hscroll->GetSize().cy;
+				rectangle.right -= m_spvis->m_vscroll->GetSize().cx;
+				rectangle.bottom -= m_spvis->m_hscroll->GetSize().cy;
 				TinySize hsize = m_spvis->m_hscroll->GetSize();
 				TinySize vsize = m_spvis->m_vscroll->GetSize();
 				hsize.cx -= vsize.cx;
@@ -328,7 +336,8 @@ namespace TinyFramework
 				m_spvis->m_hscroll->SetSize(hsize);
 				m_spvis->m_vscroll->SetSize(vsize);
 			}
-			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE, TXTBIT_SCROLLBARCHANGE)))
+			SetRectangle(rectangle);
+			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_SCROLLBARCHANGE, TXTBIT_SCROLLBARCHANGE)))
 				return FALSE;
 			return TRUE;
 		}
@@ -507,8 +516,8 @@ namespace TinyFramework
 
 		HRESULT TinyTextHost::TxGetBackStyle(TXTBACKSTYLE *pstyle)
 		{
-			*pstyle = TXTBACK_TRANSPARENT;
-			return S_OK;
+			*pstyle = m_bTransparent ? TXTBACK_TRANSPARENT : TXTBACK_OPAQUE;
+			return FALSE;
 		}
 
 		HRESULT TinyTextHost::TxGetMaxLength(DWORD *plength)
@@ -568,6 +577,10 @@ namespace TinyFramework
 			if (!(m_dwStyle & ES_NOHIDESEL))
 			{
 				bits |= TXTBIT_HIDESELECTION;
+			}
+			if (m_bAllowBeep)
+			{
+				bits |= TXTBIT_ALLOWBEEP;
 			}
 			*pdwBits = bits & dwMask;
 			return S_OK;

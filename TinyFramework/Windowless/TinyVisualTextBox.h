@@ -23,11 +23,14 @@ namespace TinyFramework
 			void		SetText(const TinyString& pzText) OVERRIDE;
 			void		SetBackgroundColor(COLORREF color) OVERRIDE;
 			void		SetTextColor(COLORREF color) OVERRIDE;
+			void		SetEnable(BOOL enable) OVERRIDE;
+			void		SetWordWrap(BOOL fWarp);
 		public:
 			BOOL		Initialize();
 			TinyString	GetText();
 			BOOL		SetReadonly(BOOL bReadOnly);
 			BOOL		SetMultiline(BOOL bMultiline);
+			BOOL		SetTransparent(BOOL bTransparent);
 			BOOL		SetPassword(BOOL bPassword, CHAR s);
 			BOOL		ShowScrollBar(INT bar, BOOL fShow);
 			UINT		GetTextMode();

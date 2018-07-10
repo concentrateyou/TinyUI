@@ -138,10 +138,13 @@ namespace Bytedance
 		m_textbox->SetSize({ 200,200 });
 		m_textbox->SetPosition({ 100,100 });
 		m_textbox->SetMultiline(TRUE);
-		m_textbox->SetBackgroundColor(RGB(128, 128, 128));
-		m_textbox->SetTextColor(RGB(128, 128, 128));
 		m_textbox->SetText("²âÊÔ1");
+		m_textbox->SetTextColor(RGB(128, 128, 128));
 		m_textbox->Initialize();
+		m_textbox->SetTransparent(FALSE);
+		m_textbox->SetBackgroundColor(RGB(255, 0, 0));
+		//m_textbox->ShowScrollBar(SB_VERT, TRUE);
+		//m_textbox->ShowScrollBar(SB_HORZ, TRUE);
 
 		TinyRectangle s = window->GetClientRect();
 		Resize(s.Width(), s.Height());
@@ -183,6 +186,8 @@ namespace Bytedance
 	{
 		//TinyPoint pos = m_document.GetScreenPos(spvis);
 		//pos.y += spvis->GetSize().cy;
+		m_textbox->SetBackgroundColor(RGB(128, 128, 128));
+		m_textbox->SetTextColor(RGB(128, 128, 128));
 	}
 	void MainWindowless::OnRestoreClick(TinyVisual*, EventArgs& args)
 	{

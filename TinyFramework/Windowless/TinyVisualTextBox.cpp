@@ -40,6 +40,11 @@ namespace TinyFramework
 			ASSERT(m_texthost.m_ts);
 			return m_texthost.SetPassword(fPassword, s);
 		}
+		BOOL TinyVisualTextBox::SetTransparent(BOOL bTransparent)
+		{
+			ASSERT(m_texthost.m_ts);
+			return m_texthost.SetTransparent(bTransparent);
+		}
 		BOOL TinyVisualTextBox::ShowScrollBar(INT bar, BOOL fShow)
 		{
 			ASSERT(m_texthost.m_ts);
@@ -486,6 +491,15 @@ namespace TinyFramework
 			m_texthost.SetTextColor(color);
 			TinyVisual::SetTextColor(color);
 		}
+		void TinyVisualTextBox::SetEnable(BOOL enable)
+		{
+			m_texthost.SetEnable(enable);
+			TinyVisual::SetEnable(enable);
+		}
+		void TinyVisualTextBox::SetWordWrap(BOOL fWarp)
+		{
+			m_texthost.SetWordWrap(fWarp);
+		}
 		void TinyVisualTextBox::SetBackgroundColor(COLORREF color)
 		{
 			m_texthost.SetbackgroundColor(color);
@@ -587,6 +601,8 @@ namespace TinyFramework
 			{
 				m_texthost.m_ts->TxSetText(m_szText.ToWString().c_str());
 			}
+			SetTextColor(m_textColor);
+			SetBackgroundColor(m_backgroundColor);
 			return TRUE;
 		}
 		HRESULT TinyVisualTextBox::OnDestory()

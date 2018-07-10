@@ -21,6 +21,7 @@ namespace TinyFramework
 		class TinyTextHost :public ITextHost
 		{
 			friend class TinyVisualTextBox;
+			DISALLOW_COPY_AND_ASSIGN(TinyTextHost)
 		public:
 			TinyTextHost();
 			~TinyTextHost();
@@ -37,6 +38,7 @@ namespace TinyFramework
 			BOOL		SetWordWrap(BOOL fWarp);
 			BOOL		ShowScrollBar(INT bar, BOOL fShow);
 			BOOL		SetLimit(LONG limit);
+			BOOL		AllowBeep(BOOL fBeep);
 			BOOL		SetRectangle(const TinyRectangle& rectangle);
 		public:
 			HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject);
@@ -96,6 +98,8 @@ namespace TinyFramework
 			TinyRectangle				m_rectangle;
 			DWORD						m_dwStyle;
 			CHAR						m_password;
+			BOOL						m_bAllowBeep;
+			BOOL						m_bTransparent;
 		};
 	}
 }
