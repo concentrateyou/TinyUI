@@ -151,7 +151,8 @@ namespace TinyFramework
 			{
 				TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
 				window->SetPosition(pos);
-				if (cy > m_itemsize.cy * m_count)
+				cy = cy <= 0 ? m_itemsize.cy * m_count : cy;
+				if (cy >= m_itemsize.cy * m_count)
 				{
 					AdjustItems(m_itemsize.cx);
 					window->SetSize(TinySize(m_itemsize.cx, m_itemsize.cy * m_count));

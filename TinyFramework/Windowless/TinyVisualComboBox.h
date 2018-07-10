@@ -50,7 +50,7 @@ namespace TinyFramework
 			TinySize				m_itemsize;
 			TinyImage*				m_images[static_cast<BYTE>(ComboBoxStyle::ARROWHOVER) + 1];
 			ComboBoxStyle			m_style;
-			TinyVisualComboBoxHWND* m_comboboxHWND;
+			TinyVisualComboBoxHWND* m_combobox;
 		};
 	}
 }

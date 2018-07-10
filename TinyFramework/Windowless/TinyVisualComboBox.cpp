@@ -15,7 +15,7 @@ namespace TinyFramework
 
 		TinyVisualComboBox::TinyVisualComboBox()
 			:m_style(ComboBoxStyle::NORMAL),
-			m_comboboxHWND(NULL),
+			m_combobox(NULL),
 			m_itemsize(125, 26)
 		{
 
@@ -23,7 +23,7 @@ namespace TinyFramework
 		TinyVisualComboBox::TinyVisualComboBox(TinyVisual* spvisParent, TinyVisualDocument* document)
 			: TinyVisual(spvisParent, document),
 			m_style(ComboBoxStyle::NORMAL),
-			m_comboboxHWND(NULL),
+			m_combobox(NULL),
 			m_itemsize(125, 26)
 		{
 
@@ -45,17 +45,17 @@ namespace TinyFramework
 		void TinyVisualComboBox::SetItemSize(const TinySize& itemsize)
 		{
 			m_itemsize = itemsize;
-			if (m_comboboxHWND != NULL)
+			if (m_combobox != NULL)
 			{
-				m_comboboxHWND->SetItemSize(itemsize);
+				m_combobox->SetItemSize(itemsize);
 			}
 		}
 		void TinyVisualComboBox::SetSelected(TinyVisualComboBoxItem* item)
 		{
-			if (m_comboboxHWND != NULL)
+			if (m_combobox != NULL)
 			{
-				m_comboboxHWND->m_current = item;
-				m_comboboxHWND->Invalidate();
+				m_combobox->m_current = item;
+				m_combobox->Invalidate();
 				SetText(item != NULL ? item->GetText() : "");
 				Invalidate();
 			}
@@ -66,33 +66,33 @@ namespace TinyFramework
 		}
 		TinyVisualComboBoxItem*	TinyVisualComboBox::GetSelected()
 		{
-			if (m_comboboxHWND != NULL)
-				return static_cast<TinyVisualComboBoxItem*>(m_comboboxHWND->m_current);
+			if (m_combobox != NULL)
+				return static_cast<TinyVisualComboBoxItem*>(m_combobox->m_current);
 			return NULL;
 		}
 		TinyVisualComboBoxItem*	TinyVisualComboBox::Add(const TinyString& name, const TinyString& text)
 		{
 			ASSERT(m_document);
-			if (!m_comboboxHWND)
+			if (!m_combobox)
 			{
-				m_comboboxHWND = new TinyVisualComboBoxHWND();
-				m_comboboxHWND->Create(m_document->GetVisualHWND(), "");
-				m_comboboxHWND->m_owner = this;
+				m_combobox = new TinyVisualComboBoxHWND();
+				m_combobox->Create(m_document->GetVisualHWND(), "");
+				m_combobox->m_owner = this;
 			}
-			return m_comboboxHWND->Add(name, text);
+			return m_combobox->Add(name, text);
 		}
 		void TinyVisualComboBox::Remove(const TinyString& name)
 		{
-			if (m_comboboxHWND != NULL)
+			if (m_combobox != NULL)
 			{
-				m_comboboxHWND->Remove(name);
+				m_combobox->Remove(name);
 			}
 		}
 		void TinyVisualComboBox::RemoveAll()
 		{
-			if (m_comboboxHWND != NULL)
+			if (m_combobox != NULL)
 			{
-				m_comboboxHWND->RemoveAll();
+				m_combobox->RemoveAll();
 			}
 		}
 		BOOL TinyVisualComboBox::OnDraw(HDC hDC, const RECT& rcPaint)
@@ -147,11 +147,11 @@ namespace TinyFramework
 			TinyPoint point = m_document->VisualToClient(this, pos);
 			if (s.PtInRect(point))
 			{
-				if (m_comboboxHWND != NULL)
+				if (m_combobox != NULL)
 				{
-					if (m_comboboxHWND->IsPopup())
+					if (m_combobox->IsPopup())
 					{
-						m_comboboxHWND->Unpopup();
+						m_combobox->Unpopup();
 						m_style = ComboBoxStyle::NORMAL;
 						this->Invalidate();
 					}
@@ -159,12 +159,12 @@ namespace TinyFramework
 					{
 						TinyPoint pos = m_document->GetScreenPos(this);
 						pos.y += GetSize().cy;
-						if (m_comboboxHWND->m_current != NULL)
+						if (m_combobox->m_current != NULL)
 						{
-							TinyVisualComboBoxItem* current = static_cast<TinyVisualComboBoxItem*>(m_comboboxHWND->m_current);
+							TinyVisualComboBoxItem* current = static_cast<TinyVisualComboBoxItem*>(m_combobox->m_current);
 							current->m_dwFlag |= ITEM_HIGHLIGHT;
 						}
-						m_comboboxHWND->Popup(pos, 120);
+						m_combobox->Popup(pos, 0);
 						m_style = ComboBoxStyle::PUSH;
 						this->Invalidate();
 					}
@@ -181,11 +181,11 @@ namespace TinyFramework
 			TinyPoint point = m_document->VisualToClient(this, pos);
 			if (s.PtInRect(point))
 			{
-				if (m_comboboxHWND != NULL)
+				if (m_combobox != NULL)
 				{
-					if (m_comboboxHWND->IsPopup())
+					if (m_combobox->IsPopup())
 					{
-						m_comboboxHWND->Unpopup();
+						m_combobox->Unpopup();
 						m_style = ComboBoxStyle::NORMAL;
 						this->Invalidate();
 					}
@@ -193,12 +193,12 @@ namespace TinyFramework
 					{
 						TinyPoint pos = m_document->GetScreenPos(this);
 						pos.y += GetSize().cy;
-						if (m_comboboxHWND->m_current != NULL)
+						if (m_combobox->m_current != NULL)
 						{
-							TinyVisualComboBoxItem* current = static_cast<TinyVisualComboBoxItem*>(m_comboboxHWND->m_current);
+							TinyVisualComboBoxItem* current = static_cast<TinyVisualComboBoxItem*>(m_combobox->m_current);
 							current->m_dwFlag |= ITEM_HIGHLIGHT;
 						}
-						m_comboboxHWND->Popup(pos, 120);
+						m_combobox->Popup(pos, 0);
 						m_style = ComboBoxStyle::PUSH;
 						this->Invalidate();
 					}
