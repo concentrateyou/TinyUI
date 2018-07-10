@@ -85,17 +85,14 @@ namespace TinyFramework
 				{
 					TinyRectangle dcClip = rcPaint;
 					TinySize size = m_document->GetVisualDC()->GetSize();
+					dcClip.DeflateRect(1, 1, 1, 1);
 					if (clip.bottom > size.cy && clip.top < size.cy)
 					{
 						dcClip.DeflateRect(1, 1, 1, 3);
 					}
-					else if (clip.bottom < TO_CY(m_rectangle) && clip.bottom > 0)
+					if (clip.bottom < TO_CY(m_rectangle) && clip.bottom > 0)
 					{
 						dcClip.DeflateRect(1, 3, 1, 1);
-					}
-					else
-					{
-						dcClip.DeflateRect(1, 1, 1, 1);
 					}
 					TinyClipCanvas clipCanvas(hDC, this, dcClip);
 					clipCanvas.DrawImage(*m_images[0], clip, 0, 0, m_images[0]->GetSize().cx, m_images[0]->GetSize().cy);
@@ -119,13 +116,9 @@ namespace TinyFramework
 						{
 							dcClip.DeflateRect(0, 0, 0, 3);
 						}
-						else if (clip.bottom < TO_CY(m_rectangle) && clip.bottom > 0)
+						if (clip.bottom < TO_CY(m_rectangle) && clip.bottom > 0)
 						{
 							dcClip.DeflateRect(0, 3, 0, 0);
-						}
-						else
-						{
-							dcClip.DeflateRect(0, 0, 0, 0);
 						}
 						TinyClipCanvas clipCanvas(hDC, this, dcClip);
 						clipCanvas.DrawImage(text, s, 0, 0, text.GetSize().cx, text.GetSize().cy);
@@ -143,13 +136,9 @@ namespace TinyFramework
 					{
 						dcClip.DeflateRect(0, 0, 0, 3);
 					}
-					else if (clip.bottom < TO_CY(m_rectangle) && clip.bottom > 0)
+					if (clip.bottom < TO_CY(m_rectangle) && clip.bottom > 0)
 					{
 						dcClip.DeflateRect(0, 3, 0, 0);
-					}
-					else
-					{
-						dcClip.DeflateRect(0, 0, 0, 0);
 					}
 					TinyClipCanvas clipCanvas(hDC, this, dcClip);
 					clipCanvas.DrawString(m_szText, clip, m_textAlign);
