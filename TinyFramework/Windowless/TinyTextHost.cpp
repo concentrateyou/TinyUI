@@ -478,7 +478,6 @@ namespace TinyFramework
 
 		HRESULT TinyTextHost::TxGetClientRect(LPRECT prc)
 		{
-			ASSERT(m_spvis);
 			CopyRect(prc, &m_rectangle);
 			return S_OK;
 		}
@@ -520,7 +519,7 @@ namespace TinyFramework
 
 		HRESULT TinyTextHost::TxGetScrollBars(DWORD *pdwScrollBar)
 		{
-			*pdwScrollBar = m_dwStyle & (WS_VSCROLL | WS_HSCROLL | ES_AUTOVSCROLL | ES_AUTOHSCROLL);
+			*pdwScrollBar = m_dwStyle & (WS_VSCROLL | WS_HSCROLL | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_DISABLENOSCROLL);
 			return S_OK;
 		}
 

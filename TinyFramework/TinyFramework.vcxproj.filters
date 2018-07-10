@@ -451,7 +451,9 @@
     <ClCompile Include="Windowless\TinyVisualTextBox.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
-    <ClCompile Include="Windowless\TinyTextHost.cpp" />
+    <ClCompile Include="Windowless\TinyTextHost.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -910,7 +912,9 @@
     <ClInclude Include="Windowless\TinyVisualTextBox.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
-    <ClInclude Include="Windowless\TinyTextHost.h" />
+    <ClInclude Include="Windowless\TinyTextHost.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="头文件">

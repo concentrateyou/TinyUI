@@ -530,23 +530,23 @@ namespace TinyFramework
 		}
 		BOOL TinyVisualTextBox::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
+			ASSERT(m_document);
 			if (m_texthost.m_ts != NULL)
 			{
 				TinyRectangle clip = m_document->GetWindowRect(this);
 				TinyClipCanvas canvas(hDC, this, rcPaint);
-				::SetGraphicsMode(canvas, GM_COMPATIBLE);
+				INT graphicsMode = ::SetGraphicsMode(canvas, GM_COMPATIBLE);
 				m_texthost.TxGetClientRect(&clip);
 				m_texthost.m_ts->TxDraw(DVASPECT_CONTENT, 0, NULL, NULL, canvas, NULL, reinterpret_cast<LPCRECTL>(&clip), NULL, reinterpret_cast<LPRECT>(&clip), NULL, 0, 0);
+				::SetGraphicsMode(canvas, graphicsMode);
 				return TRUE;
 			}
 			return FALSE;
 		}
 		HRESULT TinyVisualTextBox::OnCreate()
 		{
-			if (m_document != NULL)
-			{
-				m_document->GetVisualHWND().AddFilter(this);
-			}
+			ASSERT(m_document);
+			m_document->GetVisualHWND().AddFilter(this);
 			m_texthost.Initialize(this);
 			return FALSE;
 		}
