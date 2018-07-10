@@ -517,7 +517,6 @@ namespace TinyFramework
 			m_texthost.m_ts->TxSendMessage(EM_GETTEXTEX, (WPARAM)&gt, (LPARAM)&szText[0], NULL);
 			return szText.empty() ? "" : szText.c_str();
 		}
-
 		BOOL TinyVisualTextBox::OnFilter(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
 		{
 			if (uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST)
@@ -556,15 +555,34 @@ namespace TinyFramework
 			m_texthost.Initialize(this);
 			return FALSE;
 		}
-		HRESULT TinyVisualTextBox::OnInitialize()
+		BOOL TinyVisualTextBox::Initialize()
 		{
 			ASSERT(m_document);
 			TinySize size = this->GetSize();
 			m_hscroll = static_cast<TinyVisualHScrollBar*>(m_document->Create(0, size.cy - 12, size.cx, 12, TinyVisualTag::HSCROLLBAR, this));
+			m_hscroll->SetImage(ARROW1NORMAL, TinyVisualResource::GetInstance()["hscrollbar_arrow_up_normal"]);
+			m_hscroll->SetImage(ARROW1HIGHLIGHT, TinyVisualResource::GetInstance()["hscrollbar_arrow_up_hover"]);
+			m_hscroll->SetImage(ARROW1DOWN, TinyVisualResource::GetInstance()["hscrollbar_arrow_up_press"]);
+			m_hscroll->SetImage(ARROW2NORMAL, TinyVisualResource::GetInstance()["hscrollbar_arrow_down_normal"]);
+			m_hscroll->SetImage(ARROW2HIGHLIGHT, TinyVisualResource::GetInstance()["hscrollbar_arrow_down_hover"]);
+			m_hscroll->SetImage(ARROW2DOWN, TinyVisualResource::GetInstance()["hscrollbar_arrow_down_normal"]);
+			m_hscroll->SetImage(SCROLLBARGROOVE, TinyVisualResource::GetInstance()["hscrollbar_groove"]);
+			m_hscroll->SetImage(SCROLLBARNORMAL, TinyVisualResource::GetInstance()["hscrollbar_normal"]);
+			m_hscroll->SetImage(SCROLLBARHIGHLIGHT, TinyVisualResource::GetInstance()["hscrollbar_hover"]);
 			ASSERT(m_hscroll);
 			m_hscroll->EVENT_POSCHANGE += m_onPosChange;
 			m_hscroll->SetVisible(FALSE);
+
 			m_vscroll = static_cast<TinyVisualVScrollBar*>(m_document->Create(size.cx - 12, 0, 12, size.cy, TinyVisualTag::VSCROLLBAR, this));
+			m_vscroll->SetImage(ARROW1NORMAL, TinyVisualResource::GetInstance()["vscrollbar_arrow_up_normal"]);
+			m_vscroll->SetImage(ARROW1HIGHLIGHT, TinyVisualResource::GetInstance()["vscrollbar_arrow_up_hover"]);
+			m_vscroll->SetImage(ARROW1DOWN, TinyVisualResource::GetInstance()["vscrollbar_arrow_up_press"]);
+			m_vscroll->SetImage(ARROW2NORMAL, TinyVisualResource::GetInstance()["vscrollbar_arrow_down_normal"]);
+			m_vscroll->SetImage(ARROW2HIGHLIGHT, TinyVisualResource::GetInstance()["vscrollbar_arrow_down_hover"]);
+			m_vscroll->SetImage(ARROW2DOWN, TinyVisualResource::GetInstance()["vscrollbar_arrow_down_normal"]);
+			m_vscroll->SetImage(SCROLLBARGROOVE, TinyVisualResource::GetInstance()["vscrollbar_groove"]);
+			m_vscroll->SetImage(SCROLLBARNORMAL, TinyVisualResource::GetInstance()["vscrollbar_normal"]);
+			m_vscroll->SetImage(SCROLLBARHIGHLIGHT, TinyVisualResource::GetInstance()["vscrollbar_hover"]);
 			ASSERT(m_vscroll);
 			m_vscroll->EVENT_POSCHANGE += m_onPosChange;
 			m_vscroll->SetVisible(FALSE);
@@ -575,13 +593,15 @@ namespace TinyFramework
 			{
 				m_texthost.m_ts->TxSetText(m_szText.ToWString().c_str());
 			}
-			return FALSE;
+			return TRUE;
 		}
 		HRESULT TinyVisualTextBox::OnDestory()
 		{
 			ASSERT(m_document);
-			m_hscroll->EVENT_POSCHANGE -= m_onPosChange;
-			m_vscroll->EVENT_POSCHANGE -= m_onPosChange;
+			if (m_hscroll != NULL)
+				m_hscroll->EVENT_POSCHANGE -= m_onPosChange;
+			if (m_vscroll != NULL)
+				m_vscroll->EVENT_POSCHANGE -= m_onPosChange;
 			m_document->GetVisualHWND().RemoveFilter(this);
 			return FALSE;
 		}

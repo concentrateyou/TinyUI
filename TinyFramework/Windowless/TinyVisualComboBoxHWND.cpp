@@ -66,7 +66,8 @@ namespace TinyFramework
 
 		void TinyVisualComboBoxHWND::OnUninitialize()
 		{
-			m_scrollbar->EVENT_POSCHANGE -= m_onPosChange;
+			if (m_scrollbar != NULL)
+				m_scrollbar->EVENT_POSCHANGE -= m_onPosChange;
 			m_current = NULL;
 		}
 

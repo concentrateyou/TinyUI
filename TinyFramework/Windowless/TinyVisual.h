@@ -89,7 +89,6 @@ namespace TinyFramework
 		protected:
 			virtual HRESULT		OnCreate();
 			virtual HRESULT		OnDestory();
-			virtual HRESULT		OnInitialize();
 			virtual HRESULT		OnLButtonDown(const TinyPoint& pos, DWORD dwFlags);
 			virtual HRESULT		OnLButtonUp(const TinyPoint& pos, DWORD dwFlags);
 			virtual HRESULT		OnLButtonDBClick(const TinyPoint& pos, DWORD dwFlags);

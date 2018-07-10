@@ -133,6 +133,13 @@ namespace Bytedance
 		//m_scrollbar->SetPosition(TinyPoint(300, 100));
 		//m_scrollbar->SetScrollInfo(0, 300, 100, 0);
 		//m_scrollbar->SetSize(TinySize(12, 200));
+		m_textbox = static_cast<TinyVisualTextBox*>(m_document.Create(TinyVisualTag::TEXTBOX, window));
+		ASSERT(m_textbox);
+		m_textbox->SetSize({ 200,200 });
+		m_textbox->SetPosition({ 100,100 });
+		m_textbox->SetBackgroundColor(RGB(128, 128, 128));
+		m_textbox->SetText("²âÊÔ1");
+		m_textbox->Initialize();
 
 		TinyRectangle s = window->GetClientRect();
 		Resize(s.Width(), s.Height());

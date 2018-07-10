@@ -8,6 +8,7 @@
 #include "Windowless/TinyVisualMenuItem.h"
 #include "Windowless/TinyVisualComboBox.h"
 #include "Windowless/TinyVisualScrollBar.h"
+#include "Windowless/TinyVisualTextBox.h"
 using namespace TinyFramework;
 using namespace TinyFramework::Windowless;
 
@@ -47,7 +48,7 @@ namespace Bytedance
 		TinyVisualButton*		m_setting;
 		TinyVisualLabel*		m_title;
 		TinyVisualComboBox*		m_combobox;
-		//TinyVisualVScrollBar*	m_scrollbar;
+		TinyVisualTextBox*		m_textbox;
 		//ÊÂ¼þ
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMinClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMaxClick;

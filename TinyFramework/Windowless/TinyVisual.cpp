@@ -359,11 +359,6 @@ namespace TinyFramework
 			EVENT_DESTORY(this, EventArgs());
 			return TRUE;
 		}
-		HRESULT	TinyVisual::OnInitialize()
-		{
-			EVENT_INITIALIZE(this, EventArgs());
-			return TRUE;
-		}
 		BOOL	TinyVisual::OnDraw(HDC hDC, const RECT& rcPaint)
 		{
 			ASSERT(m_document);
