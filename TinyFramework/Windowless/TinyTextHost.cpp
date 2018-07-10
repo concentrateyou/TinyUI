@@ -58,9 +58,12 @@ namespace TinyFramework
 					{
 						pUnknown->QueryInterface(IID_ITextServices, (void**)&m_ts);
 						pUnknown->Release();
+						m_ts->OnTxInPlaceActivate(NULL);
 						m_ts->OnTxInPlaceDeactivate();
 						m_ts->OnTxUIDeactivate();
 						m_ts->TxSendMessage(WM_KILLFOCUS, 0, 0, 0);
+						LRESULT lResult = 0;
+						m_ts->TxSendMessage(EM_SETLANGOPTIONS, 0, 0, &lResult);
 						HDC hDC = GetDC(m_spvis->m_document->Handle());
 						m_logpixelsx = ::GetDeviceCaps(hDC, LOGPIXELSX);
 						m_logpixelsy = ::GetDeviceCaps(hDC, LOGPIXELSY);
@@ -90,6 +93,12 @@ namespace TinyFramework
 			if (FAILED(m_ts->TxSendMessage(EM_SETCHARFORMAT, 0, (LPARAM)&m_cf, 0)))
 				return FALSE;
 			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE, TXTBIT_CHARFORMATCHANGE)))
+				return FALSE;
+			return TRUE;
+		}
+		BOOL TinyTextHost::SetTransparent(BOOL bTransparent)
+		{
+			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_BACKSTYLECHANGE, bTransparent ? TXTBIT_BACKSTYLECHANGE : 0)))
 				return FALSE;
 			return TRUE;
 		}
@@ -202,7 +211,7 @@ namespace TinyFramework
 			m_extent.cy = MAP_PIX_TO_LOGHIM(m_rectangle.Height(), m_logpixelsy);
 			if (FAILED(m_ts->OnTxInPlaceActivate(&m_rectangle)))
 				return FALSE;
-			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE | TXTBIT_EXTENTCHANGE, TRUE)))
+			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE | TXTBIT_EXTENTCHANGE, TXTBIT_CLIENTRECTCHANGE | TXTBIT_EXTENTCHANGE)))
 				return FALSE;
 			return TRUE;
 		}
@@ -237,7 +246,9 @@ namespace TinyFramework
 			}
 			break;
 			}
-			return m_ts->OnTxPropertyBitsChange(TXTBIT_SCROLLBARCHANGE, TXTBIT_SCROLLBARCHANGE) == S_OK;
+			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_SCROLLBARCHANGE, TXTBIT_SCROLLBARCHANGE)))
+				return FALSE;
+			return TRUE;
 		}
 		HRESULT STDMETHODCALLTYPE TinyTextHost::QueryInterface(REFIID riid, void **ppvObject)
 		{
@@ -554,6 +565,10 @@ namespace TinyFramework
 			if (m_dwStyle & ES_PASSWORD)
 			{
 				bits |= TXTBIT_USEPASSWORD;
+			}
+			if (!(m_dwStyle & ES_NOHIDESEL))
+			{
+				bits |= TXTBIT_HIDESELECTION;
 			}
 			*pdwBits = bits & dwMask;
 			return S_OK;

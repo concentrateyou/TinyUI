@@ -19,10 +19,10 @@ namespace TinyFramework
 			TinyVisualTextBox(TinyVisual* spvisParent, TinyVisualDocument* vtree);
 		public:
 			virtual ~TinyVisualTextBox();
-			TinyString RetrieveTag() const OVERRIDE;
-			void SetText(const TinyString& pzText) OVERRIDE;
-			void SetBackgroundColor(COLORREF color) OVERRIDE;
-			void SetTextColor(COLORREF color) OVERRIDE;
+			TinyString	RetrieveTag() const OVERRIDE;
+			void		SetText(const TinyString& pzText) OVERRIDE;
+			void		SetBackgroundColor(COLORREF color) OVERRIDE;
+			void		SetTextColor(COLORREF color) OVERRIDE;
 		public:
 			BOOL		Initialize();
 			TinyString	GetText();

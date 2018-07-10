@@ -101,6 +101,7 @@ namespace TinyFramework
 			BOOL					AddFilter(TinyVisualFilter* ps);
 			BOOL					RemoveFilter(TinyVisualFilter* ps);
 			void					AllowTracking(BOOL bAllow);
+			TinyVisualDC*			GetVisualDC();
 			TinyVisualShadow&		GetShadow();
 			TinyVisualDocument&		GetDocument();
 			virtual void			OnInitialize() = 0;

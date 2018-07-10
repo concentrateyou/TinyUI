@@ -428,13 +428,8 @@ namespace TinyFramework
 			POINT pos;
 			GetCursorPos(&pos);
 			::ScreenToClient(hWND, &pos);
-			HDC hDC = GetDC(hWND);
-			if (hDC != NULL)
-			{
-				TinyRectangle clip = GetWindowRect();
-				m_texthost.m_ts->OnTxSetCursor(DVASPECT_CONTENT, -1, NULL, NULL, hDC, NULL, &clip, pos.x, pos.y);
-				ReleaseDC(hWND, hDC);
-			}
+			TinyRectangle clip = GetWindowRect();
+			m_texthost.m_ts->OnTxSetCursor(DVASPECT_CONTENT, -1, NULL, NULL, m_document->GetVisualHWND().GetVisualDC()->Handle(), NULL, &clip, pos.x, pos.y);
 			return TRUE;
 		}
 		HRESULT	TinyVisualTextBox::OnFocus(BOOL bFlag)
@@ -537,9 +532,9 @@ namespace TinyFramework
 		{
 			if (m_texthost.m_ts != NULL)
 			{
+				TinyRectangle clip = m_document->GetWindowRect(this);
 				TinyClipCanvas canvas(hDC, this, rcPaint);
 				::SetGraphicsMode(canvas, GM_COMPATIBLE);
-				TinyRectangle clip;
 				m_texthost.TxGetClientRect(&clip);
 				m_texthost.m_ts->TxDraw(DVASPECT_CONTENT, 0, NULL, NULL, canvas, NULL, reinterpret_cast<LPCRECTL>(&clip), NULL, reinterpret_cast<LPRECT>(&clip), NULL, 0, 0);
 				return TRUE;

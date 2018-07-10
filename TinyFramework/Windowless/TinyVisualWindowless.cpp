@@ -334,6 +334,10 @@ namespace TinyFramework
 		{
 			m_bAllowTracking = bAllow;
 		}
+		TinyVisualDC* TinyVisualWindowless::GetVisualDC()
+		{
+			return m_visualDC;
+		}
 		TinyVisualShadow& TinyVisualWindowless::GetShadow()
 		{
 			return m_shadow;
