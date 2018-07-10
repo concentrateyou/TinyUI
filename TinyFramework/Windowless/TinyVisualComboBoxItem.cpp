@@ -83,9 +83,10 @@ namespace TinyFramework
 			{
 				if (m_images[0] != NULL && !m_images[0]->IsEmpty())
 				{
-					TinyRectangle s = clip;
+					TinyRectangle s = rcPaint;
 					s.DeflateRect(1, 1, 1, 1);
-					canvas.DrawImage(*m_images[0], s, 0, 0, m_images[0]->GetSize().cx, m_images[0]->GetSize().cy);
+					TinyClipCanvas clipCanvas(hDC, this, s);
+					clipCanvas.DrawImage(*m_images[0], clip, 0, 0, m_images[0]->GetSize().cx, m_images[0]->GetSize().cy);
 				}
 			}
 			if (!m_szText.IsEmpty())
@@ -100,7 +101,10 @@ namespace TinyFramework
 						TinyRectangle s;
 						s.SetSize(textImage.GetSize());
 						s.SetPosition(TinyPoint(clip.left + m_padding.left, clip.top + (clip.Height() - textImage.GetSize().cy) / 2));
-						canvas.DrawImage(textImage, s, 0, 0, textImage.GetSize().cx, textImage.GetSize().cy);
+						TinyRectangle s1 = rcPaint;
+						s1.DeflateRect(3, 3, 3, 3);
+						TinyClipCanvas clipCanvas(hDC, this, s1);
+						clipCanvas.DrawImage(textImage, s, 0, 0, textImage.GetSize().cx, textImage.GetSize().cy);
 					}
 				}
 				else
@@ -109,11 +113,10 @@ namespace TinyFramework
 					clip.left += m_padding.left;
 					clip.top += (clip.Height() - size.cy) / 2;
 					clip.bottom -= (clip.Height() - size.cy) / 2;
-
-					TinyRectangle s1 = rcPaint;
-					s1.DeflateRect(3, 3, 3, 3);
-					TinyClipCanvas canvas1(hDC, this, s1);
-					canvas1.DrawString(m_szText, clip, m_textAlign);
+					TinyRectangle s = rcPaint;
+					s.DeflateRect(3, 3, 3, 3);
+					TinyClipCanvas clipCanvas(hDC, this, s);
+					clipCanvas.DrawString(m_szText, clip, m_textAlign);
 				}
 			}
 			return TinyVisual::OnDraw(hDC, rcPaint);

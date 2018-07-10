@@ -39,7 +39,7 @@ namespace TinyFramework
 
 		DWORD TinyVisualComboBoxHWND::RetrieveExStyle()
 		{
-			return (WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_TOOLWINDOW);
+			return (WS_EX_LAYERED | WS_EX_TOOLWINDOW);
 		}
 
 		void TinyVisualComboBoxHWND::OnInitialize()
