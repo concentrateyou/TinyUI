@@ -30,6 +30,7 @@ namespace TinyFramework
 			Register(TinyVisualTag::COMBOBOX, CLASS_NAME(TinyVisualComboBox));
 			Register(TinyVisualTag::COMBOBOXITEM, CLASS_NAME(TinyVisualComboBoxItem));
 			Register(TinyVisualTag::MENUITEM, CLASS_NAME(TinyVisualMenuItem));
+			Register(TinyVisualTag::TEXTBOX, CLASS_NAME(TinyVisualTextBox));
 		}
 		TinyVisualResource::~TinyVisualResource()
 		{
