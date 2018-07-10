@@ -83,9 +83,21 @@ namespace TinyFramework
 			{
 				if (m_images[0] != NULL && !m_images[0]->IsEmpty())
 				{
-					TinyRectangle s = rcPaint;
-					s.DeflateRect(1, 1, 1, 1);
-					TinyClipCanvas clipCanvas(hDC, this, s);
+					TinyRectangle dcClip = rcPaint;
+					TinySize size = m_document->GetVisualDC()->GetSize();
+					if (clip.bottom > size.cy && clip.top < size.cy)
+					{
+						dcClip.DeflateRect(1, 1, 1, 3);
+					}
+					else if (clip.bottom < TO_CY(m_rectangle) && clip.bottom > 0)
+					{
+						dcClip.DeflateRect(1, 3, 1, 1);
+					}
+					else
+					{
+						dcClip.DeflateRect(1, 1, 1, 1);
+					}
+					TinyClipCanvas clipCanvas(hDC, this, dcClip);
 					clipCanvas.DrawImage(*m_images[0], clip, 0, 0, m_images[0]->GetSize().cx, m_images[0]->GetSize().cy);
 				}
 			}
@@ -95,27 +107,51 @@ namespace TinyFramework
 				canvas.SetTextColor(TestF(ITEM_HIGHLIGHT) ? RGB(255, 255, 255) : RGB(0, 0, 0));
 				if (m_document->GetVisualHWND().RetrieveExStyle() & WS_EX_LAYERED)
 				{
-					TinyImage textImage;
-					if (textImage.Create(hDC, m_szText.CSTR(), m_textAlign, TestF(ITEM_HIGHLIGHT) ? RGB(0, 0, 0) : RGB(255, 255, 255)))
+					TinyImage text;
+					if (text.Create(hDC, m_szText.CSTR(), m_textAlign, TestF(ITEM_HIGHLIGHT) ? RGB(0, 0, 0) : RGB(255, 255, 255)))
 					{
 						TinyRectangle s;
-						s.SetSize(textImage.GetSize());
-						s.SetPosition(TinyPoint(clip.left + m_padding.left, clip.top + (clip.Height() - textImage.GetSize().cy) / 2));
-						TinyRectangle s1 = rcPaint;
-						s1.DeflateRect(3, 3, 3, 3);
-						TinyClipCanvas clipCanvas(hDC, this, s1);
-						clipCanvas.DrawImage(textImage, s, 0, 0, textImage.GetSize().cx, textImage.GetSize().cy);
+						s.SetSize(text.GetSize());
+						s.SetPosition(TinyPoint(clip.left + m_padding.left, clip.top + (clip.Height() - text.GetSize().cy) / 2));
+						TinyRectangle dcClip = rcPaint;
+						TinySize size = m_document->GetVisualDC()->GetSize();
+						if (clip.bottom > size.cy && clip.top < size.cy)
+						{
+							dcClip.DeflateRect(0, 0, 0, 3);
+						}
+						else if (clip.bottom < TO_CY(m_rectangle) && clip.bottom > 0)
+						{
+							dcClip.DeflateRect(0, 3, 0, 0);
+						}
+						else
+						{
+							dcClip.DeflateRect(0, 0, 0, 0);
+						}
+						TinyClipCanvas clipCanvas(hDC, this, dcClip);
+						clipCanvas.DrawImage(text, s, 0, 0, text.GetSize().cx, text.GetSize().cy);
 					}
 				}
 				else
 				{
-					SIZE size = TinyVisualDC::GetTextExtent(hDC, m_szText.CSTR(), m_szText.GetSize());
+					TinySize size = TinyVisualDC::GetTextExtent(hDC, m_szText.CSTR(), m_szText.GetSize());
 					clip.left += m_padding.left;
 					clip.top += (clip.Height() - size.cy) / 2;
 					clip.bottom -= (clip.Height() - size.cy) / 2;
-					TinyRectangle s = rcPaint;
-					s.DeflateRect(3, 3, 3, 3);
-					TinyClipCanvas clipCanvas(hDC, this, s);
+					TinyRectangle dcClip = rcPaint;
+					size = m_document->GetVisualDC()->GetSize();
+					if (clip.bottom > size.cy && clip.top < size.cy)
+					{
+						dcClip.DeflateRect(0, 0, 0, 3);
+					}
+					else if (clip.bottom < TO_CY(m_rectangle) && clip.bottom > 0)
+					{
+						dcClip.DeflateRect(0, 3, 0, 0);
+					}
+					else
+					{
+						dcClip.DeflateRect(0, 0, 0, 0);
+					}
+					TinyClipCanvas clipCanvas(hDC, this, dcClip);
 					clipCanvas.DrawString(m_szText, clip, m_textAlign);
 				}
 			}

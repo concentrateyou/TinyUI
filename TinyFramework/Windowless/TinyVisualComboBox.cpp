@@ -164,7 +164,7 @@ namespace TinyFramework
 							TinyVisualComboBoxItem* current = static_cast<TinyVisualComboBoxItem*>(m_comboboxHWND->m_current);
 							current->m_dwFlag |= ITEM_HIGHLIGHT;
 						}
-						m_comboboxHWND->Popup(pos, 80);
+						m_comboboxHWND->Popup(pos, 120);
 						m_style = ComboBoxStyle::PUSH;
 						this->Invalidate();
 					}
@@ -198,7 +198,7 @@ namespace TinyFramework
 							TinyVisualComboBoxItem* current = static_cast<TinyVisualComboBoxItem*>(m_comboboxHWND->m_current);
 							current->m_dwFlag |= ITEM_HIGHLIGHT;
 						}
-						m_comboboxHWND->Popup(pos, 80);
+						m_comboboxHWND->Popup(pos, 120);
 						m_style = ComboBoxStyle::PUSH;
 						this->Invalidate();
 					}

@@ -165,10 +165,13 @@ namespace TinyFramework
 					m_scrollbar->SetPosition(TinyPoint(m_itemsize.cx - 12, 0));
 					m_scrollbar->SetSize(TinySize(12, cy));
 					m_scrollbar->SetScrollInfo(0, m_itemsize.cy * (m_count + 1) - cy, m_itemsize.cy, m_iPos);
-					m_document.SetFocus(m_scrollbar);
 				}
 				m_document.Redraw();
 				::ShowWindow(m_hWND, SW_SHOW);
+				if (m_scrollbar->IsVisible())
+				{
+					m_document.SetFocus(m_scrollbar);
+				}
 			}
 		}
 		BOOL TinyVisualComboBoxHWND::IsPopup() const
