@@ -325,6 +325,14 @@ namespace TinyFramework
 		{
 			return m_backgroundCenter;
 		}
+		COLORREF TinyVisual::GetTextColor() const
+		{
+			return m_textColor;
+		}
+		UINT TinyVisual::GetTextAlian() const
+		{
+			return m_textAlign;
+		}
 		TinyRectangle TinyVisual::GetBorderThickness() const
 		{
 			return m_borderThickness;

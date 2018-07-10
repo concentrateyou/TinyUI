@@ -26,8 +26,7 @@ namespace TinyFramework
 			~TinyTextHost();
 		public:
 			BOOL Initialize(TinyVisualTextBox* spvis);
-			BOOL UpdateView();
-			BOOL UpdateFormat();
+			BOOL SetFont(HFONT hFONT, COLORREF cf);
 			BOOL SetbackgroundColor(COLORREF cf);
 			BOOL SetTextColor(COLORREF cf);
 			BOOL SetEnable(BOOL bEnable);

@@ -82,6 +82,8 @@ namespace TinyFramework
 			COLORREF			GetBackgroundColor() const;
 			TinyImage*			GetBackgroundImage() const;
 			TinyRectangle		GetBackgroundCenter() const;
+			COLORREF			GetTextColor() const;
+			UINT				GetTextAlian() const;
 			TinyRectangle		GetBorderThickness() const;
 			COLORREF			GetBorderColor() const;
 			UINT				GetBorderStyle() const;

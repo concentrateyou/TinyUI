@@ -138,6 +138,7 @@ namespace Bytedance
 		m_textbox->SetSize({ 200,200 });
 		m_textbox->SetPosition({ 100,100 });
 		m_textbox->SetBackgroundColor(RGB(128, 128, 128));
+		m_textbox->SetTextColor(RGB(128, 128, 128));
 		m_textbox->SetText("²âÊÔ1");
 		m_textbox->Initialize();
 

@@ -587,8 +587,7 @@ namespace TinyFramework
 			m_vscroll->EVENT_POSCHANGE += m_onPosChange;
 			m_vscroll->SetVisible(FALSE);
 			m_texthost.SetRectangle(GetWindowRect());
-			m_texthost.UpdateFormat();
-			m_texthost.UpdateView();
+			m_texthost.SetFont(m_hFONT, m_textColor);
 			if (!m_szText.IsEmpty())
 			{
 				m_texthost.m_ts->TxSetText(m_szText.ToWString().c_str());

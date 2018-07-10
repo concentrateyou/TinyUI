@@ -61,7 +61,10 @@ namespace TinyFramework
 						m_ts->OnTxInPlaceDeactivate();
 						m_ts->OnTxUIDeactivate();
 						m_ts->TxSendMessage(WM_KILLFOCUS, 0, 0, 0);
-
+						HDC hDC = GetDC(m_spvis->m_document->Handle());
+						m_logpixelsx = ::GetDeviceCaps(hDC, LOGPIXELSX);
+						m_logpixelsy = ::GetDeviceCaps(hDC, LOGPIXELSY);
+						ReleaseDC(m_spvis->m_document->Handle(), hDC);
 						return TRUE;
 					}
 				}
@@ -101,19 +104,15 @@ namespace TinyFramework
 				return FALSE;
 			return TRUE;
 		}
-		BOOL TinyTextHost::UpdateFormat()
+		BOOL TinyTextHost::SetFont(HFONT hFONT, COLORREF cf)
 		{
-			ASSERT(m_ts || m_spvis);
-			HDC hDC = GetDC(m_spvis->m_document->Handle());
-			m_logpixelsx = ::GetDeviceCaps(hDC, LOGPIXELSX);
-			m_logpixelsy = ::GetDeviceCaps(hDC, LOGPIXELSY);
-			ReleaseDC(m_spvis->m_document->Handle(), hDC);
+			ASSERT(m_ts);
 			LOGFONT lf;
-			GetObject(m_spvis->m_hFONT, sizeof(LOGFONT), &lf);
+			GetObject(hFONT, sizeof(LOGFONT), &lf);
 			m_cf.cbSize = sizeof(CHARFORMAT2W);
 			m_cf.yHeight = lf.lfHeight * LY_PER_INCH / m_logpixelsy;
 			m_cf.yOffset = 0;
-			m_cf.crTextColor = GetSysColor(COLOR_WINDOWTEXT);
+			m_cf.crTextColor = cf;
 			m_cf.dwEffects = CFM_EFFECTS | CFE_AUTOBACKCOLOR;
 			m_cf.dwEffects &= ~(CFE_PROTECTED | CFE_LINK);
 			if (lf.lfWeight < FW_BOLD)
@@ -145,17 +144,6 @@ namespace TinyFramework
 			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE, TXTBIT_CHARFORMATCHANGE)))
 				return FALSE;
 			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_PARAFORMATCHANGE, TXTBIT_PARAFORMATCHANGE)))
-				return FALSE;
-			return TRUE;
-		}
-		BOOL TinyTextHost::UpdateView()
-		{
-			ASSERT(m_ts || m_spvis);
-			m_extent.cx = MAP_PIX_TO_LOGHIM(m_rectangle.Width(), m_logpixelsx);
-			m_extent.cy = MAP_PIX_TO_LOGHIM(m_rectangle.Height(), m_logpixelsy);
-			if (FAILED(m_ts->OnTxInPlaceActivate(&m_rectangle)))
-				return FALSE;
-			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE | TXTBIT_EXTENTCHANGE, TRUE)))
 				return FALSE;
 			return TRUE;
 		}
@@ -210,7 +198,13 @@ namespace TinyFramework
 		BOOL TinyTextHost::SetRectangle(const TinyRectangle& rectangle)
 		{
 			m_rectangle = rectangle;
-			return m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE, TXTBIT_SCROLLBARCHANGE) == S_OK;
+			m_extent.cx = MAP_PIX_TO_LOGHIM(m_rectangle.Width(), m_logpixelsx);
+			m_extent.cy = MAP_PIX_TO_LOGHIM(m_rectangle.Height(), m_logpixelsy);
+			if (FAILED(m_ts->OnTxInPlaceActivate(&m_rectangle)))
+				return FALSE;
+			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE | TXTBIT_EXTENTCHANGE, TRUE)))
+				return FALSE;
+			return TRUE;
 		}
 		BOOL TinyTextHost::ShowScrollBar(INT bar, BOOL fShow)
 		{
@@ -323,7 +317,9 @@ namespace TinyFramework
 				m_spvis->m_hscroll->SetSize(hsize);
 				m_spvis->m_vscroll->SetSize(vsize);
 			}
-			return this->UpdateView();
+			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CLIENTRECTCHANGE, TXTBIT_SCROLLBARCHANGE)))
+				return FALSE;
+			return TRUE;
 		}
 
 		BOOL TinyTextHost::TxEnableScrollBar(INT fuSBFlags, INT fuArrowflags)
