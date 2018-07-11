@@ -3,7 +3,7 @@
 
 namespace DXFramework
 {
-	/*DX11Duplicator::DX11Duplicator()
+	DX11Duplicator::DX11Duplicator()
 		:m_handle(NULL)
 	{
 	}
@@ -105,5 +105,5 @@ namespace DXFramework
 	HANDLE	DX11Duplicator::GetSharedHandle() const
 	{
 		return m_handle;
-	}*/
+	}
 }

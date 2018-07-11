@@ -7,11 +7,11 @@ using namespace TinyFramework::IO;
 
 namespace DXFramework
 {
-	class DX11DuplicatorTask : public TinyThread
+	class DX11DuplicatorRunner : public TinyThread
 	{
 	public:
-		DX11DuplicatorTask(DX11& dx11, DX11Image2D& image);
-		virtual ~DX11DuplicatorTask();
+		DX11DuplicatorRunner(DX11& dx11, DX11Image2D& image);
+		virtual ~DX11DuplicatorRunner();
 		BOOL					Submit();
 		BOOL					Close(DWORD dwMS = INFINITE) OVERRIDE;
 	private:

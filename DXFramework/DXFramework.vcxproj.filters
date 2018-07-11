@@ -81,13 +81,7 @@
     <ClInclude Include="DX11.h">
       <Filter>头文件\DX11</Filter>
     </ClInclude>
-    <ClInclude Include="DX11CaptureTask.h">
-      <Filter>头文件\DX11</Filter>
-    </ClInclude>
     <ClInclude Include="DX11Duplicator.h">
-      <Filter>头文件\DX11</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11DuplicatorTask.h">
       <Filter>头文件\DX11</Filter>
     </ClInclude>
     <ClInclude Include="DX11Element2D.h">
@@ -147,6 +141,12 @@
     <ClInclude Include="DX11YUVBT709Shader.h">
       <Filter>头文件\DX11</Filter>
     </ClInclude>
+    <ClInclude Include="DX11CaptureRunner.h">
+      <Filter>头文件\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11DuplicatorRunner.h">
+      <Filter>头文件\DX11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -200,13 +200,7 @@
     <ClCompile Include="DX11.cpp">
       <Filter>源文件\DX11</Filter>
     </ClCompile>
-    <ClCompile Include="DX11CaptureTask.cpp">
-      <Filter>源文件\DX11</Filter>
-    </ClCompile>
     <ClCompile Include="DX11Duplicator.cpp">
-      <Filter>源文件\DX11</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11DuplicatorTask.cpp">
       <Filter>源文件\DX11</Filter>
     </ClCompile>
     <ClCompile Include="DX11Element2D.cpp">
@@ -264,6 +258,12 @@
       <Filter>源文件\DX11</Filter>
     </ClCompile>
     <ClCompile Include="DX11YUVBT709Shader.cpp">
+      <Filter>源文件\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11CaptureRunner.cpp">
+      <Filter>源文件\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11DuplicatorRunner.cpp">
       <Filter>源文件\DX11</Filter>
     </ClCompile>
   </ItemGroup>

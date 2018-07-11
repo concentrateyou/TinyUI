@@ -183,9 +183,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX11.h" />
-    <ClInclude Include="DX11CaptureTask.h" />
+    <ClInclude Include="DX11CaptureRunner.h" />
     <ClInclude Include="DX11Duplicator.h" />
-    <ClInclude Include="DX11DuplicatorTask.h" />
+    <ClInclude Include="DX11DuplicatorRunner.h" />
     <ClInclude Include="DX11Font2D.h" />
     <ClInclude Include="DX11Graphics2D.h" />
     <ClInclude Include="DX11Image2D.h" />
@@ -225,11 +225,11 @@
   <ItemGroup>
     <ClCompile Include="DX11.cpp" />
     <ClCompile Include="DX11Duplicator.cpp" />
-    <ClCompile Include="DX11DuplicatorTask.cpp" />
+    <ClCompile Include="DX11DuplicatorRunner.cpp" />
     <ClCompile Include="DX11Font2D.cpp" />
     <ClCompile Include="DX11Graphics2D.cpp" />
     <ClCompile Include="DX11Image2D.cpp" />
-    <ClCompile Include="DX11CaptureTask.cpp" />
+    <ClCompile Include="DX11CaptureRunner.cpp" />
     <ClCompile Include="DX11ImageElement2D.cpp" />
     <ClCompile Include="DX11NV12BT709Shader.cpp" />
     <ClCompile Include="DX11NV12Video.cpp" />
