@@ -93,11 +93,12 @@ namespace TinyFramework
 			LONG						m_logpixelsx;
 			LONG						m_logpixelsy;
 			LONG						m_limit;
-			CHARFORMAT2W				m_cf;
+			CHARFORMAT2W				m_cfw;
 			PARAFORMAT2					m_pf;
 			TinyRectangle				m_rectangle;
 			DWORD						m_dwStyle;
 			CHAR						m_password;
+			BOOL						m_bWordWrap;
 			BOOL						m_bAllowBeep;
 			BOOL						m_bTransparent;
 		};

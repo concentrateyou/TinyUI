@@ -30,7 +30,8 @@ namespace TinyFramework
 			m_dwStyle(0),
 			m_limit(-1),
 			m_bTransparent(TRUE),
-			m_bAllowBeep(FALSE)
+			m_bAllowBeep(FALSE),
+			m_bWordWrap(FALSE)
 		{
 
 		}
@@ -79,9 +80,9 @@ namespace TinyFramework
 		BOOL TinyTextHost::SetbackgroundColor(COLORREF cf)
 		{
 			ASSERT(m_ts || m_spvis);
-			m_cf.dwEffects &= ~CFE_AUTOCOLOR;
-			m_cf.crBackColor = cf & 0x00FFFFFF;
-			if (FAILED(m_ts->TxSendMessage(EM_SETCHARFORMAT, SCF_DEFAULT, (LPARAM)&m_cf, 0)))
+			m_cfw.dwEffects &= ~CFE_AUTOCOLOR;
+			m_cfw.crBackColor = cf & 0x00FFFFFF;
+			if (FAILED(m_ts->TxSendMessage(EM_SETCHARFORMAT, SCF_DEFAULT, (LPARAM)&m_cfw, 0)))
 				return FALSE;
 			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE, TXTBIT_CHARFORMATCHANGE)))
 				return FALSE;
@@ -90,9 +91,9 @@ namespace TinyFramework
 		BOOL TinyTextHost::SetTextColor(COLORREF cf)
 		{
 			ASSERT(m_ts || m_spvis);
-			m_cf.dwEffects &= ~CFE_AUTOCOLOR;
-			m_cf.crTextColor = cf & 0x00FFFFFF;
-			if (FAILED(m_ts->TxSendMessage(EM_SETCHARFORMAT, SCF_DEFAULT, (LPARAM)&m_cf, 0)))
+			m_cfw.dwEffects &= ~CFE_AUTOCOLOR;
+			m_cfw.crTextColor = cf & 0x00FFFFFF;
+			if (FAILED(m_ts->TxSendMessage(EM_SETCHARFORMAT, SCF_DEFAULT, (LPARAM)&m_cfw, 0)))
 				return FALSE;
 			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE, TXTBIT_CHARFORMATCHANGE)))
 				return FALSE;
@@ -107,10 +108,10 @@ namespace TinyFramework
 		}
 		BOOL TinyTextHost::SetEnable(BOOL bEnable)
 		{
-			m_cf.dwEffects |= CFE_DISABLED;
+			m_cfw.dwEffects |= CFE_DISABLED;
 			if (!bEnable)
 			{
-				m_cf.dwEffects &= ~CFE_DISABLED;
+				m_cfw.dwEffects &= ~CFE_DISABLED;
 			}
 			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE, TXTBIT_CHARFORMATCHANGE)))
 				return FALSE;
@@ -121,27 +122,33 @@ namespace TinyFramework
 			ASSERT(m_ts);
 			LOGFONT lf;
 			GetObject(hFONT, sizeof(LOGFONT), &lf);
-			m_cf.cbSize = sizeof(CHARFORMAT2W);
-			m_cf.yHeight = lf.lfHeight * LY_PER_INCH / m_logpixelsy;
-			m_cf.yOffset = 0;
-			m_cf.crTextColor = cf;
-			m_cf.dwEffects = CFM_EFFECTS | CFE_AUTOCOLOR;
-			m_cf.dwEffects &= ~(CFE_PROTECTED | CFE_LINK);
+			ZeroMemory(&m_cfw, sizeof(CHARFORMAT2W));
+			m_cfw.cbSize = sizeof(CHARFORMAT2W);
+			m_cfw.yHeight = lf.lfHeight * LY_PER_INCH / m_logpixelsy;
+			m_cfw.yOffset = 0;
+			m_cfw.crTextColor = cf;
+			m_cfw.dwEffects &= ~(CFE_PROTECTED | CFE_LINK);
 			if (lf.lfWeight < FW_BOLD)
-				m_cf.dwEffects &= ~CFE_BOLD;
+				m_cfw.dwEffects &= ~CFE_BOLD;
 			if (!lf.lfItalic)
-				m_cf.dwEffects &= ~CFE_ITALIC;
+				m_cfw.dwEffects &= ~CFE_ITALIC;
+			else
+				m_cfw.dwEffects |= CFE_ITALIC;
 			if (!lf.lfUnderline)
-				m_cf.dwEffects &= ~CFE_UNDERLINE;
+				m_cfw.dwEffects &= ~CFE_UNDERLINE;
+			else
+				m_cfw.dwEffects |= CFE_UNDERLINE;
 			if (!lf.lfStrikeOut)
-				m_cf.dwEffects &= ~CFE_STRIKEOUT;
-			m_cf.dwMask = CFM_ALL;
-			m_cf.bCharSet = lf.lfCharSet;
-			m_cf.bPitchAndFamily = lf.lfPitchAndFamily;
+				m_cfw.dwEffects &= ~CFE_STRIKEOUT;
+			else
+				m_cfw.dwEffects |= CFE_STRIKEOUT;
+			m_cfw.dwMask = CFM_SIZE | CFM_OFFSET | CFM_FACE | CFM_CHARSET | CFM_COLOR | CFM_BOLD | CFM_ITALIC | CFM_UNDERLINE;
+			m_cfw.bCharSet = lf.lfCharSet;
+			m_cfw.bPitchAndFamily = lf.lfPitchAndFamily;
 #ifdef UNICODE
-			StrCpy(m_cf.szFaceName, lf.lfFaceName);
+			StrCpy(m_cfw.szFaceName, lf.lfFaceName);
 #else
-			MultiByteToWideChar(CP_ACP, 0, lf.lfFaceName, LF_FACESIZE, m_cf.szFaceName, LF_FACESIZE);
+			MultiByteToWideChar(CP_ACP, 0, lf.lfFaceName, LF_FACESIZE, m_cfw.szFaceName, LF_FACESIZE);
 #endif
 			ZeroMemory(&m_pf, sizeof(PARAFORMAT2));
 			m_pf.cbSize = sizeof(PARAFORMAT2);
@@ -149,10 +156,29 @@ namespace TinyFramework
 			m_pf.wAlignment = PFA_LEFT;
 			m_pf.cTabCount = 1;
 			m_pf.rgxTabs[0] = lDefaultTab;
-			if (FAILED(m_ts->TxSendMessage(EM_SETCHARFORMAT, 0, (LPARAM)&m_cf, 0)))
+			LRESULT lResult = 0;
+			if (FAILED(m_ts->TxSendMessage(EM_SETCHARFORMAT, 0, (LPARAM)&m_cfw, &lResult)))
 				return FALSE;
-			if (FAILED(m_ts->TxSendMessage(EM_SETPARAFORMAT, 0, (LPARAM)&m_pf, 0)))
+			if ((BOOL)lResult == TRUE)
+			{
+				CHARFORMAT2W cfw;
+				ZeroMemory(&cfw, sizeof(CHARFORMAT2W));
+				cfw.cbSize = sizeof(CHARFORMAT2W);
+				if (FAILED(m_ts->TxSendMessage(EM_GETCHARFORMAT, 0, (LPARAM)&cfw, 0)))
+					return FALSE;
+				m_cfw = cfw;
+			}
+			if (FAILED(m_ts->TxSendMessage(EM_SETPARAFORMAT, 0, (LPARAM)&m_pf, &lResult)))
 				return FALSE;
+			if ((BOOL)lResult == TRUE)
+			{
+				PARAFORMAT2 pf;
+				ZeroMemory(&pf, sizeof(PARAFORMAT2));
+				pf.cbSize = sizeof(PARAFORMAT2);
+				if (FAILED(m_ts->TxSendMessage(EM_GETPARAFORMAT, 0, (LPARAM)&pf, 0)))
+					return FALSE;
+				m_pf = pf;
+			}
 			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE, TXTBIT_CHARFORMATCHANGE)))
 				return FALSE;
 			if (FAILED(m_ts->OnTxPropertyBitsChange(TXTBIT_PARAFORMATCHANGE, TXTBIT_PARAFORMATCHANGE)))
@@ -200,6 +226,7 @@ namespace TinyFramework
 		}
 		BOOL TinyTextHost::SetWordWrap(BOOL bWarp)
 		{
+			m_bWordWrap = bWarp;
 			return m_ts->OnTxPropertyBitsChange(TXTBIT_WORDWRAP, bWarp ? TXTBIT_WORDWRAP : 0) == S_OK;
 		}
 		BOOL TinyTextHost::SetLimit(LONG limit)
@@ -499,7 +526,7 @@ namespace TinyFramework
 
 		HRESULT TinyTextHost::TxGetCharFormat(const CHARFORMATW **ppCF)
 		{
-			*ppCF = &m_cf;
+			*ppCF = &m_cfw;
 			return S_OK;
 		}
 
@@ -577,6 +604,10 @@ namespace TinyFramework
 			if (!(m_dwStyle & ES_NOHIDESEL))
 			{
 				bits |= TXTBIT_HIDESELECTION;
+			}
+			if (m_bWordWrap)
+			{
+				bits |= TXTBIT_WORDWRAP;
 			}
 			if (m_bAllowBeep)
 			{

@@ -186,8 +186,7 @@ namespace Bytedance
 	{
 		//TinyPoint pos = m_document.GetScreenPos(spvis);
 		//pos.y += spvis->GetSize().cy;
-		m_textbox->SetBackgroundColor(RGB(128, 128, 128));
-		m_textbox->SetTextColor(RGB(128, 128, 128));
+		m_textbox->SetBackgroundColor(RGB(255, 0, 0));
 	}
 	void MainWindowless::OnRestoreClick(TinyVisual*, EventArgs& args)
 	{
