@@ -308,6 +308,7 @@
     <ClInclude Include="Windowless\TinyVisualComboBox.h" />
     <ClInclude Include="Windowless\TinyVisualComboBoxHWND.h" />
     <ClInclude Include="Windowless\TinyVisualComboBoxItem.h" />
+    <ClInclude Include="Windowless\TinyVisualNative.h" />
     <ClInclude Include="Windowless\TinyVisualLabel.h" />
     <ClInclude Include="Windowless\TinyVisualContextMenu.h" />
     <ClInclude Include="Windowless\TinyVisualMenuItem.h" />
@@ -464,6 +465,7 @@
     <ClCompile Include="Windowless\TinyVisualComboBox.cpp" />
     <ClCompile Include="Windowless\TinyVisualComboBoxHWND.cpp" />
     <ClCompile Include="Windowless\TinyVisualComboBoxItem.cpp" />
+    <ClCompile Include="Windowless\TinyVisualNative.cpp" />
     <ClCompile Include="Windowless\TinyVisualLabel.cpp" />
     <ClCompile Include="Windowless\TinyVisualManage.cpp" />
     <ClCompile Include="Windowless\TinyVisualContextMenu.cpp" />

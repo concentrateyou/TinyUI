@@ -189,7 +189,7 @@ namespace TinyFramework
 		const TinyString TinyVisualTag::OPTION = TEXT("option");
 		const TinyString TinyVisualTag::TEXTBOX = TEXT("textbox");
 		const TinyString TinyVisualTag::STRETCH = TEXT("stretch");
-		const TinyString TinyVisualTag::NATIVEWINDOW = TEXT("nativewindow");
+		const TinyString TinyVisualTag::NATIVE = TEXT("native");
 		const TinyString TinyVisualTag::MENUITEM = TEXT("menuitem");
 		//////////////////////////////////////////////////////////////////////////
 	}
