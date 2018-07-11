@@ -142,7 +142,7 @@ namespace Bytedance
 		m_textbox->SetTextColor(RGB(255, 0, 0));
 		m_textbox->Initialize(m_textbox->GetSize());
 		m_textbox->SetTransparent(TRUE);
-		m_textbox->SetBackgroundColor(RGB(255, 0, 0));
+		m_textbox->SetBackgroundColor(RGB(255, 127, 127));
 		//m_textbox->ShowScrollBar(SB_VERT, TRUE);
 		//m_textbox->ShowScrollBar(SB_HORZ, TRUE);
 
