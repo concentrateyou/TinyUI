@@ -26,7 +26,7 @@ namespace TinyFramework
 			void		SetEnable(BOOL enable) OVERRIDE;
 			void		SetWordWrap(BOOL fWarp);
 		public:
-			BOOL		Initialize();
+			BOOL		Initialize(const TinySize& size);
 			TinyString	GetText();
 			BOOL		SetReadonly(BOOL bReadOnly);
 			BOOL		SetMultiline(BOOL bMultiline);

@@ -139,9 +139,9 @@ namespace Bytedance
 		m_textbox->SetPosition({ 100,100 });
 		m_textbox->SetMultiline(TRUE);
 		m_textbox->SetText("²âÊÔ1");
-		m_textbox->SetTextColor(RGB(128, 128, 128));
-		m_textbox->Initialize();
-		m_textbox->SetTransparent(FALSE);
+		m_textbox->SetTextColor(RGB(255, 0, 0));
+		m_textbox->Initialize(m_textbox->GetSize());
+		m_textbox->SetTransparent(TRUE);
 		m_textbox->SetBackgroundColor(RGB(255, 0, 0));
 		//m_textbox->ShowScrollBar(SB_VERT, TRUE);
 		//m_textbox->ShowScrollBar(SB_HORZ, TRUE);

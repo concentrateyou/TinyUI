@@ -564,10 +564,9 @@ namespace TinyFramework
 			m_texthost.Initialize(this);
 			return FALSE;
 		}
-		BOOL TinyVisualTextBox::Initialize()
+		BOOL TinyVisualTextBox::Initialize(const TinySize& size)
 		{
 			ASSERT(m_document);
-			TinySize size = this->GetSize();
 			m_hscroll = static_cast<TinyVisualHScrollBar*>(m_document->Create(0, size.cy - 12, size.cx, 12, TinyVisualTag::HSCROLLBAR, this));
 			m_hscroll->SetImage(ARROW1NORMAL, TinyVisualResource::GetInstance()["hscrollbar_arrow_up_normal"]);
 			m_hscroll->SetImage(ARROW1HIGHLIGHT, TinyVisualResource::GetInstance()["hscrollbar_arrow_up_hover"]);
