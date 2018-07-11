@@ -35,7 +35,7 @@ namespace DXFramework
 	}
 	BOOL DX9Graphics2D::Resize(const TinySize& size)
 	{
-		return m_dx9.ResizeView(size.cx, size.cy);
+		return m_dx9.Resize(size.cx, size.cy);
 	}
 	BOOL DX9Graphics2D::DrawImage(DX9Image2D* image)
 	{

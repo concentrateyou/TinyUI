@@ -6,7 +6,6 @@ namespace Bytedance
 	IMPLEMENT_DYNAMIC(MainView, TinyVisualWindowless);
 
 	MainView::MainView()
-		:m_renderView(m_graphics.GetDX9())
 	{
 	}
 
@@ -20,7 +19,7 @@ namespace Bytedance
 		window->SetMinimumSize(TinySize(800, 600));
 		window->SetSize(TinySize(800, 600));
 		window->SetPosition(TinySize(100, 100));
-		m_canvasView.Create(m_hWND, 0, 0, 0, 0, FALSE);
+		m_canvasView.Create(m_hWND, 0, 0, 1, 1, FALSE);
 		BuildUI({ 800,600 });
 	}
 
@@ -108,10 +107,6 @@ namespace Bytedance
 		m_native->SetPosition({ 8,27 + 8 });
 		m_native->SetSize({ size.cx - 16,500 });
 
-		m_graphics.Initialize(m_canvasView.Handle(), { size.cx - 16,500 });
-		m_image2D.Load(m_graphics.GetDX9(), "D:\\timg.jpg");
-		m_renderView.Create();
-		m_graphics.SetRenderView(&m_renderView);
 
 		TinyRectangle s = window->GetClientRect();
 		Resize(s.Width(), s.Height());
@@ -133,8 +128,6 @@ namespace Bytedance
 
 			m_native->SetPosition({ 8,27 + 8 });
 			m_native->SetSize({ cx - 16,500 });
-			m_graphics.Resize({ cx - 16,500 });
-
 		}
 	}
 
@@ -159,11 +152,6 @@ namespace Bytedance
 	{
 		//TinyPoint pos = m_document.GetScreenPos(spvis);
 		//pos.y += spvis->GetSize().cy;
-
-		m_graphics.GetRenderView()->BeginDraw();
-		m_graphics.DrawImage(&m_image2D);
-		m_graphics.GetRenderView()->EndDraw();
-		m_graphics.Present();
 	}
 	void MainView::OnRestoreClick(TinyVisual*, EventArgs& args)
 	{

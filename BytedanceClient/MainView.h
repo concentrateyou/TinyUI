@@ -12,9 +12,6 @@
 #include "Windowless/TinyVisualNative.h"
 #include "CanvasView.h"
 
-#include "DX9Image2D.h"
-#include "DX9RenderView.h"
-#include "DX9Graphics2D.h"
 
 using namespace TinyFramework;
 using namespace TinyFramework::Windowless;
@@ -61,9 +58,5 @@ namespace Bytedance
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onRestoreClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onCloseClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onSettingClick;
-
-		DX9Image2D				m_image2D;
-		DX9Graphics2D			m_graphics;
-		DX9RenderView			m_renderView;
 	};
 }

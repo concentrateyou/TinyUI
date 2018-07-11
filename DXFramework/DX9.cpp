@@ -10,7 +10,7 @@ namespace DXFramework
 		m_render2D(NULL),
 		m_bActive(FALSE)
 	{
-
+		ZeroMemory(&m_d3dpp, sizeof(m_d3dpp));
 	}
 	DX9::~DX9()
 	{
@@ -35,24 +35,22 @@ namespace DXFramework
 		{
 			multiType = D3DMULTISAMPLE_4_SAMPLES;
 		}
-		D3DPRESENT_PARAMETERS d3dpp;
-		ZeroMemory(&d3dpp, sizeof(d3dpp));
-		d3dpp.BackBufferWidth = cx;
-		d3dpp.BackBufferHeight = cy;
-		d3dpp.BackBufferFormat = displayMode.Format;
-		d3dpp.BackBufferCount = 1;
-		d3dpp.MultiSampleType = multiType;
-		d3dpp.MultiSampleQuality = 0;
-		d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-		d3dpp.hDeviceWindow = hWND;
-		d3dpp.Windowed = TRUE;
-		d3dpp.EnableAutoDepthStencil = TRUE;
-		d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
-		d3dpp.Flags = 0;
-		d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
-		d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+		m_d3dpp.BackBufferWidth = cx;
+		m_d3dpp.BackBufferHeight = cy;
+		m_d3dpp.BackBufferFormat = displayMode.Format;
+		m_d3dpp.BackBufferCount = 1;
+		m_d3dpp.MultiSampleType = multiType;
+		m_d3dpp.MultiSampleQuality = 0;
+		m_d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+		m_d3dpp.hDeviceWindow = hWND;
+		m_d3dpp.Windowed = TRUE;
+		m_d3dpp.EnableAutoDepthStencil = TRUE;
+		m_d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
+		m_d3dpp.Flags = 0;
+		m_d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+		m_d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 		m_d3dd9.Release();
-		hRes = m_d3d9->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWND, D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_PUREDEVICE, &d3dpp, &m_d3dd9);
+		hRes = m_d3d9->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWND, D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_PUREDEVICE, &m_d3dpp, &m_d3dd9);
 		if (hRes != S_OK)
 		{
 			TRACE("[Initialize] CreateDevice:%d\n", hRes);
@@ -318,14 +316,20 @@ namespace DXFramework
 		}
 		return TRUE;
 	}
-	BOOL DX9::ResizeView(INT cx, INT cy)
+	BOOL DX9::Resize(INT cx, INT cy)
 	{
 		if (IsEmpty())
 			return FALSE;
-		if (!m_background2D->Resize())
-			return FALSE;
+		m_background2D->Destory();
 		m_size.cx = cx;
 		m_size.cy = cy;
+		m_d3dpp.BackBufferWidth = cx;
+		m_d3dpp.BackBufferHeight = cy;
+		HRESULT hRes = m_d3dd9->Reset(&m_d3dpp);
+		if (hRes != S_OK)
+			return FALSE;
+		if (!m_background2D->Resize())
+			return FALSE;
 		this->SetViewport(TinyPoint(0, 0), m_background2D->GetSize());
 		this->SetMatrixs(m_background2D->GetSize());
 		return TRUE;

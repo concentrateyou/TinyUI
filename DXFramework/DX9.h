@@ -16,7 +16,7 @@ namespace DXFramework
 		virtual ~DX9();
 		BOOL				Initialize(HWND hWND, INT cx, INT cy);
 		BOOL				Present();
-		BOOL				ResizeView(INT cx = 0, INT cy = 0);
+		BOOL				Resize(INT cx = 0, INT cy = 0);
 		BOOL				SetViewport(const TinyPoint& pos, const TinySize& size);
 		D3DXMATRIX*			GetMatrixs();
 		void				SetMatrixs(const TinySize& size);
@@ -35,6 +35,7 @@ namespace DXFramework
 		BOOL							m_bActive;
 		HWND							m_hWND;
 		TinySize						m_size;
+		D3DPRESENT_PARAMETERS			m_d3dpp;
 		D3DXMATRIX						m_matrixs[3];
 		DX9RenderView*					m_render2D;
 		TinyComPtr<IDirect3D9>			m_d3d9;
