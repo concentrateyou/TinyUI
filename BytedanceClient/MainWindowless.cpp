@@ -98,53 +98,6 @@ namespace Bytedance
 		m_onSettingClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainWindowless::OnSettingClick));
 		m_setting->EVENT_CLICK += m_onSettingClick;
 
-		m_combobox = static_cast<TinyVisualComboBox*>(m_document.Create(TinyVisualTag::COMBOBOX, window));
-		ASSERT(m_combobox);
-		m_combobox->SetName("Combobox");
-		m_combobox->SetTextColor(RGB(0, 0, 0));
-		m_combobox->SetTextAlian(DT_LEFT | DT_VCENTER | DT_SINGLELINE);
-		m_combobox->SetSize(TinySize(129, 28));
-		m_combobox->SetPadding({ 5,0,0,0 });
-		m_combobox->SetImage(TinyVisualComboBox::ComboBoxStyle::NORMAL, TinyVisualResource::GetInstance()["combobox_normal"]);
-		m_combobox->SetImage(TinyVisualComboBox::ComboBoxStyle::HOVER, TinyVisualResource::GetInstance()["combobox_hover"]);
-		m_combobox->SetImage(TinyVisualComboBox::ComboBoxStyle::PUSH, TinyVisualResource::GetInstance()["combobox_push"]);
-		m_combobox->SetImage(TinyVisualComboBox::ComboBoxStyle::ARROWDOWN, TinyVisualResource::GetInstance()["inputbtn_down"]);
-		m_combobox->SetImage(TinyVisualComboBox::ComboBoxStyle::ARROWHOVER, TinyVisualResource::GetInstance()["inputbtn_highlight"]);
-		m_combobox->SetImage(TinyVisualComboBox::ComboBoxStyle::ARROWNORMAL, TinyVisualResource::GetInstance()["inputbtn_normal"]);
-
-		m_combobox->Add("test1", "上海1");
-		m_combobox->Add("test2", "上海2");
-		TinyVisualComboBoxItem* item = m_combobox->Add("test3", "上海3");
-		m_combobox->SetSelected(item);
-		m_combobox->Add("test4", "上海4");
-		m_combobox->Add("test5", "上海5");
-
-
-		//m_scrollbar = static_cast<TinyVisualVScrollBar*>(m_document.Create(TinyVisualTag::VSCROLLBAR, window));
-		//m_scrollbar->SetImage(ARROW1NORMAL, TinyVisualResource::GetInstance()["vscrollbar_arrow_up_normal"]);
-		//m_scrollbar->SetImage(ARROW1HIGHLIGHT, TinyVisualResource::GetInstance()["vscrollbar_arrow_up_hover"]);
-		//m_scrollbar->SetImage(ARROW1DOWN, TinyVisualResource::GetInstance()["vscrollbar_arrow_up_press"]);
-		//m_scrollbar->SetImage(ARROW2NORMAL, TinyVisualResource::GetInstance()["vscrollbar_arrow_down_normal"]);
-		//m_scrollbar->SetImage(ARROW2HIGHLIGHT, TinyVisualResource::GetInstance()["vscrollbar_arrow_down_hover"]);
-		//m_scrollbar->SetImage(ARROW2DOWN, TinyVisualResource::GetInstance()["vscrollbar_arrow_down_normal"]);
-		//m_scrollbar->SetImage(SCROLLBARGROOVE, TinyVisualResource::GetInstance()["vscrollbar_groove"]);
-		//m_scrollbar->SetImage(SCROLLBARNORMAL, TinyVisualResource::GetInstance()["vscrollbar_normal"]);
-		//m_scrollbar->SetImage(SCROLLBARHIGHLIGHT, TinyVisualResource::GetInstance()["vscrollbar_hover"]);
-		//m_scrollbar->SetPosition(TinyPoint(300, 100));
-		//m_scrollbar->SetScrollInfo(0, 300, 100, 0);
-		//m_scrollbar->SetSize(TinySize(12, 200));
-		m_textbox = static_cast<TinyVisualTextBox*>(m_document.Create(TinyVisualTag::TEXTBOX, window));
-		ASSERT(m_textbox);
-		m_textbox->SetSize({ 200,200 });
-		m_textbox->SetPosition({ 100,100 });
-		m_textbox->SetMultiline(TRUE);
-		m_textbox->SetText("测试1");
-		m_textbox->SetTextColor(RGB(255, 0, 0));
-		m_textbox->Initialize(m_textbox->GetSize());
-		m_textbox->SetTransparent(TRUE);
-		m_textbox->SetBackgroundColor(RGB(255, 127, 127));
-		//m_textbox->ShowScrollBar(SB_VERT, TRUE);
-		//m_textbox->ShowScrollBar(SB_HORZ, TRUE);
 
 		TinyRectangle s = window->GetClientRect();
 		Resize(s.Width(), s.Height());
@@ -186,7 +139,6 @@ namespace Bytedance
 	{
 		//TinyPoint pos = m_document.GetScreenPos(spvis);
 		//pos.y += spvis->GetSize().cy;
-		m_textbox->SetBackgroundColor(RGB(255, 0, 0));
 	}
 	void MainWindowless::OnRestoreClick(TinyVisual*, EventArgs& args)
 	{

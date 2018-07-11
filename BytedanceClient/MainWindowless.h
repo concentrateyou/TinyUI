@@ -47,8 +47,6 @@ namespace Bytedance
 		TinyVisualButton*		m_close;
 		TinyVisualButton*		m_setting;
 		TinyVisualLabel*		m_title;
-		TinyVisualComboBox*		m_combobox;
-		TinyVisualTextBox*		m_textbox;
 		//ÊÂ¼þ
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMinClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMaxClick;
