@@ -9,28 +9,34 @@
 #include "Windowless/TinyVisualComboBox.h"
 #include "Windowless/TinyVisualScrollBar.h"
 #include "Windowless/TinyVisualTextBox.h"
+#include "Windowless/TinyVisualNative.h"
+#include "CanvasView.h"
+
+#include "DX9Image2D.h"
+#include "DX9RenderView.h"
+#include "DX9Graphics2D.h"
+
 using namespace TinyFramework;
 using namespace TinyFramework::Windowless;
+using namespace DXFramework;
 
 namespace Bytedance
 {
 	/// <summary>
 	/// 主窗口
 	/// </summary>
-	class MainWindowless : public TinyVisualWindowless
+	class MainView : public TinyVisualWindowless
 	{
-		DECLARE_DYNAMIC(MainWindowless)
-		DISALLOW_COPY_AND_ASSIGN(MainWindowless)
+		DECLARE_DYNAMIC(MainView)
+		DISALLOW_COPY_AND_ASSIGN(MainView)
 	public:
-		MainWindowless();
-		~MainWindowless();
+		MainView();
+		~MainView();
 		void OnInitialize() OVERRIDE;
 		void OnUninitialize() OVERRIDE;
-
 		LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-
 	private:
-		void BuildUI();
+		void BuildUI(const TinySize& size);
 		void Resize(INT cx, INT cy);
 	private:
 		void OnMaxClick(TinyVisual*, EventArgs& args);
@@ -47,11 +53,17 @@ namespace Bytedance
 		TinyVisualButton*		m_close;
 		TinyVisualButton*		m_setting;
 		TinyVisualLabel*		m_title;
+		TinyVisualNative*		m_native;
+		CanvasView				m_canvasView;
 		//事件
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMinClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onMaxClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onRestoreClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onCloseClick;
 		TinyScopedPtr<Delegate<void(TinyVisual*, EventArgs&)>>		m_onSettingClick;
+
+		DX9Image2D				m_image2D;
+		DX9Graphics2D			m_graphics;
+		DX9RenderView			m_renderView;
 	};
 }

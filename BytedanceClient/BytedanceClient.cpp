@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "BytedanceClient.h"
 #include "Common/TinyApplication.h"
-#include "MainWindowless.h"
+#include "MainView.h"
 using namespace TinyFramework;
 using namespace Bytedance;
 
@@ -57,7 +57,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_BYTEDANCECLIENT));
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	MainWindowless window;
+	MainView window;
 	window.Create(NULL, "");
 	window.UpdateWindow();
 	INT loopRes = theLoop.MessageLoop();

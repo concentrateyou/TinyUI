@@ -33,6 +33,10 @@ namespace DXFramework
 			return FALSE;
 		return TRUE;
 	}
+	BOOL DX9Graphics2D::Resize(const TinySize& size)
+	{
+		return m_dx9.ResizeView(size.cx, size.cy);
+	}
 	BOOL DX9Graphics2D::DrawImage(DX9Image2D* image)
 	{
 		if (!image || image->IsEmpty())

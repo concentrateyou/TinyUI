@@ -1,29 +1,32 @@
 #include "stdafx.h"
-#include "MainWindowless.h"
+#include "MainView.h"
 
 namespace Bytedance
 {
-	IMPLEMENT_DYNAMIC(MainWindowless, TinyVisualWindowless);
+	IMPLEMENT_DYNAMIC(MainView, TinyVisualWindowless);
 
-	MainWindowless::MainWindowless()
+	MainView::MainView()
+		:m_renderView(m_graphics.GetDX9())
 	{
 	}
 
-	MainWindowless::~MainWindowless()
+	MainView::~MainView()
 	{
 	}
 
-	void MainWindowless::OnInitialize()
+	void MainView::OnInitialize()
 	{
 		TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
 		window->SetMinimumSize(TinySize(800, 600));
 		window->SetSize(TinySize(800, 600));
 		window->SetPosition(TinySize(100, 100));
-		BuildUI();
+		m_canvasView.Create(m_hWND, 0, 0, 0, 0, FALSE);
+		BuildUI({ 800,600 });
 	}
 
-	void MainWindowless::OnUninitialize()
+	void MainView::OnUninitialize()
 	{
+		m_canvasView.DestroyWindow();
 		m_max->EVENT_CLICK -= m_onMaxClick;
 		m_min->EVENT_CLICK -= m_onMaxClick;
 		m_close->EVENT_CLICK += m_onCloseClick;
@@ -31,7 +34,7 @@ namespace Bytedance
 		m_setting->EVENT_CLICK -= m_onSettingClick;
 	}
 
-	LRESULT MainWindowless::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT MainView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		if (lParam != NULL)
 		{
@@ -43,7 +46,7 @@ namespace Bytedance
 		return TinyVisualWindowless::OnSize(uMsg, wParam, lParam, bHandled);
 	}
 
-	void MainWindowless::BuildUI()
+	void MainView::BuildUI(const TinySize& size)
 	{
 		TinyVisualWindow* window = static_cast<TinyVisualWindow*>(m_document.GetParent(NULL));
 
@@ -54,7 +57,7 @@ namespace Bytedance
 		m_max->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["sysbtn_max_normal"]);
 		m_max->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["sysbtn_max_hover"]);
 		m_max->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["sysbtn_max_down"]);
-		m_onMaxClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainWindowless::OnMaxClick));
+		m_onMaxClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnMaxClick));
 		m_max->EVENT_CLICK += m_onMaxClick;
 
 		m_min = static_cast<TinyVisualButton*>(m_document.Create(TinyVisualTag::BUTTON, window));
@@ -64,7 +67,7 @@ namespace Bytedance
 		m_min->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["sysbtn_min_normal"]);
 		m_min->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["sysbtn_min_hover"]);
 		m_min->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["sysbtn_min_down"]);
-		m_onMinClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainWindowless::OnMinClick));
+		m_onMinClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnMinClick));
 		m_min->EVENT_CLICK += m_onMinClick;
 
 		m_close = static_cast<TinyVisualButton*>(m_document.Create(TinyVisualTag::BUTTON, window));
@@ -74,7 +77,7 @@ namespace Bytedance
 		m_close->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["sysbtn_close_normal"]);
 		m_close->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["sysbtn_close_hover"]);
 		m_close->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["sysbtn_close_down"]);
-		m_onCloseClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainWindowless::OnCloseClick));
+		m_onCloseClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnCloseClick));
 		m_close->EVENT_CLICK += m_onCloseClick;
 
 		m_restore = static_cast<TinyVisualButton*>(m_document.Create(TinyVisualTag::BUTTON, window));
@@ -85,7 +88,7 @@ namespace Bytedance
 		m_restore->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["sysbtn_restore_normal"]);
 		m_restore->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["sysbtn_restore_hover"]);
 		m_restore->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["sysbtn_restore_down"]);
-		m_onRestoreClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainWindowless::OnRestoreClick));
+		m_onRestoreClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnRestoreClick));
 		m_restore->EVENT_CLICK += m_onRestoreClick;
 
 		m_setting = static_cast<TinyVisualButton*>(m_document.Create(TinyVisualTag::BUTTON, window));
@@ -95,14 +98,26 @@ namespace Bytedance
 		m_setting->SetImage(TinyVisualButton::ButtonStyle::NORMAL, TinyVisualResource::GetInstance()["setting_normal"]);
 		m_setting->SetImage(TinyVisualButton::ButtonStyle::HOVER, TinyVisualResource::GetInstance()["setting_hover"]);
 		m_setting->SetImage(TinyVisualButton::ButtonStyle::DOWN, TinyVisualResource::GetInstance()["setting_down"]);
-		m_onSettingClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainWindowless::OnSettingClick));
+		m_onSettingClick.Reset(new Delegate<void(TinyVisual*, EventArgs&)>(this, &MainView::OnSettingClick));
 		m_setting->EVENT_CLICK += m_onSettingClick;
 
+		m_native = static_cast<TinyVisualNative*>(m_document.Create(TinyVisualTag::NATIVE, window));
+		m_native->SetName("CanvasWindow");
+		m_native->SetView(&m_canvasView);
+		ASSERT(m_native);
+		m_native->SetPosition({ 8,27 + 8 });
+		m_native->SetSize({ size.cx - 16,500 });
+
+		m_graphics.Initialize(m_canvasView.Handle(), { size.cx - 16,500 });
+		m_image2D.Load(m_graphics.GetDX9(), "D:\\timg.jpg");
+		m_renderView.Create();
+		m_graphics.SetRenderView(&m_renderView);
 
 		TinyRectangle s = window->GetClientRect();
 		Resize(s.Width(), s.Height());
+
 	}
-	void MainWindowless::Resize(INT cx, INT cy)
+	void MainView::Resize(INT cx, INT cy)
 	{
 		if (m_close != NULL)
 		{
@@ -115,32 +130,42 @@ namespace Bytedance
 			m_min->SetPosition(TinyPoint(cx - offset, 0));
 			offset += m_setting->GetSize().cx;
 			m_setting->SetPosition(TinyPoint(cx - offset, 0));
+
+			m_native->SetPosition({ 8,27 + 8 });
+			m_native->SetSize({ cx - 16,500 });
+			m_graphics.Resize({ cx - 16,500 });
+
 		}
 	}
 
-	void MainWindowless::OnMaxClick(TinyVisual*, EventArgs& args)
+	void MainView::OnMaxClick(TinyVisual*, EventArgs& args)
 	{
 		m_document.ReleaseCapture();
 		m_restore->SetVisible(TRUE);
 		m_max->SetVisible(FALSE);
 		::SendMessage(m_hWND, WM_SYSCOMMAND, SC_MAXIMIZE, NULL);
 	}
-	void MainWindowless::OnMinClick(TinyVisual*, EventArgs& args)
+	void MainView::OnMinClick(TinyVisual*, EventArgs& args)
 	{
 		m_document.ReleaseCapture();
 		::SendMessage(m_hWND, WM_SYSCOMMAND, SC_MINIMIZE, NULL);
 	}
-	void MainWindowless::OnCloseClick(TinyVisual*, EventArgs& args)
+	void MainView::OnCloseClick(TinyVisual*, EventArgs& args)
 	{
 		m_document.ReleaseCapture();
 		::SendMessage(m_hWND, WM_SYSCOMMAND, SC_CLOSE, NULL);
 	}
-	void MainWindowless::OnSettingClick(TinyVisual* spvis, EventArgs& args)
+	void MainView::OnSettingClick(TinyVisual* spvis, EventArgs& args)
 	{
 		//TinyPoint pos = m_document.GetScreenPos(spvis);
 		//pos.y += spvis->GetSize().cy;
+
+		m_graphics.GetRenderView()->BeginDraw();
+		m_graphics.DrawImage(&m_image2D);
+		m_graphics.GetRenderView()->EndDraw();
+		m_graphics.Present();
 	}
-	void MainWindowless::OnRestoreClick(TinyVisual*, EventArgs& args)
+	void MainView::OnRestoreClick(TinyVisual*, EventArgs& args)
 	{
 		m_document.ReleaseCapture();
 		m_restore->SetVisible(FALSE);

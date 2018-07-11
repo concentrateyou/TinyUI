@@ -1,11 +1,9 @@
 #pragma once
-#include <d3d11_1.h>
-#include <dxgi1_2.h>
 #include "DX11Image2D.h"
 
 namespace DXFramework
 {
-	class DX11Duplicator
+	/*class DX11Duplicator
 	{
 	public:
 		DX11Duplicator();
@@ -18,7 +16,7 @@ namespace DXFramework
 		HANDLE								m_handle;
 		TinyComPtr<ID3D11Resource>			m_resource;
 		TinyComPtr<IDXGIOutputDuplication>	m_duplication;
-	};
+	};*/
 }
 
 

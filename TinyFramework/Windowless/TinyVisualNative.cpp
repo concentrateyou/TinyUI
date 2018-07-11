@@ -12,11 +12,13 @@ namespace TinyFramework
 		IMPLEMENT_DYNCREATE(TinyVisualNative, TinyVisual);
 
 		TinyVisualNative::TinyVisualNative()
+			:m_view(NULL)
 		{
 
 		}
 		TinyVisualNative::TinyVisualNative(TinyVisual* spvisParent, TinyVisualDocument* document)
-			:TinyVisual(spvisParent, document)
+			: TinyVisual(spvisParent, document),
+			m_view(NULL)
 		{
 
 		}
@@ -36,39 +38,42 @@ namespace TinyFramework
 
 		void TinyVisualNative::SetPosition(const TinyPoint& pos)
 		{
-			if (m_hWND != NULL)
+			if (m_view != NULL)
 			{
-				::SetWindowPos(m_hWND, NULL, pos.x, pos.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+				::SetWindowPos(m_view->Handle(), NULL, pos.x, pos.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 			}
 			TinyVisual::SetPosition(pos);
 		}
 
 		void TinyVisualNative::SetSize(const TinySize& size)
 		{
-			if (m_hWND != NULL)
+			if (m_view != NULL)
 			{
-				::SetWindowPos(m_hWND, NULL, 0, 0, size.cx, size.cy, SWP_NOMOVE | SWP_NOZORDER);
+				::SetWindowPos(m_view->Handle(), NULL, 0, 0, size.cx, size.cy, SWP_NOMOVE | SWP_NOZORDER);
 			}
 			TinyVisual::SetSize(size);
 		}
 
 		void TinyVisualNative::SetVisible(BOOL visible)
 		{
-			if (m_hWND)
+			if (m_view != NULL)
 			{
-				::ShowWindow(m_hWND, visible ? SW_SHOW : SW_HIDE);
+				::ShowWindow(m_view->Handle(), visible ? SW_SHOW : SW_HIDE);
 			}
 			TinyVisual::SetVisible(visible);
 		}
 
 		void TinyVisualNative::SetEnable(BOOL enable)
 		{
-			if (m_hWND != NULL)
+			if (m_view != NULL)
 			{
-				EnableWindow(m_hWND, enable);
+				EnableWindow(m_view->Handle(), enable);
 			}
 			TinyVisual::SetEnable(enable);
 		}
-
+		void TinyVisualNative::SetView(TinyControl* view)
+		{
+			m_view = view;
+		}
 	}
 }

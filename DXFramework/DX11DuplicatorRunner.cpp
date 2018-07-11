@@ -3,7 +3,7 @@
 
 namespace DXFramework
 {
-	DX11DuplicatorRunner::DX11DuplicatorRunner(DX11& dx11, DX11Image2D& image)
+	/*DX11DuplicatorRunner::DX11DuplicatorRunner(DX11& dx11, DX11Image2D& image)
 		:m_image(image),
 		m_dx11(dx11)
 	{
@@ -31,5 +31,5 @@ namespace DXFramework
 				break;
 			}
 		}
-	}
+	}*/
 }

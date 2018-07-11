@@ -21,8 +21,9 @@ namespace TinyFramework
 			void		SetSize(const TinySize& size) OVERRIDE;
 			void		SetVisible(BOOL visible) OVERRIDE;
 			void		SetEnable(BOOL enable) OVERRIDE;
+			void		SetView(TinyControl* view);
 		private:
-			HWND		m_hWND;
+			TinyControl*	m_view;
 		};
 	}
 }
