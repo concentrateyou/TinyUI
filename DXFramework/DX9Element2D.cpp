@@ -23,16 +23,16 @@ namespace DXFramework
 	{
 		return m_angle;
 	}
-	D3DXVECTOR2	 DX9Element2D::GetSize() const
+	XMFLOAT2	 DX9Element2D::GetSize() const
 	{
 		return m_size;
 	}
-	D3DXVECTOR2	 DX9Element2D::GetScale() const
+	XMFLOAT2	 DX9Element2D::GetScale() const
 	{
 		return m_scale;
 	}
 
-	D3DXVECTOR2	 DX9Element2D::GetTranslate() const
+	XMFLOAT2	 DX9Element2D::GetTranslate() const
 	{
 		return m_translate;
 	}
@@ -46,23 +46,26 @@ namespace DXFramework
 	{
 		return m_bFlipV;
 	}
-	void DX9Element2D::SetSize(const D3DXVECTOR2& size)
+	void DX9Element2D::SetSize(const XMFLOAT2& size)
 	{
-		m_size = size;
+		m_size.x = size.x;
+		m_size.y = size.y;
 	}
 	void DX9Element2D::SetRotate(FLOAT angle)
 	{
 		m_angle = angle;
 	}
 
-	void DX9Element2D::SetScale(const D3DXVECTOR2& scale)
+	void DX9Element2D::SetScale(const XMFLOAT2& scale)
 	{
-		m_scale = scale;
+		m_scale.x = scale.x;
+		m_scale.y = scale.y;
 	}
 
-	void DX9Element2D::SetTranslate(const D3DXVECTOR2& pos)
+	void DX9Element2D::SetTranslate(const XMFLOAT2& pos)
 	{
-		m_translate = pos;
+		m_translate.x = pos.x;
+		m_translate.y = pos.y;
 	}
 
 	void DX9Element2D::SetFlipH(BOOL bFlag)

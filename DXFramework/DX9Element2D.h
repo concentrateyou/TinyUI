@@ -19,15 +19,15 @@ namespace DXFramework
 		TinyString		GetElementName() const;
 		void			SetElementName(const TinyString& name);
 		FLOAT			GetRotate() const;
-		D3DXVECTOR2		GetSize() const;
-		D3DXVECTOR2		GetScale() const;
-		D3DXVECTOR2		GetTranslate() const;
+		XMFLOAT2		GetSize() const;
+		XMFLOAT2		GetScale() const;
+		XMFLOAT2		GetTranslate() const;
 		BOOL			IsFlipH() const;
 		BOOL			IsFlipV() const;
-		void			SetSize(const D3DXVECTOR2& size);
+		void			SetSize(const XMFLOAT2& size);
 		void			SetRotate(FLOAT angle);
-		void			SetScale(const D3DXVECTOR2& scale);
-		void			SetTranslate(const D3DXVECTOR2& pos);
+		void			SetScale(const XMFLOAT2& scale);
+		void			SetTranslate(const XMFLOAT2& pos);
 		void			SetFlipH(BOOL bFlag);
 		void			SetFlipV(BOOL bFlag);
 	public:
@@ -38,9 +38,9 @@ namespace DXFramework
 		BOOL			m_bFlipH;
 		BOOL			m_bFlipV;
 		FLOAT			m_angle;
-		D3DXVECTOR2		m_size;//元素大小
-		D3DXVECTOR2		m_scale;//缩放比例
-		D3DXVECTOR2		m_translate;//平移坐标
+		XMFLOAT2		m_size;//元素大小
+		XMFLOAT2		m_scale;//缩放比例
+		XMFLOAT2		m_translate;//平移坐标
 		TinyString		m_szElement;
 	};
 }

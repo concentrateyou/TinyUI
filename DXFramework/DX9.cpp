@@ -263,14 +263,13 @@ namespace DXFramework
 	{
 		FLOAT fov = (FLOAT)D3DX_PI / 4.0F;
 		FLOAT aspect = (FLOAT)size.cx / (FLOAT)size.cy;
-		D3DXMatrixPerspectiveFovLH(&m_matrixs[0], fov, aspect, 1000.0F, 0.1F);//Projection
-		D3DXMatrixLookAtLH(&m_matrixs[1],
-			&D3DXVECTOR3(0.0F, 0.0F, -10.0F),
-			&D3DXVECTOR3(0.0F, 0.0F, 0.0F),
-			&D3DXVECTOR3(0.0F, 1.0F, 0.0F));//View
-		D3DXMatrixIdentity(&m_matrixs[2]);//World
+		m_matrixs[0] = XMMatrixPerspectiveFovLH(fov, aspect, 0.1F, 1000.0F);//Projection
+		m_matrixs[1] = XMMatrixLookAtLH(XMLoadFloat3(&XMFLOAT3(0.0F, 0.0F, -10.0F)),
+			XMLoadFloat3(&XMFLOAT3(0.0F, 0.0F, 0.0F)),
+			XMLoadFloat3(&XMFLOAT3(0.0F, 1.0F, 0.0F)));//View
+		m_matrixs[2] = XMMatrixIdentity();//World
 	}
-	D3DXMATRIX* DX9::GetMatrixs()
+	XMMATRIX* DX9::GetMatrixs()
 	{
 		return m_matrixs;
 	}
