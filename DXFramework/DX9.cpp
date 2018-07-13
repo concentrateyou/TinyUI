@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "DX9.h"
-#include "DX9RenderView.h"
+#include "DX9Graphics2D.h"
 #include "Common/TinyLogging.h"
 
 namespace DXFramework
@@ -14,6 +14,10 @@ namespace DXFramework
 	DX9::~DX9()
 	{
 
+	}
+	BOOL DX9::Initialize(HWND hWND, const TinySize& size)
+	{
+		return Initialize(hWND, size.cx, size.cy);
 	}
 	BOOL DX9::Initialize(HWND hWND, INT cx, INT cy)
 	{
@@ -191,6 +195,10 @@ namespace DXFramework
 			return FALSE;
 		}
 		return TRUE;
+	}
+	BOOL DX9::Resize(const TinySize& size)
+	{
+		return Resize(size.cx, size.cy);
 	}
 	BOOL DX9::Resize(INT cx, INT cy)
 	{

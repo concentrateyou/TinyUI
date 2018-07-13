@@ -7,7 +7,7 @@ namespace Bytedance
 	IMPLEMENT_DYNAMIC(CanvasView, TinyControl);
 
 	CanvasView::CanvasView()
-		:m_renderView(m_graphics.GetDX9())
+		:m_graphics(m_dx9)
 	{
 	}
 
@@ -40,10 +40,9 @@ namespace Bytedance
 		bHandled = FALSE;
 		TinyRectangle s;
 		GetClientRect(&s);
-		m_graphics.Initialize(m_hWND, s.Size());
-		/*m_renderView.Create();
-		m_graphics.SetRenderView(&m_renderView);
-		m_image2D.Load(m_graphics.GetDX9(), "D:\\timg.jpg");*/
+		m_dx9.Initialize(m_hWND, s.Size());
+		m_image2D.Load(m_dx9, "D:\\timg.jpg");
+		m_graphics.Create();
 		return TinyControl::OnCreate(uMsg, wParam, lParam, bHandled);
 	}
 
@@ -53,7 +52,9 @@ namespace Bytedance
 		TinySize size;
 		size.cx = LOWORD(lParam);
 		size.cy = HIWORD(lParam);
-		m_graphics.Resize(size);
+		m_graphics.Destory();
+		m_dx9.Resize(size);
+		m_graphics.Create();
 		//m_renderView.Resize();
 		return TinyControl::OnSize(uMsg, wParam, lParam, bHandled);
 	}
@@ -65,10 +66,11 @@ namespace Bytedance
 		BeginPaint(m_hWND, &s);
 		EndPaint(m_hWND, &s);
 
-		//m_graphics.GetRenderView()->BeginDraw();
-		//m_graphics.DrawImage(&m_image2D);
-		//m_graphics.GetRenderView()->EndDraw();
-		//m_graphics.Present();
+		m_graphics.BeginDraw();
+		m_graphics.DrawImage(&m_image2D);
+		m_graphics.EndDraw();
+
+		m_dx9.Present();
 
 		return TinyControl::OnPaint(uMsg, wParam, lParam, bHandled);
 	}

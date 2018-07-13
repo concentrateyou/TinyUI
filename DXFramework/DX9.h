@@ -5,18 +5,20 @@
 
 namespace DXFramework
 {
-	class DX9RenderView;
+	class DX9Graphics2D;
 
 	class DX9
 	{
-		friend class DX9Graphics2D;
+		friend class DX9Canvas;
 		DISALLOW_COPY_AND_ASSIGN(DX9)
 	public:
 		DX9();
 		virtual ~DX9();
+		BOOL				Initialize(HWND hWND, const TinySize& size);
 		BOOL				Initialize(HWND hWND, INT cx, INT cy);
 		BOOL				Present();
-		BOOL				Resize(INT cx = 0, INT cy = 0);
+		BOOL				Resize(INT cx, INT cy);
+		BOOL				Resize(const TinySize& size);
 		BOOL				SetViewport(const TinyPoint& pos, const TinySize& size);
 		D3DXMATRIX*			GetMatrixs();
 		void				SetMatrixs(const TinySize& size);

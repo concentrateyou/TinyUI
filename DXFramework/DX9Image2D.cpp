@@ -21,7 +21,7 @@ namespace DXFramework
 	{
 		m_vertexs.Release();
 		//´´½¨¶¥µã»º³å
-		HRESULT hRes = dx9.GetD3D()->CreateVertexBuffer(sizeof(VERTEXTYPE) * 4, D3DUSAGE_WRITEONLY, D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1, D3DPOOL_DEFAULT, &m_vertexs, NULL);
+		HRESULT hRes = dx9.GetD3D()->CreateVertexBuffer(sizeof(VERTEXTYPE) * 4, D3DUSAGE_WRITEONLY, D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1, D3DPOOL_MANAGED, &m_vertexs, NULL);
 		if (hRes != S_OK)
 			return FALSE;
 		return TRUE;

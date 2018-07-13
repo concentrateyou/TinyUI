@@ -35,7 +35,7 @@ namespace DXFramework
 	BOOL DX9Texture2D::Create(DX9& dx9, INT cx, INT cy, const BYTE* bits)
 	{
 		Destory();
-		HRESULT hRes = dx9.GetD3D()->CreateTexture(cx, cy, 1, D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_texture2D, NULL);
+		HRESULT hRes = dx9.GetD3D()->CreateTexture(cx, cy, 1, D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &m_texture2D, NULL);
 		if (hRes != S_OK)
 		{
 			TRACE("DX9Texture2D CreateTexture:%d\n", hRes);

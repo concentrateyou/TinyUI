@@ -60,16 +60,10 @@
     <ClInclude Include="DX9Font2D.h">
       <Filter>头文件\DX9</Filter>
     </ClInclude>
-    <ClInclude Include="DX9Graphics2D.h">
-      <Filter>头文件\DX9</Filter>
-    </ClInclude>
     <ClInclude Include="DX9Image2D.h">
       <Filter>头文件\DX9</Filter>
     </ClInclude>
     <ClInclude Include="DX9Line2D.h">
-      <Filter>头文件\DX9</Filter>
-    </ClInclude>
-    <ClInclude Include="DX9RenderView.h">
       <Filter>头文件\DX9</Filter>
     </ClInclude>
     <ClInclude Include="DX9Shader.h">
@@ -147,6 +141,9 @@
     <ClInclude Include="DX11DuplicatorRunner.h">
       <Filter>头文件\DX11</Filter>
     </ClInclude>
+    <ClInclude Include="DX9Graphics2D.h">
+      <Filter>头文件\DX9</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -179,16 +176,10 @@
     <ClCompile Include="DX9Font2D.cpp">
       <Filter>源文件\DX9</Filter>
     </ClCompile>
-    <ClCompile Include="DX9Graphics2D.cpp">
-      <Filter>源文件\DX9</Filter>
-    </ClCompile>
     <ClCompile Include="DX9Image2D.cpp">
       <Filter>源文件\DX9</Filter>
     </ClCompile>
     <ClCompile Include="DX9Line2D.cpp">
-      <Filter>源文件\DX9</Filter>
-    </ClCompile>
-    <ClCompile Include="DX9RenderView.cpp">
       <Filter>源文件\DX9</Filter>
     </ClCompile>
     <ClCompile Include="DX9Shader.cpp">
@@ -265,6 +256,9 @@
     </ClCompile>
     <ClCompile Include="DX11DuplicatorRunner.cpp">
       <Filter>源文件\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX9Graphics2D.cpp">
+      <Filter>源文件\DX9</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

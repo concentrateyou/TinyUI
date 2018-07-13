@@ -3,7 +3,7 @@
 #include "LAVVideoFilter.h"
 #include "LAVVideo.h"
 #include "LAVAudio.h"
-#include "DX9Graphics2D.h"
+#include "DX9Canvas.h"
 #include "DX9Image2D.h"
 #include "DX9Canvas.h"
 #include "Media/TinyXAudio.h"
