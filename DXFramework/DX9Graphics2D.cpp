@@ -108,24 +108,24 @@ namespace DXFramework
 		return TRUE;
 	}
 
-	BOOL DX9Graphics2D::DrawImage(DX9Image2D* image)
+	BOOL DX9Graphics2D::DrawImage(DX9Image2D& image)
 	{
-		if (!image || image->IsEmpty())
+		if (image.IsEmpty())
 			return FALSE;
-		if (!image->Process(m_dx9))
+		if (!image.Process(m_dx9))
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX9Graphics2D::DrawString(DX9Font2D* ps, LPCSTR pzText, INT count, LPRECT pRect, DWORD dwFormat, D3DCOLOR color)
+	BOOL DX9Graphics2D::DrawString(DX9Font2D& dx9Font2D, LPCSTR pzText, INT count, LPRECT pRect, DWORD dwFormat, D3DCOLOR color)
 	{
-		if (!ps)
+		if (!dx9Font2D.IsEmpty())
 			return FALSE;
-		return ps->DrawString(m_dx9, pzText, count, pRect, dwFormat, color);
+		return dx9Font2D.DrawString(m_dx9, pzText, count, pRect, dwFormat, color);
 	}
-	BOOL DX9Graphics2D::DrawLine(DX9Line2D* ps, D3DXVECTOR2 *pVertexList, DWORD dwVertexListCount, D3DCOLOR color)
+	BOOL DX9Graphics2D::DrawLine(DX9Line2D& dx9Line2D, D3DXVECTOR2 *pVertexList, DWORD dwVertexListCount, D3DCOLOR color)
 	{
-		if (!ps)
+		if (!dx9Line2D.IsEmpty())
 			return FALSE;
-		return ps->DrawLine(m_dx9, pVertexList, dwVertexListCount, color);
+		return dx9Line2D.DrawLine(m_dx9, pVertexList, dwVertexListCount, color);
 	}
 }
