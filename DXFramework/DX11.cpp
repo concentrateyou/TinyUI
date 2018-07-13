@@ -1,13 +1,12 @@
 #include "stdafx.h"
 #include "DX11.h"
-#include "DX11RenderView.h"
+#include "DX11Graphics2D.h"
 #include "Common/TinyLogging.h"
 
 namespace DXFramework
 {
 	DX11::DX11()
-		:m_hWND(NULL),
-		m_render2D(NULL)
+		:m_hWND(NULL)
 	{
 
 	}
@@ -66,13 +65,8 @@ namespace DXFramework
 		hRes = D3D11CreateDeviceAndSwapChain(pAdapter, D3D_DRIVER_TYPE_HARDWARE, NULL, dwFlag, levels, sizeof(levels) / sizeof(D3D_FEATURE_LEVEL), D3D11_SDK_VERSION, &swapDesc, &m_swap, &m_d3d, &level, &m_immediateContext);
 		if (hRes != S_OK)
 			return FALSE;
-		m_background2D.Reset(new DX11RenderView(*this));
-		ASSERT(m_background2D);
-		if (!m_background2D->Create())
-			return FALSE;
-		this->SetViewport(TinyPoint(0, 0), m_background2D->GetSize());
-		this->SetMatrixs(m_background2D->GetSize());
-		m_render2D = m_background2D;
+		this->SetViewport(TinyPoint(0, 0), { cx,cy });
+		this->SetMatrixs({ cx,cy });
 		D3D11_DEPTH_STENCIL_DESC depthDesc;
 		ZeroMemory(&depthDesc, sizeof(depthDesc));
 		depthDesc.DepthEnable = TRUE;
@@ -148,7 +142,6 @@ namespace DXFramework
 	}
 	void DX11::Uninitialize()
 	{
-		m_background2D.Reset(NULL);
 		m_disableDepthState.Release();
 		m_enableDepthState.Release();
 		m_disableBlendState.Release();
@@ -157,16 +150,18 @@ namespace DXFramework
 		m_immediateContext.Release();
 		m_swap.Release();
 		m_d3d.Release();
-		m_render2D = NULL;
 	}
 	BOOL DX11::Resize(INT cx, INT cy)
 	{
 		if (IsEmpty())
 			return FALSE;
-		if (!m_background2D->Resize(cx, cy))
+		LPVOID ps = NULL;
+		m_immediateContext->OMSetRenderTargets(1, (ID3D11RenderTargetView**)&ps, NULL);
+		HRESULT hRes = m_swap->ResizeBuffers(2, cx, cy, DXGI_FORMAT_B8G8R8A8_UNORM, 0);
+		if (hRes != S_OK)
 			return FALSE;
-		this->SetViewport(TinyPoint(0, 0), m_background2D->GetSize());
-		this->SetMatrixs(m_background2D->GetSize());
+		this->SetViewport(TinyPoint(0, 0), { cx,cy });
+		this->SetMatrixs({ cx,cy });
 		return TRUE;
 	}
 	BOOL DX11::AllowBlend(BOOL bAllow, FLOAT blendFactor[4])
@@ -182,20 +177,6 @@ namespace DXFramework
 			return FALSE;
 		m_immediateContext->OMSetDepthStencilState(bAllow ? m_enableDepthState : m_disableDepthState, 1);
 		return TRUE;
-	}
-	void DX11::SetRenderView(DX11RenderView* render2D)
-	{
-		if (render2D == NULL)
-		{
-			m_render2D = m_background2D;
-		}
-		else
-		{
-			if (m_render2D != render2D)
-			{
-				m_render2D = render2D;
-			}
-		}
 	}
 	BOOL DX11::Present()
 	{
@@ -234,10 +215,6 @@ namespace DXFramework
 	IDXGISwapChain*	DX11::GetSwapChain() const
 	{
 		return m_swap;
-	}
-	DX11RenderView* DX11::GetRenderView() const
-	{
-		return m_render2D;
 	}
 	HWND DX11::GetHWND() const
 	{

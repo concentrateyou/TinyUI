@@ -4,6 +4,9 @@
 #include "DX9Image2D.h"
 #include "DX9Graphics2D.h"
 
+#include "DX11Image2D.h"
+#include "DX11Graphics2D.h"
+
 using namespace TinyFramework;
 using namespace DXFramework;
 
@@ -23,9 +26,9 @@ namespace Bytedance
 		LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	private:
-		DX9						m_dx9;
-		DX9Graphics2D			m_graphics;
-		DX9Image2D				m_image2D;
+		DX11			m_dx11;
+		DX11Graphics2D	m_graphics;
+		DX11Image2D		m_image2D;
 	};
 }
 

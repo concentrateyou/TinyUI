@@ -3,7 +3,7 @@
 
 namespace DXFramework
 {
-	class DX11RenderView;
+	class DX11Graphics2D;
 
 	class DX11
 	{
@@ -15,7 +15,7 @@ namespace DXFramework
 		BOOL					EnumAdapters(vector<IDXGIAdapter*>& adapters);
 		BOOL					Initialize(HWND hWND, INT cx, INT cy, IDXGIAdapter* pAdapter = NULL);
 		void					Uninitialize();
-		BOOL					Resize(INT cx = 0, INT cy = 0);
+		BOOL					Resize(INT cx, INT cy);
 		BOOL					SetViewport(const TinyPoint& pos, const TinySize& size);
 		BOOL					AllowBlend(BOOL bAllow, FLOAT blendFactor[4]);
 		BOOL					AllowDepth(BOOL bAllow);
@@ -31,14 +31,9 @@ namespace DXFramework
 		XMMATRIX*				GetMatrixs();
 		TinySize				GetSize() const;
 	private:
-		void					SetRenderView(DX11RenderView* render2D);
-		DX11RenderView*			GetRenderView() const;
-	private:
 		HWND								m_hWND;
 		XMMATRIX							m_matrixs[3];
 		TinySize							m_size;
-		DX11RenderView*						m_render2D;
-		TinyScopedPtr<DX11RenderView>		m_background2D;
 		TinyComPtr<ID3D11Device>			m_d3d;
 		TinyComPtr<IDXGISwapChain>			m_swap;
 		TinyComPtr<ID3D11DeviceContext>		m_immediateContext;
