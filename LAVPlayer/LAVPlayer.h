@@ -5,7 +5,7 @@
 #include "LAVAudio.h"
 #include "DX9Graphics2D.h"
 #include "DX9Image2D.h"
-#include "DX9RenderView.h"
+#include "DX9Canvas.h"
 #include "Media/TinyXAudio.h"
 using namespace std;
 using namespace TinyFramework;

@@ -17,7 +17,6 @@ namespace DXFramework
 		DX9Graphics2D();
 		virtual ~DX9Graphics2D();
 		DX9&			GetDX9();
-		BOOL			Reset();
 		BOOL			Present();
 		BOOL			Initialize(HWND hWND, const TinySize& size);
 		BOOL			Resize(const TinySize& size);
@@ -27,8 +26,6 @@ namespace DXFramework
 		BOOL			DrawString(DX9Font2D* ps, LPCSTR pzText, INT count, LPRECT pRect, DWORD dwFormat, D3DCOLOR color);
 	public:
 		BOOL			IsActive() const;
-		void			SetRenderView(DX9RenderView* render2D);
-		DX9RenderView*	GetRenderView() const;
 	private:
 		DX9				m_dx9;
 	};

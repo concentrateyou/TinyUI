@@ -2,7 +2,7 @@
 #include "Control/TinyControl.h"
 
 #include "DX9Image2D.h"
-#include "DX9RenderView.h"
+#include "DX9Canvas.h"
 #include "DX9Graphics2D.h"
 
 using namespace TinyFramework;

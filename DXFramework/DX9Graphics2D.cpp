@@ -19,10 +19,6 @@ namespace DXFramework
 	{
 		return m_dx9;
 	}
-	BOOL DX9Graphics2D::Reset()
-	{
-		return m_dx9.Reset();
-	}
 	BOOL DX9Graphics2D::Present()
 	{
 		return m_dx9.Present();
@@ -56,13 +52,5 @@ namespace DXFramework
 		if (!ps)
 			return FALSE;
 		return ps->DrawLine(m_dx9, pVertexList, dwVertexListCount, color);
-	}
-	void DX9Graphics2D::SetRenderView(DX9RenderView* render2D)
-	{
-		m_dx9.SetRenderView(render2D);
-	}
-	DX9RenderView*	DX9Graphics2D::GetRenderView() const
-	{
-		return m_dx9.GetRenderView();
 	}
 }
