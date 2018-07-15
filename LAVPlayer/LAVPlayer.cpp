@@ -144,7 +144,7 @@ namespace LAV
 				m_image.Destory();
 				if (!m_image.Create(m_graphics.GetDX9(), vih.bmiHeader.biWidth, vih.bmiHeader.biHeight, NULL))
 					return FALSE;
-				m_image.SetScale(D3DXVECTOR2(static_cast<FLOAT>(TO_CX(s)) / m_image.GetSize().x, static_cast<FLOAT>(TO_CY(s)) / m_image.GetSize().y));
+				m_image.SetScale(XMFLOAT2(static_cast<FLOAT>(TO_CX(s)) / m_image.GetSize().x, static_cast<FLOAT>(TO_CY(s)) / m_image.GetSize().y));
 			}
 			if (mediaType->majortype == MEDIATYPE_Audio)
 			{

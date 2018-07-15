@@ -4,7 +4,7 @@
 #include <d3d11.h>
 #include <DXGIFormat.h>
 #include <DirectXMath.h>
-#include <D3DX11async.h>
+#include <d3dcompiler.h>
 #include <DXGI.h>
 #include <dwmapi.h>
 #include <TlHelp32.h>

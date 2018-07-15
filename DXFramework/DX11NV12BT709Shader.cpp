@@ -21,14 +21,14 @@ namespace DXFramework
 		D3D11_INPUT_ELEMENT_DESC layout[3];
 		D3D11_BUFFER_DESC bufferDesc = { 0 };
 		D3D11_SAMPLER_DESC samplerDesc;
-		hRes = D3DX11CompileFromFile(vsFile, NULL, NULL, "NV12BT709VertexShader", "vs_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &vertexShaderBuffer, &errorMsg, NULL);
+		hRes = D3DCompileFromFile(StringToWString(vsFile).c_str(), NULL, NULL, "NV12BT709VertexShader", "vs_4_0", D3DCOMPILE_ENABLE_STRICTNESS, 0, &vertexShaderBuffer, &errorMsg);
 		if (hRes != S_OK)
 		{
 			CHAR* error = (CHAR*)errorMsg->GetBufferPointer();
 			LOG(ERROR) << "DX11TextureShader Initialize - NV12BT709VertexShader: " << error;
 			return FALSE;
 		}
-		hRes = D3DX11CompileFromFile(psFile, NULL, NULL, "NV12BT709PixelShader", "ps_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, &pixelShaderBuffer, &errorMsg, NULL);
+		hRes = D3DCompileFromFile(StringToWString(psFile).c_str(), NULL, NULL, "NV12BT709PixelShader", "ps_4_0", D3DCOMPILE_ENABLE_STRICTNESS, 0, &pixelShaderBuffer, &errorMsg);
 		if (hRes != S_OK)
 		{
 			CHAR* error = (CHAR*)errorMsg->GetBufferPointer();

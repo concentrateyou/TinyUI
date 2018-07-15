@@ -25,6 +25,12 @@
     <Filter Include="源文件\DX11">
       <UniqueIdentifier>{e436aa8c-9f65-4870-af2a-c2b0557d6969}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\DX10">
+      <UniqueIdentifier>{16f1745b-1858-4ab4-9021-21df53b6ab88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\DX10">
+      <UniqueIdentifier>{1d024bae-1078-42b4-8941-911bd96efb02}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
