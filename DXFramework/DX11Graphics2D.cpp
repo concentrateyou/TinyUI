@@ -370,7 +370,7 @@ namespace DXFramework
 		m_colorSharder.Render(m_dx11);
 		return TRUE;
 	}
-	BOOL DX11Graphics2D::SaveAs(const CHAR* pzName, D3DX11_IMAGE_FILE_FORMAT format)
+	BOOL DX11Graphics2D::SaveAs(const CHAR* pzName, IMAGE_FILE_FORMAT format)
 	{
 		if (m_dx11.IsEmpty())
 			return FALSE;

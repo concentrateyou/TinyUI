@@ -182,6 +182,24 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DX10.h" />
+    <ClInclude Include="DX10ColorShader.h" />
+    <ClInclude Include="DX10Element2D.h" />
+    <ClInclude Include="DX10Font2D.h" />
+    <ClInclude Include="DX10Graphics2D.h" />
+    <ClInclude Include="DX10Image2D.h" />
+    <ClInclude Include="DX10ImageElement2D.h" />
+    <ClInclude Include="DX10Line2D.h" />
+    <ClInclude Include="DX10NV12BT601Shader.h" />
+    <ClInclude Include="DX10NV12BT709Shader.h" />
+    <ClInclude Include="DX10NV12Video.h" />
+    <ClInclude Include="DX10Rectangle2D.h" />
+    <ClInclude Include="DX10Shader.h" />
+    <ClInclude Include="DX10Texture2D.h" />
+    <ClInclude Include="DX10TextureShader.h" />
+    <ClInclude Include="DX10YUVBT601Shader.h" />
+    <ClInclude Include="DX10YUVBT709Shader.h" />
+    <ClInclude Include="DX10YUVVideo.h" />
     <ClInclude Include="DX11.h" />
     <ClInclude Include="DX11CaptureRunner.h" />
     <ClInclude Include="DX11Duplicator.h" />
@@ -221,6 +239,24 @@
     <ClInclude Include="WICTexture.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DX10.cpp" />
+    <ClCompile Include="DX10ColorShader.cpp" />
+    <ClCompile Include="DX10Element2D.cpp" />
+    <ClCompile Include="DX10Font2D.cpp" />
+    <ClCompile Include="DX10Graphics2D.cpp" />
+    <ClCompile Include="DX10Image2D.cpp" />
+    <ClCompile Include="DX10ImageElement2D.cpp" />
+    <ClCompile Include="DX10Line2D.cpp" />
+    <ClCompile Include="DX10NV12BT601Shader.cpp" />
+    <ClCompile Include="DX10NV12BT709Shader.cpp" />
+    <ClCompile Include="DX10NV12Video.cpp" />
+    <ClCompile Include="DX10Rectangle2D.cpp" />
+    <ClCompile Include="DX10Shader.cpp" />
+    <ClCompile Include="DX10Texture2D.cpp" />
+    <ClCompile Include="DX10TextureShader.cpp" />
+    <ClCompile Include="DX10YUVBT601Shader.cpp" />
+    <ClCompile Include="DX10YUVBT709Shader.cpp" />
+    <ClCompile Include="DX10YUVVideo.cpp" />
     <ClCompile Include="DX11.cpp" />
     <ClCompile Include="DX11Duplicator.cpp" />
     <ClCompile Include="DX11DuplicatorRunner.cpp" />

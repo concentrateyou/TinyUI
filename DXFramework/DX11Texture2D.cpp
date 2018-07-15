@@ -3,17 +3,6 @@
 
 namespace DXFramework
 {
-	INT GetBits(DXGI_FORMAT dxgi)
-	{
-		switch (dxgi)
-		{
-		case DXGI_FORMAT_B8G8R8X8_UNORM:
-		case DXGI_FORMAT_B8G8R8A8_UNORM:
-			return 4;
-		default:
-			return 2;
-		}
-	}
 	DX11Texture2D::DX11Texture2D()
 	{
 	}
@@ -176,7 +165,7 @@ namespace DXFramework
 	{
 		dx11.GetImmediateContext()->Unmap(m_texture2D, 0);
 	}
-	BOOL DX11Texture2D::SaveAs(DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT format)
+	BOOL DX11Texture2D::SaveAs(DX11& dx11, const CHAR* pzFile, IMAGE_FILE_FORMAT format)
 	{
 		ASSERT(m_texture2D);
 		wstring ws = StringToWString(pzFile);

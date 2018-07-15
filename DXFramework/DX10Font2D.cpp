@@ -1,17 +1,17 @@
 #include "stdafx.h"
-#include "DX11Font2D.h"
+#include "DX10Font2D.h"
 
 namespace DXFramework
 {
-	IMPLEMENT_DYNAMIC(DX11Font2D, DX11Image2D);
-	DX11Font2D::DX11Font2D()
+	IMPLEMENT_DYNAMIC(DX10Font2D, DX10Image2D);
+	DX10Font2D::DX10Font2D()
 	{
 	}
 
-	DX11Font2D::~DX11Font2D()
+	DX10Font2D::~DX10Font2D()
 	{
 	}
-	BOOL DX11Font2D::Create(DX11& dx11, const wstring& str, const CHARFORMAT& cf, const COLORREF& bkColor)
+	BOOL DX10Font2D::Create(DX10& dx10, const wstring& str, const CHARFORMAT& cf, const COLORREF& bkColor)
 	{
 		if (str.empty())
 			return FALSE;
@@ -28,7 +28,7 @@ namespace DXFramework
 			sizeF.Width += 1;
 			sizeF.Height += 1;
 			TinyRectangle s = { 0 };
-			GetClientRect(dx11.GetHWND(), &s);
+			GetClientRect(dx10.GetHWND(), &s);
 			if (sizeF.Width > s.Width())
 			{
 				sizeF.Width = static_cast<Gdiplus::REAL>(s.Width());
@@ -37,14 +37,14 @@ namespace DXFramework
 			{
 				sizeF.Height = static_cast<Gdiplus::REAL>(s.Height());
 			}
-			return DX11Image2D::Create(dx11, (INT)sizeF.Width, (INT)sizeF.Height);
+			return DX10Image2D::Create(dx10, (INT)sizeF.Width, (INT)sizeF.Height);
 		}
 		return FALSE;
 	}
-	BOOL DX11Font2D::ClearContext()
+	BOOL DX10Font2D::ClearContext()
 	{
 		HDC hDC = NULL;
-		if (!DX11Texture2D::GetDC(FALSE, hDC))
+		if (!DX10Texture2D::GetDC(FALSE, hDC))
 			return FALSE;
 		Graphics g(hDC);
 		g.SetTextRenderingHint(Gdiplus::TextRenderingHintAntiAlias);
@@ -54,16 +54,16 @@ namespace DXFramework
 		color.SetFromCOLORREF(m_bkColor);
 		g.Clear(color);
 		g.ReleaseHDC(hDC);
-		if (!DX11Texture2D::ReleaseDC())
+		if (!DX10Texture2D::ReleaseDC())
 			return FALSE;
 		return TRUE;
 	}
-	BOOL DX11Font2D::DrawString(DX11& dx11, const TinyString& str, const RectF& rectF, const StringFormat* format)
+	BOOL DX10Font2D::DrawString(DX10& dx10, const TinyString& str, const RectF& rectF, const StringFormat* format)
 	{
-		if (DX11Texture2D::IsEmpty())
+		if (DX10Texture2D::IsEmpty())
 			return FALSE;
 		HDC hDC = NULL;
-		if (!DX11Texture2D::GetDC(FALSE, hDC))
+		if (!DX10Texture2D::GetDC(FALSE, hDC))
 			return FALSE;
 		Graphics g(hDC);
 		g.SetTextRenderingHint(Gdiplus::TextRenderingHintAntiAlias);
@@ -79,7 +79,7 @@ namespace DXFramework
 		Gdiplus::Font font(hDC, &lf);
 		g.DrawString(ws.c_str(), -1, &font, rectF, format, &textBrush);
 		g.ReleaseHDC(hDC);
-		if (!DX11Texture2D::ReleaseDC())
+		if (!DX10Texture2D::ReleaseDC())
 			return FALSE;
 		return TRUE;
 	}

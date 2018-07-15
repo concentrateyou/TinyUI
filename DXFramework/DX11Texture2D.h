@@ -26,7 +26,7 @@ namespace DXFramework
 		virtual BOOL Copy(DX11& dx11, ID3D11Texture2D* texture2D);
 		virtual BOOL Copy(DX11& dx11, DX11Texture2D& texture2D);
 		virtual BOOL Copy(DX11& dx11, D3D11_BOX* ps, const BYTE* bits, LONG size, UINT rowPitch, UINT depthPitch);
-		virtual BOOL SaveAs(DX11& dx11, const CHAR* pzFile, D3DX11_IMAGE_FILE_FORMAT dxgi);
+		virtual BOOL SaveAs(DX11& dx11, const CHAR* pzFile, IMAGE_FILE_FORMAT dxgi);
 		virtual void Destory();
 	public:
 		operator ID3D11Texture2D*() const;
@@ -43,33 +43,5 @@ namespace DXFramework
 		TinyComPtr<ID3D11Texture2D>				m_texture2D;
 		TinyComPtr<ID3D11ShaderResourceView>	m_resourceView;
 	};
-
-#define CAPTURETYPE_MEMORYTEXTURE   1
-#define CAPTURETYPE_SHAREDTEXTURE   2
-
-#pragma pack(push, 8)
-	typedef struct tagSharedCaptureDATA
-	{
-		UINT		CaptureType;
-		DWORD		Format;
-		SIZE		Size;
-		BOOL		bFlip;
-		BOOL		bMultisample;
-		UINT		Pitch;
-		DWORD		MapSize;
-		HWND		HwndCapture;
-	}SharedCaptureDATA;
-	/// <summary>
-	/// 共享纹理数据
-	/// </summary>
-	typedef struct tagSharedTextureDATA
-	{
-		LONGLONG    FrameTime;
-		HANDLE      TextureHandle;
-		DWORD       Texture1Offset;
-		DWORD		Texture2Offset;
-		DWORD		CurrentID;
-	}SharedTextureDATA;
-#pragma pack(pop)
 }
 

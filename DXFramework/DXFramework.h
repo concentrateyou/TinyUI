@@ -12,6 +12,7 @@
 #include <d2d1.h>
 #include <wincodec.h>
 #include <d2d1helper.h>
+#include <Richedit.h>
 #include "Common/TinyCommon.h"
 #include "Common/TinyUtility.h"
 #include "Common/TinyTime.h"
@@ -43,7 +44,7 @@ namespace DXFramework
 		hitMiddle = 8
 	};
 
-	enum D3DX11_IMAGE_FILE_FORMAT
+	enum IMAGE_FILE_FORMAT
 	{
 		BMP,
 		JPG,
@@ -53,7 +54,7 @@ namespace DXFramework
 		WMP
 	};
 
-	REFGUID GetWICCodec(D3DX11_IMAGE_FILE_FORMAT format);
+	REFGUID GetWICCodec(IMAGE_FILE_FORMAT format);
 
 	typedef struct tagWNDINFO
 	{
@@ -101,6 +102,40 @@ namespace DXFramework
 #define TEXTURE_MUTEX2          TEXT("TextureMutex2")
 #define D3DX_PI    (3.14159265358979323846)
 #define D3DX_1BYPI ( 1.0 / D3DX_PI )
+
+#define CAPTURETYPE_MEMORYTEXTURE   1
+#define CAPTURETYPE_SHAREDTEXTURE   2
+
+#pragma pack(push, 8)
+	typedef struct tagSharedCaptureDATA
+	{
+		UINT		CaptureType;
+		DWORD		Format;
+		SIZE		Size;
+		BOOL		bFlip;
+		BOOL		bMultisample;
+		UINT		Pitch;
+		DWORD		MapSize;
+		HWND		HwndCapture;
+	}SharedCaptureDATA;
+	/// <summary>
+	/// 共享纹理数据
+	/// </summary>
+	typedef struct tagSharedTextureDATA
+	{
+		LONGLONG    FrameTime;
+		HANDLE      TextureHandle;
+		DWORD       Texture1Offset;
+		DWORD		Texture2Offset;
+		DWORD		CurrentID;
+	}SharedTextureDATA;
+#pragma pack(pop)
+
+	void WINAPI CHARFORMAT2LOGFONT(const CHARFORMAT& cf, LOGFONT& lf, COLORREF& color);
+	void WINAPI LOGFONT2CHARFORMAT(const LOGFONT& lf, CHARFORMAT& cf, const COLORREF& color);
+	Gdiplus::RectF WINAPI MeasureString(const wstring& str, const Gdiplus::Font* font);
+	Gdiplus::RectF WINAPI MeasureString(const wstring& str, const CHARFORMAT& cf);
+
 	BOOL WINAPI ProcessExists(const TinyString& exeName, PROCESSINFO& ps);
 	BOOL WINAPI InjectLibrary(HANDLE hProcess, const CHAR *pszDLL);
 	BOOL WINAPI UninjectLibrary(HANDLE hProcess, const CHAR *pszDLL);

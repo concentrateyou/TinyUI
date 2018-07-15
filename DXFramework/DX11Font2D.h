@@ -3,14 +3,9 @@
 #include "DX11Texture2D.h"
 #include "DX11TextureShader.h"
 #include "DX11Image2D.h"
-#include <Richedit.h>
 
 namespace DXFramework
 {
-	void CHARFORMAT2LOGFONT(const CHARFORMAT& cf, LOGFONT& lf, COLORREF& color);
-	void LOGFONT2CHARFORMAT(const LOGFONT& lf, CHARFORMAT& cf, const COLORREF& color);
-	Gdiplus::RectF WINAPI MeasureString(const wstring& str, const Gdiplus::Font* font);
-	Gdiplus::RectF WINAPI MeasureString(const wstring& str, const CHARFORMAT& cf);
 	/// <summary>
 	/// DX11×ÖÌå
 	/// </summary>

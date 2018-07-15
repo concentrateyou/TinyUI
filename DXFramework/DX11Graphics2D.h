@@ -45,7 +45,7 @@ namespace DXFramework
 		ID3D11RenderTargetView* GetRTView() const;
 		ID3D11DepthStencilView* GetDSView() const;
 	public:
-		BOOL					SaveAs(const CHAR* pzName, D3DX11_IMAGE_FILE_FORMAT format);
+		BOOL					SaveAs(const CHAR* pzName, IMAGE_FILE_FORMAT format);
 	protected:
 		BOOL								m_swap;
 		DX11&								m_dx11;
