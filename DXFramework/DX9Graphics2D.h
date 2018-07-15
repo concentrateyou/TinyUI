@@ -23,10 +23,10 @@ namespace DXFramework
 		BOOL		Resize(INT cx, INT cy);
 	public:
 		BOOL		BeginDraw();
-		BOOL		EndDraw();
 		BOOL		DrawImage(DX9Image2D& image);
 		BOOL		DrawString(DX9Font2D& dx9Font2D, LPCSTR pzText, INT count, LPRECT pRect, DWORD dwFormat, D3DCOLOR color);
 		BOOL		DrawLine(DX9Line2D& dx9Line2D, D3DXVECTOR2 *pVertexList, DWORD dwVertexListCount, D3DCOLOR color);
+		BOOL		EndDraw();
 	protected:
 		DX9&							m_dx9;
 		TinySize						m_size;

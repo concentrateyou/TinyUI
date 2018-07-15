@@ -41,9 +41,8 @@ namespace Bytedance
 		TinyRectangle s;
 		GetClientRect(&s);
 		m_dx11.Initialize(m_hWND, TO_CX(s), TO_CY(s));
-		m_image2D.Load(m_graphics.GetDX11(), "D:\\timg.jpg");
+		m_image2D.Load(m_graphics.GetDX9(), "D:\\timg.jpg");
 		m_graphics.Create();
-		m_graphics.InitializeShaders();
 		return TinyControl::OnCreate(uMsg, wParam, lParam, bHandled);
 	}
 

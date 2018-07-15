@@ -26,7 +26,6 @@ namespace DXFramework
 		void					Destory();
 	public:
 		BOOL					BeginDraw();
-		BOOL					EndDraw();
 		BOOL					DrawImageNV12BT601(DX11NV12Video& image);
 		BOOL					DrawImageNV12BT709(DX11NV12Video& image);
 		BOOL					DrawImageYUVBT601(DX11YUVVideo& image);
@@ -35,6 +34,7 @@ namespace DXFramework
 		BOOL					DrawLine(DX11Line2D& line, const XMFLOAT2* points, DWORD count, const XMFLOAT4& color);
 		BOOL					DrawRectangle(DX11Rectangle2D& rectangle, const XMFLOAT2 points[4], const XMFLOAT4& color);
 		BOOL					FillRectangle(DX11Rectangle2D& rectangle, const XMFLOAT2 points[4], const XMFLOAT4& color);
+		BOOL					EndDraw();
 		BOOL					Map(D3D11_MAPPED_SUBRESOURCE& map);
 		BOOL					Unmap();
 		HANDLE					GetHandle();//»ñµÃ¹²Ïí¾ä±ú
